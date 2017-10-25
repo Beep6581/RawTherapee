@@ -116,6 +116,8 @@ Locallab::Locallab ():
     retinexMethod (Gtk::manage (new MyComboBoxText ())),
     qualityMethod (Gtk::manage (new MyComboBoxText ())),
     qualitycurveMethod (Gtk::manage (new MyComboBoxText ())),
+    blurMethod (Gtk::manage (new MyComboBoxText ())),
+    dustMethod (Gtk::manage (new MyComboBoxText ())),
 
     artifFrame (Gtk::manage (new Gtk::Frame (M ("TP_LOCALLAB_ARTIF")))),
     shapeFrame (Gtk::manage (new Gtk::Frame (M ("TP_LOCALLAB_SHFR")))),
@@ -152,6 +154,7 @@ Locallab::Locallab ():
     inversret (Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_INVERS")))),
     inverssha (Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_INVERS")))),
     cutpast (Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_CUTPAST")))),
+    lastdust (Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_LASTDUST")))),
     draggedPointOldAngle (-1000.)
 
 {
@@ -403,6 +406,10 @@ Locallab::Locallab ():
     cutpast->set_tooltip_text (M ("TP_LOCALLAB_CUTPAST_TOOLTIP"));
 //tone mapping local
 
+    lastdust->set_active (false);
+    lastdustConn  = lastdust->signal_toggled().connect ( sigc::mem_fun (*this, &Locallab::lastdustChanged) );
+    lastdust->set_tooltip_text (M ("TP_LOCALLAB_LASTDUST_TOOLTIP"));
+
     stren->setAdjusterListener (this);
 
     gamma->setAdjusterListener (this);
@@ -622,6 +629,12 @@ Locallab::Locallab ():
     ToolParamBlock* const colorBox = Gtk::manage (new ToolParamBlock());
 
     ToolParamBlock* const dustBox = Gtk::manage (new ToolParamBlock());
+    dustMethod->append (M ("TP_LOCALLAB_DSCOP"));
+    dustMethod->append (M ("TP_LOCALLAB_DSMOV"));
+    dustMethod->append (M ("TP_LOCALLAB_DSPAS"));
+    dustMethod->set_active (0);
+    dustMethodConn = dustMethod->signal_changed().connect ( sigc::mem_fun (*this, &Locallab::dustMethodChanged) );
+    dustMethod->set_tooltip_markup (M ("TP_LOCALLAB_BLMETHOD_TOOLTIP"));
 
     superBox->pack_start (*lightness);
     superBox->pack_start (*contrast);
@@ -632,13 +645,15 @@ Locallab::Locallab ():
     colorBox->pack_start (*sensi);
 
     dustFrame->set_label_align (0.025, 0.5);
+    dustBox->pack_start (*dustMethod);
+    dustBox->pack_start (*lastdust);
 
     dustBox->pack_start (*cutpast);
     dustBox->pack_start (*centerXbuf);
     dustBox->pack_start (*centerYbuf);
     dustBox->pack_start (*adjblur);
     dustFrame->add (*dustBox);
-//    colorBox->pack_start (*dustFrame);
+ //   colorBox->pack_start (*dustFrame);
     centerXbuf->hide();
     centerYbuf->hide();
 
@@ -746,13 +761,22 @@ Locallab::Locallab ():
 
 
     ToolParamBlock* const blurrBox = Gtk::manage (new ToolParamBlock());
+    blurMethod->append (M ("TP_LOCALLAB_BLNORM"));
+    blurMethod->append (M ("TP_LOCALLAB_BLINV"));
+    blurMethod->append (M ("TP_LOCALLAB_BLSYM"));
+    blurMethod->set_active (0);
+    blurMethodConn = blurMethod->signal_changed().connect ( sigc::mem_fun (*this, &Locallab::blurMethodChanged) );
+    blurMethod->set_tooltip_markup (M ("TP_LOCALLAB_BLMETHOD_TOOLTIP"));
 
     blurrBox->pack_start (*radius);
     blurrBox->pack_start (*strength);
     blurrBox->pack_start (*sensibn);
+    blurrBox->pack_start (*blurMethod);
+
+
     blurrBox->pack_start (*activlum);
 
-    blurrBox->pack_start (*inversrad);
+//    blurrBox->pack_start (*inversrad);
     expblur->add (*blurrBox);
     expblur->setLevel (2);
     pack_start (*expblur);
@@ -1178,6 +1202,8 @@ void Locallab::neutral_pressed ()
     centerXbuf->resetValue (false);
     centerYbuf->resetValue (false);
     adjblur->resetValue (false);
+    blurMethod->set_active (0);
+    dustMethod->set_active (1);
 
     qualityMethod->set_active (0);
     qualitycurveMethod->set_active (0);
@@ -1193,6 +1219,7 @@ void Locallab::neutral_pressed ()
     sensibn->resetValue (false);
     invers->set_active (false);
     cutpast->set_active (false);
+    lastdust->set_active (false);
     curvactiv->set_active (false);
     inversrad->set_active (false);
     inversret->set_active (false);
@@ -1702,6 +1729,28 @@ bool Locallab::localComputed_ ()
 
     chromacbdl->setValue (nextdatasp[74]);
 
+    if (nextdatasp[75] == 0) {
+        lastdust->set_active (false);
+    } else {
+        lastdust->set_active (true);
+    }
+
+    if (nextdatasp[76] == 0) {
+        blurMethod->set_active (0);
+    } else if (nextdatasp[76] == 1) {
+        blurMethod->set_active (1);
+    } else if (nextdatasp[76] == 2) {
+        blurMethod->set_active (2);
+    }
+
+    if (nextdatasp[77] == 0) {
+        dustMethod->set_active (0);
+    } else if (nextdatasp[77] == 1) {
+        dustMethod->set_active (1);
+    } else if (nextdatasp[77] == 2) {
+        dustMethod->set_active (2);
+    }
+
     double intermed = 0.01 * (double) nextdatasp[75];
     hueref->setValue (intermed);
     chromaref->setValue (nextdatasp[76]);
@@ -1891,6 +1940,18 @@ bool Locallab::localComputed_ ()
         listener->panelChanged (Evlocallabcutpast, M ("GENERAL_ENABLED"));
     }
 
+    if (listener) {//for cutpast
+        listener->panelChanged (Evlocallablastdust, M ("GENERAL_ENABLED"));
+    }
+
+    if (listener) {//for blur method
+        listener->panelChanged (EvlocallabblurMethod, blurMethod->get_active_text ());
+    }
+
+    if (listener) {//for dust method
+        listener->panelChanged (EvlocallabdustMethod, dustMethod->get_active_text ());
+    }
+
     if (listener) {//for curvactiv
         listener->panelChanged (Evlocallabcurvactiv, M ("GENERAL_ENABLED"));
     }
@@ -1973,7 +2034,7 @@ bool Locallab::localComputed_ ()
 
 void Locallab::localChanged  (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat)
 {
-    for (int i = 2; i < 78; i++) {
+    for (int i = 2; i < 81; i++) {
         nextdatasp[i] = datasp[i][sp];
     }
 
@@ -2105,6 +2166,7 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
         activlum->set_inconsistent (multiImage && !pedited->locallab.activlum);
         invers->set_inconsistent (multiImage && !pedited->locallab.invers);
         cutpast->set_inconsistent (multiImage && !pedited->locallab.cutpast);
+        lastdust->set_inconsistent (multiImage && !pedited->locallab.lastdust);
         curvactiv->set_inconsistent (multiImage && !pedited->locallab.curvactiv);
         inversrad->set_inconsistent (multiImage && !pedited->locallab.inversrad);
         inverssha->set_inconsistent (multiImage && !pedited->locallab.inverssha);
@@ -2134,6 +2196,14 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
             retinexMethod->set_active_text (M ("GENERAL_UNCHANGED"));
         }
 
+        if (!pedited->locallab.blurMethod) {
+            blurMethod->set_active_text (M ("GENERAL_UNCHANGED"));
+        }
+
+        if (!pedited->locallab.dustMethod) {
+            dustMethod->set_active_text (M ("GENERAL_UNCHANGED"));
+        }
+
         if (!pedited->locallab.qualityMethod) {
             qualityMethod->set_active_text (M ("GENERAL_UNCHANGED"));
         }
@@ -2150,6 +2220,8 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
     retinexMethodConn.block (true);
     qualityMethodConn.block (true);
     qualitycurveMethodConn.block (true);
+    blurMethodConn.block (true);
+    dustMethodConn.block (true);
 
     avoidConn.block (true);
     avoid->set_active (pp->locallab.avoid);
@@ -2163,6 +2235,10 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
     cutpastConn.block (true);
     cutpast->set_active (pp->locallab.cutpast);
     cutpastConn.block (false);
+    lastdustConn.block (true);
+    lastdust->set_active (pp->locallab.lastdust);
+    lastdustConn.block (false);
+
     curvactivConn.block (true);
     curvactiv->set_active (pp->locallab.curvactiv);
     curvactivConn.block (false);
@@ -2297,6 +2373,7 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
     lastavoid = pp->locallab.avoid;
     lastinvers = pp->locallab.invers;
     lastcutpast = pp->locallab.cutpast;
+    lastlastdust = pp->locallab.lastdust;
     lastcurvactiv = pp->locallab.curvactiv;
     lastinversrad = pp->locallab.inversrad;
     lastinversret = pp->locallab.inversret;
@@ -2304,6 +2381,7 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
     activlumChanged();
     inversChanged();
     cutpastChanged();
+    lastdustChanged();
     curvactivChanged();
     inversradChanged();
     inversretChanged();
@@ -2334,6 +2412,28 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     retinexMethodChanged ();
     retinexMethodConn.block (false);
+
+    if (pp->locallab.blurMethod == "norm") {
+        blurMethod->set_active (0);
+    } else if (pp->locallab.blurMethod == "inv") {
+        blurMethod->set_active (1);
+    } else if (pp->locallab.blurMethod == "sym") {
+        blurMethod->set_active (2);
+    }
+
+    blurMethodChanged ();
+    blurMethodConn.block (false);
+
+    if (pp->locallab.dustMethod == "cop") {
+        dustMethod->set_active (0);
+    } else if (pp->locallab.dustMethod == "mov") {
+        dustMethod->set_active (1);
+    } else if (pp->locallab.dustMethod == "pas") {
+        dustMethod->set_active (2);
+    }
+
+    dustMethodChanged ();
+    dustMethodConn.block (false);
 
     if (pp->locallab.qualityMethod == "std") {
         qualityMethod->set_active (0);
@@ -2657,6 +2757,7 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
     pp->locallab.activlum = activlum->get_active();
     pp->locallab.invers = invers->get_active();
     pp->locallab.cutpast = cutpast->get_active();
+    pp->locallab.lastdust = lastdust->get_active();
     pp->locallab.curvactiv = curvactiv->get_active();
     pp->locallab.inversrad = inversrad->get_active();
     pp->locallab.inversret = inversret->get_active();
@@ -2710,6 +2811,8 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.retinexMethod    = retinexMethod->get_active_text() != M ("GENERAL_UNCHANGED");
         pedited->locallab.qualityMethod    = qualityMethod->get_active_text() != M ("GENERAL_UNCHANGED");
         pedited->locallab.qualitycurveMethod    = qualitycurveMethod->get_active_text() != M ("GENERAL_UNCHANGED");
+        pedited->locallab.blurMethod    = blurMethod->get_active_text() != M ("GENERAL_UNCHANGED");
+        pedited->locallab.dustMethod    = dustMethod->get_active_text() != M ("GENERAL_UNCHANGED");
         pedited->locallab.locY = locY->getEditedState ();
         pedited->locallab.locX = locX->getEditedState ();
         pedited->locallab.locYT = locYT->getEditedState ();
@@ -2759,6 +2862,7 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.avoid = !avoid->get_inconsistent();
         pedited->locallab.invers = !invers->get_inconsistent();
         pedited->locallab.cutpast = !cutpast->get_inconsistent();
+        pedited->locallab.lastdust = !lastdust->get_inconsistent();
         pedited->locallab.curvactiv = !curvactiv->get_inconsistent();
         pedited->locallab.activlum = !activlum->get_inconsistent();
         pedited->locallab.inversret = !inversret->get_inconsistent();
@@ -2814,6 +2918,22 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
         pp->locallab.retinexMethod = "uni";
     } else if (retinexMethod->get_active_row_number() == 2) {
         pp->locallab.retinexMethod = "high";
+    }
+
+    if (blurMethod->get_active_row_number() == 0) {
+        pp->locallab.blurMethod = "norm";
+    } else if (blurMethod->get_active_row_number() == 1) {
+        pp->locallab.blurMethod = "inv";
+    } else if (blurMethod->get_active_row_number() == 2) {
+        pp->locallab.blurMethod = "sym";
+    }
+
+    if (dustMethod->get_active_row_number() == 0) {
+        pp->locallab.dustMethod = "cop";
+    } else if (dustMethod->get_active_row_number() == 1) {
+        pp->locallab.dustMethod = "mov";
+    } else if (dustMethod->get_active_row_number() == 2) {
+        pp->locallab.dustMethod = "pas";
     }
 
     if (qualityMethod->get_active_row_number() == 0) {
@@ -3054,6 +3174,36 @@ void Locallab::retinexMethodChanged()
     }
 }
 
+void Locallab::blurMethodChanged()
+{
+    if (!batchMode) {
+
+    }
+
+    if (blurMethod->get_active_row_number() == 0 || blurMethod->get_active_row_number() == 2) {
+        sensibn->show();
+    } else {
+        sensibn->hide();
+    }
+
+    if (listener) {
+        listener->panelChanged (EvlocallabblurMethod, blurMethod->get_active_text ());
+    }
+}
+
+
+void Locallab::dustMethodChanged()
+{
+    if (!batchMode) {
+
+    }
+
+
+    if (listener) {
+        listener->panelChanged (EvlocallabdustMethod, dustMethod->get_active_text ());
+    }
+}
+
 void Locallab::qualityMethodChanged()
 {
     if (!batchMode) {
@@ -3224,6 +3374,33 @@ void Locallab::cutpastChanged ()
         }
     }
 }
+
+void Locallab::lastdustChanged ()
+{
+
+    if (batchMode) {
+        if (lastdust->get_inconsistent()) {
+            lastdust->set_inconsistent (false);
+            lastdustConn.block (true);
+            lastdust->set_active (false);
+            lastdustConn.block (false);
+        } else if (lastlastdust) {
+            lastdust->set_inconsistent (true);
+        }
+
+        lastlastdust = lastdust->get_active ();
+    }
+
+
+    if (listener) {
+        if (getEnabled()) {
+            listener->panelChanged (Evlocallablastdust, M ("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged (Evlocallablastdust, M ("GENERAL_DISABLED"));
+        }
+    }
+}
+
 
 void Locallab::curvactivChanged ()
 {

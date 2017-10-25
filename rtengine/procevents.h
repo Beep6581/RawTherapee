@@ -606,6 +606,9 @@ enum ProcEvent {
     Evlocallabadjblur = 576,
     Evlocallabcutpast = 577,
     Evlocallabchromacbdl = 578,
+    EvlocallabblurMethod = 579,
+    EvlocallabdustMethod = 580,
+    Evlocallablastdust = 581,
 
     NUMOFEVENTS
 

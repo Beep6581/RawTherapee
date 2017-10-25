@@ -1036,6 +1036,28 @@ void Crop::update (int todo)
 
                         params.locallab.chromacbdl = parent->chromacbdls[sp];
 
+                        if (parent->lastdusts[sp] ==  0) {
+                            params.locallab.lastdust = false;
+                        } else {
+                            params.locallab.lastdust = true;
+                        }
+
+                        if (parent->blurmets[sp] ==  0) {
+                            params.locallab.blurMethod = "norm" ;
+                        } else if (parent->blurmets[sp] ==  1) {
+                            params.locallab.blurMethod = "inv" ;
+                        } else if (parent->blurmets[sp] ==  2) {
+                            params.locallab.blurMethod = "enh" ;
+                        }
+
+                        if (parent->dustmets[sp] ==  0) {
+                            params.locallab.dustMethod = "cop" ;
+                        } else if (parent->dustmets[sp] ==  1) {
+                            params.locallab.dustMethod = "mov" ;
+                        } else if (parent->dustmets[sp] ==  2) {
+                            params.locallab.dustMethod = "pas" ;
+                        }
+
                         std::vector<double>   cretie;
 
                         for (int j = 0; j < parent->sizeretics[sp]; j++) {
@@ -1370,6 +1392,37 @@ void Crop::update (int todo)
                 }
 
                 parent->chromacbdls[sp] = params.locallab.chromacbdl = parent->chromacbdls[0];
+
+                if (parent->lastdusts[0] ==  0) {
+                    params.locallab.lastdust = false;
+                    parent->lastdusts[sp] = 0;
+                } else {
+                    params.locallab.lastdust = true;
+                    parent->lastdusts[sp] = 1;
+
+                }
+
+                if (parent->blurmets[sp] ==  0) {
+                    params.locallab.blurMethod = "norm" ;
+                    parent->qualitycurves[sp] =  0;
+                } else if (parent->blurmets[sp] ==  1) {
+                    params.locallab.blurMethod = "inv" ;
+                    parent->blurmets[sp] =  1;
+                } else if (parent->blurmets[sp] ==  2) {
+                    params.locallab.blurMethod = "sym" ;
+                    parent->blurmets[sp] =  2;
+                }
+
+                if (parent->dustmets[sp] ==  0) {
+                    params.locallab.dustMethod = "cop" ;
+                    parent->dustmets[sp] =  0;
+                } else if (parent->dustmets[sp] ==  1) {
+                    params.locallab.dustMethod = "mov" ;
+                    parent->dustmets[sp] =  1;
+                } else if (parent->dustmets[sp] ==  2) {
+                    params.locallab.dustMethod = "pas" ;
+                    parent->dustmets[sp] =  2;
+                }
 
                 std::vector<double>   ccret;
 

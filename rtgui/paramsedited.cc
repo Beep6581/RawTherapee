@@ -367,8 +367,11 @@ void ParamsEdited::set (bool v)
     locallab.avoid = v;
     locallab.Smethod = v;
     locallab.retinexMethod = v;
+    locallab.blurMethod = v;
+    locallab.dustMethod = v;
     locallab.invers = v;
     locallab.cutpast = v;
+    locallab.lastdust = v;
     locallab.curvactiv = v;
     locallab.activlum = v;
     locallab.inversrad = v;
@@ -950,6 +953,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         locallab.avoid = locallab.avoid && p.locallab.avoid == other.locallab.avoid;
         locallab.invers = locallab.invers && p.locallab.invers == other.locallab.invers;
         locallab.cutpast = locallab.cutpast && p.locallab.cutpast == other.locallab.cutpast;
+        locallab.lastdust = locallab.lastdust && p.locallab.lastdust == other.locallab.lastdust;
         locallab.curvactiv = locallab.curvactiv && p.locallab.curvactiv == other.locallab.curvactiv;
         locallab.activlum = locallab.activlum && p.locallab.activlum == other.locallab.activlum;
         locallab.inversrad = locallab.inversrad && p.locallab.inversrad == other.locallab.inversrad;
@@ -962,6 +966,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         locallab.locXL = locallab.locXL && p.locallab.locXL == other.locallab.locXL;
         locallab.Smethod = locallab.Smethod && p.locallab.Smethod == other.locallab.Smethod;
         locallab.retinexMethod = locallab.retinexMethod && p.locallab.retinexMethod == other.locallab.retinexMethod;
+        locallab.blurMethod = locallab.blurMethod && p.locallab.blurMethod == other.locallab.blurMethod;
+        locallab.dustMethod = locallab.dustMethod && p.locallab.dustMethod == other.locallab.dustMethod;
         locallab.centerX = locallab.centerX && p.locallab.centerX == other.locallab.centerX;
         locallab.centerY = locallab.centerY && p.locallab.centerY == other.locallab.centerY;
         locallab.circrad = locallab.circrad && p.locallab.circrad == other.locallab.circrad;
@@ -2381,6 +2387,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.locallab.cutpast    = mods.locallab.cutpast;
     }
 
+    if (locallab.lastdust) {
+        toEdit.locallab.lastdust    = mods.locallab.lastdust;
+    }
+
     if (locallab.curvactiv) {
         toEdit.locallab.curvactiv    = mods.locallab.curvactiv;
     }
@@ -2427,6 +2437,14 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (locallab.retinexMethod) {
         toEdit.locallab.retinexMethod   = mods.locallab.retinexMethod;
+    }
+
+    if (locallab.blurMethod) {
+        toEdit.locallab.blurMethod   = mods.locallab.blurMethod;
+    }
+
+    if (locallab.dustMethod) {
+        toEdit.locallab.dustMethod   = mods.locallab.dustMethod;
     }
 
     if (locallab.qualityMethod) {

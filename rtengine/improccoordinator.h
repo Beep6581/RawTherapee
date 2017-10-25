@@ -255,6 +255,10 @@ protected:
     LUTi centerybufs;
     LUTi adjblurs;
     LUTi cutpasts;
+    LUTi lastdusts;
+    LUTi blurmets;
+    LUTi dustmets;
+
 
     LUTi locx;
     LUTi locy;

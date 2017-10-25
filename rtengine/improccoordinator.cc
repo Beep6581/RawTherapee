@@ -108,6 +108,9 @@ ImProcCoordinator::ImProcCoordinator ()
       centerybufs (500, -10000),
       adjblurs (500, -10000),
       cutpasts (500, -10000),
+      lastdusts (500, -10000),
+      blurmets (500, -10000),
+      dustmets (500, -10000),
 
       locx (500, -10000),
       locy (500, -10000),
@@ -839,7 +842,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                                     };
 
 
-            int maxdata = 78;//73 for 10011
+            int maxdata = 81;//78;//73 for 10011
 
             if (fic0) {
                 //find current version mip
@@ -883,7 +886,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     //initilize newues when first utilisation of Locallab. Prepare creation of Mip files
                     for (int sp = 1; sp < maxspot; sp++) { // spots default
                         int t_sp = sp;
-                        int t_mipversion = 10013;//new value for each change
+                        int t_mipversion = 10014;//new value for each change
                         int t_circrad = 18;
                         int t_locX = 250;
                         int t_locY = 250;
@@ -992,6 +995,12 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                         //10013
                         int t_chromacbdl = 0;
 
+                        //10014
+                        int t_lastdust = 0;
+                        int t_blurMethod = 0;
+                        int t_dustMethod = 1;
+
+
                         //all variables except locRETgainCurve 'coomon for all)
                         fic << "Mipversion=" << t_mipversion << '@' << endl;
                         fic << "Spot=" << t_sp << '@' << endl;
@@ -1075,6 +1084,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                         fic << "Cutpast=" << t_cutpast << '@' <<  endl;
 
                         fic << "Chromacbdl=" << t_chromacbdl << '@' <<  endl;
+
+                        fic << "Lastdust=" << t_lastdust << '@' <<  endl;
+                        fic << "BlurMethod=" << t_blurMethod << '@' <<  endl;
+                        fic << "DustMethod=" << t_dustMethod << '@' <<  endl;
 
                         fic << "curveReti=" << t_curvret << '@' << endl;
                         fic << "curveLL=" << t_curvll << '@' << endl;
@@ -1294,7 +1307,33 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     dataspot[73][0] = cutpasts[0] = 1;
                 }
 
+
                 dataspot[74][0] = chromacbdls[0] = params.locallab.chromacbdl;
+
+                if (!params.locallab.lastdust) {
+                    dataspot[75][0] = lastdusts[0] = 0;
+                } else {
+                    dataspot[75][0] = lastdusts[0] = 1;
+                }
+
+                if (params.locallab.blurMethod == "norm") {
+                    dataspot[76][0] =  blurmets[0] = 0;
+                } else if (params.locallab.blurMethod == "inv") {
+                    dataspot[76][0] =  blurmets[0] = 1;
+                } else if (params.locallab.blurMethod == "sym") {
+                    dataspot[76][0] =  blurmets[0] = 2;
+                }
+
+                if (params.locallab.dustMethod == "cop") {
+                    dataspot[77][0] =  dustmets[0] = 0;
+                } else if (params.locallab.dustMethod == "mov") {
+                    dataspot[77][0] =  dustmets[0] = 1;
+                } else if (params.locallab.dustMethod == "pas") {
+                    dataspot[77][0] =  dustmets[0] = 2;
+                }
+
+
+
 
                 // for all curves work around - I do not know how to do with params curves...
                 //curve Reti local
@@ -1569,6 +1608,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     maxind = 74;
                 }
 
+                if (versionmip == 10013) {
+                    maxind = 77;
+                }
+
                 while (getline (fich, line)) {
                     spotline = line;
                     std::size_t pos = spotline.find ("=");
@@ -1766,6 +1809,15 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 }
             }
 
+            if (versionmip <= 10013) {//
+                for (int sp = 1; sp < maxspot; sp++) { // spots default
+                    dataspot[75][sp] = 0;
+                    dataspot[76][sp] = 0;
+                    dataspot[77][sp] = 1;
+
+                }
+            }
+
             //here we change the number of spot
 
             if (ns <  (maxspot - 1)) {
@@ -1774,7 +1826,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
                 for (int sp = ns + 1 ; sp < maxspot; sp++) { // spots default
                     int t_sp = sp;
-                    int t_mipversion = 10013;
+                    int t_mipversion = 10014;
                     int t_circrad = 18;
                     int t_locX = 250;
                     int t_locY = 250;
@@ -1875,6 +1927,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     //10013
                     int t_chromacbdl = 0;
 
+                    //10014
+                    int t_lastdust = 0;
+                    int t_blurMethod = 0;
+                    int t_dustMethod = 1;
+
                     fic << "Mipversion=" << t_mipversion << '@' << endl;
                     fic << "Spot=" << t_sp << '@' << endl;
                     fic << "Circrad=" << t_circrad << '@' << endl;
@@ -1955,6 +2012,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     fic << "Cutpast=" << t_cutpast << '@' <<  endl;
 
                     fic << "Chromacbdl=" << t_chromacbdl << '@' <<  endl;
+                    fic << "Lastdust=" << t_lastdust << '@' <<  endl;
+                    fic << "BlurMethod=" << t_blurMethod << '@' <<  endl;
+                    fic << "DustMethod=" << t_dustMethod << '@' <<  endl;
 
                     fic << "curveReti=" << t_curvret << '@' << endl;
                     fic << "curveLL=" << t_curvll << '@' << endl;
@@ -2262,6 +2322,36 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 }
 
                 params.locallab.chromacbdl = chromacbdls[sp] = dataspot[74][sp];
+
+                if (dataspot[75][sp] ==  0) {
+                    lastdusts[sp] = 0;
+                    params.locallab.lastdust = false;
+                } else {
+                    lastdusts[sp] = 1;
+                    params.locallab.lastdust  = true;
+                }
+
+                if (dataspot[76][sp] ==  0) {
+                    blurmets[sp] = 0;
+                    params.locallab.blurMethod = "norm" ;
+                } else if (dataspot[76][sp] ==  1) {
+                    blurmets[sp] = 1;
+                    params.locallab.blurMethod = "inv" ;
+                } else if (dataspot[76][sp] ==  2) {
+                    blurmets[sp] = 2;
+                    params.locallab.blurMethod = "sym" ;
+                }
+
+                if (dataspot[77][sp] ==  0) {
+                    dustmets[sp] = 0;
+                    params.locallab.dustMethod = "cop" ;
+                } else if (dataspot[76][sp] ==  1) {
+                    dustmets[sp] = 1;
+                    params.locallab.dustMethod = "mov" ;
+                } else if (dataspot[77][sp] ==  2) {
+                    dustmets[sp] = 2;
+                    params.locallab.dustMethod = "pas" ;
+                }
 
                 int *s_datc;
                 s_datc = new int[70];
@@ -2745,6 +2835,44 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
             dataspot[74][sp] = chromacbdls[sp] = params.locallab.chromacbdl = dataspot[74][0];
 
+            if (dataspot[75][0] == 0) {
+                params.locallab.lastdust = false;
+                dataspot[75][sp] = 0;
+                lastdusts[sp] = 0;
+            } else {
+                params.locallab.lastdust = true;
+                dataspot[75][sp] = 1;
+                lastdusts[sp] = 1;
+            }
+
+            if (dataspot[76][0] == 0) {
+                params.locallab.blurMethod = "norm" ;
+                blurmets[sp] = 0;
+                dataspot[76][sp] = 0;
+            } else if (dataspot[76][0] == 1) {
+                params.locallab.blurMethod = "inv" ;
+                blurmets[sp] = 1;
+                dataspot[76][sp] = 1;
+            } else if (dataspot[76][0] == 2) {
+                params.locallab.blurMethod = "sym" ;
+                blurmets[sp] = 2;
+                dataspot[76][sp] = 2;
+            }
+
+            if (dataspot[77][0] == 0) {
+                params.locallab.dustMethod = "cop" ;
+                dustmets[sp] = 0;
+                dataspot[77][sp] = 0;
+            } else if (dataspot[77][0] == 1) {
+                params.locallab.dustMethod = "mov" ;
+                dustmets[sp] = 1;
+                dataspot[77][sp] = 1;
+            } else if (dataspot[77][0] == 2) {
+                params.locallab.dustMethod = "pas" ;
+                dustmets[sp] = 2;
+                dataspot[77][sp] = 2;
+            }
+
             int *s_datc;
             s_datc = new int[70];
             int siz;
@@ -2983,7 +3111,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
                 for (int spe = 1; spe < maxspot; spe++) {
                     int t_sp = spe;
-                    int t_mipversion = 10013;
+                    int t_mipversion = 10014;
                     int t_circrad  = dataspot[2][spe];
                     int t_locX  = dataspot[3][spe];
                     int t_locY  = dataspot[4][spe];
@@ -3062,6 +3190,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     int t_cutpast = dataspot[73][spe];
 
                     int t_chromacbdl = dataspot[74][spe];
+
+                    int t_lastdust = dataspot[75][spe];
+                    int t_blurMethod = dataspot[76][spe];
+                    int t_dustMethod = dataspot[77][spe];
 
                     int t_hueref = dataspot[maxdata - 3][spe];
                     int t_chromaref = dataspot[maxdata - 2][spe];
@@ -3159,6 +3291,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     fou << "Cutpast=" << t_cutpast << '@' <<  endl;
 
                     fou << "Chromacbdl=" << t_chromacbdl << '@' <<  endl;
+                    fou << "Lastdust=" << t_lastdust << '@' <<  endl;
+                    fou << "BlurMethod=" << t_blurMethod << '@' <<  endl;
+                    fou << "DustMethod=" << t_dustMethod << '@' <<  endl;
 
                     fou << "hueref=" << t_hueref << '@' << endl;
                     fou << "chromaref=" << t_chromaref << '@' << endl;
@@ -3302,9 +3437,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
             const FramesMetaData* metaData = imgsrc->getMetaData();
             int imgNum = 0;
+
             if (imgsrc->isRAW()) {
                 if (imgsrc->getSensorType() == ST_BAYER) {
-                    imgNum = rtengine::LIM<unsigned int>(params.raw.bayersensor.imageNum, 0, metaData->getFrameCount() - 1);
+                    imgNum = rtengine::LIM<unsigned int> (params.raw.bayersensor.imageNum, 0, metaData->getFrameCount() - 1);
                 } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS) {
                     //imgNum = rtengine::LIM<unsigned int>(params.raw.xtranssensor.imageNum, 0, metaData->getFrameCount() - 1);
                 }

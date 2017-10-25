@@ -1033,8 +1033,11 @@ void LocallabParams::setDefaults()
     avoid = false;
     Smethod = "IND";
     retinexMethod = "high";
+    blurMethod = "norm";
+    dustMethod = "mov";
     invers = false;
     cutpast = false;
+    lastdust = false;
     curvactiv = false;
     activlum = false;
     radius = 1;
@@ -2970,6 +2973,10 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_boolean ("Locallab", "Cutpast", locallab.cutpast);
         }
 
+        if (!pedited || pedited->locallab.lastdust) {
+            keyFile.set_boolean ("Locallab", "Lastdust", locallab.lastdust);
+        }
+
         if (!pedited || pedited->locallab.curvactiv) {
             keyFile.set_boolean ("Locallab", "Curvactiv", locallab.curvactiv);
         }
@@ -3000,6 +3007,14 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->locallab.retinexMethod) {
             keyFile.set_string ("Locallab", "retinexMethod", locallab.retinexMethod);
+        }
+
+        if (!pedited || pedited->locallab.blurMethod) {
+            keyFile.set_string ("Locallab", "BlurMethod", locallab.blurMethod);
+        }
+
+        if (!pedited || pedited->locallab.dustMethod) {
+            keyFile.set_string ("Locallab", "DustMethod", locallab.dustMethod);
         }
 
         if (!pedited || pedited->locallab.qualityMethod) {
@@ -4781,6 +4796,14 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("Locallab", "Lastdust"))  {
+                locallab.lastdust  = keyFile.get_boolean ("Locallab", "Lastdust");
+
+                if (pedited) {
+                    pedited->locallab.lastdust = true;
+                }
+            }
+
             if (keyFile.has_key ("Locallab", "Curvactiv"))  {
                 locallab.curvactiv  = keyFile.get_boolean ("Locallab", "Curvactiv");
 
@@ -4843,6 +4866,22 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->locallab.retinexMethod = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "BlurMethod"))  {
+                locallab.blurMethod  = keyFile.get_string ("Locallab", "BlurMethod");
+
+                if (pedited) {
+                    pedited->locallab.blurMethod = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "DustMethod"))  {
+                locallab.dustMethod  = keyFile.get_string ("Locallab", "DustMethod");
+
+                if (pedited) {
+                    pedited->locallab.dustMethod = true;
                 }
             }
 
@@ -9959,6 +9998,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && locallab.avoid == other.locallab.avoid
         && locallab.invers == other.locallab.invers
         && locallab.cutpast == other.locallab.cutpast
+        && locallab.lastdust == other.locallab.lastdust
         && locallab.curvactiv == other.locallab.curvactiv
         && locallab.activlum == other.locallab.activlum
         && locallab.inversrad == other.locallab.inversrad
@@ -9967,6 +10007,8 @@ bool ProcParams::operator== (const ProcParams& other)
         && locallab.degree == other.locallab.degree
         && locallab.Smethod == other.locallab.Smethod
         && locallab.retinexMethod == other.locallab.retinexMethod
+        && locallab.blurMethod == other.locallab.blurMethod
+        && locallab.dustMethod == other.locallab.dustMethod
         && locallab.qualityMethod == other.locallab.qualityMethod
         && locallab.qualitycurveMethod == other.locallab.qualitycurveMethod
         && locallab.locY == other.locallab.locY

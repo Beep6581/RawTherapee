@@ -479,6 +479,8 @@ public:
     bool avoid;
     bool Smethod;
     bool retinexMethod;
+    bool blurMethod;
+    bool dustMethod;
     bool str;
     bool neigh;
     bool nbspot;
@@ -490,6 +492,7 @@ public:
     bool activlum;
     bool invers;
     bool cutpast;
+    bool lastdust;
     bool curvactiv;
     bool inversrad;
     bool inversret;

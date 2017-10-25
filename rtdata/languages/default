@@ -827,6 +827,7 @@ HISTORY_MSG_576;Local - Centerbuf
 HISTORY_MSG_577;Local - adjblur
 HISTORY_MSG_578;Local - cut past
 HISTORY_MSG_579;Local - cbdl chroma
+HISTORY_MSG_580;Local - Blur method
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -1802,7 +1803,11 @@ TP_LOCALLAB_ADJBLUR;Adjust and Blur
 TP_LOCALLAB_ARTIF;Reduce artifacts - Improve algoritm
 TP_LOCALLAB_ARTIF_TOOLTIP;Only active for Color-light, Exposure, Retinex, Vibrance, ToneMapping, CBDL.
 TP_LOCALLAB_AVOID;Avoid color shift
+TP_LOCALLAB_BLMETHOD_TOOLTIP;Normal - direct blur and noise with all settings.\nInverse - Inverse blur and noise without scope and whithout enhanced algorithm.\nSymmetric - inverse blur and noise with all settings. Be careful some results may be curious
 TP_LOCALLAB_BLUFR;Blur & Noise
+TP_LOCALLAB_BLNORM;Normal
+TP_LOCALLAB_BLINV;Inverse
+TP_LOCALLAB_BLSYM;Symmetric
 TP_LOCALLAB_CENTER_X;Center X
 TP_LOCALLAB_CENTER_Y;Center Y
 TP_LOCALLAB_CBDL;Contrast by detail levels

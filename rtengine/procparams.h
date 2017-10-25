@@ -998,8 +998,11 @@ public:
     bool    avoid;
     Glib::ustring Smethod;
     Glib::ustring retinexMethod;
+    Glib::ustring blurMethod;
+    Glib::ustring dustMethod;
     bool    invers;
     bool    cutpast;
+    bool    lastdust;
     bool    curvactiv;
     bool    activlum;
     bool    inversrad;

@@ -1102,7 +1102,7 @@ private:
             }
 
             ifstream fich (datalab, ios::in);
-            int maxdata = 78;//73 10011
+            int maxdata = 81;//78;//73 10011
 
             if (fich && versionmip != 0) {
                 std::string inser;
@@ -1304,6 +1304,28 @@ private:
                     }
 
                     dataspots[74][0] = params.locallab.chromacbdl;
+
+                    if (!params.locallab.lastdust) {
+                        dataspots[75][0] = 0;
+                    } else {
+                        dataspots[75][0] = 1;
+                    }
+
+                    if (params.locallab.blurMethod == "norm") {
+                        dataspots[76][0] =  0;
+                    } else if (params.locallab.blurMethod == "inv") {
+                        dataspots[76][0] =  1;
+                    } else if (params.locallab.blurMethod == "sym") {
+                        dataspots[76][0] =  2;
+                    }
+
+                    if (params.locallab.dustMethod == "cop") {
+                        dataspots[77][0] =  0;
+                    } else if (params.locallab.dustMethod == "mov") {
+                        dataspots[77][0] =  1;
+                    } else if (params.locallab.dustMethod == "pas") {
+                        dataspots[77][0] =  2;
+                    }
 
                     dataspots[maxdata - 3][0] = 100.f * params.locallab.hueref;
                     dataspots[maxdata - 2][0] = params.locallab.chromaref;
@@ -1739,6 +1761,28 @@ private:
 
                     params.locallab.chromacbdl = dataspots[74][sp];
 
+                    if (dataspots[75][sp] ==  0) {
+                        params.locallab.lastdust = false;
+                    } else {
+                        params.locallab.lastdust  = true;
+                    }
+
+                    if (dataspots[76][sp] ==  0) {
+                        params.locallab.blurMethod = "norm" ;
+                    } else if (dataspots[76][sp] ==  1) {
+                        params.locallab.blurMethod = "inv" ;
+                    } else if (dataspots[76][sp] ==  2) {
+                        params.locallab.blurMethod = "sym" ;
+                    }
+
+                    if (dataspots[77][sp] ==  0) {
+                        params.locallab.dustMethod = "cop" ;
+                    } else if (dataspots[77][sp] ==  1) {
+                        params.locallab.dustMethod = "mov" ;
+                    } else if (dataspots[77][sp] ==  2) {
+                        params.locallab.dustMethod = "pas" ;
+                    }
+
                     params.locallab.hueref = ((float) dataspots[maxdata - 3][sp]) / 100.f;
                     params.locallab.chromaref = dataspots[maxdata - 2][sp];
                     params.locallab.lumaref = dataspots[maxdata - 1][sp];
@@ -2073,11 +2117,13 @@ private:
         if (params.colorappearance.enabled) {
             double adap;
             int imgNum = 0;
+
             if (imgsrc->getSensorType() == ST_BAYER) {
                 imgNum = params.raw.bayersensor.imageNum;
             } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS) {
                 //imgNum = params.raw.xtranssensor.imageNum;
             }
+
             float fnum = imgsrc->getMetaData()->getFNumber (imgNum);         // F number
             float fiso = imgsrc->getMetaData()->getISOSpeed (imgNum) ;       // ISO
             float fspeed = imgsrc->getMetaData()->getShutterSpeed (imgNum) ; //speed
@@ -2259,7 +2305,7 @@ private:
             readyImg->setMetadata (ii->getMetaData()->getRootExifData ());
         } else {
             // ask for the correct frame number, but may contain subframe depending on initial raw's hierarchy
-            readyImg->setMetadata (ii->getMetaData()->getBestExifData(imgsrc, &params.raw), params.exif, params.iptc);
+            readyImg->setMetadata (ii->getMetaData()->getBestExifData (imgsrc, &params.raw), params.exif, params.iptc);
         }
 
 

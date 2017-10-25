@@ -125,6 +125,8 @@ private:
     MyComboBoxText*   const retinexMethod;
     MyComboBoxText*   const qualityMethod;
     MyComboBoxText*   const qualitycurveMethod;
+    MyComboBoxText*   const blurMethod;
+    MyComboBoxText*   const dustMethod;
 
 
     Gtk::Frame* const artifFrame;
@@ -162,6 +164,7 @@ private:
     Gtk::CheckButton* const inversret;
     Gtk::CheckButton* const inverssha;
     Gtk::CheckButton* const cutpast;
+    Gtk::CheckButton* const lastdust;
 
     Gtk::Button* neutral;
     Gtk::HBox* neutrHBox;
@@ -207,15 +210,17 @@ private:
     sigc::connection enablecolorConn, enableexposeConn, enablevibranceConn, enableblurConn, enabletonemapConn;
     sigc::connection enableretiConn, enablesharpConn, enablecbdlConn;
     sigc::connection enabledenoiConn;
-    sigc::connection  editConn, avoidConn, inversConn, cutpastConn, curvactivConn, activlumConn, inversradConn, inversretConn, inversshaConn,  neutralconn, neutralconn1;
+    sigc::connection  editConn, avoidConn, inversConn, cutpastConn, lastdustConn, curvactivConn, activlumConn, inversradConn, inversretConn, inversshaConn,  neutralconn, neutralconn1;
     sigc::connection  Smethodconn;
     sigc::connection retinexMethodConn;
     sigc::connection qualityMethodConn;
     sigc::connection qualitycurveMethodConn;
+    sigc::connection blurMethodConn;
+    sigc::connection dustMethodConn;
 
 
 
-    int nextdatasp[78];
+    int nextdatasp[81];
     int nextlength;
     std::string nextstr;
     std::string nextstr2;
@@ -242,7 +247,7 @@ private:
     double draggedlocYTOffset;
     double draggedlocXLOffset;
     rtengine::Coord draggedCenter;
-    bool lastavoid, lastinvers, lastcutpast, lastinversrad, lastinversret, lastactivlum, lastinverssha, lastcurvactiv;
+    bool lastavoid, lastinvers, lastcutpast, lastlastdust, lastinversrad, lastinversret, lastactivlum, lastinverssha, lastcurvactiv;
     int lastanbspot;
 
     void editToggled ();
@@ -277,6 +282,8 @@ public:
     void inversretChanged ();
     void inversshaChanged ();
     void cutpastChanged ();
+    void lastdustChanged ();
+
     void curveChanged (CurveEditor* ce);
     void autoOpenCurve ();
     void localChanged           (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat);
@@ -285,6 +292,8 @@ public:
     bool localretComputed_         ();
     void setEditProvider (EditDataProvider* provider);
     void retinexMethodChanged();
+    void blurMethodChanged();
+    void dustMethodChanged();
     void qualityMethodChanged();
     void qualitycurveMethodChanged();
     void lumaneutralPressed ();
