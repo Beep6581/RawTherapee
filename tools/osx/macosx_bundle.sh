@@ -159,7 +159,7 @@ mkdir -p "${RESOURCES}/share/lensfun"
 cp /opt/local/share/lensfun/version_1/* "${RESOURCES}/share/lensfun"
 
 # Copy the libiomp5 license into the app bundle
-cp "${PROJECT_SOURCE_DATA_DIR}/licenses/osx_libiomp5_LICENSE.txt" "${RESOURCES}"
+cp "${PROJECT_SOURCE_DIR}/licenses/osx_libiomp5_LICENSE.txt" "${RESOURCES}"
 
 # Install names
 find -E "${CONTENTS}" -type f -regex '.*/(rawtherapee-cli|rawtherapee|.*\.(dylib|so))' | while read -r x; do
