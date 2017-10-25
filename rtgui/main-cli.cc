@@ -163,7 +163,7 @@ int main (int argc, char **argv)
         return -2;
     }
 
-    rtengine::setPaths (options);
+    rtengine::setPaths();
 
     TIFFSetWarningHandler (nullptr);   // avoid annoying message boxes
 
