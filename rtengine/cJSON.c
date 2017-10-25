@@ -31,6 +31,7 @@
 #include <limits.h>
 #include <ctype.h>
 #include "cJSON.h"
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 
 static const char *ep;
 
