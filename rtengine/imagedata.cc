@@ -857,8 +857,7 @@ bool FramesData::hasIPTC (unsigned int frame) const
 tm FramesData::getDateTime (unsigned int frame) const
 {
     if (frames.empty() || frame >= frames.size() ) {
-        tm emptytm = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-        return emptytm;
+        return {};
     } else {
         return frames.at(frame)->getDateTime ();
     }

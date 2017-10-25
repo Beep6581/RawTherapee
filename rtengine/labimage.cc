@@ -17,8 +17,10 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "labimage.h"
+#include <cstring>
 #include <memory>
+
+#include "labimage.h"
 
 namespace rtengine
 {
