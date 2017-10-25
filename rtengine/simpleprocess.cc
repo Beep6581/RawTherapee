@@ -1232,7 +1232,7 @@ private:
 
             GammaValues ga;
             //  if(params.blackwhite.enabled) params.toneCurve.hrenabled=false;
-            readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm, bwonly, &ga);
+            readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm, &ga);
             customGamma = true;
 
             //or selected Free gamma
@@ -1246,7 +1246,7 @@ private:
             // if Default gamma mode: we use the profile selected in the "Output profile" combobox;
             // gamma come from the selected profile, otherwise it comes from "Free gamma" tool
 
-            readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm, bwonly);
+            readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm);
 
             if (settings->verbose) {
                 printf ("Output profile_: \"%s\"\n", params.icm.output.c_str());
