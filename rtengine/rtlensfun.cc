@@ -75,10 +75,18 @@ bool LFModifier::isCACorrectionAvailable() const
     return false;
 }
 
+#ifdef __GNUC__ // silence warning, can be removed when function is implemented
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
 
 void LFModifier::correctCA(double &x, double &y, int channel) const
 {
 }
+
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 
 
 void LFModifier::processVignetteLine(int width, int y, float *line) const
