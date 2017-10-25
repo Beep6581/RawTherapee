@@ -1177,20 +1177,20 @@ MyFileChooserButton::MyFileChooserButton(const Glib::ustring &title, Gtk::FileCh
     lbl_.set_ellipsize(Pango::ELLIPSIZE_MIDDLE);
     lbl_.set_justify(Gtk::JUSTIFY_LEFT);
     set_none();
-    box_.pack_start(lbl_, true, true, 3);
+    box_.pack_start(lbl_, true, true);
     Gtk::Image *img = Gtk::manage(new Gtk::Image());
     img->set_from_icon_name("document-open", Gtk::ICON_SIZE_BUTTON);
     box_.pack_start(*Gtk::manage(new Gtk::VSeparator()), false, false, 5);
-    box_.pack_start(*img, false, false, 3);
+    box_.pack_start(*img, false, false);
     box_.show_all_children();
     add(box_);
     signal_clicked().connect(sigc::mem_fun(*this, &MyFileChooserButton::show_chooser));
 
-    set_border_width(2);
+    if (GTK_MINOR_VERSION < 20) {
+        set_border_width(2); // agriggio: margin doesn't seem to work for me on GTK 3.18
+    }
+    
     set_name("MyFileChooserButton");
-    lbl_.set_name("MyFileChooserButton");
-    box_.set_name("MyFileChooserButton");
-    img->set_name("MyFileChooserButton");
 }
 
 
