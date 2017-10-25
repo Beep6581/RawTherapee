@@ -21,7 +21,6 @@
 #include "icons.h"
 
 #include <iostream>
-#pragma GCC diagnostic warning "-Wextra"
 
 namespace rtengine
 {
