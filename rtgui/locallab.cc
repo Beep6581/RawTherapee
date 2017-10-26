@@ -79,7 +79,7 @@ Locallab::Locallab ():
     sensiex (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSI"), 0, 100, 1, 19))),
     radius (Gtk::manage ( new Adjuster (M ("TP_LOCALLAB_RADIUS"), 1, 100, 1, 1) )),
     strength (Gtk::manage ( new Adjuster (M ("TP_LOCALLAB_STRENGTH"), 0, 100, 1, 0) )),
-    sensibn (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSIBN"), 0, 100, 1, 19))),
+    sensibn (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSIBN"), 0, 100, 1, 40))),
     transit (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_TRANSIT"), 5, 95, 1, 60))),
     stren (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_STREN"), -50, 100, 1, 0))),
     gamma (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_GAM"), 80, 150, 1, 100))),

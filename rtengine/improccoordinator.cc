@@ -904,7 +904,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                         int t_currentspot = 1;
                         int t_radius = 1;
                         int t_strength = 0;
-                        int t_sensibn = 19;
+                        int t_sensibn = 40;
                         int t_inversrad = 0;
                         int t_str = 0;
                         int t_chrrt = 0;
@@ -1844,7 +1844,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     int t_currentspot = 1;
                     int t_radius = 1;
                     int t_strength = 0;
-                    int t_sensibn = 19;
+                    int t_sensibn = 40;
                     int t_inversrad = 0;
                     int t_str = 0;
                     int t_chrrt = 0;
