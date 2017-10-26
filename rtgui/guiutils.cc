@@ -1187,7 +1187,7 @@ MyFileChooserButton::MyFileChooserButton(const Glib::ustring &title, Gtk::FileCh
     signal_clicked().connect(sigc::mem_fun(*this, &MyFileChooserButton::show_chooser));
 
     if (GTK_MINOR_VERSION < 20) {
-        set_border_width(2); // agriggio: margin doesn't seem to work for me on GTK 3.18
+        set_border_width(2); // margin doesn't work on GTK < 3.20
     }
     
     set_name("MyFileChooserButton");
