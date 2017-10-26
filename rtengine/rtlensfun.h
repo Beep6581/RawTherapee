@@ -90,6 +90,7 @@ public:
     float getCropFactor() const;
     bool hasVignettingCorrection() const;
     bool hasDistortionCorrection() const;
+    bool hasCACorrection() const;
 
 private:
     friend class LFDatabase;
