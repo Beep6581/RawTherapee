@@ -2172,8 +2172,8 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, LabIma
     const float bmo = - amo * huemoins;
 
 
-    constexpr float pb = 7.f;
-    constexpr float pa = (1.f - pb) / 70.f;
+    constexpr float pb = 4.f;
+    constexpr float pa = (1.f - pb) / 40.f;
 
     const float ahu = 1.f / (2.8f * lp.sensbn - 280.f);
     const float bhu = 1.f - ahu * 2.8f * lp.sensbn;
@@ -2314,6 +2314,7 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, LabIma
                 float deltahue = fabs (rhue - hueref);
                 float realstr = 1.f;
                 float realstrch = 1.f;
+                float khu = 0.f;
 
                 if (deltahue > rtengine::RT_PI) {
                     deltahue = - (deltahue - 2.f * rtengine::RT_PI);
@@ -2332,13 +2333,12 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, LabIma
                     kch = ak * deltachro + bk;
                 }
 
-                if (lp.sensbn < 70.f ) {
-                    float khu = 0.f;
+                if (lp.sensbn < 40.f ) {
                     kch = pow (kch, pa * lp.sensbn + pb);   //increase under 90
-
+				}		
 
                     // algo with detection of hue ==> artifacts for noisy images  ==> denoise before
-                    if (lp.qualmet >= 1 && lp.sensbn < 70.f) { //to try...
+                    if (lp.qualmet >= 1 && lp.sensbn < 50.f) { //to try...
                         //hue detection
                         if ((hueref + dhue) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
                             if (rhue >= hueplus - delhu )  {
@@ -2400,7 +2400,7 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, LabIma
                             }
                         }
 
-                        if (lp.sensbn <= 70.f) { //to try...
+                        if (lp.sensbn <= 35.f) { //to try...
 
                             if (deltaE <  2.8f * lp.sensbn) {
                                 fach = khu;
@@ -2428,7 +2428,7 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, LabIma
 
                         }
                     }
-                }
+            //    }
 
                 switch (zone) {
 
