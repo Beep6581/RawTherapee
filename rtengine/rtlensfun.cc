@@ -76,7 +76,7 @@ bool LFModifier::isCACorrectionAvailable() const
 }
 
 
-void LFModifier::correctCA(double &x, double &y, int channel) const
+void LFModifier::correctCA(double &x, double &y, int cx, int cy, int channel) const
 {
     assert(channel >= 0 && channel <= 2);
 
@@ -84,6 +84,8 @@ void LFModifier::correctCA(double &x, double &y, int channel) const
     // lensfun applies it to all the three channels simultaneously. This means
     // we do the work 3 times, because each time we discard 2 of the 3
     // channels. We could consider caching the info to speed this up
+    x += cx;
+    y += cy;
     
     float pos[6];
     if (swap_xy_) {
@@ -95,6 +97,8 @@ void LFModifier::correctCA(double &x, double &y, int channel) const
     if (swap_xy_) {
         std::swap(x, y);
     }
+    x -= cx;
+    y -= cy;
 }
 
 

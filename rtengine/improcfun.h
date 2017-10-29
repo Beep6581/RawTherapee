@@ -58,7 +58,7 @@ class ImProcFunctions
         TRANSFORM_PREVIEW,
         TRANSFORM_HIGH_QUALITY,
         TRANSFORM_HIGH_QUALITY_FULLIMAGE,
-        TRANSFORM_HIGH_QUALITY_FULLIMAGE_CA
+        TRANSFORM_HIGH_QUALITY_CA
     };
     void transformLuminanceOnly (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH, int fW, int fH);
     void transformGeneral(TransformMode mode, Imagefloat *original, Imagefloat *transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LensCorrection *pLCPMap);

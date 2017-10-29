@@ -329,21 +329,23 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
         std::unique_ptr<Imagefloat> tmpimg;
         if (!needsCA() && scale != 1) {
             mode = TRANSFORM_PREVIEW;
-        } else if (!fullImage) {
-            mode = TRANSFORM_HIGH_QUALITY;
         } else {
-            mode = TRANSFORM_HIGH_QUALITY_FULLIMAGE;
+            if (!fullImage) {
+                mode = TRANSFORM_HIGH_QUALITY;
+            } else {
+                mode = TRANSFORM_HIGH_QUALITY_FULLIMAGE;
+            }
             // agriggio: CA correction via the lens profile has to be
             // performed before all the other transformations (except for the
             // coarse rotation/flipping). In order to not change the code too
             // much, I simply introduced a new mode
-            // TRANSFORM_HIGH_QUALITY_FULLIMAGE_CA, which applies *only*
+            // TRANSFORM_HIGH_QUALITY_CA, which applies *only*
             // profile-based CA correction. So, the correction in this case
             // occurs in two steps, using an intermediate temporary
             // image. There's room for optimization of course...
             if (pLCPMap && params->lensProf.useCA && pLCPMap->isCACorrectionAvailable()) {
-                tmpimg.reset(new Imagefloat(transformed->getWidth(), transformed->getHeight()));
-                transformGeneral(TRANSFORM_HIGH_QUALITY_FULLIMAGE_CA, original, tmpimg.get(), cx, cy, sx, sy, oW, oH, fW, fH, pLCPMap.get());
+                tmpimg.reset(new Imagefloat(original->getWidth(), original->getHeight()));
+                transformGeneral(TRANSFORM_HIGH_QUALITY_CA, original, tmpimg.get(), 0, 0, 0, 0, fW, fH, fW, fH, pLCPMap.get());
                 original = tmpimg.get();
             }
         }
@@ -750,7 +752,7 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
     bool enableDistortion = needsDistortion();
 
     switch (mode) {
-    case ImProcFunctions::TRANSFORM_HIGH_QUALITY_FULLIMAGE_CA:
+    case ImProcFunctions::TRANSFORM_HIGH_QUALITY_CA:
         enableLCPDist = false;
         enablePerspective = false;
         enableDistortion = false;
@@ -763,9 +765,9 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
         enableLCPCA = false;
         break;
     case ImProcFunctions::TRANSFORM_HIGH_QUALITY:
-        if (enableLCPDist) {
+        // if (enableLCPDist) {
             enableLCPCA = false;
-        }
+        // }
         break;
     case ImProcFunctions::TRANSFORM_PREVIEW:
         enableLCPCA = false;
@@ -834,7 +836,7 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
 
     //double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH, pLCPMap) : 1.0;
     double ascale = 1.0;
-    if (mode != ImProcFunctions::TRANSFORM_HIGH_QUALITY_FULLIMAGE_CA &&
+    if (mode != ImProcFunctions::TRANSFORM_HIGH_QUALITY_CA &&
         params->commonTrans.autofill) {
         ascale = getTransformAutoFill (oW, oH, pLCPMap);
     }
@@ -912,7 +914,7 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
 
                 // LCP CA
                 if (enableLCPCA) {
-                    pLCPMap->correctCA (Dx, Dy, c);
+                    pLCPMap->correctCA (Dx, Dy, cx, cy, c);
                 }
 
                 // Extract integer and fractions of source screen coordinates
