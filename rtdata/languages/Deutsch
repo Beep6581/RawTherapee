@@ -737,31 +737,15 @@ HISTORY_MSG_442;(Retinex) - Einstellungen\nTransmission - Skalierung
 HISTORY_MSG_443;(Farbmanagement)\nAusgabeprofil\nSchwarzpunkt-Kompensation
 HISTORY_MSG_444;(Weißabgleich)\nAWB-Temperatur-Korrektur
 HISTORY_MSG_445;(Sensor-Matrix)\nFarbinterpolation\nUnterbild
-HISTORY_MSG_446;EvPixelShiftMotion
-HISTORY_MSG_447;EvPixelShiftMotionCorrection
-HISTORY_MSG_448;EvPixelShiftStddevFactorGreen
 HISTORY_MSG_449;(Sensor-Matrix)\nFarbinterpolation\nISO-Anpassung
-HISTORY_MSG_450;EvPixelShiftNreadIso
-HISTORY_MSG_451;EvPixelShiftPrnu
 HISTORY_MSG_452;(Sensor-Matrix)\nFarbinterpolation\nBewegungsmaske\nanzeigen
 HISTORY_MSG_453;(Sensor-Matrix)\nFarbinterpolation\nNur Maske anzeigen
-HISTORY_MSG_454;EvPixelShiftAutomatic
-HISTORY_MSG_455;EvPixelShiftNonGreenHorizontal
-HISTORY_MSG_456;EvPixelShiftNonGreenVertical
 HISTORY_MSG_457;(Sensor-Matrix)\nFarbinterpolation\nBewegung im Rot/Blau-\nKanal erkennen
-HISTORY_MSG_458;EvPixelShiftStddevFactorRed
-HISTORY_MSG_459;EvPixelShiftStddevFactorBlue
-HISTORY_MSG_460;EvPixelShiftGreenAmaze
-HISTORY_MSG_461;EvPixelShiftNonGreenAmaze
 HISTORY_MSG_462;(Sensor-Matrix)\nFarbinterpolation\nBewegung im Grün-\nKanal erkennen
-HISTORY_MSG_463;EvPixelShiftRedBlueWeight
 HISTORY_MSG_464;(Sensor-Matrix)\nFarbinterpolation\nUnschärfebewegungsmaske
 HISTORY_MSG_465;(Sensor-Matrix)\nFarbinterpolation\nUnschärferadius
-HISTORY_MSG_466;EvPixelShiftSum
-HISTORY_MSG_467;EvPixelShiftExp0
 HISTORY_MSG_468;(Sensor-Matrix)\nFarbinterpolation\nLücken in der Bewegungs-\nmaske erkennen
 HISTORY_MSG_469;(Sensor-Matrix)\nFarbinterpolation\nMedian
-HISTORY_MSG_470;EvPixelShiftMedian3
 HISTORY_MSG_471;(Sensor-Matrix)\nFarbinterpolation\nBewegungskorrektur
 HISTORY_MSG_472;(Sensor-Matrix)\nFarbinterpolation\nWeicher Übergang
 HISTORY_MSG_473;(Sensor-Matrix)\nFarbinterpolation\nLMMSE für Bewegungs-\nteile verwenden
