@@ -401,6 +401,8 @@ FileBrowser::FileBrowser () :
     copyprof->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_C, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
     pasteprof->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_V, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
     partpasteprof->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_V, Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
+    copyTo->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_C, Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
+    moveTo->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_M, Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
 
     // Bind to event handlers
     open->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), open));
@@ -439,8 +441,6 @@ FileBrowser::FileBrowser () :
     resetdefaultprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), resetdefaultprof));
     clearprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), clearprof));
     cachemenu->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), cachemenu));
-
-
 
     // A separate pop-up menu for Color Labels
     int c = 0;
@@ -497,6 +497,8 @@ void FileBrowser::rightClicked (ThumbBrowserEntryBase* entry)
         partpasteprof->set_sensitive (clipboard.hasProcParams());
         copyprof->set_sensitive (selected.size() == 1);
         clearprof->set_sensitive (!selected.empty());
+        copyTo->set_sensitive (!selected.empty());
+        moveTo->set_sensitive (!selected.empty());
     }
 
     // submenuDF
@@ -1115,7 +1117,14 @@ bool FileBrowser::keyPressed (GdkEventKey* event)
 #ifdef __WIN32__
     bool altgr = event->state & GDK_MOD2_MASK;
 #endif
-    if ((event->keyval == GDK_KEY_C || event->keyval == GDK_KEY_c || event->keyval == GDK_KEY_Insert) && ctrl) {
+
+    if ((event->keyval == GDK_KEY_C || event->keyval == GDK_KEY_c) && ctrl && shift) {
+        menuItemActivated (copyTo);
+        return true;
+    } else if ((event->keyval == GDK_KEY_M || event->keyval == GDK_KEY_m) && ctrl && shift) {
+        menuItemActivated (moveTo);
+        return true;
+    } else if ((event->keyval == GDK_KEY_C || event->keyval == GDK_KEY_c || event->keyval == GDK_KEY_Insert) && ctrl) {
         copyProfile ();
         return true;
     } else if ((event->keyval == GDK_KEY_V || event->keyval == GDK_KEY_v) && ctrl && !shift) {
