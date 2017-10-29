@@ -870,7 +870,6 @@ PREFERENCES_D50;5000K
 PREFERENCES_D55;5500K
 PREFERENCES_D60;6000K
 PREFERENCES_D65;6500K
-PREFERENCES_DARKFRAME;Svartbild
 PREFERENCES_DARKFRAMEFOUND;Hittade
 PREFERENCES_DARKFRAMESHOTS;bilder
 PREFERENCES_DARKFRAMETEMPLATES;mallar
@@ -891,8 +890,6 @@ PREFERENCES_EXTERNALEDITOR;Externt bildredigeringsprogram
 PREFERENCES_FBROWSEROPTS;Inställningar för filvyn/miniatyrbilderna
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Filvyns verktygsrad som en rad (avmarkera för lågupplösta skärmar)
 PREFERENCES_FILEFORMAT;Filformat
-PREFERENCES_FILMSIMULATION;Filmsimulering
-PREFERENCES_FLATFIELD;Plattfält
 PREFERENCES_FLATFIELDFOUND;Hittade
 PREFERENCES_FLATFIELDSDIR;Plattfältskatalog
 PREFERENCES_FLATFIELDSHOTS;bilder
@@ -1994,6 +1991,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_CMMBPC;Black point compensation
 !PREFERENCES_D50_OLD;5000K
+!PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
 !PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
 !PREFERENCES_LANG;Language

@@ -661,7 +661,6 @@ PREFERENCES_D50;5000K
 PREFERENCES_D55;5500K
 PREFERENCES_D60;6000K
 PREFERENCES_D65;6500K
-PREFERENCES_DARKFRAME;Dark Frame
 PREFERENCES_DARKFRAMEFOUND;Trovati
 PREFERENCES_DARKFRAMESHOTS;fotogrammi
 PREFERENCES_DARKFRAMETEMPLATES;modelli
@@ -679,7 +678,6 @@ PREFERENCES_EXTERNALEDITOR;Programma di ritocco esterni
 PREFERENCES_FBROWSEROPTS;Opzioni del Navigatore e delle miniature
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barra di navigazione a singola riga (deseleziona nel caso di schermo a bassa risoluzione)
 PREFERENCES_FILEFORMAT;Formato file
-PREFERENCES_FLATFIELD;Flat Field
 PREFERENCES_FLATFIELDFOUND;Trovati
 PREFERENCES_FLATFIELDSDIR;Cartella dei fotogrammi di campo (Flat Field)
 PREFERENCES_FLATFIELDSHOTS;fotogrammi
@@ -1652,8 +1650,8 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !PREFERENCES_D50_OLD;5000K
 !PREFERENCES_DAUB_LABEL;Use Daubechies D6 wavelets instead of D4
 !PREFERENCES_DAUB_TOOLTIP;The Noise Reduction and Wavelet Levels tools use a Debauchies mother wavelet. If you choose D6 instead of D4 you increase the number of orthogonal Daubechies coefficients and probably increase quality of small-scale levels. There is no memory or processing time difference between the two.
+!PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_EXPAUT;Expert
-!PREFERENCES_FILMSIMULATION;Film Simulation
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
 !PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
