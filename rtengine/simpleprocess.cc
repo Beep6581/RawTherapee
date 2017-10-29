@@ -817,7 +817,8 @@ private:
                 trImg = baseImg;
             } else {
                 trImg = new Imagefloat (fw, fh);
-            }           ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh, fw, fh,
+            }
+            ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh, fw, fh,
                            imgsrc->getMetaData(), imgsrc->getRotateDegree(), true);
             if(trImg != baseImg) {
                 delete baseImg;
