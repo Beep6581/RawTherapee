@@ -161,6 +161,88 @@ struct local_params {
 
 };
 
+static void SobelLuma (float ** sobelL, float **deltasobelL, float **luma, int bfw, int bfh)
+{
+    int GX[3][3];
+    int GY[3][3];
+    float SUML;
+
+    float sumXL, sumYL;
+
+    //Sobel Horizontal
+    GX[0][0] = 1;
+    GX[0][1] = 0;
+    GX[0][2] = -1;
+    GX[1][0] = 2;
+    GX[1][1] = 0;
+    GX[1][2] = -2;
+    GX[2][0] = 1;
+    GX[2][1] = 0;
+    GX[2][2] = -1;
+
+    //Sobel Vertical
+    GY[0][0] =  1;
+    GY[0][1] =  2;
+    GY[0][2] =  1;
+    GY[1][0] =  0;
+    GY[1][1] =  0;
+    GY[1][2] =  0;
+    GY[2][0] = -1;
+    GY[2][1] = -2;
+    GY[2][2] = -1;
+    //inspired from Chen Guanghua Zhang Xiaolong
+    // edge detection to improve auto WB
+
+    //  if (edg) {
+    {
+        for (int y = 0; y < bfh ; y++) {
+            for (int x = 0; x < bfw ; x++) {
+                sobelL[y][x] = 0.f;
+                deltasobelL[y][x] = 0.f;
+            }
+        }
+
+
+        for (int y = 0; y < bfh ; y++) {
+            for (int x = 0; x < bfw ; x++) {
+                sumXL    = 0.f;
+                sumYL    = 0.f;
+
+                /*Image Boundaries*/
+                if (y == 0 || y == bfh - 1) {
+                    SUML = 0.f;
+                } else if (x == 0 || x == bfw - 1) {
+                    SUML = 0.f;
+                } else {
+                    for (int i = -1; i < 2; i++) {
+                        for (int j = -1; j < 2; j++) {
+                            sumXL += GX[j + 1][i + 1] * luma[y + i][x + j];
+                        }
+                    }
+
+                    for (int i = -1; i < 2; i++) {
+                        for (int j = -1; j < 2; j++) {
+                            sumYL += GY[j + 1][i + 1] * luma[y + i][x + j];
+                        }
+                    }
+
+                    //Edge strength
+                    SUML = sqrt (SQR (sumXL) + SQR (sumYL));
+                    //we can add if need teta = atan2 (sumYr, sumXr)
+                }
+
+                SUML = CLIPLOC (SUML);
+
+                sobelL[y][x] = SUML;
+                deltasobelL[y][x] = SUML - luma[y][x];
+            }
+        }
+
+    }
+}
+
+
+
 static void calcLocalParams (int oW, int oH, const LocallabParams& locallab, struct local_params& lp)
 {
     int w = oW;
@@ -2335,100 +2417,101 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, LabIma
 
                 if (lp.sensbn < 40.f ) {
                     kch = pow (kch, pa * lp.sensbn + pb);   //increase under 90
-				}		
+                }
 
-                    // algo with detection of hue ==> artifacts for noisy images  ==> denoise before
-                    if (lp.qualmet >= 1 && lp.sensbn < 50.f) { //to try...
-                        //hue detection
-                        if ((hueref + dhue) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
-                            if (rhue >= hueplus - delhu )  {
-                                realstr = aplus * rhue + bplus;
-                                realstrch = aplusch * rhue + bplusch;
-                                khu  = apl * rhue + bpl;
-                            } else if (rhue < huemoins + delhu)  {
-                                realstr = amoins * rhue + bmoins;
-                                realstrch = amoinsch * rhue + bmoinsch;
-                                khu = amo * rhue + bmo;
-                            } else {
-                                realstr = cli;
-                                realstrch = clc;
-                                khu = 1.f;
-                            }
-                        } else if ((hueref + dhue) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
-                            if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                                realstr = aplus * rhue + bplus;
-                                realstrch = aplusch * rhue + bplusch;
-                                khu  = apl * rhue + bpl;
-                            } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                                realstr = amoins * rhue + bmoins;
-                                realstrch = amoinsch * rhue + bmoinsch;
-                                khu = amo * rhue + bmo;
-                            } else {
-                                realstr = cli;
-                                realstrch = clc;
-                                khu = 1.f;
-                            }
+                // algo with detection of hue ==> artifacts for noisy images  ==> denoise before
+                if (lp.qualmet >= 1 && lp.sensbn < 50.f) { //to try...
+                    //hue detection
+                    if ((hueref + dhue) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
+                        if (rhue >= hueplus - delhu )  {
+                            realstr = aplus * rhue + bplus;
+                            realstrch = aplusch * rhue + bplusch;
+                            khu  = apl * rhue + bpl;
+                        } else if (rhue < huemoins + delhu)  {
+                            realstr = amoins * rhue + bmoins;
+                            realstrch = amoinsch * rhue + bmoinsch;
+                            khu = amo * rhue + bmo;
+                        } else {
+                            realstr = cli;
+                            realstrch = clc;
+                            khu = 1.f;
                         }
-
-                        if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins ) {
-                            if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                                realstr = aplus * rhue + bplus;
-                                realstrch = aplusch * rhue + bplusch;
-                                khu  = apl * rhue + bpl;
-                            } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                                realstrch = amoinsch * rhue + bmoinsch;
-                                realstr = amoins * rhue + bmoins;
-                                khu = amo * rhue + bmo;
-                            } else {
-                                realstr = cli;
-                                realstrch = clc;
-                                khu = 1.f;
-                            }
-                        } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
-                            if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                                realstr = aplus * rhue + bplus;
-                                realstrch = aplusch * rhue + bplusch;
-                                khu  = apl * rhue + bpl;
-                            } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                                realstr = amoins * rhue + bmoins;
-                                realstrch = amoinsch * rhue + bmoinsch;
-                                khu = amo * rhue + bmo;
-                            } else {
-                                realstrch = clc;
-                                realstr = cli;
-                                khu = 1.f;
-                            }
-                        }
-
-                        if (lp.sensbn <= 35.f) { //to try...
-
-                            if (deltaE <  2.8f * lp.sensbn) {
-                                fach = khu;
-                            } else {
-                                fach = khu * (ahu * deltaE + bhu);
-                            }
-
-
-                            float kcr = 10.f;
-
-                            if (rchro < kcr) {
-                                fach *= (1.f / (kcr * kcr)) * rchro * rchro;
-                            }
-
-                            if (lp.qualmet >= 1) {
-                            } else {
-                                fach = 1.f;
-                            }
-
-                            if (deltaL <  lp.sensbn) {
-                                falu = 1.f;
-                            } else {
-                                falu = alum * deltaL + blum;
-                            }
-
+                    } else if ((hueref + dhue) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
+                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
+                            realstr = aplus * rhue + bplus;
+                            realstrch = aplusch * rhue + bplusch;
+                            khu  = apl * rhue + bpl;
+                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
+                            realstr = amoins * rhue + bmoins;
+                            realstrch = amoinsch * rhue + bmoinsch;
+                            khu = amo * rhue + bmo;
+                        } else {
+                            realstr = cli;
+                            realstrch = clc;
+                            khu = 1.f;
                         }
                     }
-            //    }
+
+                    if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins ) {
+                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
+                            realstr = aplus * rhue + bplus;
+                            realstrch = aplusch * rhue + bplusch;
+                            khu  = apl * rhue + bpl;
+                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
+                            realstrch = amoinsch * rhue + bmoinsch;
+                            realstr = amoins * rhue + bmoins;
+                            khu = amo * rhue + bmo;
+                        } else {
+                            realstr = cli;
+                            realstrch = clc;
+                            khu = 1.f;
+                        }
+                    } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
+                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
+                            realstr = aplus * rhue + bplus;
+                            realstrch = aplusch * rhue + bplusch;
+                            khu  = apl * rhue + bpl;
+                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
+                            realstr = amoins * rhue + bmoins;
+                            realstrch = amoinsch * rhue + bmoinsch;
+                            khu = amo * rhue + bmo;
+                        } else {
+                            realstrch = clc;
+                            realstr = cli;
+                            khu = 1.f;
+                        }
+                    }
+
+                    if (lp.sensbn <= 35.f) { //to try...
+
+                        if (deltaE <  2.8f * lp.sensbn) {
+                            fach = khu;
+                        } else {
+                            fach = khu * (ahu * deltaE + bhu);
+                        }
+
+
+                        float kcr = 10.f;
+
+                        if (rchro < kcr) {
+                            fach *= (1.f / (kcr * kcr)) * rchro * rchro;
+                        }
+
+                        if (lp.qualmet >= 1) {
+                        } else {
+                            fach = 1.f;
+                        }
+
+                        if (deltaL <  lp.sensbn) {
+                            falu = 1.f;
+                        } else {
+                            falu = alum * deltaL + blum;
+                        }
+
+                    }
+                }
+
+                //    }
 
                 switch (zone) {
 
