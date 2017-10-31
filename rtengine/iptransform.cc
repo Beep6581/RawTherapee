@@ -341,7 +341,7 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
             // image. There's room for optimization of course...
             if (pLCPMap && params->lensProf.useCA && pLCPMap->isCACorrectionAvailable()) {
                 tmpimg.reset(new Imagefloat(original->getWidth(), original->getHeight()));
-                transformLCPCAOnly(original, tmpimg.get(), cx, cy, oW, oH, pLCPMap.get());
+                transformLCPCAOnly(original, tmpimg.get(), cx, cy, pLCPMap.get());
                 original = tmpimg.get();
             }
         }
@@ -941,12 +941,9 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
 }
 
 
-void ImProcFunctions::transformLCPCAOnly(Imagefloat *original, Imagefloat *transformed, int cx, int cy, int oW, int oH, const LensCorrection *pLCPMap)
+void ImProcFunctions::transformLCPCAOnly(Imagefloat *original, Imagefloat *transformed, int cx, int cy, const LensCorrection *pLCPMap)
 {
     assert(pLCPMap && params->lensProf.useCA && pLCPMap->isCACorrectionAvailable());
-
-    double w2 = (double) oW  / 2.0 - 0.5;
-    double h2 = (double) oH  / 2.0 - 0.5;
 
     float** chOrig[3];
     chOrig[0] = original->r.ptrs;
