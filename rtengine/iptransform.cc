@@ -751,9 +751,7 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
     double h2 = (double) oH  / 2.0 - 0.5;
 
     double vig_w2, vig_h2, maxRadius, v, b, mul;
-    if (enableVignetting) {
-        calcVignettingParams (oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
-    }
+    calcVignettingParams (oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
 
     struct grad_params gp;
 
