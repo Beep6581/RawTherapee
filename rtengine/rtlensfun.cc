@@ -172,6 +172,15 @@ float LFCamera::getCropFactor() const
 }
 
 
+bool LFCamera::isFixedLens() const
+{
+    // per lensfun's main developer Torsten Bronger:
+    // "Compact camera mounts can be identified by the fact that the mount
+    // starts with a lowercase letter"
+    return data_ && data_->Mount && std::islower(data_->Mount[0]);
+}
+
+
 Glib::ustring LFCamera::getDisplayString() const
 {
     if (data_) {
@@ -387,12 +396,7 @@ LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name) c
 {
     LFLens ret;
     if (data_) {
-        Glib::ustring lname = name;
-        bool stdlens = camera && (name.empty() || name.find("Unknown") == 0);
-        if (stdlens) {
-            lname = camera.getModel(); // "Standard"
-        }
-        auto found = data_->FindLenses(camera.data_, nullptr, lname.c_str());
+        auto found = data_->FindLenses(camera.data_, nullptr, name.c_str());
         for (size_t pos = 0; !found && pos < name.size(); ) {
             // try to split the maker from the model of the lens -- we have to
             // guess a bit here, since there are makers with a multi-word name
@@ -410,6 +414,9 @@ LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name) c
             } else {
                 break;
             }
+        }
+        if (!found && camera && camera.isFixedLens()) {
+            found = data_->FindLenses(camera.data_, nullptr, "");
         }
         if (found) {
             ret.data_ = found[0];
