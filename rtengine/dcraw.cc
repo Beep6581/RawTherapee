@@ -2272,6 +2272,7 @@ void CLASS hasselblad_load_raw()
   FORC3 back[c] = back[4] + c*raw_width;
   cblack[6] >>= sh = tiff_samples > 1;
   shot = LIM(shot_select, 1, tiff_samples) - 1;
+  ph1_bithuff_t ph1_bithuff(this, ifp, order);
   for (row=0; row < raw_height; row++) {
     FORC4 back[(c+3) & 3] = back[c];
     for (col=0; col < raw_width; col+=2) {
