@@ -69,6 +69,7 @@ public:
     Glib::ustring getMake() const;
     Glib::ustring getModel() const;
     float getCropFactor() const;
+    bool isFixedLens() const;
 
     Glib::ustring getDisplayString() const;
 
