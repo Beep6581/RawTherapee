@@ -200,9 +200,12 @@ ImProcCoordinator::ImProcCoordinator ()
       huerefs (500, -100000.f),
       chromarefs (500, -100000.f),
       lumarefs (500, -100000.f),
+      sobelrefs (500, -100000.f),
+
       huer (0),
       chromar (0),
       lumar (0),
+      sobeler (0),
       colourToningSatLimit (0.f), colourToningSatLimitOpacity (0.f),
       retistrsav (nullptr)
       /*
@@ -842,7 +845,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                                     };
 
 
-            int maxdata = 81;//78;//73 for 10011
+            int maxdata = 82;//78;//73 for 10011
 
             if (fic0) {
                 //find current version mip
@@ -886,7 +889,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     //initilize newues when first utilisation of Locallab. Prepare creation of Mip files
                     for (int sp = 1; sp < maxspot; sp++) { // spots default
                         int t_sp = sp;
-                        int t_mipversion = 10014;//new value for each change
+                        int t_mipversion = 10015;//new value for each change
                         int t_circrad = 18;
                         int t_locX = 250;
                         int t_locY = 250;
@@ -1552,7 +1555,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 std::string line;
                 std::string spotline;
                 int cont = 0;
-                int maxind = maxdata - 3 ; //
+                int maxind = maxdata - 4 ; //
 
                 if (versionmip == 10000) {
                     maxind = 49;
@@ -1826,7 +1829,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
                 for (int sp = ns + 1 ; sp < maxspot; sp++) { // spots default
                     int t_sp = sp;
-                    int t_mipversion = 10014;
+                    int t_mipversion = 10015;
                     int t_circrad = 18;
                     int t_locX = 250;
                     int t_locY = 250;
@@ -2040,7 +2043,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     std::string spotline2;
                     int cont2 = 0;
                     int ns2 = 0;
-                    int maxin = maxdata - 3; //70 ;//64
+                    int maxin = maxdata - 4; //70 ;//64
 
                     while (getline (fich2, line2)) {
                         spotline2 = line2;
@@ -2116,9 +2119,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
             //main algorithm for all spots
             for (int sp = 1; sp < maxspot; sp++) { //spots default
-                params.locallab.hueref = dataspot[maxdata - 3][sp] / 100.;
-                params.locallab.chromaref = dataspot[maxdata - 2][sp];
-                params.locallab.lumaref = dataspot[maxdata - 1][sp];
+                params.locallab.hueref = dataspot[maxdata - 4][sp] / 100.;
+                params.locallab.chromaref = dataspot[maxdata - 3][sp];
+                params.locallab.lumaref = dataspot[maxdata - 2][sp];
+                params.locallab.sobelref = dataspot[maxdata - 1][sp];
                 bool locutili = false;
                 params.locallab.circrad = circrads[sp] = dataspot[2][sp];
                 params.locallab.locX = locx[sp] = dataspot[3][sp];
@@ -2562,19 +2566,24 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                                                  sca);
 
                 double huere, chromare, lumare;
-                ipf.calc_ref (3, sp, (float**)shbuffer, nprevl, nprevl, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, cclocalcurve, sklocalcurve, huere, chromare, lumare);
+                double sobelre;
+                ipf.calc_ref (3, sp, (float**)shbuffer, nprevl, nprevl, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, cclocalcurve, sklocalcurve, huere, chromare, lumare, sobelre);
                 huer = huere;
                 chromar = chromare;
                 lumar = lumare ;
+                sobeler = sobelre;
                 params.locallab.hueref = huer;
                 params.locallab.chromaref = chromar;
                 params.locallab.lumaref = lumar;
-                dataspot[maxdata - 3][sp] = huerefs[sp] = 100.f * params.locallab.hueref;
-                dataspot[maxdata - 2][sp] = chromarefs[sp] = params.locallab.chromaref;
-                dataspot[maxdata - 1][sp] = lumarefs[sp] = params.locallab.lumaref;
+                params.locallab.sobelref = sobeler;
+
+                dataspot[maxdata - 4][sp] = huerefs[sp] = 100.f * params.locallab.hueref;
+                dataspot[maxdata - 3][sp] = chromarefs[sp] = params.locallab.chromaref;
+                dataspot[maxdata - 2][sp] = lumarefs[sp] = params.locallab.lumaref;
+                dataspot[maxdata - 1][sp] = sobelrefs[sp] = params.locallab.sobelref;
                 //printf("sp=%i huerefsp=%f\n", sp, huerefs[sp]);
                 ipf.Lab_Local (params.locallab, 3, sp, (float**)shbuffer, nprevl, nprevl, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve,  lochhCurve,
-                               LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
+                               LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref, params.locallab.sobelref);
                 lllocalcurve.clear();
                 cclocalcurve.clear();
                 sklocalcurve.clear();
@@ -2598,6 +2607,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             params.locallab.hueref = INFINITY;
             params.locallab.chromaref = INFINITY;
             params.locallab.lumaref = INFINITY;
+            params.locallab.sobelref = INFINITY;
             locallutili = false;
 
             sps[sp] = sp;
@@ -3094,9 +3104,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             params.locallab.hueref = huerefs[sp] / 100.;
             params.locallab.chromaref = chromarefs[sp];
             params.locallab.lumaref = lumarefs[sp];
+            params.locallab.sobelref = sobelrefs[sp];
 
             ipf.Lab_Local (params.locallab, 3, sp, (float**)shbuffer, nprevl, nprevl, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve,
-                           localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref );
+                           localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref, params.locallab.sobelref);
             lllocalcurve.clear();
             cclocalcurve.clear();
             sklocalcurve.clear();
@@ -3111,7 +3122,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
                 for (int spe = 1; spe < maxspot; spe++) {
                     int t_sp = spe;
-                    int t_mipversion = 10014;
+                    int t_mipversion = 10015;
                     int t_circrad  = dataspot[2][spe];
                     int t_locX  = dataspot[3][spe];
                     int t_locY  = dataspot[4][spe];
@@ -3195,9 +3206,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     int t_blurMethod = dataspot[76][spe];
                     int t_dustMethod = dataspot[77][spe];
 
-                    int t_hueref = dataspot[maxdata - 3][spe];
-                    int t_chromaref = dataspot[maxdata - 2][spe];
-                    int t_lumaref = dataspot[maxdata - 1][spe];
+                    int t_hueref = dataspot[maxdata - 4][spe];
+                    int t_chromaref = dataspot[maxdata - 3][spe];
+                    int t_lumaref = dataspot[maxdata - 2][spe];
+                    int t_sobelref = dataspot[maxdata - 1][spe];
 
 
 
@@ -3298,6 +3310,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     fou << "hueref=" << t_hueref << '@' << endl;
                     fou << "chromaref=" << t_chromaref << '@' << endl;
                     fou << "lumaref=" << t_lumaref << '@' << endl;
+                    fou << "sobelref=" << t_sobelref << '@' << endl;
                     fou << "curveReti=" << t_curvret << endl;
                     fou << "curveLL=" << t_curvll  << endl;
                     fou << "curveLH=" << t_curvlh  << endl;

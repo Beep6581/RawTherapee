@@ -384,6 +384,7 @@ void ParamsEdited::set (bool v)
     locallab.hueref = v;
     locallab.chromaref = v;
     locallab.lumaref = v;
+    locallab.sobelref = v;
     locallab.vart = v;
     locallab.localTgaincurve = v;
     locallab.localTgaincurverab = v;
@@ -1019,6 +1020,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         locallab.hueref = locallab.hueref && p.locallab.hueref == other.locallab.hueref;
         locallab.chromaref = locallab.chromaref && p.locallab.chromaref == other.locallab.chromaref;
         locallab.lumaref = locallab.lumaref && p.locallab.lumaref == other.locallab.lumaref;
+        locallab.sobelref = locallab.sobelref && p.locallab.sobelref == other.locallab.sobelref;
         locallab.vart = locallab.vart && p.locallab.vart == other.locallab.vart;
         locallab.localTgaincurve = locallab.localTgaincurve && p.locallab.localTgaincurve == other.locallab.localTgaincurve;
         locallab.localTgaincurverab = locallab.localTgaincurverab && p.locallab.localTgaincurverab == other.locallab.localTgaincurverab;
@@ -2678,6 +2680,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (locallab.lumaref) {
         toEdit.locallab.lumaref   = mods.locallab.lumaref;
+    }
+
+    if (locallab.sobelref) {
+        toEdit.locallab.sobelref   = mods.locallab.sobelref;
     }
 
     if (locallab.vart) {

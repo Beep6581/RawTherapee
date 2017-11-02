@@ -161,8 +161,20 @@ struct local_params {
 
 };
 
-static void SobelLuma (float ** sobelL, float **deltasobelL, float **luma, int bfw, int bfh)
+static void SobelCannyLuma (LabImage *sobelL, LabImage *deltasobelL, LabImage *luma, int bfw, int bfh)
 {
+    //base of the process to detect shape in complement of deltaE
+    //use for calcualte Spot reference
+    // and for structure of the shape
+    // actually , as thr program don't use these function, I just create a simple "Canny" near of Sobel. This can be completed after with teta, etc.
+    float *tmLBuffer = new float[bfh * bfw];
+    float *tmL[bfh];
+
+    for (int i = 0; i < bfh; i++) {
+        tmL[i] = &tmLBuffer[i * bfw];
+    }
+
+
     int GX[3][3];
     int GY[3][3];
     float SUML;
@@ -191,38 +203,58 @@ static void SobelLuma (float ** sobelL, float **deltasobelL, float **luma, int b
     GY[2][1] = -2;
     GY[2][2] = -1;
     //inspired from Chen Guanghua Zhang Xiaolong
-    // edge detection to improve auto WB
 
-    //  if (edg) {
+    //Gaussian 1.4 to blur and denoise
+    for (int i = 2; i < bfh - 2; i++) {
+        for (int j = 2; j < bfw - 2; j++) {
+            //Gaussian 1.4
+            // 2 4 5 4 2
+            // 4 9 12 9 4
+            // 5 12 15 12 5
+            // 4 9 12 9 4
+            // 2 4 5 4 2
+            // divi 159
+            tmL[i][j] = (15.f * luma->L[i][j] + 12.f * luma->L[i - 1][j] + 12.f * luma->L[i + 1][j]
+                         + 12.f * luma->L[i][j + 1] + 12.f * luma->L[i][j - 1] + 9.f * luma->L[i - 1][j - 1]
+                         + 9.f * luma->L[i - 1][j + 1] + 9.f * luma->L[i + 1][j - 1] + 9.f * luma->L[i + 1][j + 1]
+                         + 5.f * luma->L[i - 2][j] + 5.f * luma->L[i + 2][j] + 5.f * luma->L[i][j - 2] + 5.f * luma->L[i][j + 2]
+                         + 4.f * luma->L[i - 2][j - 1] + 4.f * luma->L[i - 2][j + 1] + 4.f * luma->L[i + 2][j + 1] + 4.f * luma->L[i + 2][j - 1]
+                         + 4.f * luma->L[i - 1][j - 2] + 4.f * luma->L[i - 1][j + 2] + 4.f * luma->L[i + 1][j + 2] + 4.f * luma->L[i + 1][j - 2]
+                         + 2.f * luma->L[i - 2][j - 2] + 2.f * luma->L[i - 2][j + 2] + 2.f * luma->L[i + 2][j - 2] + 2.f * luma->L[i + 2][j + 2]
+                        ) * 0.0062893f;
+
+        }
+    }
+
+
     {
         for (int y = 0; y < bfh ; y++) {
             for (int x = 0; x < bfw ; x++) {
-                sobelL[y][x] = 0.f;
-                deltasobelL[y][x] = 0.f;
+                sobelL->L[y][x] = 0.f;
+                deltasobelL->L[y][x] = 0.f;
             }
         }
 
 
-        for (int y = 0; y < bfh ; y++) {
-            for (int x = 0; x < bfw ; x++) {
+        for (int y = 2; y < bfh - 2 ; y++) {
+            for (int x = 2; x < bfw - 2 ; x++) {
                 sumXL    = 0.f;
                 sumYL    = 0.f;
 
-                /*Image Boundaries*/
-                if (y == 0 || y == bfh - 1) {
+                if (y == 2 || y == bfh - 3) {
                     SUML = 0.f;
-                } else if (x == 0 || x == bfw - 1) {
+                } else if (x == 2 || x == bfw - 3) {
                     SUML = 0.f;
                 } else {
                     for (int i = -1; i < 2; i++) {
                         for (int j = -1; j < 2; j++) {
-                            sumXL += GX[j + 1][i + 1] * luma[y + i][x + j];
+                            sumXL += GX[j + 1][i + 1] * tmL[y + i][x + j];
                         }
                     }
 
                     for (int i = -1; i < 2; i++) {
                         for (int j = -1; j < 2; j++) {
-                            sumYL += GY[j + 1][i + 1] * luma[y + i][x + j];
+                            sumYL += GY[j + 1][i + 1] * tmL[y + i][x + j];
                         }
                     }
 
@@ -233,12 +265,15 @@ static void SobelLuma (float ** sobelL, float **deltasobelL, float **luma, int b
 
                 SUML = CLIPLOC (SUML);
 
-                sobelL[y][x] = SUML;
-                deltasobelL[y][x] = SUML - luma[y][x];
+                sobelL->L[y][x] = SUML;
+                deltasobelL->L[y][x] = SUML - tmL[y][x];
             }
         }
 
     }
+
+    delete [] tmLBuffer;
+
 }
 
 
@@ -5274,7 +5309,7 @@ void ImProcFunctions::InverseColorLight_Local (const struct local_params & lp, L
     }
 
 }
-void ImProcFunctions::calc_ref (int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, int sx, int sy, int cx, int cy, int oW, int oH,  int fw, int fh, bool locutili, int sk, const LocretigainCurve & locRETgainCcurve, bool locallutili, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, LUTf & cclocalcurve, LUTf & sklocalcurve, double & hueref, double & chromaref, double & lumaref)
+void ImProcFunctions::calc_ref (int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, int sx, int sy, int cx, int cy, int oW, int oH,  int fw, int fh, bool locutili, int sk, const LocretigainCurve & locRETgainCcurve, bool locallutili, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, LUTf & cclocalcurve, LUTf & sklocalcurve, double & hueref, double & chromaref, double & lumaref, double &sobelref)
 {
     if (params->locallab.enabled) {
         //always calculate hueref, chromaref, lumaref  before others operations use in normal mode for all modules exceprt denoise
@@ -5286,29 +5321,80 @@ void ImProcFunctions::calc_ref (int call, int sp, float** shbuffer, LabImage * o
         double aveB = 0.;
         double aveL = 0.;
         double aveChro = 0.;
+        double avesobel = 0.;
 // int precision for the counters
         int nab = 0;
+        int nso = 0;
 // single precision for the result
         float avA, avB, avL;
         int spotSize = 0.88623f * max (1,  lp.cir / sk); //18
         //O.88623 = sqrt(PI / 4) ==> sqare equal to circle
+        int spotSise2; // = 0.88623f * max (1,  lp.cir / sk); //18
 
         // very small region, don't use omp here
 //      printf("cy=%i cx=%i yc=%f xc=%f circ=%i spot=%i tH=%i tW=%i sk=%i\n", cy, cx, lp.yc, lp.xc, lp.cir, spotSize, transformed->H, transformed->W, sk);
 //      printf("ymin=%i ymax=%i\n", max (cy, (int) (lp.yc - spotSize)),min (transformed->H + cy, (int) (lp.yc + spotSize + 1)) );
 //      printf("xmin=%i xmax=%i\n", max (cx, (int) (lp.xc - spotSize)),min (transformed->W + cx, (int) (lp.xc + spotSize + 1)) );
+        LabImage *sobelL;
+        LabImage *deltasobelL;
+        LabImage *origsob;
+        int spotSi = 1 + 2 * max (1,  lp.cir / sk);
 
+        if (spotSi < 5) {
+            spotSi = 5;
+        }
+
+        spotSise2 = (spotSi - 1) / 2;
+        origsob = new LabImage (spotSi, spotSi);
+        sobelL = new LabImage (spotSi, spotSi);
+        deltasobelL = new LabImage (spotSi, spotSi);
+
+        //ref for luma, chroma, hue
         for (int y = max (cy, (int) (lp.yc - spotSize)); y < min (transformed->H + cy, (int) (lp.yc + spotSize + 1)); y++) {
             for (int x = max (cx, (int) (lp.xc - spotSize)); x < min (transformed->W + cx, (int) (lp.xc + spotSize + 1)); x++) {
                 aveL += original->L[y - cy][x - cx];
                 aveA += original->a[y - cy][x - cx];
                 aveB += original->b[y - cy][x - cx];
                 aveChro += sqrtf (SQR (original->b[y - cy][x - cx]) + SQR (original->a[y - cy][x - cx]));
-
                 nab++;
             }
         }
 
+        //ref for sobel
+        bool toto = false;
+
+        if (toto) {
+            for (int y = max (cy, (int) (lp.yc - spotSise2)); y < min (transformed->H + cy, (int) (lp.yc + spotSise2 + 1)); y++) {
+                for (int x = max (cx, (int) (lp.xc - spotSise2)); x < min (transformed->W + cx, (int) (lp.xc + spotSise2 + 1)); x++) {
+                    int yb = max (cy, (int) (lp.yc - spotSise2));
+
+                    int xb = max (cx, (int) (lp.xc - spotSise2));
+
+                    int z = y - yb;
+                    int u = x - xb;
+                    origsob->L[z][u] = original->L[y - cy][x - cx];
+                    nso++;
+                }
+            }
+
+
+            SobelCannyLuma (sobelL, deltasobelL, origsob, spotSi, spotSi );
+            int nbs = 0;
+
+            for (int y = 0; y < spotSi ; y ++)
+                for (int x = 0; x < spotSi ; x ++) {
+                    avesobel += deltasobelL->L[y][x];
+                    nbs++;
+                }
+
+            sobelref = avesobel / nbs;
+            //    printf ("sobelref=%f \n", sobelref);
+        }
+
+        delete sobelL;
+
+        delete deltasobelL;
+        delete origsob;
         aveL = aveL / nab;
         aveA = aveA / nab;
         aveB = aveB / nab;
@@ -5416,7 +5502,7 @@ void ImProcFunctions::paste_ref (int call, int sp, LabImage * spotbuffer, LabIma
 
 void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, int sx, int sy, int cx, int cy, int oW, int oH,  int fw, int fh, bool locutili, int sk,
                                  const LocretigainCurve & locRETgainCcurve, bool locallutili, LUTf & lllocalcurve, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve,
-                                 bool &LHutili, bool &HHutili, LUTf & cclocalcurve, bool & localskutili, LUTf & sklocalcurve, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, double & hueref, double & chromaref, double & lumaref)
+                                 bool &LHutili, bool &HHutili, LUTf & cclocalcurve, bool & localskutili, LUTf & sklocalcurve, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, double & hueref, double & chromaref, double & lumaref, double & sobelref)
 {
     //general call of others functions : important return hueref, chromaref, lumaref
     if (params->locallab.enabled) {

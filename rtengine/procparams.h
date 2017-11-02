@@ -1011,6 +1011,7 @@ public:
     double  hueref;
     double  chromaref;
     double  lumaref;
+    double  sobelref;
     int     str;
     int     neigh;
     int     nbspot;

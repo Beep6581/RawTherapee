@@ -488,6 +488,7 @@ public:
     bool hueref;
     bool chromaref;
     bool lumaref;
+    bool sobelref;
     bool vart;
     bool activlum;
     bool invers;

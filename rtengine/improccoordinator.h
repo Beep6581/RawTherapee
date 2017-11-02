@@ -350,8 +350,9 @@ protected:
     LUTf huerefs;
     LUTf chromarefs;
     LUTf lumarefs;
+    LUTf sobelrefs;
 
-    double huer, chromar, lumar;
+    double huer, chromar, lumar, sobeler;
     void startProcessing ();
     void process ();
     float colourToningSatLimit;

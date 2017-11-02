@@ -117,6 +117,7 @@ private:
     Adjuster* const hueref;
     Adjuster* const chromaref;
     Adjuster* const lumaref;
+    Adjuster* const sobelref;
     Adjuster* const centerXbuf;
     Adjuster* const centerYbuf;
     Adjuster* const adjblur;
@@ -220,7 +221,7 @@ private:
 
 
 
-    int nextdatasp[81];
+    int nextdatasp[82];
     int nextlength;
     std::string nextstr;
     std::string nextstr2;

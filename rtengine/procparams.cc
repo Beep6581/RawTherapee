@@ -1053,6 +1053,7 @@ void LocallabParams::setDefaults()
     hueref = 1.;
     chromaref = 50.;
     lumaref = 50.;
+    sobelref = 0.;
     str = 0;
     neigh = 50;
     vart = 200;
@@ -3240,12 +3241,17 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_double ("Locallab", "Hueref", locallab.hueref);
         }
 
+
         if (!pedited || pedited->locallab.chromaref) {
             keyFile.set_double ("Locallab", "Chromaref", locallab.chromaref);
         }
 
         if (!pedited || pedited->locallab.lumaref) {
             keyFile.set_double ("Locallab", "Lumaref", locallab.lumaref);
+        }
+
+        if (!pedited || pedited->locallab.sobelref) {
+            keyFile.set_double ("Locallab", "Sobelref", locallab.sobelref);
         }
 
         if (!pedited || pedited->locallab.vart) {
@@ -5254,6 +5260,14 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->locallab.lumaref = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Sobelref"))  {
+                locallab.sobelref  = keyFile.get_double ("Locallab", "Sobelref");
+
+                if (pedited) {
+                    pedited->locallab.sobelref = true;
                 }
             }
 
@@ -10073,6 +10087,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && locallab.hueref == other.locallab.hueref
         && locallab.chromaref == other.locallab.chromaref
         && locallab.lumaref == other.locallab.lumaref
+        && locallab.sobelref == other.locallab.sobelref
         && locallab.vart == other.locallab.vart
         && locallab.threshold == other.locallab.threshold
         && locallab.chromacbdl == other.locallab.chromacbdl

@@ -1102,7 +1102,7 @@ private:
             }
 
             ifstream fich (datalab, ios::in);
-            int maxdata = 81;//78;//73 10011
+            int maxdata = 82;//78;//73 10011
 
             if (fich && versionmip != 0) {
                 std::string inser;
@@ -1327,9 +1327,10 @@ private:
                         dataspots[77][0] =  2;
                     }
 
-                    dataspots[maxdata - 3][0] = 100.f * params.locallab.hueref;
-                    dataspots[maxdata - 2][0] = params.locallab.chromaref;
-                    dataspots[maxdata - 1][0] = params.locallab.lumaref;
+                    dataspots[maxdata - 4][0] = 100.f * params.locallab.hueref;
+                    dataspots[maxdata - 3][0] = params.locallab.chromaref;
+                    dataspots[maxdata - 2][0] = params.locallab.lumaref;
+                    dataspots[maxdata - 1][0] = params.locallab.sobelref;
 
                     //curve Reti local
                     int siz = params.locallab.localTgaincurve.size();
@@ -1595,6 +1596,7 @@ private:
                     params.locallab.hueref = INFINITY;
                     params.locallab.chromaref = INFINITY;
                     params.locallab.lumaref = INFINITY;
+                    params.locallab.sobelref = INFINITY;
 
                     params.locallab.circrad = dataspots[2][sp];
                     params.locallab.locX = dataspots[3][sp];
@@ -1783,9 +1785,10 @@ private:
                         params.locallab.dustMethod = "pas" ;
                     }
 
-                    params.locallab.hueref = ((float) dataspots[maxdata - 3][sp]) / 100.f;
-                    params.locallab.chromaref = dataspots[maxdata - 2][sp];
-                    params.locallab.lumaref = dataspots[maxdata - 1][sp];
+                    params.locallab.hueref = ((float) dataspots[maxdata - 4][sp]) / 100.f;
+                    params.locallab.chromaref = dataspots[maxdata - 3][sp];
+                    params.locallab.lumaref = dataspots[maxdata - 2][sp];
+                    params.locallab.sobelref = dataspots[maxdata - 1][sp];
 
 
                     int *s_datc;
@@ -1963,14 +1966,16 @@ private:
                                                      1);
 
                     double huere, chromare, lumare;
+                    double sobelre;
 
-                    ipf.calc_ref (2, sp, (float**)shbuffer, labView, labView, 0, 0, 0, 0, fw, fh, fw, fh, locutili, 1, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, cclocalcurve, sklocalcurve, huere, chromare, lumare);
+                    ipf.calc_ref (2, sp, (float**)shbuffer, labView, labView, 0, 0, 0, 0, fw, fh, fw, fh, locutili, 1, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, cclocalcurve, sklocalcurve, huere, chromare, lumare, sobelre);
                     params.locallab.hueref = huere;
                     params.locallab.chromaref = chromare;
                     params.locallab.lumaref = lumare;
+                    params.locallab.sobelref = sobelre;
 
                     ipf.Lab_Local (params.locallab, 2, sp, (float**)shbuffer, labView, labView, 0, 0, 0, 0, fw, fh, fw, fh, locutili, 1, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, lochhCurve,
-                                   LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
+                                   LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref, params.locallab.sobelref);
                     lllocalcurve.clear();
                     cclocalcurve.clear();
                     sklocalcurve.clear();
