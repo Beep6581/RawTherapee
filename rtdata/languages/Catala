@@ -512,7 +512,6 @@ PREFERENCES_CUSTPROFBUILD;Constructor de perfils de procés particulars
 PREFERENCES_CUSTPROFBUILDHINT;Nom del fitxer executable (o script) per a usar un nou perfil de procés en una imatge.\nRep paràmetres en línia d'ordres per a la generació de perfils basats en regles:\n[raw/JPG path] [path per omissió del perfil de procés] [número f] [expos. en segons] [long. focal en mm] [ISO] [objectiu] [càmera]
 PREFERENCES_CUSTPROFBUILDPATH;Executable path
 PREFERENCES_CUTOVERLAYBRUSH;Cropa màscara color/transparència
-PREFERENCES_DARKFRAME;Marc fosc
 PREFERENCES_DARKFRAMEFOUND;Trobat
 PREFERENCES_DARKFRAMESHOTS;trets
 PREFERENCES_DARKFRAMETEMPLATES;plantilles
@@ -530,7 +529,6 @@ PREFERENCES_EXTERNALEDITOR;Editor extern
 PREFERENCES_FBROWSEROPTS;Opcions de navegador i minifotos
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barra de gestor de fitxers d'una línia (inapropiat en monitors de baixa resolució)
 PREFERENCES_FILEFORMAT;Format de fitxer
-PREFERENCES_FLATFIELD;Camp pla
 PREFERENCES_FLATFIELDFOUND;Trobat
 PREFERENCES_FLATFIELDSDIR;Carpeta de camps plans
 PREFERENCES_FLATFIELDSHOTS;trets
@@ -1424,8 +1422,8 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_D65;6500K
 !PREFERENCES_DAUB_LABEL;Use Daubechies D6 wavelets instead of D4
 !PREFERENCES_DAUB_TOOLTIP;The Noise Reduction and Wavelet Levels tools use a Debauchies mother wavelet. If you choose D6 instead of D4 you increase the number of orthogonal Daubechies coefficients and probably increase quality of small-scale levels. There is no memory or processing time difference between the two.
+!PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_EXPAUT;Expert
-!PREFERENCES_FILMSIMULATION;Film Simulation
 !PREFERENCES_FLUOF2;Fluorescent F2
 !PREFERENCES_FLUOF7;Fluorescent F7
 !PREFERENCES_FLUOF11;Fluorescent F11

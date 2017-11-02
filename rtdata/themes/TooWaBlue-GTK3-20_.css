@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.58
+  Version 2.59
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -425,7 +425,7 @@ paned.horizontal > separator {
 }
 
 paned.vertical > separator {
-	background-image: image(@bg-dark-grey);
+    background-image: image(@bg-dark-grey);
     background-color: @bg-light-grey;
     min-height: 0.5em;
     border-top: 1px solid @bg-light-grey;
@@ -1197,7 +1197,7 @@ popover.background {
     border-radius: 0;
     padding: 0;
     margin: 0;
-	box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.5), 0 0 0 1px @bg-dark-grey;
+    box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.5), 0 0 0 1px @bg-dark-grey;
 }
 popover.background > box {
     padding: 0;
@@ -1237,6 +1237,21 @@ button.flat {
 }
 button.text-button label {
     margin: 0 0.5em;/* x */
+}
+
+#PrefNotebook > stack > :nth-child(5) combobox {
+    /* margin: 0.16667em 0; */
+    margin: 2px 0;
+}
+#PrefNotebook > stack > :nth-child(2) #MyFileChooserButton {
+    /* margin: 0.25em 0.33334em; */
+    margin: 3px 5px;
+}
+
+filechooser button image,
+#MyFileChooserButton image {
+    opacity: .8;
+    -gtk-icon-style: symbolic;
 }
 
 #MainNotebook > header > grid > button,
@@ -1343,6 +1358,10 @@ dialog button,
     padding: 0 0.375em;
     margin: 0.08334em 0;
 }
+#MyExpander #MyFileChooserButton + button.image-button{
+    min-width: 1.66667em;
+    padding: 0;
+}
 combobox .combo,
 dialog combobox .combo,
 #ToolPanelNotebook combobox .combo,
@@ -1362,7 +1381,6 @@ dialog combobox .combo,
 #MyExpander combobox + label */ {
     margin-left: 0.16667em;
 }
-#MyExpander label + filechooserbutton,
 #MyExpander label + * > button:not(.flat).Left,
 #MyExpander label + combobox:not(:first-child):not(:only-child),
 #MyExpander label + button:not(.flat):not(spinbutton) {
@@ -1630,7 +1648,7 @@ radio {
     box-shadow: none;
     background-repeat: no-repeat;
     -gtk-icon-shadow: none;
-	color: @text-color;
+    color: @text-color;
 }
 radiobutton label,
 checkbutton label {

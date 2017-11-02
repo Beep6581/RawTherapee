@@ -903,3 +903,13 @@ paned > separator {
 #PartialPasteHeaderSep {
     background-color: #D8D8D8;
 }
+
+/* All MyFileChooserButtons */
+button#MyFileChooserButton {
+    padding: 2px;
+    margin: 2px;
+}
+
+#ToolPanelNotebook button {
+	margin: 0px;
+}

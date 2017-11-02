@@ -796,9 +796,6 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
 
         case ImProcFunctions::TRANSFORM_HIGH_QUALITY: {
             enableLCPDist = pLCPMap && params->lensProf.useDist;
-            if (enableLCPCA) {
-                enableLCPDist = false;
-            }
             enableCA = enableLCPCA || needsCA();
         }
         //no break on purpose
@@ -809,6 +806,10 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
             break;
         }
     }
+
+    if (enableLCPCA) {
+        enableLCPDist = false;
+    }    
 
     if (!enableCA) {
         chDist[0] = 0.0;
