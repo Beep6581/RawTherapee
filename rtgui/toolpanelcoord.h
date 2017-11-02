@@ -78,6 +78,7 @@
 #include "colortoning.h"
 #include "filmsimulation.h"
 #include "prsharpening.h"
+#include "fattaltonemap.h"
 #include "guiutils.h"
 
 class ImageEditorCoordinator;
@@ -145,6 +146,7 @@ protected:
     RAWExposure* rawexposure;
     BayerRAWExposure* bayerrawexposure;
     XTransRAWExposure* xtransrawexposure;
+    FattalToneMapping *fattal;
 
     std::vector<PParamsChangeListener*> paramcListeners;
 

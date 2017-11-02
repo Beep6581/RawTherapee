@@ -3119,6 +3119,19 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
         }
     }
 
+    std::unique_ptr<Imagefloat> fattal;
+    if (params->fattal.enabled) {
+        fattal.reset(working->copy());
+        int detail_level = 3;
+        if (scale < 8) {
+            detail_level = 3;
+        } else {
+            detail_level = 0;
+        }
+        ToneMapFattal02(fattal.get(), detail_level);
+        working = fattal.get();
+    }
+
     int h_th = 0, s_th = 0;
 
     if (shmap) {

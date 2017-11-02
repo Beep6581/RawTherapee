@@ -365,6 +365,14 @@ public:
 };
 
 
+class FattalToneMappingParamsEdited {
+public:
+    bool enabled;
+    bool alpha;
+    bool beta;
+};
+
+
 class SHParamsEdited
 {
 
@@ -800,6 +808,7 @@ public:
     DefringeParamsEdited          defringe;
     DirPyrDenoiseParamsEdited     dirpyrDenoise;
     EPDParamsEdited               epd;
+    FattalToneMappingParamsEdited fattal;
     ImpulseDenoiseParamsEdited    impulseDenoise;
     SHParamsEdited                sh;
     CropParamsEdited              crop;
