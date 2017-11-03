@@ -401,6 +401,7 @@ void findMaxMinPercentile(const Array2Df& I,
 }
 
 void solve_pde_fft(Array2Df *F, Array2Df *U, bool multithread);
+void rescale_bilinear(const Array2Df &src, Array2Df &dst, bool multithread); // RT
 
 void tmo_fattal02(size_t width,
                   size_t height,
@@ -426,7 +427,7 @@ void tmo_fattal02(size_t width,
   // ph.setValue(2);
   // if (ph.canceled()) return;
 
-    /* RT -- we use a hardcoded value of 8 for nlevels, to limit the
+    /* RT -- we use a hardcoded value for nlevels, to limit the
      * dependency of the result on the image size. When using an auto computed
      * nlevels value, you would get vastly different results with different
      * image sizes, making it essentially impossible to preview the tool
@@ -441,6 +442,7 @@ void tmo_fattal02(size_t width,
   // {
   //    MSIZE = 8;
   // }
+        
 
   int size = width*height;
   // unsigned int x,y;
@@ -461,6 +463,41 @@ void tmo_fattal02(size_t width,
       (*H)(i) = logf( 100.0f* Y(i)/maxLum + 1e-4 );
   }
   // ph.setValue(4);
+
+  /** RT - this is also here to reduce the dependency of the results on the
+   * input image size, with the primary aim of having a preview in RT that is
+   * reasonably close to the actual output image. Intuitively, what we do is
+   * to put a cap on the dimension of the image processed, so that it is close
+   * in size to the typical preview that you will see on a normal consumer
+   * monitor. (That's where the 1920 comes from here.) However, we can't
+   * simply downscale the input Y array and then upscale it on output, because
+   * that would cause a big loss of sharpness (confirmed by testing).
+   * So, we use a different method: we downscale the H array, so that we
+   * compute a downscaled gaussian pyramid and a downscaled FI matrix. Then,
+   * we upscale the FI matrix later on, before it gets combined with the
+   * original input luminance array H. This seems to preserve the input
+   * sharpness and at the same time significantly reduce the dependency of the
+   * result on the input size. Clearly this is a hack, and keep in mind that I
+   * do not really know how Fattal works (it comes from LuminanceHDR almost
+   * verbatim), so this should probably be revised/reviewed by someone who
+   * knows better... also, we use a quite naive bilinear interpolation
+   * algorithm (see rescale_bilinear below), which could definitely be
+   * improved */
+  const int RT_dimension_cap = 1920;
+  int fullwidth = width;
+  int fullheight = height;
+  int dim = std::min(width, height);
+  Array2Df *fullH = nullptr;
+  if (dim > RT_dimension_cap) {
+      float s = float(RT_dimension_cap) / float(dim);
+      Array2Df *HH = new Array2Df(width * s, height * s);
+      rescale_bilinear(*H, *HH, multithread);
+      fullH = H;
+      H = HH;
+      width = H->getCols();
+      height = H->getRows();
+  }
+  /** RT */
 
   // create gaussian pyramids
   // int mins = (width<height) ? width : height;    // smaller dimension
@@ -508,6 +545,18 @@ void tmo_fattal02(size_t width,
   //   return;
   // }
 
+  /** - RT - bring back the FI image to the input size if it was downscaled */
+  if (fullH) {
+      Array2Df *FI2 = new Array2Df(fullwidth, fullheight);
+      rescale_bilinear(*FI, *FI2, multithread);
+      delete FI;
+      FI = FI2;
+      width = fullwidth;
+      height = fullheight;
+      delete H;
+      H = fullH;
+  }
+  /** RT */
 
   // attenuate gradients
   Array2Df* Gx = new Array2Df(width, height);
@@ -947,6 +996,47 @@ void solve_pde_fft(Array2Df *F, Array2Df *U, bool multithread)/*, pfs::Progress 
 //     }
 //   return static_cast<float>( sqrt(res) );
 // }
+
+
+/*****************************************************************************
+ * RT code from here on
+ *****************************************************************************/
+
+inline float get_bilinear_value(const Array2Df &src, float x, float y)
+{
+    // Get integer and fractional parts of numbers
+    int xi = x;
+    int yi = y;
+    float xf = x - xi;
+    float yf = y - yi;
+    int xi1 = std::min(xi+1, src.getCols()-1);
+    int yi1 = std::min(yi+1, src.getRows()-1);
+ 
+    float bl = src(xi, yi);
+    float br = src(xi1, yi);
+    float tl = src(xi, yi1);
+    float tr = src(xi1, yi1);
+ 
+    // interpolate
+    float b = xf * br + (1.f - xf) * bl;
+    float t = xf * tr + (1.f - xf) * tl;
+    float pxf = yf * t + (1.f - yf) * b;
+    return pxf;
+}
+
+
+void rescale_bilinear(const Array2Df &src, Array2Df &dst, bool multithread)
+{
+    float col_scale = float(src.getCols())/float(dst.getCols());
+    float row_scale = float(src.getRows())/float(dst.getRows());
+
+    #pragma omp parallel for if (multithread)
+    for (int x = 0; x < dst.getCols(); ++x) {
+        for (int y = 0; y < dst.getRows(); ++y) {
+            dst(x, y) = get_bilinear_value(src, x * col_scale, y * row_scale);
+        }
+    }
+}
 
 
 void tmo_fattal02_RT(Imagefloat *rgb, float alpha, float beta, int detail_level, bool multiThread)
