@@ -636,6 +636,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         ipf.chromiLuminanceCurve (nullptr, pW, nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, histCCurve, histLCurve);
         ipf.vibrance (nprevl);
 
+        if (params.fattal.enabled) {
+            ipf.ToneMapFattal02(nprevl, 3);
+        }
+        
         if ((params.colorappearance.enabled && !params.colorappearance.tonecie) ||  (!params.colorappearance.enabled)) {
             ipf.EPDToneMap (nprevl, 5, scale);
         }

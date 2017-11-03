@@ -1013,6 +1013,10 @@ private:
 
         ipf.chromiLuminanceCurve (nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 
+        if (params.fattal.enabled) {
+            ipf.ToneMapFattal02(labView, 3);
+        }
+
         if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled)) {
             ipf.EPDToneMap (labView, 5, 1);
         }

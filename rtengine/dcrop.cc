@@ -808,6 +808,10 @@ void Crop::update (int todo)
         parent->ipf.chromiLuminanceCurve (this, 1, labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve,  parent->clcurve, parent->lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
         parent->ipf.vibrance (labnCrop);
 
+        if (params.fattal.enabled) {
+            parent->ipf.ToneMapFattal02(labnCrop, 3);
+        }
+        
         if ((params.colorappearance.enabled && !params.colorappearance.tonecie) ||  (!params.colorappearance.enabled)) {
             parent->ipf.EPDToneMap (labnCrop, 5, skip);
         }
@@ -1077,6 +1081,11 @@ void Crop::freeAll ()
 namespace
 {
 
+bool check_need_full_image(const ProcParams &params)
+{
+    return params.fattal.enabled; // agriggio - maybe we can do this for wavelets too?
+}
+
 bool check_need_larger_crop_for_lcp_distortion (int fw, int fh, int x, int y, int w, int h, const ProcParams &params)
 {
     if (x == 0 && y == 0 && w == fw && h == fh) {
@@ -1139,6 +1148,14 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
     ory = by1;
     orw = bw;
     orh = bh;
+
+    if (check_need_full_image(parent->params)) {
+        orx = bx1 = 0;
+        ory = by1 = 0;
+        orw = bw = parent->fullw;
+        orh = bh = parent->fullh;
+    }
+    
     ProcParams& params = parent->params;
 
     parent->ipf.transCoord (parent->fw, parent->fh, bx1, by1, bw, bh, orx, ory, orw, orh);
@@ -1177,7 +1194,6 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
         orw = min (x2 - x1, parent->fw - orx);
         orh = min (y2 - y1, parent->fh - ory);
     }
-
 
     PreviewProps cp (orx, ory, orw, orh, skip);
     int orW, orH;

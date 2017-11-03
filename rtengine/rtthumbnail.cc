@@ -1275,6 +1275,10 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     ipf.vibrance (labView);
 
+    if (params.fattal.enabled) {
+        ipf.ToneMapFattal02(labView, 0);
+    }
+
     if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || !params.colorappearance.enabled) {
         ipf.EPDToneMap (labView, 5, 6);
     }

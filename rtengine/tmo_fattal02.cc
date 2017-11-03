@@ -68,6 +68,8 @@
 #include "array2D.h"
 #include "improcfun.h"
 #include "settings.h"
+#include "iccstore.h"
+
 
 namespace rtengine {
 
@@ -155,6 +157,15 @@ void gaussianBlur(const Array2Df& I, Array2Df& L)
 
     Array2Df T(width,height);
 
+    if (width < 3 || height < 3) {
+        if (&I != &L) {
+            for (int i = 0, n = width*height; i < n; ++i) {
+                L(i) = I(i);
+            }
+        }
+        return;
+    }
+
     //--- X blur
     //#pragma omp parallel for shared(I, T)
     for ( int y=0 ; y<height ; y++ )
@@ -202,10 +213,20 @@ void createGaussianPyramids( Array2Df* H, Array2Df** pyramids, int nlevels)
 
   for ( int k=1 ; k<nlevels ; k++ )
   {
-    width /= 2;
-    height /= 2;
-    pyramids[k] = new Array2Df(width,height);
-    downSample(*L, *pyramids[k]);
+      if (width > 2 && height > 2) {
+          width /= 2;
+          height /= 2;
+          pyramids[k] = new Array2Df(width,height);
+          downSample(*L, *pyramids[k]);
+      } else {
+          // RT - now nlevels is fixed in tmo_fattal02 (see the comment in
+          // there), so it might happen that we have to add some padding to
+          // the gaussian pyramids
+          pyramids[k] = new Array2Df(width,height);
+          for (int j = 0, n = width*height; j < n; ++j) {
+              (*pyramids[k])(j) = (*L)(j);
+          }
+      }
 
     delete L;
     L = new Array2Df(width,height);
@@ -379,7 +400,7 @@ void findMaxMinPercentile(const Array2Df& I,
     maxLum = vI.at( int(maxPrct*vI.size()) );
 }
 
-void solve_pde_fft(Array2Df *F, Array2Df *U);
+void solve_pde_fft(Array2Df *F, Array2Df *U, bool multithread);
 
 void tmo_fattal02(size_t width,
                   size_t height,
@@ -388,7 +409,8 @@ void tmo_fattal02(size_t width,
                   float alfa,
                   float beta,
                   float noise,
-                  int detail_level)
+                  int detail_level,
+                  bool multithread)
 {
 // #ifdef TIMER_PROFILING
 //     msec_timer stop_watch;
@@ -404,15 +426,21 @@ void tmo_fattal02(size_t width,
   // ph.setValue(2);
   // if (ph.canceled()) return;
 
-  int MSIZE = 32;         // minimum size of gaussian pyramid
-  // I believe a smaller value than 32 results in slightly better overall
-  // quality but I'm only applying this if the newly implemented fft solver
-  // is used in order not to change behaviour of the old version
-  // TODO: best let the user decide this value
-  // if (fftsolver)
-  {
-     MSIZE = 8;
-  }
+    /* RT -- we use a hardcoded value of 8 for nlevels, to limit the
+     * dependency of the result on the image size. When using an auto computed
+     * nlevels value, you would get vastly different results with different
+     * image sizes, making it essentially impossible to preview the tool
+     * inside RT. With a hardcoded value, the results for the preview are much
+     * closer to those for the final image */
+  // int MSIZE = 32;         // minimum size of gaussian pyramid
+  // // I believe a smaller value than 32 results in slightly better overall
+  // // quality but I'm only applying this if the newly implemented fft solver
+  // // is used in order not to change behaviour of the old version
+  // // TODO: best let the user decide this value
+  // // if (fftsolver)
+  // {
+  //    MSIZE = 8;
+  // }
 
   int size = width*height;
   // unsigned int x,y;
@@ -435,16 +463,17 @@ void tmo_fattal02(size_t width,
   // ph.setValue(4);
 
   // create gaussian pyramids
-  int mins = (width<height) ? width : height;    // smaller dimension
-  int nlevels = 0;
-  while ( mins >= MSIZE )
-  {
-    nlevels++;
-    mins /= 2;
-  }
-  // std::cout << "DEBUG: nlevels = " << nlevels << ", mins = " << mins << std::endl;
-  // The following lines solves a bug with images particularly small
-  if (nlevels == 0) nlevels = 1;
+  // int mins = (width<height) ? width : height;    // smaller dimension
+  // int nlevels = 0;
+  // while ( mins >= MSIZE )
+  // {
+  //   nlevels++;
+  //   mins /= 2;
+  // }
+  // // std::cout << "DEBUG: nlevels = " << nlevels << ", mins = " << mins << std::endl;
+  // // The following lines solves a bug with images particularly small
+  // if (nlevels == 0) nlevels = 1;
+  const int nlevels = 7; // RT -- see above
 
   Array2Df** pyramids = new Array2Df*[nlevels];
   createGaussianPyramids(H, pyramids, nlevels);
@@ -551,7 +580,7 @@ void tmo_fattal02(size_t width,
   Array2Df U(width, height);
   // if (fftsolver)
   {
-      solve_pde_fft(&DivG, &U);//, ph);
+      solve_pde_fft(&DivG, &U, multithread);//, ph);
   }
   // else
   // {
@@ -798,7 +827,7 @@ std::vector<double> get_lambda(int n)
 // not modified and the equation might not have a solution but an
 // approximate solution with a minimum error is then calculated
 // double precision version
-void solve_pde_fft(Array2Df *F, Array2Df *U)/*, pfs::Progress &ph,
+void solve_pde_fft(Array2Df *F, Array2Df *U, bool multithread)/*, pfs::Progress &ph,
                                               bool adjust_bound)*/
 {
    // ph.setValue(20);
@@ -809,8 +838,10 @@ void solve_pde_fft(Array2Df *F, Array2Df *U)/*, pfs::Progress &ph,
 
   // activate parallel execution of fft routines
 #ifdef RT_FFTW3F_OMP
-  fftwf_init_threads();
-  fftwf_plan_with_nthreads( omp_get_max_threads() );
+  if (multithread) {
+      fftwf_init_threads();
+      fftwf_plan_with_nthreads( omp_get_max_threads() );
+  }
 // #else
 //   fftwf_plan_with_nthreads( 2 );
 #endif
@@ -883,7 +914,9 @@ void solve_pde_fft(Array2Df *F, Array2Df *U)/*, pfs::Progress &ph,
 
   // fft parallel threads cleanup, better handled outside this function?
 #ifdef RT_FFTW3F_OMP
-  fftwf_cleanup_threads();
+  if (multithread) {
+      fftwf_cleanup_threads();
+  }
 #endif
 
   // ph.setValue(90);
@@ -916,10 +949,7 @@ void solve_pde_fft(Array2Df *F, Array2Df *U)/*, pfs::Progress &ph,
 // }
 
 
-} // namespace
-
-
-void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, int detail_level)
+void tmo_fattal02_RT(Imagefloat *rgb, float alpha, float beta, int detail_level, bool multiThread)
 {
     int w = rgb->getWidth();
     int h = rgb->getHeight();
@@ -936,8 +966,8 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, int detail_level)
         }
     }
 
-    float alpha = params->fattal.alpha;
-    float beta = params->fattal.beta;
+    // float alpha = params->fattal.alpha;
+    // float beta = params->fattal.beta;
     float noise = alpha * 0.01f;
 
     if (settings->verbose) {
@@ -945,7 +975,7 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, int detail_level)
                   << ", detail_level = " << detail_level << std::endl;
     }
 
-    tmo_fattal02(w, h, Yr, L, alpha, beta, noise, detail_level);
+    tmo_fattal02(w, h, Yr, L, alpha, beta, noise, detail_level, multiThread);
 
     const float epsilon = 1e-4f;
     for (int y = 0; y < h; y++) {
@@ -959,6 +989,17 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, int detail_level)
     }
 
     rgb->normalizeFloatTo65535();
+}
+
+} // namespace
+
+
+void ImProcFunctions::ToneMapFattal02(LabImage *lab, int detail_level)
+{
+    Imagefloat tmp(lab->W, lab->H);
+    lab2rgb(*lab, tmp, params->icm.working);
+    tmo_fattal02_RT(&tmp, params->fattal.alpha, params->fattal.beta, detail_level, multiThread);
+    rgb2lab(tmp, *lab, params->icm.working);
 }
 
 } // namespace rtengine
