@@ -833,6 +833,10 @@ private:
         //ImProcFunctions ipf (&params, true);
         ImProcFunctions &ipf = * (ipf_p.get());
 
+        if (params.fattal.enabled) {
+            ipf.ToneMapFattal02(baseImg);
+        }
+        
         if (params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
             const int W = baseImg->getWidth();
             const int H = baseImg->getHeight();
@@ -1012,10 +1016,6 @@ private:
                                        params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve, 1);
 
         ipf.chromiLuminanceCurve (nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
-
-        if (params.fattal.enabled) {
-            ipf.ToneMapFattal02(labView, 3);
-        }
 
         if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled)) {
             ipf.EPDToneMap (labView, 5, 1);

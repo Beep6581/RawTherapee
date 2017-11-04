@@ -1102,6 +1102,10 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         baseImg = trImg;
     }
 
+    if (params.fattal.enabled) {
+        ipf.ToneMapFattal02(baseImg);
+    }
+
     // update blurmap
     SHMap* shmap = nullptr;
 
@@ -1274,10 +1278,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     ipf.chromiLuminanceCurve (nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 
     ipf.vibrance (labView);
-
-    if (params.fattal.enabled) {
-        ipf.ToneMapFattal02(labView, 0);
-    }
 
     if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || !params.colorappearance.enabled) {
         ipf.EPDToneMap (labView, 5, 6);

@@ -1030,7 +1030,9 @@ void rescale_bilinear(const Array2Df &src, Array2Df &dst, bool multithread)
     float col_scale = float(src.getCols())/float(dst.getCols());
     float row_scale = float(src.getRows())/float(dst.getRows());
 
+#ifdef _OPENMP
     #pragma omp parallel for if (multithread)
+#endif
     for (int x = 0; x < dst.getCols(); ++x) {
         for (int y = 0; y < dst.getRows(); ++y) {
             dst(x, y) = get_bilinear_value(src, x * col_scale, y * row_scale);
@@ -1047,17 +1049,17 @@ void tmo_fattal02_RT(Imagefloat *rgb, float alpha, float beta, int detail_level,
     Array2Df Yr(w, h);
     Array2Df L(w, h);
 
-    rgb->normalizeFloatTo1();
-
+    const float epsilon = 1e-4f;
+    
+#ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
+#endif
     for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++) {
-            Yr(x, y) = Color::rgbLuminance(rgb->r(y, x), rgb->g(y, x), rgb->b(y, x));
+            Yr(x, y) = std::max(Color::rgbLuminance(rgb->r(y, x), rgb->g(y, x), rgb->b(y, x)), epsilon); // clip really black pixels, otherwise it doesn't work at all (not sure why...)
         }
     }
 
-    // float alpha = params->fattal.alpha;
-    // float beta = params->fattal.beta;
     float noise = alpha * 0.01f;
 
     if (settings->verbose) {
@@ -1067,10 +1069,9 @@ void tmo_fattal02_RT(Imagefloat *rgb, float alpha, float beta, int detail_level,
 
     tmo_fattal02(w, h, Yr, L, alpha, beta, noise, detail_level, multiThread);
 
-    const float epsilon = 1e-4f;
     for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++) {
-            float Y = std::max(Yr(x, y), epsilon);
+            float Y = Yr(x, y);
             float l = std::max(L(x, y), epsilon);
             rgb->r(y, x) = std::max(rgb->r(y, x)/Y, 0.f) * l;
             rgb->g(y, x) = std::max(rgb->g(y, x)/Y, 0.f) * l;
@@ -1084,12 +1085,11 @@ void tmo_fattal02_RT(Imagefloat *rgb, float alpha, float beta, int detail_level,
 } // namespace
 
 
-void ImProcFunctions::ToneMapFattal02(LabImage *lab, int detail_level)
+void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb)
 {
-    Imagefloat tmp(lab->W, lab->H);
-    lab2rgb(*lab, tmp, params->icm.working);
-    tmo_fattal02_RT(&tmp, params->fattal.alpha, params->fattal.beta, detail_level, multiThread);
-    rgb2lab(tmp, *lab, params->icm.working);
+    const int detail_level = 3;
+    tmo_fattal02_RT(rgb, params->fattal.alpha, params->fattal.beta, detail_level, multiThread);
 }
+
 
 } // namespace rtengine

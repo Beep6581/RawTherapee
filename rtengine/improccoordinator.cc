@@ -407,6 +407,15 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         }
     }
 
+    if ((todo & M_RGBCURVE) && params.fattal.enabled) {
+        Imagefloat *fattalprev = oprevi->copy();
+        ipf.ToneMapFattal02(fattalprev);
+        if (oprevi != orig_prev) {
+            delete oprevi;
+        }
+        oprevi = fattalprev;
+    } 
+
     if ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
         const int W = oprevi->getWidth();
         const int H = oprevi->getHeight();
@@ -636,10 +645,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         ipf.chromiLuminanceCurve (nullptr, pW, nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, histCCurve, histLCurve);
         ipf.vibrance (nprevl);
 
-        if (params.fattal.enabled) {
-            ipf.ToneMapFattal02(nprevl, 3);
-        }
-        
         if ((params.colorappearance.enabled && !params.colorappearance.tonecie) ||  (!params.colorappearance.enabled)) {
             ipf.EPDToneMap (nprevl, 5, scale);
         }

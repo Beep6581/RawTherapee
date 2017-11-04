@@ -715,6 +715,13 @@ void Crop::update (int todo)
         transCrop = nullptr;
     }
 
+    std::unique_ptr<Imagefloat> fattalCrop;
+    if ((todo & M_RGBCURVE) && params.fattal.enabled) {
+        fattalCrop.reset(baseCrop->copy());
+        parent->ipf.ToneMapFattal02(fattalCrop.get());
+        baseCrop = fattalCrop.get();
+    }
+    
     if ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
 
         const int W = baseCrop->getWidth();
@@ -808,10 +815,6 @@ void Crop::update (int todo)
         parent->ipf.chromiLuminanceCurve (this, 1, labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve,  parent->clcurve, parent->lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
         parent->ipf.vibrance (labnCrop);
 
-        if (params.fattal.enabled) {
-            parent->ipf.ToneMapFattal02(labnCrop, 3);
-        }
-        
         if ((params.colorappearance.enabled && !params.colorappearance.tonecie) ||  (!params.colorappearance.enabled)) {
             parent->ipf.EPDToneMap (labnCrop, 5, skip);
         }
