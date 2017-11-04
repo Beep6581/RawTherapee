@@ -30,7 +30,7 @@ FattalToneMapping::FattalToneMapping(): FoldableToolPanel(this, "fattal", M("TP_
 //    setEnabledTooltipMarkup(M("TP_EPD_TOOLTIP"));
     
     alpha = Gtk::manage(new Adjuster (M("TP_TM_FATTAL_ALPHA"), 0.0, 2.0, 0.01, 1.0));
-    beta = Gtk::manage(new Adjuster (M("TP_TM_FATTAL_BETA"), 0.0, 2.0, 0.01, 1.0));
+    beta = Gtk::manage(new Adjuster (M("TP_TM_FATTAL_BETA"), 0.7, 1.3, 0.01, 1.0));
 
     alpha->setAdjusterListener(this);
     beta->setAdjusterListener(this);
@@ -116,5 +116,11 @@ void FattalToneMapping::setBatchMode(bool batchMode)
 
     alpha->showEditedCB();
     beta->showEditedCB();
+}
+
+void FattalToneMapping::setAdjusterBehavior (bool alphaAdd, bool betaAdd)
+{
+    alpha->setAddMode(alphaAdd);
+    beta->setAddMode(betaAdd);
 }
 
