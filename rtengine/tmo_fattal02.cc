@@ -1043,6 +1043,11 @@ void rescale_bilinear(const Array2Df &src, Array2Df &dst, bool multithread)
 
 void tmo_fattal02_RT(Imagefloat *rgb, float alpha, float beta, int detail_level, bool multiThread)
 {
+    // sanity check
+    if (alpha <= 0 || beta <= 0) {
+        return;
+    }
+    
     int w = rgb->getWidth();
     int h = rgb->getHeight();
     
