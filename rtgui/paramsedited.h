@@ -368,8 +368,8 @@ public:
 class FattalToneMappingParamsEdited {
 public:
     bool enabled;
-    bool alpha;
-    bool beta;
+    bool threshold;
+    bool amount;
 };
 
 

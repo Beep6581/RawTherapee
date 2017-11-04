@@ -2449,12 +2449,12 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_boolean ("FattalToneMapping", "Enabled", fattal.enabled);
         }
 
-        if (!pedited || pedited->fattal.alpha) {
-            keyFile.set_double ("FattalToneMapping", "Alpha", fattal.alpha);
+        if (!pedited || pedited->fattal.threshold) {
+            keyFile.set_integer ("FattalToneMapping", "Threshold", fattal.threshold);
         }
 
-        if (!pedited || pedited->fattal.beta) {
-            keyFile.set_double ("FattalToneMapping", "Beta", fattal.beta);
+        if (!pedited || pedited->fattal.amount) {
+            keyFile.set_integer ("FattalToneMapping", "Amount", fattal.amount);
         }
         
         /*
@@ -5613,19 +5613,19 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
-            if (keyFile.has_key ("FattalToneMapping", "Alpha")) {
-                fattal.alpha = keyFile.get_double ("FattalToneMapping", "Alpha");
+            if (keyFile.has_key ("FattalToneMapping", "Threshold")) {
+                fattal.threshold = keyFile.get_double ("FattalToneMapping", "Threshold");
 
                 if (pedited) {
-                    pedited->fattal.alpha = true;
+                    pedited->fattal.threshold = true;
                 }
             }
 
-            if (keyFile.has_key ("FattalToneMapping", "Beta")) {
-                fattal.beta = keyFile.get_double ("FattalToneMapping", "Beta");
+            if (keyFile.has_key ("FattalToneMapping", "Amount")) {
+                fattal.amount = keyFile.get_double ("FattalToneMapping", "Amount");
 
                 if (pedited) {
-                    pedited->fattal.beta = true;
+                    pedited->fattal.amount = true;
                 }
             }
         }        
@@ -8489,8 +8489,8 @@ bool ProcParams::operator== (const ProcParams& other)
         && epd.scale == other.epd.scale
         && epd.reweightingIterates == other.epd.reweightingIterates
         && fattal.enabled == other.fattal.enabled
-        && fattal.alpha == other.fattal.alpha
-        && fattal.beta == other.fattal.beta
+        && fattal.threshold == other.fattal.threshold
+        && fattal.amount == other.fattal.amount
         && defringe.enabled == other.defringe.enabled
         && defringe.radius == other.defringe.radius
         && defringe.threshold == other.defringe.threshold

@@ -1093,7 +1093,13 @@ void tmo_fattal02_RT(Imagefloat *rgb, float alpha, float beta, int detail_level,
 void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb)
 {
     const int detail_level = 3;
-    tmo_fattal02_RT(rgb, params->fattal.alpha, params->fattal.beta, detail_level, multiThread);
+    double alpha = 1.;
+    if (params->fattal.threshold < 0) {
+        alpha += (params->fattal.threshold * 0.9) / 100.;
+    } else if (params->fattal.threshold > 0) {
+        alpha += params->fattal.threshold / 100.;
+    }
+    tmo_fattal02_RT(rgb, alpha, 1. - (params->fattal.amount * 0.3) / 100., detail_level, multiThread);
 }
 
 

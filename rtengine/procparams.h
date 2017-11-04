@@ -743,8 +743,8 @@ public:
 class FattalToneMappingParams {
 public:
     bool enabled;
-    double alpha;
-    double beta;
+    int threshold;
+    int amount;
     
     FattalToneMappingParams()
     {
@@ -754,8 +754,8 @@ public:
     void setDefaults()
     {
         enabled = false;
-        alpha = 1.0;
-        beta = 1.0;
+        threshold = 0;
+        amount = 0;
     }
 };
 

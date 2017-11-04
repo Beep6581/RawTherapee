@@ -26,8 +26,8 @@
 class FattalToneMapping: public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
 {
 protected:
-    Adjuster *alpha;
-    Adjuster *beta;
+    Adjuster *threshold;
+    Adjuster *amount;
 
 public:
 

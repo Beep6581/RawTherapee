@@ -28,18 +28,18 @@ FattalToneMapping::FattalToneMapping(): FoldableToolPanel(this, "fattal", M("TP_
 {
 
 //    setEnabledTooltipMarkup(M("TP_EPD_TOOLTIP"));
-    
-    alpha = Gtk::manage(new Adjuster (M("TP_TM_FATTAL_ALPHA"), 0.0, 2.0, 0.01, 1.0));
-    beta = Gtk::manage(new Adjuster (M("TP_TM_FATTAL_BETA"), 0.7, 1.3, 0.01, 1.0));
 
-    alpha->setAdjusterListener(this);
-    beta->setAdjusterListener(this);
+    threshold = Gtk::manage(new Adjuster (M("TP_TM_FATTAL_THRESHOLD"), -100., 100., 1., 0.0));
+    amount = Gtk::manage(new Adjuster (M("TP_TM_FATTAL_AMOUNT"), -100., 100., 1., 0.0));
 
-    alpha->show();
-    beta->show();
+    threshold->setAdjusterListener(this);
+    amount->setAdjusterListener(this);
 
-    pack_start(*alpha);
-    pack_start(*beta);
+    threshold->show();
+    amount->show();
+
+    pack_start(*threshold);
+    pack_start(*amount);
 }
 
 void FattalToneMapping::read(const ProcParams *pp, const ParamsEdited *pedited)
@@ -47,52 +47,52 @@ void FattalToneMapping::read(const ProcParams *pp, const ParamsEdited *pedited)
     disableListener();
 
     if(pedited) {
-        alpha->setEditedState(pedited->fattal.alpha ? Edited : UnEdited);
-        beta->setEditedState(pedited->fattal.beta ? Edited : UnEdited);
+        threshold->setEditedState(pedited->fattal.threshold ? Edited : UnEdited);
+        amount->setEditedState(pedited->fattal.amount ? Edited : UnEdited);
         set_inconsistent(multiImage && !pedited->fattal.enabled);
     }
 
     setEnabled(pp->fattal.enabled);
-    alpha->setValue(pp->fattal.alpha);
-    beta->setValue(pp->fattal.beta);
+    threshold->setValue(pp->fattal.threshold);
+    amount->setValue(pp->fattal.amount);
 
     enableListener();
 }
 
 void FattalToneMapping::write(ProcParams *pp, ParamsEdited *pedited)
 {
-    pp->fattal.alpha = alpha->getValue();
-    pp->fattal.beta = beta->getValue();
+    pp->fattal.threshold = threshold->getValue();
+    pp->fattal.amount = amount->getValue();
     pp->fattal.enabled = getEnabled();
 
     if(pedited) {
-        pedited->fattal.alpha = alpha->getEditedState();
-        pedited->fattal.beta = beta->getEditedState();
+        pedited->fattal.threshold = threshold->getEditedState();
+        pedited->fattal.amount = amount->getEditedState();
         pedited->fattal.enabled = !get_inconsistent();
     }
 }
 
 void FattalToneMapping::setDefaults(const ProcParams *defParams, const ParamsEdited *pedited)
 {
-    alpha->setDefault(defParams->fattal.alpha);
-    beta->setDefault(defParams->fattal.beta);
+    threshold->setDefault(defParams->fattal.threshold);
+    amount->setDefault(defParams->fattal.amount);
 
     if(pedited) {
-        alpha->setDefaultEditedState(pedited->fattal.alpha ? Edited : UnEdited);
-        beta->setDefaultEditedState(pedited->fattal.beta ? Edited : UnEdited);
+        threshold->setDefaultEditedState(pedited->fattal.threshold ? Edited : UnEdited);
+        amount->setDefaultEditedState(pedited->fattal.amount ? Edited : UnEdited);
     } else {
-        alpha->setDefaultEditedState(Irrelevant);
-        beta->setDefaultEditedState(Irrelevant);
+        threshold->setDefaultEditedState(Irrelevant);
+        amount->setDefaultEditedState(Irrelevant);
     }
 }
 
 void FattalToneMapping::adjusterChanged(Adjuster* a, double newval)
 {
     if(listener && getEnabled()) {
-        if(a == alpha) {
-            listener->panelChanged(EvTMFattalAlpha, Glib::ustring::format(std::setw(2), std::fixed, std::setprecision(2), a->getValue()));
-        } else if(a == beta) {
-            listener->panelChanged(EvTMFattalBeta, Glib::ustring::format(std::setw(2), std::fixed, std::setprecision(2), a->getValue()));
+        if(a == threshold) {
+            listener->panelChanged(EvTMFattalThreshold, a->getTextValue());
+        } else if(a == amount) {
+            listener->panelChanged(EvTMFattalAmount, a->getTextValue());
         }
     }
 }
@@ -114,13 +114,13 @@ void FattalToneMapping::setBatchMode(bool batchMode)
 {
     ToolPanel::setBatchMode(batchMode);
 
-    alpha->showEditedCB();
-    beta->showEditedCB();
+    threshold->showEditedCB();
+    amount->showEditedCB();
 }
 
 void FattalToneMapping::setAdjusterBehavior (bool alphaAdd, bool betaAdd)
 {
-    alpha->setAddMode(alphaAdd);
-    beta->setAddMode(betaAdd);
+    threshold->setAddMode(alphaAdd);
+    amount->setAddMode(betaAdd);
 }
 
