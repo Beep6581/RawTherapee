@@ -38,8 +38,8 @@ FattalToneMapping::FattalToneMapping(): FoldableToolPanel(this, "fattal", M("TP_
     threshold->show();
     amount->show();
 
-    pack_start(*threshold);
     pack_start(*amount);
+    pack_start(*threshold);
 }
 
 void FattalToneMapping::read(const ProcParams *pp, const ParamsEdited *pedited)
