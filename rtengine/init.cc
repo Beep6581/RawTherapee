@@ -38,6 +38,7 @@ namespace rtengine
 const Settings* settings;
 
 MyMutex* lcmsMutex = nullptr;
+MyMutex *fftwMutex = nullptr;
 
 int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDir, bool loadAll)
 {
@@ -101,6 +102,7 @@ int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDi
     Color::init ();
     delete lcmsMutex;
     lcmsMutex = new MyMutex;
+    fftwMutex = new MyMutex;
     return 0;
 }
 

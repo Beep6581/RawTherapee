@@ -74,6 +74,7 @@
 namespace rtengine {
 
 extern const Settings *settings;
+extern MyMutex *fftwMutex;
 
 using namespace std;
 
@@ -629,6 +630,7 @@ void tmo_fattal02(size_t width,
   Array2Df U(width, height);
   // if (fftsolver)
   {
+      MyMutex::MyLock lock(*fftwMutex);
       solve_pde_fft(&DivG, &U, multithread);//, ph);
   }
   // else

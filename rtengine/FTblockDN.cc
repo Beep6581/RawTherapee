@@ -71,6 +71,8 @@ namespace rtengine
 
 
 extern const Settings* settings;
+extern MyMutex *fftwMutex;
+
 
 void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, const int height, const Median medianType, const int iterations, const int numThreads, float **buffer)
 {
@@ -445,8 +447,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
         return;
     }
 
-    static MyMutex FftwMutex;
-    MyMutex::MyLock lock(FftwMutex);
+    MyMutex::MyLock lock(*fftwMutex);
 
     const nrquality nrQuality = (dnparams.smethod == "shal") ? QUALITY_STANDARD : QUALITY_HIGH;//shrink method
     const float qhighFactor = (nrQuality == QUALITY_HIGH) ? 1.f / static_cast<float>( settings->nrhigh) : 1.0f;
