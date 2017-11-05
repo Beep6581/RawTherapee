@@ -29,14 +29,14 @@ FattalToneMapping::FattalToneMapping(): FoldableToolPanel(this, "fattal", M("TP_
 
 //    setEnabledTooltipMarkup(M("TP_EPD_TOOLTIP"));
 
+    amount = Gtk::manage(new Adjuster (M("TP_TM_FATTAL_AMOUNT"), 0., 100., 1., 0.0));
     threshold = Gtk::manage(new Adjuster (M("TP_TM_FATTAL_THRESHOLD"), -100., 100., 1., 0.0));
-    amount = Gtk::manage(new Adjuster (M("TP_TM_FATTAL_AMOUNT"), -100., 100., 1., 0.0));
 
-    threshold->setAdjusterListener(this);
     amount->setAdjusterListener(this);
+    threshold->setAdjusterListener(this);
 
-    threshold->show();
     amount->show();
+    threshold->show();
 
     pack_start(*amount);
     pack_start(*threshold);
