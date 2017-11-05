@@ -366,9 +366,8 @@ void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, 
 #ifdef _OPENMP
         #pragma omp parallel for num_threads(numThreads) if (numThreads>1)
 #endif
-
-        for (int i = border; i < height - border; ++i) {
-            for (int j = border; j < width - border; ++j) {
+        for (int i = 0; i < height; ++i) {
+            for (int j = 0; j < width; ++j) {
                 dst[i][j] = medianOut[i][j];
             }
         }
