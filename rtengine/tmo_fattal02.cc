@@ -73,6 +73,10 @@
 
 namespace rtengine {
 
+/******************************************************************************
+ * RT code
+ ******************************************************************************/
+
 extern const Settings *settings;
 extern MyMutex *fftwMutex;
 
@@ -127,6 +131,15 @@ public:
     }
 };
 
+// upper bound on image dimension used in tmo_fattal02 -- see the comment there
+const int RT_dimension_cap = 1920;
+
+void rescale_bilinear(const Array2Df &src, Array2Df &dst, bool multithread);
+
+
+/******************************************************************************
+ * Luminance HDR code (modifications are marked with an RT comment)
+ ******************************************************************************/
 
 void downSample(const Array2Df& A, Array2Df& B)
 {
@@ -402,7 +415,6 @@ void findMaxMinPercentile(const Array2Df& I,
 }
 
 void solve_pde_fft(Array2Df *F, Array2Df *U, bool multithread);
-void rescale_bilinear(const Array2Df &src, Array2Df &dst, bool multithread); // RT
 
 void tmo_fattal02(size_t width,
                   size_t height,
@@ -470,9 +482,10 @@ void tmo_fattal02(size_t width,
    * reasonably close to the actual output image. Intuitively, what we do is
    * to put a cap on the dimension of the image processed, so that it is close
    * in size to the typical preview that you will see on a normal consumer
-   * monitor. (That's where the 1920 comes from here.) However, we can't
-   * simply downscale the input Y array and then upscale it on output, because
-   * that would cause a big loss of sharpness (confirmed by testing).
+   * monitor. (That's where the 1920 value for RT_dimension_cap comes from.)
+   * However, we can't simply downscale the input Y array and then upscale it
+   * on output, because that would cause a big loss of sharpness (confirmed by
+   * testing).
    * So, we use a different method: we downscale the H array, so that we
    * compute a downscaled gaussian pyramid and a downscaled FI matrix. Then,
    * we upscale the FI matrix later on, before it gets combined with the
@@ -484,10 +497,9 @@ void tmo_fattal02(size_t width,
    * knows better... also, we use a quite naive bilinear interpolation
    * algorithm (see rescale_bilinear below), which could definitely be
    * improved */
-  const int RT_dimension_cap = 1920;
   int fullwidth = width;
   int fullheight = height;
-  int dim = std::min(width, height);
+  int dim = std::max(width, height);
   Array2Df *fullH = nullptr;
   if (dim > RT_dimension_cap) {
       float s = float(RT_dimension_cap) / float(dim);
@@ -1042,9 +1054,22 @@ void rescale_bilinear(const Array2Df &src, Array2Df &dst, bool multithread)
     }
 }
 
+} // namespace
 
-void tmo_fattal02_RT(Imagefloat *rgb, float alpha, float beta, int detail_level, bool multiThread)
+
+void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb)
 {
+    const int detail_level = 3;
+
+    float alpha = 1.f;
+    if (params->fattal.threshold < 0) {
+        alpha += (params->fattal.threshold * 0.9f) / 100.f;
+    } else if (params->fattal.threshold > 0) {
+        alpha += params->fattal.threshold / 100.f;
+    }
+
+    float beta = 1.f - (params->fattal.amount * 0.3f) / 100.f;
+    
     // sanity check
     if (alpha <= 0 || beta <= 0) {
         return;
@@ -1067,6 +1092,42 @@ void tmo_fattal02_RT(Imagefloat *rgb, float alpha, float beta, int detail_level,
         }
     }
 
+    // median filter on the deep shadows, to avoid boosting noise
+    {
+        const float luminance_noise_floor = 65.535f; // 0.1% -- is this ok?
+        
+#ifdef _OPENMP
+        int num_threads = multiThread ? omp_get_max_threads() : 1;
+#else
+        int num_threads = 1;
+#endif
+        Array2Df Yr_med(w, h);
+        float r = float(std::max(w, h)) / float(RT_dimension_cap);
+        Median med;
+        if (r >= 3) {
+            med = Median::TYPE_7X7;
+        } else if (r >= 2) {
+            med = Median::TYPE_5X5_STRONG;
+        } else if (r >= 1) {
+            med = Median::TYPE_5X5_SOFT;
+        } else {
+            med = Median::TYPE_3X3_STRONG;
+        }
+        Median_Denoise(Yr, Yr_med, w, h, med, 1, num_threads);
+
+#ifdef _OPENMP
+        #pragma omp parallel for if (multiThread)
+#endif
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                if (Yr(x, y) <= luminance_noise_floor) {
+                    Yr(x, y) = Yr_med(x, y);
+                }
+            }
+        }
+    }
+    
+
     float noise = alpha * 0.01f;
 
     if (settings->verbose) {
@@ -1087,21 +1148,6 @@ void tmo_fattal02_RT(Imagefloat *rgb, float alpha, float beta, int detail_level,
     }
 
     rgb->normalizeFloatTo65535();
-}
-
-} // namespace
-
-
-void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb)
-{
-    const int detail_level = 3;
-    double alpha = 1.;
-    if (params->fattal.threshold < 0) {
-        alpha += (params->fattal.threshold * 0.9) / 100.;
-    } else if (params->fattal.threshold > 0) {
-        alpha += params->fattal.threshold / 100.;
-    }
-    tmo_fattal02_RT(rgb, alpha, 1. - (params->fattal.amount * 0.3) / 100., detail_level, multiThread);
 }
 
 
