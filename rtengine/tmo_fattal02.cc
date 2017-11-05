@@ -69,8 +69,10 @@
 #include "improcfun.h"
 #include "settings.h"
 #include "iccstore.h"
-
-
+#define BENCHMARK
+#include "StopWatch.h"
+#include "sleef.c"
+#include "opthelper.h"
 namespace rtengine {
 
 /******************************************************************************
@@ -426,6 +428,7 @@ void tmo_fattal02(size_t width,
                   int detail_level,
                   bool multithread)
 {
+    BENCHFUN
 // #ifdef TIMER_PROFILING
 //     msec_timer stop_watch;
 //     stop_watch.start();
@@ -471,10 +474,35 @@ void tmo_fattal02(size_t width,
   }
   Array2Df* H = new Array2Df(width, height);
   //#pragma omp parallel for private(i) shared(H, Y, maxLum)
-  for ( int i=0 ; i<size ; i++ )
+  StopWatch Stop1("logf");
+  float temp = 100.f / maxLum;
+  #pragma omp parallel
   {
-      (*H)(i) = logf( 100.0f* Y(i)/maxLum + 1e-4 );
+#ifdef __SSE2__
+  vfloat epsv = F2V(1e-4);
+  vfloat tempv = F2V(temp);
+#endif
+  #pragma omp for schedule(dynamic,16)
+  for ( size_t i=0 ; i<height ; i++ ) {
+      size_t j = 0;
+#ifdef __SSE2__
+      for(; j < width - 3; j+=4)
+      {
+          STVFU((*H)[i][j], xlogf(tempv * LVFU(Y[i][j]) + epsv));
+      }
+#endif
+      for(; j < width; j++)
+      {
+          (*H)[i][j] = xlogf( temp * Y[i][j] + 1e-4 );
+      }
   }
+  }
+//  #pragma omp parallel for
+//  for ( int i=0 ; i<size ; i++ )
+//  {
+//      (*H)(i) = xlogf( temp * Y(i) + 1e-4 );
+//  }
+  Stop1.stop();
   // ph.setValue(4);
 
   /** RT - this is also here to reduce the dependency of the results on the
@@ -893,6 +921,7 @@ std::vector<double> get_lambda(int n)
 void solve_pde_fft(Array2Df *F, Array2Df *U, bool multithread)/*, pfs::Progress &ph,
                                               bool adjust_bound)*/
 {
+BENCHFUN
    // ph.setValue(20);
   //DEBUG_STR << "solve_pde_fft: solving Laplace U = F ..." << std::endl;
   int width = F->getCols();
@@ -1059,6 +1088,7 @@ void rescale_bilinear(const Array2Df &src, Array2Df &dst, bool multithread)
 
 void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb)
 {
+    BENCHFUN
     const int detail_level = 3;
 
     float alpha = 1.f;
@@ -1094,6 +1124,7 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb)
 
     // median filter on the deep shadows, to avoid boosting noise
     {
+        StopWatch Stop1("Median");
         const float luminance_noise_floor = 65.535f; // 0.1% -- is this ok?
         
 #ifdef _OPENMP
