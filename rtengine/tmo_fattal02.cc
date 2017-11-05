@@ -215,6 +215,7 @@ void gaussianBlur(const Array2Df& I, Array2Df& L)
 
 void createGaussianPyramids( Array2Df* H, Array2Df** pyramids, int nlevels)
 {
+    BENCHFUN
   int width = H->getCols();
   int height = H->getRows();
   const int size = width*height;
@@ -256,6 +257,7 @@ void createGaussianPyramids( Array2Df* H, Array2Df** pyramids, int nlevels)
 
 float calculateGradients(Array2Df* H, Array2Df* G, int k)
 {
+    BENCHFUN
   const int width = H->getCols();
   const int height = H->getRows();
   const float divider = pow( 2.0f, k+1 );
@@ -331,6 +333,7 @@ void calculateFiMatrix(Array2Df* FI, Array2Df* gradients[],
                        float avgGrad[], int nlevels, int detail_level,
                        float alfa, float beta, float noise)
 {
+    BENCHFUN
     const bool newfattal = true;
     int width = gradients[nlevels-1]->getCols();
     int height = gradients[nlevels-1]->getRows();
@@ -346,6 +349,7 @@ void calculateFiMatrix(Array2Df* FI, Array2Df* gradients[],
         }
     }
 
+StopWatch Stop1("test");
     for ( int k = nlevels-1; k >= 0 ; k-- )
     {
         width = gradients[k]->getCols();
@@ -375,7 +379,6 @@ void calculateFiMatrix(Array2Df* FI, Array2Df* gradients[],
             }
         }
 
-
         // create next level
         if ( k>1 )
         {
@@ -392,6 +395,7 @@ void calculateFiMatrix(Array2Df* FI, Array2Df* gradients[],
             gaussianBlur(*fi[k-1], *fi[k-1]);
         }
     }
+Stop1.stop();
 
     for ( int k=1 ; k<nlevels ; k++ )
     {
@@ -686,10 +690,33 @@ void tmo_fattal02(size_t width,
   //     return;
   // }
 
-  for ( size_t idx = 0 ; idx < height*width; ++idx )
+StopWatch Stope("expf");
+  #pragma omp parallel
   {
-      L(idx) = expf( gamma * U(idx) );
+#ifdef __SSE2__
+  vfloat gammav = F2V(gamma);
+#endif
+  #pragma omp for schedule(dynamic,16)
+  for ( size_t i=0 ; i<height ; i++ ) {
+      size_t j = 0;
+#ifdef __SSE2__
+      for(; j < width - 3; j+=4)
+      {
+          STVFU(L[i][j], xexpf(gammav * LVFU(U[i][j])));
+      }
+#endif
+      for(; j < width; j++)
+      {
+          L[i][j] = xexpf( gamma * U[i][j]);
+      }
   }
+  }
+
+//  for ( size_t idx = 0 ; idx < height*width; ++idx )
+//  {
+//      L(idx) = xexpf( gamma * U(idx) );
+//  }
+Stope.stop();
   }
   // ph.setValue(95);
 
