@@ -1112,21 +1112,20 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb)
     Array2Df L(w, h);
 
     const float epsilon = 1e-4f;
+    const float luminance_noise_floor = 65.535f;
+    const float min_luminance = 1.f;
     
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
 #endif
     for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++) {
-            Yr(x, y) = std::max(Color::rgbLuminance(rgb->r(y, x), rgb->g(y, x), rgb->b(y, x)), epsilon); // clip really black pixels, otherwise it doesn't work at all (not sure why...)
+            Yr(x, y) = std::max(Color::rgbLuminance(rgb->r(y, x), rgb->g(y, x), rgb->b(y, x)), min_luminance); // clip really black pixels
         }
     }
 
     // median filter on the deep shadows, to avoid boosting noise
     {
-        StopWatch Stop1("Median");
-        const float luminance_noise_floor = 65.535f; // 0.1% -- is this ok?
-        
 #ifdef _OPENMP
         int num_threads = multiThread ? omp_get_max_threads() : 1;
 #else
