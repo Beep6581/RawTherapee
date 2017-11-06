@@ -409,15 +409,35 @@ void findMaxMinPercentile(const Array2Df& I,
                                  float minPrct, float& minLum,
                                  float maxPrct, float& maxLum)
 {
+    BENCHFUN
     const int size = I.getRows() * I.getCols();
     const float* data = I.data();
-    std::vector<float> vI;
 
-    std::copy(data, data + size, std::back_inserter(vI));
-    std::sort(vI.begin(), vI.end());
+    LUTu histo(65535, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
+    histo.clear();
+#pragma omp parallel
+{
+    LUTu histothr(65535, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
+    histothr.clear();
+#pragma omp for nowait
+    for(int i = 0; i< size; ++i) {
+        histothr[(unsigned int)(65535.f * data[i])]++;
+    }
+#pragma omp critical
+    histo += histothr;
+}
+    int k = 0;
+    int count = 0;
+    while(count < minPrct*size) {
+        count += histo[k++];
+    }
+    minLum = k /65535.f;
 
-    minLum = vI.at( int(minPrct*vI.size()) );
-    maxLum = vI.at( int(maxPrct*vI.size()) );
+    while(count < maxPrct*size) {
+        count += histo[k++];
+    }
+    maxLum = k /65535.f;
+
 }
 
 void solve_pde_fft(Array2Df *F, Array2Df *U, bool multithread);
