@@ -215,7 +215,6 @@ void gaussianBlur(const Array2Df& I, Array2Df& L)
 
 void createGaussianPyramids( Array2Df* H, Array2Df** pyramids, int nlevels)
 {
-    BENCHFUN
   int width = H->getCols();
   int height = H->getRows();
   const int size = width*height;
@@ -257,7 +256,6 @@ void createGaussianPyramids( Array2Df* H, Array2Df** pyramids, int nlevels)
 
 float calculateGradients(Array2Df* H, Array2Df* G, int k)
 {
-    BENCHFUN
   const int width = H->getCols();
   const int height = H->getRows();
   const float divider = pow( 2.0f, k+1 );
@@ -333,7 +331,6 @@ void calculateFiMatrix(Array2Df* FI, Array2Df* gradients[],
                        float avgGrad[], int nlevels, int detail_level,
                        float alfa, float beta, float noise)
 {
-    BENCHFUN
     const bool newfattal = true;
     int width = gradients[nlevels-1]->getCols();
     int height = gradients[nlevels-1]->getRows();
@@ -349,7 +346,6 @@ void calculateFiMatrix(Array2Df* FI, Array2Df* gradients[],
         }
     }
 
-StopWatch Stop1("test");
     for ( int k = nlevels-1; k >= 0 ; k-- )
     {
         width = gradients[k]->getCols();
@@ -395,7 +391,6 @@ StopWatch Stop1("test");
             gaussianBlur(*fi[k-1], *fi[k-1]);
         }
     }
-Stop1.stop();
 
     for ( int k=1 ; k<nlevels ; k++ )
     {
@@ -409,34 +404,69 @@ void findMaxMinPercentile(const Array2Df& I,
                                  float minPrct, float& minLum,
                                  float maxPrct, float& maxLum)
 {
-    BENCHFUN
+    assert(minPcrt <= maxPcrt);
+
     const int size = I.getRows() * I.getCols();
     const float* data = I.data();
 
-    LUTu histo(65535, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
+    // we need to find the (minPrct*size) smallest value and the (maxPrct*size) smallest value in I
+    // We use a histogram based search for speed and to reduce memory usage
+    // memory usage of this method is 65536 * sizeof(float) * (t + 1) byte, where t is the number of threads
+
+    // We need one global histogram
+    LUTu histo(65536, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
     histo.clear();
+#ifdef _OPENMP
 #pragma omp parallel
+#endif
 {
-    LUTu histothr(65535, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
+    // We need one histogram per thread
+    LUTu histothr(65536, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
     histothr.clear();
+
+#ifdef _OPENMP
 #pragma omp for nowait
+#endif
     for(int i = 0; i< size; ++i) {
+        // values are in [0;1] range, so we have to multiply with 65535 to get the histogram index
         histothr[(unsigned int)(65535.f * data[i])]++;
     }
+
+#ifdef _OPENMP
 #pragma omp critical
+#endif
+    // add per thread histogram to global histogram
     histo += histothr;
 }
+
     int k = 0;
     int count = 0;
+
+    // find (minPrct*size) smallest value
     while(count < minPrct*size) {
         count += histo[k++];
     }
-    minLum = k /65535.f;
+    if(k > 0) { // interpolate
+        int count_ = count - histo[k - 1];
+        float c0 = count - minPrct * size;
+        float c1 = minPrct * size - count_;
+        minLum = (c1 * k + c0 * (k - 1)) / ((c0 + c1) * 65535.f);
+    } else {
+        minLum = k /65535.f;
+    }
 
+    // find (maxPrct*size) smallest value
     while(count < maxPrct*size) {
         count += histo[k++];
     }
-    maxLum = k /65535.f;
+    if(k > 0) { // interpolate
+        int count_ = count - histo[k - 1];
+        float c0 = count - maxPrct * size;
+        float c1 = maxPrct * size - count_;
+        maxLum = (c1 * k + c0 * (k - 1)) / ((c0 + c1) * 65535.f);
+    } else {
+        maxLum = k /65535.f;
+    }
 
 }
 
@@ -452,7 +482,6 @@ void tmo_fattal02(size_t width,
                   int detail_level,
                   bool multithread)
 {
-    BENCHFUN
 // #ifdef TIMER_PROFILING
 //     msec_timer stop_watch;
 //     stop_watch.start();
@@ -497,37 +526,28 @@ void tmo_fattal02(size_t width,
       maxLum = ( Y(i) > maxLum ) ? Y(i) : maxLum;
   }
   Array2Df* H = new Array2Df(width, height);
-  //#pragma omp parallel for private(i) shared(H, Y, maxLum)
-  StopWatch Stop1("logf");
+
   float temp = 100.f / maxLum;
+  float eps = 1e-4f;
   #pragma omp parallel
   {
 #ifdef __SSE2__
-  vfloat epsv = F2V(1e-4);
+  vfloat epsv = F2V(eps);
   vfloat tempv = F2V(temp);
 #endif
   #pragma omp for schedule(dynamic,16)
-  for ( size_t i=0 ; i<height ; i++ ) {
+  for (size_t i=0 ; i<height ; ++i) {
       size_t j = 0;
 #ifdef __SSE2__
-      for(; j < width - 3; j+=4)
-      {
+      for(; j < width - 3; j+=4) {
           STVFU((*H)[i][j], xlogf(tempv * LVFU(Y[i][j]) + epsv));
       }
 #endif
-      for(; j < width; j++)
-      {
-          (*H)[i][j] = xlogf( temp * Y[i][j] + 1e-4 );
+      for(; j < width; ++j) {
+          (*H)[i][j] = xlogf(temp * Y[i][j] + eps);
       }
   }
   }
-//  #pragma omp parallel for
-//  for ( int i=0 ; i<size ; i++ )
-//  {
-//      (*H)(i) = xlogf( temp * Y(i) + 1e-4 );
-//  }
-  Stop1.stop();
-  // ph.setValue(4);
 
   /** RT - this is also here to reduce the dependency of the results on the
    * input image size, with the primary aim of having a preview in RT that is
@@ -710,33 +730,25 @@ void tmo_fattal02(size_t width,
   //     return;
   // }
 
-StopWatch Stope("expf");
   #pragma omp parallel
   {
 #ifdef __SSE2__
   vfloat gammav = F2V(gamma);
 #endif
   #pragma omp for schedule(dynamic,16)
-  for ( size_t i=0 ; i<height ; i++ ) {
+  for (size_t i=0 ; i<height ; i++) {
       size_t j = 0;
 #ifdef __SSE2__
-      for(; j < width - 3; j+=4)
-      {
+      for(; j < width - 3; j+=4) {
           STVFU(L[i][j], xexpf(gammav * LVFU(U[i][j])));
       }
 #endif
-      for(; j < width; j++)
-      {
+      for(; j < width; j++) {
           L[i][j] = xexpf( gamma * U[i][j]);
       }
   }
   }
 
-//  for ( size_t idx = 0 ; idx < height*width; ++idx )
-//  {
-//      L(idx) = xexpf( gamma * U(idx) );
-//  }
-Stope.stop();
   }
   // ph.setValue(95);
 
@@ -968,7 +980,6 @@ std::vector<double> get_lambda(int n)
 void solve_pde_fft(Array2Df *F, Array2Df *U, bool multithread)/*, pfs::Progress &ph,
                                               bool adjust_bound)*/
 {
-BENCHFUN
    // ph.setValue(20);
   //DEBUG_STR << "solve_pde_fft: solving Laplace U = F ..." << std::endl;
   int width = F->getCols();
