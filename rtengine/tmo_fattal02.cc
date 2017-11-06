@@ -1123,8 +1123,8 @@ void rescale_bilinear(const Array2Df &src, Array2Df &dst, bool multithread)
 #ifdef _OPENMP
     #pragma omp parallel for if (multithread)
 #endif
-    for (int x = 0; x < dst.getCols(); ++x) {
-        for (int y = 0; y < dst.getRows(); ++y) {
+    for (int y = 0; y < dst.getRows(); ++y) {
+        for (int x = 0; x < dst.getCols(); ++x) {
             dst(x, y) = get_bilinear_value(src, x * col_scale, y * row_scale);
         }
     }
