@@ -1130,6 +1130,12 @@ void rescale_bilinear(const Array2Df &src, Array2Df &dst, bool multithread)
     }
 }
 
+
+inline float luminance(float r, float g, float b, TMatrix ws)
+{
+    return r * ws[1][0] + g * ws[1][1] + b * ws[1][2];
+}
+
 } // namespace
 
 
@@ -1161,13 +1167,14 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb)
     const float epsilon = 1e-4f;
     const float luminance_noise_floor = 65.535f;
     const float min_luminance = 1.f;
+    TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.working);
     
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
 #endif
     for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++) {
-            Yr(x, y) = std::max(Color::rgbLuminance(rgb->r(y, x), rgb->g(y, x), rgb->b(y, x)), min_luminance); // clip really black pixels
+            Yr(x, y) = std::max(luminance(rgb->r(y, x), rgb->g(y, x), rgb->b(y, x), ws), min_luminance); // clip really black pixels
         }
     }
 
