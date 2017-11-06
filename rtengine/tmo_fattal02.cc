@@ -404,7 +404,7 @@ void findMaxMinPercentile(const Array2Df& I,
                                  float minPrct, float& minLum,
                                  float maxPrct, float& maxLum)
 {
-    assert(minPcrt <= maxPcrt);
+    assert(minPrct <= maxPrct);
 
     const int size = I.getRows() * I.getCols();
     const float* data = I.data();
@@ -1232,6 +1232,9 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb)
 
     tmo_fattal02(w, h, Yr, L, alpha, beta, noise, detail_level, multiThread);
 
+#ifdef _OPENMP
+    #pragma omp parallel for if(multiThread)
+#endif
     for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++) {
             float Y = Yr(x, y);
@@ -1239,6 +1242,10 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb)
             rgb->r(y, x) = std::max(rgb->r(y, x)/Y, 0.f) * l;
             rgb->g(y, x) = std::max(rgb->g(y, x)/Y, 0.f) * l;
             rgb->b(y, x) = std::max(rgb->b(y, x)/Y, 0.f) * l;
+            
+            assert(std::isfinite(rgb->r(y, x)));
+            assert(std::isfinite(rgb->g(y, x)));
+            assert(std::isfinite(rgb->b(y, x)));
         }
     }
 
