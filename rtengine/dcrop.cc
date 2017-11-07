@@ -715,8 +715,15 @@ void Crop::update (int todo)
         transCrop = nullptr;
     }
 
+    std::unique_ptr<Imagefloat> fattalCrop;
     if ((todo & M_RGBCURVE) && params.fattal.enabled) {
-        parent->ipf.ToneMapFattal02(baseCrop);
+        Imagefloat *f = baseCrop;
+        if (f == origCrop) {
+            fattalCrop.reset(baseCrop->copy());
+            f = fattalCrop.get();
+        }
+        parent->ipf.ToneMapFattal02(f);
+        baseCrop = f;
     }
     
     if ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
