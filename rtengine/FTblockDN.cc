@@ -74,8 +74,13 @@ extern const Settings* settings;
 extern MyMutex *fftwMutex;
 
 
-void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, const int height, const Median medianType, const int iterations, const int numThreads, float **buffer)
+namespace {
+
+template <bool useUpperBound>
+void do_median_denoise(float **src, float **dst, float upperBound, const int width, const int height, const ImProcFunctions::Median medianType, const int iterations, const int numThreads, float **buffer)
 {
+    typedef ImProcFunctions::Median Median;
+    
     int border = 1;
 
     switch (medianType) {
@@ -156,13 +161,17 @@ void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, 
             switch (medianType) {
                 case Median::TYPE_3X3_SOFT: {
                     for (; j < width - border; ++j) {
-                        medianOut[i][j] = median(
-                                              medianIn[i - 1][j],
-                                              medianIn[i][j - 1],
-                                              medianIn[i][j],
-                                              medianIn[i][j + 1],
-                                              medianIn[i + 1][j]
-                                          );
+                        if (!useUpperBound || medianIn[i][j] <= upperBound) {
+                            medianOut[i][j] = median(
+                                                  medianIn[i - 1][j],
+                                                  medianIn[i][j - 1],
+                                                  medianIn[i][j],
+                                                  medianIn[i][j + 1],
+                                                  medianIn[i + 1][j]
+                                              );
+                        } else {
+                            medianOut[i][j] = medianIn[i][j];
+                        }
                     }
 
                     break;
@@ -170,17 +179,21 @@ void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, 
 
                 case Median::TYPE_3X3_STRONG: {
                     for (; j < width - border; ++j) {
-                        medianOut[i][j] = median(
-                                              medianIn[i - 1][j - 1],
-                                              medianIn[i - 1][j],
-                                              medianIn[i - 1][j + 1],
-                                              medianIn[i][j - 1],
-                                              medianIn[i][j],
-                                              medianIn[i][j + 1],
-                                              medianIn[i + 1][j - 1],
-                                              medianIn[i + 1][j],
-                                              medianIn[i + 1][j + 1]
-                                          );
+                        if (!useUpperBound || medianIn[i][j] <= upperBound) {
+                            medianOut[i][j] = median(
+                                                  medianIn[i - 1][j - 1],
+                                                  medianIn[i - 1][j],
+                                                  medianIn[i - 1][j + 1],
+                                                  medianIn[i][j - 1],
+                                                  medianIn[i][j],
+                                                  medianIn[i][j + 1],
+                                                  medianIn[i + 1][j - 1],
+                                                  medianIn[i + 1][j],
+                                                  medianIn[i + 1][j + 1]
+                                              );
+                        } else {
+                            medianOut[i][j] = medianIn[i][j];
+                        }
                     }
 
                     break;
@@ -188,21 +201,25 @@ void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, 
 
                 case Median::TYPE_5X5_SOFT: {
                     for (; j < width - border; ++j) {
-                        medianOut[i][j] = median(
-                                              medianIn[i - 2][j],
-                                              medianIn[i - 1][j - 1],
-                                              medianIn[i - 1][j],
-                                              medianIn[i - 1][j + 1],
-                                              medianIn[i][j - 2],
-                                              medianIn[i][j - 1],
-                                              medianIn[i][j],
-                                              medianIn[i][j + 1],
-                                              medianIn[i][j + 2],
-                                              medianIn[i + 1][j - 1],
-                                              medianIn[i + 1][j],
-                                              medianIn[i + 1][j + 1],
-                                              medianIn[i + 2][j]
-                                          );
+                        if (!useUpperBound || medianIn[i][j] <= upperBound) {
+                            medianOut[i][j] = median(
+                                                  medianIn[i - 2][j],
+                                                  medianIn[i - 1][j - 1],
+                                                  medianIn[i - 1][j],
+                                                  medianIn[i - 1][j + 1],
+                                                  medianIn[i][j - 2],
+                                                  medianIn[i][j - 1],
+                                                  medianIn[i][j],
+                                                  medianIn[i][j + 1],
+                                                  medianIn[i][j + 2],
+                                                  medianIn[i + 1][j - 1],
+                                                  medianIn[i + 1][j],
+                                                  medianIn[i + 1][j + 1],
+                                                  medianIn[i + 2][j]
+                                              );
+                        } else {
+                            medianOut[i][j] = medianIn[i][j];
+                        }
                     }
 
                     break;
@@ -210,8 +227,7 @@ void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, 
 
                 case Median::TYPE_5X5_STRONG: {
 #ifdef __SSE2__
-
-                    for (; j < width - border - 3; j += 4) {
+                    for (; !useUpperBound && j < width - border - 3; j += 4) {
                         STVFU(
                             medianOut[i][j],
                             median(
@@ -245,35 +261,38 @@ void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, 
                     }
 
 #endif
-
                     for (; j < width - border; ++j) {
-                        medianOut[i][j] = median(
-                                              medianIn[i - 2][j - 2],
-                                              medianIn[i - 2][j - 1],
-                                              medianIn[i - 2][j],
-                                              medianIn[i - 2][j + 1],
-                                              medianIn[i - 2][j + 2],
-                                              medianIn[i - 1][j - 2],
-                                              medianIn[i - 1][j - 1],
-                                              medianIn[i - 1][j],
-                                              medianIn[i - 1][j + 1],
-                                              medianIn[i - 1][j + 2],
-                                              medianIn[i][j - 2],
-                                              medianIn[i][j - 1],
-                                              medianIn[i][j],
-                                              medianIn[i][j + 1],
-                                              medianIn[i][j + 2],
-                                              medianIn[i + 1][j - 2],
-                                              medianIn[i + 1][j - 1],
-                                              medianIn[i + 1][j],
-                                              medianIn[i + 1][j + 1],
-                                              medianIn[i + 1][j + 2],
-                                              medianIn[i + 2][j - 2],
-                                              medianIn[i + 2][j - 1],
-                                              medianIn[i + 2][j],
-                                              medianIn[i + 2][j + 1],
-                                              medianIn[i + 2][j + 2]
-                                          );
+                        if (!useUpperBound || medianIn[i][j] <= upperBound) {
+                            medianOut[i][j] = median(
+                                                  medianIn[i - 2][j - 2],
+                                                  medianIn[i - 2][j - 1],
+                                                  medianIn[i - 2][j],
+                                                  medianIn[i - 2][j + 1],
+                                                  medianIn[i - 2][j + 2],
+                                                  medianIn[i - 1][j - 2],
+                                                  medianIn[i - 1][j - 1],
+                                                  medianIn[i - 1][j],
+                                                  medianIn[i - 1][j + 1],
+                                                  medianIn[i - 1][j + 2],
+                                                  medianIn[i][j - 2],
+                                                  medianIn[i][j - 1],
+                                                  medianIn[i][j],
+                                                  medianIn[i][j + 1],
+                                                  medianIn[i][j + 2],
+                                                  medianIn[i + 1][j - 2],
+                                                  medianIn[i + 1][j - 1],
+                                                  medianIn[i + 1][j],
+                                                  medianIn[i + 1][j + 1],
+                                                  medianIn[i + 1][j + 2],
+                                                  medianIn[i + 2][j - 2],
+                                                  medianIn[i + 2][j - 1],
+                                                  medianIn[i + 2][j],
+                                                  medianIn[i + 2][j + 1],
+                                                  medianIn[i + 2][j + 2]
+                                              );
+                        } else {
+                            medianOut[i][j] = medianIn[i][j];
+                        }
                     }
 
                     break;
@@ -283,7 +302,7 @@ void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, 
 #ifdef __SSE2__
                     std::array<vfloat, 49> vpp ALIGNED16;
 
-                    for (; j < width - border - 3; j += 4) {
+                    for (; !useUpperBound && j < width - border - 3; j += 4) {
                         for (int kk = 0, ii = -border; ii <= border; ++ii) {
                             for (int jj = -border; jj <= border; ++jj, ++kk) {
                                 vpp[kk] = LVFU(medianIn[i + ii][j + jj]);
@@ -296,15 +315,19 @@ void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, 
 #endif
 
                     std::array<float, 49> pp;
-
+                    
                     for (; j < width - border; ++j) {
-                        for (int kk = 0, ii = -border; ii <= border; ++ii) {
-                            for (int jj = -border; jj <= border; ++jj, ++kk) {
-                                pp[kk] = medianIn[i + ii][j + jj];
+                        if (!useUpperBound || medianIn[i][j] <= upperBound) {
+                            for (int kk = 0, ii = -border; ii <= border; ++ii) {
+                                for (int jj = -border; jj <= border; ++jj, ++kk) {
+                                    pp[kk] = medianIn[i + ii][j + jj];
+                                }
                             }
+                            
+                            medianOut[i][j] = median(pp);
+                        } else {
+                            medianOut[i][j] = medianIn[i][j];
                         }
-
-                        medianOut[i][j] = median(pp);
                     }
 
                     break;
@@ -314,7 +337,7 @@ void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, 
 #ifdef __SSE2__
                     std::array<vfloat, 81> vpp ALIGNED16;
 
-                    for (; j < width - border - 3; j += 4) {
+                    for (; !useUpperBound && j < width - border - 3; j += 4) {
                         for (int kk = 0, ii = -border; ii <= border; ++ii) {
                             for (int jj = -border; jj <= border; ++jj, ++kk) {
                                 vpp[kk] = LVFU(medianIn[i + ii][j + jj]);
@@ -327,15 +350,19 @@ void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, 
 #endif
 
                     std::array<float, 81> pp;
-
+                    
                     for (; j < width - border; ++j) {
-                        for (int kk = 0, ii = -border; ii <= border; ++ii) {
-                            for (int jj = -border; jj <= border; ++jj, ++kk) {
-                                pp[kk] = medianIn[i + ii][j + jj];
+                        if (!useUpperBound || medianIn[i][j] <= upperBound) {
+                            for (int kk = 0, ii = -border; ii <= border; ++ii) {
+                                for (int jj = -border; jj <= border; ++jj, ++kk) {
+                                    pp[kk] = medianIn[i + ii][j + jj];
+                                }
                             }
+                        
+                            medianOut[i][j] = median(pp);
+                        } else {
+                            medianOut[i][j] = medianIn[i][j];
                         }
-
-                        medianOut[i][j] = median(pp);
                     }
 
                     for (; j < width; ++j) {
@@ -381,6 +408,21 @@ void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, 
         delete[] allocBuffer;
     }
 }
+
+} // namespace
+
+
+void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, const int height, const Median medianType, const int iterations, const int numThreads, float **buffer)
+{
+    do_median_denoise<false>(src, dst, width, height, 0.f, medianType, iterations, numThreads, buffer);
+}
+
+
+void ImProcFunctions::Median_Denoise(float **src, float **dst, float upperBound, const int width, const int height, const Median medianType, const int iterations, const int numThreads, float **buffer)
+{
+    do_median_denoise<true>(src, dst, upperBound, width, height, medianType, iterations, numThreads, buffer);
+}
+
 
 void ImProcFunctions::Tile_calc(int tilesize, int overlap, int kall, int imwidth, int imheight, int &numtiles_W, int &numtiles_H, int &tilewidth, int &tileheight, int &tileWskip, int &tileHskip)
 

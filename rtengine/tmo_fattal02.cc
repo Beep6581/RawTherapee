@@ -1196,7 +1196,6 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb)
 #else
         int num_threads = 1;
 #endif
-        Array2Df Yr_med(w, h);
         float r = float(std::max(w, h)) / float(RT_dimension_cap);
         Median med;
         if (r >= 3) {
@@ -1208,18 +1207,7 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb)
         } else {
             med = Median::TYPE_3X3_STRONG;
         }
-        Median_Denoise(Yr, Yr_med, w, h, med, 1, num_threads);
-
-#ifdef _OPENMP
-        #pragma omp parallel for if (multiThread)
-#endif
-        for (int y = 0; y < h; y++) {
-            for (int x = 0; x < w; x++) {
-                if (Yr(x, y) <= luminance_noise_floor) {
-                    Yr(x, y) = Yr_med(x, y);
-                }
-            }
-        }
+        Median_Denoise(Yr, Yr, luminance_noise_floor, w, h, med, 1, num_threads);
     }
     
 
