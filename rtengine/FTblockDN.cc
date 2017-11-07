@@ -414,7 +414,7 @@ void do_median_denoise(float **src, float **dst, float upperBound, const int wid
 
 void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, const int height, const Median medianType, const int iterations, const int numThreads, float **buffer)
 {
-    do_median_denoise<false>(src, dst, width, height, 0.f, medianType, iterations, numThreads, buffer);
+    do_median_denoise<false>(src, dst, 0.f, width, height, medianType, iterations, numThreads, buffer);
 }
 
 
