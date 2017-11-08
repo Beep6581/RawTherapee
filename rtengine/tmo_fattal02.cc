@@ -1142,9 +1142,79 @@ void rescale_bilinear(const Array2Df &src, Array2Df &dst, bool multithread)
 }
 
 
+void rescale_nearest(const Array2Df &src, Array2Df &dst, bool multithread)
+{
+    const int width = src.getCols();
+    const int height = src.getRows();
+    const int nw = dst.getCols();
+    const int nh = dst.getRows();
+
+#ifdef _OPENMP
+    #pragma omp parallel for if (multithread)
+#endif
+    for (int y = 0; y < nh; ++y) {
+        int sy = y * height / nh;
+        for (int x = 0; x < nw; ++x) {
+            int sx = x * width / nw;
+            dst(x, y) = src(sx, sy);
+        }
+    }
+}
+
+
 inline float luminance(float r, float g, float b, TMatrix ws)
 {
     return r * ws[1][0] + g * ws[1][1] + b * ws[1][2];
+}
+
+
+inline int round_up_pow2(int dim)
+{
+    // from https://graphics.stanford.edu/~seander/bithacks.html
+    assert(dim > 0);
+    unsigned int v = dim;
+    v--;
+    v |= v >> 1;
+    v |= v >> 2;
+    v |= v >> 4;
+    v |= v >> 8;
+    v |= v >> 16;
+    v++;
+    return v;
+}
+
+inline int find_fast_dim(int dim)
+{
+    // as per the FFTW docs:
+    //
+    //   FFTW is generally best at handling sizes of the form 2a 3b 5c 7d 11e
+    //   13f, where e+f is either 0 or 1.
+    // 
+    // Here, we try to round up to the nearest dim that can be expressed in
+    // the above form. This is not exhaustive, but should be ok for pictures
+    // up to 100MPix at least
+    int d1 = round_up_pow2(dim);
+    std::vector<int> d = {
+        d1/128 * 65,
+        d1/64 * 33,
+        d1/512 * 273,
+        d1/16 * 9,
+        d1/8 * 5,
+        d1/16 * 11,
+        d1/128 * 91,
+        d1/4 * 3,
+        d1/64 * 49,
+        d1/16 * 13,
+        d1/8 * 7,
+        d1
+    };
+    for (size_t i = 0; i < d.size(); ++i) {
+        if (d[i] >= dim) {
+            return d[i];
+        }
+    }
+    assert(false);
+    return dim;
 }
 
 } // namespace
@@ -1209,7 +1279,6 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb)
         }
         Median_Denoise(Yr, Yr, luminance_noise_floor, w, h, med, 1, num_threads);
     }
-    
 
     float noise = alpha * 0.01f;
 
@@ -1218,7 +1287,15 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb)
                   << ", detail_level = " << detail_level << std::endl;
     }
 
-    tmo_fattal02(w, h, Yr, L, alpha, beta, noise, detail_level, multiThread);
+    //tmo_fattal02(w, h, Yr, L, alpha, beta, noise, detail_level, multiThread);
+    {
+        int w2 = find_fast_dim(w) + 1;
+        int h2 = find_fast_dim(h) + 1;
+        Array2Df buf(w2, h2);
+        rescale_nearest(Yr, buf, multiThread);
+        tmo_fattal02(w2, h2, buf, buf, alpha, beta, noise, detail_level, multiThread);
+        rescale_nearest(buf, L, multiThread);
+    }
 
 #ifdef _OPENMP
     #pragma omp parallel for if(multiThread)
