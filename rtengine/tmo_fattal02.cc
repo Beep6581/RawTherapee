@@ -1284,7 +1284,6 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb)
 
 //    tmo_fattal02(w, h, Yr, L, alpha, beta, noise, detail_level, multiThread);
 
-StopWatch Stopx("second Last part");
 #ifdef _OPENMP
     #pragma omp parallel for if(multiThread)
 #endif
@@ -1301,11 +1300,6 @@ StopWatch Stopx("second Last part");
             assert(std::isfinite(rgb->b(y, x)));
         }
     }
-Stopx.stop();
-StopWatch Stopy("Last part");
-
-//    rgb->normalizeFloatTo65535();
-Stopy.stop();
 }
 
 
