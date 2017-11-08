@@ -488,7 +488,7 @@ void findMaxMinPercentile(const Array2Df& I,
 
 }
 
-void solve_pde_fft(Array2Df *F, Array2Df *U, bool multithread);
+void solve_pde_fft(Array2Df *F, Array2Df *U, Array2Df *buf, bool multithread);
 
 void tmo_fattal02(size_t width,
                   size_t height,
@@ -625,7 +625,9 @@ void tmo_fattal02(size_t width,
   {
     gradients[k] = new Array2Df(pyramids[k]->getCols(), pyramids[k]->getRows());
     avgGrad[k] = calculateGradients(pyramids[k],gradients[k], k);
+    delete pyramids[k];
   }
+  delete[] pyramids;
   // ph.setValue(12);
 
   // calculate fi matrix
@@ -634,10 +636,8 @@ void tmo_fattal02(size_t width,
 //  dumpPFS( "FI.pfs", FI, "Y" );
   for ( int i=0 ; i<nlevels ; i++ )
   {
-    delete pyramids[i];
     delete gradients[i];
   }
-  delete[] pyramids;
   delete[] gradients;
   delete[] avgGrad;
   // ph.setValue(16);
@@ -702,7 +702,7 @@ void tmo_fattal02(size_t width,
 
       }
   }
-  delete Gx;
+  //delete Gx; // RT - reused as temp buffer in solve_pde_fft, deleted later
   delete Gy;
 
   // solve pde and exponentiate (ie recover compressed image)
@@ -710,8 +710,9 @@ void tmo_fattal02(size_t width,
   // if (fftsolver)
   {
       MyMutex::MyLock lock(*fftwMutex);
-      solve_pde_fft(FI, &L, multithread);//, ph);
+      solve_pde_fft(FI, &L, Gx, multithread);//, ph);
   }
+  delete Gx;
   delete FI;
   // else
   // {
@@ -966,7 +967,7 @@ std::vector<double> get_lambda(int n)
 // not modified and the equation might not have a solution but an
 // approximate solution with a minimum error is then calculated
 // double precision version
-void solve_pde_fft(Array2Df *F, Array2Df *U, bool multithread)/*, pfs::Progress &ph,
+void solve_pde_fft(Array2Df *F, Array2Df *U, Array2Df *buf, bool multithread)/*, pfs::Progress &ph,
                                               bool adjust_bound)*/
 {
    // ph.setValue(20);
@@ -974,6 +975,7 @@ void solve_pde_fft(Array2Df *F, Array2Df *U, bool multithread)/*, pfs::Progress 
   int width = F->getCols();
   int height = F->getRows();
   assert((int)U->getCols()==width && (int)U->getRows()==height);
+  assert(buf->getCols()==width && buf->getRows()==height);
 
   // activate parallel execution of fft routines
 #ifdef RT_FFTW3F_OMP
@@ -997,7 +999,7 @@ void solve_pde_fft(Array2Df *F, Array2Df *U, bool multithread)/*, pfs::Progress 
 
   // transforms F into eigenvector space: Ftr =
   //DEBUG_STR << "solve_pde_fft: transform F to ev space (fft)" << std::endl;
-  Array2Df* F_tr = new Array2Df(width,height);
+  Array2Df* F_tr = buf; //new Array2Df(width,height);
   transform_normal2ev(F, F_tr);
   // TODO: F no longer needed so could release memory, but as it is an
   // input parameter we won't do that
@@ -1030,7 +1032,7 @@ void solve_pde_fft(Array2Df *F, Array2Df *U, bool multithread)/*, pfs::Progress 
   // transforms U_tr back to the normal space
   //DEBUG_STR << "solve_pde_fft: transform U_tr to normal space (fft)" << std::endl;
   transform_ev2normal(F_tr, U);
-  delete F_tr;    // no longer needed so release memory
+//  delete F_tr;    // no longer needed so release memory
 
   // the solution U as calculated will satisfy something like int U = 0
   // since for any constant c, U-c is also a solution and we are mainly
@@ -1266,7 +1268,6 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb)
         Median_Denoise(Yr, Yr, luminance_noise_floor, w, h, med, 1, num_threads);
     }
 
-
     float noise = alpha * 0.01f;
 
     if (settings->verbose) {
@@ -1274,13 +1275,11 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb)
                   << ", detail_level = " << detail_level << std::endl;
     }
 
-        int w2 = find_fast_dim(w) + 1;
-        int h2 = find_fast_dim(h) + 1;
-        Array2Df buf(w2, h2);
-        rescale_nearest(Yr, buf, multiThread);
-        tmo_fattal02(w2, h2, buf, buf, alpha, beta, noise, detail_level, multiThread);
-        Array2Df L(w, h);
-        rescale_nearest(buf, L, multiThread);
+    int w2 = find_fast_dim(w) + 1;
+    int h2 = find_fast_dim(h) + 1;
+    Array2Df L(w2, h2);
+    rescale_nearest(Yr, L, multiThread);
+    tmo_fattal02(w2, h2, L, L, alpha, beta, noise, detail_level, multiThread);
 
 //    tmo_fattal02(w, h, Yr, L, alpha, beta, noise, detail_level, multiThread);
 
@@ -1288,9 +1287,11 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb)
     #pragma omp parallel for if(multiThread)
 #endif
     for (int y = 0; y < h; y++) {
+        int yy = y * h2 / h;
         for (int x = 0; x < w; x++) {
+            int xx = x * w2 / w;
             float Y = Yr(x, y);
-            float l = std::max(L(x, y), epsilon) * (65535.f / Y);
+            float l = std::max(L(xx, yy), epsilon) * (65535.f / Y);
             rgb->r(y, x) = std::max(rgb->r(y, x), 0.f) * l;
             rgb->g(y, x) = std::max(rgb->g(y, x), 0.f) * l;
             rgb->b(y, x) = std::max(rgb->b(y, x), 0.f) * l;
