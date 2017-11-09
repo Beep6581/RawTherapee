@@ -117,7 +117,7 @@ void do_median_denoise(float **src, float **dst, float upperBound, const int wid
 
     // we need a buffer if src == dst or if (src != dst && iterations > 1)
     if (src == dst || iterations > 1) {
-        if (buffer == nullptr) { // we didn't get a buufer => create one
+        if (buffer == nullptr) { // we didn't get a buffer => create one
             allocBuffer = new float*[height];
 
             for (int i = 0; i < height; ++i) {

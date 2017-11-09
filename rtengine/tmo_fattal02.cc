@@ -1248,6 +1248,10 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb)
         }
     }
     // median filter on the deep shadows, to avoid boosting noise
+    // because w2 >= w and h2 >= h, we can use the L buffer as temporary buffer for Median_Denoise()
+    int w2 = find_fast_dim(w) + 1;
+    int h2 = find_fast_dim(h) + 1;
+    Array2Df L(w2, h2);
     {
 #ifdef _OPENMP
         int num_threads = multiThread ? omp_get_max_threads() : 1;
@@ -1265,7 +1269,7 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb)
         } else {
             med = Median::TYPE_3X3_STRONG;
         }
-        Median_Denoise(Yr, Yr, luminance_noise_floor, w, h, med, 1, num_threads);
+        Median_Denoise(Yr, Yr, luminance_noise_floor, w, h, med, 1, num_threads, L);
     }
 
     float noise = alpha * 0.01f;
@@ -1275,9 +1279,6 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb)
                   << ", detail_level = " << detail_level << std::endl;
     }
 
-    int w2 = find_fast_dim(w) + 1;
-    int h2 = find_fast_dim(h) + 1;
-    Array2Df L(w2, h2);
     rescale_nearest(Yr, L, multiThread);
     tmo_fattal02(w2, h2, L, L, alpha, beta, noise, detail_level, multiThread);
 
