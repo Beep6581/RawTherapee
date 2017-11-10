@@ -312,13 +312,17 @@ SSEFUNCTION void ImProcFunctions :: cbdl_local_temp (float ** src, float ** dst,
 
         if (lv >= 1) {
             if (scalefl[lv] < 1.f) {
-                if(mult[lv] > 1.f) multi[lv] = (atten123 * ((float) mult[lv] - 1.f) / 100.f) + 1.f;    //modulate action if zoom < 100%
+                if (mult[lv] > 1.f) {
+                    multi[lv] = (atten123 * ((float) mult[lv] - 1.f) / 100.f) + 1.f;    //modulate action if zoom < 100%
+                }
             } else {
                 multi[lv] = (float) mult[lv];
             }
         } else  {
             if (scalefl[lv] < 1.f) {
-                if(mult[lv] > 1.f) multi[lv] = (atten0 * ((float) mult[lv] - 1.f) / 100.f) + 1.f;    //modulate action if zoom < 100%
+                if (mult[lv] > 1.f) {
+                    multi[lv] = (atten0 * ((float) mult[lv] - 1.f) / 100.f) + 1.f;    //modulate action if zoom < 100%
+                }
             } else {
                 multi[lv] = (float) mult[lv];
             }
@@ -358,7 +362,8 @@ SSEFUNCTION void ImProcFunctions :: cbdl_local_temp (float ** src, float ** dst,
         level ++;
     }
 
-    float **tmpHue, **tmpChr;
+    float **tmpHue = nullptr;
+    float **tmpChr = nullptr;
     // with the current implementation of idirpyr_eq_channel we can safely use the buffer from last level as buffer, saves some memory
     float ** buffer = dirpyrlo[lastlevel - 1];
 
@@ -376,7 +381,7 @@ SSEFUNCTION void ImProcFunctions :: cbdl_local_temp (float ** src, float ** dst,
         for (int j = 0; j < srcwidth; j++) {
             dst[i][j] = src[i][j];
             loctemp[i][j] = CLIP (buffer[i][j]); // TODO: Really a clip necessary?
-          //  dst[i][j] = CLIP (buffer[i][j]); // TODO: Really a clip necessary?
+            //  dst[i][j] = CLIP (buffer[i][j]); // TODO: Really a clip necessary?
         }
 
 }
@@ -488,7 +493,7 @@ void ImProcFunctions :: dirpyr_equalizercam (CieImage *ncie, float ** src, float
     float ** buffer = dirpyrlo[lastlevel - 1];
 
     for (int level = lastlevel - 1; level > 0; level--) {
-        idirpyr_eq_channelcam (dirpyrlo[level], dirpyrlo[level - 1], buffer, srcwidth, srcheight, level, multi, dirpyrThreshold , h_p, C_p, skinprot, b_l, t_l, t_r);
+        idirpyr_eq_channelcam (dirpyrlo[level], dirpyrlo[level - 1], buffer, srcwidth, srcheight, level, multi, dirpyrThreshold, h_p, C_p, skinprot, b_l, t_l, t_r);
     }
 
     idirpyr_eq_channelcam (dirpyrlo[0], dst, buffer, srcwidth, srcheight, 0, multi, dirpyrThreshold,  h_p, C_p, skinprot, b_l, t_l, t_r);
@@ -744,7 +749,7 @@ SSEFUNCTION void ImProcFunctions::dirpyr_channel (float ** data_fine, float ** d
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-void ImProcFunctions::idirpyr_eq_channel_loc (float ** data_coarse, float ** data_fine, float ** loctemp, float ** buffer, int width, int height, int level, float mult[5], const double dirpyrThreshold, float ** hue, float ** chrom, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r , int choice)
+void ImProcFunctions::idirpyr_eq_channel_loc (float ** data_coarse, float ** data_fine, float ** loctemp, float ** buffer, int width, int height, int level, float mult[5], const double dirpyrThreshold, float ** hue, float ** chrom, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r, int choice)
 {
     //  const float skinprotneg = -skinprot;
 //   const float factorHard = (1.f - skinprotneg / 100.f);
@@ -838,7 +843,7 @@ void ImProcFunctions::idirpyr_eq_channel_loc (float ** data_coarse, float ** dat
     */
 }
 
-void ImProcFunctions::idirpyr_eq_channel (float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float mult[6], const double dirpyrThreshold, float ** hue, float ** chrom, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r , int choice)
+void ImProcFunctions::idirpyr_eq_channel (float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float mult[6], const double dirpyrThreshold, float ** hue, float ** chrom, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r, int choice)
 {
     const float skinprotneg = -skinprot;
     const float factorHard = (1.f - skinprotneg / 100.f);
@@ -890,8 +895,7 @@ void ImProcFunctions::idirpyr_eq_channel (float ** data_coarse, float ** data_fi
                 float hipass = (data_fine[i][j] - data_coarse[i][j]);
                 buffer[i][j] += irangefn[hipass + 0x10000] * hipass;
             }
-        }
-    else if (skinprot > 0.f)
+        } else if (skinprot > 0.f)
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -905,8 +909,7 @@ void ImProcFunctions::idirpyr_eq_channel (float ** data_coarse, float ** data_fi
                 Color::SkinSatCbdl ((data_fine[i][j]) / 327.68f, modhue, modchro, skinprot, scale, true, b_l, t_l, t_r);
                 buffer[i][j] += (1.f + (irangefn[hipass + 0x10000]) * scale) * hipass ;
             }
-        }
-    else
+        } else
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -983,8 +986,7 @@ void ImProcFunctions::idirpyr_eq_channelcam (float ** data_coarse, float ** data
                 float hipass = (data_fine[i][j] - data_coarse[i][j]);
                 buffer[i][j] += irangefn[hipass + 0x10000] * hipass ;
             }
-        }
-    else if (skinprot > 0.f)
+        } else if (skinprot > 0.f)
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -992,11 +994,10 @@ void ImProcFunctions::idirpyr_eq_channelcam (float ** data_coarse, float ** data
             for (int j = 0; j < width; j++) {
                 float hipass = (data_fine[i][j] - data_coarse[i][j]);
                 float scale = 1.f;
-                Color::SkinSatCbdlCam ((data_fine[i][j]) / 327.68f, l_a_h[i][j] , l_b_c[i][j], skinprot, scale, true, b_l, t_l, t_r);
+                Color::SkinSatCbdlCam ((data_fine[i][j]) / 327.68f, l_a_h[i][j], l_b_c[i][j], skinprot, scale, true, b_l, t_l, t_r);
                 buffer[i][j] += (1.f + (irangefn[hipass + 0x10000]) * scale) * hipass ;
             }
-        }
-    else
+        } else
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -1006,7 +1007,7 @@ void ImProcFunctions::idirpyr_eq_channelcam (float ** data_coarse, float ** data
                 float scale = 1.f;
                 float correct;
                 correct = irangefn[hipass + 0x10000];
-                Color::SkinSatCbdlCam ((data_fine[i][j]) / 327.68f, l_a_h[i][j], l_b_c[i][j] , skinprotneg, scale, false, b_l, t_l, t_r);
+                Color::SkinSatCbdlCam ((data_fine[i][j]) / 327.68f, l_a_h[i][j], l_b_c[i][j], skinprotneg, scale, false, b_l, t_l, t_r);
 
                 if (scale == 1.f) {//image hard
                     buffer[i][j] += (1.f + (correct) * factorHard) * hipass ;

@@ -68,6 +68,9 @@ private:
     Adjuster* const centerX;
     Adjuster* const centerY;
     Adjuster* const circrad;
+    Adjuster* const sensiexclu;
+    Adjuster* const struc;
+
     Adjuster* const thres;
     Adjuster* const proxi;
     Adjuster* const lightness;
@@ -123,12 +126,14 @@ private:
     Adjuster* const adjblur;
 
     MyComboBoxText*   const Smethod;
+    MyComboBoxText*   const Exclumethod;
     MyComboBoxText*   const retinexMethod;
     MyComboBoxText*   const qualityMethod;
     MyComboBoxText*   const qualitycurveMethod;
     MyComboBoxText*   const blurMethod;
     MyComboBoxText*   const dustMethod;
 
+    Gtk::Frame* const excluFrame;
 
     Gtk::Frame* const artifFrame;
     Gtk::Frame* const shapeFrame;
@@ -139,8 +144,11 @@ private:
     Gtk::Label* const labqual;
     Gtk::Label* const labqualcurv;
     Gtk::Label* const labmS;
+    Gtk::Label* const labmEx;
 
     Gtk::HBox* const ctboxS;
+    Gtk::HBox* const ctboxEx;
+
     Gtk::HBox* const dhbox;
     Gtk::HBox* const qualbox;
     Gtk::HBox* const qualcurvbox;
@@ -212,7 +220,7 @@ private:
     sigc::connection enableretiConn, enablesharpConn, enablecbdlConn;
     sigc::connection enabledenoiConn;
     sigc::connection  editConn, avoidConn, inversConn, cutpastConn, lastdustConn, curvactivConn, activlumConn, inversradConn, inversretConn, inversshaConn,  neutralconn, neutralconn1;
-    sigc::connection  Smethodconn;
+    sigc::connection  Smethodconn, Exclumethodconn;
     sigc::connection retinexMethodConn;
     sigc::connection qualityMethodConn;
     sigc::connection qualitycurveMethodConn;
@@ -221,7 +229,7 @@ private:
 
 
 
-    int nextdatasp[82];
+    int nextdatasp[85];
     int nextlength;
     std::string nextstr;
     std::string nextstr2;
@@ -266,6 +274,7 @@ public:
 
     void updateGeometry (const int centerX_, const int centerY_, const int circrad_, const int locY_, const double degree_, const int locX_, const int locYT_, const int locXL_, const int fullWidth = -1, const int fullHeight = -1);
     void SmethodChanged      ();
+    void ExclumethodChanged      ();
     void writeOptions (std::vector<int> &tpOpen);
     void updateToolState (std::vector<int> &tpOpen);
 

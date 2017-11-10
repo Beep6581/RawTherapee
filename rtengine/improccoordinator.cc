@@ -39,7 +39,7 @@ namespace rtengine
 extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
-    : orig_prev (nullptr), oprevi (nullptr), oprevl (nullptr), nprevl (nullptr), previmg (nullptr), workimg (nullptr),
+    : orig_prev (nullptr), oprevi (nullptr), oprevl (nullptr), nprevl (nullptr), reserv (nullptr), previmg (nullptr), workimg (nullptr),
       ncie (nullptr), imgsrc (nullptr), shmap (nullptr), lastAwbEqual (0.), lastAwbTempBias (0.0), ipf (&params, true), monitorIntent (RI_RELATIVE),
       softProof (false), gamutCheck (false), scale (10), highDetailPreprocessComputed (false), highDetailRawComputed (false),
       allocated (false), bwAutoR (-9000.f), bwAutoG (-9000.f), bwAutoB (-9000.f), CAMMean (NAN), coordX (0), coordY (0), localX (0), localY (0),
@@ -197,6 +197,9 @@ ImProcCoordinator::ImProcCoordinator ()
       sizeskintonecurves (500, -10000),
       excurves (25000, -10000),
       sizeexcurves (500, -10000),
+      exclumets (500, -1000),
+      sensiexclus (500, -1000),
+      strucs (500, -1000),
       huerefs (500, -100000.f),
       chromarefs (500, -100000.f),
       lumarefs (500, -100000.f),
@@ -761,6 +764,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
     //scale = 1;
     if (todo & (M_LUMINANCE + M_COLOR) ) {
         nprevl->CopyFrom (oprevl);
+        reserv->CopyFrom (oprevl);
+
         int maxspot = settings->nspot + 1;
         progress ("Applying Color Boost...", 100 * readyphase / numofphases);
 
@@ -845,7 +850,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                                     };
 
 
-            int maxdata = 82;//78;//73 for 10011
+            int maxdata = 85;// 82 10015//78;//73 for 10011
 
             if (fic0) {
                 //find current version mip
@@ -889,7 +894,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     //initilize newues when first utilisation of Locallab. Prepare creation of Mip files
                     for (int sp = 1; sp < maxspot; sp++) { // spots default
                         int t_sp = sp;
-                        int t_mipversion = 10015;//new value for each change
+                        int t_mipversion = 10016;//new value for each change
                         int t_circrad = 18;
                         int t_locX = 250;
                         int t_locY = 250;
@@ -1003,6 +1008,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                         int t_blurMethod = 0;
                         int t_dustMethod = 1;
 
+                        //10016
+                        int t_excludemeth = 0;
+                        int t_sensiexclu = 19;
+                        int t_struc = 0;
+
 
                         //all variables except locRETgainCurve 'coomon for all)
                         fic << "Mipversion=" << t_mipversion << '@' << endl;
@@ -1091,6 +1101,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                         fic << "Lastdust=" << t_lastdust << '@' <<  endl;
                         fic << "BlurMethod=" << t_blurMethod << '@' <<  endl;
                         fic << "DustMethod=" << t_dustMethod << '@' <<  endl;
+
+                        fic << "ExcludeMethod=" << t_excludemeth << '@' <<  endl;
+                        fic << "Sensiexclu=" << t_sensiexclu << '@' << endl;
+                        fic << "Struc=" << t_struc << '@' << endl;
 
                         fic << "curveReti=" << t_curvret << '@' << endl;
                         fic << "curveLL=" << t_curvll << '@' << endl;
@@ -1335,8 +1349,14 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     dataspot[77][0] =  dustmets[0] = 2;
                 }
 
+                if (params.locallab.Exclumethod == "norm") {
+                    dataspot[78][0] =  exclumets[0] = 0;
+                } else if (params.locallab.Exclumethod == "exc") {
+                    dataspot[78][0] =  exclumets[0] = 1;
+                }
 
-
+                dataspot[79][0] = sensiexclus[0] = params.locallab.sensiexclu;
+                dataspot[80][0] = strucs[0] = params.locallab.struc;
 
                 // for all curves work around - I do not know how to do with params curves...
                 //curve Reti local
@@ -1615,6 +1635,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     maxind = 77;
                 }
 
+                if (versionmip == 10015) {
+                    maxind = 77;
+                }
+
                 while (getline (fich, line)) {
                     spotline = line;
                     std::size_t pos = spotline.find ("=");
@@ -1821,6 +1845,15 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 }
             }
 
+            if (versionmip <= 10015) {//
+                for (int sp = 1; sp < maxspot; sp++) { // spots default
+                    dataspot[78][sp] = 0;
+                    dataspot[79][sp] = 19;
+                    dataspot[80][sp] = 0;
+
+                }
+            }
+
             //here we change the number of spot
 
             if (ns <  (maxspot - 1)) {
@@ -1829,7 +1862,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
                 for (int sp = ns + 1 ; sp < maxspot; sp++) { // spots default
                     int t_sp = sp;
-                    int t_mipversion = 10015;
+                    int t_mipversion = 10016;
                     int t_circrad = 18;
                     int t_locX = 250;
                     int t_locY = 250;
@@ -1935,6 +1968,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     int t_blurMethod = 0;
                     int t_dustMethod = 1;
 
+                    //10016
+                    int t_excludemeth = 0;
+                    int t_sensiexclu = 19;
+                    int t_struc = 0;
+
                     fic << "Mipversion=" << t_mipversion << '@' << endl;
                     fic << "Spot=" << t_sp << '@' << endl;
                     fic << "Circrad=" << t_circrad << '@' << endl;
@@ -2018,6 +2056,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     fic << "Lastdust=" << t_lastdust << '@' <<  endl;
                     fic << "BlurMethod=" << t_blurMethod << '@' <<  endl;
                     fic << "DustMethod=" << t_dustMethod << '@' <<  endl;
+
+                    fic << "ExcludeMethod=" << t_excludemeth << '@' <<  endl;
+                    fic << "Sensiexclu=" << t_sensiexclu << '@' << endl;
+                    fic << "Struc=" << t_struc << '@' << endl;
 
                     fic << "curveReti=" << t_curvret << '@' << endl;
                     fic << "curveLL=" << t_curvll << '@' << endl;
@@ -2349,13 +2391,25 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 if (dataspot[77][sp] ==  0) {
                     dustmets[sp] = 0;
                     params.locallab.dustMethod = "cop" ;
-                } else if (dataspot[76][sp] ==  1) {
+                } else if (dataspot[77][sp] ==  1) {
                     dustmets[sp] = 1;
                     params.locallab.dustMethod = "mov" ;
                 } else if (dataspot[77][sp] ==  2) {
                     dustmets[sp] = 2;
                     params.locallab.dustMethod = "pas" ;
                 }
+
+                if (dataspot[78][sp] ==  0) {
+                    exclumets[sp] = 0;
+                    params.locallab.Exclumethod = "norm" ;
+                } else if (dataspot[78][sp] ==  1) {
+                    exclumets[sp] = 1;
+                    params.locallab.Exclumethod = "exc" ;
+                }
+
+                params.locallab.sensiexclu = sensiexclus[sp] = dataspot[79][sp];
+                params.locallab.struc = strucs[sp] = dataspot[80][sp];
+
 
                 int *s_datc;
                 s_datc = new int[70];
@@ -2582,7 +2636,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 dataspot[maxdata - 2][sp] = lumarefs[sp] = params.locallab.lumaref;
                 dataspot[maxdata - 1][sp] = sobelrefs[sp] = params.locallab.sobelref;
                 //printf("sp=%i huerefsp=%f\n", sp, huerefs[sp]);
-                ipf.Lab_Local (params.locallab, 3, sp, (float**)shbuffer, nprevl, nprevl, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve,  lochhCurve,
+                ipf.Lab_Local (params.locallab, 3, sp, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve,  lochhCurve,
                                LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref, params.locallab.sobelref);
                 lllocalcurve.clear();
                 cclocalcurve.clear();
@@ -2883,6 +2937,20 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 dataspot[77][sp] = 2;
             }
 
+            if (dataspot[78][0] == 0) {
+                params.locallab.Exclumethod = "norm" ;
+                exclumets[sp] = 0;
+                dataspot[78][sp] = 0;
+            } else if (dataspot[78][0] == 1) {
+                params.locallab.Exclumethod = "exc" ;
+                exclumets[sp] = 1;
+                dataspot[78][sp] = 1;
+            }
+
+            dataspot[79][sp] = sensiexclus[sp] = params.locallab.sensiexclu = dataspot[79][0];
+            dataspot[80][sp] = strucs[sp] = params.locallab.struc = dataspot[80][0];
+
+
             int *s_datc;
             s_datc = new int[70];
             int siz;
@@ -3106,7 +3174,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             params.locallab.lumaref = lumarefs[sp];
             params.locallab.sobelref = sobelrefs[sp];
 
-            ipf.Lab_Local (params.locallab, 3, sp, (float**)shbuffer, nprevl, nprevl, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve,
+            ipf.Lab_Local (params.locallab, 3, sp, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve,
                            localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref, params.locallab.sobelref);
             lllocalcurve.clear();
             cclocalcurve.clear();
@@ -3122,7 +3190,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
                 for (int spe = 1; spe < maxspot; spe++) {
                     int t_sp = spe;
-                    int t_mipversion = 10015;
+                    int t_mipversion = 10016;
                     int t_circrad  = dataspot[2][spe];
                     int t_locX  = dataspot[3][spe];
                     int t_locY  = dataspot[4][spe];
@@ -3205,6 +3273,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     int t_lastdust = dataspot[75][spe];
                     int t_blurMethod = dataspot[76][spe];
                     int t_dustMethod = dataspot[77][spe];
+
+                    int t_excludemeth = dataspot[78][spe];
+                    int t_sensiexclu = dataspot[79][spe];
+                    int t_struc = dataspot[80][spe];
 
                     int t_hueref = dataspot[maxdata - 4][spe];
                     int t_chromaref = dataspot[maxdata - 3][spe];
@@ -3306,6 +3378,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     fou << "Lastdust=" << t_lastdust << '@' <<  endl;
                     fou << "BlurMethod=" << t_blurMethod << '@' <<  endl;
                     fou << "DustMethod=" << t_dustMethod << '@' <<  endl;
+
+                    fou << "ExcludeMethod=" << t_excludemeth << '@' <<  endl;
+                    fou << "Sensiexclu=" << t_sensiexclu << '@' << endl;
+                    fou << "Struc=" << t_struc << '@' << endl;
 
                     fou << "hueref=" << t_hueref << '@' << endl;
                     fou << "chromaref=" << t_chromaref << '@' << endl;
@@ -3605,6 +3681,8 @@ void ImProcCoordinator::freeAll ()
         oprevl    = nullptr;
         delete nprevl;
         nprevl    = nullptr;
+        delete reserv;
+        reserv    = nullptr;
 
         if (ncie) {
             delete ncie;
@@ -3672,6 +3750,8 @@ void ImProcCoordinator::setScale (int prevscale)
         oprevi = orig_prev;
         oprevl = new LabImage (pW, pH);
         nprevl = new LabImage (pW, pH);
+        reserv = new LabImage (pW, pH);
+
         //  nprevloc = new LabImage (pW, pH);
         //ncie is only used in ImProcCoordinator::updatePreviewImage, it will be allocated on first use and deleted if not used anymore
         previmg = new Image8 (pW, pH);

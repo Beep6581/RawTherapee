@@ -51,7 +51,7 @@ namespace rtengine
 extern const Settings* settings;
 
 Crop::Crop (ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow)
-    : PipetteBuffer (editDataProvider), origCrop (nullptr), laboCrop (nullptr), labnCrop (nullptr),
+    : PipetteBuffer (editDataProvider), origCrop (nullptr), laboCrop (nullptr), labnCrop (nullptr), reservCrop (nullptr),
       cropImg (nullptr), cbuf_real (nullptr),   cshmap (nullptr), shbuf_real (nullptr), transCrop (nullptr), cieCrop (nullptr), cbuffer (nullptr), shbuffer (nullptr),
       updating (false), newUpdatePending (false), skip (10),
       cropx (0), cropy (0), cropw (-1), croph (-1),
@@ -804,6 +804,7 @@ void Crop::update (int todo)
         //if (tutu) { //
         //I made a little change here. Rather than have luminanceCurve (and others) use in/out lab images, we can do more if we copy right here.
         labnCrop->CopyFrom (laboCrop);
+        reservCrop->CopyFrom (laboCrop);
 
 
         //parent->ipf.luminanceCurve (labnCrop, labnCrop, parent->lumacurve);
@@ -1058,6 +1059,15 @@ void Crop::update (int todo)
                             params.locallab.dustMethod = "pas" ;
                         }
 
+                        if (parent->exclumets[sp] ==  0) {
+                            params.locallab.Exclumethod = "norm" ;
+                        } else if (parent->exclumets[sp] ==  1) {
+                            params.locallab.Exclumethod = "exc" ;
+                        }
+
+                        params.locallab.sensiexclu = parent->sensiexclus[sp];
+                        params.locallab.struc = parent->strucs[sp];
+
                         std::vector<double>   cretie;
 
                         for (int j = 0; j < parent->sizeretics[sp]; j++) {
@@ -1152,7 +1162,7 @@ void Crop::update (int todo)
                         params.locallab.sobelref = parent->sobelrefs[sp];
 
 
-                        parent->ipf.Lab_Local (params.locallab, 1, sp, (float**)shbuffer, labnCrop, labnCrop, trafx / skip, trafy / skip, cropx / skip, cropy / skip, skips (parent->fw, skip), skips (parent->fh, skip), parent->fw, parent->fh, locutili, skip,  locRETgainCurve, locallutili, lllocalcurve2,
+                        parent->ipf.Lab_Local (params.locallab, 1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop, trafx / skip, trafy / skip, cropx / skip, cropy / skip, skips (parent->fw, skip), skips (parent->fh, skip), parent->fw, parent->fh, locutili, skip,  locRETgainCurve, locallutili, lllocalcurve2,
                                                loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref, params.locallab.sobelref);
                         lllocalcurve2.clear();
                         cclocalcurve2.clear();
@@ -1425,6 +1435,17 @@ void Crop::update (int todo)
                     parent->dustmets[sp] =  2;
                 }
 
+                if (parent->exclumets[sp] ==  0) {
+                    params.locallab.Exclumethod = "norm" ;
+                    parent->exclumets[sp] =  0;
+                } else if (parent->exclumets[sp] ==  1) {
+                    params.locallab.Exclumethod = "exc" ;
+                    parent->exclumets[sp] =  1;
+                }
+
+                parent->sensiexclus[sp] = params.locallab.sensiexclu = parent->sensiexclus[0];
+                parent->strucs[sp] = params.locallab.struc = parent->strucs[0];
+
                 std::vector<double>   ccret;
 
                 for (int j = 0; j < parent->sizeretics[sp]; j++) {
@@ -1526,7 +1547,7 @@ void Crop::update (int todo)
                 params.locallab.chromaref = parent->chromarefs[sp];
                 params.locallab.lumaref = parent->lumarefs[sp];
                 params.locallab.sobelref = parent->sobelrefs[sp];
-                parent->ipf.Lab_Local (params.locallab, 1, sp, (float**)shbuffer, labnCrop, labnCrop, trafx / skip, trafy / skip, cropx / skip, cropy / skip, skips (parent->fw, skip), skips (parent->fh, skip), parent->fw, parent->fh, locutili, skip,  locRETgainCurve, locallutili, lllocalcurve2, loclhCurve, lochhCurve,
+                parent->ipf.Lab_Local (params.locallab, 1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop, trafx / skip, trafy / skip, cropx / skip, cropy / skip, skips (parent->fw, skip), skips (parent->fh, skip), parent->fw, parent->fh, locutili, skip,  locRETgainCurve, locallutili, lllocalcurve2, loclhCurve, lochhCurve,
                                        LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref, params.locallab.sobelref);
 
                 lllocalcurve2.clear();
@@ -1779,6 +1800,11 @@ void Crop::freeAll ()
             labnCrop = nullptr;
         }
 
+        if (reservCrop ) {
+            delete    reservCrop;
+            reservCrop = nullptr;
+        }
+
         /*        if (lablocCrop ) {
                     delete    lablocCrop;
                     lablocCrop = NULL;
@@ -1982,6 +2008,12 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
         }
 
         labnCrop = new LabImage (cropw, croph);
+
+        if (reservCrop) {
+            delete reservCrop;    // labnCrop can't be resized
+        }
+
+        reservCrop = new LabImage (cropw, croph);
 
         /*        if (lablocCrop) {
                     delete lablocCrop;    // labnCrop can't be resized

@@ -828,6 +828,11 @@ HISTORY_MSG_577;Local - adjblur
 HISTORY_MSG_578;Local - cut past
 HISTORY_MSG_579;Local - cbdl chroma
 HISTORY_MSG_580;Local - Blur method
+HISTORY_MSG_581;Local - D method
+HISTORY_MSG_582;Local - LD
+HISTORY_MSG_584;Local - Spot method
+HISTORY_MSG_585;Local - Spot Excluding scope
+HISTORY_MSG_586;Local - Spot Excluding struc
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -1822,6 +1827,7 @@ TP_LOCALLAB_CURVCURR;Normal
 TP_LOCALLAB_CURVENH;Super
 TP_LOCALLAB_CUTPAST;Copy past buffer
 TP_LOCALLAB_DENOIS;Denoise
+TP_LOCALLAB_DSMOV;Local
 TP_LOCALLAB_DUST;Dust Spot Removal
 TP_LOCALLAB_LUM;Curves
 TP_LOCALLAB_CHROMACBDL;Chroma
@@ -1829,6 +1835,14 @@ TP_LOCALLAB_CHROMACB_TOOLTIP;Acts as an amplifier-reducer action compare to slid
 TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP;L=f(L), can be used with L(H) in Color and Light
 TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP;To be active, you must check button 'Enable curves' 
 TP_LOCALLAB_CURVEMETHOD_TOOLTIP;'Normal', the curve L=f(L) has the same algorithm than slider lightness.\n'Super' the curve L=f(L) has an new improved algorithm, which can leeds in some cases to artifacts.
+TP_LOCALLAB_EXCLUF;Excluding
+TP_LOCALLAB_SENSIEXCLU;Scope
+TP_LOCALLAB_SENSIEXCLU_TOOLTIP;Adjust color to include in exclusion!
+TP_LOCALLAB_STRUC;Structure
+TP_LOCALLAB_EXCLUTYPE;Spot method
+TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Normal spot use recursive data.\nExcluding spot reinitialize data to origin.
+TP_LOCALLAB_EXNORM;Normal spot
+TP_LOCALLAB_EXECLU;Excluding spot
 TP_LOCALLAB_EXPOSE;Exposure
 TP_LOCALLAB_NOISELUMFINE;Luminance fine
 TP_LOCALLAB_NOISELUMCOARSE;Luminance coarse

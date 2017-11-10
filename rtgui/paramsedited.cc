@@ -351,6 +351,8 @@ void ParamsEdited::set (bool v)
     locallab.sensiex = v;
     locallab.sensih = v;
     locallab.retrab = v;
+    locallab.sensiexclu = v;
+    locallab.struc = v;
     locallab.sensicb = v;
     locallab.sensibn = v;
     locallab.sensitm = v;
@@ -366,6 +368,7 @@ void ParamsEdited::set (bool v)
     locallab.chrrt = v;
     locallab.avoid = v;
     locallab.Smethod = v;
+    locallab.Exclumethod = v;
     locallab.retinexMethod = v;
     locallab.blurMethod = v;
     locallab.dustMethod = v;
@@ -966,6 +969,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         locallab.locYT = locallab.locYT && p.locallab.locYT == other.locallab.locYT;
         locallab.locXL = locallab.locXL && p.locallab.locXL == other.locallab.locXL;
         locallab.Smethod = locallab.Smethod && p.locallab.Smethod == other.locallab.Smethod;
+        locallab.Exclumethod = locallab.Exclumethod && p.locallab.Exclumethod == other.locallab.Exclumethod;
         locallab.retinexMethod = locallab.retinexMethod && p.locallab.retinexMethod == other.locallab.retinexMethod;
         locallab.blurMethod = locallab.blurMethod && p.locallab.blurMethod == other.locallab.blurMethod;
         locallab.dustMethod = locallab.dustMethod && p.locallab.dustMethod == other.locallab.dustMethod;
@@ -1000,6 +1004,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         locallab.sensiex = locallab.sensiex && p.locallab.sensiex == other.locallab.sensiex;
         locallab.sensih = locallab.sensih && p.locallab.sensih == other.locallab.sensih;
         locallab.retrab = locallab.retrab && p.locallab.retrab == other.locallab.retrab;
+        locallab.sensiexclu = locallab.sensiexclu && p.locallab.sensiexclu == other.locallab.sensiexclu;
+        locallab.struc = locallab.struc && p.locallab.struc == other.locallab.struc;
         locallab.sensicb = locallab.sensicb && p.locallab.sensicb == other.locallab.sensicb;
         locallab.sensibn = locallab.sensibn && p.locallab.sensibn == other.locallab.sensibn;
         locallab.sensitm = locallab.sensitm && p.locallab.sensitm == other.locallab.sensitm;
@@ -2437,6 +2443,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.locallab.Smethod   = mods.locallab.Smethod;
     }
 
+    if (locallab.Exclumethod) {
+        toEdit.locallab.Exclumethod   = mods.locallab.Exclumethod;
+    }
+
     if (locallab.retinexMethod) {
         toEdit.locallab.retinexMethod   = mods.locallab.retinexMethod;
     }
@@ -2605,6 +2615,13 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.locallab.retrab     = mods.locallab.retrab;
     }
 
+    if (locallab.sensiexclu) {
+        toEdit.locallab.sensiexclu     = mods.locallab.sensiexclu;
+    }
+
+    if (locallab.struc) {
+        toEdit.locallab.struc     = mods.locallab.struc;
+    }
 
     if (locallab.sensicb) {
         toEdit.locallab.sensicb     = mods.locallab.sensicb;

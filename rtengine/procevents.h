@@ -610,6 +610,9 @@ enum ProcEvent {
     EvlocallabdustMethod = 580,
     Evlocallablastdust = 581,
     Evlocallabsobelref = 582,
+    Evlocallabexclumethod = 583,
+    Evlocallabsensiexclu = 584,
+    Evlocallabstruc = 585,
 
     NUMOFEVENTS
 

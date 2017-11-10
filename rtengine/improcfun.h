@@ -46,11 +46,11 @@ class ImProcFunctions
 
 
     bool lastcutpast;
-	int lastcxbuf;
-	int lastcybuf;
-	int lastcount;
+    int lastcxbuf;
+    int lastcybuf;
+    int lastcount;
     LabImage *spotbuffer;
-	
+
     cmsHTRANSFORM monitorTransform;
     cmsHTRANSFORM lab2outputTransform;
     cmsHTRANSFORM output2monitorTransform;
@@ -209,7 +209,7 @@ public:
     double lumimul[3];
 
     ImProcFunctions       (const ProcParams* iparams, bool imultiThread = true)
-        : lastcutpast (false), lastcxbuf (0), lastcybuf (0), lastcount (0), spotbuffer (nullptr) , monitorTransform (nullptr), lab2outputTransform (nullptr), output2monitorTransform (nullptr), params (iparams), scale (1), multiThread (imultiThread), lumimul{} {}
+        : lastcutpast (false), lastcxbuf (0), lastcybuf (0), lastcount (0), spotbuffer (nullptr), monitorTransform (nullptr), lab2outputTransform (nullptr), output2monitorTransform (nullptr), params (iparams), scale (1), multiThread (imultiThread), lumimul{} {}
     ~ImProcFunctions      ();
     bool needsLuminanceOnly()
     {
@@ -295,7 +295,7 @@ public:
     void calc_ref (int call, int sp, float** shbuffer, LabImage* original, LabImage* transformed, int sx, int sy, int cx, int cy, int oW, int oH,  int fw, int fh, bool locutili, int sk, const LocretigainCurve & locRETgainCcurve, bool locallutili, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, LUTf & cclocalcurve, LUTf & sklocalcurve, double &huere, double &chromare, double &lumare, double &sobelref);
     void copy_ref (int call, int sp, LabImage* spotbuffer, LabImage* original, LabImage* transformed, int sx, int sy, int cx, int cy, int oW, int oH,  int fw, int fh, int sk, const struct local_params & lp, double &huerefspot, double &chromarefspot, double &lumarefspot);
     void paste_ref (int call, int sp, LabImage* spotbuffer, LabImage* original, LabImage* transformed, int sx, int sy, int cx, int cy, int oW, int oH,  int fw, int fh, int sk, const struct local_params & lp, double &huerefspot, double &chromarefspot, double &lumarefspot);
-    void Lab_Local (LocallabParams &loc, int call, int sp, float** shbuffer, LabImage* original, LabImage* transformed, int sx, int sy, int cx, int cy, int oW, int oH,  int fw, int fh, bool locutili, int sk, const LocretigainCurve & locRETgainCcurve, bool locallutili, LUTf & lllocalcurve, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve, bool &LHutili, bool &HHutili, LUTf & cclocalcurve, bool & localskutili, LUTf & sklocalcurve, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve, double &hueref, double &chromaref, double &lumaref, double &sobelref);
+    void Lab_Local (LocallabParams &loc, int call, int sp, float** shbuffer, LabImage* original, LabImage* transformed, LabImage* reserved, int sx, int sy, int cx, int cy, int oW, int oH,  int fw, int fh, bool locutili, int sk, const LocretigainCurve & locRETgainCcurve, bool locallutili, LUTf & lllocalcurve, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve, bool &LHutili, bool &HHutili, LUTf & cclocalcurve, bool & localskutili, LUTf & sklocalcurve, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve, double &hueref, double &chromaref, double &lumaref, double &sobelref);
     void addGaNoise (LabImage *lab, LabImage *dst, const float mean, const float variance, const int sk);
     void BlurNoise_Localold (int call, const struct local_params& lp, LabImage* original, LabImage* transformed, const LabImage* const tmp1, int cx, int cy);
     void InverseBlurNoise_Local (const struct local_params& lp, LabImage* original, LabImage* transformed, const LabImage* const tmp1, int cx, int cy);
@@ -310,6 +310,7 @@ public:
     void vibrancelocal (const local_params& lp, int bfw, int bfh, LabImage* lab,  LabImage* dest, bool & localskutili, LUTf & sklocalcurve);
     void Expose_Local (int sen, int call, float **buflight, float **bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy);
     void exlabLocal (const local_params& lp, int bfh, int bfw, LabImage* bufexporig, LabImage* lab,  LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve);
+    void Exclude_Local (int sen, int call, float **buflight, float **bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, LabImage * rsv, int cx, int cy);
 
     void DeNoise_Local (int call, const struct local_params& lp, LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy);
 

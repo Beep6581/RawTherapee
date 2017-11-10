@@ -911,6 +911,7 @@ private:
         }
 
         labView = new LabImage (fw, fh);
+        reservView = new LabImage (fw, fh);
 
         if (params.blackwhite.enabled) {
             CurveFactory::curveBW (params.blackwhite.beforeCurve, params.blackwhite.afterCurve, hist16, dummy, customToneCurvebw1, customToneCurvebw2, 1);
@@ -1025,6 +1026,7 @@ private:
         bool locutili = false;
         //     bool locallutili = false;
         //     bool localcutili = false;
+        reservView->CopyFrom (labView);
 
         if (params.locallab.enabled) {
             MyTime t1, t2;
@@ -1102,7 +1104,7 @@ private:
             }
 
             ifstream fich (datalab, ios::in);
-            int maxdata = 82;//78;//73 10011
+            int maxdata = 85; //82;//78;//73 10011
 
             if (fich && versionmip != 0) {
                 std::string inser;
@@ -1326,6 +1328,16 @@ private:
                     } else if (params.locallab.dustMethod == "pas") {
                         dataspots[77][0] =  2;
                     }
+
+
+                    if (params.locallab.Exclumethod == "norm") {
+                        dataspots[78][0] =  0;
+                    } else if (params.locallab.Exclumethod == "exc") {
+                        dataspots[78][0] =  1;
+                    }
+
+                    dataspots[79][0] = params.locallab.sensiexclu;
+                    dataspots[80][0] = params.locallab.struc;
 
                     dataspots[maxdata - 4][0] = 100.f * params.locallab.hueref;
                     dataspots[maxdata - 3][0] = params.locallab.chromaref;
@@ -1785,6 +1797,16 @@ private:
                         params.locallab.dustMethod = "pas" ;
                     }
 
+
+                    if (dataspots[78][sp] ==  0) {
+                        params.locallab.Exclumethod = "norm" ;
+                    } else if (dataspots[78][sp] ==  1) {
+                        params.locallab.Exclumethod = "exc" ;
+                    }
+
+                    params.locallab.sensiexclu = dataspots[79][sp];
+                    params.locallab.struc = dataspots[80][sp];
+
                     params.locallab.hueref = ((float) dataspots[maxdata - 4][sp]) / 100.f;
                     params.locallab.chromaref = dataspots[maxdata - 3][sp];
                     params.locallab.lumaref = dataspots[maxdata - 2][sp];
@@ -1974,7 +1996,7 @@ private:
                     params.locallab.lumaref = lumare;
                     params.locallab.sobelref = sobelre;
 
-                    ipf.Lab_Local (params.locallab, 2, sp, (float**)shbuffer, labView, labView, 0, 0, 0, 0, fw, fh, fw, fh, locutili, 1, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, lochhCurve,
+                    ipf.Lab_Local (params.locallab, 2, sp, (float**)shbuffer, labView, labView, reservView, 0, 0, 0, 0, fw, fh, fw, fh, locutili, 1, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, lochhCurve,
                                    LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref, params.locallab.sobelref);
                     lllocalcurve.clear();
                     cclocalcurve.clear();
@@ -2021,6 +2043,9 @@ private:
             }
 
         }
+		
+        delete reservView;
+        reservView = nullptr;
 
         ipf.chromiLuminanceCurve (nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 
@@ -2278,6 +2303,8 @@ private:
         delete labView;
         labView = nullptr;
 
+ //       delete reservView;
+ //       reservView = nullptr;
 
 
         if (bwonly) { //force BW r=g=b
@@ -2551,6 +2578,7 @@ private:
     ColorTemp currWB;
     Imagefloat *baseImg;
     LabImage* labView;
+    LabImage* reservView;
 
     LUTu hist16;
 

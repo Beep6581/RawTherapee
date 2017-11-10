@@ -43,6 +43,7 @@ protected:
     Imagefloat*  origCrop;   // "one chunk" allocation
     LabImage*    laboCrop;   // "one chunk" allocation
     LabImage*    labnCrop;   // "one chunk" allocation
+    LabImage*    reservCrop;   // "one chunk" allocation
     Image8*      cropImg;    // "one chunk" allocation ; displayed image in monitor color space, showing the output profile as well (soft-proofing enabled, which then correspond to workimg) or not
     float *      cbuf_real;  // "one chunk" allocation
     SHMap*       cshmap;     // per line allocation

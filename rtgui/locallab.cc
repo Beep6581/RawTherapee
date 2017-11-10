@@ -3,6 +3,7 @@
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
  *
+ *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -65,6 +66,8 @@ Locallab::Locallab ():
     centerX (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CENTER_X"), -1000, 1000, 1, 0))),
     centerY (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CENTER_Y"), -1000, 1000, 1, 0))),
     circrad (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CIRCRADIUS"), 2, 150, 1, 18))),
+    sensiexclu (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSIEXCLU"), 0, 100, 1, 19))),
+    struc (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_STRUC"), 0, 100, 1, 0))),
     thres (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_THRES"), 1, 35, 1, 18))),
     proxi (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_PROXI"), 0, 60, 1, 0))),
     lightness (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_LIGHTNESS"), -100, 100, 1, 0))),
@@ -114,12 +117,15 @@ Locallab::Locallab ():
     adjblur (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_ADJBLUR"), 0, 100, 1, 0))),
 
     Smethod (Gtk::manage (new MyComboBoxText ())),
+    Exclumethod (Gtk::manage (new MyComboBoxText ())),
+
     retinexMethod (Gtk::manage (new MyComboBoxText ())),
     qualityMethod (Gtk::manage (new MyComboBoxText ())),
     qualitycurveMethod (Gtk::manage (new MyComboBoxText ())),
     blurMethod (Gtk::manage (new MyComboBoxText ())),
     dustMethod (Gtk::manage (new MyComboBoxText ())),
 
+    excluFrame (Gtk::manage (new Gtk::Frame (M ("TP_LOCALLAB_EXCLUF")))),
     artifFrame (Gtk::manage (new Gtk::Frame (M ("TP_LOCALLAB_ARTIF")))),
     shapeFrame (Gtk::manage (new Gtk::Frame (M ("TP_LOCALLAB_SHFR")))),
     superFrame (Gtk::manage (new Gtk::Frame ())),
@@ -141,8 +147,10 @@ Locallab::Locallab ():
     labqual (Gtk::manage (new Gtk::Label (M ("TP_LOCALLAB_QUAL_METHOD") + ":"))),
     labqualcurv (Gtk::manage (new Gtk::Label (M ("TP_LOCALLAB_QUALCURV_METHOD") + ":"))),
     labmS (Gtk::manage (new Gtk::Label (M ("TP_LOCALLAB_STYPE") + ":"))),
+    labmEx (Gtk::manage (new Gtk::Label (M ("TP_LOCALLAB_EXCLUTYPE") + ":"))),
 
     ctboxS (Gtk::manage (new Gtk::HBox ())),
+    ctboxEx (Gtk::manage (new Gtk::HBox ())),
     dhbox (Gtk::manage (new Gtk::HBox ())),
     qualbox (Gtk::manage (new Gtk::HBox ())),
     qualcurvbox (Gtk::manage (new Gtk::HBox ())),
@@ -221,6 +229,19 @@ Locallab::Locallab ():
     expdenoi->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &Locallab::foldAllButMe), expdenoi) );
     enabledenoiConn = expdenoi->signal_enabled_toggled().connect ( sigc::bind ( sigc::mem_fun (this, &Locallab::enableToggled), expdenoi) );
 
+    ctboxEx->pack_start (*labmEx, Gtk::PACK_SHRINK, 4);
+    ctboxEx->set_tooltip_markup (M ("TP_LOCALLAB_EXCLUTYPE_TOOLTIP"));
+
+    Exclumethod->append (M ("TP_LOCALLAB_EXNORM"));
+    Exclumethod->append (M ("TP_LOCALLAB_EXECLU"));
+    Exclumethod->set_active (0);
+    Exclumethodconn = Exclumethod->signal_changed().connect ( sigc::mem_fun (*this, &Locallab::ExclumethodChanged) );
+
+    sensiexclu->set_tooltip_text (M ("TP_LOCALLAB_SENSIEXCLU_TOOLTIP"));
+    sensiexclu->setAdjusterListener (this);
+
+    //  struc->set_tooltip_text (M ("TP_LOCALLAB_STRUC_TOOLTIP"));
+    struc->setAdjusterListener (this);
 
     ctboxS->pack_start (*labmS, Gtk::PACK_SHRINK, 4);
     ctboxS->set_tooltip_markup (M ("TP_LOCALLAB_STYPE_TOOLTIP"));
@@ -231,6 +252,7 @@ Locallab::Locallab ():
     Smethod->append (M ("TP_LOCALLAB_SYMSL"));
     Smethod->set_active (0);
     Smethodconn = Smethod->signal_changed().connect ( sigc::mem_fun (*this, &Locallab::SmethodChanged) );
+
 
     //locX->set_tooltip_text (M("TP_LOCAL_WIDTH_TOOLTIP"));
     locX->setAdjusterListener (this);
@@ -497,8 +519,22 @@ Locallab::Locallab ():
     chromaref->hide();
     lumaref->hide();
     sobelref->hide();
+    ctboxEx->pack_start (*Exclumethod);
+    shapeBox->pack_start (*ctboxEx);
+
+    excluFrame->set_label_align (0.025, 0.5);
+    excluFrame->set_tooltip_text (M ("TP_LOCALLAB_EXCLUF_TOOLTIP"));
+    ToolParamBlock* const excluBox = Gtk::manage (new ToolParamBlock());
+
+    excluBox->pack_start (*sensiexclu);
+//    excluBox->pack_start (*struc);
+    excluFrame->add (*excluBox);
+    shapeBox->pack_start (*excluFrame);
+
+
     ctboxS->pack_start (*Smethod);
     shapeBox->pack_start (*ctboxS);
+
 
     shapeBox->pack_start (*locX);
     shapeBox->pack_start (*locXL);
@@ -632,7 +668,7 @@ Locallab::Locallab ():
     superFrame->set_label_widget (*curvactiv);
     ToolParamBlock* const colorBox = Gtk::manage (new ToolParamBlock());
 
-    ToolParamBlock* const dustBox = Gtk::manage (new ToolParamBlock());
+    //  ToolParamBlock* const dustBox = Gtk::manage (new ToolParamBlock());
     dustMethod->append (M ("TP_LOCALLAB_DSCOP"));
     dustMethod->append (M ("TP_LOCALLAB_DSMOV"));
     dustMethod->append (M ("TP_LOCALLAB_DSPAS"));
@@ -649,15 +685,15 @@ Locallab::Locallab ():
     colorBox->pack_start (*sensi);
 
     dustFrame->set_label_align (0.025, 0.5);
-    dustBox->pack_start (*dustMethod);
-    dustBox->pack_start (*lastdust);
+//    dustBox->pack_start (*dustMethod);
+//    dustBox->pack_start (*lastdust);
 
-    dustBox->pack_start (*cutpast);
-    dustBox->pack_start (*centerXbuf);
-    dustBox->pack_start (*centerYbuf);
-    dustBox->pack_start (*adjblur);
-    dustFrame->add (*dustBox);
-//   colorBox->pack_start (*dustFrame);
+//    dustBox->pack_start (*cutpast);
+//    dustBox->pack_start (*centerXbuf);
+//    dustBox->pack_start (*centerYbuf);
+//    dustBox->pack_start (*adjblur);
+//    dustFrame->add (*dustBox);
+//  colorBox->pack_start (*dustFrame);
     centerXbuf->hide();
     centerYbuf->hide();
 
@@ -1196,6 +1232,7 @@ void Locallab::updateToolState (std::vector<int> &tpOpen)
 void Locallab::neutral_pressed ()
 {
     Smethod->set_active (0);
+    Exclumethod->set_active (0);
     locX->resetValue (false);
     locXL->resetValue (false);
     locY->resetValue (false);
@@ -1208,6 +1245,8 @@ void Locallab::neutral_pressed ()
     adjblur->resetValue (false);
     blurMethod->set_active (0);
     dustMethod->set_active (1);
+    sensiexclu->resetValue (false);
+    struc->resetValue (false);
 
     qualityMethod->set_active (0);
     qualitycurveMethod->set_active (0);
@@ -1755,11 +1794,20 @@ bool Locallab::localComputed_ ()
         dustMethod->set_active (2);
     }
 
-    double intermed = 0.01 * (double) nextdatasp[78];
+    if (nextdatasp[78] == 0) {
+        Exclumethod->set_active (0);
+    } else if (nextdatasp[78] == 1) {
+        Exclumethod->set_active (1);
+    }
+
+    sensiexclu->setValue (nextdatasp[79]);
+    struc->setValue (nextdatasp[80]);
+
+    double intermed = 0.01 * (double) nextdatasp[81];
     hueref->setValue (intermed);
-    chromaref->setValue (nextdatasp[79]);
-    lumaref->setValue (nextdatasp[80]);
-    sobelref->setValue (nextdatasp[81]);
+    chromaref->setValue (nextdatasp[82]);
+    lumaref->setValue (nextdatasp[83]);
+    sobelref->setValue (nextdatasp[84]);
 
     int *s_datc;
     s_datc = new int[70];
@@ -1942,11 +1990,11 @@ bool Locallab::localComputed_ ()
     }
 
     if (listener) {//for cutpast
-        listener->panelChanged (Evlocallabcutpast, M ("GENERAL_ENABLED"));
+        //   listener->panelChanged (Evlocallabcutpast, M ("GENERAL_ENABLED"));
     }
 
     if (listener) {//for cutpast
-        listener->panelChanged (Evlocallablastdust, M ("GENERAL_ENABLED"));
+        //    listener->panelChanged (Evlocallablastdust, M ("GENERAL_ENABLED"));
     }
 
     if (listener) {//for blur method
@@ -1954,7 +2002,11 @@ bool Locallab::localComputed_ ()
     }
 
     if (listener) {//for dust method
-        listener->panelChanged (EvlocallabdustMethod, dustMethod->get_active_text ());
+        //    listener->panelChanged (EvlocallabdustMethod, dustMethod->get_active_text ());
+    }
+
+    if (listener) {//for Exclude method
+        listener->panelChanged (Evlocallabexclumethod, Exclumethod->get_active_text ());
     }
 
     if (listener) {//for curvactiv
@@ -2039,7 +2091,7 @@ bool Locallab::localComputed_ ()
 
 void Locallab::localChanged  (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat)
 {
-    for (int i = 2; i < 82; i++) {
+    for (int i = 2; i < 85; i++) {
         nextdatasp[i] = datasp[i][sp];
     }
 
@@ -2142,6 +2194,8 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
 
         threshold->setEditedState (pedited->locallab.threshold ? Edited : UnEdited);
         chromacbdl->setEditedState (pedited->locallab.chromacbdl ? Edited : UnEdited);
+        sensiexclu->setEditedState (pedited->locallab.sensiexclu ? Edited : UnEdited);
+        struc->setEditedState (pedited->locallab.struc ? Edited : UnEdited);
 
         sensi->setEditedState (pedited->locallab.sensi ? Edited : UnEdited);
         sensih->setEditedState (pedited->locallab.sensih ? Edited : UnEdited);
@@ -2199,6 +2253,10 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
             Smethod->set_active_text (M ("GENERAL_UNCHANGED"));
         }
 
+        if (!pedited->locallab.Exclumethod) {
+            Exclumethod->set_active_text (M ("GENERAL_UNCHANGED"));
+        }
+
         if (!pedited->locallab.retinexMethod) {
             retinexMethod->set_active_text (M ("GENERAL_UNCHANGED"));
         }
@@ -2224,6 +2282,7 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
     setEnabled (pp->locallab.enabled);
 
     Smethodconn.block (true);
+    Exclumethodconn.block (true);
     retinexMethodConn.block (true);
     qualityMethodConn.block (true);
     qualitycurveMethodConn.block (true);
@@ -2281,6 +2340,8 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
     black->setValue (pp->locallab.black);
     shcompr->setValue (pp->locallab.shcompr);
     shcompr->set_sensitive (! ((int)black->getValue () == 0));  //at black=0 shcompr value has no effect
+    sensiexclu->setValue (pp->locallab.sensiexclu);
+    struc->setValue (pp->locallab.struc);
 
     sharradius->setValue (pp->locallab.sharradius);
     sharamount->setValue (pp->locallab.sharamount);
@@ -2409,6 +2470,15 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     SmethodChanged();
     Smethodconn.block (false);
+
+    if (pp->locallab.Exclumethod == "norm") {
+        Exclumethod->set_active (0);
+    } else if (pp->locallab.Exclumethod == "exc") {
+        Exclumethod->set_active (1);
+    }
+
+    ExclumethodChanged();
+    Exclumethodconn.block (false);
 
     if (pp->locallab.retinexMethod == "low") {
         retinexMethod->set_active (0);
@@ -2751,6 +2821,8 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
     pp->locallab.sensih = sensih->getIntValue ();
     pp->locallab.retrab = retrab->getIntValue ();
     pp->locallab.sensicb = sensicb->getIntValue ();
+    pp->locallab.sensiexclu = sensiexclu->getIntValue ();
+    pp->locallab.struc = struc->getIntValue ();
     pp->locallab.sensibn = sensibn->getIntValue ();
     pp->locallab.sensitm = sensitm->getIntValue ();
     pp->locallab.radius = radius->getIntValue ();
@@ -2818,6 +2890,7 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
     if (pedited) {
         pedited->locallab.degree = degree->getEditedState ();
         pedited->locallab.Smethod  = Smethod->get_active_text() != M ("GENERAL_UNCHANGED");
+        pedited->locallab.Exclumethod  = Exclumethod->get_active_text() != M ("GENERAL_UNCHANGED");
         pedited->locallab.retinexMethod    = retinexMethod->get_active_text() != M ("GENERAL_UNCHANGED");
         pedited->locallab.qualityMethod    = qualityMethod->get_active_text() != M ("GENERAL_UNCHANGED");
         pedited->locallab.qualitycurveMethod    = qualitycurveMethod->get_active_text() != M ("GENERAL_UNCHANGED");
@@ -2858,6 +2931,8 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.sensih = sensih->getEditedState ();
         pedited->locallab.retrab = retrab->getEditedState ();
         pedited->locallab.sensicb = sensicb->getEditedState ();
+        pedited->locallab.sensiexclu = sensiexclu->getEditedState ();
+        pedited->locallab.struc = struc->getEditedState ();
         pedited->locallab.sensibn = sensibn->getEditedState ();
         pedited->locallab.sensitm = sensitm->getEditedState ();
         pedited->locallab.radius = radius->getEditedState ();
@@ -2963,6 +3038,11 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
         pp->locallab.qualitycurveMethod = "enh";
     }
 
+    if (Exclumethod->get_active_row_number() == 0) {
+        pp->locallab.Exclumethod = "norm";
+    } else if (Exclumethod->get_active_row_number() == 1) {
+        pp->locallab.Exclumethod = "exc";
+    }
 
     if (Smethod->get_active_row_number() == 0) {
         pp->locallab.Smethod = "IND";
@@ -3211,7 +3291,7 @@ void Locallab::dustMethodChanged()
 
 
     if (listener) {
-        listener->panelChanged (EvlocallabdustMethod, dustMethod->get_active_text ());
+        //   listener->panelChanged (EvlocallabdustMethod, dustMethod->get_active_text ());
     }
 }
 
@@ -3252,6 +3332,24 @@ void Locallab::qualitycurveMethodChanged()
         listener->panelChanged (EvlocallabqualitycurveMethod, qualitycurveMethod->get_active_text ());
     }
 }
+
+void Locallab::ExclumethodChanged()
+{
+    if (!batchMode) {
+        if (Exclumethod->get_active_row_number() == 0) {
+            excluFrame->hide();
+        } else if (Exclumethod->get_active_row_number() == 1) {
+            excluFrame->show();
+        }
+    }
+
+
+    if (listener) {
+        listener->panelChanged (Evlocallabexclumethod, Exclumethod->get_active_text ());
+    }
+
+}
+
 
 void Locallab::SmethodChanged ()
 {
@@ -3379,9 +3477,9 @@ void Locallab::cutpastChanged ()
 
     if (listener) {
         if (getEnabled()) {
-            listener->panelChanged (Evlocallabcutpast, M ("GENERAL_ENABLED"));
+            //     listener->panelChanged (Evlocallabcutpast, M ("GENERAL_ENABLED"));
         } else {
-            listener->panelChanged (Evlocallabcutpast, M ("GENERAL_DISABLED"));
+            //     listener->panelChanged (Evlocallabcutpast, M ("GENERAL_DISABLED"));
         }
     }
 }
@@ -3405,9 +3503,9 @@ void Locallab::lastdustChanged ()
 
     if (listener) {
         if (getEnabled()) {
-            listener->panelChanged (Evlocallablastdust, M ("GENERAL_ENABLED"));
+            //    listener->panelChanged (Evlocallablastdust, M ("GENERAL_ENABLED"));
         } else {
-            listener->panelChanged (Evlocallablastdust, M ("GENERAL_DISABLED"));
+            //    listener->panelChanged (Evlocallablastdust, M ("GENERAL_DISABLED"));
         }
     }
 }
@@ -3600,6 +3698,8 @@ void Locallab::setDefaults (const ProcParams * defParams, const ParamsEdited * p
     sensiex->setDefault (defParams->locallab.sensiex);
     sensih->setDefault (defParams->locallab.sensih);
     retrab->setDefault (defParams->locallab.retrab);
+    sensiexclu->setDefault (defParams->locallab.sensiexclu);
+    struc->setDefault (defParams->locallab.struc);
     sensicb->setDefault (defParams->locallab.sensicb);
     sensibn->setDefault (defParams->locallab.sensibn);
     sensitm->setDefault (defParams->locallab.sensitm);
@@ -3671,6 +3771,8 @@ void Locallab::setDefaults (const ProcParams * defParams, const ParamsEdited * p
         sensiex->setDefaultEditedState (pedited->locallab.sensiex ? Edited : UnEdited);
         sensih->setDefaultEditedState (pedited->locallab.sensih ? Edited : UnEdited);
         retrab->setDefaultEditedState (pedited->locallab.retrab ? Edited : UnEdited);
+        sensiexclu->setDefaultEditedState (pedited->locallab.sensiexclu ? Edited : UnEdited);
+        struc->setDefaultEditedState (pedited->locallab.struc ? Edited : UnEdited);
         sensicb->setDefaultEditedState (pedited->locallab.sensicb ? Edited : UnEdited);
         sensibn->setDefaultEditedState (pedited->locallab.sensibn ? Edited : UnEdited);
         sensitm->setDefaultEditedState (pedited->locallab.sensitm ? Edited : UnEdited);
@@ -3742,7 +3844,9 @@ void Locallab::setDefaults (const ProcParams * defParams, const ParamsEdited * p
         sensih->setDefaultEditedState (Irrelevant);
         retrab->setDefaultEditedState (Irrelevant);
         sensicb->setDefaultEditedState (Irrelevant);
-        sensibn->setDefaultEditedState (Irrelevant);
+        sensiexclu->setDefaultEditedState (Irrelevant);
+        sensicb->setDefaultEditedState (Irrelevant);
+        struc->setDefaultEditedState (Irrelevant);
         sensitm->setDefaultEditedState (Irrelevant);
         radius->setDefaultEditedState (Irrelevant);
         strength->setDefaultEditedState (Irrelevant);
@@ -3967,12 +4071,16 @@ void Locallab::adjusterChanged (Adjuster * a, double newval)
             listener->panelChanged (Evlocallabchromacbdl, chromacbdl->getTextValue());
         } else if (a == sensicb) {
             listener->panelChanged (Evlocallabsensicb, sensicb->getTextValue());
+        } else if (a == sensiexclu) {
+            listener->panelChanged (Evlocallabsensiexclu, sensiexclu->getTextValue());
+        } else if (a == struc) {
+//            listener->panelChanged (Evlocallabstruc, struc->getTextValue());
         } else if (a == sensibn) {
             listener->panelChanged (Evlocallabsensibn, sensibn->getTextValue());
         } else if (a == proxi) {
             listener->panelChanged (Evlocallabproxi, proxi->getTextValue());
         } else if (a == adjblur) {
-            listener->panelChanged (Evlocallabadjblur, adjblur->getTextValue());
+            //    listener->panelChanged (Evlocallabadjblur, adjblur->getTextValue());
         } else if (a == centerX || a == centerY) {
             listener->panelChanged (EvlocallabCenter, Glib::ustring::compose ("X=%1\nY=%2", centerX->getTextValue(), centerY->getTextValue()));
         } else if (a == centerXbuf || a == centerYbuf) {
@@ -4091,6 +4199,8 @@ void Locallab::trimValues (rtengine::procparams::ProcParams * pp)
     sensiex->trimValue (pp->locallab.sensiex);
     sensih->trimValue (pp->locallab.sensih);
     retrab->trimValue (pp->locallab.retrab);
+    sensiexclu->trimValue (pp->locallab.sensiexclu);
+    struc->trimValue (pp->locallab.struc);
     sensicb->trimValue (pp->locallab.sensicb);
     sensibn->trimValue (pp->locallab.sensibn);
     sensitm->trimValue (pp->locallab.sensitm);
@@ -4172,6 +4282,8 @@ void Locallab::setBatchMode (bool batchMode)
     sensiex->showEditedCB ();
     sensih->showEditedCB ();
     retrab->showEditedCB ();
+    sensiexclu->showEditedCB ();
+    struc->showEditedCB ();
     sensicb->showEditedCB ();
     sensibn->showEditedCB ();
     sensitm->showEditedCB ();

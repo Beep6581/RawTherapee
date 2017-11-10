@@ -984,6 +984,8 @@ public:
     int     sensih;
     int     retrab;
     int     sensicb;
+    int     sensiexclu;
+    int     struc;
     int     sensibn;
     int     sensisha;
     int     sensitm;
@@ -997,6 +999,7 @@ public:
     int     transit;
     bool    avoid;
     Glib::ustring Smethod;
+    Glib::ustring Exclumethod;
     Glib::ustring retinexMethod;
     Glib::ustring blurMethod;
     Glib::ustring dustMethod;

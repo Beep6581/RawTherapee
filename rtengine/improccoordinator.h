@@ -60,6 +60,8 @@ protected:
     Imagefloat *oprevi;
     LabImage *oprevl;
     LabImage *nprevl;
+    LabImage *reserv;
+
     Image8 *previmg;  // displayed image in monitor color space, showing the output profile as well (soft-proofing enabled, which then correspond to workimg) or not
     Image8 *workimg;  // internal image in output color space for analysis
     CieImage *ncie;
@@ -346,6 +348,10 @@ protected:
     LUTi sizeskintonecurves;
     LUTi excurves;
     LUTi sizeexcurves;
+
+    LUTi exclumets;
+    LUTi sensiexclus;
+    LUTi strucs;
 
     LUTf huerefs;
     LUTf chromarefs;

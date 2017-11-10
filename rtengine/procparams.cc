@@ -1025,6 +1025,8 @@ void LocallabParams::setDefaults()
     sensih = 19;
     retrab = 500;
     sensicb = 19;
+    sensiexclu = 19;
+    struc = 0;
     sensibn = 40;
     sensitm = 19;
     sensisha = 19;
@@ -1032,6 +1034,7 @@ void LocallabParams::setDefaults()
     chrrt = 0;
     avoid = false;
     Smethod = "IND";
+    Exclumethod = "norm";
     retinexMethod = "high";
     blurMethod = "norm";
     dustMethod = "mov";
@@ -3006,6 +3009,10 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_string ("Locallab", "Smethod", locallab.Smethod);
         }
 
+        if (!pedited || pedited->locallab.Exclumethod) {
+            keyFile.set_string ("Locallab", "Exclumethod", locallab.Exclumethod);
+        }
+
         if (!pedited || pedited->locallab.retinexMethod) {
             keyFile.set_string ("Locallab", "retinexMethod", locallab.retinexMethod);
         }
@@ -3204,6 +3211,13 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_integer ("Locallab", "Retrab", locallab.retrab);
         }
 
+        if (!pedited || pedited->locallab.sensiexclu) {
+            keyFile.set_integer ("Locallab", "Sensiexclu", locallab.sensiexclu);
+        }
+
+        if (!pedited || pedited->locallab.struc) {
+            keyFile.set_integer ("Locallab", "Struc", locallab.struc);
+        }
 
         if (!pedited || pedited->locallab.sensicb) {
             keyFile.set_integer ("Locallab", "Sensicb", locallab.sensicb);
@@ -4867,6 +4881,14 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("Locallab", "Exclumethod"))  {
+                locallab.Exclumethod  = keyFile.get_string ("Locallab", "Exclumethod");
+
+                if (pedited) {
+                    pedited->locallab.Exclumethod = true;
+                }
+            }
+
             if (keyFile.has_key ("Locallab", "retinexMethod"))  {
                 locallab.retinexMethod  = keyFile.get_string ("Locallab", "retinexMethod");
 
@@ -5167,6 +5189,21 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
 
             //RAS
+            if (keyFile.has_key ("Locallab", "Sensiexclu"))  {
+                locallab.sensiexclu  = keyFile.get_integer ("Locallab", "Sensiexclu");
+
+                if (pedited) {
+                    pedited->locallab.sensiexclu = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Struc"))  {
+                locallab.struc  = keyFile.get_integer ("Locallab", "Struc");
+
+                if (pedited) {
+                    pedited->locallab.struc = true;
+                }
+            }
 
 
             if (keyFile.has_key ("Locallab", "Sensicb"))  {
@@ -10020,6 +10057,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && locallab.inverssha == other.locallab.inverssha
         && locallab.degree == other.locallab.degree
         && locallab.Smethod == other.locallab.Smethod
+        && locallab.Exclumethod == other.locallab.Exclumethod
         && locallab.retinexMethod == other.locallab.retinexMethod
         && locallab.blurMethod == other.locallab.blurMethod
         && locallab.dustMethod == other.locallab.dustMethod
@@ -10069,6 +10107,8 @@ bool ProcParams::operator== (const ProcParams& other)
         && locallab.sensih == other.locallab.sensih
         && locallab.retrab == other.locallab.retrab
         && locallab.sensicb == other.locallab.sensicb
+        && locallab.sensiexclu == other.locallab.sensiexclu
+        && locallab.struc == other.locallab.struc
         && locallab.sensibn == other.locallab.sensibn
         && locallab.sensisha == other.locallab.sensisha
         && locallab.radius == other.locallab.radius

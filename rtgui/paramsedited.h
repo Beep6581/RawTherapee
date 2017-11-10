@@ -478,6 +478,9 @@ public:
     bool transit;
     bool avoid;
     bool Smethod;
+    bool Exclumethod;
+    bool sensiexclu;
+    bool struc;
     bool retinexMethod;
     bool blurMethod;
     bool dustMethod;
