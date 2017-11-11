@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.57
+  Version 2.60
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -425,7 +425,7 @@ paned.horizontal > separator {
 }
 
 paned.vertical > separator {
-	background-image: image(@bg-dark-grey);
+    background-image: image(@bg-dark-grey);
     background-color: @bg-light-grey;
     min-height: 0.5em;
     border-top: 1px solid @bg-light-grey;
@@ -462,6 +462,9 @@ menu separator {
 #MyExpander separator {
     background-color: @view-grid-border;
     margin: 0.33334em 0;
+}
+#MyFileChooserButton separator {
+    background-color: transparent;
 }
 
 #PlacesPaned .view.separator {
@@ -884,12 +887,15 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     border-radius: 0;
 }
 
+#MetaPanelNotebook > stack > box:nth-child(1) > :nth-child(1) {
+    border: 0.08334em solid @bg-dark-grey;
+}
 #MetaPanelNotebook > stack > box:nth-child(2) > scrolledwindow scrolledwindow {
     background-color: @bg-dark-grey;
     padding: 0;
     margin: 0;
 }
-#MetaPanelNotebook .view {
+#MetaPanelNotebook > stack > box:nth-child(2) .view {
     border: 0.08334em solid @bg-dark-grey;
     padding: 0.16667em;
     margin: 0;
@@ -1036,9 +1042,8 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 }
 
 #EditorTopPanel > box:nth-child(9) > button.image-button {
-    min-width: 0;
-    padding-left: 0.25em;
-    padding-right: 0.25em;
+    min-width: 1.05em;
+    padding: 0;
 }
 
 /*Button editor bottom*/
@@ -1197,7 +1202,7 @@ popover.background {
     border-radius: 0;
     padding: 0;
     margin: 0;
-	box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.5), 0 0 0 1px @bg-dark-grey;
+    box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.5), 0 0 0 1px @bg-dark-grey;
 }
 popover.background > box {
     padding: 0;
@@ -1237,6 +1242,21 @@ button.flat {
 }
 button.text-button label {
     margin: 0 0.5em;/* x */
+}
+
+#PrefNotebook > stack > :nth-child(5) combobox {
+    /* margin: 0.16667em 0; */
+    margin: 2px 0;
+}
+#PrefNotebook > stack > :nth-child(2) #MyFileChooserButton {
+    /* margin: 0.25em 0.33334em; */
+    margin: 3px 5px;
+}
+
+filechooser button image,
+#MyFileChooserButton image {
+    opacity: .8;
+    -gtk-icon-style: symbolic;
 }
 
 #MainNotebook > header > grid > button,
@@ -1343,6 +1363,10 @@ dialog button,
     padding: 0 0.375em;
     margin: 0.08334em 0;
 }
+#MyExpander #MyFileChooserButton + button.image-button{
+    min-width: 1.66667em;
+    padding: 0;
+}
 combobox .combo,
 dialog combobox .combo,
 #ToolPanelNotebook combobox .combo,
@@ -1362,7 +1386,6 @@ dialog combobox .combo,
 #MyExpander combobox + label */ {
     margin-left: 0.16667em;
 }
-#MyExpander label + filechooserbutton,
 #MyExpander label + * > button:not(.flat).Left,
 #MyExpander label + combobox:not(:first-child):not(:only-child),
 #MyExpander label + button:not(.flat):not(spinbutton) {
@@ -1613,6 +1636,10 @@ radiobutton {
     margin: 0;
     min-height: 2em;
 }
+#PrefNotebook checkbox,
+#PrefNotebook checkbutton {
+    min-height: 1.6667em;
+}
 
 check,
 radio {
@@ -1626,7 +1653,7 @@ radio {
     box-shadow: none;
     background-repeat: no-repeat;
     -gtk-icon-shadow: none;
-	color: @text-color;
+    color: @text-color;
 }
 radiobutton label,
 checkbutton label {

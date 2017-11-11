@@ -66,7 +66,7 @@ protected:
     ProfileChangeListener* tpc;
     bool dontupdate;
     sigc::connection changeconn;
-
+    static Gtk::Window* parent;
     void changeTo (const rtengine::procparams::PartialProfile* newpp, Glib::ustring profname);
 
 public:
@@ -79,7 +79,7 @@ public:
         tpc = ppl;
     }
 
-    static void init (Gtk::Window* parent);
+    static void init (Gtk::Window* parentWindow);
     static void cleanup ();
     void storeCurrentValue();
     void updateProfileList ();

@@ -788,6 +788,10 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
     bool enableLCPDist = false;
     bool enableCA = false;
 
+#ifdef __GNUC__ // silence warning
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#endif
     switch (mode) {
         case ImProcFunctions::TRANSFORM_HIGH_QUALITY_FULLIMAGE: {
             enableLCPCA = pLCPMap && params->lensProf.useCA && pLCPMap->isCACorrectionAvailable();
@@ -796,9 +800,6 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
 
         case ImProcFunctions::TRANSFORM_HIGH_QUALITY: {
             enableLCPDist = pLCPMap && params->lensProf.useDist;
-            if (enableLCPCA) {
-                enableLCPDist = false;
-            }
             enableCA = enableLCPCA || needsCA();
         }
         //no break on purpose
@@ -809,6 +810,13 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
             break;
         }
     }
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
+
+    if (enableLCPCA) {
+        enableLCPDist = false;
+    }    
 
     if (!enableCA) {
         chDist[0] = 0.0;

@@ -493,7 +493,6 @@ PREFERENCES_CUSTPROFBUILD;Egyedi profil készítő
 PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.\nReceives command line params to allow a rules based .pp3 generation:\n[Path raw/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
 PREFERENCES_CUSTPROFBUILDPATH;Indítóállomány útvonala
 PREFERENCES_CUTOVERLAYBRUSH;Vágás maszkjának színe/áttetszősége
-PREFERENCES_DARKFRAME;Fekete referenciakép (dark frame)
 PREFERENCES_DARKFRAMEFOUND;Találat
 PREFERENCES_DARKFRAMESHOTS;kép
 PREFERENCES_DARKFRAMETEMPLATES;sablonok
@@ -511,7 +510,6 @@ PREFERENCES_EXTERNALEDITOR;Külső képszerkesztő program
 PREFERENCES_FBROWSEROPTS;Állományböngésző beállításai
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Egysoros állományböngésző eszköztár (alacsony felbontás esetén hagyd üresen)
 PREFERENCES_FILEFORMAT;Állományformátum
-PREFERENCES_FLATFIELD;Flat Field
 PREFERENCES_FLATFIELDFOUND;Találat
 PREFERENCES_FLATFIELDSDIR;Flat Fields könyvtár
 PREFERENCES_FLATFIELDSHOTS;kép
@@ -1360,8 +1358,8 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !PREFERENCES_D65;6500K
 !PREFERENCES_DAUB_LABEL;Use Daubechies D6 wavelets instead of D4
 !PREFERENCES_DAUB_TOOLTIP;The Noise Reduction and Wavelet Levels tools use a Debauchies mother wavelet. If you choose D6 instead of D4 you increase the number of orthogonal Daubechies coefficients and probably increase quality of small-scale levels. There is no memory or processing time difference between the two.
+!PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_EXPAUT;Expert
-!PREFERENCES_FILMSIMULATION;Film Simulation
 !PREFERENCES_FLUOF2;Fluorescent F2
 !PREFERENCES_FLUOF7;Fluorescent F7
 !PREFERENCES_FLUOF11;Fluorescent F11

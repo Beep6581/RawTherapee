@@ -52,7 +52,7 @@ LUTf RawImageSource::initInvGrad()
 #endif
 //LUTf RawImageSource::invGrad = RawImageSource::initInvGrad();
 
-SSEFUNCTION void RawImageSource::fast_demosaic(int winx, int winy, int winw, int winh)
+SSEFUNCTION void RawImageSource::fast_demosaic()
 {
 
     double progress = 0.0;

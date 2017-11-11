@@ -537,7 +537,6 @@ PREFERENCES_D50_OLD;5000K
 PREFERENCES_D55;5500K
 PREFERENCES_D60;6000K
 PREFERENCES_D65;6500K
-PREFERENCES_DARKFRAME;暗场
 PREFERENCES_DARKFRAMEFOUND;找到
 PREFERENCES_DARKFRAMESHOTS;张
 PREFERENCES_DARKFRAMETEMPLATES;模板
@@ -558,8 +557,6 @@ PREFERENCES_EXTERNALEDITOR;外部编辑器
 PREFERENCES_FBROWSEROPTS;文件浏览选项
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar\n(de-select for low resolution display)
 PREFERENCES_FILEFORMAT;文件格式
-PREFERENCES_FILMSIMULATION;胶片模拟
-PREFERENCES_FLATFIELD;平场
 PREFERENCES_FLATFIELDFOUND;找到
 PREFERENCES_FLATFIELDSDIR;平场图像路径
 PREFERENCES_FLATFIELDSHOTS;张
@@ -1480,6 +1477,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values.
 !PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed.
 !PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial processing profile should be generated for an image.\n\nThe path of the communication file (*.ini style, a.k.a. "Keyfile") is added as a command line parameter. It contains various parameters required for the scripts and image Exif to allow a rules-based processing profile generation.\n\n<b>WARNING:</b> You are responsible for using double quotes where necessary if you're using paths containing spaces.
+!PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
 !PROFILEPANEL_COPYPPASTE;Parameters to copy
 !PROFILEPANEL_GLOBALPROFILES;Bundled profiles

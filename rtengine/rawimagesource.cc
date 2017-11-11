@@ -87,7 +87,7 @@ void transLineStandard (const float* const red, const float* const green, const 
     rotateLine (blue, image->b, tran, i, imwidth, imheight);
 }
 
-void transLineFuji (const float* const red, const float* const green, const float* const blue, const int i, rtengine::Imagefloat* const image, const int tran, const int imwidth, const int imheight, const int fw)
+void transLineFuji (const float* const red, const float* const green, const float* const blue, const int i, rtengine::Imagefloat* const image, const int tran, const int imheight, const int fw)
 {
 
     // Fuji SuperCCD rotation + coarse rotation
@@ -623,7 +623,7 @@ float calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const flo
     return gain;
 }
 
-void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const ColorManagementParams &cmp, const RAWParams &raw )
+void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw )
 {
     MyMutex::MyLock lock(getImageMutex);
 
@@ -824,7 +824,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
             if(d1x) {
                 transLineD1x (line_red, line_grn, line_blue, ix, image, tran, imwidth, imheight, d1xHeightOdd, doClip);
             } else if(fuji) {
-                transLineFuji (line_red, line_grn, line_blue, ix, image, tran, imwidth, imheight, fw);
+                transLineFuji (line_red, line_grn, line_blue, ix, image, tran, imheight, fw);
             } else {
                 transLineStandard (line_red, line_grn, line_blue, ix, image, tran, imwidth, imheight);
             }
@@ -910,7 +910,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     }
 }
 
-DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, ColorTemp &wb, DCPProfile::ApplyState &as)
+DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, DCPProfile::ApplyState &as)
 {
     DCPProfile *dcpProf = nullptr;
     cmsHPROFILE dummy;
@@ -1518,7 +1518,7 @@ void RawImageSource::vflip (Imagefloat* image)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int RawImageSource::load (const Glib::ustring &fname, int imageNum, bool batch)
+int RawImageSource::load (const Glib::ustring &fname)
 {
 
     MyTime t1, t2;
@@ -2003,7 +2003,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         double clip = 0;
         int brightness, contrast, black, hlcompr, hlcomprthresh;
         getAutoExpHistogram (aehist, aehistcompr);
-        ImProcFunctions::getAutoExp (aehist, aehistcompr, getDefGain(), clip, dirpyrdenoiseExpComp, brightness, contrast, black, hlcompr, hlcomprthresh);
+        ImProcFunctions::getAutoExp (aehist, aehistcompr, clip, dirpyrdenoiseExpComp, brightness, contrast, black, hlcompr, hlcomprthresh);
     }
 
     t2.set();
@@ -2032,7 +2032,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::vng4] ) {
             vng4_demosaic ();
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::ahd] ) {
-            ahd_demosaic (0, 0, W, H);
+            ahd_demosaic ();
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::amaze] ) {
             amaze_demosaic_RT (0, 0, W, H, rawData, red, green, blue);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift] ) {
@@ -2046,7 +2046,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::lmmse]) {
             lmmse_interpolate_omp(W, H, rawData, red, green, blue, raw.bayersensor.lmmse_iterations);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::fast] ) {
-            fast_demosaic (0, 0, W, H);
+            fast_demosaic();
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::mono] ) {
             nodemosaic(true);
         } else {
@@ -2117,8 +2117,8 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, const Reti
             std::swap(pwr, gamm);
         }
 
-        int mode = 0, imax = 0;
-        Color::calcGamma(pwr, ts, mode, imax, g_a); // call to calcGamma with selected gamma and slope
+        int mode = 0;
+        Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope
 
         //    printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
         double start;
@@ -2384,13 +2384,13 @@ void RawImageSource::retinex(ColorManagementParams cmp, const RetinexParams &deh
         double gamm = deh.gam;
         double gamm2 = gamm;
         double ts = deh.slope;
-        int mode = 0, imax = 0;
+        int mode = 0;
 
         if(gamm2 < 1.) {
             std::swap(pwr, gamm);
         }
 
-        Color::calcGamma(pwr, ts, mode, imax, g_a); // call to calcGamma with selected gamma and slope
+        Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope
 
         double mul = 1. + g_a[4];
         double add;

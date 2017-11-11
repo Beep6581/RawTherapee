@@ -1049,7 +1049,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PREFERENCES_D55;5500K
 !PREFERENCES_D60;6000K
 !PREFERENCES_D65;6500K
-!PREFERENCES_DARKFRAME;Dark-Frame
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
@@ -1058,6 +1057,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PREFERENCES_DAUB_LABEL;Use Daubechies D6 wavelets instead of D4
 !PREFERENCES_DAUB_TOOLTIP;The Noise Reduction and Wavelet Levels tools use a Debauchies mother wavelet. If you choose D6 instead of D4 you increase the number of orthogonal Daubechies coefficients and probably increase quality of small-scale levels. There is no memory or processing time difference between the two.
 !PREFERENCES_DIRDARKFRAMES;Dark-frames directory
+!PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_DIRHOME;Home directory
 !PREFERENCES_DIRLAST;Last visited directory
 !PREFERENCES_DIROTHER;Other
@@ -1070,8 +1070,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PREFERENCES_FBROWSEROPTS;File Browser / Thumbnail Options
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar\n(de-select for low resolution display)
 !PREFERENCES_FILEFORMAT;File format
-!PREFERENCES_FILMSIMULATION;Film Simulation
-!PREFERENCES_FLATFIELD;Flat-Field
 !PREFERENCES_FLATFIELDFOUND;Found
 !PREFERENCES_FLATFIELDSDIR;Flat-fields directory
 !PREFERENCES_FLATFIELDSHOTS;shots

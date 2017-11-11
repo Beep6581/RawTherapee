@@ -75,10 +75,18 @@ bool LFModifier::isCACorrectionAvailable() const
     return false;
 }
 
+#ifdef __GNUC__ // silence warning, can be removed when function is implemented
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
 
 void LFModifier::correctCA(double &x, double &y, int channel) const
 {
 }
+
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 
 
 void LFModifier::processVignetteLine(int width, int y, float *line) const
@@ -169,6 +177,15 @@ float LFCamera::getCropFactor() const
     } else {
         return 0;
     }
+}
+
+
+bool LFCamera::isFixedLens() const
+{
+    // per lensfun's main developer Torsten Bronger:
+    // "Compact camera mounts can be identified by the fact that the mount
+    // starts with a lowercase letter"
+    return data_ && data_->Mount && std::islower(data_->Mount[0]);
 }
 
 
@@ -387,21 +404,27 @@ LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name) c
 {
     LFLens ret;
     if (data_) {
-        Glib::ustring lname = name;
-        bool stdlens = camera && (name.empty() || name.find("Unknown") == 0);
-        if (stdlens) {
-            lname = camera.getModel(); // "Standard"
-        }
-        auto found = data_->FindLenses(camera.data_, nullptr, lname.c_str());
-        if (!found) {
-            // try to split the maker from the model of the lens
+        auto found = data_->FindLenses(camera.data_, nullptr, name.c_str());
+        for (size_t pos = 0; !found && pos < name.size(); ) {
+            // try to split the maker from the model of the lens -- we have to
+            // guess a bit here, since there are makers with a multi-word name
+            // (e.g. "Leica Camera AG")
+            if (name.find("f/", pos) == 0) {
+                break; // no need to search further
+            }
             Glib::ustring make, model;
-            auto i = name.find_first_of(' ');
+            auto i = name.find(' ', pos);
             if (i != Glib::ustring::npos) {
                 make = name.substr(0, i);
                 model = name.substr(i+1);
                 found = data_->FindLenses(camera.data_, make.c_str(), model.c_str());
+                pos = i+1;
+            } else {
+                break;
             }
+        }
+        if (!found && camera && camera.isFixedLens()) {
+            found = data_->FindLenses(camera.data_, nullptr, "");
         }
         if (found) {
             ret.data_ = found[0];

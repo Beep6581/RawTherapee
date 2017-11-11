@@ -424,7 +424,7 @@ void ImProcFunctions::Tile_calc(int tilesize, int overlap, int kall, int imwidth
 int denoiseNestedLevels = 1;
 enum nrquality {QUALITY_STANDARD, QUALITY_HIGH};
 
-SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagefloat * dst, Imagefloat * calclum, float * ch_M, float *max_r, float *max_b, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, const NoiseCurve & noiseLCurve, const NoiseCurve & noiseCCurve, float &chaut, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &nresi, float &highresi)
+SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagefloat * dst, Imagefloat * calclum, float * ch_M, float *max_r, float *max_b, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, const NoiseCurve & noiseLCurve, const NoiseCurve & noiseCCurve, float &nresi, float &highresi)
 {
 //#ifdef _DEBUG
     MyTime t1e, t2e;
@@ -2812,10 +2812,10 @@ SSEFUNCTION void ImProcFunctions::ShrinkAllAB(wavelet_decomposition &WaveletCoef
 
 }
 
-SSEFUNCTION void ImProcFunctions::ShrinkAll_info(float ** WavCoeffs_a, float ** WavCoeffs_b, int level,
-        int W_ab, int H_ab, int skip_ab, float **noisevarlum, float **noisevarchrom, float **noisevarhue, int width, int height, float noisevar_abr, float noisevar_abb, LabImage * noi, float &chaut, int &Nb, float &redaut, float &blueaut,
-        float &maxredaut, float &maxblueaut, float &minredaut, float &minblueaut,  bool autoch, int schoice, int lvl, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc,
-        float &maxchred, float &maxchblue, float &minchred, float &minchblue, int &nb, float &chau, float &chred, float &chblue, bool denoiseMethodRgb, bool multiThread)
+SSEFUNCTION void ImProcFunctions::ShrinkAll_info(float ** WavCoeffs_a, float ** WavCoeffs_b,
+        int W_ab, int H_ab, float **noisevarlum, float **noisevarchrom, float **noisevarhue, float &chaut, int &Nb, float &redaut, float &blueaut,
+        float &maxredaut, float &maxblueaut, float &minredaut, float &minblueaut, int schoice, int lvl, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc,
+        float &maxchred, float &maxchblue, float &minchred, float &minchblue, int &nb, float &chau, float &chred, float &chblue, bool denoiseMethodRgb)
 {
 
     //simple wavelet shrinkage
@@ -2931,8 +2931,8 @@ SSEFUNCTION void ImProcFunctions::ShrinkAll_info(float ** WavCoeffs_a, float ** 
 
 
 void ImProcFunctions::WaveletDenoiseAll_info(int levwav, wavelet_decomposition &WaveletCoeffs_a,
-        wavelet_decomposition &WaveletCoeffs_b, float **noisevarlum, float **noisevarchrom, float **noisevarhue, int width, int height, float noisevar_abr, float noisevar_abb, LabImage * noi, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &minredaut, float &minblueaut, int schoice, bool autoch,
-        float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc, float &maxchred, float &maxchblue, float &minchred, float &minchblue, int &nb, float &chau, float &chred, float &chblue, bool denoiseMethodRgb, bool multiThread)
+        wavelet_decomposition &WaveletCoeffs_b, float **noisevarlum, float **noisevarchrom, float **noisevarhue, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &minredaut, float &minblueaut, int schoice,
+        float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc, float &maxchred, float &maxchblue, float &minchred, float &minchblue, int &nb, float &chau, float &chred, float &chblue, bool denoiseMethodRgb)
 {
 
     int maxlvl = levwav;
@@ -2942,14 +2942,12 @@ void ImProcFunctions::WaveletDenoiseAll_info(int levwav, wavelet_decomposition &
         int Wlvl_ab = WaveletCoeffs_a.level_W(lvl);
         int Hlvl_ab = WaveletCoeffs_a.level_H(lvl);
 
-        int skip_ab = WaveletCoeffs_a.level_stride(lvl);
-
         float ** WavCoeffs_a = WaveletCoeffs_a.level_coeffs(lvl);
         float ** WavCoeffs_b = WaveletCoeffs_b.level_coeffs(lvl);
 
-        ShrinkAll_info(WavCoeffs_a, WavCoeffs_b, lvl, Wlvl_ab, Hlvl_ab,
-                       skip_ab, noisevarlum,  noisevarchrom, noisevarhue, width, height, noisevar_abr, noisevar_abb, noi, chaut, Nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut,
-                       autoch, schoice, lvl, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc, maxchred, maxchblue, minchred, minchblue, nb, chau, chred, chblue, denoiseMethodRgb, multiThread);
+        ShrinkAll_info(WavCoeffs_a, WavCoeffs_b, Wlvl_ab, Hlvl_ab,
+                       noisevarlum, noisevarchrom, noisevarhue, chaut, Nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut,
+                       schoice, lvl, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc, maxchred, maxchblue, minchred, minchblue, nb, chau, chred, chblue, denoiseMethodRgb);
 
     }
 }
@@ -3250,9 +3248,6 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
                 noisevarhue[i] = new float[(width + 1) / 2];
             }
 
-            // init luma noisevarL
-            float noisevarab_b, noisevarab_r;
-
             float realred, realblue;
             float interm_med = static_cast<float>( dnparams.chroma) / 10.0;
             float intermred, intermblue;
@@ -3281,7 +3276,6 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
                 realblue = 0.001f;
             }
 
-            //TODO: implement using AlignedBufferMP
             //fill tile from image; convert RGB to "luma/chroma"
 
             if (isRAW) {//image is raw; use channel differences for chroma channels
@@ -3482,8 +3476,6 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
             //and whether to subsample the image after wavelet filtering.  Subsampling is coded as
             //binary 1 or 0 for each level, eg subsampling = 0 means no subsampling, 1 means subsample
             //the first level only, 7 means subsample the first three levels, etc.
-            noisevarab_r = SQR(realred) + 0.01f;
-            noisevarab_b = SQR(realblue) + 0.01f;
 
             wavelet_decomposition* adecomp;
             wavelet_decomposition* bdecomp;
@@ -3512,8 +3504,6 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
                     bdecomp = new wavelet_decomposition (labdn->data + 2 * datalen, labdn->W, labdn->H, levwav, 1);
                 }
             }
-            const bool autoch = (settings->leveldnautsimpl == 1 && (dnparams.Cmethod == "AUT" || dnparams.Cmethod == "PRE")) || (settings->leveldnautsimpl == 0 && (dnparams.C2method == "AUTO" || dnparams.C2method == "PREV"));
-
 
             if (comptlevel == 0) {
                 WaveletDenoiseAll_info(
@@ -3523,11 +3513,6 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
                     noisevarlum,
                     noisevarchrom,
                     noisevarhue,
-                    width,
-                    height,
-                    noisevarab_r,
-                    noisevarab_b,
-                    labdn,
                     chaut,
                     Nb,
                     redaut,
@@ -3537,7 +3522,6 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
                     minredaut,
                     minblueaut,
                     schoice,
-                    autoch,
                     chromina,
                     sigma,
                     lumema,
@@ -3553,8 +3537,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
                     chau,
                     chred,
                     chblue,
-                    denoiseMethodRgb,
-                    multiThread
+                    denoiseMethodRgb
                 ); // Enhance mode
             }
 

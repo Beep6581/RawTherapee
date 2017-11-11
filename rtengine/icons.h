@@ -26,7 +26,7 @@ namespace rtengine
 {
 
 Glib::ustring findIconAbsolutePath (const Glib::ustring& iconName);
-void setPaths (const Options& options);
+void setPaths ();
 
 }
 
