@@ -764,14 +764,14 @@ public:
     BayerSensor bayersensor;
     XTransSensor xtranssensor;
 
-    bool caCorrection;
-    bool caRed;
-    bool caBlue;
+    bool ca_autocorrect;
+    bool cared;
+    bool cablue;
     bool hotPixelFilter;
     bool deadPixelFilter;
-    bool hotDeadPixelThresh;
+    bool hotdeadpix_thresh;
     bool darkFrame;
-    bool dfAuto;
+    bool df_autoselect;
     bool ff_file;
     bool ff_AutoSelect;
     bool ff_BlurRadius;

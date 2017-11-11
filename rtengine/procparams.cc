@@ -1633,7 +1633,6 @@ static Glib::ustring relativePathIfInside (const Glib::ustring &procparams_fname
 
 int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, bool fnameAbsolute, ParamsEdited* pedited)
 {
-
     if (fname.empty () && fname2.empty ()) {
         return 0;
     }
@@ -1641,16 +1640,17 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
     Glib::ustring sPParams;
 
     try {
-
         Glib::KeyFile keyFile;
 
+// Version
         keyFile.set_string ("Version", "AppVersion", APPVERSION);
         keyFile.set_integer ("Version", "Version", PPVERSION);
 
         saveToKeyfile(!pedited || pedited->general.rank, "General", "Rank", rank, keyFile);
         saveToKeyfile(!pedited || pedited->general.colorlabel, "General", "ColorLabel", colorlabel, keyFile);
         saveToKeyfile(!pedited || pedited->general.intrash, "General", "InTrash", inTrash, keyFile);
-// save tone curve
+
+// Tone curve
         saveToKeyfile(!pedited || pedited->toneCurve.autoexp, "Exposure", "Auto", toneCurve.autoexp, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.clip, "Exposure", "Clip", toneCurve.clip, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.expcomp, "Exposure", "Compensation", toneCurve.expcomp, keyFile);
@@ -1661,7 +1661,8 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->toneCurve.hlcompr, "Exposure", "HighlightCompr", toneCurve.hlcompr, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.hlcomprthresh, "Exposure", "HighlightComprThreshold", toneCurve.hlcomprthresh, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.shcompr, "Exposure", "ShadowCompr", toneCurve.shcompr, keyFile);
-// save highlight recovery settings
+
+// Highlight recovery
         saveToKeyfile(!pedited || pedited->toneCurve.hrenabled, "HLRecovery", "Enabled", toneCurve.hrenabled, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.method, "HLRecovery", "Method", toneCurve.method, keyFile);
 
@@ -1679,8 +1680,8 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         saveToKeyfile(!pedited || pedited->toneCurve.curve, "Exposure", "Curve", toneCurve.curve, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.curve2, "Exposure", "Curve2", toneCurve.curve2, keyFile);
-//save retinex
 
+// Retinex
         saveToKeyfile(!pedited || pedited->retinex.enabled, "Retinex", "Enabled", retinex.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->retinex.str, "Retinex", "Str", retinex.str, keyFile);
         saveToKeyfile(!pedited || pedited->retinex.scal, "Retinex", "Scal", retinex.scal, keyFile);
@@ -1714,7 +1715,8 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->retinex.radius, "Retinex", "Radius", retinex.radius, keyFile);
         saveToKeyfile(!pedited || pedited->retinex.transmissionCurve, "Retinex", "TransmissionCurve", retinex.transmissionCurve, keyFile);
         saveToKeyfile(!pedited || pedited->retinex.gaintransmissionCurve, "Retinex", "GainTransmissionCurve", retinex.gaintransmissionCurve, keyFile);
-// save channel mixer
+
+// Channel mixer
         if (!pedited || pedited->chmixer.red[0] || pedited->chmixer.red[1] || pedited->chmixer.red[2]) {
             Glib::ArrayHandle<int> rmix (chmixer.red, 3, Glib::OWNERSHIP_NONE);
             keyFile.set_integer_list ("Channel Mixer", "Red", rmix);
@@ -1730,7 +1732,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_integer_list ("Channel Mixer", "Blue", bmix);
         }
 
-//save Black & White
+// Black & White
         saveToKeyfile(!pedited || pedited->blackwhite.enabled, "Black & White", "Enabled", blackwhite.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->blackwhite.method, "Black & White", "Method", blackwhite.method , keyFile);
         saveToKeyfile(!pedited || pedited->blackwhite.autoc, "Black & White", "Auto", blackwhite.autoc, keyFile);
@@ -1778,7 +1780,8 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         );
         saveToKeyfile(!pedited || pedited->blackwhite.beforeCurve, "Black & White", "BeforeCurve", blackwhite.beforeCurve, keyFile);
         saveToKeyfile(!pedited || pedited->blackwhite.afterCurve, "Black & White", "AfterCurve", blackwhite.afterCurve, keyFile);
-// save luma curve
+
+// Luma curve
         saveToKeyfile(!pedited || pedited->labCurve.brightness, "Luminance Curve", "Brightness", labCurve.brightness, keyFile);
         saveToKeyfile(!pedited || pedited->labCurve.contrast, "Luminance Curve", "Contrast", labCurve.contrast, keyFile);
         saveToKeyfile(!pedited || pedited->labCurve.chromaticity, "Luminance Curve", "Chromaticity", labCurve.chromaticity, keyFile);
@@ -1794,7 +1797,8 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->labCurve.hhcurve, "Luminance Curve", "hhCurve", labCurve.hhcurve, keyFile);
         saveToKeyfile(!pedited || pedited->labCurve.lccurve, "Luminance Curve", "LcCurve", labCurve.lccurve, keyFile);
         saveToKeyfile(!pedited || pedited->labCurve.clcurve, "Luminance Curve", "ClCurve", labCurve.clcurve, keyFile);
-// save sharpening
+
+// Sharpening
         saveToKeyfile(!pedited || pedited->sharpening.enabled, "Sharpening", "Enabled", sharpening.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->sharpening.method, "Sharpening", "Method", sharpening.method, keyFile);
         saveToKeyfile(!pedited || pedited->sharpening.radius, "Sharpening", "Radius", sharpening.radius, keyFile);
@@ -1813,7 +1817,8 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->sharpening.deconvamount, "Sharpening", "DeconvAmount", sharpening.deconvamount, keyFile);
         saveToKeyfile(!pedited || pedited->sharpening.deconvdamping, "Sharpening", "DeconvDamping", sharpening.deconvdamping, keyFile);
         saveToKeyfile(!pedited || pedited->sharpening.deconviter, "Sharpening", "DeconvIterations", sharpening.deconviter, keyFile);
-// save vibrance
+
+// Vibrance
         saveToKeyfile(!pedited || pedited->vibrance.enabled, "Vibrance", "Enabled", vibrance.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->vibrance.pastels, "Vibrance", "Pastels", vibrance.pastels, keyFile);
         saveToKeyfile(!pedited || pedited->vibrance.saturated, "Vibrance", "Saturated", vibrance.saturated, keyFile);
@@ -1826,36 +1831,39 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->vibrance.avoidcolorshift, "Vibrance", "AvoidColorShift", vibrance.avoidcolorshift, keyFile);
         saveToKeyfile(!pedited || pedited->vibrance.pastsattog, "Vibrance", "PastSatTog", vibrance.pastsattog, keyFile);
         saveToKeyfile(!pedited || pedited->vibrance.skintonescurve, "Vibrance", "SkinTonesCurve", vibrance.skintonescurve, keyFile);
-//save edge sharpening
+
+// Edge sharpening
         saveToKeyfile(!pedited || pedited->sharpenEdge.enabled, "SharpenEdge", "Enabled", sharpenEdge.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->sharpenEdge.passes, "SharpenEdge", "Passes", sharpenEdge.passes, keyFile);
         saveToKeyfile(!pedited || pedited->sharpenEdge.amount, "SharpenEdge", "Strength", sharpenEdge.amount, keyFile);
         saveToKeyfile(!pedited || pedited->sharpenEdge.threechannels, "SharpenEdge", "ThreeChannels", sharpenEdge.threechannels, keyFile);
-//save micro-contrast sharpening
+
+// Micro-contrast sharpening
         saveToKeyfile(!pedited || pedited->sharpenMicro.enabled, "SharpenMicro", "Enabled", sharpenMicro.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->sharpenMicro.matrix, "SharpenMicro", "Matrix", sharpenMicro.matrix, keyFile);
         saveToKeyfile(!pedited || pedited->sharpenMicro.amount, "SharpenMicro", "Strength", sharpenMicro.amount, keyFile);
         saveToKeyfile(!pedited || pedited->sharpenMicro.uniformity, "SharpenMicro", "Uniformity", sharpenMicro.uniformity, keyFile);
         /*
-            // save colorBoost
+            // colorBoost
             if (!pedited || pedited->colorBoost.amount)                   keyFile.set_integer ("Color Boost", "Amount",             colorBoost.amount);
             if (!pedited || pedited->colorBoost.avoidclip)                keyFile.set_boolean ("Color Boost", "AvoidColorClipping", colorBoost.avoidclip);
             if (!pedited || pedited->colorBoost.enable_saturationlimiter) keyFile.set_boolean ("Color Boost", "SaturationLimiter",  colorBoost.enable_saturationlimiter);
             if (!pedited || pedited->colorBoost.saturationlimit)          keyFile.set_double  ("Color Boost", "SaturationLimit",    colorBoost.saturationlimit);
         */
 
-        // save wb
+        // wb
         saveToKeyfile(!pedited || pedited->wb.method, "White Balance", "Setting", wb.method, keyFile);
         saveToKeyfile(!pedited || pedited->wb.temperature, "White Balance", "Temperature", wb.temperature, keyFile);
         saveToKeyfile(!pedited || pedited->wb.green, "White Balance", "Green", wb.green, keyFile);
         saveToKeyfile(!pedited || pedited->wb.equal, "White Balance", "Equal", wb.equal, keyFile);
         saveToKeyfile(!pedited || pedited->wb.tempBias, "White Balance", "TemperatureBias", wb.tempBias, keyFile);
         /*
-        // save colorShift
+        // colorShift
         if (!pedited || pedited->colorShift.a) keyFile.set_double ("Color Shift", "ChannelA", colorShift.a);
         if (!pedited || pedited->colorShift.b) keyFile.set_double ("Color Shift", "ChannelB", colorShift.b);
         */
-// save colorappearance
+
+// Colorappearance
         saveToKeyfile(!pedited || pedited->colorappearance.enabled, "Color appearance", "Enabled", colorappearance.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.degree, "Color appearance", "Degree", colorappearance.degree, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.autodegree, "Color appearance", "AutoDegree", colorappearance.autodegree, keyFile);
@@ -1918,16 +1926,17 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->colorappearance.curve2, "Color appearance", "Curve2", colorappearance.curve2, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.curve3, "Color appearance", "Curve3", colorappearance.curve3, keyFile);
 
-
-// save impulseDenoise
+// Impulse denoise
         saveToKeyfile(!pedited || pedited->impulseDenoise.enabled, "Impulse Denoising", "Enabled", impulseDenoise.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->impulseDenoise.thresh, "Impulse Denoising", "Threshold", impulseDenoise.thresh, keyFile);
-// save defringe
+
+// Defringe
         saveToKeyfile(!pedited || pedited->defringe.enabled, "Defringing", "Enabled", defringe.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->defringe.radius, "Defringing", "Radius", defringe.radius, keyFile);
         saveToKeyfile(!pedited || pedited->defringe.threshold, "Defringing", "Threshold", defringe.threshold, keyFile);
         saveToKeyfile(!pedited || pedited->defringe.huecurve, "Defringing", "HueCurve", defringe.huecurve, keyFile);
-// save dirpyrDenoise
+
+// Directional pyramid denoising
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.enabled, "Directional Pyramid Denoising", "Enabled", dirpyrDenoise.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.enhance, "Directional Pyramid Denoising", "Enhance", dirpyrDenoise.enhance, keyFile);
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.median, "Directional Pyramid Denoising", "Median", dirpyrDenoise.median, keyFile);
@@ -1958,31 +1967,33 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.passes, "Directional Pyramid Denoising", "Passes", dirpyrDenoise.passes, keyFile);
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.lcurve, "Directional Pyramid Denoising", "LCurve", dirpyrDenoise.lcurve, keyFile);
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.cccurve, "Directional Pyramid Denoising", "CCCurve", dirpyrDenoise.cccurve, keyFile);
-// save epd.
+
+// EPD
         saveToKeyfile(!pedited || pedited->epd.enabled, "EPD", "Enabled", epd.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->epd.strength, "EPD", "Strength", epd.strength, keyFile);
         saveToKeyfile(!pedited || pedited->epd.gamma, "EPD", "Gamma", epd.gamma, keyFile);
         saveToKeyfile(!pedited || pedited->epd.edgeStopping, "EPD", "EdgeStopping", epd.edgeStopping, keyFile);
         saveToKeyfile(!pedited || pedited->epd.scale, "EPD", "Scale", epd.scale, keyFile);
         saveToKeyfile(!pedited || pedited->epd.reweightingIterates, "EPD", "ReweightingIterates", epd.reweightingIterates, keyFile);
-// save fattal
+
+// Fattal
         saveToKeyfile(!pedited || pedited->fattal.enabled, "FattalToneMapping", "Enabled", fattal.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->fattal.threshold, "FattalToneMapping", "Threshold", fattal.threshold, keyFile);
         saveToKeyfile(!pedited || pedited->fattal.amount, "FattalToneMapping", "Amount", fattal.amount, keyFile);
         /*
-        // save lumaDenoise
+        // lumaDenoise
         if (!pedited || pedited->lumaDenoise.enabled) keyFile.set_boolean ("Luminance Denoising", "Enabled", lumaDenoise.enabled);
         if (!pedited || pedited->lumaDenoise.radius) keyFile.set_double ("Luminance Denoising", "Radius", lumaDenoise.radius);
         if (!pedited || pedited->lumaDenoise.edgetolerance) keyFile.set_integer ("Luminance Denoising", "EdgeTolerance", lumaDenoise.edgetolerance);
         */
 
         /*
-        // save colorDenoise
+        // colorDenoise
         //if (!pedited || pedited->colorDenoise.enabled) keyFile.set_boolean ("Chrominance Denoising", "Enabled", colorDenoise.enabled);
         if (!pedited || pedited->colorDenoise.amount) keyFile.set_integer ("Chrominance Denoising", "Amount", colorDenoise.amount);
         */
 
-// save sh
+// Shadows & highlights
         saveToKeyfile(!pedited || pedited->sh.enabled, "Shadows & Highlights", "Enabled", sh.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->sh.hq, "Shadows & Highlights", "HighQuality", sh.hq, keyFile);
         saveToKeyfile(!pedited || pedited->sh.highlights, "Shadows & Highlights", "Highlights", sh.highlights, keyFile);
@@ -1991,7 +2002,8 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->sh.stonalwidth, "Shadows & Highlights", "ShadowTonalWidth", sh.stonalwidth, keyFile);
         saveToKeyfile(!pedited || pedited->sh.localcontrast, "Shadows & Highlights", "LocalContrast", sh.localcontrast, keyFile);
         saveToKeyfile(!pedited || pedited->sh.radius, "Shadows & Highlights", "Radius", sh.radius, keyFile);
-// save crop
+
+// Crop
         saveToKeyfile(!pedited || pedited->crop.enabled, "Crop", "Enabled", crop.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->crop.x, "Crop", "X", crop.x, keyFile);
         saveToKeyfile(!pedited || pedited->crop.y, "Crop", "Y", crop.y, keyFile);
@@ -2001,17 +2013,22 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->crop.ratio, "Crop", "Ratio", crop.ratio, keyFile);
         saveToKeyfile(!pedited || pedited->crop.orientation, "Crop", "Orientation", crop.orientation, keyFile);
         saveToKeyfile(!pedited || pedited->crop.guide, "Crop", "Guide", crop.guide, keyFile);
-// save coarse
+
+// Coarse transformation
         saveToKeyfile(!pedited || pedited->coarse.rotate, "Coarse Transformation", "Rotate", coarse.rotate, keyFile);
         saveToKeyfile(!pedited || pedited->coarse.hflip, "Coarse Transformation", "HorizontalFlip", coarse.hflip, keyFile);
         saveToKeyfile(!pedited || pedited->coarse.vflip, "Coarse Transformation", "VerticalFlip", coarse.vflip, keyFile);
-// save commonTrans
+
+// Common properties for transformations
         saveToKeyfile(!pedited || pedited->commonTrans.autofill, "Common Properties for Transformations", "AutoFill", commonTrans.autofill, keyFile);
-// save rotate
+
+// Rotation
         saveToKeyfile(!pedited || pedited->rotate.degree, "Rotation", "Degree", rotate.degree, keyFile);
-// save distortion
+
+// Distortion
         saveToKeyfile(!pedited || pedited->distortion.amount, "Distortion", "Amount", distortion.amount, keyFile);
-// lens profile
+
+// Lens profile
         saveToKeyfile(!pedited || pedited->lensProf.lcMode, "LensProfile", "LcMode", lensProf.getMethodString (lensProf.lcMode), keyFile);
         saveToKeyfile(!pedited || pedited->lensProf.lcpFile, "LensProfile", "LCPFile", relativePathIfInside (fname, fnameAbsolute, lensProf.lcpFile), keyFile);
         saveToKeyfile(!pedited || pedited->lensProf.useDist, "LensProfile", "UseDistortion", lensProf.useDist, keyFile);
@@ -2020,31 +2037,37 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->lensProf.lfCameraMake, "LensProfile", "LFCameraMake", lensProf.lfCameraMake, keyFile);
         saveToKeyfile(!pedited || pedited->lensProf.lfCameraModel, "LensProfile", "LFCameraModel", lensProf.lfCameraModel, keyFile);
         saveToKeyfile(!pedited || pedited->lensProf.lfLens, "LensProfile", "LFLens", lensProf.lfLens, keyFile);
-// save perspective correction
+
+// Perspective correction
         saveToKeyfile(!pedited || pedited->perspective.horizontal, "Perspective", "Horizontal", perspective.horizontal, keyFile);
         saveToKeyfile(!pedited || pedited->perspective.vertical, "Perspective", "Vertical", perspective.vertical, keyFile);
-// save gradient
+
+// Gradient
         saveToKeyfile(!pedited || pedited->gradient.enabled, "Gradient", "Enabled", gradient.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->gradient.degree, "Gradient", "Degree", gradient.degree, keyFile);
         saveToKeyfile(!pedited || pedited->gradient.feather, "Gradient", "Feather", gradient.feather, keyFile);
         saveToKeyfile(!pedited || pedited->gradient.strength, "Gradient", "Strength", gradient.strength, keyFile);
         saveToKeyfile(!pedited || pedited->gradient.centerX, "Gradient", "CenterX", gradient.centerX, keyFile);
         saveToKeyfile(!pedited || pedited->gradient.centerY, "Gradient", "CenterY", gradient.centerY, keyFile);
-// save post-crop vignette
+
+// Post-crop vignette
         saveToKeyfile(!pedited || pedited->pcvignette.enabled, "PCVignette", "Enabled", pcvignette.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->pcvignette.strength, "PCVignette", "Strength", pcvignette.strength, keyFile);
         saveToKeyfile(!pedited || pedited->pcvignette.feather, "PCVignette", "Feather", pcvignette.feather, keyFile);
         saveToKeyfile(!pedited || pedited->pcvignette.roundness, "PCVignette", "Roundness", pcvignette.roundness, keyFile);
-// save C/A correction
+
+// C/A correction
         saveToKeyfile(!pedited || pedited->cacorrection.red, "CACorrection", "Red", cacorrection.red, keyFile);
         saveToKeyfile(!pedited || pedited->cacorrection.blue, "CACorrection", "Blue", cacorrection.blue, keyFile);
-// save vignetting correction
+
+// Vignetting correction
         saveToKeyfile(!pedited || pedited->vignetting.amount, "Vignetting Correction", "Amount", vignetting.amount, keyFile);
         saveToKeyfile(!pedited || pedited->vignetting.radius, "Vignetting Correction", "Radius", vignetting.radius, keyFile);
         saveToKeyfile(!pedited || pedited->vignetting.strength, "Vignetting Correction", "Strength", vignetting.strength, keyFile);
         saveToKeyfile(!pedited || pedited->vignetting.centerX, "Vignetting Correction", "CenterX", vignetting.centerX, keyFile);
         saveToKeyfile(!pedited || pedited->vignetting.centerY, "Vignetting Correction", "CenterY", vignetting.centerY, keyFile);
 
+// Resize
         saveToKeyfile(!pedited || pedited->resize.enabled, "Resize", "Enabled", resize.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->resize.scale, "Resize", "Scale", resize.scale, keyFile);
         saveToKeyfile(!pedited || pedited->resize.appliesTo, "Resize", "AppliesTo", resize.appliesTo, keyFile);
@@ -2052,6 +2075,8 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->resize.dataspec, "Resize", "DataSpecified", resize.dataspec, keyFile);
         saveToKeyfile(!pedited || pedited->resize.width, "Resize", "Width", resize.width, keyFile);
         saveToKeyfile(!pedited || pedited->resize.height, "Resize", "Height", resize.height, keyFile);
+
+// Post resize sharpening
         saveToKeyfile(!pedited || pedited->prsharpening.enabled, "PostResizeSharpening", "Enabled", prsharpening.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->prsharpening.method, "PostResizeSharpening", "Method", prsharpening.method, keyFile);
         saveToKeyfile(!pedited || pedited->prsharpening.radius, "PostResizeSharpening", "Radius", prsharpening.radius, keyFile);
@@ -2060,7 +2085,6 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             Glib::ArrayHandle<int> thresh (prsharpening.threshold.value, 4, Glib::OWNERSHIP_NONE);
             keyFile.set_integer_list ("PostResizeSharpening", "Threshold", thresh);
         }
-
         saveToKeyfile(!pedited || pedited->prsharpening.edgesonly, "PostResizeSharpening", "OnlyEdges", prsharpening.edgesonly, keyFile);
         saveToKeyfile(!pedited || pedited->prsharpening.edges_radius, "PostResizeSharpening", "EdgedetectionRadius", prsharpening.edges_radius, keyFile);
         saveToKeyfile(!pedited || pedited->prsharpening.edges_tolerance, "PostResizeSharpening", "EdgeTolerance", prsharpening.edges_tolerance, keyFile);
@@ -2071,7 +2095,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->prsharpening.deconvdamping, "PostResizeSharpening", "DeconvDamping", prsharpening.deconvdamping, keyFile);
         saveToKeyfile(!pedited || pedited->prsharpening.deconviter, "PostResizeSharpening", "DeconvIterations", prsharpening.deconviter, keyFile);
 
-// save color management settings
+// Color management
         saveToKeyfile(!pedited || pedited->icm.input, "Color Management", "InputProfile", relativePathIfInside (fname, fnameAbsolute, icm.input), keyFile);
         saveToKeyfile(!pedited || pedited->icm.toneCurve, "Color Management", "ToneCurve", icm.toneCurve, keyFile);
         saveToKeyfile(!pedited || pedited->icm.applyLookTable, "Color Management", "ApplyLookTable", icm.applyLookTable, keyFile);
@@ -2100,8 +2124,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->icm.gampos, "Color Management", "GammaValue", icm.gampos, keyFile);
         saveToKeyfile(!pedited || pedited->icm.slpos, "Color Management", "GammaSlope", icm.slpos, keyFile);
 
-
-// save wavelet parameters
+// Wavelet
         saveToKeyfile(!pedited || pedited->wavelet.enabled, "Wavelet", "Enabled", wavelet.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.strength, "Wavelet", "Strength", wavelet.strength, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.balance, "Wavelet", "Balance", wavelet.balance, keyFile);
@@ -2144,37 +2167,30 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             Glib::ArrayHandle<int> thresh (wavelet.hllev.value, 4, Glib::OWNERSHIP_NONE);
             keyFile.set_integer_list ("Wavelet", "HLRange", thresh);
         }
-
         if (!pedited || pedited->wavelet.bllev) {
             Glib::ArrayHandle<int> thresh (wavelet.bllev.value, 4, Glib::OWNERSHIP_NONE);
             keyFile.set_integer_list ("Wavelet", "SHRange", thresh);
         }
-
         if (!pedited || pedited->wavelet.edgcont) {
             Glib::ArrayHandle<int> thresh (wavelet.edgcont.value, 4, Glib::OWNERSHIP_NONE);
             keyFile.set_integer_list ("Wavelet", "Edgcont", thresh);
         }
-
         if (!pedited || pedited->wavelet.level0noise) {
             Glib::ArrayHandle<double> thresh (wavelet.level0noise.value, 2, Glib::OWNERSHIP_NONE);
             keyFile.set_double_list ("Wavelet", "Level0noise", thresh);
         }
-
         if (!pedited || pedited->wavelet.level1noise) {
             Glib::ArrayHandle<double> thresh (wavelet.level1noise.value, 2, Glib::OWNERSHIP_NONE);
             keyFile.set_double_list ("Wavelet", "Level1noise", thresh);
         }
-
         if (!pedited || pedited->wavelet.level2noise) {
             Glib::ArrayHandle<double> thresh (wavelet.level2noise.value, 2, Glib::OWNERSHIP_NONE);
             keyFile.set_double_list ("Wavelet", "Level2noise", thresh);
         }
-
         if (!pedited || pedited->wavelet.level3noise) {
             Glib::ArrayHandle<double> thresh (wavelet.level3noise.value, 2, Glib::OWNERSHIP_NONE);
             keyFile.set_double_list ("Wavelet", "Level3noise", thresh);
         }
-
         saveToKeyfile(!pedited || pedited->wavelet.threshold, "Wavelet", "ThresholdHighlight", wavelet.threshold, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.threshold2, "Wavelet", "ThresholdShadow", wavelet.threshold2, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.edgedetect, "Wavelet", "Edgedetect", wavelet.edgedetect, keyFile);
@@ -2201,7 +2217,6 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             Glib::ArrayHandle<int> thresh (wavelet.satlev.value, 4, Glib::OWNERSHIP_NONE);
             keyFile.set_integer_list ("Wavelet", "Satlev", thresh);
         }
-
         saveToKeyfile(!pedited || pedited->wavelet.opacityCurveRG, "Wavelet", "OpacityCurveRG", wavelet.opacityCurveRG, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.opacityCurveBY, "Wavelet", "OpacityCurveBY", wavelet.opacityCurveBY, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.opacityCurveW, "Wavelet", "OpacityCurveW", wavelet.opacityCurveW, keyFile);
@@ -2209,7 +2224,6 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->wavelet.hhcurve, "Wavelet", "HHcurve", wavelet.hhcurve, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.Chcurve, "Wavelet", "CHcurve", wavelet.Chcurve, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.wavclCurve, "Wavelet", "WavclCurve", wavelet.wavclCurve, keyFile);
-
         saveToKeyfile(!pedited || pedited->wavelet.median, "Wavelet", "Median", wavelet.median, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.medianlev, "Wavelet", "Medianlev", wavelet.medianlev, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.linkedg, "Wavelet", "Linkedg", wavelet.linkedg, keyFile);
@@ -2221,13 +2235,11 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             Glib::ArrayHandle<int> thresh (wavelet.hueskin.value, 4, Glib::OWNERSHIP_NONE);
             keyFile.set_integer_list ("Wavelet", "Hueskin", thresh);
         }
-
         saveToKeyfile(!pedited || pedited->wavelet.edgrad, "Wavelet", "Edgrad", wavelet.edgrad, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.edgval, "Wavelet", "Edgval", wavelet.edgval, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.edgthresh, "Wavelet", "ThrEdg", wavelet.edgthresh, keyFile);
 // if (!pedited || pedited->wavelet.strength) keyFile.set_integer ("Wavelet", "Strength", wavelet.strength);
 // if (!pedited || pedited->wavelet.balance) keyFile.set_integer ("Wavelet", "Balance", wavelet.balance);
-
         saveToKeyfile(!pedited || pedited->wavelet.avoid, "Wavelet", "AvoidColorShift", wavelet.avoid, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.tmr, "Wavelet", "TMr", wavelet.tmr, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.rescon, "Wavelet", "ResidualcontShadow", wavelet.rescon, keyFile);
@@ -2242,10 +2254,9 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             Glib::ArrayHandle<int> thresh (wavelet.hueskin2.value, 4, Glib::OWNERSHIP_NONE);
             keyFile.set_integer_list ("Wavelet", "HueRange", thresh);
         }
-
         saveToKeyfile(!pedited || pedited->wavelet.contrast, "Wavelet", "Contrast", wavelet.contrast, keyFile);
 
-// save directional pyramid wavelet parameters
+// Directional pyramid equalizer
         saveToKeyfile(!pedited || pedited->dirpyrequalizer.enabled, "Directional Pyramid Equalizer", "Enabled", dirpyrequalizer.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->dirpyrequalizer.gamutlab, "Directional Pyramid Equalizer", "Gamutlab", dirpyrequalizer.gamutlab, keyFile);
         saveToKeyfile(!pedited || pedited->dirpyrequalizer.cbdlMethod, "Directional Pyramid Equalizer", "cbdlMethod", dirpyrequalizer.cbdlMethod, keyFile);
@@ -2263,11 +2274,12 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_integer_list ("Directional Pyramid Equalizer", "Hueskin", thresh);
         }
 
-// save hsv wavelet parameters
+// HSV Equalizer
         saveToKeyfile(!pedited || pedited->hsvequalizer.hcurve, "HSV Equalizer", "HCurve", hsvequalizer.hcurve, keyFile);
         saveToKeyfile(!pedited || pedited->hsvequalizer.scurve, "HSV Equalizer", "SCurve", hsvequalizer.scurve, keyFile);
         saveToKeyfile(!pedited || pedited->hsvequalizer.vcurve, "HSV Equalizer", "VCurve", hsvequalizer.vcurve, keyFile);
-//save film simulation parameters
+
+// Film simulation
         saveToKeyfile(!pedited || pedited->filmSimulation.enabled, "Film Simulation", "Enabled", filmSimulation.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->filmSimulation.clutFilename, "Film Simulation", "ClutFilename", filmSimulation.clutFilename, keyFile);
         saveToKeyfile(!pedited || pedited->filmSimulation.strength, "Film Simulation", "Strength", filmSimulation.strength, keyFile);
@@ -2276,7 +2288,8 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->rgbCurves.rcurve, "RGB Curves", "rCurve", rgbCurves.rcurve, keyFile);
         saveToKeyfile(!pedited || pedited->rgbCurves.gcurve, "RGB Curves", "gCurve", rgbCurves.gcurve, keyFile);
         saveToKeyfile(!pedited || pedited->rgbCurves.bcurve, "RGB Curves", "bCurve", rgbCurves.bcurve, keyFile);
-// save Color Toning
+
+// Color toning
         saveToKeyfile(!pedited || pedited->colorToning.enabled, "ColorToning", "Enabled", colorToning.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->colorToning.method, "ColorToning", "Method", colorToning.method, keyFile);
         saveToKeyfile(!pedited || pedited->colorToning.lumamode, "ColorToning", "Lumamode", colorToning.lumamode, keyFile);
@@ -2308,24 +2321,24 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             Glib::ArrayHandle<int> thresh (colorToning.shadowsColSat.value, 2, Glib::OWNERSHIP_NONE);
             keyFile.set_integer_list ("ColorToning", "ShadowsColorSaturation", thresh);
         }
-
         saveToKeyfile(!pedited || pedited->colorToning.clcurve, "ColorToning", "ClCurve", colorToning.clcurve, keyFile);
         saveToKeyfile(!pedited || pedited->colorToning.cl2curve, "ColorToning", "Cl2Curve", colorToning.cl2curve, keyFile);
-// save raw parameters
+
+// Raw
         saveToKeyfile(!pedited || pedited->raw.darkFrame, "RAW", "DarkFrame", relativePathIfInside (fname, fnameAbsolute, raw.dark_frame) , keyFile);
-        saveToKeyfile(!pedited || pedited->raw.dfAuto, "RAW", "DarkFrameAuto", raw.df_autoselect , keyFile);
+        saveToKeyfile(!pedited || pedited->raw.df_autoselect, "RAW", "DarkFrameAuto", raw.df_autoselect , keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_file, "RAW", "FlatFieldFile", relativePathIfInside (fname, fnameAbsolute, raw.ff_file) , keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_AutoSelect, "RAW", "FlatFieldAutoSelect", raw.ff_AutoSelect , keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_BlurRadius, "RAW", "FlatFieldBlurRadius", raw.ff_BlurRadius , keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_BlurType, "RAW", "FlatFieldBlurType", raw.ff_BlurType , keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_AutoClipControl, "RAW", "FlatFieldAutoClipControl", raw.ff_AutoClipControl , keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_clipControl, "RAW", "FlatFieldClipControl", raw.ff_clipControl , keyFile);
-        saveToKeyfile(!pedited || pedited->raw.caCorrection, "RAW", "CA", raw.ca_autocorrect , keyFile);
-        saveToKeyfile(!pedited || pedited->raw.caRed, "RAW", "CARed", raw.cared , keyFile);
-        saveToKeyfile(!pedited || pedited->raw.caBlue, "RAW", "CABlue", raw.cablue , keyFile);
+        saveToKeyfile(!pedited || pedited->raw.ca_autocorrect, "RAW", "CA", raw.ca_autocorrect , keyFile);
+        saveToKeyfile(!pedited || pedited->raw.cared, "RAW", "CARed", raw.cared , keyFile);
+        saveToKeyfile(!pedited || pedited->raw.cablue, "RAW", "CABlue", raw.cablue , keyFile);
         saveToKeyfile(!pedited || pedited->raw.hotPixelFilter, "RAW", "HotPixelFilter", raw.hotPixelFilter , keyFile);
         saveToKeyfile(!pedited || pedited->raw.deadPixelFilter, "RAW", "DeadPixelFilter", raw.deadPixelFilter , keyFile);
-        saveToKeyfile(!pedited || pedited->raw.hotDeadPixelThresh, "RAW", "HotDeadPixelThresh", raw.hotdeadpix_thresh , keyFile);
+        saveToKeyfile(!pedited || pedited->raw.hotdeadpix_thresh, "RAW", "HotDeadPixelThresh", raw.hotdeadpix_thresh , keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.method, "RAW Bayer", "Method", raw.bayersensor.method , keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.imageNum, "RAW Bayer", "ImageNum", raw.bayersensor.imageNum + 1 , keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.ccSteps, "RAW Bayer", "CcSteps", raw.bayersensor.ccSteps, keyFile);
@@ -2375,17 +2388,18 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.exBlackGreen, "RAW X-Trans", "PreBlackGreen", raw.xtranssensor.blackgreen , keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.exBlackBlue, "RAW X-Trans", "PreBlackBlue", raw.xtranssensor.blackblue , keyFile);
 
-// save raw exposition
+// Raw exposition
         saveToKeyfile(!pedited || pedited->raw.exPos, "RAW", "PreExposure", raw.expos , keyFile);
         saveToKeyfile(!pedited || pedited->raw.exPreser, "RAW", "PrePreserv", raw.preser , keyFile);
-// save exif change list
+
+// EXIF change list
         if (!pedited || pedited->exif) {
             for (ExifPairs::const_iterator i = exif.begin(); i != exif.end(); ++i) {
                 keyFile.set_string ("Exif", i->first, i->second);
             }
         }
 
-// save iptc change list
+// IPTC change list
         if (!pedited || pedited->iptc) {
             for (IPTCPairs::const_iterator i = iptc.begin(); i != iptc.end(); ++i) {
                 Glib::ArrayHandle<Glib::ustring> values = i->second;
@@ -2471,8 +2485,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
         fclose (f);
 
-        // load tonecurve:
-
         ppVersion = PPVERSION;
         appVersion = APPVERSION;
 
@@ -2507,7 +2519,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Exposure", "HighlightCompr", pedited, toneCurve.hlcompr, pedited->toneCurve.hlcompr);
             assignFromKeyfile(keyFile, "Exposure", "HighlightComprThreshold", pedited, toneCurve.hlcomprthresh, pedited->toneCurve.hlcomprthresh);
             assignFromKeyfile(keyFile, "Exposure", "ShadowCompr", pedited, toneCurve.shcompr, pedited->toneCurve.shcompr);
-// load highlight recovery settings
             if (toneCurve.shcompr > 100) {
                 toneCurve.shcompr = 100; // older pp3 files can have values above 100.
             }
@@ -2535,7 +2546,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "HLRecovery", "Method", pedited, toneCurve.method, pedited->toneCurve.method);
         }
 
-        // load channel mixer curve
         if (keyFile.has_group ("Channel Mixer")) {
             if (keyFile.has_key ("Channel Mixer", "Red") && keyFile.has_key ("Channel Mixer", "Green") && keyFile.has_key ("Channel Mixer", "Blue")) {
                 const std::vector<int> rmix = keyFile.get_integer_list ("Channel Mixer", "Red");
@@ -2556,7 +2566,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
         }
 
-// load black & white
         if (keyFile.has_group ("Black & White")) {
             assignFromKeyfile(keyFile, "Black & White", "Enabled", pedited, blackwhite.enabled, pedited->blackwhite.enabled);
             assignFromKeyfile(keyFile, "Black & White", "Method", pedited, blackwhite.method, pedited->blackwhite.method);
@@ -2610,7 +2619,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             );
         }
 
-//load retinex
         if (keyFile.has_group ("Retinex")) {
             assignFromKeyfile(keyFile, "Retinex", "Median", pedited, retinex.medianmap, pedited->retinex.medianmap);
             assignFromKeyfile(keyFile, "Retinex", "RetinexMethod", pedited, retinex.retinexMethod, pedited->retinex.retinexMethod);
@@ -2655,7 +2663,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
         }
 
 
-// load luma curve
         if (keyFile.has_group ("Luminance Curve")) {
             assignFromKeyfile(keyFile, "Luminance Curve", "Brightness", pedited, labCurve.brightness, pedited->labCurve.brightness);
             assignFromKeyfile(keyFile, "Luminance Curve", "Contrast", pedited, labCurve.contrast, pedited->labCurve.contrast);
@@ -2709,7 +2716,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
         }
 
-// load sharpening
         if (keyFile.has_group ("Sharpening")) {
             assignFromKeyfile(keyFile, "Sharpening", "Enabled", pedited, sharpening.enabled, pedited->sharpening.enabled);
             assignFromKeyfile(keyFile, "Sharpening", "Radius", pedited, sharpening.radius, pedited->sharpening.radius);
@@ -2743,7 +2749,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Sharpening", "DeconvIterations", pedited, sharpening.deconviter, pedited->sharpening.deconviter);
         }
 
-// load edge sharpening
         if (keyFile.has_group ("SharpenEdge")) {
             assignFromKeyfile(keyFile, "SharpenEdge", "Enabled", pedited, sharpenEdge.enabled, pedited->sharpenEdge.enabled);
             assignFromKeyfile(keyFile, "SharpenEdge", "Passes", pedited, sharpenEdge.passes, pedited->sharpenEdge.passes);
@@ -2751,7 +2756,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "SharpenEdge", "ThreeChannels", pedited, sharpenEdge.threechannels, pedited->sharpenEdge.threechannels);
         }
 
-// load micro-contrast sharpening
         if (keyFile.has_group ("SharpenMicro")) {
             assignFromKeyfile(keyFile, "SharpenMicro", "Enabled", pedited, sharpenMicro.enabled, pedited->sharpenMicro.enabled);
             assignFromKeyfile(keyFile, "SharpenMicro", "Matrix", pedited, sharpenMicro.matrix, pedited->sharpenMicro.matrix);
@@ -2759,7 +2763,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "SharpenMicro", "Uniformity", pedited, sharpenMicro.uniformity, pedited->sharpenMicro.uniformity);
         }
 
-// load vibrance
         if (keyFile.has_group ("Vibrance")) {
             assignFromKeyfile(keyFile, "Vibrance", "Enabled", pedited, vibrance.enabled, pedited->vibrance.enabled);
             assignFromKeyfile(keyFile, "Vibrance", "Pastels", pedited, vibrance.pastels, pedited->vibrance.pastels);
@@ -2802,7 +2805,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             if (keyFile.has_key ("Color Boost", "SaturationLimit"))     { colorBoost.saturationlimit         = keyFile.get_double  ("Color Boost", "SaturationLimit"); if (pedited) pedited->colorBoost.saturationlimit = true; }
         }*/
 
-        // load wb
         if (keyFile.has_group ("White Balance")) {
             assignFromKeyfile(keyFile, "White Balance", "Setting", pedited, wb.method, pedited->wb.method);
             assignFromKeyfile(keyFile, "White Balance", "Temperature", pedited, wb.temperature, pedited->wb.temperature);
@@ -2817,7 +2819,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             if (keyFile.has_key ("Color Shift", "ChannelB")) { colorShift.b = keyFile.get_double ("Color Shift", "ChannelB"); if (pedited) pedited->colorShift.b = true; }
         }*/
 
-        // load defringe
         if (keyFile.has_group ("Defringing")) {
             assignFromKeyfile(keyFile, "Defringing", "Enabled", pedited, defringe.enabled, pedited->defringe.enabled);
             assignFromKeyfile(keyFile, "Defringing", "Radius", pedited, defringe.radius, pedited->defringe.radius);
@@ -2836,7 +2837,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Defringing", "HueCurve", pedited, defringe.huecurve, pedited->defringe.huecurve);
         }
 
-// load colorappearance
         if (keyFile.has_group ("Color appearance")) {
             assignFromKeyfile(keyFile, "Color appearance", "Enabled", pedited, colorappearance.enabled, pedited->colorappearance.enabled);
             assignFromKeyfile(keyFile, "Color appearance", "Degree", pedited, colorappearance.degree, pedited->colorappearance.degree);
@@ -2908,13 +2908,11 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
         }
 
-// load impulseDenoise
         if (keyFile.has_group ("Impulse Denoising")) {
             assignFromKeyfile(keyFile, "Impulse Denoising", "Enabled", pedited, impulseDenoise.enabled, pedited->impulseDenoise.enabled);
             assignFromKeyfile(keyFile, "Impulse Denoising", "Threshold", pedited, impulseDenoise.thresh, pedited->impulseDenoise.thresh);
         }
 
-// load dirpyrDenoise
         if (keyFile.has_group ("Directional Pyramid Denoising")) {//TODO: No longer an accurate description for FT denoise
             assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Enabled", pedited, dirpyrDenoise.enabled, pedited->dirpyrDenoise.enabled);
             assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Enhance", pedited, dirpyrDenoise.enhance, pedited->dirpyrDenoise.enhance);
@@ -2950,7 +2948,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Passes", pedited, dirpyrDenoise.passes, pedited->dirpyrDenoise.passes);
         }
 
-//Load EPD.
         if (keyFile.has_group ("EPD")) {
             assignFromKeyfile(keyFile, "EPD", "Enabled", pedited, epd.enabled, pedited->epd.enabled);
             assignFromKeyfile(keyFile, "EPD", "Strength", pedited, epd.strength, pedited->epd.strength);
@@ -2960,7 +2957,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "EPD", "ReweightingIterates", pedited, epd.reweightingIterates, pedited->epd.reweightingIterates);
         }
 
-//Load FattalToneMapping
         if (keyFile.has_group ("FattalToneMapping")) {
             assignFromKeyfile(keyFile, "FattalToneMapping", "Enabled", pedited, fattal.enabled, pedited->fattal.enabled);
             assignFromKeyfile(keyFile, "FattalToneMapping", "Threshold", pedited, fattal.threshold, pedited->fattal.threshold);
@@ -2982,7 +2978,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             if (keyFile.has_key ("Chrominance Denoising", "Amount"))       { colorDenoise.amount        = keyFile.get_integer   ("Chrominance Denoising", "Amount"); if (pedited) pedited->colorDenoise.amount = true; }
         }*/
 
-        // load sh
         if (keyFile.has_group ("Shadows & Highlights")) {
             assignFromKeyfile(keyFile, "Shadows & Highlights", "Enabled", pedited, sh.enabled, pedited->sh.enabled);
             assignFromKeyfile(keyFile, "Shadows & Highlights", "HighQuality", pedited, sh.hq, pedited->sh.hq);
@@ -2994,7 +2989,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Shadows & Highlights", "Radius", pedited, sh.radius, pedited->sh.radius);
         }
 
-// load crop
         if (keyFile.has_group ("Crop")) {
             assignFromKeyfile(keyFile, "Crop", "Enabled", pedited, crop.enabled, pedited->crop.enabled);
             assignFromKeyfile(keyFile, "Crop", "X", pedited, crop.x, pedited->crop.x);
@@ -3034,29 +3028,24 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Crop", "Guide", pedited, crop.guide, pedited->crop.guide);
         }
 
-// load coarse
         if (keyFile.has_group ("Coarse Transformation")) {
             assignFromKeyfile(keyFile, "Coarse Transformation", "Rotate", pedited, coarse.rotate, pedited->coarse.rotate);
             assignFromKeyfile(keyFile, "Coarse Transformation", "HorizontalFlip", pedited, coarse.hflip, pedited->coarse.hflip);
             assignFromKeyfile(keyFile, "Coarse Transformation", "VerticalFlip", pedited, coarse.vflip, pedited->coarse.vflip);
         }
 
-// load rotate
         if (keyFile.has_group ("Rotation")) {
             assignFromKeyfile(keyFile, "Rotation", "Degree", pedited, rotate.degree, pedited->rotate.degree);
         }
 
-// load commonTrans
         if (keyFile.has_group ("Common Properties for Transformations")) {
             assignFromKeyfile(keyFile, "Common Properties for Transformations", "AutoFill", pedited, commonTrans.autofill, pedited->commonTrans.autofill);
         }
 
-// load distortion
         if (keyFile.has_group ("Distortion")) {
             assignFromKeyfile(keyFile, "Distortion", "Amount", pedited, distortion.amount, pedited->distortion.amount);
         }
 
-// lens profile
         if (keyFile.has_group ("LensProfile")) {
             if (keyFile.has_key ("LensProfile", "LcMode")) {
                 lensProf.lcMode = lensProf.getMethodNumber (keyFile.get_string ("LensProfile", "LcMode"));
@@ -3103,13 +3092,11 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
         }
 
-// load perspective correction
         if (keyFile.has_group ("Perspective")) {
             assignFromKeyfile(keyFile, "Perspective", "Horizontal", pedited, perspective.horizontal, pedited->perspective.horizontal);
             assignFromKeyfile(keyFile, "Perspective", "Vertical", pedited, perspective.vertical, pedited->perspective.vertical);
         }
 
-// load gradient
         if (keyFile.has_group ("Gradient")) {
             assignFromKeyfile(keyFile, "Gradient", "Enabled", pedited, gradient.enabled, pedited->gradient.enabled);
             assignFromKeyfile(keyFile, "Gradient", "Degree", pedited, gradient.degree, pedited->gradient.degree);
@@ -3126,13 +3113,11 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "PCVignette", "Roundness", pedited, pcvignette.roundness, pedited->pcvignette.roundness);
         }
 
-// load c/a correction
         if (keyFile.has_group ("CACorrection")) {
             assignFromKeyfile(keyFile, "CACorrection", "Red", pedited, cacorrection.red, pedited->cacorrection.red);
             assignFromKeyfile(keyFile, "CACorrection", "Blue", pedited, cacorrection.blue, pedited->cacorrection.blue);
         }
 
-// load vignetting correction
         if (keyFile.has_group ("Vignetting Correction")) {
             assignFromKeyfile(keyFile, "Vignetting Correction", "Amount", pedited, vignetting.amount, pedited->vignetting.amount);
             assignFromKeyfile(keyFile, "Vignetting Correction", "Radius", pedited, vignetting.radius, pedited->vignetting.radius);
@@ -3141,7 +3126,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Vignetting Correction", "CenterY", pedited, vignetting.centerY, pedited->vignetting.centerY);
         }
 
-// load resize settings
         if (keyFile.has_group ("Resize")) {
             assignFromKeyfile(keyFile, "Resize", "Enabled", pedited, resize.enabled, pedited->resize.enabled);
             assignFromKeyfile(keyFile, "Resize", "Scale", pedited, resize.scale, pedited->resize.scale);
@@ -3152,7 +3136,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Resize", "Height", pedited, resize.height, pedited->resize.height);
         }
 
-// load post resize sharpening
         if (keyFile.has_group ("PostResizeSharpening")) {
             assignFromKeyfile(keyFile, "PostResizeSharpening", "Enabled", pedited, prsharpening.enabled, pedited->prsharpening.enabled);
             assignFromKeyfile(keyFile, "PostResizeSharpening", "Radius", pedited, prsharpening.radius, pedited->prsharpening.radius);
@@ -3186,7 +3169,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "PostResizeSharpening", "DeconvIterations", pedited, prsharpening.deconviter, pedited->prsharpening.deconviter);
         }
 
-// load color management settings
         if (keyFile.has_group ("Color Management")) {
             if (keyFile.has_key ("Color Management", "InputProfile")) {
                 icm.input = expandRelativePath (fname, "file:", keyFile.get_string ("Color Management", "InputProfile"));
@@ -3228,7 +3210,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "GammaSlope", pedited, icm.slpos, pedited->icm.slpos);
         }
 
-// load wavelet wavelet parameters
         if (keyFile.has_group ("Wavelet")) {
             assignFromKeyfile(keyFile, "Wavelet", "Enabled", pedited, wavelet.enabled, pedited->wavelet.enabled);
             assignFromKeyfile(keyFile, "Wavelet", "Strength", pedited, wavelet.strength, pedited->wavelet.strength);
@@ -3286,21 +3267,13 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Wavelet", "ThresholdResidShadow", pedited, wavelet.thr, pedited->wavelet.thr);
             assignFromKeyfile(keyFile, "Wavelet", "ThresholdResidHighLight", pedited, wavelet.thrH, pedited->wavelet.thrH);
             assignFromKeyfile(keyFile, "Wavelet", "ContrastCurve", pedited, wavelet.ccwcurve, pedited->wavelet.ccwcurve);
-
             assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveRG", pedited, wavelet.opacityCurveRG, pedited->wavelet.opacityCurveRG);
-
             assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveBY", pedited, wavelet.opacityCurveBY, pedited->wavelet.opacityCurveBY);
-
             assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveW", pedited, wavelet.opacityCurveW, pedited->wavelet.opacityCurveW);
-
             assignFromKeyfile(keyFile, "Wavelet", "OpacityCurveWL", pedited, wavelet.opacityCurveWL, pedited->wavelet.opacityCurveWL);
-
             assignFromKeyfile(keyFile, "Wavelet", "HHcurve", pedited, wavelet.hhcurve, pedited->wavelet.hhcurve);
-
             assignFromKeyfile(keyFile, "Wavelet", "CHcurve", pedited, wavelet.Chcurve, pedited->wavelet.Chcurve);
-
             assignFromKeyfile(keyFile, "Wavelet", "WavclCurve", pedited, wavelet.wavclCurve, pedited->wavelet.wavclCurve);
-
             if (keyFile.has_key ("Wavelet", "Hueskin")) {
                 const std::vector<int> thresh = keyFile.get_integer_list ("Wavelet", "Hueskin");
 
@@ -3312,7 +3285,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->wavelet.hueskin = true;
                 }
             }
-
             if (keyFile.has_key ("Wavelet", "HueRange")) {
                 const std::vector<int> thresh = keyFile.get_integer_list ("Wavelet", "HueRange");
 
@@ -3324,7 +3296,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->wavelet.hueskin2 = true;
                 }
             }
-
             if (keyFile.has_key ("Wavelet", "HLRange")) {
                 const std::vector<int> thresh = keyFile.get_integer_list ("Wavelet", "HLRange");
 
@@ -3336,7 +3307,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->wavelet.hllev = true;
                 }
             }
-
             if (keyFile.has_key ("Wavelet", "SHRange")) {
                 const std::vector<int> thresh = keyFile.get_integer_list ("Wavelet", "SHRange");
 
@@ -3348,7 +3318,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->wavelet.bllev = true;
                 }
             }
-
             if (keyFile.has_key ("Wavelet", "Edgcont")) {
                 const std::vector<int> thresh = keyFile.get_integer_list ("Wavelet", "Edgcont");
 
@@ -3360,7 +3329,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->wavelet.edgcont = true;
                 }
             }
-
             if (keyFile.has_key ("Wavelet", "Level0noise")) {
                 const std::vector<double> thresh = keyFile.get_double_list ("Wavelet", "Level0noise");
 
@@ -3372,7 +3340,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->wavelet.level0noise = true;
                 }
             }
-
             if (keyFile.has_key ("Wavelet", "Level1noise")) {
                 const std::vector<double> thresh = keyFile.get_double_list ("Wavelet", "Level1noise");
 
@@ -3384,7 +3351,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->wavelet.level1noise = true;
                 }
             }
-
             if (keyFile.has_key ("Wavelet", "Level2noise")) {
                 const std::vector<double> thresh = keyFile.get_double_list ("Wavelet", "Level2noise");
 
@@ -3396,7 +3362,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->wavelet.level2noise = true;
                 }
             }
-
             if (keyFile.has_key ("Wavelet", "Level3noise")) {
                 const std::vector<double> thresh = keyFile.get_double_list ("Wavelet", "Level3noise");
 
@@ -3408,8 +3373,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->wavelet.level3noise = true;
                 }
             }
-
-
             if (keyFile.has_key ("Wavelet", "Pastlev")) {
                 const std::vector<int> thresh = keyFile.get_integer_list ("Wavelet", "Pastlev");
 
@@ -3421,7 +3384,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->wavelet.pastlev = true;
                 }
             }
-
             if (keyFile.has_key ("Wavelet", "Satlev")) {
                 const std::vector<int> thresh = keyFile.get_integer_list ("Wavelet", "Satlev");
 
@@ -3433,8 +3395,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->wavelet.satlev = true;
                 }
             }
-
-
             assignFromKeyfile(keyFile, "Wavelet", "Skinprotect", pedited, wavelet.skinprotect, pedited->wavelet.skinprotect);
             assignFromKeyfile(keyFile, "Wavelet", "Expcontrast", pedited, wavelet.expcontrast, pedited->wavelet.expcontrast);
             assignFromKeyfile(keyFile, "Wavelet", "Expchroma", pedited, wavelet.expchroma, pedited->wavelet.expchroma);
@@ -3450,7 +3410,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     }
                 }
             }
-
             for (int i = 0; i < 9; i ++) {
                 std::stringstream ss;
                 ss << "Chroma" << (i + 1);
@@ -3463,22 +3422,17 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     }
                 }
             }
-
             assignFromKeyfile(keyFile, "Wavelet", "Expedge", pedited, wavelet.expedge, pedited->wavelet.expedge);
             assignFromKeyfile(keyFile, "Wavelet", "Expresid", pedited, wavelet.expresid, pedited->wavelet.expresid);
             assignFromKeyfile(keyFile, "Wavelet", "Expfinal", pedited, wavelet.expfinal, pedited->wavelet.expfinal);
             assignFromKeyfile(keyFile, "Wavelet", "Exptoning", pedited, wavelet.exptoning, pedited->wavelet.exptoning);
             assignFromKeyfile(keyFile, "Wavelet", "Expnoise", pedited, wavelet.expnoise, pedited->wavelet.expnoise);
-
         }
 
-// load directional pyramid equalizer parameters
         if (keyFile.has_group ("Directional Pyramid Equalizer")) {
             assignFromKeyfile(keyFile, "Directional Pyramid Equalizer", "Enabled", pedited, dirpyrequalizer.enabled, pedited->dirpyrequalizer.enabled);
             assignFromKeyfile(keyFile, "Directional Pyramid Equalizer", "Gamutlab", pedited, dirpyrequalizer.gamutlab, pedited->dirpyrequalizer.gamutlab);
-
             assignFromKeyfile(keyFile, "Directional Pyramid Equalizer", "cbdlMethod", pedited, dirpyrequalizer.cbdlMethod, pedited->dirpyrequalizer.cbdlMethod);
-
 // if (keyFile.has_key ("Directional Pyramid Equalizer", "Algorithm")) { dirpyrequalizer.algo = keyFile.get_string ("Directional Pyramid Equalizer", "Algorithm"); if (pedited) pedited->dirpyrequalizer.algo = true; }
             if (keyFile.has_key ("Directional Pyramid Equalizer", "Hueskin")) {
                 const std::vector<int> thresh = keyFile.get_integer_list ("Directional Pyramid Equalizer", "Hueskin");
@@ -3491,7 +3445,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->dirpyrequalizer.hueskin = true;
                 }
             }
-
             if (ppVersion < 316) {
                 for (int i = 0; i < 5; i ++) {
                     std::stringstream ss;
@@ -3535,68 +3488,44 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
         }
 
-// load CLUT parameters
-        if ( keyFile.has_group ( "Film Simulation" ) ) {
-            if ( keyFile.has_key ( "Film Simulation", "Enabled" ) ) {
-                filmSimulation.enabled = keyFile.get_boolean ( "Film Simulation", "Enabled" );
-
-                if ( pedited ) {
-                    pedited->filmSimulation.enabled = true;
-                }
-            }
-
-            if ( keyFile.has_key ( "Film Simulation", "ClutFilename" ) ) {
-                filmSimulation.clutFilename = keyFile.get_string ( "Film Simulation", "ClutFilename" );
-
-                if ( pedited ) {
-                    pedited->filmSimulation.clutFilename = true;
-                }
-            }
-
-            if ( keyFile.has_key ( "Film Simulation", "Strength" ) ) {
+        if (keyFile.has_group ("Film Simulation")) {
+            assignFromKeyfile(keyFile, "Film Simulation", "Enabled", pedited, filmSimulation.enabled, pedited->filmSimulation.enabled);
+            assignFromKeyfile(keyFile, "Film Simulation", "ClutFilename", pedited, filmSimulation.clutFilename, pedited->filmSimulation.clutFilename);
+            if (keyFile.has_key ("Film Simulation", "Strength")) {
                 if (ppVersion < 321) {
-                    filmSimulation.strength = int (keyFile.get_double ( "Film Simulation", "Strength" ) * 100 + 0.1);
+                    filmSimulation.strength = keyFile.get_double ("Film Simulation", "Strength") * 100 + 0.1;
                 } else {
-                    filmSimulation.strength = keyFile.get_integer ( "Film Simulation", "Strength" );
+                    filmSimulation.strength = keyFile.get_integer ("Film Simulation", "Strength");
                 }
 
-                if ( pedited ) {
+                if (pedited) {
                     pedited->filmSimulation.strength = true;
                 }
             }
         }
 
-// load HSV wavelet parameters
         if (keyFile.has_group ("HSV Equalizer")) {
             if (ppVersion >= 300) {
                 assignFromKeyfile(keyFile, "HSV Equalizer", "HCurve", pedited, hsvequalizer.hcurve, pedited->hsvequalizer.hcurve);
-
                 assignFromKeyfile(keyFile, "HSV Equalizer", "SCurve", pedited, hsvequalizer.scurve, pedited->hsvequalizer.scurve);
-
                 assignFromKeyfile(keyFile, "HSV Equalizer", "VCurve", pedited, hsvequalizer.vcurve, pedited->hsvequalizer.vcurve);
             }
         }
 
-// load RGB curves
         if (keyFile.has_group ("RGB Curves")) {
             assignFromKeyfile(keyFile, "RGB Curves", "LumaMode", pedited, rgbCurves.lumamode, pedited->rgbCurves.lumamode);
             assignFromKeyfile(keyFile, "RGB Curves", "rCurve", pedited, rgbCurves.rcurve, pedited->rgbCurves.rcurve);
-
             assignFromKeyfile(keyFile, "RGB Curves", "gCurve", pedited, rgbCurves.gcurve, pedited->rgbCurves.gcurve);
-
             assignFromKeyfile(keyFile, "RGB Curves", "bCurve", pedited, rgbCurves.bcurve, pedited->rgbCurves.bcurve);
         }
 
-// load Color Toning
         if (keyFile.has_group ("ColorToning")) {
             assignFromKeyfile(keyFile, "ColorToning", "Enabled", pedited, colorToning.enabled, pedited->colorToning.enabled);
             assignFromKeyfile(keyFile, "ColorToning", "Method", pedited, colorToning.method, pedited->colorToning.method);
             assignFromKeyfile(keyFile, "ColorToning", "Lumamode", pedited, colorToning.lumamode, pedited->colorToning.lumamode);
             assignFromKeyfile(keyFile, "ColorToning", "Twocolor", pedited, colorToning.twocolor, pedited->colorToning.twocolor);
             assignFromKeyfile(keyFile, "ColorToning", "OpacityCurve", pedited, colorToning.opacityCurve, pedited->colorToning.opacityCurve);
-
             assignFromKeyfile(keyFile, "ColorToning", "ColorCurve", pedited, colorToning.colorCurve, pedited->colorToning.colorCurve);
-
             assignFromKeyfile(keyFile, "ColorToning", "Autosat", pedited, colorToning.autosat, pedited->colorToning.autosat);
             assignFromKeyfile(keyFile, "ColorToning", "SatProtectionThreshold", pedited, colorToning.satProtectionThreshold, pedited->colorToning.satprotectionthreshold);
             assignFromKeyfile(keyFile, "ColorToning", "SaturatedOpacity", pedited, colorToning.saturatedOpacity, pedited->colorToning.saturatedopacity);
@@ -3612,7 +3541,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->colorToning.hlColSat = true;
                 }
             }
-
             if (keyFile.has_key ("ColorToning", "ShadowsColorSaturation")) {
                 const std::vector<int> thresh = keyFile.get_integer_list ("ColorToning", "ShadowsColorSaturation");
 
@@ -3624,11 +3552,8 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->colorToning.shadowsColSat = true;
                 }
             }
-
             assignFromKeyfile(keyFile, "ColorToning", "ClCurve", pedited, colorToning.clcurve, pedited->colorToning.clcurve);
-
             assignFromKeyfile(keyFile, "ColorToning", "Cl2Curve", pedited, colorToning.cl2curve, pedited->colorToning.cl2curve);
-
             assignFromKeyfile(keyFile, "ColorToning", "Redlow", pedited, colorToning.redlow, pedited->colorToning.redlow);
             assignFromKeyfile(keyFile, "ColorToning", "Greenlow", pedited, colorToning.greenlow, pedited->colorToning.greenlow);
             assignFromKeyfile(keyFile, "ColorToning", "Bluelow", pedited, colorToning.bluelow, pedited->colorToning.bluelow);
@@ -3643,7 +3568,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "ColorToning", "Bluehigh", pedited, colorToning.bluehigh, pedited->colorToning.bluehigh);
         }
 
-// load raw settings
         if (keyFile.has_group ("RAW")) {
             if (keyFile.has_key ("RAW", "DarkFrame")) {
                 raw.dark_frame = expandRelativePath (fname, "", keyFile.get_string ("RAW", "DarkFrame" ));
@@ -3652,15 +3576,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->raw.darkFrame = true;
                 }
             }
-
-            if (keyFile.has_key ("RAW", "DarkFrameAuto")) {
-                raw.df_autoselect = keyFile.get_boolean ("RAW", "DarkFrameAuto" );
-
-                if (pedited) {
-                    pedited->raw.dfAuto = true;
-                }
-            }
-
+            assignFromKeyfile(keyFile, "RAW", "DarkFrameAuto", pedited, raw.df_autoselect, pedited->raw.df_autoselect);
             if (keyFile.has_key ("RAW", "FlatFieldFile")) {
                 raw.ff_file = expandRelativePath (fname, "", keyFile.get_string ("RAW", "FlatFieldFile" ));
 
@@ -3668,117 +3584,27 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->raw.ff_file = true;
                 }
             }
-
-            if (keyFile.has_key ("RAW", "FlatFieldAutoSelect")) {
-                raw.ff_AutoSelect = keyFile.get_boolean ("RAW", "FlatFieldAutoSelect" );
-
-                if (pedited) {
-                    pedited->raw.ff_AutoSelect = true;
-                }
-            }
-
-            if (keyFile.has_key ("RAW", "FlatFieldBlurRadius")) {
-                raw.ff_BlurRadius = keyFile.get_integer ("RAW", "FlatFieldBlurRadius" );
-
-                if (pedited) {
-                    pedited->raw.ff_BlurRadius = true;
-                }
-            }
-
-            if (keyFile.has_key ("RAW", "FlatFieldBlurType")) {
-                raw.ff_BlurType = keyFile.get_string ("RAW", "FlatFieldBlurType" );
-
-                if (pedited) {
-                    pedited->raw.ff_BlurType = true;
-                }
-            }
-
-            if (keyFile.has_key ("RAW", "FlatFieldAutoClipControl")) {
-                raw.ff_AutoClipControl = keyFile.get_boolean ("RAW", "FlatFieldAutoClipControl" );
-
-                if (pedited) {
-                    pedited->raw.ff_AutoClipControl = true;
-                }
-            }
-
-            if (keyFile.has_key ("RAW", "FlatFieldClipControl")) {
-                raw.ff_clipControl = keyFile.get_boolean ("RAW", "FlatFieldClipControl" );
-
-                if (pedited) {
-                    pedited->raw.ff_clipControl = true;
-                }
-            }
-
-            if (keyFile.has_key ("RAW", "CA")) {
-                raw.ca_autocorrect = keyFile.get_boolean ("RAW", "CA" );
-
-                if (pedited) {
-                    pedited->raw.caCorrection = true;
-                }
-            }
-
-            if (keyFile.has_key ("RAW", "CARed")) {
-                raw.cared = keyFile.get_double ("RAW", "CARed" );
-
-                if (pedited) {
-                    pedited->raw.caRed = true;
-                }
-            }
-
-            if (keyFile.has_key ("RAW", "CABlue")) {
-                raw.cablue = keyFile.get_double ("RAW", "CABlue" );
-
-                if (pedited) {
-                    pedited->raw.caBlue = true;
-                }
-            }
-
-// for compatibility to elder pp3 versions
-            if (keyFile.has_key ("RAW", "HotDeadPixels")) {
-                raw.deadPixelFilter = raw.hotPixelFilter = keyFile.get_boolean ("RAW", "HotDeadPixels" );
-
-                if (pedited) {
-                    pedited->raw.hotPixelFilter = pedited->raw.deadPixelFilter = true;
-                }
-            }
-
-            if (keyFile.has_key ("RAW", "HotPixelFilter")) {
-                raw.hotPixelFilter = keyFile.get_boolean ("RAW", "HotPixelFilter" );
-
-                if (pedited) {
-                    pedited->raw.hotPixelFilter = true;
-                }
-            }
-
-            if (keyFile.has_key ("RAW", "DeadPixelFilter")) {
-                raw.deadPixelFilter = keyFile.get_boolean ("RAW", "DeadPixelFilter" );
-
-                if (pedited) {
-                    pedited->raw.deadPixelFilter = true;
-                }
-            }
-
-            if (keyFile.has_key ("RAW", "HotDeadPixelThresh")) {
-                raw.hotdeadpix_thresh = keyFile.get_integer ("RAW", "HotDeadPixelThresh" );
-
-                if (pedited) {
-                    pedited->raw.hotDeadPixelThresh = true;
-                }
-            }
-
+            assignFromKeyfile(keyFile, "RAW", "FlatFieldAutoSelect", pedited, raw.ff_AutoSelect, pedited->raw.ff_AutoSelect);
+            assignFromKeyfile(keyFile, "RAW", "FlatFieldBlurRadius", pedited, raw.ff_BlurRadius, pedited->raw.ff_BlurRadius);
+            assignFromKeyfile(keyFile, "RAW", "FlatFieldBlurType", pedited, raw.ff_BlurType, pedited->raw.ff_BlurType);
+            assignFromKeyfile(keyFile, "RAW", "FlatFieldAutoClipControl", pedited, raw.ff_AutoClipControl, pedited->raw.ff_AutoClipControl);
+            assignFromKeyfile(keyFile, "RAW", "FlatFieldClipControl", pedited, raw.ff_clipControl, pedited->raw.ff_clipControl);
+            assignFromKeyfile(keyFile, "RAW", "CA", pedited, raw.ca_autocorrect, pedited->raw.ca_autocorrect);
+            assignFromKeyfile(keyFile, "RAW", "CARed", pedited, raw.cared, pedited->raw.cared);
+            assignFromKeyfile(keyFile, "RAW", "CABlue", pedited, raw.cablue, pedited->raw.cablue);
+            // For compatibility to elder pp3 versions
+            assignFromKeyfile(keyFile, "RAW", "HotDeadPixels", pedited, raw.hotPixelFilter, pedited->raw.hotPixelFilter);
+            raw.deadPixelFilter = raw.hotPixelFilter;
+            pedited->raw.deadPixelFilter = pedited->raw.hotPixelFilter;
+            assignFromKeyfile(keyFile, "RAW", "HotPixelFilter", pedited, raw.hotPixelFilter, pedited->raw.hotPixelFilter);
+            assignFromKeyfile(keyFile, "RAW", "DeadPixelFilter", pedited, raw.deadPixelFilter, pedited->raw.deadPixelFilter);
+            assignFromKeyfile(keyFile, "RAW", "HotDeadPixelThresh", pedited, raw.hotdeadpix_thresh, pedited->raw.hotdeadpix_thresh);
             assignFromKeyfile(keyFile, "RAW", "PreExposure", pedited, raw.expos, pedited->raw.exPos);
             assignFromKeyfile(keyFile, "RAW", "PrePreserv", pedited, raw.preser, pedited->raw.exPreser);
             if (ppVersion < 320) {
                 assignFromKeyfile(keyFile, "RAW", "Method", pedited, raw.bayersensor.method, pedited->raw.bayersensor.method);
                 assignFromKeyfile(keyFile, "RAW", "CcSteps", pedited, raw.bayersensor.ccSteps, pedited->raw.bayersensor.ccSteps);
-                if (keyFile.has_key ("RAW", "LineDenoise")) {
-                    raw.bayersensor.linenoise = keyFile.get_integer ("RAW", "LineDenoise" );
-
-                    if (pedited) {
-                        pedited->raw.bayersensor.linenoise = true;
-                    }
-                }
-
+                assignFromKeyfile(keyFile, "RAW", "LineDenoise", pedited, raw.bayersensor.linenoise, pedited->raw.bayersensor.linenoise);
                 assignFromKeyfile(keyFile, "RAW", "GreenEqThreshold", pedited, raw.bayersensor.greenthresh, pedited->raw.bayersensor.greenEq);
                 assignFromKeyfile(keyFile, "RAW", "DCBIterations", pedited, raw.bayersensor.dcb_iterations, pedited->raw.bayersensor.dcbIterations);
                 assignFromKeyfile(keyFile, "RAW", "DCBEnhance", pedited, raw.bayersensor.dcb_enhance, pedited->raw.bayersensor.dcbEnhance);
@@ -3792,7 +3618,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
         }
 
-// load Bayer sensors' raw settings
         if (keyFile.has_group ("RAW Bayer")) {
             assignFromKeyfile(keyFile, "RAW Bayer", "Method", pedited, raw.bayersensor.method, pedited->raw.bayersensor.method);
             if (keyFile.has_key ("RAW Bayer", "ImageNum")) {
@@ -3802,21 +3627,13 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->raw.bayersensor.imageNum = true;
                 }
             }
-
             assignFromKeyfile(keyFile, "RAW Bayer", "CcSteps", pedited, raw.bayersensor.ccSteps, pedited->raw.bayersensor.ccSteps);
             assignFromKeyfile(keyFile, "RAW Bayer", "PreBlack0", pedited, raw.bayersensor.black0, pedited->raw.bayersensor.exBlack0);
             assignFromKeyfile(keyFile, "RAW Bayer", "PreBlack1", pedited, raw.bayersensor.black1, pedited->raw.bayersensor.exBlack1);
             assignFromKeyfile(keyFile, "RAW Bayer", "PreBlack2", pedited, raw.bayersensor.black2, pedited->raw.bayersensor.exBlack2);
             assignFromKeyfile(keyFile, "RAW Bayer", "PreBlack3", pedited, raw.bayersensor.black3, pedited->raw.bayersensor.exBlack3);
             assignFromKeyfile(keyFile, "RAW Bayer", "PreTwoGreen", pedited, raw.bayersensor.twogreen, pedited->raw.bayersensor.exTwoGreen);
-            if (keyFile.has_key ("RAW Bayer", "LineDenoise")) {
-                raw.bayersensor.linenoise = keyFile.get_integer ("RAW Bayer", "LineDenoise" );
-
-                if (pedited) {
-                    pedited->raw.bayersensor.linenoise = true;
-                }
-            }
-
+            assignFromKeyfile(keyFile, "RAW Bayer", "LineDenoise", pedited, raw.bayersensor.linenoise, pedited->raw.bayersensor.linenoise);
             assignFromKeyfile(keyFile, "RAW Bayer", "GreenEqThreshold", pedited, raw.bayersensor.greenthresh, pedited->raw.bayersensor.greenEq);
             assignFromKeyfile(keyFile, "RAW Bayer", "DCBIterations", pedited, raw.bayersensor.dcb_iterations, pedited->raw.bayersensor.dcbIterations);
             assignFromKeyfile(keyFile, "RAW Bayer", "DCBEnhance", pedited, raw.bayersensor.dcb_enhance, pedited->raw.bayersensor.dcbEnhance);
@@ -3829,7 +3646,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->raw.bayersensor.pixelShiftMotionCorrection = true;
                 }
             }
-
             if (keyFile.has_key ("RAW Bayer", "PixelShiftMotionCorrectionMethod")) {
                 raw.bayersensor.pixelShiftMotionCorrectionMethod = (RAWParams::BayerSensor::ePSMotionCorrectionMethod)keyFile.get_integer ("RAW Bayer", "PixelShiftMotionCorrectionMethod");
 
@@ -3837,7 +3653,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->raw.bayersensor.pixelShiftMotionCorrectionMethod = true;
                 }
             }
-
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftStddevFactorGreen", pedited, raw.bayersensor.pixelShiftStddevFactorGreen, pedited->raw.bayersensor.pixelShiftStddevFactorGreen);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftStddevFactorRed", pedited, raw.bayersensor.pixelShiftStddevFactorRed, pedited->raw.bayersensor.pixelShiftStddevFactorRed);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftStddevFactorBlue", pedited, raw.bayersensor.pixelShiftStddevFactorBlue, pedited->raw.bayersensor.pixelShiftStddevFactorBlue);
@@ -3867,7 +3682,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftNonGreenAmaze", pedited, raw.bayersensor.pixelShiftNonGreenAmaze, pedited->raw.bayersensor.pixelShiftNonGreenAmaze);
         }
 
-// load X-Trans sensors' raw settings
         if (keyFile.has_group ("RAW X-Trans")) {
             assignFromKeyfile(keyFile, "RAW X-Trans", "Method", pedited, raw.xtranssensor.method, pedited->raw.xtranssensor.method);
             assignFromKeyfile(keyFile, "RAW X-Trans", "CcSteps", pedited, raw.xtranssensor.ccSteps, pedited->raw.xtranssensor.ccSteps);
@@ -3876,13 +3690,11 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackBlue", pedited, raw.xtranssensor.blackblue, pedited->raw.xtranssensor.exBlackBlue);
         }
 
-        // load exif change settings
         if (keyFile.has_group ("Exif")) {
             std::vector<Glib::ustring> keys = keyFile.get_keys ("Exif");
 
-            for (int i = 0; i < (int)keys.size(); i++) {
-                Glib::ustring tmpStr = keyFile.get_string ("Exif", keys[i]);
-                exif[keys[i]] = keyFile.get_string ("Exif", keys[i]);
+            for (const auto& key : keyFile.get_keys("Exif")) {
+                exif[key] = keyFile.get_string ("Exif", key);
 
                 if (pedited) {
                     pedited->exif = true;
@@ -3903,12 +3715,9 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
          * i.e. they don't merge
          */
         if (keyFile.has_group ("IPTC")) {
-            std::vector<Glib::ustring> keys = keyFile.get_keys ("IPTC");
-            IPTCPairs::iterator element;
-
-            for (unsigned int i = 0; i < keys.size(); i++) {
+            for (const auto& key : keyFile.get_keys("IPTC")) {
                 // does this key already exist?
-                element = iptc.find (keys[i]);
+                const IPTCPairs::iterator element = iptc.find(key);
 
                 if (element != iptc.end()) {
                     // it already exist so we cleanup the values
@@ -3916,13 +3725,8 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
 
                 // TODO: look out if merging Keywords and SupplementalCategories from the procparams chain would be interesting
-                std::vector<Glib::ustring> currIptc = keyFile.get_string_list ("IPTC", keys[i]);
-
-                for (
-                    std::vector<Glib::ustring>::iterator currLoadedTagValue = currIptc.begin();
-                    currLoadedTagValue != currIptc.end();
-                    ++currLoadedTagValue) {
-                    iptc[keys[i]].push_back (currLoadedTagValue->data());
+                for (const auto& currLoadedTagValue : keyFile.get_string_list ("IPTC", key)) {
+                    iptc[key].push_back (currLoadedTagValue);
                 }
 
                 if (pedited) {
@@ -3930,7 +3734,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
         }
-
 
         return 0;
     } catch (const Glib::Error& e) {
