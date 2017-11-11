@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.59
+  Version 2.60
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -463,6 +463,9 @@ menu separator {
     background-color: @view-grid-border;
     margin: 0.33334em 0;
 }
+#MyFileChooserButton separator {
+    background-color: transparent;
+}
 
 #PlacesPaned .view.separator {
     color: @border-color;
@@ -884,12 +887,15 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     border-radius: 0;
 }
 
+#MetaPanelNotebook > stack > box:nth-child(1) > :nth-child(1) {
+    border: 0.08334em solid @bg-dark-grey;
+}
 #MetaPanelNotebook > stack > box:nth-child(2) > scrolledwindow scrolledwindow {
     background-color: @bg-dark-grey;
     padding: 0;
     margin: 0;
 }
-#MetaPanelNotebook .view {
+#MetaPanelNotebook > stack > box:nth-child(2) .view {
     border: 0.08334em solid @bg-dark-grey;
     padding: 0.16667em;
     margin: 0;
@@ -1036,9 +1042,8 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 }
 
 #EditorTopPanel > box:nth-child(9) > button.image-button {
-    min-width: 0;
-    padding-left: 0.25em;
-    padding-right: 0.25em;
+    min-width: 1.05em;
+    padding: 0;
 }
 
 /*Button editor bottom*/

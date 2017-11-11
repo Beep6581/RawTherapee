@@ -1,9 +1,31 @@
+/*
+ *  This file is part of RawTherapee.
+ *
+ *  Copyright (c) 2004-2017 Gabor Horvath <hgabor@rawtherapee.com>
+ *
+ *  RawTherapee is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  RawTherapee is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <cstring>
+#include <memory>
+
 #include "labimage.h"
-#include <memory.h>
+
 namespace rtengine
 {
 
-LabImage::LabImage (int w, int h) : fromImage(false), W(w), H(h)
+LabImage::LabImage (int w, int h) : W(w), H(h)
 {
     allocLab(w, h);
 }
@@ -41,5 +63,44 @@ void LabImage::getPipetteData (float &v1, float &v2, float &v3, int posX, int po
     v2 = n ? accumulator_a / float(n) : 0.f;
     v3 = n ? accumulator_b / float(n) : 0.f;
 }
+
+void LabImage::allocLab(int w, int h)
+{
+    L = new float*[h];
+    a = new float*[h];
+    b = new float*[h];
+
+    data = new float [w * h * 3];
+    float * index = data;
+
+    for (int i = 0; i < h; i++) {
+        L[i] = index + i * w;
+    }
+
+    index += w * h;
+
+    for (int i = 0; i < h; i++) {
+        a[i] = index + i * w;
+    }
+
+    index += w * h;
+
+    for (int i = 0; i < h; i++) {
+        b[i] = index + i * w;
+    }
+}
+
+void LabImage::deleteLab()
+{
+    delete [] L;
+    delete [] a;
+    delete [] b;
+    delete [] data;
+}
+
+void LabImage::reallocLab()
+{
+    allocLab(W, H);
+};
 
 }

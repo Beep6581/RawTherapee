@@ -20,38 +20,27 @@
 
 #include <cstddef>
 #include <cmath>
-#include "curves.h"
-#include "labimage.h"
-#include "color.h"
-#include "mytime.h"
 #include "improcfun.h"
-#include "rawimagesource.h"
 #include "array2D.h"
 #include "rt_math.h"
 #include "opthelper.h"
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-#define CLIPI(a) ((a)>0 ?((a)<32768 ?(a):32768):0)
 
 #define RANGEFN(i) ((1000.0f / (i + 1000.0f)))
-#define CLIPC(a) ((a)>-32000?((a)<32000?(a):32000):-32000)
 #define DIRWT(i1,j1,i,j) ( domker[(i1-i)/scale+halfwin][(j1-j)/scale+halfwin] * RANGEFN(fabsf((data_fine[i1][j1]-data_fine[i][j]))) )
 
 namespace rtengine
 {
 
-static const int maxlevel = 6;
-static const float noise = 2000;
+constexpr int maxlevel = 6;
+constexpr float noise = 2000;
 
 //sequence of scales
-static const int scales[6] = {1, 2, 4, 8, 16, 32};
+constexpr int scales[maxlevel] = {1, 2, 4, 8, 16, 32};
 extern const Settings* settings;
 
 //sequence of scales
 
-
-SSEFUNCTION void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst, int srcwidth, int srcheight, float ** l_a, float ** l_b, float ** dest_a, float ** dest_b, const double * mult, const double dirpyrThreshold, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r, int choice, int scaleprev)
+SSEFUNCTION void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst, int srcwidth, int srcheight, float ** l_a, float ** l_b, const double * mult, const double dirpyrThreshold, const double skinprot, float b_l, float t_l, float t_r, int scaleprev)
 {
     int lastlevel = maxlevel;
 
@@ -94,10 +83,10 @@ SSEFUNCTION void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst,
     }
 
     int level;
-    float multi[6] = {1.f, 1.f, 1.f, 1.f, 1.f, 1.f};
-    float scalefl[6];
+    float multi[maxlevel] = {1.f, 1.f, 1.f, 1.f, 1.f, 1.f};
+    float scalefl[maxlevel];
 
-    for(int lv = 0; lv < 6; lv++) {
+    for(int lv = 0; lv < maxlevel; lv++) {
         scalefl[lv] = ((float) scales[lv]) / (float) scaleprev;
 
         if(lv >= 1) {
@@ -226,12 +215,12 @@ SSEFUNCTION void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst,
     float ** buffer = dirpyrlo[lastlevel - 1];
 
     for(int level = lastlevel - 1; level > 0; level--) {
-        idirpyr_eq_channel(dirpyrlo[level], dirpyrlo[level - 1], buffer, srcwidth, srcheight, level, multi, dirpyrThreshold, tmpHue, tmpChr, skinprot, gamutlab, b_l, t_l, t_r, b_r, choice );
+        idirpyr_eq_channel(dirpyrlo[level], dirpyrlo[level - 1], buffer, srcwidth, srcheight, level, multi, dirpyrThreshold, tmpHue, tmpChr, skinprot, b_l, t_l, t_r);
     }
 
     scale = scales[0];
 
-    idirpyr_eq_channel(dirpyrlo[0], dst, buffer, srcwidth, srcheight, 0, multi, dirpyrThreshold, tmpHue, tmpChr, skinprot, gamutlab, b_l, t_l, t_r, b_r, choice );
+    idirpyr_eq_channel(dirpyrlo[0], dst, buffer, srcwidth, srcheight, 0, multi, dirpyrThreshold, tmpHue, tmpChr, skinprot, b_l, t_l, t_r);
 
     if(skinprot != 0.f) {
         for (int i = 0; i < srcheight; i++) {
@@ -247,7 +236,6 @@ SSEFUNCTION void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst,
         delete [] tmpHue;
     }
 
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     #pragma omp parallel for
 
     for (int i = 0; i < srcheight; i++)
@@ -259,7 +247,7 @@ SSEFUNCTION void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst,
 
 
 
-void ImProcFunctions :: dirpyr_equalizercam (CieImage *ncie, float ** src, float ** dst, int srcwidth, int srcheight, float ** h_p, float ** C_p, const double * mult, const double dirpyrThreshold, const double skinprot, bool execdir,  const bool gamutlab, float b_l, float t_l, float t_r, float b_r, int choice, int scaleprev)
+void ImProcFunctions :: dirpyr_equalizercam (CieImage *ncie, float ** src, float ** dst, int srcwidth, int srcheight, float ** h_p, float ** C_p, const double * mult, const double dirpyrThreshold, const double skinprot, bool execdir, float b_l, float t_l, float t_r, int scaleprev)
 {
     int lastlevel = maxlevel;
 
@@ -303,10 +291,10 @@ void ImProcFunctions :: dirpyr_equalizercam (CieImage *ncie, float ** src, float
 
     int level;
 
-    float multi[6] = {1.f, 1.f, 1.f, 1.f, 1.f, 1.f};
-    float scalefl[6];
+    float multi[maxlevel] = {1.f, 1.f, 1.f, 1.f, 1.f, 1.f};
+    float scalefl[maxlevel];
 
-    for(int lv = 0; lv < 6; lv++) {
+    for(int lv = 0; lv < maxlevel; lv++) {
         scalefl[lv] = ((float) scales[lv]) / (float) scaleprev;
 
         //  if(scalefl[lv] < 1.f) multi[lv] = 1.f; else  multi[lv]=(float) mult[lv];
@@ -371,7 +359,6 @@ void ImProcFunctions :: dirpyr_equalizercam (CieImage *ncie, float ** src, float
     idirpyr_eq_channelcam(dirpyrlo[0], dst, buffer, srcwidth, srcheight, 0, multi, dirpyrThreshold,  h_p, C_p, skinprot, b_l, t_l, t_r);
 
 
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     if(execdir) {
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16)
@@ -385,20 +372,17 @@ void ImProcFunctions :: dirpyr_equalizercam (CieImage *ncie, float ** src, float
                     dst[i][j] = src[i][j];
                 }
             }
-    } else
+    } else {
         for (int i = 0; i < srcheight; i++)
             for (int j = 0; j < srcwidth; j++) {
                 dst[i][j] = CLIP( buffer[i][j] );  // TODO: Really a clip necessary?
             }
-
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    }
 }
-
 
 SSEFUNCTION void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, int width, int height, int level, int scale)
 {
-    //scale is spacing of directional averaging weights
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // scale is spacing of directional averaging weights
     // calculate weights, compute directionally weighted average
 
     if(level > 1) {
@@ -620,9 +604,7 @@ SSEFUNCTION void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** da
     }
 }
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void ImProcFunctions::idirpyr_eq_channel(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float mult[6], const double dirpyrThreshold, float ** hue, float ** chrom, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r , int choice)
+void ImProcFunctions::idirpyr_eq_channel(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float mult[maxlevel], const double dirpyrThreshold, float ** hue, float ** chrom, const double skinprot, float b_l, float t_l, float t_r)
 {
     const float skinprotneg = -skinprot;
     const float factorHard = (1.f - skinprotneg / 100.f);
@@ -635,7 +617,7 @@ void ImProcFunctions::idirpyr_eq_channel(float ** data_coarse, float ** data_fin
         offs = -1.f;
     }
 
-    float multbis[6];
+    float multbis[maxlevel];
 
     multbis[level] = mult[level]; //multbis to reduce artifacts for high values mult
 
@@ -714,7 +696,7 @@ void ImProcFunctions::idirpyr_eq_channel(float ** data_coarse, float ** data_fin
 }
 
 
-void ImProcFunctions::idirpyr_eq_channelcam(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float mult[6], const double dirpyrThreshold, float ** l_a_h, float ** l_b_c, const double skinprot, float b_l, float t_l, float t_r)
+void ImProcFunctions::idirpyr_eq_channelcam(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float mult[maxlevel], const double dirpyrThreshold, float ** l_a_h, float ** l_b_c, const double skinprot, float b_l, float t_l, float t_r)
 {
 
     const float skinprotneg = -skinprot;
@@ -728,7 +710,7 @@ void ImProcFunctions::idirpyr_eq_channelcam(float ** data_coarse, float ** data_
         offs = -1.f;
     }
 
-    float multbis[6];
+    float multbis[maxlevel];
 
     multbis[level] = mult[level]; //multbis to reduce artifacts for high values mult
 

@@ -95,7 +95,7 @@ private:
     unsigned int dcrawFrameCount;
 
 public:
-    FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataLocation> rml = nullptr, bool firstFrameOnly = false, bool loadAll = false);
+    FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataLocation> rml = nullptr, bool firstFrameOnly = false);
     ~FramesData ();
 
     void setDCRawFrameCount (unsigned int frameCount);

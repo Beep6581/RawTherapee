@@ -19,22 +19,19 @@
 #ifndef _COLORTEMP_
 #define _COLORTEMP_
 
-#include <glibmm.h>
 #include <cmath>
-
-#define pow_F(a,b) (xexpf(b*xlogf(a)))
+#include <map>
 
 namespace rtengine
 {
 
-#define MINTEMP 1500
-#define MAXTEMP 60000
-#define MINGREEN 0.02
-#define MAXGREEN 10.0
-#define MINEQUAL 0.8
-#define MAXEQUAL 1.5
-
-#define INITIALBLACKBODY 4000
+constexpr double MINTEMP = 1500.0;
+constexpr double MAXTEMP = 60000.0;
+constexpr double MINGREEN = 0.02;
+constexpr double MAXGREEN = 10.0;
+constexpr double MINEQUAL = 0.8;
+constexpr double MAXEQUAL = 1.5;
+constexpr double INITIALBLACKBODY = 4000.0;
 
 
 class ColorTemp
@@ -49,12 +46,12 @@ private:
     static void clip (double &temp, double &green, double &equal);
     int XYZtoCorColorTemp(double x0, double y0 , double z0, double &temp) const;
     void temp2mul (double temp, double green, double equal, double& rmul, double& gmul, double& bmul) const;
-
+    const static std::map<std::string,const double *> spectMap;
 public:
 
     ColorTemp () : temp(-1.), green(-1.), equal (1.), method("Custom") {}
     explicit ColorTemp (double e) : temp(-1.), green(-1.), equal (e), method("Custom") {}
-    ColorTemp (double t, double g, double e, const Glib::ustring &m);
+    ColorTemp (double t, double g, double e, const std::string &m);
     ColorTemp (double mulr, double mulg, double mulb, double e);
 
     void update (const double rmul, const double gmul, const double bmul, const double equal, const double tempBias=0.0)
@@ -95,7 +92,7 @@ public:
     }
 
     void mul2temp (const double rmul, const double gmul, const double bmul, const double equal, double& temp, double& green) const;
-    static void temp2mulxyz (double tem, double gree, const std::string &method, double &Xxyz, double &Zxyz);
+    static void temp2mulxyz (double tem, const std::string &method, double &Xxyz, double &Zxyz);
 
     static void cieCAT02(double Xw, double Yw, double Zw, double &CAM02BB00, double &CAM02BB01, double &CAM02BB02, double &CAM02BB10, double &CAM02BB11, double &CAM02BB12, double &CAM02BB20, double &CAM02BB21, double &CAM02BB22, double adap );
     //static    void CAT02 (Imagefloat* baseImg, const ProcParams* params);

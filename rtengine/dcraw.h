@@ -285,8 +285,8 @@ void fuji_extend_generic(ushort *linebuf[_ltotal], int line_width, int start, in
 void fuji_extend_red(ushort *linebuf[_ltotal], int line_width);
 void fuji_extend_green(ushort *linebuf[_ltotal], int line_width);
 void fuji_extend_blue(ushort *linebuf[_ltotal], int line_width);
-void xtrans_decode_block(struct fuji_compressed_block* info, const struct fuji_compressed_params *params, int cur_line);
-void fuji_bayer_decode_block(struct fuji_compressed_block* info, const struct fuji_compressed_params *params, int cur_line);
+void xtrans_decode_block(struct fuji_compressed_block* info, const struct fuji_compressed_params *params);
+void fuji_bayer_decode_block(struct fuji_compressed_block* info, const struct fuji_compressed_params *params);
 void fuji_decode_strip(const struct fuji_compressed_params* info_common, int cur_block, INT64 raw_offset, unsigned dsize);
 void fuji_compressed_load_raw();
 void fuji_decode_loop(const struct fuji_compressed_params* common_info, int count, INT64* raw_block_offsets, unsigned *block_sizes);
