@@ -25,8 +25,6 @@
 /*RT*/#include "jpeg.h"
 
 #include "opthelper.h"
-#define BENCHMARK
-#include "StopWatch.h"
 
 /*
    dcraw.c -- Dave Coffin's raw photo decoder
@@ -1501,7 +1499,6 @@ void CLASS phase_one_flat_field (int is_float, int nc)
 
 void CLASS phase_one_correct()
 {
-BENCHFUN
     unsigned entries, tag, data, save, col, row, type;
     int len, i, j, k, cip, val[4], dev[4], sum, max;
     int head[9], diff, mindiff=INT_MAX, off_412=0;
@@ -1784,7 +1781,6 @@ inline unsigned CLASS ph1_bithuff_t::operator() ()
 #ifndef MYFILE_MMAP
 void CLASS phase_one_load_raw_c()
 {
-  BENCHFUN
   static const int length[] = { 8,7,6,9,11,10,5,12,14,13 };
   int *offset, len[2], pred[2], row, col, i, j;
   ushort *pixel;
@@ -1839,7 +1835,6 @@ void CLASS phase_one_load_raw_c()
 #else
 void CLASS phase_one_load_raw_c()
 {
-BENCHFUN
     static const int length[] = { 8,7,6,9,11,10,5,12,14,13 };
 
     int *offset = (int *)calloc(raw_width * 2 + raw_height * 4, 2);
