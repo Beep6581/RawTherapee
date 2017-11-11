@@ -25,8 +25,6 @@
 #include "opthelper.h"
 #include "iccstore.h"
 
-#define pow_F(a,b) (xexpf(b*xlogf(a)))
-
 using namespace std;
 
 namespace rtengine
@@ -1526,9 +1524,9 @@ void Color::interpolateRGBColor (const float balance, const float r1, const floa
 
 
 void Color::interpolateRGBColor (float realL, float iplow, float iphigh, int algm, const float balance, int twoc, int metchrom,
-                                 bool chr, bool lum, float chromat, float luma, const float r1, const float g1, const float b1,
+                                 float chromat, float luma, const float r1, const float g1, const float b1,
                                  const float xl, const float yl, const float zl, const float x2, const float y2, const float z2,
-                                 int toDo, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float &ro, float &go, float &bo)
+                                 const double xyz_rgb[3][3], const double rgb_xyz[3][3], float &ro, float &go, float &bo)
 {
     float X1, Y1, Z1, X2, Y2, Z2, X, Y, Z, XL, YL, ZL;
     float L1 = 0.f, L2, LL, a_1 = 0.f, b_1 = 0.f, a_2 = 0.f, b_2 = 0.f, a_L, b_L;
@@ -1620,7 +1618,7 @@ void Color::interpolateRGBColor (float realL, float iplow, float iphigh, int alg
     Color::xyz2rgb(X, Y, Z, ro, go, bo, rgb_xyz);// ro go bo in gamut
 }
 
-void Color::calcGamma (double pwr, double ts, int mode, int imax, GammaValues &gamma)
+void Color::calcGamma (double pwr, double ts, int mode, GammaValues &gamma)
 {
     //from Dcraw (D.Coffin)
     int i;
@@ -2604,7 +2602,7 @@ void Color::gamutLchonly (float2 sincosval, float &Lprov1, float &Chprov1, const
  *    const double wip[3][3]: matrix for working profile
  *    bool multiThread      : parallelize the loop
  */
-SSEFUNCTION  void Color::LabGamutMunsell(float *labL, float *laba, float *labb, const int N, bool corMunsell, bool lumaMuns, bool isHLEnabled, bool gamut, const double wip[3][3], bool multiThread )
+SSEFUNCTION  void Color::LabGamutMunsell(float *labL, float *laba, float *labb, const int N, bool corMunsell, bool lumaMuns, bool isHLEnabled, bool gamut, const double wip[3][3])
 {
 #ifdef _DEBUG
     MyTime t1e, t2e;
