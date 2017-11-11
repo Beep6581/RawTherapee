@@ -745,12 +745,12 @@ public:
     bool enabled;
     int threshold;
     int amount;
-    
+
     FattalToneMappingParams()
     {
         setDefaults();
     }
-    
+
     void setDefaults()
     {
         enabled = false;
@@ -1107,12 +1107,12 @@ public:
     bool medianlev;
     bool linkedg;
     bool cbenab;
-    double greenlow;
-    double bluelow;
-    double greenmed;
-    double bluemed;
-    double greenhigh;
-    double bluehigh;
+    int greenlow;
+    int bluelow;
+    int greenmed;
+    int bluemed;
+    int greenhigh;
+    int bluehigh;
 
     bool lipst;
     //  bool edgreinf;
@@ -1427,8 +1427,8 @@ public:
     DirPyrEqualizerParams   dirpyrequalizer; ///< directional pyramid wavelet parameters
     HSVEqualizerParams      hsvequalizer;    ///< hsv wavelet parameters
     FilmSimulationParams    filmSimulation;  ///< film simulation parameters
-    char                    rank;            ///< Custom image quality ranking
-    char                    colorlabel;      ///< Custom color label
+    int                     rank;            ///< Custom image quality ranking
+    int                     colorlabel;      ///< Custom color label
     bool                    inTrash;         ///< Marks deleted image
     Glib::ustring           appVersion;      ///< Version of the application that generated the parameters
     int                     ppVersion;       ///< Version of the PP file from which the parameters have been read
