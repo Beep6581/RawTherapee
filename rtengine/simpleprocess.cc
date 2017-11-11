@@ -810,6 +810,10 @@ private:
 
         ipf.firstAnalysis (baseImg, params, hist16);
 
+        if (params.fattal.enabled) {
+            ipf.ToneMapFattal02(baseImg);
+        }
+                
         // perform transform (excepted resizing)
         if (ipf.needsTransform()) {
             Imagefloat* trImg = nullptr;
@@ -833,10 +837,6 @@ private:
         //ImProcFunctions ipf (&params, true);
         ImProcFunctions &ipf = * (ipf_p.get());
 
-        if (params.fattal.enabled) {
-            ipf.ToneMapFattal02(baseImg);
-        }
-        
         if (params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
             const int W = baseImg->getWidth();
             const int H = baseImg->getHeight();

@@ -385,36 +385,33 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     readyphase++;
 
-    progress ("Rotate / Distortion...", 100 * readyphase / numofphases);
-    // Remove transformation if unneeded
-    bool needstransform = ipf.needsTransform();
-
-    if (!needstransform && ! ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) && orig_prev != oprevi) {
-        delete oprevi;
-        oprevi = orig_prev;
-    }
-
-    if ((needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled)) ) {
-        if (!oprevi || oprevi == orig_prev) {
-            oprevi = new Imagefloat (pW, pH);
-        }
-
-        if (needstransform)
-            ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH, fw, fh, 
-                           imgsrc->getMetaData(), imgsrc->getRotateDegree(), false);
-        else {
-            orig_prev->copyData (oprevi);
-        }
-    }
-
-    if ((todo & M_RGBCURVE) && params.fattal.enabled) {
-        Imagefloat *fattalprev = oprevi->copy();
+    if ((todo & (M_TRANSFORM | M_RGBCURVE)) && params.fattal.enabled) {
+        Imagefloat *fattalprev = orig_prev->copy();
         ipf.ToneMapFattal02(fattalprev);
         if (oprevi != orig_prev) {
             delete oprevi;
         }
         oprevi = fattalprev;
-    } 
+    } else {
+        oprevi = orig_prev;
+    }
+
+    progress ("Rotate / Distortion...", 100 * readyphase / numofphases);
+    // Remove transformation if unneeded
+    bool needstransform = ipf.needsTransform();
+    
+    if ((needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled)) ) {
+        assert(oprevi);
+        Imagefloat *op = oprevi;
+        oprevi = new Imagefloat (pW, pH);
+
+        if (needstransform)
+            ipf.transform (op, oprevi, 0, 0, 0, 0, pW, pH, fw, fh, 
+                           imgsrc->getMetaData(), imgsrc->getRotateDegree(), false);
+        else {
+            op->copyData (oprevi);
+        }
+    }
 
     if ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
         const int W = oprevi->getWidth();

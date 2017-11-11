@@ -690,14 +690,46 @@ void Crop::update (int todo)
     // has to be called after setCropSizes! Tools prior to this point can't handle the Edit mechanism, but that shouldn't be a problem.
     createBuffer (cropw, croph);
 
+    std::unique_ptr<Imagefloat> fattalCrop;
+    bool need_cropping = false;
+    bool has_fattal = false;
+    
+    if ((todo & (M_TRANSFORM | M_RGBCURVE)) && params.fattal.enabled) {
+        has_fattal = true;
+        Imagefloat *f = baseCrop;
+        if (f == origCrop) {
+            fattalCrop.reset(baseCrop->copy());
+            f = fattalCrop.get();
+        }
+        parent->ipf.ToneMapFattal02(f);
+        need_cropping = (cropx || cropy || trafw != cropw || trafh != croph);
+        baseCrop = f;
+    }
+    
     // transform
     if (needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled)) {
+        int tx = cropx;
+        int ty = cropy;
+        int tw = cropw;
+        int th = croph;
+        
+        if (has_fattal) {
+            tx = 0;
+            ty = 0;
+            tw = trafw;
+            th = trafh;
+            if (transCrop) {
+                delete transCrop;
+                transCrop = nullptr;
+            }
+        }
+        
         if (!transCrop) {
-            transCrop = new Imagefloat (cropw, croph);
+            transCrop = new Imagefloat (tw, th);
         }
 
         if (needstransform)
-            parent->ipf.transform (baseCrop, transCrop, cropx / skip, cropy / skip, trafx / skip, trafy / skip, skips (parent->fw, skip), skips (parent->fh, skip), parent->getFullWidth(), parent->getFullHeight(),
+            parent->ipf.transform (baseCrop, transCrop, tx / skip, ty / skip, trafx / skip, trafy / skip, skips (parent->fw, skip), skips (parent->fh, skip), parent->getFullWidth(), parent->getFullHeight(),
                                    parent->imgsrc->getMetaData(),
                                    parent->imgsrc->getRotateDegree(), false);
         else {
@@ -715,17 +747,28 @@ void Crop::update (int todo)
         transCrop = nullptr;
     }
 
-    std::unique_ptr<Imagefloat> fattalCrop;
-    if ((todo & M_RGBCURVE) && params.fattal.enabled) {
-        Imagefloat *f = baseCrop;
-        if (f == origCrop) {
-            fattalCrop.reset(baseCrop->copy());
-            f = fattalCrop.get();
+    if (need_cropping) {
+        Imagefloat *c = new Imagefloat(cropw, croph);
+
+        int oy = skips(cropy, skip);
+        int ox = skips(cropx, skip);
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+        for (int y = 0; y < croph; ++y) {
+            int cy = y + oy;
+            for (int x = 0; x < cropw; ++x) {
+                int cx = x + ox;
+                c->r(y, x) = baseCrop->r(cy, cx);
+                c->g(y, x) = baseCrop->g(cy, cx);
+                c->b(y, x) = baseCrop->b(cy, cx);
+            }
         }
-        parent->ipf.ToneMapFattal02(f);
-        baseCrop = f;
+        fattalCrop.reset(c);
+        baseCrop = c;
     }
     
+
     if ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
 
         const int W = baseCrop->getWidth();
@@ -1156,13 +1199,6 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
     orw = bw;
     orh = bh;
 
-    if (check_need_full_image(parent->params)) {
-        orx = bx1 = 0;
-        ory = by1 = 0;
-        orw = bw = parent->fullw;
-        orh = bh = parent->fullh;
-    }
-    
     ProcParams& params = parent->params;
 
     parent->ipf.transCoord (parent->fw, parent->fh, bx1, by1, bw, bh, orx, ory, orw, orh);
@@ -1202,6 +1238,16 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
         orh = min (y2 - y1, parent->fh - ory);
     }
 
+    leftBorder  = skips (rqx1 - bx1, skip);
+    upperBorder = skips (rqy1 - by1, skip);
+
+    if (check_need_full_image(parent->params)) {
+        orx = 0;
+        ory = 0;
+        orw = parent->fullw;
+        orh = parent->fullh;
+    }    
+    
     PreviewProps cp (orx, ory, orw, orh, skip);
     int orW, orH;
     parent->imgsrc->getSize (cp, orW, orH);
@@ -1211,9 +1257,6 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
 
     int cw = skips (bw, skip);
     int ch = skips (bh, skip);
-
-    leftBorder  = skips (rqx1 - bx1, skip);
-    upperBorder = skips (rqy1 - by1, skip);
 
     if (settings->verbose) {
         printf ("setsizes starts (%d, %d, %d, %d, %d, %d)\n", orW, orH, trafw, trafh, cw, ch);

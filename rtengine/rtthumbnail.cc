@@ -1090,6 +1090,10 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     ipf.firstAnalysis (baseImg, params, hist16);
 
+    if (params.fattal.enabled) {
+        ipf.ToneMapFattal02(baseImg);
+    }
+    
     // perform transform
     if (ipf.needsTransform()) {
         Imagefloat* trImg = new Imagefloat (fw, fh);
@@ -1100,10 +1104,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh, origFW * tscale + 0.5, origFH * tscale + 0.5, metadata, 0, true); // Raw rotate degree not detectable here
         delete baseImg;
         baseImg = trImg;
-    }
-
-    if (params.fattal.enabled) {
-        ipf.ToneMapFattal02(baseImg);
     }
 
     // update blurmap
