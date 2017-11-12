@@ -66,7 +66,7 @@ public:
         embProfile(nullptr), idata(nullptr), dirpyrdenoiseExpComp(INFINITY) {}
 
     virtual ~ImageSource            () {}
-    virtual int         load        (const Glib::ustring &fname, int imageNum = 0, bool batch = false) = 0;
+    virtual int         load        (const Glib::ustring &fname, RAWParams *raw, int imageNum = 0, bool batch = false) = 0;
     virtual void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse, bool prepareDenoise = true) {};
     virtual void        demosaic    (const RAWParams &raw) {};
     virtual void        retinex       (ColorManagementParams cmp, const RetinexParams &deh, ToneCurveParams Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI) {};

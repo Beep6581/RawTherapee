@@ -30,7 +30,8 @@
 #include "../rtgui/multilangmgr.h"
 #include "mytime.h"
 #undef THREAD_PRIORITY_NORMAL
-
+#define BENCHMARK
+#include "StopWatch.h"
 namespace rtengine
 {
 extern const Settings* settings;
@@ -78,6 +79,7 @@ public:
 private:
     Image16 *normal_pipeline()
     {
+        BENCHFUN
         if (!stage_init()) {
             return nullptr;
         }
@@ -115,9 +117,10 @@ private:
         }
 
         ii = job->initialImage;
+        procparams::ProcParams& params = job->pparams;
 
         if (!ii) {
-            ii = InitialImage::load (job->fname, job->isRaw, &errorCode);
+            ii = InitialImage::load (job->fname, job->isRaw, &errorCode, &params.raw);
 
             if (errorCode) {
                 delete job;
@@ -125,7 +128,6 @@ private:
             }
         }
 
-        procparams::ProcParams& params = job->pparams;
 
         // acquire image from imagesource
         imgsrc = ii->getImageSource ();

@@ -253,7 +253,7 @@ bool FilePanel::fileSelected (Thumbnail* thm)
     pendingLoadMutex.unlock();
 
     ProgressConnector<rtengine::InitialImage*> *ld = new ProgressConnector<rtengine::InitialImage*>();
-    ld->startFunc (sigc::bind(sigc::ptr_fun(&rtengine::InitialImage::load), thm->getFileName (), thm->getType() == FT_Raw, &error, parent->getProgressListener()),
+    ld->startFunc (sigc::bind(sigc::ptr_fun(&rtengine::InitialImage::load), thm->getFileName (), thm->getType() == FT_Raw, &error, &thm->pparams.raw, parent->getProgressListener()),
                    sigc::bind(sigc::mem_fun(*this, &FilePanel::imageLoaded), thm, ld) );
     return true;
 }

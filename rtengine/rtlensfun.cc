@@ -81,9 +81,9 @@ void LFModifier::correctCA(double &x, double &y, int channel) const
 }
 
 
-void LFModifier::processVignetteLine(int width, int y, float *line) const
+void LFModifier::processVignetteLine(int width, int y, int xoffs, int yoffs, float *line) const
 {
-    data_->ApplyColorModification(line, 0, y, width, 1, LF_CR_1(INTENSITY), 0);
+    data_->ApplyColorModification(line, xoffs, y + yoffs, width, 1, LF_CR_1(INTENSITY), 0);
 }
 
 

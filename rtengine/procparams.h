@@ -1350,6 +1350,12 @@ public:
     bool deadPixelFilter;
     int hotdeadpix_thresh;
 
+    bool rawCrop;
+    int  rcX;
+    int  rcY;
+    int  rcWidth;
+    int  rcHeight;
+
     RAWParams()
     {
         setDefaults();

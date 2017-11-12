@@ -772,6 +772,11 @@ public:
     bool ff_clipControl;
     bool exPos;
     bool exPreser;
+    bool rawCrop;
+    bool rcX;
+    bool rcY;
+    bool rcWidth;
+    bool rcHeight;
 
     bool isUnchanged() const;
 };

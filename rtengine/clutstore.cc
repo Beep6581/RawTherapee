@@ -22,7 +22,7 @@ bool loadFile(
 {
     rtengine::StdImageSource img_src;
 
-    if (!Glib::file_test(filename, Glib::FILE_TEST_EXISTS) || img_src.load(filename)) {
+    if (!Glib::file_test(filename, Glib::FILE_TEST_EXISTS) || img_src.load(filename, nullptr)) {
         return false;
     }
 

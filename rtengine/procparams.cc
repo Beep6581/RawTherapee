@@ -1008,6 +1008,11 @@ void RAWParams::setDefaults()
     bayersensor.pixelShiftShowMotion = false;
     bayersensor.pixelShiftShowMotionMaskOnly = false;
 
+    rawCrop = false;
+    rcX = 0;
+    rcY = 0;
+    rcWidth = -1;
+    rcHeight = -1;
 }
 
 void ColorManagementParams::setDefaults()
@@ -3452,6 +3457,26 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->raw.hotDeadPixelThresh) {
             keyFile.set_integer ("RAW", "HotDeadPixelThresh", raw.hotdeadpix_thresh );
+        }
+
+        if (!pedited || pedited->raw.rawCrop) {
+            keyFile.set_boolean ("RAW", "RawCropEnabled", raw.rawCrop );
+        }
+
+        if (!pedited || pedited->raw.rcX) {
+            keyFile.set_integer ("RAW", "RawCropX", raw.rcX );
+        }
+
+        if (!pedited || pedited->raw.rcY) {
+            keyFile.set_integer ("RAW", "RawCropY", raw.rcY );
+        }
+
+        if (!pedited || pedited->raw.rcWidth) {
+            keyFile.set_integer ("RAW", "RawCropWidth", raw.rcWidth );
+        }
+
+        if (!pedited || pedited->raw.rcHeight) {
+            keyFile.set_integer ("RAW", "RawCropHeight", raw.rcHeight );
         }
 
         if (!pedited || pedited->raw.bayersensor.method) {
@@ -7639,6 +7664,46 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("RAW", "RawCropEnabled")) {
+                raw.rawCrop = keyFile.get_boolean ("RAW", "RawCropEnabled" );
+
+                if (pedited) {
+                    pedited->raw.rawCrop = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW", "RawCropX")) {
+                raw.rcX = keyFile.get_integer ("RAW", "RawCropX" );
+
+                if (pedited) {
+                    pedited->raw.rcX = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW", "RawCropY")) {
+                raw.rcY = keyFile.get_integer ("RAW", "RawCropY" );
+
+                if (pedited) {
+                    pedited->raw.rcY = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW", "RawCropWidth")) {
+                raw.rcWidth = keyFile.get_integer ("RAW", "RawCropWidth" );
+
+                if (pedited) {
+                    pedited->raw.rcWidth = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW", "RawCropHeight")) {
+                raw.rcHeight = keyFile.get_integer ("RAW", "RawCropHeight" );
+
+                if (pedited) {
+                    pedited->raw.rcHeight = true;
+                }
+            }
+
             if (keyFile.has_key ("RAW", "PreExposure")) {
                 raw.expos = keyFile.get_double ("RAW", "PreExposure");
 
@@ -8601,6 +8666,11 @@ bool ProcParams::operator== (const ProcParams& other)
         && raw.hotPixelFilter == other.raw.hotPixelFilter
         && raw.deadPixelFilter == other.raw.deadPixelFilter
         && raw.hotdeadpix_thresh == other.raw.hotdeadpix_thresh
+        && raw.rawCrop == other.raw.rawCrop
+        && raw.rcX == other.raw.rcX
+        && raw.rcY == other.raw.rcY
+        && raw.rcWidth == other.raw.rcWidth
+        && raw.rcHeight == other.raw.rcHeight
         && icm.input == other.icm.input
         && icm.toneCurve == other.icm.toneCurve
         && icm.applyLookTable == other.icm.applyLookTable

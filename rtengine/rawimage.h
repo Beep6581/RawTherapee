@@ -26,6 +26,7 @@
 #include "dcraw.h"
 #include "imageformat.h"
 #include "noncopyable.h"
+#include "procparams.h"
 
 namespace rtengine
 {
@@ -39,6 +40,7 @@ struct badPix {
 class PixelsMap :
     public NonCopyable
 {
+    int fullWidth;
     int w; // line width in base_t units
     int h; // height
     typedef unsigned long base_t;
@@ -47,7 +49,8 @@ class PixelsMap :
 
 public:
     PixelsMap(int width, int height )
-        : h(height)
+        : fullWidth(width),
+          h(height)
     {
         w = (width / (base_t_size * 8)) + 1;
         pm = new base_t [h * w ];
@@ -80,13 +83,17 @@ public:
     }
 
     // set pixels from a list
-    int set( std::vector<badPix> &bp)
+    int set( std::vector<badPix> &bp, int rcX = 0, int rcY = 0)
     {
+        int numBadPix = 0;
         for(std::vector<badPix>::iterator iter = bp.begin(); iter != bp.end(); ++iter) {
-            set( iter->x, iter->y);
+            if(iter->x - rcX >= 0 && iter->x - rcX < fullWidth && iter->y - rcY >= 0 && iter->y - rcY < h) {
+                set( iter->x - rcX, iter->y - rcY);
+                ++numBadPix;
+            }
         }
 
-        return bp.size();
+        return numBadPix;
     }
 
     void clear()
@@ -105,7 +112,7 @@ class RawImage: public DCraw
 {
 public:
 
-    explicit RawImage( const Glib::ustring &name );
+    explicit RawImage( const Glib::ustring &name, procparams::RAWParams *raw);
     ~RawImage();
 
     int loadRaw (bool loadData, unsigned int imageNum = 0, bool closeFile = true, ProgressListener *plistener = nullptr, double progressRange = 1.0);
@@ -131,6 +138,7 @@ protected:
     char* profile_data; // Embedded ICC color profile
     float* allocation; // pointer to allocated memory
     int maximum_c4[4];
+    procparams::RAWParams *rp;
     bool isFoveon() const
     {
         return is_foveon;

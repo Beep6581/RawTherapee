@@ -130,7 +130,7 @@ void ffInfo::updateRawImage()
     // this may not be necessary, as flatfield is further blurred before being applied to the processed image.
     if( !pathNames.empty() ) {
         std::list<Glib::ustring>::iterator iName = pathNames.begin();
-        ri = new RawImage(*iName); // First file used also for extra pixels informations (width,height, shutter, filters etc.. )
+        ri = new RawImage(*iName, nullptr); // First file used also for extra pixels informations (width,height, shutter, filters etc.. )
         if( ri->loadRaw(true)) {
             delete ri;
             ri = nullptr;
@@ -154,7 +154,7 @@ void ffInfo::updateRawImage()
             int nFiles = 1; // First file data already loaded
 
             for( ++iName; iName != pathNames.end(); ++iName) {
-                RawImage* temp = new RawImage(*iName);
+                RawImage* temp = new RawImage(*iName, nullptr);
 
                 if( !temp->loadRaw(true)) {
                     temp->compress_image(0);     //\ TODO would be better working on original, because is temporary
@@ -191,7 +191,7 @@ void ffInfo::updateRawImage()
             delete [] acc;
         }
     } else {
-        ri = new RawImage(pathname);
+        ri = new RawImage(pathname, nullptr);
         if( ri->loadRaw(true)) {
             delete ri;
             ri = nullptr;
@@ -317,7 +317,7 @@ ffInfo* FFManager::addFileInfo (const Glib::ustring& filename, bool pool)
             return nullptr;
         }
 
-        RawImage ri(filename);
+        RawImage ri(filename, nullptr);
         int res = ri.loadRaw(false); // Read informations about shot
 
         if (res != 0) {

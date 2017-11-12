@@ -97,7 +97,7 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
 
     if ((mode == PIM_EmbeddedOrRaw && !tpp) || mode == PIM_ForceRaw) {
         RawImageSource rawImage;
-        int error = rawImage.load(fname, true);
+        int error = rawImage.load(fname, nullptr, true);
 
         if (!error) {
             const unsigned char *data = nullptr;

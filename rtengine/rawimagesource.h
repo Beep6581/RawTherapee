@@ -116,7 +116,7 @@ public:
     RawImageSource ();
     ~RawImageSource ();
 
-    int         load        (const Glib::ustring &fname, int imageNum = 0, bool batch = false);
+    int         load        (const Glib::ustring &fname, RAWParams *raw, int imageNum = 0, bool batch = false);
     void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse, bool prepareDenoise = true);
     void        demosaic    (const RAWParams &raw);
     void        retinex       (ColorManagementParams cmp, const RetinexParams &deh, ToneCurveParams Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI);

@@ -145,7 +145,7 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
 
     StdImageSource imgSrc;
 
-    if (imgSrc.load (fname)) {
+    if (imgSrc.load (fname, nullptr)) {
         return nullptr;
     }
 
@@ -249,7 +249,7 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
 
 Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, bool rotate, bool inspectorMode)
 {
-    RawImage *ri = new RawImage (fname);
+    RawImage *ri = new RawImage (fname, nullptr);
     unsigned int imageNum = 0;
     int r = ri->loadRaw (false, imageNum, false);
 
@@ -367,7 +367,7 @@ RawMetaDataLocation Thumbnail::loadMetaDataFromRaw (const Glib::ustring& fname)
     rml.ciffBase = -1;
     rml.ciffLength = -1;
 
-    RawImage ri (fname);
+    RawImage ri (fname, nullptr);
     unsigned int imageNum = 0;
 
     int r = ri.loadRaw (false, imageNum);
@@ -383,7 +383,7 @@ RawMetaDataLocation Thumbnail::loadMetaDataFromRaw (const Glib::ustring& fname)
 
 Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, bool rotate, int imageNum)
 {
-    RawImage *ri = new RawImage (fname);
+    RawImage *ri = new RawImage (fname, nullptr);
     unsigned int tempImageNum = 0;
 
     int r = ri->loadRaw (1, tempImageNum, 0);

@@ -1125,10 +1125,10 @@ void rtengine::LCPMapper::correctCA(double& x, double& y, int channel) const
     }
 }
 
-SSEFUNCTION void rtengine::LCPMapper::processVignetteLine(int width, int y, float* line) const
+SSEFUNCTION void rtengine::LCPMapper::processVignetteLine(int width, int y, int xoffs, int yoffs, float* line) const
 {
     // No need for swapXY, since vignette is in RAW and always before rotation
-    float yd = ((float)y - mc.y0) * mc.rfy;
+    float yd = ((float)(y + yoffs) - mc.y0) * mc.rfy;
     yd *= yd;
     int x = 0;
 #ifdef __SSE2__
@@ -1142,7 +1142,7 @@ SSEFUNCTION void rtengine::LCPMapper::processVignetteLine(int width, int y, floa
     const vfloat x0v = F2V(mc.x0);
     const vfloat rfxv = F2V(mc.rfx);
 
-    vfloat xv = _mm_setr_ps(0.f, 1.f, 2.f, 3.f);
+    vfloat xv = _mm_setr_ps(xoffs, xoffs + 1, xoffs + 2, xoffs + 3);
     for (; x < width-3; x+=4) {
         const vfloat xdv = (xv - x0v) * rfxv;
         const vfloat rsqr = xdv * xdv + ydv;
@@ -1155,7 +1155,7 @@ SSEFUNCTION void rtengine::LCPMapper::processVignetteLine(int width, int y, floa
 #endif // __SSE2__
     for (; x < width; x++) {
         if (line[x] > 0) {
-            const float xd = ((float)x - mc.x0) * mc.rfx;
+            const float xd = ((float)(x + xoffs) - mc.x0) * mc.rfx;
             const LCPModelCommon::VignParam vignParam = mc.vign_param;
             const float rsqr = xd * xd + yd;
             line[x] += line[x] * rsqr * (vignParam[0] + rsqr * ((vignParam[1]) - (vignParam[2]) * rsqr + (vignParam[3]) * rsqr * rsqr));

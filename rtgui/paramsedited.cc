@@ -426,6 +426,11 @@ void ParamsEdited::set (bool v)
     raw.hotPixelFilter = v;
     raw.deadPixelFilter = v;
     raw.hotDeadPixelThresh = v;
+    raw.rawCrop = v;
+    raw.rcX = v;
+    raw.rcY = v;
+    raw.rcWidth = v;
+    raw.rcHeight = v;
     raw.darkFrame = v;
     raw.dfAuto = v;
     raw.ff_file = v;
@@ -964,6 +969,11 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.hotPixelFilter = raw.hotPixelFilter && p.raw.hotPixelFilter == other.raw.hotPixelFilter;
         raw.deadPixelFilter = raw.deadPixelFilter && p.raw.deadPixelFilter == other.raw.deadPixelFilter;
         raw.hotDeadPixelThresh = raw.hotDeadPixelThresh && p.raw.hotdeadpix_thresh == other.raw.hotdeadpix_thresh;
+        raw.rawCrop = raw.rawCrop && p.raw.rawCrop == other.raw.rawCrop;
+        raw.rcX = raw.rcX && p.raw.rcX == other.raw.rcX;
+        raw.rcY = raw.rcY && p.raw.rcY == other.raw.rcY;
+        raw.rcWidth = raw.rcWidth && p.raw.rcWidth == other.raw.rcWidth;
+        raw.rcHeight = raw.rcHeight && p.raw.rcHeight == other.raw.rcHeight;
         raw.darkFrame = raw.darkFrame && p.raw.dark_frame == other.raw.dark_frame;
         raw.dfAuto = raw.dfAuto && p.raw.df_autoselect == other.raw.df_autoselect;
         raw.ff_file = raw.ff_file && p.raw.ff_file == other.raw.ff_file;
@@ -2586,6 +2596,26 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.raw.hotdeadpix_thresh = mods.raw.hotdeadpix_thresh;
     }
 
+    if (raw.rawCrop) {
+        toEdit.raw.rawCrop = mods.raw.rawCrop;
+    }
+
+    if (raw.rcX) {
+        toEdit.raw.rcX = mods.raw.rcX;
+    }
+
+    if (raw.rcY) {
+        toEdit.raw.rcY = mods.raw.rcY;
+    }
+
+    if (raw.rcWidth) {
+        toEdit.raw.rcWidth = mods.raw.rcWidth;
+    }
+
+    if (raw.rcHeight) {
+        toEdit.raw.rcHeight = mods.raw.rcHeight;
+    }
+
     if (raw.darkFrame) {
         toEdit.raw.dark_frame        = mods.raw.dark_frame;
     }
@@ -3046,7 +3076,7 @@ bool RAWParamsEdited::XTransSensor::isUnchanged() const
 bool RAWParamsEdited::isUnchanged() const
 {
     return  bayersensor.isUnchanged() && xtranssensor.isUnchanged() && caCorrection && caRed && caBlue && hotPixelFilter && deadPixelFilter && hotDeadPixelThresh && darkFrame
-            && dfAuto && ff_file && ff_AutoSelect && ff_BlurRadius && ff_BlurType && exPos && exPreser && ff_AutoClipControl && ff_clipControl;
+            && dfAuto && ff_file && ff_AutoSelect && ff_BlurRadius && ff_BlurType && exPos && exPreser && ff_AutoClipControl && ff_clipControl && rawCrop && rcX && rcY && rcWidth && rcHeight;
 }
 
 bool LensProfParamsEdited::isUnchanged() const

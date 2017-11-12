@@ -47,7 +47,6 @@ class Thumbnail
     float           imgRatio;           // hack to avoid rounding error
 //        double          scale;            // portion of the sizes of the processed thumbnail image and the full scale image
 
-    rtengine::procparams::ProcParams      pparams;
     bool            pparamsValid;
     bool            needsReProcessing;
     bool            imageLoading;
@@ -81,6 +80,7 @@ public:
     Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5);
     ~Thumbnail ();
 
+    rtengine::procparams::ProcParams      pparams;
     bool              hasProcParams ();
     const rtengine::procparams::ProcParams& getProcParams ();
     const rtengine::procparams::ProcParams& getProcParamsU ();  // Unprotected version

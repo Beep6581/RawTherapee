@@ -21,13 +21,14 @@ namespace rtengine
 
 extern const Settings* settings;
 
-RawImage::RawImage(  const Glib::ustring &name )
+RawImage::RawImage( const Glib::ustring &name, procparams::RAWParams *raw)
     : data(nullptr)
     , prefilters(0)
     , filename(name)
     , rotate_deg(0)
     , profile_data(nullptr)
     , allocation(nullptr)
+    , rp(raw)
 {
     memset(maximum_c4, 0, sizeof(maximum_c4));
     RT_matrix_from_constant = 0;
@@ -550,6 +551,14 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
                 for (int i = 0; i < 8 && cc->has_rawMask(i); i++) {
                     cc->get_rawMask(i, mask[i][0], mask[i][1], mask[i][2], mask[i][3]);
                 }
+            }
+
+            if(rp && rp->rawCrop) {
+                std::cout << "rawcrop" << std::endl;
+                left_margin += rp->rcX;
+                top_margin += rp->rcY;
+                iwidth = width = rtengine::max(rp->rcWidth, 136);
+                iheight = height = rtengine::max(rp->rcHeight, 136);
             }
 
             crop_masked_pixels();

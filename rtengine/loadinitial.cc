@@ -23,7 +23,7 @@
 namespace rtengine
 {
 
-InitialImage* InitialImage::load (const Glib::ustring& fname, bool isRaw, int* errorCode, ProgressListener* pl)
+InitialImage* InitialImage::load (const Glib::ustring& fname, bool isRaw, int* errorCode, procparams::RAWParams *raw, ProgressListener* pl)
 {
 
     ImageSource* isrc;
@@ -37,9 +37,9 @@ InitialImage* InitialImage::load (const Glib::ustring& fname, bool isRaw, int* e
     isrc->setProgressListener (pl);
 
     if(isRaw && pl == nullptr) {
-        *errorCode = isrc->load (fname, true);
+        *errorCode = isrc->load (fname, raw, true, false);
     } else {
-        *errorCode = isrc->load (fname);
+        *errorCode = isrc->load (fname, raw);
     }
 
     if (*errorCode) {
