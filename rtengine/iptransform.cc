@@ -788,7 +788,7 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
     bool enableLCPDist = false;
     bool enableCA = false;
 
-#ifdef __GNUC__ // silence warning
+#if defined( __GNUC__ ) && __GNUC__ >= 7// silence warning
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 #endif
@@ -810,7 +810,7 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
             break;
         }
     }
-#ifdef __GNUC__
+#if defined( __GNUC__ ) && __GNUC__ >= 7
 #pragma GCC diagnostic pop
 #endif
 

@@ -191,7 +191,7 @@ static const char *parse_string(cJSON *item,const char *str)
 
 					len=4;if (uc<0x80) len=1;else if (uc<0x800) len=2;else if (uc<0x10000) len=3; ptr2+=len;
 					
-#ifdef __GNUC__ // silence warning
+#if defined( __GNUC__ ) && __GNUC__ >= 7// silence warning
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 #endif
@@ -203,7 +203,7 @@ static const char *parse_string(cJSON *item,const char *str)
 						case 1: *--ptr2 =(uc | firstByteMark[len]);
 					}
 
-#ifdef __GNUC__
+#if defined( __GNUC__ ) && __GNUC__ >= 7
 #pragma GCC diagnostic pop
 #endif
 					ptr2+=len;
