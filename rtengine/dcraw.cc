@@ -1906,9 +1906,6 @@ void CLASS phase_one_load_raw_c()
             } else {
 	            pixel = pred[col & 1] += ph1_bits(i) + 1 - (1 << (i - 1));
             }
-            if (UNLIKELY(pixel >> 16)) {
-                derror();
-            }
             if (ph1.format == 5 && pixel < 256) {
 	            pixel = curve[pixel];
             }
@@ -3261,6 +3258,7 @@ void CLASS samsung_load_raw()
   int row, col, c, i, dir, op[4], len[4];
 
   order = 0x4949;
+  ph1_bithuff_t ph1_bithuff(this, ifp, order);
   for (row=0; row < raw_height; row++) {
     fseek (ifp, strip_offset+row*4, SEEK_SET);
     fseek (ifp, data_offset+get4(), SEEK_SET);
@@ -3318,6 +3316,7 @@ void CLASS samsung3_load_raw()
   fseek (ifp, 9, SEEK_CUR);
   opt = fgetc(ifp);
   init = (get2(),get2());
+  ph1_bithuff_t ph1_bithuff(this, ifp, order);
   for (row=0; row < raw_height; row++) {
     fseek (ifp, (data_offset-ftell(ifp)) & 15, SEEK_CUR);
     hb_bits(-1);
