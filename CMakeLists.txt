@@ -54,7 +54,8 @@ set(CACHE_NAME_SUFFIX "" CACHE STRING "RawTherapee's cache folder suffix")
 set(PROC_TARGET_NUMBER 0 CACHE STRING "Selected target processor from the list above (taken from ProcessorTargets.cmake)")
 
 # Set special compilation flags for rtengine which get added to CMAKE_CXX_FLAGS:
-set(RTENGINE_CXX_FLAGS "" CACHE STRING "Special compilation flags for RTEngine")
+# Some Linux distros build with -O2 instead of -O3. We explicitly enable auto vectorization by using -ftree-vectorize
+set(RTENGINE_CXX_FLAGS "-ftree-vectorize" CACHE STRING "Special compilation flags for RTEngine")
 
 # Loads the ProcessorTargets list:
 include(ProcessorTargets.cmake)
