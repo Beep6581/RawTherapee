@@ -1529,7 +1529,7 @@ int RawImageSource::load (const Glib::ustring &fname, RAWParams *raw, int imageN
         plistener->setProgressStr ("Decoding...");
         plistener->setProgress (0.0);
     }
-    std::cout << "ris load : " << raw << std::endl;
+
     ri = new RawImage(fname, raw);
     int errCode = ri->loadRaw (false, 0, false);
 
@@ -2806,7 +2806,7 @@ void RawImageSource::HLRecovery_Global(ToneCurveParams hrp)
 
 void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile, unsigned short black[4])
 {
-    BENCHFUN
+//    BENCHFUN
     const int ffHeight = riFlatFile->get_height();
     const int ffWidth = riFlatFile->get_width();
     const int rcX = raw.rawCrop ? raw.rcX : 0;

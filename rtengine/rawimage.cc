@@ -554,11 +554,10 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
             }
 
             if(rp && rp->rawCrop) {
-                std::cout << "rawcrop" << std::endl;
                 left_margin += rp->rcX;
                 top_margin += rp->rcY;
-                iwidth = width = rtengine::max(rp->rcWidth, 136);
-                iheight = height = rtengine::max(rp->rcHeight, 136);
+                iwidth = width = rtengine::max(rp->rcWidth + 8, 136);
+                iheight = height = rtengine::max(rp->rcHeight + 8, 136);
             }
 
             crop_masked_pixels();
