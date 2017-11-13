@@ -1268,10 +1268,10 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 //if(params->dirpyrequalizer.enabled) if(execsharp) {
             if (params->dirpyrequalizer.enabled) {
                 if (params->dirpyrequalizer.gamutlab  /*&& execsharp*/) {
-                    float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
-                    float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
-                    float b_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[2]) / 100.0f;
-                    float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
+                    float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.getBottomLeft()) / 100.0f;
+                    float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.getTopLeft()) / 100.0f;
+                    float b_r = static_cast<float> (params->dirpyrequalizer.hueskin.getBottomRight()) / 100.0f;
+                    float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.getTopRight()) / 100.0f;
 
                     float artifact = (float) settings->artifact_cbdl;
 
@@ -1312,10 +1312,10 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 //  if     (params->dirpyrequalizer.algo=="FI") choice=0;
 //  else if(params->dirpyrequalizer.algo=="LA") choice=1;
                 if (rtt == 1) {
-                    float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
-                    float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
-                    float b_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[2]) / 100.0f;
-                    float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
+                    float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.getBottomLeft()) / 100.0f;
+                    float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.getTopLeft()) / 100.0f;
+                    float b_r = static_cast<float> (params->dirpyrequalizer.hueskin.getBottomRight()) / 100.0f;
+                    float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.getTopRight()) / 100.0f;
                     int choice = 0; //not disabled in case of ! always 0
                     dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold,  params->dirpyrequalizer.skinprotect, true, params->dirpyrequalizer.gamutlab, b_l, t_l, t_r, b_r, choice, scale);   //contrast by detail adapted to CIECAM
                 }
@@ -2707,10 +2707,10 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
 //if(params->dirpyrequalizer.enabled) if(execsharp) {
                 if (params->dirpyrequalizer.enabled)  {
                     if (params->dirpyrequalizer.gamutlab  /*&& execsharp*/) { //remove artifacts by gaussian blur - skin control
-                        float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
-                        float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
-                        float b_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[2]) / 100.0f;
-                        float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
+                        float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.getBottomLeft()) / 100.0f;
+                        float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.getTopLeft()) / 100.0f;
+                        float b_r = static_cast<float> (params->dirpyrequalizer.hueskin.getBottomRight()) / 100.0f;
+                        float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.getTopRight()) / 100.0f;
                         float artifact = (float) settings->artifact_cbdl;
 
                         if (artifact > 6.f) {
@@ -2761,10 +2761,10 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
 //  else if(params->dirpyrequalizer.algo=="LA") choice=1;
 
                     if (rtt == 1) {
-                        float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
-                        float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
-                        float b_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[2]) / 100.0f;
-                        float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
+                        float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.getBottomLeft()) / 100.0f;
+                        float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.getTopLeft()) / 100.0f;
+                        float b_r = static_cast<float> (params->dirpyrequalizer.hueskin.getBottomRight()) / 100.0f;
+                        float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.getTopRight()) / 100.0f;
                         int choice = 0; // I have not suppress this statement in case of !! always to 0
                         lab->deleteLab();
                         dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, params->dirpyrequalizer.skinprotect,  true, params->dirpyrequalizer.gamutlab, b_l, t_l, t_r, b_r, choice, scale); //contrast by detail adapted to CIECAM
@@ -3337,8 +3337,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     float RedHigh = (100.f + float (params->colorToning.redhigh)) / 100.f; //printf("RedH=%f\n",RedHigh);
     float GreenHigh = (100.f + float (params->colorToning.greenhigh)) / 100.f;
     float BlueHigh = (100.f + float (params->colorToning.bluehigh)) / 100.f;
-    float SatLow = float (params->colorToning.shadowsColSat.value[0]) / 100.f;
-    float SatHigh = float (params->colorToning.hlColSat.value[0]) / 100.f;
+    float SatLow = float (params->colorToning.shadowsColSat.getBottom()) / 100.f;
+    float SatHigh = float (params->colorToning.hlColSat.getBottom()) / 100.f;
 
     float Balan = float (params->colorToning.balance);
 
@@ -6512,10 +6512,10 @@ void ImProcFunctions::badpixlab (LabImage* lab, double rad, int thr, int mode, f
 void ImProcFunctions::dirpyrequalizer (LabImage* lab, int scale)
 {
     if (params->dirpyrequalizer.enabled && lab->W >= 8 && lab->H >= 8) {
-        float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
-        float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
-        float b_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[2]) / 100.0f;
-        float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
+        float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.getBottomLeft()) / 100.0f;
+        float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.getTopLeft()) / 100.0f;
+        float b_r = static_cast<float> (params->dirpyrequalizer.hueskin.getBottomRight()) / 100.0f;
+        float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.getTopRight()) / 100.0f;
         int choice = 0; //I have  not disabled this statement in case of ! always 0
         //      if     (params->dirpyrequalizer.algo=="FI") choice=0;
         //      else if(params->dirpyrequalizer.algo=="LA") choice=1;

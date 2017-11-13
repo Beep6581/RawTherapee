@@ -195,6 +195,17 @@ void putToKeyfile(
 void putToKeyfile(
     const Glib::ustring& group_name,
     const Glib::ustring& key,
+    const std::vector<int>& value,
+    Glib::KeyFile& keyfile
+)
+{
+    const Glib::ArrayHandle<int> list = value;
+    keyfile.set_integer_list(group_name, key, list);
+}
+
+void putToKeyfile(
+    const Glib::ustring& group_name,
+    const Glib::ustring& key,
     const std::vector<double>& value,
     Glib::KeyFile& keyfile
 )
@@ -729,7 +740,7 @@ void ColorToningParams::mixerToCurve (std::vector<double> &colorCurve, std::vect
 
 void ColorToningParams::slidersToCurve (std::vector<double> &colorCurve, std::vector<double> &opacityCurve) const
 {
-    if (hlColSat.value[0] == 0 && shadowsColSat.value[0] == 0) { // if both opacity are null, set both curves to Linear
+    if (hlColSat.getBottom() == 0 && shadowsColSat.getBottom() == 0) { // if both opacity are null, set both curves to Linear
         colorCurve.resize (1);
         colorCurve.at (0) = FCT_Linear;
         opacityCurve.resize (1);
@@ -740,22 +751,22 @@ void ColorToningParams::slidersToCurve (std::vector<double> &colorCurve, std::ve
     colorCurve.resize (9);
     colorCurve.at (0) = FCT_MinMaxCPoints;
     colorCurve.at (1) = 0.26 + 0.12 * double (balance) / 100.;
-    colorCurve.at (2) = double (shadowsColSat.value[1]) / 360.;
+    colorCurve.at (2) = double (shadowsColSat.getTop()) / 360.;
     colorCurve.at (3) = 0.35;
     colorCurve.at (4) = 0.35;
     colorCurve.at (5) = 0.64 + 0.12 * double (balance) / 100.;
-    colorCurve.at (6) = double (hlColSat.value[1]) / 360.;
+    colorCurve.at (6) = double (hlColSat.getTop()) / 360.;
     colorCurve.at (7) = 0.35;
     colorCurve.at (8) = 0.35;
 
     opacityCurve.resize (9);
     opacityCurve.at (0) = FCT_MinMaxCPoints;
     opacityCurve.at (1) = colorCurve.at (1);
-    opacityCurve.at (2) = double (shadowsColSat.value[0]) / 100.;
+    opacityCurve.at (2) = double (shadowsColSat.getBottom()) / 100.;
     opacityCurve.at (3) = 0.35;
     opacityCurve.at (4) = 0.35;
     opacityCurve.at (5) = colorCurve.at (5);
-    opacityCurve.at (6) = double (hlColSat.value[0]) / 100.;
+    opacityCurve.at (6) = double (hlColSat.getBottom()) / 100.;
     opacityCurve.at (7) = 0.35;
     opacityCurve.at (8) = 0.35;
 }
@@ -1803,11 +1814,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->sharpening.method, "Sharpening", "Method", sharpening.method, keyFile);
         saveToKeyfile(!pedited || pedited->sharpening.radius, "Sharpening", "Radius", sharpening.radius, keyFile);
         saveToKeyfile(!pedited || pedited->sharpening.amount, "Sharpening", "Amount", sharpening.amount, keyFile);
-        if (!pedited || pedited->sharpening.threshold) {
-            Glib::ArrayHandle<int> thresh (sharpening.threshold.value, 4, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list ("Sharpening", "Threshold", thresh);
-        }
-
+        saveToKeyfile(!pedited || pedited->sharpening.threshold, "Sharpening", "Threshold", sharpening.threshold.toVector(), keyFile);
         saveToKeyfile(!pedited || pedited->sharpening.edgesonly, "Sharpening", "OnlyEdges", sharpening.edgesonly, keyFile);
         saveToKeyfile(!pedited || pedited->sharpening.edges_radius, "Sharpening", "EdgedetectionRadius", sharpening.edges_radius, keyFile);
         saveToKeyfile(!pedited || pedited->sharpening.edges_tolerance, "Sharpening", "EdgeTolerance", sharpening.edges_tolerance, keyFile);
@@ -1822,11 +1829,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->vibrance.enabled, "Vibrance", "Enabled", vibrance.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->vibrance.pastels, "Vibrance", "Pastels", vibrance.pastels, keyFile);
         saveToKeyfile(!pedited || pedited->vibrance.saturated, "Vibrance", "Saturated", vibrance.saturated, keyFile);
-        if (!pedited || pedited->vibrance.psthreshold) {
-            Glib::ArrayHandle<int> thresh (vibrance.psthreshold.value, 2, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list ("Vibrance", "PSThreshold", thresh);
-        }
-
+        saveToKeyfile(!pedited || pedited->vibrance.psthreshold, "Vibrance", "PSThreshold", vibrance.psthreshold.toVector(), keyFile);
         saveToKeyfile(!pedited || pedited->vibrance.protectskins, "Vibrance", "ProtectSkins", vibrance.protectskins, keyFile);
         saveToKeyfile(!pedited || pedited->vibrance.avoidcolorshift, "Vibrance", "AvoidColorShift", vibrance.avoidcolorshift, keyFile);
         saveToKeyfile(!pedited || pedited->vibrance.pastsattog, "Vibrance", "PastSatTog", vibrance.pastsattog, keyFile);
@@ -2081,10 +2084,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->prsharpening.method, "PostResizeSharpening", "Method", prsharpening.method, keyFile);
         saveToKeyfile(!pedited || pedited->prsharpening.radius, "PostResizeSharpening", "Radius", prsharpening.radius, keyFile);
         saveToKeyfile(!pedited || pedited->prsharpening.amount, "PostResizeSharpening", "Amount", prsharpening.amount, keyFile);
-        if (!pedited || pedited->prsharpening.threshold) {
-            Glib::ArrayHandle<int> thresh (prsharpening.threshold.value, 4, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list ("PostResizeSharpening", "Threshold", thresh);
-        }
+        saveToKeyfile(!pedited || pedited->prsharpening.threshold, "PostResizeSharpening", "Threshold", prsharpening.threshold.toVector(), keyFile);
         saveToKeyfile(!pedited || pedited->prsharpening.edgesonly, "PostResizeSharpening", "OnlyEdges", prsharpening.edgesonly, keyFile);
         saveToKeyfile(!pedited || pedited->prsharpening.edges_radius, "PostResizeSharpening", "EdgedetectionRadius", prsharpening.edges_radius, keyFile);
         saveToKeyfile(!pedited || pedited->prsharpening.edges_tolerance, "PostResizeSharpening", "EdgeTolerance", prsharpening.edges_tolerance, keyFile);
@@ -2163,34 +2163,13 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         saveToKeyfile(!pedited || pedited->wavelet.sup, "Wavelet", "ContExtra", wavelet.sup, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.HSmethod, "Wavelet", "HSMethod", wavelet.HSmethod, keyFile);
-        if (!pedited || pedited->wavelet.hllev) {
-            Glib::ArrayHandle<int> thresh (wavelet.hllev.value, 4, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list ("Wavelet", "HLRange", thresh);
-        }
-        if (!pedited || pedited->wavelet.bllev) {
-            Glib::ArrayHandle<int> thresh (wavelet.bllev.value, 4, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list ("Wavelet", "SHRange", thresh);
-        }
-        if (!pedited || pedited->wavelet.edgcont) {
-            Glib::ArrayHandle<int> thresh (wavelet.edgcont.value, 4, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list ("Wavelet", "Edgcont", thresh);
-        }
-        if (!pedited || pedited->wavelet.level0noise) {
-            Glib::ArrayHandle<double> thresh (wavelet.level0noise.value, 2, Glib::OWNERSHIP_NONE);
-            keyFile.set_double_list ("Wavelet", "Level0noise", thresh);
-        }
-        if (!pedited || pedited->wavelet.level1noise) {
-            Glib::ArrayHandle<double> thresh (wavelet.level1noise.value, 2, Glib::OWNERSHIP_NONE);
-            keyFile.set_double_list ("Wavelet", "Level1noise", thresh);
-        }
-        if (!pedited || pedited->wavelet.level2noise) {
-            Glib::ArrayHandle<double> thresh (wavelet.level2noise.value, 2, Glib::OWNERSHIP_NONE);
-            keyFile.set_double_list ("Wavelet", "Level2noise", thresh);
-        }
-        if (!pedited || pedited->wavelet.level3noise) {
-            Glib::ArrayHandle<double> thresh (wavelet.level3noise.value, 2, Glib::OWNERSHIP_NONE);
-            keyFile.set_double_list ("Wavelet", "Level3noise", thresh);
-        }
+        saveToKeyfile(!pedited || pedited->wavelet.hllev, "Wavelet", "HLRange", wavelet.hllev.toVector(), keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.bllev, "Wavelet", "SHRange", wavelet.bllev.toVector(), keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.edgcont, "Wavelet", "Edgcont", wavelet.edgcont.toVector(), keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.level0noise, "Wavelet", "Level0noise", wavelet.level0noise.toVector(), keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.level1noise, "Wavelet", "Level1noise", wavelet.level1noise.toVector(), keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.level2noise, "Wavelet", "Level2noise", wavelet.level2noise.toVector(), keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.level3noise, "Wavelet", "Level3noise", wavelet.level3noise.toVector(), keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.threshold, "Wavelet", "ThresholdHighlight", wavelet.threshold, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.threshold2, "Wavelet", "ThresholdShadow", wavelet.threshold2, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.edgedetect, "Wavelet", "Edgedetect", wavelet.edgedetect, keyFile);
@@ -2208,15 +2187,8 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->wavelet.TMmethod, "Wavelet", "TMMethod", wavelet.TMmethod, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.chro, "Wavelet", "ChromaLink", wavelet.chro, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.ccwcurve, "Wavelet", "ContrastCurve", wavelet.ccwcurve, keyFile);
-        if (!pedited || pedited->wavelet.pastlev) {
-            Glib::ArrayHandle<int> thresh (wavelet.pastlev.value, 4, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list ("Wavelet", "Pastlev", thresh);
-        }
-
-        if (!pedited || pedited->wavelet.satlev) {
-            Glib::ArrayHandle<int> thresh (wavelet.satlev.value, 4, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list ("Wavelet", "Satlev", thresh);
-        }
+        saveToKeyfile(!pedited || pedited->wavelet.pastlev, "Wavelet", "Pastlev", wavelet.pastlev.toVector(), keyFile);
+        saveToKeyfile(!pedited || pedited->wavelet.satlev, "Wavelet", "Satlev", wavelet.satlev.toVector(), keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.opacityCurveRG, "Wavelet", "OpacityCurveRG", wavelet.opacityCurveRG, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.opacityCurveBY, "Wavelet", "OpacityCurveBY", wavelet.opacityCurveBY, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.opacityCurveW, "Wavelet", "OpacityCurveW", wavelet.opacityCurveW, keyFile);
@@ -2231,10 +2203,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->wavelet.lipst, "Wavelet", "Lipst", wavelet.lipst, keyFile);
 // if (!pedited || pedited->wavelet.edgreinf) keyFile.set_boolean ("Wavelet", "Edgreinf", wavelet.edgreinf);
         saveToKeyfile(!pedited || pedited->wavelet.skinprotect, "Wavelet", "Skinprotect", wavelet.skinprotect, keyFile);
-        if (!pedited || pedited->wavelet.hueskin) {
-            Glib::ArrayHandle<int> thresh (wavelet.hueskin.value, 4, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list ("Wavelet", "Hueskin", thresh);
-        }
+        saveToKeyfile(!pedited || pedited->wavelet.hueskin, "Wavelet", "Hueskin", wavelet.hueskin.toVector(), keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.edgrad, "Wavelet", "Edgrad", wavelet.edgrad, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.edgval, "Wavelet", "Edgval", wavelet.edgval, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.edgthresh, "Wavelet", "ThrEdg", wavelet.edgthresh, keyFile);
@@ -2250,10 +2219,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->wavelet.tmrs, "Wavelet", "ResidualTM", wavelet.tmrs, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.gamma, "Wavelet", "Residualgamma", wavelet.gamma, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.sky, "Wavelet", "HueRangeResidual", wavelet.sky, keyFile);
-        if (!pedited || pedited->wavelet.hueskin2) {
-            Glib::ArrayHandle<int> thresh (wavelet.hueskin2.value, 4, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list ("Wavelet", "HueRange", thresh);
-        }
+        saveToKeyfile(!pedited || pedited->wavelet.hueskin2, "Wavelet", "HueRange", wavelet.hueskin2.toVector(), keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.contrast, "Wavelet", "Contrast", wavelet.contrast, keyFile);
 
 // Directional pyramid equalizer
@@ -2264,15 +2230,12 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             std::stringstream ss;
             ss << "Mult" << i;
 
-            saveToKeyfile(!pedited || pedited->dirpyrequalizer.mult[i], "Directional Pyramid Equalizer", ss.str(), dirpyrequalizer.mult[i], keyFile);        }
-
+            saveToKeyfile(!pedited || pedited->dirpyrequalizer.mult[i], "Directional Pyramid Equalizer", ss.str(), dirpyrequalizer.mult[i], keyFile);
+        }
         saveToKeyfile(!pedited || pedited->dirpyrequalizer.threshold, "Directional Pyramid Equalizer", "Threshold", dirpyrequalizer.threshold, keyFile);
         saveToKeyfile(!pedited || pedited->dirpyrequalizer.skinprotect, "Directional Pyramid Equalizer", "Skinprotect", dirpyrequalizer.skinprotect, keyFile);
 // if (!pedited || pedited->dirpyrequalizer.algo) keyFile.set_string ("Directional Pyramid Equalizer", "Algorithm", dirpyrequalizer.algo);
-        if (!pedited || pedited->dirpyrequalizer.hueskin) {
-            Glib::ArrayHandle<int> thresh (dirpyrequalizer.hueskin.value, 4, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list ("Directional Pyramid Equalizer", "Hueskin", thresh);
-        }
+        saveToKeyfile(!pedited || pedited->dirpyrequalizer.hueskin, "Directional Pyramid Equalizer", "Hueskin", dirpyrequalizer.hueskin.toVector(), keyFile);
 
 // HSV Equalizer
         saveToKeyfile(!pedited || pedited->hsvequalizer.hcurve, "HSV Equalizer", "HCurve", hsvequalizer.hcurve, keyFile);
@@ -2309,18 +2272,11 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->colorToning.autosat, "ColorToning", "Autosat", colorToning.autosat, keyFile);
         saveToKeyfile(!pedited || pedited->colorToning.opacityCurve, "ColorToning", "OpacityCurve", colorToning.opacityCurve, keyFile);
         saveToKeyfile(!pedited || pedited->colorToning.colorCurve, "ColorToning", "ColorCurve", colorToning.colorCurve, keyFile);
-        saveToKeyfile(!pedited || pedited->colorToning.satprotectionthreshold, "ColorToning", "SatProtectionThreshold", colorToning.satProtectionThreshold , keyFile);
-        saveToKeyfile(!pedited || pedited->colorToning.saturatedopacity, "ColorToning", "SaturatedOpacity", colorToning.saturatedOpacity , keyFile);
-        saveToKeyfile(!pedited || pedited->colorToning.strength, "ColorToning", "Strength", colorToning.strength , keyFile);
-        if (!pedited || pedited->colorToning.hlColSat) {
-            Glib::ArrayHandle<int> thresh (colorToning.hlColSat.value, 2, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list ("ColorToning", "HighlightsColorSaturation", thresh);
-        }
-
-        if (!pedited || pedited->colorToning.shadowsColSat) {
-            Glib::ArrayHandle<int> thresh (colorToning.shadowsColSat.value, 2, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list ("ColorToning", "ShadowsColorSaturation", thresh);
-        }
+        saveToKeyfile(!pedited || pedited->colorToning.satprotectionthreshold, "ColorToning", "SatProtectionThreshold", colorToning.satProtectionThreshold, keyFile);
+        saveToKeyfile(!pedited || pedited->colorToning.saturatedopacity, "ColorToning", "SaturatedOpacity", colorToning.saturatedOpacity, keyFile);
+        saveToKeyfile(!pedited || pedited->colorToning.strength, "ColorToning", "Strength", colorToning.strength, keyFile);
+        saveToKeyfile(!pedited || pedited->colorToning.hlColSat, "ColorToning", "HighlightsColorSaturation", colorToning.hlColSat.toVector(), keyFile);
+        saveToKeyfile(!pedited || pedited->colorToning.shadowsColSat, "ColorToning", "ShadowsColorSaturation", colorToning.shadowsColSat.toVector(), keyFile);
         saveToKeyfile(!pedited || pedited->colorToning.clcurve, "ColorToning", "ClCurve", colorToning.clcurve, keyFile);
         saveToKeyfile(!pedited || pedited->colorToning.cl2curve, "ColorToning", "Cl2Curve", colorToning.cl2curve, keyFile);
 

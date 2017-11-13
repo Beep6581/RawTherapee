@@ -341,20 +341,20 @@ void ThresholdAdjuster::sendToListener ()
         rtengine::procparams::Threshold<double> t = tSelector.getPositions<double>();
 
         if (tSelector.isDouble()) {
-            adjusterListener->adjusterChanged (this, t.value[0], t.value[1], t.value[2], t.value[3]);
-            adjusterListener->adjusterChanged2 (this, t.value[0], t.value[1], t.value[2], t.value[3]);
+            adjusterListener->adjusterChanged (this, t.getBottomLeft(), t.getTopLeft(), t.getBottomRight(), t.getTopRight());
+            adjusterListener->adjusterChanged2 (this, t.getBottomLeft(), t.getTopLeft(), t.getBottomRight(), t.getTopRight());
         } else {
-            adjusterListener->adjusterChanged (this, t.value[0], t.value[1]);
+            adjusterListener->adjusterChanged (this, t.getBottomLeft(), t.getTopLeft());
         }
     } else {
         // if precision is equal to 0, then we assume that the listener is waiting for integers
         rtengine::procparams::Threshold<int> t = tSelector.getPositions<int>();
 
         if (tSelector.isDouble()) {
-            adjusterListener->adjusterChanged (this, t.value[0], t.value[1], t.value[2], t.value[3]);
-            adjusterListener->adjusterChanged2 (this, t.value[0], t.value[1], t.value[2], t.value[3]);
+            adjusterListener->adjusterChanged (this, t.getBottomLeft(), t.getTopLeft(), t.getBottomRight(), t.getTopRight());
+            adjusterListener->adjusterChanged2 (this, t.getBottomLeft(), t.getTopLeft(), t.getBottomRight(), t.getTopRight());
         } else {
-            adjusterListener->adjusterChanged (this, t.value[0], t.value[1]);
+            adjusterListener->adjusterChanged (this, t.getBottomLeft(), t.getTopLeft());
         }
     }
 }

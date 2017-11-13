@@ -16,19 +16,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _PROCPARAMS_H_
-#define _PROCPARAMS_H_
+#pragma once
 
-#include <vector>
-#include <cstdio>
 #include <cmath>
+#include <cstdio>
 #include <type_traits>
+#include <vector>
 
 #include <glibmm.h>
 #include <lcms2.h>
 
-#include "LUT.h"
 #include "coord.h"
+#include "LUT.h"
 
 class ParamsEdited;
 
@@ -36,15 +35,15 @@ namespace rtengine
 {
 
 class ColorGradientCurve;
-class OpacityCurve;
 class NoiseCurve;
+class OpacityCurve;
+class RetinexgaintransmissionCurve;
+class RetinextransmissionCurve;
 class WavCurve;
-class WavOpacityCurveRG;
 class WavOpacityCurveBY;
+class WavOpacityCurveRG;
 class WavOpacityCurveW;
 class WavOpacityCurveWL;
-class RetinextransmissionCurve;
-class RetinexgaintransmissionCurve;
 
 enum RenderingIntent {
     RI_PERCEPTUAL = INTENT_PERCEPTUAL,
@@ -57,196 +56,198 @@ enum RenderingIntent {
 namespace procparams
 {
 
-template <typename T>
-class Threshold
+template<typename T>
+class Threshold final
 {
 public:
-    T value[4];
-
-protected:
-    bool initEq1;
-    bool _isDouble;
-
-public:
-    Threshold (T bottom, T top, bool startAtOne)
+    Threshold(T _bottom, T _top, bool _start_at_one) :
+        Threshold(_bottom, _top, 0, 0, _start_at_one, false)
     {
-        initEq1 = startAtOne;
-        value[0] = bottom;
-        value[1] = top;
-        value[2] = T (0);
-        value[3] = T (0);
-        _isDouble = false;
     }
 
-    Threshold (T bottomLeft, T topLeft, T bottomRight, T topRight, bool startAtOne)
+    Threshold(T _bottom_left, T _top_left, T _bottom_right, T _top_right, bool _start_at_one) :
+        Threshold(_bottom_left, _top_left, _bottom_right, _top_right, _start_at_one, true)
     {
-        initEq1 = startAtOne;
-        value[0] = bottomLeft;
-        value[1] = topLeft;
-        value[2] = bottomRight;
-        value[3] = topRight;
-        _isDouble = true;
     }
 
-    // for convenience, since 'values' is public
-    void setValues (T bottom, T top)
+    template<typename U = T>
+    typename std::enable_if<std::is_floating_point<U>::value, bool>::type operator ==(const Threshold<U>& rhs) const
     {
-        value[0] = bottom;
-        value[1] = top;
+        if (is_double) {
+            return
+                std::fabs (bottom_left - rhs.bottom_left) < 1e-10
+                && std::fabs (top_left - rhs.top_left) < 1e-10
+                && std::fabs (bottom_right - rhs.bottom_right) < 1e-10
+                && std::fabs (top_right - rhs.top_right) < 1e-10;
+        } else {
+            return
+                std::fabs (bottom_left - rhs.bottom_left) < 1e-10
+                && std::fabs (top_left - rhs.top_left) < 1e-10;
+        }
     }
 
-    // for convenience, since 'values' is public
-    void setValues (T bottomLeft, T topLeft, T bottomRight, T topRight)
+    template<typename U = T>
+    typename std::enable_if<std::is_integral<U>::value, bool>::type operator ==(const Threshold<U>& rhs) const
     {
-        value[0] = bottomLeft;
-        value[1] = topLeft;
-        value[2] = bottomRight;
-        value[3] = topRight;
+        if (is_double) {
+            return
+                bottom_left == rhs.bottom_left
+                && top_left == rhs.top_left
+                && bottom_right == rhs.bottom_right
+                && top_right == rhs.top_right;
+        } else {
+            return
+                bottom_left == rhs.bottom_left
+                && top_left == rhs.top_left;
+        }
+    }
+
+    T getBottom() const
+    {
+        return bottom_left;
+    }
+
+    T getTop() const
+    {
+        return top_left;
+    }
+
+     T getBottomLeft() const
+    {
+        return bottom_left;
+    }
+
+    T getTopLeft() const
+    {
+        return top_left;
+    }
+
+   T getBottomRight() const
+    {
+        return bottom_right;
+    }
+
+    T getTopRight() const
+    {
+        return top_right;
+    }
+
+    void setValues(T bottom, T top)
+    {
+        bottom_left = bottom;
+        top_left = top;
+    }
+
+    void setValues(T bottom_left, T top_left, T bottom_right, T top_right)
+    {
+        this->bottom_left = bottom_left;
+        this->top_left = top_left;
+        this->bottom_right = bottom_right;
+        this->top_right = top_right;
     }
 
     bool isDouble() const
     {
-        return _isDouble;
+        return is_double;
+    }
+
+    std::vector<T> toVector() const
+    {
+        if (is_double) {
+            return {
+                bottom_left,
+                top_left,
+                bottom_right,
+                top_right
+            };
+        } else {
+            return {
+                bottom_left,
+                top_left
+            };
+        }
     }
 
     // RT: Type of the returned value
     // RV: Type of the value on the X axis
     // RV2: Type of the maximum value on the Y axis
     template <typename RT, typename RV, typename RV2>
-    RT multiply (RV x, RV2 yMax) const
+    RT multiply (RV x, RV2 y_max) const
     {
-        double val = double (x);
+        const double val = x;
 
-        if (initEq1) {
-            if (_isDouble) {
-                if (val == double (value[2]) && double (value[2]) == double (value[3]))
-                    // this handle the special case where the 2 right values are the same, then bottom one is sent back,
+        if (init_eql) {
+            if (is_double) {
+                if (val == static_cast<double>(bottom_right) && static_cast<double>(bottom_right) == static_cast<double>(top_right)) {
+                    // This handles the special case where the 2 right values are the same, then bottom one is sent back,
                     // useful if one wants to keep the bottom value even beyond the x max bound
-                {
-                    return RT (0.);
+                    return 0;
                 }
 
-                if (val >= double (value[3])) {
-                    return RT (yMax);
+                if (val >= static_cast<double>(top_right)) {
+                    return y_max;
                 }
 
-                if (val > double (value[2])) {
-                    return RT (double (yMax) * (val - double (value[2])) / (double (value[3]) - double (value[2])));
+                if (val > static_cast<double>(bottom_right)) {
+                    return static_cast<double>(y_max * (val - static_cast<double>(bottom_right)) / (static_cast<double>(top_right) - static_cast<double>(bottom_right)));
                 }
             }
 
-            if (val >= double (value[0])) {
-                return RT (0);
+            if (val >= static_cast<double>(bottom_left)) {
+                return 0;
             }
 
-            if (val > double (value[1])) {
-                return RT (double (yMax) * (1. - (val - double (value[0])) / (double (value[1]) - double (value[0]))));
+            if (val > static_cast<double>(top_left)) {
+                return static_cast<double>(y_max * (1. - (val - static_cast<double>(bottom_left)) / (static_cast<double>(top_left) - static_cast<double>(bottom_left))));
             }
 
-            return RT (yMax);
+            return y_max;
         } else {
-            if (_isDouble) {
-                if (val == double (value[2]) && double (value[2]) == double (value[3]))
-                    // this handle the special case where the 2 right values are the same, then top one is sent back,
+            if (is_double) {
+                if (val == static_cast<double>(bottom_right) && static_cast<double>(bottom_right) == static_cast<double>(top_right)) {
+                    // This handles the special case where the 2 right values are the same, then top one is sent back,
                     // useful if one wants to keep the top value even beyond the x max bound
-                {
-                    return RT (yMax);
+                    return y_max;
                 }
 
-                if (val >= double (value[2])) {
-                    return RT (0);
+                if (val >= static_cast<double>(bottom_right)) {
+                    return 0;
                 }
 
-                if (val > double (value[3])) {
-                    return RT (double (yMax) * (1. - (val - double (value[3])) / (double (value[2]) - double (value[3]))));
+                if (val > static_cast<double>(top_right)) {
+                    return static_cast<double>(y_max * (1.0 - (val - static_cast<double>(top_right)) / (static_cast<double>(bottom_right) - static_cast<double>(top_right))));
                 }
             }
 
-            if (val >= double (value[1])) {
-                return RT (yMax);
+            if (val >= static_cast<double>(top_left)) {
+                return y_max;
             }
 
-            if (val > double (value[0])) {
-                return RT (double (yMax) * (val - double (value[0])) / (double (value[1]) - double (value[0])));
+            if (val > static_cast<double>(bottom_left)) {
+                return static_cast<double>(y_max * (val - static_cast<double>(bottom_left)) / (static_cast<double>(top_left) - static_cast<double>(bottom_left)));
             }
 
-            return RT (0);
+            return 0;
         }
     }
 
-    // RT: Type of the returned value
-    // RV: Type of the value on the X axis
-    /*template <typename RT, typename RV>
-    RT getRatio(RV val) const {
-        double val = double(val);
-        if (initEq1) {
-            if (_isDouble) {  // assuming that simple thresholds will be more frequent
-                if (val >= double(value[3]))
-                    return RT(1);
-                if (val > double(value[2]))
-                    return (val-double(value[2]))/(double(value[3])-double(value[2]));
-            }
-            if (val >= double(value[1]))
-                return RT(0);
-            if (val > double(value[0]))
-                return 1.-(val-double(value[0]))/(double(value[1])-double(value[0]));
-            return RT(1);
-        }
-        else {
-            if (_isDouble) {  // assuming that simple thresholds will be more frequent
-                if (val >= double(value[3]))
-                    return RT(0);
-                if (val > double(value[2]))
-                    return 1.-(val-double(value[2]))/(double(value[3])-double(value[2]));
-            }
-            if (val >= double(value[1]))
-                return RT(1);
-            if (val > double(value[0]))
-                return (val-double(value[0]))/(double(value[1])-double(value[0]));
-            return RT(0);
-        }
-    }*/
-
-    Threshold<T>& operator = (const Threshold<T> &rhs)
+private:
+    Threshold(T _bottom_left, T _top_left, T _bottom_right, T _top_right, bool _start_at_one, bool _is_double) :
+        bottom_left(_bottom_left),
+        top_left(_top_left),
+        bottom_right(_bottom_right),
+        top_right(_top_right),
+        init_eql(_start_at_one),
+        is_double(_is_double)
     {
-        value[0] = rhs.value[0];
-        value[1] = rhs.value[1];
-        value[2] = rhs.value[2];
-        value[3] = rhs.value[3];
-        initEq1 = rhs.initEq1;
-        _isDouble = rhs._isDouble;
-        return *this;
     }
 
-    template<typename U = T>
-    typename std::enable_if<std::is_floating_point<U>::value, bool>::type operator == (const Threshold<U> &rhs) const
-    {
-        if (_isDouble) {
-            return std::fabs (value[0] - rhs.value[0]) < 1e-10
-                   && std::fabs (value[1] - rhs.value[1]) < 1e-10
-                   && std::fabs (value[2] - rhs.value[2]) < 1e-10
-                   && std::fabs (value[3] - rhs.value[3]) < 1e-10;
-        } else {
-            return std::fabs (value[0] - rhs.value[0]) < 1e-10
-                   && std::fabs (value[1] - rhs.value[1]) < 1e-10;
-        }
-    }
-
-    template<typename U = T>
-    typename std::enable_if<std::is_integral<U>::value, bool>::type operator == (const Threshold<U> &rhs) const
-    {
-        if (_isDouble) {
-            return
-                value[0] == rhs.value[0]
-                && value[1] == rhs.value[1]
-                && value[2] == rhs.value[2]
-                && value[3] == rhs.value[3];
-        } else {
-            return
-                value[0] == rhs.value[0]
-                && value[1] == rhs.value[1];
-        }
-    }
+    T bottom_left;
+    T top_left;
+    T bottom_right;
+    T top_right;
+    bool init_eql;
+    bool is_double;
 };
 
 /**
@@ -1535,4 +1536,3 @@ public:
 
 }
 }
-#endif
