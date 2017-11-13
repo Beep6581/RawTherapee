@@ -1,5 +1,8 @@
 if(WIN32)
     cmake_minimum_required(VERSION 2.8.4)
+elseif(APPLE)
+    cmake_minimum_required(VERSION 3.3)
+    CMAKE_POLICY(SET CMP0025 NEW)
 else()
     cmake_minimum_required(VERSION 2.6)
 endif()
