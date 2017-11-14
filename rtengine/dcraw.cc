@@ -1802,6 +1802,7 @@ void CLASS phase_one_load_raw_c()
     read_shorts ((ushort *) rblack[0], raw_width*2);
   for (i=0; i < 256; i++)
     curve[i] = i*i / 3.969 + 0.5;
+  ph1_bithuff_t ph1_bithuff(this, ifp, order);
   for (row=0; row < raw_height; row++) {
     fseek (ifp, data_offset + offset[row], SEEK_SET);
     ph1_init();
@@ -2258,13 +2259,13 @@ void CLASS hasselblad_load_raw()
 
   if (!ljpeg_start (&jh, 0)) return;
   order = 0x4949;
+  ph1_bithuff_t ph1_bithuff(this, ifp, order);
   hb_bits(-1);
   back[4] = (int *) calloc (raw_width, 3*sizeof **back);
   merror (back[4], "hasselblad_load_raw()");
   FORC3 back[c] = back[4] + c*raw_width;
   cblack[6] >>= sh = tiff_samples > 1;
   shot = LIM(shot_select, 1, tiff_samples) - 1;
-  ph1_bithuff_t ph1_bithuff(this, ifp, order);
   for (row=0; row < raw_height; row++) {
     FORC4 back[(c+3) & 3] = back[c];
     for (col=0; col < raw_width; col+=2) {

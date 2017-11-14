@@ -59,7 +59,6 @@ public:
     ,RT_blacklevel_from_constant(0)
     ,RT_matrix_from_constant(0)
 	,getbithuff(this,ifp,zero_after_ff)
-	,ph1_bithuff(this,ifp,order)
 	,pana_bits(ifp,load_flags)
     {
         memset(&hbd, 0, sizeof(hbd));
@@ -316,7 +315,7 @@ void parse_qt (int end);
 // ph1_bithuff(int nbits, ushort *huff);
 class ph1_bithuff_t {
 public:
-   ph1_bithuff_t(DCraw *p,IMFILE *i,short &o):parent(p),order(o),ifp(i),bitbuf(0),vbits(0){}
+   ph1_bithuff_t(DCraw *p, IMFILE *i, short &o):parent(p),order(o),ifp(i),bitbuf(0),vbits(0){}
    unsigned operator()(int nbits, ushort *huff);
    unsigned operator()(int nbits);
    unsigned operator()();
@@ -355,7 +354,6 @@ private:
    UINT64 bitbuf;
    int vbits;
 };
-ph1_bithuff_t ph1_bithuff;
 
 void phase_one_load_raw_c();
 void hasselblad_correct();
