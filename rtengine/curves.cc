@@ -482,8 +482,8 @@ void CurveFactory::complexsgnCurve (bool & autili,  bool & butili, bool & ccutil
 
 SSEFUNCTION void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh,
         double shcompr, double br, double contr,
-        procparams::ToneCurveParams::eTCModeId curveMode, const std::vector<double>& curvePoints,
-        procparams::ToneCurveParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2,
+        procparams::ToneCurveParams::Mode curveMode, const std::vector<double>& curvePoints,
+        procparams::ToneCurveParams::Mode curveMode2, const std::vector<double>& curvePoints2,
         LUTu & histogram,
         LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
         LUTu & outBeforeCCurveHistogram,

@@ -223,8 +223,8 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
     shape->setCurve (pp->toneCurve.curve);
     shape2->setCurve (pp->toneCurve.curve2);
 
-    toneCurveMode->set_active(pp->toneCurve.curveMode);
-    toneCurveMode2->set_active(pp->toneCurve.curveMode2);
+    toneCurveMode->set_active(rtengine::toUnderlying(pp->toneCurve.curveMode));
+    toneCurveMode2->set_active(rtengine::toUnderlying(pp->toneCurve.curveMode2));
 
     if (pedited) {
         expcomp->setEditedState (pedited->toneCurve.expcomp ? Edited : UnEdited);
@@ -314,33 +314,33 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited)
     int tcMode = toneCurveMode->get_active_row_number();
 
     if      (tcMode == 0) {
-        pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_STD;
+        pp->toneCurve.curveMode = ToneCurveParams::Mode::STD;
     } else if (tcMode == 1) {
-        pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_WEIGHTEDSTD;
+        pp->toneCurve.curveMode = ToneCurveParams::Mode::WEIGHTEDSTD;
     } else if (tcMode == 2) {
-        pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_FILMLIKE;
+        pp->toneCurve.curveMode = ToneCurveParams::Mode::FILMLIKE;
     } else if (tcMode == 3) {
-        pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_SATANDVALBLENDING;
+        pp->toneCurve.curveMode = ToneCurveParams::Mode::SATANDVALBLENDING;
     } else if (tcMode == 4) {
-        pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_LUMINANCE;
+        pp->toneCurve.curveMode = ToneCurveParams::Mode::LUMINANCE;
     } else if (tcMode == 5) {
-        pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_PERCEPTUAL;
+        pp->toneCurve.curveMode = ToneCurveParams::Mode::PERCEPTUAL;
     }
 
     tcMode = toneCurveMode2->get_active_row_number();
 
     if      (tcMode == 0) {
-        pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_STD;
+        pp->toneCurve.curveMode2 = ToneCurveParams::Mode::STD;
     } else if (tcMode == 1) {
-        pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_WEIGHTEDSTD;
+        pp->toneCurve.curveMode2 = ToneCurveParams::Mode::WEIGHTEDSTD;
     } else if (tcMode == 2) {
-        pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_FILMLIKE;
+        pp->toneCurve.curveMode2 = ToneCurveParams::Mode::FILMLIKE;
     } else if (tcMode == 3) {
-        pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_SATANDVALBLENDING;
+        pp->toneCurve.curveMode2 = ToneCurveParams::Mode::SATANDVALBLENDING;
     } else if (tcMode == 4) {
-        pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_LUMINANCE;
+        pp->toneCurve.curveMode2 = ToneCurveParams::Mode::LUMINANCE;
     } else if (tcMode == 5) {
-        pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_PERCEPTUAL;
+        pp->toneCurve.curveMode2 = ToneCurveParams::Mode::PERCEPTUAL;
     }
 
     if (pedited) {

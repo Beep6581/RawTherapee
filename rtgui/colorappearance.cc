@@ -799,9 +799,9 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     shape->setCurve (pp->colorappearance.curve);
     shape2->setCurve (pp->colorappearance.curve2);
     shape3->setCurve (pp->colorappearance.curve3);
-    toneCurveMode->set_active (pp->colorappearance.curveMode);
-    toneCurveMode2->set_active (pp->colorappearance.curveMode2);
-    toneCurveMode3->set_active (pp->colorappearance.curveMode3);
+    toneCurveMode->set_active (toUnderlying(pp->colorappearance.curveMode));
+    toneCurveMode2->set_active (toUnderlying(pp->colorappearance.curveMode2));
+    toneCurveMode3->set_active (toUnderlying(pp->colorappearance.curveMode3));
     curveMode3Changed(); // This will set the correct sensitive state of depending Adjusters
 
     if (pedited) {
@@ -1044,27 +1044,27 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
     int tcMode = toneCurveMode->get_active_row_number();
 
     if      (tcMode == 0) {
-        pp->colorappearance.curveMode = ColorAppearanceParams::TC_MODE_LIGHT;
+        pp->colorappearance.curveMode = ColorAppearanceParams::TCMode::LIGHT;
     } else if (tcMode == 1) {
-        pp->colorappearance.curveMode = ColorAppearanceParams::TC_MODE_BRIGHT;
+        pp->colorappearance.curveMode = ColorAppearanceParams::TCMode::BRIGHT;
     }
 
     tcMode = toneCurveMode2->get_active_row_number();
 
     if      (tcMode == 0) {
-        pp->colorappearance.curveMode2 = ColorAppearanceParams::TC_MODE_LIGHT;
+        pp->colorappearance.curveMode2 = ColorAppearanceParams::TCMode::LIGHT;
     } else if (tcMode == 1) {
-        pp->colorappearance.curveMode2 = ColorAppearanceParams::TC_MODE_BRIGHT;
+        pp->colorappearance.curveMode2 = ColorAppearanceParams::TCMode::BRIGHT;
     }
 
     int tcMode3 = toneCurveMode3->get_active_row_number();
 
     if      (tcMode3 == 0) {
-        pp->colorappearance.curveMode3 = ColorAppearanceParams::TC_MODE_CHROMA;
+        pp->colorappearance.curveMode3 = ColorAppearanceParams::CTCMode::CHROMA;
     } else if (tcMode3 == 1) {
-        pp->colorappearance.curveMode3 = ColorAppearanceParams::TC_MODE_SATUR;
+        pp->colorappearance.curveMode3 = ColorAppearanceParams::CTCMode::SATUR;
     } else if (tcMode3 == 2) {
-        pp->colorappearance.curveMode3 = ColorAppearanceParams::TC_MODE_COLORF;
+        pp->colorappearance.curveMode3 = ColorAppearanceParams::CTCMode::COLORF;
     }
 
     if (pedited) {

@@ -34,7 +34,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Glib::RefPtr<Gdk::Pixbuf> WhiteBalance::wbPixbufs[rtengine::procparams::WBT_CUSTOM + 1];
+Glib::RefPtr<Gdk::Pixbuf> WhiteBalance::wbPixbufs[toUnderlying(WBEntry::Type::CUSTOM) + 1];
 /*
 Glib::RefPtr<Gdk::Pixbuf> WhiteBalance::wbCameraPB, WhiteBalance::wbAutoPB, WhiteBalance::wbSunPB, WhiteBalance::wbTungstenPB,
                           WhiteBalance::wbCloudyPB, WhiteBalance::wbShadePB, WhiteBalance::wbFluorescentPB, WhiteBalance::wbLampPB,
@@ -43,24 +43,24 @@ Glib::RefPtr<Gdk::Pixbuf> WhiteBalance::wbCameraPB, WhiteBalance::wbAutoPB, Whit
 
 void WhiteBalance::init ()
 {
-    wbPixbufs[WBT_CAMERA]      = RTImage::createFromFile ("wb-camera.png");
-    wbPixbufs[WBT_AUTO]        = RTImage::createFromFile ("wb-auto.png");
-    wbPixbufs[WBT_DAYLIGHT]    = RTImage::createFromFile ("wb-sun.png");
-    wbPixbufs[WBT_CLOUDY]      = RTImage::createFromFile ("wb-cloudy.png");
-    wbPixbufs[WBT_SHADE]       = RTImage::createFromFile ("wb-shade.png");
-    wbPixbufs[WBT_WATER]       = RTImage::createFromFile ("wb-water.png");
-//    wbPixbufs[WBT_WATER2]       = RTImage::createFromFile ("wb-water.png");
-    wbPixbufs[WBT_TUNGSTEN]    = RTImage::createFromFile ("wb-tungsten.png");
-    wbPixbufs[WBT_FLUORESCENT] = RTImage::createFromFile ("wb-fluorescent.png");
-    wbPixbufs[WBT_LAMP]        = RTImage::createFromFile ("wb-lamp.png");
-    wbPixbufs[WBT_FLASH]       = RTImage::createFromFile ("wb-flash.png");
-    wbPixbufs[WBT_LED]         = RTImage::createFromFile ("wb-led.png");
-    wbPixbufs[WBT_CUSTOM]      = RTImage::createFromFile ("wb-custom.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::CAMERA)]      = RTImage::createFromFile ("wb-camera.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::AUTO)]        = RTImage::createFromFile ("wb-auto.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::DAYLIGHT)]    = RTImage::createFromFile ("wb-sun.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::CLOUDY)]      = RTImage::createFromFile ("wb-cloudy.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::SHADE)]       = RTImage::createFromFile ("wb-shade.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::WATER)]       = RTImage::createFromFile ("wb-water.png");
+//    wbPixbufs[WBEntry::Type::WATER2]       = RTImage::createFromFile ("wb-water.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::TUNGSTEN)]    = RTImage::createFromFile ("wb-tungsten.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::FLUORESCENT)] = RTImage::createFromFile ("wb-fluorescent.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::LAMP)]        = RTImage::createFromFile ("wb-lamp.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::FLASH)]       = RTImage::createFromFile ("wb-flash.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::LED)]         = RTImage::createFromFile ("wb-led.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::CUSTOM)]      = RTImage::createFromFile ("wb-custom.png");
 }
 
 void WhiteBalance::cleanup ()
 {
-    for (unsigned int i = 0; i < WBT_CUSTOM + 1; i++) {
+    for (unsigned int i = 0; i < toUnderlying(WBEntry::Type::CUSTOM) + 1; i++) {
         wbPixbufs[i].reset();
     }
 }
@@ -163,68 +163,68 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     // Assign the model to the Combobox
     method->set_model(refTreeModel);
 
-    enum WBTypes oldType = WBParams::wbEntries[0]->type;
-    enum WBTypes currType;
+    WBEntry::Type oldType = WBParams::wbEntries[0].type;
+    WBEntry::Type currType;
     Gtk::TreeModel::Row row, childrow;
 
     for (unsigned int i = 0; i < WBParams::wbEntries.size(); i++) {
-        if (oldType != (currType = WBParams::wbEntries[i]->type)) {
+        if (oldType != (currType = WBParams::wbEntries[i].type)) {
             // New entry type
-            if (currType == WBT_FLUORESCENT) {
+            if (currType == WBEntry::Type::FLUORESCENT) {
                 // Creating the Fluorescent subcategory header
                 row = *(refTreeModel->append());
-                row[methodColumns.colIcon] = wbPixbufs[currType];
+                row[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
                 row[methodColumns.colLabel] = M("TP_WBALANCE_FLUO_HEADER");
                 row[methodColumns.colId] = i + 100;
             }
 
-            if (currType == WBT_WATER) {
+            if (currType == WBEntry::Type::WATER) {
                 // Creating the under water subcategory header
                 row = *(refTreeModel->append());
-                row[methodColumns.colIcon] = wbPixbufs[currType];
+                row[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
                 row[methodColumns.colLabel] = M("TP_WBALANCE_WATER_HEADER");
                 row[methodColumns.colId] = i + 100;
             }
 
-            if (currType == WBT_LAMP) {
+            if (currType == WBEntry::Type::LAMP) {
                 // Creating the Lamp subcategory header
                 row = *(refTreeModel->append());
-                row[methodColumns.colIcon] = wbPixbufs[currType];
+                row[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
                 row[methodColumns.colLabel] = M("TP_WBALANCE_LAMP_HEADER");
                 row[methodColumns.colId] = i + 100;
             }
 
-            if (currType == WBT_LED) {
+            if (currType == WBEntry::Type::LED) {
                 // Creating the LED subcategory header
                 row = *(refTreeModel->append());
-                row[methodColumns.colIcon] = wbPixbufs[currType];
+                row[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
                 row[methodColumns.colLabel] = M("TP_WBALANCE_LED_HEADER");
                 row[methodColumns.colId] = i + 100;
             }
 
-            if (currType == WBT_FLASH) {
+            if (currType == WBEntry::Type::FLASH) {
                 // Creating the Flash subcategory header
                 row = *(refTreeModel->append());
-                row[methodColumns.colIcon] = wbPixbufs[currType];
+                row[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
                 row[methodColumns.colLabel] = M("TP_WBALANCE_FLASH_HEADER");
                 row[methodColumns.colId] = i + 100;
             }
         }
 
-        if (currType == WBT_FLUORESCENT
-                || currType == WBT_LAMP
-                || currType == WBT_WATER
-                || currType == WBT_FLASH
-                || currType == WBT_LED
+        if (currType == WBEntry::Type::FLUORESCENT
+                || currType == WBEntry::Type::LAMP
+                || currType == WBEntry::Type::WATER
+                || currType == WBEntry::Type::FLASH
+                || currType == WBEntry::Type::LED
            ) {
             childrow = *(refTreeModel->append(row.children()));
-            childrow[methodColumns.colIcon] = wbPixbufs[currType];
-            childrow[methodColumns.colLabel] = WBParams::wbEntries[i]->GUILabel;
+            childrow[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
+            childrow[methodColumns.colLabel] = WBParams::wbEntries[i].GUILabel;
             childrow[methodColumns.colId] = i;
         } else {
             row = *(refTreeModel->append());
-            row[methodColumns.colIcon] = wbPixbufs[currType];
-            row[methodColumns.colLabel] = WBParams::wbEntries[i]->GUILabel;
+            row[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
+            row[methodColumns.colLabel] = WBParams::wbEntries[i].GUILabel;
             row[methodColumns.colId] = i;
         }
 
@@ -362,12 +362,24 @@ void WhiteBalance::adjusterChanged (Adjuster* a, double newval)
     }
 
     Glib::ustring colLabel = row[methodColumns.colLabel];
-    WBEntry* ppMethod = findWBEntry (row[methodColumns.colLabel], WBLT_GUI);
-    WBEntry* wbCustom = findWBEntry ("Custom", WBLT_PP);
+    const std::pair<bool, const WBEntry&> ppMethod = findWBEntry (row[methodColumns.colLabel], WBLT_GUI);
+    const std::pair<bool, const WBEntry&> wbCustom = findWBEntry ("Custom", WBLT_PP);
 
-    if (!ppMethod || (ppMethod->ppLabel != wbCustom->ppLabel && !((a == equal || a == tempBias) && ppMethod->type == WBT_AUTO)) ) {
+    if (
+        !ppMethod.first
+        || (
+            ppMethod.second.ppLabel != wbCustom.second.ppLabel
+            && !(
+                (
+                    a == equal
+                    || a == tempBias
+                )
+                && ppMethod.second.type == WBEntry::Type::AUTO
+            )
+        )
+    ) {
         methconn.block(true);
-        opt = setActiveMethod(wbCustom->GUILabel);
+        opt = setActiveMethod(wbCustom.second.GUILabel);
         tempBias->set_sensitive(false);
         
         cache_customWB (tVal, gVal);
@@ -429,12 +441,12 @@ void WhiteBalance::optChanged ()
             tempBias->setEditedState (UnEdited);
         } else {
             unsigned int methodId = findWBEntryId (row[methodColumns.colLabel], WBLT_GUI);
-            WBEntry* currMethod = WBParams::wbEntries[methodId];
+            const WBEntry& currMethod = WBParams::wbEntries[methodId];
 
-            tempBias->set_sensitive(currMethod->type == WBT_AUTO);
+            tempBias->set_sensitive(currMethod.type == WBEntry::Type::AUTO);
 
-            switch (currMethod->type) {
-            case WBT_CAMERA:
+            switch (currMethod.type) {
+            case WBEntry::Type::CAMERA:
                 if (wbp) {
                     double ctemp, cgreen;
                     wbp->getCamWB (ctemp, cgreen);
@@ -451,7 +463,7 @@ void WhiteBalance::optChanged ()
 
                 break;
 
-            case WBT_AUTO:
+            case WBEntry::Type::AUTO:
                 if (wbp) {
                     if (batchMode) {
                         temp->setEditedState (UnEdited);
@@ -464,7 +476,7 @@ void WhiteBalance::optChanged ()
 
                 break;
 
-            case WBT_CUSTOM:
+            case WBEntry::Type::CUSTOM:
                 if (custom_temp > 0) {
                     temp->setValue (temp->getAddMode() ? 0.0 : custom_temp);
                     green->setValue (green->getAddMode() ? 0.0 : custom_green);
@@ -484,19 +496,19 @@ void WhiteBalance::optChanged ()
                 break;
 
             /* All other solution are the default cases
-            case WBT_DAYLIGHT:
-            case WBT_CLOUDY:
-            case WBT_SHADE:
-            case WBT_TUNGSTEN:
-            case WBT_FLUORESCENT:
-            case WBT_LAMP:
-            case WBT_FLASH:
-            case WBT_LED:*/
+            case WBEntry::Type::DAYLIGHT:
+            case WBEntry::Type::CLOUDY:
+            case WBEntry::Type::SHADE:
+            case WBEntry::Type::TUNGSTEN:
+            case WBEntry::Type::FLUORESCENT:
+            case WBEntry::Type::LAMP:
+            case WBEntry::Type::FLASH:
+            case WBEntry::Type::LED:*/
             default:
                 // recall custom WB settings if it exists, set to 1.0 otherwise
-                temp->setValue  ( temp->getAddMode() ? 0.0 : (double)(currMethod->temperature));
-                green->setValue (green->getAddMode() ? 0.0 : (double)(currMethod->green));
-                equal->setValue (equal->getAddMode() ? 0.0 : (double)(currMethod->equal));
+                temp->setValue  ( temp->getAddMode() ? 0.0 : (double)(currMethod.temperature));
+                green->setValue (green->getAddMode() ? 0.0 : (double)(currMethod.green));
+                equal->setValue (equal->getAddMode() ? 0.0 : (double)(currMethod.equal));
 
                 if (batchMode) {
                     temp->setEditedState (Edited);
@@ -551,17 +563,21 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
     if (pedited && !pedited->wb.method) {
         opt = setActiveMethod(M("GENERAL_UNCHANGED"));
     } else {
-        WBEntry* wbValues = findWBEntry(pp->wb.method, WBLT_PP);
+        const WBEntry& wbValues =
+            [this, pp]() -> const WBEntry&
+            {
+                const std::pair<bool, const WBEntry&> res = findWBEntry(pp->wb.method, WBLT_PP);
+                return
+                    !res.first
+                        ? findWBEntry("Camera", WBLT_PP).second
+                        : res.second;
+            }();
 
-        if (!wbValues) {
-            wbValues = findWBEntry("Camera", WBLT_PP);
-        }
-
-        opt = setActiveMethod(wbValues->GUILabel);
+        opt = setActiveMethod(wbValues.GUILabel);
 
         // temperature is reset to the associated temperature, or 0.0 if addMode is set.
-        switch (wbValues->type) {
-        case WBT_CUSTOM:
+        switch (wbValues.type) {
+        case WBEntry::Type::CUSTOM:
             temp->setValue (temp->getAddMode() ? 0.0 : pp->wb.temperature);
             green->setValue (green->getAddMode() ? 0.0 : pp->wb.green);
             equal->setValue (equal->getAddMode() ? 0.0 : pp->wb.equal);
@@ -578,7 +594,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
             break;
 
-        case WBT_CAMERA:
+        case WBEntry::Type::CAMERA:
             if (wbp) {
                 double ctemp = -1.0;
                 double cgreen = -1.0;
@@ -600,7 +616,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
             break;
 
-        case WBT_AUTO:
+        case WBEntry::Type::AUTO:
             // the equalizer's value is restored for the AutoWB
             equal->setValue (equal->getAddMode() ? 0.0 : pp->wb.equal);
             tempBias->setValue (tempBias->getAddMode() ? 0.0 : pp->wb.tempBias);
@@ -620,18 +636,18 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
         /*
         All those types are the "default" case:
-        case WBT_DAYLIGHT:
-        case WBT_CLOUDY:
-        case WBT_SHADE:
-        case WBT_TUNGSTEN:
-        case WBT_FLUORESCENT:
-        case WBT_LAMP:
-        case WBT_FLASH:
-        case WBT_LED:
+        case WBEntry::Type::DAYLIGHT:
+        case WBEntry::Type::CLOUDY:
+        case WBEntry::Type::SHADE:
+        case WBEntry::Type::TUNGSTEN:
+        case WBEntry::Type::FLUORESCENT:
+        case WBEntry::Type::LAMP:
+        case WBEntry::Type::FLASH:
+        case WBEntry::Type::LED:
         */
         default:
             // Set the associated temperature, or 0.0 if in ADD mode
-            temp->setValue(temp->getAddMode() ? 0.0 : (double)wbValues->temperature);
+            temp->setValue(temp->getAddMode() ? 0.0 : (double)wbValues.temperature);
             // Set the stored temperature, or 0.0 if in ADD mode
             green->setValue(green->getAddMode() ? 0.0 : pp->wb.green);
             equal->setValue(equal->getAddMode() ? 0.0 : pp->wb.equal);
@@ -648,7 +664,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
             break;
         }
 
-        tempBias->set_sensitive(wbValues->type == WBT_AUTO);
+        tempBias->set_sensitive(wbValues.type == WBEntry::Type::AUTO);
     }
 
     methconn.block (false);
@@ -668,10 +684,10 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->wb.method = row[methodColumns.colLabel] != M("GENERAL_UNCHANGED");
     }
 
-    WBEntry* ppMethod = findWBEntry (row[methodColumns.colLabel], WBLT_GUI);
+    const std::pair<bool, const WBEntry&> ppMethod = findWBEntry (row[methodColumns.colLabel], WBLT_GUI);
 
-    if (ppMethod) {
-        pp->wb.method = ppMethod->ppLabel;
+    if (ppMethod.first) {
+        pp->wb.method = ppMethod.second.ppLabel;
     }
 
     pp->wb.temperature = temp->getIntValue ();
@@ -739,10 +755,10 @@ void WhiteBalance::setWB (int vtemp, double vgreen)
 {
 
     methconn.block(true);
-    WBEntry *wbValues = findWBEntry("Custom", WBLT_PP);
+    const std::pair<bool, const WBEntry&> wbValues = findWBEntry("Custom", WBLT_PP);
     temp->setValue (vtemp);
     green->setValue (vgreen);
-    opt = setActiveMethod(wbValues->GUILabel);
+    opt = setActiveMethod(wbValues.second.GUILabel);
     cache_customWB (vtemp, vgreen); // sequence in which this call is made is important; must be before "method->set_active (2);"
     cache_customEqual(equal->getValue());
     temp->setEditedState (Edited);
@@ -792,10 +808,10 @@ void WhiteBalance::cache_customWB(int temp, double green)
     cache_customGreen (green);
 }
 
-unsigned int WhiteBalance::findWBEntryId (const Glib::ustring &label, enum WB_LabelType lblType)
+unsigned int WhiteBalance::findWBEntryId (const Glib::ustring& label, enum WB_LabelType lblType)
 {
     for (unsigned int i = 0; i < WBParams::wbEntries.size(); i++) {
-        if (label == (lblType == WBLT_GUI ? WBParams::wbEntries[i]->GUILabel : WBParams::wbEntries[i]->ppLabel)) {
+        if (label == (lblType == WBLT_GUI ? WBParams::wbEntries[i].GUILabel : WBParams::wbEntries[i].ppLabel)) {
             return i;
         }
     }
@@ -803,15 +819,15 @@ unsigned int WhiteBalance::findWBEntryId (const Glib::ustring &label, enum WB_La
     return 0; // default to camera wb
 }
 
-WBEntry* WhiteBalance::findWBEntry (Glib::ustring label, enum WB_LabelType lblType)
+std::pair<bool, const WBEntry&> WhiteBalance::findWBEntry(const Glib::ustring& label, enum WB_LabelType lblType)
 {
-    for (unsigned int i = 0; i < WBParams::wbEntries.size(); i++) {
-        if (label == (lblType == WBLT_GUI ? WBParams::wbEntries[i]->GUILabel : WBParams::wbEntries[i]->ppLabel)) {
-            return WBParams::wbEntries[i];
+    for (unsigned int i = 0; i < WBParams::wbEntries.size(); ++i) {
+        if (label == (lblType == WBLT_GUI ? WBParams::wbEntries[i].GUILabel : WBParams::wbEntries[i].ppLabel)) {
+            return {true, WBParams::wbEntries[i]};
         }
     }
 
-    return nullptr;
+    return {false, WBParams::wbEntries[0]};
 }
 
 int WhiteBalance::_setActiveMethod(Glib::ustring &label, Gtk::TreeModel::Children &children)

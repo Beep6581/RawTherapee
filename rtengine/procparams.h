@@ -253,18 +253,14 @@ private:
 /**
   * Parameters of the tone curve
   */
-class ToneCurveParams
-{
-
-public:
-
-    enum eTCModeId {
-        TC_MODE_STD,               // Standard modes, the curve is applied on all component individually
-        TC_MODE_WEIGHTEDSTD,       // Weighted standard mode
-        TC_MODE_FILMLIKE,          // Film-like mode, as defined in Adobe's reference code
-        TC_MODE_SATANDVALBLENDING, // Modify the Saturation and Value channel
-        TC_MODE_LUMINANCE,         // Modify the Luminance channel with coefficients from Rec 709's
-        TC_MODE_PERCEPTUAL         // Keep color appearance constant using perceptual modeling
+struct ToneCurveParams {
+    enum class Mode {
+        STD,               // Standard modes, the curve is applied on all component individually
+        WEIGHTEDSTD,       // Weighted standard mode
+        FILMLIKE,          // Film-like mode, as defined in Adobe's reference code
+        SATANDVALBLENDING, // Modify the Saturation and Value channel
+        LUMINANCE,         // Modify the Luminance channel with coefficients from Rec 709's
+        PERCEPTUAL         // Keep color appearance constant using perceptual modeling
     };
 
     bool        autoexp;
@@ -274,8 +270,8 @@ public:
     double      expcomp;
     std::vector<double>   curve;
     std::vector<double>   curve2;
-    eTCModeId   curveMode;
-    eTCModeId   curveMode2;
+    Mode   curveMode;
+    Mode   curveMode2;
     int         brightness;
     int         black;
     int         contrast;
@@ -284,20 +280,17 @@ public:
     int         hlcompr;        // Highlight Recovery's compression
     int         hlcomprthresh;  // Highlight Recovery's threshold
 
-    ToneCurveParams ()
-    {
-        setDefaults();
-    }
+    ToneCurveParams();
+
     void setDefaults();
-    static bool HLReconstructionNecessary (LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw);
+    static bool HLReconstructionNecessary(LUTu& histRedRaw, LUTu& histGreenRaw, LUTu& histBlueRaw);
 };
+
 /**
   * Parameters of Retinex
   */
-class RetinexParams
+struct RetinexParams
 {
-
-public:
     bool enabled;
     std::vector<double>   cdcurve;
     std::vector<double>   cdHcurve;
@@ -330,23 +323,22 @@ public:
     int     highl;
     int     skal;
     bool    medianmap;
-    RetinexParams ();
+
+    RetinexParams();
     void setDefaults();
-    void getCurves (RetinextransmissionCurve &transmissionCurveLUT, RetinexgaintransmissionCurve &gaintransmissionCurveLUT) const;
+    void getCurves(RetinextransmissionCurve& transmissionCurveLUT, RetinexgaintransmissionCurve& gaintransmissionCurveLUT) const;
 
-    static void getDefaultgaintransmissionCurve (std::vector<double> &curve);
+    static void getDefaultgaintransmissionCurve (std::vector<double>& curve);
 
-    static void getDefaulttransmissionCurve (std::vector<double> &curve);
+    static void getDefaulttransmissionCurve (std::vector<double>& curve);
 };
 
 
 /**
   * Parameters of the luminance curve
   */
-class LCurveParams
+struct LCurveParams
 {
-
-public:
     std::vector<double>   lcurve;
     std::vector<double>   acurve;
     std::vector<double>   bcurve;
@@ -367,10 +359,7 @@ public:
 /**
   * Parameters of the RGB curves
   */
-class RGBCurvesParams
-{
-
-public:
+struct RGBCurvesParams {
     bool lumamode;
     std::vector<double>   rcurve;
     std::vector<double>   gcurve;
@@ -381,10 +370,7 @@ public:
   * Parameters of the Color Toning
   */
 
-class ColorToningParams
-{
-
-public:
+struct ColorToningParams {
     bool enabled;
     bool autosat;
     std::vector<double> opacityCurve;
@@ -429,28 +415,26 @@ public:
     double sathigh;
     bool lumamode;
 
-    ColorToningParams ();
+    ColorToningParams();
     void setDefaults();  // SHOULD BE GENERALIZED TO ALL CLASSES!
-    /// @brief Transform the mixer values to their curve equivalences
-    void mixerToCurve (std::vector<double> &colorCurve, std::vector<double> &opacityCurve) const;
-    /// @brief Specifically transform the sliders values to their curve equivalences
-    void slidersToCurve (std::vector<double> &colorCurve, std::vector<double> &opacityCurve) const;
-    /// @brief Fill the ColorGradientCurve and OpacityCurve LUTf from the control points curve or sliders value
-    void getCurves (ColorGradientCurve &colorCurveLUT, OpacityCurve &opacityCurveLUT, const double xyz_rgb[3][3], const double rgb_xyz[3][3], bool &opautili) const;
 
-    static void getDefaultColorCurve (std::vector<double> &curve);
-    static void getDefaultOpacityCurve (std::vector<double> &curve);
-    static void getDefaultCLCurve (std::vector<double> &curve);
-    static void getDefaultCL2Curve (std::vector<double> &curve);
+    /// @brief Transform the mixer values to their curve equivalences
+    void mixerToCurve(std::vector<double>& colorCurve, std::vector<double>& opacityCurve) const;
+    /// @brief Specifically transform the sliders values to their curve equivalences
+    void slidersToCurve(std::vector<double>& colorCurve, std::vector<double>& opacityCurve) const;
+    /// @brief Fill the ColorGradientCurve and OpacityCurve LUTf from the control points curve or sliders value
+    void getCurves(ColorGradientCurve& colorCurveLUT, OpacityCurve& opacityCurveLUT, const double xyz_rgb[3][3], const double rgb_xyz[3][3], bool& opautili) const;
+
+    static void getDefaultColorCurve(std::vector<double>& curve);
+    static void getDefaultOpacityCurve(std::vector<double>& curve);
+    static void getDefaultCLCurve(std::vector<double>& curve);
+    static void getDefaultCL2Curve(std::vector<double>& curve);
 };
 
 /**
   * Parameters of the sharpening
   */
-class SharpeningParams
-{
-
-public:
+struct SharpeningParams {
     bool           enabled;
     double         radius;
     int            amount;
@@ -468,17 +452,15 @@ public:
 
     SharpeningParams();
 };
-class SharpenEdgeParams
-{
-public:
+
+struct SharpenEdgeParams {
     bool    enabled;
     int     passes;
     double  amount;
     bool    threechannels;
 };
-class SharpenMicroParams
-{
-public:
+
+struct SharpenMicroParams {
     bool    enabled;
     bool    matrix;
     double  amount;
@@ -488,10 +470,7 @@ public:
 /**
   * Parameters of the vibrance
   */
-class VibranceParams
-{
-
-public:
+struct VibranceParams {
     bool           enabled;
     int            pastels;
     int            saturated;
@@ -505,82 +484,56 @@ public:
 };
 
 /**
-  * Parameters of the color boost
-  */
-/*class ColorBoostParams {
-
-    public:
-        int     amount;
-        bool    avoidclip;
-        bool    enable_saturationlimiter;
-        double  saturationlimit;
-};*/
-
-/**
   * Parameters of the white balance adjustments
   */
+struct WBEntry {
+    enum class Type {
+        CAMERA,
+        AUTO,
+        DAYLIGHT,
+        CLOUDY,
+        SHADE,
+        WATER,
+        TUNGSTEN,
+        FLUORESCENT,
+        LAMP,
+        FLASH,
+        LED,
+        // CUSTOM one must remain the last one!
+        CUSTOM
+    };
 
-enum WBTypes {
-    WBT_CAMERA,
-    WBT_AUTO,
-    WBT_DAYLIGHT,
-    WBT_CLOUDY,
-    WBT_SHADE,
-    WBT_WATER,
-    WBT_TUNGSTEN,
-    WBT_FLUORESCENT,
-    WBT_LAMP,
-    WBT_FLASH,
-    WBT_LED,
-    // WBT_CUSTOM one must remain the last one!
-    WBT_CUSTOM
-};
-
-class WBEntry
-{
-public:
     Glib::ustring ppLabel;
-    enum WBTypes type;
+    Type type;
     Glib::ustring GUILabel;
     int temperature;
     double green;
     double equal;
     double tempBias;
-
-    WBEntry (const Glib::ustring &p, enum WBTypes t, const Glib::ustring &l, int temp, double green, double equal, double bias) : ppLabel (p), type (t), GUILabel (l), temperature (temp), green (green), equal (equal), tempBias (bias) {};
 };
 
-class WBParams
-{
-
-public:
-    static std::vector<WBEntry*> wbEntries;
+struct WBParams {
+    static const std::vector<WBEntry> wbEntries;
     Glib::ustring   method;
     int             temperature;
     double          green;
     double          equal;
     double          tempBias;
-
-    static void     init();
-    static void     cleanup();
 };
 
 /**
  * Parameters of colorappearance
  */
-class ColorAppearanceParams
-{
-
-public:
-    enum eTCModeId {
-        TC_MODE_LIGHT,    // Lightness mode
-        TC_MODE_BRIGHT,   // Brightness mode
+struct ColorAppearanceParams {
+    enum class TCMode {
+        LIGHT,    // Lightness mode
+        BRIGHT,   // Brightness mode
     };
 
-    enum eCTCModeId {
-        TC_MODE_CHROMA,   // chroma mode
-        TC_MODE_SATUR,    // saturation mode
-        TC_MODE_COLORF,   // colorfullness mode
+    enum class CTCMode {
+        CHROMA,   // chroma mode
+        SATUR,    // saturation mode
+        COLORF,   // colorfullness mode
     };
 
     bool          enabled;
@@ -591,9 +544,9 @@ public:
     std::vector<double> curve;
     std::vector<double> curve2;
     std::vector<double> curve3;
-    eTCModeId     curveMode;
-    eTCModeId     curveMode2;
-    eCTCModeId    curveMode3;
+    TCMode     curveMode;
+    TCMode     curveMode2;
+    CTCMode    curveMode3;
 
     Glib::ustring surround;
     Glib::ustring surrsrc;
@@ -625,50 +578,12 @@ public:
     double greenout;
     int tempsc;
     double greensc;
-
-    //      bool          sharpcie;
 };
-
-/**
-  * Parameters of the color shift
-  */
-/*class ColorShiftParams {
-
-    public:
-        double  a;
-        double  b;
-};*/
-
-/**
-  * Parameters of the luminance denoising
-  */
-/*class LumaDenoiseParams {
-
-    public:
-        bool    enabled;
-        double  radius;
-        int     edgetolerance;
-};*/
-
-/**
-  * Parameters of the color denoising
-  */
-/*class ColorDenoiseParams {
-
-    public:
-        bool    enabled;
-        int     edgetolerance;
-        bool    edgesensitive;
-        int     amount;
-};*/
 
 /**
  * Parameters of defringing
  */
-class DefringeParams
-{
-
-public:
+struct DefringeParams {
     bool    enabled;
     double  radius;
     float   threshold;
@@ -678,10 +593,7 @@ public:
 /**
   * Parameters of impulse denoising
   */
-class ImpulseDenoiseParams
-{
-
-public:
+struct ImpulseDenoiseParams {
     bool    enabled;
     int     thresh;
 
@@ -690,10 +602,7 @@ public:
 /**
  * Parameters of the directional pyramid denoising
  */
-class DirPyrDenoiseParams
-{
-
-public:
+struct DirPyrDenoiseParams {
     std::vector<double>   lcurve;
     std::vector<double>   cccurve;
 
@@ -718,19 +627,14 @@ public:
     Glib::ustring rgbmethod;
     int  passes;
 
-    DirPyrDenoiseParams ();
+    DirPyrDenoiseParams();
     void setDefaults();  // SHOULD BE GENERALIZED TO ALL CLASSES!
-    void getCurves (NoiseCurve &lCurve, NoiseCurve &cCurve) const;
-
-    static void getDefaultNoisCurve (std::vector<double> &curve);
-    static void getDefaultCCCurve (std::vector<double> &curve);
+    void getCurves(NoiseCurve& lCurve, NoiseCurve& cCurve) const;
 
 };
 
-//EPD related parameters.
-class EPDParams
-{
-public:
+// EPD related parameters.
+struct EPDParams {
     bool   enabled;
     double strength;
     double gamma;
@@ -739,34 +643,20 @@ public:
     int    reweightingIterates;
 };
 
-
 // Fattal02 Tone-Mapping parameters
-class FattalToneMappingParams {
-public:
+struct FattalToneMappingParams {
     bool enabled;
     int threshold;
     int amount;
 
-    FattalToneMappingParams()
-    {
-        setDefaults();
-    }
-
-    void setDefaults()
-    {
-        enabled = false;
-        threshold = 0;
-        amount = 0;
-    }
+    FattalToneMappingParams();
+    void setDefaults();
 };
 
 /**
   * Parameters of the shadow/highlight enhancement
   */
-class SHParams
-{
-
-public:
+struct SHParams {
     bool    enabled;
     bool    hq;
     int     highlights;
@@ -780,10 +670,7 @@ public:
 /**
   * Parameters of the cropping
   */
-class CropParams
-{
-
-public:
+struct CropParams {
     bool    enabled;
     int     x;
     int     y;
@@ -794,63 +681,45 @@ public:
     Glib::ustring   orientation;
     Glib::ustring   guide;
 
-    CropParams() : enabled (false), x (0), y (0), w (0), h (0), fixratio (false) {};
-    void mapToResized (int resizedWidth, int resizedHeight, int scale, int &x1, int &x2, int &y1, int &y2) const;
+    CropParams();
+    void mapToResized (int resizedWidth, int resizedHeight, int scale, int& x1, int& x2, int& y1, int& y2) const;
 };
 
 /**
   * Parameters of the coarse transformations like 90 deg rotations and h/v flipping
   */
-class CoarseTransformParams
-{
-
-public:
+struct CoarseTransformParams {
     int     rotate;
     bool    hflip;
     bool    vflip;
 
-    CoarseTransformParams()
-    {
-        setDefaults();
-    }
+    CoarseTransformParams();
     void setDefaults();
 };
 
 /**
   * Common transformation parameters
   */
-class CommonTransformParams
-{
-
-public:
+struct CommonTransformParams {
     bool autofill;
 };
 
 /**
   * Parameters of the rotation
   */
-class RotateParams
-{
-
-public:
+struct RotateParams {
     double  degree;
 };
 
 /**
   * Parameters of the distortion correction
   */
-class DistortionParams
-{
-
-public:
+struct DistortionParams {
     double  amount;
 };
 
 // Lens profile correction parameters
-class LensProfParams
-{
-
-public:
+struct LensProfParams {
     enum class LcMode {
         NONE,               // No lens correction
         LENSFUNAUTOMATCH,   // Lens correction using auto matched lensfun database entry
@@ -858,7 +727,6 @@ public:
         LCP                 // Lens correction using lcp file
     };
 
-    static const char *methodstring[static_cast<size_t>(LcMode::LCP) + 1u];
     LcMode lcMode;
     Glib::ustring lcpFile;
     bool useDist, useVign, useCA;
@@ -866,56 +734,24 @@ public:
     Glib::ustring lfCameraModel;
     Glib::ustring lfLens;
 
-    LensProfParams()
-    {
-        setDefaults();
-    }
+    LensProfParams();
     void setDefaults();
 
-    bool useLensfun() const
-    {
-        return lcMode == LcMode::LENSFUNAUTOMATCH || lcMode == LcMode::LENSFUNMANUAL;
-    }
+    bool useLensfun() const;
+    bool lfAutoMatch() const;
+    bool useLcp() const;
+    bool lfManual() const;
 
-    bool lfAutoMatch() const
-    {
-        return lcMode == LcMode::LENSFUNAUTOMATCH;
-    }
-
-    bool useLcp() const
-    {
-        return lcMode == LcMode::LCP && lcpFile.length() > 0;
-    }
-
-    bool lfManual() const
-    {
-        return lcMode == LcMode::LENSFUNMANUAL;
-    }
-
-    Glib::ustring getMethodString(LcMode mode) const
-    {
-        return methodstring[static_cast<size_t>(mode)];
-    }
-
-    LcMode getMethodNumber(const Glib::ustring &mode) const
-    {
-        for(size_t i = 0; i <= static_cast<size_t>(LcMode::LCP); ++i) {
-            if(methodstring[i] == mode) {
-                return static_cast<LcMode>(i);
-            }
-        }
-        return LcMode::NONE;
-    }
+    const std::vector<const char*>& getMethodStrings() const;
+    Glib::ustring getMethodString(LcMode mode) const;
+    LcMode getMethodNumber(const Glib::ustring& mode) const;
 };
 
 
 /**
   * Parameters of the perspective correction
   */
-class PerspectiveParams
-{
-
-public:
+struct PerspectiveParams {
     double  horizontal;
     double  vertical;
 };
@@ -923,10 +759,7 @@ public:
 /**
   * Parameters of the gradient filter
   */
-class GradientParams
-{
-
-public:
+struct GradientParams {
     bool   enabled;
     double degree;
     int    feather;
@@ -938,10 +771,7 @@ public:
 /**
   * Parameters of the post-crop vignette filter
   */
-class PCVignetteParams
-{
-
-public:
+struct PCVignetteParams {
     bool   enabled;
     double strength;
     int    feather;
@@ -951,10 +781,7 @@ public:
 /**
   * Parameters of the vignetting correction
   */
-class VignettingParams
-{
-
-public:
+struct VignettingParams {
     int  amount;
     int  radius;
     int  strength;
@@ -965,10 +792,7 @@ public:
 /**
   * Parameters of the color mixer
   */
-class ChannelMixerParams
-{
-
-public:
+struct ChannelMixerParams {
     int red[3];
     int green[3];
     int blue[3];
@@ -1185,12 +1009,12 @@ public:
 
     WaveletParams ();
     void setDefaults();
-    void getCurves (WavCurve &cCurve, WavOpacityCurveRG &opacityCurveLUTRG, WavOpacityCurveBY &opacityCurveLUTBY, WavOpacityCurveW &opacityCurveLUTW, WavOpacityCurveWL &opacityCurveLUTWL) const;
-    static void getDefaultCCWCurve (std::vector<double> &curve);
-    static void getDefaultOpacityCurveRG (std::vector<double> &curve);
-    static void getDefaultOpacityCurveBY (std::vector<double> &curve);
-    static void getDefaultOpacityCurveW (std::vector<double> &curve);
-    static void getDefaultOpacityCurveWL (std::vector<double> &curve);
+    void getCurves (WavCurve& cCurve, WavOpacityCurveRG& opacityCurveLUTRG, WavOpacityCurveBY& opacityCurveLUTBY, WavOpacityCurveW& opacityCurveLUTW, WavOpacityCurveWL& opacityCurveLUTWL) const;
+    static void getDefaultCCWCurve (std::vector<double>& curve);
+    static void getDefaultOpacityCurveRG (std::vector<double>& curve);
+    static void getDefaultOpacityCurveBY (std::vector<double>& curve);
+    static void getDefaultOpacityCurveW (std::vector<double>& curve);
+    static void getDefaultOpacityCurveWL (std::vector<double>& curve);
 
 };
 
@@ -1420,7 +1244,7 @@ public:
     CACorrParams            cacorrection;    ///< Lens c/a correction parameters
     VignettingParams        vignetting;      ///< Lens vignetting correction parameters
     ChannelMixerParams      chmixer;         ///< Channel mixer parameters
-    BlackWhiteParams        blackwhite;      ///< Black & White parameters
+    BlackWhiteParams        blackwhite;      ///< Black&  White parameters
     ResizeParams            resize;          ///< Resize parameters
     ColorManagementParams   icm;             ///< profiles/color spaces used during the image processing
     RAWParams               raw;             ///< RAW parameters before demosaicing
@@ -1455,14 +1279,14 @@ public:
       * @param pedited pointer to a ParamsEdited object (optional) to store which values has to be saved
       * @return Error code (=0 if all supplied filenames where created correctly)
       */
-    int     save        (const Glib::ustring &fname, const Glib::ustring &fname2 = "", bool fnameAbsolute = true, ParamsEdited* pedited = nullptr);
+    int     save        (const Glib::ustring& fname, const Glib::ustring& fname2 = "", bool fnameAbsolute = true, ParamsEdited* pedited = nullptr);
     /**
       * Loads the parameters from a file.
       * @param fname the name of the file
       * @params pedited pointer to a ParamsEdited object (optional) to store which values has been loaded
       * @return Error code (=0 if no error)
       */
-    int     load        (const Glib::ustring &fname, ParamsEdited* pedited = nullptr);
+    int     load        (const Glib::ustring& fname, ParamsEdited* pedited = nullptr);
 
     /** Creates a new instance of ProcParams.
       * @return a pointer to the new ProcParams instance. */
@@ -1484,7 +1308,7 @@ private:
     * @param content the text to write
     * @return Error code (=0 if no error)
     * */
-    int write (const Glib::ustring &fname, const Glib::ustring &content) const;
+    int write (const Glib::ustring& fname, const Glib::ustring& content) const;
 
 };
 
@@ -1514,7 +1338,7 @@ public:
     PartialProfile      (const ProcParams* pp, const ParamsEdited* pe = nullptr);
     void deleteInstance ();
     void clearGeneral   ();
-    int  load           (const Glib::ustring &fName);
+    int  load           (const Glib::ustring& fName);
     void set            (bool v);
     const void applyTo  (ProcParams *destParams) const ;
 };

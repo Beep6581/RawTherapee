@@ -265,12 +265,47 @@ const int br = (int) options.rtSettings.bot_right;
 const int tl = (int) options.rtSettings.top_left;
 const int bl = (int) options.rtSettings.bot_left;
 
-const char *LensProfParams::methodstring[static_cast<size_t>(LensProfParams::LcMode::LCP) + 1u] = {"none", "lfauto", "lfmanual", "lcp"};
 const char *RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::numMethods] = {"amaze", "igv", "lmmse", "eahd", "hphd", "vng4", "dcb", "ahd", "fast", "mono", "none", "pixelshift" };
 const char *RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::numMethods] = {"3-pass (best)", "1-pass (medium)", "fast", "mono", "none" };
 
 const char *RAWParams::ff_BlurTypestring[RAWParams::numFlatFileBlurTypes] = {/*"Parametric",*/ "Area Flatfield", "Vertical Flatfield", "Horizontal Flatfield", "V+H Flatfield"};
-std::vector<WBEntry*> WBParams::wbEntries;
+
+const std::vector<WBEntry> WBParams::wbEntries = {
+    {"Camera",                 WBEntry::Type::CAMERA,         M ("TP_WBALANCE_CAMERA"),         0, 1.f,    1.f,    0.f},
+    {"Auto",                   WBEntry::Type::AUTO,           M ("TP_WBALANCE_AUTO"),           0, 1.f,    1.f,    0.f},
+    {"Daylight",               WBEntry::Type::DAYLIGHT,       M ("TP_WBALANCE_DAYLIGHT"),    5300, 1.f,    1.f,    0.f},
+    {"Cloudy",                 WBEntry::Type::CLOUDY,         M ("TP_WBALANCE_CLOUDY"),      6200, 1.f,    1.f,    0.f},
+    {"Shade",                  WBEntry::Type::SHADE,          M ("TP_WBALANCE_SHADE"),       7600, 1.f,    1.f,    0.f},
+    {"Water 1",                WBEntry::Type::WATER,          M ("TP_WBALANCE_WATER1"),     35000, 0.3f,   1.1f,   0.f},
+    {"Water 2",                WBEntry::Type::WATER,          M ("TP_WBALANCE_WATER2"),     48000, 0.63f,  1.38f,  0.f},
+    {"Tungsten",               WBEntry::Type::TUNGSTEN,       M ("TP_WBALANCE_TUNGSTEN"),    2856, 1.f,    1.f,    0.f},
+    {"Fluo F1",                WBEntry::Type::FLUORESCENT,    M ("TP_WBALANCE_FLUO1"),       6430, 1.f,    1.f,    0.f},
+    {"Fluo F2",                WBEntry::Type::FLUORESCENT,    M ("TP_WBALANCE_FLUO2"),       4230, 1.f,    1.f,    0.f},
+    {"Fluo F3",                WBEntry::Type::FLUORESCENT,    M ("TP_WBALANCE_FLUO3"),       3450, 1.f,    1.f,    0.f},
+    {"Fluo F4",                WBEntry::Type::FLUORESCENT,    M ("TP_WBALANCE_FLUO4"),       2940, 1.f,    1.f,    0.f},
+    {"Fluo F5",                WBEntry::Type::FLUORESCENT,    M ("TP_WBALANCE_FLUO5"),       6350, 1.f,    1.f,    0.f},
+    {"Fluo F6",                WBEntry::Type::FLUORESCENT,    M ("TP_WBALANCE_FLUO6"),       4150, 1.f,    1.f,    0.f},
+    {"Fluo F7",                WBEntry::Type::FLUORESCENT,    M ("TP_WBALANCE_FLUO7"),       6500, 1.f,    1.f,    0.f},
+    {"Fluo F8",                WBEntry::Type::FLUORESCENT,    M ("TP_WBALANCE_FLUO8"),       5020, 1.f,    1.f,    0.f},
+    {"Fluo F9",                WBEntry::Type::FLUORESCENT,    M ("TP_WBALANCE_FLUO9"),       4330, 1.f,    1.f,    0.f},
+    {"Fluo F10",               WBEntry::Type::FLUORESCENT,    M ("TP_WBALANCE_FLUO10"),      5300, 1.f,    1.f,    0.f},
+    {"Fluo F11",               WBEntry::Type::FLUORESCENT,    M ("TP_WBALANCE_FLUO11"),      4000, 1.f,    1.f,    0.f},
+    {"Fluo F12",               WBEntry::Type::FLUORESCENT,    M ("TP_WBALANCE_FLUO12"),      3000, 1.f,    1.f,    0.f},
+    {"HMI Lamp",               WBEntry::Type::LAMP,           M ("TP_WBALANCE_HMI"),         4800, 1.f,    1.f,    0.f},
+    {"GTI Lamp",               WBEntry::Type::LAMP,           M ("TP_WBALANCE_GTI"),         5000, 1.f,    1.f,    0.f},
+    {"JudgeIII Lamp",          WBEntry::Type::LAMP,           M ("TP_WBALANCE_JUDGEIII"),    5100, 1.f,    1.f,    0.f},
+    {"Solux Lamp 3500K",       WBEntry::Type::LAMP,           M ("TP_WBALANCE_SOLUX35"),     3480, 1.f,    1.f,    0.f},
+    {"Solux Lamp 4100K",       WBEntry::Type::LAMP,           M ("TP_WBALANCE_SOLUX41"),     3930, 1.f,    1.f,    0.f},
+    {"Solux Lamp 4700K",       WBEntry::Type::LAMP,           M ("TP_WBALANCE_SOLUX47"),     4700, 1.f,    1.f,    0.f},
+    {"NG Solux Lamp 4700K",    WBEntry::Type::LAMP,           M ("TP_WBALANCE_SOLUX47_NG"),  4480, 1.f,    1.f,    0.f},
+    {"LED LSI Lumelex 2040",   WBEntry::Type::LED,            M ("TP_WBALANCE_LED_LSI"),     2970, 1.f,    1.f,    0.f},
+    {"LED CRS SP12 WWMR16",    WBEntry::Type::LED,            M ("TP_WBALANCE_LED_CRS"),     3050, 1.f,    1.f,    0.f},
+    {"Flash 5500K",            WBEntry::Type::FLASH,          M ("TP_WBALANCE_FLASH55"),     5500, 1.f,    1.f,    0.f},
+    {"Flash 6000K",            WBEntry::Type::FLASH,          M ("TP_WBALANCE_FLASH60"),     6000, 1.f,    1.f,    0.f},
+    {"Flash 6500K",            WBEntry::Type::FLASH,          M ("TP_WBALANCE_FLASH65"),     6500, 1.f,    1.f,    0.f},
+    // Should remain the last one
+    {"Custom",                 WBEntry::Type::CUSTOM,         M ("TP_WBALANCE_CUSTOM"),         0, 1.f,    1.f,    0.f}
+};
 
 bool ToneCurveParams::HLReconstructionNecessary (LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw)
 {
@@ -281,50 +316,14 @@ bool ToneCurveParams::HLReconstructionNecessary (LUTu &histRedRaw, LUTu &histGre
     return histRedRaw[255] > 50 || histGreenRaw[255] > 50 || histBlueRaw[255] > 50 || histRedRaw[0] > 50 || histGreenRaw[0] > 50 || histBlueRaw[0] > 50;
 }
 
-void WBParams::init()
+CropParams::CropParams() :
+    enabled(false),
+    x(0),
+    y(0),
+    w(0),
+    h(0),
+    fixratio(false)
 {
-    // Creation of the different methods and its associated temperature value
-    wbEntries.push_back (new WBEntry ("Camera",                 WBT_CAMERA,         M ("TP_WBALANCE_CAMERA"),         0, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("Auto",                   WBT_AUTO,           M ("TP_WBALANCE_AUTO"),           0, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("Daylight",               WBT_DAYLIGHT,       M ("TP_WBALANCE_DAYLIGHT"),    5300, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("Cloudy",                 WBT_CLOUDY,         M ("TP_WBALANCE_CLOUDY"),      6200, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("Shade",                  WBT_SHADE,          M ("TP_WBALANCE_SHADE"),       7600, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("Water 1",                WBT_WATER,          M ("TP_WBALANCE_WATER1"),     35000, 0.3f,   1.1f,   0.f));
-    wbEntries.push_back (new WBEntry ("Water 2",                WBT_WATER,          M ("TP_WBALANCE_WATER2"),     48000, 0.63f,  1.38f,  0.f));
-    wbEntries.push_back (new WBEntry ("Tungsten",               WBT_TUNGSTEN,       M ("TP_WBALANCE_TUNGSTEN"),    2856, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("Fluo F1",                WBT_FLUORESCENT,    M ("TP_WBALANCE_FLUO1"),       6430, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("Fluo F2",                WBT_FLUORESCENT,    M ("TP_WBALANCE_FLUO2"),       4230, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("Fluo F3",                WBT_FLUORESCENT,    M ("TP_WBALANCE_FLUO3"),       3450, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("Fluo F4",                WBT_FLUORESCENT,    M ("TP_WBALANCE_FLUO4"),       2940, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("Fluo F5",                WBT_FLUORESCENT,    M ("TP_WBALANCE_FLUO5"),       6350, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("Fluo F6",                WBT_FLUORESCENT,    M ("TP_WBALANCE_FLUO6"),       4150, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("Fluo F7",                WBT_FLUORESCENT,    M ("TP_WBALANCE_FLUO7"),       6500, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("Fluo F8",                WBT_FLUORESCENT,    M ("TP_WBALANCE_FLUO8"),       5020, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("Fluo F9",                WBT_FLUORESCENT,    M ("TP_WBALANCE_FLUO9"),       4330, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("Fluo F10",               WBT_FLUORESCENT,    M ("TP_WBALANCE_FLUO10"),      5300, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("Fluo F11",               WBT_FLUORESCENT,    M ("TP_WBALANCE_FLUO11"),      4000, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("Fluo F12",               WBT_FLUORESCENT,    M ("TP_WBALANCE_FLUO12"),      3000, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("HMI Lamp",               WBT_LAMP,           M ("TP_WBALANCE_HMI"),         4800, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("GTI Lamp",               WBT_LAMP,           M ("TP_WBALANCE_GTI"),         5000, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("JudgeIII Lamp",          WBT_LAMP,           M ("TP_WBALANCE_JUDGEIII"),    5100, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("Solux Lamp 3500K",       WBT_LAMP,           M ("TP_WBALANCE_SOLUX35"),     3480, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("Solux Lamp 4100K",       WBT_LAMP,           M ("TP_WBALANCE_SOLUX41"),     3930, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("Solux Lamp 4700K",       WBT_LAMP,           M ("TP_WBALANCE_SOLUX47"),     4700, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("NG Solux Lamp 4700K",    WBT_LAMP,           M ("TP_WBALANCE_SOLUX47_NG"),  4480, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("LED LSI Lumelex 2040",   WBT_LED,            M ("TP_WBALANCE_LED_LSI"),     2970, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("LED CRS SP12 WWMR16",    WBT_LED,            M ("TP_WBALANCE_LED_CRS"),     3050, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("Flash 5500K",            WBT_FLASH,          M ("TP_WBALANCE_FLASH55"),     5500, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("Flash 6000K",            WBT_FLASH,          M ("TP_WBALANCE_FLASH60"),     6000, 1.f,    1.f,    0.f));
-    wbEntries.push_back (new WBEntry ("Flash 6500K",            WBT_FLASH,          M ("TP_WBALANCE_FLASH65"),     6500, 1.f,    1.f,    0.f));
-    // Should remain the last one
-    wbEntries.push_back (new WBEntry ("Custom",                 WBT_CUSTOM,         M ("TP_WBALANCE_CUSTOM"),        0, 1.f,    1.f,    0.f));
-}
-
-void WBParams::cleanup()
-{
-    for (unsigned int i = 0; i < wbEntries.size(); i++) {
-        delete wbEntries[i];
-    }
 }
 
 // Maps crop to resized width (e.g. smaller previews)
@@ -360,6 +359,7 @@ void RetinexParams::getDefaulttransmissionCurve (std::vector<double> &curve)
         curve.at (i) = v[i - 1];
     }
 }
+
 void RetinexParams::getDefaultgaintransmissionCurve (std::vector<double> &curve)
 {
     double v[16] = { 0.00,  0.1, 0.35, 0.00,
@@ -1045,41 +1045,32 @@ DirPyrDenoiseParams::DirPyrDenoiseParams ()
     setDefaults ();
 }
 
-void DirPyrDenoiseParams::getDefaultNoisCurve (std::vector<double> &curve)
-{
-    double v[8] = { 0.05, 0.15, 0.35, 0.35,
-                    0.55, 0.04, 0.35, 0.35
-                  };
-    curve.resize (9);
-    curve.at (0 ) = double (FCT_MinMaxCPoints);
-
-    for (size_t i = 1; i < curve.size(); ++i) {
-        curve.at (i) = v[i - 1];
-    }
-}
-
-void DirPyrDenoiseParams::getDefaultCCCurve (std::vector<double> &curve)
-{
-    //  double v[8]= { 0.15, 0.00,0.35,0.35,
-    //                 0.60, 0.05,0.35,0.35};
-    double v[8] = { 0.05, 0.50, 0.35, 0.35,
-                    0.35, 0.05, 0.35, 0.35
-                  };
-
-    curve.resize (9);
-    curve.at (0 ) = double (FCT_MinMaxCPoints);
-
-    for (size_t i = 1; i < curve.size(); ++i) {
-        curve.at (i) = v[i - 1];
-    }
-}
-
-
 void DirPyrDenoiseParams::setDefaults()
 {
 
-    getDefaultNoisCurve (lcurve);
-    getDefaultCCCurve (cccurve);
+    lcurve = {
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.05,
+        0.15,
+        0.35,
+        0.35,
+        0.55,
+        0.04,
+        0.35,
+        0.35
+    };
+
+    cccurve = {
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.05,
+        0.50,
+        0.35,
+        0.35,
+        0.35,
+        0.05,
+        0.35,
+        0.35
+    };
 
     enabled = false;
     enhance = false;
@@ -1109,6 +1100,23 @@ void DirPyrDenoiseParams::getCurves (NoiseCurve &lCurve, NoiseCurve &cCurve) con
     cCurve.Set (this->cccurve);
 }
 
+FattalToneMappingParams::FattalToneMappingParams()
+{
+    setDefaults();
+}
+
+void FattalToneMappingParams::setDefaults()
+{
+    enabled = false;
+    threshold = 0;
+    amount = 0;
+}
+
+ToneCurveParams::ToneCurveParams()
+{
+    setDefaults();
+}
+
 void ToneCurveParams::setDefaults()
 {
     autoexp = false;
@@ -1125,10 +1133,15 @@ void ToneCurveParams::setDefaults()
     curve.push_back (DCT_Linear);
     curve2.clear ();
     curve2.push_back (DCT_Linear);
-    curveMode = ToneCurveParams::TC_MODE_STD;
-    curveMode2 = ToneCurveParams::TC_MODE_STD;
+    curveMode = ToneCurveParams::Mode::STD;
+    curveMode2 = ToneCurveParams::Mode::STD;
     hrenabled = false;
     method = "Blend";
+}
+
+LensProfParams::LensProfParams()
+{
+    setDefaults();
 }
 
 void LensProfParams::setDefaults()
@@ -1142,12 +1155,64 @@ void LensProfParams::setDefaults()
     lfLens = "";
 }
 
+bool LensProfParams::useLensfun() const
+{
+    return lcMode == LcMode::LENSFUNAUTOMATCH || lcMode == LcMode::LENSFUNMANUAL;
+}
+
+bool LensProfParams::lfAutoMatch() const
+{
+    return lcMode == LcMode::LENSFUNAUTOMATCH;
+}
+
+bool LensProfParams::useLcp() const
+{
+    return lcMode == LcMode::LCP && lcpFile.length() > 0;
+}
+
+bool LensProfParams::lfManual() const
+{
+    return lcMode == LcMode::LENSFUNMANUAL;
+}
+
+const std::vector<const char*>& LensProfParams::getMethodStrings() const
+{
+    static const std::vector<const char*> method_strings = {
+        "none",
+        "lfauto",
+        "lfmanual",
+        "lcp"
+    };
+    return method_strings;
+}
+
+Glib::ustring LensProfParams::getMethodString(LcMode mode) const
+{
+    return getMethodStrings()[toUnderlying(mode)];
+}
+
+LensProfParams::LcMode LensProfParams::getMethodNumber(const Glib::ustring& mode) const
+{
+    for (std::vector<const char*>::size_type i = 0; i < getMethodStrings().size(); ++i) {
+        if (getMethodStrings()[i] == mode) {
+            return static_cast<LcMode>(i);
+        }
+    }
+    return LcMode::NONE;
+}
+
+CoarseTransformParams::CoarseTransformParams()
+{
+    setDefaults();
+}
+
 void CoarseTransformParams::setDefaults()
 {
     rotate = 0;
     hflip = false;
     vflip = false;
 }
+
 void RAWParams::BayerSensor::setPixelShiftDefaults()
 {
     pixelShiftMotion = 0;
@@ -1249,14 +1314,10 @@ ProcParams::ProcParams ()
 
 void ProcParams::init ()
 {
-
-    WBParams::init();
 }
 
 void ProcParams::cleanup ()
 {
-
-    WBParams::cleanup();
 }
 
 ProcParams* ProcParams::create ()
@@ -1401,11 +1462,11 @@ void ProcParams::setDefaults ()
     colorappearance.curve.push_back (DCT_Linear);
     colorappearance.curve2.clear ();
     colorappearance.curve2.push_back (DCT_Linear);
-    colorappearance.curveMode = ColorAppearanceParams::TC_MODE_LIGHT;
-    colorappearance.curveMode2 = ColorAppearanceParams::TC_MODE_LIGHT;
+    colorappearance.curveMode = ColorAppearanceParams::TCMode::LIGHT;
+    colorappearance.curveMode2 = ColorAppearanceParams::TCMode::LIGHT;
     colorappearance.curve3.clear ();
     colorappearance.curve3.push_back (DCT_Linear);
-    colorappearance.curveMode3    = ColorAppearanceParams::TC_MODE_CHROMA;
+    colorappearance.curveMode3    = ColorAppearanceParams::CTCMode::CHROMA;
     colorappearance.tempout        = 5000;
     colorappearance.greenout        = 1.0;
     colorappearance.ybout        = 18;
@@ -1677,13 +1738,13 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->toneCurve.hrenabled, "HLRecovery", "Enabled", toneCurve.hrenabled, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.method, "HLRecovery", "Method", toneCurve.method, keyFile);
 
-        const std::map<ToneCurveParams::eTCModeId, const char*> tc_mapping = {
-            {ToneCurveParams::TC_MODE_STD, "Standard"},
-            {ToneCurveParams::TC_MODE_FILMLIKE, "FilmLike"},
-            {ToneCurveParams::TC_MODE_SATANDVALBLENDING, "SatAndValueBlending"},
-            {ToneCurveParams::TC_MODE_WEIGHTEDSTD,"WeightedStd"},
-            {ToneCurveParams::TC_MODE_LUMINANCE, "Luminance"},
-            {ToneCurveParams::TC_MODE_PERCEPTUAL, "Perceptual"}
+        const std::map<ToneCurveParams::Mode, const char*> tc_mapping = {
+            {ToneCurveParams::Mode::STD, "Standard"},
+            {ToneCurveParams::Mode::FILMLIKE, "FilmLike"},
+            {ToneCurveParams::Mode::SATANDVALBLENDING, "SatAndValueBlending"},
+            {ToneCurveParams::Mode::WEIGHTEDSTD,"WeightedStd"},
+            {ToneCurveParams::Mode::LUMINANCE, "Luminance"},
+            {ToneCurveParams::Mode::PERCEPTUAL, "Perceptual"}
         };
 
         saveToKeyfile(!pedited || pedited->toneCurve.curveMode, "Exposure", "CurveMode", tc_mapping, toneCurve.curveMode, keyFile);
@@ -1904,21 +1965,21 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->colorappearance.tonecie, "Color appearance", "Tonecie", colorappearance.tonecie, keyFile);
 // if (!pedited || pedited->colorappearance.sharpcie) keyFile.set_boolean ("Color appearance", "Sharpcie", colorappearance.sharpcie);
 
-        const std::map<ColorAppearanceParams::eTCModeId, const char*> ca_mapping = {
-            {ColorAppearanceParams::TC_MODE_LIGHT, "Lightness"},
-            {ColorAppearanceParams::TC_MODE_BRIGHT, "Brightness"}
+        const std::map<ColorAppearanceParams::TCMode, const char*> ca_mapping = {
+            {ColorAppearanceParams::TCMode::LIGHT, "Lightness"},
+            {ColorAppearanceParams::TCMode::BRIGHT, "Brightness"}
         };
 
         saveToKeyfile(!pedited || pedited->colorappearance.curveMode, "Color appearance", "CurveMode", ca_mapping, colorappearance.curveMode, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.curveMode2, "Color appearance", "CurveMode2", ca_mapping, colorappearance.curveMode2, keyFile);
         saveToKeyfile(
-            !pedited || colorappearance.curveMode3,
+            !pedited || pedited->colorappearance.curveMode3,
             "Color appearance",
             "CurveMode3",
             {
-                {ColorAppearanceParams::TC_MODE_CHROMA, "Chroma"},
-                {ColorAppearanceParams::TC_MODE_SATUR, "Saturation"},
-                {ColorAppearanceParams::TC_MODE_COLORF, "Colorfullness"}
+                {ColorAppearanceParams::CTCMode::CHROMA, "Chroma"},
+                {ColorAppearanceParams::CTCMode::SATUR, "Saturation"},
+                {ColorAppearanceParams::CTCMode::COLORF, "Colorfullness"}
 
             },
             colorappearance.curveMode3,
@@ -2479,13 +2540,13 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 toneCurve.shcompr = 100; // older pp3 files can have values above 100.
             }
 
-            const std::map<const char*, ToneCurveParams::eTCModeId> tc_mapping = {
-                {"Standard", ToneCurveParams::TC_MODE_STD},
-                {"FilmLike", ToneCurveParams::TC_MODE_FILMLIKE},
-                {"SatAndValueBlending", ToneCurveParams::TC_MODE_SATANDVALBLENDING},
-                {"WeightedStd", ToneCurveParams::TC_MODE_WEIGHTEDSTD},
-                {"Luminance", ToneCurveParams::TC_MODE_LUMINANCE},
-                {"Perceptual", ToneCurveParams::TC_MODE_PERCEPTUAL}
+            const std::map<const char*, ToneCurveParams::Mode> tc_mapping = {
+                {"Standard", ToneCurveParams::Mode::STD},
+                {"FilmLike", ToneCurveParams::Mode::FILMLIKE},
+                {"SatAndValueBlending", ToneCurveParams::Mode::SATANDVALBLENDING},
+                {"WeightedStd", ToneCurveParams::Mode::WEIGHTEDSTD},
+                {"Luminance", ToneCurveParams::Mode::LUMINANCE},
+                {"Perceptual", ToneCurveParams::Mode::PERCEPTUAL}
             };
 
             assignFromKeyfile(keyFile, "Exposure", "CurveMode", pedited, tc_mapping, toneCurve.curveMode, pedited->toneCurve.curveMode);
@@ -2835,9 +2896,9 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color appearance", "Tonecie", pedited, colorappearance.tonecie, pedited->colorappearance.tonecie);
 // if (keyFile.has_key ("Color appearance", "Sharpcie")) {colorappearance.sharpcie = keyFile.get_boolean ("Color appearance", "Sharpcie"); if (pedited) pedited->colorappearance.sharpcie = true; }
 
-            const std::map<const char*, ColorAppearanceParams::eTCModeId> tc_mapping = {
-                {"Lightness", ColorAppearanceParams::TC_MODE_LIGHT},
-                {"Brightness", ColorAppearanceParams::TC_MODE_BRIGHT}
+            const std::map<const char*, ColorAppearanceParams::TCMode> tc_mapping = {
+                {"Lightness", ColorAppearanceParams::TCMode::LIGHT},
+                {"Brightness", ColorAppearanceParams::TCMode::BRIGHT}
             };
             assignFromKeyfile(keyFile, "Color appearance", "CurveMode", pedited, tc_mapping, colorappearance.curveMode, pedited->colorappearance.curveMode);
             assignFromKeyfile(keyFile, "Color appearance", "CurveMode2", pedited, tc_mapping, colorappearance.curveMode2, pedited->colorappearance.curveMode2);
@@ -2848,9 +2909,9 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 "CurveMode3",
                 pedited,
                 {
-                    {"Chroma", ColorAppearanceParams::TC_MODE_CHROMA},
-                    {"Saturation", ColorAppearanceParams::TC_MODE_SATUR},
-                    {"Colorfullness", ColorAppearanceParams::TC_MODE_COLORF}
+                    {"Chroma", ColorAppearanceParams::CTCMode::CHROMA},
+                    {"Saturation", ColorAppearanceParams::CTCMode::SATUR},
+                    {"Colorfullness", ColorAppearanceParams::CTCMode::COLORF}
                 },
                 colorappearance.curveMode3,
                 pedited->colorappearance.curveMode3
