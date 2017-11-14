@@ -192,7 +192,7 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
 
     ckbUseDist->set_active (pp->lensProf.useDist);
     ckbUseVign->set_active (pp->lensProf.useVign && isRaw);
-    ckbUseCA->set_active   (pp->lensProf.useCA && isRaw);
+    ckbUseCA->set_active(pp->lensProf.useCA && isRaw && ckbUseCA->get_sensitive());
 
     const LFDatabase *db = LFDatabase::getInstance();
     LFCamera c;
@@ -380,7 +380,8 @@ void LensProfilePanel::updateDisabled(bool enable)
 {
     ckbUseDist->set_sensitive(enable);
     ckbUseVign->set_sensitive(enable && isRaw);
-    ckbUseCA->set_sensitive(enable && allowFocusDep);
+    // agriggio TODO -- CA correction via LCP is currently broken
+    ckbUseCA->set_sensitive(false);//enable && allowFocusDep);
 }
 
 void LensProfilePanel::setBatchMode(bool yes)

@@ -1023,7 +1023,7 @@ rtengine::LCPMapper::LCPMapper(
 
 bool rtengine::LCPMapper::isCACorrectionAvailable() const
 {
-    return enableCA;
+    return false /*enableCA*/; // agriggio TODO -- this is currently broken
 }
 
 void rtengine::LCPMapper::correctDistortion(double &x, double &y, int cx, int cy, double scale) const
