@@ -315,7 +315,7 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
             pLCPMap.reset(
                 new LCPMapper (pLCPProf, focalLen, focalLen35mm,
                                focusDist, fNumber, false,
-                               params->lensProf.useDist,
+                               false,
                                oW, oH, params->coarse, rawRotationDeg
                 )
             );
@@ -325,17 +325,30 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
     if (! (needsCA() || needsDistortion() || needsRotation() || needsPerspective() || needsLCP() || needsLensfun()) && (needsVignetting() || needsPCVignetting() || needsGradient())) {
         transformLuminanceOnly (original, transformed, cx, cy, oW, oH, fW, fH);
     } else {
-        TransformMode mode;
+        bool highQuality;
+        std::unique_ptr<Imagefloat> tmpimg;
         if (!needsCA() && scale != 1) {
-            mode = TRANSFORM_PREVIEW;
-        } else if (!fullImage) {
-            mode = TRANSFORM_HIGH_QUALITY;
+            highQuality = false;
         } else {
-            mode = TRANSFORM_HIGH_QUALITY_FULLIMAGE;
+            highQuality = true;
+            // agriggio: CA correction via the lens profile has to be
+            // performed before all the other transformations (except for the
+            // coarse rotation/flipping). In order to not change the code too
+            // much, I simply introduced a new mode
+            // TRANSFORM_HIGH_QUALITY_CA, which applies *only*
+            // profile-based CA correction. So, the correction in this case
+            // occurs in two steps, using an intermediate temporary
+            // image. There's room for optimization of course...
+            if (pLCPMap && params->lensProf.useCA && pLCPMap->isCACorrectionAvailable()) {
+                tmpimg.reset(new Imagefloat(original->getWidth(), original->getHeight()));
+                transformLCPCAOnly(original, tmpimg.get(), cx, cy, pLCPMap.get());
+                original = tmpimg.get();
+            }
         }
-        transformGeneral(mode, original, transformed, cx, cy, sx, sy, oW, oH, fW, fH, pLCPMap.get());
+        transformGeneral(highQuality, original, transformed, cx, cy, sx, sy, oW, oH, fW, fH, pLCPMap.get());
     }
 }
+
 
 // helper function
 void ImProcFunctions::calcVignettingParams (int oW, int oH, const VignettingParams& vignetting, double &w2, double &h2, double& maxRadius, double &v, double &b, double &mul)
@@ -723,8 +736,17 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
 }
 
 
-void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imagefloat *original, Imagefloat *transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LensCorrection *pLCPMap)
+void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, Imagefloat *transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LensCorrection *pLCPMap)
 {
+    // set up stuff, depending on the mode we are
+    bool enableLCPDist = pLCPMap && params->lensProf.useDist;
+    bool enableCA = highQuality && needsCA();
+    bool enableGradient = needsGradient();
+    bool enablePCVignetting = needsPCVignetting();
+    bool enableVignetting = needsVignetting();
+    bool enablePerspective = needsPerspective();
+    bool enableDistortion = needsDistortion();
+
     double w2 = (double) oW  / 2.0 - 0.5;
     double h2 = (double) oH  / 2.0 - 0.5;
 
@@ -733,13 +755,13 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
 
     struct grad_params gp;
 
-    if (needsGradient()) {
+    if (enableGradient) {
         calcGradientParams (oW, oH, params->gradient, gp);
     }
 
     struct pcv_params pcv;
 
-    if (needsPCVignetting()) {
+    if (enablePCVignetting) {
         calcPCVignetteParams (fW, fH, oW, oH, params->pcvignette, params->crop, pcv);
     }
 
@@ -755,12 +777,11 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
 
     // auxiliary variables for c/a correction
     double chDist[3];
-    chDist[0] = params->cacorrection.red;
+    chDist[0] = enableCA ? params->cacorrection.red : 0.0;
     chDist[1] = 0.0;
-    chDist[2] = params->cacorrection.blue;
+    chDist[2] = enableCA ? params->cacorrection.blue : 0.0;
 
     // auxiliary variables for distortion correction
-    bool needsDist = needsDistortion();  // for performance
     double distAmount = params->distortion.amount;
 
     // auxiliary variables for rotation
@@ -783,45 +804,13 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
 
     double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH, pLCPMap) : 1.0;
 
-    // smaller crop images are a problem, so only when processing fully
-    bool enableLCPCA = false;
-    bool enableLCPDist = false;
-    bool enableCA = false;
-
 #if defined( __GNUC__ ) && __GNUC__ >= 7// silence warning
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 #endif
-    switch (mode) {
-        case ImProcFunctions::TRANSFORM_HIGH_QUALITY_FULLIMAGE: {
-            enableLCPCA = pLCPMap && params->lensProf.useCA && pLCPMap->isCACorrectionAvailable();
-        }
-        //no break on purpose
-
-        case ImProcFunctions::TRANSFORM_HIGH_QUALITY: {
-            enableLCPDist = pLCPMap && params->lensProf.useDist;
-            enableCA = enableLCPCA || needsCA();
-        }
-        //no break on purpose
-
-        default:
-        case ImProcFunctions::TRANSFORM_PREVIEW: {
-            enableLCPDist = pLCPMap && params->lensProf.useDist;
-            break;
-        }
-    }
 #if defined( __GNUC__ ) && __GNUC__ >= 7
 #pragma GCC diagnostic pop
 #endif
-
-    if (enableLCPCA) {
-        enableLCPDist = false;
-    }    
-
-    if (!enableCA) {
-        chDist[0] = 0.0;
-    }
-
     // main cycle
     bool darkening = (params->vignetting.amount <= 0.0);
     #pragma omp parallel for if (multiThread)
@@ -842,12 +831,12 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
 
             double vig_x_d = 0., vig_y_d = 0.;
 
-            if (needsVignetting()) {
+            if (enableVignetting) {
                 vig_x_d = ascale * (x + cx - vig_w2);       // centering x coord & scale
                 vig_y_d = ascale * (y + cy - vig_h2);       // centering y coord & scale
             }
 
-            if (needsPerspective()) {
+            if (enablePerspective) {
                 // horizontal perspective transformation
                 y_d *= maxRadius / (maxRadius + x_d * hptanpt);
                 x_d *= maxRadius * hpcospt / (maxRadius + x_d * hptanpt);
@@ -864,14 +853,14 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
             // distortion correction
             double s = 1;
 
-            if (needsDist) {
+            if (enableDistortion) {
                 double r = sqrt (Dxc * Dxc + Dyc * Dyc) / maxRadius; // sqrt is slow
                 s = 1.0 - distAmount + distAmount * r ;
             }
 
             double r2 = 0.;
 
-            if (needsVignetting()) {
+            if (enableVignetting) {
                 double vig_Dx = vig_x_d * cost - vig_y_d * sint;
                 double vig_Dy = vig_x_d * sint + vig_y_d * cost;
                 r2 = sqrt (vig_Dx * vig_Dx + vig_Dy * vig_Dy);
@@ -884,11 +873,6 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
                 // de-center
                 Dx += w2;
                 Dy += h2;
-
-                // LCP CA
-                if (enableLCPCA) {
-                    pLCPMap->correctCA (Dx, Dy, c);
-                }
 
                 // Extract integer and fractions of source screen coordinates
                 int xc = (int)Dx;
@@ -904,7 +888,7 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
                     // multiplier for vignetting correction
                     double vignmul = 1.0;
 
-                    if (needsVignetting()) {
+                    if (enableVignetting) {
                         if (darkening) {
                             vignmul /= std::max (v + mul * tanh (b * (maxRadius - s * r2) / maxRadius), 0.001);
                         } else {
@@ -912,11 +896,11 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
                         }
                     }
 
-                    if (needsGradient()) {
+                    if (enableGradient) {
                         vignmul *= calcGradientFactor (gp, cx + x, cy + y);
                     }
 
-                    if (needsPCVignetting()) {
+                    if (enablePCVignetting) {
                         vignmul *= calcPCVignetteFactor (pcv, cx + x, cy + y);
                     }
 
@@ -924,7 +908,7 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
                         // all interpolation pixels inside image
                         if (enableCA) {
                             interpolateTransformChannelsCubic (chOrig[c], xc - 1, yc - 1, Dx, Dy, & (chTrans[c][y][x]), vignmul);
-                        } else if (mode == ImProcFunctions::TRANSFORM_PREVIEW) {
+                        } else if (!highQuality) {
                             transformed->r (y, x) = vignmul * (original->r (yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->r (yc, xc + 1) * Dx * (1.0 - Dy) + original->r (yc + 1, xc) * (1.0 - Dx) * Dy + original->r (yc + 1, xc + 1) * Dx * Dy);
                             transformed->g (y, x) = vignmul * (original->g (yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->g (yc, xc + 1) * Dx * (1.0 - Dy) + original->g (yc + 1, xc) * (1.0 - Dx) * Dy + original->g (yc + 1, xc + 1) * Dx * Dy);
                             transformed->b (y, x) = vignmul * (original->b (yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->b (yc, xc + 1) * Dx * (1.0 - Dy) + original->b (yc + 1, xc) * (1.0 - Dx) * Dy + original->b (yc + 1, xc + 1) * Dx * Dy);
@@ -955,6 +939,62 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
                         transformed->g (y, x) = 0;
                         transformed->b (y, x) = 0;
                     }
+                }
+            }
+        }
+    }
+}
+
+
+void ImProcFunctions::transformLCPCAOnly(Imagefloat *original, Imagefloat *transformed, int cx, int cy, const LensCorrection *pLCPMap)
+{
+    assert(pLCPMap && params->lensProf.useCA && pLCPMap->isCACorrectionAvailable());
+
+    float** chOrig[3];
+    chOrig[0] = original->r.ptrs;
+    chOrig[1] = original->g.ptrs;
+    chOrig[2] = original->b.ptrs;
+
+    float** chTrans[3];
+    chTrans[0] = transformed->r.ptrs;
+    chTrans[1] = transformed->g.ptrs;
+    chTrans[2] = transformed->b.ptrs;
+
+    #pragma omp parallel for if (multiThread)
+
+    for (int y = 0; y < transformed->getHeight(); y++) {
+        for (int x = 0; x < transformed->getWidth(); x++) {
+            for (int c = 0; c < 3; c++) {
+                double Dx = x;
+                double Dy = y;
+                
+                pLCPMap->correctCA(Dx, Dy, cx, cy, c);
+
+                // Extract integer and fractions of coordinates
+                int xc = (int)Dx;
+                Dx -= (double)xc;
+                int yc = (int)Dy;
+                Dy -= (double)yc;
+
+                // Convert only valid pixels
+                if (yc >= 0 && yc < original->getHeight() && xc >= 0 && xc < original->getWidth()) {
+
+                    // multiplier for vignetting correction
+                    if (yc > 0 && yc < original->getHeight() - 2 && xc > 0 && xc < original->getWidth() - 2) {
+                        // all interpolation pixels inside image
+                        interpolateTransformChannelsCubic (chOrig[c], xc - 1, yc - 1, Dx, Dy, & (chTrans[c][y][x]), 1.0);
+                    } else {
+                        // edge pixels
+                        int y1 = LIM (yc,   0, original->getHeight() - 1);
+                        int y2 = LIM (yc + 1, 0, original->getHeight() - 1);
+                        int x1 = LIM (xc,   0, original->getWidth() - 1);
+                        int x2 = LIM (xc + 1, 0, original->getWidth() - 1);
+
+                        chTrans[c][y][x] = (chOrig[c][y1][x1] * (1.0 - Dx) * (1.0 - Dy) + chOrig[c][y1][x2] * Dx * (1.0 - Dy) + chOrig[c][y2][x1] * (1.0 - Dx) * Dy + chOrig[c][y2][x2] * Dx * Dy);
+                    }
+                } else {
+                    // not valid (source pixel x,y not inside source image, etc.)
+                    chTrans[c][y][x] = 0;
                 }
             }
         }
