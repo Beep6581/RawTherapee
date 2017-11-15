@@ -350,7 +350,7 @@ private:
 
    DCraw *parent;
    short &order;
-   IMFILE *&ifp;
+   IMFILE* const ifp;
    UINT64 bitbuf;
    int vbits;
 };
