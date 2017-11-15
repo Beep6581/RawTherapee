@@ -2158,7 +2158,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 params.locallab.chromaref = dataspot[maxdata - 3][sp];
                 params.locallab.lumaref = dataspot[maxdata - 2][sp];
                 params.locallab.sobelref = dataspot[maxdata - 1][sp];
-                bool locutili = false;
                 params.locallab.circrad = circrads[sp] = dataspot[2][sp];
                 params.locallab.locX = locx[sp] = dataspot[3][sp];
                 params.locallab.locY = locy[sp] = dataspot[4][sp];
@@ -2614,7 +2613,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
                 double huere, chromare, lumare;
                 double sobelre;
-                ipf.calc_ref (3, sp, (float**)shbuffer, nprevl, nprevl, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, cclocalcurve, sklocalcurve, huere, chromare, lumare, sobelre);
+                ipf.calc_ref (nprevl, nprevl, 0, 0, pW, pH, scale, huere, chromare, lumare, sobelre);
                 huer = huere;
                 chromar = chromare;
                 lumar = lumare ;
@@ -2629,8 +2628,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 dataspot[maxdata - 2][sp] = lumarefs[sp] = params.locallab.lumaref;
                 dataspot[maxdata - 1][sp] = sobelrefs[sp] = params.locallab.sobelref;
                 //printf("sp=%i huerefsp=%f\n", sp, huerefs[sp]);
-                ipf.Lab_Local (params.locallab, 3, sp, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve,  lochhCurve,
-                               LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref, params.locallab.sobelref);
+                ipf.Lab_Local (3, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, loclhCurve,  lochhCurve,
+                               LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
                 lllocalcurve.clear();
                 cclocalcurve.clear();
                 sklocalcurve.clear();
@@ -3167,8 +3166,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             params.locallab.lumaref = lumarefs[sp];
             params.locallab.sobelref = sobelrefs[sp];
 
-            ipf.Lab_Local (params.locallab, 3, sp, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve,
-                           localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref, params.locallab.sobelref);
+            ipf.Lab_Local (3, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve,
+                           localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
             lllocalcurve.clear();
             cclocalcurve.clear();
             sklocalcurve.clear();

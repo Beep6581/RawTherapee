@@ -867,8 +867,6 @@ void Crop::update (int todo)
 
                 int realspot = params.locallab.nbspot;
                 //  bool tata = true;
-                bool locutili = parent->locutili;
-
 
                 for (int sp = 1; sp < maxspot; sp++) {
                     if (sp != realspot) {
@@ -1162,8 +1160,8 @@ void Crop::update (int todo)
                         params.locallab.sobelref = parent->sobelrefs[sp];
 
 
-                        parent->ipf.Lab_Local (params.locallab, 1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop, trafx / skip, trafy / skip, cropx / skip, cropy / skip, skips (parent->fw, skip), skips (parent->fh, skip), parent->fw, parent->fh, locutili, skip,  locRETgainCurve, locallutili, lllocalcurve2,
-                                               loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref, params.locallab.sobelref);
+                        parent->ipf.Lab_Local (1, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips (parent->fw, skip), skips (parent->fh, skip), skip, locRETgainCurve, lllocalcurve2,
+                                               loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
                         lllocalcurve2.clear();
                         cclocalcurve2.clear();
                         sklocalcurve2.clear();
@@ -1547,8 +1545,8 @@ void Crop::update (int todo)
                 params.locallab.chromaref = parent->chromarefs[sp];
                 params.locallab.lumaref = parent->lumarefs[sp];
                 params.locallab.sobelref = parent->sobelrefs[sp];
-                parent->ipf.Lab_Local (params.locallab, 1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop, trafx / skip, trafy / skip, cropx / skip, cropy / skip, skips (parent->fw, skip), skips (parent->fh, skip), parent->fw, parent->fh, locutili, skip,  locRETgainCurve, locallutili, lllocalcurve2, loclhCurve, lochhCurve,
-                                       LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref, params.locallab.sobelref);
+                parent->ipf.Lab_Local (1, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips (parent->fw, skip), skips (parent->fh, skip), skip,  locRETgainCurve, lllocalcurve2, loclhCurve, lochhCurve,
+                                       LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
 
                 lllocalcurve2.clear();
                 cclocalcurve2.clear();

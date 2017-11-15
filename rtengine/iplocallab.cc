@@ -54,7 +54,7 @@
 #define CLIPCHRO(x) LIM(x,0.f, 140.f)
 #define CLIPRET(x) LIM(x,-99.5f, 99.5f)
 #define CLIP1(x) LIM(x, 0.f, 1.f)
-
+#pragma GCC diagnostic warning "-Wextra"
 namespace
 {
 
@@ -644,7 +644,7 @@ void ImProcFunctions::strcurv_data (std::string retistr, int *s_datc, int &siz)
 
 }
 
-void ImProcFunctions::vibrancelocal (const local_params& lp, int bfw, int bfh, LabImage* lab,  LabImage* dest, bool & localskutili, LUTf & sklocalcurve)
+void ImProcFunctions::vibrancelocal (int bfw, int bfh, LabImage* lab,  LabImage* dest, bool & localskutili, LUTf & sklocalcurve)
 {
     if (!params->locallab.expvibrance) {
         return;
@@ -1629,7 +1629,7 @@ void ImProcFunctions::DeNoise_Local (int call, const struct local_params& lp, La
 }
 
 
-void ImProcFunctions::cbdl_Local (int call, int sp, float ** buflight, float ** bufchrom, float **loctemp, float **loctempch, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int chro)
+void ImProcFunctions::cbdl_Local (float ** buflight, float ** bufchrom, float **loctemp, float **loctempch, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int chro)
 {
 //local CBDL
     BENCHFUN
@@ -1992,7 +1992,7 @@ void ImProcFunctions::cbdl_Local (int call, int sp, float ** buflight, float ** 
 }
 
 
-void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **buflight, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
+void ImProcFunctions::TM_Local (LabImage * tmp1, float **buflight, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
 {
 //local TM
     BENCHFUN
@@ -2301,7 +2301,7 @@ void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **bufli
 
 
 
-void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, LabImage * tmp2, float ** buflight, float ** bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
+void ImProcFunctions::BlurNoise_Local (int call, LabImage * tmp1, LabImage * tmp2, float ** buflight, float ** bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
 {
 //local BLUR
     BENCHFUN
@@ -2746,7 +2746,7 @@ void ImProcFunctions::InverseReti_Local (const struct local_params & lp, LabImag
 
 
 
-void ImProcFunctions::Reti_Local (int call, float **buflight, float **bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int chro)
+void ImProcFunctions::Reti_Local (float **buflight, float **bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int chro)
 {
 
 //local retinex
@@ -3228,7 +3228,7 @@ struct local_contra {
     float al, bl;
 };
 
-void ImProcFunctions::Contrast_Local (int call, float ave, LabImage * bufcontorig, float ** buflightc, float moy, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, float pm, struct local_contra & lco, float lumaref, float av, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
+void ImProcFunctions::Contrast_Local (int call, float ** buflightc, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, float pm, struct local_contra & lco, float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
 {
     BENCHFUN
 // contrast - perhaps for 4 areas   if need
@@ -3680,7 +3680,7 @@ static void calclight (float lum, float  koef, float & lumnew, bool inv)
 
 }
 
-void ImProcFunctions::InverseSharp_Local (int sp, float **loctemp, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
+void ImProcFunctions::InverseSharp_Local (float **loctemp, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
 {
 //local sharp
     //  BENCHFUN
@@ -3878,7 +3878,7 @@ void ImProcFunctions::InverseSharp_Local (int sp, float **loctemp, const float h
 }
 
 
-void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
+void ImProcFunctions::Sharp_Local (int call, float **loctemp, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
 {
     BENCHFUN
     const float ach = (float)lp.trans / 100.f;
@@ -4105,7 +4105,7 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
 }
 
 
-void ImProcFunctions::Exclude_Local (int sen, int call, float **buflight, float **bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, LabImage * rsv, int cx, int cy)
+void ImProcFunctions::Exclude_Local (int sen, float **buflight, float **bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, LabImage * rsv, int cx, int cy)
 {
 
 //local exposure
@@ -4516,7 +4516,7 @@ void ImProcFunctions::Exclude_Local (int sen, int call, float **buflight, float 
 
 
 
-void ImProcFunctions::Expose_Local (int sen, int call, float **buflight, float **bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy)
+void ImProcFunctions::Expose_Local (int sen, float **buflight, float **bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy)
 {
 
 //local exposure
@@ -4926,7 +4926,7 @@ void ImProcFunctions::Expose_Local (int sen, int call, float **buflight, float *
 }
 
 
-void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, float ** buflight, float ** bufchro, float ** bufhh, float ** buflightslid, bool &LHutili, bool &HHutili, int sp, float moy, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, bool locallutili, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, const LocHHCurve & lochhCurve, LUTf & cclocalcurve, float chprov, float cligh, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
+void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, float ** buflight, float ** bufchro, float ** bufhh, float ** buflightslid, bool &LHutili, bool &HHutili, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, const LocHHCurve & lochhCurve, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
 {
     BENCHFUN
 // chroma and lightness
@@ -5747,7 +5747,7 @@ void ImProcFunctions::InverseColorLight_Local (const struct local_params & lp, L
     }
 
 }
-void ImProcFunctions::calc_ref (int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, int sx, int sy, int cx, int cy, int oW, int oH,  int fw, int fh, bool locutili, int sk, const LocretigainCurve & locRETgainCcurve, bool locallutili, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, LUTf & cclocalcurve, LUTf & sklocalcurve, double & hueref, double & chromaref, double & lumaref, double &sobelref)
+void ImProcFunctions::calc_ref (LabImage * original, LabImage * transformed, int cx, int cy, int oW, int oH, int sk, double & hueref, double & chromaref, double & lumaref, double &sobelref)
 {
     if (params->locallab.enabled) {
         //always calculate hueref, chromaref, lumaref  before others operations use in normal mode for all modules exceprt denoise
@@ -5849,7 +5849,7 @@ void ImProcFunctions::calc_ref (int call, int sp, float** shbuffer, LabImage * o
     }
 }
 
-void ImProcFunctions::copy_ref (int call, int sp, LabImage * spotbuffer, LabImage * original, LabImage * transformed, int sx, int sy, int cx, int cy, int oW, int oH,  int fw, int fh, int sk, const struct local_params & lp, double & huerefspot, double & chromarefspot, double & lumarefspot)
+void ImProcFunctions::copy_ref (LabImage * spotbuffer, LabImage * original, LabImage * transformed, int cx, int cy, int sk, const struct local_params & lp, double & huerefspot, double & chromarefspot, double & lumarefspot)
 {
     if (params->locallab.enabled) {
 
@@ -5911,7 +5911,7 @@ void ImProcFunctions::copy_ref (int call, int sp, LabImage * spotbuffer, LabImag
     }
 }
 
-void ImProcFunctions::paste_ref (int call, int sp, LabImage * spotbuffer, LabImage * original, LabImage * transformed, int sx, int sy, int cx, int cy, int oW, int oH,  int fw, int fh, int sk, const struct local_params & lp, double & huerefspot, double & chromarefspot, double & lumarefspot)
+void ImProcFunctions::paste_ref (LabImage * spotbuffer, LabImage * transformed, int cx, int cy, int sk, const struct local_params & lp)
 {
     if (params->locallab.enabled) {
 
@@ -5940,9 +5940,9 @@ void ImProcFunctions::paste_ref (int call, int sp, LabImage * spotbuffer, LabIma
     }
 }
 
-void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, int sx, int sy, int cx, int cy, int oW, int oH,  int fw, int fh, bool locutili, int sk,
-                                 const LocretigainCurve & locRETgainCcurve, bool locallutili, LUTf & lllocalcurve, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve,
-                                 bool &LHutili, bool &HHutili, LUTf & cclocalcurve, bool & localskutili, LUTf & sklocalcurve, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, double & hueref, double & chromaref, double & lumaref, double & sobelref)
+void ImProcFunctions::Lab_Local (int call, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, int cx, int cy, int oW, int oH, int sk,
+                                 const LocretigainCurve & locRETgainCcurve, LUTf & lllocalcurve, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve,
+                                 bool &LHutili, bool &HHutili, LUTf & cclocalcurve, bool & localskutili, LUTf & sklocalcurve, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, double & hueref, double & chromaref, double & lumaref)
 {
     //general call of others functions : important return hueref, chromaref, lumaref
     if (params->locallab.enabled) {
@@ -5955,7 +5955,6 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
 #endif
 
         int del = 3; // to avoid crash with [loy - begy] and [lox - begx] and bfh bfw  // with gtk2 [loy - begy-1] [lox - begx -1 ] and del = 1
-        float moy = 0.f;
 
         struct local_params lp;
         calcLocalParams (oW, oH, params->locallab, lp);
@@ -6198,7 +6197,7 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
                     bufchro[ir][jr] = rch;
                 }
 
-            Exclude_Local (1, call, buflight, bufchro, hueplus, huemoins, hueref, dhueex, chromaref, lumaref, lp, original, transformed, bufreserv, cx, cy);
+            Exclude_Local (1, buflight, bufchro, hueplus, huemoins, hueref, dhueex, chromaref, lumaref, lp, original, transformed, bufreserv, cx, cy);
 
 
             delete deltasobelL;
@@ -6400,7 +6399,7 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
                         bufchro[ir][jr] = rch;
                     }
 
-                BlurNoise_Local (call, sp, tmp1, tmp2, buflight, bufchro, hueplus, huemoins, hueref, dhuebn, chromaref, lumaref, lp, original, transformed, cx, cy);
+                BlurNoise_Local (call, tmp1, tmp2, buflight, bufchro, hueplus, huemoins, hueref, dhuebn, chromaref, lumaref, lp, original, transformed, cx, cy);
 
             } else {
 
@@ -6826,11 +6825,9 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
             }
 
             LabImage *bufcolorig = nullptr;
-            float chprov = 1.f;
             float chpro = 1.f;
             float cligh = 1.f;
             float clighL = 1.f;
-            float clighmax ;
             float **buflight = nullptr;
             float **bufchro = nullptr;
             float **buflightslid = nullptr;
@@ -6906,7 +6903,6 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
                         bufhh[ir][jr] = 0.f;
                     }
 
-                clighmax = 0.f;
                 /*
                                 int yStart = lp.yc - lp.lyT - cy;
                                 int yEnd = lp.yc + lp.ly - cy;
@@ -7001,7 +6997,6 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
                             bufcolorig->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
                             bufcolorig->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
                             bufcolorig->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
-                            chprov = 0.f;
                             chpro = 0.f;
 
                             //Chroma curve
@@ -7076,7 +7071,7 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
             }
 
 
-            ColorLight_Local (call, bufcolorig, buflight, bufchro, bufhh, buflightslid, LHutili, HHutili, sp, moy, hueplus, huemoins, hueref, dhue, chromaref, lumaref, locallutili, lllocalcurve, loclhCurve, lochhCurve, cclocalcurve, chprov, clighmax, lp, original, transformed, cx, cy);
+            ColorLight_Local (call, bufcolorig, buflight, bufchro, bufhh, buflightslid, LHutili, HHutili, hueplus, huemoins, hueref, dhue, chromaref, lumaref, lllocalcurve, loclhCurve, lochhCurve, lp, original, transformed, cx, cy);
 
             if (call <= 3) {
 
@@ -7274,7 +7269,7 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
 
             }
 
-            Contrast_Local (call, ave, bufcontorig, buflightc, moy, hueplus, huemoins, hueref, dhue, chromaref, pm, lco, lumaref, av, lp, original, transformed, cx, cy);
+            Contrast_Local (call, buflightc, hueplus, huemoins, hueref, dhue, chromaref, pm, lco, lumaref, lp, original, transformed, cx, cy);
 
             if (call <= 3) {
 
@@ -7452,7 +7447,7 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
                     }
 
                 //   printf ("min=%2.2f max=%2.2f", minc, maxc);
-                Expose_Local (1, call, buflight, bufl_ab, hueplus, huemoins, hueref, dhueex, chromaref, lumaref, lp, original, transformed, bufexpfin, cx, cy);
+                Expose_Local (1, buflight, bufl_ab, hueplus, huemoins, hueref, dhueex, chromaref, lumaref, lp, original, transformed, bufexpfin, cx, cy);
 
             }
 
@@ -7569,7 +7564,7 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
 
 
 
-                ImProcFunctions::vibrancelocal (lp, bfw, bfh, bufexporig, bufexpfin, localskutili, sklocalcurve);
+                ImProcFunctions::vibrancelocal (bfw, bfh, bufexporig, bufexpfin, localskutili, sklocalcurve);
 
 
                 //          float maxc = -10000.f;
@@ -7617,7 +7612,7 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
                     }
 
                 //   printf ("min=%2.2f max=%2.2f", minc, maxc);
-                Expose_Local (2, call, buflight, bufl_ab, hueplus, huemoins, hueref, dhuev, chromaref, lumaref, lp, original, transformed, bufexpfin, cx, cy);
+                Expose_Local (2, buflight, bufl_ab, hueplus, huemoins, hueref, dhuev, chromaref, lumaref, lp, original, transformed, bufexpfin, cx, cy);
 
             }
 
@@ -7752,7 +7747,7 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
 
 //            printf ("min=%2.2f max=%2.2f", minc, maxc);
 
-            TM_Local (call, sp, tmp1, buflight, hueplus, huemoins, hueref, dhuetm, chromaref, lumaref, lp, original, transformed, cx, cy);
+            TM_Local (tmp1, buflight, hueplus, huemoins, hueref, dhuetm, chromaref, lumaref, lp, original, transformed, cx, cy);
 
             if (call <= 3) {
                 delete bufgb;
@@ -7898,7 +7893,7 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
 
 
 
-                cbdl_Local (call, sp, buflight, bufchrom,  loctemp, loctempch, hueplus, huemoins, hueref, dhuecb, chromaref, lumaref, lp, original, transformed, cx, cy, 0);
+                cbdl_Local (buflight, bufchrom,  loctemp, loctempch, hueplus, huemoins, hueref, dhuecb, chromaref, lumaref, lp, original, transformed, cx, cy, 0);
 
 
                 for (int i = 0; i < bfh; i++) {
@@ -7945,7 +7940,7 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
                             }
                     }
 
-                    cbdl_Local (call, sp, buflight, bufchrom,  loctemp, loctempch, hueplus, huemoins, hueref, dhuecb, chromaref, lumaref, lp, original, transformed, cx, cy, 1);
+                    cbdl_Local (buflight, bufchrom,  loctemp, loctempch, hueplus, huemoins, hueref, dhuecb, chromaref, lumaref, lp, original, transformed, cx, cy, 1);
                 }
 
                 for (int i = 0; i < bfh; i++) {
@@ -8042,7 +8037,7 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
             }
 
             //sharpen ellipse and transition
-            Sharp_Local (call, sp, loctemp, hueplus, huemoins, hueref, dhuesha, chromaref, lumaref, lp, original, transformed, cx, cy);
+            Sharp_Local (call, loctemp, hueplus, huemoins, hueref, dhuesha, chromaref, lp, original, transformed, cx, cy);
 
         } else if (lp.invshar && lp.shrad > 0.42 && call < 3 && lp.sharpena) {
             int GW = original->W;
@@ -8062,7 +8057,7 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
                 huemoins = hueref - dhuesha + 2.f * rtengine::RT_PI;
             }
 
-            InverseSharp_Local (sp, loctemp, hueplus, huemoins, hueref, dhuesha, chromaref, lumaref, lp, original, transformed, cx, cy);
+            InverseSharp_Local (loctemp, hueplus, huemoins, hueref, dhuesha, chromaref, lp, original, transformed, cx, cy);
         }
 
         //      }
@@ -8229,7 +8224,7 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
 
             if (!lp.invret) {
 
-                Reti_Local (call, buflight, bufchro, hueplus, huemoins, hueref, dhueret, chromaref, lumaref, lp, original, transformed, tmpl, cx, cy, 0);
+                Reti_Local (buflight, bufchro, hueplus, huemoins, hueref, dhueret, chromaref, lumaref, lp, original, transformed, tmpl, cx, cy, 0);
             } else {
                 InverseReti_Local (lp, original, transformed, tmpl, cx, cy, 0);
             }
@@ -8323,7 +8318,7 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
 
                 if (!lp.invret) {
 
-                    Reti_Local (call, buflight, bufchro, hueplus, huemoins, hueref, dhueret, chromaref, lumaref, lp, original, transformed, tmpl, cx, cy, 1);
+                    Reti_Local (buflight, bufchro, hueplus, huemoins, hueref, dhueret, chromaref, lumaref, lp, original, transformed, tmpl, cx, cy, 1);
                 } else {
                     InverseReti_Local (lp, original, transformed, tmpl, cx, cy, 1);
                 }

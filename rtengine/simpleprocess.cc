@@ -1017,7 +1017,6 @@ private:
                                        params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve, 1);
 
 
-        bool locutili = false;
         //     bool locallutili = false;
         //     bool localcutili = false;
         reservView->CopyFrom (labView);
@@ -1984,14 +1983,14 @@ private:
                     double huere, chromare, lumare;
                     double sobelre;
 
-                    ipf.calc_ref (2, sp, (float**)shbuffer, labView, labView, 0, 0, 0, 0, fw, fh, fw, fh, locutili, 1, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, cclocalcurve, sklocalcurve, huere, chromare, lumare, sobelre);
+                    ipf.calc_ref (labView, labView, 0, 0, fw, fh, 1, huere, chromare, lumare, sobelre);
                     params.locallab.hueref = huere;
                     params.locallab.chromaref = chromare;
                     params.locallab.lumaref = lumare;
                     params.locallab.sobelref = sobelre;
 
-                    ipf.Lab_Local (params.locallab, 2, sp, (float**)shbuffer, labView, labView, reservView, 0, 0, 0, 0, fw, fh, fw, fh, locutili, 1, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, lochhCurve,
-                                   LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref, params.locallab.sobelref);
+                    ipf.Lab_Local (2, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve,
+                                   LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
                     lllocalcurve.clear();
                     cclocalcurve.clear();
                     sklocalcurve.clear();
