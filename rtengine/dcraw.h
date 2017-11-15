@@ -59,7 +59,6 @@ public:
     ,RT_blacklevel_from_constant(0)
     ,RT_matrix_from_constant(0)
 	,getbithuff(this,ifp,zero_after_ff)
-	,pana_bits(ifp,load_flags)
     {
         memset(&hbd, 0, sizeof(hbd));
         aber[0]=aber[1]=aber[2]=aber[3]=1;
@@ -68,7 +67,6 @@ public:
         greybox[0]=greybox[1]=0; greybox[2]=greybox[3]= UINT_MAX;
     }
 
-    //int main (int argc, const char **argv);
 protected:
     int exif_base, ciff_base, ciff_len;
     IMFILE *ifp;
@@ -366,18 +364,16 @@ void imacon_full_load_raw();
 void packed_load_raw();
 void nokia_load_raw();
 
-// pana_bits(int nbits);
 class pana_bits_t{
 public:
-   pana_bits_t(IMFILE *&i,unsigned &u):ifp(i),load_flags(u),vbits(0){}
+   pana_bits_t(IMFILE *i, unsigned &u): ifp(i), load_flags(u), vbits(0) {}
    unsigned operator()(int nbits);
 private:
-   IMFILE *&ifp;
+   IMFILE *ifp;
    unsigned &load_flags;
    uchar buf[0x4000];
    int vbits;
 };
-pana_bits_t pana_bits;
 
 void canon_rmf_load_raw();
 void panasonic_load_raw();

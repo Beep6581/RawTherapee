@@ -2492,6 +2492,7 @@ unsigned CLASS pana_bits_t::operator() (int nbits)
 
 void CLASS panasonic_load_raw()
 {
+  pana_bits_t pana_bits(ifp,load_flags);
   int row, col, i, j, sh=0, pred[2], nonz[2];
 
   pana_bits(0);
