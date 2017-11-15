@@ -304,7 +304,7 @@ public:
 	
 public:
     static void complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr,
-                              procparams::ToneCurveParams::eTCModeId curveMode, const std::vector<double>& curvePoints, procparams::ToneCurveParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2,
+                              const std::vector<double>& curvePoints, const std::vector<double>& curvePoints2,
                               LUTu & histogram, LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, LUTu & outBeforeCCurveHistogram, ToneCurve & outToneCurve, ToneCurve & outToneCurve2,
 
                               int skip = 1);
@@ -840,10 +840,10 @@ public:
     virtual ~ColorGradientCurve() {};
 
     void Reset();
-    void SetXYZ (const Curve *pCurve, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float satur, float lumin);
-    void SetXYZ (const std::vector<double> &curvePoints, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float satur, float lumin);
-    void SetRGB (const Curve *pCurve, const double xyz_rgb[3][3], const double rgb_xyz[3][3]);
-    void SetRGB (const std::vector<double> &curvePoints, const double xyz_rgb[3][3], const double rgb_xyz[3][3]);
+    void SetXYZ(const Curve *pCurve, const double xyz_rgb[3][3], float satur, float lumin);
+    void SetXYZ(const std::vector<double> &curvePoints, const double xyz_rgb[3][3], float satur, float lumin);
+    void SetRGB(const Curve *pCurve);
+    void SetRGB(const std::vector<double> &curvePoints);
 
     /**
     * @brief Get the value of Red, Green and Blue corresponding to the requested index
@@ -954,11 +954,6 @@ class StandardToneCurve : public ToneCurve
 public:
     void Apply (float& r, float& g, float& b) const;
 };
-class StandardToneCurvebw : public ToneCurve
-{
-public:
-    void Apply (float& r, float& g, float& b) const;
-};
 
 class AdobeToneCurve : public ToneCurve
 {
@@ -969,22 +964,7 @@ public:
     void Apply (float& r, float& g, float& b) const;
 };
 
-class AdobeToneCurvebw : public ToneCurve
-{
-private:
-    void RGBTone (float& r, float& g, float& b) const; // helper for tone curve
-
-public:
-    void Apply (float& r, float& g, float& b) const;
-};
-
 class SatAndValueBlendingToneCurve : public ToneCurve
-{
-public:
-    void Apply (float& r, float& g, float& b) const;
-};
-
-class SatAndValueBlendingToneCurvebw : public ToneCurve
 {
 public:
     void Apply (float& r, float& g, float& b) const;
@@ -1037,26 +1017,8 @@ public:
     void Apply (float& r, float& g, float& b, PerceptualToneCurveState & state) const;
 };
 
-class WeightedStdToneCurvebw : public ToneCurve
-{
-private:
-    float Triangle (float refX, float refY, float X2) const;
-public:
-    void Apply (float& r, float& g, float& b) const;
-};
-
 // Standard tone curve
 inline void StandardToneCurve::Apply (float& r, float& g, float& b) const
-{
-
-    assert (lutToneCurve);
-
-    r = lutToneCurve[r];
-    g = lutToneCurve[g];
-    b = lutToneCurve[b];
-}
-// Standard tone curve
-inline void StandardToneCurvebw::Apply (float& r, float& g, float& b) const
 {
 
     assert (lutToneCurve);
@@ -1096,43 +1058,8 @@ inline void AdobeToneCurve::Apply (float& r, float& g, float& b) const
         }
     }
 }
-inline void AdobeToneCurvebw::Apply (float& r, float& g, float& b) const
-{
-
-    assert (lutToneCurve);
-
-    if (r >= g) {
-        if      (g > b) {
-            RGBTone (r, g, b);    // Case 1: r >= g >  b
-        } else if (b > r) {
-            RGBTone (b, r, g);    // Case 2: b >  r >= g
-        } else if (b > g) {
-            RGBTone (r, b, g);    // Case 3: r >= b >  g
-        } else {                           // Case 4: r >= g == b
-            r = lutToneCurve[r];
-            g = lutToneCurve[g];
-            b = g;
-        }
-    } else {
-        if      (r >= b) {
-            RGBTone (g, r, b);    // Case 5: g >  r >= b
-        } else if (b >  g) {
-            RGBTone (b, g, r);    // Case 6: b >  g >  r
-        } else {
-            RGBTone (g, b, r);    // Case 7: g >= b >  r
-        }
-    }
-}
 
 inline void AdobeToneCurve::RGBTone (float& r, float& g, float& b) const
-{
-    float rold = r, gold = g, bold = b;
-
-    r = lutToneCurve[rold];
-    b = lutToneCurve[bold];
-    g = b + ((r - b) * (gold - bold) / (rold - bold));
-}
-inline void AdobeToneCurvebw::RGBTone (float& r, float& g, float& b) const
 {
     float rold = r, gold = g, bold = b;
 
@@ -1157,23 +1084,6 @@ inline void LuminanceToneCurve::Apply (float &r, float &g, float &b) const
 }
 
 inline float WeightedStdToneCurve::Triangle (float a, float a1, float b) const
-{
-    if (a != b) {
-        float b1;
-        float a2 = a1 - a;
-
-        if (b < a) {
-            b1 = b + a2 *      b  /     a ;
-        } else       {
-            b1 = b + a2 * (65535.f - b) / (65535.f - a);
-        }
-
-        return b1;
-    }
-
-    return a1;
-}
-inline float WeightedStdToneCurvebw::Triangle (float a, float a1, float b) const
 {
     if (a != b) {
         float b1;
@@ -1215,28 +1125,6 @@ inline void WeightedStdToneCurve::Apply (float& r, float& g, float& b) const
     b = CLIP<float> (b1 * 0.25f + b2 * 0.25f + b3 * 0.50f);
 }
 
-inline void WeightedStdToneCurvebw::Apply (float& r, float& g, float& b) const
-{
-
-    assert (lutToneCurve);
-
-    float r1 = lutToneCurve[r];
-    float g1 = Triangle (r, r1, g);
-    float b1 = Triangle (r, r1, b);
-
-    float g2 = lutToneCurve[g];
-    float r2 = Triangle (g, g2, r);
-    float b2 = Triangle (g, g2, b);
-
-    float b3 = lutToneCurve[b];
-    float r3 = Triangle (b, b3, r);
-    float g3 = Triangle (b, b3, g);
-
-    r = CLIP<float> ( r1 * 0.50f + r2 * 0.25f + r3 * 0.25f);
-    g = CLIP<float> (g1 * 0.25f + g2 * 0.50f + g3 * 0.25f);
-    b = CLIP<float> (b1 * 0.25f + b2 * 0.25f + b3 * 0.50f);
-}
-
 // Tone curve modifying the value channel only, preserving hue and saturation
 // values in 0xffff space
 inline void SatAndValueBlendingToneCurve::Apply (float& r, float& g, float& b) const
@@ -1253,54 +1141,20 @@ inline void SatAndValueBlendingToneCurve::Apply (float& r, float& g, float& b) c
         return;
     }
 
-    bool increase = newLum > lum;
+    Color::rgb2hsv(r, g, b, h, s, v);
 
-    Color::rgb2hsv (r, g, b, h, s, v);
-
-    if (increase) {
+    float dV;
+    if (newLum > lum) {
         // Linearly targeting Value = 1 and Saturation = 0
         float coef = (newLum - lum) / (65535.f - lum);
-        float dV = (1.f - v) * coef;
+        dV = (1.f - v) * coef;
         s *= 1.f - coef;
-        Color::hsv2rgb (h, s, v + dV, r, g, b);
     } else {
         // Linearly targeting Value = 0
-        float coef = (lum - newLum) / lum ;
-        float dV = v * coef;
-        Color::hsv2rgb (h, s, v - dV, r, g, b);
+        float coef = (newLum - lum) / lum ;
+        dV = v * coef;
     }
-}
-
-inline void SatAndValueBlendingToneCurvebw::Apply (float& r, float& g, float& b) const
-{
-
-    assert (lutToneCurve);
-
-    float h, s, v;
-    float lum = (r + g + b) / 3.f;
-    //float lum = Color::rgbLuminance(r, g, b);
-    float newLum = lutToneCurve[lum];
-
-    if (newLum == lum) {
-        return;
-    }
-
-    bool increase = newLum > lum;
-
-    Color::rgb2hsv (r, g, b, h, s, v);
-
-    if (increase) {
-        // Linearly targeting Value = 1 and Saturation = 0
-        float coef = (newLum - lum) / (65535.f - lum);
-        float dV = (1.f - v) * coef;
-        s *= 1.f - coef;
-        Color::hsv2rgb (h, s, v + dV, r, g, b);
-    } else {
-        // Linearly targeting Value = 0
-        float coef = (lum - newLum) / lum ;
-        float dV = v * coef;
-        Color::hsv2rgb (h, s, v - dV, r, g, b);
-    }
+    Color::hsv2rgb(h, s, v + dV, r, g, b);
 }
 
 }

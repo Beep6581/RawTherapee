@@ -258,7 +258,7 @@ RTWindow *create_rt_window()
     Glib::RefPtr<Gtk::IconTheme> defaultIconTheme = Gtk::IconTheme::get_default();
     defaultIconTheme->append_search_path (icon_path);
 
-    rtengine::setPaths (options);
+    rtengine::setPaths();
     MyExpander::init();  // has to stay AFTER rtengine::setPaths
 
     // ------- loading theme files

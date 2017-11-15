@@ -86,7 +86,7 @@ Glib::ustring findIconAbsolutePath (const Glib::ustring& iconName)
     return Glib::ustring();
 }
 
-void setPaths (const Options& options)
+void setPaths ()
 {
     // TODO: Forcing the Dark theme, so reading the icon set files is useless for now...
 

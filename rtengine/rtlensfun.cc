@@ -72,13 +72,42 @@ void LFModifier::correctDistortion(double &x, double &y, int cx, int cy, double 
 
 bool LFModifier::isCACorrectionAvailable() const
 {
-    return false;
+    return (flags_ & LF_MODIFY_TCA);
 }
 
+#ifdef __GNUC__ // silence warning, can be removed when function is implemented
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
 
-void LFModifier::correctCA(double &x, double &y, int channel) const
+void LFModifier::correctCA(double &x, double &y, int cx, int cy, int channel) const
 {
+    assert(channel >= 0 && channel <= 2);
+
+    // agriggio: RT currently applies the CA correction per channel, whereas
+    // lensfun applies it to all the three channels simultaneously. This means
+    // we do the work 3 times, because each time we discard 2 of the 3
+    // channels. We could consider caching the info to speed this up
+    x += cx;
+    y += cy;
+    
+    float pos[6];
+    if (swap_xy_) {
+        std::swap(x, y);
+    }
+    data_->ApplySubpixelDistortion(x, y, 1, 1, pos);
+    x = pos[2*channel];
+    y = pos[2*channel+1];
+    if (swap_xy_) {
+        std::swap(x, y);
+    }
+    x -= cx;
+    y -= cy;
 }
+
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 
 
 void LFModifier::processVignetteLine(int width, int y, float *line) const
@@ -107,6 +136,11 @@ Glib::ustring LFModifier::getDisplayString() const
         if (flags_ & LF_MODIFY_VIGNETTING) {
             ret += sep;
             ret += "vignetting";
+            sep = ", ";
+        }
+        if (flags_ & LF_MODIFY_TCA) {
+            ret += sep;
+            ret += "CA";
             sep = ", ";
         }
         if (flags_ & LF_MODIFY_SCALE) {
@@ -249,6 +283,15 @@ bool LFLens::hasDistortionCorrection() const
 {
     if (data_) {
         return data_->CalibDistortion;
+    } else {
+        return false;
+    }
+}
+
+bool LFLens::hasCACorrection() const
+{
+    if (data_) {
+        return data_->CalibTCA;
     } else {
         return false;
     }
@@ -435,7 +478,7 @@ std::unique_ptr<LFModifier> LFDatabase::getModifier(const LFCamera &camera, cons
     if (data_) {
         if (camera && lens) {
             lfModifier *mod = lfModifier::Create(lens.data_, camera.getCropFactor(), width, height);
-            int flags = LF_MODIFY_DISTORTION | LF_MODIFY_SCALE;
+            int flags = LF_MODIFY_DISTORTION | LF_MODIFY_SCALE | LF_MODIFY_TCA;
             if (aperture > 0) {
                 flags |= LF_MODIFY_VIGNETTING;
             }

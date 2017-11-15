@@ -460,7 +460,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         // Tells to the ImProcFunctions' tools what is the preview scale, which may lead to some simplifications
         ipf.setScale (scale);
 
-        imgsrc->getImage (currWB, tr, orig_prev, pp, params.toneCurve, params.icm, params.raw);
+        imgsrc->getImage (currWB, tr, orig_prev, pp, params.toneCurve, params.raw);
         denoiseInfoStore.valid = false;
         //ColorTemp::CAT02 (orig_prev, &params) ;
         //   printf("orig_prevW=%d\n  scale=%d",orig_prev->width, scale);
@@ -570,7 +570,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             LUTu aehist;
             int aehistcompr;
             imgsrc->getAutoExpHistogram (aehist, aehistcompr);
-            ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, params.toneCurve.expcomp,
+            ipf.getAutoExp (aehist, aehistcompr, params.toneCurve.clip, params.toneCurve.expcomp,
                             params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
 
             if (aeListener)
@@ -588,7 +588,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black / 65535.0,
                                     params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh,
                                     params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast,
-                                    params.toneCurve.curveMode, params.toneCurve.curve, params.toneCurve.curveMode2, params.toneCurve.curve2,
+                                    params.toneCurve.curve, params.toneCurve.curve2,
                                     vhist16, hltonecurve, shtonecurve, tonecurve, histToneCurve, customToneCurve1, customToneCurve2, 1);
 
         CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, 1);
@@ -605,13 +605,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 {wprof[1][0], wprof[1][1], wprof[1][2]},
                 {wprof[2][0], wprof[2][1], wprof[2][2]}
             };
-            TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params.icm.working);
-            double wip[3][3] = {
-                {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
-                {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
-                {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
-            };
-            params.colorToning.getCurves (ctColorCurve, ctOpacityCurve, wp, wip, opautili);
+            params.colorToning.getCurves (ctColorCurve, ctOpacityCurve, wp, opautili);
             CurveFactory::curveToning (params.colorToning.clcurve, clToningcurve, scale == 1 ? 1 : 16);
             CurveFactory::curveToning (params.colorToning.cl2curve, cl2Toningcurve, scale == 1 ? 1 : 16);
         }
@@ -683,7 +677,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             double bbm = 33.;
 
             DCPProfile::ApplyState as;
-            DCPProfile *dcpProf = imgsrc->getDCP (params.icm, currWB, as);
+            DCPProfile *dcpProf = imgsrc->getDCP (params.icm, as);
 
             ipf.rgbProc (oprevi, oprevl, nullptr, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
                          rCurve, gCurve, bCurve, colourToningSatLimit, colourToningSatLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, dcpProf, as, histToneCurve);
@@ -1129,7 +1123,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 }
 
             }
-
 
 
             int realspot = params.locallab.nbspot;
@@ -3497,7 +3490,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             int kall = 0;
             progress ("Wavelet...", 100 * readyphase / numofphases);
             //  ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, scale);
-            ipf.ip_wavelet (nprevl, nprevl, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, wavcontlutili, scale);
+            ipf.ip_wavelet (nprevl, nprevl, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, scale);
 
         }
 
@@ -3551,8 +3544,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 // end calculation adaptation scene luminosity
             }
 
-            int begh = 0;
-            int endh = pH;
             float d, dj, yb;
             bool execsharp = false;
 
@@ -3573,7 +3564,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             CAMBrightCurveJ.dirty = true;
             CAMBrightCurveQ.dirty = true;
 
-            ipf.ciecam_02float (ncie, float (adap), begh, endh, pW, 2, nprevl, &params, customColCurve1, customColCurve2, customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, scale, execsharp, d, dj, yb, 1);
+            ipf.ciecam_02float (ncie, float (adap), pW, 2, nprevl, &params, customColCurve1, customColCurve2, customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, scale, execsharp, d, dj, yb, 1);
 
             if ((params.colorappearance.autodegree || params.colorappearance.autodegreeout) && acListener && params.colorappearance.enabled) {
                 acListener->autoCamChanged (100.* (double)d, 100.* (double)dj);
@@ -4022,7 +4013,7 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring & fname, bool
         currWB = ColorTemp(); // = no white balance
     }
 
-    imgsrc->getImage (currWB, tr, im, pp, ppar.toneCurve, ppar.icm, ppar.raw);
+    imgsrc->getImage (currWB, tr, im, pp, ppar.toneCurve, ppar.raw);
     ImProcFunctions ipf (&ppar, true);
 
     if (ipf.needsTransform()) {

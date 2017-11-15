@@ -534,7 +534,7 @@ void CLASS fuji_extend_blue (ushort *linebuf[_ltotal], int line_width)
     fuji_extend_generic (linebuf, line_width, _B2, _B4);
 }
 
-void CLASS xtrans_decode_block (struct fuji_compressed_block* info, const struct fuji_compressed_params *params, int cur_line)
+void CLASS xtrans_decode_block (struct fuji_compressed_block* info, const struct fuji_compressed_params *params)
 {
     int r_even_pos = 0, r_odd_pos = 1;
     int g_even_pos = 0, g_odd_pos = 1;
@@ -699,8 +699,7 @@ void CLASS xtrans_decode_block (struct fuji_compressed_block* info, const struct
     }
 }
 
-void CLASS fuji_bayer_decode_block (struct fuji_compressed_block *info, const struct fuji_compressed_params *params,
-                                    int cur_line)
+void CLASS fuji_bayer_decode_block (struct fuji_compressed_block *info, const struct fuji_compressed_params *params)
 {
     int r_even_pos = 0, r_odd_pos = 1;
     int g_even_pos = 0, g_odd_pos = 1;
@@ -867,9 +866,9 @@ void CLASS fuji_decode_strip (const struct fuji_compressed_params* info_common, 
 
     for  (cur_line = 0; cur_line < fuji_total_lines; cur_line++) {
         if (fuji_raw_type == 16) {
-            xtrans_decode_block (&info, info_common, cur_line);
+            xtrans_decode_block (&info, info_common);
         } else {
-            fuji_bayer_decode_block (&info, info_common, cur_line);
+            fuji_bayer_decode_block (&info, info_common);
         }
 
         // copy data from line buffers and advance

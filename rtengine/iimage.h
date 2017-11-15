@@ -28,6 +28,7 @@
 #include "coord2d.h"
 #include "procparams.h"
 #include "color.h"
+#include "../rtgui/threadutils.h"
 
 #define TR_NONE     0
 #define TR_R90      1

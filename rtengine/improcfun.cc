@@ -28,7 +28,6 @@
 #include "curves.h"
 #include "mytime.h"
 #include "iccstore.h"
-#include "impulse_denoise.h"
 #include "imagesource.h"
 #include "rtthumbnail.h"
 #include "utils.h"
@@ -210,9 +209,9 @@ void ImProcFunctions::firstAnalysis (const Imagefloat* const original, const Pro
 
 
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
-void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh, int pW, int pwb, LabImage* lab, const ProcParams* params,
+void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int pW, int pwb, LabImage* lab, const ProcParams* params,
                                  const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2, const ColorAppearance & customColCurve3,
-                                 LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, double &d, double &dj, double &yb, int rtt)
+                                 LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, double &d, double &dj, int rtt)
 {
     if (params->colorappearance.enabled) {
 //int lastskip;
@@ -258,7 +257,6 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
         int width = lab->W, height = lab->H;
         float minQ = 10000.f;
         float maxQ = -1000.f;
-        float w_h = 0.f;
         float a_w = 0.f;
         float c_ = 0.f;
         float f_l;
@@ -278,9 +276,9 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 
         bool ciedata = params->colorappearance.datacie;
 
-        ColorTemp::temp2mulxyz (params->wb.temperature, params->wb.green, params->wb.method, Xw, Zw); //compute white Xw Yw Zw  : white current WB
-        ColorTemp::temp2mulxyz (params->colorappearance.tempout, params->colorappearance.greenout, "Custom", Xwout, Zwout);
-        ColorTemp::temp2mulxyz (params->colorappearance.tempsc, params->colorappearance.greensc, "Custom", Xwsc, Zwsc);
+        ColorTemp::temp2mulxyz (params->wb.temperature, params->wb.method, Xw, Zw); //compute white Xw Yw Zw  : white current WB
+        ColorTemp::temp2mulxyz (params->colorappearance.tempout, "Custom", Xwout, Zwout);
+        ColorTemp::temp2mulxyz (params->colorappearance.tempsc, "Custom", Xwsc, Zwsc);
 
         //viewing condition for surrsrc
         if (params->colorappearance.surrsrc == "Average") {
@@ -609,7 +607,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 
 
 #ifndef _DEBUG
-        #pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,yb2,la2,fl,nc,f,c, height,width,begh, endh,nc2,f2,c2, alg,algepd, gamu, highlight, rstprotection, pW, scale)
+        #pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,yb2,la2,fl,nc,f,c, height,width,nc2,f2,c2, alg,algepd, gamu, highlight, rstprotection, pW, scale)
 #endif
         {
             //matrix for current working space
@@ -655,15 +653,13 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                                                     Q,  M,  s, aw, fl, wh,
                                                     x,  y,  z,
                                                     xw1, yw1,  zw1,
-                                                    yb,  la,
-                                                    f, c,  nc,  pilot, gamu, n, nbb, ncb, pfl, cz, d );
+                                                    c,  nc, gamu, n, nbb, ncb, pfl, cz, d );
                     Jpro = J;
                     Cpro = C;
                     hpro = h;
                     Qpro = Q;
                     Mpro = M;
                     spro = s;
-                    w_h = wh + epsil;
                     a_w = aw;
                     c_ = c;
                     f_l = fl;
@@ -1182,8 +1178,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                         Ciecam02::jch2xyz_ciecam02 ( xx, yy, zz,
                                                      J,  C, h,
                                                      xw2, yw2,  zw2,
-                                                     yb2, la2,
-                                                     f2,  c2, nc2, gamu, nj, nbbj, ncbj, flj, czj, dj, awj);
+                                                     c2, nc2, gamu, nj, nbbj, ncbj, flj, czj, dj, awj);
                         x = (float)xx * 655.35;
                         y = (float)yy * 655.35;
                         z = (float)zz * 655.35;
@@ -1270,11 +1265,6 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 //if(params->dirpyrequalizer.enabled) if(execsharp) {
             if (params->dirpyrequalizer.enabled) {
                 if (params->dirpyrequalizer.gamutlab  /*&& execsharp*/) {
-                    float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
-                    float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
-                    float b_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[2]) / 100.0f;
-                    float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
-
                     float artifact = (float) settings->artifact_cbdl;
 
                     if (artifact > 6.f) {
@@ -1288,14 +1278,14 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                     float chrom = 50.f;
                     {
                         int hotbad = 0;
-                        ImProcFunctions::badpixcam (ncie, artifact, 5, 2, b_l, t_l, t_r, b_r, params->dirpyrequalizer.skinprotect, chrom, hotbad);      //enabled remove artifacts for cbDL
+                        ImProcFunctions::badpixcam (ncie, artifact, 5, 2, params->dirpyrequalizer.skinprotect, chrom, hotbad);      //enabled remove artifacts for cbDL
                     }
                 }
             }
 
             if (params->colorappearance.badpixsl > 0) if (execsharp) {
                     int mode = params->colorappearance.badpixsl;
-                    ImProcFunctions::badpixcam (ncie, 3.4, 5, mode, 0, 0, 0, 0, 0, 0, 1);//for bad pixels CIECAM
+                    ImProcFunctions::badpixcam (ncie, 3.4, 5, mode, 0, 0, 1);//for bad pixels CIECAM
                 }
 
             if (params->sharpenMicro.enabled)if (execsharp) {
@@ -1316,10 +1306,8 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                 if (rtt == 1) {
                     float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
                     float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
-                    float b_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[2]) / 100.0f;
                     float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
-                    int choice = 0; //not disabled in case of ! always 0
-                    dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold,  params->dirpyrequalizer.skinprotect, true, params->dirpyrequalizer.gamutlab, b_l, t_l, t_r, b_r, choice, scale);   //contrast by detail adapted to CIECAM
+                    dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold,  params->dirpyrequalizer.skinprotect, true, b_l, t_l, t_r, scale);   //contrast by detail adapted to CIECAM
                 }
             }
 
@@ -1349,14 +1337,14 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                 ||  (params->colorappearance.badpixsl > 0 && settings->autocielab)) {
 
             if (params->epd.enabled  && params->colorappearance.tonecie  && algepd) {
-                ImProcFunctions::EPDToneMapCIE (ncie, a_w, c_, w_h, width, height, begh, endh, minQ, maxQ, Iterates, scale );
+                ImProcFunctions::EPDToneMapCIE (ncie, a_w, c_, width, height, minQ, maxQ, Iterates, scale );
             }
 
             //EPDToneMapCIE adapted to CIECAM
 
 
 #ifndef _DEBUG
-            #pragma omp parallel default(shared) firstprivate(lab,xw2,yw2,zw2,chr,yb,la2,yb2, height,width,begh, endh, nc2,f2,c2, gamu, highlight,pW)
+            #pragma omp parallel default(shared) firstprivate(lab,xw2,yw2,zw2,chr,yb,la2,yb2, height,width, nc2,f2,c2, gamu, highlight,pW)
 #endif
             {
                 TMatrix wiprofa = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.working);
@@ -1451,8 +1439,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                         Ciecam02::jch2xyz_ciecam02 ( xx, yy, zz,
                                                      ncie->J_p[i][j],  ncie->C_p[i][j], ncie->h_p[i][j],
                                                      xw2, yw2,  zw2,
-                                                     yb2, la2,
-                                                     f2,  c2, nc2, gamu, nj, nbbj, ncbj, flj, czj, dj, awj);
+                                                     c2, nc2, gamu, nj, nbbj, ncbj, flj, czj, dj, awj);
                         x = (float)xx * 655.35;
                         y = (float)yy * 655.35;
                         z = (float)zz * 655.35;
@@ -1523,7 +1510,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 
 
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
-void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int endh, int pW, int pwb, LabImage* lab, const ProcParams* params,
+void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pwb, LabImage* lab, const ProcParams* params,
                                       const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2, const ColorAppearance & customColCurve3,
                                       LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, float &dj, float &yb, int rtt)
 {
@@ -1565,9 +1552,9 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                        || (params->dirpyrequalizer.enabled && settings->autocielab) || (params->defringe.enabled && settings->autocielab)  || (params->sharpenMicro.enabled && settings->autocielab)
                        || (params->impulseDenoise.enabled && settings->autocielab) ||  (params->colorappearance.badpixsl > 0 && settings->autocielab));
 
-        ColorTemp::temp2mulxyz (params->wb.temperature, params->wb.green, params->wb.method, Xw, Zw); //compute white Xw Yw Zw  : white current WB
-        ColorTemp::temp2mulxyz (params->colorappearance.tempout, params->colorappearance.greenout, "Custom", Xwout, Zwout);
-        ColorTemp::temp2mulxyz (params->colorappearance.tempsc, params->colorappearance.greensc, "Custom", Xwsc, Zwsc);
+        ColorTemp::temp2mulxyz (params->wb.temperature, params->wb.method, Xw, Zw); //compute white Xw Yw Zw  : white current WB
+        ColorTemp::temp2mulxyz (params->colorappearance.tempout, "Custom", Xwout, Zwout);
+        ColorTemp::temp2mulxyz (params->colorappearance.tempsc, "Custom", Xwsc, Zwsc);
 
         //viewing condition for surrsrc
         if (params->colorappearance.surrsrc == "Average") {
@@ -1984,7 +1971,6 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
         const float pow1n = pow_F ( 1.64f - pow_F ( 0.29f, nj ), 0.73f );
 
         const float epsil = 0.0001f;
-        const float w_h = wh + epsil;
         const float coefQ = 32767.f / wh;
         const float a_w = aw;
         const float c_ = c;
@@ -2607,7 +2593,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                     Ciecam02::jch2xyz_ciecam02float ( x, y, z,
                                                       LVF (Jbuffer[k]), LVF (Cbuffer[k]), LVF (hbuffer[k]),
                                                       F2V (xw2), F2V (yw2), F2V (zw2),
-                                                      F2V (f2),  F2V (nc2), F2V (pow1n), F2V (nbbj), F2V (ncbj), F2V (flj), F2V (dj), F2V (awj), F2V (reccmcz));
+                                                      F2V (nc2), F2V (pow1n), F2V (nbbj), F2V (ncbj), F2V (flj), F2V (dj), F2V (awj), F2V (reccmcz));
                     STVF (xbuffer[k], x * c655d35);
                     STVF (ybuffer[k], y * c655d35);
                     STVF (zbuffer[k], z * c655d35);
@@ -2709,10 +2695,6 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
 //if(params->dirpyrequalizer.enabled) if(execsharp) {
                 if (params->dirpyrequalizer.enabled)  {
                     if (params->dirpyrequalizer.gamutlab  /*&& execsharp*/) { //remove artifacts by gaussian blur - skin control
-                        float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
-                        float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
-                        float b_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[2]) / 100.0f;
-                        float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
                         float artifact = (float) settings->artifact_cbdl;
 
                         if (artifact > 6.f) {
@@ -2726,7 +2708,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         int hotbad = 0;
                         float chrom = 50.f;
                         lab->deleteLab();
-                        ImProcFunctions::badpixcam (ncie, artifact, 5, 2, b_l, t_l, t_r, b_r, params->dirpyrequalizer.skinprotect, chrom, hotbad);  //enabled remove artifacts for cbDL
+                        ImProcFunctions::badpixcam (ncie, artifact, 5, 2, params->dirpyrequalizer.skinprotect, chrom, hotbad);  //enabled remove artifacts for cbDL
                         lab->reallocLab();
                     }
                 }
@@ -2735,7 +2717,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                 if (params->colorappearance.badpixsl > 0) if (execsharp) {
                         int mode = params->colorappearance.badpixsl;
                         lab->deleteLab();
-                        ImProcFunctions::badpixcam (ncie, 3.0, 10, mode, 0, 0, 0, 0, 0, 0, 1);//for bad pixels CIECAM
+                        ImProcFunctions::badpixcam (ncie, 3.0, 10, mode, 0, 0, 1);//for bad pixels CIECAM
                         lab->reallocLab();
                     }
 
@@ -2765,11 +2747,9 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                     if (rtt == 1) {
                         float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
                         float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
-                        float b_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[2]) / 100.0f;
                         float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
-                        int choice = 0; // I have not suppress this statement in case of !! always to 0
                         lab->deleteLab();
-                        dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, params->dirpyrequalizer.skinprotect,  true, params->dirpyrequalizer.gamutlab, b_l, t_l, t_r, b_r, choice, scale); //contrast by detail adapted to CIECAM
+                        dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, params->dirpyrequalizer.skinprotect, true, b_l, t_l, t_r, scale); //contrast by detail adapted to CIECAM
                         lab->reallocLab();
                     }
 
@@ -2812,7 +2792,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
 
             if (epdEnabled  && params->colorappearance.tonecie && algepd) {
                 lab->deleteLab();
-                ImProcFunctions::EPDToneMapCIE (ncie, a_w, c_, w_h, width, height, begh, endh, minQ, maxQ, Iterates, scale );
+                ImProcFunctions::EPDToneMapCIE (ncie, a_w, c_, width, height, minQ, maxQ, Iterates, scale );
                 lab->reallocLab();
             }
 
@@ -2951,7 +2931,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         Ciecam02::jch2xyz_ciecam02float ( x, y, z,
                                                           LVF (Jbuffer[k]), LVF (Cbuffer[k]), LVF (hbuffer[k]),
                                                           F2V (xw2), F2V (yw2), F2V (zw2),
-                                                          F2V (f2), F2V (nc2), F2V (pow1n), F2V (nbbj), F2V (ncbj), F2V (flj), F2V (dj), F2V (awj), F2V (reccmcz));
+                                                          F2V (nc2), F2V (pow1n), F2V (nbbj), F2V (ncbj), F2V (flj), F2V (dj), F2V (awj), F2V (reccmcz));
                         x *= c655d35;
                         y *= c655d35;
                         z *= c655d35;
@@ -4070,7 +4050,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                 float lumbefore = 0.299f * r + 0.587f * g + 0.114f * b;
                                 float ro, go, bo;
                                 int mode = 0;
-                                toningsmh (r, g, b, ro, go, bo, RedLow, GreenLow, BlueLow, RedMed, GreenMed, BlueMed, RedHigh, GreenHigh, BlueHigh, reducac, mode, preser, strProtect);
+                                toningsmh (r, g, b, ro, go, bo, RedLow, GreenLow, BlueLow, RedMed, GreenMed, BlueMed, RedHigh, GreenHigh, BlueHigh, reducac, mode, strProtect);
                                 float lumafter = 0.299f * ro + 0.587f * go + 0.114f * bo;
                                 float preserv = 1.f;
 
@@ -4221,21 +4201,21 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                         if (beforeCurveMode == BlackWhiteParams::TC_MODE_STD_BW) { // Standard
                             for (int i = istart, ti = 0; i < tH; i++, ti++) {
                                 for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                    const StandardToneCurvebw& userToneCurvebw = static_cast<const StandardToneCurvebw&> (customToneCurvebw1);
+                                    const StandardToneCurve& userToneCurvebw = static_cast<const StandardToneCurve&> (customToneCurvebw1);
                                     userToneCurvebw.Apply (rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
                                 }
                             }
                         } else if (beforeCurveMode == BlackWhiteParams::TC_MODE_FILMLIKE_BW) { // Adobe like
                             for (int i = istart, ti = 0; i < tH; i++, ti++) {
                                 for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                    const AdobeToneCurvebw& userToneCurvebw = static_cast<const AdobeToneCurvebw&> (customToneCurvebw1);
+                                    const AdobeToneCurve& userToneCurvebw = static_cast<const AdobeToneCurve&> (customToneCurvebw1);
                                     userToneCurvebw.Apply (rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
                                 }
                             }
                         } else if (beforeCurveMode == BlackWhiteParams::TC_MODE_SATANDVALBLENDING_BW) { // apply the curve on the saturation and value channels
                             for (int i = istart, ti = 0; i < tH; i++, ti++) {
                                 for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                    const SatAndValueBlendingToneCurvebw& userToneCurvebw = static_cast<const SatAndValueBlendingToneCurvebw&> (customToneCurvebw1);
+                                    const SatAndValueBlendingToneCurve& userToneCurvebw = static_cast<const SatAndValueBlendingToneCurve&> (customToneCurvebw1);
                                     rtemp[ti * TS + tj] = CLIP<float> (rtemp[ti * TS + tj]);
                                     gtemp[ti * TS + tj] = CLIP<float> (gtemp[ti * TS + tj]);
                                     btemp[ti * TS + tj] = CLIP<float> (btemp[ti * TS + tj]);
@@ -4245,7 +4225,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                         } else if (beforeCurveMode == BlackWhiteParams::TC_MODE_WEIGHTEDSTD_BW) { // apply the curve to the rgb channels, weighted
                             for (int i = istart, ti = 0; i < tH; i++, ti++) {
                                 for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                    const WeightedStdToneCurvebw& userToneCurvebw = static_cast<const WeightedStdToneCurvebw&> (customToneCurvebw1);
+                                    const WeightedStdToneCurve& userToneCurvebw = static_cast<const WeightedStdToneCurve&> (customToneCurvebw1);
                                     rtemp[ti * TS + tj] = CLIP<float> (rtemp[ti * TS + tj]);
                                     gtemp[ti * TS + tj] = CLIP<float> (gtemp[ti * TS + tj]);
                                     btemp[ti * TS + tj] = CLIP<float> (btemp[ti * TS + tj]);
@@ -4685,7 +4665,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                 for (int i = 0; i < tH; i++) {
                     for (int j = 0; j < tW; j++) {
-                        const StandardToneCurvebw& userToneCurve = static_cast<const StandardToneCurvebw&> (customToneCurvebw2);
+                        const StandardToneCurve& userToneCurve = static_cast<const StandardToneCurve&> (customToneCurvebw2);
                         userToneCurve.Apply (tmpImage->r (i, j), tmpImage->g (i, j), tmpImage->b (i, j));
                     }
                 }
@@ -4696,7 +4676,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                 for (int i = 0; i < tH; i++) { //for ulterior usage if bw data modified
                     for (int j = 0; j < tW; j++) {
-                        const WeightedStdToneCurvebw& userToneCurve = static_cast<const WeightedStdToneCurvebw&> (customToneCurvebw2);
+                        const WeightedStdToneCurve& userToneCurve = static_cast<const WeightedStdToneCurve&> (customToneCurvebw2);
 
                         tmpImage->r (i, j) = CLIP<float> (tmpImage->r (i, j));
                         tmpImage->g (i, j) = CLIP<float> (tmpImage->g (i, j));
@@ -4749,7 +4729,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                         if (lumbefore < 65000.f  && lumbefore > 500.f) { //reduct artifacts for highlights an extrem shadows
                             float ro, go, bo;
                             int mode = 1;
-                            toningsmh (r, g, b, ro, go, bo, RedLow, GreenLow, BlueLow, RedMed, GreenMed, BlueMed, RedHigh, GreenHigh, BlueHigh, reducac, mode, preser, strProtect);
+                            toningsmh (r, g, b, ro, go, bo, RedLow, GreenLow, BlueLow, RedMed, GreenMed, BlueMed, RedHigh, GreenHigh, BlueHigh, reducac, mode, strProtect);
                             float lumafter = 0.299f * ro + 0.587f * go + 0.114f * bo;
                             float preserv = 1.f;
 
@@ -5091,7 +5071,7 @@ void ImProcFunctions::secondeg_begin (float reducac, float vend, float &aam, flo
 * @param mode ?
 * @param preser whether to preserve luminance (if 1) or not
 **/
-void ImProcFunctions::toningsmh (float r, float g, float b, float &ro, float &go, float &bo, float RedLow, float GreenLow, float BlueLow, float RedMed, float GreenMed, float BlueMed, float RedHigh, float GreenHigh, float BlueHigh, float reducac, int mode, int preser, float strProtect)
+void ImProcFunctions::toningsmh (float r, float g, float b, float &ro, float &go, float &bo, float RedLow, float GreenLow, float BlueLow, float RedMed, float GreenMed, float BlueMed, float RedHigh, float GreenHigh, float BlueHigh, float reducac, int mode, float strProtect)
 {
     float bmu = mode == 1 ? 0.5f : 0.4f;
     float RedL   = 1.f + (RedLow  - 1.f) * 0.4f;
@@ -5568,8 +5548,6 @@ void ImProcFunctions::labtoning (float r, float g, float b, float &ro, float &go
     float opacity2 = (1.f - min<float> (s / satLimit, 1.f) * (1.f - satLimitOpacity));
 
     //float ro, go, bo;
-    bool chr = true;
-    bool lum = false;
     float lm = l;
     float chromat, luma;
 
@@ -5585,12 +5563,10 @@ void ImProcFunctions::labtoning (float r, float g, float b, float &ro, float &go
         luma = 1.f - SQR (SQR ((lm * 65535.f) / (cl2Toningcurve[ (lm) * 65535.f]))); //apply C2=f(L) acts only on 'b'
     }
 
-    int todo = 1;
-
     if (algm == 1) {
-        Color::interpolateRGBColor (realL, iplow, iphigh, algm, opacity, twoc, metchrom, chr, lum, chromat, luma, r, g, b, xl, yl, zl, x2, y2, z2, todo, wp, wip, ro, go, bo);
+        Color::interpolateRGBColor (realL, iplow, iphigh, algm, opacity, twoc, metchrom, chromat, luma, r, g, b, xl, yl, zl, x2, y2, z2, wp, wip, ro, go, bo);
     } else {
-        Color::interpolateRGBColor (realL, iplow, iphigh, algm, opacity2, twoc, metchrom, chr, lum, chromat, luma, r, g, b, xl, yl, zl, x2, y2, z2, todo, wp, wip, ro, go, bo);
+        Color::interpolateRGBColor (realL, iplow, iphigh, algm, opacity2, twoc, metchrom, chromat, luma, r, g, b, xl, yl, zl, x2, y2, z2, wp, wip, ro, go, bo);
     }
 }
 
@@ -5830,7 +5806,7 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
 
                 // only if user activate Lab adjustments
                 if (autili || butili || ccutili ||  cclutili || chutili || lhutili || hhutili || clcutili || utili || chromaticity) {
-                    Color::LabGamutMunsell (lold->L[i], lold->a[i], lold->b[i], W, /*corMunsell*/true, /*lumaMuns*/false, params->toneCurve.hrenabled, /*gamut*/true, wip, multiThread);
+                    Color::LabGamutMunsell (lold->L[i], lold->a[i], lold->b[i], W, /*corMunsell*/true, /*lumaMuns*/false, params->toneCurve.hrenabled, /*gamut*/true, wip);
                 }
 
 #ifdef __SSE2__
@@ -6389,8 +6365,8 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
 
 //#include "cubic.cc"
 
-void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew)
-{
+//void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew)
+//{
 
     /*    LUT<double> cmultiplier(181021);
 
@@ -6467,7 +6443,7 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew)
             }
     */
     //delete [] cmultiplier;
-}
+//}
 
 void ImProcFunctions::impulsedenoise (LabImage* lab)
 {
@@ -6506,17 +6482,17 @@ void ImProcFunctions::defringecam (CieImage* ncie)
     }
 }
 
-void ImProcFunctions::badpixcam (CieImage* ncie, double rad, int thr, int mode, float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom, int hotbad)
+void ImProcFunctions::badpixcam (CieImage* ncie, double rad, int thr, int mode, float skinprot, float chrom, int hotbad)
 {
     if (ncie->W >= 8 && ncie->H >= 8) {
-        Badpixelscam (ncie, ncie, rad, thr, mode, b_l, t_l, t_r, b_r, skinprot, chrom, hotbad);
+        Badpixelscam (ncie, ncie, rad, thr, mode, skinprot, chrom, hotbad);
     }
 }
 
-void ImProcFunctions::badpixlab (LabImage* lab, double rad, int thr, int mode, float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom)
+void ImProcFunctions::badpixlab (LabImage* lab, double rad, int thr, int mode, float skinprot, float chrom)
 {
     if (lab->W >= 8 && lab->H >= 8) {
-        BadpixelsLab (lab, lab, rad, thr, mode, b_l, t_l, t_r, b_r, skinprot, chrom);
+        BadpixelsLab (lab, lab, rad, thr, mode, skinprot, chrom);
     }
 }
 
@@ -6525,9 +6501,7 @@ void ImProcFunctions::dirpyrequalizer (LabImage* lab, int scale)
     if (params->dirpyrequalizer.enabled && lab->W >= 8 && lab->H >= 8) {
         float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
         float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
-        float b_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[2]) / 100.0f;
         float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
-        int choice = 0; //I have  not disabled this statement in case of ! always 0
         //      if     (params->dirpyrequalizer.algo=="FI") choice=0;
         //      else if(params->dirpyrequalizer.algo=="LA") choice=1;
         float artifact = (float) settings->artifact_cbdl;
@@ -6543,14 +6517,14 @@ void ImProcFunctions::dirpyrequalizer (LabImage* lab, int scale)
         float chrom = 50.f;
 
         if (params->dirpyrequalizer.gamutlab) {
-            ImProcFunctions::badpixlab (lab, artifact, 5, 3, b_l, t_l, t_r, b_r, params->dirpyrequalizer.skinprotect, chrom);    //for artifacts
+            ImProcFunctions::badpixlab (lab, artifact, 5, 3, params->dirpyrequalizer.skinprotect, chrom);    //for artifacts
         }
 
         //dirpyrLab_equalizer(lab, lab, params->dirpyrequalizer.mult);
-        dirpyr_equalizer (lab->L, lab->L, lab->W, lab->H, lab->a, lab->b, lab->a, lab->b, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, params->dirpyrequalizer.skinprotect, params->dirpyrequalizer.gamutlab,  b_l, t_l, t_r, b_r, choice, scale);
+        dirpyr_equalizer (lab->L, lab->L, lab->W, lab->H, lab->a, lab->b, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, params->dirpyrequalizer.skinprotect, b_l, t_l, t_r, scale);
     }
 }
-void ImProcFunctions::EPDToneMapCIE (CieImage *ncie, float a_w, float c_, float w_h, int Wid, int Hei, int begh, int endh, float minQ, float maxQ, unsigned int Iterates, int skip)
+void ImProcFunctions::EPDToneMapCIE (CieImage *ncie, float a_w, float c_, int Wid, int Hei, float minQ, float maxQ, unsigned int Iterates, int skip)
 {
 
     if (!params->epd.enabled) {
@@ -6866,14 +6840,7 @@ void ImProcFunctions::EPDToneMap (LabImage *lab, unsigned int Iterates, int skip
 }
 
 
-
-
-
-
-
-
-void ImProcFunctions::getAutoExp  (const LUTu &histogram, int histcompr, double defgain, double clip,
-                                   double& expcomp, int& bright, int& contr, int& black, int& hlcompr, int& hlcomprthresh)
+void ImProcFunctions::getAutoExp  (const LUTu &histogram, int histcompr, double clip, double& expcomp, int& bright, int& contr, int& black, int& hlcompr, int& hlcomprthresh)
 {
 
     float scale = 65536.0f;
@@ -7190,7 +7157,7 @@ double ImProcFunctions::getAutoDistor  (const Glib::ustring &fname, int thumb_si
             return 0.0;
         }
 
-        Thumbnail* raw =   rtengine::Thumbnail::loadFromRaw      (fname, ri, sensorType, w_raw, h_raw, 1, 1.0, FALSE, 0);
+        Thumbnail* raw =   rtengine::Thumbnail::loadFromRaw      (fname, ri, sensorType, w_raw, h_raw, 1, 1.0, FALSE);
 
         if (!raw) {
             delete thumb;

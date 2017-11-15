@@ -1435,253 +1435,278 @@ int CLASS raw (unsigned row, unsigned col)
 
 void CLASS phase_one_flat_field (int is_float, int nc)
 {
-  ushort head[8];
-  unsigned wide, high, y, x, c, rend, cend, row, col;
-  float *mrow, num, mult[4];
+    ushort uhead[8];
 
-  read_shorts (head, 8);
-  if (head[2] * head[3] * head[4] * head[5] == 0) return;
-  wide = head[2] / head[4] + (head[2] % head[4] != 0);
-  high = head[3] / head[5] + (head[3] % head[5] != 0);
-  mrow = (float *) calloc (nc*wide, sizeof *mrow);
-  merror (mrow, "phase_one_flat_field()");
-  for (y=0; y < high; y++) {
-    for (x=0; x < wide; x++)
-      for (c=0; c < nc; c+=2) {
-	num = is_float ? getreal(11) : get2()/32768.0;
-	if (y==0) mrow[c*wide+x] = num;
-	else mrow[(c+1)*wide+x] = (num - mrow[c*wide+x]) / head[5];
-      }
-    if (y==0) continue;
-    rend = head[1] + y*head[5];
-    for (row = rend-head[5];
-	 row < raw_height && row < rend &&
-	 row < head[1]+head[3]-head[5]; row++) {
-      for (x=1; x < wide; x++) {
-	for (c=0; c < nc; c+=2) {
-	  mult[c] = mrow[c*wide+x-1];
-	  mult[c+1] = (mrow[c*wide+x] - mult[c]) / head[4];
-	}
-	cend = head[0] + x*head[4];
-	for (col = cend-head[4];
-	     col < raw_width &&
-	     col < cend && col < head[0]+head[2]-head[4]; col++) {
-	  c = nc > 2 ? FC(row-top_margin,col-left_margin) : 0;
-	  if (!(c & 1)) {
-	    c = RAW(row,col) * mult[c];
-	    RAW(row,col) = LIM(c,0,65535);
-	  }
-	  for (c=0; c < nc; c+=2)
-	    mult[c] += mult[c+1];
-	}
-      }
-      for (x=0; x < wide; x++)
-	for (c=0; c < nc; c+=2)
-	  mrow[c*wide+x] += mrow[(c+1)*wide+x];
+    read_shorts (uhead, 8);
+    if (uhead[2] * uhead[3] * uhead[4] * uhead[5] == 0) {
+        return;
     }
-  }
-  free (mrow);
+    const unsigned wide = uhead[2] / uhead[4] + (uhead[2] % uhead[4] != 0);
+    const unsigned high = uhead[3] / uhead[5] + (uhead[3] % uhead[5] != 0);
+    const unsigned colLimit = std::min(uhead[0] + uhead[2] - uhead[4], (int)raw_width);
+
+    const float head4 = 1.0 / uhead[4];
+    const float head5 = 1.0 / uhead[5];
+
+    float* mrow = (float *) calloc(nc * wide, sizeof *mrow);
+    merror(mrow, "phase_one_flat_field()");
+    for (unsigned x=0; x < wide; x++) {
+        for (unsigned c=0; c < nc; c+=2) {
+            float num = is_float ? getreal(11) : get2() / 32768.f;
+            mrow[c * wide + x] = num;
+        }
+    }
+    for (unsigned y=1; y < high; y++) {
+        for (unsigned x=0; x < wide; x++) {
+            for (unsigned c=0; c < nc; c+=2) {
+                float num = is_float ? getreal(11) : get2() / 32768.f;
+                mrow[(c + 1) * wide + x] = (num - mrow[c * wide + x]) * head5;
+           }
+        }
+        const unsigned rend = uhead[1] + y * uhead[5];
+        for (unsigned row = rend - uhead[5]; row < raw_height && row < rend && row < uhead[1] + uhead[3] - uhead[5]; row++) {
+            unsigned cend = uhead[0] + uhead[4];
+            const unsigned c0 = FC(row - top_margin, cend - uhead[4] - left_margin);
+            const unsigned c = nc > 2 ? (c0 & 1) ? FC(row - top_margin, cend - uhead[4] - left_margin + 1) : c0 : 0;
+            for (unsigned x=1; x < wide; x++, cend += uhead[4]) {
+                float mult0 = mrow[c * wide + x - 1];
+                float mult1 = (mrow[c * wide + x] - mult0) * head4;
+                if (nc > 2) {
+                    mult0 += (c0 & 1) ? mult1 : 0;
+                    for (unsigned col = cend - uhead[4] + (c0 & 1); col < std::min(colLimit, cend); col += 2) {
+                        unsigned val = RAW(row, col) * mult0;
+                        RAW(row, col) = rtengine::min(val, 65535u);
+                        mult0 += mult1;
+                        mult0 += mult1; // <= this could be reduced to one addition inside the loop, but then the result is not exactly the same as with old code, though it should be even more accurate then
+                    }
+                } else {
+                    for (unsigned col = cend - uhead[4]; col < std::min(colLimit, cend); col++) {
+                        unsigned val = RAW(row, col) * mult0;
+                        RAW(row, col) = rtengine::min(val, 65535u);
+                        mult0 += mult1;
+                    }
+                }
+            }
+            for (unsigned x = 0; x < wide; x++) {
+                for (unsigned c = 0; c < nc; c += 2) {
+                    mrow[c * wide + x] += mrow[(c + 1) * wide + x];
+                }
+            }
+        }
+    }
+  free(mrow);
 }
 
 void CLASS phase_one_correct()
 {
-  unsigned entries, tag, data, save, col, row, type;
-  int len, i, j, k, cip, val[4], dev[4], sum, max;
-  int head[9], diff, mindiff=INT_MAX, off_412=0;
-  static const signed char dir[12][2] =
-    { {-1,-1}, {-1,1}, {1,-1}, {1,1}, {-2,0}, {0,-2}, {0,2}, {2,0},
-      {-2,-2}, {-2,2}, {2,-2}, {2,2} };
-  float poly[8], num, cfrac, frac, mult[2], *yval[2];
-  ushort *xval[2];
-  int qmult_applied = 0, qlin_applied = 0;
+    unsigned entries, tag, data, save, col, row, type;
+    int len, i, j, k, cip, val[4], dev[4], sum, max;
+    int head[9], diff, mindiff=INT_MAX, off_412=0;
+    static const signed char dir[12][2] = { {-1,-1}, {-1,1}, {1,-1}, {1,1}, {-2,0}, {0,-2}, {0,2}, {2,0}, {-2,-2}, {-2,2}, {2,-2}, {2,2} };
+    float poly[8], num, cfrac, frac, mult[2], *yval[2];
+    ushort *xval[2];
+    int qmult_applied = 0, qlin_applied = 0;
 
-  if (half_size || !meta_length) return;
-  if (verbose) fprintf (stderr,_("Phase One correction...\n"));
-  fseek (ifp, meta_offset, SEEK_SET);
-  order = get2();
-  fseek (ifp, 6, SEEK_CUR);
-  fseek (ifp, meta_offset+get4(), SEEK_SET);
-  entries = get4();  get4();
-  while (entries--) {
-    tag  = get4();
-    len  = get4();
-    data = get4();
-    save = ftell(ifp);
-    fseek (ifp, meta_offset+data, SEEK_SET);
-    if (tag == 0x419) {				/* Polynomial curve */
-      for (get4(), i=0; i < 8; i++)
-	poly[i] = getreal(11);
-      poly[3] += (ph1.tag_210 - poly[7]) * poly[6] + 1;
-      for (i=0; i < 0x10000; i++) {
-	num = (poly[5]*i + poly[3])*i + poly[1];
-	curve[i] = LIM(num,0,65535);
-      } goto apply;				/* apply to right half */
-    } else if (tag == 0x41a) {			/* Polynomial curve */
-      for (i=0; i < 4; i++)
-	poly[i] = getreal(11);
-      for (i=0; i < 0x10000; i++) {
-	for (num=0, j=4; j--; )
-	  num = num * i + poly[j];
-	curve[i] = LIM(num+i,0,65535);
-      } apply:					/* apply to whole image */
-      for (row=0; row < raw_height; row++)
-	for (col = (tag & 1)*ph1.split_col; col < raw_width; col++)
-	  RAW(row,col) = curve[RAW(row,col)];
-    } else if (tag == 0x400) {			/* Sensor defects */
-      while ((len -= 8) >= 0) {
-	col  = get2();
-	row  = get2();
-	type = get2(); get2();
-	if (col >= raw_width) continue;
-	if (type == 131 || type == 137)		/* Bad column */
-	  for (row=0; row < raw_height; row++)
-	    if (FC(row-top_margin,col-left_margin) == 1) {
-	      for (sum=i=0; i < 4; i++)
-		sum += val[i] = raw (row+dir[i][0], col+dir[i][1]);
-	      for (max=i=0; i < 4; i++) {
-		dev[i] = abs((val[i] << 2) - sum);
-		if (dev[max] < dev[i]) max = i;
-	      }
-	      RAW(row,col) = (sum - val[max])/3.0 + 0.5;
-	    } else {
-	      for (sum=0, i=8; i < 12; i++)
-		sum += raw (row+dir[i][0], col+dir[i][1]);
-	      RAW(row,col) = 0.5 + sum * 0.0732233 +
-		(raw(row,col-2) + raw(row,col+2)) * 0.3535534;
-	    }
-	else if (type == 129) {			/* Bad pixel */
-	  if (row >= raw_height) continue;
-	  j = (FC(row-top_margin,col-left_margin) != 1) * 4;
-	  for (sum=0, i=j; i < j+8; i++)
-	    sum += raw (row+dir[i][0], col+dir[i][1]);
-	  RAW(row,col) = (sum + 4) >> 3;
-	}
-      }
-    } else if (tag == 0x401) {			/* All-color flat fields */
-      phase_one_flat_field (1, 2);
-    } else if (tag == 0x416 || tag == 0x410) {
-      phase_one_flat_field (0, 2);
-    } else if (tag == 0x40b) {			/* Red+blue flat field */
-      phase_one_flat_field (0, 4);
-    } else if (tag == 0x412) {
-      fseek (ifp, 36, SEEK_CUR);
-      diff = abs (get2() - ph1.tag_21a);
-      if (mindiff > diff) {
-	mindiff = diff;
-	off_412 = ftell(ifp) - 38;
-      }
-    } else if (tag == 0x41f && !qlin_applied) { /* Quadrant linearization */
-      ushort lc[2][2][16], ref[16];
-      int qr, qc;
-      for (qr = 0; qr < 2; qr++)
-	for (qc = 0; qc < 2; qc++)
-	  for (i = 0; i < 16; i++)
-	    lc[qr][qc][i] = get4();
-      for (i = 0; i < 16; i++) {
-	int v = 0;
-	for (qr = 0; qr < 2; qr++)
-	  for (qc = 0; qc < 2; qc++)
-	    v += lc[qr][qc][i];
-	ref[i] = (v + 2) >> 2;
-      }
-      for (qr = 0; qr < 2; qr++) {
-	for (qc = 0; qc < 2; qc++) {
-	  int cx[19], cf[19];
-	  for (i = 0; i < 16; i++) {
-	    cx[1+i] = lc[qr][qc][i];
-	    cf[1+i] = ref[i];
-	  }
-	  cx[0] = cf[0] = 0;
-	  cx[17] = cf[17] = ((unsigned) ref[15] * 65535) / lc[qr][qc][15];
-	  cx[18] = cf[18] = 65535;
-	  cubic_spline(cx, cf, 19);
-	  for (row = (qr ? ph1.split_row : 0);
-	       row < (qr ? raw_height : ph1.split_row); row++)
-	    for (col = (qc ? ph1.split_col : 0);
-		 col < (qc ? raw_width : ph1.split_col); col++)
-	      RAW(row,col) = curve[RAW(row,col)];
-	}
-      }
-      qlin_applied = 1;
-    } else if (tag == 0x41e && !qmult_applied) { /* Quadrant multipliers */
-      float qmult[2][2] = { { 1, 1 }, { 1, 1 } };
-      get4(); get4(); get4(); get4();
-      qmult[0][0] = 1.0 + getreal(11);
-      get4(); get4(); get4(); get4(); get4();
-      qmult[0][1] = 1.0 + getreal(11);
-      get4(); get4(); get4();
-      qmult[1][0] = 1.0 + getreal(11);
-      get4(); get4(); get4();
-      qmult[1][1] = 1.0 + getreal(11);
-      for (row=0; row < raw_height; row++)
-	for (col=0; col < raw_width; col++) {
-	  i = qmult[row >= ph1.split_row][col >= ph1.split_col] * RAW(row,col);
-	  RAW(row,col) = LIM(i,0,65535);
-	}
-      qmult_applied = 1;
-    } else if (tag == 0x431 && !qmult_applied) { /* Quadrant combined */
-      ushort lc[2][2][7], ref[7];
-      int qr, qc;
-      for (i = 0; i < 7; i++)
-	ref[i] = get4();
-      for (qr = 0; qr < 2; qr++)
-	for (qc = 0; qc < 2; qc++)
-	  for (i = 0; i < 7; i++)
-	    lc[qr][qc][i] = get4();
-      for (qr = 0; qr < 2; qr++) {
-	for (qc = 0; qc < 2; qc++) {
-	  int cx[9], cf[9];
-	  for (i = 0; i < 7; i++) {
-	    cx[1+i] = ref[i];
-	    cf[1+i] = ((unsigned) ref[i] * lc[qr][qc][i]) / 10000;
-	  }
-	  cx[0] = cf[0] = 0;
-	  cx[8] = cf[8] = 65535;
-	  cubic_spline(cx, cf, 9);
-	  for (row = (qr ? ph1.split_row : 0);
-	       row < (qr ? raw_height : ph1.split_row); row++)
-	    for (col = (qc ? ph1.split_col : 0);
-		 col < (qc ? raw_width : ph1.split_col); col++)
-	      RAW(row,col) = curve[RAW(row,col)];
-        }
-      }
-      qmult_applied = 1;
-      qlin_applied = 1;
+    if (half_size || !meta_length) {
+        return;
     }
-    fseek (ifp, save, SEEK_SET);
-  }
-  if (off_412) {
-    fseek (ifp, off_412, SEEK_SET);
-    for (i=0; i < 9; i++) head[i] = get4() & 0x7fff;
-    yval[0] = (float *) calloc (head[1]*head[3] + head[2]*head[4], 6);
-    merror (yval[0], "phase_one_correct()");
-    yval[1] = (float  *) (yval[0] + head[1]*head[3]);
-    xval[0] = (ushort *) (yval[1] + head[2]*head[4]);
-    xval[1] = (ushort *) (xval[0] + head[1]*head[3]);
-    get2();
-    for (i=0; i < 2; i++)
-      for (j=0; j < head[i+1]*head[i+3]; j++)
-	yval[i][j] = getreal(11);
-    for (i=0; i < 2; i++)
-      for (j=0; j < head[i+1]*head[i+3]; j++)
-	xval[i][j] = get2();
-    for (row=0; row < raw_height; row++)
-      for (col=0; col < raw_width; col++) {
-	cfrac = (float) col * head[3] / raw_width;
-	cfrac -= cip = cfrac;
-	num = RAW(row,col) * 0.5;
-	for (i=cip; i < cip+2; i++) {
-	  for (k=j=0; j < head[1]; j++)
-	    if (num < xval[0][k = head[1]*i+j]) break;
-	  frac = (j == 0 || j == head[1]) ? 0 :
-		(xval[0][k] - num) / (xval[0][k] - xval[0][k-1]);
-	  mult[i-cip] = yval[0][k-1] * frac + yval[0][k] * (1-frac);
-	}
-	i = ((mult[0] * (1-cfrac) + mult[1] * cfrac) * row + num) * 2;
-	RAW(row,col) = LIM(i,0,65535);
-      }
-    free (yval[0]);
-  }
+    if (verbose) {
+        fprintf (stderr,_("Phase One correction...\n"));
+    }
+    fseek (ifp, meta_offset, SEEK_SET);
+    order = get2();
+    fseek (ifp, 6, SEEK_CUR);
+    fseek (ifp, meta_offset+get4(), SEEK_SET);
+    entries = get4();  get4();
+    while (entries--) {
+        tag  = get4();
+        len  = get4();
+        data = get4();
+        save = ftell(ifp);
+        fseek (ifp, meta_offset+data, SEEK_SET);
+        if (tag == 0x419) {				/* Polynomial curve */
+            for (get4(), i=0; i < 8; i++) {
+                poly[i] = getreal(11);
+            }
+            poly[3] += (ph1.tag_210 - poly[7]) * poly[6] + 1;
+            for (i=0; i < 0x10000; i++) {
+                num = (poly[5]*i + poly[3])*i + poly[1];
+                curve[i] = LIM(num,0,65535);
+            }
+            goto apply;				/* apply to right half */
+        } else if (tag == 0x41a) {			/* Polynomial curve */
+            for (i=0; i < 4; i++) {
+                poly[i] = getreal(11);
+            }
+            for (i=0; i < 0x10000; i++) {
+                for (num=0, j=4; j--;) {
+                    num = num * i + poly[j];
+                }
+            curve[i] = LIM(num+i,0,65535);
+            }
+            apply:					/* apply to whole image */
+            #pragma omp parallel for schedule(dynamic,16)
+            for (int row=0; row < raw_height; row++) {
+                for (int col = (tag & 1)*ph1.split_col; col < raw_width; col++) {
+                    RAW(row,col) = curve[RAW(row,col)];
+                }
+            }
+        } else if (tag == 0x400) {			/* Sensor defects */
+            while ((len -= 8) >= 0) {
+	            col  = get2();
+	            row  = get2();
+	            type = get2();
+	            get2();
+	            if (col >= raw_width) continue;
+	            if (type == 131 || type == 137) {		/* Bad column */
+                    for (row=0; row < raw_height; row++) {
+                        if (FC(row-top_margin,col-left_margin) == 1) {
+                            for (sum=i=0; i < 4; i++)
+                                sum += val[i] = raw (row+dir[i][0], col+dir[i][1]);
+                            for (max=i=0; i < 4; i++) {
+                                dev[i] = abs((val[i] << 2) - sum);
+                                if (dev[max] < dev[i]) max = i;
+                            }
+                            RAW(row,col) = (sum - val[max])/3.0 + 0.5;
+                        } else {
+                            for (sum=0, i=8; i < 12; i++)
+                                sum += raw (row+dir[i][0], col+dir[i][1]);
+                            RAW(row,col) = 0.5 + sum * 0.0732233 + (raw(row,col-2) + raw(row,col+2)) * 0.3535534;
+                        }
+                    }
+	            } else if (type == 129) {			/* Bad pixel */
+                    if (row >= raw_height) continue;
+                    j = (FC(row-top_margin,col-left_margin) != 1) * 4;
+                    for (sum=0, i=j; i < j+8; i++)
+	                    sum += raw (row+dir[i][0], col+dir[i][1]);
+                    RAW(row,col) = (sum + 4) >> 3;
+	            }
+            }
+        } else if (tag == 0x401) {			/* All-color flat fields */
+            phase_one_flat_field (1, 2);
+        } else if (tag == 0x416 || tag == 0x410) {
+            phase_one_flat_field (0, 2);
+        } else if (tag == 0x40b) {			/* Red+blue flat field */
+            phase_one_flat_field (0, 4);
+        } else if (tag == 0x412) {
+            fseek (ifp, 36, SEEK_CUR);
+            diff = abs (get2() - ph1.tag_21a);
+            if (mindiff > diff) {
+	            mindiff = diff;
+	            off_412 = ftell(ifp) - 38;
+            }
+        } else if (tag == 0x41f && !qlin_applied) { /* Quadrant linearization */
+            ushort lc[2][2][16], ref[16];
+            int qr, qc;
+            for (qr = 0; qr < 2; qr++)
+	            for (qc = 0; qc < 2; qc++)
+	                for (i = 0; i < 16; i++)
+	                    lc[qr][qc][i] = get4();
+            for (i = 0; i < 16; i++) {
+	            int v = 0;
+	            for (qr = 0; qr < 2; qr++)
+	                for (qc = 0; qc < 2; qc++)
+	                    v += lc[qr][qc][i];
+	            ref[i] = (v + 2) >> 2;
+            }
+            for (qr = 0; qr < 2; qr++) {
+	            for (qc = 0; qc < 2; qc++) {
+	                int cx[19], cf[19];
+	                for (i = 0; i < 16; i++) {
+	                    cx[1+i] = lc[qr][qc][i];
+	                    cf[1+i] = ref[i];
+	                }
+	                cx[0] = cf[0] = 0;
+	                cx[17] = cf[17] = ((unsigned) ref[15] * 65535) / lc[qr][qc][15];
+	                cx[18] = cf[18] = 65535;
+	                cubic_spline(cx, cf, 19);
+	                #pragma omp parallel for schedule(dynamic,16)
+                    for (int row = (qr ? ph1.split_row : 0); row < (qr ? raw_height : ph1.split_row); row++)
+                        for (int col = (qc ? ph1.split_col : 0); col < (qc ? raw_width : ph1.split_col); col++)
+                            RAW(row,col) = curve[RAW(row,col)];
+	            }
+            }
+            qlin_applied = 1;
+        } else if (tag == 0x41e && !qmult_applied) { /* Quadrant multipliers */
+            float qmult[2][2] = { { 1, 1 }, { 1, 1 } };
+            get4(); get4(); get4(); get4();
+            qmult[0][0] = 1.0 + getreal(11);
+            get4(); get4(); get4(); get4(); get4();
+            qmult[0][1] = 1.0 + getreal(11);
+            get4(); get4(); get4();
+            qmult[1][0] = 1.0 + getreal(11);
+            get4(); get4(); get4();
+            qmult[1][1] = 1.0 + getreal(11);
+            #pragma omp parallel for schedule(dynamic,16)
+            for (int row=0; row < raw_height; row++) {
+                for (int col=0; col < raw_width; col++) {
+                    int i = qmult[row >= ph1.split_row][col >= ph1.split_col] * RAW(row,col);
+                    RAW(row,col) = LIM(i,0,65535);
+                }
+            }
+            qmult_applied = 1;
+        } else if (tag == 0x431 && !qmult_applied) { /* Quadrant combined */
+            ushort lc[2][2][7], ref[7];
+            int qr, qc;
+            for (i = 0; i < 7; i++)
+                ref[i] = get4();
+            for (qr = 0; qr < 2; qr++)
+                for (qc = 0; qc < 2; qc++)
+                    for (i = 0; i < 7; i++)
+                        lc[qr][qc][i] = get4();
+            for (qr = 0; qr < 2; qr++) {
+                for (qc = 0; qc < 2; qc++) {
+                    int cx[9], cf[9];
+                    for (i = 0; i < 7; i++) {
+                        cx[1+i] = ref[i];
+                        cf[1+i] = ((unsigned) ref[i] * lc[qr][qc][i]) / 10000;
+	                }
+	                cx[0] = cf[0] = 0;
+	                cx[8] = cf[8] = 65535;
+	                cubic_spline(cx, cf, 9);
+	                for (row = (qr ? ph1.split_row : 0); row < (qr ? raw_height : ph1.split_row); row++)
+	                    for (col = (qc ? ph1.split_col : 0); col < (qc ? raw_width : ph1.split_col); col++)
+	                        RAW(row,col) = curve[RAW(row,col)];
+                }
+            }
+            qmult_applied = 1;
+            qlin_applied = 1;
+        }
+        fseek (ifp, save, SEEK_SET);
+    }
+    if (off_412) {
+        fseek (ifp, off_412, SEEK_SET);
+        for (i=0; i < 9; i++)
+            head[i] = get4() & 0x7fff;
+        yval[0] = (float *) calloc (head[1]*head[3] + head[2]*head[4], 6);
+        merror (yval[0], "phase_one_correct()");
+        yval[1] = (float  *) (yval[0] + head[1]*head[3]);
+        xval[0] = (ushort *) (yval[1] + head[2]*head[4]);
+        xval[1] = (ushort *) (xval[0] + head[1]*head[3]);
+        get2();
+        for (i=0; i < 2; i++)
+            for (j=0; j < head[i+1]*head[i+3]; j++)
+	            yval[i][j] = getreal(11);
+        for (i=0; i < 2; i++)
+            for (j=0; j < head[i+1]*head[i+3]; j++)
+	            xval[i][j] = get2();
+        for (row=0; row < raw_height; row++)
+            for (col=0; col < raw_width; col++) {
+	            cfrac = (float) col * head[3] / raw_width;
+	            cfrac -= cip = cfrac;
+	            num = RAW(row,col) * 0.5;
+	            for (i=cip; i < cip+2; i++) {
+	                for (k=j=0; j < head[1]; j++)
+	                    if (num < xval[0][k = head[1]*i+j])
+	                        break;
+	                frac = (j == 0 || j == head[1]) ? 0 : (xval[0][k] - num) / (xval[0][k] - xval[0][k-1]);
+	                mult[i-cip] = yval[0][k-1] * frac + yval[0][k] * (1-frac);
+	            }
+	            i = ((mult[0] * (1-cfrac) + mult[1] * cfrac) * row + num) * 2;
+	            RAW(row,col) = LIM(i,0,65535);
+        }
+        free (yval[0]);
+    }
 }
 
 void CLASS phase_one_load_raw()
@@ -1725,9 +1750,35 @@ unsigned CLASS ph1_bithuff_t::operator() (int nbits, ushort *huff)
   vbits -= nbits;
   return c;
 }
-#define ph1_bits(n) ph1_bithuff(n,0)
+
+inline unsigned CLASS ph1_bithuff_t::operator() (int nbits)
+{
+/*RT  static UINT64 bitbuf=0; */
+/*RT  static int vbits=0; */
+
+  if (vbits < nbits) {
+    bitbuf = bitbuf << 32 | get4();
+    vbits += 32;
+  }
+  unsigned c = bitbuf << (64-vbits) >> (64-nbits);
+  vbits -= nbits;
+  return c;
+}
+
+inline unsigned CLASS ph1_bithuff_t::operator() ()
+{
+/*RT  static UINT64 bitbuf=0; */
+/*RT  static int vbits=0; */
+  return bitbuf = vbits = 0;
+}
+
+
+#define ph1_init() ph1_bithuff()
+#define ph1_bits(n) ph1_bithuff(n)
+#define hb_bits(n) ph1_bithuff(n,0)
 #define ph1_huff(h) ph1_bithuff(*h,h+1)
 
+#ifndef MYFILE_MMAP
 void CLASS phase_one_load_raw_c()
 {
   static const int length[] = { 8,7,6,9,11,10,5,12,14,13 };
@@ -1751,9 +1802,10 @@ void CLASS phase_one_load_raw_c()
     read_shorts ((ushort *) rblack[0], raw_width*2);
   for (i=0; i < 256; i++)
     curve[i] = i*i / 3.969 + 0.5;
+  ph1_bithuff_t ph1_bithuff(this, ifp, order);
   for (row=0; row < raw_height; row++) {
     fseek (ifp, data_offset + offset[row], SEEK_SET);
-    ph1_bits(-1);
+    ph1_init();
     pred[0] = pred[1] = 0;
     for (col=0; col < raw_width; col++) {
       if (col >= (raw_width & -8))
@@ -1781,7 +1833,92 @@ void CLASS phase_one_load_raw_c()
   free (pixel);
   maximum = 0xfffc - ph1.black;
 }
+#else
+void CLASS phase_one_load_raw_c()
+{
+    static const int length[] = { 8,7,6,9,11,10,5,12,14,13 };
 
+    int *offset = (int *)calloc(raw_width * 2 + raw_height * 4, 2);
+    fseek(ifp, strip_offset, SEEK_SET);
+    for (int row = 0; row < raw_height; row++) {
+        offset[row] = get4();
+    }
+
+    short (*cblack)[2] = (short (*)[2]) (offset + raw_height);
+    fseek(ifp, ph1.black_col, SEEK_SET);
+    if (ph1.black_col) {
+        read_shorts ((ushort *) cblack[0], raw_height * 2);
+    }
+
+    short (*rblack)[2] = cblack + raw_height;
+    fseek(ifp, ph1.black_row, SEEK_SET);
+    if (ph1.black_row) {
+        read_shorts ((ushort *) rblack[0], raw_width * 2);
+    }
+
+    for (int i = 0; i < 256; i++) {
+        curve[i] = i * i / 3.969 + 0.5;
+    }
+
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+{
+    int len[2], pred[2];
+    IMFILE ifpthr = *ifp;
+    ifpthr.plistener = nullptr;
+
+#ifdef _OPENMP
+#pragma omp master
+#endif
+{
+    ifpthr.plistener = ifp->plistener;
+}
+
+    ph1_bithuff_t ph1_bithuff(this, &ifpthr, order);
+
+#ifdef _OPENMP
+    #pragma omp for schedule(dynamic,16)
+#endif
+
+    for (int row = 0; row < raw_height; row++) {
+        const int shift = 2 * (ph1.format != 8);
+        fseek(&ifpthr, data_offset + offset[row], SEEK_SET);
+        ph1_init();
+        pred[0] = pred[1] = 0;
+        for (int col = 0; col < raw_width; col++) {
+            if (col >= (raw_width & -8)) {
+	            len[0] = len[1] = 14;
+            } else if ((col & 7) == 0) {
+                for (int i = 0; i < 2; i++) {
+                    int j;
+                    for (j = 0; j < 5 && !ph1_bits(1); j++)
+                        ;
+	                if (j--) {
+                        len[i] = length[j * 2 + ph1_bits(1)];
+	                }
+	            }
+            }
+
+            int i = len[col & 1];
+            ushort pixel;
+            if (i == 14) {
+	            pixel = pred[col & 1] = ph1_bits(16);
+            } else {
+	            pixel = pred[col & 1] += ph1_bits(i) + 1 - (1 << (i - 1));
+            }
+            if (ph1.format == 5 && pixel < 256) {
+	            pixel = curve[pixel];
+            }
+            int rawVal = (pixel << shift) - ph1.black + cblack[row][col >= ph1.split_col] + rblack[col][row >= ph1.split_row];
+            RAW(row,col) = std::max(rawVal, 0);
+        }
+    }
+}
+  free(offset);
+  maximum = 0xfffc - ph1.black;
+}
+#endif
 void CLASS parse_hasselblad_gain()
 {
     /*
@@ -2122,7 +2259,8 @@ void CLASS hasselblad_load_raw()
 
   if (!ljpeg_start (&jh, 0)) return;
   order = 0x4949;
-  ph1_bits(-1);
+  ph1_bithuff_t ph1_bithuff(this, ifp, order);
+  hb_bits(-1);
   back[4] = (int *) calloc (raw_width, 3*sizeof **back);
   merror (back[4], "hasselblad_load_raw()");
   FORC3 back[c] = back[4] + c*raw_width;
@@ -2134,7 +2272,7 @@ void CLASS hasselblad_load_raw()
       for (s=0; s < tiff_samples*2; s+=2) {
 	FORC(2) len[c] = ph1_huff(jh.huff[0]);
 	FORC(2) {
-	  diff[s+c] = ph1_bits(len[c]);
+	  diff[s+c] = hb_bits(len[c]);
 	  if ((diff[s+c] & (1 << (len[c]-1))) == 0)
 	    diff[s+c] -= (1 << len[c]) - 1;
 	  if (diff[s+c] == 65535) diff[s+c] = -32768;
@@ -3121,22 +3259,23 @@ void CLASS samsung_load_raw()
   int row, col, c, i, dir, op[4], len[4];
 
   order = 0x4949;
+  ph1_bithuff_t ph1_bithuff(this, ifp, order);
   for (row=0; row < raw_height; row++) {
     fseek (ifp, strip_offset+row*4, SEEK_SET);
     fseek (ifp, data_offset+get4(), SEEK_SET);
-    ph1_bits(-1);
+    hb_bits(-1);
     FORC4 len[c] = row < 2 ? 7:4;
     for (col=0; col < raw_width; col+=16) {
-      dir = ph1_bits(1);
-      FORC4 op[c] = ph1_bits(2);
+      dir = hb_bits(1);
+      FORC4 op[c] = hb_bits(2);
       FORC4 switch (op[c]) {
-	case 3: len[c] = ph1_bits(4);	break;
+	case 3: len[c] = hb_bits(4);	break;
 	case 2: len[c]--;		break;
 	case 1: len[c]++;
       }
       for (c=0; c < 16; c+=2) {
 	i = len[((c & 1) << 1) | (c >> 3)];
-        RAW(row,col+c) = ((signed) ph1_bits(i) << (32-i) >> (32-i)) +
+        RAW(row,col+c) = ((signed) hb_bits(i) << (32-i) >> (32-i)) +
 	  (dir ? RAW(row+(~c | -2),col+c) : col ? RAW(row,col+(c | -2)) : 128);
 	if (c == 14) c = -1;
       }
@@ -3178,27 +3317,28 @@ void CLASS samsung3_load_raw()
   fseek (ifp, 9, SEEK_CUR);
   opt = fgetc(ifp);
   init = (get2(),get2());
+  ph1_bithuff_t ph1_bithuff(this, ifp, order);
   for (row=0; row < raw_height; row++) {
     fseek (ifp, (data_offset-ftell(ifp)) & 15, SEEK_CUR);
-    ph1_bits(-1);
+    hb_bits(-1);
     mag = 0; pmode = 7;
     FORC(6) ((ushort *)lent)[c] = row < 2 ? 7:4;
     prow[ row & 1] = &RAW(row-1,1-((row & 1) << 1));	// green
     prow[~row & 1] = &RAW(row-2,0);			// red and blue
     for (tab=0; tab+15 < raw_width; tab+=16) {
       if (~opt & 4 && !(tab & 63)) {
-	i = ph1_bits(2);
-	mag = i < 3 ? mag-'2'+"204"[i] : ph1_bits(12);
+	i = hb_bits(2);
+	mag = i < 3 ? mag-'2'+"204"[i] : hb_bits(12);
       }
       if (opt & 2)
-	pmode = 7 - 4*ph1_bits(1);
-      else if (!ph1_bits(1))
-	pmode = ph1_bits(3);
-      if (opt & 1 || !ph1_bits(1)) {
-	FORC4 len[c] = ph1_bits(2);
+	pmode = 7 - 4*hb_bits(1);
+      else if (!hb_bits(1))
+	pmode = hb_bits(3);
+      if (opt & 1 || !hb_bits(1)) {
+	FORC4 len[c] = hb_bits(2);
 	FORC4 {
 	  i = ((row & 1) << 1 | (c & 1)) % 3;
-	  len[c] = len[c] < 3 ? lent[i][0]-'1'+"120"[len[c]] : ph1_bits(4);
+	  len[c] = len[c] < 3 ? lent[i][0]-'1'+"120"[len[c]] : hb_bits(4);
 	  lent[i][0] = lent[i][1];
 	  lent[i][1] = len[c];
 	}
@@ -3209,7 +3349,7 @@ void CLASS samsung3_load_raw()
 	     ? (tab ? RAW(row,tab-2+(col & 1)) : init)
 	     : (prow[col & 1][col-'4'+"0224468"[pmode]] +
 		prow[col & 1][col-'4'+"0244668"[pmode]] + 1) >> 1;
-	diff = ph1_bits (i = len[c >> 2]);
+	diff = hb_bits (i = len[c >> 2]);
 	if (diff >> (i-1)) diff -= 1 << i;
 	diff = diff * (mag*2+1) + mag;
 	RAW(row,col) = pred + diff;
@@ -4139,7 +4279,6 @@ void CLASS crop_masked_pixels()
       }
     }
   } else {
-
 #pragma omp parallel for
     for (int row=0; row < height; row++)
       for (int col=0; col < width; col++)

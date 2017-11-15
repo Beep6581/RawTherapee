@@ -72,6 +72,7 @@ set(RTENGINESOURCEFILES
     imageio.cc
     improccoordinator.cc
     improcfun.cc
+    impulse_denoise.cc
     init.cc
     iplab2rgb.cc
 	iplocallab.cc

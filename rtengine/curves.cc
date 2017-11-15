@@ -734,14 +734,10 @@ void CurveFactory::complexsgnCurve (bool & autili,  bool & butili, bool & ccutil
 
 }
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 SSEFUNCTION void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh,
         double shcompr, double br, double contr,
-        procparams::ToneCurveParams::eTCModeId curveMode, const std::vector<double>& curvePoints,
-        procparams::ToneCurveParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2,
+        const std::vector<double>& curvePoints,
+        const std::vector<double>& curvePoints2,
         LUTu & histogram,
         LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
         LUTu & outBeforeCCurveHistogram,
@@ -2043,7 +2039,7 @@ void ColorGradientCurve::Reset()
     lut3.reset();
 }
 
-void ColorGradientCurve::SetXYZ (const Curve *pCurve, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float satur, float lumin)
+void ColorGradientCurve::SetXYZ(const Curve *pCurve, const double xyz_rgb[3][3], float satur, float lumin)
 {
     if (pCurve->isIdentity()) {
         lut1.reset();
@@ -2183,7 +2179,7 @@ void ColorGradientCurve::SetXYZ (const Curve *pCurve, const double xyz_rgb[3][3]
     */
 }
 
-void ColorGradientCurve::SetXYZ (const std::vector<double> &curvePoints, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float satur, float lumin)
+void ColorGradientCurve::SetXYZ(const std::vector<double> &curvePoints, const double xyz_rgb[3][3], float satur, float lumin)
 {
     std::unique_ptr<FlatCurve> tcurve;
 
@@ -2192,11 +2188,11 @@ void ColorGradientCurve::SetXYZ (const std::vector<double> &curvePoints, const d
     }
 
     if (tcurve) {
-        SetXYZ (tcurve.get(), xyz_rgb, rgb_xyz, satur, lumin);
+        SetXYZ(tcurve.get(), xyz_rgb, satur, lumin);
     }
 }
 
-void ColorGradientCurve::SetRGB (const Curve *pCurve, const double xyz_rgb[3][3], const double rgb_xyz[3][3])
+void ColorGradientCurve::SetRGB(const Curve *pCurve)
 {
     if (pCurve->isIdentity()) {
         lut1.reset();
@@ -2282,7 +2278,7 @@ void ColorGradientCurve::SetRGB (const Curve *pCurve, const double xyz_rgb[3][3]
     */
 }
 
-void ColorGradientCurve::SetRGB (const std::vector<double> &curvePoints, const double xyz_rgb[3][3], const double rgb_xyz[3][3])
+void ColorGradientCurve::SetRGB(const std::vector<double> &curvePoints)
 {
     std::unique_ptr<FlatCurve> tcurve;
 
@@ -2291,7 +2287,7 @@ void ColorGradientCurve::SetRGB (const std::vector<double> &curvePoints, const d
     }
 
     if (tcurve) {
-        SetRGB (tcurve.get(), xyz_rgb, rgb_xyz);
+        SetRGB(tcurve.get());
     }
 }
 
@@ -2666,10 +2662,10 @@ void PerceptualToneCurve::Apply (float &r, float &g, float &b, PerceptualToneCur
 
     C *= cmul;
 
-    Ciecam02::jch2xyz_ciecam02float ( x, y, z,
-                                      J, C, h,
-                                      xw, yw,  zw,
-                                      f,  c, nc, 1, pow1, nbb, ncb, fl, cz, d, aw );
+    Ciecam02::jch2xyz_ciecam02float( x, y, z,
+                                     J, C, h,
+                                     xw, yw,  zw,
+                                     c, nc, 1, pow1, nbb, ncb, fl, cz, d, aw );
 
     if (!isfinite (x) || !isfinite (y) || !isfinite (z)) {
         // can happen for colors on the rim of being outside gamut, that worked without chroma scaling but not with. Then we return only the curve's result.

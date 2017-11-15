@@ -238,18 +238,18 @@ void Crop::update (int todo)
         if (settings->leveldnautsimpl == 1) {
             if (params.dirpyrDenoise.Cmethod == "MAN" || params.dirpyrDenoise.Cmethod == "PON" )  {
                 PreviewProps pp (trafx, trafy, trafw * skip, trafh * skip, skip);
-                parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.toneCurve, params.icm, params.raw );
+                parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.toneCurve, params.raw );
             }
         } else {
             if (params.dirpyrDenoise.C2method == "MANU")  {
                 PreviewProps pp (trafx, trafy, trafw * skip, trafh * skip, skip);
-                parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.toneCurve, params.icm, params.raw );
+                parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.toneCurve, params.raw );
             }
         }
 
         if ((settings->leveldnautsimpl == 1 && params.dirpyrDenoise.Cmethod == "PRE") || (settings->leveldnautsimpl == 0 && params.dirpyrDenoise.C2method == "PREV")) {
             PreviewProps pp (trafx, trafy, trafw * skip, trafh * skip, skip);
-            parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.toneCurve, params.icm, params.raw );
+            parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.toneCurve, params.raw );
 
             if ((!isDetailWindow) && parent->adnListener && skip == 1 && params.dirpyrDenoise.enabled) {
                 float lowdenoise = 1.f;
@@ -461,7 +461,7 @@ void Crop::update (int todo)
                 for (int wcr = 0; wcr <= 2; wcr++) {
                     for (int hcr = 0; hcr <= 2; hcr++) {
                         PreviewProps ppP (coordW[wcr], coordH[hcr], crW, crH, 1);
-                        parent->imgsrc->getImage (parent->currWB, tr, origCropPart, ppP, params.toneCurve, params.icm, params.raw );
+                        parent->imgsrc->getImage (parent->currWB, tr, origCropPart, ppP, params.toneCurve, params.raw );
 
                         // we only need image reduced to 1/4 here
                         for (int ii = 0; ii < crH; ii += 2) {
@@ -623,7 +623,7 @@ void Crop::update (int todo)
         //  if(params.dirpyrDenoise.Cmethod=="AUT" || params.dirpyrDenoise.Cmethod=="PON") {//reinit origCrop after Auto
         if ((settings->leveldnautsimpl == 1 && params.dirpyrDenoise.Cmethod == "AUT")  || (settings->leveldnautsimpl == 0 && params.dirpyrDenoise.C2method == "AUTO")) { //reinit origCrop after Auto
             PreviewProps pp (trafx, trafy, trafw * skip, trafh * skip, skip);
-            parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.toneCurve, params.icm, params.raw );
+            parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.toneCurve, params.raw );
         }
 
         DirPyrDenoiseParams denoiseParams = params.dirpyrDenoise;
@@ -663,8 +663,8 @@ void Crop::update (int todo)
             if (skip == 1 && denoiseParams.enabled) {
                 int kall = 0;
 
-                float chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi;
-                parent->ipf.RGB_denoise (kall, origCrop, origCrop, calclum, parent->denoiseInfoStore.ch_M, parent->denoiseInfoStore.max_r, parent->denoiseInfoStore.max_b, parent->imgsrc->isRAW(), /*Roffset,*/ denoiseParams, parent->imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi);
+                float nresi, highresi;
+                parent->ipf.RGB_denoise (kall, origCrop, origCrop, calclum, parent->denoiseInfoStore.ch_M, parent->denoiseInfoStore.max_r, parent->denoiseInfoStore.max_b, parent->imgsrc->isRAW(), /*Roffset,*/ denoiseParams, parent->imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, nresi, highresi);
 
                 if (parent->adnListener) {
                     parent->adnListener->noiseChanged (nresi, highresi);
@@ -773,7 +773,7 @@ void Crop::update (int todo)
     if (todo & M_RGBCURVE) {
         double rrm, ggm, bbm;
         DCPProfile::ApplyState as;
-        DCPProfile *dcpProf = parent->imgsrc->getDCP (params.icm, parent->currWB, as);
+        DCPProfile *dcpProf = parent->imgsrc->getDCP (params.icm, as);
 
         LUTu histToneCurve;
         parent->ipf.rgbProc (baseCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
@@ -814,7 +814,7 @@ void Crop::update (int todo)
         bool ccutili = parent->ccutili;
         bool clcutili = parent->clcutili;
         bool cclutili = parent->cclutili;
-        bool wavcontlutili = parent->wavcontlutili;
+
         bool locallutili = parent->locallutili;
         LUTf lllocalcurve2 (65536, 0);
         bool localcutili = parent->locallutili;
@@ -1678,7 +1678,7 @@ void Crop::update (int todo)
 
             params.wavelet.getCurves (wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
 
-            parent->ipf.ip_wavelet (labnCrop, labnCrop, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, parent->wavclCurve, wavcontlutili, skip);
+            parent->ipf.ip_wavelet (labnCrop, labnCrop, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, parent->wavclCurve, skip);
         }
 
         //     }
@@ -1701,7 +1701,6 @@ void Crop::update (int todo)
                 // end calculation adaptation scene luminosity
             }
 
-            int begh = 0, endh = labnCrop->H;
             bool execsharp = false;
 
             if (skip == 1) {
@@ -1714,13 +1713,13 @@ void Crop::update (int todo)
 
             if (settings->ciecamfloat) {
                 float d, dj, yb; // not used after this block
-                parent->ipf.ciecam_02float (cieCrop, float (adap), begh, endh, 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3,
+                parent->ipf.ciecam_02float (cieCrop, float (adap), 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3,
                                             dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 5, skip, execsharp, d, dj, yb, 1);
             } else {
-                double dd, dj, yb; // not used after this block
+                double dd, dj; // not used after this block
 
-                parent->ipf.ciecam_02 (cieCrop, adap, begh, endh, 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3,
-                                       dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 5, skip, execsharp, dd, dj, yb, 1);
+                parent->ipf.ciecam_02 (cieCrop, adap, 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3,
+                                       dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 5, skip, execsharp, dd, dj, 1);
             }
         } else {
             // CIECAM is disbaled, we free up its image buffer to save some space
