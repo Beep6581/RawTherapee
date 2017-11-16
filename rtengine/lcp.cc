@@ -1023,7 +1023,7 @@ rtengine::LCPMapper::LCPMapper(
 
 bool rtengine::LCPMapper::isCACorrectionAvailable() const
 {
-    return false /*enableCA*/; // agriggio TODO -- this is currently broken
+    return enableCA;
 }
 
 void rtengine::LCPMapper::correctDistortion(double &x, double &y, int cx, int cy, double scale) const
@@ -1128,7 +1128,7 @@ void rtengine::LCPMapper::correctCA(double& x, double& y, int cx, int cy, int ch
     }
 
     x -= cx;
-    x -= cy;
+    y -= cy;
 }
 
 SSEFUNCTION void rtengine::LCPMapper::processVignetteLine(int width, int y, float* line) const
