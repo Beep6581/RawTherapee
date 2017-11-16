@@ -750,8 +750,8 @@ void Crop::update (int todo)
     if (need_cropping) {
         Imagefloat *c = new Imagefloat(cropw, croph);
 
-        int oy = skips(cropy, skip);
-        int ox = skips(cropx, skip);
+        int oy = cropy / skip;
+        int ox = cropx / skip;
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
