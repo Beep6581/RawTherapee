@@ -33,7 +33,7 @@ namespace rtengine
 extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
-    : orig_prev (nullptr), oprevi (nullptr), oprevl (nullptr), nprevl (nullptr), previmg (nullptr), workimg (nullptr),
+    : orig_prev (nullptr), oprevi (nullptr), oprevl (nullptr), nprevl (nullptr), fattal_11_dcrop_cache(nullptr), previmg (nullptr), workimg (nullptr),
       ncie (nullptr), imgsrc (nullptr), shmap (nullptr), lastAwbEqual (0.), lastAwbTempBias (0.0), ipf (&params, true), monitorIntent (RI_RELATIVE),
       softProof (false), gamutCheck (false), scale (10), highDetailPreprocessComputed (false), highDetailRawComputed (false),
       allocated (false), bwAutoR (-9000.f), bwAutoG (-9000.f), bwAutoB (-9000.f), CAMMean (NAN),
@@ -111,6 +111,10 @@ ImProcCoordinator::~ImProcCoordinator ()
     mProcessing.lock();
     mProcessing.unlock();
     freeAll ();
+    if (fattal_11_dcrop_cache) {
+        delete fattal_11_dcrop_cache;
+        fattal_11_dcrop_cache = nullptr;
+    }
 
     std::vector<Crop*> toDel = crops;
 
@@ -386,6 +390,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
     readyphase++;
 
     if ((todo & M_HDR) && params.fattal.enabled) {
+        if (fattal_11_dcrop_cache) {
+            delete fattal_11_dcrop_cache;
+            fattal_11_dcrop_cache = nullptr;
+        }
         ipf.ToneMapFattal02(orig_prev);
         if (oprevi != orig_prev) {
             delete oprevi;

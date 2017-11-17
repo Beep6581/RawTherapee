@@ -696,37 +696,48 @@ void Crop::update (int todo)
         int fw = skips(parent->fw, skip);
         int fh = skips(parent->fh, skip);
         bool need_cropping = false;
+        bool need_fattal = true;
 
         if (trafx || trafy || trafw != fw || trafh != fh) {
             need_cropping = true;
             // fattal needs to work on the full image. So here we get the full
             // image from imgsrc, and replace the denoised crop in case
-            f = new Imagefloat(fw, fh);
-            fattalCrop.reset(f);
-            PreviewProps pp (0, 0, parent->fw, parent->fh, skip);
-            int tr = getCoarseBitMask(params.coarse);
-            parent->imgsrc->getImage(parent->currWB, tr, f, pp, params.toneCurve, params.icm, params.raw);
-            parent->imgsrc->convertColorSpace(f, params.icm, parent->currWB);
+            if (!params.dirpyrDenoise.enabled && skip == 1 && parent->fattal_11_dcrop_cache) {
+                f = parent->fattal_11_dcrop_cache;
+                need_fattal = false;
+            } else {
+                f = new Imagefloat(fw, fh);
+                fattalCrop.reset(f);
+                PreviewProps pp (0, 0, parent->fw, parent->fh, skip);
+                int tr = getCoarseBitMask(params.coarse);
+                parent->imgsrc->getImage(parent->currWB, tr, f, pp, params.toneCurve, params.icm, params.raw);
+                parent->imgsrc->convertColorSpace(f, params.icm, parent->currWB);
 
-            if (params.dirpyrDenoise.enabled) {
-                // copy the denoised crop
-                int oy = trafy / skip;
-                int ox = trafx / skip;
+                if (params.dirpyrDenoise.enabled) {
+                    // copy the denoised crop
+                    int oy = trafy / skip;
+                    int ox = trafx / skip;
 #ifdef _OPENMP
-                #pragma omp parallel for
+                    #pragma omp parallel for
 #endif
-                for (int y = 0; y < baseCrop->getHeight(); ++y) {
-                    int dy = oy + y;
-                    for (int x = 0; x < baseCrop->getWidth(); ++x) {
-                        int dx = ox + x;
-                        f->r(dy, dx) = baseCrop->r(y, x);
-                        f->g(dy, dx) = baseCrop->g(y, x);
-                        f->b(dy, dx) = baseCrop->b(y, x);
+                    for (int y = 0; y < baseCrop->getHeight(); ++y) {
+                        int dy = oy + y;
+                        for (int x = 0; x < baseCrop->getWidth(); ++x) {
+                            int dx = ox + x;
+                            f->r(dy, dx) = baseCrop->r(y, x);
+                            f->g(dy, dx) = baseCrop->g(y, x);
+                            f->b(dy, dx) = baseCrop->b(y, x);
+                        }
                     }
+                } else if (skip == 1) {
+                    parent->fattal_11_dcrop_cache = f; // cache this globally
+                    fattalCrop.release();
                 }
             }
         }
-        parent->ipf.ToneMapFattal02(f);
+        if (need_fattal) {
+            parent->ipf.ToneMapFattal02(f);
+        }
 
         // crop back to the size expected by the rest of the pipeline
         if (need_cropping) {
@@ -735,7 +746,7 @@ void Crop::update (int todo)
             int oy = trafy / skip;
             int ox = trafx / skip;
 #ifdef _OPENMP
-#pragma omp parallel for
+            #pragma omp parallel for
 #endif
             for (int y = 0; y < trafh; ++y) {
                 int cy = y + oy;
