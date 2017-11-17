@@ -280,7 +280,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         }
     }
 
-    if (todo & (M_INIT | M_LINDENOISE)) {
+    if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
         MyMutex::MyLock initLock (minit); // Also used in crop window
 
         imgsrc->HLRecovery_Global ( params.toneCurve); // this handles Color HLRecovery
@@ -385,16 +385,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     readyphase++;
 
-    if ((todo & (M_TRANSFORM | M_RGBCURVE)) && params.fattal.enabled) {
-        Imagefloat *fattalprev = orig_prev->copy();
-        ipf.ToneMapFattal02(fattalprev);
+    if ((todo & M_HDR) && params.fattal.enabled) {
+        ipf.ToneMapFattal02(orig_prev);
         if (oprevi != orig_prev) {
             delete oprevi;
         }
-        oprevi = fattalprev;
-    } else {
-        oprevi = orig_prev;
     }
+    oprevi = orig_prev;
 
     progress ("Rotate / Distortion...", 100 * readyphase / numofphases);
     // Remove transformation if unneeded

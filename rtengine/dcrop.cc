@@ -168,7 +168,7 @@ void Crop::update (int todo)
 
     bool needstransform  = parent->ipf.needsTransform();
 
-    if (todo & (M_INIT | M_LINDENOISE)) {
+    if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
         MyMutex::MyLock lock (parent->minit); // Also used in improccoord
 
         int tr = getCoarseBitMask (params.coarse);
@@ -691,8 +691,8 @@ void Crop::update (int todo)
     createBuffer (cropw, croph);
 
     std::unique_ptr<Imagefloat> fattalCrop;
-    if ((todo & (M_TRANSFORM | M_RGBCURVE)) && params.fattal.enabled) {
-        Imagefloat *f = baseCrop;
+    if ((todo & M_HDR) && params.fattal.enabled) {
+        Imagefloat *f = origCrop;
         int fw = skips(parent->fw, skip);
         int fh = skips(parent->fh, skip);
         bool need_cropping = false;
@@ -726,18 +726,14 @@ void Crop::update (int todo)
                 }
             }
         }
-        if (f == origCrop) {
-            fattalCrop.reset(baseCrop->copy());
-            f = fattalCrop.get();
-        }
         parent->ipf.ToneMapFattal02(f);
 
         // crop back to the size expected by the rest of the pipeline
         if (need_cropping) {
-            Imagefloat *c = new Imagefloat(cropw, croph);
+            Imagefloat *c = origCrop;
 
-            int oy = cropy / skip;
-            int ox = cropx / skip;
+            int oy = trafy / skip;
+            int ox = trafx / skip;
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
@@ -750,7 +746,6 @@ void Crop::update (int todo)
                     c->b(y, x) = f->b(cy, cx);
                 }
             }
-            fattalCrop.reset(c);
             baseCrop = c;
         } else {
             baseCrop = f;
