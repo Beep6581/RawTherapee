@@ -53,6 +53,7 @@ public:
     int sequence;
     SaveFormat saveFormat;
     bool forceFormatOpts;
+    bool fast_pipeline;
 
     BatchQueueEntry (rtengine::ProcessingJob* job, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm = nullptr);
     ~BatchQueueEntry ();

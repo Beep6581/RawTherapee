@@ -248,7 +248,7 @@ bool BatchQueue::saveBatchQueue ()
                  << saveFormat.pngBits << '|' << saveFormat.pngCompression << '|'
                  << saveFormat.tiffBits << '|'  << saveFormat.tiffUncompressed << '|'
                  << saveFormat.saveParams << '|' << entry->forceFormatOpts << '|'
-                 << entry->job->fastPipeline() << '|'
+                 << entry->fast_pipeline << '|'
                  << std::endl;
         }
     }
