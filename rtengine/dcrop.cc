@@ -702,6 +702,7 @@ void Crop::update (int todo)
             // fattal needs to work on the full image. So here we get the full
             // image from imgsrc, and replace the denoised crop in case
             f = new Imagefloat(fw, fh);
+            fattalCrop.reset(f);
             PreviewProps pp (0, 0, parent->fw, parent->fh, skip);
             int tr = getCoarseBitMask(params.coarse);
             parent->imgsrc->getImage(parent->currWB, tr, f, pp, params.toneCurve, params.icm, params.raw);
