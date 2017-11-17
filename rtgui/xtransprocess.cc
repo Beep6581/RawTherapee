@@ -162,7 +162,7 @@ void XTransProcess::methodChanged ()
     if (curSelection >= 0 && curSelection < std::numeric_limits<int>::max()) {
         methodName = RAWParams::XTransSensor::getMethodStrings()[curSelection];
 
-        if (method == RAWParams::XTransSensor::Method::NONE || RAWParams::XTransSensor::Method(oldSelection) == RAWParams::XTransSensor::Method::NONE) {
+        if (method == RAWParams::XTransSensor::Method::MONO || RAWParams::XTransSensor::Method(oldSelection) == RAWParams::XTransSensor::Method::MONO) {
             ppreq = true;
         }
     }

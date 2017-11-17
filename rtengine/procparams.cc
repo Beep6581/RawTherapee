@@ -16,6 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include <map>
 
 #include <locale.h>
@@ -437,7 +438,6 @@ void RetinexParams::getCurves (RetinextransmissionCurve &transmissionCurveLUT, R
 
 }
 
-
 void RetinexParams::getDefaultgaintransmissionCurve (std::vector<double> &curve)
 {
     double v[16] = { 0.00,  0.1, 0.35, 0.00,
@@ -445,7 +445,6 @@ void RetinexParams::getDefaultgaintransmissionCurve (std::vector<double> &curve)
                      0.70, 0.25, 0.35, 0.35,
                      1.00,  0.1, 0.00, 0.00
                    };
-
 
     curve.resize (17);
     curve.at (0 ) = double (FCT_MinMaxCPoints);
@@ -455,14 +454,12 @@ void RetinexParams::getDefaultgaintransmissionCurve (std::vector<double> &curve)
     }
 }
 
-
 void RetinexParams::getDefaulttransmissionCurve (std::vector<double> &curve)
 {
     double v[12] =   {   0.00, 0.50, 0.35, 0.35,
                          0.60, 0.75, 0.35, 0.35,
                          1.00, 0.50, 0.35, 0.35,
                      };
-
 
     curve.resize (13);
     curve.at (0 ) = double (FCT_MinMaxCPoints);
@@ -655,14 +652,9 @@ void ColorToningParams::mixerToCurve (std::vector<double> &colorCurve, std::vect
         high[0] = high[1] = high[2] = 1.f;
     }
 
-
-
-
     const double xPosLow  = 0.1;
     const double xPosMed  = 0.4;
     const double xPosHigh = 0.7;
-
-
 
     colorCurve.resize ( medSat != 0.f ? 13 : 9 );
     colorCurve.at (0) = FCT_MinMaxCPoints;
@@ -808,7 +800,6 @@ void ColorToningParams::getDefaultColorCurve (std::vector<double> &curve)
     }
 }
 
-
 void ColorToningParams::getDefaultOpacityCurve (std::vector<double> &curve)
 {
     double v[16] = { 0.00, 0.3, 0.35, 0.00,
@@ -881,7 +872,6 @@ VibranceParams::VibranceParams() :
     pastsattog (true)
 {
 }
-
 
 const std::vector<WBEntry>& WBParams::getWbEntries()
 {
@@ -1291,7 +1281,6 @@ void WaveletParams::getDefaultOpacityCurveBY (std::vector<double> &curve)
     };
 }
 
-
 void WaveletParams::getDefaultOpacityCurveW (std::vector<double> &curve)
 {
     curve = {
@@ -1329,7 +1318,6 @@ void WaveletParams::getDefaultOpacityCurveWL (std::vector<double> &curve)
         0.35
     };
 }
-
 
 DirPyrEqualizerParams::DirPyrEqualizerParams() :
     hueskin (20, 80, 2000, 1200, false)
@@ -1721,7 +1709,6 @@ void ProcParams::setDefaults ()
     cacorrection.red = 0;
     cacorrection.blue = 0;
 
-
     vignetting.amount = 0;
     vignetting.radius = 50;
     vignetting.strength = 1;
@@ -1780,7 +1767,6 @@ void ProcParams::setDefaults ()
     dirpyrequalizer.enabled = false;
     dirpyrequalizer.gamutlab = false;
     dirpyrequalizer.cbdlMethod = "bef";
-
 
     for (int i = 0; i < 6; i ++) {
         dirpyrequalizer.mult[i] = 1.0;
@@ -1872,7 +1858,6 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         saveToKeyfile(!pedited || pedited->retinex.gam, "Retinex", "Gam", retinex.gam, keyFile);
         saveToKeyfile(!pedited || pedited->retinex.slope, "Retinex", "Slope", retinex.slope, keyFile);
         saveToKeyfile(!pedited || pedited->retinex.medianmap, "Retinex", "Median", retinex.medianmap, keyFile);
-
 
         saveToKeyfile(!pedited || pedited->retinex.neigh, "Retinex", "Neigh", retinex.neigh, keyFile);
         saveToKeyfile(!pedited || pedited->retinex.offs, "Retinex", "Offs", retinex.offs, keyFile);
@@ -2766,10 +2751,8 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             assignFromKeyfile(keyFile, "Retinex", "TransmissionCurve", pedited, retinex.transmissionCurve, pedited->retinex.transmissionCurve);
 
-
             assignFromKeyfile(keyFile, "Retinex", "GainTransmissionCurve", pedited, retinex.gaintransmissionCurve, pedited->retinex.gaintransmissionCurve);
         }
-
 
         if (keyFile.has_group ("Luminance Curve")) {
             assignFromKeyfile(keyFile, "Luminance Curve", "Brightness", pedited, labCurve.brightness, pedited->labCurve.brightness);

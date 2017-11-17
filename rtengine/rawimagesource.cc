@@ -650,8 +650,8 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
         const float new_pre_mul[4] = { ri->get_pre_mul(0) / rm, ri->get_pre_mul(1) / gm, ri->get_pre_mul(2) / bm, ri->get_pre_mul(3) / gm };
         float new_scale_mul[4];
 
-        bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::NONE))
-                      || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::NONE));
+        bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
+                      || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
         float gain = calculate_scale_mul(new_scale_mul, new_pre_mul, c_white, cblacksom, isMono, ri->get_colors());
         rm = new_scale_mul[0] / scale_mul[0] * gain;
         gm = new_scale_mul[1] / scale_mul[1] * gain;
@@ -2047,7 +2047,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
             lmmse_interpolate_omp(W, H, rawData, red, green, blue, raw.bayersensor.lmmse_iterations);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST) ) {
             fast_demosaic (0, 0, W, H);
-        } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::NONE) ) {
+        } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO) ) {
             nodemosaic(true);
         } else {
             nodemosaic(false);
@@ -2062,7 +2062,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
             xtrans_interpolate(1, false);
         } else if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::THREE_PASS) ) {
             xtrans_interpolate(3, true);
-        } else if(raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::NONE) ) {
+        } else if(raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO) ) {
             nodemosaic(true);
         } else {
             nodemosaic(false);
@@ -3429,7 +3429,7 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
         black_lev[2] = raw.bayersensor.black2; //B
         black_lev[3] = raw.bayersensor.black3; //G2
 
-        isMono = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::NONE) == raw.bayersensor.method;
+        isMono = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO) == raw.bayersensor.method;
     } else if (getSensorType() == ST_FUJI_XTRANS) {
 
         black_lev[0] = raw.xtranssensor.blackred; //R
@@ -3437,7 +3437,7 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
         black_lev[2] = raw.xtranssensor.blackblue; //B
         black_lev[3] = raw.xtranssensor.blackgreen; //G2  (set, only used with a Bayer filter)
 
-        isMono = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::NONE) == raw.xtranssensor.method;
+        isMono = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO) == raw.xtranssensor.method;
     }
 
     for(int i = 0; i < 4 ; i++) {
