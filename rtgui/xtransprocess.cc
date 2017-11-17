@@ -29,11 +29,11 @@ XTransProcess::XTransProcess () : FoldableToolPanel(this, "xtransprocess", M("TP
     hb1->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_RAW_DMETHOD") + ": ")), Gtk::PACK_SHRINK, 4);
     method = Gtk::manage (new MyComboBoxText ());
 
-    for( size_t i = 0; i < procparams::RAWParams::XTransSensor::numMethods; i++) {
+    for (const auto method_string : RAWParams::XTransSensor::getMethodStrings()) {
         const std::string langKey =
-            [i]() -> std::string
+            [method_string]() -> std::string
             {
-                const std::string str(procparams::RAWParams::XTransSensor::methodstring[i]);
+                const std::string str(method_string);
 
                 std::string res;
                 for (const auto& c : str) {
@@ -83,10 +83,10 @@ void XTransProcess::read(const rtengine::procparams::ProcParams* pp, const Param
     disableListener ();
     methodconn.block (true);
 
-    method->set_active(procparams::RAWParams::XTransSensor::numMethods);
+    method->set_active(std::numeric_limits<int>::max());
 
-    for( size_t i = 0; i < procparams::RAWParams::XTransSensor::numMethods; i++)
-        if( pp->raw.xtranssensor.method == procparams::RAWParams::XTransSensor::methodstring[i]) {
+    for (size_t i = 0; i < RAWParams::XTransSensor::getMethodStrings().size(); ++i)
+        if( pp->raw.xtranssensor.method == RAWParams::XTransSensor::getMethodStrings()[i]) {
             method->set_active(i);
             oldSelection = i;
             break;
@@ -96,7 +96,7 @@ void XTransProcess::read(const rtengine::procparams::ProcParams* pp, const Param
         ccSteps->setEditedState (pedited->raw.xtranssensor.ccSteps ? Edited : UnEdited);
 
         if( !pedited->raw.xtranssensor.method ) {
-            method->set_active(procparams::RAWParams::XTransSensor::numMethods);    // No name
+            method->set_active(std::numeric_limits<int>::max()); // No name
         }
     }
 
@@ -113,12 +113,12 @@ void XTransProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* p
 
     int currentRow = method->get_active_row_number();
 
-    if( currentRow >= 0 && currentRow < procparams::RAWParams::XTransSensor::numMethods) {
-        pp->raw.xtranssensor.method = procparams::RAWParams::XTransSensor::methodstring[currentRow];
+    if (currentRow >= 0 && currentRow < std::numeric_limits<int>::max()) {
+        pp->raw.xtranssensor.method = procparams::RAWParams::XTransSensor::getMethodStrings()[currentRow];
     }
 
     if (pedited) {
-        pedited->raw.xtranssensor.method = method->get_active_row_number() != procparams::RAWParams::XTransSensor::numMethods;
+        pedited->raw.xtranssensor.method = method->get_active_row_number() != std::numeric_limits<int>::max();
         pedited->raw.xtranssensor.ccSteps = ccSteps->getEditedState ();
     }
 }
@@ -126,7 +126,7 @@ void XTransProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* p
 void XTransProcess::setBatchMode(bool batchMode)
 {
     method->append (M("GENERAL_UNCHANGED"));
-    method->set_active(procparams::RAWParams::XTransSensor::numMethods); // No name
+    method->set_active(std::numeric_limits<int>::max()); // No name
     ToolPanel::setBatchMode (batchMode);
     ccSteps->showEditedCB ();
 }
@@ -153,15 +153,16 @@ void XTransProcess::adjusterChanged (Adjuster* a, double newval)
 
 void XTransProcess::methodChanged ()
 {
-    int  curSelection = method->get_active_row_number();
+    const int curSelection = method->get_active_row_number();
+    const RAWParams::XTransSensor::Method method = RAWParams::XTransSensor::Method(curSelection);
 
-    Glib::ustring methodName = "";
+    Glib::ustring methodName;
     bool ppreq = false;
 
-    if( curSelection >= 0 && curSelection < procparams::RAWParams::XTransSensor::numMethods) {
-        methodName = procparams::RAWParams::XTransSensor::methodstring[curSelection];
+    if (curSelection >= 0 && curSelection < std::numeric_limits<int>::max()) {
+        methodName = RAWParams::XTransSensor::getMethodStrings()[curSelection];
 
-        if (curSelection == procparams::RAWParams::XTransSensor::mono || oldSelection == procparams::RAWParams::XTransSensor::mono) {
+        if (method == RAWParams::XTransSensor::Method::NONE || RAWParams::XTransSensor::Method(oldSelection) == RAWParams::XTransSensor::Method::NONE) {
             ppreq = true;
         }
     }

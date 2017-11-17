@@ -314,33 +314,33 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited)
     int tcMode = toneCurveMode->get_active_row_number();
 
     if      (tcMode == 0) {
-        pp->toneCurve.curveMode = ToneCurveParams::Mode::STD;
+        pp->toneCurve.curveMode = ToneCurveParams::TcMode::STD;
     } else if (tcMode == 1) {
-        pp->toneCurve.curveMode = ToneCurveParams::Mode::WEIGHTEDSTD;
+        pp->toneCurve.curveMode = ToneCurveParams::TcMode::WEIGHTEDSTD;
     } else if (tcMode == 2) {
-        pp->toneCurve.curveMode = ToneCurveParams::Mode::FILMLIKE;
+        pp->toneCurve.curveMode = ToneCurveParams::TcMode::FILMLIKE;
     } else if (tcMode == 3) {
-        pp->toneCurve.curveMode = ToneCurveParams::Mode::SATANDVALBLENDING;
+        pp->toneCurve.curveMode = ToneCurveParams::TcMode::SATANDVALBLENDING;
     } else if (tcMode == 4) {
-        pp->toneCurve.curveMode = ToneCurveParams::Mode::LUMINANCE;
+        pp->toneCurve.curveMode = ToneCurveParams::TcMode::LUMINANCE;
     } else if (tcMode == 5) {
-        pp->toneCurve.curveMode = ToneCurveParams::Mode::PERCEPTUAL;
+        pp->toneCurve.curveMode = ToneCurveParams::TcMode::PERCEPTUAL;
     }
 
     tcMode = toneCurveMode2->get_active_row_number();
 
     if      (tcMode == 0) {
-        pp->toneCurve.curveMode2 = ToneCurveParams::Mode::STD;
+        pp->toneCurve.curveMode2 = ToneCurveParams::TcMode::STD;
     } else if (tcMode == 1) {
-        pp->toneCurve.curveMode2 = ToneCurveParams::Mode::WEIGHTEDSTD;
+        pp->toneCurve.curveMode2 = ToneCurveParams::TcMode::WEIGHTEDSTD;
     } else if (tcMode == 2) {
-        pp->toneCurve.curveMode2 = ToneCurveParams::Mode::FILMLIKE;
+        pp->toneCurve.curveMode2 = ToneCurveParams::TcMode::FILMLIKE;
     } else if (tcMode == 3) {
-        pp->toneCurve.curveMode2 = ToneCurveParams::Mode::SATANDVALBLENDING;
+        pp->toneCurve.curveMode2 = ToneCurveParams::TcMode::SATANDVALBLENDING;
     } else if (tcMode == 4) {
-        pp->toneCurve.curveMode2 = ToneCurveParams::Mode::LUMINANCE;
+        pp->toneCurve.curveMode2 = ToneCurveParams::TcMode::LUMINANCE;
     } else if (tcMode == 5) {
-        pp->toneCurve.curveMode2 = ToneCurveParams::Mode::PERCEPTUAL;
+        pp->toneCurve.curveMode2 = ToneCurveParams::TcMode::PERCEPTUAL;
     }
 
     if (pedited) {

@@ -28,6 +28,7 @@
 
 #include "coord.h"
 #include "LUT.h"
+#include "utils.h"
 
 class ParamsEdited;
 
@@ -254,7 +255,7 @@ private:
   * Parameters of the tone curve
   */
 struct ToneCurveParams {
-    enum class Mode {
+    enum class TcMode {
         STD,               // Standard modes, the curve is applied on all component individually
         WEIGHTEDSTD,       // Weighted standard mode
         FILMLIKE,          // Film-like mode, as defined in Adobe's reference code
@@ -270,8 +271,8 @@ struct ToneCurveParams {
     double      expcomp;
     std::vector<double>   curve;
     std::vector<double>   curve2;
-    Mode   curveMode;
-    Mode   curveMode2;
+    TcMode   curveMode;
+    TcMode   curveMode2;
     int         brightness;
     int         black;
     int         contrast;
@@ -519,18 +520,20 @@ struct WBParams {
     double          green;
     double          equal;
     double          tempBias;
+
+    static const std::vector<WBEntry>& getWbEntries();
 };
 
 /**
  * Parameters of colorappearance
  */
 struct ColorAppearanceParams {
-    enum class TCMode {
+    enum class TcMode {
         LIGHT,    // Lightness mode
         BRIGHT,   // Brightness mode
     };
 
-    enum class CTCMode {
+    enum class CtcMode {
         CHROMA,   // chroma mode
         SATUR,    // saturation mode
         COLORF,   // colorfullness mode
@@ -544,9 +547,9 @@ struct ColorAppearanceParams {
     std::vector<double> curve;
     std::vector<double> curve2;
     std::vector<double> curve3;
-    TCMode     curveMode;
-    TCMode     curveMode2;
-    CTCMode    curveMode3;
+    TcMode     curveMode;
+    TcMode     curveMode2;
+    CtcMode    curveMode3;
 
     Glib::ustring surround;
     Glib::ustring surrsrc;
@@ -798,21 +801,18 @@ struct ChannelMixerParams {
     int blue[3];
 };
 
-class BlackWhiteParams
-{
-
-public:
-    enum eTCModeId {
-        TC_MODE_STD_BW,               // Standard modes, the curve is applied on all component individually
-        TC_MODE_WEIGHTEDSTD_BW,       // Weighted standard mode
-        TC_MODE_FILMLIKE_BW,          // Film-like mode, as defined in Adobe's reference code
-        TC_MODE_SATANDVALBLENDING_BW  // Modify the Saturation and Value channel
+struct BlackWhiteParams {
+    enum class TcMode {
+        STD_BW,               // Standard modes, the curve is applied on all component individually
+        WEIGHTEDSTD_BW,       // Weighted standard mode
+        FILMLIKE_BW,          // Film-like mode, as defined in Adobe's reference code
+        SATANDVALBLENDING_BW  // Modify the Saturation and Value channel
     };
 
     std::vector<double> beforeCurve;
-    eTCModeId beforeCurveMode;
+    TcMode beforeCurveMode;
     std::vector<double> afterCurve;
-    eTCModeId afterCurveMode;
+    TcMode afterCurveMode;
     Glib::ustring algo;
 
     std::vector<double> luminanceCurve;
@@ -838,32 +838,15 @@ public:
 /**
   * Parameters of the c/a correction
   */
-class CACorrParams
-{
-
-public:
+struct CACorrParams {
     double red;
     double blue;
 };
 
 /**
-  * Parameters of the highlight recovery
-  */
-/*
-class HRecParams {
-
-  public:
-      bool enabled;
-     Glib::ustring method;
-};
-*/
-/**
   * Parameters of the resizing
   */
-class ResizeParams
-{
-
-public:
+struct ResizeParams {
     bool enabled;
     double scale;
     Glib::ustring appliesTo;
@@ -876,10 +859,7 @@ public:
 /**
   * Parameters of the color spaces used during the processing
   */
-class ColorManagementParams
-{
-
-public:
+struct ColorManagementParams {
     Glib::ustring input;
     bool          toneCurve;
     bool          applyLookTable;
@@ -897,10 +877,7 @@ public:
     double slpos;
     bool freegamma;
 
-    ColorManagementParams()
-    {
-        setDefaults();
-    }
+    ColorManagementParams();
     void setDefaults();
 };
 
@@ -912,14 +889,11 @@ typedef std::map<Glib::ustring, Glib::ustring> ExifPairs;
 /**
   * The IPTC key/value pairs
   */
-typedef std::map<Glib::ustring, std::vector<Glib::ustring> > IPTCPairs;
+typedef std::map<Glib::ustring, std::vector<Glib::ustring>> IPTCPairs;
 
 
-class WaveletParams
-{
-
-public:
-    std::vector<double>   ccwcurve;
+struct WaveletParams {
+    std::vector<double> ccwcurve;
     std::vector<double> opacityCurveRG;
     std::vector<double> opacityCurveBY;
     std::vector<double> opacityCurveW;
@@ -940,7 +914,6 @@ public:
     int bluehigh;
 
     bool lipst;
-    //  bool edgreinf;
     bool avoid;
     bool tmr;
     int strength;
@@ -1006,44 +979,35 @@ public:
     Threshold<double> level2noise;
     Threshold<double> level3noise;
 
-
-    WaveletParams ();
+    WaveletParams();
     void setDefaults();
-    void getCurves (WavCurve& cCurve, WavOpacityCurveRG& opacityCurveLUTRG, WavOpacityCurveBY& opacityCurveLUTBY, WavOpacityCurveW& opacityCurveLUTW, WavOpacityCurveWL& opacityCurveLUTWL) const;
+    void getCurves(WavCurve& cCurve, WavOpacityCurveRG& opacityCurveLUTRG, WavOpacityCurveBY& opacityCurveLUTBY, WavOpacityCurveW& opacityCurveLUTW, WavOpacityCurveWL& opacityCurveLUTWL) const;
     static void getDefaultCCWCurve (std::vector<double>& curve);
     static void getDefaultOpacityCurveRG (std::vector<double>& curve);
     static void getDefaultOpacityCurveBY (std::vector<double>& curve);
     static void getDefaultOpacityCurveW (std::vector<double>& curve);
     static void getDefaultOpacityCurveWL (std::vector<double>& curve);
-
 };
-
 
 /**
 * Directional pyramid equalizer params
 */
-class DirPyrEqualizerParams
-{
-
-public:
+struct DirPyrEqualizerParams {
     bool enabled;
     bool gamutlab;
     double mult[6];
     double threshold;
     double skinprotect;
     Threshold<int> hueskin;
-    //Glib::ustring algo;
     Glib::ustring cbdlMethod;
-    DirPyrEqualizerParams() : hueskin (20, 80, 2000, 1200, false) {};
+
+    DirPyrEqualizerParams();
 };
 
 /**
  * HSV equalizer params
  */
-class HSVEqualizerParams
-{
-
-public:
+struct HSVEqualizerParams {
     std::vector<double>   hcurve;
     std::vector<double>   scurve;
     std::vector<double>   vcurve;
@@ -1058,45 +1022,48 @@ struct FilmSimulationParams {
     Glib::ustring clutFilename;
     int strength;
 
-    FilmSimulationParams()
-    {
-        setDefaults();
-    }
-
-    void setDefaults()
-    {
-        enabled = false;
-        clutFilename = Glib::ustring();
-        strength = 100;
-    }
+    FilmSimulationParams();
+    void setDefaults();
 };
 
 
 /**
   * Parameters for RAW demosaicing, common to all sensor type
   */
-class RAWParams
-{
-
-public:
+struct RAWParams {
     /**
      * Parameters for RAW demosaicing specific to Bayer sensors
      */
-    class BayerSensor
-    {
-    public:
-        //enum eMethod{ eahd,hphd,vng4,dcb,amaze,ahd,IGV_noise,fast,
-        //numMethods }; // This MUST be the last enum
-        enum eMethod { amaze, igv, lmmse, eahd, hphd, vng4, dcb, ahd, fast, mono, none, pixelshift,
-                       numMethods
-                     }; // This MUST be the last enum
-        enum ePSMotionCorrection {
-            Grid1x1, Grid1x2, Grid3x3, Grid5x5, Grid7x7, Grid3x3New
+    struct BayerSensor {
+        enum class Method {
+            AMAZE,
+            IGV,
+            LMMSE,
+            EAHD,
+            HPHD,
+            VNG4,
+            DCB,
+            AHD,
+            FAST,
+            MONO,
+            NONE,
+            PIXELSHIFT
         };
-        enum ePSMotionCorrectionMethod {
-            Off, Automatic, Custom
+
+        enum class PSMotionCorrection {
+            GRID_1X1,
+            GRID_1X2,
+            GRID_3X3,
+            GRID_5X5,
+            GRID_7X7,
+            GRID_3X3_NEW
         };
-        static const char *methodstring[numMethods];
+
+        enum class PSMotionCorrectionMethod {
+            OFF,
+            AUTO,
+            CUSTOM
+        };
 
         Glib::ustring method;
         int imageNum;
@@ -1111,8 +1078,8 @@ public:
         int dcb_iterations;
         int lmmse_iterations;
         int pixelShiftMotion;
-        ePSMotionCorrection pixelShiftMotionCorrection;
-        ePSMotionCorrectionMethod pixelShiftMotionCorrectionMethod;
+        PSMotionCorrection pixelShiftMotionCorrection;
+        PSMotionCorrectionMethod pixelShiftMotionCorrectionMethod;
         double pixelShiftStddevFactorGreen;
         double pixelShiftStddevFactorRed;
         double pixelShiftStddevFactorBlue;
@@ -1141,38 +1108,44 @@ public:
         bool pixelShiftNonGreenCross2;
         bool pixelShiftNonGreenAmaze;
         bool dcb_enhance;
-        //bool all_enhance;
 
         void setPixelShiftDefaults();
 
+        static const std::vector<const char*>& getMethodStrings();
+        static Glib::ustring getMethodString(Method method);
     };
 
     /**
      * Parameters for RAW demosaicing specific to X-Trans sensors
      */
-    class XTransSensor
-    {
-    public:
-        enum eMethod { threePass, onePass, fast, mono, none,
-                       numMethods
-                     }; // This MUST be the last enum
-        static const char *methodstring[numMethods];
+    struct XTransSensor {
+        enum class Method {
+            THREE_PASS,
+            ONE_PASS,
+            FAST,
+            MONO,
+            NONE
+        };
 
         Glib::ustring method;
         int ccSteps;
         double blackred;
         double blackgreen;
         double blackblue;
-    };
+
+        static const std::vector<const char*>& getMethodStrings();
+        static Glib::ustring getMethodString(Method method);
+     };
 
     BayerSensor bayersensor;         ///< RAW parameters for Bayer sensors
     XTransSensor xtranssensor;       ///< RAW parameters for X-Trans sensors
 
-    enum eFlatFileBlurType { /*parametric,*/area_ff, v_ff, h_ff, vh_ff,
-                                            numFlatFileBlurTypes
-                           }; // This MUST be the last enum
-
-    static const char *ff_BlurTypestring[numFlatFileBlurTypes];
+    enum class FlatFieldBlurType {
+        AREA,
+        V,
+        H,
+        VH,
+    };
 
     Glib::ustring dark_frame;
     bool df_autoselect;
@@ -1196,11 +1169,11 @@ public:
     bool deadPixelFilter;
     int hotdeadpix_thresh;
 
-    RAWParams()
-    {
-        setDefaults();
-    }
+    RAWParams();
     void setDefaults();
+
+    static const std::vector<const char*>& getFlatFieldBlurTypeStrings();
+    static Glib::ustring getFlatFieldBlurTypeString(FlatFieldBlurType type);
 };
 
 /**
@@ -1348,7 +1321,8 @@ public:
   * and automatically delete them in the destructor. This class has been mostly created
   * to be used with vectors, which use the default constructor/destructor
   */
-class AutoPartialProfile : public PartialProfile
+class AutoPartialProfile :
+    public PartialProfile
 {
 public:
     AutoPartialProfile() : PartialProfile (true) {}

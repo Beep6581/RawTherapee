@@ -163,12 +163,12 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     // Assign the model to the Combobox
     method->set_model(refTreeModel);
 
-    WBEntry::Type oldType = WBParams::wbEntries[0].type;
+    WBEntry::Type oldType = WBParams::getWbEntries()[0].type;
     WBEntry::Type currType;
     Gtk::TreeModel::Row row, childrow;
 
-    for (unsigned int i = 0; i < WBParams::wbEntries.size(); i++) {
-        if (oldType != (currType = WBParams::wbEntries[i].type)) {
+    for (unsigned int i = 0; i < WBParams::getWbEntries().size(); i++) {
+        if (oldType != (currType = WBParams::getWbEntries()[i].type)) {
             // New entry type
             if (currType == WBEntry::Type::FLUORESCENT) {
                 // Creating the Fluorescent subcategory header
@@ -219,12 +219,12 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
            ) {
             childrow = *(refTreeModel->append(row.children()));
             childrow[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
-            childrow[methodColumns.colLabel] = WBParams::wbEntries[i].GUILabel;
+            childrow[methodColumns.colLabel] = WBParams::getWbEntries()[i].GUILabel;
             childrow[methodColumns.colId] = i;
         } else {
             row = *(refTreeModel->append());
             row[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
-            row[methodColumns.colLabel] = WBParams::wbEntries[i].GUILabel;
+            row[methodColumns.colLabel] = WBParams::getWbEntries()[i].GUILabel;
             row[methodColumns.colId] = i;
         }
 
@@ -441,7 +441,7 @@ void WhiteBalance::optChanged ()
             tempBias->setEditedState (UnEdited);
         } else {
             unsigned int methodId = findWBEntryId (row[methodColumns.colLabel], WBLT_GUI);
-            const WBEntry& currMethod = WBParams::wbEntries[methodId];
+            const WBEntry& currMethod = WBParams::getWbEntries()[methodId];
 
             tempBias->set_sensitive(currMethod.type == WBEntry::Type::AUTO);
 
@@ -740,7 +740,7 @@ void WhiteBalance::setBatchMode (bool batchMode)
     equal->showEditedCB ();
     tempBias->showEditedCB ();
     Gtk::TreeModel::Row row = *(refTreeModel->append());
-    row[methodColumns.colId] = WBParams::wbEntries.size();
+    row[methodColumns.colId] = WBParams::getWbEntries().size();
     row[methodColumns.colLabel] = M("GENERAL_UNCHANGED");
 
 }
@@ -810,8 +810,8 @@ void WhiteBalance::cache_customWB(int temp, double green)
 
 unsigned int WhiteBalance::findWBEntryId (const Glib::ustring& label, enum WB_LabelType lblType)
 {
-    for (unsigned int i = 0; i < WBParams::wbEntries.size(); i++) {
-        if (label == (lblType == WBLT_GUI ? WBParams::wbEntries[i].GUILabel : WBParams::wbEntries[i].ppLabel)) {
+    for (unsigned int i = 0; i < WBParams::getWbEntries().size(); i++) {
+        if (label == (lblType == WBLT_GUI ? WBParams::getWbEntries()[i].GUILabel : WBParams::getWbEntries()[i].ppLabel)) {
             return i;
         }
     }
@@ -821,13 +821,13 @@ unsigned int WhiteBalance::findWBEntryId (const Glib::ustring& label, enum WB_La
 
 std::pair<bool, const WBEntry&> WhiteBalance::findWBEntry(const Glib::ustring& label, enum WB_LabelType lblType)
 {
-    for (unsigned int i = 0; i < WBParams::wbEntries.size(); ++i) {
-        if (label == (lblType == WBLT_GUI ? WBParams::wbEntries[i].GUILabel : WBParams::wbEntries[i].ppLabel)) {
-            return {true, WBParams::wbEntries[i]};
+    for (unsigned int i = 0; i < WBParams::getWbEntries().size(); ++i) {
+        if (label == (lblType == WBLT_GUI ? WBParams::getWbEntries()[i].GUILabel : WBParams::getWbEntries()[i].ppLabel)) {
+            return {true, WBParams::getWbEntries()[i]};
         }
     }
 
-    return {false, WBParams::wbEntries[0]};
+    return {false, WBParams::getWbEntries()[0]};
 }
 
 int WhiteBalance::_setActiveMethod(Glib::ustring &label, Gtk::TreeModel::Children &children)

@@ -108,10 +108,10 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
             rawImage.getFullSize (fw, fh, TR_NONE);
             PreviewProps pp (0, 0, fw, fh, 1);
             params.icm.input = Glib::ustring("(embedded)");
-            params.raw.bayersensor.method = RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::fast];
+            params.raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
             params.raw.deadPixelFilter = false;
             params.raw.ca_autocorrect = false;
-            params.raw.xtranssensor.method = RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::fast];
+            params.raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
             rawImage.preprocess(params.raw, params.lensProf, params.coarse);
             rawImage.demosaic(params.raw);
             Imagefloat image(fw, fh);

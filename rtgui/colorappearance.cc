@@ -1044,27 +1044,27 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
     int tcMode = toneCurveMode->get_active_row_number();
 
     if      (tcMode == 0) {
-        pp->colorappearance.curveMode = ColorAppearanceParams::TCMode::LIGHT;
+        pp->colorappearance.curveMode = ColorAppearanceParams::TcMode::LIGHT;
     } else if (tcMode == 1) {
-        pp->colorappearance.curveMode = ColorAppearanceParams::TCMode::BRIGHT;
+        pp->colorappearance.curveMode = ColorAppearanceParams::TcMode::BRIGHT;
     }
 
     tcMode = toneCurveMode2->get_active_row_number();
 
     if      (tcMode == 0) {
-        pp->colorappearance.curveMode2 = ColorAppearanceParams::TCMode::LIGHT;
+        pp->colorappearance.curveMode2 = ColorAppearanceParams::TcMode::LIGHT;
     } else if (tcMode == 1) {
-        pp->colorappearance.curveMode2 = ColorAppearanceParams::TCMode::BRIGHT;
+        pp->colorappearance.curveMode2 = ColorAppearanceParams::TcMode::BRIGHT;
     }
 
     int tcMode3 = toneCurveMode3->get_active_row_number();
 
     if      (tcMode3 == 0) {
-        pp->colorappearance.curveMode3 = ColorAppearanceParams::CTCMode::CHROMA;
+        pp->colorappearance.curveMode3 = ColorAppearanceParams::CtcMode::CHROMA;
     } else if (tcMode3 == 1) {
-        pp->colorappearance.curveMode3 = ColorAppearanceParams::CTCMode::SATUR;
+        pp->colorappearance.curveMode3 = ColorAppearanceParams::CtcMode::SATUR;
     } else if (tcMode3 == 2) {
-        pp->colorappearance.curveMode3 = ColorAppearanceParams::CTCMode::COLORF;
+        pp->colorappearance.curveMode3 = ColorAppearanceParams::CtcMode::COLORF;
     }
 
     if (pedited) {
