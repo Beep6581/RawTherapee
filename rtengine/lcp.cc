@@ -797,12 +797,12 @@ void XMLCALL rtengine::LCPProfile::XmlStartHandler(void* pLCPProfile, const char
     if (src_str == "PerspectiveModel") {
         pProf->firstLIDone = true;
         pProf->inPerspect = true;
-        return;
+        parseAttr = true;
     } else if (src_str == "FisheyeModel") {
         pProf->firstLIDone = true;
         pProf->inPerspect = true;
         pProf->isFisheye = true; // just misses third param, and different path, rest is the same
-        return;
+        parseAttr = true;
     } else if (src_str == "Description") {
         parseAttr = true;
     }
