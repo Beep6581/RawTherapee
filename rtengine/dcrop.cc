@@ -697,7 +697,7 @@ void Crop::update (int todo)
         int fh = skips(parent->fh, skip);
         bool need_cropping = false;
 
-        if (cropx || cropy || trafw != fw || trafh != fh) {
+        if (trafx || trafy || trafw != fw || trafh != fh) {
             need_cropping = true;
             // fattal needs to work on the full image. So here we get the full
             // image from imgsrc, and replace the denoised crop in case
@@ -710,8 +710,8 @@ void Crop::update (int todo)
 
             if (params.dirpyrDenoise.enabled) {
                 // copy the denoised crop
-                int oy = cropy / skip;
-                int ox = cropx / skip;
+                int oy = trafy / skip;
+                int ox = trafx / skip;
 #ifdef _OPENMP
                 #pragma omp parallel for
 #endif
@@ -737,9 +737,9 @@ void Crop::update (int todo)
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-            for (int y = 0; y < croph; ++y) {
+            for (int y = 0; y < trafh; ++y) {
                 int cy = y + oy;
-                for (int x = 0; x < cropw; ++x) {
+                for (int x = 0; x < trafw; ++x) {
                     int cx = x + ox;
                     c->r(y, x) = f->r(cy, cx);
                     c->g(y, x) = f->g(cy, cx);
