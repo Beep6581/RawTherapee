@@ -515,6 +515,10 @@ enum ProcEvent {
     EvLensCorrMode = 484,
     EvLensCorrLensfunCamera = 485,
     EvLensCorrLensfunLens = 486,
+    // Fattal tone mapping
+    EvTMFattalEnabled = 487,
+    EvTMFattalThreshold = 488,
+    EvTMFattalAmount = 489,
 
     NUMOFEVENTS
 

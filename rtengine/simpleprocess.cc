@@ -810,6 +810,10 @@ private:
 
         ipf.firstAnalysis (baseImg, params, hist16);
 
+        if (params.fattal.enabled) {
+            ipf.ToneMapFattal02(baseImg);
+        }
+                
         // perform transform (excepted resizing)
         if (ipf.needsTransform()) {
             Imagefloat* trImg = nullptr;

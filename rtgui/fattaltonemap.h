@@ -1,7 +1,8 @@
-/*
+/** -*- C++ -*-
+ *  
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2017 Alberto Griggio <alberto.griggio@gmail.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,25 +17,21 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EPD_H_
-#define _EPD_H_
+#pragma once
 
 #include <gtkmm.h>
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class EdgePreservingDecompositionUI : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class FattalToneMapping: public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
 {
 protected:
-    Adjuster *strength;
-    Adjuster *gamma;
-    Adjuster *edgeStopping;
-    Adjuster *scale;
-    Adjuster *reweightingIterates;
+    Adjuster *threshold;
+    Adjuster *amount;
 
 public:
 
-    EdgePreservingDecompositionUI();
+    FattalToneMapping();
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
@@ -43,7 +40,7 @@ public:
 
     void adjusterChanged (Adjuster* a, double newval);
     void enabledChanged  ();
-    void setAdjusterBehavior (bool stAdd, bool gAdd, bool esAdd, bool scAdd, bool rAdd);
+    void setAdjusterBehavior (bool alphaAdd, bool betaAdd);
+
 };
 
-#endif

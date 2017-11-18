@@ -33,7 +33,7 @@ namespace rtengine
 extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
-    : orig_prev (nullptr), oprevi (nullptr), oprevl (nullptr), nprevl (nullptr), previmg (nullptr), workimg (nullptr),
+    : orig_prev (nullptr), oprevi (nullptr), oprevl (nullptr), nprevl (nullptr), fattal_11_dcrop_cache(nullptr), previmg (nullptr), workimg (nullptr),
       ncie (nullptr), imgsrc (nullptr), shmap (nullptr), lastAwbEqual (0.), lastAwbTempBias (0.0), ipf (&params, true), monitorIntent (RI_RELATIVE),
       softProof (false), gamutCheck (false), scale (10), highDetailPreprocessComputed (false), highDetailRawComputed (false),
       allocated (false), bwAutoR (-9000.f), bwAutoG (-9000.f), bwAutoB (-9000.f), CAMMean (NAN),
@@ -111,6 +111,10 @@ ImProcCoordinator::~ImProcCoordinator ()
     mProcessing.lock();
     mProcessing.unlock();
     freeAll ();
+    if (fattal_11_dcrop_cache) {
+        delete fattal_11_dcrop_cache;
+        fattal_11_dcrop_cache = nullptr;
+    }
 
     std::vector<Crop*> toDel = crops;
 
@@ -280,7 +284,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         }
     }
 
-    if (todo & (M_INIT | M_LINDENOISE)) {
+    if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
         MyMutex::MyLock initLock (minit); // Also used in crop window
 
         imgsrc->HLRecovery_Global ( params.toneCurve); // this handles Color HLRecovery
@@ -385,25 +389,32 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     readyphase++;
 
+    if ((todo & M_HDR) && params.fattal.enabled) {
+        if (fattal_11_dcrop_cache) {
+            delete fattal_11_dcrop_cache;
+            fattal_11_dcrop_cache = nullptr;
+        }
+        ipf.ToneMapFattal02(orig_prev);
+        if (oprevi != orig_prev) {
+            delete oprevi;
+        }
+    }
+    oprevi = orig_prev;
+
     progress ("Rotate / Distortion...", 100 * readyphase / numofphases);
     // Remove transformation if unneeded
     bool needstransform = ipf.needsTransform();
-
-    if (!needstransform && ! ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) && orig_prev != oprevi) {
-        delete oprevi;
-        oprevi = orig_prev;
-    }
-
+    
     if ((needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled)) ) {
-        if (!oprevi || oprevi == orig_prev) {
-            oprevi = new Imagefloat (pW, pH);
-        }
+        assert(oprevi);
+        Imagefloat *op = oprevi;
+        oprevi = new Imagefloat (pW, pH);
 
         if (needstransform)
-            ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH, fw, fh, 
+            ipf.transform (op, oprevi, 0, 0, 0, 0, pW, pH, fw, fh, 
                            imgsrc->getMetaData(), imgsrc->getRotateDegree(), false);
         else {
-            orig_prev->copyData (oprevi);
+            op->copyData (oprevi);
         }
     }
 
