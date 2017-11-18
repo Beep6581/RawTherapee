@@ -3933,6 +3933,9 @@ void RawImageSource::cielab (const float (*rgb)[3], float* l, float* a, float *b
 * Luis Sanz Rodriguez (luis.sanz.rodriguez(at)gmail(dot)com)
 *
 * Release 2.2 @ 171117
+*
+* Original code from https://github.com/LuisSR/RCD-Demosaicing
+* Licensed under the GNU GPL version 3
 */
 void RawImageSource::rcd_demosaic()
 {
