@@ -283,8 +283,7 @@ struct ToneCurveParams {
 
     ToneCurveParams();
 
-    void setDefaults();
-    static bool HLReconstructionNecessary(LUTu& histRedRaw, LUTu& histGreenRaw, LUTu& histBlueRaw);
+    static bool HLReconstructionNecessary(const LUTu& histRedRaw, const LUTu& histGreenRaw, const LUTu& histBlueRaw);
 };
 
 /**
@@ -326,12 +325,8 @@ struct RetinexParams
     bool    medianmap;
 
     RetinexParams();
-    void setDefaults();
+
     void getCurves(RetinextransmissionCurve& transmissionCurveLUT, RetinexgaintransmissionCurve& gaintransmissionCurveLUT) const;
-
-    static void getDefaultgaintransmissionCurve (std::vector<double>& curve);
-
-    static void getDefaulttransmissionCurve (std::vector<double>& curve);
 };
 
 
@@ -355,6 +350,8 @@ struct LCurveParams
     bool    avoidcolorshift;
     double  rstprotection;
     bool    lcredsk;
+
+    LCurveParams();
 };
 
 /**
@@ -417,7 +414,6 @@ struct ColorToningParams {
     bool lumamode;
 
     ColorToningParams();
-    void setDefaults();  // SHOULD BE GENERALIZED TO ALL CLASSES!
 
     /// @brief Transform the mixer values to their curve equivalences
     void mixerToCurve(std::vector<double>& colorCurve, std::vector<double>& opacityCurve) const;
@@ -425,11 +421,6 @@ struct ColorToningParams {
     void slidersToCurve(std::vector<double>& colorCurve, std::vector<double>& opacityCurve) const;
     /// @brief Fill the ColorGradientCurve and OpacityCurve LUTf from the control points curve or sliders value
     void getCurves(ColorGradientCurve& colorCurveLUT, OpacityCurve& opacityCurveLUT, const double xyz_rgb[3][3], const double rgb_xyz[3][3], bool& opautili) const;
-
-    static void getDefaultColorCurve(std::vector<double>& curve);
-    static void getDefaultOpacityCurve(std::vector<double>& curve);
-    static void getDefaultCLCurve(std::vector<double>& curve);
-    static void getDefaultCL2Curve(std::vector<double>& curve);
 };
 
 /**

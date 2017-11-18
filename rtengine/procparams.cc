@@ -349,86 +349,119 @@ bool operator ==(const rtengine::procparams::DirPyrEqualizerParams& a, const rte
     return a.threshold == b.threshold;
 }
 
-ToneCurveParams::ToneCurveParams()
+ToneCurveParams::ToneCurveParams() :
+    autoexp(false),
+    clip(0.02),
+    hrenabled(false),
+    method("Blend"),
+    expcomp(0),
+    curve{
+        DCT_Linear
+    },
+    curve2{
+        DCT_Linear
+    },
+    curveMode(ToneCurveParams::TcMode::STD),
+    curveMode2(ToneCurveParams::TcMode::STD),
+    brightness(0),
+    black(0),
+    contrast(0),
+    saturation(0),
+    shcompr(50),
+    hlcompr(0),
+    hlcomprthresh(33)
 {
-    setDefaults();
 }
 
-void ToneCurveParams::setDefaults()
+bool ToneCurveParams::HLReconstructionNecessary(const LUTu& histRedRaw, const LUTu& histGreenRaw, const LUTu& histBlueRaw)
 {
-    autoexp = false;
-    clip = 0.02;
-    expcomp = 0;
-    brightness = 0;
-    contrast = 0;
-    saturation = 0;
-    black = 0;
-    hlcompr = 0;
-    hlcomprthresh = 33;
-    shcompr = 50;
-    curve.clear ();
-    curve.push_back (DCT_Linear);
-    curve2.clear ();
-    curve2.push_back (DCT_Linear);
-    curveMode = ToneCurveParams::TcMode::STD;
-    curveMode2 = ToneCurveParams::TcMode::STD;
-    hrenabled = false;
-    method = "Blend";
-}
-
-bool ToneCurveParams::HLReconstructionNecessary (LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw)
-{
-    if (options.rtSettings.verbose)
-        printf ("histRedRaw[  0]=%07d, histGreenRaw[  0]=%07d, histBlueRaw[  0]=%07d\nhistRedRaw[255]=%07d, histGreenRaw[255]=%07d, histBlueRaw[255]=%07d\n",
+    if (options.rtSettings.verbose) {
+        printf("histRedRaw[  0]=%07d, histGreenRaw[  0]=%07d, histBlueRaw[  0]=%07d\nhistRedRaw[255]=%07d, histGreenRaw[255]=%07d, histBlueRaw[255]=%07d\n",
                 histRedRaw[0], histGreenRaw[0], histBlueRaw[0], histRedRaw[255], histGreenRaw[255], histBlueRaw[255]);
+    }
 
-    return histRedRaw[255] > 50 || histGreenRaw[255] > 50 || histBlueRaw[255] > 50 || histRedRaw[0] > 50 || histGreenRaw[0] > 50 || histBlueRaw[0] > 50;
+    return
+        histRedRaw[255] > 50
+        || histGreenRaw[255] > 50
+        || histBlueRaw[255] > 50
+        || histRedRaw[0] > 50
+        || histGreenRaw[0] > 50
+        || histBlueRaw[0] > 50;
 }
 
-RetinexParams::RetinexParams ()
+RetinexParams::RetinexParams() :
+    enabled(false),
+    cdcurve{
+        DCT_Linear
+    },
+    cdHcurve{
+        DCT_Linear
+    },
+    lhcurve{
+        DCT_Linear
+    },
+    transmissionCurve{
+        FCT_MinMaxCPoints,
+        0.00,
+        0.50,
+        0.35,
+        0.35,
+        0.60,
+        0.75,
+        0.35,
+        0.35,
+        1.00,
+        0.50,
+        0.35,
+        0.35
+    },
+    gaintransmissionCurve{
+        FCT_MinMaxCPoints,
+        0.00,
+        0.1,
+        0.35,
+        0.00,
+        0.25,
+        0.25,
+        0.35,
+        0.35,
+        0.70,
+        0.25,
+        0.35,
+        0.35,
+        1.00,
+        0.1,
+        0.00,
+        0.00
+    },
+    mapcurve{
+        DCT_Linear
+    },
+    str(20),
+    scal(3),
+    iter(1),
+    grad(1),
+    grads(1),
+    gam(1.30),
+    slope(3.),
+    neigh(80),
+    offs(0),
+    highlights(0),
+    htonalwidth(80),
+    shadows(0),
+    stonalwidth(80),
+    radius(40),
+    retinexMethod("high"),
+    retinexcolorspace("Lab"),
+    gammaretinex("none"),
+    mapMethod("none"),
+    viewMethod("none"),
+    vart(200),
+    limd(8),
+    highl(4),
+    skal(3),
+    medianmap(false)
 {
-    setDefaults ();
-}
-
-void RetinexParams::setDefaults()
-{
-    enabled = false;
-    str = 20;
-    scal = 3;
-    iter = 1;
-    grad = 1;
-    grads = 1;
-    gam = 1.30;
-    slope = 3.;
-    neigh = 80;
-    offs = 0;
-    vart = 200;
-    limd = 8;
-    highl = 4;
-    highlights = 0;
-    htonalwidth = 80;
-    shadows = 0;
-    stonalwidth = 80;
-    radius = 40;
-
-    skal = 3;
-    retinexMethod = "high";
-    mapMethod = "none";
-    viewMethod = "none";
-    retinexcolorspace = "Lab";
-    gammaretinex = "none";
-    medianmap = false;
-    cdcurve.clear();
-    cdcurve.push_back (DCT_Linear);
-    cdHcurve.clear();
-    cdHcurve.push_back (DCT_Linear);
-    lhcurve.clear();
-    lhcurve.push_back (DCT_Linear);
-    mapcurve.clear();
-    mapcurve.push_back (DCT_Linear);
-    getDefaultgaintransmissionCurve (gaintransmissionCurve);
-
-    getDefaulttransmissionCurve (transmissionCurve);
 }
 
 void RetinexParams::getCurves (RetinextransmissionCurve &transmissionCurveLUT, RetinexgaintransmissionCurve &gaintransmissionCurveLUT) const
@@ -438,73 +471,115 @@ void RetinexParams::getCurves (RetinextransmissionCurve &transmissionCurveLUT, R
 
 }
 
-void RetinexParams::getDefaultgaintransmissionCurve (std::vector<double> &curve)
+LCurveParams::LCurveParams() :
+    lcurve{
+        DCT_Linear
+    },
+    acurve{
+        DCT_Linear
+    },
+    bcurve{
+        DCT_Linear
+    },
+    cccurve{
+        DCT_Linear
+    },
+    chcurve{
+        FCT_Linear
+    },
+    lhcurve{
+        FCT_Linear
+    },
+    hhcurve{
+        FCT_Linear
+    },
+    lccurve{
+        DCT_Linear
+    },
+    clcurve{
+        DCT_Linear
+    },
+    brightness(0),
+    contrast(0),
+    chromaticity(0),
+    avoidcolorshift(false),
+    rstprotection(0),
+    lcredsk(true)
 {
-    double v[16] = { 0.00,  0.1, 0.35, 0.00,
-                     0.25, 0.25, 0.35, 0.35,
-                     0.70, 0.25, 0.35, 0.35,
-                     1.00,  0.1, 0.00, 0.00
-                   };
-
-    curve.resize (17);
-    curve.at (0 ) = double (FCT_MinMaxCPoints);
-
-    for (size_t i = 1; i < curve.size(); ++i) {
-        curve.at (i) = v[i - 1];
-    }
 }
 
-void RetinexParams::getDefaulttransmissionCurve (std::vector<double> &curve)
+ColorToningParams::ColorToningParams () :
+    enabled(false),
+    autosat(true),
+    opacityCurve{
+        FCT_MinMaxCPoints,
+        0.00,
+        0.3,
+        0.35,
+        0.00,
+        0.25,
+        0.8,
+        0.35,
+        0.35,
+        0.70,
+        0.8,
+        0.35,
+        0.35,
+        1.00,
+        0.3,
+        0.00,
+        0.00
+    },
+    colorCurve{
+        FCT_MinMaxCPoints,
+        0.050,
+        0.62,
+        0.25,
+        0.25,
+        0.585,
+        0.11,
+        0.25,
+        0.25
+    },
+    satProtectionThreshold(30),
+    saturatedOpacity(80),
+    strength(50),
+    balance(0),
+    hlColSat(60, 80, false),
+    shadowsColSat (80, 208, false),
+    clcurve{
+        DCT_NURBS,
+        0.00,
+        0.00,
+        0.35,
+        0.65,
+        1.00,
+        1.00
+    },
+    cl2curve{
+        DCT_NURBS,
+        0.00,
+        0.00,
+        0.35,
+        0.65,
+        1.00,
+        1.00
+    },
+    method("Lab"),
+    twocolor("Std"),
+    redlow(0.0),
+    greenlow(0.0),
+    bluelow(0.0),
+    redmed(0.0),
+    greenmed(0.0),
+    bluemed(0.0),
+    redhigh(0.0),
+    greenhigh(0.0),
+    bluehigh(0.0),
+    satlow(0.0),
+    sathigh(0.0),
+    lumamode(true)
 {
-    double v[12] =   {   0.00, 0.50, 0.35, 0.35,
-                         0.60, 0.75, 0.35, 0.35,
-                         1.00, 0.50, 0.35, 0.35,
-                     };
-
-    curve.resize (13);
-    curve.at (0 ) = double (FCT_MinMaxCPoints);
-
-    for (size_t i = 1; i < curve.size(); ++i) {
-        curve.at (i) = v[i - 1];
-    }
-}
-
-// Maps crop to resized width (e.g. smaller previews)
-ColorToningParams::ColorToningParams () : hlColSat (60, 80, false), shadowsColSat (80, 208, false)
-{
-    setDefaults();
-}
-
-void ColorToningParams::setDefaults()
-{
-    enabled = false;
-    autosat = true;
-    method = "Lab";
-
-    getDefaultColorCurve (colorCurve);
-    getDefaultOpacityCurve (opacityCurve);
-    getDefaultCLCurve (clcurve);
-    getDefaultCL2Curve (cl2curve);
-
-    hlColSat.setValues (60, 80);
-    shadowsColSat.setValues (80, 208);
-    balance = 0;
-    satProtectionThreshold = 30;
-    saturatedOpacity = 80;
-    strength = 50;
-    lumamode = true;
-    twocolor = "Std";
-    redlow = 0.0;
-    greenlow = 0.0;
-    bluelow = 0.0;
-    satlow = 0.0;
-    sathigh = 0.0;
-    redmed = 0.0;
-    greenmed = 0.0;
-    bluemed = 0.0;
-    redhigh = 0.0;
-    greenhigh = 0.0;
-    bluehigh = 0.0;
 }
 
 void ColorToningParams::mixerToCurve (std::vector<double> &colorCurve, std::vector<double> &opacityCurve) const
@@ -783,65 +858,6 @@ void ColorToningParams::getCurves (ColorGradientCurve &colorCurveLUT, OpacityCur
     } else if (method.substr (0, 3) == "RGB") {
         colorCurveLUT.SetRGB (cCurve, xyz_rgb, rgb_xyz);
         opacityCurveLUT.Set (oCurve, opautili);
-    }
-}
-
-void ColorToningParams::getDefaultColorCurve (std::vector<double> &curve)
-{
-    double v[8] = { 0.050, 0.62, 0.25, 0.25,
-                    0.585, 0.11, 0.25, 0.25
-                  };
-
-    curve.resize (9);
-    curve.at (0) = double (FCT_MinMaxCPoints);
-
-    for (size_t i = 1; i < curve.size(); ++i) {
-        curve.at (i) = v[i - 1];
-    }
-}
-
-void ColorToningParams::getDefaultOpacityCurve (std::vector<double> &curve)
-{
-    double v[16] = { 0.00, 0.3, 0.35, 0.00,
-                     0.25, 0.8, 0.35, 0.35,
-                     0.70, 0.8, 0.35, 0.35,
-                     1.00, 0.3, 0.00, 0.00
-                   };
-    curve.resize (17);
-    curve.at (0 ) = double (FCT_MinMaxCPoints);
-
-    for (size_t i = 1; i < curve.size(); ++i) {
-        curve.at (i) = v[i - 1];
-    }
-}
-
-void ColorToningParams::getDefaultCLCurve (std::vector<double> &curve)
-{
-    double v[6] = { 0.00, 0.00,
-                    0.35, 0.65,
-                    1.00, 1.00
-                  };
-
-    curve.resize (7);
-    curve.at (0) = double (DCT_NURBS);
-
-    for (size_t i = 1; i < curve.size(); ++i) {
-        curve.at (i) = v[i - 1];
-    }
-}
-
-void ColorToningParams::getDefaultCL2Curve (std::vector<double> &curve)
-{
-    double v[6] = { 0.00, 0.00,
-                    0.35, 0.65,
-                    1.00, 1.00
-                  };
-
-    curve.resize (7);
-    curve.at (0) = double (DCT_NURBS);
-
-    for (size_t i = 1; i < curve.size(); ++i) {
-        curve.at (i) = v[i - 1];
     }
 }
 
@@ -1481,34 +1497,9 @@ ProcParams::ProcParams ()
 
 void ProcParams::setDefaults ()
 {
+    toneCurve = ToneCurveParams();
 
-    toneCurve.setDefaults();
-
-    labCurve.brightness = 0;
-    labCurve.contrast = 0;
-    labCurve.chromaticity = 0;
-    labCurve.avoidcolorshift = false;
-    labCurve.lcredsk = true;
-    labCurve.rstprotection = 0;
-    labCurve.lcurve.clear ();
-    labCurve.lcurve.push_back (DCT_Linear);
-    labCurve.acurve.clear ();
-    labCurve.acurve.push_back (DCT_Linear);
-    labCurve.bcurve.clear ();
-    labCurve.bcurve.push_back (DCT_Linear);
-    labCurve.cccurve.clear ();
-    labCurve.cccurve.push_back (DCT_Linear);
-    labCurve.chcurve.clear ();
-    labCurve.chcurve.push_back (FCT_Linear);
-    labCurve.lhcurve.clear ();
-    labCurve.lhcurve.push_back (FCT_Linear);
-    labCurve.hhcurve.clear ();
-    labCurve.hhcurve.push_back (FCT_Linear);
-
-    labCurve.lccurve.clear ();
-    labCurve.lccurve.push_back (DCT_Linear);
-    labCurve.clcurve.clear ();
-    labCurve.clcurve.push_back (DCT_Linear);
+    labCurve = LCurveParams();
 
     rgbCurves.lumamode = false;
     rgbCurves.rcurve.clear ();
@@ -1518,7 +1509,7 @@ void ProcParams::setDefaults ()
     rgbCurves.bcurve.clear ();
     rgbCurves.bcurve.push_back (DCT_Linear);
 
-    colorToning.setDefaults();
+    colorToning = ColorToningParams();
 
     sharpenEdge.enabled = false;
     sharpenEdge.passes = 2;
