@@ -186,8 +186,6 @@ Glib::ustring BatchQueueEntry::getToolTip (int x, int y)
                                                   saveFormat.jpegSubSamp == 1 ? M("SAVEDLG_SUBSAMP_1") :
                                                   saveFormat.jpegSubSamp == 2 ? M("SAVEDLG_SUBSAMP_2") :
                                                   M("SAVEDLG_SUBSAMP_3"));
-            } else if (saveFormat.format == "png") {
-                tooltip += Glib::ustring::compose("\n%1: %2", M("SAVEDLG_PNGCOMPR"), saveFormat.pngCompression);
             } else if (saveFormat.format == "tif") {
                 if (saveFormat.tiffUncompressed) {
                     tooltip += Glib::ustring::compose("\n%1", M("SAVEDLG_TIFFUNCOMPRESSED"));

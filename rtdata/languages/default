@@ -1194,7 +1194,6 @@ SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
 SAVEDLG_FILEFORMAT;File format
 SAVEDLG_FORCEFORMATOPTS;Force saving options
 SAVEDLG_JPEGQUAL;JPEG quality
-SAVEDLG_PNGCOMPR;PNG compression
 SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
