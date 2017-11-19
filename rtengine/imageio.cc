@@ -1250,20 +1250,28 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
         }
 
 #if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
-        bool needsReverse = bps == 16 && exifRoot->getOrder() == rtexif::MOTOROLA;
+        bool needsReverse = (bps == 16 || bps == 32) && exifRoot->getOrder() == rtexif::MOTOROLA;
 #else
-        bool needsReverse = bps == 16 && exifRoot->getOrder() == rtexif::INTEL;
+        bool needsReverse = (bps == 16 || bps == 32) && exifRoot->getOrder() == rtexif::INTEL;
 #endif
 
         for (int i = 0; i < height; i++) {
             getScanline (i, linebuffer, bps);
 
-            if (needsReverse)
-                for (int i = 0; i < lineWidth; i += 2) {
-                    char c = linebuffer[i];
-                    linebuffer[i] = linebuffer[i + 1];
-                    linebuffer[i + 1] = c;
+            if (needsReverse) {
+                if (bps == 16) {
+                    for (int i = 0; i < lineWidth; i += 2) {
+                        char c = linebuffer[i];
+                        linebuffer[i] = linebuffer[i + 1];
+                        linebuffer[i + 1] = c;
+                    }
+                } else {
+                    for (int i = 0; i < lineWidth; i += 4) {
+                        std::swap(linebuffer[i], linebuffer[i+3]);
+                        std::swap(linebuffer[i+1], linebuffer[i+2]);
+                    }
                 }
+            }
 
             fwrite (linebuffer, lineWidth, 1, file);
 
@@ -1362,6 +1370,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
         TIFFSetField (out, TIFFTAG_SAMPLEFORMAT, SAMPLEFORMAT_UINT);
         TIFFSetField (out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
         TIFFSetField (out, TIFFTAG_COMPRESSION, uncompressed ? COMPRESSION_NONE : COMPRESSION_DEFLATE);
+        TIFFSetField (out, TIFFTAG_SAMPLEFORMAT, bps == 32 ? SAMPLEFORMAT_IEEEFP : SAMPLEFORMAT_UINT);
 
         if (!uncompressed) {
             TIFFSetField (out, TIFFTAG_PREDICTOR, PREDICTOR_NONE);

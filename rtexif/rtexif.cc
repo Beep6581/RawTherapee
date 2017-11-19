@@ -3240,6 +3240,8 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
     Tag* stripOffs = new Tag (cl, lookupAttrib (ifdAttribs, "StripOffsets"));
     stripOffs->initInt (0, LONG, strips);
     cl->replaceTag (stripOffs);
+    Tag *sampleFormat = new Tag (cl, lookupAttrib (ifdAttribs, "SampleFormat"), bps == 32 ? 3 : 1, SHORT);
+    cl->replaceTag (sampleFormat);
 
     for (int i = 0; i < strips - 1; i++) {
         stripBC->setInt (rps * W * 3 * bps / 8, i * 4);
