@@ -755,7 +755,7 @@ public:
     {
         enabled = false;
         threshold = 0;
-        amount = 0;
+        amount = 1;
     }
 };
 
