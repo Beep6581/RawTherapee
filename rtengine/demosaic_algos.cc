@@ -4122,9 +4122,6 @@ void RawImageSource::rcd_demosaic()
     /**
     * STEP 4: Populate the red and blue channel
     */
-#ifdef _OPENMP
-    #pragma omp parallel for
-#endif
     for ( int row = 4; row < height - 4; row++ ) {
         for ( int col = 4 + ( FC( row, 0 )&1 ), indx = row * width + col, c = 2 - FC( row, col ); col < width - 4; col += 2, indx += 2 ) {
 
@@ -4155,9 +4152,6 @@ void RawImageSource::rcd_demosaic()
     }
     // -------------------------------------------------------------------------
     
-#ifdef _OPENMP
-    #pragma omp parallel for
-#endif
     for ( int row = 4; row < height - 4; row++ ) {
         for ( int col = 4 + ( FC( row, 1 )&1 ), indx = row * width + col; col < width - 4; col += 2, indx += 2 ) {
 
