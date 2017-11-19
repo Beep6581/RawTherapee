@@ -9693,7 +9693,11 @@ dng_skip:
 	&& cmatrix[0][0] > 0.125) {
     memcpy (rgb_cam, cmatrix, sizeof cmatrix);
     raw_color = 0;
+    if (dng_version && !use_camera_wb) { // RT
+        raw_color = 1;
+    }
   }
+  // RT -- TODO: check if these special cases are still needed!
   if(!strncmp(make, "Panasonic", 9) && !strncmp(model, "DMC-LX100",9))
 	adobe_coeff (make, model);
   if(!strncmp(make, "Samsung", 7) && !strncmp(model, "GX20",4))
