@@ -534,7 +534,7 @@ public:
    * @param pl is an optional ProgressListener if you want to keep track of the progress
    * @param tunnelMetaData tunnels IPTC and XMP to output without change
    * @return the resulting image, with the output profile applied, exif and iptc data set. You have to save it or you can access the pixel data directly.  */
-IImage16* processImage (ProcessingJob* job, int& errorCode, ProgressListener* pl = nullptr, bool tunnelMetaData = false, bool flush = false);
+IImagefloat* processImage (ProcessingJob* job, int& errorCode, ProgressListener* pl = nullptr, bool tunnelMetaData = false, bool flush = false);
 
 /** This class is used to control the batch processing. The class implementing this interface will be called when the full processing of an
    * image is ready and the next job to process is needed. */
@@ -545,7 +545,7 @@ public:
                    * there is no jobs left.
                    * @param img is the result of the last ProcessingJob
                    * @return the next ProcessingJob to process */
-    virtual ProcessingJob* imageReady (IImage16* img) = 0;
+    virtual ProcessingJob* imageReady (IImagefloat* img) = 0;
     virtual void error (Glib::ustring message) = 0;
 };
 /** This function performs all the image processinf steps corresponding to the given ProcessingJob. It runs in the background, thus it returns immediately,

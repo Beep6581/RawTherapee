@@ -1751,9 +1751,9 @@ void EditorPanel::procParamsChanged (Thumbnail* thm, int whoChangedIt)
     }
 }
 
-bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname, SaveFormat sf, rtengine::procparams::ProcParams &pparams)
+bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImagefloat*> *pc, Glib::ustring fname, SaveFormat sf, rtengine::procparams::ProcParams &pparams)
 {
-    rtengine::IImage16* img = pc->returnValue();
+    rtengine::IImagefloat* img = pc->returnValue();
     delete pc;
 
     if ( img ) {
@@ -1764,13 +1764,13 @@ bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Gl
         img->setSaveProgressListener (parent->getProgressListener());
 
         if (sf.format == "tif")
-            ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImage16::saveAsTIFF), fname, sf.tiffBits, sf.tiffUncompressed),
+            ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImagefloat::saveAsTIFF), fname, sf.tiffBits, sf.tiffUncompressed),
                            sigc::bind (sigc::mem_fun (*this, &EditorPanel::idle_imageSaved), ld, img, fname, sf, pparams));
         else if (sf.format == "png")
-            ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImage16::saveAsPNG), fname, sf.pngBits),
+            ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImagefloat::saveAsPNG), fname, sf.pngBits),
                            sigc::bind (sigc::mem_fun (*this, &EditorPanel::idle_imageSaved), ld, img, fname, sf, pparams));
         else if (sf.format == "jpg")
-            ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImage16::saveAsJPEG), fname, sf.jpegQuality, sf.jpegSubSamp),
+            ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImagefloat::saveAsJPEG), fname, sf.jpegQuality, sf.jpegSubSamp),
                            sigc::bind (sigc::mem_fun (*this, &EditorPanel::idle_imageSaved), ld, img, fname, sf, pparams));
         else {
             delete ld;
@@ -1791,7 +1791,7 @@ bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Gl
     return false;
 }
 
-bool EditorPanel::idle_imageSaved (ProgressConnector<int> *pc, rtengine::IImage16* img, Glib::ustring fname, SaveFormat sf, rtengine::procparams::ProcParams &pparams)
+bool EditorPanel::idle_imageSaved (ProgressConnector<int> *pc, rtengine::IImagefloat* img, Glib::ustring fname, SaveFormat sf, rtengine::procparams::ProcParams &pparams)
 {
     img->free ();
 
@@ -1916,7 +1916,7 @@ void EditorPanel::saveAsPressed ()
                 ipc->getParams (&pparams);
                 rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
 
-                ProgressConnector<rtengine::IImage16*> *ld = new ProgressConnector<rtengine::IImage16*>();
+                ProgressConnector<rtengine::IImagefloat*> *ld = new ProgressConnector<rtengine::IImagefloat*>();
                 ld->startFunc (sigc::bind (sigc::ptr_fun (&rtengine::processImage), job, err, parent->getProgressListener(), options.tunnelMetaData, false ),
                                sigc::bind (sigc::mem_fun ( *this, &EditorPanel::idle_saveImage ), ld, fnameOut, sf, pparams));
                 saveimgas->set_sensitive (false);
@@ -1960,7 +1960,7 @@ void EditorPanel::sendToGimpPressed ()
     rtengine::procparams::ProcParams pparams;
     ipc->getParams (&pparams);
     rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
-    ProgressConnector<rtengine::IImage16*> *ld = new ProgressConnector<rtengine::IImage16*>();
+    ProgressConnector<rtengine::IImagefloat*> *ld = new ProgressConnector<rtengine::IImagefloat*>();
     ld->startFunc (sigc::bind (sigc::ptr_fun (&rtengine::processImage), job, err, parent->getProgressListener(), options.tunnelMetaData, false ),
                    sigc::bind (sigc::mem_fun ( *this, &EditorPanel::idle_sendToGimp ), ld, openThm->getFileName() ));
     saveimgas->set_sensitive (false);
@@ -1975,7 +1975,7 @@ bool EditorPanel::saveImmediately (const Glib::ustring &filename, const SaveForm
     rtengine::ProcessingJob *job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
 
     // save immediately
-    rtengine::IImage16 *img = rtengine::processImage (job, err, nullptr, options.tunnelMetaData, false);
+    rtengine::IImagefloat *img = rtengine::processImage (job, err, nullptr, options.tunnelMetaData, false);
 
     int err = 0;
 
@@ -2015,10 +2015,10 @@ void EditorPanel::syncFileBrowser()   // synchronize filebrowser with image in E
     }
 }
 
-bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname)
+bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *pc, Glib::ustring fname)
 {
 
-    rtengine::IImage16* img = pc->returnValue();
+    rtengine::IImagefloat* img = pc->returnValue();
     delete pc;
 
     if (img) {
@@ -2050,7 +2050,7 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImage16*> *pc, 
 
         ProgressConnector<int> *ld = new ProgressConnector<int>();
         img->setSaveProgressListener (parent->getProgressListener());
-        ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImage16::saveAsTIFF), fileName, sf.tiffBits, sf.tiffUncompressed),
+        ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImagefloat::saveAsTIFF), fileName, sf.tiffBits, sf.tiffUncompressed),
                        sigc::bind (sigc::mem_fun (*this, &EditorPanel::idle_sentToGimp), ld, img, fileName));
     } else {
         Glib::ustring msg_ = Glib::ustring ("<b> Error during image processing\n</b>");
@@ -2063,7 +2063,7 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImage16*> *pc, 
     return false;
 }
 
-bool EditorPanel::idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImage16* img, Glib::ustring filename)
+bool EditorPanel::idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImagefloat* img, Glib::ustring filename)
 {
     img->free ();
     int errore = pc->returnValue();

@@ -578,7 +578,7 @@ void BatchQueue::startProcessing ()
     }
 }
 
-rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img)
+rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImagefloat* img)
 {
 
     // save image img

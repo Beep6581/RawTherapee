@@ -239,9 +239,9 @@ public:
     void transform        (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const FramesMetaData *metadata, int rawRotationDeg, bool fullImage);
     float resizeScale     (const ProcParams* params, int fw, int fh, int &imw, int &imh);
     void lab2monitorRgb   (LabImage* lab, Image8* image);
-    void resize           (Image16* src, Image16* dst, float dScale);
+    void resize           (Imagefloat* src, Imagefloat* dst, float dScale);
     void Lanczos (const LabImage* src, LabImage* dst, float scale);
-    void Lanczos (const Image16* src, Image16* dst, float scale);
+    void Lanczos (const Imagefloat* src, Imagefloat* dst, float scale);
 
     void deconvsharpening (float** luminance, float** buffer, int W, int H, const SharpeningParams &sharpenParam);
     void MLsharpen (LabImage* lab);// Manuel's clarity / sharpening
@@ -347,7 +347,7 @@ public:
     void ToneMapFattal02(Imagefloat *rgb);
     
     Image8*     lab2rgb   (LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm);
-    Image16*    lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm, GammaValues *ga = nullptr);
+    Imagefloat*    lab2rgbOut (LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm, GammaValues *ga = nullptr);
     // CieImage *ciec;
 
     bool transCoord       (int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef = -1, const LensCorrection *pLCPMap = nullptr);
