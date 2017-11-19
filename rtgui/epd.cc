@@ -182,3 +182,11 @@ void EdgePreservingDecompositionUI::setBatchMode(bool batchMode)
     reweightingIterates->showEditedCB();
 }
 
+void EdgePreservingDecompositionUI::setAdjusterBehavior (bool stAdd, bool gAdd, bool esAdd, bool scAdd, bool rAdd)
+{
+    strength->setAddMode(stAdd);
+    gamma->setAddMode(gAdd);
+    edgeStopping->setAddMode(esAdd);
+    scale->setAddMode(scAdd);
+    reweightingIterates->setAddMode(rAdd);
+}

@@ -735,104 +735,107 @@ HISTORY_MSG_484;CAM02 - Auto Yb scene
 HISTORY_MSG_485;Lens Correction
 HISTORY_MSG_486;Lens Correction - Camera
 HISTORY_MSG_487;Lens Correction - Lens
-HISTORY_MSG_488;Local L*a*b*
-HISTORY_MSG_489;Local - Bottom
-HISTORY_MSG_490;Local - Right
-HISTORY_MSG_491;Local - Center
-HISTORY_MSG_492;Local - Lightness/
-HISTORY_MSG_493;Local - Lightness
-HISTORY_MSG_494;Local - Contrast
-HISTORY_MSG_495;Local - Chrominance
-HISTORY_MSG_496;Local - Transition
-HISTORY_MSG_497;Local - Avoid color shift
-HISTORY_MSG_498;Local - Top
-HISTORY_MSG_499;Local - Left
-HISTORY_MSG_500;Local - Method
-HISTORY_MSG_501;Local - Color Inverse
-HISTORY_MSG_502;Local - Radius
-HISTORY_MSG_503;Local - Blur Inverse
-HISTORY_MSG_504;Local - Noise
-HISTORY_MSG_505;Local - Scope
-HISTORY_MSG_506;Local - Retinex method
-HISTORY_MSG_507;Local - Retinex strength
-HISTORY_MSG_508;Local - Retinex radius
-HISTORY_MSG_509;Local - Retinex contrast
-HISTORY_MSG_510;Local - Retinex Gain curve
-HISTORY_MSG_511;Local - Retinex chroma
-HISTORY_MSG_512;Local - Retinex Inverse
-HISTORY_MSG_513;Local - Hue scope
-HISTORY_MSG_514;Local - Spot
-HISTORY_MSG_515;Local - Blur Luminance only
-HISTORY_MSG_516;Local - Update GUI and Mip -1
-HISTORY_MSG_517;Local - Sh Radius
-HISTORY_MSG_518;Local - Sh Amount
-HISTORY_MSG_519;Local - Sh Damping
-HISTORY_MSG_520;Local - Sh Iterations
-HISTORY_MSG_521;Local - Sh Scope
-HISTORY_MSG_522;Local - Sh Inverse
-HISTORY_MSG_523;Local - Spot size
-HISTORY_MSG_524;Local - artifacts theshold
-HISTORY_MSG_525;Local - artifacts iterations
-HISTORY_MSG_526;Local - Quality
-HISTORY_MSG_527;Local - Noise lum f
-HISTORY_MSG_528;Local - Noise lum c
-HISTORY_MSG_529;Local - Noise chro f
-HISTORY_MSG_530;Local - Noise chro c
-HISTORY_MSG_531;Local - cbdl threshold
-HISTORY_MSG_532;Local - cbdl mult
-HISTORY_MSG_533;Local - cbdl scope
-HISTORY_MSG_534;Local - Blur scope
-HISTORY_MSG_535;Local - TM strength
-HISTORY_MSG_536;Local - TM gamma
-HISTORY_MSG_537;Local - TM edge stopping
-HISTORY_MSG_538;Local - TM scale
-HISTORY_MSG_539;Local - TM Reweighting
-HISTORY_MSG_540;Local - TM scope
-HISTORY_MSG_541;Local - Update GUI and Mip -2
-HISTORY_MSG_542;Local - Update GUI and Mip -3
-HISTORY_MSG_543;Local - LL Curve
-HISTORY_MSG_544;Local - Color and light
-HISTORY_MSG_545;Local - Blur and noise
-HISTORY_MSG_546;Local - Tone mapping
-HISTORY_MSG_547;Local - Retinex
-HISTORY_MSG_548;Local - Sharpening
-HISTORY_MSG_549;Local - CBDL
-HISTORY_MSG_550;Local - Denoise
-HISTORY_MSG_551;Local - LH Curve
-HISTORY_MSG_552;Local - Enable super
-HISTORY_MSG_553;Local - CC curve
-HISTORY_MSG_554;Local - curve method
-HISTORY_MSG_555;Local - hueref
-HISTORY_MSG_556;Local - chromaref
-HISTORY_MSG_557;Local - lumaref
-HISTORY_MSG_558;Local - H curve
-HISTORY_MSG_559;Local - Vibrance
-HISTORY_MSG_560;Local - Vib H curve
-HISTORY_MSG_561;Local - Vib Protect skin tones
-HISTORY_MSG_562;Local - Vib avoid colorshift
-HISTORY_MSG_563;Local - Vib link
-HISTORY_MSG_564;Local - Vib Pastel
-HISTORY_MSG_565;Local - Vib Saturated
-HISTORY_MSG_566;Local - Vib Threshold
-HISTORY_MSG_567;Local - Vib Scope
-HISTORY_MSG_568;Local - Exposure
-HISTORY_MSG_569;Local - Exp Compensation
-HISTORY_MSG_570;Local - Exp Hlcompr
-HISTORY_MSG_571;Local - Exp hlcomprthresh
-HISTORY_MSG_572;Local - Exp black
-HISTORY_MSG_573;Local - Exp Shcompr
-HISTORY_MSG_574;Local - Exp Scope
-HISTORY_MSG_575;Local - Exp Contrast curve
-HISTORY_MSG_576;Local - Centerbuf
-HISTORY_MSG_577;Local - adjblur
-HISTORY_MSG_578;Local - cut past
-HISTORY_MSG_579;Local - cbdl chroma
-HISTORY_MSG_580;Local - Blur method
-HISTORY_MSG_581;Local - D method
-HISTORY_MSG_582;Local - LD
-HISTORY_MSG_584;Local - Spot method
-HISTORY_MSG_585;Local - Spot Excluding scope
-HISTORY_MSG_586;Local - Spot Excluding struc
+HISTORY_MSG_488;HDR Tone Mapping
+HISTORY_MSG_489;HDR TM - Threshold
+HISTORY_MSG_490;HDR TM - Amount
+HISTORY_MSG_491;Local L*a*b*
+HISTORY_MSG_492;Local - Bottom
+HISTORY_MSG_493;Local - Right
+HISTORY_MSG_494;Local - Center
+HISTORY_MSG_495;Local - Lightness/
+HISTORY_MSG_496;Local - Lightness
+HISTORY_MSG_497;Local - Contrast
+HISTORY_MSG_498;Local - Chrominance
+HISTORY_MSG_499;Local - Transition
+HISTORY_MSG_500;Local - Avoid color shift
+HISTORY_MSG_501;Local - Top
+HISTORY_MSG_502;Local - Left
+HISTORY_MSG_503;Local - Method
+HISTORY_MSG_504;Local - Color Inverse
+HISTORY_MSG_505;Local - Radius
+HISTORY_MSG_506;Local - Blur Inverse
+HISTORY_MSG_507;Local - Noise
+HISTORY_MSG_508;Local - Scope
+HISTORY_MSG_509;Local - Retinex method
+HISTORY_MSG_510;Local - Retinex strength
+HISTORY_MSG_511;Local - Retinex radius
+HISTORY_MSG_512;Local - Retinex contrast
+HISTORY_MSG_513;Local - Retinex Gain curve
+HISTORY_MSG_514;Local - Retinex chroma
+HISTORY_MSG_515;Local - Retinex Inverse
+HISTORY_MSG_516;Local - Hue scope
+HISTORY_MSG_517;Local - Spot
+HISTORY_MSG_518;Local - Blur Luminance only
+HISTORY_MSG_519;Local - Update GUI and Mip -1
+HISTORY_MSG_520;Local - Sh Radius
+HISTORY_MSG_521;Local - Sh Amount
+HISTORY_MSG_522;Local - Sh Damping
+HISTORY_MSG_523;Local - Sh Iterations
+HISTORY_MSG_524;Local - Sh Scope
+HISTORY_MSG_525;Local - Sh Inverse
+HISTORY_MSG_526;Local - Spot size
+HISTORY_MSG_527;Local - artifacts theshold
+HISTORY_MSG_528;Local - artifacts iterations
+HISTORY_MSG_529;Local - Quality
+HISTORY_MSG_530;Local - Noise lum f
+HISTORY_MSG_531;Local - Noise lum c
+HISTORY_MSG_532;Local - Noise chro f
+HISTORY_MSG_533;Local - Noise chro c
+HISTORY_MSG_534;Local - cbdl threshold
+HISTORY_MSG_535;Local - cbdl mult
+HISTORY_MSG_536;Local - cbdl scope
+HISTORY_MSG_537;Local - Blur scope
+HISTORY_MSG_538;Local - TM strength
+HISTORY_MSG_539;Local - TM gamma
+HISTORY_MSG_540;Local - TM edge stopping
+HISTORY_MSG_541;Local - TM scale
+HISTORY_MSG_542;Local - TM Reweighting
+HISTORY_MSG_543;Local - TM scope
+HISTORY_MSG_544;Local - Update GUI and Mip -2
+HISTORY_MSG_545;Local - Update GUI and Mip -3
+HISTORY_MSG_546;Local - LL Curve
+HISTORY_MSG_547;Local - Color and light
+HISTORY_MSG_548;Local - Blur and noise
+HISTORY_MSG_549;Local - Tone mapping
+HISTORY_MSG_550;Local - Retinex
+HISTORY_MSG_551;Local - Sharpening
+HISTORY_MSG_552;Local - CBDL
+HISTORY_MSG_553;Local - Denoise
+HISTORY_MSG_554;Local - LH Curve
+HISTORY_MSG_555;Local - Enable super
+HISTORY_MSG_556;Local - CC curve
+HISTORY_MSG_557;Local - curve method
+HISTORY_MSG_558;Local - hueref
+HISTORY_MSG_559;Local - chromaref
+HISTORY_MSG_560;Local - lumaref
+HISTORY_MSG_561;Local - H curve
+HISTORY_MSG_562;Local - Vibrance
+HISTORY_MSG_563;Local - Vib H curve
+HISTORY_MSG_564;Local - Vib Protect skin tones
+HISTORY_MSG_565;Local - Vib avoid colorshift
+HISTORY_MSG_566;Local - Vib link
+HISTORY_MSG_567;Local - Vib Pastel
+HISTORY_MSG_568;Local - Vib Saturated
+HISTORY_MSG_569;Local - Vib Threshold
+HISTORY_MSG_570;Local - Vib Scope
+HISTORY_MSG_571;Local - Exposure
+HISTORY_MSG_572;Local - Exp Compensation
+HISTORY_MSG_573;Local - Exp Hlcompr
+HISTORY_MSG_574;Local - Exp hlcomprthresh
+HISTORY_MSG_575;Local - Exp black
+HISTORY_MSG_576;Local - Exp Shcompr
+HISTORY_MSG_577;Local - Exp Scope
+HISTORY_MSG_578;Local - Exp Contrast curve
+HISTORY_MSG_579;Local - Centerbuf
+HISTORY_MSG_580;Local - adjblur
+HISTORY_MSG_581;Local - cut past
+HISTORY_MSG_582;Local - cbdl chroma
+HISTORY_MSG_583;Local - Blur method
+HISTORY_MSG_584;Local - D method
+HISTORY_MSG_585;Local - LD
+HISTORY_MSG_587;Local - Spot method
+HISTORY_MSG_588;Local - Spot Excluding scope
+HISTORY_MSG_589;Local - Spot Excluding struc
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -1043,6 +1046,7 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Shadows/highlights
 PARTIALPASTE_SHARPENEDGE;Edges
 PARTIALPASTE_SHARPENING;Sharpening (USM/RL)
 PARTIALPASTE_SHARPENMICRO;Microcontrast
+PARTIALPASTE_TM_FATTAL;HDR Tone mapping
 PARTIALPASTE_VIBRANCE;Vibrance
 PARTIALPASTE_VIGNETTING;Vignetting correction
 PARTIALPASTE_WAVELETGROUP;Wavelet Levels
@@ -1324,7 +1328,6 @@ SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
 SAVEDLG_FILEFORMAT;File format
 SAVEDLG_FORCEFORMATOPTS;Force saving options
 SAVEDLG_JPEGQUAL;JPEG quality
-SAVEDLG_PNGCOMPR;PNG compression
 SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
@@ -2160,6 +2163,9 @@ TP_SHARPENMICRO_AMOUNT;Quantity
 TP_SHARPENMICRO_LABEL;Microcontrast
 TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
 TP_SHARPENMICRO_UNIFORMITY;Uniformity
+TP_TM_FATTAL_LABEL;HDR Tone Mapping
+TP_TM_FATTAL_THRESHOLD;Threshold
+TP_TM_FATTAL_AMOUNT;Amount
 TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid color shift
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Skin-tones

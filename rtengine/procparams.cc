@@ -1515,6 +1515,8 @@ void ProcParams::setDefaults ()
     epd.scale = 1.0;
     epd.reweightingIterates = 0;
 
+    fattal.setDefaults();
+
     sh.enabled = false;
     sh.hq = false;
     sh.highlights = 0;
@@ -2716,6 +2718,19 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_integer ("EPD", "ReweightingIterates", epd.reweightingIterates);
         }
 
+// save fattal
+        if (!pedited || pedited->fattal.enabled) {
+            keyFile.set_boolean ("FattalToneMapping", "Enabled", fattal.enabled);
+        }
+
+        if (!pedited || pedited->fattal.threshold) {
+            keyFile.set_integer ("FattalToneMapping", "Threshold", fattal.threshold);
+        }
+
+        if (!pedited || pedited->fattal.amount) {
+            keyFile.set_integer ("FattalToneMapping", "Amount", fattal.amount);
+        }
+        
         /*
         // save lumaDenoise
         if (!pedited || pedited->lumaDenoise.enabled) keyFile.set_boolean ("Luminance Denoising", "Enabled", lumaDenoise.enabled);
@@ -7118,6 +7133,33 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
         }
 
+//Load FattalToneMapping
+        if (keyFile.has_group ("FattalToneMapping")) {
+            if (keyFile.has_key ("FattalToneMapping", "Enabled")) {
+                fattal.enabled = keyFile.get_boolean ("FattalToneMapping", "Enabled");
+
+                if (pedited) {
+                    pedited->fattal.enabled = true;
+                }
+            }
+
+            if (keyFile.has_key ("FattalToneMapping", "Threshold")) {
+                fattal.threshold = keyFile.get_double ("FattalToneMapping", "Threshold");
+
+                if (pedited) {
+                    pedited->fattal.threshold = true;
+                }
+            }
+
+            if (keyFile.has_key ("FattalToneMapping", "Amount")) {
+                fattal.amount = keyFile.get_double ("FattalToneMapping", "Amount");
+
+                if (pedited) {
+                    pedited->fattal.amount = true;
+                }
+            }
+        }        
+
         // load lumaDenoise
         /*if (keyFile.has_group ("Luminance Denoising")) {
             if (keyFile.has_key ("Luminance Denoising", "Enabled"))        { lumaDenoise.enabled       = keyFile.get_boolean ("Luminance Denoising", "Enabled"); if (pedited) pedited->lumaDenoise.enabled = true; }
@@ -9995,6 +10037,9 @@ bool ProcParams::operator== (const ProcParams& other)
         && epd.edgeStopping == other.epd.edgeStopping
         && epd.scale == other.epd.scale
         && epd.reweightingIterates == other.epd.reweightingIterates
+        && fattal.enabled == other.fattal.enabled
+        && fattal.threshold == other.fattal.threshold
+        && fattal.amount == other.fattal.amount
         && defringe.enabled == other.defringe.enabled
         && defringe.radius == other.defringe.radius
         && defringe.threshold == other.defringe.threshold

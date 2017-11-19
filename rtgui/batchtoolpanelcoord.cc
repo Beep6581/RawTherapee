@@ -152,6 +152,8 @@ void BatchToolPanelCoordinator::initSession ()
             sharpenEdge->setAdjusterBehavior (false, false);
             sharpenMicro->setAdjusterBehavior (false, false);
             icm->setAdjusterBehavior (false, false);
+            epd->setAdjusterBehavior (false, false, false, false, false);
+            fattal->setAdjusterBehavior (false, false);
 
             chmixer->setAdjusterBehavior (false);
             blackwhite->setAdjusterBehavior (false, false);
@@ -191,6 +193,8 @@ void BatchToolPanelCoordinator::initSession ()
             cacorrection->setAdjusterBehavior (options.baBehav[ADDSET_CA]);
             sharpening->setAdjusterBehavior (options.baBehav[ADDSET_SHARP_RADIUS], options.baBehav[ADDSET_SHARP_AMOUNT], options.baBehav[ADDSET_SHARP_DAMPING], options.baBehav[ADDSET_SHARP_ITER], options.baBehav[ADDSET_SHARP_EDGETOL], options.baBehav[ADDSET_SHARP_HALOCTRL]);
             prsharpening->setAdjusterBehavior (options.baBehav[ADDSET_SHARP_RADIUS], options.baBehav[ADDSET_SHARP_AMOUNT], options.baBehav[ADDSET_SHARP_DAMPING], options.baBehav[ADDSET_SHARP_ITER], options.baBehav[ADDSET_SHARP_EDGETOL], options.baBehav[ADDSET_SHARP_HALOCTRL]);
+            epd->setAdjusterBehavior (options.baBehav[ADDSET_EPD_STRENGTH], options.baBehav[ADDSET_EPD_GAMMA], options.baBehav[ADDSET_EPD_EDGESTOPPING], options.baBehav[ADDSET_EPD_SCALE], options.baBehav[ADDSET_EPD_REWEIGHTINGITERATES]);
+            fattal->setAdjusterBehavior (options.baBehav[ADDSET_FATTAL_ALPHA], options.baBehav[ADDSET_FATTAL_BETA]);
 
             sharpenEdge->setAdjusterBehavior (options.baBehav[ADDSET_SHARPENEDGE_AMOUNT], options.baBehav[ADDSET_SHARPENEDGE_PASS]);
             sharpenMicro->setAdjusterBehavior (options.baBehav[ADDSET_SHARPENMICRO_AMOUNT], options.baBehav[ADDSET_SHARPENMICRO_UNIFORMITY]);

@@ -114,6 +114,7 @@ set(RTENGINESOURCEFILES
     stdimagesource.cc
     utils.cc
     rtlensfun.cc
+    tmo_fattal02.cc
     )
 
 if(LENSFUN_HAS_LOAD_DIRECTORY)

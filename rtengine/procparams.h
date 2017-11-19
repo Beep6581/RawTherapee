@@ -743,6 +743,27 @@ public:
     int    reweightingIterates;
 };
 
+
+// Fattal02 Tone-Mapping parameters
+class FattalToneMappingParams {
+public:
+    bool enabled;
+    int threshold;
+    int amount;
+    
+    FattalToneMappingParams()
+    {
+        setDefaults();
+    }
+    
+    void setDefaults()
+    {
+        enabled = false;
+        threshold = 0;
+        amount = 0;
+    }
+};
+
 /**
   * Parameters of the shadow/highlight enhancement
   */
@@ -1523,6 +1544,7 @@ public:
     ImpulseDenoiseParams    impulseDenoise;  ///< Impulse denoising parameters
     DirPyrDenoiseParams     dirpyrDenoise;   ///< Directional Pyramid denoising parameters
     EPDParams               epd;             ///< Edge Preserving Decomposition parameters
+    FattalToneMappingParams          fattal;          ///< Fattal02 tone mapping
     SHParams                sh;              ///< Shadow/highlight enhancement parameters
     CropParams              crop;            ///< Crop parameters
     CoarseTransformParams   coarse;          ///< Coarse transformation (90, 180, 270 deg rotation, h/v flipping) parameters

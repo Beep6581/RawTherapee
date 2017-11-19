@@ -380,8 +380,7 @@ void LensProfilePanel::updateDisabled(bool enable)
 {
     ckbUseDist->set_sensitive(enable);
     ckbUseVign->set_sensitive(enable && isRaw);
-    // agriggio TODO -- CA correction via LCP is currently broken
-    ckbUseCA->set_sensitive(false);//enable && allowFocusDep);
+    ckbUseCA->set_sensitive(enable && allowFocusDep);
 }
 
 void LensProfilePanel::setBatchMode(bool yes)

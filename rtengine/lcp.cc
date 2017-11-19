@@ -797,12 +797,12 @@ void XMLCALL rtengine::LCPProfile::XmlStartHandler(void* pLCPProfile, const char
     if (src_str == "PerspectiveModel") {
         pProf->firstLIDone = true;
         pProf->inPerspect = true;
-        return;
+        parseAttr = true;
     } else if (src_str == "FisheyeModel") {
         pProf->firstLIDone = true;
         pProf->inPerspect = true;
         pProf->isFisheye = true; // just misses third param, and different path, rest is the same
-        return;
+        parseAttr = true;
     } else if (src_str == "Description") {
         parseAttr = true;
     }
@@ -1023,7 +1023,7 @@ rtengine::LCPMapper::LCPMapper(
 
 bool rtengine::LCPMapper::isCACorrectionAvailable() const
 {
-    return false /*enableCA*/; // agriggio TODO -- this is currently broken
+    return enableCA;
 }
 
 void rtengine::LCPMapper::correctDistortion(double &x, double &y, int cx, int cy, double scale) const
@@ -1128,7 +1128,7 @@ void rtengine::LCPMapper::correctCA(double& x, double& y, int cx, int cy, int ch
     }
 
     x -= cx;
-    x -= cy;
+    y -= cy;
 }
 
 SSEFUNCTION void rtengine::LCPMapper::processVignetteLine(int width, int y, float* line) const

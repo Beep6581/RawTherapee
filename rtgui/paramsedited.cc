@@ -264,6 +264,9 @@ void ParamsEdited::set (bool v)
     epd.edgeStopping        = v;
     epd.scale               = v;
     epd.reweightingIterates = v;
+    fattal.enabled   = v;
+    fattal.threshold = v;
+    fattal.amount    = v;
     sh.enabled       = v;
     sh.hq            = v;
     sh.highlights    = v;
@@ -912,6 +915,10 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         epd.scale = epd.scale && p.epd.scale == other.epd.scale;
         epd.reweightingIterates = epd.reweightingIterates && p.epd.reweightingIterates == other.epd.reweightingIterates;
 
+        fattal.enabled = fattal.enabled && p.fattal.enabled == other.fattal.enabled;
+        fattal.threshold = fattal.threshold && p.fattal.threshold == other.fattal.threshold;
+        fattal.amount = fattal.amount && p.fattal.amount == other.fattal.amount;
+        
         sh.enabled = sh.enabled && p.sh.enabled == other.sh.enabled;
         sh.hq = sh.hq && p.sh.hq == other.sh.hq;
         sh.highlights = sh.highlights && p.sh.highlights == other.sh.highlights;
@@ -2186,6 +2193,16 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (epd.reweightingIterates) {
         toEdit.epd.reweightingIterates    = mods.epd.reweightingIterates;
     }
+
+    if (fattal.enabled) {
+        toEdit.fattal.enabled = mods.fattal.enabled;
+    }
+    if (fattal.threshold) {
+        toEdit.fattal.threshold = mods.fattal.threshold;
+    }
+    if (fattal.amount) {
+        toEdit.fattal.amount = mods.fattal.amount;
+    }    
 
     if (sh.enabled) {
         toEdit.sh.enabled         = mods.sh.enabled;

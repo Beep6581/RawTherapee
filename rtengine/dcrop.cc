@@ -178,7 +178,7 @@ void Crop::update (int todo)
 
     bool needstransform  = parent->ipf.needsTransform();
 
-    if (todo & (M_INIT | M_LINDENOISE)) {
+    if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
         MyMutex::MyLock lock (parent->minit); // Also used in improccoord
 
         int tr = getCoarseBitMask (params.coarse);
@@ -700,6 +700,79 @@ void Crop::update (int todo)
     // has to be called after setCropSizes! Tools prior to this point can't handle the Edit mechanism, but that shouldn't be a problem.
     createBuffer (cropw, croph);
 
+    std::unique_ptr<Imagefloat> fattalCrop;
+    if ((todo & M_HDR) && params.fattal.enabled) {
+        Imagefloat *f = origCrop;
+        int fw = skips(parent->fw, skip);
+        int fh = skips(parent->fh, skip);
+        bool need_cropping = false;
+        bool need_fattal = true;
+
+        if (trafx || trafy || trafw != fw || trafh != fh) {
+            need_cropping = true;
+            // fattal needs to work on the full image. So here we get the full
+            // image from imgsrc, and replace the denoised crop in case
+            if (!params.dirpyrDenoise.enabled && skip == 1 && parent->fattal_11_dcrop_cache) {
+                f = parent->fattal_11_dcrop_cache;
+                need_fattal = false;
+            } else {
+                f = new Imagefloat(fw, fh);
+                fattalCrop.reset(f);
+                PreviewProps pp (0, 0, parent->fw, parent->fh, skip);
+                int tr = getCoarseBitMask(params.coarse);
+                parent->imgsrc->getImage(parent->currWB, tr, f, pp, params.toneCurve, params.raw);
+                parent->imgsrc->convertColorSpace(f, params.icm, parent->currWB);
+
+                if (params.dirpyrDenoise.enabled) {
+                    // copy the denoised crop
+                    int oy = trafy / skip;
+                    int ox = trafx / skip;
+#ifdef _OPENMP
+                    #pragma omp parallel for
+#endif
+                    for (int y = 0; y < baseCrop->getHeight(); ++y) {
+                        int dy = oy + y;
+                        for (int x = 0; x < baseCrop->getWidth(); ++x) {
+                            int dx = ox + x;
+                            f->r(dy, dx) = baseCrop->r(y, x);
+                            f->g(dy, dx) = baseCrop->g(y, x);
+                            f->b(dy, dx) = baseCrop->b(y, x);
+                        }
+                    }
+                } else if (skip == 1) {
+                    parent->fattal_11_dcrop_cache = f; // cache this globally
+                    fattalCrop.release();
+                }
+            }
+        }
+        if (need_fattal) {
+            parent->ipf.ToneMapFattal02(f);
+        }
+
+        // crop back to the size expected by the rest of the pipeline
+        if (need_cropping) {
+            Imagefloat *c = origCrop;
+
+            int oy = trafy / skip;
+            int ox = trafx / skip;
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+            for (int y = 0; y < trafh; ++y) {
+                int cy = y + oy;
+                for (int x = 0; x < trafw; ++x) {
+                    int cx = x + ox;
+                    c->r(y, x) = f->r(cy, cx);
+                    c->g(y, x) = f->g(cy, cx);
+                    c->b(y, x) = f->b(cy, cx);
+                }
+            }
+            baseCrop = c;
+        } else {
+            baseCrop = f;
+        }
+    }
+    
     // transform
     if (needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled)) {
         if (!transCrop) {
@@ -1909,6 +1982,7 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
     ory = by1;
     orw = bw;
     orh = bh;
+
     ProcParams& params = parent->params;
 
     parent->ipf.transCoord (parent->fw, parent->fh, bx1, by1, bw, bh, orx, ory, orw, orh);
@@ -1948,6 +2022,8 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
         orh = min (y2 - y1, parent->fh - ory);
     }
 
+    leftBorder  = skips (rqx1 - bx1, skip);
+    upperBorder = skips (rqy1 - by1, skip);
 
     PreviewProps cp (orx, ory, orw, orh, skip);
     int orW, orH;
@@ -1958,9 +2034,6 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
 
     int cw = skips (bw, skip);
     int ch = skips (bh, skip);
-
-    leftBorder  = skips (rqx1 - bx1, skip);
-    upperBorder = skips (rqy1 - by1, skip);
 
     if (settings->verbose) {
         printf ("setsizes starts (%d, %d, %d, %d, %d, %d)\n", orW, orH, trafw, trafh, cw, ch);
