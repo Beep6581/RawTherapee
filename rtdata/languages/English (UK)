@@ -802,6 +802,9 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !HISTORY_MSG_485;Lens Correction
 !HISTORY_MSG_486;Lens Correction - Camera
 !HISTORY_MSG_487;Lens Correction - Lens
+!HISTORY_MSG_488;HDR Tone Mapping
+!HISTORY_MSG_489;HDR TM - Threshold
+!HISTORY_MSG_490;HDR TM - Amount
 !HISTORY_NEWSNAPSHOT;Add
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !HISTORY_SNAPSHOT;Snapshot
@@ -999,6 +1002,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PARTIALPASTE_SHARPENEDGE;Edges
 !PARTIALPASTE_SHARPENING;Sharpening (USM/RL)
 !PARTIALPASTE_SHARPENMICRO;Microcontrast
+!PARTIALPASTE_TM_FATTAL;HDR Tone mapping
 !PARTIALPASTE_VIBRANCE;Vibrance
 !PARTIALPASTE_VIGNETTING;Vignetting correction
 !PARTIALPASTE_WAVELETGROUP;Wavelet Levels
@@ -1256,7 +1260,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !SAVEDLG_FILEFORMAT;File format
 !SAVEDLG_FORCEFORMATOPTS;Force saving options
 !SAVEDLG_JPEGQUAL;JPEG quality
-!SAVEDLG_PNGCOMPR;PNG compression
 !SAVEDLG_PUTTOQUEUE;Put into processing queue
 !SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 !SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
@@ -1935,6 +1938,9 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_SHARPENMICRO_LABEL;Microcontrast
 !TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
 !TP_SHARPENMICRO_UNIFORMITY;Uniformity
+!TP_TM_FATTAL_AMOUNT;Amount
+!TP_TM_FATTAL_LABEL;HDR Tone Mapping
+!TP_TM_FATTAL_THRESHOLD;Threshold
 !TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
 !TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Skin-tones
 !TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;Red/Purple
