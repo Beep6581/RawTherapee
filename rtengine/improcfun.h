@@ -311,7 +311,7 @@ public:
 
     void DeNoise_Local (int call, const struct local_params& lp, LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy);
 
-    void ColorLight_Local (int call, LabImage * bufcolorig, float **buflight, float **bufchro, float ** bufhh, float ** buflightslid, bool &LHutili, bool &HHutili, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, const LocHHCurve & lochhCurve, const local_params& lp, LabImage* original, LabImage* transformed, int cx, int cy);
+    void ColorLight_Local (int call, LabImage * bufcolorig, float **buflight, float **bufchro, float **bufchroslid, float ** bufhh, float ** buflightslid, bool &LHutili, bool &HHutili, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, const LocHHCurve & lochhCurve, const local_params& lp, LabImage* original, LabImage* transformed, int cx, int cy);
     void InverseColorLight_Local (const struct local_params& lp, LabImage* original, LabImage* transformed, int cx, int cy);
 
     void Sharp_Local (int call, float **loctemp, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const local_params& lp, LabImage* original, LabImage* transformed, int cx, int cy);
