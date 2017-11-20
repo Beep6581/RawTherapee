@@ -508,6 +508,20 @@ LCurveParams::LCurveParams() :
 {
 }
 
+RGBCurvesParams::RGBCurvesParams() :
+    lumamode(false),
+    rcurve{
+        DCT_Linear
+    },
+    gcurve{
+        DCT_Linear
+    },
+    bcurve{
+        DCT_Linear
+    }
+{
+}
+
 ColorToningParams::ColorToningParams () :
     enabled(false),
     autosat(true),
@@ -862,30 +876,59 @@ void ColorToningParams::getCurves (ColorGradientCurve &colorCurveLUT, OpacityCur
 }
 
 SharpeningParams::SharpeningParams() :
-    enabled (false),
-    radius (0.5),
-    amount (200),
-    threshold (20, 80, 2000, 1200, false),
-    edgesonly (false),
-    edges_radius (1.9),
-    edges_tolerance (1800),
-    halocontrol (false),
-    halocontrol_amount (85),
-    deconvamount (75),
-    deconvradius (0.75),
-    deconviter (30),
-    deconvdamping (20)
+    enabled(false),
+    radius(0.5),
+    amount(200),
+    threshold(20, 80, 2000, 1200, false),
+    edgesonly(false),
+    edges_radius(1.9),
+    edges_tolerance(1800),
+    halocontrol(false),
+    halocontrol_amount(85),
+    method("usm"),
+    deconvamount(75),
+    deconvradius(0.75),
+    deconviter(30),
+    deconvdamping(20)
+{
+}
+
+SharpenEdgeParams::SharpenEdgeParams() :
+    enabled(false),
+    passes(2),
+    amount(50.0),
+    threechannels(false)
+{
+}
+
+SharpenMicroParams::SharpenMicroParams() :
+    enabled(false),
+    matrix(false),
+    amount(20.0),
+    uniformity(50.0)
 {
 }
 
 VibranceParams::VibranceParams() :
-    enabled (false),
-    pastels (0),
-    saturated (0),
-    psthreshold (0, 75, false),
-    protectskins (false),
-    avoidcolorshift (true),
-    pastsattog (true)
+    enabled(false),
+    pastels(0),
+    saturated(0),
+    psthreshold(0, 75, false),
+    protectskins(false),
+    avoidcolorshift(true),
+    pastsattog(true),
+    skintonescurve{
+        DCT_Linear
+    }
+{
+}
+
+WBParams::WBParams() :
+    method("Camera"),
+    temperature(6504),
+    green(1.0),
+    equal(1.0),
+    tempBias(0.0)
 {
 }
 
@@ -931,16 +974,98 @@ const std::vector<WBEntry>& WBParams::getWbEntries()
     return wb_entries;
 }
 
-DirPyrDenoiseParams::DirPyrDenoiseParams ()
+ColorAppearanceParams::ColorAppearanceParams() :
+    enabled(false),
+    degree(90),
+    autodegree(true),
+    degreeout(90),
+    autodegreeout(true),
+    curve{
+       DCT_Linear
+    },
+    curve2{
+       DCT_Linear
+    },
+    curve3{
+       DCT_Linear
+    },
+    curveMode(TcMode::LIGHT),
+    curveMode2(TcMode::LIGHT),
+    curveMode3(CtcMode::CHROMA),
+    surround("Average"),
+    surrsrc("Average"),
+    adapscen(2000.0),
+    autoadapscen(true),
+    ybscen(18),
+    autoybscen(true),
+    adaplum(16),
+    badpixsl(0),
+    wbmodel("RawT"),
+    algo("No"),
+    contrast(0.0),
+    qcontrast(0.0),
+    jlight(0.0),
+    qbright(0.0),
+    chroma(0.0),
+    schroma(0.0),
+    mchroma(0.0),
+    colorh(0.0),
+    rstprotection(0.0),
+    surrsource(false),
+    gamut(true),
+    datacie(false),
+    tonecie(false),
+    tempout(5000),
+    ybout(18),
+    greenout(1.0),
+    tempsc(5000),
+    greensc(1.0)
 {
-    setDefaults ();
 }
 
-void DirPyrDenoiseParams::setDefaults()
+DefringeParams::DefringeParams() :
+    enabled(false),
+    radius(2.0),
+    threshold(13),
+    huecurve{
+        FCT_MinMaxCPoints,
+        0.166666667,
+        0.,
+        0.35,
+        0.35,
+        0.347,
+        0.,
+        0.35,
+        0.35,
+        0.513667426,
+        0,
+        0.35,
+        0.35,
+        0.668944571,
+        0.,
+        0.35,
+        0.35,
+        0.8287775246,
+        0.97835991,
+        0.35,
+        0.35,
+        0.9908883827,
+        0.,
+        0.35,
+        0.35
+    }
 {
+}
 
-    lcurve = {
-        static_cast<double>(FCT_MinMaxCPoints),
+ImpulseDenoiseParams::ImpulseDenoiseParams() :
+    enabled(false),
+    thresh(50)
+{
+}
+
+DirPyrDenoiseParams::DirPyrDenoiseParams() :
+    lcurve{
+        FCT_MinMaxCPoints,
         0.05,
         0.15,
         0.35,
@@ -949,10 +1074,9 @@ void DirPyrDenoiseParams::setDefaults()
         0.04,
         0.35,
         0.35
-    };
-
-    cccurve = {
-        static_cast<double>(FCT_MinMaxCPoints),
+    },
+    cccurve{
+        FCT_MinMaxCPoints,
         0.05,
         0.50,
         0.35,
@@ -961,28 +1085,27 @@ void DirPyrDenoiseParams::setDefaults()
         0.05,
         0.35,
         0.35
-    };
-
-    enabled = false;
-    enhance = false;
-    median = false;
-    perform = false;
-    luma = 0;
-    passes = 1;
-    dmethod = "Lab";
-    Lmethod = "SLI";//"CUR";// SLIDER method with value 0 is set as default, while the default Lcurve is populated via getDefaultNoisCurve and can be switched to by the user
-    Cmethod = "MAN";
-    C2method = "AUTO";
-    smethod = "shal";
-    medmethod = "soft";
-    methodmed = "none";
-    rgbmethod = "soft";
-    Ldetail = 0;
-    chroma = 15;
-    redchro = 0;
-    bluechro = 0;
-    gamma = 1.7;
-    perform = false;
+    },
+    enabled(false),
+    enhance(false),
+    median(false),
+    perform(false),
+    luma(0),
+    Ldetail(0),
+    chroma(15),
+    redchro(0),
+    bluechro(0),
+    gamma(1.7),
+    dmethod("Lab"),
+    Lmethod("SLI"),
+    Cmethod("MAN"),
+    C2method("AUTO"),
+    smethod("shal"),
+    medmethod("soft"),
+    methodmed("none"),
+    rgbmethod("soft"),
+    passes(1)
+{
 }
 
 void DirPyrDenoiseParams::getCurves (NoiseCurve &lCurve, NoiseCurve &cCurve) const
@@ -991,25 +1114,45 @@ void DirPyrDenoiseParams::getCurves (NoiseCurve &lCurve, NoiseCurve &cCurve) con
     cCurve.Set (this->cccurve);
 }
 
-FattalToneMappingParams::FattalToneMappingParams()
+EPDParams::EPDParams() :
+    enabled(false),
+    strength(0.5),
+    gamma(1.0),
+    edgeStopping(1.4),
+    scale(1.0),
+    reweightingIterates(0)
 {
-    setDefaults();
 }
 
-void FattalToneMappingParams::setDefaults()
+FattalToneMappingParams::FattalToneMappingParams() :
+    enabled(false),
+    threshold(0),
+    amount(0)
 {
-    enabled = false;
-    threshold = 0;
-    amount = 0;
+}
+
+SHParams::SHParams() :
+    enabled(false),
+    hq(false),
+    highlights(0),
+    htonalwidth(80),
+    shadows(0),
+    stonalwidth(80),
+    localcontrast(0),
+    radius(40)
+{
 }
 
 CropParams::CropParams() :
     enabled(false),
-    x(0),
-    y(0),
-    w(0),
-    h(0),
-    fixratio(false)
+    x(-1),
+    y(-1),
+    w(15000),
+    h(15000),
+    fixratio(true),
+    ratio("3:2"),
+    orientation("As Image"),
+    guide("Frame")
 {
 }
 
@@ -1018,39 +1161,41 @@ void CropParams::mapToResized (int resizedWidth, int resizedHeight, int scale, i
     x1 = 0, x2 = resizedWidth, y1 = 0, y2 = resizedHeight;
 
     if (enabled) {
-        x1 = min (resizedWidth - 1, max (0, x / scale));
-        y1 = min (resizedHeight - 1, max (0, y / scale));
-        x2 = min (resizedWidth, max (0, (x + w) / scale));
-        y2 = min (resizedHeight, max (0, (y + h) / scale));
+        x1 = min(resizedWidth - 1, max (0, x / scale));
+        y1 = min(resizedHeight - 1, max (0, y / scale));
+        x2 = min(resizedWidth, max (0, (x + w) / scale));
+        y2 = min(resizedHeight, max (0, (y + h) / scale));
     }
 }
 
-CoarseTransformParams::CoarseTransformParams()
+CoarseTransformParams::CoarseTransformParams() :
+    rotate(0),
+    hflip(false),
+    vflip(false)
 {
-    setDefaults();
 }
 
-void CoarseTransformParams::setDefaults()
+CommonTransformParams::CommonTransformParams() :
+    autofill(true)
 {
-    rotate = 0;
-    hflip = false;
-    vflip = false;
 }
 
-LensProfParams::LensProfParams()
+RotateParams::RotateParams() :
+    degree(0.0)
 {
-    setDefaults();
 }
 
-void LensProfParams::setDefaults()
+DistortionParams::DistortionParams() :
+    amount(0.0)
 {
-    lcMode = LcMode::NONE;
-    lcpFile = "";
-    useDist = useVign = true;
-    useCA = false;
-    lfCameraMake = "";
-    lfCameraModel = "";
-    lfLens = "";
+}
+
+LensProfParams::LensProfParams() :
+    lcMode(LcMode::NONE),
+    useDist(true),
+    useVign(true),
+    useCA(false)
+{
 }
 
 bool LensProfParams::useLensfun() const
@@ -1099,157 +1244,130 @@ LensProfParams::LcMode LensProfParams::getMethodNumber(const Glib::ustring& mode
     return LcMode::NONE;
 }
 
-const Glib::ustring ColorManagementParams::NoICMString = Glib::ustring ("No ICM: sRGB output");
-
-ColorManagementParams::ColorManagementParams()
+PerspectiveParams::PerspectiveParams() :
+    horizontal(0.0),
+    vertical(0.0)
 {
-    setDefaults();
 }
 
-void ColorManagementParams::setDefaults()
+GradientParams::GradientParams() :
+    enabled(false),
+    degree(0.0),
+    feather(25),
+    strength(0.60),
+    centerX(0),
+    centerY(0)
 {
-    input = "(cameraICC)";
-    toneCurve = false;
-    applyLookTable = false;
-    applyBaselineExposureOffset = true;
-    applyHueSatMap = true;
-    dcpIlluminant = 0;
-    working = "ProPhoto";
-    output = "RT_sRGB";
-    outputIntent = RI_RELATIVE;
-    outputBPC = true;
-    gamma = "default";
-    gampos = 2.22;
-    slpos = 4.5;
-    freegamma = false;
+}
+
+PCVignetteParams::PCVignetteParams() :
+    enabled(false),
+    strength(0.60),
+    feather(50),
+    roundness(50)
+{
+}
+
+VignettingParams::VignettingParams() :
+    amount(0),
+    radius(50),
+    strength(1),
+    centerX(0),
+    centerY(0)
+{
+}
+
+ChannelMixerParams::ChannelMixerParams() :
+    red{
+        100,
+        0,
+        0
+    },
+    green{
+        0,
+        100,
+        0
+    },
+    blue{
+        0,
+        0,
+        100
+    }
+{
+}
+
+BlackWhiteParams::BlackWhiteParams() :
+    beforeCurve{
+        DCT_Linear
+    },
+    beforeCurveMode(BlackWhiteParams::TcMode::STD_BW),
+    afterCurve{
+        DCT_Linear
+    },
+    afterCurveMode(BlackWhiteParams::TcMode::STD_BW),
+    algo("SP"),
+    luminanceCurve{
+        FCT_Linear
+    },
+    autoc(false),
+    enabledcc(true),
+    enabled(false),
+    filter("None"),
+    setting("NormalContrast"),
+    method("Desaturation"),
+    mixerRed(33),
+    mixerOrange(33),
+    mixerYellow(33),
+    mixerGreen(33),
+    mixerCyan(33),
+    mixerBlue(33),
+    mixerMagenta(33),
+    mixerPurple(33),
+    gammaRed(0),
+    gammaGreen(0),
+    gammaBlue(0)
+{
+}
+
+CACorrParams::CACorrParams() :
+    red(0.0),
+    blue(0.0)
+{
+}
+
+ResizeParams::ResizeParams() :
+    enabled(false),
+    scale(1.0),
+    appliesTo("Cropped area"),
+    method("Lanczos"),
+    dataspec(3),
+    width(900),
+    height(900)
+{
+}
+
+const Glib::ustring ColorManagementParams::NoICMString = Glib::ustring ("No ICM: sRGB output");
+
+ColorManagementParams::ColorManagementParams() :
+    input("(cameraICC)"),
+    toneCurve(false),
+    applyLookTable(false),
+    applyBaselineExposureOffset(true),
+    applyHueSatMap(true),
+    dcpIlluminant(0),
+    working("ProPhoto"),
+    output("RT_sRGB"),
+    outputIntent(RI_RELATIVE),
+    outputBPC(true),
+    gamma("default"),
+    gampos(2.22),
+    slpos(4.5),
+    freegamma(false)
+{
 }
 
 WaveletParams::WaveletParams() :
-    hueskin     (  -5,   25,  170,  120, false),
-    hueskin2    (-260, -250, -130, -140, false),
-    hllev       (  50,   75,  100,   98, false),
-    bllev       (   0,    2,   50,   25, false),
-    pastlev     (   0,    2,   30,   20, false),
-    satlev      (  30,   45,  130,  100, false),
-    edgcont     (  bl,   tl,   br,   tr, false),
-    /*edgcont     (   0,   10,   75,   40, false),*/
-    level0noise (0, 0, false),
-    level1noise (0, 0, false),
-    level2noise (0, 0, false),
-    level3noise (0, 0, false)
-{
-    setDefaults ();
-}
-
-void WaveletParams::setDefaults()
-{
-    getDefaultCCWCurve (ccwcurve);
-    getDefaultOpacityCurveRG (opacityCurveRG);
-    getDefaultOpacityCurveBY (opacityCurveBY);
-    getDefaultOpacityCurveW (opacityCurveW);
-    getDefaultOpacityCurveWL (opacityCurveWL);
-    enabled = false;
-    median = false;
-    medianlev = false;
-    linkedg = true;
-    cbenab = false;
-    lipst = false;
-    Medgreinf = "less"; //"none";
-    avoid = false;
-    tmr = false;
-    strength = 100;
-    balance = 0;
-    iter = 0;
-    wavclCurve.clear ();
-    wavclCurve.push_back (DCT_Linear);
-
-    Lmethod = "4_";
-    CHmethod = "without";
-    CHSLmethod = "SL";
-    EDmethod = "CU";
-    NPmethod = "none";
-    BAmethod = "none";
-    TMmethod = "cont";
-    HSmethod = "with";
-    CLmethod = "all";
-    Backmethod = "grey";
-    Dirmethod = "all";
-    Tilesmethod = "full";
-    daubcoeffmethod = "4_";
-    rescon = 0;
-    resconH = 0;
-    reschro = 0;
-    tmrs = 0;
-    gamma = 1;
-    sky = 0.;
-    sup = 0;
-    thres = 7;
-    chroma = 5;
-    chro = 0;
-    contrast = 0;
-    edgrad = 15;
-    edgval = 0;
-    edgthresh = 10;
-    thr = 35;
-    thrH = 65;
-    skinprotect = 0.;
-    hueskin.setValues   (  -5,   25,  170,  120);
-    hueskin2.setValues  (-260, -250, -130, -140);
-    threshold = 5;
-    threshold2 = 4;
-    edgedetect = 90;
-    edgedetectthr = 20;
-    edgedetectthr2 = 0;
-    edgesensi = 60;
-    edgeampli = 10;
-    hllev.setValues     (50, 75, 100,  98);
-    bllev.setValues     ( 0,  2,  50,  25);
-    pastlev.setValues   ( 0,  2,  30,  20);
-    satlev.setValues    (30, 45, 130, 100);
-    //edgcont.setValues   (bl, tl,  br,  tr);
-    edgcont.setValues   ( 0, 10,  75,  40);
-    level0noise.setValues (0, 0);
-    level1noise.setValues (0, 0);
-    level2noise.setValues (0, 0);
-    level3noise.setValues (0, 0);
-    hhcurve.clear ();
-    hhcurve.push_back (FCT_Linear);
-    Chcurve.clear ();
-    Chcurve.push_back (FCT_Linear);
-    expcontrast = false;
-    expchroma = false;
-    expedge = false;
-    expresid = false;
-    expfinal = false;
-    exptoning = false;
-    expnoise = false;
-
-    for (int i = 0; i < 9; i ++) {
-        c[i] = 0;
-    }
-
-    for (int i = 0; i < 9; i ++) {
-        ch[i] = 0;
-    }
-
-    greenlow = greenmed = greenhigh = 0.0;
-    bluelow = bluemed = bluehigh = 0.0;
-
-}
-
-void WaveletParams::getCurves (WavCurve &cCurve, WavOpacityCurveRG &opacityCurveLUTRG, WavOpacityCurveBY &opacityCurveLUTBY, WavOpacityCurveW &opacityCurveLUTW, WavOpacityCurveWL &opacityCurveLUTWL) const
-{
-    cCurve.Set (this->ccwcurve);
-    opacityCurveLUTRG.Set (this->opacityCurveRG);
-    opacityCurveLUTBY.Set (this->opacityCurveBY);
-    opacityCurveLUTW.Set (this->opacityCurveW);
-    opacityCurveLUTWL.Set (this->opacityCurveWL);
-
-}
-
-void WaveletParams::getDefaultCCWCurve (std::vector<double> &curve)
-{
-    curve = {
+    ccwcurve{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0,
         0.25,
@@ -1263,13 +1381,8 @@ void WaveletParams::getDefaultCCWCurve (std::vector<double> &curve)
         0.0,
         0.35,
         0.35
-    };
-
-}
-
-void WaveletParams::getDefaultOpacityCurveRG (std::vector<double> &curve)
-{
-    curve = {
+    },
+    opacityCurveRG{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0,
         0.50,
@@ -1279,12 +1392,8 @@ void WaveletParams::getDefaultOpacityCurveRG (std::vector<double> &curve)
         0.50,
         0.35,
         0.35
-    };
-}
-
-void WaveletParams::getDefaultOpacityCurveBY (std::vector<double> &curve)
-{
-    curve = {
+    },
+    opacityCurveBY{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0,
         0.50,
@@ -1294,12 +1403,8 @@ void WaveletParams::getDefaultOpacityCurveBY (std::vector<double> &curve)
         0.50,
         0.35,
         0.35
-    };
-}
-
-void WaveletParams::getDefaultOpacityCurveW (std::vector<double> &curve)
-{
-    curve = {
+    },
+    opacityCurveW{
         static_cast<double>(FCT_MinMaxCPoints),
         0.00,
         0.35,
@@ -1317,12 +1422,8 @@ void WaveletParams::getDefaultOpacityCurveW (std::vector<double> &curve)
         0.35,
         0.00,
         0.00
-    };
-}
-
-void WaveletParams::getDefaultOpacityCurveWL (std::vector<double> &curve)
-{
-    curve = {
+    },
+    opacityCurveWL{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0,
         0.50,
@@ -1332,24 +1433,186 @@ void WaveletParams::getDefaultOpacityCurveWL (std::vector<double> &curve)
         0.50,
         0.35,
         0.35
-    };
+    },
+    hhcurve{
+        FCT_Linear
+    },
+    Chcurve{
+        FCT_Linear
+    },
+    wavclCurve {
+        DCT_Linear
+    },
+    enabled(false),
+    median(false),
+    medianlev(false),
+    linkedg(true),
+    cbenab(false),
+    greenlow(0),
+    bluelow(0),
+    greenmed(0),
+    bluemed(0),
+    greenhigh(0),
+    bluehigh(0),
+    lipst(false),
+    avoid(false),
+    tmr(false),
+    strength(100),
+    balance(0),
+    iter(0),
+    expcontrast(false),
+    expchroma(false),
+    c{},
+    ch{},
+    expedge(false),
+    expresid(false),
+    expfinal(false),
+    exptoning(false),
+    expnoise(false),
+    Lmethod("4_"),
+    CLmethod("all"),
+    Backmethod("grey"),
+    Tilesmethod("full"),
+    daubcoeffmethod("4_"),
+    CHmethod("without"),
+    Medgreinf("less"),
+    CHSLmethod("SL"),
+    EDmethod("CU"),
+    NPmethod("none"),
+    BAmethod("none"),
+    TMmethod("cont"),
+    Dirmethod("all"),
+    HSmethod("with"),
+    rescon(0),
+    resconH(0),
+    reschro(0),
+    tmrs(0),
+    gamma(1),
+    sup(0),
+    sky(0.0),
+    thres(7),
+    chroma(5),
+    chro(0),
+    threshold(5),
+    threshold2(4),
+    edgedetect(90),
+    edgedetectthr(20),
+    edgedetectthr2(0),
+    edgesensi(60),
+    edgeampli(10),
+    contrast(0),
+    edgrad(15),
+    edgval(0),
+    edgthresh(10),
+    thr(35),
+    thrH(65),
+    skinprotect(0.0),
+    hueskin(-5, 25, 170, 120, false),
+    hueskin2(-260, -250, -130, -140, false),
+    hllev(50, 75, 100, 98, false),
+    bllev(0, 2, 50, 25, false),
+    pastlev(0, 2, 30, 20, false),
+    satlev(30, 45, 130, 100, false),
+    edgcont(0, 10, 75, 40, false),
+    level0noise(0, 0, false),
+    level1noise(0, 0, false),
+    level2noise(0, 0, false),
+    level3noise(0, 0, false)
+{
+}
+
+void WaveletParams::getCurves (WavCurve &cCurve, WavOpacityCurveRG &opacityCurveLUTRG, WavOpacityCurveBY &opacityCurveLUTBY, WavOpacityCurveW &opacityCurveLUTW, WavOpacityCurveWL &opacityCurveLUTWL) const
+{
+    cCurve.Set (this->ccwcurve);
+    opacityCurveLUTRG.Set (this->opacityCurveRG);
+    opacityCurveLUTBY.Set (this->opacityCurveBY);
+    opacityCurveLUTW.Set (this->opacityCurveW);
+    opacityCurveLUTWL.Set (this->opacityCurveWL);
+
 }
 
 DirPyrEqualizerParams::DirPyrEqualizerParams() :
-    hueskin (20, 80, 2000, 1200, false)
+    enabled(false),
+    gamutlab(false),
+    mult{
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    },
+    threshold(0.2),
+    skinprotect(0.0),
+    hueskin (-5, 25, 170, 120, false),
+    cbdlMethod("bef")
 {
 }
 
-FilmSimulationParams::FilmSimulationParams()
+HSVEqualizerParams::HSVEqualizerParams() :
+    hcurve{
+        FCT_Linear
+    },
+    scurve{
+        FCT_Linear
+    },
+    vcurve{
+        FCT_Linear
+    }
 {
-    setDefaults();
 }
 
-void FilmSimulationParams::setDefaults()
+FilmSimulationParams::FilmSimulationParams() :
+    enabled(false),
+    strength(100)
 {
-    enabled = false;
-    clutFilename = Glib::ustring();
-    strength = 100;
+}
+
+RAWParams::BayerSensor::BayerSensor() :
+    method(getMethodString(Method::AMAZE)),
+    imageNum(0),
+    ccSteps(0),
+    black0(0.0),
+    black1(0.0),
+    black2(0.0),
+    black3(0.0),
+    twogreen(true),
+    linenoise(0),
+    greenthresh(0),
+    dcb_iterations(2),
+    lmmse_iterations(2),
+    pixelShiftMotion(0),
+    pixelShiftMotionCorrection(PSMotionCorrection::GRID_3X3_NEW),
+    pixelShiftMotionCorrectionMethod(PSMotionCorrectionMethod::AUTO),
+    pixelShiftStddevFactorGreen(5.0),
+    pixelShiftStddevFactorRed(5.0),
+    pixelShiftStddevFactorBlue(5.0),
+    pixelShiftEperIso(0.0),
+    pixelShiftNreadIso(0.0),
+    pixelShiftPrnu(1.0),
+    pixelShiftSigma(1.0),
+    pixelShiftSum(3.0),
+    pixelShiftRedBlueWeight(0.7),
+    pixelShiftShowMotion(false),
+    pixelShiftShowMotionMaskOnly(false),
+    pixelShiftAutomatic(true),
+    pixelShiftNonGreenHorizontal(false),
+    pixelShiftNonGreenVertical(false),
+    pixelShiftHoleFill(true),
+    pixelShiftMedian(false),
+    pixelShiftMedian3(false),
+    pixelShiftGreen(true),
+    pixelShiftBlur(true),
+    pixelShiftSmoothFactor(0.7),
+    pixelShiftExp0(false),
+    pixelShiftLmmse(false),
+    pixelShiftEqualBright(false),
+    pixelShiftEqualBrightChannel(false),
+    pixelShiftNonGreenCross(true),
+    pixelShiftNonGreenCross2(false),
+    pixelShiftNonGreenAmaze(false),
+    dcb_enhance(true)
+{
 }
 
 void RAWParams::BayerSensor::setPixelShiftDefaults()
@@ -1408,6 +1671,15 @@ Glib::ustring RAWParams::BayerSensor::getMethodString(Method method)
     return getMethodStrings()[toUnderlying(method)];
 }
 
+RAWParams::XTransSensor::XTransSensor() :
+    method(getMethodString(Method::THREE_PASS)),
+    ccSteps(0),
+    blackred(0.0),
+    blackgreen(0.0),
+    blackblue(0.0)
+{
+}
+
 const std::vector<const char*>& RAWParams::XTransSensor::getMethodStrings()
 {
     static const std::vector<const char*> method_strings {
@@ -1425,52 +1697,22 @@ Glib::ustring RAWParams::XTransSensor::getMethodString(Method method)
     return getMethodStrings()[toUnderlying(method)];
 }
 
-RAWParams::RAWParams()
+RAWParams::RAWParams() :
+    df_autoselect(false),
+    ff_AutoSelect(false),
+    ff_BlurRadius(32),
+    ff_BlurType(getFlatFieldBlurTypeString(FlatFieldBlurType::AREA)),
+    ff_AutoClipControl(false),
+    ff_clipControl(0),
+    ca_autocorrect(false),
+    cared(0.0),
+    cablue(0.0),
+    expos(1.0),
+    preser(0.0),
+    hotPixelFilter(false),
+    deadPixelFilter(false),
+    hotdeadpix_thresh(100)
 {
-    setDefaults();
-}
-
-void RAWParams::setDefaults()
-{
-    bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZE);
-    bayersensor.imageNum = 0;
-    bayersensor.ccSteps = 0;
-    bayersensor.dcb_iterations = 2;
-    bayersensor.dcb_enhance = true;
-//bayersensor.all_enhance = false;
-    bayersensor.lmmse_iterations = 2;
-    bayersensor.black0 = 0.0;
-    bayersensor.black1 = 0.0;
-    bayersensor.black2 = 0.0;
-    bayersensor.black3 = 0.0;
-    bayersensor.twogreen = true;
-    bayersensor.linenoise = 0;
-    bayersensor.greenthresh = 0;
-
-    xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::THREE_PASS);
-    xtranssensor.ccSteps = 0;
-    xtranssensor.blackred = 0.0;
-    xtranssensor.blackgreen = 0.0;
-    xtranssensor.blackblue = 0.0;
-
-    expos = 1.0;
-    preser = 0.0;
-    df_autoselect = false;
-    ff_AutoSelect = false;
-    ff_BlurRadius = 32;
-    ff_BlurType = RAWParams::getFlatFieldBlurTypeString(RAWParams::FlatFieldBlurType::AREA);
-    ff_AutoClipControl = false;
-    ff_clipControl = 0;
-    cared = 0;
-    cablue = 0;
-    ca_autocorrect = false;
-    hotPixelFilter = false;
-    deadPixelFilter = false;
-    hotdeadpix_thresh = 100;
-    bayersensor.setPixelShiftDefaults();
-    bayersensor.pixelShiftShowMotion = false;
-    bayersensor.pixelShiftShowMotionMaskOnly = false;
-
 }
 
 const std::vector<const char*>& RAWParams::getFlatFieldBlurTypeStrings()
@@ -1491,7 +1733,6 @@ Glib::ustring RAWParams::getFlatFieldBlurTypeString(FlatFieldBlurType type)
 
 ProcParams::ProcParams ()
 {
-
     setDefaults ();
 }
 
@@ -1501,283 +1742,80 @@ void ProcParams::setDefaults ()
 
     labCurve = LCurveParams();
 
-    rgbCurves.lumamode = false;
-    rgbCurves.rcurve.clear ();
-    rgbCurves.rcurve.push_back (DCT_Linear);
-    rgbCurves.gcurve.clear ();
-    rgbCurves.gcurve.push_back (DCT_Linear);
-    rgbCurves.bcurve.clear ();
-    rgbCurves.bcurve.push_back (DCT_Linear);
+    rgbCurves = RGBCurvesParams();
 
     colorToning = ColorToningParams();
 
-    sharpenEdge.enabled = false;
-    sharpenEdge.passes = 2;
-    sharpenEdge.amount = 50.0;
-    sharpenEdge.threechannels = false;
+    sharpenEdge = SharpenEdgeParams();
 
-    sharpenMicro.enabled = false;
-    sharpenMicro.amount = 20.0;
-    sharpenMicro.uniformity = 50.0;
-    sharpenMicro.matrix = false;
+    sharpenMicro = SharpenMicroParams();
 
-    sharpening.enabled = false;
-    sharpening.radius = 0.5;
-    sharpening.amount = 200;
-    sharpening.threshold.setValues (20, 80, 2000, 1200);
-    sharpening.edgesonly = false;
-    sharpening.edges_radius = 1.9;
-    sharpening.edges_tolerance = 1800;
-    sharpening.halocontrol = false;
-    sharpening.halocontrol_amount = 85;
-    sharpening.method = "usm";
-    sharpening.deconvradius = 0.75;
-    sharpening.deconviter = 30;
-    sharpening.deconvdamping = 20;
-    sharpening.deconvamount = 75;
+    sharpening = SharpeningParams();
 
-    prsharpening.enabled = false;
-    prsharpening.radius = 0.5;
-    prsharpening.amount = 200;
-    prsharpening.threshold.setValues (20, 80, 2000, 1200);
-    prsharpening.edgesonly = false;
-    prsharpening.edges_radius = 1.9;
-    prsharpening.edges_tolerance = 1800;
-    prsharpening.halocontrol = false;
-    prsharpening.halocontrol_amount = 85;
+    prsharpening = SharpeningParams();
     prsharpening.method = "rld";
+    prsharpening.deconvamount = 100;
     prsharpening.deconvradius = 0.45;
     prsharpening.deconviter = 100;
     prsharpening.deconvdamping = 0;
-    prsharpening.deconvamount = 100;
 
-    vibrance.enabled = false;
-    vibrance.pastels = 0;
-    vibrance.saturated = 0;
-    vibrance.psthreshold.setValues (0, 75);
-    vibrance.protectskins = false;
-    vibrance.avoidcolorshift = true;
-    vibrance.pastsattog = true;
-    vibrance.skintonescurve.clear ();
-    vibrance.skintonescurve.push_back (DCT_Linear);
+    vibrance = VibranceParams();
 
-    wb.method       = "Camera";
-    wb.temperature  = 6504;
-    wb.green        = 1.0;
-    wb.equal        = 1.0;
-    wb.tempBias     = 0.0;
-    colorappearance.enabled       = false;
-    colorappearance.degree        = 90;
-    colorappearance.autodegree    = true;
-    colorappearance.degreeout        = 90;
-    colorappearance.autodegreeout    = true;
-    colorappearance.surround      = "Average";
-    colorappearance.surrsrc      = "Average";
-    colorappearance.adaplum       = 16;
-    colorappearance.badpixsl       = 0;
-    colorappearance.adapscen      = 2000.0;
-    colorappearance.autoadapscen    = true;
-    colorappearance.ybscen      = 18;
-    colorappearance.autoybscen    = true;
-    colorappearance.algo          = "No";
-    colorappearance.wbmodel       = "RawT";
-    colorappearance.jlight        = 0.0;
-    colorappearance.qbright       = 0.0;
-    colorappearance.chroma        = 0.0;
-    colorappearance.schroma       = 0.0;
-    colorappearance.mchroma       = 0.0;
-    colorappearance.rstprotection = 0.0;
-    colorappearance.contrast = 0.0;
-    colorappearance.qcontrast = 0.0;
-    colorappearance.colorh = 0.0;
-    colorappearance.surrsource = false;
-    colorappearance.gamut = true;
-// colorappearance.badpix = false;
-    colorappearance.datacie = false;
-    colorappearance.tonecie = false;
-// colorappearance.sharpcie = false;
-    colorappearance.curve.clear ();
-    colorappearance.curve.push_back (DCT_Linear);
-    colorappearance.curve2.clear ();
-    colorappearance.curve2.push_back (DCT_Linear);
-    colorappearance.curveMode = ColorAppearanceParams::TcMode::LIGHT;
-    colorappearance.curveMode2 = ColorAppearanceParams::TcMode::LIGHT;
-    colorappearance.curve3.clear ();
-    colorappearance.curve3.push_back (DCT_Linear);
-    colorappearance.curveMode3    = ColorAppearanceParams::CtcMode::CHROMA;
-    colorappearance.tempout        = 5000;
-    colorappearance.greenout        = 1.0;
-    colorappearance.ybout        = 18;
-    colorappearance.tempsc        = 5000;
-    colorappearance.greensc        = 1.0;
+    wb = WBParams();
 
-    impulseDenoise.enabled = false;
-    impulseDenoise.thresh = 50;
+    colorappearance = ColorAppearanceParams();
 
-    defringe.enabled = false;
-    defringe.radius = 2.0;
-    defringe.threshold = 13;
-    defringe.huecurve.resize (25);
-    defringe.huecurve.at (0)  = FCT_MinMaxCPoints;
-    defringe.huecurve.at (1)  = 0.166666667;
-    defringe.huecurve.at (2)  = 0.;
-    defringe.huecurve.at (3)  = 0.35;
-    defringe.huecurve.at (4)  = 0.35;
-    defringe.huecurve.at (5)  = 0.347;
-    defringe.huecurve.at (6)  = 0.;
-    defringe.huecurve.at (7)  = 0.35;
-    defringe.huecurve.at (8)  = 0.35;
-    defringe.huecurve.at (9)  = 0.513667426;
-    defringe.huecurve.at (10) = 0;
-    defringe.huecurve.at (11) = 0.35;
-    defringe.huecurve.at (12) = 0.35;
-    defringe.huecurve.at (13) = 0.668944571;
-    defringe.huecurve.at (14) = 0.;
-    defringe.huecurve.at (15) = 0.35;
-    defringe.huecurve.at (16) = 0.35;
-    defringe.huecurve.at (17) = 0.8287775246;
-    defringe.huecurve.at (18) = 0.97835991;
-    defringe.huecurve.at (19) = 0.35;
-    defringe.huecurve.at (20) = 0.35;
-    defringe.huecurve.at (21) = 0.9908883827;
-    defringe.huecurve.at (22) = 0.;
-    defringe.huecurve.at (23) = 0.35;
-    defringe.huecurve.at (24) = 0.35;
+    defringe = DefringeParams();
 
-    dirpyrDenoise.setDefaults();
+    impulseDenoise = ImpulseDenoiseParams();
 
-    epd.enabled = false;
-    epd.strength = 0.5;
-    epd.gamma = 1.0;
-    epd.edgeStopping = 1.4;
-    epd.scale = 1.0;
-    epd.reweightingIterates = 0;
+    dirpyrDenoise = DirPyrDenoiseParams();
 
-    fattal.setDefaults();
+    epd = EPDParams();
 
-    sh.enabled = false;
-    sh.hq = false;
-    sh.highlights = 0;
-    sh.htonalwidth = 80;
-    sh.shadows = 0;
-    sh.stonalwidth = 80;
-    sh.localcontrast = 0;
-    sh.radius = 40;
+    fattal = FattalToneMappingParams();
 
-    crop.enabled = false;
-    crop.x = -1;
-    crop.y = -1;
-    crop.w = 15000;
-    crop.h = 15000;
-    crop.fixratio = true;
-    crop.ratio = "3:2";
-    crop.orientation = "As Image";
-    crop.guide = "Frame";
+    sh = SHParams();
 
-    coarse.setDefaults();
+    crop = CropParams();
 
-    commonTrans.autofill = true;
+    coarse = CoarseTransformParams();
 
-    rotate.degree = 0;
+    commonTrans = CommonTransformParams();
 
-    distortion.amount = 0;
+    rotate = RotateParams();
 
-    perspective.horizontal = 0;
-    perspective.vertical = 0;
+    distortion = DistortionParams();
 
-    gradient.enabled = false;
-    gradient.degree = 0;
-    gradient.feather = 25;
-    gradient.strength = 0.60;
-    gradient.centerX = 0;
-    gradient.centerY = 0;
+    lensProf = LensProfParams();
 
-    pcvignette.enabled = false;
-    pcvignette.strength = 0.60;
-    pcvignette.feather = 50;
-    pcvignette.roundness = 50;
+    perspective = PerspectiveParams();
 
-    cacorrection.red = 0;
-    cacorrection.blue = 0;
+    gradient = GradientParams();
 
-    vignetting.amount = 0;
-    vignetting.radius = 50;
-    vignetting.strength = 1;
-    vignetting.centerX = 0;
-    vignetting.centerY = 0;
+    pcvignette = PCVignetteParams();
 
-    lensProf.setDefaults();
+    vignetting = VignettingParams();
 
-    chmixer.red[0]   = 100;
-    chmixer.red[1]   = 0;
-    chmixer.red[2]   = 0;
-    chmixer.green[0] = 0;
-    chmixer.green[1] = 100;
-    chmixer.green[2] = 0;
-    chmixer.blue[0]  = 0;
-    chmixer.blue[1]  = 0;
-    chmixer.blue[2]  = 100;
+    chmixer = ChannelMixerParams();
 
-    blackwhite.autoc = false;
-    blackwhite.enabledcc = true;
-    blackwhite.enabled = false;
-    blackwhite.mixerRed     = 33;
-    blackwhite.mixerGreen   = 33;
-    blackwhite.mixerBlue    = 33;
-    blackwhite.mixerOrange  = 33;
-    blackwhite.mixerYellow  = 33;
-    blackwhite.mixerCyan    = 33;
-    blackwhite.mixerMagenta = 33;
-    blackwhite.mixerPurple  = 33;
-    blackwhite.gammaRed   = 0;
-    blackwhite.gammaGreen = 0;
-    blackwhite.gammaBlue  = 0;
-    blackwhite.luminanceCurve.clear ();
-    blackwhite.luminanceCurve.push_back (FCT_Linear);
-    blackwhite.method = "Desaturation";
-    blackwhite.filter = "None";
-    blackwhite.setting = "NormalContrast";
-    blackwhite.beforeCurve.clear ();
-    blackwhite.beforeCurve.push_back (DCT_Linear);
-    blackwhite.beforeCurveMode = BlackWhiteParams::TcMode::STD_BW;
-    blackwhite.afterCurve.clear ();
-    blackwhite.afterCurve.push_back (DCT_Linear);
-    blackwhite.afterCurveMode = BlackWhiteParams::TcMode::STD_BW;
-    blackwhite.algo = "SP";
+    blackwhite = BlackWhiteParams();
 
-    resize.enabled = false;
-    resize.scale = 1.0;
-    resize.appliesTo = "Cropped area";
-    resize.method = "Lanczos";
-    resize.dataspec = 3;
-    resize.width = 900;
-    resize.height = 900;
+    cacorrection = CACorrParams();
 
-    icm.setDefaults();
+    resize = ResizeParams();
 
-    dirpyrequalizer.enabled = false;
-    dirpyrequalizer.gamutlab = false;
-    dirpyrequalizer.cbdlMethod = "bef";
+    icm = ColorManagementParams();
 
-    for (int i = 0; i < 6; i ++) {
-        dirpyrequalizer.mult[i] = 1.0;
-    }
+    wavelet = WaveletParams();
 
-    dirpyrequalizer.threshold = 0.2;
-    dirpyrequalizer.skinprotect = 0.;
-    dirpyrequalizer.hueskin.setValues (-5, 25, 170, 120); //default (b_l 0, t_l 30, b_r 170, t_r 120);
-// dirpyrequalizer.algo = "FI";
+    dirpyrequalizer = DirPyrEqualizerParams();
 
-    hsvequalizer.hcurve.clear ();
-    hsvequalizer.hcurve.push_back (FCT_Linear);
-    hsvequalizer.scurve.clear ();
-    hsvequalizer.scurve.push_back (FCT_Linear);
-    hsvequalizer.vcurve.clear ();
-    hsvequalizer.vcurve.push_back (FCT_Linear);
+    hsvequalizer = HSVEqualizerParams();
 
-    filmSimulation.setDefaults();
+    filmSimulation = FilmSimulationParams();
 
-    raw.setDefaults();
+    raw = RAWParams();
 
     exif.clear ();
     iptc.clear ();

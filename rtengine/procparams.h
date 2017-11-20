@@ -362,6 +362,8 @@ struct RGBCurvesParams {
     std::vector<double>   rcurve;
     std::vector<double>   gcurve;
     std::vector<double>   bcurve;
+
+    RGBCurvesParams();
 };
 
 /**
@@ -450,6 +452,8 @@ struct SharpenEdgeParams {
     int     passes;
     double  amount;
     bool    threechannels;
+
+    SharpenEdgeParams();
 };
 
 struct SharpenMicroParams {
@@ -457,6 +461,8 @@ struct SharpenMicroParams {
     bool    matrix;
     double  amount;
     double  uniformity;
+
+    SharpenMicroParams();
 };
 
 /**
@@ -505,12 +511,13 @@ struct WBEntry {
 };
 
 struct WBParams {
-    static const std::vector<WBEntry> wbEntries;
     Glib::ustring   method;
     int             temperature;
     double          green;
     double          equal;
     double          tempBias;
+
+    WBParams();
 
     static const std::vector<WBEntry>& getWbEntries();
 };
@@ -564,7 +571,6 @@ struct ColorAppearanceParams {
     double        rstprotection;
     bool          surrsource;
     bool          gamut;
-    //      bool          badpix;
     bool          datacie;
     bool          tonecie;
     int tempout;
@@ -572,6 +578,8 @@ struct ColorAppearanceParams {
     double greenout;
     int tempsc;
     double greensc;
+
+    ColorAppearanceParams();
 };
 
 /**
@@ -582,6 +590,8 @@ struct DefringeParams {
     double  radius;
     float   threshold;
     std::vector<double> huecurve;
+
+    DefringeParams();
 };
 
 /**
@@ -591,6 +601,7 @@ struct ImpulseDenoiseParams {
     bool    enabled;
     int     thresh;
 
+    ImpulseDenoiseParams();
 };
 
 /**
@@ -622,7 +633,7 @@ struct DirPyrDenoiseParams {
     int  passes;
 
     DirPyrDenoiseParams();
-    void setDefaults();  // SHOULD BE GENERALIZED TO ALL CLASSES!
+
     void getCurves(NoiseCurve& lCurve, NoiseCurve& cCurve) const;
 
 };
@@ -635,6 +646,8 @@ struct EPDParams {
     double edgeStopping;
     double scale;
     int    reweightingIterates;
+
+    EPDParams();
 };
 
 // Fattal02 Tone-Mapping parameters
@@ -644,7 +657,6 @@ struct FattalToneMappingParams {
     int amount;
 
     FattalToneMappingParams();
-    void setDefaults();
 };
 
 /**
@@ -659,6 +671,8 @@ struct SHParams {
     int     stonalwidth;
     int     localcontrast;
     int     radius;
+
+    SHParams();
 };
 
 /**
@@ -676,7 +690,7 @@ struct CropParams {
     Glib::ustring   guide;
 
     CropParams();
-    void mapToResized (int resizedWidth, int resizedHeight, int scale, int& x1, int& x2, int& y1, int& y2) const;
+    void mapToResized(int resizedWidth, int resizedHeight, int scale, int& x1, int& x2, int& y1, int& y2) const;
 };
 
 /**
@@ -688,7 +702,6 @@ struct CoarseTransformParams {
     bool    vflip;
 
     CoarseTransformParams();
-    void setDefaults();
 };
 
 /**
@@ -696,6 +709,8 @@ struct CoarseTransformParams {
   */
 struct CommonTransformParams {
     bool autofill;
+
+    CommonTransformParams();
 };
 
 /**
@@ -703,6 +718,8 @@ struct CommonTransformParams {
   */
 struct RotateParams {
     double  degree;
+
+    RotateParams();
 };
 
 /**
@@ -710,6 +727,8 @@ struct RotateParams {
   */
 struct DistortionParams {
     double  amount;
+
+    DistortionParams();
 };
 
 // Lens profile correction parameters
@@ -729,7 +748,6 @@ struct LensProfParams {
     Glib::ustring lfLens;
 
     LensProfParams();
-    void setDefaults();
 
     bool useLensfun() const;
     bool lfAutoMatch() const;
@@ -748,6 +766,8 @@ struct LensProfParams {
 struct PerspectiveParams {
     double  horizontal;
     double  vertical;
+
+    PerspectiveParams();
 };
 
 /**
@@ -760,6 +780,8 @@ struct GradientParams {
     double strength;
     int    centerX;
     int    centerY;
+
+    GradientParams();
 };
 
 /**
@@ -770,6 +792,8 @@ struct PCVignetteParams {
     double strength;
     int    feather;
     int    roundness;
+
+    PCVignetteParams();
 };
 
 /**
@@ -781,6 +805,8 @@ struct VignettingParams {
     int  strength;
     int  centerX;
     int  centerY;
+
+    VignettingParams();
 };
 
 /**
@@ -790,6 +816,8 @@ struct ChannelMixerParams {
     int red[3];
     int green[3];
     int blue[3];
+
+    ChannelMixerParams();
 };
 
 struct BlackWhiteParams {
@@ -824,6 +852,8 @@ struct BlackWhiteParams {
     int gammaRed;
     int gammaGreen;
     int gammaBlue;
+
+    BlackWhiteParams();
 };
 
 /**
@@ -832,6 +862,8 @@ struct BlackWhiteParams {
 struct CACorrParams {
     double red;
     double blue;
+
+    CACorrParams();
 };
 
 /**
@@ -845,6 +877,8 @@ struct ResizeParams {
     int dataspec;
     int width;
     int height;
+
+    ResizeParams();
 };
 
 /**
@@ -861,15 +895,15 @@ struct ColorManagementParams {
     Glib::ustring output;
     RenderingIntent outputIntent;
     bool outputBPC;
-    static const Glib::ustring NoICMString;
 
     Glib::ustring gamma;
     double gampos;
     double slpos;
     bool freegamma;
 
+    static const Glib::ustring NoICMString;
+
     ColorManagementParams();
-    void setDefaults();
 };
 
 /**
@@ -881,7 +915,6 @@ typedef std::map<Glib::ustring, Glib::ustring> ExifPairs;
   * The IPTC key/value pairs
   */
 typedef std::map<Glib::ustring, std::vector<Glib::ustring>> IPTCPairs;
-
 
 struct WaveletParams {
     std::vector<double> ccwcurve;
@@ -971,13 +1004,8 @@ struct WaveletParams {
     Threshold<double> level3noise;
 
     WaveletParams();
-    void setDefaults();
+
     void getCurves(WavCurve& cCurve, WavOpacityCurveRG& opacityCurveLUTRG, WavOpacityCurveBY& opacityCurveLUTBY, WavOpacityCurveW& opacityCurveLUTW, WavOpacityCurveWL& opacityCurveLUTWL) const;
-    static void getDefaultCCWCurve (std::vector<double>& curve);
-    static void getDefaultOpacityCurveRG (std::vector<double>& curve);
-    static void getDefaultOpacityCurveBY (std::vector<double>& curve);
-    static void getDefaultOpacityCurveW (std::vector<double>& curve);
-    static void getDefaultOpacityCurveWL (std::vector<double>& curve);
 };
 
 /**
@@ -999,9 +1027,11 @@ struct DirPyrEqualizerParams {
  * HSV equalizer params
  */
 struct HSVEqualizerParams {
-    std::vector<double>   hcurve;
-    std::vector<double>   scurve;
-    std::vector<double>   vcurve;
+    std::vector<double> hcurve;
+    std::vector<double> scurve;
+    std::vector<double> vcurve;
+
+    HSVEqualizerParams();
 };
 
 
@@ -1014,7 +1044,6 @@ struct FilmSimulationParams {
     int strength;
 
     FilmSimulationParams();
-    void setDefaults();
 };
 
 
@@ -1100,6 +1129,8 @@ struct RAWParams {
         bool pixelShiftNonGreenAmaze;
         bool dcb_enhance;
 
+        BayerSensor();
+
         void setPixelShiftDefaults();
 
         static const std::vector<const char*>& getMethodStrings();
@@ -1123,6 +1154,8 @@ struct RAWParams {
         double blackred;
         double blackgreen;
         double blackblue;
+
+        XTransSensor();
 
         static const std::vector<const char*>& getMethodStrings();
         static Glib::ustring getMethodString(Method method);
@@ -1161,7 +1194,6 @@ struct RAWParams {
     int hotdeadpix_thresh;
 
     RAWParams();
-    void setDefaults();
 
     static const std::vector<const char*>& getFlatFieldBlurTypeStrings();
     static Glib::ustring getFlatFieldBlurTypeString(FlatFieldBlurType type);
