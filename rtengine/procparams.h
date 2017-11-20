@@ -28,7 +28,6 @@
 
 #include "coord.h"
 #include "LUT.h"
-#include "utils.h"
 
 class ParamsEdited;
 
@@ -1005,7 +1004,14 @@ struct WaveletParams {
 
     WaveletParams();
 
-    void getCurves(WavCurve& cCurve, WavOpacityCurveRG& opacityCurveLUTRG, WavOpacityCurveBY& opacityCurveLUTBY, WavOpacityCurveW& opacityCurveLUTW, WavOpacityCurveWL& opacityCurveLUTWL) const;
+    void getCurves(
+        WavCurve& cCurve,
+        WavOpacityCurveRG&
+        opacityCurveLUTRG,
+        WavOpacityCurveBY& opacityCurveLUTBY,
+        WavOpacityCurveW& opacityCurveLUTW,
+        WavOpacityCurveWL& opacityCurveLUTWL
+    ) const;
 };
 
 /**
@@ -1208,7 +1214,7 @@ class ProcParams
 public:
     ToneCurveParams         toneCurve;       ///< Tone curve parameters
     LCurveParams            labCurve;        ///< CIELAB luminance curve parameters
-    RetinexParams             retinex;           ///< Retinex parameters
+    RetinexParams           retinex;         ///< Retinex parameters
     RGBCurvesParams         rgbCurves;       ///< RGB curves parameters
     ColorToningParams       colorToning;     ///< Color Toning parameters
     SharpeningParams        sharpening;      ///< Sharpening parameters
@@ -1216,17 +1222,13 @@ public:
     SharpenEdgeParams       sharpenEdge;     ///< Sharpen edge parameters
     SharpenMicroParams      sharpenMicro;    ///< Sharpen microcontrast parameters
     VibranceParams          vibrance;        ///< Vibrance parameters
-    //ColorBoostParams        colorBoost;      ///< Color boost parameters
     WBParams                wb;              ///< White balance parameters
     ColorAppearanceParams   colorappearance;
-    //ColorShiftParams        colorShift;      ///< Color shift parameters
-    //LumaDenoiseParams       lumaDenoise;     ///< Luminance denoising parameters
-    //ColorDenoiseParams      colorDenoise;    ///< Color denoising parameters
     DefringeParams          defringe;        ///< Defringing parameters
     ImpulseDenoiseParams    impulseDenoise;  ///< Impulse denoising parameters
     DirPyrDenoiseParams     dirpyrDenoise;   ///< Directional Pyramid denoising parameters
     EPDParams               epd;             ///< Edge Preserving Decomposition parameters
-    FattalToneMappingParams          fattal;          ///< Fattal02 tone mapping
+    FattalToneMappingParams fattal;          ///< Fattal02 tone mapping
     SHParams                sh;              ///< Shadow/highlight enhancement parameters
     CropParams              crop;            ///< Crop parameters
     CoarseTransformParams   coarse;          ///< Coarse transformation (90, 180, 270 deg rotation, h/v flipping) parameters
@@ -1254,17 +1256,17 @@ public:
     Glib::ustring           appVersion;      ///< Version of the application that generated the parameters
     int                     ppVersion;       ///< Version of the PP file from which the parameters have been read
 
-    ExifPairs                exif;            ///< List of modifications appplied on the exif tags of the input image
-    IPTCPairs                iptc;            ///< The IPTC tags and values to be saved to the output image
+    ExifPairs               exif;            ///< List of modifications appplied on the exif tags of the input image
+    IPTCPairs               iptc;            ///< The IPTC tags and values to be saved to the output image
 
     /**
       * The constructor only sets the hand-wired defaults.
       */
-    ProcParams          ();
+    ProcParams();
     /**
       * Sets the hand-wired defaults parameters.
       */
-    void    setDefaults ();
+    void setDefaults();
     /**
       * Saves the parameters to possibly two files. This is a performance improvement if a function has to
       * save the same file in two different location, i.e. the cache and the image's directory
@@ -1275,28 +1277,28 @@ public:
       * @param pedited pointer to a ParamsEdited object (optional) to store which values has to be saved
       * @return Error code (=0 if all supplied filenames where created correctly)
       */
-    int     save        (const Glib::ustring& fname, const Glib::ustring& fname2 = "", bool fnameAbsolute = true, ParamsEdited* pedited = nullptr);
+    int save(const Glib::ustring& fname, const Glib::ustring& fname2 = Glib::ustring(), bool fnameAbsolute = true, ParamsEdited* pedited = nullptr);
     /**
       * Loads the parameters from a file.
       * @param fname the name of the file
       * @params pedited pointer to a ParamsEdited object (optional) to store which values has been loaded
       * @return Error code (=0 if no error)
       */
-    int     load        (const Glib::ustring& fname, ParamsEdited* pedited = nullptr);
+    int load(const Glib::ustring& fname, ParamsEdited* pedited = nullptr);
 
     /** Creates a new instance of ProcParams.
       * @return a pointer to the new ProcParams instance. */
-    static ProcParams* create  ();
+    static ProcParams* create ();
 
     /** Destroys an instance of ProcParams.
       * @param pp a pointer to the ProcParams instance to destroy. */
-    static void        destroy (ProcParams* pp);
+    static void destroy(ProcParams* pp);
 
-    static void init ();
-    static void cleanup ();
+    static void init();
+    static void cleanup();
 
-    bool operator== (const ProcParams& other);
-    bool operator!= (const ProcParams& other);
+    bool operator ==(const ProcParams& other);
+    bool operator !=(const ProcParams& other);
 
 private:
     /** Write the ProcParams's text in the file of the given name.
@@ -1304,7 +1306,7 @@ private:
     * @param content the text to write
     * @return Error code (=0 if no error)
     * */
-    int write (const Glib::ustring& fname, const Glib::ustring& content) const;
+    int write(const Glib::ustring& fname, const Glib::ustring& content) const;
 
 };
 
@@ -1322,7 +1324,7 @@ class PartialProfile
 public:
     rtengine::procparams::ProcParams* pparams;
     ParamsEdited* pedited;
-    PartialProfile& operator = (const PartialProfile& rhs)
+    PartialProfile& operator =(const PartialProfile& rhs)
     {
         pparams = rhs.pparams;
         pedited = rhs.pedited;
