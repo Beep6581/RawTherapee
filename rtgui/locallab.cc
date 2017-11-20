@@ -58,16 +58,16 @@ Locallab::Locallab ():
 
 
     anbspot (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_ANBSPOT"), 0, 1, 1, 0))),
-    locX (Gtk::manage (new Adjuster (M ("TP_LOCAL_WIDTH"), 0, 1500, 1, 250))),
-    locXL (Gtk::manage (new Adjuster (M ("TP_LOCAL_WIDTH_L"), 0, 1500, 1, 250))),
+    locX (Gtk::manage (new Adjuster (M ("TP_LOCAL_WIDTH"), 0, 2250, 1, 250))),
+    locXL (Gtk::manage (new Adjuster (M ("TP_LOCAL_WIDTH_L"), 0, 2250, 1, 250))),
     degree (Gtk::manage (new Adjuster (M ("TP_LOCAL_DEGREE"), -180, 180, 1, 0))),
-    locY (Gtk::manage (new Adjuster (M ("TP_LOCAL_HEIGHT"), 0, 1500, 1, 250))),
-    locYT (Gtk::manage (new Adjuster (M ("TP_LOCAL_HEIGHT_T"), 0, 1500, 1, 250))),
+    locY (Gtk::manage (new Adjuster (M ("TP_LOCAL_HEIGHT"), 0, 2250, 1, 250))),
+    locYT (Gtk::manage (new Adjuster (M ("TP_LOCAL_HEIGHT_T"), 0, 2250, 1, 250))),
     centerX (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CENTER_X"), -1000, 1000, 1, 0))),
     centerY (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CENTER_Y"), -1000, 1000, 1, 0))),
     circrad (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CIRCRADIUS"), 2, 150, 1, 18))),
     sensiexclu (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSIEXCLU"), 0, 100, 1, 19))),
-    struc (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_STRUC"), 0, 100, 1, 0))),
+    struc (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_STRUC"), 0, 400, 1, 0))),
     thres (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_THRES"), 1, 35, 1, 18))),
     proxi (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_PROXI"), 0, 60, 1, 0))),
     lightness (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_LIGHTNESS"), -100, 100, 1, 0))),
@@ -240,7 +240,7 @@ Locallab::Locallab ():
     sensiexclu->set_tooltip_text (M ("TP_LOCALLAB_SENSIEXCLU_TOOLTIP"));
     sensiexclu->setAdjusterListener (this);
 
-    //  struc->set_tooltip_text (M ("TP_LOCALLAB_STRUC_TOOLTIP"));
+    struc->set_tooltip_text (M ("TP_LOCALLAB_STRUC_TOOLTIP"));
     struc->setAdjusterListener (this);
 
     ctboxS->pack_start (*labmS, Gtk::PACK_SHRINK, 4);
@@ -4074,7 +4074,7 @@ void Locallab::adjusterChanged (Adjuster * a, double newval)
         } else if (a == sensiexclu) {
             listener->panelChanged (Evlocallabsensiexclu, sensiexclu->getTextValue());
         } else if (a == struc) {
-//            listener->panelChanged (Evlocallabstruc, struc->getTextValue());
+            listener->panelChanged (Evlocallabstruc, struc->getTextValue());
         } else if (a == sensibn) {
             listener->panelChanged (Evlocallabsensibn, sensibn->getTextValue());
         } else if (a == proxi) {

@@ -6368,81 +6368,81 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
 //void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew)
 //{
 
-    /*    LUT<double> cmultiplier(181021);
+/*    LUT<double> cmultiplier(181021);
 
-        double boost_a = ((float)params->colorBoost.amount + 100.0) / 100.0;
-        double boost_b = ((float)params->colorBoost.amount + 100.0) / 100.0;
+    double boost_a = ((float)params->colorBoost.amount + 100.0) / 100.0;
+    double boost_b = ((float)params->colorBoost.amount + 100.0) / 100.0;
 
-        double c, amul = 1.0, bmul = 1.0;
-        if (boost_a > boost_b) {
-            c = boost_a;
-            if (boost_a > 0)
-                bmul = boost_b / boost_a;
+    double c, amul = 1.0, bmul = 1.0;
+    if (boost_a > boost_b) {
+        c = boost_a;
+        if (boost_a > 0)
+            bmul = boost_b / boost_a;
+    }
+    else {
+        c = boost_b;
+        if (boost_b > 0)
+            amul = boost_a / boost_b;
+    }
+
+    if (params->colorBoost.enable_saturationlimiter && c>1.0) {
+        // re-generate color multiplier lookup table
+        double d = params->colorBoost.saturationlimit / 3.0;
+        double alpha = 0.5;
+        double threshold1 = alpha * d;
+        double threshold2 = c*d*(alpha+1.0) - d;
+        for (int i=0; i<=181020; i++) { // lookup table stores multipliers with a 0.25 chrominance resolution
+            double chrominance = (double)i/4.0;
+            if (chrominance < threshold1)
+                cmultiplier[i] = c;
+            else if (chrominance < d)
+                cmultiplier[i] = (c / (2.0*d*(alpha-1.0)) * (chrominance-d)*(chrominance-d) + c*d/2.0 * (alpha+1.0) ) / chrominance;
+            else if (chrominance < threshold2)
+                cmultiplier[i] = (1.0 / (2.0*d*(c*(alpha+1.0)-2.0)) * (chrominance-d)*(chrominance-d) + c*d/2.0 * (alpha+1.0) ) / chrominance;
+            else
+                cmultiplier[i] = 1.0;
         }
-        else {
-            c = boost_b;
-            if (boost_b > 0)
-                amul = boost_a / boost_b;
-        }
+    }
 
-        if (params->colorBoost.enable_saturationlimiter && c>1.0) {
-            // re-generate color multiplier lookup table
-            double d = params->colorBoost.saturationlimit / 3.0;
-            double alpha = 0.5;
-            double threshold1 = alpha * d;
-            double threshold2 = c*d*(alpha+1.0) - d;
-            for (int i=0; i<=181020; i++) { // lookup table stores multipliers with a 0.25 chrominance resolution
-                double chrominance = (double)i/4.0;
-                if (chrominance < threshold1)
-                    cmultiplier[i] = c;
-                else if (chrominance < d)
-                    cmultiplier[i] = (c / (2.0*d*(alpha-1.0)) * (chrominance-d)*(chrominance-d) + c*d/2.0 * (alpha+1.0) ) / chrominance;
-                else if (chrominance < threshold2)
-                    cmultiplier[i] = (1.0 / (2.0*d*(c*(alpha+1.0)-2.0)) * (chrominance-d)*(chrominance-d) + c*d/2.0 * (alpha+1.0) ) / chrominance;
-                else
-                    cmultiplier[i] = 1.0;
+    float eps = 0.001;
+    double shift_a = params->colorShift.a + eps, shift_b = params->colorShift.b + eps;
+
+    float** oa = lold->a;
+    float** ob = lold->b;
+
+    #pragma omp parallel for if (multiThread)
+    for (int i=0; i<lold->H; i++)
+        for (int j=0; j<lold->W; j++) {
+
+            double wanted_c = c;
+            if (params->colorBoost.enable_saturationlimiter && c>1) {
+                float chroma = (float)(4.0 * sqrt((oa[i][j]+shift_a)*(oa[i][j]+shift_a) + (ob[i][j]+shift_b)*(ob[i][j]+shift_b)));
+                wanted_c = cmultiplier [chroma];
             }
-        }
 
-        float eps = 0.001;
-        double shift_a = params->colorShift.a + eps, shift_b = params->colorShift.b + eps;
-
-        float** oa = lold->a;
-        float** ob = lold->b;
-
-        #pragma omp parallel for if (multiThread)
-        for (int i=0; i<lold->H; i++)
-            for (int j=0; j<lold->W; j++) {
-
-                double wanted_c = c;
-                if (params->colorBoost.enable_saturationlimiter && c>1) {
-                    float chroma = (float)(4.0 * sqrt((oa[i][j]+shift_a)*(oa[i][j]+shift_a) + (ob[i][j]+shift_b)*(ob[i][j]+shift_b)));
-                    wanted_c = cmultiplier [chroma];
+            double real_c = wanted_c;
+            if (wanted_c >= 1.0 && params->colorBoost.avoidclip) {
+                double cclip = 100000.0;
+                double cr = tightestroot ((double)lnew->L[i][j]/655.35, (double)(oa[i][j]+shift_a)*amul, (double)(ob[i][j]+shift_b)*bmul, 3.079935, -1.5371515, -0.54278342);
+                double cg = tightestroot ((double)lnew->L[i][j]/655.35, (double)(oa[i][j]+shift_a)*amul, (double)(ob[i][j]+shift_b)*bmul, -0.92123418, 1.87599, 0.04524418);
+                double cb = tightestroot ((double)lnew->L[i][j]/655.35, (double)(oa[i][j]+shift_a)*amul, (double)(ob[i][j]+shift_b)*bmul, 0.052889682, -0.20404134, 1.15115166);
+                if (cr>1.0 && cr<cclip) cclip = cr;
+                if (cg>1.0 && cg<cclip) cclip = cg;
+                if (cb>1.0 && cb<cclip) cclip = cb;
+                if (cclip<100000.0) {
+                    real_c = -cclip + 2.0*cclip / (1.0+exp(-2.0*wanted_c/cclip));
+                    if (real_c<1.0)
+                        real_c = 1.0;
                 }
-
-                double real_c = wanted_c;
-                if (wanted_c >= 1.0 && params->colorBoost.avoidclip) {
-                    double cclip = 100000.0;
-                    double cr = tightestroot ((double)lnew->L[i][j]/655.35, (double)(oa[i][j]+shift_a)*amul, (double)(ob[i][j]+shift_b)*bmul, 3.079935, -1.5371515, -0.54278342);
-                    double cg = tightestroot ((double)lnew->L[i][j]/655.35, (double)(oa[i][j]+shift_a)*amul, (double)(ob[i][j]+shift_b)*bmul, -0.92123418, 1.87599, 0.04524418);
-                    double cb = tightestroot ((double)lnew->L[i][j]/655.35, (double)(oa[i][j]+shift_a)*amul, (double)(ob[i][j]+shift_b)*bmul, 0.052889682, -0.20404134, 1.15115166);
-                    if (cr>1.0 && cr<cclip) cclip = cr;
-                    if (cg>1.0 && cg<cclip) cclip = cg;
-                    if (cb>1.0 && cb<cclip) cclip = cb;
-                    if (cclip<100000.0) {
-                        real_c = -cclip + 2.0*cclip / (1.0+exp(-2.0*wanted_c/cclip));
-                        if (real_c<1.0)
-                            real_c = 1.0;
-                    }
-                }
-
-                float nna = ((oa[i][j]+shift_a) * real_c * amul);
-                float nnb = ((ob[i][j]+shift_b) * real_c * bmul);
-                lnew->a[i][j] = LIM(nna,-32000.0f,32000.0f);
-                lnew->b[i][j] = LIM(nnb,-32000.0f,32000.0f);
             }
-    */
-    //delete [] cmultiplier;
+
+            float nna = ((oa[i][j]+shift_a) * real_c * amul);
+            float nnb = ((ob[i][j]+shift_b) * real_c * bmul);
+            lnew->a[i][j] = LIM(nna,-32000.0f,32000.0f);
+            lnew->b[i][j] = LIM(nnb,-32000.0f,32000.0f);
+        }
+*/
+//delete [] cmultiplier;
 //}
 
 void ImProcFunctions::impulsedenoise (LabImage* lab)

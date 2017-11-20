@@ -289,6 +289,14 @@ static void SobelCannyLuma (float **sobelL, float **deltasobelL, float **luma, i
     }
 
     delete [] tmLBuffer;
+    /*
+        //mean to exclude litlle values
+        for (int y = 1; y < bfh - 1 ; y++) {
+            for (int x = 1; x < bfw - 1 ; x++) {
+                sobelL[y][x] = (sobelL[y - 1][x - 1] + sobelL[y - 1][x] + sobelL[y - 1][x + 1] + sobelL[y][x - 1] + sobelL[y][x] + sobelL[y][x + 1] + sobelL[y + 1][x - 1] + sobelL[y + 1][x] + sobelL[y + 1][x + 1]) / 9;
+            }
+        }
+    */
 
 }
 
@@ -4105,7 +4113,8 @@ void ImProcFunctions::Sharp_Local (int call, float **loctemp, const float hueplu
 }
 
 
-void ImProcFunctions::Exclude_Local (int sen, float **buflight, float **bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, LabImage * rsv, int cx, int cy)
+
+void ImProcFunctions::Exclude_Local (int sen, float **deltaso, float **buflight, float **bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, LabImage * rsv, int cx, int cy)
 {
 
 //local exposure
@@ -4464,7 +4473,12 @@ void ImProcFunctions::Exclude_Local (int sen, float **buflight, float **bufchro,
                                 difL *= factorx * (100.f + realstr * falL) / 100.f;
                                 difL *= kch * fach;
 
-                                transformed->L[y][x] = original->L[y][x] + difL;
+                                if (deltaso[loy - begy][lox - begx] == 0.f) {
+                                    transformed->L[y][x]  = original->L[y][x]; //orsv->L[loy - begy][lox - begx];
+                                } else {
+                                    transformed->L[y][x] = original->L[y][x] + difL;
+                                }
+
                                 float difa, difb;
 
                                 difa = rsv->a[loy - begy][lox - begx] - original->a[y][x];
@@ -4473,9 +4487,14 @@ void ImProcFunctions::Exclude_Local (int sen, float **buflight, float **bufchro,
                                 difb *= factorx * (100.f + realstrch * falu * falL) / 100.f;
                                 difa *= kch * fach;
                                 difb *= kch * fach;
-                                transformed->a[y][x] = CLIPC (original->a[y][x] + difa);
-                                transformed->b[y][x] = CLIPC (original->b[y][x] + difb);
 
+                                if (deltaso[loy - begy][lox - begx] == 0.f) {
+                                    transformed->a[y][x] = original->a[y][x]; //rsv->a[loy - begy][lox - begx];
+                                    transformed->b[y][x] = original->b[y][x]; //rsv->b[loy - begy][lox - begx];
+                                } else {
+                                    transformed->a[y][x] = CLIPC (original->a[y][x] + difa);
+                                    transformed->b[y][x] = CLIPC (original->b[y][x] + difb);
+                                }
 
                                 break;
 
@@ -4487,7 +4506,15 @@ void ImProcFunctions::Exclude_Local (int sen, float **buflight, float **bufchro,
                                 difL = rsv->L[loy - begy][lox - begx] - original->L[y][x];
                                 difL *= (100.f + realstr * falL) / 100.f;
                                 difL *= kch * fach;
-                                transformed->L[y][x] = original->L[y][x] + difL;
+
+                                if (deltaso[loy - begy][lox - begx] == 0.f) {
+                                    //  printf ("0");
+                                    transformed->L[y][x]  = original->L[y][x]; //rsv->L[loy - begy][lox - begx];
+                                } else {
+                                    transformed->L[y][x] = original->L[y][x] + difL;
+                                }
+
+                                //  transformed->L[y][x] = original->L[y][x] + difL;
                                 float difa, difb;
 
                                 difa = rsv->a[loy - begy][lox - begx] - original->a[y][x];
@@ -4497,8 +4524,15 @@ void ImProcFunctions::Exclude_Local (int sen, float **buflight, float **bufchro,
                                 difa *= kch * fach;
                                 difb *= kch * fach;
 
-                                transformed->a[y][x] = CLIPC (original->a[y][x] + difa);
-                                transformed->b[y][x] = CLIPC (original->b[y][x] + difb);
+                                if (deltaso[loy - begy][lox - begx] == 0.f) {
+                                    // printf ("0");
+                                    transformed->a[y][x] = original->a[y][x]; //rsv->a[loy - begy][lox - begx];
+                                    transformed->b[y][x] = original->b[y][x]; //rsv->b[loy - begy][lox - begx];
+                                } else {
+                                    // printf ("1");
+                                    transformed->a[y][x] = CLIPC (original->a[y][x] + difa);
+                                    transformed->b[y][x] = CLIPC (original->b[y][x] + difb);
+                                }
 
                             }
                         }
@@ -5747,6 +5781,7 @@ void ImProcFunctions::InverseColorLight_Local (const struct local_params & lp, L
     }
 
 }
+
 void ImProcFunctions::calc_ref (LabImage * original, LabImage * transformed, int cx, int cy, int oW, int oH, int sk, double & hueref, double & chromaref, double & lumaref, double &sobelref)
 {
     if (params->locallab.enabled) {
@@ -5942,7 +5977,7 @@ void ImProcFunctions::paste_ref (LabImage * spotbuffer, LabImage * transformed, 
 
 void ImProcFunctions::Lab_Local (int call, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, int cx, int cy, int oW, int oH, int sk,
                                  const LocretigainCurve & locRETgainCcurve, LUTf & lllocalcurve, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve,
-                                 bool &LHutili, bool &HHutili, LUTf & cclocalcurve, bool & localskutili, LUTf & sklocalcurve, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, double & hueref, double & chromaref, double & lumaref)
+                                 bool &LHutili, bool &HHutili, LUTf & cclocalcurve, bool & localskutili, LUTf & sklocalcurve, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, double & hueref, double & chromaref, double & lumaref, double &sobelref)
 {
     //general call of others functions : important return hueref, chromaref, lumaref
     if (params->locallab.enabled) {
@@ -5960,7 +5995,7 @@ void ImProcFunctions::Lab_Local (int call, float** shbuffer, LabImage * original
         calcLocalParams (oW, oH, params->locallab, lp);
 
         const float radius = lp.rad / (sk * 1.4f); //0 to 70 ==> see skip
-        // float radiussob = 3.f  / (sk * 1.4f); //0 to 70 ==> see skip
+        float radiussob = lp.strucc / (sk * 1.4f); //0 to 70 ==> see skip
         //printf("radiussob=%f rad=%f sk=%i\n", radiussob, lp.rad, sk);
         double ave = 0.;
         int n = 0;
@@ -6128,10 +6163,329 @@ void ImProcFunctions::Lab_Local (int call, float** shbuffer, LabImage * original
 
             tmpsob = new LabImage (bfw, bfh);
             deltasobelL = new LabImage (bfw, bfh);
-            // SobelCannyLuma (tmpsob->L, deltasobelL->L, bufsob->L, bfw, bfh, radiussob);
-            //todo use of tmpsob and deltasobelL - shape  detection
+            SobelCannyLuma (tmpsob->L, deltasobelL->L, bufsob->L, bfw, bfh, radiussob);
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+
+            for (int ir = 0; ir < bfh; ir++) //fill with 0
+                for (int jr = 0; jr < bfw; jr++) {
+                    deltasobelL->L[ir][jr] = 1.f;
+                }
+
+            bool titi = false;
+
+            if (titi) {
+
+                //  if (lp.strucc > 0.f) {
+                //   if (titi) {
+                //todo use of tmpsob and deltasobelL - shape  detection
+                //  float epsxy = 0.001f;
+                //first quarter superior
+                buflight   = new float*[bfh];
+
+                for (int i = 0; i < bfh; i++) {
+                    buflight[i] = new float[bfw];
+                }
+
+                int Xo = ceil (-lp.lxL);
+                int Xe = ceil (lp.lx);
+                //    int Yo = ceil (-lp.ly);
+                int Ye = ceil (lp.lyT);
+
+                int XR = max (-Xo, Xe);
+                float **val = nullptr;
+                int rr = sqrt (SQR (XR) + SQR (Ye)) + 3;
+
+                val = new float*[xEn - begx + 3];
+
+                for (int i = 0; i < (xEn - begx + 3); i++) {
+                    val[i] = new float[rr];
+                }
+
+                float *rad = nullptr;
+                rad = new float[xEn - begx + 3];
+                float *radlim = nullptr;
+                radlim = new float[xEn - begx + 3];
+
+                //second quarter left
+                float *valL = nullptr;
+                valL = new float[yEn - begy + 3];
+                float *radL = nullptr;
+                radL = new float[yEn - begy + 3];
+
+                float *radlimL = nullptr;
+                radlimL = new float[yEn - begy + 3];
+
+                float2 sincosval;
+
+                for (int w = 0; w < (xEn - begx); w++) {
+                    rad[w] = 0.f;
+                    radlim[w] = 0.f;
+                }
+
+                for (int w = 0; w < (xEn - begx); w++) {
+                    for (int z = 0; z < rr; z++) {
+                        val[w][z] = 0.f;
+                    }
+
+                }
+
+                for (int w = 0; w < (yEn - begy); w++) {
+                    radL[w] = 0.f;
+                    radlimL[w] = 0.f;
+                }
+
+                //change coordonate to XX, YY XX=x, YY=-y to can use easily trigo functions and polar coordonates
+                // xc yc are XX=0 YY=0
+                //at the end we convert inverse
+                float sobelponder = 2.f * sobelref;
+
+                if (sobelponder > 25000.f) {
+                    sobelponder = 25000.f;
+                }
+
+
+                float valm = 0.f;
+
+                /*
+                printf ("yT=%i xL=%i x=%i y=%i xc=%i yc=%i\n",  (int)lp.lyT, (int)lp.lxL, (int)lp.lx, (int)lp.ly, (int)lp.xc, (int)lp.yc);
+                float tetabe1 = xatan2f (Ye, Xo );
+                float tetaen1 = xatan2f (Ye, Xe);
+                printf ("tetbhaut1=%f tetend1=%f\n", tetabe1, tetaen1);
+
+                float tetabe2 = xatan2f (Yo, Xo );
+                float tetaen2 = xatan2f (Ye, Xo);
+                printf ("tetbhaut2=%f tetend2=%f\n", tetabe2, tetaen2);
+                */
+                //  int maxm = -10;
+                for (int XX = Xo; XX < Xe; XX++) { //first quarter superior
+                    int m = ceil (XX - Xo);
+
+                    if (m < 0) {
+                        m = 0;
+                    }
+
+                    radlim[m] = sqrt (SQR (XX) + SQR (Ye));
+
+                    float tetacur =  xatan2f (Ye, XX);
+                    //    float maxval = -10000.f;
+                    float valedge = 8000.f;
+
+                    for (int r = 0; r < radlim[m]; r++) {
+                        sincosval = xsincosf (tetacur);
+                        float xcur = r * sincosval.y;
+                        float ycur = r * sincosval.x;
+
+                        int xxcur =   ceil (lp.xc) + ceil (xcur) - begx;
+                        xxcur = LIM<int> (xxcur, 0, bfw - 1);
+
+                        int yycur =   ceil (lp.yc) - ceil (ycur) - begy;// - before ceil(ycur) to convert YY ==> y
+                        yycur = LIM<int> (yycur, 0, bfh - 1);
+                        valm = tmpsob->L[yycur][xxcur];
+
+                        if (valm > valedge) {
+                            //  if(m > maxm) maxm = m;
+                            val[m][r] = valm;
+
+                            if (XX == 0  || XX == 2) {
+                                printf ("XX=%i m=%i r=%i val=%f \n", XX, m, r, val[m][r]);
+                            }
+                        }
+
+
+
+                        //    val[maxm][r] = valedge;
+
+
+                    }
+                }
+
+                /*
+                                for (int XX = Xo; XX < Xe; XX++) { //first quarter superior
+                                    int m = ceil (XX - Xo);
+
+                                    if (m < 0) {
+                                        m = 0;
+                                    }
+
+                                    radlim[m] = sqrt (SQR (XX) + SQR (Ye));
+
+                                    float tetacur =  xatan2f (Ye, XX);
+
+                                    int rf = -10;
+                                    for (int r = 0; r < radlim[m]; r++) {
+                                        sincosval = xsincosf (tetacur);
+                                        float xcur = r * sincosval.y;
+                                        float ycur = r * sincosval.x;
+
+                                        int xxcur =   ceil (lp.xc) + ceil (xcur) - begx;
+                                        xxcur = LIM<int> (xxcur, 0, bfw - 1);
+
+                                        int yycur =   ceil (lp.yc) - ceil (ycur) - begy;
+                                        yycur = LIM<int> (yycur, 0, bfh - 1);
+                                        float lect = tmpsob->L[yycur][xxcur];
+
+                                        if (lect == val[m][r]) {
+                                            if(r > rf) rf = r;
+                                            rad[m] = (float) rf;
+                                        }
+                                    }
+                                }
+
+
+                                for (int XX = Xo; XX < Xe; XX++) { //first quarter superior
+                                    int m = ceil (XX - Xo);
+
+                                    if (m < 0) {
+                                        m = 0;
+                                    }
+
+                                    radlim[m] = sqrt (SQR (XX) + SQR (Ye));
+
+                                    float tetacur =  xatan2f (Ye, XX);
+
+
+                                    for (int r = 0; r < radlim[m]; r++) {
+                                        sincosval = xsincosf (tetacur);
+                                        float xcur = r * sincosval.y;
+                                        float ycur = r * sincosval.x;
+
+                                        int xxcur =   ceil (lp.xc) + ceil (xcur) - begx;
+                                        xxcur = LIM<int> (xxcur, 0, bfw - 1);
+
+                                        int yycur =   ceil (lp.yc) - ceil (ycur) - begy;
+                                        yycur = LIM<int> (yycur, 0, bfh - 1);
+
+                                        if ((float) r <= rad[m]) {
+                                            deltasobelL->L[yycur][xxcur] = 1.f;
+                                        } else {
+                                            deltasobelL->L[yycur][xxcur] = 0.f;
+                                        }
+                                    }
+                                }
+                */
+                /*
+
+                                for (int YY = Yo; YY < Ye; YY++) { //second quarter left
+                                    int m = ceil (YY - Yo);
+
+                                    if (m < 0) {
+                                        m = 0;
+                                    }
+
+                                    radlimL[m] = sqrt (SQR (YY) + SQR (Xo));
+
+                                    float tetacur =  xatan2f (YY, Xo);
+                                    float maxval = -10000.f;
+
+                                    for (int r = 0; r < radlimL[m]; r++) {
+                                        sincosval = xsincosf (tetacur);
+                                        float xcur = r * sincosval.y;
+                                        float ycur = r * sincosval.x;
+
+                                        int xxcur =   ceil (lp.xc) + ceil (xcur) - begx;
+                                        xxcur = LIM<int> (xxcur, 0, bfw - 1);
+
+                                        int yycur =   ceil (lp.yc) - ceil (ycur) - begy;
+                                        yycur = LIM<int> (yycur, 0, bfh - 1);
+                                        valm = tmpsob->L[yycur][xxcur];
+
+
+                                        if (valm > maxval) {
+                                            maxval = valm;
+                                        }
+
+                                        valL[m] = maxval;
+
+
+
+                                    }
+                                }
+
+
+                                for (int YY = Yo; YY < Ye; YY++) { //second quarter left
+                                    int m = ceil (YY - Yo);
+
+                                    if (m < 0) {
+                                        m = 0;
+                                    }
+
+                                    radlimL[m] = sqrt (SQR (YY) + SQR (Xo));
+
+                                    float tetacur =  xatan2f (YY, Xo);
+
+
+
+                                    for (int r = 0; r < radlimL[m]; r++) {
+                                        sincosval = xsincosf (tetacur);
+                                        float xcur = r * sincosval.y;
+                                        float ycur = r * sincosval.x;
+
+                                        int xxcur =   ceil (lp.xc) + ceil (xcur) - begx;
+                                        xxcur = LIM<int> (xxcur, 0, bfw - 1);
+
+                                        int yycur =   ceil (lp.yc) - ceil (ycur) - begy;
+                                        yycur = LIM<int> (yycur, 0, bfh - 1);
+                                        float lect = tmpsob->L[yycur][xxcur];
+
+                                        if (lect ==  valL[m]) {
+                                            radL[m] = (float) r;
+                                        }
+                                    }
+                                }
+
+                                for (int YY = Yo; YY < Ye; YY++) { //second quarter left
+                                    int m = ceil (YY - Yo);
+
+                                    if (m < 0) {
+                                        m = 0;
+                                    }
+
+                                    radlimL[m] = sqrt (SQR (YY) + SQR (Xo));
+
+                                    float tetacur =  xatan2f (YY, Xo);
+
+                                    for (int r = 0; r < radlimL[m]; r++) {
+                                        sincosval = xsincosf (tetacur);
+                                        float xcur = r * sincosval.y;
+                                        float ycur = r * sincosval.x;
+
+                                        int xxcur =   ceil (lp.xc) + ceil (xcur) - begx;
+                                        xxcur = LIM<int> (xxcur, 0, bfw - 1);
+
+                                        int yycur =   ceil (lp.yc) - ceil (ycur) - begy;
+                                        yycur = LIM<int> (yycur, 0, bfh - 1);
+
+                                        if ((float) r <= radL[m]) {
+                                            deltasobelL->L[yycur][xxcur] = 1.f;
+                                        } else {
+                                            deltasobelL->L[yycur][xxcur] = 0.f;
+                                        }
+                                    }
+                                }
+                */
+
+                delete[] radlimL;
+                delete[] radL;
+                delete[] valL;
+
+                delete[] radlim;
+                delete[] rad;
+
+                for (int i = 0; i < (xEn - begx + 3); i++) {
+                    delete [] val[i];
+                }
+
+                delete [] val;
+
+
+            }
 
             //then restore non modified area
+
+
+
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -6197,7 +6551,7 @@ void ImProcFunctions::Lab_Local (int call, float** shbuffer, LabImage * original
                     bufchro[ir][jr] = rch;
                 }
 
-            Exclude_Local (1, buflight, bufchro, hueplus, huemoins, hueref, dhueex, chromaref, lumaref, lp, original, transformed, bufreserv, cx, cy);
+            Exclude_Local (1,  deltasobelL->L, buflight, bufchro, hueplus, huemoins, hueref, dhueex, chromaref, lumaref, lp, original, transformed, bufreserv, cx, cy);
 
 
             delete deltasobelL;
@@ -7427,8 +7781,8 @@ void ImProcFunctions::Lab_Local (int call, float** shbuffer, LabImage * original
                             buflight[loy - begy][lox - begx] = rL;
 
 
-                            float chp;
-                            chp = CLIPRET ((sqrt (SQR (bufexpfin->a[loy - begy][lox - begx]) + SQR (bufexpfin->b[loy - begy][lox - begx])) - sqrt (SQR (bufexporig->a[loy - begy][lox - begx]) + SQR (bufexporig->b[loy - begy][lox - begx]))) / 250.f);
+                            //    float chp;
+                            //    chp = CLIPRET ((sqrt (SQR (bufexpfin->a[loy - begy][lox - begx]) + SQR (bufexpfin->b[loy - begy][lox - begx])) - sqrt (SQR (bufexporig->a[loy - begy][lox - begx]) + SQR (bufexporig->b[loy - begy][lox - begx]))) / 250.f);
                             /*
                               if (chp > maxc) {
                                    maxc = chp;
@@ -7441,7 +7795,7 @@ void ImProcFunctions::Lab_Local (int call, float** shbuffer, LabImage * original
                             //  chpro = CLIPCHRO (amplil * ra - amplil); //ampli = 25.f arbitrary empirical coefficient between 5 and 50
 
                             //ra = 1.f;
-                            bufl_ab[loy - begy][lox - begx] = chp;
+                            //   bufl_ab[loy - begy][lox - begx] = chp;
 
                         }
                     }
