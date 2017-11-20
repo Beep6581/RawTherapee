@@ -30,7 +30,6 @@
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0?((a)<1.0?(a):1.0):0.0)
 #define MAXR(a,b) ((a) > (b) ? (a) : (b))
-#define pow_F(a,b) (xexpf(b*xlogf(a)))
 
 namespace rtengine
 {
@@ -780,7 +779,7 @@ void Ciecam02::initcam2float (float gamu, float yb, float pilotd, float f, float
 
 void Ciecam02::xyz2jchqms_ciecam02 ( double &J, double &C, double &h, double &Q, double &M, double &s, double &aw, double &fl, double &wh,
                                      double x, double y, double z, double xw, double yw, double zw,
-                                     double yb, double la, double f, double c, double nc, double pilotd, int gamu, double n, double nbb, double ncb, double pfl, double cz, double d)
+                                     double c, double nc, int gamu, double n, double nbb, double ncb, double pfl, double cz, double d)
 {
     double r, g, b;
     double rw, gw, bw;
@@ -1040,8 +1039,8 @@ void Ciecam02::xyz2jch_ciecam02float ( float &J, float &C, float &h, float aw, f
 
 
 void Ciecam02::jch2xyz_ciecam02 ( double &x, double &y, double &z, double J, double C, double h,
-                                  double xw, double yw, double zw, double yb, double la,
-                                  double f, double c, double nc, int gamu, double n, double nbb, double ncb, double fl, double cz, double d, double aw )
+                                  double xw, double yw, double zw,
+                                  double c, double nc, int gamu, double n, double nbb, double ncb, double fl, double cz, double d, double aw )
 {
     double r, g, b;
     double rc, gc, bc;
@@ -1075,7 +1074,7 @@ void Ciecam02::jch2xyz_ciecam02 ( double &x, double &y, double &z, double J, dou
 
 void Ciecam02::jch2xyz_ciecam02float ( float &x, float &y, float &z, float J, float C, float h,
                                        float xw, float yw, float zw,
-                                       float f, float c, float nc, int gamu, float pow1, float nbb, float ncb, float fl, float cz, float d, float aw)
+                                       float c, float nc, int gamu, float pow1, float nbb, float ncb, float fl, float cz, float d, float aw)
 {
     float r, g, b;
     float rc, gc, bc;
@@ -1110,7 +1109,7 @@ void Ciecam02::jch2xyz_ciecam02float ( float &x, float &y, float &z, float J, fl
 #ifdef __SSE2__
 void Ciecam02::jch2xyz_ciecam02float ( vfloat &x, vfloat &y, vfloat &z, vfloat J, vfloat C, vfloat h,
                                        vfloat xw, vfloat yw, vfloat zw,
-                                       vfloat f, vfloat nc, vfloat pow1, vfloat nbb, vfloat ncb, vfloat fl, vfloat d, vfloat aw, vfloat reccmcz)
+                                       vfloat nc, vfloat pow1, vfloat nbb, vfloat ncb, vfloat fl, vfloat d, vfloat aw, vfloat reccmcz)
 {
     vfloat r, g, b;
     vfloat rc, gc, bc;

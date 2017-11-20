@@ -163,7 +163,7 @@ int main (int argc, char **argv)
         return -2;
     }
 
-    rtengine::setPaths (options);
+    rtengine::setPaths();
 
     TIFFSetWarningHandler (nullptr);   // avoid annoying message boxes
 
@@ -611,7 +611,7 @@ int processLineParams ( int argc, char **argv )
                     std::cout << "  -t[z]            Specify output to be TIFF." << std::endl;
                     std::cout << "                   Uncompressed by default, or deflate compression with 'z'." << std::endl;
                     std::cout << "  -n               Specify output to be compressed PNG." << std::endl;
-                    std::cout << "                   Compression is hard-coded to 6." << std::endl;
+                    std::cout << "                   Compression is hard-coded to PNG_FILTER_PAETH, Z_RLE" << std::endl;
                     std::cout << "  -Y               Overwrite output if present." << std::endl;
                     std::cout << "  -f               Use the custom fast-export processing pipeline." << std::endl;
                     std::cout << std::endl;
@@ -837,7 +837,7 @@ int processLineParams ( int argc, char **argv )
         } else if ( outputType == "tif" ) {
             errorCode = resultImage->saveAsTIFF ( outputFile, bits, compression == 0  );
         } else if ( outputType == "png" ) {
-            errorCode = resultImage->saveAsPNG ( outputFile, compression, bits );
+            errorCode = resultImage->saveAsPNG ( outputFile, bits );
         } else {
             errorCode = resultImage->saveToFile (outputFile);
         }

@@ -82,19 +82,18 @@ public:
     static void jch2xyz_ciecam02 ( double &x, double &y, double &z,
                                    double J, double C, double h,
                                    double xw, double yw, double zw,
-                                   double yb, double la,
-                                   double f, double c, double nc, int gamu, double n, double nbb, double ncb, double fl, double cz, double d, double aw);
+                                   double c, double nc, int gamu, double n, double nbb, double ncb, double fl, double cz, double d, double aw);
 
 
     static void jch2xyz_ciecam02float ( float &x, float &y, float &z,
                                         float J, float C, float h,
                                         float xw, float yw, float zw,
-                                        float f, float c, float nc, int gamu, float n, float nbb, float ncb, float fl, float cz, float d, float aw );
+                                        float c, float nc, int gamu, float n, float nbb, float ncb, float fl, float cz, float d, float aw );
 #ifdef __SSE2__
     static void jch2xyz_ciecam02float ( vfloat &x, vfloat &y, vfloat &z,
                                         vfloat J, vfloat C, vfloat h,
                                         vfloat xw, vfloat yw, vfloat zw,
-                                        vfloat f, vfloat nc, vfloat n, vfloat nbb, vfloat ncb, vfloat fl, vfloat d, vfloat aw, vfloat reccmcz );
+                                        vfloat nc, vfloat n, vfloat nbb, vfloat ncb, vfloat fl, vfloat d, vfloat aw, vfloat reccmcz );
 #endif
     /**
      * Forward transform from XYZ to CIECAM02 JCh.
@@ -115,8 +114,7 @@ public:
                                       double &Q, double &M, double &s, double &aw, double &fl, double &wh,
                                       double x, double y, double z,
                                       double xw, double yw, double zw,
-                                      double yb, double la,
-                                      double f, double c, double nc,  double pilotd, int gamu, double n, double nbb, double ncb, double pfl, double cz, double d );
+                                      double c, double nc, int gamu, double n, double nbb, double ncb, double pfl, double cz, double d );
 
     static void xyz2jch_ciecam02float ( float &J, float &C, float &h,
                                         float aw, float fl,

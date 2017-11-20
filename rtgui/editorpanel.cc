@@ -1767,7 +1767,7 @@ bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Gl
             ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImage16::saveAsTIFF), fname, sf.tiffBits, sf.tiffUncompressed),
                            sigc::bind (sigc::mem_fun (*this, &EditorPanel::idle_imageSaved), ld, img, fname, sf, pparams));
         else if (sf.format == "png")
-            ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImage16::saveAsPNG), fname, sf.pngCompression, sf.pngBits),
+            ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImage16::saveAsPNG), fname, sf.pngBits),
                            sigc::bind (sigc::mem_fun (*this, &EditorPanel::idle_imageSaved), ld, img, fname, sf, pparams));
         else if (sf.format == "jpg")
             ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImage16::saveAsJPEG), fname, sf.jpegQuality, sf.jpegSubSamp),
@@ -1982,7 +1982,7 @@ bool EditorPanel::saveImmediately (const Glib::ustring &filename, const SaveForm
     if (sf.format == "tif") {
         err = img->saveAsTIFF (filename, sf.tiffBits, sf.tiffUncompressed);
     } else if (sf.format == "png") {
-        err = img->saveAsPNG (filename, sf.pngCompression, sf.pngBits);
+        err = img->saveAsPNG (filename, sf.pngBits);
     } else if (sf.format == "jpg") {
         err = img->saveAsJPEG (filename, sf.jpegQuality, sf.jpegSubSamp);
     } else {

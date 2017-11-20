@@ -18,12 +18,8 @@
  */
 #ifndef _ALIGNEDBUFFER_
 #define _ALIGNEDBUFFER_
-#include <cstdint>
 #include <cstdlib>
-#include <vector>
 #include <utility>
-#include <glibmm.h>
-#include "../rtgui/threadutils.h"
 
 // Aligned buffer that should be faster
 template <class T> class AlignedBuffer
@@ -111,7 +107,6 @@ public:
                 }
 
                 if (real) {
-                    //data = (T*)( (uintptr_t)real + (alignment-((uintptr_t)real)%alignment) );
                     data = (T*)( ( uintptr_t(real) + uintptr_t(alignment - 1)) / alignment * alignment);
                     inUse = true;
                 } else {
@@ -142,51 +137,4 @@ public:
     }
 };
 
-// Multi processor version, use with OpenMP
-template <class T> class AlignedBufferMP
-{
-private:
-    MyMutex mtx;
-    std::vector<AlignedBuffer<T>*> buffers;
-    size_t size;
-
-public:
-    explicit AlignedBufferMP(size_t sizeP)
-    {
-        size = sizeP;
-    }
-
-    ~AlignedBufferMP()
-    {
-        for (size_t i = 0; i < buffers.size(); i++) {
-            delete buffers[i];
-        }
-    }
-
-    AlignedBuffer<T>* acquire()
-    {
-        MyMutex::MyLock lock(mtx);
-
-        // Find available buffer
-        for (size_t i = 0; i < buffers.size(); i++) {
-            if (!buffers[i]->inUse) {
-                buffers[i]->inUse = true;
-                return buffers[i];
-            }
-        }
-
-        // Add new buffer if nothing is free
-        AlignedBuffer<T>* buffer = new AlignedBuffer<T>(size);
-        buffers.push_back(buffer);
-
-        return buffer;
-    }
-
-    void release(AlignedBuffer<T>* buffer)
-    {
-        MyMutex::MyLock lock(mtx);
-
-        buffer->inUse = false;
-    }
-};
 #endif

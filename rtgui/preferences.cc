@@ -2160,7 +2160,7 @@ void Preferences::cancelPressed ()
 {
     // set the initial theme back
     if (themeFNames.at (theme->get_active_row_number ()).longFName != options.theme) {
-        rtengine::setPaths (options);
+        rtengine::setPaths();
         RTImage::updateImages();
         switchThemeTo (options.theme);
     }
@@ -2218,7 +2218,7 @@ void Preferences::themeChanged ()
 {
 
     moptions.theme = themeFNames.at (theme->get_active_row_number ()).longFName;
-    rtengine::setPaths (moptions);
+    rtengine::setPaths();
     RTImage::updateImages();
     switchThemeTo (moptions.theme);
 }

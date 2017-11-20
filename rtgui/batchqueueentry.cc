@@ -29,10 +29,19 @@
 bool BatchQueueEntry::iconsLoaded(false);
 Glib::RefPtr<Gdk::Pixbuf> BatchQueueEntry::savedAsIcon;
 
-BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm)
-    : ThumbBrowserEntryBase(fname),
-      opreview(nullptr), origpw(prevw), origph(prevh), opreviewDone(false),
-      job(pjob), params(pparams), progress(0), outFileName(""), sequence(0), forceFormatOpts(false)
+BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm) :
+    ThumbBrowserEntryBase(fname),
+    opreview(nullptr),
+    origpw(prevw),
+    origph(prevh),
+    opreviewDone(false),
+    job(pjob),
+    params(pparams),
+    progress(0),
+    outFileName(""),
+    sequence(0),
+    forceFormatOpts(false),
+    fast_pipeline(job->fastPipeline())
 {
 
     thumbnail = thm;
@@ -177,8 +186,6 @@ Glib::ustring BatchQueueEntry::getToolTip (int x, int y)
                                                   saveFormat.jpegSubSamp == 1 ? M("SAVEDLG_SUBSAMP_1") :
                                                   saveFormat.jpegSubSamp == 2 ? M("SAVEDLG_SUBSAMP_2") :
                                                   M("SAVEDLG_SUBSAMP_3"));
-            } else if (saveFormat.format == "png") {
-                tooltip += Glib::ustring::compose("\n%1: %2", M("SAVEDLG_PNGCOMPR"), saveFormat.pngCompression);
             } else if (saveFormat.format == "tif") {
                 if (saveFormat.tiffUncompressed) {
                     tooltip += Glib::ustring::compose("\n%1", M("SAVEDLG_TIFFUNCOMPRESSED"));

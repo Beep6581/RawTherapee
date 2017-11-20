@@ -97,7 +97,7 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
 
     if ((mode == PIM_EmbeddedOrRaw && !tpp) || mode == PIM_ForceRaw) {
         RawImageSource rawImage;
-        int error = rawImage.load(fname, true);
+        int error = rawImage.load(fname);
 
         if (!error) {
             const unsigned char *data = nullptr;
@@ -115,7 +115,7 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
             rawImage.preprocess(params.raw, params.lensProf, params.coarse);
             rawImage.demosaic(params.raw);
             Imagefloat image(fw, fh);
-            rawImage.getImage (wb, TR_NONE, &image, pp, params.toneCurve, params.icm, params.raw);
+            rawImage.getImage (wb, TR_NONE, &image, pp, params.toneCurve, params.raw);
             rtengine::Image8 output(fw, fh);
             rawImage.convertColorSpace(&image, params.icm, wb);
             #pragma omp parallel for schedule(dynamic, 10)

@@ -422,7 +422,7 @@ struct ColorToningParams {
     /// @brief Specifically transform the sliders values to their curve equivalences
     void slidersToCurve(std::vector<double>& colorCurve, std::vector<double>& opacityCurve) const;
     /// @brief Fill the ColorGradientCurve and OpacityCurve LUTf from the control points curve or sliders value
-    void getCurves(ColorGradientCurve& colorCurveLUT, OpacityCurve& opacityCurveLUT, const double xyz_rgb[3][3], const double rgb_xyz[3][3], bool& opautili) const;
+    void getCurves(ColorGradientCurve& colorCurveLUT, OpacityCurve& opacityCurveLUT, const double xyz_rgb[3][3], bool& opautili) const;
 };
 
 /**
@@ -1336,7 +1336,7 @@ public:
     void clearGeneral   ();
     int  load           (const Glib::ustring& fName);
     void set            (bool v);
-    const void applyTo  (ProcParams *destParams) const ;
+    void applyTo  (ProcParams *destParams) const ;
 };
 
 /**
