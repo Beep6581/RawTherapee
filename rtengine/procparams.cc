@@ -3668,7 +3668,9 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             // For compatibility to elder pp3 versions
             assignFromKeyfile(keyFile, "RAW", "HotDeadPixels", pedited, raw.hotPixelFilter, pedited->raw.hotPixelFilter);
             raw.deadPixelFilter = raw.hotPixelFilter;
-            pedited->raw.deadPixelFilter = pedited->raw.hotPixelFilter;
+            if (pedited) {
+                pedited->raw.deadPixelFilter = pedited->raw.hotPixelFilter;
+            }
             assignFromKeyfile(keyFile, "RAW", "HotPixelFilter", pedited, raw.hotPixelFilter, pedited->raw.hotPixelFilter);
             assignFromKeyfile(keyFile, "RAW", "DeadPixelFilter", pedited, raw.deadPixelFilter, pedited->raw.deadPixelFilter);
             assignFromKeyfile(keyFile, "RAW", "HotDeadPixelThresh", pedited, raw.hotdeadpix_thresh, pedited->raw.hotdeadpix_thresh);
