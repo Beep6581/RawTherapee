@@ -4427,6 +4427,16 @@ void PartialProfile::applyTo(ProcParams* destParams) const
     }
 }
 
+AutoPartialProfile::AutoPartialProfile() :
+    PartialProfile(true)
+{
+}
+
+AutoPartialProfile::~AutoPartialProfile()
+{
+    deleteInstance();
+}
+
 }
 
 }

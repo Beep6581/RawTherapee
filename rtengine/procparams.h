@@ -28,6 +28,7 @@
 
 #include "coord.h"
 #include "LUT.h"
+#include "noncopyable.h"
 
 class ParamsEdited;
 
@@ -1307,7 +1308,6 @@ private:
     * @return Error code (=0 if no error)
     * */
     int write(const Glib::ustring& fname, const Glib::ustring& content) const;
-
 };
 
 /**
@@ -1319,26 +1319,21 @@ private:
   * and hence is not responsible of their destructions. The function that instanciate
   * PartialProfile object has to handle all this itself.
   */
-class PartialProfile
+class PartialProfile :
+    public NonCopyable
 {
 public:
+    PartialProfile(bool createInstance = false, bool paramsEditedValue = false);
+    PartialProfile(ProcParams* pp, ParamsEdited* pe = nullptr, bool fullCopy = false);
+    PartialProfile(const ProcParams* pp, const ParamsEdited* pe = nullptr);
+    void deleteInstance();
+    void clearGeneral();
+    int  load(const Glib::ustring& fName);
+    void set(bool v);
+    void applyTo(ProcParams* destParams) const ;
+
     rtengine::procparams::ProcParams* pparams;
     ParamsEdited* pedited;
-    PartialProfile& operator =(const PartialProfile& rhs)
-    {
-        pparams = rhs.pparams;
-        pedited = rhs.pedited;
-        return *this;
-    };
-
-    PartialProfile      (bool createInstance = false, bool paramsEditedValue = false);
-    PartialProfile      (ProcParams* pp, ParamsEdited* pe = nullptr, bool fullCopy = false);
-    PartialProfile      (const ProcParams* pp, const ParamsEdited* pe = nullptr);
-    void deleteInstance ();
-    void clearGeneral   ();
-    int  load           (const Glib::ustring& fName);
-    void set            (bool v);
-    void applyTo  (ProcParams *destParams) const ;
 };
 
 /**
@@ -1350,11 +1345,8 @@ class AutoPartialProfile :
     public PartialProfile
 {
 public:
-    AutoPartialProfile() : PartialProfile (true) {}
-    ~AutoPartialProfile()
-    {
-        deleteInstance();
-    }
+    AutoPartialProfile();
+    ~AutoPartialProfile();
 };
 
 }
