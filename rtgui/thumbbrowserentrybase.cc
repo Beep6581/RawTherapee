@@ -462,7 +462,7 @@ void ThumbBrowserEntryBase::resize (int h)
         width = bsw + 2 * sideMargin + 2 * borderWidth;
     }
 
-    if ( preh != old_preh || width != old_width ) {
+    if (preh != old_preh) {
         delete [] preview;
         preview = nullptr;
         refreshThumbnailImage ();
