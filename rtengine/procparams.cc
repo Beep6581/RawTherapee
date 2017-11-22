@@ -3661,7 +3661,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW", "FlatFieldBlurRadius", pedited, raw.ff_BlurRadius, pedited->raw.ff_BlurRadius);
             assignFromKeyfile(keyFile, "RAW", "FlatFieldBlurType", pedited, raw.ff_BlurType, pedited->raw.ff_BlurType);
             assignFromKeyfile(keyFile, "RAW", "FlatFieldAutoClipControl", pedited, raw.ff_AutoClipControl, pedited->raw.ff_AutoClipControl);
-            assignFromKeyfile(keyFile, "RAW", "FlatFieldClipControl", pedited, raw.ff_clipControl, pedited->raw.ff_clipControl);
+            if (ppVersion < 328) {
+                // With ppversion < 328 this value was stored as a boolean, which is nonsense.
+                // To avoid annoying warnings we skip reading and assume 0.
+                raw.ff_clipControl = 0;
+            } else {
+                assignFromKeyfile(keyFile, "RAW", "FlatFieldClipControl", pedited, raw.ff_clipControl, pedited->raw.ff_clipControl);
+            }
             assignFromKeyfile(keyFile, "RAW", "CA", pedited, raw.ca_autocorrect, pedited->raw.ca_autocorrect);
             assignFromKeyfile(keyFile, "RAW", "CARed", pedited, raw.cared, pedited->raw.cared);
             assignFromKeyfile(keyFile, "RAW", "CABlue", pedited, raw.cablue, pedited->raw.cablue);
