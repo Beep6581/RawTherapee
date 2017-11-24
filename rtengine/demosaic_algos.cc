@@ -3950,13 +3950,27 @@ void RawImageSource::rcd_demosaic()
     std::vector<float> cfa(width * height);
     std::vector<std::array<float, 3>> rgb(width * height);
 
+    const float prescale = max(ref_pre_mul[0], ref_pre_mul[1], ref_pre_mul[2], ref_pre_mul[3]) / min(ref_pre_mul[0], ref_pre_mul[1], ref_pre_mul[2], ref_pre_mul[3]);
+
+    auto clip =
+        [=](float v) -> float
+        {
+            v /= 65535.f;
+            float f = (1.f - LIM01(v * 0.25f)) * prescale;
+            if (f > 1e-4f) {
+                return LIM01(v * f) / f;
+            } else {
+                return LIM01(v);
+            }
+        };
+    
 #ifdef _OPENMP
     #pragma omp parallel for
 #endif
     for (int row = 0; row < height; row++) {
         for (int col = 0, indx = row * width + col; col < width; col++, indx++) {
             int c = FC(row, col);
-            cfa[indx] = rgb[indx][c] = CLIP(rawData[row][col]) / 65535.f; 
+            cfa[indx] = rgb[indx][c] = clip(rawData[row][col]);
         }
     }
 
