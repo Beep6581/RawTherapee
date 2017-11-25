@@ -500,3 +500,9 @@ GtkNotebook {
 #PartialPasteHeaderSep {
     color: #D8D8D8;
 }
+
+
+#MyFileChooserButton {
+    padding-left: 3px;
+    padding-right: 3px;
+}

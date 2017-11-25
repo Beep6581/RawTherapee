@@ -993,7 +993,6 @@ PREFERENCES_D50;5000K
 PREFERENCES_D55;5500K
 PREFERENCES_D60;6000K
 PREFERENCES_D65;6500K
-PREFERENCES_DARKFRAME;Tmavý snímek
 PREFERENCES_DARKFRAMEFOUND;Nalezeno
 PREFERENCES_DARKFRAMESHOTS;snímků
 PREFERENCES_DARKFRAMETEMPLATES;šablon
@@ -1014,8 +1013,6 @@ PREFERENCES_EXTERNALEDITOR;Externí editor
 PREFERENCES_FBROWSEROPTS;Volby prohlížeče souborů / náhledů
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Jednořádková lišta nástrojů v prohlížeči souborů\n(vypněte na nízkých rozlišeních)
 PREFERENCES_FILEFORMAT;Formát souboru
-PREFERENCES_FILMSIMULATION;Simulace filmu
-PREFERENCES_FLATFIELD;Flat Field
 PREFERENCES_FLATFIELDFOUND;Nalezeno
 PREFERENCES_FLATFIELDSDIR;Složka Flat Field souborů
 PREFERENCES_FLATFIELDSHOTS;snímků
@@ -2170,6 +2167,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !DONT_SHOW_AGAIN;Don't show this message again.
+!EXIFPANEL_SHOWALL;Show all
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
 !HISTORY_MSG_476;CAM02 - Temp out
 !HISTORY_MSG_477;CAM02 - Green out
@@ -2180,14 +2178,41 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_482;CAM02 - Green scene
 !HISTORY_MSG_483;CAM02 - Yb scene
 !HISTORY_MSG_484;CAM02 - Auto Yb scene
+!HISTORY_MSG_485;Lens Correction
+!HISTORY_MSG_486;Lens Correction - Camera
+!HISTORY_MSG_487;Lens Correction - Lens
+!HISTORY_MSG_488;HDR Tone Mapping
+!HISTORY_MSG_489;HDR TM - Threshold
+!HISTORY_MSG_490;HDR TM - Amount
+!LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
+!LENSPROFILE_CORRECTION_LCPFILE;LCP File
+!LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
+!LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
+!MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
+!PARTIALPASTE_TM_FATTAL;HDR Tone mapping
+!PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_D50_OLD;5000K
+!PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
 !PREFERENCES_LANG;Language
+!PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
 !PREFERENCES_THEME;Theme
+!QINFO_FRAMECOUNT;%2 frames
+!QINFO_HDR;HDR / %2 frame(s)
+!QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
+!SAMPLEFORMAT_0;Unknown data format
+!SAMPLEFORMAT_1;Unsigned 8 bits
+!SAMPLEFORMAT_2;Unsigned 16 bits
+!SAMPLEFORMAT_4;LogLuv 24 bits
+!SAMPLEFORMAT_8;LogLuv 32 bits
+!SAMPLEFORMAT_16;32 bits floating point
 !TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 !TP_COLORAPP_NEUTRAL;Reset
 !TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
-!TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant always Tint=1.\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
+!TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
 !TP_COLORAPP_YB;Yb% (mean luminance)
 !TP_COLORAPP_YBSCENE;Yb% (mean luminance)
 !TP_COLORAPP_YBSCENE_TOOLTIP;if auto enable, Yb is calculated from the mean value of actual image luminance
+!TP_TM_FATTAL_AMOUNT;Amount
+!TP_TM_FATTAL_LABEL;HDR Tone Mapping
+!TP_TM_FATTAL_THRESHOLD;Threshold

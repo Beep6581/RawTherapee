@@ -188,6 +188,19 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     appendBehavList (mi, M ("TP_EXPOSURE_SATURATION"), ADDSET_TC_SATURATION, false);
 
     mi = behModel->append ();
+    mi->set_value (behavColumns.label, M ("TP_EPD_LABEL"));
+    appendBehavList (mi, M ("TP_EPD_STRENGTH"), ADDSET_EPD_STRENGTH, false);
+    appendBehavList (mi, M ("TP_EPD_GAMMA"), ADDSET_EPD_GAMMA, false);
+    appendBehavList (mi, M ("TP_EPD_EDGESTOPPING"), ADDSET_EPD_EDGESTOPPING, false);
+    appendBehavList (mi, M ("TP_EPD_SCALE"), ADDSET_EPD_SCALE, false);
+    appendBehavList (mi, M ("TP_EPD_REWEIGHTINGITERATES"), ADDSET_EPD_REWEIGHTINGITERATES, false);
+
+    mi = behModel->append ();
+    mi->set_value (behavColumns.label, M ("TP_TM_FATTAL_LABEL"));
+    appendBehavList (mi, M ("TP_TM_FATTAL_ALPHA"), ADDSET_FATTAL_ALPHA, false);
+    appendBehavList (mi, M ("TP_TM_FATTAL_BETA"), ADDSET_FATTAL_BETA, false);
+
+    mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_RETINEX_LABEL"));
     appendBehavList (mi, M ("TP_RETINEX_STRENGTH"), ADDSET_RETI_STR, false);
     appendBehavList (mi, M ("TP_RETINEX_NEIGHBOR"), ADDSET_RETI_NEIGH, false);
@@ -210,9 +223,14 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     appendBehavList (mi, M ("TP_LABCURVE_CONTRAST"), ADDSET_LC_CONTRAST, false);
     appendBehavList (mi, M ("TP_LABCURVE_CHROMATICITY"), ADDSET_LC_CHROMATICITY, false);
 
-    mi = behModel->append ();
+    mi = behModel->append (); // Used for both Resize and Post-Resize sharpening
     mi->set_value (behavColumns.label, M ("TP_SHARPENING_LABEL"));
+    appendBehavList (mi, M ("TP_SHARPENING_RADIUS"), ADDSET_SHARP_RADIUS, false);
     appendBehavList (mi, M ("TP_SHARPENING_AMOUNT"), ADDSET_SHARP_AMOUNT, false);
+    appendBehavList (mi, M ("TP_SHARPENING_RLD_DAMPING"), ADDSET_SHARP_DAMPING, false);
+    appendBehavList (mi, M ("TP_SHARPENING_RLD_ITERATIONS"), ADDSET_SHARP_ITER, false);
+    appendBehavList (mi, M ("TP_SHARPENING_EDTOLERANCE"), ADDSET_SHARP_EDGETOL, false);
+    appendBehavList (mi, M ("TP_SHARPENING_HALOCONTROL"), ADDSET_SHARP_HALOCTRL, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_SHARPENEDGE_LABEL"));
@@ -294,6 +312,11 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     appendBehavList (mi, M ("TP_ROTATE_DEGREE"), ADDSET_ROTATE_DEGREE, false);
 
     mi = behModel->append ();
+    mi->set_value (behavColumns.label, M ("TP_RESIZE_LABEL"));
+    appendBehavList (mi, M ("TP_RESIZE_SCALE"), ADDSET_RESIZE_SCALE, true);
+
+
+    mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_DISTORTION_LABEL"));
     appendBehavList (mi, M ("TP_DISTORTION_AMOUNT"), ADDSET_DIST_AMOUNT, false);
 
@@ -334,7 +357,6 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_WAVELET_LABEL"));
     appendBehavList (mi, M ("TP_WAVELET_LEVELS"), ADDSET_WA_THRES, true);
-    //appendBehavList (mi, M("TP_WAVELET_CONTRAST"), ADDSET_WA, true);
     appendBehavList (mi, M ("TP_WAVELET_THRESHOLD"), ADDSET_WA_THRESHOLD, true);
     appendBehavList (mi, M ("TP_WAVELET_THRESHOLD2"), ADDSET_WA_THRESHOLD2, true);
     appendBehavList (mi, M ("TP_WAVELET_CHRO"), ADDSET_WA_CHRO, true);
@@ -411,22 +433,21 @@ void Preferences::appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustri
     ci->set_value (behavColumns.addsetid, id);
 }
 
+void Preferences::behAddSetRadioToggled (const Glib::ustring& path, bool add)
+{
+    Gtk::TreeModel::iterator iter = behModel->get_iter (path);
+    iter->set_value(behavColumns.badd, add);
+    iter->set_value(behavColumns.bset, !add);
+}
+
 void Preferences::behAddRadioToggled (const Glib::ustring& path)
 {
-
-    Gtk::TreeModel::iterator iter = behModel->get_iter (path);
-    //bool set = iter->get_value (behavColumns.bset);
-    iter->set_value (behavColumns.bset, false);
-    iter->set_value (behavColumns.badd, true);
+    behAddSetRadioToggled(path, true);
 }
 
 void Preferences::behSetRadioToggled (const Glib::ustring& path)
 {
-
-    Gtk::TreeModel::iterator iter = behModel->get_iter (path);
-    //bool add = iter->get_value (behavColumns.badd);
-    iter->set_value (behavColumns.bset, true);
-    iter->set_value (behavColumns.badd, false);
+    behAddSetRadioToggled(path, false);
 }
 
 
@@ -505,51 +526,56 @@ Gtk::Widget* Preferences::getProcParamsPanel ()
     fdp->add (*vbdp);
     mvbpp->pack_start (*fdp, Gtk::PACK_SHRINK, 4);
 
-    Gtk::Frame* fdf = Gtk::manage (new Gtk::Frame (M ("PREFERENCES_DARKFRAME")) );
-    Gtk::HBox* hb42 = Gtk::manage (new Gtk::HBox ());
-    darkFrameDir = Gtk::manage (new Gtk::FileChooserButton (M ("PREFERENCES_DIRDARKFRAMES"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    // Directories
+    Gtk::Frame* cdf = Gtk::manage (new Gtk::Frame (M ("PREFERENCES_DIRECTORIES")) );
+    Gtk::Grid* dirgrid = Gtk::manage (new Gtk::Grid ());
+    setExpandAlignProperties(dirgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
     Gtk::Label *dfLab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_DIRDARKFRAMES") + ":"));
-    hb42->pack_start (*dfLab, Gtk::PACK_SHRINK, 4 );
-    hb42->pack_start (*darkFrameDir, Gtk::PACK_EXPAND_WIDGET, 4);
+    setExpandAlignProperties(dfLab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    darkFrameDir = Gtk::manage (new MyFileChooserButton (M ("PREFERENCES_DIRDARKFRAMES"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    setExpandAlignProperties(darkFrameDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     dfLabel = Gtk::manage (new Gtk::Label ("Found:"));
-    Gtk::VBox* vbdf = Gtk::manage (new Gtk::VBox ());
-    vbdf->pack_start (*hb42, Gtk::PACK_SHRINK, 4);
-    vbdf->pack_start (*dfLabel, Gtk::PACK_SHRINK, 4 );
-    fdf->add (*vbdf );
-    mvbpp->pack_start (*fdf, Gtk::PACK_SHRINK, 4);
+    setExpandAlignProperties(dfLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+
+    dirgrid->attach_next_to(*dfLab, Gtk::POS_TOP, 1, 1);
+    dirgrid->attach_next_to(*darkFrameDir, *dfLab, Gtk::POS_RIGHT, 1, 1);
+    dirgrid->attach_next_to(*dfLabel, *darkFrameDir, Gtk::POS_RIGHT, 1, 1);
 
     //dfconn = darkFrameDir->signal_file_set().connect ( sigc::mem_fun(*this, &Preferences::darkFrameChanged), true);
-    dfconn = darkFrameDir->signal_selection_changed().connect ( sigc::mem_fun (*this, &Preferences::darkFrameChanged), true);
+    dfconn = darkFrameDir->signal_selection_changed().connect ( sigc::mem_fun (*this, &Preferences::darkFrameChanged)); //, true);
 
     // FLATFIELD
-    Gtk::Frame* fff = Gtk::manage (new Gtk::Frame (M ("PREFERENCES_FLATFIELD")) );
-    Gtk::HBox* hb43 = Gtk::manage (new Gtk::HBox ());
-    flatFieldDir = Gtk::manage (new Gtk::FileChooserButton (M ("PREFERENCES_FLATFIELDSDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     Gtk::Label *ffLab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_FLATFIELDSDIR") + ":"));
-    hb43->pack_start (*ffLab, Gtk::PACK_SHRINK, 4 );
-    hb43->pack_start (*flatFieldDir);
+    setExpandAlignProperties(ffLab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    flatFieldDir = Gtk::manage (new MyFileChooserButton (M ("PREFERENCES_FLATFIELDSDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    setExpandAlignProperties(flatFieldDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     ffLabel = Gtk::manage (new Gtk::Label ("Found:"));
-    Gtk::VBox* vbff = Gtk::manage (new Gtk::VBox ());
-    vbff->pack_start (*hb43, Gtk::PACK_SHRINK, 4);
-    vbff->pack_start (*ffLabel, Gtk::PACK_SHRINK, 4 );
-    fff->add (*vbff );
-    mvbpp->pack_start (*fff, Gtk::PACK_SHRINK, 4);
+    setExpandAlignProperties(ffLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+
+    dirgrid->attach_next_to(*ffLab, *dfLab, Gtk::POS_BOTTOM, 1, 1);
+    dirgrid->attach_next_to(*flatFieldDir, *ffLab, Gtk::POS_RIGHT, 1, 1);
+    dirgrid->attach_next_to(*ffLabel, *flatFieldDir, Gtk::POS_RIGHT, 1, 1);
 
     //ffconn = flatFieldDir->signal_file_set().connect ( sigc::mem_fun(*this, &Preferences::flatFieldChanged), true);
-    ffconn = flatFieldDir->signal_selection_changed().connect ( sigc::mem_fun (*this, &Preferences::flatFieldChanged), true);
+    ffconn = flatFieldDir->signal_selection_changed().connect ( sigc::mem_fun (*this, &Preferences::flatFieldChanged)); //, true);
 
     //Cluts Dir
-    Gtk::Frame* clutsDirFrame = Gtk::manage (new Gtk::Frame (M ("PREFERENCES_FILMSIMULATION")) );
-    Gtk::HBox* clutsDirBox = Gtk::manage (new Gtk::HBox ());
-    clutsDir = Gtk::manage (new Gtk::FileChooserButton (M ("PREFERENCES_CLUTSDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     Gtk::Label *clutsDirLabel = Gtk::manage (new Gtk::Label (M ("PREFERENCES_CLUTSDIR") + ":"));
+    setExpandAlignProperties(clutsDirLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    clutsDir = Gtk::manage (new MyFileChooserButton (M ("PREFERENCES_CLUTSDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    setExpandAlignProperties(clutsDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     Gtk::Label* clutsRestartNeeded = Gtk::manage ( new Gtk::Label (Glib::ustring (" (") + M ("PREFERENCES_APPLNEXTSTARTUP") + ")") );
-    clutsDirBox->pack_start (*clutsDirLabel, Gtk::PACK_SHRINK, 4 );
-    clutsDirBox->pack_start (*clutsDir );
-    clutsDirBox->pack_start (*clutsRestartNeeded, Gtk::PACK_SHRINK, 4 );
-    clutsDirFrame->add (*clutsDirBox );
-    mvbpp->pack_start (*clutsDirFrame, Gtk::PACK_SHRINK, 4 );
+    setExpandAlignProperties(clutsRestartNeeded, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
+    dirgrid->attach_next_to(*clutsDirLabel, *ffLab, Gtk::POS_BOTTOM, 1, 1);
+    dirgrid->attach_next_to(*clutsDir, *clutsDirLabel, Gtk::POS_RIGHT, 1, 1);
+    dirgrid->attach_next_to(*clutsRestartNeeded, *clutsDir, Gtk::POS_RIGHT, 1, 1);
+
+    cdf->add(*dirgrid);
+    mvbpp->pack_start (*cdf, Gtk::PACK_SHRINK, 4 );
+
+    // Metadata
     Gtk::Frame* fmd = Gtk::manage (new Gtk::Frame (M ("PREFERENCES_METADATA")));
     Gtk::VBox* vbmd = Gtk::manage (new Gtk::VBox ());
     ckbTunnelMetaData = Gtk::manage (new Gtk::CheckButton (M ("PREFERENCES_TUNNELMETADATA")));
@@ -707,7 +733,7 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
     Gtk::VBox* mvbcm = Gtk::manage (new Gtk::VBox ());
     mvbcm->set_spacing (4);
 
-    iccDir = Gtk::manage (new Gtk::FileChooserButton (M ("PREFERENCES_ICCDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    iccDir = Gtk::manage (new MyFileChooserButton (M ("PREFERENCES_ICCDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     setExpandAlignProperties (iccDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     Gtk::Label* pdlabel = Gtk::manage (new Gtk::Label (M ("PREFERENCES_ICCDIR") + ":", Gtk::ALIGN_START));
     setExpandAlignProperties (pdlabel, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
@@ -878,14 +904,14 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
         grey->append (M("PREFERENCES_GREY30"));
         grey->append (M("PREFERENCES_GREY40"));
     */
-/*
-    Gtk::Label* greySclab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_GREYSC") + ":", Gtk::ALIGN_START));
-    setExpandAlignProperties (greySclab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    greySc = Gtk::manage (new Gtk::ComboBoxText ());
-    setExpandAlignProperties (greySc, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    greySc->append (M ("PREFERENCES_GREYSCA"));
-    greySc->append (M ("PREFERENCES_GREYSC18"));
-*/
+    /*
+        Gtk::Label* greySclab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_GREYSC") + ":", Gtk::ALIGN_START));
+        setExpandAlignProperties (greySclab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+        greySc = Gtk::manage (new Gtk::ComboBoxText ());
+        setExpandAlignProperties (greySc, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+        greySc->append (M ("PREFERENCES_GREYSCA"));
+        greySc->append (M ("PREFERENCES_GREYSC18"));
+    */
     Gtk::Frame* fcielab = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_CIEART_FRAME")) );
     setExpandAlignProperties (fcielab, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
@@ -986,8 +1012,20 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     workflowGrid->attach_next_to (*hb4label, *ckbFileBrowserToolbarSingleRow, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to (*ckbHideTPVScrollbar, *hb4label, Gtk::POS_RIGHT, 1, 1);
     workflowGrid->attach_next_to (*ckbUseIconNoText, *ckbHideTPVScrollbar, Gtk::POS_RIGHT, 1, 1);
+    ckbAutoSaveTpOpen = Gtk::manage (new Gtk::CheckButton (M ("PREFERENCES_AUTOSAVE_TP_OPEN")));
+    workflowGrid->attach_next_to (*ckbAutoSaveTpOpen, *hb4label, Gtk::POS_BOTTOM, 1, 1);
+    btnSaveTpOpenNow = Gtk::manage (new Gtk::Button (M ("PREFERENCES_SAVE_TP_OPEN_NOW")));
+    setExpandAlignProperties (btnSaveTpOpenNow, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+    workflowGrid->attach_next_to (*btnSaveTpOpenNow, *ckbAutoSaveTpOpen, Gtk::POS_RIGHT, 1, 1);
+
+    auto save_tp_open_now =
+    [&]() -> void {
+        parent->writeToolExpandedStatus (moptions.tpOpen);
+    };
+    btnSaveTpOpenNow->signal_clicked().connect (save_tp_open_now);
 
     fworklflow->add (*workflowGrid);
+
     mvbsd->attach_next_to (*fworklflow, Gtk::POS_TOP, 2, 1);
 
     // ---------------------------------------------
@@ -1182,7 +1220,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     edPS = Gtk::manage ( new Gtk::RadioButton (M ("PREFERENCES_PSPATH") + ":"));
     setExpandAlignProperties (edPS, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    psDir = Gtk::manage ( new Gtk::FileChooserButton (M ("PREFERENCES_PSPATH"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER) );
+    psDir = Gtk::manage ( new MyFileChooserButton (M ("PREFERENCES_PSPATH"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER) );
     setExpandAlignProperties (psDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     externaleditorGrid->attach_next_to (*edPS, *edGimp, Gtk::POS_BOTTOM, 1, 1);
     externaleditorGrid->attach_next_to (*psDir, *edPS, Gtk::POS_RIGHT, 1, 1);
@@ -1193,7 +1231,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 #elif defined WIN32
     edGimp = Gtk::manage ( new Gtk::RadioButton (M ("PREFERENCES_GIMPPATH") + ":") );
     setExpandAlignProperties (edGimp, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    gimpDir = Gtk::manage ( new Gtk::FileChooserButton (M ("PREFERENCES_GIMPPATH"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER) );
+    gimpDir = Gtk::manage ( new MyFileChooserButton (M ("PREFERENCES_GIMPPATH"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER) );
     setExpandAlignProperties (gimpDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     externaleditorGrid->attach_next_to (*edGimp, Gtk::POS_TOP, 1, 1);
     externaleditorGrid->attach_next_to (*gimpDir, *edGimp, Gtk::POS_RIGHT, 1, 1);
@@ -1201,7 +1239,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     edPS = Gtk::manage ( new Gtk::RadioButton (M ("PREFERENCES_PSPATH") + ":") );
     setExpandAlignProperties (edPS, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    psDir = Gtk::manage ( new Gtk::FileChooserButton (M ("PREFERENCES_PSPATH"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER) );
+    psDir = Gtk::manage ( new MyFileChooserButton (M ("PREFERENCES_PSPATH"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER) );
     setExpandAlignProperties (psDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     externaleditorGrid->attach_next_to (*edPS, *edGimp, Gtk::POS_BOTTOM, 1, 1);
     externaleditorGrid->attach_next_to (*psDir, *edPS, Gtk::POS_RIGHT, 1, 1);
@@ -1792,6 +1830,8 @@ void Preferences::storePreferences ()
     moptions.overwriteOutputFile = chOverwriteOutputFile->get_active ();
     moptions.UseIconNoText = ckbUseIconNoText->get_active();
 
+    moptions.autoSaveTpOpen = ckbAutoSaveTpOpen->get_active();
+
     moptions.rgbDenoiseThreadLimit = rgbDenoiseTreadLimitSB->get_value_as_int();
     moptions.clutCacheSize = clutCacheSizeSB->get_value_as_int();
     moptions.maxInspectorBuffers = maxInspectorBuffersSB->get_value_as_int();
@@ -2009,6 +2049,8 @@ void Preferences::fillPreferences ()
     ckbHideTPVScrollbar->set_active (moptions.hideTPVScrollbar);
     ckbUseIconNoText->set_active (moptions.UseIconNoText);
 
+    ckbAutoSaveTpOpen->set_active (moptions.autoSaveTpOpen);
+
     rgbDenoiseTreadLimitSB->set_value (moptions.rgbDenoiseThreadLimit);
     clutCacheSizeSB->set_value (moptions.clutCacheSize);
     maxInspectorBuffersSB->set_value (moptions.maxInspectorBuffers);
@@ -2026,14 +2068,13 @@ void Preferences::fillPreferences ()
 
     moptions.baBehav.resize (ADDSET_PARAM_NUM);
 
-    for (size_t i = 0; i < moptions.baBehav.size(); i++)
-        for (Gtk::TreeIter sections = behModel->children().begin(); sections != behModel->children().end(); sections++)
-            for (Gtk::TreeIter adjs = sections->children().begin(); adjs != sections->children().end(); adjs++)
-                if (adjs->get_value (behavColumns.addsetid) == (int)i) {
-                    adjs->set_value (behavColumns.badd, moptions.baBehav[i] == 1);
-                    adjs->set_value (behavColumns.bset, moptions.baBehav[i] != 1);
-                    break;
-                }
+    for (Gtk::TreeIter sections = behModel->children().begin(); sections != behModel->children().end(); ++sections) {
+        for (Gtk::TreeIter adjs = sections->children().begin(); adjs != sections->children().end(); ++adjs) {
+            const bool add = moptions.baBehav[adjs->get_value(behavColumns.addsetid)];
+            adjs->set_value (behavColumns.badd, add);
+            adjs->set_value (behavColumns.bset, !add);
+        }
+    }
 
     addc.block (false);
     setc.block (false);
@@ -2103,7 +2144,14 @@ void Preferences::okPressed ()
     workflowUpdate();
     options.copyFrom (&moptions);
     options.filterOutParsedExtensions();
-    Options::save ();
+
+    try {
+        Options::save ();
+    } catch (Options::Error &e) {
+        Gtk::MessageDialog msgd (getToplevelWindow (this), e.get_msg(), true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_CLOSE, true);
+        msgd.run();
+    }
+
     dynProfilePanel->save();
     hide ();
 }
@@ -2112,7 +2160,7 @@ void Preferences::cancelPressed ()
 {
     // set the initial theme back
     if (themeFNames.at (theme->get_active_row_number ()).longFName != options.theme) {
-        rtengine::setPaths (options);
+        rtengine::setPaths();
         RTImage::updateImages();
         switchThemeTo (options.theme);
     }
@@ -2170,7 +2218,7 @@ void Preferences::themeChanged ()
 {
 
     moptions.theme = themeFNames.at (theme->get_active_row_number ()).longFName;
-    rtengine::setPaths (moptions);
+    rtengine::setPaths();
     RTImage::updateImages();
     switchThemeTo (moptions.theme);
 }
@@ -2531,32 +2579,23 @@ bool Preferences::splashClosed (GdkEventAny* event)
     return true;
 }
 
+void Preferences::behAddSetAllPressed (bool add)
+{
+    moptions.baBehav.assign(ADDSET_PARAM_NUM, add);
+    for (Gtk::TreeIter sections = behModel->children().begin(); sections != behModel->children().end(); ++sections) {
+        for (Gtk::TreeIter adjs = sections->children().begin(); adjs != sections->children().end(); ++adjs) {
+            adjs->set_value(behavColumns.badd, add);
+            adjs->set_value(behavColumns.bset, !add);
+        }
+    }
+}
+
 void Preferences::behAddAllPressed ()
 {
-
-    if (moptions.baBehav.size() == ADDSET_PARAM_NUM) {
-        for (size_t i = 0; i < moptions.baBehav.size(); i++)
-            for (Gtk::TreeIter sections = behModel->children().begin();  sections != behModel->children().end(); sections++)
-                for (Gtk::TreeIter adjs = sections->children().begin();  adjs != sections->children().end(); adjs++)
-                    if (adjs->get_value (behavColumns.addsetid) == (int)i) {
-                        adjs->set_value (behavColumns.badd, true);
-                        adjs->set_value (behavColumns.bset, false);
-                        break;
-                    }
-    }
+    behAddSetAllPressed(true);
 }
 
 void Preferences::behSetAllPressed ()
 {
-
-    if (moptions.baBehav.size() == ADDSET_PARAM_NUM) {
-        for (size_t i = 0; i < moptions.baBehav.size(); i++)
-            for (Gtk::TreeIter sections = behModel->children().begin();  sections != behModel->children().end(); sections++)
-                for (Gtk::TreeIter adjs = sections->children().begin();  adjs != sections->children().end(); adjs++)
-                    if (adjs->get_value (behavColumns.addsetid) == (int)i) {
-                        adjs->set_value (behavColumns.badd, false);
-                        adjs->set_value (behavColumns.bset, true);
-                        break;
-                    }
-    }
+    behAddSetAllPressed(false);
 }

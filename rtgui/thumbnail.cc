@@ -132,20 +132,22 @@ void Thumbnail::_generateThumbnailImage ()
         bool quick = false;
         rtengine::RawMetaDataLocation ri;
 
+        rtengine::eSensorType sensorType = rtengine::ST_NONE;
         if ( initial_ && options.internalThumbIfUntouched) {
             quick = true;
-            tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, tw, th, 1, TRUE);
+            tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, sensorType, tw, th, 1, TRUE);
         }
 
         if ( tpp == nullptr ) {
             quick = false;
-            tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, tw, th, 1, pparams.wb.equal, TRUE, pparams.raw.bayersensor.imageNum);
+            tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, sensorType, tw, th, 1, pparams.wb.equal, TRUE);
         }
 
+        cfs.sensortype = sensorType;
         if (tpp) {
             cfs.format = FT_Raw;
             cfs.thumbImgType = quick ? CacheImageData::QUICK_THUMBNAIL : CacheImageData::FULL_THUMBNAIL;
-            infoFromImage (fname, &ri);
+            infoFromImage (fname, std::unique_ptr<rtengine::RawMetaDataLocation>(new rtengine::RawMetaDataLocation(ri)));
         }
     }
 
@@ -227,14 +229,16 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
 
     if (!run_cpb) {
         if (defProf == DEFPROFILE_DYNAMIC && create && cfs && cfs->exifValid) {
-            rtengine::ImageMetaData* imageMetaData;
+            rtengine::FramesMetaData* imageMetaData;
             if (getType() == FT_Raw) {
-                rtengine::RawMetaDataLocation metaData = rtengine::Thumbnail::loadMetaDataFromRaw(fname);
-                imageMetaData = rtengine::ImageMetaData::fromFile (fname, &metaData);
+                // Should we ask all frame's MetaData ?
+                imageMetaData = rtengine::FramesMetaData::fromFile (fname, std::unique_ptr<rtengine::RawMetaDataLocation>(new rtengine::RawMetaDataLocation(rtengine::Thumbnail::loadMetaDataFromRaw(fname))), true);
             } else {
-                imageMetaData = rtengine::ImageMetaData::fromFile (fname, nullptr);
+                // Should we ask all frame's MetaData ?
+                imageMetaData = rtengine::FramesMetaData::fromFile (fname, nullptr, true);
             }
             PartialProfile *pp = ProfileStore::getInstance()->loadDynamicProfile(imageMetaData);
+            delete imageMetaData;
             int err = pp->pparams->save(outFName);
             pp->deleteInstance();
             delete pp;
@@ -249,25 +253,27 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
         }
     } else {
         // First generate the communication file, with general values and EXIF metadata
-        rtengine::ImageMetaData* imageMetaData;
+        rtengine::FramesMetaData* imageMetaData;
 
         if (getType() == FT_Raw) {
-            rtengine::RawMetaDataLocation metaData = rtengine::Thumbnail::loadMetaDataFromRaw(fname);
-            imageMetaData = rtengine::ImageMetaData::fromFile (fname, &metaData);
+            // Should we ask all frame's MetaData ?
+            imageMetaData = rtengine::FramesMetaData::fromFile (fname, std::unique_ptr<rtengine::RawMetaDataLocation>(new rtengine::RawMetaDataLocation(rtengine::Thumbnail::loadMetaDataFromRaw(fname))), true);
         } else {
-            imageMetaData = rtengine::ImageMetaData::fromFile (fname, nullptr);
+            // Should we ask all frame's MetaData ?
+            imageMetaData = rtengine::FramesMetaData::fromFile (fname, nullptr, true);
         }
 
         Glib::ustring tmpFileName( Glib::build_filename(options.cacheBaseDir, Glib::ustring::compose("CPB_temp_%1.txt", index++)) );
 
         const rtexif::TagDirectory* exifDir = nullptr;
 
-        if (imageMetaData && (exifDir = imageMetaData->getExifData())) {
+        if (imageMetaData && (exifDir = imageMetaData->getRootExifData())) {
             exifDir->CPBDump(tmpFileName, fname, outFName,
                              defaultPparamsPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(defaultPparamsPath, Glib::path_get_basename(defProf) + paramFileExtension),
                              cfs,
                              flaggingMode);
         }
+        delete imageMetaData;
 
         // For the filename etc. do NOT use streams, since they are not UTF8 safe
         Glib::ustring cmdLine = options.CPBPath + Glib::ustring(" \"") + tmpFileName + Glib::ustring("\"");
@@ -284,8 +290,6 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
         }
 
         g_remove (tmpFileName.c_str ());
-
-        delete imageMetaData;
     }
 
     if (returnParams && hasProcParams()) {
@@ -497,6 +501,15 @@ bool Thumbnail::isEnqueued ()
     return enqueueNumber > 0;
 }
 
+bool Thumbnail::isPixelShift ()
+{
+    return cfs.isPixelShift;
+}
+bool Thumbnail::isHDR ()
+{
+    return cfs.isHDR;
+}
+
 void Thumbnail::increaseRef ()
 {
     MyMutex::MyLock lock(mutex);
@@ -599,10 +612,11 @@ rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::Pro
 
     if ( cfs.thumbImgType == CacheImageData::QUICK_THUMBNAIL ) {
         // RAW internal thumbnail, no profile yet: just do some rotation etc.
-        image = tpp->quickProcessImage (pparams, h, rtengine::TI_Nearest, scale);
+        image = tpp->quickProcessImage (pparams, h, rtengine::TI_Nearest);
     } else {
         // Full thumbnail: apply profile
-        image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.getCamera(), cfs.focalLen, cfs.focalLen35mm, cfs.focusDist, cfs.shutter, cfs.fnumber, cfs.iso, cfs.expcomp, scale );
+        // image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.getCamera(), cfs.focalLen, cfs.focalLen35mm, cfs.focusDist, cfs.shutter, cfs.fnumber, cfs.iso, cfs.expcomp, scale );
+        image = tpp->processImage (pparams, static_cast<rtengine::eSensorType>(cfs.sensortype), h, rtengine::TI_Bilinear, &cfs, scale );
     }
 
     tpp->getDimensions(lastW, lastH, lastScale);
@@ -627,7 +641,8 @@ rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::Pro
         return nullptr;
     }
 
-    rtengine::IImage8* image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.getCamera(), cfs.focalLen, cfs.focalLen35mm, cfs.focusDist, cfs.shutter, cfs.fnumber, cfs.iso, cfs.expcomp,  scale );
+    // rtengine::IImage8* image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.getCamera(), cfs.focalLen, cfs.focalLen35mm, cfs.focusDist, cfs.shutter, cfs.fnumber, cfs.iso, cfs.expcomp,  scale );
+    rtengine::IImage8* image = tpp->processImage (pparams, static_cast<rtengine::eSensorType>(cfs.sensortype), h, rtengine::TI_Bilinear, &cfs, scale );
     tpp->getDimensions(lastW, lastH, lastScale);
 
     delete tpp;
@@ -645,7 +660,7 @@ void Thumbnail::generateExifDateTimeStrings ()
         return;
     }
 
-    exifString = Glib::ustring::compose ("f/%1 %2s %3%4 %5mm", Glib::ustring(rtengine::ImageData::apertureToString(cfs.fnumber)), Glib::ustring(rtengine::ImageData::shutterToString(cfs.shutter)), M("QINFO_ISO"), cfs.iso, Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2), cfs.focalLen));
+    exifString = Glib::ustring::compose ("f/%1 %2s %3%4 %5mm", Glib::ustring(rtengine::FramesData::apertureToString(cfs.fnumber)), Glib::ustring(rtengine::FramesData::shutterToString(cfs.shutter)), M("QINFO_ISO"), cfs.iso, Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2), cfs.focalLen));
 
     if (options.fbShowExpComp && cfs.expcomp != "0.00" && cfs.expcomp != "") { // don't show exposure compensation if it is 0.00EV;old cache iles do not have ExpComp, so value will not be displayed.
         exifString = Glib::ustring::compose ("%1 %2EV", exifString, cfs.expcomp);    // append exposure compensation to exifString
@@ -709,10 +724,9 @@ ThFileType Thumbnail::getType ()
     return (ThFileType) cfs.format;
 }
 
-int Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaDataLocation* rml)
+int Thumbnail::infoFromImage (const Glib::ustring& fname, std::unique_ptr<rtengine::RawMetaDataLocation> rml)
 {
-
-    rtengine::ImageMetaData* idata = rtengine::ImageMetaData::fromFile (fname, rml);
+    rtengine::FramesMetaData* idata = rtengine::FramesMetaData::fromFile (fname, std::move(rml));
 
     if (!idata) {
         return 0;
@@ -723,24 +737,28 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaDataL
     cfs.exifValid = false;
 
     if (idata->hasExif()) {
-        cfs.shutter  = idata->getShutterSpeed ();
-        cfs.fnumber  = idata->getFNumber ();
-        cfs.focalLen = idata->getFocalLen ();
+        cfs.shutter      = idata->getShutterSpeed ();
+        cfs.fnumber      = idata->getFNumber ();
+        cfs.focalLen     = idata->getFocalLen ();
         cfs.focalLen35mm = idata->getFocalLen35mm ();
-        cfs.focusDist = idata->getFocusDist ();
-        cfs.iso      = idata->getISOSpeed ();
-        cfs.expcomp  = idata->expcompToString (idata->getExpComp(), false); // do not mask Zero expcomp
-        cfs.year     = 1900 + idata->getDateTime().tm_year;
-        cfs.month    = idata->getDateTime().tm_mon + 1;
-        cfs.day      = idata->getDateTime().tm_mday;
-        cfs.hour     = idata->getDateTime().tm_hour;
-        cfs.min      = idata->getDateTime().tm_min;
-        cfs.sec      = idata->getDateTime().tm_sec;
-        cfs.timeValid = true;
-        cfs.exifValid = true;
-        cfs.lens      = idata->getLens();
-        cfs.camMake   = idata->getMake();
-        cfs.camModel  = idata->getModel();
+        cfs.focusDist    = idata->getFocusDist ();
+        cfs.iso          = idata->getISOSpeed ();
+        cfs.expcomp      = idata->expcompToString (idata->getExpComp(), false); // do not mask Zero expcomp
+        cfs.isHDR        = idata->getHDR ();
+        cfs.isPixelShift = idata->getPixelShift ();
+        cfs.frameCount   = idata->getFrameCount ();
+        cfs.sampleFormat = idata->getSampleFormat ();
+        cfs.year         = 1900 + idata->getDateTime().tm_year;
+        cfs.month        = idata->getDateTime().tm_mon + 1;
+        cfs.day          = idata->getDateTime().tm_mday;
+        cfs.hour         = idata->getDateTime().tm_hour;
+        cfs.min          = idata->getDateTime().tm_min;
+        cfs.sec          = idata->getDateTime().tm_sec;
+        cfs.timeValid    = true;
+        cfs.exifValid    = true;
+        cfs.lens         = idata->getLens();
+        cfs.camMake      = idata->getMake();
+        cfs.camModel     = idata->getModel();
 
         if (idata->getOrientation() == "Rotate 90 CW") {
             deg = 90;
@@ -865,7 +883,7 @@ void Thumbnail::_saveThumbnail ()
     }
 
     // save thumbnail image
-    tpp->writeImage (getCacheFileName ("images", ""), 1);
+    tpp->writeImage (getCacheFileName ("images", ""));
 
     // save aehistogram
     tpp->writeAEHistogram (getCacheFileName ("aehistograms", ""));

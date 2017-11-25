@@ -435,7 +435,7 @@ public:
     /// @brief Specifically transform the sliders values to their curve equivalences
     void slidersToCurve (std::vector<double> &colorCurve, std::vector<double> &opacityCurve) const;
     /// @brief Fill the ColorGradientCurve and OpacityCurve LUTf from the control points curve or sliders value
-    void getCurves (ColorGradientCurve &colorCurveLUT, OpacityCurve &opacityCurveLUT, const double xyz_rgb[3][3], const double rgb_xyz[3][3], bool &opautili) const;
+    void getCurves (ColorGradientCurve &colorCurveLUT, OpacityCurve &opacityCurveLUT, const double xyz_rgb[3][3], bool &opautili) const;
 
     static void getDefaultColorCurve (std::vector<double> &curve);
     static void getDefaultOpacityCurve (std::vector<double> &curve);
@@ -738,6 +738,27 @@ public:
     int    reweightingIterates;
 };
 
+
+// Fattal02 Tone-Mapping parameters
+class FattalToneMappingParams {
+public:
+    bool enabled;
+    int threshold;
+    int amount;
+    
+    FattalToneMappingParams()
+    {
+        setDefaults();
+    }
+    
+    void setDefaults()
+    {
+        enabled = false;
+        threshold = 0;
+        amount = 1;
+    }
+};
+
 /**
   * Parameters of the shadow/highlight enhancement
   */
@@ -829,15 +850,63 @@ class LensProfParams
 {
 
 public:
+    enum class LcMode {
+        NONE,               // No lens correction
+        LENSFUNAUTOMATCH,   // Lens correction using auto matched lensfun database entry
+        LENSFUNMANUAL,      // Lens correction using manually selected lensfun database entry
+        LCP                 // Lens correction using lcp file
+    };
+
+    static const char *methodstring[static_cast<size_t>(LcMode::LCP) + 1u];
+    LcMode lcMode;
     Glib::ustring lcpFile;
     bool useDist, useVign, useCA;
+    Glib::ustring lfCameraMake;
+    Glib::ustring lfCameraModel;
+    Glib::ustring lfLens;
 
     LensProfParams()
     {
         setDefaults();
     }
     void setDefaults();
+
+    bool useLensfun() const
+    {
+        return lcMode == LcMode::LENSFUNAUTOMATCH || lcMode == LcMode::LENSFUNMANUAL;
+    }
+
+    bool lfAutoMatch() const
+    {
+        return lcMode == LcMode::LENSFUNAUTOMATCH;
+    }
+
+    bool useLcp() const
+    {
+        return lcMode == LcMode::LCP && lcpFile.length() > 0;
+    }
+
+    bool lfManual() const
+    {
+        return lcMode == LcMode::LENSFUNMANUAL;
+    }
+
+    Glib::ustring getMethodString(LcMode mode) const
+    {
+        return methodstring[static_cast<size_t>(mode)];
+    }
+
+    LcMode getMethodNumber(const Glib::ustring &mode) const
+    {
+        for(size_t i = 0; i <= static_cast<size_t>(LcMode::LCP); ++i) {
+            if(methodstring[i] == mode) {
+                return static_cast<LcMode>(i);
+            }
+        }
+        return LcMode::NONE;
+    }
 };
+
 
 /**
   * Parameters of the perspective correction
@@ -1385,6 +1454,7 @@ public:
     ImpulseDenoiseParams    impulseDenoise;  ///< Impulse denoising parameters
     DirPyrDenoiseParams     dirpyrDenoise;   ///< Directional Pyramid denoising parameters
     EPDParams               epd;             ///< Edge Preserving Decomposition parameters
+    FattalToneMappingParams          fattal;          ///< Fattal02 tone mapping
     SHParams                sh;              ///< Shadow/highlight enhancement parameters
     CropParams              crop;            ///< Crop parameters
     CoarseTransformParams   coarse;          ///< Coarse transformation (90, 180, 270 deg rotation, h/v flipping) parameters
@@ -1495,7 +1565,7 @@ public:
     void clearGeneral   ();
     int  load           (const Glib::ustring &fName);
     void set            (bool v);
-    const void applyTo  (ProcParams *destParams) const ;
+    void applyTo  (ProcParams *destParams) const ;
 };
 
 /**

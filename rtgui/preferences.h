@@ -36,8 +36,8 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
         Gtk::TreeModelColumn<Glib::ustring>  ext;
         ExtensionColumns()
         {
-            add(enabled);
-            add(ext);
+            add (enabled);
+            add (ext);
         }
     };
     ExtensionColumns extensionColumns;
@@ -54,11 +54,11 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
         Gtk::TreeModelColumn<int>           addsetid;
         BehavColumns()
         {
-            add(label);
-            add(badd);
-            add(bset);
-            add(visible);
-            add(addsetid);
+            add (label);
+            add (badd);
+            add (bset);
+            add (visible);
+            add (addsetid);
         }
     };
 
@@ -68,7 +68,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
         Glib::ustring shortFName;
         Glib::ustring longFName;
 
-        ThemeFilename (Glib::ustring sfname, Glib::ustring lfname) : shortFName(sfname), longFName(lfname) {}
+        ThemeFilename (Glib::ustring sfname, Glib::ustring lfname) : shortFName (sfname), longFName (lfname) {}
     };
 
     Glib::RefPtr<Gtk::TreeStore> behModel;
@@ -89,15 +89,15 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::RadioButton* sdlast;
     Gtk::RadioButton* sdhome;
     Gtk::RadioButton* sdother;
-    Gtk::FileChooserButton* gimpDir;
-    Gtk::FileChooserButton* psDir;
+    MyFileChooserButton* gimpDir;
+    MyFileChooserButton* psDir;
     Gtk::Entry* editorToSendTo;
     Gtk::RadioButton* edGimp;
     Gtk::RadioButton* edPS;
     Gtk::RadioButton* edOther;
-    Gtk::FileChooserButton* darkFrameDir;
-    Gtk::FileChooserButton* flatFieldDir;
-    Gtk::FileChooserButton* clutsDir;
+    MyFileChooserButton* darkFrameDir;
+    MyFileChooserButton* flatFieldDir;
+    MyFileChooserButton* clutsDir;
     Gtk::Label *dfLabel;
     Gtk::Label *ffLabel;
 
@@ -105,7 +105,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::CheckButton* showBasicExif;
     Gtk::CheckButton* showExpComp;
 
-    Gtk::FileChooserButton* iccDir;
+    MyFileChooserButton* iccDir;
     Gtk::ComboBoxText* prtProfile;
     Gtk::ComboBoxText* prtIntent;
     Gtk::CheckButton* prtBPC;
@@ -122,7 +122,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::SpinButton*  panFactor;
     Gtk::CheckButton* rememberZoomPanCheckbutton;
 
- //   Gtk::ComboBoxText* view;
+//   Gtk::ComboBoxText* view;
 //    Gtk::ComboBoxText* grey;
 //    Gtk::ComboBoxText* greySc;
     Gtk::ComboBoxText* dnv;
@@ -201,6 +201,9 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::CheckButton* ckbHideTPVScrollbar;
     Gtk::CheckButton* ckbUseIconNoText;
 
+    Gtk::CheckButton* ckbAutoSaveTpOpen;
+    Gtk::Button* btnSaveTpOpenNow;
+
     DynamicProfilePanel *dynProfilePanel;
 
     Glib::ustring storedValueRaw;
@@ -232,9 +235,9 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     void iccDirChanged ();
     void switchThemeTo (Glib::ustring newTheme);
     void switchFontTo  (const Glib::ustring &newFontFamily, const int newFontSize);
-    bool splashClosed(GdkEventAny* event);
+    bool splashClosed (GdkEventAny* event);
 
-    int getThemeRowNumber(Glib::ustring& longThemeFName);
+    int getThemeRowNumber (Glib::ustring& longThemeFName);
 
     void appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustring label, int id, bool set);
 
@@ -272,8 +275,10 @@ public:
     void clearThumbImagesPressed ();
     void clearAllPressed ();
 
+    void behAddSetRadioToggled (const Glib::ustring& path, bool add);
     void behAddRadioToggled (const Glib::ustring& path);
     void behSetRadioToggled (const Glib::ustring& path);
+    void behAddSetAllPressed (bool add);
     void behAddAllPressed ();
     void behSetAllPressed ();
 

@@ -116,7 +116,7 @@ public:
     RawImageSource ();
     ~RawImageSource ();
 
-    int         load        (const Glib::ustring &fname, int imageNum = 0, bool batch = false);
+    int         load        (const Glib::ustring &fname);
     void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse, bool prepareDenoise = true);
     void        demosaic    (const RAWParams &raw);
     void        retinex       (ColorManagementParams cmp, const RetinexParams &deh, ToneCurveParams Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI);
@@ -128,7 +128,7 @@ public:
     void        refinement_lassus (int PassCount);
     void        refinement(int PassCount);
 
-    bool        IsrgbSourceModified() const
+    bool        isRGBSourceModified() const
     {
         return rgbSourceModified;   // tracks whether cached rgb output of demosaic has been modified
     }
@@ -138,7 +138,7 @@ public:
     void        cfaboxblur  (RawImage *riFlatFile, float* cfablur, int boxH, int boxW);
     void        scaleColors (int winx, int winy, int winw, int winh, const RAWParams &raw, array2D<float> &rawData); // raw for cblack
 
-    void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const ColorManagementParams &cmp, const RAWParams &raw);
+    void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw);
     eSensorType getSensorType () const
     {
         return ri != nullptr ? ri->getSensorType() : ST_NONE;
@@ -166,9 +166,9 @@ public:
         return ri->get_rotateDegree();
     }
 
-    ImageData*  getImageData ()
+    FrameData*  getImageData (unsigned int frameNum)
     {
-        return idata;
+        return idata->getFrameData (frameNum);
     }
     ImageMatrices* getImageMatrices ()
     {
@@ -185,7 +185,7 @@ public:
     }
     void        getAutoExpHistogram (LUTu & histogram, int& histcompr);
     void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw);
-    DCPProfile *getDCP(const ColorManagementParams &cmp, ColorTemp &wb, DCPProfile::ApplyState &as);
+    DCPProfile *getDCP(const ColorManagementParams &cmp, DCPProfile::ApplyState &as);
 
     void convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb);
     static bool findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, DCPProfile **dcpProf, cmsHPROFILE& in);
@@ -233,6 +233,7 @@ protected:
 
     void cfa_linedn (float linenoiselevel);//Emil's line denoise
 
+    void green_equilibrate_global (array2D<float> &rawData);
     void green_equilibrate (float greenthresh, array2D<float> &rawData);//Emil's green equilibration
 
     void nodemosaic(bool bw);
@@ -244,9 +245,9 @@ protected:
     void igv_interpolate(int winw, int winh);
     void lmmse_interpolate_omp(int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, int iterations);
     void amaze_demosaic_RT(int winx, int winy, int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);//Emil's code for AMaZE
-    void fast_demosaic(int winx, int winy, int winw, int winh );//Emil's code for fast demosaicing
+    void fast_demosaic();//Emil's code for fast demosaicing
     void dcb_demosaic(int iterations, bool dcb_enhance);
-    void ahd_demosaic(int winx, int winy, int winw, int winh);
+    void ahd_demosaic();
     void border_interpolate(unsigned int border, float (*image)[4], unsigned int start = 0, unsigned int end = 0);
     void border_interpolate2(int winw, int winh, int lborders);
     void dcb_initTileLimits(int &colMin, int &rowMin, int &colMax, int &rowMax, int x0, int y0, int border);

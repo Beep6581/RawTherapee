@@ -26,12 +26,12 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-PartialPasteDlg* ProfilePanel::partialProfileDlg;
+PartialPasteDlg* ProfilePanel::partialProfileDlg = nullptr;
+Gtk::Window* ProfilePanel::parent;
 
-
-void ProfilePanel::init (Gtk::Window* parent)
+void ProfilePanel::init (Gtk::Window* parentWindow)
 {
-    partialProfileDlg = new PartialPasteDlg (Glib::ustring (), parent);
+    parent = parentWindow;
 }
 
 void ProfilePanel::cleanup ()
@@ -336,6 +336,9 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
             if (toSave) {
                 if (event->state & Gdk::CONTROL_MASK) {
                     // opening the partial paste dialog window
+                    if(!partialProfileDlg) {
+                        partialProfileDlg = new PartialPasteDlg (Glib::ustring (), parent);
+                    }
                     partialProfileDlg->set_title(M("PROFILEPANEL_SAVEPPASTE"));
                     int i = partialProfileDlg->run();
                     partialProfileDlg->hide();
@@ -407,6 +410,9 @@ void ProfilePanel::copy_clicked (GdkEventButton* event)
     if (toSave) {
         if (event->state & Gdk::CONTROL_MASK) {
             // opening the partial paste dialog window
+            if(!partialProfileDlg) {
+                partialProfileDlg = new PartialPasteDlg (Glib::ustring (), parent);
+            }
             partialProfileDlg->set_title(M("PROFILEPANEL_COPYPPASTE"));
             int i = partialProfileDlg->run();
             partialProfileDlg->hide();
@@ -475,6 +481,9 @@ void ProfilePanel::load_clicked (GdkEventButton* event)
 
         if (event->state & Gdk::CONTROL_MASK) {
             // opening the partial paste dialog window
+            if(!partialProfileDlg) {
+                partialProfileDlg = new PartialPasteDlg (Glib::ustring (), parent);
+            }
             partialProfileDlg->set_title(M("PROFILEPANEL_LOADPPASTE"));
             int i = partialProfileDlg->run();
             partialProfileDlg->hide();
@@ -514,6 +523,9 @@ void ProfilePanel::load_clicked (GdkEventButton* event)
             if (event->state & Gdk::CONTROL_MASK)
                 // custom.pparams = loadedFile.pparams filtered by ( loadedFile.pedited & partialPaste.pedited )
             {
+                if(!partialProfileDlg) {
+                    partialProfileDlg = new PartialPasteDlg (Glib::ustring (), parent);
+                }
                 partialProfileDlg->applyPaste (custom->pparams, !fillMode->get_active() ? custom->pedited : nullptr, &pp, &pe);
             } else {
                 // custom.pparams = loadedFile.pparams filtered by ( loadedFile.pedited )
@@ -551,6 +563,9 @@ void ProfilePanel::paste_clicked (GdkEventButton* event)
     }
 
     if (event->state & Gdk::CONTROL_MASK) {
+        if(!partialProfileDlg) {
+            partialProfileDlg = new PartialPasteDlg (Glib::ustring (), parent);
+        }
         partialProfileDlg->set_title(M("PROFILEPANEL_PASTEPPASTE"));
         int i = partialProfileDlg->run();
         partialProfileDlg->hide();
@@ -613,6 +628,9 @@ void ProfilePanel::paste_clicked (GdkEventButton* event)
         if (event->state & Gdk::CONTROL_MASK)
             // custom.pparams = clipboard.pparams filtered by ( clipboard.pedited & partialPaste.pedited )
         {
+            if(!partialProfileDlg) {
+                partialProfileDlg = new PartialPasteDlg (Glib::ustring (), parent);
+            }
             partialProfileDlg->applyPaste (custom->pparams, !fillMode->get_active() ? custom->pedited : nullptr, &pp, &pe);
         } else {
             // custom.pparams = clipboard.pparams filtered by ( clipboard.pedited )
@@ -626,6 +644,9 @@ void ProfilePanel::paste_clicked (GdkEventButton* event)
         if (event->state & Gdk::CONTROL_MASK)
             // custom.pparams = clipboard.pparams filtered by ( partialPaste.pedited )
         {
+            if(!partialProfileDlg) {
+                partialProfileDlg = new PartialPasteDlg (Glib::ustring (), parent);
+            }
             partialProfileDlg->applyPaste (custom->pparams, nullptr, &pp, nullptr);
         } else {
             // custom.pparams = clipboard.pparams non filtered

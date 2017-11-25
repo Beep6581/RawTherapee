@@ -31,7 +31,7 @@ scrollbar:not(.overlay-indicator):hover {
     color: #666666;
 }
 
-.view:selected {
+.view:selected:not(check):not(radio) {
     color: #262626;
     background-color: #AAAAAA
 }
@@ -171,6 +171,7 @@ eventbox.frame {
     border-color: #565656;
 }
 
+/*** Scrollbar ***************************************/
 scrollbar {
     background-color: #303030;
 }
@@ -180,6 +181,42 @@ scrollbar slider {
 scrollbar slider:hover {
     background-color: #999999;
 }
+
+scrollbar:not(.overlay-indicator).horizontal slider,
+scrollbar.horizontal.hovering slider {
+    min-height: 6px;
+    min-width: 24px;
+}
+scrollbar:not(.overlay-indicator).horizontal.fine-tune slider,
+scrollbar.horizontal.hovering.fine-tune slider {
+    min-height: 4px;
+    border-width: 4px;
+    margin: 0 -1px;
+}
+scrollbar.horizontal.overlay-indicator:not(.hovering) slider {
+    min-width: 24px;
+    min-height: 3px;
+    margin: 0 2px;
+}
+
+scrollbar:not(.overlay-indicator).vertical slider,
+scrollbar.vertical.hovering slider {
+    min-height: 24px;
+    min-width: 6px;
+}
+scrollbar:not(.overlay-indicator).vertical.fine-tune slider,
+scrollbar.vertical.hovering.fine-tune slider {
+    min-width: 4px;
+    border-width: 4px;
+    margin: -1px 0;
+}
+scrollbar.vertical.overlay-indicator:not(.hovering) slider {
+    min-width: 3px;
+    min-height: 24px;
+    margin: 2px 0;
+}
+
+/**************************************************/
 
 button  {
     padding: 0;
@@ -639,18 +676,11 @@ paned box, paned grid {
 }
 
 paned > separator {
-    border-width: 1px;
-    border-color: #484848;
-    margin: 0;
-    padding: 0;
-}
-paned.horizontal > separator {
-    min-width: 2px;
-    border-style: none solid;
-}
-paned.vertical > separator {
-    min-height: 2px;
-    border-style: solid none;
+    border-width: 1px 1px 0 0;
+    border-style: solid;
+    border-color: #404040;
+    padding: 0px;
+    margin: 4px;
 }
 
 #PlacesPaned {
@@ -872,4 +902,14 @@ paned.vertical > separator {
 
 #PartialPasteHeaderSep {
     background-color: #D8D8D8;
+}
+
+/* All MyFileChooserButtons */
+button#MyFileChooserButton {
+    padding: 2px;
+    margin: 2px;
+}
+
+#ToolPanelNotebook button {
+	margin: 0px;
 }

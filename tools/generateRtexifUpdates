@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
 # This Bash4 script generates lens ID and other parameter lists for rtexif/*.cc
-# files using ExifTool. It uses xmlstarlet to parse ExifTool's output.
+# using ExifTool. It uses xmlstarlet to parse ExifTool's output.
 #
 # Run the script from the project root:
-#   ./tools/generateLensList
+#   ./tools/generateRtexifUpdates
 #
-# Manually replace old code in rtexif/* with new from /tmp/rt-generateLensList/*
+# Manually replace old code in rtexif/* with new from /tmp/rt-generateRtexifUpdates/*
 #
 # Blame DrSlony
 # Please report bugs or enhancements to https://github.com/Beep6581/RawTherapee
@@ -18,7 +18,7 @@ hash xmlstarlet 2>/dev/null || { echo >&2 "XMLStarlet not found, install it firs
 
 unset cam cams
 
-tmpdir="/tmp/rt-generateLensList"
+tmpdir="/tmp/rt-generateRtexifUpdates"
 
 printf '%s\n' "ExifTool version: $("$et" -ver)" "" "XMLStarlet version: $(xmlstarlet --version)"  | sed 's/^/# /'
 
@@ -30,15 +30,18 @@ mkdir -p "$tmpdir" || { printf '%s\n' "Error creating $tmpdir" ""; exit 1; }
 echo
 
 # Canon
-printf '%s\n' "Saving ${tmpdir}/canon"
-xmlstarlet sel -T -t -m "taginfo/table/tag[@name='LensType']/values/key" -v "concat(@id,'	',val)" -n < <("$et" -listx -canon:all) | sort -fuV > "${tmpdir}/canon"
-sed -r -i -e '/-1\tn\/a/d' -e 's/([0-9]+)[0-9.]*\t/\1, "/' -e 's/^/        choices.insert(p_t(/' -e 's/$/"));/' -e 's| F/([0-9]+)| f/\1|' "${tmpdir}/canon"
+printf '%s\n' "Saving ${tmpdir}/canon_lenses"
+xmlstarlet sel -T -t -m "taginfo/table/tag[@name='LensType']/values/key" -v "concat(@id,'	',val)" -n < <("$et" -listx -canon:all) | sort -fuV > "${tmpdir}/canon_lenses"
+sed -r -i -e '/-1\tn\/a/d' -e 's/([0-9]+)[0-9.]*\t/\1, "/' -e 's/^/        choices.insert (p_t (/' -e 's/$/"));/' -e 's| F/([0-9]+)| f/\1|' "${tmpdir}/canon_lenses"
 # xmlstarlet sel -T -t -m "taginfo/table/tag[@name='EasyMode']/values/key" -v "concat(@id,'  ',val)" -n < <(exiftool -listx -canon:all) | sed -r -e '/-1\tn\/a/d' -e 's/([0-9]+)[0-9.]*\t/\1] = "/' -e 's/^/        choices[/' -e 's/$/";/'
+printf '%s\n' "Saving ${tmpdir}/canon_cameras"
+xmlstarlet sel -T -t -m "taginfo/table/tag[@name='CanonModelID']/values/key" -v "concat(@id,'	',val)" -n < <("$et" -listx -canon:all) | sort -fuV > "${tmpdir}/canon_cameras"
+sed -r -i -e 's/^/        choices[/' -e 's/\t/] = "/' -e 's/$/";/' "${tmpdir}/canon_cameras"
 
 # Nikon LensIDs are composite tags
 printf '%s\n' "Saving ${tmpdir}/nikon"
 xmlstarlet sel -T -t -m "taginfo/table/tag[@name='LensID']/values/key" -v "concat(@id,'	',val)" -n < <("$et" -listx -composite:all) > "${tmpdir}/nikon"
-sed -r -i -e '/^...	/d' -e 's/^/        {"/' -e 's/([A-F0-9]+)[A-F0-9.]*\t/\1", "/' -e 's/$/"},/' -e 's|(.* ")(.*) F([0-9]+)|\1\2 f/\3|' -e 's| F/([0-9]+)| f/\1|' "${tmpdir}/nikon"
+sed -r -i -e '/^...	/d' -e 's/^/    {"/' -e 's/([A-F0-9]+)[A-F0-9.]*\t/\1", "/' -e 's/$/"},/' -e 's|(.* ")(.*) F([0-9]+)|\1\2 f/\3|' -e 's| F/([0-9]+)| f/\1|' "${tmpdir}/nikon"
 
 # Olympus
 printf '%s\n' "Saving ${tmpdir}/olympus"
@@ -48,7 +51,7 @@ sed -r -i -e '/0 00 00\tNone/d' -e 's/^/        lenses["0/' -e 's/\t/"] = "/' -e
 # Pentax
 printf '%s\n' "Saving ${tmpdir}/pentax"
 xmlstarlet sel -T -t -m "taginfo/table/tag[@name='LensType']/values/key" -v "concat(@id,'	',val)" -n < <("$et" -listx -pentax:all) | sort -fuV > "${tmpdir}/pentax"
-sed -r -i -e 's/^/        choices.insert(p_t(256 * /' -e 's/([0-9]+) ([0-9]+)([0-9.]*)/\1 + \2/' -e 's/\t/, "/' -e 's/$/"));/' -e 's| F([0-9]+)| f/\1|' "${tmpdir}/pentax"
+sed -r -i -e 's/^/        choices.insert (p_t (256 * /' -e 's/([0-9]+) ([0-9]+)([0-9.]*)/\1 + \2/' -e 's/\t/, "/' -e 's/$/"));/' -e 's| F([0-9]+)| f/\1|' "${tmpdir}/pentax"
 
 # Sony
 printf '%s\n' "Saving ${tmpdir}/sony"
@@ -56,6 +59,6 @@ xmlstarlet sel -T -t -m "taginfo/table/tag[@name='LensType']/values/key" -v "con
 # Sony has more lenses under the LensType2 tag
 printf '%s\n' "Saving ${tmpdir}/sony-lenstype2"
 xmlstarlet sel -T -t -m "taginfo/table/tag[@name='LensType2']/values/key" -v "concat(@id,'	',val)" -n < <("$et" -listx -sony:all) | sort -fuV > "${tmpdir}/sony-lenstype2"
-sed -r -i -e 's/^/                    {/' -e 's/([0-9]+)[0-9.]*\t/\1, "/' -e 's/$/"},/' -e 's| F([0-9]+)| f/\1|g' "${tmpdir}/sony"
-sed -r -i -e '/255\tTamron Lens (255)/d' -e 's/([0-9]+)[0-9.]*\t/\1, "/' -e 's/^/        choices.insert(p_t(/' -e 's/$/"));/' -e 's| F([0-9]+)| f/\1|g' "${tmpdir}/sony-lenstype2"
+sed -r -i -e 's/^/            {/' -e 's/([0-9]+)[0-9.]*\t/\1, "/' -e 's/$/"},/' -e 's| F([0-9]+)| f/\1|g' "${tmpdir}/sony"
+sed -r -i -e '/255\tTamron Lens (255)/d' -e 's/([0-9]+)[0-9.]*\t/\1, "/' -e 's/^/        choices.insert (p_t (/' -e 's/$/"));/' -e 's| F([0-9]+)| f/\1|g' "${tmpdir}/sony-lenstype2"
 

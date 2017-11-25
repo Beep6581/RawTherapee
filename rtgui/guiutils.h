@@ -358,22 +358,72 @@ class MyHScale : public Gtk::HScale
 /**
  * @brief subclass of Gtk::FileChooserButton in order to handle the scrollwheel
  */
-class MyFileChooserButton : public Gtk::FileChooserButton
-{
+class MyFileChooserButton: public Gtk::Button {
+private:
+    void show_chooser();
+
+    Glib::ustring title_;
+    Gtk::FileChooserAction action_;
+    Gtk::HBox box_;
+    Gtk::Label lbl_;
+    std::string filename_;
+    std::string current_folder_;
+    std::vector<Glib::RefPtr<Gtk::FileFilter>> file_filters_;
+    Glib::RefPtr<Gtk::FileFilter> cur_filter_;
+    std::vector<std::string> shortcut_folders_;
+    bool show_hidden_;
+    sigc::signal<void> selection_changed_;
 
 protected:
     bool on_scroll_event (GdkEventScroll* event);
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
     void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
 
+    void set_none();
+
 public:
-    MyFileChooserButton (const Glib::ustring& title, Gtk::FileChooserAction action = Gtk::FILE_CHOOSER_ACTION_OPEN);
+    MyFileChooserButton(const Glib::ustring &title, Gtk::FileChooserAction action=Gtk::FILE_CHOOSER_ACTION_OPEN);
+
+    sigc::signal<void> &signal_selection_changed();
+    sigc::signal<void> &signal_file_set();
+    
+    std::string get_filename() const;
+    bool set_filename(const std::string &filename);
+
+    void add_filter(const Glib::RefPtr<Gtk::FileFilter> &filter);
+    void remove_filter(const Glib::RefPtr<Gtk::FileFilter> &filter);
+    void set_filter(const Glib::RefPtr<Gtk::FileFilter> &filter);
+    std::vector<Glib::RefPtr<Gtk::FileFilter>> list_filters();
+    
+    bool set_current_folder(const std::string &filename);
+    std::string get_current_folder() const;
+
+    bool add_shortcut_folder(const std::string &folder);
+    bool remove_shortcut_folder(const std::string &folder);
+
+    void unselect_all();
+    void unselect_filename(const std::string &filename);
+
+    void set_show_hidden(bool yes);
 };
 
 /**
  * @brief A helper method to connect the current folder property of a file chooser to an arbitrary variable.
  */
-void bindCurrentFolder (Gtk::FileChooser& chooser, Glib::ustring& variable);
+template <class FileChooser>
+void bindCurrentFolder (FileChooser& chooser, Glib::ustring& variable)
+{
+    chooser.signal_selection_changed ().connect ([&]()
+    {
+        const auto current_folder = chooser.get_current_folder ();
+
+        if (!current_folder.empty ())
+            variable = current_folder;
+    });
+
+    if (!variable.empty ())
+        chooser.set_current_folder (variable);
+}
 
 typedef enum RTUpdatePolicy {
     RTUP_STATIC,

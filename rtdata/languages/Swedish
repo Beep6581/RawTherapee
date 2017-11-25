@@ -870,7 +870,6 @@ PREFERENCES_D50;5000K
 PREFERENCES_D55;5500K
 PREFERENCES_D60;6000K
 PREFERENCES_D65;6500K
-PREFERENCES_DARKFRAME;Svartbild
 PREFERENCES_DARKFRAMEFOUND;Hittade
 PREFERENCES_DARKFRAMESHOTS;bilder
 PREFERENCES_DARKFRAMETEMPLATES;mallar
@@ -891,8 +890,6 @@ PREFERENCES_EXTERNALEDITOR;Externt bildredigeringsprogram
 PREFERENCES_FBROWSEROPTS;Inställningar för filvyn/miniatyrbilderna
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Filvyns verktygsrad som en rad (avmarkera för lågupplösta skärmar)
 PREFERENCES_FILEFORMAT;Filformat
-PREFERENCES_FILMSIMULATION;Filmsimulering
-PREFERENCES_FLATFIELD;Plattfält
 PREFERENCES_FLATFIELDFOUND;Hittade
 PREFERENCES_FLATFIELDSDIR;Plattfältskatalog
 PREFERENCES_FLATFIELDSHOTS;bilder
@@ -1896,6 +1893,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !DYNPROFILEEDITOR_NEW;New
 !DYNPROFILEEDITOR_NEW_RULE;New Dynamic Profile Rule
 !DYNPROFILEEDITOR_PROFILE;Processing Profile
+!EXIFPANEL_SHOWALL;Show all
 !EXPORT_BYPASS;Processing steps to bypass
 !EXPORT_PIPELINE;Processing pipeline
 !EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
@@ -1951,6 +1949,12 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !HISTORY_MSG_482;CAM02 - Green scene
 !HISTORY_MSG_483;CAM02 - Yb scene
 !HISTORY_MSG_484;CAM02 - Auto Yb scene
+!HISTORY_MSG_485;Lens Correction
+!HISTORY_MSG_486;Lens Correction - Camera
+!HISTORY_MSG_487;Lens Correction - Lens
+!HISTORY_MSG_488;HDR Tone Mapping
+!HISTORY_MSG_489;HDR TM - Threshold
+!HISTORY_MSG_490;HDR TM - Amount
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
 !IPTCPANEL_COPYRIGHT;Copyright notice
@@ -1976,14 +1980,22 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
 !IPTCPANEL_TRANSREFERENCE;Job ID
 !IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
+!LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
+!LENSPROFILE_CORRECTION_LCPFILE;LCP File
+!LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
+!LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
 !MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
+!MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
 !PARTIALPASTE_COLORTONING;Color toning
 !PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control
 !PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
-!PARTIALPASTE_RAW_PIXELSHIFT;PixelShift
+!PARTIALPASTE_RAW_PIXELSHIFT;Pixel Shift
+!PARTIALPASTE_TM_FATTAL;HDR Tone mapping
+!PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_CMMBPC;Black point compensation
 !PREFERENCES_D50_OLD;5000K
+!PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
 !PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
 !PREFERENCES_LANG;Language
@@ -1997,15 +2009,25 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
 !PREFERENCES_PRTINTENT;Rendering intent
 !PREFERENCES_PRTPROFILE;Color profile
+!PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
 !PREFERENCES_SERIALIZE_TIFF_READ;Tiff Read Settings
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
 !PREFERENCES_THEME;Theme
 !PROFILEPANEL_PDYNAMIC;Dynamic
+!QINFO_FRAMECOUNT;%2 frames
+!QINFO_HDR;HDR / %2 frame(s)
+!QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
+!SAMPLEFORMAT_0;Unknown data format
+!SAMPLEFORMAT_1;Unsigned 8 bits
+!SAMPLEFORMAT_2;Unsigned 16 bits
+!SAMPLEFORMAT_4;LogLuv 24 bits
+!SAMPLEFORMAT_8;LogLuv 32 bits
+!SAMPLEFORMAT_16;32 bits floating point
 !TP_CBDL_METHOD;Process located
 !TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 !TP_COLORAPP_NEUTRAL;Reset
 !TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
-!TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant always Tint=1.\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
+!TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
 !TP_COLORAPP_YB;Yb% (mean luminance)
 !TP_COLORAPP_YBSCENE;Yb% (mean luminance)
 !TP_COLORAPP_YBSCENE_TOOLTIP;if auto enable, Yb is calculated from the mean value of actual image luminance
@@ -2117,6 +2139,9 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.
 !TP_RETINEX_VIEW_MASK;Mask
 !TP_RETINEX_VIEW_METHOD_TOOLTIP;Standard - Normal display.\nMask -  Displays the mask.\nUnsharp mask - Displays the image with a high radius unsharp mask.\nTransmission - Auto/Fixed - Displays the file transmission-map, before any action on contrast and brightness.\n\nAttention: the mask does not correspond to reality, but is amplified to make it more visible.
+!TP_TM_FATTAL_AMOUNT;Amount
+!TP_TM_FATTAL_LABEL;HDR Tone Mapping
+!TP_TM_FATTAL_THRESHOLD;Threshold
 !TP_WAVELET_CBENAB;Toning and Color Balance
 !TP_WAVELET_CB_TOOLTIP;For strong values product color-toning by combining it or not with levels decomposition 'toning'\nFor low values you can change the white balance of the background (sky, ...) without changing that of the front plane, generally more contrasted
 !TP_WAVELET_CHRO_TOOLTIP;Sets the wavelet level which will be the threshold between saturated and pastel colors.\n1-x: saturated\nx-9: pastel\n\nIf the value exceeds the amount of wavelet levels you are using then it will be ignored.

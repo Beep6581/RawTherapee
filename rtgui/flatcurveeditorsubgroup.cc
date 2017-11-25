@@ -63,9 +63,9 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
     }
 
     editCPoints = Gtk::manage (new Gtk::ToggleButton());
-    initButton(*editCPoints, Glib::ustring("editmodehand.png"), Gtk::ALIGN_START, false, Glib::ustring(M("EDIT_PIPETTE_TOOLTIP")));
+    initButton(*editCPoints, Glib::ustring("editmodehand.png"), Gtk::ALIGN_START, false, "EDIT_PIPETTE_TOOLTIP");
     editPointCPoints = Gtk::manage (new Gtk::ToggleButton ());
-    initButton(*editPointCPoints,  Glib::ustring("gtk-edit.png"), Gtk::ALIGN_START, false, Glib::ustring(M("CURVEEDITOR_EDITPOINT_HINT")));
+    initButton(*editPointCPoints,  Glib::ustring("gtk-edit.png"), Gtk::ALIGN_START, false, "CURVEEDITOR_EDITPOINT_HINT");
     copyCPoints = Gtk::manage (new Gtk::Button ());
     initButton(*copyCPoints, Glib::ustring("edit-copy.png"), Gtk::ALIGN_END, true);
     pasteCPoints = Gtk::manage (new Gtk::Button ());

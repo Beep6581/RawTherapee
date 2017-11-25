@@ -1,5 +1,8 @@
 if(WIN32)
     cmake_minimum_required(VERSION 2.8.4)
+elseif(APPLE)
+    cmake_minimum_required(VERSION 3.3)
+    CMAKE_POLICY(SET CMP0025 NEW)
 else()
     cmake_minimum_required(VERSION 2.6)
 endif()
@@ -54,7 +57,8 @@ set(CACHE_NAME_SUFFIX "" CACHE STRING "RawTherapee's cache folder suffix")
 set(PROC_TARGET_NUMBER 0 CACHE STRING "Selected target processor from the list above (taken from ProcessorTargets.cmake)")
 
 # Set special compilation flags for rtengine which get added to CMAKE_CXX_FLAGS:
-set(RTENGINE_CXX_FLAGS "" CACHE STRING "Special compilation flags for RTEngine")
+# Some Linux distros build with -O2 instead of -O3. We explicitly enable auto vectorization by using -ftree-vectorize
+set(RTENGINE_CXX_FLAGS "-ftree-vectorize" CACHE STRING "Special compilation flags for RTEngine")
 
 # Loads the ProcessorTargets list:
 include(ProcessorTargets.cmake)
@@ -231,6 +235,10 @@ if(NOT DEFINED APPDATADIR)
     endif()
 endif()
 
+if(DEFINED LENSFUNDBDIR AND NOT IS_ABSOLUTE "${LENSFUNDBDIR}")
+    set(LENSFUNDBDIR "${DATADIR}/${LENSFUNDBDIR}")
+endif()
+
 # Enforce absolute paths for non-bundle builds:
 if(NOT BUILD_BUNDLE)
     foreach(path BINDIR DATADIR LIBDIR DOCDIR CREDITSDIR LICENCEDIR)
@@ -262,16 +270,22 @@ endif()
 
 # Check for libraries:
 find_package(PkgConfig)
+if(WIN32)
+pkg_check_modules (GTK     REQUIRED gtk+-3.0>=3.22.24)
+pkg_check_modules (GTKMM   REQUIRED gtkmm-3.0>=3.22)
+else()
 pkg_check_modules (GTK     REQUIRED gtk+-3.0>=3.16)
+pkg_check_modules (GTKMM   REQUIRED gtkmm-3.0>=3.16)
+endif()
 pkg_check_modules (GLIB2   REQUIRED glib-2.0>=2.44)
 pkg_check_modules (GLIBMM  REQUIRED glibmm-2.4>=2.44)
-pkg_check_modules (GTKMM   REQUIRED gtkmm-3.0>=3.16)
 pkg_check_modules (CAIROMM REQUIRED cairomm-1.0)
 pkg_check_modules (GIO     REQUIRED gio-2.0>=2.44)
 pkg_check_modules (GIOMM   REQUIRED giomm-2.4>=2.44)
 pkg_check_modules (GTHREAD REQUIRED gthread-2.0>=2.44)
 pkg_check_modules (GOBJECT REQUIRED gobject-2.0>=2.44)
 pkg_check_modules (SIGC    REQUIRED sigc++-2.0>=2.3.1)
+pkg_check_modules (LENSFUN REQUIRED lensfun>=0.2)
 
 if(WIN32)
     add_definitions(-DWIN32)
@@ -296,6 +310,7 @@ find_package(ZLIB REQUIRED)
 if(WITH_SYSTEM_KLT)
     find_package(KLT REQUIRED)
 endif()
+
 
 # Check for libcanberra-gtk3 (sound events on Linux):
 if(UNIX AND(NOT APPLE))
@@ -330,6 +345,35 @@ if(OPTION_OMP)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -Werror=unknown-pragmas -Wall -Wno-unused-result -Wno-deprecated-declarations")
     endif()
 endif()
+
+# check for libfftw3f_omp
+include(CheckCSourceCompiles)
+if(OPENMP_FOUND)
+    set(CMAKE_REQUIRED_INCLUDES ${FFTW3F_INCLUDE_DIRS})
+    set(CMAKE_REQUIRED_LIBRARIES)
+    foreach(l ${FFTW3F_LIBRARIES})
+        find_library(_f ${l} PATHS ${FFTW3F_LIBRARY_DIRS})
+        set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${_f})
+    endforeach()
+    check_c_source_compiles(
+"#include <fftw3.h>
+int main()
+{
+    fftwf_init_threads();
+    fftwf_plan_with_nthreads(1);
+    return 0;
+}" _fftw3f_multithread)
+    if(_fftw3f_multithread)
+        add_definitions(-DRT_FFTW3F_OMP)
+    else()
+        find_library(fftw3f_omp fftw3f_omp PATHS ${FFTW3F_LIBRARY_DIRS})
+        if(fftw3f_omp)
+            add_definitions(-DRT_FFTW3F_OMP)
+            set(FFTW3F_LIBRARIES ${FFTW3F_LIBRARIES} ${fftw3f_omp})
+        endif()
+    endif()
+endif()
+
 
 # Find out whether we are building out of source:
 get_filename_component(ABS_SOURCE_DIR "${PROJECT_SOURCE_DIR}" ABSOLUTE)
@@ -389,7 +433,8 @@ set(ABOUT_COMMAND_WITH_ARGS ${CMAKE_COMMAND}
     -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
     -DOPTION_OMP:STRING=${OPTION_OMP}
-    -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP})
+    -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
+    -DLENSFUN_VERSION:STRING=${LENSFUN_VERSION})
 
 if(WIN32)
     list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Windows
@@ -438,6 +483,34 @@ endif()
 if(UNIX)
     install(FILES rawtherapee.appdata.xml DESTINATION "${APPDATADIR}")
 endif()
+
+# check whether the used version of lensfun has lfDatabase::LoadDirectory
+include(CheckCXXSourceCompiles)
+set(CMAKE_REQUIRED_INCLUDES ${LENSFUN_INCLUDE_DIRS})
+set(CMAKE_REQUIRED_LIBRARIES)
+foreach(l ${LENSFUN_LIBRARIES})
+    if(LENSFUN_LIBRARY_DIRS)
+        # the NO_DEFAULT_PATH is to make sure we find the lensfun version we
+        # want, and not the system's one (e.g. if we have a custom version
+        # installed in a non-standard location)
+        find_library(_l ${l} PATHS ${LENSFUN_LIBRARY_DIRS} NO_DEFAULT_PATH)
+    else()
+        # LENSFUN_LIBRARY_DIRS can be empty if lensfun is installed in the
+        # default path. In this case, adding NO_DEFAULT_PATH would make
+        # find_library fail...
+        find_library(_l ${l})
+    endif()
+    set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${_l})
+endforeach()
+check_cxx_source_compiles(
+    "#include <lensfun.h>
+int main()
+{
+    lfDatabase *db = 0;
+    bool b = db->LoadDirectory(0);
+    return 0;
+}" LENSFUN_HAS_LOAD_DIRECTORY)
+
 
 add_subdirectory(rtexif)
 add_subdirectory(rtengine)

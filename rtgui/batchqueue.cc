@@ -245,10 +245,10 @@ bool BatchQueue::saveBatchQueue ()
             file << entry->filename << '|' << entry->savedParamsFile << '|' << entry->outFileName << '|' << saveFormat.format << '|'
 #endif
                  << saveFormat.jpegQuality << '|' << saveFormat.jpegSubSamp << '|'
-                 << saveFormat.pngBits << '|' << saveFormat.pngCompression << '|'
+                 << saveFormat.pngBits << '|'
                  << saveFormat.tiffBits << '|'  << saveFormat.tiffUncompressed << '|'
                  << saveFormat.saveParams << '|' << entry->forceFormatOpts << '|'
-                 << entry->job->fastPipeline() << '|'
+                 << entry->fast_pipeline << '|'
                  << std::endl;
         }
     }
@@ -310,7 +310,6 @@ bool BatchQueue::loadBatchQueue ()
             const auto jpegQuality = nextIntOr (options.saveFormat.jpegQuality);
             const auto jpegSubSamp = nextIntOr (options.saveFormat.jpegSubSamp);
             const auto pngBits = nextIntOr (options.saveFormat.pngBits);
-            const auto pngCompression = nextIntOr (options.saveFormat.pngCompression);
             const auto tiffBits = nextIntOr (options.saveFormat.tiffBits);
             const auto tiffUncompressed = nextIntOr (options.saveFormat.tiffUncompressed);
             const auto saveParams = nextIntOr (options.saveFormat.saveParams);
@@ -352,7 +351,6 @@ bool BatchQueue::loadBatchQueue ()
                 saveFormat.jpegQuality = jpegQuality;
                 saveFormat.jpegSubSamp = jpegSubSamp;
                 saveFormat.pngBits = pngBits;
-                saveFormat.pngCompression = pngCompression;
                 saveFormat.tiffBits = tiffBits;
                 saveFormat.tiffUncompressed = tiffUncompressed != 0;
                 saveFormat.saveParams = saveParams != 0;
@@ -612,7 +610,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img)
         if (saveFormat.format == "tif") {
             err = img->saveAsTIFF (fname, saveFormat.tiffBits, saveFormat.tiffUncompressed);
         } else if (saveFormat.format == "png") {
-            err = img->saveAsPNG (fname, saveFormat.pngCompression, saveFormat.pngBits);
+            err = img->saveAsPNG (fname, saveFormat.pngBits);
         } else if (saveFormat.format == "jpg") {
             err = img->saveAsJPEG (fname, saveFormat.jpegQuality, saveFormat.jpegSubSamp);
         }
@@ -743,8 +741,14 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
         da.push_back (tok);
     }
 
-    if (origFileName[0] == '/' || origFileName[0] == '\\') {
+    if (origFileName[0] == '/') {
         pa.push_back ("/" + da[0]);
+    } else if (origFileName[0] == '\\') {
+        if (origFileName.size() > 1 && origFileName[1] == '\\') {
+            pa.push_back ("\\\\" + da[0]);
+        } else {
+            pa.push_back ("/" + da[0]);
+        }
     } else {
         pa.push_back (da[0]);
     }

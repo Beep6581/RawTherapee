@@ -42,8 +42,8 @@ public:
     StdImageSource ();
     ~StdImageSource ();
 
-    int         load        (const Glib::ustring &fname, int imageNum = 0, bool batch = false);
-    void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const ColorManagementParams &cmp, const RAWParams &raw);
+    int         load        (const Glib::ustring &fname);
+    void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw);
     ColorTemp   getWB       () const
     {
         return wb;
@@ -68,9 +68,9 @@ public:
     void        getFullSize (int& w, int& h, int tr = TR_NONE);
     void        getSize     (const PreviewProps &pp, int& w, int& h);
 
-    ImageData*  getImageData ()
+    FrameData*  getImageData (unsigned int frameNum)
     {
-        return idata;
+        return idata->getFrameData (frameNum);
     }
     ImageIO*    getImageIO   ()
     {
@@ -93,7 +93,7 @@ public:
     void        convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb);// RAWParams raw will not be used for non-raw files (see imagesource.h)
     static void colorSpaceConversion (Imagefloat* im, const ColorManagementParams &cmp, cmsHPROFILE embedded, IIOSampleFormat sampleFormat);
 
-    bool        IsrgbSourceModified() const
+    bool        isRGBSourceModified() const
     {
         return rgbSourceModified;
     }

@@ -733,7 +733,7 @@ public:
     * @param go green channel of output color [0 ; 65535] (return value)
     * @param bo blue channel of output color [0 ; 65535] (return value)
     */
-    static void interpolateRGBColor (float realL, float iplow, float iphigh, int algm,  const float balance, int twoc, int metchrom, bool chr, bool lum, float chromat, float luma, const float r1, const float g1, const float b1, const float xl, const float yl, const float zl, const float x2, const float y2, const float z2, int channels, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float &ro, float &go, float &bo);
+    static void interpolateRGBColor (float realL, float iplow, float iphigh, int algm,  const float balance, int twoc, int metchrom, float chromat, float luma, const float r1, const float g1, const float b1, const float xl, const float yl, const float zl, const float x2, const float y2, const float z2, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float &ro, float &go, float &bo);
 
 
     /**
@@ -898,7 +898,7 @@ public:
     *        gamma4 used in ip2Lab2rgb [0 ; 1], usually near 0.03(return value)
     *        gamma5 used in ip2Lab2rgb [0 ; 1], usually near 0.5 (return value)
     */
-    static void calcGamma (double pwr, double ts, int mode, int imax, GammaValues &gamma);
+    static void calcGamma (double pwr, double ts, int mode, GammaValues &gamma);
 
 
     /**
@@ -1310,7 +1310,7 @@ public:
     * @param wip matrix for working profile
     * @param multiThread whether to parallelize the loop or not
     */
-    static void LabGamutMunsell (float *labL, float *laba, float *labb, const int N, bool corMunsell, bool lumaMuns, bool isHLEnabled, bool gamut, const double wip[3][3], bool multiThread );
+    static void LabGamutMunsell (float *labL, float *laba, float *labb, const int N, bool corMunsell, bool lumaMuns, bool isHLEnabled, bool gamut, const double wip[3][3]);
 
 
     /*

@@ -1245,6 +1245,13 @@ Camera constants:
     },
 
     { // Quality B
+        "make_model": "FUJIFILM X-A10",
+        "dcraw_matrix": [ 11540,-4999,-991,-2949,10963,2278,-382,1049,5605 ], // DNGv9.12 D65
+        "raw_crop": [ 0, 0, 4912, 3278 ], // full raw 4912x3278, fuji official borders 10,11,9,8
+        "ranges": { "white": 4050 }
+    },
+
+    { // Quality B
         "make_model": [ "FUJIFILM X-T1", "FUJIFILM X-T10", "FUJIFILM X-E2" ],
         "dcraw_matrix": [ 8458,-2451,-855,-4597,12447,2407,-1475,2482,6526 ], // DNG D65
         //"dcraw_matrix": [ 9289,-3279,-632,-3539,11137,2758,-1049,1950,6544 ], // X-RITE D55
@@ -1501,6 +1508,38 @@ Camera constants:
         "ranges": { "white": 16300 } // WL values for 14-bit files, RT auto adapts it for 12-bit files. Typical WL at 16383
     },
 
+    { // Quality A, Samples by zorgtool at RT forums
+        "make_model": "Nikon D850",
+        "dcraw_matrix": [ 10405,-3755,-1270,-5461,13787,1793,-1040,2015,6785 ], // DNGv9.12.1 d65
+        "ranges": {
+            "white": [
+                { "iso": [ 64, 80, 100, 125, 160, 200, 250, 320 ], "levels": [ 16250, 16050, 16250 ] }, // R,B 16383 G1,G2 16145-16155
+                { "iso": [ 400, 500, 640, 800, 1000, 1250, 1600, 2000, 2500 ], "levels": [ 16150, 15950, 16150 ] }, // G1,G2 16110-16145
+                { "iso": [ 3200, 4000, 5000 ], "levels": 16000 }, // G1,G2 16120-16145
+                { "iso": [ 6400, 8000, 10000 ], "levels": 15700 }, // G1,G2 16120-16145
+                { "iso": [ 12800, 16000 ], "levels": 15400 }, // 16383
+                { "iso": [ 20000, 25600 ], "levels": 15000 }, // 16383
+                { "iso": [ 32000 ], "levels": 14500 }, // 16383
+                { "iso": [ 40000 ], "levels": 14000 }, // 16383
+                { "iso": [ 51200 ], "levels": 13500 }, // nominal 16383
+                { "iso": [ 102400 ], "levels": 12000 } // nominal 16383
+            ],
+            "white_max": 16383,
+            "aperture_scaling": [
+                // need for more data to properly fill all scale factors
+                { "aperture": 1.4, "scale_factor": 1.050 }, // 37/35
+                { "aperture": 1.6, "scale_factor": 1.040 }, // 68/65
+                { "aperture": 1.8, "scale_factor": 1.030 }, // 65/63
+                { "aperture": 2.0, "scale_factor": 1.000 }, //
+                { "aperture": 2.2, "scale_factor": 1.000 }, //
+                { "aperture": 2.5, "scale_factor": 1.000 }, //
+                { "aperture": 2.8, "scale_factor": 1.000 }, //
+                { "aperture": 3.2, "scale_factor": 1.000 }, //
+                { "aperture": 3.5, "scale_factor": 1.000 } //
+            ]
+        }
+    },
+
     { // Quality B
         "make_model": "Nikon D80",
         "dcraw_matrix": [ 8629,-2410,-883,-9055,16940,2171,-1490,1363,8520 ], // Dcraw.c d65
@@ -1535,8 +1574,8 @@ Camera constants:
 
     { // Quality B, 20Mp and 80Mp raw frames,
         "make_model": "OLYMPUS E-M1MarkII",
-        //"dcraw_matrix": [ 9422,-3258,-711,-2655,10898,2015,-512,1354,5512 ], // E-M5II dng_v9.5 D65
-        "dcraw_matrix": [ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 ], // beta, dng_v9.8 D65
+        "dcraw_matrix": [ 9383,-3170,-763,-2457,10702,2020,-384,1236,5552 ], // dng_V9.10 D65
+        //"dcraw_matrix": [ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 ], // beta, dng_v9.8 D65
         "raw_crop": [ 8, 8, -16, -8 ], // full raw 5240X3912, jpeg top12,left12,5184x3888, full hires 10400X7792, jpeg crop 8,8,10368x7776
         "ranges": {
             "white": [
@@ -1555,7 +1594,7 @@ Camera constants:
     },
 
     { // Quality B, crop correction
-        "make_model": [ "OLYMPUS E-M10", "OLYMPUS E-M10MarkII" ],
+        "make_model": [ "OLYMPUS E-M10", "OLYMPUS E-M10MarkII", "OLYMPUS E-M10 Mark III" ],
         "dcraw_matrix": [ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 ],
         "raw_crop": [ 0, 0, 4624, 3472 ], // largest valid - full frame is 4640x3472
         //"raw_crop": [ 4, 4, 4616, 3464 ], // olympus jpeg crop 8, 8, 4608, 3456
@@ -1602,6 +1641,13 @@ Camera constants:
                 { "iso": [ 3200, 6400, 12600, 25600 ], "levels": 4080 } // Exif 4095 distribution 4080-4095
             ]
         }
+    },
+
+    { // Quality B
+        "make_model": [ "Panasonic DC-FZ80", "Panasonic DC-FZ81", "Panasonic DC-FZ82", "Panasonic DC-FZ83" ],
+        "dcraw_matrix": [ 8550,-2908,-842,-3195,11529,1881,-338,1603,4631 ], // DNGv9.10.1 D65
+        "raw_crop": [ 0, 6, -8, -2 ], // fullraw4/3 5040x3688 official 8,8,4904,3680 = 4896X3672. Dcraw 0,0,4912,3688 RT's frame gets smaller than dcraw but works better with auto distortion
+        "ranges": { "black": 15, "white": 4050 } // 15 is BL offset. dcraw/RT read the base offset from Exif and calculates total BL = BLbase+BLoffset
     },
 
     { // Quality A, replicated from rawimage.cc
@@ -1672,8 +1718,15 @@ Camera constants:
     { // Quality B
         "make_model": [ "Panasonic DMC-TZ70", "Panasonic DMC-TZ71", "Panasonic DMC-ZS50", "Panasonic DMC-ZS51" ],
         "dcraw_matrix": [ 8802,-3135,-789,-3151,11468,1904,-550,1745,4810 ], // DNG_V8.8 D65
-        "raw_crop": [ 4, 4, -4, -4 ], // full raw 4/3 4144x3016 8,8,3008,4008 = 4000X3000. RT's frame gets smaller than dcraw but works better with auto distortion
+        "raw_crop": [ 0, 0, -4, -4 ], // full raw 4/3 4144x3016 8,8,3008,4008 = 4000X3000. RT's frame gets smaller than dcraw but works better with auto distortion
         "ranges": { "black": 14, "white": 4050 } // 12+1+1 is BL offset
+    },
+
+    { // Quality A, samples by Hombre
+        "make_model": [ "Panasonic DC-ZS70", "Panasonic DC-TZ90", "Panasonic DC-TZ91", "Panasonic DC-TZ92", "Panasonic DC-TZ93" ],
+        "dcraw_matrix": [ 9052,-3117,-883,-3045,11346,1927,-205,1520,4730 ], // DNG_V9.10.1 D65
+        "raw_crop": [ 0, 6, -8, -2 ], // fullraw4/3 5264x3904 official 8,8,3896,5192 = 5184X3888. Dcraw 0,0,5200,3904 RT's frame gets smaller than dcraw but works better with auto distortion
+        "ranges": { "black": 16, "white": 4050 } // 12+3+1 is BL offset
     },
 
 // Panasonic DMC-FZ150,G10,G1,G2,G3,G5,GF1,GF2,GF3 are included as overwrites of the same items of rawimage.cc to test the dcraw9.21 patch
@@ -2055,7 +2108,7 @@ Camera constants:
         "raw_crop": [ 92, 38, 5480, 3656 ] // jpeg 5472x3648 - full raw: 5600 x 3714 - Samsung's official crop: 96, 42, 5568, 3690
         },
 
-    {  // Quality B, RT normally use the embedded data with DNGs but because various DNG use different color matrix adobe_coeff setting is used in dcraw.cc to always use the data from camconst.json for NX1
+    {  // Quality B, RT normally use the embedded data with DNGs but because various DNGs use different color matrix, adobe_coeff setting is used in dcraw.cc to always use the data from camconst.json for NX1
         "make_model": [ "Samsung NX1", "Samsung NX500" ],
         "dcraw_matrix": [ 10686,-4042,-1052,-3595,13238,276,-464,1259,5931 ], // DNG_v8.7 D65
         //"dcraw_matrix": [ 13298,-6099,-296,-5243,16153,-1235,-508,1220,7758 ], // DNG_v8.7 Standard Light A
@@ -2227,13 +2280,13 @@ Camera constants:
     },
 
     { // Quality B
-        "make_model": [ "Sony DSC-RX10M2", "Sony DSC-RX10M3" ],
+        "make_model": [ "Sony DSC-RX10M2", "Sony DSC-RX10M3", "Sony DSC-RX10M4" ],
         "dcraw_matrix": [ 6679,-1825,-745,-5047,13256,1953,-1580,2422,5183 ], // DNG_v9.6 D65
         "ranges": { "black": 800, "white": 16300 }
     },
 
     { // Quality C, No proper color data, beta samples, frame set to official jpeg,
-        "make_model": "XIAOYI M1",
+        "make_model": [ "XIAOYI M1", "YI TECHNOLOGY M1" ],
         "dcraw_matrix": [ 7158,-1911,-606,-3603,10669,2530,-659,1236,5530 ], // XIAO YI DNG D65
         "raw_crop": [ 4, 3, 5192, 3896 ], // full raw 5200x3902, official jpeg 5184X3888
         "ranges": {

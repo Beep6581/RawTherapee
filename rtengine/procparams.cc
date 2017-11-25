@@ -18,7 +18,6 @@
  */
 #include <glib/gstdio.h>
 #include "procparams.h"
-#include "rt_math.h"
 #include "curves.h"
 #include "../rtgui/multilangmgr.h"
 #include "../rtgui/version.h"
@@ -26,6 +25,7 @@
 #include "../rtgui/paramsedited.h"
 #include "../rtgui/options.h"
 #include <locale.h>
+
 #define APPVERSION RTVERSION
 
 using namespace std;
@@ -52,6 +52,7 @@ const int br = (int) options.rtSettings.bot_right;
 const int tl = (int) options.rtSettings.top_left;
 const int bl = (int) options.rtSettings.bot_left;
 
+const char *LensProfParams::methodstring[static_cast<size_t>(LensProfParams::LcMode::LCP) + 1u] = {"none", "lfauto", "lfmanual", "lcp"};
 const char *RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::numMethods] = {"amaze", "igv", "lmmse", "eahd", "hphd", "vng4", "dcb", "ahd", "fast", "mono", "none", "pixelshift" };
 const char *RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::numMethods] = {"3-pass (best)", "1-pass (medium)", "fast", "mono", "none" };
 
@@ -560,7 +561,7 @@ void ColorToningParams::slidersToCurve (std::vector<double> &colorCurve, std::ve
     opacityCurve.at (8) = 0.35;
 }
 
-void ColorToningParams::getCurves (ColorGradientCurve &colorCurveLUT, OpacityCurve &opacityCurveLUT, const double xyz_rgb[3][3], const double rgb_xyz[3][3], bool &opautili) const
+void ColorToningParams::getCurves (ColorGradientCurve &colorCurveLUT, OpacityCurve &opacityCurveLUT, const double xyz_rgb[3][3], bool &opautili) const
 {
     float satur = 0.8f;
     float lumin = 0.5f; //middle of luminance for optimization of gamut - no real importance...as we work in XYZ and gamut control
@@ -586,13 +587,13 @@ void ColorToningParams::getCurves (ColorGradientCurve &colorCurveLUT, OpacityCur
             satur = 0.9f;
         }
 
-        colorCurveLUT.SetXYZ (cCurve, xyz_rgb, rgb_xyz, satur, lumin);
+        colorCurveLUT.SetXYZ (cCurve, xyz_rgb, satur, lumin);
         opacityCurveLUT.Set (oCurve, opautili);
     } else if (method == "Splitlr" || method == "Splitco") {
-        colorCurveLUT.SetXYZ (cCurve, xyz_rgb, rgb_xyz, satur, lumin);
+        colorCurveLUT.SetXYZ (cCurve, xyz_rgb, satur, lumin);
         opacityCurveLUT.Set (oCurve, opautili);
     } else if (method.substr (0, 3) == "RGB") {
-        colorCurveLUT.SetRGB (cCurve, xyz_rgb, rgb_xyz);
+        colorCurveLUT.SetRGB (cCurve);
         opacityCurveLUT.Set (oCurve, opautili);
     }
 }
@@ -922,9 +923,13 @@ void ToneCurveParams::setDefaults()
 
 void LensProfParams::setDefaults()
 {
+    lcMode = LcMode::NONE;
     lcpFile = "";
     useDist = useVign = true;
     useCA = false;
+    lfCameraMake = "";
+    lfCameraModel = "";
+    lfLens = "";
 }
 
 void CoarseTransformParams::setDefaults()
@@ -1245,6 +1250,8 @@ void ProcParams::setDefaults ()
     epd.edgeStopping = 1.4;
     epd.scale = 1.0;
     epd.reweightingIterates = 0;
+
+    fattal.setDefaults();
 
     sh.enabled = false;
     sh.hq = false;
@@ -2447,6 +2454,19 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_integer ("EPD", "ReweightingIterates", epd.reweightingIterates);
         }
 
+// save fattal
+        if (!pedited || pedited->fattal.enabled) {
+            keyFile.set_boolean ("FattalToneMapping", "Enabled", fattal.enabled);
+        }
+
+        if (!pedited || pedited->fattal.threshold) {
+            keyFile.set_integer ("FattalToneMapping", "Threshold", fattal.threshold);
+        }
+
+        if (!pedited || pedited->fattal.amount) {
+            keyFile.set_integer ("FattalToneMapping", "Amount", fattal.amount);
+        }
+        
         /*
         // save lumaDenoise
         if (!pedited || pedited->lumaDenoise.enabled) keyFile.set_boolean ("Luminance Denoising", "Enabled", lumaDenoise.enabled);
@@ -2559,6 +2579,10 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         }
 
 // lens profile
+        if (!pedited || pedited->lensProf.lcMode) {
+            keyFile.set_string ("LensProfile", "LcMode", lensProf.getMethodString (lensProf.lcMode));
+        }
+
         if (!pedited || pedited->lensProf.lcpFile) {
             keyFile.set_string ("LensProfile", "LCPFile", relativePathIfInside (fname, fnameAbsolute, lensProf.lcpFile));
         }
@@ -2573,6 +2597,16 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->lensProf.useCA) {
             keyFile.set_boolean ("LensProfile", "UseCA", lensProf.useCA);
+        }
+
+        if (!pedited || pedited->lensProf.lfCameraMake) {
+            keyFile.set_string("LensProfile", "LFCameraMake", lensProf.lfCameraMake);
+        }
+        if (!pedited || pedited->lensProf.lfCameraModel) {
+            keyFile.set_string("LensProfile", "LFCameraModel", lensProf.lfCameraModel);
+        }
+        if (!pedited || pedited->lensProf.lfLens) {
+            keyFile.set_string("LensProfile", "LFLens", lensProf.lfLens);
         }
 
 // save perspective correction
@@ -5600,6 +5634,33 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
         }
 
+//Load FattalToneMapping
+        if (keyFile.has_group ("FattalToneMapping")) {
+            if (keyFile.has_key ("FattalToneMapping", "Enabled")) {
+                fattal.enabled = keyFile.get_boolean ("FattalToneMapping", "Enabled");
+
+                if (pedited) {
+                    pedited->fattal.enabled = true;
+                }
+            }
+
+            if (keyFile.has_key ("FattalToneMapping", "Threshold")) {
+                fattal.threshold = keyFile.get_double ("FattalToneMapping", "Threshold");
+
+                if (pedited) {
+                    pedited->fattal.threshold = true;
+                }
+            }
+
+            if (keyFile.has_key ("FattalToneMapping", "Amount")) {
+                fattal.amount = keyFile.get_double ("FattalToneMapping", "Amount");
+
+                if (pedited) {
+                    pedited->fattal.amount = true;
+                }
+            }
+        }        
+
         // load lumaDenoise
         /*if (keyFile.has_group ("Luminance Denoising")) {
             if (keyFile.has_key ("Luminance Denoising", "Enabled"))        { lumaDenoise.enabled       = keyFile.get_boolean ("Luminance Denoising", "Enabled"); if (pedited) pedited->lumaDenoise.enabled = true; }
@@ -5832,11 +5893,23 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
 // lens profile
         if (keyFile.has_group ("LensProfile")) {
+            if (keyFile.has_key ("LensProfile", "LcMode")) {
+                lensProf.lcMode = lensProf.getMethodNumber (keyFile.get_string ("LensProfile", "LcMode"));
+
+                if (pedited) {
+                    pedited->lensProf.lcMode = true;
+                }
+            }
+
             if (keyFile.has_key ("LensProfile", "LCPFile")) {
                 lensProf.lcpFile = expandRelativePath (fname, "", keyFile.get_string ("LensProfile", "LCPFile"));
 
                 if (pedited) {
                     pedited->lensProf.lcpFile = true;
+                }
+
+                if(ppVersion < 327 && !lensProf.lcpFile.empty()) {
+                    lensProf.lcMode = LensProfParams::LcMode::LCP;
                 }
             }
 
@@ -5861,6 +5934,27 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->lensProf.useCA = true;
+                }
+            }
+
+            if (keyFile.has_key("LensProfile", "LFCameraMake")) {
+                lensProf.lfCameraMake = keyFile.get_string("LensProfile", "LFCameraMake");
+                if (pedited) {
+                    pedited->lensProf.lfCameraMake = true;
+                }
+            }
+
+            if (keyFile.has_key("LensProfile", "LFCameraModel")) {
+                lensProf.lfCameraModel = keyFile.get_string("LensProfile", "LFCameraModel");
+                if (pedited) {
+                    pedited->lensProf.lfCameraModel = true;
+                }
+            }
+
+            if (keyFile.has_key("LensProfile", "LFLens")) {
+                lensProf.lfLens = keyFile.get_string("LensProfile", "LFLens");
+                if (pedited) {
+                    pedited->lensProf.lfLens = true;
                 }
             }
         }
@@ -8455,6 +8549,9 @@ bool ProcParams::operator== (const ProcParams& other)
         && epd.edgeStopping == other.epd.edgeStopping
         && epd.scale == other.epd.scale
         && epd.reweightingIterates == other.epd.reweightingIterates
+        && fattal.enabled == other.fattal.enabled
+        && fattal.threshold == other.fattal.threshold
+        && fattal.amount == other.fattal.amount
         && defringe.enabled == other.defringe.enabled
         && defringe.radius == other.defringe.radius
         && defringe.threshold == other.defringe.threshold
@@ -8489,10 +8586,14 @@ bool ProcParams::operator== (const ProcParams& other)
         && rotate.degree == other.rotate.degree
         && commonTrans.autofill == other.commonTrans.autofill
         && distortion.amount == other.distortion.amount
+        && lensProf.lcMode == other.lensProf.lcMode
         && lensProf.lcpFile == other.lensProf.lcpFile
         && lensProf.useDist == other.lensProf.useDist
         && lensProf.useVign == other.lensProf.useVign
         && lensProf.useCA == other.lensProf.useCA
+        && lensProf.lfCameraMake == other.lensProf.lfCameraMake
+        && lensProf.lfCameraModel == other.lensProf.lfCameraModel
+        && lensProf.lfLens == other.lensProf.lfLens
         && perspective.horizontal == other.perspective.horizontal
         && perspective.vertical == other.perspective.vertical
         && gradient.enabled == other.gradient.enabled
@@ -8834,7 +8935,7 @@ void PartialProfile::clearGeneral ()
     }
 }
 
-const void PartialProfile::applyTo (ProcParams *destParams) const
+void PartialProfile::applyTo (ProcParams *destParams) const
 {
     if (destParams && pparams && pedited) {
         pedited->combine (*destParams, *pparams, true);

@@ -30,6 +30,7 @@
 #include "rtthumbnail.h"
 #include "profilestore.h"
 #include "../rtgui/threadutils.h"
+#include "rtlensfun.h"
 
 namespace rtengine
 {
@@ -37,23 +38,71 @@ namespace rtengine
 const Settings* settings;
 
 MyMutex* lcmsMutex = nullptr;
+MyMutex *fftwMutex = nullptr;
 
 int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDir, bool loadAll)
 {
     settings = s;
-    ProfileStore::getInstance()->init (loadAll);
-    ICCStore::getInstance()->init (s->iccDirectory, Glib::build_filename (baseDir, "iccprofiles"), loadAll);
-    DCPStore::getInstance()->init (Glib::build_filename (baseDir, "dcpprofiles"), loadAll);
+    ProcParams::init();
+    PerceptualToneCurve::init();
+    RawImageSource::init();
 
-    CameraConstantsStore::getInstance ()->init (baseDir, userSettingsDir);
-    ProcParams::init ();
+#ifdef _OPENMP
+#pragma omp parallel sections
+#endif
+{
+#ifdef _OPENMP
+#pragma omp section
+#endif
+{
+    if (s->lensfunDbDirectory.empty() || Glib::path_is_absolute(s->lensfunDbDirectory)) {
+        LFDatabase::init(s->lensfunDbDirectory);
+    } else {
+        LFDatabase::init(Glib::build_filename(baseDir, s->lensfunDbDirectory));
+    }
+}
+#ifdef _OPENMP
+#pragma omp section
+#endif
+{
+    ProfileStore::getInstance()->init(loadAll);
+}
+#ifdef _OPENMP
+#pragma omp section
+#endif
+{
+    ICCStore::getInstance()->init(s->iccDirectory, Glib::build_filename (baseDir, "iccprofiles"), loadAll);
+}
+#ifdef _OPENMP
+#pragma omp section
+#endif
+{
+    DCPStore::getInstance()->init(Glib::build_filename (baseDir, "dcpprofiles"), loadAll);
+}
+#ifdef _OPENMP
+#pragma omp section
+#endif
+{
+    CameraConstantsStore::getInstance()->init(baseDir, userSettingsDir);
+}
+#ifdef _OPENMP
+#pragma omp section
+#endif
+{
+    dfm.init(s->darkFramesPath);
+}
+#ifdef _OPENMP
+#pragma omp section
+#endif
+{
+    ffm.init(s->flatFieldsPath);
+}
+}
+
     Color::init ();
-    PerceptualToneCurve::init ();
-    RawImageSource::init ();
     delete lcmsMutex;
     lcmsMutex = new MyMutex;
-    dfm.init( s->darkFramesPath );
-    ffm.init( s->flatFieldsPath );
+    fftwMutex = new MyMutex;
     return 0;
 }
 

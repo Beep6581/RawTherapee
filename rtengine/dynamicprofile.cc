@@ -72,7 +72,7 @@ bool DynamicProfileRule::operator< (const DynamicProfileRule &other) const
 }
 
 
-bool DynamicProfileRule::matches (const rtengine::ImageMetaData *im) const
+bool DynamicProfileRule::matches (const rtengine::FramesMetaData *im) const
 {
     return (iso (im->getISOSpeed())
             && fnumber (im->getFNumber())

@@ -24,8 +24,9 @@
 
 CacheImageData::CacheImageData ()
     : md5(""), supported(false), format(FT_Invalid), rankOld(-1), inTrashOld(false), recentlySaved(false),
-      timeValid(false), year(0), month(0), day(0), hour(0), min(0), sec(0), exifValid(false), 
-      fnumber(0.0), shutter(0.0), focalLen(0.0), focalLen35mm(0.0), focusDist(0.f), iso(0),
+      timeValid(false), year(0), month(0), day(0), hour(0), min(0), sec(0), exifValid(false), frameCount(1),
+      fnumber(0.0), shutter(0.0), focalLen(0.0), focalLen35mm(0.0), focusDist(0.f), iso(0), isHDR (false),
+      isPixelShift (false), sensortype(rtengine::ST_NONE), sampleFormat(rtengine::IIOSF_UNKNOWN),
       redAWBMul(-1.0), greenAWBMul(-1.0), blueAWBMul(-1.0), rotate(0), thumbImgType(0)
 {
 }
@@ -138,6 +139,14 @@ int CacheImageData::load (const Glib::ustring& fname)
                         iso         = keyFile.get_integer ("ExifInfo", "ISO");
                     }
 
+                    if (keyFile.has_key ("ExifInfo", "IsHDR")) {
+                        isHDR = keyFile.get_boolean ("ExifInfo", "IsHDR");
+                    }
+
+                    if (keyFile.has_key ("ExifInfo", "IsPixelShift")) {
+                        isPixelShift = keyFile.get_boolean ("ExifInfo", "IsPixelShift");
+                    }
+
                     if (keyFile.has_key ("ExifInfo", "ExpComp")) {
                         expcomp     = keyFile.get_string ("ExifInfo", "ExpComp");
                     }
@@ -160,11 +169,20 @@ int CacheImageData::load (const Glib::ustring& fname)
                 if (keyFile.has_key ("FileInfo", "Filetype")) {
                     filetype    = keyFile.get_string ("FileInfo", "Filetype");
                 }
+                if (keyFile.has_key ("FileInfo", "FrameCount")) {
+                    frameCount  = static_cast<unsigned int>(keyFile.get_integer ("FileInfo", "FrameCount"));
+                }
+                if (keyFile.has_key ("FileInfo", "SampleFormat")) {
+                    sampleFormat = (rtengine::IIO_Sample_Format)keyFile.get_integer ("FileInfo", "SampleFormat");
+                }
             }
 
             if (format == FT_Raw && keyFile.has_group ("ExtraRawInfo")) {
                 if (keyFile.has_key ("ExtraRawInfo", "ThumbImageType")) {
                     thumbImgType    = keyFile.get_integer ("ExtraRawInfo", "ThumbImageType");
+                }
+                if (keyFile.has_key ("ExtraRawInfo", "SensorType")) {
+                    sensortype  = keyFile.get_integer ("ExtraRawInfo", "SensorType");
                 }
             } else {
                 rotate = 0;
@@ -235,6 +253,8 @@ int CacheImageData::save (const Glib::ustring& fname)
         keyFile.set_double  ("ExifInfo", "FocalLen35mm", focalLen35mm);
         keyFile.set_double  ("ExifInfo", "FocusDist", focusDist);
         keyFile.set_integer ("ExifInfo", "ISO", iso);
+        keyFile.set_boolean ("ExifInfo", "IsHDR", isHDR);
+        keyFile.set_boolean ("ExifInfo", "IsPixelShift", isPixelShift);
         keyFile.set_string  ("ExifInfo", "ExpComp", expcomp);
     }
 
@@ -242,9 +262,12 @@ int CacheImageData::save (const Glib::ustring& fname)
     keyFile.set_string  ("ExifInfo", "CameraMake", camMake);
     keyFile.set_string  ("ExifInfo", "CameraModel", camModel);
     keyFile.set_string  ("FileInfo", "Filetype", filetype);
+    keyFile.set_integer ("FileInfo", "FrameCount", frameCount);
+    keyFile.set_integer ("FileInfo", "SampleFormat", sampleFormat);
 
     if (format == FT_Raw) {
         keyFile.set_integer ("ExtraRawInfo", "ThumbImageType", thumbImgType);
+        keyFile.set_integer ("ExtraRawInfo", "SensorType", sensortype);
     }
 
     keyData = keyFile.to_data ();

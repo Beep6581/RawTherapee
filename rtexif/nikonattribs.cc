@@ -55,7 +55,7 @@ public:
         sprintf (buffer, "%d", a);
         return buffer;
     }
-    virtual double toDouble (Tag* t, int ofs)
+    virtual double toDouble (const Tag* t, int ofs)
     {
         int a = t->getValue()[ofs];
 
@@ -66,7 +66,7 @@ public:
             return 0.;
         }
     }
-    virtual int toInt (Tag* t, int ofs, TagType astype)
+    virtual int toInt (const Tag* t, int ofs, TagType astype)
     {
         int a = t->getValue()[ofs];
 
@@ -557,8 +557,10 @@ public:
 };
 NALensDataInterpreter naLensDataInterpreter;
 const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
-    // The key is a composite string made of 8 HEX bytes
-    // LensIDNumber LensFStops MinFocalLength MaxFocalLength MaxApertureAtMinFocal MaxApertureAtMaxFocal MCUVersion and LensType
+    /*
+     * The Nikon LensID is constructed as a Composite tag from the raw hex values of 8 other tags:
+     * LensIDNumber, LensFStops, MinFocalLength, MaxFocalLength, MaxApertureAtMinFocal, MaxApertureAtMaxFocal, MCUVersion and LensType, in that order.
+     */
     {"00 00 00 00 00 00 00 01", "Manual Lens No CPU"},
     {"00 00 00 00 00 00 E1 12", "TC-17E II"},
     {"00 00 00 00 00 00 F1 0C", "TC-14E [II] or Sigma APO Tele Converter 1.4x EX DG or Kenko Teleplus PRO 300 DG 1.4x"},
@@ -680,6 +682,7 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"10 3D 3C 60 2C 3C D2 02", "Tamron AF 28-80mm f/3.5-5.6 Aspherical (177D)"},
     {"10 48 8E 8E 30 30 08 00", "AF Nikkor 300mm f/4 IF-ED"},
     {"11 48 44 5C 24 24 08 00", "AF Zoom-Nikkor 35-70mm f/2.8"},
+    {"11 48 44 5C 24 24 15 00", "AF Zoom-Nikkor 35-70mm f/2.8"},
     {"12 36 5C 81 35 3D 09 00", "Cosina AF Zoom 70-210mm f/4.5-5.6 MC Macro"},
     {"12 36 69 97 35 42 09 00", "Soligor AF Zoom 100-400mm 1:4.5-6.7 MC"},
     {"12 38 69 97 35 42 09 02", "Promaster Spectrum 7 100-400mm f/4.5-6.7"},
@@ -952,6 +955,7 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"92 48 24 37 24 24 94 06", "AF-S Zoom-Nikkor 14-24mm f/2.8G ED"},
     {"93 48 37 5C 24 24 95 06", "AF-S Zoom-Nikkor 24-70mm f/2.8G ED"},
     {"94 40 2D 53 2C 3C 96 06", "AF-S DX Zoom-Nikkor 18-55mm f/3.5-5.6G ED II"},
+    {"94 48 7C 7C 24 24 4B 0E", "Sigma 180mm f/2.8 APO Macro EX DG OS"},
     {"95 00 37 37 2C 2C 97 06", "PC-E Nikkor 24mm f/3.5D ED"},
     {"95 4C 37 37 2C 2C 97 02", "PC-E Nikkor 24mm f/3.5D ED"},
     {"96 38 1F 37 34 3C 4B 06", "Sigma 12-24mm f/4.5-5.6 II DG HSM"},
@@ -1002,6 +1006,7 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"A7 3C 53 80 30 3C C2 0E", "AF-S DX Nikkor 55-200mm f/4-5.6G ED VR II"},
     {"A7 49 80 A0 24 24 4B 06", "Sigma APO 200-500mm f/2.8 EX DG"},
     {"A7 4B 62 62 2C 2C A9 0E", "AF-S DX Micro Nikkor 85mm f/3.5G ED VR"},
+    {"A8 38 18 30 34 3C D3 8E", "AF-P DX Nikkor 10-20mm f/4.5-5.6G VR"},
     {"A8 48 80 98 30 30 AA 0E", "AF-S VR Zoom-Nikkor 200-400mm f/4G IF-ED II"},
     {"A8 48 8E 8E 30 30 C3 0E", "AF-S Nikkor 300mm f/4E PF ED VR"},
     {"A8 48 8E 8E 30 30 C3 4E", "AF-S Nikkor 300mm f/4E PF ED VR"},
@@ -1030,6 +1035,8 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"B6 48 37 56 24 24 1C 02", "Sigma 24-60mm f/2.8 EX DG"},
     {"B7 44 60 98 34 3C B9 0E", "AF-S Nikkor 80-400mm f/4.5-5.6G ED VR"},
     {"B8 40 2D 44 2C 34 BA 06", "AF-S Nikkor 18-35mm f/3.5-4.5G ED"},
+    {"BF 4E 26 26 1E 1E 01 04", "Irix 15mm f/2.4 Firefly"},
+    {"C3 34 68 98 38 40 4B 4E", "Sigma 100-400mm f/5-6.3 DG OS HSM | C"},
     {"CC 4C 50 68 14 14 4B 06", "Sigma 50-100mm f/1.8 DC HSM | A"},
     {"CD 3D 2D 70 2E 3C 4B 0E", "Sigma 18-125mm f/3.8-5.6 DC OS HSM"},
     {"CE 34 76 A0 38 40 4B 0E", "Sigma 150-500mm f/5-6.3 DG OS APO HSM"},
@@ -1083,7 +1090,7 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"FE 53 5C 80 24 24 84 06", "Tamron SP AF 70-200mm f/2.8 Di LD (IF) Macro (A001)"},
     {"FE 54 5C 80 24 24 DF 0E", "Tamron SP 70-200mm f/2.8 Di VC USD (A009)"},
     {"FE 54 64 64 24 24 DF 0E", "Tamron SP 90mm f/2.8 Di VC USD Macro 1:1 (F004)"},
-    {"FF 40 2D 80 2C 40 4B 06", "Sigma 18-200mm f/3.5-6.3 DC"}
+    {"FF 40 2D 80 2C 40 4B 06", "Sigma 18-200mm f/3.5-6.3 DC"},
 };
 
 const TagAttrib nikonISOInfoAttribs[] = {

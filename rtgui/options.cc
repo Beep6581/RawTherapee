@@ -309,7 +309,6 @@ void Options::setDefaults ()
     saveFormat.format = "jpg";
     saveFormat.jpegQuality = 92;
     saveFormat.jpegSubSamp = 2;
-    saveFormat.pngCompression = 6;
     saveFormat.pngBits = 8;
     saveFormat.tiffBits = 16;
     saveFormat.tiffUncompressed = true;
@@ -318,7 +317,6 @@ void Options::setDefaults ()
     saveFormatBatch.format = "jpg";
     saveFormatBatch.jpegQuality = 92;
     saveFormatBatch.jpegSubSamp = 2;
-    saveFormatBatch.pngCompression = 6;
     saveFormatBatch.pngBits = 8;
     saveFormatBatch.tiffBits = 16;
     saveFormatBatch.tiffUncompressed = true;
@@ -354,6 +352,7 @@ void Options::setDefaults ()
     CPFontFamily = "default";
     CPFontSize = 8;
     lastScale = 5;
+    lastShowAllExif = false;
     panAccelFactor = 5;
     rememberZoomAndPan = true;
     lastCropSize = 1;
@@ -405,6 +404,7 @@ void Options::setDefaults ()
     editorToSendTo = 1;
     favoriteDirs.clear();
     tpOpen.clear ();
+    autoSaveTpOpen = true;
     //crvOpen.clear ();
     parseExtensions.clear ();
     parseExtensionsEnabled.clear ();
@@ -509,120 +509,8 @@ void Options::setDefaults ()
     sndLngEditProcDone = "window-attention";
 #endif
 
-    // Reminder: 0 = SET mode, 1 = ADD mode
-    baBehav = {
-        1, // ADDSET_TC_EXPCOMP
-        1, // ADDSET_TC_BRIGHTNESS
-        1, // ADDSET_TC_BLACKLEVEL
-        1, // ADDSET_TC_CONTRAST
-        1, // ADDSET_SH_HIGHLIGHTS
-        1, // ADDSET_SH_SHADOWS
-        1, // ADDSET_SH_LOCALCONTRAST
-        1, // ADDSET_LC_BRIGHTNESS
-        1, // ADDSET_LC_CONTRAST
-        1, // ADDSET_SHARP_AMOUNT
-        1, // ADDSET_WB_TEMPERATURE
-        1, // ADDSET_WB_GREEN
-        1, // ADDSET_ROTATE_DEGREE
-        1, // ADDSET_DIST_AMOUNT
-        1, // ADDSET_PERSPECTIVE
-        1, // ADDSET_CA
-        1, // ADDSET_VIGN_AMOUNT
-        1, // ADDSET_VIGN_RADIUS
-        1, // ADDSET_VIGN_STRENGTH
-        1, // ADDSET_VIGN_CENTER
-        1, // ADDSET_LC_CHROMATICITY
-        1, // ADDSET_TC_SATURATION
-        1, // ADDSET_TC_HLCOMPAMOUNT
-        1, // ADDSET_TC_HLCOMPTHRESH
-        1, // ADDSET_TC_SHCOMP
-        1, // ADDSET_DIRPYREQ
-        1, // ADDSET_DIRPYRDN_LUMA
-        1, // ADDSET_DIRPYRDN_LUDET
-        1, // ADDSET_DIRPYRDN_CHROMA
-        1, // ADDSET_DIRPYRDN_CHROMARED
-        1, // ADDSET_DIRPYRDN_CHROMABLUE
-        1, // ADDSET_DIRPYRDN_GAMMA
-        1, // ADDSET_CHMIXER
-        1, // ADDSET_PREPROCESS_GREENEQUIL
-        1, // ADDSET_PREPROCESS_LINEDENOISE
-        1, // ADDSET_RAWCACORR
-        1, // ADDSET_RAWEXPOS_LINEAR
-        1, // ADDSET_RAWEXPOS_PRESER
-        1, // ADDSET_RAWEXPOS_BLACKS
-        1, // ADDSET_SHARPENEDGE_AMOUNT
-        1, // ADDSET_SHARPENMICRO_AMOUNT
-        1, // ADDSET_SHARPENEDGE_PASS
-        1, // ADDSET_SHARPENMICRO_UNIFORMITY
-        1, // ADDSET_VIBRANCE_PASTELS
-        1, // ADDSET_VIBRANCE_SATURATED
-        1, // ADDSET_FREE_OUPUT_GAMMA
-        1, // ADDSET_FREE_OUTPUT_SLOPE
-        1, // ADDSET_CAT_DEGREE
-        1, // ADDSET_CAT_ADAPSCEN
-        1, // ADDSET_CAT_ADAPLUM
-        1, // ADDSET_CAT_LIGHT
-        1, // ADDSET_CAT_RSTPRO
-        1, // ADDSET_CAT_BADPIX
-        1, // ADDSET_CAT_JLIGHT
-        1, // ADDSET_CAT_CHROMA
-        1, // ADDSET_CAT_CONTRAST
-        1, // ADDSET_CAT_CHROMA_S
-        1, // ADDSET_CAT_CHROMA_M
-        1, // ADDSET_CAT_HUE
-        1, // ADDSET_CAT_BADPIX
-        1, // ADDSET_WB_EQUAL
-        1, // ADDSET_GRADIENT_DEGREE
-        1, // ADDSET_GRADIENT_FEATHER
-        1, // ADDSET_GRADIENT_STRENGTH
-        1, // ADDSET_GRADIENT_CENTER
-        1, // ADDSET_PCVIGNETTE_STRENGTH
-        1, // ADDSET_PCVIGNETTE_FEATHER
-        1, // ADDSET_PCVIGNETTE_ROUNDNESS
-        1, // ADDSET_BLACKWHITE_HUES
-        1, // ADDSET_BLACKWHITE_GAMMA
-        1, // ADDSET_DIRPYREQ_THRESHOLD
-        1, // ADDSET_DIRPYREQ_SKINPROTECT
-        1, // ADDSET_COLORTONING_SPLIT
-        1, // ADDSET_COLORTONING_SATTHRESHOLD
-        1, // ADDSET_COLORTONING_SATOPACITY
-        1, // ADDSET_COLORTONING_BALANCE
-        1, // ADDSET_COLORTONING_STRENGTH
-        1, // ADDSET_DIRPYRDN_PASSES
-        1, // ADDSET_RAWFFCLIPCONTROL
-        1, // ADDSET_FILMSIMULATION_STRENGTH
-        1, // ADDSET_WA
-        1, // ADDSET_WA_SKINPROTECT
-        1, // ADDSET_WA_THRESHOLD2
-        1, // ADDSET_WA_THRR
-        1, // ADDSET_WA_THRRH
-        1, // ADDSET_WA_THRESHOLD
-        1, // ADDSET_WA_THRESHOLD2
-        1, // ADDSET_WA_CHRO
-        1, // ADDSET_WA_CHROMA
-        1, // ADDSET_WA_CONTRAST
-        1, // ADDSET_WA_RESCON
-        1, // ADDSET_WA_RESCONH
-        1, // ADDSET_WA_RESCHRO
-        1, // ADDSET_WA_SKYPROTECT
-        1, // ADDSET_WA_EDGRAD
-        1, // ADDSET_WA_EDGVAL
-        1, // ADDSET_WA_STRENGTH
-        1, // ADDSET_WA_EDGEDETECT
-        1, // ADDSET_WA_EDGEDETECTTHR
-        1, // ADDSET_WA_EDGEDETECTTHR2
-        1, // ADDSET_WA_TMRS
-        1, // ADDSET_WA_GAMMA
-        1, // ADDSET_RETI_STR
-        1, // ADDSET_RETI_NEIGH
-        1, // ADDSET_RETI_LIMD
-        1, // ADDSET_RETI_GAIN
-        1, // ADDSET_RETI_OFFS
-        1, // ADDSET_RETI_VART
-        1, // ADDSET_RETI_GAM
-        1, // ADDSET_RETI_SLO
-        1, // ADDSET_WB_TEMPBIAS
-    };
+    // 0 = SET mode, 1 = ADD mode
+    baBehav.assign(ADDSET_PARAM_NUM, 0);
 
     rtSettings.darkFramesPath = "";
     rtSettings.flatFieldsPath = "";
@@ -642,7 +530,7 @@ void Options::setDefaults ()
 #endif
 //   rtSettings.viewingdevice = 0;
 //   rtSettings.viewingdevicegrey = 3;
-  //  rtSettings.viewinggreySc = 1;
+    //  rtSettings.viewinggreySc = 1;
     rtSettings.leveldnv = 2;
     rtSettings.leveldnti = 0;
     rtSettings.leveldnaut = 0;
@@ -726,6 +614,7 @@ void Options::setDefaults ()
     lastLensProfileDir = "";
     gimpPluginShowInfoDialog = true;
     maxRecentFolders = 15;
+    rtSettings.lensfunDbDirectory = ""; // set also in main.cc and main-cli.cc
 }
 
 Options* Options::copyFrom (Options* other)
@@ -744,14 +633,15 @@ void Options::filterOutParsedExtensions ()
         }
 }
 
-int Options::readFromFile (Glib::ustring fname)
+void Options::readFromFile (Glib::ustring fname)
 {
     setlocale (LC_NUMERIC, "C"); // to set decimal point to "."
 
     Glib::KeyFile keyFile;
 
     if ( !Glib::file_test (fname, Glib::FILE_TEST_EXISTS)) {
-        return 1;
+        Glib::ustring msg = Glib::ustring::compose ("Options file %1 does not exist", fname);
+        throw Error (msg);
     }
 
     try {
@@ -898,10 +788,6 @@ int Options::readFromFile (Glib::ustring fname)
                     saveFormat.jpegSubSamp = keyFile.get_integer ("Output", "JpegSubSamp");
                 }
 
-                if (keyFile.has_key ("Output", "PngCompression")) {
-                    saveFormat.pngCompression = keyFile.get_integer ("Output", "PngCompression");
-                }
-
                 if (keyFile.has_key ("Output", "PngBps")) {
                     saveFormat.pngBits = keyFile.get_integer ("Output", "PngBps");
                 }
@@ -929,10 +815,6 @@ int Options::readFromFile (Glib::ustring fname)
 
                 if (keyFile.has_key ("Output", "JpegSubSampBatch")) {
                     saveFormatBatch.jpegSubSamp = keyFile.get_integer ("Output", "JpegSubSampBatch");
-                }
-
-                if (keyFile.has_key ("Output", "PngCompressionBatch")) {
-                    saveFormatBatch.pngCompression = keyFile.get_integer ("Output", "PngCompressionBatch");
                 }
 
                 if (keyFile.has_key ("Output", "PngBpsBatch")) {
@@ -1387,6 +1269,10 @@ int Options::readFromFile (Glib::ustring fname)
                     lastScale = keyFile.get_integer ("GUI", "LastPreviewScale");
                 }
 
+                if (keyFile.has_key ("GUI", "LastShowAllExif")) {
+                    lastShowAllExif = keyFile.get_boolean ("GUI", "LastShowAllExif");
+                }
+
                 if (keyFile.has_key ("GUI", "PanAccelFactor")) {
                     panAccelFactor = keyFile.get_integer ("GUI", "PanAccelFactor");
                 }
@@ -1433,6 +1319,10 @@ int Options::readFromFile (Glib::ustring fname)
 
                 if (keyFile.has_key ("GUI", "ToolPanelsExpanded")) {
                     tpOpen = keyFile.get_integer_list ("GUI", "ToolPanelsExpanded");
+                }
+
+                if (keyFile.has_key ("GUI", "ToolPanelsExpandedAutoSave")) {
+                    autoSaveTpOpen = keyFile.get_boolean ("GUI", "ToolPanelsExpandedAutoSave");
                 }
 
                 if (keyFile.has_key ("GUI", "MultiDisplayMode")) {
@@ -1557,11 +1447,11 @@ int Options::readFromFile (Glib::ustring fname)
                 rtSettings.viewingdevicegrey = keyFile.get_integer ("Color Management", "grey");
                 }
                 */
-/*
-                if (keyFile.has_key ("Color Management", "greySc")) {
-                    rtSettings.viewinggreySc = keyFile.get_integer ("Color Management", "greySc");
-                }
-*/
+                /*
+                                if (keyFile.has_key ("Color Management", "greySc")) {
+                                    rtSettings.viewinggreySc = keyFile.get_integer ("Color Management", "greySc");
+                                }
+                */
                 if (keyFile.has_key ("Color Management", "CBDLArtif")) {
                     rtSettings.artifact_cbdl = keyFile.get_double ("Color Management", "CBDLArtif");
                 }
@@ -1862,25 +1752,36 @@ int Options::readFromFile (Glib::ustring fname)
                 }
             }
 
+            if (keyFile.has_group ("Lensfun")) {
+                if (keyFile.has_key ("Lensfun", "DBDirectory")) {
+                    rtSettings.lensfunDbDirectory = keyFile.get_string ("Lensfun", "DBDirectory");
+                }
+            }
+
 // --------------------------------------------------------------------------------------------------------
 
             filterOutParsedExtensions ();
 
-            return 0;
+            return;
 
         }
     } catch (Glib::Error &err) {
+        Glib::ustring msg = Glib::ustring::compose ("Options::readFromFile / Error code %1 while reading values from \"%2\":\n%3", err.code(), fname, err.what());
+
         if (options.rtSettings.verbose) {
-            printf ("Options::readFromFile / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
+            printf ("%s\n", msg.c_str());
         }
+
+        throw Error (msg);
     } catch (...) {
+        Glib::ustring msg = Glib::ustring::compose ("Options::readFromFile / Unknown exception while trying to load \"%1\"!", fname);
+
         if (options.rtSettings.verbose) {
-            printf ("Options::readFromFile / Unknown exception while trying to load \"%s\"!\n", fname.c_str());
+            printf ("%s\n", msg.c_str());
         }
+
+        throw Error (msg);
     }
-
-    return 1;
-
 }
 
 bool Options::safeDirGet (const Glib::KeyFile& keyFile, const Glib::ustring& section,
@@ -1898,7 +1799,7 @@ bool Options::safeDirGet (const Glib::KeyFile& keyFile, const Glib::ustring& sec
     return false;
 }
 
-int Options::saveToFile (Glib::ustring fname)
+void Options::saveToFile (Glib::ustring fname)
 {
 
     Glib::ustring keyData;
@@ -2016,7 +1917,6 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_string  ("Output", "Format", saveFormat.format);
         keyFile.set_integer ("Output", "JpegQuality", saveFormat.jpegQuality);
         keyFile.set_integer ("Output", "JpegSubSamp", saveFormat.jpegSubSamp);
-        keyFile.set_integer ("Output", "PngCompression", saveFormat.pngCompression);
         keyFile.set_integer ("Output", "PngBps", saveFormat.pngBits);
         keyFile.set_integer ("Output", "TiffBps", saveFormat.tiffBits);
         keyFile.set_boolean ("Output", "TiffUncompressed", saveFormat.tiffUncompressed);
@@ -2025,7 +1925,6 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_string  ("Output", "FormatBatch", saveFormatBatch.format);
         keyFile.set_integer ("Output", "JpegQualityBatch", saveFormatBatch.jpegQuality);
         keyFile.set_integer ("Output", "JpegSubSampBatch", saveFormatBatch.jpegSubSamp);
-        keyFile.set_integer ("Output", "PngCompressionBatch", saveFormatBatch.pngCompression);
         keyFile.set_integer ("Output", "PngBpsBatch", saveFormatBatch.pngBits);
         keyFile.set_integer ("Output", "TiffBpsBatch", saveFormatBatch.tiffBits);
         keyFile.set_boolean ("Output", "TiffUncompressedBatch", saveFormatBatch.tiffUncompressed);
@@ -2087,6 +1986,7 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_string  ("GUI", "CPFontFamily", CPFontFamily);
         keyFile.set_integer ("GUI", "CPFontSize", CPFontSize);
         keyFile.set_integer ("GUI", "LastPreviewScale", lastScale);
+        keyFile.set_boolean ("GUI", "LastShowAllExif", lastShowAllExif);
         keyFile.set_integer ("GUI", "PanAccelFactor", panAccelFactor);
         keyFile.set_boolean ("GUI", "RememberZoomAndPan", rememberZoomAndPan);
         keyFile.set_integer ("GUI", "LastCropSize", lastCropSize);
@@ -2100,6 +2000,7 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_boolean ("GUI", "ProcessingQueueEnbled", procQueueEnabled);
         Glib::ArrayHandle<int> tpopen = tpOpen;
         keyFile.set_integer_list ("GUI", "ToolPanelsExpanded", tpopen);
+        keyFile.set_boolean ("GUI", "ToolPanelsExpandedAutoSave", autoSaveTpOpen);
         keyFile.set_integer ("GUI", "MultiDisplayMode", multiDisplayMode);
         keyFile.set_double_list ("GUI", "CutOverlayBrush", cutOverlayBrush);
         keyFile.set_double_list ("GUI", "NavGuideBrush", navGuideBrush);
@@ -2227,33 +2128,27 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_string  ("Dialogs", "LastLensProfileDir", lastLensProfileDir);
         keyFile.set_boolean ("Dialogs", "GimpPluginShowInfoDialog", gimpPluginShowInfoDialog);
 
+        keyFile.set_string  ("Lensfun", "DBDirectory", rtSettings.lensfunDbDirectory);        
+
         keyData = keyFile.to_data ();
 
-    } catch (Glib::KeyFileError&) {}
-
-    if (keyData.empty ()) {
-        return 1;
+    } catch (Glib::KeyFileError &e) {
+        throw Error (e.what());
     }
 
     FILE *f = g_fopen (fname.c_str (), "wt");
 
     if (f == nullptr) {
         std::cout << "Warning! Unable to save your preferences to: " << fname << std::endl;
-#ifndef RAWTHERAPEE_CLI
         Glib::ustring msg_ = Glib::ustring::compose (M ("MAIN_MSG_WRITEFAILED"), fname.c_str());
-        //writeFailed (getToplevelWindow (this), msg_);
-        Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_CLOSE, true);
-        msgd.run ();
-#endif
-        return 1;
+        throw Error (msg_);
     } else {
         fprintf (f, "%s", keyData.c_str ());
         fclose (f);
-        return 0;
     }
 }
 
-bool Options::load (bool lightweight)
+void Options::load (bool lightweight)
 {
 
     // Find the application data path
@@ -2267,7 +2162,8 @@ bool Options::load (bool lightweight)
         rtdir = Glib::ustring (path);
 
         if (!Glib::path_is_absolute (rtdir)) {
-            return false;
+            Glib::ustring msg = Glib::ustring::compose ("Settings path %1 is not absolute", rtdir);
+            throw Error (msg);
         }
     } else {
 #ifdef WIN32
@@ -2292,7 +2188,11 @@ bool Options::load (bool lightweight)
     cacheBaseDir = Glib::build_filename (argv0, "cache");
 
     // Read the global option file (the one located in the application's base folder)
-    options.readFromFile (Glib::build_filename (argv0, "options"));
+    try {
+        options.readFromFile (Glib::build_filename (argv0, "options"));
+    } catch (Options::Error &) {
+        // ignore errors here
+    }
 
     // Modify the path of the cache folder to the one provided in RT_CACHE environment variable
     path = g_getenv ("RT_CACHE");
@@ -2301,7 +2201,8 @@ bool Options::load (bool lightweight)
         cacheBaseDir = Glib::ustring (path);
 
         if (!Glib::path_is_absolute (cacheBaseDir)) {
-            return false;
+            Glib::ustring msg = Glib::ustring::compose ("Cache base dir %1 is not absolute", cacheBaseDir);
+            throw Error (msg);
         }
     }
     // No environment variable provided, so falling back to the multi user mode, is enabled
@@ -2317,12 +2218,14 @@ bool Options::load (bool lightweight)
     if (options.multiUser) {
         // Read the user option file (the one located somewhere in the user's home folder)
         // Those values supersets those of the global option file
-        int r = options.readFromFile (Glib::build_filename (rtdir, "options"));
-
-        // If the local option file does not exist or is broken, and the local cache folder does not exist, recreate it
-        if (r && !g_mkdir_with_parents (rtdir.c_str (), 511)) {
-            // Save the option file
-            options.saveToFile (Glib::build_filename (rtdir, "options"));
+        try {
+            options.readFromFile (Glib::build_filename (rtdir, "options"));
+        } catch (Options::Error &) {
+            // If the local option file does not exist or is broken, and the local cache folder does not exist, recreate it
+            if (!g_mkdir_with_parents (rtdir.c_str (), 511)) {
+                // Save the option file
+                options.saveToFile (Glib::build_filename (rtdir, "options"));
+            }
         }
 
 #ifdef __APPLE__
@@ -2412,11 +2315,9 @@ bool Options::load (bool lightweight)
         }
     }
 
-    langMgr.load (localeTranslation, new MultiLangMgr (languageTranslation, new MultiLangMgr (defaultTranslation)));
+    langMgr.load ({localeTranslation, languageTranslation, defaultTranslation});
 
     rtengine::init (&options.rtSettings, argv0, rtdir, !lightweight);
-
-    return true;
 }
 
 void Options::save ()

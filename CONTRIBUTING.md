@@ -14,6 +14,7 @@ The most useful feedback is based on the latest development code, and in the cas
 
 ## Contributing as a Programmer
 - Announce and discuss your plans in GitHub before starting work.
+- Work in a new branch. Fork if necessary.
 - Keep branches small so that completed and working features can be merged into the "dev" branch often, and so that they can be abandoned if they head in the wrong direction.
 - Use C++11
-- Code must be run through astyle version 3 or newer before being merged.
+- Code may be run through astyle version 3 or newer. If using astyle, it is important that the astyle changes go into their own commit, so that style changes are not mixed with actual code changes. Command: `astyle --options=rawtherapee.astylerc code.cc`

@@ -50,15 +50,15 @@ private:
 
     bool isSingleTabMode()
     {
-        return !options.tabbedUI && !(options.multiDisplayMode > 0);
+        return !options.tabbedUI && ! (options.multiDisplayMode > 0);
     };
-    void findVerNumbers(int* numbers, Glib::ustring versionStr);
+    void findVerNumbers (int* numbers, Glib::ustring versionStr);
 
-    bool on_expose_event_epanel(GdkEventExpose* event);
-    bool on_expose_event_fpanel(GdkEventExpose* event);
-    bool splashClosed(GdkEventAny* event);
-    bool isEditorPanel(Widget* panel);
-    bool isEditorPanel(guint pageNum);
+    bool on_expose_event_epanel (GdkEventExpose* event);
+    bool on_expose_event_fpanel (GdkEventExpose* event);
+    bool splashClosed (GdkEventAny* event);
+    bool isEditorPanel (Widget* panel);
+    bool isEditorPanel (guint pageNum);
 
     Glib::ustring versionStr;
 #if defined(__APPLE__)
@@ -70,20 +70,20 @@ public:
     ~RTWindow();
 
 #if defined(__APPLE__)
-    bool osxFileOpenEvent(Glib::ustring path);
+    bool osxFileOpenEvent (Glib::ustring path);
 #endif
     void addEditorPanel (EditorPanel* ep, const std::string &name);
     void remEditorPanel (EditorPanel* ep);
-    bool selectEditorPanel(const std::string &name);
+    bool selectEditorPanel (const std::string &name);
 
     void addBatchQueueJob       (BatchQueueEntry* bqe, bool head = false);
     void addBatchQueueJobs      (std::vector<BatchQueueEntry*> &entries);
 
     bool keyPressed (GdkEventKey* event);
-    bool on_configure_event(GdkEventConfigure* event);
-    bool on_delete_event(GdkEventAny* event);
-    bool on_window_state_event(GdkEventWindowState* event);
-    void on_mainNB_switch_page(Gtk::Widget* widget, guint page_num);
+    bool on_configure_event (GdkEventConfigure* event);
+    bool on_delete_event (GdkEventAny* event);
+    bool on_window_state_event (GdkEventWindowState* event);
+    void on_mainNB_switch_page (Gtk::Widget* widget, guint page_num);
 
     void showPreferences ();
     void on_realize ();
@@ -115,10 +115,12 @@ public:
     {
         return is_fullscreen;
     }
-    void set_title_decorated(Glib::ustring fname);
+    void set_title_decorated (Glib::ustring fname);
     void closeOpenEditors();
-    void setEditorMode(bool tabbedUI);
+    void setEditorMode (bool tabbedUI);
     void createSetmEditor();
+
+    void writeToolExpandedStatus (std::vector<int> &tpOpen);
 };
 
 #endif

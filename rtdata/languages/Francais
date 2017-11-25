@@ -68,6 +68,7 @@ EXIFPANEL_RESET;Réinitialiser
 EXIFPANEL_RESETALL;Réinitialiser tout
 EXIFPANEL_RESETALLHINT;Réinitialise tous les tags à leur valeur initiale
 EXIFPANEL_RESETHINT;Réinitialise les données sélectionnées à la valeur initiale
+EXIFPANEL_SHOWALL;Voir tout
 EXIFPANEL_SUBDIRECTORY;Sous-répertoire
 EXPORT_BYPASS;Étapes de traitement à ignorer
 EXPORT_BYPASS_ALL;Sélectionner / Désélectionner tout
@@ -702,6 +703,9 @@ HISTORY_MSG_472;PS - Adoucir les transitions
 HISTORY_MSG_473;PS - Utiliser LMMSE
 HISTORY_MSG_474;PS - Égaliser
 HISTORY_MSG_475;PS - Égaliser par canal
+HISTORY_MSG_488;Compression tonale HDR
+HISTORY_MSG_489;CT HDR - Seuil
+HISTORY_MSG_490;CT HDR - Quantité
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourci: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Capture
@@ -903,6 +907,7 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Ombres/Hautes lumières
 PARTIALPASTE_SHARPENEDGE;Bords
 PARTIALPASTE_SHARPENING;Netteté
 PARTIALPASTE_SHARPENMICRO;Microcontraste
+PARTIALPASTE_TM_FATTAL;Compression tonale HDR (Fattal02)
 PARTIALPASTE_VIBRANCE;Vibrance
 PARTIALPASTE_VIGNETTING;Correction du vignettage
 PARTIALPASTE_WAVELETGROUP;Niveaux d'ondelette
@@ -954,7 +959,6 @@ PREFERENCES_D50;5000K
 PREFERENCES_D55;5500K
 PREFERENCES_D60;6000K
 PREFERENCES_D65;6500K
-PREFERENCES_DARKFRAME;Soustraction de Trame Noire
 PREFERENCES_DARKFRAMEFOUND;Trouvé
 PREFERENCES_DARKFRAMESHOTS;image(s)
 PREFERENCES_DARKFRAMETEMPLATES;modèle(s)
@@ -963,6 +967,7 @@ PREFERENCES_DATEFORMATHINT;<i>Vous pouvez utiliser les paramètres de chaînes f
 PREFERENCES_DAUB_LABEL;Utiliser les ondelettes de Daubechies D6 au lieu de D4
 PREFERENCES_DAUB_TOOLTIP;Les outils de Réduction de Bruit et de Niveaux d'Ondelettes utilisent une ondelette de Debauchie mère. Si vous choisissez D6 au lieu de D4 vous augmentez le nombre de coéf. orthogonaux de Daubechies et augmentez probablement la qualité des niveaux de taille moyenne. Il n'y a pas de différence de consommation mémoire ou de temps de traitement entre les deux.
 PREFERENCES_DIRDARKFRAMES;Dossier des images de Trame Noire
+PREFERENCES_DIRECTORIES;Dossiers
 PREFERENCES_DIRHOME;Racine de mes documents personnels
 PREFERENCES_DIRLAST;Dernier dossier visité
 PREFERENCES_DIROTHER;Autre
@@ -975,8 +980,6 @@ PREFERENCES_EXTERNALEDITOR;Éditeur externe
 PREFERENCES_FBROWSEROPTS;Options du navigateur de fichiers et de vignettes
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barre de menu de l'explorateur de fichiers uni-ligne\n(à désactiver pour les écrans de faible résolution)
 PREFERENCES_FILEFORMAT;Format du fichier
-PREFERENCES_FILMSIMULATION;Simulation de Film
-PREFERENCES_FLATFIELD;Champ Uniforme
 PREFERENCES_FLATFIELDFOUND;Trouvé
 PREFERENCES_FLATFIELDSDIR;Dossier des images de Champ Uniforme
 PREFERENCES_FLATFIELDSHOTS;image(s)
@@ -1153,8 +1156,17 @@ PROGRESSBAR_SAVEPNG;Enregistrement du fichier PNG...
 PROGRESSBAR_SAVETIFF;Enregistrement du fichier TIFF...
 PROGRESSBAR_SNAPSHOT_ADDED;Signet ajouté
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Profil modifié dans le navigateur
+QINFO_FRAMECOUNT;%2 images
+QINFO_HDR;HDR / %2 image(s)
 QINFO_ISO;ISO
 QINFO_NOEXIF;Données EXIF non disponibles.
+QINFO_PIXELSHIFT;PixelShift / %2 images
+SAMPLEFORMAT_0;Format de donnée inconnu
+SAMPLEFORMAT_1;8 bits non signé
+SAMPLEFORMAT_2;16 bits non signé
+SAMPLEFORMAT_4;LogLuv 24 bits
+SAMPLEFORMAT_8;LogLuv 32 bits
+SAMPLEFORMAT_16;32 bits à virgule flottante
 SAVEDLG_AUTOSUFFIX;Ajouter automatiquement un suffixe si le fichier existe déjà
 SAVEDLG_FILEFORMAT;Format de fichier
 SAVEDLG_FORCEFORMATOPTS;Forcer les options d'enregistrement
@@ -1173,8 +1185,8 @@ SAVEDLG_SUBSAMP_TOOLTIP;Meilleurs compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma div
 SAVEDLG_TIFFUNCOMPRESSED;TIFF non compressé
 SAVEDLG_WARNFILENAME;Le fichier sera nommé
 SHCSELECTOR_TOOLTIP;Cliquez le bouton droit de la souris\npour réinitialiser la position de ces 3 curseurs
-SOFTPROOF_GAMUTCHECK_TOOLTIP;Si activé, indique en gris les pixels dont la couleurs est en dehors du gamut du profil de sortie
-SOFTPROOF_TOOLTIP;Épreuvage écran\nSi activé, simule le rendu généré par le profile de sortie de l'outil ICM. Particulièrement utile pour simuler le rendu en sortie d'imprimante.
+SOFTPROOF_GAMUTCHECK_TOOLTIP;Si activé, indique en gris les pixels dont la couleurs est en dehors du gamut du profil Imprimante
+SOFTPROOF_TOOLTIP;Épreuvage écran\nSi activé, vous permet de simuler le rendu obtenu par votre imprimante en utilisant le profil Imprimante réglé dans Préférences > Gestion des couleurs.
 THRESHOLDSELECTOR_B;Bas
 THRESHOLDSELECTOR_BL;Bas-gauche
 THRESHOLDSELECTOR_BR;Bas-droite
@@ -1887,6 +1899,9 @@ TP_SHARPENMICRO_UNIFORMITY;Uniformité
 TP_SPOT_COUNTLABEL;%1 point(s)
 TP_SPOT_ENTRYCHANGED;Modification d'un point
 TP_SPOT_LABEL;Retrait de taches
+TP_TM_FATTAL_AMOUNT;Quantité
+TP_TM_FATTAL_LABEL;Compression Tonale HDR (Fattal02)
+TP_TM_FATTAL_THRESHOLD;Seuil
 TP_VIBRANCE_AVOIDCOLORSHIFT;Éviter les dérives de teinte
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;TT
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Tons chair
@@ -2145,14 +2160,24 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_482;CAM02 - Green scene
 !HISTORY_MSG_483;CAM02 - Yb scene
 !HISTORY_MSG_484;CAM02 - Auto Yb scene
+!HISTORY_MSG_485;Lens Correction
+!HISTORY_MSG_486;Lens Correction - Camera
+!HISTORY_MSG_487;Lens Correction - Lens
+!LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
+!LENSPROFILE_CORRECTION_LCPFILE;LCP File
+!LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
+!LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
+!MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
+!PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_D50_OLD;5000K
 !PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
 !PREFERENCES_LANG;Language
+!PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
 !PREFERENCES_THEME;Theme
 !TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 !TP_COLORAPP_NEUTRAL;Reset
 !TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
-!TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant always Tint=1.\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
+!TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
 !TP_COLORAPP_YB;Yb% (mean luminance)
 !TP_COLORAPP_YBSCENE;Yb% (mean luminance)
 !TP_COLORAPP_YBSCENE_TOOLTIP;if auto enable, Yb is calculated from the mean value of actual image luminance

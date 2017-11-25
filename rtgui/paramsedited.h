@@ -365,6 +365,14 @@ public:
 };
 
 
+class FattalToneMappingParamsEdited {
+public:
+    bool enabled;
+    bool threshold;
+    bool amount;
+};
+
+
 class SHParamsEdited
 {
 
@@ -428,6 +436,8 @@ class LensProfParamsEdited
 {
 public:
     bool lcpFile, useDist, useVign, useCA;
+    bool useLensfun, lfAutoMatch, lfCameraMake, lfCameraModel, lfLens;
+    bool lcMode;
 
     bool isUnchanged() const;
 };
@@ -805,6 +815,7 @@ public:
     DefringeParamsEdited          defringe;
     DirPyrDenoiseParamsEdited     dirpyrDenoise;
     EPDParamsEdited               epd;
+    FattalToneMappingParamsEdited fattal;
     ImpulseDenoiseParamsEdited    impulseDenoise;
     SHParamsEdited                sh;
     CropParamsEdited              crop;

@@ -25,6 +25,7 @@ MAIN_TAB_COLOR;Colour
 MAIN_TOOLTIP_BACKCOLOR0;Background colour of the preview: <b>Theme-based</b>\nShortcut: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR1;Background colour of the preview: <b>Black</b>\nShortcut: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Background colour of the preview: <b>White</b>\nShortcut: <b>9</b>
+MAIN_TOOLTIP_BACKCOLOR3;Background colour of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
 PARTIALPASTE_COLORGROUP;Colour Related Settings
 PARTIALPASTE_COLORTONING;Colour toning
 PARTIALPASTE_ICMSETTINGS;Colour management settings
@@ -41,7 +42,8 @@ PREFERENCES_NAVGUIDEBRUSH;Navigator guide colour
 PREFERENCES_PRTPROFILE;Colour profile
 PREFERENCES_SELECTFONT_COLPICKER;Select Colour Picker's font
 PREFERENCES_TAB_COLORMGR;Colour Management
-SOFTPROOF_GAMUTCHECK_TOOLTIP;If active, indicates in grey the pixels which have out of gamut colours from the output profile.
+SOFTPROOF_GAMUTCHECK_TOOLTIP;If active, indicates in grey the pixels which have out of gamut colours from the Printer profile.
+SOFTPROOF_TOOLTIP;Soft-proofing\nIf active, let you simulate the printer's output by using the Printer profile set in Preferences > Colour Management.
 TOOLBAR_TOOLTIP_COLORPICKER;Lockable Colour Picker\n\nWhen enabled:\nClick in the preview with left mouse button to add a colour picker\nDrag it around while pressing the left mouse button\nDelete the colour picker with a right mouse button click\nDelete all colour pickers with Shift + Right mouse button click\nRight click away from any colour picker to go back to the Hand tool
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Straighten</b> / <b>fine rotation</b>.\nShortcut: <b>s</b>\n\nIndicate the vertical or horizontal by drawing a guide line over the image preview. Angle of rotation will be shown next to the guide line. Centre of rotation is the geometrical centre of the image.
 TP_BWMIX_CC_ENABLED;Adjust complementary colour
@@ -175,6 +177,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !EXIFPANEL_RESETALL;Reset All
 !EXIFPANEL_RESETALLHINT;Reset all tags to their original values.
 !EXIFPANEL_RESETHINT;Reset the selected tags to their original values.
+!EXIFPANEL_SHOWALL;Show all
 !EXIFPANEL_SUBDIRECTORY;Subdirectory
 !EXPORT_BYPASS;Processing steps to bypass
 !EXPORT_BYPASS_ALL;Select / Unselect All
@@ -380,9 +383,9 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !HISTORY_MSG_31;RLD - Amount
 !HISTORY_MSG_32;RLD - Damping
 !HISTORY_MSG_33;RLD - Iterations
-!HISTORY_MSG_34;LCP distortion correction
-!HISTORY_MSG_35;LCP vignetting correction
-!HISTORY_MSG_36;LCP CA correction
+!HISTORY_MSG_34;Lens Correction - Distortion
+!HISTORY_MSG_35;Lens Correction - Vignetting
+!HISTORY_MSG_36;Lens Correction - CA
 !HISTORY_MSG_37;Exposure - Auto levels
 !HISTORY_MSG_38;White Balance - Method
 !HISTORY_MSG_39;WB - Temperature
@@ -427,7 +430,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !HISTORY_MSG_82;Profile changed
 !HISTORY_MSG_83;S/H - Sharp mask
 !HISTORY_MSG_84;Perspective correction
-!HISTORY_MSG_85;LCP
+!HISTORY_MSG_85;Lens Correction - LCP file
 !HISTORY_MSG_86;RGB Curves - Luminosity mode
 !HISTORY_MSG_87;Impulse Noise Reduction
 !HISTORY_MSG_88;Impulse NR threshold
@@ -796,6 +799,12 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !HISTORY_MSG_482;CAM02 - Green scene
 !HISTORY_MSG_483;CAM02 - Yb scene
 !HISTORY_MSG_484;CAM02 - Auto Yb scene
+!HISTORY_MSG_485;Lens Correction
+!HISTORY_MSG_486;Lens Correction - Camera
+!HISTORY_MSG_487;Lens Correction - Lens
+!HISTORY_MSG_488;HDR Tone Mapping
+!HISTORY_MSG_489;HDR TM - Threshold
+!HISTORY_MSG_490;HDR TM - Amount
 !HISTORY_NEWSNAPSHOT;Add
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !HISTORY_SNAPSHOT;Snapshot
@@ -842,6 +851,10 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
 !IPTCPANEL_TRANSREFERENCE;Job ID
 !IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
+!LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
+!LENSPROFILE_CORRECTION_LCPFILE;LCP File
+!LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
+!LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
@@ -960,7 +973,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PARTIALPASTE_IPTCINFO;IPTC
 !PARTIALPASTE_LABCURVE;L*a*b* adjustments
 !PARTIALPASTE_LENSGROUP;Lens Related Settings
-!PARTIALPASTE_LENSPROFILE;Lens correction profile
+!PARTIALPASTE_LENSPROFILE;Profiled lens correction
 !PARTIALPASTE_METAGROUP;Metadata
 !PARTIALPASTE_PCVIGNETTE;Vignette filter
 !PARTIALPASTE_PERSPECTIVE;Perspective
@@ -980,7 +993,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PARTIALPASTE_RAW_DMETHOD;Demosaic method
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
 !PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
-!PARTIALPASTE_RAW_PIXELSHIFT;PixelShift
+!PARTIALPASTE_RAW_PIXELSHIFT;Pixel Shift
 !PARTIALPASTE_RESIZE;Resize
 !PARTIALPASTE_RETINEX;Retinex
 !PARTIALPASTE_RGBCURVES;RGB curves
@@ -989,6 +1002,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PARTIALPASTE_SHARPENEDGE;Edges
 !PARTIALPASTE_SHARPENING;Sharpening (USM/RL)
 !PARTIALPASTE_SHARPENMICRO;Microcontrast
+!PARTIALPASTE_TM_FATTAL;HDR Tone mapping
 !PARTIALPASTE_VIBRANCE;Vibrance
 !PARTIALPASTE_VIGNETTING;Vignetting correction
 !PARTIALPASTE_WAVELETGROUP;Wavelet Levels
@@ -1000,6 +1014,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PREFERENCES_AUTLISSTD;High
 !PREFERENCES_AUTLISVLOW;None
 !PREFERENCES_AUTLOW;Low
+!PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_AUTSTD;Standard
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
 !PREFERENCES_BEHADDALL;All to 'Add'
@@ -1038,7 +1053,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PREFERENCES_D55;5500K
 !PREFERENCES_D60;6000K
 !PREFERENCES_D65;6500K
-!PREFERENCES_DARKFRAME;Dark-Frame
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
@@ -1047,6 +1061,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PREFERENCES_DAUB_LABEL;Use Daubechies D6 wavelets instead of D4
 !PREFERENCES_DAUB_TOOLTIP;The Noise Reduction and Wavelet Levels tools use a Debauchies mother wavelet. If you choose D6 instead of D4 you increase the number of orthogonal Daubechies coefficients and probably increase quality of small-scale levels. There is no memory or processing time difference between the two.
 !PREFERENCES_DIRDARKFRAMES;Dark-frames directory
+!PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_DIRHOME;Home directory
 !PREFERENCES_DIRLAST;Last visited directory
 !PREFERENCES_DIROTHER;Other
@@ -1059,8 +1074,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PREFERENCES_FBROWSEROPTS;File Browser / Thumbnail Options
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar\n(de-select for low resolution display)
 !PREFERENCES_FILEFORMAT;File format
-!PREFERENCES_FILMSIMULATION;Film Simulation
-!PREFERENCES_FLATFIELD;Flat-Field
 !PREFERENCES_FLATFIELDFOUND;Found
 !PREFERENCES_FLATFIELDSDIR;Flat-fields directory
 !PREFERENCES_FLATFIELDSHOTS;shots
@@ -1155,6 +1168,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
 !PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction and Wavelet Levels
 !PREFERENCES_RGBDTL_TOOLTIP;Leave the setting at "0" to automatically use as many threads as possible. The more threads run in parallel, the faster the computation. Refer to RawPedia for memory requirements.
+!PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
 !PREFERENCES_SELECTFONT;Select main font
 !PREFERENCES_SELECTLANG;Select language
 !PREFERENCES_SELECTTHEME;Select theme
@@ -1231,13 +1245,21 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PROGRESSBAR_SAVETIFF;Saving TIFF file...
 !PROGRESSBAR_SNAPSHOT_ADDED;Snapshot added
 !PROGRESSDLG_PROFILECHANGEDINBROWSER;Processing profile changed in browser
+!QINFO_FRAMECOUNT;%2 frames
+!QINFO_HDR;HDR / %2 frame(s)
 !QINFO_ISO;ISO
 !QINFO_NOEXIF;Exif data not available.
+!QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
+!SAMPLEFORMAT_0;Unknown data format
+!SAMPLEFORMAT_1;Unsigned 8 bits
+!SAMPLEFORMAT_2;Unsigned 16 bits
+!SAMPLEFORMAT_4;LogLuv 24 bits
+!SAMPLEFORMAT_8;LogLuv 32 bits
+!SAMPLEFORMAT_16;32 bits floating point
 !SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
 !SAVEDLG_FILEFORMAT;File format
 !SAVEDLG_FORCEFORMATOPTS;Force saving options
 !SAVEDLG_JPEGQUAL;JPEG quality
-!SAVEDLG_PNGCOMPR;PNG compression
 !SAVEDLG_PUTTOQUEUE;Put into processing queue
 !SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 !SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
@@ -1251,7 +1273,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 !SAVEDLG_WARNFILENAME;File will be named
 !SHCSELECTOR_TOOLTIP;Click right mouse button to reset the position of those 3 sliders.
-!SOFTPROOF_TOOLTIP;Soft-proofing\nIf active, let you simulate de rendering generated by the output profile of the ICM tool. Most useful for simulating printing outputs.
 !THRESHOLDSELECTOR_B;Bottom
 !THRESHOLDSELECTOR_BL;Bottom-left
 !THRESHOLDSELECTOR_BR;Bottom-right
@@ -1393,7 +1414,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_COLORAPP_TCMODE_LABEL3;Curve chroma mode
 !TP_COLORAPP_TCMODE_LIGHTNESS;Lightness
 !TP_COLORAPP_TCMODE_SATUR;Saturation
-!TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant always Tint=1.\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
+!TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
 !TP_COLORAPP_TONECIE;Tone mapping using CIECAM02
 !TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in L*a*b* space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
 !TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
@@ -1665,7 +1686,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_LENSGEOM_AUTOCROP;Auto-Crop
 !TP_LENSGEOM_FILL;Auto-fill
 !TP_LENSGEOM_LABEL;Lens / Geometry
-!TP_LENSPROFILE_LABEL;Lens Correction Profile
+!TP_LENSPROFILE_LABEL;Profiled Lens Correction
 !TP_LENSPROFILE_USECA;Chromatic aberration correction
 !TP_LENSPROFILE_USEDIST;Distortion correction
 !TP_LENSPROFILE_USEVIGN;Vignetting correction
@@ -1917,6 +1938,9 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_SHARPENMICRO_LABEL;Microcontrast
 !TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
 !TP_SHARPENMICRO_UNIFORMITY;Uniformity
+!TP_TM_FATTAL_AMOUNT;Amount
+!TP_TM_FATTAL_LABEL;HDR Tone Mapping
+!TP_TM_FATTAL_THRESHOLD;Threshold
 !TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
 !TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Skin-tones
 !TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;Red/Purple

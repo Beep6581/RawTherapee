@@ -33,7 +33,7 @@ namespace rtengine
 extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
-    : orig_prev (nullptr), oprevi (nullptr), spotprevi (nullptr), oprevl (nullptr), nprevl (nullptr), previmg (nullptr), workimg (nullptr),
+    : orig_prev (nullptr), oprevi (nullptr), spotprevi (nullptr), oprevl (nullptr), nprevl (nullptr), fattal_11_dcrop_cache(nullptr), previmg (nullptr), workimg (nullptr),
       ncie (nullptr), imgsrc (nullptr), shmap (nullptr), lastAwbEqual (0.), lastAwbTempBias (0.0), ipf (&params, true), previewProps(-1, -1, -1, -1, 1), monitorIntent (RI_RELATIVE),
       softProof (false), gamutCheck (false), scale (10), highDetailPreprocessComputed (false), highDetailRawComputed (false),
       allocated (false), bwAutoR (-9000.f), bwAutoG (-9000.f), bwAutoB (-9000.f), CAMMean (NAN),
@@ -111,6 +111,10 @@ ImProcCoordinator::~ImProcCoordinator ()
     mProcessing.lock();
     mProcessing.unlock();
     freeAll ();
+    if (fattal_11_dcrop_cache) {
+        delete fattal_11_dcrop_cache;
+        fattal_11_dcrop_cache = nullptr;
+    }
 
     std::vector<Crop*> toDel = crops;
 
@@ -220,8 +224,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     if (   (todo & M_RAW)
             || (!highDetailRawComputed && highDetailNeeded)
-            || ( params.toneCurve.hrenabled && params.toneCurve.method != "Color" && imgsrc->IsrgbSourceModified())
-            || (!params.toneCurve.hrenabled && params.toneCurve.method == "Color" && imgsrc->IsrgbSourceModified())) {
+            || ( params.toneCurve.hrenabled && params.toneCurve.method != "Color" && imgsrc->isRGBSourceModified())
+            || (!params.toneCurve.hrenabled && params.toneCurve.method == "Color" && imgsrc->isRGBSourceModified())) {
 
         if (settings->verbose) {
             if (imgsrc->getSensorType() == ST_BAYER) {
@@ -280,7 +284,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         }
     }
 
-    if (todo & (M_INIT | M_LINDENOISE)) {
+    if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
         MyMutex::MyLock initLock (minit); // Also used in crop window
 
         imgsrc->HLRecovery_Global ( params.toneCurve); // this handles Color HLRecovery
@@ -333,7 +337,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         // Tells to the ImProcFunctions' tools what is the preview scale, which may lead to some simplifications
         ipf.setScale (scale);
 
-        imgsrc->getImage (currWB, tr, orig_prev, previewProps, params.toneCurve, params.icm, params.raw);
+        imgsrc->getImage (currWB, tr, orig_prev, previewProps, params.toneCurve, params.raw);
         denoiseInfoStore.valid = false;
         //ColorTemp::CAT02 (orig_prev, &params) ;
         //   printf("orig_prevW=%d\n  scale=%d",orig_prev->width, scale);
@@ -385,72 +389,17 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     readyphase++;
 
-    progress ("Rotate / Distortion...", 100 * readyphase / numofphases);
-    // Remove transformation if unneeded
-    bool needstransform = ipf.needsTransform();
-
-    if (!needstransform && ! ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) && orig_prev != oprevi) {
-        delete oprevi;
-        spotprevi = oprevi = orig_prev;
-    }
-
-    if ((needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled)) ) {
-        if (!oprevi || oprevi == orig_prev) {
-            spotprevi = oprevi = new Imagefloat (pW, pH);
+    if ((todo & M_HDR) && params.fattal.enabled) {
+        if (fattal_11_dcrop_cache) {
+            delete fattal_11_dcrop_cache;
+            fattal_11_dcrop_cache = nullptr;
         }
-
-        if (needstransform)
-            ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH, fw, fh, imgsrc->getMetaData()->getFocalLen(),
-                           imgsrc->getMetaData()->getFocalLen35mm(), imgsrc->getMetaData()->getFocusDist(), imgsrc->getMetaData()->getFNumber(), imgsrc->getRotateDegree(), false);
-        else {
-            orig_prev->copyData (oprevi);
+        ipf.ToneMapFattal02(orig_prev);
+        if (oprevi != orig_prev) {
+            delete oprevi;
         }
     }
-
-    if ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
-        const int W = oprevi->getWidth();
-        const int H = oprevi->getHeight();
-        LabImage labcbdl (W, H);
-        ipf.rgb2lab (*oprevi, labcbdl, params.icm.working);
-        ipf.dirpyrequalizer (&labcbdl, scale);
-        ipf.lab2rgb (labcbdl, *oprevi, params.icm.working);
-    }
-
-    readyphase++;
-    progress ("Preparing shadow/highlight map...", 100 * readyphase / numofphases);
-
-    if ((todo & M_BLURMAP) && params.sh.enabled) {
-        double radius = sqrt (double (pW * pW + pH * pH)) / 2.0;
-        double shradius = params.sh.radius;
-
-        if (!params.sh.hq) {
-            shradius *= radius / 1800.0;
-        }
-
-        if (!shmap) {
-            shmap = new SHMap (pW, pH, true);
-        }
-
-        shmap->update (oprevi, shradius, ipf.lumimul, params.sh.hq, scale);
-    }
-
-
-
-    readyphase++;
-
-    if (todo & M_AUTOEXP) {
-        if (params.toneCurve.autoexp) {
-            LUTu aehist;
-            int aehistcompr;
-            imgsrc->getAutoExpHistogram (aehist, aehistcompr);
-            ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, params.toneCurve.expcomp,
-                            params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
-
-            if (aeListener)
-                aeListener->autoExpChanged (params.toneCurve.expcomp, params.toneCurve.brightness, params.toneCurve.contrast,
-                                            params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.hrenabled);
-        }
-    }
+    oprevi = orig_prev;
 
     progress ("Spot Removal...", 100 * readyphase / numofphases);
 
@@ -470,16 +419,78 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     readyphase++;
 
+    progress ("Rotate / Distortion...", 100 * readyphase / numofphases);
+    // Remove transformation if unneeded
+    bool needstransform = ipf.needsTransform();
+    
+    if ((needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled)) ) {
+        assert(spotprevi);
+        Imagefloat *op = spotprevi;
+        spotprevi = new Imagefloat (pW, pH);
+
+        if (needstransform)
+            ipf.transform (op, spotprevi, 0, 0, 0, 0, pW, pH, fw, fh,
+                           imgsrc->getMetaData(), imgsrc->getRotateDegree(), false);
+        else {
+            op->copyData (spotprevi);
+        }
+    }
+
+    if ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
+        const int W = spotprevi->getWidth();
+        const int H = spotprevi->getHeight();
+        LabImage labcbdl (W, H);
+        ipf.rgb2lab (*spotprevi, labcbdl, params.icm.working);
+        ipf.dirpyrequalizer (&labcbdl, scale);
+        ipf.lab2rgb (labcbdl, *spotprevi, params.icm.working);
+    }
+
+    readyphase++;
+    progress ("Preparing shadow/highlight map...", 100 * readyphase / numofphases);
+
+    if ((todo & M_BLURMAP) && params.sh.enabled) {
+        double radius = sqrt (double (pW * pW + pH * pH)) / 2.0;
+        double shradius = params.sh.radius;
+
+        if (!params.sh.hq) {
+            shradius *= radius / 1800.0;
+        }
+
+        if (!shmap) {
+            shmap = new SHMap (pW, pH, true);
+        }
+
+        shmap->update (spotprevi, shradius, ipf.lumimul, params.sh.hq, scale);
+    }
+
+
+
+    readyphase++;
+
+    if (todo & M_AUTOEXP) {
+        if (params.toneCurve.autoexp) {
+            LUTu aehist;
+            int aehistcompr;
+            imgsrc->getAutoExpHistogram (aehist, aehistcompr);
+            ipf.getAutoExp (aehist, aehistcompr, params.toneCurve.clip, params.toneCurve.expcomp,
+                            params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
+
+            if (aeListener)
+                aeListener->autoExpChanged (params.toneCurve.expcomp, params.toneCurve.brightness, params.toneCurve.contrast,
+                                            params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.hrenabled);
+        }
+    }
+
     progress ("Exposure curve & CIELAB conversion...", 100 * readyphase / numofphases);
 
     if ((todo & M_RGBCURVE) || (todo & M_CROP)) {
-//        if (hListener) oprevi->calcCroppedHistogram(params, scale, histCropped);
+//        if (hListener) spotprevi->calcCroppedHistogram(params, scale, histCropped);
 
         //complexCurve also calculated pre-curves histogram depending on crop
         CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black / 65535.0,
                                     params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh,
                                     params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast,
-                                    params.toneCurve.curveMode, params.toneCurve.curve, params.toneCurve.curveMode2, params.toneCurve.curve2,
+                                    params.toneCurve.curve, params.toneCurve.curve2,
                                     vhist16, hltonecurve, shtonecurve, tonecurve, histToneCurve, customToneCurve1, customToneCurve2, 1);
 
         CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, 1);
@@ -496,13 +507,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 {wprof[1][0], wprof[1][1], wprof[1][2]},
                 {wprof[2][0], wprof[2][1], wprof[2][2]}
             };
-            TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params.icm.working);
-            double wip[3][3] = {
-                {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
-                {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
-                {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
-            };
-            params.colorToning.getCurves (ctColorCurve, ctOpacityCurve, wp, wip, opautili);
+            params.colorToning.getCurves (ctColorCurve, ctOpacityCurve, wp, opautili);
             CurveFactory::curveToning (params.colorToning.clcurve, clToningcurve, scale == 1 ? 1 : 16);
             CurveFactory::curveToning (params.colorToning.cl2curve, cl2Toningcurve, scale == 1 ? 1 : 16);
         }
@@ -574,7 +579,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             double bbm = 33.;
 
             DCPProfile::ApplyState as;
-            DCPProfile *dcpProf = imgsrc->getDCP (params.icm, currWB, as);
+            DCPProfile *dcpProf = imgsrc->getDCP (params.icm, as);
 
             ipf.rgbProc (spotprevi, oprevl, nullptr, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
                          rCurve, gCurve, bCurve, colourToningSatLimit, colourToningSatLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, dcpProf, as, histToneCurve);
@@ -724,7 +729,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             int kall = 0;
             progress ("Wavelet...", 100 * readyphase / numofphases);
             //  ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, scale);
-            ipf.ip_wavelet (nprevl, nprevl, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, wavcontlutili, scale);
+            ipf.ip_wavelet (nprevl, nprevl, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, scale);
 
         }
 
@@ -750,10 +755,21 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             CurveFactory::curveLightBrightColor (params.colorappearance.curve, params.colorappearance.curve2, params.colorappearance.curve3,
                                                  lhist16CAM, histLCAM, lhist16CCAM, histCCAM,
                                                  customColCurve1, customColCurve2, customColCurve3, 1);
-            float fnum = imgsrc->getMetaData()->getFNumber  ();        // F number
-            float fiso = imgsrc->getMetaData()->getISOSpeed () ;       // ISO
-            float fspeed = imgsrc->getMetaData()->getShutterSpeed () ; // Speed
-            double fcomp = imgsrc->getMetaData()->getExpComp  ();      // Compensation +/-
+
+            const FramesMetaData* metaData = imgsrc->getMetaData();
+            int imgNum = 0;
+            if (imgsrc->isRAW()) {
+                if (imgsrc->getSensorType() == ST_BAYER) {
+                    imgNum = rtengine::LIM<unsigned int>(params.raw.bayersensor.imageNum, 0, metaData->getFrameCount() - 1);
+                } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS) {
+                    //imgNum = rtengine::LIM<unsigned int>(params.raw.xtranssensor.imageNum, 0, metaData->getFrameCount() - 1);
+                }
+            }
+
+            float fnum = metaData->getFNumber (imgNum);         // F number
+            float fiso = metaData->getISOSpeed (imgNum) ;       // ISO
+            float fspeed = metaData->getShutterSpeed (imgNum) ; // Speed
+            double fcomp = metaData->getExpComp (imgNum);       // Compensation +/-
             double adap;
 
             if (fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) { //if no exif data or wrong
@@ -766,8 +782,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 // end calculation adaptation scene luminosity
             }
 
-            int begh = 0;
-            int endh = pH;
             float d, dj, yb;
             bool execsharp = false;
 
@@ -788,7 +802,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             CAMBrightCurveJ.dirty = true;
             CAMBrightCurveQ.dirty = true;
 
-            ipf.ciecam_02float (ncie, float (adap), begh, endh, pW, 2, nprevl, &params, customColCurve1, customColCurve2, customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, scale, execsharp, d, dj, yb, 1);
+            ipf.ciecam_02float (ncie, float (adap), pW, 2, nprevl, &params, customColCurve1, customColCurve2, customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, scale, execsharp, d, dj, yb, 1);
 
             if ((params.colorappearance.autodegree || params.colorappearance.autodegreeout) && acListener && params.colorappearance.enabled) {
                 acListener->autoCamChanged (100.* (double)d, 100.* (double)dj);
@@ -1141,10 +1155,10 @@ void ImProcCoordinator::getAutoCrop (double ratio, int &x, int &y, int &w, int &
 
     MyMutex::MyLock lock (mProcessing);
 
-    LCPMapper *pLCPMap = nullptr;
+    LensCorrection *pLCPMap = nullptr;
 
-    if (params.lensProf.lcpFile.length() && imgsrc->getMetaData()->getFocalLen() > 0) {
-        LCPProfile *pLCPProf = lcpStore->getProfile (params.lensProf.lcpFile);
+    if (params.lensProf.useLcp() && imgsrc->getMetaData()->getFocalLen() > 0) {
+        const std::shared_ptr<LCPProfile> pLCPProf = LCPStore::getInstance()->getProfile (params.lensProf.lcpFile);
 
         if (pLCPProf) pLCPMap = new LCPMapper (pLCPProf, imgsrc->getMetaData()->getFocalLen(), imgsrc->getMetaData()->getFocalLen35mm(), imgsrc->getMetaData()->getFocusDist(),
                                                    0, false, params.lensProf.useDist, fullw, fullh, params.coarse, imgsrc->getRotateDegree());
@@ -1237,13 +1251,13 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname, bool 
         currWB = ColorTemp(); // = no white balance
     }
 
-    imgsrc->getImage (currWB, tr, im, pp, ppar.toneCurve, ppar.icm, ppar.raw);
+    imgsrc->getImage (currWB, tr, im, pp, ppar.toneCurve, ppar.raw);
     ImProcFunctions ipf (&ppar, true);
 
     if (ipf.needsTransform()) {
         Imagefloat* trImg = new Imagefloat (fW, fH);
-        ipf.transform (im, trImg, 0, 0, 0, 0, fW, fH, fW, fH, imgsrc->getMetaData()->getFocalLen(), imgsrc->getMetaData()->getFocalLen35mm(),
-                       imgsrc->getMetaData()->getFocusDist(), imgsrc->getMetaData()->getFNumber(), imgsrc->getRotateDegree(), true);
+        ipf.transform (im, trImg, 0, 0, 0, 0, fW, fH, fW, fH,
+                       imgsrc->getMetaData(), imgsrc->getRotateDegree(), true);
         delete im;
         im = trImg;
     }

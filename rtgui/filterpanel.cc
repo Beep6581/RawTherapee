@@ -171,15 +171,15 @@ void FilterPanel::setFilter (ExifFilterSettings& defefs, bool updateLists)
     }
 
 //  enaFNumber->set_active (curefs.filterFNumber);
-    fnumberFrom->set_text (ImageMetaData::apertureToString (defefs.fnumberFrom));
+    fnumberFrom->set_text (FramesMetaData::apertureToString (defefs.fnumberFrom));
     curefs.fnumberFrom = defefs.fnumberFrom;
-    fnumberTo->set_text (ImageMetaData::apertureToString (defefs.fnumberTo));
+    fnumberTo->set_text (FramesMetaData::apertureToString (defefs.fnumberTo));
     curefs.fnumberTo = defefs.fnumberTo;
 
 //  enaShutter->set_active (curefs.filterShutter);
-    shutterFrom->set_text (ImageMetaData::shutterToString (defefs.shutterFrom));
+    shutterFrom->set_text (FramesMetaData::shutterToString (defefs.shutterFrom));
     curefs.shutterFrom = defefs.shutterFrom;
-    shutterTo->set_text (ImageMetaData::shutterToString (defefs.shutterTo));
+    shutterTo->set_text (FramesMetaData::shutterToString (defefs.shutterTo));
     curefs.shutterTo = defefs.shutterTo;
 
 //  enaISO->set_active (curefs.filterISO);
@@ -315,8 +315,8 @@ ExifFilterSettings FilterPanel::getFilter ()
     efs.focalTo     = atof (focalTo->get_text().c_str());
     efs.isoFrom     = atoi (isoFrom->get_text().c_str());
     efs.isoTo       = atoi (isoTo->get_text().c_str());
-    efs.shutterFrom = ImageMetaData::shutterFromString (shutterFrom->get_text());
-    efs.shutterTo   = ImageMetaData::shutterFromString (shutterTo->get_text());
+    efs.shutterFrom = FramesMetaData::shutterFromString (shutterFrom->get_text());
+    efs.shutterTo   = FramesMetaData::shutterFromString (shutterTo->get_text());
 
     efs.filterFNumber  = enaFNumber->get_active ();
     efs.filterShutter  = enaShutter->get_active ();

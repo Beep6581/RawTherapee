@@ -38,7 +38,6 @@
 #include "improccoordinator.h"
 #include <locale.h>
 
-
 namespace
 {
 
@@ -247,7 +246,7 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
     return tpp;
 }
 
-Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh, bool rotate, bool inspectorMode)
+Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, bool rotate, bool inspectorMode)
 {
     RawImage *ri = new RawImage (fname);
     unsigned int imageNum = 0;
@@ -255,8 +254,11 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 
     if ( r ) {
         delete ri;
+        sensorType = ST_NONE;
         return nullptr;
     }
+
+    sensorType = ri->getSensorType();
 
     rml.exifBase = ri->get_exifBase();
     rml.ciffBase = ri->get_ciffBase();
@@ -378,7 +380,7 @@ RawMetaDataLocation Thumbnail::loadMetaDataFromRaw (const Glib::ustring& fname)
     return rml;
 }
 
-Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh, double wbEq, bool rotate, int imageNum)
+Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, bool rotate)
 {
     RawImage *ri = new RawImage (fname);
     unsigned int tempImageNum = 0;
@@ -387,8 +389,11 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
     if ( r ) {
         delete ri;
+        sensorType = ST_NONE;
         return nullptr;
     }
+
+    sensorType = ri->getSensorType();
 
     int width = ri->get_width();
     int height = ri->get_height();
@@ -653,70 +658,18 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
         tpp->scale = (double) height / (rotate_90 ? w : h);
     }
 
-    // generate histogram for auto exposure
+    // generate histogram for auto exposure, also calculate autoWB
     tpp->aeHistCompression = 3;
-    tpp->aeHistogram (65536 >> tpp->aeHistCompression);
+    tpp->aeHistogram(65536 >> tpp->aeHistCompression);
     tpp->aeHistogram.clear();
-    int radd = 4;
-    int gadd = 4;
-    int badd = 4;
 
-    if (!filter) {
-        radd = gadd = badd = 1;
-    }
+    const unsigned int add = filter ? 1 : 4 / ri->get_colors();
 
-    for (int i = 8; i < height - 8; i++) {
-        int start, end;
-
-        if (ri->get_FujiWidth() != 0) {
-            int fw = ri->get_FujiWidth();
-            start = ABS (fw - i) + 8;
-            end = min (height + width - fw - i, fw + i) - 8;
-        } else {
-            start = 8;
-            end = width - 8;
-        }
-
-        if (ri->get_colors() == 1) {
-            for (int j = start; j < end; j++) {
-                tpp->aeHistogram[ ((int) (image[i * width + j][0])) >> tpp->aeHistCompression] += radd;
-                tpp->aeHistogram[ ((int) (image[i * width + j][0])) >> tpp->aeHistCompression] += gadd;
-                tpp->aeHistogram[ ((int) (image[i * width + j][0])) >> tpp->aeHistCompression] += badd;
-            }
-        } else if (ri->getSensorType() == ST_BAYER) {
-            for (int j = start; j < end; j++)
-                if (FISGREEN (filter, i, j)) {
-                    tpp->aeHistogram[ ((int) (tpp->camwbGreen * image[i * width + j][1])) >> tpp->aeHistCompression] += gadd;
-                } else if (FISRED (filter, i, j)) {
-                    tpp->aeHistogram[ ((int) (tpp->camwbRed * image[i * width + j][0])) >> tpp->aeHistCompression] += radd;
-                } else if (FISBLUE (filter, i, j)) {
-                    tpp->aeHistogram[ ((int) (tpp->camwbBlue * image[i * width + j][2])) >> tpp->aeHistCompression] += badd;
-                }
-        } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
-            for (int j = start; j < end; j++)
-                if (ri->ISXTRANSGREEN (i, j)) {
-                    tpp->aeHistogram[ ((int) (tpp->camwbGreen * image[i * width + j][1])) >> tpp->aeHistCompression] += gadd;
-                } else if (ri->ISXTRANSRED (i, j)) {
-                    tpp->aeHistogram[ ((int) (tpp->camwbRed * image[i * width + j][0])) >> tpp->aeHistCompression] += radd;
-                } else if (ri->ISXTRANSBLUE (i, j)) {
-                    tpp->aeHistogram[ ((int) (tpp->camwbBlue * image[i * width + j][2])) >> tpp->aeHistCompression] += badd;
-                }
-        } else { /* if(ri->getSensorType()==ST_FOVEON) */
-            for (int j = start; j < end; j++) {
-                tpp->aeHistogram[ ((int) (image[i * width + j][0] * 2.f)) >> tpp->aeHistCompression] += radd;
-                tpp->aeHistogram[ ((int) (image[i * width + j][1])) >> tpp->aeHistCompression] += gadd;
-                tpp->aeHistogram[ ((int) (image[i * width + j][2] * 0.5f)) >> tpp->aeHistCompression] += badd;
-            }
-        }
-    }
-
-    // generate autoWB
-    double avg_r = 0;
-    double avg_g = 0;
-    double avg_b = 0;
-    const float eps = 1e-5; //tolerance to avoid dividing by zero
-
-    float rn = eps, gn = eps, bn = eps;
+    double pixSum[3] = {0.0};
+    unsigned int n[3] = {0};
+    const double compression = pow(2.0, tpp->aeHistCompression);
+    const double camWb[3] = {tpp->camwbRed / compression, tpp->camwbGreen / compression, tpp->camwbBlue / compression};
+    const double clipval = 64000.0 / tpp->defGain;
 
     for (int i = 32; i < height - 32; i++) {
         int start, end;
@@ -730,110 +683,118 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
             end = width - 32;
         }
 
-        if (ri->getSensorType() == ST_BAYER) {
+        if (ri->get_colors() == 1) {
             for (int j = start; j < end; j++) {
-                if (!filter) {
-                    double d = tpp->defGain * image[i * width + j][0];
-
-                    if (d > 64000.) {
-                        continue;
-                    }
-
-                    avg_g += d;
-                    avg_r += d;
-                    avg_b += d;
-                    rn++;
-                    gn++;
-                    bn++;
-                } else if (FISGREEN (filter, i, j)) {
-                    double d = tpp->defGain * image[i * width + j][1];
-
-                    if (d > 64000.) {
-                        continue;
-                    }
-
-                    avg_g += d;
-                    gn++;
-                } else if (FISRED (filter, i, j)) {
-                    double d = tpp->defGain * image[i * width + j][0];
-
-                    if (d > 64000.) {
-                        continue;
-                    }
-
-                    avg_r += d;
-                    rn++;
-                } else if (FISBLUE (filter, i, j)) {
-                    double d = tpp->defGain * image[i * width + j][2];
-
-                    if (d > 64000.) {
-                        continue;
-                    }
-
-                    avg_b += d;
-                    bn++;
+                tpp->aeHistogram[image[i * width + j][0] >> tpp->aeHistCompression]++;
+            }
+        } else if (ri->getSensorType() == ST_BAYER) {
+            int c0 = ri->FC(i, start);
+            int c1 = ri->FC(i, start + 1);
+            int j = start;
+            int n0 = 0;
+            int n1 = 0;
+            double pixSum0 = 0.0;
+            double pixSum1 = 0.0;
+            for (; j < end - 1; j+=2) {
+                double v0 = image[i * width + j][c0];
+                tpp->aeHistogram[(int)(camWb[c0] * v0)]++;
+                if (v0 <= clipval) {
+                    pixSum0 += v0;
+                    n0++;
+                }
+                double v1 = image[i * width + j + 1][c1];
+                tpp->aeHistogram[(int)(camWb[c1] * v1)]++;
+                if (v1 <= clipval) {
+                    pixSum1 += v1;
+                    n1++;
                 }
             }
+            if (j < end) {
+                double v0 = image[i * width + j][c0];
+                tpp->aeHistogram[(int)(camWb[c0] * v0)]++;
+                if (v0 <= clipval) {
+                    pixSum0 += v0;
+                    n0++;
+                }
+            }
+            n[c0] += n0;
+            n[c1] += n1;
+            pixSum[c0] += pixSum0;
+            pixSum[c1] += pixSum1;
         } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
-            for (int j = start; j < end; j++) {
+            int c[6];
+            for(int cc = 0; cc < 6; ++cc) {
+                c[cc] = ri->XTRANSFC(i, start + cc);
+            }
+            int j = start;
+            for (; j < end - 5; j += 6) {
+                for(int cc = 0; cc < 6; ++cc) {
+                    double d = image[i * width + j + cc][c[cc]];
+                    tpp->aeHistogram[(int)(camWb[c[cc]] * d)]++;
+                    if (d <= clipval) {
+                        pixSum[c[cc]] += d;
+                        n[c[cc]]++;
+                    }
+                }
+            }
+            for (; j < end; j++) {
                 if (ri->ISXTRANSGREEN (i, j)) {
-                    double d = tpp->defGain * image[i * width + j][1];
-
-                    if (d > 64000.) {
-                        continue;
+                    double d = image[i * width + j][1];
+                    tpp->aeHistogram[(int)(camWb[1] * d)]++;
+                    if (d <= clipval) {
+                        pixSum[1] += d;
+                        n[1]++;
                     }
-
-                    avg_g += d;
-                    gn++;
                 } else if (ri->ISXTRANSRED (i, j)) {
-                    double d = tpp->defGain * image[i * width + j][0];
-
-                    if (d > 64000.) {
-                        continue;
+                    double d = image[i * width + j][0];
+                    tpp->aeHistogram[(int)(camWb[0] * d)]++;
+                    if (d <= clipval) {
+                        pixSum[0] += d;
+                        n[0]++;
                     }
-
-                    avg_r += d;
-                    rn++;
                 } else if (ri->ISXTRANSBLUE (i, j)) {
-                    double d = tpp->defGain * image[i * width + j][2];
-
-                    if (d > 64000.) {
-                        continue;
+                    double d = image[i * width + j][2];
+                    tpp->aeHistogram[(int)(camWb[2] * d)]++;
+                    if (d <= clipval) {
+                        pixSum[2] += d;
+                        n[2]++;
                     }
-
-                    avg_b += d;
-                    bn++;
                 }
             }
         } else { /* if(ri->getSensorType()==ST_FOVEON) */
             for (int j = start; j < end; j++) {
-                double d = tpp->defGain * image[i * width + j][0];
-
-                if (d <= 64000.) {
-                    avg_r += d;
-                    rn++;
+                double r = image[i * width + j][0];
+                if (r <= clipval) {
+                    pixSum[0] += r;
+                    n[0]++;
                 }
-
-                d = tpp->defGain * image[i * width + j][1];
-
-                if (d <= 64000.) {
-                    avg_g += d;
-                    gn++;
+                double g = image[i * width + j][1];
+                if (g <= clipval) {
+                    pixSum[1] += g;
+                    n[1]++;
                 }
-
-                d = tpp->defGain * image[i * width + j][2];
-
-                if (d <= 64000.) {
-                    avg_b += d;
-                    bn++;
+                tpp->aeHistogram[((int)g) >> tpp->aeHistCompression] += add;
+                double b = image[i * width + j][2];
+                if (b <= clipval) {
+                    pixSum[2] += b;
+                    n[2]++;
                 }
+                tpp->aeHistogram[((int) (b * 0.5f)) >> tpp->aeHistCompression] += add;
             }
         }
     }
 
-    double reds = avg_r / rn * tpp->camwbRed;
-    double greens = avg_g / gn * tpp->camwbGreen;
-    double blues = avg_b / bn * tpp->camwbBlue;
+    if (ri->get_colors() == 1) {
+        pixSum[0] = pixSum[1] = pixSum[2] = 1.;
+        n[0] = n[1] = n[2] = 1;
+    }
+    pixSum[0] *= tpp->defGain;
+    pixSum[1] *= tpp->defGain;
+    pixSum[2] *= tpp->defGain;
+
+    double reds = pixSum[0] / std::max(n[0], 1u) * tpp->camwbRed;
+    double greens = pixSum[1] / std::max(n[1], 1u) * tpp->camwbGreen;
+    double blues = pixSum[2] / std::max(n[2], 1u) * tpp->camwbBlue;
 
     tpp->redAWBMul   = ri->get_rgb_cam (0, 0) * reds + ri->get_rgb_cam (0, 1) * greens + ri->get_rgb_cam (0, 2) * blues;
     tpp->greenAWBMul = ri->get_rgb_cam (1, 0) * reds + ri->get_rgb_cam (1, 1) * greens + ri->get_rgb_cam (1, 2) * blues;
@@ -924,7 +885,7 @@ Thumbnail::~Thumbnail ()
 }
 
 // Simple processing of RAW internal JPGs
-IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int rheight, rtengine::TypeInterpolation interp, double& myscale)
+IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int rheight, rtengine::TypeInterpolation interp)
 {
 
     int rwidth;
@@ -954,9 +915,22 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 }
 
 // Full thumbnail processing, second stage if complete profile exists
-IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, std::string camName,
-                                  double focalLen, double focalLen35mm, float focusDist, float shutter, float fnumber, float iso, std::string expcomp_, double& myscale)
+IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorType sensorType, int rheight, TypeInterpolation interp, const FramesMetaData *metadata, double& myscale)
 {
+    unsigned int imgNum = 0;
+    if (isRaw) {
+        if (sensorType == ST_BAYER) {
+            imgNum = rtengine::LIM<unsigned int>(params.raw.bayersensor.imageNum, 0, metadata->getFrameCount() - 1);
+        } else if (sensorType == ST_FUJI_XTRANS) {
+            //imgNum = rtengine::LIM<unsigned int>(params.raw.xtranssensor.imageNum, 0, metadata->getFrameCount() - 1)
+        }
+    }
+    std::string camName = metadata->getCamera(imgNum);
+    float shutter = metadata->getShutterSpeed(imgNum);
+    float fnumber = metadata->getFNumber(imgNum);
+    float iso = metadata->getISOSpeed(imgNum);
+    float fcomp = metadata->getExpComp(imgNum);
+    
     // check if the WB's equalizer value has changed
     if (wbEqual < (params.wb.equal - 5e-4) || wbEqual > (params.wb.equal + 5e-4) || wbTempBias < (params.wb.tempBias - 5e-4) || wbTempBias > (params.wb.tempBias + 5e-4)) {
         wbEqual = params.wb.equal;
@@ -1072,6 +1046,10 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     ipf.firstAnalysis (baseImg, params, hist16);
 
+    if (params.fattal.enabled) {
+        ipf.ToneMapFattal02(baseImg);
+    }
+    
     // perform transform
     if (ipf.needsTransform()) {
         Imagefloat* trImg = new Imagefloat (fw, fh);
@@ -1079,7 +1057,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         int origFH;
         double tscale = 0.0;
         getDimensions (origFW, origFH, tscale);
-        ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh, origFW * tscale + 0.5, origFH * tscale + 0.5, focalLen, focalLen35mm, focusDist, fnumber, 0, true); // Raw rotate degree not detectable here
+        ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh, origFW * tscale + 0.5, origFH * tscale + 0.5, metadata, 0, true); // Raw rotate degree not detectable here
         delete baseImg;
         baseImg = trImg;
     }
@@ -1108,8 +1086,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     int     hlcomprthresh = params.toneCurve.hlcomprthresh;
 
     if (params.toneCurve.autoexp && aeHistogram) {
-        double logDefGain = 0.0;
-        ipf.getAutoExp (aeHistogram, aeHistCompression, logDefGain, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
+        ipf.getAutoExp (aeHistogram, aeHistCompression, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
     }
 
     LUTf curve1 (65536);
@@ -1135,8 +1112,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     ToneCurve customToneCurvebw2;
     CurveFactory::complexCurve (expcomp, black / 65535.0, hlcompr, hlcomprthresh,
                                 params.toneCurve.shcompr, bright, contr,
-                                params.toneCurve.curveMode, params.toneCurve.curve,
-                                params.toneCurve.curveMode2, params.toneCurve.curve2,
+                                params.toneCurve.curve,
+                                params.toneCurve.curve2,
                                 hist16, curve1, curve2, curve, dummy, customToneCurve1, customToneCurve2, 16);
 
     LUTf rCurve;
@@ -1155,13 +1132,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
             {wprof[1][0], wprof[1][1], wprof[1][2]},
             {wprof[2][0], wprof[2][1], wprof[2][2]}
         };
-        TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params.icm.working);
-        double wip[3][3] = {
-            {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
-            {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
-            {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
-        };
-        params.colorToning.getCurves (ctColorCurve, ctOpacityCurve, wp, wip, opautili);
+        params.colorToning.getCurves (ctColorCurve, ctOpacityCurve, wp, opautili);
 
         clToningcurve (65536);
         CurveFactory::curveToning (params.colorToning.clcurve, clToningcurve, scale == 1 ? 1 : 16);
@@ -1272,17 +1243,12 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
             customColCurve2,
             customColCurve3,
             16);
-        int begh = 0, endh = labView->H;
+
         bool execsharp = false;
         float d, dj, yb;
         float fnum = fnumber;// F number
         float fiso = iso;// ISO
         float fspeed = shutter;//speed
-        char * writ = new char[expcomp_.size() + 1];//convert expcomp_ to char
-        std::copy (expcomp_.begin(), expcomp_.end(), writ);
-        writ[expcomp_.size()] = '\0';
-        float fcomp = atof (writ); //compensation + -
-        delete[] writ;
         float adap;
 
         if (fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f)
@@ -1310,7 +1276,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         CAMMean = NAN;
         CAMBrightCurveJ.dirty = true;
         CAMBrightCurveQ.dirty = true;
-        ipf.ciecam_02float (cieView, adap, begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, sk, execsharp, d, dj, yb, rtt);
+        ipf.ciecam_02float (cieView, adap, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, sk, execsharp, d, dj, yb, rtt);
         delete cieView;
     }
 
@@ -1420,7 +1386,7 @@ void Thumbnail::applyAutoExp (procparams::ProcParams& params)
 
     if (params.toneCurve.autoexp && aeHistogram) {
         ImProcFunctions ipf (&params, false);
-        ipf.getAutoExp (aeHistogram, aeHistCompression, log (defGain) / log (2.0), params.toneCurve.clip, params.toneCurve.expcomp,
+        ipf.getAutoExp (aeHistogram, aeHistCompression, params.toneCurve.clip, params.toneCurve.expcomp,
                         params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
     }
 }
@@ -1749,7 +1715,7 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
     return tmpdata;
 }
 
-bool Thumbnail::writeImage (const Glib::ustring& fname, int format)
+bool Thumbnail::writeImage (const Glib::ustring& fname)
 {
 
     if (!thumbImg) {

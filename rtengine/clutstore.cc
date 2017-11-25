@@ -52,7 +52,7 @@ bool loadFile(
         rtengine::procparams::ColorManagementParams icm;
         icm.working = working_color_space;
 
-        img_src.getImage(curr_wb, TR_NONE, img_float.get(), pp, rtengine::procparams::ToneCurveParams(), icm, rtengine::procparams::RAWParams());
+        img_src.getImage(curr_wb, TR_NONE, img_float.get(), pp, rtengine::procparams::ToneCurveParams(), rtengine::procparams::RAWParams());
 
         if (!working_color_space.empty()) {
             img_src.convertColorSpace(img_float.get(), icm, curr_wb);
@@ -305,7 +305,7 @@ rtengine::CLUTStore& rtengine::CLUTStore::getInstance()
     return instance;
 }
 
-std::shared_ptr<rtengine::HaldCLUT> rtengine::CLUTStore::getClut(const Glib::ustring& filename)
+std::shared_ptr<rtengine::HaldCLUT> rtengine::CLUTStore::getClut(const Glib::ustring& filename) const
 {
     std::shared_ptr<rtengine::HaldCLUT> result;
 

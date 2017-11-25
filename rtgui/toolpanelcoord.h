@@ -79,6 +79,7 @@
 #include "colortoning.h"
 #include "filmsimulation.h"
 #include "prsharpening.h"
+#include "fattaltonemap.h"
 #include "guiutils.h"
 
 class ImageEditorCoordinator;
@@ -147,6 +148,7 @@ protected:
     RAWExposure* rawexposure;
     BayerRAWExposure* bayerrawexposure;
     XTransRAWExposure* xtransrawexposure;
+    FattalToneMapping *fattal;
 
     std::vector<PParamsChangeListener*> paramcListeners;
 
@@ -200,7 +202,7 @@ public:
     CoarsePanel* coarse;
     Gtk::Notebook* toolPanelNotebook;
 
-    ToolPanelCoordinator ();
+    ToolPanelCoordinator (bool batch = false);
     virtual ~ToolPanelCoordinator ();
 
     bool getChangedState                ()
@@ -219,7 +221,7 @@ public:
     // toolpanellistener interface
     void panelChanged   (rtengine::ProcEvent event, const Glib::ustring& descr);
 
-    void imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans);
+    void imageTypeChanged (bool isRaw, bool isBayer, bool isXtrans);
     // profilechangelistener interface
     void profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited = nullptr);
     void setDefaults    (rtengine::procparams::ProcParams* defparams);
@@ -241,6 +243,8 @@ public:
     // read/write the "expanded" state of the expanders & read/write the crop panel settings (ratio, guide type, etc.)
     void readOptions        ();
     void writeOptions       ();
+    void writeToolExpandedStatus (std::vector<int> &tpOpen);
+
 
     // wbprovider interface
     void getAutoWB (double& temp, double& green, double equal, double tempBias)
@@ -299,7 +303,7 @@ public:
     void toolSelected (ToolMode tool);
     void editModeSwitchedOff ();
 
-    void setEditProvider(EditDataProvider *provider);
+    void setEditProvider (EditDataProvider *provider);
 };
 
 #endif

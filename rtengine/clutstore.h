@@ -57,14 +57,14 @@ class CLUTStore final :
 public:
     static CLUTStore& getInstance();
 
-    std::shared_ptr<HaldCLUT> getClut(const Glib::ustring& filename);
+    std::shared_ptr<HaldCLUT> getClut(const Glib::ustring& filename) const;
 
     void clearCache();
 
 private:
     CLUTStore();
 
-    Cache<Glib::ustring, std::shared_ptr<HaldCLUT>> cache;
+    mutable Cache<Glib::ustring, std::shared_ptr<HaldCLUT>> cache;
 };
 
 }
