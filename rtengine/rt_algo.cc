@@ -1,8 +1,6 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2017 Ingo Weyrich <heckflosse67@gmx.de>
- *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -34,11 +32,15 @@ namespace rtengine
 
 void findMinMaxPercentile(const float* data, size_t size, float minPrct, float& minOut, float maxPrct, float& maxOut, bool multithread)
 {
+    // Copyright (c) 2017 Ingo Weyrich <heckflosse67@gmx.de>
     // We need to find the (minPrct*size) smallest value and the (maxPrct*size) smallest value in data.
     // We use a histogram based search for speed and to reduce memory usage.
     // Memory usage of this method is histoSize * sizeof(uint32_t) * (t + 1) byte,
     // where t is the number of threads and histoSize is in [1;65536].
+    // Processing time is O(n) where n is size of the input array.
+    // It scales well with multiple threads if the size of the input array is large.
     // The current implementation is not guaranteed to work correctly if size > 2^32 (4294967296).
+
     assert(minPrct <= maxPrct);
 
     if (size == 0) {
