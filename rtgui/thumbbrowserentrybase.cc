@@ -400,7 +400,7 @@ void ThumbBrowserEntryBase::resize (int h)
     MYWRITERLOCK(l, lockRW);
 
     height = h;
-    int old_preh = preh, old_width = width;
+    int old_preh = preh;
 
     // dimensions of the button set
     int bsw = 0, bsh = 0;
