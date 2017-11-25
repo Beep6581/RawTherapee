@@ -23,6 +23,7 @@
 
 namespace rtengine
 {
-void findMinMaxPercentile (const float *data, size_t size, float minPrct, float& minOut, float maxPrct, float& maxOut, bool multiThread = true);
+
+void findMinMaxPercentile(const float* data, size_t size, float minPrct, float& minOut, float maxPrct, float& maxOut, bool multiThread = true);
 
 }
