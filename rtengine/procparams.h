@@ -283,6 +283,9 @@ struct ToneCurveParams {
 
     ToneCurveParams();
 
+    bool operator ==(const ToneCurveParams& other) const;
+    bool operator !=(const ToneCurveParams& other) const;
+
     static bool HLReconstructionNecessary(const LUTu& histRedRaw, const LUTu& histGreenRaw, const LUTu& histBlueRaw);
 };
 
@@ -326,6 +329,9 @@ struct RetinexParams
 
     RetinexParams();
 
+    bool operator ==(const RetinexParams& other) const;
+    bool operator !=(const RetinexParams& other) const;
+
     void getCurves(RetinextransmissionCurve& transmissionCurveLUT, RetinexgaintransmissionCurve& gaintransmissionCurveLUT) const;
 };
 
@@ -352,6 +358,9 @@ struct LCurveParams
     bool    lcredsk;
 
     LCurveParams();
+
+    bool operator ==(const LCurveParams& other) const;
+    bool operator !=(const LCurveParams& other) const;
 };
 
 /**
@@ -364,6 +373,9 @@ struct RGBCurvesParams {
     std::vector<double>   bcurve;
 
     RGBCurvesParams();
+
+    bool operator ==(const RGBCurvesParams& other) const;
+    bool operator !=(const RGBCurvesParams& other) const;
 };
 
 /**
@@ -417,6 +429,9 @@ struct ColorToningParams {
 
     ColorToningParams();
 
+    bool operator ==(const ColorToningParams& other) const;
+    bool operator !=(const ColorToningParams& other) const;
+
     /// @brief Transform the mixer values to their curve equivalences
     void mixerToCurve(std::vector<double>& colorCurve, std::vector<double>& opacityCurve) const;
     /// @brief Specifically transform the sliders values to their curve equivalences
@@ -445,6 +460,9 @@ struct SharpeningParams {
     int            deconvdamping;
 
     SharpeningParams();
+
+    bool operator ==(const SharpeningParams& other) const;
+    bool operator !=(const SharpeningParams& other) const;
 };
 
 struct SharpenEdgeParams {
@@ -454,6 +472,9 @@ struct SharpenEdgeParams {
     bool    threechannels;
 
     SharpenEdgeParams();
+
+    bool operator ==(const SharpenEdgeParams& other) const;
+    bool operator !=(const SharpenEdgeParams& other) const;
 };
 
 struct SharpenMicroParams {
@@ -463,6 +484,9 @@ struct SharpenMicroParams {
     double  uniformity;
 
     SharpenMicroParams();
+
+    bool operator ==(const SharpenMicroParams& other) const;
+    bool operator !=(const SharpenMicroParams& other) const;
 };
 
 /**
@@ -479,6 +503,9 @@ struct VibranceParams {
     std::vector<double> skintonescurve;
 
     VibranceParams();
+
+    bool operator ==(const VibranceParams& other) const;
+    bool operator !=(const VibranceParams& other) const;
 };
 
 /**
@@ -518,6 +545,9 @@ struct WBParams {
     double          tempBias;
 
     WBParams();
+
+    bool operator ==(const WBParams& other) const;
+    bool operator !=(const WBParams& other) const;
 
     static const std::vector<WBEntry>& getWbEntries();
 };
@@ -580,6 +610,9 @@ struct ColorAppearanceParams {
     double greensc;
 
     ColorAppearanceParams();
+
+    bool operator ==(const ColorAppearanceParams& other) const;
+    bool operator !=(const ColorAppearanceParams& other) const;
 };
 
 /**
@@ -592,6 +625,9 @@ struct DefringeParams {
     std::vector<double> huecurve;
 
     DefringeParams();
+
+    bool operator ==(const DefringeParams& other) const;
+    bool operator !=(const DefringeParams& other) const;
 };
 
 /**
@@ -602,6 +638,9 @@ struct ImpulseDenoiseParams {
     int     thresh;
 
     ImpulseDenoiseParams();
+
+    bool operator ==(const ImpulseDenoiseParams& other) const;
+    bool operator !=(const ImpulseDenoiseParams& other) const;
 };
 
 /**
@@ -634,6 +673,9 @@ struct DirPyrDenoiseParams {
 
     DirPyrDenoiseParams();
 
+    bool operator ==(const DirPyrDenoiseParams& other) const;
+    bool operator !=(const DirPyrDenoiseParams& other) const;
+
     void getCurves(NoiseCurve& lCurve, NoiseCurve& cCurve) const;
 
 };
@@ -648,6 +690,9 @@ struct EPDParams {
     int    reweightingIterates;
 
     EPDParams();
+
+    bool operator ==(const EPDParams& other) const;
+    bool operator !=(const EPDParams& other) const;
 };
 
 // Fattal02 Tone-Mapping parameters
@@ -657,6 +702,9 @@ struct FattalToneMappingParams {
     int amount;
 
     FattalToneMappingParams();
+
+    bool operator ==(const FattalToneMappingParams& other) const;
+    bool operator !=(const FattalToneMappingParams& other) const;
 };
 
 /**
@@ -673,6 +721,9 @@ struct SHParams {
     int     radius;
 
     SHParams();
+
+    bool operator ==(const SHParams& other) const;
+    bool operator !=(const SHParams& other) const;
 };
 
 /**
@@ -690,6 +741,10 @@ struct CropParams {
     Glib::ustring   guide;
 
     CropParams();
+
+    bool operator ==(const CropParams& other) const;
+    bool operator !=(const CropParams& other) const;
+
     void mapToResized(int resizedWidth, int resizedHeight, int scale, int& x1, int& x2, int& y1, int& y2) const;
 };
 
@@ -702,6 +757,9 @@ struct CoarseTransformParams {
     bool    vflip;
 
     CoarseTransformParams();
+
+    bool operator ==(const CoarseTransformParams& other) const;
+    bool operator !=(const CoarseTransformParams& other) const;
 };
 
 /**
@@ -711,6 +769,9 @@ struct CommonTransformParams {
     bool autofill;
 
     CommonTransformParams();
+
+    bool operator ==(const CommonTransformParams& other) const;
+    bool operator !=(const CommonTransformParams& other) const;
 };
 
 /**
@@ -720,6 +781,9 @@ struct RotateParams {
     double  degree;
 
     RotateParams();
+
+    bool operator ==(const RotateParams& other) const;
+    bool operator !=(const RotateParams& other) const;
 };
 
 /**
@@ -729,6 +793,9 @@ struct DistortionParams {
     double  amount;
 
     DistortionParams();
+
+    bool operator ==(const DistortionParams& other) const;
+    bool operator !=(const DistortionParams& other) const;
 };
 
 // Lens profile correction parameters
@@ -749,6 +816,9 @@ struct LensProfParams {
 
     LensProfParams();
 
+    bool operator ==(const LensProfParams& other) const;
+    bool operator !=(const LensProfParams& other) const;
+
     bool useLensfun() const;
     bool lfAutoMatch() const;
     bool useLcp() const;
@@ -768,6 +838,9 @@ struct PerspectiveParams {
     double  vertical;
 
     PerspectiveParams();
+
+    bool operator ==(const PerspectiveParams& other) const;
+    bool operator !=(const PerspectiveParams& other) const;
 };
 
 /**
@@ -782,6 +855,9 @@ struct GradientParams {
     int    centerY;
 
     GradientParams();
+
+    bool operator ==(const GradientParams& other) const;
+    bool operator !=(const GradientParams& other) const;
 };
 
 /**
@@ -794,6 +870,9 @@ struct PCVignetteParams {
     int    roundness;
 
     PCVignetteParams();
+
+    bool operator ==(const PCVignetteParams& other) const;
+    bool operator !=(const PCVignetteParams& other) const;
 };
 
 /**
@@ -807,6 +886,9 @@ struct VignettingParams {
     int  centerY;
 
     VignettingParams();
+
+    bool operator ==(const VignettingParams& other) const;
+    bool operator !=(const VignettingParams& other) const;
 };
 
 /**
@@ -818,6 +900,9 @@ struct ChannelMixerParams {
     int blue[3];
 
     ChannelMixerParams();
+
+    bool operator ==(const ChannelMixerParams& other) const;
+    bool operator !=(const ChannelMixerParams& other) const;
 };
 
 struct BlackWhiteParams {
@@ -854,6 +939,9 @@ struct BlackWhiteParams {
     int gammaBlue;
 
     BlackWhiteParams();
+
+    bool operator ==(const BlackWhiteParams& other) const;
+    bool operator !=(const BlackWhiteParams& other) const;
 };
 
 /**
@@ -864,6 +952,9 @@ struct CACorrParams {
     double blue;
 
     CACorrParams();
+
+    bool operator ==(const CACorrParams& other) const;
+    bool operator !=(const CACorrParams& other) const;
 };
 
 /**
@@ -879,6 +970,9 @@ struct ResizeParams {
     int height;
 
     ResizeParams();
+
+    bool operator ==(const ResizeParams& other) const;
+    bool operator !=(const ResizeParams& other) const;
 };
 
 /**
@@ -904,6 +998,9 @@ struct ColorManagementParams {
     static const Glib::ustring NoICMString;
 
     ColorManagementParams();
+
+    bool operator ==(const ColorManagementParams& other) const;
+    bool operator !=(const ColorManagementParams& other) const;
 };
 
 /**
@@ -1005,6 +1102,9 @@ struct WaveletParams {
 
     WaveletParams();
 
+    bool operator ==(const WaveletParams& other) const;
+    bool operator !=(const WaveletParams& other) const;
+
     void getCurves(
         WavCurve& cCurve,
         WavOpacityCurveRG&
@@ -1028,6 +1128,9 @@ struct DirPyrEqualizerParams {
     Glib::ustring cbdlMethod;
 
     DirPyrEqualizerParams();
+
+    bool operator ==(const DirPyrEqualizerParams& other) const;
+    bool operator !=(const DirPyrEqualizerParams& other) const;
 };
 
 /**
@@ -1039,6 +1142,9 @@ struct HSVEqualizerParams {
     std::vector<double> vcurve;
 
     HSVEqualizerParams();
+
+    bool operator ==(const HSVEqualizerParams& other) const;
+    bool operator !=(const HSVEqualizerParams& other) const;
 };
 
 
@@ -1051,6 +1157,9 @@ struct FilmSimulationParams {
     int strength;
 
     FilmSimulationParams();
+
+    bool operator ==(const FilmSimulationParams& other) const;
+    bool operator !=(const FilmSimulationParams& other) const;
 };
 
 
@@ -1138,6 +1247,9 @@ struct RAWParams {
 
         BayerSensor();
 
+        bool operator ==(const BayerSensor& other) const;
+        bool operator !=(const BayerSensor& other) const;
+
         void setPixelShiftDefaults();
 
         static const std::vector<const char*>& getMethodStrings();
@@ -1163,6 +1275,9 @@ struct RAWParams {
         double blackblue;
 
         XTransSensor();
+
+        bool operator ==(const XTransSensor& other) const;
+        bool operator !=(const XTransSensor& other) const;
 
         static const std::vector<const char*>& getMethodStrings();
         static Glib::ustring getMethodString(Method method);
@@ -1201,6 +1316,9 @@ struct RAWParams {
     int hotdeadpix_thresh;
 
     RAWParams();
+
+    bool operator ==(const RAWParams& other) const;
+    bool operator !=(const RAWParams& other) const;
 
     static const std::vector<const char*>& getFlatFieldBlurTypeStrings();
     static Glib::ustring getFlatFieldBlurTypeString(FlatFieldBlurType type);
@@ -1298,8 +1416,8 @@ public:
     static void init();
     static void cleanup();
 
-    bool operator ==(const ProcParams& other);
-    bool operator !=(const ProcParams& other);
+    bool operator ==(const ProcParams& other) const;
+    bool operator !=(const ProcParams& other) const;
 
 private:
     /** Write the ProcParams's text in the file of the given name.

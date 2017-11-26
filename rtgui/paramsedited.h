@@ -839,8 +839,5 @@ public:
     void set   (bool v);
     void initFrom (const std::vector<rtengine::procparams::ProcParams>& src);
     void combine (rtengine::procparams::ProcParams& toEdit, const rtengine::procparams::ProcParams& mods, bool forceSet);
-
-    bool operator== (const ParamsEdited& other);
-    bool operator!= (const ParamsEdited& other);
 };
 #endif

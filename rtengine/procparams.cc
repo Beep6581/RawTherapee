@@ -307,42 +307,6 @@ namespace rtengine
 namespace procparams
 {
 
-bool operator ==(const rtengine::procparams::WaveletParams& a, const rtengine::procparams::WaveletParams& b)
-{
-    if (a.enabled != b.enabled) {
-        return false;
-    }
-
-    for (int i = 0; i < 9; i++) {
-        if (a.c[i] != b.c[i]) {
-            return false;
-        }
-    }
-
-    for (int i = 0; i < 9; i++) {
-        if (a.ch[i] != b.ch[i]) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool operator ==(const rtengine::procparams::DirPyrEqualizerParams& a, const rtengine::procparams::DirPyrEqualizerParams& b)
-{
-    if (a.enabled != b.enabled) {
-        return false;
-    }
-
-    for (int i = 0; i < 6; i++) {
-        if (a.mult[i] != b.mult[i]) {
-            return false;
-        }
-    }
-
-    return a.threshold == b.threshold;
-}
-
 ToneCurveParams::ToneCurveParams() :
     autoexp(false),
     clip(0.02),
@@ -365,6 +329,32 @@ ToneCurveParams::ToneCurveParams() :
     hlcompr(0),
     hlcomprthresh(33)
 {
+}
+
+bool ToneCurveParams::operator ==(const ToneCurveParams& other) const
+{
+    return
+        autoexp == other.autoexp
+        && clip == other.clip
+        && hrenabled == other.hrenabled
+        && method == other.method
+        && expcomp == other.expcomp
+        && curve == other.curve
+        && curve2 == other.curve2
+        && curveMode == other.curveMode
+        && curveMode2 == other.curveMode2
+        && brightness == other.brightness
+        && black == other.black
+        && contrast == other.contrast
+        && saturation == other.saturation
+        && shcompr == other.shcompr
+        && hlcompr == other.hlcompr
+        && hlcomprthresh == other.hlcomprthresh;
+}
+
+bool ToneCurveParams::operator !=(const ToneCurveParams& other) const
+{
+    return !(*this == other);
 }
 
 bool ToneCurveParams::HLReconstructionNecessary(const LUTu& histRedRaw, const LUTu& histGreenRaw, const LUTu& histBlueRaw)
@@ -458,6 +448,47 @@ RetinexParams::RetinexParams() :
 {
 }
 
+bool RetinexParams::operator ==(const RetinexParams& other) const
+{
+    return
+        enabled == other.enabled
+        && cdcurve == other.cdcurve
+        && cdHcurve == other.cdHcurve
+        && lhcurve == other.lhcurve
+        && transmissionCurve == other.transmissionCurve
+        && gaintransmissionCurve == other.gaintransmissionCurve
+        && mapcurve == other.mapcurve
+        && str == other.str
+        && scal == other.scal
+        && iter == other.iter
+        && grad == other.grad
+        && grads == other.grads
+        && gam == other.gam
+        && slope == other.slope
+        && neigh == other.neigh
+        && offs == other.offs
+        && highlights == other.highlights
+        && htonalwidth == other.htonalwidth
+        && shadows == other.shadows
+        && stonalwidth == other.stonalwidth
+        && radius == other.radius
+        && retinexMethod == other.retinexMethod
+        && retinexcolorspace == other.retinexcolorspace
+        && gammaretinex == other.gammaretinex
+        && mapMethod == other.mapMethod
+        && viewMethod == other.viewMethod
+        && vart == other.vart
+        && limd == other.limd
+        && highl == other.highl
+        && skal == other.skal
+        && medianmap == other.medianmap;
+}
+
+bool RetinexParams::operator !=(const RetinexParams& other) const
+{
+    return !(*this == other);
+}
+
 void RetinexParams::getCurves(RetinextransmissionCurve &transmissionCurveLUT, RetinexgaintransmissionCurve &gaintransmissionCurveLUT) const
 {
     transmissionCurveLUT.Set(this->transmissionCurve);
@@ -502,6 +533,31 @@ LCurveParams::LCurveParams() :
 {
 }
 
+bool LCurveParams::operator ==(const LCurveParams& other) const
+{
+    return
+        lcurve == other.lcurve
+        && acurve == other.acurve
+        && bcurve == other.bcurve
+        && cccurve == other.cccurve
+        && chcurve == other.chcurve
+        && lhcurve == other.lhcurve
+        && hhcurve == other.hhcurve
+        && lccurve == other.lccurve
+        && clcurve == other.clcurve
+        && brightness == other.brightness
+        && contrast == other.contrast
+        && chromaticity == other.chromaticity
+        && avoidcolorshift == other.avoidcolorshift
+        && rstprotection == other.rstprotection
+        && lcredsk == other.lcredsk;
+}
+
+bool LCurveParams::operator !=(const LCurveParams& other) const
+{
+    return !(*this == other);
+}
+
 RGBCurvesParams::RGBCurvesParams() :
     lumamode(false),
     rcurve{
@@ -514,6 +570,20 @@ RGBCurvesParams::RGBCurvesParams() :
         DCT_Linear
     }
 {
+}
+
+bool RGBCurvesParams::operator ==(const RGBCurvesParams& other) const
+{
+    return
+        lumamode == other.lumamode
+        && rcurve == other.rcurve
+        && gcurve == other.gcurve
+        && bcurve == other.bcurve;
+}
+
+bool RGBCurvesParams::operator !=(const RGBCurvesParams& other) const
+{
+    return !(*this == other);
 }
 
 ColorToningParams::ColorToningParams() :
@@ -588,6 +658,42 @@ ColorToningParams::ColorToningParams() :
     sathigh(0.0),
     lumamode(true)
 {
+}
+
+bool ColorToningParams::operator ==(const ColorToningParams& other) const
+{
+    return
+        enabled == other.enabled
+        && autosat == other.autosat
+        && opacityCurve == other.opacityCurve
+        && colorCurve == other.colorCurve
+        && satProtectionThreshold == other.satProtectionThreshold
+        && saturatedOpacity == other.saturatedOpacity
+        && strength == other.strength
+        && balance == other.balance
+        && hlColSat == other.hlColSat
+        && shadowsColSat == other.shadowsColSat
+        && clcurve == other.clcurve
+        && cl2curve == other.cl2curve
+        && method == other.method
+        && twocolor == other.twocolor
+        && redlow == other.redlow
+        && greenlow == other.greenlow
+        && bluelow == other.bluelow
+        && redmed == other.redmed
+        && greenmed == other.greenmed
+        && bluemed == other.bluemed
+        && redhigh == other.redhigh
+        && greenhigh == other.greenhigh
+        && bluehigh == other.bluehigh
+        && satlow == other.satlow
+        && sathigh == other.sathigh
+        && lumamode == other.lumamode;
+}
+
+bool ColorToningParams::operator !=(const ColorToningParams& other) const
+{
+    return !(*this == other);
 }
 
 void ColorToningParams::mixerToCurve(std::vector<double>& colorCurve, std::vector<double>& opacityCurve) const
@@ -832,7 +938,7 @@ void ColorToningParams::slidersToCurve(std::vector<double>& colorCurve, std::vec
     opacityCurve.at (8) = 0.35;
 }
 
-void ColorToningParams::getCurves (ColorGradientCurve& colorCurveLUT, OpacityCurve& opacityCurveLUT, const double xyz_rgb[3][3], bool& opautili) const
+void ColorToningParams::getCurves(ColorGradientCurve& colorCurveLUT, OpacityCurve& opacityCurveLUT, const double xyz_rgb[3][3], bool& opautili) const
 {
     float satur = 0.8f;
     float lumin = 0.5f; //middle of luminance for optimization of gamut - no real importance...as we work in XYZ and gamut control
@@ -887,6 +993,30 @@ SharpeningParams::SharpeningParams() :
 {
 }
 
+bool SharpeningParams::operator ==(const SharpeningParams& other) const
+{
+    return
+        enabled == other.enabled
+        && radius == other.radius
+        && amount == other.amount
+        && threshold == other.threshold
+        && edgesonly == other.edgesonly
+        && edges_radius == other.edges_radius
+        && edges_tolerance == other.edges_tolerance
+        && halocontrol == other.halocontrol
+        && halocontrol_amount == other.halocontrol_amount
+        && method == other.method
+        && deconvamount == other.deconvamount
+        && deconvradius == other.deconvradius
+        && deconviter == other.deconviter
+        && deconvdamping == other.deconvdamping;
+}
+
+bool SharpeningParams::operator !=(const SharpeningParams& other) const
+{
+    return !(*this == other);
+}
+
 SharpenEdgeParams::SharpenEdgeParams() :
     enabled(false),
     passes(2),
@@ -895,12 +1025,40 @@ SharpenEdgeParams::SharpenEdgeParams() :
 {
 }
 
+bool SharpenEdgeParams::operator ==(const SharpenEdgeParams& other) const
+{
+    return
+        enabled == other.enabled
+        && passes == other.passes
+        && amount == other.amount
+        && threechannels == other.threechannels;
+}
+
+bool SharpenEdgeParams::operator !=(const SharpenEdgeParams& other) const
+{
+    return !(*this == other);
+}
+
 SharpenMicroParams::SharpenMicroParams() :
     enabled(false),
     matrix(false),
     amount(20.0),
     uniformity(50.0)
 {
+}
+
+bool SharpenMicroParams::operator ==(const SharpenMicroParams& other) const
+{
+    return
+        enabled == other.enabled
+        && matrix == other.matrix
+        && amount == other.amount
+        && uniformity == other.uniformity;
+}
+
+bool SharpenMicroParams::operator !=(const SharpenMicroParams& other) const
+{
+    return !(*this == other);
 }
 
 VibranceParams::VibranceParams() :
@@ -917,6 +1075,24 @@ VibranceParams::VibranceParams() :
 {
 }
 
+bool VibranceParams::operator ==(const VibranceParams& other) const
+{
+    return
+        enabled == other.enabled
+        && pastels == other.pastels
+        && saturated == other.saturated
+        && psthreshold == other.psthreshold
+        && protectskins == other.protectskins
+        && avoidcolorshift == other.avoidcolorshift
+        && pastsattog == other.pastsattog
+        && skintonescurve == other.skintonescurve;
+}
+
+bool VibranceParams::operator !=(const VibranceParams& other) const
+{
+    return !(*this == other);
+}
+
 WBParams::WBParams() :
     method("Camera"),
     temperature(6504),
@@ -924,6 +1100,21 @@ WBParams::WBParams() :
     equal(1.0),
     tempBias(0.0)
 {
+}
+
+bool WBParams::operator ==(const WBParams& other) const
+{
+    return
+        method == other.method
+        && temperature == other.temperature
+        && green == other.green
+        && equal == other.equal
+        && tempBias == other.tempBias;
+}
+
+bool WBParams::operator !=(const WBParams& other) const
+{
+    return !(*this == other);
 }
 
 const std::vector<WBEntry>& WBParams::getWbEntries()
@@ -1017,6 +1208,55 @@ ColorAppearanceParams::ColorAppearanceParams() :
 {
 }
 
+bool ColorAppearanceParams::operator ==(const ColorAppearanceParams& other) const
+{
+    return
+        enabled == other.enabled
+        && degree == other.degree
+        && autodegree == other.autodegree
+        && degreeout == other.degreeout
+        && autodegreeout == other.autodegreeout
+        && curve == other.curve
+        && curve2 == other.curve2
+        && curve3 == other.curve3
+        && curveMode == other.curveMode
+        && curveMode2 == other.curveMode2
+        && curveMode3 == other.curveMode3
+        && surround == other.surround
+        && surrsrc == other.surrsrc
+        && adapscen == other.adapscen
+        && autoadapscen == other.autoadapscen
+        && ybscen == other.ybscen
+        && autoybscen == other.autoybscen
+        && adaplum == other.adaplum
+        && badpixsl == other.badpixsl
+        && wbmodel == other.wbmodel
+        && algo == other.algo
+        && contrast == other.contrast
+        && qcontrast == other.qcontrast
+        && jlight == other.jlight
+        && qbright == other.qbright
+        && chroma == other.chroma
+        && schroma == other.schroma
+        && mchroma == other.mchroma
+        && colorh == other.colorh
+        && rstprotection == other.rstprotection
+        && surrsource == other.surrsource
+        && gamut == other.gamut
+        && datacie == other.datacie
+        && tonecie == other.tonecie
+        && tempout == other.tempout
+        && ybout == other.ybout
+        && greenout == other.greenout
+        && tempsc == other.tempsc
+        && greensc == other.greensc;
+}
+
+bool ColorAppearanceParams::operator !=(const ColorAppearanceParams& other) const
+{
+    return !(*this == other);
+}
+
 DefringeParams::DefringeParams() :
     enabled(false),
     radius(2.0),
@@ -1051,10 +1291,36 @@ DefringeParams::DefringeParams() :
 {
 }
 
+bool DefringeParams::operator ==(const DefringeParams& other) const
+{
+    return
+        enabled == other.enabled
+        && radius == other.radius
+        && threshold == other.threshold
+        && huecurve == other.huecurve;
+}
+
+bool DefringeParams::operator !=(const DefringeParams& other) const
+{
+    return !(*this == other);
+}
+
 ImpulseDenoiseParams::ImpulseDenoiseParams() :
     enabled(false),
     thresh(50)
 {
+}
+
+bool ImpulseDenoiseParams::operator ==(const ImpulseDenoiseParams& other) const
+{
+    return
+        enabled == other.enabled
+        && thresh == other.thresh;
+}
+
+bool ImpulseDenoiseParams::operator !=(const ImpulseDenoiseParams& other) const
+{
+    return !(*this == other);
 }
 
 DirPyrDenoiseParams::DirPyrDenoiseParams() :
@@ -1102,10 +1368,41 @@ DirPyrDenoiseParams::DirPyrDenoiseParams() :
 {
 }
 
+bool DirPyrDenoiseParams::operator ==(const DirPyrDenoiseParams& other) const
+{
+    return
+        lcurve == other.lcurve
+        && cccurve == other.cccurve
+        && enabled == other.enabled
+        && enhance == other.enhance
+        && median == other.median
+        && perform == other.perform
+        && luma == other.luma
+        && Ldetail == other.Ldetail
+        && chroma == other.chroma
+        && redchro == other.redchro
+        && bluechro == other.bluechro
+        && gamma == other.gamma
+        && dmethod == other.dmethod
+        && Lmethod == other.Lmethod
+        && Cmethod == other.Cmethod
+        && C2method == other.C2method
+        && smethod == other.smethod
+        && medmethod == other.medmethod
+        && methodmed == other.methodmed
+        && rgbmethod == other.rgbmethod
+        && passes == other.passes;
+}
+
+bool DirPyrDenoiseParams::operator !=(const DirPyrDenoiseParams& other) const
+{
+    return !(*this == other);
+}
+
 void DirPyrDenoiseParams::getCurves (NoiseCurve &lCurve, NoiseCurve &cCurve) const
 {
-    lCurve.Set (this->lcurve);
-    cCurve.Set (this->cccurve);
+    lCurve.Set(this->lcurve);
+    cCurve.Set(this->cccurve);
 }
 
 EPDParams::EPDParams() :
@@ -1118,11 +1415,40 @@ EPDParams::EPDParams() :
 {
 }
 
+bool EPDParams::operator ==(const EPDParams& other) const
+{
+    return
+        enabled == other.enabled
+        && strength == other.strength
+        && gamma == other.gamma
+        && edgeStopping == other.edgeStopping
+        && scale == other.scale
+        && reweightingIterates == other.reweightingIterates;
+}
+
+bool EPDParams::operator !=(const EPDParams& other) const
+{
+    return !(*this == other);
+}
+
 FattalToneMappingParams::FattalToneMappingParams() :
     enabled(false),
     threshold(0),
     amount(1)
 {
+}
+
+bool FattalToneMappingParams::operator ==(const FattalToneMappingParams& other) const
+{
+    return
+        enabled == other.enabled
+        && threshold == other.threshold
+        && amount == other.amount;
+}
+
+bool FattalToneMappingParams::operator !=(const FattalToneMappingParams& other) const
+{
+    return !(*this == other);
 }
 
 SHParams::SHParams() :
@@ -1137,6 +1463,24 @@ SHParams::SHParams() :
 {
 }
 
+bool SHParams::operator ==(const SHParams& other) const
+{
+    return
+        enabled == other.enabled
+        && hq == other.hq
+        && highlights == other.highlights
+        && htonalwidth == other.htonalwidth
+        && shadows == other.shadows
+        && stonalwidth == other.stonalwidth
+        && localcontrast == other.localcontrast
+        && radius == other.radius;
+}
+
+bool SHParams::operator !=(const SHParams& other) const
+{
+    return !(*this == other);
+}
+
 CropParams::CropParams() :
     enabled(false),
     x(-1),
@@ -1148,6 +1492,25 @@ CropParams::CropParams() :
     orientation("As Image"),
     guide("Frame")
 {
+}
+
+bool CropParams::operator ==(const CropParams& other) const
+{
+    return
+        enabled == other.enabled
+        && x == other.x
+        && y == other.y
+        && w == other.w
+        && h == other.h
+        && fixratio == other.fixratio
+        && ratio == other.ratio
+        && orientation == other.orientation
+        && guide == other.guide;
+}
+
+bool CropParams::operator !=(const CropParams& other) const
+{
+    return !(*this == other);
 }
 
 void CropParams::mapToResized(int resizedWidth, int resizedHeight, int scale, int& x1, int& x2, int& y1, int& y2) const
@@ -1169,9 +1532,32 @@ CoarseTransformParams::CoarseTransformParams() :
 {
 }
 
+bool CoarseTransformParams::operator ==(const CoarseTransformParams& other) const
+{
+    return
+        rotate == other.rotate
+        && hflip == other.hflip
+        && vflip == other.vflip;
+}
+
+bool CoarseTransformParams::operator !=(const CoarseTransformParams& other) const
+{
+    return !(*this == other);
+}
+
 CommonTransformParams::CommonTransformParams() :
     autofill(true)
 {
+}
+
+bool CommonTransformParams::operator ==(const CommonTransformParams& other) const
+{
+    return autofill == other.autofill;
+}
+
+bool CommonTransformParams::operator !=(const CommonTransformParams& other) const
+{
+    return !(*this == other);
 }
 
 RotateParams::RotateParams() :
@@ -1179,9 +1565,29 @@ RotateParams::RotateParams() :
 {
 }
 
+bool RotateParams::operator ==(const RotateParams& other) const
+{
+    return degree == other.degree;
+}
+
+bool RotateParams::operator !=(const RotateParams& other) const
+{
+    return !(*this == other);
+}
+
 DistortionParams::DistortionParams() :
     amount(0.0)
 {
+}
+
+bool DistortionParams::operator ==(const DistortionParams& other) const
+{
+    return amount == other.amount;
+}
+
+bool DistortionParams::operator !=(const DistortionParams& other) const
+{
+    return !(*this == other);
 }
 
 LensProfParams::LensProfParams() :
@@ -1190,6 +1596,22 @@ LensProfParams::LensProfParams() :
     useVign(true),
     useCA(false)
 {
+}
+
+bool LensProfParams::operator ==(const LensProfParams& other) const
+{
+    return
+        lcMode == other.lcMode
+        && lcpFile == other.lcpFile
+        && useCA == other.useCA
+        && lfCameraMake == other.lfCameraMake
+        && lfCameraModel == other.lfCameraModel
+        && lfLens == other.lfLens;
+}
+
+bool LensProfParams::operator !=(const LensProfParams& other) const
+{
+    return !(*this == other);
 }
 
 bool LensProfParams::useLensfun() const
@@ -1244,6 +1666,18 @@ PerspectiveParams::PerspectiveParams() :
 {
 }
 
+bool PerspectiveParams::operator ==(const PerspectiveParams& other) const
+{
+    return
+        horizontal == other.horizontal
+        && vertical == other.vertical;
+}
+
+bool PerspectiveParams::operator !=(const PerspectiveParams& other) const
+{
+    return !(*this == other);
+}
+
 GradientParams::GradientParams() :
     enabled(false),
     degree(0.0),
@@ -1254,12 +1688,42 @@ GradientParams::GradientParams() :
 {
 }
 
+bool GradientParams::operator ==(const GradientParams& other) const
+{
+    return
+        enabled == other.enabled
+        && degree == other.degree
+        && feather == other.feather
+        && strength == other.strength
+        && centerX == other.centerX
+        && centerY == other.centerY;
+}
+
+bool GradientParams::operator !=(const GradientParams& other) const
+{
+    return !(*this == other);
+}
+
 PCVignetteParams::PCVignetteParams() :
     enabled(false),
     strength(0.60),
     feather(50),
     roundness(50)
 {
+}
+
+bool PCVignetteParams::operator ==(const PCVignetteParams& other) const
+{
+    return
+        enabled == other.enabled
+        && strength == other.strength
+        && feather == other.feather
+        && roundness == other.roundness;
+}
+
+bool PCVignetteParams::operator !=(const PCVignetteParams& other) const
+{
+    return !(*this == other);
 }
 
 VignettingParams::VignettingParams() :
@@ -1269,6 +1733,21 @@ VignettingParams::VignettingParams() :
     centerX(0),
     centerY(0)
 {
+}
+
+bool VignettingParams::operator ==(const VignettingParams& other) const
+{
+    return
+        amount == other.amount
+        && radius == other.radius
+        && strength == other.strength
+        && centerX == other.centerX
+        && centerY == other.centerY;
+}
+
+bool VignettingParams::operator !=(const VignettingParams& other) const
+{
+    return !(*this == other);
 }
 
 ChannelMixerParams::ChannelMixerParams() :
@@ -1288,6 +1767,25 @@ ChannelMixerParams::ChannelMixerParams() :
         100
     }
 {
+}
+
+bool ChannelMixerParams::operator ==(const ChannelMixerParams& other) const
+{
+    for (unsigned int i = 0; i < 3; ++i) {
+        if (
+            red[i] != other.red[i]
+            || green[i] != other.green[i]
+            || blue[i] != other.blue[i]
+        ) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool ChannelMixerParams::operator !=(const ChannelMixerParams& other) const
+{
+    return !(*this == other);
 }
 
 BlackWhiteParams::BlackWhiteParams() :
@@ -1323,10 +1821,55 @@ BlackWhiteParams::BlackWhiteParams() :
 {
 }
 
+bool BlackWhiteParams::operator ==(const BlackWhiteParams& other) const
+{
+    return
+        beforeCurve == other.beforeCurve
+        && beforeCurveMode == other.beforeCurveMode
+        && afterCurve == other.afterCurve
+        && afterCurveMode == other.afterCurveMode
+        && algo == other.algo
+        && luminanceCurve == other.luminanceCurve
+        && autoc == other.autoc
+        && enabledcc == other.enabledcc
+        && enabled == other.enabled
+        && filter == other.filter
+        && setting == other.setting
+        && method == other.method
+        && mixerRed == other.mixerRed
+        && mixerOrange == other.mixerOrange
+        && mixerYellow == other.mixerYellow
+        && mixerGreen == other.mixerGreen
+        && mixerCyan == other.mixerCyan
+        && mixerBlue == other.mixerBlue
+        && mixerMagenta == other.mixerMagenta
+        && mixerPurple == other.mixerPurple
+        && gammaRed == other.gammaRed
+        && gammaGreen == other.gammaGreen
+        && gammaBlue == other.gammaBlue;
+}
+
+bool BlackWhiteParams::operator !=(const BlackWhiteParams& other) const
+{
+    return !(*this == other);
+}
+
 CACorrParams::CACorrParams() :
     red(0.0),
     blue(0.0)
 {
+}
+
+bool CACorrParams::operator ==(const CACorrParams& other) const
+{
+    return
+        red == other.red
+        && blue == other.blue;
+}
+
+bool CACorrParams::operator !=(const CACorrParams& other) const
+{
+    return !(*this == other);
 }
 
 ResizeParams::ResizeParams() :
@@ -1338,6 +1881,23 @@ ResizeParams::ResizeParams() :
     width(900),
     height(900)
 {
+}
+
+bool ResizeParams::operator ==(const ResizeParams& other) const
+{
+    return
+        enabled == other.enabled
+        && scale == other.scale
+        && appliesTo == other.appliesTo
+        && method == other.method
+        && dataspec == other.dataspec
+        && width == other.width
+        && height == other.height;
+}
+
+bool ResizeParams::operator !=(const ResizeParams& other) const
+{
+    return !(*this == other);
 }
 
 const Glib::ustring ColorManagementParams::NoICMString = Glib::ustring ("No ICM: sRGB output");
@@ -1358,6 +1918,30 @@ ColorManagementParams::ColorManagementParams() :
     slpos(4.5),
     freegamma(false)
 {
+}
+
+bool ColorManagementParams::operator ==(const ColorManagementParams& other) const
+{
+    return
+        input == other.input
+        && toneCurve == other.toneCurve
+        && applyLookTable == other.applyLookTable
+        && applyBaselineExposureOffset == other.applyBaselineExposureOffset
+        && applyHueSatMap == other.applyHueSatMap
+        && dcpIlluminant == other.dcpIlluminant
+        && working == other.working
+        && output == other.output
+        && outputIntent == other.outputIntent
+        && outputBPC == other.outputBPC
+        && gamma == other.gamma
+        && gampos == other.gampos
+        && slpos == other.slpos
+        && freegamma == other.freegamma;
+}
+
+bool ColorManagementParams::operator !=(const ColorManagementParams& other) const
+{
+    return !(*this == other);
 }
 
 WaveletParams::WaveletParams() :
@@ -1515,6 +2099,106 @@ WaveletParams::WaveletParams() :
 {
 }
 
+bool WaveletParams::operator ==(const WaveletParams& other) const
+{
+    return
+        ccwcurve == other.ccwcurve
+        && opacityCurveRG == other.opacityCurveRG
+        && opacityCurveBY == other.opacityCurveBY
+        && opacityCurveW == other.opacityCurveW
+        && opacityCurveWL == other.opacityCurveWL
+        && hhcurve == other.hhcurve
+        && Chcurve == other.Chcurve
+        && wavclCurve == other.wavclCurve
+        && enabled == other.enabled
+        && median == other.median
+        && medianlev == other.medianlev
+        && linkedg == other.linkedg
+        && cbenab == other.cbenab
+        && greenlow == other.greenlow
+        && bluelow == other.bluelow
+        && greenmed == other.greenmed
+        && bluemed == other.bluemed
+        && greenhigh == other.greenhigh
+        && bluehigh == other.bluehigh
+        && lipst == other.lipst
+        && avoid == other.avoid
+        && tmr == other.tmr
+        && strength == other.strength
+        && balance == other.balance
+        && iter == other.iter
+        && expcontrast == other.expcontrast
+        && expchroma == other.expchroma
+        && [this, &other]() -> bool
+            {
+                for (unsigned int i = 0; i < 9; ++i) {
+                    if (c[i] != other.c[i] || ch[i] != other.ch[i]) {
+                        return false;
+                    }
+                }
+                return true;
+            }()
+        && expedge == other.expedge
+        && expresid == other.expresid
+        && expfinal == other.expfinal
+        && exptoning == other.exptoning
+        && expnoise == other.expnoise
+        && Lmethod == other.Lmethod
+        && CLmethod == other.CLmethod
+        && Backmethod == other.Backmethod
+        && Tilesmethod == other.Tilesmethod
+        && daubcoeffmethod == other.daubcoeffmethod
+        && CHmethod == other.CHmethod
+        && Medgreinf == other.Medgreinf
+        && CHSLmethod == other.CHSLmethod
+        && EDmethod == other.EDmethod
+        && NPmethod == other.NPmethod
+        && BAmethod == other.BAmethod
+        && TMmethod == other.TMmethod
+        && Dirmethod == other.Dirmethod
+        && HSmethod == other.HSmethod
+        && rescon == other.rescon
+        && resconH == other.resconH
+        && reschro == other.reschro
+        && tmrs == other.tmrs
+        && gamma == other.gamma
+        && sup == other.sup
+        && sky == other.sky
+        && thres == other.thres
+        && chroma == other.chroma
+        && chro == other.chro
+        && threshold == other.threshold
+        && threshold2 == other.threshold2
+        && edgedetect == other.edgedetect
+        && edgedetectthr == other.edgedetectthr
+        && edgedetectthr2 == other.edgedetectthr2
+        && edgesensi == other.edgesensi
+        && edgeampli == other.edgeampli
+        && contrast == other.contrast
+        && edgrad == other.edgrad
+        && edgval == other.edgval
+        && edgthresh == other.edgthresh
+        && thr == other.thr
+        && thrH == other.thrH
+        && skinprotect == other.skinprotect
+        && hueskin == other.hueskin
+        && hueskin2 == other.hueskin2
+        && hllev == other.hllev
+        && bllev == other.bllev
+        && pastlev == other.pastlev
+        && satlev == other.satlev
+        && edgcont == other.edgcont
+        && level0noise == other.level0noise
+        && level1noise == other.level1noise
+        && level2noise == other.level2noise
+        && level3noise == other.level3noise;
+}
+
+bool WaveletParams::operator !=(const WaveletParams& other) const
+{
+    return !(*this == other);
+}
+
 void WaveletParams::getCurves(
     WavCurve& cCurve,
     WavOpacityCurveRG& opacityCurveLUTRG,
@@ -1549,6 +2233,31 @@ DirPyrEqualizerParams::DirPyrEqualizerParams() :
 {
 }
 
+bool DirPyrEqualizerParams::operator ==(const DirPyrEqualizerParams& other) const
+{
+    return
+        enabled == other.enabled
+        && gamutlab == other.gamutlab
+        && [this, &other]() -> bool
+            {
+                for (unsigned int i = 0; i < 6; ++i) {
+                    if (mult[i] != other.mult[i]) {
+                        return false;
+                    }
+                }
+                return true;
+            }()
+        && threshold == other.threshold
+        && skinprotect == other.skinprotect
+        && hueskin == other.hueskin
+        && cbdlMethod == other.cbdlMethod;
+}
+
+bool DirPyrEqualizerParams::operator !=(const DirPyrEqualizerParams& other) const
+{
+    return !(*this == other);
+}
+
 HSVEqualizerParams::HSVEqualizerParams() :
     hcurve{
         FCT_Linear
@@ -1562,10 +2271,36 @@ HSVEqualizerParams::HSVEqualizerParams() :
 {
 }
 
+bool HSVEqualizerParams::operator ==(const HSVEqualizerParams& other) const
+{
+    return
+        hcurve == other.hcurve
+        && scurve == other.scurve
+        && vcurve == other.vcurve;
+}
+
+bool HSVEqualizerParams::operator !=(const HSVEqualizerParams& other) const
+{
+    return !(*this == other);
+}
+
 FilmSimulationParams::FilmSimulationParams() :
     enabled(false),
     strength(100)
 {
+}
+
+bool FilmSimulationParams::operator ==(const FilmSimulationParams& other) const
+{
+    return
+        enabled == other.enabled
+        && clutFilename == other.clutFilename
+        && strength == other.strength;
+}
+
+bool FilmSimulationParams::operator !=(const FilmSimulationParams& other) const
+{
+    return !(*this == other);
 }
 
 RAWParams::BayerSensor::BayerSensor() :
@@ -1613,6 +2348,59 @@ RAWParams::BayerSensor::BayerSensor() :
     pixelShiftNonGreenAmaze(false),
     dcb_enhance(true)
 {
+}
+
+bool RAWParams::BayerSensor::operator ==(const BayerSensor& other) const
+{
+    return
+        method == other.method
+        && imageNum == other.imageNum
+        && ccSteps == other.ccSteps
+        && black0 == other.black0
+        && black1 == other.black1
+        && black2 == other.black2
+        && black3 == other.black3
+        && twogreen == other.twogreen
+        && linenoise == other.linenoise
+        && greenthresh == other.greenthresh
+        && dcb_iterations == other.dcb_iterations
+        && lmmse_iterations == other.lmmse_iterations
+        && pixelShiftMotion == other.pixelShiftMotion
+        && pixelShiftMotionCorrection == other.pixelShiftMotionCorrection
+        && pixelShiftMotionCorrectionMethod == other.pixelShiftMotionCorrectionMethod
+        && pixelShiftStddevFactorGreen == other.pixelShiftStddevFactorGreen
+        && pixelShiftStddevFactorRed == other.pixelShiftStddevFactorRed
+        && pixelShiftStddevFactorBlue == other.pixelShiftStddevFactorBlue
+        && pixelShiftEperIso == other.pixelShiftEperIso
+        && pixelShiftNreadIso == other.pixelShiftNreadIso
+        && pixelShiftPrnu == other.pixelShiftPrnu
+        && pixelShiftSigma == other.pixelShiftSigma
+        && pixelShiftSum == other.pixelShiftSum
+        && pixelShiftRedBlueWeight == other.pixelShiftRedBlueWeight
+        && pixelShiftShowMotion == other.pixelShiftShowMotion
+        && pixelShiftShowMotionMaskOnly == other.pixelShiftShowMotionMaskOnly
+        && pixelShiftAutomatic == other.pixelShiftAutomatic
+        && pixelShiftNonGreenHorizontal == other.pixelShiftNonGreenHorizontal
+        && pixelShiftNonGreenVertical == other.pixelShiftNonGreenVertical
+        && pixelShiftHoleFill == other.pixelShiftHoleFill
+        && pixelShiftMedian == other.pixelShiftMedian
+        && pixelShiftMedian3 == other.pixelShiftMedian3
+        && pixelShiftGreen == other.pixelShiftGreen
+        && pixelShiftBlur == other.pixelShiftBlur
+        && pixelShiftSmoothFactor == other.pixelShiftSmoothFactor
+        && pixelShiftExp0 == other.pixelShiftExp0
+        && pixelShiftLmmse == other.pixelShiftLmmse
+        && pixelShiftEqualBright == other.pixelShiftEqualBright
+        && pixelShiftEqualBrightChannel == other.pixelShiftEqualBrightChannel
+        && pixelShiftNonGreenCross == other.pixelShiftNonGreenCross
+        && pixelShiftNonGreenCross2 == other.pixelShiftNonGreenCross2
+        && pixelShiftNonGreenAmaze == other.pixelShiftNonGreenAmaze
+        && dcb_enhance == other.dcb_enhance;
+}
+
+bool RAWParams::BayerSensor::operator !=(const BayerSensor& other) const
+{
+    return !(*this == other);
 }
 
 void RAWParams::BayerSensor::setPixelShiftDefaults()
@@ -1680,6 +2468,21 @@ RAWParams::XTransSensor::XTransSensor() :
 {
 }
 
+bool RAWParams::XTransSensor::operator ==(const XTransSensor& other) const
+{
+    return
+        method == other.method
+        && ccSteps == other.ccSteps
+        && blackred == other.blackred
+        && blackgreen == other.blackgreen
+        && blackblue == other.blackblue;
+}
+
+bool RAWParams::XTransSensor::operator !=(const XTransSensor& other) const
+{
+    return !(*this == other);
+}
+
 const std::vector<const char*>& RAWParams::XTransSensor::getMethodStrings()
 {
     static const std::vector<const char*> method_strings {
@@ -1713,6 +2516,34 @@ RAWParams::RAWParams() :
     deadPixelFilter(false),
     hotdeadpix_thresh(100)
 {
+}
+
+bool RAWParams::operator ==(const RAWParams& other) const
+{
+    return
+        bayersensor == other.bayersensor
+        && xtranssensor == other.xtranssensor
+        && dark_frame == other.dark_frame
+        && df_autoselect == other.df_autoselect
+        && ff_file == other.ff_file
+        && ff_AutoSelect == other.ff_AutoSelect
+        && ff_BlurRadius == other.ff_BlurRadius
+        && ff_BlurType == other.ff_BlurType
+        && ff_AutoClipControl == other.ff_AutoClipControl
+        && ff_clipControl == other.ff_clipControl
+        && ca_autocorrect == other.ca_autocorrect
+        && cared == other.cared
+        && cablue == other.cablue
+        && expos == other.expos
+        && preser == other.preser
+        && hotPixelFilter == other.hotPixelFilter
+        && deadPixelFilter == other.deadPixelFilter
+        && hotdeadpix_thresh == other.hotdeadpix_thresh;
+}
+
+bool RAWParams::operator !=(const RAWParams& other) const
+{
+    return !(*this == other);
 }
 
 const std::vector<const char*>& RAWParams::getFlatFieldBlurTypeStrings()
@@ -3844,466 +4675,52 @@ void ProcParams::destroy(ProcParams* pp)
     delete pp;
 }
 
-bool ProcParams::operator ==(const ProcParams& other)
+bool ProcParams::operator ==(const ProcParams& other) const
 {
     return
-        toneCurve.curve == other.toneCurve.curve
-        && toneCurve.curve2 == other.toneCurve.curve2
-        && toneCurve.brightness == other.toneCurve.brightness
-        && toneCurve.black == other.toneCurve.black
-        && toneCurve.contrast == other.toneCurve.contrast
-        && toneCurve.saturation == other.toneCurve.saturation
-        && toneCurve.shcompr == other.toneCurve.shcompr
-        && toneCurve.hlcompr == other.toneCurve.hlcompr
-        && toneCurve.hlcomprthresh == other.toneCurve.hlcomprthresh
-        && toneCurve.autoexp == other.toneCurve.autoexp
-        && toneCurve.clip == other.toneCurve.clip
-        && toneCurve.expcomp == other.toneCurve.expcomp
-        && toneCurve.curveMode == other.toneCurve.curveMode
-        && toneCurve.curveMode2 == other.toneCurve.curveMode2
-        && toneCurve.hrenabled == other.toneCurve.hrenabled
-        && toneCurve.method == other.toneCurve.method
-        && retinex.cdcurve == other.retinex.cdcurve
-        && retinex.mapcurve == other.retinex.mapcurve
-        && retinex.cdHcurve == other.retinex.cdHcurve
-        && retinex.lhcurve == other.retinex.lhcurve
-        && retinex.transmissionCurve == other.retinex.transmissionCurve
-        && retinex.gaintransmissionCurve == other.retinex.gaintransmissionCurve
-        && retinex.str == other.retinex.str
-        && retinex.scal == other.retinex.scal
-        && retinex.iter == other.retinex.iter
-        && retinex.grad == other.retinex.grad
-        && retinex.grads == other.retinex.grads
-        && retinex.gam == other.retinex.gam
-        && retinex.slope == other.retinex.slope
-        && retinex.neigh == other.retinex.neigh
-        && retinex.limd == other.retinex.limd
-        && retinex.highl == other.retinex.highl
-        && retinex.highlights == other.retinex.highlights
-        && retinex.htonalwidth == other.retinex.htonalwidth
-        && retinex.shadows == other.retinex.shadows
-        && retinex.stonalwidth == other.retinex.stonalwidth
-        && retinex.radius == other.retinex.radius
-        && retinex.skal == other.retinex.skal
-        && retinex.offs == other.retinex.offs
-        && retinex.retinexMethod == other.retinex.retinexMethod
-        && retinex.mapMethod == other.retinex.mapMethod
-        && retinex.viewMethod == other.retinex.viewMethod
-        && retinex.retinexcolorspace == other.retinex.retinexcolorspace
-        && retinex.gammaretinex == other.retinex.gammaretinex
-        && retinex.vart == other.retinex.vart
-        && retinex.medianmap == other.retinex.medianmap
-        && retinex.enabled == other.retinex.enabled
-        && labCurve.lcurve == other.labCurve.lcurve
-        && labCurve.acurve == other.labCurve.acurve
-        && labCurve.bcurve == other.labCurve.bcurve
-        && labCurve.cccurve == other.labCurve.cccurve
-        && labCurve.chcurve == other.labCurve.chcurve
-        && labCurve.lhcurve == other.labCurve.lhcurve
-        && labCurve.hhcurve == other.labCurve.hhcurve
-        && labCurve.lccurve == other.labCurve.lccurve
-        && labCurve.clcurve == other.labCurve.clcurve
-        && labCurve.brightness == other.labCurve.brightness
-        && labCurve.contrast == other.labCurve.contrast
-        && labCurve.chromaticity == other.labCurve.chromaticity
-        && labCurve.avoidcolorshift == other.labCurve.avoidcolorshift
-        && labCurve.rstprotection == other.labCurve.rstprotection
-        && labCurve.lcredsk == other.labCurve.lcredsk
-        && sharpenEdge.enabled == other.sharpenEdge.enabled
-        && sharpenEdge.passes == other.sharpenEdge.passes
-        && sharpenEdge.amount == other.sharpenEdge.amount
-        && sharpenEdge.threechannels == other.sharpenEdge.threechannels
-        && sharpenMicro.enabled == other.sharpenMicro.enabled
-        && sharpenMicro.matrix == other.sharpenMicro.matrix
-        && sharpenMicro.amount == other.sharpenMicro.amount
-        && sharpenMicro.uniformity == other.sharpenMicro.uniformity
-        && sharpening.enabled == other.sharpening.enabled
-        && sharpening.radius == other.sharpening.radius
-        && sharpening.amount == other.sharpening.amount
-        && sharpening.threshold == other.sharpening.threshold
-        && sharpening.edgesonly == other.sharpening.edgesonly
-        && sharpening.edges_radius == other.sharpening.edges_radius
-        && sharpening.edges_tolerance == other.sharpening.edges_tolerance
-        && sharpening.halocontrol == other.sharpening.halocontrol
-        && sharpening.halocontrol_amount == other.sharpening.halocontrol_amount
-        && sharpening.method == other.sharpening.method
-        && sharpening.deconvamount == other.sharpening.deconvamount
-        && sharpening.deconvradius == other.sharpening.deconvradius
-        && sharpening.deconviter == other.sharpening.deconviter
-        && sharpening.deconvdamping == other.sharpening.deconvdamping
-        && prsharpening.enabled == other.prsharpening.enabled
-        && prsharpening.radius == other.prsharpening.radius
-        && prsharpening.amount == other.prsharpening.amount
-        && prsharpening.threshold == other.prsharpening.threshold
-        && prsharpening.edgesonly == other.prsharpening.edgesonly
-        && prsharpening.edges_radius == other.prsharpening.edges_radius
-        && prsharpening.edges_tolerance == other.prsharpening.edges_tolerance
-        && prsharpening.halocontrol == other.prsharpening.halocontrol
-        && prsharpening.halocontrol_amount == other.prsharpening.halocontrol_amount
-        && prsharpening.method == other.prsharpening.method
-        && prsharpening.deconvamount == other.prsharpening.deconvamount
-        && prsharpening.deconvradius == other.prsharpening.deconvradius
-        && prsharpening.deconviter == other.prsharpening.deconviter
-        && prsharpening.deconvdamping == other.prsharpening.deconvdamping
-        && vibrance.enabled == other.vibrance.enabled
-        && vibrance.pastels == other.vibrance.pastels
-        && vibrance.saturated == other.vibrance.saturated
-        && vibrance.psthreshold == other.vibrance.psthreshold
-        && vibrance.protectskins == other.vibrance.protectskins
-        && vibrance.avoidcolorshift == other.vibrance.avoidcolorshift
-        && vibrance.pastsattog == other.vibrance.pastsattog
-        && vibrance.skintonescurve == other.vibrance.skintonescurve
-        && wb.method == other.wb.method
-        && wb.green == other.wb.green
-        && wb.temperature == other.wb.temperature
-        && wb.equal == other.wb.equal
-        && colorappearance.enabled == other.colorappearance.enabled
-        && colorappearance.degree == other.colorappearance.degree
-        && colorappearance.autodegree == other.colorappearance.autodegree
-        && colorappearance.degreeout == other.colorappearance.degreeout
-        && colorappearance.autodegreeout == other.colorappearance.autodegreeout
-        && colorappearance.surround == other.colorappearance.surround
-        && colorappearance.surrsrc == other.colorappearance.surrsrc
-        && colorappearance.adapscen == other.colorappearance.adapscen
-        && colorappearance.autoadapscen == other.colorappearance.autoadapscen
-        && colorappearance.ybscen == other.colorappearance.ybscen
-        && colorappearance.autoybscen == other.colorappearance.autoybscen
-        && colorappearance.adaplum == other.colorappearance.adaplum
-        && colorappearance.badpixsl == other.colorappearance.badpixsl
-        && colorappearance.wbmodel == other.colorappearance.wbmodel
-        && colorappearance.algo == other.colorappearance.algo
-        && colorappearance.curveMode == other.colorappearance.curveMode
-        && colorappearance.curveMode2 == other.colorappearance.curveMode2
-        && colorappearance.curveMode3 == other.colorappearance.curveMode3
-        && colorappearance.jlight == other.colorappearance.jlight
-        && colorappearance.qbright == other.colorappearance.qbright
-        && colorappearance.chroma == other.colorappearance.chroma
-        && colorappearance.schroma == other.colorappearance.schroma
-        && colorappearance.mchroma == other.colorappearance.mchroma
-        && colorappearance.rstprotection == other.colorappearance.rstprotection
-        && colorappearance.contrast == other.colorappearance.contrast
-        && colorappearance.qcontrast == other.colorappearance.qcontrast
-        && colorappearance.colorh == other.colorappearance.colorh
-        && colorappearance.tempout == other.colorappearance.tempout
-        && colorappearance.greenout == other.colorappearance.greenout
-        && colorappearance.tempsc == other.colorappearance.tempsc
-        && colorappearance.greensc == other.colorappearance.greensc
-        && colorappearance.ybout == other.colorappearance.ybout
-        && impulseDenoise.enabled == other.impulseDenoise.enabled
-        && impulseDenoise.thresh == other.impulseDenoise.thresh
-        && dirpyrDenoise.enabled == other.dirpyrDenoise.enabled
-        && dirpyrDenoise.enhance == other.dirpyrDenoise.enhance
-        && dirpyrDenoise.median == other.dirpyrDenoise.median
-        && dirpyrDenoise.luma == other.dirpyrDenoise.luma
-        && dirpyrDenoise.lcurve == other.dirpyrDenoise.lcurve
-        && dirpyrDenoise.cccurve == other.dirpyrDenoise.cccurve
-        && dirpyrDenoise.Ldetail == other.dirpyrDenoise.Ldetail
-        && dirpyrDenoise.chroma == other.dirpyrDenoise.chroma
-        && dirpyrDenoise.dmethod == other.dirpyrDenoise.dmethod
-        && dirpyrDenoise.Lmethod == other.dirpyrDenoise.Lmethod
-        && dirpyrDenoise.Cmethod == other.dirpyrDenoise.Cmethod
-        && dirpyrDenoise.C2method == other.dirpyrDenoise.C2method
-        && dirpyrDenoise.smethod == other.dirpyrDenoise.smethod
-        && dirpyrDenoise.medmethod == other.dirpyrDenoise.medmethod
-        && dirpyrDenoise.methodmed == other.dirpyrDenoise.methodmed
-        && dirpyrDenoise.rgbmethod == other.dirpyrDenoise.rgbmethod
-        && dirpyrDenoise.redchro == other.dirpyrDenoise.redchro
-        && dirpyrDenoise.bluechro == other.dirpyrDenoise.bluechro
-        && dirpyrDenoise.gamma == other.dirpyrDenoise.gamma
-        && dirpyrDenoise.passes == other.dirpyrDenoise.passes
-        && epd.enabled == other.epd.enabled
-        && epd.strength == other.epd.strength
-        && epd.gamma == other.epd.gamma
-        && epd.edgeStopping == other.epd.edgeStopping
-        && epd.scale == other.epd.scale
-        && epd.reweightingIterates == other.epd.reweightingIterates
-        && fattal.enabled == other.fattal.enabled
-        && fattal.threshold == other.fattal.threshold
-        && fattal.amount == other.fattal.amount
-        && defringe.enabled == other.defringe.enabled
-        && defringe.radius == other.defringe.radius
-        && defringe.threshold == other.defringe.threshold
-        && defringe.huecurve == other.defringe.huecurve
-        && sh.enabled == other.sh.enabled
-        && sh.hq == other.sh.hq
-        && sh.highlights == other.sh.highlights
-        && sh.htonalwidth == other.sh.htonalwidth
-        && sh.shadows == other.sh.shadows
-        && sh.stonalwidth == other.sh.stonalwidth
-        && sh.localcontrast == other.sh.localcontrast
-        && sh.radius == other.sh.radius
-        && crop.enabled == other.crop.enabled
-        && crop.x == other.crop.x
-        && crop.y == other.crop.y
-        && crop.w == other.crop.w
-        && crop.h == other.crop.h
-        && crop.fixratio == other.crop.fixratio
-        && crop.ratio == other.crop.ratio
-        && crop.orientation == other.crop.orientation
-        && crop.guide == other.crop.guide
-        && coarse.rotate == other.coarse.rotate
-        && coarse.hflip == other.coarse.hflip
-        && coarse.vflip == other.coarse.vflip
-        && rotate.degree == other.rotate.degree
-        && commonTrans.autofill == other.commonTrans.autofill
-        && distortion.amount == other.distortion.amount
-        && lensProf.lcMode == other.lensProf.lcMode
-        && lensProf.lcpFile == other.lensProf.lcpFile
-        && lensProf.useDist == other.lensProf.useDist
-        && lensProf.useVign == other.lensProf.useVign
-        && lensProf.useCA == other.lensProf.useCA
-        && lensProf.lfCameraMake == other.lensProf.lfCameraMake
-        && lensProf.lfCameraModel == other.lensProf.lfCameraModel
-        && lensProf.lfLens == other.lensProf.lfLens
-        && perspective.horizontal == other.perspective.horizontal
-        && perspective.vertical == other.perspective.vertical
-        && gradient.enabled == other.gradient.enabled
-        && gradient.degree == other.gradient.degree
-        && gradient.feather == other.gradient.feather
-        && gradient.strength == other.gradient.strength
-        && gradient.centerX == other.gradient.centerX
-        && gradient.centerY == other.gradient.centerY
-        && pcvignette.enabled == other.pcvignette.enabled
-        && pcvignette.strength == other.pcvignette.strength
-        && pcvignette.feather == other.pcvignette.feather
-        && pcvignette.roundness == other.pcvignette.roundness
-        && cacorrection.red == other.cacorrection.red
-        && cacorrection.blue == other.cacorrection.blue
-        && vignetting.amount == other.vignetting.amount
-        && vignetting.radius == other.vignetting.radius
-        && vignetting.strength == other.vignetting.strength
-        && vignetting.centerX == other.vignetting.centerX
-        && vignetting.centerY == other.vignetting.centerY
-        && !memcmp (&chmixer.red, &other.chmixer.red, 3 * sizeof (int))
-        && !memcmp (&chmixer.green, &other.chmixer.green, 3 * sizeof (int))
-        && !memcmp (&chmixer.blue, &other.chmixer.blue, 3 * sizeof (int))
-        && blackwhite.mixerRed == other.blackwhite.mixerRed
-        && blackwhite.mixerOrange == other.blackwhite.mixerOrange
-        && blackwhite.mixerYellow == other.blackwhite.mixerYellow
-        && blackwhite.mixerGreen == other.blackwhite.mixerGreen
-        && blackwhite.mixerCyan == other.blackwhite.mixerCyan
-        && blackwhite.mixerBlue == other.blackwhite.mixerBlue
-        && blackwhite.mixerMagenta == other.blackwhite.mixerMagenta
-        && blackwhite.mixerPurple == other.blackwhite.mixerPurple
-        && blackwhite.gammaRed == other.blackwhite.gammaRed
-        && blackwhite.gammaGreen == other.blackwhite.gammaGreen
-        && blackwhite.gammaBlue == other.blackwhite.gammaBlue
-        && blackwhite.filter == other.blackwhite.filter
-        && blackwhite.setting == other.blackwhite.setting
-        && blackwhite.method == other.blackwhite.method
-        && blackwhite.luminanceCurve == other.blackwhite.luminanceCurve
-        && blackwhite.beforeCurve == other.blackwhite.beforeCurve
-        && blackwhite.afterCurve == other.blackwhite.afterCurve
-        && blackwhite.beforeCurveMode == other.blackwhite.beforeCurveMode
-        && blackwhite.afterCurveMode == other.blackwhite.afterCurveMode
-        && blackwhite.autoc == other.blackwhite.autoc
-        && blackwhite.algo == other.blackwhite.algo
-        && resize.scale == other.resize.scale
-        && resize.appliesTo == other.resize.appliesTo
-        && resize.method == other.resize.method
-        && resize.dataspec == other.resize.dataspec
-        && resize.width == other.resize.width
-        && resize.height == other.resize.height
-        && raw.bayersensor.method == other.raw.bayersensor.method
-        && raw.bayersensor.imageNum == other.raw.bayersensor.imageNum
-        && raw.bayersensor.ccSteps == other.raw.bayersensor.ccSteps
-        && raw.bayersensor.black0 == other.raw.bayersensor.black0
-        && raw.bayersensor.black1 == other.raw.bayersensor.black1
-        && raw.bayersensor.black2 == other.raw.bayersensor.black2
-        && raw.bayersensor.black3 == other.raw.bayersensor.black3
-        && raw.bayersensor.twogreen == other.raw.bayersensor.twogreen
-        && raw.bayersensor.greenthresh == other.raw.bayersensor.greenthresh
-        && raw.bayersensor.linenoise == other.raw.bayersensor.linenoise
-        && raw.bayersensor.dcb_iterations == other.raw.bayersensor.dcb_iterations
-        && raw.bayersensor.lmmse_iterations == other.raw.bayersensor.lmmse_iterations
-        && raw.bayersensor.pixelShiftMotion == other.raw.bayersensor.pixelShiftMotion
-        && raw.bayersensor.pixelShiftMotionCorrection == other.raw.bayersensor.pixelShiftMotionCorrection
-        && raw.bayersensor.pixelShiftMotionCorrectionMethod == other.raw.bayersensor.pixelShiftMotionCorrectionMethod
-        && raw.bayersensor.pixelShiftStddevFactorGreen == other.raw.bayersensor.pixelShiftStddevFactorGreen
-        && raw.bayersensor.pixelShiftStddevFactorRed == other.raw.bayersensor.pixelShiftStddevFactorRed
-        && raw.bayersensor.pixelShiftStddevFactorBlue == other.raw.bayersensor.pixelShiftStddevFactorBlue
-        && raw.bayersensor.pixelShiftEperIso == other.raw.bayersensor.pixelShiftEperIso
-        && raw.bayersensor.pixelShiftNreadIso == other.raw.bayersensor.pixelShiftNreadIso
-        && raw.bayersensor.pixelShiftPrnu == other.raw.bayersensor.pixelShiftPrnu
-        && raw.bayersensor.pixelShiftSigma == other.raw.bayersensor.pixelShiftSigma
-        && raw.bayersensor.pixelShiftSum == other.raw.bayersensor.pixelShiftSum
-        && raw.bayersensor.pixelShiftRedBlueWeight == other.raw.bayersensor.pixelShiftRedBlueWeight
-        && raw.bayersensor.pixelShiftShowMotion == other.raw.bayersensor.pixelShiftShowMotion
-        && raw.bayersensor.pixelShiftShowMotionMaskOnly == other.raw.bayersensor.pixelShiftShowMotionMaskOnly
-        && raw.bayersensor.pixelShiftAutomatic == other.raw.bayersensor.pixelShiftAutomatic
-        && raw.bayersensor.pixelShiftNonGreenHorizontal == other.raw.bayersensor.pixelShiftNonGreenHorizontal
-        && raw.bayersensor.pixelShiftNonGreenVertical == other.raw.bayersensor.pixelShiftNonGreenVertical
-        && raw.bayersensor.pixelShiftHoleFill == other.raw.bayersensor.pixelShiftHoleFill
-        && raw.bayersensor.pixelShiftMedian == other.raw.bayersensor.pixelShiftMedian
-        && raw.bayersensor.pixelShiftMedian3 == other.raw.bayersensor.pixelShiftMedian3
-        && raw.bayersensor.pixelShiftGreen == other.raw.bayersensor.pixelShiftGreen
-        && raw.bayersensor.pixelShiftBlur == other.raw.bayersensor.pixelShiftBlur
-        && raw.bayersensor.pixelShiftSmoothFactor == other.raw.bayersensor.pixelShiftSmoothFactor
-        && raw.bayersensor.pixelShiftExp0 == other.raw.bayersensor.pixelShiftExp0
-        && raw.bayersensor.pixelShiftLmmse == other.raw.bayersensor.pixelShiftLmmse
-        && raw.bayersensor.pixelShiftEqualBright == other.raw.bayersensor.pixelShiftEqualBright
-        && raw.bayersensor.pixelShiftEqualBrightChannel == other.raw.bayersensor.pixelShiftEqualBrightChannel
-        && raw.bayersensor.pixelShiftNonGreenCross == other.raw.bayersensor.pixelShiftNonGreenCross
-        && raw.bayersensor.pixelShiftNonGreenCross2 == other.raw.bayersensor.pixelShiftNonGreenCross2
-        && raw.bayersensor.pixelShiftNonGreenAmaze == other.raw.bayersensor.pixelShiftNonGreenAmaze
-        && raw.bayersensor.dcb_enhance == other.raw.bayersensor.dcb_enhance
-        && raw.xtranssensor.method == other.raw.xtranssensor.method
-        && raw.xtranssensor.ccSteps == other.raw.xtranssensor.ccSteps
-        && raw.xtranssensor.blackred == other.raw.xtranssensor.blackred
-        && raw.xtranssensor.blackgreen == other.raw.xtranssensor.blackgreen
-        && raw.xtranssensor.blackblue == other.raw.xtranssensor.blackblue
-        && raw.dark_frame == other.raw.dark_frame
-        && raw.df_autoselect == other.raw.df_autoselect
-        && raw.ff_file == other.raw.ff_file
-        && raw.ff_AutoSelect == other.raw.ff_AutoSelect
-        && raw.ff_BlurRadius == other.raw.ff_BlurRadius
-        && raw.ff_BlurType == other.raw.ff_BlurType
-        && raw.ff_AutoClipControl == other.raw.ff_AutoClipControl
-        && raw.ff_clipControl == other.raw.ff_clipControl
-        && raw.expos == other.raw.expos
-        && raw.preser == other.raw.preser
-        && raw.ca_autocorrect == other.raw.ca_autocorrect
-        && raw.cared == other.raw.cared
-        && raw.cablue == other.raw.cablue
-        && raw.hotPixelFilter == other.raw.hotPixelFilter
-        && raw.deadPixelFilter == other.raw.deadPixelFilter
-        && raw.hotdeadpix_thresh == other.raw.hotdeadpix_thresh
-        && icm.input == other.icm.input
-        && icm.toneCurve == other.icm.toneCurve
-        && icm.applyLookTable == other.icm.applyLookTable
-        && icm.applyBaselineExposureOffset == other.icm.applyBaselineExposureOffset
-        && icm.applyHueSatMap == other.icm.applyHueSatMap
-        && icm.dcpIlluminant == other.icm.dcpIlluminant
-        && icm.working == other.icm.working
-        && icm.output == other.icm.output
-        && icm.gamma == other.icm.gamma
-        && icm.freegamma == other.icm.freegamma
-        && icm.gampos == other.icm.gampos
-        && icm.slpos == other.icm.slpos
+        toneCurve == other.toneCurve
+        && retinex == other.retinex
+        && labCurve == other.labCurve
+        && sharpenEdge == other.sharpenEdge
+        && sharpenMicro == other.sharpenMicro
+        && sharpening == other.sharpening
+        && prsharpening == other.prsharpening
+        && vibrance == other.vibrance
+        && wb == other.wb
+        && colorappearance == other.colorappearance
+        && impulseDenoise == other.impulseDenoise
+        && dirpyrDenoise == other.dirpyrDenoise
+        && epd == other.epd
+        && fattal == other.fattal
+        && defringe == other.defringe
+        && sh == other.sh
+        && crop == other.crop
+        && coarse == other.coarse
+        && rotate == other.rotate
+        && commonTrans == other.commonTrans
+        && distortion == other.distortion
+        && lensProf == other.lensProf
+        && perspective == other.perspective
+        && gradient == other.gradient
+        && pcvignette == other.pcvignette
+        && cacorrection == other.cacorrection
+        && vignetting == other.vignetting
+        && chmixer == other.chmixer
+        && blackwhite == other.blackwhite
+        && resize == other.resize
+        && raw == other.raw
+        && icm == other.icm
         && wavelet == other.wavelet
-        && wavelet.Lmethod == other.wavelet.Lmethod
-        && wavelet.CLmethod == other.wavelet.CLmethod
-        && wavelet.Backmethod == other.wavelet.Backmethod
-        && wavelet.Tilesmethod == other.wavelet.Tilesmethod
-        && wavelet.daubcoeffmethod == other.wavelet.daubcoeffmethod
-        && wavelet.CHmethod == other.wavelet.CHmethod
-        && wavelet.CHSLmethod == other.wavelet.CHSLmethod
-        && wavelet.EDmethod == other.wavelet.EDmethod
-        && wavelet.NPmethod == other.wavelet.NPmethod
-        && wavelet.BAmethod == other.wavelet.BAmethod
-        && wavelet.TMmethod == other.wavelet.TMmethod
-        && wavelet.HSmethod == other.wavelet.HSmethod
-        && wavelet.Dirmethod == other.wavelet.Dirmethod
-        && wavelet.rescon == other.wavelet.rescon
-        && wavelet.resconH == other.wavelet.resconH
-        && wavelet.reschro == other.wavelet.reschro
-        && wavelet.tmrs == other.wavelet.tmrs
-        && wavelet.gamma == other.wavelet.gamma
-        && wavelet.sup == other.wavelet.sup
-        && wavelet.sky == other.wavelet.sky
-        && wavelet.thres == other.wavelet.thres
-        && wavelet.chroma == other.wavelet.chroma
-        && wavelet.chro == other.wavelet.chro
-        && wavelet.tmr == other.wavelet.tmr
-        && wavelet.contrast == other.wavelet.contrast
-        && wavelet.median == other.wavelet.median
-        && wavelet.expcontrast == other.wavelet.expcontrast
-        && wavelet.expchroma == other.wavelet.expchroma
-        && wavelet.expedge == other.wavelet.expedge
-        && wavelet.expresid == other.wavelet.expresid
-        && wavelet.expfinal == other.wavelet.expfinal
-        && wavelet.exptoning == other.wavelet.exptoning
-        && wavelet.expnoise == other.wavelet.expnoise
-        && wavelet.medianlev == other.wavelet.medianlev
-        && wavelet.linkedg == other.wavelet.linkedg
-        && wavelet.cbenab == other.wavelet.cbenab
-        && wavelet.lipst == other.wavelet.lipst
-        && wavelet.Medgreinf == other.wavelet.Medgreinf
-        && wavelet.edgrad == other.wavelet.edgrad
-        && wavelet.edgval == other.wavelet.edgval
-        && wavelet.edgthresh == other.wavelet.edgthresh
-        && wavelet.thr == other.wavelet.thr
-        && wavelet.thrH == other.wavelet.thrH
-        && wavelet.threshold == other.wavelet.threshold
-        && wavelet.threshold2 == other.wavelet.threshold2
-        && wavelet.edgedetect == other.wavelet.edgedetect
-        && wavelet.edgedetectthr == other.wavelet.edgedetectthr
-        && wavelet.edgedetectthr2 == other.wavelet.edgedetectthr2
-        && wavelet.edgesensi == other.wavelet.edgesensi
-        && wavelet.edgeampli == other.wavelet.edgeampli
-        && wavelet.hueskin == other.wavelet.hueskin
-        && wavelet.hueskin2 == other.wavelet.hueskin2
-        && wavelet.hllev == other.wavelet.hllev
-        && wavelet.bllev == other.wavelet.bllev
-        && wavelet.edgcont == other.wavelet.edgcont
-        && wavelet.level0noise == other.wavelet.level0noise
-        && wavelet.level1noise == other.wavelet.level1noise
-        && wavelet.level2noise == other.wavelet.level2noise
-        && wavelet.level3noise == other.wavelet.level3noise
-        && wavelet.pastlev == other.wavelet.pastlev
-        && wavelet.satlev == other.wavelet.satlev
-        && wavelet.opacityCurveRG == other.wavelet.opacityCurveRG
-        && wavelet.opacityCurveBY == other.wavelet.opacityCurveBY
-        && wavelet.opacityCurveW == other.wavelet.opacityCurveW
-        && wavelet.opacityCurveWL == other.wavelet.opacityCurveWL
-        && wavelet.hhcurve == other.wavelet.hhcurve
-        && wavelet.Chcurve == other.wavelet.Chcurve
-        && wavelet.ccwcurve == other.wavelet.ccwcurve
-        && wavelet.wavclCurve == other.wavelet.wavclCurve
-        && wavelet.skinprotect == other.wavelet.skinprotect
-        && wavelet.strength == other.wavelet.strength
-        && wavelet.balance == other.wavelet.balance
-        && wavelet.greenhigh == other.wavelet.greenhigh
-        && wavelet.greenmed == other.wavelet.greenmed
-        && wavelet.greenlow == other.wavelet.greenlow
-        && wavelet.bluehigh == other.wavelet.bluehigh
-        && wavelet.bluemed == other.wavelet.bluemed
-        && wavelet.bluelow == other.wavelet.bluelow
-        && wavelet.iter == other.wavelet.iter
         && dirpyrequalizer == other.dirpyrequalizer
-        && dirpyrequalizer.hueskin == other.dirpyrequalizer.hueskin
-        && dirpyrequalizer.threshold == other.dirpyrequalizer.threshold
-        && dirpyrequalizer.cbdlMethod == other.dirpyrequalizer.cbdlMethod
-        && dirpyrequalizer.skinprotect == other.dirpyrequalizer.skinprotect
-        && hsvequalizer.hcurve == other.hsvequalizer.hcurve
-        && hsvequalizer.scurve == other.hsvequalizer.scurve
-        && hsvequalizer.vcurve == other.hsvequalizer.vcurve
-        && filmSimulation.enabled == other.filmSimulation.enabled
-        && filmSimulation.clutFilename == other.filmSimulation.clutFilename
-        && filmSimulation.strength == other.filmSimulation.strength
-        && rgbCurves.rcurve == other.rgbCurves.rcurve
-        && rgbCurves.gcurve == other.rgbCurves.gcurve
-        && rgbCurves.bcurve == other.rgbCurves.bcurve
-        && colorToning.enabled == other.colorToning.enabled
-        && colorToning.twocolor == other.colorToning.twocolor
-        && colorToning.method == other.colorToning.method
-        && colorToning.colorCurve == other.colorToning.colorCurve
-        && colorToning.opacityCurve == other.colorToning.opacityCurve
-        && colorToning.autosat == other.colorToning.autosat
-        && colorToning.satProtectionThreshold == other.colorToning.satProtectionThreshold
-        && colorToning.saturatedOpacity == other.colorToning.saturatedOpacity
-        && colorToning.strength == other.colorToning.strength
-        && colorToning.hlColSat == other.colorToning.hlColSat
-        && colorToning.shadowsColSat == other.colorToning.shadowsColSat
-        && colorToning.balance == other.colorToning.balance
-        && colorToning.clcurve == other.colorToning.clcurve
-        && colorToning.cl2curve == other.colorToning.cl2curve
-        && colorToning.redlow == other.colorToning.redlow
-        && colorToning.greenlow == other.colorToning.greenlow
-        && colorToning.bluelow == other.colorToning.bluelow
-        && colorToning.satlow == other.colorToning.satlow
-        && colorToning.sathigh == other.colorToning.sathigh
-        && colorToning.redmed == other.colorToning.redmed
-        && colorToning.greenmed == other.colorToning.greenmed
-        && colorToning.bluemed == other.colorToning.bluemed
-        && colorToning.redhigh == other.colorToning.redhigh
-        && colorToning.greenhigh == other.colorToning.greenhigh
-        && colorToning.bluehigh == other.colorToning.bluehigh
+        && hsvequalizer == other.hsvequalizer
+        && filmSimulation == other.filmSimulation
+        && rgbCurves == other.rgbCurves
+        && colorToning == other.colorToning
         && exif == other.exif
         && iptc == other.iptc;
 }
 
-bool ProcParams::operator !=(const ProcParams& other)
+bool ProcParams::operator !=(const ProcParams& other) const
 {
     return !(*this == other);
 }
