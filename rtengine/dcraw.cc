@@ -6410,6 +6410,9 @@ guess_cfa_pc:
   }
   if (!use_cm)
     FORCC pre_mul[c] /= cc[cm_D65][c][c];
+
+  RT_from_adobe_dng_converter = !strncmp(software, "Adobe DNG Converter", 19);
+
   return 0;
 }
 
@@ -9690,14 +9693,16 @@ bw:   colors = 1;
   }
 dng_skip:
   if ((use_camera_matrix & (use_camera_wb || dng_version))
-	&& cmatrix[0][0] > 0.125) {
+        && cmatrix[0][0] > 0.125
+        && !RT_from_adobe_dng_converter /* RT -- do not use the embedded
+                                         * matrices for DNGs coming from the
+                                         * Adobe DNG Converter, to ensure
+                                         * consistency of WB values between
+                                         * DNG-converted and original raw
+                                         * files. See #4129 */) {
     memcpy (rgb_cam, cmatrix, sizeof cmatrix);
     raw_color = 0;
-    if (dng_version && !use_camera_wb) { // RT
-        raw_color = 1;
-    }
   }
-  // RT -- TODO: check if these special cases are still needed!
   if(!strncmp(make, "Panasonic", 9) && !strncmp(model, "DMC-LX100",9))
 	adobe_coeff (make, model);
   if(!strncmp(make, "Samsung", 7) && !strncmp(model, "GX20",4))
