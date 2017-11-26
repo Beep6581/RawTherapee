@@ -4,5 +4,5 @@ indent-switches
 break-blocks
 pad-oper
 convert-tabs
-pad-first-paren-out
 pad-header
+unpad-paren

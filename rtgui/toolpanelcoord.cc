@@ -72,10 +72,12 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
     prsharpening        = Gtk::manage (new PrSharpening());
     crop                = Gtk::manage (new Crop ());
     icm                 = Gtk::manage (new ICMPanel ());
-    if(!batch) {
+
+    if (!batch) {
         exifpanel           = Gtk::manage (new ExifPanel ());
         iptcpanel           = Gtk::manage (new IPTCPanel ());
     }
+
     wavelet             = Gtk::manage (new Wavelet ());
     dirpyrequalizer     = Gtk::manage (new DirPyrEqualizer ());
     hsvequalizer        = Gtk::manage (new HSVEqualizer ());
@@ -155,7 +157,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
 
     toolPanels.push_back (coarse);
 
-    if(!batch) {
+    if (!batch) {
         toolPanels.push_back (exifpanel);
         toolPanels.push_back (iptcpanel);
         metadataPanel = Gtk::manage (new Gtk::Notebook ());
@@ -165,6 +167,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
     } else {
         metadataPanel = nullptr;
     }
+
     toolPanelNotebook = new Gtk::Notebook ();
     toolPanelNotebook->set_name ("ToolPanelNotebook");
 
@@ -219,14 +222,15 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
 
     TOITypes type = options.UseIconNoText ? TOI_ICON : TOI_TEXT;
 
-    toiE = Gtk::manage (new TextOrIcon ("exposure.png" , M ("MAIN_TAB_EXPOSURE") , M ("MAIN_TAB_EXPOSURE_TOOLTIP") , type));
-    toiD = Gtk::manage (new TextOrIcon ("detail.png"   , M ("MAIN_TAB_DETAIL")   , M ("MAIN_TAB_DETAIL_TOOLTIP")   , type));
-    toiC = Gtk::manage (new TextOrIcon ("colour.png"   , M ("MAIN_TAB_COLOR")    , M ("MAIN_TAB_COLOR_TOOLTIP")    , type));
-    toiW = Gtk::manage (new TextOrIcon ("wavelet.png"  , M ("MAIN_TAB_WAVELET")  , M ("MAIN_TAB_WAVELET_TOOLTIP") , type));
-    toiL = Gtk::manage (new TextOrIcon ("openhand.png"  , M ("MAIN_TAB_LOCALLAB")  , M ("MAIN_TAB_LOCALLAB_TOOLTIP") , type));
+    toiE = Gtk::manage (new TextOrIcon ("exposure.png", M ("MAIN_TAB_EXPOSURE"), M ("MAIN_TAB_EXPOSURE_TOOLTIP"), type));
+    toiD = Gtk::manage (new TextOrIcon ("detail.png", M ("MAIN_TAB_DETAIL"), M ("MAIN_TAB_DETAIL_TOOLTIP"), type));
+    toiC = Gtk::manage (new TextOrIcon ("colour.png", M ("MAIN_TAB_COLOR"), M ("MAIN_TAB_COLOR_TOOLTIP"), type));
+    toiW = Gtk::manage (new TextOrIcon ("wavelet.png", M ("MAIN_TAB_WAVELET"), M ("MAIN_TAB_WAVELET_TOOLTIP"), type));
+    toiL = Gtk::manage (new TextOrIcon ("openhand.png", M ("MAIN_TAB_LOCALLAB"), M ("MAIN_TAB_LOCALLAB_TOOLTIP"), type));
     toiT = Gtk::manage (new TextOrIcon ("transform.png", M ("MAIN_TAB_TRANSFORM"), M ("MAIN_TAB_TRANSFORM_TOOLTIP"), type));
     toiR = Gtk::manage (new TextOrIcon ("raw.png", M ("MAIN_TAB_RAW"), M ("MAIN_TAB_RAW_TOOLTIP"), type));
-    if(!batch) {
+
+    if (!batch) {
         toiM = Gtk::manage (new TextOrIcon ("meta.png", M ("MAIN_TAB_METADATA"), M ("MAIN_TAB_METADATA_TOOLTIP"), type));
     } else {
         toiM = nullptr;
@@ -239,7 +243,8 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
     toolPanelNotebook->append_page (*locallabPanelSW,   *toiL);
     toolPanelNotebook->append_page (*transformPanelSW, *toiT);
     toolPanelNotebook->append_page (*rawPanelSW,       *toiR);
-    if(!batch) {
+
+    if (!batch) {
         toolPanelNotebook->append_page (*metadataPanel,    *toiM);
     }
 
@@ -565,12 +570,14 @@ void ToolPanelCoordinator::updateToolState()
             temp.push_back (options.tpOpen.at (i + expList.size()));
         }
 
+        locallab->updateToolState (temp);
+        locallab->setExpanded (true);
+
         wavelet->updateToolState (temp);
         wavelet->setExpanded (true);
         retinex->updateToolState (temp);
-        locallab->updateToolState (temp);
-        locallab->setExpanded (true);
-		
+
+
     }
 }
 
@@ -602,7 +609,7 @@ void ToolPanelCoordinator::writeToolExpandedStatus (std::vector<int> &tpOpen)
     wavelet->writeOptions (tpOpen);
     retinex->writeOptions (tpOpen);
     locallab->writeOptions (tpOpen);
-	
+
 }
 
 
@@ -882,8 +889,8 @@ void ToolPanelCoordinator::updateTabsHeader (bool useIcons)
     toiC->switchTo (type);
     toiT->switchTo (type);
     toiR->switchTo (type);
-	toiL->switchTo (type);
-	
+    toiL->switchTo (type);
+
     if (toiM) {
         toiM->switchTo (type);
     }
