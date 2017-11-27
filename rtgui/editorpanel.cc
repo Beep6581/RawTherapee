@@ -587,8 +587,9 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     // Histogram profile toggle controls
     toggleHistogramProfile = Gtk::manage (new Gtk::ToggleButton ());
-    toggleHistogramProfile->set_relief(Gtk::RELIEF_NONE);
-    toggleHistogramProfile->set_active(options.rtSettings.HistogramWorking);
+    toggleHistogramProfile->set_relief (Gtk::RELIEF_NONE);
+    toggleHistogramProfile->set_active (options.rtSettings.HistogramWorking);
+    toggleHistogramProfile->set_tooltip_markup ( (M ("PREFERENCES_HISTOGRAM_TOOLTIP")));
 
     Gtk::VSeparator* vsep3 = Gtk::manage (new Gtk::VSeparator ());
 
