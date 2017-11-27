@@ -990,18 +990,14 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     ckbHistogramPositionLeft = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_HISTOGRAMPOSITIONLEFT")) );
     setExpandAlignProperties (ckbHistogramPositionLeft, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
-    ckbHistogramWorking = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_HISTOGRAMWORKING")) );
-    setExpandAlignProperties (ckbHistogramWorking, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
-    ckbHistogramWorking->set_tooltip_markup (M ("PREFERENCES_HISTOGRAM_TOOLTIP"));
     workflowGrid->attach_next_to (*ckbHistogramPositionLeft, *curveBBoxPosL, Gtk::POS_BOTTOM, 1, 1);
-    workflowGrid->attach_next_to (*ckbHistogramWorking, *curveBBoxPosC, Gtk::POS_BOTTOM, 2, 1);
 
     ckbFileBrowserToolbarSingleRow = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_FILEBROWSERTOOLBARSINGLEROW")) );
     setExpandAlignProperties (ckbFileBrowserToolbarSingleRow, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
     ckbShowFilmStripToolBar = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_SHOWFILMSTRIPTOOLBAR")) );
     setExpandAlignProperties (ckbShowFilmStripToolBar, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
     workflowGrid->attach_next_to (*ckbFileBrowserToolbarSingleRow, *ckbHistogramPositionLeft, Gtk::POS_BOTTOM, 1, 1);
-    workflowGrid->attach_next_to (*ckbShowFilmStripToolBar, *ckbHistogramWorking, Gtk::POS_BOTTOM, 2, 1);
+    workflowGrid->attach_next_to (*ckbShowFilmStripToolBar, *curveBBoxPosC, Gtk::POS_BOTTOM, 2, 1);
 
     Gtk::Label* hb4label = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_TP_LABEL")) );
     setExpandAlignProperties (hb4label, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
@@ -1757,7 +1753,6 @@ void Preferences::storePreferences ()
 //    moptions.rtSettings.viewinggreySc = greySc->get_active_row_number ();
 // moptions.rtSettings.autocielab = cbAutocielab->get_active ();
     moptions.rtSettings.ciecamfloat = cbciecamfloat->get_active ();
-    moptions.rtSettings.HistogramWorking = ckbHistogramWorking->get_active ();
     moptions.rtSettings.leveldnv = dnv->get_active_row_number ();
     moptions.rtSettings.leveldnti = dnti->get_active_row_number ();
     moptions.rtSettings.leveldnliss = dnliss->get_active_row_number ();
@@ -1928,7 +1923,6 @@ void Preferences::fillPreferences ()
 
 //  cbAutocielab->set_active (moptions.rtSettings.autocielab);
     cbciecamfloat->set_active (moptions.rtSettings.ciecamfloat);
-    ckbHistogramWorking->set_active (moptions.rtSettings.HistogramWorking);
     languages->set_active_text (moptions.language);
     ckbLangAutoDetect->set_active (moptions.languageAutoDetect);
     int themeNbr = getThemeRowNumber (moptions.theme);
