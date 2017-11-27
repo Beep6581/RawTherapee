@@ -585,6 +585,13 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     Gtk::VSeparator* vsep1 = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vsep2 = Gtk::manage (new Gtk::VSeparator ());
 
+    // Histogram profile toggle controls
+    toggleHistogramProfile = Gtk::manage (new Gtk::ToggleButton ());
+    toggleHistogramProfile->set_relief(Gtk::RELIEF_NONE);
+    toggleHistogramProfile->set_active(options.rtSettings.HistogramWorking);
+
+    Gtk::VSeparator* vsep3 = Gtk::manage (new Gtk::VSeparator ());
+
     iareapanel = new ImageAreaPanel ();
     tpc->setEditProvider (iareapanel->imageArea);
     tpc->getToolBar()->setLockablePickerToolListener (iareapanel->imageArea);
@@ -607,6 +614,10 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     toolBarPanel->pack_end   (*tpc->coarse, Gtk::PACK_SHRINK, 2);
     toolBarPanel->pack_end   (*vsepcl, Gtk::PACK_SHRINK, 2);
+    // Histogram profile toggle
+    toolBarPanel->pack_end (*toggleHistogramProfile, Gtk::PACK_SHRINK, 1);
+    toolBarPanel->pack_end (*vsep3, Gtk::PACK_SHRINK, 2);
+
     toolBarPanel->pack_end   (*iareapanel->imageArea->indClippedPanel, Gtk::PACK_SHRINK, 0);
     toolBarPanel->pack_end   (*vsepz, Gtk::PACK_SHRINK, 2);
     toolBarPanel->pack_end   (*iareapanel->imageArea->previewModePanel, Gtk::PACK_SHRINK, 0);
@@ -819,6 +830,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     saveimgas->signal_pressed().connect ( sigc::mem_fun (*this, &EditorPanel::saveAsPressed) );
     queueimg->signal_pressed().connect ( sigc::mem_fun (*this, &EditorPanel::queueImgPressed) );
     sendtogimp->signal_pressed().connect ( sigc::mem_fun (*this, &EditorPanel::sendToGimpPressed) );
+    toggleHistogramProfile->signal_toggled().connect( sigc::mem_fun (*this, &EditorPanel::histogramProfile_toggled) );
 
     if (navPrev) {
         navPrev->signal_pressed().connect ( sigc::mem_fun (*this, &EditorPanel::openPreviousEditorImage) );
@@ -2013,6 +2025,11 @@ void EditorPanel::syncFileBrowser()   // synchronize filebrowser with image in E
     if (!simpleEditor && fPanel && !fname.empty()) {
         fPanel->fileCatalog->selectImage (fname, false);
     }
+}
+
+void EditorPanel::histogramProfile_toggled()
+{
+    options.rtSettings.HistogramWorking = toggleHistogramProfile->get_active();
 }
 
 bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname)
