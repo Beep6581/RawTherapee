@@ -1253,15 +1253,18 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
     rescale_nearest (Yr, L, multiThread);
     tmo_fattal02 (w2, h2, L, L, alpha, beta, noise, detail_level, multiThread);
 
+    const float hr = float(h2) / float(h);
+    const float wr = float(w2) / float(w);
+    
 #ifdef _OPENMP
     #pragma omp parallel for if(multiThread)
 #endif
-
     for (int y = 0; y < h; y++) {
-        int yy = y * h2 / h;
-
+        int yy = y * hr + 1;
+        
         for (int x = 0; x < w; x++) {
-            int xx = x * w2 / w;
+            int xx = x * wr + 1;
+            
             float Y = Yr (x, y);
             float l = std::max (L (xx, yy), epsilon) * (65535.f / Y);
             rgb->r (y, x) = std::max (rgb->r (y, x), 0.f) * l;
