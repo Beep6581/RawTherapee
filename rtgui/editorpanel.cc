@@ -2186,6 +2186,11 @@ void EditorPanel::beforeAfterToggled ()
         beforeIpc = rtengine::StagedImageProcessor::create (beforeImg);
         beforeIpc->setPreviewScale (10);
         beforeIpc->setPreviewImageListener (beforePreviewHandler);
+        Glib::ustring monitorProfile;
+        rtengine::RenderingIntent intent;
+        ipc->getMonitorProfile(monitorProfile, intent);
+        beforeIpc->setMonitorProfile(monitorProfile, intent);
+        
         beforeIarea->imageArea->setPreviewHandler (beforePreviewHandler);
         beforeIarea->imageArea->setImProcCoordinator (beforeIpc);
 
