@@ -44,6 +44,7 @@
 
 #define BENCHMARK
 #include "StopWatch.h"
+#include "rt_algo.h"
 
 #define cliploc( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
 
@@ -98,6 +99,8 @@ float calcLocalFactorinv (const float lox, const float loy, const float lcx, con
 namespace rtengine
 {
 using namespace procparams;
+
+
 
 extern const Settings* settings;
 
@@ -164,7 +167,7 @@ struct local_params {
 
 };
 
-static void SobelCannyLuma(float **sobelL, float **deltasobelL, float **luma, int bfw, int bfh, float radius)
+static void SobelCannyLuma(float **sobelL, float **luma, int bfw, int bfh, float radius)
 {
     //base of the process to detect shape in complement of deltaE
     //use for calcualte Spot reference
@@ -236,7 +239,6 @@ static void SobelCannyLuma(float **sobelL, float **deltasobelL, float **luma, in
         for (int y = 0; y < bfh ; y++) {
             for (int x = 0; x < bfw ; x++) {
                 sobelL[y][x] = 0.f;
-                deltasobelL[y][x] = 0.f;
                 tmL[y][x] = luma[y][x];
             }
         }
@@ -283,7 +285,6 @@ static void SobelCannyLuma(float **sobelL, float **deltasobelL, float **luma, in
                 SUML = CLIPLOC(SUML);
 
                 sobelL[y][x] = SUML;
-                deltasobelL[y][x] = SUML - tmL[y][x];
             }
         }
 
@@ -6507,7 +6508,7 @@ void ImProcFunctions::calc_ref(LabImage * original, LabImage * transformed, int 
             }
 
             const float radius = 3.f / (sk * 1.4f); //0 to 70 ==> see skip
-            SobelCannyLuma(sobelL->L, deltasobelL->L, origsob->L, spotSi, spotSi, radius);
+            SobelCannyLuma(sobelL->L, origsob->L, spotSi, spotSi, radius);
 
             //      SobelCannyLuma (sobelL, deltasobelL, origsob, spotSi, spotSi, radius );
             int nbs = 0;
@@ -6767,8 +6768,9 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
             int xEn = lp.xc + lp.lx;
             bufsob = new LabImage(bfw, bfh);
             bufreserv = new LabImage(bfw, bfh);
-            float **buflight = nullptr;
-            float **bufchro = nullptr;
+            const JaggedArray<float> buflight(bfw, bfh);
+            const JaggedArray<float> bufchro(bfw, bfh);
+
             float *orig[bfh] ALIGNED16;
             origBuffer = new float[bfh * bfw];
 
@@ -6778,17 +6780,6 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
             bufexclu = new LabImage(bfw, bfh);
 
-            buflight   = new float*[bfh];
-
-            for (int i = 0; i < bfh; i++) {
-                buflight[i] = new float[bfw];
-            }
-
-            bufchro   = new float*[bfh];//for chroma reti
-
-            for (int i = 0; i < bfh; i++) {
-                bufchro[i] = new float[bfw];
-            }
 
 #ifdef _OPENMP
             #pragma omp parallel for
@@ -6846,7 +6837,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
             tmpsob = new LabImage(bfw, bfh);
             deltasobelL = new LabImage(bfw, bfh);
-            SobelCannyLuma(tmpsob->L, deltasobelL->L, bufsob->L, bfw, bfh, radiussob);
+            SobelCannyLuma(tmpsob->L, bufsob->L, bfw, bfh, radiussob);
 #ifdef _OPENMP
             #pragma omp parallel for
 #endif
@@ -6864,47 +6855,19 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
 
 
-                //    if (lp.strucc > 0) {
-                //   if (titi) {
-                //todo use of tmpsob and deltasobelL - shape  detection
-                /*
-                                buflight   = new float*[bfh];
-
-                                for (int i = 0; i < bfh; i++) {
-                                    buflight[i] = new float[bfw];
-                                }
-                */
+                //     if (lp.strucc > 0) {
                 //change coordonate to XX, YY XX=x, YY=-y to can use easily trigo functions and polar coordonates
                 // xc yc are XX=0 YY=0
                 //at the end we convert inverse
                 // we have 4 quarter for the area bfw * bfh : TOP, LEFT, BOTTOM, RIGHT
-                float **Cdeltae = nullptr;
-                Cdeltae   = new float*[bfh];
+                //Cdeltae Ldeltae - deltaE Chroma and Luma in area bfw bfh
+                //Cdeltaesob Ldeltaesob - Sobel transformed of deltaE Chroma and Luma in area bfw bfh
 
-                for (int i = 0; i < bfh; i++) {
-                    Cdeltae[i] = new float[bfw];
-                }
+                const JaggedArray<float> Cdeltae(bfw, bfh);
+                const JaggedArray<float> Cdeltaesob(bfw, bfh);
+                const JaggedArray<float> Ldeltae(bfw, bfh);
+                const JaggedArray<float> Ldeltaesob(bfw, bfh);
 
-                float **Cdeltaesob = nullptr;
-                Cdeltaesob   = new float*[bfh];
-
-                for (int i = 0; i < bfh; i++) {
-                    Cdeltaesob[i] = new float[bfw];
-                }
-
-                float **Ldeltae = nullptr;
-                Ldeltae   = new float*[bfh];
-
-                for (int i = 0; i < bfh; i++) {
-                    Ldeltae[i] = new float[bfw];
-                }
-
-                float **Ldeltaesob = nullptr;
-                Ldeltaesob   = new float*[bfh];
-
-                for (int i = 0; i < bfh; i++) {
-                    Ldeltaesob[i] = new float[bfw];
-                }
 
 #ifdef _OPENMP
                 #pragma omp parallel for
@@ -6931,8 +6894,8 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                     }
 
 
-                SobelCannyLuma(Cdeltaesob, deltasobelL->L, Cdeltae, bfw, bfh, 0);//0 or other thing eg radiussob if noise...
-                SobelCannyLuma(Ldeltaesob, deltasobelL->L, Ldeltae, bfw, bfh, 0);
+                SobelCannyLuma(Cdeltaesob, Cdeltae, bfw, bfh, 0);//0 or other thing eg radiussob if noise...
+                SobelCannyLuma(Ldeltaesob, Ldeltae, bfw, bfh, 0);
 
                 int Xo = trunc(-lp.lxL);
                 int Xe = trunc(lp.lx);
@@ -6941,79 +6904,41 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 int ar = 1;//to avoid crash due to round values
                 //init first quarter top
                 int XR = max(-Xo, Xe);
-                float **val = nullptr;
+
                 //rr maximum radius to stock data
-                int rr = sqrt(SQR(XR) + SQR(Ye)) + ar;    //+ 3 to prevent crash due to round float
-                //val [m = position on relative abscisse] [r = polar radius]
+                int rr = sqrt(SQR(XR) + SQR(Ye)) + ar;    //+ ar to prevent crash due to round float
+                //polar coord
+                const JaggedArray<float> val(rr, xEn - begx + ar);
+                const JaggedArray<float> CdE(rr, xEn - begx + ar);
+                const JaggedArray<float> LdE(rr, xEn - begx + ar);
+                const JaggedArray<float> CdEsob(rr, xEn - begx + ar);
+                const JaggedArray<float> LdEsob(rr, xEn - begx + ar);
+                const JaggedArray<float> Soderiv(rr, xEn - begx + ar);
+                const JaggedArray<float> Chderiv(rr, xEn - begx + ar);
+                const JaggedArray<float> Luderiv(rr, xEn - begx + ar);
+                const JaggedArray<float> goodmax(rr, xEn - begx + ar);
+                const JaggedArray<float> Soderiv2(rr, xEn - begx + ar);
+                const JaggedArray<float> Chderiv2(rr, xEn - begx + ar);
+                const JaggedArray<float> Luderiv2(rr, xEn - begx + ar);
+                const JaggedArray<float> Totalderiv2(rr, xEn - begx + ar);
 
-                //val to stock Sobel on radius
-                val = new float*[xEn - begx + ar];
-
-                for (int i = 0; i < (xEn - begx + ar); i++) {
-                    val[i] = new float[rr];
-                }
-
-                //cDe and LdE to stock delta E chroma and luma
-                float **CdE = nullptr;
-                CdE = new float*[xEn - begx + ar];
-
-                for (int i = 0; i < (xEn - begx + ar); i++) {
-                    CdE[i] = new float[rr];
-                }
-
-                float **LdE = nullptr;
-                LdE = new float*[xEn - begx + ar];
-
-                for (int i = 0; i < (xEn - begx + ar); i++) {
-                    LdE[i] = new float[rr];
-                }
-
-                //cdEsob and ldesob to stock sobel on DeltaEch and Luma
-                float **CdEsob = nullptr;
-                CdEsob = new float*[xEn - begx + ar];
-
-                for (int i = 0; i < (xEn - begx + ar); i++) {
-                    CdEsob[i] = new float[rr];
-                }
-
-                float **LdEsob = nullptr;
-                LdEsob = new float*[xEn - begx + ar];
-
-                for (int i = 0; i < (xEn - begx + ar); i++) {
-                    LdEsob[i] = new float[rr];
-                }
-
-                float **Soderiv = nullptr;
-                Soderiv = new float*[xEn - begx + ar];
-
-                for (int i = 0; i < (xEn - begx + ar); i++) {
-                    Soderiv[i] = new float[rr];
-                }
-
-                //derivative of deltae Chroma
-                float **Chderiv = nullptr;
-                Chderiv = new float*[xEn - begx + ar];
-
-                for (int i = 0; i < (xEn - begx + ar); i++) {
-                    Chderiv[i] = new float[rr];
-                }
-
-                //derivative of deltaE Luma
-                float **Luderiv = nullptr;
-                Luderiv = new float*[xEn - begx + ar];
-
-                for (int i = 0; i < (xEn - begx + ar); i++) {
-                    Luderiv[i] = new float[rr];
-                }
+                //cDe and LdE to stock delta E chroma and luma in area top and polar coord
+                //cDesob and LdEsob Sobel canny of delta E chroma and luma
+                //Chderiv Luderiv derivative of Sobel deltae Chroma Luma
+                //Soderiv derivative of sobel
 
                 //good max : find the good max value. This value perhaps is max, but perhaps it is after - on the radius - and before the end
-                float *goodmax = nullptr;
-                goodmax = new float[xEn - begx + ar];
-                //derivative of sobel
 
                 //keep radius On OFF action
                 float *rad = nullptr;
                 rad = new float[xEn - begx + ar];
+
+                float *maxsob = nullptr;
+                maxsob = new float[xEn - begx + ar];
+                float *meanbef = nullptr;
+                meanbef = new float[xEn - begx + ar];
+                float *meanaft = nullptr;
+                meanaft = new float[xEn - begx + ar];
 
                 //radlim maximum radius
                 float *radlim = nullptr;
@@ -7021,63 +6946,67 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
                 //init second quarter left
                 int YL = max(-Yo, Ye);
-
-                float **valL = nullptr;
                 int rrL = sqrt(SQR(YL) + SQR(Xo)) + ar;
 
-                valL = new float*[yEn - begy + ar];
-
-                for (int i = 0; i < (yEn - begy + ar); i++) {
-                    valL[i] = new float[rrL];
-                }
+                const JaggedArray<float> valL(rrL, yEn - begy + ar);
+                const JaggedArray<float> CdEL(rrL, yEn - begy + ar);
+                const JaggedArray<float> LdEL(rrL, yEn - begy + ar);
+                const JaggedArray<float> CdEsobL(rrL, yEn - begy + ar);
+                const JaggedArray<float> LdEsobL(rrL, yEn - begy + ar);
+                const JaggedArray<float> SoderivL(rrL, yEn - begy + ar);
+                const JaggedArray<float> ChderivL(rrL, yEn - begy + ar);
+                const JaggedArray<float> LuderivL(rrL, yEn - begy + ar);
 
                 float *radL = nullptr;
                 radL = new float[yEn - begy + ar];
-
                 float *radlimL = nullptr;
                 radlimL = new float[yEn - begy + ar];
 
+
                 //init third quarter bottom
                 XR = max(-Xo, Xe);
-                float **valB = nullptr;
                 int rrB = sqrt(SQR(XR) + SQR(Yo)) + ar;
-                valB = new float*[xEn - begx + ar];
 
-                for (int i = 0; i < (xEn - begx + ar); i++) {
-                    valB[i] = new float[rrB];
-                }
+                const JaggedArray<float> valB(rrB, xEn - begx + ar);
+                const JaggedArray<float> CdEB(rrB, xEn - begx + ar);
+                const JaggedArray<float> LdEB(rrB, xEn - begx + ar);
+                const JaggedArray<float> CdEsobB(rrB, xEn - begx + ar);
+                const JaggedArray<float> LdEsobB(rrB, xEn - begx + ar);
+                const JaggedArray<float> SoderivB(rrB, xEn - begx + ar);
+                const JaggedArray<float> ChderivB(rrB, xEn - begx + ar);
+                const JaggedArray<float> LuderivB(rrB, xEn - begx + ar);
 
                 float *radB = nullptr;
                 radB = new float[xEn - begx + ar];
                 float *radlimB = nullptr;
                 radlimB = new float[xEn - begx + ar];
 
+
                 //init fourth quarter right
                 YL = max(-Yo, Ye);
-
-                float **valR = nullptr;
                 int rrR = sqrt(SQR(YL) + SQR(Xe)) + ar;
-
-                valR = new float*[yEn - begy + ar];
-
-                for (int i = 0; i < (yEn - begy + ar); i++) {
-                    valR[i] = new float[rrR];
-                }
+                const JaggedArray<float> valR(rrR, yEn - begy + ar);
+                const JaggedArray<float> CdER(rrR, yEn - begy + ar);
+                const JaggedArray<float> LdER(rrR, yEn - begy + ar);
+                const JaggedArray<float> CdEsobR(rrR, yEn - begy + ar);
+                const JaggedArray<float> LdEsobR(rrR, yEn - begy + ar);
+                const JaggedArray<float> SoderivR(rrR, yEn - begy + ar);
+                const JaggedArray<float> ChderivR(rrR, yEn - begy + ar);
+                const JaggedArray<float> LuderivR(rrR, yEn - begy + ar);
 
                 float *radR = nullptr;
                 radR = new float[yEn - begy + ar];
-
                 float *radlimR = nullptr;
                 radlimR = new float[yEn - begy + ar];
 
-                float2 sincosval;
+
+
 
                 for (int w = 0; w < (xEn - begx); w++) {
                     rad[w] = 0.f;
                     radlim[w] = 0.f;
                     radB[w] = 0.f;
                     radlimB[w] = 0.f;
-                    goodmax[w] = 0.f;
                 }
 
                 for (int w = 0; w < (xEn - begx); w++) {
@@ -7086,28 +7015,55 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         Soderiv[w][z] = 0.f;
                         Chderiv[w][z] = 0.f;
                         Luderiv[w][z] = 0.f;
+                        Soderiv2[w][z] = 0.f;
+                        Chderiv2[w][z] = 0.f;
+                        Luderiv2[w][z] = 0.f;
+                        Totalderiv2[w][z] = 0.f;
                         CdE[w][z] = 0.f;
                         LdE[w][z] = 0.f;
                         CdEsob[w][z] = 0.f;
                         LdEsob[w][z] = 0.f;
+                        goodmax[w][z] = 0.f;
+
                     }
                 }
 
                 for (int w = 0; w < (xEn - begx); w++) {
                     for (int z = 0; z < rrB; z++) {
                         valB[w][z] = 0.f;
+                        SoderivB[w][z] = 0.f;
+                        ChderivB[w][z] = 0.f;
+                        LuderivB[w][z] = 0.f;
+                        CdEB[w][z] = 0.f;
+                        LdEB[w][z] = 0.f;
+                        CdEsobB[w][z] = 0.f;
+                        LdEsobB[w][z] = 0.f;
                     }
                 }
 
                 for (int w = 0; w < (yEn - begy); w++) {
                     for (int z = 0; z < rrL; z++) {
                         valL[w][z] = 0.f;
+                        SoderivL[w][z] = 0.f;
+                        ChderivL[w][z] = 0.f;
+                        LuderivL[w][z] = 0.f;
+                        CdEL[w][z] = 0.f;
+                        LdEL[w][z] = 0.f;
+                        CdEsobL[w][z] = 0.f;
+                        LdEsobL[w][z] = 0.f;
                     }
                 }
 
                 for (int w = 0; w < (yEn - begy); w++) {
                     for (int z = 0; z < rrR; z++) {
                         valR[w][z] = 0.f;
+                        SoderivR[w][z] = 0.f;
+                        ChderivR[w][z] = 0.f;
+                        LuderivR[w][z] = 0.f;
+                        CdER[w][z] = 0.f;
+                        LdER[w][z] = 0.f;
+                        CdEsobR[w][z] = 0.f;
+                        LdEsobR[w][z] = 0.f;
                     }
                 }
 
@@ -7119,6 +7075,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 }
 
                 float sobelponder = 2.f * sobelref;
+                float2 sincosval;
 
                 if (sobelponder > 25000.f) {
                     sobelponder = 25000.f;
@@ -7139,8 +7096,10 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
                     float tetacur =  xatan2f(Ye, XX);//we can probably supprres xatan2f and repace by XX / Ye but I keep it in case of
                     float valedge = 0.f;
+                    //      float maxval = -10000.f;
+                    //     float minval = 100000.f;
 
-                    for (int r = 0; r < radlim[m] - (ar + 2); r++) {
+                    for (int r = 1; r < radlim[m] - (ar + 2); r++) {
                         sincosval = xsincosf(tetacur);
                         float xcur = r * sincosval.y;
                         float ycur = r * sincosval.x;
@@ -7150,7 +7109,6 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
                         int yycur =   trunc(lp.yc) - trunc(ycur) - begy;  // - before ceil(ycur) to convert YY ==> y
                         yycur = LIM<int> (yycur, 0, bfh - 1);
-                        valm = tmpsob->L[yycur][xxcur];
                         valm = tmpsob->L[yycur][xxcur];
                         CdEsob[m][r] = Cdeltaesob[yycur][xxcur];
                         LdEsob[m][r] = Ldeltaesob[yycur][xxcur];
@@ -7165,7 +7123,10 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                                 //   printf("XX=%i m=%i r=%i val=%i CdE=%i LdE=%i\n", XX, m, r, (int) val[m][r], (int)CdE[m][r], (int)LdE[m][r]);
                             }
                         }
+
                     }
+
+
                 }
 
                 valm = 0.f;
@@ -7193,6 +7154,10 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         int yycur =   ceil(lp.yc) - ceil(ycur) - begy;
                         yycur = LIM<int> (yycur, 0, bfh - 1);
                         valm = tmpsob->L[yycur][xxcur];
+                        CdEsobL[m][r] = Cdeltaesob[yycur][xxcur];
+                        LdEsobL[m][r] = Ldeltaesob[yycur][xxcur];
+                        LdEL[m][r] = Ldeltae[yycur][xxcur];
+                        CdEL[m][r] = Cdeltae[yycur][xxcur];
 
                         if (valm > valedge) {
                             valL[m][r] = valm;
@@ -7229,6 +7194,10 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         int yycur =   ceil(lp.yc) - ceil(ycur) - begy;  // - before ceil(ycur) to convert YY ==> y
                         yycur = LIM<int> (yycur, 0, bfh - 1);
                         valm = tmpsob->L[yycur][xxcur];
+                        CdEsobB[m][r] = Cdeltaesob[yycur][xxcur];
+                        LdEsobB[m][r] = Ldeltaesob[yycur][xxcur];
+                        LdEB[m][r] = Ldeltae[yycur][xxcur];
+                        CdEB[m][r] = Cdeltae[yycur][xxcur];
 
                         if (valm > valedge) {
                             //  if(m > maxm) maxm = m;
@@ -7266,6 +7235,10 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         int yycur =   ceil(lp.yc) - ceil(ycur) - begy;
                         yycur = LIM<int> (yycur, 0, bfh - 1);
                         valm = tmpsob->L[yycur][xxcur];
+                        CdEsobR[m][r] = Cdeltaesob[yycur][xxcur];
+                        LdEsobR[m][r] = Ldeltaesob[yycur][xxcur];
+                        LdER[m][r] = Ldeltae[yycur][xxcur];
+                        CdER[m][r] = Cdeltae[yycur][xxcur];
 
                         if (valm > valedge) {
                             valR[m][r] = valm;
@@ -7290,6 +7263,13 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         m = 0;
                     }
 
+                    float maxval = -10000.f;
+                    int rmax = 0;
+                    float maxso = -10000.f;
+                    //  int rmaxso = 0;
+                    float maxch = -10000.f;
+                    int rmaxch = 0;
+
                     //average convolution and first max
                     for (int r = 1; r < radlim[m] - (ar + 3); r++) {
                         val[m][r] = 0.333f * (val[m][r - 1] + val[m][r] + val[m][r + 1]);
@@ -7297,6 +7277,40 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         LdE[m][r] =  0.333f * (LdE[m][r - 1] + LdE[m][r] + LdE[m][r + 1]);
                         CdEsob[m][r] =  0.333f * (CdEsob[m][r - 1] + CdEsob[m][r] + CdEsob[m][r + 1]);
                         LdEsob[m][r] =  0.333f * (LdEsob[m][r - 1] + LdEsob[m][r] + LdEsob[m][r + 1]);
+
+                        if (val[m][r] > maxval) {
+                            maxval = val[m][r];
+                            rmax = r;
+                        }
+                    }
+
+                    maxsob[m] = maxval;
+
+                    float meanbe = 0.f;
+                    float meanaf = 0.f;
+                    int nbbef = 0;
+                    int nbaft = 0;
+
+                    for (int r = 2; r < radlim[m] - (ar + 4); r++) {
+                        if (r < rmax - 1) {
+                            meanbe += val[m][r];
+                            nbbef ++;
+                        }
+
+                        if (r > rmax + 1) {
+                            meanaf += val[m][r];
+                            nbaft ++;
+                        }
+                    }
+
+                    meanbe /= nbbef;
+                    meanaf /= nbaft;
+                    meanbef[m] = meanbe;
+                    meanaft[m] = meanaf;
+
+                    if (XX == 0) {
+
+                        printf(" maxsob=%i ram=%i meanbef=%i meanaft=%i\n", (int) maxsob[m],  rmax, (int) meanbef[m], (int) meanaft[m]);
                     }
 
                     //derivative function on 2 values
@@ -7305,57 +7319,145 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         Chderiv[m][r] = (CdEsob[m][r] - CdEsob[m][r + 2]);
                         Luderiv[m][r] = (LdEsob[m][r] - LdEsob[m][r + 2]);
 
-                        if (XX == Xe / 2) {
+                        if (XX == 0) {
 
-                            printf("X=%i m=%i r=%i So=%i Chd=%i Ld=%i Sdri=%i Csodri=%i Lsodri=%i\n", XX, m, r, (int) val[m][r], (int)CdE[m][r], (int)LdE[m][r], (int) Soderiv[m][r], (int) Chderiv[m][r], (int) Luderiv[m][r]);
+                            //    printf("X=%i m=%i r=%i So=%i Chd=%i Ld=%i Sdri=%i Csodri=%i Lsodri=%i\n", XX, m, r, (int) val[m][r], (int)CdE[m][r], (int)LdE[m][r], (int) Soderiv[m][r], (int) Chderiv[m][r], (int) Luderiv[m][r]);
+                        }
+                    }
+
+                    //pseudo second derivative
+                    //find maxi of derivative and also change sign
+                    for (int r = 2; r < radlim[m] - (ar + 6); r++) {
+                        if (r + 4 < radlim[m] - (ar + 6)) {
+                            if (signbit(Chderiv[m][r]) + signbit(Chderiv[m][r + 4]) == 1) { //one is positive and one is negative
+                                Chderiv2[m][r] = fabs(Chderiv[m][r] - Chderiv[m][r + 4]);
+                            }
+
+                            if (signbit(Soderiv[m][r]) + signbit(Soderiv[m][r + 4]) == 1) { //one is positive and one is negative
+                                Soderiv2[m][r] = fabs(Soderiv[m][r] - Soderiv[m][r + 4]);
+                            }
+
+                            if (signbit(Luderiv[m][r]) + signbit(Luderiv[m][r + 4]) == 1) { //one is positive and one is negative
+                                Luderiv2[m][r] = fabs(Luderiv[m][r] - Luderiv[m][r + 4]);
+                            }
+
+                            Totalderiv2[m][r] = Luderiv2[m][r] + Chderiv2[m][r] + Soderiv2[m][r];
+
+                            if (Chderiv2[m][r] > maxch) {
+                                maxch = Chderiv2[m][r];
+                                rmaxch = r;
+                            }
+
+
+                            if (Soderiv2[m][r] > maxso) {
+                                maxso = Soderiv2[m][r];
+                                //    rmaxso = r;
+                            }
+
+                        }
+
+                        if (XX == 0) {
+
+                            //   printf("X=%i m=%i r=%i So=%i Chd=%i Ld=%i Sdri2=%i Cdri2=%i Ldri2=%i To=%i\n", XX, m, r, (int) val[m][r], (int)CdE[m][r], (int)LdE[m][r], (int) Soderiv2[m][r], (int) Chderiv2[m][r], (int) Luderiv2[m][r], (int) Totalderiv2[m][r]);
                         }
 
 
                     }
 
-                    /*
-                                        for (int r = 1; r < radlim[m] - (ar + 3); r++) {
-
-                                            if ((val[m][r] == goodmax[m]) && (Soderiv[m][r] > 5000.f)) {
-                                                rad[m] = r;
-                                            }
-
-                                        }
-
-                                        if (XX == 2) {
-                                            printf("XX=%i m=%i gmax=%i rad=%i\n", XX, m, (int) goodmax[m], (int) rad[m]);
-                                        }
-
-                                        float maxref2 = -1000.f;
-
-                                        for (int r = 1; r < radlim[m] - (ar + 3); r++) {
-
-                                            if (r > rad[m]) {
-                                                if (val[m][r] > maxref2) {
-                                                    maxref2 = val[m][r];
-                                                }
-                                            }
-
-                                            goodmax[m] = maxref2;
-
-                                        }
-
-                                        for (int r = 1; r < radlim[m] - (ar + 3); r++) {
-
-                                            if (val[m][r] == goodmax[m] && Soderiv[m][r] > 5000.f) {
-                                                rad[m] = r;
-                                            }
-
-                                        }
-
-                                        if (XX == 2) {
-                                            printf("XX=%i m=%i gmax2=%i rad=%i\n", XX, m, (int) goodmax[m], (int) rad[m]);
-                                        }
-                    */
+                    //we must now calculate rad[m] in function of others criterail
+                    rad[m] = rmaxch;
 
                 }
 
+                for (int YY = Yo; YY < Ye; YY++) { //second quarter left
+                    int m = ceil(YY - Yo);
 
+                    if (m < 0) {
+                        m = 0;
+                    }
+
+                    //average convolution and first max
+                    for (int r = 1; r < radlimL[m] - (ar + 3); r++) {
+                        valL[m][r] = 0.333f * (valL[m][r - 1] + valL[m][r] + valL[m][r + 1]);
+                        CdEL[m][r] =  0.333f * (CdEL[m][r - 1] + CdEL[m][r] + CdEL[m][r + 1]);
+                        LdEL[m][r] =  0.333f * (LdEL[m][r - 1] + LdEL[m][r] + LdEL[m][r + 1]);
+                        CdEsobL[m][r] =  0.333f * (CdEsobL[m][r - 1] + CdEsobL[m][r] + CdEsobL[m][r + 1]);
+                        LdEsobL[m][r] =  0.333f * (LdEsobL[m][r - 1] + LdEsobL[m][r] + LdEsobL[m][r + 1]);
+                    }
+
+                    //derivative function on 2 values
+                    for (int r = 2; r < radlimL[m] - (ar + 6); r++) {
+                        SoderivL[m][r] = (valL[m][r] - valL[m][r + 2]);
+                        ChderivL[m][r] = (CdEsobL[m][r] - CdEsobL[m][r + 2]);
+                        LuderivL[m][r] = (LdEsobL[m][r] - LdEsobL[m][r + 2]);
+
+                        if (YY == 0) {
+
+                            //    printf("Y=%i m=%i r=%i So=%i Chd=%i Ld=%i Sdri=%i Csodri=%i Lsodri=%i\n", YY, m, r, (int) valL[m][r], (int)CdEL[m][r], (int)LdEL[m][r], (int) SoderivL[m][r], (int) ChderivL[m][r], (int) LuderivL[m][r]);
+                        }
+                    }
+                }
+
+
+                for (int XX = Xo; XX < Xe; XX++) { //third quarter inf
+                    int m = trunc(XX - Xo);
+
+                    if (m < 0) {
+                        m = 0;
+                    }
+
+                    //average convolution and first max
+                    for (int r = 1; r < radlimB[m] - (ar + 3); r++) {
+                        valB[m][r] = 0.333f * (valB[m][r - 1] + valB[m][r] + valB[m][r + 1]);
+                        CdEB[m][r] =  0.333f * (CdEB[m][r - 1] + CdEB[m][r] + CdEB[m][r + 1]);
+                        LdEB[m][r] =  0.333f * (LdEB[m][r - 1] + LdEB[m][r] + LdEB[m][r + 1]);
+                        CdEsobB[m][r] =  0.333f * (CdEsobB[m][r - 1] + CdEsobB[m][r] + CdEsobB[m][r + 1]);
+                        LdEsobB[m][r] =  0.333f * (LdEsobB[m][r - 1] + LdEsobB[m][r] + LdEsobB[m][r + 1]);
+                    }
+
+                    //derivative function on 2 values
+                    for (int r = 2; r < radlimB[m] - (ar + 6); r++) {
+                        SoderivB[m][r] = (valB[m][r] - valB[m][r + 2]);
+                        ChderivB[m][r] = (CdEsobB[m][r] - CdEsobB[m][r + 2]);
+                        LuderivB[m][r] = (LdEsobB[m][r] - LdEsobB[m][r + 2]);
+
+                        if (XX == Xe / 2) {
+
+                            //    printf("X=%i m=%i r=%i So=%i Chd=%i Ld=%i Sdri=%i Csodri=%i Lsodri=%i\n", XX, m, r, (int) valB[m][r], (int)CdEB[m][r], (int)LdEB[m][r], (int) SoderivB[m][r], (int) ChderivB[m][r], (int) LuderivB[m][r]);
+                        }
+                    }
+                }
+
+                for (int YY = Yo; YY < Ye; YY++) { //second quarter left
+                    int m = ceil(YY - Yo);
+
+                    if (m < 0) {
+                        m = 0;
+                    }
+
+                    //average convolution and first max
+                    for (int r = 1; r < radlimR[m] - (ar + 3); r++) {
+                        valR[m][r] = 0.333f * (valR[m][r - 1] + valR[m][r] + valR[m][r + 1]);
+                        CdER[m][r] =  0.333f * (CdER[m][r - 1] + CdER[m][r] + CdER[m][r + 1]);
+                        LdER[m][r] =  0.333f * (LdER[m][r - 1] + LdER[m][r] + LdER[m][r + 1]);
+                        CdEsobR[m][r] =  0.333f * (CdEsobR[m][r - 1] + CdEsobR[m][r] + CdEsobR[m][r + 1]);
+                        LdEsobR[m][r] =  0.333f * (LdEsobR[m][r - 1] + LdEsobR[m][r] + LdEsobR[m][r + 1]);
+                    }
+
+                    //derivative function on 2 values
+                    for (int r = 2; r < radlimR[m] - (ar + 6); r++) {
+                        SoderivR[m][r] = (valR[m][r] - valR[m][r + 2]);
+                        ChderivR[m][r] = (CdEsobR[m][r] - CdEsobR[m][r + 2]);
+                        LuderivR[m][r] = (LdEsobR[m][r] - LdEsobR[m][r + 2]);
+
+                        if (YY == 0) {
+
+                            //printf("Y=%i m=%i r=%i So=%i Chd=%i Ld=%i Sdri=%i Csodri=%i Lsodri=%i\n", YY, m, r, (int) valR[m][r], (int)CdER[m][r], (int)LdER[m][r], (int) SoderivR[m][r], (int) ChderivR[m][r], (int) LuderivR[m][r]);
+                        }
+                    }
+                }
+
+                //real algo to find good radius
 
 
                 // put good values in delatasobelL
@@ -7389,85 +7491,20 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                     }
                 }
 
-
+                delete[] radlimR;
+                delete[] radR;
 
                 delete[] radlimB;
                 delete[] radB;
-
-                delete[] radlimR;
-                delete[] radR;
 
                 delete[] radlimL;
                 delete[] radL;
 
                 delete[] radlim;
                 delete[] rad;
-                delete[] goodmax;
-
-                for (int i = 0; i < (xEn - begx + ar); i++) {
-                    delete [] val[i];
-                    delete[] Soderiv[i];
-                    delete[] Chderiv[i];
-                    delete[] Luderiv[i];
-                    delete [] CdE[i];
-                    delete [] LdE[i];
-                    delete [] CdEsob[i];
-                    delete [] LdEsob[i];
-
-                }
-
-                delete [] val;
-                delete [] Soderiv;
-                delete [] Chderiv;
-                delete [] Luderiv;
-                delete [] CdE;
-                delete [] LdE;
-                delete [] CdEsob;
-                delete [] LdEsob;
-
-                for (int i = 0; i < (yEn - begy + ar); i++) {
-                    delete [] valL[i];
-                }
-
-                delete [] valL;
-
-                for (int i = 0; i < (xEn - begx + ar); i++) {
-                    delete [] valB[i];
-                }
-
-                delete [] valB;
-
-                for (int i = 0; i < (yEn - begy + ar); i++) {
-                    delete [] valR[i];
-                }
-
-                delete [] valR;
-
-                for (int i = 0; i < bfh; i++) {
-                    delete [] Cdeltae[i];
-                }
-
-                delete [] Cdeltae;
-
-                for (int i = 0; i < bfh; i++) {
-                    delete [] Ldeltae[i];
-                }
-
-                delete [] Ldeltae;
-
-                for (int i = 0; i < bfh; i++) {
-                    delete [] Cdeltaesob[i];
-                }
-
-                delete [] Cdeltaesob;
-
-                for (int i = 0; i < bfh; i++) {
-                    delete [] Ldeltaesob[i];
-                }
-
-                delete [] Ldeltaesob;
-
-
+                delete[] maxsob;
+                delete[] meanaft;
+                delete[] meanbef;
 
             }
 
@@ -7527,17 +7564,6 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
             delete deltasobelL;
             delete tmpsob;
 
-            for (int i = 0; i < bfh; i++) {
-                delete [] bufchro[i];
-            }
-
-            delete [] bufchro;
-
-            for (int i = 0; i < bfh; i++) {
-                delete [] buflight[i];
-            }
-
-            delete [] buflight;
 
             delete bufexclu;
             delete [] origBuffer;
@@ -7553,32 +7579,21 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
             LabImage *tmp1 = nullptr;
             LabImage *tmp2 = nullptr;
             LabImage *bufgb = nullptr;
-            float **buflight = nullptr;
-            float **bufchro = nullptr;
             float *origBuffer = nullptr;
             //       LabImage *deltasobelL = nullptr;
-
             int GW = transformed->W;
             int GH = transformed->H;
             //  printf ("rad=%f gaus=%f call=%i skip=%i\n", radius, GAUSS_SKIP, call, sk);
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
+            const JaggedArray<float> buflight(bfw, bfh);
+            const JaggedArray<float> bufchro(bfw, bfh);
+
             float *orig[bfh] ALIGNED16;
 
             //    if (call <= 3  && !lp.invrad) {
             if (call <= 3  && lp.blurmet != 1) {
                 bufgb = new LabImage(bfw, bfh);
-                buflight   = new float*[bfh];
-
-                for (int i = 0; i < bfh; i++) {
-                    buflight[i] = new float[bfw];
-                }
-
-                bufchro   = new float*[bfh];//for chroma reti
-
-                for (int i = 0; i < bfh; i++) {
-                    bufchro[i] = new float[bfw];
-                }
 
                 origBuffer = new float[bfh * bfw];
 
@@ -7733,17 +7748,6 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
                 delete bufgb;
 
-                for (int i = 0; i < bfh; i++) {
-                    delete [] buflight[i];
-                }
-
-                delete [] buflight;
-
-                for (int i = 0; i < bfh; i++) {
-                    delete [] bufchro[i];
-                }
-
-                delete [] bufchro;
                 delete [] origBuffer;
 
 
@@ -8149,13 +8153,15 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
             float chpro = 1.f;
             float cligh = 1.f;
             float clighL = 1.f;
-            float **buflight = nullptr;
-            float **bufchro = nullptr;
-            float **bufchroslid = nullptr;
-            float **buflightslid = nullptr;
-            float **bufhh = nullptr;
 
             int bfh = 0.f, bfw = 0.f;
+            bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
+            bfw = int (lp.lx + lp.lxL) + del;
+            const JaggedArray<float> buflight(bfw, bfh);
+            const JaggedArray<float> bufchro(bfw, bfh);
+            const JaggedArray<float> buflightslid(bfw, bfh);
+            const JaggedArray<float> bufchroslid(bfw, bfh);
+            const JaggedArray<float> bufhh(bfw, bfh);
 
 
             float adjustr = 1.0f;
@@ -8181,39 +8187,8 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
 
             if (call <= 3) { //simpleprocess, dcrop, improccoordinator
-                bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
-                bfw = int (lp.lx + lp.lxL) + del;
                 bufcolorig = new LabImage(bfw, bfh); //buffer for data in zone limit
 
-                buflight   = new float*[bfh];//for lightness curve
-
-                for (int i = 0; i < bfh; i++) {
-                    buflight[i] = new float[bfw];
-                }
-
-                bufchro   = new float*[bfh];//for chroma curve
-
-                for (int i = 0; i < bfh; i++) {
-                    bufchro[i] = new float[bfw];
-                }
-
-                bufchroslid   = new float*[bfh];//for chroma curve
-
-                for (int i = 0; i < bfh; i++) {
-                    bufchroslid[i] = new float[bfw];
-                }
-
-                bufhh   = new float*[bfh];//for chroma curve
-
-                for (int i = 0; i < bfh; i++) {
-                    bufhh[i] = new float[bfw];
-                }
-
-                buflightslid   = new float*[bfh];//for chroma curve
-
-                for (int i = 0; i < bfh; i++) {
-                    buflightslid[i] = new float[bfw];
-                }
 
 
 #ifdef _OPENMP
@@ -8427,37 +8402,6 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
                 // delete bufcoltra;
 
-                for (int i = 0; i < bfh; i++) {
-                    delete [] buflight[i];
-                }
-
-                delete [] buflight;
-
-                for (int i = 0; i < bfh; i++) {
-                    delete [] bufchro[i];
-                }
-
-                delete [] bufchro;
-
-                for (int i = 0; i < bfh; i++) {
-                    delete [] bufhh[i];
-                }
-
-                delete [] bufhh;
-
-                for (int i = 0; i < bfh; i++) {
-                    delete [] bufchroslid[i];
-                }
-
-
-                delete [] bufchroslid;
-
-                for (int i = 0; i < bfh; i++) {
-                    delete [] buflightslid[i];
-                }
-
-
-                delete [] buflightslid;
             }
         }
 //inverse
@@ -8493,8 +8437,10 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
             }
 
             LabImage *bufcontorig = nullptr;
-            float **buflightc = nullptr;
-            int bfh = 0, bfw = 0;
+            int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
+            int bfw = int (lp.lx + lp.lxL) + del;
+            const JaggedArray<float> buflightc(bfw, bfh);
+
             float clighc = 0.f;
             const float localtype = lumaref;
             //         const float localtype = ave;
@@ -8526,15 +8472,8 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
             ImProcFunctions::secondeg_end(reducac, vinf, lco.aaa, lco.bbb, lco.ccc); //parabolic
 
             if (call <= 3) { //simpleprocess, dcrop, improccoordinator
-                bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
-                bfw = int (lp.lx + lp.lxL) + del;
                 bufcontorig = new LabImage(bfw, bfh); //buffer for data in zone limit
 
-                buflightc   = new float*[bfh];//for lightness curve
-
-                for (int i = 0; i < bfh; i++) {
-                    buflightc[i] = new float[bfw];
-                }
 
 
 
@@ -8641,13 +8580,6 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
             if (call <= 3) {
 
                 delete bufcontorig;
-
-
-                for (int i = 0; i < bfh; i++) {
-                    delete [] buflightc[i];
-                }
-
-                delete [] buflightc;
             }
 
 
@@ -8694,31 +8626,20 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
             LabImage *bufexporig = nullptr;
             LabImage *bufexpfin = nullptr;
-            float **buflight = nullptr;
-            float **bufl_ab = nullptr;
 
             int bfh = 0.f, bfw = 0.f;
+            bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
+            bfw = int (lp.lx + lp.lxL) + del;
+            const JaggedArray<float> buflight(bfw, bfh);
+            const JaggedArray<float> bufl_ab(bfw, bfh);
 
 
             if (call <= 3) { //simpleprocess, dcrop, improccoordinator
-                bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
-                bfw = int (lp.lx + lp.lxL) + del;
 
 
                 bufexporig = new LabImage(bfw, bfh); //buffer for data in zone limit
                 bufexpfin = new LabImage(bfw, bfh); //buffer for data in zone limit
 
-                buflight   = new float*[bfh];//for lightness
-
-                for (int i = 0; i < bfh; i++) {
-                    buflight[i] = new float[bfw];
-                }
-
-                bufl_ab   = new float*[bfh];//for chroma
-
-                for (int i = 0; i < bfh; i++) {
-                    bufl_ab[i] = new float[bfw];
-                }
 
 #ifdef _OPENMP
                 #pragma omp parallel for
@@ -8833,19 +8754,6 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
                 delete bufexporig;
                 delete bufexpfin;
-
-                for (int i = 0; i < bfh; i++) {
-                    delete [] buflight[i];
-                }
-
-                delete [] buflight;
-
-                for (int i = 0; i < bfh; i++) {
-                    delete [] bufl_ab[i];
-                }
-
-                delete [] bufl_ab;
-
             }
 
         }
@@ -8871,31 +8779,20 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
             LabImage *bufexporig = nullptr;
             LabImage *bufexpfin = nullptr;
-            float **buflight = nullptr;
-            float **bufl_ab = nullptr;
 
-            int bfh = 0.f, bfw = 0.f;
+            int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
+            int bfw = int (lp.lx + lp.lxL) + del;
+
+            const JaggedArray<float> buflight(bfw, bfh);
+            const JaggedArray<float> bufl_ab(bfw, bfh);
 
 
             if (call <= 3) { //simpleprocess, dcrop, improccoordinator
-                bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
-                bfw = int (lp.lx + lp.lxL) + del;
 
 
                 bufexporig = new LabImage(bfw, bfh); //buffer for data in zone limit
                 bufexpfin = new LabImage(bfw, bfh); //buffer for data in zone limit
 
-                buflight   = new float*[bfh];//for lightness
-
-                for (int i = 0; i < bfh; i++) {
-                    buflight[i] = new float[bfw];
-                }
-
-                bufl_ab   = new float*[bfh];//for chroma
-
-                for (int i = 0; i < bfh; i++) {
-                    bufl_ab[i] = new float[bfw];
-                }
 
 #ifdef _OPENMP
                 #pragma omp parallel for
@@ -8999,17 +8896,6 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 delete bufexporig;
                 delete bufexpfin;
 
-                for (int i = 0; i < bfh; i++) {
-                    delete [] buflight[i];
-                }
-
-                delete [] buflight;
-
-                for (int i = 0; i < bfh; i++) {
-                    delete [] bufl_ab[i];
-                }
-
-                delete [] bufl_ab;
 
             }
 
@@ -9021,20 +8907,15 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 //&& lp.tonemapena
         if (lp.strengt != 0.f  && lp.tonemapena) {
             LabImage *tmp1 = nullptr;
-            float **buflight = nullptr;
 
             LabImage *bufgb = nullptr;
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
+            const JaggedArray<float> buflight(bfw, bfh);
 
             if (call <= 3) { //simpleprocess dcrop improcc
 
                 bufgb = new LabImage(bfw, bfh);
-                buflight   = new float*[bfh];//for lightness reti
-
-                for (int i = 0; i < bfh; i++) {
-                    buflight[i] = new float[bfw];
-                }
 
 #ifdef _OPENMP
                 #pragma omp parallel for
@@ -9130,11 +9011,6 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
             if (call <= 3) {
                 delete bufgb;
 
-                for (int i = 0; i < bfh; i++) {
-                    delete [] buflight[i];
-                }
-
-                delete [] buflight;
 
             }
 
@@ -9145,20 +9021,21 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
 //begin cbdl
         if ((lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f) && lp.cbdlena) {
-            float **bufsh = nullptr;//buffer por square zone
-            float **bufchr = nullptr;//buffer por square zone
-            float **loctemp = nullptr;
-            float **loctempch = nullptr;
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
+            const JaggedArray<float> buflight(bfw, bfh);
+            const JaggedArray<float> bufchrom(bfw, bfh);
+            const JaggedArray<float> bufchr(bfw, bfh);
+            const JaggedArray<float> bufsh(bfw, bfh);
+            const JaggedArray<float> loctemp(bfw, bfh);
+            const JaggedArray<float> loctempch(bfw, bfh);
+
             float b_l = -5.f;
             float t_l = 25.f;
             float t_r = 120.f;
             float b_r = 170.f;
             double skinprot = 0.;
             int choice = 0;
-            float **buflight = nullptr;
-            float **bufchrom = nullptr;
 
             // I initialize these variable in case of !
             float hueplus = hueref + dhuecb;
@@ -9174,41 +9051,6 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
 
             if (call <= 3) { //call from simpleprocess dcrop improcc
-                bufsh   = new float*[bfh];
-
-                for (int i = 0; i < bfh; i++) {
-                    bufsh[i] = new float[bfw];
-                }
-
-                bufchr   = new float*[bfh];
-
-                for (int i = 0; i < bfh; i++) {
-                    bufchr[i] = new float[bfw];
-                }
-
-                buflight   = new float*[bfh];
-
-                for (int i = 0; i < bfh; i++) {
-                    buflight[i] = new float[bfw];
-                }
-
-                bufchrom   = new float*[bfh];
-
-                for (int i = 0; i < bfh; i++) {
-                    bufchrom[i] = new float[bfw];
-                }
-
-                loctemp = new float*[bfh];//allocate temp
-
-                for (int i = 0; i < bfh; i++) {
-                    loctemp[i] = new float[bfw];
-                }
-
-                loctempch = new float*[bfh];//allocate temp
-
-                for (int i = 0; i < bfh; i++) {
-                    loctempch[i] = new float[bfw];
-                }
 
 #ifdef _OPENMP
                 #pragma omp parallel for
@@ -9274,11 +9116,6 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 cbdl_Local(buflight, bufchrom,  loctemp, loctempch, hueplus, huemoins, hueref, dhuecb, chromaref, lumaref, lp, original, transformed, cx, cy, 0);
 
 
-                for (int i = 0; i < bfh; i++) {
-                    delete [] bufsh[i];
-                }
-
-                delete [] bufsh;
 
                 //chroma CBDL begin here
                 if (lp.chromacb > 0.f) {
@@ -9320,39 +9157,6 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
                     cbdl_Local(buflight, bufchrom,  loctemp, loctempch, hueplus, huemoins, hueref, dhuecb, chromaref, lumaref, lp, original, transformed, cx, cy, 1);
                 }
-
-                for (int i = 0; i < bfh; i++) {
-                    delete [] loctemp[i];
-                }
-
-                delete [] loctemp;
-
-                for (int i = 0; i < bfh; i++) {
-                    delete [] loctempch[i];
-                }
-
-                delete [] loctempch;
-
-
-                for (int i = 0; i < bfh; i++) {
-                    delete [] bufchr[i];
-                }
-
-                delete [] bufchr;
-
-
-                for (int i = 0; i < bfh; i++) {
-                    delete [] buflight[i];
-                }
-
-                delete [] buflight;
-
-
-                for (int i = 0; i < bfh; i++) {
-                    delete [] bufchrom[i];
-                }
-
-                delete [] bufchrom;
 
 
 
@@ -9445,10 +9249,10 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
             int GH = transformed->H;
 
             LabImage *bufreti = nullptr;
-            float **buflight = nullptr;
-            float **bufchro = nullptr;
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
+            const JaggedArray<float> buflight(bfw, bfh);
+            const JaggedArray<float> bufchro(bfw, bfh);
 
             float hueplus = hueref + dhueret;
             float huemoins = hueref - dhueret;
@@ -9470,17 +9274,6 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 Hd = bfh;
                 Wd = bfw;
                 bufreti = new LabImage(bfw, bfh);
-                buflight   = new float*[bfh];//for lightness reti
-
-                for (int i = 0; i < bfh; i++) {
-                    buflight[i] = new float[bfw];
-                }
-
-                bufchro   = new float*[bfh];//for chroma reti
-
-                for (int i = 0; i < bfh; i++) {
-                    bufchro[i] = new float[bfw];
-                }
 
 #ifdef _OPENMP
                 #pragma omp parallel for
@@ -9711,17 +9504,6 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
                 delete  bufreti;
 
-                for (int i = 0; i < bfh; i++) {
-                    delete [] buflight[i];
-                }
-
-                delete [] buflight;
-
-                for (int i = 0; i < bfh; i++) {
-                    delete [] bufchro[i];
-                }
-
-                delete [] bufchro;
 
             }
         }

@@ -527,7 +527,7 @@ Locallab::Locallab():
     ToolParamBlock* const excluBox = Gtk::manage(new ToolParamBlock());
 
     excluBox->pack_start(*sensiexclu);
-    //excluBox->pack_start (*struc);
+    //excluBox->pack_start(*struc);
     excluFrame->add(*excluBox);
     shapeBox->pack_start(*excluFrame);
 
