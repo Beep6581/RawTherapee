@@ -174,7 +174,7 @@ bool assignFromKeyfile(
     const Glib::ustring& group_name,
     const Glib::ustring& key,
     bool has_params_edited,
-    const std::map<const char*, T>& mapping,
+    const std::map<std::string, T>& mapping,
     T& value,
     bool& params_edited_value
 )
@@ -183,7 +183,7 @@ bool assignFromKeyfile(
         Glib::ustring v;
         getFromKeyfile(keyfile, group_name, key, v);
 
-        const typename std::map<const char*, T>::const_iterator m = mapping.find(v.c_str());
+        const typename std::map<std::string, T>::const_iterator m = mapping.find(v);
 
         if (m != mapping.end()) {
             value = m->second;
@@ -3425,7 +3425,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 toneCurve.shcompr = 100; // older pp3 files can have values above 100.
             }
 
-            const std::map<const char*, ToneCurveParams::TcMode> tc_mapping = {
+            const std::map<std::string, ToneCurveParams::TcMode> tc_mapping = {
                 {"Standard", ToneCurveParams::TcMode::STD},
                 {"FilmLike", ToneCurveParams::TcMode::FILMLIKE},
                 {"SatAndValueBlending", ToneCurveParams::TcMode::SATANDVALBLENDING},
@@ -3757,7 +3757,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color appearance", "Datacie", pedited, colorappearance.datacie, pedited->colorappearance.datacie);
             assignFromKeyfile(keyFile, "Color appearance", "Tonecie", pedited, colorappearance.tonecie, pedited->colorappearance.tonecie);
 
-            const std::map<const char*, ColorAppearanceParams::TcMode> tc_mapping = {
+            const std::map<std::string, ColorAppearanceParams::TcMode> tc_mapping = {
                 {"Lightness", ColorAppearanceParams::TcMode::LIGHT},
                 {"Brightness", ColorAppearanceParams::TcMode::BRIGHT}
             };
