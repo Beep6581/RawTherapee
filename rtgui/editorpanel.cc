@@ -466,7 +466,6 @@ public:
 
     void updateHistogram()
     {
-      intentBox.setSelected(intentBox.getSelected());
       updateParameters();
     }
 
