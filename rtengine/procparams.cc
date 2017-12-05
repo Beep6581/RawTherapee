@@ -4117,7 +4117,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Wavelet", "ContExtra", pedited, wavelet.sup, pedited->wavelet.sup);
             assignFromKeyfile(keyFile, "Wavelet", "HueRangeResidual", pedited, wavelet.sky, pedited->wavelet.sky);
             assignFromKeyfile(keyFile, "Wavelet", "MaxLev", pedited, wavelet.thres, pedited->wavelet.thres);
-            assignFromKeyfile(keyFile, "Wavelet", "ThresholdHighLight", pedited, wavelet.threshold, pedited->wavelet.threshold);
+            assignFromKeyfile(keyFile, "Wavelet", "ThresholdHighlight", pedited, wavelet.threshold, pedited->wavelet.threshold);
             assignFromKeyfile(keyFile, "Wavelet", "ThresholdShadow", pedited, wavelet.threshold2, pedited->wavelet.threshold2);
             assignFromKeyfile(keyFile, "Wavelet", "Edgedetect", pedited, wavelet.edgedetect, pedited->wavelet.edgedetect);
             assignFromKeyfile(keyFile, "Wavelet", "Edgedetectthr", pedited, wavelet.edgedetectthr, pedited->wavelet.edgedetectthr);
