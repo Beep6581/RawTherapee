@@ -54,14 +54,14 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
 
     colorShape->setLeftBarBgGradient(milestones);
 
+    const ColorToningParams default_params;
+
     // luminance gradient
     milestones.clear();
     milestones.push_back( GradientMilestone(0., 0., 0., 0.) );
     milestones.push_back( GradientMilestone(1., 1., 1., 1.) );
     colorShape->setBottomBarBgGradient(milestones);
-    std::vector<double> defaultCurve;
-    rtengine::ColorToningParams::getDefaultColorCurve(defaultCurve);
-    colorShape->setResetCurve(FCT_MinMaxCPoints, defaultCurve);
+    colorShape->setResetCurve(FCT_MinMaxCPoints, default_params.colorCurve);
 
     // This will add the reset button at the end of the curveType buttons
     colorCurveEditorG->curveListComplete();
@@ -88,10 +88,9 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     opacityCurveEditorG = new CurveEditorGroup (options.lastColorToningCurvesDir, M("TP_COLORTONING_OPACITY"));
     opacityCurveEditorG->setCurveListener (this);
 
-    rtengine::ColorToningParams::getDefaultOpacityCurve(defaultCurve);
     opacityShape = static_cast<FlatCurveEditor*>(opacityCurveEditorG->addCurve(CT_Flat, "", nullptr, false, false));
     opacityShape->setIdentityValue(0.);
-    opacityShape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
+    opacityShape->setResetCurve(FlatCurveType(default_params.opacityCurve.at(0)), default_params.opacityCurve);
     opacityShape->setBottomBarBgGradient(milestones);
 
     // This will add the reset button at the end of the curveType buttons
@@ -107,9 +106,8 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     clCurveEditorG = new CurveEditorGroup (options.lastColorToningCurvesDir, M("TP_COLORTONING_CHROMAC"));
     clCurveEditorG->setCurveListener (this);
 
-    rtengine::ColorToningParams::getDefaultCLCurve(defaultCurve);
     clshape = static_cast<DiagonalCurveEditor*>(clCurveEditorG->addCurve(CT_Diagonal, M("TP_COLORTONING_AB"), irg, false));
-    clshape->setResetCurve(DiagonalCurveType(defaultCurve.at(0)), defaultCurve);
+    clshape->setResetCurve(DiagonalCurveType(default_params.clcurve.at(0)), default_params.clcurve);
     clshape->setTooltip(M("TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP"));
 
     clshape->setLeftBarColorProvider(this, 1);
@@ -127,9 +125,8 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     cl2CurveEditorG = new CurveEditorGroup (options.lastColorToningCurvesDir, M("TP_COLORTONING_CHROMAC"));
     cl2CurveEditorG->setCurveListener (this);
 
-    rtengine::ColorToningParams::getDefaultCL2Curve(defaultCurve);
     cl2shape = static_cast<DiagonalCurveEditor*>(cl2CurveEditorG->addCurve(CT_Diagonal, M("TP_COLORTONING_BY"), iby, false));
-    cl2shape->setResetCurve(DiagonalCurveType(defaultCurve.at(0)), defaultCurve);
+    cl2shape->setResetCurve(DiagonalCurveType(default_params.cl2curve.at(0)), default_params.cl2curve);
     cl2shape->setTooltip(M("TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP"));
 
     cl2shape->setLeftBarColorProvider(this, 1);

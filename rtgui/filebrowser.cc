@@ -1021,7 +1021,7 @@ void FileBrowser::pasteProfile ()
 
         for (unsigned int i = 0; i < mselected.size(); i++) {
             // copying read only clipboard PartialProfile to a temporary one
-            rtengine::procparams::PartialProfile cbPartProf = clipboard.getPartialProfile();
+            const rtengine::procparams::PartialProfile& cbPartProf = clipboard.getPartialProfile();
             rtengine::procparams::PartialProfile pastedPartProf(cbPartProf.pparams, cbPartProf.pedited, true);
 
             // applying the PartialProfile to the thumb's ProcParams
@@ -1069,7 +1069,7 @@ void FileBrowser::partPasteProfile ()
             for (unsigned int i = 0; i < mselected.size(); i++) {
                 // copying read only clipboard PartialProfile to a temporary one, initialized to the thumb's ProcParams
                 mselected[i]->thumbnail->createProcParamsForUpdate(false, false); // this can execute customprofilebuilder to generate param file
-                rtengine::procparams::PartialProfile cbPartProf = clipboard.getPartialProfile();
+                const rtengine::procparams::PartialProfile& cbPartProf = clipboard.getPartialProfile();
                 rtengine::procparams::PartialProfile pastedPartProf(&mselected[i]->thumbnail->getProcParams (), nullptr);
 
                 // pushing the selected values of the clipboard PartialProfile to the temporary PartialProfile

@@ -81,7 +81,7 @@ void PreProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
     pp->raw.hotdeadpix_thresh = hdThreshold->getIntValue();
 
     if (pedited) {
-        pedited->raw.hotDeadPixelThresh = hdThreshold->getEditedState ();
+        pedited->raw.hotdeadpix_thresh = hdThreshold->getEditedState ();
         pedited->raw.hotPixelFilter = !hotPixel->get_inconsistent();
         pedited->raw.deadPixelFilter = !deadPixel->get_inconsistent();
     }

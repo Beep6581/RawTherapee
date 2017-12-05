@@ -311,11 +311,11 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 
     bayerParams.pixelShiftAutomatic = true;
 
-    if(bayerParams.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::Automatic) {
+    if(bayerParams.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::PSMotionCorrectionMethod::AUTO) {
         bool pixelShiftEqualBright = bayerParams.pixelShiftEqualBright;
         bayerParams.setPixelShiftDefaults();
         bayerParams.pixelShiftEqualBright = pixelShiftEqualBright;
-    } else if(bayerParams.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::Off) {
+    } else if(bayerParams.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::PSMotionCorrectionMethod::OFF) {
         bayerParams.pixelShiftAutomatic = false;
         bayerParams.pixelShiftShowMotion = false;
     }
@@ -506,7 +506,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     static const float ePerIsoK70 = 0.5f;
 
     if(plistener) {
-        plistener->setProgressStr(Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift]));
+        plistener->setProgressStr(Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)));
         plistener->setProgress(0.0);
     }
 

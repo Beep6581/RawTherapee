@@ -38,7 +38,7 @@ void hflip(unsigned char* img, int w, int h);
 void vflip(unsigned char* img, int w, int h);
 
 template<typename ENUM>
-typename std::underlying_type<ENUM>::type toUnderlying(ENUM value)
+constexpr typename std::underlying_type<ENUM>::type toUnderlying(ENUM value)
 {
     return static_cast<typename std::underlying_type<ENUM>::type>(value);
 }
