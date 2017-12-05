@@ -464,6 +464,13 @@ public:
         updateParameters ();
     }
 
+    void updateHistogram()
+    {
+      intentBox.setSelected(intentBox.getSelected());
+      updateParameters();
+    }
+
+
     void defaultMonitorProfileChanged (const Glib::ustring &profile_name, bool auto_monitor_profile)
     {
         ConnectionBlocker profileBlocker (profileConn);
@@ -2031,6 +2038,7 @@ void EditorPanel::syncFileBrowser()   // synchronize filebrowser with image in E
 void EditorPanel::histogramProfile_toggled()
 {
     options.rtSettings.HistogramWorking = toggleHistogramProfile->get_active();
+    colorMgmtToolBar->updateHistogram();
 }
 
 bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname)
