@@ -4071,7 +4071,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
 
             assignFromKeyfile(keyFile, "Color Management", "OutputBPC", pedited, icm.outputBPC, pedited->icm.outputBPC);
-            assignFromKeyfile(keyFile, "Color Management", "Gammafree", pedited, icm.gamma, pedited->icm.gamfree);
+            assignFromKeyfile(keyFile, "Color Management", "Gammafree", pedited, icm.gamma, pedited->icm.gamma);
             assignFromKeyfile(keyFile, "Color Management", "Freegamma", pedited, icm.freegamma, pedited->icm.freegamma);
             assignFromKeyfile(keyFile, "Color Management", "GammaValue", pedited, icm.gampos, pedited->icm.gampos);
             assignFromKeyfile(keyFile, "Color Management", "GammaSlope", pedited, icm.slpos, pedited->icm.slpos);

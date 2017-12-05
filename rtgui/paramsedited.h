@@ -567,7 +567,6 @@ public:
     bool gamma;
     bool gampos;
     bool slpos;
-    bool gamfree;
     bool freegamma;
 };
 class WaveletParamsEdited
