@@ -223,12 +223,18 @@ SSEFUNCTION void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw,
                 // fill inner part
                 for (int rr = rrmin; rr < rrmax; rr++) {
                     int row = rr + top;
-
-                    for (int cc = ccmin; cc < ccmax; cc += 4) {
+                    int cc = ccmin;
+                    for (; cc < ccmax - 3; cc += 4) {
                         int indx1 = rr * ts + cc;
                         vfloat tempv = LVFU(rawData[row][cc + left]) / c65535v;
                         STVF(cfa[indx1], tempv );
                         STVF(rgbgreen[indx1], tempv );
+                    }
+                    for (; cc < ccmax; ++cc) {
+                        int indx1 = rr * ts + cc;
+                        float temp = rawData[row][cc + left] / 65535.f;
+                        cfa[indx1] = temp;
+                        rgbgreen[indx1] = temp;
                     }
                 }
 

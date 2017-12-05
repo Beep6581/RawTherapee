@@ -2029,7 +2029,8 @@ SSEFUNCTION void RawImageSource::igv_interpolate(int winw, int winh)
             for (; col < width; col++, indx += 2) {
                 dest1[indx >> 1] = CLIP(rawData[row][col]); //rawData = RT datas
                 col++;
-                dest2[indx >> 1] = CLIP(rawData[row][col]); //rawData = RT datas
+                if(col < width)
+                    dest2[indx >> 1] = CLIP(rawData[row][col]); //rawData = RT datas
             }
         }
 

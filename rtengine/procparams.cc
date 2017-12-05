@@ -3383,26 +3383,9 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             pedited->set (false);
         }
 
-        FILE* f = g_fopen (fname.c_str (), "rt");
-
-        if (!f) {
+        if (!keyFile.load_from_file(fname)) {
             return 1;
         }
-
-        char* buffer = new char[1024];
-        std::ostringstream ostr;
-
-        while (fgets (buffer, 1024, f)) {
-            ostr << buffer << "\n";
-        }
-
-        delete [] buffer;
-
-        if (!keyFile.load_from_data (ostr.str())) {
-            return 1;
-        }
-
-        fclose (f);
 
         ppVersion = PPVERSION;
         appVersion = RTVERSION;

@@ -58,6 +58,7 @@ public:
     ,RT_whitelevel_from_constant(0)
     ,RT_blacklevel_from_constant(0)
     ,RT_matrix_from_constant(0)
+    ,RT_from_adobe_dng_converter(false)
 	,getbithuff(this,ifp,zero_after_ff)
     {
         memset(&hbd, 0, sizeof(hbd));
@@ -151,6 +152,7 @@ protected:
     int RT_whitelevel_from_constant;
     int RT_blacklevel_from_constant;
     int RT_matrix_from_constant;
+    bool RT_from_adobe_dng_converter;
 
     float cam_mul[4], pre_mul[4], cmatrix[3][4], rgb_cam[3][4];
 
