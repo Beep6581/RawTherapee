@@ -115,6 +115,7 @@ public:
     void openNextEditorImage ();
     void openPreviousEditorImage ();
     void syncFileBrowser ();
+    void histogramProfile_toggled ();
 
     void tbTopPanel_1_visible (bool visible);
     bool CheckSidePanelsVisibility();
@@ -196,6 +197,7 @@ private:
     Gtk::HBox* beforeAfterBox;
     Gtk::HBox* beforeHeaderBox;
     Gtk::HBox* afterHeaderBox;
+    Gtk::ToggleButton* toggleHistogramProfile;
 
     Gtk::Frame* ppframe;
     ProfilePanel* profilep;

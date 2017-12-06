@@ -195,7 +195,6 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::ComboBoxText* custProfBuilderLabelType;
 
     Gtk::CheckButton* ckbHistogramPositionLeft;
-    Gtk::CheckButton* ckbHistogramWorking;
     Gtk::CheckButton* ckbFileBrowserToolbarSingleRow;
     Gtk::CheckButton* ckbShowFilmStripToolBar;
     Gtk::CheckButton* ckbHideTPVScrollbar;
