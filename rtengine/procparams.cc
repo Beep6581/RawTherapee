@@ -3383,7 +3383,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             pedited->set (false);
         }
 
-        if (!keyFile.load_from_file(fname)) {
+        if (!Glib::file_test(fname, Glib::FILE_TEST_EXISTS) ||
+            !keyFile.load_from_file(fname)) {
             return 1;
         }
 
