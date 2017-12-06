@@ -593,6 +593,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     // Histogram profile toggle controls
     toggleHistogramProfile = Gtk::manage (new Gtk::ToggleButton ());
+    Gtk::Image* histProfImg = Gtk::manage (new RTImage ("gamut-hist.png"));
+    toggleHistogramProfile->add (*histProfImg);
     toggleHistogramProfile->set_relief (Gtk::RELIEF_NONE);
     toggleHistogramProfile->set_active (options.rtSettings.HistogramWorking);
     toggleHistogramProfile->set_tooltip_markup ( (M ("PREFERENCES_HISTOGRAM_TOOLTIP")));
