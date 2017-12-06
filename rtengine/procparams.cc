@@ -3435,7 +3435,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             };
 
             assignFromKeyfile(keyFile, "Exposure", "CurveMode", pedited, tc_mapping, toneCurve.curveMode, pedited->toneCurve.curveMode);
-            assignFromKeyfile(keyFile, "Exposure", "CurveMode2", pedited, tc_mapping, toneCurve.curveMode, pedited->toneCurve.curveMode);
+            assignFromKeyfile(keyFile, "Exposure", "CurveMode2", pedited, tc_mapping, toneCurve.curveMode2, pedited->toneCurve.curveMode2);
 
             if (ppVersion > 200) {
                 assignFromKeyfile(keyFile, "Exposure", "Curve", pedited, toneCurve.curve, pedited->toneCurve.curve);
