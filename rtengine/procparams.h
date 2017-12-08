@@ -1180,6 +1180,7 @@ struct RAWParams {
             VNG4,
             DCB,
             AHD,
+            RCD,
             FAST,
             MONO,
             NONE,
