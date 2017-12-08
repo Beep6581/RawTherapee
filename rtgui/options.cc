@@ -1366,10 +1366,14 @@ void Options::readFromFile (Glib::ustring fname)
                     FileBrowserToolbarSingleRow = keyFile.get_boolean ("GUI", "FileBrowserToolbarSingleRow");
                 }
 
+#ifdef __linux__
+                // Cannot scroll toolbox with mousewheel when HideTPVScrollbar=true #3413
+                hideTPVScrollbar = false;
+#else
                 if (keyFile.has_key ("GUI", "HideTPVScrollbar")) {
                     hideTPVScrollbar = keyFile.get_boolean ("GUI", "HideTPVScrollbar");
                 }
-
+#endif
                 if (keyFile.has_key ("GUI", "UseIconNoText")) {
                     UseIconNoText = keyFile.get_boolean ("GUI", "UseIconNoText");
                 }
