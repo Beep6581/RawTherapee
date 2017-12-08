@@ -1295,79 +1295,6 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                         }
 
                         if (!memoryAllocationFailed) {
-                            if ((metchoice == 1 || metchoice == 2 || metchoice == 3 || metchoice == 4) && dnparams.median) {
-                                float** tmL;
-                                int wid = labdn->W;
-                                int hei = labdn->H;
-                                tmL = new float*[hei];
-
-                                for (int i = 0; i < hei; ++i) {
-                                    tmL[i] = new float[wid];
-                                }
-
-                                Median medianTypeL = Median::TYPE_3X3_SOFT;
-                                Median medianTypeAB = Median::TYPE_3X3_SOFT;
-
-                                if (dnparams.medmethod == "soft") {
-                                    if (metchoice != 4) {
-                                        medianTypeL = medianTypeAB = Median::TYPE_3X3_SOFT;
-                                    } else {
-                                        medianTypeL = Median::TYPE_3X3_SOFT;
-                                        medianTypeAB = Median::TYPE_3X3_SOFT;
-                                    }
-                                } else if (dnparams.medmethod == "33") {
-                                    if (metchoice != 4) {
-                                        medianTypeL = medianTypeAB = Median::TYPE_3X3_STRONG;
-                                    } else {
-                                        medianTypeL = Median::TYPE_3X3_SOFT;
-                                        medianTypeAB = Median::TYPE_3X3_STRONG;
-                                    }
-                                } else if (dnparams.medmethod == "55soft") {
-                                    if (metchoice != 4) {
-                                        medianTypeL = medianTypeAB = Median::TYPE_5X5_SOFT;
-                                    } else {
-                                        medianTypeL = Median::TYPE_3X3_SOFT;
-                                        medianTypeAB = Median::TYPE_5X5_SOFT;
-                                    }
-                                } else if (dnparams.medmethod == "55") {
-                                    if (metchoice != 4) {
-                                        medianTypeL = medianTypeAB = Median::TYPE_5X5_STRONG;
-                                    } else {
-                                        medianTypeL = Median::TYPE_3X3_STRONG;
-                                        medianTypeAB = Median::TYPE_5X5_STRONG;
-                                    }
-                                } else if (dnparams.medmethod == "77") {
-                                    if (metchoice != 4) {
-                                        medianTypeL = medianTypeAB = Median::TYPE_7X7;
-                                    } else {
-                                        medianTypeL = Median::TYPE_3X3_STRONG;
-                                        medianTypeAB = Median::TYPE_7X7;
-                                    }
-                                } else if (dnparams.medmethod == "99") {
-                                    if (metchoice != 4) {
-                                        medianTypeL = medianTypeAB = Median::TYPE_9X9;
-                                    } else {
-                                        medianTypeL = Median::TYPE_5X5_SOFT;
-                                        medianTypeAB = Median::TYPE_9X9;
-                                    }
-                                }
-
-                                if (metchoice == 1 || metchoice == 2 || metchoice == 4) {
-                                    Median_Denoise(labdn->L, labdn->L, wid, hei, medianTypeL, dnparams.passes, denoiseNestedLevels, tmL);
-                                }
-
-                                if (metchoice == 2 || metchoice == 3 || metchoice == 4) {
-                                    Median_Denoise(labdn->a, labdn->a, wid, hei, medianTypeAB, dnparams.passes, denoiseNestedLevels, tmL);
-                                    Median_Denoise(labdn->b, labdn->b, wid, hei, medianTypeAB, dnparams.passes, denoiseNestedLevels, tmL);
-                                }
-
-                                for (int i = 0; i < hei; ++i) {
-                                    delete[] tmL[i];
-                                }
-
-                                delete[] tmL;
-                            }
-
                             //wavelet denoised L channel
                             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1528,6 +1455,79 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                         labdn->L[i][j] += Ldetail[i][j] / totwt[i][j]; //note that labdn initially stores the denoised hipass data
                                     }
                                 }
+                            }
+
+                            if ((metchoice == 1 || metchoice == 2 || metchoice == 3 || metchoice == 4) && dnparams.median) {
+                                float** tmL;
+                                int wid = labdn->W;
+                                int hei = labdn->H;
+                                tmL = new float*[hei];
+
+                                for (int i = 0; i < hei; ++i) {
+                                    tmL[i] = new float[wid];
+                                }
+
+                                Median medianTypeL = Median::TYPE_3X3_SOFT;
+                                Median medianTypeAB = Median::TYPE_3X3_SOFT;
+
+                                if (dnparams.medmethod == "soft") {
+                                    if (metchoice != 4) {
+                                        medianTypeL = medianTypeAB = Median::TYPE_3X3_SOFT;
+                                    } else {
+                                        medianTypeL = Median::TYPE_3X3_SOFT;
+                                        medianTypeAB = Median::TYPE_3X3_SOFT;
+                                    }
+                                } else if (dnparams.medmethod == "33") {
+                                    if (metchoice != 4) {
+                                        medianTypeL = medianTypeAB = Median::TYPE_3X3_STRONG;
+                                    } else {
+                                        medianTypeL = Median::TYPE_3X3_SOFT;
+                                        medianTypeAB = Median::TYPE_3X3_STRONG;
+                                    }
+                                } else if (dnparams.medmethod == "55soft") {
+                                    if (metchoice != 4) {
+                                        medianTypeL = medianTypeAB = Median::TYPE_5X5_SOFT;
+                                    } else {
+                                        medianTypeL = Median::TYPE_3X3_SOFT;
+                                        medianTypeAB = Median::TYPE_5X5_SOFT;
+                                    }
+                                } else if (dnparams.medmethod == "55") {
+                                    if (metchoice != 4) {
+                                        medianTypeL = medianTypeAB = Median::TYPE_5X5_STRONG;
+                                    } else {
+                                        medianTypeL = Median::TYPE_3X3_STRONG;
+                                        medianTypeAB = Median::TYPE_5X5_STRONG;
+                                    }
+                                } else if (dnparams.medmethod == "77") {
+                                    if (metchoice != 4) {
+                                        medianTypeL = medianTypeAB = Median::TYPE_7X7;
+                                    } else {
+                                        medianTypeL = Median::TYPE_3X3_STRONG;
+                                        medianTypeAB = Median::TYPE_7X7;
+                                    }
+                                } else if (dnparams.medmethod == "99") {
+                                    if (metchoice != 4) {
+                                        medianTypeL = medianTypeAB = Median::TYPE_9X9;
+                                    } else {
+                                        medianTypeL = Median::TYPE_5X5_SOFT;
+                                        medianTypeAB = Median::TYPE_9X9;
+                                    }
+                                }
+
+                                if (metchoice == 1 || metchoice == 2 || metchoice == 4) {
+                                    Median_Denoise(labdn->L, labdn->L, wid, hei, medianTypeL, dnparams.passes, denoiseNestedLevels, tmL);
+                                }
+
+                                if (metchoice == 2 || metchoice == 3 || metchoice == 4) {
+                                    Median_Denoise(labdn->a, labdn->a, wid, hei, medianTypeAB, dnparams.passes, denoiseNestedLevels, tmL);
+                                    Median_Denoise(labdn->b, labdn->b, wid, hei, medianTypeAB, dnparams.passes, denoiseNestedLevels, tmL);
+                                }
+
+                                for (int i = 0; i < hei; ++i) {
+                                    delete[] tmL[i];
+                                }
+
+                                delete[] tmL;
                             }
 
                             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
