@@ -44,6 +44,7 @@ public:
     void adjusterChanged (Adjuster* a, double newval);
     void setAdjusterBehavior (bool rgbadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
+    void enabledChanged();
 };
 
 #endif

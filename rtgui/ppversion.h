@@ -1,11 +1,13 @@
 #pragma once
 
 // This number has to be incremented whenever the PP3 file format is modified or the behaviour of a tool changes
-#define PPVERSION 328
+#define PPVERSION 329
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /*
   Log of version changes
+   329  2017-12-09
+        Added 'Enabled' flag for Channel Mixer, RGB Curves and HSV Equalizer
    328  2017-11-22
         Fix wrong type of ff_clipControl
    327  2017-09-15

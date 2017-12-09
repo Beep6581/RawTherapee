@@ -3146,7 +3146,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
         {wprof[2][0], wprof[2][1], wprof[2][2]}
     };
 
-    bool mixchannels = (params->chmixer.red[0] != 100 || params->chmixer.red[1] != 0     || params->chmixer.red[2] != 0   ||
+    bool mixchannels = params->chmixer.enabled &&
+        (params->chmixer.red[0] != 100 || params->chmixer.red[1] != 0     || params->chmixer.red[2] != 0   ||
                         params->chmixer.green[0] != 0 || params->chmixer.green[1] != 100 || params->chmixer.green[2] != 0 ||
                         params->chmixer.blue[0] != 0  || params->chmixer.blue[1] != 0    || params->chmixer.blue[2] != 100);
 
@@ -3159,9 +3160,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     FlatCurveType sCurveType = (FlatCurveType)params->hsvequalizer.scurve.at (0);
     FlatCurveType vCurveType = (FlatCurveType)params->hsvequalizer.vcurve.at (0);
     FlatCurveType bwlCurveType = (FlatCurveType)params->blackwhite.luminanceCurve.at (0);
-    bool hCurveEnabled = hCurveType > FCT_Linear;
-    bool sCurveEnabled = sCurveType > FCT_Linear;
-    bool vCurveEnabled = vCurveType > FCT_Linear;
+    bool hCurveEnabled = params->hsvequalizer.enabled && hCurveType > FCT_Linear;
+    bool sCurveEnabled = params->hsvequalizer.enabled && sCurveType > FCT_Linear;
+    bool vCurveEnabled = params->hsvequalizer.enabled && vCurveType > FCT_Linear;
     bool bwlCurveEnabled = bwlCurveType > FCT_Linear;
 
     // TODO: We should create a 'skip' value like for CurveFactory::complexsgnCurve (rtengine/curves.cc)
@@ -3760,7 +3761,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                     }
                 }
 
-                if (rCurve || gCurve || bCurve) { // if any of the RGB curves is engaged
+                if (params->rgbCurves.enabled && (rCurve || gCurve || bCurve)) { // if any of the RGB curves is engaged
                     if (!params->rgbCurves.lumamode) { // normal RGB mode
 
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {

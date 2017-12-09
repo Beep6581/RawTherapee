@@ -367,6 +367,7 @@ struct LCurveParams
   * Parameters of the RGB curves
   */
 struct RGBCurvesParams {
+    bool enabled;
     bool lumamode;
     std::vector<double>   rcurve;
     std::vector<double>   gcurve;
@@ -896,6 +897,7 @@ struct VignettingParams {
   * Parameters of the color mixer
   */
 struct ChannelMixerParams {
+    bool enabled;
     int red[3];
     int green[3];
     int blue[3];
@@ -1138,6 +1140,7 @@ struct DirPyrEqualizerParams {
  * HSV equalizer params
  */
 struct HSVEqualizerParams {
+    bool enabled;
     std::vector<double> hcurve;
     std::vector<double> scurve;
     std::vector<double> vcurve;
