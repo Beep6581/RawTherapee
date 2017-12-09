@@ -711,7 +711,7 @@ void ImProcFunctions::vibrancelocal(int bfw, int bfh, LabImage* lab,  LabImage* 
     const float chromaPastel = float (params->locallab.pastels)   / 100.0f;
     const float chromaSatur  = float (params->locallab.saturated) / 100.0f;
     const float p00 = 0.07f;
-    const float limitpastelsatur = (static_cast<float>(params->locallab.psthreshold.value[ThresholdSelector::TS_TOPLEFT])    / 100.0f) * (1.0f - p00) + p00;
+    const float limitpastelsatur = (static_cast<float>(params->locallab.psthreshold.getTopLeft())    / 100.0f) * (1.0f - p00) + p00;
     const float maxdp = (limitpastelsatur - p00) / 4.0f;
     const float maxds = (1.0 - limitpastelsatur) / 4.0f;
     const float p0 = p00 + maxdp;
@@ -720,7 +720,7 @@ void ImProcFunctions::vibrancelocal(int bfw, int bfh, LabImage* lab,  LabImage* 
     const float s0 = limitpastelsatur + maxds;
     const float s1 = limitpastelsatur + 2.0f * maxds;
     const float s2 = limitpastelsatur + 3.0f * maxds;
-    const float transitionweighting = static_cast<float>(params->locallab.psthreshold.value[ThresholdSelector::TS_BOTTOMLEFT]) / 100.0f;
+    const float transitionweighting = static_cast<float>(params->locallab.psthreshold.getBottomLeft()) / 100.0f;
     float chromamean = 0.0f;
 
     if (chromaPastel != chromaSatur) {

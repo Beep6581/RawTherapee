@@ -311,7 +311,8 @@ Locallab::Locallab():
 
     rtengine::LocallabParams::getDefaultLLCurve(defaultCurve);
     llshape = static_cast<DiagonalCurveEditor*>(llCurveEditorG->addCurve(CT_Diagonal, "L(L)"));
-    llshape->setResetCurve(DiagonalCurveType(defaultCurve.at(0)), defaultCurve);
+  //  llshape->setResetCurve(DiagonalCurveType(defaultCurve.at(0)), defaultCurve);
+    llshape->setResetCurve(DiagonalCurveType(default_params.llcurve.at(0)), default_params.llcurve);
     llshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     milestones.push_back(GradientMilestone(0., 0., 0., 0.));
     milestones.push_back(GradientMilestone(1., 1., 1., 1.));
@@ -320,7 +321,7 @@ Locallab::Locallab():
 
     rtengine::LocallabParams::getDefaultCCCurve(defaultCurve4);
     ccshape = static_cast<DiagonalCurveEditor*>(llCurveEditorG->addCurve(CT_Diagonal, "C(C)"));
-    ccshape->setResetCurve(DiagonalCurveType(defaultCurve4.at(0)), defaultCurve4);
+    ccshape->setResetCurve(DiagonalCurveType(default_params.cccurve.at(0)), default_params.cccurve);
     ccshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     milestones.push_back(GradientMilestone(0., 0., 0., 0.));
     milestones.push_back(GradientMilestone(1., 1., 1., 1.));
@@ -332,7 +333,7 @@ Locallab::Locallab():
     LHshape = static_cast<FlatCurveEditor*>(llCurveEditorG->addCurve(CT_Flat, "L(H)", nullptr, false, true));
 
     LHshape->setIdentityValue(0.);
-    LHshape->setResetCurve(FlatCurveType(defaultCurve3.at(0)), defaultCurve3);
+    LHshape->setResetCurve(FlatCurveType(default_params.LHcurve.at(0)), default_params.LHcurve);
     LHshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     LHshape->setCurveColorProvider(this, 1);
     milestones.clear();
@@ -351,7 +352,7 @@ Locallab::Locallab():
     HHshape = static_cast<FlatCurveEditor*>(llCurveEditorG->addCurve(CT_Flat, "H(H)", nullptr, false, true));
 
     HHshape->setIdentityValue(0.);
-    HHshape->setResetCurve(FlatCurveType(defaultCurve5.at(0)), defaultCurve5);
+    HHshape->setResetCurve(FlatCurveType(default_params.HHcurve.at(0)), default_params.HHcurve);
     HHshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     HHshape->setCurveColorProvider(this, 1);
     milestones.clear();
@@ -476,7 +477,7 @@ Locallab::Locallab():
     cTgainshape = static_cast<FlatCurveEditor*>(LocalcurveEditorgainT->addCurve(CT_Flat, "", nullptr, false, false));
 
     cTgainshape->setIdentityValue(0.);
-    cTgainshape->setResetCurve(FlatCurveType(defaultCurve2.at(0)), defaultCurve2);
+    cTgainshape->setResetCurve(FlatCurveType(default_params.localTgaincurve.at(0)), default_params.localTgaincurve);
     cTgainshape->setTooltip(M("TP_RETINEX_GAINTRANSMISSION_TOOLTIP"));
 
     LocalcurveEditorgainTrab->setCurveListener(this);
@@ -488,7 +489,7 @@ Locallab::Locallab():
 
 
     cTgainshaperab->setIdentityValue(0.);
-    cTgainshaperab->setResetCurve(FlatCurveType(defaultCurve2rab.at(0)), defaultCurve2rab);
+    cTgainshaperab->setResetCurve(FlatCurveType(localTgaincurverab.at(0)), localTgaincurverab);
     cTgainshaperab->setTooltip(M("TP_RETINEX_GAINTRANSMISSIONRAB_TOOLTIP"));
 
     LocalcurveEditorgainT->curveListComplete();
