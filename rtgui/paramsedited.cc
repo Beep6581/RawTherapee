@@ -219,6 +219,7 @@ void ParamsEdited::set (bool v)
     //colorBoost.avoidclip      = v;
     //colorBoost.enable_saturationlimiter = v;
     //colorBoost.saturationlimit = v;
+    wb.enabled                 = v;
     wb.method                  = v;
     wb.green                   = v;
     wb.temperature             = v;
@@ -758,6 +759,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         //colorBoost.avoidclip = colorBoost.avoidclip && p.colorBoost.avoidclip == other.colorBoost.avoidclip;
         //colorBoost.enable_saturationlimiter = colorBoost.enable_saturationlimiter && p.colorBoost.enable_saturationlimiter == other.colorBoost.enable_saturationlimiter;
         //colorBoost.saturationlimit = colorBoost.saturationlimit && p.colorBoost.saturationlimit == other.colorBoost.saturationlimit;
+        wb.enabled = wb.enabled && p.wb.enabled == other.wb.enabled;
         wb.method = wb.method && p.wb.method == other.wb.method;
         wb.green = wb.green && p.wb.green == other.wb.green;
         wb.equal = wb.equal && p.wb.equal == other.wb.equal;
@@ -1664,6 +1666,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     //if (colorBoost.avoidclip)             toEdit.colorBoost.avoidclip     = mods.colorBoost.avoidclip;
     //if (colorBoost.enable_saturationlimiter)toEdit.colorBoost.enable_saturationlimiter    = mods.colorBoost.enable_saturationlimiter;
     //if (colorBoost.saturationlimit)           toEdit.colorBoost.saturationlimit   = mods.colorBoost.saturationlimit;
+    if (wb.enabled) {
+        toEdit.wb.enabled = mods.wb.enabled;
+    }
+    
     if (wb.method) {
         toEdit.wb.method  = mods.wb.method;
     }

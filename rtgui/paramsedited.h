@@ -229,6 +229,7 @@ class WBParamsEdited
 {
 
 public:
+    bool enabled;
     bool method;
     bool temperature;
     bool green;

@@ -1094,6 +1094,7 @@ bool VibranceParams::operator !=(const VibranceParams& other) const
 }
 
 WBParams::WBParams() :
+    enabled(true),
     method("Camera"),
     temperature(6504),
     green(1.0),
@@ -1105,7 +1106,8 @@ WBParams::WBParams() :
 bool WBParams::operator ==(const WBParams& other) const
 {
     return
-        method == other.method
+        enabled == other.enabled
+        && method == other.method
         && temperature == other.temperature
         && green == other.green
         && equal == other.equal
@@ -2864,6 +2866,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->sharpenMicro.uniformity, "SharpenMicro", "Uniformity", sharpenMicro.uniformity, keyFile);
 
 // WB
+        saveToKeyfile(!pedited || pedited->wb.enabled, "White Balance", "Enabled", wb.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->wb.method, "White Balance", "Setting", wb.method, keyFile);
         saveToKeyfile(!pedited || pedited->wb.temperature, "White Balance", "Temperature", wb.temperature, keyFile);
         saveToKeyfile(!pedited || pedited->wb.green, "White Balance", "Green", wb.green, keyFile);
@@ -3696,6 +3699,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         }
 
         if (keyFile.has_group ("White Balance")) {
+            assignFromKeyfile(keyFile, "White Balance", "Enabled", pedited, wb.enabled, pedited->wb.enabled);
             assignFromKeyfile(keyFile, "White Balance", "Setting", pedited, wb.method, pedited->wb.method);
             assignFromKeyfile(keyFile, "White Balance", "Temperature", pedited, wb.temperature, pedited->wb.temperature);
             assignFromKeyfile(keyFile, "White Balance", "Green", pedited, wb.green, pedited->wb.green);

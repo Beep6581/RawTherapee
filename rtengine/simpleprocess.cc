@@ -223,7 +223,9 @@ private:
         // set the color temperature
         currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
 
-        if (params.wb.method == "Camera") {
+        if (!params.wb.enabled) {
+            currWB = ColorTemp();
+        } else if (params.wb.method == "Camera") {
             currWB = imgsrc->getWB ();
         } else if (params.wb.method == "Auto") {
             double rm, gm, bm;

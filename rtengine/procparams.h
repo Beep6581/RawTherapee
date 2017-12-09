@@ -538,6 +538,7 @@ struct WBEntry {
 };
 
 struct WBParams {
+    bool enabled;
     Glib::ustring   method;
     int             temperature;
     double          green;
