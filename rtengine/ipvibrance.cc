@@ -126,7 +126,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
     const float chromaPastel = float (params->vibrance.pastels)   / 100.0f;
     const float chromaSatur  = float (params->vibrance.saturated) / 100.0f;
     const float p00 = 0.07f;
-    const float limitpastelsatur =    (static_cast<float> (params->vibrance.psthreshold.value[ThresholdSelector::TS_TOPLEFT])    / 100.0f) * (1.0f - p00) + p00;
+    const float limitpastelsatur = (static_cast<float>(params->vibrance.psthreshold.getTopLeft()) / 100.0f) * (1.0f - p00) + p00;
     const float maxdp = (limitpastelsatur - p00) / 4.0f;
     const float maxds = (1.0 - limitpastelsatur) / 4.0f;
     const float p0 = p00 + maxdp;
@@ -135,7 +135,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
     const float s0 = limitpastelsatur + maxds;
     const float s1 = limitpastelsatur + 2.0f * maxds;
     const float s2 = limitpastelsatur + 3.0f * maxds;
-    const float transitionweighting = static_cast<float> (params->vibrance.psthreshold.value[ThresholdSelector::TS_BOTTOMLEFT]) / 100.0f;
+    const float transitionweighting = static_cast<float>(params->vibrance.psthreshold.getBottomLeft()) / 100.0f;
     float chromamean = 0.0f;
 
     if (chromaPastel != chromaSatur) {

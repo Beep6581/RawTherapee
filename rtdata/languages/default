@@ -836,6 +836,7 @@ HISTORY_MSG_585;Local - LD
 HISTORY_MSG_587;Local - Spot method
 HISTORY_MSG_588;Local - Spot Excluding scope
 HISTORY_MSG_589;Local - Spot Excluding struc
+HISTORY_MSG_590;Local - Warm Cool
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -1906,6 +1907,7 @@ TP_LOCALLAB_CURVEEDITOR_TONES_LABEL;Tone curve
 TP_LOCALLAB_TRANSIT;Transition
 TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and unaffected areas.
 TP_LOCALLAB_VIBRANCE;Vibrance
+TP_LOCALLAB_WARM;Warm - Cool
 TP_LOCAL_HEIGHT;Bottom
 TP_LOCAL_HEIGHT_T;Top
 TP_LOCAL_WIDTH;Right

@@ -650,9 +650,9 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
         const float new_pre_mul[4] = { ri->get_pre_mul (0) / rm, ri->get_pre_mul (1) / gm, ri->get_pre_mul (2) / bm, ri->get_pre_mul (3) / gm };
         float new_scale_mul[4];
 
-        bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::mono])
-                      || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::mono]);
-        float gain = calculate_scale_mul (new_scale_mul, new_pre_mul, c_white, cblacksom, isMono, ri->get_colors());
+        bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
+                      || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
+        float gain = calculate_scale_mul(new_scale_mul, new_pre_mul, c_white, cblacksom, isMono, ri->get_colors());
         rm = new_scale_mul[0] / scale_mul[0] * gain;
         gm = new_scale_mul[1] / scale_mul[1] * gain;
         bm = new_scale_mul[2] / scale_mul[2] * gain;
@@ -1930,7 +1930,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     }
 
     // check if it is an olympus E camera or green equilibration is enabled. If yes, compute G channel pre-compensation factors
-    if ( ri->getSensorType() == ST_BAYER && (raw.bayersensor.greenthresh || (((idata->getMake().size() >= 7 && idata->getMake().substr(0, 7) == "OLYMPUS" && idata->getModel()[0] == 'E') || (idata->getMake().size() >= 9 && idata->getMake().substr(0, 9) == "Panasonic")) && raw.bayersensor.method != RAWParams::BayerSensor::methodstring[ RAWParams::BayerSensor::vng4])) ) {
+    if ( ri->getSensorType() == ST_BAYER && (raw.bayersensor.greenthresh || (((idata->getMake().size() >= 7 && idata->getMake().substr(0, 7) == "OLYMPUS" && idata->getModel()[0] == 'E') || (idata->getMake().size() >= 9 && idata->getMake().substr(0, 9) == "Panasonic")) && raw.bayersensor.method != RAWParams::BayerSensor::getMethodString( RAWParams::BayerSensor::Method::VNG4))) ) {
         // global correction
         if(numFrames == 4) {
             for(int i = 0; i < 4; ++i) {
@@ -2036,28 +2036,28 @@ void RawImageSource::demosaic (const RAWParams &raw)
     t1.set();
 
     if (ri->getSensorType() == ST_BAYER) {
-        if ( raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::hphd] ) {
+        if ( raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::HPHD) ) {
             hphd_demosaic ();
-        } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::vng4] ) {
+        } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::VNG4) ) {
             vng4_demosaic ();
-        } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::ahd] ) {
+        } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AHD) ) {
             ahd_demosaic ();
-        } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::amaze] ) {
+        } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZE) ) {
             amaze_demosaic_RT (0, 0, W, H, rawData, red, green, blue);
-        } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift] ) {
-            pixelshift (0, 0, W, H, raw.bayersensor, currFrame, ri->get_model(), raw.expos);
-        } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::dcb] ) {
-            dcb_demosaic (raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);
-        } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::eahd]) {
+        } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT) ) {
+            pixelshift(0, 0, W, H, raw.bayersensor, currFrame, ri->get_model(), raw.expos);
+        } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCB) ) {
+            dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);
+        } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::EAHD)) {
             eahd_demosaic ();
-        } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::igv]) {
-            igv_interpolate (W, H);
-        } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::lmmse]) {
-            lmmse_interpolate_omp (W, H, rawData, red, green, blue, raw.bayersensor.lmmse_iterations);
-        } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::fast] ) {
+        } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::IGV)) {
+            igv_interpolate(W, H);
+        } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::LMMSE)) {
+            lmmse_interpolate_omp(W, H, rawData, red, green, blue, raw.bayersensor.lmmse_iterations);
+        } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST) ) {
             fast_demosaic();
-        } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::mono] ) {
-            nodemosaic (true);
+        } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO) ) {
+            nodemosaic(true);
         } else {
             nodemosaic (false);
         }
@@ -2065,14 +2065,14 @@ void RawImageSource::demosaic (const RAWParams &raw)
         //if (raw.all_enhance) refinement_lassus();
 
     } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
-        if (raw.xtranssensor.method == RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::fast] ) {
+        if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST) ) {
             fast_xtrans_interpolate();
-        } else if (raw.xtranssensor.method == RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::onePass]) {
-            xtrans_interpolate (1, false);
-        } else if (raw.xtranssensor.method == RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::threePass] ) {
-            xtrans_interpolate (3, true);
-        } else if (raw.xtranssensor.method == RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::mono] ) {
-            nodemosaic (true);
+        } else if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::ONE_PASS)) {
+            xtrans_interpolate(1, false);
+        } else if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::THREE_PASS) ) {
+            xtrans_interpolate(3, true);
+        } else if(raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO) ) {
+            nodemosaic(true);
         } else {
             nodemosaic (false);
         }
@@ -2812,15 +2812,15 @@ void RawImageSource::processFlatField (const RAWParams &raw, RawImage *riFlatFil
     BS += BS & 1;
 
     //function call to cfabloxblur
-    if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::v_ff]) {
-        cfaboxblur (riFlatFile, cfablur, 2 * BS, 0);
-    } else if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::h_ff]) {
-        cfaboxblur (riFlatFile, cfablur, 0, 2 * BS);
-    } else if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::vh_ff]) {
+    if (raw.ff_BlurType == RAWParams::getFlatFieldBlurTypeString(RAWParams::FlatFieldBlurType::V)) {
+        cfaboxblur(riFlatFile, cfablur, 2 * BS, 0);
+    } else if (raw.ff_BlurType == RAWParams::getFlatFieldBlurTypeString(RAWParams::FlatFieldBlurType::H)) {
+        cfaboxblur(riFlatFile, cfablur, 0, 2 * BS);
+    } else if (raw.ff_BlurType == RAWParams::getFlatFieldBlurTypeString(RAWParams::FlatFieldBlurType::VH)) {
         //slightly more complicated blur if trying to correct both vertical and horizontal anomalies
-        cfaboxblur (riFlatFile, cfablur, BS, BS);   //first do area blur to correct vignette
-    } else { //(raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::area_ff])
-        cfaboxblur (riFlatFile, cfablur, BS, BS);
+        cfaboxblur(riFlatFile, cfablur, BS, BS);    //first do area blur to correct vignette
+    } else { //(raw.ff_BlurType == RAWParams::getFlatFieldBlurTypeString(RAWParams::area_ff))
+        cfaboxblur(riFlatFile, cfablur, BS, BS);
     }
 
     if (ri->getSensorType() == ST_BAYER) {
@@ -3017,7 +3017,7 @@ void RawImageSource::processFlatField (const RAWParams &raw, RawImage *riFlatFil
         }
     }
 
-    if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::vh_ff]) {
+    if (raw.ff_BlurType == RAWParams::getFlatFieldBlurTypeString(RAWParams::FlatFieldBlurType::VH)) {
         float *cfablur1 = (float (*)) malloc (H * W * sizeof * cfablur1);
         float *cfablur2 = (float (*)) malloc (H * W * sizeof * cfablur2);
         //slightly more complicated blur if trying to correct both vertical and horizontal anomalies
@@ -3438,7 +3438,7 @@ void RawImageSource::scaleColors (int winx, int winy, int winw, int winh, const 
         black_lev[2] = raw.bayersensor.black2; //B
         black_lev[3] = raw.bayersensor.black3; //G2
 
-        isMono = RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::mono] == raw.bayersensor.method;
+        isMono = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO) == raw.bayersensor.method;
     } else if (getSensorType() == ST_FUJI_XTRANS) {
 
         black_lev[0] = raw.xtranssensor.blackred; //R
@@ -3446,7 +3446,7 @@ void RawImageSource::scaleColors (int winx, int winy, int winw, int winh, const 
         black_lev[2] = raw.xtranssensor.blackblue; //B
         black_lev[3] = raw.xtranssensor.blackgreen; //G2  (set, only used with a Bayer filter)
 
-        isMono = RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::mono] == raw.xtranssensor.method;
+        isMono = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO) == raw.xtranssensor.method;
     }
 
     for (int i = 0; i < 4 ; i++) {

@@ -2331,7 +2331,6 @@ HHcurve{
 skintonescurve {
     DCT_Linear
 },
-
 enabled(false),
 degree(0),
 locY(250),
@@ -2344,12 +2343,14 @@ circrad(18),
 centerXbuf(0),
 centerYbuf(0),
 adjblur(0),
+qualityMethod("enhden"),
 qualitycurveMethod("none"),
 proxi(0),
 thres(18),
 lightness(0),
 contrast(0),
 chroma(0),
+warm(0),
 expcomp(0),
 black(0),
 hlcompr(20),
@@ -2380,16 +2381,15 @@ struc(0),
 sensibn(40),
 sensitm(19),
 sensisha(19),
+radius(1),
+strength(0),
+stren(0),
+gamma(100),
+estop(140),
+scaltm(10),
+rewei(0),
 transit(60),
-chrrt(0),
 avoid(false),
-mult{
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-},
 Smethod("IND"),
 Exclumethod("norm"),
 retinexMethod("high"),
@@ -2400,25 +2400,26 @@ cutpast(false),
 lastdust(false),
 curvactiv(false),
 activlum(false),
-radius(1),
 inversrad(false),
 inversret(false),
 inverssha(false),
-strength(0),
-stren(0),
-gamma(100),
-estop(140),
-scaltm(10),
-rewei(0),
 hueref(1.),
 chromaref(50.),
 lumaref(50.),
 sobelref(0.),
 str(0),
 neigh(50),
-vart(200),
 nbspot(1),
 anbspot(0),
+vart(200),
+chrrt(0),
+mult{
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+},
 expcolor(false),
 expexpose(false),
 expvibrance(false),
@@ -2436,7 +2437,7 @@ chromacbdl(0)
 bool LocallabParams::operator ==(const LocallabParams& other) const
 {
     return
-        && enabled == other.enabled
+        enabled == other.enabled
         && avoid == other.avoid
         && invers == other.invers
         && cutpast == other.cutpast
@@ -2469,6 +2470,7 @@ bool LocallabParams::operator ==(const LocallabParams& other) const
         && lightness == other.lightness
         && contrast == other.contrast
         && chroma == other.chroma
+        && warm == other.warm
         && expcomp == other.expcomp
         && hlcompr == other.hlcompr
         && hlcomprthresh == other.hlcomprthresh
@@ -2488,8 +2490,7 @@ bool LocallabParams::operator ==(const LocallabParams& other) const
 
         return true;
     }()
-    && protectskins == other.protectskins;
-
+    && protectskins == other.protectskins
     && avoidcolorshift == other.avoidcolorshift
     && pastsattog == other.pastsattog
     && skintonescurve == other.skintonescurve
@@ -2546,7 +2547,7 @@ bool LocallabParams::operator ==(const LocallabParams& other) const
     && llcurve == other.llcurve
     && cccurve == other.cccurve
     && LHcurve == other.LHcurve
-    && HHcurve == other.HHcurve
+    && HHcurve == other.HHcurve;
 
 }
 
@@ -2570,7 +2571,6 @@ void LocallabParams::getCurves(
     hhCurve.Set(this->HHcurve, HHutili);
 
 }
-
 
 
 DirPyrEqualizerParams::DirPyrEqualizerParams() :
@@ -3441,12 +3441,13 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->locallab.circrad, "Locallab", "Circrad", locallab.circrad, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.centerXbuf, "Locallab", "CenterXbuf", locallab.centerXbuf, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.centerYbuf, "Locallab", "CenterYbuf", locallab.centerYbuf, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.adlblur, "Locallab", "Adjblur", locallab.adjblur, keyFile);
+        saveToKeyfile(!pedited || pedited->locallab.adjblur, "Locallab", "Adjblur", locallab.adjblur, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.thres, "Locallab", "Thres", locallab.thres, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.proxi, "Locallab", "Proxi", locallab.proxi, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.lightness, "Locallab", "Lightness", locallab.lightness, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.contrast, "Locallab", "Contrast", locallab.contrast, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.chroma, "Locallab", "Chroma", locallab.chroma, keyFile);
+        saveToKeyfile(!pedited || pedited->locallab.warm, "Locallab", "Warm", locallab.warm, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.expcomp, "Locallab", "Expcomp", locallab.expcomp, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.hlcompr, "Locallab", "Hlcompr", locallab.hlcompr, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.hlcomprthresh, "Locallab", "Hlcomprthresh", locallab.hlcomprthresh, keyFile);
@@ -4496,6 +4497,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Locallab", "Thres", pedited, locallab.thres, pedited->locallab.thres);
             assignFromKeyfile(keyFile, "Locallab", "Proxi", pedited, locallab.proxi, pedited->locallab.proxi);
             assignFromKeyfile(keyFile, "Locallab", "Chroma", pedited, locallab.chroma, pedited->locallab.chroma);
+            assignFromKeyfile(keyFile, "Locallab", "Warm", pedited, locallab.warm, pedited->locallab.warm);
             assignFromKeyfile(keyFile, "Locallab", "Expcomp", pedited, locallab.expcomp, pedited->locallab.expcomp);
             assignFromKeyfile(keyFile, "Locallab", "Hlcompr", pedited, locallab.hlcompr, pedited->locallab.hlcompr);
             assignFromKeyfile(keyFile, "Locallab", "Hlcomprthresh", pedited, locallab.hlcomprthresh, pedited->locallab.hlcomprthresh);
@@ -4579,6 +4581,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Locallab", "Chromacbdl", pedited, locallab.chromacbdl, pedited->locallab.chromacbdl);
 
         }
+
 
         if (keyFile.has_group("PCVignette")) {
             assignFromKeyfile(keyFile, "PCVignette", "Enabled", pedited, pcvignette.enabled, pedited->pcvignette.enabled);
@@ -5301,6 +5304,7 @@ bool ProcParams::operator ==(const ProcParams& other) const
         && lensProf == other.lensProf
         && perspective == other.perspective
         && gradient == other.gradient
+        && locallab == other.locallab
         && pcvignette == other.pcvignette
         && cacorrection == other.cacorrection
         && vignetting == other.vignetting

@@ -38,18 +38,17 @@ namespace rtengine
 class ColorGradientCurve;
 class NoiseCurve;
 class OpacityCurve;
-class RetinextransmissionCurve;
 class RetinexgaintransmissionCurve;
+class RetinextransmissionCurve;
 class WavCurve;
-class WavOpacityCurveRG;
 class WavOpacityCurveBY;
+class WavOpacityCurveRG;
 class WavOpacityCurveW;
 class WavOpacityCurveWL;
 class LocretigainCurve;
 class LocretigainCurverab;
 class LocLHCurve;
 class LocHHCurve;
-
 
 enum RenderingIntent {
     RI_PERCEPTUAL = INTENT_PERCEPTUAL,
@@ -143,6 +142,7 @@ public:
         bottom_left = bottom;
         top_left = top;
     }
+
 
     void setValues(T bottom_left, T top_left, T bottom_right, T top_right)
     {
@@ -295,8 +295,8 @@ struct ToneCurveParams {
 };
 
 /**
-* Parameters of Retinex
-*/
+  * Parameters of Retinex
+  */
 struct RetinexParams {
     bool enabled;
     std::vector<double>   cdcurve;
@@ -447,8 +447,6 @@ struct ColorToningParams {
   * Parameters of the sharpening
   */
 struct SharpeningParams {
-
-public:
     bool           enabled;
     double         radius;
     int            amount;
@@ -471,7 +469,6 @@ public:
 };
 
 struct SharpenEdgeParams {
-public:
     bool    enabled;
     int     passes;
     double  amount;
@@ -484,8 +481,8 @@ public:
 
 };
 
+
 struct SharpenMicroParams {
-public:
     bool    enabled;
     bool    matrix;
     double  amount;
@@ -501,8 +498,6 @@ public:
   * Parameters of the vibrance
   */
 struct VibranceParams {
-
-public:
     bool           enabled;
     int            pastels;
     int            saturated;
@@ -517,18 +512,6 @@ public:
     bool operator ==(const VibranceParams& other) const;
     bool operator !=(const VibranceParams& other) const;
 };
-
-/**
-  * Parameters of the color boost
-  */
-/*class ColorBoostParams {
-
-    public:
-        int     amount;
-        bool    avoidclip;
-        bool    enable_saturationlimiter;
-        double  saturationlimit;
-};*/
 
 /**
   * Parameters of the white balance adjustments
@@ -702,7 +685,6 @@ struct DirPyrDenoiseParams {
 
 };
 
-//EPD related parameters.
 // EPD related parameters.
 struct EPDParams {
     bool   enabled;
@@ -882,12 +864,20 @@ struct GradientParams {
     bool operator ==(const GradientParams& other) const;
     bool operator !=(const GradientParams& other) const;
 };
+
 /**
   * Parameters of the Local Lab
   */
 struct LocallabParams {
+    std::vector<double> llcurve;
+    std::vector<double> cccurve;
+    std::vector<double> excurve;
+    std::vector<double>   localTgaincurve;
+    std::vector<double>   localTgaincurverab;
+    std::vector<double> LHcurve;
+    std::vector<double> HHcurve;
+    std::vector<double> skintonescurve;
 
-public:
     bool    enabled;
     double  degree;
     int     locY;
@@ -900,48 +890,34 @@ public:
     int     centerXbuf;
     int     centerYbuf;
     int     adjblur;
-    int     thres;
-    int     proxi;
     Glib::ustring qualityMethod;
     Glib::ustring qualitycurveMethod;
-    bool expcolor;
-    bool expexpose;
-    bool expvibrance;
-    bool expblur;
-    bool exptonemap;
-    bool expreti;
-    bool expsharp;
-    bool expcbdl;
-    bool expdenoi;
-
+    int     proxi;
+    int     thres;
     int     lightness;
     int     contrast;
     int     chroma;
+    int     warm;
     int      expcomp;
     int         black;
-    int         shcompr;
     int         hlcompr;
     int         hlcomprthresh;
-
-
+    int         shcompr;
     int            pastels;
     int            saturated;
     Threshold<int> psthreshold;
     bool           protectskins;
     bool           avoidcolorshift;
     bool           pastsattog;
-    std::vector<double> skintonescurve;
     int sensiv;
-
-    int     sharradius;
-    int     sharamount;
-    int     shardamping;
-    int     shariter;
     int     noiselumf;
     int     noiselumc;
     int     noisechrof;
     int     noisechroc;
-
+    int     sharradius;
+    int     sharamount;
+    int     shardamping;
+    int     shariter;
     int     sensi;
     int     sensiex;
     int     sensih;
@@ -950,8 +926,8 @@ public:
     int     sensiexclu;
     int     struc;
     int     sensibn;
-    int     sensisha;
     int     sensitm;
+    int     sensisha;
     int     radius;
     int     strength;
     int     stren;
@@ -984,15 +960,16 @@ public:
     int     anbspot;
     int     vart;
     int     chrrt;
-    std::vector<double>   localTgaincurve;
-    std::vector<double>   localTgaincurverab;
-    std::vector<double> llcurve;
-    std::vector<double> cccurve;
-    std::vector<double> LHcurve;
-    std::vector<double> HHcurve;
-    std::vector<double> excurve;
-
     double mult[5];
+    bool expcolor;
+    bool expexpose;
+    bool expvibrance;
+    bool expblur;
+    bool exptonemap;
+    bool expreti;
+    bool expsharp;
+    bool expcbdl;
+    bool expdenoi;
     double threshold;
     int chromacbdl;
 

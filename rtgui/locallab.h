@@ -32,8 +32,8 @@ class Locallab :
 {
 private:
     int lastObject;
-    void foldAllButMe (GdkEventButton* event, MyExpander *expander);
-    void enableToggled (MyExpander *expander);
+    void foldAllButMe(GdkEventButton* event, MyExpander *expander);
+    void enableToggled(MyExpander *expander);
 
 //protected:
 
@@ -196,6 +196,8 @@ private:
     CurveEditorGroup* curveEditorGG;
     Adjuster* pastels;
     Adjuster* saturated;
+    Adjuster* warm;
+
     ThresholdAdjuster* psThreshold;
     Gtk::CheckButton* protectSkins;
     Gtk::CheckButton* avoidColorShift;
@@ -229,7 +231,7 @@ private:
 
 
 
-    int nextdatasp[85];
+    int nextdatasp[86];
     int nextlength;
     std::string nextstr;
     std::string nextstr2;
@@ -259,69 +261,69 @@ private:
     bool lastavoid, lastinvers, lastcutpast, lastlastdust, lastinversrad, lastinversret, lastactivlum, lastinverssha, lastcurvactiv;
     int lastanbspot;
 
-    void editToggled ();
+    void editToggled();
 
 public:
 
-    Locallab ();
-    ~Locallab ();
+    Locallab();
+    ~Locallab();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
 
-    void setBatchMode   (bool batchMode);
+    void setBatchMode(bool batchMode);
 
-    void updateGeometry (const int centerX_, const int centerY_, const int circrad_, const int locY_, const double degree_, const int locX_, const int locYT_, const int locXL_, const int fullWidth = -1, const int fullHeight = -1);
-    void SmethodChanged      ();
-    void ExclumethodChanged      ();
-    void writeOptions (std::vector<int> &tpOpen);
-    void updateToolState (std::vector<int> &tpOpen);
+    void updateGeometry(const int centerX_, const int centerY_, const int circrad_, const int locY_, const double degree_, const int locX_, const int locYT_, const int locXL_, const int fullWidth = -1, const int fullHeight = -1);
+    void SmethodChanged();
+    void ExclumethodChanged();
+    void writeOptions(std::vector<int> &tpOpen);
+    void updateToolState(std::vector<int> &tpOpen);
 
-    void adjusterChanged (Adjuster* a, double newval);
-    void adjusterChanged     (ThresholdAdjuster* a, int newBottom, int newTop);
+    void adjusterChanged(Adjuster* a, double newval);
+    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop);
 
-    void enabledChanged ();
-    void setAdjusterBehavior (bool degreeadd, bool locYadd, bool locXadd, bool locYTadd, bool locXLadd, bool centeradd, bool lightnessadd, bool contrastadd, bool chromaadd, bool sensiadd, bool transitadd, bool radiusadd, bool strengthadd);
-    void trimValues          (rtengine::procparams::ProcParams* pp);
-    void avoidChanged ();
-    void activlumChanged ();
-    void inversChanged ();
-    void curvactivChanged ();
-    void inversradChanged ();
-    void inversretChanged ();
-    void inversshaChanged ();
-    void cutpastChanged ();
-    void lastdustChanged ();
+    void enabledChanged();
+    void setAdjusterBehavior(bool degreeadd, bool locYadd, bool locXadd, bool locYTadd, bool locXLadd, bool centeradd, bool lightnessadd, bool contrastadd, bool chromaadd, bool sensiadd, bool transitadd, bool radiusadd, bool strengthadd);
+    void trimValues(rtengine::procparams::ProcParams* pp);
+    void avoidChanged();
+    void activlumChanged();
+    void inversChanged();
+    void curvactivChanged();
+    void inversradChanged();
+    void inversretChanged();
+    void inversshaChanged();
+    void cutpastChanged();
+    void lastdustChanged();
 
-    void curveChanged (CurveEditor* ce);
-    void autoOpenCurve ();
-    void localChanged           (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat);
-    void localretChanged           (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat);
-    bool localComputed_         ();
-    bool localretComputed_         ();
-    void setEditProvider (EditDataProvider* provider);
+    void curveChanged(CurveEditor* ce);
+    void autoOpenCurve();
+    void localChanged(int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat);
+    void localretChanged(int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat);
+    bool localComputed_();
+    bool localretComputed_();
+    void setEditProvider(EditDataProvider* provider);
     void retinexMethodChanged();
     void blurMethodChanged();
     void dustMethodChanged();
     void qualityMethodChanged();
     void qualitycurveMethodChanged();
-    void lumaneutralPressed ();
-    void lumacontrastPlusPressed ();
-    void lumacontrastMinusPressed ();
-    void neutral_pressed       ();
-    virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
-    void protectskins_toggled    ();
-    void avoidcolorshift_toggled ();
-    void pastsattog_toggled      ();
-    std::vector<double> getCurvePoints (ThresholdSelector* tAdjuster) const;
+    void lumaneutralPressed();
+    void lumacontrastPlusPressed();
+    void lumacontrastMinusPressed();
+    void neutral_pressed();
+    virtual void colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
+    void protectskins_toggled();
+    void avoidcolorshift_toggled();
+    void pastsattog_toggled();
+    std::vector<double> getCurvePoints(ThresholdSelector* tAdjuster) const;
 
     // EditSubscriber interface
-    CursorShape getCursor (int objectID);
-    bool mouseOver (int modifierKey);
-    bool button1Pressed (int modifierKey);
+    CursorShape getCursor(int objectID);
+    bool mouseOver(int modifierKey);
+    bool button1Pressed(int modifierKey);
     bool button1Released();
-    bool drag1 (int modifierKey);
-    void switchOffEditMode ();
+    bool drag1(int modifierKey);
+    void switchOffEditMode();
 };
 

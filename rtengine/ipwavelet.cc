@@ -431,56 +431,56 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
     cp.thH = float (waparams.thrH);
     cp.sky = waparams.sky;
     //skin
-    cp.b_l = static_cast<float> (params->wavelet.hueskin.value[0]) / 100.0f;
-    cp.t_l = static_cast<float> (params->wavelet.hueskin.value[1]) / 100.0f;
-    cp.b_r = static_cast<float> (params->wavelet.hueskin.value[2]) / 100.0f;
-    cp.t_r = static_cast<float> (params->wavelet.hueskin.value[3]) / 100.0f;
+    cp.b_l = static_cast<float>(params->wavelet.hueskin.getBottomLeft()) / 100.0f;
+    cp.t_l = static_cast<float>(params->wavelet.hueskin.getTopLeft()) / 100.0f;
+    cp.b_r = static_cast<float>(params->wavelet.hueskin.getBottomRight()) / 100.0f;
+    cp.t_r = static_cast<float>(params->wavelet.hueskin.getTopRight()) / 100.0f;
 
-    cp.b_ly = static_cast<float> (params->wavelet.hueskin2.value[0]) / 100.0f;
-    cp.t_ly = static_cast<float> (params->wavelet.hueskin2.value[1]) / 100.0f;
-    cp.b_ry = static_cast<float> (params->wavelet.hueskin2.value[2]) / 100.0f;
-    cp.t_ry = static_cast<float> (params->wavelet.hueskin2.value[3]) / 100.0f;
+    cp.b_ly = static_cast<float>(params->wavelet.hueskin2.getBottomLeft()) / 100.0f;
+    cp.t_ly = static_cast<float>(params->wavelet.hueskin2.getTopLeft()) / 100.0f;
+    cp.b_ry = static_cast<float>(params->wavelet.hueskin2.getBottomRight()) / 100.0f;
+    cp.t_ry = static_cast<float>(params->wavelet.hueskin2.getTopRight()) / 100.0f;
     cp.numlevH = params->wavelet.threshold;
 
     //shadows
-    cp.b_lsl = static_cast<float> (params->wavelet.bllev.value[0]);
-    cp.t_lsl = static_cast<float> (params->wavelet.bllev.value[1]);
-    cp.b_rsl = static_cast<float> (params->wavelet.bllev.value[2]);
-    cp.t_rsl = static_cast<float> (params->wavelet.bllev.value[3]);
+    cp.b_lsl = static_cast<float>(params->wavelet.bllev.getBottomLeft());
+    cp.t_lsl = static_cast<float>(params->wavelet.bllev.getTopLeft());
+    cp.b_rsl = static_cast<float>(params->wavelet.bllev.getBottomRight());
+    cp.t_rsl = static_cast<float>(params->wavelet.bllev.getTopRight());
     cp.numlevS = params->wavelet.threshold2;
     int maxlevS = 9 - cp.numlevH;
     cp.numlevS = MIN (cp.numlevS, maxlevS);
     //printf("levHigh=%d levShad=%d\n",cp.numlevH,cp.numlevS);
     //highlight
-    cp.b_lhl = static_cast<float> (params->wavelet.hllev.value[0]);
-    cp.t_lhl = static_cast<float> (params->wavelet.hllev.value[1]);
-    cp.b_rhl = static_cast<float> (params->wavelet.hllev.value[2]);
-    cp.t_rhl = static_cast<float> (params->wavelet.hllev.value[3]);
+    cp.b_lhl = static_cast<float>(params->wavelet.hllev.getBottomLeft());
+    cp.t_lhl = static_cast<float>(params->wavelet.hllev.getTopLeft());
+    cp.b_rhl = static_cast<float>(params->wavelet.hllev.getBottomRight());
+    cp.t_rhl = static_cast<float>(params->wavelet.hllev.getTopRight());
     //printf("BL=%f TL=%f BR=%f TR=%f\n",cp.b_lhl,cp.t_lhl,cp.b_rhl,cp.t_rhl);
     //pastel
-    cp.b_lpast = static_cast<float> (params->wavelet.pastlev.value[0]);
-    cp.t_lpast = static_cast<float> (params->wavelet.pastlev.value[1]);
-    cp.b_rpast = static_cast<float> (params->wavelet.pastlev.value[2]);
-    cp.t_rpast = static_cast<float> (params->wavelet.pastlev.value[3]);
+    cp.b_lpast = static_cast<float>(params->wavelet.pastlev.getBottomLeft());
+    cp.t_lpast = static_cast<float>(params->wavelet.pastlev.getTopLeft());
+    cp.b_rpast = static_cast<float>(params->wavelet.pastlev.getBottomRight());
+    cp.t_rpast = static_cast<float>(params->wavelet.pastlev.getTopRight());
     //saturated
-    cp.b_lsat = static_cast<float> (params->wavelet.satlev.value[0]);
-    cp.t_lsat = static_cast<float> (params->wavelet.satlev.value[1]);
-    cp.b_rsat = static_cast<float> (params->wavelet.satlev.value[2]);
-    cp.t_rsat = static_cast<float> (params->wavelet.satlev.value[3]);
+    cp.b_lsat = static_cast<float>(params->wavelet.satlev.getBottomLeft());
+    cp.t_lsat = static_cast<float>(params->wavelet.satlev.getTopLeft());
+    cp.b_rsat = static_cast<float>(params->wavelet.satlev.getBottomRight());
+    cp.t_rsat = static_cast<float>(params->wavelet.satlev.getTopRight());
     //edge local contrast
-    cp.edg_low = static_cast<float> (params->wavelet.edgcont.value[0]);
-    cp.edg_mean = static_cast<float> (params->wavelet.edgcont.value[1]);
-    cp.edg_max = static_cast<float> (params->wavelet.edgcont.value[2]);
-    cp.edg_sd = static_cast<float> (params->wavelet.edgcont.value[3]);
+    cp.edg_low = static_cast<float>(params->wavelet.edgcont.getBottomLeft());
+    cp.edg_mean = static_cast<float>(params->wavelet.edgcont.getTopLeft());
+    cp.edg_max = static_cast<float>(params->wavelet.edgcont.getBottomRight());
+    cp.edg_sd = static_cast<float>(params->wavelet.edgcont.getTopRight());
     //level noise
-    cp.lev0s = static_cast<float> (params->wavelet.level0noise.value[0]);
-    cp.lev0n = static_cast<float> (params->wavelet.level0noise.value[1]);
-    cp.lev1s = static_cast<float> (params->wavelet.level1noise.value[0]);
-    cp.lev1n = static_cast<float> (params->wavelet.level1noise.value[1]);
-    cp.lev2s = static_cast<float> (params->wavelet.level2noise.value[0]);
-    cp.lev2n = static_cast<float> (params->wavelet.level2noise.value[1]);
-    cp.lev3s = static_cast<float> (params->wavelet.level3noise.value[0]);
-    cp.lev3n = static_cast<float> (params->wavelet.level3noise.value[1]);
+    cp.lev0s = static_cast<float>(params->wavelet.level0noise.getBottom());
+    cp.lev0n = static_cast<float>(params->wavelet.level0noise.getTop());
+    cp.lev1s = static_cast<float>(params->wavelet.level1noise.getBottom());
+    cp.lev1n = static_cast<float>(params->wavelet.level1noise.getTop());
+    cp.lev2s = static_cast<float>(params->wavelet.level2noise.getBottom());
+    cp.lev2n = static_cast<float>(params->wavelet.level2noise.getTop());
+    cp.lev3s = static_cast<float>(params->wavelet.level3noise.getBottom());
+    cp.lev3n = static_cast<float>(params->wavelet.level3noise.getTop());
 
     cp.detectedge = params->wavelet.medianlev;
     //printf("low=%f mean=%f sd=%f max=%f\n",cp.edg_low,cp.edg_mean,cp.edg_sd,cp.edg_max);

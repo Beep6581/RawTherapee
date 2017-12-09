@@ -65,7 +65,7 @@ extern const Settings* settings;
 void RawImageSource::eahd_demosaic ()
 {
     if (plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::eahd]));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::EAHD)));
         plistener->setProgress (0.0);
     }
 
@@ -494,7 +494,7 @@ void RawImageSource::hphd_green (float** hpmap)
 void RawImageSource::hphd_demosaic ()
 {
     if (plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::hphd]));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::HPHD)));
         plistener->setProgress (0.0);
     }
 
@@ -595,7 +595,7 @@ void RawImageSource::vng4_demosaic ()
     const bool plistenerActive = plistener;
 
     if (plistenerActive) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::vng4]));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::VNG4)));
         plistener->setProgress (progress);
     }
 
@@ -893,7 +893,7 @@ void RawImageSource::ppg_demosaic()
 
     if (plistener) {
         // looks like ppg isn't supported anymore
-        //plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::ppg]));
+        //plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::ppg)));
         plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "xxx"));
         plistener->setProgress (0.0);
     }
@@ -1201,7 +1201,7 @@ void RawImageSource::jdl_interpolate_omp()  // from "Lassus"
 
     if (plistener) {
         // this function seems to be unused
-        //plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::jdl]));
+        //plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::jdl)));
         plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "xxx"));
         plistener->setProgress (0.0);
     }
@@ -1397,7 +1397,7 @@ SSEFUNCTION void RawImageSource::lmmse_interpolate_omp(int winw, int winh, array
     }
 
     if (plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::lmmse]));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::LMMSE)));
         plistener->setProgress (0.0);
     }
 
@@ -1975,7 +1975,7 @@ SSEFUNCTION void RawImageSource::igv_interpolate(int winw, int winh)
     border_interpolate2(winw, winh, 7);
 
     if (plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::igv]));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::IGV)));
         plistener->setProgress (0.0);
     }
 
@@ -2029,7 +2029,8 @@ SSEFUNCTION void RawImageSource::igv_interpolate(int winw, int winh)
             for (; col < width; col++, indx += 2) {
                 dest1[indx >> 1] = CLIP(rawData[row][col]); //rawData = RT datas
                 col++;
-                dest2[indx >> 1] = CLIP(rawData[row][col]); //rawData = RT datas
+                if(col < width)
+                    dest2[indx >> 1] = CLIP(rawData[row][col]); //rawData = RT datas
             }
         }
 
@@ -2364,7 +2365,7 @@ void RawImageSource::igv_interpolate(int winw, int winh)
     border_interpolate2(winw, winh, 7);
 
     if (plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::igv]));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::IGV)));
         plistener->setProgress (0.0);
     }
 
@@ -2639,7 +2640,7 @@ void RawImageSource::ahd_demosaic()
     const float d65_white[3] = { 0.950456, 1, 1.088754 };
 
     if (plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::ahd]));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AHD)));
         plistener->setProgress (0.0);
     }
 
@@ -3702,7 +3703,7 @@ BENCHFUN
     double currentProgress = 0.0;
 
     if(plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::dcb]));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCB)));
         plistener->setProgress (currentProgress);
     }
 

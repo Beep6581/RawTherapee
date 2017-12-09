@@ -189,6 +189,7 @@ Locallab::Locallab():
         }
     }
 
+    const LocallabParams default_params;
 
     nbspot->setAdjusterListener(this);
     nbspot->set_tooltip_text(M("TP_LOCALLAB_NBSPOT_TOOLTIP"));
@@ -309,9 +310,7 @@ Locallab::Locallab():
 
     llCurveEditorG->setCurveListener(this);
 
-    rtengine::LocallabParams::getDefaultLLCurve(defaultCurve);
     llshape = static_cast<DiagonalCurveEditor*>(llCurveEditorG->addCurve(CT_Diagonal, "L(L)"));
-  //  llshape->setResetCurve(DiagonalCurveType(defaultCurve.at(0)), defaultCurve);
     llshape->setResetCurve(DiagonalCurveType(default_params.llcurve.at(0)), default_params.llcurve);
     llshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     milestones.push_back(GradientMilestone(0., 0., 0., 0.));
@@ -319,7 +318,6 @@ Locallab::Locallab():
     llshape->setBottomBarBgGradient(milestones);
     llshape->setLeftBarBgGradient(milestones);
 
-    rtengine::LocallabParams::getDefaultCCCurve(defaultCurve4);
     ccshape = static_cast<DiagonalCurveEditor*>(llCurveEditorG->addCurve(CT_Diagonal, "C(C)"));
     ccshape->setResetCurve(DiagonalCurveType(default_params.cccurve.at(0)), default_params.cccurve);
     ccshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
@@ -328,7 +326,6 @@ Locallab::Locallab():
     ccshape->setBottomBarBgGradient(milestones);
     ccshape->setLeftBarBgGradient(milestones);
 
-    rtengine::LocallabParams::getDefaultLHCurve(defaultCurve3);
 
     LHshape = static_cast<FlatCurveEditor*>(llCurveEditorG->addCurve(CT_Flat, "L(H)", nullptr, false, true));
 
@@ -347,7 +344,6 @@ Locallab::Locallab():
 
     LHshape->setBottomBarBgGradient(milestones);
 
-    rtengine::LocallabParams::getDefaultHHCurve(defaultCurve5);
 
     HHshape = static_cast<FlatCurveEditor*>(llCurveEditorG->addCurve(CT_Flat, "H(H)", nullptr, false, true));
 
@@ -377,6 +373,12 @@ Locallab::Locallab():
 
     //contrast->set_tooltip_text (M("TP_LOCALLAB_CONTRAST_TOOLTIP"));
     contrast->setAdjusterListener(this);
+
+    Gtk::Image* iblueredL = Gtk::manage(new RTImage("ajd-wb-bluered1.png"));
+    Gtk::Image* iblueredR = Gtk::manage(new RTImage("ajd-wb-bluered2.png"));
+
+    warm = Gtk::manage(new Adjuster(M("TP_LOCALLAB_WARM"), -100., 100., 1., 0., iblueredL, iblueredR));
+    warm->setAdjusterListener(this);
 
     //chroma->set_tooltip_text (M("TP_LOCALLAB_CHROMA_TOOLTIP"));
     chroma->setAdjusterListener(this);
@@ -471,7 +473,6 @@ Locallab::Locallab():
 
 
     LocalcurveEditorgainT->setCurveListener(this);
-    rtengine::LocallabParams::getDefaultLocalgainCurveT(defaultCurve2);
 
 
     cTgainshape = static_cast<FlatCurveEditor*>(LocalcurveEditorgainT->addCurve(CT_Flat, "", nullptr, false, false));
@@ -482,14 +483,13 @@ Locallab::Locallab():
 
     LocalcurveEditorgainTrab->setCurveListener(this);
 
-    rtengine::LocallabParams::getDefaultLocalgainCurveTrab(defaultCurve2rab);
 
 
     cTgainshaperab = static_cast<FlatCurveEditor*>(LocalcurveEditorgainTrab->addCurve(CT_Flat, "", nullptr, false, false));
 
 
     cTgainshaperab->setIdentityValue(0.);
-    cTgainshaperab->setResetCurve(FlatCurveType(localTgaincurverab.at(0)), localTgaincurverab);
+    cTgainshaperab->setResetCurve(FlatCurveType(default_params.localTgaincurverab.at(0)), default_params.localTgaincurverab);
     cTgainshaperab->setTooltip(M("TP_RETINEX_GAINTRANSMISSIONRAB_TOOLTIP"));
 
     LocalcurveEditorgainT->curveListComplete();
@@ -683,6 +683,7 @@ Locallab::Locallab():
     colorBox->pack_start(*superFrame);
 
     colorBox->pack_start(*chroma);
+    colorBox->pack_start(*warm);
     colorBox->pack_start(*sensi);
 
     dustFrame->set_label_align(0.025, 0.5);
@@ -1255,6 +1256,7 @@ void Locallab::neutral_pressed()
     proxi->resetValue(false);
     lightness->resetValue(false);
     chroma->resetValue(false);
+    warm->resetValue(false);
     contrast->resetValue(false);
     sensi->resetValue(false);
     radius->resetValue(false);
@@ -1803,12 +1805,13 @@ bool Locallab::localComputed_()
 
     sensiexclu->setValue(nextdatasp[79]);
     struc->setValue(nextdatasp[80]);
+    warm->setValue(nextdatasp[81]);
 
-    double intermed = 0.01 * (double) nextdatasp[81];
+    double intermed = 0.01 * (double) nextdatasp[82];
     hueref->setValue(intermed);
-    chromaref->setValue(nextdatasp[82]);
-    lumaref->setValue(nextdatasp[83]);
-    sobelref->setValue(nextdatasp[84]);
+    chromaref->setValue(nextdatasp[83]);
+    lumaref->setValue(nextdatasp[84]);
+    sobelref->setValue(nextdatasp[85]);
 
     int *s_datc;
     s_datc = new int[70];
@@ -2092,7 +2095,7 @@ bool Locallab::localComputed_()
 
 void Locallab::localChanged(int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat)
 {
-    for (int i = 2; i < 85; i++) {
+    for (int i = 2; i < 86; i++) {
         nextdatasp[i] = datasp[i][sp];
     }
 
@@ -2163,6 +2166,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
         lightness->setEditedState(pedited->locallab.lightness ? Edited : UnEdited);
         contrast->setEditedState(pedited->locallab.contrast ? Edited : UnEdited);
         chroma->setEditedState(pedited->locallab.chroma ? Edited : UnEdited);
+        warm->setEditedState(pedited->locallab.warm ? Edited : UnEdited);
         expcomp->setEditedState(pedited->locallab.expcomp ? Edited : UnEdited);
         hlcompr->setEditedState(pedited->locallab.hlcompr ? Edited : UnEdited);
         hlcomprthresh->setEditedState(pedited->locallab.hlcomprthresh ? Edited : UnEdited);
@@ -2335,6 +2339,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
     lightness->setValue(pp->locallab.lightness);
     contrast->setValue(pp->locallab.contrast);
     chroma->setValue(pp->locallab.chroma);
+    warm->setValue(pp->locallab.warm);
     expcomp->setValue(pp->locallab.expcomp);
     hlcompr->setValue(pp->locallab.hlcompr);
     hlcomprthresh->setValue(pp->locallab.hlcomprthresh);
@@ -2803,6 +2808,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
     pp->locallab.lightness = lightness->getIntValue();
     pp->locallab.contrast = contrast->getIntValue();
     pp->locallab.chroma = chroma->getIntValue();
+    pp->locallab.warm = warm->getIntValue();
     pp->locallab.expcomp = expcomp->getValue();
     pp->locallab.black = (int)black->getValue();
     pp->locallab.hlcompr = (int)hlcompr->getValue();
@@ -2912,6 +2918,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.lightness = lightness->getEditedState();
         pedited->locallab.contrast = contrast->getEditedState();
         pedited->locallab.chroma = chroma->getEditedState();
+        pedited->locallab.warm = warm->getEditedState();
         pedited->locallab.expcomp    = expcomp->getEditedState();
         pedited->locallab.black      = black->getEditedState();
         pedited->locallab.hlcompr    = hlcompr->getEditedState();
@@ -3681,6 +3688,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     lightness->setDefault(defParams->locallab.lightness);
     contrast->setDefault(defParams->locallab.contrast);
     chroma->setDefault(defParams->locallab.chroma);
+    warm->setDefault(defParams->locallab.warm);
     expcomp->setDefault(defParams->locallab.expcomp);
     black->setDefault(defParams->locallab.black);
     hlcompr->setDefault(defParams->locallab.hlcompr);
@@ -3754,6 +3762,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         lightness->setDefaultEditedState(pedited->locallab.lightness ? Edited : UnEdited);
         contrast->setDefaultEditedState(pedited->locallab.contrast ? Edited : UnEdited);
         chroma->setDefaultEditedState(pedited->locallab.chroma ? Edited : UnEdited);
+        warm->setDefaultEditedState(pedited->locallab.warm ? Edited : UnEdited);
         expcomp->setDefaultEditedState(pedited->locallab.expcomp ? Edited : UnEdited);
         black->setDefaultEditedState(pedited->locallab.black ? Edited : UnEdited);
         hlcompr->setDefaultEditedState(pedited->locallab.hlcompr ? Edited : UnEdited);
@@ -3826,6 +3835,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         lightness->setDefaultEditedState(Irrelevant);
         contrast->setDefaultEditedState(Irrelevant);
         chroma->setDefaultEditedState(Irrelevant);
+        warm->setDefaultEditedState(Irrelevant);
         expcomp->setDefaultEditedState(Irrelevant);
         black->setDefaultEditedState(Irrelevant);
         hlcompr->setDefaultEditedState(Irrelevant);
@@ -3975,6 +3985,8 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             listener->panelChanged(Evlocallabcontrast, contrast->getTextValue());
         } else if (a == chroma) {
             listener->panelChanged(Evlocallabchroma, chroma->getTextValue());
+        } else if (a == warm) {
+            listener->panelChanged(Evlocallabwarm, warm->getTextValue());
         } else if (a == expcomp) {
             listener->panelChanged(Evlocallabexpcomp, expcomp->getTextValue());
         } else if (a == hlcompr) {
@@ -4182,6 +4194,7 @@ void Locallab::trimValues(rtengine::procparams::ProcParams * pp)
     lightness->trimValue(pp->locallab.lightness);
     contrast->trimValue(pp->locallab.contrast);
     chroma->trimValue(pp->locallab.chroma);
+    warm->trimValue(pp->locallab.warm);
     expcomp->trimValue(pp->locallab.expcomp);
     hlcompr->trimValue(pp->locallab.hlcompr);
     hlcomprthresh->trimValue(pp->locallab.hlcomprthresh);
@@ -4265,6 +4278,7 @@ void Locallab::setBatchMode(bool batchMode)
     lightness->showEditedCB();
     contrast->showEditedCB();
     chroma->showEditedCB();
+    warm->showEditedCB();
     expcomp->showEditedCB();
     black->showEditedCB();
     hlcompr->showEditedCB();

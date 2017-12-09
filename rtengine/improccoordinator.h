@@ -89,7 +89,7 @@ protected:
     bool highDetailRawComputed;
     bool allocated;
 
-    void freeAll ();
+    void freeAll();
 
     // Precomputed values used by DetailedCrop ----------------------------------------------
 
@@ -199,11 +199,11 @@ protected:
 
     MyMutex minit;  // to gain mutually exclusive access to ... to what exactly?
 
-    void progress (Glib::ustring str, int pr);
-    void reallocAll ();
-    void updateLRGBHistograms ();
-    void setScale (int prevscale);
-    void updatePreviewImage (int todo, Crop* cropCall = nullptr);
+    void progress(Glib::ustring str, int pr);
+    void reallocAll();
+    void updateLRGBHistograms();
+    void setScale(int prevscale);
+    void updatePreviewImage(int todo, Crop* cropCall = nullptr);
 
     MyMutex mProcessing;
     ProcParams params;
@@ -353,6 +353,7 @@ protected:
     LUTi exclumets;
     LUTi sensiexclus;
     LUTi strucs;
+    LUTi warms;
 
     LUTf huerefs;
     LUTf chromarefs;
@@ -360,162 +361,162 @@ protected:
     LUTf sobelrefs;
 
     double huer, chromar, lumar, sobeler;
-    void startProcessing ();
-    void process ();
+    void startProcessing();
+    void process();
     float colourToningSatLimit;
     float colourToningSatLimitOpacity;
 
 public:
 
-    ImProcCoordinator ();
-    ~ImProcCoordinator ();
-    void assign     (ImageSource* imgsrc);
+    ImProcCoordinator();
+    ~ImProcCoordinator();
+    void assign(ImageSource* imgsrc);
 
-    void        getParams (procparams::ProcParams* dst)
+    void        getParams(procparams::ProcParams* dst)
     {
         *dst = params;
     }
 
-    void        startProcessing (int changeCode);
-    ProcParams* beginUpdateParams ();
-    void        endUpdateParams (ProcEvent change);  // must be called after beginUpdateParams, triggers update
-    void        endUpdateParams (int changeFlags);
-    void        stopProcessing ();
+    void        startProcessing(int changeCode);
+    ProcParams* beginUpdateParams();
+    void        endUpdateParams(ProcEvent change);   // must be called after beginUpdateParams, triggers update
+    void        endUpdateParams(int changeFlags);
+    void        stopProcessing();
 //    void updatePreviewImage (int todo, Crop* cropCall = NULL);
 
     std::string *retistrsav;
 
-    void setPreviewScale    (int scale)
+    void setPreviewScale(int scale)
     {
-        setScale (scale);
+        setScale(scale);
     }
-    int  getPreviewScale    ()
+    int  getPreviewScale()
     {
         return scale;
     }
 
     //void fullUpdatePreviewImage  ();
 
-    int getFullWidth ()
+    int getFullWidth()
     {
         return fullw;
     }
-    int getFullHeight ()
+    int getFullHeight()
     {
         return fullh;
     }
 
-    int getPreviewWidth ()
+    int getPreviewWidth()
     {
         return pW;
     }
-    int getPreviewHeight ()
+    int getPreviewHeight()
     {
         return pH;
     }
 
-    DetailedCrop* createCrop  (::EditDataProvider *editDataProvider, bool isDetailWindow);
+    DetailedCrop* createCrop(::EditDataProvider *editDataProvider, bool isDetailWindow);
 
-    bool getAutoWB   (double& temp, double& green, double equal, double tempBias);
-    void getCamWB    (double& temp, double& green);
-    void getSpotWB   (int x, int y, int rectSize, double& temp, double& green);
-    void getAutoCrop (double ratio, int &x, int &y, int &w, int &h);
+    bool getAutoWB(double& temp, double& green, double equal, double tempBias);
+    void getCamWB(double& temp, double& green);
+    void getSpotWB(int x, int y, int rectSize, double& temp, double& green);
+    void getAutoCrop(double ratio, int &x, int &y, int &w, int &h);
 
-    void setMonitorProfile (const Glib::ustring& profile, RenderingIntent intent);
-    void getMonitorProfile (Glib::ustring& profile, RenderingIntent& intent) const;
-    void setSoftProofing   (bool softProof, bool gamutCheck);
-    void getSoftProofing   (bool &softProof, bool &gamutCheck);
+    void setMonitorProfile(const Glib::ustring& profile, RenderingIntent intent);
+    void getMonitorProfile(Glib::ustring& profile, RenderingIntent& intent) const;
+    void setSoftProofing(bool softProof, bool gamutCheck);
+    void getSoftProofing(bool &softProof, bool &gamutCheck);
 
-    bool updateTryLock ()
+    bool updateTryLock()
     {
         return updaterThreadStart.trylock();
     }
-    void updateUnLock ()
+    void updateUnLock()
     {
         updaterThreadStart.unlock();
     }
 
-    void setProgressListener (ProgressListener* pl)
+    void setProgressListener(ProgressListener* pl)
     {
         plistener = pl;
     }
-    void setPreviewImageListener    (PreviewImageListener* il)
+    void setPreviewImageListener(PreviewImageListener* il)
     {
         imageListener = il;
     }
-    void setSizeListener     (SizeListener* il)
+    void setSizeListener(SizeListener* il)
     {
-        sizeListeners.push_back (il);
+        sizeListeners.push_back(il);
     }
-    void delSizeListener     (SizeListener* il)
+    void delSizeListener(SizeListener* il)
     {
-        std::vector<SizeListener*>::iterator it = std::find (sizeListeners.begin(), sizeListeners.end(), il);
+        std::vector<SizeListener*>::iterator it = std::find(sizeListeners.begin(), sizeListeners.end(), il);
 
         if (it != sizeListeners.end()) {
-            sizeListeners.erase (it);
+            sizeListeners.erase(it);
         }
     }
-    void setAutoExpListener  (AutoExpListener* ael)
+    void setAutoExpListener(AutoExpListener* ael)
     {
         aeListener = ael;
     }
-    void setHistogramListener (HistogramListener *h)
+    void setHistogramListener(HistogramListener *h)
     {
         hListener = h;
     }
-    void setAutoCamListener  (AutoCamListener* acl)
+    void setAutoCamListener(AutoCamListener* acl)
     {
         acListener = acl;
     }
-    void setAutoBWListener   (AutoBWListener* abw)
+    void setAutoBWListener(AutoBWListener* abw)
     {
         abwListener = abw;
     }
-    void setlocalListener   (localListener* alo)
+    void setlocalListener(localListener* alo)
     {
         aloListener = alo;
     }
 
-    void setAutoWBListener   (AutoWBListener* awb)
+    void setAutoWBListener(AutoWBListener* awb)
     {
         awbListener = awb;
     }
-    void setAutoColorTonListener   (AutoColorTonListener* bwct)
+    void setAutoColorTonListener(AutoColorTonListener* bwct)
     {
         actListener = bwct;
     }
-    void setAutoChromaListener  (AutoChromaListener* adn)
+    void setAutoChromaListener(AutoChromaListener* adn)
     {
         adnListener = adn;
     }
-    void setRetinexListener  (RetinexListener* adh)
+    void setRetinexListener(RetinexListener* adh)
     {
         dehaListener = adh;
     }
-    void setWaveletListener  (WaveletListener* awa)
+    void setWaveletListener(WaveletListener* awa)
     {
         awavListener = awa;
     }
 
-    void setFrameCountListener  (FrameCountListener* fcl)
+    void setFrameCountListener(FrameCountListener* fcl)
     {
         frameCountListener = fcl;
     }
 
-    void setImageTypeListener  (ImageTypeListener* itl)
+    void setImageTypeListener(ImageTypeListener* itl)
     {
         imageTypeListener = itl;
     }
 
-    void saveInputICCReference (const Glib::ustring& fname, bool apply_wb);
+    void saveInputICCReference(const Glib::ustring& fname, bool apply_wb);
 
-    InitialImage*  getInitialImage ()
+    InitialImage*  getInitialImage()
     {
         return imgsrc;
     }
 
     struct DenoiseInfoStore {
-        DenoiseInfoStore () : chM (0), max_r{}, max_b{}, ch_M{}, valid (false)  {}
+        DenoiseInfoStore() : chM(0), max_r{}, max_b{}, ch_M{}, valid(false)  {}
         float chM;
         float max_r[9];
         float max_b[9];
