@@ -672,7 +672,7 @@ void ImProcFunctions::ciecamloc_02float(LabImage* lab, LabImage* dest)
     float f = 0.f, nc = 0.f, la, c = 0.f, xw, yw, zw, f2 = 1.f, c2 = 1.f, nc2 = 1.f, yb2;
     float fl, n, nbb, ncb, aw; //d
     float xwd, ywd, zwd, xws, yws, zws;
-    int alg = 0;
+    //  int alg = 0;
     double Xwout, Zwout;
     double Xwsc, Zwsc;
 
@@ -695,7 +695,7 @@ void ImProcFunctions::ciecamloc_02float(LabImage* lab, LabImage* dest)
     //viewing condition for surround
     f2 = 1.0f, c2 = 0.69f, nc2 = 1.0f;
     //with which algorithm
-    alg = 0;
+    //  alg = 0;
 
 
     xwd = 100.f * Xwout;
@@ -715,7 +715,7 @@ void ImProcFunctions::ciecamloc_02float(LabImage* lab, LabImage* dest)
     const float pilotout = 2.f;
 
     //algoritm's params
-    const float rstprotection = 100. ;//- params->colorappearance.rstprotection;
+    // const float rstprotection = 100. ;//- params->colorappearance.rstprotection;
     LUTu hist16J;
     LUTu hist16Q;
     float yb = 18.f;
@@ -736,13 +736,13 @@ void ImProcFunctions::ciecamloc_02float(LabImage* lab, LabImage* dest)
 
     float cz, wh, pfl;
     Ciecam02::initcam1float(gamu, yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c);
-    const float chr = 0.f;
+//   const float chr = 0.f;
     const float pow1 = pow_F(1.64f - pow_F(0.29f, n), 0.73f);
     float nj, nbbj, ncbj, czj, awj, flj;
     Ciecam02::initcam2float(gamu, yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj);
     const float reccmcz = 1.f / (c2 * czj);
     const float pow1n = pow_F(1.64f - pow_F(0.29f, nj), 0.73f);
-    const float QproFactor = (0.4f / c) * (aw + 4.0f) ;
+//    const float QproFactor = (0.4f / c) * (aw + 4.0f) ;
     const bool LabPassOne = true;
 
 #ifdef __SSE2__
