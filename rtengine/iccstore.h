@@ -34,7 +34,7 @@ namespace rtengine
 namespace procparams
 {
 
-    class ColorManagementParams;
+    struct ColorManagementParams;
 
 }
 

@@ -2058,6 +2058,8 @@ void RawImageSource::demosaic (const RAWParams &raw)
             fast_demosaic();
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO) ) {
             nodemosaic(true);
+        } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCD) ) {
+            rcd_demosaic ();
         } else {
             nodemosaic (false);
         }

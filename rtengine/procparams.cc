@@ -2805,6 +2805,7 @@ const std::vector<const char*>& RAWParams::BayerSensor::getMethodStrings()
         "vng4",
         "dcb",
         "ahd",
+        "rcd",
         "fast",
         "mono",
         "none",

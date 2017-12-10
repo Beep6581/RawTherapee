@@ -658,7 +658,8 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
         }
 
         const float gain = pow(2.0f, float(expcomp));
-        float noisevar_Ldetail = SQR(static_cast<float>(SQR(100. - dnparams.Ldetail) + 50.*(100. - dnparams.Ldetail)) * TS * 0.5f);
+        float params_Ldetail = min(float(dnparams.Ldetail), 99.9f); // max out to avoid div by zero when using noisevar_Ldetail as divisor
+        float noisevar_Ldetail = SQR(static_cast<float>(SQR(100. - params_Ldetail) + 50.*(100. - params_Ldetail)) * TS * 0.5f);
 
         array2D<float> tilemask_in(TS, TS);
         array2D<float> tilemask_out(TS, TS);

@@ -954,36 +954,34 @@ void ColorToning::colorForValue (double valX, double valY, enum ColorCaller::Ele
     if (callerId == 1) {         // ch - main curve
         Color::hsv2rgb01(float(valY), 1.0f, 0.5f, R, G, B);
     } else if (callerId == 2) {  // Slider 1 background
-        if (valY > 0.5)
+        if (valY <= 0.5)
             // the hue range
         {
             Color::hsv2rgb01(float(valX), 1.0f, 0.5f, R, G, B);
         } else {
             // the strength applied to the current hue
             double strength, hue;
-            float r_, g_, b_;
             hlColSat->getValue(strength, hue);
-            Color::hsv2rgb01(valY * 2.f, 1.f, 1.f, r_, g_, b_);
             Color::hsv2rgb01(hue / 360.f, 1.f, 1.f, R, G, B);
-            R = r_ + (R - r_) * valX;
-            G = g_ + (G - g_) * valX;
-            B = b_ + (B - b_) * valX;
+            const double gray = 0.46;
+            R = (gray * (1.0 - valX)) + R * valX;
+            G = (gray * (1.0 - valX)) + G * valX;
+            B = (gray * (1.0 - valX)) + B * valX;
         }
     } else if (callerId == 3) {  // Slider 2 background
-        if (valY > 0.5)
+        if (valY <= 0.5)
             // the hue range
         {
             Color::hsv2rgb01(float(valX), 1.0f, 0.5f, R, G, B);
         } else {
             // the strength applied to the current hue
             double strength, hue;
-            float r_, g_, b_;
             shadowsColSat->getValue(strength, hue);
-            Color::hsv2rgb01(valY * 2.f, 1.f, 1.f, r_, g_, b_);
             Color::hsv2rgb01(hue / 360.f, 1.f, 1.f, R, G, B);
-            R = r_ + (R - r_) * valX;
-            G = g_ + (G - g_) * valX;
-            B = b_ + (B - b_) * valX;
+            const double gray = 0.46;
+            R = (gray * (1.0 - valX)) + R * valX;
+            G = (gray * (1.0 - valX)) + G * valX;
+            B = (gray * (1.0 - valX)) + B * valX;
         }
     }
 
