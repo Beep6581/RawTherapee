@@ -111,13 +111,14 @@ void FlatField::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
     flatFieldBlurTypeconn.block (true);
 
     //flatFieldBlurType
-    for( size_t i = 0; i < procparams::RAWParams::numFlatFileBlurTypes; i++)
-        if( pp->raw.ff_BlurType == procparams::RAWParams::ff_BlurTypestring[i]) {
+    for (size_t i = 0; i < procparams::RAWParams::getFlatFieldBlurTypeStrings().size(); ++i) {
+        if (pp->raw.ff_BlurType == procparams::RAWParams::getFlatFieldBlurTypeStrings()[i]) {
             flatFieldBlurType->set_active(i);
             break;
         }
+    }
 
-    if (multiImage || pp->raw.ff_BlurType == procparams::RAWParams::ff_BlurTypestring[procparams::RAWParams::area_ff]) {
+    if (multiImage || pp->raw.ff_BlurType == procparams::RAWParams::getFlatFieldBlurTypeString(procparams::RAWParams::FlatFieldBlurType::AREA)) {
         flatFieldClipControl->show();
     } else {
         flatFieldClipControl->hide();
@@ -135,7 +136,7 @@ void FlatField::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
         flatFieldClipControl->setAutoInconsistent(multiImage && !pedited->raw.ff_AutoClipControl);
 
         if( !pedited->raw.ff_BlurType ) {
-            flatFieldBlurType->set_active(procparams::RAWParams::numFlatFileBlurTypes);    // No name
+            flatFieldBlurType->set_active(std::numeric_limits<int>::max());    // No name
         }
     }
 
@@ -216,8 +217,8 @@ void FlatField::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedit
 
     int currentRow = flatFieldBlurType->get_active_row_number();
 
-    if( currentRow >= 0 && currentRow < procparams::RAWParams::numFlatFileBlurTypes) {
-        pp->raw.ff_BlurType = procparams::RAWParams::ff_BlurTypestring[currentRow];
+    if( currentRow >= 0 && currentRow < std::numeric_limits<int>::max()) {
+        pp->raw.ff_BlurType = procparams::RAWParams::getFlatFieldBlurTypeStrings()[currentRow];
     }
 
     if (pedited) {
@@ -226,7 +227,7 @@ void FlatField::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedit
         pedited->raw.ff_BlurRadius = flatFieldBlurRadius->getEditedState ();
         pedited->raw.ff_clipControl = flatFieldClipControl->getEditedState ();
         pedited->raw.ff_AutoClipControl = !flatFieldClipControl->getAutoInconsistent();
-        pedited->raw.ff_BlurType = flatFieldBlurType->get_active_row_number() != procparams::RAWParams::numFlatFileBlurTypes;
+        pedited->raw.ff_BlurType = flatFieldBlurType->get_active_row_number() != std::numeric_limits<int>::max();
     }
 
 }
@@ -336,15 +337,16 @@ void FlatField::flatFieldFile_Reset()
 
 void FlatField::flatFieldBlurTypeChanged ()
 {
-    int  curSelection = flatFieldBlurType->get_active_row_number();
+    const int curSelection = flatFieldBlurType->get_active_row_number();
+    const RAWParams::FlatFieldBlurType blur_type = RAWParams::FlatFieldBlurType(curSelection);
 
-    Glib::ustring s = "";
+    Glib::ustring s;
 
-    if( curSelection >= 0 && curSelection < procparams::RAWParams::numFlatFileBlurTypes) {
+    if (curSelection >= 0 && curSelection < std::numeric_limits<int>::max()) {
         s = flatFieldBlurType->get_active_text();
     }
 
-    if (multiImage || curSelection == procparams::RAWParams::area_ff) {
+    if (multiImage || blur_type == procparams::RAWParams::FlatFieldBlurType::AREA) {
         flatFieldClipControl->show();
     } else {
         flatFieldClipControl->hide();

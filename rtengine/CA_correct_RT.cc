@@ -218,18 +218,18 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
             // Main algorithm: Tile loop calculating correction parameters per tile
             #pragma omp for collapse(2) schedule(dynamic) nowait
             for (int top = -border ; top < height; top += ts - border2)
-                for (int left = -border; left < width; left += ts - border2) {
+                for (int left = -border; left < width - (W & 1); left += ts - border2) {
                     memset(buffer, 0, buffersize);
                     const int vblock = ((top + border) / (ts - border2)) + 1;
                     const int hblock = ((left + border) / (ts - border2)) + 1;
                     const int bottom = min(top + ts, height + border);
-                    const int right  = min(left + ts, width + border);
+                    const int right  = min(left + ts, width - (W & 1) + border);
                     const int rr1 = bottom - top;
                     const int cc1 = right - left;
                     const int rrmin = top < 0 ? border : 0;
                     const int rrmax = bottom > height ? height - top : rr1;
                     const int ccmin = left < 0 ? border : 0;
-                    const int ccmax = right > width ? width - left : cc1;
+                    const int ccmax = (right > width - (W & 1)) ? width - (W & 1) - left : cc1;
 
                     // rgb from input CFA data
                     // rgb values should be floating point numbers between 0 and 1
@@ -755,20 +755,20 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
             #pragma omp for schedule(dynamic) collapse(2) nowait
 
             for (int top = -border; top < height; top += ts - border2)
-                for (int left = -border; left < width; left += ts - border2) {
+                for (int left = -border; left < width - (W & 1); left += ts - border2) {
                     memset(buffer, 0, buffersize);
                     float lblockshifts[2][2];
                     const int vblock = ((top + border) / (ts - border2)) + 1;
                     const int hblock = ((left + border) / (ts - border2)) + 1;
                     const int bottom = min(top + ts, height + border);
-                    const int right  = min(left + ts, width + border);
+                    const int right  = min(left + ts, width - (W & 1) + border);
                     const int rr1 = bottom - top;
                     const int cc1 = right - left;
 
                     const int rrmin = top < 0 ? border : 0;
                     const int rrmax = bottom > height ? height - top : rr1;
                     const int ccmin = left < 0 ? border : 0;
-                    const int ccmax = right > width ? width - left : cc1;
+                    const int ccmax = (right > width - (W & 1)) ? width - (W & 1) - left : cc1;
 
                     // rgb from input CFA data
                     // rgb values should be floating point number between 0 and 1
@@ -1145,7 +1145,7 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                     STC2VFU(rawData[row][col], LVFU(RawDataTmp[indx]));
                 }
 #endif
-                for(; col < width; col += 2, indx++) {
+                for(; col < width - (W & 1); col += 2, indx++) {
                     rawData[row][col] = RawDataTmp[indx];
                 }
             }

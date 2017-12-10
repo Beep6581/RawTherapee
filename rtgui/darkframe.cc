@@ -77,7 +77,7 @@ void DarkFrame::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
     dfAuto->set_active( pp->raw.df_autoselect );
 
     if(pedited ) {
-        dfAuto->set_inconsistent(!pedited->raw.dfAuto );
+        dfAuto->set_inconsistent(!pedited->raw.df_autoselect );
     }
 
     if (Glib::file_test (pp->raw.dark_frame, Glib::FILE_TEST_EXISTS)) {
@@ -152,7 +152,7 @@ void DarkFrame::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedit
 
     if (pedited) {
         pedited->raw.darkFrame = dfChanged;
-        pedited->raw.dfAuto = !dfAuto->get_inconsistent();
+        pedited->raw.df_autoselect = !dfAuto->get_inconsistent();
     }
 
 }

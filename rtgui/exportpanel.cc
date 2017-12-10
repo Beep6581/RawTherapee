@@ -68,8 +68,8 @@ ExportPanel::ExportPanel () : listener (nullptr)
     hb_raw_bayer_method->pack_start (*Gtk::manage (new Gtk::Label ( M ("EXPORT_RAW_DMETHOD") + ": ")), Gtk::PACK_SHRINK, 4);
     raw_bayer_method = Gtk::manage (new MyComboBoxText ());
 
-    for ( size_t i = 0; i < procparams::RAWParams::BayerSensor::numMethods; i++) {
-        raw_bayer_method->append (procparams::RAWParams::BayerSensor::methodstring[i]);
+    for (const auto method_string : RAWParams::BayerSensor::getMethodStrings()) {
+        raw_bayer_method->append(method_string);
     }
 
     raw_bayer_method->set_active (0);
@@ -91,8 +91,8 @@ ExportPanel::ExportPanel () : listener (nullptr)
     hb_raw_xtrans_method->pack_start (*Gtk::manage (new Gtk::Label ( M ("EXPORT_RAW_DMETHOD") + ": ")), Gtk::PACK_SHRINK, 4);
     raw_xtrans_method = Gtk::manage (new MyComboBoxText ());
 
-    for ( size_t i = 0; i < procparams::RAWParams::XTransSensor::numMethods; i++) {
-        raw_xtrans_method->append (procparams::RAWParams::XTransSensor::methodstring[i]);
+    for (const auto method_string : RAWParams::XTransSensor::getMethodStrings()) {
+        raw_xtrans_method->append(method_string);
     }
 
     raw_xtrans_method->set_active (0);
@@ -275,15 +275,15 @@ void ExportPanel::SaveSettingsAsDefault()
     //saving Bayer demosaic_method
     int currentRow = raw_bayer_method->get_active_row_number();
 
-    if ( currentRow >= 0 && currentRow < procparams::RAWParams::BayerSensor::numMethods) {
-        FE_OPT_STORE_ (options.fastexport_raw_bayer_method, procparams::RAWParams::BayerSensor::methodstring[currentRow]);
+    if (currentRow >= 0 && currentRow < std::numeric_limits<int>::max()) {
+        FE_OPT_STORE_ (options.fastexport_raw_bayer_method, procparams::RAWParams::BayerSensor::getMethodStrings()[currentRow]);
     }
 
     //saving X-Trans demosaic_method
     currentRow = raw_xtrans_method->get_active_row_number();
 
-    if ( currentRow >= 0 && currentRow < procparams::RAWParams::XTransSensor::numMethods) {
-        FE_OPT_STORE_ (options.fastexport_raw_xtrans_method, procparams::RAWParams::XTransSensor::methodstring[currentRow]);
+    if (currentRow >= 0 && currentRow < std::numeric_limits<int>::max()) {
+        FE_OPT_STORE_ (options.fastexport_raw_xtrans_method, procparams::RAWParams::XTransSensor::getMethodStrings()[currentRow]);
     }
 
 //  options.fastexport_icm_input        = icm_input       ;
@@ -337,20 +337,20 @@ void ExportPanel::LoadDefaultSettings()
     bypass_raw_ff->set_active            (options.fastexport_bypass_raw_ff             );
 
     // Bayer demosaic method
-    raw_bayer_method->set_active (procparams::RAWParams::BayerSensor::numMethods);
+    raw_bayer_method->set_active(std::numeric_limits<int>::max());
 
-    for ( size_t i = 0; i < procparams::RAWParams::BayerSensor::numMethods; i++)
-        if ( options.fastexport_raw_bayer_method == procparams::RAWParams::BayerSensor::methodstring[i]) {
-            raw_bayer_method->set_active (i);
+    for (size_t i = 0; i < RAWParams::BayerSensor::getMethodStrings().size(); ++i)
+        if (options.fastexport_raw_bayer_method == procparams::RAWParams::BayerSensor::getMethodStrings()[i]) {
+            raw_bayer_method->set_active(i);
             break;
         }
 
     // X-Trans demosaic method
-    raw_xtrans_method->set_active (procparams::RAWParams::XTransSensor::numMethods);
+    raw_xtrans_method->set_active(std::numeric_limits<int>::max());
 
-    for ( size_t i = 0; i < procparams::RAWParams::XTransSensor::numMethods; i++)
-        if ( options.fastexport_raw_xtrans_method == procparams::RAWParams::XTransSensor::methodstring[i]) {
-            raw_xtrans_method->set_active (i);
+    for (size_t i = 0; i < procparams::RAWParams::XTransSensor::getMethodStrings().size(); ++i)
+        if (options.fastexport_raw_xtrans_method == procparams::RAWParams::XTransSensor::getMethodStrings()[i]) {
+            raw_xtrans_method->set_active(i);
             break;
         }
 

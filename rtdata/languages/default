@@ -1787,6 +1787,7 @@ TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Smooth transitions between areas with motion and
 TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;StdDev factor Blue
 TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;StdDev factor Green
 TP_RAW_PIXELSHIFTSTDDEVFACTORRED;StdDev factor Red
+TP_RAW_RCD;RCD
 TP_RAW_SENSOR_BAYER_LABEL;Sensor with Bayer Matrix
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.
 TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix

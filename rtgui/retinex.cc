@@ -380,14 +380,15 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
     Gtk::Grid *tranGrid = Gtk::manage (new Gtk::Grid());
     setExpandAlignProperties (tranGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
+    const RetinexParams default_params;
+
     // Transmission map curve
     transmissionCurveEditorG = new CurveEditorGroup (options.lastRetinexDir, M ("TP_RETINEX_TRANSMISSION"));
     setExpandAlignProperties (transmissionCurveEditorG, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     transmissionCurveEditorG->setCurveListener (this);
-    rtengine::RetinexParams::getDefaulttransmissionCurve (defaultCurve);
     transmissionShape = static_cast<FlatCurveEditor*> (transmissionCurveEditorG->addCurve (CT_Flat, "", nullptr, false, false));
     transmissionShape->setIdentityValue (0.);
-    transmissionShape->setResetCurve (FlatCurveType (defaultCurve.at (0)), defaultCurve);
+    transmissionShape->setResetCurve (FlatCurveType (default_params.transmissionCurve.at (0)), default_params.transmissionCurve);
     // transmissionShape->setBottomBarBgGradient(milestones);
     transmissionCurveEditorG->curveListComplete();
     transmissionCurveEditorG->set_tooltip_markup (M ("TP_RETINEX_TRANSMISSION_TOOLTIP"));
@@ -439,10 +440,9 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
     gaintransmissionCurve = new CurveEditorGroup (options.lastRetinexDir, M ("TP_RETINEX_GAINTRANSMISSION"));
     setExpandAlignProperties (gaintransmissionCurve, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     gaintransmissionCurve->setCurveListener (this);
-    rtengine::RetinexParams::getDefaultgaintransmissionCurve (defaultCurve);
     gaintransmissionShape = static_cast<FlatCurveEditor*> (gaintransmissionCurve->addCurve (CT_Flat, "", nullptr, false, false));
     gaintransmissionShape->setIdentityValue (0.);
-    gaintransmissionShape->setResetCurve (FlatCurveType (defaultCurve.at (0)), defaultCurve);
+    gaintransmissionShape->setResetCurve (FlatCurveType (default_params.gaintransmissionCurve.at (0)), default_params.gaintransmissionCurve);
     //gaintransmissionShape->setBottomBarBgGradient(milestones);
     gaintransmissionCurve->set_tooltip_markup (M ("TP_RETINEX_GAINTRANSMISSION_TOOLTIP"));
     gaintransmissionCurve->curveListComplete();

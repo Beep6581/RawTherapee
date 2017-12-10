@@ -74,13 +74,14 @@ extern const Settings* settings;
 extern MyMutex *fftwMutex;
 
 
-namespace {
+namespace
+{
 
 template <bool useUpperBound>
 void do_median_denoise(float **src, float **dst, float upperBound, const int width, const int height, const ImProcFunctions::Median medianType, const int iterations, const int numThreads, float **buffer)
 {
     typedef ImProcFunctions::Median Median;
-    
+
     int border = 1;
 
     switch (medianType) {
@@ -227,6 +228,7 @@ void do_median_denoise(float **src, float **dst, float upperBound, const int wid
 
                 case Median::TYPE_5X5_STRONG: {
 #ifdef __SSE2__
+
                     for (; !useUpperBound && j < width - border - 3; j += 4) {
                         STVFU(
                             medianOut[i][j],
@@ -261,6 +263,7 @@ void do_median_denoise(float **src, float **dst, float upperBound, const int wid
                     }
 
 #endif
+
                     for (; j < width - border; ++j) {
                         if (!useUpperBound || medianIn[i][j] <= upperBound) {
                             medianOut[i][j] = median(
@@ -315,7 +318,7 @@ void do_median_denoise(float **src, float **dst, float upperBound, const int wid
 #endif
 
                     std::array<float, 49> pp;
-                    
+
                     for (; j < width - border; ++j) {
                         if (!useUpperBound || medianIn[i][j] <= upperBound) {
                             for (int kk = 0, ii = -border; ii <= border; ++ii) {
@@ -323,7 +326,7 @@ void do_median_denoise(float **src, float **dst, float upperBound, const int wid
                                     pp[kk] = medianIn[i + ii][j + jj];
                                 }
                             }
-                            
+
                             medianOut[i][j] = median(pp);
                         } else {
                             medianOut[i][j] = medianIn[i][j];
@@ -350,7 +353,7 @@ void do_median_denoise(float **src, float **dst, float upperBound, const int wid
 #endif
 
                     std::array<float, 81> pp;
-                    
+
                     for (; j < width - border; ++j) {
                         if (!useUpperBound || medianIn[i][j] <= upperBound) {
                             for (int kk = 0, ii = -border; ii <= border; ++ii) {
@@ -358,7 +361,7 @@ void do_median_denoise(float **src, float **dst, float upperBound, const int wid
                                     pp[kk] = medianIn[i + ii][j + jj];
                                 }
                             }
-                        
+
                             medianOut[i][j] = median(pp);
                         } else {
                             medianOut[i][j] = medianIn[i][j];
@@ -393,6 +396,7 @@ void do_median_denoise(float **src, float **dst, float upperBound, const int wid
 #ifdef _OPENMP
         #pragma omp parallel for num_threads(numThreads) if (numThreads>1)
 #endif
+
         for (int i = 0; i < height; ++i) {
             for (int j = 0; j < width; ++j) {
                 dst[i][j] = medianOut[i][j];
@@ -491,7 +495,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
     MyMutex::MyLock lock(*fftwMutex);
 
     const nrquality nrQuality = (dnparams.smethod == "shal") ? QUALITY_STANDARD : QUALITY_HIGH;//shrink method
-    const float qhighFactor = (nrQuality == QUALITY_HIGH) ? 1.f / static_cast<float>( settings->nrhigh) : 1.0f;
+    const float qhighFactor = (nrQuality == QUALITY_HIGH) ? 1.f / static_cast<float>(settings->nrhigh) : 1.0f;
     const bool useNoiseCCurve = (noiseCCurve && noiseCCurve.getSum() > 5.f);
     const bool useNoiseLCurve = (noiseLCurve && noiseLCurve.getSum() >= 7.f);
     const bool autoch = (settings->leveldnautsimpl == 1 && (dnparams.Cmethod == "AUT" || dnparams.Cmethod == "PRE")) || (settings->leveldnautsimpl == 0 && (dnparams.C2method == "AUTO" || dnparams.C2method == "PREV"));
@@ -531,15 +535,15 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 
     const bool denoiseMethodRgb = (dnparams.dmethod == "RGB");
     // init luma noisevarL
-    const float noiseluma = static_cast<float>( dnparams.luma);
-    const float noisevarL = (useNoiseLCurve && (denoiseMethodRgb || !isRAW)) ? static_cast<float> (SQR(((noiseluma + 1.0) / 125.0) * (10. + (noiseluma + 1.0) / 25.0))) : static_cast<float> (SQR((noiseluma / 125.0) * (1.0 + noiseluma / 25.0)));
+    const float noiseluma = static_cast<float>(dnparams.luma);
+    const float noisevarL = (useNoiseLCurve && (denoiseMethodRgb || !isRAW)) ? static_cast<float>(SQR(((noiseluma + 1.0) / 125.0) * (10. + (noiseluma + 1.0) / 25.0))) : static_cast<float>(SQR((noiseluma / 125.0) * (1.0 + noiseluma / 25.0)));
     const bool denoiseLuminance = (noisevarL > 0.00001f);
 
     //printf("NL=%f \n",noisevarL);
     if (useNoiseLCurve || useNoiseCCurve) {
         int hei = calclum->getHeight();
         int wid = calclum->getWidth();
-        TMatrix wprofi = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
+        TMatrix wprofi = ICCStore::getInstance()->workingSpaceMatrix(params->icm.working);
 
         const float wpi[3][3] = {
             {static_cast<float>(wprofi[0][0]), static_cast<float>(wprofi[0][1]), static_cast<float>(wprofi[0][2])},
@@ -653,8 +657,9 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
             Color::gammanf2lut(igamcurve, igam, 32768.f, 65535.f);
         }
 
-        const float gain = pow (2.0f, float(expcomp));
-        float noisevar_Ldetail = SQR(static_cast<float>(SQR(100. - dnparams.Ldetail) + 50.*(100. - dnparams.Ldetail)) * TS * 0.5f);
+        const float gain = pow(2.0f, float(expcomp));
+        float params_Ldetail = min(float(dnparams.Ldetail), 99.9f); // max out to avoid div by zero when using noisevar_Ldetail as divisor
+        float noisevar_Ldetail = SQR(static_cast<float>(SQR(100. - params_Ldetail) + 50.*(100. - params_Ldetail)) * TS * 0.5f);
 
         array2D<float> tilemask_in(TS, TS);
         array2D<float> tilemask_out(TS, TS);
@@ -706,7 +711,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 
             int numtiles_W, numtiles_H, tilewidth, tileheight, tileWskip, tileHskip;
 
-            Tile_calc (tilesize, overlap, (options.rgbDenoiseThreadLimit == 0 && !ponder) ? (numTries == 1 ? 0 : 2) : 2, imwidth, imheight, numtiles_W, numtiles_H, tilewidth, tileheight, tileWskip, tileHskip);
+            Tile_calc(tilesize, overlap, (options.rgbDenoiseThreadLimit == 0 && !ponder) ? (numTries == 1 ? 0 : 2) : 2, imwidth, imheight, numtiles_W, numtiles_H, tilewidth, tileheight, tileWskip, tileHskip);
             memoryAllocationFailed = false;
             const int numtiles = numtiles_W * numtiles_H;
 
@@ -746,8 +751,8 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
             fftwf_plan plan_backward_blox[2];
 
             if (denoiseLuminance) {
-                float *Lbloxtmp  = reinterpret_cast<float*>( fftwf_malloc(max_numblox_W * TS * TS * sizeof (float)));
-                float *fLbloxtmp = reinterpret_cast<float*>( fftwf_malloc(max_numblox_W * TS * TS * sizeof (float)));
+                float *Lbloxtmp  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                float *fLbloxtmp = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
 
                 int nfwd[2] = {TS, TS};
 
@@ -756,12 +761,12 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                 fftw_r2r_kind bwdkind[2] = {FFTW_REDFT01, FFTW_REDFT01};
 
                 // Creating the plans with FFTW_MEASURE instead of FFTW_ESTIMATE speeds up the execute a bit
-                plan_forward_blox[0]  = fftwf_plan_many_r2r(2, nfwd, max_numblox_W, Lbloxtmp, nullptr, 1, TS * TS, fLbloxtmp, nullptr, 1, TS * TS, fwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT  );
-                plan_backward_blox[0] = fftwf_plan_many_r2r(2, nfwd, max_numblox_W, fLbloxtmp, nullptr, 1, TS * TS, Lbloxtmp, nullptr, 1, TS * TS, bwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT  );
-                plan_forward_blox[1]  = fftwf_plan_many_r2r(2, nfwd, min_numblox_W, Lbloxtmp, nullptr, 1, TS * TS, fLbloxtmp, nullptr, 1, TS * TS, fwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT  );
-                plan_backward_blox[1] = fftwf_plan_many_r2r(2, nfwd, min_numblox_W, fLbloxtmp, nullptr, 1, TS * TS, Lbloxtmp, nullptr, 1, TS * TS, bwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT  );
-                fftwf_free (Lbloxtmp);
-                fftwf_free (fLbloxtmp);
+                plan_forward_blox[0]  = fftwf_plan_many_r2r(2, nfwd, max_numblox_W, Lbloxtmp, nullptr, 1, TS * TS, fLbloxtmp, nullptr, 1, TS * TS, fwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                plan_backward_blox[0] = fftwf_plan_many_r2r(2, nfwd, max_numblox_W, fLbloxtmp, nullptr, 1, TS * TS, Lbloxtmp, nullptr, 1, TS * TS, bwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                plan_forward_blox[1]  = fftwf_plan_many_r2r(2, nfwd, min_numblox_W, Lbloxtmp, nullptr, 1, TS * TS, fLbloxtmp, nullptr, 1, TS * TS, fwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                plan_backward_blox[1] = fftwf_plan_many_r2r(2, nfwd, min_numblox_W, fLbloxtmp, nullptr, 1, TS * TS, Lbloxtmp, nullptr, 1, TS * TS, bwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                fftwf_free(Lbloxtmp);
+                fftwf_free(fLbloxtmp);
             }
 
 #ifndef _OPENMP
@@ -785,7 +790,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
             }
 
             if (options.rgbDenoiseThreadLimit > 0)
-                while(denoiseNestedLevels * numthreads > options.rgbDenoiseThreadLimit) {
+                while (denoiseNestedLevels * numthreads > options.rgbDenoiseThreadLimit) {
                     denoiseNestedLevels--;
                 }
 
@@ -801,12 +806,12 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 
             if (numtiles > 1 && denoiseLuminance) {
                 for (int i = 0; i < denoiseNestedLevels * numthreads; ++i) {
-                    LbloxArray[i]  = reinterpret_cast<float*>( fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
-                    fLbloxArray[i] = reinterpret_cast<float*>( fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                    LbloxArray[i]  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                    fLbloxArray[i] = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
                 }
             }
 
-            TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.working);
+            TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.working);
             //inverse matrix user select
             const float wip[3][3] = {
                 {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
@@ -814,7 +819,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                 {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
             };
 
-            TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
+            TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.working);
 
             const float wp[3][3] = {
                 {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
@@ -853,19 +858,19 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                         int height = tilebottom - tiletop;
                         int width2 = (width + 1) / 2;
                         float realred, realblue;
-                        float interm_med = static_cast<float>( dnparams.chroma) / 10.0;
+                        float interm_med = static_cast<float>(dnparams.chroma) / 10.0;
                         float intermred, intermblue;
 
                         if (dnparams.redchro > 0.) {
                             intermred = (dnparams.redchro / 10.);
                         } else {
-                            intermred = static_cast<float>( dnparams.redchro) / 7.0;    //increase slower than linear for more sensit
+                            intermred = static_cast<float>(dnparams.redchro) / 7.0;     //increase slower than linear for more sensit
                         }
 
                         if (dnparams.bluechro > 0.) {
                             intermblue = (dnparams.bluechro / 10.);
                         } else {
-                            intermblue = static_cast<float>( dnparams.bluechro) / 7.0;    //increase slower than linear for more sensit
+                            intermblue = static_cast<float>(dnparams.bluechro) / 7.0;     //increase slower than linear for more sensit
                         }
 
                         if (ponder && kall == 2) {
@@ -1079,7 +1084,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                         //binary 1 or 0 for each level, eg subsampling = 0 means no subsampling, 1 means subsample
                         //the first level only, 7 means subsample the first three levels, etc.
                         //actual implementation only works with subsampling set to 1
-                        float interm_medT = static_cast<float>( dnparams.chroma) / 10.0;
+                        float interm_medT = static_cast<float>(dnparams.chroma) / 10.0;
                         bool execwavelet = true;
 
                         if (!denoiseLuminance && interm_medT < 0.05f && dnparams.median && (dnparams.methodmed == "Lab" || dnparams.methodmed == "Lonly")) {
@@ -1139,7 +1144,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                             levwav = min(maxlev2, levwav);
 
                             //  if (settings->verbose) printf("levwavelet=%i  noisevarA=%f noisevarB=%f \n",levwav, noisevarab_r, noisevarab_b);
-                            Ldecomp = new wavelet_decomposition (labdn->L[0], labdn->W, labdn->H, levwav, 1, 1, max(1, denoiseNestedLevels));
+                            Ldecomp = new wavelet_decomposition(labdn->L[0], labdn->W, labdn->H, levwav, 1, 1, max(1, denoiseNestedLevels));
 
                             if (Ldecomp->memoryAllocationFailed) {
                                 memoryAllocationFailed = true;
@@ -1176,7 +1181,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                             float chmaxresid = 0.f;
                             float chmaxresidtemp = 0.f;
 
-                            adecomp = new wavelet_decomposition (labdn->a[0], labdn->W, labdn->H, levwav, 1, 1, max(1, denoiseNestedLevels));
+                            adecomp = new wavelet_decomposition(labdn->a[0], labdn->W, labdn->H, levwav, 1, 1, max(1, denoiseNestedLevels));
 
                             if (adecomp->memoryAllocationFailed) {
                                 memoryAllocationFailed = true;
@@ -1213,7 +1218,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                             delete adecomp;
 
                             if (!memoryAllocationFailed) {
-                                wavelet_decomposition* bdecomp = new wavelet_decomposition (labdn->b[0], labdn->W, labdn->H, levwav, 1, 1, max(1, denoiseNestedLevels));
+                                wavelet_decomposition* bdecomp = new wavelet_decomposition(labdn->b[0], labdn->W, labdn->H, levwav, 1, 1, max(1, denoiseNestedLevels));
 
                                 if (bdecomp->memoryAllocationFailed) {
                                     memoryAllocationFailed = true;
@@ -1295,79 +1300,6 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                         }
 
                         if (!memoryAllocationFailed) {
-                            if ((metchoice == 1 || metchoice == 2 || metchoice == 3 || metchoice == 4) && dnparams.median) {
-                                float** tmL;
-                                int wid = labdn->W;
-                                int hei = labdn->H;
-                                tmL = new float*[hei];
-
-                                for (int i = 0; i < hei; ++i) {
-                                    tmL[i] = new float[wid];
-                                }
-
-                                Median medianTypeL = Median::TYPE_3X3_SOFT;
-                                Median medianTypeAB = Median::TYPE_3X3_SOFT;
-
-                                if (dnparams.medmethod == "soft") {
-                                    if (metchoice != 4) {
-                                        medianTypeL = medianTypeAB = Median::TYPE_3X3_SOFT;
-                                    } else {
-                                        medianTypeL = Median::TYPE_3X3_SOFT;
-                                        medianTypeAB = Median::TYPE_3X3_SOFT;
-                                    }
-                                } else if (dnparams.medmethod == "33") {
-                                    if (metchoice != 4) {
-                                        medianTypeL = medianTypeAB = Median::TYPE_3X3_STRONG;
-                                    } else {
-                                        medianTypeL = Median::TYPE_3X3_SOFT;
-                                        medianTypeAB = Median::TYPE_3X3_STRONG;
-                                    }
-                                } else if (dnparams.medmethod == "55soft") {
-                                    if (metchoice != 4) {
-                                        medianTypeL = medianTypeAB = Median::TYPE_5X5_SOFT;
-                                    } else {
-                                        medianTypeL = Median::TYPE_3X3_SOFT;
-                                        medianTypeAB = Median::TYPE_5X5_SOFT;
-                                    }
-                                } else if (dnparams.medmethod == "55") {
-                                    if (metchoice != 4) {
-                                        medianTypeL = medianTypeAB = Median::TYPE_5X5_STRONG;
-                                    } else {
-                                        medianTypeL = Median::TYPE_3X3_STRONG;
-                                        medianTypeAB = Median::TYPE_5X5_STRONG;
-                                    }
-                                } else if (dnparams.medmethod == "77") {
-                                    if (metchoice != 4) {
-                                        medianTypeL = medianTypeAB = Median::TYPE_7X7;
-                                    } else {
-                                        medianTypeL = Median::TYPE_3X3_STRONG;
-                                        medianTypeAB = Median::TYPE_7X7;
-                                    }
-                                } else if (dnparams.medmethod == "99") {
-                                    if (metchoice != 4) {
-                                        medianTypeL = medianTypeAB = Median::TYPE_9X9;
-                                    } else {
-                                        medianTypeL = Median::TYPE_5X5_SOFT;
-                                        medianTypeAB = Median::TYPE_9X9;
-                                    }
-                                }
-
-                                if (metchoice == 1 || metchoice == 2 || metchoice == 4) {
-                                    Median_Denoise(labdn->L, labdn->L, wid, hei, medianTypeL, dnparams.passes, denoiseNestedLevels, tmL);
-                                }
-
-                                if (metchoice == 2 || metchoice == 3 || metchoice == 4) {
-                                    Median_Denoise(labdn->a, labdn->a, wid, hei, medianTypeAB, dnparams.passes, denoiseNestedLevels, tmL);
-                                    Median_Denoise(labdn->b, labdn->b, wid, hei, medianTypeAB, dnparams.passes, denoiseNestedLevels, tmL);
-                                }
-
-                                for (int i = 0; i < hei; ++i) {
-                                    delete[] tmL[i];
-                                }
-
-                                delete[] tmL;
-                            }
-
                             //wavelet denoised L channel
                             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1396,8 +1328,8 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 
                                 if (numtiles == 1) {
                                     for (int i = 0; i < denoiseNestedLevels * numthreads; ++i) {
-                                        LbloxArray[i]  = reinterpret_cast<float*>( fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
-                                        fLbloxArray[i] = reinterpret_cast<float*>( fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                                        LbloxArray[i]  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                                        fLbloxArray[i] = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
                                     }
                                 }
 
@@ -1492,7 +1424,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 
 
                                         for (int hblk = 0; hblk < numblox_W; ++hblk) {
-                                            RGBtile_denoise (fLblox, hblk, noisevar_Ldetail, nbrwt, blurbuffer);
+                                            RGBtile_denoise(fLblox, hblk, noisevar_Ldetail, nbrwt, blurbuffer);
                                         }//end of horizontal block loop
 
                                         //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1507,7 +1439,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                         int topproc = (vblk - blkrad) * offset;
 
                                         //add row of blocks to output image tile
-                                        RGBoutput_tile_row (Lblox, Ldetail, tilemask_out, height, width, topproc);
+                                        RGBoutput_tile_row(Lblox, Ldetail, tilemask_out, height, width, topproc);
 
                                         //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1528,6 +1460,79 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                         labdn->L[i][j] += Ldetail[i][j] / totwt[i][j]; //note that labdn initially stores the denoised hipass data
                                     }
                                 }
+                            }
+
+                            if ((metchoice == 1 || metchoice == 2 || metchoice == 3 || metchoice == 4) && dnparams.median) {
+                                float** tmL;
+                                int wid = labdn->W;
+                                int hei = labdn->H;
+                                tmL = new float*[hei];
+
+                                for (int i = 0; i < hei; ++i) {
+                                    tmL[i] = new float[wid];
+                                }
+
+                                Median medianTypeL = Median::TYPE_3X3_SOFT;
+                                Median medianTypeAB = Median::TYPE_3X3_SOFT;
+
+                                if (dnparams.medmethod == "soft") {
+                                    if (metchoice != 4) {
+                                        medianTypeL = medianTypeAB = Median::TYPE_3X3_SOFT;
+                                    } else {
+                                        medianTypeL = Median::TYPE_3X3_SOFT;
+                                        medianTypeAB = Median::TYPE_3X3_SOFT;
+                                    }
+                                } else if (dnparams.medmethod == "33") {
+                                    if (metchoice != 4) {
+                                        medianTypeL = medianTypeAB = Median::TYPE_3X3_STRONG;
+                                    } else {
+                                        medianTypeL = Median::TYPE_3X3_SOFT;
+                                        medianTypeAB = Median::TYPE_3X3_STRONG;
+                                    }
+                                } else if (dnparams.medmethod == "55soft") {
+                                    if (metchoice != 4) {
+                                        medianTypeL = medianTypeAB = Median::TYPE_5X5_SOFT;
+                                    } else {
+                                        medianTypeL = Median::TYPE_3X3_SOFT;
+                                        medianTypeAB = Median::TYPE_5X5_SOFT;
+                                    }
+                                } else if (dnparams.medmethod == "55") {
+                                    if (metchoice != 4) {
+                                        medianTypeL = medianTypeAB = Median::TYPE_5X5_STRONG;
+                                    } else {
+                                        medianTypeL = Median::TYPE_3X3_STRONG;
+                                        medianTypeAB = Median::TYPE_5X5_STRONG;
+                                    }
+                                } else if (dnparams.medmethod == "77") {
+                                    if (metchoice != 4) {
+                                        medianTypeL = medianTypeAB = Median::TYPE_7X7;
+                                    } else {
+                                        medianTypeL = Median::TYPE_3X3_STRONG;
+                                        medianTypeAB = Median::TYPE_7X7;
+                                    }
+                                } else if (dnparams.medmethod == "99") {
+                                    if (metchoice != 4) {
+                                        medianTypeL = medianTypeAB = Median::TYPE_9X9;
+                                    } else {
+                                        medianTypeL = Median::TYPE_5X5_SOFT;
+                                        medianTypeAB = Median::TYPE_9X9;
+                                    }
+                                }
+
+                                if (metchoice == 1 || metchoice == 2 || metchoice == 4) {
+                                    Median_Denoise(labdn->L, labdn->L, wid, hei, medianTypeL, dnparams.passes, denoiseNestedLevels, tmL);
+                                }
+
+                                if (metchoice == 2 || metchoice == 3 || metchoice == 4) {
+                                    Median_Denoise(labdn->a, labdn->a, wid, hei, medianTypeAB, dnparams.passes, denoiseNestedLevels, tmL);
+                                    Median_Denoise(labdn->b, labdn->b, wid, hei, medianTypeAB, dnparams.passes, denoiseNestedLevels, tmL);
+                                }
+
+                                for (int i = 0; i < hei; ++i) {
+                                    delete[] tmL[i];
+                                }
+
+                                delete[] tmL;
                             }
 
                             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1776,7 +1781,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                 fftwf_destroy_plan(plan_backward_blox[1]);
                 fftwf_cleanup();
             }
-        } while(memoryAllocationFailed && numTries < 2 && (options.rgbDenoiseThreadLimit == 0) && !ponder);
+        } while (memoryAllocationFailed && numTries < 2 && (options.rgbDenoiseThreadLimit == 0) && !ponder);
 
         if (memoryAllocationFailed) {
             printf("tiled denoise failed due to isufficient memory. Output is not denoised!\n");
@@ -1838,16 +1843,16 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                             }
                         }
                     }
-                } else {
+                } else
+                {
                     #pragma omp for
 
-                    for (int i = 2; i < hei - 2; ++i)
-                    {
+                    for (int i = 2; i < hei - 2; ++i) {
                         if (methmed == 3) {
                             for (int j = 2; j < wid - 2; ++j) {
                                 tm[i][j] = median(source->r(i, j), source->r(i - 1, j), source->r(i + 1, j), source->r(i, j + 1), source->r(i, j - 1), source->r(i - 1, j - 1), source->r(i - 1, j + 1), source->r(i + 1, j - 1), source->r(i + 1, j + 1),
-                                source->r(i - 2, j), source->r(i + 2, j), source->r(i, j + 2), source->r(i, j - 2), source->r(i - 2, j - 2), source->r(i - 2, j + 2), source->r(i + 2, j - 2), source->r(i + 2, j + 2),
-                                source->r(i - 2, j + 1), source->r(i + 2, j + 1), source->r(i - 1, j + 2), source->r(i - 1, j - 2), source->r(i - 2, j - 1), source->r(i + 2, j - 1), source->r(i + 1, j + 2), source->r(i + 1, j - 2));//5x5
+                                                  source->r(i - 2, j), source->r(i + 2, j), source->r(i, j + 2), source->r(i, j - 2), source->r(i - 2, j - 2), source->r(i - 2, j + 2), source->r(i + 2, j - 2), source->r(i + 2, j + 2),
+                                                  source->r(i - 2, j + 1), source->r(i + 2, j + 1), source->r(i - 1, j + 2), source->r(i - 1, j - 2), source->r(i - 2, j - 1), source->r(i + 2, j - 1), source->r(i + 1, j + 2), source->r(i + 1, j - 2));//5x5
                             }
                         } else {
                             for (int j = 2; j < wid - 2; ++j) {
@@ -1870,6 +1875,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                         }
                     }
                 }
+
 #ifdef _OPENMP
                 #pragma omp for nowait
 #endif
@@ -1896,16 +1902,16 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                             }
                         }
                     }
-                } else {
+                } else
+                {
                     #pragma omp for
 
-                    for (int i = 2; i < hei - 2; ++i)
-                    {
+                    for (int i = 2; i < hei - 2; ++i) {
                         if (methmed == 3) {
                             for (int j = 2; j < wid - 2; ++j) {
                                 tm[i][j] = median(source->b(i, j), source->b(i - 1, j), source->b(i + 1, j), source->b(i, j + 1), source->b(i, j - 1), source->b(i - 1, j - 1), source->b(i - 1, j + 1), source->b(i + 1, j - 1), source->b(i + 1, j + 1),
-                                source->b(i - 2, j), source->b(i + 2, j), source->b(i, j + 2), source->b(i, j - 2), source->b(i - 2, j - 2), source->b(i - 2, j + 2), source->b(i + 2, j - 2), source->b(i + 2, j + 2),
-                                source->b(i - 2, j + 1), source->b(i + 2, j + 1), source->b(i - 1, j + 2), source->b(i - 1, j - 2), source->b(i - 2, j - 1), source->b(i + 2, j - 1), source->b(i + 1, j + 2), source->b(i + 1, j - 2)); // 5x5
+                                                  source->b(i - 2, j), source->b(i + 2, j), source->b(i, j + 2), source->b(i, j - 2), source->b(i - 2, j - 2), source->b(i - 2, j + 2), source->b(i + 2, j - 2), source->b(i + 2, j + 2),
+                                                  source->b(i - 2, j + 1), source->b(i + 2, j + 1), source->b(i - 1, j + 2), source->b(i - 1, j - 2), source->b(i - 2, j - 1), source->b(i + 2, j - 1), source->b(i + 1, j + 2), source->b(i + 1, j - 2)); // 5x5
                             }
                         } else {
                             for (int j = 2; j < wid - 2; ++j) {
@@ -1956,16 +1962,16 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                             }
                         }
                     }
-                } else {
+                } else
+                {
                     #pragma omp for
 
-                    for (int i = 2; i < hei - 2; ++i)
-                    {
+                    for (int i = 2; i < hei - 2; ++i) {
                         if (methmed == 3) {
                             for (int j = 2; j < wid - 2; ++j) {
                                 tm[i][j] = median(source->g(i, j), source->g(i - 1, j), source->g(i + 1, j), source->g(i, j + 1), source->g(i, j - 1), source->g(i - 1, j - 1), source->g(i - 1, j + 1), source->g(i + 1, j - 1), source->g(i + 1, j + 1),
-                                source->g(i - 2, j), source->g(i + 2, j), source->g(i, j + 2), source->g(i, j - 2), source->g(i - 2, j - 2), source->g(i - 2, j + 2), source->g(i + 2, j - 2), source->g(i + 2, j + 2),
-                                source->g(i - 2, j + 1), source->g(i + 2, j + 1), source->g(i - 1, j + 2), source->g(i - 1, j - 2), source->g(i - 2, j - 1), source->g(i + 2, j - 1), source->g(i + 1, j + 2), source->g(i + 1, j - 2)); // 5x5
+                                                  source->g(i - 2, j), source->g(i + 2, j), source->g(i, j + 2), source->g(i, j - 2), source->g(i - 2, j - 2), source->g(i - 2, j + 2), source->g(i + 2, j - 2), source->g(i + 2, j + 2),
+                                                  source->g(i - 2, j + 1), source->g(i + 2, j + 1), source->g(i - 1, j + 2), source->g(i - 1, j - 2), source->g(i - 2, j - 1), source->g(i + 2, j - 1), source->g(i + 1, j + 2), source->g(i + 1, j - 2)); // 5x5
                             }
                         } else {
                             for (int j = 2; j < wid - 2; ++j) {
@@ -2034,7 +2040,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-SSEFUNCTION void ImProcFunctions::RGBtile_denoise (float * fLblox, int hblproc, float noisevar_Ldetail, float * nbrwt, float * blurbuffer) //for DCT
+SSEFUNCTION void ImProcFunctions::RGBtile_denoise(float * fLblox, int hblproc, float noisevar_Ldetail, float * nbrwt, float * blurbuffer)  //for DCT
 {
     int blkstart = hblproc * TS * TS;
 
@@ -2067,7 +2073,7 @@ SSEFUNCTION void ImProcFunctions::RGBtile_denoise (float * fLblox, int hblproc, 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void ImProcFunctions::RGBoutput_tile_row (float *bloxrow_L, float ** Ldetail, float ** tilemask_out, int height, int width, int top)
+void ImProcFunctions::RGBoutput_tile_row(float *bloxrow_L, float ** Ldetail, float ** tilemask_out, int height, int width, int top)
 {
     const int numblox_W = ceil((static_cast<float>(width)) / (offset));
     const float DCTnorm = 1.0f / (4 * TS * TS); //for DCT
@@ -2146,7 +2152,7 @@ float ImProcFunctions::MadMax(float * DataList, int & max, int datalen)
 
 float ImProcFunctions::Mad(float * DataList, const int datalen)
 {
-    if(datalen <= 1) { // Avoid possible buffer underrun
+    if (datalen <= 1) { // Avoid possible buffer underrun
         return 0;
     }
 
@@ -2175,7 +2181,7 @@ float ImProcFunctions::Mad(float * DataList, const int datalen)
 
 float ImProcFunctions::MadRgb(float * DataList, const int datalen)
 {
-    if(datalen <= 1) { // Avoid possible buffer underrun
+    if (datalen <= 1) { // Avoid possible buffer underrun
         return 0;
     }
 
@@ -2902,7 +2908,7 @@ SSEFUNCTION void ImProcFunctions::ShrinkAll_info(float ** WavCoeffs_a, float ** 
         }
     }
 
-    const float reduc = (schoice == 2) ? static_cast<float>( settings->nrhigh) : 1.f;
+    const float reduc = (schoice == 2) ? static_cast<float>(settings->nrhigh) : 1.f;
 
     for (int dir = 1; dir < 4; ++dir) {
         float mada, madb;
@@ -3002,7 +3008,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_infoGamCurve(const procparams::Dir
     }
 }
 
-void ImProcFunctions::calcautodn_info (float &chaut, float &delta, int Nb, int levaut, float maxmax, float lumema, float chromina, int mode, int lissage, float redyel, float skinc, float nsknc)
+void ImProcFunctions::calcautodn_info(float &chaut, float &delta, int Nb, int levaut, float maxmax, float lumema, float chromina, int mode, int lissage, float redyel, float skinc, float nsknc)
 {
 
     float reducdelta = 1.f;
@@ -3081,7 +3087,7 @@ void ImProcFunctions::calcautodn_info (float &chaut, float &delta, int Nb, int l
             delta *= 0.15f;
         } else if (chaut < 650.f) {
             delta *= 0.1f;
-        } else /*if (chaut >= 650.f)*/ {
+        } else { /*if (chaut >= 650.f)*/
             delta *= 0.07f;
         }
 
@@ -3119,7 +3125,7 @@ void ImProcFunctions::calcautodn_info (float &chaut, float &delta, int Nb, int l
             delta *= 0.3f;
         } else if (chaut < 650.f) {
             delta *= 0.2f;
-        } else /*if (chaut >= 650.f)*/ {
+        } else { /*if (chaut >= 650.f)*/
             delta *= 0.15f;
         }
 
@@ -3157,7 +3163,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
     float** bcalc;
     hei = provicalc->getHeight();
     wid = provicalc->getWidth();
-    TMatrix wprofi = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
+    TMatrix wprofi = ICCStore::getInstance()->workingSpaceMatrix(params->icm.working);
 
     const float wpi[3][3] = {
         {static_cast<float>(wprofi[0][0]), static_cast<float>(wprofi[0][1]), static_cast<float>(wprofi[0][2])},
@@ -3209,7 +3215,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
 
     bool denoiseMethodRgb = (dnparams.dmethod == "RGB");
 
-    const float gain = pow (2.0f, float(expcomp));
+    const float gain = pow(2.0f, float(expcomp));
 
     int tilesize;
     int overlap;
@@ -3228,11 +3234,11 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
 
     //always no Tiles
     int kall = 0;
-    Tile_calc (tilesize, overlap, kall, imwidth, imheight, numtiles_W, numtiles_H, tilewidth, tileheight, tileWskip, tileHskip);
+    Tile_calc(tilesize, overlap, kall, imwidth, imheight, numtiles_W, numtiles_H, tilewidth, tileheight, tileWskip, tileHskip);
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
+    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.working);
     const float wp[3][3] = {
         {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
         {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
@@ -3276,19 +3282,19 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
             }
 
             float realred, realblue;
-            float interm_med = static_cast<float>( dnparams.chroma) / 10.0;
+            float interm_med = static_cast<float>(dnparams.chroma) / 10.0;
             float intermred, intermblue;
 
             if (dnparams.redchro > 0.) {
                 intermred = (dnparams.redchro / 10.);
             } else {
-                intermred = static_cast<float>( dnparams.redchro) / 7.0;    //increase slower than linear for more sensit
+                intermred = static_cast<float>(dnparams.redchro) / 7.0;     //increase slower than linear for more sensit
             }
 
             if (dnparams.bluechro > 0.) {
                 intermblue = (dnparams.bluechro / 10.);
             } else {
-                intermblue = static_cast<float>( dnparams.bluechro) / 7.0;    //increase slower than linear for more sensit
+                intermblue = static_cast<float>(dnparams.bluechro) / 7.0;     //increase slower than linear for more sensit
             }
 
             realred = interm_med + intermred;
@@ -3522,13 +3528,13 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
                 #pragma omp section
 #endif
                 {
-                    adecomp = new wavelet_decomposition (labdn->data + datalen, labdn->W, labdn->H, levwav, 1);
+                    adecomp = new wavelet_decomposition(labdn->data + datalen, labdn->W, labdn->H, levwav, 1);
                 }
 #ifdef _RT_NESTED_OPENMP
                 #pragma omp section
 #endif
                 {
-                    bdecomp = new wavelet_decomposition (labdn->data + 2 * datalen, labdn->W, labdn->H, levwav, 1);
+                    bdecomp = new wavelet_decomposition(labdn->data + 2 * datalen, labdn->W, labdn->H, levwav, 1);
                 }
             }
 

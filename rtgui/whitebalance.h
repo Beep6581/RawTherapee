@@ -57,7 +57,7 @@ protected:
         }
     };
 
-    static Glib::RefPtr<Gdk::Pixbuf> wbPixbufs[rtengine::procparams::WBT_CUSTOM + 1];
+    static Glib::RefPtr<Gdk::Pixbuf> wbPixbufs[rtengine::toUnderlying(rtengine::procparams::WBEntry::Type::CUSTOM) + 1];
     Glib::RefPtr<Gtk::TreeStore> refTreeModel;
     MethodColumns methodColumns;
     MyComboBox* method;
@@ -85,9 +85,9 @@ protected:
     int  setActiveMethod   (Glib::ustring label);
     int _setActiveMethod   (Glib::ustring &label, Gtk::TreeModel::Children &children);
 
-    Gtk::TreeModel::Row            getActiveMethod ();
-    unsigned int                   findWBEntryId   (const Glib::ustring &label, enum WB_LabelType lblType = WBLT_GUI);
-    rtengine::procparams::WBEntry* findWBEntry     (Glib::ustring label, enum WB_LabelType lblType = WBLT_GUI);
+    Gtk::TreeModel::Row                                   getActiveMethod();
+    unsigned int                                          findWBEntryId  (const Glib::ustring& label, enum WB_LabelType lblType = WBLT_GUI);
+    std::pair<bool, const rtengine::procparams::WBEntry&> findWBEntry    (const Glib::ustring& label, enum WB_LabelType lblType = WBLT_GUI);
 
 public:
 

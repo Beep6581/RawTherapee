@@ -1481,16 +1481,12 @@ private:
                        params.defringe.radius);
         adjust_radius (defaultparams.sh.radius, scale_factor, params.sh.radius);
 
-        if (params.raw.xtranssensor.method ==
-                procparams::RAWParams::XTransSensor::methodstring[
-             procparams::RAWParams::XTransSensor::threePass]) {
-            params.raw.xtranssensor.method =
-                procparams::RAWParams::XTransSensor::methodstring[
-            procparams::RAWParams::XTransSensor::onePass];
+        if (params.raw.xtranssensor.method == procparams::RAWParams::XTransSensor::getMethodString(procparams::RAWParams::XTransSensor::Method::THREE_PASS)) {
+            params.raw.xtranssensor.method = procparams::RAWParams::XTransSensor::getMethodString(procparams::RAWParams::XTransSensor::Method::ONE_PASS);
         }
 
-        if (params.raw.bayersensor.method == procparams::RAWParams::BayerSensor::methodstring[procparams::RAWParams::BayerSensor::pixelshift]) {
-            params.raw.bayersensor.method = procparams::RAWParams::BayerSensor::methodstring[params.raw.bayersensor.pixelShiftLmmse ? procparams::RAWParams::BayerSensor::lmmse : procparams::RAWParams::BayerSensor::amaze];
+        if (params.raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::PIXELSHIFT)) {
+            params.raw.bayersensor.method = procparams::RAWParams::BayerSensor::getMethodString(params.raw.bayersensor.pixelShiftLmmse ? procparams::RAWParams::BayerSensor::Method::LMMSE : procparams::RAWParams::BayerSensor::Method::AMAZE);
         }
     }
 

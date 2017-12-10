@@ -943,12 +943,12 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
     }
 
     if (!raw_ca_autocorrect->get_active ()) {
-        filterPE.raw.caCorrection       = falsePE.raw.caCorrection;
+        filterPE.raw.ca_autocorrect       = falsePE.raw.ca_autocorrect;
     }
 
     if (!raw_caredblue->get_active ()) {
-        filterPE.raw.caRed              = falsePE.raw.caRed;
-        filterPE.raw.caBlue             = falsePE.raw.caBlue;
+        filterPE.raw.cared              = falsePE.raw.cared;
+        filterPE.raw.cablue             = falsePE.raw.cablue;
     }
 
     if (!raw_hotpix_filt->get_active ())     {
@@ -960,7 +960,7 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
     }
 
     if (!raw_deadpix_filt->get_active () && !raw_hotpix_filt->get_active ()) {
-        filterPE.raw.hotDeadPixelThresh = falsePE.raw.hotDeadPixelThresh;
+        filterPE.raw.hotdeadpix_thresh = falsePE.raw.hotdeadpix_thresh;
     }
 
     if (!df_file->get_active ()) {
@@ -968,7 +968,7 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
     }
 
     if (!df_AutoSelect->get_active ()) {
-        filterPE.raw.dfAuto             = falsePE.raw.dfAuto;
+        filterPE.raw.df_autoselect             = falsePE.raw.df_autoselect;
     }
 
     if (!ff_file->get_active ()) {

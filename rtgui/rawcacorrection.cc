@@ -61,9 +61,9 @@ void RAWCACorr::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
     disableListener ();
 
     if(pedited ) {
-        caAutocorrect->setEdited(pedited->raw.caCorrection);
-        caRed->setEditedState( pedited->raw.caRed ? Edited : UnEdited );
-        caBlue->setEditedState( pedited->raw.caBlue ? Edited : UnEdited );
+        caAutocorrect->setEdited(pedited->raw.ca_autocorrect);
+        caRed->setEditedState( pedited->raw.cared ? Edited : UnEdited );
+        caBlue->setEditedState( pedited->raw.cablue ? Edited : UnEdited );
     }
 
     // disable Red and Blue sliders when caAutocorrect is enabled
@@ -84,9 +84,9 @@ void RAWCACorr::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedit
     pp->raw.cablue = caBlue->getValue();
 
     if (pedited) {
-        pedited->raw.caCorrection = !caAutocorrect->get_inconsistent();
-        pedited->raw.caRed = caRed->getEditedState ();
-        pedited->raw.caBlue = caBlue->getEditedState ();
+        pedited->raw.ca_autocorrect = !caAutocorrect->get_inconsistent();
+        pedited->raw.cared = caRed->getEditedState ();
+        pedited->raw.cablue = caBlue->getEditedState ();
     }
 
 }
@@ -132,8 +132,8 @@ void RAWCACorr::setDefaults(const rtengine::procparams::ProcParams* defParams, c
     caBlue->setDefault( defParams->raw.cablue);
 
     if (pedited) {
-        caRed->setDefaultEditedState( pedited->raw.caRed ? Edited : UnEdited);
-        caBlue->setDefaultEditedState( pedited->raw.caBlue ? Edited : UnEdited);
+        caRed->setDefaultEditedState( pedited->raw.cared ? Edited : UnEdited);
+        caBlue->setDefaultEditedState( pedited->raw.cablue ? Edited : UnEdited);
     } else {
         caRed->setDefaultEditedState( Irrelevant );
         caBlue->setDefaultEditedState( Irrelevant );

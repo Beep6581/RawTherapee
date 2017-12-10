@@ -190,10 +190,6 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
         updateDisabled(false);
     }
 
-    ckbUseDist->set_active (pp->lensProf.useDist);
-    ckbUseVign->set_active (pp->lensProf.useVign && isRaw);
-    ckbUseCA->set_active(pp->lensProf.useCA && isRaw && ckbUseCA->get_sensitive());
-
     const LFDatabase *db = LFDatabase::getInstance();
     LFCamera c;
     
@@ -226,6 +222,10 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
 
     updateLensfunWarning();
 
+    ckbUseDist->set_active (pp->lensProf.useDist);
+    ckbUseVign->set_active (pp->lensProf.useVign && isRaw);
+    ckbUseCA->set_active(pp->lensProf.useCA && isRaw && ckbUseCA->get_sensitive());
+    
     enableListener ();
     conUseDist.block(false);
 }
