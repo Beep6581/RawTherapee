@@ -1555,7 +1555,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
         ColorTemp::temp2mulxyz(params->wb.temperature, params->wb.method, Xw, Zw);  //compute white Xw Yw Zw  : white current WB
         ColorTemp::temp2mulxyz(params->colorappearance.tempout, "Custom", Xwout, Zwout);
         ColorTemp::temp2mulxyz(params->colorappearance.tempsc, "Custom", Xwsc, Zwsc);
-
+		printf("tsc=%i To=%i\n", params->colorappearance.tempsc, params->colorappearance.tempout);
         //viewing condition for surrsrc
         if (params->colorappearance.surrsrc == "Average") {
             f  = 1.00f;

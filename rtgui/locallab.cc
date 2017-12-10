@@ -3440,7 +3440,7 @@ void Locallab::inversChanged()
     }
 
     if (invers->get_active()) {
-        //sensi->hide();
+        warm->hide();
         sensi->show();
         llCurveEditorG->hide();
         curvactiv->hide();
@@ -3450,6 +3450,7 @@ void Locallab::inversChanged()
 
     } else {
         sensi->show();
+        warm->show();		
         llCurveEditorG->show();
         curvactiv->show();
         qualitycurveMethod->show();
