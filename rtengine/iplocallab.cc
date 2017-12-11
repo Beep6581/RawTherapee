@@ -8814,7 +8814,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                     }
         */
 
-        if (lp.war != 0  && !lp.inv) {
+        if (lp.war != 0  && !lp.inv  && lp.colorena) {
             float hueplus = hueref + dhue;
             float huemoins = hueref - dhue;
             // float ddhue = 0.f;
