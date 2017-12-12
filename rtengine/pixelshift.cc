@@ -336,7 +336,7 @@ private:
 
 using namespace std;
 using namespace rtengine;
-void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RAWParams::BayerSensor &bayerParamsIn, unsigned int frame, const std::string &model, float rawWpCorrection)
+void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RAWParams::BayerSensor &bayerParamsIn, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection)
 {
 
     if(numFrames != 4) { // fallback for non pixelshift files
