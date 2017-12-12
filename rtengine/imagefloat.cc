@@ -175,17 +175,22 @@ void Imagefloat::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, Prev
 {
 
     // compute channel multipliers
-    double drm, dgm, dbm;
-    ctemp.getMultipliers (drm, dgm, dbm);
-    float rm = drm, gm = dgm, bm = dbm;
+    float rm = 1.f, gm = 1.f, bm = 1.f;
+    if (ctemp.getTemp() >= 0) {
+        double drm, dgm, dbm;
+        ctemp.getMultipliers (drm, dgm, dbm);
+        rm = drm;
+        gm = dgm;
+        bm = dbm;
 
-    rm = 1.0 / rm;
-    gm = 1.0 / gm;
-    bm = 1.0 / bm;
-    float mul_lum = 0.299 * rm + 0.587 * gm + 0.114 * bm;
-    rm /= mul_lum;
-    gm /= mul_lum;
-    bm /= mul_lum;
+        rm = 1.0 / rm;
+        gm = 1.0 / gm;
+        bm = 1.0 / bm;
+        float mul_lum = 0.299 * rm + 0.587 * gm + 0.114 * bm;
+        rm /= mul_lum;
+        gm /= mul_lum;
+        bm /= mul_lum;
+    }
 
     int sx1, sy1, sx2, sy2;
 
