@@ -679,9 +679,9 @@ void ImProcFunctions::ciecamloc_02float(LabImage* lab, LabImage* dest)
     int tempo;
 
     if (params->locallab.warm > 0) {
-        tempo = 5000 - 35 * params->locallab.warm;
+        tempo = 5000 - 30 * params->locallab.warm;
     } else {
-        tempo = 5000 - 50 * params->locallab.warm;
+        tempo = 5000 - 49 * params->locallab.warm;
     }
 
     ColorTemp::temp2mulxyz(params->wb.temperature, params->wb.method, Xw, Zw);  //compute white Xw Yw Zw  : white current WB

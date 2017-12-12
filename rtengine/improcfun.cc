@@ -1697,6 +1697,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
         // level of adaptation
         const float deg = (params->colorappearance.degree) / 100.0f;
         const float pilot = params->colorappearance.autodegree ? 2.0f : deg;
+		
 
         const float degout = (params->colorappearance.degreeout) / 100.0f;
         const float pilotout = params->colorappearance.autodegreeout ? 2.0f : degout;
