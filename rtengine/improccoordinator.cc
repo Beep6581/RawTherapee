@@ -96,7 +96,6 @@ ImProcCoordinator::ImProcCoordinator()
       fw(0), fh(0), tr(0),
       fullw(1), fullh(1),
       pW(-1), pH(-1),
-//<<<<<<< HEAD
       plistener(nullptr), awbListener(nullptr), imageListener(nullptr), aeListener(nullptr), acListener(nullptr), abwListener(nullptr),  aloListener(nullptr), actListener(nullptr), adnListener(nullptr), awavListener(nullptr), dehaListener(nullptr), frameCountListener(nullptr), imageTypeListener(nullptr), hListener(nullptr),
       resultValid(false), lastOutputProfile("BADFOOD"), lastOutputIntent(RI__COUNT), lastOutputBPC(false), thread(nullptr), changeSinceLast(0), updaterRunning(false), destroying(false), utili(false), autili(false),
       butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false),  wavcontlutili(false),
@@ -414,32 +413,34 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
     }
 
     if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
-        MyMutex::MyLock initLock(minit);  // Also used in crop window
+        MyMutex::MyLock initLock (minit); // Also used in crop window
 
-        imgsrc->HLRecovery_Global(params.toneCurve);   // this handles Color HLRecovery
+        imgsrc->HLRecovery_Global ( params.toneCurve); // this handles Color HLRecovery
 
 
         if (settings->verbose) {
-            printf("Applying white balance, color correction & sRBG conversion...\n");
+            printf ("Applying white balance, color correction & sRBG conversion...\n");
         }
 
-        currWB = ColorTemp(params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
+        currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
 
-        if (params.wb.method == "Camera") {
-            currWB = imgsrc->getWB();
+        if (!params.wb.enabled) {
+            currWB = ColorTemp();
+        } else if (params.wb.method == "Camera") {
+            currWB = imgsrc->getWB ();
         } else if (params.wb.method == "Auto") {
             if (lastAwbEqual != params.wb.equal || lastAwbTempBias != params.wb.tempBias) {
                 double rm, gm, bm;
-                imgsrc->getAutoWBMultipliers(rm, gm, bm);
+                imgsrc->getAutoWBMultipliers (rm, gm, bm);
 
                 if (rm != -1.) {
-                    autoWB.update(rm, gm, bm, params.wb.equal, params.wb.tempBias);
+                    autoWB.update (rm, gm, bm, params.wb.equal, params.wb.tempBias);
                     lastAwbEqual = params.wb.equal;
                     lastAwbTempBias = params.wb.tempBias;
                 } else {
                     lastAwbEqual = -1.;
                     lastAwbTempBias = 0.0;
-                    autoWB.useDefaults(params.wb.equal);
+                    autoWB.useDefaults (params.wb.equal);
                 }
 
                 //double rr,gg,bb;
@@ -449,24 +450,26 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
             currWB = autoWB;
         }
 
-        params.wb.temperature = currWB.getTemp();
-        params.wb.green = currWB.getGreen();
-
-        if (params.wb.method == "Auto" && awbListener) {
-            awbListener->WBChanged(params.wb.temperature, params.wb.green);
+        if (params.wb.enabled) {
+            params.wb.temperature = currWB.getTemp ();
+            params.wb.green = currWB.getGreen ();
         }
 
-        int tr = getCoarseBitMask(params.coarse);
+        if (params.wb.method == "Auto" && awbListener && params.wb.enabled) {
+            awbListener->WBChanged (params.wb.temperature, params.wb.green);
+        }
 
-        imgsrc->getFullSize(fw, fh, tr);
+        int tr = getCoarseBitMask (params.coarse);
+
+        imgsrc->getFullSize (fw, fh, tr);
 
         // Will (re)allocate the preview's buffers
-        setScale(scale);
-        PreviewProps pp(0, 0, fw, fh, scale);
+        setScale (scale);
+        PreviewProps pp (0, 0, fw, fh, scale);
         // Tells to the ImProcFunctions' tools what is the preview scale, which may lead to some simplifications
-        ipf.setScale(scale);
+        ipf.setScale (scale);
 
-        imgsrc->getImage(currWB, tr, orig_prev, pp, params.toneCurve, params.raw);
+        imgsrc->getImage (currWB, tr, orig_prev, pp, params.toneCurve, params.raw);
         denoiseInfoStore.valid = false;
         //ColorTemp::CAT02 (orig_prev, &params) ;
         //   printf("orig_prevW=%d\n  scale=%d",orig_prev->width, scale);
@@ -511,9 +514,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                     }
                 }
         */
-        imgsrc->convertColorSpace(orig_prev, params.icm, currWB);
+        imgsrc->convertColorSpace (orig_prev, params.icm, currWB);
 
-        ipf.firstAnalysis(orig_prev, params, vhist16);
+        ipf.firstAnalysis (orig_prev, params, vhist16);
     }
 
     readyphase++;
@@ -728,12 +731,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
     lhist16(32768);
 
     if (todo & (M_LUMACURVE | M_CROP)) {
-        /*
-        <<<<<<< HEAD
-        =======
-                LUTu lhist16 (32768);
-        >>>>>>> dev
-        */
         lhist16.clear();
 #ifdef _OPENMP
         const int numThreads = min(max(pW * pH / (int)lhist16.getSize(), 1), omp_get_max_threads());
@@ -3009,7 +3006,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
             sizellcs[sp] = sizl;
             std::vector<double>   cllend;
 
-            llstr[sp] = llstr[0];
+           llstr[sp] = llstr[0];
 
             for (int j = 0; j < sizl; j++) {
                 llcurvs[sp * 500 + j] = s_datcl[j];
