@@ -2353,19 +2353,21 @@ void CLASS unpacked_load_raw()
 // RT
 void CLASS sony_arq_load_raw()
 {
+  static unsigned frame2pos[] = { 0, 1, 3, 2 };
   int row, col, bits=0;
   ushort samples[4];
+  unsigned frame = frame2pos[shot_select];
 
   while (1 << ++bits < maximum);
-  for (row=0; row < ((shot_select < 2) ? 1 : raw_height); row++) {
+  for (row=0; row < ((frame < 2) ? 1 : raw_height); row++) {
     for (col=0; col < ((row == 0) ? raw_width : 1); col++) {
       RAW(row,col) = 0;
     }
   }
   for (row=0; row < raw_height; row++) {
-    int r = row + (shot_select & 1);
+    int r = row + (frame & 1);
     for (col=0; col < raw_width; col++) {
-      int c = col + ((shot_select >> 1) & 1);
+      int c = col + ((frame >> 1) & 1);
       read_shorts(samples, 4);
       if (r < raw_height && c < raw_width) {
           RAW(r,c) = samples[(2 * (r & 1)) + (c & 1)];

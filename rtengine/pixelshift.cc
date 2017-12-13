@@ -294,44 +294,6 @@ void calcFrameBrightnessFactor(unsigned int frame, uint32_t datalen, LUT<uint32_
 
 }
 
-
-class RawDataFrameReorder {
-public:
-    typedef array2D<float> *array2D_ptr;
-    RawDataFrameReorder(const std::string &model, array2D_ptr *rawDataFrames):
-        model_(model),
-        frames_(rawDataFrames)
-    {
-        if (model_ == "ILCE-7RM3") {
-            std::swap(frames_[2], frames_[3]);
-        }
-    }
-
-    ~RawDataFrameReorder()
-    {
-        if (model_ == "ILCE-7RM3") {
-            std::swap(frames_[2], frames_[3]);
-        }
-    }
-
-    unsigned int getframe(unsigned int frame)
-    {
-        if (model_ == "ILCE-7RM3") {
-            if (frame == 2) {
-                return 3;
-            } else if (frame == 3) {
-                return 2;
-            }
-        }
-        return frame;
-    }
-
-private:
-    std::string model_;
-    array2D_ptr *frames_;
-};
-
-
 }
 
 using namespace std;
@@ -343,9 +305,6 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
         amaze_demosaic_RT(winx, winy, winw, winh, rawData, red, green, blue);
         return;
     }
-
-    RawDataFrameReorder reorder_frames(model, rawDataFrames);
-    frame = reorder_frames.getframe(frame);
 
     RAWParams::BayerSensor bayerParams = bayerParamsIn;
 
