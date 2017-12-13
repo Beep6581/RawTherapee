@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////
 //
-//  Algorithm for Pentax Pixel Shift raw files with motion detection
+//  Algorithm for Pentax/Sony Pixel Shift raw files with motion detection
 //
 //  Copyright (C) 2016 - 2017 Ingo Weyrich <heckflosse67@gmx.de>
 //
@@ -504,6 +504,42 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 
     static const float ePerIsoK70 = 0.5f;
 
+    // preliminary ILCE-7RM3 data, good fidelity except from A) small innaccuracy at places
+    // due to integer scaling quantization, B) much different noise behavior of PDAF pixels
+    static const float nReadILCE7RM3[] = { 4.2f,  // ISO 100
+                                        3.9f,  // ISO 125
+                                        3.6f,  // ISO 160
+                                        3.55f, // ISO 200
+                                        3.5f,  // ISO 250
+                                        3.45f, // ISO 320
+                                        3.35f, // ISO 400
+                                        3.3f,  // ISO 500
+                                        1.3f,  // ISO 640
+                                        1.2f,  // ISO 800
+                                        1.2f,  // ISO 1000
+                                        1.2f,  // ISO 1250
+                                        1.15f, // ISO 1600
+                                        1.2f,  // ISO 2000
+                                        1.15f, // ISO 2500
+                                        1.15f, // ISO 3200
+                                        1.1f,  // ISO 4000
+                                        1.1f,  // ISO 5000
+                                        1.05f, // ISO 6400
+                                        1.05f, // ISO 8000
+                                        1.05f, // ISO 10000
+                                        1.0f,  // ISO 12800
+                                        1.0f,  // ISO 16000
+                                        1.0f,  // ISO 20000
+                                        1.0f,  // ISO 25600
+                                        1.0f,  // ISO 32000
+                                        1.0f,  // ISO 40000
+                                        1.0f,  // ISO 51200
+                                        1.1f,  // ISO 64000
+                                        1.1f,  // ISO 80000
+                                        1.1f,  // ISO 102400
+                                   };
+    static const float ePerIsoILCE7RM3 = 0.8f;
+
     if(plistener) {
         plistener->setProgressStr(Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)));
         plistener->setProgress(0.0);
@@ -530,6 +566,9 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     } else if(model.find("K-1") != string::npos) {
         nRead = nReadK1[nReadIndex];
         eperIsoModel = ePerIsoK1;
+    } else if(model.find("ILCE-7RM3") != string::npos) {
+        nRead = nReadILCE7RM3[nReadIndex];
+        eperIsoModel = ePerIsoILCE7RM3;
     } else { // as long as we don't have values for Pentax KP, we use the values from K-70
         nRead = nReadK70[nReadIndex];
         eperIsoModel = ePerIsoK70;
