@@ -47,7 +47,7 @@ ExifPanel::ExifPanel () : idata (nullptr)
     exifTree->set_model (exifTreeModel);
     exifTree->set_grid_lines (Gtk::TREE_VIEW_GRID_LINES_NONE);
     exifTree->set_row_separator_func (
-    [&] (const Glib::RefPtr<Gtk::TreeModel>& model, const Gtk::TreeModel::iterator & row) {
+    [&] (const Glib::RefPtr<Gtk::TreeModel>& model, const Gtk::TreeModel::iterator & row)-> bool {
         return row->get_value (exifColumns.isSeparator);
     }
     );
