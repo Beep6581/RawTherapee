@@ -22,6 +22,7 @@
 #include <cmath>
 #include <glib.h>
 #include <glibmm.h>
+#include <fftw3.h>
 
 #include "rtengine.h"
 #include "improcfun.h"
@@ -48,6 +49,14 @@
 #include "rt_algo.h"
 
 #define cliploc( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
+
+#define TSD 64       // Tile size
+#define offset 25   // shift between tiles
+#define fTS ((TS/2+1))  // second dimension of Fourier tiles
+#define blkrad 1    // radius of block averaging
+
+#define epsilon 0.001f/(TS*TS) //tolerance
+
 
 #define CLIPC(a) ((a)>-42000?((a)<42000?(a):42000):-42000)  // limit a and b  to 130 probably enough ?
 #define CLIPL(x) LIM(x,0.f,40000.f) // limit L to about L=120 probably enough ?
@@ -134,6 +143,7 @@ struct local_params {
     int qualcurvemet;
     int blurmet;
     float noiself;
+    float noiseldetail;
     float noiselc;
     float noisecf;
     float noisecc;
@@ -368,6 +378,7 @@ static void calcLocalParams(int oW, int oH, const LocallabParams& locallab, stru
 
     float local_noiself = locallab.noiselumf;
     float local_noiselc = locallab.noiselumc;
+    float local_noiseldetail = locallab.noiselumdetail;
     float local_noisecf = locallab.noisechrof;
     float local_noisecc = locallab.noisechroc;
     float multi[5];
@@ -450,7 +461,7 @@ static void calcLocalParams(int oW, int oH, const LocallabParams& locallab, stru
     lp.dyy = h * local_dyy;
     lp.thr = thre;
     lp.noiself = local_noiself;
-    lp.noiself = local_noiself;
+    lp.noiseldetail = local_noiseldetail;
     lp.noiselc = local_noiselc;
     lp.noisecf = local_noisecf;
     lp.noisecc = local_noisecc;
@@ -7235,6 +7246,10 @@ void ImProcFunctions::calc_ref(LabImage * original, LabImage * transformed, int 
         hueref = xatan2f(avB, avA);    //mean hue
         chromaref = aveChro;
         lumaref = avL;
+
+        if (lumaref > 95.f) {//to avoid crash
+            lumaref = 95.f;
+        }
     }
 }
 
@@ -8487,8 +8502,58 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
             if (call == 1) {
                 LabImage tmp1(transformed->W, transformed->H);
+                array2D<float> *Lin = nullptr;
+
+
                 int GW = transformed->W;
                 int GH = transformed->H;
+                int max_numblox_W = ceil((static_cast<float>(GW)) / (offset)) + 2 * blkrad;
+                // calculate min size of numblox_W.
+                int min_numblox_W = ceil((static_cast<float>(GW)) / (offset)) + 2 * blkrad;
+
+                // these are needed only for creation of the plans and will be freed before entering the parallel loop
+                fftwf_plan plan_forward_blox[2];
+                fftwf_plan plan_backward_blox[2];
+                array2D<float> tilemask_in(TS, TS);
+                array2D<float> tilemask_out(TS, TS);
+
+                if ((lp.noiself > 0.1f ||  lp.noiselc > 0.1f)) {
+                    float *Lbloxtmp  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                    float *fLbloxtmp = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+
+                    int nfwd[2] = {TS, TS};
+
+                    //for DCT:
+                    fftw_r2r_kind fwdkind[2] = {FFTW_REDFT10, FFTW_REDFT10};
+                    fftw_r2r_kind bwdkind[2] = {FFTW_REDFT01, FFTW_REDFT01};
+
+                    // Creating the plans with FFTW_MEASURE instead of FFTW_ESTIMATE speeds up the execute a bit
+                    plan_forward_blox[0]  = fftwf_plan_many_r2r(2, nfwd, max_numblox_W, Lbloxtmp, nullptr, 1, TS * TS, fLbloxtmp, nullptr, 1, TS * TS, fwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                    plan_backward_blox[0] = fftwf_plan_many_r2r(2, nfwd, max_numblox_W, fLbloxtmp, nullptr, 1, TS * TS, Lbloxtmp, nullptr, 1, TS * TS, bwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                    plan_forward_blox[1]  = fftwf_plan_many_r2r(2, nfwd, min_numblox_W, Lbloxtmp, nullptr, 1, TS * TS, fLbloxtmp, nullptr, 1, TS * TS, fwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                    plan_backward_blox[1] = fftwf_plan_many_r2r(2, nfwd, min_numblox_W, fLbloxtmp, nullptr, 1, TS * TS, Lbloxtmp, nullptr, 1, TS * TS, bwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                    fftwf_free(Lbloxtmp);
+                    fftwf_free(fLbloxtmp);
+
+                    const int border = MAX(2, TS / 16);
+
+                    for (int i = 0; i < TS; ++i) {
+                        float i1 = abs((i > TS / 2 ? i - TS + 1 : i));
+                        float vmask = (i1 < border ? SQR(sin((rtengine::RT_PI * i1) / (2 * border))) : 1.0f);
+                        float vmask2 = (i1 < 2 * border ? SQR(sin((rtengine::RT_PI * i1) / (2 * border))) : 1.0f);
+
+                        for (int j = 0; j < TS; ++j) {
+                            float j1 = abs((j > TS / 2 ? j - TS + 1 : j));
+                            tilemask_in[i][j] = (vmask * (j1 < border ? SQR(sin((rtengine::RT_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
+                            tilemask_out[i][j] = (vmask2 * (j1 < 2 * border ? SQR(sin((rtengine::RT_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
+
+                        }
+                    }
+
+                }
+
+                float *LbloxArray[numThreads];
+                float *fLbloxArray[numThreads];
 
                 for (int ir = 0; ir < GH; ir++)
                     for (int jr = 0; jr < GW; jr++) {
@@ -8507,6 +8572,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 wavelet_decomposition bdecomp(tmp1.b[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, DaubLen);
 
                 float madL[8][3];
+                float madC[8][3];
                 int edge = 2;
 
                 if (!Ldecomp.memoryAllocationFailed) {
@@ -8529,7 +8595,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         edge = 2;
                         vari[0] = 8.f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
                         vari[1] = 8.f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
-                        vari[2] = 8.f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
+                        vari[2] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
 
                         vari[3] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
                         vari[4] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
@@ -8539,21 +8605,43 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         edge = 3;
                         vari[0] = 8.f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
                         vari[1] = 8.f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
-                        vari[2] = 8.f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
-                        vari[3] = 8.f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiselc / 25.0));
+                        vari[2] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                        vari[3] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
 
                     }
 
                     if ((lp.noiself > 0.1f ||  lp.noiselc > 0.1f)) {
+                        float kr3 = 0.f;
+                        float kr4 = 0.f;
+                        float kr5 = 0.f;
+
+                        if (lp.noiselc < 30.f) {
+                            kr3 = 0.f;
+                            kr4 = 0.f;
+                            kr5 = 0.f;
+                        } else if (lp.noiselc < 50.f) {
+                            kr3 = 0.5f;
+                            kr4 = 0.3f;
+                            kr5 = 0.2f;
+                        } else if (lp.noiselc < 70.f) {
+                            kr3 = 0.7f;
+                            kr4 = 0.5f;
+                            kr5 = 0.3f;
+                        } else {
+                            kr3 = 1.f;
+                            kr4 = 1.f;
+                            kr5 = 1.f;
+                        }
+
                         vari[0] = max(0.0001f, vari[0]);
                         vari[1] = max(0.0001f, vari[1]);
                         vari[2] = max(0.0001f, vari[2]);
-                        vari[3] = max(0.0001f, vari[3]);
+                        vari[3] = max(0.0001f, kr3 * vari[3]);
 
                         if (levred == 7) {
-                            vari[4] = max(0.0001f, vari[4]);
-                            vari[5] = max(0.0001f, vari[5]);
-                            vari[6] = max(0.0001f, vari[6]);
+                            vari[4] = max(0.0001f, kr4 * vari[4]);
+                            vari[5] = max(0.0001f, kr5 * vari[5]);
+                            vari[6] = max(0.0001f, kr5 * vari[6]);
                         }
 
                         float* noisevarlum = nullptr;  // we need a dummy to pass it to WaveletDenoiseAllL
@@ -8565,6 +8653,23 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 float variC[levred];
 
                 if (!adecomp.memoryAllocationFailed && !bdecomp.memoryAllocationFailed) {
+                    #pragma omp parallel for collapse(2) schedule(dynamic,1)
+
+                    for (int lvl = 0; lvl < levred; ++lvl) {
+                        // compute median absolute deviation (MAD) of detail coefficients as robust noise estimator
+                        for (int dir = 1; dir < 4; ++dir) {
+
+                            int Wlvl_ab = adecomp.level_W(lvl);//approximation with only "a" (better than L
+                            int Hlvl_ab = adecomp.level_H(lvl);
+
+                            float ** WavCoeffs_ab = adecomp.level_coeffs(lvl);
+                            madC[lvl][dir - 1] = SQR(Mad(WavCoeffs_ab[dir], Wlvl_ab * Hlvl_ab));
+                        }
+
+                    }
+
+
+
                     if (levred == 7) {
                         edge = 2;
                         variC[0] = SQR(lp.noisecf / 10.0);
@@ -8610,16 +8715,189 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         }
 
                         float noisevarab_r = 100.f; //SQR(lp.noisecc / 10.0);
-                        WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, false, false, false, numThreads);
-                        WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variC, edge, noisevarab_r, false, false, false, numThreads);
+                        WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madC, variC, edge, noisevarab_r, false, false, false, numThreads);
+                        WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madC, variC, edge, noisevarab_r, false, false, false, numThreads);
                         delete[] noisevarchrom;
 
                     }
                 }
 
                 if (!Ldecomp.memoryAllocationFailed) {
+                    Lin = new array2D<float>(GW, GH);
+
+                    for (int i = 0; i < GH; ++i) {
+                        for (int j = 0; j < GW; ++j) {
+                            (*Lin)[i][j] = tmp1.L[i][j];
+                        }
+                    }
 
                     Ldecomp.reconstruct(tmp1.L[0]);
+                }
+
+                if (!Ldecomp.memoryAllocationFailed) {
+
+                    const int numblox_W = ceil((static_cast<float>(GW)) / (offset)) + 2 * blkrad;
+                    const int numblox_H = ceil((static_cast<float>(GH)) / (offset)) + 2 * blkrad;
+
+                    if ((lp.noiself > 0.1f ||  lp.noiselc > 0.1f)) {
+                        //residual between input and denoised L channel
+                        array2D<float> Ldetail(GW, GH, ARRAY2D_CLEAR_DATA);
+                        array2D<float> totwt(GW, GH, ARRAY2D_CLEAR_DATA); //weight for combining DCT blocks
+
+                        for (int i = 0; i < numThreads; ++i) {
+                            LbloxArray[i]  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                            fLbloxArray[i] = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                        }
+
+#ifdef _OPENMP
+                        int masterThread = omp_get_thread_num();
+#endif
+#ifdef _OPENMP
+                        #pragma omp parallel //num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
+#endif
+                        {
+#ifdef _OPENMP
+                            int subThread = masterThread * 1 + omp_get_thread_num();
+#else
+                            int subThread = 0;
+#endif
+                            float blurbuffer[TS * TS] ALIGNED64;
+                            float *Lblox = LbloxArray[subThread];
+                            float *fLblox = fLbloxArray[subThread];
+                            float pBuf[GW + TS + 2 * blkrad * offset] ALIGNED16;
+                            float nbrwt[TS * TS] ALIGNED64;
+#ifdef _OPENMP
+                            #pragma omp for
+#endif
+
+                            for (int vblk = 0; vblk < numblox_H; ++vblk) {
+
+                                int top = (vblk - blkrad) * offset;
+                                float * datarow = pBuf + blkrad * offset;
+
+                                for (int i = 0; i < TS; ++i) {
+                                    int row = top + i;
+                                    int rr = row;
+
+                                    if (row < 0) {
+                                        rr = MIN(-row, GH - 1);
+                                    } else if (row >= GH) {
+                                        rr = MAX(0, 2 * GH - 2 - row);
+                                    }
+
+                                    for (int j = 0; j < tmp1.W; ++j) {
+                                        datarow[j] = ((*Lin)[rr][j] - tmp1.L[rr][j]);
+                                    }
+
+                                    for (int j = -blkrad * offset; j < 0; ++j) {
+                                        datarow[j] = datarow[MIN(-j, GW - 1)];
+                                    }
+
+                                    for (int j = GW; j < GW + TS + blkrad * offset; ++j) {
+                                        datarow[j] = datarow[MAX(0, 2 * GW - 2 - j)];
+                                    }//now we have a padded data row
+
+                                    //now fill this row of the blocks with Lab high pass data
+                                    for (int hblk = 0; hblk < numblox_W; ++hblk) {
+                                        int left = (hblk - blkrad) * offset;
+                                        int indx = (hblk) * TS; //index of block in malloc
+
+                                        if (top + i >= 0 && top + i < GH) {
+                                            int j;
+
+                                            for (j = 0; j < min((-left), TS); ++j) {
+                                                Lblox[(indx + i)*TS + j] = tilemask_in[i][j] * datarow[left + j]; // luma data
+                                            }
+
+                                            for (; j < min(TS, GW - left); ++j) {
+                                                Lblox[(indx + i)*TS + j] = tilemask_in[i][j] * datarow[left + j]; // luma data
+                                                totwt[top + i][left + j] += tilemask_in[i][j] * tilemask_out[i][j];
+                                            }
+
+                                            for (; j < TS; ++j) {
+                                                Lblox[(indx + i)*TS + j] = tilemask_in[i][j] * datarow[left + j]; // luma data
+                                            }
+                                        } else {
+                                            for (int j = 0; j < TS; ++j) {
+                                                Lblox[(indx + i)*TS + j] = tilemask_in[i][j] * datarow[left + j]; // luma data
+                                            }
+                                        }
+
+                                    }
+
+                                }//end of filling block row
+
+                                //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                                //fftwf_print_plan (plan_forward_blox);
+                                if (numblox_W == max_numblox_W) {
+                                    fftwf_execute_r2r(plan_forward_blox[0], Lblox, fLblox);    // DCT an entire row of tiles
+                                } else {
+                                    fftwf_execute_r2r(plan_forward_blox[1], Lblox, fLblox);    // DCT an entire row of tiles
+                                }
+
+                                //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                                // now process the vblk row of blocks for noise reduction
+                                float params_Ldetail = min(float(lp.noiseldetail), 99.9f); // max out to avoid div by zero when using noisevar_Ldetail as divisor
+                                float noisevar_Ldetail = SQR(static_cast<float>(SQR(100. - params_Ldetail) + 50.*(100. - params_Ldetail)) * TS * 0.5f);
+
+
+
+                                for (int hblk = 0; hblk < numblox_W; ++hblk) {
+                                    ImProcFunctions::RGBtile_denoise(fLblox, hblk, noisevar_Ldetail, nbrwt, blurbuffer);
+                                }//end of horizontal block loop
+
+                                //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+                                //now perform inverse FT of an entire row of blocks
+                                if (numblox_W == max_numblox_W) {
+                                    fftwf_execute_r2r(plan_backward_blox[0], fLblox, Lblox);    //for DCT
+                                } else {
+                                    fftwf_execute_r2r(plan_backward_blox[1], fLblox, Lblox);    //for DCT
+                                }
+
+                                int topproc = (vblk - blkrad) * offset;
+
+                                //add row of blocks to output image tile
+                                ImProcFunctions::RGBoutput_tile_row(Lblox, Ldetail, tilemask_out, GH, GW, topproc);
+
+                                //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+                            }//end of vertical block loop
+
+                            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+                        }
+                        //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#ifdef _OPENMP
+
+                        #pragma omp parallel for //num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
+#endif
+
+                        for (int i = 0; i < GH; ++i) {
+                            for (int j = 0; j < GW; ++j) {
+                                //may want to include masking threshold for large hipass data to preserve edges/detail
+                                tmp1.L[i][j] += Ldetail[i][j] / totwt[i][j]; //note that labdn initially stores the denoised hipass data
+                            }
+                        }
+
+                    }
+
+                    delete Lin;
+                }
+
+                if ((lp.noiself > 0.1f ||  lp.noiselc > 0.1f)) {
+
+                    for (int i = 0; i < numThreads; ++i) {
+                        fftwf_free(LbloxArray[i]);
+                        fftwf_free(fLbloxArray[i]);
+                    }
+
+                    fftwf_destroy_plan(plan_forward_blox[0]);
+                    fftwf_destroy_plan(plan_backward_blox[0]);
+                    fftwf_destroy_plan(plan_forward_blox[1]);
+                    fftwf_destroy_plan(plan_backward_blox[1]);
+                    fftwf_cleanup();
+
                 }
 
                 if (!adecomp.memoryAllocationFailed) {
@@ -8640,6 +8918,54 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 int bfw = int (lp.lx + lp.lxL) + del;
                 LabImage bufwv(bfw, bfh);
                 bufwv.clear(true);
+                array2D<float> *Lin = nullptr;
+                int max_numblox_W = ceil((static_cast<float>(bfw)) / (offset)) + 2 * blkrad;
+                // calculate min size of numblox_W.
+                int min_numblox_W = ceil((static_cast<float>(bfw)) / (offset)) + 2 * blkrad;
+                // these are needed only for creation of the plans and will be freed before entering the parallel loop
+                fftwf_plan plan_forward_blox[2];
+                fftwf_plan plan_backward_blox[2];
+                array2D<float> tilemask_in(TS, TS);
+                array2D<float> tilemask_out(TS, TS);
+
+                if ((lp.noiself > 0.1f ||  lp.noiselc > 0.1f)) {
+                    float *Lbloxtmp  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                    float *fLbloxtmp = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+
+                    int nfwd[2] = {TS, TS};
+
+                    //for DCT:
+                    fftw_r2r_kind fwdkind[2] = {FFTW_REDFT10, FFTW_REDFT10};
+                    fftw_r2r_kind bwdkind[2] = {FFTW_REDFT01, FFTW_REDFT01};
+
+                    // Creating the plans with FFTW_MEASURE instead of FFTW_ESTIMATE speeds up the execute a bit
+                    plan_forward_blox[0]  = fftwf_plan_many_r2r(2, nfwd, max_numblox_W, Lbloxtmp, nullptr, 1, TS * TS, fLbloxtmp, nullptr, 1, TS * TS, fwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                    plan_backward_blox[0] = fftwf_plan_many_r2r(2, nfwd, max_numblox_W, fLbloxtmp, nullptr, 1, TS * TS, Lbloxtmp, nullptr, 1, TS * TS, bwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                    plan_forward_blox[1]  = fftwf_plan_many_r2r(2, nfwd, min_numblox_W, Lbloxtmp, nullptr, 1, TS * TS, fLbloxtmp, nullptr, 1, TS * TS, fwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                    plan_backward_blox[1] = fftwf_plan_many_r2r(2, nfwd, min_numblox_W, fLbloxtmp, nullptr, 1, TS * TS, Lbloxtmp, nullptr, 1, TS * TS, bwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                    fftwf_free(Lbloxtmp);
+                    fftwf_free(fLbloxtmp);
+
+                    const int border = MAX(2, TS / 16);
+
+                    for (int i = 0; i < TS; ++i) {
+                        float i1 = abs((i > TS / 2 ? i - TS + 1 : i));
+                        float vmask = (i1 < border ? SQR(sin((rtengine::RT_PI * i1) / (2 * border))) : 1.0f);
+                        float vmask2 = (i1 < 2 * border ? SQR(sin((rtengine::RT_PI * i1) / (2 * border))) : 1.0f);
+
+                        for (int j = 0; j < TS; ++j) {
+                            float j1 = abs((j > TS / 2 ? j - TS + 1 : j));
+                            tilemask_in[i][j] = (vmask * (j1 < border ? SQR(sin((rtengine::RT_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
+                            tilemask_out[i][j] = (vmask2 * (j1 < 2 * border ? SQR(sin((rtengine::RT_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
+
+                        }
+                    }
+
+                }
+
+                float *LbloxArray[numThreads];
+                float *fLbloxArray[numThreads];
+
 
                 int begy = lp.yc - lp.lyT;
                 int begx = lp.xc - lp.lxL;
@@ -8694,7 +9020,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         edge = 2;
                         vari[0] = 8.f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
                         vari[1] = 8.f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
-                        vari[2] = 8.f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
+                        vari[2] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
 
                         vari[3] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
                         vari[4] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
@@ -8704,23 +9030,44 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         edge = 3;
                         vari[0] = 8.f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
                         vari[1] = 8.f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
-                        vari[2] = 8.f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiself / 25.0));
-                        vari[3] = 8.f * SQR((lp.noiself / 125.0) * (1.0 + lp.noiselc / 25.0));
+                        vari[2] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                        vari[3] = 8.f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
 
                     }
 
 
                     if ((lp.noiself > 0.1f ||  lp.noiselc > 0.1f)) {
+                        float kr3 = 0.f;
+                        float kr4 = 0.f;
+                        float kr5 = 0.f;
+
+                        if (lp.noiselc < 30.f) {
+                            kr3 = 0.f;
+                            kr4 = 0.f;
+                            kr5 = 0.f;
+                        } else if (lp.noiselc < 50.f) {
+                            kr3 = 0.5f;
+                            kr4 = 0.3f;
+                            kr5 = 0.2f;
+                        } else if (lp.noiselc < 70.f) {
+                            kr3 = 0.7f;
+                            kr4 = 0.5f;
+                            kr5 = 0.3f;
+                        } else {
+                            kr3 = 1.f;
+                            kr4 = 1.f;
+                            kr5 = 1.f;
+                        }
+
                         vari[0] = max(0.0001f, vari[0]);
                         vari[1] = max(0.0001f, vari[1]);
                         vari[2] = max(0.0001f, vari[2]);
-                        vari[3] = max(0.0001f, vari[3]);
+                        vari[3] = max(0.0001f, kr3 * vari[3]);
 
                         if (levred == 7) {
-
-                            vari[4] = max(0.0001f, vari[4]);
-                            vari[5] = max(0.0001f, vari[5]);
-                            vari[6] = max(0.0001f, vari[6]);
+                            vari[4] = max(0.0001f, kr4 * vari[4]);
+                            vari[5] = max(0.0001f, kr5 * vari[5]);
+                            vari[6] = max(0.0001f, kr5 * vari[6]);
                         }
 
                         float* noisevarlum = nullptr;  // we need a dummy to pass it to WaveletDenoiseAllL
@@ -8733,6 +9080,21 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 float variC[levred];
 
                 if (!adecomp.memoryAllocationFailed && !bdecomp.memoryAllocationFailed) {
+                    float madC[8][3];
+                    #pragma omp parallel for collapse(2) schedule(dynamic,1)
+
+                    for (int lvl = 0; lvl < levred; ++lvl) {
+                        // compute median absolute deviation (MAD) of detail coefficients as robust noise estimator
+                        for (int dir = 1; dir < 4; ++dir) {
+
+                            int Wlvl_ab = adecomp.level_W(lvl);//approximation with only "a" (better than L
+                            int Hlvl_ab = adecomp.level_H(lvl);
+
+                            float ** WavCoeffs_ab = adecomp.level_coeffs(lvl);
+                            madC[lvl][dir - 1] = SQR(Mad(WavCoeffs_ab[dir], Wlvl_ab * Hlvl_ab));
+                        }
+
+                    }
 
                     if (levred == 7) {
                         edge = 2;
@@ -8779,16 +9141,193 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
 
                         float noisevarab_r = 100.f; //SQR(lp.noisecc / 10.0);
-                        WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, false, false, false, numThreads);
-                        WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variC, edge, noisevarab_r, false, false, false, numThreads);
+                        WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madC, variC, edge, noisevarab_r, false, false, false, numThreads);
+                        WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madC, variC, edge, noisevarab_r, false, false, false, numThreads);
                         delete[] noisevarchrom;
 
                     }
                 }
 
                 if (!Ldecomp.memoryAllocationFailed) {
+                    Lin = new array2D<float>(bfw, bfh);
+                    //    #pragma omp parallel for num_threads(numThreads) if (numThreads>1)
+
+
+                    for (int i = 0; i < bfh; ++i) {
+                        for (int j = 0; j < bfw; ++j) {
+                            (*Lin)[i][j] = bufwv.L[i][j];
+                        }
+                    }
 
                     Ldecomp.reconstruct(bufwv.L[0]);
+                }
+
+
+                if (!Ldecomp.memoryAllocationFailed) {
+
+                    const int numblox_W = ceil((static_cast<float>(bfw)) / (offset)) + 2 * blkrad;
+                    const int numblox_H = ceil((static_cast<float>(bfh)) / (offset)) + 2 * blkrad;
+
+                    if ((lp.noiself > 0.1f ||  lp.noiselc > 0.1f)) {
+                        //residual between input and denoised L channel
+                        array2D<float> Ldetail(bfw, bfh, ARRAY2D_CLEAR_DATA);
+                        //pixel weight
+                        array2D<float> totwt(bfw, bfh, ARRAY2D_CLEAR_DATA); //weight for combining DCT blocks
+
+                        for (int i = 0; i < numThreads; ++i) {
+                            LbloxArray[i]  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                            fLbloxArray[i] = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                        }
+
+#ifdef _OPENMP
+                        int masterThread = omp_get_thread_num();
+#endif
+#ifdef _OPENMP
+                        #pragma omp parallel //num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
+#endif
+                        {
+#ifdef _OPENMP
+                            int subThread = masterThread * 1 + omp_get_thread_num();
+#else
+                            int subThread = 0;
+#endif
+                            float blurbuffer[TS * TS] ALIGNED64;
+                            float *Lblox = LbloxArray[subThread];
+                            float *fLblox = fLbloxArray[subThread];
+                            float pBuf[bfw + TS + 2 * blkrad * offset] ALIGNED16;
+                            float nbrwt[TS * TS] ALIGNED64;
+#ifdef _OPENMP
+                            #pragma omp for
+#endif
+
+                            for (int vblk = 0; vblk < numblox_H; ++vblk) {
+
+                                int top = (vblk - blkrad) * offset;
+                                float * datarow = pBuf + blkrad * offset;
+
+                                for (int i = 0; i < TS; ++i) {
+                                    int row = top + i;
+                                    int rr = row;
+
+                                    if (row < 0) {
+                                        rr = MIN(-row, bfh - 1);
+                                    } else if (row >= bfh) {
+                                        rr = MAX(0, 2 * bfh - 2 - row);
+                                    }
+
+                                    for (int j = 0; j < bufwv.W; ++j) {
+                                        datarow[j] = ((*Lin)[rr][j] - bufwv.L[rr][j]);
+                                    }
+
+                                    for (int j = -blkrad * offset; j < 0; ++j) {
+                                        datarow[j] = datarow[MIN(-j, bfw - 1)];
+                                    }
+
+                                    for (int j = bfw; j < bfw + TS + blkrad * offset; ++j) {
+                                        datarow[j] = datarow[MAX(0, 2 * bfw - 2 - j)];
+                                    }//now we have a padded data row
+
+                                    //now fill this row of the blocks with Lab high pass data
+                                    for (int hblk = 0; hblk < numblox_W; ++hblk) {
+                                        int left = (hblk - blkrad) * offset;
+                                        int indx = (hblk) * TS; //index of block in malloc
+
+                                        if (top + i >= 0 && top + i < bfh) {
+                                            int j;
+
+                                            for (j = 0; j < min((-left), TS); ++j) {
+                                                Lblox[(indx + i)*TS + j] = tilemask_in[i][j] * datarow[left + j]; // luma data
+                                            }
+
+                                            for (; j < min(TS, bfw - left); ++j) {
+                                                Lblox[(indx + i)*TS + j] = tilemask_in[i][j] * datarow[left + j]; // luma data
+                                                totwt[top + i][left + j] += tilemask_in[i][j] * tilemask_out[i][j];
+                                            }
+
+                                            for (; j < TS; ++j) {
+                                                Lblox[(indx + i)*TS + j] = tilemask_in[i][j] * datarow[left + j]; // luma data
+                                            }
+                                        } else {
+                                            for (int j = 0; j < TS; ++j) {
+                                                Lblox[(indx + i)*TS + j] = tilemask_in[i][j] * datarow[left + j]; // luma data
+                                            }
+                                        }
+
+                                    }
+
+                                }//end of filling block row
+
+                                //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                                //fftwf_print_plan (plan_forward_blox);
+                                if (numblox_W == max_numblox_W) {
+                                    fftwf_execute_r2r(plan_forward_blox[0], Lblox, fLblox);    // DCT an entire row of tiles
+                                } else {
+                                    fftwf_execute_r2r(plan_forward_blox[1], Lblox, fLblox);    // DCT an entire row of tiles
+                                }
+
+                                //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                                // now process the vblk row of blocks for noise reduction
+                                float params_Ldetail = min(float(lp.noiseldetail), 99.9f); // max out to avoid div by zero when using noisevar_Ldetail as divisor
+                                float noisevar_Ldetail = SQR(static_cast<float>(SQR(100. - params_Ldetail) + 50.*(100. - params_Ldetail)) * TS * 0.5f);
+
+
+
+                                for (int hblk = 0; hblk < numblox_W; ++hblk) {
+                                    ImProcFunctions::RGBtile_denoise(fLblox, hblk, noisevar_Ldetail, nbrwt, blurbuffer);
+                                }//end of horizontal block loop
+
+                                //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+                                //now perform inverse FT of an entire row of blocks
+                                if (numblox_W == max_numblox_W) {
+                                    fftwf_execute_r2r(plan_backward_blox[0], fLblox, Lblox);    //for DCT
+                                } else {
+                                    fftwf_execute_r2r(plan_backward_blox[1], fLblox, Lblox);    //for DCT
+                                }
+
+                                int topproc = (vblk - blkrad) * offset;
+
+                                //add row of blocks to output image tile
+                                ImProcFunctions::RGBoutput_tile_row(Lblox, Ldetail, tilemask_out, bfh, bfw, topproc);
+
+                                //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+                            }//end of vertical block loop
+
+                            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+                        }
+                        //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#ifdef _OPENMP
+
+                        #pragma omp parallel for //num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
+#endif
+
+                        for (int i = 0; i < bfh; ++i) {
+                            for (int j = 0; j < bfw; ++j) {
+                                //may want to include masking threshold for large hipass data to preserve edges/detail
+                                bufwv.L[i][j] += Ldetail[i][j] / totwt[i][j]; //note that labdn initially stores the denoised hipass data
+                            }
+                        }
+
+                    }
+
+                    delete Lin;
+                }
+
+                if ((lp.noiself > 0.1f ||  lp.noiselc > 0.1f)) {
+
+                    for (int i = 0; i < numThreads; ++i) {
+                        fftwf_free(LbloxArray[i]);
+                        fftwf_free(fLbloxArray[i]);
+                    }
+
+                    fftwf_destroy_plan(plan_forward_blox[0]);
+                    fftwf_destroy_plan(plan_backward_blox[0]);
+                    fftwf_destroy_plan(plan_forward_blox[1]);
+                    fftwf_destroy_plan(plan_backward_blox[1]);
+                    fftwf_cleanup();
+
                 }
 
                 if (!adecomp.memoryAllocationFailed) {

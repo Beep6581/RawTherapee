@@ -619,6 +619,7 @@ enum ProcEvent {
     Evlocallabsensiexclu = 589,
     Evlocallabstruc = 590,
     Evlocallabwarm = 591,
+    Evlocallabnoiselumdetail = 592,
 
     NUMOFEVENTS
 

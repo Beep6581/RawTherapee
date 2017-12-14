@@ -1147,6 +1147,7 @@ void Crop::update(int todo)
                         params.locallab.sensiexclu = parent->sensiexclus[sp];
                         params.locallab.struc = parent->strucs[sp];
                         params.locallab.warm = parent->warms[sp];
+                        params.locallab.noiselumdetail = parent->noiselumdetails[sp];
 
                         std::vector<double>   cretie;
 
@@ -1526,6 +1527,7 @@ void Crop::update(int todo)
                 parent->sensiexclus[sp] = params.locallab.sensiexclu = parent->sensiexclus[0];
                 parent->strucs[sp] = params.locallab.struc = parent->strucs[0];
                 parent->warms[sp] = params.locallab.warm = parent->warms[0];
+                parent->noiselumdetails[sp] = params.locallab.noiselumdetail = parent->noiselumdetails[0];
 
                 std::vector<double>   ccret;
 

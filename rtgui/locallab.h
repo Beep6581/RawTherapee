@@ -115,6 +115,8 @@ private:
     Adjuster* const sensisha;
     Adjuster* const noiselumf;
     Adjuster* const noiselumc;
+    Adjuster* const noiselumdetail;
+
     Adjuster* const noisechrof;
     Adjuster* const noisechroc;
     Adjuster* const hueref;
@@ -231,7 +233,7 @@ private:
 
 
 
-    int nextdatasp[86];
+    int nextdatasp[87];
     int nextlength;
     std::string nextstr;
     std::string nextstr2;

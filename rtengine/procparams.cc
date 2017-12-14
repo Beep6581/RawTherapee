@@ -1784,6 +1784,7 @@ bool ChannelMixerParams::operator ==(const ChannelMixerParams& other) const
     if (enabled != other.enabled) {
         return false;
     }
+
     for (unsigned int i = 0; i < 3; ++i) {
         if (
             red[i] != other.red[i]
@@ -2373,6 +2374,7 @@ pastsattog(true),
 sensiv(19),
 noiselumf(0),
 noiselumc(0),
+noiselumdetail(0),
 noisechrof(0),
 noisechroc(0),
 sharradius(40),
@@ -2505,6 +2507,7 @@ bool LocallabParams::operator ==(const LocallabParams& other) const
     && excurve == other.excurve
     && noiselumf == other.noiselumf
     && noiselumc == other.noiselumc
+    && noiselumdetail == other.noiselumdetail
     && noisechrof == other.noisechrof
     && noisechroc == other.noisechroc
     && sharradius == other.sharradius
@@ -3116,6 +3119,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Channel mixer
         saveToKeyfile(!pedited || pedited->chmixer.enabled, "Channel Mixer", "Enabled", chmixer.enabled, keyFile);
+
         if (!pedited || pedited->chmixer.red[0] || pedited->chmixer.red[1] || pedited->chmixer.red[2]) {
             Glib::ArrayHandle<int> rmix(chmixer.red, 3, Glib::OWNERSHIP_NONE);
             keyFile.set_integer_list("Channel Mixer", "Red", rmix);
@@ -3478,6 +3482,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->locallab.excurve, "Locallab", "ExCurve", locallab.excurve, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.noiselumf, "Locallab", "noiselumf", locallab.noiselumf, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.noiselumc, "Locallab", "noiselumc", locallab.noiselumc, keyFile);
+        saveToKeyfile(!pedited || pedited->locallab.noiselumdetail, "Locallab", "noiselumdetail", locallab.noiselumdetail, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.noisechrof, "Locallab", "noisechrof", locallab.noisechrof, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.noisechroc, "Locallab", "noisechroc", locallab.noisechroc, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.sharradius, "Locallab", "Sharradius", locallab.sharradius, keyFile);
@@ -3941,19 +3946,21 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "HLRecovery", "Method", pedited, toneCurve.method, pedited->toneCurve.method);
         }
 
-        if (keyFile.has_group ("Channel Mixer")) {
+        if (keyFile.has_group("Channel Mixer")) {
             if (ppVersion >= 329) {
                 assignFromKeyfile(keyFile, "Channel Mixer", "Enabled", pedited, chmixer.enabled, pedited->chmixer.enabled);
             } else {
                 chmixer.enabled = true;
+
                 if (pedited) {
                     pedited->chmixer.enabled = true;
                 }
             }
-            if (keyFile.has_key ("Channel Mixer", "Red") && keyFile.has_key ("Channel Mixer", "Green") && keyFile.has_key ("Channel Mixer", "Blue")) {
-                const std::vector<int> rmix = keyFile.get_integer_list ("Channel Mixer", "Red");
-                const std::vector<int> gmix = keyFile.get_integer_list ("Channel Mixer", "Green");
-                const std::vector<int> bmix = keyFile.get_integer_list ("Channel Mixer", "Blue");
+
+            if (keyFile.has_key("Channel Mixer", "Red") && keyFile.has_key("Channel Mixer", "Green") && keyFile.has_key("Channel Mixer", "Blue")) {
+                const std::vector<int> rmix = keyFile.get_integer_list("Channel Mixer", "Red");
+                const std::vector<int> gmix = keyFile.get_integer_list("Channel Mixer", "Green");
+                const std::vector<int> bmix = keyFile.get_integer_list("Channel Mixer", "Blue");
 
                 if (rmix.size() == 3 && gmix.size() == 3 && bmix.size() == 3) {
                     memcpy(chmixer.red,   rmix.data(), 3 * sizeof(int));
@@ -4192,7 +4199,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Vibrance", "SkinTonesCurve", pedited, vibrance.skintonescurve, pedited->vibrance.skintonescurve);
         }
 
-        if (keyFile.has_group ("White Balance")) {
+        if (keyFile.has_group("White Balance")) {
             assignFromKeyfile(keyFile, "White Balance", "Enabled", pedited, wb.enabled, pedited->wb.enabled);
             assignFromKeyfile(keyFile, "White Balance", "Setting", pedited, wb.method, pedited->wb.method);
             assignFromKeyfile(keyFile, "White Balance", "Temperature", pedited, wb.temperature, pedited->wb.temperature);
@@ -4529,6 +4536,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Locallab", "Shcompr", pedited, locallab.shcompr, pedited->locallab.shcompr);
             assignFromKeyfile(keyFile, "Locallab", "noiselumf", pedited, locallab.noiselumf, pedited->locallab.noiselumf);
             assignFromKeyfile(keyFile, "Locallab", "noiselumc", pedited, locallab.noiselumc, pedited->locallab.noiselumc);
+            assignFromKeyfile(keyFile, "Locallab", "noiselumdetail", pedited, locallab.noiselumdetail, pedited->locallab.noiselumdetail);
             assignFromKeyfile(keyFile, "Locallab", "noisechrof", pedited, locallab.noisechrof, pedited->locallab.noisechrof);
             assignFromKeyfile(keyFile, "Locallab", "noisechroc", pedited, locallab.noisechroc, pedited->locallab.noisechroc);
             assignFromKeyfile(keyFile, "Locallab", "Sharradius", pedited, locallab.sharradius, pedited->locallab.sharradius);
@@ -5023,15 +5031,17 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
         }
 
-        if (keyFile.has_group ("HSV Equalizer")) {
+        if (keyFile.has_group("HSV Equalizer")) {
             if (ppVersion >= 329) {
                 assignFromKeyfile(keyFile, "HSV Equalizer", "Enabled", pedited, hsvequalizer.enabled, pedited->hsvequalizer.enabled);
             } else {
                 hsvequalizer.enabled = true;
+
                 if (pedited) {
                     pedited->hsvequalizer.enabled = true;
                 }
             }
+
             if (ppVersion >= 300) {
                 assignFromKeyfile(keyFile, "HSV Equalizer", "HCurve", pedited, hsvequalizer.hcurve, pedited->hsvequalizer.hcurve);
                 assignFromKeyfile(keyFile, "HSV Equalizer", "SCurve", pedited, hsvequalizer.scurve, pedited->hsvequalizer.scurve);
@@ -5039,15 +5049,17 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
         }
 
-        if (keyFile.has_group ("RGB Curves")) {
+        if (keyFile.has_group("RGB Curves")) {
             if (ppVersion >= 329) {
                 assignFromKeyfile(keyFile, "RGB Curves", "Enabled", pedited, rgbCurves.enabled, pedited->rgbCurves.enabled);
             } else {
                 rgbCurves.enabled = true;
+
                 if (pedited) {
                     pedited->rgbCurves.enabled = true;
                 }
             }
+
             assignFromKeyfile(keyFile, "RGB Curves", "LumaMode", pedited, rgbCurves.lumamode, pedited->rgbCurves.lumamode);
             assignFromKeyfile(keyFile, "RGB Curves", "rCurve", pedited, rgbCurves.rcurve, pedited->rgbCurves.rcurve);
             assignFromKeyfile(keyFile, "RGB Curves", "gCurve", pedited, rgbCurves.gcurve, pedited->rgbCurves.gcurve);

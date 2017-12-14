@@ -914,6 +914,7 @@ struct LocallabParams {
     int sensiv;
     int     noiselumf;
     int     noiselumc;
+    int     noiselumdetail;
     int     noisechrof;
     int     noisechroc;
     int     sharradius;

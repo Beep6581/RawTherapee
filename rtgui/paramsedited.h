@@ -466,6 +466,7 @@ public:
 
     bool noiselumf;
     bool noiselumc;
+    bool noiselumdetail;
     bool noisechrof;
     bool noisechroc;
     bool sharradius;
