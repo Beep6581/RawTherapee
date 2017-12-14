@@ -156,7 +156,13 @@ ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/icons/Adwaita/index.theme
 
 # Copy the Lensfun database into the app bundle
 mkdir -p "${RESOURCES}/share/lensfun"
-cp /opt/local/share/lensfun/version_1/* "${RESOURCES}/share/lensfun"
+cp /opt/local/share/lensfun/version_2/* "${RESOURCES}/share/lensfun"
+
+# Copy liblensfun to Frameworks
+cp /opt/local/lib/liblensfun.1.dylib "${RESOURCES}/../Frameworks"
+
+# Copy libiomp5 to Frameworks
+cp /opt/local/lib/libomp/libiomp5.dylib "${RESOURCES}/../Frameworks"
 
 # Copy the libiomp5 license into the app bundle
 cp "${PROJECT_SOURCE_DIR}/licenses/osx_libiomp5_LICENSE.txt" "${RESOURCES}"
