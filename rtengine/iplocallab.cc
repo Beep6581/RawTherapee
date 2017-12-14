@@ -8572,7 +8572,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 wavelet_decomposition bdecomp(tmp1.b[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, DaubLen);
 
                 float madL[8][3];
-                float madC[8][3];
+                // float madC[8][3];
                 int edge = 2;
 
                 if (!Ldecomp.memoryAllocationFailed) {
@@ -8653,6 +8653,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 float variC[levred];
 
                 if (!adecomp.memoryAllocationFailed && !bdecomp.memoryAllocationFailed) {
+                    /*
                     #pragma omp parallel for collapse(2) schedule(dynamic,1)
 
                     for (int lvl = 0; lvl < levred; ++lvl) {
@@ -8667,7 +8668,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         }
 
                     }
-
+                    */
 
 
                     if (levred == 7) {
@@ -8711,12 +8712,12 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         float* noisevarchrom = new float[GH * GW];
 
                         for (int q = 0; q < GH * GW; q++) {
-                            noisevarchrom[q] = 1.f;
+                            noisevarchrom[q] = 50.f;
                         }
 
                         float noisevarab_r = 100.f; //SQR(lp.noisecc / 10.0);
-                        WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madC, variC, edge, noisevarab_r, false, false, false, numThreads);
-                        WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madC, variC, edge, noisevarab_r, false, false, false, numThreads);
+                        WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, false, false, false, numThreads);
+                        WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variC, edge, noisevarab_r, false, false, false, numThreads);
                         delete[] noisevarchrom;
 
                     }
@@ -9080,22 +9081,23 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 float variC[levred];
 
                 if (!adecomp.memoryAllocationFailed && !bdecomp.memoryAllocationFailed) {
-                    float madC[8][3];
-                    #pragma omp parallel for collapse(2) schedule(dynamic,1)
+                    /*
+                                        float madC[8][3];
+                                        #pragma omp parallel for collapse(2) schedule(dynamic,1)
 
-                    for (int lvl = 0; lvl < levred; ++lvl) {
-                        // compute median absolute deviation (MAD) of detail coefficients as robust noise estimator
-                        for (int dir = 1; dir < 4; ++dir) {
+                                        for (int lvl = 0; lvl < levred; ++lvl) {
+                                            // compute median absolute deviation (MAD) of detail coefficients as robust noise estimator
+                                            for (int dir = 1; dir < 4; ++dir) {
 
-                            int Wlvl_ab = adecomp.level_W(lvl);//approximation with only "a" (better than L
-                            int Hlvl_ab = adecomp.level_H(lvl);
+                                                int Wlvl_ab = adecomp.level_W(lvl);//approximation with only "a" (better than L
+                                                int Hlvl_ab = adecomp.level_H(lvl);
 
-                            float ** WavCoeffs_ab = adecomp.level_coeffs(lvl);
-                            madC[lvl][dir - 1] = SQR(Mad(WavCoeffs_ab[dir], Wlvl_ab * Hlvl_ab));
-                        }
+                                                float ** WavCoeffs_ab = adecomp.level_coeffs(lvl);
+                                                madC[lvl][dir - 1] = SQR(Mad(WavCoeffs_ab[dir], Wlvl_ab * Hlvl_ab));
+                                            }
 
-                    }
-
+                                        }
+                    */
                     if (levred == 7) {
                         edge = 2;
                         variC[0] = SQR(lp.noisecf / 10.0);
@@ -9136,13 +9138,13 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         float* noisevarchrom = new float[bfh * bfw];
 
                         for (int q = 0; q < bfh * bfw; q++) {
-                            noisevarchrom[q] = 1.f;
+                            noisevarchrom[q] = 50.f;
                         }
 
 
                         float noisevarab_r = 100.f; //SQR(lp.noisecc / 10.0);
-                        WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madC, variC, edge, noisevarab_r, false, false, false, numThreads);
-                        WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madC, variC, edge, noisevarab_r, false, false, false, numThreads);
+                        WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, false, false, false, numThreads);
+                        WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variC, edge, noisevarab_r, false, false, false, numThreads);
                         delete[] noisevarchrom;
 
                     }
