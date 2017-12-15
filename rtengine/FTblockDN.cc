@@ -1172,6 +1172,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                         } else {
                                             madL[lvl][dir - 1] = SQR(MadRgb(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
                                         }
+
                                     }
                                 }
                             }
@@ -2531,7 +2532,7 @@ bool ImProcFunctions::WaveletDenoiseAllL(wavelet_decomposition &WaveletCoeffs_L,
     int maxlvl = min(WaveletCoeffs_L.maxlevel(), 5);
 
     if (edge == 1 || edge == 3) {
-        maxlvl = 4;    //for refine denoise edge wavelet 
+        maxlvl = 4;    //for refine denoise edge wavelet
     }
 
     if (edge == 2) {
@@ -2744,7 +2745,7 @@ SSEFUNCTION void ImProcFunctions::ShrinkAllL(wavelet_decomposition &WaveletCoeff
 
 
 SSEFUNCTION void ImProcFunctions::ShrinkAllAB(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_ab, float **buffer, int level, int dir,
-        float *noisevarchrom, float noisevar_ab, const bool useNoiseCCurve, bool autoch,
+        float *noisevarchrom, float noisevar_ab,  bool useNoiseCCurve, bool autoch,
         bool denoiseMethodRgb, float * madL,  float * variC, int local, float * madaab,  bool madCalculated)
 
 {
@@ -2777,14 +2778,18 @@ SSEFUNCTION void ImProcFunctions::ShrinkAllAB(wavelet_decomposition &WaveletCoef
             madab = SQR(MadRgb(WavCoeffs_ab[dir], W_ab * H_ab));
         }
     }
+
     float noisevarfc;
+
     if ((local == 2 || local == 3) && variC) {
+        useNoiseCCurve = true;
         noisevarfc = variC[level];
     } else {
         noisevarfc = noisevar_ab;
     }
+
     if (noisevarfc > 0.001f) {//noisevar_ab
-        //  madab = useNoiseCCurve ? madab : madab * noisevar_ab;
+        //madab = useNoiseCCurve ? madab : madab * noisevar_ab;
         madab = useNoiseCCurve ? madab : madab * noisevarfc;
 #ifdef __SSE2__
         __m128 onev = _mm_set1_ps(1.f);

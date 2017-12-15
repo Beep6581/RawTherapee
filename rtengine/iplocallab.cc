@@ -1861,6 +1861,7 @@ void ImProcFunctions::addGaNoise(LabImage *lab, LabImage *dst, const float mean,
 void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy)
 {
     // local denoise
+    //simple algo , perhaps we can improve as the others, but noise is here and not good for hue detection
     // BENCHFUN
     const float ach = (float)lp.trans / 100.f;
 
@@ -1888,6 +1889,7 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
             calcTransition(lox, loy, ach, lp, zone, localFactor);
             int begx = int (lp.xc - lp.lxL);
             int begy = int (lp.yc - lp.lyT);
+            float factnoise = (1.f + (lp.noisecf + lp.noisecc) / 300.f);
 
             switch (zone) {
                 case 0: { // outside selection and outside transition zone => no effect, keep original values
@@ -1914,10 +1916,10 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
 
                     difL *= factorx;
                     difa *= factorx;
-                    difb *= factorx;
+                    difb *= factorx ;
                     transformed->L[y][x] = original->L[y][x] + difL;
-                    transformed->a[y][x] = original->a[y][x] + difa;
-                    transformed->b[y][x] = original->b[y][x] + difb;
+                    transformed->a[y][x] = original->a[y][x] + difa * factnoise;
+                    transformed->b[y][x] = original->b[y][x] + difb * factnoise;
                     break;
                 }
 
@@ -1936,8 +1938,8 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
                     }
 
                     transformed->L[y][x] = original->L[y][x] + difL;
-                    transformed->a[y][x] = original->a[y][x] + difa;
-                    transformed->b[y][x] = original->b[y][x] + difb;
+                    transformed->a[y][x] = original->a[y][x] + difa * factnoise;
+                    transformed->b[y][x] = original->b[y][x] + difb * factnoise;
                 }
             }
         }
@@ -8572,7 +8574,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 wavelet_decomposition bdecomp(tmp1.b[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, DaubLen);
 
                 float madL[8][3];
-                // float madC[8][3];
+                //  float madC[8][3];
                 int edge = 2;
 
                 if (!Ldecomp.memoryAllocationFailed) {
@@ -8653,23 +8655,6 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 float variC[levred];
 
                 if (!adecomp.memoryAllocationFailed && !bdecomp.memoryAllocationFailed) {
-                    /*
-                    #pragma omp parallel for collapse(2) schedule(dynamic,1)
-
-                    for (int lvl = 0; lvl < levred; ++lvl) {
-                        // compute median absolute deviation (MAD) of detail coefficients as robust noise estimator
-                        for (int dir = 1; dir < 4; ++dir) {
-
-                            int Wlvl_ab = adecomp.level_W(lvl);//approximation with only "a" (better than L
-                            int Hlvl_ab = adecomp.level_H(lvl);
-
-                            float ** WavCoeffs_ab = adecomp.level_coeffs(lvl);
-                            madC[lvl][dir - 1] = SQR(Mad(WavCoeffs_ab[dir], Wlvl_ab * Hlvl_ab));
-                        }
-
-                    }
-                    */
-
 
                     if (levred == 7) {
                         edge = 2;
@@ -8703,17 +8688,51 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         variC[3] = max(minic, variC[3]);
 
                         if (levred == 7) {
-
+                            float k6 = 0.f;
                             variC[4] = max(0.0001f, variC[4]);
                             variC[5] = max(0.0001f, variC[5]);
-                            variC[6] = max(0.0001f, variC[6]);
+
+                            if (lp.noisecc < 20.f) {
+                                k6 = 0.f;
+                            } else if (lp.noisecc < 50.f) {
+                                k6 = 0.4f;
+                            } else if (lp.noisecc < 70.f) {
+                                k6 = 0.7f;
+                            } else {
+                                k6 = 1.f;
+                            }
+
+                            variC[6] = max(0.0001f, k6 * variC[6]);
                         }
 
                         float* noisevarchrom = new float[GH * GW];
+                        //noisevarchrom in function chroma
+                        int GW2 = (GW + 1) / 2;
+                        float nvch = 50.f;//high value
+                        float nvcl = 8.f;//low value
+                        float seuil = 3000.f;//low
+                        float seuil2 = 20000.f;//high
+                        //ac and bc for transition
+                        float ac = (nvch - nvcl) / (seuil - seuil2);
+                        float bc = nvch - seuil * ac;
+#ifdef _OPENMP
+                        #pragma omp parallel for
 
-                        for (int q = 0; q < GH * GW; q++) {
-                            noisevarchrom[q] = 50.f;
-                        }
+#endif
+
+                        for (int ir = 0; ir < GH; ir++)
+                            for (int jr = 0; jr < GW; jr++) {
+                                float cN = sqrt(SQR(tmp1.a[ir][jr]) + SQR(tmp1.b[ir][jr]));
+
+                                if (cN < seuil) {
+                                    noisevarchrom[(ir >> 1)*GW2 + (jr >> 1)] =  1.f * SQR(nvch);
+                                } else if (cN < seuil2) {
+                                    noisevarchrom[(ir >> 1)*GW2 + (jr >> 1)] = 1.f * SQR(ac * cN + bc);
+                                } else {
+                                    noisevarchrom[(ir >> 1)*GW2 + (jr >> 1)] =  1.f * SQR(nvcl);
+                                }
+                            }
+
 
                         float noisevarab_r = 100.f; //SQR(lp.noisecc / 10.0);
                         WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, false, false, false, numThreads);
@@ -8725,6 +8744,10 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
                 if (!Ldecomp.memoryAllocationFailed) {
                     Lin = new array2D<float>(GW, GH);
+#ifdef _OPENMP
+                    #pragma omp parallel for
+
+#endif
 
                     for (int i = 0; i < GH; ++i) {
                         for (int j = 0; j < GW; ++j) {
@@ -8754,7 +8777,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         int masterThread = omp_get_thread_num();
 #endif
 #ifdef _OPENMP
-                        #pragma omp parallel //num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
+                        #pragma omp parallel
 #endif
                         {
 #ifdef _OPENMP
@@ -9081,23 +9104,6 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 float variC[levred];
 
                 if (!adecomp.memoryAllocationFailed && !bdecomp.memoryAllocationFailed) {
-                    /*
-                                        float madC[8][3];
-                                        #pragma omp parallel for collapse(2) schedule(dynamic,1)
-
-                                        for (int lvl = 0; lvl < levred; ++lvl) {
-                                            // compute median absolute deviation (MAD) of detail coefficients as robust noise estimator
-                                            for (int dir = 1; dir < 4; ++dir) {
-
-                                                int Wlvl_ab = adecomp.level_W(lvl);//approximation with only "a" (better than L
-                                                int Hlvl_ab = adecomp.level_H(lvl);
-
-                                                float ** WavCoeffs_ab = adecomp.level_coeffs(lvl);
-                                                madC[lvl][dir - 1] = SQR(Mad(WavCoeffs_ab[dir], Wlvl_ab * Hlvl_ab));
-                                            }
-
-                                        }
-                    */
                     if (levred == 7) {
                         edge = 2;
                         variC[0] = SQR(lp.noisecf / 10.0);
@@ -9129,17 +9135,50 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         variC[3] = max(minic, variC[3]);
 
                         if (levred == 7) {
-
+                            float k6 = 0.f;
                             variC[4] = max(0.0001f, variC[4]);
                             variC[5] = max(0.0001f, variC[5]);
-                            variC[6] = max(0.0001f, variC[6]);
+
+                            if (lp.noisecc < 20.f) {
+                                k6 = 0.f;
+                            } else if (lp.noisecc < 50.f) {
+                                k6 = 0.4f;
+                            } else if (lp.noisecc < 70.f) {
+                                k6 = 0.7f;
+                            } else {
+                                k6 = 1.f;
+                            }
+
+                            variC[6] = max(0.0001f, k6 * variC[6]);
                         }
 
                         float* noisevarchrom = new float[bfh * bfw];
+                        int bfw2 = (bfw + 1) / 2;
+                        float nvch = 50.f;//high value
+                        float nvcl = 8.f;//low value
+                        float seuil = 3000.f;//low
+                        float seuil2 = 20000.f;//high
+                        //ac and bc for transition
+                        float ac = (nvch - nvcl) / (seuil - seuil2);
+                        float bc = nvch - seuil * ac;
+#ifdef _OPENMP
+                        #pragma omp parallel for
 
-                        for (int q = 0; q < bfh * bfw; q++) {
-                            noisevarchrom[q] = 50.f;
-                        }
+#endif
+
+                        for (int ir = 0; ir < bfh; ir++)
+                            for (int jr = 0; jr < bfw; jr++) {
+                                float cN = sqrt(SQR(bufwv.a[ir][jr]) + SQR(bufwv.b[ir][jr]));
+
+                                if (cN < seuil) {
+                                    noisevarchrom[(ir >> 1)*bfw2 + (jr >> 1)] = 0.5f * SQR(nvch);
+                                } else if (cN < seuil2) {
+                                    noisevarchrom[(ir >> 1)*bfw2 + (jr >> 1)] = 0.5f * SQR(ac * cN + bc);
+                                } else {
+                                    noisevarchrom[(ir >> 1)*bfw2 + (jr >> 1)] = 0.5f * SQR(nvcl);
+                                }
+                            }
+
 
 
                         float noisevarab_r = 100.f; //SQR(lp.noisecc / 10.0);
@@ -9152,8 +9191,11 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
                 if (!Ldecomp.memoryAllocationFailed) {
                     Lin = new array2D<float>(bfw, bfh);
-                    //    #pragma omp parallel for num_threads(numThreads) if (numThreads>1)
 
+#ifdef _OPENMP
+                    #pragma omp parallel for
+
+#endif
 
                     for (int i = 0; i < bfh; ++i) {
                         for (int j = 0; j < bfw; ++j) {
@@ -9185,7 +9227,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         int masterThread = omp_get_thread_num();
 #endif
 #ifdef _OPENMP
-                        #pragma omp parallel //num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
+                        #pragma omp parallel
 #endif
                         {
 #ifdef _OPENMP
@@ -9302,7 +9344,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #ifdef _OPENMP
 
-                        #pragma omp parallel for //num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
+                        #pragma omp parallel for
 #endif
 
                         for (int i = 0; i < bfh; ++i) {
