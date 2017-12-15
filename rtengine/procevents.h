@@ -519,6 +519,7 @@ enum ProcEvent {
     EvTMFattalEnabled = 487,
     EvTMFattalThreshold = 488,
     EvTMFattalAmount = 489,
+    EvPixelShiftOneGreen = 490,
 
     NUMOFEVENTS
 

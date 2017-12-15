@@ -925,11 +925,25 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                         const float blend = smoothFactor == 0.f ? 1.f : pow_F(std::max(psMask[i][j] - 1.f, 0.f), smoothFactor);
 #endif
                         redDest[j + offsX] = intp(blend, redDest[j + offsX], psRed[i][j] );
-                        greenDest[j + offsX] = intp(blend, greenDest[j + offsX], ((*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset] + (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset]) * 0.5f);
+                        if(bayerParams.pixelShiftOneGreen) {
+                            int greenFrame = (1 - offset != 0) ? 1 - offset : 3 - offset;
+                            int greenJ = (1 - offset != 0) ? j : j + 1;
+                            int greenI = (1 - offset != 0) ? i - offset + 1 : i + offset;
+                            greenDest[j + offsX] = intp(blend, greenDest[j + offsX], (*rawDataFrames[greenFrame])[greenI][greenJ] * greenBrightness[greenFrame]);
+                        } else {
+                            greenDest[j + offsX] = intp(blend, greenDest[j + offsX], ((*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset] + (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset]) * 0.5f);
+                        }
                         blueDest[j + offsX] = intp(blend, blueDest[j + offsX], psBlue[i][j]);
                     } else {
                         redDest[j + offsX] = psRed[i][j];
-                        greenDest[j + offsX] = ((*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset] + (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset]) * 0.5f;
+                        if(bayerParams.pixelShiftOneGreen) {
+                            int greenFrame = (1 - offset != 0) ? 1 - offset : 3 - offset;
+                            int greenJ = (1 - offset != 0) ? j : j + 1;
+                            int greenI = (1 - offset != 0) ? i - offset + 1 : i + offset;
+                            greenDest[j + offsX] = (*rawDataFrames[greenFrame])[greenI][greenJ] * greenBrightness[greenFrame];
+                        } else {
+                            greenDest[j + offsX] = ((*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset] + (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset]) * 0.5f;
+                        }
                         blueDest[j + offsX] = psBlue[i][j];
                     }
                 }
@@ -962,7 +976,14 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 
             for(; j < winw - 1; ++j) {
                 // set red, green and blue values
-                green[i][j] = ((*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset] + (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset]) * 0.5f;
+                if(bayerParams.pixelShiftOneGreen) {
+                    int greenFrame = (1 - offset != 0) ? 1 - offset : 3 - offset;
+                    int greenJ = (1 - offset != 0) ? j : j + 1;
+                    int greenI = (1 - offset != 0) ? i - offset + 1 : i + offset;
+                    green[i][j] = (*rawDataFrames[greenFrame])[greenI][greenJ] * greenBrightness[greenFrame];
+                } else {
+                    green[i][j] = ((*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset] + (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset]) * 0.5f;
+                }
                 nonGreenDest0[j] = (*rawDataFrames[(offset << 1) + offset])[i][j + offset] * ngbright[ng][(offset << 1) + offset];
                 nonGreenDest1[j] = (*rawDataFrames[2 - offset])[i + 1][j - offset + 1] * ngbright[ng ^ 1][2 - offset];
                 offset ^= 1; // 0 => 1 or 1 => 0

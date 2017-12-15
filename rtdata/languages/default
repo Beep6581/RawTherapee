@@ -1726,7 +1726,7 @@ TP_RAW_DCBITERATIONS;Number of DCB iterations
 TP_RAW_DMETHOD;Method
 TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
 TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
-TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.\nPixel Shift is for Pentax Pixel Shift files. It falls back to AMaZE for non-Pixel Shift files.
+TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.\nPixel Shift is for Pentax/Sony Pixel Shift files. It falls back to AMaZE for non-Pixel Shift files.
 TP_RAW_EAHD;EAHD
 TP_RAW_FALSECOLOR;False color suppression steps
 TP_RAW_FAST;Fast
@@ -1735,7 +1735,7 @@ TP_RAW_HD_TOOLTIP;Lower values make hot/dead pixel detection more aggressive, bu
 TP_RAW_HPHD;HPHD
 TP_RAW_IGV;IGV
 TP_RAW_IMAGENUM;Sub-image
-TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
+TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
 TP_RAW_LABEL;Demosaicing
 TP_RAW_LMMSE;LMMSE
 TP_RAW_LMMSEITERATIONS;LMMSE enhancement steps
@@ -1757,6 +1757,7 @@ TP_RAW_PIXELSHIFTHOLEFILL;Fill holes in motion mask
 TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fill holes in motion mask
 TP_RAW_PIXELSHIFTLMMSE;Use LMMSE for moving parts
 TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Use LMMSE instead of AMaZE for areas of motion.\nUseful for high ISO images.
+TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Use one green instead of averaging two greens for regions without motion.
 TP_RAW_PIXELSHIFTMASKTHRESHOLD;3x3 new threshold
 TP_RAW_PIXELSHIFTMEDIAN;Use median for moving parts
 TP_RAW_PIXELSHIFTMEDIAN3;Exclude selected frame from median
@@ -1775,6 +1776,7 @@ TP_RAW_PIXELSHIFTNONGREENCROSS2;Check green AMaZE
 TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Check red/blue horizontal
 TP_RAW_PIXELSHIFTNONGREENVERTICAL;Check red/blue vertical
 TP_RAW_PIXELSHIFTNREADISO;nRead
+TP_RAW_PIXELSHIFTONEGREEN;Use one green instead of average
 TP_RAW_PIXELSHIFTPRNU;PRNU (%)
 TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
 TP_RAW_PIXELSHIFTSHOWMOTION;Show motion mask
