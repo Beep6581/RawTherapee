@@ -555,364 +555,366 @@ class CALensInterpreter : public IntLensInterpreter< int >
 public:
     CALensInterpreter ()
     {
-        choices.insert (p_t (1, "Canon EF 50mm f/1.8"));
-        choices.insert (p_t (2, "Canon EF 28mm f/2.8"));
-        choices.insert (p_t (3, "Canon EF 135mm f/2.8 Soft"));
-        choices.insert (p_t (4, "Canon EF 35-105mm f/3.5-4.5 or Sigma Lens"));
-        choices.insert (p_t (4, "Sigma UC Zoom 35-135mm f/4-5.6"));
-        choices.insert (p_t (5, "Canon EF 35-70mm f/3.5-4.5"));
-        choices.insert (p_t (6, "Canon EF 28-70mm f/3.5-4.5 or Sigma or Tokina Lens"));
-        choices.insert (p_t (6, "Sigma 18-50mm f/3.5-5.6 DC"));
-        choices.insert (p_t (6, "Sigma 18-125mm f/3.5-5.6 DC IF ASP"));
-        choices.insert (p_t (6, "Tokina AF 193-2 19-35mm f/3.5-4.5"));
-        choices.insert (p_t (6, "Sigma 28-80mm f/3.5-5.6 II Macro"));
-        choices.insert (p_t (7, "Canon EF 100-300mm f/5.6L"));
-        choices.insert (p_t (8, "Canon EF 100-300mm f/5.6 or Sigma or Tokina Lens"));
-        choices.insert (p_t (8, "Sigma 70-300mm f/4-5.6 [APO] DG Macro"));
-        choices.insert (p_t (8, "Tokina AT-X 242 AF 24-200mm f/3.5-5.6"));
-        choices.insert (p_t (9, "Canon EF 70-210mm f/4"));
-        choices.insert (p_t (9, "Sigma 55-200mm f/4-5.6 DC"));
-        choices.insert (p_t (10, "Canon EF 50mm f/2.5 Macro or Sigma Lens"));
-        choices.insert (p_t (10, "Sigma 50mm f/2.8 EX"));
-        choices.insert (p_t (10, "Sigma 28mm f/1.8"));
-        choices.insert (p_t (10, "Sigma 105mm f/2.8 Macro EX"));
-        choices.insert (p_t (10, "Sigma 70mm f/2.8 EX DG Macro EF"));
-        choices.insert (p_t (11, "Canon EF 35mm f/2"));
-        choices.insert (p_t (13, "Canon EF 15mm f/2.8 Fisheye"));
-        choices.insert (p_t (14, "Canon EF 50-200mm f/3.5-4.5L"));
-        choices.insert (p_t (15, "Canon EF 50-200mm f/3.5-4.5"));
-        choices.insert (p_t (16, "Canon EF 35-135mm f/3.5-4.5"));
-        choices.insert (p_t (17, "Canon EF 35-70mm f/3.5-4.5A"));
-        choices.insert (p_t (18, "Canon EF 28-70mm f/3.5-4.5"));
-        choices.insert (p_t (20, "Canon EF 100-200mm f/4.5A"));
-        choices.insert (p_t (21, "Canon EF 80-200mm f/2.8L"));
-        choices.insert (p_t (22, "Canon EF 20-35mm f/2.8L or Tokina Lens"));
-        choices.insert (p_t (22, "Tokina AT-X 280 AF Pro 28-80mm f/2.8 Aspherical"));
-        choices.insert (p_t (23, "Canon EF 35-105mm f/3.5-4.5"));
-        choices.insert (p_t (24, "Canon EF 35-80mm f/4-5.6 Power Zoom"));
-        choices.insert (p_t (25, "Canon EF 35-80mm f/4-5.6 Power Zoom"));
-        choices.insert (p_t (26, "Canon EF 100mm f/2.8 Macro or Other Lens"));
-        choices.insert (p_t (26, "Cosina 100mm f/3.5 Macro AF"));
-        choices.insert (p_t (26, "Tamron SP AF 90mm f/2.8 Di Macro"));
-        choices.insert (p_t (26, "Tamron SP AF 180mm f/3.5 Di Macro"));
-        choices.insert (p_t (26, "Carl Zeiss Planar T* 50mm f/1.4"));
-        choices.insert (p_t (27, "Canon EF 35-80mm f/4-5.6"));
-        choices.insert (p_t (28, "Canon EF 80-200mm f/4.5-5.6 or Tamron Lens"));
-        choices.insert (p_t (28, "Tamron SP AF 28-105mm f/2.8 LD Aspherical IF"));
-        choices.insert (p_t (28, "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro"));
-        choices.insert (p_t (28, "Tamron AF 70-300mm f/4-5.6 Di LD 1:2 Macro"));
-        choices.insert (p_t (28, "Tamron AF Aspherical 28-200mm f/3.8-5.6"));
-        choices.insert (p_t (29, "Canon EF 50mm f/1.8 II"));
-        choices.insert (p_t (30, "Canon EF 35-105mm f/4.5-5.6"));
-        choices.insert (p_t (31, "Canon EF 75-300mm f/4-5.6 or Tamron Lens"));
-        choices.insert (p_t (31, "Tamron SP AF 300mm f/2.8 LD IF"));
-        choices.insert (p_t (32, "Canon EF 24mm f/2.8 or Sigma Lens"));
-        choices.insert (p_t (32, "Sigma 15mm f/2.8 EX Fisheye"));
-        choices.insert (p_t (33, "Voigtlander or Carl Zeiss Lens"));
-        choices.insert (p_t (33, "Voigtlander Ultron 40mm f/2 SLII Aspherical"));
-        choices.insert (p_t (33, "Voigtlander Color Skopar 20mm f/3.5 SLII Aspherical"));
-        choices.insert (p_t (33, "Voigtlander APO-Lanthar 90mm f/3.5 SLII Close Focus"));
-        choices.insert (p_t (33, "Carl Zeiss Distagon T* 15mm f/2.8 ZE"));
-        choices.insert (p_t (33, "Carl Zeiss Distagon T* 18mm f/3.5 ZE"));
-        choices.insert (p_t (33, "Carl Zeiss Distagon T* 21mm f/2.8 ZE"));
-        choices.insert (p_t (33, "Carl Zeiss Distagon T* 25mm f/2 ZE"));
-        choices.insert (p_t (33, "Carl Zeiss Distagon T* 28mm f/2 ZE"));
-        choices.insert (p_t (33, "Carl Zeiss Distagon T* 35mm f/2 ZE"));
-        choices.insert (p_t (33, "Carl Zeiss Distagon T* 35mm f/1.4 ZE"));
-        choices.insert (p_t (33, "Carl Zeiss Planar T* 50mm f/1.4 ZE"));
-        choices.insert (p_t (33, "Carl Zeiss Makro-Planar T* 50mm f/2 ZE"));
-        choices.insert (p_t (33, "Carl Zeiss Makro-Planar T* 100mm f/2 ZE"));
-        choices.insert (p_t (33, "Carl Zeiss Apo-Sonnar T* 135mm f/2 ZE"));
-        choices.insert (p_t (35, "Canon EF 35-80mm f/4-5.6"));
-        choices.insert (p_t (36, "Canon EF 38-76mm f/4.5-5.6"));
-        choices.insert (p_t (37, "Canon EF 35-80mm f/4-5.6 or Tamron Lens"));
-        choices.insert (p_t (37, "Tamron 70-200mm f/2.8 Di LD IF Macro"));
-        choices.insert (p_t (37, "Tamron AF 28-300mm f/3.5-6.3 XR Di VC LD Aspherical [IF] Macro Model A20"));
-        choices.insert (p_t (37, "Tamron SP AF 17-50mm f/2.8 XR Di II VC LD Aspherical [IF]"));
-        choices.insert (p_t (37, "Tamron AF 18-270mm f/3.5-6.3 Di II VC LD Aspherical [IF] Macro"));
-        choices.insert (p_t (38, "Canon EF 80-200mm f/4.5-5.6"));
-        choices.insert (p_t (39, "Canon EF 75-300mm f/4-5.6"));
-        choices.insert (p_t (40, "Canon EF 28-80mm f/3.5-5.6"));
-        choices.insert (p_t (41, "Canon EF 28-90mm f/4-5.6"));
-        choices.insert (p_t (42, "Canon EF 28-200mm f/3.5-5.6 or Tamron Lens"));
-        choices.insert (p_t (42, "Tamron AF 28-300mm f/3.5-6.3 XR Di VC LD Aspherical [IF] Macro Model A20"));
-        choices.insert (p_t (43, "Canon EF 28-105mm f/4-5.6"));
-        choices.insert (p_t (44, "Canon EF 90-300mm f/4.5-5.6"));
-        choices.insert (p_t (45, "Canon EF-S 18-55mm f/3.5-5.6 [II]"));
-        choices.insert (p_t (46, "Canon EF 28-90mm f/4-5.6"));
-        choices.insert (p_t (47, "Zeiss Milvus 35mm f/2 or 50mm f/2"));
-        choices.insert (p_t (47, "Zeiss Milvus 50mm f/2 Makro"));
-        choices.insert (p_t (48, "Canon EF-S 18-55mm f/3.5-5.6 IS"));
-        choices.insert (p_t (49, "Canon EF-S 55-250mm f/4-5.6 IS"));
-        choices.insert (p_t (50, "Canon EF-S 18-200mm f/3.5-5.6 IS"));
-        choices.insert (p_t (51, "Canon EF-S 18-135mm f/3.5-5.6 IS"));
-        choices.insert (p_t (52, "Canon EF-S 18-55mm f/3.5-5.6 IS II"));
-        choices.insert (p_t (53, "Canon EF-S 18-55mm f/3.5-5.6 III"));
-        choices.insert (p_t (54, "Canon EF-S 55-250mm f/4-5.6 IS II"));
-        choices.insert (p_t (60, "Irix 11mm f/4"));
-        choices.insert (p_t (80, "Canon TS-E 50mm f/2.8L Macro"));
-        choices.insert (p_t (81, "Canon TS-E 90mm f/2.8L Macro"));
-        choices.insert (p_t (82, "Canon TS-E 135mm f/4L Macro"));
-        choices.insert (p_t (94, "Canon TS-E 17mm f/4L"));
-        choices.insert (p_t (95, "Canon TS-E 24mm f/3.5L II"));
-        choices.insert (p_t (124, "Canon MP-E 65mm f/2.8 1-5x Macro Photo"));
-        choices.insert (p_t (125, "Canon TS-E 24mm f/3.5L"));
-        choices.insert (p_t (126, "Canon TS-E 45mm f/2.8"));
-        choices.insert (p_t (127, "Canon TS-E 90mm f/2.8"));
-        choices.insert (p_t (129, "Canon EF 300mm f/2.8L"));
-        choices.insert (p_t (130, "Canon EF 50mm f/1.0L"));
-        choices.insert (p_t (131, "Canon EF 28-80mm f/2.8-4L or Sigma Lens"));
-        choices.insert (p_t (131, "Sigma 8mm f/3.5 EX DG Circular Fisheye"));
-        choices.insert (p_t (131, "Sigma 17-35mm f/2.8-4 EX DG Aspherical HSM"));
-        choices.insert (p_t (131, "Sigma 17-70mm f/2.8-4.5 DC Macro"));
-        choices.insert (p_t (131, "Sigma APO 50-150mm f/2.8 [II] EX DC HSM"));
-        choices.insert (p_t (131, "Sigma APO 120-300mm f/2.8 EX DG HSM"));
-        choices.insert (p_t (131, "Sigma 4.5mm f/2.8 EX DC HSM Circular Fisheye"));
-        choices.insert (p_t (131, "Sigma 70-200mm f/2.8 APO EX HSM"));
-        choices.insert (p_t (132, "Canon EF 1200mm f/5.6L"));
-        choices.insert (p_t (134, "Canon EF 600mm f/4L IS"));
-        choices.insert (p_t (135, "Canon EF 200mm f/1.8L"));
-        choices.insert (p_t (136, "Canon EF 300mm f/2.8L"));
-        choices.insert (p_t (137, "Canon EF 85mm f/1.2L or Sigma or Tamron Lens"));
-        choices.insert (p_t (137, "Sigma 18-50mm f/2.8-4.5 DC OS HSM"));
-        choices.insert (p_t (137, "Sigma 50-200mm f/4-5.6 DC OS HSM"));
-        choices.insert (p_t (137, "Sigma 18-250mm f/3.5-6.3 DC OS HSM"));
-        choices.insert (p_t (137, "Sigma 24-70mm f/2.8 IF EX DG HSM"));
-        choices.insert (p_t (137, "Sigma 18-125mm f/3.8-5.6 DC OS HSM"));
-        choices.insert (p_t (137, "Sigma 17-70mm f/2.8-4 DC Macro OS HSM | C"));
-        choices.insert (p_t (137, "Sigma 17-50mm f/2.8 OS HSM"));
-        choices.insert (p_t (137, "Sigma 18-200mm f/3.5-6.3 DC OS HSM [II]"));
-        choices.insert (p_t (137, "Tamron AF 18-270mm f/3.5-6.3 Di II VC PZD"));
-        choices.insert (p_t (137, "Sigma 8-16mm f/4.5-5.6 DC HSM"));
-        choices.insert (p_t (137, "Tamron SP 17-50mm f/2.8 XR Di II VC"));
-        choices.insert (p_t (137, "Tamron SP 60mm f/2 Macro Di II"));
-        choices.insert (p_t (137, "Sigma 10-20mm f/3.5 EX DC HSM"));
-        choices.insert (p_t (137, "Tamron SP 24-70mm f/2.8 Di VC USD"));
-        choices.insert (p_t (137, "Sigma 18-35mm f/1.8 DC HSM"));
-        choices.insert (p_t (137, "Sigma 12-24mm f/4.5-5.6 DG HSM II"));
-        choices.insert (p_t (138, "Canon EF 28-80mm f/2.8-4L"));
-        choices.insert (p_t (139, "Canon EF 400mm f/2.8L"));
-        choices.insert (p_t (140, "Canon EF 500mm f/4.5L"));
-        choices.insert (p_t (141, "Canon EF 500mm f/4.5L"));
-        choices.insert (p_t (142, "Canon EF 300mm f/2.8L IS"));
-        choices.insert (p_t (143, "Canon EF 500mm f/4L IS or Sigma Lens"));
-        choices.insert (p_t (143, "Sigma 17-70mm f/2.8-4 DC Macro OS HSM"));
-        choices.insert (p_t (144, "Canon EF 35-135mm f/4-5.6 USM"));
-        choices.insert (p_t (145, "Canon EF 100-300mm f/4.5-5.6 USM"));
-        choices.insert (p_t (146, "Canon EF 70-210mm f/3.5-4.5 USM"));
-        choices.insert (p_t (147, "Canon EF 35-135mm f/4-5.6 USM"));
-        choices.insert (p_t (148, "Canon EF 28-80mm f/3.5-5.6 USM"));
-        choices.insert (p_t (149, "Canon EF 100mm f/2 USM"));
-        choices.insert (p_t (150, "Canon EF 14mm f/2.8L or Sigma Lens"));
-        choices.insert (p_t (150, "Sigma 20mm EX f/1.8"));
-        choices.insert (p_t (150, "Sigma 30mm f/1.4 DC HSM"));
-        choices.insert (p_t (150, "Sigma 24mm f/1.8 DG Macro EX"));
-        choices.insert (p_t (150, "Sigma 28mm f/1.8 DG Macro EX"));
-        choices.insert (p_t (151, "Canon EF 200mm f/2.8L"));
-        choices.insert (p_t (152, "Canon EF 300mm f/4L IS or Sigma Lens"));
-        choices.insert (p_t (152, "Sigma 12-24mm f/4.5-5.6 EX DG ASPHERICAL HSM"));
-        choices.insert (p_t (152, "Sigma 14mm f/2.8 EX Aspherical HSM"));
-        choices.insert (p_t (152, "Sigma 10-20mm f/4-5.6"));
-        choices.insert (p_t (152, "Sigma 100-300mm f/4"));
-        choices.insert (p_t (153, "Canon EF 35-350mm f/3.5-5.6L or Sigma or Tamron Lens"));
-        choices.insert (p_t (153, "Sigma 50-500mm f/4-6.3 APO HSM EX"));
-        choices.insert (p_t (153, "Tamron AF 28-300mm f/3.5-6.3 XR LD Aspherical [IF] Macro"));
-        choices.insert (p_t (153, "Tamron AF 18-200mm f/3.5-6.3 XR Di II LD Aspherical [IF] Macro Model A14"));
-        choices.insert (p_t (153, "Tamron 18-250mm f/3.5-6.3 Di II LD Aspherical [IF] Macro"));
-        choices.insert (p_t (154, "Canon EF 20mm f/2.8 USM or Zeiss Lens"));
-        choices.insert (p_t (154, "Zeiss Milvus 21mm f/2.8"));
-        choices.insert (p_t (155, "Canon EF 85mm f/1.8 USM"));
-        choices.insert (p_t (156, "Canon EF 28-105mm f/3.5-4.5 USM or Tamron Lens"));
-        choices.insert (p_t (156, "Tamron SP 70-300mm f/4.0-5.6 Di VC USD"));
-        choices.insert (p_t (156, "Tamron SP AF 28-105mm f/2.8 LD Aspherical IF"));
-        choices.insert (p_t (160, "Canon EF 20-35mm f/3.5-4.5 USM or Tamron or Tokina Lens"));
-        choices.insert (p_t (160, "Tamron AF 19-35mm f/3.5-4.5"));
-        choices.insert (p_t (160, "Tokina AT-X 124 AF Pro DX 12-24mm f/4"));
-        choices.insert (p_t (160, "Tokina AT-X 107 AF DX 10-17mm f/3.5-4.5 Fisheye"));
-        choices.insert (p_t (160, "Tokina AT-X 116 AF Pro DX 11-16mm f/2.8"));
-        choices.insert (p_t (160, "Tokina AT-X 11-20 F2.8 PRO DX Aspherical 11-20mm f/2.8"));
-        choices.insert (p_t (161, "Canon EF 28-70mm f/2.8L or Sigma or Tamron Lens"));
-        choices.insert (p_t (161, "Sigma 24-70mm f/2.8 EX"));
-        choices.insert (p_t (161, "Sigma 28-70mm f/2.8 EX"));
-        choices.insert (p_t (161, "Sigma 24-60mm f/2.8 EX DG"));
-        choices.insert (p_t (161, "Tamron AF 17-50mm f/2.8 Di-II LD Aspherical"));
-        choices.insert (p_t (161, "Tamron 90mm f/2.8"));
-        choices.insert (p_t (161, "Tamron SP AF 17-35mm f/2.8-4 Di LD Aspherical IF"));
-        choices.insert (p_t (161, "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro"));
-        choices.insert (p_t (162, "Canon EF 200mm f/2.8L"));
-        choices.insert (p_t (163, "Canon EF 300mm f/4L"));
-        choices.insert (p_t (164, "Canon EF 400mm f/5.6L"));
-        choices.insert (p_t (165, "Canon EF 70-200mm f/2.8 L"));
-        choices.insert (p_t (166, "Canon EF 70-200mm f/2.8 L + 1.4x"));
-        choices.insert (p_t (167, "Canon EF 70-200mm f/2.8 L + 2x"));
-        choices.insert (p_t (168, "Canon EF 28mm f/1.8 USM or Sigma Lens"));
-        choices.insert (p_t (168, "Sigma 50-100mm f/1.8 DC HSM | A"));
-        choices.insert (p_t (169, "Canon EF 17-35mm f/2.8L or Sigma Lens"));
-        choices.insert (p_t (169, "Sigma 18-200mm f/3.5-6.3 DC OS"));
-        choices.insert (p_t (169, "Sigma 15-30mm f/3.5-4.5 EX DG Aspherical"));
-        choices.insert (p_t (169, "Sigma 18-50mm f/2.8 Macro"));
-        choices.insert (p_t (169, "Sigma 50mm f/1.4 EX DG HSM"));
-        choices.insert (p_t (169, "Sigma 85mm f/1.4 EX DG HSM"));
-        choices.insert (p_t (169, "Sigma 30mm f/1.4 EX DC HSM"));
-        choices.insert (p_t (169, "Sigma 35mm f/1.4 DG HSM"));
-        choices.insert (p_t (170, "Canon EF 200mm f/2.8L II"));
-        choices.insert (p_t (171, "Canon EF 300mm f/4L"));
-        choices.insert (p_t (172, "Canon EF 400mm f/5.6L or Sigma Lens"));
-        choices.insert (p_t (172, "Sigma 150-600mm f/5-6.3 DG OS HSM | S"));
-        choices.insert (p_t (173, "Canon EF 180mm Macro f/3.5L or Sigma Lens"));
-        choices.insert (p_t (173, "Sigma 180mm EX HSM Macro f/3.5"));
-        choices.insert (p_t (173, "Sigma APO Macro 150mm f/2.8 EX DG HSM"));
-        choices.insert (p_t (174, "Canon EF 135mm f/2L or Other Lens"));
-        choices.insert (p_t (174, "Sigma 70-200mm f/2.8 EX DG APO OS HSM"));
-        choices.insert (p_t (174, "Sigma 50-500mm f/4.5-6.3 APO DG OS HSM"));
-        choices.insert (p_t (174, "Sigma 150-500mm f/5-6.3 APO DG OS HSM"));
-        choices.insert (p_t (174, "Zeiss Milvus 100mm f/2 Makro"));
-        choices.insert (p_t (175, "Canon EF 400mm f/2.8L"));
-        choices.insert (p_t (176, "Canon EF 24-85mm f/3.5-4.5 USM"));
-        choices.insert (p_t (177, "Canon EF 300mm f/4L IS"));
-        choices.insert (p_t (178, "Canon EF 28-135mm f/3.5-5.6 IS"));
-        choices.insert (p_t (179, "Canon EF 24mm f/1.4L"));
-        choices.insert (p_t (180, "Canon EF 35mm f/1.4L or Other Lens"));
-        choices.insert (p_t (180, "Sigma 50mm f/1.4 DG HSM | A"));
-        choices.insert (p_t (180, "Sigma 24mm f/1.4 DG HSM | A"));
-        choices.insert (p_t (180, "Zeiss Milvus 50mm f/1.4"));
-        choices.insert (p_t (180, "Zeiss Milvus 85mm f/1.4"));
-        choices.insert (p_t (180, "Zeiss Otus 28mm f/1.4 ZE"));
-        choices.insert (p_t (181, "Canon EF 100-400mm f/4.5-5.6L IS + 1.4x or Sigma Lens"));
-        choices.insert (p_t (181, "Sigma 150-600mm f/5-6.3 DG OS HSM | S + 1.4x"));
-        choices.insert (p_t (182, "Canon EF 100-400mm f/4.5-5.6L IS + 2x or Sigma Lens"));
-        choices.insert (p_t (182, "Sigma 150-600mm f/5-6.3 DG OS HSM | S + 2x"));
-        choices.insert (p_t (183, "Canon EF 100-400mm f/4.5-5.6L IS or Sigma Lens"));
-        choices.insert (p_t (183, "Sigma 150mm f/2.8 EX DG OS HSM APO Macro"));
-        choices.insert (p_t (183, "Sigma 105mm f/2.8 EX DG OS HSM Macro"));
-        choices.insert (p_t (183, "Sigma 180mm f/2.8 EX DG OS HSM APO Macro"));
-        choices.insert (p_t (183, "Sigma 150-600mm f/5-6.3 DG OS HSM | C"));
-        choices.insert (p_t (183, "Sigma 150-600mm f/5-6.3 DG OS HSM | S"));
-        choices.insert (p_t (183, "Sigma 100-400mm f/5-6.3 DG OS HSM"));
-        choices.insert (p_t (184, "Canon EF 400mm f/2.8L + 2x"));
-        choices.insert (p_t (185, "Canon EF 600mm f/4L IS"));
-        choices.insert (p_t (186, "Canon EF 70-200mm f/4L"));
-        choices.insert (p_t (187, "Canon EF 70-200mm f/4L + 1.4x"));
-        choices.insert (p_t (188, "Canon EF 70-200mm f/4L + 2x"));
-        choices.insert (p_t (189, "Canon EF 70-200mm f/4L + 2.8x"));
-        choices.insert (p_t (190, "Canon EF 100mm f/2.8 Macro USM"));
-        choices.insert (p_t (191, "Canon EF 400mm f/4 DO IS"));
-        choices.insert (p_t (193, "Canon EF 35-80mm f/4-5.6 USM"));
-        choices.insert (p_t (194, "Canon EF 80-200mm f/4.5-5.6 USM"));
-        choices.insert (p_t (195, "Canon EF 35-105mm f/4.5-5.6 USM"));
-        choices.insert (p_t (196, "Canon EF 75-300mm f/4-5.6 USM"));
-        choices.insert (p_t (197, "Canon EF 75-300mm f/4-5.6 IS USM or Sigma Lens"));
-        choices.insert (p_t (197, "Sigma 18-300mm f/3.5-6.3 DC Macro OS HS"));
-        choices.insert (p_t (198, "Canon EF 50mm f/1.4 USM or Zeiss Lens"));
-        choices.insert (p_t (198, "Zeiss Otus 55mm f/1.4 ZE"));
-        choices.insert (p_t (198, "Zeiss Otus 85mm f/1.4 ZE"));
-        choices.insert (p_t (199, "Canon EF 28-80mm f/3.5-5.6 USM"));
-        choices.insert (p_t (200, "Canon EF 75-300mm f/4-5.6 USM"));
-        choices.insert (p_t (201, "Canon EF 28-80mm f/3.5-5.6 USM"));
-        choices.insert (p_t (202, "Canon EF 28-80mm f/3.5-5.6 USM IV"));
-        choices.insert (p_t (208, "Canon EF 22-55mm f/4-5.6 USM"));
-        choices.insert (p_t (209, "Canon EF 55-200mm f/4.5-5.6"));
-        choices.insert (p_t (210, "Canon EF 28-90mm f/4-5.6 USM"));
-        choices.insert (p_t (211, "Canon EF 28-200mm f/3.5-5.6 USM"));
-        choices.insert (p_t (212, "Canon EF 28-105mm f/4-5.6 USM"));
-        choices.insert (p_t (213, "Canon EF 90-300mm f/4.5-5.6 USM or Tamron Lens"));
-        choices.insert (p_t (213, "Tamron SP 150-600mm f/5-6.3 Di VC USD"));
-        choices.insert (p_t (213, "Tamron 16-300mm f/3.5-6.3 Di II VC PZD Macro"));
-        choices.insert (p_t (213, "Tamron SP 35mm f/1.8 Di VC USD"));
-        choices.insert (p_t (213, "Tamron SP 45mm f/1.8 Di VC USD"));
-        choices.insert (p_t (214, "Canon EF-S 18-55mm f/3.5-5.6 USM"));
-        choices.insert (p_t (215, "Canon EF 55-200mm f/4.5-5.6 II USM"));
-        choices.insert (p_t (217, "Tamron AF 18-270mm f/3.5-6.3 Di II VC PZD"));
-        choices.insert (p_t (224, "Canon EF 70-200mm f/2.8L IS"));
-        choices.insert (p_t (225, "Canon EF 70-200mm f/2.8L IS + 1.4x"));
-        choices.insert (p_t (226, "Canon EF 70-200mm f/2.8L IS + 2x"));
-        choices.insert (p_t (227, "Canon EF 70-200mm f/2.8L IS + 2.8x"));
-        choices.insert (p_t (228, "Canon EF 28-105mm f/3.5-4.5 USM"));
-        choices.insert (p_t (229, "Canon EF 16-35mm f/2.8L"));
-        choices.insert (p_t (230, "Canon EF 24-70mm f/2.8L"));
-        choices.insert (p_t (231, "Canon EF 17-40mm f/4L"));
-        choices.insert (p_t (232, "Canon EF 70-300mm f/4.5-5.6 DO IS USM"));
-        choices.insert (p_t (233, "Canon EF 28-300mm f/3.5-5.6L IS"));
-        choices.insert (p_t (234, "Canon EF-S 17-85mm f/4-5.6 IS USM or Tokina Lens"));
-        choices.insert (p_t (234, "Tokina AT-X 12-28 PRO DX 12-28mm f/4"));
-        choices.insert (p_t (235, "Canon EF-S 10-22mm f/3.5-4.5 USM"));
-        choices.insert (p_t (236, "Canon EF-S 60mm f/2.8 Macro USM"));
-        choices.insert (p_t (237, "Canon EF 24-105mm f/4L IS"));
-        choices.insert (p_t (238, "Canon EF 70-300mm f/4-5.6 IS USM"));
-        choices.insert (p_t (239, "Canon EF 85mm f/1.2L II"));
-        choices.insert (p_t (240, "Canon EF-S 17-55mm f/2.8 IS USM"));
-        choices.insert (p_t (241, "Canon EF 50mm f/1.2L"));
-        choices.insert (p_t (242, "Canon EF 70-200mm f/4L IS"));
-        choices.insert (p_t (243, "Canon EF 70-200mm f/4L IS + 1.4x"));
-        choices.insert (p_t (244, "Canon EF 70-200mm f/4L IS + 2x"));
-        choices.insert (p_t (245, "Canon EF 70-200mm f/4L IS + 2.8x"));
-        choices.insert (p_t (246, "Canon EF 16-35mm f/2.8L II"));
-        choices.insert (p_t (247, "Canon EF 14mm f/2.8L II USM"));
-        choices.insert (p_t (248, "Canon EF 200mm f/2L IS or Sigma Lens"));
-        choices.insert (p_t (248, "Sigma 24-35mm f/2 DG HSM | A"));
-        choices.insert (p_t (249, "Canon EF 800mm f/5.6L IS"));
-        choices.insert (p_t (250, "Canon EF 24mm f/1.4L II or Sigma Lens"));
-        choices.insert (p_t (250, "Sigma 20mm f/1.4 DG HSM | A"));
-        choices.insert (p_t (251, "Canon EF 70-200mm f/2.8L IS II USM"));
-        choices.insert (p_t (252, "Canon EF 70-200mm f/2.8L IS II USM + 1.4x"));
-        choices.insert (p_t (253, "Canon EF 70-200mm f/2.8L IS II USM + 2x"));
-        choices.insert (p_t (254, "Canon EF 100mm f/2.8L Macro IS USM"));
-        choices.insert (p_t (255, "Sigma 24-105mm f/4 DG OS HSM | A or Other Sigma Lens"));
-        choices.insert (p_t (255, "Sigma 180mm f/2.8 EX DG OS HSM APO Macro"));
-        choices.insert (p_t (488, "Canon EF-S 15-85mm f/3.5-5.6 IS USM"));
-        choices.insert (p_t (489, "Canon EF 70-300mm f/4-5.6L IS USM"));
-        choices.insert (p_t (490, "Canon EF 8-15mm f/4L Fisheye USM"));
-        choices.insert (p_t (491, "Canon EF 300mm f/2.8L IS II USM or Tamron Lens"));
-        choices.insert (p_t (491, "Tamron SP 70-200mm f/2.8 Di VC USD G2 (A025)"));
-        choices.insert (p_t (491, "Tamron 18-400mm f/3.5-6.3 Di II VC HLD (B028)"));
-        choices.insert (p_t (492, "Canon EF 400mm f/2.8L IS II USM"));
-        choices.insert (p_t (493, "Canon EF 500mm f/4L IS II USM or EF 24-105mm f4L IS USM"));
-        choices.insert (p_t (493, "Canon EF 24-105mm f/4L IS USM"));
-        choices.insert (p_t (494, "Canon EF 600mm f/4.0L IS II USM"));
-        choices.insert (p_t (495, "Canon EF 24-70mm f/2.8L II USM or Sigma Lens"));
-        choices.insert (p_t (495, "Sigma 24-70mm F2.8 DG OS HSM | A"));
-        choices.insert (p_t (496, "Canon EF 200-400mm f/4L IS USM"));
-        choices.insert (p_t (499, "Canon EF 200-400mm f/4L IS USM + 1.4x"));
-        choices.insert (p_t (502, "Canon EF 28mm f/2.8 IS USM"));
-        choices.insert (p_t (503, "Canon EF 24mm f/2.8 IS USM"));
-        choices.insert (p_t (504, "Canon EF 24-70mm f/4L IS USM"));
-        choices.insert (p_t (505, "Canon EF 35mm f/2 IS USM"));
-        choices.insert (p_t (506, "Canon EF 400mm f/4 DO IS II USM"));
-        choices.insert (p_t (507, "Canon EF 16-35mm f/4L IS USM"));
-        choices.insert (p_t (508, "Canon EF 11-24mm f/4L USM or Tamron Lens"));
-        choices.insert (p_t (508, "Tamron 10-24mm f/3.5-4.5 Di II VC HLD"));
-        choices.insert (p_t (747, "Canon EF 100-400mm f/4.5-5.6L IS II USM or Tamron Lens"));
-        choices.insert (p_t (747, "Tamron SP 150-600mm F5-6.3 Di VC USD G2"));
-        choices.insert (p_t (748, "Canon EF 100-400mm f/4.5-5.6L IS II USM + 1.4x"));
-        choices.insert (p_t (750, "Canon EF 35mm f/1.4L II USM"));
-        choices.insert (p_t (751, "Canon EF 16-35mm f/2.8L III USM"));
-        choices.insert (p_t (752, "Canon EF 24-105mm f/4L IS II USM"));
-        choices.insert (p_t (4142, "Canon EF-S 18-135mm f/3.5-5.6 IS STM"));
-        choices.insert (p_t (4143, "Canon EF-M 18-55mm f/3.5-5.6 IS STM or Tamron Lens"));
-        choices.insert (p_t (4143, "Tamron 18-200mm f/3.5-6.3 Di III VC"));
-        choices.insert (p_t (4144, "Canon EF 40mm f/2.8 STM"));
-        choices.insert (p_t (4145, "Canon EF-M 22mm f/2 STM"));
-        choices.insert (p_t (4146, "Canon EF-S 18-55mm f/3.5-5.6 IS STM"));
-        choices.insert (p_t (4147, "Canon EF-M 11-22mm f/4-5.6 IS STM"));
-        choices.insert (p_t (4148, "Canon EF-S 55-250mm f/4-5.6 IS STM"));
-        choices.insert (p_t (4149, "Canon EF-M 55-200mm f/4.5-6.3 IS STM"));
-        choices.insert (p_t (4150, "Canon EF-S 10-18mm f/4.5-5.6 IS STM"));
-        choices.insert (p_t (4152, "Canon EF 24-105mm f/3.5-5.6 IS STM"));
-        choices.insert (p_t (4153, "Canon EF-M 15-45mm f/3.5-6.3 IS STM"));
-        choices.insert (p_t (4154, "Canon EF-S 24mm f/2.8 STM"));
-        choices.insert (p_t (4155, "Canon EF-M 28mm f/3.5 Macro IS STM"));
-        choices.insert (p_t (4156, "Canon EF 50mm f/1.8 STM"));
-        choices.insert (p_t (4157, "Canon EF-M 18-150mm 1:3.5-6.3 IS STM"));
-        choices.insert (p_t (4158, "Canon EF-S 18-55mm f/4-5.6 IS STM"));
-        choices.insert (p_t (4160, "Canon EF-S 35mm f/2.8 Macro IS STM"));
-        choices.insert (p_t (36910, "Canon EF 70-300mm f/4-5.6 IS II USM"));
-        choices.insert (p_t (36912, "Canon EF-S 18-135mm f/3.5-5.6 IS USM"));
-        choices.insert (p_t (61491, "Canon CN-E 14mm T3.1 L F"));
-        choices.insert (p_t (61492, "Canon CN-E 24mm T1.5 L F"));
-        choices.insert (p_t (61494, "Canon CN-E 85mm T1.3 L F"));
-        choices.insert (p_t (61495, "Canon CN-E 135mm T2.2 L F"));
-        choices.insert (p_t (61496, "Canon CN-E 35mm T1.5 L F"));
-        choices.insert (p_t (65535, "n/a"));
+        choices = {
+            {1, "Canon EF 50mm f/1.8"},
+            {2, "Canon EF 28mm f/2.8"},
+            {3, "Canon EF 135mm f/2.8 Soft"},
+            {4, "Canon EF 35-105mm f/3.5-4.5 or Sigma Lens"},
+            {4, "Sigma UC Zoom 35-135mm f/4-5.6"},
+            {5, "Canon EF 35-70mm f/3.5-4.5"},
+            {6, "Canon EF 28-70mm f/3.5-4.5 or Sigma or Tokina Lens"},
+            {6, "Sigma 18-50mm f/3.5-5.6 DC"},
+            {6, "Sigma 18-125mm f/3.5-5.6 DC IF ASP"},
+            {6, "Tokina AF 193-2 19-35mm f/3.5-4.5"},
+            {6, "Sigma 28-80mm f/3.5-5.6 II Macro"},
+            {7, "Canon EF 100-300mm f/5.6L"},
+            {8, "Canon EF 100-300mm f/5.6 or Sigma or Tokina Lens"},
+            {8, "Sigma 70-300mm f/4-5.6 [APO] DG Macro"},
+            {8, "Tokina AT-X 242 AF 24-200mm f/3.5-5.6"},
+            {9, "Canon EF 70-210mm f/4"},
+            {9, "Sigma 55-200mm f/4-5.6 DC"},
+            {10, "Canon EF 50mm f/2.5 Macro or Sigma Lens"},
+            {10, "Sigma 50mm f/2.8 EX"},
+            {10, "Sigma 28mm f/1.8"},
+            {10, "Sigma 105mm f/2.8 Macro EX"},
+            {10, "Sigma 70mm f/2.8 EX DG Macro EF"},
+            {11, "Canon EF 35mm f/2"},
+            {13, "Canon EF 15mm f/2.8 Fisheye"},
+            {14, "Canon EF 50-200mm f/3.5-4.5L"},
+            {15, "Canon EF 50-200mm f/3.5-4.5"},
+            {16, "Canon EF 35-135mm f/3.5-4.5"},
+            {17, "Canon EF 35-70mm f/3.5-4.5A"},
+            {18, "Canon EF 28-70mm f/3.5-4.5"},
+            {20, "Canon EF 100-200mm f/4.5A"},
+            {21, "Canon EF 80-200mm f/2.8L"},
+            {22, "Canon EF 20-35mm f/2.8L or Tokina Lens"},
+            {22, "Tokina AT-X 280 AF Pro 28-80mm f/2.8 Aspherical"},
+            {23, "Canon EF 35-105mm f/3.5-4.5"},
+            {24, "Canon EF 35-80mm f/4-5.6 Power Zoom"},
+            {25, "Canon EF 35-80mm f/4-5.6 Power Zoom"},
+            {26, "Canon EF 100mm f/2.8 Macro or Other Lens"},
+            {26, "Cosina 100mm f/3.5 Macro AF"},
+            {26, "Tamron SP AF 90mm f/2.8 Di Macro"},
+            {26, "Tamron SP AF 180mm f/3.5 Di Macro"},
+            {26, "Carl Zeiss Planar T* 50mm f/1.4"},
+            {27, "Canon EF 35-80mm f/4-5.6"},
+            {28, "Canon EF 80-200mm f/4.5-5.6 or Tamron Lens"},
+            {28, "Tamron SP AF 28-105mm f/2.8 LD Aspherical IF"},
+            {28, "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro"},
+            {28, "Tamron AF 70-300mm f/4-5.6 Di LD 1:2 Macro"},
+            {28, "Tamron AF Aspherical 28-200mm f/3.8-5.6"},
+            {29, "Canon EF 50mm f/1.8 II"},
+            {30, "Canon EF 35-105mm f/4.5-5.6"},
+            {31, "Canon EF 75-300mm f/4-5.6 or Tamron Lens"},
+            {31, "Tamron SP AF 300mm f/2.8 LD IF"},
+            {32, "Canon EF 24mm f/2.8 or Sigma Lens"},
+            {32, "Sigma 15mm f/2.8 EX Fisheye"},
+            {33, "Voigtlander or Carl Zeiss Lens"},
+            {33, "Voigtlander Ultron 40mm f/2 SLII Aspherical"},
+            {33, "Voigtlander Color Skopar 20mm f/3.5 SLII Aspherical"},
+            {33, "Voigtlander APO-Lanthar 90mm f/3.5 SLII Close Focus"},
+            {33, "Carl Zeiss Distagon T* 15mm f/2.8 ZE"},
+            {33, "Carl Zeiss Distagon T* 18mm f/3.5 ZE"},
+            {33, "Carl Zeiss Distagon T* 21mm f/2.8 ZE"},
+            {33, "Carl Zeiss Distagon T* 25mm f/2 ZE"},
+            {33, "Carl Zeiss Distagon T* 28mm f/2 ZE"},
+            {33, "Carl Zeiss Distagon T* 35mm f/2 ZE"},
+            {33, "Carl Zeiss Distagon T* 35mm f/1.4 ZE"},
+            {33, "Carl Zeiss Planar T* 50mm f/1.4 ZE"},
+            {33, "Carl Zeiss Makro-Planar T* 50mm f/2 ZE"},
+            {33, "Carl Zeiss Makro-Planar T* 100mm f/2 ZE"},
+            {33, "Carl Zeiss Apo-Sonnar T* 135mm f/2 ZE"},
+            {35, "Canon EF 35-80mm f/4-5.6"},
+            {36, "Canon EF 38-76mm f/4.5-5.6"},
+            {37, "Canon EF 35-80mm f/4-5.6 or Tamron Lens"},
+            {37, "Tamron 70-200mm f/2.8 Di LD IF Macro"},
+            {37, "Tamron AF 28-300mm f/3.5-6.3 XR Di VC LD Aspherical [IF] Macro Model A20"},
+            {37, "Tamron SP AF 17-50mm f/2.8 XR Di II VC LD Aspherical [IF]"},
+            {37, "Tamron AF 18-270mm f/3.5-6.3 Di II VC LD Aspherical [IF] Macro"},
+            {38, "Canon EF 80-200mm f/4.5-5.6"},
+            {39, "Canon EF 75-300mm f/4-5.6"},
+            {40, "Canon EF 28-80mm f/3.5-5.6"},
+            {41, "Canon EF 28-90mm f/4-5.6"},
+            {42, "Canon EF 28-200mm f/3.5-5.6 or Tamron Lens"},
+            {42, "Tamron AF 28-300mm f/3.5-6.3 XR Di VC LD Aspherical [IF] Macro Model A20"},
+            {43, "Canon EF 28-105mm f/4-5.6"},
+            {44, "Canon EF 90-300mm f/4.5-5.6"},
+            {45, "Canon EF-S 18-55mm f/3.5-5.6 [II]"},
+            {46, "Canon EF 28-90mm f/4-5.6"},
+            {47, "Zeiss Milvus 35mm f/2 or 50mm f/2"},
+            {47, "Zeiss Milvus 50mm f/2 Makro"},
+            {48, "Canon EF-S 18-55mm f/3.5-5.6 IS"},
+            {49, "Canon EF-S 55-250mm f/4-5.6 IS"},
+            {50, "Canon EF-S 18-200mm f/3.5-5.6 IS"},
+            {51, "Canon EF-S 18-135mm f/3.5-5.6 IS"},
+            {52, "Canon EF-S 18-55mm f/3.5-5.6 IS II"},
+            {53, "Canon EF-S 18-55mm f/3.5-5.6 III"},
+            {54, "Canon EF-S 55-250mm f/4-5.6 IS II"},
+            {60, "Irix 11mm f/4"},
+            {80, "Canon TS-E 50mm f/2.8L Macro"},
+            {81, "Canon TS-E 90mm f/2.8L Macro"},
+            {82, "Canon TS-E 135mm f/4L Macro"},
+            {94, "Canon TS-E 17mm f/4L"},
+            {95, "Canon TS-E 24mm f/3.5L II"},
+            {124, "Canon MP-E 65mm f/2.8 1-5x Macro Photo"},
+            {125, "Canon TS-E 24mm f/3.5L"},
+            {126, "Canon TS-E 45mm f/2.8"},
+            {127, "Canon TS-E 90mm f/2.8"},
+            {129, "Canon EF 300mm f/2.8L"},
+            {130, "Canon EF 50mm f/1.0L"},
+            {131, "Canon EF 28-80mm f/2.8-4L or Sigma Lens"},
+            {131, "Sigma 8mm f/3.5 EX DG Circular Fisheye"},
+            {131, "Sigma 17-35mm f/2.8-4 EX DG Aspherical HSM"},
+            {131, "Sigma 17-70mm f/2.8-4.5 DC Macro"},
+            {131, "Sigma APO 50-150mm f/2.8 [II] EX DC HSM"},
+            {131, "Sigma APO 120-300mm f/2.8 EX DG HSM"},
+            {131, "Sigma 4.5mm f/2.8 EX DC HSM Circular Fisheye"},
+            {131, "Sigma 70-200mm f/2.8 APO EX HSM"},
+            {132, "Canon EF 1200mm f/5.6L"},
+            {134, "Canon EF 600mm f/4L IS"},
+            {135, "Canon EF 200mm f/1.8L"},
+            {136, "Canon EF 300mm f/2.8L"},
+            {137, "Canon EF 85mm f/1.2L or Sigma or Tamron Lens"},
+            {137, "Sigma 18-50mm f/2.8-4.5 DC OS HSM"},
+            {137, "Sigma 50-200mm f/4-5.6 DC OS HSM"},
+            {137, "Sigma 18-250mm f/3.5-6.3 DC OS HSM"},
+            {137, "Sigma 24-70mm f/2.8 IF EX DG HSM"},
+            {137, "Sigma 18-125mm f/3.8-5.6 DC OS HSM"},
+            {137, "Sigma 17-70mm f/2.8-4 DC Macro OS HSM | C"},
+            {137, "Sigma 17-50mm f/2.8 OS HSM"},
+            {137, "Sigma 18-200mm f/3.5-6.3 DC OS HSM [II]"},
+            {137, "Tamron AF 18-270mm f/3.5-6.3 Di II VC PZD"},
+            {137, "Sigma 8-16mm f/4.5-5.6 DC HSM"},
+            {137, "Tamron SP 17-50mm f/2.8 XR Di II VC"},
+            {137, "Tamron SP 60mm f/2 Macro Di II"},
+            {137, "Sigma 10-20mm f/3.5 EX DC HSM"},
+            {137, "Tamron SP 24-70mm f/2.8 Di VC USD"},
+            {137, "Sigma 18-35mm f/1.8 DC HSM"},
+            {137, "Sigma 12-24mm f/4.5-5.6 DG HSM II"},
+            {138, "Canon EF 28-80mm f/2.8-4L"},
+            {139, "Canon EF 400mm f/2.8L"},
+            {140, "Canon EF 500mm f/4.5L"},
+            {141, "Canon EF 500mm f/4.5L"},
+            {142, "Canon EF 300mm f/2.8L IS"},
+            {143, "Canon EF 500mm f/4L IS or Sigma Lens"},
+            {143, "Sigma 17-70mm f/2.8-4 DC Macro OS HSM"},
+            {144, "Canon EF 35-135mm f/4-5.6 USM"},
+            {145, "Canon EF 100-300mm f/4.5-5.6 USM"},
+            {146, "Canon EF 70-210mm f/3.5-4.5 USM"},
+            {147, "Canon EF 35-135mm f/4-5.6 USM"},
+            {148, "Canon EF 28-80mm f/3.5-5.6 USM"},
+            {149, "Canon EF 100mm f/2 USM"},
+            {150, "Canon EF 14mm f/2.8L or Sigma Lens"},
+            {150, "Sigma 20mm EX f/1.8"},
+            {150, "Sigma 30mm f/1.4 DC HSM"},
+            {150, "Sigma 24mm f/1.8 DG Macro EX"},
+            {150, "Sigma 28mm f/1.8 DG Macro EX"},
+            {151, "Canon EF 200mm f/2.8L"},
+            {152, "Canon EF 300mm f/4L IS or Sigma Lens"},
+            {152, "Sigma 12-24mm f/4.5-5.6 EX DG ASPHERICAL HSM"},
+            {152, "Sigma 14mm f/2.8 EX Aspherical HSM"},
+            {152, "Sigma 10-20mm f/4-5.6"},
+            {152, "Sigma 100-300mm f/4"},
+            {153, "Canon EF 35-350mm f/3.5-5.6L or Sigma or Tamron Lens"},
+            {153, "Sigma 50-500mm f/4-6.3 APO HSM EX"},
+            {153, "Tamron AF 28-300mm f/3.5-6.3 XR LD Aspherical [IF] Macro"},
+            {153, "Tamron AF 18-200mm f/3.5-6.3 XR Di II LD Aspherical [IF] Macro Model A14"},
+            {153, "Tamron 18-250mm f/3.5-6.3 Di II LD Aspherical [IF] Macro"},
+            {154, "Canon EF 20mm f/2.8 USM or Zeiss Lens"},
+            {154, "Zeiss Milvus 21mm f/2.8"},
+            {155, "Canon EF 85mm f/1.8 USM"},
+            {156, "Canon EF 28-105mm f/3.5-4.5 USM or Tamron Lens"},
+            {156, "Tamron SP 70-300mm f/4.0-5.6 Di VC USD"},
+            {156, "Tamron SP AF 28-105mm f/2.8 LD Aspherical IF"},
+            {160, "Canon EF 20-35mm f/3.5-4.5 USM or Tamron or Tokina Lens"},
+            {160, "Tamron AF 19-35mm f/3.5-4.5"},
+            {160, "Tokina AT-X 124 AF Pro DX 12-24mm f/4"},
+            {160, "Tokina AT-X 107 AF DX 10-17mm f/3.5-4.5 Fisheye"},
+            {160, "Tokina AT-X 116 AF Pro DX 11-16mm f/2.8"},
+            {160, "Tokina AT-X 11-20 F2.8 PRO DX Aspherical 11-20mm f/2.8"},
+            {161, "Canon EF 28-70mm f/2.8L or Sigma or Tamron Lens"},
+            {161, "Sigma 24-70mm f/2.8 EX"},
+            {161, "Sigma 28-70mm f/2.8 EX"},
+            {161, "Sigma 24-60mm f/2.8 EX DG"},
+            {161, "Tamron AF 17-50mm f/2.8 Di-II LD Aspherical"},
+            {161, "Tamron 90mm f/2.8"},
+            {161, "Tamron SP AF 17-35mm f/2.8-4 Di LD Aspherical IF"},
+            {161, "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro"},
+            {162, "Canon EF 200mm f/2.8L"},
+            {163, "Canon EF 300mm f/4L"},
+            {164, "Canon EF 400mm f/5.6L"},
+            {165, "Canon EF 70-200mm f/2.8 L"},
+            {166, "Canon EF 70-200mm f/2.8 L + 1.4x"},
+            {167, "Canon EF 70-200mm f/2.8 L + 2x"},
+            {168, "Canon EF 28mm f/1.8 USM or Sigma Lens"},
+            {168, "Sigma 50-100mm f/1.8 DC HSM | A"},
+            {169, "Canon EF 17-35mm f/2.8L or Sigma Lens"},
+            {169, "Sigma 18-200mm f/3.5-6.3 DC OS"},
+            {169, "Sigma 15-30mm f/3.5-4.5 EX DG Aspherical"},
+            {169, "Sigma 18-50mm f/2.8 Macro"},
+            {169, "Sigma 50mm f/1.4 EX DG HSM"},
+            {169, "Sigma 85mm f/1.4 EX DG HSM"},
+            {169, "Sigma 30mm f/1.4 EX DC HSM"},
+            {169, "Sigma 35mm f/1.4 DG HSM"},
+            {170, "Canon EF 200mm f/2.8L II"},
+            {171, "Canon EF 300mm f/4L"},
+            {172, "Canon EF 400mm f/5.6L or Sigma Lens"},
+            {172, "Sigma 150-600mm f/5-6.3 DG OS HSM | S"},
+            {173, "Canon EF 180mm Macro f/3.5L or Sigma Lens"},
+            {173, "Sigma 180mm EX HSM Macro f/3.5"},
+            {173, "Sigma APO Macro 150mm f/2.8 EX DG HSM"},
+            {174, "Canon EF 135mm f/2L or Other Lens"},
+            {174, "Sigma 70-200mm f/2.8 EX DG APO OS HSM"},
+            {174, "Sigma 50-500mm f/4.5-6.3 APO DG OS HSM"},
+            {174, "Sigma 150-500mm f/5-6.3 APO DG OS HSM"},
+            {174, "Zeiss Milvus 100mm f/2 Makro"},
+            {175, "Canon EF 400mm f/2.8L"},
+            {176, "Canon EF 24-85mm f/3.5-4.5 USM"},
+            {177, "Canon EF 300mm f/4L IS"},
+            {178, "Canon EF 28-135mm f/3.5-5.6 IS"},
+            {179, "Canon EF 24mm f/1.4L"},
+            {180, "Canon EF 35mm f/1.4L or Other Lens"},
+            {180, "Sigma 50mm f/1.4 DG HSM | A"},
+            {180, "Sigma 24mm f/1.4 DG HSM | A"},
+            {180, "Zeiss Milvus 50mm f/1.4"},
+            {180, "Zeiss Milvus 85mm f/1.4"},
+            {180, "Zeiss Otus 28mm f/1.4 ZE"},
+            {181, "Canon EF 100-400mm f/4.5-5.6L IS + 1.4x or Sigma Lens"},
+            {181, "Sigma 150-600mm f/5-6.3 DG OS HSM | S + 1.4x"},
+            {182, "Canon EF 100-400mm f/4.5-5.6L IS + 2x or Sigma Lens"},
+            {182, "Sigma 150-600mm f/5-6.3 DG OS HSM | S + 2x"},
+            {183, "Canon EF 100-400mm f/4.5-5.6L IS or Sigma Lens"},
+            {183, "Sigma 150mm f/2.8 EX DG OS HSM APO Macro"},
+            {183, "Sigma 105mm f/2.8 EX DG OS HSM Macro"},
+            {183, "Sigma 180mm f/2.8 EX DG OS HSM APO Macro"},
+            {183, "Sigma 150-600mm f/5-6.3 DG OS HSM | C"},
+            {183, "Sigma 150-600mm f/5-6.3 DG OS HSM | S"},
+            {183, "Sigma 100-400mm f/5-6.3 DG OS HSM"},
+            {184, "Canon EF 400mm f/2.8L + 2x"},
+            {185, "Canon EF 600mm f/4L IS"},
+            {186, "Canon EF 70-200mm f/4L"},
+            {187, "Canon EF 70-200mm f/4L + 1.4x"},
+            {188, "Canon EF 70-200mm f/4L + 2x"},
+            {189, "Canon EF 70-200mm f/4L + 2.8x"},
+            {190, "Canon EF 100mm f/2.8 Macro USM"},
+            {191, "Canon EF 400mm f/4 DO IS"},
+            {193, "Canon EF 35-80mm f/4-5.6 USM"},
+            {194, "Canon EF 80-200mm f/4.5-5.6 USM"},
+            {195, "Canon EF 35-105mm f/4.5-5.6 USM"},
+            {196, "Canon EF 75-300mm f/4-5.6 USM"},
+            {197, "Canon EF 75-300mm f/4-5.6 IS USM or Sigma Lens"},
+            {197, "Sigma 18-300mm f/3.5-6.3 DC Macro OS HS"},
+            {198, "Canon EF 50mm f/1.4 USM or Zeiss Lens"},
+            {198, "Zeiss Otus 55mm f/1.4 ZE"},
+            {198, "Zeiss Otus 85mm f/1.4 ZE"},
+            {199, "Canon EF 28-80mm f/3.5-5.6 USM"},
+            {200, "Canon EF 75-300mm f/4-5.6 USM"},
+            {201, "Canon EF 28-80mm f/3.5-5.6 USM"},
+            {202, "Canon EF 28-80mm f/3.5-5.6 USM IV"},
+            {208, "Canon EF 22-55mm f/4-5.6 USM"},
+            {209, "Canon EF 55-200mm f/4.5-5.6"},
+            {210, "Canon EF 28-90mm f/4-5.6 USM"},
+            {211, "Canon EF 28-200mm f/3.5-5.6 USM"},
+            {212, "Canon EF 28-105mm f/4-5.6 USM"},
+            {213, "Canon EF 90-300mm f/4.5-5.6 USM or Tamron Lens"},
+            {213, "Tamron SP 150-600mm f/5-6.3 Di VC USD"},
+            {213, "Tamron 16-300mm f/3.5-6.3 Di II VC PZD Macro"},
+            {213, "Tamron SP 35mm f/1.8 Di VC USD"},
+            {213, "Tamron SP 45mm f/1.8 Di VC USD"},
+            {214, "Canon EF-S 18-55mm f/3.5-5.6 USM"},
+            {215, "Canon EF 55-200mm f/4.5-5.6 II USM"},
+            {217, "Tamron AF 18-270mm f/3.5-6.3 Di II VC PZD"},
+            {224, "Canon EF 70-200mm f/2.8L IS"},
+            {225, "Canon EF 70-200mm f/2.8L IS + 1.4x"},
+            {226, "Canon EF 70-200mm f/2.8L IS + 2x"},
+            {227, "Canon EF 70-200mm f/2.8L IS + 2.8x"},
+            {228, "Canon EF 28-105mm f/3.5-4.5 USM"},
+            {229, "Canon EF 16-35mm f/2.8L"},
+            {230, "Canon EF 24-70mm f/2.8L"},
+            {231, "Canon EF 17-40mm f/4L"},
+            {232, "Canon EF 70-300mm f/4.5-5.6 DO IS USM"},
+            {233, "Canon EF 28-300mm f/3.5-5.6L IS"},
+            {234, "Canon EF-S 17-85mm f/4-5.6 IS USM or Tokina Lens"},
+            {234, "Tokina AT-X 12-28 PRO DX 12-28mm f/4"},
+            {235, "Canon EF-S 10-22mm f/3.5-4.5 USM"},
+            {236, "Canon EF-S 60mm f/2.8 Macro USM"},
+            {237, "Canon EF 24-105mm f/4L IS"},
+            {238, "Canon EF 70-300mm f/4-5.6 IS USM"},
+            {239, "Canon EF 85mm f/1.2L II"},
+            {240, "Canon EF-S 17-55mm f/2.8 IS USM"},
+            {241, "Canon EF 50mm f/1.2L"},
+            {242, "Canon EF 70-200mm f/4L IS"},
+            {243, "Canon EF 70-200mm f/4L IS + 1.4x"},
+            {244, "Canon EF 70-200mm f/4L IS + 2x"},
+            {245, "Canon EF 70-200mm f/4L IS + 2.8x"},
+            {246, "Canon EF 16-35mm f/2.8L II"},
+            {247, "Canon EF 14mm f/2.8L II USM"},
+            {248, "Canon EF 200mm f/2L IS or Sigma Lens"},
+            {248, "Sigma 24-35mm f/2 DG HSM | A"},
+            {249, "Canon EF 800mm f/5.6L IS"},
+            {250, "Canon EF 24mm f/1.4L II or Sigma Lens"},
+            {250, "Sigma 20mm f/1.4 DG HSM | A"},
+            {251, "Canon EF 70-200mm f/2.8L IS II USM"},
+            {252, "Canon EF 70-200mm f/2.8L IS II USM + 1.4x"},
+            {253, "Canon EF 70-200mm f/2.8L IS II USM + 2x"},
+            {254, "Canon EF 100mm f/2.8L Macro IS USM"},
+            {255, "Sigma 24-105mm f/4 DG OS HSM | A or Other Sigma Lens"},
+            {255, "Sigma 180mm f/2.8 EX DG OS HSM APO Macro"},
+            {488, "Canon EF-S 15-85mm f/3.5-5.6 IS USM"},
+            {489, "Canon EF 70-300mm f/4-5.6L IS USM"},
+            {490, "Canon EF 8-15mm f/4L Fisheye USM"},
+            {491, "Canon EF 300mm f/2.8L IS II USM or Tamron Lens"},
+            {491, "Tamron SP 70-200mm f/2.8 Di VC USD G2 (A025)"},
+            {491, "Tamron 18-400mm f/3.5-6.3 Di II VC HLD (B028)"},
+            {492, "Canon EF 400mm f/2.8L IS II USM"},
+            {493, "Canon EF 500mm f/4L IS II USM or EF 24-105mm f4L IS USM"},
+            {493, "Canon EF 24-105mm f/4L IS USM"},
+            {494, "Canon EF 600mm f/4.0L IS II USM"},
+            {495, "Canon EF 24-70mm f/2.8L II USM or Sigma Lens"},
+            {495, "Sigma 24-70mm F2.8 DG OS HSM | A"},
+            {496, "Canon EF 200-400mm f/4L IS USM"},
+            {499, "Canon EF 200-400mm f/4L IS USM + 1.4x"},
+            {502, "Canon EF 28mm f/2.8 IS USM"},
+            {503, "Canon EF 24mm f/2.8 IS USM"},
+            {504, "Canon EF 24-70mm f/4L IS USM"},
+            {505, "Canon EF 35mm f/2 IS USM"},
+            {506, "Canon EF 400mm f/4 DO IS II USM"},
+            {507, "Canon EF 16-35mm f/4L IS USM"},
+            {508, "Canon EF 11-24mm f/4L USM or Tamron Lens"},
+            {508, "Tamron 10-24mm f/3.5-4.5 Di II VC HLD"},
+            {747, "Canon EF 100-400mm f/4.5-5.6L IS II USM or Tamron Lens"},
+            {747, "Tamron SP 150-600mm F5-6.3 Di VC USD G2"},
+            {748, "Canon EF 100-400mm f/4.5-5.6L IS II USM + 1.4x"},
+            {750, "Canon EF 35mm f/1.4L II USM"},
+            {751, "Canon EF 16-35mm f/2.8L III USM"},
+            {752, "Canon EF 24-105mm f/4L IS II USM"},
+            {4142, "Canon EF-S 18-135mm f/3.5-5.6 IS STM"},
+            {4143, "Canon EF-M 18-55mm f/3.5-5.6 IS STM or Tamron Lens"},
+            {4143, "Tamron 18-200mm f/3.5-6.3 Di III VC"},
+            {4144, "Canon EF 40mm f/2.8 STM"},
+            {4145, "Canon EF-M 22mm f/2 STM"},
+            {4146, "Canon EF-S 18-55mm f/3.5-5.6 IS STM"},
+            {4147, "Canon EF-M 11-22mm f/4-5.6 IS STM"},
+            {4148, "Canon EF-S 55-250mm f/4-5.6 IS STM"},
+            {4149, "Canon EF-M 55-200mm f/4.5-6.3 IS STM"},
+            {4150, "Canon EF-S 10-18mm f/4.5-5.6 IS STM"},
+            {4152, "Canon EF 24-105mm f/3.5-5.6 IS STM"},
+            {4153, "Canon EF-M 15-45mm f/3.5-6.3 IS STM"},
+            {4154, "Canon EF-S 24mm f/2.8 STM"},
+            {4155, "Canon EF-M 28mm f/3.5 Macro IS STM"},
+            {4156, "Canon EF 50mm f/1.8 STM"},
+            {4157, "Canon EF-M 18-150mm 1:3.5-6.3 IS STM"},
+            {4158, "Canon EF-S 18-55mm f/4-5.6 IS STM"},
+            {4160, "Canon EF-S 35mm f/2.8 Macro IS STM"},
+            {36910, "Canon EF 70-300mm f/4-5.6 IS II USM"},
+            {36912, "Canon EF-S 18-135mm f/3.5-5.6 IS USM"},
+            {61491, "Canon CN-E 14mm T3.1 L F"},
+            {61492, "Canon CN-E 24mm T1.5 L F"},
+            {61494, "Canon CN-E 85mm T1.3 L F"},
+            {61495, "Canon CN-E 135mm T2.2 L F"},
+            {61496, "Canon CN-E 35mm T1.5 L F"},
+            {65535, "n/a"}
+        };
     }
 
     virtual std::string toString (Tag* t)
