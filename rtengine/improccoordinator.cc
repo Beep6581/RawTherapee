@@ -156,6 +156,7 @@ ImProcCoordinator::ImProcCoordinator()
       noiselumfs(500, -10000),
       noiselumcs(500, -10000),
       noiselumdetails(500, -10000),
+      noisechrodetails(500, -10000),
       noisechrofs(500, -10000),
       noisechrocs(500, -10000),
       mult0s(500, -10000),
@@ -858,7 +859,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                                     };
 
 
-            int maxdata = 87;//86 10017 //85 10016;// 82 10015//78;//73 for 10011
+            int maxdata = 88;//87 10016  //86 10017 //85 10016;// 82 10015//78;//73 for 10011
 
             if (fic0) {
                 //find current version mip
@@ -902,7 +903,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                     //initilize newues when first utilisation of Locallab. Prepare creation of Mip files
                     for (int sp = 1; sp < maxspot; sp++) { // spots default
                         int t_sp = sp;
-                        int t_mipversion = 10018;//new value for each change
+                        int t_mipversion = 10019;//new value for each change
                         int t_circrad = 18;
                         int t_locX = 250;
                         int t_locY = 250;
@@ -1025,6 +1026,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                         int t_warm = 0;
                         //10018
                         int t_noiselumdetail = 0;
+                        //10019
+                        int t_noisechrodetail = 0;
 
                         //all variables except locRETgainCurve 'coomon for all)
                         fic << "Mipversion=" << t_mipversion << '@' << endl;
@@ -1119,6 +1122,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                         fic << "Struc=" << t_struc << '@' << endl;
                         fic << "Warm=" << t_warm << '@' << endl;
                         fic << "Noiselumdetail=" << t_noiselumdetail << '@' << endl;
+                        fic << "Noisechrodetail=" << t_noisechrodetail << '@' << endl;
 
                         fic << "curveReti=" << t_curvret << '@' << endl;
                         fic << "curveLL=" << t_curvll << '@' << endl;
@@ -1372,6 +1376,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 dataspot[80][0] = strucs[0] = params.locallab.struc;
                 dataspot[81][0] = warms[0] = params.locallab.warm;
                 dataspot[82][0] = noiselumdetails[0] = params.locallab.noiselumdetail;
+                dataspot[83][0] = noisechrodetails[0] = params.locallab.noisechrodetail;
 
                 // for all curves work around - I do not know how to do with params curves...
                 //curve Reti local
@@ -1662,6 +1667,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                     maxind = 81;
                 }
 
+                if (versionmip == 10018) {
+                    maxind = 82;
+                }
+
                 while (getline(fich, line)) {
                     spotline = line;
                     std::size_t pos = spotline.find("=");
@@ -1889,6 +1898,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 }
             }
 
+            if (versionmip <= 10018) {//
+                for (int sp = 1; sp < maxspot; sp++) { // spots default
+                    dataspot[83][sp] = 0;
+                }
+            }
+
             //here we change the number of spot
 
             if (ns < (maxspot - 1)) {
@@ -1897,7 +1912,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
                 for (int sp = ns + 1 ; sp < maxspot; sp++) { // spots default
                     int t_sp = sp;
-                    int t_mipversion = 10018;
+                    int t_mipversion = 10019;
                     int t_circrad = 18;
                     int t_locX = 250;
                     int t_locY = 250;
@@ -2012,6 +2027,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                     int t_warm = 0;
                     //10018
                     int t_noiselumdetail = 0;
+                    //10019
+                    int t_noisechrodetail = 0;
 
                     fic << "Mipversion=" << t_mipversion << '@' << endl;
                     fic << "Spot=" << t_sp << '@' << endl;
@@ -2102,6 +2119,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                     fic << "Struc=" << t_struc << '@' << endl;
                     fic << "Warm=" << t_warm << '@' << endl;
                     fic << "Noiselumdetail=" << t_noiselumdetail << '@' << endl;
+                    fic << "Noisechrodetail=" << t_noisechrodetail << '@' << endl;
 
                     fic << "curveReti=" << t_curvret << '@' << endl;
                     fic << "curveLL=" << t_curvll << '@' << endl;
@@ -2452,6 +2470,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 params.locallab.struc = strucs[sp] = dataspot[80][sp];
                 params.locallab.warm = warms[sp] = dataspot[81][sp];
                 params.locallab.noiselumdetail = noiselumdetails[sp] = dataspot[82][sp];
+                params.locallab.noisechrodetail = noisechrodetails[sp] = dataspot[83][sp];
 
 
                 int *s_datc;
@@ -2994,6 +3013,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
             dataspot[80][sp] = strucs[sp] = params.locallab.struc = dataspot[80][0];
             dataspot[81][sp] = warms[sp] = params.locallab.warm = dataspot[81][0];
             dataspot[82][sp] = noiselumdetails[sp] = params.locallab.noiselumdetail = dataspot[82][0];
+            dataspot[83][sp] = noisechrodetails[sp] = params.locallab.noisechrodetail = dataspot[83][0];
 
 
             int *s_datc;
@@ -3235,7 +3255,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
                 for (int spe = 1; spe < maxspot; spe++) {
                     int t_sp = spe;
-                    int t_mipversion = 10018;
+                    int t_mipversion = 10019;
                     int t_circrad  = dataspot[2][spe];
                     int t_locX  = dataspot[3][spe];
                     int t_locY  = dataspot[4][spe];
@@ -3324,6 +3344,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                     int t_struc = dataspot[80][spe];
                     int t_warm = dataspot[81][spe];
                     int t_noiselumdetail = dataspot[82][spe];
+                    int t_noisechrodetail = dataspot[83][spe];
 
                     int t_hueref = dataspot[maxdata - 4][spe];
                     int t_chromaref = dataspot[maxdata - 3][spe];
@@ -3431,6 +3452,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                     fou << "Struc=" << t_struc << '@' << endl;
                     fou << "Warm=" << t_warm << '@' << endl;
                     fou << "Noiselumdetail=" << t_noiselumdetail << '@' << endl;
+                    fou << "Noisechrodetail=" << t_noisechrodetail << '@' << endl;
 
                     fou << "hueref=" << t_hueref << '@' << endl;
                     fou << "chromaref=" << t_chromaref << '@' << endl;

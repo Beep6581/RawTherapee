@@ -1103,7 +1103,7 @@ private:
             }
 
             ifstream fich(datalab, ios::in);
-            int maxdata = 87; //86 10017//85 10016 //82;//78;//73 10011
+            int maxdata = 88; //87 10018//86 10017//85 10016 //82;//78;//73 10011
 
             if (fich && versionmip != 0) {
                 std::string inser;
@@ -1339,6 +1339,7 @@ private:
                     dataspots[80][0] = params.locallab.struc;
                     dataspots[81][0] = params.locallab.warm;
                     dataspots[82][0] = params.locallab.noiselumdetail;
+                    dataspots[83][0] = params.locallab.noisechrodetail;
 
                     dataspots[maxdata - 4][0] = 100.f * params.locallab.hueref;
                     dataspots[maxdata - 3][0] = params.locallab.chromaref;
@@ -1809,6 +1810,7 @@ private:
                     params.locallab.struc = dataspots[80][sp];
                     params.locallab.warm = dataspots[81][sp];
                     params.locallab.noiselumdetail = dataspots[82][sp];
+                    params.locallab.noisechrodetail = dataspots[83][sp];
 
                     params.locallab.hueref = ((float) dataspots[maxdata - 4][sp]) / 100.f;
                     params.locallab.chromaref = dataspots[maxdata - 3][sp];

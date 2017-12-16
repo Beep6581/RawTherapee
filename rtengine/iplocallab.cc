@@ -144,6 +144,7 @@ struct local_params {
     int blurmet;
     float noiself;
     float noiseldetail;
+    float noisechrodetail;
     float noiselc;
     float noisecf;
     float noisecc;
@@ -379,6 +380,7 @@ static void calcLocalParams(int oW, int oH, const LocallabParams& locallab, stru
     float local_noiself = locallab.noiselumf;
     float local_noiselc = locallab.noiselumc;
     float local_noiseldetail = locallab.noiselumdetail;
+    float local_noisechrodetail = locallab.noisechrodetail;
     float local_noisecf = locallab.noisechrof;
     float local_noisecc = locallab.noisechroc;
     float multi[5];
@@ -462,6 +464,7 @@ static void calcLocalParams(int oW, int oH, const LocallabParams& locallab, stru
     lp.thr = thre;
     lp.noiself = local_noiself;
     lp.noiseldetail = local_noiseldetail;
+    lp.noisechrodetail = local_noisechrodetail;
     lp.noiselc = local_noiselc;
     lp.noisecf = local_noisecf;
     lp.noisecc = local_noisecc;
@@ -8506,6 +8509,8 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
             if (call == 1) {
                 LabImage tmp1(transformed->W, transformed->H);
                 array2D<float> *Lin = nullptr;
+                array2D<float> *Ain = nullptr;
+                array2D<float> *Bin = nullptr;
 
 
                 int GW = transformed->W;
@@ -8517,8 +8522,22 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 // these are needed only for creation of the plans and will be freed before entering the parallel loop
                 fftwf_plan plan_forward_blox[2];
                 fftwf_plan plan_backward_blox[2];
+
+                fftwf_plan plan_forward_blox_a[2];
+                fftwf_plan plan_backward_blox_a[2];
+
+                fftwf_plan plan_forward_blox_b[2];
+                fftwf_plan plan_backward_blox_b[2];
+
+
                 array2D<float> tilemask_in(TS, TS);
                 array2D<float> tilemask_out(TS, TS);
+
+                array2D<float> tilemask_ina(TS, TS);
+                array2D<float> tilemask_outa(TS, TS);
+
+                array2D<float> tilemask_inb(TS, TS);
+                array2D<float> tilemask_outb(TS, TS);
 
                 if ((lp.noiself > 0.1f ||  lp.noiselc > 0.1f)  && levred == 7) {
                     float *Lbloxtmp  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
@@ -8557,6 +8576,65 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
                 float *LbloxArray[numThreads];
                 float *fLbloxArray[numThreads];
+
+                if ((lp.noisecf > 0.1f ||  lp.noisecc > 0.1f)) {
+                    float *Abloxtmp  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                    float *fAbloxtmp = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+
+                    float *Bbloxtmp  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                    float *fBbloxtmp = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+
+                    int nfwd[2] = {TS, TS};
+
+                    //for DCT:
+                    fftw_r2r_kind fwdkind[2] = {FFTW_REDFT10, FFTW_REDFT10};
+                    fftw_r2r_kind bwdkind[2] = {FFTW_REDFT01, FFTW_REDFT01};
+
+                    // Creating the plans with FFTW_MEASURE instead of FFTW_ESTIMATE speeds up the execute a bit
+                    plan_forward_blox_a[0]  = fftwf_plan_many_r2r(2, nfwd, max_numblox_W, Abloxtmp, nullptr, 1, TS * TS, fAbloxtmp, nullptr, 1, TS * TS, fwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                    plan_backward_blox_a[0] = fftwf_plan_many_r2r(2, nfwd, max_numblox_W, fAbloxtmp, nullptr, 1, TS * TS, Abloxtmp, nullptr, 1, TS * TS, bwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                    plan_forward_blox_a[1]  = fftwf_plan_many_r2r(2, nfwd, min_numblox_W, Abloxtmp, nullptr, 1, TS * TS, fAbloxtmp, nullptr, 1, TS * TS, fwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                    plan_backward_blox_a[1] = fftwf_plan_many_r2r(2, nfwd, min_numblox_W, fAbloxtmp, nullptr, 1, TS * TS, Abloxtmp, nullptr, 1, TS * TS, bwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                    fftwf_free(Abloxtmp);
+                    fftwf_free(fAbloxtmp);
+
+                    plan_forward_blox_b[0]  = fftwf_plan_many_r2r(2, nfwd, max_numblox_W, Bbloxtmp, nullptr, 1, TS * TS, fBbloxtmp, nullptr, 1, TS * TS, fwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                    plan_backward_blox_b[0] = fftwf_plan_many_r2r(2, nfwd, max_numblox_W, fBbloxtmp, nullptr, 1, TS * TS, Bbloxtmp, nullptr, 1, TS * TS, bwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                    plan_forward_blox_b[1]  = fftwf_plan_many_r2r(2, nfwd, min_numblox_W, Bbloxtmp, nullptr, 1, TS * TS, fBbloxtmp, nullptr, 1, TS * TS, fwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                    plan_backward_blox_b[1] = fftwf_plan_many_r2r(2, nfwd, min_numblox_W, fBbloxtmp, nullptr, 1, TS * TS, Bbloxtmp, nullptr, 1, TS * TS, bwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                    fftwf_free(Bbloxtmp);
+                    fftwf_free(fBbloxtmp);
+
+                    const int border = MAX(2, TS / 16);
+
+                    for (int i = 0; i < TS; ++i) {
+                        float i1 = abs((i > TS / 2 ? i - TS + 1 : i));
+                        float vmask = (i1 < border ? SQR(sin((rtengine::RT_PI * i1) / (2 * border))) : 1.0f);
+                        float vmask2 = (i1 < 2 * border ? SQR(sin((rtengine::RT_PI * i1) / (2 * border))) : 1.0f);
+
+                        for (int j = 0; j < TS; ++j) {
+                            float j1 = abs((j > TS / 2 ? j - TS + 1 : j));
+                            tilemask_ina[i][j] = (vmask * (j1 < border ? SQR(sin((rtengine::RT_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
+                            tilemask_outa[i][j] = (vmask2 * (j1 < 2 * border ? SQR(sin((rtengine::RT_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
+
+                        }
+
+                        for (int j = 0; j < TS; ++j) {
+                            float j1 = abs((j > TS / 2 ? j - TS + 1 : j));
+                            tilemask_inb[i][j] = (vmask * (j1 < border ? SQR(sin((rtengine::RT_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
+                            tilemask_outb[i][j] = (vmask2 * (j1 < 2 * border ? SQR(sin((rtengine::RT_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
+
+                        }
+                    }
+
+                }
+
+                float *AbloxArray[numThreads];
+                float *fAbloxArray[numThreads];
+                float *BbloxArray[numThreads];
+                float *fBbloxArray[numThreads];
+
+
 
                 for (int ir = 0; ir < GH; ir++)
                     for (int jr = 0; jr < GW; jr++) {
@@ -8921,19 +8999,380 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                     fftwf_destroy_plan(plan_backward_blox[0]);
                     fftwf_destroy_plan(plan_forward_blox[1]);
                     fftwf_destroy_plan(plan_backward_blox[1]);
-                    fftwf_cleanup();
+                    //    fftwf_cleanup();
 
                 }
 
                 if (!adecomp.memoryAllocationFailed) {
+                    Ain = new array2D<float>(GW, GH);
+#ifdef _OPENMP
+                    #pragma omp parallel for
+
+#endif
+
+                    for (int i = 0; i < GH; ++i) {
+                        for (int j = 0; j < GW; ++j) {
+                            (*Ain)[i][j] = tmp1.a[i][j];
+                        }
+                    }
 
                     adecomp.reconstruct(tmp1.a[0]);
                 }
 
+
+                if (!adecomp.memoryAllocationFailed) {
+
+                    const int numblox_W = ceil((static_cast<float>(GW)) / (offset)) + 2 * blkrad;
+                    const int numblox_H = ceil((static_cast<float>(GH)) / (offset)) + 2 * blkrad;
+
+                    if ((lp.noisecf > 0.1f ||  lp.noisecc > 0.1f)) {
+                        //residual between input and denoised L channel
+                        array2D<float> Ldetail(GW, GH, ARRAY2D_CLEAR_DATA);
+                        array2D<float> totwt(GW, GH, ARRAY2D_CLEAR_DATA); //weight for combining DCT blocks
+
+                        for (int i = 0; i < numThreads; ++i) {
+                            AbloxArray[i]  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                            fAbloxArray[i] = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                        }
+
+#ifdef _OPENMP
+                        int masterThread = omp_get_thread_num();
+#endif
+#ifdef _OPENMP
+                        #pragma omp parallel
+#endif
+                        {
+#ifdef _OPENMP
+                            int subThread = masterThread * 1 + omp_get_thread_num();
+#else
+                            int subThread = 0;
+#endif
+                            float blurbuffer[TS * TS] ALIGNED64;
+                            float *Lblox = AbloxArray[subThread];
+                            float *fLblox = fAbloxArray[subThread];
+                            float pBuf[GW + TS + 2 * blkrad * offset] ALIGNED16;
+                            float nbrwt[TS * TS] ALIGNED64;
+#ifdef _OPENMP
+                            #pragma omp for
+#endif
+
+                            for (int vblk = 0; vblk < numblox_H; ++vblk) {
+
+                                int top = (vblk - blkrad) * offset;
+                                float * datarow = pBuf + blkrad * offset;
+
+                                for (int i = 0; i < TS; ++i) {
+                                    int row = top + i;
+                                    int rr = row;
+
+                                    if (row < 0) {
+                                        rr = MIN(-row, GH - 1);
+                                    } else if (row >= GH) {
+                                        rr = MAX(0, 2 * GH - 2 - row);
+                                    }
+
+                                    for (int j = 0; j < tmp1.W; ++j) {
+                                        datarow[j] = ((*Ain)[rr][j] - tmp1.a[rr][j]);
+                                    }
+
+                                    for (int j = -blkrad * offset; j < 0; ++j) {
+                                        datarow[j] = datarow[MIN(-j, GW - 1)];
+                                    }
+
+                                    for (int j = GW; j < GW + TS + blkrad * offset; ++j) {
+                                        datarow[j] = datarow[MAX(0, 2 * GW - 2 - j)];
+                                    }//now we have a padded data row
+
+                                    //now fill this row of the blocks with Lab high pass data
+                                    for (int hblk = 0; hblk < numblox_W; ++hblk) {
+                                        int left = (hblk - blkrad) * offset;
+                                        int indx = (hblk) * TS; //index of block in malloc
+
+                                        if (top + i >= 0 && top + i < GH) {
+                                            int j;
+
+                                            for (j = 0; j < min((-left), TS); ++j) {
+                                                Lblox[(indx + i)*TS + j] = tilemask_ina[i][j] * datarow[left + j]; // luma data
+                                            }
+
+                                            for (; j < min(TS, GW - left); ++j) {
+                                                Lblox[(indx + i)*TS + j] = tilemask_ina[i][j] * datarow[left + j]; // luma data
+                                                totwt[top + i][left + j] += tilemask_ina[i][j] * tilemask_outa[i][j];
+                                            }
+
+                                            for (; j < TS; ++j) {
+                                                Lblox[(indx + i)*TS + j] = tilemask_ina[i][j] * datarow[left + j]; // luma data
+                                            }
+                                        } else {
+                                            for (int j = 0; j < TS; ++j) {
+                                                Lblox[(indx + i)*TS + j] = tilemask_ina[i][j] * datarow[left + j]; // luma data
+                                            }
+                                        }
+
+                                    }
+
+                                }//end of filling block row
+
+                                //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                                //fftwf_print_plan (plan_forward_blox);
+                                if (numblox_W == max_numblox_W) {
+                                    fftwf_execute_r2r(plan_forward_blox_a[0], Lblox, fLblox);    // DCT an entire row of tiles
+                                } else {
+                                    fftwf_execute_r2r(plan_forward_blox_a[1], Lblox, fLblox);    // DCT an entire row of tiles
+                                }
+
+                                //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                                // now process the vblk row of blocks for noise reduction
+                                float params_Ldetail = min(float(lp.noisechrodetail), 99.9f); // max out to avoid div by zero when using noisevar_Ldetail as divisor
+                                float noisevar_Ldetail = SQR(static_cast<float>(SQR(100. - params_Ldetail) + 50.*(100. - params_Ldetail)) * TS * 0.5f);
+
+
+
+                                for (int hblk = 0; hblk < numblox_W; ++hblk) {
+                                    ImProcFunctions::RGBtile_denoise(fLblox, hblk, noisevar_Ldetail, nbrwt, blurbuffer);
+                                }//end of horizontal block loop
+
+                                //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+                                //now perform inverse FT of an entire row of blocks
+                                if (numblox_W == max_numblox_W) {
+                                    fftwf_execute_r2r(plan_backward_blox_a[0], fLblox, Lblox);    //for DCT
+                                } else {
+                                    fftwf_execute_r2r(plan_backward_blox_a[1], fLblox, Lblox);    //for DCT
+                                }
+
+                                int topproc = (vblk - blkrad) * offset;
+
+                                //add row of blocks to output image tile
+                                ImProcFunctions::RGBoutput_tile_row(Lblox, Ldetail, tilemask_outa, GH, GW, topproc);
+
+                                //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+                            }//end of vertical block loop
+
+                            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+                        }
+                        //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#ifdef _OPENMP
+
+                        #pragma omp parallel for
+#endif
+
+                        for (int i = 0; i < GH; ++i) {
+                            for (int j = 0; j < GW; ++j) {
+                                //may want to include masking threshold for large hipass data to preserve edges/detail
+                                tmp1.a[i][j] += Ldetail[i][j] / totwt[i][j]; //note that labdn initially stores the denoised hipass data
+                            }
+                        }
+
+                    }
+
+                    delete Ain;
+                }
+
+                if ((lp.noisecf > 0.1f ||  lp.noisecc > 0.1f)) {
+
+                    for (int i = 0; i < numThreads; ++i) {
+                        fftwf_free(AbloxArray[i]);
+                        fftwf_free(fAbloxArray[i]);
+                    }
+
+                    fftwf_destroy_plan(plan_forward_blox_a[0]);
+                    fftwf_destroy_plan(plan_backward_blox_a[0]);
+                    fftwf_destroy_plan(plan_forward_blox_a[1]);
+                    fftwf_destroy_plan(plan_backward_blox_a[1]);
+                    //fftwf_cleanup();
+
+                }
+
+
+
                 if (!bdecomp.memoryAllocationFailed) {
+                    Bin = new array2D<float>(GW, GH);
+#ifdef _OPENMP
+                    #pragma omp parallel for
+
+#endif
+
+                    for (int i = 0; i < GH; ++i) {
+                        for (int j = 0; j < GW; ++j) {
+                            (*Bin)[i][j] = tmp1.b[i][j];
+                        }
+                    }
 
                     bdecomp.reconstruct(tmp1.b[0]);
                 }
+
+
+                if (!bdecomp.memoryAllocationFailed) {
+
+                    const int numblox_W = ceil((static_cast<float>(GW)) / (offset)) + 2 * blkrad;
+                    const int numblox_H = ceil((static_cast<float>(GH)) / (offset)) + 2 * blkrad;
+
+                    if ((lp.noisecf > 0.1f ||  lp.noisecc > 0.1f)) {
+                        //residual between input and denoised L channel
+                        array2D<float> Ldetail(GW, GH, ARRAY2D_CLEAR_DATA);
+                        array2D<float> totwt(GW, GH, ARRAY2D_CLEAR_DATA); //weight for combining DCT blocks
+
+                        for (int i = 0; i < numThreads; ++i) {
+                            BbloxArray[i]  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                            fBbloxArray[i] = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                        }
+
+#ifdef _OPENMP
+                        int masterThread = omp_get_thread_num();
+#endif
+#ifdef _OPENMP
+                        #pragma omp parallel
+#endif
+                        {
+#ifdef _OPENMP
+                            int subThread = masterThread * 1 + omp_get_thread_num();
+#else
+                            int subThread = 0;
+#endif
+                            float blurbuffer[TS * TS] ALIGNED64;
+                            float *Lblox = BbloxArray[subThread];
+                            float *fLblox = fBbloxArray[subThread];
+                            float pBuf[GW + TS + 2 * blkrad * offset] ALIGNED16;
+                            float nbrwt[TS * TS] ALIGNED64;
+#ifdef _OPENMP
+                            #pragma omp for
+#endif
+
+                            for (int vblk = 0; vblk < numblox_H; ++vblk) {
+
+                                int top = (vblk - blkrad) * offset;
+                                float * datarow = pBuf + blkrad * offset;
+
+                                for (int i = 0; i < TS; ++i) {
+                                    int row = top + i;
+                                    int rr = row;
+
+                                    if (row < 0) {
+                                        rr = MIN(-row, GH - 1);
+                                    } else if (row >= GH) {
+                                        rr = MAX(0, 2 * GH - 2 - row);
+                                    }
+
+                                    for (int j = 0; j < tmp1.W; ++j) {
+                                        datarow[j] = ((*Bin)[rr][j] - tmp1.b[rr][j]);
+                                    }
+
+                                    for (int j = -blkrad * offset; j < 0; ++j) {
+                                        datarow[j] = datarow[MIN(-j, GW - 1)];
+                                    }
+
+                                    for (int j = GW; j < GW + TS + blkrad * offset; ++j) {
+                                        datarow[j] = datarow[MAX(0, 2 * GW - 2 - j)];
+                                    }//now we have a padded data row
+
+                                    //now fill this row of the blocks with Lab high pass data
+                                    for (int hblk = 0; hblk < numblox_W; ++hblk) {
+                                        int left = (hblk - blkrad) * offset;
+                                        int indx = (hblk) * TS; //index of block in malloc
+
+                                        if (top + i >= 0 && top + i < GH) {
+                                            int j;
+
+                                            for (j = 0; j < min((-left), TS); ++j) {
+                                                Lblox[(indx + i)*TS + j] = tilemask_inb[i][j] * datarow[left + j]; // luma data
+                                            }
+
+                                            for (; j < min(TS, GW - left); ++j) {
+                                                Lblox[(indx + i)*TS + j] = tilemask_inb[i][j] * datarow[left + j]; // luma data
+                                                totwt[top + i][left + j] += tilemask_inb[i][j] * tilemask_outb[i][j];
+                                            }
+
+                                            for (; j < TS; ++j) {
+                                                Lblox[(indx + i)*TS + j] = tilemask_inb[i][j] * datarow[left + j]; // luma data
+                                            }
+                                        } else {
+                                            for (int j = 0; j < TS; ++j) {
+                                                Lblox[(indx + i)*TS + j] = tilemask_inb[i][j] * datarow[left + j]; // luma data
+                                            }
+                                        }
+
+                                    }
+
+                                }//end of filling block row
+
+                                //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                                //fftwf_print_plan (plan_forward_blox);
+                                if (numblox_W == max_numblox_W) {
+                                    fftwf_execute_r2r(plan_forward_blox_b[0], Lblox, fLblox);    // DCT an entire row of tiles
+                                } else {
+                                    fftwf_execute_r2r(plan_forward_blox_b[1], Lblox, fLblox);    // DCT an entire row of tiles
+                                }
+
+                                //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                                // now process the vblk row of blocks for noise reduction
+                                float params_Ldetail = min(float(lp.noisechrodetail), 99.9f); // max out to avoid div by zero when using noisevar_Ldetail as divisor
+                                float noisevar_Ldetail = SQR(static_cast<float>(SQR(100. - params_Ldetail) + 50.*(100. - params_Ldetail)) * TS * 0.5f);
+
+
+
+                                for (int hblk = 0; hblk < numblox_W; ++hblk) {
+                                    ImProcFunctions::RGBtile_denoise(fLblox, hblk, noisevar_Ldetail, nbrwt, blurbuffer);
+                                }//end of horizontal block loop
+
+                                //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+                                //now perform inverse FT of an entire row of blocks
+                                if (numblox_W == max_numblox_W) {
+                                    fftwf_execute_r2r(plan_backward_blox_b[0], fLblox, Lblox);    //for DCT
+                                } else {
+                                    fftwf_execute_r2r(plan_backward_blox_b[1], fLblox, Lblox);    //for DCT
+                                }
+
+                                int topproc = (vblk - blkrad) * offset;
+
+                                //add row of blocks to output image tile
+                                ImProcFunctions::RGBoutput_tile_row(Lblox, Ldetail, tilemask_outb, GH, GW, topproc);
+
+                                //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+                            }//end of vertical block loop
+
+                            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+                        }
+                        //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#ifdef _OPENMP
+
+                        #pragma omp parallel for
+#endif
+
+                        for (int i = 0; i < GH; ++i) {
+                            for (int j = 0; j < GW; ++j) {
+                                //may want to include masking threshold for large hipass data to preserve edges/detail
+                                tmp1.b[i][j] += Ldetail[i][j] / totwt[i][j]; //note that labdn initially stores the denoised hipass data
+                            }
+                        }
+
+                    }
+
+                    delete Bin;
+                }
+
+                if ((lp.noisecf > 0.1f ||  lp.noisecc > 0.1f)) {
+
+                    for (int i = 0; i < numThreads; ++i) {
+                        fftwf_free(BbloxArray[i]);
+                        fftwf_free(fBbloxArray[i]);
+                    }
+
+                    fftwf_destroy_plan(plan_forward_blox_b[0]);
+                    fftwf_destroy_plan(plan_backward_blox_b[0]);
+                    fftwf_destroy_plan(plan_forward_blox_b[1]);
+                    fftwf_destroy_plan(plan_backward_blox_b[1]);
+                    //  fftwf_cleanup();
+
+                }
+
+                fftwf_cleanup();
+
 
                 DeNoise_Local(call, lp, original, transformed, tmp1, cx, cy);
 
@@ -8944,14 +9383,30 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 LabImage bufwv(bfw, bfh);
                 bufwv.clear(true);
                 array2D<float> *Lin = nullptr;
+                array2D<float> *Ain = nullptr;
+                array2D<float> *Bin = nullptr;
+
                 int max_numblox_W = ceil((static_cast<float>(bfw)) / (offset)) + 2 * blkrad;
                 // calculate min size of numblox_W.
                 int min_numblox_W = ceil((static_cast<float>(bfw)) / (offset)) + 2 * blkrad;
                 // these are needed only for creation of the plans and will be freed before entering the parallel loop
                 fftwf_plan plan_forward_blox[2];
                 fftwf_plan plan_backward_blox[2];
+
+                fftwf_plan plan_forward_blox_a[2];
+                fftwf_plan plan_backward_blox_a[2];
+
+                fftwf_plan plan_forward_blox_b[2];
+                fftwf_plan plan_backward_blox_b[2];
+
                 array2D<float> tilemask_in(TS, TS);
                 array2D<float> tilemask_out(TS, TS);
+
+                array2D<float> tilemask_ina(TS, TS);
+                array2D<float> tilemask_outa(TS, TS);
+
+                array2D<float> tilemask_inb(TS, TS);
+                array2D<float> tilemask_outb(TS, TS);
 
                 if ((lp.noiself > 0.1f ||  lp.noiselc > 0.1f) && levred == 7) {
                     float *Lbloxtmp  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
@@ -8982,7 +9437,6 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                             float j1 = abs((j > TS / 2 ? j - TS + 1 : j));
                             tilemask_in[i][j] = (vmask * (j1 < border ? SQR(sin((rtengine::RT_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
                             tilemask_out[i][j] = (vmask2 * (j1 < 2 * border ? SQR(sin((rtengine::RT_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
-
                         }
                     }
 
@@ -8991,6 +9445,63 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 float *LbloxArray[numThreads];
                 float *fLbloxArray[numThreads];
 
+                if ((lp.noisecf > 0.1f ||  lp.noisecc > 0.1f)) {
+                    float *Abloxtmp  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                    float *fAbloxtmp = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+
+                    float *Bbloxtmp  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                    float *fBbloxtmp = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+
+                    int nfwd[2] = {TS, TS};
+
+                    //for DCT:
+                    fftw_r2r_kind fwdkind[2] = {FFTW_REDFT10, FFTW_REDFT10};
+                    fftw_r2r_kind bwdkind[2] = {FFTW_REDFT01, FFTW_REDFT01};
+
+                    // Creating the plans with FFTW_MEASURE instead of FFTW_ESTIMATE speeds up the execute a bit
+                    plan_forward_blox_a[0]  = fftwf_plan_many_r2r(2, nfwd, max_numblox_W, Abloxtmp, nullptr, 1, TS * TS, fAbloxtmp, nullptr, 1, TS * TS, fwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                    plan_backward_blox_a[0] = fftwf_plan_many_r2r(2, nfwd, max_numblox_W, fAbloxtmp, nullptr, 1, TS * TS, Abloxtmp, nullptr, 1, TS * TS, bwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                    plan_forward_blox_a[1]  = fftwf_plan_many_r2r(2, nfwd, min_numblox_W, Abloxtmp, nullptr, 1, TS * TS, fAbloxtmp, nullptr, 1, TS * TS, fwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                    plan_backward_blox_a[1] = fftwf_plan_many_r2r(2, nfwd, min_numblox_W, fAbloxtmp, nullptr, 1, TS * TS, Abloxtmp, nullptr, 1, TS * TS, bwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                    fftwf_free(Abloxtmp);
+                    fftwf_free(fAbloxtmp);
+
+                    plan_forward_blox_b[0]  = fftwf_plan_many_r2r(2, nfwd, max_numblox_W, Bbloxtmp, nullptr, 1, TS * TS, fBbloxtmp, nullptr, 1, TS * TS, fwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                    plan_backward_blox_b[0] = fftwf_plan_many_r2r(2, nfwd, max_numblox_W, fBbloxtmp, nullptr, 1, TS * TS, Bbloxtmp, nullptr, 1, TS * TS, bwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                    plan_forward_blox_b[1]  = fftwf_plan_many_r2r(2, nfwd, min_numblox_W, Bbloxtmp, nullptr, 1, TS * TS, fBbloxtmp, nullptr, 1, TS * TS, fwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                    plan_backward_blox_b[1] = fftwf_plan_many_r2r(2, nfwd, min_numblox_W, fBbloxtmp, nullptr, 1, TS * TS, Bbloxtmp, nullptr, 1, TS * TS, bwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT);
+                    fftwf_free(Bbloxtmp);
+                    fftwf_free(fBbloxtmp);
+
+                    const int border = MAX(2, TS / 16);
+
+                    for (int i = 0; i < TS; ++i) {
+                        float i1 = abs((i > TS / 2 ? i - TS + 1 : i));
+                        float vmask = (i1 < border ? SQR(sin((rtengine::RT_PI * i1) / (2 * border))) : 1.0f);
+                        float vmask2 = (i1 < 2 * border ? SQR(sin((rtengine::RT_PI * i1) / (2 * border))) : 1.0f);
+
+                        for (int j = 0; j < TS; ++j) {
+                            float j1 = abs((j > TS / 2 ? j - TS + 1 : j));
+                            tilemask_ina[i][j] = (vmask * (j1 < border ? SQR(sin((rtengine::RT_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
+                            tilemask_outa[i][j] = (vmask2 * (j1 < 2 * border ? SQR(sin((rtengine::RT_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
+
+                        }
+
+                        for (int j = 0; j < TS; ++j) {
+                            float j1 = abs((j > TS / 2 ? j - TS + 1 : j));
+                            tilemask_inb[i][j] = (vmask * (j1 < border ? SQR(sin((rtengine::RT_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
+                            tilemask_outb[i][j] = (vmask2 * (j1 < 2 * border ? SQR(sin((rtengine::RT_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
+
+                        }
+                    }
+
+                }
+
+                float *AbloxArray[numThreads];
+                float *fAbloxArray[numThreads];
+
+                float *BbloxArray[numThreads];
+                float *fBbloxArray[numThreads];
 
                 int begy = lp.yc - lp.lyT;
                 int begx = lp.xc - lp.lxL;
@@ -9180,13 +9691,10 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                                 }
                             }
 
-
-
                         float noisevarab_r = 100.f; //SQR(lp.noisecc / 10.0);
                         WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
                         WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
                         delete[] noisevarchrom;
-
                     }
                 }
 
@@ -9371,19 +9879,376 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                     fftwf_destroy_plan(plan_backward_blox[0]);
                     fftwf_destroy_plan(plan_forward_blox[1]);
                     fftwf_destroy_plan(plan_backward_blox[1]);
-                    fftwf_cleanup();
+                    // fftwf_cleanup();
 
                 }
 
                 if (!adecomp.memoryAllocationFailed) {
+                    Ain = new array2D<float>(bfw, bfh);
+#ifdef _OPENMP
+                    #pragma omp parallel for
+
+#endif
+
+                    for (int i = 0; i < bfh; ++i) {
+                        for (int j = 0; j < bfw; ++j) {
+                            (*Ain)[i][j] = bufwv.a[i][j];
+                        }
+                    }
 
                     adecomp.reconstruct(bufwv.a[0]);
                 }
 
+                if (!adecomp.memoryAllocationFailed) {
+
+                    const int numblox_W = ceil((static_cast<float>(bfw)) / (offset)) + 2 * blkrad;
+                    const int numblox_H = ceil((static_cast<float>(bfh)) / (offset)) + 2 * blkrad;
+
+                    if ((lp.noisecf > 0.1f ||  lp.noisecc > 0.1f)) {
+                        //residual between input and denoised a channel
+                        array2D<float> Ldetail(bfw, bfh, ARRAY2D_CLEAR_DATA);
+                        array2D<float> totwt(bfw, bfh, ARRAY2D_CLEAR_DATA); //weight for combining DCT blocks
+
+                        for (int i = 0; i < numThreads; ++i) {
+                            AbloxArray[i]  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                            fAbloxArray[i] = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                        }
+
+#ifdef _OPENMP
+                        int masterThread = omp_get_thread_num();
+#endif
+#ifdef _OPENMP
+                        #pragma omp parallel
+#endif
+                        {
+#ifdef _OPENMP
+                            int subThread = masterThread * 1 + omp_get_thread_num();
+#else
+                            int subThread = 0;
+#endif
+                            float blurbuffer[TS * TS] ALIGNED64;
+                            float *Lblox = AbloxArray[subThread];
+                            float *fLblox = fAbloxArray[subThread];
+                            float pBuf[bfw + TS + 2 * blkrad * offset] ALIGNED16;
+                            float nbrwt[TS * TS] ALIGNED64;
+#ifdef _OPENMP
+                            #pragma omp for
+#endif
+
+                            for (int vblk = 0; vblk < numblox_H; ++vblk) {
+
+                                int top = (vblk - blkrad) * offset;
+                                float * datarow = pBuf + blkrad * offset;
+
+                                for (int i = 0; i < TS; ++i) {
+                                    int row = top + i;
+                                    int rr = row;
+
+                                    if (row < 0) {
+                                        rr = MIN(-row, bfh - 1);
+                                    } else if (row >= bfh) {
+                                        rr = MAX(0, 2 * bfh - 2 - row);
+                                    }
+
+                                    for (int j = 0; j < bufwv.W; ++j) {
+                                        datarow[j] = ((*Ain)[rr][j] - bufwv.a[rr][j]);
+                                    }
+
+                                    for (int j = -blkrad * offset; j < 0; ++j) {
+                                        datarow[j] = datarow[MIN(-j, bfw - 1)];
+                                    }
+
+                                    for (int j = bfw; j < bfw + TS + blkrad * offset; ++j) {
+                                        datarow[j] = datarow[MAX(0, 2 * bfw - 2 - j)];
+                                    }//now we have a padded data row
+
+                                    //now fill this row of the blocks with Lab high pass data
+                                    for (int hblk = 0; hblk < numblox_W; ++hblk) {
+                                        int left = (hblk - blkrad) * offset;
+                                        int indx = (hblk) * TS; //index of block in malloc
+
+                                        if (top + i >= 0 && top + i < bfh) {
+                                            int j;
+
+                                            for (j = 0; j < min((-left), TS); ++j) {
+                                                Lblox[(indx + i)*TS + j] = tilemask_ina[i][j] * datarow[left + j]; // luma data
+                                            }
+
+                                            for (; j < min(TS, bfw - left); ++j) {
+                                                Lblox[(indx + i)*TS + j] = tilemask_ina[i][j] * datarow[left + j]; // luma data
+                                                totwt[top + i][left + j] += tilemask_ina[i][j] * tilemask_outa[i][j];
+                                            }
+
+                                            for (; j < TS; ++j) {
+                                                Lblox[(indx + i)*TS + j] = tilemask_ina[i][j] * datarow[left + j]; // luma data
+                                            }
+                                        } else {
+                                            for (int j = 0; j < TS; ++j) {
+                                                Lblox[(indx + i)*TS + j] = tilemask_ina[i][j] * datarow[left + j]; // luma data
+                                            }
+                                        }
+
+                                    }
+
+                                }//end of filling block row
+
+                                //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                                //fftwf_print_plan (plan_forward_blox);
+                                if (numblox_W == max_numblox_W) {
+                                    fftwf_execute_r2r(plan_forward_blox_a[0], Lblox, fLblox);    // DCT an entire row of tiles
+                                } else {
+                                    fftwf_execute_r2r(plan_forward_blox_a[1], Lblox, fLblox);    // DCT an entire row of tiles
+                                }
+
+                                //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                                // now process the vblk row of blocks for noise reduction
+                                float params_Ldetail = min(float(lp.noisechrodetail), 99.9f); // max out to avoid div by zero when using noisevar_Ldetail as divisor
+                                float noisevar_Ldetail = SQR(static_cast<float>(SQR(100. - params_Ldetail) + 50.*(100. - params_Ldetail)) * TS * 0.5f);
+
+
+
+                                for (int hblk = 0; hblk < numblox_W; ++hblk) {
+                                    ImProcFunctions::RGBtile_denoise(fLblox, hblk, noisevar_Ldetail, nbrwt, blurbuffer);
+                                }//end of horizontal block loop
+
+                                //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+                                //now perform inverse FT of an entire row of blocks
+                                if (numblox_W == max_numblox_W) {
+                                    fftwf_execute_r2r(plan_backward_blox_a[0], fLblox, Lblox);    //for DCT
+                                } else {
+                                    fftwf_execute_r2r(plan_backward_blox_a[1], fLblox, Lblox);    //for DCT
+                                }
+
+                                int topproc = (vblk - blkrad) * offset;
+
+                                //add row of blocks to output image tile
+                                ImProcFunctions::RGBoutput_tile_row(Lblox, Ldetail, tilemask_outa, bfh, bfw, topproc);
+
+                                //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+                            }//end of vertical block loop
+
+                            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+                        }
+                        //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#ifdef _OPENMP
+
+                        #pragma omp parallel for
+#endif
+
+                        for (int i = 0; i < bfh; ++i) {
+                            for (int j = 0; j < bfw; ++j) {
+                                //may want to include masking threshold for large hipass data to preserve edges/detail
+                                bufwv.a[i][j] += Ldetail[i][j] / totwt[i][j]; //note that labdn initially stores the denoised hipass data
+                            }
+                        }
+
+                    }
+
+                    delete Ain;
+                }
+
+                if ((lp.noisecf > 0.1f ||  lp.noisecc > 0.1f)) {
+
+                    for (int i = 0; i < numThreads; ++i) {
+                        fftwf_free(AbloxArray[i]);
+                        fftwf_free(fAbloxArray[i]);
+                    }
+
+                    fftwf_destroy_plan(plan_forward_blox_a[0]);
+                    fftwf_destroy_plan(plan_backward_blox_a[0]);
+                    fftwf_destroy_plan(plan_forward_blox_a[1]);
+                    fftwf_destroy_plan(plan_backward_blox_a[1]);
+                    // fftwf_cleanup();
+
+                }
+
                 if (!bdecomp.memoryAllocationFailed) {
+                    Bin = new array2D<float>(bfw, bfh);
+#ifdef _OPENMP
+                    #pragma omp parallel for
+
+#endif
+
+                    for (int i = 0; i < bfh; ++i) {
+                        for (int j = 0; j < bfw; ++j) {
+                            (*Bin)[i][j] = bufwv.b[i][j];
+                        }
+                    }
+
 
                     bdecomp.reconstruct(bufwv.b[0]);
                 }
+
+                if (!bdecomp.memoryAllocationFailed) {
+
+                    const int numblox_W = ceil((static_cast<float>(bfw)) / (offset)) + 2 * blkrad;
+                    const int numblox_H = ceil((static_cast<float>(bfh)) / (offset)) + 2 * blkrad;
+
+                    if ((lp.noisecf > 0.1f ||  lp.noisecc > 0.1f)) {
+                        //residual between input and denoised b channel
+                        array2D<float> Ldetail(bfw, bfh, ARRAY2D_CLEAR_DATA);
+                        array2D<float> totwt(bfw, bfh, ARRAY2D_CLEAR_DATA); //weight for combining DCT blocks
+
+                        for (int i = 0; i < numThreads; ++i) {
+                            BbloxArray[i]  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                            fBbloxArray[i] = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                        }
+
+#ifdef _OPENMP
+                        int masterThread = omp_get_thread_num();
+#endif
+#ifdef _OPENMP
+                        #pragma omp parallel
+#endif
+                        {
+#ifdef _OPENMP
+                            int subThread = masterThread * 1 + omp_get_thread_num();
+#else
+                            int subThread = 0;
+#endif
+                            float blurbuffer[TS * TS] ALIGNED64;
+                            float *Lblox = BbloxArray[subThread];
+                            float *fLblox = fBbloxArray[subThread];
+                            float pBuf[bfw + TS + 2 * blkrad * offset] ALIGNED16;
+                            float nbrwt[TS * TS] ALIGNED64;
+#ifdef _OPENMP
+                            #pragma omp for
+#endif
+
+                            for (int vblk = 0; vblk < numblox_H; ++vblk) {
+
+                                int top = (vblk - blkrad) * offset;
+                                float * datarow = pBuf + blkrad * offset;
+
+                                for (int i = 0; i < TS; ++i) {
+                                    int row = top + i;
+                                    int rr = row;
+
+                                    if (row < 0) {
+                                        rr = MIN(-row, bfh - 1);
+                                    } else if (row >= bfh) {
+                                        rr = MAX(0, 2 * bfh - 2 - row);
+                                    }
+
+                                    for (int j = 0; j < bufwv.W; ++j) {
+                                        datarow[j] = ((*Bin)[rr][j] - bufwv.b[rr][j]);
+                                    }
+
+                                    for (int j = -blkrad * offset; j < 0; ++j) {
+                                        datarow[j] = datarow[MIN(-j, bfw - 1)];
+                                    }
+
+                                    for (int j = bfw; j < bfw + TS + blkrad * offset; ++j) {
+                                        datarow[j] = datarow[MAX(0, 2 * bfw - 2 - j)];
+                                    }//now we have a padded data row
+
+                                    //now fill this row of the blocks with Lab high pass data
+                                    for (int hblk = 0; hblk < numblox_W; ++hblk) {
+                                        int left = (hblk - blkrad) * offset;
+                                        int indx = (hblk) * TS; //index of block in malloc
+
+                                        if (top + i >= 0 && top + i < bfh) {
+                                            int j;
+
+                                            for (j = 0; j < min((-left), TS); ++j) {
+                                                Lblox[(indx + i)*TS + j] = tilemask_inb[i][j] * datarow[left + j]; // luma data
+                                            }
+
+                                            for (; j < min(TS, bfw - left); ++j) {
+                                                Lblox[(indx + i)*TS + j] = tilemask_inb[i][j] * datarow[left + j]; // luma data
+                                                totwt[top + i][left + j] += tilemask_inb[i][j] * tilemask_outb[i][j];
+                                            }
+
+                                            for (; j < TS; ++j) {
+                                                Lblox[(indx + i)*TS + j] = tilemask_inb[i][j] * datarow[left + j]; // luma data
+                                            }
+                                        } else {
+                                            for (int j = 0; j < TS; ++j) {
+                                                Lblox[(indx + i)*TS + j] = tilemask_inb[i][j] * datarow[left + j]; // luma data
+                                            }
+                                        }
+
+                                    }
+
+                                }//end of filling block row
+
+                                //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                                //fftwf_print_plan (plan_forward_blox);
+                                if (numblox_W == max_numblox_W) {
+                                    fftwf_execute_r2r(plan_forward_blox_b[0], Lblox, fLblox);    // DCT an entire row of tiles
+                                } else {
+                                    fftwf_execute_r2r(plan_forward_blox_b[1], Lblox, fLblox);    // DCT an entire row of tiles
+                                }
+
+                                //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                                // now process the vblk row of blocks for noise reduction
+                                float params_Ldetail = min(float(lp.noisechrodetail), 99.9f); // max out to avoid div by zero when using noisevar_Ldetail as divisor
+                                float noisevar_Ldetail = SQR(static_cast<float>(SQR(100. - params_Ldetail) + 50.*(100. - params_Ldetail)) * TS * 0.5f);
+
+
+
+                                for (int hblk = 0; hblk < numblox_W; ++hblk) {
+                                    ImProcFunctions::RGBtile_denoise(fLblox, hblk, noisevar_Ldetail, nbrwt, blurbuffer);
+                                }//end of horizontal block loop
+
+                                //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+                                //now perform inverse FT of an entire row of blocks
+                                if (numblox_W == max_numblox_W) {
+                                    fftwf_execute_r2r(plan_backward_blox_b[0], fLblox, Lblox);    //for DCT
+                                } else {
+                                    fftwf_execute_r2r(plan_backward_blox_b[1], fLblox, Lblox);    //for DCT
+                                }
+
+                                int topproc = (vblk - blkrad) * offset;
+
+                                //add row of blocks to output image tile
+                                ImProcFunctions::RGBoutput_tile_row(Lblox, Ldetail, tilemask_outb, bfh, bfw, topproc);
+
+                                //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+                            }//end of vertical block loop
+
+                            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+                        }
+                        //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#ifdef _OPENMP
+
+                        #pragma omp parallel for
+#endif
+
+                        for (int i = 0; i < bfh; ++i) {
+                            for (int j = 0; j < bfw; ++j) {
+                                //may want to include masking threshold for large hipass data to preserve edges/detail
+                                bufwv.b[i][j] += Ldetail[i][j] / totwt[i][j]; //note that labdn initially stores the denoised hipass data
+                            }
+                        }
+
+                    }
+
+                    delete Bin;
+                }
+
+                if ((lp.noisecf > 0.1f ||  lp.noisecc > 0.1f)) {
+
+                    for (int i = 0; i < numThreads; ++i) {
+                        fftwf_free(BbloxArray[i]);
+                        fftwf_free(fBbloxArray[i]);
+                    }
+
+                    fftwf_destroy_plan(plan_forward_blox_b[0]);
+                    fftwf_destroy_plan(plan_backward_blox_b[0]);
+                    fftwf_destroy_plan(plan_forward_blox_b[1]);
+                    fftwf_destroy_plan(plan_backward_blox_b[1]);
+                    // fftwf_cleanup();
+
+                }
+
+                fftwf_cleanup();
 
                 DeNoise_Local(call, lp, original, transformed, bufwv, cx, cy);
             }

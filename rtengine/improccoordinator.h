@@ -307,6 +307,7 @@ protected:
     LUTi noiselumfs;
     LUTi noiselumcs;
     LUTi noiselumdetails;
+    LUTi noisechrodetails;
     LUTi noisechrofs;
     LUTi noisechrocs;
     LUTi mult0s;

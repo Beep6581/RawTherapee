@@ -2375,6 +2375,7 @@ sensiv(19),
 noiselumf(0),
 noiselumc(0),
 noiselumdetail(0),
+noisechrodetail(0),
 noisechrof(0),
 noisechroc(0),
 sharradius(40),
@@ -2508,6 +2509,7 @@ bool LocallabParams::operator ==(const LocallabParams& other) const
     && noiselumf == other.noiselumf
     && noiselumc == other.noiselumc
     && noiselumdetail == other.noiselumdetail
+    && noisechrodetail == other.noisechrodetail
     && noisechrof == other.noisechrof
     && noisechroc == other.noisechroc
     && sharradius == other.sharradius
@@ -3483,6 +3485,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->locallab.noiselumf, "Locallab", "noiselumf", locallab.noiselumf, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.noiselumc, "Locallab", "noiselumc", locallab.noiselumc, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.noiselumdetail, "Locallab", "noiselumdetail", locallab.noiselumdetail, keyFile);
+        saveToKeyfile(!pedited || pedited->locallab.noisechrodetail, "Locallab", "noisechrodetail", locallab.noisechrodetail, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.noisechrof, "Locallab", "noisechrof", locallab.noisechrof, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.noisechroc, "Locallab", "noisechroc", locallab.noisechroc, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.sharradius, "Locallab", "Sharradius", locallab.sharradius, keyFile);
@@ -4537,6 +4540,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Locallab", "noiselumf", pedited, locallab.noiselumf, pedited->locallab.noiselumf);
             assignFromKeyfile(keyFile, "Locallab", "noiselumc", pedited, locallab.noiselumc, pedited->locallab.noiselumc);
             assignFromKeyfile(keyFile, "Locallab", "noiselumdetail", pedited, locallab.noiselumdetail, pedited->locallab.noiselumdetail);
+            assignFromKeyfile(keyFile, "Locallab", "noisechrodetail", pedited, locallab.noisechrodetail, pedited->locallab.noisechrodetail);
             assignFromKeyfile(keyFile, "Locallab", "noisechrof", pedited, locallab.noisechrof, pedited->locallab.noisechrof);
             assignFromKeyfile(keyFile, "Locallab", "noisechroc", pedited, locallab.noisechroc, pedited->locallab.noisechroc);
             assignFromKeyfile(keyFile, "Locallab", "Sharradius", pedited, locallab.sharradius, pedited->locallab.sharradius);

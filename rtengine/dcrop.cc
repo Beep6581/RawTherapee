@@ -1148,6 +1148,7 @@ void Crop::update(int todo)
                         params.locallab.struc = parent->strucs[sp];
                         params.locallab.warm = parent->warms[sp];
                         params.locallab.noiselumdetail = parent->noiselumdetails[sp];
+                        params.locallab.noisechrodetail = parent->noisechrodetails[sp];
 
                         std::vector<double>   cretie;
 
@@ -1528,6 +1529,7 @@ void Crop::update(int todo)
                 parent->strucs[sp] = params.locallab.struc = parent->strucs[0];
                 parent->warms[sp] = params.locallab.warm = parent->warms[0];
                 parent->noiselumdetails[sp] = params.locallab.noiselumdetail = parent->noiselumdetails[0];
+                parent->noisechrodetails[sp] = params.locallab.noisechrodetail = parent->noisechrodetails[0];
 
                 std::vector<double>   ccret;
 
