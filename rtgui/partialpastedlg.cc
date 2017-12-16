@@ -379,14 +379,14 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
 void PartialPasteDlg::everythingToggled ()
 {
 
-    basicConn.block (true);
-    detailConn.block (true);
-    colorConn.block (true);
-    lensConn.block (true);
-    compositionConn.block (true);
-    metaConn.block (true);
-    rawConn.block (true);
-    wavConn.block (true);
+    ConnectionBlocker basicBlocker(basicConn);
+    ConnectionBlocker detailBlocker(detailConn);
+    ConnectionBlocker colorBlocker(colorConn);
+    ConnectionBlocker lensBlocker(lensConn);
+    ConnectionBlocker compositionBlocker(compositionConn);
+    ConnectionBlocker metaBlocker(metaConn);
+    ConnectionBlocker rawBlocker(rawConn);
+    ConnectionBlocker wavBlocker(wavConn);
 
     everything->set_inconsistent (false);
 
@@ -409,44 +409,35 @@ void PartialPasteDlg::everythingToggled ()
     PartialPasteDlg::metaToggled ();
     PartialPasteDlg::rawToggled ();
     PartialPasteDlg::wavToggled ();
-
-    basicConn.block (false);
-    detailConn.block (false);
-    colorConn.block (false);
-    lensConn.block (false);
-    compositionConn.block (false);
-    metaConn.block (false);
-    rawConn.block (false);
-    wavConn.block (false);
 }
 
 void PartialPasteDlg::rawToggled ()
 {
 
-    raw_methodConn.block (true);
-    raw_imagenumConn.block (true);
-    raw_ccStepsConn.block (true);
-    raw_dcb_iterationsConn.block (true);
-    raw_dcb_enhanceConn.block (true);
-    //raw_all_enhanceConn.block (true);
-    raw_lmmse_iterationsConn.block (true);
-    raw_pixelshiftConn.block (true);
-    raw_exposConn.block (true);
-    raw_preserConn.block (true);
-    raw_blackConn.block (true);
-    raw_ca_autocorrectConn.block (true);
-    raw_caredblueConn.block (true);
-    raw_hotpix_filtConn.block (true);
-    raw_deadpix_filtConn.block (true);
-    raw_linenoiseConn.block (true);
-    raw_greenthreshConn.block (true);
-    df_fileConn.block (true);
-    df_AutoSelectConn.block (true);
-    ff_fileConn.block (true);
-    ff_AutoSelectConn.block (true);
-    ff_BlurRadiusConn.block (true);
-    ff_BlurTypeConn.block (true);
-    ff_ClipControlConn.block (true);
+    ConnectionBlocker raw_methodBlocker(raw_methodConn);
+    ConnectionBlocker raw_imagenumBlocker(raw_imagenumConn);
+    ConnectionBlocker raw_ccStepsBlocker(raw_ccStepsConn);
+    ConnectionBlocker raw_dcb_iterationsBlocker(raw_dcb_iterationsConn);
+    ConnectionBlocker raw_dcb_enhanceBlocker(raw_dcb_enhanceConn);
+    //ConnectionBlocker raw_all_enhanceConnBlocker(raw_all_enhanceConnConn);
+    ConnectionBlocker raw_lmmse_iterationsBlocker(raw_lmmse_iterationsConn);
+    ConnectionBlocker raw_pixelshiftBlocker(raw_pixelshiftConn);
+    ConnectionBlocker raw_exposBlocker(raw_exposConn);
+    ConnectionBlocker raw_preserBlocker(raw_preserConn);
+    ConnectionBlocker raw_blackBlocker(raw_blackConn);
+    ConnectionBlocker raw_ca_autocorrectBlocker(raw_ca_autocorrectConn);
+    ConnectionBlocker raw_caredblueBlocker(raw_caredblueConn);
+    ConnectionBlocker raw_hotpix_filtBlocker(raw_hotpix_filtConn);
+    ConnectionBlocker raw_deadpix_filtBlocker(raw_deadpix_filtConn);
+    ConnectionBlocker raw_linenoiseBlocker(raw_linenoiseConn);
+    ConnectionBlocker raw_greenthreshBlocker(raw_greenthreshConn);
+    ConnectionBlocker df_fileBlocker(df_fileConn);
+    ConnectionBlocker df_AutoSelectBlocker(df_AutoSelectConn);
+    ConnectionBlocker ff_fileBlocker(ff_fileConn);
+    ConnectionBlocker ff_AutoSelectBlocker(ff_AutoSelectConn);
+    ConnectionBlocker ff_BlurRadiusBlocker(ff_BlurRadiusConn);
+    ConnectionBlocker ff_BlurTypeBlocker(ff_BlurTypeConn);
+    ConnectionBlocker ff_ClipControlBlocker(ff_ClipControlConn);
 
     raw->set_inconsistent (false);
 
@@ -474,45 +465,21 @@ void PartialPasteDlg::rawToggled ()
     ff_BlurRadius->set_active (raw->get_active ());
     ff_BlurType->set_active (raw->get_active ());
     ff_ClipControl->set_active (raw->get_active ());
-
-    raw_methodConn.block (false);
-    raw_imagenumConn.block (false);
-    raw_ccStepsConn.block (false);
-    raw_dcb_iterationsConn.block (false);
-    raw_dcb_enhanceConn.block (false);
-    //raw_all_enhanceConn.block (false);
-    raw_pixelshiftConn.block (false);
-    raw_lmmse_iterationsConn.block (false);
-    raw_exposConn.block (false);
-    raw_preserConn.block (false);
-    raw_blackConn.block (false);
-    raw_ca_autocorrectConn.block (false);
-    raw_caredblueConn.block (false);
-    raw_hotpix_filtConn.block (false);
-    raw_deadpix_filtConn.block (false);
-    raw_linenoiseConn.block (false);
-    raw_greenthreshConn.block (false);
-    df_fileConn.block (false);
-    df_AutoSelectConn.block (false);
-    ff_fileConn.block (false);
-    ff_AutoSelectConn.block (false);
-    ff_BlurRadiusConn.block (false);
-    ff_BlurTypeConn.block (false);
-    ff_ClipControlConn.block (false);
 }
 
 void PartialPasteDlg::basicToggled ()
 {
 
-    wbConn.block (true);
-    exposureConn.block (true);
-    shConn.block (true);
-    epdConn.block(true);
-    pcvignetteConn.block (true);
-    gradientConn.block (true);
-    labcurveConn.block (true);
-    colorappearanceConn.block (true);
-    retinexConn.block (true);
+    ConnectionBlocker wbBlocker(wbConn);
+    ConnectionBlocker exposureBlocker(exposureConn);
+    ConnectionBlocker shBlocker(shConn);
+    ConnectionBlocker epdBlocker(epdConn);
+    ConnectionBlocker fattalBlocker(fattalConn);
+    ConnectionBlocker pcvignetteBlocker(pcvignetteConn);
+    ConnectionBlocker gradientBlocker(gradientConn);
+    ConnectionBlocker retinexBlocker(retinexConn);
+    ConnectionBlocker labcurveBlocker(labcurveConn);
+    ConnectionBlocker colorappearanceBlocker(colorappearanceConn);
 
     basic->set_inconsistent (false);
 
@@ -526,29 +493,18 @@ void PartialPasteDlg::basicToggled ()
     retinex->set_active (basic->get_active ());
     labcurve->set_active (basic->get_active ());
     colorappearance->set_active (basic->get_active ());
-
-    wbConn.block (false);
-    exposureConn.block (false);
-    shConn.block (false);
-    epdConn.block (false);
-    pcvignetteConn.block (false);
-    gradientConn.block (false);
-    retinexConn.block (false);
-    
-    labcurveConn.block (false);
-    colorappearanceConn.block (false);
 }
 
 void PartialPasteDlg::detailToggled ()
 {
 
-    sharpenConn.block (true);
-    gradsharpenConn.block(true);
-    microcontrastConn.block(true);
-    impdenConn.block (true);
-    dirpyrdenConn.block (true);
-    defringeConn.block (true);
-    dirpyreqConn.block (true);
+    ConnectionBlocker sharpenBlocker(sharpenConn);
+    ConnectionBlocker gradsharpenBlocker(gradsharpenConn);
+    ConnectionBlocker microcontrastBlocker(microcontrastConn);
+    ConnectionBlocker impdenBlocker(impdenConn);
+    ConnectionBlocker dirpyrdenBlocker(dirpyrdenConn);
+    ConnectionBlocker defringeBlocker(defringeConn);
+    ConnectionBlocker dirpyreqBlocker(dirpyreqConn);
 
     detail->set_inconsistent (false);
 
@@ -559,41 +515,32 @@ void PartialPasteDlg::detailToggled ()
     dirpyrden->set_active (detail->get_active ());
     defringe->set_active (detail->get_active ());
     dirpyreq->set_active (detail->get_active ());
-
-    sharpenConn.block (false);
-    gradsharpenConn.block(false);
-    microcontrastConn.block(false);
-    impdenConn.block (false);
-    dirpyrdenConn.block (false);
-    defringeConn.block (false);
-    dirpyreqConn.block (false);
 }
 
 void PartialPasteDlg::wavToggled ()
 {
 
-    waveletConn.block (true);
+    ConnectionBlocker waveletBlocker(waveletConn);
 
     wav->set_inconsistent (false);
     wavelet->set_active (wav->get_active ());
-
-    waveletConn.block (false);
 }
 
 void PartialPasteDlg::colorToggled ()
 {
 
-    icmConn.block (true);
-    //gamcsconn.block (true);
-    vibranceConn.block (true);
-    chmixerConn.block (true);
-    chmixerbwConn.block (true);
-    hsveqConn.block (true);
-    filmSimulationConn.block (true);
-    rgbcurvesConn.block (true);
-    colortoningConn.block (true);
+    ConnectionBlocker icmBlocker(icmConn);
+    ConnectionBlocker vibranceBlocker(vibranceConn);
+    ConnectionBlocker chmixerBlocker(chmixerConn);
+    ConnectionBlocker chmixerbwBlocker(chmixerbwConn);
+    ConnectionBlocker hsveqBlocker(hsveqConn);
+    ConnectionBlocker filmSimulationBlocker(filmSimulationConn);
+    //ConnectionBlocker gamcsconnBlocker(gamcsconnConn);
+    ConnectionBlocker rgbcurvesBlocker(rgbcurvesConn);
+    ConnectionBlocker colortoningBlocker(colortoningConn);
 
     color->set_inconsistent (false);
+
     icm->set_active (color->get_active ());
     //gam->set_active (color->get_active ());
     vibrance->set_active (color->get_active ());
@@ -603,25 +550,15 @@ void PartialPasteDlg::colorToggled ()
     filmSimulation->set_active (color->get_active ());
     rgbcurves->set_active (color->get_active ());
     colortoning->set_active(color->get_active ());
-
-    icmConn.block (false);
-    //gamcsconn.block (false);
-    vibranceConn.block (false);
-    chmixerbwConn.block (false);
-    chmixerConn.block (false);
-    hsveqConn.block (false);
-    filmSimulationConn.block (false);
-    rgbcurvesConn.block (false);
-    colortoningConn.block (false);
 }
 
 void PartialPasteDlg::lensToggled ()
 {
 
-    distortionConn.block (true);
-    cacorrConn.block (true);
-    vignettingConn.block (true);
-    lcpConn.block (true);
+    ConnectionBlocker distortionBlocker(distortionConn);
+    ConnectionBlocker cacorrBlocker(cacorrConn);
+    ConnectionBlocker vignettingBlocker(vignettingConn);
+    ConnectionBlocker lcpBlocker(lcpConn);
 
     lens->set_inconsistent (false);
 
@@ -629,23 +566,18 @@ void PartialPasteDlg::lensToggled ()
     cacorr->set_active (lens->get_active ());
     vignetting->set_active (lens->get_active ());
     lcp->set_active (lens->get_active ());
-
-    distortionConn.block (false);
-    cacorrConn.block (false);
-    vignettingConn.block (false);
-    lcpConn.block (false);
 }
 
 void PartialPasteDlg::compositionToggled ()
 {
 
-    coarserotConn.block (true);
-    finerotConn.block (true);
-    cropConn.block (true);
-    resizeConn.block (true);
-    prsharpeningConn.block (true);
-    perspectiveConn.block (true);
-    commonTransConn.block (true);
+    ConnectionBlocker coarserotBlocker(coarserotConn);
+    ConnectionBlocker finerotBlocker(finerotConn);
+    ConnectionBlocker cropBlocker(cropConn);
+    ConnectionBlocker resizeBlocker(resizeConn);
+    ConnectionBlocker prsharpeningBlocker(prsharpeningConn);
+    ConnectionBlocker perspectiveBlocker(perspectiveConn);
+    ConnectionBlocker commonTransBlocker(commonTransConn);
 
     composition->set_inconsistent (false);
 
@@ -656,28 +588,18 @@ void PartialPasteDlg::compositionToggled ()
     prsharpening->set_active (composition->get_active ());
     perspective->set_active (composition->get_active ());
     commonTrans->set_active (composition->get_active ());
-
-    coarserotConn.block (false);
-    finerotConn.block (false);
-    cropConn.block (false);
-    resizeConn.block (false);
-    prsharpeningConn.block (false);
-    perspectiveConn.block (false);
-    commonTransConn.block (false);
 }
 
 void PartialPasteDlg::metaToggled ()
 {
 
-    exifchConn.block (true);
-    iptcConn.block (true);
+    ConnectionBlocker exifchBlocker(exifchConn);
+    ConnectionBlocker iptcBlocker(iptcConn);
+
     meta->set_inconsistent (false);
 
     exifch->set_active (meta->get_active ());
     iptc->set_active (meta->get_active ());
-
-    exifchConn.block (false);
-    iptcConn.block (false);
 }
 
 

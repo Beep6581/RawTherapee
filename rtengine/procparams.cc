@@ -3101,7 +3101,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->icm.working, "Color Management", "WorkingProfile", icm.working, keyFile);
         saveToKeyfile(!pedited || pedited->icm.output, "Color Management", "OutputProfile", icm.output, keyFile);
         saveToKeyfile(
-            !pedited || icm.outputIntent,
+            !pedited || pedited->icm.outputIntent,
             "Color Management",
             "OutputProfileIntent",
             {
