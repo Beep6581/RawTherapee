@@ -24,7 +24,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"))
+LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"), false, true)
 {
 
     std::vector<GradientMilestone> milestones;
@@ -244,6 +244,8 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
         hhshape->setUnChanged  (!pedited->labCurve.hhcurve);
         lcshape->setUnChanged  (!pedited->labCurve.lccurve);
         clshape->setUnChanged  (!pedited->labCurve.clcurve);
+
+        set_inconsistent(multiImage && !pedited->labCurve.enabled);
     }
 
     brightness->setValue    (pp->labCurve.brightness);
@@ -277,6 +279,8 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
     lcshape->setCurve  (pp->labCurve.lccurve);
     clshape->setCurve  (pp->labCurve.clcurve);
 
+    setEnabled(pp->labCurve.enabled);
+    
     queue_draw();
 
     enableListener ();
@@ -338,7 +342,8 @@ void LCurve::setEditProvider  (EditDataProvider *provider)
 
 void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
 {
-
+    pp->labCurve.enabled = getEnabled();
+    
     pp->labCurve.brightness    = brightness->getValue ();
     pp->labCurve.contrast      = (int)contrast->getValue ();
     pp->labCurve.chromaticity  = (int)chromaticity->getValue ();
@@ -380,7 +385,7 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->labCurve.lccurve   = !lcshape->isUnChanged ();
         pedited->labCurve.clcurve   = !clshape->isUnChanged ();
 
-
+        pedited->labCurve.enabled = !get_inconsistent();
     }
 
 }
@@ -424,7 +429,7 @@ void LCurve::avoidcolorshift_toggled ()
         lastACVal = avoidcolorshift->get_active ();
     }
 
-    if (listener) {
+    if (listener && getEnabled()) {
         if (avoidcolorshift->get_active ()) {
             listener->panelChanged (EvLAvoidColorShift, M("GENERAL_ENABLED"));
         } else {
@@ -451,7 +456,7 @@ void LCurve::lcredsk_toggled ()
         lcshape->refresh();
     }
 
-    if (listener) {
+    if (listener && getEnabled()) {
         if (lcredsk->get_active ()) {
             listener->panelChanged (EvLLCredsk, M("GENERAL_ENABLED"));
         } else {
@@ -471,7 +476,7 @@ void LCurve::lcredsk_toggled ()
 void LCurve::curveChanged (CurveEditor* ce)
 {
 
-    if (listener) {
+    if (listener && getEnabled()) {
         if (ce == lshape) {
             listener->panelChanged (EvLLCurve, M("HISTORY_CUSTOMCURVE"));
         }
@@ -526,15 +531,15 @@ void LCurve::adjusterChanged (Adjuster* a, double newval)
     }
 
     if (a == brightness) {
-        if (listener) {
+        if (listener && getEnabled()) {
             listener->panelChanged (EvLBrightness, costr);
         }
     } else if (a == contrast) {
-        if (listener) {
+        if (listener && getEnabled()) {
             listener->panelChanged (EvLContrast, costr);
         }
     } else if (a == rstprotection) {
-        if (listener) {
+        if (listener && getEnabled()) {
             listener->panelChanged (EvLRSTProtection, costr);
         }
     } else if (a == chromaticity) {
@@ -550,7 +555,7 @@ void LCurve::adjusterChanged (Adjuster* a, double newval)
             lcredsk->set_sensitive( int(newval) > -100 );
         }
 
-        if (listener) {
+        if (listener && getEnabled()) {
             listener->panelChanged (EvLSaturation, costr);
         }
     }
@@ -667,4 +672,17 @@ void LCurve::trimValues (rtengine::procparams::ProcParams* pp)
     brightness->trimValue(pp->labCurve.brightness);
     contrast->trimValue(pp->labCurve.contrast);
     chromaticity->trimValue(pp->labCurve.chromaticity);
+}
+
+void LCurve::enabledChanged()
+{
+    if (listener) {
+        if (get_inconsistent()) {
+            listener->panelChanged (EvLEnabled, M("GENERAL_UNCHANGED"));
+        } else if (getEnabled()) {
+            listener->panelChanged (EvLEnabled, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged (EvLEnabled, M("GENERAL_DISABLED"));
+        }
+    }
 }

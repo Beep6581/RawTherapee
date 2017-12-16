@@ -518,6 +518,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     HDR,              // EvTMFattalThreshold
     HDR,              // EvTMFattalAmount
     ALLNORAW,         // EvWBEnabled
-    RGBCURVE          // EvRGBEnabled
+    RGBCURVE,         // EvRGBEnabled
+    LUMINANCECURVE    // EvLEnabled
 };
 
