@@ -2745,7 +2745,7 @@ SSEFUNCTION void ImProcFunctions::ShrinkAllL(wavelet_decomposition &WaveletCoeff
 
 
 SSEFUNCTION void ImProcFunctions::ShrinkAllAB(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_ab, float **buffer, int level, int dir,
-        float *noisevarchrom, float noisevar_ab,  bool useNoiseCCurve, bool autoch,
+        float *noisevarchrom, float noisevar_ab,  const bool useNoiseCCurve, bool autoch,
         bool denoiseMethodRgb, float * madL,  float * variC, int local, float * madaab,  bool madCalculated)
 
 {
@@ -2781,9 +2781,14 @@ SSEFUNCTION void ImProcFunctions::ShrinkAllAB(wavelet_decomposition &WaveletCoef
 
     float noisevarfc;
 
-    if ((local == 2 || local == 3) && variC) {
-        useNoiseCCurve = true;
+
+    if ((local == 2 || local == 3) && variC  && useNoiseCCurve) {
         noisevarfc = variC[level];
+
+        for (int p = 0; p < H_ab * W_ab; p++) {
+            noisevarchrom[p] = variC[level] * SQR(1.f + 4.f * noisevarchrom[p]);
+        }
+
     } else {
         noisevarfc = noisevar_ab;
     }

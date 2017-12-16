@@ -1870,6 +1870,8 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
     for (int y = 0; y < transformed->H; y++) {
         const int loy = cy + y;
         const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
+        float factnoise1 = 1.f + (lp.noisecf) / 200.f;
+        float factnoise2 = 1.f + (lp.noisecc) / 100.f;
 
         if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
             for (int x = 0; x < transformed->W; x++) {
@@ -1889,7 +1891,6 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
             calcTransition(lox, loy, ach, lp, zone, localFactor);
             int begx = int (lp.xc - lp.lxL);
             int begy = int (lp.yc - lp.lyT);
-            float factnoise = (1.f + (lp.noisecf + lp.noisecc) / 300.f);
 
             switch (zone) {
                 case 0: { // outside selection and outside transition zone => no effect, keep original values
@@ -1918,8 +1919,8 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
                     difa *= factorx;
                     difb *= factorx ;
                     transformed->L[y][x] = original->L[y][x] + difL;
-                    transformed->a[y][x] = original->a[y][x] + difa * factnoise;
-                    transformed->b[y][x] = original->b[y][x] + difb * factnoise;
+                    transformed->a[y][x] = (original->a[y][x] + difa) * factnoise1 * factnoise2;
+                    transformed->b[y][x] = (original->b[y][x] + difb) * factnoise1 * factnoise2 ;
                     break;
                 }
 
@@ -1938,8 +1939,8 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
                     }
 
                     transformed->L[y][x] = original->L[y][x] + difL;
-                    transformed->a[y][x] = original->a[y][x] + difa * factnoise;
-                    transformed->b[y][x] = original->b[y][x] + difb * factnoise;
+                    transformed->a[y][x] = (original->a[y][x] + difa) * factnoise1 * factnoise2;
+                    transformed->b[y][x] = (original->b[y][x] + difb) * factnoise1 * factnoise2;
                 }
             }
         }
@@ -8487,7 +8488,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
         bool execbdl = (lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f) ;//only if user want cbdl
         execdenoi = noiscfactiv && ((lp.colorena && execcolor) || (lp.tonemapena && lp.strengt != 0.f) || (lp.cbdlena && execbdl) || (lp.sharpena && lp.shrad > 0.42) || (lp.retiena  && lp.str > 0.f)  || (lp.exposena && lp.expcomp != 0.f)  || (lp.expvib  && lp.past != 0.f));
 
-        if (((lp.noiself > 0.f || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f) && lp.denoiena) || execdenoi) {
+        if (((lp.noiself > 0.f || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f) && lp.denoiena) || execdenoi) {  // sk == 1 ??
             StopWatch Stop1("locallab Denoise called");
 
             if (lp.noisecf > 0.1f || lp.noisecc > 0.1f) {
@@ -8519,7 +8520,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 array2D<float> tilemask_in(TS, TS);
                 array2D<float> tilemask_out(TS, TS);
 
-                if ((lp.noiself > 0.1f ||  lp.noiselc > 0.1f)) {
+                if ((lp.noiself > 0.1f ||  lp.noiselc > 0.1f)  && levred == 7) {
                     float *Lbloxtmp  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
                     float *fLbloxtmp = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
 
@@ -8708,10 +8709,10 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         float* noisevarchrom = new float[GH * GW];
                         //noisevarchrom in function chroma
                         int GW2 = (GW + 1) / 2;
-                        float nvch = 50.f;//high value
-                        float nvcl = 8.f;//low value
+                        float nvch = 0.5f;//high value
+                        float nvcl = 0.05f;//low value
                         float seuil = 3000.f;//low
-                        float seuil2 = 20000.f;//high
+                        float seuil2 = 10000.f;//high
                         //ac and bc for transition
                         float ac = (nvch - nvcl) / (seuil - seuil2);
                         float bc = nvch - seuil * ac;
@@ -8725,18 +8726,18 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                                 float cN = sqrt(SQR(tmp1.a[ir][jr]) + SQR(tmp1.b[ir][jr]));
 
                                 if (cN < seuil) {
-                                    noisevarchrom[(ir >> 1)*GW2 + (jr >> 1)] =  1.f * SQR(nvch);
+                                    noisevarchrom[(ir >> 1)*GW2 + (jr >> 1)] =  nvch;
                                 } else if (cN < seuil2) {
-                                    noisevarchrom[(ir >> 1)*GW2 + (jr >> 1)] = 1.f * SQR(ac * cN + bc);
+                                    noisevarchrom[(ir >> 1)*GW2 + (jr >> 1)] = ac * cN + bc;
                                 } else {
-                                    noisevarchrom[(ir >> 1)*GW2 + (jr >> 1)] =  1.f * SQR(nvcl);
+                                    noisevarchrom[(ir >> 1)*GW2 + (jr >> 1)] =  nvcl;
                                 }
                             }
 
 
                         float noisevarab_r = 100.f; //SQR(lp.noisecc / 10.0);
-                        WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, false, false, false, numThreads);
-                        WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variC, edge, noisevarab_r, false, false, false, numThreads);
+                        WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
+                        WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
                         delete[] noisevarchrom;
 
                     }
@@ -8763,7 +8764,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                     const int numblox_W = ceil((static_cast<float>(GW)) / (offset)) + 2 * blkrad;
                     const int numblox_H = ceil((static_cast<float>(GH)) / (offset)) + 2 * blkrad;
 
-                    if ((lp.noiself > 0.1f ||  lp.noiselc > 0.1f)) {
+                    if ((lp.noiself > 0.1f ||  lp.noiselc > 0.1f) && levred == 7) {
                         //residual between input and denoised L channel
                         array2D<float> Ldetail(GW, GH, ARRAY2D_CLEAR_DATA);
                         array2D<float> totwt(GW, GH, ARRAY2D_CLEAR_DATA); //weight for combining DCT blocks
@@ -8894,7 +8895,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #ifdef _OPENMP
 
-                        #pragma omp parallel for //num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
+                        #pragma omp parallel for
 #endif
 
                         for (int i = 0; i < GH; ++i) {
@@ -8909,7 +8910,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                     delete Lin;
                 }
 
-                if ((lp.noiself > 0.1f ||  lp.noiselc > 0.1f)) {
+                if ((lp.noiself > 0.1f ||  lp.noiselc > 0.1f) && levred == 7) {
 
                     for (int i = 0; i < numThreads; ++i) {
                         fftwf_free(LbloxArray[i]);
@@ -8952,7 +8953,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 array2D<float> tilemask_in(TS, TS);
                 array2D<float> tilemask_out(TS, TS);
 
-                if ((lp.noiself > 0.1f ||  lp.noiselc > 0.1f)) {
+                if ((lp.noiself > 0.1f ||  lp.noiselc > 0.1f) && levred == 7) {
                     float *Lbloxtmp  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
                     float *fLbloxtmp = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
 
@@ -9154,10 +9155,10 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
                         float* noisevarchrom = new float[bfh * bfw];
                         int bfw2 = (bfw + 1) / 2;
-                        float nvch = 50.f;//high value
-                        float nvcl = 8.f;//low value
+                        float nvch = 0.5f;//high value
+                        float nvcl = 0.05f;//low value
                         float seuil = 3000.f;//low
-                        float seuil2 = 20000.f;//high
+                        float seuil2 = 10000.f;//high
                         //ac and bc for transition
                         float ac = (nvch - nvcl) / (seuil - seuil2);
                         float bc = nvch - seuil * ac;
@@ -9171,19 +9172,19 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                                 float cN = sqrt(SQR(bufwv.a[ir][jr]) + SQR(bufwv.b[ir][jr]));
 
                                 if (cN < seuil) {
-                                    noisevarchrom[(ir >> 1)*bfw2 + (jr >> 1)] = 0.5f * SQR(nvch);
+                                    noisevarchrom[(ir >> 1)*bfw2 + (jr >> 1)] = nvch;
                                 } else if (cN < seuil2) {
-                                    noisevarchrom[(ir >> 1)*bfw2 + (jr >> 1)] = 0.5f * SQR(ac * cN + bc);
+                                    noisevarchrom[(ir >> 1)*bfw2 + (jr >> 1)] = ac * cN + bc;
                                 } else {
-                                    noisevarchrom[(ir >> 1)*bfw2 + (jr >> 1)] = 0.5f * SQR(nvcl);
+                                    noisevarchrom[(ir >> 1)*bfw2 + (jr >> 1)] = nvcl;
                                 }
                             }
 
 
 
                         float noisevarab_r = 100.f; //SQR(lp.noisecc / 10.0);
-                        WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, false, false, false, numThreads);
-                        WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variC, edge, noisevarab_r, false, false, false, numThreads);
+                        WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
+                        WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
                         delete[] noisevarchrom;
 
                     }
@@ -9212,7 +9213,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                     const int numblox_W = ceil((static_cast<float>(bfw)) / (offset)) + 2 * blkrad;
                     const int numblox_H = ceil((static_cast<float>(bfh)) / (offset)) + 2 * blkrad;
 
-                    if ((lp.noiself > 0.1f ||  lp.noiselc > 0.1f)) {
+                    if ((lp.noiself > 0.1f ||  lp.noiselc > 0.1f) && levred == 7) {
                         //residual between input and denoised L channel
                         array2D<float> Ldetail(bfw, bfh, ARRAY2D_CLEAR_DATA);
                         //pixel weight
@@ -9359,7 +9360,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                     delete Lin;
                 }
 
-                if ((lp.noiself > 0.1f ||  lp.noiselc > 0.1f)) {
+                if ((lp.noiself > 0.1f ||  lp.noiselc > 0.1f) && levred == 7) {
 
                     for (int i = 0; i < numThreads; ++i) {
                         fftwf_free(LbloxArray[i]);
