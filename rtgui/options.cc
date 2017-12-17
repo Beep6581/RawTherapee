@@ -1366,7 +1366,7 @@ void Options::readFromFile (Glib::ustring fname)
                     FileBrowserToolbarSingleRow = keyFile.get_boolean ("GUI", "FileBrowserToolbarSingleRow");
                 }
 
-#ifdef __linux__
+#if defined(__linux__) && ((GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION > 18) || GTK_MAJOR_VERSION > 3)
                 // Cannot scroll toolbox with mousewheel when HideTPVScrollbar=true #3413
                 hideTPVScrollbar = false;
 #else
