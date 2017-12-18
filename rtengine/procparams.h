@@ -916,6 +916,7 @@ struct LocallabParams {
     int     noiselumc;
     int     noiselumdetail;
     int     noisechrodetail;
+    int     sensiden;
     int     noisechrof;
     int     noisechroc;
     int     sharradius;
@@ -955,6 +956,7 @@ struct LocallabParams {
     bool    inversret;
     bool    inverssha;
     double  hueref;
+    double  huerefblur;
     double  chromaref;
     double  lumaref;
     double  sobelref;

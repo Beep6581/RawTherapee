@@ -2376,6 +2376,7 @@ noiselumf(0),
 noiselumc(0),
 noiselumdetail(0),
 noisechrodetail(0),
+sensiden(30),
 noisechrof(0),
 noisechroc(0),
 sharradius(40),
@@ -2415,6 +2416,7 @@ inversrad(false),
 inversret(false),
 inverssha(false),
 hueref(1.),
+huerefblur(1.),
 chromaref(50.),
 lumaref(50.),
 sobelref(0.),
@@ -2510,6 +2512,7 @@ bool LocallabParams::operator ==(const LocallabParams& other) const
     && noiselumc == other.noiselumc
     && noiselumdetail == other.noiselumdetail
     && noisechrodetail == other.noisechrodetail
+    && sensiden == other.sensiden
     && noisechrof == other.noisechrof
     && noisechroc == other.noisechroc
     && sharradius == other.sharradius
@@ -2540,6 +2543,7 @@ bool LocallabParams::operator ==(const LocallabParams& other) const
     && nbspot == other.nbspot
     && anbspot == other.anbspot
     && hueref == other.hueref
+    && huerefblur == other.huerefblur
     && chromaref == other.chromaref
     && lumaref == other.lumaref
     && sobelref == other.sobelref
@@ -3486,6 +3490,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->locallab.noiselumc, "Locallab", "noiselumc", locallab.noiselumc, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.noiselumdetail, "Locallab", "noiselumdetail", locallab.noiselumdetail, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.noisechrodetail, "Locallab", "noisechrodetail", locallab.noisechrodetail, keyFile);
+        saveToKeyfile(!pedited || pedited->locallab.sensiden, "Locallab", "Sensiden", locallab.sensiden, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.noisechrof, "Locallab", "noisechrof", locallab.noisechrof, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.noisechroc, "Locallab", "noisechroc", locallab.noisechroc, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.sharradius, "Locallab", "Sharradius", locallab.sharradius, keyFile);
@@ -3509,6 +3514,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->locallab.nbspot, "Locallab", "Nbspot", locallab.nbspot, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.anbspot, "Locallab", "ANbspot", locallab.anbspot, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.hueref, "Locallab", "Hueref", locallab.hueref, keyFile);
+        saveToKeyfile(!pedited || pedited->locallab.huerefblur, "Locallab", "Huerefblur", locallab.huerefblur, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.chromaref, "Locallab", "Chromaref", locallab.chromaref, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.lumaref, "Locallab", "Lumaref", locallab.lumaref, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.sobelref, "Locallab", "Sobelref", locallab.sobelref, keyFile);
@@ -4541,6 +4547,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Locallab", "noiselumc", pedited, locallab.noiselumc, pedited->locallab.noiselumc);
             assignFromKeyfile(keyFile, "Locallab", "noiselumdetail", pedited, locallab.noiselumdetail, pedited->locallab.noiselumdetail);
             assignFromKeyfile(keyFile, "Locallab", "noisechrodetail", pedited, locallab.noisechrodetail, pedited->locallab.noisechrodetail);
+            assignFromKeyfile(keyFile, "Locallab", "Sensiden", pedited, locallab.sensiden, pedited->locallab.sensiden);
             assignFromKeyfile(keyFile, "Locallab", "noisechrof", pedited, locallab.noisechrof, pedited->locallab.noisechrof);
             assignFromKeyfile(keyFile, "Locallab", "noisechroc", pedited, locallab.noisechroc, pedited->locallab.noisechroc);
             assignFromKeyfile(keyFile, "Locallab", "Sharradius", pedited, locallab.sharradius, pedited->locallab.sharradius);
@@ -4565,6 +4572,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Locallab", "Nbspot", pedited, locallab.nbspot, pedited->locallab.nbspot);
             assignFromKeyfile(keyFile, "Locallab", "ANbspot", pedited, locallab.anbspot, pedited->locallab.anbspot);
             assignFromKeyfile(keyFile, "Locallab", "Hueref", pedited, locallab.hueref, pedited->locallab.hueref);
+            assignFromKeyfile(keyFile, "Locallab", "Huerefblur", pedited, locallab.huerefblur, pedited->locallab.huerefblur);
             assignFromKeyfile(keyFile, "Locallab", "Chromaref", pedited, locallab.chromaref, pedited->locallab.chromaref);
             assignFromKeyfile(keyFile, "Locallab", "Lumaref", pedited, locallab.lumaref, pedited->locallab.lumaref);
             assignFromKeyfile(keyFile, "Locallab", "Sobelref", pedited, locallab.sobelref, pedited->locallab.sobelref);

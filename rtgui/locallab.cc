@@ -108,9 +108,11 @@ Locallab::Locallab():
     noiselumc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMCOARSE"), 0, 100, 1, 0))),
     noiselumdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMDETAIL"), 0, 100, 1, 50))),
     noisechrodetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHRODETAIL"), 0, 100, 1, 50))),
+    sensiden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIDEN"), 0, 100, 1, 30))),
     noisechrof(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROFINE"), 0, 100, 1, 0))),
     noisechroc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROCOARSE"), 0, 100, 1, 0))),
     hueref(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HUEREF"), -3.15, 3.15, 0.01, 0))),
+    huerefblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HUEREFBLUR"), -3.15, 3.15, 0.01, 0))),
     chromaref(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMAREF"), 0, 200, 0.01, 0))),
     lumaref(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LUMAMAREF"), 0, 100, 0.01, 0))),
     sobelref(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOBELREF"), 0, 100, 0.01, 0))),
@@ -508,17 +510,20 @@ Locallab::Locallab():
     pack_start(*anbspot);
 
     hueref->setAdjusterListener(this);
+    huerefblur->setAdjusterListener(this);
     chromaref->setAdjusterListener(this);
     lumaref->setAdjusterListener(this);
     sobelref->setAdjusterListener(this);
 
     pack_start(*hueref);
+    pack_start(*huerefblur);
     pack_start(*chromaref);
     pack_start(*lumaref);
     pack_start(*sobelref);
 
     anbspot->hide();//keep anbspot  - i used it to test diffrent algo...
     hueref->hide();
+    huerefblur->hide();
     chromaref->hide();
     lumaref->hide();
     sobelref->hide();
@@ -644,6 +649,7 @@ Locallab::Locallab():
     noiselumc->setAdjusterListener(this);
     noiselumdetail->setAdjusterListener(this);
     noisechrodetail->setAdjusterListener(this);
+    sensiden->setAdjusterListener(this);
 
     noisechrof->setAdjusterListener(this);
 
@@ -656,6 +662,7 @@ Locallab::Locallab():
     denoisBox->pack_start(*noisechrof);
     denoisBox->pack_start(*noisechroc);
     denoisBox->pack_start(*noisechrodetail);
+    denoisBox->pack_start(*sensiden);
 
     neutrHBox1 = Gtk::manage(new Gtk::HBox());
 
@@ -1311,6 +1318,7 @@ void Locallab::neutral_pressed()
     noisechrof->resetValue(false);
     noisechroc->resetValue(false);
     noisechrodetail->resetValue(false);
+    sensiden->resetValue(false);
 
 
 }
@@ -1816,12 +1824,16 @@ bool Locallab::localComputed_()
     warm->setValue(nextdatasp[81]);
     noiselumdetail->setValue(nextdatasp[82]);
     noisechrodetail->setValue(nextdatasp[83]);
+    sensiden->setValue(nextdatasp[84]);
 
-    double intermed = 0.01 * (double) nextdatasp[84];
+    double intermedblur = 0.01 * (double) nextdatasp[85];
+    huerefblur->setValue(intermedblur);
+    double intermed = 0.01 * (double) nextdatasp[86];
     hueref->setValue(intermed);
-    chromaref->setValue(nextdatasp[85]);
-    lumaref->setValue(nextdatasp[86]);
-    sobelref->setValue(nextdatasp[87]);
+
+    chromaref->setValue(nextdatasp[87]);
+    lumaref->setValue(nextdatasp[88]);
+    sobelref->setValue(nextdatasp[89]);
 
     int *s_datc;
     s_datc = new int[70];
@@ -2105,7 +2117,7 @@ bool Locallab::localComputed_()
 
 void Locallab::localChanged(int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat)
 {
-    for (int i = 2; i < 88; i++) {
+    for (int i = 2; i < 90; i++) {
         nextdatasp[i] = datasp[i][sp];
     }
 
@@ -2142,6 +2154,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
 {
     anbspot->hide();
     hueref->hide();
+    huerefblur->hide();
     chromaref->hide();
     lumaref->hide();
     sobelref->hide();
@@ -2195,6 +2208,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
         noisechrof->setEditedState(pedited->locallab.noisechrof ? Edited : UnEdited);
         noisechroc->setEditedState(pedited->locallab.noisechroc ? Edited : UnEdited);
         noisechrodetail->setEditedState(pedited->locallab.noisechrodetail ? Edited : UnEdited);
+        sensiden->setEditedState(pedited->locallab.sensiden ? Edited : UnEdited);
 
         pastels->setEditedState(pedited->locallab.pastels ? Edited : UnEdited);
         saturated->setEditedState(pedited->locallab.saturated ? Edited : UnEdited);
@@ -2231,6 +2245,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
         nbspot->setEditedState(pedited->locallab.nbspot ? Edited : UnEdited);
         anbspot->setEditedState(pedited->locallab.anbspot ? Edited : UnEdited);
         hueref->setEditedState(pedited->locallab.hueref ? Edited : UnEdited);
+        huerefblur->setEditedState(pedited->locallab.huerefblur ? Edited : UnEdited);
         chromaref->setEditedState(pedited->locallab.chromaref ? Edited : UnEdited);
         lumaref->setEditedState(pedited->locallab.lumaref ? Edited : UnEdited);
         sobelref->setEditedState(pedited->locallab.sobelref ? Edited : UnEdited);
@@ -2386,6 +2401,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
     nbspot->setValue(pp->locallab.nbspot);
     anbspot->setValue(pp->locallab.anbspot);
     hueref->setValue(pp->locallab.hueref);
+    huerefblur->setValue(pp->locallab.huerefblur);
     chromaref->setValue(pp->locallab.chromaref);
     lumaref->setValue(pp->locallab.lumaref);
     sobelref->setValue(pp->locallab.sobelref);
@@ -2406,6 +2422,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
     noisechrof->setValue(pp->locallab.noisechrof);
     noisechroc->setValue(pp->locallab.noisechroc);
     noisechrodetail->setValue(pp->locallab.noisechrodetail);
+    sensiden->setValue(pp->locallab.sensiden);
     expcolor->setEnabled(pp->locallab.expcolor);
     expexpose->setEnabled(pp->locallab.expexpose);
     expvibrance->setEnabled(pp->locallab.expvibrance);
@@ -2557,6 +2574,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     anbspot->hide();
     hueref->hide();
+    huerefblur->hide();
     chromaref->hide();
     lumaref->hide();
     sobelref->hide();
@@ -2831,6 +2849,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
     pp->locallab.noiselumc = noiselumc->getIntValue();
     pp->locallab.noiselumdetail = noiselumdetail->getIntValue();
     pp->locallab.noisechrodetail = noisechrodetail->getIntValue();
+    pp->locallab.sensiden = sensiden->getIntValue();
     pp->locallab.noiselumf = noiselumf->getIntValue();
     pp->locallab.noisechrof = noisechrof->getIntValue();
     pp->locallab.noisechroc = noisechroc->getIntValue();
@@ -2871,6 +2890,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
     pp->locallab.nbspot = nbspot->getIntValue();
     pp->locallab.anbspot = anbspot->getIntValue();
     pp->locallab.hueref = hueref->getValue();
+    pp->locallab.huerefblur = huerefblur->getValue();
     pp->locallab.chromaref = chromaref->getValue();
     pp->locallab.lumaref = lumaref->getValue();
     pp->locallab.sobelref = sobelref->getValue();
@@ -2945,6 +2965,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.noiselumc = noiselumc->getEditedState();
         pedited->locallab.noiselumdetail = noiselumdetail->getEditedState();
         pedited->locallab.noisechrodetail = noisechrodetail->getEditedState();
+        pedited->locallab.sensiden = sensiden->getEditedState();
         pedited->locallab.noisechrof = noisechrof->getEditedState();
         pedited->locallab.noisechroc = noisechroc->getEditedState();
         pedited->locallab.sharradius = sharradius->getEditedState();
@@ -2984,6 +3005,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.nbspot = nbspot->getEditedState();
         pedited->locallab.anbspot = anbspot->getEditedState();
         pedited->locallab.hueref = hueref->getEditedState();
+        pedited->locallab.huerefblur = huerefblur->getEditedState();
         pedited->locallab.chromaref = chromaref->getEditedState();
         pedited->locallab.lumaref = lumaref->getEditedState();
         pedited->locallab.sobelref = sobelref->getEditedState();
@@ -3718,6 +3740,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     noiselumc->setDefault(defParams->locallab.noiselumc);
     noiselumdetail->setDefault(defParams->locallab.noiselumdetail);
     noisechrodetail->setDefault(defParams->locallab.noisechrodetail);
+    sensiden->setDefault(defParams->locallab.sensiden);
     noisechrof->setDefault(defParams->locallab.noisechrof);
     noisechroc->setDefault(defParams->locallab.noisechroc);
     sharradius->setDefault(defParams->locallab.sharradius);
@@ -3747,6 +3770,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     nbspot->setDefault(defParams->locallab.nbspot);
     anbspot->setDefault(defParams->locallab.anbspot);
     hueref->setDefault(defParams->locallab.hueref);
+    huerefblur->setDefault(defParams->locallab.huerefblur);
     chromaref->setDefault(defParams->locallab.chromaref);
     lumaref->setDefault(defParams->locallab.lumaref);
     sobelref->setDefault(defParams->locallab.sobelref);
@@ -3794,6 +3818,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         noiselumc->setDefaultEditedState(pedited->locallab.noiselumc ? Edited : UnEdited);
         noiselumdetail->setDefaultEditedState(pedited->locallab.noiselumdetail ? Edited : UnEdited);
         noisechrodetail->setDefaultEditedState(pedited->locallab.noisechrodetail ? Edited : UnEdited);
+        sensiden->setDefaultEditedState(pedited->locallab.sensiden ? Edited : UnEdited);
         noisechrof->setDefaultEditedState(pedited->locallab.noisechrof ? Edited : UnEdited);
         noisechroc->setDefaultEditedState(pedited->locallab.noisechroc ? Edited : UnEdited);
         sharradius->setDefaultEditedState(pedited->locallab.sharradius ? Edited : UnEdited);
@@ -3823,6 +3848,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         nbspot->setDefaultEditedState(pedited->locallab.nbspot ? Edited : UnEdited);
         anbspot->setDefaultEditedState(pedited->locallab.anbspot ? Edited : UnEdited);
         hueref->setDefaultEditedState(pedited->locallab.hueref ? Edited : UnEdited);
+        huerefblur->setDefaultEditedState(pedited->locallab.huerefblur ? Edited : UnEdited);
         chromaref->setDefaultEditedState(pedited->locallab.chromaref ? Edited : UnEdited);
         lumaref->setDefaultEditedState(pedited->locallab.lumaref ? Edited : UnEdited);
         sobelref->setDefaultEditedState(pedited->locallab.sobelref ? Edited : UnEdited);
@@ -3869,6 +3895,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         noiselumc->setDefaultEditedState(Irrelevant);
         noiselumdetail->setDefaultEditedState(Irrelevant);
         noisechrodetail->setDefaultEditedState(Irrelevant);
+        sensiden->setDefaultEditedState(Irrelevant);
         noisechrof->setDefaultEditedState(Irrelevant);
         noisechroc->setDefaultEditedState(Irrelevant);
         sharradius->setDefaultEditedState(Irrelevant);
@@ -3898,6 +3925,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         nbspot->setDefaultEditedState(Irrelevant);
         anbspot->setDefaultEditedState(Irrelevant);
         hueref->setDefaultEditedState(Irrelevant);
+        huerefblur->setDefaultEditedState(Irrelevant);
         chromaref->setDefaultEditedState(Irrelevant);
         lumaref->setDefaultEditedState(Irrelevant);
         sobelref->setDefaultEditedState(Irrelevant);
@@ -3933,6 +3961,7 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
     updateGeometry(int (centerX->getValue()), int (centerY->getValue()), int (circrad->getValue()), (int)locY->getValue(), degree->getValue(), (int)locX->getValue(), (int)locYT->getValue(), (int)locXL->getValue());
     anbspot->hide();
     hueref->hide();
+    huerefblur->hide();
     chromaref->hide();
     lumaref->hide();
     sobelref->hide();
@@ -4046,6 +4075,8 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             listener->panelChanged(Evlocallabnoiselumdetail, noiselumdetail->getTextValue());
         } else if (a == noisechrodetail) {
             listener->panelChanged(Evlocallabnoisechrodetail, noisechrodetail->getTextValue());
+        } else if (a == sensiden) {
+            listener->panelChanged(Evlocallabsensiden, sensiden->getTextValue());
         } else if (a == noisechrof) {
             listener->panelChanged(Evlocallabnoisechrof, noisechrof->getTextValue());
         } else if (a == noisechroc) {
@@ -4094,6 +4125,8 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             listener->panelChanged(Evlocallabanbspot, ""); //anbspot->getTextValue());
         } else if (a == hueref) {
             listener->panelChanged(Evlocallabhueref, ""); //anbspot->getTextValue());
+        } else if (a == huerefblur) {
+            listener->panelChanged(Evlocallabhuerefblur, ""); //anbspot->getTextValue());
         } else if (a == chromaref) {
             listener->panelChanged(Evlocallabchromaref, ""); //anbspot->getTextValue());
         } else if (a == lumaref) {
@@ -4146,6 +4179,7 @@ void Locallab::enabledChanged()
 {
     anbspot->hide();
     hueref->hide();
+    huerefblur->hide();
     chromaref->hide();
     lumaref->hide();
     sobelref->hide();
@@ -4234,6 +4268,7 @@ void Locallab::trimValues(rtengine::procparams::ProcParams * pp)
     noiselumc->trimValue(pp->locallab.noiselumc);
     noiselumdetail->trimValue(pp->locallab.noiselumdetail);
     noisechrodetail->trimValue(pp->locallab.noisechrodetail);
+    sensiden->trimValue(pp->locallab.sensiden);
     noisechrof->trimValue(pp->locallab.noisechrof);
     noisechroc->trimValue(pp->locallab.noisechroc);
     sharradius->trimValue(pp->locallab.sharradius);
@@ -4263,6 +4298,7 @@ void Locallab::trimValues(rtengine::procparams::ProcParams * pp)
     nbspot->trimValue(pp->locallab.nbspot);
     anbspot->trimValue(pp->locallab.anbspot);
     hueref->trimValue(pp->locallab.hueref);
+    huerefblur->trimValue(pp->locallab.huerefblur);
     chromaref->trimValue(pp->locallab.chromaref);
     lumaref->trimValue(pp->locallab.lumaref);
     sobelref->trimValue(pp->locallab.sobelref);
@@ -4289,6 +4325,7 @@ void Locallab::setBatchMode(bool batchMode)
     ToolPanel::setBatchMode(batchMode);
 
     hueref->hide();
+    huerefblur->hide();
     chromaref->hide();
     lumaref->hide();
     sobelref->hide();
@@ -4320,6 +4357,7 @@ void Locallab::setBatchMode(bool batchMode)
     noiselumc->showEditedCB();
     noiselumdetail->showEditedCB();
     noisechrodetail->showEditedCB();
+    sensiden->showEditedCB();
     noisechroc->showEditedCB();
     noiselumf->showEditedCB();
     sharradius->showEditedCB();
@@ -4350,6 +4388,7 @@ void Locallab::setBatchMode(bool batchMode)
     nbspot->showEditedCB();
     anbspot->showEditedCB();
     hueref->showEditedCB();
+    huerefblur->showEditedCB();
     chromaref->showEditedCB();
     lumaref->showEditedCB();
     sobelref->showEditedCB();

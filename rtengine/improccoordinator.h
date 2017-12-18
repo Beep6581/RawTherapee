@@ -308,6 +308,7 @@ protected:
     LUTi noiselumcs;
     LUTi noiselumdetails;
     LUTi noisechrodetails;
+    LUTi sensidens;
     LUTi noisechrofs;
     LUTi noisechrocs;
     LUTi mult0s;
@@ -358,11 +359,12 @@ protected:
     LUTi warms;
 
     LUTf huerefs;
+    LUTf huerefblurs;
     LUTf chromarefs;
     LUTf lumarefs;
     LUTf sobelrefs;
 
-    double huer, chromar, lumar, sobeler;
+    double huer, huerblu, chromar, lumar, sobeler;
     void startProcessing();
     void process();
     float colourToningSatLimit;

@@ -1149,6 +1149,7 @@ void Crop::update(int todo)
                         params.locallab.warm = parent->warms[sp];
                         params.locallab.noiselumdetail = parent->noiselumdetails[sp];
                         params.locallab.noisechrodetail = parent->noisechrodetails[sp];
+                        params.locallab.sensiden = parent->sensidens[sp];
 
                         std::vector<double>   cretie;
 
@@ -1238,14 +1239,14 @@ void Crop::update(int todo)
                                                         parent->lhist16, hltonecurveloc2, shtonecurveloc2, tonecurveloc2,
                                                         sca);
 
+                        params.locallab.huerefblur = (parent->huerefblurs[sp]) / 100.f;
                         params.locallab.hueref = (parent->huerefs[sp]) / 100.f;
                         params.locallab.chromaref = parent->chromarefs[sp];
                         params.locallab.lumaref = parent->lumarefs[sp];
                         params.locallab.sobelref = parent->sobelrefs[sp];
 
-
                         parent->ipf.Lab_Local(1, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, lllocalcurve2,
-                                              loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref, params.locallab.sobelref);
+                                              loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, params.locallab.huerefblur, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref, params.locallab.sobelref);
                         lllocalcurve2.clear();
                         cclocalcurve2.clear();
                         sklocalcurve2.clear();
@@ -1530,6 +1531,7 @@ void Crop::update(int todo)
                 parent->warms[sp] = params.locallab.warm = parent->warms[0];
                 parent->noiselumdetails[sp] = params.locallab.noiselumdetail = parent->noiselumdetails[0];
                 parent->noisechrodetails[sp] = params.locallab.noisechrodetail = parent->noisechrodetails[0];
+                parent->sensidens[sp] = params.locallab.sensiden = parent->sensidens[0];
 
                 std::vector<double>   ccret;
 
@@ -1628,12 +1630,13 @@ void Crop::update(int todo)
                                                 parent->lhist16, hltonecurveloc2, shtonecurveloc2, tonecurveloc2,
                                                 sca);
 
+                params.locallab.huerefblur = (parent->huerefblurs[sp]) / 100.f;
                 params.locallab.hueref = (parent->huerefs[sp]) / 100.f;
                 params.locallab.chromaref = parent->chromarefs[sp];
                 params.locallab.lumaref = parent->lumarefs[sp];
                 params.locallab.sobelref = parent->sobelrefs[sp];
                 parent->ipf.Lab_Local(1, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip,  locRETgainCurve, lllocalcurve2, loclhCurve, lochhCurve,
-                                      LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref, params.locallab.sobelref);
+                                      LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, params.locallab.huerefblur, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref, params.locallab.sobelref);
 
                 lllocalcurve2.clear();
                 cclocalcurve2.clear();
@@ -1889,6 +1892,7 @@ void Crop::freeAll()
             reservCrop = nullptr;
         }
 
+
         /*        if (lablocCrop ) {
                     delete    lablocCrop;
                     lablocCrop = NULL;
@@ -2098,6 +2102,7 @@ bool Crop::setCropSizes(int rcx, int rcy, int rcw, int rch, int skip, bool inter
         }
 
         reservCrop = new LabImage(cropw, croph);
+
 
         /*        if (lablocCrop) {
                     delete lablocCrop;    // labnCrop can't be resized

@@ -125,7 +125,7 @@ struct local_params {
     int cir;
     float thr;
     int prox;
-    int chro, cont, sens, sensh, senscb, sensbn, senstm, sensex, sensexclu;
+    int chro, cont, sens, sensh, senscb, sensbn, senstm, sensex, sensexclu, sensden;
     float ligh;
     int shamo, shdamp, shiter, senssha, sensv;
     double shrad;
@@ -381,6 +381,8 @@ static void calcLocalParams(int oW, int oH, const LocallabParams& locallab, stru
     float local_noiselc = locallab.noiselumc;
     float local_noiseldetail = locallab.noiselumdetail;
     float local_noisechrodetail = locallab.noisechrodetail;
+    int local_sensiden = locallab.sensiden;
+
     float local_noisecf = locallab.noisechrof;
     float local_noisecc = locallab.noisechroc;
     float multi[5];
@@ -468,6 +470,7 @@ static void calcLocalParams(int oW, int oH, const LocallabParams& locallab, stru
     lp.noiselc = local_noiselc;
     lp.noisecf = local_noisecf;
     lp.noisecc = local_noisecc;
+    lp.sensden = local_sensiden;
 
 
     lp.strengt = streng;
@@ -1861,98 +1864,239 @@ void ImProcFunctions::addGaNoise(LabImage *lab, LabImage *dst, const float mean,
     }
 }
 
-void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy)
+void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp,  int levred, float hueplus, float huemoins, float hueref, float dhueden, LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy)
 {
     // local denoise
     //simple algo , perhaps we can improve as the others, but noise is here and not good for hue detection
     // BENCHFUN
     const float ach = (float)lp.trans / 100.f;
+    constexpr float delhu = 0.1f; //between 0.05 and 0.2
 
-    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 
-    for (int y = 0; y < transformed->H; y++) {
-        const int loy = cy + y;
-        const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
-        float factnoise1 = 1.f + (lp.noisecf) / 200.f;
-        float factnoise2 = 1.f + (lp.noisecc) / 100.f;
+    float factnoise1 = 1.f + (lp.noisecf) / 500.f;
+    float factnoise2 = 1.f + (lp.noisecc) / 500.f;
 
-        if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
-            for (int x = 0; x < transformed->W; x++) {
-                transformed->L[y][x] = original->L[y][x];
-                transformed->a[y][x] = original->a[y][x];
-                transformed->b[y][x] = original->b[y][x];
-            }
+    constexpr float apl = (-1.f) / delhu;
+    const float bpl = - apl * hueplus;
+    constexpr float amo = 1.f / delhu;
+    const float bmo = - amo * huemoins;
+    /*
+        constexpr float pb = 4.f;
+        constexpr float pa = (1.f - pb) / 40.f;
+    */
+    int GW = transformed->W;
+    int GH = transformed->H;
 
-            continue;
-        }
+    LabImage *origblur = nullptr;
 
-        for (int x = 0; x < transformed->W; x++) {
-            int lox = cx + x;
+    origblur = new LabImage(GW, GH);
 
-            int zone;
-            float localFactor;
-            calcTransition(lox, loy, ach, lp, zone, localFactor);
-            int begx = int (lp.xc - lp.lxL);
-            int begy = int (lp.yc - lp.lyT);
+    float radius = 2.f;
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        gaussianBlur(original->L, origblur->L, GW, GH, radius);
+        gaussianBlur(original->a, origblur->a, GW, GH, radius);
+        gaussianBlur(original->b, origblur->b, GW, GH, radius);
 
-            switch (zone) {
-                case 0: { // outside selection and outside transition zone => no effect, keep original values
+    }
+
+    /*
+        const float ahu = 1.f / (2.8f * lp.sensden - 280.f);
+        const float bhu = 1.f - ahu * 2.8f * lp.sensden;
+    */
+#ifdef _OPENMP
+    #pragma omp parallel if (multiThread)
+#endif
+    {
+#ifdef __SSE2__
+        float atan2Buffer[transformed->W] ALIGNED16;
+        float sqrtBuffer[transformed->W] ALIGNED16;
+        vfloat c327d68v = F2V(327.68f);
+#endif
+
+#ifdef _OPENMP
+        #pragma omp for schedule(dynamic,16)
+#endif
+
+        for (int y = 0; y < transformed->H; y++) {
+            const int loy = cy + y;
+
+            const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
+
+            if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
+                for (int x = 0; x < transformed->W; x++) {
                     transformed->L[y][x] = original->L[y][x];
                     transformed->a[y][x] = original->a[y][x];
                     transformed->b[y][x] = original->b[y][x];
-                    break;
                 }
 
-                case 1: { // inside transition zone
-                    float factorx = localFactor;
-                    float difL, difa, difb;
+                continue;
+            }
 
-                    if (call == 2) { //simpleprocess
-                        difL = tmp1.L[loy - begy][lox - begx] - original->L[y][x];
-                        difa = tmp1.a[loy - begy][lox - begx] - original->a[y][x];
-                        difb = tmp1.b[loy - begy][lox - begx] - original->b[y][x];
-                    } else  { //dcrop
-                        difL = tmp1.L[y][x] - original->L[y][x];
-                        difa = tmp1.a[y][x] - original->a[y][x];
-                        difb = tmp1.b[y][x] - original->b[y][x];
+#ifdef __SSE2__
+            int i = 0;
+
+            for (; i < transformed->W - 3; i += 4) {
+                vfloat av = LVFU(origblur->a[y][i]);
+                vfloat bv = LVFU(origblur->b[y][i]);
+                STVF(atan2Buffer[i], xatan2f(bv, av));
+                STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
+            }
+
+            for (; i < transformed->W; i++) {
+                atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
+                sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
+            }
+
+#endif
+
+            for (int x = 0, lox = cx + x; x < transformed->W; x++, lox++) {
+                int zone = 0;
+                // int lox = cx + x;
+                int begx = int (lp.xc - lp.lxL);
+                int begy = int (lp.yc - lp.lyT);
+
+                float localFactor = 1.f;
+                calcTransition(lox, loy, ach, lp, zone, localFactor);
+
+                if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
+                    transformed->L[y][x] = original->L[y][x];
+                    transformed->a[y][x] = original->a[y][x];
+                    transformed->b[y][x] = original->b[y][x];
+                    continue;
+                }
+
+#ifdef __SSE2__
+                const float rhue = atan2Buffer[x];
+                //    const float rchro = sqrtBuffer[x];
+#else
+                const float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
+                //    const float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
+#endif
+
+                //    float rL = original->L[y][x] / 327.68f;
+
+                float khu = 0.f;
+                //   bool kzon = false;
+
+                // algo with detection of hue ==> artifacts for noisy images  ==> denoise before
+                if (levred == 7 && lp.sensden < 90.f) { // after 90 plein effect
+                    //hue detection
+                    if ((hueref + dhueden) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
+                        if (rhue >= hueplus - delhu)  {
+                            khu  = apl * rhue + bpl;
+                        } else if (rhue < huemoins + delhu)  {
+                            khu = amo * rhue + bmo;
+                        } else {
+                            khu = 1.f;
+                        }
+
+                        //        kzon = true;
+
+                    } else if ((hueref + dhueden) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus)) {
+                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
+                            khu  = apl * rhue + bpl;
+                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
+                            khu = amo * rhue + bmo;
+                        } else {
+                            khu = 1.f;
+                        }
+
+                        //    kzon = true;
 
                     }
 
-                    difL *= factorx;
-                    difa *= factorx;
-                    difb *= factorx ;
-                    transformed->L[y][x] = original->L[y][x] + difL;
-                    transformed->a[y][x] = (original->a[y][x] + difa) * factnoise1 * factnoise2;
-                    transformed->b[y][x] = (original->b[y][x] + difb) * factnoise1 * factnoise2 ;
-                    break;
-                }
+                    if ((hueref - dhueden) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins) {
+                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
+                            khu  = apl * rhue + bpl;
+                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
+                            khu = amo * rhue + bmo;
+                        } else {
+                            khu = 1.f;
+                        }
 
-                case 2: { // inside selection => full effect, no transition
-                    float difL, difa, difb;
+                        //    kzon = true;
 
-                    if (call == 2) { //simpleprocess
-                        difL = tmp1.L[loy - begy][lox - begx] - original->L[y][x];
-                        difa = tmp1.a[loy - begy][lox - begx] - original->a[y][x];
-                        difb = tmp1.b[loy - begy][lox - begx] - original->b[y][x];
-                    } else  { //dcrop
-                        difL = tmp1.L[y][x] - original->L[y][x];
-                        difa = tmp1.a[y][x] - original->a[y][x];
-                        difb = tmp1.b[y][x] - original->b[y][x];
+                    } else if ((hueref - dhueden) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus)) {
+                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
+                            khu  = apl * rhue + bpl;
+                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
+                            khu = amo * rhue + bmo;
+                        } else {
+                            khu = 1.f;
+                        }
+
+                        //    kzon = true;
 
                     }
-
-                    transformed->L[y][x] = original->L[y][x] + difL;
-                    transformed->a[y][x] = (original->a[y][x] + difa) * factnoise1 * factnoise2;
-                    transformed->b[y][x] = (original->b[y][x] + difb) * factnoise1 * factnoise2;
+                } else {
+                    khu = 1.f;
                 }
+
+                switch (zone) {
+                    case 0: { // outside selection and outside transition zone => no effect, keep original values
+                        transformed->L[y][x] = original->L[y][x];
+                        transformed->a[y][x] = original->a[y][x];
+                        transformed->b[y][x] = original->b[y][x];
+                        break;
+                    }
+
+                    case 1: { // inside transition zone
+                        float factorx = localFactor;
+                        float difL, difa, difb;
+
+                        if (call == 2) { //simpleprocess
+                            difL = tmp1.L[loy - begy][lox - begx] - original->L[y][x];
+                            difa = tmp1.a[loy - begy][lox - begx] - original->a[y][x];
+                            difb = tmp1.b[loy - begy][lox - begx] - original->b[y][x];
+                        } else  { //dcrop
+                            difL = tmp1.L[y][x] - original->L[y][x];
+                            difa = tmp1.a[y][x] - original->a[y][x];
+                            difb = tmp1.b[y][x] - original->b[y][x];
+
+                        }
+
+                        difL *= factorx * khu;
+                        difa *= factorx * khu;
+                        difb *= factorx * khu;
+                        transformed->L[y][x] = original->L[y][x] + difL;
+                        transformed->a[y][x] = (original->a[y][x] + difa) * factnoise1 * factnoise2;
+                        transformed->b[y][x] = (original->b[y][x] + difb) * factnoise1 * factnoise2 ;
+                        break;
+                    }
+
+                    case 2: { // inside selection => full effect, no transition
+                        float difL, difa, difb;
+
+                        if (call == 2) { //simpleprocess
+                            difL = tmp1.L[loy - begy][lox - begx] - original->L[y][x];
+                            difa = tmp1.a[loy - begy][lox - begx] - original->a[y][x];
+                            difb = tmp1.b[loy - begy][lox - begx] - original->b[y][x];
+                        } else  { //dcrop
+                            difL = tmp1.L[y][x] - original->L[y][x];
+                            difa = tmp1.a[y][x] - original->a[y][x];
+                            difb = tmp1.b[y][x] - original->b[y][x];
+
+                        }
+
+                        difL *= khu;
+                        difa *= khu;
+                        difb *= khu;
+
+                        transformed->L[y][x] = original->L[y][x] + difL;
+                        transformed->a[y][x] = (original->a[y][x] + difa) * factnoise1 * factnoise2;
+                        transformed->b[y][x] = (original->b[y][x] + difb) * factnoise1 * factnoise2;
+                    }
+                }
+
             }
         }
     }
-
-
+    delete origblur;
 
 }
-
 
 void ImProcFunctions::cat02_Local(float **buflightcat, float **buf_a_cat, float ** buf_b_cat, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy)
 {
@@ -6271,6 +6415,8 @@ void ImProcFunctions::ColorLight_Local(int call, LabImage * bufcolorig, float **
                         kzon = true;
                     }
 
+//printf("khu=%f ", khu);
+
                     //  realhh = hhro;
 
                     //detection of deltaE and deltaL
@@ -7153,7 +7299,7 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, La
 
 }
 
-void ImProcFunctions::calc_ref(LabImage * original, LabImage * transformed, int cx, int cy, int oW, int oH, int sk, double & hueref, double & chromaref, double & lumaref, double & sobelref)
+void ImProcFunctions::calc_ref(LabImage * original, LabImage * transformed, int cx, int cy, int oW, int oH, int sk, double & huerefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref)
 {
     if (params->locallab.enabled) {
         //always calculate hueref, chromaref, lumaref  before others operations use in normal mode for all modules exceprt denoise
@@ -7165,10 +7311,15 @@ void ImProcFunctions::calc_ref(LabImage * original, LabImage * transformed, int 
         double aveB = 0.;
         double aveL = 0.;
         double aveChro = 0.;
+        double aveAblur = 0.;
+        double aveBblur = 0.;
+        float avAblur, avBblur;
+
         double avesobel = 0.;
 // int precision for the counters
         int nab = 0;
         int nso = 0;
+        int nsb = 0;
 // single precision for the result
         float avA, avB, avL;
         int spotSize = 0.88623f * max(1,  lp.cir / sk);  //18
@@ -7182,6 +7333,9 @@ void ImProcFunctions::calc_ref(LabImage * original, LabImage * transformed, int 
         LabImage *sobelL;
         LabImage *deltasobelL;
         LabImage *origsob;
+        LabImage *origblur = nullptr;
+        LabImage *blurorig = nullptr;
+
         int spotSi = 1 + 2 * max(1,  lp.cir / sk);
 
         if (spotSi < 5) {
@@ -7189,9 +7343,54 @@ void ImProcFunctions::calc_ref(LabImage * original, LabImage * transformed, int 
         }
 
         spotSise2 = (spotSi - 1) / 2;
+
+
         origsob = new LabImage(spotSi, spotSi);
         sobelL = new LabImage(spotSi, spotSi);
         deltasobelL = new LabImage(spotSi, spotSi);
+        bool isdenoise = false;
+
+        if ((lp.noiself > 0.f || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f) && lp.denoiena) {
+            isdenoise = true;
+        }
+
+        if (isdenoise) {
+            origblur = new LabImage(spotSi, spotSi);
+            blurorig = new LabImage(spotSi, spotSi);
+
+            for (int y = max(cy, (int)(lp.yc - spotSise2)); y < min(transformed->H + cy, (int)(lp.yc + spotSise2 + 1)); y++) {
+                for (int x = max(cx, (int)(lp.xc - spotSise2)); x < min(transformed->W + cx, (int)(lp.xc + spotSise2 + 1)); x++) {
+                    int yb = max(cy, (int)(lp.yc - spotSise2));
+
+                    int xb = max(cx, (int)(lp.xc - spotSise2));
+
+                    int z = y - yb;
+                    int u = x - xb;
+                    origblur->L[z][u] = original->L[y - cy][x - cx];
+                    origblur->a[z][u] = original->a[y - cy][x - cx];
+                    origblur->b[z][u] = original->b[y - cy][x - cx];
+
+                }
+            }
+
+            float radius = 2.f;
+            {
+                //No omp
+                gaussianBlur(origblur->L, blurorig->L, spotSi, spotSi, radius);
+                gaussianBlur(origblur->a, blurorig->a, spotSi, spotSi, radius);
+                gaussianBlur(origblur->b, blurorig->b, spotSi, spotSi, radius);
+
+            }
+
+            for (int y = 0; y < spotSi; y++) {
+                for (int x = 0; x < spotSi; x++) {
+                    aveAblur += blurorig->a[y][x];
+                    aveBblur += blurorig->b[y][x];
+                    nsb++;
+
+                }
+            }
+        }
 
         //ref for luma, chroma, hue
         for (int y = max(cy, (int)(lp.yc - spotSize)); y < min(transformed->H + cy, (int)(lp.yc + spotSize + 1)); y++) {
@@ -7250,8 +7449,29 @@ void ImProcFunctions::calc_ref(LabImage * original, LabImage * transformed, int 
         avB = aveB / 327.68f;
         avL = aveL / 327.68f;
         hueref = xatan2f(avB, avA);    //mean hue
+
+        if (isdenoise) {
+
+            aveAblur = aveAblur / nsb;
+            aveBblur = aveBblur / nsb;
+            avAblur = aveAblur / 327.68f;
+            avBblur = aveBblur / 327.68f;
+        }
+
+        if (isdenoise) {
+            huerefblur = xatan2f(avBblur, avAblur);
+        } else {
+            huerefblur = 0.f;
+        }
+
+        //    printf("hueblur=%f hue=%f\n", huerefblur, hueref);
         chromaref = aveChro;
         lumaref = avL;
+
+        if (isdenoise) {
+            delete origblur;
+            delete blurorig;
+        }
 
         if (lumaref > 95.f) {//to avoid crash
             lumaref = 95.f;
@@ -7352,7 +7572,7 @@ void ImProcFunctions::paste_ref(LabImage * spotbuffer, LabImage * transformed, i
 
 void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, int cx, int cy, int oW, int oH, int sk,
                                 const LocretigainCurve & locRETgainCcurve, LUTf & lllocalcurve, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve,
-                                bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localskutili, LUTf & sklocalcurve, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, double & hueref, double & chromaref, double & lumaref, double & sobelref)
+                                bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localskutili, LUTf & sklocalcurve, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, double & huerefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref)
 {
     //general call of others functions : important return hueref, chromaref, lumaref
     if (params->locallab.enabled) {
@@ -7438,8 +7658,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
         constexpr float ared = (rtengine::RT_PI - 0.05f) / 100.f;
 
         constexpr float bred = 0.05f;
-
-        float dhue = ared * lp.sens + bred; //delta hue lght chroma
+        float dhue = ared * lp.sens + bred; //delta hue vibr
 
         float dhuev = ared * lp.sensv + bred; //delta hue vibr
 
@@ -7456,6 +7675,9 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
         float dhuecb = ared * lp.senscb + bred; //delta hue cbdl
 
         float dhueexclu = ared * lp.sensexclu + bred; //delta hue exclude
+
+        float dhueden = ared * lp.sensden + bred; //delta hue lght chroma
+
 
         constexpr float maxh = 3.5f; // 3.5 amplification contrast above mean
 
@@ -8499,6 +8721,17 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 levred = 7;
             }
 
+            float hueplus = huerefblur + dhueden;
+            float huemoins = huerefblur - dhueden;
+
+            if (hueplus > rtengine::RT_PI) {
+                hueplus = huerefblur + dhueden - 2.f * rtengine::RT_PI;
+            }
+
+            if (huemoins < -rtengine::RT_PI) {
+                huemoins = huerefblur - dhueden + 2.f * rtengine::RT_PI;
+            }
+
 #ifdef _OPENMP
             const int numThreads = omp_get_max_threads();
 #else
@@ -9373,8 +9606,8 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
                 fftwf_cleanup();
 
-
-                DeNoise_Local(call, lp, original, transformed, tmp1, cx, cy);
+                // printf("huere=%f dhueden=%f huplus=%f huemoin=%f\n", hueref, dhueden, hueplus, huemoins);
+                DeNoise_Local(call, lp,  levred, hueplus, huemoins, huerefblur, dhueden, original, transformed, tmp1, cx, cy);
 
             } else if (call == 2) { //simpleprocess
 
@@ -10250,7 +10483,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
                 fftwf_cleanup();
 
-                DeNoise_Local(call, lp, original, transformed, bufwv, cx, cy);
+                DeNoise_Local(call, lp, levred, hueplus, huemoins, huerefblur, dhueden, original, transformed, bufwv, cx, cy);
             }
 
         }

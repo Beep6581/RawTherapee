@@ -468,6 +468,7 @@ public:
     bool noiselumc;
     bool noiselumdetail;
     bool noisechrodetail;
+    bool sensiden;
     bool noisechrof;
     bool noisechroc;
     bool sharradius;
@@ -503,6 +504,7 @@ public:
     bool nbspot;
     bool anbspot;
     bool hueref;
+    bool huerefblur;
     bool chromaref;
     bool lumaref;
     bool sobelref;

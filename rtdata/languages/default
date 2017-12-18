@@ -841,6 +841,7 @@ HISTORY_MSG_591;Local - Spot Excluding struc
 HISTORY_MSG_592;Local - Warm Cool
 HISTORY_MSG_593;Local - Noise lum detail
 HISTORY_MSG_594;Local - Noise chro detail
+HISTORY_MSG_595;Local - Noise Scope
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -1844,6 +1845,7 @@ TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP;L=f(L), can be used with L(H) in Color and
 TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP;To be active, you must check button 'Enable curves' 
 TP_LOCALLAB_CURVEMETHOD_TOOLTIP;'Normal', the curve L=f(L) has the same algorithm than slider lightness.\n'Super' the curve L=f(L) has an new improved algorithm, which can leeds in some cases to artifacts.
 TP_LOCALLAB_EXCLUF;Excluding
+TP_LOCALLAB_SENSIDEN;Scope
 TP_LOCALLAB_SENSIEXCLU;Scope
 TP_LOCALLAB_SENSIEXCLU_TOOLTIP;Adjust color to include in exclusion!
 TP_LOCALLAB_STRUC;Structure

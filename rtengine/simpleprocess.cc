@@ -1103,7 +1103,7 @@ private:
             }
 
             ifstream fich(datalab, ios::in);
-            int maxdata = 88; //87 10018//86 10017//85 10016 //82;//78;//73 10011
+            int maxdata = 90; //88 10019 //87 10018//86 10017//85 10016 //82;//78;//73 10011
 
             if (fich && versionmip != 0) {
                 std::string inser;
@@ -1340,7 +1340,9 @@ private:
                     dataspots[81][0] = params.locallab.warm;
                     dataspots[82][0] = params.locallab.noiselumdetail;
                     dataspots[83][0] = params.locallab.noisechrodetail;
+                    dataspots[84][0] = params.locallab.sensiden;
 
+                    dataspots[maxdata - 5][0] = 100.f * params.locallab.huerefblur;
                     dataspots[maxdata - 4][0] = 100.f * params.locallab.hueref;
                     dataspots[maxdata - 3][0] = params.locallab.chromaref;
                     dataspots[maxdata - 2][0] = params.locallab.lumaref;
@@ -1607,6 +1609,7 @@ private:
 
 
                 for (int sp = 1; sp < maxspot; sp++) { //spots default
+                    params.locallab.huerefblur = INFINITY;
                     params.locallab.hueref = INFINITY;
                     params.locallab.chromaref = INFINITY;
                     params.locallab.lumaref = INFINITY;
@@ -1811,7 +1814,9 @@ private:
                     params.locallab.warm = dataspots[81][sp];
                     params.locallab.noiselumdetail = dataspots[82][sp];
                     params.locallab.noisechrodetail = dataspots[83][sp];
+                    params.locallab.sensiden = dataspots[84][sp];
 
+                    params.locallab.huerefblur = ((float) dataspots[maxdata - 5][sp]) / 100.f;
                     params.locallab.hueref = ((float) dataspots[maxdata - 4][sp]) / 100.f;
                     params.locallab.chromaref = dataspots[maxdata - 3][sp];
                     params.locallab.lumaref = dataspots[maxdata - 2][sp];
@@ -1992,17 +1997,19 @@ private:
                                                     hist16, hltonecurveloc, shtonecurveloc, tonecurveloc,
                                                     1);
 
-                    double huere, chromare, lumare;
+                    double huere, chromare, lumare, huerefblu;
                     double sobelre;
-                    ipf.calc_ref(labView, labView, 0, 0, fw, fh, 1, huere, chromare, lumare, sobelre);
 
+                    ipf.calc_ref(labView, labView, 0, 0, fw, fh, 1, huerefblu, huere, chromare, lumare, sobelre);
+
+                    params.locallab.huerefblur = huerefblu;
                     params.locallab.hueref = huere;
                     params.locallab.chromaref = chromare;
                     params.locallab.lumaref = lumare;
                     params.locallab.sobelref = sobelre;
 
                     ipf.Lab_Local(2, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve,
-                                  LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref, params.locallab.sobelref);
+                                  LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.huerefblur, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref, params.locallab.sobelref);
                     lllocalcurve.clear();
                     cclocalcurve.clear();
                     sklocalcurve.clear();

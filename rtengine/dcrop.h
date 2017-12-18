@@ -72,30 +72,30 @@ protected:
     ImProcCoordinator* const parent;
     const bool isDetailWindow;
     EditUniqueID getCurrEditID();
-    bool setCropSizes (int cropX, int cropY, int cropW, int cropH, int skip, bool internal);
-    void freeAll ();
+    bool setCropSizes(int cropX, int cropY, int cropW, int cropH, int skip, bool internal);
+    void freeAll();
 
 public:
-    Crop             (ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow);
-    virtual ~Crop    ();
+    Crop(ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow);
+    virtual ~Crop();
 //   MyMutex* locMutex;
-    void setEditSubscriber (EditSubscriber* newSubscriber);
+    void setEditSubscriber(EditSubscriber* newSubscriber);
     bool hasListener();
-    void update      (int todo);
-    void setWindow   (int cropX, int cropY, int cropW, int cropH, int skip)
+    void update(int todo);
+    void setWindow(int cropX, int cropY, int cropW, int cropH, int skip)
     {
-        setCropSizes (cropX, cropY, cropW, cropH, skip, false);
+        setCropSizes(cropX, cropY, cropW, cropH, skip, false);
     }
 
     /** @brief Synchronously look out if a full update is necessary
      * First try, only make fullUpdate if this returns false
      */
-    bool tryUpdate   ();
+    bool tryUpdate();
     /** @brief Asynchronously reprocess the detailed crop */
-    void fullUpdate  ();  // called via thread
+    void fullUpdate();    // called via thread
 
-    void setListener    (DetailedCropListener* il);
-    void destroy        ();
+    void setListener(DetailedCropListener* il);
+    void destroy();
     int get_skip();
     int getLeftBorder();
     int getUpperBorder();

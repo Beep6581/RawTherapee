@@ -349,6 +349,7 @@ void ParamsEdited::set(bool v)
     locallab.noiselumc = v;
     locallab.noiselumdetail = v;
     locallab.noisechrodetail = v;
+    locallab.sensiden = v;
     locallab.noisechrof = v;
     locallab.noisechroc = v;
     locallab.sharradius = v;
@@ -393,6 +394,7 @@ void ParamsEdited::set(bool v)
     locallab.nbspot = v;
     locallab.anbspot = v;
     locallab.hueref = v;
+    locallab.huerefblur = v;
     locallab.chromaref = v;
     locallab.lumaref = v;
     locallab.sobelref = v;
@@ -1014,6 +1016,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         locallab.noiselumc = locallab.noiselumc && p.locallab.noiselumc == other.locallab.noiselumc;
         locallab.noiselumdetail = locallab.noiselumdetail && p.locallab.noiselumdetail == other.locallab.noiselumdetail;
         locallab.noisechrodetail = locallab.noisechrodetail && p.locallab.noisechrodetail == other.locallab.noisechrodetail;
+        locallab.sensiden = locallab.sensiden && p.locallab.sensiden == other.locallab.sensiden;
         locallab.noisechrof = locallab.noisechrof && p.locallab.noisechrof == other.locallab.noisechrof;
         locallab.noisechroc = locallab.noisechroc && p.locallab.noisechroc == other.locallab.noisechroc;
         locallab.sharradius = locallab.sharradius && p.locallab.sharradius == other.locallab.sharradius;
@@ -1043,6 +1046,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         locallab.nbspot = locallab.nbspot && p.locallab.nbspot == other.locallab.nbspot;
         locallab.anbspot = locallab.anbspot && p.locallab.anbspot == other.locallab.anbspot;
         locallab.hueref = locallab.hueref && p.locallab.hueref == other.locallab.hueref;
+        locallab.huerefblur = locallab.huerefblur && p.locallab.huerefblur == other.locallab.huerefblur;
         locallab.chromaref = locallab.chromaref && p.locallab.chromaref == other.locallab.chromaref;
         locallab.lumaref = locallab.lumaref && p.locallab.lumaref == other.locallab.lumaref;
         locallab.sobelref = locallab.sobelref && p.locallab.sobelref == other.locallab.sobelref;
@@ -2628,6 +2632,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.locallab.noisechrodetail    = mods.locallab.noisechrodetail;
     }
 
+    if (locallab.sensiden) {
+        toEdit.locallab.sensiden    = mods.locallab.sensiden;
+    }
+
     if (locallab.noisechrof) {
         toEdit.locallab.noisechrof    = mods.locallab.noisechrof;
     }
@@ -2742,6 +2750,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (locallab.hueref) {
         toEdit.locallab.hueref   = mods.locallab.hueref;
+    }
+
+    if (locallab.huerefblur) {
+        toEdit.locallab.huerefblur   = mods.locallab.huerefblur;
     }
 
     if (locallab.chromaref) {
