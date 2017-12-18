@@ -21,7 +21,7 @@
 #include "guiutils.h"
 #include "../rtengine/color.h"
 
-#define MINTEMP0 1500   //1200
+#define MINTEMP0 2000   //1200
 #define MAXTEMP0 12000  //12000
 #define CENTERTEMP0 5000
 #define MINGREEN0 0.8

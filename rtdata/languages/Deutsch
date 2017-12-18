@@ -46,6 +46,7 @@
 #45 15.10.2017 Erweiterung (TooWaBoo) RT 5.3
 #46 18.10.2017 Erweiterung (TooWaBoo) RT 5.3
 #47 19.11.2017 HDR-Dynamikkompression (TooWaBoo) RT 5.3
+#48 13.12.2017 Erweiterung (TooWaBoo) RT 5.3
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -764,6 +765,9 @@ HISTORY_MSG_484;(CIECAM02) - Szene\nAuto Yb%
 HISTORY_MSG_485;(Objektivkorrektur)\nProfil
 HISTORY_MSG_486;(Objektivkorrektur)\nProfil - Kamera
 HISTORY_MSG_487;(Objektivkorrektur)\nProfil - Objektiv
+HISTORY_MSG_488;(HDR-Dynamikkompression)
+HISTORY_MSG_489;(HDR-Dynamikkompression)\nSchwelle
+HISTORY_MSG_490;(HDR-Dynamikkompression)\nIntensität
 HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
 HISTORY_SNAPSHOT;Schnappschuss
@@ -970,6 +974,7 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Schatten/Lichter
 PARTIALPASTE_SHARPENEDGE;Kantenschärfung
 PARTIALPASTE_SHARPENING;Schärfung
 PARTIALPASTE_SHARPENMICRO;Mikrokontrast
+PARTIALPASTE_TM_FATTAL;HDR-Dynamikkompression
 PARTIALPASTE_VIBRANCE;Dynamik
 PARTIALPASTE_VIGNETTING;Vignettierungskorrektur
 PARTIALPASTE_WAVELETGROUP;Wavelet
@@ -1970,6 +1975,9 @@ TP_SHARPENMICRO_AMOUNT;Intensität
 TP_SHARPENMICRO_LABEL;Mikrokontrast
 TP_SHARPENMICRO_MATRIX;3×3-Matrix statt 5×5-Matrix
 TP_SHARPENMICRO_UNIFORMITY;Gleichmäßigkeit
+TP_TM_FATTAL_AMOUNT;Intensität
+TP_TM_FATTAL_LABEL;HDR-Dynamikkompression
+TP_TM_FATTAL_THRESHOLD;Schwelle
 TP_VIBRANCE_AVOIDCOLORSHIFT;Farbverschiebungen vermeiden
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Hautfarbtöne
@@ -2217,10 +2225,6 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-HISTORY_MSG_488;(HDR-Dynamikkompression)
-HISTORY_MSG_489;(HDR-Dynamikkompression)\nSchwelle
-HISTORY_MSG_490;(HDR-Dynamikkompression)\nIntensität
-PARTIALPASTE_TM_FATTAL;HDR-Dynamikkompression
-TP_TM_FATTAL_AMOUNT;Intensität
-TP_TM_FATTAL_LABEL;HDR-Dynamikkompression
-TP_TM_FATTAL_THRESHOLD;Schwelle
+HISTORY_MSG_491;(Weißabgleich)
+HISTORY_MSG_492;(RGB-Kurven)
+TP_RAW_RCD;RCD

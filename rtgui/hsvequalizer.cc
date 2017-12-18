@@ -25,7 +25,7 @@ using namespace rtengine::procparams;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-HSVEqualizer::HSVEqualizer () : FoldableToolPanel(this, "hsvequalizer", M("TP_HSVEQUALIZER_LABEL"))
+HSVEqualizer::HSVEqualizer () : FoldableToolPanel(this, "hsvequalizer", M("TP_HSVEQUALIZER_LABEL"), false, true)
 {
 
     std::vector<GradientMilestone> bottomMilestones;
@@ -84,11 +84,13 @@ void HSVEqualizer::read (const ProcParams* pp, const ParamsEdited* pedited)
         hshape->setUnChanged (!pedited->hsvequalizer.hcurve);
         sshape->setUnChanged (!pedited->hsvequalizer.scurve);
         vshape->setUnChanged (!pedited->hsvequalizer.vcurve);
+        set_inconsistent(multiImage && !pedited->hsvequalizer.enabled);
     }
 
     hshape->setCurve         (pp->hsvequalizer.hcurve);
     sshape->setCurve         (pp->hsvequalizer.scurve);
     vshape->setCurve         (pp->hsvequalizer.vcurve);
+    setEnabled(pp->hsvequalizer.enabled);
 
     enableListener ();
 }
@@ -116,7 +118,7 @@ void HSVEqualizer::autoOpenCurve ()
 
 void HSVEqualizer::write (ProcParams* pp, ParamsEdited* pedited)
 {
-
+    pp->hsvequalizer.enabled = getEnabled();
     pp->hsvequalizer.hcurve = hshape->getCurve ();
     pp->hsvequalizer.scurve = sshape->getCurve ();
     pp->hsvequalizer.vcurve = vshape->getCurve ();
@@ -126,6 +128,7 @@ void HSVEqualizer::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->hsvequalizer.hcurve = !hshape->isUnChanged ();
         pedited->hsvequalizer.scurve = !sshape->isUnChanged ();
         pedited->hsvequalizer.vcurve = !vshape->isUnChanged ();
+        pedited->hsvequalizer.enabled = !get_inconsistent();
     }
 }
 
@@ -138,7 +141,7 @@ void HSVEqualizer::write (ProcParams* pp, ParamsEdited* pedited)
 void HSVEqualizer::curveChanged (CurveEditor* ce)
 {
 
-    if (listener) {
+    if (listener && getEnabled()) {
         if (ce == hshape) {
             listener->panelChanged (EvHSVEqualizerH, M("HISTORY_CUSTOMCURVE"));
         }
@@ -198,4 +201,18 @@ void HSVEqualizer::setBatchMode (bool batchMode)
     ToolPanel::setBatchMode (batchMode);
 
     curveEditorG->setBatchMode (batchMode);
+}
+
+
+void HSVEqualizer::enabledChanged()
+{
+    if (listener) {
+        if (get_inconsistent()) {
+            listener->panelChanged (EvHSVEqEnabled, M("GENERAL_UNCHANGED"));
+        } else if (getEnabled()) {
+            listener->panelChanged (EvHSVEqEnabled, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged (EvHSVEqEnabled, M("GENERAL_DISABLED"));
+        }
+    }
 }

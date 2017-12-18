@@ -296,7 +296,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
         currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
 
-        if (params.wb.method == "Camera") {
+        if (!params.wb.enabled) {
+            currWB = ColorTemp();
+        } else if (params.wb.method == "Camera") {
             currWB = imgsrc->getWB ();
         } else if (params.wb.method == "Auto") {
             if (lastAwbEqual != params.wb.equal || lastAwbTempBias != params.wb.tempBias) {
@@ -320,10 +322,12 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             currWB = autoWB;
         }
 
-        params.wb.temperature = currWB.getTemp ();
-        params.wb.green = currWB.getGreen ();
+        if (params.wb.enabled) {
+            params.wb.temperature = currWB.getTemp ();
+            params.wb.green = currWB.getGreen ();
+        }
 
-        if (params.wb.method == "Auto" && awbListener) {
+        if (params.wb.method == "Auto" && awbListener && params.wb.enabled) {
             awbListener->WBChanged (params.wb.temperature, params.wb.green);
         }
 

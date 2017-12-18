@@ -21,6 +21,7 @@
 
 #include <cmath>
 #include <map>
+#include <string>
 
 namespace rtengine
 {

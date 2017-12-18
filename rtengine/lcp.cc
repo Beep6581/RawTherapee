@@ -361,7 +361,7 @@ void rtengine::LCPProfile::calcParams(
             const float focDist = aPersModel[pm]->focDist;
             const float focDistLog = std::log(focDist) + euler;
 
-            double meanErr;
+            double meanErr = 0.0;
 
             if (aPersModel[pm]->hasModeData(mode)) {
                 double lowMeanErr = 0.0;
