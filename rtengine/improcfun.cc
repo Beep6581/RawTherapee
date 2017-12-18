@@ -5597,6 +5597,10 @@ void ImProcFunctions::luminanceCurve(LabImage* lold, LabImage* lnew, LUTf & curv
 
 SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve(PipetteBuffer *pipetteBuffer, int pW, LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve, LUTf & lhskcurve, LUTf & clcurve, LUTf & curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histLCurve)
 {
+    if (!params->labCurve.enabled) {
+        return;
+    }
+    
     int W = lold->W;
     int H = lold->H;
     // lhskcurve.dump("lh_curve");

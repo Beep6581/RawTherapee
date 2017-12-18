@@ -343,7 +343,9 @@ struct RetinexParams {
 /**
   * Parameters of the luminance curve
   */
-struct LCurveParams {
+struct LCurveParams
+{
+    bool enabled;
     std::vector<double>   lcurve;
     std::vector<double>   acurve;
     std::vector<double>   bcurve;

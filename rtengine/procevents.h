@@ -519,7 +519,7 @@ enum ProcEvent {
     EvTMFattalAmount = 489,
     EvWBEnabled = 490,
     EvRGBEnabled = 491,
-    EvlocallabEnabled = 492,
+    EvLEnabled = 492,
     EvlocallablocY = 493,
     EvlocallablocX = 494,
     EvlocallabCenter = 495,
@@ -623,6 +623,7 @@ enum ProcEvent {
     Evlocallabnoisechrodetail = 593,
     Evlocallabsensiden = 594,
     Evlocallabhuerefblur = 595,
+    EvlocallabEnabled = 596,
 
     NUMOFEVENTS
 

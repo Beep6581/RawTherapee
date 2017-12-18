@@ -518,8 +518,8 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     HDR,              // EvTMFattalThreshold
     HDR,              // EvTMFattalAmount
     ALLNORAW,         // EvWBEnabled
-    RGBCURVE,          // EvRGBEnabled
-    LUMINANCECURVE,   // EvlocallabEnabled
+    RGBCURVE,         // EvRGBEnabled
+    LUMINANCECURVE,    // EvLEnabled
     LUMINANCECURVE,   // EvlocallablocY
     LUMINANCECURVE,   // EvlocallablocX
     LUMINANCECURVE,   // EvlocallabCenter
@@ -622,7 +622,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,    // Evlocallabnoiselumdetail
     LUMINANCECURVE,    // Evlocallabnoisechrodetail
     LUMINANCECURVE,    // Evlocallabsensiden
-    LUMINANCECURVE    // Evlocallabhuerefblur
-
+    LUMINANCECURVE,    // Evlocallabhuerefblur
+    LUMINANCECURVE   // EvlocallabEnabled
 };
 

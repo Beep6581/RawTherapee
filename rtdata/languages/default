@@ -740,7 +740,7 @@ HISTORY_MSG_489;HDR TM - Threshold
 HISTORY_MSG_490;HDR TM - Amount
 HISTORY_MSG_491;White Balance
 HISTORY_MSG_492;RGB Curves
-HISTORY_MSG_493;Local L*a*b*
+HISTORY_MSG_493;L*a*b* Adjustments
 HISTORY_MSG_494;Local - Bottom
 HISTORY_MSG_495;Local - Right
 HISTORY_MSG_496;Local - Center
@@ -842,6 +842,7 @@ HISTORY_MSG_592;Local - Warm Cool
 HISTORY_MSG_593;Local - Noise lum detail
 HISTORY_MSG_594;Local - Noise chro detail
 HISTORY_MSG_595;Local - Noise Scope
+HISTORY_MSG_596;Local L*a*b*
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
