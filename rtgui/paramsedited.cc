@@ -82,6 +82,7 @@ void ParamsEdited::set (bool v)
     retinex.radius        = v;
 
     retinex.retinex = v;
+    labCurve.enabled = v;
     labCurve.lcurve      = v;
     labCurve.acurve      = v;
     labCurve.bcurve      = v;
@@ -626,6 +627,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         retinex.radius = retinex.radius && p.retinex.radius == other.retinex.radius;
 
         retinex.enabled = retinex.enabled && p.retinex.enabled == other.retinex.enabled;
+        labCurve.enabled = labCurve.enabled && p.labCurve.enabled == other.labCurve.enabled;
         labCurve.lcurve = labCurve.lcurve && p.labCurve.lcurve == other.labCurve.lcurve;
         labCurve.acurve = labCurve.acurve && p.labCurve.acurve == other.labCurve.acurve;
         labCurve.bcurve = labCurve.bcurve && p.labCurve.bcurve == other.labCurve.bcurve;
@@ -1304,6 +1306,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     }
 
 
+    if (labCurve.enabled) {
+        toEdit.labCurve.enabled = mods.labCurve.enabled;
+    }
+    
     if (labCurve.lcurve) {
         toEdit.labCurve.lcurve        = mods.labCurve.lcurve;
     }

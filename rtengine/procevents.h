@@ -519,6 +519,7 @@ enum ProcEvent {
     EvTMFattalAmount = 489,
     EvWBEnabled = 490,
     EvRGBEnabled = 491,
+    EvLEnabled = 492,
 
     NUMOFEVENTS
 

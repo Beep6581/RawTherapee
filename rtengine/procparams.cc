@@ -497,6 +497,7 @@ void RetinexParams::getCurves(RetinextransmissionCurve &transmissionCurveLUT, Re
 }
 
 LCurveParams::LCurveParams() :
+    enabled(false),
     lcurve{
         DCT_Linear
     },
@@ -536,7 +537,8 @@ LCurveParams::LCurveParams() :
 bool LCurveParams::operator ==(const LCurveParams& other) const
 {
     return
-        lcurve == other.lcurve
+        enabled == other.enabled
+        && lcurve == other.lcurve
         && acurve == other.acurve
         && bcurve == other.bcurve
         && cccurve == other.cccurve
@@ -2820,6 +2822,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->blackwhite.afterCurve, "Black & White", "AfterCurve", blackwhite.afterCurve, keyFile);
 
 // Luma curve
+        saveToKeyfile(!pedited || pedited->labCurve.enabled, "Luminance Curve", "Enabled", labCurve.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->labCurve.brightness, "Luminance Curve", "Brightness", labCurve.brightness, keyFile);
         saveToKeyfile(!pedited || pedited->labCurve.contrast, "Luminance Curve", "Contrast", labCurve.contrast, keyFile);
         saveToKeyfile(!pedited || pedited->labCurve.chromaticity, "Luminance Curve", "Chromaticity", labCurve.chromaticity, keyFile);
@@ -3588,6 +3591,15 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         }
 
         if (keyFile.has_group ("Luminance Curve")) {
+            if (ppVersion >= 329) {
+                assignFromKeyfile(keyFile, "Luminance Curve", "Enabled", pedited, labCurve.enabled, pedited->labCurve.enabled);
+            } else {
+                labCurve.enabled = true;
+                if (pedited) {
+                    pedited->labCurve.enabled = true;
+                }
+            }
+            
             assignFromKeyfile(keyFile, "Luminance Curve", "Brightness", pedited, labCurve.brightness, pedited->labCurve.brightness);
             assignFromKeyfile(keyFile, "Luminance Curve", "Contrast", pedited, labCurve.contrast, pedited->labCurve.contrast);
 
