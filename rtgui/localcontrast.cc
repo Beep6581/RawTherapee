@@ -36,8 +36,8 @@ LocalContrast::LocalContrast(): FoldableToolPanel(this, "localcontrast", M("TP_L
     
     radius = Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_RADIUS"), 3., 200., 1., 8.));
     amount = Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_AMOUNT"), 0., 1., 0.01, 0.2));
-    darkness = Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_DARKNESS"), 0., 4., 0.1, 1.));
-    lightness = Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_LIGHTNESS"), 0., 4., 0.1, 1.));
+    darkness = Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_DARKNESS"), 0., 3., 0.01, 1.));
+    lightness = Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_LIGHTNESS"), 0., 3., 0.01, 1.));
 
     radius->setAdjusterListener(this);
     amount->setAdjusterListener(this);
