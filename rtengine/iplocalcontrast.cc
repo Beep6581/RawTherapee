@@ -4,6 +4,10 @@
  *
  *  Ported from G'MIC by Alberto Griggio <alberto.griggio@gmail.com>
  *
+ *  The original implementation in G'MIC was authored by Arto Huotari, and was
+ *  released under the CeCILL free software license (see
+ *  http://www.cecill.info/licences/Licence_CeCILL_V2-en.html)
+ *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
