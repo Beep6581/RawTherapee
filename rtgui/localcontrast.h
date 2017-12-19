@@ -25,12 +25,18 @@
 
 class LocalContrast: public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
 {
-protected:
+private:
     Adjuster *radius;
     Adjuster *amount;
     Adjuster *darkness;
     Adjuster *lightness;
 
+    rtengine::ProcEvent EvLocalContrastEnabled;
+    rtengine::ProcEvent EvLocalContrastRadius;
+    rtengine::ProcEvent EvLocalContrastAmount;
+    rtengine::ProcEvent EvLocalContrastDarkness;
+    rtengine::ProcEvent EvLocalContrastLightness;
+    
 public:
 
     LocalContrast();
