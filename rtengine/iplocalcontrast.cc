@@ -27,11 +27,14 @@
 #include "gauss.h"
 #include "boxblur.h"
 #include "array2D.h"
+#define BENCHMARK
+#include "StopWatch.h"
 
 namespace rtengine {
 
 void ImProcFunctions::localContrast(LabImage *lab)
 {
+    BENCHFUN
     if (!params->localContrast.enabled) {
         return;
     }
@@ -45,21 +48,23 @@ void ImProcFunctions::localContrast(LabImage *lab)
     array2D<float> buf(width, height);
     const float sigma = params->localContrast.radius / scale;
 
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
     gaussianBlur(lab->L, buf, width, height, sigma);
 
 #ifdef _OPENMP
-        #pragma omp parallel for
+    #pragma omp parallel for
 #endif
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
-            buf[y][x] -= lab->L[y][x];
-            buf[y][x] *= a;
+            float bufval = (buf[y][x] - lab->L[y][x]) * a;
 
             if (dark != 1 || light != 1) {
-                buf[y][x] = max(buf[y][x], half) * light + min(buf[y][x], half) * dark;
+                bufval = max(bufval, half) * light + min(bufval, half) * dark;
             }
 
-            lab->L[y][x] += buf[y][x];
+            lab->L[y][x] += bufval;
         }
     }
 }
