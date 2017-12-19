@@ -106,6 +106,7 @@ set(RTENGINESOURCEFILES
     rawimage.cc
     rawimagesource.cc
     refreshmap.cc
+    rt_algo.cc
     rtthumbnail.cc
     shmap.cc
     simpleprocess.cc

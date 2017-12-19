@@ -65,7 +65,7 @@ extern const Settings* settings;
 void RawImageSource::eahd_demosaic ()
 {
     if (plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::eahd]));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::EAHD)));
         plistener->setProgress (0.0);
     }
 
@@ -494,7 +494,7 @@ void RawImageSource::hphd_green (float** hpmap)
 void RawImageSource::hphd_demosaic ()
 {
     if (plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::hphd]));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::HPHD)));
         plistener->setProgress (0.0);
     }
 
@@ -595,7 +595,7 @@ void RawImageSource::vng4_demosaic ()
     const bool plistenerActive = plistener;
 
     if (plistenerActive) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::vng4]));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::VNG4)));
         plistener->setProgress (progress);
     }
 
@@ -893,7 +893,7 @@ void RawImageSource::ppg_demosaic()
 
     if (plistener) {
         // looks like ppg isn't supported anymore
-        //plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::ppg]));
+        //plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::ppg)));
         plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "xxx"));
         plistener->setProgress (0.0);
     }
@@ -1201,7 +1201,7 @@ void RawImageSource::jdl_interpolate_omp()  // from "Lassus"
 
     if (plistener) {
         // this function seems to be unused
-        //plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::jdl]));
+        //plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::jdl)));
         plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "xxx"));
         plistener->setProgress (0.0);
     }
@@ -1397,7 +1397,7 @@ SSEFUNCTION void RawImageSource::lmmse_interpolate_omp(int winw, int winh, array
     }
 
     if (plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::lmmse]));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::LMMSE)));
         plistener->setProgress (0.0);
     }
 
@@ -1975,7 +1975,7 @@ SSEFUNCTION void RawImageSource::igv_interpolate(int winw, int winh)
     border_interpolate2(winw, winh, 7);
 
     if (plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::igv]));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::IGV)));
         plistener->setProgress (0.0);
     }
 
@@ -2029,7 +2029,8 @@ SSEFUNCTION void RawImageSource::igv_interpolate(int winw, int winh)
             for (; col < width; col++, indx += 2) {
                 dest1[indx >> 1] = CLIP(rawData[row][col]); //rawData = RT datas
                 col++;
-                dest2[indx >> 1] = CLIP(rawData[row][col]); //rawData = RT datas
+                if(col < width)
+                    dest2[indx >> 1] = CLIP(rawData[row][col]); //rawData = RT datas
             }
         }
 
@@ -2364,7 +2365,7 @@ void RawImageSource::igv_interpolate(int winw, int winh)
     border_interpolate2(winw, winh, 7);
 
     if (plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::igv]));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::IGV)));
         plistener->setProgress (0.0);
     }
 
@@ -2639,7 +2640,7 @@ void RawImageSource::ahd_demosaic()
     const float d65_white[3] = { 0.950456, 1, 1.088754 };
 
     if (plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::ahd]));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AHD)));
         plistener->setProgress (0.0);
     }
 
@@ -3702,7 +3703,7 @@ BENCHFUN
     double currentProgress = 0.0;
 
     if(plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::dcb]));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCB)));
         plistener->setProgress (currentProgress);
     }
 
@@ -3925,6 +3926,299 @@ void RawImageSource::cielab (const float (*rgb)[3], float* l, float* a, float *b
             b[i * labWidth + j] = 200 * (xyz[1] - xyz[2]);
         }
     }
+}
+
+
+/**
+* RATIO CORRECTED DEMOSAICING
+* Luis Sanz Rodriguez (luis.sanz.rodriguez(at)gmail(dot)com)
+*
+* Release 2.3 @ 171125
+*
+* Original code from https://github.com/LuisSR/RCD-Demosaicing
+* Licensed under the GNU GPL version 3
+*/
+void RawImageSource::rcd_demosaic()
+{
+    // RT ---------------------------------------------------------------------
+    if (plistener) {
+        plistener->setProgressStr(Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "rcd"));
+        plistener->setProgress(0);
+    }
+    
+    int width = W, height = H;
+
+    std::vector<float> cfa(width * height);
+    std::vector<std::array<float, 3>> rgb(width * height);
+
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
+    for (int row = 0; row < height; row++) {
+        for (int col = 0, indx = row * width + col; col < width; col++, indx++) {
+            int c = FC(row, col);
+            cfa[indx] = rgb[indx][c] = LIM01(rawData[row][col] / 65535.f);
+        }
+    }
+
+    if (plistener) {
+        plistener->setProgress(0.05);
+    }
+    // ------------------------------------------------------------------------
+/* RT    
+    int row, col, indx, c;
+*/    
+    int w1 = width, w2 = 2 * width, w3 = 3 * width, w4 = 4 * width;
+
+    //Tolerance to avoid dividing by zero
+    static const float eps = 1e-5, epssq = 1e-10;
+
+/* RT    
+    //Gradients
+    float N_Grad, E_Grad, W_Grad, S_Grad, NW_Grad, NE_Grad, SW_Grad, SE_Grad;
+
+    //Pixel estimation
+    float N_Est, E_Est, W_Est, S_Est, NW_Est, NE_Est, SW_Est, SE_Est, V_Est, H_Est, P_Est, Q_Est;
+
+    //Directional discrimination
+    //float V_Stat, H_Stat, P_Stat, Q_Stat;
+    float VH_Central_Value, VH_Neighbour_Value, PQ_Central_Value, PQ_Neighbour_Value;
+*/    
+    float ( *VH_Dir ), ( *PQ_Dir );
+
+    //Low pass filter
+    float ( *lpf );
+
+
+    /**
+    * STEP 1: Find cardinal and diagonal interpolation directions
+    */
+
+    VH_Dir = ( float ( * ) ) calloc( width * height, sizeof *VH_Dir ); //merror ( VH_Dir, "rcd_demosaicing_171117()" );
+
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
+    for (int row = 4; row < height - 4; row++ ) {
+        for (int col = 4, indx = row * width + col; col < width - 4; col++, indx++ ) {
+            //Calculate h/v local discrimination
+            float V_Stat = max(epssq, - 18.0f  *  cfa[indx] * cfa[indx - w1] - 18.0f * cfa[indx] * cfa[indx + w1] - 36.0f * cfa[indx] * cfa[indx - w2] - 36.0f * cfa[indx] * cfa[indx + w2] + 18.0f * cfa[indx] * cfa[indx - w3] + 18.0f * cfa[indx] * cfa[indx + w3] - 2.0f * cfa[indx] * cfa[indx - w4] - 2.0f * cfa[indx] * cfa[indx + w4] + 38.0f * cfa[indx] * cfa[indx] - 70.0f * cfa[indx - w1] * cfa[indx + w1] - 12.0f * cfa[indx - w1] * cfa[indx - w2] + 24.0f * cfa[indx - w1] * cfa[indx + w2] - 38.0f * cfa[indx - w1] * cfa[indx - w3] + 16.0f * cfa[indx - w1] * cfa[indx + w3] + 12.0f * cfa[indx - w1] * cfa[indx - w4] - 6.0f * cfa[indx - w1] * cfa[indx + w4] + 46.0f * cfa[indx - w1] * cfa[indx - w1] + 24.0f * cfa[indx + w1] * cfa[indx - w2] - 12.0f * cfa[indx + w1] * cfa[indx + w2] + 16.0f * cfa[indx + w1] * cfa[indx - w3] - 38.0f * cfa[indx + w1] * cfa[indx + w3] - 6.0f * cfa[indx + w1] * cfa[indx - w4] + 12.0f * cfa[indx + w1] * cfa[indx + w4] + 46.0f * cfa[indx + w1] * cfa[indx + w1] + 14.0f * cfa[indx - w2] * cfa[indx + w2] - 12.0f * cfa[indx - w2] * cfa[indx + w3] - 2.0f * cfa[indx - w2] * cfa[indx - w4] + 2.0f * cfa[indx - w2] * cfa[indx + w4] + 11.0f * cfa[indx - w2] * cfa[indx - w2] - 12.0f * cfa[indx + w2] * cfa[indx - w3] + 2.0f * cfa[indx + w2] * cfa[indx - w4] - 2.0f * cfa[indx + w2] * cfa[indx + w4] + 11.0f * cfa[indx + w2] * cfa[indx + w2] + 2.0f * cfa[indx - w3] * cfa[indx + w3] - 6.0f * cfa[indx - w3] * cfa[indx - w4] + 10.0f * cfa[indx - w3] * cfa[indx - w3] - 6.0f * cfa[indx + w3] * cfa[indx + w4] + 10.0f * cfa[indx + w3] * cfa[indx + w3] + 1.0f * cfa[indx - w4] * cfa[indx - w4] + 1.0f * cfa[indx + w4] * cfa[indx + w4]);
+            
+            float H_Stat = max(epssq, - 18.0f  *  cfa[indx] * cfa[indx -  1] - 18.0f * cfa[indx] * cfa[indx +  1] - 36.0f * cfa[indx] * cfa[indx -  2] - 36.0f * cfa[indx] * cfa[indx +  2] + 18.0f * cfa[indx] * cfa[indx -  3] + 18.0f * cfa[indx] * cfa[indx +  3] - 2.0f * cfa[indx] * cfa[indx -  4] - 2.0f * cfa[indx] * cfa[indx +  4] + 38.0f * cfa[indx] * cfa[indx] - 70.0f * cfa[indx -  1] * cfa[indx +  1] - 12.0f * cfa[indx -  1] * cfa[indx -  2] + 24.0f * cfa[indx -  1] * cfa[indx +  2] - 38.0f * cfa[indx -  1] * cfa[indx -  3] + 16.0f * cfa[indx -  1] * cfa[indx +  3] + 12.0f * cfa[indx -  1] * cfa[indx -  4] - 6.0f * cfa[indx -  1] * cfa[indx +  4] + 46.0f * cfa[indx -  1] * cfa[indx -  1] + 24.0f * cfa[indx +  1] * cfa[indx -  2] - 12.0f * cfa[indx +  1] * cfa[indx +  2] + 16.0f * cfa[indx +  1] * cfa[indx -  3] - 38.0f * cfa[indx +  1] * cfa[indx +  3] - 6.0f * cfa[indx +  1] * cfa[indx -  4] + 12.0f * cfa[indx +  1] * cfa[indx +  4] + 46.0f * cfa[indx +  1] * cfa[indx +  1] + 14.0f * cfa[indx -  2] * cfa[indx +  2] - 12.0f * cfa[indx -  2] * cfa[indx +  3] - 2.0f * cfa[indx -  2] * cfa[indx -  4] + 2.0f * cfa[indx -  2] * cfa[indx +  4] + 11.0f * cfa[indx -  2] * cfa[indx -  2] - 12.0f * cfa[indx +  2] * cfa[indx -  3] + 2.0f * cfa[indx +  2] * cfa[indx -  4] - 2.0f * cfa[indx +  2] * cfa[indx +  4] + 11.0f * cfa[indx +  2] * cfa[indx +  2] + 2.0f * cfa[indx -  3] * cfa[indx +  3] - 6.0f * cfa[indx -  3] * cfa[indx -  4] + 10.0f * cfa[indx -  3] * cfa[indx -  3] - 6.0f * cfa[indx +  3] * cfa[indx +  4] + 10.0f * cfa[indx +  3] * cfa[indx +  3] + 1.0f * cfa[indx -  4] * cfa[indx -  4] + 1.0f * cfa[indx +  4] * cfa[indx +  4]);
+
+            VH_Dir[indx] = V_Stat / (V_Stat + H_Stat);
+        }
+    }
+
+    // RT ---------------------------------------------------------------------
+    if (plistener) {
+        plistener->setProgress(0.2);
+    }
+    // -------------------------------------------------------------------------
+
+    /**
+    * STEP 2: Calculate the low pass filter
+    */
+
+    // Step 2.1: Low pass filter incorporating green, red and blue local samples from the raw data
+    lpf = ( float ( * ) ) calloc( width * height, sizeof *lpf ); //merror ( lpf, "rcd_demosaicing_171125()" );
+
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif    
+    for ( int row = 2; row < height - 2; row++ ) {
+        for ( int col = 2 + (FC( row, 0 ) & 1), indx = row * width + col; col < width - 2; col += 2, indx += 2 ) {
+
+            lpf[indx] = 0.25f * cfa[indx] + 0.125f * ( cfa[indx - w1] + cfa[indx + w1] + cfa[indx - 1] + cfa[indx + 1] ) + 0.0625f * ( cfa[indx - w1 - 1] + cfa[indx - w1 + 1] + cfa[indx + w1 - 1] + cfa[indx + w1 + 1] );
+
+        }
+    }
+
+    // RT ---------------------------------------------------------------------
+    if (plistener) {
+        plistener->setProgress(0.4);
+    }
+    // ------------------------------------------------------------------------
+
+    /**
+    * STEP 3: Populate the green channel
+    */
+
+    // Step 3.1: Populate the green channel at blue and red CFA positions
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
+   for ( int row = 4; row < height - 4; row++ ) {
+       for ( int col = 4 + (FC( row, 0 ) & 1), indx = row * width + col; col < width - 4; col += 2, indx += 2 ) {
+
+            // Refined vertical and horizontal local discrimination
+            float VH_Central_Value   = VH_Dir[indx];
+            float VH_Neighbourhood_Value = 0.25f * ( VH_Dir[indx - w1 - 1] + VH_Dir[indx - w1 + 1] + VH_Dir[indx + w1 - 1] + VH_Dir[indx + w1 + 1] );
+
+            float VH_Disc = ( fabs( 0.5f - VH_Central_Value ) < fabs( 0.5f - VH_Neighbourhood_Value ) ) ? VH_Neighbourhood_Value : VH_Central_Value;
+
+            // Cardinal gradients
+            float N_Grad = eps + fabs( cfa[indx - w1] - cfa[indx + w1] ) + fabs( cfa[indx] - cfa[indx - w2] ) + fabs( cfa[indx - w1] - cfa[indx - w3] ) + fabs( cfa[indx - w2] - cfa[indx - w4] );
+            float S_Grad = eps + fabs( cfa[indx + w1] - cfa[indx - w1] ) + fabs( cfa[indx] - cfa[indx + w2] ) + fabs( cfa[indx + w1] - cfa[indx + w3] ) + fabs( cfa[indx + w2] - cfa[indx + w4] );
+            float W_Grad = eps + fabs( cfa[indx -  1] - cfa[indx +  1] ) + fabs( cfa[indx] - cfa[indx -  2] ) + fabs( cfa[indx -  1] - cfa[indx -  3] ) + fabs( cfa[indx -  2] - cfa[indx -  4] );
+            float E_Grad = eps + fabs( cfa[indx +  1] - cfa[indx -  1] ) + fabs( cfa[indx] - cfa[indx +  2] ) + fabs( cfa[indx +  1] - cfa[indx +  3] ) + fabs( cfa[indx +  2] - cfa[indx +  4] );
+
+            // Cardinal pixel estimations
+            float N_Est = cfa[indx - w1] * ( 1.f + ( lpf[indx] - lpf[indx - w2] ) / ( eps + lpf[indx] + lpf[indx - w2] ) );
+            float S_Est = cfa[indx + w1] * ( 1.f + ( lpf[indx] - lpf[indx + w2] ) / ( eps + lpf[indx] + lpf[indx + w2] ) );
+            float W_Est = cfa[indx -  1] * ( 1.f + ( lpf[indx] - lpf[indx -  2] ) / ( eps + lpf[indx] + lpf[indx -  2] ) );
+            float E_Est = cfa[indx +  1] * ( 1.f + ( lpf[indx] - lpf[indx +  2] ) / ( eps + lpf[indx] + lpf[indx +  2] ) );
+
+            // Vertical and horizontal estimations
+            float V_Est = ( S_Grad * N_Est + N_Grad * S_Est ) / max(eps, N_Grad + S_Grad );
+            float H_Est = ( W_Grad * E_Est + E_Grad * W_Est ) / max(eps, E_Grad + W_Grad );
+
+            // G@B and G@R interpolation
+            rgb[indx][1] = LIM( VH_Disc * H_Est + ( 1.f - VH_Disc ) * V_Est, 0.f, 1.f );
+
+        }
+    }
+
+    free( lpf );
+
+    // RT ---------------------------------------------------------------------
+    if (plistener) {
+        plistener->setProgress(0.5);
+    }
+    // ------------------------------------------------------------------------
+    
+    /**
+    * STEP 4: Populate the red and blue channels
+    */
+
+    // Step 4.1: Calculate P/Q diagonal local discrimination
+    PQ_Dir = ( float ( * ) ) calloc( width * height, sizeof *PQ_Dir ); //merror ( PQ_Dir, "rcd_demosaicing_171125()" );
+
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
+    for ( int row = 4; row < height - 4; row++ ) {
+        for ( int col = 4 + (FC( row, 0 ) & 1), indx = row * width + col; col < width - 4; col += 2, indx += 2 ) {
+
+            float P_Stat = max( - 18.f * cfa[indx] * cfa[indx - w1 - 1] - 18.f * cfa[indx] * cfa[indx + w1 + 1] - 36.f * cfa[indx] * cfa[indx - w2 - 2] - 36.f * cfa[indx] * cfa[indx + w2 + 2] + 18.f * cfa[indx] * cfa[indx - w3 - 3] + 18.f * cfa[indx] * cfa[indx + w3 + 3] - 2.f * cfa[indx] * cfa[indx - w4 - 4] - 2.f * cfa[indx] * cfa[indx + w4 + 4] + 38.f * cfa[indx] * cfa[indx] - 70.f * cfa[indx - w1 - 1] * cfa[indx + w1 + 1] - 12.f * cfa[indx - w1 - 1] * cfa[indx - w2 - 2] + 24.f * cfa[indx - w1 - 1] * cfa[indx + w2 + 2] - 38.f * cfa[indx - w1 - 1] * cfa[indx - w3 - 3] + 16.f * cfa[indx - w1 - 1] * cfa[indx + w3 + 3] + 12.f * cfa[indx - w1 - 1] * cfa[indx - w4 - 4] - 6.f * cfa[indx - w1 - 1] * cfa[indx + w4 + 4] + 46.f * cfa[indx - w1 - 1] * cfa[indx - w1 - 1] + 24.f * cfa[indx + w1 + 1] * cfa[indx - w2 - 2] - 12.f * cfa[indx + w1 + 1] * cfa[indx + w2 + 2] + 16.f * cfa[indx + w1 + 1] * cfa[indx - w3 - 3] - 38.f * cfa[indx + w1 + 1] * cfa[indx + w3 + 3] - 6.f * cfa[indx + w1 + 1] * cfa[indx - w4 - 4] + 12.f * cfa[indx + w1 + 1] * cfa[indx + w4 + 4] + 46.f * cfa[indx + w1 + 1] * cfa[indx + w1 + 1] + 14.f * cfa[indx - w2 - 2] * cfa[indx + w2 + 2] - 12.f * cfa[indx - w2 - 2] * cfa[indx + w3 + 3] - 2.f * cfa[indx - w2 - 2] * cfa[indx - w4 - 4] + 2.f * cfa[indx - w2 - 2] * cfa[indx + w4 + 4] + 11.f * cfa[indx - w2 - 2] * cfa[indx - w2 - 2] - 12.f * cfa[indx + w2 + 2] * cfa[indx - w3 - 3] + 2 * cfa[indx + w2 + 2] * cfa[indx - w4 - 4] - 2.f * cfa[indx + w2 + 2] * cfa[indx + w4 + 4] + 11.f * cfa[indx + w2 + 2] * cfa[indx + w2 + 2] + 2.f * cfa[indx - w3 - 3] * cfa[indx + w3 + 3] - 6.f * cfa[indx - w3 - 3] * cfa[indx - w4 - 4] + 10.f * cfa[indx - w3 - 3] * cfa[indx - w3 - 3] - 6.f * cfa[indx + w3 + 3] * cfa[indx + w4 + 4] + 10.f * cfa[indx + w3 + 3] * cfa[indx + w3 + 3] + 1.f * cfa[indx - w4 - 4] * cfa[indx - w4 - 4] + 1.f * cfa[indx + w4 + 4] * cfa[indx + w4 + 4], epssq );
+            float Q_Stat = max( - 18.f * cfa[indx] * cfa[indx + w1 - 1] - 18.f * cfa[indx] * cfa[indx - w1 + 1] - 36.f * cfa[indx] * cfa[indx + w2 - 2] - 36.f * cfa[indx] * cfa[indx - w2 + 2] + 18.f * cfa[indx] * cfa[indx + w3 - 3] + 18.f * cfa[indx] * cfa[indx - w3 + 3] - 2.f * cfa[indx] * cfa[indx + w4 - 4] - 2.f * cfa[indx] * cfa[indx - w4 + 4] + 38.f * cfa[indx] * cfa[indx] - 70.f * cfa[indx + w1 - 1] * cfa[indx - w1 + 1] - 12.f * cfa[indx + w1 - 1] * cfa[indx + w2 - 2] + 24.f * cfa[indx + w1 - 1] * cfa[indx - w2 + 2] - 38.f * cfa[indx + w1 - 1] * cfa[indx + w3 - 3] + 16.f * cfa[indx + w1 - 1] * cfa[indx - w3 + 3] + 12.f * cfa[indx + w1 - 1] * cfa[indx + w4 - 4] - 6.f * cfa[indx + w1 - 1] * cfa[indx - w4 + 4] + 46.f * cfa[indx + w1 - 1] * cfa[indx + w1 - 1] + 24.f * cfa[indx - w1 + 1] * cfa[indx + w2 - 2] - 12.f * cfa[indx - w1 + 1] * cfa[indx - w2 + 2] + 16.f * cfa[indx - w1 + 1] * cfa[indx + w3 - 3] - 38.f * cfa[indx - w1 + 1] * cfa[indx - w3 + 3] - 6.f * cfa[indx - w1 + 1] * cfa[indx + w4 - 4] + 12.f * cfa[indx - w1 + 1] * cfa[indx - w4 + 4] + 46.f * cfa[indx - w1 + 1] * cfa[indx - w1 + 1] + 14.f * cfa[indx + w2 - 2] * cfa[indx - w2 + 2] - 12.f * cfa[indx + w2 - 2] * cfa[indx - w3 + 3] - 2.f * cfa[indx + w2 - 2] * cfa[indx + w4 - 4] + 2.f * cfa[indx + w2 - 2] * cfa[indx - w4 + 4] + 11.f * cfa[indx + w2 - 2] * cfa[indx + w2 - 2] - 12.f * cfa[indx - w2 + 2] * cfa[indx + w3 - 3] + 2 * cfa[indx - w2 + 2] * cfa[indx + w4 - 4] - 2.f * cfa[indx - w2 + 2] * cfa[indx - w4 + 4] + 11.f * cfa[indx - w2 + 2] * cfa[indx - w2 + 2] + 2.f * cfa[indx + w3 - 3] * cfa[indx - w3 + 3] - 6.f * cfa[indx + w3 - 3] * cfa[indx + w4 - 4] + 10.f * cfa[indx + w3 - 3] * cfa[indx + w3 - 3] - 6.f * cfa[indx - w3 + 3] * cfa[indx - w4 + 4] + 10.f * cfa[indx - w3 + 3] * cfa[indx - w3 + 3] + 1.f * cfa[indx + w4 - 4] * cfa[indx + w4 - 4] + 1.f * cfa[indx - w4 + 4] * cfa[indx - w4 + 4], epssq );
+
+            PQ_Dir[indx] = P_Stat / ( P_Stat + Q_Stat );
+
+        }
+    }
+
+    // RT ---------------------------------------------------------------------
+    if (plistener) {
+        plistener->setProgress(0.7);
+    }
+    // -------------------------------------------------------------------------
+
+    // Step 4.2: Populate the red and blue channels at blue and red CFA positions
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
+    for ( int row = 4; row < height - 4; row++ ) {
+        for ( int col = 4 + (FC( row, 0 ) & 1), indx = row * width + col, c = 2 - FC( row, col ); col < width - 4; col += 2, indx += 2 ) {
+
+            // Refined P/Q diagonal local discrimination
+            float PQ_Central_Value   = PQ_Dir[indx];
+            float PQ_Neighbourhood_Value = 0.25f * ( PQ_Dir[indx - w1 - 1] + PQ_Dir[indx - w1 + 1] + PQ_Dir[indx + w1 - 1] + PQ_Dir[indx + w1 + 1] );
+
+            float PQ_Disc = ( fabs( 0.5f - PQ_Central_Value ) < fabs( 0.5f - PQ_Neighbourhood_Value ) ) ? PQ_Neighbourhood_Value : PQ_Central_Value;
+
+            // Diagonal gradients
+            float NW_Grad = eps + fabs( rgb[indx - w1 - 1][c] - rgb[indx + w1 + 1][c] ) + fabs( rgb[indx - w1 - 1][c] - rgb[indx - w3 - 3][c] ) + fabs( rgb[indx][1] - rgb[indx - w2 - 2][1] );
+            float NE_Grad = eps + fabs( rgb[indx - w1 + 1][c] - rgb[indx + w1 - 1][c] ) + fabs( rgb[indx - w1 + 1][c] - rgb[indx - w3 + 3][c] ) + fabs( rgb[indx][1] - rgb[indx - w2 + 2][1] );
+            float SW_Grad = eps + fabs( rgb[indx + w1 - 1][c] - rgb[indx - w1 + 1][c] ) + fabs( rgb[indx + w1 - 1][c] - rgb[indx + w3 - 3][c] ) + fabs( rgb[indx][1] - rgb[indx + w2 - 2][1] );
+            float SE_Grad = eps + fabs( rgb[indx + w1 + 1][c] - rgb[indx - w1 - 1][c] ) + fabs( rgb[indx + w1 + 1][c] - rgb[indx + w3 + 3][c] ) + fabs( rgb[indx][1] - rgb[indx + w2 + 2][1] );
+
+            // Diagonal colour differences
+            float NW_Est = rgb[indx - w1 - 1][c] - rgb[indx - w1 - 1][1];
+            float NE_Est = rgb[indx - w1 + 1][c] - rgb[indx - w1 + 1][1];
+            float SW_Est = rgb[indx + w1 - 1][c] - rgb[indx + w1 - 1][1];
+            float SE_Est = rgb[indx + w1 + 1][c] - rgb[indx + w1 + 1][1];
+
+            // P/Q estimations
+            float P_Est = ( NW_Grad * SE_Est + SE_Grad * NW_Est ) / max(eps, NW_Grad + SE_Grad );
+            float Q_Est = ( NE_Grad * SW_Est + SW_Grad * NE_Est ) / max(eps, NE_Grad + SW_Grad );
+
+            // R@B and B@R interpolation
+            rgb[indx][c] = LIM( rgb[indx][1] + ( 1.f - PQ_Disc ) * P_Est + PQ_Disc * Q_Est, 0.f, 1.f );
+
+        }
+    }
+
+    free( PQ_Dir );
+
+    // RT ---------------------------------------------------------------------
+    if (plistener) {
+        plistener->setProgress(0.825);
+    }
+    // -------------------------------------------------------------------------
+        
+    // Step 4.3: Populate the red and blue channels at green CFA positions
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
+    for ( int row = 4; row < height - 4; row++ ) {
+        for ( int col = 4 + (FC( row, 1 ) & 1), indx = row * width + col; col < width - 4; col += 2, indx += 2 ) {
+
+            // Refined vertical and horizontal local discrimination
+            float VH_Central_Value   = VH_Dir[indx];
+            float VH_Neighbourhood_Value = 0.25f * ( VH_Dir[indx - w1 - 1] + VH_Dir[indx - w1 + 1] + VH_Dir[indx + w1 - 1] + VH_Dir[indx + w1 + 1] );
+            
+            float VH_Disc = ( fabs( 0.5f - VH_Central_Value ) < fabs( 0.5f - VH_Neighbourhood_Value ) ) ? VH_Neighbourhood_Value : VH_Central_Value;
+
+            for ( int c = 0; c <= 2; c += 2 ) {
+
+                // Cardinal gradients
+                float N_Grad = eps + fabs( rgb[indx][1] - rgb[indx - w2][1] ) + fabs( rgb[indx - w1][c] - rgb[indx + w1][c] ) + fabs( rgb[indx - w1][c] - rgb[indx - w3][c] );
+                float S_Grad = eps + fabs( rgb[indx][1] - rgb[indx + w2][1] ) + fabs( rgb[indx + w1][c] - rgb[indx - w1][c] ) + fabs( rgb[indx + w1][c] - rgb[indx + w3][c] );
+                float W_Grad = eps + fabs( rgb[indx][1] - rgb[indx -  2][1] ) + fabs( rgb[indx -  1][c] - rgb[indx +  1][c] ) + fabs( rgb[indx -  1][c] - rgb[indx -  3][c] );
+                float E_Grad = eps + fabs( rgb[indx][1] - rgb[indx +  2][1] ) + fabs( rgb[indx +  1][c] - rgb[indx -  1][c] ) + fabs( rgb[indx +  1][c] - rgb[indx +  3][c] );
+
+                // Cardinal colour differences
+                float N_Est = rgb[indx - w1][c] - rgb[indx - w1][1];
+                float S_Est = rgb[indx + w1][c] - rgb[indx + w1][1];
+                float W_Est = rgb[indx -  1][c] - rgb[indx -  1][1];
+                float E_Est = rgb[indx +  1][c] - rgb[indx +  1][1];
+
+                // Vertical and horizontal estimations
+                float V_Est = ( N_Grad * S_Est + S_Grad * N_Est ) / max(eps, N_Grad + S_Grad );
+                float H_Est = ( E_Grad * W_Est + W_Grad * E_Est ) / max(eps, E_Grad + W_Grad );
+
+                // R@G and B@G interpolation
+                rgb[indx][c] = LIM( rgb[indx][1] + ( 1.f - VH_Disc ) * V_Est + VH_Disc * H_Est, 0.f, 1.f );
+
+            }
+        }
+    }
+
+    free(VH_Dir);
+
+    // RT ---------------------------------------------------------------------
+    if (plistener) {
+        plistener->setProgress(0.95);
+    }
+
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
+    for (int row = 0; row < height; ++row) {
+        for (int col = 0, idx = row * width + col ; col < width; ++col, ++idx) {
+            red[row][col] = CLIP(rgb[idx][0] * 65535.f);
+            green[row][col] = CLIP(rgb[idx][1] * 65535.f);
+            blue[row][col] = CLIP(rgb[idx][2] * 65535.f);
+        }
+    }
+
+    border_interpolate2(width, height, 8);
+
+    if (plistener) {
+        plistener->setProgress(1);
+    }
+    // -------------------------------------------------------------------------
 }
 
 #define fcol(row,col) xtrans[(row)%6][(col)%6]

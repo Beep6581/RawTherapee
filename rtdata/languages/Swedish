@@ -1955,6 +1955,8 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !HISTORY_MSG_488;HDR Tone Mapping
 !HISTORY_MSG_489;HDR TM - Threshold
 !HISTORY_MSG_490;HDR TM - Amount
+!HISTORY_MSG_491;White Balance
+!HISTORY_MSG_492;RGB Curves
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
 !IPTCPANEL_COPYRIGHT;Copyright notice
@@ -2027,10 +2029,10 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 !TP_COLORAPP_NEUTRAL;Reset
 !TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
-!TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
+!TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
 !TP_COLORAPP_YB;Yb% (mean luminance)
 !TP_COLORAPP_YBSCENE;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE_TOOLTIP;if auto enable, Yb is calculated from the mean value of actual image luminance
+!TP_COLORAPP_YBSCENE_TOOLTIP;if auto is enabled, Yb is calculated from the mean value of the actual image's luminance
 !TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Chroma opacity as a function of luminance oC=f(L)
 !TP_COLORTONING_LABEL;Color Toning
 !TP_COLORTONING_METHOD_TOOLTIP;"L*a*b* blending", "RGB sliders" and "RGB curves" use interpolated color blending.\n"Color balance (Shadows/Midtones/Highlights)" and "Saturation 2 colors" use direct colors.\n\nThe Black-and-White tool can be enabled when using any color toning method, which allows for color toning.
@@ -2115,6 +2117,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;StdDev factor Blue
 !TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;StdDev factor Green
 !TP_RAW_PIXELSHIFTSTDDEVFACTORRED;StdDev factor Red
+!TP_RAW_RCD;RCD
 !TP_RAW_VNG4;VNG4
 !TP_RETINEX_CONTEDIT_MAP;Mask equalizer
 !TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorrect raw data to reduce halos and artifacts.

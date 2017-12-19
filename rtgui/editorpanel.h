@@ -150,6 +150,8 @@ private:
     bool                idle_saveImage (ProgressConnector<rtengine::IImagefloat*> *pc, Glib::ustring fname, SaveFormat sf, rtengine::procparams::ProcParams &pparams);
     bool                idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *pc, Glib::ustring fname);
     bool                idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImagefloat* img, Glib::ustring filename);
+    void                histogramProfile_toggled ();
+
 
     Glib::ustring lastSaveAsFileName;
     bool realized;
@@ -196,6 +198,7 @@ private:
     Gtk::HBox* beforeAfterBox;
     Gtk::HBox* beforeHeaderBox;
     Gtk::HBox* afterHeaderBox;
+    Gtk::ToggleButton* toggleHistogramProfile;
 
     Gtk::Frame* ppframe;
     ProfilePanel* profilep;

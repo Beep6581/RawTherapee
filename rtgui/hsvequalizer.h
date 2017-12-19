@@ -54,6 +54,7 @@ public:
     virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
 
     //void adjusterChanged (Adjuster* a, double newval);
+    void enabledChanged();
 };
 
 #endif

@@ -93,6 +93,7 @@ private:
     void resetAllPressed();
     void addPressed();
     void showAlltoggled();
+    bool rowSeperatorFunc(const Glib::RefPtr<Gtk::TreeModel>& model, const Gtk::TreeModel::iterator& iter);
 
 public:
     ExifPanel ();

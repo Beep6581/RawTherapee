@@ -82,6 +82,7 @@ void ParamsEdited::set (bool v)
     retinex.radius        = v;
 
     retinex.retinex = v;
+    labCurve.enabled = v;
     labCurve.lcurve      = v;
     labCurve.acurve      = v;
     labCurve.bcurve      = v;
@@ -97,6 +98,7 @@ void ParamsEdited::set (bool v)
     labCurve.avoidcolorshift = v;
     labCurve.rstprotection   = v;
     labCurve.lcredsk         = v;
+    rgbCurves.enabled = v;
     rgbCurves.lumamode       = v;
     rgbCurves.rcurve         = v;
     rgbCurves.gcurve         = v;
@@ -219,6 +221,7 @@ void ParamsEdited::set (bool v)
     //colorBoost.avoidclip      = v;
     //colorBoost.enable_saturationlimiter = v;
     //colorBoost.saturationlimit = v;
+    wb.enabled                 = v;
     wb.method                  = v;
     wb.green                   = v;
     wb.temperature             = v;
@@ -319,6 +322,7 @@ void ParamsEdited::set (bool v)
     vignetting.strength = v;
     vignetting.centerX = v;
     vignetting.centerY = v;
+    chmixer.enabled = v;
     chmixer.red[0] = v;
     chmixer.red[1] = v;
     chmixer.red[2] = v;
@@ -423,14 +427,14 @@ void ParamsEdited::set (bool v)
     raw.xtranssensor.exBlackRed = v;
     raw.xtranssensor.exBlackGreen = v;
     raw.xtranssensor.exBlackBlue = v;
-    raw.caCorrection = v;
-    raw.caBlue  = v;
-    raw.caRed   = v;
+    raw.ca_autocorrect = v;
+    raw.cablue  = v;
+    raw.cared   = v;
     raw.hotPixelFilter = v;
     raw.deadPixelFilter = v;
-    raw.hotDeadPixelThresh = v;
+    raw.hotdeadpix_thresh = v;
     raw.darkFrame = v;
-    raw.dfAuto = v;
+    raw.df_autoselect = v;
     raw.ff_file = v;
     raw.ff_AutoSelect = v;
     raw.ff_BlurRadius = v;
@@ -547,6 +551,7 @@ void ParamsEdited::set (bool v)
     dirpyrequalizer.skinprotect = v;
     dirpyrequalizer.hueskin = v;
     //dirpyrequalizer.algo = v;
+    hsvequalizer.enabled = v;
     hsvequalizer.hcurve = v;
     hsvequalizer.scurve = v;
     hsvequalizer.vcurve = v;
@@ -622,6 +627,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         retinex.radius = retinex.radius && p.retinex.radius == other.retinex.radius;
 
         retinex.enabled = retinex.enabled && p.retinex.enabled == other.retinex.enabled;
+        labCurve.enabled = labCurve.enabled && p.labCurve.enabled == other.labCurve.enabled;
         labCurve.lcurve = labCurve.lcurve && p.labCurve.lcurve == other.labCurve.lcurve;
         labCurve.acurve = labCurve.acurve && p.labCurve.acurve == other.labCurve.acurve;
         labCurve.bcurve = labCurve.bcurve && p.labCurve.bcurve == other.labCurve.bcurve;
@@ -637,6 +643,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         labCurve.avoidcolorshift = labCurve.avoidcolorshift && p.labCurve.avoidcolorshift == other.labCurve.avoidcolorshift;
         labCurve.rstprotection = labCurve.rstprotection && p.labCurve.rstprotection == other.labCurve.rstprotection;
         labCurve.lcredsk = labCurve.lcredsk && p.labCurve.lcredsk == other.labCurve.lcredsk;
+        rgbCurves.enabled = rgbCurves.enabled && p.rgbCurves.enabled == other.rgbCurves.enabled;
         rgbCurves.lumamode = rgbCurves.lumamode && p.rgbCurves.lumamode == other.rgbCurves.lumamode;
         rgbCurves.rcurve = rgbCurves.rcurve && p.rgbCurves.rcurve == other.rgbCurves.rcurve;
         rgbCurves.gcurve = rgbCurves.gcurve && p.rgbCurves.gcurve == other.rgbCurves.gcurve;
@@ -758,6 +765,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         //colorBoost.avoidclip = colorBoost.avoidclip && p.colorBoost.avoidclip == other.colorBoost.avoidclip;
         //colorBoost.enable_saturationlimiter = colorBoost.enable_saturationlimiter && p.colorBoost.enable_saturationlimiter == other.colorBoost.enable_saturationlimiter;
         //colorBoost.saturationlimit = colorBoost.saturationlimit && p.colorBoost.saturationlimit == other.colorBoost.saturationlimit;
+        wb.enabled = wb.enabled && p.wb.enabled == other.wb.enabled;
         wb.method = wb.method && p.wb.method == other.wb.method;
         wb.green = wb.green && p.wb.green == other.wb.green;
         wb.equal = wb.equal && p.wb.equal == other.wb.equal;
@@ -863,6 +871,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         vignetting.strength = vignetting.strength && p.vignetting.strength == other.vignetting.strength;
         vignetting.centerX = vignetting.centerX && p.vignetting.centerX == other.vignetting.centerX;
         vignetting.centerY = vignetting.centerY && p.vignetting.centerY == other.vignetting.centerY;
+        chmixer.enabled = chmixer.enabled && p.chmixer.enabled == other.chmixer.enabled;
         chmixer.red[0] = chmixer.red[0] && p.chmixer.red[0] == other.chmixer.red[0];
         chmixer.red[1] = chmixer.red[1] && p.chmixer.red[1] == other.chmixer.red[1];
         chmixer.red[2] = chmixer.red[2] && p.chmixer.red[2] == other.chmixer.red[2];
@@ -965,14 +974,14 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.xtranssensor.exBlackRed = raw.xtranssensor.exBlackRed && p.raw.xtranssensor.blackred == other.raw.xtranssensor.blackred;
         raw.xtranssensor.exBlackGreen = raw.xtranssensor.exBlackGreen && p.raw.xtranssensor.blackgreen == other.raw.xtranssensor.blackgreen;
         raw.xtranssensor.exBlackBlue = raw.xtranssensor.exBlackBlue && p.raw.xtranssensor.blackblue == other.raw.xtranssensor.blackblue;
-        raw.caCorrection = raw.caCorrection && p.raw.ca_autocorrect == other.raw.ca_autocorrect;
-        raw.caRed = raw.caRed && p.raw.cared == other.raw.cared;
-        raw.caBlue = raw.caBlue && p.raw.cablue == other.raw.cablue;
+        raw.ca_autocorrect = raw.ca_autocorrect && p.raw.ca_autocorrect == other.raw.ca_autocorrect;
+        raw.cared = raw.cared && p.raw.cared == other.raw.cared;
+        raw.cablue = raw.cablue && p.raw.cablue == other.raw.cablue;
         raw.hotPixelFilter = raw.hotPixelFilter && p.raw.hotPixelFilter == other.raw.hotPixelFilter;
         raw.deadPixelFilter = raw.deadPixelFilter && p.raw.deadPixelFilter == other.raw.deadPixelFilter;
-        raw.hotDeadPixelThresh = raw.hotDeadPixelThresh && p.raw.hotdeadpix_thresh == other.raw.hotdeadpix_thresh;
+        raw.hotdeadpix_thresh = raw.hotdeadpix_thresh && p.raw.hotdeadpix_thresh == other.raw.hotdeadpix_thresh;
         raw.darkFrame = raw.darkFrame && p.raw.dark_frame == other.raw.dark_frame;
-        raw.dfAuto = raw.dfAuto && p.raw.df_autoselect == other.raw.df_autoselect;
+        raw.df_autoselect = raw.df_autoselect && p.raw.df_autoselect == other.raw.df_autoselect;
         raw.ff_file = raw.ff_file && p.raw.ff_file == other.raw.ff_file;
         raw.ff_AutoSelect = raw.ff_AutoSelect && p.raw.ff_AutoSelect == other.raw.ff_AutoSelect;
         raw.ff_BlurRadius = raw.ff_BlurRadius && p.raw.ff_BlurRadius == other.raw.ff_BlurRadius;
@@ -1084,6 +1093,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         dirpyrequalizer.skinprotect = dirpyrequalizer.skinprotect && p.dirpyrequalizer.skinprotect == other.dirpyrequalizer.skinprotect;
         //    dirpyrequalizer.algo = dirpyrequalizer.algo && p.dirpyrequalizer.algo == other.dirpyrequalizer.algo;
         dirpyrequalizer.hueskin = dirpyrequalizer.hueskin && p.dirpyrequalizer.hueskin == other.dirpyrequalizer.hueskin;
+        hsvequalizer.enabled = hsvequalizer.enabled && p.hsvequalizer.enabled == other.hsvequalizer.enabled;        
         hsvequalizer.hcurve = hsvequalizer.hcurve && p.hsvequalizer.hcurve == other.hsvequalizer.hcurve;
         hsvequalizer.scurve = hsvequalizer.scurve && p.hsvequalizer.scurve == other.hsvequalizer.scurve;
         hsvequalizer.vcurve = hsvequalizer.vcurve && p.hsvequalizer.vcurve == other.hsvequalizer.vcurve;
@@ -1296,6 +1306,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     }
 
 
+    if (labCurve.enabled) {
+        toEdit.labCurve.enabled = mods.labCurve.enabled;
+    }
+    
     if (labCurve.lcurve) {
         toEdit.labCurve.lcurve        = mods.labCurve.lcurve;
     }
@@ -1354,6 +1368,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (labCurve.lcredsk) {
         toEdit.labCurve.lcredsk     = mods.labCurve.lcredsk;
+    }
+
+    if (rgbCurves.enabled) {
+        toEdit.rgbCurves.enabled = mods.rgbCurves.enabled;
     }
 
     if (rgbCurves.lumamode) {
@@ -1664,6 +1682,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     //if (colorBoost.avoidclip)             toEdit.colorBoost.avoidclip     = mods.colorBoost.avoidclip;
     //if (colorBoost.enable_saturationlimiter)toEdit.colorBoost.enable_saturationlimiter    = mods.colorBoost.enable_saturationlimiter;
     //if (colorBoost.saturationlimit)           toEdit.colorBoost.saturationlimit   = mods.colorBoost.saturationlimit;
+    if (wb.enabled) {
+        toEdit.wb.enabled = mods.wb.enabled;
+    }
+    
     if (wb.method) {
         toEdit.wb.method  = mods.wb.method;
     }
@@ -2189,6 +2211,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.vignetting.centerY = dontforceSet && options.baBehav[ADDSET_VIGN_CENTER] ? toEdit.vignetting.centerY + mods.vignetting.centerY : mods.vignetting.centerY;
     }
 
+    if (chmixer.enabled) {
+        toEdit.chmixer.enabled = mods.chmixer.enabled;
+    }
+    
     for (int i = 0; i < 3; i++) {
         if (chmixer.red[i]) {
             toEdit.chmixer.red[i]     = dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.red[i] + mods.chmixer.red[i] : mods.chmixer.red[i];
@@ -2571,15 +2597,15 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.raw.xtranssensor.blackblue       = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_BLACKS] ? toEdit.raw.xtranssensor.blackblue + mods.raw.xtranssensor.blackblue : mods.raw.xtranssensor.blackblue;
     }
 
-    if (raw.caCorrection) {
+    if (raw.ca_autocorrect) {
         toEdit.raw.ca_autocorrect  = mods.raw.ca_autocorrect;
     }
 
-    if (raw.caRed) {
+    if (raw.cared) {
         toEdit.raw.cared           = dontforceSet && options.baBehav[ADDSET_RAWCACORR] ? toEdit.raw.cared + mods.raw.cared : mods.raw.cared;
     }
 
-    if (raw.caBlue) {
+    if (raw.cablue) {
         toEdit.raw.cablue          = dontforceSet && options.baBehav[ADDSET_RAWCACORR] ? toEdit.raw.cablue + mods.raw.cablue : mods.raw.cablue;
     }
 
@@ -2599,7 +2625,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.raw.deadPixelFilter   = mods.raw.deadPixelFilter;
     }
 
-    if (raw.hotDeadPixelThresh) {
+    if (raw.hotdeadpix_thresh) {
         toEdit.raw.hotdeadpix_thresh = mods.raw.hotdeadpix_thresh;
     }
 
@@ -2607,7 +2633,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.raw.dark_frame        = mods.raw.dark_frame;
     }
 
-    if (raw.dfAuto) {
+    if (raw.df_autoselect) {
         toEdit.raw.df_autoselect     = mods.raw.df_autoselect;
     }
 
@@ -3008,6 +3034,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     }
 
 //  if (dirpyrequalizer.algo)       toEdit.dirpyrequalizer.algo     = mods.dirpyrequalizer.algo;
+    if (hsvequalizer.enabled) {
+        toEdit.hsvequalizer.enabled = mods.hsvequalizer.enabled;
+    }
+    
     if (hsvequalizer.hcurve) {
         toEdit.hsvequalizer.hcurve        = mods.hsvequalizer.hcurve;
     }
@@ -3062,8 +3092,8 @@ bool RAWParamsEdited::XTransSensor::isUnchanged() const
 
 bool RAWParamsEdited::isUnchanged() const
 {
-    return  bayersensor.isUnchanged() && xtranssensor.isUnchanged() && caCorrection && caRed && caBlue && hotPixelFilter && deadPixelFilter && hotDeadPixelThresh && darkFrame
-            && dfAuto && ff_file && ff_AutoSelect && ff_BlurRadius && ff_BlurType && exPos && exPreser && ff_AutoClipControl && ff_clipControl;
+    return  bayersensor.isUnchanged() && xtranssensor.isUnchanged() && ca_autocorrect && cared && cablue && hotPixelFilter && deadPixelFilter && hotdeadpix_thresh && darkFrame
+            && df_autoselect && ff_file && ff_AutoSelect && ff_BlurRadius && ff_BlurType && exPos && exPreser && ff_AutoClipControl && ff_clipControl;
 }
 
 bool LensProfParamsEdited::isUnchanged() const

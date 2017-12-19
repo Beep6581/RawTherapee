@@ -21,7 +21,7 @@
 #include "guiutils.h"
 #include "../rtengine/color.h"
 
-#define MINTEMP0 1500   //1200
+#define MINTEMP0 2000   //1200
 #define MAXTEMP0 12000  //12000
 #define CENTERTEMP0 5000
 #define MINGREEN0 0.8
@@ -799,9 +799,9 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     shape->setCurve (pp->colorappearance.curve);
     shape2->setCurve (pp->colorappearance.curve2);
     shape3->setCurve (pp->colorappearance.curve3);
-    toneCurveMode->set_active (pp->colorappearance.curveMode);
-    toneCurveMode2->set_active (pp->colorappearance.curveMode2);
-    toneCurveMode3->set_active (pp->colorappearance.curveMode3);
+    toneCurveMode->set_active (toUnderlying(pp->colorappearance.curveMode));
+    toneCurveMode2->set_active (toUnderlying(pp->colorappearance.curveMode2));
+    toneCurveMode3->set_active (toUnderlying(pp->colorappearance.curveMode3));
     curveMode3Changed(); // This will set the correct sensitive state of depending Adjusters
 
     if (pedited) {
@@ -1044,27 +1044,27 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
     int tcMode = toneCurveMode->get_active_row_number();
 
     if      (tcMode == 0) {
-        pp->colorappearance.curveMode = ColorAppearanceParams::TC_MODE_LIGHT;
+        pp->colorappearance.curveMode = ColorAppearanceParams::TcMode::LIGHT;
     } else if (tcMode == 1) {
-        pp->colorappearance.curveMode = ColorAppearanceParams::TC_MODE_BRIGHT;
+        pp->colorappearance.curveMode = ColorAppearanceParams::TcMode::BRIGHT;
     }
 
     tcMode = toneCurveMode2->get_active_row_number();
 
     if      (tcMode == 0) {
-        pp->colorappearance.curveMode2 = ColorAppearanceParams::TC_MODE_LIGHT;
+        pp->colorappearance.curveMode2 = ColorAppearanceParams::TcMode::LIGHT;
     } else if (tcMode == 1) {
-        pp->colorappearance.curveMode2 = ColorAppearanceParams::TC_MODE_BRIGHT;
+        pp->colorappearance.curveMode2 = ColorAppearanceParams::TcMode::BRIGHT;
     }
 
     int tcMode3 = toneCurveMode3->get_active_row_number();
 
     if      (tcMode3 == 0) {
-        pp->colorappearance.curveMode3 = ColorAppearanceParams::TC_MODE_CHROMA;
+        pp->colorappearance.curveMode3 = ColorAppearanceParams::CtcMode::CHROMA;
     } else if (tcMode3 == 1) {
-        pp->colorappearance.curveMode3 = ColorAppearanceParams::TC_MODE_SATUR;
+        pp->colorappearance.curveMode3 = ColorAppearanceParams::CtcMode::SATUR;
     } else if (tcMode3 == 2) {
-        pp->colorappearance.curveMode3 = ColorAppearanceParams::TC_MODE_COLORF;
+        pp->colorappearance.curveMode3 = ColorAppearanceParams::CtcMode::COLORF;
     }
 
     if (pedited) {

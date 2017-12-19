@@ -944,7 +944,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     // compute WB multipliers
     ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
 
-    if (params.wb.method == "Camera") {
+    if (!params.wb.enabled) {
+        currWB = ColorTemp();
+    } else if (params.wb.method == "Camera") {
         //recall colorMatrix is rgb_cam
         double cam_r = colorMatrix[0][0] * camwbRed + colorMatrix[0][1] * camwbGreen + colorMatrix[0][2] * camwbBlue;
         double cam_g = colorMatrix[1][0] * camwbRed + colorMatrix[1][1] * camwbGreen + colorMatrix[1][2] * camwbBlue;
@@ -954,12 +956,19 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         currWB = ColorTemp (autoWBTemp, autoWBGreen, wbEqual, "Custom");
     }
 
-    double r, g, b;
-    currWB.getMultipliers (r, g, b);
-    //iColorMatrix is cam_rgb
-    double rm = iColorMatrix[0][0] * r + iColorMatrix[0][1] * g + iColorMatrix[0][2] * b;
-    double gm = iColorMatrix[1][0] * r + iColorMatrix[1][1] * g + iColorMatrix[1][2] * b;
-    double bm = iColorMatrix[2][0] * r + iColorMatrix[2][1] * g + iColorMatrix[2][2] * b;
+    double rm, gm, bm;
+    if (currWB.getTemp() < 0) {
+        rm = redMultiplier;
+        gm = greenMultiplier;
+        bm = blueMultiplier;
+    } else {
+        double r, g, b;
+        currWB.getMultipliers (r, g, b);
+        //iColorMatrix is cam_rgb
+        rm = iColorMatrix[0][0] * r + iColorMatrix[0][1] * g + iColorMatrix[0][2] * b;
+        gm = iColorMatrix[1][0] * r + iColorMatrix[1][1] * g + iColorMatrix[1][2] * b;
+        bm = iColorMatrix[2][0] * r + iColorMatrix[2][1] * g + iColorMatrix[2][2] * b;
+    }
     rm = camwbRed / rm;
     gm = camwbGreen / gm;
     bm = camwbBlue / bm;

@@ -69,10 +69,12 @@
 #include "improcfun.h"
 #include "settings.h"
 #include "iccstore.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 #include "sleef.c"
 #include "opthelper.h"
+#include "rt_algo.h"
+
 namespace rtengine
 {
 
@@ -167,7 +169,7 @@ void downSample (const Array2Df& A, Array2Df& B)
     }
 }
 
-void gaussianBlur (const Array2Df& I, Array2Df& L)
+void gaussianBlur (const Array2Df& I, Array2Df& L, bool multithread)
 {
     const int width = I.getCols();
     const int height = I.getRows();
@@ -185,7 +187,7 @@ void gaussianBlur (const Array2Df& I, Array2Df& L)
     Array2Df T (width, height);
 
     //--- X blur
-    #pragma omp parallel for shared(I, T)
+    #pragma omp parallel for shared(I, T) if(multithread)
 
     for ( int y = 0 ; y < height ; y++ ) {
         for ( int x = 1 ; x < width - 1 ; x++ ) {
@@ -200,7 +202,7 @@ void gaussianBlur (const Array2Df& I, Array2Df& L)
     }
 
     //--- Y blur
-    #pragma omp parallel for
+    #pragma omp parallel for if(multithread)
 
     for ( int x = 0 ; x < width - 7 ; x += 8 ) {
         for ( int y = 1 ; y < height - 1 ; y++ ) {
@@ -231,21 +233,15 @@ void gaussianBlur (const Array2Df& I, Array2Df& L)
     }
 }
 
-void createGaussianPyramids ( Array2Df* H, Array2Df** pyramids, int nlevels)
+void createGaussianPyramids (Array2Df** pyramids, int nlevels, bool multithread)
 {
-    int width = H->getCols();
-    int height = H->getRows();
-    const int size = width * height;
+    // pyramids[0] is already set
+    int width = pyramids[0]->getCols();
+    int height = pyramids[0]->getRows();
 
-    pyramids[0] = new Array2Df (width, height);
-
-//#pragma omp parallel for shared(pyramids, H)
-    for ( int i = 0 ; i < size ; i++ ) {
-        (*pyramids[0]) (i) = (*H) (i);
-    }
 
     Array2Df* L = new Array2Df (width, height);
-    gaussianBlur ( *pyramids[0], *L );
+    gaussianBlur ( *pyramids[0], *L, multithread );
 
     for ( int k = 1 ; k < nlevels ; k++ ) {
         if (width > 2 && height > 2) {
@@ -267,7 +263,7 @@ void createGaussianPyramids ( Array2Df* H, Array2Df** pyramids, int nlevels)
         if (k < nlevels - 1) {
             delete L;
             L = new Array2Df (width, height);
-            gaussianBlur ( *pyramids[k], *L );
+            gaussianBlur ( *pyramids[k], *L, multithread );
         }
     }
 
@@ -276,14 +272,14 @@ void createGaussianPyramids ( Array2Df* H, Array2Df** pyramids, int nlevels)
 
 //--------------------------------------------------------------------
 
-float calculateGradients (Array2Df* H, Array2Df* G, int k)
+float calculateGradients (Array2Df* H, Array2Df* G, int k, bool multithread)
 {
     const int width = H->getCols();
     const int height = H->getRows();
     const float divider = pow ( 2.0f, k + 1 );
     float avgGrad = 0.0f;
 
-    #pragma omp parallel for reduction(+:avgGrad)
+    #pragma omp parallel for reduction(+:avgGrad) if(multithread)
 
     for ( int y = 0 ; y < height ; y++ ) {
         int n = (y == 0 ? 0 : y - 1);
@@ -350,20 +346,17 @@ void upSample (const Array2Df& A, Array2Df& B)
 
 void calculateFiMatrix (Array2Df* FI, Array2Df* gradients[],
                         float avgGrad[], int nlevels, int detail_level,
-                        float alfa, float beta, float noise)
+                        float alfa, float beta, float noise, bool multithread)
 {
-    const bool newfattal = true;
     int width = gradients[nlevels - 1]->getCols();
     int height = gradients[nlevels - 1]->getRows();
     Array2Df** fi = new Array2Df*[nlevels];
 
     fi[nlevels - 1] = new Array2Df (width, height);
 
-    if (newfattal) {
-        //#pragma omp parallel for shared(fi)
-        for ( int k = 0 ; k < width * height ; k++ ) {
-            (*fi[nlevels - 1]) (k) = 1.0f;
-        }
+    #pragma omp parallel for shared(fi) if(multithread)
+    for ( int k = 0 ; k < width * height ; k++ ) {
+        (*fi[nlevels - 1]) (k) = 1.0f;
     }
 
     for ( int k = nlevels - 1; k >= 0 ; k-- ) {
@@ -371,23 +364,16 @@ void calculateFiMatrix (Array2Df* FI, Array2Df* gradients[],
         height = gradients[k]->getRows();
 
         // only apply gradients to levels>=detail_level but at least to the coarsest
-        if ( k >= detail_level
-                || k == nlevels - 1
-                || newfattal == false) {
+        if ((k >= detail_level || k == nlevels - 1) && beta != 1.f)  {
             //DEBUG_STR << "calculateFiMatrix: apply gradient to level " << k << endl;
-            #pragma omp parallel for shared(fi,avgGrad)
+            #pragma omp parallel for shared(fi,avgGrad) if(multithread)
             for ( int y = 0; y < height; y++ ) {
                 for ( int x = 0; x < width; x++ ) {
                     float grad = ((*gradients[k]) (x, y) < 1e-4f) ? 1e-4 : (*gradients[k]) (x, y);
                     float a = alfa * avgGrad[k];
-
                     float value = pow ((grad + noise) / a, beta - 1.0f);
 
-                    if (newfattal) {
-                        (*fi[k]) (x, y) *= value;
-                    } else {
-                        (*fi[k]) (x, y) = value;
-                    }
+                    (*fi[k]) (x, y) *= value;
                 }
             }
         }
@@ -401,9 +387,9 @@ void calculateFiMatrix (Array2Df* FI, Array2Df* gradients[],
             fi[0] = FI;    // highest level -> result
         }
 
-        if ( k > 0  && newfattal ) {
+        if (k > 0) {
             upSample (*fi[k], *fi[k - 1]);        // upsample to next level
-            gaussianBlur (*fi[k - 1], *fi[k - 1]);
+            gaussianBlur (*fi[k - 1], *fi[k - 1], multithread);
         }
     }
 
@@ -412,80 +398,6 @@ void calculateFiMatrix (Array2Df* FI, Array2Df* gradients[],
     }
 
     delete[] fi;
-}
-
-inline
-void findMaxMinPercentile (const Array2Df& I,
-                           float minPrct, float& minLum,
-                           float maxPrct, float& maxLum)
-{
-    assert (minPrct <= maxPrct);
-
-    const int size = I.getRows() * I.getCols();
-    const float* data = I.data();
-
-    // we need to find the (minPrct*size) smallest value and the (maxPrct*size) smallest value in I
-    // We use a histogram based search for speed and to reduce memory usage
-    // memory usage of this method is 65536 * sizeof(float) * (t + 1) byte, where t is the number of threads
-
-    // We need one global histogram
-    LUTu histo (65536, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
-    histo.clear();
-#ifdef _OPENMP
-    #pragma omp parallel
-#endif
-    {
-        // We need one histogram per thread
-        LUTu histothr (65536, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
-        histothr.clear();
-
-#ifdef _OPENMP
-        #pragma omp for nowait
-#endif
-
-        for (int i = 0; i < size; ++i) {
-            // values are in [0;1] range, so we have to multiply with 65535 to get the histogram index
-            histothr[ (unsigned int) (65535.f * data[i])]++;
-        }
-
-#ifdef _OPENMP
-        #pragma omp critical
-#endif
-        // add per thread histogram to global histogram
-        histo += histothr;
-    }
-
-    int k = 0;
-    int count = 0;
-
-    // find (minPrct*size) smallest value
-    while (count < minPrct * size) {
-        count += histo[k++];
-    }
-
-    if (k > 0) { // interpolate
-        int count_ = count - histo[k - 1];
-        float c0 = count - minPrct * size;
-        float c1 = minPrct * size - count_;
-        minLum = (c1 * k + c0 * (k - 1)) / ((c0 + c1) * 65535.f);
-    } else {
-        minLum = k / 65535.f;
-    }
-
-    // find (maxPrct*size) smallest value
-    while (count < maxPrct * size) {
-        count += histo[k++];
-    }
-
-    if (k > 0) { // interpolate
-        int count_ = count - histo[k - 1];
-        float c0 = count - maxPrct * size;
-        float c1 = maxPrct * size - count_;
-        maxLum = (c1 * k + c0 * (k - 1)) / ((c0 + c1) * 65535.f);
-    } else {
-        maxLum = k / 65535.f;
-    }
-
 }
 
 void solve_pde_fft (Array2Df *F, Array2Df *U, Array2Df *buf, bool multithread);
@@ -543,7 +455,7 @@ void tmo_fattal02 (size_t width,
     float minLum = Y (0, 0);
     float maxLum = Y (0, 0);
 
-    #pragma omp parallel for reduction(max:maxLum)
+    #pragma omp parallel for reduction(max:maxLum) if(multithread)
 
     for ( int i = 0 ; i < size ; i++ ) {
         maxLum = std::max (maxLum, Y (i));
@@ -552,7 +464,7 @@ void tmo_fattal02 (size_t width,
     Array2Df* H = new Array2Df (width, height);
     float temp = 100.f / maxLum;
     float eps = 1e-4f;
-    #pragma omp parallel
+    #pragma omp parallel if(multithread)
     {
 #ifdef __SSE2__
         vfloat epsv = F2V (eps);
@@ -613,78 +525,55 @@ void tmo_fattal02 (size_t width,
 
     /** RT */
 
-    // create gaussian pyramids
-    // int mins = (width<height) ? width : height;    // smaller dimension
-    // int nlevels = 0;
-    // while ( mins >= MSIZE )
-    // {
-    //   nlevels++;
-    //   mins /= 2;
-    // }
-    // // std::cout << "DEBUG: nlevels = " << nlevels << ", mins = " << mins << std::endl;
-    // // The following lines solves a bug with images particularly small
-    // if (nlevels == 0) nlevels = 1;
     const int nlevels = 7; // RT -- see above
 
-    Array2Df** pyramids = new Array2Df*[nlevels];
-    createGaussianPyramids (H, pyramids, nlevels);
-    // ph.setValue(8);
+    Array2Df* pyramids[nlevels];
+    pyramids[0] = H;
+    createGaussianPyramids (pyramids, nlevels, multithread);
 
     // calculate gradients and its average values on pyramid levels
-    Array2Df** gradients = new Array2Df*[nlevels];
-    float* avgGrad = new float[nlevels];
+    Array2Df* gradients[nlevels];
+    float avgGrad[nlevels];
 
     for ( int k = 0 ; k < nlevels ; k++ ) {
         gradients[k] = new Array2Df (pyramids[k]->getCols(), pyramids[k]->getRows());
-        avgGrad[k] = calculateGradients (pyramids[k], gradients[k], k);
-        delete pyramids[k];
+        avgGrad[k] = calculateGradients (pyramids[k], gradients[k], k, multithread);
+        if(k != 0) // pyramids[0] is H. Will be deleted later
+            delete pyramids[k];
     }
 
-    delete[] pyramids;
-    // ph.setValue(12);
 
     // calculate fi matrix
     Array2Df* FI = new Array2Df (width, height);
-    calculateFiMatrix (FI, gradients, avgGrad, nlevels, detail_level, alfa, beta, noise);
+    calculateFiMatrix (FI, gradients, avgGrad, nlevels, detail_level, alfa, beta, noise, multithread);
 
-//  dumpPFS( "FI.pfs", FI, "Y" );
     for ( int i = 0 ; i < nlevels ; i++ ) {
         delete gradients[i];
     }
 
-    delete[] gradients;
-    delete[] avgGrad;
-    // ph.setValue(16);
-    // if (ph.canceled()){
-    //   delete FI;
-    //   delete H;
-    //   return;
-    // }
-
     /** - RT - bring back the FI image to the input size if it was downscaled */
     if (fullH) {
+        delete H;
+        H = fullH;
         Array2Df *FI2 = new Array2Df (fullwidth, fullheight);
         rescale_bilinear (*FI, *FI2, multithread);
         delete FI;
         FI = FI2;
         width = fullwidth;
         height = fullheight;
-        delete H;
-        H = fullH;
     }
 
     /** RT */
 
     // attenuate gradients
     Array2Df* Gx = new Array2Df (width, height);
-    Array2Df* Gy = new Array2Df (width, height);
+    Array2Df* Gy = &L; // use L as buffer for Gy
 
     // the fft solver solves the Poisson pde but with slightly different
     // boundary conditions, so we need to adjust the assembly of the right hand
     // side accordingly (basically fft solver assumes U(-1) = U(1), whereas zero
     // Neumann conditions assume U(-1)=U(0)), see also divergence calculation
-    // if (fftsolver)
-    #pragma omp parallel for
+    #pragma omp parallel for if(multithread)
 
     for ( size_t y = 0 ; y < height ; y++ ) {
         // sets index+1 based on the boundary assumption H(N+1)=H(N-1)
@@ -702,7 +591,7 @@ void tmo_fattal02 (size_t width,
     delete H;
 
     // calculate divergence
-    #pragma omp parallel for
+    #pragma omp parallel for if(multithread)
 
     for ( size_t y = 0; y < height; ++y ) {
         for ( size_t x = 0; x < width; ++x ) {
@@ -716,77 +605,58 @@ void tmo_fattal02 (size_t width,
                 (*FI) (x, y) -= (*Gy) (x, y - 1);
             }
 
-            // if (fftsolver)
-            {
-                if (x == 0) {
-                    (*FI) (x, y) += (*Gx) (x, y);
-                }
+            if (x == 0) {
+                (*FI) (x, y) += (*Gx) (x, y);
+            }
 
-                if (y == 0) {
-                    (*FI) (x, y) += (*Gy) (x, y);
-                }
+            if (y == 0) {
+                (*FI) (x, y) += (*Gy) (x, y);
             }
 
         }
     }
 
     //delete Gx; // RT - reused as temp buffer in solve_pde_fft, deleted later
-    delete Gy;
 
     // solve pde and exponentiate (ie recover compressed image)
     {
-        // if (fftsolver)
-        {
-            MyMutex::MyLock lock (*fftwMutex);
-            solve_pde_fft (FI, &L, Gx, multithread); //, ph);
-        }
-        delete Gx;
-        delete FI;
-        // else
-        // {
-        //     solve_pde_multigrid(&DivG, &U, ph);
-        // }
-// #ifndef NDEBUG
-//   printf("\npde residual error: %f\n", residual_pde(&U, &DivG));
-// #endif
-        // ph.setValue(90);
-        // if ( ph.canceled() )
-        // {
-        //     return;
-        // }
-        #pragma omp parallel
-        {
+        MyMutex::MyLock lock (*fftwMutex);
+        solve_pde_fft (FI, &L, Gx, multithread);
+    }
+    delete Gx;
+    delete FI;
+
+    #pragma omp parallel if(multithread)
+    {
 #ifdef __SSE2__
-            vfloat gammav = F2V (gamma);
+        vfloat gammav = F2V (gamma);
 #endif
-            #pragma omp for schedule(dynamic,16)
+        #pragma omp for schedule(dynamic,16)
 
-            for (size_t i = 0 ; i < height ; i++) {
-                size_t j = 0;
+        for (size_t i = 0 ; i < height ; i++) {
+            size_t j = 0;
 #ifdef __SSE2__
 
-                for (; j < width - 3; j += 4) {
-                    STVFU (L[i][j], xexpf (gammav * LVFU (L[i][j])));
-                }
+            for (; j < width - 3; j += 4) {
+                STVFU (L[i][j], xexpf (gammav * LVFU (L[i][j])));
+            }
 
 #endif
 
-                for (; j < width; j++) {
-                    L[i][j] = xexpf ( gamma * L[i][j]);
-                }
+            for (; j < width; j++) {
+                L[i][j] = xexpf ( gamma * L[i][j]);
             }
         }
     }
-    // ph.setValue(95);
 
     // remove percentile of min and max values and renormalize
     float cut_min = 0.01f * black_point;
     float cut_max = 1.0f - 0.01f * white_point;
     assert (cut_min >= 0.0f && (cut_max <= 1.0f) && (cut_min < cut_max));
-    findMaxMinPercentile (L, cut_min, minLum, cut_max, maxLum);
+    findMinMaxPercentile (L.data(), L.getRows() * L.getCols(), cut_min, minLum, cut_max, maxLum, multithread);
     float dividor = (maxLum - minLum);
 
-    #pragma omp parallel for
+    #pragma omp parallel for if(multithread)
 
     for (size_t i = 0; i < height; ++i) {
         for (size_t j = 0; j < width; ++j) {
@@ -841,35 +711,10 @@ void tmo_fattal02 (size_t width,
 // atimes(). This means the assembly of the right hand side F is different
 // for both solvers.
 
-// #include <iostream>
-
-// #include <boost/math/constants/constants.hpp>
-
-// #include <stdio.h>
-// #include <stdlib.h>
-// #include "arch/math.h"
-// #include <cassert>
-// #ifdef _OPENMP
-// #include <omp.h>
-// #endif
-// #include <vector>
-// #include <fftw3.h>
-
-// #include "Libpfs/progress.h"
-// #include "Libpfs/array2d.h"
-// #include "pde.h"
-
-// using namespace std;
-
-
-// #ifndef SQR
-// #define SQR(x) (x)*(x)
-// #endif
-
 
 // returns T = EVy A EVx^tr
 // note, modifies input data
-void transform_ev2normal (Array2Df *A, Array2Df *T)
+void transform_ev2normal (Array2Df *A, Array2Df *T, bool multithread)
 {
     int width = A->getCols();
     int height = A->getRows();
@@ -877,7 +722,7 @@ void transform_ev2normal (Array2Df *A, Array2Df *T)
 
     // the discrete cosine transform is not exactly the transform needed
     // need to scale input values to get the right transformation
-    #pragma omp parallel for
+    #pragma omp parallel for if(multithread)
 
     for (int y = 1 ; y < height - 1 ; y++ )
         for (int x = 1 ; x < width - 1 ; x++ ) {
@@ -913,7 +758,7 @@ void transform_ev2normal (Array2Df *A, Array2Df *T)
 
 
 // returns T = EVy^-1 * A * (EVx^-1)^tr
-void transform_normal2ev (Array2Df *A, Array2Df *T)
+void transform_normal2ev (Array2Df *A, Array2Df *T, bool multithread)
 {
     int width = A->getCols();
     int height = A->getRows();
@@ -928,7 +773,7 @@ void transform_normal2ev (Array2Df *A, Array2Df *T)
 
     // need to scale the output matrix to get the right transform
     float factor = (1.0f / ((height - 1) * (width - 1)));
-    #pragma omp parallel for
+    #pragma omp parallel for if(multithread)
 
     for (int y = 0 ; y < height ; y++ )
         for (int x = 0 ; x < width ; x++ ) {
@@ -1037,27 +882,17 @@ void solve_pde_fft (Array2Df *F, Array2Df *U, Array2Df *buf, bool multithread)/*
 
     // transforms F into eigenvector space: Ftr =
     //DEBUG_STR << "solve_pde_fft: transform F to ev space (fft)" << std::endl;
-    Array2Df* F_tr = buf; //new Array2Df(width,height);
-    transform_normal2ev (F, F_tr);
+    Array2Df* F_tr = buf;
+    transform_normal2ev (F, F_tr, multithread);
     // TODO: F no longer needed so could release memory, but as it is an
     // input parameter we won't do that
-    // ph.setValue(50);
-    // if (ph.canceled())
-    // {
-    //   delete F_tr;
-    //   return;
-    // }
 
-    //DEBUG_STR << "solve_pde_fft: F_tr(0,0) = " << (*F_tr)(0,0);
-    //DEBUG_STR << " (must be 0 for solution to exist)" << std::endl;
 
     // in the eigenvector space the solution is very simple
-    //DEBUG_STR << "solve_pde_fft: solve in eigenvector space" << std::endl;
-//  Array2Df* U_tr = new Array2Df(width,height);
     std::vector<double> l1 = get_lambda (height);
     std::vector<double> l2 = get_lambda (width);
 
-    #pragma omp parallel for
+    #pragma omp parallel for if(multithread)
 
     for (int y = 0 ; y < height ; y++ ) {
         for (int x = 0 ; x < width ; x++ ) {
@@ -1067,10 +902,8 @@ void solve_pde_fft (Array2Df *F, Array2Df *U, Array2Df *buf, bool multithread)/*
 
     (*F_tr) (0, 0) = 0.f; // any value ok, only adds a const to the solution
 
-    // transforms U_tr back to the normal space
-    //DEBUG_STR << "solve_pde_fft: transform U_tr to normal space (fft)" << std::endl;
-    transform_ev2normal (F_tr, U);
-//  delete F_tr;    // no longer needed so release memory
+    // transforms F_tr back to the normal space
+    transform_ev2normal (F_tr, U, multithread);
 
     // the solution U as calculated will satisfy something like int U = 0
     // since for any constant c, U-c is also a solution and we are mainly
@@ -1079,13 +912,13 @@ void solve_pde_fft (Array2Df *F, Array2Df *U, Array2Df *buf, bool multithread)/*
     // (not really needed but good for numerics as we later take exp(U))
     //DEBUG_STR << "solve_pde_fft: removing constant from solution" << std::endl;
     float max = 0.f;
-    #pragma omp parallel for reduction(max:max)
+    #pragma omp parallel for reduction(max:max) if(multithread)
 
     for (int i = 0; i < width * height; i++) {
         max = std::max (max, (*U) (i));
     }
 
-    #pragma omp parallel for
+    #pragma omp parallel for if(multithread)
 
     for (int i = 0; i < width * height; i++) {
         (*U) (i) -= max;
@@ -1335,17 +1168,18 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
     rescale_nearest (Yr, L, multiThread);
     tmo_fattal02 (w2, h2, L, L, alpha, beta, noise, detail_level, multiThread);
 
-//    tmo_fattal02(w, h, Yr, L, alpha, beta, noise, detail_level, multiThread);
-
+    const float hr = float(h2) / float(h);
+    const float wr = float(w2) / float(w);
+    
 #ifdef _OPENMP
     #pragma omp parallel for if(multiThread)
 #endif
-
     for (int y = 0; y < h; y++) {
-        int yy = y * h2 / h;
-
+        int yy = y * hr + 1;
+        
         for (int x = 0; x < w; x++) {
-            int xx = x * w2 / w;
+            int xx = x * wr + 1;
+            
             float Y = Yr (x, y);
             float l = std::max (L (xx, yy), epsilon) * (65535.f / Y);
             rgb->r (y, x) = std::max (rgb->r (y, x), 0.f) * l;

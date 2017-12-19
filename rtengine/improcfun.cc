@@ -438,11 +438,11 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int pW, int pwb, L
         }
 
         // extracting datas from 'params' to avoid cache flush (to be confirmed)
-        ColorAppearanceParams::eTCModeId curveMode = params->colorappearance.curveMode;
-        ColorAppearanceParams::eTCModeId curveMode2 = params->colorappearance.curveMode2;
+        ColorAppearanceParams::TcMode curveMode = params->colorappearance.curveMode;
+        ColorAppearanceParams::TcMode curveMode2 = params->colorappearance.curveMode2;
         bool hasColCurve1 = bool (customColCurve1);
         bool hasColCurve2 = bool (customColCurve2);
-        ColorAppearanceParams::eCTCModeId curveMode3 = params->colorappearance.curveMode3;
+        ColorAppearanceParams::CtcMode curveMode3 = params->colorappearance.curveMode3;
         bool hasColCurve3 = bool (customColCurve3);
 
 
@@ -801,7 +801,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int pW, int pwb, L
                     }
 
                     if (hasColCurve1) {//curve 1 with Lightness and Brightness
-                        if (curveMode == ColorAppearanceParams::TC_MODE_LIGHT) {
+                        if (curveMode == ColorAppearanceParams::TcMode::LIGHT) {
                             /*  float Jj=(float) Jpro*327.68;
                             float Jold=Jj;
                             const Lightcurve& userColCurve = static_cast<const Lightcurve&>(customColCurve1);
@@ -839,7 +839,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int pW, int pwb, L
                             }
 
                             t1L = true;
-                        } else if (curveMode == ColorAppearanceParams::TC_MODE_BRIGHT) {
+                        } else if (curveMode == ColorAppearanceParams::TcMode::BRIGHT) {
                             //attention! Brightness curves are open - unlike Lightness or Lab or RGB==> rendering  and algoritms will be different
                             float coef = ((aw + 4.f) * (4.f / c)) / 100.f;
                             float Qanc = Qpro;
@@ -887,7 +887,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int pW, int pwb, L
                     }
 
                     if (hasColCurve2) {//curve 2 with Lightness and Brightness
-                        if (curveMode2 == ColorAppearanceParams::TC_MODE_LIGHT) {
+                        if (curveMode2 == ColorAppearanceParams::TcMode::LIGHT) {
                             float Jj = (float) Jpro * 327.68;
                             float Jold = Jj;
                             /*
@@ -930,7 +930,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int pW, int pwb, L
                                 Jpro = 1.;
                             }
 
-                        } else if (curveMode2 == ColorAppearanceParams::TC_MODE_BRIGHT) { //
+                        } else if (curveMode2 == ColorAppearanceParams::TcMode::BRIGHT) { //
                             float Qanc = Qpro;
                             float coef = ((aw + 4.f) * (4.f / c)) / 100.f;
                             float Qq = (float) Qpro * 327.68f * (1.f / coef);
@@ -988,7 +988,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int pW, int pwb, L
                     }
 
                     if (hasColCurve3) {//curve 3 with chroma saturation colorfullness
-                        if (curveMode3 == ColorAppearanceParams::TC_MODE_CHROMA) {
+                        if (curveMode3 == ColorAppearanceParams::CtcMode::CHROMA) {
                             double parsat = 0.8; //0.68;
                             double coef = 327.68 / parsat;
                             float Cc = (float) Cpro * coef;
@@ -1012,7 +1012,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int pW, int pwb, L
                             }
 
                             //  Cpro=Cc/coef;
-                        } else if (curveMode3 == ColorAppearanceParams::TC_MODE_SATUR) { //
+                        } else if (curveMode3 == ColorAppearanceParams::CtcMode::SATUR) { //
                             double parsat = 0.8; //0.6
                             double coef = 327.68 / parsat;
                             float Ss = (float) spro * coef;
@@ -1032,7 +1032,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int pW, int pwb, L
                             Cpro = (spro * spro * Qpro) / (10000.0);
                             c1s = 1;
 
-                        } else if (curveMode3 == ColorAppearanceParams::TC_MODE_COLORF) { //
+                        } else if (curveMode3 == ColorAppearanceParams::CtcMode::COLORF) { //
                             double parsat = 0.8; //0.68;
                             double coef = 327.68 / parsat;
                             float Mm = (float) Mpro * coef;
@@ -1117,21 +1117,21 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int pW, int pwb, L
                         int libr = 0;
                         int colch = 0;
 
-                        if (curveMode == ColorAppearanceParams::TC_MODE_BRIGHT) {
+                        if (curveMode == ColorAppearanceParams::TcMode::BRIGHT) {
                             brli = 70.0;
                             libr = 1;
-                        } else if (curveMode == ColorAppearanceParams::TC_MODE_LIGHT) {
+                        } else if (curveMode == ColorAppearanceParams::TcMode::LIGHT) {
                             brli = 327.;
                             libr = 0;
                         }
 
-                        if (curveMode3 == ColorAppearanceParams::TC_MODE_CHROMA) {
+                        if (curveMode3 == ColorAppearanceParams::CtcMode::CHROMA) {
                             chsacol = 400.;//327.;
                             colch = 0;
-                        } else if (curveMode3 == ColorAppearanceParams::TC_MODE_SATUR) {
+                        } else if (curveMode3 == ColorAppearanceParams::CtcMode::SATUR) {
                             chsacol = 450.0;
                             colch = 1;
-                        } else if (curveMode3 == ColorAppearanceParams::TC_MODE_COLORF) {
+                        } else if (curveMode3 == ColorAppearanceParams::CtcMode::COLORF) {
                             chsacol = 400.;//327.0;
                             colch = 2;
                         }
@@ -1302,9 +1302,9 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int pW, int pwb, L
 //  if     (params->dirpyrequalizer.algo=="FI") choice=0;
 //  else if(params->dirpyrequalizer.algo=="LA") choice=1;
                 if (rtt == 1) {
-                    float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
-                    float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
-                    float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
+                    float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.getBottomLeft()) / 100.0f;
+                    float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.getTopLeft()) / 100.0f;
+                    float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.getTopRight()) / 100.0f;
                     dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold,  params->dirpyrequalizer.skinprotect, true, b_l, t_l, t_r, scale);   //contrast by detail adapted to CIECAM
                 }
             }
@@ -1378,21 +1378,21 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int pW, int pwb, L
                         int libr = 0;
                         int colch = 0;
 
-                        if (curveMode == ColorAppearanceParams::TC_MODE_BRIGHT) {
+                        if (curveMode == ColorAppearanceParams::TcMode::BRIGHT) {
                             brli = 70.0;
                             libr = 1;
-                        } else if (curveMode == ColorAppearanceParams::TC_MODE_LIGHT) {
+                        } else if (curveMode == ColorAppearanceParams::TcMode::LIGHT) {
                             brli = 327.;
                             libr = 0;
                         }
 
-                        if (curveMode3 == ColorAppearanceParams::TC_MODE_CHROMA) {
+                        if (curveMode3 == ColorAppearanceParams::CtcMode::CHROMA) {
                             chsacol = 400.;//327.;
                             colch = 0;
-                        } else if (curveMode3 == ColorAppearanceParams::TC_MODE_SATUR) {
+                        } else if (curveMode3 == ColorAppearanceParams::CtcMode::SATUR) {
                             chsacol = 450.0;
                             colch = 1;
-                        } else if (curveMode3 == ColorAppearanceParams::TC_MODE_COLORF) {
+                        } else if (curveMode3 == ColorAppearanceParams::CtcMode::COLORF) {
                             chsacol = 400.;//327.0;
                             colch = 2;
                         }
@@ -1752,14 +1752,14 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
         const float rstprotection = 100. - params->colorappearance.rstprotection;
 
         // extracting datas from 'params' to avoid cache flush (to be confirmed)
-        const ColorAppearanceParams::eTCModeId curveMode = params->colorappearance.curveMode;
+        const ColorAppearanceParams::TcMode curveMode = params->colorappearance.curveMode;
         const bool hasColCurve1 = bool (customColCurve1);
-        const bool t1L = hasColCurve1 && curveMode == ColorAppearanceParams::TC_MODE_LIGHT;
+        const bool t1L = hasColCurve1 && curveMode == ColorAppearanceParams::TcMode::LIGHT;
 
-        const ColorAppearanceParams::eTCModeId curveMode2 = params->colorappearance.curveMode2;
+        const ColorAppearanceParams::TcMode curveMode2 = params->colorappearance.curveMode2;
         const bool hasColCurve2 = bool (customColCurve2);
 
-        const ColorAppearanceParams::eCTCModeId curveMode3 = params->colorappearance.curveMode3;
+        const ColorAppearanceParams::CtcMode curveMode3 = params->colorappearance.curveMode3;
         const bool hasColCurve3 = bool (customColCurve3);
 
         bool needJ = (alg == 0 || alg == 1 || alg == 3);
@@ -2212,7 +2212,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                     }
 
                     if (hasColCurve1) {//curve 1 with Lightness and Brightness
-                        if (curveMode == ColorAppearanceParams::TC_MODE_LIGHT) {
+                        if (curveMode == ColorAppearanceParams::TcMode::LIGHT) {
                             float Jj = (float) Jpro * 327.68f;
                             float Jold = Jj;
                             float Jold100 = (float) Jpro;
@@ -2241,7 +2241,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                             if (Jpro < 1.f) {
                                 Jpro = 1.f;
                             }
-                        } else if (curveMode == ColorAppearanceParams::TC_MODE_BRIGHT) {
+                        } else if (curveMode == ColorAppearanceParams::TcMode::BRIGHT) {
                             //attention! Brightness curves are open - unlike Lightness or Lab or RGB==> rendering  and algoritms will be different
                             float coef = ((aw + 4.f) * (4.f / c)) / 100.f;
                             float Qanc = Qpro;
@@ -2285,7 +2285,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                     }
 
                     if (hasColCurve2) {//curve 2 with Lightness and Brightness
-                        if (curveMode2 == ColorAppearanceParams::TC_MODE_LIGHT) {
+                        if (curveMode2 == ColorAppearanceParams::TcMode::LIGHT) {
                             float Jj = (float) Jpro * 327.68f;
                             float Jold = Jj;
                             float Jold100 = (float) Jpro;
@@ -2323,7 +2323,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                                 Jpro = 1.f;
                             }
 
-                        } else if (curveMode2 == ColorAppearanceParams::TC_MODE_BRIGHT) { //
+                        } else if (curveMode2 == ColorAppearanceParams::TcMode::BRIGHT) { //
                             float Qanc = Qpro;
 
                             float coef = ((aw + 4.f) * (4.f / c)) / 100.f;
@@ -2380,7 +2380,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                     }
 
                     if (hasColCurve3) {//curve 3 with chroma saturation colorfullness
-                        if (curveMode3 == ColorAppearanceParams::TC_MODE_CHROMA) {
+                        if (curveMode3 == ColorAppearanceParams::CtcMode::CHROMA) {
                             float parsat = 0.8f; //0.68;
                             float coef = 327.68f / parsat;
                             float Cc = (float) Cpro * coef;
@@ -2403,7 +2403,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                                                             Cpro = 50.f;
                                                         }
                             */
-                        } else if (curveMode3 == ColorAppearanceParams::TC_MODE_SATUR) { //
+                        } else if (curveMode3 == ColorAppearanceParams::CtcMode::SATUR) { //
                             float parsat = 0.8f; //0.6
                             float coef = 327.68f / parsat;
                             float Ss = (float) spro * coef;
@@ -2420,7 +2420,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                             Color::skinredfloat (Jpro, hpro, Ss, Sold, dred, protect_red, sk, rstprotection, ko, spro);
                             Qpro = ( 4.0f / c ) * sqrtf ( Jpro / 100.0f ) * ( aw + 4.0f ) ;
                             Cpro = (spro * spro * Qpro) / (10000.0f);
-                        } else if (curveMode3 == ColorAppearanceParams::TC_MODE_COLORF) { //
+                        } else if (curveMode3 == ColorAppearanceParams::CtcMode::COLORF) { //
                             float parsat = 0.8f; //0.68;
                             float coef = 327.68f / parsat;
                             float Mm = (float) Mpro * coef;
@@ -2490,10 +2490,10 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                             float colch;
 
                             //update histogram
-                            if (curveMode == ColorAppearanceParams::TC_MODE_BRIGHT) {
+                            if (curveMode == ColorAppearanceParams::TcMode::BRIGHT) {
                                 brli = 70.0f;
                                 libr = Q;     //40.0 to 100.0 approximative factor for Q  - 327 for J
-                            } else { /*if(curveMode == ColorAppearanceParams::TC_MODE_LIGHT)*/
+                            } else { /*if(curveMode == ColorAppearanceParams::TCMode::LIGHT)*/
                                 brli = 327.f;
                                 libr = J;    //327 for J
                             }
@@ -2501,13 +2501,13 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                             posl = (int) (libr * brli);
                             hist16JCAM[posl]++;
 
-                            if (curveMode3 == ColorAppearanceParams::TC_MODE_CHROMA) {
+                            if (curveMode3 == ColorAppearanceParams::CtcMode::CHROMA) {
                                 chsacol = 400.f;//327
                                 colch = C;    //450.0 approximative factor for s    320 for M
-                            } else if (curveMode3 == ColorAppearanceParams::TC_MODE_SATUR) {
+                            } else if (curveMode3 == ColorAppearanceParams::CtcMode::SATUR) {
                                 chsacol = 450.0f;
                                 colch = s;
-                            } else { /*if(curveMode3 == ColorAppearanceParams::TC_MODE_COLORF)*/
+                            } else { /*if(curveMode3 == ColorAppearanceParams::CTCMode::COLORF)*/
                                 chsacol = 400.0f;//327
                                 colch = M;
                             }
@@ -2743,9 +2743,9 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
 //  else if(params->dirpyrequalizer.algo=="LA") choice=1;
 
                     if (rtt == 1) {
-                        float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
-                        float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
-                        float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
+                        float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.getBottomLeft()) / 100.0f;
+                        float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.getTopLeft()) / 100.0f;
+                        float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.getTopRight()) / 100.0f;
                         lab->deleteLab();
                         dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, params->dirpyrequalizer.skinprotect, true, b_l, t_l, t_r, scale); //contrast by detail adapted to CIECAM
                         lab->reallocLab();
@@ -2837,10 +2837,10 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                             float libr;
                             float colch;
 
-                            if (curveMode == ColorAppearanceParams::TC_MODE_BRIGHT) {
+                            if (curveMode == ColorAppearanceParams::TcMode::BRIGHT) {
                                 brli = 70.0f;
                                 libr = ncie->Q_p[i][j];    //40.0 to 100.0 approximative factor for Q  - 327 for J
-                            } else { /*if(curveMode == ColorAppearanceParams::TC_MODE_LIGHT)*/
+                            } else { /*if(curveMode == ColorAppearanceParams::TCMode::LIGHT)*/
                                 brli = 327.f;
                                 libr = ncie->J_p[i][j];    //327 for J
                             }
@@ -2848,13 +2848,13 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                             posl = (int) (libr * brli);
                             hist16JCAM[posl]++;
 
-                            if (curveMode3 == ColorAppearanceParams::TC_MODE_CHROMA) {
+                            if (curveMode3 == ColorAppearanceParams::CtcMode::CHROMA) {
                                 chsacol = 400.f;//327.f;
                                 colch = ncie_C_p;
-                            } else if (curveMode3 == ColorAppearanceParams::TC_MODE_SATUR) {
+                            } else if (curveMode3 == ColorAppearanceParams::CtcMode::SATUR) {
                                 chsacol = 450.0f;
                                 colch = 100.f * sqrtf (ncie_C_p / ncie->Q_p[i][j]);
-                            } else { /*if(curveMode3 == ColorAppearanceParams::TC_MODE_COLORF)*/
+                            } else { /*if(curveMode3 == ColorAppearanceParams::CTCMode::COLORF)*/
                                 chsacol = 400.f;//327.0f;
                                 colch = ncie->M_p[i][j];
                             }
@@ -3146,7 +3146,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
         {wprof[2][0], wprof[2][1], wprof[2][2]}
     };
 
-    bool mixchannels = (params->chmixer.red[0] != 100 || params->chmixer.red[1] != 0     || params->chmixer.red[2] != 0   ||
+    bool mixchannels = params->chmixer.enabled &&
+        (params->chmixer.red[0] != 100 || params->chmixer.red[1] != 0     || params->chmixer.red[2] != 0   ||
                         params->chmixer.green[0] != 0 || params->chmixer.green[1] != 100 || params->chmixer.green[2] != 0 ||
                         params->chmixer.blue[0] != 0  || params->chmixer.blue[1] != 0    || params->chmixer.blue[2] != 100);
 
@@ -3159,9 +3160,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     FlatCurveType sCurveType = (FlatCurveType)params->hsvequalizer.scurve.at (0);
     FlatCurveType vCurveType = (FlatCurveType)params->hsvequalizer.vcurve.at (0);
     FlatCurveType bwlCurveType = (FlatCurveType)params->blackwhite.luminanceCurve.at (0);
-    bool hCurveEnabled = hCurveType > FCT_Linear;
-    bool sCurveEnabled = sCurveType > FCT_Linear;
-    bool vCurveEnabled = vCurveType > FCT_Linear;
+    bool hCurveEnabled = params->hsvequalizer.enabled && hCurveType > FCT_Linear;
+    bool sCurveEnabled = params->hsvequalizer.enabled && sCurveType > FCT_Linear;
+    bool vCurveEnabled = params->hsvequalizer.enabled && vCurveType > FCT_Linear;
     bool bwlCurveEnabled = bwlCurveType > FCT_Linear;
 
     // TODO: We should create a 'skip' value like for CurveFactory::complexsgnCurve (rtengine/curves.cc)
@@ -3250,25 +3251,25 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     const float hlrange = 65536.0 - shoulder;
     const bool isProPhoto = (params->icm.working == "ProPhoto");
     // extracting datas from 'params' to avoid cache flush (to be confirmed)
-    ToneCurveParams::eTCModeId curveMode = params->toneCurve.curveMode;
-    ToneCurveParams::eTCModeId curveMode2 = params->toneCurve.curveMode2;
+    ToneCurveParams::TcMode curveMode = params->toneCurve.curveMode;
+    ToneCurveParams::TcMode curveMode2 = params->toneCurve.curveMode2;
     bool highlight = params->toneCurve.hrenabled;//Get the value if "highlight reconstruction" is activated
     bool hasToneCurve1 = bool (customToneCurve1);
     bool hasToneCurve2 = bool (customToneCurve2);
-    BlackWhiteParams::eTCModeId beforeCurveMode = params->blackwhite.beforeCurveMode;
-    BlackWhiteParams::eTCModeId afterCurveMode = params->blackwhite.afterCurveMode;
+    BlackWhiteParams::TcMode beforeCurveMode = params->blackwhite.beforeCurveMode;
+    BlackWhiteParams::TcMode afterCurveMode = params->blackwhite.afterCurveMode;
 
     bool hasToneCurvebw1 = bool (customToneCurvebw1);
     bool hasToneCurvebw2 = bool (customToneCurvebw2);
 
     PerceptualToneCurveState ptc1ApplyState, ptc2ApplyState;
 
-    if (hasToneCurve1 && curveMode == ToneCurveParams::TC_MODE_PERCEPTUAL) {
+    if (hasToneCurve1 && curveMode == ToneCurveParams::TcMode::PERCEPTUAL) {
         const PerceptualToneCurve& userToneCurve = static_cast<const PerceptualToneCurve&> (customToneCurve1);
         userToneCurve.initApplyState (ptc1ApplyState, params->icm.working);
     }
 
-    if (hasToneCurve2 && curveMode2 == ToneCurveParams::TC_MODE_PERCEPTUAL) {
+    if (hasToneCurve2 && curveMode2 == ToneCurveParams::TcMode::PERCEPTUAL) {
         const PerceptualToneCurve& userToneCurve = static_cast<const PerceptualToneCurve&> (customToneCurve2);
         userToneCurve.initApplyState (ptc2ApplyState, params->icm.working);
     }
@@ -3317,8 +3318,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     float RedHigh = (100.f + float (params->colorToning.redhigh)) / 100.f; //printf("RedH=%f\n",RedHigh);
     float GreenHigh = (100.f + float (params->colorToning.greenhigh)) / 100.f;
     float BlueHigh = (100.f + float (params->colorToning.bluehigh)) / 100.f;
-    float SatLow = float (params->colorToning.shadowsColSat.value[0]) / 100.f;
-    float SatHigh = float (params->colorToning.hlColSat.value[0]) / 100.f;
+    float SatLow = float (params->colorToning.shadowsColSat.getBottom()) / 100.f;
+    float SatHigh = float (params->colorToning.hlColSat.getBottom()) / 100.f;
 
     float Balan = float (params->colorToning.balance);
 
@@ -3621,21 +3622,21 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 }
 
                 if (hasToneCurve1) {
-                    if (curveMode == ToneCurveParams::TC_MODE_STD) { // Standard
+                    if (curveMode == ToneCurveParams::TcMode::STD) { // Standard
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
                             for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                                 const StandardToneCurve& userToneCurve = static_cast<const StandardToneCurve&> (customToneCurve1);
                                 userToneCurve.Apply (rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
                             }
                         }
-                    } else if (curveMode == ToneCurveParams::TC_MODE_FILMLIKE) { // Adobe like
+                    } else if (curveMode == ToneCurveParams::TcMode::FILMLIKE) { // Adobe like
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
                             for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                                 const AdobeToneCurve& userToneCurve = static_cast<const AdobeToneCurve&> (customToneCurve1);
                                 userToneCurve.Apply (rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
                             }
                         }
-                    } else if (curveMode == ToneCurveParams::TC_MODE_SATANDVALBLENDING) { // apply the curve on the saturation and value channels
+                    } else if (curveMode == ToneCurveParams::TcMode::SATANDVALBLENDING) { // apply the curve on the saturation and value channels
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
                             for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                                 const SatAndValueBlendingToneCurve& userToneCurve = static_cast<const SatAndValueBlendingToneCurve&> (customToneCurve1);
@@ -3645,7 +3646,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                 userToneCurve.Apply (rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
                             }
                         }
-                    } else if (curveMode == ToneCurveParams::TC_MODE_WEIGHTEDSTD) { // apply the curve to the rgb channels, weighted
+                    } else if (curveMode == ToneCurveParams::TcMode::WEIGHTEDSTD) { // apply the curve to the rgb channels, weighted
                         const WeightedStdToneCurve& userToneCurve = static_cast<const WeightedStdToneCurve&> (customToneCurve1);
 
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
@@ -3656,7 +3657,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                 userToneCurve.Apply (rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
                             }
                         }
-                    } else if (curveMode == ToneCurveParams::TC_MODE_LUMINANCE) { // apply the curve to the luminance channel
+                    } else if (curveMode == ToneCurveParams::TcMode::LUMINANCE) { // apply the curve to the luminance channel
                         const LuminanceToneCurve& userToneCurve = static_cast<const LuminanceToneCurve&> (customToneCurve1);
 
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
@@ -3667,7 +3668,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                 userToneCurve.Apply (rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
                             }
                         }
-                    } else if (curveMode == ToneCurveParams::TC_MODE_PERCEPTUAL) { // apply curve while keeping color appearance constant
+                    } else if (curveMode == ToneCurveParams::TcMode::PERCEPTUAL) { // apply curve while keeping color appearance constant
                         const PerceptualToneCurve& userToneCurve = static_cast<const PerceptualToneCurve&> (customToneCurve1);
 
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
@@ -3692,28 +3693,28 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 }
 
                 if (hasToneCurve2) {
-                    if (curveMode2 == ToneCurveParams::TC_MODE_STD) { // Standard
+                    if (curveMode2 == ToneCurveParams::TcMode::STD) { // Standard
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
                             for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                                 const StandardToneCurve& userToneCurve = static_cast<const StandardToneCurve&> (customToneCurve2);
                                 userToneCurve.Apply (rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
                             }
                         }
-                    } else if (curveMode2 == ToneCurveParams::TC_MODE_FILMLIKE) { // Adobe like
+                    } else if (curveMode2 == ToneCurveParams::TcMode::FILMLIKE) { // Adobe like
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
                             for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                                 const AdobeToneCurve& userToneCurve = static_cast<const AdobeToneCurve&> (customToneCurve2);
                                 userToneCurve.Apply (rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
                             }
                         }
-                    } else if (curveMode2 == ToneCurveParams::TC_MODE_SATANDVALBLENDING) { // apply the curve on the saturation and value channels
+                    } else if (curveMode2 == ToneCurveParams::TcMode::SATANDVALBLENDING) { // apply the curve on the saturation and value channels
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
                             for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                                 const SatAndValueBlendingToneCurve& userToneCurve = static_cast<const SatAndValueBlendingToneCurve&> (customToneCurve2);
                                 userToneCurve.Apply (rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
                             }
                         }
-                    } else if (curveMode2 == ToneCurveParams::TC_MODE_WEIGHTEDSTD) { // apply the curve to the rgb channels, weighted
+                    } else if (curveMode2 == ToneCurveParams::TcMode::WEIGHTEDSTD) { // apply the curve to the rgb channels, weighted
                         const WeightedStdToneCurve& userToneCurve = static_cast<const WeightedStdToneCurve&> (customToneCurve2);
 
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
@@ -3721,7 +3722,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                 userToneCurve.Apply (rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
                             }
                         }
-                    } else if (curveMode2 == ToneCurveParams::TC_MODE_LUMINANCE) { // apply the curve to the luminance channel
+                    } else if (curveMode2 == ToneCurveParams::TcMode::LUMINANCE) { // apply the curve to the luminance channel
                         const LuminanceToneCurve& userToneCurve = static_cast<const LuminanceToneCurve&> (customToneCurve2);
 
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
@@ -3729,7 +3730,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                 userToneCurve.Apply (rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
                             }
                         }
-                    } else if (curveMode2 == ToneCurveParams::TC_MODE_PERCEPTUAL) { // apply curve while keeping color appearance constant
+                    } else if (curveMode2 == ToneCurveParams::TcMode::PERCEPTUAL) { // apply curve while keeping color appearance constant
                         const PerceptualToneCurve& userToneCurve = static_cast<const PerceptualToneCurve&> (customToneCurve2);
 
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
@@ -3760,7 +3761,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                     }
                 }
 
-                if (rCurve || gCurve || bCurve) { // if any of the RGB curves is engaged
+                if (params->rgbCurves.enabled && (rCurve || gCurve || bCurve)) { // if any of the RGB curves is engaged
                     if (!params->rgbCurves.lumamode) { // normal RGB mode
 
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
@@ -4192,21 +4193,21 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 //black and white
                 if (blackwhite) {
                     if (hasToneCurvebw1) {
-                        if (beforeCurveMode == BlackWhiteParams::TC_MODE_STD_BW) { // Standard
+                        if (beforeCurveMode == BlackWhiteParams::TcMode::STD_BW) { // Standard
                             for (int i = istart, ti = 0; i < tH; i++, ti++) {
                                 for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                                     const StandardToneCurve& userToneCurvebw = static_cast<const StandardToneCurve&> (customToneCurvebw1);
                                     userToneCurvebw.Apply (rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
                                 }
                             }
-                        } else if (beforeCurveMode == BlackWhiteParams::TC_MODE_FILMLIKE_BW) { // Adobe like
+                        } else if (beforeCurveMode == BlackWhiteParams::TcMode::FILMLIKE_BW) { // Adobe like
                             for (int i = istart, ti = 0; i < tH; i++, ti++) {
                                 for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                                     const AdobeToneCurve& userToneCurvebw = static_cast<const AdobeToneCurve&> (customToneCurvebw1);
                                     userToneCurvebw.Apply (rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
                                 }
                             }
-                        } else if (beforeCurveMode == BlackWhiteParams::TC_MODE_SATANDVALBLENDING_BW) { // apply the curve on the saturation and value channels
+                        } else if (beforeCurveMode == BlackWhiteParams::TcMode::SATANDVALBLENDING_BW) { // apply the curve on the saturation and value channels
                             for (int i = istart, ti = 0; i < tH; i++, ti++) {
                                 for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                                     const SatAndValueBlendingToneCurve& userToneCurvebw = static_cast<const SatAndValueBlendingToneCurve&> (customToneCurvebw1);
@@ -4216,7 +4217,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                     userToneCurvebw.Apply (rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
                                 }
                             }
-                        } else if (beforeCurveMode == BlackWhiteParams::TC_MODE_WEIGHTEDSTD_BW) { // apply the curve to the rgb channels, weighted
+                        } else if (beforeCurveMode == BlackWhiteParams::TcMode::WEIGHTEDSTD_BW) { // apply the curve to the rgb channels, weighted
                             for (int i = istart, ti = 0; i < tH; i++, ti++) {
                                 for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                                     const WeightedStdToneCurve& userToneCurvebw = static_cast<const WeightedStdToneCurve&> (customToneCurvebw1);
@@ -4652,7 +4653,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
         if (hasToneCurvebw2) {
 
-            if (afterCurveMode == BlackWhiteParams::TC_MODE_STD_BW) { // Standard
+            if (afterCurveMode == BlackWhiteParams::TcMode::STD_BW) { // Standard
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic, 5)
 #endif
@@ -4663,7 +4664,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                         userToneCurve.Apply (tmpImage->r (i, j), tmpImage->g (i, j), tmpImage->b (i, j));
                     }
                 }
-            } else if (afterCurveMode == BlackWhiteParams::TC_MODE_WEIGHTEDSTD_BW) { // apply the curve to the rgb channels, weighted
+            } else if (afterCurveMode == BlackWhiteParams::TcMode::WEIGHTEDSTD_BW) { // apply the curve to the rgb channels, weighted
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic, 5)
 #endif
@@ -5585,6 +5586,10 @@ void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, LUTf & cur
 
 SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW, LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve, LUTf & lhskcurve, LUTf & clcurve, LUTf & curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histLCurve)
 {
+    if (!params->labCurve.enabled) {
+        return;
+    }
+    
     int W = lold->W;
     int H = lold->H;
     // lhskcurve.dump("lh_curve");
@@ -6488,9 +6493,9 @@ void ImProcFunctions::badpixlab (LabImage* lab, double rad, int thr, int mode, f
 void ImProcFunctions::dirpyrequalizer (LabImage* lab, int scale)
 {
     if (params->dirpyrequalizer.enabled && lab->W >= 8 && lab->H >= 8) {
-        float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
-        float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
-        float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
+        float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.getBottomLeft()) / 100.0f;
+        float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.getTopLeft()) / 100.0f;
+        float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.getTopRight()) / 100.0f;
         //      if     (params->dirpyrequalizer.algo=="FI") choice=0;
         //      else if(params->dirpyrequalizer.algo=="LA") choice=1;
         float artifact = (float) settings->artifact_cbdl;
