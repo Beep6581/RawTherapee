@@ -45,8 +45,7 @@ void ImProcFunctions::localContrast(LabImage *lab)
 
     const int width = lab->W;
     const int height = lab->H;
-    const float a = -params->localContrast.amount;
-    const float half = 0.5f;
+    const float a = params->localContrast.amount;
     const float dark = params->localContrast.darkness;
     const float light = params->localContrast.lightness;
     array2D<float> buf(width, height);
@@ -62,10 +61,10 @@ void ImProcFunctions::localContrast(LabImage *lab)
 #endif
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
-            float bufval = (buf[y][x] - lab->L[y][x]) * a;
+            float bufval = (lab->L[y][x] - buf[y][x]) * a;
 
             if (dark != 1 || light != 1) {
-                bufval = max(bufval, half) * light + min(bufval, half) * dark;
+                bufval *= (bufval > 0.f) ? light : dark;
             }
 
             lab->L[y][x] += bufval;
