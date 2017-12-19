@@ -364,6 +364,24 @@ struct LCurveParams
     bool operator !=(const LCurveParams& other) const;
 };
 
+
+/**
+ * Parameters for local contrast
+ */ 
+struct LocalContrastParams {
+    bool enabled;
+    int radius;
+    double amount;
+    double darkness;
+    double lightness;
+
+    LocalContrastParams();
+
+    bool operator==(const LocalContrastParams &other) const;
+    bool operator!=(const LocalContrastParams &other) const;
+};
+
+
 /**
   * Parameters of the RGB curves
   */
@@ -1340,6 +1358,7 @@ public:
     ToneCurveParams         toneCurve;       ///< Tone curve parameters
     LCurveParams            labCurve;        ///< CIELAB luminance curve parameters
     RetinexParams           retinex;         ///< Retinex parameters
+    LocalContrastParams     localContrast;   ////< Local contrast parameters
     RGBCurvesParams         rgbCurves;       ///< RGB curves parameters
     ColorToningParams       colorToning;     ///< Color Toning parameters
     SharpeningParams        sharpening;      ///< Sharpening parameters

@@ -98,6 +98,11 @@ void ParamsEdited::set (bool v)
     labCurve.avoidcolorshift = v;
     labCurve.rstprotection   = v;
     labCurve.lcredsk         = v;
+    localContrast.enabled = v;
+    localContrast.radius = v;
+    localContrast.amount = v;
+    localContrast.darkness = v;
+    localContrast.lightness = v;
     rgbCurves.enabled = v;
     rgbCurves.lumamode       = v;
     rgbCurves.rcurve         = v;
@@ -643,6 +648,13 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         labCurve.avoidcolorshift = labCurve.avoidcolorshift && p.labCurve.avoidcolorshift == other.labCurve.avoidcolorshift;
         labCurve.rstprotection = labCurve.rstprotection && p.labCurve.rstprotection == other.labCurve.rstprotection;
         labCurve.lcredsk = labCurve.lcredsk && p.labCurve.lcredsk == other.labCurve.lcredsk;
+
+        localContrast.enabled = localContrast.enabled && p.localContrast.enabled == other.localContrast.enabled;        
+        localContrast.radius = localContrast.radius && p.localContrast.radius == other.localContrast.radius;
+        localContrast.amount = localContrast.amount && p.localContrast.amount == other.localContrast.amount;
+        localContrast.darkness = localContrast.darkness && p.localContrast.darkness == other.localContrast.darkness;
+        localContrast.lightness = localContrast.lightness && p.localContrast.lightness == other.localContrast.lightness;
+        
         rgbCurves.enabled = rgbCurves.enabled && p.rgbCurves.enabled == other.rgbCurves.enabled;
         rgbCurves.lumamode = rgbCurves.lumamode && p.rgbCurves.lumamode == other.rgbCurves.lumamode;
         rgbCurves.rcurve = rgbCurves.rcurve && p.rgbCurves.rcurve == other.rgbCurves.rcurve;
@@ -1368,6 +1380,22 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (labCurve.lcredsk) {
         toEdit.labCurve.lcredsk     = mods.labCurve.lcredsk;
+    }
+
+    if (localContrast.enabled) {
+        toEdit.localContrast.enabled = mods.localContrast.enabled;
+    }
+    if (localContrast.radius) {
+        toEdit.localContrast.radius = mods.localContrast.radius;
+    }
+    if (localContrast.amount) {
+        toEdit.localContrast.amount = mods.localContrast.amount;
+    }
+    if (localContrast.darkness) {
+        toEdit.localContrast.darkness = mods.localContrast.darkness;
+    }
+    if (localContrast.lightness) {
+        toEdit.localContrast.lightness = mods.localContrast.lightness;
     }
 
     if (rgbCurves.enabled) {

@@ -3427,6 +3427,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
         int tW;
         int tH;
 
+        // zero out the buffers
+        memset(buffer, 0, 3 * sizeof (float) * TS * TS + 20 * 64 + 63);
+
         // Allocating buffer for the PipetteBuffer
         float *editIFloatTmpR = nullptr, *editIFloatTmpG = nullptr, *editIFloatTmpB = nullptr, *editWhateverTmp = nullptr;
 
@@ -4964,6 +4967,11 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
     if (vCurveEnabled) {
         delete vCurve;
+    }
+
+    if (params->localContrast.enabled) {
+        // Alberto's local contrast
+        localContrast(lab);
     }
 }
 

@@ -520,6 +520,11 @@ enum ProcEvent {
     EvWBEnabled = 490,
     EvRGBEnabled = 491,
     EvLEnabled = 492,
+    EvLocalContrastEnabled = 493,
+    EvLocalContrastRadius = 494,
+    EvLocalContrastAmount = 495,
+    EvLocalContrastDarkness = 496,
+    EvLocalContrastLightness = 497,
 
     NUMOFEVENTS
 

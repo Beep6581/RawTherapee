@@ -148,6 +148,7 @@ set(NONCLISOURCEFILES
     xtransrawexposure.cc
     zoompanel.cc
     fattaltonemap.cc
+    localcontrast.cc
     )
 
 include_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")

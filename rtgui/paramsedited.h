@@ -118,6 +118,17 @@ public:
     bool clcurve;
 };
 
+
+class LocalContrastParamsEdited {
+public:
+    bool enabled;
+    bool radius;
+    bool amount;
+    bool darkness;
+    bool lightness;
+};
+
+
 class RGBCurvesParamsEdited
 {
 
@@ -793,6 +804,7 @@ public:
     GeneralParamsEdited           general;
     ToneCurveParamsEdited         toneCurve;
     LCurveParamsEdited            labCurve;
+    LocalContrastParamsEdited     localContrast;
     RGBCurvesParamsEdited         rgbCurves;
     ColorToningEdited             colorToning;
     RetinexParamsEdited             retinex;
