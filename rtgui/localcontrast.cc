@@ -157,9 +157,11 @@ void LocalContrast::setBatchMode(bool batchMode)
 }
 
 
-// void LocalContrast::setAdjusterBehavior (bool alphaAdd, bool betaAdd)
-// {
-//     threshold->setAddMode(alphaAdd);
-//     amount->setAddMode(betaAdd);
-// }
+void LocalContrast::setAdjusterBehavior(bool radiusAdd, bool amountAdd, bool darknessAdd, bool lightnessAdd)
+{
+    radius->setAddMode(radiusAdd);
+    amount->setAddMode(amountAdd);
+    darkness->setAddMode(darknessAdd);
+    lightness->setAddMode(lightnessAdd);
+}
 
