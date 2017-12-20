@@ -138,12 +138,12 @@ public:
     template <typename T>
     void setDefaults (const rtengine::procparams::Threshold<T> &t)
     {
-        defPos[TS_BOTTOMLEFT] = double(t.value[0]);  // should we use shapeValue() ?
-        defPos[TS_TOPLEFT]    = double(t.value[1]);
+        defPos[TS_BOTTOMLEFT] = double(t.getBottomLeft());  // should we use shapeValue() ?
+        defPos[TS_TOPLEFT]    = double(t.getTopLeft());
 
         if (doubleThresh) {
-            defPos[TS_BOTTOMRIGHT] = double(t.value[2]);
-            defPos[TS_TOPRIGHT]    = double(t.value[3]);
+            defPos[TS_BOTTOMRIGHT] = double(t.getBottomRight());
+            defPos[TS_TOPRIGHT]    = double(t.getTopRight());
         }
     }
     void setDefaults (double bottom, double top);
@@ -151,12 +151,12 @@ public:
     template <typename T>
     void setPositions (const rtengine::procparams::Threshold<T> &tValues)
     {
-        positions[TS_BOTTOMLEFT]  = static_cast<double>(tValues.value[TS_BOTTOMLEFT]);
-        positions[TS_TOPLEFT]     = static_cast<double>(tValues.value[TS_TOPLEFT]);
+        positions[TS_BOTTOMLEFT]  = static_cast<double>(tValues.getBottomLeft());
+        positions[TS_TOPLEFT]     = static_cast<double>(tValues.getTopLeft());
 
         if (tValues.isDouble()) {
-            positions[TS_BOTTOMRIGHT] = static_cast<double>(tValues.value[TS_BOTTOMRIGHT]);
-            positions[TS_TOPRIGHT]    = static_cast<double>(tValues.value[TS_TOPRIGHT]);
+            positions[TS_BOTTOMRIGHT] = static_cast<double>(tValues.getBottomRight());
+            positions[TS_TOPRIGHT]    = static_cast<double>(tValues.getTopRight());
         }
 
         updateTooltip();

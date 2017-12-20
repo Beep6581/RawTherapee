@@ -225,7 +225,9 @@ private:
         // set the color temperature
         currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
 
-        if (params.wb.method == "Camera") {
+        if (!params.wb.enabled) {
+            currWB = ColorTemp();
+        } else if (params.wb.method == "Camera") {
             currWB = imgsrc->getWB ();
         } else if (params.wb.method == "Auto") {
             double rm, gm, bm;
@@ -320,7 +322,7 @@ private:
                             int beg_tileW = wcr * tileWskip + tileWskip / 2.f - crW / 2.f;
                             int beg_tileH = hcr * tileHskip + tileHskip / 2.f - crH / 2.f;
                             PreviewProps ppP (beg_tileW, beg_tileH, crW, crH, skipP);
-                            imgsrc->getImage (currWB, tr, origCropPart, ppP, params.toneCurve, params.icm, params.raw );
+                            imgsrc->getImage (currWB, tr, origCropPart, ppP, params.toneCurve, params.raw );
                             //baseImg->getStdImage(currWB, tr, origCropPart, ppP, true, params.toneCurve);
 
                             // we only need image reduced to 1/4 here
@@ -540,7 +542,7 @@ private:
                     for (int wcr = 0; wcr <= 2; wcr++) {
                         for (int hcr = 0; hcr <= 2; hcr++) {
                             PreviewProps ppP (coordW[wcr], coordH[hcr], crW, crH, 1);
-                            imgsrc->getImage (currWB, tr, origCropPart, ppP, params.toneCurve, params.icm, params.raw);
+                            imgsrc->getImage (currWB, tr, origCropPart, ppP, params.toneCurve, params.raw);
                             //baseImg->getStdImage(currWB, tr, origCropPart, ppP, true, params.toneCurve);
 
 
@@ -700,7 +702,7 @@ private:
         }
 
         baseImg = new Imagefloat (fw, fh);
-        imgsrc->getImage (currWB, tr, baseImg, pp, params.toneCurve, params.icm, params.raw);
+        imgsrc->getImage (currWB, tr, baseImg, pp, params.toneCurve, params.raw);
 
         if (pl) {
             pl->setProgress (0.50);
@@ -720,7 +722,7 @@ private:
             LUTu aehist;
             int aehistcompr;
             imgsrc->getAutoExpHistogram (aehist, aehistcompr);
-            ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
+            ipf.getAutoExp (aehist, aehistcompr, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
         }
 
         // at this stage, we can flush the raw data to free up quite an important amount of memory
@@ -780,9 +782,9 @@ private:
             // CurveFactory::denoiseLL(lldenoiseutili, denoiseParams.lcurve, Noisecurve,1);
             //denoiseParams.getCurves(noiseLCurve);
 //      ipf.RGB_denoise(baseImg, baseImg, calclum, imgsrc->isRAW(), denoiseParams, params.defringe, imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, lldenoiseutili);
-            float chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi;
+            float nresi, highresi;
             int kall = 2;
-            ipf.RGB_denoise (kall, baseImg, baseImg, calclum, ch_M, max_r, max_b, imgsrc->isRAW(), denoiseParams, imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi);
+            ipf.RGB_denoise (kall, baseImg, baseImg, calclum, ch_M, max_r, max_b, imgsrc->isRAW(), denoiseParams, imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, nresi, highresi);
 
         }
 
@@ -812,6 +814,10 @@ private:
 
         ipf.firstAnalysis (baseImg, params, hist16);
 
+        if (params.fattal.enabled) {
+            ipf.ToneMapFattal02(baseImg);
+        }
+                
         // perform transform (excepted resizing)
         if (ipf.needsTransform()) {
             Imagefloat* trImg = nullptr;
@@ -873,7 +879,7 @@ private:
         //if(params.blackwhite.enabled) params.toneCurve.hrenabled=false;
 
         CurveFactory::complexCurve (expcomp, black / 65535.0, hlcompr, hlcomprthresh, params.toneCurve.shcompr, bright, contr,
-                                    params.toneCurve.curveMode, params.toneCurve.curve, params.toneCurve.curveMode2, params.toneCurve.curve2,
+                                    params.toneCurve.curve, params.toneCurve.curve2,
                                     hist16, curve1, curve2, curve, dummy, customToneCurve1, customToneCurve2 );
 
         CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, 1);
@@ -889,13 +895,7 @@ private:
                 {wprof[1][0], wprof[1][1], wprof[1][2]},
                 {wprof[2][0], wprof[2][1], wprof[2][2]}
             };
-            TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params.icm.working);
-            double wip[3][3] = {
-                {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
-                {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
-                {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
-            };
-            params.colorToning.getCurves (ctColorCurve, ctOpacityCurve, wp, wip, opautili);
+            params.colorToning.getCurves (ctColorCurve, ctOpacityCurve, wp, opautili);
             clToningcurve (65536, 0);
             CurveFactory::curveToning (params.colorToning.clcurve, clToningcurve, 1);
             cl2Toningcurve (65536, 0);
@@ -934,7 +934,7 @@ private:
 
         autor = -9000.f; // This will ask to compute the "auto" values for the B&W tool (have to be inferior to -5000)
         DCPProfile::ApplyState as;
-        DCPProfile *dcpProf = imgsrc->getDCP (params.icm, currWB, as);
+        DCPProfile *dcpProf = imgsrc->getDCP (params.icm, as);
 
         LUTu histToneCurve;
 
@@ -1081,7 +1081,7 @@ private:
         CurveFactory::curveWavContL (wavcontlutili, params.wavelet.wavclCurve, wavclCurve,/* hist16C, dummy,*/ 1);
 
         if (params.wavelet.enabled) {
-            ipf.ip_wavelet (labView, labView, 2, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, wavcontlutili, 1);
+            ipf.ip_wavelet (labView, labView, 2, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, 1);
         }
 
         wavCLVCurve.Reset();
@@ -1089,7 +1089,6 @@ private:
         //Colorappearance and tone-mapping associated
 
         int f_w = 1, f_h = 1;
-        int begh = 0, endh = fh;
 
         if (params.colorappearance.tonecie || params.colorappearance.enabled) {
             f_w = fw;
@@ -1097,8 +1096,7 @@ private:
         }
 
         CieImage *cieView = new CieImage (f_w, (f_h));
-        begh = 0;
-        endh = fh;
+
         CurveFactory::curveLightBrightColor (
             params.colorappearance.curve,
             params.colorappearance.curve2,
@@ -1140,18 +1138,18 @@ private:
             if (params.sharpening.enabled) {
                 if (settings->ciecamfloat) {
                     float d, dj, yb;
-                    ipf.ciecam_02float (cieView, float (adap), begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, dj, yb, 1);
+                    ipf.ciecam_02float (cieView, float (adap), 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, dj, yb, 1);
                 } else {
-                    double dd, dj, yb;
-                    ipf.ciecam_02 (cieView, adap, begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, dd, dj, yb, 1);
+                    double dd, dj;
+                    ipf.ciecam_02 (cieView, adap, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, dd, dj, 1);
                 }
             } else {
                 if (settings->ciecamfloat) {
                     float d, dj, yb;
-                    ipf.ciecam_02float (cieView, float (adap), begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, dj, yb, 1);
+                    ipf.ciecam_02float (cieView, float (adap), 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, dj, yb, 1);
                 } else {
-                    double dd, dj, yb;
-                    ipf.ciecam_02 (cieView, adap, begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, dd, dj, yb, 1);
+                    double dd, dj;
+                    ipf.ciecam_02 (cieView, adap, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, dd, dj, 1);
                 }
             }
         }
@@ -1243,7 +1241,7 @@ private:
 
             GammaValues ga;
             //  if(params.blackwhite.enabled) params.toneCurve.hrenabled=false;
-            readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm, bwonly, &ga);
+            readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm, &ga);
             customGamma = true;
 
             //or selected Free gamma
@@ -1257,7 +1255,7 @@ private:
             // if Default gamma mode: we use the profile selected in the "Output profile" combobox;
             // gamma come from the selected profile, otherwise it comes from "Free gamma" tool
 
-            readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm, bwonly);
+            readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm);
 
             if (settings->verbose) {
                 printf ("Output profile_: \"%s\"\n", params.icm.output.c_str());
@@ -1481,16 +1479,12 @@ private:
                        params.defringe.radius);
         adjust_radius (defaultparams.sh.radius, scale_factor, params.sh.radius);
 
-        if (params.raw.xtranssensor.method ==
-                procparams::RAWParams::XTransSensor::methodstring[
-             procparams::RAWParams::XTransSensor::threePass]) {
-            params.raw.xtranssensor.method =
-                procparams::RAWParams::XTransSensor::methodstring[
-            procparams::RAWParams::XTransSensor::onePass];
+        if (params.raw.xtranssensor.method == procparams::RAWParams::XTransSensor::getMethodString(procparams::RAWParams::XTransSensor::Method::THREE_PASS)) {
+            params.raw.xtranssensor.method = procparams::RAWParams::XTransSensor::getMethodString(procparams::RAWParams::XTransSensor::Method::ONE_PASS);
         }
 
-        if (params.raw.bayersensor.method == procparams::RAWParams::BayerSensor::methodstring[procparams::RAWParams::BayerSensor::pixelshift]) {
-            params.raw.bayersensor.method = procparams::RAWParams::BayerSensor::methodstring[params.raw.bayersensor.pixelShiftLmmse ? procparams::RAWParams::BayerSensor::lmmse : procparams::RAWParams::BayerSensor::amaze];
+        if (params.raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::PIXELSHIFT)) {
+            params.raw.bayersensor.method = procparams::RAWParams::BayerSensor::getMethodString(params.raw.bayersensor.pixelShiftLmmse ? procparams::RAWParams::BayerSensor::Method::LMMSE : procparams::RAWParams::BayerSensor::Method::AMAZE);
         }
     }
 

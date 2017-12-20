@@ -1671,7 +1671,7 @@ void Tag::toString (char* buffer, int ofs)
 
     strcpy (buffer, "");
 
-    for (size_t i = 0; i < maxcount; i++) {
+    for (ssize_t i = 0; i < std::min<int>(maxcount, valuesize - ofs); i++) {
         if (i > 0) {
             strcat (buffer, ", ");
         }

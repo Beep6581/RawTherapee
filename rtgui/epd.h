@@ -43,6 +43,7 @@ public:
 
     void adjusterChanged (Adjuster* a, double newval);
     void enabledChanged  ();
+    void setAdjusterBehavior (bool stAdd, bool gAdd, bool esAdd, bool scAdd, bool rAdd);
 };
 
 #endif

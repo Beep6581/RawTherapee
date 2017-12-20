@@ -190,10 +190,6 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
         updateDisabled(false);
     }
 
-    ckbUseDist->set_active (pp->lensProf.useDist);
-    ckbUseVign->set_active (pp->lensProf.useVign && isRaw);
-    ckbUseCA->set_active   (pp->lensProf.useCA && isRaw);
-
     const LFDatabase *db = LFDatabase::getInstance();
     LFCamera c;
     
@@ -226,6 +222,10 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
 
     updateLensfunWarning();
 
+    ckbUseDist->set_active (pp->lensProf.useDist);
+    ckbUseVign->set_active (pp->lensProf.useVign && isRaw);
+    ckbUseCA->set_active(pp->lensProf.useCA && isRaw && ckbUseCA->get_sensitive());
+    
     enableListener ();
     conUseDist.block(false);
 }
@@ -254,6 +254,16 @@ void LensProfilePanel::updateLensfunWarning()
         }
         ckbUseVign->set_sensitive(l.hasVignettingCorrection());
         ckbUseDist->set_sensitive(l.hasDistortionCorrection());
+        ckbUseCA->set_sensitive(l.hasCACorrection());
+        if (!isRaw || !l.hasVignettingCorrection()) {
+            ckbUseVign->set_active(false);
+        }
+        if (!l.hasDistortionCorrection()) {
+            ckbUseDist->set_active(false);
+        }
+        if (!l.hasCACorrection()) {
+            ckbUseCA->set_active(false);
+        }
     }
 }
 

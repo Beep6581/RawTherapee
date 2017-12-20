@@ -34,6 +34,7 @@ CURVEEDITOR_TOOLTIPPASTE;Colle la courbe du presse-papier
 CURVEEDITOR_TOOLTIPSAVE;Enregistrer la courbe actuelle
 CURVEEDITOR_TYPE;Type:
 DIRBROWSER_FOLDERS;Répertoires
+DONT_SHOW_AGAIN;Ne plus montrer ce message.
 DYNPROFILEEDITOR_DELETE;Supprimer
 DYNPROFILEEDITOR_EDIT;Modifier
 DYNPROFILEEDITOR_EDIT_RULE;Modifier une règle de Profil Dynamique
@@ -233,6 +234,7 @@ GENERAL_PORTRAIT;Portrait
 GENERAL_SAVE;Enregistrer
 GENERAL_UNCHANGED;(Inchangé)
 GENERAL_WARNING;Attention
+GIMP_PLUGIN_INFO;Bienvenue dans le plugin RawTherapee de GIMP!\nUne fois l'édition terminée, fermez simplement la fenêtre principale de RawTherapee et l'image sera importée automatiquement dans GIMP.
 HISTOGRAM_TOOLTIP_B;Montrer/cacher l'histogramme BLEU
 HISTOGRAM_TOOLTIP_BAR;Montrer/Cacher l'indicateur RVB du pixel pointé\nCliquer le bouton droit de la souris sur l'image de prévisualisation pour geler/dégeler
 HISTOGRAM_TOOLTIP_CHRO;Montrer/Cacher l'histogramme de Chromaticité
@@ -703,6 +705,21 @@ HISTORY_MSG_472;PS - Adoucir les transitions
 HISTORY_MSG_473;PS - Utiliser LMMSE
 HISTORY_MSG_474;PS - Égaliser
 HISTORY_MSG_475;PS - Égaliser par canal
+HISTORY_MSG_476;CAM02 - Temp sortie
+HISTORY_MSG_477;CAM02 - Vert sortie
+HISTORY_MSG_478;CAM02 - Yb sortie
+HISTORY_MSG_479;CAM02 - adaptation CAT02 sortie
+HISTORY_MSG_480;CAM02 - CAT02 auto sortie
+HISTORY_MSG_481;CAM02 - Temp scène
+HISTORY_MSG_482;CAM02 - Green scène
+HISTORY_MSG_483;CAM02 - Yb scène
+HISTORY_MSG_484;CAM02 - Yb auto scène
+HISTORY_MSG_485;Correction d'Objectif
+HISTORY_MSG_486;Corr. d'Obj. - Appareil
+HISTORY_MSG_487;Corr. d'Obj. - Objectif
+HISTORY_MSG_488;Compression tonale HDR
+HISTORY_MSG_489;CT HDR - Seuil
+HISTORY_MSG_490;CT HDR - Quantité
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourci: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Capture
@@ -749,6 +766,10 @@ IPTCPANEL_TITLE;Titre
 IPTCPANEL_TITLEHINT;Enterez un nom court et humainement lisible pour l'image, cela peut être le nom du fichier.
 IPTCPANEL_TRANSREFERENCE;ID du travail
 IPTCPANEL_TRANSREFERENCEHINT;Enterez un nombre ou identifiant servant au contrôle du flux de travail ou au suivi.
+LENSPROFILE_CORRECTION_AUTOMATCH;Paramètres de correction trouvés automatiquement
+LENSPROFILE_CORRECTION_LCPFILE;Fichier LCP
+LENSPROFILE_CORRECTION_MANUAL;Paramètres de correction manuel
+LENSPROFILE_LENS_WARNING;Attention: la taille du capteur utilisé pour le profilage de l'objectif est plus grand que celui de l'appareil sélectionné, le résultat peut être faux.
 MAIN_BUTTON_FULLSCREEN;Plein écran
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigue à l'image Suivante relativement à l'image ouverte dans l'Éditeur\nRaccourci: <b>Shift-F4</b>\n\nPour naviguer à l'image Suivante relativement à la vignette sélectionnée dans le Navigateur de fichiers\nRaccourci: <b>F4</b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;Navigue à l'image Précédente relativement à l'image ouverte dans l'Éditeur\nRaccourci: <b>Shift-F3</b>\n\nPour naviguer à l'image Précédente relativement à la vignette sélectionnée dans le Navigateur de fichiers\nRaccourci: <b>F3</b>
@@ -807,6 +828,7 @@ MAIN_TAB_WAVELET_TOOLTIP;Raccourci: <b>Alt-w</b>
 MAIN_TOOLTIP_BACKCOLOR0;Couleur de fond de l'aperçu: <b>Selon le thème</b>\nRaccourci : <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR1;Couleur de fond de l'aperçu: <b>Noir</b>\nRaccourci : <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Couleur de fond de l'aperçu: <b>Blanc</b>\nRaccourci: <b>9</b>
+MAIN_TOOLTIP_BACKCOLOR3;Couleur de fond de l'aperçu: <b>Gris moyen</b>\nRaccourci : <b>9</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Vérouille</b> / <b>déverouille</b> la vue <b>Avant</b>\n\n<b>Vérouille</b>: garde la vue <b>Avant</b> inchangée - \nutile pour évaluer l'effet cumulatif de plusieurs outils.\nDe plus, une comparaison peut être faite à partir de n'importe quelle étape de l'historique\n\n<b>Déverouille</b>: la vue <b>Avant</b> représentera l'étape précédant la vue <b>Après</b>, montrant l'effet qui vient d'être modifié
 MAIN_TOOLTIP_HIDEHP;Montrer/cacher le panneau gauche (incluant l'historique)\nRaccourci: <b>l</b>
 MAIN_TOOLTIP_INDCLIPPEDH;Indication hautes lumières hors domaine\nRaccourci: <b>&lt;</b>
@@ -904,6 +926,7 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Ombres/Hautes lumières
 PARTIALPASTE_SHARPENEDGE;Bords
 PARTIALPASTE_SHARPENING;Netteté
 PARTIALPASTE_SHARPENMICRO;Microcontraste
+PARTIALPASTE_TM_FATTAL;Compression tonale HDR
 PARTIALPASTE_VIBRANCE;Vibrance
 PARTIALPASTE_VIGNETTING;Correction du vignettage
 PARTIALPASTE_WAVELETGROUP;Niveaux d'ondelette
@@ -916,6 +939,7 @@ PREFERENCES_AUTLISSTD;Haut
 PREFERENCES_AUTLISVLOW;Aucun
 PREFERENCES_AUTLOW;Bas
 PREFERENCES_AUTOMONPROFILE;Utiliser automatiquement le profil de l'écran principal
+PREFERENCES_AUTOSAVE_TP_OPEN;Sauver automatiquement l'état ouvert/fermé\n des outils avant de fermer
 PREFERENCES_AUTSTD;Standard
 PREFERENCES_BATCH_PROCESSING;Traitement par lot
 PREFERENCES_BEHADDALL;Tout à 'Ajoute'
@@ -952,6 +976,7 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 PREFERENCES_CUSTPROFBUILDPATH;Chemin de l'exécutable
 PREFERENCES_CUTOVERLAYBRUSH;Masque de recadrage
 PREFERENCES_D50;5000K
+PREFERENCES_D50_OLD;5000K
 PREFERENCES_D55;5500K
 PREFERENCES_D60;6000K
 PREFERENCES_D65;6500K
@@ -993,6 +1018,7 @@ PREFERENCES_GREY05;Yb=05 CIE L#30
 PREFERENCES_GREY10;Yb=10 CIE L#40
 PREFERENCES_GREY15;Yb=15 CIE L#45
 PREFERENCES_GREY18;Yb=18 CIE L#50
+PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
 PREFERENCES_GREY23;Yb=23 CIE L#55
 PREFERENCES_GREY30;Yb=30 CIE L#60
 PREFERENCES_GREY40;Yb=40 CIE L#70
@@ -1014,6 +1040,7 @@ PREFERENCES_INTENT_PERCEPTUAL;Perceptuel
 PREFERENCES_INTENT_RELATIVE;Colorimétrie relative
 PREFERENCES_INTENT_SATURATION;Saturation
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Afficher vignette incluse dans fichier RAW si non édité
+PREFERENCES_LANG;Langage
 PREFERENCES_LANGAUTODETECT;Utiliser les paramètres linguistiques de l'OS
 PREFERENCES_LEVAUTDN;Niveau de débruitage
 PREFERENCES_LEVDN;Taille de la cellule
@@ -1042,7 +1069,7 @@ PREFERENCES_OUTDIR;Dossier de sortie
 PREFERENCES_OUTDIRFOLDER;Dossier de sauvegarde
 PREFERENCES_OUTDIRFOLDERHINT;Place les images traitées dans le dossier selectionné
 PREFERENCES_OUTDIRTEMPLATE;Utiliser le modèle
-PREFERENCES_OUTDIRTEMPLATEHINT;Vous pouvez utiliser les paramètres de chaîne formatées suivants:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nCes chaînes de formattage se réfèrent aux différentes parties du chemin de la photo, certains de ses attributs ou un numéro de séquence arbitraire dans le traitement par lot.\n\nPar exemple, si la photo en cours de traitement a le chemin suivant:\n<b><i>/home/tom/image/02-09-2006/dsc0012.nef</i></b>\nla signification des chaînes de formattage est:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> sera remplacé par le rang de la photo. Si la photo n'a pas de rang, %r sera remplacé par '0'. Si la photo est dans la corbeille de RawTherapee, %r sera remplacé par 'x'.\n\n<b>%s1</b>, <b>%s2</b>, etc. sera remplacé par un index de séquence constitué de 1 à 9 chiffre. L'index de la séquence commencera à 1 à chaque fois que le file de traitement est démarrée, et est incrémenté de 1 pour chaque image traitée.\n\nSi vous voulez enregistrer l'image de sortie là où se trouve l'originale, écrivez:\n<b>%p1/%f</b>\n\nSi vous voulez enregistrer l'image de sortie dans un dossier nommé "<i>convertis</i>" situé dans le dossier de l'originale, écrivez:\n<b>%p1/convertis/%f</b>\n\nSi vous voulez enregistrer l'image de sortie dans un dossier nommé "<i>/home/tom/photos/convertis/2010-10-31</i>", écrivez:\n<b>%p2/convertis/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATEHINT;Vous pouvez utiliser les paramètres de chaîne formatées suivants:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nCes chaînes de formattage se réfèrent aux différentes parties du chemin de la photo, certains de ses attributs ou un numéro de séquence arbitraire dans le traitement par lot.\n\nPar exemple, si la photo en cours de traitement a le chemin suivant:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\nla signification des chaînes de formattage est:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> sera remplacé par le rang de la photo. Si la photo n'a pas de rang, %r sera remplacé par '0'. Si la photo est dans la corbeille de RawTherapee, %r sera remplacé par 'x'.\n\n<b>%s1</b>, <b>%s2</b>, etc. sera remplacé par un index de séquence constitué de 1 à 9 chiffres. L'index de la séquence commencera à 1 à chaque fois que le file de traitement est démarrée, et est incrémenté de 1 pour chaque image traitée.\n\nSi vous voulez enregistrer l'image de sortie là où se trouve l'originale, écrivez:\n<b>%p1/%f</b>\n\nSi vous voulez enregistrer l'image de sortie dans un dossier nommé "<i>convertis</i>" situé dans le dossier de l'originale, écrivez:\n<b>%p1/convertis/%f</b>\n\nSi vous voulez enregistrer l'image de sortie dans un dossier nommé "<i>/home/tom/photos/convertis/2010-10-31</i>", écrivez:\n<b>%p2/convertis/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Superposer les noms de fichier sur les vignettes dans le navigateur de fichier
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Superposer les noms de fichier sur les vignettes dans le panneau d'édition
 PREFERENCES_OVERWRITEOUTPUTFILE;Écraser le fichier s'il existe déjà
@@ -1075,6 +1102,7 @@ PREFERENCES_REMEMBERZOOMPAN;Se souvenir de niveau de zoom et de la position de l
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Retient le niveau de zoom et la position de l'image courante lors de l'ouverture d'une nouvelle image.\n\nCette option ne fonctionne que dans le mode "Éditeur unique" et quand "Méthode de dématriçage utilisé pour l'aperçu à un zoom <100%" is set to "Idem PP3".
 PREFERENCES_RGBDTL_LABEL;Nombre maximum d'unités de calcul pour la Réduction du bruit
 PREFERENCES_RGBDTL_TOOLTIP;La réduction du bruit nécessite un minimum d'à peu près 128Mo de RAM pour une image de 10MPix ou 512Mo pour une image de 40MPix, ainsi que 128Mo de RAM supplémentaire par unité de calcul. Plus il y aura d'unités de calcul travaillant en parallèle, plus ce sera rapide. Laissez la valeur à "0" pour utiliser automatiquement autant d'unités de calcul que possible.
+PREFERENCES_SAVE_TP_OPEN_NOW;Sauver l'état ouvert/fermé maintenant
 PREFERENCES_SELECTFONT;Police principale
 PREFERENCES_SELECTFONT_COLPICKER;Police des pipette à couleur
 PREFERENCES_SELECTLANG;Choix de la langue
@@ -1105,6 +1133,7 @@ PREFERENCES_TAB_GENERAL;Général
 PREFERENCES_TAB_IMPROC;Traitement de l'image
 PREFERENCES_TAB_PERFORMANCE;Performance
 PREFERENCES_TAB_SOUND;Sons
+PREFERENCES_THEME;Thème
 PREFERENCES_TIMAX;Haut
 PREFERENCES_TINB;Nombre de tuiles
 PREFERENCES_TISTD;Standard
@@ -1307,6 +1336,7 @@ TP_COLORAPP_DATACIE;Histogrammes post CIECAM dans les courbes
 TP_COLORAPP_DATACIE_TOOLTIP;Quand activé, les histogrammes de fond des courbes CIECAM02 montrent des valeurs/amplitudes approximatives de J/Q, ou de C:s/M après les ajustements CIECAM.\nCette sélection n'a pas d'incidence sur l'histogramme général.\n\nQuand désactivé, les histogrammes de fond des courbes CIECAM affichent les valeurs Lab avant les ajustements CIECAM
 TP_COLORAPP_DEGREE_AUTO_TOOLTIP;Si la case est cochée (recommandé), RT calcule une valeur optimale, qui est utilisée par CAT02, mais aussi pour l'ensemble de CIECAM02.\nVous pouvez décocher la case et changer la valeur du curseur; (les valeurs supérieures à 65 sont recommandées)
 TP_COLORAPP_DEGREE_TOOLTIP;Niveau d'adaptation chromatique CIE CAT 2002
+TP_COLORAPP_FREE;Temp libre+vert + CAT02 + [sortie]
 TP_COLORAPP_GAMUT;Contrôle du gamut (Lab)
 TP_COLORAPP_GAMUT_TOOLTIP;Permet le controle du gamut en mode Lab
 TP_COLORAPP_HUE;Teinte (h)
@@ -1319,6 +1349,8 @@ TP_COLORAPP_LIGHT;Luminosité (J)
 TP_COLORAPP_LIGHT_TOOLTIP;Luminosité dans CIECAM02 est différent de celui de Lab et RVB
 TP_COLORAPP_MODEL;Modèle de Point Blanc
 TP_COLORAPP_MODEL_TOOLTIP;Modèle de Point Blanc\n\n<b>BB [RT] + [sortie]:</b>\nLa BB de RT est utilisée pour la scène, CIECAM est réglé sur D50, le blanc du périphérique de sortie utilise la valeur réglée dans Préférences\n\n<b>BB [RT+CAT02] + [sortie]:</b>\nLes réglages de BB de RT sont utilisés par CAT02 et le blanc du périphérique de sortie utilise la valeur réglée dans Préférences
+TP_COLORAPP_NEUTRAL;Résinitialiser
+TP_COLORAPP_NEUTRAL_TIP;Réinitialiser tous les curseurs, cases à cocher et courbes à leurs valeur par défaut
 TP_COLORAPP_RSTPRO;Protection des tons chairs et rouges
 TP_COLORAPP_RSTPRO_TOOLTIP;Protection des tons chairs et rouges (curseurs et courbes)
 TP_COLORAPP_SHARPCIE;Netteté, Contraste par niveau de détails, Microcontraste & Aberration chromatique avec Q/C
@@ -1339,10 +1371,14 @@ TP_COLORAPP_TCMODE_LABEL2;Courbe mode 2
 TP_COLORAPP_TCMODE_LABEL3;Courbe chroma mode
 TP_COLORAPP_TCMODE_LIGHTNESS;Luminosité
 TP_COLORAPP_TCMODE_SATUR;Saturation
+TP_COLORAPP_TEMP_TOOLTIP;Pour sélectionner un illuminant, toujours régler Teinte=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
 TP_COLORAPP_TONECIE;Compression Tonale utilisant CIECAM02
 TP_COLORAPP_TONECIE_TOOLTIP;Si cette option est désactivée, la compression tonale est faite dans l'espace Lab.\nSi cette options est activée, la compression tonale est faite en utilisant CIECAM02.\nL'outil Compression Tonale doit être activé pour que ce réglage prenne effet
 TP_COLORAPP_WBCAM;BB [RT+CAT02] + [sortie]
 TP_COLORAPP_WBRT;BB [RT] + [sortie]
+TP_COLORAPP_YB;Yb% (luminance moyenne)
+TP_COLORAPP_YBSCENE;Yb% (luminance moyenne)
+TP_COLORAPP_YBSCENE_TOOLTIP;si auto activé, Yb est calculé suivant la valeur de luminance moyenne de l'image actuelle
 TP_COLORTONING_AB;o C/L
 TP_COLORTONING_AUTOSAT;Automatique
 TP_COLORTONING_BALANCE;Balance
@@ -1892,6 +1928,9 @@ TP_SHARPENMICRO_AMOUNT;Quantité
 TP_SHARPENMICRO_LABEL;Microcontraste
 TP_SHARPENMICRO_MATRIX;Matrice 3×3 au lieu de 5×5
 TP_SHARPENMICRO_UNIFORMITY;Uniformité
+TP_TM_FATTAL_AMOUNT;Quantité
+TP_TM_FATTAL_LABEL;Compression Tonale HDR
+TP_TM_FATTAL_THRESHOLD;Seuil
 TP_VIBRANCE_AVOIDCOLORSHIFT;Éviter les dérives de teinte
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;TT
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Tons chair
@@ -2139,35 +2178,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!DONT_SHOW_AGAIN;Don't show this message again.
-!GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
-!HISTORY_MSG_476;CAM02 - Temp out
-!HISTORY_MSG_477;CAM02 - Green out
-!HISTORY_MSG_478;CAM02 - Yb out
-!HISTORY_MSG_479;CAM02 - CAT02 adaptation out
-!HISTORY_MSG_480;CAM02 - Automatic CAT02 out
-!HISTORY_MSG_481;CAM02 - Temp scene
-!HISTORY_MSG_482;CAM02 - Green scene
-!HISTORY_MSG_483;CAM02 - Yb scene
-!HISTORY_MSG_484;CAM02 - Auto Yb scene
-!HISTORY_MSG_485;Lens Correction
-!HISTORY_MSG_486;Lens Correction - Camera
-!HISTORY_MSG_487;Lens Correction - Lens
-!LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
-!LENSPROFILE_CORRECTION_LCPFILE;LCP File
-!LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
-!LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
-!MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
-!PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
-!PREFERENCES_D50_OLD;5000K
-!PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
-!PREFERENCES_LANG;Language
-!PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
-!PREFERENCES_THEME;Theme
-!TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
-!TP_COLORAPP_NEUTRAL;Reset
-!TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
-!TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
-!TP_COLORAPP_YB;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE_TOOLTIP;if auto enable, Yb is calculated from the mean value of actual image luminance
+!HISTORY_MSG_491;White Balance
+!HISTORY_MSG_492;RGB Curves
+!HISTORY_MSG_493;L*a*b* Adjustments
+!TP_RAW_RCD;RCD

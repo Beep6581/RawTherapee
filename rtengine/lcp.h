@@ -164,7 +164,7 @@ public:
     virtual ~LensCorrection() {}
     virtual void correctDistortion(double &x, double &y, int cx, int cy, double scale) const = 0;
     virtual bool isCACorrectionAvailable() const = 0;
-    virtual void correctCA(double &x, double &y, int channel) const = 0;
+    virtual void correctCA(double &x, double &y, int cx, int cy, int channel) const = 0;
     virtual void processVignetteLine(int width, int y, int xoffs, int yoffs, float *line) const = 0;
     virtual void processVignetteLine3Channels(int width, int y, float *line) const = 0;
 };
@@ -192,7 +192,7 @@ public:
 
     void correctDistortion(double &x, double &y, int cx, int cy, double scale) const;  // MUST be the first stage
     bool isCACorrectionAvailable() const;
-    void correctCA(double& x, double& y, int channel) const;
+    void correctCA(double& x, double& y, int cx, int cy, int channel) const;
     void processVignetteLine(int width, int y, int xoffs, int yoffs, float* line) const;
     void processVignetteLine3Channels(int width, int y, float* line) const;
 

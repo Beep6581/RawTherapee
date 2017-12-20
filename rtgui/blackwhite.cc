@@ -500,7 +500,7 @@ void BlackWhite::read (const ProcParams* pp, const ParamsEdited* pedited)
     mixerPurple->setValue (pp->blackwhite.mixerPurple);
     luminanceCurve->setCurve (pp->blackwhite.luminanceCurve);
     beforeCurve->setCurve (pp->blackwhite.beforeCurve);
-    beforeCurveMode->set_active(pp->blackwhite.beforeCurveMode);
+    beforeCurveMode->set_active(toUnderlying(pp->blackwhite.beforeCurveMode));
     afterCurve->setCurve (pp->blackwhite.afterCurve);
 //  afterCurveMode->set_active(pp->blackwhite.afterCurveMode);
 
@@ -583,18 +583,18 @@ void BlackWhite::write (ProcParams* pp, ParamsEdited* pedited)
     int tcMode = beforeCurveMode->get_active_row_number();
 
     if      (tcMode == 0) {
-        pp->blackwhite.beforeCurveMode = BlackWhiteParams::TC_MODE_STD_BW;
+        pp->blackwhite.beforeCurveMode = BlackWhiteParams::TcMode::STD_BW;
     } else if (tcMode == 1) {
-        pp->blackwhite.beforeCurveMode = BlackWhiteParams::TC_MODE_WEIGHTEDSTD_BW;
+        pp->blackwhite.beforeCurveMode = BlackWhiteParams::TcMode::WEIGHTEDSTD_BW;
     } else if (tcMode == 2) {
-        pp->blackwhite.beforeCurveMode = BlackWhiteParams::TC_MODE_FILMLIKE_BW;
+        pp->blackwhite.beforeCurveMode = BlackWhiteParams::TcMode::FILMLIKE_BW;
     } else if (tcMode == 3) {
-        pp->blackwhite.beforeCurveMode = BlackWhiteParams::TC_MODE_SATANDVALBLENDING_BW;
+        pp->blackwhite.beforeCurveMode = BlackWhiteParams::TcMode::SATANDVALBLENDING_BW;
     }
 
 //  tcMode = afterCurveMode->get_active_row_number();
-//  if      (tcMode == 0) pp->blackwhite.afterCurveMode = BlackWhiteParams::TC_MODE_STD_BW;
-    //  else if (tcMode == 1) pp->blackwhite.afterCurveMode = BlackWhiteParams::TC_MODE_WEIGHTEDSTD;
+//  if      (tcMode == 0) pp->blackwhite.afterCurveMode = BlackWhiteParams::TCMode::STD_BW;
+    //  else if (tcMode == 1) pp->blackwhite.afterCurveMode = BlackWhiteParams::TCMode::WEIGHTEDSTD;
 
     if (pedited) {
         pedited->blackwhite.enabled = !get_inconsistent();

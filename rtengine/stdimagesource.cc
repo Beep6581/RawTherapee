@@ -102,7 +102,7 @@ void StdImageSource::getSampleFormat (const Glib::ustring &fname, IIOSampleForma
  * and RT's image data type (Image8, Image16 and Imagefloat), then it will
  * load the image into it
  */
-int StdImageSource::load (const Glib::ustring &fname, RAWParams *raw, int imageNum,  bool batch)
+int StdImageSource::load (const Glib::ustring &fname, RAWParams *raw)
 {
 
     fileName = fname;
@@ -187,7 +187,7 @@ int StdImageSource::load (const Glib::ustring &fname, RAWParams *raw, int imageN
     return 0;
 }
 
-void StdImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const ColorManagementParams &cmp, const RAWParams &raw)
+void StdImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw)
 {
 
     // the code will use OpenMP as of now.

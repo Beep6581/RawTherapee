@@ -58,9 +58,8 @@ public:
     ,RT_whitelevel_from_constant(0)
     ,RT_blacklevel_from_constant(0)
     ,RT_matrix_from_constant(0)
+    ,RT_from_adobe_dng_converter(false)
 	,getbithuff(this,ifp,zero_after_ff)
-	,ph1_bithuff(this,ifp,order)
-	,pana_bits(ifp,load_flags)
     {
         memset(&hbd, 0, sizeof(hbd));
         aber[0]=aber[1]=aber[2]=aber[3]=1;
@@ -69,7 +68,6 @@ public:
         greybox[0]=greybox[1]=0; greybox[2]=greybox[3]= UINT_MAX;
     }
 
-    //int main (int argc, const char **argv);
 protected:
     int exif_base, ciff_base, ciff_len;
     IMFILE *ifp;
@@ -154,6 +152,7 @@ protected:
     int RT_whitelevel_from_constant;
     int RT_blacklevel_from_constant;
     int RT_matrix_from_constant;
+    bool RT_from_adobe_dng_converter;
 
     float cam_mul[4], pre_mul[4], cmatrix[3][4], rgb_cam[3][4];
 
@@ -285,8 +284,8 @@ void fuji_extend_generic(ushort *linebuf[_ltotal], int line_width, int start, in
 void fuji_extend_red(ushort *linebuf[_ltotal], int line_width);
 void fuji_extend_green(ushort *linebuf[_ltotal], int line_width);
 void fuji_extend_blue(ushort *linebuf[_ltotal], int line_width);
-void xtrans_decode_block(struct fuji_compressed_block* info, const struct fuji_compressed_params *params, int cur_line);
-void fuji_bayer_decode_block(struct fuji_compressed_block* info, const struct fuji_compressed_params *params, int cur_line);
+void xtrans_decode_block(struct fuji_compressed_block* info, const struct fuji_compressed_params *params);
+void fuji_bayer_decode_block(struct fuji_compressed_block* info, const struct fuji_compressed_params *params);
 void fuji_decode_strip(const struct fuji_compressed_params* info_common, int cur_block, INT64 raw_offset, unsigned dsize);
 void fuji_compressed_load_raw();
 void fuji_decode_loop(const struct fuji_compressed_params* common_info, int count, INT64* raw_block_offsets, unsigned *block_sizes);
@@ -316,19 +315,45 @@ void parse_qt (int end);
 // ph1_bithuff(int nbits, ushort *huff);
 class ph1_bithuff_t {
 public:
-   ph1_bithuff_t(DCraw *p,IMFILE *&i,short &o):parent(p),order(o),ifp(i),bitbuf(0),vbits(0){}
+   ph1_bithuff_t(DCraw *p, IMFILE *i, short &o):parent(p),order(o),ifp(i),bitbuf(0),vbits(0){}
    unsigned operator()(int nbits, ushort *huff);
+   unsigned operator()(int nbits);
+   unsigned operator()();
+    ushort get2() {
+        uchar str[2] = { 0xff,0xff };
+        fread (str, 1, 2, ifp);
+        if (order == 0x4949) { /* "II" means little-endian */
+            return str[0] | str[1] << 8;
+        } else { /* "MM" means big-endian */
+            return str[0] << 8 | str[1];
+        }
+    }
 private:
-   unsigned get4(){
-	 return parent->get4();
+    inline unsigned get4() {
+        unsigned val = 0xffffff;
+        uchar* str = (uchar*)&val;
+        fread (str, 1, 4, ifp);
+        if (order == 0x4949) {
+#if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
+            return val;
+#else
+            return str[0] | str[1] << 8 | str[2] << 16 | str[3] << 24;
+#endif
+        } else {
+#if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
+            return str[0] << 24 | str[1] << 16 | str[2] << 8 | str[3];
+#else
+            return val;
+#endif
+        }
    }
+
    DCraw *parent;
    short &order;
-   IMFILE *&ifp;
+   IMFILE* const ifp;
    UINT64 bitbuf;
    int vbits;
 };
-ph1_bithuff_t ph1_bithuff;
 
 void phase_one_load_raw_c();
 void hasselblad_correct();
@@ -341,18 +366,16 @@ void imacon_full_load_raw();
 void packed_load_raw();
 void nokia_load_raw();
 
-// pana_bits(int nbits);
 class pana_bits_t{
 public:
-   pana_bits_t(IMFILE *&i,unsigned &u):ifp(i),load_flags(u),vbits(0){}
+   pana_bits_t(IMFILE *i, unsigned &u): ifp(i), load_flags(u), vbits(0) {}
    unsigned operator()(int nbits);
 private:
-   IMFILE *&ifp;
+   IMFILE *ifp;
    unsigned &load_flags;
    uchar buf[0x4000];
    int vbits;
 };
-pana_bits_t pana_bits;
 
 void canon_rmf_load_raw();
 void panasonic_load_raw();

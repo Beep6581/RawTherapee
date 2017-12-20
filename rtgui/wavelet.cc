@@ -408,12 +408,11 @@ Wavelet::Wavelet() :
 
     opaCurveEditorG->setCurveListener (this);
 
-    std::vector<double> defaultCurve;
+    const WaveletParams default_params;
 
-    rtengine::WaveletParams::getDefaultOpacityCurveRG(defaultCurve);
     opacityShapeRG = static_cast<FlatCurveEditor*>(opaCurveEditorG->addCurve(CT_Flat, "", nullptr, false, false));
     opacityShapeRG->setIdentityValue(0.);
-    opacityShapeRG->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
+    opacityShapeRG->setResetCurve(FlatCurveType(default_params.opacityCurveRG.at(0)), default_params.opacityCurveRG);
 
     opaCurveEditorG->curveListComplete();
     opaCurveEditorG->show();
@@ -422,10 +421,9 @@ Wavelet::Wavelet() :
 
     opacityCurveEditorG->setCurveListener (this);
 
-    rtengine::WaveletParams::getDefaultOpacityCurveBY(defaultCurve);
     opacityShapeBY = static_cast<FlatCurveEditor*>(opacityCurveEditorG->addCurve(CT_Flat, "", nullptr, false, false));
     opacityShapeBY->setIdentityValue(0.);
-    opacityShapeBY->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
+    opacityShapeBY->setResetCurve(FlatCurveType(default_params.opacityCurveBY.at(0)), default_params.opacityCurveBY);
 
     opacityCurveEditorG->curveListComplete();
     opacityCurveEditorG->show();
@@ -502,11 +500,10 @@ Wavelet::Wavelet() :
     // <-- Edge Sharpness  Local Contrast curve
     CCWcurveEditorG->setCurveListener (this);
 
-    rtengine::WaveletParams::getDefaultCCWCurve(defaultCurve);
     ccshape = static_cast<FlatCurveEditor*>(CCWcurveEditorG->addCurve(CT_Flat, "", nullptr, false, false));
 
     ccshape->setIdentityValue(0.);
-    ccshape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
+    ccshape->setResetCurve(FlatCurveType(default_params.ccwcurve.at(0)), default_params.ccwcurve);
     ccshape->setTooltip(M("TP_WAVELET_CURVEEDITOR_CC_TOOLTIP"));
 
     CCWcurveEditorG->curveListComplete();
@@ -781,10 +778,9 @@ Wavelet::Wavelet() :
 
     opacityCurveEditorW->setCurveListener (this);
 
-    rtengine::WaveletParams::getDefaultOpacityCurveW(defaultCurve);
     opacityShape = static_cast<FlatCurveEditor*>(opacityCurveEditorW->addCurve(CT_Flat, "", nullptr, false, false));
     opacityShape->setIdentityValue(0.);
-    opacityShape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
+    opacityShape->setResetCurve(FlatCurveType(default_params.opacityCurveW.at(0)), default_params.opacityCurveW);
     opacityShape->setBottomBarBgGradient(milestones2);
 
     // This will add the reset button at the end of the curveType buttons
@@ -798,10 +794,9 @@ Wavelet::Wavelet() :
 
     opacityCurveEditorWL->setCurveListener (this);
 
-    rtengine::WaveletParams::getDefaultOpacityCurveWL(defaultCurve);
     opacityShapeWL = static_cast<FlatCurveEditor*>(opacityCurveEditorWL->addCurve(CT_Flat, "", nullptr, false, false));
     opacityShapeWL->setIdentityValue(0.);
-    opacityShapeWL->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
+    opacityShapeWL->setResetCurve(FlatCurveType(default_params.opacityCurveWL.at(0)), default_params.opacityCurveWL);
     opacityShapeWL->setTooltip(M("TP_WAVELET_OPACITYWL_TOOLTIP"));
 
     // This will add the reset button at the end of the curveType buttons

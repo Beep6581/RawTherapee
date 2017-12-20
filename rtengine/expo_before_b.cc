@@ -80,7 +80,7 @@ void RawImageSource::processRawWhitepoint(float expos, float preser, array2D<flo
         if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS) {
             // Demosaic to allow calculation of luminosity.
             if(ri->getSensorType() == ST_BAYER) {
-                fast_demosaic (0, 0, W, H);
+                fast_demosaic();
             } else {
                 fast_xtrans_interpolate();
             }

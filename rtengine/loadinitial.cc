@@ -36,11 +36,7 @@ InitialImage* InitialImage::load (const Glib::ustring& fname, bool isRaw, int* e
 
     isrc->setProgressListener (pl);
 
-    if(isRaw && pl == nullptr) {
-        *errorCode = isrc->load (fname, raw, true, false);
-    } else {
-        *errorCode = isrc->load (fname, raw);
-    }
+    *errorCode = isrc->load (fname, raw);
 
     if (*errorCode) {
         delete isrc;

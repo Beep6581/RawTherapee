@@ -1,5 +1,8 @@
 if(WIN32)
     cmake_minimum_required(VERSION 2.8.4)
+elseif(APPLE)
+    cmake_minimum_required(VERSION 3.3)
+    CMAKE_POLICY(SET CMP0025 NEW)
 else()
     cmake_minimum_required(VERSION 2.6)
 endif()
@@ -54,7 +57,8 @@ set(CACHE_NAME_SUFFIX "" CACHE STRING "RawTherapee's cache folder suffix")
 set(PROC_TARGET_NUMBER 0 CACHE STRING "Selected target processor from the list above (taken from ProcessorTargets.cmake)")
 
 # Set special compilation flags for rtengine which get added to CMAKE_CXX_FLAGS:
-set(RTENGINE_CXX_FLAGS "" CACHE STRING "Special compilation flags for RTEngine")
+# Some Linux distros build with -O2 instead of -O3. We explicitly enable auto vectorization by using -ftree-vectorize
+set(RTENGINE_CXX_FLAGS "-ftree-vectorize" CACHE STRING "Special compilation flags for RTEngine")
 
 # Loads the ProcessorTargets list:
 include(ProcessorTargets.cmake)
@@ -307,6 +311,7 @@ if(WITH_SYSTEM_KLT)
     find_package(KLT REQUIRED)
 endif()
 
+
 # Check for libcanberra-gtk3 (sound events on Linux):
 if(UNIX AND(NOT APPLE))
     pkg_check_modules(CANBERRA-GTK REQUIRED libcanberra-gtk3)
@@ -340,6 +345,35 @@ if(OPTION_OMP)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -Werror=unknown-pragmas -Wall -Wno-unused-result -Wno-deprecated-declarations")
     endif()
 endif()
+
+# check for libfftw3f_omp
+include(CheckCSourceCompiles)
+if(OPENMP_FOUND)
+    set(CMAKE_REQUIRED_INCLUDES ${FFTW3F_INCLUDE_DIRS})
+    set(CMAKE_REQUIRED_LIBRARIES)
+    foreach(l ${FFTW3F_LIBRARIES})
+        find_library(_f ${l} PATHS ${FFTW3F_LIBRARY_DIRS})
+        set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${_f})
+    endforeach()
+    check_c_source_compiles(
+"#include <fftw3.h>
+int main()
+{
+    fftwf_init_threads();
+    fftwf_plan_with_nthreads(1);
+    return 0;
+}" _fftw3f_multithread)
+    if(_fftw3f_multithread)
+        add_definitions(-DRT_FFTW3F_OMP)
+    else()
+        find_library(fftw3f_omp fftw3f_omp PATHS ${FFTW3F_LIBRARY_DIRS})
+        if(fftw3f_omp)
+            add_definitions(-DRT_FFTW3F_OMP)
+            set(FFTW3F_LIBRARIES ${FFTW3F_LIBRARIES} ${fftw3f_omp})
+        endif()
+    endif()
+endif()
+
 
 # Find out whether we are building out of source:
 get_filename_component(ABS_SOURCE_DIR "${PROJECT_SOURCE_DIR}" ABSOLUTE)

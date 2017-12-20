@@ -140,7 +140,7 @@ void Thumbnail::_generateThumbnailImage ()
 
         if ( tpp == nullptr ) {
             quick = false;
-            tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, sensorType, tw, th, 1, pparams.wb.equal, TRUE, pparams.raw.bayersensor.imageNum);
+            tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, sensorType, tw, th, 1, pparams.wb.equal, TRUE);
         }
 
         cfs.sensortype = sensorType;
@@ -612,7 +612,7 @@ rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::Pro
 
     if ( cfs.thumbImgType == CacheImageData::QUICK_THUMBNAIL ) {
         // RAW internal thumbnail, no profile yet: just do some rotation etc.
-        image = tpp->quickProcessImage (pparams, h, rtengine::TI_Nearest, scale);
+        image = tpp->quickProcessImage (pparams, h, rtengine::TI_Nearest);
     } else {
         // Full thumbnail: apply profile
         // image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.getCamera(), cfs.focalLen, cfs.focalLen35mm, cfs.focusDist, cfs.shutter, cfs.fnumber, cfs.iso, cfs.expcomp, scale );
@@ -883,7 +883,7 @@ void Thumbnail::_saveThumbnail ()
     }
 
     // save thumbnail image
-    tpp->writeImage (getCacheFileName ("images", ""), 1);
+    tpp->writeImage (getCacheFileName ("images", ""));
 
     // save aehistogram
     tpp->writeAEHistogram (getCacheFileName ("aehistograms", ""));

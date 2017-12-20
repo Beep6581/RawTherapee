@@ -28,6 +28,7 @@
 #include "coord2d.h"
 #include "procparams.h"
 #include "color.h"
+#include "../rtgui/threadutils.h"
 
 #define TR_NONE     0
 #define TR_R90      1
@@ -1750,7 +1751,7 @@ public:
       * @param compression is the amount of compression (0-6), -1 corresponds to the default
       * @param bps can be 8 or 16 depending on the bits per pixels the output file will have
         @return the error code, 0 if none */
-    virtual int saveAsPNG  (Glib::ustring fname, int compression = -1, int bps = -1) = 0;
+    virtual int saveAsPNG  (Glib::ustring fname, int bps = -1) = 0;
     /** @brief Saves the image to file in a jpg format.
       * @param fname is the name of the file
       * @param quality is the quality of the jpeg (0...100), set it to -1 to use default

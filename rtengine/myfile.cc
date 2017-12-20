@@ -33,6 +33,11 @@
 #define PROT_READ 1
 #define MAP_FAILED (void *)-1
 
+#ifdef __GNUC__ // silence warning
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+
 void* mmap(void *start, size_t length, int prot, int flags, int fd, off_t offset)
 {
     HANDLE handle = CreateFileMapping((HANDLE)_get_osfhandle(fd), NULL, PAGE_WRITECOPY, 0, 0, NULL);
@@ -51,6 +56,9 @@ int munmap(void *start, size_t length)
     UnmapViewOfFile(start);
     return 0;
 }
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 
 #else // WIN32
 

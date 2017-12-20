@@ -82,15 +82,6 @@ SaveFormatPanel::SaveFormatPanel () : listener (nullptr)
     jpegOpts->attach(*jpegSubSamp, 1, 1, 1, 1);
     jpegOpts->show_all ();
 
-    // ---------------------  PNG OPTIONS
-
-
-    pngCompr = new Adjuster (M("SAVEDLG_PNGCOMPR"), 0, 6, 1, 6);
-    setExpandAlignProperties(pngCompr, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    pngCompr->setAdjusterListener (this);
-    pngCompr->show_all ();
-
-
     // ---------------------  TIFF OPTIONS
 
 
@@ -113,13 +104,11 @@ SaveFormatPanel::SaveFormatPanel () : listener (nullptr)
     attach (*hb1, 0, 0, 1, 1);
     attach (*jpegOpts, 0, 1, 1, 1);
     attach (*tiffUncompressed, 0, 2, 1, 1);
-    attach (*pngCompr, 0, 3, 1, 1);
     attach (*savesPP, 0, 4, 1, 2);
 }
 SaveFormatPanel::~SaveFormatPanel ()
 {
     delete jpegQual;
-    delete pngCompr;
     delete tiffUncompressed;
 }
 
@@ -143,7 +132,6 @@ void SaveFormatPanel::init (SaveFormat &sf)
 
     jpegSubSamp->set_active (sf.jpegSubSamp - 1);
 
-    pngCompr->setValue (sf.pngCompression);
     jpegQual->setValue (sf.jpegQuality);
     savesPP->set_active (sf.saveParams);
     tiffUncompressed->set_active (sf.tiffUncompressed);
@@ -170,7 +158,6 @@ SaveFormat SaveFormatPanel::getFormat ()
         sf.tiffBits = 8;
     }
 
-    sf.pngCompression   = (int) pngCompr->getValue ();
     sf.jpegQuality      = (int) jpegQual->getValue ();
     sf.jpegSubSamp      = jpegSubSamp->get_active_row_number() + 1;
     sf.tiffUncompressed = tiffUncompressed->get_active();
@@ -192,15 +179,12 @@ void SaveFormatPanel::formatChanged ()
     if (fr == "jpg") {
         jpegOpts->show_all();
         tiffUncompressed->hide();
-        pngCompr->hide();
     } else if (fr == "png") {
         jpegOpts->hide();
         tiffUncompressed->hide();
-        pngCompr->show_all();
     } else if (fr == "tif") {
         jpegOpts->hide();
         tiffUncompressed->show_all();
-        pngCompr->hide();
     }
 
     if (listener) {

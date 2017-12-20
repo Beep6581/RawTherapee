@@ -361,7 +361,7 @@ void rtengine::LCPProfile::calcParams(
             const float focDist = aPersModel[pm]->focDist;
             const float focDistLog = std::log(focDist) + euler;
 
-            double meanErr;
+            double meanErr = 0.0;
 
             if (aPersModel[pm]->hasModeData(mode)) {
                 double lowMeanErr = 0.0;
@@ -797,12 +797,12 @@ void XMLCALL rtengine::LCPProfile::XmlStartHandler(void* pLCPProfile, const char
     if (src_str == "PerspectiveModel") {
         pProf->firstLIDone = true;
         pProf->inPerspect = true;
-        return;
+        parseAttr = true;
     } else if (src_str == "FisheyeModel") {
         pProf->firstLIDone = true;
         pProf->inPerspect = true;
         pProf->isFisheye = true; // just misses third param, and different path, rest is the same
-        return;
+        parseAttr = true;
     } else if (src_str == "Description") {
         parseAttr = true;
     }
@@ -1077,11 +1077,14 @@ void rtengine::LCPMapper::correctDistortion(double &x, double &y, int cx, int cy
     y -= cy * scale;
 }
 
-void rtengine::LCPMapper::correctCA(double& x, double& y, int channel) const
+void rtengine::LCPMapper::correctCA(double& x, double& y, int cx, int cy, int channel) const
 {
     if (!enableCA) {
         return;
     }
+
+    x += cx;
+    y += cy;
 
     double xgreen, ygreen;
 
@@ -1123,6 +1126,9 @@ void rtengine::LCPMapper::correctCA(double& x, double& y, int channel) const
         x = (chrom[channel].scale_factor * ( xd * commonSum + xfac * rsqr )) * chrom[channel].fx + chrom[channel].x0;
         y = (chrom[channel].scale_factor * ( yd * commonSum + yfac * rsqr )) * chrom[channel].fy + chrom[channel].y0;
     }
+
+    x -= cx;
+    y -= cy;
 }
 
 SSEFUNCTION void rtengine::LCPMapper::processVignetteLine(int width, int y, int xoffs, int yoffs, float* line) const
