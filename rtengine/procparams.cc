@@ -590,6 +590,34 @@ bool RGBCurvesParams::operator !=(const RGBCurvesParams& other) const
     return !(*this == other);
 }
 
+
+LocalContrastParams::LocalContrastParams():
+    enabled(false),
+    radius(80),
+    amount(0.2),
+    darkness(1.0),
+    lightness(1.0)
+{
+}
+
+
+bool LocalContrastParams::operator==(const LocalContrastParams &other) const
+{
+    return
+        enabled == other.enabled
+        && radius == other.radius
+        && amount == other.amount
+        && darkness == other.darkness
+        && lightness == other.lightness;
+}
+
+
+bool LocalContrastParams::operator!=(const LocalContrastParams &other) const
+{
+    return !(*this == other);
+}
+
+
 ColorToningParams::ColorToningParams() :
     enabled(false),
     autosat(true),
@@ -2591,6 +2619,8 @@ void ProcParams::setDefaults ()
 
     rgbCurves = RGBCurvesParams();
 
+    localContrast = LocalContrastParams();
+
     colorToning = ColorToningParams();
 
     sharpenEdge = SharpenEdgeParams();
@@ -2757,6 +2787,14 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->retinex.radius, "Retinex", "Radius", retinex.radius, keyFile);
         saveToKeyfile(!pedited || pedited->retinex.transmissionCurve, "Retinex", "TransmissionCurve", retinex.transmissionCurve, keyFile);
         saveToKeyfile(!pedited || pedited->retinex.gaintransmissionCurve, "Retinex", "GainTransmissionCurve", retinex.gaintransmissionCurve, keyFile);
+
+// Local contrast
+        saveToKeyfile(!pedited || pedited->localContrast.enabled, "Local Contrast", "Enabled", localContrast.enabled, keyFile);
+        saveToKeyfile(!pedited || pedited->localContrast.radius, "Local Contrast", "Radius", localContrast.radius, keyFile);
+        saveToKeyfile(!pedited || pedited->localContrast.amount, "Local Contrast", "Amount", localContrast.amount, keyFile);
+        saveToKeyfile(!pedited || pedited->localContrast.darkness, "Local Contrast", "Darkness", localContrast.darkness, keyFile);
+        saveToKeyfile(!pedited || pedited->localContrast.lightness, "Local Contrast", "Lightness", localContrast.lightness, keyFile);
+        
 
 // Channel mixer
         saveToKeyfile(!pedited || pedited->chmixer.enabled, "Channel Mixer", "Enabled", chmixer.enabled, keyFile);
@@ -3592,6 +3630,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Retinex", "TransmissionCurve", pedited, retinex.transmissionCurve, pedited->retinex.transmissionCurve);
 
             assignFromKeyfile(keyFile, "Retinex", "GainTransmissionCurve", pedited, retinex.gaintransmissionCurve, pedited->retinex.gaintransmissionCurve);
+        }
+
+        if (keyFile.has_group("Local Contrast")) {
+            assignFromKeyfile(keyFile, "Local Contrast", "Enabled", pedited, localContrast.enabled, pedited->localContrast.enabled);
+            assignFromKeyfile(keyFile, "Local Contrast", "Radius", pedited, localContrast.radius, pedited->localContrast.radius);
+            assignFromKeyfile(keyFile, "Local Contrast", "Amount", pedited, localContrast.amount, pedited->localContrast.amount);
+            assignFromKeyfile(keyFile, "Local Contrast", "Darkness", pedited, localContrast.darkness, pedited->localContrast.darkness);
+            assignFromKeyfile(keyFile, "Local Contrast", "Lightness", pedited, localContrast.lightness, pedited->localContrast.lightness);
         }
 
         if (keyFile.has_group ("Luminance Curve")) {
@@ -4721,6 +4767,7 @@ bool ProcParams::operator ==(const ProcParams& other) const
     return
         toneCurve == other.toneCurve
         && retinex == other.retinex
+        && localContrast == other.localContrast
         && labCurve == other.labCurve
         && sharpenEdge == other.sharpenEdge
         && sharpenMicro == other.sharpenMicro
