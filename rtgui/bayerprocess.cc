@@ -225,6 +225,11 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     pixelShiftLmmse->set_tooltip_text (M("TP_RAW_PIXELSHIFTLMMSE_TOOLTIP"));
     pixelShiftOptions->pack_start(*pixelShiftLmmse);
 
+//    pixelShiftOneGreen = Gtk::manage (new CheckBox(M("TP_RAW_PIXELSHIFTONEGREEN"), multiImage));
+//    pixelShiftOneGreen->setCheckBoxListener (this);
+//    pixelShiftOneGreen->set_tooltip_text (M("TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP"));
+//    pixelShiftOptions->pack_start(*pixelShiftOneGreen);
+
 #ifdef PIXELSHIFTDEV
     pixelShiftMotion = Gtk::manage (new Adjuster (M("TP_RAW_PIXELSHIFTMOTION"), 0, 100, 1, 70));
     pixelShiftMotion->setAdjusterListener (this);
@@ -376,6 +381,7 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
     }
     pixelShiftSmooth->setValue (pp->raw.bayersensor.pixelShiftSmoothFactor);
     pixelShiftLmmse->setValue (pp->raw.bayersensor.pixelShiftLmmse);
+//    pixelShiftOneGreen->setValue (pp->raw.bayersensor.pixelShiftOneGreen);
     pixelShiftEqualBright->setValue (pp->raw.bayersensor.pixelShiftEqualBright);
     pixelShiftEqualBrightChannel->set_sensitive (pp->raw.bayersensor.pixelShiftEqualBright);
     pixelShiftEqualBrightChannel->setValue (pp->raw.bayersensor.pixelShiftEqualBrightChannel);
@@ -427,6 +433,7 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
         pixelShiftBlur->setEdited (pedited->raw.bayersensor.pixelShiftBlur);
         pixelShiftSmooth->setEditedState ( pedited->raw.bayersensor.pixelShiftSmooth ? Edited : UnEdited);
         pixelShiftLmmse->setEdited (pedited->raw.bayersensor.pixelShiftLmmse);
+//        pixelShiftOneGreen->setEdited (pedited->raw.bayersensor.pixelShiftOneGreen);
         pixelShiftEqualBright->setEdited (pedited->raw.bayersensor.pixelShiftEqualBright);
         pixelShiftEqualBrightChannel->setEdited (pedited->raw.bayersensor.pixelShiftEqualBrightChannel);
         pixelShiftNonGreenCross->setEdited (pedited->raw.bayersensor.pixelShiftNonGreenCross);
@@ -531,6 +538,7 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
     pp->raw.bayersensor.pixelShiftBlur = pixelShiftBlur->getLastActive ();
     pp->raw.bayersensor.pixelShiftSmoothFactor = pixelShiftSmooth->getValue();
     pp->raw.bayersensor.pixelShiftLmmse = pixelShiftLmmse->getLastActive ();
+//    pp->raw.bayersensor.pixelShiftOneGreen = pixelShiftOneGreen->getLastActive ();
     pp->raw.bayersensor.pixelShiftEqualBright = pixelShiftEqualBright->getLastActive ();
     pp->raw.bayersensor.pixelShiftEqualBrightChannel = pixelShiftEqualBrightChannel->getLastActive ();
     pp->raw.bayersensor.pixelShiftNonGreenCross = pixelShiftNonGreenCross->getLastActive ();
@@ -583,6 +591,7 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         pedited->raw.bayersensor.pixelShiftBlur = !pixelShiftBlur->get_inconsistent();
         pedited->raw.bayersensor.pixelShiftSmooth = pixelShiftSmooth->getEditedState();
         pedited->raw.bayersensor.pixelShiftLmmse = !pixelShiftLmmse->get_inconsistent();
+//        pedited->raw.bayersensor.pixelShiftOneGreen = !pixelShiftOneGreen->get_inconsistent();
         pedited->raw.bayersensor.pixelShiftEqualBright = !pixelShiftEqualBright->get_inconsistent();
         pedited->raw.bayersensor.pixelShiftEqualBrightChannel = !pixelShiftEqualBrightChannel->get_inconsistent();
         pedited->raw.bayersensor.pixelShiftNonGreenCross = !pixelShiftNonGreenCross->get_inconsistent();
@@ -849,6 +858,10 @@ void BayerProcess::checkBoxToggled (CheckBox* c, CheckValue newval)
         if (listener) {
             listener->panelChanged (EvPixelShiftLmmse, pixelShiftLmmse->getValueAsStr ());
         }
+//    } else if (c == pixelShiftOneGreen) {
+//        if (listener) {
+//            listener->panelChanged (EvPixelShiftOneGreen, pixelShiftOneGreen->getValueAsStr ());
+//        }
     } else if (c == pixelShiftEqualBright) {
         if (!batchMode) {
             pixelShiftEqualBrightChannel->set_sensitive(newval != CheckValue::off);

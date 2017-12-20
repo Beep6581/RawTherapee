@@ -49,6 +49,7 @@ protected:
     CheckBox* pixelShiftBlur;
     CheckBox* pixelShiftHoleFill;
     CheckBox* pixelShiftMedian;
+//    CheckBox* pixelShiftOneGreen;
     CheckBox* pixelShiftLmmse;
     CheckBox* pixelShiftEqualBright;
     CheckBox* pixelShiftEqualBrightChannel;

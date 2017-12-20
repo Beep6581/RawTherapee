@@ -520,6 +520,7 @@ enum ProcEvent {
     EvWBEnabled = 490,
     EvRGBEnabled = 491,
     EvLEnabled = 492,
+    EvPixelShiftOneGreen = 493,
 
     NUMOFEVENTS
 

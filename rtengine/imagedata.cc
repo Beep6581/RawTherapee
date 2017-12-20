@@ -473,7 +473,7 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
     // -----------------------  Special file type detection (HDR, PixelShift) ------------------------
 
 
-    uint16 bitspersample = 0, sampleformat = 0, photometric = 0, compression = 0;
+    uint16 bitspersample = 0, samplesperpixel = 0, sampleformat = 0, photometric = 0, compression = 0;
     rtexif::Tag* bps = frameRootDir->findTag("BitsPerSample");
     rtexif::Tag* spp = frameRootDir->findTag("SamplesPerPixel");
     rtexif::Tag* sf = frameRootDir->findTag("SampleFormat");
@@ -535,6 +535,7 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
     }
 
     bitspersample = bps->toInt();
+    samplesperpixel = spp->toInt();
 
     photometric = pi->toInt();
     if (photometric == PHOTOMETRIC_LOGLUV) {
@@ -580,6 +581,26 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
                 sampleFormat = IIOSF_UNSIGNED_CHAR;
             } else if (bitspersample <= 16) {
                 sampleFormat = IIOSF_UNSIGNED_SHORT;
+            }
+        }
+    } else if (photometric == 34892 || photometric == 32892  /* Linear RAW (see DNG spec ; 32892 seem to be a flaw from Sony's ARQ files) */) {
+        if (sampleformat == SAMPLEFORMAT_IEEEFP) {
+            sampleFormat = IIOSF_FLOAT;
+            isHDR = true;
+#if PRINT_HDR_PS_DETECTION
+            printf("HDR detected ! -> sampleFormat = %d\n", sampleFormat);
+#endif
+        } else if (sampleformat == SAMPLEFORMAT_INT || sampleformat == SAMPLEFORMAT_UINT) {
+            if (bitspersample == 8) {   // shouldn't occur...
+                sampleFormat = IIOSF_UNSIGNED_CHAR;
+            } else if (bitspersample <= 16) {
+                sampleFormat = IIOSF_UNSIGNED_SHORT;
+                if (mnote && (!make.compare (0, 4, "SONY")) && bitspersample >= 12 && samplesperpixel == 4) {
+                    isPixelShift = true;
+#if PRINT_HDR_PS_DETECTION
+                    printf("PixelShift detected ! -> \"Make\" = SONY, bitsPerPixel > 8, samplesPerPixel == 4\n");
+#endif
+                }
             }
         }
     } else if (photometric == PHOTOMETRIC_LOGLUV) {
@@ -764,7 +785,7 @@ FrameData *FramesData::getFrameData (unsigned int frame) const
 
 bool FramesData::getPixelShift (unsigned int frame) const
 {
-    // So far only Pentax provide multi-frame HDR file.
+    // So far only Pentax and Sony provide multi-frame HDR file.
     // Only the first frame contains the HDR tag
     // If more brand have to be supported, this rule may need
     // to evolve
