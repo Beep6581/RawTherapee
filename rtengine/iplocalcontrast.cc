@@ -27,18 +27,13 @@
 #endif
 
 #include "improcfun.h"
-#include "settings.h"
 #include "gauss.h"
-#include "boxblur.h"
 #include "array2D.h"
-#define BENCHMARK
-#include "StopWatch.h"
 
 namespace rtengine {
 
 void ImProcFunctions::localContrast(LabImage *lab)
 {
-    BENCHFUN
     if (!params->localContrast.enabled) {
         return;
     }
@@ -52,12 +47,12 @@ void ImProcFunctions::localContrast(LabImage *lab)
     const float sigma = params->localContrast.radius / scale;
 
 #ifdef _OPENMP
-    #pragma omp parallel
+    #pragma omp parallel if(multiThread)
 #endif
     gaussianBlur(lab->L, buf, width, height, sigma);
 
 #ifdef _OPENMP
-    #pragma omp parallel for
+    #pragma omp parallel for if(multiThread)
 #endif
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
