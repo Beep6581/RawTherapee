@@ -413,6 +413,7 @@ public:
       * The image update starts immediately in the background. If it is ready, the result is passed to a PreviewImageListener
       * and to a DetailedCropListener (if enabled). */
     virtual void        endUpdateParams (ProcEvent change) = 0;
+    void endUpdateParams(ProcEventCode change) { endUpdateParams(ProcEvent(change)); }
     virtual void        endUpdateParams (int changeFlags) = 0;
     // Starts a minimal update
     virtual void        startProcessing (int changeCode) = 0;
