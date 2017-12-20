@@ -768,6 +768,9 @@ HISTORY_MSG_487;(Objektivkorrektur)\nProfil - Objektiv
 HISTORY_MSG_488;(HDR-Dynamikkompression)
 HISTORY_MSG_489;(HDR-Dynamikkompression)\nSchwelle
 HISTORY_MSG_490;(HDR-Dynamikkompression)\nIntensität
+HISTORY_MSG_491;(Weißabgleich)
+HISTORY_MSG_492;(RGB-Kurven)
+HISTORY_MSG_493;(L*a*b*)
 HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
 HISTORY_SNAPSHOT;Schnappschuss
@@ -1835,6 +1838,7 @@ TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Weicher Übergang zwischen Bereichen mit und ohn
 TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;StdDev factor Blue
 TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;StdDev factor Green
 TP_RAW_PIXELSHIFTSTDDEVFACTORRED;StdDev factor Red
+TP_RAW_RCD;RCD
 TP_RAW_SENSOR_BAYER_LABEL;Sensor mit Bayer-Matrix
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;Mit “3-Pass“ erzielt man die besten Ergebnisse\n(empfohlen bei Bildern mit niedrigen ISO-Werten).\n\nBei hohen ISO-Werten unterscheidet sich “1-Pass“\nkaum gegenüber “3-Pass“, ist aber deutlich schneller.
 TP_RAW_SENSOR_XTRANS_LABEL;Sensor mit X-Trans-Matrix
@@ -2221,10 +2225,3 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-HISTORY_MSG_491;(Weißabgleich)
-HISTORY_MSG_492;(RGB-Kurven)
-TP_RAW_RCD;RCD

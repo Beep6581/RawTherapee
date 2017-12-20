@@ -39,6 +39,7 @@
 #38 2017-04-26 updated by mkyral
 #39 2017-07-21 updated by mkyral
 #40 2017-12-13 updated by mkyral
+
 ABOUT_TAB_BUILD;Verze
 ABOUT_TAB_CREDITS;Zásluhy
 ABOUT_TAB_LICENSE;Licence
@@ -2213,3 +2214,9 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Přizpůsobit obrazovce\nZkratka: <b>Alt</b>-<b>f</b
 ZOOMPANEL_ZOOMFITSCREEN;Přizpůsobit obrázek obrazovce\nZkratka: <b>f</b>
 ZOOMPANEL_ZOOMIN;Přiblížit\nZkratka: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!HISTORY_MSG_493;L*a*b* Adjustments

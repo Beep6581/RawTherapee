@@ -977,6 +977,7 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !HISTORY_MSG_490;HDR TM - Amount
 !HISTORY_MSG_491;White Balance
 !HISTORY_MSG_492;RGB Curves
+!HISTORY_MSG_493;L*a*b* Adjustments
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
