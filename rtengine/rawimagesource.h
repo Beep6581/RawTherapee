@@ -269,7 +269,7 @@ protected:
     void xtransborder_interpolate (int border);
     void xtrans_interpolate (const int passes, const bool useCieLab);
     void fast_xtrans_interpolate ();
-    void pixelshift(int winx, int winy, int winw, int winh, const RAWParams::BayerSensor &bayerParams, unsigned int frame, const std::string &model, float rawWpCorrection);
+    void pixelshift(int winx, int winy, int winw, int winh, const RAWParams::BayerSensor &bayerParams, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection);
     void    hflip       (Imagefloat* im);
     void    vflip       (Imagefloat* im);
     void getRawValues(int x, int y, int rotate, int &R, int &G, int &B);
