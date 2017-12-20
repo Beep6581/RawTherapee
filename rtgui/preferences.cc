@@ -197,8 +197,8 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_TM_FATTAL_LABEL"));
-    appendBehavList (mi, M ("TP_TM_FATTAL_ALPHA"), ADDSET_FATTAL_ALPHA, false);
-    appendBehavList (mi, M ("TP_TM_FATTAL_BETA"), ADDSET_FATTAL_BETA, false);
+    appendBehavList (mi, M ("TP_TM_FATTAL_THRESHOLD"), ADDSET_FATTAL_ALPHA, false);
+    appendBehavList (mi, M ("TP_TM_FATTAL_AMOUNT"), ADDSET_FATTAL_BETA, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_RETINEX_LABEL"));
