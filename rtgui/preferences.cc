@@ -1003,6 +1003,11 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     setExpandAlignProperties (hb4label, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     ckbHideTPVScrollbar = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_TP_VSCROLLBAR")) );
     setExpandAlignProperties (ckbHideTPVScrollbar, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+#if defined(__linux__) && ((GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION > 18) || GTK_MAJOR_VERSION > 3)
+    // Cannot scroll toolbox with mousewheel when HideTPVScrollbar=true #3413
+    ckbHideTPVScrollbar->set_active(false);
+    ckbHideTPVScrollbar->set_sensitive(false);
+#endif
     ckbUseIconNoText = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_TP_USEICONORTEXT")) );
     setExpandAlignProperties (ckbUseIconNoText, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     workflowGrid->attach_next_to (*hb4label, *ckbFileBrowserToolbarSingleRow, Gtk::POS_BOTTOM, 1, 1);
