@@ -357,6 +357,16 @@ protected:
     LUTi sensiexclus;
     LUTi strucs;
     LUTi warms;
+    LUTi expdenois;
+    LUTi expcolors;
+    LUTi expvibrances;
+    LUTi expblurs;
+    LUTi exptonemaps;
+    LUTi expretis;
+    LUTi expsharps;
+    LUTi expcbdls;
+    LUTi expexposes;
+
 
     LUTf huerefs;
     LUTf huerefblurs;

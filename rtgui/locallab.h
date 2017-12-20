@@ -236,7 +236,7 @@ private:
 
 
 
-    int nextdatasp[90];
+    int nextdatasp[99];
     int nextlength;
     std::string nextstr;
     std::string nextstr2;

@@ -7725,7 +7725,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
             if (chrom == 0) {
                 params_Ldetail = min(float(lp.noiseldetail), 99.9f);    // max out to avoid div by zero when using noisevar_Ldetail as divisor
             } else if (chrom == 1) {
-                params_Ldetail = min(float(lp.noisechrodetail), 99.9f);    // max out to avoid div by zero when using noisevar_Ldetail as divisor
+                params_Ldetail = min(float(lp.noisechrodetail), 99.9f);
             }
 
             float noisevar_Ldetail = SQR(static_cast<float>(SQR(100. - params_Ldetail) + 50.*(100. - params_Ldetail)) * TS * 0.5f);

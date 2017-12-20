@@ -1826,14 +1826,70 @@ bool Locallab::localComputed_()
     noisechrodetail->setValue(nextdatasp[83]);
     sensiden->setValue(nextdatasp[84]);
 
-    double intermedblur = 0.01 * (double) nextdatasp[85];
+    //exp
+    if (nextdatasp[85] == 0) {
+        expdenoi->setEnabled(false);
+    } else {
+        expdenoi->setEnabled(true);
+    }
+
+    if (nextdatasp[86] == 0) {
+        expcolor->setEnabled(false);
+    } else {
+        expcolor->setEnabled(true);
+    }
+
+    if (nextdatasp[87] == 0) {
+        expvibrance->setEnabled(false);
+    } else {
+        expvibrance->setEnabled(true);
+    }
+
+    if (nextdatasp[88] == 0) {
+        expblur->setEnabled(false);
+    } else {
+        expblur->setEnabled(true);
+    }
+
+    if (nextdatasp[89] == 0) {
+        exptonemap->setEnabled(false);
+    } else {
+        exptonemap->setEnabled(true);
+    }
+
+    if (nextdatasp[90] == 0) {
+        expreti->setEnabled(false);
+    } else {
+        expreti->setEnabled(true);
+    }
+
+    if (nextdatasp[91] == 0) {
+        expsharp->setEnabled(false);
+    } else {
+        expsharp->setEnabled(true);
+    }
+
+    if (nextdatasp[92] == 0) {
+        expcbdl->setEnabled(false);
+    } else {
+        expcbdl->setEnabled(true);
+    }
+
+    if (nextdatasp[93] == 0) {
+        expexpose->setEnabled(false);
+    } else {
+        expexpose->setEnabled(true);
+    }
+
+
+    double intermedblur = 0.01 * (double) nextdatasp[94];
     huerefblur->setValue(intermedblur);
-    double intermed = 0.01 * (double) nextdatasp[86];
+    double intermed = 0.01 * (double) nextdatasp[95];
     hueref->setValue(intermed);
 
-    chromaref->setValue(nextdatasp[87]);
-    lumaref->setValue(nextdatasp[88]);
-    sobelref->setValue(nextdatasp[89]);
+    chromaref->setValue(nextdatasp[96]);
+    lumaref->setValue(nextdatasp[97]);
+    sobelref->setValue(nextdatasp[98]);
 
     int *s_datc;
     s_datc = new int[70];
@@ -2112,12 +2168,45 @@ bool Locallab::localComputed_()
         listener->panelChanged(Evlocallabshape, M(""));
     }
 
+    if (listener) {//for expander denoise
+        listener->panelChanged(EvLocenadenoi, M(""));
+    }
+
+    if (listener) {//for expander color
+        listener->panelChanged(EvLocenacolor, M(""));
+    }
+
+    if (listener) {//for expander vib
+        listener->panelChanged(EvLocenavibrance, M(""));
+    }
+
+    if (listener) {//for expander tonem
+        listener->panelChanged(EvLocenatonemap, M(""));
+    }
+
+    if (listener) {//for expander reti
+        listener->panelChanged(EvLocenareti, M(""));
+    }
+
+    if (listener) {//for expander sharp
+        listener->panelChanged(EvLocenasharp, M(""));
+    }
+
+    if (listener) {//for expander cbdl
+        listener->panelChanged(EvLocenacbdl, M(""));
+    }
+
+    if (listener) {//for expander cbdl
+        listener->panelChanged(EvLocenaexpose, M(""));
+    }
+
+
     return false;
 }
 
 void Locallab::localChanged(int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat)
 {
-    for (int i = 2; i < 90; i++) {
+    for (int i = 2; i < 99; i++) {
         nextdatasp[i] = datasp[i][sp];
     }
 

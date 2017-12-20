@@ -1151,6 +1151,62 @@ void Crop::update(int todo)
                         params.locallab.noisechrodetail = parent->noisechrodetails[sp];
                         params.locallab.sensiden = parent->sensidens[sp];
 
+                        if (parent->expdenois[sp] ==  0) {
+                            params.locallab.expdenoi = false;
+                        } else {
+                            params.locallab.expdenoi = true;
+                        }
+
+                        if (parent->expcolors[sp] ==  0) {
+                            params.locallab.expcolor = false;
+                        } else {
+                            params.locallab.expcolor = true;
+                        }
+
+                        if (parent->expvibrances[sp] ==  0) {
+                            params.locallab.expvibrance = false;
+                        } else {
+                            params.locallab.expvibrance = true;
+                        }
+
+                        if (parent->expblurs[sp] ==  0) {
+                            params.locallab.expblur = false;
+                        } else {
+                            params.locallab.expblur = true;
+                        }
+
+                        if (parent->exptonemaps[sp] ==  0) {
+                            params.locallab.exptonemap = false;
+                        } else {
+                            params.locallab.exptonemap = true;
+                        }
+
+                        if (parent->expretis[sp] ==  0) {
+                            params.locallab.expreti = false;
+                        } else {
+                            params.locallab.expreti = true;
+                        }
+
+                        if (parent->expsharps[sp] ==  0) {
+                            params.locallab.expsharp = false;
+                        } else {
+                            params.locallab.expsharp = true;
+                        }
+
+                        if (parent->expcbdls[sp] ==  0) {
+                            params.locallab.expcbdl = false;
+                        } else {
+                            params.locallab.expcbdl = true;
+                        }
+
+                        if (parent->expexposes[sp] ==  0) {
+                            params.locallab.expexpose = false;
+                        } else {
+                            params.locallab.expexpose = true;
+                        }
+
+
+
                         std::vector<double>   cretie;
 
                         for (int j = 0; j < parent->sizeretics[sp]; j++) {
@@ -1532,6 +1588,97 @@ void Crop::update(int todo)
                 parent->noiselumdetails[sp] = params.locallab.noiselumdetail = parent->noiselumdetails[0];
                 parent->noisechrodetails[sp] = params.locallab.noisechrodetail = parent->noisechrodetails[0];
                 parent->sensidens[sp] = params.locallab.sensiden = parent->sensidens[0];
+
+                if (parent->expdenois[0] ==  0) {
+                    params.locallab.expdenoi = false;
+                    parent->expdenois[sp] = 0;
+
+                } else {
+                    params.locallab.expdenoi = true;
+                    parent->expdenois[sp] = 1;
+
+                }
+
+                if (parent->expcolors[0] ==  0) {
+                    params.locallab.expcolor = false;
+                    parent->expcolors[sp] = 0;
+
+                } else {
+                    params.locallab.expcolor = true;
+                    parent->expcolors[sp] = 1;
+
+                }
+
+                if (parent->expvibrances[0] ==  0) {
+                    params.locallab.expvibrance = false;
+                    parent->expvibrances[sp] = 0;
+
+                } else {
+                    params.locallab.expvibrance = true;
+                    parent->expvibrances[sp] = 1;
+
+                }
+
+                if (parent->expblurs[0] ==  0) {
+                    params.locallab.expblur = false;
+                    parent->expblurs[sp] = 0;
+
+                } else {
+                    params.locallab.expblur = true;
+                    parent->expblurs[sp] = 1;
+
+                }
+
+                if (parent->exptonemaps[0] ==  0) {
+                    params.locallab.exptonemap = false;
+                    parent->exptonemaps[sp] = 0;
+
+                } else {
+                    params.locallab.exptonemap = true;
+                    parent->exptonemaps[sp] = 1;
+
+                }
+
+                if (parent->expretis[0] ==  0) {
+                    params.locallab.expreti = false;
+                    parent->expretis[sp] = 0;
+
+                } else {
+                    params.locallab.expreti = true;
+                    parent->expretis[sp] = 1;
+
+                }
+
+                if (parent->expsharps[0] ==  0) {
+                    params.locallab.expsharp = false;
+                    parent->expsharps[sp] = 0;
+
+                } else {
+                    params.locallab.expsharp = true;
+                    parent->expsharps[sp] = 1;
+
+                }
+
+                if (parent->expcbdls[0] ==  0) {
+                    params.locallab.expcbdl = false;
+                    parent->expcbdls[sp] = 0;
+
+                } else {
+                    params.locallab.expcbdl = true;
+                    parent->expcbdls[sp] = 1;
+
+                }
+
+                if (parent->expexposes[0] ==  0) {
+                    params.locallab.expexpose = false;
+                    parent->expexposes[sp] = 0;
+
+                } else {
+                    params.locallab.expexpose = true;
+                    parent->expexposes[sp] = 1;
+
+                }
+
 
                 std::vector<double>   ccret;
 

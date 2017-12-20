@@ -203,6 +203,17 @@ ImProcCoordinator::ImProcCoordinator()
       sensiexclus(500, -1000),
       strucs(500, -1000),
       warms(500, -1000),
+      expdenois(500, -10000),
+      expcolors(500, -10000),
+      expvibrances(500, -10000),
+      expblurs(500, -10000),
+      exptonemaps(500, -10000),
+      expretis(500, -10000),
+      expsharps(500, -10000),
+      expcbdls(500, -10000),
+      expexposes(500, -10000),
+
+
       huerefs(500, -100000.f),
       huerefblurs(500, -100000.f),
       chromarefs(500, -100000.f),
@@ -862,7 +873,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                                     };
 
 
-            int maxdata = 90;//88 10019//87 10018  //86 10017 //85 10016;// 82 10015//78;//73 for 10011
+            int maxdata = 99; // 90 10020 //88 10019//87 10018  //86 10017 //85 10016;// 82 10015//78;//73 for 10011
 
             if (fic0) {
                 //find current version mip
@@ -906,7 +917,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                     //initilize newues when first utilisation of Locallab. Prepare creation of Mip files
                     for (int sp = 1; sp < maxspot; sp++) { // spots default
                         int t_sp = sp;
-                        int t_mipversion = 10020;//new value for each change
+                        int t_mipversion = 10021;//new value for each change
                         int t_circrad = 18;
                         int t_locX = 250;
                         int t_locY = 250;
@@ -1034,6 +1045,18 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                         //10019
                         int t_sensiden = 30;
 
+                        //10021
+                        int t_expdenoi = 0;
+
+                        int t_expcolor = 0;
+                        int t_expvibrance = 0;
+                        int t_expblur = 0;
+                        int t_exptonemap = 0;
+                        int t_expreti = 0;
+                        int t_expsharp = 0;
+                        int t_expcbdl = 0;
+                        int t_expexpose = 0;
+
                         //all variables except locRETgainCurve 'coomon for all)
                         fic << "Mipversion=" << t_mipversion << '@' << endl;
                         fic << "Spot=" << t_sp << '@' << endl;
@@ -1129,6 +1152,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                         fic << "Noiselumdetail=" << t_noiselumdetail << '@' << endl;
                         fic << "Noisechrodetail=" << t_noisechrodetail << '@' << endl;
                         fic << "Sensiden=" << t_sensiden << '@' << endl;
+                        fic << "Expdenoi=" << t_expdenoi << '@' << endl;
+                        fic << "Expcolor=" << t_expcolor << '@' << endl;
+                        fic << "Expvibrance=" << t_expvibrance << '@' << endl;
+                        fic << "Expblur=" << t_expblur << '@' << endl;
+                        fic << "Exptonemap=" << t_exptonemap << '@' << endl;
+                        fic << "Expreti=" << t_expreti << '@' << endl;
+                        fic << "Expsharp=" << t_expsharp << '@' << endl;
+                        fic << "Expcbdl=" << t_expcbdl << '@' << endl;
+                        fic << "Expexpose=" << t_expexpose << '@' << endl;
 
                         fic << "curveReti=" << t_curvret << '@' << endl;
                         fic << "curveLL=" << t_curvll << '@' << endl;
@@ -1384,6 +1416,61 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 dataspot[82][0] = noiselumdetails[0] = params.locallab.noiselumdetail;
                 dataspot[83][0] = noisechrodetails[0] = params.locallab.noisechrodetail;
                 dataspot[84][0] = sensidens[0] = params.locallab.sensiden;
+
+                if (!params.locallab.expdenoi) {
+                    dataspot[85][0] = expdenois[0] = 0;
+                } else {
+                    dataspot[85][0] = expdenois[0] = 1;
+                }
+
+                if (!params.locallab.expcolor) {
+                    dataspot[86][0] = expcolors[0] = 0;
+                } else {
+                    dataspot[86][0] = expcolors[0] = 1;
+                }
+
+                if (!params.locallab.expvibrance) {
+                    dataspot[87][0] = expvibrances[0] = 0;
+                } else {
+                    dataspot[87][0] = expvibrances[0] = 1;
+                }
+
+                if (!params.locallab.expblur) {
+                    dataspot[88][0] = expblurs[0] = 0;
+                } else {
+                    dataspot[88][0] = expblurs[0] = 1;
+                }
+
+                if (!params.locallab.exptonemap) {
+                    dataspot[89][0] = exptonemaps[0] = 0;
+                } else {
+                    dataspot[89][0] = exptonemaps[0] = 1;
+                }
+
+                if (!params.locallab.expreti) {
+                    dataspot[90][0] = expretis[0] = 0;
+                } else {
+                    dataspot[90][0] = expretis[0] = 1;
+                }
+
+                if (!params.locallab.expsharp) {
+                    dataspot[91][0] = expsharps[0] = 0;
+                } else {
+                    dataspot[91][0] = expsharps[0] = 1;
+                }
+
+                if (!params.locallab.expcbdl) {
+                    dataspot[92][0] = expcbdls[0] = 0;
+                } else {
+                    dataspot[92][0] = expcbdls[0] = 1;
+                }
+
+                if (!params.locallab.expexpose) {
+                    dataspot[93][0] = expexposes[0] = 0;
+                } else {
+                    dataspot[93][0] = expexposes[0] = 1;
+                }
+
 
                 // for all curves work around - I do not know how to do with params curves...
                 //curve Reti local
@@ -1682,6 +1769,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                     maxind = 83;
                 }
 
+                if (versionmip == 10020) {
+                    maxind = 84;
+                }
+
                 while (getline(fich, line)) {
                     spotline = line;
                     std::size_t pos = spotline.find("=");
@@ -1921,6 +2012,22 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 }
             }
 
+            if (versionmip <= 10020) {//
+                for (int sp = 1; sp < maxspot; sp++) { // spots default
+                    dataspot[85][sp] = 0;
+                    dataspot[86][sp] = 0;
+                    dataspot[87][sp] = 0;
+                    dataspot[88][sp] = 0;
+                    dataspot[89][sp] = 0;
+                    dataspot[90][sp] = 0;
+                    dataspot[91][sp] = 0;
+                    dataspot[92][sp] = 0;
+                    dataspot[93][sp] = 0;
+                }
+            }
+
+
+
             //here we change the number of spot
 
             if (ns < (maxspot - 1)) {
@@ -1929,7 +2036,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
                 for (int sp = ns + 1 ; sp < maxspot; sp++) { // spots default
                     int t_sp = sp;
-                    int t_mipversion = 10020;
+                    int t_mipversion = 10021;
                     int t_circrad = 18;
                     int t_locX = 250;
                     int t_locY = 250;
@@ -2049,6 +2156,18 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                     //10020
                     int t_sensiden = 30;
 
+                    //10021
+                    int t_expdenoi = 0;
+
+                    int t_expcolor = 0;
+                    int t_expvibrance = 0;
+                    int t_expblur = 0;
+                    int t_exptonemap = 0;
+                    int t_expreti = 0;
+                    int t_expsharp = 0;
+                    int t_expcbdl = 0;
+                    int t_expexpose = 0;
+
                     fic << "Mipversion=" << t_mipversion << '@' << endl;
                     fic << "Spot=" << t_sp << '@' << endl;
                     fic << "Circrad=" << t_circrad << '@' << endl;
@@ -2140,6 +2259,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                     fic << "Noiselumdetail=" << t_noiselumdetail << '@' << endl;
                     fic << "Noisechrodetail=" << t_noisechrodetail << '@' << endl;
                     fic << "Sensiden=" << t_sensiden << '@' << endl;
+                    fic << "Expdenoi=" << t_expdenoi << '@' << endl;
+                    fic << "Expcolor=" << t_expcolor << '@' << endl;
+                    fic << "Expvibrance=" << t_expvibrance << '@' << endl;
+                    fic << "Expblur=" << t_expblur << '@' << endl;
+                    fic << "Exptonemap=" << t_exptonemap << '@' << endl;
+                    fic << "Expreti=" << t_expreti << '@' << endl;
+                    fic << "Expsharp=" << t_expsharp << '@' << endl;
+                    fic << "Expcbdl=" << t_expcbdl << '@' << endl;
+                    fic << "Expexpose=" << t_expexpose << '@' << endl;
 
                     fic << "curveReti=" << t_curvret << '@' << endl;
                     fic << "curveLL=" << t_curvll << '@' << endl;
@@ -2165,7 +2293,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                     std::string spotline2;
                     int cont2 = 0;
                     int ns2 = 0;
-                    int maxin = maxdata - 4; //70 ;//64
+                    int maxin = maxdata - 5; //70 ;//64
 
                     while (getline(fich2, line2)) {
                         spotline2 = line2;
@@ -2493,6 +2621,78 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 params.locallab.noiselumdetail = noiselumdetails[sp] = dataspot[82][sp];
                 params.locallab.noisechrodetail = noisechrodetails[sp] = dataspot[83][sp];
                 params.locallab.sensiden = sensidens[sp] = dataspot[84][sp];
+
+                if (dataspot[85][sp] ==  0) {
+                    expdenois[sp] = 0;
+                    params.locallab.expdenoi = false;
+                } else {
+                    expdenois[sp] = 1;
+                    params.locallab.expdenoi = true;
+                }
+
+                if (dataspot[86][sp] ==  0) {
+                    expcolors[sp] = 0;
+                    params.locallab.expcolor = false;
+                } else {
+                    expcolors[sp] = 1;
+                    params.locallab.expcolor = true;
+                }
+
+                if (dataspot[87][sp] ==  0) {
+                    expvibrances[sp] = 0;
+                    params.locallab.expvibrance = false;
+                } else {
+                    expvibrances[sp] = 1;
+                    params.locallab.expvibrance = true;
+                }
+
+                if (dataspot[88][sp] ==  0) {
+                    expblurs[sp] = 0;
+                    params.locallab.expblur = false;
+                } else {
+                    expblurs[sp] = 1;
+                    params.locallab.expblur = true;
+                }
+
+                if (dataspot[89][sp] ==  0) {
+                    exptonemaps[sp] = 0;
+                    params.locallab.exptonemap = false;
+                } else {
+                    exptonemaps[sp] = 1;
+                    params.locallab.exptonemap = true;
+                }
+
+                if (dataspot[90][sp] ==  0) {
+                    expretis[sp] = 0;
+                    params.locallab.expreti = false;
+                } else {
+                    expretis[sp] = 1;
+                    params.locallab.expreti = true;
+                }
+
+                if (dataspot[91][sp] ==  0) {
+                    expsharps[sp] = 0;
+                    params.locallab.expsharp = false;
+                } else {
+                    expsharps[sp] = 1;
+                    params.locallab.expsharp = true;
+                }
+
+                if (dataspot[92][sp] ==  0) {
+                    expcbdls[sp] = 0;
+                    params.locallab.expcbdl = false;
+                } else {
+                    expcbdls[sp] = 1;
+                    params.locallab.expcbdl = true;
+                }
+
+                if (dataspot[93][sp] ==  0) {
+                    expexposes[sp] = 0;
+                    params.locallab.expexpose = false;
+                } else {
+                    expcbdls[sp] = 1;
+                    params.locallab.expexpose = true;
+                }
 
 
                 int *s_datc;
@@ -3043,6 +3243,95 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
             dataspot[83][sp] = noisechrodetails[sp] = params.locallab.noisechrodetail = dataspot[83][0];
             dataspot[84][sp] = sensidens[sp] = params.locallab.sensiden = dataspot[84][0];
 
+            if (dataspot[85][0] == 0) {
+                params.locallab.expdenoi = false;
+                dataspot[85][sp] = 0;
+                expdenois[sp] = 0;
+            } else {
+                params.locallab.expdenoi = true;
+                dataspot[85][sp] = 1;
+                expdenois[sp] = 1;
+            }
+
+            if (dataspot[86][0] == 0) {
+                params.locallab.expcolor = false;
+                dataspot[86][sp] = 0;
+                expcolors[sp] = 0;
+            } else {
+                params.locallab.expcolor = true;
+                dataspot[86][sp] = 1;
+                expcolors[sp] = 1;
+            }
+
+            if (dataspot[87][0] == 0) {
+                params.locallab.expvibrance = false;
+                dataspot[87][sp] = 0;
+                expvibrances[sp] = 0;
+            } else {
+                params.locallab.expvibrance = true;
+                dataspot[87][sp] = 1;
+                expvibrances[sp] = 1;
+            }
+
+            if (dataspot[88][0] == 0) {
+                params.locallab.expblur = false;
+                dataspot[88][sp] = 0;
+                expblurs[sp] = 0;
+            } else {
+                params.locallab.expblur = true;
+                dataspot[88][sp] = 1;
+                expblurs[sp] = 1;
+            }
+
+            if (dataspot[89][0] == 0) {
+                params.locallab.exptonemap = false;
+                dataspot[89][sp] = 0;
+                exptonemaps[sp] = 0;
+            } else {
+                params.locallab.exptonemap = true;
+                dataspot[89][sp] = 1;
+                exptonemaps[sp] = 1;
+            }
+
+            if (dataspot[90][0] == 0) {
+                params.locallab.expreti = false;
+                dataspot[90][sp] = 0;
+                expretis[sp] = 0;
+            } else {
+                params.locallab.expreti = true;
+                dataspot[90][sp] = 1;
+                expretis[sp] = 1;
+            }
+
+            if (dataspot[91][0] == 0) {
+                params.locallab.expsharp = false;
+                dataspot[91][sp] = 0;
+                expsharps[sp] = 0;
+            } else {
+                params.locallab.expsharp = true;
+                dataspot[91][sp] = 1;
+                expsharps[sp] = 1;
+            }
+
+            if (dataspot[92][0] == 0) {
+                params.locallab.expcbdl = false;
+                dataspot[92][sp] = 0;
+                expcbdls[sp] = 0;
+            } else {
+                params.locallab.expcbdl = true;
+                dataspot[92][sp] = 1;
+                expcbdls[sp] = 1;
+            }
+
+            if (dataspot[93][0] == 0) {
+                params.locallab.expexpose = false;
+                dataspot[93][sp] = 0;
+                expexposes[sp] = 0;
+            } else {
+                params.locallab.expexpose = true;
+                dataspot[93][sp] = 1;
+                expexposes[sp] = 1;
+            }
 
             int *s_datc;
             s_datc = new int[70];
@@ -3283,7 +3572,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
                 for (int spe = 1; spe < maxspot; spe++) {
                     int t_sp = spe;
-                    int t_mipversion = 10020;
+                    int t_mipversion = 10021;
                     int t_circrad  = dataspot[2][spe];
                     int t_locX  = dataspot[3][spe];
                     int t_locY  = dataspot[4][spe];
@@ -3374,6 +3663,16 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                     int t_noiselumdetail = dataspot[82][spe];
                     int t_noisechrodetail = dataspot[83][spe];
                     int t_sensiden = dataspot[84][spe];
+                    int t_expdenoi = dataspot[85][spe];
+
+                    int t_expcolor = dataspot[86][spe];
+                    int t_expvibrance = dataspot[87][spe];
+                    int t_expblur = dataspot[88][spe];
+                    int t_exptonemap = dataspot[89][spe];
+                    int t_expreti = dataspot[90][spe];
+                    int t_expsharp = dataspot[91][spe];
+                    int t_expcbdl = dataspot[92][spe];
+                    int t_expexpose = dataspot[93][spe];
 
                     int t_huerefblur = dataspot[maxdata - 5][spe];
                     int t_hueref = dataspot[maxdata - 4][spe];
@@ -3484,6 +3783,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                     fou << "Noiselumdetail=" << t_noiselumdetail << '@' << endl;
                     fou << "Noisechrodetail=" << t_noisechrodetail << '@' << endl;
                     fou << "Sensiden=" << t_sensiden << '@' << endl;
+                    fou << "Expdenoi=" << t_expdenoi << '@' << endl;
+                    fou << "Expcolor=" << t_expcolor << '@' << endl;
+                    fou << "Expvibrance=" << t_expvibrance << '@' << endl;
+                    fou << "Expblur=" << t_expblur << '@' << endl;
+                    fou << "Exptonemap=" << t_exptonemap << '@' << endl;
+                    fou << "Expreti=" << t_expreti << '@' << endl;
+                    fou << "Expsharp=" << t_expsharp << '@' << endl;
+                    fou << "Expcbdl=" << t_expcbdl << '@' << endl;
+                    fou << "Expexpose=" << t_expexpose << '@' << endl;
 
                     fou << "huerefblur=" << t_huerefblur << '@' << endl;
                     fou << "hueref=" << t_hueref << '@' << endl;

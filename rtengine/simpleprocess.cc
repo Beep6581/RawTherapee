@@ -1103,7 +1103,7 @@ private:
             }
 
             ifstream fich(datalab, ios::in);
-            int maxdata = 90; //88 10019 //87 10018//86 10017//85 10016 //82;//78;//73 10011
+            int maxdata = 99; // 91 10021 //88 10019 //87 10018//86 10017//85 10016 //82;//78;//73 10011
 
             if (fich && versionmip != 0) {
                 std::string inser;
@@ -1341,6 +1341,60 @@ private:
                     dataspots[82][0] = params.locallab.noiselumdetail;
                     dataspots[83][0] = params.locallab.noisechrodetail;
                     dataspots[84][0] = params.locallab.sensiden;
+
+                    if (!params.locallab.expdenoi) {
+                        dataspots[85][0] =  0;
+                    } else {
+                        dataspots[85][0] =  1;
+                    }
+
+                    if (!params.locallab.expcolor) {
+                        dataspots[86][0] =  0;
+                    } else {
+                        dataspots[86][0] =  1;
+                    }
+
+                    if (!params.locallab.expvibrance) {
+                        dataspots[87][0] =  0;
+                    } else {
+                        dataspots[87][0] =  1;
+                    }
+
+                    if (!params.locallab.expblur) {
+                        dataspots[88][0] =  0;
+                    } else {
+                        dataspots[88][0] =  1;
+                    }
+
+                    if (!params.locallab.exptonemap) {
+                        dataspots[89][0] =  0;
+                    } else {
+                        dataspots[89][0] =  1;
+                    }
+
+                    if (!params.locallab.expreti) {
+                        dataspots[90][0] =  0;
+                    } else {
+                        dataspots[90][0] =  1;
+                    }
+
+                    if (!params.locallab.expsharp) {
+                        dataspots[91][0] =  0;
+                    } else {
+                        dataspots[91][0] =  1;
+                    }
+
+                    if (!params.locallab.expcbdl) {
+                        dataspots[92][0] =  0;
+                    } else {
+                        dataspots[92][0] =  1;
+                    }
+
+                    if (!params.locallab.expexpose) {
+                        dataspots[93][0] =  0;
+                    } else {
+                        dataspots[93][0] =  1;
+                    }
 
                     dataspots[maxdata - 5][0] = 100.f * params.locallab.huerefblur;
                     dataspots[maxdata - 4][0] = 100.f * params.locallab.hueref;
@@ -1815,6 +1869,62 @@ private:
                     params.locallab.noiselumdetail = dataspots[82][sp];
                     params.locallab.noisechrodetail = dataspots[83][sp];
                     params.locallab.sensiden = dataspots[84][sp];
+
+                    if (dataspots[85][sp] ==  0) {
+                        params.locallab.expdenoi = false;
+                    } else {
+                        params.locallab.expdenoi = true;
+                    }
+
+                    if (dataspots[86][sp] ==  0) {
+                        params.locallab.expcolor = false;
+                    } else {
+                        params.locallab.expcolor = true;
+                    }
+
+                    if (dataspots[87][sp] ==  0) {
+                        params.locallab.expvibrance = false;
+                    } else {
+                        params.locallab.expvibrance = true;
+                    }
+
+                    if (dataspots[88][sp] ==  0) {
+                        params.locallab.expblur = false;
+                    } else {
+                        params.locallab.expblur = true;
+                    }
+
+                    if (dataspots[89][sp] ==  0) {
+                        params.locallab.exptonemap = false;
+                    } else {
+                        params.locallab.exptonemap = true;
+                    }
+
+                    if (dataspots[90][sp] ==  0) {
+                        params.locallab.expreti = false;
+                    } else {
+                        params.locallab.expreti = true;
+                    }
+
+                    if (dataspots[91][sp] ==  0) {
+                        params.locallab.expsharp = false;
+                    } else {
+                        params.locallab.expsharp = true;
+                    }
+
+                    if (dataspots[92][sp] ==  0) {
+                        params.locallab.expcbdl = false;
+                    } else {
+                        params.locallab.expcbdl = true;
+                    }
+
+                    if (dataspots[93][sp] ==  0) {
+                        params.locallab.expexpose = false;
+                    } else {
+                        params.locallab.expexpose = true;
+                    }
+
+
 
                     params.locallab.huerefblur = ((float) dataspots[maxdata - 5][sp]) / 100.f;
                     params.locallab.hueref = ((float) dataspots[maxdata - 4][sp]) / 100.f;
