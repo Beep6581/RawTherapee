@@ -49,16 +49,17 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     loc         ->set_name ("PartialPasteHeader");
 
     // options in basic:
-    wb          = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_WHITEBALANCE")));
-    exposure    = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_EXPOSURE")));
-    sh          = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_SHADOWSHIGHLIGHTS")));
-    epd         = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_EPD")));
-    fattal      = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_TM_FATTAL")));
-    retinex     = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RETINEX")));
-    pcvignette  = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_PCVIGNETTE")));
-    gradient    = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_GRADIENT")));
-    labcurve    = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_LABCURVE")));
-    colorappearance = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_COLORAPP")));
+    wb          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_WHITEBALANCE")));
+    exposure    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EXPOSURE")));
+    localcontrast = Gtk::manage(new Gtk::CheckButton(M("PARTIALPASTE_LOCALCONTRAST")));
+    sh          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_SHADOWSHIGHLIGHTS")));
+    epd         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EPD")));
+    fattal      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_TM_FATTAL")));
+    retinex     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RETINEX")));
+    pcvignette  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PCVIGNETTE")));
+    gradient    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_GRADIENT")));
+    labcurve    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_LABCURVE")));
+    colorappearance = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COLORAPP")));
 
     // options in detail:
     sharpen     = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_SHARPENING")));
@@ -146,6 +147,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[0]->pack_start (*hseps[0], Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*wb, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*exposure, Gtk::PACK_SHRINK, 2);
+    vboxes[0]->pack_start (*localcontrast, Gtk::PACK_SHRINK, 2);    
     vboxes[0]->pack_start (*sh, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*epd, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*fattal, Gtk::PACK_SHRINK, 2);
@@ -296,39 +298,41 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
 
     // This can be improved
     // there is currently no binding of subsettings to CheckButton 'everything' for its inconsistent status
-    everythingConn  = everything->signal_toggled().connect (sigc::mem_fun (*this, &PartialPasteDlg::everythingToggled));
-    basicConn       = basic->signal_toggled().connect (sigc::mem_fun (*this, &PartialPasteDlg::basicToggled));
-    detailConn      = detail->signal_toggled().connect (sigc::mem_fun (*this, &PartialPasteDlg::detailToggled));
-    colorConn       = color->signal_toggled().connect (sigc::mem_fun (*this, &PartialPasteDlg::colorToggled));
-    lensConn        = lens->signal_toggled().connect (sigc::mem_fun (*this, &PartialPasteDlg::lensToggled));
-    compositionConn = composition->signal_toggled().connect (sigc::mem_fun (*this, &PartialPasteDlg::compositionToggled));
-    metaConn        = meta->signal_toggled().connect (sigc::mem_fun (*this, &PartialPasteDlg::metaToggled));
-    rawConn         = raw->signal_toggled().connect (sigc::mem_fun (*this, &PartialPasteDlg::rawToggled));
-    wavConn         = wav->signal_toggled().connect (sigc::mem_fun (*this, &PartialPasteDlg::wavToggled));
+    everythingConn  = everything->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::everythingToggled));
+    basicConn       = basic->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::basicToggled));
+    detailConn      = detail->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::detailToggled));
+    colorConn       = color->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::colorToggled));
+    lensConn        = lens->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::lensToggled));
+    compositionConn = composition->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::compositionToggled));
+    metaConn        = meta->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::metaToggled));
+    rawConn         = raw->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::rawToggled));
+    wavConn         = wav->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::wavToggled));
 //    locConn         = loc->signal_toggled().connect (sigc::mem_fun (*this, &PartialPasteDlg::locToggled));
 
-    wbConn          = wb->signal_toggled().connect (sigc::bind (sigc::mem_fun (*basic, &Gtk::CheckButton::set_inconsistent), true));
-    exposureConn    = exposure->signal_toggled().connect (sigc::bind (sigc::mem_fun (*basic, &Gtk::CheckButton::set_inconsistent), true));
-    shConn          = sh->signal_toggled().connect (sigc::bind (sigc::mem_fun (*basic, &Gtk::CheckButton::set_inconsistent), true));
-    epdConn         = epd->signal_toggled().connect (sigc::bind (sigc::mem_fun (*basic, &Gtk::CheckButton::set_inconsistent), true));
-    fattalConn      = fattal->signal_toggled().connect (sigc::bind (sigc::mem_fun (*basic, &Gtk::CheckButton::set_inconsistent), true));
-    retinexConn     = retinex->signal_toggled().connect (sigc::bind (sigc::mem_fun (*basic, &Gtk::CheckButton::set_inconsistent), true));
-    pcvignetteConn  = pcvignette->signal_toggled().connect (sigc::bind (sigc::mem_fun (*basic, &Gtk::CheckButton::set_inconsistent), true));
-    gradientConn    = gradient->signal_toggled().connect (sigc::bind (sigc::mem_fun (*basic, &Gtk::CheckButton::set_inconsistent), true));
-    labcurveConn    = labcurve->signal_toggled().connect (sigc::bind (sigc::mem_fun (*basic, &Gtk::CheckButton::set_inconsistent), true));
-    colorappearanceConn = colorappearance->signal_toggled().connect (sigc::bind (sigc::mem_fun (*basic, &Gtk::CheckButton::set_inconsistent), true));
+    wbConn          = wb->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
+    exposureConn    = exposure->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
+    localcontrastConn = localcontrast->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
+    shConn          = sh->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
+    epdConn         = epd->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
+    fattalConn      = fattal->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
+    retinexConn     = retinex->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
+    pcvignetteConn  = pcvignette->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
+    gradientConn    = gradient->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
+    labcurveConn    = labcurve->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
+    colorappearanceConn = colorappearance->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
 
-    sharpenConn     = sharpen->signal_toggled().connect (sigc::bind (sigc::mem_fun (*detail, &Gtk::CheckButton::set_inconsistent), true));
-    gradsharpenConn = sharpenedge->signal_toggled().connect (sigc::bind (sigc::mem_fun (*detail, &Gtk::CheckButton::set_inconsistent), true));
-    microcontrastConn = sharpenmicro->signal_toggled().connect (sigc::bind (sigc::mem_fun (*detail, &Gtk::CheckButton::set_inconsistent), true));
-    impdenConn      = impden->signal_toggled().connect (sigc::bind (sigc::mem_fun (*detail, &Gtk::CheckButton::set_inconsistent), true));
-    dirpyrdenConn   = dirpyrden->signal_toggled().connect (sigc::bind (sigc::mem_fun (*detail, &Gtk::CheckButton::set_inconsistent), true));
-    dirpyreqConn    = dirpyreq->signal_toggled().connect (sigc::bind (sigc::mem_fun (*detail, &Gtk::CheckButton::set_inconsistent), true));
-    defringeConn    = defringe->signal_toggled().connect (sigc::bind (sigc::mem_fun (*detail, &Gtk::CheckButton::set_inconsistent), true));
-
-    waveletConn = wavelet->signal_toggled().connect (sigc::bind (sigc::mem_fun (*wav, &Gtk::CheckButton::set_inconsistent), true));
+    sharpenConn     = sharpen->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
+    gradsharpenConn = sharpenedge->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
+    microcontrastConn = sharpenmicro->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
+    impdenConn      = impden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
+    dirpyrdenConn   = dirpyrden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
+    dirpyreqConn    = dirpyreq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
+    defringeConn    = defringe->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
   //  locallabConn     = locallab->signal_toggled().connect (sigc::bind (sigc::mem_fun (*basic, &Gtk::CheckButton::set_inconsistent), true));
-    icmConn         = icm->signal_toggled().connect (sigc::bind (sigc::mem_fun (*color, &Gtk::CheckButton::set_inconsistent), true));
+
+    waveletConn = wavelet->signal_toggled().connect (sigc::bind (sigc::mem_fun(*wav, &Gtk::CheckButton::set_inconsistent), true));
+
+    icmConn         = icm->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
     //gamcsconn      = gam->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
     vibranceConn    = vibrance->signal_toggled().connect (sigc::bind (sigc::mem_fun (*color, &Gtk::CheckButton::set_inconsistent), true));
     chmixerConn     = chmixer->signal_toggled().connect (sigc::bind (sigc::mem_fun (*color, &Gtk::CheckButton::set_inconsistent), true));
@@ -488,6 +492,7 @@ void PartialPasteDlg::basicToggled ()
 
     ConnectionBlocker wbBlocker(wbConn);
     ConnectionBlocker exposureBlocker(exposureConn);
+    ConnectionBlocker localcontrastBlocker(localcontrastConn);
     ConnectionBlocker shBlocker(shConn);
     ConnectionBlocker epdBlocker(epdConn);
     ConnectionBlocker fattalBlocker(fattalConn);
@@ -502,6 +507,7 @@ void PartialPasteDlg::basicToggled ()
 
     wb->set_active (basic->get_active ());
     exposure->set_active (basic->get_active ());
+    localcontrast->set_active(basic->get_active());
     sh->set_active (basic->get_active ());
     epd->set_active (basic->get_active ());
     fattal->set_active (basic->get_active ());
@@ -671,6 +677,10 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 
     if (!exposure->get_active ()) {
         filterPE.toneCurve  = falsePE.toneCurve;
+    }
+
+    if (!localcontrast->get_active()) {
+        filterPE.localContrast = falsePE.localContrast;
     }
 
     if (!sh->get_active ()) {

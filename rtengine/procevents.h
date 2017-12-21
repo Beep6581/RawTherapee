@@ -26,7 +26,7 @@ namespace rtengine
 
 
 // Aligned so the first entry starts on line 30
-enum ProcEvent {
+enum ProcEventCode {
     EvPhotoLoaded = 0,
     EvProfileLoaded = 1,
     EvProfileChanged = 2,
@@ -520,7 +520,7 @@ enum ProcEvent {
     EvWBEnabled = 490,
     EvRGBEnabled = 491,
     EvLEnabled = 492,
-    EvlocallablocY = 493,
+    EvPixelShiftOneGreen = 493,
     EvlocallablocX = 494,
     EvlocallabCenter = 495,
     EvlocallabDegree = 496,
@@ -624,11 +624,32 @@ enum ProcEvent {
     Evlocallabsensiden = 594,
     Evlocallabhuerefblur = 595,
     EvlocallabEnabled = 596,
-
+    EvlocallablocY = 597,
     NUMOFEVENTS
 
 
 };
+
+
+class ProcEvent {
+public:
+    ProcEvent(): code_(0) {}
+    ProcEvent(ProcEventCode code): code_(code) {}
+    explicit ProcEvent(int code): code_(code) {}
+    operator int() { return code_; }
+
+private:
+    int code_;
+};
+
+
+inline bool operator==(ProcEvent a, ProcEvent b) { return int(a) == int(b); }
+inline bool operator==(ProcEvent a, ProcEventCode b) { return int(a) == int(b); }
+inline bool operator==(ProcEventCode a, ProcEvent b) { return int(a) == int(b); }
+inline bool operator!=(ProcEvent a, ProcEvent b) { return int(a) != int(b); }
+inline bool operator!=(ProcEvent a, ProcEventCode b) { return int(a) != int(b); }
+inline bool operator!=(ProcEventCode a, ProcEvent b) { return int(a) != int(b); }
+
 }
 #endif
 

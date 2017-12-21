@@ -120,7 +120,7 @@ public:
     /** @return the orientation of the image */
     virtual std::string getOrientation (unsigned int frame = 0) const = 0;
 
-    /** @return true if the file is a PixelShift shot (Pentax bodies) */
+    /** @return true if the file is a PixelShift shot (Pentax and Sony bodies) */
     virtual bool getPixelShift (unsigned int frame = 0) const = 0;
     /** @return false: not an HDR file ; true: single or multi-frame HDR file (e.g. Pentax HDR raw file or 32 bit float DNG file or Log compressed) */
     virtual bool getHDR (unsigned int frame = 0) const = 0;
@@ -424,6 +424,7 @@ public:
       * The image update starts immediately in the background. If it is ready, the result is passed to a PreviewImageListener
       * and to a DetailedCropListener (if enabled). */
     virtual void        endUpdateParams (ProcEvent change) = 0;
+    void endUpdateParams(ProcEventCode change) { endUpdateParams(ProcEvent(change)); }
     virtual void        endUpdateParams (int changeFlags) = 0;
     // Starts a minimal update
     virtual void        startProcessing (int changeCode) = 0;

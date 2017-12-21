@@ -42,6 +42,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
     coarse              = Gtk::manage (new CoarsePanel ());
     toneCurve           = Gtk::manage (new ToneCurve ());
     shadowshighlights   = Gtk::manage (new ShadowsHighlights ());
+    localContrast       = Gtk::manage(new LocalContrast());
     impulsedenoise      = Gtk::manage (new ImpulseDenoise ());
     defringe            = Gtk::manage (new Defringe ());
     dirpyrdenoise       = Gtk::manage (new DirPyrDenoise ());
@@ -110,6 +111,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
     addPanel (colorPanel, vibrance);
     addPanel (colorPanel, chmixer);
     addPanel (colorPanel, blackwhite);
+    addPanel (exposurePanel, localContrast);
     addPanel (exposurePanel, shadowshighlights);
     addPanel (detailsPanel, sharpening);
     addPanel (detailsPanel, sharpenEdge);
@@ -328,7 +330,7 @@ void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::
         return;
     }
 
-    int changeFlags = refreshmap[ (int)event];
+    int changeFlags = rtengine::RefreshMapper::getInstance()->getAction(event);
 
     ProcParams* params = ipc->beginUpdateParams ();
 
@@ -340,7 +342,7 @@ void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::
     if (event == rtengine::EvCTHFlip || event == rtengine::EvCTVFlip) {
         if (fabs (params->rotate.degree) > 0.001) {
             params->rotate.degree *= -1;
-            changeFlags |= refreshmap[ (int)rtengine::EvROTDegree];
+            changeFlags |= rtengine::RefreshMapper::getInstance()->getAction(rtengine::EvROTDegree);
             rotate->read (params);
         }
     }
@@ -462,7 +464,7 @@ void ToolPanelCoordinator::profileChange  (const PartialProfile *nparams, rtengi
 
     // start the IPC processing
     if (filterRawRefresh) {
-        ipc->endUpdateParams ( refreshmap[ (int)event] & ALLNORAW );
+        ipc->endUpdateParams ( rtengine::RefreshMapper::getInstance()->getAction(event) & ALLNORAW );
     } else {
         ipc->endUpdateParams (event);
     }

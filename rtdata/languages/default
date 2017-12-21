@@ -741,7 +741,6 @@ HISTORY_MSG_490;HDR TM - Amount
 HISTORY_MSG_491;White Balance
 HISTORY_MSG_492;RGB Curves
 HISTORY_MSG_493;L*a*b* Adjustments
-HISTORY_MSG_494;Local - Bottom
 HISTORY_MSG_495;Local - Right
 HISTORY_MSG_496;Local - Center
 HISTORY_MSG_497;Local - Lightness/
@@ -842,7 +841,13 @@ HISTORY_MSG_592;Local - Warm Cool
 HISTORY_MSG_593;Local - Noise lum detail
 HISTORY_MSG_594;Local - Noise chro detail
 HISTORY_MSG_595;Local - Noise Scope
-HISTORY_MSG_596;Local L*a*b*
+HISTORY_MSG_597;Local L*a*b*
+HISTORY_MSG_598;Local - Bottom
+HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
+HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
+HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
+HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
+HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -1024,6 +1029,7 @@ PARTIALPASTE_LENSGROUP;Lens Related Settings
 PARTIALPASTE_LOCALLAB;Local L*a*b*
 PARTIALPASTE_LOCGROUP;Local 
 PARTIALPASTE_LENSPROFILE;Profiled lens correction
+PARTIALPASTE_LOCALCONTRAST;Local contrast
 PARTIALPASTE_METAGROUP;Metadata
 PARTIALPASTE_PCVIGNETTE;Vignette filter
 PARTIALPASTE_PERSPECTIVE;Perspective
@@ -1813,6 +1819,7 @@ TP_LENSPROFILE_LABEL;Profiled Lens Correction
 TP_LENSPROFILE_USECA;Chromatic aberration correction
 TP_LENSPROFILE_USEDIST;Distortion correction
 TP_LENSPROFILE_USEVIGN;Vignetting correction
+<<<<<<< HEAD
 TP_LOCALLAB_ACTIV;Blur luminance only
 TP_LOCALLAB_ADJBLUR;Adjust and Blur
 TP_LOCALLAB_ARTIF;Reduce artifacts - Improve algoritm
@@ -1923,6 +1930,14 @@ TP_LOCAL_WIDTH;Right
 TP_LOCAL_WIDTH_L;Left
 TP_LOCRETI_METHOD_TOOLTIP;Low = Reinforce low light.\nUniform = Equalize action.\nHigh = Reinforce high light.\n
 TP_NEUTRAL;Neutral
+=======
+TP_LOCALCONTRAST_LABEL;Local Contrast
+TP_LOCALCONTRAST_RADIUS;Radius
+TP_LOCALCONTRAST_AMOUNT;Amount
+TP_LOCALCONTRAST_DARKNESS;Darkness level
+TP_LOCALCONTRAST_LIGHTNESS;Lightness level
+TP_NEUTRAL;Reset
+>>>>>>> dev
 TP_NEUTRAL_TIP;Resets exposure sliders to neutral values.\nApplies to the same controls that Auto Levels applies to, regardless of whether you used Auto Levels or not.
 TP_PCVIGNETTE_FEATHER;Feather
 TP_PCVIGNETTE_FEATHER_TOOLTIP;Feathering:\n0 = corners only,\n50 = halfway to center,\n100 = to center.
@@ -1972,7 +1987,7 @@ TP_RAW_DCBITERATIONS;Number of DCB iterations
 TP_RAW_DMETHOD;Method
 TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
 TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
-TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.\nPixel Shift is for Pentax Pixel Shift files. It falls back to AMaZE for non-Pixel Shift files.
+TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.\nPixel Shift is for Pentax/Sony Pixel Shift files. It falls back to AMaZE for non-Pixel Shift files.
 TP_RAW_EAHD;EAHD
 TP_RAW_FALSECOLOR;False color suppression steps
 TP_RAW_FAST;Fast
@@ -1981,7 +1996,7 @@ TP_RAW_HD_TOOLTIP;Lower values make hot/dead pixel detection more aggressive, bu
 TP_RAW_HPHD;HPHD
 TP_RAW_IGV;IGV
 TP_RAW_IMAGENUM;Sub-image
-TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
+TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
 TP_RAW_LABEL;Demosaicing
 TP_RAW_LMMSE;LMMSE
 TP_RAW_LMMSEITERATIONS;LMMSE enhancement steps
@@ -2003,6 +2018,7 @@ TP_RAW_PIXELSHIFTHOLEFILL;Fill holes in motion mask
 TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fill holes in motion mask
 TP_RAW_PIXELSHIFTLMMSE;Use LMMSE for moving parts
 TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Use LMMSE instead of AMaZE for areas of motion.\nUseful for high ISO images.
+TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Use one green instead of averaging two greens for regions without motion.
 TP_RAW_PIXELSHIFTMASKTHRESHOLD;3x3 new threshold
 TP_RAW_PIXELSHIFTMEDIAN;Use median for moving parts
 TP_RAW_PIXELSHIFTMEDIAN3;Exclude selected frame from median
@@ -2021,6 +2037,7 @@ TP_RAW_PIXELSHIFTNONGREENCROSS2;Check green AMaZE
 TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Check red/blue horizontal
 TP_RAW_PIXELSHIFTNONGREENVERTICAL;Check red/blue vertical
 TP_RAW_PIXELSHIFTNREADISO;nRead
+TP_RAW_PIXELSHIFTONEGREEN;Use one green instead of average
 TP_RAW_PIXELSHIFTPRNU;PRNU (%)
 TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
 TP_RAW_PIXELSHIFTSHOWMOTION;Show motion mask

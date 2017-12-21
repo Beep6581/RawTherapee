@@ -195,6 +195,7 @@ void BatchToolPanelCoordinator::initSession ()
             prsharpening->setAdjusterBehavior (options.baBehav[ADDSET_SHARP_RADIUS], options.baBehav[ADDSET_SHARP_AMOUNT], options.baBehav[ADDSET_SHARP_DAMPING], options.baBehav[ADDSET_SHARP_ITER], options.baBehav[ADDSET_SHARP_EDGETOL], options.baBehav[ADDSET_SHARP_HALOCTRL]);
             epd->setAdjusterBehavior (options.baBehav[ADDSET_EPD_STRENGTH], options.baBehav[ADDSET_EPD_GAMMA], options.baBehav[ADDSET_EPD_EDGESTOPPING], options.baBehav[ADDSET_EPD_SCALE], options.baBehav[ADDSET_EPD_REWEIGHTINGITERATES]);
             fattal->setAdjusterBehavior (options.baBehav[ADDSET_FATTAL_ALPHA], options.baBehav[ADDSET_FATTAL_BETA]);
+            localContrast->setAdjusterBehavior(options.baBehav[ADDSET_LOCALCONTRAST_RADIUS], options.baBehav[ADDSET_LOCALCONTRAST_AMOUNT], options.baBehav[ADDSET_LOCALCONTRAST_DARKNESS], options.baBehav[ADDSET_LOCALCONTRAST_LIGHTNESS]);
 
             sharpenEdge->setAdjusterBehavior (options.baBehav[ADDSET_SHARPENEDGE_AMOUNT], options.baBehav[ADDSET_SHARPENEDGE_PASS]);
             sharpenMicro->setAdjusterBehavior (options.baBehav[ADDSET_SHARPENMICRO_AMOUNT], options.baBehav[ADDSET_SHARPENMICRO_UNIFORMITY]);
@@ -353,6 +354,9 @@ void BatchToolPanelCoordinator::initSession ()
             if (options.baBehav[ADDSET_RAWFFCLIPCONTROL]) { pparams.raw.ff_clipControl = 0; }
             if (options.baBehav[ADDSET_PREPROCESS_GREENEQUIL]) { pparams.raw.bayersensor.greenthresh = 0; }
             if (options.baBehav[ADDSET_PREPROCESS_LINEDENOISE]) { pparams.raw.bayersensor.linenoise = 0; }
+            if (options.baBehav[ADDSET_LOCALCONTRAST_AMOUNT]) { pparams.localContrast.amount = 0; }
+            if (options.baBehav[ADDSET_LOCALCONTRAST_DARKNESS]) { pparams.localContrast.darkness = 0; }
+            if (options.baBehav[ADDSET_LOCALCONTRAST_LIGHTNESS]) { pparams.localContrast.lightness = 0; }
             // *INDENT-ON*
         }
 

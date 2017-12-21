@@ -118,6 +118,17 @@ public:
     bool clcurve;
 };
 
+
+class LocalContrastParamsEdited {
+public:
+    bool enabled;
+    bool radius;
+    bool amount;
+    bool darkness;
+    bool lightness;
+};
+
+
 class RGBCurvesParamsEdited
 {
 
@@ -852,6 +863,7 @@ public:
         bool pixelShiftSmooth;
         bool pixelShiftExp0;
         bool pixelShiftLmmse;
+        bool pixelShiftOneGreen;
         bool pixelShiftEqualBright;
         bool pixelShiftEqualBrightChannel;
         bool pixelShiftNonGreenCross;
@@ -908,6 +920,7 @@ public:
     GeneralParamsEdited           general;
     ToneCurveParamsEdited         toneCurve;
     LCurveParamsEdited            labCurve;
+    LocalContrastParamsEdited     localContrast;
     RGBCurvesParamsEdited         rgbCurves;
     ColorToningEdited             colorToning;
     RetinexParamsEdited             retinex;
