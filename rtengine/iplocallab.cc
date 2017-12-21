@@ -1891,7 +1891,7 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp,  in
 
     origblur = new LabImage(GW, GH);
 
-    float radius = 2.f;
+    float radius = 3.f;
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -2139,6 +2139,26 @@ void ImProcFunctions::cat02_Local(float **buflightcat, float **buf_a_cat, float 
 
         const float alum = 1.f / (varsens - 100.f);
         const float blum = 1.f - alum * varsens;
+		
+    int GW = transformed->W;
+    int GH = transformed->H;
+
+    LabImage *origblur = nullptr;
+
+    origblur = new LabImage(GW, GH);
+
+    float radius = 3.f;
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        gaussianBlur(original->L, origblur->L, GW, GH, radius);
+        gaussianBlur(original->a, origblur->a, GW, GH, radius);
+        gaussianBlur(original->b, origblur->b, GW, GH, radius);
+
+    }
+		
+		
         //float maxc = -100000.f;
         //float minc = 100000.f;
 
@@ -2174,15 +2194,15 @@ void ImProcFunctions::cat02_Local(float **buflightcat, float **buf_a_cat, float 
                 int i = 0;
 
                 for (; i < transformed->W - 3; i += 4) {
-                    vfloat av = LVFU(original->a[y][i]);
-                    vfloat bv = LVFU(original->b[y][i]);
+                    vfloat av = LVFU(origblur->a[y][i]);
+                    vfloat bv = LVFU(origblur->b[y][i]);
                     STVF(atan2Buffer[i], xatan2f(bv, av));
                     STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
                 }
 
                 for (; i < transformed->W; i++) {
-                    atan2Buffer[i] = xatan2f(original->b[y][i], original->a[y][i]);
-                    sqrtBuffer[i] = sqrt(SQR(original->b[y][i]) + SQR(original->a[y][i])) / 327.68f;
+                    atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
+                    sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
                 }
 
 #endif
@@ -2205,10 +2225,10 @@ void ImProcFunctions::cat02_Local(float **buflightcat, float **buf_a_cat, float 
                     float rhue = atan2Buffer[x];
                     float rchro = sqrtBuffer[x];
 #else
-                    float rhue = xatan2f(original->b[y][x], original->a[y][x]);
-                    float rchro = sqrt(SQR(original->b[y][x]) + SQR(original->a[y][x])) / 327.68f;
+                    float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
+                    float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
 #endif
-                    float rL = original->L[y][x] / 327.68f;
+                    float rL = origblur->L[y][x] / 327.68f;
 
                     float cli = 1.f;
                     float cla = 1.f;
@@ -2492,6 +2512,7 @@ void ImProcFunctions::cat02_Local(float **buflightcat, float **buf_a_cat, float 
 
             //    printf ("minc=%f maxc=%f \n", minc, maxc);
         }
+		delete origblur;
 
     }
 }
@@ -4145,6 +4166,25 @@ void ImProcFunctions::Contrast_Local(int call, float ** buflightc, const float h
     ImProcFunctions::secondeg_begin(reducac, vi, lco.aa, lco.bb); //parabolic
     ImProcFunctions::secondeg_end(reducac, vinf, lco.aaa, lco.bbb, lco.ccc); //parabolic
 
+    int GW = transformed->W;
+    int GH = transformed->H;
+
+    LabImage *origblur = nullptr;
+
+    origblur = new LabImage(GW, GH);
+
+    float radius = 3.f;
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        gaussianBlur(original->L, origblur->L, GW, GH, radius);
+        gaussianBlur(original->a, origblur->a, GW, GH, radius);
+        gaussianBlur(original->b, origblur->b, GW, GH, radius);
+
+    }
+	
+	
     if (call <= 3) {
 #ifdef _OPENMP
         #pragma omp parallel if (multiThread)
@@ -4174,15 +4214,15 @@ void ImProcFunctions::Contrast_Local(int call, float ** buflightc, const float h
                 int i = 0;
 
                 for (; i < transformed->W - 3; i += 4) {
-                    vfloat av = LVFU(original->a[y][i]);
-                    vfloat bv = LVFU(original->b[y][i]);
+                    vfloat av = LVFU(origblur->a[y][i]);
+                    vfloat bv = LVFU(origblur->b[y][i]);
                     STVF(atan2Buffer[i], xatan2f(bv, av));
                     STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
                 }
 
                 for (; i < transformed->W; i++) {
-                    atan2Buffer[i] = xatan2f(original->b[y][i], original->a[y][i]);
-                    sqrtBuffer[i] = sqrt(SQR(original->b[y][i]) + SQR(original->a[y][i])) / 327.68f;
+                    atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
+                    sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
                 }
 
 #endif
@@ -4192,7 +4232,7 @@ void ImProcFunctions::Contrast_Local(int call, float ** buflightc, const float h
 
                     float rL;
 
-                    if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && (rL = original->L[y][x]) > 3.2768f) {
+                    if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && (rL = origblur->L[y][x]) > 3.2768f) {
                         // rL > 3.2768f to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
                         int zone = 0;
 
@@ -4207,8 +4247,8 @@ void ImProcFunctions::Contrast_Local(int call, float ** buflightc, const float h
                         float rhue = atan2Buffer[x];
                         float rchro = sqrtBuffer[x];
 #else
-                        float rhue = xatan2f(original->b[y][x], original->a[y][x]);
-                        float rchro = sqrt(SQR(original->b[y][x]) + SQR(original->a[y][x])) / 327.68f;
+                        float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
+                        float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
 #endif
                         //prepare shape detection
                         float khu = 0.f;
@@ -4435,6 +4475,7 @@ void ImProcFunctions::Contrast_Local(int call, float ** buflightc, const float h
             }
         }
     }
+	delete origblur;
 }
 
 void ImProcFunctions::InverseContrast_Local(float ave, struct local_contra & lco, const struct local_params & lp, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, LabImage * original, LabImage * transformed, int cx, int cy)
@@ -6111,6 +6152,25 @@ void ImProcFunctions::ColorLight_Local(int call, LabImage * bufcolorig, float **
     float hueplushr = Color::huelab_to_huehsv2(hueplus);
     float huemoinshr = Color::huelab_to_huehsv2(huemoins);
 
+    int GW = transformed->W;
+    int GH = transformed->H;
+
+    LabImage *origblur = nullptr;
+
+    origblur = new LabImage(GW, GH);
+
+    float radius = 3.f;
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        gaussianBlur(original->L, origblur->L, GW, GH, radius);
+        gaussianBlur(original->a, origblur->a, GW, GH, radius);
+        gaussianBlur(original->b, origblur->b, GW, GH, radius);
+
+    }
+	
+	
     if (call <= 3) {
         //Todo optimization in this first part with bufcolorig and bufcoltra
 
@@ -6141,15 +6201,15 @@ void ImProcFunctions::ColorLight_Local(int call, LabImage * bufcolorig, float **
                 int i = 0;
 
                 for (; i < transformed->W - 3; i += 4) {
-                    vfloat av = LVFU(original->a[y][i]);
-                    vfloat bv = LVFU(original->b[y][i]);
+                    vfloat av = LVFU(origblur->a[y][i]);
+                    vfloat bv = LVFU(origblur->b[y][i]);
                     STVF(atan2Buffer[i], xatan2f(bv, av));
                     STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
                 }
 
                 for (; i < transformed->W; i++) {
-                    atan2Buffer[i] = xatan2f(original->b[y][i], original->a[y][i]);
-                    sqrtBuffer[i] = sqrt(SQR(original->b[y][i]) + SQR(original->a[y][i])) / 327.68f;
+                    atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
+                    sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
                 }
 
 #endif
@@ -6175,17 +6235,17 @@ void ImProcFunctions::ColorLight_Local(int call, LabImage * bufcolorig, float **
                     float rchro = sqrtBuffer[x];
 #else
 
-                    float rhue = xatan2f(original->b[y][x], original->a[y][x]);
+                    float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
 
-                    float rchro = sqrt(SQR(original->b[y][x]) + SQR(original->a[y][x])) / 327.68f;
+                    float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
 #endif
                     float rhuehr = Color::huelab_to_huehsv2(rhue);
 
-                    float rL = original->L[y][x] / 327.68f;
-                    float rLL = original->L[y][x] / 327.68f;
+                    float rL = origblur->L[y][x] / 327.68f;
+                    float rLL = origblur->L[y][x] / 327.68f;
 
-                    if (fabs(original->b[y][x]) < 0.01f) {
-                        original->b[y][x] = 0.01f;
+                    if (fabs(origblur->b[y][x]) < 0.01f) {
+                        origblur->b[y][x] = 0.01f;
                     }
 
                     /*
@@ -6826,6 +6886,7 @@ void ImProcFunctions::ColorLight_Local(int call, LabImage * bufcolorig, float **
 
 
     }
+	delete origblur;
 
 }
 

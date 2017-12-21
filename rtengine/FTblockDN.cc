@@ -782,7 +782,6 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 #ifdef _RT_NESTED_OPENMP
             denoiseNestedLevels = omp_get_max_threads() / numthreads;
             bool oldNested = omp_get_nested();
-
             if (denoiseNestedLevels < 2) {
                 denoiseNestedLevels = 1;
             } else {
@@ -793,6 +792,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                 while (denoiseNestedLevels * numthreads > options.rgbDenoiseThreadLimit) {
                     denoiseNestedLevels--;
                 }
+			printf("dennl=%i \n", denoiseNestedLevels);
 
 #endif
 
