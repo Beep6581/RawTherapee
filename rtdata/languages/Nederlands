@@ -2159,12 +2159,18 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !HISTORY_MSG_491;White Balance
 !HISTORY_MSG_492;RGB Curves
 !HISTORY_MSG_493;L*a*b* Adjustments
+!HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
+!HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
+!HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
+!HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
+!HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
 !LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
 !LENSPROFILE_CORRECTION_LCPFILE;LCP File
 !LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
 !LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
 !MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
 !MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
+!PARTIALPASTE_LOCALCONTRAST;Local contrast
 !PARTIALPASTE_TM_FATTAL;HDR Tone mapping
 !PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_D50_OLD;5000K
@@ -2191,9 +2197,16 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_COLORAPP_YB;Yb% (mean luminance)
 !TP_COLORAPP_YBSCENE;Yb% (mean luminance)
 !TP_COLORAPP_YBSCENE_TOOLTIP;if auto is enabled, Yb is calculated from the mean value of the actual image's luminance
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
+!TP_LOCALCONTRAST_AMOUNT;Amount
+!TP_LOCALCONTRAST_DARKNESS;Darkness level
+!TP_LOCALCONTRAST_LABEL;Local Contrast
+!TP_LOCALCONTRAST_LIGHTNESS;Lightness level
+!TP_LOCALCONTRAST_RADIUS;Radius
+!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
 !TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Equalize per channel
 !TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the RGB channels individually.\nDisabled: Use same equalization factor for all channels.
+!TP_RAW_PIXELSHIFTONEGREEN;Use one green instead of average
+!TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Use one green instead of averaging two greens for regions without motion.
 !TP_RAW_RCD;RCD
 !TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
 !TP_RETINEX_GAINTRANSMISSION;Gain transmission

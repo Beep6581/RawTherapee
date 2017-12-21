@@ -1322,6 +1322,11 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !HISTORY_MSG_491;White Balance
 !HISTORY_MSG_492;RGB Curves
 !HISTORY_MSG_493;L*a*b* Adjustments
+!HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
+!HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
+!HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
+!HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
+!HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
@@ -1383,6 +1388,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PARTIALPASTE_FILMSIMULATION;Film simulation
 !PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control
 !PARTIALPASTE_GRADIENT;Graduated filter
+!PARTIALPASTE_LOCALCONTRAST;Local contrast
 !PARTIALPASTE_PCVIGNETTE;Vignette filter
 !PARTIALPASTE_PREPROCESS_DEADPIXFILT;Dead pixel filter
 !PARTIALPASTE_PREPROCESS_HOTPIXFILT;Hot pixel filter
@@ -1826,6 +1832,11 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_LABCURVE_CURVEEDITOR_LH;LH
 !TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H)
 !TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance according to luminance L=f(L)
+!TP_LOCALCONTRAST_AMOUNT;Amount
+!TP_LOCALCONTRAST_DARKNESS;Darkness level
+!TP_LOCALCONTRAST_LABEL;Local Contrast
+!TP_LOCALCONTRAST_LIGHTNESS;Lightness level
+!TP_LOCALCONTRAST_RADIUS;Radius
 !TP_NEUTRAL;Reset
 !TP_PCVIGNETTE_FEATHER;Feather
 !TP_PCVIGNETTE_FEATHER_TOOLTIP;Feathering:\n0 = corners only,\n50 = halfway to center,\n100 = to center.
@@ -1858,7 +1869,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_RAW_DCB;DCB
 !TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
 !TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
-!TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.\nPixel Shift is for Pentax Pixel Shift files. It falls back to AMaZE for non-Pixel Shift files.
+!TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.\nPixel Shift is for Pentax/Sony Pixel Shift files. It falls back to AMaZE for non-Pixel Shift files.
 !TP_RAW_EAHD;EAHD
 !TP_RAW_FAST;Fast
 !TP_RAW_HD;Threshold
@@ -1866,7 +1877,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_RAW_HPHD;HPHD
 !TP_RAW_IGV;IGV
 !TP_RAW_IMAGENUM;Sub-image
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
+!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
 !TP_RAW_LMMSE;LMMSE
 !TP_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 !TP_RAW_LMMSE_TOOLTIP;Adds gamma (step 1), median (steps 2-4) and refinement (steps 5-6) to reduce artifacts and improve the signal-to-noise ratio.
@@ -1905,6 +1916,8 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Check red/blue horizontal
 !TP_RAW_PIXELSHIFTNONGREENVERTICAL;Check red/blue vertical
 !TP_RAW_PIXELSHIFTNREADISO;nRead
+!TP_RAW_PIXELSHIFTONEGREEN;Use one green instead of average
+!TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Use one green instead of averaging two greens for regions without motion.
 !TP_RAW_PIXELSHIFTPRNU;PRNU (%)
 !TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
 !TP_RAW_PIXELSHIFTSHOWMOTION;Show motion mask

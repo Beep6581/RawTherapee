@@ -843,11 +843,11 @@ HISTORY_MSG_594;Local - Noise chro detail
 HISTORY_MSG_595;Local - Noise Scope
 HISTORY_MSG_597;Local L*a*b*
 HISTORY_MSG_598;Local - Bottom
-HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
-HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
+HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
+HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -1820,6 +1820,7 @@ TP_LENSPROFILE_USECA;Chromatic aberration correction
 TP_LENSPROFILE_USEDIST;Distortion correction
 TP_LENSPROFILE_USEVIGN;Vignetting correction
 <<<<<<< HEAD
+<<<<<<< HEAD
 TP_LOCALLAB_ACTIV;Blur luminance only
 TP_LOCALLAB_ADJBLUR;Adjust and Blur
 TP_LOCALLAB_ARTIF;Reduce artifacts - Improve algoritm
@@ -1933,9 +1934,13 @@ TP_NEUTRAL;Neutral
 =======
 TP_LOCALCONTRAST_LABEL;Local Contrast
 TP_LOCALCONTRAST_RADIUS;Radius
+=======
+>>>>>>> dev
 TP_LOCALCONTRAST_AMOUNT;Amount
 TP_LOCALCONTRAST_DARKNESS;Darkness level
+TP_LOCALCONTRAST_LABEL;Local Contrast
 TP_LOCALCONTRAST_LIGHTNESS;Lightness level
+TP_LOCALCONTRAST_RADIUS;Radius
 TP_NEUTRAL;Reset
 >>>>>>> dev
 TP_NEUTRAL_TIP;Resets exposure sliders to neutral values.\nApplies to the same controls that Auto Levels applies to, regardless of whether you used Auto Levels or not.
@@ -2018,7 +2023,6 @@ TP_RAW_PIXELSHIFTHOLEFILL;Fill holes in motion mask
 TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fill holes in motion mask
 TP_RAW_PIXELSHIFTLMMSE;Use LMMSE for moving parts
 TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Use LMMSE instead of AMaZE for areas of motion.\nUseful for high ISO images.
-TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Use one green instead of averaging two greens for regions without motion.
 TP_RAW_PIXELSHIFTMASKTHRESHOLD;3x3 new threshold
 TP_RAW_PIXELSHIFTMEDIAN;Use median for moving parts
 TP_RAW_PIXELSHIFTMEDIAN3;Exclude selected frame from median
@@ -2038,6 +2042,7 @@ TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Check red/blue horizontal
 TP_RAW_PIXELSHIFTNONGREENVERTICAL;Check red/blue vertical
 TP_RAW_PIXELSHIFTNREADISO;nRead
 TP_RAW_PIXELSHIFTONEGREEN;Use one green instead of average
+TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Use one green instead of averaging two greens for regions without motion.
 TP_RAW_PIXELSHIFTPRNU;PRNU (%)
 TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
 TP_RAW_PIXELSHIFTSHOWMOTION;Show motion mask
