@@ -792,7 +792,6 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                 while (denoiseNestedLevels * numthreads > options.rgbDenoiseThreadLimit) {
                     denoiseNestedLevels--;
                 }
-			printf("dennl=%i \n", denoiseNestedLevels);
 
 #endif
 
