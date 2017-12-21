@@ -772,6 +772,11 @@ HISTORY_MSG_490;(HDR-Dynamikkompression)\nIntensität
 HISTORY_MSG_491;(Weißabgleich)
 HISTORY_MSG_492;(RGB-Kurven)
 HISTORY_MSG_493;(L*a*b*)
+HISTORY_MSG_LOCALCONTRAST_AMOUNT;(Lokaler Kontrast)\nIntensität
+HISTORY_MSG_LOCALCONTRAST_DARKNESS;(Lokaler Kontrast)\nDunkle Bereiche
+HISTORY_MSG_LOCALCONTRAST_ENABLED;(Lokaler Kontrast)
+HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;(Lokaler Kontrast)\nHelle Bereiche
+HISTORY_MSG_LOCALCONTRAST_RADIUS;(Lokaler Kontrast)\nRadius
 HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
 HISTORY_SNAPSHOT;Schnappschuss
@@ -949,6 +954,7 @@ PARTIALPASTE_IPTCINFO;IPTC-Informationen
 PARTIALPASTE_LABCURVE;L*a*b* - Einstellungen
 PARTIALPASTE_LENSGROUP;Objektivkorrekturen
 PARTIALPASTE_LENSPROFILE;Objektivkorrekturprofil
+PARTIALPASTE_LOCALCONTRAST;Lokaler Kontrast
 PARTIALPASTE_METAGROUP;Metadaten
 PARTIALPASTE_PCVIGNETTE;Vignettierungsfilter
 PARTIALPASTE_PERSPECTIVE;Perspektive
@@ -1727,6 +1733,11 @@ TP_LENSPROFILE_LABEL;Objektivkorrekturprofil
 TP_LENSPROFILE_USECA;CA korrigieren
 TP_LENSPROFILE_USEDIST;Verzeichnung korrigieren
 TP_LENSPROFILE_USEVIGN;Vignettierung korrigieren
+TP_LOCALCONTRAST_AMOUNT;Intensität
+TP_LOCALCONTRAST_DARKNESS;Dunkle Bereiche
+TP_LOCALCONTRAST_LABEL;Lokaler Kontrast
+TP_LOCALCONTRAST_LIGHTNESS;Helle Bereiche
+TP_LOCALCONTRAST_RADIUS;Radius
 TP_NEUTRAL;Zurücksetzen
 TP_NEUTRAL_TIP;Belichtungseinstellungen auf\nneutrale Werte zurücksetzen
 TP_PCVIGNETTE_FEATHER;Bereich
@@ -2230,14 +2241,5 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-HISTORY_MSG_LOCALCONTRAST_ENABLED;(Lokaler Kontrast)
-HISTORY_MSG_LOCALCONTRAST_RADIUS;(Lokaler Kontrast)\nRadius
-HISTORY_MSG_LOCALCONTRAST_AMOUNT;(Lokaler Kontrast)\nIntensität
-HISTORY_MSG_LOCALCONTRAST_DARKNESS;(Lokaler Kontrast)\nDunkle Bereiche
-HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;(Lokaler Kontrast)\nHelle Bereiche
-PARTIALPASTE_LOCALCONTRAST;Lokaler Kontrast
-TP_LOCALCONTRAST_LABEL;Lokaler Kontrast
-TP_LOCALCONTRAST_RADIUS;Radius
-TP_LOCALCONTRAST_AMOUNT;Intensität
-TP_LOCALCONTRAST_DARKNESS;Dunkle Bereiche
-TP_LOCALCONTRAST_LIGHTNESS;Helle Bereiche
+!TP_RAW_PIXELSHIFTONEGREEN;Use one green instead of average
+!TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Use one green instead of averaging two greens for regions without motion.
