@@ -1263,7 +1263,7 @@ void Locallab::neutral_pressed()
     sensiexclu->resetValue(false);
     struc->resetValue(false);
 
-    qualityMethod->set_active(0);
+    qualityMethod->set_active(1);
     qualitycurveMethod->set_active(0);
     thres->resetValue(false);
     proxi->resetValue(false);

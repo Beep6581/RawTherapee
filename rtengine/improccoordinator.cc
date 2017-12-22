@@ -950,7 +950,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                         int t_shariter = 30;
                         int t_sensisha = 19;
                         int t_inverssha = 0;
-                        int t_qualityMethod = 2;
+                        int t_qualityMethod = 1;
                         int t_thres = 18;
                         int t_proxi = 0;
                         int t_noiselumf = 0;
@@ -2069,7 +2069,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                     int t_shariter = 30;
                     int t_sensisha = 19;
                     int t_inverssha = 0;
-                    int t_qualityMethod = 2;
+                    int t_qualityMethod = 1;
                     int t_thres = 18;
                     int t_proxi = 0;
                     int t_noiselumf = 0;

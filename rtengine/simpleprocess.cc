@@ -2634,8 +2634,8 @@ private:
 
         params.dirpyrequalizer.threshold *= scale_factor;
 
-        adjust_radius (defaultparams.defringe.radius, scale_factor,
-                       params.defringe.radius);
+        adjust_radius(defaultparams.defringe.radius, scale_factor,
+                      params.defringe.radius);
         params.sh.radius *= scale_factor;
         params.localContrast.radius *= scale_factor;
 

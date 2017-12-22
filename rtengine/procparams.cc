@@ -2382,7 +2382,7 @@ circrad(18),
 centerXbuf(0),
 centerYbuf(0),
 adjblur(0),
-qualityMethod("enhden"),
+qualityMethod("enh"),
 qualitycurveMethod("none"),
 proxi(0),
 thres(18),
@@ -3164,7 +3164,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->localContrast.amount, "Local Contrast", "Amount", localContrast.amount, keyFile);
         saveToKeyfile(!pedited || pedited->localContrast.darkness, "Local Contrast", "Darkness", localContrast.darkness, keyFile);
         saveToKeyfile(!pedited || pedited->localContrast.lightness, "Local Contrast", "Lightness", localContrast.lightness, keyFile);
-        
+
 
 // Channel mixer
         saveToKeyfile(!pedited || pedited->chmixer.enabled, "Channel Mixer", "Enabled", chmixer.enabled, keyFile);
@@ -4131,16 +4131,17 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Local Contrast", "Lightness", pedited, localContrast.lightness, pedited->localContrast.lightness);
         }
 
-        if (keyFile.has_group ("Luminance Curve")) {
+        if (keyFile.has_group("Luminance Curve")) {
             if (ppVersion >= 329) {
                 assignFromKeyfile(keyFile, "Luminance Curve", "Enabled", pedited, labCurve.enabled, pedited->labCurve.enabled);
             } else {
                 labCurve.enabled = true;
+
                 if (pedited) {
                     pedited->labCurve.enabled = true;
                 }
             }
-            
+
             assignFromKeyfile(keyFile, "Luminance Curve", "Brightness", pedited, labCurve.brightness, pedited->labCurve.brightness);
             assignFromKeyfile(keyFile, "Luminance Curve", "Contrast", pedited, labCurve.contrast, pedited->labCurve.contrast);
 

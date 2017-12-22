@@ -1864,7 +1864,7 @@ void ImProcFunctions::addGaNoise(LabImage *lab, LabImage *dst, const float mean,
     }
 }
 
-void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp,  int levred, float hueplus, float huemoins, float hueref, float dhueden, LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy)
+void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp,  int levred, float hueplus, float huemoins, float hueref, float dhueden, LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy, int sk)
 {
     // local denoise
     //simple algo , perhaps we can improve as the others, but noise is here and not good for hue detection
@@ -1891,7 +1891,7 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp,  in
 
     origblur = new LabImage(GW, GH);
 
-    float radius = 3.f;
+    float radius = 3.f / sk;
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -2098,7 +2098,7 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp,  in
 
 }
 
-void ImProcFunctions::cat02_Local(float **buflightcat, float **buf_a_cat, float ** buf_b_cat, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy)
+void ImProcFunctions::cat02_Local(float **buflightcat, float **buf_a_cat, float ** buf_b_cat, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int sk)
 {
 
 //local cat02
@@ -2139,26 +2139,26 @@ void ImProcFunctions::cat02_Local(float **buflightcat, float **buf_a_cat, float 
 
         const float alum = 1.f / (varsens - 100.f);
         const float blum = 1.f - alum * varsens;
-		
-    int GW = transformed->W;
-    int GH = transformed->H;
 
-    LabImage *origblur = nullptr;
+        int GW = transformed->W;
+        int GH = transformed->H;
 
-    origblur = new LabImage(GW, GH);
+        LabImage *origblur = nullptr;
 
-    float radius = 3.f;
+        origblur = new LabImage(GW, GH);
+
+        float radius = 3.f / sk;
 #ifdef _OPENMP
-    #pragma omp parallel
+        #pragma omp parallel
 #endif
-    {
-        gaussianBlur(original->L, origblur->L, GW, GH, radius);
-        gaussianBlur(original->a, origblur->a, GW, GH, radius);
-        gaussianBlur(original->b, origblur->b, GW, GH, radius);
+        {
+            gaussianBlur(original->L, origblur->L, GW, GH, radius);
+            gaussianBlur(original->a, origblur->a, GW, GH, radius);
+            gaussianBlur(original->b, origblur->b, GW, GH, radius);
 
-    }
-		
-		
+        }
+
+
         //float maxc = -100000.f;
         //float minc = 100000.f;
 
@@ -2512,13 +2512,13 @@ void ImProcFunctions::cat02_Local(float **buflightcat, float **buf_a_cat, float 
 
             //    printf ("minc=%f maxc=%f \n", minc, maxc);
         }
-		delete origblur;
+        delete origblur;
 
     }
 }
 
 
-void ImProcFunctions::cbdl_Local(float ** buflight, float ** bufchrom, float **loctemp, float **loctempch, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int chro)
+void ImProcFunctions::cbdl_Local(float ** buflight, float ** bufchrom, float **loctemp, float **loctempch, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int chro, int sk)
 {
 //local CBDL
     BENCHFUN
@@ -2539,6 +2539,23 @@ void ImProcFunctions::cbdl_Local(float ** buflight, float ** bufchrom, float **l
 
     const float alum = 1.f / (lp.senscb - 100.f);
     const float blum = 1.f - alum * lp.senscb;
+    int GW = transformed->W;
+    int GH = transformed->H;
+
+    LabImage *origblur = nullptr;
+
+    origblur = new LabImage(GW, GH);
+
+    float radius = 3.f / sk;
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        gaussianBlur(original->L, origblur->L, GW, GH, radius);
+        gaussianBlur(original->a, origblur->a, GW, GH, radius);
+        gaussianBlur(original->b, origblur->b, GW, GH, radius);
+
+    }
 
 #ifdef _OPENMP
     #pragma omp parallel if (multiThread)
@@ -2566,15 +2583,15 @@ void ImProcFunctions::cbdl_Local(float ** buflight, float ** bufchrom, float **l
             int i = 0;
 
             for (; i < transformed->W - 3; i += 4) {
-                vfloat av = LVFU(original->a[y][i]);
-                vfloat bv = LVFU(original->b[y][i]);
+                vfloat av = LVFU(origblur->a[y][i]);
+                vfloat bv = LVFU(origblur->b[y][i]);
                 STVF(atan2Buffer[i], xatan2f(bv, av));
                 STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
             }
 
             for (; i < transformed->W; i++) {
-                atan2Buffer[i] = xatan2f(original->b[y][i], original->a[y][i]);
-                sqrtBuffer[i] = sqrt(SQR(original->b[y][i]) + SQR(original->a[y][i])) / 327.68f;
+                atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
+                sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
             }
 
 #endif
@@ -2597,11 +2614,11 @@ void ImProcFunctions::cbdl_Local(float ** buflight, float ** bufchrom, float **l
                 float rhue = atan2Buffer[x];
                 float rchro = sqrtBuffer[x];
 #else
-                float rhue = xatan2f(original->b[y][x], original->a[y][x]);
-                float rchro = sqrt(SQR(original->b[y][x]) + SQR(original->a[y][x])) / 327.68f;
+                float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
+                float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
 #endif
                 //     int zone;
-                float rL = original->L[y][x] / 327.68f;
+                float rL = origblur->L[y][x] / 327.68f;
 
                 //retrieve data
                 float cli = 1.f;
@@ -2878,10 +2895,11 @@ void ImProcFunctions::cbdl_Local(float ** buflight, float ** bufchrom, float **l
             }
         }
     }
+    delete origblur;
 }
 
 
-void ImProcFunctions::TM_Local(LabImage * tmp1, float **buflight, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
+void ImProcFunctions::TM_Local(LabImage * tmp1, float **buflight, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 //local TM
     BENCHFUN
@@ -2903,6 +2921,23 @@ void ImProcFunctions::TM_Local(LabImage * tmp1, float **buflight, const float hu
     const float alum = 1.f / (lp.senstm - 100.f);
     const float blum = 1.f - alum * lp.senstm;
 
+    int GW = transformed->W;
+    int GH = transformed->H;
+
+    LabImage *origblur = nullptr;
+
+    origblur = new LabImage(GW, GH);
+
+    float radius = 3.f / sk;
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        gaussianBlur(original->L, origblur->L, GW, GH, radius);
+        gaussianBlur(original->a, origblur->a, GW, GH, radius);
+        gaussianBlur(original->b, origblur->b, GW, GH, radius);
+
+    }
 
 #ifdef _OPENMP
     #pragma omp parallel if (multiThread)
@@ -2930,15 +2965,15 @@ void ImProcFunctions::TM_Local(LabImage * tmp1, float **buflight, const float hu
             int i = 0;
 
             for (; i < transformed->W - 3; i += 4) {
-                vfloat av = LVFU(original->a[y][i]);
-                vfloat bv = LVFU(original->b[y][i]);
+                vfloat av = LVFU(origblur->a[y][i]);
+                vfloat bv = LVFU(origblur->b[y][i]);
                 STVF(atan2Buffer[i], xatan2f(bv, av));
                 STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
             }
 
             for (; i < transformed->W; i++) {
-                atan2Buffer[i] = xatan2f(original->b[y][i], original->a[y][i]);
-                sqrtBuffer[i] = sqrt(SQR(original->b[y][i]) + SQR(original->a[y][i])) / 327.68f;
+                atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
+                sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
             }
 
 #endif
@@ -2967,11 +3002,11 @@ void ImProcFunctions::TM_Local(LabImage * tmp1, float **buflight, const float hu
                     float rhue = atan2Buffer[x];
                     float rchro = sqrtBuffer[x];
 #else
-                    float rhue = xatan2f(original->b[y][x], original->a[y][x]);
-                    float rchro = sqrt(SQR(original->b[y][x]) + SQR(original->a[y][x])) / 327.68f;
+                    float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
+                    float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
 #endif
                     // int zone;
-                    float rL = original->L[y][x] / 327.68f;
+                    float rL = origblur->L[y][x] / 327.68f;
 
                     //retrieve data
                     float cli = 1.f;
@@ -3185,12 +3220,13 @@ void ImProcFunctions::TM_Local(LabImage * tmp1, float **buflight, const float hu
             }
         }
     }
+    delete origblur;
 }
 
 
 
 
-void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2, float ** buflight, float ** bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
+void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2, float ** buflight, float ** bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 //local BLUR
     BENCHFUN
@@ -3212,6 +3248,23 @@ void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2
 
     const float alum = 1.f / (lp.sensbn - 100.f);
     const float blum = 1.f - alum * lp.sensbn;
+    int GW = transformed->W;
+    int GH = transformed->H;
+
+    LabImage *origblur = nullptr;
+
+    origblur = new LabImage(GW, GH);
+
+    float radius = 3.f / sk;
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        gaussianBlur(original->L, origblur->L, GW, GH, radius);
+        gaussianBlur(original->a, origblur->a, GW, GH, radius);
+        gaussianBlur(original->b, origblur->b, GW, GH, radius);
+
+    }
 
 #ifdef _OPENMP
     #pragma omp parallel if (multiThread)
@@ -3264,15 +3317,15 @@ void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2
             int i = 0;
 
             for (; i < transformed->W - 3; i += 4) {
-                vfloat av = LVFU(original->a[y][i]);
-                vfloat bv = LVFU(original->b[y][i]);
+                vfloat av = LVFU(origblur->a[y][i]);
+                vfloat bv = LVFU(origblur->b[y][i]);
                 STVF(atan2Buffer[i], xatan2f(bv, av));
                 STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
             }
 
             for (; i < transformed->W; i++) {
-                atan2Buffer[i] = xatan2f(original->b[y][i], original->a[y][i]);
-                sqrtBuffer[i] = sqrt(SQR(original->b[y][i]) + SQR(original->a[y][i])) / 327.68f;
+                atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
+                sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
             }
 
 #endif
@@ -3316,11 +3369,11 @@ void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2
                 const float rhue = atan2Buffer[x];
                 const float rchro = sqrtBuffer[x];
 #else
-                const float rhue = xatan2f(original->b[y][x], original->a[y][x]);
-                const float rchro = sqrt(SQR(original->b[y][x]) + SQR(original->a[y][x])) / 327.68f;
+                const float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
+                const float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
 #endif
 
-                float rL = original->L[y][x] / 327.68f;
+                float rL = origblur->L[y][x] / 327.68f;
 
                 float cli = 1.f;
                 float clc = 1.f;
@@ -3560,6 +3613,7 @@ void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2
             }
         }
     }
+    delete origblur;
 }
 
 void ImProcFunctions::InverseReti_Local(const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int chro)
@@ -3635,7 +3689,7 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, LabImage
 
 
 
-void ImProcFunctions::Reti_Local(float **buflight, float **bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int chro)
+void ImProcFunctions::Reti_Local(float **buflight, float **bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int chro, int sk)
 {
 
 //local retinex
@@ -3675,6 +3729,23 @@ void ImProcFunctions::Reti_Local(float **buflight, float **bufchro, const float 
         const float alum = 1.f / (lp.sensh - 100.f);
         const float blum = 1.f - alum * lp.sensh;
 
+        int GW = transformed->W;
+        int GH = transformed->H;
+
+        LabImage *origblur = nullptr;
+
+        origblur = new LabImage(GW, GH);
+
+        float radius = 3.f / sk;
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            gaussianBlur(original->L, origblur->L, GW, GH, radius);
+            gaussianBlur(original->a, origblur->a, GW, GH, radius);
+            gaussianBlur(original->b, origblur->b, GW, GH, radius);
+
+        }
 
 #ifdef _OPENMP
         #pragma omp parallel if (multiThread)
@@ -3708,15 +3779,15 @@ void ImProcFunctions::Reti_Local(float **buflight, float **bufchro, const float 
                 int i = 0;
 
                 for (; i < transformed->W - 3; i += 4) {
-                    vfloat av = LVFU(original->a[y][i]);
-                    vfloat bv = LVFU(original->b[y][i]);
+                    vfloat av = LVFU(origblur->a[y][i]);
+                    vfloat bv = LVFU(origblur->b[y][i]);
                     STVF(atan2Buffer[i], xatan2f(bv, av));
                     STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
                 }
 
                 for (; i < transformed->W; i++) {
-                    atan2Buffer[i] = xatan2f(original->b[y][i], original->a[y][i]);
-                    sqrtBuffer[i] = sqrt(SQR(original->b[y][i]) + SQR(original->a[y][i])) / 327.68f;
+                    atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
+                    sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
                 }
 
 #endif
@@ -3739,10 +3810,10 @@ void ImProcFunctions::Reti_Local(float **buflight, float **bufchro, const float 
                     float rhue = atan2Buffer[x];
                     float rchro = sqrtBuffer[x];
 #else
-                    float rhue = xatan2f(original->b[y][x], original->a[y][x]);
-                    float rchro = sqrt(SQR(original->b[y][x]) + SQR(original->a[y][x])) / 327.68f;
+                    float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
+                    float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
 #endif
-                    float rL = original->L[y][x] / 327.68f;
+                    float rL = origblur->L[y][x] / 327.68f;
 
                     float cli = 1.f;
                     float clc = 1.f;
@@ -4033,7 +4104,7 @@ void ImProcFunctions::Reti_Local(float **buflight, float **bufchro, const float 
                 }
             }
         }
-
+        delete origblur;
     }
 }
 
@@ -4117,7 +4188,7 @@ struct local_contra {
     float al, bl;
 };
 
-void ImProcFunctions::Contrast_Local(int call, float ** buflightc, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, float pm, struct local_contra & lco, float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
+void ImProcFunctions::Contrast_Local(int call, float ** buflightc, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, float pm, struct local_contra & lco, float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
     BENCHFUN
 // contrast - perhaps for 4 areas   if need
@@ -4173,7 +4244,7 @@ void ImProcFunctions::Contrast_Local(int call, float ** buflightc, const float h
 
     origblur = new LabImage(GW, GH);
 
-    float radius = 3.f;
+    float radius = 3.f / sk;
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -4183,8 +4254,8 @@ void ImProcFunctions::Contrast_Local(int call, float ** buflightc, const float h
         gaussianBlur(original->b, origblur->b, GW, GH, radius);
 
     }
-	
-	
+
+
     if (call <= 3) {
 #ifdef _OPENMP
         #pragma omp parallel if (multiThread)
@@ -4475,10 +4546,11 @@ void ImProcFunctions::Contrast_Local(int call, float ** buflightc, const float h
             }
         }
     }
-	delete origblur;
+
+    delete origblur;
 }
 
-void ImProcFunctions::InverseContrast_Local(float ave, struct local_contra & lco, const struct local_params & lp, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, LabImage * original, LabImage * transformed, int cx, int cy)
+void ImProcFunctions::InverseContrast_Local(float ave, struct local_contra & lco, const struct local_params & lp, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 
 {
     //  BENCHFUN
@@ -4540,6 +4612,24 @@ void ImProcFunctions::InverseContrast_Local(float ave, struct local_contra & lco
     ImProcFunctions::secondeg_begin(reducac, vi, lco.aa, lco.bb); //parabolic
     ImProcFunctions::secondeg_end(reducac, vinf, lco.aaa, lco.bbb, lco.ccc); //parabolic
 
+    int GW = transformed->W;
+    int GH = transformed->H;
+
+    LabImage *origblur = nullptr;
+
+    origblur = new LabImage(GW, GH);
+
+    float radius = 3.f / sk;
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        gaussianBlur(original->L, origblur->L, GW, GH, radius);
+        gaussianBlur(original->a, origblur->a, GW, GH, radius);
+        gaussianBlur(original->b, origblur->b, GW, GH, radius);
+
+    }
+
 #ifdef _OPENMP
     #pragma omp parallel if (multiThread)
 #endif
@@ -4562,15 +4652,15 @@ void ImProcFunctions::InverseContrast_Local(float ave, struct local_contra & lco
             int i = 0;
 
             for (; i < transformed->W - 3; i += 4) {
-                vfloat av = LVFU(original->a[y][i]);
-                vfloat bv = LVFU(original->b[y][i]);
+                vfloat av = LVFU(origblur->a[y][i]);
+                vfloat bv = LVFU(origblur->b[y][i]);
                 STVF(atan2Buffer[i], xatan2f(bv, av));
                 STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
             }
 
             for (; i < transformed->W; i++) {
-                atan2Buffer[i] = xatan2f(original->b[y][i], original->a[y][i]);
-                sqrtBuffer[i] = sqrt(SQR(original->b[y][i]) + SQR(original->a[y][i])) / 327.68f;
+                atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
+                sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
             }
 
 #endif
@@ -4591,8 +4681,8 @@ void ImProcFunctions::InverseContrast_Local(float ave, struct local_contra & lco
                 float rhue = atan2Buffer[x];
                 float rchro = sqrtBuffer[x];
 #else
-                float rhue = xatan2f(original->b[y][x], original->a[y][x]);
-                float rchro = sqrt(SQR(original->b[y][x]) + SQR(original->a[y][x])) / 327.68f;
+                float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
+                float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
 #endif
                 //prepare shape detection
                 float khu = 0.f;
@@ -4763,6 +4853,7 @@ void ImProcFunctions::InverseContrast_Local(float ave, struct local_contra & lco
             }
         }
     }
+    delete origblur;
 }
 
 static void calclight(float lum, float  koef, float & lumnew, bool inv)
@@ -4803,7 +4894,7 @@ static void calclight(float lum, float  koef, float & lumnew, bool inv)
 
 }
 
-void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
+void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 //local sharp
     //  BENCHFUN
@@ -4821,6 +4912,23 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueplus, c
 
     const float ahu = 1.f / (2.8f * lp.senssha - 280.f);
     const float bhu = 1.f - ahu * 2.8f * lp.senssha;
+    int GW = transformed->W;
+    int GH = transformed->H;
+
+    LabImage *origblur = nullptr;
+
+    origblur = new LabImage(GW, GH);
+
+    float radius = 3.f / sk;
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        gaussianBlur(original->L, origblur->L, GW, GH, radius);
+        gaussianBlur(original->a, origblur->a, GW, GH, radius);
+        gaussianBlur(original->b, origblur->b, GW, GH, radius);
+
+    }
 
 #ifdef _OPENMP
     #pragma omp parallel if (multiThread)
@@ -4841,15 +4949,15 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueplus, c
             int i = 0;
 
             for (; i < transformed->W - 3; i += 4) {
-                vfloat av = LVFU(original->a[y][i]);
-                vfloat bv = LVFU(original->b[y][i]);
+                vfloat av = LVFU(origblur->a[y][i]);
+                vfloat bv = LVFU(origblur->b[y][i]);
                 STVF(atan2Buffer[i], xatan2f(bv, av));
                 STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
             }
 
             for (; i < transformed->W; i++) {
-                atan2Buffer[i] = xatan2f(original->b[y][i], original->a[y][i]);
-                sqrtBuffer[i] = sqrt(SQR(original->b[y][i]) + SQR(original->a[y][i])) / 327.68f;
+                atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
+                sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
             }
 
 #endif
@@ -4862,8 +4970,8 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueplus, c
                 float rhue = atan2Buffer[x];
                 float rchro = sqrtBuffer[x];
 #else
-                float rhue = xatan2f(original->b[y][x], original->a[y][x]);
-                float rchro = sqrt(SQR(original->b[y][x]) + SQR(original->a[y][x])) / 327.68f;
+                float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
+                float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
 #endif
                 int zone;
                 float localFactor = 1.f;
@@ -4998,10 +5106,11 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueplus, c
             }
         }
     }
+    delete origblur;
 }
 
 
-void ImProcFunctions::Sharp_Local(int call, float **loctemp, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
+void ImProcFunctions::Sharp_Local(int call, float **loctemp, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
     BENCHFUN
     const float ach = (float)lp.trans / 100.f;
@@ -5020,6 +5129,25 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, const float hueplus
     const float bhu = 1.f - ahu * 2.8f * lp.senssha;
 
     const bool detectHue = lp.senssha < 20.f && lp.qualmet >= 1;
+
+    int GW = transformed->W;
+    int GH = transformed->H;
+
+    LabImage *origblur = nullptr;
+
+    origblur = new LabImage(GW, GH);
+
+    float radius = 3.f / sk;
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        gaussianBlur(original->L, origblur->L, GW, GH, radius);
+        gaussianBlur(original->a, origblur->a, GW, GH, radius);
+        gaussianBlur(original->b, origblur->b, GW, GH, radius);
+
+    }
+
 #ifdef _OPENMP
     #pragma omp parallel if (multiThread)
 #endif
@@ -5052,25 +5180,25 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, const float hueplus
 
             if (detectHue) {
                 for (; i < transformed->W - 3; i += 4) {
-                    vfloat av = LVFU(original->a[y][i]);
-                    vfloat bv = LVFU(original->b[y][i]);
+                    vfloat av = LVFU(origblur->a[y][i]);
+                    vfloat bv = LVFU(origblur->b[y][i]);
                     STVF(atan2Buffer[i], xatan2f(bv, av));
                     STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
                 }
 
                 for (; i < transformed->W; i++) {
-                    atan2Buffer[i] = xatan2f(original->b[y][i], original->a[y][i]);
-                    sqrtBuffer[i] = sqrt(SQR(original->b[y][i]) + SQR(original->a[y][i])) / 327.68f;
+                    atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
+                    sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
                 }
             } else {
                 for (; i < transformed->W - 3; i += 4) {
-                    vfloat av = LVFU(original->a[y][i]);
-                    vfloat bv = LVFU(original->b[y][i]);
+                    vfloat av = LVFU(origblur->a[y][i]);
+                    vfloat bv = LVFU(origblur->b[y][i]);
                     STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
                 }
 
                 for (; i < transformed->W; i++) {
-                    sqrtBuffer[i] = sqrt(SQR(original->b[y][i]) + SQR(original->a[y][i])) / 327.68f;
+                    sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
                 }
             }
 
@@ -5090,7 +5218,7 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, const float hueplus
 #ifdef __SSE2__
                 float rchro = sqrtBuffer[x];
 #else
-                float rchro = sqrt(SQR(original->b[y][x]) + SQR(original->a[y][x])) / 327.68f;
+                float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
 #endif
                 //prepare shape detection
                 float kch = 1.f;
@@ -5120,7 +5248,7 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, const float hueplus
 #ifdef __SSE2__
                     float rhue = atan2Buffer[x];
 #else
-                    float rhue = xatan2f(original->b[y][x], original->a[y][x]);
+                    float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
 #endif
                     float khu = 0.f;
                     float deltahue = fabs(rhue - hueref);
@@ -5229,7 +5357,7 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, const float hueplus
 
 
 
-void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, float **bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, LabImage * rsv, int cx, int cy)
+void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, float **bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, LabImage * rsv, int cx, int cy, int sk)
 {
 
 //local exposure
@@ -5281,6 +5409,23 @@ void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, 
         const float blum = 1.f - alum * varsens;
         //float maxc = -100000.f;
         //float minc = 100000.f;
+        int GW = transformed->W;
+        int GH = transformed->H;
+
+        LabImage *origblur = nullptr;
+
+        origblur = new LabImage(GW, GH);
+
+        float radius = 3.f / sk;
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            gaussianBlur(original->L, origblur->L, GW, GH, radius);
+            gaussianBlur(original->a, origblur->a, GW, GH, radius);
+            gaussianBlur(original->b, origblur->b, GW, GH, radius);
+
+        }
 
 #ifdef _OPENMP
         #pragma omp parallel if (multiThread)
@@ -5314,15 +5459,15 @@ void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, 
                 int i = 0;
 
                 for (; i < transformed->W - 3; i += 4) {
-                    vfloat av = LVFU(original->a[y][i]);
-                    vfloat bv = LVFU(original->b[y][i]);
+                    vfloat av = LVFU(origblur->a[y][i]);
+                    vfloat bv = LVFU(origblur->b[y][i]);
                     STVF(atan2Buffer[i], xatan2f(bv, av));
                     STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
                 }
 
                 for (; i < transformed->W; i++) {
-                    atan2Buffer[i] = xatan2f(original->b[y][i], original->a[y][i]);
-                    sqrtBuffer[i] = sqrt(SQR(original->b[y][i]) + SQR(original->a[y][i])) / 327.68f;
+                    atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
+                    sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
                 }
 
 #endif
@@ -5345,10 +5490,10 @@ void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, 
                     float rhue = atan2Buffer[x];
                     float rchro = sqrtBuffer[x];
 #else
-                    float rhue = xatan2f(original->b[y][x], original->a[y][x]);
-                    float rchro = sqrt(SQR(original->b[y][x]) + SQR(original->a[y][x])) / 327.68f;
+                    float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
+                    float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
 #endif
-                    float rL = original->L[y][x] / 327.68f;
+                    float rL = origblur->L[y][x] / 327.68f;
 
                     float cli = 1.f;
                     float clc = 1.f;
@@ -5657,7 +5802,7 @@ void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, 
             }
 
         }
-
+        delete origblur;
     }
 }
 
@@ -5665,7 +5810,7 @@ void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, 
 
 
 
-void ImProcFunctions::Expose_Local(int sen, float **buflight, float **bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy)
+void ImProcFunctions::Expose_Local(int sen, float **buflight, float **bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int sk)
 {
 
 //local exposure
@@ -5718,6 +5863,25 @@ void ImProcFunctions::Expose_Local(int sen, float **buflight, float **bufchro, c
         //float maxc = -100000.f;
         //float minc = 100000.f;
 
+        int GW = transformed->W;
+        int GH = transformed->H;
+
+        LabImage *origblur = nullptr;
+
+        origblur = new LabImage(GW, GH);
+
+        float radius = 3.f / sk;
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            gaussianBlur(original->L, origblur->L, GW, GH, radius);
+            gaussianBlur(original->a, origblur->a, GW, GH, radius);
+            gaussianBlur(original->b, origblur->b, GW, GH, radius);
+
+        }
+
+
 #ifdef _OPENMP
         #pragma omp parallel if (multiThread)
 #endif
@@ -5750,15 +5914,15 @@ void ImProcFunctions::Expose_Local(int sen, float **buflight, float **bufchro, c
                 int i = 0;
 
                 for (; i < transformed->W - 3; i += 4) {
-                    vfloat av = LVFU(original->a[y][i]);
-                    vfloat bv = LVFU(original->b[y][i]);
+                    vfloat av = LVFU(origblur->a[y][i]);
+                    vfloat bv = LVFU(origblur->b[y][i]);
                     STVF(atan2Buffer[i], xatan2f(bv, av));
                     STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
                 }
 
                 for (; i < transformed->W; i++) {
-                    atan2Buffer[i] = xatan2f(original->b[y][i], original->a[y][i]);
-                    sqrtBuffer[i] = sqrt(SQR(original->b[y][i]) + SQR(original->a[y][i])) / 327.68f;
+                    atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
+                    sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
                 }
 
 #endif
@@ -5781,10 +5945,10 @@ void ImProcFunctions::Expose_Local(int sen, float **buflight, float **bufchro, c
                     float rhue = atan2Buffer[x];
                     float rchro = sqrtBuffer[x];
 #else
-                    float rhue = xatan2f(original->b[y][x], original->a[y][x]);
-                    float rchro = sqrt(SQR(original->b[y][x]) + SQR(original->a[y][x])) / 327.68f;
+                    float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
+                    float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
 #endif
-                    float rL = original->L[y][x] / 327.68f;
+                    float rL = origblur->L[y][x] / 327.68f;
 
                     float cli = 1.f;
                     float clc = 1.f;
@@ -6070,12 +6234,13 @@ void ImProcFunctions::Expose_Local(int sen, float **buflight, float **bufchro, c
 
             //    printf ("minc=%f maxc=%f \n", minc, maxc);
         }
+        delete origblur;
 
     }
 }
 
 
-void ImProcFunctions::ColorLight_Local(int call, LabImage * bufcolorig, float ** buflight, float ** bufchro, float ** bufchroslid, float ** bufhh, float ** buflightslid, bool &LHutili, bool &HHutili, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, const LocHHCurve & lochhCurve, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
+void ImProcFunctions::ColorLight_Local(int call, LabImage * bufcolorig, float ** buflight, float ** bufchro, float ** bufchroslid, float ** bufhh, float ** buflightslid, bool &LHutili, bool &HHutili, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, const LocHHCurve & lochhCurve, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
     BENCHFUN
 // chroma and lightness
@@ -6159,7 +6324,7 @@ void ImProcFunctions::ColorLight_Local(int call, LabImage * bufcolorig, float **
 
     origblur = new LabImage(GW, GH);
 
-    float radius = 3.f;
+    float radius = 3.f / sk;
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -6169,8 +6334,8 @@ void ImProcFunctions::ColorLight_Local(int call, LabImage * bufcolorig, float **
         gaussianBlur(original->b, origblur->b, GW, GH, radius);
 
     }
-	
-	
+
+
     if (call <= 3) {
         //Todo optimization in this first part with bufcolorig and bufcoltra
 
@@ -6886,11 +7051,12 @@ void ImProcFunctions::ColorLight_Local(int call, LabImage * bufcolorig, float **
 
 
     }
-	delete origblur;
+
+    delete origblur;
 
 }
 
-void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref)
+void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, int sk)
 {
     // BENCHFUN
     float ach = (float)lp.trans / 100.f;
@@ -6960,6 +7126,23 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, La
     ImProcFunctions::secondeg_end(reducac2, vinf2, aaaa, bbbb, cccc); //parabolic
     ImProcFunctions::secondeg_begin(reducac2, vi2, aO, bO); //parabolic
 
+    int GW = transformed->W;
+    int GH = transformed->H;
+
+    LabImage *origblur = nullptr;
+
+    origblur = new LabImage(GW, GH);
+
+    float radius = 3.f / sk;
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        gaussianBlur(original->L, origblur->L, GW, GH, radius);
+        gaussianBlur(original->a, origblur->a, GW, GH, radius);
+        gaussianBlur(original->b, origblur->b, GW, GH, radius);
+
+    }
 
 #ifdef _OPENMP
     #pragma omp parallel if (multiThread)
@@ -6982,15 +7165,15 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, La
             int i = 0;
 
             for (; i < transformed->W - 3; i += 4) {
-                vfloat av = LVFU(original->a[y][i]);
-                vfloat bv = LVFU(original->b[y][i]);
+                vfloat av = LVFU(origblur->a[y][i]);
+                vfloat bv = LVFU(origblur->b[y][i]);
                 STVF(atan2Buffer[i], xatan2f(bv, av));
                 STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
             }
 
             for (; i < transformed->W; i++) {
-                atan2Buffer[i] = xatan2f(original->b[y][i], original->a[y][i]);
-                sqrtBuffer[i] = sqrt(SQR(original->b[y][i]) + SQR(original->a[y][i])) / 327.68f;
+                atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
+                sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
             }
 
 #endif
@@ -7009,16 +7192,16 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, La
                 float rchro = sqrtBuffer[x];
 #else
 
-                float rhue = xatan2f(original->b[y][x], original->a[y][x]);
+                float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
 
-                float rchro = sqrt(SQR(original->b[y][x]) + SQR(original->a[y][x])) / 327.68f;
+                float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
 #endif
 
-                float rL = original->L[y][x] / 327.68f;
-                float rLL = original->L[y][x] / 327.68f;
+                float rL = origblur->L[y][x] / 327.68f;
+                float rLL = origblur->L[y][x] / 327.68f;
 
-                if (fabs(original->b[y][x]) < 0.01f) {
-                    original->b[y][x] = 0.01f;
+                if (fabs(origblur->b[y][x]) < 0.01f) {
+                    origblur->b[y][x] = 0.01f;
                 }
 
 
@@ -7357,6 +7540,7 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, La
             }
         }
     }
+    delete origblur;
 
 }
 
@@ -8783,7 +8967,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                     bufchro[ir][jr] = rch;
                 }
 
-            Exclude_Local(1,  deltasobelL->L, buflight, bufchro, hueplus, huemoins, hueref, dhueex, chromaref, lumaref, lp, original, transformed, bufreserv, cx, cy);
+            Exclude_Local(1,  deltasobelL->L, buflight, bufchro, hueplus, huemoins, hueref, dhueex, chromaref, lumaref, lp, original, transformed, bufreserv, cx, cy, sk);
 
 
             delete deltasobelL;
@@ -8960,7 +9144,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         bufchro[ir][jr] = rch;
                     }
 
-                BlurNoise_Local(call, tmp1, tmp2, buflight, bufchro, hueplus, huemoins, hueref, dhuebn, chromaref, lumaref, lp, original, transformed, cx, cy);
+                BlurNoise_Local(call, tmp1, tmp2, buflight, bufchro, hueplus, huemoins, hueref, dhuebn, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
             } else {
 
@@ -9160,7 +9344,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         float minic = 0.0001f;
 
                         if (noiscfactiv) {
-                            minic = 0.01f;//only for artifact shape detection
+                            minic = 0.1f;//only for artifact shape detection
                         }
 
                         variC[0] = max(minic, variC[0]);
@@ -9294,7 +9478,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
 
                 // printf("huere=%f dhueden=%f huplus=%f huemoin=%f\n", hueref, dhueden, hueplus, huemoins);
-                DeNoise_Local(call, lp,  levred, hueplus, huemoins, huerefblur, dhueden, original, transformed, tmp1, cx, cy);
+                DeNoise_Local(call, lp,  levred, hueplus, huemoins, huerefblur, dhueden, original, transformed, tmp1, cx, cy, sk);
 
             } else if (call == 2) { //simpleprocess
 
@@ -9447,7 +9631,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         float minic = 0.0001f;
 
                         if (noiscfactiv) {
-                            minic = 0.01f;//only for artifact shape detection
+                            minic = 0.1f;//only for artifact shape detection
                         }
 
                         variC[0] = max(minic, variC[0]);
@@ -9584,7 +9768,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 }
 
 
-                DeNoise_Local(call, lp, levred, hueplus, huemoins, huerefblur, dhueden, original, transformed, bufwv, cx, cy);
+                DeNoise_Local(call, lp, levred, hueplus, huemoins, huerefblur, dhueden, original, transformed, bufwv, cx, cy, sk);
             }
 
         }
@@ -9688,7 +9872,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                     }
                 }
 
-            cat02_Local(buflightcat, buf_a_cat, buf_b_cat, hueplus, huemoins, hueref, dhue, chromaref, lumaref, lp, original, transformed, bufcat02fin, cx, cy);
+            cat02_Local(buflightcat, buf_a_cat, buf_b_cat, hueplus, huemoins, hueref, dhue, chromaref, lumaref, lp, original, transformed, bufcat02fin, cx, cy, sk);
 
 
 
@@ -9985,7 +10169,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
             }
 
 
-            ColorLight_Local(call, bufcolorig, buflight, bufchro, bufchroslid, bufhh, buflightslid, LHutili, HHutili, hueplus, huemoins, hueref, dhue, chromaref, lumaref, lllocalcurve, loclhCurve, lochhCurve, lp, original, transformed, cx, cy);
+            ColorLight_Local(call, bufcolorig, buflight, bufchro, bufchroslid, bufhh, buflightslid, LHutili, HHutili, hueplus, huemoins, hueref, dhue, chromaref, lumaref, lllocalcurve, loclhCurve, lochhCurve, lp, original, transformed, cx, cy, sk);
 
             if (call <= 3) {
 
@@ -10010,7 +10194,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 huemoins = hueref - dhue + 2.f * rtengine::RT_PI;
             }
 
-            InverseColorLight_Local(lp, original, transformed, cx, cy,  hueplus, huemoins, hueref, dhue, chromaref, lumaref);
+            InverseColorLight_Local(lp, original, transformed, cx, cy,  hueplus, huemoins, hueref, dhue, chromaref, lumaref, sk);
         }
 
 
@@ -10166,7 +10350,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
             }
 
-            Contrast_Local(call, buflightc, hueplus, huemoins, hueref, dhue, chromaref, pm, lco, lumaref, lp, original, transformed, cx, cy);
+            Contrast_Local(call, buflightc, hueplus, huemoins, hueref, dhue, chromaref, pm, lco, lumaref, lp, original, transformed, cx, cy, sk);
 
             if (call <= 3) {
 
@@ -10193,7 +10377,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
             lco.bh = 1.f - 100.f * lco.ah;
             lco.al = (multL - 1.f) / av;
             lco.bl = 1.f;
-            InverseContrast_Local(ave, lco, lp, hueplus, huemoins, hueref, dhue, chromaref, lumaref, original, transformed, cx, cy);
+            InverseContrast_Local(ave, lco, lp, hueplus, huemoins, hueref, dhue, chromaref, lumaref, original, transformed, cx, cy, sk);
 
             //       InverseContrast_Local (ave, lco, lp, original, transformed, cx, cy);
         }
@@ -10337,7 +10521,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                     }
 
                 //   printf ("min=%2.2f max=%2.2f", minc, maxc);
-                Expose_Local(1, buflight, bufl_ab, hueplus, huemoins, hueref, dhueex, chromaref, lumaref, lp, original, transformed, bufexpfin, cx, cy);
+                Expose_Local(1, buflight, bufl_ab, hueplus, huemoins, hueref, dhueex, chromaref, lumaref, lp, original, transformed, bufexpfin, cx, cy, sk);
 
             }
 
@@ -10478,7 +10662,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                     }
 
                 //   printf ("min=%2.2f max=%2.2f", minc, maxc);
-                Expose_Local(2, buflight, bufl_ab, hueplus, huemoins, hueref, dhuev, chromaref, lumaref, lp, original, transformed, bufexpfin, cx, cy);
+                Expose_Local(2, buflight, bufl_ab, hueplus, huemoins, hueref, dhuev, chromaref, lumaref, lp, original, transformed, bufexpfin, cx, cy, sk);
 
             }
 
@@ -10597,7 +10781,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
 //            printf ("min=%2.2f max=%2.2f", minc, maxc);
 
-            TM_Local(tmp1, buflight, hueplus, huemoins, hueref, dhuetm, chromaref, lumaref, lp, original, transformed, cx, cy);
+            TM_Local(tmp1, buflight, hueplus, huemoins, hueref, dhuetm, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
             if (call <= 3) {
                 delete bufgb;
@@ -10704,7 +10888,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
 
 
-                cbdl_Local(buflight, bufchrom,  loctemp, loctempch, hueplus, huemoins, hueref, dhuecb, chromaref, lumaref, lp, original, transformed, cx, cy, 0);
+                cbdl_Local(buflight, bufchrom,  loctemp, loctempch, hueplus, huemoins, hueref, dhuecb, chromaref, lumaref, lp, original, transformed, cx, cy, 0, sk);
 
 
 
@@ -10746,7 +10930,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                             }
                     }
 
-                    cbdl_Local(buflight, bufchrom,  loctemp, loctempch, hueplus, huemoins, hueref, dhuecb, chromaref, lumaref, lp, original, transformed, cx, cy, 1);
+                    cbdl_Local(buflight, bufchrom,  loctemp, loctempch, hueplus, huemoins, hueref, dhuecb, chromaref, lumaref, lp, original, transformed, cx, cy, 1, sk);
                 }
 
 
@@ -10810,7 +10994,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
             }
 
             //sharpen ellipse and transition
-            Sharp_Local(call, loctemp, hueplus, huemoins, hueref, dhuesha, chromaref, lp, original, transformed, cx, cy);
+            Sharp_Local(call, loctemp, hueplus, huemoins, hueref, dhuesha, chromaref, lp, original, transformed, cx, cy, sk);
 
         } else if (lp.invshar && lp.shrad > 0.42 && call < 3 && lp.sharpena) {
             int GW = original->W;
@@ -10830,7 +11014,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 huemoins = hueref - dhuesha + 2.f * rtengine::RT_PI;
             }
 
-            InverseSharp_Local(loctemp, hueplus, huemoins, hueref, dhuesha, chromaref, lp, original, transformed, cx, cy);
+            InverseSharp_Local(loctemp, hueplus, huemoins, hueref, dhuesha, chromaref, lp, original, transformed, cx, cy, sk);
         }
 
         //      }
@@ -10986,7 +11170,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
             if (!lp.invret) {
 
-                Reti_Local(buflight, bufchro, hueplus, huemoins, hueref, dhueret, chromaref, lumaref, lp, original, transformed, tmpl, cx, cy, 0);
+                Reti_Local(buflight, bufchro, hueplus, huemoins, hueref, dhueret, chromaref, lumaref, lp, original, transformed, tmpl, cx, cy, 0, sk);
             } else {
                 InverseReti_Local(lp, original, transformed, tmpl, cx, cy, 0);
             }
@@ -11080,7 +11264,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
                 if (!lp.invret) {
 
-                    Reti_Local(buflight, bufchro, hueplus, huemoins, hueref, dhueret, chromaref, lumaref, lp, original, transformed, tmpl, cx, cy, 1);
+                    Reti_Local(buflight, bufchro, hueplus, huemoins, hueref, dhueret, chromaref, lumaref, lp, original, transformed, tmpl, cx, cy, 1, sk);
                 } else {
                     InverseReti_Local(lp, original, transformed, tmpl, cx, cy, 1);
                 }

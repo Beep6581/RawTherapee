@@ -193,10 +193,10 @@ protected:
 
     bool hasChanged;
 
-    void addPanel (Gtk::Box* where, FoldableToolPanel* panel, int level = 1);
-    void foldThemAll (GdkEventButton* event);
-    void updateVScrollbars (bool hide);
-    void updateTabsHeader (bool useIcons);
+    void addPanel(Gtk::Box* where, FoldableToolPanel* panel, int level = 1);
+    void foldThemAll(GdkEventButton* event);
+    void updateVScrollbars(bool hide);
+    void updateTabsHeader(bool useIcons);
 
 private:
 
@@ -207,61 +207,61 @@ public:
     CoarsePanel* coarse;
     Gtk::Notebook* toolPanelNotebook;
 
-    ToolPanelCoordinator (bool batch = false);
-    virtual ~ToolPanelCoordinator ();
+    ToolPanelCoordinator(bool batch = false);
+    virtual ~ToolPanelCoordinator();
 
-    bool getChangedState                ()
+    bool getChangedState()
     {
         return hasChanged;
     }
-    void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, /*LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI);
-    void foldAllButOne (Gtk::Box* parent, FoldableToolPanel* openedSection);
+    void updateCurveBackgroundHistogram(LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, /*LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI);
+    void foldAllButOne(Gtk::Box* parent, FoldableToolPanel* openedSection);
 
     // multiple listeners can be added that are notified on changes (typical: profile panel and the history)
-    void addPParamsChangeListener   (PParamsChangeListener* pp)
+    void addPParamsChangeListener(PParamsChangeListener* pp)
     {
-        paramcListeners.push_back (pp);
+        paramcListeners.push_back(pp);
     }
 
     // toolpanellistener interface
-    void panelChanged   (rtengine::ProcEvent event, const Glib::ustring& descr);
+    void panelChanged(rtengine::ProcEvent event, const Glib::ustring& descr);
 
-    void imageTypeChanged (bool isRaw, bool isBayer, bool isXtrans);
+    void imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans);
     // profilechangelistener interface
-    void profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited = nullptr);
-    void setDefaults    (rtengine::procparams::ProcParams* defparams);
+    void profileChange(const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited = nullptr);
+    void setDefaults(rtengine::procparams::ProcParams* defparams);
 
     // DirSelectionListener interface
-    void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile);
+    void dirSelected(const Glib::ustring& dirname, const Glib::ustring& openfile);
 
     // to support the GUI:
-    CropGUIListener* getCropGUIListener (); // through the CropGUIListener the editor area can notify the "crop" ToolPanel when the crop selection changes
+    CropGUIListener* getCropGUIListener();  // through the CropGUIListener the editor area can notify the "crop" ToolPanel when the crop selection changes
 
     // init the toolpanelcoordinator with an image & close it
-    void initImage          (rtengine::StagedImageProcessor* ipc_, bool israw);
-    void closeImage         ();
+    void initImage(rtengine::StagedImageProcessor* ipc_, bool israw);
+    void closeImage();
 
     // update the "expanded" state of the Tools
-    void updateToolState    ();
-    void openAllTools       ();
-    void closeAllTools      ();
+    void updateToolState();
+    void openAllTools();
+    void closeAllTools();
     // read/write the "expanded" state of the expanders & read/write the crop panel settings (ratio, guide type, etc.)
-    void readOptions        ();
-    void writeOptions       ();
-    void writeToolExpandedStatus (std::vector<int> &tpOpen);
+    void readOptions();
+    void writeOptions();
+    void writeToolExpandedStatus(std::vector<int> &tpOpen);
 
 
     // wbprovider interface
-    void getAutoWB (double& temp, double& green, double equal, double tempBias)
+    void getAutoWB(double& temp, double& green, double equal, double tempBias)
     {
         if (ipc) {
-            ipc->getAutoWB (temp, green, equal, tempBias);
+            ipc->getAutoWB(temp, green, equal, tempBias);
         }
     }
-    void getCamWB (double& temp, double& green)
+    void getCamWB(double& temp, double& green)
     {
         if (ipc) {
-            ipc->getCamWB (temp, green);
+            ipc->getCamWB(temp, green);
         }
     }
 
@@ -273,42 +273,42 @@ public:
     Glib::ustring GetCurrentImageFilePath();
 
     // rotatelistener interface
-    void straightenRequested ();
-    void autoCropRequested ();
-    double autoDistorRequested ();
+    void straightenRequested();
+    void autoCropRequested();
+    double autoDistorRequested();
 
     // spotwblistener interface
-    void spotWBRequested (int size);
+    void spotWBRequested(int size);
 
     // croppanellistener interface
-    void cropSelectRequested ();
+    void cropSelectRequested();
 
     // icmpanellistener interface
-    void saveInputICCReference (Glib::ustring fname, bool apply_wb);
+    void saveInputICCReference(Glib::ustring fname, bool apply_wb);
 
     // imageareatoollistener interface
-    void spotWBselected (int x, int y, Thumbnail* thm = nullptr);
-    void cropSelectionReady ();
-    void rotateSelectionReady (double rotate_deg, Thumbnail* thm = nullptr);
-    ToolBar* getToolBar ()
+    void spotWBselected(int x, int y, Thumbnail* thm = nullptr);
+    void cropSelectionReady();
+    void rotateSelectionReady(double rotate_deg, Thumbnail* thm = nullptr);
+    ToolBar* getToolBar()
     {
         return toolBar;
     }
-    int  getSpotWBRectSize ();
-    CropGUIListener* startCropEditing (Thumbnail* thm = nullptr)
+    int  getSpotWBRectSize();
+    CropGUIListener* startCropEditing(Thumbnail* thm = nullptr)
     {
         return crop;
     }
 
-    void updateTPVScrollbar (bool hide);
-    void updateTabsUsesIcons (bool useIcons);
-    bool handleShortcutKey (GdkEventKey* event);
+    void updateTPVScrollbar(bool hide);
+    void updateTabsUsesIcons(bool useIcons);
+    bool handleShortcutKey(GdkEventKey* event);
 
     // ToolBarListener interface
-    void toolSelected (ToolMode tool);
-    void editModeSwitchedOff ();
+    void toolSelected(ToolMode tool);
+    void editModeSwitchedOff();
 
-    void setEditProvider (EditDataProvider *provider);
+    void setEditProvider(EditDataProvider *provider);
 };
 
 #endif
