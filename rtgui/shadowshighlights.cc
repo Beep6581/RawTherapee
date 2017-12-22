@@ -44,9 +44,6 @@ ShadowsHighlights::ShadowsHighlights () : FoldableToolPanel(this, "shadowshighli
 
     pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
-    lcontrast = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_LOCALCONTR"), 0, 100, 1, 0));
-    pack_start (*lcontrast);
-
     pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
     radius = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_RADIUS"), 5, 100, 1, 30));
@@ -57,7 +54,6 @@ ShadowsHighlights::ShadowsHighlights () : FoldableToolPanel(this, "shadowshighli
     h_tonalwidth->setAdjusterListener (this);
     shadows->setAdjusterListener (this);
     s_tonalwidth->setAdjusterListener (this);
-    lcontrast->setAdjusterListener (this);
 
     show_all_children ();
 }
@@ -69,7 +65,6 @@ void ShadowsHighlights::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     if (pedited) {
         radius->setEditedState       (pedited->sh.radius ? Edited : UnEdited);
-        lcontrast->setEditedState    (pedited->sh.localcontrast ? Edited : UnEdited);
         highlights->setEditedState   (pedited->sh.highlights ? Edited : UnEdited);
         h_tonalwidth->setEditedState (pedited->sh.htonalwidth ? Edited : UnEdited);
         shadows->setEditedState      (pedited->sh.shadows ? Edited : UnEdited);
@@ -87,7 +82,6 @@ void ShadowsHighlights::read (const ProcParams* pp, const ParamsEdited* pedited)
     lastHQ = pp->sh.hq;
 
     radius->setValue        (pp->sh.radius);
-    lcontrast->setValue     (pp->sh.localcontrast);
     highlights->setValue    (pp->sh.highlights);
     h_tonalwidth->setValue  (pp->sh.htonalwidth);
     shadows->setValue       (pp->sh.shadows);
@@ -100,7 +94,6 @@ void ShadowsHighlights::write (ProcParams* pp, ParamsEdited* pedited)
 {
 
     pp->sh.radius        = (int)radius->getValue ();
-    pp->sh.localcontrast = (int)lcontrast->getValue ();
     pp->sh.highlights    = (int)highlights->getValue ();
     pp->sh.htonalwidth   = (int)h_tonalwidth->getValue ();
     pp->sh.shadows       = (int)shadows->getValue ();
@@ -110,7 +103,6 @@ void ShadowsHighlights::write (ProcParams* pp, ParamsEdited* pedited)
 
     if (pedited) {
         pedited->sh.radius          = radius->getEditedState ();
-        pedited->sh.localcontrast   = lcontrast->getEditedState ();
         pedited->sh.highlights      = highlights->getEditedState ();
         pedited->sh.htonalwidth     = h_tonalwidth->getEditedState ();
         pedited->sh.shadows         = shadows->getEditedState ();
@@ -124,7 +116,6 @@ void ShadowsHighlights::setDefaults (const ProcParams* defParams, const ParamsEd
 {
 
     radius->setDefault (defParams->sh.radius);
-    lcontrast->setDefault (defParams->sh.localcontrast);
     highlights->setDefault (defParams->sh.highlights);
     h_tonalwidth->setDefault (defParams->sh.htonalwidth);
     shadows->setDefault (defParams->sh.shadows);
@@ -132,14 +123,12 @@ void ShadowsHighlights::setDefaults (const ProcParams* defParams, const ParamsEd
 
     if (pedited) {
         radius->setDefaultEditedState       (pedited->sh.radius ? Edited : UnEdited);
-        lcontrast->setDefaultEditedState    (pedited->sh.localcontrast ? Edited : UnEdited);
         highlights->setDefaultEditedState   (pedited->sh.highlights ? Edited : UnEdited);
         h_tonalwidth->setDefaultEditedState (pedited->sh.htonalwidth ? Edited : UnEdited);
         shadows->setDefaultEditedState      (pedited->sh.shadows ? Edited : UnEdited);
         s_tonalwidth->setDefaultEditedState (pedited->sh.stonalwidth ? Edited : UnEdited);
     } else {
         radius->setDefaultEditedState       (Irrelevant);
-        lcontrast->setDefaultEditedState    (Irrelevant);
         highlights->setDefaultEditedState   (Irrelevant);
         h_tonalwidth->setDefaultEditedState (Irrelevant);
         shadows->setDefaultEditedState      (Irrelevant);
@@ -164,8 +153,6 @@ void ShadowsHighlights::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvSHSHTonalW, costr);
         } else if (a == radius) {
             listener->panelChanged (EvSHRadius, costr);
-        } else if (a == lcontrast) {
-            listener->panelChanged (EvSHLContrast, costr);
         }
     }
 }
@@ -214,19 +201,17 @@ void ShadowsHighlights::setBatchMode (bool batchMode)
 
     ToolPanel::setBatchMode (batchMode);
     radius->showEditedCB ();
-    lcontrast->showEditedCB ();
     highlights->showEditedCB ();
     h_tonalwidth->showEditedCB ();
     shadows->showEditedCB ();
     s_tonalwidth->showEditedCB ();
 }
 
-void ShadowsHighlights::setAdjusterBehavior (bool hadd, bool sadd, bool lcadd)
+void ShadowsHighlights::setAdjusterBehavior (bool hadd, bool sadd)
 {
 
     highlights->setAddMode(hadd);
     shadows->setAddMode(sadd);
-    lcontrast->setAddMode(lcadd);
 }
 
 void ShadowsHighlights::trimValues (rtengine::procparams::ProcParams* pp)
@@ -234,5 +219,4 @@ void ShadowsHighlights::trimValues (rtengine::procparams::ProcParams* pp)
 
     highlights->trimValue(pp->sh.highlights);
     shadows->trimValue(pp->sh.shadows);
-    lcontrast->trimValue(pp->sh.localcontrast);
 }

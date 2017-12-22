@@ -395,7 +395,6 @@ public:
     bool htonalwidth;
     bool shadows;
     bool stonalwidth;
-    bool localcontrast;
     bool radius;
 };
 

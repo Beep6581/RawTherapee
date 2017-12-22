@@ -738,7 +738,6 @@ struct SHParams {
     int     htonalwidth;
     int     shadows;
     int     stonalwidth;
-    int     localcontrast;
     int     radius;
 
     SHParams();

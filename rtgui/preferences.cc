@@ -223,7 +223,6 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     mi->set_value (behavColumns.label, M ("TP_SHADOWSHLIGHTS_LABEL"));
     appendBehavList (mi, M ("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), ADDSET_SH_HIGHLIGHTS, false);
     appendBehavList (mi, M ("TP_SHADOWSHLIGHTS_SHADOWS"), ADDSET_SH_SHADOWS, false);
-    appendBehavList (mi, M ("TP_SHADOWSHLIGHTS_LOCALCONTR"), ADDSET_SH_LOCALCONTRAST, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_LABCURVE_LABEL"));
