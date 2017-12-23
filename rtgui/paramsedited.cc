@@ -281,7 +281,6 @@ void ParamsEdited::set(bool v)
     sh.htonalwidth   = v;
     sh.shadows       = v;
     sh.stonalwidth   = v;
-    sh.localcontrast = v;
     sh.radius        = v;
     crop.enabled = v;
     crop.x       = v;
@@ -952,7 +951,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         sh.htonalwidth = sh.htonalwidth && p.sh.htonalwidth == other.sh.htonalwidth;
         sh.shadows = sh.shadows && p.sh.shadows == other.sh.shadows;
         sh.stonalwidth = sh.stonalwidth && p.sh.stonalwidth == other.sh.stonalwidth;
-        sh.localcontrast = sh.localcontrast && p.sh.localcontrast == other.sh.localcontrast;
         sh.radius = sh.radius && p.sh.radius == other.sh.radius;
         crop.enabled = crop.enabled && p.crop.enabled == other.crop.enabled;
         crop.x = crop.x && p.crop.x == other.crop.x;
@@ -2296,10 +2294,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (sh.stonalwidth) {
         toEdit.sh.stonalwidth     = mods.sh.stonalwidth;
-    }
-
-    if (sh.localcontrast) {
-        toEdit.sh.localcontrast = dontforceSet && options.baBehav[ADDSET_SH_LOCALCONTRAST] ? toEdit.sh.localcontrast + mods.sh.localcontrast : mods.sh.localcontrast;
     }
 
     if (sh.radius) {

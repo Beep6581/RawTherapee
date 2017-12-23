@@ -3118,8 +3118,6 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
     }
 
     bool processSH  = params->sh.enabled && shmap && (params->sh.highlights > 0 || params->sh.shadows > 0);
-    bool processLCE = params->sh.enabled && shmap && params->sh.localcontrast > 0;
-    double lceamount = params->sh.localcontrast / 200.0;
 
     TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.working);
     TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.working);
@@ -3508,7 +3506,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                     }
                 }
 
-                if (processSH || processLCE) {
+                if (processSH) {
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
 
@@ -3527,16 +3525,9 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                                 }
                             }
 
-                            if (processLCE) {
-                                double sub = lceamount * (mapval - factor * (r * lumimul[0] + g * lumimul[1] + b * lumimul[2]));
-                                rtemp[ti * TS + tj] = factor * r - sub;
-                                gtemp[ti * TS + tj] = factor * g - sub;
-                                btemp[ti * TS + tj] = factor * b - sub;
-                            } else {
-                                rtemp[ti * TS + tj] = factor * r;
-                                gtemp[ti * TS + tj] = factor * g;
-                                btemp[ti * TS + tj] = factor * b;
-                            }
+                            rtemp[ti * TS + tj] = factor * r;
+                            gtemp[ti * TS + tj] = factor * g;
+                            btemp[ti * TS + tj] = factor * b;
                         }
                     }
                 }

@@ -1496,7 +1496,6 @@ SHParams::SHParams() :
     htonalwidth(80),
     shadows(0),
     stonalwidth(80),
-    localcontrast(0),
     radius(40)
 {
 }
@@ -1510,7 +1509,6 @@ bool SHParams::operator ==(const SHParams& other) const
         && htonalwidth == other.htonalwidth
         && shadows == other.shadows
         && stonalwidth == other.stonalwidth
-        && localcontrast == other.localcontrast
         && radius == other.radius;
 }
 
@@ -3417,7 +3415,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->sh.htonalwidth, "Shadows & Highlights", "HighlightTonalWidth", sh.htonalwidth, keyFile);
         saveToKeyfile(!pedited || pedited->sh.shadows, "Shadows & Highlights", "Shadows", sh.shadows, keyFile);
         saveToKeyfile(!pedited || pedited->sh.stonalwidth, "Shadows & Highlights", "ShadowTonalWidth", sh.stonalwidth, keyFile);
-        saveToKeyfile(!pedited || pedited->sh.localcontrast, "Shadows & Highlights", "LocalContrast", sh.localcontrast, keyFile);
         saveToKeyfile(!pedited || pedited->sh.radius, "Shadows & Highlights", "Radius", sh.radius, keyFile);
 
 // Crop
@@ -4429,8 +4426,22 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Shadows & Highlights", "HighlightTonalWidth", pedited, sh.htonalwidth, pedited->sh.htonalwidth);
             assignFromKeyfile(keyFile, "Shadows & Highlights", "Shadows", pedited, sh.shadows, pedited->sh.shadows);
             assignFromKeyfile(keyFile, "Shadows & Highlights", "ShadowTonalWidth", pedited, sh.stonalwidth, pedited->sh.stonalwidth);
-            assignFromKeyfile(keyFile, "Shadows & Highlights", "LocalContrast", pedited, sh.localcontrast, pedited->sh.localcontrast);
             assignFromKeyfile(keyFile, "Shadows & Highlights", "Radius", pedited, sh.radius, pedited->sh.radius);
+            if (keyFile.has_key("Shadows & Highlights", "LocalContrast") && ppVersion < 329) {
+                int lc = keyFile.get_integer("Shadows & Highlights", "LocalContrast");
+                localContrast.amount = float(lc) / (sh.hq ? 500.0 : 30.);
+                if (pedited) {
+                    pedited->localContrast.amount = true;
+                }
+                localContrast.enabled = sh.enabled;
+                if (pedited) {
+                    pedited->localContrast.enabled = true;
+                }
+                localContrast.radius = sh.radius;
+                if (pedited) {
+                    pedited->localContrast.radius = true;
+                }
+            }
         }
 
         if (keyFile.has_group("Crop")) {
