@@ -1205,6 +1205,7 @@ void Crop::update(int todo)
                             params.locallab.expexpose = true;
                         }
 
+                        params.locallab.bilateral = parent->bilaterals[sp];
 
 
                         std::vector<double>   cretie;
@@ -1679,6 +1680,7 @@ void Crop::update(int todo)
 
                 }
 
+                parent->bilaterals[sp] = params.locallab.bilateral = parent->bilaterals[0];
 
                 std::vector<double>   ccret;
 

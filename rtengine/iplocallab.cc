@@ -145,6 +145,7 @@ struct local_params {
     float noiself;
     float noiseldetail;
     float noisechrodetail;
+    float bilat;
     float noiselc;
     float noisecf;
     float noisecc;
@@ -471,7 +472,7 @@ static void calcLocalParams(int oW, int oH, const LocallabParams& locallab, stru
     lp.noisecf = local_noisecf;
     lp.noisecc = local_noisecc;
     lp.sensden = local_sensiden;
-
+    lp.bilat = locallab.bilateral;
 
     lp.strengt = streng;
     lp.gamm = gam;
@@ -1863,6 +1864,229 @@ void ImProcFunctions::addGaNoise(LabImage *lab, LabImage *dst, const float mean,
         }
     }
 }
+
+void ImProcFunctions::DeNoise_Local_imp(const struct local_params& lp,  int levred, float hueplus, float huemoins, float hueref, float dhueden, LabImage* original, LabImage* transformed, LabImage* tmp1, int cx, int cy, int sk)
+{
+    // local denoise
+    //simple algo , perhaps we can improve as the others, but noise is here and not good for hue detection
+    // BENCHFUN
+    const float ach = (float)lp.trans / 100.f;
+    constexpr float delhu = 0.1f; //between 0.05 and 0.2
+
+
+    float factnoise1 = 1.f + (lp.noisecf) / 500.f;
+    float factnoise2 = 1.f + (lp.noisecc) / 500.f;
+
+    constexpr float apl = (-1.f) / delhu;
+    const float bpl = - apl * hueplus;
+    constexpr float amo = 1.f / delhu;
+    const float bmo = - amo * huemoins;
+    /*
+        constexpr float pb = 4.f;
+        constexpr float pa = (1.f - pb) / 40.f;
+    */
+    int GW = transformed->W;
+    int GH = transformed->H;
+
+    LabImage *origblur = nullptr;
+
+    origblur = new LabImage(GW, GH);
+
+    float radius = 3.f / sk;
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        gaussianBlur(original->L, origblur->L, GW, GH, radius);
+        gaussianBlur(original->a, origblur->a, GW, GH, radius);
+        gaussianBlur(original->b, origblur->b, GW, GH, radius);
+
+    }
+
+    /*
+        const float ahu = 1.f / (2.8f * lp.sensden - 280.f);
+        const float bhu = 1.f - ahu * 2.8f * lp.sensden;
+    */
+#ifdef _OPENMP
+    #pragma omp parallel if (multiThread)
+#endif
+    {
+#ifdef __SSE2__
+        float atan2Buffer[transformed->W] ALIGNED16;
+        float sqrtBuffer[transformed->W] ALIGNED16;
+        vfloat c327d68v = F2V(327.68f);
+#endif
+
+#ifdef _OPENMP
+        #pragma omp for schedule(dynamic,16)
+#endif
+
+        for (int y = 0; y < transformed->H; y++) {
+            const int loy = cy + y;
+
+            const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
+
+            if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
+                for (int x = 0; x < transformed->W; x++) {
+                    transformed->L[y][x] = original->L[y][x];
+                    transformed->a[y][x] = original->a[y][x];
+                    transformed->b[y][x] = original->b[y][x];
+                }
+
+                continue;
+            }
+
+#ifdef __SSE2__
+            int i = 0;
+
+            for (; i < transformed->W - 3; i += 4) {
+                vfloat av = LVFU(origblur->a[y][i]);
+                vfloat bv = LVFU(origblur->b[y][i]);
+                STVF(atan2Buffer[i], xatan2f(bv, av));
+                STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
+            }
+
+            for (; i < transformed->W; i++) {
+                atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
+                sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
+            }
+
+#endif
+
+            for (int x = 0, lox = cx + x; x < transformed->W; x++, lox++) {
+                int zone = 0;
+                // int lox = cx + x;
+                int begx = int (lp.xc - lp.lxL);
+                int begy = int (lp.yc - lp.lyT);
+
+                float localFactor = 1.f;
+                calcTransition(lox, loy, ach, lp, zone, localFactor);
+
+                if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
+                    transformed->L[y][x] = original->L[y][x];
+                    transformed->a[y][x] = original->a[y][x];
+                    transformed->b[y][x] = original->b[y][x];
+                    continue;
+                }
+
+#ifdef __SSE2__
+                const float rhue = atan2Buffer[x];
+                //    const float rchro = sqrtBuffer[x];
+#else
+                const float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
+                //    const float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
+#endif
+
+                //    float rL = original->L[y][x] / 327.68f;
+
+                float khu = 0.f;
+                //   bool kzon = false;
+
+                // algo with detection of hue ==> artifacts for noisy images  ==> denoise before
+                if (levred == 7 && lp.sensden < 90.f) { // after 90 plein effect
+                    //hue detection
+                    if ((hueref + dhueden) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
+                        if (rhue >= hueplus - delhu)  {
+                            khu  = apl * rhue + bpl;
+                        } else if (rhue < huemoins + delhu)  {
+                            khu = amo * rhue + bmo;
+                        } else {
+                            khu = 1.f;
+                        }
+
+                        //        kzon = true;
+
+                    } else if ((hueref + dhueden) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus)) {
+                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
+                            khu  = apl * rhue + bpl;
+                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
+                            khu = amo * rhue + bmo;
+                        } else {
+                            khu = 1.f;
+                        }
+
+                        //    kzon = true;
+
+                    }
+
+                    if ((hueref - dhueden) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins) {
+                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
+                            khu  = apl * rhue + bpl;
+                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
+                            khu = amo * rhue + bmo;
+                        } else {
+                            khu = 1.f;
+                        }
+
+                        //    kzon = true;
+
+                    } else if ((hueref - dhueden) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus)) {
+                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
+                            khu  = apl * rhue + bpl;
+                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
+                            khu = amo * rhue + bmo;
+                        } else {
+                            khu = 1.f;
+                        }
+
+                        //    kzon = true;
+
+                    }
+                } else {
+                    khu = 1.f;
+                }
+
+                switch (zone) {
+                    case 0: { // outside selection and outside transition zone => no effect, keep original values
+                        transformed->L[y][x] = original->L[y][x];
+                        transformed->a[y][x] = original->a[y][x];
+                        transformed->b[y][x] = original->b[y][x];
+                        break;
+                    }
+
+                    case 1: { // inside transition zone
+                        float factorx = localFactor;
+                        float difL, difa, difb;
+
+                        difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
+                        difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
+                        difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
+
+                        difL *= factorx * khu;
+                        difa *= factorx * khu;
+                        difb *= factorx * khu;
+                        transformed->L[y][x] = original->L[y][x] + difL;
+                        transformed->a[y][x] = (original->a[y][x] + difa) * factnoise1 * factnoise2;
+                        transformed->b[y][x] = (original->b[y][x] + difb) * factnoise1 * factnoise2 ;
+                        break;
+                    }
+
+                    case 2: { // inside selection => full effect, no transition
+                        float difL, difa, difb;
+
+                        difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
+                        difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
+                        difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
+
+                        difL *= khu;
+                        difa *= khu;
+                        difb *= khu;
+
+                        transformed->L[y][x] = original->L[y][x] + difL;
+                        transformed->a[y][x] = (original->a[y][x] + difa) * factnoise1 * factnoise2;
+                        transformed->b[y][x] = (original->b[y][x] + difb) * factnoise1 * factnoise2;
+                    }
+                }
+
+            }
+        }
+    }
+    delete origblur;
+
+}
+
+
+
 
 void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp,  int levred, float hueplus, float huemoins, float hueref, float dhueden, LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy, int sk)
 {
@@ -9172,6 +9396,59 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
         }
 
         //      }
+
+        //local impulse
+        if ((lp.bilat > 0.f) && lp.denoiena) {
+            int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
+            int bfw = int (lp.lx + lp.lxL) + del;
+
+            LabImage *bufwv = nullptr;
+
+
+            bufwv = new LabImage(bfw, bfh); //buffer for data in zone limit
+
+
+            int begy = lp.yc - lp.lyT;
+            int begx = lp.xc - lp.lxL;
+            int yEn = lp.yc + lp.ly;
+            int xEn = lp.xc + lp.lx;
+            float hueplus = huerefblur + dhueden;
+            float huemoins = huerefblur - dhueden;
+
+            if (hueplus > rtengine::RT_PI) {
+                hueplus = huerefblur + dhueden - 2.f * rtengine::RT_PI;
+            }
+
+            if (huemoins < -rtengine::RT_PI) {
+                huemoins = huerefblur - dhueden + 2.f * rtengine::RT_PI;
+            }
+
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+            for (int y = 0; y < transformed->H ; y++) //{
+                for (int x = 0; x < transformed->W; x++) {
+                    int lox = cx + x;
+                    int loy = cy + y;
+
+                    if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                        bufwv->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                        bufwv->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
+                        bufwv->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                    }
+
+                }
+
+            double thr = (float) lp.bilat / 20.0;
+
+            if (bfh > 8 && bfw > 8) {
+                ImProcFunctions::impulse_nr(bufwv, thr);
+            }
+
+            DeNoise_Local_imp(lp,  levred, hueplus, huemoins, huerefblur, dhueden, original, transformed, bufwv, cx, cy, sk);
+            delete bufwv;
+        }
 
 //local denoise
         //all these variables are to prevent use of denoise when non necessary

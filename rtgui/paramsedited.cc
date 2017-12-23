@@ -355,6 +355,7 @@ void ParamsEdited::set(bool v)
     locallab.noiselumc = v;
     locallab.noiselumdetail = v;
     locallab.noisechrodetail = v;
+    locallab.bilateral = v;
     locallab.sensiden = v;
     locallab.noisechrof = v;
     locallab.noisechroc = v;
@@ -763,12 +764,12 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         labCurve.rstprotection = labCurve.rstprotection && p.labCurve.rstprotection == other.labCurve.rstprotection;
         labCurve.lcredsk = labCurve.lcredsk && p.labCurve.lcredsk == other.labCurve.lcredsk;
 
-        localContrast.enabled = localContrast.enabled && p.localContrast.enabled == other.localContrast.enabled;        
+        localContrast.enabled = localContrast.enabled && p.localContrast.enabled == other.localContrast.enabled;
         localContrast.radius = localContrast.radius && p.localContrast.radius == other.localContrast.radius;
         localContrast.amount = localContrast.amount && p.localContrast.amount == other.localContrast.amount;
         localContrast.darkness = localContrast.darkness && p.localContrast.darkness == other.localContrast.darkness;
         localContrast.lightness = localContrast.lightness && p.localContrast.lightness == other.localContrast.lightness;
-        
+
         rgbCurves.enabled = rgbCurves.enabled && p.rgbCurves.enabled == other.rgbCurves.enabled;
         rgbCurves.lumamode = rgbCurves.lumamode && p.rgbCurves.lumamode == other.rgbCurves.lumamode;
         rgbCurves.rcurve = rgbCurves.rcurve && p.rgbCurves.rcurve == other.rgbCurves.rcurve;
@@ -1031,6 +1032,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         locallab.noiselumc = locallab.noiselumc && p.locallab.noiselumc == other.locallab.noiselumc;
         locallab.noiselumdetail = locallab.noiselumdetail && p.locallab.noiselumdetail == other.locallab.noiselumdetail;
         locallab.noisechrodetail = locallab.noisechrodetail && p.locallab.noisechrodetail == other.locallab.noisechrodetail;
+        locallab.bilateral = locallab.bilateral && p.locallab.bilateral == other.locallab.bilateral;
         locallab.sensiden = locallab.sensiden && p.locallab.sensiden == other.locallab.sensiden;
         locallab.noisechrof = locallab.noisechrof && p.locallab.noisechrof == other.locallab.noisechrof;
         locallab.noisechroc = locallab.noisechroc && p.locallab.noisechroc == other.locallab.noisechroc;
@@ -1548,7 +1550,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     if (labCurve.enabled) {
         toEdit.labCurve.enabled = mods.labCurve.enabled;
     }
-    
+
     if (labCurve.lcurve) {
         toEdit.labCurve.lcurve        = mods.labCurve.lcurve;
     }
@@ -1612,15 +1614,19 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     if (localContrast.enabled) {
         toEdit.localContrast.enabled = mods.localContrast.enabled;
     }
+
     if (localContrast.radius) {
         toEdit.localContrast.radius = mods.localContrast.radius;
     }
+
     if (localContrast.amount) {
         toEdit.localContrast.amount = mods.localContrast.amount;
     }
+
     if (localContrast.darkness) {
         toEdit.localContrast.darkness = mods.localContrast.darkness;
     }
+
     if (localContrast.lightness) {
         toEdit.localContrast.lightness = mods.localContrast.lightness;
     }
@@ -2666,6 +2672,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (locallab.noisechrodetail) {
         toEdit.locallab.noisechrodetail    = mods.locallab.noisechrodetail;
+    }
+
+    if (locallab.bilateral) {
+        toEdit.locallab.bilateral    = mods.locallab.bilateral;
     }
 
     if (locallab.sensiden) {

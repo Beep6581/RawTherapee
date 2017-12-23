@@ -343,8 +343,7 @@ struct RetinexParams {
 /**
   * Parameters of the luminance curve
   */
-struct LCurveParams
-{
+struct LCurveParams {
     bool enabled;
     std::vector<double>   lcurve;
     std::vector<double>   acurve;
@@ -371,7 +370,7 @@ struct LCurveParams
 
 /**
  * Parameters for local contrast
- */ 
+ */
 struct LocalContrastParams {
     bool enabled;
     int radius;
@@ -936,6 +935,7 @@ struct LocallabParams {
     int     noiselumc;
     int     noiselumdetail;
     int     noisechrodetail;
+    int     bilateral;
     int     sensiden;
     int     noisechrof;
     int     noisechroc;

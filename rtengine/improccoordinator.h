@@ -308,6 +308,7 @@ protected:
     LUTi noiselumcs;
     LUTi noiselumdetails;
     LUTi noisechrodetails;
+    LUTi bilaterals;
     LUTi sensidens;
     LUTi noisechrofs;
     LUTi noisechrocs;

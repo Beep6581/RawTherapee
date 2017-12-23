@@ -624,11 +624,13 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,    // Evlocallabsensiden
     LUMINANCECURVE,    // Evlocallabhuerefblur
     LUMINANCECURVE,   // EvlocallabEnabled
-    LUMINANCECURVE   // EvlocallablocY
+    LUMINANCECURVE,   // EvlocallablocY
+    LUMINANCECURVE   // Evlocallabbilateral
 };
 
 
-namespace rtengine {
+namespace rtengine
+{
 
 RefreshMapper::RefreshMapper():
     next_event_(rtengine::NUMOFEVENTS)
@@ -654,6 +656,7 @@ void RefreshMapper::mapEvent(ProcEvent event, int action)
 int RefreshMapper::getAction(ProcEvent event) const
 {
     auto it = actions_.find(event);
+
     if (it == actions_.end()) {
         return 0;
     } else {

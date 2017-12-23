@@ -843,6 +843,7 @@ HISTORY_MSG_594;Local - Noise chro detail
 HISTORY_MSG_595;Local - Noise Scope
 HISTORY_MSG_597;Local L*a*b*
 HISTORY_MSG_598;Local - Bottom
+HISTORY_MSG_599;Local - Noise bilateral
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
@@ -1826,6 +1827,7 @@ TP_LOCALLAB_ADJBLUR;Adjust and Blur
 TP_LOCALLAB_ARTIF;Reduce artifacts - Improve algoritm
 TP_LOCALLAB_ARTIF_TOOLTIP;Only active for Color-light, Exposure, Retinex, Vibrance, ToneMapping, CBDL.
 TP_LOCALLAB_AVOID;Avoid color shift
+TP_LOCALLAB_BILATERAL;Bilateral filter
 TP_LOCALLAB_BLMETHOD_TOOLTIP;Normal - direct blur and noise with all settings.\nInverse - Inverse blur and noise without scope and whithout enhanced algorithm.\nSymmetric - inverse blur and noise with all settings. Be careful some results may be curious
 TP_LOCALLAB_BLUFR;Blur & Noise
 TP_LOCALLAB_BLNORM;Normal

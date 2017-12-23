@@ -625,30 +625,53 @@ enum ProcEventCode {
     Evlocallabhuerefblur = 595,
     EvlocallabEnabled = 596,
     EvlocallablocY = 597,
+    Evlocallabbilateral = 598,
     NUMOFEVENTS
 
 
 };
 
 
-class ProcEvent {
+class ProcEvent
+{
 public:
     ProcEvent(): code_(0) {}
     ProcEvent(ProcEventCode code): code_(code) {}
     explicit ProcEvent(int code): code_(code) {}
-    operator int() { return code_; }
+    operator int()
+    {
+        return code_;
+    }
 
 private:
     int code_;
 };
 
 
-inline bool operator==(ProcEvent a, ProcEvent b) { return int(a) == int(b); }
-inline bool operator==(ProcEvent a, ProcEventCode b) { return int(a) == int(b); }
-inline bool operator==(ProcEventCode a, ProcEvent b) { return int(a) == int(b); }
-inline bool operator!=(ProcEvent a, ProcEvent b) { return int(a) != int(b); }
-inline bool operator!=(ProcEvent a, ProcEventCode b) { return int(a) != int(b); }
-inline bool operator!=(ProcEventCode a, ProcEvent b) { return int(a) != int(b); }
+inline bool operator==(ProcEvent a, ProcEvent b)
+{
+    return int(a) == int(b);
+}
+inline bool operator==(ProcEvent a, ProcEventCode b)
+{
+    return int(a) == int(b);
+}
+inline bool operator==(ProcEventCode a, ProcEvent b)
+{
+    return int(a) == int(b);
+}
+inline bool operator!=(ProcEvent a, ProcEvent b)
+{
+    return int(a) != int(b);
+}
+inline bool operator!=(ProcEvent a, ProcEventCode b)
+{
+    return int(a) != int(b);
+}
+inline bool operator!=(ProcEventCode a, ProcEvent b)
+{
+    return int(a) != int(b);
+}
 
 }
 #endif

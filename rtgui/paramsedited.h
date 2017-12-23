@@ -119,7 +119,8 @@ public:
 };
 
 
-class LocalContrastParamsEdited {
+class LocalContrastParamsEdited
+{
 public:
     bool enabled;
     bool radius;
@@ -478,6 +479,7 @@ public:
     bool noiselumc;
     bool noiselumdetail;
     bool noisechrodetail;
+    bool bilateral;
     bool sensiden;
     bool noisechrof;
     bool noisechroc;

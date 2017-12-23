@@ -117,6 +117,7 @@ private:
     Adjuster* const noiselumc;
     Adjuster* const noiselumdetail;
     Adjuster* const noisechrodetail;
+    Adjuster* const bilateral;
     Adjuster* const sensiden;
 
     Adjuster* const noisechrof;
@@ -144,6 +145,7 @@ private:
     Gtk::Frame* const shapeFrame;
     Gtk::Frame* const superFrame;
     Gtk::Frame* const dustFrame;
+    Gtk::Frame* const wavFrame;
 
     Gtk::Label* const labmdh;
     Gtk::Label* const labqual;
@@ -236,7 +238,7 @@ private:
 
 
 
-    int nextdatasp[99];
+    int nextdatasp[100];
     int nextlength;
     std::string nextstr;
     std::string nextstr2;
