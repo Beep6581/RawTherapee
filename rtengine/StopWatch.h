@@ -19,6 +19,8 @@
  *  Author: reine
  */
 
+#define BENCHMARK
+
 #ifndef STOPWATCH_H
 #define STOPWATCH_H
 #include <iostream>

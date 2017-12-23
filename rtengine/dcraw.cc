@@ -122,6 +122,8 @@ typedef unsigned char uchar;
 typedef unsigned short ushort;
 
 #include "dcraw.h"
+#include "StopWatch.h"
+
 /*
    RT All global variables are defined here, and all functions that
    access them are prefixed with "CLASS".  Note that a thread-safe
@@ -3208,6 +3210,7 @@ void CLASS sony_load_raw()
 
 void CLASS sony_arw_load_raw()
 {
+  BENCHFUN
   ushort huff[32770];
   static const ushort tab[18] =
   { 0xf11,0xf10,0xe0f,0xd0e,0xc0d,0xb0c,0xa0b,0x90a,0x809,
@@ -3228,6 +3231,7 @@ void CLASS sony_arw_load_raw()
 
 void CLASS sony_arw2_load_raw()
 {
+  BENCHFUN
 
 #if defined( _OPENMP ) && defined( MYFILE_MMAP )
 #pragma omp parallel
