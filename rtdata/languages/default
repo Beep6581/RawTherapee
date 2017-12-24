@@ -828,7 +828,7 @@ HISTORY_MSG_578;Local - Exp Shcompr
 HISTORY_MSG_579;Local - Exp Scope
 HISTORY_MSG_580;Local - Exp Contrast curve
 HISTORY_MSG_581;Local - Centerbuf
-HISTORY_MSG_582;Local - adjblur
+HISTORY_MSG_582;Local - Noise Equa blue-red
 HISTORY_MSG_583;Local - cut past
 HISTORY_MSG_584;Local - cbdl chroma
 HISTORY_MSG_585;Local - Blur method
@@ -1820,10 +1820,8 @@ TP_LENSPROFILE_LABEL;Profiled Lens Correction
 TP_LENSPROFILE_USECA;Chromatic aberration correction
 TP_LENSPROFILE_USEDIST;Distortion correction
 TP_LENSPROFILE_USEVIGN;Vignetting correction
-<<<<<<< HEAD
-<<<<<<< HEAD
 TP_LOCALLAB_ACTIV;Blur luminance only
-TP_LOCALLAB_ADJBLUR;Adjust and Blur
+TP_LOCALLAB_ADJ;Equalizer blue-red
 TP_LOCALLAB_ARTIF;Reduce artifacts - Improve algoritm
 TP_LOCALLAB_ARTIF_TOOLTIP;Only active for Color-light, Exposure, Retinex, Vibrance, ToneMapping, CBDL.
 TP_LOCALLAB_AVOID;Avoid color shift
@@ -1932,19 +1930,12 @@ TP_LOCAL_HEIGHT_T;Top
 TP_LOCAL_WIDTH;Right
 TP_LOCAL_WIDTH_L;Left
 TP_LOCRETI_METHOD_TOOLTIP;Low = Reinforce low light.\nUniform = Equalize action.\nHigh = Reinforce high light.\n
-TP_NEUTRAL;Neutral
-=======
-TP_LOCALCONTRAST_LABEL;Local Contrast
-TP_LOCALCONTRAST_RADIUS;Radius
-=======
->>>>>>> dev
 TP_LOCALCONTRAST_AMOUNT;Amount
 TP_LOCALCONTRAST_DARKNESS;Darkness level
 TP_LOCALCONTRAST_LABEL;Local Contrast
 TP_LOCALCONTRAST_LIGHTNESS;Lightness level
 TP_LOCALCONTRAST_RADIUS;Radius
 TP_NEUTRAL;Reset
->>>>>>> dev
 TP_NEUTRAL_TIP;Resets exposure sliders to neutral values.\nApplies to the same controls that Auto Levels applies to, regardless of whether you used Auto Levels or not.
 TP_PCVIGNETTE_FEATHER;Feather
 TP_PCVIGNETTE_FEATHER_TOOLTIP;Feathering:\n0 = corners only,\n50 = halfway to center,\n100 = to center.

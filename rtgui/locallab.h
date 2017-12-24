@@ -129,7 +129,7 @@ private:
     Adjuster* const sobelref;
     Adjuster* const centerXbuf;
     Adjuster* const centerYbuf;
-    Adjuster* const adjblur;
+//    Adjuster* const adjblur;
 
     MyComboBoxText*   const Smethod;
     MyComboBoxText*   const Exclumethod;
@@ -204,6 +204,7 @@ private:
     Adjuster* pastels;
     Adjuster* saturated;
     Adjuster* warm;
+    Adjuster* adjblur;
 
     ThresholdAdjuster* psThreshold;
     Gtk::CheckButton* protectSkins;

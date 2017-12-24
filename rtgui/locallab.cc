@@ -32,10 +32,96 @@
 #include <unistd.h>
 #include "../rtengine/improcfun.h"
 
+#define MINCHRO 0.
+#define MAXCHRO 100
+#define CENTERCHRO 10
+
+
 using namespace rtengine;
 using namespace rtengine::procparams;
 extern Options options;
 
+static double dnSlider2chro(double sval)
+{
+
+    // slider range: 0 - 10000
+    double chro;
+
+    if (sval <= 10) {
+        // linear below center-temp
+        chro = MINCHRO + (sval / 10.0) * (CENTERCHRO - MINCHRO);
+    } else {
+        const double slope = (double)(CENTERCHRO - MINCHRO) / (MAXCHRO - CENTERCHRO);
+        double x = (sval - 10) / 10; // x 0..1
+        double y = x * slope + (1.0 - slope) * pow(x, 4.0);
+        //double y = pow(x, 4.0);
+        chro = CENTERCHRO + y * (MAXCHRO - CENTERCHRO);
+    }
+
+    if (chro < MINCHRO) {
+        chro = MINCHRO;
+    }
+
+    if (chro > MAXCHRO) {
+        chro = MAXCHRO;
+    }
+
+    return chro;
+}
+
+static double dnchro2Slider(double noisechrof)
+{
+
+    double sval;
+
+    if (noisechrof <= CENTERCHRO) {
+        sval = ((noisechrof - MINCHRO) / (CENTERCHRO - MINCHRO)) * 10.0;
+    } else {
+        const double slope = (double)(CENTERCHRO - MINCHRO) / (MAXCHRO - CENTERCHRO);
+        const double y = (noisechrof - CENTERCHRO) / (MAXCHRO - CENTERCHRO);
+        double x = pow(y, 0.25); // rough guess of x, will be a little lower
+        double k = 0.1;
+        bool add = true;
+
+        // the y=f(x) function is a mess to invert, therefore we have this trial-refinement loop instead.
+        // from tests, worst case is about 20 iterations, ie no problem
+        for (;;) {
+            double y1 = x * slope + (1.0 - slope) * pow(x, 4.0);
+
+            if (10 * fabs(y1 - y) < 0.1) {
+                break;
+            }
+
+            if (y1 < y) {
+                if (!add) {
+                    k /= 2;
+                }
+
+                x += k;
+                add = true;
+            } else {
+                if (add) {
+                    k /= 2;
+                }
+
+                x -= k;
+                add = false;
+            }
+        }
+
+        sval = 10.0 + x * 10.0;
+    }
+
+    if (sval < 0) {
+        sval = 0;
+    }
+
+    if (sval > 100) {
+        sval = 100;
+    }
+
+    return sval;
+}
 
 
 Locallab::Locallab():
@@ -110,8 +196,10 @@ Locallab::Locallab():
     noisechrodetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHRODETAIL"), 0, 100, 1, 50))),
     bilateral(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BILATERAL"), 0, 100, 1, 0))),
     sensiden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIDEN"), 0, 100, 1, 30))),
-    noisechrof(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROFINE"), 0, 100, 1, 0))),
-    noisechroc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROCOARSE"), 0, 100, 1, 0))),
+//    noisechrof(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROFINE"), 0, 100, 0.1, 0))),
+    noisechrof(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROFINE"), MINCHRO, MAXCHRO, 0.1, 0, NULL, NULL, &dnSlider2chro, &dnchro2Slider))),
+//    noisechroc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROCOARSE"), 0, 100, 0.1, 0))),
+    noisechroc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROCOARSE"), MINCHRO, MAXCHRO, 0.1, 0, NULL, NULL, &dnSlider2chro, &dnchro2Slider))),
     hueref(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HUEREF"), -3.15, 3.15, 0.01, 0))),
     huerefblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HUEREFBLUR"), -3.15, 3.15, 0.01, 0))),
     chromaref(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMAREF"), 0, 200, 0.01, 0))),
@@ -119,7 +207,7 @@ Locallab::Locallab():
     sobelref(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOBELREF"), 0, 100, 0.01, 0))),
     centerXbuf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CENTERBUF_X"), -1000, 1000, 1, 0))),
     centerYbuf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CENTERBUF_Y"), -1000, 1000, 1, 0))),
-    adjblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ADJBLUR"), 0, 100, 1, 0))),
+//    adjblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ADJBLUR"), -100, 100, 1, 0))),
 
     Smethod(Gtk::manage(new MyComboBoxText())),
     Exclumethod(Gtk::manage(new MyComboBoxText())),
@@ -386,6 +474,12 @@ Locallab::Locallab():
     warm = Gtk::manage(new Adjuster(M("TP_LOCALLAB_WARM"), -100., 100., 1., 0., iblueredL, iblueredR));
     warm->setAdjusterListener(this);
 
+    Gtk::Image* iblueredL1 = Gtk::manage(new RTImage("ajd-wb-bluered1.png"));
+    Gtk::Image* iblueredR1 = Gtk::manage(new RTImage("ajd-wb-bluered2.png"));
+
+    adjblur = Gtk::manage(new Adjuster(M("TP_LOCALLAB_ADJ"), -100., 100., 1., 0., iblueredL1, iblueredR1));
+    adjblur->setAdjusterListener(this);
+
     //chroma->set_tooltip_text (M("TP_LOCALLAB_CHROMA_TOOLTIP"));
     chroma->setAdjusterListener(this);
 
@@ -394,7 +488,7 @@ Locallab::Locallab():
 
     centerXbuf->setAdjusterListener(this);;
     centerYbuf->setAdjusterListener(this);;
-    adjblur->setAdjusterListener(this);;
+//    adjblur->setAdjusterListener(this);;
 
 //exposure
 
@@ -667,6 +761,8 @@ Locallab::Locallab():
     wavBox->pack_start(*noisechrof);
     wavBox->pack_start(*noisechroc);
     wavBox->pack_start(*noisechrodetail);
+    wavBox->pack_start(*adjblur);
+
 
     wavFrame->add(*wavBox);
     denoisBox->pack_start(*wavFrame);
@@ -692,7 +788,7 @@ Locallab::Locallab():
     superFrame->set_label_widget(*curvactiv);
     ToolParamBlock* const colorBox = Gtk::manage(new ToolParamBlock());
 
-    //  ToolParamBlock* const dustBox = Gtk::manage (new ToolParamBlock());
+//    ToolParamBlock* const dustBox = Gtk::manage (new ToolParamBlock());
     dustMethod->append(M("TP_LOCALLAB_DSCOP"));
     dustMethod->append(M("TP_LOCALLAB_DSMOV"));
     dustMethod->append(M("TP_LOCALLAB_DSPAS"));
@@ -709,17 +805,17 @@ Locallab::Locallab():
 
     colorBox->pack_start(*warm);
     colorBox->pack_start(*sensi);
-
-    dustFrame->set_label_align(0.025, 0.5);
-//    dustBox->pack_start (*dustMethod);
-//    dustBox->pack_start (*lastdust);
-
-//    dustBox->pack_start (*cutpast);
-//    dustBox->pack_start (*centerXbuf);
-//    dustBox->pack_start (*centerYbuf);
-//    dustBox->pack_start (*adjblur);
-//    dustFrame->add (*dustBox);
-//  colorBox->pack_start (*dustFrame);
+    /*
+        dustFrame->set_label_align(0.025, 0.5);
+        dustBox->pack_start (*dustMethod);
+        dustBox->pack_start (*lastdust);
+        dustBox->pack_start (*cutpast);
+       dustBox->pack_start (*centerXbuf);
+        dustBox->pack_start (*centerYbuf);
+       dustBox->pack_start (*adjblur);
+       dustFrame->add (*dustBox);
+      colorBox->pack_start (*dustFrame);
+      */
     centerXbuf->hide();
     centerYbuf->hide();
 
@@ -4267,7 +4363,7 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         } else if (a == proxi) {
             listener->panelChanged(Evlocallabproxi, proxi->getTextValue());
         } else if (a == adjblur) {
-            //    listener->panelChanged (Evlocallabadjblur, adjblur->getTextValue());
+            listener->panelChanged(Evlocallabadjblur, adjblur->getTextValue());
         } else if (a == centerX || a == centerY) {
             listener->panelChanged(EvlocallabCenter, Glib::ustring::compose("X=%1\nY=%2", centerX->getTextValue(), centerY->getTextValue()));
         } else if (a == centerXbuf || a == centerYbuf) {

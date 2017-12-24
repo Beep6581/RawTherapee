@@ -177,6 +177,7 @@ struct local_params {
     int excmet;
     int strucc;
     int war;
+    float adjch;
 
 
 };
@@ -473,7 +474,7 @@ static void calcLocalParams(int oW, int oH, const LocallabParams& locallab, stru
     lp.noisecc = local_noisecc;
     lp.sensden = local_sensiden;
     lp.bilat = locallab.bilateral;
-
+    lp.adjch = (float) locallab.adjblur;
     lp.strengt = streng;
     lp.gamm = gam;
     lp.esto = est;
@@ -9595,28 +9596,80 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 }
 
                 float variC[levred];
+                float variCb[levred];
+
+                float noisecfr = lp.noisecf;
+                float noiseccr = lp.noisecc;
+
+                if (lp.adjch > 0.f) {
+                    noisecfr = lp.noisecf * ((100.f + lp.adjch) / 10.f);
+                    noiseccr = lp.noisecc + ((100.f + lp.adjch) / 10.f);
+                }
+
+                float noisecfb = lp.noisecf;
+                float noiseccb = lp.noisecc;
+
+                if (lp.adjch < 0.f) {
+                    noisecfb = lp.noisecf * ((100.f - lp.adjch) / 10.f);
+                    noiseccb = lp.noisecc * ((100.f - lp.adjch) / 10.f);
+                }
+
+
+                if (noisecfr < 0.f) {
+                    noisecfr = 0.0001f;
+                }
+
+                if (noiseccr < 0.f) {
+                    noiseccr = 0.0001f;
+                }
+
+                if (noisecfb < 0.f) {
+                    noisecfb = 0.0001f;
+                }
+
+                if (noiseccb < 0.f) {
+                    noiseccb = 0.0001f;
+                }
+
 
                 if (!adecomp.memoryAllocationFailed && !bdecomp.memoryAllocationFailed) {
 
                     if (levred == 7) {
                         edge = 2;
-                        variC[0] = SQR(lp.noisecf / 10.0);
-                        variC[1] = SQR(lp.noisecf / 10.0);
-                        variC[2] = SQR(lp.noisecf / 10.0);
+                        variC[0] = SQR(noisecfr / 10.0);
+                        variC[1] = SQR(noisecfr / 10.0);
+                        variC[2] = SQR(noisecfr / 10.0);
 
-                        variC[3] = SQR(lp.noisecf / 10.0);
-                        variC[4] = SQR(lp.noisecf / 10.0);
-                        variC[5] = SQR(lp.noisecc / 10.0);
-                        variC[6] = SQR(lp.noisecc / 10.0);
+                        variC[3] = SQR(noisecfr / 10.0);
+                        variC[4] = SQR(noisecfr / 10.0);
+                        variC[5] = SQR(noiseccr / 10.0);
+                        variC[6] = SQR(noiseccr / 10.0);
+
+                        variCb[0] = SQR(noisecfb / 10.0);
+                        variCb[1] = SQR(noisecfb / 10.0);
+                        variCb[2] = SQR(noisecfb / 10.0);
+
+                        variCb[3] = SQR(noisecfb / 10.0);
+                        variCb[4] = SQR(noisecfb / 10.0);
+                        variCb[5] = SQR(noiseccb / 10.0);
+                        variCb[6] = SQR(noiseccb / 10.0);
+
                     } else if (levred == 4) {
                         edge = 3;
                         variC[0] = SQR(lp.noisecf / 10.0);
                         variC[1] = SQR(lp.noisecf / 10.0);
                         variC[2] = SQR(lp.noisecf / 10.0);
                         variC[3] = SQR(lp.noisecf / 10.0);
+
+                        variCb[0] = SQR(lp.noisecf / 10.0);
+                        variCb[1] = SQR(lp.noisecf / 10.0);
+                        variCb[2] = SQR(lp.noisecf / 10.0);
+                        variCb[3] = SQR(lp.noisecf / 10.0);
+
+
                     }
 
-
+//lp.adjch
                     if ((lp.noisecf > 0.1f ||  lp.noisecc > 0.1f  || noiscfactiv)) {
                         float minic = 0.0001f;
 
@@ -9624,27 +9677,98 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                             minic = 0.1f;//only for artifact shape detection
                         }
 
+                        float k1 = 0.f;
+                        float k2 = 0.f;
+                        float k3 = 0.f;
+
+                        if (lp.noisecf < 0.3f) {
+                            k1 = 0.f;
+                            k2 = 0.f;
+                            k3 = 0.f;
+                        } else if (lp.noisecf < 1.f) {
+                            k1 = 0.4f;
+                            k2 = 0.2f;
+                            k3 = 0.f;
+
+                        } else if (lp.noisecf < 3.f) {
+                            k1 = 0.6f;
+                            k2 = 0.45f;
+                            k3 = 0.3f;
+                        } else if (lp.noisecf < 5.f) {
+                            k1 = 0.8f;
+                            k2 = 0.6f;
+                            k3 = 0.5f;
+                        } else {
+                            k1 = 1.f;
+                            k2 = 1.f;
+                            k3 = 1.f;
+                        }
+
                         variC[0] = max(minic, variC[0]);
-                        variC[1] = max(minic, variC[1]);
-                        variC[2] = max(minic, variC[2]);
-                        variC[3] = max(minic, variC[3]);
+                        variC[1] = max(minic, k1 * variC[1]);
+                        variC[2] = max(minic, k2 * variC[2]);
+                        variC[3] = max(minic, k3 * variC[3]);
+
+                        variCb[0] = max(minic, variCb[0]);
+                        variCb[1] = max(minic, k1 * variCb[1]);
+                        variCb[2] = max(minic, k2 * variCb[2]);
+                        variCb[3] = max(minic, k3 * variCb[3]);
 
                         if (levred == 7) {
+                            float k4 = 0.f;
+                            float k5 = 0.f;
                             float k6 = 0.f;
-                            variC[4] = max(0.0001f, variC[4]);
-                            variC[5] = max(0.0001f, variC[5]);
 
-                            if (lp.noisecc < 20.f) {
+                            if (lp.noisecc < 0.3f) {
+                                k4 = 0.1f;
+                                k5 = 0.0f;
+                            } else if (lp.noisecc < 1.f) {
+                                k4 = 0.15f;
+                                k5 = 0.1f;
+                            } else if (lp.noisecc < 4.f) {
+                                k4 = 0.3f;
+                                k5 = 0.15f;
+                            } else if (lp.noisecc < 8.f) {
+                                k4 = 0.4f;
+                                k5 = 0.2f;
+                            } else if (lp.noisecc < 20.f) {
+                                k4 = 0.45f;
+                                k5 = 0.3f;
+                            } else if (lp.noisecc < 40.f) {
+                                k4 = 0.6f;
+                                k5 = 0.4f;
+                            } else if (lp.noisecc < 70.f) {
+                                k4 = 0.7f;
+                                k5 = 0.5f;
+                            } else if (lp.noisecc < 80.f) {
+                                k4 = 0.8f;
+                                k5 = 0.7f;
+                            } else {
+                                k4 = 1.f;
+                                k5 = 1.f;
+                            }
+
+
+                            variC[4] = max(0.0001f, k4 * variC[4]);
+                            variC[5] = max(0.0001f, k5 * variC[5]);
+                            variCb[4] = max(0.0001f, k4 * variCb[4]);
+                            variCb[5] = max(0.0001f, k5 * variCb[5]);
+
+                            if (lp.noisecc < 10.f) {
                                 k6 = 0.f;
-                            } else if (lp.noisecc < 50.f) {
+                            } else if (lp.noisecc < 15.f) {
+                                k6 = 0.2f;
+                            } else if (lp.noisecc < 30.f) {
                                 k6 = 0.4f;
                             } else if (lp.noisecc < 70.f) {
-                                k6 = 0.7f;
+                                k6 = 0.6f;
                             } else {
                                 k6 = 1.f;
                             }
 
                             variC[6] = max(0.0001f, k6 * variC[6]);
+                            variCb[6] = max(0.0001f, k6 * variCb[6]);
+
                         }
 
                         float* noisevarchrom = new float[GH * GW];
@@ -9678,7 +9802,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
                         float noisevarab_r = 100.f; //SQR(lp.noisecc / 10.0);
                         WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
-                        WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
+                        WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, numThreads);
                         delete[] noisevarchrom;
 
                     }
@@ -9884,26 +10008,80 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
 
                 float variC[levred];
+                float variCb[levred];
+
+                float noisecfr = lp.noisecf;
+                float noiseccr = lp.noisecc;
+
+                if (lp.adjch > 0.f) {
+                    noisecfr = lp.noisecf * ((100.f + lp.adjch) / 10.f);
+                    noiseccr = lp.noisecc + ((100.f + lp.adjch) / 10.f);
+                }
+
+                float noisecfb = lp.noisecf;
+                float noiseccb = lp.noisecc;
+
+                if (lp.adjch < 0.f) {
+                    noisecfb = lp.noisecf * ((100.f - lp.adjch) / 10.f);
+                    noiseccb = lp.noisecc * ((100.f - lp.adjch) / 10.f);
+                }
+
+
+                if (noisecfr < 0.f) {
+                    noisecfr = 0.0001f;
+                }
+
+                if (noiseccr < 0.f) {
+                    noiseccr = 0.0001f;
+                }
+
+                if (noisecfb < 0.f) {
+                    noisecfb = 0.0001f;
+                }
+
+                if (noiseccb < 0.f) {
+                    noiseccb = 0.0001f;
+                }
+
 
                 if (!adecomp.memoryAllocationFailed && !bdecomp.memoryAllocationFailed) {
+
                     if (levred == 7) {
                         edge = 2;
-                        variC[0] = SQR(lp.noisecf / 10.0);
-                        variC[1] = SQR(lp.noisecf / 10.0);
-                        variC[2] = SQR(lp.noisecf / 10.0);
+                        variC[0] = SQR(noisecfr / 10.0);
+                        variC[1] = SQR(noisecfr / 10.0);
+                        variC[2] = SQR(noisecfr / 10.0);
 
-                        variC[3] = SQR(lp.noisecf / 10.0);
-                        variC[4] = SQR(lp.noisecf / 10.0);
-                        variC[5] = SQR(lp.noisecc / 10.0);
-                        variC[6] = SQR(lp.noisecc / 10.0);
+                        variC[3] = SQR(noisecfr / 10.0);
+                        variC[4] = SQR(noisecfr / 10.0);
+                        variC[5] = SQR(noiseccr / 10.0);
+                        variC[6] = SQR(noiseccr / 10.0);
+
+                        variCb[0] = SQR(noisecfb / 10.0);
+                        variCb[1] = SQR(noisecfb / 10.0);
+                        variCb[2] = SQR(noisecfb / 10.0);
+
+                        variCb[3] = SQR(noisecfb / 10.0);
+                        variCb[4] = SQR(noisecfb / 10.0);
+                        variCb[5] = SQR(noiseccb / 10.0);
+                        variCb[6] = SQR(noiseccb / 10.0);
+
                     } else if (levred == 4) {
                         edge = 3;
                         variC[0] = SQR(lp.noisecf / 10.0);
                         variC[1] = SQR(lp.noisecf / 10.0);
                         variC[2] = SQR(lp.noisecf / 10.0);
                         variC[3] = SQR(lp.noisecf / 10.0);
+
+                        variCb[0] = SQR(lp.noisecf / 10.0);
+                        variCb[1] = SQR(lp.noisecf / 10.0);
+                        variCb[2] = SQR(lp.noisecf / 10.0);
+                        variCb[3] = SQR(lp.noisecf / 10.0);
+
+
                     }
 
+//lp.adjch
                     if ((lp.noisecf > 0.1f ||  lp.noisecc > 0.1f  || noiscfactiv)) {
                         float minic = 0.0001f;
 
@@ -9911,28 +10089,101 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                             minic = 0.1f;//only for artifact shape detection
                         }
 
+                        float k1 = 0.f;
+                        float k2 = 0.f;
+                        float k3 = 0.f;
+
+                        if (lp.noisecf < 0.3f) {
+                            k1 = 0.f;
+                            k2 = 0.f;
+                            k3 = 0.f;
+                        } else if (lp.noisecf < 1.f) {
+                            k1 = 0.4f;
+                            k2 = 0.2f;
+                            k3 = 0.f;
+
+                        } else if (lp.noisecf < 3.f) {
+                            k1 = 0.6f;
+                            k2 = 0.45f;
+                            k3 = 0.3f;
+                        } else if (lp.noisecf < 5.f) {
+                            k1 = 0.8f;
+                            k2 = 0.6f;
+                            k3 = 0.5f;
+                        } else {
+                            k1 = 1.f;
+                            k2 = 1.f;
+                            k3 = 1.f;
+                        }
+
                         variC[0] = max(minic, variC[0]);
-                        variC[1] = max(minic, variC[1]);
-                        variC[2] = max(minic, variC[2]);
-                        variC[3] = max(minic, variC[3]);
+                        variC[1] = max(minic, k1 * variC[1]);
+                        variC[2] = max(minic, k2 * variC[2]);
+                        variC[3] = max(minic, k3 * variC[3]);
+
+                        variCb[0] = max(minic, variCb[0]);
+                        variCb[1] = max(minic, k1 * variCb[1]);
+                        variCb[2] = max(minic, k2 * variCb[2]);
+                        variCb[3] = max(minic, k3 * variCb[3]);
 
                         if (levred == 7) {
+                            float k4 = 0.f;
+                            float k5 = 0.f;
                             float k6 = 0.f;
-                            variC[4] = max(0.0001f, variC[4]);
-                            variC[5] = max(0.0001f, variC[5]);
 
-                            if (lp.noisecc < 20.f) {
+                            if (lp.noisecc < 0.3f) {
+                                k4 = 0.1f;
+                                k5 = 0.0f;
+                            } else if (lp.noisecc < 1.f) {
+                                k4 = 0.15f;
+                                k5 = 0.1f;
+                            } else if (lp.noisecc < 4.f) {
+                                k4 = 0.3f;
+                                k5 = 0.15f;
+                            } else if (lp.noisecc < 8.f) {
+                                k4 = 0.4f;
+                                k5 = 0.2f;
+                            } else if (lp.noisecc < 20.f) {
+                                k4 = 0.45f;
+                                k5 = 0.3f;
+                            } else if (lp.noisecc < 40.f) {
+                                k4 = 0.6f;
+                                k5 = 0.4f;
+                            } else if (lp.noisecc < 70.f) {
+                                k4 = 0.7f;
+                                k5 = 0.5f;
+                            } else if (lp.noisecc < 80.f) {
+                                k4 = 0.8f;
+                                k5 = 0.7f;
+                            } else {
+                                k4 = 1.f;
+                                k5 = 1.f;
+                            }
+
+
+                            variC[4] = max(0.0001f, k4 * variC[4]);
+                            variC[5] = max(0.0001f, k5 * variC[5]);
+                            variCb[4] = max(0.0001f, k4 * variCb[4]);
+                            variCb[5] = max(0.0001f, k5 * variCb[5]);
+
+                            if (lp.noisecc < 10.f) {
                                 k6 = 0.f;
-                            } else if (lp.noisecc < 50.f) {
+                            } else if (lp.noisecc < 15.f) {
+                                k6 = 0.2f;
+                            } else if (lp.noisecc < 30.f) {
                                 k6 = 0.4f;
                             } else if (lp.noisecc < 70.f) {
-                                k6 = 0.7f;
+                                k6 = 0.6f;
                             } else {
                                 k6 = 1.f;
                             }
 
                             variC[6] = max(0.0001f, k6 * variC[6]);
+                            variCb[6] = max(0.0001f, k6 * variCb[6]);
+
                         }
+
+
 
                         float* noisevarchrom = new float[bfh * bfw];
                         int bfw2 = (bfw + 1) / 2;
@@ -9963,7 +10214,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
                         float noisevarab_r = 100.f; //SQR(lp.noisecc / 10.0);
                         WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
-                        WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
+                        WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, numThreads);
                         delete[] noisevarchrom;
                     }
                 }
