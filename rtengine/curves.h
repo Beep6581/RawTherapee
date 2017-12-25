@@ -881,6 +881,7 @@ inline void StandardToneCurve::Apply (float& r, float& g, float& b) const
     g = lutToneCurve[g];
     b = lutToneCurve[b];
 }
+
 inline void StandardToneCurve::BatchApply(
         const size_t start, const size_t end,
         float *r, float *g, float *b) const {
@@ -911,9 +912,9 @@ inline void StandardToneCurve::BatchApply(
 
 #if defined( __SSE2__ ) && defined( __x86_64__ )
     for (; i + 3 < end; i += 4) {
-        __m128i r_val = _mm_cvtps_epi32(LVF(r[i]));
-        __m128i g_val = _mm_cvtps_epi32(LVF(g[i]));
-        __m128i b_val = _mm_cvtps_epi32(LVF(b[i]));
+        __m128 r_val = LVF(r[i]);
+        __m128 g_val = LVF(g[i]);
+        __m128 b_val = LVF(b[i]);
         STVF(r[i], lutToneCurve[r_val]);
         STVF(g[i], lutToneCurve[g_val]);
         STVF(b[i], lutToneCurve[b_val]);
