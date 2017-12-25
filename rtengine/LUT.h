@@ -95,7 +95,8 @@ protected:
     // list of variables ordered to improve cache speed
     unsigned int maxs;
     float maxsf;
-    // possibly-more-correct value for sse routine (see unit test for details)
+    // For the SSE routine operator[](vfloat), we just clip float lookup values
+    // to just below the max value.
     float maxIndexFloat;
     T * data;
     unsigned int clip;
@@ -125,7 +126,10 @@ public:
 #endif
         dirty = true;
         clip = flags;
-        data = new T[s];
+        // Add a few extra elements so [](vfloat) won't access out-of-bounds memory.
+        // The routine would still produce the right answer, but might cause issues
+        // with address/heap checking programs.
+        data = new T[s + 3];
         owner = 1;
         size = s;
         upperBound = size - 1;
@@ -155,7 +159,8 @@ public:
 
         dirty = true; // Assumption!
         clip = flags;
-        data = new T[s];
+        // See comment in constructor.
+        data = new T[s + 3];
         owner = 1;
         size = s;
         upperBound = size - 1;
@@ -222,7 +227,8 @@ public:
             }
 
             if (this->data == nullptr) {
-                this->data = new T[rhs.size];
+                // See comment in constructor.
+                this->data = new T[rhs.size + 3];
             }
 
             this->clip = rhs.clip;
@@ -327,7 +333,7 @@ public:
         vfloat upper = _mm_castsi128_ps(_mm_unpackhi_epi64(temp0, temp1));
 
         vfloat diff = clampedIndexes - _mm_cvtepi32_ps(indexes);
-        return (_mm_set1_ps(1.0f) - diff) * lower + (diff * upper);
+        return vintpf(diff, upper, lower);
     }
 #ifdef __SSE4_1__
     template<typename U = T, typename = typename std::enable_if<std::is_same<U, float>::value>::type>
@@ -426,9 +432,7 @@ public:
             }
 
             idx = 0;
-            // Note: Maybe this should be 'idx > maxsf'? See unit test where a LUT with
-            // values [10, 11, 12, 13] gets looked up at 2.5 and returns 12.5.
-        } else if (index > maxsf) {
+        } else if (idx > maxs) {
             if (clip & LUT_CLIP_ABOVE) {
                 return data[upperBound];
             }
