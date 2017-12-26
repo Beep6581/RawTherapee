@@ -310,9 +310,7 @@ public:
 
         // Clamp and convert to integer values. Extract out of SSE register because all
         // lookup operations use regular addresses.
-        vfloat clampedIndexes = _mm_max_ps(
-                _mm_setzero_ps(),
-                _mm_min_ps(_mm_set1_ps(maxIndexFloat), indexv));
+        vfloat clampedIndexes = vmaxf(ZEROV, vminf(F2V(maxIndexFloat), indexv));
         vint indexes = _mm_cvttps_epi32(clampedIndexes);
         int indexArray[4];
         _mm_storeu_si128(reinterpret_cast<__m128i*>(&indexArray[0]), indexes);
