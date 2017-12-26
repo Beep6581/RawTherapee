@@ -3540,7 +3540,27 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 }
 
                 for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                    vfloat cr = F2V(0.299f);
+                    vfloat cg = F2V(0.587f);
+                    vfloat cb = F2V(0.114f);
+                    int j = jstart;
+                    int tj = 0;
+#ifdef __SSE2__
+                    for (; j < tW - 3; j+=4, tj+=4) {
+
+                        vfloat rv = LVF(rtemp[ti * TS + tj]);
+                        vfloat gv = LVF(gtemp[ti * TS + tj]);
+                        vfloat bv = LVF(btemp[ti * TS + tj]);
+
+                        //shadow tone curve
+                        vfloat Yv = cr * rv + cg * gv + cb * bv;
+                        vfloat tonefactorv = shtonecurve(Yv);
+                        STVF(rtemp[ti * TS + tj], rv * tonefactorv);
+                        STVF(gtemp[ti * TS + tj], gv * tonefactorv);
+                        STVF(btemp[ti * TS + tj], bv * tonefactorv);
+                    }
+#endif
+                    for (; j < tW; j++, tj++) {
 
                         float r = rtemp[ti * TS + tj];
                         float g = gtemp[ti * TS + tj];
@@ -3588,17 +3608,33 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                     }
                 }
 
-                for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                if (histToneCurveThr) {
+                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
 
-                        //brightness/contrast
-                        rtemp[ti * TS + tj] = tonecurve[ rtemp[ti * TS + tj] ];
-                        gtemp[ti * TS + tj] = tonecurve[ gtemp[ti * TS + tj] ];
-                        btemp[ti * TS + tj] = tonecurve[ btemp[ti * TS + tj] ];
+                            //brightness/contrast
+                            rtemp[ti * TS + tj] = tonecurve[ rtemp[ti * TS + tj] ];
+                            gtemp[ti * TS + tj] = tonecurve[ gtemp[ti * TS + tj] ];
+                            btemp[ti * TS + tj] = tonecurve[ btemp[ti * TS + tj] ];
 
-                        if (histToneCurveThr) {
                             int y = CLIP<int> (lumimulf[0] * Color::gamma2curve[rtemp[ti * TS + tj]] + lumimulf[1] * Color::gamma2curve[gtemp[ti * TS + tj]] + lumimulf[2] * Color::gamma2curve[btemp[ti * TS + tj]]);
                             histToneCurveThr[y >> histToneCurveCompression]++;
+                        }
+                    }
+                } else {
+                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                        int j = jstart, tj = 0;
+                        for (; j < tW - 3; j+=4, tj+=4) {
+                            //brightness/contrast
+                            STVF(rtemp[ti * TS + tj], tonecurve(LVF(rtemp[ti * TS + tj])));
+                            STVF(gtemp[ti * TS + tj], tonecurve(LVF(gtemp[ti * TS + tj])));
+                            STVF(btemp[ti * TS + tj], tonecurve(LVF(btemp[ti * TS + tj])));
+                        }
+                        for (; j < tW; j++, tj++) {
+                            //brightness/contrast
+                            rtemp[ti * TS + tj] = tonecurve[rtemp[ti * TS + tj]];
+                            gtemp[ti * TS + tj] = tonecurve[gtemp[ti * TS + tj]];
+                            btemp[ti * TS + tj] = tonecurve[btemp[ti * TS + tj]];
                         }
                     }
                 }
@@ -3687,10 +3723,10 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 if (hasToneCurve2) {
                     if (curveMode2 == ToneCurveParams::TcMode::STD) { // Standard
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                const StandardToneCurve& userToneCurve = static_cast<const StandardToneCurve&> (customToneCurve2);
-                                userToneCurve.Apply (rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
-                            }
+                            const StandardToneCurve& userToneCurve = static_cast<const StandardToneCurve&> (customToneCurve2);
+                            userToneCurve.BatchApply (
+                                    0, tW - jstart,
+                                    &rtemp[ti * TS], &gtemp[ti * TS], &btemp[ti * TS]);
                         }
                     } else if (curveMode2 == ToneCurveParams::TcMode::FILMLIKE) { // Adobe like
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
