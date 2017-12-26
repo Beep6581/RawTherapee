@@ -93,7 +93,7 @@ class LUT :
 {
 protected:
     // list of variables ordered to improve cache speed
-    unsigned int maxs;
+    int maxs;
     float maxsf;
     // For the SSE routine operator[](vfloat), we just clip float lookup values
     // to just below the max value.
