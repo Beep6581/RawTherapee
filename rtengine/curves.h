@@ -886,6 +886,8 @@ inline void StandardToneCurve::BatchApply(
         const size_t start, const size_t end,
         float *r, float *g, float *b) const {
     assert (lutToneCurve);
+    assert (lutToneCurve.getClip() & LUT_CLIP_BELOW);
+    assert (lutToneCurve.getClip() & LUT_CLIP_ABOVE);
 
     // All pointers must have the same alignment for SSE usage. In the loop body below,
     // we will only check `r`, assuming that the same result would hold for `g` and `b`.

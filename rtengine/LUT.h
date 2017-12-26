@@ -200,6 +200,10 @@ public:
         clip = flags;
     }
 
+    int getClip() const {
+        return clip;
+    }
+
     /** @brief Get the number of element in the LUT (i.e. dimension of the array)
      *  For a LUT(500), it will return 500
      *  @return number of element in the array
@@ -304,6 +308,9 @@ public:
     }
 
 #if defined( __SSE2__ ) && defined( __x86_64__ )
+
+    // NOTE: This version requires LUTs which clip at upper and lower bounds
+    // (which is the default).
     vfloat operator[](vfloat indexv) const
     {
         static_assert(std::is_same<T, float>::value, "This method only works for float LUTs");
