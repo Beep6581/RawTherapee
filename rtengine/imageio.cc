@@ -308,6 +308,11 @@ int ImageIO::loadPNG  (Glib::ustring fname)
         return IMIO_HEADERERROR;
     }
 
+    // silence the warning about "invalid" sRGB profiles -- see #4260
+#if defined(PNG_SKIP_sRGB_CHECK_PROFILE) && defined(PNG_SET_OPTION_SUPPORTED)
+    png_set_option(png, PNG_SKIP_sRGB_CHECK_PROFILE, PNG_OPTION_ON);
+#endif
+
     png_infop info = png_create_info_struct (png);
     png_infop end_info = png_create_info_struct (png);
 
@@ -354,6 +359,22 @@ int ImageIO::loadPNG  (Glib::ustring fname)
 
     if (color_type & PNG_COLOR_MASK_ALPHA) {
         png_set_strip_alpha(png);
+    }
+
+    // reading the embedded ICC profile if any
+    if (png_get_valid(png, info, PNG_INFO_iCCP)) {
+        png_charp name;
+        int compression_type;
+#if PNG_LIBPNG_VER_MAJOR > 1 || (PNG_LIBPNG_VER_MAJOR == 1 && PNG_LIBPNG_VER_MINOR > 4)
+        png_bytep profdata;
+#else
+        png_charp profdata;
+#endif
+        png_uint_32 proflen;
+        png_get_iCCP(png, info, &name, &compression_type, &profdata, &proflen);
+        embProfile = cmsOpenProfileFromMem(profdata, proflen);
+        loadedProfileData = new char[proflen];
+        memcpy(loadedProfileData, profdata, proflen);
     }
 
     //setting gamma
