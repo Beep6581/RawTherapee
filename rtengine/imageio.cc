@@ -926,6 +926,77 @@ int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool s
     return IMIO_SUCCESS;
 }
 
+
+namespace {
+
+// Taken from Darktable -- src/imageio/format/png.c
+//
+/* Write EXIF data to PNG file.
+ * Code copied from DigiKam's libs/dimg/loaders/pngloader.cpp.
+ * The EXIF embedding is defined by ImageMagicK.
+ * It is documented in the ExifTool page:
+ * http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/PNG.html
+ *
+ * ..and in turn copied from ufraw. thanks to udi and colleagues
+ * for making useful code much more readable and discoverable ;)
+ */
+
+void PNGwriteRawProfile(png_struct *ping, png_info *ping_info, const char *profile_type, guint8 *profile_data, png_uint_32 length)
+{
+    png_textp text;
+    long i;
+    guint8 *sp;
+    png_charp dp;
+    png_uint_32 allocated_length, description_length;
+
+    const guint8 hex[16] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+    text = static_cast<png_textp>(png_malloc(ping, sizeof(png_text)));
+    description_length = strlen(profile_type);
+    allocated_length = length * 2 + (length >> 5) + 20 + description_length;
+
+    text[0].text = static_cast<png_charp>(png_malloc(ping, allocated_length));
+    text[0].key = static_cast<png_charp>(png_malloc(ping, 80));
+    text[0].key[0] = '\0';
+
+    g_strlcat(text[0].key, "Raw profile type ", 80);
+    g_strlcat(text[0].key, profile_type, 80);
+
+    sp = profile_data;
+    dp = text[0].text;
+    *dp++ = '\n';
+
+    g_strlcpy(dp, profile_type, allocated_length);
+
+    dp += description_length;
+    *dp++ = '\n';
+    *dp = '\0';
+
+    g_snprintf(dp, allocated_length - strlen(text[0].text), "%8lu ", static_cast<unsigned long int>(length));
+
+    dp += 8;
+
+    for(i = 0; i < long(length); i++)
+    {
+        if(i % 36 == 0) *dp++ = '\n';
+
+        *(dp++) = hex[((*sp >> 4) & 0x0f)];
+        *(dp++) = hex[((*sp++) & 0x0f)];
+    }
+
+    *dp++ = '\n';
+    *dp = '\0';
+    text[0].text_length = (dp - text[0].text);
+    text[0].compression = -1;
+
+    if(text[0].text_length <= allocated_length) png_set_text(ping, ping_info, text, 1);
+
+    png_free(ping, text[0].text);
+    png_free(ping, text[0].key);
+    png_free(ping, text);
+}
+
+} // namespace
+
 int ImageIO::savePNG  (Glib::ustring fname, volatile int bps)
 {
     if (getWidth() < 1 || getHeight() < 1) {
@@ -992,6 +1063,29 @@ int ImageIO::savePNG  (Glib::ustring fname, volatile int bps)
         png_bytep profdata = reinterpret_cast<png_bytep>(profileData);
 #endif
         png_set_iCCP(png, info, const_cast<png_charp>("icc"), 0, profdata, profileLength);
+    }
+
+    {
+        // buffer for the exif and iptc
+        unsigned int bufferSize;
+        unsigned char* buffer = nullptr; // buffer will be allocated in createTIFFHeader
+        unsigned char* iptcdata = nullptr;
+        unsigned int iptclen = 0;
+
+        if (iptc && iptc_data_save (iptc, &iptcdata, &iptclen) && iptcdata) {
+            iptc_data_free_buf (iptc, iptcdata);
+            iptcdata = nullptr;
+        }
+
+        int size = rtexif::ExifManager::createPNGMarker(exifRoot, exifChange, width, height, bps, (char*)iptcdata, iptclen, buffer, bufferSize);
+
+        if (iptcdata) {
+            iptc_data_free_buf (iptc, iptcdata);
+        }
+        if (buffer && size) {
+            PNGwriteRawProfile(png, info, "exif", buffer, size);
+            delete[] buffer;
+        }
     }
 
 

@@ -3312,6 +3312,83 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
     return endOffs;
 }
 
+
+int ExifManager::createPNGMarker(const TagDirectory* root, const rtengine::procparams::ExifPairs &changeList, int W, int H, int bps, const char* iptcdata, int iptclen, unsigned char *&buffer, unsigned &bufferSize)
+{
+// write tiff header
+    int offs = 0;
+    ByteOrder order = HOSTORDER;
+
+    if (root) {
+        order = root->getOrder ();
+    }
+
+    TagDirectory* cl;
+
+    if (root) {
+        cl = (const_cast<TagDirectory*> (root))->clone (nullptr);
+        // remove some unknown top level tags which produce warnings when opening a tiff
+        Tag *removeTag = cl->getTag (0x9003);
+
+        if (removeTag) {
+            removeTag->setKeep (false);
+        }
+
+        removeTag = cl->getTag (0x9211);
+
+        if (removeTag) {
+            removeTag->setKeep (false);
+        }
+    } else {
+        cl = new TagDirectory (nullptr, ifdAttribs, HOSTORDER);
+    }
+
+    if (iptcdata) {
+        Tag* iptc = new Tag (cl, lookupAttrib (ifdAttribs, "IPTCData"));
+        iptc->initLongArray (iptcdata, iptclen);
+        cl->replaceTag (iptc);
+    }
+
+// apply list of changes
+    for (rtengine::procparams::ExifPairs::const_iterator i = changeList.begin(); i != changeList.end(); ++i) {
+        cl->applyChange (i->first, i->second);
+    }
+
+    // append default properties
+    const std::vector<Tag*> defTags = getDefaultTIFFTags (cl);
+
+    defTags[0]->setInt (W, 0, LONG);
+    defTags[1]->setInt (H, 0, LONG);
+    defTags[8]->initInt (0, SHORT, 3);
+
+    for (int i = 0; i < 3; i++) {
+        defTags[8]->setInt (bps, i * 2, SHORT);
+    }
+
+    for (int i = defTags.size() - 1; i >= 0; i--) {
+        Tag* defTag = defTags[i];
+        cl->replaceTag (defTag->clone (cl));
+        delete defTag;
+    }
+
+    cl->sort ();
+    bufferSize = cl->calculateSize() + 8;
+    buffer = new unsigned char[bufferSize]; // this has to be deleted in caller
+    sset2 ((unsigned short)order, buffer + offs, order);
+    offs += 2;
+    sset2 (42, buffer + offs, order);
+    offs += 2;
+    sset4 (8, buffer + offs, order);
+
+    int endOffs = cl->write (8, buffer);
+
+//  cl->printAll();
+    delete cl;
+
+    return endOffs;
+}
+
+
 //-----------------------------------------------------------------------------
 // global functions to read byteorder dependent data
 //-----------------------------------------------------------------------------
