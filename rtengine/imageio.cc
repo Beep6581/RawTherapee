@@ -365,10 +365,10 @@ int ImageIO::loadPNG  (Glib::ustring fname)
     if (png_get_valid(png, info, PNG_INFO_iCCP)) {
         png_charp name;
         int compression_type;
-#if PNG_LIBPNG_VER_MAJOR > 1 || (PNG_LIBPNG_VER_MAJOR == 1 && PNG_LIBPNG_VER_MINOR > 4)
-        png_bytep profdata;
-#else
+#if PNG_LIBPNG_VER < 10500
         png_charp profdata;
+#else
+        png_bytep profdata;
 #endif
         png_uint_32 proflen;
         png_get_iCCP(png, info, &name, &compression_type, &profdata, &proflen);
@@ -950,6 +950,11 @@ int ImageIO::savePNG  (Glib::ustring fname, volatile int bps)
         return IMIO_HEADERERROR;
     }
 
+    // silence the warning about "invalid" sRGB profiles -- see #4260
+#if defined(PNG_SKIP_sRGB_CHECK_PROFILE) && defined(PNG_SET_OPTION_SUPPORTED)
+    png_set_option(png, PNG_SKIP_sRGB_CHECK_PROFILE, PNG_OPTION_ON);
+#endif
+    
     png_infop info = png_create_info_struct(png);
 
     if (!info) {
@@ -979,6 +984,15 @@ int ImageIO::savePNG  (Glib::ustring fname, volatile int bps)
 
     png_set_IHDR(png, info, width, height, bps, PNG_COLOR_TYPE_RGB,
                  PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_BASE);
+
+    if (profileData) {
+#if PNG_LIBPNG_VER < 10500
+        png_charp profdata = reinterpret_cast<png_charp>(profileData);
+#else
+        png_bytep profdata = reinterpret_cast<png_bytep>(profileData);
+#endif
+        png_set_iCCP(png, info, const_cast<png_charp>("icc"), 0, profdata, profileLength);
+    }
 
 
     int rowlen = width * 3 * bps / 8;
