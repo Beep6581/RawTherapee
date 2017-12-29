@@ -1024,6 +1024,25 @@ struct ColorManagementParams {
     bool operator !=(const ColorManagementParams& other) const;
 };
 
+
+/**
+  * Parameters for metadata handling
+  */
+struct MetaDataParams {
+    enum Mode {
+        TUNNEL,
+        EDIT,
+        STRIP
+    };
+    Mode mode;
+
+    MetaDataParams();
+
+    bool operator ==(const MetaDataParams &other) const;
+    bool operator !=(const MetaDataParams &other) const;
+};
+
+
 /**
   * Typedef for representing a key/value for the exif metadata information
   */
@@ -1400,6 +1419,7 @@ public:
     Glib::ustring           appVersion;      ///< Version of the application that generated the parameters
     int                     ppVersion;       ///< Version of the PP file from which the parameters have been read
 
+    MetaDataParams          metadata;        ///< Metadata parameters
     ExifPairs               exif;            ///< List of modifications appplied on the exif tags of the input image
     IPTCPairs               iptc;            ///< The IPTC tags and values to be saved to the output image
 

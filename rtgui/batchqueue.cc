@@ -572,7 +572,7 @@ void BatchQueue::startProcessing ()
             next->removeButtonSet ();
 
             // start batch processing
-            rtengine::startBatchProcessing (next->job, this, options.tunnelMetaData);
+            rtengine::startBatchProcessing (next->job, this);
             queue_draw ();
         }
     }

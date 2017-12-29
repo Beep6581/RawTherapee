@@ -426,7 +426,6 @@ void Options::setDefaults ()
     tabbedUI = false;
     mainNBVertical = true;
     multiDisplayMode = 0;
-    tunnelMetaData = true;
     histogramPosition = 1;
     histogramBar = true;
     histogramFullMode = false;
@@ -867,10 +866,6 @@ void Options::readFromFile (Glib::ustring fname)
 
                 if (keyFile.has_key ("Output", "OverwriteOutputFile")) {
                     overwriteOutputFile = keyFile.get_boolean ("Output", "OverwriteOutputFile");
-                }
-
-                if (keyFile.has_key ("Output", "TunnelMetaData")) {
-                    tunnelMetaData = keyFile.get_boolean ("Output", "TunnelMetaData");
                 }
             }
 
@@ -1942,7 +1937,6 @@ void Options::saveToFile (Glib::ustring fname)
         keyFile.set_boolean ("Output", "UsePathTemplate", saveUsePathTemplate);
         keyFile.set_string  ("Output", "LastSaveAsPath", lastSaveAsPath);
         keyFile.set_boolean ("Output", "OverwriteOutputFile", overwriteOutputFile);
-        keyFile.set_boolean ("Output", "TunnelMetaData", tunnelMetaData);
 
         keyFile.set_string  ("Profiles", "Directory", profilePath);
         keyFile.set_boolean ("Profiles", "UseBundledProfiles", useBundledProfiles);
