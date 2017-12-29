@@ -43,13 +43,20 @@ MetaDataPanel::MetaDataPanel()
     metadataMode->signal_changed().connect(sigc::mem_fun(*this, &MetaDataPanel::metaDataModeChanged));
 
     tagsNotebook = Gtk::manage(new Gtk::Notebook());
-    exifpanel = Gtk::manage(new ExifPanel());
-    iptcpanel = Gtk::manage(new IPTCPanel());
+    exifpanel = new ExifPanel();
+    iptcpanel = new IPTCPanel();
     tagsNotebook->set_name("MetaPanelNotebook");
     tagsNotebook->append_page(*exifpanel, M("MAIN_TAB_EXIF"));
     tagsNotebook->append_page(*iptcpanel, M("MAIN_TAB_IPTC"));
 
     pack_end(*tagsNotebook);
+}
+
+
+MetaDataPanel::~MetaDataPanel()
+{
+    delete iptcpanel;
+    delete exifpanel;
 }
 
 

@@ -36,6 +36,7 @@ private:
 
 public:
     MetaDataPanel();
+    ~MetaDataPanel();
     
     void setBatchMode(bool batchMode);
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
