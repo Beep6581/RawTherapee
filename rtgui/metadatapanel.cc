@@ -88,7 +88,8 @@ void MetaDataPanel::read(const rtengine::procparams::ProcParams* pp, const Param
 
 void MetaDataPanel::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
 {
-    pp->metadata.mode = static_cast<MetaDataParams::Mode>(max(metadataMode->get_active_row_number(), 2));
+    pp->metadata.mode = static_cast<MetaDataParams::Mode>(min(metadataMode->get_active_row_number(), 2));
+    
     if (pedited) {
         pedited->metadata.mode = metadataMode->get_active_row_number() != 3;
     }
