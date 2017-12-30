@@ -353,6 +353,7 @@ void ParamsEdited::set(bool v)
     locallab.noiselumf = v;
     locallab.noiselumc = v;
     locallab.noiselumdetail = v;
+    locallab.noiselequal = v;
     locallab.noisechrodetail = v;
     locallab.bilateral = v;
     locallab.sensiden = v;
@@ -1029,6 +1030,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         locallab.noiselumf = locallab.noiselumf && p.locallab.noiselumf == other.locallab.noiselumf;
         locallab.noiselumc = locallab.noiselumc && p.locallab.noiselumc == other.locallab.noiselumc;
         locallab.noiselumdetail = locallab.noiselumdetail && p.locallab.noiselumdetail == other.locallab.noiselumdetail;
+        locallab.noiselequal = locallab.noiselequal && p.locallab.noiselequal == other.locallab.noiselequal;
         locallab.noisechrodetail = locallab.noisechrodetail && p.locallab.noisechrodetail == other.locallab.noisechrodetail;
         locallab.bilateral = locallab.bilateral && p.locallab.bilateral == other.locallab.bilateral;
         locallab.sensiden = locallab.sensiden && p.locallab.sensiden == other.locallab.sensiden;
@@ -2662,6 +2664,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (locallab.noiselumdetail) {
         toEdit.locallab.noiselumdetail    = mods.locallab.noiselumdetail;
+    }
+
+    if (locallab.noiselequal) {
+        toEdit.locallab.noiselequal    = mods.locallab.noiselequal;
     }
 
     if (locallab.noisechrodetail) {

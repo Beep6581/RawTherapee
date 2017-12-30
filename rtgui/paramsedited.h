@@ -477,6 +477,7 @@ public:
     bool noiselumf;
     bool noiselumc;
     bool noiselumdetail;
+    bool noiselequal;
     bool noisechrodetail;
     bool bilateral;
     bool sensiden;

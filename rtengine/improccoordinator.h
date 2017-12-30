@@ -307,6 +307,7 @@ protected:
     LUTi noiselumfs;
     LUTi noiselumcs;
     LUTi noiselumdetails;
+    LUTi noiselequals;
     LUTi noisechrodetails;
     LUTi bilaterals;
     LUTi sensidens;

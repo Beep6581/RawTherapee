@@ -113,15 +113,15 @@ private:
     Adjuster* const shardamping;
     Adjuster* const shariter;
     Adjuster* const sensisha;
-    Adjuster* const noiselumf;
-    Adjuster* const noiselumc;
+//   Adjuster* const noiselumf;
+//   Adjuster* const noiselumc;
     Adjuster* const noiselumdetail;
     Adjuster* const noisechrodetail;
     Adjuster* const bilateral;
     Adjuster* const sensiden;
 
-    Adjuster* const noisechrof;
-    Adjuster* const noisechroc;
+//    Adjuster* const noisechrof;
+//    Adjuster* const noisechroc;
     Adjuster* const hueref;
     Adjuster* const huerefblur;
     Adjuster* const chromaref;
@@ -205,6 +205,11 @@ private:
     Adjuster* saturated;
     Adjuster* warm;
     Adjuster* adjblur;
+    Adjuster* noiselequal;
+    Adjuster* noiselumf;
+    Adjuster* noiselumc;
+    Adjuster* noisechrof;
+    Adjuster* noisechroc;
 
     ThresholdAdjuster* psThreshold;
     Gtk::CheckButton* protectSkins;
@@ -239,7 +244,7 @@ private:
 
 
 
-    int nextdatasp[100];
+    int nextdatasp[101];
     int nextlength;
     std::string nextstr;
     std::string nextstr2;

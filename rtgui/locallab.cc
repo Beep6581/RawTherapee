@@ -33,28 +33,28 @@
 #include "../rtengine/improcfun.h"
 
 #define MINCHRO 0.
-#define MAXCHRO 100
+#define MAXCHRO 150
 #define CENTERCHRO 10
+#define MAXCHROCC 100
 
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 extern Options options;
 
+/*
 static double dnSlider2chro(double sval)
 {
 
-    // slider range: 0 - 10000
     double chro;
+    double coef = CENTERCHRO;
 
-    if (sval <= 10) {
-        // linear below center-temp
-        chro = MINCHRO + (sval / 10.0) * (CENTERCHRO - MINCHRO);
+    if (sval <= coef) {
+        chro = MINCHRO + (sval / coef) * (CENTERCHRO - MINCHRO);
     } else {
         const double slope = (double)(CENTERCHRO - MINCHRO) / (MAXCHRO - CENTERCHRO);
-        double x = (sval - 10) / 10; // x 0..1
+        double x = (sval - coef) / coef; // x 0..1
         double y = x * slope + (1.0 - slope) * pow(x, 4.0);
-        //double y = pow(x, 4.0);
         chro = CENTERCHRO + y * (MAXCHRO - CENTERCHRO);
     }
 
@@ -69,13 +69,40 @@ static double dnSlider2chro(double sval)
     return chro;
 }
 
+static double dnSlider2chroCC(double sval)
+{
+
+    double chro;
+    double coef = CENTERCHRO;
+
+    if (sval <= coef) {
+        chro = MINCHRO + (sval / coef) * (CENTERCHRO - MINCHRO);
+    } else {
+        const double slope = (double)(CENTERCHRO - MINCHRO) / (MAXCHROCC - CENTERCHRO);
+        double x = (sval - coef) / coef; // x 0..1
+        double y = x * slope + (1.0 - slope) * pow(x, 4.0);
+        chro = CENTERCHRO + y * (MAXCHROCC - CENTERCHRO);
+    }
+
+    if (chro < MINCHRO) {
+        chro = MINCHRO;
+    }
+
+    if (chro > MAXCHROCC) {
+        chro = MAXCHROCC;
+    }
+
+    return chro;
+}
+
 static double dnchro2Slider(double noisechrof)
 {
 
     double sval;
+    double coef = CENTERCHRO;
 
     if (noisechrof <= CENTERCHRO) {
-        sval = ((noisechrof - MINCHRO) / (CENTERCHRO - MINCHRO)) * 10.0;
+        sval = ((noisechrof - MINCHRO) / (CENTERCHRO - MINCHRO)) * coef;
     } else {
         const double slope = (double)(CENTERCHRO - MINCHRO) / (MAXCHRO - CENTERCHRO);
         const double y = (noisechrof - CENTERCHRO) / (MAXCHRO - CENTERCHRO);
@@ -83,12 +110,10 @@ static double dnchro2Slider(double noisechrof)
         double k = 0.1;
         bool add = true;
 
-        // the y=f(x) function is a mess to invert, therefore we have this trial-refinement loop instead.
-        // from tests, worst case is about 20 iterations, ie no problem
         for (;;) {
             double y1 = x * slope + (1.0 - slope) * pow(x, 4.0);
 
-            if (10 * fabs(y1 - y) < 0.1) {
+            if (coef * fabs(y1 - y) < 0.1) {
                 break;
             }
 
@@ -109,23 +134,76 @@ static double dnchro2Slider(double noisechrof)
             }
         }
 
-        sval = 10.0 + x * 10.0;
+        sval = coef + x * coef;
     }
 
     if (sval < 0) {
         sval = 0;
     }
 
-    if (sval > 100) {
-        sval = 100;
+    if (sval > MAXCHRO) {
+        sval = MAXCHRO;
     }
 
     return sval;
 }
 
+static double dnchroCC2Slider(double noisechroc)
+{
+
+    double sval;
+    double coef = CENTERCHRO;
+
+    if (noisechroc <= CENTERCHRO) {
+        sval = ((noisechroc - MINCHRO) / (CENTERCHRO - MINCHRO)) * coef;
+    } else {
+        const double slope = (double)(CENTERCHRO - MINCHRO) / (MAXCHROCC - CENTERCHRO);
+        const double y = (noisechroc - CENTERCHRO) / (MAXCHROCC - CENTERCHRO);
+        double x = pow(y, 0.25); // rough guess of x, will be a little lower
+        double k = 0.1;
+        bool add = true;
+
+        for (;;) {
+            double y1 = x * slope + (1.0 - slope) * pow(x, 4.0);
+
+            if (coef * fabs(y1 - y) < 0.1) {
+                break;
+            }
+
+            if (y1 < y) {
+                if (!add) {
+                    k /= 2;
+                }
+
+                x += k;
+                add = true;
+            } else {
+                if (add) {
+                    k /= 2;
+                }
+
+                x -= k;
+                add = false;
+            }
+        }
+
+        sval = coef + x * coef;
+    }
+
+    if (sval < 0) {
+        sval = 0;
+    }
+
+    if (sval > MAXCHROCC) {
+        sval = MAXCHROCC;
+    }
+
+    return sval;
+}
+*/
 
 Locallab::Locallab():
-    FoldableToolPanel(this, "locallab", M("TP_LOCALLAB_LABEL"), true, true),
+    FoldableToolPanel(this, "locallab", M("TP_LOCALLAB_LABEL"), false, true),
     EditSubscriber(ET_OBJECTS), lastObject(-1),
     expcolor(new MyExpander(true, M("TP_LOCALLAB_COFR"))),
     expexpose(new MyExpander(true, M("TP_LOCALLAB_EXPOSE"))),
@@ -190,16 +268,10 @@ Locallab::Locallab():
     shardamping(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARDAMPING"), 0, 100, 1, 75))),
     shariter(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARITER"), 5, 100, 1, 30))),
     sensisha(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 19))),
-    noiselumf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINE"), 0, 100, 1, 0))),
-    noiselumc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMCOARSE"), 0, 100, 1, 0))),
-    noiselumdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMDETAIL"), 0, 100, 1, 50))),
-    noisechrodetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHRODETAIL"), 0, 100, 1, 50))),
+    noiselumdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMDETAIL"), 0, 100, 1, 0))),
+    noisechrodetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHRODETAIL"), 0, 100, 1, 0))),
     bilateral(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BILATERAL"), 0, 100, 1, 0))),
     sensiden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIDEN"), 0, 100, 1, 30))),
-//    noisechrof(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROFINE"), 0, 100, 0.1, 0))),
-    noisechrof(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROFINE"), MINCHRO, MAXCHRO, 0.1, 0, NULL, NULL, &dnSlider2chro, &dnchro2Slider))),
-//    noisechroc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROCOARSE"), 0, 100, 0.1, 0))),
-    noisechroc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROCOARSE"), MINCHRO, MAXCHRO, 0.1, 0, NULL, NULL, &dnSlider2chro, &dnchro2Slider))),
     hueref(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HUEREF"), -3.15, 3.15, 0.01, 0))),
     huerefblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HUEREFBLUR"), -3.15, 3.15, 0.01, 0))),
     chromaref(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMAREF"), 0, 200, 0.01, 0))),
@@ -207,7 +279,6 @@ Locallab::Locallab():
     sobelref(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOBELREF"), 0, 100, 0.01, 0))),
     centerXbuf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CENTERBUF_X"), -1000, 1000, 1, 0))),
     centerYbuf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CENTERBUF_Y"), -1000, 1000, 1, 0))),
-//    adjblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ADJBLUR"), -100, 100, 1, 0))),
 
     Smethod(Gtk::manage(new MyComboBoxText())),
     Exclumethod(Gtk::manage(new MyComboBoxText())),
@@ -474,11 +545,6 @@ Locallab::Locallab():
     warm = Gtk::manage(new Adjuster(M("TP_LOCALLAB_WARM"), -100., 100., 1., 0., iblueredL, iblueredR));
     warm->setAdjusterListener(this);
 
-    Gtk::Image* iblueredL1 = Gtk::manage(new RTImage("ajd-wb-bluered1.png"));
-    Gtk::Image* iblueredR1 = Gtk::manage(new RTImage("ajd-wb-bluered2.png"));
-
-    adjblur = Gtk::manage(new Adjuster(M("TP_LOCALLAB_ADJ"), -100., 100., 1., 0., iblueredL1, iblueredR1));
-    adjblur->setAdjusterListener(this);
 
     //chroma->set_tooltip_text (M("TP_LOCALLAB_CHROMA_TOOLTIP"));
     chroma->setAdjusterListener(this);
@@ -739,18 +805,97 @@ Locallab::Locallab():
     sharpBox->pack_start(*sensisha);
     sharpBox->pack_start(*inverssha);
 
+    /*
+    noiselumf = Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINE"), MINCHRO, MAXCHRO, 1, 0, NULL, NULL, &dnSlider2chro, &dnchro2Slider));
+    noiselumc = Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMCOARSE"), MINCHRO, MAXCHROCC, 1, 0, NULL, NULL, &dnSlider2chroCC, &dnchroCC2Slider));
+
+    noisechrof = Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROFINE"), MINCHRO, MAXCHRO, 1, 0, NULL, NULL, &dnSlider2chro, &dnchro2Slider));
+    noisechroc = Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROCOARSE"), MINCHRO, MAXCHROCC, 1, 0, NULL, NULL, &dnSlider2chroCC, &dnchroCC2Slider));
+    */
+    noiselumf = Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINE"), MINCHRO, MAXCHRO, 1, 0));
+    noiselumc = Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMCOARSE"), MINCHRO, MAXCHROCC, 1, 0));
+
+    noisechrof = Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROFINE"), MINCHRO, MAXCHRO, 1, 0));
+    noisechroc = Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROCOARSE"), MINCHRO, MAXCHROCC, 1, 0));
+
+
+    Gtk::Image* iblueredL1 = Gtk::manage(new RTImage("ajd-wb-bluered1.png"));
+    Gtk::Image* iblueredR1 = Gtk::manage(new RTImage("ajd-wb-bluered2.png"));
+
+    adjblur = Gtk::manage(new Adjuster(M("TP_LOCALLAB_ADJ"), -100., 100., 1., 0., iblueredL1, iblueredR1));
+    adjblur->setAdjusterListener(this);
+
+    Gtk::Image* bleq = Gtk::manage(new RTImage("previewmodeBC1-on.png"));
+    Gtk::Image* wheq = Gtk::manage(new RTImage("previewmodeBC2-on.png"));
+
+    noiselequal = Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELEQUAL"), -2, 10, 1, 7, wheq, bleq));
+    noiselequal->setAdjusterListener(this);
+
+    if (noiselequal->delay < 200) {
+        noiselequal->delay = 200;
+    }
+
 
     noiselumf->setAdjusterListener(this);
 
+    if (noiselumf->delay < 200) {
+        noiselumf->delay = 200;
+    }
+
+
     noiselumc->setAdjusterListener(this);
+
+    if (noiselumc->delay < 200) {
+        noiselumc->delay = 200;
+    }
+
+    noiselumc->set_tooltip_text(M("TP_LOCALLAB_NOISECHROC_TOOLTIP"));
+
+
     noiselumdetail->setAdjusterListener(this);
+
+    if (noiselumdetail->delay < 200) {
+        noiselumdetail->delay = 200;
+    }
+
+
+
     noisechrodetail->setAdjusterListener(this);
+
+    if (noisechrodetail->delay < 200) {
+        noisechrodetail->delay = 200;
+    }
+
+
     bilateral->setAdjusterListener(this);
+
+    if (bilateral->delay < 200) {
+        bilateral->delay = 200;
+    }
+
+
     sensiden->setAdjusterListener(this);
+
+    if (sensiden->delay < 200) {
+        sensiden->delay = 200;
+    }
+
 
     noisechrof->setAdjusterListener(this);
 
+    if (noisechrof->delay < 200) {
+        noisechrof->delay = 200;
+    }
+
+
     noisechroc->setAdjusterListener(this);
+
+    if (noisechroc->delay < 200) {
+        noisechroc->delay = 200;
+    }
+
+
+    noisechroc->set_tooltip_text(M("TP_LOCALLAB_NOISECHROC_TOOLTIP"));
 
     ToolParamBlock* const denoisBox = Gtk::manage(new ToolParamBlock());
     ToolParamBlock* const wavBox = Gtk::manage(new ToolParamBlock());
@@ -758,9 +903,10 @@ Locallab::Locallab():
     wavBox->pack_start(*noiselumf);
     wavBox->pack_start(*noiselumc);
     wavBox->pack_start(*noiselumdetail);
+    wavBox->pack_start(*noiselequal);
     wavBox->pack_start(*noisechrof);
     wavBox->pack_start(*noisechroc);
-    wavBox->pack_start(*noisechrodetail);
+    //wavBox->pack_start(*noisechrodetail);
     wavBox->pack_start(*adjblur);
 
 
@@ -1422,6 +1568,7 @@ void Locallab::neutral_pressed()
     noiselumf->resetValue(false);
     noiselumc->resetValue(false);
     noiselumdetail->resetValue(false);
+    noiselequal->resetValue(false);
     noisechrof->resetValue(false);
     noisechroc->resetValue(false);
     noisechrodetail->resetValue(false);
@@ -1990,15 +2137,16 @@ bool Locallab::localComputed_()
     }
 
     bilateral->setValue(nextdatasp[94]);
+    noiselequal->setValue(nextdatasp[95]);
 
-    double intermedblur = 0.01 * (double) nextdatasp[95];
+    double intermedblur = 0.01 * (double) nextdatasp[96];
     huerefblur->setValue(intermedblur);
-    double intermed = 0.01 * (double) nextdatasp[96];
+    double intermed = 0.01 * (double) nextdatasp[97];
     hueref->setValue(intermed);
 
-    chromaref->setValue(nextdatasp[97]);
-    lumaref->setValue(nextdatasp[98]);
-    sobelref->setValue(nextdatasp[99]);
+    chromaref->setValue(nextdatasp[98]);
+    lumaref->setValue(nextdatasp[99]);
+    sobelref->setValue(nextdatasp[100]);
 
     int *s_datc;
     s_datc = new int[70];
@@ -2315,7 +2463,7 @@ bool Locallab::localComputed_()
 
 void Locallab::localChanged(int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat)
 {
-    for (int i = 2; i < 100; i++) {
+    for (int i = 2; i < 101; i++) {
         nextdatasp[i] = datasp[i][sp];
     }
 
@@ -2403,6 +2551,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
         noiselumf->setEditedState(pedited->locallab.noiselumf ? Edited : UnEdited);
         noiselumc->setEditedState(pedited->locallab.noiselumc ? Edited : UnEdited);
         noiselumdetail->setEditedState(pedited->locallab.noiselumdetail ? Edited : UnEdited);
+        noiselequal->setEditedState(pedited->locallab.noiselequal ? Edited : UnEdited);
         noisechrof->setEditedState(pedited->locallab.noisechrof ? Edited : UnEdited);
         noisechroc->setEditedState(pedited->locallab.noisechroc ? Edited : UnEdited);
         noisechrodetail->setEditedState(pedited->locallab.noisechrodetail ? Edited : UnEdited);
@@ -2618,6 +2767,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
     noiselumf->setValue(pp->locallab.noiselumf);
     noiselumc->setValue(pp->locallab.noiselumc);
     noiselumdetail->setValue(pp->locallab.noiselumdetail);
+    noiselequal->setValue(pp->locallab.noiselequal);
     noisechrof->setValue(pp->locallab.noisechrof);
     noisechroc->setValue(pp->locallab.noisechroc);
     noisechrodetail->setValue(pp->locallab.noisechrodetail);
@@ -3048,6 +3198,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
     pp->locallab.shcompr = (int)shcompr->getValue();
     pp->locallab.noiselumc = noiselumc->getIntValue();
     pp->locallab.noiselumdetail = noiselumdetail->getIntValue();
+    pp->locallab.noiselequal = noiselequal->getIntValue();
     pp->locallab.noisechrodetail = noisechrodetail->getIntValue();
     pp->locallab.bilateral = bilateral->getIntValue();
     pp->locallab.sensiden = sensiden->getIntValue();
@@ -3165,6 +3316,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.noiselumf = noiselumf->getEditedState();
         pedited->locallab.noiselumc = noiselumc->getEditedState();
         pedited->locallab.noiselumdetail = noiselumdetail->getEditedState();
+        pedited->locallab.noiselequal = noiselequal->getEditedState();
         pedited->locallab.noisechrodetail = noisechrodetail->getEditedState();
         pedited->locallab.bilateral = bilateral->getEditedState();
         pedited->locallab.sensiden = sensiden->getEditedState();
@@ -3941,6 +4093,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     noiselumf->setDefault(defParams->locallab.noiselumf);
     noiselumc->setDefault(defParams->locallab.noiselumc);
     noiselumdetail->setDefault(defParams->locallab.noiselumdetail);
+    noiselequal->setDefault(defParams->locallab.noiselequal);
     noisechrodetail->setDefault(defParams->locallab.noisechrodetail);
     bilateral->setDefault(defParams->locallab.bilateral);
     sensiden->setDefault(defParams->locallab.sensiden);
@@ -4020,6 +4173,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         noiselumf->setDefaultEditedState(pedited->locallab.noiselumf ? Edited : UnEdited);
         noiselumc->setDefaultEditedState(pedited->locallab.noiselumc ? Edited : UnEdited);
         noiselumdetail->setDefaultEditedState(pedited->locallab.noiselumdetail ? Edited : UnEdited);
+        noiselequal->setDefaultEditedState(pedited->locallab.noiselequal ? Edited : UnEdited);
         noisechrodetail->setDefaultEditedState(pedited->locallab.noisechrodetail ? Edited : UnEdited);
         bilateral->setDefaultEditedState(pedited->locallab.bilateral ? Edited : UnEdited);
         sensiden->setDefaultEditedState(pedited->locallab.sensiden ? Edited : UnEdited);
@@ -4098,6 +4252,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         noiselumf->setDefaultEditedState(Irrelevant);
         noiselumc->setDefaultEditedState(Irrelevant);
         noiselumdetail->setDefaultEditedState(Irrelevant);
+        noiselequal->setDefaultEditedState(Irrelevant);
         noisechrodetail->setDefaultEditedState(Irrelevant);
         bilateral->setDefaultEditedState(Irrelevant);
         sensiden->setDefaultEditedState(Irrelevant);
@@ -4278,6 +4433,8 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             listener->panelChanged(Evlocallabnoiselumc, noiselumc->getTextValue());
         } else if (a == noiselumdetail) {
             listener->panelChanged(Evlocallabnoiselumdetail, noiselumdetail->getTextValue());
+        } else if (a == noiselequal) {
+            listener->panelChanged(Evlocallabnoiselequal, noiselequal->getTextValue());
         } else if (a == noisechrodetail) {
             listener->panelChanged(Evlocallabnoisechrodetail, noisechrodetail->getTextValue());
         } else if (a == bilateral) {
@@ -4474,6 +4631,7 @@ void Locallab::trimValues(rtengine::procparams::ProcParams * pp)
     noiselumf->trimValue(pp->locallab.noiselumf);
     noiselumc->trimValue(pp->locallab.noiselumc);
     noiselumdetail->trimValue(pp->locallab.noiselumdetail);
+    noiselequal->trimValue(pp->locallab.noiselequal);
     noisechrodetail->trimValue(pp->locallab.noisechrodetail);
     bilateral->trimValue(pp->locallab.bilateral);
     sensiden->trimValue(pp->locallab.sensiden);
@@ -4564,6 +4722,7 @@ void Locallab::setBatchMode(bool batchMode)
     noiselumf->showEditedCB();
     noiselumc->showEditedCB();
     noiselumdetail->showEditedCB();
+    noiselequal->showEditedCB();
     noisechrodetail->showEditedCB();
     bilateral->showEditedCB();
     sensiden->showEditedCB();

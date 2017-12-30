@@ -626,6 +626,8 @@ enum ProcEventCode {
     EvlocallabEnabled = 596,
     EvlocallablocY = 597,
     Evlocallabbilateral = 598,
+    Evlocallabnoiselequal = 599,
+
     NUMOFEVENTS
 
 

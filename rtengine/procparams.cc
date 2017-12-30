@@ -2403,6 +2403,7 @@ sensiv(19),
 noiselumf(0),
 noiselumc(0),
 noiselumdetail(0),
+noiselequal(7),
 noisechrodetail(0),
 bilateral(0),
 sensiden(30),
@@ -2540,6 +2541,7 @@ bool LocallabParams::operator ==(const LocallabParams& other) const
     && noiselumf == other.noiselumf
     && noiselumc == other.noiselumc
     && noiselumdetail == other.noiselumdetail
+    && noiselequal == other.noiselequal
     && noisechrodetail == other.noisechrodetail
     && bilateral == other.bilateral
     && sensiden == other.sensiden
@@ -3532,6 +3534,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->locallab.noiselumf, "Locallab", "noiselumf", locallab.noiselumf, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.noiselumc, "Locallab", "noiselumc", locallab.noiselumc, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.noiselumdetail, "Locallab", "noiselumdetail", locallab.noiselumdetail, keyFile);
+        saveToKeyfile(!pedited || pedited->locallab.noiselequal, "Locallab", "noiselequal", locallab.noiselequal, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.noisechrodetail, "Locallab", "noisechrodetail", locallab.noisechrodetail, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.bilateral, "Locallab", "Bilateral", locallab.bilateral, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.sensiden, "Locallab", "Sensiden", locallab.sensiden, keyFile);
@@ -4427,17 +4430,23 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Shadows & Highlights", "Shadows", pedited, sh.shadows, pedited->sh.shadows);
             assignFromKeyfile(keyFile, "Shadows & Highlights", "ShadowTonalWidth", pedited, sh.stonalwidth, pedited->sh.stonalwidth);
             assignFromKeyfile(keyFile, "Shadows & Highlights", "Radius", pedited, sh.radius, pedited->sh.radius);
+
             if (keyFile.has_key("Shadows & Highlights", "LocalContrast") && ppVersion < 329) {
                 int lc = keyFile.get_integer("Shadows & Highlights", "LocalContrast");
                 localContrast.amount = float(lc) / (sh.hq ? 500.0 : 30.);
+
                 if (pedited) {
                     pedited->localContrast.amount = true;
                 }
+
                 localContrast.enabled = sh.enabled;
+
                 if (pedited) {
                     pedited->localContrast.enabled = true;
                 }
+
                 localContrast.radius = sh.radius;
+
                 if (pedited) {
                     pedited->localContrast.radius = true;
                 }
@@ -4623,6 +4632,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Locallab", "noiselumf", pedited, locallab.noiselumf, pedited->locallab.noiselumf);
             assignFromKeyfile(keyFile, "Locallab", "noiselumc", pedited, locallab.noiselumc, pedited->locallab.noiselumc);
             assignFromKeyfile(keyFile, "Locallab", "noiselumdetail", pedited, locallab.noiselumdetail, pedited->locallab.noiselumdetail);
+            assignFromKeyfile(keyFile, "Locallab", "noiselequal", pedited, locallab.noiselequal, pedited->locallab.noiselequal);
             assignFromKeyfile(keyFile, "Locallab", "noisechrodetail", pedited, locallab.noisechrodetail, pedited->locallab.noisechrodetail);
             assignFromKeyfile(keyFile, "Locallab", "Bilateral", pedited, locallab.bilateral, pedited->locallab.bilateral);
             assignFromKeyfile(keyFile, "Locallab", "Sensiden", pedited, locallab.sensiden, pedited->locallab.sensiden);

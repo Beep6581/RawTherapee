@@ -844,6 +844,7 @@ HISTORY_MSG_595;Local - Noise Scope
 HISTORY_MSG_597;Local L*a*b*
 HISTORY_MSG_598;Local - Bottom
 HISTORY_MSG_599;Local - Noise bilateral
+HISTORY_MSG_600;Local - Noise Equal. Black-White
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
@@ -1854,6 +1855,7 @@ TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP;L=f(L), can be used with L(H) in Color and
 TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP;To be active, you must check button 'Enable curves' 
 TP_LOCALLAB_CURVEMETHOD_TOOLTIP;'Normal', the curve L=f(L) has the same algorithm than slider lightness.\n'Super' the curve L=f(L) has an new improved algorithm, which can leeds in some cases to artifacts.
 TP_LOCALLAB_EXCLUF;Excluding
+TP_LOCALLAB_EXCLUF_TOOLTIP;Can be used to exclude this part of datas - move Scope to extend color.\n You can apply all settings to this RT-spot.
 TP_LOCALLAB_SENSIDEN;Scope
 TP_LOCALLAB_SENSIEXCLU;Scope
 TP_LOCALLAB_SENSIEXCLU_TOOLTIP;Adjust color to include in exclusion!
@@ -1866,9 +1868,11 @@ TP_LOCALLAB_EXPOSE;Exposure
 TP_LOCALLAB_NOISELUMFINE;Luminance fine (Wav)
 TP_LOCALLAB_NOISELUMCOARSE;Luminance coarse (Wav)
 TP_LOCALLAB_NOISELUMDETAIL;Luminance detail (DCT)
+TP_LOCALLAB_NOISELEQUAL;Equalizer black-white
 TP_LOCALLAB_NOISECHROFINE;Chroma fine (Wav)
 TP_LOCALLAB_NOISECHROCOARSE;Chroma coarse (Wav)
 TP_LOCALLAB_NOISECHRODETAIL;Chroma detail (DCT)
+TP_LOCALLAB_NOISECHROC_TOOLTIP;If superior to zero, high quality algorithm is enabled.\nCoarse is for slider >=2
 TP_LOCALLAB_QUAL_METHOD;Global quality
 TP_LOCALLAB_QUALCURV_METHOD;Curves type
 TP_LOCALLAB_GAM;Gamma

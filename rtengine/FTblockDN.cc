@@ -782,6 +782,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 #ifdef _RT_NESTED_OPENMP
             denoiseNestedLevels = omp_get_max_threads() / numthreads;
             bool oldNested = omp_get_nested();
+
             if (denoiseNestedLevels < 2) {
                 denoiseNestedLevels = 1;
             } else {
@@ -1193,7 +1194,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                         memoryAllocationFailed = true;
                                     }
                                 } else { /*if (nrQuality==QUALITY_HIGH)*/
-                                    if (!WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *adecomp, noisevarchrom, madL, noisevarab_r, useNoiseCCurve, autoch, denoiseMethodRgb)) { //enhance mode
+                                    if (!WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *adecomp, noisevarchrom, madL, nullptr, 0, noisevarab_r, useNoiseCCurve, autoch, denoiseMethodRgb, denoiseNestedLevels)) { //enhance mode
                                         memoryAllocationFailed = true;
                                     }
 
@@ -1230,7 +1231,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                             memoryAllocationFailed = true;
                                         }
                                     } else { /*if (nrQuality==QUALITY_HIGH)*/
-                                        if (!WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *bdecomp, noisevarchrom, madL, noisevarab_b, useNoiseCCurve, autoch, denoiseMethodRgb)) { //enhance mode
+                                        if (!WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *bdecomp, noisevarchrom, madL, nullptr, 0, noisevarab_b, useNoiseCCurve, autoch, denoiseMethodRgb, denoiseNestedLevels)) { //enhance mode
                                             memoryAllocationFailed = true;
                                         }
 
@@ -1266,7 +1267,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                                 memoryAllocationFailed = true;
                                             }
                                         } else { /*if (nrQuality==QUALITY_HIGH)*/
-                                            if (!WaveletDenoiseAll_BiShrinkL(*Ldecomp, noisevarlum, madL)) { //enhance mode
+                                            if (!WaveletDenoiseAll_BiShrinkL(*Ldecomp, noisevarlum, madL, nullptr, edge, denoiseNestedLevels)) { //enhance mode
                                                 memoryAllocationFailed = true;
                                             }
 
@@ -2043,7 +2044,6 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 SSEFUNCTION void ImProcFunctions::RGBtile_denoise(float * fLblox, int hblproc, float noisevar_Ldetail, float * nbrwt, float * blurbuffer)  //for DCT
 {
     int blkstart = hblproc * TS * TS;
-
     boxabsblur(fLblox + blkstart, nbrwt, 3, 3, TS, TS, blurbuffer); //blur neighbor weights for more robust estimation //for DCT
 
 #ifdef __SSE2__
@@ -2251,10 +2251,18 @@ void ImProcFunctions::Noise_residualAB(wavelet_decomposition &WaveletCoeffs_ab, 
     chmaxresid = maxresid;
 }
 
-SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposition &WaveletCoeffs_L, float *noisevarlum, float madL[8][3])
+SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposition &WaveletCoeffs_L, float *noisevarlum, float madL[8][3], float * vari, int edge, int denoiseNestedLevels)
 {
     int maxlvl = min(WaveletCoeffs_L.maxlevel(), 5);
     const float eps = 0.01f;
+
+    if (edge == 1 || edge == 3) {
+        maxlvl = 4;    //for refine denoise edge wavelet
+    }
+
+    if (edge == 2) {
+        maxlvl = 7;    //for locallab denoise
+    }
 
     int maxWL = 0, maxHL = 0;
 
@@ -2266,6 +2274,7 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposit
         if (WaveletCoeffs_L.level_H(lvl) > maxHL) {
             maxHL = WaveletCoeffs_L.level_H(lvl);
         }
+
     }
 
     bool memoryAllocationFailed = false;
@@ -2273,12 +2282,13 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposit
     #pragma omp parallel num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
 #endif
     {
-        float *buffer[3];
+        float *buffer[4];
         buffer[0] = new (std::nothrow) float[maxWL * maxHL + 32];
         buffer[1] = new (std::nothrow) float[maxWL * maxHL + 64];
         buffer[2] = new (std::nothrow) float[maxWL * maxHL + 96];
+        buffer[3] = new (std::nothrow) float[maxWL * maxHL + 128];
 
-        if (buffer[0] == nullptr || buffer[1] == nullptr || buffer[2] == nullptr) {
+        if (buffer[0] == nullptr || buffer[1] == nullptr || buffer[2] == nullptr || buffer[3] == nullptr) {
             memoryAllocationFailed = true;
         }
 
@@ -2296,15 +2306,54 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposit
                     float ** WavCoeffs_L = WaveletCoeffs_L.level_coeffs(lvl);
 
                     if (lvl == maxlvl - 1) {
-                        int edge = 0;
-                        ShrinkAllL(WaveletCoeffs_L, buffer, lvl, dir, noisevarlum, madL[lvl], nullptr, edge);
-                    } else {
+                        //  int edge = 0;
+                        ShrinkAllL(WaveletCoeffs_L, buffer, lvl, dir, noisevarlum, madL[lvl], vari, edge);
+                    }  else {
                         //simple wavelet shrinkage
                         float * sfave = buffer[0] + 32;
-                        float * sfaved = buffer[2] + 96;
-                        float * blurBuffer = buffer[1] + 64;
+                        float * sfaved = buffer[1] + 64;
+                        float * blurBuffer = buffer[2] + 96;
 
                         float mad_Lr = madL[lvl][dir - 1];
+                        /*
+                                                if ((edge == 1 || edge == 2 || edge == 3) && vari) {
+                                                    noisevarlum = blurBuffer;       // we need one buffer, but fortunately we don't have to allocate a new one because we can use blurBuffer
+
+                                                    for (int i = 0; i < Wlvl_L * Hlvl_L; ++i) {
+                                                        noisevarlum[i] = vari[lvl];
+                                                    }
+                                                }
+                                                */
+                        float *nvl = nullptr;
+                        nvl = new float[Hlvl_L * Wlvl_L];
+
+                        for (int i = 0; i < Hlvl_L * Wlvl_L; ++i) {
+                            nvl[i] = 0.f;
+                        }
+
+                        if ((edge == 1 || edge == 2 || edge == 3) && vari) {
+                            //  nvl = blurBuffer;       // we need one buffer, but fortunately we don't have to allocate a new one because we can use blurBuffer
+                            if ((edge == 1 || edge == 3)) {
+                                for (int i = 0; i < Hlvl_L * Wlvl_L; ++i) {
+                                    nvl[i] = vari[lvl];
+                                }
+                            }
+
+                            if (edge == 2) {
+                                for (int i = 0; i < Hlvl_L * Wlvl_L; ++i) {
+                                    nvl[i] = vari[lvl] * SQR(noisevarlum[i]);
+                                }
+                            }
+
+                        }
+
+                        else {
+                            for (int i = 0; i < Hlvl_L * Wlvl_L; ++i) {
+                                nvl[i] = noisevarlum[i];
+                            }
+
+                        }
+
 
                         float levelFactor = mad_Lr * 5.f / (lvl + 1);
 #ifdef __SSE2__
@@ -2316,14 +2365,14 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposit
                         int coeffloc_L;
 
                         for (coeffloc_L = 0; coeffloc_L < Hlvl_L * Wlvl_L - 3; coeffloc_L += 4) {
-                            mad_Lv = LVFU(noisevarlum[coeffloc_L]) * levelFactorv;
+                            mad_Lv = LVFU(nvl[coeffloc_L]) * levelFactorv;
                             mag_Lv = SQRV(LVFU(WavCoeffs_L[dir][coeffloc_L]));
                             _mm_storeu_ps(&sfave[coeffloc_L], mag_Lv / (mag_Lv + mad_Lv * xexpf(-mag_Lv / (mad_Lv * ninev)) + epsv));
                         }
 
                         for (; coeffloc_L < Hlvl_L * Wlvl_L; ++coeffloc_L) {
                             float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L]);
-                            sfave[coeffloc_L] = mag_L / (mag_L + levelFactor * noisevarlum[coeffloc_L] * xexpf(-mag_L / (9.f * levelFactor * noisevarlum[coeffloc_L])) + eps);
+                            sfave[coeffloc_L] = mag_L / (mag_L + levelFactor * nvl[coeffloc_L] * xexpf(-mag_L / (9.f * levelFactor * nvl[coeffloc_L])) + eps);
                         }
 
 #else
@@ -2333,7 +2382,7 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposit
 
                                 int coeffloc_L = i * Wlvl_L + j;
                                 float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L]);
-                                sfave[coeffloc_L] = mag_L / (mag_L + levelFactor * noisevarlum[coeffloc_L] * xexpf(-mag_L / (9.f * levelFactor * noisevarlum[coeffloc_L])) + eps);
+                                sfave[coeffloc_L] = mag_L / (mag_L + levelFactor * nvl[coeffloc_L] * xexpf(-mag_L / (9.f * levelFactor * nvl[coeffloc_L])) + eps);
                             }
                         }
 
@@ -2369,12 +2418,14 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposit
                         }
 
 #endif
+                        delete [] nvl;
                     }
+
                 }
             }
         }
 
-        for (int i = 2; i >= 0; i--) {
+        for (int i = 3; i >= 0; i--) {
             if (buffer[i] != nullptr) {
                 delete[] buffer[i];
             }
@@ -2384,10 +2435,19 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposit
     return (!memoryAllocationFailed);
 }
 
-SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_ab,
-        float *noisevarchrom, float madL[8][3], float noisevar_ab, const bool useNoiseCCurve, bool autoch, bool denoiseMethodRgb)
+
+SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_ab, float *noisevarchrom, float madL[8][3], float *variC, int local, float noisevar_ab, const bool useNoiseCCurve,  bool autoch, bool denoiseMethodRgb, int denoiseNestedLevels)
+
 {
     int maxlvl = WaveletCoeffs_L.maxlevel();
+
+    if (local == 2) {
+        maxlvl = 7;    //for local denoise
+    }
+
+    if (local == 3) {
+        maxlvl = 4;    //for shape detection
+    }
 
     if (autoch && noisevar_ab <= 0.001f) {
         noisevar_ab = 0.02f;
@@ -2459,11 +2519,33 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
                         ShrinkAllAB(WaveletCoeffs_L, WaveletCoeffs_ab, buffer, lvl, dir, noisevarchrom, noisevar_ab, useNoiseCCurve, autoch, denoiseMethodRgb, madL[lvl], nullptr, 0, madab[lvl], true);
                     } else {
                         //simple wavelet shrinkage
+                        float noisevarfc;
 
                         float mad_Lr = madL[lvl][dir - 1];
-                        float mad_abr = useNoiseCCurve ? noisevar_ab * madab[lvl][dir - 1] : SQR(noisevar_ab) * madab[lvl][dir - 1];
+                        float *nvc = nullptr;
+                        nvc = new float[Hlvl_ab * Wlvl_ab];
 
-                        if (noisevar_ab > 0.001f) {
+                        if ((local == 2 || local == 3) && variC  && useNoiseCCurve) {
+                            noisevarfc = variC[lvl];
+
+                            for (int p = 0; p < Hlvl_ab * Wlvl_ab; p++) {
+                                nvc[p] = 10.f * sqrt(variC[lvl]) * SQR(1.f + 4.f * noisevarchrom[p]);
+                            }
+
+                        } else {
+                            noisevarfc = noisevar_ab;
+
+                            for (int p = 0; p < Hlvl_ab * Wlvl_ab; p++) {
+                                nvc[p] = noisevarchrom[p];
+                            }
+
+                        }
+
+
+                        //     float mad_abr = useNoiseCCurve ? noisevar_ab * madab[lvl][dir - 1] : SQR(noisevar_ab) * madab[lvl][dir - 1];
+                        float mad_abr = useNoiseCCurve ? noisevarfc * madab[lvl][dir - 1] : SQR(noisevarfc) * madab[lvl][dir - 1];
+
+                        if (noisevarfc > 0.001f) {
 
 #ifdef __SSE2__
                             __m128 onev = _mm_set1_ps(1.f);
@@ -2475,7 +2557,7 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
                             int coeffloc_ab;
 
                             for (coeffloc_ab = 0; coeffloc_ab < Hlvl_ab * Wlvl_ab - 3; coeffloc_ab += 4) {
-                                mad_abv = LVFU(noisevarchrom[coeffloc_ab]) * mad_abrv;
+                                mad_abv = LVFU(nvc[coeffloc_ab]) * mad_abrv;
 
                                 tempabv = LVFU(WavCoeffs_ab[dir][coeffloc_ab]);
                                 mag_Lv = LVFU(WavCoeffs_L[dir][coeffloc_ab]);
@@ -2488,7 +2570,7 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
                             for (; coeffloc_ab < Hlvl_ab * Wlvl_ab; ++coeffloc_ab) {
                                 float mag_L = SQR(WavCoeffs_L[dir][coeffloc_ab ]);
                                 float mag_ab = SQR(WavCoeffs_ab[dir][coeffloc_ab]);
-                                WavCoeffs_ab[dir][coeffloc_ab] *= SQR(1.f - xexpf(-(mag_ab / (noisevarchrom[coeffloc_ab] * mad_abr)) - (mag_L / (9.f * mad_Lr)))/*satfactor_a*/);
+                                WavCoeffs_ab[dir][coeffloc_ab] *= SQR(1.f - xexpf(-(mag_ab / (nvc[coeffloc_ab] * mad_abr)) - (mag_L / (9.f * mad_Lr)))/*satfactor_a*/);
                             }//now chrominance coefficients are denoised
 
 #else
@@ -2500,7 +2582,7 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
                                     float mag_L = SQR(WavCoeffs_L[dir][coeffloc_ab ]);
                                     float mag_ab = SQR(WavCoeffs_ab[dir][coeffloc_ab]);
 
-                                    WavCoeffs_ab[dir][coeffloc_ab] *= SQR(1.f - xexpf(-(mag_ab / (noisevarchrom[coeffloc_ab] * mad_abr)) - (mag_L / (9.f * mad_Lr)))/*satfactor_a*/);
+                                    WavCoeffs_ab[dir][coeffloc_ab] *= SQR(1.f - xexpf(-(mag_ab / (nvc[coeffloc_ab] * mad_abr)) - (mag_L / (9.f * mad_Lr)))/*satfactor_a*/);
 
                                 }
                             }//now chrominance coefficients are denoised
@@ -2508,9 +2590,12 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
 #endif
                         }
 
+                        delete [] nvc;
+
                     }
                 }
             }
+
         }
 
         for (int i = 2; i >= 0; i--) {
@@ -2668,17 +2753,66 @@ SSEFUNCTION void ImProcFunctions::ShrinkAllL(wavelet_decomposition &WaveletCoeff
     int H_L = WaveletCoeffs_L.level_H(level);
 
     float ** WavCoeffs_L = WaveletCoeffs_L.level_coeffs(level);
-//      printf("OK lev=%d\n",level);
     float mad_L = madL[dir - 1] ;
 
-    if ((edge == 1 || edge == 2 || edge == 3) && vari) {
-        noisevarlum = blurBuffer;       // we need one buffer, but fortunately we don't have to allocate a new one because we can use blurBuffer
+    float *nvl = nullptr;
+    nvl = new float[ H_L * W_L];
 
-        for (int i = 0; i < W_L * H_L; ++i) {
-            noisevarlum[i] = vari[level];
-        }
+    for (int i = 0; i < W_L * H_L; ++i) {
+        nvl[i] = 0.f;
     }
 
+    if ((edge == 1 || edge == 2 || edge == 3) && vari) {
+        //  nvl = blurBuffer;       // we need one buffer, but fortunately we don't have to allocate a new one because we can use blurBuffer
+        if ((edge == 1 || edge == 3)) {
+            for (int i = 0; i < W_L * H_L; ++i) {
+                nvl[i] = vari[level]; //* SQR(1.f + 4.f * noisevarchrom[p]);
+            }
+        }
+
+        if (edge == 2) {
+            for (int i = 0; i < W_L * H_L; ++i) {
+                nvl[i] = vari[level] * SQR(noisevarlum[i]);
+            }
+        }
+
+    }
+
+    else {
+        for (int i = 0; i < W_L * H_L; ++i) {
+            nvl[i] = noisevarlum[i];
+        }
+
+    }
+
+    /*
+                    float kinterm = epsi + noiseLCurve[xdivf(LLum, 15) * 500.f];
+                    kinterm *= 100.f;
+                    kinterm += noiseluma;
+                    lumcalc[ii][jj] = SQR((kinterm / 125.f) * (1.f + kinterm / 25.f));
+
+    //TO DO perhaps needs ci=urve for L ??  ==> same as in shrinkallab
+        float noisevarfc;
+
+        float *nvc = nullptr;
+        nvc = new float[ H_ab * W_ab];
+
+        if ((local == 2 || local == 3) && variC  && useNoiseCCurve) {
+            noisevarfc = variC[level];
+
+            for (int p = 0; p < H_ab * W_ab; p++) {
+                nvc[p] = 10.f * sqrt(variC[level]) * SQR(1.f + 4.f * noisevarchrom[p]);
+            }
+
+        } else {
+            noisevarfc = noisevar_ab;
+
+            for (int p = 0; p < H_ab * W_ab; p++) {
+                nvc[p] = noisevarchrom[p];
+            }
+
+        }
+    */
     float levelFactor = mad_L * 5.f / static_cast<float>(level + 1);
 #ifdef __SSE2__
     __m128  magv;
@@ -2689,7 +2823,7 @@ SSEFUNCTION void ImProcFunctions::ShrinkAllL(wavelet_decomposition &WaveletCoeff
     int i;
 
     for (i = 0; i < W_L * H_L - 3; i += 4) {
-        mad_Lv = LVFU(noisevarlum[i]) * levelFactorv;
+        mad_Lv = LVFU(nvl[i]) * levelFactorv;
         magv = SQRV(LVFU(WavCoeffs_L[dir][i]));
         _mm_storeu_ps(&sfave[i], magv / (magv + mad_Lv * xexpf(-magv / (ninev * mad_Lv)) + epsv));
     }
@@ -2697,7 +2831,7 @@ SSEFUNCTION void ImProcFunctions::ShrinkAllL(wavelet_decomposition &WaveletCoeff
     // few remaining pixels
     for (; i < W_L * H_L; ++i) {
         float mag = SQR(WavCoeffs_L[dir][i]);
-        sfave[i] = mag / (mag + levelFactor * noisevarlum[i] * xexpf(-mag / (9 * levelFactor * noisevarlum[i])) + eps);
+        sfave[i] = mag / (mag + levelFactor * nvl[i] * xexpf(-mag / (9 * levelFactor * nvl[i])) + eps);
     }
 
 #else
@@ -2705,12 +2839,13 @@ SSEFUNCTION void ImProcFunctions::ShrinkAllL(wavelet_decomposition &WaveletCoeff
     for (int i = 0; i < W_L * H_L; ++i) {
 
         float mag = SQR(WavCoeffs_L[dir][i]);
-        float shrinkfactor = mag / (mag + levelFactor * noisevarlum[i] * xexpf(-mag / (9 * levelFactor * noisevarlum[i])) + eps);
+        float shrinkfactor = mag / (mag + levelFactor * nvl[i] * xexpf(-mag / (9 * levelFactor * nvl[i])) + eps);
         sfave[i] = shrinkfactor;
     }
 
 #endif
     boxblur(sfave, sfaved, blurBuffer, level + 2, level + 2, W_L, H_L); //increase smoothness by locally averaging shrinkage
+    delete [] nvl;
 
 #ifdef __SSE2__
     __m128  sfv;
@@ -2743,8 +2878,8 @@ SSEFUNCTION void ImProcFunctions::ShrinkAllL(wavelet_decomposition &WaveletCoeff
 }
 
 
-SSEFUNCTION void ImProcFunctions::ShrinkAllAB(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_ab, float **buffer, int level, int dir,
-        float *noisevarchrom, float noisevar_ab,  const bool useNoiseCCurve, bool autoch,
+SSEFUNCTION void ImProcFunctions::ShrinkAllAB(wavelet_decomposition & WaveletCoeffs_L, wavelet_decomposition & WaveletCoeffs_ab, float **buffer, int level, int dir,
+        float * noisevarchrom, float noisevar_ab,  const bool useNoiseCCurve, bool autoch,
         bool denoiseMethodRgb, float * madL,  float * variC, int local, float * madaab,  bool madCalculated)
 
 {
@@ -2780,18 +2915,26 @@ SSEFUNCTION void ImProcFunctions::ShrinkAllAB(wavelet_decomposition &WaveletCoef
 
     float noisevarfc;
 
+    float *nvc = nullptr;
+    nvc = new float[ H_ab * W_ab];
 
     if ((local == 2 || local == 3) && variC  && useNoiseCCurve) {
         noisevarfc = variC[level];
 
         for (int p = 0; p < H_ab * W_ab; p++) {
-            noisevarchrom[p] = variC[level] * SQR(1.f + 4.f * noisevarchrom[p]);
+            nvc[p] = 10.f * sqrt(variC[level]) * SQR(1.f + 4.f * noisevarchrom[p]);
         }
 
     } else {
         noisevarfc = noisevar_ab;
+
+        for (int p = 0; p < H_ab * W_ab; p++) {
+            nvc[p] = noisevarchrom[p];
+        }
+
     }
 
+//  printf("varfc=%f nvc0=%f nvc1=%f nvc2=%f\n",  noisevarfc, nvc[10], nvc[H_ab * W_ab /3], nvc[H_ab * W_ab /2]);
     if (noisevarfc > 0.001f) {//noisevar_ab
         //madab = useNoiseCCurve ? madab : madab * noisevar_ab;
         madab = useNoiseCCurve ? madab : madab * noisevarfc;
@@ -2805,7 +2948,7 @@ SSEFUNCTION void ImProcFunctions::ShrinkAllAB(wavelet_decomposition &WaveletCoef
         int coeffloc_ab;
 
         for (coeffloc_ab = 0; coeffloc_ab < H_ab * W_ab - 3; coeffloc_ab += 4) {
-            mad_abv = LVFU(noisevarchrom[coeffloc_ab]) * mad_abrv;
+            mad_abv = LVFU(nvc[coeffloc_ab]) * mad_abrv;
 
             mag_Lv = LVFU(WavCoeffs_L[dir][coeffloc_ab]);
             mag_abv = SQRV(LVFU(WavCoeffs_ab[dir][coeffloc_ab]));
@@ -2817,7 +2960,7 @@ SSEFUNCTION void ImProcFunctions::ShrinkAllAB(wavelet_decomposition &WaveletCoef
         for (; coeffloc_ab < H_ab * W_ab; ++coeffloc_ab) {
             float mag_L = SQR(WavCoeffs_L[dir][coeffloc_ab]);
             float mag_ab = SQR(WavCoeffs_ab[dir][coeffloc_ab]);
-            sfaveab[coeffloc_ab] = (1.f - xexpf(-(mag_ab / (noisevarchrom[coeffloc_ab] * madab)) - (mag_L / (9.f * mad_L))));
+            sfaveab[coeffloc_ab] = (1.f - xexpf(-(mag_ab / (nvc[coeffloc_ab] * madab)) - (mag_L / (9.f * mad_L))));
         }//now chrominance coefficients are denoised
 
 #else
@@ -2827,7 +2970,7 @@ SSEFUNCTION void ImProcFunctions::ShrinkAllAB(wavelet_decomposition &WaveletCoef
                 int coeffloc_ab = i * W_ab + j;
                 float mag_L = SQR(WavCoeffs_L[dir][coeffloc_ab]);
                 float mag_ab = SQR(WavCoeffs_ab[dir][coeffloc_ab]);
-                sfaveab[coeffloc_ab] = (1.f - xexpf(-(mag_ab / (noisevarchrom[coeffloc_ab] * madab)) - (mag_L / (9.f * mad_L))));
+                sfaveab[coeffloc_ab] = (1.f - xexpf(-(mag_ab / (nvc[coeffloc_ab] * madab)) - (mag_L / (9.f * mad_L))));
             }
         }//now chrominance coefficients are denoised
 
@@ -2871,12 +3014,13 @@ SSEFUNCTION void ImProcFunctions::ShrinkAllAB(wavelet_decomposition &WaveletCoef
 #endif
     }
 
+    delete [] nvc;
 }
 
 SSEFUNCTION void ImProcFunctions::ShrinkAll_info(float ** WavCoeffs_a, float ** WavCoeffs_b,
-        int W_ab, int H_ab, float **noisevarlum, float **noisevarchrom, float **noisevarhue, float &chaut, int &Nb, float &redaut, float &blueaut,
-        float &maxredaut, float &maxblueaut, float &minredaut, float &minblueaut, int schoice, int lvl, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc,
-        float &maxchred, float &maxchblue, float &minchred, float &minchblue, int &nb, float &chau, float &chred, float &chblue, bool denoiseMethodRgb)
+        int W_ab, int H_ab, float **noisevarlum, float **noisevarchrom, float **noisevarhue, float & chaut, int &Nb, float & redaut, float & blueaut,
+        float & maxredaut, float & maxblueaut, float & minredaut, float & minblueaut, int schoice, int lvl, float & chromina, float & sigma, float & lumema, float & sigma_L, float & redyel, float & skinc, float & nsknc,
+        float & maxchred, float & maxchblue, float & minchred, float & minchblue, int &nb, float & chau, float & chred, float & chblue, bool denoiseMethodRgb)
 {
 
     //simple wavelet shrinkage
@@ -2991,9 +3135,9 @@ SSEFUNCTION void ImProcFunctions::ShrinkAll_info(float ** WavCoeffs_a, float ** 
 }
 
 
-void ImProcFunctions::WaveletDenoiseAll_info(int levwav, wavelet_decomposition &WaveletCoeffs_a,
-        wavelet_decomposition &WaveletCoeffs_b, float **noisevarlum, float **noisevarchrom, float **noisevarhue, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &minredaut, float &minblueaut, int schoice,
-        float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc, float &maxchred, float &maxchblue, float &minchred, float &minchblue, int &nb, float &chau, float &chred, float &chblue, bool denoiseMethodRgb)
+void ImProcFunctions::WaveletDenoiseAll_info(int levwav, wavelet_decomposition & WaveletCoeffs_a,
+        wavelet_decomposition & WaveletCoeffs_b, float **noisevarlum, float **noisevarchrom, float **noisevarhue, float & chaut, int &Nb, float & redaut, float & blueaut, float & maxredaut, float & maxblueaut, float & minredaut, float & minblueaut, int schoice,
+        float & chromina, float & sigma, float & lumema, float & sigma_L, float & redyel, float & skinc, float & nsknc, float & maxchred, float & maxchblue, float & minchred, float & minchblue, int &nb, float & chau, float & chred, float & chblue, bool denoiseMethodRgb)
 {
 
     int maxlvl = levwav;
@@ -3013,7 +3157,7 @@ void ImProcFunctions::WaveletDenoiseAll_info(int levwav, wavelet_decomposition &
     }
 }
 
-SSEFUNCTION void ImProcFunctions::RGB_denoise_infoGamCurve(const procparams::DirPyrDenoiseParams & dnparams, bool isRAW, LUTf &gamcurve, float &gam, float &gamthresh, float &gamslope)
+SSEFUNCTION void ImProcFunctions::RGB_denoise_infoGamCurve(const procparams::DirPyrDenoiseParams & dnparams, bool isRAW, LUTf & gamcurve, float & gam, float & gamthresh, float & gamslope)
 {
     gam = dnparams.gamma;
     gamthresh = 0.001f;
@@ -3036,7 +3180,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_infoGamCurve(const procparams::Dir
     }
 }
 
-void ImProcFunctions::calcautodn_info(float &chaut, float &delta, int Nb, int levaut, float maxmax, float lumema, float chromina, int mode, int lissage, float redyel, float skinc, float nsknc)
+void ImProcFunctions::calcautodn_info(float & chaut, float & delta, int Nb, int levaut, float maxmax, float lumema, float chromina, int mode, int lissage, float redyel, float skinc, float nsknc)
 {
 
     float reducdelta = 1.f;
@@ -3178,7 +3322,7 @@ void ImProcFunctions::calcautodn_info(float &chaut, float &delta, int Nb, int le
 
 }
 
-SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat * provicalc, const bool isRAW, LUTf &gamcurve, float gam, float gamthresh, float gamslope, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, float &chaut, int &Nb,  float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &minredaut, float &minblueaut, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc, bool multiThread)
+SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat * provicalc, const bool isRAW, LUTf & gamcurve, float gam, float gamthresh, float gamslope, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, float & chaut, int &Nb,  float & redaut, float & blueaut, float & maxredaut, float & maxblueaut, float & minredaut, float & minblueaut, float & chromina, float & sigma, float & lumema, float & sigma_L, float & redyel, float & skinc, float & nsknc, bool multiThread)
 {
     if ((settings->leveldnautsimpl == 1 && dnparams.Cmethod == "MAN") || (settings->leveldnautsimpl == 0 && dnparams.C2method == "MANU")) {
         //nothing to do
