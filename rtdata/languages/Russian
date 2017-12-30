@@ -656,7 +656,6 @@ PREFERENCES_DIRLAST;Последний каталог
 PREFERENCES_DIROTHER;Другой
 PREFERENCES_DIRSELECTDLG;Каталог, открываемый при запуске программы
 PREFERENCES_DIRSOFTWARE;Каталог установки
-PREFERENCES_EDITORCMDLINE;Другой (путь к исполняемому файлу)
 PREFERENCES_EDITORLAYOUT;Тип редактора
 PREFERENCES_EXTERNALEDITOR;Внешний редактор
 PREFERENCES_FBROWSEROPTS;Настройки

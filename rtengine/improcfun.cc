@@ -23,6 +23,7 @@
 #include <omp.h>
 #endif
 
+#include "alignedbuffer.h"
 #include "rtengine.h"
 #include "improcfun.h"
 #include "curves.h"
@@ -3420,31 +3421,27 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
     #pragma omp parallel if (multiThread)
 #endif
     {
-        char *buffer;
+        size_t perChannelSizeBytes = padToAlignment(sizeof (float) * TS * TS + 4 * 64);
+        AlignedBuffer<float> buffer(3 * perChannelSizeBytes);
         char *editIFloatBuffer = nullptr;
         char *editWhateverBuffer = nullptr;
-
-        buffer = (char *) malloc(3 * sizeof(float) * TS * TS + 20 * 64 + 63);
-        char *data;
-        data = (char*)((uintptr_t (buffer) + uintptr_t (63)) / 64 * 64);
-
-        float *rtemp = (float (*))data;
-        float *gtemp = (float (*))((char*)rtemp + sizeof(float) * TS * TS + 4 * 64);
-        float *btemp = (float (*))((char*)gtemp + sizeof(float) * TS * TS + 8 * 64);
+        float *rtemp = buffer.data;
+        float *gtemp = &rtemp[perChannelSizeBytes / sizeof(float)];
+        float *btemp = &gtemp[perChannelSizeBytes / sizeof(float)];
         int istart;
         int jstart;
         int tW;
         int tH;
 
         // zero out the buffers
-        memset(buffer, 0, 3 * sizeof (float) * TS * TS + 20 * 64 + 63);
+        memset(rtemp, 0, 3 * perChannelSizeBytes);
 
         // Allocating buffer for the PipetteBuffer
         float *editIFloatTmpR = nullptr, *editIFloatTmpG = nullptr, *editIFloatTmpB = nullptr, *editWhateverTmp = nullptr;
 
         if (editImgFloat) {
-            editIFloatBuffer = (char *) malloc(3 * sizeof(float) * TS * TS + 20 * 64 + 63);
-            data = (char*)((uintptr_t (editIFloatBuffer) + uintptr_t (63)) / 64 * 64);
+            editIFloatBuffer = (char *) malloc (3 * sizeof (float) * TS * TS + 20 * 64 + 63);
+            char *data = (char*) ( ( uintptr_t (editIFloatBuffer) + uintptr_t (63)) / 64 * 64);
 
             editIFloatTmpR = (float (*))data;
             editIFloatTmpG = (float (*))((char*)editIFloatTmpR + sizeof(float) * TS * TS + 4 * 64);
@@ -3452,8 +3449,8 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
         }
 
         if (editWhatever) {
-            editWhateverBuffer = (char *) malloc(sizeof(float) * TS * TS + 20 * 64 + 63);
-            data = (char*)((uintptr_t (editWhateverBuffer) + uintptr_t (63)) / 64 * 64);
+            editWhateverBuffer = (char *) malloc (sizeof (float) * TS * TS + 20 * 64 + 63);
+            char *data = (char*) ( ( uintptr_t (editWhateverBuffer) + uintptr_t (63)) / 64 * 64);
 
             editWhateverTmp = (float (*))data;
         }
@@ -3629,10 +3626,10 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                 if (hasToneCurve1) {
                     if (curveMode == ToneCurveParams::TcMode::STD) { // Standard
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                const StandardToneCurve& userToneCurve = static_cast<const StandardToneCurve&>(customToneCurve1);
-                                userToneCurve.Apply(rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
-                            }
+                            const StandardToneCurve& userToneCurve = static_cast<const StandardToneCurve&> (customToneCurve1);
+                            userToneCurve.BatchApply (
+                                    0, tW - jstart,
+                                    &rtemp[ti * TS], &gtemp[ti * TS], &btemp[ti * TS]);
                         }
                     } else if (curveMode == ToneCurveParams::TcMode::FILMLIKE) { // Adobe like
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
@@ -4539,8 +4536,6 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                     }
                 }
             }
-
-        free(buffer);
 
         if (editIFloatBuffer) {
             free(editIFloatBuffer);

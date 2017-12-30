@@ -952,7 +952,14 @@ inline void Colorfcurve::Apply (float& Cf) const
 class StandardToneCurve : public ToneCurve
 {
 public:
-    void Apply (float& r, float& g, float& b) const;
+    void Apply(float& r, float& g, float& b) const;
+
+    // Applies the tone curve to `r`, `g`, `b` arrays, starting at `r[start]`
+    // and ending at `r[end]` (and respectively for `b` and `g`). Uses SSE
+    // and requires that `r`, `g`, and `b` pointers have the same alignment.
+    void BatchApply(
+            const size_t start, const size_t end,
+            float *r, float *g, float *b) const;
 };
 
 class AdobeToneCurve : public ToneCurve
@@ -1026,6 +1033,55 @@ inline void StandardToneCurve::Apply (float& r, float& g, float& b) const
     r = lutToneCurve[r];
     g = lutToneCurve[g];
     b = lutToneCurve[b];
+}
+
+inline void StandardToneCurve::BatchApply(
+        const size_t start, const size_t end,
+        float *r, float *g, float *b) const {
+    assert (lutToneCurve);
+    assert (lutToneCurve.getClip() & LUT_CLIP_BELOW);
+    assert (lutToneCurve.getClip() & LUT_CLIP_ABOVE);
+
+    // All pointers must have the same alignment for SSE usage. In the loop body below,
+    // we will only check `r`, assuming that the same result would hold for `g` and `b`.
+    assert (reinterpret_cast<uintptr_t>(r) % 16 == reinterpret_cast<uintptr_t>(g) % 16);
+    assert (reinterpret_cast<uintptr_t>(g) % 16 == reinterpret_cast<uintptr_t>(b) % 16);
+
+    size_t i = start;
+    while (true) {
+        if (i >= end) {
+            // If we get to the end before getting to an aligned address, just return.
+            // (Or, for non-SSE mode, if we get to the end.)
+            return;
+#if defined( __SSE2__ ) && defined( __x86_64__ )
+        } else if (reinterpret_cast<uintptr_t>(&r[i]) % 16 == 0) {
+            // Otherwise, we get to the first aligned address; go to the SSE part.
+            break;
+#endif
+        }
+        r[i] = lutToneCurve[r[i]];
+        g[i] = lutToneCurve[g[i]];
+        b[i] = lutToneCurve[b[i]];
+        i++;
+    }
+
+#if defined( __SSE2__ ) && defined( __x86_64__ )
+    for (; i + 3 < end; i += 4) {
+        __m128 r_val = LVF(r[i]);
+        __m128 g_val = LVF(g[i]);
+        __m128 b_val = LVF(b[i]);
+        STVF(r[i], lutToneCurve[r_val]);
+        STVF(g[i], lutToneCurve[g_val]);
+        STVF(b[i], lutToneCurve[b_val]);
+    }
+
+    // Remainder in non-SSE.
+    for (; i < end; ++i) {
+        r[i] = lutToneCurve[r[i]];
+        g[i] = lutToneCurve[g[i]];
+        b[i] = lutToneCurve[b[i]];
+    }
+#endif
 }
 
 // Tone curve according to Adobe's reference implementation
