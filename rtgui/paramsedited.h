@@ -797,6 +797,13 @@ public:
     bool isUnchanged() const;
 };
 
+
+class MetaDataParamsEdited {
+public:
+    bool mode;
+};
+
+
 class ParamsEdited
 {
 
@@ -845,6 +852,7 @@ public:
     WaveletParamsEdited             wavelet;
     HSVEqualizerParamsEdited      hsvequalizer;
     FilmSimulationParamsEdited    filmSimulation;
+    MetaDataParamsEdited          metadata;
     bool                          exif;
     bool                          iptc;
 

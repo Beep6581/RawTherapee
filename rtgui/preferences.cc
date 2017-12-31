@@ -582,14 +582,6 @@ Gtk::Widget* Preferences::getProcParamsPanel ()
     cdf->add(*dirgrid);
     mvbpp->pack_start (*cdf, Gtk::PACK_SHRINK, 4 );
 
-    // Metadata
-    Gtk::Frame* fmd = Gtk::manage (new Gtk::Frame (M ("PREFERENCES_METADATA")));
-    Gtk::VBox* vbmd = Gtk::manage (new Gtk::VBox ());
-    ckbTunnelMetaData = Gtk::manage (new Gtk::CheckButton (M ("PREFERENCES_TUNNELMETADATA")));
-    vbmd->pack_start (*ckbTunnelMetaData, Gtk::PACK_SHRINK, 4);
-    fmd->add (*vbmd);
-    mvbpp->pack_start (*fmd, Gtk::PACK_SHRINK, 4);
-
     return mvbpp;
 }
 
@@ -1810,8 +1802,6 @@ void Preferences::storePreferences ()
     moptions.paramsLoadLocation = (PPLoadLocation)loadParamsPreference->get_active_row_number ();
     moptions.useBundledProfiles = useBundledProfiles->get_active ();
 
-    moptions.tunnelMetaData = ckbTunnelMetaData->get_active ();
-
     moptions.rtSettings.darkFramesPath = darkFrameDir->get_filename();
     moptions.rtSettings.flatFieldsPath = flatFieldDir->get_filename();
 
@@ -2038,8 +2028,6 @@ void Preferences::fillPreferences ()
 
     loadParamsPreference->set_active (moptions.paramsLoadLocation);
     useBundledProfiles->set_active (moptions.useBundledProfiles);
-
-    ckbTunnelMetaData->set_active (moptions.tunnelMetaData);
 
     if (!moptions.tabbedUI) {
         editorLayout->set_active (moptions.mainNBVertical ? 1 : 0);
