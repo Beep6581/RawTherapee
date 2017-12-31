@@ -1787,14 +1787,6 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
 {
 
 #ifdef __SSE2__
-    // prepare matrix to save some divisions (reduces the number of divisions by width/2 - 6)
-    float wpn[3][3];
-    for(int i = 0; i < 3; ++i) {
-        wpn[0][i] = wp[0][i] / Color::D50x;
-        wpn[1][i] = wp[1][i];
-        wpn[2][i] = wp[2][i] / Color::D50z;
-    }
-
     vfloat maxvalfv = F2V(MAXVALF);
     vfloat c116v = F2V(116.f);
     vfloat c5242d88v = F2V(5242.88f);
@@ -1807,9 +1799,9 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
         const vfloat rv = LVFU(R[i]);
         const vfloat gv = LVFU(G[i]);
         const vfloat bv = LVFU(B[i]);
-        const vfloat xv = F2V(wpn[0][0]) * rv + F2V(wpn[0][1]) * gv + F2V(wpn[0][2]) * bv;
-        const vfloat yv = F2V(wpn[1][0]) * rv + F2V(wpn[1][1]) * gv + F2V(wpn[1][2]) * bv;
-        const vfloat zv = F2V(wpn[2][0]) * rv + F2V(wpn[2][1]) * gv + F2V(wpn[2][2]) * bv;
+        const vfloat xv = F2V(wp[0][0]) * rv + F2V(wp[0][1]) * gv + F2V(wp[0][2]) * bv;
+        const vfloat yv = F2V(wp[1][0]) * rv + F2V(wp[1][1]) * gv + F2V(wp[1][2]) * bv;
+        const vfloat zv = F2V(wp[2][0]) * rv + F2V(wp[2][1]) * gv + F2V(wp[2][2]) * bv;
 
         vmask maxMask = vmaskf_gt(vmaxf(xv, vmaxf(yv, zv)), maxvalfv);
         if (_mm_movemask_ps((vfloat)maxMask)) {
@@ -1844,7 +1836,15 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
         float x = wp[0][0] * rv + wp[0][1] * gv + wp[0][2] * bv;
         float y = wp[1][0] * rv + wp[1][1] * gv + wp[1][2] * bv;
         float z = wp[2][0] * rv + wp[2][1] * gv + wp[2][2] * bv;
-        XYZ2Lab(x, y, z, L[i], a[i], b[i]);
+        float fx, fy, fz;
+
+        fx = (x <= 65535.0f ? cachef[x] : (327.68f * xcbrtf(x / MAXVALF)));
+        fy = (y <= 65535.0f ? cachef[y] : (327.68f * xcbrtf(y / MAXVALF)));
+        fz = (z <= 65535.0f ? cachef[z] : (327.68f * xcbrtf(z / MAXVALF)));
+
+        L[i] = 116.0f *  fy - 5242.88f; //5242.88=16.0*327.68;
+        a[i] = 500.0f * (fx - fy);
+        b[i] = 200.0f * (fy - fz);
     }
 }
 

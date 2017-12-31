@@ -459,7 +459,6 @@ HISTORY_MSG_169;L*a*b* - CH Křivka
 HISTORY_MSG_170;Živost - HH křivka
 HISTORY_MSG_171;L*a*b* - LC křivka
 HISTORY_MSG_172;L*a*b* - Omezení LC
-HISTORY_MSG_173;Redukce šumu - Jas detailu
 HISTORY_MSG_174;CIECAM02
 HISTORY_MSG_175;CAM02 - CAT02 přizpůsobení
 HISTORY_MSG_176;CAM02 - Okolí pro prohlížení
@@ -489,7 +488,6 @@ HISTORY_MSG_199;CAM02 - Výstupní histogramy
 HISTORY_MSG_200;CAM02 - Mapování tónů
 HISTORY_MSG_201;Redukce šumu - Barevnost Č a Z
 HISTORY_MSG_202;Redukce šumu - Barevnost M a Ž
-HISTORY_MSG_203;Redukce šumu - Metoda
 HISTORY_MSG_204;Kroky rozšíření LMMSE
 HISTORY_MSG_205;CAM02 - Filtr vypálených/špatných pixelů
 HISTORY_MSG_206;CAT02 - Automatická svítivost scény
@@ -541,7 +539,6 @@ HISTORY_MSG_252;KdDÚ - Ochrana tónů pleti
 HISTORY_MSG_253;KdDÚ - Omezení vzniku artefaktů
 HISTORY_MSG_254;KdDÚ - Tóny pleti
 HISTORY_MSG_255;Redukce šumu - Medián
-HISTORY_MSG_256;Redukce šumu - Typ mediánu
 HISTORY_MSG_257;Barevné tónování
 HISTORY_MSG_258;Barevní tónování - Barevná křivka
 HISTORY_MSG_259;Barevné tónování - Křivka neprůhlednosti
@@ -582,7 +579,6 @@ HISTORY_MSG_293;Simulace filmu
 HISTORY_MSG_294;Simulace filmu - Síla
 HISTORY_MSG_295;Simulace filmu - Film
 HISTORY_MSG_296;Redukce šumu - Křivka jasů
-HISTORY_MSG_297;Redukce šumu - Kvalita
 HISTORY_MSG_298;Filtr mrtvých pixelů
 HISTORY_MSG_299;Redukce šumu - Křivka barevnosti
 HISTORY_MSG_300;-
@@ -1478,68 +1474,62 @@ TP_DARKFRAME_LABEL;Tmavý snímek
 TP_DEFRINGE_LABEL;Odstranění lemu
 TP_DEFRINGE_RADIUS;Poloměr
 TP_DEFRINGE_THRESHOLD;Práh
-TP_DIRPYRDENOISE_3X3;3×3
-TP_DIRPYRDENOISE_3X3_SOFT;3×3 jemný
-TP_DIRPYRDENOISE_5X5;5×5
-TP_DIRPYRDENOISE_5X5_SOFT;5×5 jemný
-TP_DIRPYRDENOISE_7X7;7×7
-TP_DIRPYRDENOISE_9X9;9×9
-TP_DIRPYRDENOISE_ABM;Pouze barevnost
-TP_DIRPYRDENOISE_AUT;Automatická celková
-TP_DIRPYRDENOISE_AUTO;Automatická celková
-TP_DIRPYRDENOISE_AUTO_TOOLTIP;Zkusí odhadnout barevný šum\nPozor, tento výpočet je zprůměrován a zcela subjektivní!
-TP_DIRPYRDENOISE_BLUE;Barevnost - Modrá a žlutá
-TP_DIRPYRDENOISE_C2TYPE_TOOLTIP;Ručně\nOvlivňuje celý obrázek.\nVolby redukce šumu nastavujete ručně.\n\nCelková automatika\nOvlivňuje celý obrázek.\nPro výpočet parametrů celkové redukce barevného šumu je použito 9 zón.\n\nNáhled\nOvlivňuje celý obrázek.\nPro výpočet celkového nastavení redukce barevného šumu je použita viditelná část obrázku.
-TP_DIRPYRDENOISE_CCCURVE;Křivka barevnosti
-TP_DIRPYRDENOISE_CHROMA;Barevnost - Hlavní
-TP_DIRPYRDENOISE_CHROMAFR;Barevnost
-TP_DIRPYRDENOISE_CTYPE;Metoda
-TP_DIRPYRDENOISE_CTYPE_TOOLTIP;Ručně\nOvlivňuje celý obrázek.\nVolby redukce šumu nastavujete ručně.\n\nCelková automatika\nOvlivňuje celý obrázek.\nPro výpočet parametrů celkové redukce barevného šumu je použito 9 zón.\n\nVíce zónová automatika\nBez náhledu - funguje pouze při ukládání, přesto je možné pomocí funkce "Náhled" získat alespoň částečnou představu o výsledku, Nastavení jsou aplikována na centrální dlaždici.\nObrázek je rozdělen na dlaždice (V závislosti na velikosti obrázku jich bude 10 až 70) a pro každou dlaždici bude vypočítáno vhodné nastavení redukce barevného šumu.\n\nNáhled\nOvlivňuje celý obrázek.\nPro výpočet celkového nastavení redukce barevného šumu je použita viditelná část obrázku.
-TP_DIRPYRDENOISE_CUR;Křivka
-TP_DIRPYRDENOISE_CURVEEDITOR_CC;Barevnost
-TP_DIRPYRDENOISE_CURVEEDITOR_CC_TOOLTIP;Zvýší (násobí) hodnoty všech barevných posuvníků.\nKřivka vám umožní nastavit sílu redukce barevného šumu jako funkci barvy. Například pro zvýšení účinku v oblastech s nízkým nasycení a snížení v oblastech s vysokým nasycením.
-TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Moduluje akci 'jasového' odstranění šumu
+TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Více zónová automatika
+TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Automatická celková
+TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;Zkusí odhadnout barevný šum\nPozor, tento výpočet je zprůměrován a zcela subjektivní!
+TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;Barevnost - Modrá a žlutá
+TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Křivka barevnosti
+TP_DIRPYRDENOISE_CHROMINANCE_FRAME;Barevnost
+TP_DIRPYRDENOISE_CHROMINANCE_MANUAL;Ručně
+TP_DIRPYRDENOISE_CHROMINANCE_MASTER;Barevnost - Hlavní
+TP_DIRPYRDENOISE_CHROMINANCE_METHOD;Metoda
+TP_DIRPYRDENOISE_CHROMINANCE_METHODADVANCED_TOOLTIP;Ručně\nOvlivňuje celý obrázek.\nVolby redukce šumu nastavujete ručně.\n\nCelková automatika\nOvlivňuje celý obrázek.\nPro výpočet parametrů celkové redukce barevného šumu je použito 9 zón.\n\nNáhled\nOvlivňuje celý obrázek.\nPro výpočet celkového nastavení redukce barevného šumu je použita viditelná část obrázku.
+TP_DIRPYRDENOISE_CHROMINANCE_METHOD_TOOLTIP;Ručně\nOvlivňuje celý obrázek.\nVolby redukce šumu nastavujete ručně.\n\nCelková automatika\nOvlivňuje celý obrázek.\nPro výpočet parametrů celkové redukce barevného šumu je použito 9 zón.\n\nVíce zónová automatika\nBez náhledu - funguje pouze při ukládání, přesto je možné pomocí funkce "Náhled" získat alespoň částečnou představu o výsledku, Nastavení jsou aplikována na centrální dlaždici.\nObrázek je rozdělen na dlaždice (V závislosti na velikosti obrázku jich bude 10 až 70) a pro každou dlaždici bude vypočítáno vhodné nastavení redukce barevného šumu.\n\nNáhled\nOvlivňuje celý obrázek.\nPro výpočet celkového nastavení redukce barevného šumu je použita viditelná část obrázku.
+TP_DIRPYRDENOISE_CHROMINANCE_PMZ;Více zónový náhled
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW;Náhled
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEWRESIDUAL_INFO_TOOLTIP;Zobrazuje zbývající úroveň zašumění části obrázku viditelného v <b>náhledu</b> po vlnkové transformaci.\n\n>300 Hodně šumu\n100-300 Šum\n50-100 Málo šumu\n<50 Velmi málo šumu\n\nUpozornění:  hodnoty RGB a L*a*b* režimu se budou lišit. Protože v RGB režimu nedochází ke kompletnímu oddělení jasu a barev jsou RGB hodnoty jméně přesné
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_INFO;Velikost náhledu=%1, Střed: Px=%2  Py=%3
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO;Náhled šumu: Průměr=%1  Výšky=%2
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY;Náhled šumu: Průměr= -   Výšky= -
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;Velikost dlaždice=%1, Střed: Tx=%2  Ty=%3
+TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;Barevnost - Červená a zelená
 TP_DIRPYRDENOISE_ENH;Vylepšený režim
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Zvýší kvalitu odstranění šumu, ale zároveň prodlouží dobu zpracování o 20%.
-TP_DIRPYRDENOISE_GAMMA;Gama
-TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gama ovlivňuje sílu redukce šumu v rozsahu tónů. Menší hodnoty ovlivňují stíny, kdežto vysoké hodnoty zesílí efekt v jasných tónech.
-TP_DIRPYRDENOISE_LAB;L*a*b*
-TP_DIRPYRDENOISE_LABEL;Redukce šumu
-TP_DIRPYRDENOISE_LABM;L*a*b*
-TP_DIRPYRDENOISE_LCURVE;Křivka jasů
-TP_DIRPYRDENOISE_LDETAIL;Jas - Detail
-TP_DIRPYRDENOISE_LM;Pouze jas
-TP_DIRPYRDENOISE_LPLABM;Vyvážená L* (trochu) + a*b* (normální)
-TP_DIRPYRDENOISE_LTYPE;Ovládání jasu
-TP_DIRPYRDENOISE_LUMA;Jas
-TP_DIRPYRDENOISE_LUMAFR;Jas
-TP_DIRPYRDENOISE_MAN;Ručně
-TP_DIRPYRDENOISE_MANU;Ručně
-TP_DIRPYRDENOISE_MED;Filtr medián
-TP_DIRPYRDENOISE_MEDMETHOD;Metoda mediánu
-TP_DIRPYRDENOISE_MEDTYPE;Typ mediánu
-TP_DIRPYRDENOISE_METHOD;Metoda
-TP_DIRPYRDENOISE_METHOD11;Kvalita
-TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Kvalita může být přizpůsobena vzoru šumu. Nastavení "Vysoká" vylepší efekt redukce šumu za cenu navýšení času zpracování.
-TP_DIRPYRDENOISE_METHOD_TOOLTIP;Pro raw obrázky může být použita jak RGB tak i L*a*b* metoda.\n\nPro ostatní obrázky bude vždy použita metoda L*a*b* bez ohledu na výběr.
-TP_DIRPYRDENOISE_METM_TOOLTIP;Pokud je použito 'Pouze Jas' a 'L*a*b*' metody, bude při odstranění šumu použit filtr medián hned po vlnkové transformaci.\nPokud je použit "RGB" mód, bude filtr použit až na úplný závěr procesu redukce šumu.
-TP_DIRPYRDENOISE_MET_TOOLTIP;Aplikuje filtr medián požadované velikosti okna. Čím větší velikost okna, tím déle bude zpracování trvat.\n\n3×3 jemný: upraví 5 pixelů v okně 3x3 pixely.\n3×3: upraví 9 pixelů v okně 3x3 pixely.\n5×5 jemný; upraví 13 pixelů v okně 5x5 pixelů.\n5×5: upraví 25 pixelů v okně 5x5 pixelů.\n7×7: upraví 49 pixelů v okně 7x7 pixelů.\n9×9: upraví 81 pixelů v okně 9x9 pixelů.\n\nV některých případech může být větší kvality dosaženo pomocí několika průběhů s menšími okny než jedním průběhem s velkým oknem.
-TP_DIRPYRDENOISE_NOISELABEL;Náhled šumu: Průměr=%1  Výšky=%2
-TP_DIRPYRDENOISE_NOISELABELEMPTY;Náhled šumu: Průměr= -   Výšky= -
-TP_DIRPYRDENOISE_NRESID_TOOLTIP;Zobrazuje zbývající úroveň zašumění části obrázku viditelného v <b>náhledu</b> po vlnkové transformaci.\n\n>300 Hodně šumu\n100-300 Šum\n50-100 Málo šumu\n<50 Velmi málo šumu\n\nUpozornění:  hodnoty RGB a L*a*b* režimu se budou lišit. Protože v RGB režimu nedochází ke kompletnímu oddělení jasu a barev jsou RGB hodnoty jméně přesné
-TP_DIRPYRDENOISE_PASSES;Počet průchodů mediánu
-TP_DIRPYRDENOISE_PASSES_TOOLTIP;Aplikování tří průchodů  filtru medián s oknem 3×3 často vede k lepšímu výsledku než jednou aplikovaný filtr medián s oknem 7×7.
-TP_DIRPYRDENOISE_PON;Více zónová automatika
-TP_DIRPYRDENOISE_PRE;Více zónový náhled
-TP_DIRPYRDENOISE_PREV;Náhled
-TP_DIRPYRDENOISE_PREVLABEL;Velikost náhledu=%1, Střed: Px=%2  Py=%3
-TP_DIRPYRDENOISE_RED;Barevnost - Červená a zelená
-TP_DIRPYRDENOISE_RGB;RGB
-TP_DIRPYRDENOISE_RGBM;RGB
-TP_DIRPYRDENOISE_SHAL;Běžná
-TP_DIRPYRDENOISE_SHALBI;Vysoká
+TP_DIRPYRDENOISE_LUMINANCE_CONTROL;Ovládání jasu
+TP_DIRPYRDENOISE_LUMINANCE_CURVE;Křivka jasů
+TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Jas - Detail
+TP_DIRPYRDENOISE_LUMINANCE_FRAME;Jas
+TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Jas
+TP_DIRPYRDENOISE_MAIN_COLORSPACE;Metoda
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;L*a*b*
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Redukce šumu
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;Pro raw obrázky může být použita jak RGB tak i L*a*b* metoda.\n\nPro ostatní obrázky bude vždy použita metoda L*a*b* bez ohledu na výběr.
+TP_DIRPYRDENOISE_MAIN_GAMMA;Gama
+TP_DIRPYRDENOISE_MAIN_GAMMA_TOOLTIP;Gama ovlivňuje sílu redukce šumu v rozsahu tónů. Menší hodnoty ovlivňují stíny, kdežto vysoké hodnoty zesílí efekt v jasných tónech.
+TP_DIRPYRDENOISE_MAIN_MODE;Kvalita
+TP_DIRPYRDENOISE_MAIN_MODE_AGGRESSIVE;Vysoká
+TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE;Běžná
+TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;Kvalita může být přizpůsobena vzoru šumu. Nastavení "Vysoká" vylepší efekt redukce šumu za cenu navýšení času zpracování.
+TP_DIRPYRDENOISE_MEDIAN_METHOD;Metoda mediánu
+TP_DIRPYRDENOISE_MEDIAN_METHOD_CHROMINANCE;Pouze barevnost
+TP_DIRPYRDENOISE_MEDIAN_METHOD_LAB;L*a*b*
+TP_DIRPYRDENOISE_MEDIAN_METHOD_LABEL;Filtr medián
+TP_DIRPYRDENOISE_MEDIAN_METHOD_LUMINANCE;Pouze jas
+TP_DIRPYRDENOISE_MEDIAN_METHOD_RGB;RGB
+TP_DIRPYRDENOISE_MEDIAN_METHOD_TOOLTIP;Pokud je použito 'Pouze Jas' a 'L*a*b*' metody, bude při odstranění šumu použit filtr medián hned po vlnkové transformaci.\nPokud je použit "RGB" mód, bude filtr použit až na úplný závěr procesu redukce šumu.
+TP_DIRPYRDENOISE_MEDIAN_METHOD_WEIGHTED;Vyvážená L* (trochu) + a*b* (normální)
+TP_DIRPYRDENOISE_MEDIAN_PASSES;Počet průchodů mediánu
+TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Aplikování tří průchodů  filtru medián s oknem 3×3 často vede k lepšímu výsledku než jednou aplikovaný filtr medián s oknem 7×7.
+TP_DIRPYRDENOISE_MEDIAN_TYPE;Typ mediánu
+TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Aplikuje filtr medián požadované velikosti okna. Čím větší velikost okna, tím déle bude zpracování trvat.\n\n3×3 jemný: upraví 5 pixelů v okně 3x3 pixely.\n3×3: upraví 9 pixelů v okně 3x3 pixely.\n5×5 jemný; upraví 13 pixelů v okně 5x5 pixelů.\n5×5: upraví 25 pixelů v okně 5x5 pixelů.\n7×7: upraví 49 pixelů v okně 7x7 pixelů.\n9×9: upraví 81 pixelů v okně 9x9 pixelů.\n\nV některých případech může být větší kvality dosaženo pomocí několika průběhů s menšími okny než jedním průběhem s velkým oknem.
 TP_DIRPYRDENOISE_SLI;Posuvník
-TP_DIRPYRDENOISE_TILELABEL;Velikost dlaždice=%1, Střed: Tx=%2  Ty=%3
+TP_DIRPYRDENOISE_TYPE_3X3;3×3
+TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 jemný
+TP_DIRPYRDENOISE_TYPE_5X5;5×5
+TP_DIRPYRDENOISE_TYPE_5X5SOFT;5×5 jemný
+TP_DIRPYRDENOISE_TYPE_7X7;7×7
+TP_DIRPYRDENOISE_TYPE_9X9;9×9
 TP_DIRPYREQUALIZER_ALGO;Rozsah pleťových tónů
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Jemný: blíž k barvám pleti, minimalizuje zásahy na ostatních barvách.\nVelký: více zabrání vzniku artefaktů.
 TP_DIRPYREQUALIZER_ARTIF;Omezení artefaktů
@@ -2218,17 +2208,30 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!GENERAL_SLIDER;Slider
+!HISTORY_MSG_173;NR - Detail recovery
+!HISTORY_MSG_203;NR - Color space
+!HISTORY_MSG_256;NR - Median - Type
+!HISTORY_MSG_297;NR - Mode
 !HISTORY_MSG_493;L*a*b* Adjustments
 !HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 !HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 !HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
 !HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
 !HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
+!HISTORY_MSG_METADATA_MODE;Metadata copy mode
 !PARTIALPASTE_LOCALCONTRAST;Local contrast
+!PREFERENCES_EDITORCMDLINE;Custom command line
+!TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
+!TP_DIRPYRDENOISE_LABEL;Noise Reduction
 !TP_LOCALCONTRAST_AMOUNT;Amount
 !TP_LOCALCONTRAST_DARKNESS;Darkness level
 !TP_LOCALCONTRAST_LABEL;Local Contrast
 !TP_LOCALCONTRAST_LIGHTNESS;Lightness level
 !TP_LOCALCONTRAST_RADIUS;Radius
+!TP_METADATA_EDIT;Apply modifications
+!TP_METADATA_MODE;Metadata copy mode
+!TP_METADATA_STRIP;Strip all metadata
+!TP_METADATA_TUNNEL;Copy unchanged
 !TP_RAW_PIXELSHIFTONEGREEN;Use one green instead of average
 !TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Use one green instead of averaging two greens for regions without motion.
