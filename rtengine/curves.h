@@ -868,7 +868,7 @@ private:
 public:
     static void init();
     void initApplyState(PerceptualToneCurveState & state, Glib::ustring workingSpace) const;
-    void Apply(float& r, float& g, float& b, PerceptualToneCurveState & state) const;
+    void Apply(float& r, float& g, float& b, const PerceptualToneCurveState &state) const;
 };
 
 // Standard tone curve

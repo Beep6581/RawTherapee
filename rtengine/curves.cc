@@ -1822,7 +1822,7 @@ float PerceptualToneCurve::calculateToneCurveContrastValue() const
     return maxslope;
 }
 
-void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurveState & state) const
+void PerceptualToneCurve::Apply(float &r, float &g, float &b, const PerceptualToneCurveState &state) const
 {
     float x, y, z;
 
@@ -2012,14 +2012,13 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
         // we use the RGB-HSV hue-stable "Adobe" curve as reference. For S-curve contrast it increases
         // saturation greatly, but desaturates extreme highlights and thus provide a smooth transition to
         // the white point. However the desaturation effect is quite strong so we make a weighting
-        float ah, as, av, h, s, v;
-        Color::rgb2hsv(ar, ag, ab, ah, as, av);
-        Color::rgb2hsv(r, g, b, h, s, v);
+        float as = Color::rgb2s(ar, ag, ab);
+        float s = Color::rgb2s(r, g, b);
 
         float sat_scale = as <= 0.f ? 1.f : s / as; // saturation scale compared to Adobe curve
         float keep = 0.2f;
-        const float lolim = 1.00f; // only mix in the Adobe curve if we have increased saturation compared to it
-        const float hilim = 1.20f;
+        constexpr float lolim = 1.00f; // only mix in the Adobe curve if we have increased saturation compared to it
+        constexpr float hilim = 1.20f;
 
         if (sat_scale < lolim) {
             // saturation is low enough, don't desaturate
@@ -2041,9 +2040,9 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
 
         if (keep < 1.f) {
             // mix in some of the Adobe curve result
-            r = r * keep + (1.f - keep) * ar;
-            g = g * keep + (1.f - keep) * ag;
-            b = b * keep + (1.f - keep) * ab;
+            r = intp(keep, r, ar);
+            g = intp(keep, g, ag);
+            b = intp(keep, b, ab);
         }
     }
 
