@@ -1076,7 +1076,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PREFERENCES_DIROTHER;Other
 !PREFERENCES_DIRSELECTDLG;Select Image Directory at Startup...
 !PREFERENCES_DIRSOFTWARE;Installation directory
-!PREFERENCES_EDITORCMDLINE;Other command line
 !PREFERENCES_EDITORLAYOUT;Editor Layout
 !PREFERENCES_EXPAUT;Expert
 !PREFERENCES_EXTERNALEDITOR;External Editor
