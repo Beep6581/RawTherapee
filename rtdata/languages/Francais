@@ -419,7 +419,6 @@ HISTORY_MSG_169;Courbe 'CT'
 HISTORY_MSG_170;Vib. - Courbe
 HISTORY_MSG_171;Courbe 'LC'
 HISTORY_MSG_172;Lab - Restreindre 'LC'
-HISTORY_MSG_173;Réd. Bruit - Détail Luminance
 HISTORY_MSG_174;Modèle d'Apparence de la Couleur 2002
 HISTORY_MSG_175;CAM02 - Adaptation CAT02
 HISTORY_MSG_176;CAM02 - Environ. de visionnage
@@ -449,7 +448,6 @@ HISTORY_MSG_199;CAM02 - Histogrammes de sortie
 HISTORY_MSG_200;CAM02 - Compression tonale
 HISTORY_MSG_201;Réd. de bruit - Chrom. R,V
 HISTORY_MSG_202;Réd. de bruit - Chrom. B,J
-HISTORY_MSG_203;Réd. de bruit - Méthode
 HISTORY_MSG_204;Niveau d'amélioration LMMSE
 HISTORY_MSG_205;CAM02 Pixels chauds/morts
 HISTORY_MSG_206;CAT02 - Luminosité de la scène auto
@@ -501,7 +499,6 @@ HISTORY_MSG_252;CpND - Tons chair
 HISTORY_MSG_253;CpND - Réduction des artéfactes
 HISTORY_MSG_254;CpND - Teinte chair
 HISTORY_MSG_255;Réd. de bruit - Filtre médian
-HISTORY_MSG_256;Réd. de bruit - Type de médiane
 HISTORY_MSG_257;Virage Partiel
 HISTORY_MSG_258;Virage Partiel - Couleur
 HISTORY_MSG_259;Virage Partiel - Opacité
@@ -542,7 +539,6 @@ HISTORY_MSG_293;Simulation de Film
 HISTORY_MSG_294;Simulation de Film - Force
 HISTORY_MSG_295;Simulation de Film - Film
 HISTORY_MSG_296;Réd. de bruit - Courbe de luminance
-HISTORY_MSG_297;Réd. de bruit - Qualité
 HISTORY_MSG_298;Filtre de pixel mort
 HISTORY_MSG_299;Réd. de bruit - Courbe de chrominance
 HISTORY_MSG_300;-
@@ -1437,69 +1433,63 @@ TP_DARKFRAME_LABEL;Trame Noire
 TP_DEFRINGE_LABEL;Aberration chromatique
 TP_DEFRINGE_RADIUS;Rayon
 TP_DEFRINGE_THRESHOLD;Seuil
-TP_DIRPYRDENOISE_3X3;3×3
-TP_DIRPYRDENOISE_3X3_SOFT;3×3 doux
-TP_DIRPYRDENOISE_5X5;5×5
-TP_DIRPYRDENOISE_5X5_SOFT;5×5 doux
-TP_DIRPYRDENOISE_7X7;7×7
-TP_DIRPYRDENOISE_9X9;9×9
-TP_DIRPYRDENOISE_ABM;Chroma uniquement
-TP_DIRPYRDENOISE_AUT;Global automatique
-TP_DIRPYRDENOISE_AUTO;Global automatique
-TP_DIRPYRDENOISE_AUTO_TOOLTIP;Essaie d'évaluer le bruit chroma\nFaites attention, cela calcul une moyenne, et est très subjectif !
-TP_DIRPYRDENOISE_BLUE;Chrominance - Bleu-Jaune
-TP_DIRPYRDENOISE_C2TYPE_TOOLTIP;Manuel\nAgit sur l'image entière.\nVous controlez les paramètres de réduction de bruit manuellement.\n\nGlobal automatique\nAgit sur l'image entière.\n9 zones sont utilisées pour calculer un réglage de réduction de bruit de chroma.\n\nAperçu\nAgit sur l'image entière.\nLa partie visible de l'image dans l'aperçu est utilisé pour calculer un réglage de réduction de bruit de chroma.
-TP_DIRPYRDENOISE_CCCURVE;Courbe de chrominance
-TP_DIRPYRDENOISE_CHROMA;Chrominance - Maître
-TP_DIRPYRDENOISE_CHROMAFR;Chrominance
-TP_DIRPYRDENOISE_CTYPE;Méthode
-TP_DIRPYRDENOISE_CTYPE_TOOLTIP;Manuel\nAgit sur l'image entière.\nVous controlez les paramètres de réduction de bruit manuellement.\n\nGlobal automatique\nAgit sur l'image entière.\n9 zones sont utilisées pour calculer un réglage de réduction de bruit de chroma.\n\nAutomatique multi-zones\nPas d'aperçu - ne fonctionne que lors de l'enregistrement, mais utiliser la méthode "Aperçu" en faisant correspondre la taille et le centre de la tuile à la taille et au centre de l'aperçu, vous permet d'avoir une idée des résultats attendus.\nL'image est divisé en tuiles (entre 10 et 70 en fonction de la taille de l'image) et chaque tuile reçoit son propre réglage de réduction de bruit de chrominance.\n\nAperçu\nAgit sur l'image entière.\nLa partie de l'image visible dans l'aperçu est utilisé pour calculer un réglage de réduction de bruit de chroma.
-TP_DIRPYRDENOISE_CUR;Courbe
-TP_DIRPYRDENOISE_CURVEEDITOR_CC;Chroma
-TP_DIRPYRDENOISE_CURVEEDITOR_CC_TOOLTIP;Augmente (multiplie) la valeur de tousles curseurs de chrominance.\nCette courbe vous permet d'ajuster la force de la réduction de bruit chromatique en fonction de la chromaticité, par exemple pour augmenter l'action dans les zones peu saturées et pour la réduire dans ceux celles très saturées.
-TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Module l'action du débruitage de 'Luminance'
+TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Multi-zones auto
+TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Global automatique
+TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;Essaie d'évaluer le bruit chroma\nFaites attention, cela calcul une moyenne, et est très subjectif !
+TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;Chrominance - Bleu-Jaune
+TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Courbe de chrominance
+TP_DIRPYRDENOISE_CHROMINANCE_FRAME;Chrominance
+TP_DIRPYRDENOISE_CHROMINANCE_MANUAL;Manuel
+TP_DIRPYRDENOISE_CHROMINANCE_MASTER;Chrominance - Maître
+TP_DIRPYRDENOISE_CHROMINANCE_METHOD;Méthode
+TP_DIRPYRDENOISE_CHROMINANCE_METHODADVANCED_TOOLTIP;Manuel\nAgit sur l'image entière.\nVous controlez les paramètres de réduction de bruit manuellement.\n\nGlobal automatique\nAgit sur l'image entière.\n9 zones sont utilisées pour calculer un réglage de réduction de bruit de chroma.\n\nAperçu\nAgit sur l'image entière.\nLa partie visible de l'image dans l'aperçu est utilisé pour calculer un réglage de réduction de bruit de chroma.
+TP_DIRPYRDENOISE_CHROMINANCE_METHOD_TOOLTIP;Manuel\nAgit sur l'image entière.\nVous controlez les paramètres de réduction de bruit manuellement.\n\nGlobal automatique\nAgit sur l'image entière.\n9 zones sont utilisées pour calculer un réglage de réduction de bruit de chroma.\n\nAutomatique multi-zones\nPas d'aperçu - ne fonctionne que lors de l'enregistrement, mais utiliser la méthode "Aperçu" en faisant correspondre la taille et le centre de la tuile à la taille et au centre de l'aperçu, vous permet d'avoir une idée des résultats attendus.\nL'image est divisé en tuiles (entre 10 et 70 en fonction de la taille de l'image) et chaque tuile reçoit son propre réglage de réduction de bruit de chrominance.\n\nAperçu\nAgit sur l'image entière.\nLa partie de l'image visible dans l'aperçu est utilisé pour calculer un réglage de réduction de bruit de chroma.
+TP_DIRPYRDENOISE_CHROMINANCE_PMZ;Aperçu multi-zones
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW;Aperçu
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEWRESIDUAL_INFO_TOOLTIP;Affiche les niveaux de bruit résiduel de la partie de l'image visible dans l'<b>aperçu</b> après les ondelettes.\n\n>300 Très bruité\n100-300 Bruité\n50-100 Peu bruité\n<50 Très peu bruité\n\nAttention, les valeurs diffèreront entre le mode RVB et L*a*b*. Les valeurs RVB sont moins précises car le mode RVB ne séparent pas complètement la luminance et la chrominance.
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_INFO;Taille de l'aperçu=%1, Centre: Px=%2  Py=%3
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO;Bruit de l'aperçu: Moyen=%1  Haut=%2
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY;Bruit de l'aperçu: Moyen= -   Haut= -
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;Taille des tuiles =%1, Centre: Tx=%2  Ty=%3
+TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;Chrominance - Rouge-Vert
 TP_DIRPYRDENOISE_ENH;Mode amélioré
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Augmente la qualité du débruitage, mais augmente le temps de traitement d'environ 20%
-TP_DIRPYRDENOISE_GAMMA;Gamma
-TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma fait varier la quantité de réduction de bruit sur l'échelle des tons. Les plus petites valeurs cibleront les ombres, les plus hautes valeurs cibleront les tons les plus clairs.
-TP_DIRPYRDENOISE_LAB;Lab
-TP_DIRPYRDENOISE_LABEL;Réduction du bruit
-TP_DIRPYRDENOISE_LABM;L*a*b*
-TP_DIRPYRDENOISE_LCURVE;Courbe de luminance
-TP_DIRPYRDENOISE_LDETAIL;Niveau de détails de Luminance
-TP_DIRPYRDENOISE_LM;Luminance seulement
-TP_DIRPYRDENOISE_LPLABM;L* pondéré (faiblement) + a*b* (normal)
-TP_DIRPYRDENOISE_LTYPE;Contrôle de luminance
-TP_DIRPYRDENOISE_LUMA;Luminance
-TP_DIRPYRDENOISE_LUMAFR;Luminance
-TP_DIRPYRDENOISE_MAN;Manuel
-TP_DIRPYRDENOISE_MANU;Manuel
-TP_DIRPYRDENOISE_MED;Filtre Médian
-TP_DIRPYRDENOISE_MEDMETHOD;Méthode
-TP_DIRPYRDENOISE_MEDTYPE;Type de médiane
-TP_DIRPYRDENOISE_METHOD;Méthode
-TP_DIRPYRDENOISE_METHOD11;Qualité
-TP_DIRPYRDENOISE_METHOD11_TOOLTIP;La qualité peut être adapté à la trame du bruit. Régler sur "haut" augmentera l'effet de la réduction de bruit au prix d'un temps de traitement plus long.
-TP_DIRPYRDENOISE_METHOD_TOOLTIP;Pour les images raw, les méthodes RVB ou Lab peuvent être utilisées.\n\nPour les images non-raw la méthode Lab sera utilisée, indépendamment de ce qu'indique ce bouton.
-TP_DIRPYRDENOISE_METM_TOOLTIP;Lorsque vous utilisez les méthodes "Luminance seulement" et "Lab", un filtrage médian sera effectué juste après l'étape des ondelettes dans le pipeline de la réduction de bruit.\nEm mode "RVB", il sera effectué à la toute fin du pipeline de la réduction de bruit.
-TP_DIRPYRDENOISE_MET_TOOLTIP;Applique un filtre médian de la taille de "fenêtre" désirée. Plus cette taille est grande, plus cela prendra de temps.\n\n3×3 doux: traite 5 pixels dans une fenêtre de 3×3 pixels.\n3×3: traite 9 pixels dans une fenêtre de 3×3 pixels.\n5×5 doux: traite 13 pixels dans une fenêtre de 5×5 pixels.\n5×5: traite 25 pixels dans une fenêtre de 5×5 pixels.\n7×7: traite 49 pixels dans une fenêtre de 7×7 pixels.\n9×9: traite 81 pixels dans une fenêtre 9×9 pixels.\n\nIl est parfois possible d'atteindre une meilleurs qualité en appliquant plusieurs itérations d'une petite fenêtre qu'une seule itération d'une grande.
-TP_DIRPYRDENOISE_NOISELABEL;Bruit de l'aperçu: Moyen=%1  Haut=%2
-TP_DIRPYRDENOISE_NOISELABELEMPTY;Bruit de l'aperçu: Moyen= -   Haut= -
-TP_DIRPYRDENOISE_NRESID_TOOLTIP;Affiche les niveaux de bruit résiduel de la partie de l'image visible dans l'<b>aperçu</b> après les ondelettes.\n\n>300 Très bruité\n100-300 Bruité\n50-100 Peu bruité\n<50 Très peu bruité\n\nAttention, les valeurs diffèreront entre le mode RVB et L*a*b*. Les valeurs RVB sont moins précises car le mode RVB ne séparent pas complètement la luminance et la chrominance.
+TP_DIRPYRDENOISE_LUMINANCE_CONTROL;Contrôle de luminance
+TP_DIRPYRDENOISE_LUMINANCE_CURVE;Courbe de luminance
+TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Niveau de détails de Luminance
+TP_DIRPYRDENOISE_LUMINANCE_FRAME;Luminance
+TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminance
+TP_DIRPYRDENOISE_MAIN_COLORSPACE;Méthode
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;Lab
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Réduction du bruit
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RVB
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;Pour les images raw, les méthodes RVB ou Lab peuvent être utilisées.\n\nPour les images non-raw la méthode Lab sera utilisée, indépendamment de ce qu'indique ce bouton.
+TP_DIRPYRDENOISE_MAIN_GAMMA;Gamma
+TP_DIRPYRDENOISE_MAIN_GAMMA_TOOLTIP;Gamma fait varier la quantité de réduction de bruit sur l'échelle des tons. Les plus petites valeurs cibleront les ombres, les plus hautes valeurs cibleront les tons les plus clairs.
+TP_DIRPYRDENOISE_MAIN_MODE;Qualité
+TP_DIRPYRDENOISE_MAIN_MODE_AGGRESSIVE;Haut
+TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE;Standard
+TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;La qualité peut être adapté à la trame du bruit. Régler sur "haut" augmentera l'effet de la réduction de bruit au prix d'un temps de traitement plus long.
+TP_DIRPYRDENOISE_MEDIAN_METHOD;Méthode
+TP_DIRPYRDENOISE_MEDIAN_METHOD_CHROMINANCE;Chroma uniquement
+TP_DIRPYRDENOISE_MEDIAN_METHOD_LAB;L*a*b*
+TP_DIRPYRDENOISE_MEDIAN_METHOD_LABEL;Filtre Médian
+TP_DIRPYRDENOISE_MEDIAN_METHOD_LUMINANCE;Luminance seulement
+TP_DIRPYRDENOISE_MEDIAN_METHOD_RGB;RVB
+TP_DIRPYRDENOISE_MEDIAN_METHOD_TOOLTIP;Lorsque vous utilisez les méthodes "Luminance seulement" et "Lab", un filtrage médian sera effectué juste après l'étape des ondelettes dans le pipeline de la réduction de bruit.\nEm mode "RVB", il sera effectué à la toute fin du pipeline de la réduction de bruit.
+TP_DIRPYRDENOISE_MEDIAN_METHOD_WEIGHTED;L* pondéré (faiblement) + a*b* (normal)
+TP_DIRPYRDENOISE_MEDIAN_PASSES;Itérations
+TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Appliquer trois itérations avec une taille de fenêtre de 3×3 aboutit souvent à de meilleurs résultats qu'une seule itération avec une taille de fenêtre de 7×7.
+TP_DIRPYRDENOISE_MEDIAN_TYPE;Type de médiane
+TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Applique un filtre médian de la taille de "fenêtre" désirée. Plus cette taille est grande, plus cela prendra de temps.\n\n3×3 doux: traite 5 pixels dans une fenêtre de 3×3 pixels.\n3×3: traite 9 pixels dans une fenêtre de 3×3 pixels.\n5×5 doux: traite 13 pixels dans une fenêtre de 5×5 pixels.\n5×5: traite 25 pixels dans une fenêtre de 5×5 pixels.\n7×7: traite 49 pixels dans une fenêtre de 7×7 pixels.\n9×9: traite 81 pixels dans une fenêtre 9×9 pixels.\n\nIl est parfois possible d'atteindre une meilleurs qualité en appliquant plusieurs itérations d'une petite fenêtre qu'une seule itération d'une grande.
 TP_DIRPYRDENOISE_PASSE;Itérations
-TP_DIRPYRDENOISE_PASSES;Itérations
-TP_DIRPYRDENOISE_PASSES_TOOLTIP;Appliquer trois itérations avec une taille de fenêtre de 3×3 aboutit souvent à de meilleurs résultats qu'une seule itération avec une taille de fenêtre de 7×7.
-TP_DIRPYRDENOISE_PON;Multi-zones auto
-TP_DIRPYRDENOISE_PRE;Aperçu multi-zones
-TP_DIRPYRDENOISE_PREV;Aperçu
-TP_DIRPYRDENOISE_PREVLABEL;Taille de l'aperçu=%1, Centre: Px=%2  Py=%3
-TP_DIRPYRDENOISE_RED;Chrominance - Rouge-Vert
-TP_DIRPYRDENOISE_RGB;RVB
-TP_DIRPYRDENOISE_RGBM;RVB
-TP_DIRPYRDENOISE_SHAL;Standard
-TP_DIRPYRDENOISE_SHALBI;Haut
 TP_DIRPYRDENOISE_SLI;Curseur
-TP_DIRPYRDENOISE_TILELABEL;Taille des tuiles =%1, Centre: Tx=%2  Ty=%3
+TP_DIRPYRDENOISE_TYPE_3X3;3×3
+TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 doux
+TP_DIRPYRDENOISE_TYPE_5X5;5×5
+TP_DIRPYRDENOISE_TYPE_5X5SOFT;5×5 doux
+TP_DIRPYRDENOISE_TYPE_7X7;7×7
+TP_DIRPYRDENOISE_TYPE_9X9;9×9
 TP_DIRPYREQUALIZER_ALGO;Domaine des tons chairs
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fin: plus proche des tons chairs, minimisant l'actions sur les autres couleurs\nLarge: évite plus d'artéfacts
 TP_DIRPYREQUALIZER_ARTIF;Réduire les artéfacts
@@ -2177,6 +2167,11 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!GENERAL_SLIDER;Slider
+!HISTORY_MSG_173;NR - Detail recovery
+!HISTORY_MSG_203;NR - Color space
+!HISTORY_MSG_256;NR - Median - Type
+!HISTORY_MSG_297;NR - Mode
 !HISTORY_MSG_491;White Balance
 !HISTORY_MSG_492;RGB Curves
 !HISTORY_MSG_493;L*a*b* Adjustments
@@ -2185,12 +2180,20 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
 !HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
 !HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
+!HISTORY_MSG_METADATA_MODE;Metadata copy mode
 !PARTIALPASTE_LOCALCONTRAST;Local contrast
+!PREFERENCES_EDITORCMDLINE;Custom command line
+!TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
+!TP_DIRPYRDENOISE_LABEL;Noise Reduction
 !TP_LOCALCONTRAST_AMOUNT;Amount
 !TP_LOCALCONTRAST_DARKNESS;Darkness level
 !TP_LOCALCONTRAST_LABEL;Local Contrast
 !TP_LOCALCONTRAST_LIGHTNESS;Lightness level
 !TP_LOCALCONTRAST_RADIUS;Radius
+!TP_METADATA_EDIT;Apply modifications
+!TP_METADATA_MODE;Metadata copy mode
+!TP_METADATA_STRIP;Strip all metadata
+!TP_METADATA_TUNNEL;Copy unchanged
 !TP_RAW_PIXELSHIFTONEGREEN;Use one green instead of average
 !TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Use one green instead of averaging two greens for regions without motion.
 !TP_RAW_RCD;RCD
