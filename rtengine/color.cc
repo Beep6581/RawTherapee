@@ -1783,6 +1783,71 @@ void Color::Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, vfloat &
 }
 #endif // __SSE2__
 
+void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, const float wp[3][3], int width)
+{
+
+#ifdef __SSE2__
+    // prepare matrix to save some divisions (reduces the number of divisions by width/2 - 6)
+    float wpn[3][3];
+    for(int i = 0; i < 3; ++i) {
+        wpn[0][i] = wp[0][i] / Color::D50x;
+        wpn[1][i] = wp[1][i];
+        wpn[2][i] = wp[2][i] / Color::D50z;
+    }
+
+    vfloat maxvalfv = F2V(MAXVALF);
+    vfloat c116v = F2V(116.f);
+    vfloat c5242d88v = F2V(5242.88f);
+    vfloat c500v = F2V(500.f);
+    vfloat c200v = F2V(200.f);
+#endif
+    int i = 0;
+#ifdef __SSE2__
+    for(;i < width - 3; i+=4) {
+        const vfloat rv = LVFU(R[i]);
+        const vfloat gv = LVFU(G[i]);
+        const vfloat bv = LVFU(B[i]);
+        const vfloat xv = F2V(wpn[0][0]) * rv + F2V(wpn[0][1]) * gv + F2V(wpn[0][2]) * bv;
+        const vfloat yv = F2V(wpn[1][0]) * rv + F2V(wpn[1][1]) * gv + F2V(wpn[1][2]) * bv;
+        const vfloat zv = F2V(wpn[2][0]) * rv + F2V(wpn[2][1]) * gv + F2V(wpn[2][2]) * bv;
+
+        vmask maxMask = vmaskf_gt(vmaxf(xv, vmaxf(yv, zv)), maxvalfv);
+        if (_mm_movemask_ps((vfloat)maxMask)) {
+            // take slower code path for all 4 pixels if one of the values is > MAXVALF. Still faster than non SSE2 version
+            for(int k = 0; k < 4; ++k) {
+                float x = xv[k];
+                float y = yv[k];
+                float z = zv[k];
+                float fx = (x <= 65535.f ? cachef[x] : (327.68f * xcbrtf(x / MAXVALF)));
+                float fy = (y <= 65535.f ? cachef[y] : (327.68f * xcbrtf(y / MAXVALF)));
+                float fz = (z <= 65535.f ? cachef[z] : (327.68f * xcbrtf(z / MAXVALF)));
+
+                L[i + k] = (116.f *  fy - 5242.88f); //5242.88=16.0*327.68;
+                a[i + k] = (500.f * (fx - fy) );
+                b[i + k] = (200.f * (fy - fz) );
+            }
+        } else {
+            const vfloat fx = cachef[xv];
+            const vfloat fy = cachef[yv];
+            const vfloat fz = cachef[zv];
+
+            STVFU(L[i], c116v *  fy - c5242d88v); //5242.88=16.0*327.68;
+            STVFU(a[i], c500v * (fx - fy));
+            STVFU(b[i], c200v * (fy - fz));
+        }
+    }
+#endif
+    for(;i < width; ++i) {
+        const float rv = R[i];
+        const float gv = G[i];
+        const float bv = B[i];
+        float x = wp[0][0] * rv + wp[0][1] * gv + wp[0][2] * bv;
+        float y = wp[1][0] * rv + wp[1][1] * gv + wp[1][2] * bv;
+        float z = wp[2][0] * rv + wp[2][1] * gv + wp[2][2] * bv;
+        XYZ2Lab(x, y, z, L[i], a[i], b[i]);
+    }
+}
+
 void Color::XYZ2Lab(float X, float Y, float Z, float &L, float &a, float &b)
 {
 
