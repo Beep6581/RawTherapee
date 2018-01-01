@@ -39,7 +39,7 @@ private:
     static DiagonalCurve *phaseOneIccCurveInv;
     static LUTf invGrad;  // for fast_demosaic
     static LUTf initInvGrad ();
-    static void colorSpaceConversion_ (Imagefloat* im, ColorManagementParams &cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName);
+    static void colorSpaceConversion_ (Imagefloat* im, const ColorManagementParams& cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName);
     int  defTransform        (int tran);
 
 protected:
@@ -189,7 +189,7 @@ public:
 
     void convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb);
     static bool findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, DCPProfile **dcpProf, cmsHPROFILE& in);
-    static void colorSpaceConversion   (Imagefloat* im, ColorManagementParams cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName)
+    static void colorSpaceConversion   (Imagefloat* im, const ColorManagementParams& cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName)
     {
         colorSpaceConversion_ (im, cmp, wb, pre_mul, embedded, camprofile, cam, camName);
     }

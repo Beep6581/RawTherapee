@@ -3884,7 +3884,7 @@ lab2ProphotoRgbD50(float L, float A, float B, float& r, float& g, float& b)
 }
 
 // Converts raw image including ICC input profile to working space - floating point version
-void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParams &cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], const std::string &camName)
+void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagementParams& cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], const std::string &camName)
 {
 
 //    MyTime t1, t2, t3;
