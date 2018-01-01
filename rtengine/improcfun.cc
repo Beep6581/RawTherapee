@@ -3553,8 +3553,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     float chMixBG = float (params->chmixer.blue[1]);
     float chMixBB = float (params->chmixer.blue[2]);
 
-    int shHighlights = params->sh.highlights / 100.f;
-    int shShadows = params->sh.shadows / 100.f;
+    int shHighlights = params->sh.highlights;
+    int shShadows = params->sh.shadows;
     bool blackwhite = params->blackwhite.enabled;
     bool complem = params->blackwhite.enabledcc;
     float bwr = float (params->blackwhite.mixerRed);
@@ -3722,13 +3722,14 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                             float g = gtemp[ti * TS + tj];
                             float b = btemp[ti * TS + tj];
 
+
                             float mapval = 1.f + shmap->map[i][j];
                             float factor = 1.f;
 
                             if (mapval > h_th) {
-                                factor = (1.f - shHighlights) + shHighlights * h_th / mapval;
+                                factor = (h_th + (100.0 - shHighlights) * (mapval - h_th) / 100.0) / mapval;
                             } else if (mapval < s_th) {
-                                factor = (s_th - (1.f - shShadows) * (s_th - mapval)) / mapval;
+                                factor = (s_th - (100.0 - shShadows) * (s_th - mapval) / 100.0) / mapval;
                             }
 
                             rtemp[ti * TS + tj] = factor * r;
