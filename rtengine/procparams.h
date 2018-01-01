@@ -364,6 +364,24 @@ struct LCurveParams
     bool operator !=(const LCurveParams& other) const;
 };
 
+
+/**
+ * Parameters for local contrast
+ */ 
+struct LocalContrastParams {
+    bool enabled;
+    int radius;
+    double amount;
+    double darkness;
+    double lightness;
+
+    LocalContrastParams();
+
+    bool operator==(const LocalContrastParams &other) const;
+    bool operator!=(const LocalContrastParams &other) const;
+};
+
+
 /**
   * Parameters of the RGB curves
   */
@@ -720,7 +738,6 @@ struct SHParams {
     int     htonalwidth;
     int     shadows;
     int     stonalwidth;
-    int     localcontrast;
     int     radius;
 
     SHParams();
@@ -1007,6 +1024,25 @@ struct ColorManagementParams {
     bool operator !=(const ColorManagementParams& other) const;
 };
 
+
+/**
+  * Parameters for metadata handling
+  */
+struct MetaDataParams {
+    enum Mode {
+        TUNNEL,
+        EDIT,
+        STRIP
+    };
+    Mode mode;
+
+    MetaDataParams();
+
+    bool operator ==(const MetaDataParams &other) const;
+    bool operator !=(const MetaDataParams &other) const;
+};
+
+
 /**
   * Typedef for representing a key/value for the exif metadata information
   */
@@ -1244,6 +1280,7 @@ struct RAWParams {
         double pixelShiftSmoothFactor;
         bool pixelShiftExp0;
         bool pixelShiftLmmse;
+        bool pixelShiftOneGreen;
         bool pixelShiftEqualBright;
         bool pixelShiftEqualBrightChannel;
         bool pixelShiftNonGreenCross;
@@ -1340,6 +1377,7 @@ public:
     ToneCurveParams         toneCurve;       ///< Tone curve parameters
     LCurveParams            labCurve;        ///< CIELAB luminance curve parameters
     RetinexParams           retinex;         ///< Retinex parameters
+    LocalContrastParams     localContrast;   ////< Local contrast parameters
     RGBCurvesParams         rgbCurves;       ///< RGB curves parameters
     ColorToningParams       colorToning;     ///< Color Toning parameters
     SharpeningParams        sharpening;      ///< Sharpening parameters
@@ -1381,6 +1419,7 @@ public:
     Glib::ustring           appVersion;      ///< Version of the application that generated the parameters
     int                     ppVersion;       ///< Version of the PP file from which the parameters have been read
 
+    MetaDataParams          metadata;        ///< Metadata parameters
     ExifPairs               exif;            ///< List of modifications appplied on the exif tags of the input image
     IPTCPairs               iptc;            ///< The IPTC tags and values to be saved to the output image
 

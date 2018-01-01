@@ -1375,7 +1375,8 @@ ProcParams* ImProcCoordinator::beginUpdateParams ()
 
 void ImProcCoordinator::endUpdateParams (ProcEvent change)
 {
-    endUpdateParams ( refreshmap[ (int)change] );
+    int action = RefreshMapper::getInstance()->getAction(change);
+    endUpdateParams(action);
 }
 
 void ImProcCoordinator::endUpdateParams (int changeFlags)

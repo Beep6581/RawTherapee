@@ -47,6 +47,7 @@
 #46 18.10.2017 Erweiterung (TooWaBoo) RT 5.3
 #47 19.11.2017 HDR-Dynamikkompression (TooWaBoo) RT 5.3
 #48 13.12.2017 Erweiterung (TooWaBoo) RT 5.3
+#49 21.12.2017 Lokaler Kontrast (TooWaBoo) RT 5.3
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -467,7 +468,6 @@ HISTORY_MSG_169;(L*a*b*) - CH-Kurve
 HISTORY_MSG_170;(Dynamik) - HH-Kurve
 HISTORY_MSG_171;(L*a*b*) - LC-Kurve
 HISTORY_MSG_172;(L*a*b*) - LC-Kurve\nbeschränken
-HISTORY_MSG_173;(Rauschreduzierung)\nLuminanzdetails
 HISTORY_MSG_174;(CIECAM02)
 HISTORY_MSG_175;(CIECAM02) - Szene\nCAT02-Adaptation
 HISTORY_MSG_176;(CIECAM02)\nBetrachtungsbed.\nUmgebung
@@ -497,7 +497,6 @@ HISTORY_MSG_199;(CIECAM02) - Ausgabe-\nHistogramm anzeigen
 HISTORY_MSG_200;(CIECAM02)\nDynamikkompression
 HISTORY_MSG_201;(Rauschreduzierung)\nDelta-Chrominanz\nRot / Grün
 HISTORY_MSG_202;(Rauschreduzierung)\nDelta-Chrominanz\nBlau / Gelb
-HISTORY_MSG_203;(Rauschreduzierung)\nMethode
 HISTORY_MSG_204;(Sensor-Matrix)\nFarbinterpolation\nLMMSE-Verbesserung
 HISTORY_MSG_205;(CIECAM02)\nBetrachtungsbed.\nHot / Bad-Pixelfilter
 HISTORY_MSG_206;(CIECAM02) - Szene\nAuto-Luminanz
@@ -549,7 +548,6 @@ HISTORY_MSG_252;(Detailebenenkontrast)\nHautfarbtöne schützen
 HISTORY_MSG_253;(Detailebenenkontrast)\nArtefakte reduzieren
 HISTORY_MSG_254;(Detailebenenkontrast)\nHautfarbton
 HISTORY_MSG_255;(Rauschreduzierung)\nMedianfilter
-HISTORY_MSG_256;(Rauschreduzierung)\nMediantyp
 HISTORY_MSG_257;(Farbanpassungen)
 HISTORY_MSG_258;(Farbanpassungen)\nFarbkurve
 HISTORY_MSG_259;(Farbanpassungen)\nDeckkraftkurve
@@ -590,7 +588,6 @@ HISTORY_MSG_293;(Filmsimulation)
 HISTORY_MSG_294;(Filmsimulation)\nIntensität
 HISTORY_MSG_295;(Filmsimulation) - Film
 HISTORY_MSG_296;(Rauschreduzierung)\nLuminanzkurve
-HISTORY_MSG_297;(Rauschreduzierung)\nQualität
 HISTORY_MSG_298;(Vorverarbeitung)\nDead-Pixel-Filter
 HISTORY_MSG_299;(Rauschreduzierung)\nChrominanzkurve
 HISTORY_MSG_300;-
@@ -768,6 +765,14 @@ HISTORY_MSG_487;(Objektivkorrektur)\nProfil - Objektiv
 HISTORY_MSG_488;(HDR-Dynamikkompression)
 HISTORY_MSG_489;(HDR-Dynamikkompression)\nSchwelle
 HISTORY_MSG_490;(HDR-Dynamikkompression)\nIntensität
+HISTORY_MSG_491;(Weißabgleich)
+HISTORY_MSG_492;(RGB-Kurven)
+HISTORY_MSG_493;(L*a*b*)
+HISTORY_MSG_LOCALCONTRAST_AMOUNT;(Lokaler Kontrast)\nIntensität
+HISTORY_MSG_LOCALCONTRAST_DARKNESS;(Lokaler Kontrast)\nDunkle Bereiche
+HISTORY_MSG_LOCALCONTRAST_ENABLED;(Lokaler Kontrast)
+HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;(Lokaler Kontrast)\nHelle Bereiche
+HISTORY_MSG_LOCALCONTRAST_RADIUS;(Lokaler Kontrast)\nRadius
 HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
 HISTORY_SNAPSHOT;Schnappschuss
@@ -945,6 +950,7 @@ PARTIALPASTE_IPTCINFO;IPTC-Informationen
 PARTIALPASTE_LABCURVE;L*a*b* - Einstellungen
 PARTIALPASTE_LENSGROUP;Objektivkorrekturen
 PARTIALPASTE_LENSPROFILE;Objektivkorrekturprofil
+PARTIALPASTE_LOCALCONTRAST;Lokaler Kontrast
 PARTIALPASTE_METAGROUP;Metadaten
 PARTIALPASTE_PCVIGNETTE;Vignettierungsfilter
 PARTIALPASTE_PERSPECTIVE;Perspektive
@@ -1042,7 +1048,6 @@ PREFERENCES_DIRLAST;Zuletzt geöffnetes Verzeichnis
 PREFERENCES_DIROTHER;Anderes
 PREFERENCES_DIRSELECTDLG;Wähle das Bild-Verzeichnis beim Programmstart...
 PREFERENCES_DIRSOFTWARE;Installationsverzeichnis
-PREFERENCES_EDITORCMDLINE;Befehlszeile
 PREFERENCES_EDITORLAYOUT;Editor-Layout
 PREFERENCES_EXPAUT;Experte
 PREFERENCES_EXTERNALEDITOR;Externer Editor
@@ -1486,68 +1491,62 @@ TP_DARKFRAME_LABEL;Dunkelbild
 TP_DEFRINGE_LABEL;Farbsaum entfernen (Defringe)
 TP_DEFRINGE_RADIUS;Radius
 TP_DEFRINGE_THRESHOLD;Schwelle
-TP_DIRPYRDENOISE_3X3;3×3
-TP_DIRPYRDENOISE_3X3_SOFT;3×3 weich
-TP_DIRPYRDENOISE_5X5;5×5
-TP_DIRPYRDENOISE_5X5_SOFT;5×5 weich
-TP_DIRPYRDENOISE_7X7;7×7
-TP_DIRPYRDENOISE_9X9;9×9
-TP_DIRPYRDENOISE_ABM;Nur Farbe
-TP_DIRPYRDENOISE_AUT;Automatisch Global
-TP_DIRPYRDENOISE_AUTO;Automatisch Global
-TP_DIRPYRDENOISE_AUTO_TOOLTIP;Bewertung des Farbrauschens.\nDie Bewertung ist ungenau und sehr subjektiv!
-TP_DIRPYRDENOISE_BLUE;Delta-Chrominanz Blau / Gelb
-TP_DIRPYRDENOISE_C2TYPE_TOOLTIP;<b>Benutzerdefiniert:</b>\nManuelle Anpassung der Chrominanz-Rauschreduzierung.\n\n<b>Automatisch Global:</b>\nEs werden 9 Zonen für die Berechnung der Chrominanz-\nRauschreduzierung verwendet.\n\n<b>Vorschau:</b>\nNur der sichbare Teil des Bildes wird für die Berechnung\nder Chrominanz-Rauschreduzierung verwendet.
-TP_DIRPYRDENOISE_CCCURVE;Chrominanzkurve
-TP_DIRPYRDENOISE_CHROMA;Chrominanz (Master)
-TP_DIRPYRDENOISE_CHROMAFR;Chrominanz
-TP_DIRPYRDENOISE_CTYPE;Methode
-TP_DIRPYRDENOISE_CTYPE_TOOLTIP;<b>Benutzerdefiniert:</b>\nManuelle Anpassung der Chrominanz-Rauschreduzierung.\n\n<b>Automatisch Global:</b>\nEs werden 9 Zonen für die Berechnung der Chrominanz-\nRauschreduzierung verwendet.\n\n<b>Auto-Multizonen:</b>\nKeine Voransicht - wird erst beim Speichern angewendet.\nAbhängig von der Bildgröße, wird das Bild in ca. 10 bis 70\nKacheln aufgeteilt. Für jede Kachel wird die Chrominanz-\nRauschreduzierung individuell berechnet.\n\n<b>Vorschau:</b>\nNur der sichbare Teil des Bildes wird für die Berechnung\nder Chrominanz-Rauschreduzierung verwendet.
-TP_DIRPYRDENOISE_CUR;Kurve
-TP_DIRPYRDENOISE_CURVEEDITOR_CC;Farbe
-TP_DIRPYRDENOISE_CURVEEDITOR_CC_TOOLTIP;Erhöht den Wert aller Chrominanz-Regler und\nregelt die Chrominanz-Rauschreduzierung als\nFunktion der Chromatizität. Die Intensität kann über\nKontrollpunkte für schwach bis intensiv gesättigte\nFarben unterschiedlich eingestellt werden.
-TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Moduliert die Wirkung der Luminanz-Rauschreduzierung
+TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto-Multizonen
+TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Automatisch Global
+TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;Bewertung des Farbrauschens.\nDie Bewertung ist ungenau und sehr subjektiv!
+TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;Delta-Chrominanz Blau / Gelb
+TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Chrominanzkurve
+TP_DIRPYRDENOISE_CHROMINANCE_FRAME;Chrominanz
+TP_DIRPYRDENOISE_CHROMINANCE_MANUAL;Benutzerdefiniert
+TP_DIRPYRDENOISE_CHROMINANCE_MASTER;Chrominanz (Master)
+TP_DIRPYRDENOISE_CHROMINANCE_METHOD;Methode
+TP_DIRPYRDENOISE_CHROMINANCE_METHODADVANCED_TOOLTIP;<b>Benutzerdefiniert:</b>\nManuelle Anpassung der Chrominanz-Rauschreduzierung.\n\n<b>Automatisch Global:</b>\nEs werden 9 Zonen für die Berechnung der Chrominanz-\nRauschreduzierung verwendet.\n\n<b>Vorschau:</b>\nNur der sichbare Teil des Bildes wird für die Berechnung\nder Chrominanz-Rauschreduzierung verwendet.
+TP_DIRPYRDENOISE_CHROMINANCE_METHOD_TOOLTIP;<b>Benutzerdefiniert:</b>\nManuelle Anpassung der Chrominanz-Rauschreduzierung.\n\n<b>Automatisch Global:</b>\nEs werden 9 Zonen für die Berechnung der Chrominanz-\nRauschreduzierung verwendet.\n\n<b>Auto-Multizonen:</b>\nKeine Voransicht - wird erst beim Speichern angewendet.\nAbhängig von der Bildgröße, wird das Bild in ca. 10 bis 70\nKacheln aufgeteilt. Für jede Kachel wird die Chrominanz-\nRauschreduzierung individuell berechnet.\n\n<b>Vorschau:</b>\nNur der sichbare Teil des Bildes wird für die Berechnung\nder Chrominanz-Rauschreduzierung verwendet.
+TP_DIRPYRDENOISE_CHROMINANCE_PMZ;Vorschau
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW;Vorschau
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEWRESIDUAL_INFO_TOOLTIP;Zeigt das Restrauschen des sichtbaren Bildbereichs\nin der 100%-Ansicht an.\n\n<50: Sehr wenig Rauschen\n50 - 100: Wenig Rauschen\n100 - 300: Durchschnittliches Rauschen\n>300: Hohes Rauschen\n\nDie Werte unterscheiden sich im L*a*b*- und RGB-Modus.\nDie RGB-Werte sind ungenauer, da der RGB-Modus\nLuminanz und Chrominanz nicht komplett trennt.
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_INFO;Vorschaugröße = %1, Zentrum: Px = %2  Py = %2
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO;Rauschen: Mittelwert = %1  Hoch = %2
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY;Rauschen: Mittelwert = ---   Hoch = ---
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;Kachelgröße = %1 Zentrum: Tx = %2  Ty = %2
+TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;Delta-Chrominanz Rot / Grün
 TP_DIRPYRDENOISE_ENH;Erweiterter Modus
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Erhöht die Qualität der Rauschreduzierung auf Kosten einer um 20% erhöhten Verarbeitungszeit.
-TP_DIRPYRDENOISE_GAMMA;Gamma
-TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Mit Gamma kann die Intensität der\nRauschreduzierung über den Farbbereich\nvariiert werden. Bei kleinen Werten sind\nnur dunkle Farbtöne betroffen, bei\ngrößeren Werten wird der Effekt auf\nhellere Töne ausgeweitet.
-TP_DIRPYRDENOISE_LAB;L*a*b*
-TP_DIRPYRDENOISE_LABEL;Rauschreduzierung
-TP_DIRPYRDENOISE_LABM;L*a*b*
-TP_DIRPYRDENOISE_LCURVE;Luminanzkurve
-TP_DIRPYRDENOISE_LDETAIL;Luminanzdetails
-TP_DIRPYRDENOISE_LM;Nur Luminanz
-TP_DIRPYRDENOISE_LPLABM;Gewichtet L* (wenig) + a*b* (normal)
-TP_DIRPYRDENOISE_LTYPE;Luminanzkontrolle
-TP_DIRPYRDENOISE_LUMA;Luminanz
-TP_DIRPYRDENOISE_LUMAFR;Luminanz
-TP_DIRPYRDENOISE_MAN;Benutzerdefiniert
-TP_DIRPYRDENOISE_MANU;Benutzerdefiniert
-TP_DIRPYRDENOISE_MED;Medianfilter
-TP_DIRPYRDENOISE_MEDMETHOD;Medianmethode
-TP_DIRPYRDENOISE_MEDTYPE;Mediantyp
-TP_DIRPYRDENOISE_METHOD;Methode
-TP_DIRPYRDENOISE_METHOD11;Qualität
-TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Einstellung der Qualität der Rauschreduzierung.\nDie Einstellung “Hoch“ verbessert die Rausch-\nreduzierung auf Kosten der Verarbeitungszeit.
-TP_DIRPYRDENOISE_METHOD_TOOLTIP;Für RAW-Bilder kann entweder die RGB-\noder L*a*b*-Methode verwendet werden.\n\nFür andere Bilder wird unabhängig von der\nAuswahl immer die L*a*b*-Methode verwendet.
-TP_DIRPYRDENOISE_METM_TOOLTIP;Bei der Methode “Nur Luminanz“ und “L*a*b*“,\nwird der Medianfilter nach den Waveletschritten\nverarbeitet.\nBei RGB wird der Medianfilter am Ende der\nRauschreduzierung verarbeitet.
-TP_DIRPYRDENOISE_MET_TOOLTIP;Einen Medianfilter mit der gewünschten Fenstergröße auswählen.\nJe größer das Fenster, umso länger dauert die Verarbeitungszeit.\n\n3×3 weich: Nutzt 5 Pixel in einem 3×3-Pixelfenster.\n3×3: Nutzt 9 Pixel in einem 3×3-Pixelfenster.\n5×5 weich: Nutzt 13 Pixel in einem 5×5-Pixelfenster.\n5×5: Nutzt 25 Pixel in einem 5×5-Pixelfenster.\n7×7: Nutzt 49 Pixel in einem 7×7-Pixelfenster.\n9×9: Nutzt 81 Pixel in einem 9×9-Pixelfenster.\n\nManchmal ist das Ergebnis mit einem kleineren Fenster und mehreren Iterationen besser, als mit einem größeren und nur einer Iteration.
-TP_DIRPYRDENOISE_NOISELABEL;Rauschen: Mittelwert = %1  Hoch = %2
-TP_DIRPYRDENOISE_NOISELABELEMPTY;Rauschen: Mittelwert = ---   Hoch = ---
-TP_DIRPYRDENOISE_NRESID_TOOLTIP;Zeigt das Restrauschen des sichtbaren Bildbereichs\nin der 100%-Ansicht an.\n\n<50: Sehr wenig Rauschen\n50 - 100: Wenig Rauschen\n100 - 300: Durchschnittliches Rauschen\n>300: Hohes Rauschen\n\nDie Werte unterscheiden sich im L*a*b*- und RGB-Modus.\nDie RGB-Werte sind ungenauer, da der RGB-Modus\nLuminanz und Chrominanz nicht komplett trennt.
-TP_DIRPYRDENOISE_PASSES;Medianiterationen
-TP_DIRPYRDENOISE_PASSES_TOOLTIP;Manchmal führt ein kleines 3×3-Fenster mit\nmehreren Iterationen zu besseren Ergebnissen\nals ein 7×7-Fenster mit nur einer Iteration.
-TP_DIRPYRDENOISE_PON;Auto-Multizonen
-TP_DIRPYRDENOISE_PRE;Vorschau
-TP_DIRPYRDENOISE_PREV;Vorschau
-TP_DIRPYRDENOISE_PREVLABEL;Vorschaugröße = %1, Zentrum: Px = %2  Py = %2
-TP_DIRPYRDENOISE_RED;Delta-Chrominanz Rot / Grün
-TP_DIRPYRDENOISE_RGB;RGB
-TP_DIRPYRDENOISE_RGBM;RGB
-TP_DIRPYRDENOISE_SHAL;Standard
-TP_DIRPYRDENOISE_SHALBI;Hoch
+TP_DIRPYRDENOISE_LUMINANCE_CONTROL;Luminanzkontrolle
+TP_DIRPYRDENOISE_LUMINANCE_CURVE;Luminanzkurve
+TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Luminanzdetails
+TP_DIRPYRDENOISE_LUMINANCE_FRAME;Luminanz
+TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminanz
+TP_DIRPYRDENOISE_MAIN_COLORSPACE;Methode
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;L*a*b*
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Rauschreduzierung
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;Für RAW-Bilder kann entweder die RGB-\noder L*a*b*-Methode verwendet werden.\n\nFür andere Bilder wird unabhängig von der\nAuswahl immer die L*a*b*-Methode verwendet.
+TP_DIRPYRDENOISE_MAIN_GAMMA;Gamma
+TP_DIRPYRDENOISE_MAIN_GAMMA_TOOLTIP;Mit Gamma kann die Intensität der\nRauschreduzierung über den Farbbereich\nvariiert werden. Bei kleinen Werten sind\nnur dunkle Farbtöne betroffen, bei\ngrößeren Werten wird der Effekt auf\nhellere Töne ausgeweitet.
+TP_DIRPYRDENOISE_MAIN_MODE;Qualität
+TP_DIRPYRDENOISE_MAIN_MODE_AGGRESSIVE;Hoch
+TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE;Standard
+TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;Einstellung der Qualität der Rauschreduzierung.\nDie Einstellung “Hoch“ verbessert die Rausch-\nreduzierung auf Kosten der Verarbeitungszeit.
+TP_DIRPYRDENOISE_MEDIAN_METHOD;Medianmethode
+TP_DIRPYRDENOISE_MEDIAN_METHOD_CHROMINANCE;Nur Farbe
+TP_DIRPYRDENOISE_MEDIAN_METHOD_LAB;L*a*b*
+TP_DIRPYRDENOISE_MEDIAN_METHOD_LABEL;Medianfilter
+TP_DIRPYRDENOISE_MEDIAN_METHOD_LUMINANCE;Nur Luminanz
+TP_DIRPYRDENOISE_MEDIAN_METHOD_RGB;RGB
+TP_DIRPYRDENOISE_MEDIAN_METHOD_TOOLTIP;Bei der Methode “Nur Luminanz“ und “L*a*b*“,\nwird der Medianfilter nach den Waveletschritten\nverarbeitet.\nBei RGB wird der Medianfilter am Ende der\nRauschreduzierung verarbeitet.
+TP_DIRPYRDENOISE_MEDIAN_METHOD_WEIGHTED;Gewichtet L* (wenig) + a*b* (normal)
+TP_DIRPYRDENOISE_MEDIAN_PASSES;Medianiterationen
+TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Manchmal führt ein kleines 3×3-Fenster mit\nmehreren Iterationen zu besseren Ergebnissen\nals ein 7×7-Fenster mit nur einer Iteration.
+TP_DIRPYRDENOISE_MEDIAN_TYPE;Mediantyp
+TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Einen Medianfilter mit der gewünschten Fenstergröße auswählen.\nJe größer das Fenster, umso länger dauert die Verarbeitungszeit.\n\n3×3 weich: Nutzt 5 Pixel in einem 3×3-Pixelfenster.\n3×3: Nutzt 9 Pixel in einem 3×3-Pixelfenster.\n5×5 weich: Nutzt 13 Pixel in einem 5×5-Pixelfenster.\n5×5: Nutzt 25 Pixel in einem 5×5-Pixelfenster.\n7×7: Nutzt 49 Pixel in einem 7×7-Pixelfenster.\n9×9: Nutzt 81 Pixel in einem 9×9-Pixelfenster.\n\nManchmal ist das Ergebnis mit einem kleineren Fenster und mehreren Iterationen besser, als mit einem größeren und nur einer Iteration.
 TP_DIRPYRDENOISE_SLI;Regler
-TP_DIRPYRDENOISE_TILELABEL;Kachelgröße = %1 Zentrum: Tx = %2  Ty = %2
+TP_DIRPYRDENOISE_TYPE_3X3;3×3
+TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 weich
+TP_DIRPYRDENOISE_TYPE_5X5;5×5
+TP_DIRPYRDENOISE_TYPE_5X5SOFT;5×5 weich
+TP_DIRPYRDENOISE_TYPE_7X7;7×7
+TP_DIRPYRDENOISE_TYPE_9X9;9×9
 TP_DIRPYREQUALIZER_ALGO;Hautfarbtonbereich
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fein: Ist näher an den Hautfarbtönen und minimiert den Einfluss auf andere Farben.\n\nGrob: Minimiert Artefakte.
 TP_DIRPYREQUALIZER_ARTIF;Artefakte reduzieren
@@ -1723,6 +1722,11 @@ TP_LENSPROFILE_LABEL;Objektivkorrekturprofil
 TP_LENSPROFILE_USECA;CA korrigieren
 TP_LENSPROFILE_USEDIST;Verzeichnung korrigieren
 TP_LENSPROFILE_USEVIGN;Vignettierung korrigieren
+TP_LOCALCONTRAST_AMOUNT;Intensität
+TP_LOCALCONTRAST_DARKNESS;Dunkle Bereiche
+TP_LOCALCONTRAST_LABEL;Lokaler Kontrast
+TP_LOCALCONTRAST_LIGHTNESS;Helle Bereiche
+TP_LOCALCONTRAST_RADIUS;Radius
 TP_NEUTRAL;Zurücksetzen
 TP_NEUTRAL_TIP;Belichtungseinstellungen auf\nneutrale Werte zurücksetzen
 TP_PCVIGNETTE_FEATHER;Bereich
@@ -1835,6 +1839,7 @@ TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Weicher Übergang zwischen Bereichen mit und ohn
 TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;StdDev factor Blue
 TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;StdDev factor Green
 TP_RAW_PIXELSHIFTSTDDEVFACTORRED;StdDev factor Red
+TP_RAW_RCD;RCD
 TP_RAW_SENSOR_BAYER_LABEL;Sensor mit Bayer-Matrix
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;Mit “3-Pass“ erzielt man die besten Ergebnisse\n(empfohlen bei Bildern mit niedrigen ISO-Werten).\n\nBei hohen ISO-Werten unterscheidet sich “1-Pass“\nkaum gegenüber “3-Pass“, ist aber deutlich schneller.
 TP_RAW_SENSOR_XTRANS_LABEL;Sensor mit X-Trans-Matrix
@@ -2225,6 +2230,18 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-HISTORY_MSG_491;(Weißabgleich)
-HISTORY_MSG_492;(RGB-Kurven)
-TP_RAW_RCD;RCD
+!GENERAL_SLIDER;Slider
+!HISTORY_MSG_173;NR - Detail recovery
+!HISTORY_MSG_203;NR - Color space
+!HISTORY_MSG_256;NR - Median - Type
+!HISTORY_MSG_297;NR - Mode
+!HISTORY_MSG_METADATA_MODE;Metadata copy mode
+!PREFERENCES_EDITORCMDLINE;Custom command line
+!TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
+!TP_DIRPYRDENOISE_LABEL;Noise Reduction
+!TP_METADATA_EDIT;Apply modifications
+!TP_METADATA_MODE;Metadata copy mode
+!TP_METADATA_STRIP;Strip all metadata
+!TP_METADATA_TUNNEL;Copy unchanged
+!TP_RAW_PIXELSHIFTONEGREEN;Use one green instead of average
+!TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Use one green instead of averaging two greens for regions without motion.
