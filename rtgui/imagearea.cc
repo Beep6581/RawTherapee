@@ -638,7 +638,7 @@ void ImageArea::initialImageArrived (CropWindow* cw)
 
     if (mainCropWindow) {
         if(firstOpen || options.prevdemo != PD_Sidecar || (!options.rememberZoomAndPan) ) {
-            mainCropWindow->zoomFit ();
+            mainCropWindow->zoomFitCrop ();
             firstOpen = false;
             mainCropWindow->cropHandler.getFullImageSize(fullImageWidth, fullImageHeight);
         } else {
@@ -646,7 +646,7 @@ void ImageArea::initialImageArrived (CropWindow* cw)
             mainCropWindow->cropHandler.getFullImageSize(w, h);
 
             if(w != fullImageWidth || h != fullImageHeight) {
-                mainCropWindow->zoomFit ();
+                mainCropWindow->zoomFitCrop ();
             }
 
             fullImageWidth = w;
