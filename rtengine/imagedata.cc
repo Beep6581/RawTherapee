@@ -838,8 +838,6 @@ rtexif::TagDirectory* FramesData::getBestExifData (ImageSource *imgSource, procp
         */
         }
 
-        frames[imgNum]->getExifData ();
-
         td = getFrameExifData (imgNum);
         rtexif::Tag* makeTag;
         if (td && (makeTag = td->findTag("Make", true))) {
