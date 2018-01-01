@@ -119,15 +119,15 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     bluechro    = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW"), -100, 100, 0.1, 0));
 
     Gtk::HBox* hb1 = Gtk::manage (new Gtk::HBox ());
-    hb1->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_DIRPYRDENOISE_MAIN_COLORSPACE") + ": ")), Gtk::PACK_SHRINK, 4);
+    hb1->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_DIRPYRDENOISE_MAIN_COLORSPACE") + ": ")), Gtk::PACK_SHRINK, 1);
     hb1->set_tooltip_markup (M("TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP"));
 
     dmethod = Gtk::manage (new MyComboBoxText ());
     dmethod->append (M("TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB"));
     dmethod->append (M("TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB"));
     dmethod->set_active(0);
-    hb1->pack_end (*dmethod, Gtk::PACK_EXPAND_WIDGET, 4);
-    pack_start( *hb1, Gtk::PACK_SHRINK, 4);
+    hb1->pack_end (*dmethod, Gtk::PACK_EXPAND_WIDGET, 1);
+    pack_start(*hb1, Gtk::PACK_SHRINK, 1);
 
 
     dmethodconn = dmethod->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::dmethodChanged) );
@@ -220,7 +220,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     ctboxrgb->pack_start (*labrgb, Gtk::PACK_SHRINK, 1);
 
     Gtk::HBox* hb11 = Gtk::manage (new Gtk::HBox ());
-    hb11->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_DIRPYRDENOISE_MAIN_MODE") + ": ")), Gtk::PACK_SHRINK, 4);
+    hb11->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_DIRPYRDENOISE_MAIN_MODE") + ": ")), Gtk::PACK_SHRINK, 1);
     hb11->set_tooltip_markup (M("TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP"));
 
     smethod = Gtk::manage (new MyComboBoxText ());
@@ -230,15 +230,15 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
 //  smethod->append (M("TP_DIRPYRDENOISE_MAIN_MODE_SHALAL"));
 //  smethod->append (M("TP_DIRPYRDENOISE_MAIN_MODE_SHBIBI"));
     smethod->set_active(1);
-    hb11->pack_start (*smethod, Gtk::PACK_EXPAND_WIDGET, 4);
-    pack_start( *hb11, Gtk::PACK_SHRINK, 4);
+    hb11->pack_start (*smethod, Gtk::PACK_EXPAND_WIDGET, 1);
+    pack_start( *hb11, Gtk::PACK_SHRINK, 1);
     smethodconn = smethod->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::smethodChanged) );
 
     gamma = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_MAIN_GAMMA"), 1.0, 3.0, 0.01, 1.7));
     gamma->set_tooltip_text (M("TP_DIRPYRDENOISE_MAIN_GAMMA_TOOLTIP"));
     gamma->setAdjusterListener (this);
     gamma->show();
-    pack_start (*gamma);
+    pack_start (*gamma, Gtk::PACK_EXPAND_WIDGET, 1);
 
     passes  = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_MEDIAN_PASSES"), 1.0, 3.0, 1., 1.));
     passes->set_tooltip_text (M("TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP"));
