@@ -1928,24 +1928,48 @@ void Tag::initInt (int data, TagType t, int cnt)
     setInt (data, 0, t);
 }
 
+void Tag::swapByteOrder2(char *buffer, int count)
+{
+    char* ptr = buffer;
+    for (int i = 0; i < count; i+=2) {
+        unsigned char c = ptr[0];
+        ptr[0] = ptr[1];
+        ptr[1] = c;
+        ptr += 2;
+    }
+}
 void Tag::initUserComment (const Glib::ustring &text)
 {
+    const bool useBOM = false; // set it to true if you want to output BOM in UCS-2/UTF-8 UserComments ; this could be turned to an options entry
     type = UNDEFINED;
     if (text.is_ascii()) {
-        count = 8 + strlen (text.c_str());
-        valuesize = count;
+        valuesize = count = 8 + strlen (text.c_str());
         value = new unsigned char[valuesize];
-        strcpy ((char*)value, "ASCII");
-        value[5] = value[6] = value[7] = 0;
-        strcpy ((char*)value + 8, text.c_str());
+        memcpy(value, "ASCII\0\0\0", 8);
+        memcpy(value + 8, text.c_str(), valuesize - 8);
     } else {
-        wchar_t *commentStr = (wchar_t*)g_utf8_to_utf16 (text.c_str(), -1, NULL, NULL, NULL);
-        count = 8 + wcslen(commentStr)*2;
-        valuesize = count;
-        value = (unsigned char*)new char[valuesize];
-        strcpy ((char*)value, "UNICODE");
-        value[7] = 0;
-        wcscpy(((wchar_t*)value) + 4, commentStr);
+        wchar_t *commentStr = (wchar_t*)g_utf8_to_utf16 (text.c_str(), -1, nullptr, nullptr, nullptr);
+        size_t wcStrSize = wcslen(commentStr);
+        valuesize = count = wcStrSize * 2 + 8 + (useBOM ? 2 : 0);
+        value = new unsigned char[valuesize];
+        memcpy(value, "UNICODE\0", 8);
+
+        if (useBOM) {
+            if (getOrder() == INTEL) { //Little Endian
+                value[8] = 0xFF;
+                value[9] = 0xFE;
+            } else {
+                value[8] = 0xFE;
+                value[9] = 0xFF;
+            }
+        }
+
+        // Swapping byte order to match the Exif's byte order
+        if (getOrder() != HOSTORDER) {
+            swapByteOrder2((char*)commentStr, wcStrSize * 2);
+        }
+
+        memcpy(value + 8 + (useBOM ? 2 : 0), (char*)commentStr, wcStrSize * 2);
         g_free(commentStr);
     }
 }

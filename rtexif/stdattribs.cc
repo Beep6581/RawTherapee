@@ -452,12 +452,109 @@ public:
         }
 
         count = std::min (count, 65535); // limit to 65535 chars to avoid crashes in case of corrupted metadata
-        char *buffer = new char[count - 7];
+        char *buffer = new char[count - 6]; // include 2 ending null chars for UCS-2 string (possibly)
+        char *value = (char*)t->getValue();
 
-        if (!memcmp ((char*)t->getValue(), "ASCII\0\0\0", 8)) {
-            strncpy (buffer, (char*)t->getValue() + 8, count - 8);
+        if (!memcmp(value, "ASCII\0\0\0", 8)) {
+            memcpy(buffer, value + 8, count - 8);
             buffer[count - 8] = '\0';
+        } else if (!memcmp(value, "UNICODE\0", 8)) {
+            memcpy(buffer, value + 8, count - 8);
+            buffer[count - 7] = buffer[count - 8] = '\0';
+            Glib::ustring tmp1(buffer);
+
+
+            bool hasBOM = false;
+            enum ByteOrder bo = UNKNOWN;
+            if (count % 2 || (count >= 11 && (buffer[0] == 0xEF && buffer[1] == 0xBB && buffer[2] == 0xBF))) {
+                // odd string length can only be UTF-8, don't change anything
+                std::string retVal (buffer + 3);
+                delete [] buffer;
+                return retVal;
+            } else if (count >= 10) {
+                if (buffer[0] == 0xFF && buffer[1] == 0xFE) {
+                    bo = INTEL; // little endian
+                    hasBOM = true;
+                } else if (buffer[0] == 0xFE && buffer[1] == 0xFF) {
+                    bo = MOTOROLA; // big endian
+                    hasBOM = true;
+                }
+            }
+            if (bo == UNKNOWN) {
+                // auto-detecting byte order; we still don't know if it's UCS-2 or UTF-8
+                int a = 0, b = 0, c = 0, d = 0;
+                for (int j = 8; j < count; j++) {
+                    char cc = value[j];
+                    if (!(j%2)) {
+                        // counting zeros for first byte
+                        if (!cc) {
+                            ++a;
+                        }
+                    } else {
+                        // counting zeros for second byte
+                        if (!cc) {
+                            ++b;
+                        }
+                    }
+                    if (!(cc & 0x80) || ((cc & 0xC0) == 0xC0) || ((cc & 0xC0) == 0x80)) {
+                        ++c;
+                    }
+                    if ((cc & 0xC0) == 0x80) {
+                        ++d;
+                    }
+                }
+                if (c == (count - 8) && d) {
+                    // this is an UTF-8 string
+                    std::string retVal (buffer);
+                    delete [] buffer;
+                    return retVal;
+                }
+                if ((a || b) && a != b) {
+                    bo = a > b ? MOTOROLA : INTEL;
+                }
+            }
+            if (bo == UNKNOWN) {
+                // assuming platform's byte order
+#if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
+                bo = INTEL;
+#else
+                bo = MOTOROLA;
+#endif
+            }
+
+            // now swapping if necessary
+            if (!hasBOM && bo != HOSTORDER) {
+                if (t->getOrder() != HOSTORDER) {
+                    Tag::swapByteOrder2(buffer, count - 8);
+                }
+            }
+
+            glong written;
+            char* utf8Str = g_utf16_to_utf8((unsigned short int*)buffer, -1, nullptr, &written, nullptr);
+            delete [] buffer;
+            buffer = new char[written + 1];
+            memcpy(buffer, utf8Str, written);
+            buffer[written] = 0;
+        } else if (!memcmp(value, "\0\0\0\0\0\0\0\0", 8)) {
+            // local charset string, whatever it is
+            memcpy(buffer, value + 8, count - 8);
+            buffer[count - 7] = buffer[count - 8] = '\0';
+
+            gsize written = 0;
+            char *utf8Str = g_locale_to_utf8(buffer, count - 8, nullptr, &written, nullptr);
+            if (utf8Str && written) {
+                delete [] buffer;
+                size_t length = strlen(utf8Str);
+                buffer = new char[length + 1];
+                strcpy(buffer, utf8Str);
+            } else {
+                buffer[0] = 0;
+            }
+            if (utf8Str) {
+                g_free(utf8Str);
+            }
         } else {
+            // JIS: unsupported
             buffer[0] = 0;
         }
 
@@ -467,11 +564,8 @@ public:
     }
     virtual void fromString (Tag* t, const std::string& value)
     {
-        char *buffer = new char[t->getCount()];
-        memcpy (buffer, "ASCII\0\0\0", 8);
-        strcpy (buffer + 8, value.c_str());
-        t->fromString (buffer, value.size() + 9);
-        delete [] buffer;
+        Glib::ustring tmpStr(value);
+        t->userCommentFromString (tmpStr);
     }
 };
 UserCommentInterpreter userCommentInterpreter;
