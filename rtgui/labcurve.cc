@@ -143,7 +143,7 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"),
     );
 
     ccshape->setBottomBarColorProvider(this, 2);
-    ccshape->setLeftBarColorProvider(this, 2);
+    ccshape->setLeftBarColorProvider(this, 7);
     ccshape->setRangeDefaultMilestones(0.05, 0.2, 0.58);
 
     lcshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_LABCURVE_CURVEEDITOR_LC")));
@@ -162,7 +162,7 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"),
     clshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP"));
     clshape->setEditID(EUID_Lab_CLCurve, BT_SINGLEPLANE_FLOAT);
 
-    clshape->setLeftBarColorProvider(this, 2);
+    clshape->setLeftBarColorProvider(this, 7);
     clshape->setRangeDefaultMilestones(0.25, 0.5, 0.75);
     milestones.push_back( GradientMilestone(0., 0., 0., 0.) );
     milestones.push_back( GradientMilestone(1., 1., 1., 1.) );
@@ -627,6 +627,12 @@ void LCurve::colorForValue (double valX, double valY, enum ColorCaller::ElemType
         }
 
         Color::hsv2rgb01(h, 0.5f, 0.5f, R, G, B);
+    } else if (callerId == 7) {  // cc and cl - left bar
+
+        float value = (1.f - 0.7f) * float(valX) + 0.7f;
+        // whole hue range
+        // Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
+        Color::hsv2rgb01(float(valY), 1.f - float(valX), value, R, G, B);
     }
 
     caller->ccRed = double(R);
