@@ -739,11 +739,12 @@ void TagDirectory::applyChange (std::string name, Glib::ustring value)
         } else {
             const TagAttrib* attrib = nullptr;
 
-            for (int i = 0; attribs[i].ignore != -1; i++)
+            for (int i = 0; attribs[i].ignore != -1; i++) {
                 if (!strcmp (attribs[i].name, fseg.c_str())) {
                     attrib = &attribs[i];
                     break;
                 }
+            }
 
             if (attrib) {
                 Tag* nt = new Tag (this, attrib);
@@ -1663,15 +1664,11 @@ void Tag::toString (char* buffer, int ofs)
         return;
     }
 
-    size_t maxcount = 4;
-
-    if (count < 4) {
-        maxcount = count;
-    }
+    size_t maxcount = rtengine::min<size_t>(count, 10);
 
     strcpy (buffer, "");
 
-    for (ssize_t i = 0; i < std::min<int>(maxcount, valuesize - ofs); i++) {
+    for (ssize_t i = 0; i < rtengine::min<int>(maxcount, valuesize - ofs); i++) {
         if (i > 0) {
             strcat (buffer, ", ");
         }
@@ -3197,121 +3194,6 @@ int ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::pro
     delete cl;
 
     return size + 6;
-}
-
-int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::procparams::ExifPairs& changeList, int W, int H, int bps, const char* profiledata, int profilelen, const char* iptcdata, int iptclen, unsigned char *&buffer, unsigned &bufferSize)
-{
-
-// write tiff header
-    int offs = 0;
-    ByteOrder order = HOSTORDER;
-
-    if (root) {
-        order = root->getOrder ();
-    }
-
-    TagDirectory* cl;
-
-    if (root) {
-        cl = (const_cast<TagDirectory*> (root))->clone (nullptr);
-        // remove some unknown top level tags which produce warnings when opening a tiff
-        Tag *removeTag = cl->getTag (0x9003);
-
-        if (removeTag) {
-            removeTag->setKeep (false);
-        }
-
-        removeTag = cl->getTag (0x9211);
-
-        if (removeTag) {
-            removeTag->setKeep (false);
-        }
-    } else {
-        cl = new TagDirectory (nullptr, ifdAttribs, HOSTORDER);
-    }
-
-// add tiff strip data
-    int rps = 8;
-    int strips = ceil ((double)H / rps);
-    cl->replaceTag (new Tag (cl, lookupAttrib (ifdAttribs, "RowsPerStrip"), rps, LONG));
-    Tag* stripBC   = new Tag (cl, lookupAttrib (ifdAttribs, "StripByteCounts"));
-    stripBC->initInt (0, LONG, strips);
-    cl->replaceTag (stripBC);
-    Tag* stripOffs = new Tag (cl, lookupAttrib (ifdAttribs, "StripOffsets"));
-    stripOffs->initInt (0, LONG, strips);
-    cl->replaceTag (stripOffs);
-    Tag *sampleFormat = new Tag (cl, lookupAttrib (ifdAttribs, "SampleFormat"), bps == 32 ? 3 : 1, SHORT);
-    cl->replaceTag (sampleFormat);
-
-    for (int i = 0; i < strips - 1; i++) {
-        stripBC->setInt (rps * W * 3 * bps / 8, i * 4);
-    }
-
-    int remaining = (H - rps * floor ((double)H / rps)) * W * 3 * bps / 8;
-
-    if (remaining) {
-        stripBC->setInt (remaining, (strips - 1) * 4);
-    } else {
-        stripBC->setInt (rps * W * 3 * bps / 8, (strips - 1) * 4);
-    }
-
-    if (profiledata) {
-        Tag* icc = new Tag (cl, lookupAttrib (ifdAttribs, "ICCProfile"));
-        icc->initUndefArray (profiledata, profilelen);
-        cl->replaceTag (icc);
-    }
-
-    if (iptcdata) {
-        Tag* iptc = new Tag (cl, lookupAttrib (ifdAttribs, "IPTCData"));
-        iptc->initLongArray (iptcdata, iptclen);
-        cl->replaceTag (iptc);
-    }
-
-// apply list of changes
-    for (rtengine::procparams::ExifPairs::const_iterator i = changeList.begin(); i != changeList.end(); ++i) {
-        cl->applyChange (i->first, i->second);
-    }
-
-    // append default properties
-    const std::vector<Tag*> defTags = getDefaultTIFFTags (cl);
-
-    defTags[0]->setInt (W, 0, LONG);
-    defTags[1]->setInt (H, 0, LONG);
-    defTags[8]->initInt (0, SHORT, 3);
-
-    for (int i = 0; i < 3; i++) {
-        defTags[8]->setInt (bps, i * 2, SHORT);
-    }
-
-    for (int i = defTags.size() - 1; i >= 0; i--) {
-        Tag* defTag = defTags[i];
-        cl->replaceTag (defTag->clone (cl));
-        delete defTag;
-    }
-
-// calculate strip offsets
-    int size = cl->calculateSize ();
-    int byps = bps / 8;
-
-    for (int i = 0; i < strips; i++) {
-        stripOffs->setInt (size + 8 + i * rps * W * 3 * byps, i * 4);
-    }
-
-    cl->sort ();
-    bufferSize = cl->calculateSize() + 8;
-    buffer = new unsigned char[bufferSize]; // this has to be deleted in caller
-    sset2 ((unsigned short)order, buffer + offs, order);
-    offs += 2;
-    sset2 (42, buffer + offs, order);
-    offs += 2;
-    sset4 (8, buffer + offs, order);
-
-    int endOffs = cl->write (8, buffer);
-
-//  cl->printAll();
-    delete cl;
-
-    return endOffs;
 }
 
 //-----------------------------------------------------------------------------

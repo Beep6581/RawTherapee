@@ -809,10 +809,10 @@ const TagAttrib ifdAttribs[] = {
     {0, AC_WRITE,     0, nullptr, 0x828e, AUTO, "CFAPattern", &cfaInterpreter},
     {0, AC_WRITE,     0, kodakIfdAttribs, 0x8290, AUTO, "KodakIFD", &stdInterpreter},
     {0, AC_WRITE,     1, nullptr, 0x8298, AUTO, "Copyright", &stdInterpreter},
+    {0, AC_SYSTEM,    0, nullptr, 0x83BB, AUTO, "IPTCData", &stdInterpreter},
     {0, AC_DONTWRITE, 0, nullptr, 0x8606, AUTO, "LeafData", &stdInterpreter}, // is actually a subdir, but a proprietary format
     {0, AC_WRITE,     0, exifAttribs, 0x8769, AUTO, "Exif", &stdInterpreter},
     {0, AC_SYSTEM,    0, nullptr, 0x8773, AUTO, "ICCProfile", &stdInterpreter},
-    {0, AC_SYSTEM,    0, nullptr, 0x83BB, AUTO, "IPTCData", &stdInterpreter},
     {0, AC_WRITE,     0, gpsAttribs,  0x8825, AUTO, "GPSInfo", &stdInterpreter},
     {0, AC_WRITE,     0, nullptr, 0x9003, AUTO, "DateTimeOriginal", &stdInterpreter},
     {0, AC_WRITE,     0, nullptr, 0x9004, AUTO, "DateTimeDigitized", &stdInterpreter},
