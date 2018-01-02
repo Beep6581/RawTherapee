@@ -1103,7 +1103,7 @@ private:
             }
 
             ifstream fich(datalab, ios::in);
-            int maxdata = 101; //100 10022 //99 10021 // 91 10021 //88 10019 //87 10018//86 10017//85 10016 //82;//78;//73 10011
+            int maxdata = 102; //101 10023 //100 10022 //99 10021 // 91 10021 //88 10019 //87 10018//86 10017//85 10016 //82;//78;//73 10011
 
             if (fich && versionmip != 0) {
                 std::string inser;
@@ -1398,6 +1398,12 @@ private:
 
                     dataspots[94][0] = params.locallab.bilateral;
                     dataspots[95][0] = params.locallab.noiselequal;
+
+                    if (params.locallab.shapemethod == "ELI") {
+                        dataspots[96][0] =  0;
+                    } else if (params.locallab.shapemethod == "RECT") {
+                        dataspots[96][0] =  1;
+                    }
 
                     dataspots[maxdata - 5][0] = 100.f * params.locallab.huerefblur;
                     dataspots[maxdata - 4][0] = 100.f * params.locallab.hueref;
@@ -1930,6 +1936,11 @@ private:
                     params.locallab.bilateral = dataspots[94][sp];
                     params.locallab.noiselequal = dataspots[95][sp];
 
+                    if (dataspots[96][sp] ==  0) {
+                        params.locallab.shapemethod = "ELI" ;
+                    } else if (dataspots[96][sp] ==  1) {
+                        params.locallab.shapemethod = "RECT" ;
+                    }
 
                     params.locallab.huerefblur = ((float) dataspots[maxdata - 5][sp]) / 100.f;
                     params.locallab.hueref = ((float) dataspots[maxdata - 4][sp]) / 100.f;

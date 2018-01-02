@@ -385,6 +385,7 @@ void ParamsEdited::set(bool v)
     locallab.avoid = v;
     locallab.Smethod = v;
     locallab.Exclumethod = v;
+    locallab.shapemethod = v;
     locallab.retinexMethod = v;
     locallab.blurMethod = v;
     locallab.dustMethod = v;
@@ -1002,6 +1003,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         locallab.locYT = locallab.locYT && p.locallab.locYT == other.locallab.locYT;
         locallab.locXL = locallab.locXL && p.locallab.locXL == other.locallab.locXL;
         locallab.Smethod = locallab.Smethod && p.locallab.Smethod == other.locallab.Smethod;
+        locallab.shapemethod = locallab.shapemethod && p.locallab.shapemethod == other.locallab.shapemethod;
         locallab.Exclumethod = locallab.Exclumethod && p.locallab.Exclumethod == other.locallab.Exclumethod;
         locallab.retinexMethod = locallab.retinexMethod && p.locallab.retinexMethod == other.locallab.retinexMethod;
         locallab.blurMethod = locallab.blurMethod && p.locallab.blurMethod == other.locallab.blurMethod;
@@ -2528,6 +2530,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (locallab.Exclumethod) {
         toEdit.locallab.Exclumethod   = mods.locallab.Exclumethod;
+    }
+
+    if (locallab.shapemethod) {
+        toEdit.locallab.shapemethod   = mods.locallab.shapemethod;
     }
 
     if (locallab.retinexMethod) {

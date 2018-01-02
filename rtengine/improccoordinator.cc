@@ -201,6 +201,7 @@ ImProcCoordinator::ImProcCoordinator()
       sizeskintonecurves(500, -10000),
       excurves(25000, -10000),
       sizeexcurves(500, -10000),
+      shapemets(500, -1000),
       exclumets(500, -1000),
       sensiexclus(500, -1000),
       strucs(500, -1000),
@@ -875,7 +876,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                                     };
 
 
-            int maxdata = 101; //100 10022 //99 10021 // 90 10020 //88 10019//87 10018  //86 10017 //85 10016;// 82 10015//78;//73 for 10011
+            int maxdata = 102; //101 10023 //100 10022 //99 10021 // 90 10020 //88 10019//87 10018  //86 10017 //85 10016;// 82 10015//78;//73 for 10011
 
             if (fic0) {
                 //find current version mip
@@ -919,7 +920,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                     //initilize newues when first utilisation of Locallab. Prepare creation of Mip files
                     for (int sp = 1; sp < maxspot; sp++) { // spots default
                         int t_sp = sp;
-                        int t_mipversion = 10023;//new value for each change
+                        int t_mipversion = 10024;//new value for each change
                         int t_circrad = 18;
                         int t_locX = 250;
                         int t_locY = 250;
@@ -1064,6 +1065,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                         //10023
                         int t_noiselequal = 7;
 
+                        //10024
+                        int t_shapemeth = 0;
+
                         //all variables except locRETgainCurve 'coomon for all)
                         fic << "Mipversion=" << t_mipversion << '@' << endl;
                         fic << "Spot=" << t_sp << '@' << endl;
@@ -1172,6 +1176,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
                         fic << "Bilateral=" << t_bilateral << '@' << endl;
                         fic << "Noiselequal=" << t_noiselequal << '@' << endl;
+                        fic << "ShapeMethod=" << t_shapemeth << '@' <<  endl;
 
                         fic << "curveReti=" << t_curvret << '@' << endl;
                         fic << "curveLL=" << t_curvll << '@' << endl;
@@ -1485,6 +1490,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 dataspot[94][0] = bilaterals[0] = params.locallab.bilateral;
                 dataspot[95][0] = noiselequals[0] = params.locallab.noiselequal;
 
+                if (params.locallab.shapemethod == "ELI") {
+                    dataspot[96][0] =  shapemets[0] = 0;
+                } else if (params.locallab.shapemethod == "RECT") {
+                    dataspot[96][0] =  shapemets[0] = 1;
+                }
+
                 // for all curves work around - I do not know how to do with params curves...
                 //curve Reti local
                 int siz = params.locallab.localTgaincurve.size();
@@ -1794,6 +1805,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                     maxind = 93;
                 }
 
+                if (versionmip == 10023) {
+                    maxind = 94;
+                }
+
                 while (getline(fich, line)) {
                     spotline = line;
                     std::size_t pos = spotline.find("=");
@@ -2061,6 +2076,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 }
             }
 
+            if (versionmip <= 10023) {//
+                for (int sp = 1; sp < maxspot; sp++) { // spots default
+                    dataspot[96][sp] = 0;
+
+                }
+            }
+
             //here we change the number of spot
 
             if (ns < (maxspot - 1)) {
@@ -2069,7 +2091,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
                 for (int sp = ns + 1 ; sp < maxspot; sp++) { // spots default
                     int t_sp = sp;
-                    int t_mipversion = 10023;
+                    int t_mipversion = 10024;
                     int t_circrad = 18;
                     int t_locX = 250;
                     int t_locY = 250;
@@ -2206,6 +2228,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
                     //10023
                     int t_noiselequal = 7;
+                    //10024
+                    int t_shapemeth = 0;
 
                     fic << "Mipversion=" << t_mipversion << '@' << endl;
                     fic << "Spot=" << t_sp << '@' << endl;
@@ -2311,6 +2335,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
                     fic << "Bilateral=" << t_bilateral << '@' << endl;
                     fic << "Noiselequal=" << t_noiselequal << '@' << endl;
+                    fic << "ShapeMethod=" << t_shapemeth << '@' <<  endl;
 
                     fic << "curveReti=" << t_curvret << '@' << endl;
                     fic << "curveLL=" << t_curvll << '@' << endl;
@@ -2739,6 +2764,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
                 params.locallab.bilateral = bilaterals[sp] = dataspot[94][sp];
                 params.locallab.noiselequal = noiselequals[sp] = dataspot[95][sp];
+
+                if (dataspot[96][sp] ==  0) {
+                    shapemets[sp] = 0;
+                    params.locallab.shapemethod = "ELI" ;
+                } else if (dataspot[96][sp] ==  1) {
+                    shapemets[sp] = 1;
+                    params.locallab.shapemethod = "RECT" ;
+                }
 
                 int *s_datc;
                 s_datc = new int[70];
@@ -3381,6 +3414,16 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
             dataspot[94][sp] = bilaterals[sp] = params.locallab.bilateral = dataspot[94][0];
             dataspot[95][sp] = noiselequals[sp] = params.locallab.noiselequal = dataspot[95][0];
 
+            if (dataspot[96][0] == 0) {
+                params.locallab.shapemethod = "ELI" ;
+                shapemets[sp] = 0;
+                dataspot[96][sp] = 0;
+            } else if (dataspot[96][0] == 1) {
+                params.locallab.shapemethod = "RECT" ;
+                shapemets[sp] = 1;
+                dataspot[96][sp] = 1;
+            }
+
             int *s_datc;
             s_datc = new int[70];
             int siz;
@@ -3620,7 +3663,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
                 for (int spe = 1; spe < maxspot; spe++) {
                     int t_sp = spe;
-                    int t_mipversion = 10023;
+                    int t_mipversion = 10024;
                     int t_circrad  = dataspot[2][spe];
                     int t_locX  = dataspot[3][spe];
                     int t_locY  = dataspot[4][spe];
@@ -3724,6 +3767,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
                     int t_bilateral = dataspot[94][spe];
                     int t_noiselequal = dataspot[95][spe];
+                    int t_shapemeth = dataspot[96][spe];
 
                     int t_huerefblur = dataspot[maxdata - 5][spe];
                     int t_hueref = dataspot[maxdata - 4][spe];
@@ -3846,6 +3890,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
                     fou << "Bilateral=" << t_bilateral << '@' << endl;
                     fou << "Noiselequal=" << t_noiselequal << '@' << endl;
+                    fou << "ShapeMethod=" << t_shapemeth << '@' <<  endl;
 
                     fou << "huerefblur=" << t_huerefblur << '@' << endl;
                     fou << "hueref=" << t_hueref << '@' << endl;

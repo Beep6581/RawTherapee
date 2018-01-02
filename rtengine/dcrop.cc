@@ -1208,6 +1208,11 @@ void Crop::update(int todo)
                         params.locallab.bilateral = parent->bilaterals[sp];
                         params.locallab.noiselequal = parent->noiselequals[sp];
 
+                        if (parent->shapemets[sp] ==  0) {
+                            params.locallab.shapemethod = "ELI" ;
+                        } else if (parent->shapemets[sp] ==  1) {
+                            params.locallab.shapemethod = "RECT" ;
+                        }
 
                         std::vector<double>   cretie;
 
@@ -1683,6 +1688,14 @@ void Crop::update(int todo)
 
                 parent->bilaterals[sp] = params.locallab.bilateral = parent->bilaterals[0];
                 parent->noiselequals[sp] = params.locallab.noiselequal = parent->noiselequals[0];
+
+                if (parent->shapemets[sp] ==  0) {
+                    params.locallab.shapemethod = "ELI" ;
+                    parent->shapemets[sp] =  0;
+                } else if (parent->shapemets[sp] ==  1) {
+                    params.locallab.shapemethod = "RECT" ;
+                    parent->shapemets[sp] =  1;
+                }
 
                 std::vector<double>   ccret;
 

@@ -280,6 +280,7 @@ Locallab::Locallab():
     centerXbuf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CENTERBUF_X"), -1000, 1000, 1, 0))),
     centerYbuf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CENTERBUF_Y"), -1000, 1000, 1, 0))),
 
+    shapemethod(Gtk::manage(new MyComboBoxText())),
     Smethod(Gtk::manage(new MyComboBoxText())),
     Exclumethod(Gtk::manage(new MyComboBoxText())),
 
@@ -313,8 +314,10 @@ Locallab::Locallab():
     labqualcurv(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_QUALCURV_METHOD") + ":"))),
     labmS(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_STYPE") + ":"))),
     labmEx(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_EXCLUTYPE") + ":"))),
+    labmshape(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SHAPETYPE") + ":"))),
 
     ctboxS(Gtk::manage(new Gtk::HBox())),
+    ctboxshape(Gtk::manage(new Gtk::HBox())),
     ctboxEx(Gtk::manage(new Gtk::HBox())),
     dhbox(Gtk::manage(new Gtk::HBox())),
     qualbox(Gtk::manage(new Gtk::HBox())),
@@ -395,8 +398,18 @@ Locallab::Locallab():
     expdenoi->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expdenoi));
     enabledenoiConn = expdenoi->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expdenoi));
 
+
+    ctboxshape->pack_start(*labmshape, Gtk::PACK_SHRINK, 4);
+    ctboxshape->set_tooltip_markup(M("TP_LOCALLAB_SHAPE_TOOLTIP"));
+
     ctboxEx->pack_start(*labmEx, Gtk::PACK_SHRINK, 4);
     ctboxEx->set_tooltip_markup(M("TP_LOCALLAB_EXCLUTYPE_TOOLTIP"));
+
+    shapemethod->append(M("TP_LOCALLAB_ELI"));
+    shapemethod->append(M("TP_LOCALLAB_RECT"));
+    shapemethod->set_active(0);
+    shapemethodconn = shapemethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::shapemethodChanged));
+
 
     Exclumethod->append(M("TP_LOCALLAB_EXNORM"));
     Exclumethod->append(M("TP_LOCALLAB_EXECLU"));
@@ -411,6 +424,7 @@ Locallab::Locallab():
 
     ctboxS->pack_start(*labmS, Gtk::PACK_SHRINK, 4);
     ctboxS->set_tooltip_markup(M("TP_LOCALLAB_STYPE_TOOLTIP"));
+
 
     Smethod->append(M("TP_LOCALLAB_IND"));
     Smethod->append(M("TP_LOCALLAB_SYM"));
@@ -689,6 +703,9 @@ Locallab::Locallab():
     chromaref->hide();
     lumaref->hide();
     sobelref->hide();
+    ctboxshape->pack_start(*shapemethod);
+    shapeBox->pack_start(*ctboxshape);
+
     ctboxEx->pack_start(*Exclumethod);
     shapeBox->pack_start(*ctboxEx);
 
@@ -702,6 +719,7 @@ Locallab::Locallab():
     shapeBox->pack_start(*excluFrame);
 
 
+//   ctboxS->pack_start(*shapemethod);
     ctboxS->pack_start(*Smethod);
     shapeBox->pack_start(*ctboxS);
 
@@ -1500,6 +1518,7 @@ void Locallab::updateToolState(std::vector<int> &tpOpen)
 void Locallab::neutral_pressed()
 {
     Smethod->set_active(0);
+    shapemethod->set_active(0);
     Exclumethod->set_active(0);
     locX->resetValue(false);
     locXL->resetValue(false);
@@ -2139,14 +2158,20 @@ bool Locallab::localComputed_()
     bilateral->setValue(nextdatasp[94]);
     noiselequal->setValue(nextdatasp[95]);
 
-    double intermedblur = 0.01 * (double) nextdatasp[96];
+    if (nextdatasp[96] == 0) {
+        shapemethod->set_active(0);
+    } else if (nextdatasp[96] == 1) {
+        shapemethod->set_active(1);
+    }
+
+    double intermedblur = 0.01 * (double) nextdatasp[97];
     huerefblur->setValue(intermedblur);
-    double intermed = 0.01 * (double) nextdatasp[97];
+    double intermed = 0.01 * (double) nextdatasp[98];
     hueref->setValue(intermed);
 
-    chromaref->setValue(nextdatasp[98]);
-    lumaref->setValue(nextdatasp[99]);
-    sobelref->setValue(nextdatasp[100]);
+    chromaref->setValue(nextdatasp[99]);
+    lumaref->setValue(nextdatasp[100]);
+    sobelref->setValue(nextdatasp[101]);
 
     int *s_datc;
     s_datc = new int[70];
@@ -2348,6 +2373,10 @@ bool Locallab::localComputed_()
         listener->panelChanged(Evlocallabexclumethod, Exclumethod->get_active_text());
     }
 
+    if (listener) {//for shape RT-spot method
+        listener->panelChanged(Evlocallabshapemethod, shapemethod->get_active_text());
+    }
+
     if (listener) {//for curvactiv
         listener->panelChanged(Evlocallabcurvactiv, M("GENERAL_ENABLED"));
     }
@@ -2463,7 +2492,7 @@ bool Locallab::localComputed_()
 
 void Locallab::localChanged(int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat)
 {
-    for (int i = 2; i < 101; i++) {
+    for (int i = 2; i < 102; i++) {
         nextdatasp[i] = datasp[i][sp];
     }
 
@@ -2633,6 +2662,10 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
             Smethod->set_active_text(M("GENERAL_UNCHANGED"));
         }
 
+        if (!pedited->locallab.shapemethod) {
+            shapemethod->set_active_text(M("GENERAL_UNCHANGED"));
+        }
+
         if (!pedited->locallab.Exclumethod) {
             Exclumethod->set_active_text(M("GENERAL_UNCHANGED"));
         }
@@ -2661,6 +2694,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     setEnabled(pp->locallab.enabled);
 
+    shapemethodconn.block(true);
     Smethodconn.block(true);
     Exclumethodconn.block(true);
     retinexMethodConn.block(true);
@@ -2845,6 +2879,16 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     updateGeometry(pp->locallab.centerX, pp->locallab.centerY, pp->locallab.circrad, pp->locallab.locY, pp->locallab.degree,  pp->locallab.locX, pp->locallab.locYT, pp->locallab.locXL);
 
+    if (pp->locallab.shapemethod == "ELI") {
+        shapemethod->set_active(0);
+    } else if (pp->locallab.shapemethod == "RECT") {
+        shapemethod->set_active(1);
+    }
+
+    shapemethodChanged();
+    shapemethodconn.block(false);
+
+
     if (pp->locallab.Smethod == "IND") {
         Smethod->set_active(0);
     } else if (pp->locallab.Smethod == "SYM") {
@@ -2854,6 +2898,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
     } else if (pp->locallab.Smethod == "SYMSL") {
         Smethod->set_active(3);
     }
+
 
     SmethodChanged();
     Smethodconn.block(false);
@@ -3285,6 +3330,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
     if (pedited) {
         pedited->locallab.degree = degree->getEditedState();
         pedited->locallab.Smethod  = Smethod->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->locallab.shapemethod  = shapemethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->locallab.Exclumethod  = Exclumethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->locallab.retinexMethod    = retinexMethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->locallab.qualityMethod    = qualityMethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -3444,6 +3490,12 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
         pp->locallab.Exclumethod = "norm";
     } else if (Exclumethod->get_active_row_number() == 1) {
         pp->locallab.Exclumethod = "exc";
+    }
+
+    if (shapemethod->get_active_row_number() == 0) {
+        pp->locallab.shapemethod = "ELI";
+    } else if (shapemethod->get_active_row_number() == 1) {
+        pp->locallab.shapemethod = "RECT";
     }
 
     if (Smethod->get_active_row_number() == 0) {
@@ -3752,6 +3804,17 @@ void Locallab::ExclumethodChanged()
 
 }
 
+void Locallab::shapemethodChanged()
+{
+    if (!batchMode) {
+        //
+    }
+
+
+    if (listener) {
+        listener->panelChanged(Evlocallabshapemethod, shapemethod->get_active_text());
+    }
+}
 
 void Locallab::SmethodChanged()
 {

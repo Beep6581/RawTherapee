@@ -845,6 +845,7 @@ HISTORY_MSG_597;Local L*a*b*
 HISTORY_MSG_598;Local - Bottom
 HISTORY_MSG_599;Local - Noise bilateral
 HISTORY_MSG_600;Local - Noise Equal. Black-White
+HISTORY_MSG_601;Local - Shape Rt-spot method
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
@@ -1909,6 +1910,10 @@ TP_LOCALLAB_SENSI;Scope
 TP_LOCALLAB_SENSI_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
 TP_LOCALLAB_SENSIH;Hue Scope
 TP_LOCALLAB_SENSIH_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
+TP_LOCALLAB_SHAPETYPE;Shape RT-spot area
+TP_LOCALLAB_SHAPE_TOOLTIP;Rectangle is only in normal mode.
+TP_LOCALLAB_ELI;Elipse
+TP_LOCALLAB_RECT;Rectangle
 TP_LOCALLAB_SHARP;Sharpening
 TP_LOCALLAB_SHARRADIUS;Radius
 TP_LOCALLAB_SHARAMOUNT;Amount

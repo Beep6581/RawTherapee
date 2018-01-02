@@ -964,6 +964,7 @@ struct LocallabParams {
     bool    avoid;
     Glib::ustring Smethod;
     Glib::ustring Exclumethod;
+    Glib::ustring shapemethod;
     Glib::ustring retinexMethod;
     Glib::ustring blurMethod;
     Glib::ustring dustMethod;

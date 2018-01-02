@@ -131,6 +131,7 @@ private:
     Adjuster* const centerYbuf;
 //    Adjuster* const adjblur;
 
+    MyComboBoxText*   const shapemethod;
     MyComboBoxText*   const Smethod;
     MyComboBoxText*   const Exclumethod;
     MyComboBoxText*   const retinexMethod;
@@ -152,8 +153,10 @@ private:
     Gtk::Label* const labqualcurv;
     Gtk::Label* const labmS;
     Gtk::Label* const labmEx;
+    Gtk::Label* const labmshape;
 
     Gtk::HBox* const ctboxS;
+    Gtk::HBox* const ctboxshape;
     Gtk::HBox* const ctboxEx;
 
     Gtk::HBox* const dhbox;
@@ -235,7 +238,7 @@ private:
     sigc::connection enableretiConn, enablesharpConn, enablecbdlConn;
     sigc::connection enabledenoiConn;
     sigc::connection  editConn, avoidConn, inversConn, cutpastConn, lastdustConn, curvactivConn, activlumConn, inversradConn, inversretConn, inversshaConn,  neutralconn, neutralconn1;
-    sigc::connection  Smethodconn, Exclumethodconn;
+    sigc::connection  Smethodconn, shapemethodconn, Exclumethodconn;
     sigc::connection retinexMethodConn;
     sigc::connection qualityMethodConn;
     sigc::connection qualitycurveMethodConn;
@@ -244,7 +247,7 @@ private:
 
 
 
-    int nextdatasp[101];
+    int nextdatasp[102];
     int nextlength;
     std::string nextstr;
     std::string nextstr2;
@@ -289,6 +292,7 @@ public:
 
     void updateGeometry(const int centerX_, const int centerY_, const int circrad_, const int locY_, const double degree_, const int locX_, const int locYT_, const int locXL_, const int fullWidth = -1, const int fullHeight = -1);
     void SmethodChanged();
+    void shapemethodChanged();
     void ExclumethodChanged();
     void writeOptions(std::vector<int> &tpOpen);
     void updateToolState(std::vector<int> &tpOpen);

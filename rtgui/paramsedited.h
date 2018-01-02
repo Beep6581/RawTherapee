@@ -506,6 +506,7 @@ public:
     bool avoid;
     bool Smethod;
     bool Exclumethod;
+    bool shapemethod;
     bool sensiexclu;
     bool struc;
     bool retinexMethod;

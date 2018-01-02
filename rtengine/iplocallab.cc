@@ -87,6 +87,28 @@ float calcLocalFactor(const float lox, const float loy, const float lcx, const f
     return 0.5f * (1.f + xcosf(degrad * ap + bp));  //trigo cos transition
 
 }
+float calcLocalFactorrect(const float lox, const float loy, const float lcx, const float dx, const float lcy, const float dy, const float ach)
+{
+    float eps = 0.0001f;
+    float krap = fabs(dx / dy);
+    float kx = (lox - lcx);
+    float ky = (loy - lcy);
+    float ref = 0.f;
+
+    if (fabs(kx / (ky + eps)) < krap) {
+        ref = sqrt(rtengine::SQR(dy) * (1.f + rtengine::SQR(kx / (ky + eps))));
+    } else {
+        ref = sqrt(rtengine::SQR(dx) * (1.f + rtengine::SQR(ky / (kx + eps))));
+    }
+
+    float rad = sqrt(rtengine::SQR(kx) + rtengine::SQR(ky));
+    float coef = rad / ref;
+    float ac = 1.f / (ach - 1.f);
+    float fact = ac * (coef - 1.f);
+    return fact;
+
+}
+
 /*
 float calcLocalFactorinv (const float lox, const float loy, const float lcx, const float dx, const float lcy, const float dy, const float ach)
 {
@@ -186,6 +208,7 @@ struct local_params {
     int strucc;
     int war;
     float adjch;
+    int shapmet;
 
 
 };
@@ -387,6 +410,12 @@ static void calcLocalParams(int oW, int oH, const LocallabParams& locallab, stru
         lp.excmet = 1;
     }
 
+    if (locallab.shapemethod == "ELI") {
+        lp.shapmet = 0;
+    } else if (locallab.shapemethod == "RECT") {
+        lp.shapmet = 1;
+    }
+
     float local_noiself = (float)locallab.noiselumf;
     float local_noiselc = (float)locallab.noiselumc;
     float local_noiseldetail = locallab.noiselumdetail;
@@ -521,6 +550,51 @@ static void calcLocalParams(int oW, int oH, const LocallabParams& locallab, stru
     lp.strucc = local_struc;
     lp.war = local_warm;
 }
+
+
+
+static void calcTransitionrect(const float lox, const float loy, const float ach, const local_params& lp, int &zone, float &localFactor)
+{
+    zone = 0;
+
+    if (lox >= lp.xc && lox < (lp.xc + lp.lx) && loy >= lp.yc && loy < lp.yc + lp.ly) {
+        if (lox < (lp.xc + lp.lx * ach)  && loy < (lp.yc + lp.ly * ach)) {
+            zone = 2;
+        } else {
+            zone = 1;
+            localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lx, lp.yc, lp.ly, ach);
+        }
+
+    } else if (lox >= lp.xc && lox < lp.xc + lp.lx && loy < lp.yc && loy > lp.yc - lp.lyT) {
+        if (lox < (lp.xc + lp.lx * ach) && loy > (lp.yc - lp.lyT * ach)) {
+            zone = 2;
+        } else {
+            zone = 1;
+            localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lx, lp.yc, lp.lyT, ach);
+        }
+
+
+    } else if (lox < lp.xc && lox > lp.xc - lp.lxL && loy <= lp.yc && loy > lp.yc - lp.lyT) {
+        if (lox > (lp.xc - lp.lxL * ach) && loy > (lp.yc - lp.lyT * ach)) {
+            zone = 2;
+        } else {
+            zone = 1;
+            localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lxL, lp.yc, lp.lyT, ach);
+        }
+
+    } else if (lox < lp.xc && lox > lp.xc - lp.lxL && loy > lp.yc && loy < lp.yc + lp.ly) {
+        if (lox > (lp.xc - lp.lxL * ach) && loy < (lp.yc + lp.ly * ach)) {
+            zone = 2;
+        } else {
+            zone = 1;
+            localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lxL, lp.yc, lp.ly, ach);
+        }
+
+    }
+
+}
+
+
 
 static void calcTransition(const float lox, const float loy, const float ach, const local_params& lp, int &zone, float &localFactor)
 {
@@ -1971,7 +2045,14 @@ void ImProcFunctions::DeNoise_Local_imp(const struct local_params& lp,  int levr
                 int begy = int (lp.yc - lp.lyT);
 
                 float localFactor = 1.f;
-                calcTransition(lox, loy, ach, lp, zone, localFactor);
+
+                if (lp.shapmet == 0) {
+                    calcTransition(lox, loy, ach, lp, zone, localFactor);
+                } else if (lp.shapmet == 1) {
+                    calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
+                }
+
+                // calcTransition(lox, loy, ach, lp, zone, localFactor);
 
                 if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
                     transformed->L[y][x] = original->L[y][x];
@@ -2194,7 +2275,14 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp,  in
                 int begy = int (lp.yc - lp.lyT);
 
                 float localFactor = 1.f;
-                calcTransition(lox, loy, ach, lp, zone, localFactor);
+
+                if (lp.shapmet == 0) {
+                    calcTransition(lox, loy, ach, lp, zone, localFactor);
+                } else if (lp.shapmet == 1) {
+                    calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
+                }
+
+                //     calcTransition(lox, loy, ach, lp, zone, localFactor);
 
                 if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
                     transformed->L[y][x] = original->L[y][x];
@@ -2449,7 +2537,14 @@ void ImProcFunctions::cat02_Local(float **buflightcat, float **buf_a_cat, float 
 
                     int zone = 0;
                     float localFactor = 1.f;
-                    calcTransition(lox, loy, ach, lp, zone, localFactor);
+
+                    if (lp.shapmet == 0) {
+                        calcTransition(lox, loy, ach, lp, zone, localFactor);
+                    } else if (lp.shapmet == 1) {
+                        calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
+                    }
+
+                    //   calcTransition(lox, loy, ach, lp, zone, localFactor);
 
                     if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
                         transformed->L[y][x] = original->L[y][x];
@@ -2838,7 +2933,14 @@ void ImProcFunctions::cbdl_Local(float ** buflight, float ** bufchrom, float **l
                 int zone = 0;
 
                 float localFactor = 1.f;
-                calcTransition(lox, loy, ach, lp, zone, localFactor);
+
+                if (lp.shapmet == 0) {
+                    calcTransition(lox, loy, ach, lp, zone, localFactor);
+                } else if (lp.shapmet == 1) {
+                    calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
+                }
+
+                //   calcTransition(lox, loy, ach, lp, zone, localFactor);
 
                 if (zone == 0) {
                     continue;
@@ -3225,7 +3327,14 @@ void ImProcFunctions::TM_Local(LabImage * tmp1, float **buflight, const float hu
                     int zone = 0;
 
                     float localFactor = 1.f;
-                    calcTransition(lox, loy, ach, lp, zone, localFactor);
+
+                    if (lp.shapmet == 0) {
+                        calcTransition(lox, loy, ach, lp, zone, localFactor);
+                    } else if (lp.shapmet == 1) {
+                        calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
+                    }
+
+                    //  calcTransition(lox, loy, ach, lp, zone, localFactor);
 
                     if (zone == 0) {
                         continue;
@@ -3574,7 +3683,14 @@ void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2
                 int begy = int (lp.yc - lp.lyT);
 
                 float localFactor = 1.f;
-                calcTransition(lox, loy, ach, lp, zone, localFactor);
+
+                if (lp.shapmet == 0) {
+                    calcTransition(lox, loy, ach, lp, zone, localFactor);
+                } else if (lp.shapmet == 1) {
+                    calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
+                }
+
+                //    calcTransition(lox, loy, ach, lp, zone, localFactor);
 
                 if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
                     if (lp.blurmet == 0) {
@@ -3867,7 +3983,14 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, LabImage
 
             int zone;
             float localFactor;
-            calcTransition(lox, loy, ach, lp, zone, localFactor);
+
+            if (lp.shapmet == 0) {
+                calcTransition(lox, loy, ach, lp, zone, localFactor);
+            } else if (lp.shapmet == 1) {
+                calcTransition(lox, loy, ach, lp, zone, localFactor);
+            }
+
+            //  calcTransition(lox, loy, ach, lp, zone, localFactor);
 
             switch (zone) {
                 case 0: { // outside selection and outside transition zone => full effect, no transition
@@ -4034,7 +4157,14 @@ void ImProcFunctions::Reti_Local(float **buflight, float **bufchro, const float 
 
                     int zone = 0;
                     float localFactor = 1.f;
-                    calcTransition(lox, loy, ach, lp, zone, localFactor);
+
+                    if (lp.shapmet == 0) {
+                        calcTransition(lox, loy, ach, lp, zone, localFactor);
+                    } else if (lp.shapmet == 1) {
+                        calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
+                    }
+
+                    //   calcTransition(lox, loy, ach, lp, zone, localFactor);
 
                     if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
                         transformed->L[y][x] = original->L[y][x];
@@ -4359,7 +4489,14 @@ void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp, Lab
 
             int zone;
             float localFactor;
-            calcTransition(lox, loy, ach, lp, zone, localFactor);
+
+            if (lp.shapmet == 0) {
+                calcTransition(lox, loy, ach, lp, zone, localFactor);
+            } else if (lp.shapmet == 1) {
+                calcTransition(lox, loy, ach, lp, zone, localFactor);
+            }
+
+            //  calcTransition(lox, loy, ach, lp, zone, localFactor);
 
             switch (zone) {
                 case 0: { // outside selection and outside transition zone => full effect, no transition
@@ -4543,7 +4680,14 @@ void ImProcFunctions::Contrast_Local(int call, float ** buflightc, const float h
                         int zone = 0;
 
                         float localFactor = 1.f;
-                        calcTransition(lox, loy, ach, lp, zone, localFactor);
+
+                        if (lp.shapmet == 0) {
+                            calcTransition(lox, loy, ach, lp, zone, localFactor);
+                        } else if (lp.shapmet == 1) {
+                            calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
+                        }
+
+                        //     calcTransition(lox, loy, ach, lp, zone, localFactor);
 
                         if (zone == 0) {
                             continue;
@@ -4909,7 +5053,14 @@ void ImProcFunctions::InverseContrast_Local(float ave, struct local_contra & lco
                 int zone = 0;
 
                 float localFactor = 1.f;
-                calcTransition(lox, loy, ach, lp, zone, localFactor);
+
+                if (lp.shapmet == 0) {
+                    calcTransition(lox, loy, ach, lp, zone, localFactor);
+                } else if (lp.shapmet == 1) {
+                    calcTransition(lox, loy, ach, lp, zone, localFactor);
+                }
+
+                //  calcTransition(lox, loy, ach, lp, zone, localFactor);
 
 
 #ifdef __SSE2__
@@ -5210,7 +5361,14 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueplus, c
 #endif
                 int zone;
                 float localFactor = 1.f;
-                calcTransition(lox, loy, ach, lp, zone, localFactor);
+
+                if (lp.shapmet == 0) {
+                    calcTransition(lox, loy, ach, lp, zone, localFactor);
+                } else if (lp.shapmet == 1) {
+                    calcTransition(lox, loy, ach, lp, zone, localFactor);
+                }
+
+                //   calcTransition(lox, loy, ach, lp, zone, localFactor);
                 //prepare shape detection
                 float khu = 0.f;
                 float kch = 1.f;
@@ -5443,7 +5601,14 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, const float hueplus
                 int lox = cx + x;
                 int zone = 0;
                 float localFactor = 1.f;
-                calcTransition(lox, loy, ach, lp, zone, localFactor);
+
+                if (lp.shapmet == 0) {
+                    calcTransition(lox, loy, ach, lp, zone, localFactor);
+                } else if (lp.shapmet == 1) {
+                    calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
+                }
+
+                //    calcTransition(lox, loy, ach, lp, zone, localFactor);
 
                 if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
                     transformed->L[y][x] = original->L[y][x];
@@ -5714,7 +5879,14 @@ void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, 
 
                     int zone = 0;
                     float localFactor = 1.f;
-                    calcTransition(lox, loy, ach, lp, zone, localFactor);
+
+                    if (lp.shapmet == 0) {
+                        calcTransition(lox, loy, ach, lp, zone, localFactor);
+                    } else if (lp.shapmet == 1) {
+                        calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
+                    }
+
+                    //   calcTransition(lox, loy, ach, lp, zone, localFactor);
 
                     if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
                         transformed->L[y][x] = original->L[y][x];
@@ -6169,7 +6341,14 @@ void ImProcFunctions::Expose_Local(int sen, float **buflight, float **bufchro, c
 
                     int zone = 0;
                     float localFactor = 1.f;
-                    calcTransition(lox, loy, ach, lp, zone, localFactor);
+
+                    if (lp.shapmet == 0) {
+                        calcTransition(lox, loy, ach, lp, zone, localFactor);
+                    } else if (lp.shapmet == 1) {
+                        calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
+                    }
+
+                    //  calcTransition(lox, loy, ach, lp, zone, localFactor);
 
                     if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
                         transformed->L[y][x] = original->L[y][x];
@@ -6623,7 +6802,12 @@ void ImProcFunctions::ColorLight_Local(int call, LabImage * bufcolorig, float **
                     int zone = 0;
 
                     float localFactor = 1.f;
-                    calcTransition(lox, loy, ach, lp, zone, localFactor);
+
+                    if (lp.shapmet == 0) {
+                        calcTransition(lox, loy, ach, lp, zone, localFactor);
+                    } else if (lp.shapmet == 1) {
+                        calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
+                    }
 
                     if (zone == 0) {
                         continue;
@@ -7419,7 +7603,14 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, La
                 int zone = 0;
 
                 float localFactor = 1.f;
-                calcTransition(lox, loy, ach, lp, zone, localFactor);
+
+                if (lp.shapmet == 0) {
+                    calcTransition(lox, loy, ach, lp, zone, localFactor);
+                } else if (lp.shapmet == 1) {
+                    calcTransition(lox, loy, ach, lp, zone, localFactor);//rect not good
+                }
+
+                //  calcTransition(lox, loy, ach, lp, zone, localFactor);
 
 
 #ifdef __SSE2__

@@ -355,6 +355,7 @@ protected:
     LUTi excurves;
     LUTi sizeexcurves;
 
+    LUTi shapemets;
     LUTi exclumets;
     LUTi sensiexclus;
     LUTi strucs;

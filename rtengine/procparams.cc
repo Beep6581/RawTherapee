@@ -2434,6 +2434,7 @@ transit(60),
 avoid(false),
 Smethod("IND"),
 Exclumethod("norm"),
+shapemethod("ELI"),
 retinexMethod("high"),
 blurMethod("norm"),
 dustMethod("mov"),
@@ -2493,6 +2494,7 @@ bool LocallabParams::operator ==(const LocallabParams& other) const
         && degree == other.degree
         && Smethod == other.Smethod
         && Exclumethod == other.Exclumethod
+        && shapemethod == other.shapemethod
         && retinexMethod == other.retinexMethod
         && blurMethod == other.blurMethod
         && dustMethod == other.dustMethod
@@ -3495,6 +3497,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->locallab.degree, "Locallab", "Degree", locallab.degree, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.Smethod, "Locallab", "Smethod", locallab.Smethod, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.Exclumethod, "Locallab", "Exclumethod", locallab.Exclumethod, keyFile);
+        saveToKeyfile(!pedited || pedited->locallab.shapemethod, "Locallab", "Shapemethod", locallab.shapemethod, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.retinexMethod, "Locallab", "retinexMethod", locallab.retinexMethod, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.blurMethod, "Locallab", "BlurMethod", locallab.blurMethod, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.dustMethod, "Locallab", "DustMethod", locallab.dustMethod, keyFile);
@@ -4606,6 +4609,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Locallab", "Degree", pedited, locallab.degree, pedited->locallab.degree);
             assignFromKeyfile(keyFile, "Locallab", "Smethod", pedited, locallab.Smethod, pedited->locallab.Smethod);
             assignFromKeyfile(keyFile, "Locallab", "Exclumethod", pedited, locallab.Exclumethod, pedited->locallab.Exclumethod);
+            assignFromKeyfile(keyFile, "Locallab", "Shapemethod", pedited, locallab.shapemethod, pedited->locallab.shapemethod);
             assignFromKeyfile(keyFile, "Locallab", "retinexMethod", pedited, locallab.retinexMethod, pedited->locallab.retinexMethod);
             assignFromKeyfile(keyFile, "Locallab", "BlurMethod", pedited, locallab.blurMethod, pedited->locallab.blurMethod);
             assignFromKeyfile(keyFile, "Locallab", "DustMethod", pedited, locallab.dustMethod, pedited->locallab.dustMethod);
