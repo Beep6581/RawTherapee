@@ -309,6 +309,38 @@ public:
 
 #if defined( __SSE2__ ) && defined( __x86_64__ )
 
+
+    // NOTE: This function requires LUTs which clips only at lower bound
+    vfloat cb(vfloat indexv) const
+    {
+        static_assert(std::is_same<T, float>::value, "This method only works for float LUTs");
+
+        // Clamp and convert to integer values. Extract out of SSE register because all
+        // lookup operations use regular addresses.
+        vfloat clampedIndexes = vmaxf(ZEROV, vminf(F2V(maxIndexFloat), indexv));
+        vint indexes = _mm_cvttps_epi32(clampedIndexes);
+        int indexArray[4];
+        _mm_storeu_si128(reinterpret_cast<__m128i*>(&indexArray[0]), indexes);
+
+        // Load data from the table. This reads more than necessary, but there don't seem
+        // to exist more granular operations (though we could try non-SSE).
+        // Cast to int for convenience in the next operation (partial transpose).
+        vint values[4];
+        for (int i = 0; i < 4; ++i) {
+            values[i] = _mm_castps_si128(LVFU(data[indexArray[i]]));
+        }
+
+        // Partial 4x4 transpose operation. We want two new vectors, the first consisting
+        // of [values[0][0] ... values[3][0]] and the second [values[0][1] ... values[3][1]].
+        __m128i temp0 = _mm_unpacklo_epi32(values[0], values[1]);
+        __m128i temp1 = _mm_unpacklo_epi32(values[2], values[3]);
+        vfloat lower = _mm_castsi128_ps(_mm_unpacklo_epi64(temp0, temp1));
+        vfloat upper = _mm_castsi128_ps(_mm_unpackhi_epi64(temp0, temp1));
+
+        vfloat diff = vmaxf(ZEROV, indexv) - _mm_cvtepi32_ps(indexes);
+        return vintpf(diff, upper, lower);
+    }
+
     // NOTE: This version requires LUTs which clip at upper and lower bounds
     // (which is the default).
     vfloat operator[](vfloat indexv) const
@@ -338,6 +370,37 @@ public:
         vfloat upper = _mm_castsi128_ps(_mm_unpackhi_epi64(temp0, temp1));
 
         vfloat diff = clampedIndexes - _mm_cvtepi32_ps(indexes);
+        return vintpf(diff, upper, lower);
+    }
+
+    // NOTE: This version requires LUTs which do not clip at upper and lower bounds
+    vfloat operator()(vfloat indexv) const
+    {
+        static_assert(std::is_same<T, float>::value, "This method only works for float LUTs");
+
+        // Clamp and convert to integer values. Extract out of SSE register because all
+        // lookup operations use regular addresses.
+        vfloat clampedIndexes = vmaxf(ZEROV, vminf(F2V(maxsf), indexv));
+        vint indexes = _mm_cvttps_epi32(clampedIndexes);
+        int indexArray[4];
+        _mm_storeu_si128(reinterpret_cast<__m128i*>(&indexArray[0]), indexes);
+
+        // Load data from the table. This reads more than necessary, but there don't seem
+        // to exist more granular operations (though we could try non-SSE).
+        // Cast to int for convenience in the next operation (partial transpose).
+        vint values[4];
+        for (int i = 0; i < 4; ++i) {
+            values[i] = _mm_castps_si128(LVFU(data[indexArray[i]]));
+        }
+
+        // Partial 4x4 transpose operation. We want two new vectors, the first consisting
+        // of [values[0][0] ... values[3][0]] and the second [values[0][1] ... values[3][1]].
+        __m128i temp0 = _mm_unpacklo_epi32(values[0], values[1]);
+        __m128i temp1 = _mm_unpacklo_epi32(values[2], values[3]);
+        vfloat lower = _mm_castsi128_ps(_mm_unpacklo_epi64(temp0, temp1));
+        vfloat upper = _mm_castsi128_ps(_mm_unpackhi_epi64(temp0, temp1));
+
+        vfloat diff = indexv - _mm_cvtepi32_ps(indexes);
         return vintpf(diff, upper, lower);
     }
 #ifdef __SSE4_1__

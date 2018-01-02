@@ -282,9 +282,9 @@ public:
     int     toInt         (int ofs = 0, TagType astype = INVALID) const;
     void    fromInt       (int v);
     double  toDouble      (int ofs = 0) const;
-    double *toDoubleArray (int ofs = 0);
-    void    toRational    (int& num, int& denom, int ofs = 0);
-    void    toString      (char* buffer, int ofs = 0);
+    double* toDoubleArray (int ofs = 0) const;
+    void    toRational    (int& num, int& denom, int ofs = 0) const;
+    void    toString      (char* buffer, int ofs = 0) const;
     void    fromString    (const char* v, int size = -1);
     void    setInt        (int v, int ofs = 0, TagType astype = LONG);
 

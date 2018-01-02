@@ -151,6 +151,7 @@ set(NONCLISOURCEFILES
     fattaltonemap.cc
     localcontrast.cc
     eventmapper.cc
+    metadatapanel.cc
     )
 
 include_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")

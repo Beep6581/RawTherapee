@@ -474,14 +474,14 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
 
 
     uint16 bitspersample = 0, samplesperpixel = 0, sampleformat = 0, photometric = 0, compression = 0;
-    rtexif::Tag* bps = frameRootDir->findTag("BitsPerSample");
-    rtexif::Tag* spp = frameRootDir->findTag("SamplesPerPixel");
-    rtexif::Tag* sf = frameRootDir->findTag("SampleFormat");
-    rtexif::Tag* pi = frameRootDir->findTag("PhotometricInterpretation");
-    rtexif::Tag* c = frameRootDir->findTag("Compression");
+    const rtexif::Tag* const bps = frameRootDir->findTag("BitsPerSample");
+    const rtexif::Tag* const spp = frameRootDir->findTag("SamplesPerPixel");
+    const rtexif::Tag* const sf = frameRootDir->findTag("SampleFormat");
+    const rtexif::Tag* const pi = frameRootDir->findTag("PhotometricInterpretation");
+    const rtexif::Tag* const c = frameRootDir->findTag("Compression");
 
     if (mnote && (!make.compare (0, 6, "PENTAX") || (!make.compare (0, 5, "RICOH") && !model.compare (0, 6, "PENTAX")))) {
-        rtexif::Tag* hdr = mnote->findTag("HDR");
+        const rtexif::Tag* const hdr = mnote->findTag("HDR");
         if (hdr) {
             if (hdr->toInt() > 0 && hdr->toInt(2) > 0) {
                 isHDR = true;
@@ -490,7 +490,7 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
 #endif
             }
         } else {
-            rtexif::Tag* dm = mnote->findTag("DriveMode");
+            const rtexif::Tag* const dm = mnote->findTag("DriveMode");
             if (dm) {
                 char buffer[60];
                 dm->toString(buffer, 3);
@@ -505,7 +505,7 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
         }
 
         if (!isHDR) {
-            rtexif::Tag* q = mnote->findTag("Quality");
+            const rtexif::Tag* const q = mnote->findTag("Quality");
             if (q && q->toInt() == 7) {
                 isPixelShift = true;
 #if PRINT_HDR_PS_DETECTION
@@ -530,7 +530,11 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
         sampleformat = sf->toInt();
     }
 
-    if ((!bps & !spp) || !pi) {
+    if (
+        !bps
+        || !spp
+        || !pi
+    ) {
         return;
     }
 
@@ -833,8 +837,6 @@ rtexif::TagDirectory* FramesData::getBestExifData (ImageSource *imgSource, procp
             // standard image multiframe support should come here (when implemented in GUI)
         */
         }
-
-        frames[imgNum]->getExifData ();
 
         td = getFrameExifData (imgNum);
         rtexif::Tag* makeTag;

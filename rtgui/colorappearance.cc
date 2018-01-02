@@ -1536,7 +1536,7 @@ void ColorAppearance::colorForValue (double valX, double valY, enum ColorCaller:
         float value = (1.f - 0.7f) * float (valX) + 0.7f;
         // whole hue range
         // Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
-        Color::hsv2rgb01 (float (valY), float (valX), value, R, G, B);
+        Color::hsv2rgb01 (float (valY*0.8), float (valX), value, R, G, B);
     }
 
     caller->ccRed = double (R);

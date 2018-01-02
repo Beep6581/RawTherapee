@@ -78,8 +78,10 @@ namespace
 {
 
 template <bool useUpperBound>
-void do_median_denoise(float **src, float **dst, float upperBound, const int width, const int height, const ImProcFunctions::Median medianType, const int iterations, const int numThreads, float **buffer)
+void do_median_denoise(float **src, float **dst, float upperBound, int width, int height, ImProcFunctions::Median medianType, int iterations, int numThreads, float **buffer)
 {
+    iterations = max(1, iterations);
+
     typedef ImProcFunctions::Median Median;
 
     int border = 1;

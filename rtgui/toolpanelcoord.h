@@ -38,8 +38,7 @@
 #include "epd.h"
 #include "sharpening.h"
 #include "labcurve.h"
-#include "exifpanel.h"
-#include "iptcpanel.h"
+#include "metadatapanel.h"
 #include "crop.h"
 #include "icmpanel.h"
 #include "resize.h"
@@ -151,6 +150,7 @@ protected:
     BayerRAWExposure* bayerrawexposure;
     XTransRAWExposure* xtransrawexposure;
     FattalToneMapping *fattal;
+    MetaDataPanel* metadata;
 
     std::vector<PParamsChangeListener*> paramcListeners;
 
@@ -163,10 +163,13 @@ protected:
     ToolVBox* transformPanel;
     ToolVBox* rawPanel;
     ToolVBox* waveletPanel;
+//<<<<<<< HEAD
     ToolVBox* locallabPanel;
-    Gtk::Notebook* metadataPanel;
-    ExifPanel* exifpanel;
-    IPTCPanel* iptcpanel;
+//    Gtk::Notebook* metadataPanel;
+//    ExifPanel* exifpanel;
+//    IPTCPanel* iptcpanel;
+//=======
+//>>>>>>> dev
     ToolBar* toolBar;
 
     TextOrIcon* toiE;

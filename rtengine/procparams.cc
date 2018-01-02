@@ -2978,7 +2978,24 @@ Glib::ustring RAWParams::getFlatFieldBlurTypeString(FlatFieldBlurType type)
     return getFlatFieldBlurTypeStrings()[toUnderlying(type)];
 }
 
-ProcParams::ProcParams()
+
+MetaDataParams::MetaDataParams():
+    mode(MetaDataParams::TUNNEL)
+{
+}
+
+bool MetaDataParams::operator==(const MetaDataParams &other) const
+{
+    return mode == other.mode;
+}
+
+bool MetaDataParams::operator!=(const MetaDataParams &other) const
+{
+    return !(*this == other);
+}
+
+
+ProcParams::ProcParams ()
 {
     setDefaults();
 }
@@ -3068,8 +3085,9 @@ void ProcParams::setDefaults()
 
     raw = RAWParams();
 
-    exif.clear();
-    iptc.clear();
+    metadata = MetaDataParams();
+    exif.clear ();
+    iptc.clear ();
 
     rank = 0;
     colorlabel = 0;
@@ -3886,6 +3904,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 // Raw exposition
         saveToKeyfile(!pedited || pedited->raw.exPos, "RAW", "PreExposure", raw.expos, keyFile);
         saveToKeyfile(!pedited || pedited->raw.exPreser, "RAW", "PrePreserv", raw.preser, keyFile);
+
+// MetaData
+        saveToKeyfile(!pedited || pedited->metadata.mode, "MetaData", "Mode", metadata.mode, keyFile);
 
 // EXIF change list
         if (!pedited || pedited->exif) {
@@ -5365,8 +5386,16 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackBlue", pedited, raw.xtranssensor.blackblue, pedited->raw.xtranssensor.exBlackBlue);
         }
 
-        if (keyFile.has_group("Exif")) {
-            std::vector<Glib::ustring> keys = keyFile.get_keys("Exif");
+        if (keyFile.has_group("MetaData")) {
+            int mode = int(MetaDataParams::TUNNEL);
+            assignFromKeyfile(keyFile, "MetaData", "Mode", pedited, mode, pedited->metadata.mode);
+            if (mode >= int(MetaDataParams::TUNNEL) && mode <= int(MetaDataParams::STRIP)) {
+                metadata.mode = static_cast<MetaDataParams::Mode>(mode);
+            }
+        }
+
+        if (keyFile.has_group ("Exif")) {
+            std::vector<Glib::ustring> keys = keyFile.get_keys ("Exif");
 
             for (const auto& key : keyFile.get_keys("Exif")) {
                 exif[key] = keyFile.get_string("Exif", key);
@@ -5477,6 +5506,7 @@ bool ProcParams::operator ==(const ProcParams& other) const
         && filmSimulation == other.filmSimulation
         && rgbCurves == other.rgbCurves
         && colorToning == other.colorToning
+        && metadata == other.metadata
         && exif == other.exif
         && iptc == other.iptc;
 }

@@ -73,12 +73,7 @@ ToolPanelCoordinator::ToolPanelCoordinator(bool batch) : ipc(nullptr), hasChange
     prsharpening        = Gtk::manage(new PrSharpening());
     crop                = Gtk::manage(new Crop());
     icm                 = Gtk::manage(new ICMPanel());
-
-    if (!batch) {
-        exifpanel           = Gtk::manage(new ExifPanel());
-        iptcpanel           = Gtk::manage(new IPTCPanel());
-    }
-
+    metadata            = Gtk::manage(new MetaDataPanel());
     wavelet             = Gtk::manage(new Wavelet());
     dirpyrequalizer     = Gtk::manage(new DirPyrEqualizer());
     hsvequalizer        = Gtk::manage(new HSVEqualizer());
@@ -105,7 +100,6 @@ ToolPanelCoordinator::ToolPanelCoordinator(bool batch) : ipc(nullptr), hasChange
     // Valeurs par dfaut:
     //     Best -> low ISO
     //     Medium -> High ISO
-
     addPanel(colorPanel, whitebalance);
     addPanel(exposurePanel, toneCurve);
     addPanel(colorPanel, vibrance);
@@ -158,17 +152,10 @@ ToolPanelCoordinator::ToolPanelCoordinator(bool batch) : ipc(nullptr), hasChange
     addPanel(rawPanel, flatfield);
 
     toolPanels.push_back(coarse);
+    toolPanels.push_back(metadata);
 
-    if (!batch) {
-        toolPanels.push_back(exifpanel);
-        toolPanels.push_back(iptcpanel);
-        metadataPanel = Gtk::manage(new Gtk::Notebook());
-        metadataPanel->set_name("MetaPanelNotebook");
-        metadataPanel->append_page(*exifpanel, M("MAIN_TAB_EXIF"));
-        metadataPanel->append_page(*iptcpanel, M("MAIN_TAB_IPTC"));
-    } else {
-        metadataPanel = nullptr;
-    }
+    toolPanelNotebook = new Gtk::Notebook();
+    toolPanelNotebook->set_name("ToolPanelNotebook");
 
     toolPanelNotebook = new Gtk::Notebook();
     toolPanelNotebook->set_name("ToolPanelNotebook");
@@ -223,20 +210,15 @@ ToolPanelCoordinator::ToolPanelCoordinator(bool batch) : ipc(nullptr), hasChange
 
 
     TOITypes type = options.UseIconNoText ? TOI_ICON : TOI_TEXT;
-
     toiE = Gtk::manage(new TextOrIcon("exposure.png", M("MAIN_TAB_EXPOSURE"), M("MAIN_TAB_EXPOSURE_TOOLTIP"), type));
     toiD = Gtk::manage(new TextOrIcon("detail.png", M("MAIN_TAB_DETAIL"), M("MAIN_TAB_DETAIL_TOOLTIP"), type));
     toiC = Gtk::manage(new TextOrIcon("colour.png", M("MAIN_TAB_COLOR"), M("MAIN_TAB_COLOR_TOOLTIP"), type));
     toiW = Gtk::manage(new TextOrIcon("wavelet.png", M("MAIN_TAB_WAVELET"), M("MAIN_TAB_WAVELET_TOOLTIP"), type));
     toiL = Gtk::manage(new TextOrIcon("openhand.png", M("MAIN_TAB_LOCALLAB"), M("MAIN_TAB_LOCALLAB_TOOLTIP"), type));
+
     toiT = Gtk::manage(new TextOrIcon("transform.png", M("MAIN_TAB_TRANSFORM"), M("MAIN_TAB_TRANSFORM_TOOLTIP"), type));
     toiR = Gtk::manage(new TextOrIcon("raw.png", M("MAIN_TAB_RAW"), M("MAIN_TAB_RAW_TOOLTIP"), type));
-
-    if (!batch) {
-        toiM = Gtk::manage(new TextOrIcon("meta.png", M("MAIN_TAB_METADATA"), M("MAIN_TAB_METADATA_TOOLTIP"), type));
-    } else {
-        toiM = nullptr;
-    }
+    toiM = Gtk::manage(new TextOrIcon("meta.png", M("MAIN_TAB_METADATA"), M("MAIN_TAB_METADATA_TOOLTIP"), type));
 
     toolPanelNotebook->append_page(*exposurePanelSW,  *toiE);
     toolPanelNotebook->append_page(*detailsPanelSW,   *toiD);
@@ -245,10 +227,7 @@ ToolPanelCoordinator::ToolPanelCoordinator(bool batch) : ipc(nullptr), hasChange
     toolPanelNotebook->append_page(*locallabPanelSW,   *toiL);
     toolPanelNotebook->append_page(*transformPanelSW, *toiT);
     toolPanelNotebook->append_page(*rawPanelSW,       *toiR);
-
-    if (!batch) {
-        toolPanelNotebook->append_page(*metadataPanel,    *toiM);
-    }
+    toolPanelNotebook->append_page(*metadata,    *toiM);
 
     toolPanelNotebook->set_current_page(0);
 
@@ -501,8 +480,7 @@ void ToolPanelCoordinator::initImage(rtengine::StagedImageProcessor* ipc_, bool 
 
     if (ipc) {
         const rtengine::FramesMetaData* pMetaData = ipc->getInitialImage()->getMetaData();
-        exifpanel->setImageData(pMetaData);
-        iptcpanel->setImageData(pMetaData);
+        metadata->setImageData(pMetaData);
 
         ipc->setAutoExpListener(toneCurve);
         ipc->setAutoCamListener(colorappearance);
@@ -525,6 +503,7 @@ void ToolPanelCoordinator::initImage(rtengine::StagedImageProcessor* ipc_, bool 
 
 
     toneCurve->setRaw(raw);
+//>>>>>>> dev
     hasChanged = true;
 }
 
@@ -854,10 +833,8 @@ bool ToolPanelCoordinator::handleShortcutKey(GdkEventKey* event)
                 return true;
 
             case GDK_KEY_m:
-                if (metadataPanel) {
-                    toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(*metadataPanel));
-                    return true;
-                }
+                toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(*metadata));
+                return true;
         }
     }
 

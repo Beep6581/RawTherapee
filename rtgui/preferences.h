@@ -191,7 +191,6 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::Entry* txtSndLngEditProcDone;
     Gtk::SpinButton* spbSndLngEditProcDoneSecs;
 
-    Gtk::CheckButton* ckbTunnelMetaData;
     Gtk::CheckButton* ckbInternalThumbIfUntouched;
 
     Gtk::Entry* txtCustProfBuilderPath;

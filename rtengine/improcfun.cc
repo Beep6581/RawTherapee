@@ -48,6 +48,227 @@
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
 
+namespace {
+
+using namespace rtengine;
+// begin of helper function for rgbProc()
+void shadowToneCurve(const LUTf &shtonecurve, float *rtemp, float *gtemp, float *btemp, int istart, int tH, int jstart, int tW, int tileSize) {
+
+#ifdef __SSE2__
+    vfloat cr = F2V(0.299f);
+    vfloat cg = F2V(0.587f);
+    vfloat cb = F2V(0.114f);
+#endif
+
+    for (int i = istart, ti = 0; i < tH; i++, ti++) {
+        int j = jstart, tj = 0;
+#ifdef __SSE2__
+        for (; j < tW - 3; j+=4, tj+=4) {
+
+            vfloat rv = LVF(rtemp[ti * tileSize + tj]);
+            vfloat gv = LVF(gtemp[ti * tileSize + tj]);
+            vfloat bv = LVF(btemp[ti * tileSize + tj]);
+
+            //shadow tone curve
+            vfloat Yv = cr * rv + cg * gv + cb * bv;
+            vfloat tonefactorv = shtonecurve(Yv);
+            STVF(rtemp[ti * tileSize + tj], rv * tonefactorv);
+            STVF(gtemp[ti * tileSize + tj], gv * tonefactorv);
+            STVF(btemp[ti * tileSize + tj], bv * tonefactorv);
+        }
+#endif
+        for (; j < tW; j++, tj++) {
+
+            float r = rtemp[ti * tileSize + tj];
+            float g = gtemp[ti * tileSize + tj];
+            float b = btemp[ti * tileSize + tj];
+
+            //shadow tone curve
+            float Y = (0.299f * r + 0.587f * g + 0.114f * b);
+            float tonefactor = shtonecurve[Y];
+            rtemp[ti * tileSize + tj] = rtemp[ti * tileSize + tj] * tonefactor;
+            gtemp[ti * tileSize + tj] = gtemp[ti * tileSize + tj] * tonefactor;
+            btemp[ti * tileSize + tj] = btemp[ti * tileSize + tj] * tonefactor;
+        }
+    }
+}
+
+void highlightToneCurve(const LUTf &hltonecurve, float *rtemp, float *gtemp, float *btemp, int istart, int tH, int jstart, int tW, int tileSize, float exp_scale, float comp, float hlrange) {
+
+#ifdef __SSE2__
+    vfloat threev = F2V(3.f);
+    vfloat maxvalfv = F2V(MAXVALF);
+#endif
+
+    for (int i = istart, ti = 0; i < tH; i++, ti++) {
+        int j = jstart, tj = 0;
+#ifdef __SSE2__
+        for (; j < tW - 3; j+=4, tj+=4) {
+
+            vfloat rv = LVF(rtemp[ti * tileSize + tj]);
+            vfloat gv = LVF(gtemp[ti * tileSize + tj]);
+            vfloat bv = LVF(btemp[ti * tileSize + tj]);
+
+            //TODO: proper treatment of out-of-gamut colors
+            //float tonefactor = hltonecurve[(0.299f*r+0.587f*g+0.114f*b)];
+            vmask maxMask = vmaskf_ge(vmaxf(rv, vmaxf(gv, bv)), maxvalfv);
+            if(_mm_movemask_ps((vfloat)maxMask)) {
+                for (int k = 0; k < 4; ++k) {
+                    float r = rtemp[ti * tileSize + tj + k];
+                    float g = gtemp[ti * tileSize + tj + k];
+                    float b = btemp[ti * tileSize + tj + k];
+                    float tonefactor = ((r < MAXVALF ? hltonecurve[r] : CurveFactory::hlcurve (exp_scale, comp, hlrange, r) ) +
+                                        (g < MAXVALF ? hltonecurve[g] : CurveFactory::hlcurve (exp_scale, comp, hlrange, g) ) +
+                                        (b < MAXVALF ? hltonecurve[b] : CurveFactory::hlcurve (exp_scale, comp, hlrange, b) ) ) / 3.0;
+
+                    // note: tonefactor includes exposure scaling, that is here exposure slider and highlight compression takes place
+                    rtemp[ti * tileSize + tj + k] = r * tonefactor;
+                    gtemp[ti * tileSize + tj + k] = g * tonefactor;
+                    btemp[ti * tileSize + tj + k] = b * tonefactor;
+                }
+            } else {
+                vfloat tonefactorv = (hltonecurve.cb(rv) + hltonecurve.cb(gv) + hltonecurve.cb(bv)) / threev;
+                // note: tonefactor includes exposure scaling, that is here exposure slider and highlight compression takes place
+                STVF(rtemp[ti * tileSize + tj], rv * tonefactorv);
+                STVF(gtemp[ti * tileSize + tj], gv * tonefactorv);
+                STVF(btemp[ti * tileSize + tj], bv * tonefactorv);
+            }
+        }
+#endif
+        for (; j < tW; j++, tj++) {
+
+            float r = rtemp[ti * tileSize + tj];
+            float g = gtemp[ti * tileSize + tj];
+            float b = btemp[ti * tileSize + tj];
+
+            //TODO: proper treatment of out-of-gamut colors
+            //float tonefactor = hltonecurve[(0.299f*r+0.587f*g+0.114f*b)];
+            float tonefactor = ((r < MAXVALF ? hltonecurve[r] : CurveFactory::hlcurve (exp_scale, comp, hlrange, r) ) +
+                                (g < MAXVALF ? hltonecurve[g] : CurveFactory::hlcurve (exp_scale, comp, hlrange, g) ) +
+                                (b < MAXVALF ? hltonecurve[b] : CurveFactory::hlcurve (exp_scale, comp, hlrange, b) ) ) / 3.0;
+
+            // note: tonefactor includes exposure scaling, that is here exposure slider and highlight compression takes place
+            rtemp[ti * tileSize + tj] = r * tonefactor;
+            gtemp[ti * tileSize + tj] = g * tonefactor;
+            btemp[ti * tileSize + tj] = b * tonefactor;
+        }
+    }
+}
+
+void proPhotoBlue(float *rtemp, float *gtemp, float *btemp, int istart, int tH, int jstart, int tW, int tileSize) {
+    // this is a hack to avoid the blue=>black bug (Issue 2141)
+    for (int i = istart, ti = 0; i < tH; i++, ti++) {
+        int j = jstart, tj = 0;
+#ifdef __SSE2__
+        for (; j < tW - 3; j+=4, tj+=4) {
+            vfloat rv = LVF(rtemp[ti * tileSize + tj]);
+            vfloat gv = LVF(gtemp[ti * tileSize + tj]);
+            vmask zeromask = vorm(vmaskf_eq(rv, ZEROV), vmaskf_eq(gv, ZEROV));
+            if(_mm_movemask_ps((vfloat)zeromask)) {
+                for (int k = 0; k < 4; ++k) {
+                    float r = rtemp[ti * tileSize + tj + k];
+                    float g = gtemp[ti * tileSize + tj + k];
+                    if (r == 0.0f || g == 0.0f) {
+                        float b = btemp[ti * tileSize + tj + k];
+                        float h, s, v;
+                        Color::rgb2hsv (r, g, b, h, s, v);
+                        s *= 0.99f;
+                        Color::hsv2rgb (h, s, v, rtemp[ti * tileSize + tj + k], gtemp[ti * tileSize + tj + k], btemp[ti * tileSize + tj + k]);
+                    }
+                }
+            }
+        }
+#endif
+        for (; j < tW; j++, tj++) {
+            float r = rtemp[ti * tileSize + tj];
+            float g = gtemp[ti * tileSize + tj];
+
+            if (r == 0.0f || g == 0.0f) {
+                float b = btemp[ti * tileSize + tj];
+                float h, s, v;
+                Color::rgb2hsv (r, g, b, h, s, v);
+                s *= 0.99f;
+                Color::hsv2rgb (h, s, v, rtemp[ti * tileSize + tj], gtemp[ti * tileSize + tj], btemp[ti * tileSize + tj]);
+            }
+        }
+    }
+}
+
+void customToneCurve(const ToneCurve &customToneCurve, ToneCurveParams::TcMode curveMode, float *rtemp, float *gtemp, float *btemp, int istart, int tH, int jstart, int tW, int tileSize, PerceptualToneCurveState ptcApplyState) {
+
+    if (curveMode == ToneCurveParams::TcMode::STD) { // Standard
+        for (int i = istart, ti = 0; i < tH; i++, ti++) {
+            const StandardToneCurve& userToneCurve = static_cast<const StandardToneCurve&> (customToneCurve);
+            userToneCurve.BatchApply (
+                    0, tW - jstart,
+                    &rtemp[ti * tileSize], &gtemp[ti * tileSize], &btemp[ti * tileSize]);
+        }
+    } else if (curveMode == ToneCurveParams::TcMode::FILMLIKE) { // Adobe like
+        for (int i = istart, ti = 0; i < tH; i++, ti++) {
+            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                const AdobeToneCurve& userToneCurve = static_cast<const AdobeToneCurve&> (customToneCurve);
+                userToneCurve.Apply (rtemp[ti * tileSize + tj], gtemp[ti * tileSize + tj], btemp[ti * tileSize + tj]);
+            }
+        }
+    } else if (curveMode == ToneCurveParams::TcMode::SATANDVALBLENDING) { // apply the curve on the saturation and value channels
+        for (int i = istart, ti = 0; i < tH; i++, ti++) {
+            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                const SatAndValueBlendingToneCurve& userToneCurve = static_cast<const SatAndValueBlendingToneCurve&> (customToneCurve);
+                rtemp[ti * tileSize + tj] = CLIP<float> (rtemp[ti * tileSize + tj]);
+                gtemp[ti * tileSize + tj] = CLIP<float> (gtemp[ti * tileSize + tj]);
+                btemp[ti * tileSize + tj] = CLIP<float> (btemp[ti * tileSize + tj]);
+                userToneCurve.Apply (rtemp[ti * tileSize + tj], gtemp[ti * tileSize + tj], btemp[ti * tileSize + tj]);
+            }
+        }
+    } else if (curveMode == ToneCurveParams::TcMode::WEIGHTEDSTD) { // apply the curve to the rgb channels, weighted
+        const WeightedStdToneCurve& userToneCurve = static_cast<const WeightedStdToneCurve&> (customToneCurve);
+
+        for (int i = istart, ti = 0; i < tH; i++, ti++) {
+            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                rtemp[ti * tileSize + tj] = CLIP<float> (rtemp[ti * tileSize + tj]);
+                gtemp[ti * tileSize + tj] = CLIP<float> (gtemp[ti * tileSize + tj]);
+                btemp[ti * tileSize + tj] = CLIP<float> (btemp[ti * tileSize + tj]);
+                userToneCurve.Apply (rtemp[ti * tileSize + tj], gtemp[ti * tileSize + tj], btemp[ti * tileSize + tj]);
+            }
+        }
+    } else if (curveMode == ToneCurveParams::TcMode::LUMINANCE) { // apply the curve to the luminance channel
+        const LuminanceToneCurve& userToneCurve = static_cast<const LuminanceToneCurve&> (customToneCurve);
+
+        for (int i = istart, ti = 0; i < tH; i++, ti++) {
+            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                rtemp[ti * tileSize + tj] = CLIP<float> (rtemp[ti * tileSize + tj]);
+                gtemp[ti * tileSize + tj] = CLIP<float> (gtemp[ti * tileSize + tj]);
+                btemp[ti * tileSize + tj] = CLIP<float> (btemp[ti * tileSize + tj]);
+                userToneCurve.Apply (rtemp[ti * tileSize + tj], gtemp[ti * tileSize + tj], btemp[ti * tileSize + tj]);
+            }
+        }
+    } else if (curveMode == ToneCurveParams::TcMode::PERCEPTUAL) { // apply curve while keeping color appearance constant
+        const PerceptualToneCurve& userToneCurve = static_cast<const PerceptualToneCurve&> (customToneCurve);
+
+        for (int i = istart, ti = 0; i < tH; i++, ti++) {
+            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                rtemp[ti * tileSize + tj] = CLIP<float> (rtemp[ti * tileSize + tj]);
+                gtemp[ti * tileSize + tj] = CLIP<float> (gtemp[ti * tileSize + tj]);
+                btemp[ti * tileSize + tj] = CLIP<float> (btemp[ti * tileSize + tj]);
+                userToneCurve.Apply (rtemp[ti * tileSize + tj], gtemp[ti * tileSize + tj], btemp[ti * tileSize + tj], ptcApplyState);
+            }
+        }
+    }
+}
+
+void fillEditFloat(float *editIFloatTmpR, float *editIFloatTmpG, float *editIFloatTmpB, float *rtemp, float *gtemp, float *btemp, int istart, int tH, int jstart, int tW, int tileSize) {
+    for (int i = istart, ti = 0; i < tH; i++, ti++) {
+        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+            editIFloatTmpR[ti * tileSize + tj] = Color::gamma2curve[rtemp[ti * tileSize + tj]] / 65535.f;
+            editIFloatTmpG[ti * tileSize + tj] = Color::gamma2curve[gtemp[ti * tileSize + tj]] / 65535.f;
+            editIFloatTmpB[ti * tileSize + tj] = Color::gamma2curve[btemp[ti * tileSize + tj]] / 65535.f;
+        }
+    }
+}
+// end of helper function for rgbProc()
+
+}
+
 namespace rtengine
 {
 
@@ -3511,15 +3732,14 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                             float g = gtemp[ti * TS + tj];
                             float b = btemp[ti * TS + tj];
 
-                            double mapval = 1.0 + shmap->map[i][j];
-                            double factor = 1.0;
 
-                            if (processSH) {
-                                if (mapval > h_th) {
-                                    factor = (h_th + (100.0 - shHighlights) * (mapval - h_th) / 100.0) / mapval;
-                                } else if (mapval < s_th) {
-                                    factor = (s_th - (100.0 - shShadows) * (s_th - mapval) / 100.0) / mapval;
-                                }
+                            float mapval = 1.f + shmap->map[i][j];
+                            float factor = 1.f;
+
+                            if (mapval > h_th) {
+                                factor = (h_th + (100.0 - shHighlights) * (mapval - h_th) / 100.0) / mapval;
+                            } else if (mapval < s_th) {
+                                factor = (s_th - (100.0 - shShadows) * (s_th - mapval) / 100.0) / mapval;
                             }
 
                             rtemp[ti * TS + tj] = factor * r;
@@ -3529,41 +3749,8 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                     }
                 }
 
-                for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-
-                        float r = rtemp[ti * TS + tj];
-                        float g = gtemp[ti * TS + tj];
-                        float b = btemp[ti * TS + tj];
-
-                        //TODO: proper treatment of out-of-gamut colors
-                        //float tonefactor = hltonecurve[(0.299f*r+0.587f*g+0.114f*b)];
-                        float tonefactor = ((r < MAXVALF ? hltonecurve[r] : CurveFactory::hlcurve(exp_scale, comp, hlrange, r)) +
-                                            (g < MAXVALF ? hltonecurve[g] : CurveFactory::hlcurve(exp_scale, comp, hlrange, g)) +
-                                            (b < MAXVALF ? hltonecurve[b] : CurveFactory::hlcurve(exp_scale, comp, hlrange, b))) / 3.0;
-
-                        // note: tonefactor includes exposure scaling, that is here exposure slider and highlight compression takes place
-                        rtemp[ti * TS + tj] = r * tonefactor;
-                        gtemp[ti * TS + tj] = g * tonefactor;
-                        btemp[ti * TS + tj] = b * tonefactor;
-                    }
-                }
-
-                for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-
-                        float r = rtemp[ti * TS + tj];
-                        float g = gtemp[ti * TS + tj];
-                        float b = btemp[ti * TS + tj];
-
-                        //shadow tone curve
-                        float Y = (0.299f * r + 0.587f * g + 0.114f * b);
-                        float tonefactor = shtonecurve[Y];
-                        rtemp[ti * TS + tj] = rtemp[ti * TS + tj] * tonefactor;
-                        gtemp[ti * TS + tj] = gtemp[ti * TS + tj] * tonefactor;
-                        btemp[ti * TS + tj] = btemp[ti * TS + tj] * tonefactor;
-                    }
-                }
+                highlightToneCurve(hltonecurve, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS, exp_scale, comp, hlrange);
+                shadowToneCurve(shtonecurve, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS);
 
                 if (dcpProf) {
                     dcpProf->step2ApplyTile(rtemp, gtemp, btemp, tW - jstart, tH - istart, TS, asIn);
@@ -3571,22 +3758,10 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 
                 for (int i = istart, ti = 0; i < tH; i++, ti++) {
                     for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                        float r = rtemp[ti * TS + tj];
-                        float g = gtemp[ti * TS + tj];
-                        float b = btemp[ti * TS + tj];
-
-                        // clip out of gamut colors, without distorting color too bad
-                        if (r < 0) {
-                            r = 0;
-                        }
-
-                        if (g < 0) {
-                            g = 0;
-                        }
-
-                        if (b < 0) {
-                            b = 0;
-                        }
+                        // clip out of gamut colors, without distorting colour too bad
+                        float r = std::max(rtemp[ti * TS + tj], 0.f);
+                        float g = std::max(gtemp[ti * TS + tj], 0.f);
+                        float b = std::max(btemp[ti * TS + tj], 0.f);
 
                         if (r > 65535 || g > 65535 || b > 65535) {
                             filmlike_clip(&r, &g, &b);
@@ -3598,149 +3773,53 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                     }
                 }
 
-                for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                if (histToneCurveThr) {
+                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
 
-                        //brightness/contrast
-                        rtemp[ti * TS + tj] = tonecurve[ rtemp[ti * TS + tj] ];
-                        gtemp[ti * TS + tj] = tonecurve[ gtemp[ti * TS + tj] ];
-                        btemp[ti * TS + tj] = tonecurve[ btemp[ti * TS + tj] ];
+                            //brightness/contrast
+                            rtemp[ti * TS + tj] = tonecurve[ rtemp[ti * TS + tj] ];
+                            gtemp[ti * TS + tj] = tonecurve[ gtemp[ti * TS + tj] ];
+                            btemp[ti * TS + tj] = tonecurve[ btemp[ti * TS + tj] ];
 
-                        if (histToneCurveThr) {
                             int y = CLIP<int> (lumimulf[0] * Color::gamma2curve[rtemp[ti * TS + tj]] + lumimulf[1] * Color::gamma2curve[gtemp[ti * TS + tj]] + lumimulf[2] * Color::gamma2curve[btemp[ti * TS + tj]]);
                             histToneCurveThr[y >> histToneCurveCompression]++;
+                        }
+                    }
+                } else {
+                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                        int j = jstart, tj = 0;
+#ifdef __SSE2__
+                        for (; j < tW - 3; j+=4, tj+=4) {
+                            //brightness/contrast
+                            STVF(rtemp[ti * TS + tj], tonecurve(LVF(rtemp[ti * TS + tj])));
+                            STVF(gtemp[ti * TS + tj], tonecurve(LVF(gtemp[ti * TS + tj])));
+                            STVF(btemp[ti * TS + tj], tonecurve(LVF(btemp[ti * TS + tj])));
+                        }
+#endif
+                        for (; j < tW; j++, tj++) {
+                            //brightness/contrast
+                            rtemp[ti * TS + tj] = tonecurve[rtemp[ti * TS + tj]];
+                            gtemp[ti * TS + tj] = tonecurve[gtemp[ti * TS + tj]];
+                            btemp[ti * TS + tj] = tonecurve[btemp[ti * TS + tj]];
                         }
                     }
                 }
 
                 if (editID == EUID_ToneCurve1) {  // filling the pipette buffer
-                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                            editIFloatTmpR[ti * TS + tj] = Color::gamma2curve[rtemp[ti * TS + tj]] / 65535.f;
-                            editIFloatTmpG[ti * TS + tj] = Color::gamma2curve[gtemp[ti * TS + tj]] / 65535.f;
-                            editIFloatTmpB[ti * TS + tj] = Color::gamma2curve[btemp[ti * TS + tj]] / 65535.f;
-                        }
-                    }
+                    fillEditFloat(editIFloatTmpR, editIFloatTmpG, editIFloatTmpB, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS);
                 }
 
                 if (hasToneCurve1) {
-                    if (curveMode == ToneCurveParams::TcMode::STD) { // Standard
-                        for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                            const StandardToneCurve& userToneCurve = static_cast<const StandardToneCurve&> (customToneCurve1);
-                            userToneCurve.BatchApply (
-                                    0, tW - jstart,
-                                    &rtemp[ti * TS], &gtemp[ti * TS], &btemp[ti * TS]);
-                        }
-                    } else if (curveMode == ToneCurveParams::TcMode::FILMLIKE) { // Adobe like
-                        for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                const AdobeToneCurve& userToneCurve = static_cast<const AdobeToneCurve&>(customToneCurve1);
-                                userToneCurve.Apply(rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
-                            }
-                        }
-                    } else if (curveMode == ToneCurveParams::TcMode::SATANDVALBLENDING) { // apply the curve on the saturation and value channels
-                        for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                const SatAndValueBlendingToneCurve& userToneCurve = static_cast<const SatAndValueBlendingToneCurve&>(customToneCurve1);
-                                rtemp[ti * TS + tj] = CLIP<float> (rtemp[ti * TS + tj]);
-                                gtemp[ti * TS + tj] = CLIP<float> (gtemp[ti * TS + tj]);
-                                btemp[ti * TS + tj] = CLIP<float> (btemp[ti * TS + tj]);
-                                userToneCurve.Apply(rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
-                            }
-                        }
-                    } else if (curveMode == ToneCurveParams::TcMode::WEIGHTEDSTD) { // apply the curve to the rgb channels, weighted
-                        const WeightedStdToneCurve& userToneCurve = static_cast<const WeightedStdToneCurve&>(customToneCurve1);
-
-                        for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                rtemp[ti * TS + tj] = CLIP<float> (rtemp[ti * TS + tj]);
-                                gtemp[ti * TS + tj] = CLIP<float> (gtemp[ti * TS + tj]);
-                                btemp[ti * TS + tj] = CLIP<float> (btemp[ti * TS + tj]);
-                                userToneCurve.Apply(rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
-                            }
-                        }
-                    } else if (curveMode == ToneCurveParams::TcMode::LUMINANCE) { // apply the curve to the luminance channel
-                        const LuminanceToneCurve& userToneCurve = static_cast<const LuminanceToneCurve&>(customToneCurve1);
-
-                        for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                rtemp[ti * TS + tj] = CLIP<float> (rtemp[ti * TS + tj]);
-                                gtemp[ti * TS + tj] = CLIP<float> (gtemp[ti * TS + tj]);
-                                btemp[ti * TS + tj] = CLIP<float> (btemp[ti * TS + tj]);
-                                userToneCurve.Apply(rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
-                            }
-                        }
-                    } else if (curveMode == ToneCurveParams::TcMode::PERCEPTUAL) { // apply curve while keeping color appearance constant
-                        const PerceptualToneCurve& userToneCurve = static_cast<const PerceptualToneCurve&>(customToneCurve1);
-
-                        for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                rtemp[ti * TS + tj] = CLIP<float> (rtemp[ti * TS + tj]);
-                                gtemp[ti * TS + tj] = CLIP<float> (gtemp[ti * TS + tj]);
-                                btemp[ti * TS + tj] = CLIP<float> (btemp[ti * TS + tj]);
-                                userToneCurve.Apply(rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj], ptc1ApplyState);
-                            }
-                        }
-                    }
+                    customToneCurve(customToneCurve1, curveMode, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS, ptc1ApplyState);
                 }
 
                 if (editID == EUID_ToneCurve2) {  // filling the pipette buffer
-                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                            editIFloatTmpR[ti * TS + tj] = Color::gamma2curve[rtemp[ti * TS + tj]] / 65535.f;
-                            editIFloatTmpG[ti * TS + tj] = Color::gamma2curve[gtemp[ti * TS + tj]] / 65535.f;
-                            editIFloatTmpB[ti * TS + tj] = Color::gamma2curve[btemp[ti * TS + tj]] / 65535.f;
-                        }
-                    }
+                    fillEditFloat(editIFloatTmpR, editIFloatTmpG, editIFloatTmpB, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS);
                 }
 
                 if (hasToneCurve2) {
-                    if (curveMode2 == ToneCurveParams::TcMode::STD) { // Standard
-                        for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                const StandardToneCurve& userToneCurve = static_cast<const StandardToneCurve&>(customToneCurve2);
-                                userToneCurve.Apply(rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
-                            }
-                        }
-                    } else if (curveMode2 == ToneCurveParams::TcMode::FILMLIKE) { // Adobe like
-                        for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                const AdobeToneCurve& userToneCurve = static_cast<const AdobeToneCurve&>(customToneCurve2);
-                                userToneCurve.Apply(rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
-                            }
-                        }
-                    } else if (curveMode2 == ToneCurveParams::TcMode::SATANDVALBLENDING) { // apply the curve on the saturation and value channels
-                        for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                const SatAndValueBlendingToneCurve& userToneCurve = static_cast<const SatAndValueBlendingToneCurve&>(customToneCurve2);
-                                userToneCurve.Apply(rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
-                            }
-                        }
-                    } else if (curveMode2 == ToneCurveParams::TcMode::WEIGHTEDSTD) { // apply the curve to the rgb channels, weighted
-                        const WeightedStdToneCurve& userToneCurve = static_cast<const WeightedStdToneCurve&>(customToneCurve2);
-
-                        for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                userToneCurve.Apply(rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
-                            }
-                        }
-                    } else if (curveMode2 == ToneCurveParams::TcMode::LUMINANCE) { // apply the curve to the luminance channel
-                        const LuminanceToneCurve& userToneCurve = static_cast<const LuminanceToneCurve&>(customToneCurve2);
-
-                        for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                userToneCurve.Apply(rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
-                            }
-                        }
-                    } else if (curveMode2 == ToneCurveParams::TcMode::PERCEPTUAL) { // apply curve while keeping color appearance constant
-                        const PerceptualToneCurve& userToneCurve = static_cast<const PerceptualToneCurve&>(customToneCurve2);
-
-                        for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                userToneCurve.Apply(rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj], ptc2ApplyState);
-                            }
-                        }
-                    }
+                    customToneCurve(customToneCurve2, curveMode2, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS, ptc2ApplyState);
                 }
 
                 if (editID == EUID_RGB_R) {
@@ -3952,20 +4031,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                 }
 
                 if (isProPhoto) { // this is a hack to avoid the blue=>black bug (Issue 2141)
-                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                            float r = rtemp[ti * TS + tj];
-                            float g = gtemp[ti * TS + tj];
-
-                            if (r == 0.0f || g == 0.0f) {
-                                float b = btemp[ti * TS + tj];
-                                float h, s, v;
-                                Color::rgb2hsv(r, g, b, h, s, v);
-                                s *= 0.99f;
-                                Color::hsv2rgb(h, s, v, rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
-                            }
-                        }
-                    }
+                    proPhotoBlue(rtemp, gtemp, btemp, istart, tH, jstart, tW, TS);
                 }
 
                 if (hasColorToning && !blackwhite) {
@@ -4169,13 +4235,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 
                 // filling the pipette buffer
                 if (editID == EUID_BlackWhiteBeforeCurve) {
-                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                            editIFloatTmpR[ti * TS + tj] = Color::gamma2curve[rtemp[ti * TS + tj]] / 65535.f;
-                            editIFloatTmpG[ti * TS + tj] = Color::gamma2curve[gtemp[ti * TS + tj]] / 65535.f;
-                            editIFloatTmpB[ti * TS + tj] = Color::gamma2curve[btemp[ti * TS + tj]] / 65535.f;
-                        }
-                    }
+                    fillEditFloat(editIFloatTmpR, editIFloatTmpG, editIFloatTmpB, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS);
                 } else if (editID == EUID_BlackWhiteLuminance) {
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
@@ -4468,53 +4528,24 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 
 
                 if (!blackwhite) {
+                    if (editImgFloat || editWhatever) {
+                        for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+
+                                // filling the pipette buffer by the content of the temp pipette buffers
+                                if (editImgFloat) {
+                                    editImgFloat->r (i, j) = editIFloatTmpR[ti * TS + tj];
+                                    editImgFloat->g (i, j) = editIFloatTmpG[ti * TS + tj];
+                                    editImgFloat->b (i, j) = editIFloatTmpB[ti * TS + tj];
+                                } else if (editWhatever) {
+                                    editWhatever->v (i, j) = editWhateverTmp[ti * TS + tj];
+                                }
+                            }
+                        }
+                    }
                     // ready, fill lab
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-
-                            // filling the pipette buffer by the content of the temp pipette buffers
-                            if (editImgFloat) {
-                                editImgFloat->r(i, j) = editIFloatTmpR[ti * TS + tj];
-                                editImgFloat->g(i, j) = editIFloatTmpG[ti * TS + tj];
-                                editImgFloat->b(i, j) = editIFloatTmpB[ti * TS + tj];
-                            } else if (editWhatever) {
-                                editWhatever->v(i, j) = editWhateverTmp[ti * TS + tj];
-                            }
-
-                            float r = rtemp[ti * TS + tj];
-                            float g = gtemp[ti * TS + tj];
-                            float b = btemp[ti * TS + tj];
-
-                            float x = toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b;
-                            float y = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
-                            float z = toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b;
-
-                            float fx, fy, fz;
-
-                            fx = (x < 65535.0f ? Color::cachef[x] : 327.68f * std::cbrt(x / MAXVALF));
-                            fy = (y < 65535.0f ? Color::cachef[y] : 327.68f * std::cbrt(y / MAXVALF));
-                            fz = (z < 65535.0f ? Color::cachef[z] : 327.68f * std::cbrt(z / MAXVALF));
-
-                            lab->L[i][j] = (116.0f *  fy - 5242.88f); //5242.88=16.0*327.68;
-                            lab->a[i][j] = (500.0f * (fx - fy));
-                            lab->b[i][j] = (200.0f * (fy - fz));
-
-                            //test for color accuracy
-                            /*
-                            float fy = (0.00862069 * lab->L[i][j])/327.68 + 0.137932; // (L+16)/116
-                            float fx = (0.002 * lab->a[i][j])/327.68 + fy;
-                            float fz = fy - (0.005 * lab->b[i][j])/327.68;
-
-                            float x_ = 65535*Lab2xyz(fx)*Color::D50x;
-                            float y_ = 65535*Lab2xyz(fy);
-                            float z_ = 65535*Lab2xyz(fz)*Color::D50z;
-
-                            int R,G,B;
-                            xyz2srgb(x_,y_,z_,R,G,B);
-                            r=(float)R; g=(float)G; b=(float)B;
-                            float xxx=1;
-                            */
-                        }
+                        Color::RGB2Lab(&rtemp[ti * TS], &gtemp[ti * TS], &btemp[ti * TS], &(lab->L[i][jstart]), &(lab->a[i][jstart]), &(lab->b[i][jstart]), toxyz, tW - jstart);
                     }
                 } else { // black & white
                     // Auto channel mixer needs whole image, so we now copy to tmpImage and close the tiled processing
@@ -4926,25 +4957,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 #endif
 
         for (int i = 0; i < tH; i++) {
-            for (int j = 0; j < tW; j++) {
-                float r = tmpImage->r(i, j);
-                float g = tmpImage->g(i, j);
-                float b = tmpImage->b(i, j);
-
-                float x = toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b;
-                float y = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
-                float z = toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b;
-
-                float fx, fy, fz;
-
-                fx = (x < MAXVALF ? Color::cachef[x] : 327.68f * std::cbrt(x / MAXVALF));
-                fy = (y < MAXVALF ? Color::cachef[y] : 327.68f * std::cbrt(y / MAXVALF));
-                fz = (z < MAXVALF ? Color::cachef[z] : 327.68f * std::cbrt(z / MAXVALF));
-
-                lab->L[i][j] = 116.0f *  fy - 5242.88f; //5242.88=16.0*327.68;
-                lab->a[i][j] = 500.0f * (fx - fy);
-                lab->b[i][j] = 200.0f * (fy - fz);
-            }
+            Color::RGB2Lab(tmpImage->r(i), tmpImage->g(i), tmpImage->b(i), lab->L[i], lab->a[i], lab->b[i], toxyz, tW);
         }
 
 

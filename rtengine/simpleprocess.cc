@@ -56,13 +56,12 @@ void adjust_radius(const T &default_param, double scale_factor, T &param)
 class ImageProcessor
 {
 public:
-    ImageProcessor(ProcessingJob* pjob, int& errorCode,
-                   ProgressListener* pl, bool tunnelMetaData, bool flush):
-        job(static_cast<ProcessingJobImpl*>(pjob)),
-        errorCode(errorCode),
-        pl(pl),
-        tunnelMetaData(tunnelMetaData),
-        flush(flush),
+    ImageProcessor (ProcessingJob* pjob, int& errorCode,
+                    ProgressListener* pl, bool flush):
+        job (static_cast<ProcessingJobImpl*> (pjob)),
+        errorCode (errorCode),
+        pl (pl),
+        flush (flush),
         // internal state
         ipf_p(nullptr),
         ii(nullptr),
@@ -2467,13 +2466,19 @@ private:
             readyImg = tempImage;
         }
 
-        if (tunnelMetaData) {
+        switch (params.metadata.mode) {
+        case MetaDataParams::TUNNEL:
             // Sending back the whole first root, which won't necessarily be the selected frame number
             // and may contain subframe depending on initial raw's hierarchy
-            readyImg->setMetadata(ii->getMetaData()->getRootExifData());
-        } else {
+            readyImg->setMetadata (ii->getMetaData()->getRootExifData ());
+            break;
+        case MetaDataParams::EDIT:
             // ask for the correct frame number, but may contain subframe depending on initial raw's hierarchy
-            readyImg->setMetadata(ii->getMetaData()->getBestExifData(imgsrc, &params.raw), params.exif, params.iptc);
+            readyImg->setMetadata (ii->getMetaData()->getBestExifData(imgsrc, &params.raw), params.exif, params.iptc);
+            break;
+        default: // case MetaDataParams::STRIP
+            // nothing to do
+            break;
         }
 
 
@@ -2668,7 +2673,6 @@ private:
     ProcessingJobImpl* job;
     int& errorCode;
     ProgressListener* pl;
-    bool tunnelMetaData;
     bool flush;
 
     // internal state
@@ -2743,20 +2747,20 @@ private:
 } // namespace
 
 
-IImage16* processImage(ProcessingJob* pjob, int& errorCode, ProgressListener* pl, bool tunnelMetaData, bool flush)
+IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* pl, bool flush)
 {
-    ImageProcessor proc(pjob, errorCode, pl, tunnelMetaData, flush);
+    ImageProcessor proc (pjob, errorCode, pl, flush);
     return proc();
 }
 
-void batchProcessingThread(ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData)
+void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl)
 {
 
     ProcessingJob* currentJob = job;
 
     while (currentJob) {
         int errorCode;
-        IImage16* img = processImage(currentJob, errorCode, bpl, tunnelMetaData, true);
+        IImage16* img = processImage (currentJob, errorCode, bpl, true);
 
         if (errorCode) {
             bpl->error(M("MAIN_MSG_CANNOTLOAD"));
@@ -2772,11 +2776,11 @@ void batchProcessingThread(ProcessingJob* job, BatchProcessingListener* bpl, boo
     }
 }
 
-void startBatchProcessing(ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData)
+void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl)
 {
 
     if (bpl) {
-        Glib::Thread::create(sigc::bind(sigc::ptr_fun(batchProcessingThread), job, bpl, tunnelMetaData), 0, true, true, Glib::THREAD_PRIORITY_LOW);
+        Glib::Thread::create (sigc::bind (sigc::ptr_fun (batchProcessingThread), job, bpl), 0, true, true, Glib::THREAD_PRIORITY_LOW);
     }
 
 }
