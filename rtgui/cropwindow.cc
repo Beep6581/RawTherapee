@@ -312,8 +312,10 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                     screenCoordToImage (x, y, action_x, action_y);
                     changeZoom (zoom11index, true, action_x, action_y);
                     fitZoom = false;
+                } else if (options.cropAutoFit) {
+                    zoomFitCrop();
                 } else {
-                    zoomFitCrop ();
+                    zoomFit();
                 }
             } else {
                 zoom11 ();
@@ -613,7 +615,7 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
 
         needRedraw = true;
 
-        if (fitZoom) {
+        if (fitZoom && options.cropAutoFit) {
             zoomFitCrop();
         }
     } else if (state == SCropWinMove) {
@@ -727,7 +729,7 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
         iarea->setToolHand ();
         needRedraw = true;
 
-        if (fitZoom) {
+        if (fitZoom && options.cropAutoFit) {
             zoomFitCrop();
         }
     }
@@ -1365,8 +1367,17 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
         }
     } else {
         CropParams cropParams = cropHandler.cropParams;
-        if (state == SNormal && cropParams.guide != "None") {
-            cropParams.guide = "Frame";
+        if (state == SNormal) {
+            switch (options.cropGuides) {
+            case Options::CROP_GUIDE_NONE:
+                cropParams.guide = "None";
+                break;
+            case Options::CROP_GUIDE_FRAME:
+                cropParams.guide = "Frame";
+                break;
+            default:
+                break;
+            }
         }
         bool useBgColor = (state == SNormal);
     
@@ -2111,7 +2122,7 @@ void CropWindow::zoomFitCrop ()
         centerY = cropHandler.cropParams.y + cropHandler.cropParams.h / 2;
         setCropAnchorPosition(centerX, centerY);
         changeZoom (cz, true, centerX, centerY);
-        fitZoom = true; //false;
+        fitZoom = options.cropAutoFit;
     } else {
         zoomFit();
     }
