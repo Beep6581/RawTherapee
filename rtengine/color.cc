@@ -130,34 +130,34 @@ void MunsellDebugInfo::reinitValues()
 #endif
 
 
-void Color::init ()
+void Color::init()
 {
 
     /*******************************************/
 
     constexpr auto maxindex = 65536;
 
-    cachef (maxindex, LUT_CLIP_BELOW);
-    gammatab (maxindex, 0);
-    gammatabThumb (maxindex, 0);
+    cachef(maxindex, LUT_CLIP_BELOW);
+    gammatab(maxindex, 0);
+    gammatabThumb(maxindex, 0);
 
-    igammatab_srgb (maxindex, 0);
-    igammatab_srgb1 (maxindex, 0);
-    gammatab_srgb (maxindex, 0);
-    gammatab_srgb1 (maxindex, 0);
-    gammatab_srgb327 (32768, 0);
+    igammatab_srgb(maxindex, 0);
+    igammatab_srgb1(maxindex, 0);
+    gammatab_srgb(maxindex, 0);
+    gammatab_srgb1(maxindex, 0);
+    gammatab_srgb327(32768, 0);
 
-    denoiseGammaTab (maxindex, 0);
-    denoiseIGammaTab (maxindex, 0);
+    denoiseGammaTab(maxindex, 0);
+    denoiseIGammaTab(maxindex, 0);
 
-    igammatab_24_17 (maxindex, 0);
-    gammatab_24_17a (maxindex, LUT_CLIP_ABOVE | LUT_CLIP_BELOW);
-    gammatab_13_2 (maxindex, 0);
-    igammatab_13_2 (maxindex, 0);
-    gammatab_115_2 (maxindex, 0);
-    igammatab_115_2 (maxindex, 0);
-    gammatab_145_3 (maxindex, 0);
-    igammatab_145_3 (maxindex, 0);
+    igammatab_24_17(maxindex, 0);
+    gammatab_24_17a(maxindex, LUT_CLIP_ABOVE | LUT_CLIP_BELOW);
+    gammatab_13_2(maxindex, 0);
+    igammatab_13_2(maxindex, 0);
+    gammatab_115_2(maxindex, 0);
+    igammatab_115_2(maxindex, 0);
+    gammatab_145_3(maxindex, 0);
+    igammatab_145_3(maxindex, 0);
 
 #ifdef _OPENMP
     #pragma omp parallel sections
@@ -177,7 +177,7 @@ void Color::init ()
 
             for (; i < maxindex; i++)
             {
-                cachef[i] = 327.68 * std::cbrt ((double)i / MAXVALF);
+                cachef[i] = 327.68 * std::cbrt((double)i / MAXVALF);
             }
         }
 #ifdef _OPENMP
@@ -186,11 +186,11 @@ void Color::init ()
         {
             for (int i = 0; i < maxindex; i++)
             {
-                gammatab_srgb[i] = gammatab_srgb1[i] = gamma2 (i / 65535.0);
+                gammatab_srgb[i] = gammatab_srgb1[i] = gamma2(i / 65535.0);
             }
 
             gammatab_srgb *= 65535.f;
-            gamma2curve.share (gammatab_srgb, LUT_CLIP_BELOW | LUT_CLIP_ABOVE); // shares the buffer with gammatab_srgb but has different clip flags
+            gamma2curve.share(gammatab_srgb, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);  // shares the buffer with gammatab_srgb but has different clip flags
         }
 #ifdef _OPENMP
         #pragma omp section
@@ -198,7 +198,7 @@ void Color::init ()
         {
             for (int i = 0; i < 32768; i++)
             {
-                gammatab_srgb327[i] = gamma2 (i / 32767.0);
+                gammatab_srgb327[i] = gamma2(i / 32767.0);
             }
 
             gammatab_srgb327 *= 32767.f;
@@ -211,7 +211,7 @@ void Color::init ()
         {
             for (int i = 0; i < maxindex; i++)
             {
-                igammatab_srgb[i] = igammatab_srgb1[i] = igamma2 (i / 65535.0);
+                igammatab_srgb[i] = igammatab_srgb1[i] = igamma2(i / 65535.0);
             }
 
             igammatab_srgb *= 65535.f;
@@ -224,9 +224,9 @@ void Color::init ()
 
             for (int i = 0; i < maxindex; i++)
             {
-                double val = pow (i / 65535.0, rsRGBGamma);
+                double val = pow(i / 65535.0, rsRGBGamma);
                 gammatab[i] = 65535.0 * val;
-                gammatabThumb[i] = (unsigned char) (255.0 * val);
+                gammatabThumb[i] = (unsigned char)(255.0 * val);
             }
         }
 
@@ -241,21 +241,21 @@ void Color::init ()
         switch (settings->denoiselabgamma) {
             case 0:
                 for (int i = 0; i < maxindex; i++) {
-                    denoiseGammaTab[i] = 65535.0 * gamma26_11 (i / 65535.0);
+                    denoiseGammaTab[i] = 65535.0 * gamma26_11(i / 65535.0);
                 }
 
                 break;
 
             case 1:
                 for (int i = 0; i < maxindex; i++) {
-                    denoiseGammaTab[i] = 65535.0 * gamma4 (i / 65535.0);
+                    denoiseGammaTab[i] = 65535.0 * gamma4(i / 65535.0);
                 }
 
                 break;
 
             default:
                 for (int i = 0; i < maxindex; i++) {
-                    denoiseGammaTab[i] = 65535.0 * gamma55 (i / 65535.0);
+                    denoiseGammaTab[i] = 65535.0 * gamma55(i / 65535.0);
                 }
 
                 break;
@@ -272,21 +272,21 @@ void Color::init ()
         switch (settings->denoiselabgamma) {
             case 0:
                 for (int i = 0; i < maxindex; i++) {
-                    denoiseIGammaTab[i] = 65535.0 * igamma26_11 (i / 65535.0);
+                    denoiseIGammaTab[i] = 65535.0 * igamma26_11(i / 65535.0);
                 }
 
                 break;
 
             case 1:
                 for (int i = 0; i < maxindex; i++) {
-                    denoiseIGammaTab[i] = 65535.0 * igamma4 (i / 65535.0);
+                    denoiseIGammaTab[i] = 65535.0 * igamma4(i / 65535.0);
                 }
 
                 break;
 
             default:
                 for (int i = 0; i < maxindex; i++) {
-                    denoiseIGammaTab[i] = 65535.0 * igamma55 (i / 65535.0);
+                    denoiseIGammaTab[i] = 65535.0 * igamma55(i / 65535.0);
                 }
 
                 break;
@@ -297,7 +297,7 @@ void Color::init ()
 #endif
 
         for (int i = 0; i < maxindex; i++) {
-            gammatab_13_2[i] = 65535.0 * gamma13_2 (i / 65535.0);
+            gammatab_13_2[i] = 65535.0 * gamma13_2(i / 65535.0);
         }
 
 #ifdef _OPENMP
@@ -305,7 +305,7 @@ void Color::init ()
 #endif
 
         for (int i = 0; i < maxindex; i++) {
-            igammatab_13_2[i] = 65535.0 * igamma13_2 (i / 65535.0);
+            igammatab_13_2[i] = 65535.0 * igamma13_2(i / 65535.0);
         }
 
 #ifdef _OPENMP
@@ -313,7 +313,7 @@ void Color::init ()
 #endif
 
         for (int i = 0; i < maxindex; i++) {
-            gammatab_115_2[i] = 65535.0 * gamma115_2 (i / 65535.0);
+            gammatab_115_2[i] = 65535.0 * gamma115_2(i / 65535.0);
         }
 
 #ifdef _OPENMP
@@ -321,7 +321,7 @@ void Color::init ()
 #endif
 
         for (int i = 0; i < maxindex; i++) {
-            igammatab_115_2[i] = 65535.0 * igamma115_2 (i / 65535.0);
+            igammatab_115_2[i] = 65535.0 * igamma115_2(i / 65535.0);
         }
 
 #ifdef _OPENMP
@@ -329,7 +329,7 @@ void Color::init ()
 #endif
 
         for (int i = 0; i < maxindex; i++) {
-            gammatab_145_3[i] = 65535.0 * gamma145_3 (i / 65535.0);
+            gammatab_145_3[i] = 65535.0 * gamma145_3(i / 65535.0);
         }
 
 #ifdef _OPENMP
@@ -337,7 +337,7 @@ void Color::init ()
 #endif
 
         for (int i = 0; i < maxindex; i++) {
-            igammatab_145_3[i] = 65535.0 * igamma145_3 (i / 65535.0);
+            igammatab_145_3[i] = 65535.0 * igamma145_3(i / 65535.0);
         }
 
 #ifdef _OPENMP
@@ -345,7 +345,7 @@ void Color::init ()
 #endif
 
         for (int i = 0; i < maxindex; i++) {
-            gammatab_24_17a[i] = gamma24_17 (i / 65535.0);
+            gammatab_24_17a[i] = gamma24_17(i / 65535.0);
         }
 
 #ifdef _OPENMP
@@ -353,7 +353,7 @@ void Color::init ()
 #endif
 
         for (int i = 0; i < maxindex; i++) {
-            igammatab_24_17[i] = 65535.0 * igamma24_17 (i / 65535.0);
+            igammatab_24_17[i] = 65535.0 * igamma24_17(i / 65535.0);
         }
 
 #ifdef _OPENMP
@@ -364,18 +364,18 @@ void Color::init ()
 #ifdef _OPENMP
         #pragma omp section
 #endif
-        linearGammaTRC = cmsBuildGamma (nullptr, 1.0);
+        linearGammaTRC = cmsBuildGamma(nullptr, 1.0);
     }
 }
 
-void Color::cleanup ()
+void Color::cleanup()
 {
     if (linearGammaTRC) {
-        cmsFreeToneCurve (linearGammaTRC);
+        cmsFreeToneCurve(linearGammaTRC);
     }
 }
 
-void Color::rgb2lab (Glib::ustring profile, Glib::ustring profileW, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b, bool workingSpace)
+void Color::rgb2lab(Glib::ustring profile, Glib::ustring profileW, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b, bool workingSpace)
 {
     double xyz_rgb[3][3];
     const double ep = 216.0 / 24389.0;
@@ -413,95 +413,95 @@ void Color::rgb2lab (Glib::ustring profile, Glib::ustring profileW, int r, int g
     if (workingSpace) {//display working
         if (profileW == "sRGB") { //apply sRGB inverse gamma
 
-            if ( var_R > 0.04045 ) {
-                var_R = pow ( ( ( var_R + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+            if (var_R > 0.04045) {
+                var_R = pow(((var_R + 0.055) / 1.055), rtengine::Color::sRGBGammaCurve);
             } else {
                 var_R = var_R / 12.92;
             }
 
-            if ( var_G > 0.04045 ) {
-                var_G = pow ( ( ( var_G + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+            if (var_G > 0.04045) {
+                var_G = pow(((var_G + 0.055) / 1.055), rtengine::Color::sRGBGammaCurve);
             } else {
                 var_G = var_G / 12.92;
             }
 
-            if ( var_B > 0.04045 ) {
-                var_B = pow ( ( ( var_B + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+            if (var_B > 0.04045) {
+                var_B = pow(((var_B + 0.055) / 1.055), rtengine::Color::sRGBGammaCurve);
             } else {
                 var_B = var_B / 12.92;
             }
         } else if (profileW == "ProPhoto") { // apply inverse gamma 1.8
-            var_R = pow ( var_R, 1.8);
-            var_G = pow ( var_G, 1.8);
-            var_B = pow ( var_B, 1.8);
+            var_R = pow(var_R, 1.8);
+            var_G = pow(var_G, 1.8);
+            var_B = pow(var_B, 1.8);
         } else { // apply inverse gamma 2.2
-            var_R = pow ( var_R, 2.2);
-            var_G = pow ( var_G, 2.2);
-            var_B = pow ( var_B, 2.2);
+            var_R = pow(var_R, 2.2);
+            var_G = pow(var_G, 2.2);
+            var_B = pow(var_B, 2.2);
         }
     } else { //display outout profile
 
         if (profile == "RT_sRGB" || profile == "RT_Large_gsRGB"  || profile == "RT_Medium_gsRGB") { //apply sRGB inverse gamma
-            if ( var_R > 0.04045 ) {
-                var_R = pow ( ( ( var_R + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+            if (var_R > 0.04045) {
+                var_R = pow(((var_R + 0.055) / 1.055), rtengine::Color::sRGBGammaCurve);
             } else {
                 var_R = var_R / 12.92;
             }
 
-            if ( var_G > 0.04045 ) {
-                var_G = pow ( ( ( var_G + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+            if (var_G > 0.04045) {
+                var_G = pow(((var_G + 0.055) / 1.055), rtengine::Color::sRGBGammaCurve);
             } else {
                 var_G = var_G / 12.92;
             }
 
-            if ( var_B > 0.04045 ) {
-                var_B = pow ( ( ( var_B + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+            if (var_B > 0.04045) {
+                var_B = pow(((var_B + 0.055) / 1.055), rtengine::Color::sRGBGammaCurve);
             } else {
                 var_B = var_B / 12.92;
             }
         }
 
         else if (profile == "RT_sRGB_gBT709"  || profile == "RT_Large_gBT709") { //
-            if ( var_R > 0.0795 ) {
-                var_R = pow ( ( ( var_R + 0.0954 ) / 1.0954 ), 2.2);
+            if (var_R > 0.0795) {
+                var_R = pow(((var_R + 0.0954) / 1.0954), 2.2);
             } else {
                 var_R = var_R / 4.5;
             }
 
-            if ( var_G > 0.0795 ) {
-                var_G = pow ( ( ( var_G + 0.0954 ) / 1.0954 ), 2.2);
+            if (var_G > 0.0795) {
+                var_G = pow(((var_G + 0.0954) / 1.0954), 2.2);
             } else {
                 var_G = var_G / 4.5;
             }
 
-            if ( var_B > 0.0795 ) {
-                var_B = pow ( ( ( var_B + 0.0954 ) / 1.0954 ), 2.2);
+            if (var_B > 0.0795) {
+                var_B = pow(((var_B + 0.0954) / 1.0954), 2.2);
             } else {
                 var_B = var_B / 4.5;
             }
 
         } else if (profile == "ProPhoto") { // apply inverse gamma 1.8
 
-            var_R = pow ( var_R, 1.8);
-            var_G = pow ( var_G, 1.8);
-            var_B = pow ( var_B, 1.8);
+            var_R = pow(var_R, 1.8);
+            var_G = pow(var_G, 1.8);
+            var_B = pow(var_B, 1.8);
         } else if (profile == "RT_sRGB_g10"  || profile == "RT_Large_g10") { // apply inverse gamma 1.8
 
-            var_R = pow ( var_R, 1.);
-            var_G = pow ( var_G, 1.);
-            var_B = pow ( var_B, 1.);
+            var_R = pow(var_R, 1.);
+            var_G = pow(var_G, 1.);
+            var_B = pow(var_B, 1.);
         }
 
         else {// apply inverse gamma 2.2
-            var_R = pow ( var_R, 2.2);
-            var_G = pow ( var_G, 2.2);
-            var_B = pow ( var_B, 2.2);
+            var_R = pow(var_R, 2.2);
+            var_G = pow(var_G, 2.2);
+            var_B = pow(var_B, 2.2);
         }
     }
 
     // TMatrix wprof = rtengine::ICCStore::getInstance()->workingSpaceMatrix (profileW);
 
-    TMatrix wprof = rtengine::ICCStore::getInstance()->workingSpaceMatrix (profileCalc);
+    TMatrix wprof = rtengine::ICCStore::getInstance()->workingSpaceMatrix(profileCalc);
 
     for (int m = 0; m < 3; m++)
         for (int n = 0; n < 3; n++) {
@@ -509,28 +509,28 @@ void Color::rgb2lab (Glib::ustring profile, Glib::ustring profileW, int r, int g
         }
 
     double varxx, varyy, varzz;
-    double var_X = ( xyz_rgb[0][0] * var_R + xyz_rgb[0][1] * var_G + xyz_rgb[0][2] * var_B ) / Color::D50x;
-    double var_Y = ( xyz_rgb[1][0] * var_R + xyz_rgb[1][1] * var_G + xyz_rgb[1][2] * var_B ) ;
-    double var_Z = ( xyz_rgb[2][0] * var_R + xyz_rgb[2][1] * var_G + xyz_rgb[2][2] * var_B ) / Color::D50z;
+    double var_X = (xyz_rgb[0][0] * var_R + xyz_rgb[0][1] * var_G + xyz_rgb[0][2] * var_B) / Color::D50x;
+    double var_Y = (xyz_rgb[1][0] * var_R + xyz_rgb[1][1] * var_G + xyz_rgb[1][2] * var_B) ;
+    double var_Z = (xyz_rgb[2][0] * var_R + xyz_rgb[2][1] * var_G + xyz_rgb[2][2] * var_B) / Color::D50z;
 
-    varxx = var_X > ep ? cbrt (var_X) : ( ka * var_X  +  16.0) / 116.0 ;
-    varyy = var_Y > ep ? cbrt (var_Y) : ( ka * var_Y  +  16.0) / 116.0 ;
-    varzz = var_Z > ep ? cbrt (var_Z) : ( ka * var_Z  +  16.0) / 116.0 ;
-    LAB_l = ( 116 * varyy ) - 16;
-    LAB_a = 500 * ( varxx - varyy );
-    LAB_b = 200 * ( varyy - varzz );
+    varxx = var_X > ep ? cbrt(var_X) : (ka * var_X  +  16.0) / 116.0 ;
+    varyy = var_Y > ep ? cbrt(var_Y) : (ka * var_Y  +  16.0) / 116.0 ;
+    varzz = var_Z > ep ? cbrt(var_Z) : (ka * var_Z  +  16.0) / 116.0 ;
+    LAB_l = (116 * varyy) - 16;
+    LAB_a = 500 * (varxx - varyy);
+    LAB_b = 200 * (varyy - varzz);
 
 }
 
-void Color::rgb2hsl (float r, float g, float b, float &h, float &s, float &l)
+void Color::rgb2hsl(float r, float g, float b, float &h, float &s, float &l)
 {
 
     double var_R = double (r) / 65535.0;
     double var_G = double (g) / 65535.0;
     double var_B = double (b) / 65535.0;
 
-    double m = min (var_R, var_G, var_B);
-    double M = max (var_R, var_G, var_B);
+    double m = min(var_R, var_G, var_B);
+    double M = max(var_R, var_G, var_B);
     double C = M - m;
 
     double l_ = (M + m) / 2.;
@@ -543,14 +543,14 @@ void Color::rgb2hsl (float r, float g, float b, float &h, float &s, float &l)
         double h_;
 
         if (l_ <= 0.5) {
-            s = float ( (M - m) / (M + m) );
+            s = float ((M - m) / (M + m));
         } else {
-            s = float ( (M - m) / (2.0 - M - m) );
+            s = float ((M - m) / (2.0 - M - m));
         }
 
-        if      ( var_R == M ) {
-            h_ =      (var_G - var_B) / C;
-        } else if ( var_G == M ) {
+        if (var_R == M) {
+            h_ = (var_G - var_B) / C;
+        } else if (var_G == M) {
             h_ = 2. + (var_B - var_R) / C;
         } else {
             h_ = 4. + (var_R - var_G) / C;
@@ -558,26 +558,26 @@ void Color::rgb2hsl (float r, float g, float b, float &h, float &s, float &l)
 
         h = float (h_ / 6.0);
 
-        if ( h < 0.f ) {
+        if (h < 0.f) {
             h += 1.f;
         }
 
-        if ( h > 1.f ) {
+        if (h > 1.f) {
             h -= 1.f;
         }
     }
 }
 
-void Color::rgb2hslfloat (float r, float g, float b, float &h, float &s, float &l)
+void Color::rgb2hslfloat(float r, float g, float b, float &h, float &s, float &l)
 {
 
-    float m = min (r, g, b);
-    float M = max (r, g, b);
+    float m = min(r, g, b);
+    float M = max(r, g, b);
     float C = M - m;
 
     l = (M + m) * 7.6295109e-6f; // (0.5f / 65535.f)
 
-    if (fabsf (C) < 0.65535f) { // 0.00001f * 65535.f
+    if (fabsf(C) < 0.65535f) {  // 0.00001f * 65535.f
         h = 0.f;
         s = 0.f;
     } else {
@@ -588,9 +588,9 @@ void Color::rgb2hslfloat (float r, float g, float b, float &h, float &s, float &
             s = (M - m) / (131070.f - M - m); // 131070.f = 2.f * 65535.f
         }
 
-        if ( r == M ) {
+        if (r == M) {
             h = (g - b);
-        } else if ( g == M ) {
+        } else if (g == M) {
             h = (2.f * C) + (b - r);
         } else {
             h = (4.f * C) + (r - g);
@@ -598,49 +598,49 @@ void Color::rgb2hslfloat (float r, float g, float b, float &h, float &s, float &
 
         h /= (6.f * C);
 
-        if ( h < 0.f ) {
+        if (h < 0.f) {
             h += 1.f;
-        } else if ( h > 1.f ) {
+        } else if (h > 1.f) {
             h -= 1.f;
         }
     }
 }
 
 #ifdef __SSE2__
-void Color::rgb2hsl (vfloat r, vfloat g, vfloat b, vfloat &h, vfloat &s, vfloat &l)
+void Color::rgb2hsl(vfloat r, vfloat g, vfloat b, vfloat &h, vfloat &s, vfloat &l)
 {
-    vfloat maxv = _mm_max_ps (r, _mm_max_ps (g, b));
-    vfloat minv = _mm_min_ps (r, _mm_min_ps (g, b));
+    vfloat maxv = _mm_max_ps(r, _mm_max_ps(g, b));
+    vfloat minv = _mm_min_ps(r, _mm_min_ps(g, b));
     vfloat C = maxv - minv;
     vfloat tempv = maxv + minv;
-    l = (tempv) * F2V (7.6295109e-6f);
+    l = (tempv) * F2V(7.6295109e-6f);
     s = (maxv - minv);
-    s /= vself (vmaskf_gt (l, F2V (0.5f)), F2V (131070.f) - tempv, tempv);
+    s /= vself(vmaskf_gt(l, F2V(0.5f)), F2V(131070.f) - tempv, tempv);
 
-    h = F2V (4.f) * C + r - g;
-    h = vself (vmaskf_eq (g, maxv), F2V (2.f) * C + b - r, h);
-    h = vself (vmaskf_eq (r, maxv), g - b, h);
+    h = F2V(4.f) * C + r - g;
+    h = vself(vmaskf_eq(g, maxv), F2V(2.f) * C + b - r, h);
+    h = vself(vmaskf_eq(r, maxv), g - b, h);
 
-    h /= (F2V (6.f) * C);
-    vfloat onev = F2V (1.f);
-    h = vself (vmaskf_lt (h, ZEROV), h + onev, h);
-    h = vself (vmaskf_gt (h, onev), h - onev, h);
+    h /= (F2V(6.f) * C);
+    vfloat onev = F2V(1.f);
+    h = vself(vmaskf_lt(h, ZEROV), h + onev, h);
+    h = vself(vmaskf_gt(h, onev), h - onev, h);
 
-    vmask zeromask = vmaskf_lt (vabsf (C), F2V (0.65535f));
-    h = vself (zeromask, ZEROV, h);
-    s = vself (zeromask, ZEROV, s);
+    vmask zeromask = vmaskf_lt(vabsf(C), F2V(0.65535f));
+    h = vself(zeromask, ZEROV, h);
+    s = vself(zeromask, ZEROV, s);
 }
 #endif
 
-double Color::hue2rgb (double p, double q, double t)
+double Color::hue2rgb(double p, double q, double t)
 {
     if (t < 0.) {
         t += 6.;
-    } else if ( t > 6.) {
+    } else if (t > 6.) {
         t -= 6.;
     }
 
-    if      (t < 1.) {
+    if (t < 1.) {
         return p + (q - p) * t;
     } else if (t < 3.) {
         return q;
@@ -651,15 +651,15 @@ double Color::hue2rgb (double p, double q, double t)
     }
 }
 
-float Color::hue2rgbfloat (float p, float q, float t)
+float Color::hue2rgbfloat(float p, float q, float t)
 {
     if (t < 0.f) {
         t += 6.f;
-    } else if ( t > 6.f) {
+    } else if (t > 6.f) {
         t -= 6.f;
     }
 
-    if      (t < 1.f) {
+    if (t < 1.f) {
         return p + (q - p) * t;
     } else if (t < 3.f) {
         return q;
@@ -671,23 +671,23 @@ float Color::hue2rgbfloat (float p, float q, float t)
 }
 
 #ifdef __SSE2__
-vfloat Color::hue2rgb (vfloat p, vfloat q, vfloat t)
+vfloat Color::hue2rgb(vfloat p, vfloat q, vfloat t)
 {
-    vfloat fourv = F2V (4.f);
-    vfloat threev = F2V (3.f);
+    vfloat fourv = F2V(4.f);
+    vfloat threev = F2V(3.f);
     vfloat sixv = threev + threev;
-    t = vself (vmaskf_lt (t, ZEROV), t + sixv, t);
-    t = vself (vmaskf_gt (t, sixv), t - sixv, t);
+    t = vself(vmaskf_lt(t, ZEROV), t + sixv, t);
+    t = vself(vmaskf_gt(t, sixv), t - sixv, t);
 
     vfloat temp1 = p + (q - p) * t;
     vfloat temp2 = p + (q - p) * (fourv - t);
-    vfloat result = vself (vmaskf_lt (t, fourv), temp2, p);
-    result = vself (vmaskf_lt (t, threev), q, result);
-    return vself (vmaskf_lt (t, fourv - threev), temp1, result);
+    vfloat result = vself(vmaskf_lt(t, fourv), temp2, p);
+    result = vself(vmaskf_lt(t, threev), q, result);
+    return vself(vmaskf_lt(t, fourv - threev), temp1, result);
 }
 #endif
 
-void Color::hsl2rgb (float h, float s, float l, float &r, float &g, float &b)
+void Color::hsl2rgb(float h, float s, float l, float &r, float &g, float &b)
 {
 
     if (s == 0) {
@@ -706,13 +706,13 @@ void Color::hsl2rgb (float h, float s, float l, float &r, float &g, float &b)
 
         double m1 = 2.0 * l_ - m2;
 
-        r = float (65535.0 * hue2rgb (m1, m2, h_ * 6.0 + 2.0));
-        g = float (65535.0 * hue2rgb (m1, m2, h_ * 6.0));
-        b = float (65535.0 * hue2rgb (m1, m2, h_ * 6.0 - 2.0));
+        r = float (65535.0 * hue2rgb(m1, m2, h_ * 6.0 + 2.0));
+        g = float (65535.0 * hue2rgb(m1, m2, h_ * 6.0));
+        b = float (65535.0 * hue2rgb(m1, m2, h_ * 6.0 - 2.0));
     }
 }
 
-void Color::hsl2rgbfloat (float h, float s, float l, float &r, float &g, float &b)
+void Color::hsl2rgbfloat(float h, float s, float l, float &r, float &g, float &b)
 {
 
     if (s == 0.f) {
@@ -728,38 +728,38 @@ void Color::hsl2rgbfloat (float h, float s, float l, float &r, float &g, float &
 
         float m1 = 2.f * l - m2;
 
-        r = 65535.f * hue2rgbfloat (m1, m2, h * 6.f + 2.f);
-        g = 65535.f * hue2rgbfloat (m1, m2, h * 6.f);
-        b = 65535.f * hue2rgbfloat (m1, m2, h * 6.f - 2.f);
+        r = 65535.f * hue2rgbfloat(m1, m2, h * 6.f + 2.f);
+        g = 65535.f * hue2rgbfloat(m1, m2, h * 6.f);
+        b = 65535.f * hue2rgbfloat(m1, m2, h * 6.f - 2.f);
     }
 }
 
 #ifdef __SSE2__
-void Color::hsl2rgb (vfloat h, vfloat s, vfloat l, vfloat &r, vfloat &g, vfloat &b)
+void Color::hsl2rgb(vfloat h, vfloat s, vfloat l, vfloat &r, vfloat &g, vfloat &b)
 {
 
     vfloat m2 = s * l;
-    m2 = vself (vmaskf_gt (l, F2V (0.5f)), s - m2, m2);
+    m2 = vself(vmaskf_gt(l, F2V(0.5f)), s - m2, m2);
     m2 += l;
 
-    vfloat twov = F2V (2.f);
-    vfloat c65535v = F2V (65535.f);
+    vfloat twov = F2V(2.f);
+    vfloat c65535v = F2V(65535.f);
     vfloat m1 = l + l - m2;
 
-    h *= F2V (6.f);
-    r = c65535v * hue2rgb (m1, m2, h + twov);
-    g = c65535v * hue2rgb (m1, m2, h);
-    b = c65535v * hue2rgb (m1, m2, h - twov);
+    h *= F2V(6.f);
+    r = c65535v * hue2rgb(m1, m2, h + twov);
+    g = c65535v * hue2rgb(m1, m2, h);
+    b = c65535v * hue2rgb(m1, m2, h - twov);
 
-    vmask selectsMask = vmaskf_eq (ZEROV, s);
+    vmask selectsMask = vmaskf_eq(ZEROV, s);
     vfloat lc65535v = c65535v * l;
-    r = vself (selectsMask, lc65535v, r);
-    g = vself (selectsMask, lc65535v, g);
-    b = vself (selectsMask, lc65535v, b);
+    r = vself(selectsMask, lc65535v, r);
+    g = vself(selectsMask, lc65535v, g);
+    b = vself(selectsMask, lc65535v, b);
 }
 #endif
 
-void Color::hsl2rgb01 (float h, float s, float l, float &r, float &g, float &b)
+void Color::hsl2rgb01(float h, float s, float l, float &r, float &g, float &b)
 {
 
     if (s == 0) {
@@ -778,20 +778,20 @@ void Color::hsl2rgb01 (float h, float s, float l, float &r, float &g, float &b)
 
         double m1 = 2.0 * l_ - m2;
 
-        r = float (hue2rgb (m1, m2, h_ * 6.0 + 2.0));
-        g = float (hue2rgb (m1, m2, h_ * 6.0));
-        b = float (hue2rgb (m1, m2, h_ * 6.0 - 2.0));
+        r = float (hue2rgb(m1, m2, h_ * 6.0 + 2.0));
+        g = float (hue2rgb(m1, m2, h_ * 6.0));
+        b = float (hue2rgb(m1, m2, h_ * 6.0 - 2.0));
     }
 }
 
-void Color::rgb2hsv (float r, float g, float b, float &h, float &s, float &v)
+void Color::rgb2hsv(float r, float g, float b, float &h, float &s, float &v)
 {
     const double var_R = r / 65535.0;
     const double var_G = g / 65535.0;
     const double var_B = b / 65535.0;
 
-    const double var_Min = min (var_R, var_G, var_B);
-    const double var_Max = max (var_R, var_G, var_B);
+    const double var_Min = min(var_R, var_G, var_B);
+    const double var_Max = max(var_R, var_G, var_B);
     const double del_Max = var_Max - var_Min;
 
     h = 0.f;
@@ -822,20 +822,20 @@ void Color::rgb2hsv (float r, float g, float b, float &h, float &s, float &v)
     }
 }
 
-void Color::hsv2rgb (float h, float s, float v, float &r, float &g, float &b)
+void Color::hsv2rgb(float h, float s, float v, float &r, float &g, float &b)
 {
 
     float h1 = h * 6.f; // sector 0 to 5
     int i = (int)h1;  // floor() is very slow, and h1 is always >0
     float f = h1 - i; // fractional part of h
 
-    float p = v * ( 1.f - s );
-    float q = v * ( 1.f - s * f );
-    float t = v * ( 1.f - s * ( 1.f - f ) );
+    float p = v * (1.f - s);
+    float q = v * (1.f - s * f);
+    float t = v * (1.f - s * (1.f - f));
 
     float r1, g1, b1;
 
-    if      (i == 1)    {
+    if (i == 1)    {
         r1 = q;
         g1 = v;
         b1 = p;
@@ -868,17 +868,17 @@ void Color::hsv2rgb (float h, float s, float v, float &r, float &g, float &b)
 
 // Function copied for speed concerns
 // Not exactly the same as above ; this one return a result in the [0.0 ; 1.0] range
-void Color::hsv2rgb01 (float h, float s, float v, float &r, float &g, float &b)
+void Color::hsv2rgb01(float h, float s, float v, float &r, float &g, float &b)
 {
     float h1 = h * 6; // sector 0 to 5
     int i = int (h1);
     float f = h1 - i; // fractional part of h
 
-    float p = v * ( 1 - s );
-    float q = v * ( 1 - s * f );
-    float t = v * ( 1 - s * ( 1 - f ) );
+    float p = v * (1 - s);
+    float q = v * (1 - s * f);
+    float t = v * (1 - s * (1 - f));
 
-    if      (i == 1)    {
+    if (i == 1)    {
         r = q;
         g = v;
         b = p;
@@ -905,16 +905,16 @@ void Color::hsv2rgb01 (float h, float s, float v, float &r, float &g, float &b)
     }
 }
 
-void Color::hsv2rgb (float h, float s, float v, int &r, int &g, int &b)
+void Color::hsv2rgb(float h, float s, float v, int &r, int &g, int &b)
 {
 
     float h1 = h * 6; // sector 0 to 5
-    int i = floor ( h1 );
+    int i = floor(h1);
     float f = h1 - i; // fractional part of h
 
-    float p = v * ( 1 - s );
-    float q = v * ( 1 - s * f );
-    float t = v * ( 1 - s * ( 1 - f ) );
+    float p = v * (1 - s);
+    float q = v * (1 - s * f);
+    float t = v * (1 - s * (1 - f));
 
     float r1, g1, b1;
 
@@ -944,14 +944,14 @@ void Color::hsv2rgb (float h, float s, float v, int &r, int &g, int &b)
         b1 = q;
     }
 
-    r = (int) ( r1 * 65535);
-    g = (int) ( g1 * 65535);
-    b = (int) ( b1 * 65535);
+    r = (int)(r1 * 65535);
+    g = (int)(g1 * 65535);
+    b = (int)(b1 * 65535);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void Color::xyz2srgb (float x, float y, float z, float &r, float &g, float &b)
+void Color::xyz2srgb(float x, float y, float z, float &r, float &g, float &b)
 {
 
     //Transform to output color.  Standard sRGB is D65, but internal representation is D50
@@ -974,27 +974,27 @@ void Color::xyz2srgb (float x, float y, float z, float &r, float &g, float &b)
     b = ((sRGB_xyz[2][0] * x + sRGB_xyz[2][1] * y + sRGB_xyz[2][2] * z)) ;
 
 }
-void Color::xyz2Prophoto (float x, float y, float z, float &r, float &g, float &b)
+void Color::xyz2Prophoto(float x, float y, float z, float &r, float &g, float &b)
 {
     r = ((prophoto_xyz[0][0] * x + prophoto_xyz[0][1] * y + prophoto_xyz[0][2] * z)) ;
     g = ((prophoto_xyz[1][0] * x + prophoto_xyz[1][1] * y + prophoto_xyz[1][2] * z)) ;
     b = ((prophoto_xyz[2][0] * x + prophoto_xyz[2][1] * y + prophoto_xyz[2][2] * z)) ;
 }
-void Color::Prophotoxyz (float r, float g, float b, float &x, float &y, float &z)
+void Color::Prophotoxyz(float r, float g, float b, float &x, float &y, float &z)
 {
     x = ((xyz_prophoto[0][0] * r + xyz_prophoto[0][1] * g + xyz_prophoto[0][2] * b)) ;
     y = ((xyz_prophoto[1][0] * r + xyz_prophoto[1][1] * g + xyz_prophoto[1][2] * b)) ;
     z = ((xyz_prophoto[2][0] * r + xyz_prophoto[2][1] * g + xyz_prophoto[2][2] * b)) ;
 }
 
-void Color::rgbxyz (float r, float g, float b, float &x, float &y, float &z, const double xyz_rgb[3][3])
+void Color::rgbxyz(float r, float g, float b, float &x, float &y, float &z, const double xyz_rgb[3][3])
 {
     x = ((xyz_rgb[0][0] * r + xyz_rgb[0][1] * g + xyz_rgb[0][2] * b)) ;
     y = ((xyz_rgb[1][0] * r + xyz_rgb[1][1] * g + xyz_rgb[1][2] * b)) ;
     z = ((xyz_rgb[2][0] * r + xyz_rgb[2][1] * g + xyz_rgb[2][2] * b)) ;
 }
 
-void Color::rgbxyz (float r, float g, float b, float &x, float &y, float &z, const float xyz_rgb[3][3])
+void Color::rgbxyz(float r, float g, float b, float &x, float &y, float &z, const float xyz_rgb[3][3])
 {
     x = ((xyz_rgb[0][0] * r + xyz_rgb[0][1] * g + xyz_rgb[0][2] * b)) ;
     y = ((xyz_rgb[1][0] * r + xyz_rgb[1][1] * g + xyz_rgb[1][2] * b)) ;
@@ -1002,7 +1002,7 @@ void Color::rgbxyz (float r, float g, float b, float &x, float &y, float &z, con
 }
 
 #ifdef __SSE2__
-void Color::rgbxyz (vfloat r, vfloat g, vfloat b, vfloat &x, vfloat &y, vfloat &z, const vfloat xyz_rgb[3][3])
+void Color::rgbxyz(vfloat r, vfloat g, vfloat b, vfloat &x, vfloat &y, vfloat &z, const vfloat xyz_rgb[3][3])
 {
     x = ((xyz_rgb[0][0] * r + xyz_rgb[0][1] * g + xyz_rgb[0][2] * b)) ;
     y = ((xyz_rgb[1][0] * r + xyz_rgb[1][1] * g + xyz_rgb[1][2] * b)) ;
@@ -1010,7 +1010,7 @@ void Color::rgbxyz (vfloat r, vfloat g, vfloat b, vfloat &x, vfloat &y, vfloat &
 }
 #endif
 
-void Color::xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const double rgb_xyz[3][3])
+void Color::xyz2rgb(float x, float y, float z, float &r, float &g, float &b, const double rgb_xyz[3][3])
 {
     //Transform to output color.  Standard sRGB is D65, but internal representation is D50
     //Note that it is only at this point that we should have need of clipping color data
@@ -1032,7 +1032,7 @@ void Color::xyz2rgb (float x, float y, float z, float &r, float &g, float &b, co
     b = ((rgb_xyz[2][0] * x + rgb_xyz[2][1] * y + rgb_xyz[2][2] * z)) ;
 }
 
-void Color::xyz2r (float x, float y, float z, float &r, const double rgb_xyz[3][3]) // for black & white we need only r channel
+void Color::xyz2r(float x, float y, float z, float &r, const double rgb_xyz[3][3])  // for black & white we need only r channel
 {
     //Transform to output color.  Standard sRGB is D65, but internal representation is D50
     //Note that it is only at this point that we should have need of clipping color data
@@ -1041,7 +1041,7 @@ void Color::xyz2r (float x, float y, float z, float &r, const double rgb_xyz[3][
 }
 
 // same for float
-void Color::xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const float rgb_xyz[3][3])
+void Color::xyz2rgb(float x, float y, float z, float &r, float &g, float &b, const float rgb_xyz[3][3])
 {
     r = ((rgb_xyz[0][0] * x + rgb_xyz[0][1] * y + rgb_xyz[0][2] * z)) ;
     g = ((rgb_xyz[1][0] * x + rgb_xyz[1][1] * y + rgb_xyz[1][2] * z)) ;
@@ -1049,7 +1049,7 @@ void Color::xyz2rgb (float x, float y, float z, float &r, float &g, float &b, co
 }
 
 #ifdef __SSE2__
-void Color::xyz2rgb (vfloat x, vfloat y, vfloat z, vfloat &r, vfloat &g, vfloat &b, const vfloat rgb_xyz[3][3])
+void Color::xyz2rgb(vfloat x, vfloat y, vfloat z, vfloat &r, vfloat &g, vfloat &b, const vfloat rgb_xyz[3][3])
 {
     r = ((rgb_xyz[0][0] * x + rgb_xyz[0][1] * y + rgb_xyz[0][2] * z)) ;
     g = ((rgb_xyz[1][0] * x + rgb_xyz[1][1] * y + rgb_xyz[1][2] * z)) ;
@@ -1058,63 +1058,63 @@ void Color::xyz2rgb (vfloat x, vfloat y, vfloat z, vfloat &r, vfloat &g, vfloat 
 #endif // __SSE2__
 
 #ifdef __SSE2__
-void Color::trcGammaBW (float &r, float &g, float &b, float gammabwr, float gammabwg, float gammabwb)
+void Color::trcGammaBW(float &r, float &g, float &b, float gammabwr, float gammabwg, float gammabwb)
 {
     // correct gamma for black and white image : pseudo TRC curve of ICC profile
-    vfloat rgbv = _mm_set_ps (0.f, r, r, r); // input channel is always r
-    vfloat gammabwv = _mm_set_ps (0.f, gammabwb, gammabwg, gammabwr);
-    vfloat c65535v = F2V (65535.f);
+    vfloat rgbv = _mm_set_ps(0.f, r, r, r);  // input channel is always r
+    vfloat gammabwv = _mm_set_ps(0.f, gammabwb, gammabwg, gammabwr);
+    vfloat c65535v = F2V(65535.f);
     rgbv /= c65535v;
-    rgbv = vmaxf (rgbv, ZEROV);
-    rgbv = pow_F (rgbv, gammabwv);
+    rgbv = vmaxf(rgbv, ZEROV);
+    rgbv = pow_F(rgbv, gammabwv);
     rgbv *= c65535v;
     float temp[4] ALIGNED16;
-    STVF (temp[0], rgbv);
+    STVF(temp[0], rgbv);
     r = temp[0];
     g = temp[1];
     b = temp[2];
 }
-void Color::trcGammaBWRow (float *r, float *g, float *b, int width, float gammabwr, float gammabwg, float gammabwb)
+void Color::trcGammaBWRow(float *r, float *g, float *b, int width, float gammabwr, float gammabwg, float gammabwb)
 {
     // correct gamma for black and white image : pseudo TRC curve of ICC profile
-    vfloat c65535v = F2V (65535.f);
-    vfloat gammabwrv = F2V (gammabwr);
-    vfloat gammabwgv = F2V (gammabwg);
-    vfloat gammabwbv = F2V (gammabwb);
+    vfloat c65535v = F2V(65535.f);
+    vfloat gammabwrv = F2V(gammabwr);
+    vfloat gammabwgv = F2V(gammabwg);
+    vfloat gammabwbv = F2V(gammabwb);
     int i = 0;
 
-    for (; i < width - 3; i += 4 ) {
-        vfloat inv = _mm_loadu_ps (&r[i]); // input channel is always r
+    for (; i < width - 3; i += 4) {
+        vfloat inv = _mm_loadu_ps(&r[i]);  // input channel is always r
         inv /= c65535v;
-        inv = vmaxf (inv, ZEROV);
-        vfloat rv = pow_F (inv, gammabwrv);
-        vfloat gv = pow_F (inv, gammabwgv);
-        vfloat bv = pow_F (inv, gammabwbv);
+        inv = vmaxf(inv, ZEROV);
+        vfloat rv = pow_F(inv, gammabwrv);
+        vfloat gv = pow_F(inv, gammabwgv);
+        vfloat bv = pow_F(inv, gammabwbv);
         rv *= c65535v;
         gv *= c65535v;
         bv *= c65535v;
-        _mm_storeu_ps (&r[i], rv);
-        _mm_storeu_ps (&g[i], gv);
-        _mm_storeu_ps (&b[i], bv);
+        _mm_storeu_ps(&r[i], rv);
+        _mm_storeu_ps(&g[i], gv);
+        _mm_storeu_ps(&b[i], bv);
     }
 
     for (; i < width; i++) {
-        trcGammaBW (r[i], g[i], b[i], gammabwr, gammabwg, gammabwb);
+        trcGammaBW(r[i], g[i], b[i], gammabwr, gammabwg, gammabwb);
     }
 }
 
 #else
-void Color::trcGammaBW (float &r, float &g, float &b, float gammabwr, float gammabwg, float gammabwb)
+void Color::trcGammaBW(float &r, float &g, float &b, float gammabwr, float gammabwg, float gammabwb)
 {
     // correct gamma for black and white image : pseudo TRC curve of ICC profile
     float in = r; // input channel is always r
     in /= 65535.0f;
-    in = max (in, 0.f);
-    b = pow_F (in, gammabwb);
+    in = max(in, 0.f);
+    b = pow_F(in, gammabwb);
     b *= 65535.0f;
-    r = pow_F (in, gammabwr);
+    r = pow_F(in, gammabwr);
     r *= 65535.0f;
-    g = pow_F (in, gammabwg);
+    g = pow_F(in, gammabwg);
     g *= 65535.0f;
 }
 #endif
@@ -1124,9 +1124,9 @@ void Color::trcGammaBW (float &r, float &g, float &b, float gammabwr, float gamm
  * @param setting BlackWhite::setting
  * @param setting BlackWhite::filter
  */
-void Color::computeBWMixerConstants (const Glib::ustring &setting, const Glib::ustring &filter,  const Glib::ustring &algo, float &filcor, float &mixerRed, float &mixerGreen,
-                                     float &mixerBlue, float mixerOrange, float mixerYellow, float mixerCyan, float mixerPurple, float mixerMagenta,
-                                     bool autoc, bool complement, float &kcorec, double &rrm, double &ggm, double &bbm)
+void Color::computeBWMixerConstants(const Glib::ustring &setting, const Glib::ustring &filter,  const Glib::ustring &algo, float &filcor, float &mixerRed, float &mixerGreen,
+                                    float &mixerBlue, float mixerOrange, float mixerYellow, float mixerCyan, float mixerPurple, float mixerMagenta,
+                                    bool autoc, bool complement, float &kcorec, double &rrm, double &ggm, double &bbm)
 {
     float somm;
     float som = mixerRed + mixerGreen + mixerBlue;
@@ -1142,14 +1142,14 @@ void Color::computeBWMixerConstants (const Glib::ustring &setting, const Glib::u
 
     // rM = mixerRed, gM = mixerGreen, bM = mixerBlue !
     //presets
-    if     (setting == "RGB-Abs" || setting == "ROYGCBPM-Abs") {
+    if (setting == "RGB-Abs" || setting == "ROYGCBPM-Abs") {
         kcorec = som / 100.f;
     }
 
     if (!autoc) {
         //if     (setting=="RGB-Abs" || setting=="ROYGCBPM-Abs")  {} //Keep the RGB mixer values as is!
         //else if(setting=="RGB-Rel" || setting=="ROYGCBPM-Rel")  {} //Keep the RGB mixer values as is!
-        if     (setting == "NormalContrast")    {
+        if (setting == "NormalContrast")    {
             mixerRed = 43.f ;
             mixerGreen = 33.f;
             mixerBlue = 30.f;
@@ -1284,7 +1284,7 @@ void Color::computeBWMixerConstants (const Glib::ustring &setting, const Glib::u
                 yrM = fcompl * (0.5f * mixerYellow - 16.5f) / 100.f;    //22.4
             }
 
-            ygM = fcompl * (0.5f  * mixerYellow - 16.5f ) / 100.f;
+            ygM = fcompl * (0.5f  * mixerYellow - 16.5f) / 100.f;
 
             if (complement) {
                 ybM = (-0.492f * mixerYellow + 16.236f) / 100.f;
@@ -1299,7 +1299,7 @@ void Color::computeBWMixerConstants (const Glib::ustring &setting, const Glib::u
         if (mixerMagenta != 33) {
             if (algo == "SP") {
                 if (mixerMagenta >= 33) {
-                    mrM = fcompl * ( 0.67f * mixerMagenta - 22.11f) / 100.f;
+                    mrM = fcompl * (0.67f * mixerMagenta - 22.11f) / 100.f;
                 } else {
                     mrM = fcompl * (-0.3f * mixerMagenta + 9.9f) / 100.f;
                 }
@@ -1307,7 +1307,7 @@ void Color::computeBWMixerConstants (const Glib::ustring &setting, const Glib::u
                 if (mixerMagenta >= 33) {
                     mbM = fcompl * (-0.164f * mixerMagenta + 5.412f) / 100.f;
                 } else {
-                    mbM = fcompl * ( 0.4f * mixerMagenta - 13.2f) / 100.f;
+                    mbM = fcompl * (0.4f * mixerMagenta - 13.2f) / 100.f;
                 }
             } else if (algo == "LI") {
                 mrM = fcompl * (mixerMagenta - 33.f) / 100.f;
@@ -1374,47 +1374,47 @@ void Color::computeBWMixerConstants (const Glib::ustring &setting, const Glib::u
     filblue = 1.f;
     filcor = 1.f;
 
-    if          (filter == "None")        {
+    if (filter == "None")        {
         filred = 1.f;
         filgreen = 1.f;
         filblue = 1.f;
         filcor = 1.f;
-    } else if     (filter == "Red")         {
+    } else if (filter == "Red")         {
         filred = 1.f;
         filgreen = 0.05f;
         filblue = 0.f;
         filcor = 1.08f;
-    } else if     (filter == "Orange")      {
+    } else if (filter == "Orange")      {
         filred = 1.f;
         filgreen = 0.6f;
         filblue = 0.f;
         filcor = 1.35f;
-    } else if     (filter == "Yellow")      {
+    } else if (filter == "Yellow")      {
         filred = 1.f;
         filgreen = 1.f;
         filblue = 0.05f;
         filcor = 1.23f;
-    } else if     (filter == "YellowGreen") {
+    } else if (filter == "YellowGreen") {
         filred = 0.6f;
         filgreen = 1.f;
         filblue = 0.3f;
         filcor = 1.32f;
-    } else if     (filter == "Green")       {
+    } else if (filter == "Green")       {
         filred = 0.2f;
         filgreen = 1.f;
         filblue = 0.3f;
         filcor = 1.41f;
-    } else if     (filter == "Cyan")        {
+    } else if (filter == "Cyan")        {
         filred = 0.05f;
         filgreen = 1.f;
         filblue = 1.f;
         filcor = 1.23f;
-    } else if     (filter == "Blue")        {
+    } else if (filter == "Blue")        {
         filred = 0.f;
         filgreen = 0.05f;
         filblue = 1.f;
         filcor = 1.20f;
-    } else if     (filter == "Purple")      {
+    } else if (filter == "Purple")      {
         filred = 1.f;
         filgreen = 0.05f;
         filblue = 1.f;
@@ -1451,7 +1451,7 @@ void Color::computeBWMixerConstants (const Glib::ustring &setting, const Glib::u
 
 }
 
-void Color::interpolateRGBColor (const float balance, const float r1, const float g1, const float b1, const float r2, const float g2, const float b2, int toDo, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float &ro, float &go, float &bo)
+void Color::interpolateRGBColor(const float balance, const float r1, const float g1, const float b1, const float r2, const float g2, const float b2, int toDo, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float &ro, float &go, float &bo)
 {
     float X1, Y1, Z1, X2, Y2, Z2, X, Y, Z;
     float L1, L2, a_1, b_1, a_2, b_2, a, b;
@@ -1460,9 +1460,9 @@ void Color::interpolateRGBColor (const float balance, const float r1, const floa
     float Lr;
 
     // converting color 1 to Lch
-    Color::rgbxyz (r1, g1, b1, X1, Y1, Z1, xyz_rgb);
-    Color::XYZ2Lab (X1, Y1, Z1, L1, a_1, b_1);
-    Color::Lab2Lch (a_1, b_1, c1, h1);
+    Color::rgbxyz(r1, g1, b1, X1, Y1, Z1, xyz_rgb);
+    Color::XYZ2Lab(X1, Y1, Z1, L1, a_1, b_1);
+    Color::Lab2Lch(a_1, b_1, c1, h1);
     Lr = L1 / 327.68f; //for gamutlch
     //gamut control on r1 g1 b1
 #ifndef NDEBUG
@@ -1470,17 +1470,17 @@ void Color::interpolateRGBColor (const float balance, const float r1, const floa
     bool more_rgb = false;
 
     //gamut control : Lab values are in gamut
-    Color::gamutLchonly (h1, Lr, c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f, neg, more_rgb);
+    Color::gamutLchonly(h1, Lr, c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f, neg, more_rgb);
 #else
-    Color::gamutLchonly (h1, Lr, c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f);
+    Color::gamutLchonly(h1, Lr, c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f);
 #endif
 
     L1 = Lr * 327.68f;
 
     // converting color 2 to Lch
-    Color::rgbxyz (r2, g2, b2, X2, Y2, Z2, xyz_rgb);
-    Color::XYZ2Lab (X2, Y2, Z2, L2, a_2, b_2);
-    Color::Lab2Lch (a_2, b_2, c2, h2);
+    Color::rgbxyz(r2, g2, b2, X2, Y2, Z2, xyz_rgb);
+    Color::XYZ2Lab(X2, Y2, Z2, L2, a_2, b_2);
+    Color::Lab2Lch(a_2, b_2, c2, h2);
 
     Lr = L2 / 327.68f; //for gamutlch
     //gamut control on r2 g2 b2
@@ -1488,9 +1488,9 @@ void Color::interpolateRGBColor (const float balance, const float r1, const floa
     neg = false;
     more_rgb = false;
     //gamut control : Lab values are in gamut
-    Color::gamutLchonly (h2, Lr, c2, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f, neg, more_rgb);
+    Color::gamutLchonly(h2, Lr, c2, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f, neg, more_rgb);
 #else
-    Color::gamutLchonly (h2, Lr, c2, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f);
+    Color::gamutLchonly(h2, Lr, c2, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f);
 #endif
     L2 = Lr * 327.68f;
 
@@ -1525,34 +1525,34 @@ void Color::interpolateRGBColor (const float balance, const float r1, const floa
     neg = false;
     more_rgb = false;
     //gamut control : Lab values are in gamut
-    Color::gamutLchonly (h1, Lr, c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f, neg, more_rgb);
+    Color::gamutLchonly(h1, Lr, c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f, neg, more_rgb);
 #else
     //gamut control : Lab values are in gamut
-    Color::gamutLchonly (h1, Lr, c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f);
+    Color::gamutLchonly(h1, Lr, c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f);
 #endif
     //convert CH ==> ab
     L1 = Lr * 327.68f;
 
     // converting back to rgb
-    Color::Lch2Lab (c1, h1, a, b);
-    Color::Lab2XYZ (L1, a, b, X, Y, Z);
-    Color::xyz2rgb (X, Y, Z, ro, go, bo, rgb_xyz);
+    Color::Lch2Lab(c1, h1, a, b);
+    Color::Lab2XYZ(L1, a, b, X, Y, Z);
+    Color::xyz2rgb(X, Y, Z, ro, go, bo, rgb_xyz);
 }
 
 
-void Color::interpolateRGBColor (float realL, float iplow, float iphigh, int algm, const float balance, int twoc, int metchrom,
-                                 float chromat, float luma, const float r1, const float g1, const float b1,
-                                 const float xl, const float yl, const float zl, const float x2, const float y2, const float z2,
-                                 const double xyz_rgb[3][3], const double rgb_xyz[3][3], float &ro, float &go, float &bo)
+void Color::interpolateRGBColor(float realL, float iplow, float iphigh, int algm, const float balance, int twoc, int metchrom,
+                                float chromat, float luma, const float r1, const float g1, const float b1,
+                                const float xl, const float yl, const float zl, const float x2, const float y2, const float z2,
+                                const double xyz_rgb[3][3], const double rgb_xyz[3][3], float &ro, float &go, float &bo)
 {
     float X1, Y1, Z1, X2, Y2, Z2, X, Y, Z, XL, YL, ZL;
     float L1 = 0.f, L2, LL, a_1 = 0.f, b_1 = 0.f, a_2 = 0.f, b_2 = 0.f, a_L, b_L;
 
     // converting color 1 to Lab  (image)
-    Color::rgbxyz (r1, g1, b1, X1, Y1, Z1, xyz_rgb);
+    Color::rgbxyz(r1, g1, b1, X1, Y1, Z1, xyz_rgb);
 
     if (algm == 1) { //use H interpolate
-        Color::XYZ2Lab (X1, Y1, Z1, L1, a_1, b_1);
+        Color::XYZ2Lab(X1, Y1, Z1, L1, a_1, b_1);
         //Color::Lab2Lch(a_1, b_1, c_1, h_1) ;
     }
 
@@ -1564,7 +1564,7 @@ void Color::interpolateRGBColor (float realL, float iplow, float iphigh, int alg
         ZL = zl;
 
         if (algm <= 1) { //use H interpolate
-            Color::XYZ2Lab (XL, YL, ZL, LL, a_L, b_L);
+            Color::XYZ2Lab(XL, YL, ZL, LL, a_L, b_L);
         }
     }
 
@@ -1573,8 +1573,8 @@ void Color::interpolateRGBColor (float realL, float iplow, float iphigh, int alg
     Y2 = y2;
     Z2 = z2;
 
-    if (algm == 1 ) {
-        Color::XYZ2Lab (X2, Y2, Z2, L2, a_2, b_2);
+    if (algm == 1) {
+        Color::XYZ2Lab(X2, Y2, Z2, L2, a_2, b_2);
         //Color::Lab2Lch(a_2, b_2, c_2, h_2) ;
     }
 
@@ -1593,13 +1593,13 @@ void Color::interpolateRGBColor (float realL, float iplow, float iphigh, int alg
         calan = chromat;
 
         //calculate new balance chroma
-        if      (realL > iplow && realL <= med) {
+        if (realL > iplow && realL <= med) {
             cal = realL * calan / (iplow - med) - med * calan / (iplow - med);
         } else if (realL <= iplow) {
             cal = realL * calan / iplow;
         }
 
-        if      (realL > medH && realL <= iphigh) {
+        if (realL > medH && realL <= iphigh) {
             calH = realL * calan / (iphigh - medH) - medH * calan / (iphigh - medH);
         } else if (realL > iphigh) {
             calH = realL * calan;    //*(iphigh-1.f) - calan*(iphigh-1.f);//it is better without transition in highlight
@@ -1630,12 +1630,12 @@ void Color::interpolateRGBColor (float realL, float iplow, float iphigh, int alg
         }
     }
 
-    Color::Lab2XYZ (L1, a_1, b_1, X, Y, Z);
+    Color::Lab2XYZ(L1, a_1, b_1, X, Y, Z);
 
-    Color::xyz2rgb (X, Y, Z, ro, go, bo, rgb_xyz); // ro go bo in gamut
+    Color::xyz2rgb(X, Y, Z, ro, go, bo, rgb_xyz);  // ro go bo in gamut
 }
 
-void Color::calcGamma (double pwr, double ts, int mode, GammaValues &gamma)
+void Color::calcGamma(double pwr, double ts, int mode, GammaValues &gamma)
 {
     //from Dcraw (D.Coffin)
     int i;
@@ -1651,9 +1651,9 @@ void Color::calcGamma (double pwr, double ts, int mode, GammaValues &gamma)
             g[2] = (bnd[0] + bnd[1]) / 2.;
 
             if (g[0]) {
-                bnd[ (pow (g[2] / g[1], -g[0]) - 1.) / g[0] - 1. / g[2] > -1.] = g[2];
+                bnd[(pow(g[2] / g[1], -g[0]) - 1.) / g[0] - 1. / g[2] > -1.] = g[2];
             } else {
-                bnd[g[2] / exp (1. - 1. / g[2]) < g[1]] = g[2];
+                bnd[g[2] / exp(1. - 1. / g[2]) < g[1]] = g[2];
             }
         }
 
@@ -1665,9 +1665,9 @@ void Color::calcGamma (double pwr, double ts, int mode, GammaValues &gamma)
     }
 
     if (g[0]) {
-        g[5] = 1. / (g[1] * SQR (g[3]) / 2. - g[4] * (1. - g[3]) + (1. - pow (g[3], 1. + g[0])) * (1. + g[4]) / (1. + g[0])) - 1.;
+        g[5] = 1. / (g[1] * SQR(g[3]) / 2. - g[4] * (1. - g[3]) + (1. - pow(g[3], 1. + g[0])) * (1. + g[4]) / (1. + g[0])) - 1.;
     } else {
-        g[5] = 1. / (g[1] * SQR (g[3]) / 2. + 1. - g[2] - g[3] - g[2] * g[3] * (log (g[3]) - 1.)) - 1.;
+        g[5] = 1. / (g[1] * SQR(g[3]) / 2. + 1. - g[2] - g[3] - g[2] * g[3] * (log(g[3]) - 1.)) - 1.;
     }
 
     if (!mode--) {
@@ -1681,17 +1681,17 @@ void Color::calcGamma (double pwr, double ts, int mode, GammaValues &gamma)
         return;
     }
 }
-void Color::gammaf2lut (LUTf &gammacurve, float gamma, float start, float slope, float divisor, float factor)
+void Color::gammaf2lut(LUTf &gammacurve, float gamma, float start, float slope, float divisor, float factor)
 {
 #ifdef __SSE2__
     // SSE2 version is more than 6 times faster than scalar version
-    vfloat iv = _mm_set_ps (3.f, 2.f, 1.f, 0.f);
-    vfloat fourv = F2V (4.f);
-    vfloat gammav = F2V (1.f / gamma);
-    vfloat slopev = F2V ((slope / divisor) * factor);
-    vfloat divisorv = F2V (xlogf (divisor));
-    vfloat factorv = F2V (factor);
-    vfloat comparev = F2V (start * divisor);
+    vfloat iv = _mm_set_ps(3.f, 2.f, 1.f, 0.f);
+    vfloat fourv = F2V(4.f);
+    vfloat gammav = F2V(1.f / gamma);
+    vfloat slopev = F2V((slope / divisor) * factor);
+    vfloat divisorv = F2V(xlogf(divisor));
+    vfloat factorv = F2V(factor);
+    vfloat comparev = F2V(start * divisor);
     int border = start * divisor;
     int border1 = border - (border & 3);
     int border2 = border1 + 4;
@@ -1699,64 +1699,64 @@ void Color::gammaf2lut (LUTf &gammacurve, float gamma, float start, float slope,
 
     for (; i < border1; i += 4) {
         vfloat resultv = iv * slopev;
-        STVFU (gammacurve[i], resultv);
+        STVFU(gammacurve[i], resultv);
         iv += fourv;
     }
 
     for (; i < border2; i += 4) {
         vfloat result0v = iv * slopev;
-        vfloat result1v = xexpf ((xlogf (iv) - divisorv) * gammav) * factorv;
-        STVFU (gammacurve[i], vself (vmaskf_le (iv, comparev), result0v, result1v));
+        vfloat result1v = xexpf((xlogf(iv) - divisorv) * gammav) * factorv;
+        STVFU(gammacurve[i], vself(vmaskf_le(iv, comparev), result0v, result1v));
         iv += fourv;
     }
 
     for (; i < 65536; i += 4) {
-        vfloat resultv = xexpfNoCheck ((xlogfNoCheck (iv) - divisorv) * gammav) * factorv;
-        STVFU (gammacurve[i], resultv);
+        vfloat resultv = xexpfNoCheck((xlogfNoCheck(iv) - divisorv) * gammav) * factorv;
+        STVFU(gammacurve[i], resultv);
         iv += fourv;
     }
 
 #else
 
     for (int i = 0; i < 65536; ++i) {
-        gammacurve[i] = gammaf (static_cast<float> (i) / divisor, gamma, start, slope) * factor;
+        gammacurve[i] = gammaf(static_cast<float>(i) / divisor, gamma, start, slope) * factor;
     }
 
 #endif
 }
 
-void Color::gammanf2lut (LUTf &gammacurve, float gamma, float divisor, float factor)           //standard gamma without slope...
+void Color::gammanf2lut(LUTf &gammacurve, float gamma, float divisor, float factor)            //standard gamma without slope...
 {
 #ifdef __SSE2__
     // SSE2 version is more than 6 times faster than scalar version
-    vfloat iv = _mm_set_ps (3.f, 2.f, 1.f, 0.f);
-    vfloat fourv = F2V (4.f);
-    vfloat gammav = F2V (1.f / gamma);
-    vfloat divisorv = F2V (xlogf (divisor));
-    vfloat factorv = F2V (factor);
+    vfloat iv = _mm_set_ps(3.f, 2.f, 1.f, 0.f);
+    vfloat fourv = F2V(4.f);
+    vfloat gammav = F2V(1.f / gamma);
+    vfloat divisorv = F2V(xlogf(divisor));
+    vfloat factorv = F2V(factor);
 
     // first input value is zero => we have to use the xlogf function which checks this
-    vfloat resultv = xexpf ((xlogf (iv) - divisorv) * gammav) * factorv;
-    STVFU (gammacurve[0], resultv);
+    vfloat resultv = xexpf((xlogf(iv) - divisorv) * gammav) * factorv;
+    STVFU(gammacurve[0], resultv);
     iv += fourv;
 
     // inside the loop we can use xlogfNoCheck and xexpfNoCheck because we know about the input values
     for (int i = 4; i < 65536; i += 4) {
-        resultv = xexpfNoCheck ((xlogfNoCheck (iv) - divisorv) * gammav) * factorv;
-        STVFU (gammacurve[i], resultv);
+        resultv = xexpfNoCheck((xlogfNoCheck(iv) - divisorv) * gammav) * factorv;
+        STVFU(gammacurve[i], resultv);
         iv += fourv;
     }
 
 #else
 
     for (int i = 0; i < 65536; ++i) {
-        gammacurve[i] = Color::gammanf (static_cast<float> (i) / divisor, gamma) * factor;
+        gammacurve[i] = Color::gammanf(static_cast<float>(i) / divisor, gamma) * factor;
     }
 
 #endif
 }
 
-void Color::Lab2XYZ (float L, float a, float b, float &x, float &y, float &z)
+void Color::Lab2XYZ(float L, float a, float b, float &x, float &y, float &z)
 {
     float LL = L / 327.68f;
     float aa = a / 327.68f;
@@ -1764,16 +1764,16 @@ void Color::Lab2XYZ (float L, float a, float b, float &x, float &y, float &z)
     float fy = (0.00862069f * LL) + 0.137932f; // (L+16)/116
     float fx = (0.002f * aa) + fy;
     float fz = fy - (0.005f * bb);
-    x = 65535.0f * f2xyz (fx) * D50x;
-    z = 65535.0f * f2xyz (fz) * D50z;
+    x = 65535.0f * f2xyz(fx) * D50x;
+    z = 65535.0f * f2xyz(fz) * D50z;
     y = (LL > epskap) ? 65535.0f * fy * fy * fy : 65535.0f * LL / kappa;
 }
 
-void Color::L2XYZ (float L, float &x, float &y, float &z) // for black & white
+void Color::L2XYZ(float L, float &x, float &y, float &z)  // for black & white
 {
     float LL = L / 327.68f;
     float fy = (0.00862069f * LL) + 0.137932f; // (L+16)/116
-    float fxz = 65535.f * f2xyz (fy);
+    float fxz = 65535.f * f2xyz(fy);
     x = fxz * D50x;
     z = fxz * D50z;
     y = (LL > epskap) ? 65535.0f * fy * fy * fy : 65535.0f * LL / kappa;
@@ -1781,21 +1781,21 @@ void Color::L2XYZ (float L, float &x, float &y, float &z) // for black & white
 
 
 #ifdef __SSE2__
-void Color::Lab2XYZ (vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, vfloat &z)
+void Color::Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, vfloat &z)
 {
-    vfloat c327d68 = F2V (327.68f);
+    vfloat c327d68 = F2V(327.68f);
     L /= c327d68;
     a /= c327d68;
     b /= c327d68;
-    vfloat fy = F2V (0.00862069f) * L + F2V (0.137932f);
-    vfloat fx = F2V (0.002f) * a + fy;
-    vfloat fz = fy - (F2V (0.005f) * b);
-    vfloat c65535 = F2V (65535.f);
-    x = c65535 * f2xyz (fx) * F2V (D50x);
-    z = c65535 * f2xyz (fz) * F2V (D50z);
+    vfloat fy = F2V(0.00862069f) * L + F2V(0.137932f);
+    vfloat fx = F2V(0.002f) * a + fy;
+    vfloat fz = fy - (F2V(0.005f) * b);
+    vfloat c65535 = F2V(65535.f);
+    x = c65535 * f2xyz(fx) * F2V(D50x);
+    z = c65535 * f2xyz(fz) * F2V(D50z);
     vfloat res1 = fy * fy * fy;
-    vfloat res2 = L / F2V (kappa);
-    y = vself (vmaskf_gt (L, F2V (epskap)), res1, res2);
+    vfloat res2 = L / F2V(kappa);
+    y = vself(vmaskf_gt(L, F2V(epskap)), res1, res2);
     y *= c65535;
 }
 #endif // __SSE2__
@@ -1812,7 +1812,8 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
 #endif
     int i = 0;
 #ifdef __SSE2__
-    for(;i < width - 3; i+=4) {
+
+    for (; i < width - 3; i += 4) {
         const vfloat rv = LVFU(R[i]);
         const vfloat gv = LVFU(G[i]);
         const vfloat bv = LVFU(B[i]);
@@ -1821,9 +1822,10 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
         const vfloat zv = F2V(wp[2][0]) * rv + F2V(wp[2][1]) * gv + F2V(wp[2][2]) * bv;
 
         vmask maxMask = vmaskf_gt(vmaxf(xv, vmaxf(yv, zv)), maxvalfv);
+
         if (_mm_movemask_ps((vfloat)maxMask)) {
             // take slower code path for all 4 pixels if one of the values is > MAXVALF. Still faster than non SSE2 version
-            for(int k = 0; k < 4; ++k) {
+            for (int k = 0; k < 4; ++k) {
                 float x = xv[k];
                 float y = yv[k];
                 float z = zv[k];
@@ -1832,8 +1834,8 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
                 float fz = (z <= 65535.f ? cachef[z] : (327.68f * xcbrtf(z / MAXVALF)));
 
                 L[i + k] = (116.f *  fy - 5242.88f); //5242.88=16.0*327.68;
-                a[i + k] = (500.f * (fx - fy) );
-                b[i + k] = (200.f * (fy - fz) );
+                a[i + k] = (500.f * (fx - fy));
+                b[i + k] = (200.f * (fy - fz));
             }
         } else {
             const vfloat fx = cachef[xv];
@@ -1845,8 +1847,10 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
             STVFU(b[i], c200v * (fy - fz));
         }
     }
+
 #endif
-    for(;i < width; ++i) {
+
+    for (; i < width; ++i) {
         const float rv = R[i];
         const float gv = G[i];
         const float bv = B[i];
@@ -1873,32 +1877,32 @@ void Color::XYZ2Lab(float X, float Y, float Z, float &L, float &a, float &b)
     float y = Y;
     float fx, fy, fz;
 
-    fx = (x <= 65535.0f ? cachef[x] : (327.68f * xcbrtf (x / MAXVALF)));
-    fy = (y <= 65535.0f ? cachef[y] : (327.68f * xcbrtf (y / MAXVALF)));
-    fz = (z <= 65535.0f ? cachef[z] : (327.68f * xcbrtf (z / MAXVALF)));
+    fx = (x <= 65535.0f ? cachef[x] : (327.68f * xcbrtf(x / MAXVALF)));
+    fy = (y <= 65535.0f ? cachef[y] : (327.68f * xcbrtf(y / MAXVALF)));
+    fz = (z <= 65535.0f ? cachef[z] : (327.68f * xcbrtf(z / MAXVALF)));
 
     L = (116.0f *  fy - 5242.88f); //5242.88=16.0*327.68;
-    a = (500.0f * (fx - fy) );
-    b = (200.0f * (fy - fz) );
+    a = (500.0f * (fx - fy));
+    b = (200.0f * (fy - fz));
 }
 
-void Color::Lab2Yuv (float L, float a, float b, float &Y, float &u, float &v)
+void Color::Lab2Yuv(float L, float a, float b, float &Y, float &u, float &v)
 {
     float fy = (0.00862069 * L / 327.68) + 0.137932; // (L+16)/116
     float fx = (0.002 * a / 327.68) + fy;
     float fz = fy - (0.005 * b / 327.68);
     float LL = L / 327.68;
 
-    float X = 65535.0 * f2xyz (fx) * D50x;
+    float X = 65535.0 * f2xyz(fx) * D50x;
     // Y = 65535.0*f2xyz(fy);
-    float Z = 65535.0 * f2xyz (fz) * D50z;
+    float Z = 65535.0 * f2xyz(fz) * D50z;
     Y = (LL / 327.68f > epskap) ? 65535.0 * fy * fy * fy : 65535.0 * LL / kappa;
 
     u = 4.0 * X / (X + 15 * Y + 3 * Z) - u0;
     v = 9.0 * Y / (X + 15 * Y + 3 * Z) - v0;
 }
 
-void Color::Yuv2Lab (float Yin, float u, float v, float &L, float &a, float &b, const double wp[3][3])
+void Color::Yuv2Lab(float Yin, float u, float v, float &L, float &a, float &b, const double wp[3][3])
 {
     float u1 = u + u0;
     float v1 = v + v0;
@@ -1907,49 +1911,49 @@ void Color::Yuv2Lab (float Yin, float u, float v, float &L, float &a, float &b, 
     float X = (9 * u1 * Y) / (4 * v1 * D50x);
     float Z = (12 - 3 * u1 - 20 * v1) * Y / (4 * v1 * D50z);
 
-    gamutmap (X, Y, Z, wp);
+    gamutmap(X, Y, Z, wp);
 
-    float fx = (X <= 65535.0 ? cachef[X] : (327.68 * std::cbrt (X / MAXVALF)));
-    float fy = (Y <= 65535.0 ? cachef[Y] : (327.68 * std::cbrt (Y / MAXVALF)));
-    float fz = (Z <= 65535.0 ? cachef[Z] : (327.68 * std::cbrt (Z / MAXVALF)));
+    float fx = (X <= 65535.0 ? cachef[X] : (327.68 * std::cbrt(X / MAXVALF)));
+    float fy = (Y <= 65535.0 ? cachef[Y] : (327.68 * std::cbrt(Y / MAXVALF)));
+    float fz = (Z <= 65535.0 ? cachef[Z] : (327.68 * std::cbrt(Z / MAXVALF)));
 
     L = (116.0 * fy - 5242.88); //5242.88=16.0*327.68;
-    a = (500.0 * (fx - fy) );
-    b = (200.0 * (fy - fz) );
+    a = (500.0 * (fx - fy));
+    b = (200.0 * (fy - fz));
 }
 
-void Color::Lab2Lch (float a, float b, float &c, float &h)
+void Color::Lab2Lch(float a, float b, float &c, float &h)
 {
-    c = (sqrtf (a * a + b * b)) / 327.68f;
-    h = xatan2f (b, a);
+    c = (sqrtf(a * a + b * b)) / 327.68f;
+    h = xatan2f(b, a);
 }
 
-void Color::Lch2Lab (float c, float h, float &a, float &b)
+void Color::Lch2Lab(float c, float h, float &a, float &b)
 {
-    float2 sincosval = xsincosf (h);
+    float2 sincosval = xsincosf(h);
     a = 327.68f * c * sincosval.y;
     b = 327.68f * c * sincosval.x;
 }
 
-void Color::Luv2Lch (float u, float v, float &c, float &h)
+void Color::Luv2Lch(float u, float v, float &c, float &h)
 {
-    c = sqrtf (u * u + v * v);
-    h = xatan2f (v, u); //WARNING: should we care of division by zero here?
+    c = sqrtf(u * u + v * v);
+    h = xatan2f(v, u);  //WARNING: should we care of division by zero here?
 
     if (h < 0.f) {
         h += 1.f;
     }
 }
 
-void Color::Lch2Luv (float c, float h, float &u, float &v)
+void Color::Lch2Luv(float c, float h, float &u, float &v)
 {
-    float2 sincosval = xsincosf (h);
+    float2 sincosval = xsincosf(h);
     u = c * sincosval.x;
     v = c * sincosval.y;
 }
 
 // NOT TESTED
-void Color::XYZ2Luv (float X, float Y, float Z, float &L, float &u, float &v)
+void Color::XYZ2Luv(float X, float Y, float Z, float &L, float &u, float &v)
 {
 
     X /= 65535.f;
@@ -1957,7 +1961,7 @@ void Color::XYZ2Luv (float X, float Y, float Z, float &L, float &u, float &v)
     Z /= 65535.f;
 
     if (Y > float (eps)) {
-        L = 116.f * std::cbrt (Y) - 16.f;
+        L = 116.f * std::cbrt(Y) - 16.f;
     } else {
         L = float (kappa) * Y;
     }
@@ -1967,7 +1971,7 @@ void Color::XYZ2Luv (float X, float Y, float Z, float &L, float &u, float &v)
 }
 
 // NOT TESTED
-void Color::Luv2XYZ (float L, float u, float v, float &X, float &Y, float &Z)
+void Color::Luv2XYZ(float L, float u, float v, float &X, float &Y, float &Z)
 {
     if (L > float (epskap)) {
         float t = (L + 16.f) / 116.f;
@@ -2008,7 +2012,7 @@ void Color::Luv2XYZ (float L, float u, float v, float &X, float &Y, float &Z)
  * columns of the matrix p=xyz_rgb are RGB tristimulus primaries in XYZ
  * c is the color fixed on the boundary; and m=0 for c=0, m=1 for c=255
  */
-void Color::gamutmap (float &X, float &Y, float &Z, const double p[3][3])
+void Color::gamutmap(float &X, float &Y, float &Z, const double p[3][3])
 {
     float u = 4 * X / (X + 15 * Y + 3 * Z) - u0;
     float v = 9 * Y / (X + 15 * Y + 3 * Z) - v0;
@@ -2045,7 +2049,7 @@ void Color::gamutmap (float &X, float &Y, float &Z, const double p[3][3])
     Z = (12 - 3 * u - 20 * v) * Y / (4 * v);
 }
 
-void Color::skinred ( double J, double h, double sres, double Sp, float dred, float protect_red, int sk, float rstprotection, float ko, double &s)
+void Color::skinred(double J, double h, double sres, double Sp, float dred, float protect_red, int sk, float rstprotection, float ko, double &s)
 {
     float factorskin, factorsat, factor, factorskinext, interm;
     float scale = 100.0f / 100.1f; //reduction in normal zone
@@ -2055,16 +2059,16 @@ void Color::skinred ( double J, double h, double sres, double Sp, float dred, fl
     bool doskin = false;
 
     //rough correspondence between h (JC) and H (lab) that has relatively little importance because transitions that blur the correspondence is not linear
-    if     ((float)h > 8.6f  && (float)h <= 74.f ) {
+    if ((float)h > 8.6f  && (float)h <= 74.f) {
         HH = (1.15f / 65.4f) * (float)h - 0.0012f;     //H > 0.15   H<1.3
         doskin = true;
-    } else if ((float)h > 0.f   && (float)h <= 8.6f ) {
-        HH = (0.19f / 8.6f ) * (float)h - 0.04f;       //H>-0.04 H < 0.15
+    } else if ((float)h > 0.f   && (float)h <= 8.6f) {
+        HH = (0.19f / 8.6f) * (float)h - 0.04f;        //H>-0.04 H < 0.15
         doskin = true;
     } else if ((float)h > 355.f && (float)h <= 360.f) {
-        HH = (0.11f / 5.0f ) * (float)h - 7.96f;       //H>-0.15 <-0.04
+        HH = (0.11f / 5.0f) * (float)h - 7.96f;        //H>-0.15 <-0.04
         doskin = true;
-    } else if ((float)h > 74.f  && (float)h < 95.f  ) {
+    } else if ((float)h > 74.f  && (float)h < 95.f) {
         HH = (0.30f / 21.0f) * (float)h + 0.24285f;    //H>1.3  H<1.6
         doskin = true;
     }
@@ -2073,7 +2077,7 @@ void Color::skinred ( double J, double h, double sres, double Sp, float dred, fl
         float chromapro = sres / Sp;
 
         if (sk == 1) { //in C mode to adapt dred to J
-            if     (J < 16.0) {
+            if (J < 16.0) {
                 dred = 40.0f;
             } else if (J < 22.0) {
                 dred = 2.5f * (float)J;
@@ -2087,7 +2091,7 @@ void Color::skinred ( double J, double h, double sres, double Sp, float dred, fl
         }
 
         if (chromapro > 0.0) {
-            Color::scalered ( rstprotection, chromapro, 0.0, HH, deltaHH, scale, scaleext);    //Scale factor
+            Color::scalered(rstprotection, chromapro, 0.0, HH, deltaHH, scale, scaleext);      //Scale factor
         }
 
         if (chromapro > 1.0) {
@@ -2101,29 +2105,29 @@ void Color::skinred ( double J, double h, double sres, double Sp, float dred, fl
 
         factorsat = chromapro;
         factor = factorsat;
-        Color::transitred ( HH, s, dred, factorskin, protect_red, factorskinext, deltaHH, factorsat, factor);   //transition
+        Color::transitred(HH, s, dred, factorskin, protect_red, factorskinext, deltaHH, factorsat, factor);     //transition
         s *= factor;
     } else {
         s = ko * sres;
     }
 
 }
-void Color::skinredfloat ( float J, float h, float sres, float Sp, float dred, float protect_red, int sk, float rstprotection, float ko, float &s)
+void Color::skinredfloat(float J, float h, float sres, float Sp, float dred, float protect_red, int sk, float rstprotection, float ko, float &s)
 {
     float HH;
     bool doskin = false;
 
     //rough correspondence between h (JC) and H (lab) that has relatively little importance because transitions that blur the correspondence is not linear
-    if     ((float)h > 8.6f  && (float)h <= 74.f ) {
+    if ((float)h > 8.6f  && (float)h <= 74.f) {
         HH = (1.15f / 65.4f) * (float)h - 0.0012f;     //H > 0.15   H<1.3
         doskin = true;
-    } else if ((float)h > 0.f   && (float)h <= 8.6f ) {
-        HH = (0.19f / 8.6f ) * (float)h - 0.04f;       //H>-0.04 H < 0.15
+    } else if ((float)h > 0.f   && (float)h <= 8.6f) {
+        HH = (0.19f / 8.6f) * (float)h - 0.04f;        //H>-0.04 H < 0.15
         doskin = true;
     } else if ((float)h > 355.f && (float)h <= 360.f) {
-        HH = (0.11f / 5.0f ) * (float)h - 7.96f;       //H>-0.15 <-0.04
+        HH = (0.11f / 5.0f) * (float)h - 7.96f;        //H>-0.15 <-0.04
         doskin = true;
-    } else if ((float)h > 74.f  && (float)h < 95.f  ) {
+    } else if ((float)h > 74.f  && (float)h < 95.f) {
         HH = (0.30f / 21.0f) * (float)h + 0.24285f;    //H>1.3  H<1.6
         doskin = true;
     }
@@ -2134,7 +2138,7 @@ void Color::skinredfloat ( float J, float h, float sres, float Sp, float dred, f
         float chromapro = sres / Sp;
 
         if (sk == 1) { //in C mode to adapt dred to J
-            if     (J < 16.f) {
+            if (J < 16.f) {
                 dred = 40.f;
             } else if (J < 22.f) {
                 dred = 2.5f * J;
@@ -2150,7 +2154,7 @@ void Color::skinredfloat ( float J, float h, float sres, float Sp, float dred, f
         if (chromapro > 1.0) {
             float scale = 0.999000999f;  // 100.0f/100.1f; reduction in normal zone
             float scaleext = 1.0f; //reduction in transition zone
-            Color::scalered ( rstprotection, chromapro, 0.0, HH, deltaHH, scale, scaleext);//Scale factor
+            Color::scalered(rstprotection, chromapro, 0.0, HH, deltaHH, scale, scaleext);  //Scale factor
             float interm = (chromapro - 1.0f);
             factorskin = 1.0f + (interm * scale);
             factorskinext = 1.0f + (interm * scaleext);
@@ -2161,7 +2165,7 @@ void Color::skinredfloat ( float J, float h, float sres, float Sp, float dred, f
 
         factorsat = chromapro;
         factor = factorsat;
-        Color::transitred ( HH, s, dred, factorskin, protect_red, factorskinext, deltaHH, factorsat, factor);   //transition
+        Color::transitred(HH, s, dred, factorskin, protect_red, factorskinext, deltaHH, factorsat, factor);     //transition
         s *= factor;
     } else {
         s = ko * sres;
@@ -2174,7 +2178,7 @@ void Color::skinredfloat ( float J, float h, float sres, float Sp, float dred, f
 
 
 
-void Color::scalered ( const float rstprotection, const float param, const float limit, const float HH, const float deltaHH, float &scale, float &scaleext)
+void Color::scalered(const float rstprotection, const float param, const float limit, const float HH, const float deltaHH, float &scale, float &scaleext)
 {
     if (rstprotection < 99.9999f) {
         if (param > limit) {
@@ -2195,7 +2199,7 @@ void Color::scalered ( const float rstprotection, const float param, const float
     }
 }
 
-void Color::transitred (const float HH, float const Chprov1, const float dred, const float factorskin, const float protect_red, const float factorskinext, const float deltaHH, const float factorsat, float &factor)
+void Color::transitred(const float HH, float const Chprov1, const float dred, const float factorskin, const float protect_red, const float factorskinext, const float deltaHH, const float factorsat, float &factor)
 {
     if (HH >= 0.15f && HH < 1.3f) {
         if (Chprov1 < dred) {
@@ -2203,7 +2207,7 @@ void Color::transitred (const float HH, float const Chprov1, const float dred, c
         } else if (Chprov1 < (dred + protect_red)) {
             factor = ((factorsat - factorskin) * Chprov1 + factorsat * protect_red - (dred + protect_red) * (factorsat - factorskin)) / protect_red;
         }
-    } else if ( HH > (0.15f - deltaHH) && HH < (1.3f + deltaHH) ) { // test if chroma is in the extended range
+    } else if (HH > (0.15f - deltaHH) && HH < (1.3f + deltaHH)) {   // test if chroma is in the extended range
         if (Chprov1 < dred) {
             factor = factorskinext;    // C=dred=55 => real max of skin tones
         } else if (Chprov1 < (dred + protect_red)) {// transition
@@ -2229,9 +2233,9 @@ void Color::transitred (const float HH, float const Chprov1, const float dred, c
  *    MunsellDebugInfo* munsDbgInfo: (Debug target only) object to collect information.
  */
 #ifdef _DEBUG
-void Color::AllMunsellLch (bool lumaMuns, float Lprov1, float Loldd, float HH, float Chprov1, float CC, float &correctionHuechroma, float &correctlum, MunsellDebugInfo* munsDbgInfo)
+void Color::AllMunsellLch(bool lumaMuns, float Lprov1, float Loldd, float HH, float Chprov1, float CC, float &correctionHuechroma, float &correctlum, MunsellDebugInfo* munsDbgInfo)
 #else
-void Color::AllMunsellLch (bool lumaMuns, float Lprov1, float Loldd, float HH, float Chprov1, float CC, float &correctionHuechroma, float &correctlum)
+void Color::AllMunsellLch(bool lumaMuns, float Lprov1, float Loldd, float HH, float Chprov1, float CC, float &correctionHuechroma, float &correctlum)
 #endif
 {
 
@@ -2255,15 +2259,15 @@ void Color::AllMunsellLch (bool lumaMuns, float Lprov1, float Loldd, float HH, f
                 //zone=zo;
                 contin1 = contin2 = false;
                 correctL = false;
-                MunsellLch (Lprov1, HH, Chprov1, CC, correctionHue, zo, correctionHueLum, correctL);       //munsell chroma correction
+                MunsellLch(Lprov1, HH, Chprov1, CC, correctionHue, zo, correctionHueLum, correctL);        //munsell chroma correction
 #ifdef _DEBUG
-                float absCorrectionHue = fabs (correctionHue);
+                float absCorrectionHue = fabs(correctionHue);
 
                 if (correctionHue != 0.0) {
                     int idx = zo - 1;
                     #pragma omp critical (maxdhue)
                     {
-                        munsDbgInfo->maxdhue[idx] = MAX (munsDbgInfo->maxdhue[idx], absCorrectionHue);
+                        munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
                     }
                 }
 
@@ -2288,9 +2292,9 @@ void Color::AllMunsellLch (bool lumaMuns, float Lprov1, float Loldd, float HH, f
                     correctionHueLum = 0.0;
                     correctionHue = 0.0;
 
-                    if (fabs (Lprov1 - Loldd) > 6.0) {
+                    if (fabs(Lprov1 - Loldd) > 6.0) {
                         // correction if delta L significative..Munsell luminance
-                        MunsellLch (Loldd, HH, Chprov1, Chprov1, correctionHue, zo, correctionHueLum, correctL);
+                        MunsellLch(Loldd, HH, Chprov1, Chprov1, correctionHue, zo, correctionHueLum, correctL);
 
                         if (correctL) {
                             correctlumprov2 = correctionHueLum;
@@ -2305,13 +2309,13 @@ void Color::AllMunsellLch (bool lumaMuns, float Lprov1, float Loldd, float HH, f
                         }
 
 #ifdef _DEBUG
-                        float absCorrectLum = fabs (correctlum);
+                        float absCorrectLum = fabs(correctlum);
 
                         if (correctlum != 0.0) {
                             int idx = zo - 1;
                             #pragma omp critical (maxdhuelum)
                             {
-                                munsDbgInfo->maxdhuelum[idx] = MAX (munsDbgInfo->maxdhuelum[idx], absCorrectLum);
+                                munsDbgInfo->maxdhuelum[idx] = MAX(munsDbgInfo->maxdhuelum[idx], absCorrectLum);
                             }
                         }
 
@@ -2329,13 +2333,13 @@ void Color::AllMunsellLch (bool lumaMuns, float Lprov1, float Loldd, float HH, f
 
 #ifdef _DEBUG
 
-    if     (correctlum < -0.35f) {
+    if (correctlum < -0.35f) {
         correctlum = -0.35f;
     } else if (correctlum >  0.35f) {
         correctlum = 0.35f;
     }
 
-    if     (correctionHuechroma < -0.45f) {
+    if (correctionHuechroma < -0.45f) {
         correctionHuechroma = -0.45f;
     } else if (correctionHuechroma > 0.45f) {
         correctionHuechroma = 0.45f;
@@ -2362,9 +2366,9 @@ void Color::AllMunsellLch (bool lumaMuns, float Lprov1, float Loldd, float HH, f
  * bool neg and moreRGB : only in DEBUG mode to calculate iterations for negatives values and > 65535
  */
 #ifdef _DEBUG
-void Color::gamutLchonly (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb)
+void Color::gamutLchonly(float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb)
 #else
-void Color::gamutLchonly (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef)
+void Color::gamutLchonly(float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef)
 #endif
 {
     const float ClipLevel = 65535.0f;
@@ -2372,7 +2376,7 @@ void Color::gamutLchonly (float HH, float &Lprov1, float &Chprov1, float &R, flo
 #ifdef _DEBUG
     neg = false, more_rgb = false;
 #endif
-    float2  sincosval = xsincosf (HH);
+    float2  sincosval = xsincosf(HH);
 
     do {
         inGamut = true;
@@ -2382,16 +2386,16 @@ void Color::gamutLchonly (float HH, float &Lprov1, float &Chprov1, float &R, flo
         float bprov1 = Chprov1 * sincosval.x;
 
         //conversion Lab RGB to limit Lab values - this conversion is useful before Munsell correction
-        float fy = (0.00862069f * Lprov1 ) + 0.137932f;
+        float fy = (0.00862069f * Lprov1) + 0.137932f;
         float fx = (0.002f * aprov1) + fy;
         float fz = fy - (0.005f * bprov1);
 
-        float x_ = 65535.0f * f2xyz (fx) * D50x;
+        float x_ = 65535.0f * f2xyz(fx) * D50x;
         // float y_ = 65535.0f * f2xyz(fy);
-        float z_ = 65535.0f * f2xyz (fz) * D50z;
+        float z_ = 65535.0f * f2xyz(fz) * D50z;
         float y_ = (Lprov1 > epskap) ? 65535.0 * fy * fy * fy : 65535.0 * Lprov1 / kappa;
 
-        xyz2rgb (x_, y_, z_, R, G, B, wip);
+        xyz2rgb(x_, y_, z_, R, G, B, wip);
 
         // gamut control before saturation to put Lab values in future gamut, but not RGB
         if (R < 0.0f || G < 0.0f || B < 0.0f) {
@@ -2404,7 +2408,7 @@ void Color::gamutLchonly (float HH, float &Lprov1, float &Chprov1, float &R, flo
             }
 
             //gamut for L with ultra blue : we can improve the algorithm ... thinner, and other color ???
-            if (HH < -0.9f && HH > -1.55f ) { //ultra blue
+            if (HH < -0.9f && HH > -1.55f) {  //ultra blue
                 if (Chprov1 > 160.f) if (Lprov1 < 5.f) {
                         Lprov1 = 5.f;    //very very very very high chroma
                     }
@@ -2483,9 +2487,9 @@ void Color::gamutLchonly (float HH, float &Lprov1, float &Chprov1, float &R, flo
  * bool neg and moreRGB : only in DEBUG mode to calculate iterations for negatives values and > 65535
  */
 #ifdef _DEBUG
-void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb)
+void Color::gamutLchonly(float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb)
 #else
-void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef)
+void Color::gamutLchonly(float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef)
 #endif
 {
     constexpr float ClipLevel = 65535.0f;
@@ -2502,15 +2506,15 @@ void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chpr
         float bprov1 = Chprov1 * sincosval.x;
 
         //conversion Lab RGB to limit Lab values - this conversion is useful before Munsell correction
-        float fy = (0.00862069f * Lprov1 ) + 0.137932f;
+        float fy = (0.00862069f * Lprov1) + 0.137932f;
         float fx = (0.002f * aprov1) + fy;
         float fz = fy - (0.005f * bprov1);
 
-        float x_ = 65535.0f * f2xyz (fx) * D50x;
-        float z_ = 65535.0f * f2xyz (fz) * D50z;
+        float x_ = 65535.0f * f2xyz(fx) * D50x;
+        float z_ = 65535.0f * f2xyz(fz) * D50z;
         float y_ = (Lprov1 > epskap) ? 65535.0f * fy * fy * fy : 65535.0f * Lprov1 / kappa;
 
-        xyz2rgb (x_, y_, z_, R, G, B, wip);
+        xyz2rgb(x_, y_, z_, R, G, B, wip);
 
         // gamut control before saturation to put Lab values in future gamut, but not RGB
         if (R < 0.0f || G < 0.0f || B < 0.0f) {
@@ -2518,10 +2522,10 @@ void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chpr
             neg = true;
 #endif
 
-            if (isnan (HH)) {
+            if (isnan(HH)) {
                 float atemp = ChprovSave * sincosval.y * 327.68;
                 float btemp = ChprovSave * sincosval.x * 327.68;
-                HH = xatan2f (btemp, atemp);
+                HH = xatan2f(btemp, atemp);
             }
 
             if (Lprov1 < 0.1f) {
@@ -2529,7 +2533,7 @@ void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chpr
             }
 
             //gamut for L with ultra blue : we can improve the algorithm ... thinner, and other color ???
-            if (HH < -0.9f && HH > -1.55f ) { //ultra blue
+            if (HH < -0.9f && HH > -1.55f) {  //ultra blue
                 if (Chprov1 > 160.f) if (Lprov1 < 5.f) {
                         Lprov1 = 5.f;    //very very very very high chroma
                     }
@@ -2592,9 +2596,9 @@ void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chpr
 
 
 #ifdef _DEBUG
-void Color::gamutLchonly (float2 sincosval, float &Lprov1, float &Chprov1, const float wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb)
+void Color::gamutLchonly(float2 sincosval, float &Lprov1, float &Chprov1, const float wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb)
 #else
-void Color::gamutLchonly (float2 sincosval, float &Lprov1, float &Chprov1, const float wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef)
+void Color::gamutLchonly(float2 sincosval, float &Lprov1, float &Chprov1, const float wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef)
 #endif
 {
     const float ClipLevel = 65535.0f;
@@ -2611,17 +2615,17 @@ void Color::gamutLchonly (float2 sincosval, float &Lprov1, float &Chprov1, const
         float bprov1 = Chprov1 * sincosval.x;
 
         //conversion Lab RGB to limit Lab values - this conversion is useful before Munsell correction
-        float fy = (0.00862069f * Lprov1 ) + 0.137932f;
+        float fy = (0.00862069f * Lprov1) + 0.137932f;
         float fx = (0.002f * aprov1) + fy;
         float fz = fy - (0.005f * bprov1);
 
-        float x_ = 65535.0f * f2xyz (fx) * D50x;
+        float x_ = 65535.0f * f2xyz(fx) * D50x;
         // float y_ = 65535.0f * f2xyz(fy);
-        float z_ = 65535.0f * f2xyz (fz) * D50z;
+        float z_ = 65535.0f * f2xyz(fz) * D50z;
         float y_ = (Lprov1 > epskap) ? 65535.0 * fy * fy * fy : 65535.0 * Lprov1 / kappa;
 
         float R, G, B;
-        xyz2rgb (x_, y_, z_, R, G, B, wip);
+        xyz2rgb(x_, y_, z_, R, G, B, wip);
 
         // gamut control before saturation to put Lab values in future gamut, but not RGB
         if (R < 0.0f || G < 0.0f || B < 0.0f) {
@@ -2703,20 +2707,20 @@ SSEFUNCTION  void Color::LabGamutMunsell(float *labL, float *laba, float *labb, 
     // precalculate H and C using SSE
     float HHBuffer[N];
     float CCBuffer[N];
-    __m128 c327d68v = _mm_set1_ps (327.68f);
+    __m128 c327d68v = _mm_set1_ps(327.68f);
     __m128 av, bv;
     int k;
 
     for (k = 0; k < N - 3; k += 4) {
-        av = LVFU (laba[k]);
-        bv = LVFU (labb[k]);
-        _mm_storeu_ps (&HHBuffer[k], xatan2f (bv, av));
-        _mm_storeu_ps (&CCBuffer[k], _mm_sqrt_ps (SQRV (av) + SQRV (bv)) / c327d68v);
+        av = LVFU(laba[k]);
+        bv = LVFU(labb[k]);
+        _mm_storeu_ps(&HHBuffer[k], xatan2f(bv, av));
+        _mm_storeu_ps(&CCBuffer[k], _mm_sqrt_ps(SQRV(av) + SQRV(bv)) / c327d68v);
     }
 
     for (; k < N; k++) {
-        HHBuffer[k] = xatan2f (labb[k], laba[k]);
-        CCBuffer[k] = sqrt (SQR (laba[k]) + SQR (labb[k])) / 327.68f;
+        HHBuffer[k] = xatan2f(labb[k], laba[k]);
+        CCBuffer[k] = sqrt(SQR(laba[k]) + SQR(labb[k])) / 327.68f;
     }
 
 #endif // __SSE2__
@@ -2726,8 +2730,8 @@ SSEFUNCTION  void Color::LabGamutMunsell(float *labL, float *laba, float *labb, 
         float HH  = HHBuffer[j];
         float Chprov1 = CCBuffer[j];
 #else
-        float HH = xatan2f (labb[j], laba[j]);
-        float Chprov1 = sqrtf (SQR (laba[j]) + SQR (labb[j])) / 327.68f;
+        float HH = xatan2f(labb[j], laba[j]);
+        float Chprov1 = sqrtf(SQR(laba[j]) + SQR(labb[j])) / 327.68f;
 #endif
         float Lprov1 = labL[j] / 327.68f;
         float Loldd = Lprov1;
@@ -2751,9 +2755,9 @@ SSEFUNCTION  void Color::LabGamutMunsell(float *labL, float *laba, float *labb, 
 
             //gamut control : Lab values are in gamut
 #ifdef _DEBUG
-            gamutLchonly (HH, sincosval, Lprov1, Chprov1, R, G, B, wip, isHLEnabled, 0.15f, 0.96f, neg, more_rgb);
+            gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, isHLEnabled, 0.15f, 0.96f, neg, more_rgb);
 #else
-            gamutLchonly (HH, sincosval, Lprov1, Chprov1, R, G, B, wip, isHLEnabled, 0.15f, 0.96f);
+            gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, isHLEnabled, 0.15f, 0.96f);
 #endif
 
 #ifdef _DEBUG
@@ -2775,10 +2779,10 @@ SSEFUNCTION  void Color::LabGamutMunsell(float *labL, float *laba, float *labb, 
 
         if (corMunsell)
 #ifdef _DEBUG
-            AllMunsellLch (lumaMuns, Lprov1, Loldd, HH, Chprov1, Coldd, correctionHuechroma, correctlum, MunsDebugInfo);
+            AllMunsellLch(lumaMuns, Lprov1, Loldd, HH, Chprov1, Coldd, correctionHuechroma, correctlum, MunsDebugInfo);
 
 #else
-            AllMunsellLch (lumaMuns, Lprov1, Loldd, HH, Chprov1, Coldd, correctionHuechroma, correctlum);
+            AllMunsellLch(lumaMuns, Lprov1, Loldd, HH, Chprov1, Coldd, correctionHuechroma, correctlum);
 #endif
 
         if (correctlum == 0.f && correctionHuechroma == 0.f) {
@@ -2794,7 +2798,7 @@ SSEFUNCTION  void Color::LabGamutMunsell(float *labL, float *laba, float *labb, 
 
         } else {
             HH += correctlum;      //hue Munsell luminance correction
-            sincosval = xsincosf (HH + correctionHuechroma);
+            sincosval = xsincosf(HH + correctionHuechroma);
         }
 
         laba[j] = Chprov1 * sincosval.y * 327.68f;
@@ -2805,14 +2809,14 @@ SSEFUNCTION  void Color::LabGamutMunsell(float *labL, float *laba, float *labb, 
     t2e.set();
 
     if (settings->verbose) {
-        printf ("Color::LabGamutMunsell (correction performed in %d usec):\n", t2e.etime (t1e));
-        printf ("   Gamut              : G1negat=%iiter G165535=%iiter \n", negat, moreRGB);
+        printf("Color::LabGamutMunsell (correction performed in %d usec):\n", t2e.etime(t1e));
+        printf("   Gamut              : G1negat=%iiter G165535=%iiter \n", negat, moreRGB);
 
         if (MunsDebugInfo) {
-            printf ("   Munsell chrominance: MaxBP=%1.2frad  MaxRY=%1.2frad  MaxGY=%1.2frad  MaxRP=%1.2frad  depass=%u\n", MunsDebugInfo->maxdhue[0],    MunsDebugInfo->maxdhue[1],    MunsDebugInfo->maxdhue[2],    MunsDebugInfo->maxdhue[3],    MunsDebugInfo->depass);
-            printf ("   Munsell luminance  : MaxBP=%1.2frad  MaxRY=%1.2frad  MaxGY=%1.2frad  MaxRP=%1.2frad  depass=%u\n", MunsDebugInfo->maxdhuelum[0] , MunsDebugInfo->maxdhuelum[1], MunsDebugInfo->maxdhuelum[2], MunsDebugInfo->maxdhuelum[3], MunsDebugInfo->depassLum);
+            printf("   Munsell chrominance: MaxBP=%1.2frad  MaxRY=%1.2frad  MaxGY=%1.2frad  MaxRP=%1.2frad  depass=%u\n", MunsDebugInfo->maxdhue[0],    MunsDebugInfo->maxdhue[1],    MunsDebugInfo->maxdhue[2],    MunsDebugInfo->maxdhue[3],    MunsDebugInfo->depass);
+            printf("   Munsell luminance  : MaxBP=%1.2frad  MaxRY=%1.2frad  MaxGY=%1.2frad  MaxRP=%1.2frad  depass=%u\n", MunsDebugInfo->maxdhuelum[0], MunsDebugInfo->maxdhuelum[1], MunsDebugInfo->maxdhuelum[2], MunsDebugInfo->maxdhuelum[3], MunsDebugInfo->depassLum);
         } else {
-            printf ("   Munsell correction wasn't requested\n");
+            printf("   Munsell correction wasn't requested\n");
         }
     }
 
@@ -2830,7 +2834,7 @@ SSEFUNCTION  void Color::LabGamutMunsell(float *labL, float *laba, float *labb, 
  *
  * Find the right LUT and calculate the correction
  */
-void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, float &correction, int zone, float &lbe, bool &correctL)
+void Color::MunsellLch(float lum, float hue, float chrom, float memChprov, float &correction, int zone, float &lbe, bool &correctL)
 {
 
     int x = int (memChprov);
@@ -2840,7 +2844,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
     if (zone == 1) {
         if (lum > 5.0) {
             if (lum < 15.0) {
-                if ( (hue >= (_15PB10[x] - 0.035)) && (hue < (_15PB10[x] + 0.052) && x <= 45)) {
+                if ((hue >= (_15PB10[x] - 0.035)) && (hue < (_15PB10[x] + 0.052) && x <= 45)) {
                     if (y > 49) {
                         y = 49;
                     }
@@ -2848,7 +2852,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _15PB10[y] - _15PB10[x] ;
                     lbe = _15PB10[y];
                     correctL = true;
-                } else if (( hue >= ( _3PB10[x] - 0.052))  && (hue < (_45PB10[x] + _3PB10[x]) / 2.0) && x <= 85) {
+                } else if ((hue >= (_3PB10[x] - 0.052))  && (hue < (_45PB10[x] + _3PB10[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -2856,7 +2860,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _3PB10[y] - _3PB10[x];
                     lbe = _3PB10[y];
                     correctL = true;
-                } else if (( hue >= (_45PB10[x] + _3PB10[x]) / 2.0)  && (hue < (_45PB10[x] + 0.052)) && x <= 85) {
+                } else if ((hue >= (_45PB10[x] + _3PB10[x]) / 2.0)  && (hue < (_45PB10[x] + 0.052)) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -2864,33 +2868,33 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _45PB10[y] - _45PB10[x] ;
                     lbe = _45PB10[y];
                     correctL = true;
-                } else if (( hue >= (_6PB10[x] - 0.052)  && (hue < (_6PB10[x] + _75PB10[x]) / 2.0))) {
+                } else if ((hue >= (_6PB10[x] - 0.052)  && (hue < (_6PB10[x] + _75PB10[x]) / 2.0))) {
                     correction =  _6PB10[y] - _6PB10[x] ;
                     lbe = _6PB10[y];
                     correctL = true;
-                } else if (( hue >= (_6PB10[x] + _75PB10[x]) / 2.0)  && (hue < (_9PB10[x] + _75PB10[x]) / 2.0)) {
+                } else if ((hue >= (_6PB10[x] + _75PB10[x]) / 2.0)  && (hue < (_9PB10[x] + _75PB10[x]) / 2.0)) {
                     correction =  _75PB10[y] - _75PB10[x] ;
                     lbe = _75PB10[y];
                     correctL = true;
-                } else if (( hue >= (_9PB10[x] + _75PB10[x]) / 2.0)  && (hue < (_9PB10[x] + _10PB10[x]) / 2.0)) {
+                } else if ((hue >= (_9PB10[x] + _75PB10[x]) / 2.0)  && (hue < (_9PB10[x] + _10PB10[x]) / 2.0)) {
                     correction =  _9PB10[y] - _9PB10[x] ;
                     lbe = _9PB10[y];
                     correctL = true;
-                } else if (( hue >= (_10PB10[x] + _9PB10[x]) / 2.0)  && (hue < (_1P10[x] + _10PB10[x]) / 2.0)) {
+                } else if ((hue >= (_10PB10[x] + _9PB10[x]) / 2.0)  && (hue < (_1P10[x] + _10PB10[x]) / 2.0)) {
                     correction =  _10PB10[y] - _10PB10[x] ;
                     lbe = _10PB10[y];
                     correctL = true;
-                } else if (( hue >= (_10PB10[x] + _1P10[x]) / 2.0)  && (hue < (_1P10[x] + _4P10[x]) / 2.0)) {
+                } else if ((hue >= (_10PB10[x] + _1P10[x]) / 2.0)  && (hue < (_1P10[x] + _4P10[x]) / 2.0)) {
                     correction =  _1P10[y] - _1P10[x];
                     lbe = _1P10[y];
                     correctL = true;
-                } else if (( hue >= (_1P10[x] + _4P10[x]) / 2.0)  && (hue < (0.035 + _4P10[x]) / 2.0)) {
+                } else if ((hue >= (_1P10[x] + _4P10[x]) / 2.0)  && (hue < (0.035 + _4P10[x]) / 2.0)) {
                     correction =  _4P10[y] - _4P10[x] ;
                     lbe = _4P10[y];
                     correctL = true;
                 }
             } else if (lum < 25.0) {
-                if ( (hue >= (_15PB20[x] - 0.035)) && (hue < (_15PB20[x] + _3PB20[x]) / 2.0) && x <= 85) {
+                if ((hue >= (_15PB20[x] - 0.035)) && (hue < (_15PB20[x] + _3PB20[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -2898,7 +2902,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _15PB20[y] - _15PB20[x] ;
                     lbe = _15PB20[y];
                     correctL = true;
-                } else if (( hue >= (_15PB20[x] + _3PB20[x]) / 2.0)  && (hue < (_45PB20[x] + _3PB20[x]) / 2.0) && x <= 85) {
+                } else if ((hue >= (_15PB20[x] + _3PB20[x]) / 2.0)  && (hue < (_45PB20[x] + _3PB20[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -2906,7 +2910,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _3PB20[y] - _3PB20[x] ;
                     lbe = _3PB20[y];
                     correctL = true;
-                } else if (( hue >= (_45PB20[x] + _3PB20[x]) / 2.0)  && (hue < ( _45PB20[x] + 0.052)) && x <= 85) {
+                } else if ((hue >= (_45PB20[x] + _3PB20[x]) / 2.0)  && (hue < (_45PB20[x] + 0.052)) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -2914,33 +2918,33 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _45PB20[y] - _45PB20[x] ;
                     lbe = _45PB20[y];
                     correctL = true;
-                } else if (( hue >= (_45PB20[x] + 0.052))  && (hue < (_6PB20[x] + _75PB20[x]) / 2.0)) {
+                } else if ((hue >= (_45PB20[x] + 0.052))  && (hue < (_6PB20[x] + _75PB20[x]) / 2.0)) {
                     correction =  _6PB20[y] - _6PB20[x];
                     lbe = _6PB20[y];
                     correctL = true;
-                } else if (( hue >= (_6PB20[x] + _75PB20[x]) / 2.0)  && (hue < (_9PB20[x] + _75PB20[x]) / 2.0)) {
+                } else if ((hue >= (_6PB20[x] + _75PB20[x]) / 2.0)  && (hue < (_9PB20[x] + _75PB20[x]) / 2.0)) {
                     correction =  _75PB20[y] - _75PB20[x] ;
                     lbe = _75PB20[y];
                     correctL = true;
-                } else if (( hue >= (_9PB20[x] + _75PB20[x]) / 2.0)  && (hue < (_9PB20[x] + _10PB20[x]) / 2.0)) {
+                } else if ((hue >= (_9PB20[x] + _75PB20[x]) / 2.0)  && (hue < (_9PB20[x] + _10PB20[x]) / 2.0)) {
                     correction =  _9PB20[y] - _9PB20[x] ;
                     lbe = _9PB20[y];
                     correctL = true;
-                } else if (( hue >= (_10PB20[x] + _9PB20[x]) / 2.0)  && (hue < (_1P20[x] + _10PB20[x]) / 2.0)) {
+                } else if ((hue >= (_10PB20[x] + _9PB20[x]) / 2.0)  && (hue < (_1P20[x] + _10PB20[x]) / 2.0)) {
                     correction =  _10PB20[y] - _10PB20[x] ;
                     lbe = _10PB20[y];
                     correctL = true;
-                } else if (( hue >= (_10PB20[x] + _1P20[x]) / 2.0)  && (hue < (_1P20[x] + _4P20[x]) / 2.0)) {
+                } else if ((hue >= (_10PB20[x] + _1P20[x]) / 2.0)  && (hue < (_1P20[x] + _4P20[x]) / 2.0)) {
                     correction =  _1P20[y] - _1P20[x] ;
                     lbe = _1P20[y];
                     correctL = true;
-                } else if (( hue >= (_1P20[x] + _4P20[x]) / 2.0)  && (hue < (0.035 + _4P20[x]) / 2.0)) {
+                } else if ((hue >= (_1P20[x] + _4P20[x]) / 2.0)  && (hue < (0.035 + _4P20[x]) / 2.0)) {
                     correction =  _4P20[y] - _4P20[x] ;
                     lbe = _4P20[y];
                     correctL = true;
                 }
             } else if (lum < 35.0) {
-                if ( (hue >= (_15PB30[x] - 0.035)) && (hue < (_15PB30[x] + _3PB30[x]) / 2.0) && x <= 85 ) {
+                if ((hue >= (_15PB30[x] - 0.035)) && (hue < (_15PB30[x] + _3PB30[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -2948,7 +2952,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _15PB30[y] - _15PB30[x] ;
                     lbe = _15PB30[y];
                     correctL = true;
-                } else if (( hue >= (_15PB30[x] + _3PB30[x]) / 2.0)  && (hue < (_45PB30[x] + _3PB30[x]) / 2.0) && x <= 85) {
+                } else if ((hue >= (_15PB30[x] + _3PB30[x]) / 2.0)  && (hue < (_45PB30[x] + _3PB30[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -2956,7 +2960,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _3PB30[y] - _3PB30[x] ;
                     lbe = _3PB30[y];
                     correctL = true;
-                } else if (( hue >= (_45PB30[x] + _3PB30[x]) / 2.0)  && (hue < (_45PB30[x] + 0.052)) && x <= 85) {
+                } else if ((hue >= (_45PB30[x] + _3PB30[x]) / 2.0)  && (hue < (_45PB30[x] + 0.052)) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -2964,33 +2968,33 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _45PB30[y] - _45PB30[x] ;
                     lbe = _45PB30[y];
                     correctL = true;
-                } else if (( hue >= ( _45PB30[x] + 0.052))  && (hue < (_6PB30[x] + _75PB30[x]) / 2.0)) {
+                } else if ((hue >= (_45PB30[x] + 0.052))  && (hue < (_6PB30[x] + _75PB30[x]) / 2.0)) {
                     correction =  _6PB30[y] - _6PB30[x] ;
                     lbe = _6PB30[y];
                     correctL = true;
-                } else if (( hue >= (_6PB30[x] + _75PB30[x]) / 2.0)  && (hue < (_9PB30[x] + _75PB30[x]) / 2.0)) {
+                } else if ((hue >= (_6PB30[x] + _75PB30[x]) / 2.0)  && (hue < (_9PB30[x] + _75PB30[x]) / 2.0)) {
                     correction =  _75PB30[y] - _75PB30[x] ;
                     lbe = _75PB30[y] ;
                     correctL = true;
-                } else if (( hue >= (_9PB30[x] + _75PB30[x]) / 2.0)  && (hue < (_9PB30[x] + _10PB30[x]) / 2.0)) {
+                } else if ((hue >= (_9PB30[x] + _75PB30[x]) / 2.0)  && (hue < (_9PB30[x] + _10PB30[x]) / 2.0)) {
                     correction =  _9PB30[y] - _9PB30[x] ;
                     lbe = _9PB30[y];
                     correctL = true;
-                } else if (( hue >= (_10PB30[x] + _9PB30[x]) / 2.0)  && (hue < (_1P30[x] + _10PB30[x]) / 2.0)) {
+                } else if ((hue >= (_10PB30[x] + _9PB30[x]) / 2.0)  && (hue < (_1P30[x] + _10PB30[x]) / 2.0)) {
                     correction =  _10PB30[y] - _10PB30[x] ;
                     lbe = _10PB30[y];
                     correctL = true;
-                } else if (( hue >= (_10PB30[x] + _1P30[x]) / 2.0)  && (hue < (_1P30[x] + _4P30[x]) / 2.0)) {
+                } else if ((hue >= (_10PB30[x] + _1P30[x]) / 2.0)  && (hue < (_1P30[x] + _4P30[x]) / 2.0)) {
                     correction =  _1P30[y] - _1P30[x] ;
                     lbe = _1P30[y];
                     correctL = true;
-                } else if (( hue >= (_1P30[x] + _4P30[x]) / 2.0)  && (hue < (0.035 + _4P30[x]) / 2.0)) {
+                } else if ((hue >= (_1P30[x] + _4P30[x]) / 2.0)  && (hue < (0.035 + _4P30[x]) / 2.0)) {
                     correction =  _4P30[y] - _4P30[x] ;
                     lbe = _4P30[y];
                     correctL = true;
                 }
             } else if (lum < 45.0) {
-                if ( (hue <= (_05PB40[x] + _15PB40[x]) / 2.0) && (hue > (_05PB40[x] + _10B40[x]) / 2.0) && x < 75 ) {
+                if ((hue <= (_05PB40[x] + _15PB40[x]) / 2.0) && (hue > (_05PB40[x] + _10B40[x]) / 2.0) && x < 75) {
                     if (y > 75) {
                         y = 75;
                     }
@@ -2998,7 +3002,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _05PB40[y] - _05PB40[x] ;
                     lbe = _05PB40[y];
                     correctL = true;
-                } else if ( (hue <= (_05PB40[x] + _10B40[x]) / 2.0) && (hue > (_10B40[x] + _9B40[x]) / 2.0) && x < 70 ) {
+                } else if ((hue <= (_05PB40[x] + _10B40[x]) / 2.0) && (hue > (_10B40[x] + _9B40[x]) / 2.0) && x < 70) {
                     if (y > 70) {
                         y = 70;
                     }
@@ -3006,7 +3010,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _10B40[y] - _10B40[x] ;
                     lbe = _10B40[y];
                     correctL = true;
-                } else if ( (hue <= (_10B40[x] + _9B40[x]) / 2.0) && (hue > (_9B40[x] + _7B40[x]) / 2.0) && x < 70 ) {
+                } else if ((hue <= (_10B40[x] + _9B40[x]) / 2.0) && (hue > (_9B40[x] + _7B40[x]) / 2.0) && x < 70) {
                     if (y > 70) {
                         y = 70;
                     }
@@ -3014,7 +3018,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _9B40[y] - _9B40[x] ;
                     lbe = _9B40[y];
                     correctL = true;
-                } else if ( (hue <= (_9B40[x] + _7B40[x]) / 2.0) && (hue > (_5B40[x] + _7B40[x]) / 2.0) && x < 70 ) {
+                } else if ((hue <= (_9B40[x] + _7B40[x]) / 2.0) && (hue > (_5B40[x] + _7B40[x]) / 2.0) && x < 70) {
                     if (y > 70) {
                         y = 70;
                     }
@@ -3022,7 +3026,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _7B40[y] - _7B40[x] ;
                     lbe = _7B40[y];
                     correctL = true;
-                } else if (( hue <= (_5B40[x] + _7B40[x]) / 2.0)  && (hue > (_5B40[x] - 0.035)) && x < 70) {
+                } else if ((hue <= (_5B40[x] + _7B40[x]) / 2.0)  && (hue > (_5B40[x] - 0.035)) && x < 70) {
                     if (y > 70) {
                         y = 70;    //
                     }
@@ -3032,7 +3036,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correctL = true;
                 }
 
-                else if ( (hue >= (_15PB40[x] - 0.035)) && (hue < (_15PB40[x] + _3PB40[x]) / 2.0) && x <= 85 ) {
+                else if ((hue >= (_15PB40[x] - 0.035)) && (hue < (_15PB40[x] + _3PB40[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3040,7 +3044,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _15PB40[y] - _15PB40[x] ;
                     lbe = _15PB40[y];
                     correctL = true;
-                } else if (( hue >= (_15PB40[x] + _3PB40[x]) / 2.0)  && (hue < (_45PB40[x] + _3PB40[x]) / 2.0) && x <= 85) {
+                } else if ((hue >= (_15PB40[x] + _3PB40[x]) / 2.0)  && (hue < (_45PB40[x] + _3PB40[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3048,7 +3052,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _3PB40[y] - _3PB40[x] ;
                     lbe = _3PB40[y];
                     correctL = true;
-                } else if (( hue >= (_45PB40[x] + _3PB40[x]) / 2.0)  && (hue < (_45PB40[x] + 0.052)) && x <= 85) {
+                } else if ((hue >= (_45PB40[x] + _3PB40[x]) / 2.0)  && (hue < (_45PB40[x] + 0.052)) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3056,33 +3060,33 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _45PB40[y] - _45PB40[x] ;
                     lbe = _45PB40[y] ;
                     correctL = true;
-                } else if (( hue >= (_45PB40[x] + 0.052))  && (hue < (_6PB40[x] + _75PB40[x]) / 2.0)) {
+                } else if ((hue >= (_45PB40[x] + 0.052))  && (hue < (_6PB40[x] + _75PB40[x]) / 2.0)) {
                     correction =  _6PB40[y] - _6PB40[x] ;
                     lbe = _6PB40[y];
                     correctL = true;
-                } else if (( hue >= (_6PB40[x] + _75PB40[x]) / 2.0)  && (hue < (_9PB40[x] + _75PB40[x]) / 2.0)) {
+                } else if ((hue >= (_6PB40[x] + _75PB40[x]) / 2.0)  && (hue < (_9PB40[x] + _75PB40[x]) / 2.0)) {
                     correction =  _75PB40[y] - _75PB40[x] ;
                     lbe = _75PB40[y];
                     correctL = true;
-                } else if (( hue >= (_9PB40[x] + _75PB40[x]) / 2.0)  && (hue < (_9PB40[x] + _10PB40[x]) / 2.0)) {
+                } else if ((hue >= (_9PB40[x] + _75PB40[x]) / 2.0)  && (hue < (_9PB40[x] + _10PB40[x]) / 2.0)) {
                     correction =  _9PB40[y] - _9PB40[x] ;
                     lbe = _9PB40[y];
                     correctL = true;
-                } else if (( hue >= (_10PB40[x] + _9PB40[x]) / 2.0)  && (hue < (_1P40[x] + _10PB40[x]) / 2.0)) {
+                } else if ((hue >= (_10PB40[x] + _9PB40[x]) / 2.0)  && (hue < (_1P40[x] + _10PB40[x]) / 2.0)) {
                     correction =  _10PB40[y] - _10PB40[x] ;
                     lbe = _10PB40[y];
                     correctL = true;
-                } else if (( hue >= (_10PB40[x] + _1P40[x]) / 2.0)  && (hue < (_1P40[x] + _4P40[x]) / 2.0)) {
+                } else if ((hue >= (_10PB40[x] + _1P40[x]) / 2.0)  && (hue < (_1P40[x] + _4P40[x]) / 2.0)) {
                     correction =  _1P40[y] - _1P40[x] ;
                     lbe = _1P40[y];
                     correctL = true;
-                } else if (( hue >= (_1P40[x] + _4P40[x]) / 2.0)  && (hue < (0.035 + _4P40[x]) / 2.0)) {
+                } else if ((hue >= (_1P40[x] + _4P40[x]) / 2.0)  && (hue < (0.035 + _4P40[x]) / 2.0)) {
                     correction =  _4P40[y] - _4P40[x] ;
                     lbe = _4P40[y];
                     correctL = true;
                 }
             } else if (lum < 55.0) {
-                if ( (hue <= (_05PB50[x] + _15PB50[x]) / 2.0) && (hue > (_05PB50[x] + _10B50[x]) / 2.0) && x < 79 ) {
+                if ((hue <= (_05PB50[x] + _15PB50[x]) / 2.0) && (hue > (_05PB50[x] + _10B50[x]) / 2.0) && x < 79) {
                     if (y > 79) {
                         y = 79;
                     }
@@ -3090,7 +3094,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _05PB50[y] - _05PB50[x] ;
                     lbe = _05PB50[y];
                     correctL = true;
-                } else if ( (hue <= (_05PB50[x] + _10B50[x]) / 2.0) && (hue > (_10B50[x] + _9B50[x]) / 2.0) && x < 79 ) {
+                } else if ((hue <= (_05PB50[x] + _10B50[x]) / 2.0) && (hue > (_10B50[x] + _9B50[x]) / 2.0) && x < 79) {
                     if (y > 79) {
                         y = 79;
                     }
@@ -3098,7 +3102,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _10B50[y] - _10B50[x] ;
                     lbe = _10B50[y];
                     correctL = true;
-                } else if ( (hue <= (_10B50[x] + _9B50[x]) / 2.0) && (hue > (_9B50[x] + _7B50[x]) / 2.0) && x < 79 ) {
+                } else if ((hue <= (_10B50[x] + _9B50[x]) / 2.0) && (hue > (_9B50[x] + _7B50[x]) / 2.0) && x < 79) {
                     if (y > 79) {
                         y = 79;
                     }
@@ -3106,7 +3110,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _9B50[y] - _9B50[x] ;
                     lbe = _9B50[y];
                     correctL = true;
-                } else if ( (hue <= (_9B50[x] + _7B50[x]) / 2.0) && (hue > (_5B50[x] + _7B50[x]) / 2.0) && x < 79 ) {
+                } else if ((hue <= (_9B50[x] + _7B50[x]) / 2.0) && (hue > (_5B50[x] + _7B50[x]) / 2.0) && x < 79) {
                     if (y > 79) {
                         y = 79;
                     }
@@ -3114,7 +3118,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _7B50[y] - _7B50[x] ;
                     lbe = _7B50[y];
                     correctL = true;
-                } else if (( hue <= (_5B50[x] + _7B50[x]) / 2.0)  && (hue > (_5B50[x] - 0.035)) && x < 79) {
+                } else if ((hue <= (_5B50[x] + _7B50[x]) / 2.0)  && (hue > (_5B50[x] - 0.035)) && x < 79) {
                     if (y > 79) {
                         y = 79;    //
                     }
@@ -3124,7 +3128,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correctL = true;
                 }
 
-                else if ( (hue >= (_15PB50[x] - 0.035)) && (hue < (_15PB50[x] + _3PB50[x]) / 2.0) && x <= 85 ) {
+                else if ((hue >= (_15PB50[x] - 0.035)) && (hue < (_15PB50[x] + _3PB50[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3132,7 +3136,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _15PB50[y] - _15PB50[x] ;
                     lbe = _15PB50[y];
                     correctL = true;
-                } else if (( hue >= (_15PB50[x] + _3PB50[x]) / 2.0)  && (hue < (_45PB50[x] + _3PB50[x]) / 2.0) && x <= 85) {
+                } else if ((hue >= (_15PB50[x] + _3PB50[x]) / 2.0)  && (hue < (_45PB50[x] + _3PB50[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3140,7 +3144,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _3PB50[y] - _3PB50[x] ;
                     lbe = _3PB50[y];
                     correctL = true;
-                } else if (( hue >= (_45PB50[x] + _3PB50[x]) / 2.0)  && (hue < (_6PB50[x] + _45PB50[x]) / 2.0) && x <= 85) {
+                } else if ((hue >= (_45PB50[x] + _3PB50[x]) / 2.0)  && (hue < (_6PB50[x] + _45PB50[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3148,7 +3152,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _45PB50[y] - _45PB50[x] ;
                     lbe = _45PB50[y];
                     correctL = true;
-                } else if (( hue >= (_6PB50[x] + _45PB50[x]) / 2.0)  && (hue < (_6PB50[x] + _75PB50[x]) / 2.0) && x <= 85) {
+                } else if ((hue >= (_6PB50[x] + _45PB50[x]) / 2.0)  && (hue < (_6PB50[x] + _75PB50[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3156,7 +3160,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _6PB50[y] - _6PB50[x] ;
                     lbe = _6PB50[y];
                     correctL = true;
-                } else if (( hue >= (_6PB50[x] + _75PB50[x]) / 2.0)  && (hue < (_9PB50[x] + _75PB50[x]) / 2.0) && x <= 85) {
+                } else if ((hue >= (_6PB50[x] + _75PB50[x]) / 2.0)  && (hue < (_9PB50[x] + _75PB50[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3164,7 +3168,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _75PB50[y] - _75PB50[x] ;
                     lbe = _75PB50[y];
                     correctL = true;
-                } else if (( hue >= (_9PB50[x] + _75PB50[x]) / 2.0)  && (hue < (_9PB50[x] + _10PB50[x]) / 2.0) && x <= 85) {
+                } else if ((hue >= (_9PB50[x] + _75PB50[x]) / 2.0)  && (hue < (_9PB50[x] + _10PB50[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3172,7 +3176,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _9PB50[y] - _9PB50[x] ;
                     lbe = _9PB50[y];
                     correctL = true;
-                } else if (( hue >= (_10PB50[x] + _9PB50[x]) / 2.0)  && (hue < (_1P50[x] + _10PB50[x]) / 2.0) && x <= 85) {
+                } else if ((hue >= (_10PB50[x] + _9PB50[x]) / 2.0)  && (hue < (_1P50[x] + _10PB50[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3180,7 +3184,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _10PB50[y] - _10PB50[x] ;
                     lbe = _10PB50[y];
                     correctL = true;
-                } else if (( hue >= (_10PB50[x] + _1P50[x]) / 2.0)  && (hue < (_1P50[x] + _4P50[x]) / 2.0) && x <= 85) {
+                } else if ((hue >= (_10PB50[x] + _1P50[x]) / 2.0)  && (hue < (_1P50[x] + _4P50[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3188,7 +3192,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _1P50[y] - _1P50[x] ;
                     lbe = _1P50[y];
                     correctL = true;
-                } else if (( hue >= (_1P50[x] + _4P50[x]) / 2.0)  && (hue < (0.035 + _4P50[x]) / 2.0) && x <= 85) {
+                } else if ((hue >= (_1P50[x] + _4P50[x]) / 2.0)  && (hue < (0.035 + _4P50[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3198,7 +3202,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correctL = true;
                 }
             } else if (lum < 65.0) {
-                if ( (hue <= (_05PB60[x] + _15PB60[x]) / 2.0) && (hue > (_05PB60[x] + _10B60[x]) / 2.0) && x < 79 ) {
+                if ((hue <= (_05PB60[x] + _15PB60[x]) / 2.0) && (hue > (_05PB60[x] + _10B60[x]) / 2.0) && x < 79) {
                     if (y > 79) {
                         y = 79;
                     }
@@ -3206,7 +3210,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _05PB60[y] - _05PB60[x] ;
                     lbe = _05PB60[y];
                     correctL = true;
-                } else if ( (hue <= (_05PB60[x] + _10B60[x]) / 2.0) && (hue > (_10B60[x] + _9B60[x]) / 2.0) && x < 79 ) {
+                } else if ((hue <= (_05PB60[x] + _10B60[x]) / 2.0) && (hue > (_10B60[x] + _9B60[x]) / 2.0) && x < 79) {
                     if (y > 79) {
                         y = 79;
                     }
@@ -3214,7 +3218,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _10B60[y] - _10B60[x] ;
                     lbe = _10B60[y];
                     correctL = true;
-                } else if ( (hue <= (_10B60[x] + _9B60[x]) / 2.0) && (hue > (_9B60[x] + _7B60[x]) / 2.0) && x < 79 ) {
+                } else if ((hue <= (_10B60[x] + _9B60[x]) / 2.0) && (hue > (_9B60[x] + _7B60[x]) / 2.0) && x < 79) {
                     if (y > 79) {
                         y = 79;
                     }
@@ -3222,7 +3226,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _9B60[y] - _9B60[x] ;
                     lbe = _9B60[y];
                     correctL = true;
-                } else if ( (hue <= (_9B60[x] + _7B60[x]) / 2.0) && (hue > (_5B60[x] + _7B60[x]) / 2.0) && x < 79 ) {
+                } else if ((hue <= (_9B60[x] + _7B60[x]) / 2.0) && (hue > (_5B60[x] + _7B60[x]) / 2.0) && x < 79) {
                     if (y > 79) {
                         y = 79;
                     }
@@ -3230,7 +3234,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _7B60[y] - _7B60[x] ;
                     lbe = _7B60[y];
                     correctL = true;
-                } else if (( hue <= (_5B60[x] + _7B60[x]) / 2.0)  && (hue > (_5B60[x] - 0.035)) && x < 79) {
+                } else if ((hue <= (_5B60[x] + _7B60[x]) / 2.0)  && (hue > (_5B60[x] - 0.035)) && x < 79) {
                     if (y > 79) {
                         y = 79;    //
                     }
@@ -3240,7 +3244,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correctL = true;
                 }
 
-                else if ( (hue >= (_15PB60[x] - 0.035)) && (hue < (_15PB60[x] + _3PB60[x]) / 2.0) && x <= 85 ) {
+                else if ((hue >= (_15PB60[x] - 0.035)) && (hue < (_15PB60[x] + _3PB60[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3248,7 +3252,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _15PB60[y] - _15PB60[x] ;
                     lbe = _15PB60[y];
                     correctL = true;
-                } else if (( hue >= (_15PB60[x] + _3PB60[x]) / 2.0)  && (hue < (_45PB60[x] + _3PB60[x]) / 2.0) && x <= 85) {
+                } else if ((hue >= (_15PB60[x] + _3PB60[x]) / 2.0)  && (hue < (_45PB60[x] + _3PB60[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3256,7 +3260,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _3PB60[y] - _3PB60[x] ;
                     lbe = _3PB60[y];
                     correctL = true;
-                } else if (( hue >= (_45PB60[x] + _3PB60[x]) / 2.0)  && (hue < (_6PB60[x] + _45PB60[x]) / 2.0) && x <= 85) {
+                } else if ((hue >= (_45PB60[x] + _3PB60[x]) / 2.0)  && (hue < (_6PB60[x] + _45PB60[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3264,7 +3268,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _45PB60[y] - _45PB60[x] ;
                     lbe = _45PB60[y];
                     correctL = true;
-                } else if (( hue >= (_6PB60[x] + _45PB60[x]) / 2.0)  && (hue < (_6PB60[x] + _75PB60[x]) / 2.0) && x <= 85) {
+                } else if ((hue >= (_6PB60[x] + _45PB60[x]) / 2.0)  && (hue < (_6PB60[x] + _75PB60[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3272,7 +3276,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _6PB60[y] - _6PB60[x] ;
                     lbe = _6PB60[y];
                     correctL = true;
-                } else if (( hue >= (_6PB60[x] + _75PB60[x]) / 2.0)  && (hue < (_9PB60[x] + _75PB60[x]) / 2.0) && x <= 85) {
+                } else if ((hue >= (_6PB60[x] + _75PB60[x]) / 2.0)  && (hue < (_9PB60[x] + _75PB60[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3280,7 +3284,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _75PB60[y] - _75PB60[x] ;
                     lbe = _75PB60[y];
                     correctL = true;
-                } else if (( hue >= (_9PB60[x] + _75PB60[x]) / 2.0)  && (hue < (_9PB60[x] + _10PB60[x]) / 2.0) && x <= 85) {
+                } else if ((hue >= (_9PB60[x] + _75PB60[x]) / 2.0)  && (hue < (_9PB60[x] + _10PB60[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3288,7 +3292,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _9PB60[y] - _9PB60[x] ;
                     lbe = _9PB60[y];
                     correctL = true;
-                } else if (( hue >= (_10PB60[x] + _9PB60[x]) / 2.0)  && (hue < (_1P60[x] + _10PB60[x]) / 2.0) && x <= 85) {
+                } else if ((hue >= (_10PB60[x] + _9PB60[x]) / 2.0)  && (hue < (_1P60[x] + _10PB60[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3296,7 +3300,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _10PB60[y] - _10PB60[x] ;
                     lbe = _10PB60[y];
                     correctL = true;
-                } else if (( hue >= (_10PB60[x] + _1P60[x]) / 2.0)  && (hue < (_1P60[x] + _4P60[x]) / 2.0) && x <= 85) {
+                } else if ((hue >= (_10PB60[x] + _1P60[x]) / 2.0)  && (hue < (_1P60[x] + _4P60[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3304,7 +3308,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _1P60[y] - _1P60[x] ;
                     lbe = _1P60[y];
                     correctL = true;
-                } else if (( hue >= (_1P60[x] + _4P60[x]) / 2.0)  && (hue < (0.035 + _4P60[x]) / 2.0) && x <= 85) {
+                } else if ((hue >= (_1P60[x] + _4P60[x]) / 2.0)  && (hue < (0.035 + _4P60[x]) / 2.0) && x <= 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3314,7 +3318,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correctL = true;
                 }
             } else if (lum < 75.0) {
-                if ( (hue <= (_05PB70[x] + _15PB70[x]) / 2.0) && (hue > (_05PB70[x] + _10B70[x]) / 2.0) && x < 50 ) {
+                if ((hue <= (_05PB70[x] + _15PB70[x]) / 2.0) && (hue > (_05PB70[x] + _10B70[x]) / 2.0) && x < 50) {
                     if (y > 49) {
                         y = 49;
                     }
@@ -3322,7 +3326,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _05PB70[y] - _05PB70[x] ;
                     lbe = _05PB70[y];
                     correctL = true;
-                } else if ( (hue <= (_05PB70[x] + _10B70[x]) / 2.0) && (hue > (_10B70[x] + _9B70[x]) / 2.0) && x < 50 ) {
+                } else if ((hue <= (_05PB70[x] + _10B70[x]) / 2.0) && (hue > (_10B70[x] + _9B70[x]) / 2.0) && x < 50) {
                     if (y > 49) {
                         y = 49;
                     }
@@ -3330,7 +3334,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _10B70[y] - _10B70[x] ;
                     lbe = _10B70[y];
                     correctL = true;
-                } else if ( (hue <= (_10B70[x] + _9B70[x]) / 2.0) && (hue > (_9B70[x] + _7B70[x]) / 2.0) && x < 50 ) {
+                } else if ((hue <= (_10B70[x] + _9B70[x]) / 2.0) && (hue > (_9B70[x] + _7B70[x]) / 2.0) && x < 50) {
                     if (y > 49) {
                         y = 49;
                     }
@@ -3338,7 +3342,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _9B70[y] - _9B70[x] ;
                     lbe = _9B70[y];
                     correctL = true;
-                } else if ( (hue <= (_9B70[x] + _7B70[x]) / 2.0) && (hue > (_5B70[x] + _7B70[x]) / 2.0) && x < 50 ) {
+                } else if ((hue <= (_9B70[x] + _7B70[x]) / 2.0) && (hue > (_5B70[x] + _7B70[x]) / 2.0) && x < 50) {
                     if (y > 49) {
                         y = 49;
                     }
@@ -3346,7 +3350,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _7B70[y] - _7B70[x] ;
                     lbe = _7B70[y];
                     correctL = true;
-                } else if (( hue <= (_5B70[x] + _7B70[x]) / 2.0)  && (hue > (_5B70[x] - 0.035)) && x < 50) {
+                } else if ((hue <= (_5B70[x] + _7B70[x]) / 2.0)  && (hue > (_5B70[x] - 0.035)) && x < 50) {
                     if (y > 49) {
                         y = 49;    //
                     }
@@ -3356,7 +3360,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correctL = true;
                 }
 
-                else if ( (hue >= (_15PB70[x] - 0.035)) && (hue < (_15PB70[x] + _3PB70[x]) / 2.0) && x < 50 ) {
+                else if ((hue >= (_15PB70[x] - 0.035)) && (hue < (_15PB70[x] + _3PB70[x]) / 2.0) && x < 50) {
                     if (y > 49) {
                         y = 49;
                     }
@@ -3364,7 +3368,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _15PB70[y] - _15PB70[x] ;
                     lbe = _15PB70[y];
                     correctL = true;
-                } else if (( hue >= (_45PB70[x] + _3PB70[x]) / 2.0)  && (hue < (_6PB70[x] + _45PB70[x]) / 2.0) && x < 50) {
+                } else if ((hue >= (_45PB70[x] + _3PB70[x]) / 2.0)  && (hue < (_6PB70[x] + _45PB70[x]) / 2.0) && x < 50) {
                     if (y > 49) {
                         y = 49;
                     }
@@ -3372,7 +3376,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _45PB70[y] - _45PB70[x] ;
                     lbe = _45PB70[y];
                     correctL = true;
-                } else if (( hue >= (_6PB70[x] + _45PB70[x]) / 2.0)  && (hue < (_6PB70[x] + _75PB70[x]) / 2.0) && x < 50) {
+                } else if ((hue >= (_6PB70[x] + _45PB70[x]) / 2.0)  && (hue < (_6PB70[x] + _75PB70[x]) / 2.0) && x < 50) {
                     if (y > 49) {
                         y = 49;
                     }
@@ -3380,7 +3384,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _6PB70[y] - _6PB70[x] ;
                     lbe = _6PB70[y];
                     correctL = true;
-                } else if (( hue >= (_6PB70[x] + _75PB70[x]) / 2.0)  && (hue < (_9PB70[x] + _75PB70[x]) / 2.0) && x < 50) {
+                } else if ((hue >= (_6PB70[x] + _75PB70[x]) / 2.0)  && (hue < (_9PB70[x] + _75PB70[x]) / 2.0) && x < 50) {
                     if (y > 49) {
                         y = 49;
                     }
@@ -3388,7 +3392,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _75PB70[y] - _75PB70[x] ;
                     lbe = _75PB70[y];
                     correctL = true;
-                } else if (( hue >= (_9PB70[x] + _75PB70[x]) / 2.0)  && (hue < (_9PB70[x] + 0.035)) && x < 50) {
+                } else if ((hue >= (_9PB70[x] + _75PB70[x]) / 2.0)  && (hue < (_9PB70[x] + 0.035)) && x < 50) {
                     if (y > 49) {
                         y = 49;
                     }
@@ -3398,7 +3402,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correctL = true;
                 }
             } else if (lum < 85.0) {
-                if ( (hue <= (_05PB80[x] + _15PB80[x]) / 2.0) && (hue > (_05PB80[x] + _10B80[x]) / 2.0) && x < 40 ) {
+                if ((hue <= (_05PB80[x] + _15PB80[x]) / 2.0) && (hue > (_05PB80[x] + _10B80[x]) / 2.0) && x < 40) {
                     if (y > 39) {
                         y = 39;
                     }
@@ -3406,7 +3410,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _05PB80[y] - _05PB80[x] ;
                     lbe = _05PB80[y] ;
                     correctL = true;
-                } else if ( (hue <= (_05PB80[x] + _10B80[x]) / 2.0) && (hue > (_10B80[x] + _9B80[x]) / 2.0) && x < 40 ) {
+                } else if ((hue <= (_05PB80[x] + _10B80[x]) / 2.0) && (hue > (_10B80[x] + _9B80[x]) / 2.0) && x < 40) {
                     if (y > 39) {
                         y = 39;
                     }
@@ -3414,7 +3418,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _10B80[y] - _10B80[x] ;
                     lbe = _10B80[y];
                     correctL = true;
-                } else if ( (hue <= (_10B80[x] + _9B80[x]) / 2.0) && (hue > (_9B80[x] + _7B80[x]) / 2.0) && x < 40 ) {
+                } else if ((hue <= (_10B80[x] + _9B80[x]) / 2.0) && (hue > (_9B80[x] + _7B80[x]) / 2.0) && x < 40) {
                     if (y > 39) {
                         y = 39;
                     }
@@ -3422,7 +3426,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _9B80[y] - _9B80[x] ;
                     lbe = _9B80[y];
                     correctL = true;
-                } else if ( (hue <= (_9B80[x] + _7B80[x]) / 2.0) && (hue > (_5B80[x] + _7B80[x]) / 2.0) && x < 50 ) {
+                } else if ((hue <= (_9B80[x] + _7B80[x]) / 2.0) && (hue > (_5B80[x] + _7B80[x]) / 2.0) && x < 50) {
                     if (y > 49) {
                         y = 49;
                     }
@@ -3430,7 +3434,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _7B80[y] - _7B80[x] ;
                     lbe = _7B80[y];
                     correctL = true;
-                } else if (( hue <= (_5B80[x] + _7B80[x]) / 2.0)  && (hue > (_5B80[x] - 0.035)) && x < 50) {
+                } else if ((hue <= (_5B80[x] + _7B80[x]) / 2.0)  && (hue > (_5B80[x] - 0.035)) && x < 50) {
                     if (y > 49) {
                         y = 49;    //
                     }
@@ -3440,7 +3444,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correctL = true;
                 }
 
-                else if ( (hue >= (_15PB80[x] - 0.035)) && (hue < (_15PB80[x] + _3PB80[x]) / 2.0) && x < 50 ) {
+                else if ((hue >= (_15PB80[x] - 0.035)) && (hue < (_15PB80[x] + _3PB80[x]) / 2.0) && x < 50) {
                     if (y > 49) {
                         y = 49;
                     }
@@ -3448,7 +3452,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _15PB80[y] - _15PB80[x] ;
                     lbe = _15PB80[y];
                     correctL = true;
-                } else if (( hue >= (_45PB80[x] + _3PB80[x]) / 2.0)  && (hue < (_6PB80[x] + _45PB80[x]) / 2.0) && x < 50) {
+                } else if ((hue >= (_45PB80[x] + _3PB80[x]) / 2.0)  && (hue < (_6PB80[x] + _45PB80[x]) / 2.0) && x < 50) {
                     if (y > 49) {
                         y = 49;
                     }
@@ -3456,7 +3460,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _45PB80[y] - _45PB80[x] ;
                     lbe = _45PB80[y];
                     correctL = true;
-                } else if (( hue >= (_6PB80[x] + _45PB80[x]) / 2.0)  && (hue < (_6PB80[x] + _75PB80[x]) / 2.0) && x < 50) {
+                } else if ((hue >= (_6PB80[x] + _45PB80[x]) / 2.0)  && (hue < (_6PB80[x] + _75PB80[x]) / 2.0) && x < 50) {
                     if (y > 49) {
                         y = 49;
                     }
@@ -3464,7 +3468,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _6PB80[y] - _6PB80[x] ;
                     lbe = _6PB80[y];
                     correctL = true;
-                } else if (( hue >= (_6PB80[x] + _75PB80[x]) / 2.0)  && (hue < (_9PB80[x] + _75PB80[x]) / 2.0) && x < 50) {
+                } else if ((hue >= (_6PB80[x] + _75PB80[x]) / 2.0)  && (hue < (_9PB80[x] + _75PB80[x]) / 2.0) && x < 50) {
                     if (y > 49) {
                         y = 49;
                     }
@@ -3472,7 +3476,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _75PB80[y] - _75PB80[x] ;
                     lbe = _75PB80[y];
                     correctL = true;
-                } else if (( hue >= (_9PB80[x] + _75PB80[x]) / 2.0)  && (hue < (_9PB80[x] + 0.035)) && x < 50) {
+                } else if ((hue >= (_9PB80[x] + _75PB80[x]) / 2.0)  && (hue < (_9PB80[x] + 0.035)) && x < 50) {
                     if (y > 49) {
                         y = 49;
                     }
@@ -3490,7 +3494,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
     else if (zone == 2) {
         if (lum > 15.0) {
             if (lum < 25.0) {
-                if ( (hue <= (_10YR20[x] + 0.035)) && (hue > (_10YR20[x] + _85YR20[x]) / 2.0) && x <= 45) {
+                if ((hue <= (_10YR20[x] + 0.035)) && (hue > (_10YR20[x] + _85YR20[x]) / 2.0) && x <= 45) {
                     if (y > 49) {
                         y = 49;
                     }
@@ -3498,7 +3502,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _10YR20[y] - _10YR20[x] ;
                     lbe = _10YR20[y];
                     correctL = true;
-                } else if (( hue <= (_85YR20[x] + _10YR20[x]) / 2.0)  && (hue > (_85YR20[x] + 0.035) && x <= 45)) {
+                } else if ((hue <= (_85YR20[x] + _10YR20[x]) / 2.0)  && (hue > (_85YR20[x] + 0.035) && x <= 45)) {
                     if (y > 49) {
                         y = 49;
                     }
@@ -3508,7 +3512,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correctL = true;
                 }
             } else if (lum < 35.0) {
-                if ( (hue <= (_10YR30[x] + 0.035)) && (hue > (_10YR30[x] + _85YR30[x]) / 2.0) && x < 85) {
+                if ((hue <= (_10YR30[x] + 0.035)) && (hue > (_10YR30[x] + _85YR30[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3516,7 +3520,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _10YR30[y] - _10YR30[x] ;
                     lbe = _10YR30[y];
                     correctL = true;
-                } else if ( (hue <= (_10YR30[x] + _85YR30[x]) / 2.0) && (hue > (_85YR30[x] + _7YR30[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_10YR30[x] + _85YR30[x]) / 2.0) && (hue > (_85YR30[x] + _7YR30[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3524,7 +3528,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _85YR30[y] - _85YR30[x] ;
                     lbe = _85YR30[y];
                     correctL = true;
-                } else if (( hue <= (_85YR30[x] + _7YR30[x]) / 2.0)  && (hue > (_7YR30[x] + _55YR30[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_85YR30[x] + _7YR30[x]) / 2.0)  && (hue > (_7YR30[x] + _55YR30[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3532,7 +3536,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _7YR30[y] - _7YR30[x] ;
                     lbe = _7YR30[y];
                     correctL = true;
-                } else if (( hue <= (_7YR30[x] + _55YR30[x]) / 2.0)  && (hue > (_55YR30[x] + _4YR30[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_7YR30[x] + _55YR30[x]) / 2.0)  && (hue > (_55YR30[x] + _4YR30[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3540,7 +3544,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _55YR30[y] - _55YR30[x] ;
                     lbe = _55YR30[y];
                     correctL = true;
-                } else if (( hue <= (_55YR30[x] + _4YR30[x]) / 2.0)  && (hue > (_4YR30[x] + _25YR30[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_55YR30[x] + _4YR30[x]) / 2.0)  && (hue > (_4YR30[x] + _25YR30[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3548,7 +3552,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _4YR30[y] - _4YR30[x] ;
                     lbe = _4YR30[y];
                     correctL = true;
-                } else if (( hue <= (_4YR30[x] + _25YR30[x]) / 2.0)  && (hue > (_25YR30[x] + _10R30[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_4YR30[x] + _25YR30[x]) / 2.0)  && (hue > (_25YR30[x] + _10R30[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3556,7 +3560,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _25YR30[y] - _25YR30[x] ;
                     lbe = _25YR30[y];
                     correctL = true;
-                } else if (( hue <= (_25YR30[x] + _10R30[x]) / 2.0)  && (hue > (_10R30[x] + _9R30[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_25YR30[x] + _10R30[x]) / 2.0)  && (hue > (_10R30[x] + _9R30[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3564,7 +3568,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _10R30[y] - _10R30[x] ;
                     lbe = _10R30[y];
                     correctL = true;
-                } else if (( hue <= (_10R30[x] + _9R30[x]) / 2.0)  && (hue > (_9R30[x] + _7R30[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_10R30[x] + _9R30[x]) / 2.0)  && (hue > (_9R30[x] + _7R30[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3572,7 +3576,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _9R30[y] - _9R30[x] ;
                     lbe = _9R30[y];
                     correctL = true;
-                } else if (( hue <= (_9R30[x] + _7R30[x]) / 2.0)  && (hue > (_7R30[x] - 0.035)) && x < 85) {
+                } else if ((hue <= (_9R30[x] + _7R30[x]) / 2.0)  && (hue > (_7R30[x] - 0.035)) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3582,7 +3586,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correctL = true;
                 }
             } else if (lum < 45.0) {
-                if ( (hue <= (_10YR40[x] + 0.035)) && (hue > (_10YR40[x] + _85YR40[x]) / 2.0) && x < 85) {
+                if ((hue <= (_10YR40[x] + 0.035)) && (hue > (_10YR40[x] + _85YR40[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3590,7 +3594,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _10YR40[y] - _10YR40[x] ;
                     lbe = _10YR40[y];
                     correctL = true;
-                } else if ( (hue <= (_10YR40[x] + _85YR40[x]) / 2.0) && (hue > (_85YR40[x] + _7YR40[x]) / 2.0) && x < 85 ) {
+                } else if ((hue <= (_10YR40[x] + _85YR40[x]) / 2.0) && (hue > (_85YR40[x] + _7YR40[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3598,7 +3602,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _85YR40[y] - _85YR40[x] ;
                     lbe = _85YR40[y];
                     correctL = true;
-                } else if (( hue <= (_85YR40[x] + _7YR40[x]) / 2.0)  && (hue > (_7YR40[x] + _55YR40[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_85YR40[x] + _7YR40[x]) / 2.0)  && (hue > (_7YR40[x] + _55YR40[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3606,7 +3610,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _7YR40[y] - _7YR40[x] ;
                     lbe = _7YR40[y];
                     correctL = true;
-                } else if (( hue <= (_7YR40[x] + _55YR40[x]) / 2.0)  && (hue > (_55YR40[x] + _4YR40[x]) / 2.0) && x < 85 ) {
+                } else if ((hue <= (_7YR40[x] + _55YR40[x]) / 2.0)  && (hue > (_55YR40[x] + _4YR40[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3614,7 +3618,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _55YR40[y] - _55YR40[x] ;
                     lbe = _55YR40[y];
                     correctL = true;
-                } else if (( hue <= (_55YR40[x] + _4YR40[x]) / 2.0)  && (hue > (_4YR40[x] + _25YR40[x]) / 2.0) && x < 85 ) {
+                } else if ((hue <= (_55YR40[x] + _4YR40[x]) / 2.0)  && (hue > (_4YR40[x] + _25YR40[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3622,7 +3626,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _4YR40[y] - _4YR40[x] ;
                     lbe = _4YR40[y];
                     correctL = true;
-                } else if (( hue <= (_4YR40[x] + _25YR40[x]) / 2.0)  && (hue > (_25YR40[x] + _10R40[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_4YR40[x] + _25YR40[x]) / 2.0)  && (hue > (_25YR40[x] + _10R40[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3630,7 +3634,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _25YR40[y] - _25YR40[x] ;
                     lbe = _25YR40[y] ;
                     correctL = true;
-                } else if (( hue <= (_25YR40[x] + _10R40[x]) / 2.0)  && (hue > (_10R40[x] + _9R40[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_25YR40[x] + _10R40[x]) / 2.0)  && (hue > (_10R40[x] + _9R40[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3638,7 +3642,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _10R40[y] - _10R40[x] ;
                     lbe = _10R40[y];
                     correctL = true;
-                } else if (( hue <= (_10R40[x] + _9R40[x]) / 2.0)  && (hue > (_9R40[x] + _7R40[x]) / 2.0) && x < 85 ) {
+                } else if ((hue <= (_10R40[x] + _9R40[x]) / 2.0)  && (hue > (_9R40[x] + _7R40[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3646,7 +3650,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _9R40[y] - _9R40[x] ;
                     lbe = _9R40[y];
                     correctL = true;
-                } else if (( hue <= (_9R40[x] + _7R40[x]) / 2.0)  && (hue > (_7R40[x] - 0.035)) && x < 85 ) {
+                } else if ((hue <= (_9R40[x] + _7R40[x]) / 2.0)  && (hue > (_7R40[x] - 0.035)) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3656,7 +3660,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correctL = true;
                 }
             } else if (lum < 55.0) {
-                if ( (hue <= (_10YR50[x] + 0.035)) && (hue > (_10YR50[x] + _85YR50[x]) / 2.0) && x < 85) {
+                if ((hue <= (_10YR50[x] + 0.035)) && (hue > (_10YR50[x] + _85YR50[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3664,7 +3668,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _10YR50[y] - _10YR50[x] ;
                     lbe = _10YR50[y];
                     correctL = true;
-                } else if ( (hue <= (_10YR50[x] + _85YR50[x]) / 2.0) && (hue > (_85YR50[x] + _7YR50[x]) / 2.0) && x < 85 ) {
+                } else if ((hue <= (_10YR50[x] + _85YR50[x]) / 2.0) && (hue > (_85YR50[x] + _7YR50[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3672,7 +3676,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _85YR50[y] - _85YR50[x] ;
                     lbe = _85YR50[y];
                     correctL = true;
-                } else if (( hue <= (_85YR50[x] + _7YR50[x]) / 2.0)  && (hue > (_7YR50[x] + _55YR50[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_85YR50[x] + _7YR50[x]) / 2.0)  && (hue > (_7YR50[x] + _55YR50[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3680,7 +3684,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _7YR50[y] - _7YR50[x] ;
                     lbe = _7YR50[y];
                     correctL = true;
-                } else if (( hue <= (_7YR50[x] + _55YR50[x]) / 2.0)  && (hue > (_55YR50[x] + _4YR50[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_7YR50[x] + _55YR50[x]) / 2.0)  && (hue > (_55YR50[x] + _4YR50[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3688,7 +3692,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _55YR50[y] - _55YR50[x] ;
                     lbe = _55YR50[y];
                     correctL = true;
-                } else if (( hue <= (_55YR50[x] + _4YR50[x]) / 2.0)  && (hue > (_4YR50[x] + _25YR50[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_55YR50[x] + _4YR50[x]) / 2.0)  && (hue > (_4YR50[x] + _25YR50[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3696,7 +3700,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _4YR50[y] - _4YR50[x] ;
                     lbe = _4YR50[y];
                     correctL = true;
-                } else if (( hue <= (_4YR50[x] + _25YR50[x]) / 2.0)  && (hue > (_25YR50[x] + _10R50[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_4YR50[x] + _25YR50[x]) / 2.0)  && (hue > (_25YR50[x] + _10R50[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3704,7 +3708,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _25YR50[y] - _25YR50[x] ;
                     lbe = _25YR50[y];
                     correctL = true;
-                } else if (( hue <= (_25YR50[x] + _10R50[x]) / 2.0)  && (hue > (_10R50[x] + _9R50[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_25YR50[x] + _10R50[x]) / 2.0)  && (hue > (_10R50[x] + _9R50[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3712,7 +3716,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _10R50[y] - _10R50[x] ;
                     lbe = _10R50[y];
                     correctL = true;
-                } else if (( hue <= (_10R50[x] + _9R50[x]) / 2.0)  && (hue > (_9R50[x] + _7R50[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_10R50[x] + _9R50[x]) / 2.0)  && (hue > (_9R50[x] + _7R50[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3720,7 +3724,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _9R50[y] - _9R50[x] ;
                     lbe = _9R50[y];
                     correctL = true;
-                } else if (( hue <= (_9R50[x] + _7R50[x]) / 2.0)  && (hue > (_7R50[x] - 0.035)) && x < 85) {
+                } else if ((hue <= (_9R50[x] + _7R50[x]) / 2.0)  && (hue > (_7R50[x] - 0.035)) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3730,29 +3734,29 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correctL = true;
                 }
             } else if (lum < 65.0) {
-                if ( (hue <= (_10YR60[x] + 0.035)) && (hue > (_10YR60[x] + _85YR60[x]) / 2.0)) {
+                if ((hue <= (_10YR60[x] + 0.035)) && (hue > (_10YR60[x] + _85YR60[x]) / 2.0)) {
                     ;
                     correction =  _10YR60[y] - _10YR60[x] ;
                     lbe = _10YR60[y];
                     correctL = true;
-                } else if ( (hue <= (_10YR60[x] + _85YR60[x]) / 2.0) && (hue > (_85YR60[x] + _7YR60[x]) / 2.0) ) {
+                } else if ((hue <= (_10YR60[x] + _85YR60[x]) / 2.0) && (hue > (_85YR60[x] + _7YR60[x]) / 2.0)) {
                     ;
                     correction =  _85YR60[y] - _85YR60[x] ;
                     lbe = _85YR60[y];
                     correctL = true;
-                } else if (( hue <= (_85YR60[x] + _7YR60[x]) / 2.0)  && (hue > (_7YR60[x] + _55YR60[x]) / 2.0)) {
+                } else if ((hue <= (_85YR60[x] + _7YR60[x]) / 2.0)  && (hue > (_7YR60[x] + _55YR60[x]) / 2.0)) {
                     correction =  _7YR60[y] - _7YR60[x] ;
                     lbe = _7YR60[y];
                     correctL = true;
-                } else if (( hue <= (_7YR60[x] + _55YR60[x]) / 2.0)  && (hue > (_55YR60[x] + _4YR60[x]) / 2.0)) {
+                } else if ((hue <= (_7YR60[x] + _55YR60[x]) / 2.0)  && (hue > (_55YR60[x] + _4YR60[x]) / 2.0)) {
                     correction =  _55YR60[y] - _55YR60[x] ;
                     lbe = _55YR60[y];
                     correctL = true;
-                } else if (( hue <= (_55YR60[x] + _4YR60[x]) / 2.0)  && (hue > (_4YR60[x] + _25YR60[x]) / 2.0)) {
+                } else if ((hue <= (_55YR60[x] + _4YR60[x]) / 2.0)  && (hue > (_4YR60[x] + _25YR60[x]) / 2.0)) {
                     correction =  _4YR60[y] - _4YR60[x] ;
                     lbe = _4YR60[y];
                     correctL = true;
-                } else if (( hue <= (_4YR60[x] + _25YR60[x]) / 2.0)  && (hue > (_25YR60[x] + _10R60[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_4YR60[x] + _25YR60[x]) / 2.0)  && (hue > (_25YR60[x] + _10R60[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3760,7 +3764,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _25YR60[y] - _25YR60[x] ;
                     lbe = _25YR60[y];
                     correctL = true;
-                } else if (( hue <= (_25YR60[x] + _10R60[x]) / 2.0)  && (hue > (_10R60[x] + _9R60[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_25YR60[x] + _10R60[x]) / 2.0)  && (hue > (_10R60[x] + _9R60[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3768,7 +3772,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _10R60[y] - _10R60[x] ;
                     lbe = _10R60[y];
                     correctL = true;
-                } else if (( hue <= (_10R60[x] + _9R60[x]) / 2.0)  && (hue > (_9R60[x] + _7R60[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_10R60[x] + _9R60[x]) / 2.0)  && (hue > (_9R60[x] + _7R60[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3776,7 +3780,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _9R60[y] - _9R60[x] ;
                     lbe = _9R60[y];
                     correctL = true;
-                } else if (( hue <= (_9R60[x] + _7R60[x]) / 2.0)  && (hue > (_7R60[x] - 0.035)) && x < 85) {
+                } else if ((hue <= (_9R60[x] + _7R60[x]) / 2.0)  && (hue > (_7R60[x] - 0.035)) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3786,29 +3790,29 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correctL = true;
                 }
             } else if (lum < 75.0) {
-                if ( (hue <= (_10YR70[x] + 0.035)) && (hue > (_10YR70[x] + _85YR70[x]) / 2.0)) {
+                if ((hue <= (_10YR70[x] + 0.035)) && (hue > (_10YR70[x] + _85YR70[x]) / 2.0)) {
                     correction =  _10YR70[y] - _10YR70[x] ;
                     lbe = _10YR70[y];
                     correctL = true;
-                } else if ( (hue <= (_10YR70[x] + _85YR70[x]) / 2.0) && (hue > (_85YR70[x] + _7YR70[x]) / 2.0)) {
+                } else if ((hue <= (_10YR70[x] + _85YR70[x]) / 2.0) && (hue > (_85YR70[x] + _7YR70[x]) / 2.0)) {
                     correction =  _85YR70[y] - _85YR70[x] ;
                     lbe = _85YR70[y];
                     correctL = true;
                 }
 
-                if (( hue <= (_85YR70[x] + _7YR70[x]) / 2.0)  && (hue > (_7YR70[x] + _55YR70[x]) / 2.0)) {
+                if ((hue <= (_85YR70[x] + _7YR70[x]) / 2.0)  && (hue > (_7YR70[x] + _55YR70[x]) / 2.0)) {
                     correction =  _7YR70[y] - _7YR70[x] ;
                     lbe = _7YR70[y];
                     correctL = true;
-                } else if (( hue <= (_7YR70[x] + _55YR70[x]) / 2.0)  && (hue > (_55YR70[x] + _4YR70[x]) / 2.0)) {
+                } else if ((hue <= (_7YR70[x] + _55YR70[x]) / 2.0)  && (hue > (_55YR70[x] + _4YR70[x]) / 2.0)) {
                     correction =  _55YR70[y] - _55YR70[x] ;
                     lbe = _55YR70[y];
                     correctL = true;
-                } else if (( hue <= (_55YR70[x] + _4YR70[x]) / 2.0)  && (hue > (_4YR70[x] + _25YR70[x]) / 2.0)) {
+                } else if ((hue <= (_55YR70[x] + _4YR70[x]) / 2.0)  && (hue > (_4YR70[x] + _25YR70[x]) / 2.0)) {
                     correction =  _4YR70[y] - _4YR70[x] ;
                     lbe = _4YR70[y];
                     correctL = true;
-                } else if (( hue <= (_4YR70[x] + _25YR70[x]) / 2.0)  && (hue > (_25YR70[x] + _10R70[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_4YR70[x] + _25YR70[x]) / 2.0)  && (hue > (_25YR70[x] + _10R70[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3816,7 +3820,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _25YR70[y] - _25YR70[x] ;
                     lbe = _25YR70[y];
                     correctL = true;
-                } else if (( hue <= (_25YR70[x] + _10R70[x]) / 2.0)  && (hue > (_10R70[x] + _9R70[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_25YR70[x] + _10R70[x]) / 2.0)  && (hue > (_10R70[x] + _9R70[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3824,7 +3828,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _10R70[y] - _10R70[x] ;
                     lbe = _10R70[y];
                     correctL = true;
-                } else if (( hue <= (_10R70[x] + _9R70[x]) / 2.0)  && (hue > (_9R70[x] + _7R70[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_10R70[x] + _9R70[x]) / 2.0)  && (hue > (_9R70[x] + _7R70[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3832,7 +3836,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _9R70[y] - _9R70[x] ;
                     lbe = _9R70[y] ;
                     correctL = true;
-                } else if (( hue <= (_9R70[x] + _7R70[x]) / 2.0)  && (hue > (_7R70[x] - 0.035)) && x < 85) {
+                } else if ((hue <= (_9R70[x] + _7R70[x]) / 2.0)  && (hue > (_7R70[x] - 0.035)) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3842,14 +3846,14 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correctL = true;
                 }
             } else if (lum < 85.0) {
-                if ( (hue <= (_10YR80[x] + 0.035)) && (hue > (_10YR80[x] + _85YR80[x]) / 2.0)) {
+                if ((hue <= (_10YR80[x] + 0.035)) && (hue > (_10YR80[x] + _85YR80[x]) / 2.0)) {
                     correction =  _10YR80[y] - _10YR80[x] ;
                     lbe = _10YR80[y];
                     correctL = true;
-                } else if ( (hue <= (_10YR80[x] + _85YR80[x]) / 2.0) && (hue > (_85YR80[x] + _7YR80[x]) / 2.0)) {
+                } else if ((hue <= (_10YR80[x] + _85YR80[x]) / 2.0) && (hue > (_85YR80[x] + _7YR80[x]) / 2.0)) {
                     correction =  _85YR80[y] - _85YR80[x] ;
                     lbe = _85YR80[y];
-                } else if (( hue <= (_85YR80[x] + _7YR80[x]) / 2.0)  && (hue > (_7YR80[x] + _55YR80[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_85YR80[x] + _7YR80[x]) / 2.0)  && (hue > (_7YR80[x] + _55YR80[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3857,11 +3861,11 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _7YR80[y] - _7YR80[x] ;
                     lbe = _7YR80[y];
                     correctL = true;
-                } else if (( hue <= (_7YR80[x] + _55YR80[x]) / 2.0)  && (hue > (_55YR80[x] + _4YR80[x]) / 2.0) && x < 45) {
+                } else if ((hue <= (_7YR80[x] + _55YR80[x]) / 2.0)  && (hue > (_55YR80[x] + _4YR80[x]) / 2.0) && x < 45) {
                     correction =  _55YR80[y] - _55YR80[x] ;
                     lbe = _55YR80[y];
                     correctL = true;
-                } else if (( hue <= (_55YR80[x] + _4YR80[x]) / 2.0)  && (hue > (_4YR80[x] - 0.035) && x < 45)) {
+                } else if ((hue <= (_55YR80[x] + _4YR80[x]) / 2.0)  && (hue > (_4YR80[x] - 0.035) && x < 45)) {
                     if (y > 49) {
                         y = 49;
                     }
@@ -3871,7 +3875,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correctL = true;
                 }
             } else if (lum < 95.0) {
-                if ( (hue <= (_10YR90[x] + 0.035)) && (hue > (_10YR90[x] - 0.035) && x < 85)) {
+                if ((hue <= (_10YR90[x] + 0.035)) && (hue > (_10YR90[x] - 0.035) && x < 85)) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3879,7 +3883,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _10YR90[y] - _10YR90[x] ;
                     lbe = _10YR90[y];
                     correctL = true;
-                } else if ( hue <= (_85YR90[x] + 0.035)  && hue > (_85YR90[x] - 0.035) && x < 85) {
+                } else if (hue <= (_85YR90[x] + 0.035)  && hue > (_85YR90[x] - 0.035) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3887,7 +3891,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _85YR90[y] - _85YR90[x] ;
                     lbe = _85YR90[y];
                     correctL = true;
-                } else if (( hue <= (_55YR90[x] + 0.035)  && (hue > (_55YR90[x] - 0.035) && x < 45))) {
+                } else if ((hue <= (_55YR90[x] + 0.035)  && (hue > (_55YR90[x] - 0.035) && x < 45))) {
                     if (y > 49) {
                         y = 49;
                     }
@@ -3905,23 +3909,23 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
     else if (zone == 3) {
         if (lum >= 25.0) {
             if (lum < 35.0) {
-                if ( (hue <= (_7G30[x] + 0.035)) && (hue > (_7G30[x] + _5G30[x]) / 2.0) ) {
+                if ((hue <= (_7G30[x] + 0.035)) && (hue > (_7G30[x] + _5G30[x]) / 2.0)) {
                     correction =  _7G30[y] - _7G30[x] ;
                     lbe = _7G30[y];
                     correctL = true;
-                } else if ( (hue <= (_7G30[x] + _5G30[x]) / 2.0) && (hue > (_5G30[x] + _25G30[x]) / 2.0)) {
+                } else if ((hue <= (_7G30[x] + _5G30[x]) / 2.0) && (hue > (_5G30[x] + _25G30[x]) / 2.0)) {
                     correction =  _5G30[y] - _5G30[x] ;
                     lbe = _5G30[y];
                     correctL = true;
-                } else if (( hue <= (_25G30[x] + _5G30[x]) / 2.0)  && (hue > (_25G30[x] + _1G30[x]) / 2.0)) {
+                } else if ((hue <= (_25G30[x] + _5G30[x]) / 2.0)  && (hue > (_25G30[x] + _1G30[x]) / 2.0)) {
                     correction =  _25G30[y] - _25G30[x] ;
                     lbe = _25G30[y];
                     correctL = true;
-                } else if (( hue <= (_1G30[x] + _25G30[x]) / 2.0)  && (hue > (_1G30[x] + _10GY30[x]) / 2.0)) {
+                } else if ((hue <= (_1G30[x] + _25G30[x]) / 2.0)  && (hue > (_1G30[x] + _10GY30[x]) / 2.0)) {
                     correction =  _1G30[y] - _1G30[x] ;
                     lbe = _1G30[y];
                     correctL = true;
-                } else if (( hue <= (_1G30[x] + _10GY30[x]) / 2.0)  && (hue > (_10GY30[x] + _75GY30[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_1G30[x] + _10GY30[x]) / 2.0)  && (hue > (_10GY30[x] + _75GY30[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3929,7 +3933,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _10GY30[y] - _10GY30[x] ;
                     lbe =  _10GY30[y];
                     correctL = true;
-                } else if (( hue <= (_10GY30[x] + _75GY30[x]) / 2.0)  && (hue > (_75GY30[x] + _5GY30[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_10GY30[x] + _75GY30[x]) / 2.0)  && (hue > (_75GY30[x] + _5GY30[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3937,7 +3941,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _75GY30[y] - _75GY30[x] ;
                     lbe = _75GY30[y];
                     correctL = true;
-                } else if (( hue <= (_5GY30[x] + _75GY30[x]) / 2.0)  && (hue > (_5GY30[x] - 0.035)) && x < 85) {
+                } else if ((hue <= (_5GY30[x] + _75GY30[x]) / 2.0)  && (hue > (_5GY30[x] - 0.035)) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3947,23 +3951,23 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correctL = true;
                 }
             } else if (lum < 45.0) {
-                if ( (hue <= (_7G40[x] + 0.035)) && (hue > (_7G40[x] + _5G40[x]) / 2.0) ) {
+                if ((hue <= (_7G40[x] + 0.035)) && (hue > (_7G40[x] + _5G40[x]) / 2.0)) {
                     correction =  _7G40[y] - _7G40[x] ;
                     lbe = _7G40[y];
                     correctL = true;
-                } else if ( (hue <= (_7G40[x] + _5G40[x]) / 2.0) && (hue > (_5G40[x] + _25G40[x]) / 2.0)) {
+                } else if ((hue <= (_7G40[x] + _5G40[x]) / 2.0) && (hue > (_5G40[x] + _25G40[x]) / 2.0)) {
                     correction =  _5G40[y] - _5G40[x] ;
                     lbe = _5G40[y];
                     correctL = true;
-                } else if (( hue <= (_25G40[x] + _5G40[x]) / 2.0)  && (hue > (_25G40[x] + _1G40[x]) / 2.0)) {
+                } else if ((hue <= (_25G40[x] + _5G40[x]) / 2.0)  && (hue > (_25G40[x] + _1G40[x]) / 2.0)) {
                     correction =  _25G40[y] - _25G40[x] ;
                     lbe = _25G40[y];
                     correctL = true;
-                } else if (( hue <= (_1G40[x] + _25G40[x]) / 2.0)  && (hue > (_1G40[x] + _10GY40[x]) / 2.0)) {
+                } else if ((hue <= (_1G40[x] + _25G40[x]) / 2.0)  && (hue > (_1G40[x] + _10GY40[x]) / 2.0)) {
                     correction =  _1G40[y] - _1G40[x] ;
                     lbe = _1G40[y];
                     correctL = true;
-                } else if (( hue <= (_1G40[x] + _10GY40[x]) / 2.0)  && (hue > (_10GY40[x] + _75GY40[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_1G40[x] + _10GY40[x]) / 2.0)  && (hue > (_10GY40[x] + _75GY40[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3971,7 +3975,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _10GY40[y] - _10GY40[x] ;
                     lbe = _10GY40[y];
                     correctL = true;
-                } else if (( hue <= (_10GY40[x] + _75GY40[x]) / 2.0)  && (hue > (_75GY40[x] + _5GY40[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_10GY40[x] + _75GY40[x]) / 2.0)  && (hue > (_75GY40[x] + _5GY40[x]) / 2.0) && x < 85) {
                     if (y > 89) {
                         y = 89;
                     }
@@ -3979,7 +3983,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _75GY40[y] - _75GY40[x] ;
                     lbe = _75GY40[y];
                     correctL = true;
-                } else if (( hue <= (_5GY40[x] + _75GY40[x]) / 2.0)  && (hue > (_5GY40[x] - 0.035)) && x < 85) {
+                } else if ((hue <= (_5GY40[x] + _75GY40[x]) / 2.0)  && (hue > (_5GY40[x] - 0.035)) && x < 85) {
                     if (y > 89) {
                         y = 89;    //
                     }
@@ -3989,121 +3993,121 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correctL = true;
                 }
             } else if (lum < 55.0) {
-                if ( (hue <= (_7G50[x] + 0.035)) && (hue > (_7G50[x] + _5G50[x]) / 2.0) ) {
+                if ((hue <= (_7G50[x] + 0.035)) && (hue > (_7G50[x] + _5G50[x]) / 2.0)) {
                     correction =  _7G50[y] - _7G50[x] ;
                     lbe = _7G50[y];
                     correctL = true;
-                } else if ( (hue <= (_7G50[x] + _5G50[x]) / 2.0) && (hue > (_5G50[x] + _25G50[x]) / 2.0)) {
+                } else if ((hue <= (_7G50[x] + _5G50[x]) / 2.0) && (hue > (_5G50[x] + _25G50[x]) / 2.0)) {
                     correction =  _5G50[y] - _5G50[x] ;
                     lbe = _5G50[y];
                     correctL = true;
-                } else if (( hue <= (_25G50[x] + _5G50[x]) / 2.0)  && (hue > (_25G50[x] + _1G50[x]) / 2.0)) {
+                } else if ((hue <= (_25G50[x] + _5G50[x]) / 2.0)  && (hue > (_25G50[x] + _1G50[x]) / 2.0)) {
                     correction =  _25G50[y] - _25G50[x] ;
                     lbe = _25G50[y];
                     correctL = true;
-                } else if (( hue <= (_1G50[x] + _25G50[x]) / 2.0)  && (hue > (_1G50[x] + _10GY50[x]) / 2.0)) {
+                } else if ((hue <= (_1G50[x] + _25G50[x]) / 2.0)  && (hue > (_1G50[x] + _10GY50[x]) / 2.0)) {
                     correction =  _1G50[y] - _1G50[x] ;
                     lbe = _1G50[y];
                     correctL = true;
-                } else if (( hue <= (_1G50[x] + _10GY50[x]) / 2.0)  && (hue > (_10GY50[x] + _75GY50[x]) / 2.0)) {
+                } else if ((hue <= (_1G50[x] + _10GY50[x]) / 2.0)  && (hue > (_10GY50[x] + _75GY50[x]) / 2.0)) {
                     correction =  _10GY50[y] - _10GY50[x] ;
                     lbe = _10GY50[y];
                     correctL = true;
-                } else if (( hue <= (_10GY50[x] + _75GY50[x]) / 2.0)  && (hue > (_75GY50[x] + _5GY50[x]) / 2.0)) {
+                } else if ((hue <= (_10GY50[x] + _75GY50[x]) / 2.0)  && (hue > (_75GY50[x] + _5GY50[x]) / 2.0)) {
                     correction =  _75GY50[y] - _75GY50[x] ;
                     lbe = _75GY50[y];
                     correctL = true;
-                } else if (( hue <= (_5GY50[x] + _75GY50[x]) / 2.0)  && (hue > (_5GY50[x] - 0.035))) {
+                } else if ((hue <= (_5GY50[x] + _75GY50[x]) / 2.0)  && (hue > (_5GY50[x] - 0.035))) {
                     correction =  _5GY50[y] - _5GY50[x] ;
                     lbe = _5GY50[y];
                     correctL = true;
                 }
             } else if (lum < 65.0) {
-                if ( (hue <= (_7G60[x] + 0.035)) && (hue > (_7G60[x] + _5G60[x]) / 2.0) ) {
+                if ((hue <= (_7G60[x] + 0.035)) && (hue > (_7G60[x] + _5G60[x]) / 2.0)) {
                     correction =  _7G60[y] - _7G60[x] ;
                     lbe = _7G60[y];
                     correctL = true;
-                } else if ( (hue <= (_7G60[x] + _5G60[x]) / 2.0) && (hue > (_5G60[x] + _25G60[x]) / 2.0)) {
+                } else if ((hue <= (_7G60[x] + _5G60[x]) / 2.0) && (hue > (_5G60[x] + _25G60[x]) / 2.0)) {
                     correction =  _5G60[y] - _5G60[x] ;
                     lbe = _5G60[y];
                     correctL = true;
-                } else if (( hue <= (_25G60[x] + _5G60[x]) / 2.0)  && (hue > (_25G60[x] + _1G60[x]) / 2.0)) {
+                } else if ((hue <= (_25G60[x] + _5G60[x]) / 2.0)  && (hue > (_25G60[x] + _1G60[x]) / 2.0)) {
                     correction =  _25G60[y] - _25G60[x] ;
                     lbe = _25G60[y];
                     correctL = true;
-                } else if (( hue <= (_1G60[x] + _25G60[x]) / 2.0)  && (hue > (_1G60[x] + _10GY60[x]) / 2.0)) {
+                } else if ((hue <= (_1G60[x] + _25G60[x]) / 2.0)  && (hue > (_1G60[x] + _10GY60[x]) / 2.0)) {
                     correction =  _1G60[y] - _1G60[x] ;
                     lbe = _1G60[y];
                     correctL = true;
-                } else if (( hue <= (_1G60[x] + _10GY60[x]) / 2.0)  && (hue > (_10GY60[x] + _75GY60[x]) / 2.0)) {
+                } else if ((hue <= (_1G60[x] + _10GY60[x]) / 2.0)  && (hue > (_10GY60[x] + _75GY60[x]) / 2.0)) {
                     correction =  _10GY60[y] - _10GY60[x] ;
                     lbe = _10GY60[y];
                     correctL = true;
-                } else if (( hue <= (_10GY60[x] + _75GY60[x]) / 2.0)  && (hue > (_75GY60[x] + _5GY60[x]) / 2.0)) {
+                } else if ((hue <= (_10GY60[x] + _75GY60[x]) / 2.0)  && (hue > (_75GY60[x] + _5GY60[x]) / 2.0)) {
                     correction =  _75GY60[y] - _75GY60[x] ;
                     lbe = _75GY60[y] ;
                     correctL = true;
-                } else if (( hue <= (_5GY60[x] + _75GY60[x]) / 2.0)  && (hue > (_5GY60[x] - 0.035))) {
+                } else if ((hue <= (_5GY60[x] + _75GY60[x]) / 2.0)  && (hue > (_5GY60[x] - 0.035))) {
                     correction =  _5GY60[y] - _5GY60[x] ;
                     lbe = _5GY60[y];
                     correctL = true;
                 }
             } else if (lum < 75.0) {
-                if ( (hue <= (_7G70[x] + 0.035)) && (hue > (_7G70[x] + _5G70[x]) / 2.0) ) {
+                if ((hue <= (_7G70[x] + 0.035)) && (hue > (_7G70[x] + _5G70[x]) / 2.0)) {
                     correction =  _7G70[y] - _7G70[x] ;
                     lbe = _7G70[y];
                     correctL = true;
-                } else if ( (hue <= (_7G70[x] + _5G70[x]) / 2.0) && (hue > (_5G70[x] + _25G70[x]) / 2.0)) {
+                } else if ((hue <= (_7G70[x] + _5G70[x]) / 2.0) && (hue > (_5G70[x] + _25G70[x]) / 2.0)) {
                     correction =  _5G70[y] - _5G70[x] ;
                     lbe = _5G70[y];
                     correctL = true;
-                } else if (( hue <= (_25G70[x] + _5G70[x]) / 2.0)  && (hue > (_25G70[x] + _1G70[x]) / 2.0)) {
+                } else if ((hue <= (_25G70[x] + _5G70[x]) / 2.0)  && (hue > (_25G70[x] + _1G70[x]) / 2.0)) {
                     correction =  _25G70[y] - _25G70[x] ;
                     lbe = _25G70[y];
                     correctL = true;
-                } else if (( hue <= (_1G70[x] + _25G70[x]) / 2.0)  && (hue > (_1G70[x] + _10GY70[x]) / 2.0)) {
+                } else if ((hue <= (_1G70[x] + _25G70[x]) / 2.0)  && (hue > (_1G70[x] + _10GY70[x]) / 2.0)) {
                     correction =  _1G70[y] - _1G70[x] ;
                     lbe = _1G70[y] ;
                     correctL = true;
-                } else if (( hue <= (_1G70[x] + _10GY70[x]) / 2.0)  && (hue > (_10GY70[x] + _75GY70[x]) / 2.0)) {
+                } else if ((hue <= (_1G70[x] + _10GY70[x]) / 2.0)  && (hue > (_10GY70[x] + _75GY70[x]) / 2.0)) {
                     correction =  _10GY70[y] - _10GY70[x] ;
                     lbe = _10GY70[y];
                     correctL = true;
-                } else if (( hue <= (_10GY70[x] + _75GY70[x]) / 2.0)  && (hue > (_75GY70[x] + _5GY70[x]) / 2.0)) {
+                } else if ((hue <= (_10GY70[x] + _75GY70[x]) / 2.0)  && (hue > (_75GY70[x] + _5GY70[x]) / 2.0)) {
                     correction =  _75GY70[y] - _75GY70[x] ;
                     lbe = _75GY70[y];
                     correctL = true;
-                } else if (( hue <= (_5GY70[x] + _75GY70[x]) / 2.0)  && (hue > (_5GY70[x] - 0.035))) {
+                } else if ((hue <= (_5GY70[x] + _75GY70[x]) / 2.0)  && (hue > (_5GY70[x] - 0.035))) {
                     correction =  _5GY70[y] - _5GY70[x] ;
                     lbe =  _5GY70[y];
                     correctL = true;
                 }
             } else if (lum < 85.0) {
-                if ( (hue <= (_7G80[x] + 0.035)) && (hue > (_7G80[x] + _5G80[x]) / 2.0) ) {
+                if ((hue <= (_7G80[x] + 0.035)) && (hue > (_7G80[x] + _5G80[x]) / 2.0)) {
                     correction =  _7G80[y] - _7G80[x] ;
                     lbe = _7G80[y];
                     correctL = true;
-                } else if ( (hue <= (_7G80[x] + _5G80[x]) / 2.0) && (hue > (_5G80[x] + _25G80[x]) / 2.0)) {
+                } else if ((hue <= (_7G80[x] + _5G80[x]) / 2.0) && (hue > (_5G80[x] + _25G80[x]) / 2.0)) {
                     correction =  _5G80[y] - _5G80[x] ;
                     lbe = _5G80[y];
                     correctL = true;
-                } else if (( hue <= (_25G80[x] + _5G80[x]) / 2.0)  && (hue > (_25G80[x] + _1G80[x]) / 2.0)) {
+                } else if ((hue <= (_25G80[x] + _5G80[x]) / 2.0)  && (hue > (_25G80[x] + _1G80[x]) / 2.0)) {
                     correction =  _25G80[y] - _25G80[x] ;
                     lbe = _25G80[y];
                     correctL = true;
-                } else if (( hue <= (_1G80[x] + _25G80[x]) / 2.0)  && (hue > (_1G80[x] + _10GY80[x]) / 2.0)) {
+                } else if ((hue <= (_1G80[x] + _25G80[x]) / 2.0)  && (hue > (_1G80[x] + _10GY80[x]) / 2.0)) {
                     correction =  _1G80[y] - _1G80[x] ;
                     lbe = _1G80[y];
                     correctL = true;
-                } else if (( hue <= (_1G80[x] + _10GY80[x]) / 2.0)  && (hue > (_10GY80[x] + _75GY80[x]) / 2.0)) {
+                } else if ((hue <= (_1G80[x] + _10GY80[x]) / 2.0)  && (hue > (_10GY80[x] + _75GY80[x]) / 2.0)) {
                     correction =  _10GY80[y] - _10GY80[x] ;
                     lbe = _10GY80[y];
                     correctL = true;
-                } else if (( hue <= (_10GY80[x] + _75GY80[x]) / 2.0)  && (hue > (_75GY80[x] + _5GY80[x]) / 2.0)) {
+                } else if ((hue <= (_10GY80[x] + _75GY80[x]) / 2.0)  && (hue > (_75GY80[x] + _5GY80[x]) / 2.0)) {
                     correction =  _75GY80[y] - _75GY80[x] ;
                     lbe = _75GY80[y];
                     correctL = true;
-                } else if (( hue <= (_5GY80[x] + _75GY80[x]) / 2.0)  && (hue > (_5GY80[x] - 0.035))) {
+                } else if ((hue <= (_5GY80[x] + _75GY80[x]) / 2.0)  && (hue > (_5GY80[x] - 0.035))) {
                     correction =  _5GY80[y] - _5GY80[x] ;
                     lbe = _5GY80[y];
                     correctL = true;
@@ -4117,7 +4121,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
     else if (zone == 4) {
         if (lum > 5.0) {
             if (lum < 15.0) {
-                if ( (hue <= (_5R10[x] + 0.035)) && (hue > (_5R10[x] - 0.043)) && x < 45) {
+                if ((hue <= (_5R10[x] + 0.035)) && (hue > (_5R10[x] - 0.043)) && x < 45) {
                     if (y > 44) {
                         y = 44;
                     }
@@ -4125,7 +4129,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _5R10[y] - _5R10[x] ;
                     lbe = _5R10[y];
                     correctL = true;
-                } else if ( (hue <= (_25R10[x] + 0.043)) && (hue > (_25R10[x] + _10RP10[x]) / 2.0) && x < 45 ) {
+                } else if ((hue <= (_25R10[x] + 0.043)) && (hue > (_25R10[x] + _10RP10[x]) / 2.0) && x < 45) {
                     if (y > 44) {
                         y = 44;
                     }
@@ -4133,7 +4137,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _25R10[y] - _25R10[x] ;
                     lbe = _25R10[y];
                     correctL = true;
-                } else if ( (hue <= (_25R10[x] + _10RP10[x]) / 2.0) && (hue > (_10RP10[x] - 0.035) ) && x < 45) {
+                } else if ((hue <= (_25R10[x] + _10RP10[x]) / 2.0) && (hue > (_10RP10[x] - 0.035)) && x < 45) {
                     if (y > 44) {
                         y = 44;
                     }
@@ -4143,7 +4147,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correctL = true;
                 }
             } else if (lum < 25.0) {
-                if ( (hue <= (_5R20[x] + 0.035)) && (hue > (_5R20[x] + _25R20[x]) / 2.0) && x < 70 ) {
+                if ((hue <= (_5R20[x] + 0.035)) && (hue > (_5R20[x] + _25R20[x]) / 2.0) && x < 70) {
                     if (y > 70) {
                         y = 70;
                     }
@@ -4151,7 +4155,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _5R20[y] - _5R20[x] ;
                     lbe = _5R20[y];
                     correctL = true;
-                } else if ( (hue <= (_5R20[x] + _25R20[x]) / 2.0) && (hue > (_10RP20[x] + _25R20[x]) / 2.0) && x < 70) {
+                } else if ((hue <= (_5R20[x] + _25R20[x]) / 2.0) && (hue > (_10RP20[x] + _25R20[x]) / 2.0) && x < 70) {
                     if (y > 70) {
                         y = 70;
                     }
@@ -4159,7 +4163,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _25R20[y] - _25R20[x] ;
                     lbe = _25R20[y];
                     correctL = true;
-                } else if (( hue <= (_10RP20[x] + _25R20[x]) / 2.0)  && (hue > (_10RP20[x] - 0.035)) && x < 70) {
+                } else if ((hue <= (_10RP20[x] + _25R20[x]) / 2.0)  && (hue > (_10RP20[x] - 0.035)) && x < 70) {
                     if (y > 70) {
                         y = 70;
                     }
@@ -4169,7 +4173,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correctL = true;
                 }
             } else if (lum < 35.0) {
-                if ( (hue <= (_5R30[x] + 0.035)) && (hue > (_5R30[x] + _25R30[x]) / 2.0) && x < 85 ) {
+                if ((hue <= (_5R30[x] + 0.035)) && (hue > (_5R30[x] + _25R30[x]) / 2.0) && x < 85) {
                     if (y > 85) {
                         y = 85;
                     }
@@ -4177,7 +4181,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _5R30[y] - _5R30[x] ;
                     lbe = _5R30[y];
                     correctL = true;
-                } else if ( (hue <= (_5R30[x] + _25R30[x]) / 2.0) && (hue > (_10RP30[x] + _25R30[x]) / 2.0) && x < 85) {
+                } else if ((hue <= (_5R30[x] + _25R30[x]) / 2.0) && (hue > (_10RP30[x] + _25R30[x]) / 2.0) && x < 85) {
                     if (y > 85) {
                         y = 85;
                     }
@@ -4185,7 +4189,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
                     correction =  _25R30[y] - _25R30[x] ;
                     lbe = _25R30[y];
                     correctL = true;
-                } else if (( hue <= (_10RP30[x] + _25R30[x]) / 2.0)  && (hue > (_10RP30[x] - 0.035)) && x < 85) {
+                } else if ((hue <= (_10RP30[x] + _25R30[x]) / 2.0)  && (hue > (_10RP30[x] - 0.035)) && x < 85) {
                     if (y > 85) {
                         y = 85;
                     }
@@ -4211,7 +4215,7 @@ void Color::MunsellLch (float lum, float hue, float chrom, float memChprov, floa
  * pay attention to white balance, and do not change hue and saturation, upstream of the modification
  *
  */
-void Color::SkinSat (float lum, float hue, float chrom, float &satreduc)
+void Color::SkinSat(float lum, float hue, float chrom, float &satreduc)
 {
 
     // to be adapted...by tests
@@ -4239,49 +4243,49 @@ void Color::SkinSat (float lum, float hue, float chrom, float &satreduc)
     } else if (lum >= 70.f) {
         if ((hue > 0.4f && hue < (1.04f + H8)) && (chrom > 8.f && chrom < (35.f + C8))) {
             satreduc = reduction;
-        } else if ((hue > (0.02f + H11) && hue < 1.5f) && (chrom > 7.0f && chrom < (48.f + C9) )) {
+        } else if ((hue > (0.02f + H11) && hue < 1.5f) && (chrom > 7.0f && chrom < (48.f + C9))) {
             satreduc = extendedreduction;
-        } else if ((hue > (0.02f + H11) && hue < 1.65f) && (chrom > 7.f && chrom < (55.f + C9) )) {
+        } else if ((hue > (0.02f + H11) && hue < 1.65f) && (chrom > 7.f && chrom < (55.f + C9))) {
             satreduc = extendedreduction2;
         }
     } else if (lum >= 52.f) {
         if ((hue > 0.3f && hue < (1.27f + H7)) && (chrom > 11.f && chrom < (35.f + C7))) {
             satreduc = reduction;
-        } else if ((hue > (0.02f + H11) && hue < 1.5f) && (chrom > 7.0f && chrom < (48.f + C9) )) {
+        } else if ((hue > (0.02f + H11) && hue < 1.5f) && (chrom > 7.0f && chrom < (48.f + C9))) {
             satreduc = extendedreduction;
-        } else if ((hue > (0.02f + H11) && hue < 1.65f) && (chrom > 7.f && chrom < (55.f + C9) )) {
+        } else if ((hue > (0.02f + H11) && hue < 1.65f) && (chrom > 7.f && chrom < (55.f + C9))) {
             satreduc = extendedreduction2;
         }
     } else if (lum >= 35.f) {
         if ((hue > 0.3f && hue < (1.25f + H4)) && (chrom > 13.f && chrom < (37.f + C4))) {
             satreduc = reduction;
-        } else if ((hue > (0.02f + H11) && hue < 1.5f) && (chrom > 7.0f && chrom < (48.f + C9) )) {
+        } else if ((hue > (0.02f + H11) && hue < 1.5f) && (chrom > 7.0f && chrom < (48.f + C9))) {
             satreduc = extendedreduction;
-        } else if ((hue > (0.02f + H11) && hue < 1.65f) && (chrom > 7.f && chrom < (55.f + C9) )) {
+        } else if ((hue > (0.02f + H11) && hue < 1.65f) && (chrom > 7.f && chrom < (55.f + C9))) {
             satreduc = extendedreduction2;
         }
     } else if (lum >= 20.f) {
-        if ((hue > 0.3f && hue < (1.2f + H3)) && (chrom > 7.f && chrom < (35.f + C3) )) {
+        if ((hue > 0.3f && hue < (1.2f + H3)) && (chrom > 7.f && chrom < (35.f + C3))) {
             satreduc = reduction;
-        } else if ((hue > (0.02f + H11) && hue < 1.5f) && (chrom > 7.0f && chrom < (48.f + C9) )) {
+        } else if ((hue > (0.02f + H11) && hue < 1.5f) && (chrom > 7.0f && chrom < (48.f + C9))) {
             satreduc = extendedreduction;
-        } else if ((hue > (0.02f + H11) && hue < 1.65f) && (chrom > 7.f && chrom < (55.f + C9) )) {
+        } else if ((hue > (0.02f + H11) && hue < 1.65f) && (chrom > 7.f && chrom < (55.f + C9))) {
             satreduc = extendedreduction2;
         }
     } else if (lum > 10.f) {
         if ((hue > (0.f + H10) && hue < (0.95f + H2)) && (chrom > 8.f && chrom < (23.f + C2))) {
             satreduc = reduction;
-        } else if ((hue > (0.02f + H11) && hue < 1.f) && (chrom > 7.f && chrom < (35.f + C1) )) {
+        } else if ((hue > (0.02f + H11) && hue < 1.f) && (chrom > 7.f && chrom < (35.f + C1))) {
             satreduc = extendedreduction;
-        } else if ((hue > (0.02f + H11) && hue < 1.6f) && (chrom > 7.f && chrom < (45.f + C1) )) {
+        } else if ((hue > (0.02f + H11) && hue < 1.6f) && (chrom > 7.f && chrom < (45.f + C1))) {
             satreduc = extendedreduction2;
         }
     } else {
         if ((hue > (0.02f + H10) && hue < (0.9f + H1)) && (chrom > 8.f && chrom < (23.f + C1))) {
             satreduc = reduction;    // no data : extrapolate
-        } else if ((hue > (0.02f + H11) && hue < 1.f) && (chrom > 7.f && chrom < (35.f + C1) )) {
+        } else if ((hue > (0.02f + H11) && hue < 1.f) && (chrom > 7.f && chrom < (35.f + C1))) {
             satreduc = extendedreduction;
-        } else if ((hue > (0.02f + H11) && hue < 1.6f) && (chrom > 7.f && chrom < (45.f + C1) )) {
+        } else if ((hue > (0.02f + H11) && hue < 1.6f) && (chrom > 7.f && chrom < (45.f + C1))) {
             satreduc = extendedreduction2;
         }
 
@@ -4302,7 +4306,7 @@ void Color::SkinSat (float lum, float hue, float chrom, float &satreduc)
  * errors due to a different illuminant "Daylight" than "C" are low, about 10%. For example, a theoretical correction of 0.1 radian will be made with a real correction of 0.09 or 0.11 depending on the color illuminant D50
  * errors due to the use of a very different illuminant "C", for example illuminant "A" (tungsten) are higher, about 20%. Theoretical correction of 0.52 radians will be made with a real correction of 0.42
  */
-void Color::initMunsell ()
+void Color::initMunsell()
 {
 #ifdef _DEBUG
     MyTime t1e, t2e;
@@ -4314,7 +4318,7 @@ void Color::initMunsell ()
     const int maxInd3 = 50;
 
     //blue for sky
-    _5B40 (maxInd2);
+    _5B40(maxInd2);
     _5B40.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4326,7 +4330,7 @@ void Color::initMunsell ()
     }
 
     //printf("5B %1.2f  %1.2f\n",_5B40[44],_5B40[89]);
-    _5B50 (maxInd2);
+    _5B50(maxInd2);
     _5B50.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4338,7 +4342,7 @@ void Color::initMunsell ()
     }
 
     //printf("5B %1.2f  %1.2f\n",_5B50[44],_5B50[89]);
-    _5B60 (maxInd2);
+    _5B60(maxInd2);
     _5B60.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4350,7 +4354,7 @@ void Color::initMunsell ()
     }
 
     //printf("5B %1.2f  %1.2f\n",_5B60[44],_5B60[89]);
-    _5B70 (maxInd2);
+    _5B70(maxInd2);
     _5B70.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4362,7 +4366,7 @@ void Color::initMunsell ()
     }
 
     //printf("5B %1.2f  %1.2f\n",_5B70[44],_5B70[89]);
-    _5B80 (maxInd3);
+    _5B80(maxInd3);
     _5B80.clear();
 
     for (int i = 0; i < maxInd3; i++) {
@@ -4373,7 +4377,7 @@ void Color::initMunsell ()
 
     //printf("5B %1.2f\n",_5B80[49]);
 
-    _7B40 (maxInd2);
+    _7B40(maxInd2);
     _7B40.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4385,7 +4389,7 @@ void Color::initMunsell ()
     }
 
     //printf("7B %1.2f  %1.2f\n",_7B40[44],_7B40[89]);
-    _7B50 (maxInd2);
+    _7B50(maxInd2);
     _7B50.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4397,7 +4401,7 @@ void Color::initMunsell ()
     }
 
     //printf("7B %1.2f  %1.2f\n",_7B50[44],_7B50[79]);
-    _7B60 (maxInd2);
+    _7B60(maxInd2);
     _7B60.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4409,7 +4413,7 @@ void Color::initMunsell ()
     }
 
     //printf("7B %1.2f  %1.2f\n",_7B60[44],_7B60[79]);
-    _7B70 (maxInd2);
+    _7B70(maxInd2);
     _7B70.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4421,7 +4425,7 @@ void Color::initMunsell ()
     }
 
     //printf("7B %1.2f  %1.2f\n",_7B70[44],_7B70[64]);
-    _7B80 (maxInd3);
+    _7B80(maxInd3);
     _7B80.clear();
 
     for (int i = 0; i < maxInd3; i++) {
@@ -4432,7 +4436,7 @@ void Color::initMunsell ()
 
     //printf("5B %1.2f\n",_7B80[49]);
 
-    _9B40 (maxInd2);
+    _9B40(maxInd2);
     _9B40.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4444,7 +4448,7 @@ void Color::initMunsell ()
     }
 
     //printf("9B %1.2f  %1.2f\n",_9B40[44],_9B40[69]);
-    _9B50 (maxInd2);
+    _9B50(maxInd2);
     _9B50.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4456,7 +4460,7 @@ void Color::initMunsell ()
     }
 
     //printf("9B %1.2f  %1.2f\n",_9B50[44],_9B50[77]);
-    _9B60 (maxInd2);
+    _9B60(maxInd2);
     _9B60.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4468,7 +4472,7 @@ void Color::initMunsell ()
     }
 
     //printf("9B %1.2f  %1.2f\n",_9B60[44],_9B60[79]);
-    _9B70 (maxInd2);
+    _9B70(maxInd2);
     _9B70.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4480,7 +4484,7 @@ void Color::initMunsell ()
     }
 
     //printf("9B %1.2f  %1.2f\n",_9B70[44],_9B70[54]);
-    _9B80 (maxInd3);
+    _9B80(maxInd3);
     _9B80.clear();
 
     for (int i = 0; i < maxInd3; i++) {
@@ -4491,7 +4495,7 @@ void Color::initMunsell ()
 
     //printf("9B %1.2f\n",_9B80[49]);
 
-    _10B40 (maxInd2);
+    _10B40(maxInd2);
     _10B40.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4503,7 +4507,7 @@ void Color::initMunsell ()
     }
 
     //printf("10B %1.2f  %1.2f\n",_10B40[44],_10B40[76]);
-    _10B50 (maxInd2);
+    _10B50(maxInd2);
     _10B50.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4515,7 +4519,7 @@ void Color::initMunsell ()
     }
 
     //printf("10B %1.2f  %1.2f\n",_10B50[44],_10B50[85]);
-    _10B60 (maxInd2);
+    _10B60(maxInd2);
     _10B60.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4527,7 +4531,7 @@ void Color::initMunsell ()
     }
 
     //printf("10B %1.2f  %1.2f\n",_10B60[44],_10B60[70]);
-    _10B70 (maxInd3);
+    _10B70(maxInd3);
     _10B70.clear();
 
     for (int i = 0; i < maxInd3; i++) {
@@ -4537,7 +4541,7 @@ void Color::initMunsell ()
     }
 
     //printf("10B %1.2f\n",_10B70[49]);
-    _10B80 (maxInd3);
+    _10B80(maxInd3);
     _10B80.clear();
 
     for (int i = 0; i < maxInd3; i++) {
@@ -4548,7 +4552,7 @@ void Color::initMunsell ()
 
     //printf("10B %1.2f\n",_10B80[39]);
 
-    _05PB40 (maxInd2);
+    _05PB40(maxInd2);
     _05PB40.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4560,7 +4564,7 @@ void Color::initMunsell ()
     }
 
     //printf("05PB %1.2f  %1.2f\n",_05PB40[44],_05PB40[74]);
-    _05PB50 (maxInd2);
+    _05PB50(maxInd2);
     _05PB50.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4572,7 +4576,7 @@ void Color::initMunsell ()
     }
 
     //printf("05PB %1.2f  %1.2f\n",_05PB50[44],_05PB50[85]);
-    _05PB60 (maxInd2);
+    _05PB60(maxInd2);
     _05PB60.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4584,7 +4588,7 @@ void Color::initMunsell ()
     }
 
     //printf("05PB %1.2f  %1.2f\n",_05PB60[44],_05PB60[70]);
-    _05PB70 (maxInd2);
+    _05PB70(maxInd2);
     _05PB70.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4596,7 +4600,7 @@ void Color::initMunsell ()
     }
 
     //printf("05PB %1.2f  %1.2f\n",_05PB70[44],_05PB70[54]);
-    _05PB80 (maxInd3);
+    _05PB80(maxInd3);
     _05PB80.clear();
 
     for (int i = 0; i < maxInd3; i++) {
@@ -4614,7 +4618,7 @@ void Color::initMunsell ()
     //maximum deviation 75PB
 
     //15PB
-    _15PB10 (maxInd3);
+    _15PB10(maxInd3);
     _15PB10.clear();
 
     for (int i = 0; i < maxInd3; i++) {
@@ -4624,7 +4628,7 @@ void Color::initMunsell ()
     }
 
     //printf("15 %1.2f\n",_15PB10[49]);
-    _15PB20 (maxInd2);
+    _15PB20(maxInd2);
     _15PB20.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4637,7 +4641,7 @@ void Color::initMunsell ()
 
     //printf("15 %1.2f  %1.2f\n",_15PB20[44],_15PB20[89]);
 
-    _15PB30 (maxInd2);
+    _15PB30(maxInd2);
     _15PB30.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4650,7 +4654,7 @@ void Color::initMunsell ()
 
     //printf("15 %1.2f  %1.2f\n",_15PB30[44],_15PB30[89]);
 
-    _15PB40 (maxInd2);
+    _15PB40(maxInd2);
     _15PB40.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4663,7 +4667,7 @@ void Color::initMunsell ()
 
     //printf("15 %1.2f  %1.2f\n",_15PB40[44],_15PB40[89]);
 
-    _15PB50 (maxInd2);
+    _15PB50(maxInd2);
     _15PB50.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4676,7 +4680,7 @@ void Color::initMunsell ()
 
     //printf("15 %1.2f  %1.2f\n",_15PB50[44],_15PB50[89]);
 
-    _15PB60 (maxInd2);
+    _15PB60(maxInd2);
     _15PB60.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4688,7 +4692,7 @@ void Color::initMunsell ()
     }
 
     //printf("15 %1.2f  %1.2f\n",_15PB60[44],_15PB60[89]);
-    _15PB70 (maxInd3);
+    _15PB70(maxInd3);
     _15PB70.clear();
 
     for (int i = 0; i < maxInd3; i++) {
@@ -4698,7 +4702,7 @@ void Color::initMunsell ()
     }
 
     //    printf("15 %1.2f\n",_15PB70[49]);
-    _15PB80 (maxInd3);
+    _15PB80(maxInd3);
     _15PB80.clear();
 
     for (int i = 0; i < maxInd3; i++) {
@@ -4710,7 +4714,7 @@ void Color::initMunsell ()
     //printf("15 %1.2f %1.2f\n",_15PB80[38], _15PB80[49]);
 
     //3PB
-    _3PB10 (maxInd2);
+    _3PB10(maxInd2);
     _3PB10.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4723,7 +4727,7 @@ void Color::initMunsell ()
 
     //printf("30 %1.2f  %1.2f\n",_3PB10[44],_3PB10[89]);
 
-    _3PB20 (maxInd2);
+    _3PB20(maxInd2);
     _3PB20.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4736,7 +4740,7 @@ void Color::initMunsell ()
 
     //printf("30 %1.2f  %1.2f\n",_3PB20[44],_3PB20[89]);
 
-    _3PB30 (maxInd2);
+    _3PB30(maxInd2);
     _3PB30.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4749,7 +4753,7 @@ void Color::initMunsell ()
 
     //printf("30 %1.2f  %1.2f\n",_3PB30[44],_3PB30[89]);
 
-    _3PB40 (maxInd2);
+    _3PB40(maxInd2);
     _3PB40.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4762,7 +4766,7 @@ void Color::initMunsell ()
 
     //printf("30 %1.2f  %1.2f\n",_3PB40[44],_3PB40[89]);
 
-    _3PB50 (maxInd2);
+    _3PB50(maxInd2);
     _3PB50.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4775,7 +4779,7 @@ void Color::initMunsell ()
 
     //printf("30 %1.2f  %1.2f\n",_3PB50[44],_3PB50[89]);
 
-    _3PB60 (maxInd2);
+    _3PB60(maxInd2);
     _3PB60.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4787,7 +4791,7 @@ void Color::initMunsell ()
     }
 
     //printf("30 %1.2f  %1.2f\n",_3PB60[44],_3PB60[89]);
-    _3PB70 (maxInd3);
+    _3PB70(maxInd3);
     _3PB70.clear();
 
     for (int i = 0; i < maxInd3; i++) {
@@ -4797,7 +4801,7 @@ void Color::initMunsell ()
     }
 
     //printf("30 %1.2f\n",_3PB70[49]);
-    _3PB80 (maxInd3);
+    _3PB80(maxInd3);
     _3PB80.clear();
 
     for (int i = 0; i < maxInd3; i++) {
@@ -4809,7 +4813,7 @@ void Color::initMunsell ()
     //printf("30 %1.2f %1.2f\n",_3PB80[38], _3PB80[49]);
 
     //45PB
-    _45PB10 (maxInd2);
+    _45PB10(maxInd2);
     _45PB10.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4822,7 +4826,7 @@ void Color::initMunsell ()
 
     //printf("45 %1.2f  %1.2f\n",_45PB10[44],_45PB10[89]);
 
-    _45PB20 (maxInd2);
+    _45PB20(maxInd2);
     _45PB20.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4835,7 +4839,7 @@ void Color::initMunsell ()
 
     //printf("45 %1.2f  %1.2f\n",_45PB20[44],_45PB20[89]);
 
-    _45PB30 (maxInd2);
+    _45PB30(maxInd2);
     _45PB30.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4848,7 +4852,7 @@ void Color::initMunsell ()
 
     //printf("45 %1.2f  %1.2f\n",_45PB30[44],_45PB30[89]);
 
-    _45PB40 (maxInd2);
+    _45PB40(maxInd2);
     _45PB40.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4861,7 +4865,7 @@ void Color::initMunsell ()
 
     //printf("45 %1.2f  %1.2f\n",_45PB40[44],_45PB40[89]);
 
-    _45PB50 (maxInd2);
+    _45PB50(maxInd2);
     _45PB50.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4874,7 +4878,7 @@ void Color::initMunsell ()
 
     //printf("45 %1.2f  %1.2f\n",_45PB50[44],_45PB50[89]);
 
-    _45PB60 (maxInd2);
+    _45PB60(maxInd2);
     _45PB60.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4886,7 +4890,7 @@ void Color::initMunsell ()
     }
 
     //printf("45 %1.2f  %1.2f\n",_45PB60[44],_45PB60[89]);
-    _45PB70 (maxInd3);
+    _45PB70(maxInd3);
     _45PB70.clear();
 
     for (int i = 0; i < maxInd3; i++) {
@@ -4896,7 +4900,7 @@ void Color::initMunsell ()
     }
 
     //printf("45 %1.2f\n",_45PB70[49]);
-    _45PB80 (maxInd3);
+    _45PB80(maxInd3);
     _45PB80.clear();
 
     for (int i = 0; i < maxInd3; i++) {
@@ -4908,7 +4912,7 @@ void Color::initMunsell ()
     //printf("45 %1.2f %1.2f\n",_45PB80[38], _45PB80[49]);
 
     //_6PB
-    _6PB10 (maxInd);
+    _6PB10(maxInd);
     _6PB10.clear();
 
     for (int i = 0; i < maxInd; i++) { //i = chromaticity  0==>140
@@ -4923,7 +4927,7 @@ void Color::initMunsell ()
 
     //printf("60 %1.2f  %1.2f %1.2f\n",_6PB10[44],_6PB10[84],_6PB10[139]);
 
-    _6PB20 (maxInd);
+    _6PB20(maxInd);
     _6PB20.clear();
 
     for (int i = 0; i < maxInd; i++) { //i = chromaticity  0==>140
@@ -4938,7 +4942,7 @@ void Color::initMunsell ()
 
     //printf("60 %1.2f  %1.2f %1.2f\n",_6PB20[44],_6PB20[84],_6PB20[139]);
 
-    _6PB30 (maxInd);
+    _6PB30(maxInd);
     _6PB30.clear();
 
     for (int i = 0; i < maxInd; i++) { //i = chromaticity  0==>140
@@ -4953,7 +4957,7 @@ void Color::initMunsell ()
 
     //printf("60 %1.2f  %1.2f %1.2f\n",_6PB30[44],_6PB30[84],_6PB30[139]);
 
-    _6PB40 (maxInd);
+    _6PB40(maxInd);
     _6PB40.clear();
 
     for (int i = 0; i < maxInd; i++) { //i = chromaticity  0==>140
@@ -4968,7 +4972,7 @@ void Color::initMunsell ()
 
     //printf("60 %1.2f  %1.2f %1.2f\n",_6PB40[44],_6PB40[84],_6PB40[139]);
 
-    _6PB50 (maxInd2); //limits  -1.3   -1.11
+    _6PB50(maxInd2);  //limits  -1.3   -1.11
     _6PB50.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4981,7 +4985,7 @@ void Color::initMunsell ()
 
     //printf("60 %1.2f  %1.2f \n",_6PB50[44],_6PB50[89]);
 
-    _6PB60 (maxInd2); //limits  -1.3   -1.11
+    _6PB60(maxInd2);  //limits  -1.3   -1.11
     _6PB60.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -4993,7 +4997,7 @@ void Color::initMunsell ()
     }
 
     //printf("60 %1.2f  %1.2f\n",_6PB60[44],_6PB60[89]);
-    _6PB70 (maxInd3);
+    _6PB70(maxInd3);
     _6PB70.clear();
 
     for (int i = 0; i < maxInd3; i++) {
@@ -5003,7 +5007,7 @@ void Color::initMunsell ()
     }
 
     //printf("6 %1.2f\n",_6PB70[49]);
-    _6PB80 (maxInd3);
+    _6PB80(maxInd3);
     _6PB80.clear();
 
     for (int i = 0; i < maxInd3; i++) {
@@ -5016,7 +5020,7 @@ void Color::initMunsell ()
 
 
     //_75PB : notation Munsell for maximum deviation blue purple
-    _75PB10 (maxInd); //limits hue -1.23  -0.71  _75PBx   x=Luminance  eg_75PB10 for L >5 and L<=15
+    _75PB10(maxInd);  //limits hue -1.23  -0.71  _75PBx   x=Luminance  eg_75PB10 for L >5 and L<=15
     _75PB10.clear();
 
     for (int i = 0; i < maxInd; i++) { //i = chromaticity  0==>140
@@ -5031,7 +5035,7 @@ void Color::initMunsell ()
 
     //printf("75 %1.2f  %1.2f %1.2f\n",_75PB10[44],_75PB10[84],_75PB10[139]);
 
-    _75PB20 (maxInd); //limits -1.24  -0.79  for L>15 <=25
+    _75PB20(maxInd);  //limits -1.24  -0.79  for L>15 <=25
     _75PB20.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5046,7 +5050,7 @@ void Color::initMunsell ()
 
     //printf("75 %1.2f  %1.2f %1.2f\n",_75PB20[44],_75PB20[84],_75PB20[139]);
 
-    _75PB30 (maxInd); //limits -1.25  -0.85
+    _75PB30(maxInd);  //limits -1.25  -0.85
     _75PB30.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5061,7 +5065,7 @@ void Color::initMunsell ()
 
     //printf("75 %1.2f  %1.2f %1.2f\n",_75PB30[44],_75PB30[84],_75PB30[139]);
 
-    _75PB40 (maxInd); //limits  -1.27  -0.92
+    _75PB40(maxInd);  //limits  -1.27  -0.92
     _75PB40.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5076,7 +5080,7 @@ void Color::initMunsell ()
 
     //printf("75 %1.2f  %1.2f %1.2f\n",_75PB40[44],_75PB40[84],_75PB40[139]);
 
-    _75PB50 (maxInd2); //limits  -1.3   -1.11
+    _75PB50(maxInd2);  //limits  -1.3   -1.11
     _75PB50.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5089,7 +5093,7 @@ void Color::initMunsell ()
 
     //printf("75 %1.2f  %1.2f\n",_75PB50[44],_75PB50[89]);
 
-    _75PB60 (maxInd2);
+    _75PB60(maxInd2);
     _75PB60.clear();
 
     for (int i = 0; i < maxInd2; i++) { //limits -1.32  -1.17
@@ -5102,7 +5106,7 @@ void Color::initMunsell ()
 
     //printf("75 %1.2f  %1.2f \n",_75PB60[44],_75PB60[89]);
 
-    _75PB70 (maxInd3);
+    _75PB70(maxInd3);
     _75PB70.clear();
 
     for (int i = 0; i < maxInd3; i++) { //limits  -1.34  -1.27
@@ -5111,7 +5115,7 @@ void Color::initMunsell ()
         }
     }
 
-    _75PB80 (maxInd3);
+    _75PB80(maxInd3);
     _75PB80.clear();
 
     for (int i = 0; i < maxInd3; i++) { //limits -1.35  -1.29
@@ -5121,7 +5125,7 @@ void Color::initMunsell ()
     }
 
 
-    _9PB10 (maxInd);
+    _9PB10(maxInd);
     _9PB10.clear();
 
     for (int i = 0; i < maxInd; i++) { //i = chromaticity  0==>140
@@ -5136,7 +5140,7 @@ void Color::initMunsell ()
 
     //printf("90 %1.2f  %1.2f %1.2f\n",_9PB10[44],_9PB10[84],_9PB10[139]);
 
-    _9PB20 (maxInd);
+    _9PB20(maxInd);
     _9PB20.clear();
 
     for (int i = 0; i < maxInd; i++) { //i = chromaticity  0==>140
@@ -5151,7 +5155,7 @@ void Color::initMunsell ()
 
     //printf("90 %1.2f  %1.2f %1.2f\n",_9PB20[44],_9PB20[84],_9PB20[139]);
 
-    _9PB30 (maxInd);
+    _9PB30(maxInd);
     _9PB30.clear();
 
     for (int i = 0; i < maxInd; i++) { //i = chromaticity  0==>140
@@ -5166,7 +5170,7 @@ void Color::initMunsell ()
 
     //printf("90 %1.2f  %1.2f %1.2f\n",_9PB30[44],_9PB30[84],_9PB30[139]);
 
-    _9PB40 (maxInd);
+    _9PB40(maxInd);
     _9PB40.clear();
 
     for (int i = 0; i < maxInd; i++) { //i = chromaticity  0==>140
@@ -5181,7 +5185,7 @@ void Color::initMunsell ()
 
     //printf("90 %1.2f  %1.2f %1.2f\n",_9PB40[44],_9PB40[84],_9PB40[139]);
 
-    _9PB50 (maxInd2);
+    _9PB50(maxInd2);
     _9PB50.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5194,7 +5198,7 @@ void Color::initMunsell ()
 
     //printf("90 %1.2f  %1.2f \n",_9PB50[44],_9PB50[84]);
 
-    _9PB60 (maxInd2);
+    _9PB60(maxInd2);
     _9PB60.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5206,7 +5210,7 @@ void Color::initMunsell ()
     }
 
     //printf("90 %1.2f  %1.2f \n",_9PB60[44],_9PB60[89]);
-    _9PB70 (maxInd3);
+    _9PB70(maxInd3);
     _9PB70.clear();
 
     for (int i = 0; i < maxInd3; i++) {
@@ -5216,7 +5220,7 @@ void Color::initMunsell ()
     }
 
     //printf("9 %1.2f\n",_9PB70[49]);
-    _9PB80 (maxInd3);
+    _9PB80(maxInd3);
     _9PB80.clear();
 
     for (int i = 0; i < maxInd3; i++) {
@@ -5229,7 +5233,7 @@ void Color::initMunsell ()
 
 
     //10PB
-    _10PB10 (maxInd);
+    _10PB10(maxInd);
     _10PB10.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5244,7 +5248,7 @@ void Color::initMunsell ()
 
     //printf("10 %1.2f  %1.2f %1.2f\n",_10PB10[44],_10PB10[84],_10PB10[139]);
 
-    _10PB20 (maxInd);
+    _10PB20(maxInd);
     _10PB20.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5259,7 +5263,7 @@ void Color::initMunsell ()
 
     //printf("10 %1.2f  %1.2f %1.2f\n",_10PB20[44],_10PB20[84],_10PB20[139]);
 
-    _10PB30 (maxInd);
+    _10PB30(maxInd);
     _10PB30.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5274,7 +5278,7 @@ void Color::initMunsell ()
 
     //printf("10 %1.2f  %1.2f %1.2f\n",_10PB30[44],_10PB30[84],_10PB30[139]);
 
-    _10PB40 (maxInd);
+    _10PB40(maxInd);
     _10PB40.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5289,7 +5293,7 @@ void Color::initMunsell ()
 
     //printf("10 %1.2f  %1.2f %1.2f\n",_10PB40[44],_10PB40[84],_10PB40[139]);
 
-    _10PB50 (maxInd2);
+    _10PB50(maxInd2);
     _10PB50.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5302,7 +5306,7 @@ void Color::initMunsell ()
 
     //printf("10 %1.2f  %1.2f\n",_10PB50[44],_10PB50[84]);
 
-    _10PB60 (maxInd2);
+    _10PB60(maxInd2);
     _10PB60.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5317,7 +5321,7 @@ void Color::initMunsell ()
 
 
     //1P
-    _1P10 (maxInd);
+    _1P10(maxInd);
     _1P10.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5332,7 +5336,7 @@ void Color::initMunsell ()
 
     //printf("1P %1.2f  %1.2f %1.2f\n",_1P10[44],_1P10[84],_1P10[139]);
 
-    _1P20 (maxInd);
+    _1P20(maxInd);
     _1P20.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5347,7 +5351,7 @@ void Color::initMunsell ()
 
     //printf("1P %1.2f  %1.2f %1.2f\n",_1P20[44],_1P20[84],_1P20[139]);
 
-    _1P30 (maxInd);
+    _1P30(maxInd);
     _1P30.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5362,7 +5366,7 @@ void Color::initMunsell ()
 
     //printf("1P %1.2f  %1.2f %1.2f\n",_1P30[44],_1P30[84],_1P30[139]);
 
-    _1P40 (maxInd);
+    _1P40(maxInd);
     _1P40.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5377,7 +5381,7 @@ void Color::initMunsell ()
 
     //printf("1P %1.2f  %1.2f %1.2f\n",_1P40[44],_1P40[84],_1P40[139]);
 
-    _1P50 (maxInd2);
+    _1P50(maxInd2);
     _1P50.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5390,7 +5394,7 @@ void Color::initMunsell ()
 
     //printf("1P %1.2f  %1.2f \n",_1P50[44],_1P50[89]);
 
-    _1P60 (maxInd2);
+    _1P60(maxInd2);
     _1P60.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5404,7 +5408,7 @@ void Color::initMunsell ()
     //printf("1P %1.2f  %1.2f \n",_1P60[44],_1P60[84],_1P60[139]);
 
     //4P
-    _4P10 (maxInd);
+    _4P10(maxInd);
     _4P10.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5419,7 +5423,7 @@ void Color::initMunsell ()
 
     //printf("4P %1.2f  %1.2f %1.2f\n",_4P10[44],_4P10[84],_4P10[139]);
 
-    _4P20 (maxInd);
+    _4P20(maxInd);
     _4P20.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5434,7 +5438,7 @@ void Color::initMunsell ()
 
     //printf("4P %1.2f  %1.2f %1.2f\n",_4P20[44],_4P20[84],_4P20[139]);
 
-    _4P30 (maxInd);
+    _4P30(maxInd);
     _4P30.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5449,7 +5453,7 @@ void Color::initMunsell ()
 
     //printf("4P %1.2f  %1.2f %1.2f\n",_4P30[44],_4P30[84],_4P30[139]);
 
-    _4P40 (maxInd);
+    _4P40(maxInd);
     _4P40.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5464,7 +5468,7 @@ void Color::initMunsell ()
 
     //printf("4P %1.2f  %1.2f %1.2f\n",_4P40[44],_4P40[84],_4P40[139]);
 
-    _4P50 (maxInd2);
+    _4P50(maxInd2);
     _4P50.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5477,7 +5481,7 @@ void Color::initMunsell ()
 
     //printf("4P %1.2f  %1.2f \n",_4P50[44],_4P50[89]);
 
-    _4P60 (maxInd2);
+    _4P60(maxInd2);
     _4P60.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5492,7 +5496,7 @@ void Color::initMunsell ()
 
 
     //red yellow correction
-    _10YR20 (maxInd2);
+    _10YR20(maxInd2);
     _10YR20.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5504,7 +5508,7 @@ void Color::initMunsell ()
     }
 
     //printf("10YR  %1.2f  %1.2f\n",_10YR20[44],_10YR20[56]);
-    _10YR30 (maxInd2);
+    _10YR30(maxInd2);
     _10YR30.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5516,7 +5520,7 @@ void Color::initMunsell ()
     }
 
     //printf("10YR  %1.2f  %1.2f\n",_10YR30[44],_10YR30[75]);
-    _10YR40 (maxInd2);
+    _10YR40(maxInd2);
     _10YR40.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5528,7 +5532,7 @@ void Color::initMunsell ()
     }
 
     //printf("10YR  %1.2f  %1.2f\n",_10YR40[44],_10YR40[85]);
-    _10YR50 (maxInd2);
+    _10YR50(maxInd2);
     _10YR50.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5540,7 +5544,7 @@ void Color::initMunsell ()
     }
 
     //printf("10YR  %1.2f  %1.2f\n",_10YR50[44],_10YR50[80]);
-    _10YR60 (maxInd);
+    _10YR60(maxInd);
     _10YR60.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5554,7 +5558,7 @@ void Color::initMunsell ()
     }
 
     //printf("10YR  %1.2f  %1.2f %1.2f\n",_10YR60[44],_10YR60[85],_10YR60[139] );
-    _10YR70 (maxInd);
+    _10YR70(maxInd);
     _10YR70.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5568,7 +5572,7 @@ void Color::initMunsell ()
     }
 
     //printf("10YR  %1.2f  %1.2f %1.2f\n",_10YR70[44],_10YR70[85],_10YR70[139] );
-    _10YR80 (maxInd);
+    _10YR80(maxInd);
     _10YR80.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5582,7 +5586,7 @@ void Color::initMunsell ()
     }
 
     //printf("10YR  %1.2f  %1.2f %1.2f\n",_10YR80[44],_10YR80[84],_10YR80[139] );
-    _10YR90 (maxInd2);
+    _10YR90(maxInd2);
     _10YR90.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5594,7 +5598,7 @@ void Color::initMunsell ()
     }
 
     //printf("10YR  %1.2f  %1.2f\n",_10YR90[45],_10YR90[80]);
-    _85YR20 (maxInd3);
+    _85YR20(maxInd3);
     _85YR20.clear();
 
     for (int i = 0; i < maxInd3; i++) {
@@ -5604,7 +5608,7 @@ void Color::initMunsell ()
     }
 
     //printf("85YR  %1.2f \n",_85YR20[44]);
-    _85YR30 (maxInd2);
+    _85YR30(maxInd2);
     _85YR30.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5616,7 +5620,7 @@ void Color::initMunsell ()
     }
 
     //printf("85YR  %1.2f  %1.2f\n",_85YR30[44],_85YR30[75]);
-    _85YR40 (maxInd2);
+    _85YR40(maxInd2);
     _85YR40.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5628,7 +5632,7 @@ void Color::initMunsell ()
     }
 
     //printf("85YR  %1.2f  %1.2f\n",_85YR40[44],_85YR40[75]);
-    _85YR50 (maxInd);
+    _85YR50(maxInd);
     _85YR50.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5642,7 +5646,7 @@ void Color::initMunsell ()
     }
 
     //printf("85YR  %1.2f  %1.2f %1.2f\n",_85YR50[44],_85YR50[85],_85YR50[110] );
-    _85YR60 (maxInd);
+    _85YR60(maxInd);
     _85YR60.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5657,7 +5661,7 @@ void Color::initMunsell ()
 
     //printf("85YR  %1.2f  %1.2f %1.2f\n",_85YR60[44],_85YR60[85],_85YR60[139] );
 
-    _85YR70 (maxInd);
+    _85YR70(maxInd);
     _85YR70.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5671,7 +5675,7 @@ void Color::initMunsell ()
     }
 
     //printf("85YR  %1.2f  %1.2f %1.2f\n",_85YR70[44],_85YR70[85],_85YR70[139] );
-    _85YR80 (maxInd);
+    _85YR80(maxInd);
     _85YR80.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5685,7 +5689,7 @@ void Color::initMunsell ()
     }
 
     //printf("85YR  %1.2f  %1.2f %1.2f\n",_85YR80[44],_85YR80[85],_85YR80[139] );
-    _85YR90 (maxInd2);
+    _85YR90(maxInd2);
     _85YR90.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5699,7 +5703,7 @@ void Color::initMunsell ()
     //printf("85YR  %1.2f  %1.2f\n",_85YR90[44],_85YR90[85]);
 
     //7YR
-    _7YR30 (maxInd2);
+    _7YR30(maxInd2);
     _7YR30.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5711,7 +5715,7 @@ void Color::initMunsell ()
     }
 
     //printf("7YR  %1.2f  %1.2f\n",_7YR30[44],_7YR30[66]);
-    _7YR40 (maxInd2);
+    _7YR40(maxInd2);
     _7YR40.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5723,7 +5727,7 @@ void Color::initMunsell ()
     }
 
     //printf("7YR  %1.2f  %1.2f\n",_7YR40[44],_7YR40[89]);
-    _7YR50 (maxInd2);
+    _7YR50(maxInd2);
     _7YR50.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5735,7 +5739,7 @@ void Color::initMunsell ()
     }
 
     //printf("7YR  %1.2f  %1.2f\n",_7YR50[44],_7YR50[89] );
-    _7YR60 (maxInd);
+    _7YR60(maxInd);
     _7YR60.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5750,7 +5754,7 @@ void Color::initMunsell ()
 
     //printf("7YR  %1.2f  %1.2f %1.2f\n",_7YR60[44],_7YR60[84],_7YR60[125] );
 
-    _7YR70 (maxInd);
+    _7YR70(maxInd);
     _7YR70.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5764,7 +5768,7 @@ void Color::initMunsell ()
     }
 
     //printf("7YR  %1.2f  %1.2f %1.2f\n",_7YR70[44],_7YR70[84],_7YR70[125] );
-    _7YR80 (maxInd3);
+    _7YR80(maxInd3);
     _7YR80.clear();
 
     for (int i = 0; i < maxInd3; i++) {
@@ -5774,7 +5778,7 @@ void Color::initMunsell ()
     }
 
     //printf("7YR  %1.2f \n",_7YR80[44] );
-    _55YR30 (maxInd3);
+    _55YR30(maxInd3);
     _55YR30.clear();
 
     for (int i = 0; i < maxInd3; i++) {
@@ -5784,7 +5788,7 @@ void Color::initMunsell ()
     }
 
     //printf("55YR  %1.2f \n",_55YR30[44] );
-    _55YR40 (maxInd2);
+    _55YR40(maxInd2);
     _55YR40.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5796,7 +5800,7 @@ void Color::initMunsell ()
     }
 
     //printf("55YR  %1.2f  %1.2f\n",_55YR40[44],_55YR40[89] );
-    _55YR50 (maxInd);
+    _55YR50(maxInd);
     _55YR50.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5810,7 +5814,7 @@ void Color::initMunsell ()
     }
 
     //printf("55YR  %1.2f  %1.2f %1.2f\n",_55YR50[44],_55YR50[84],_55YR50[125] );
-    _55YR60 (maxInd);
+    _55YR60(maxInd);
     _55YR60.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5824,7 +5828,7 @@ void Color::initMunsell ()
     }
 
     //printf("55YR  %1.2f  %1.2f %1.2f\n",_55YR60[44],_55YR60[84],_55YR60[125] );
-    _55YR70 (maxInd);
+    _55YR70(maxInd);
     _55YR70.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5838,7 +5842,7 @@ void Color::initMunsell ()
     }
 
     //printf("55YR  %1.2f  %1.2f %1.2f\n",_55YR70[44],_55YR70[84],_55YR70[125] );
-    _55YR80 (maxInd);
+    _55YR80(maxInd);
     _55YR80.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5852,7 +5856,7 @@ void Color::initMunsell ()
     }
 
     //printf("55YR  %1.2f  %1.2f %1.2f\n",_55YR80[44],_55YR80[84],_55YR80[125] );
-    _55YR90 (maxInd3);
+    _55YR90(maxInd3);
     _55YR90.clear();
 
     for (int i = 0; i < maxInd3; i++) {
@@ -5863,7 +5867,7 @@ void Color::initMunsell ()
 
     //printf("55YR  %1.2f \n",_55YR90[44] );
 
-    _4YR30 (maxInd2);
+    _4YR30(maxInd2);
     _4YR30.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5875,7 +5879,7 @@ void Color::initMunsell ()
     }
 
     //printf("4YR  %1.2f  %1.2f\n",_4YR30[44],_4YR30[78] );
-    _4YR40 (maxInd2);
+    _4YR40(maxInd2);
     _4YR40.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5887,7 +5891,7 @@ void Color::initMunsell ()
     }
 
     //printf("4YR  %1.2f  %1.2f\n",_4YR40[44],_4YR40[74] );
-    _4YR50 (maxInd2);
+    _4YR50(maxInd2);
     _4YR50.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5899,7 +5903,7 @@ void Color::initMunsell ()
     }
 
     //printf("4YR  %1.2f  %1.2f\n",_4YR50[44],_4YR50[85] );
-    _4YR60 (maxInd);
+    _4YR60(maxInd);
     _4YR60.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5913,7 +5917,7 @@ void Color::initMunsell ()
     }
 
     //printf("4YR  %1.2f  %1.2f %1.2f\n",_4YR60[44],_4YR60[84],_4YR60[125] );
-    _4YR70 (maxInd);
+    _4YR70(maxInd);
     _4YR70.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -5927,7 +5931,7 @@ void Color::initMunsell ()
     }
 
     //printf("4YR  %1.2f  %1.2f %1.2f\n",_4YR70[44],_4YR70[84],_4YR70[125] );
-    _4YR80 (maxInd3);
+    _4YR80(maxInd3);
     _4YR80.clear();
 
     for (int i = 0; i < maxInd3; i++) {
@@ -5938,7 +5942,7 @@ void Color::initMunsell ()
 
     //printf("4YR  %1.2f \n",_4YR80[41] );
 
-    _25YR30 (maxInd2);
+    _25YR30(maxInd2);
     _25YR30.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5950,7 +5954,7 @@ void Color::initMunsell ()
     }
 
     //printf("25YR  %1.2f  %1.2f\n",_25YR30[44],_25YR30[74] );
-    _25YR40 (maxInd2);
+    _25YR40(maxInd2);
     _25YR40.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5962,7 +5966,7 @@ void Color::initMunsell ()
     }
 
     //printf("25YR  %1.2f  %1.2f\n",_25YR40[44],_25YR40[84] );
-    _25YR50 (maxInd2);
+    _25YR50(maxInd2);
     _25YR50.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5974,7 +5978,7 @@ void Color::initMunsell ()
     }
 
     //printf("25YR  %1.2f  %1.2f\n",_25YR50[44],_25YR50[84] );
-    _25YR60 (maxInd2);
+    _25YR60(maxInd2);
     _25YR60.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5986,7 +5990,7 @@ void Color::initMunsell ()
     }
 
     //printf("25YR  %1.2f  %1.2f\n",_25YR60[44],_25YR60[84] );
-    _25YR70 (maxInd2);
+    _25YR70(maxInd2);
     _25YR70.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -5999,7 +6003,7 @@ void Color::initMunsell ()
 
     //printf("25YR  %1.2f  %1.2f\n",_25YR70[44],_25YR70[84] );
 
-    _10R30 (maxInd2);
+    _10R30(maxInd2);
     _10R30.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -6011,7 +6015,7 @@ void Color::initMunsell ()
     }
 
     //printf("10R  %1.2f  %1.2f\n",_10R30[44],_10R30[84] );
-    _10R40 (maxInd2);
+    _10R40(maxInd2);
     _10R40.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -6023,7 +6027,7 @@ void Color::initMunsell ()
     }
 
     //printf("10R  %1.2f  %1.2f\n",_10R40[44],_10R40[84] );
-    _10R50 (maxInd2);
+    _10R50(maxInd2);
     _10R50.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -6035,7 +6039,7 @@ void Color::initMunsell ()
     }
 
     //printf("10R  %1.2f  %1.2f\n",_10R50[44],_10R50[84] );
-    _10R60 (maxInd);
+    _10R60(maxInd);
     _10R60.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6049,7 +6053,7 @@ void Color::initMunsell ()
     }
 
     //printf("10R  %1.2f  %1.2f %1.2f\n",_10R60[44],_10R60[84],_10R60[125] );
-    _10R70 (maxInd);
+    _10R70(maxInd);
     _10R70.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6064,7 +6068,7 @@ void Color::initMunsell ()
 
     //printf("10R  %1.2f  %1.2f %1.2f\n",_10R70[44],_10R70[84],_10R70[125] );
 
-    _9R30 (maxInd2);
+    _9R30(maxInd2);
     _9R30.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -6076,7 +6080,7 @@ void Color::initMunsell ()
     }
 
     //printf("9R  %1.2f  %1.2f\n",_9R30[44],_9R30[84] );
-    _9R40 (maxInd2);
+    _9R40(maxInd2);
     _9R40.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -6088,7 +6092,7 @@ void Color::initMunsell ()
     }
 
     //printf("9R  %1.2f  %1.2f\n",_9R40[44],_9R40[84] );
-    _9R50 (maxInd);
+    _9R50(maxInd);
     _9R50.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6102,7 +6106,7 @@ void Color::initMunsell ()
     }
 
     //printf("9R  %1.2f  %1.2f %1.2f\n",_9R50[44],_9R50[84],_9R50[125] );
-    _9R60 (maxInd);
+    _9R60(maxInd);
     _9R60.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6116,7 +6120,7 @@ void Color::initMunsell ()
     }
 
     //printf("9R  %1.2f  %1.2f %1.2f\n",_9R60[44],_9R60[84],_9R60[125] );
-    _9R70 (maxInd2);
+    _9R70(maxInd2);
     _9R70.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -6129,7 +6133,7 @@ void Color::initMunsell ()
 
     //printf("9R  %1.2f  %1.2f\n",_9R70[44],_9R70[84] );
 
-    _7R30 (maxInd2);
+    _7R30(maxInd2);
     _7R30.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -6141,7 +6145,7 @@ void Color::initMunsell ()
     }
 
     //printf("7R  %1.2f  %1.2f\n",_7R30[44],_7R30[84] );
-    _7R40 (maxInd2);
+    _7R40(maxInd2);
     _7R40.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -6153,7 +6157,7 @@ void Color::initMunsell ()
     }
 
     //printf("7R  %1.2f  %1.2f\n",_7R40[44],_7R40[84] );
-    _7R50 (maxInd);
+    _7R50(maxInd);
     _7R50.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6167,7 +6171,7 @@ void Color::initMunsell ()
     }
 
     //printf("7R  %1.2f  %1.2f %1.2f\n",_7R50[44],_7R50[84],_7R50[125] );
-    _7R60 (maxInd);
+    _7R60(maxInd);
     _7R60.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6181,7 +6185,7 @@ void Color::initMunsell ()
     }
 
     //printf("7R  %1.2f  %1.2f %1.2f\n",_7R60[44],_7R60[84],_7R60[107] );
-    _7R70 (maxInd2);
+    _7R70(maxInd2);
     _7R70.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -6197,7 +6201,7 @@ void Color::initMunsell ()
     //5R 1 2 3
 
     //5R
-    _5R10 (maxInd2);
+    _5R10(maxInd2);
     _5R10.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -6209,7 +6213,7 @@ void Color::initMunsell ()
     }
 
     //printf("5R  %1.2f  %1.2f\n",_5R10[44],_5R10[51] );
-    _5R20 (maxInd2);
+    _5R20(maxInd2);
     _5R20.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -6221,7 +6225,7 @@ void Color::initMunsell ()
     }
 
     //printf("5R  %1.2f  %1.2f\n",_5R20[44],_5R20[70] );
-    _5R30 (maxInd2);
+    _5R30(maxInd2);
     _5R30.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -6235,7 +6239,7 @@ void Color::initMunsell ()
     //printf("5R  %1.2f  %1.2f\n",_5R30[44],_5R30[85] );
 
     //25R
-    _25R10 (maxInd3);
+    _25R10(maxInd3);
     _25R10.clear();
 
     for (int i = 0; i < maxInd3; i++) {
@@ -6245,7 +6249,7 @@ void Color::initMunsell ()
     }
 
     //printf("25R  %1.2f \n",_25R10[44]);
-    _25R20 (maxInd2);
+    _25R20(maxInd2);
     _25R20.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -6258,7 +6262,7 @@ void Color::initMunsell ()
 
     //printf("25R  %1.2f  %1.2f\n",_25R20[44],_25R20[69] );
     //25R30: 0.28, 0.26, 0.22
-    _25R30 (maxInd2);
+    _25R30(maxInd2);
     _25R30.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -6272,7 +6276,7 @@ void Color::initMunsell ()
     //printf("25R  %1.2f  %1.2f\n",_25R30[44],_25R30[85] );
 
 
-    _10RP10 (maxInd3);
+    _10RP10(maxInd3);
     _10RP10.clear();
 
     for (int i = 0; i < maxInd3; i++) {
@@ -6282,7 +6286,7 @@ void Color::initMunsell ()
     }
 
     //printf("10RP  %1.2f \n",_10RP10[44]);
-    _10RP20 (maxInd2);
+    _10RP20(maxInd2);
     _10RP20.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -6294,7 +6298,7 @@ void Color::initMunsell ()
     }
 
     //printf("10RP  %1.2f  %1.2f\n",_10RP20[44],_10RP20[69] );
-    _10RP30 (maxInd2);
+    _10RP30(maxInd2);
     _10RP30.clear();
 
     for (int i = 0; i < maxInd2; i++) {
@@ -6308,7 +6312,7 @@ void Color::initMunsell ()
     //printf("10RP  %1.2f  %1.2f\n",_10RP30[44],_10RP30[85] );
 
     //7G
-    _7G30 (maxInd);
+    _7G30(maxInd);
     _7G30.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6322,7 +6326,7 @@ void Color::initMunsell ()
     }
 
     //printf("7G  %1.2f  %1.2f %1.2f\n",_7G30[44],_7G30[84],_7G30[125] );
-    _7G40 (maxInd);
+    _7G40(maxInd);
     _7G40.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6336,7 +6340,7 @@ void Color::initMunsell ()
     }
 
     //printf("7G  %1.2f  %1.2f %1.2f\n",_7G40[44],_7G40[84],_7G40[125] );
-    _7G50 (maxInd);
+    _7G50(maxInd);
     _7G50.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6350,7 +6354,7 @@ void Color::initMunsell ()
     }
 
     //printf("7G  %1.2f  %1.2f %1.2f\n",_7G50[44],_7G50[84],_7G50[125] );
-    _7G60 (maxInd);
+    _7G60(maxInd);
     _7G60.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6364,7 +6368,7 @@ void Color::initMunsell ()
     }
 
     //printf("7G  %1.2f  %1.2f %1.2f\n",_7G60[44],_7G60[84],_7G60[125] );
-    _7G70 (maxInd);
+    _7G70(maxInd);
     _7G70.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6378,7 +6382,7 @@ void Color::initMunsell ()
     }
 
     //printf("7G  %1.2f  %1.2f %1.2f\n",_7G70[44],_7G70[84],_7G70[125] );
-    _7G80 (maxInd);
+    _7G80(maxInd);
     _7G80.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6395,7 +6399,7 @@ void Color::initMunsell ()
 
 
     //5G
-    _5G30 (maxInd);
+    _5G30(maxInd);
     _5G30.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6409,7 +6413,7 @@ void Color::initMunsell ()
     }
 
     //printf("5G  %1.2f  %1.2f %1.2f\n",_5G30[44],_5G30[84],_5G30[125] );
-    _5G40 (maxInd);
+    _5G40(maxInd);
     _5G40.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6423,7 +6427,7 @@ void Color::initMunsell ()
     }
 
     //printf("5G  %1.2f  %1.2f %1.2f\n",_5G40[44],_5G40[84],_5G40[125] );
-    _5G50 (maxInd);
+    _5G50(maxInd);
     _5G50.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6437,7 +6441,7 @@ void Color::initMunsell ()
     }
 
     //printf("5G  %1.2f  %1.2f %1.2f\n",_5G50[44],_5G50[84],_5G50[125] );
-    _5G60 (maxInd);
+    _5G60(maxInd);
     _5G60.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6451,7 +6455,7 @@ void Color::initMunsell ()
     }
 
     //printf("5G  %1.2f  %1.2f %1.2f\n",_5G60[44],_5G60[84],_5G60[125] );
-    _5G70 (maxInd);
+    _5G70(maxInd);
     _5G70.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6465,7 +6469,7 @@ void Color::initMunsell ()
     }
 
     //printf("5G  %1.2f  %1.2f %1.2f\n",_5G70[44],_5G70[84],_5G70[125] );
-    _5G80 (maxInd);
+    _5G80(maxInd);
     _5G80.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6481,7 +6485,7 @@ void Color::initMunsell ()
     //printf("5G  %1.2f  %1.2f %1.2f\n",_5G80[44],_5G80[84],_5G80[125] );
 
     //25G
-    _25G30 (maxInd);
+    _25G30(maxInd);
     _25G30.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6495,7 +6499,7 @@ void Color::initMunsell ()
     }
 
     //printf("25G  %1.2f  %1.2f %1.2f\n",_25G30[44],_25G30[84],_25G30[125] );
-    _25G40 (maxInd);
+    _25G40(maxInd);
     _25G40.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6509,7 +6513,7 @@ void Color::initMunsell ()
     }
 
     //printf("25G  %1.2f  %1.2f %1.2f\n",_25G40[44],_25G40[84],_25G40[125] );
-    _25G50 (maxInd);
+    _25G50(maxInd);
     _25G50.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6523,7 +6527,7 @@ void Color::initMunsell ()
     }
 
     //printf("25G  %1.2f  %1.2f %1.2f\n",_25G50[44],_25G50[84],_25G50[125] );
-    _25G60 (maxInd);
+    _25G60(maxInd);
     _25G60.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6537,7 +6541,7 @@ void Color::initMunsell ()
     }
 
     //printf("25G  %1.2f  %1.2f %1.2f\n",_25G60[44],_25G60[84],_25G60[125] );
-    _25G70 (maxInd);
+    _25G70(maxInd);
     _25G70.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6551,7 +6555,7 @@ void Color::initMunsell ()
     }
 
     //printf("25G  %1.2f  %1.2f %1.2f\n",_25G70[44],_25G70[84],_25G70[125] );
-    _25G80 (maxInd);
+    _25G80(maxInd);
     _25G80.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6568,7 +6572,7 @@ void Color::initMunsell ()
 
 
     //1G
-    _1G30 (maxInd);
+    _1G30(maxInd);
     _1G30.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6582,7 +6586,7 @@ void Color::initMunsell ()
     }
 
     //printf("1G  %1.2f  %1.2f %1.2f\n",_1G30[44],_1G30[84],_1G30[125] );
-    _1G40 (maxInd);
+    _1G40(maxInd);
     _1G40.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6596,7 +6600,7 @@ void Color::initMunsell ()
     }
 
     //printf("1G  %1.2f  %1.2f %1.2f\n",_1G40[44],_1G40[84],_1G40[125] );
-    _1G50 (maxInd);
+    _1G50(maxInd);
     _1G50.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6610,7 +6614,7 @@ void Color::initMunsell ()
     }
 
     //printf("1G  %1.2f  %1.2f %1.2f\n",_1G50[44],_1G50[84],_1G50[125] );
-    _1G60 (maxInd);
+    _1G60(maxInd);
     _1G60.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6624,7 +6628,7 @@ void Color::initMunsell ()
     }
 
     //printf("1G  %1.2f  %1.2f %1.2f\n",_1G60[44],_1G60[84],_1G60[125] );
-    _1G70 (maxInd);
+    _1G70(maxInd);
     _1G70.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6638,7 +6642,7 @@ void Color::initMunsell ()
     }
 
     //printf("1G  %1.2f  %1.2f %1.2f\n",_1G70[44],_1G70[84],_1G70[125] );
-    _1G80 (maxInd);
+    _1G80(maxInd);
     _1G80.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6655,7 +6659,7 @@ void Color::initMunsell ()
 
 
     //10GY
-    _10GY30 (maxInd);
+    _10GY30(maxInd);
     _10GY30.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6669,7 +6673,7 @@ void Color::initMunsell ()
     }
 
     //printf("10GY  %1.2f  %1.2f %1.2f\n",_10GY30[44],_10GY30[84],_10GY30[125] );
-    _10GY40 (maxInd);
+    _10GY40(maxInd);
     _10GY40.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6683,7 +6687,7 @@ void Color::initMunsell ()
     }
 
     //printf("10GY  %1.2f  %1.2f %1.2f\n",_10GY40[44],_10GY40[84],_10GY40[125] );
-    _10GY50 (maxInd);
+    _10GY50(maxInd);
     _10GY50.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6697,7 +6701,7 @@ void Color::initMunsell ()
     }
 
     //printf("10GY  %1.2f  %1.2f %1.2f\n",_10GY50[44],_10GY50[84],_10GY50[125] );
-    _10GY60 (maxInd);
+    _10GY60(maxInd);
     _10GY60.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6711,7 +6715,7 @@ void Color::initMunsell ()
     }
 
     //printf("10GY  %1.2f  %1.2f %1.2f\n",_10GY60[44],_10GY60[84],_10GY60[125] );
-    _10GY70 (maxInd);
+    _10GY70(maxInd);
     _10GY70.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6725,7 +6729,7 @@ void Color::initMunsell ()
     }
 
     //printf("10GY %1.2f  %1.2f %1.2f\n",_10GY70[44],_10GY70[84],_10GY70[125] );
-    _10GY80 (maxInd);
+    _10GY80(maxInd);
     _10GY80.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6742,7 +6746,7 @@ void Color::initMunsell ()
 
 
     //75GY
-    _75GY30 (maxInd2);
+    _75GY30(maxInd2);
     _75GY30.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6754,7 +6758,7 @@ void Color::initMunsell ()
     }
 
     //printf("75GY  %1.2f  %1.2f\n",_75GY30[44],_75GY30[84] );
-    _75GY40 (maxInd2);
+    _75GY40(maxInd2);
     _75GY40.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6766,7 +6770,7 @@ void Color::initMunsell ()
     }
 
     //printf("75GY  %1.2f  %1.2f \n",_75GY40[44],_75GY40[84] );
-    _75GY50 (maxInd);
+    _75GY50(maxInd);
     _75GY50.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6780,7 +6784,7 @@ void Color::initMunsell ()
     }
 
     //printf("75GY  %1.2f  %1.2f %1.2f %1.2f\n",_75GY50[44],_75GY50[84],_75GY50[125],_75GY50[139] );
-    _75GY60 (maxInd);
+    _75GY60(maxInd);
     _75GY60.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6794,7 +6798,7 @@ void Color::initMunsell ()
     }
 
     //printf("75GY  %1.2f  %1.2f %1.2f\n",_75GY60[44],_75GY60[84],_75GY60[125] );
-    _75GY70 (maxInd);
+    _75GY70(maxInd);
     _75GY70.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6808,7 +6812,7 @@ void Color::initMunsell ()
     }
 
     //printf("75GY %1.2f  %1.2f %1.2f\n",_75GY70[44],_75GY70[84],_75GY70[125] );
-    _75GY80 (maxInd);
+    _75GY80(maxInd);
     _75GY80.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6825,7 +6829,7 @@ void Color::initMunsell ()
 
 
     //55GY
-    _5GY30 (maxInd2);
+    _5GY30(maxInd2);
     _5GY30.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6840,7 +6844,7 @@ void Color::initMunsell ()
 
     //5GY4: 2.14,2.04, 1.96, 1.91 //95
 
-    _5GY40 (maxInd2);
+    _5GY40(maxInd2);
     _5GY40.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6852,7 +6856,7 @@ void Color::initMunsell ()
     }
 
     //printf("5GY  %1.2f  %1.2f \n",_5GY40[44],_5GY40[84] );
-    _5GY50 (maxInd);
+    _5GY50(maxInd);
     _5GY50.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6866,7 +6870,7 @@ void Color::initMunsell ()
     }
 
     //printf("5GY  %1.2f  %1.2f %1.2f\n",_5GY50[44],_5GY50[84],_5GY50[125] );
-    _5GY60 (maxInd);
+    _5GY60(maxInd);
     _5GY60.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6880,7 +6884,7 @@ void Color::initMunsell ()
     }
 
     //printf("5GY  %1.2f  %1.2f %1.2f\n",_5GY60[44],_5GY60[84],_5GY60[125] );
-    _5GY70 (maxInd);
+    _5GY70(maxInd);
     _5GY70.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6894,7 +6898,7 @@ void Color::initMunsell ()
     }
 
     //printf("5GY %1.2f  %1.2f %1.2f\n",_5GY70[44],_5GY70[84],_5GY70[125] );
-    _5GY80 (maxInd);
+    _5GY80(maxInd);
     _5GY80.clear();
 
     for (int i = 0; i < maxInd; i++) {
@@ -6913,7 +6917,7 @@ void Color::initMunsell ()
     t2e.set();
 
     if (settings->verbose) {
-        printf ("Lutf Munsell  %d usec\n", t2e.etime (t1e));
+        printf("Lutf Munsell  %d usec\n", t2e.etime(t1e));
     }
 
 #endif

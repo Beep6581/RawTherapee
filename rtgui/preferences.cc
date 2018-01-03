@@ -193,64 +193,64 @@ Gtk::Widget* Preferences::getBatchProcPanel()
     appendBehavList(mi, M("TP_LOCALCONTRAST_AMOUNT"), ADDSET_LOCALCONTRAST_AMOUNT, false);
     appendBehavList(mi, M("TP_LOCALCONTRAST_DARKNESS"), ADDSET_LOCALCONTRAST_DARKNESS, false);
     appendBehavList(mi, M("TP_LOCALCONTRAST_LIGHTNESS"), ADDSET_LOCALCONTRAST_LIGHTNESS, false);
-    
 
-    mi = behModel->append ();
-    mi->set_value (behavColumns.label, M ("TP_EPD_LABEL"));
-    appendBehavList (mi, M ("TP_EPD_STRENGTH"), ADDSET_EPD_STRENGTH, false);
-    appendBehavList (mi, M ("TP_EPD_GAMMA"), ADDSET_EPD_GAMMA, false);
-    appendBehavList (mi, M ("TP_EPD_EDGESTOPPING"), ADDSET_EPD_EDGESTOPPING, false);
-    appendBehavList (mi, M ("TP_EPD_SCALE"), ADDSET_EPD_SCALE, false);
-    appendBehavList (mi, M ("TP_EPD_REWEIGHTINGITERATES"), ADDSET_EPD_REWEIGHTINGITERATES, false);
 
-    mi = behModel->append ();
-    mi->set_value (behavColumns.label, M ("TP_TM_FATTAL_LABEL"));
-    appendBehavList (mi, M ("TP_TM_FATTAL_THRESHOLD"), ADDSET_FATTAL_ALPHA, false);
-    appendBehavList (mi, M ("TP_TM_FATTAL_AMOUNT"), ADDSET_FATTAL_BETA, false);
+    mi = behModel->append();
+    mi->set_value(behavColumns.label, M("TP_EPD_LABEL"));
+    appendBehavList(mi, M("TP_EPD_STRENGTH"), ADDSET_EPD_STRENGTH, false);
+    appendBehavList(mi, M("TP_EPD_GAMMA"), ADDSET_EPD_GAMMA, false);
+    appendBehavList(mi, M("TP_EPD_EDGESTOPPING"), ADDSET_EPD_EDGESTOPPING, false);
+    appendBehavList(mi, M("TP_EPD_SCALE"), ADDSET_EPD_SCALE, false);
+    appendBehavList(mi, M("TP_EPD_REWEIGHTINGITERATES"), ADDSET_EPD_REWEIGHTINGITERATES, false);
 
-    mi = behModel->append ();
-    mi->set_value (behavColumns.label, M ("TP_RETINEX_LABEL"));
-    appendBehavList (mi, M ("TP_RETINEX_STRENGTH"), ADDSET_RETI_STR, false);
-    appendBehavList (mi, M ("TP_RETINEX_NEIGHBOR"), ADDSET_RETI_NEIGH, false);
-    appendBehavList (mi, M ("TP_RETINEX_VARIANCE"), ADDSET_RETI_VART, false);
-    appendBehavList (mi, M ("TP_RETINEX_GAMMA"), ADDSET_RETI_GAM, false);
-    appendBehavList (mi, M ("TP_RETINEX_SLOPE"), ADDSET_RETI_SLO, false);
-    appendBehavList (mi, M ("TP_RETINEX_GAIN"), ADDSET_RETI_GAIN, false);
-    appendBehavList (mi, M ("TP_RETINEX_OFFSET"), ADDSET_RETI_OFFS, false);
-    appendBehavList (mi, M ("TP_RETINEX_THRESHOLD"), ADDSET_RETI_LIMD, false);
+    mi = behModel->append();
+    mi->set_value(behavColumns.label, M("TP_TM_FATTAL_LABEL"));
+    appendBehavList(mi, M("TP_TM_FATTAL_THRESHOLD"), ADDSET_FATTAL_ALPHA, false);
+    appendBehavList(mi, M("TP_TM_FATTAL_AMOUNT"), ADDSET_FATTAL_BETA, false);
 
-    mi = behModel->append ();
-    mi->set_value (behavColumns.label, M ("TP_SHADOWSHLIGHTS_LABEL"));
-    appendBehavList (mi, M ("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), ADDSET_SH_HIGHLIGHTS, false);
-    appendBehavList (mi, M ("TP_SHADOWSHLIGHTS_SHADOWS"), ADDSET_SH_SHADOWS, false);
+    mi = behModel->append();
+    mi->set_value(behavColumns.label, M("TP_RETINEX_LABEL"));
+    appendBehavList(mi, M("TP_RETINEX_STRENGTH"), ADDSET_RETI_STR, false);
+    appendBehavList(mi, M("TP_RETINEX_NEIGHBOR"), ADDSET_RETI_NEIGH, false);
+    appendBehavList(mi, M("TP_RETINEX_VARIANCE"), ADDSET_RETI_VART, false);
+    appendBehavList(mi, M("TP_RETINEX_GAMMA"), ADDSET_RETI_GAM, false);
+    appendBehavList(mi, M("TP_RETINEX_SLOPE"), ADDSET_RETI_SLO, false);
+    appendBehavList(mi, M("TP_RETINEX_GAIN"), ADDSET_RETI_GAIN, false);
+    appendBehavList(mi, M("TP_RETINEX_OFFSET"), ADDSET_RETI_OFFS, false);
+    appendBehavList(mi, M("TP_RETINEX_THRESHOLD"), ADDSET_RETI_LIMD, false);
 
-    mi = behModel->append ();
-    mi->set_value (behavColumns.label, M ("TP_LABCURVE_LABEL"));
-    appendBehavList (mi, M ("TP_LABCURVE_BRIGHTNESS"), ADDSET_LC_BRIGHTNESS, false);
-    appendBehavList (mi, M ("TP_LABCURVE_CONTRAST"), ADDSET_LC_CONTRAST, false);
-    appendBehavList (mi, M ("TP_LABCURVE_CHROMATICITY"), ADDSET_LC_CHROMATICITY, false);
+    mi = behModel->append();
+    mi->set_value(behavColumns.label, M("TP_SHADOWSHLIGHTS_LABEL"));
+    appendBehavList(mi, M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), ADDSET_SH_HIGHLIGHTS, false);
+    appendBehavList(mi, M("TP_SHADOWSHLIGHTS_SHADOWS"), ADDSET_SH_SHADOWS, false);
 
-    mi = behModel->append (); // Used for both Resize and Post-Resize sharpening
-    mi->set_value (behavColumns.label, M ("TP_SHARPENING_LABEL"));
-    appendBehavList (mi, M ("TP_SHARPENING_RADIUS"), ADDSET_SHARP_RADIUS, false);
-    appendBehavList (mi, M ("TP_SHARPENING_AMOUNT"), ADDSET_SHARP_AMOUNT, false);
-    appendBehavList (mi, M ("TP_SHARPENING_RLD_DAMPING"), ADDSET_SHARP_DAMPING, false);
-    appendBehavList (mi, M ("TP_SHARPENING_RLD_ITERATIONS"), ADDSET_SHARP_ITER, false);
-    appendBehavList (mi, M ("TP_SHARPENING_EDTOLERANCE"), ADDSET_SHARP_EDGETOL, false);
-    appendBehavList (mi, M ("TP_SHARPENING_HALOCONTROL"), ADDSET_SHARP_HALOCTRL, false);
+    mi = behModel->append();
+    mi->set_value(behavColumns.label, M("TP_LABCURVE_LABEL"));
+    appendBehavList(mi, M("TP_LABCURVE_BRIGHTNESS"), ADDSET_LC_BRIGHTNESS, false);
+    appendBehavList(mi, M("TP_LABCURVE_CONTRAST"), ADDSET_LC_CONTRAST, false);
+    appendBehavList(mi, M("TP_LABCURVE_CHROMATICITY"), ADDSET_LC_CHROMATICITY, false);
 
-    mi = behModel->append ();
-    mi->set_value (behavColumns.label, M ("TP_SHARPENEDGE_LABEL"));
-    appendBehavList (mi, M ("TP_SHARPENEDGE_PASSES"), ADDSET_SHARPENEDGE_PASS, false);
-    appendBehavList (mi, M ("TP_SHARPENEDGE_AMOUNT"), ADDSET_SHARPENEDGE_AMOUNT, false);
+    mi = behModel->append();  // Used for both Resize and Post-Resize sharpening
+    mi->set_value(behavColumns.label, M("TP_SHARPENING_LABEL"));
+    appendBehavList(mi, M("TP_SHARPENING_RADIUS"), ADDSET_SHARP_RADIUS, false);
+    appendBehavList(mi, M("TP_SHARPENING_AMOUNT"), ADDSET_SHARP_AMOUNT, false);
+    appendBehavList(mi, M("TP_SHARPENING_RLD_DAMPING"), ADDSET_SHARP_DAMPING, false);
+    appendBehavList(mi, M("TP_SHARPENING_RLD_ITERATIONS"), ADDSET_SHARP_ITER, false);
+    appendBehavList(mi, M("TP_SHARPENING_EDTOLERANCE"), ADDSET_SHARP_EDGETOL, false);
+    appendBehavList(mi, M("TP_SHARPENING_HALOCONTROL"), ADDSET_SHARP_HALOCTRL, false);
 
-    mi = behModel->append ();
-    mi->set_value (behavColumns.label, M ("TP_SHARPENMICRO_LABEL"));
-    appendBehavList (mi, M ("TP_SHARPENMICRO_AMOUNT"), ADDSET_SHARPENMICRO_AMOUNT, false);
-    appendBehavList (mi, M ("TP_SHARPENMICRO_UNIFORMITY"), ADDSET_SHARPENMICRO_UNIFORMITY, false);
+    mi = behModel->append();
+    mi->set_value(behavColumns.label, M("TP_SHARPENEDGE_LABEL"));
+    appendBehavList(mi, M("TP_SHARPENEDGE_PASSES"), ADDSET_SHARPENEDGE_PASS, false);
+    appendBehavList(mi, M("TP_SHARPENEDGE_AMOUNT"), ADDSET_SHARPENEDGE_AMOUNT, false);
 
-    mi = behModel->append ();
-    mi->set_value (behavColumns.label, M ("TP_DIRPYRDENOISE_LABEL"));
+    mi = behModel->append();
+    mi->set_value(behavColumns.label, M("TP_SHARPENMICRO_LABEL"));
+    appendBehavList(mi, M("TP_SHARPENMICRO_AMOUNT"), ADDSET_SHARPENMICRO_AMOUNT, false);
+    appendBehavList(mi, M("TP_SHARPENMICRO_UNIFORMITY"), ADDSET_SHARPENMICRO_UNIFORMITY, false);
+
+    mi = behModel->append();
+    mi->set_value(behavColumns.label, M("TP_DIRPYRDENOISE_LABEL"));
     //appendBehavList (mi, M("TP_DIRPYRDENOISE_LUMA")+", "+M("TP_DIRPYRDENOISE_CHROMA"), ADDSET_DIRPYRDN_CHLUM, true);
     appendBehavList(mi, M("TP_DIRPYRDENOISE_LUMA"), ADDSET_DIRPYRDN_LUMA, true);
     appendBehavList(mi, M("TP_DIRPYRDENOISE_LDETAIL"), ADDSET_DIRPYRDN_LUMDET, true);

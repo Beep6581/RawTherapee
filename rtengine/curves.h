@@ -53,33 +53,33 @@ class CurveFactory
 protected:
 
     // functions calculating the parameters of the contrast curve based on the desired slope at the center
-    static double solve_upper (double m, double c, double deriv);
-    static double solve_lower (double m, double c, double deriv);
-    static double dupper (const double b, const double m, const double c);
-    static double dlower (const double b, const double m, const double c);
+    static double solve_upper(double m, double c, double deriv);
+    static double solve_lower(double m, double c, double deriv);
+    static double dupper(const double b, const double m, const double c);
+    static double dlower(const double b, const double m, const double c);
 
     // basic convex function between (0,0) and (1,1). m1 and m2 controls the slope at the start and end point
-    static inline double basel (double x, double m1, double m2)
+    static inline double basel(double x, double m1, double m2)
     {
         if (x == 0.0) {
             return 0.0;
         }
 
-        double k = sqrt ((m1 - 1.0) * (m1 - m2) * 0.5) / (1.0 - m2);
+        double k = sqrt((m1 - 1.0) * (m1 - m2) * 0.5) / (1.0 - m2);
         double l = (m1 - m2) / (1.0 - m2) + k;
-        double lx = xlog (x);
-        return m2 * x + (1.0 - m2) * (2.0 - xexp (k * lx)) * xexp (l * lx);
+        double lx = xlog(x);
+        return m2 * x + (1.0 - m2) * (2.0 - xexp(k * lx)) * xexp(l * lx);
     }
     // basic concave function between (0,0) and (1,1). m1 and m2 controls the slope at the start and end point
-    static inline double baseu (double x, double m1, double m2)
+    static inline double baseu(double x, double m1, double m2)
     {
-        return 1.0 - basel (1.0 - x, m1, m2);
+        return 1.0 - basel(1.0 - x, m1, m2);
     }
     // convex curve between (0,0) and (1,1) with slope m at (0,0). hr controls the highlight recovery
-    static inline double cupper (double x, double m, double hr)
+    static inline double cupper(double x, double m, double hr)
     {
         if (hr > 1.0) {
-            return baseu (x, m, 2.0 * (hr - 1.0) / m);
+            return baseu(x, m, 2.0 * (hr - 1.0) / m);
         }
 
         double x1 = (1.0 - hr) / m;
@@ -93,15 +93,15 @@ protected:
             return x * m;
         }
 
-        return 1.0 - hr + hr * baseu ((x - x1) / hr, m, 0);
+        return 1.0 - hr + hr * baseu((x - x1) / hr, m, 0);
     }
     // concave curve between (0,0) and (1,1) with slope m at (1,1). sr controls the shadow recovery
-    static inline double clower (double x, double m, double sr)
+    static inline double clower(double x, double m, double sr)
     {
-        return 1.0 - cupper (1.0 - x, m, sr);
+        return 1.0 - cupper(1.0 - x, m, sr);
     }
     // convex curve between (0,0) and (1,1) with slope m at (0,0). hr controls the highlight recovery
-    static inline double cupper2 (double x, double m, double hr)
+    static inline double cupper2(double x, double m, double hr)
     {
         double x1 = (1.0 - hr) / m;
         double x2 = x1 + hr;
@@ -114,9 +114,9 @@ protected:
             return x * m;
         }
 
-        return 1.0 - hr + hr * baseu ((x - x1) / hr, m, 0.3 * hr);
+        return 1.0 - hr + hr * baseu((x - x1) / hr, m, 0.3 * hr);
     }
-    static inline double clower2 (double x, double m, double sr)
+    static inline double clower2(double x, double m, double sr)
     {
         //curve for b<0; starts with positive slope and then rolls over toward straight line to x=y=1
         double x1 = sr / 1.5 + 0.00001;
@@ -125,12 +125,12 @@ protected:
             return 1 - (1 - x) * m;
         } else {
             double y1 = 1 - (1 - x1) * m;
-            return y1 + m * (x - x1) - (1 - m) * SQR (SQR (1 - x / x1));
+            return y1 + m * (x - x1) - (1 - m) * SQR(SQR(1 - x / x1));
         }
     }
     // tone curve base. a: slope (from exp.comp.), b: black point normalized by 65535,
     // D: max. x value (can be>1), hr,sr: highlight,shadow recovery
-    static inline double basecurve (double x, double a, double b, double D, double hr, double sr)
+    static inline double basecurve(double x, double a, double b, double D, double hr, double sr)
     {
         if (b < 0) {
             double m = 0.5;//midpoint
@@ -140,7 +140,7 @@ protected:
             if (x > m) {
                 return y + (x - m) * slope;    //value on straight line between (m,y) and (1,1)
             } else {
-                return y * clower2 (x / m, slope * m / y, 2.0 - sr);
+                return y * clower2(x / m, slope * m / y, 2.0 - sr);
             }
         } else {
             double slope = a / (1.0 - b);
@@ -148,15 +148,15 @@ protected:
             double y = a * D > 1.0 ? 0.25 : (m - b / a) * slope;
 
             if (x <= m) {
-                return b == 0 ? x * slope : clower (x / m, slope * m / y, sr) * y;
+                return b == 0 ? x * slope : clower(x / m, slope * m / y, sr) * y;
             } else if (a * D > 1.0) {
-                return y + (1.0 - y) * cupper2 ((x - m) / (D - m), slope * (D - m) / (1.0 - y), hr);
+                return y + (1.0 - y) * cupper2((x - m) / (D - m), slope * (D - m) / (1.0 - y), hr);
             } else {
                 return y + (x - m) * slope;
             }
         }
     }
-    static inline double simplebasecurve (double x, double b, double sr)
+    static inline double simplebasecurve(double x, double b, double sr)
     {
         // a = 1, D = 1, hr = 0 (unused for a = D = 1)
         if (b == 0.0) {
@@ -169,7 +169,7 @@ protected:
             if (x > m) {
                 return y + (x - m) * slope;    //value on straight line between (m,y) and (1,1)
             } else {
-                return y * clower2 (x / m, slope * m / y, 2.0 - sr);
+                return y * clower2(x / m, slope * m / y, 2.0 - sr);
             }
         } else {
             double slope = 1.0 / (1.0 - b);
@@ -177,7 +177,7 @@ protected:
             double y = (m - b) * slope;
 
             if (x <= m) {
-                return clower (x / m, slope * m / y, sr) * y;
+                return clower(x / m, slope * m / y, sr) * y;
             } else {
                 return y + (x - m) * slope;
             }
@@ -193,70 +193,70 @@ public:
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // accurately determine value from integer array with float as index
     //linearly interpolate from ends of range if arg is out of bounds
-    static inline float interp (int *array, float f)
+    static inline float interp(int *array, float f)
     {
-        int index = CLIPI (floor (f));
-        float part = (float) ((f) - index) * (float) (array[index + 1] - array[index]);
+        int index = CLIPI(floor(f));
+        float part = (float)((f) - index) * (float)(array[index + 1] - array[index]);
         return (float)array[index] + part;
     }
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // accurately determine value from float array with float as index
     //linearly interpolate from ends of range if arg is out of bounds
-    static inline float flinterp (float *array, float f)
+    static inline float flinterp(float *array, float f)
     {
-        int index = CLIPI (floor (f));
+        int index = CLIPI(floor(f));
         float part = ((f) - (float)index) * (array[index + 1] - array[index]);
         return array[index] + part;
     }
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    static inline double centercontrast   (double x, double b, double m);
+    static inline double centercontrast(double x, double b, double m);
 
     // standard srgb gamma and its inverse
-    static inline double gamma2            (double x)
+    static inline double gamma2(double x)
     {
-        return x <= 0.00304 ? x * 12.92 : 1.055 * exp (log (x) / sRGBGammaCurve) - 0.055;
+        return x <= 0.00304 ? x * 12.92 : 1.055 * exp(log(x) / sRGBGammaCurve) - 0.055;
     }
-    static inline double igamma2           (double x)
+    static inline double igamma2(double x)
     {
-        return x <= 0.03928 ? x / 12.92 : exp (log ((x + 0.055) / 1.055) * sRGBGammaCurve);
+        return x <= 0.03928 ? x / 12.92 : exp(log((x + 0.055) / 1.055) * sRGBGammaCurve);
     }
-    static inline float gamma2            (float x)
+    static inline float gamma2(float x)
     {
-        return x <= 0.00304 ? x * 12.92 : 1.055 * expf (logf (x) / sRGBGammaCurve) - 0.055;
+        return x <= 0.00304 ? x * 12.92 : 1.055 * expf(logf(x) / sRGBGammaCurve) - 0.055;
     }
-    static inline float igamma2           (float x)
+    static inline float igamma2(float x)
     {
-        return x <= 0.03928 ? x / 12.92 : expf (logf ((x + 0.055) / 1.055) * sRGBGammaCurve);
+        return x <= 0.03928 ? x / 12.92 : expf(logf((x + 0.055) / 1.055) * sRGBGammaCurve);
     }
     // gamma function with adjustable parameters
-    static inline double gamma            (double x, double gamma, double start, double slope, double mul, double add)
+    static inline double gamma(double x, double gamma, double start, double slope, double mul, double add)
     {
-        return (x <= start ? x*slope : exp (log (x) / gamma) * mul - add);
+        return (x <= start ? x*slope : exp(log(x) / gamma) * mul - add);
     }
-    static inline double igamma           (double x, double gamma, double start, double slope, double mul, double add)
+    static inline double igamma(double x, double gamma, double start, double slope, double mul, double add)
     {
-        return (x <= start * slope ? x / slope : exp (log ((x + add) / mul) * gamma) );
+        return (x <= start * slope ? x / slope : exp(log((x + add) / mul) * gamma));
     }
-    static inline float gamma            (float x, float gamma, float start, float slope, float mul, float add)
+    static inline float gamma(float x, float gamma, float start, float slope, float mul, float add)
     {
-        return (x <= start ? x*slope : xexpf (xlogf (x) / gamma) * mul - add);
+        return (x <= start ? x*slope : xexpf(xlogf(x) / gamma) * mul - add);
     }
-    static inline float igamma           (float x, float gamma, float start, float slope, float mul, float add)
+    static inline float igamma(float x, float gamma, float start, float slope, float mul, float add)
     {
-        return (x <= start * slope ? x / slope : xexpf (xlogf ((x + add) / mul) * gamma) );
+        return (x <= start * slope ? x / slope : xexpf(xlogf((x + add) / mul) * gamma));
     }
 #ifdef __SSE2__
-    static inline vfloat igamma           (vfloat x, vfloat gamma, vfloat start, vfloat slope, vfloat mul, vfloat add)
+    static inline vfloat igamma(vfloat x, vfloat gamma, vfloat start, vfloat slope, vfloat mul, vfloat add)
     {
 #if !defined(__clang__)
-        return (x <= start * slope ? x / slope : xexpf (xlogf ((x + add) / mul) * gamma) );
+        return (x <= start * slope ? x / slope : xexpf(xlogf((x + add) / mul) * gamma));
 #else
-        return vself (vmaskf_le (x, start * slope), x / slope, xexpf (xlogf ((x + add) / mul) * gamma));
+        return vself(vmaskf_le(x, start * slope), x / slope, xexpf(xlogf((x + add) / mul) * gamma));
 #endif
     }
 #endif
-    static inline float hlcurve (const float exp_scale, const float comp, const float hlrange, float level)
+    static inline float hlcurve(const float exp_scale, const float comp, const float hlrange, float level)
     {
         if (comp > 0.0) {
             float val = level + (hlrange - 65536.0);
@@ -273,13 +273,13 @@ public:
             }
 
             float R = hlrange / (val * comp);
-            return log1p (Y) * R;
+            return log1p(Y) * R;
         } else {
             return exp_scale;
         }
     }
 
-    static inline float hlcurveloc (const float exp_scale, const float comp, const float hlrange, float level, float niv)
+    static inline float hlcurveloc(const float exp_scale, const float comp, const float hlrange, float level, float niv)
     {
         if (comp > 0.0) {
             float val = level + (hlrange - niv);//655536 32768
@@ -296,52 +296,52 @@ public:
             }
 
             float R = hlrange / (val * comp);
-            return log1p (Y) * R;
+            return log1p(Y) * R;
         } else {
             return exp_scale;
         }
     }
-	
+
 public:
-    static void complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr,
-                              const std::vector<double>& curvePoints, const std::vector<double>& curvePoints2,
-                              LUTu & histogram, LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, LUTu & outBeforeCCurveHistogram, ToneCurve & outToneCurve, ToneCurve & outToneCurve2,
+    static void complexCurve(double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr,
+                             const std::vector<double>& curvePoints, const std::vector<double>& curvePoints2,
+                             LUTu & histogram, LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, LUTu & outBeforeCCurveHistogram, ToneCurve & outToneCurve, ToneCurve & outToneCurve2,
 
-                              int skip = 1);
+                             int skip = 1);
 
-    static void complexCurvelocal (double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr,
-                                   LUTu & histogram, LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
-                                   int skip = 1);
-
-    static void curveBW (const std::vector<double>& curvePointsbw, const std::vector<double>& curvePointsbw2, const LUTu & histogrambw, LUTu & outBeforeCCurveHistogrambw,
-                         ToneCurve & customToneCurvebw1, ToneCurve & customToneCurvebw2, int skip);
-
-    static void curveCL ( bool & clcutili, const std::vector<double>& clcurvePoints, LUTf & clCurve, int skip);
-
-    static void curveWavContL ( bool & wavcontlutili, const std::vector<double>& wavclcurvePoints, LUTf & wavclCurve,/* LUTu & histogramwavcl, LUTu & outBeforeWavCLurveHistogram,*/int skip);
-    static void curveDehaContL ( bool & dehacontlutili, const std::vector<double>& dehaclcurvePoints, LUTf & dehaclCurve, int skip, const LUTu & histogram, LUTu & outBeforeCurveHistogram);
-    static void mapcurve ( bool & mapcontlutili, const std::vector<double>& mapcurvePoints, LUTf & mapcurve, int skip, const LUTu & histogram, LUTu & outBeforeCurveHistogram);
-
-    static void curveToning ( const std::vector<double>& curvePoints, LUTf & ToningCurve, int skip);
-
-    static void curveLocal ( bool & locallutili, const std::vector<double>& curvePoints, LUTf & LocalLCurve, int skip);
-    static void curveCCLocal ( bool & localcutili, const std::vector<double>& curvePoints, LUTf & LocalCCurve, int skip);
-    static void curveskLocal ( bool & localskutili, const std::vector<double>& curvePoints, LUTf & LocalskCurve, int skip);
-    static void curveexLocal ( bool & localexutili, const std::vector<double>& curvePoints, LUTf & LocalexCurve, int skip);
-
-    static void complexsgnCurve ( bool & autili,  bool & butili, bool & ccutili, bool & clcutili, const std::vector<double>& acurvePoints,
-                                  const std::vector<double>& bcurvePoints, const std::vector<double>& cccurvePoints, const std::vector<double>& lccurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve,
+    static void complexCurvelocal(double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr,
+                                  LUTu & histogram, LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
                                   int skip = 1);
 
-    static void localLCurve (double br, double contr,/* const std::vector<double>& curvePoints,*/ LUTu & histogram, LUTf & outCurve, int skip, bool & utili);
+    static void curveBW(const std::vector<double>& curvePointsbw, const std::vector<double>& curvePointsbw2, const LUTu & histogrambw, LUTu & outBeforeCCurveHistogrambw,
+                        ToneCurve & customToneCurvebw1, ToneCurve & customToneCurvebw2, int skip);
 
-    static void updatechroma (
+    static void curveCL(bool & clcutili, const std::vector<double>& clcurvePoints, LUTf & clCurve, int skip);
+
+    static void curveWavContL(bool & wavcontlutili, const std::vector<double>& wavclcurvePoints, LUTf & wavclCurve,/* LUTu & histogramwavcl, LUTu & outBeforeWavCLurveHistogram,*/int skip);
+    static void curveDehaContL(bool & dehacontlutili, const std::vector<double>& dehaclcurvePoints, LUTf & dehaclCurve, int skip, const LUTu & histogram, LUTu & outBeforeCurveHistogram);
+    static void mapcurve(bool & mapcontlutili, const std::vector<double>& mapcurvePoints, LUTf & mapcurve, int skip, const LUTu & histogram, LUTu & outBeforeCurveHistogram);
+
+    static void curveToning(const std::vector<double>& curvePoints, LUTf & ToningCurve, int skip);
+
+    static void curveLocal(bool & locallutili, const std::vector<double>& curvePoints, LUTf & LocalLCurve, int skip);
+    static void curveCCLocal(bool & localcutili, const std::vector<double>& curvePoints, LUTf & LocalCCurve, int skip);
+    static void curveskLocal(bool & localskutili, const std::vector<double>& curvePoints, LUTf & LocalskCurve, int skip);
+    static void curveexLocal(bool & localexutili, const std::vector<double>& curvePoints, LUTf & LocalexCurve, int skip);
+
+    static void complexsgnCurve(bool & autili,  bool & butili, bool & ccutili, bool & clcutili, const std::vector<double>& acurvePoints,
+                                const std::vector<double>& bcurvePoints, const std::vector<double>& cccurvePoints, const std::vector<double>& lccurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve,
+                                int skip = 1);
+
+    static void localLCurve(double br, double contr,/* const std::vector<double>& curvePoints,*/ LUTu & histogram, LUTf & outCurve, int skip, bool & utili);
+
+    static void updatechroma(
         const std::vector<double>& cccurvePoints,
         LUTu & histogramC, LUTu & outBeforeCCurveHistogramC,//for chroma
         int skip = 1);
-    static void complexLCurve (double br, double contr, const std::vector<double>& curvePoints, const LUTu & histogram, LUTf & outCurve, LUTu & outBeforeCCurveHistogram, int skip, bool & utili);
+    static void complexLCurve(double br, double contr, const std::vector<double>& curvePoints, const LUTu & histogram, LUTf & outCurve, LUTu & outBeforeCCurveHistogram, int skip, bool & utili);
 
-    static void curveLightBrightColor (
+    static void curveLightBrightColor(
         const std::vector<double>& curvePoints,
         const std::vector<double>& curvePoints2,
         const std::vector<double>& curvePoints3,
@@ -351,7 +351,7 @@ public:
         ColorAppearance & outColCurve2,
         ColorAppearance & outColCurve3,
         int skip = 1);
-    static void RGBCurve (const std::vector<double>& curvePoints, LUTf & outCurve, int skip);
+    static void RGBCurve(const std::vector<double>& curvePoints, LUTf & outCurve, int skip);
 
 };
 
@@ -389,40 +389,40 @@ protected:
     double increment;
     int nbr_points;
 
-    static inline double p00 (double x, double prot)
+    static inline double p00(double x, double prot)
     {
-        return CurveFactory::clower (x, 2.0, prot);
+        return CurveFactory::clower(x, 2.0, prot);
     }
-    static inline double p11 (double x, double prot)
+    static inline double p11(double x, double prot)
     {
-        return CurveFactory::cupper (x, 2.0, prot);
+        return CurveFactory::cupper(x, 2.0, prot);
     }
-    static inline double p01 (double x, double prot)
+    static inline double p01(double x, double prot)
     {
-        return x <= 0.5 ? CurveFactory::clower (x * 2, 2.0, prot) * 0.5 : 0.5 + CurveFactory::cupper ((x - 0.5) * 2, 2.0, prot) * 0.5;
+        return x <= 0.5 ? CurveFactory::clower(x * 2, 2.0, prot) * 0.5 : 0.5 + CurveFactory::cupper((x - 0.5) * 2, 2.0, prot) * 0.5;
     }
-    static inline double p10 (double x, double prot)
+    static inline double p10(double x, double prot)
     {
-        return x <= 0.5 ? CurveFactory::cupper (x * 2, 2.0, prot) * 0.5 : 0.5 + CurveFactory::clower ((x - 0.5) * 2, 2.0, prot) * 0.5;
+        return x <= 0.5 ? CurveFactory::cupper(x * 2, 2.0, prot) * 0.5 : 0.5 + CurveFactory::clower((x - 0.5) * 2, 2.0, prot) * 0.5;
     }
-    static inline double pfull (double x, double prot, double sh, double hl)
+    static inline double pfull(double x, double prot, double sh, double hl)
     {
-        return (1 - sh) * (1 - hl) * p00 (x, prot) + sh * hl * p11 (x, prot) + (1 - sh) * hl * p01 (x, prot) + sh * (1 - hl) * p10 (x, prot);
+        return (1 - sh) * (1 - hl) * p00(x, prot) + sh * hl * p11(x, prot) + (1 - sh) * hl * p01(x, prot) + sh * (1 - hl) * p10(x, prot);
     }
 
     void fillHash();
     void fillDyByDx();
 
 public:
-    Curve ();
-    virtual ~Curve () {};
-    void AddPolygons ();
-    int getSize () const; // return the number of control points
-    void getControlPoint (int cpNum, double &x, double &y) const;
-    virtual double getVal (double t) const = 0;
-    virtual void   getVal (const std::vector<double>& t, std::vector<double>& res) const = 0;
+    Curve();
+    virtual ~Curve() {};
+    void AddPolygons();
+    int getSize() const;  // return the number of control points
+    void getControlPoint(int cpNum, double &x, double &y) const;
+    virtual double getVal(double t) const = 0;
+    virtual void   getVal(const std::vector<double>& t, std::vector<double>& res) const = 0;
 
-    virtual bool   isIdentity () const = 0;
+    virtual bool   isIdentity() const = 0;
 };
 
 class DiagonalCurve : public Curve
@@ -431,16 +431,16 @@ class DiagonalCurve : public Curve
 protected:
     DiagonalCurveType kind;
 
-    void spline_cubic_set ();
-    void NURBS_set ();
+    void spline_cubic_set();
+    void NURBS_set();
 
 public:
-    DiagonalCurve (const std::vector<double>& points, int ppn = CURVES_MIN_POLY_POINTS);
-    virtual ~DiagonalCurve ();
+    DiagonalCurve(const std::vector<double>& points, int ppn = CURVES_MIN_POLY_POINTS);
+    virtual ~DiagonalCurve();
 
-    double getVal     (double t) const;
-    void   getVal     (const std::vector<double>& t, std::vector<double>& res) const;
-    bool   isIdentity () const
+    double getVal(double t) const;
+    void   getVal(const std::vector<double>& t, std::vector<double>& res) const;
+    bool   isIdentity() const
     {
         return kind == DCT_Empty;
     };
@@ -456,17 +456,17 @@ private:
     double identityValue;
     bool periodic;
 
-    void CtrlPoints_set ();
+    void CtrlPoints_set();
 
 public:
 
-    FlatCurve (const std::vector<double>& points, bool isPeriodic = true, int ppn = CURVES_MIN_POLY_POINTS);
-    virtual ~FlatCurve ();
+    FlatCurve(const std::vector<double>& points, bool isPeriodic = true, int ppn = CURVES_MIN_POLY_POINTS);
+    virtual ~FlatCurve();
 
-    double getVal     (double t) const;
-    void   getVal     (const std::vector<double>& t, std::vector<double>& res) const;
-    bool   setIdentityValue (double iVal);
-    bool   isIdentity () const
+    double getVal(double t) const;
+    void   getVal(const std::vector<double>& t, std::vector<double>& res) const;
+    bool   setIdentityValue(double iVal);
+    bool   isIdentity() const
     {
         return kind == FCT_Empty;
     };
@@ -476,16 +476,16 @@ class RetinextransmissionCurve
 {
 private:
     LUTf luttransmission;  // 0xffff range
-    void Set (const Curve &pCurve);
+    void Set(const Curve &pCurve);
 
 public:
     virtual ~RetinextransmissionCurve() {};
     RetinextransmissionCurve();
 
     void Reset();
-    void Set (const Curve *pCurve);
-    void Set (const std::vector<double> &curvePoints);
-    float operator[] (float index) const
+    void Set(const Curve *pCurve);
+    void Set(const std::vector<double> &curvePoints);
+    float operator[](float index) const
     {
         return luttransmission[index];
     }
@@ -500,16 +500,16 @@ class RetinexgaintransmissionCurve
 {
 private:
     LUTf lutgaintransmission;  // 0xffff range
-    void Set (const Curve &pCurve);
+    void Set(const Curve &pCurve);
 
 public:
     virtual ~RetinexgaintransmissionCurve() {};
     RetinexgaintransmissionCurve();
 
     void Reset();
-    void Set (const Curve *pCurve);
-    void Set (const std::vector<double> &curvePoints);
-    float operator[] (float index) const
+    void Set(const Curve *pCurve);
+    void Set(const std::vector<double> &curvePoints);
+    float operator[](float index) const
     {
         return lutgaintransmission[index];
     }
@@ -530,7 +530,7 @@ public:
     virtual ~ToneCurve() {};
 
     void Reset();
-    void Set (const Curve &pCurve, float gamma = 0);
+    void Set(const Curve &pCurve, float gamma = 0);
     operator bool (void) const
     {
         return lutToneCurve;
@@ -545,15 +545,15 @@ public:
     virtual ~OpacityCurve() {};
 
     void Reset();
-    void Set (const Curve *pCurve);
-    void Set (const std::vector<double> &curvePoints, bool &opautili);
+    void Set(const Curve *pCurve);
+    void Set(const std::vector<double> &curvePoints, bool &opautili);
 
     // TODO: transfer this method to the Color class...
-    float blend (float x, float lower, float upper) const
+    float blend(float x, float lower, float upper) const
     {
         return (upper - lower) * lutOpacityCurve[x * 500.f] + lower;
     }
-    void blend3f (float x, float lower1, float upper1, float &result1, float lower2, float upper2, float &result2, float lower3, float upper3, float &result3) const
+    void blend3f(float x, float lower1, float upper1, float &result1, float lower2, float upper2, float &result2, float lower3, float upper3, float &result3) const
     {
         float opacity = lutOpacityCurve[x * 500.f];
         result1 = (upper1 - lower1) * opacity + lower1;
@@ -571,7 +571,7 @@ class LocLHCurve
 {
 private:
     LUTf lutLocLHCurve;  // 0xffff range
-    void Set (const Curve &pCurve);
+    void Set(const Curve &pCurve);
 
 public:
     float sum;
@@ -579,13 +579,13 @@ public:
     virtual ~LocLHCurve() {};
     LocLHCurve();
     void Reset();
-    void Set (const std::vector<double> &curvePoints, bool &LHutili);
+    void Set(const std::vector<double> &curvePoints, bool &LHutili);
     float getSum() const
     {
         return sum;
     }
 
-    float operator[] (float index) const
+    float operator[](float index) const
     {
         return lutLocLHCurve[index];
     }
@@ -599,7 +599,7 @@ class LocHHCurve
 {
 private:
     LUTf lutLocHHCurve;  // 0xffff range
-    void Set (const Curve &pCurve);
+    void Set(const Curve &pCurve);
 
 public:
     float sum;
@@ -607,13 +607,13 @@ public:
     virtual ~LocHHCurve() {};
     LocHHCurve();
     void Reset();
-    void Set (const std::vector<double> &curvePoints, bool &HHutili);
+    void Set(const std::vector<double> &curvePoints, bool &HHutili);
     float getSum() const
     {
         return sum;
     }
 
-    float operator[] (float index) const
+    float operator[](float index) const
     {
         return lutLocHHCurve[index];
     }
@@ -627,7 +627,7 @@ class LocretigainCurve
 {
 private:
     LUTf lutLocretigainCurve;  // 0xffff range
-    void Set (const Curve &pCurve);
+    void Set(const Curve &pCurve);
 
 public:
     float sum;
@@ -635,13 +635,13 @@ public:
     virtual ~LocretigainCurve() {};
     LocretigainCurve();
     void Reset();
-    void Set (const std::vector<double> &curvePoints);
+    void Set(const std::vector<double> &curvePoints);
     float getSum() const
     {
         return sum;
     }
 
-    float operator[] (float index) const
+    float operator[](float index) const
     {
         return lutLocretigainCurve[index];
     }
@@ -655,7 +655,7 @@ class LocretigainCurverab
 {
 private:
     LUTf lutLocretigainCurverab;  // 0xffff range
-    void Set (const Curve &pCurve);
+    void Set(const Curve &pCurve);
 
 public:
     float sum;
@@ -663,13 +663,13 @@ public:
     virtual ~LocretigainCurverab() {};
     LocretigainCurverab();
     void Reset();
-    void Set (const std::vector<double> &curvePoints);
+    void Set(const std::vector<double> &curvePoints);
     float getSum() const
     {
         return sum;
     }
 
-    float operator[] (float index) const
+    float operator[](float index) const
     {
         return lutLocretigainCurverab[index];
     }
@@ -684,7 +684,7 @@ class WavCurve
 {
 private:
     LUTf lutWavCurve;  // 0xffff range
-    void Set (const Curve &pCurve);
+    void Set(const Curve &pCurve);
 
 public:
     float sum;
@@ -692,13 +692,13 @@ public:
     virtual ~WavCurve() {};
     WavCurve();
     void Reset();
-    void Set (const std::vector<double> &curvePoints);
+    void Set(const std::vector<double> &curvePoints);
     float getSum() const
     {
         return sum;
     }
 
-    float operator[] (float index) const
+    float operator[](float index) const
     {
         return lutWavCurve[index];
     }
@@ -712,15 +712,15 @@ class WavOpacityCurveRG
 {
 private:
     LUTf lutOpacityCurveRG;  // 0xffff range
-    void Set (const Curve &pCurve);
+    void Set(const Curve &pCurve);
 public:
     virtual ~WavOpacityCurveRG() {};
     WavOpacityCurveRG();
 
     void Reset();
     //  void Set(const std::vector<double> &curvePoints, bool &opautili);
-    void Set (const std::vector<double> &curvePoints);
-    float operator[] (float index) const
+    void Set(const std::vector<double> &curvePoints);
+    float operator[](float index) const
     {
         return lutOpacityCurveRG[index];
     }
@@ -734,16 +734,16 @@ class WavOpacityCurveBY
 {
 private:
     LUTf lutOpacityCurveBY;  // 0xffff range
-    void Set (const Curve &pCurve);
+    void Set(const Curve &pCurve);
 
 public:
     virtual ~WavOpacityCurveBY() {};
     WavOpacityCurveBY();
 
     void Reset();
-    void Set (const Curve *pCurve);
-    void Set (const std::vector<double> &curvePoints);
-    float operator[] (float index) const
+    void Set(const Curve *pCurve);
+    void Set(const std::vector<double> &curvePoints);
+    float operator[](float index) const
     {
         return lutOpacityCurveBY[index];
     }
@@ -757,16 +757,16 @@ class WavOpacityCurveW
 {
 private:
     LUTf lutOpacityCurveW;  // 0xffff range
-    void Set (const Curve &pCurve);
+    void Set(const Curve &pCurve);
 
 public:
     virtual ~WavOpacityCurveW() {};
     WavOpacityCurveW();
 
     void Reset();
-    void Set (const Curve *pCurve);
-    void Set (const std::vector<double> &curvePoints);
-    float operator[] (float index) const
+    void Set(const Curve *pCurve);
+    void Set(const std::vector<double> &curvePoints);
+    float operator[](float index) const
     {
         return lutOpacityCurveW[index];
     }
@@ -781,16 +781,16 @@ class WavOpacityCurveWL
 {
 private:
     LUTf lutOpacityCurveWL;  // 0xffff range
-    void Set (const Curve &pCurve);
+    void Set(const Curve &pCurve);
 
 public:
     virtual ~WavOpacityCurveWL() {};
     WavOpacityCurveWL();
 
     void Reset();
-    void Set (const Curve *pCurve);
-    void Set (const std::vector<double> &curvePoints);
-    float operator[] (float index) const
+    void Set(const Curve *pCurve);
+    void Set(const std::vector<double> &curvePoints);
+    float operator[](float index) const
     {
         return lutOpacityCurveWL[index];
     }
@@ -806,19 +806,19 @@ class NoiseCurve
 private:
     LUTf lutNoiseCurve;  // 0xffff range
     float sum;
-    void Set (const Curve &pCurve);
+    void Set(const Curve &pCurve);
 
 public:
     virtual ~NoiseCurve() {};
     NoiseCurve();
     void Reset();
-    void Set (const std::vector<double> &curvePoints);
+    void Set(const std::vector<double> &curvePoints);
 
     float getSum() const
     {
         return sum;
     }
-    float operator[] (float index) const
+    float operator[](float index) const
     {
         return lutNoiseCurve[index];
     }
@@ -852,7 +852,7 @@ public:
     * @param g corresponding green value [0 ; 65535] (return value)
     * @param b corresponding blue value [0 ; 65535] (return value)
     */
-    void getVal (float index, float &r, float &g, float &b) const;
+    void getVal(float index, float &r, float &g, float &b) const;
     operator bool (void) const
     {
         return lut1 && lut2 && lut3;
@@ -867,7 +867,7 @@ public:
     virtual ~ColorAppearance() {};
 
     void Reset();
-    void Set (const Curve &pCurve);
+    void Set(const Curve &pCurve);
     operator bool (void) const
     {
         return lutColCurve;
@@ -877,14 +877,14 @@ public:
 class Lightcurve : public ColorAppearance
 {
 public:
-    void Apply (float& Li) const;
+    void Apply(float& Li) const;
 };
 
 //lightness curve
-inline void Lightcurve::Apply (float& Li) const
+inline void Lightcurve::Apply(float& Li) const
 {
 
-    assert (lutColCurve);
+    assert(lutColCurve);
 
     Li = lutColCurve[Li];
 }
@@ -892,14 +892,14 @@ inline void Lightcurve::Apply (float& Li) const
 class Brightcurve : public ColorAppearance
 {
 public:
-    void Apply (float& Br) const;
+    void Apply(float& Br) const;
 };
 
 //brightness curve
-inline void Brightcurve::Apply (float& Br) const
+inline void Brightcurve::Apply(float& Br) const
 {
 
-    assert (lutColCurve);
+    assert(lutColCurve);
 
     Br = lutColCurve[Br];
 }
@@ -907,28 +907,28 @@ inline void Brightcurve::Apply (float& Br) const
 class Chromacurve : public ColorAppearance
 {
 public:
-    void Apply (float& Cr) const;
+    void Apply(float& Cr) const;
 };
 
 //Chroma curve
-inline void Chromacurve::Apply (float& Cr) const
+inline void Chromacurve::Apply(float& Cr) const
 {
 
-    assert (lutColCurve);
+    assert(lutColCurve);
 
     Cr = lutColCurve[Cr];
 }
 class Saturcurve : public ColorAppearance
 {
 public:
-    void Apply (float& Sa) const;
+    void Apply(float& Sa) const;
 };
 
 //Saturation curve
-inline void Saturcurve::Apply (float& Sa) const
+inline void Saturcurve::Apply(float& Sa) const
 {
 
-    assert (lutColCurve);
+    assert(lutColCurve);
 
     Sa = lutColCurve[Sa];
 }
@@ -936,14 +936,14 @@ inline void Saturcurve::Apply (float& Sa) const
 class Colorfcurve : public ColorAppearance
 {
 public:
-    void Apply (float& Cf) const;
+    void Apply(float& Cf) const;
 };
 
 //Colorfullness curve
-inline void Colorfcurve::Apply (float& Cf) const
+inline void Colorfcurve::Apply(float& Cf) const
 {
 
-    assert (lutColCurve);
+    assert(lutColCurve);
 
     Cf = lutColCurve[Cf];
 }
@@ -958,37 +958,37 @@ public:
     // and ending at `r[end]` (and respectively for `b` and `g`). Uses SSE
     // and requires that `r`, `g`, and `b` pointers have the same alignment.
     void BatchApply(
-            const size_t start, const size_t end,
-            float *r, float *g, float *b) const;
+        const size_t start, const size_t end,
+        float *r, float *g, float *b) const;
 };
 
 class AdobeToneCurve : public ToneCurve
 {
 private:
-    void RGBTone (float& r, float& g, float& b) const; // helper for tone curve
+    void RGBTone(float& r, float& g, float& b) const;  // helper for tone curve
 
 public:
-    void Apply (float& r, float& g, float& b) const;
+    void Apply(float& r, float& g, float& b) const;
 };
 
 class SatAndValueBlendingToneCurve : public ToneCurve
 {
 public:
-    void Apply (float& r, float& g, float& b) const;
+    void Apply(float& r, float& g, float& b) const;
 };
 
 class WeightedStdToneCurve : public ToneCurve
 {
 private:
-    float Triangle (float refX, float refY, float X2) const;
+    float Triangle(float refX, float refY, float X2) const;
 public:
-    void Apply (float& r, float& g, float& b) const;
+    void Apply(float& r, float& g, float& b) const;
 };
 
 class LuminanceToneCurve : public ToneCurve
 {
 public:
-    void Apply (float& r, float& g, float& b) const;
+    void Apply(float& r, float& g, float& b) const;
 };
 
 class PerceptualToneCurveState
@@ -1013,22 +1013,22 @@ private:
     static float f, c, nc, yb, la, xw, yw, zw, gamut;
     static float n, d, nbb, ncb, cz, aw, wh, pfl, fl, pow1;
 
-    static void cubic_spline (const float x[], const float y[], const int len, const float out_x[], float out_y[], const int out_len);
-    static float find_minimum_interval_halving (float (*func) (float x, void *arg), void *arg, float a, float b, float tol, int nmax);
-    static float find_tc_slope_fun (float k, void *arg);
-    static float get_curve_val (float x, float range[2], float lut[], size_t lut_size);
+    static void cubic_spline(const float x[], const float y[], const int len, const float out_x[], float out_y[], const int out_len);
+    static float find_minimum_interval_halving(float (*func)(float x, void *arg), void *arg, float a, float b, float tol, int nmax);
+    static float find_tc_slope_fun(float k, void *arg);
+    static float get_curve_val(float x, float range[2], float lut[], size_t lut_size);
     float calculateToneCurveContrastValue() const;
 public:
     static void init();
-    void initApplyState (PerceptualToneCurveState & state, Glib::ustring workingSpace) const;
-    void Apply (float& r, float& g, float& b, PerceptualToneCurveState & state) const;
+    void initApplyState(PerceptualToneCurveState & state, Glib::ustring workingSpace) const;
+    void Apply(float& r, float& g, float& b, PerceptualToneCurveState & state) const;
 };
 
 // Standard tone curve
-inline void StandardToneCurve::Apply (float& r, float& g, float& b) const
+inline void StandardToneCurve::Apply(float& r, float& g, float& b) const
 {
 
-    assert (lutToneCurve);
+    assert(lutToneCurve);
 
     r = lutToneCurve[r];
     g = lutToneCurve[g];
@@ -1036,18 +1036,20 @@ inline void StandardToneCurve::Apply (float& r, float& g, float& b) const
 }
 
 inline void StandardToneCurve::BatchApply(
-        const size_t start, const size_t end,
-        float *r, float *g, float *b) const {
-    assert (lutToneCurve);
-    assert (lutToneCurve.getClip() & LUT_CLIP_BELOW);
-    assert (lutToneCurve.getClip() & LUT_CLIP_ABOVE);
+    const size_t start, const size_t end,
+    float *r, float *g, float *b) const
+{
+    assert(lutToneCurve);
+    assert(lutToneCurve.getClip() & LUT_CLIP_BELOW);
+    assert(lutToneCurve.getClip() & LUT_CLIP_ABOVE);
 
     // All pointers must have the same alignment for SSE usage. In the loop body below,
     // we will only check `r`, assuming that the same result would hold for `g` and `b`.
-    assert (reinterpret_cast<uintptr_t>(r) % 16 == reinterpret_cast<uintptr_t>(g) % 16);
-    assert (reinterpret_cast<uintptr_t>(g) % 16 == reinterpret_cast<uintptr_t>(b) % 16);
+    assert(reinterpret_cast<uintptr_t>(r) % 16 == reinterpret_cast<uintptr_t>(g) % 16);
+    assert(reinterpret_cast<uintptr_t>(g) % 16 == reinterpret_cast<uintptr_t>(b) % 16);
 
     size_t i = start;
+
     while (true) {
         if (i >= end) {
             // If we get to the end before getting to an aligned address, just return.
@@ -1059,6 +1061,7 @@ inline void StandardToneCurve::BatchApply(
             break;
 #endif
         }
+
         r[i] = lutToneCurve[r[i]];
         g[i] = lutToneCurve[g[i]];
         b[i] = lutToneCurve[b[i]];
@@ -1066,6 +1069,7 @@ inline void StandardToneCurve::BatchApply(
     }
 
 #if defined( __SSE2__ ) && defined( __x86_64__ )
+
     for (; i + 3 < end; i += 4) {
         __m128 r_val = LVF(r[i]);
         __m128 g_val = LVF(g[i]);
@@ -1081,41 +1085,42 @@ inline void StandardToneCurve::BatchApply(
         g[i] = lutToneCurve[g[i]];
         b[i] = lutToneCurve[b[i]];
     }
+
 #endif
 }
 
 // Tone curve according to Adobe's reference implementation
 // values in 0xffff space
 // inlined to make sure there will be no cache flush when used
-inline void AdobeToneCurve::Apply (float& r, float& g, float& b) const
+inline void AdobeToneCurve::Apply(float& r, float& g, float& b) const
 {
 
-    assert (lutToneCurve);
+    assert(lutToneCurve);
 
     if (r >= g) {
-        if      (g > b) {
-            RGBTone (r, g, b);    // Case 1: r >= g >  b
+        if (g > b) {
+            RGBTone(r, g, b);     // Case 1: r >= g >  b
         } else if (b > r) {
-            RGBTone (b, r, g);    // Case 2: b >  r >= g
+            RGBTone(b, r, g);     // Case 2: b >  r >= g
         } else if (b > g) {
-            RGBTone (r, b, g);    // Case 3: r >= b >  g
+            RGBTone(r, b, g);     // Case 3: r >= b >  g
         } else {                           // Case 4: r >= g == b
             r = lutToneCurve[r];
             g = lutToneCurve[g];
             b = g;
         }
     } else {
-        if      (r >= b) {
-            RGBTone (g, r, b);    // Case 5: g >  r >= b
+        if (r >= b) {
+            RGBTone(g, r, b);     // Case 5: g >  r >= b
         } else if (b >  g) {
-            RGBTone (b, g, r);    // Case 6: b >  g >  r
+            RGBTone(b, g, r);     // Case 6: b >  g >  r
         } else {
-            RGBTone (g, b, r);    // Case 7: g >= b >  r
+            RGBTone(g, b, r);     // Case 7: g >= b >  r
         }
     }
 }
 
-inline void AdobeToneCurve::RGBTone (float& r, float& g, float& b) const
+inline void AdobeToneCurve::RGBTone(float& r, float& g, float& b) const
 {
     float rold = r, gold = g, bold = b;
 
@@ -1125,9 +1130,9 @@ inline void AdobeToneCurve::RGBTone (float& r, float& g, float& b) const
 }
 
 // Modifying the Luminance channel only
-inline void LuminanceToneCurve::Apply (float &r, float &g, float &b) const
+inline void LuminanceToneCurve::Apply(float &r, float &g, float &b) const
 {
-    assert (lutToneCurve);
+    assert(lutToneCurve);
 
     float currLuminance = r * 0.2126729f + g * 0.7151521f + b * 0.0721750f;
 
@@ -1139,7 +1144,7 @@ inline void LuminanceToneCurve::Apply (float &r, float &g, float &b) const
     b = LIM<float> (b * coef, 0.f, 65535.f);
 }
 
-inline float WeightedStdToneCurve::Triangle (float a, float a1, float b) const
+inline float WeightedStdToneCurve::Triangle(float a, float a1, float b) const
 {
     if (a != b) {
         float b1;
@@ -1159,34 +1164,34 @@ inline float WeightedStdToneCurve::Triangle (float a, float a1, float b) const
 
 // Tone curve modifying the value channel only, preserving hue and saturation
 // values in 0xffff space
-inline void WeightedStdToneCurve::Apply (float& r, float& g, float& b) const
+inline void WeightedStdToneCurve::Apply(float& r, float& g, float& b) const
 {
 
-    assert (lutToneCurve);
+    assert(lutToneCurve);
 
     float r1 = lutToneCurve[r];
-    float g1 = Triangle (r, r1, g);
-    float b1 = Triangle (r, r1, b);
+    float g1 = Triangle(r, r1, g);
+    float b1 = Triangle(r, r1, b);
 
     float g2 = lutToneCurve[g];
-    float r2 = Triangle (g, g2, r);
-    float b2 = Triangle (g, g2, b);
+    float r2 = Triangle(g, g2, r);
+    float b2 = Triangle(g, g2, b);
 
     float b3 = lutToneCurve[b];
-    float r3 = Triangle (b, b3, r);
-    float g3 = Triangle (b, b3, g);
+    float r3 = Triangle(b, b3, r);
+    float g3 = Triangle(b, b3, g);
 
-    r = CLIP<float> ( r1 * 0.50f + r2 * 0.25f + r3 * 0.25f);
+    r = CLIP<float> (r1 * 0.50f + r2 * 0.25f + r3 * 0.25f);
     g = CLIP<float> (g1 * 0.25f + g2 * 0.50f + g3 * 0.25f);
     b = CLIP<float> (b1 * 0.25f + b2 * 0.25f + b3 * 0.50f);
 }
 
 // Tone curve modifying the value channel only, preserving hue and saturation
 // values in 0xffff space
-inline void SatAndValueBlendingToneCurve::Apply (float& r, float& g, float& b) const
+inline void SatAndValueBlendingToneCurve::Apply(float& r, float& g, float& b) const
 {
 
-    assert (lutToneCurve);
+    assert(lutToneCurve);
 
     float h, s, v;
     float lum = (r + g + b) / 3.f;
@@ -1200,6 +1205,7 @@ inline void SatAndValueBlendingToneCurve::Apply (float& r, float& g, float& b) c
     Color::rgb2hsv(r, g, b, h, s, v);
 
     float dV;
+
     if (newLum > lum) {
         // Linearly targeting Value = 1 and Saturation = 0
         float coef = (newLum - lum) / (65535.f - lum);
@@ -1210,6 +1216,7 @@ inline void SatAndValueBlendingToneCurve::Apply (float& r, float& g, float& b) c
         float coef = (newLum - lum) / lum ;
         dV = v * coef;
     }
+
     Color::hsv2rgb(h, s, v + dV, r, g, b);
 }
 

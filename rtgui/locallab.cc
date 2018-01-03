@@ -400,7 +400,7 @@ Locallab::Locallab():
 
 
     ctboxshape->pack_start(*labmshape, Gtk::PACK_SHRINK, 4);
-    ctboxshape->set_tooltip_markup(M("TP_LOCALLAB_SHAPE_TOOLTIP"));
+    //ctboxshape->set_tooltip_markup(M("TP_LOCALLAB_SHAPE_TOOLTIP"));
 
     ctboxEx->pack_start(*labmEx, Gtk::PACK_SHRINK, 4);
     ctboxEx->set_tooltip_markup(M("TP_LOCALLAB_EXCLUTYPE_TOOLTIP"));

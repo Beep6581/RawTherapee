@@ -3987,7 +3987,7 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, LabImage
             if (lp.shapmet == 0) {
                 calcTransition(lox, loy, ach, lp, zone, localFactor);
             } else if (lp.shapmet == 1) {
-                calcTransition(lox, loy, ach, lp, zone, localFactor);
+                calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
             }
 
             //  calcTransition(lox, loy, ach, lp, zone, localFactor);
@@ -4493,7 +4493,7 @@ void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp, Lab
             if (lp.shapmet == 0) {
                 calcTransition(lox, loy, ach, lp, zone, localFactor);
             } else if (lp.shapmet == 1) {
-                calcTransition(lox, loy, ach, lp, zone, localFactor);
+                calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
             }
 
             //  calcTransition(lox, loy, ach, lp, zone, localFactor);
@@ -5057,7 +5057,7 @@ void ImProcFunctions::InverseContrast_Local(float ave, struct local_contra & lco
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
                 } else if (lp.shapmet == 1) {
-                    calcTransition(lox, loy, ach, lp, zone, localFactor);
+                    calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
 
                 //  calcTransition(lox, loy, ach, lp, zone, localFactor);
@@ -5365,7 +5365,7 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueplus, c
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
                 } else if (lp.shapmet == 1) {
-                    calcTransition(lox, loy, ach, lp, zone, localFactor);
+                    calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
 
                 //   calcTransition(lox, loy, ach, lp, zone, localFactor);
@@ -7607,7 +7607,7 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, La
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
                 } else if (lp.shapmet == 1) {
-                    calcTransition(lox, loy, ach, lp, zone, localFactor);//rect not good
+                    calcTransitionrect(lox, loy, ach, lp, zone, localFactor);//rect not good
                 }
 
                 //  calcTransition(lox, loy, ach, lp, zone, localFactor);
@@ -12023,7 +12023,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
                 tmpl = new LabImage(Wd, Hd);
 
-            } /* else {
+            }  else {
 
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
@@ -12035,11 +12035,11 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                         orig1[ir][jr] = transformed->L[ir][jr];
                     }
 
-                tmpl = new LabImage (transformed->W, transformed->H);
+                tmpl = new LabImage(transformed->W, transformed->H);
 
 
             }
-*/
+
             float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
             ImProcFunctions::MSRLocal(orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 0, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 #ifdef _OPENMP
@@ -12093,7 +12093,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                             orig1[ir][jr] = sqrt(SQR(bufreti->a[ir][jr]) + SQR(bufreti->b[ir][jr]));
                         }
 
-                } /* else {
+                }  else {
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
@@ -12101,11 +12101,11 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
                     for (int ir = 0; ir < GH; ir += 1)
                         for (int jr = 0; jr < GW; jr += 1) {
-                            orig[ir][jr] = sqrt (SQR (original->a[ir][jr]) + SQR (original->b[ir][jr]));
-                            orig1[ir][jr] = sqrt (SQR (transformed->a[ir][jr]) + SQR (transformed->b[ir][jr]));
+                            orig[ir][jr] = sqrt(SQR(original->a[ir][jr]) + SQR(original->b[ir][jr]));
+                            orig1[ir][jr] = sqrt(SQR(transformed->a[ir][jr]) + SQR(transformed->b[ir][jr]));
                         }
                 }
-*/
+
                 ImProcFunctions::MSRLocal(orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
                 if (!lp.invret && call <= 3) {
@@ -12146,7 +12146,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 //                    printf ("minch=%2.2f maxch=%2.2f", minch, maxch);
 
 
-                } /* else {
+                }  else {
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
@@ -12163,7 +12163,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
                         }
                 }
-*/
+
 
                 if (!lp.invret) {
 

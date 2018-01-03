@@ -2995,7 +2995,7 @@ bool MetaDataParams::operator!=(const MetaDataParams &other) const
 }
 
 
-ProcParams::ProcParams ()
+ProcParams::ProcParams()
 {
     setDefaults();
 }
@@ -3086,8 +3086,8 @@ void ProcParams::setDefaults()
     raw = RAWParams();
 
     metadata = MetaDataParams();
-    exif.clear ();
-    iptc.clear ();
+    exif.clear();
+    iptc.clear();
 
     rank = 0;
     colorlabel = 0;
@@ -5389,13 +5389,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         if (keyFile.has_group("MetaData")) {
             int mode = int(MetaDataParams::TUNNEL);
             assignFromKeyfile(keyFile, "MetaData", "Mode", pedited, mode, pedited->metadata.mode);
+
             if (mode >= int(MetaDataParams::TUNNEL) && mode <= int(MetaDataParams::STRIP)) {
                 metadata.mode = static_cast<MetaDataParams::Mode>(mode);
             }
         }
 
-        if (keyFile.has_group ("Exif")) {
-            std::vector<Glib::ustring> keys = keyFile.get_keys ("Exif");
+        if (keyFile.has_group("Exif")) {
+            std::vector<Glib::ustring> keys = keyFile.get_keys("Exif");
 
             for (const auto& key : keyFile.get_keys("Exif")) {
                 exif[key] = keyFile.get_string("Exif", key);

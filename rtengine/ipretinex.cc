@@ -52,10 +52,10 @@
 
 namespace
 {
-void retinex_scales ( float* scales, int nscales, int mode, int s, float high)
+void retinex_scales(float* scales, int nscales, int mode, int s, float high)
 {
-    if ( nscales == 1 ) {
-        scales[0] =  (float)s / 2.f;
+    if (nscales == 1) {
+        scales[0] = (float)s / 2.f;
     } else if (nscales == 2) {
         scales[1] = (float) s / 2.f;
         scales[0] = (float) s;
@@ -63,32 +63,32 @@ void retinex_scales ( float* scales, int nscales, int mode, int s, float high)
         float size_step = (float) s / (float) nscales;
 
         if (mode == 0) {
-            for (int i = 0; i < nscales; ++i ) {
+            for (int i = 0; i < nscales; ++i) {
                 scales[nscales - i - 1] = 2.0f + (float)i * size_step;
             }
         } else if (mode == 1) {
-            size_step = (float)log (s - 2.0f) / (float) nscales;
+            size_step = (float)log(s - 2.0f) / (float) nscales;
 
-            for (int i = 0; i < nscales; ++i ) {
-                scales[nscales - i - 1] = 2.0f + (float)pow (10.f, (i * size_step) / log (10.f));
+            for (int i = 0; i < nscales; ++i) {
+                scales[nscales - i - 1] = 2.0f + (float)pow(10.f, (i * size_step) / log(10.f));
             }
         } else if (mode == 2) {
-            size_step = (float) log (s - 2.0f) / (float) nscales;
+            size_step = (float) log(s - 2.0f) / (float) nscales;
 
-            for ( int i = 0; i < nscales; ++i ) {
-                scales[i] = s - (float)pow (10.f, (i * size_step) / log (10.f));
+            for (int i = 0; i < nscales; ++i) {
+                scales[i] = s - (float)pow(10.f, (i * size_step) / log(10.f));
             }
         } else if (mode == 3) {
-            size_step = (float) log (s - 2.0f) / (float) nscales;
+            size_step = (float) log(s - 2.0f) / (float) nscales;
 
-            for ( int i = 0; i < nscales; ++i ) {
-                scales[i] = high * s - (float)pow (10.f, (i * size_step) / log (10.f));
+            for (int i = 0; i < nscales; ++i) {
+                scales[i] = high * s - (float)pow(10.f, (i * size_step) / log(10.f));
             }
         }
     }
 }
 
-void mean_stddv2 ( float **dst, float &mean, float &stddv, int W_L, int H_L, float &maxtr, float &mintr)
+void mean_stddv2(float **dst, float &mean, float &stddv, int W_L, int H_L, float &maxtr, float &mintr)
 {
     // summation using double precision to avoid too large summation error for large pictures
     double vsquared = 0.f;
@@ -104,7 +104,7 @@ void mean_stddv2 ( float **dst, float &mean, float &stddv, int W_L, int H_L, flo
         #pragma omp for reduction(+:sum,vsquared) nowait // this leads to differences, but parallel summation is more accurate
 #endif
 
-        for (int i = 0; i < H_L; i++ )
+        for (int i = 0; i < H_L; i++)
             for (int j = 0; j < W_L; j++) {
                 sum += dst[i][j];
                 vsquared += (dst[i][j] * dst[i][j]);
@@ -122,10 +122,10 @@ void mean_stddv2 ( float **dst, float &mean, float &stddv, int W_L, int H_L, flo
         }
 
     }
-    mean = sum / (double) (W_L * H_L);
+    mean = sum / (double)(W_L * H_L);
     vsquared /= (double) W_L * H_L;
-    stddv = ( vsquared - (mean * mean) );
-    stddv = (float)sqrt (stddv);
+    stddv = (vsquared - (mean * mean));
+    stddv = (float)sqrt(stddv);
 }
 
 }
@@ -148,13 +148,13 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         int iter = deh.iter;
         int gradient = deh.scal;
         int scal = 3;//disabled scal
-        int nei = (int) (2.8f * deh.neigh); //def = 220
+        int nei = (int)(2.8f * deh.neigh);  //def = 220
         float vart = (float)deh.vart / 100.f;//variance
         float gradvart = (float)deh.grad;
         float gradstr = (float)deh.grads;
         float strength = (float) deh.str / 100.f; // Blend with original L channel data
         float limD = (float) deh.limd;
-        limD = pow (limD, 1.7f); //about 2500 enough
+        limD = pow(limD, 1.7f);  //about 2500 enough
         limD *= useHslLin ? 10.f : 1.f;
         float ilimD = 1.f / limD;
         float hig = ((float) deh.highl) / 100.f;
@@ -169,7 +169,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         constexpr float elogt = 2.71828f;
         bool lhutili = false;
 
-        FlatCurve* shcurve = new FlatCurve (deh.lhcurve); //curve L=f(H)
+        FlatCurve* shcurve = new FlatCurve(deh.lhcurve);  //curve L=f(H)
 
         if (!shcurve || shcurve->isIdentity()) {
             if (shcurve) {
@@ -287,7 +287,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 }
             }
 
-            scal = round (sc);
+            scal = round(sc);
             float ks = 1.f;
 
             if (gradstr != 0) {
@@ -323,7 +323,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             constexpr auto maxRetinexScales = 8;
             float RetinexScales[maxRetinexScales];
 
-            retinex_scales ( RetinexScales, scal, moderetinex, nei / grad, high );
+            retinex_scales(RetinexScales, scal, moderetinex, nei / grad, high);
 
             float *src[H_L] ALIGNED16;
             float *srcBuffer = new float[H_L * W_L];
@@ -386,29 +386,29 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 }
             }
 
-            const float logBetaGain = xlogf (16384.f);
+            const float logBetaGain = xlogf(16384.f);
             float pond = logBetaGain / (float) scal;
 
             if (!useHslLin) {
-                pond /= log (elogt);
+                pond /= log(elogt);
             }
 
-            auto shmap = ((mapmet == 2 || mapmet == 3 || mapmet == 4) && it == 1) ? new SHMap (W_L, H_L, true) : nullptr;
+            auto shmap = ((mapmet == 2 || mapmet == 3 || mapmet == 4) && it == 1) ? new SHMap(W_L, H_L, true) : nullptr;
 
             float *buffer = new float[W_L * H_L];;
 
-            for ( int scale = scal - 1; scale >= 0; scale-- ) {
+            for (int scale = scal - 1; scale >= 0; scale--) {
 #ifdef _OPENMP
                 #pragma omp parallel
 #endif
                 {
                     if (scale == scal - 1)
                     {
-                        gaussianBlur (src, out, W_L, H_L, RetinexScales[scale], buffer);
-                    } else { // reuse result of last iteration
+                        gaussianBlur(src, out, W_L, H_L, RetinexScales[scale], buffer);
+                    } else   // reuse result of last iteration
+                    {
                         // out was modified in last iteration => restore it
-                        if ((((mapmet == 2 && scale > 1) || mapmet == 3 || mapmet == 4) || (mapmet > 0 && mapcontlutili)) && it == 1)
-                        {
+                        if ((((mapmet == 2 && scale > 1) || mapmet == 3 || mapmet == 4) || (mapmet > 0 && mapcontlutili)) && it == 1) {
 #ifdef _OPENMP
                             #pragma omp for
 #endif
@@ -420,8 +420,9 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                             }
                         }
 
-                        gaussianBlur (out, out, W_L, H_L, sqrtf (SQR (RetinexScales[scale]) - SQR (RetinexScales[scale + 1])), buffer);
+                        gaussianBlur(out, out, W_L, H_L, sqrtf(SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])), buffer);
                     }
+
                     if ((((mapmet == 2 && scale > 2) || mapmet == 3 || mapmet == 4) || (mapmet > 0 && mapcontlutili)) && it == 1 && scale > 0)
                     {
                         // out will be modified => store it for use in next iteration. We even don't need a new buffer because 'buffer' is free after gaussianBlur :)
@@ -438,15 +439,15 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 }
 
                 if (((mapmet == 2 && scale > 2) || mapmet == 3 || mapmet == 4) && it == 1) {
-                    shmap->updateL (out, shradius, true, 1);
+                    shmap->updateL(out, shradius, true, 1);
                     h_th = shmap->max_f - deh.htonalwidth * (shmap->max_f - shmap->avg) / 100;
                     s_th = deh.stonalwidth * (shmap->avg - shmap->min_f) / 100;
                 }
 
 #ifdef __SSE2__
-                vfloat pondv = F2V (pond);
-                vfloat limMinv = F2V (ilimdx);
-                vfloat limMaxv = F2V (limdx);
+                vfloat pondv = F2V(pond);
+                vfloat limMinv = F2V(ilimdx);
+                vfloat limMaxv = F2V(limdx);
 
 #endif
 
@@ -504,11 +505,11 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 
                     if (useHslLin) {
                         for (; j < W_L - 3; j += 4) {
-                            _mm_storeu_ps (&luminance[i][j], LVFU (luminance[i][j]) + pondv *  (LIMV (LVFU (src[i][j]) / LVFU (out[i][j]), limMinv, limMaxv) ));
+                            _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv * (LIMV(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv)));
                         }
                     } else {
                         for (; j < W_L - 3; j += 4) {
-                            _mm_storeu_ps (&luminance[i][j], LVFU (luminance[i][j]) + pondv *  xlogf (LIMV (LVFU (src[i][j]) / LVFU (out[i][j]), limMinv, limMaxv) ));
+                            _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv *  xlogf(LIMV(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv)));
                         }
                     }
 
@@ -516,11 +517,11 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 
                     if (useHslLin) {
                         for (; j < W_L; j++) {
-                            luminance[i][j] +=  pond * (LIM (src[i][j] / out[i][j], ilimdx, limdx));
+                            luminance[i][j] +=  pond * (LIM(src[i][j] / out[i][j], ilimdx, limdx));
                         }
                     } else {
                         for (; j < W_L; j++) {
-                            luminance[i][j] +=  pond * xlogf (LIM (src[i][j] / out[i][j], ilimdx, limdx)); //  /logt ?
+                            luminance[i][j] +=  pond * xlogf(LIM(src[i][j] / out[i][j], ilimdx, limdx));   //  /logt ?
                         }
                     }
                 }
@@ -541,7 +542,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             float stddv = 0.f;
             // I call mean_stddv2 instead of mean_stddv ==> logBetaGain
 
-            mean_stddv2 ( luminance, mean, stddv, W_L, H_L, maxtr, mintr);
+            mean_stddv2(luminance, mean, stddv, W_L, H_L, maxtr, mintr);
             //printf("mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", mean, stddv, delta, maxtr, mintr);
 
             //mean_stddv( luminance, mean, stddv, W_L, H_L, logBetaGain, maxtr, mintr);
@@ -569,9 +570,9 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                     #pragma omp for schedule(dynamic,16)
 #endif
 
-                    for (int i = 0; i < H_L; i++ )
+                    for (int i = 0; i < H_L; i++)
                         for (int j = 0; j < W_L; j++) { //for mintr to maxtr evalate absciss in function of original transmission
-                            if (LIKELY (fabsf (luminance[i][j] - mean) < stddv)) {
+                            if (LIKELY(fabsf(luminance[i][j] - mean) < stddv)) {
                                 absciss = asig * luminance[i][j] + bsig;
                             } else if (luminance[i][j] >= mean) {
                                 absciss = amax * luminance[i][j] + bmax;
@@ -606,7 +607,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 
                     for (int i = borderL; i < hei - borderL; i++) {
                         for (int j = borderL; j < wid - borderL; j++) {
-                            tmL[i][j] = median (luminance[i][j], luminance[i - 1][j], luminance[i + 1][j], luminance[i][j + 1], luminance[i][j - 1], luminance[i - 1][j - 1], luminance[i - 1][j + 1], luminance[i + 1][j - 1], luminance[i + 1][j + 1]); //3x3
+                            tmL[i][j] = median(luminance[i][j], luminance[i - 1][j], luminance[i + 1][j], luminance[i][j + 1], luminance[i][j - 1], luminance[i - 1][j - 1], luminance[i - 1][j + 1], luminance[i + 1][j - 1], luminance[i + 1][j + 1]);  //3x3
                         }
                     }
 
@@ -614,7 +615,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                     #pragma omp parallel for
 #endif
 
-                    for (int i = borderL; i < hei - borderL; i++ ) {
+                    for (int i = borderL; i < hei - borderL; i++) {
                         for (int j = borderL; j < wid - borderL; j++) {
                             luminance[i][j] = tmL[i][j];
                         }
@@ -626,7 +627,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 
                 // I call mean_stddv2 instead of mean_stddv ==> logBetaGain
                 //mean_stddv( luminance, mean, stddv, W_L, H_L, 1.f, maxtr, mintr);
-                mean_stddv2 ( luminance, mean, stddv, W_L, H_L, maxtr, mintr);
+                mean_stddv2(luminance, mean, stddv, W_L, H_L, maxtr, mintr);
 
             }
 
@@ -647,7 +648,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             float delta = maxi - mini;
             //printf("maxi=%f mini=%f mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", maxi, mini, mean, stddv, delta, maxtr, mintr);
 
-            if ( !delta ) {
+            if (!delta) {
                 delta = 1.0f;
             }
 
@@ -675,7 +676,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             stddv = 0.f;
             // I call mean_stddv2 instead of mean_stddv ==> logBetaGain
 
-            mean_stddv2 ( luminance, mean, stddv, W_L, H_L, maxtr, mintr);
+            mean_stddv2(luminance, mean, stddv, W_L, H_L, maxtr, mintr);
             float asig = 0.f, bsig = 0.f, amax = 0.f, bmax = 0.f, amin = 0.f, bmin = 0.f;
 
             if (dehagaintransmissionCurve && mean != 0.f && stddv != 0.f) { //if curve
@@ -703,14 +704,14 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 #pragma omp for schedule(dynamic,16) nowait
 #endif
 
-                for ( int i = 0; i < H_L; i ++ )
+                for (int i = 0; i < H_L; i ++)
                     for (int j = 0; j < W_L; j++) {
                         float gan;
 
                         if (dehagaintransmissionCurve && mean != 0.f && stddv != 0.f) {
                             float absciss;
 
-                            if (LIKELY (fabsf (luminance[i][j] - mean) < stddv)) {
+                            if (LIKELY(fabsf(luminance[i][j] - mean) < stddv)) {
                                 absciss = asig * luminance[i][j] + bsig;
                             } else if (luminance[i][j] >= mean) {
                                 absciss = amax * luminance[i][j] + bmax;
@@ -726,7 +727,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                             gan = 0.5f;
                         }
 
-                        float cd = gan * cdfactor * ( luminance[i][j] ) + offse;
+                        float cd = gan * cdfactor * (luminance[i][j]) + offse;
 
                         cdmax = cd > cdmax ? cd : cdmax;
                         cdmin = cd < cdmin ? cd : cdmin;
@@ -739,9 +740,9 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                                 float valparam;
 
                                 if (useHsl || useHslLin) {
-                                    valparam = float ((shcurve->getVal (HH) - 0.5f));
+                                    valparam = float ((shcurve->getVal(HH) - 0.5f));
                                 } else {
-                                    valparam = float ((shcurve->getVal (Color::huelab_to_huehsv2 (HH)) - 0.5f));
+                                    valparam = float ((shcurve->getVal(Color::huelab_to_huehsv2(HH)) - 0.5f));
                                 }
 
                                 str *= (1.f + 2.f * valparam);
@@ -753,7 +754,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                         }
 
                         if (viewmet == 0) {
-                            luminance[i][j] = intp (str, clipretinex ( cd, 0.f, 32768.f ), originalLuminance[i][j]);
+                            luminance[i][j] = intp(str, clipretinex(cd, 0.f, 32768.f), originalLuminance[i][j]);
                         } else if (viewmet == 1) {
                             luminance[i][j] = out[i][j];
                         } else if (viewmet == 4) {
@@ -801,7 +802,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
     }
 }
 
-void ImProcFunctions::MSRLocal (float** luminance, float** templ, const float* const *originalLuminance, const int width, const int height, const LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
+void ImProcFunctions::MSRLocal(float** luminance, float** templ, const float* const *originalLuminance, const int width, const int height, const LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
 {
     BENCHFUN
     bool py = true;
@@ -813,24 +814,24 @@ void ImProcFunctions::MSRLocal (float** luminance, float** templ, const float* c
         //   constexpr bool useHsl = false; //never used
         constexpr bool useHslLin = false;//never used
         const float offse = 0.f; //loc.offs;
-        const float chrT = (float) (loc.chrrt) / 100.f;
+        const float chrT = (float)(loc.chrrt) / 100.f;
         const int scal = scall;//3;//loc.scale;;
         const float vart = loc.vart / 100.f;//variance
         const float strength = loc.str / 100.f; // Blend with original L channel data
         float limD = 10.f;//(float) loc.limd;
-        limD = pow (limD, 1.7f); //about 2500 enough
+        limD = pow(limD, 1.7f);  //about 2500 enough
         //limD *= useHslLin ? 10.f : 1.f;
         float ilimD = 1.f / limD;
         const float elogt = 2.71828f;
 
         //empirical skip evaluation : very difficult  because quasi all parameters interfere
         //to test on several images
-        int nei = (int) (krad * loc.neigh);
+        int nei = (int)(krad * loc.neigh);
 
         if (skip >= 4) {
-            nei = (int) (0.1f * nei + 2.f);    //not too bad
+            nei = (int)(0.1f * nei + 2.f);     //not too bad
         } else if (skip > 1 && skip < 4) {
-            nei = (int) (0.3f * nei + 2.f);
+            nei = (int)(0.3f * nei + 2.f);
         }
 
         int moderetinex = 0;
@@ -850,7 +851,7 @@ void ImProcFunctions::MSRLocal (float** luminance, float** templ, const float* c
         constexpr auto maxRetinexScales = 8;
         float RetinexScales[maxRetinexScales];
 
-        retinex_scales ( RetinexScales, scal, moderetinex, nei, high );
+        retinex_scales(RetinexScales, scal, moderetinex, nei, high);
 
 
         const int H_L = height;
@@ -888,18 +889,18 @@ void ImProcFunctions::MSRLocal (float** luminance, float** templ, const float* c
             out[i] = &outBuffer[i * W_L];
         }
 
-        const float logBetaGain = xlogf (16384.f);
+        const float logBetaGain = xlogf(16384.f);
         float pond = logBetaGain / (float) scal;
 
         if (!useHslLin) {
-            pond /= log (elogt);
+            pond /= log(elogt);
         }
 
-        auto shmap = mapmet == 4 ? new SHMap (W_L, H_L, true) : nullptr;
+        auto shmap = mapmet == 4 ? new SHMap(W_L, H_L, true) : nullptr;
 
         float *buffer = new float[W_L * H_L];
 
-        for ( int scale = scal - 1; scale >= 0; scale-- ) {
+        for (int scale = scal - 1; scale >= 0; scale--) {
 #ifdef _OPENMP
             #pragma omp parallel
 #endif
@@ -907,11 +908,11 @@ void ImProcFunctions::MSRLocal (float** luminance, float** templ, const float* c
 
                 if (scale == scal - 1)
                 {
-                    gaussianBlur (src, out, W_L, H_L, RetinexScales[scale], buffer);
-                } else { // reuse result of last iteration
+                    gaussianBlur(src, out, W_L, H_L, RetinexScales[scale], buffer);
+                } else   // reuse result of last iteration
+                {
                     // out was modified in last iteration => restore it
-                    if (((mapmet == 4)) && it == 1)
-                    {
+                    if (((mapmet == 4)) && it == 1) {
 
 #ifdef _OPENMP
                         #pragma omp for
@@ -924,8 +925,9 @@ void ImProcFunctions::MSRLocal (float** luminance, float** templ, const float* c
                         }
                     }
 
-                    gaussianBlur (out, out, W_L, H_L, sqrtf (SQR (RetinexScales[scale]) - SQR (RetinexScales[scale + 1])), buffer);
+                    gaussianBlur(out, out, W_L, H_L, sqrtf(SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])), buffer);
                 }
+
                 if ((mapmet == 4) && it == 1 && scale > 0)
                 {
                     // out will be modified => store it for use in next iteration. We even don't need a new buffer because 'buffer' is free after gaussianBlur :)
@@ -945,7 +947,7 @@ void ImProcFunctions::MSRLocal (float** luminance, float** templ, const float* c
             float h_thcomp, s_thcomp;
 
             if ((mapmet == 4) && it == 1) {
-                shmap->updateL (out, shradius, true, 1);
+                shmap->updateL(out, shradius, true, 1);
                 h_thcomp = 0.f;//shmap->max_f - loc.htonalwidth * (shmap->max_f - shmap->avg) / 100.f;
                 h_th = h_thcomp - (shHighlights * h_thcomp);
                 s_thcomp = 0.f;//loc.stonalwidth * (shmap->avg - shmap->min_f) / 100.f;
@@ -973,9 +975,9 @@ void ImProcFunctions::MSRLocal (float** luminance, float** templ, const float* c
             }
 
 #ifdef __SSE2__
-            vfloat pondv = F2V (pond);
-            vfloat limMinv = F2V (ilimD);
-            vfloat limMaxv = F2V (limD);
+            vfloat pondv = F2V(pond);
+            vfloat limMinv = F2V(ilimD);
+            vfloat limMaxv = F2V(limD);
 
 #endif
 #ifdef _OPENMP
@@ -989,11 +991,11 @@ void ImProcFunctions::MSRLocal (float** luminance, float** templ, const float* c
 
                 if (useHslLin) { //keep in case of ??
                     for (; j < W_L - 3; j += 4) {
-                        _mm_storeu_ps (&luminance[i][j], LVFU (luminance[i][j]) + pondv *  (LIMV (LVFU (src[i][j]) / LVFU (out[i][j]), limMinv, limMaxv) ));
+                        _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv * (LIMV(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv)));
                     }
                 } else {//always Lab mode due to Wavelet
                     for (; j < W_L - 3; j += 4) {
-                        _mm_storeu_ps (&luminance[i][j], LVFU (luminance[i][j]) + pondv *  xlogf (LIMV (LVFU (src[i][j]) / LVFU (out[i][j]), limMinv, limMaxv) ));
+                        _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv *  xlogf(LIMV(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv)));
                     }
                 }
 
@@ -1001,11 +1003,11 @@ void ImProcFunctions::MSRLocal (float** luminance, float** templ, const float* c
 
                 if (useHslLin) {
                     for (; j < W_L; j++) {
-                        luminance[i][j] +=  pond * (LIM (src[i][j] / out[i][j], ilimD, limD));
+                        luminance[i][j] +=  pond * (LIM(src[i][j] / out[i][j], ilimD, limD));
                     }
                 } else {
                     for (; j < W_L; j++) {
-                        luminance[i][j] +=  pond * xlogf (LIM (src[i][j] / out[i][j], ilimD, limD)); //  /logt ?
+                        luminance[i][j] +=  pond * xlogf(LIM(src[i][j] / out[i][j], ilimD, limD));   //  /logt ?
                     }
                 }
             }
@@ -1025,7 +1027,7 @@ void ImProcFunctions::MSRLocal (float** luminance, float** templ, const float* c
         mean = 0.f;
         stddv = 0.f;
 
-        mean_stddv2 ( luminance, mean, stddv, W_L, H_L, maxtr, mintr);
+        mean_stddv2(luminance, mean, stddv, W_L, H_L, maxtr, mintr);
         //printf("mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", mean, stddv, delta, maxtr, mintr);
 
         //  mean_stddv( luminance, mean, stddv, W_L, H_L, logBetaGain, maxtr, mintr);
@@ -1088,7 +1090,7 @@ void ImProcFunctions::MSRLocal (float** luminance, float** templ, const float* c
                     // float pp[9], temp;
 
                     for (int j = borderL; j < wid - borderL; j++) {
-                        tmL[i][j] = median (luminance[i][j], luminance[i - 1][j], luminance[i + 1][j], luminance[i][j + 1], luminance[i][j - 1], luminance[i - 1][j - 1], luminance[i - 1][j + 1], luminance[i + 1][j - 1], luminance[i + 1][j + 1]); //3x3
+                        tmL[i][j] = median(luminance[i][j], luminance[i - 1][j], luminance[i + 1][j], luminance[i][j + 1], luminance[i][j - 1], luminance[i - 1][j - 1], luminance[i - 1][j + 1], luminance[i + 1][j - 1], luminance[i + 1][j + 1]);  //3x3
                     }
                 }
 
@@ -1096,7 +1098,7 @@ void ImProcFunctions::MSRLocal (float** luminance, float** templ, const float* c
                 #pragma omp parallel for
 #endif
 
-                for (int i = borderL; i < hei - borderL; i++ ) {
+                for (int i = borderL; i < hei - borderL; i++) {
                     for (int j = borderL; j < wid - borderL; j++) {
                         luminance[i][j] = tmL[i][j];
                     }
@@ -1108,7 +1110,7 @@ void ImProcFunctions::MSRLocal (float** luminance, float** templ, const float* c
 
             // I call mean_stddv2 instead of mean_stddv ==> logBetaGain
             //  mean_stddv( luminance, mean, stddv, W_L, H_L, 1.f, maxtr, mintr);
-            mean_stddv2 ( luminance, mean, stddv, W_L, H_L, maxtr, mintr);
+            mean_stddv2(luminance, mean, stddv, W_L, H_L, maxtr, mintr);
 
         }
 
@@ -1129,7 +1131,7 @@ void ImProcFunctions::MSRLocal (float** luminance, float** templ, const float* c
         delta = maxi - mini;
         //printf("maxi=%f mini=%f mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", maxi, mini, mean, stddv, delta, maxtr, mintr);
 
-        if ( !delta ) {
+        if (!delta) {
             delta = 1.0f;
         }
 
@@ -1152,7 +1154,7 @@ void ImProcFunctions::MSRLocal (float** luminance, float** templ, const float* c
         stddv = 0.f;
         // I call mean_stddv2 instead of mean_stddv ==> logBetaGain
 
-        mean_stddv2 ( luminance, mean, stddv, W_L, H_L, maxtr, mintr);
+        mean_stddv2(luminance, mean, stddv, W_L, H_L, maxtr, mintr);
         float asig = 0.f, bsig = 0.f, amax = 0.f, bmax = 0.f, amin = 0.f, bmin = 0.f;
         //   bool gaincurve = false; //wavRETgainCcurve
         const bool hasWavRetGainCurve =  locRETgainCcurve && mean != 0.f && stddv != 0.f;
@@ -1188,12 +1190,12 @@ void ImProcFunctions::MSRLocal (float** luminance, float** templ, const float* c
             #pragma omp for schedule(dynamic,16)
 #endif
 
-            for ( int i = 0; i < H_L; i ++ )
+            for (int i = 0; i < H_L; i ++)
                 for (int j = 0; j < W_L; j++) {
                     if (hasWavRetGainCurve) {
                         float absciss;
 
-                        if (LIKELY (fabsf (luminance[i][j] - mean) < stddv)) {
+                        if (LIKELY(fabsf(luminance[i][j] - mean) < stddv)) {
                             absciss = asig * luminance[i][j] + bsig;
                         } else if (luminance[i][j] >= mean) {
                             absciss = amax * luminance[i][j] + bmax;
@@ -1208,7 +1210,7 @@ void ImProcFunctions::MSRLocal (float** luminance, float** templ, const float* c
 
                     cdmax = cd > cdmax ? cd : cdmax;
                     cdmin = cd < cdmin ? cd : cdmin;
-                    luminance[i][j] = LIM ( cd, 0.f, maxclip ) * str + (1.f - str) * originalLuminance[i][j];
+                    luminance[i][j] = LIM(cd, 0.f, maxclip) * str + (1.f - str) * originalLuminance[i][j];
                     //   templ[i][j] = LIM( cd, 0.f, maxclip ) * str + (1.f - str) * originalLuminance[i][j];
                     //  luminance[i][j] = LIM( cd, 0.f, maxclip );
                 }
