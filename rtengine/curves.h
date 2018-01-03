@@ -828,8 +828,12 @@ class WeightedStdToneCurve : public ToneCurve
 {
 private:
     float Triangle(float refX, float refY, float X2) const;
+#if defined( __SSE2__ ) && defined( __x86_64__ )
+    vfloat Triangle(vfloat refX, vfloat refY, vfloat X2) const;
+#endif
 public:
     void Apply(float& r, float& g, float& b) const;
+    void BatchApply(const size_t start, const size_t end, float *r, float *g, float *b) const;
 };
 
 class LuminanceToneCurve : public ToneCurve
@@ -1003,6 +1007,17 @@ inline float WeightedStdToneCurve::Triangle(float a, float a1, float b) const
     return a1;
 }
 
+#if defined( __SSE2__ ) && defined( __x86_64__ )
+inline vfloat WeightedStdToneCurve::Triangle(vfloat a, vfloat a1, vfloat b) const
+{
+        vfloat a2 = a1 - a;
+        vmask cmask = vmaskf_lt(b, a);
+        vfloat b3 = vself(cmask, b, F2V(65535.f) - b);
+        vfloat a3 = vself(cmask, a, F2V(65535.f) - a);
+        return b + a2 * b3 / a3;
+}
+#endif
+
 // Tone curve modifying the value channel only, preserving hue and saturation
 // values in 0xffff space
 inline void WeightedStdToneCurve::Apply (float& r, float& g, float& b) const
@@ -1010,6 +1025,9 @@ inline void WeightedStdToneCurve::Apply (float& r, float& g, float& b) const
 
     assert (lutToneCurve);
 
+    r = CLIP(r);
+    g = CLIP(g);
+    b = CLIP(b);
     float r1 = lutToneCurve[r];
     float g1 = Triangle(r, r1, g);
     float b1 = Triangle(r, r1, b);
@@ -1022,9 +1040,68 @@ inline void WeightedStdToneCurve::Apply (float& r, float& g, float& b) const
     float r3 = Triangle(b, b3, r);
     float g3 = Triangle(b, b3, g);
 
-    r = CLIP<float>( r1 * 0.50f + r2 * 0.25f + r3 * 0.25f);
+    r = CLIP<float>(r1 * 0.50f + r2 * 0.25f + r3 * 0.25f);
     g = CLIP<float>(g1 * 0.25f + g2 * 0.50f + g3 * 0.25f);
     b = CLIP<float>(b1 * 0.25f + b2 * 0.25f + b3 * 0.50f);
+}
+
+inline void WeightedStdToneCurve::BatchApply(const size_t start, const size_t end, float *r, float *g, float *b) const {
+    assert (lutToneCurve);
+    assert (lutToneCurve.getClip() & LUT_CLIP_BELOW);
+    assert (lutToneCurve.getClip() & LUT_CLIP_ABOVE);
+
+    // All pointers must have the same alignment for SSE usage. In the loop body below,
+    // we will only check `r`, assuming that the same result would hold for `g` and `b`.
+    assert (reinterpret_cast<uintptr_t>(r) % 16 == reinterpret_cast<uintptr_t>(g) % 16);
+    assert (reinterpret_cast<uintptr_t>(g) % 16 == reinterpret_cast<uintptr_t>(b) % 16);
+
+    size_t i = start;
+    while (true) {
+        if (i >= end) {
+            // If we get to the end before getting to an aligned address, just return.
+            // (Or, for non-SSE mode, if we get to the end.)
+            return;
+#if defined( __SSE2__ ) && defined( __x86_64__ )
+        } else if (reinterpret_cast<uintptr_t>(&r[i]) % 16 == 0) {
+            // Otherwise, we get to the first aligned address; go to the SSE part.
+            break;
+#endif
+        }
+        Apply(r[i], g[i], b[i]);
+        i++;
+    }
+
+#if defined( __SSE2__ ) && defined( __x86_64__ )
+    const vfloat c65535v = F2V(65535.f);
+    const vfloat zd5v = F2V(0.5f);
+    const vfloat zd25v = F2V(0.25f);
+
+    for (; i + 3 < end; i += 4) {
+        vfloat r_val = LIMV(LVF(r[i]), ZEROV, c65535v);
+        vfloat g_val = LIMV(LVF(g[i]), ZEROV, c65535v);
+        vfloat b_val = LIMV(LVF(b[i]), ZEROV, c65535v);
+        vfloat r1 = lutToneCurve[r_val];
+        vfloat g1 = Triangle(r_val, r1, g_val);
+        vfloat b1 = Triangle(r_val, r1, b_val);
+
+        vfloat g2 = lutToneCurve[g_val];
+        vfloat r2 = Triangle(g_val, g2, r_val);
+        vfloat b2 = Triangle(g_val, g2, b_val);
+
+        vfloat b3 = lutToneCurve[b_val];
+        vfloat r3 = Triangle(b_val, b3, r_val);
+        vfloat g3 = Triangle(b_val, b3, g_val);
+
+        STVF(r[i], LIMV(r1 * zd5v + r2 * zd25v + r3 * zd25v, ZEROV, c65535v));
+        STVF(g[i], LIMV(g1 * zd25v + g2 * zd5v + g3 * zd25v, ZEROV, c65535v));
+        STVF(b[i], LIMV(b1 * zd25v + b2 * zd25v + b3 * zd5v, ZEROV, c65535v));
+    }
+
+    // Remainder in non-SSE.
+    for (; i < end; ++i) {
+        Apply(r[i], g[i], b[i]);
+    }
+#endif
 }
 
 // Tone curve modifying the value channel only, preserving hue and saturation
