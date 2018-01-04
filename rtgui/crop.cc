@@ -57,6 +57,7 @@ int notifyListenerUI (void* data)
 Crop::Crop():
     FoldableToolPanel(this, "crop", M("TP_CROP_LABEL"), false, true),
     crop_ratios{
+        {M("GENERAL_ASIMAGE"), 0.0},
         {"3:2", 3.0 / 2.0},                 // L1.5,        P0.666...
         {"4:3", 4.0 / 3.0},                 // L1.333...,   P0.75
         {"16:9", 16.0 / 9.0},               // L1.777...,   P0.5625
@@ -292,10 +293,14 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited)
         setDimensions (pp->crop.x + pp->crop.w, pp->crop.y + pp->crop.h);
     }
 
-    ratio->set_active_text (pp->crop.ratio);
+    if (pp->crop.ratio == "As Image") {
+        ratio->set_active(0);
+    } else {
+        ratio->set_active_text (pp->crop.ratio);
+    }
     fixr->set_active (pp->crop.fixratio);
 
-    const bool flip_orientation = pp->crop.fixratio && crop_ratios[ratio->get_active_row_number()].value < 1.0;
+    const bool flip_orientation = pp->crop.fixratio && crop_ratios[ratio->get_active_row_number()].value > 0 && crop_ratios[ratio->get_active_row_number()].value < 1.0;
 
     if (pp->crop.orientation == "Landscape") {
         orientation->set_active (flip_orientation ? 1 : 0);
@@ -390,7 +395,7 @@ void Crop::write (ProcParams* pp, ParamsEdited* pedited)
     pp->crop.ratio = ratio->get_active_text ();
 
     // for historical reasons we store orientation different if ratio is written as 2:3 instead of 3:2, but in GUI 'landscape' is always long side horizontal regardless of the ratio is written short or long side first.
-    const bool flip_orientation = fixr->get_active() && crop_ratios[ratio->get_active_row_number()].value < 1.0;
+    const bool flip_orientation = fixr->get_active() && crop_ratios[ratio->get_active_row_number()].value > 0 && crop_ratios[ratio->get_active_row_number()].value < 1.0;
 
     if (orientation->get_active_row_number() == 0) {
         pp->crop.orientation = flip_orientation ? "Portrait" : "Landscape";
@@ -1265,6 +1270,9 @@ double Crop::getRatio ()
     }
 
     r = crop_ratios[ratio->get_active_row_number()].value;
+    if (!r) {
+        r = maxh <= maxw ? float(maxh)/float(maxw) : float(maxw)/float(maxh);
+    }
 
     if (r < 1.0) {
         r = 1.0 / r;    // convert to long side first (eg 4:5 becomes 5:4)

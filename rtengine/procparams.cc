@@ -1520,7 +1520,7 @@ CropParams::CropParams() :
     w(15000),
     h(15000),
     fixratio(true),
-    ratio("3:2"),
+    ratio("As Image"),
     orientation("As Image"),
     guide("Frame")
 {

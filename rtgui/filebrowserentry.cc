@@ -168,6 +168,16 @@ void FileBrowserEntry::customBackBufferUpdate (Cairo::RefPtr<Cairo::Context> c)
             drawCrop (c, prex, prey, prew, preh, 0, 0, scale, cropParams, true, false);
         } else {
             rtengine::procparams::CropParams cparams = thumbnail->getProcParams().crop;
+            switch (options.cropGuides) {
+            case Options::CROP_GUIDE_NONE:
+                cparams.guide = "None";
+                break;
+            case Options::CROP_GUIDE_FRAME:
+                cparams.guide = "Frame";
+                break;
+            default:
+                break;
+            }
 
             if (cparams.enabled && !thumbnail->isQuick()) { // Quick thumb have arbitrary sizes, so don't apply the crop
                 drawCrop (c, prex, prey, prew, preh, 0, 0, scale, cparams, true, false);
