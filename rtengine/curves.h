@@ -1111,29 +1111,28 @@ inline void SatAndValueBlendingToneCurve::Apply (float& r, float& g, float& b) c
 
     assert (lutToneCurve);
 
+    r = CLIP(r);
+    g = CLIP(g);
+    b = CLIP(b);
+
+    const float lum = (r + g + b) / 3.f;
+    const float newLum = lutToneCurve[lum];
+
     float h, s, v;
-    float lum = (r + g + b) / 3.f;
-    //float lum = Color::rgbLuminance(r, g, b);
-    float newLum = lutToneCurve[lum];
-
-    if (newLum == lum) {
-        return;
-    }
-
-    Color::rgb2hsv(r, g, b, h, s, v);
+    Color::rgb2hsvtc(r, g, b, h, s, v);
 
     float dV;
     if (newLum > lum) {
         // Linearly targeting Value = 1 and Saturation = 0
-        float coef = (newLum - lum) / (65535.f - lum);
+        const float coef = (newLum - lum) / (65535.f - lum);
         dV = (1.f - v) * coef;
         s *= 1.f - coef;
     } else {
         // Linearly targeting Value = 0
-        float coef = (newLum - lum) / lum ;
+        const float coef = (newLum - lum) / lum ;
         dV = v * coef;
     }
-    Color::hsv2rgb(h, s, v + dV, r, g, b);
+    Color::hsv2rgbdcp(h, s, v + dV, r, g, b);
 }
 
 }
