@@ -313,17 +313,11 @@ public:
             s = del_Max / var_Max;
 
             if (r == var_Max) {
-                h = (g - b) / del_Max;
+                h = (g < b ? 6.f : 0.f) + (g - b) / del_Max;
             } else if (g == var_Max) {
                 h = 2.f + (b - r) / del_Max;
             } else { /*if ( b == var_Max ) */
                 h = 4.f + (r - g) / del_Max;
-            }
-
-            if (h < 0.f) {
-                h += 6.f;
-            } else if (h > 6.f) {
-                h -= 6.f;
             }
         }
     }
