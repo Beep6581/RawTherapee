@@ -638,7 +638,7 @@ void ImageArea::initialImageArrived (CropWindow* cw)
 
     if (mainCropWindow) {
         if(firstOpen || options.prevdemo != PD_Sidecar || (!options.rememberZoomAndPan) ) {
-            if (options.cropAutoFit) {
+            if (options.cropAutoFit || options.bgcolor != 0) {
                 mainCropWindow->zoomFitCrop();
             } else {
                 mainCropWindow->zoomFit();
