@@ -233,14 +233,8 @@ void customToneCurve(const ToneCurve &customToneCurve, ToneCurveParams::TcMode c
         }
     } else if (curveMode == ToneCurveParams::TcMode::PERCEPTUAL) { // apply curve while keeping color appearance constant
         const PerceptualToneCurve& userToneCurve = static_cast<const PerceptualToneCurve&> (customToneCurve);
-
         for (int i = istart, ti = 0; i < tH; i++, ti++) {
-            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                rtemp[ti * tileSize + tj] = CLIP<float> (rtemp[ti * tileSize + tj]);
-                gtemp[ti * tileSize + tj] = CLIP<float> (gtemp[ti * tileSize + tj]);
-                btemp[ti * tileSize + tj] = CLIP<float> (btemp[ti * tileSize + tj]);
-                userToneCurve.Apply(rtemp[ti * tileSize + tj], gtemp[ti * tileSize + tj], btemp[ti * tileSize + tj], ptcApplyState);
-            }
+            userToneCurve.BatchApply(0, tW - jstart, &rtemp[ti * tileSize], &gtemp[ti * tileSize], &btemp[ti * tileSize], ptcApplyState);
         }
     }
 }
