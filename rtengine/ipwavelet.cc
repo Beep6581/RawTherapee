@@ -46,6 +46,7 @@
 #endif
 
 #include "cplx_wavelet_dec.h"
+#include "StopWatch.h"
 
 #define TS 64       // Tile size
 #define offset 25   // shift between tiles
@@ -144,6 +145,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 
 
 {
+    BENCHFUN
 #ifdef _DEBUG
     // init variables to display Munsell corrections
     MunsellDebugInfo* MunsDebugInfo = new MunsellDebugInfo();

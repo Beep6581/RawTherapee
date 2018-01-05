@@ -15,6 +15,7 @@
 #include "settings.h"
 #include "camconst.h"
 #include "utils.h"
+#include "StopWatch.h"
 
 namespace rtengine
 {

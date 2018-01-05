@@ -29,6 +29,8 @@
 #include "rawimagesource.h"
 #include "../rtgui/multilangmgr.h"
 #include "mytime.h"
+#include "StopWatch.h"
+
 #undef THREAD_PRIORITY_NORMAL
 
 namespace rtengine
@@ -106,6 +108,7 @@ private:
 
     bool stage_init()
     {
+        BENCHFUN
         errorCode = 0;
 
         if (pl) {
@@ -735,6 +738,7 @@ private:
 
     void stage_denoise()
     {
+        BENCHFUN
         procparams::ProcParams& params = job->pparams;
         //ImProcFunctions ipf (&params, true);
         ImProcFunctions &ipf = * (ipf_p.get());
@@ -800,6 +804,7 @@ private:
 
     void stage_transform()
     {
+        BENCHFUN
         procparams::ProcParams& params = job->pparams;
         //ImProcFunctions ipf (&params, true);
         ImProcFunctions &ipf = * (ipf_p.get());
@@ -834,6 +839,7 @@ private:
 
     Image16 *stage_finish()
     {
+        BENCHFUN
         procparams::ProcParams& params = job->pparams;
         //ImProcFunctions ipf (&params, true);
         ImProcFunctions &ipf = * (ipf_p.get());
@@ -1367,6 +1373,7 @@ private:
 
     void stage_early_resize()
     {
+        BENCHFUN
         procparams::ProcParams& params = job->pparams;
         //ImProcFunctions ipf (&params, true);
         ImProcFunctions &ipf = * (ipf_p.get());

@@ -23,6 +23,7 @@
 #include "rt_math.h"
 #include "sleef.c"
 #include "opthelper.h"
+#include "StopWatch.h"
 
 using namespace std;
 
@@ -36,6 +37,7 @@ namespace rtengine
 extern const Settings* settings;
 SSEFUNCTION void ImProcFunctions::dcdamping (float** aI, float** aO, float damping, int W, int H)
 {
+    BENCHFUN
 
     const float dampingFac = -2.0 / (damping * damping);
 
@@ -92,6 +94,7 @@ SSEFUNCTION void ImProcFunctions::dcdamping (float** aI, float** aO, float dampi
 
 void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, int W, int H, const SharpeningParams &sharpenParam)
 {
+    BENCHFUN
     if (sharpenParam.deconvamount < 1) {
         return;
     }
@@ -151,6 +154,7 @@ void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, int W, i
 
 void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &sharpenParam)
 {
+    BENCHFUN
 
     if (!sharpenParam.enabled) {
         return;
@@ -256,6 +260,7 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
 
 void ImProcFunctions::sharpenHaloCtrl (float** luminance, float** blurmap, float** base, int W, int H, const SharpeningParams &sharpenParam)
 {
+    BENCHFUN
 
     float scale = (100.f - sharpenParam.halocontrol_amount) * 0.01f;
     float sharpFac = sharpenParam.amount * 0.01f;
@@ -324,6 +329,7 @@ void ImProcFunctions::sharpenHaloCtrl (float** luminance, float** blurmap, float
 // Thanks to Manuel for this excellent job (Jacques Desmis JDC or frej83)
 void ImProcFunctions::MLsharpen (LabImage* lab)
 {
+    BENCHFUN
     // JD: this algorithm maximize clarity of images; it does not play on accutance. It can remove (partialy) the effects of the AA filter)
     // I think we can use this algorithm alone in most cases, or first to clarify image and if you want a very little USM (unsharp mask sharpening) after...
     if (!params->sharpenEdge.enabled) {
@@ -564,6 +570,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab)
 //! \param luminance : Luminance channel of image
 void ImProcFunctions::MLmicrocontrast(float** luminance, int W, int H)
 {
+    BENCHFUN
     if (!params->sharpenMicro.enabled) {
         return;
     }
@@ -804,16 +811,19 @@ void ImProcFunctions::MLmicrocontrast(float** luminance, int W, int H)
 
 void ImProcFunctions::MLmicrocontrast(LabImage* lab)
 {
+    BENCHFUN
     MLmicrocontrast(lab->L, lab->W, lab->H);
 }
 
 void ImProcFunctions::MLmicrocontrastcam(CieImage* ncie)
 {
+    BENCHFUN
     MLmicrocontrast(ncie->sh_p, ncie->W, ncie->H);
 }
 
 void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
 {
+    BENCHFUN
     if ((!params->sharpening.enabled) || params->sharpening.amount < 1 || ncie->W < 8 || ncie->H < 8) {
         return;
     }

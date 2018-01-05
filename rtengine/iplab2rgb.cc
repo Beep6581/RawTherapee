@@ -26,6 +26,7 @@
 #include "curves.h"
 #include "alignedbuffer.h"
 #include "color.h"
+#include "StopWatch.h"
 
 namespace rtengine
 {
@@ -264,6 +265,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
  */
 Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm, GammaValues *ga)
 {
+    BENCHFUN
 
     if (cx < 0) {
         cx = 0;

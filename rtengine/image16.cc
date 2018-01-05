@@ -21,6 +21,7 @@
 #include "image8.h"
 #include <cstdio>
 #include "rtengine.h"
+#include "StopWatch.h"
 
 namespace
 {
@@ -333,6 +334,7 @@ Image16::tofloat()
 // Parallized transformation; create transform with cmsFLAGS_NOCACHE!
 void Image16::ExecCMSTransform(cmsHTRANSFORM hTransform, const LabImage &labImage, int cx, int cy)
 {
+    BENCHFUN
     // LittleCMS cannot parallelize planar Lab float images
     // so build temporary buffers to allow multi processor execution
 #ifdef _OPENMP
