@@ -7,6 +7,7 @@ ABOUT_TAB_RELEASENOTES;Notes de la versió
 ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Restaura predeterminats
 BATCHQUEUE_AUTOSTART;Auto engega
+BATCHQUEUE_AUTOSTARTHINT;Inicia processat automàticament en rebre un nou treball
 BATCH_PROCESSING;Processament per lots
 CURVEEDITOR_CURVE;Corba
 CURVEEDITOR_CURVES;Corbes
@@ -148,12 +149,7 @@ FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Mostra imatges no recentment desades.\nDrec
 FILEBROWSER_SHOWTRASHHINT;Veure què hi ha a la paperera.\nDrecera: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Mostra imatges sense etiqueta de color.\nDrecera: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Mostra imatges sense rang.\nDrecera: <b>0</b>
-FILEBROWSER_STARTPROCESSING;Inicia procés
-FILEBROWSER_STARTPROCESSINGHINT;Inicia el processament de les imatges de la cua
-FILEBROWSER_STOPPROCESSING;Atura processament
-FILEBROWSER_STOPPROCESSINGHINT;Atura processament d'imatges de la cua
 FILEBROWSER_THUMBSIZE;Tamany minifoto
-FILEBROWSER_TOOLTIP_STOPPROCESSING;Inicia processat automàticament en rebre un nou treball
 FILEBROWSER_ZOOMINHINT;Engrandir minifoto.\nDrecera: <b>+</b>
 FILEBROWSER_ZOOMOUTHINT;Reduïr minifoto.\nDrecera: <b>-</b>
 GENERAL_ABOUT;Respecte a
@@ -955,6 +951,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !BATCHQUEUE_DESTFILENAME;Path and file name
+!BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !CURVEEDITOR_AXIS_IN;I:
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
 !CURVEEDITOR_AXIS_OUT;O:
@@ -1421,6 +1418,12 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
 !PREFERENCES_CMMBPC;Black point compensation
+!PREFERENCES_CROP;Crop editing
+!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
+!PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
+!PREFERENCES_CROP_GUIDES_FRAME;Frame
+!PREFERENCES_CROP_GUIDES_FULL;Original
+!PREFERENCES_CROP_GUIDES_NONE;None
 !PREFERENCES_CURVEBBOXPOS;Position of curve copy & paste buttons
 !PREFERENCES_CURVEBBOXPOS_ABOVE;Above
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below

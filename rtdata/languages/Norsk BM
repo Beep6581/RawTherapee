@@ -58,10 +58,6 @@ FILEBROWSER_SHOWRANK4HINT;Vis bilder rangert med 4 stjerne
 FILEBROWSER_SHOWRANK5HINT;Vis bilder rangert med 5 stjerne
 FILEBROWSER_SHOWTRASHHINT;Vis innholdet i søpla
 FILEBROWSER_SHOWUNRANKHINT;Vis unrangerte bilder
-FILEBROWSER_STARTPROCESSING;Start Processing
-FILEBROWSER_STARTPROCESSINGHINT;Begynn prosessering/lagring av bilder i køen
-FILEBROWSER_STOPPROCESSING;Stopp prosesseringen
-FILEBROWSER_STOPPROCESSINGHINT;Stopp prosesseringen av bilder
 FILEBROWSER_THUMBSIZE;Thumbnail størrelse
 FILEBROWSER_ZOOMINHINT;Øk thumbnail størrelse
 FILEBROWSER_ZOOMOUTHINT;Reduser thumbnail størrelse
@@ -425,7 +421,9 @@ TP_WBALANCE_TEMPERATURE;Temperatur
 !ABOUT_TAB_RELEASENOTES;Release Notes
 !ABOUT_TAB_SPLASH;Splash
 !BATCHQUEUE_AUTOSTART;Auto-start
+!BATCHQUEUE_AUTOSTARTHINT;Start processing automatically when a new job arrives.
 !BATCHQUEUE_DESTFILENAME;Path and file name
+!BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !BATCH_PROCESSING;Batch Processing
 !CURVEEDITOR_AXIS_IN;I:
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
@@ -556,7 +554,6 @@ TP_WBALANCE_TEMPERATURE;Temperatur
 !FILEBROWSER_SHOWRECENTLYSAVEDHINT;Show saved images.\nShortcut: <b>Alt-7</b>
 !FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show unsaved images.\nShortcut: <b>Alt-6</b>
 !FILEBROWSER_SHOWUNCOLORHINT;Show images without a color label.\nShortcut: <b>Alt-0</b>
-!FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives.
 !FILEBROWSER_UNRANK_TOOLTIP;Unrank.\nShortcut: <b>Shift-0</b>
 !FILECHOOSER_FILTER_ANY;All files
 !FILECHOOSER_FILTER_COLPROF;Color profiles
@@ -1152,6 +1149,12 @@ TP_WBALANCE_TEMPERATURE;Temperatur
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
 !PREFERENCES_CMMBPC;Black point compensation
+!PREFERENCES_CROP;Crop editing
+!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
+!PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
+!PREFERENCES_CROP_GUIDES_FRAME;Frame
+!PREFERENCES_CROP_GUIDES_FULL;Original
+!PREFERENCES_CROP_GUIDES_NONE;None
 !PREFERENCES_CURVEBBOXPOS;Position of curve copy & paste buttons
 !PREFERENCES_CURVEBBOXPOS_ABOVE;Above
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below
