@@ -191,7 +191,6 @@ public:
     int showFilePanelState; // 0: normal, 1: maximized, 2: normal, 3: hidden
     bool showInfo;
     bool mainNBVertical;  // main notebook vertical tabs?
-    int cropPPI;
     bool showClippedHighlights;
     bool showClippedShadows;
     int highlightThreshold;
@@ -260,6 +259,12 @@ public:
     int curvebboxpos; // 0=above, 1=right, 2=below, 3=left
 
     bool showFilmStripToolBar;
+
+    // cropping options
+    int cropPPI;
+    enum CropGuidesMode { CROP_GUIDE_NONE, CROP_GUIDE_FRAME, CROP_GUIDE_FULL };
+    CropGuidesMode cropGuides;
+    bool cropAutoFit;    
 
     // Performance options
     Glib::ustring clutsDir;

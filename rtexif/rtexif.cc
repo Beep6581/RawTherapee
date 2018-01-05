@@ -1572,7 +1572,7 @@ double Tag::toDouble (int ofs) const
 /**
  * @brief Create an array of the elements
  */
-double *Tag::toDoubleArray (int ofs)
+double* Tag::toDoubleArray (int ofs) const
 {
     double *values = new double[count];
 
@@ -1583,7 +1583,7 @@ double *Tag::toDoubleArray (int ofs)
     return values;
 }
 
-void Tag::toRational (int& num, int& denom, int ofs)
+void Tag::toRational (int& num, int& denom, int ofs) const
 {
 
     switch (type) {
@@ -1632,7 +1632,7 @@ void Tag::toRational (int& num, int& denom, int ofs)
     }
 }
 
-void Tag::toString (char* buffer, int ofs)
+void Tag::toString (char* buffer, int ofs) const
 {
 
     if (type == UNDEFINED && !directory) {
