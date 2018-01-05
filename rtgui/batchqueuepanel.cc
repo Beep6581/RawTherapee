@@ -49,8 +49,6 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     Gtk::VBox* batchQueueButtonBox = Gtk::manage (new Gtk::VBox);
     batchQueueButtonBox->set_name("BatchQueueButtons");
 
-    qLbl = Gtk::manage (new Gtk::Label(M("MAIN_FRAME_BATCHQUEUE")));
-
     qStartStop = Gtk::manage (new Gtk::Switch());
     qStartStop->set_tooltip_markup (M("BATCHQUEUE_STARTSTOPHINT"));
     qStartStopConn = qStartStop->property_active().signal_changed().connect (sigc::mem_fun(*this, &BatchQueuePanel::startOrStopBatchProc));
@@ -59,9 +57,10 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     qAutoStart->set_tooltip_text (M("BATCHQUEUE_AUTOSTARTHINT"));
     qAutoStart->set_active (options.procQueueEnabled);
 
-    batchQueueButtonBox->pack_start (*qLbl, Gtk::PACK_SHRINK, 4);
     batchQueueButtonBox->pack_start (*qStartStop, Gtk::PACK_SHRINK, 4);
     batchQueueButtonBox->pack_start (*qAutoStart, Gtk::PACK_SHRINK, 4);
+    Gtk::Frame *bbox = Gtk::manage(new Gtk::Frame(M("MAIN_FRAME_BATCHQUEUE")));
+    bbox->add(*batchQueueButtonBox);
 
     // Output directory selection
     fdir = Gtk::manage (new Gtk::Frame (M("PREFERENCES_OUTDIR")));
@@ -134,7 +133,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     pack_start (*topBox, Gtk::PACK_SHRINK);
     topBox->set_name("BatchQueueButtonsMainContainer");
 
-    topBox->pack_start (*batchQueueButtonBox, Gtk::PACK_SHRINK, 4);
+    topBox->pack_start (*bbox, Gtk::PACK_SHRINK, 4);
     topBox->pack_start (*fdir, Gtk::PACK_EXPAND_WIDGET, 4);
     topBox->pack_start (*fformat, Gtk::PACK_EXPAND_WIDGET, 4);
 

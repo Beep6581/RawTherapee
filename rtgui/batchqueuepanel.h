@@ -32,7 +32,6 @@ class BatchQueuePanel : public Gtk::VBox,
     public FormatChangeListener
 {
 
-    Gtk::Label* qLbl;
     Gtk::Button* zoomInButton;
     Gtk::Button* zoomOutButton;
     Gtk::Switch* qStartStop;
