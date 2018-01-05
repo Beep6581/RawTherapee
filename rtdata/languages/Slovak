@@ -4,6 +4,7 @@
 
 ADJUSTER_RESET_TO_DEFAULT;Resetovať na predvolené nastavenia
 BATCHQUEUE_AUTOSTART;Auto štart
+BATCHQUEUE_AUTOSTARTHINT;Začať spracovanie automaticky, keď príde nová úloha
 BATCH_PROCESSING;Dávkové spracovanie
 CURVEEDITOR_CUSTOM;Vlastné
 CURVEEDITOR_DARKS;Tiene
@@ -75,12 +76,7 @@ FILEBROWSER_SHOWRANK4HINT;Ukázať obrázky triedy 4 hviezda
 FILEBROWSER_SHOWRANK5HINT;Ukázať obrázky triedy 5 hviezda
 FILEBROWSER_SHOWTRASHHINT;Zobraziť obsah koša
 FILEBROWSER_SHOWUNRANKHINT;Zobraziť obrázky bez triedy
-FILEBROWSER_STARTPROCESSING;Začať spracovanie
-FILEBROWSER_STARTPROCESSINGHINT;Začať spracovanie/ukladanie obrázkov v rade
-FILEBROWSER_STOPPROCESSING;Zastaviť spracovanie
-FILEBROWSER_STOPPROCESSINGHINT;Zastaviť spracovanie obrázkov
 FILEBROWSER_THUMBSIZE;Veľkosť zmenšenín
-FILEBROWSER_TOOLTIP_STOPPROCESSING;Začať spracovanie automaticky, keď príde nová úloha
 FILEBROWSER_ZOOMINHINT;Zväčšiť veľkosť zmenšenín
 FILEBROWSER_ZOOMOUTHINT;Zmenšiť veľkosť zmenšenín
 GENERAL_ABOUT;O programe
@@ -517,6 +513,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !ABOUT_TAB_RELEASENOTES;Release Notes
 !ABOUT_TAB_SPLASH;Splash
 !BATCHQUEUE_DESTFILENAME;Path and file name
+!BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !CURVEEDITOR_AXIS_IN;I:
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
 !CURVEEDITOR_AXIS_OUT;O:
@@ -1203,6 +1200,12 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
 !PREFERENCES_CMMBPC;Black point compensation
+!PREFERENCES_CROP;Crop editing
+!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
+!PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
+!PREFERENCES_CROP_GUIDES_FRAME;Frame
+!PREFERENCES_CROP_GUIDES_FULL;Original
+!PREFERENCES_CROP_GUIDES_NONE;None
 !PREFERENCES_CURVEBBOXPOS;Position of curve copy & paste buttons
 !PREFERENCES_CURVEBBOXPOS_ABOVE;Above
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below

@@ -22,6 +22,7 @@ ABOUT_TAB_RELEASENOTES;Uitgave-opmerkingen
 ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Terug naar beginwaarde
 BATCHQUEUE_AUTOSTART;Autostart
+BATCHQUEUE_AUTOSTARTHINT;Start verwerking automatisch wanneer nieuwe foto arriveert
 BATCHQUEUE_DESTFILENAME;Pad en bestandsnaam
 BATCH_PROCESSING;Batch-verwerking
 CURVEEDITOR_AXIS_IN;I:
@@ -208,12 +209,7 @@ FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Toon niet-opgeslagen/verwerkte foto's.\nSne
 FILEBROWSER_SHOWTRASHHINT;Toon inhoud prullenbak\nSneltoets: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Toon foto's zonder kleurlabel.\nSneltoets: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Toon foto's zonder sterwaardering.\nSneltoets: <b>0</b>
-FILEBROWSER_STARTPROCESSING;Start verwerking
-FILEBROWSER_STARTPROCESSINGHINT;Start verwerking van bestanden in verwerkingsrij
-FILEBROWSER_STOPPROCESSING;Stop verwerking
-FILEBROWSER_STOPPROCESSINGHINT;Stop verwerking van bestanden in verwerkingsrij
 FILEBROWSER_THUMBSIZE;Miniaturen
-FILEBROWSER_TOOLTIP_STOPPROCESSING;Start verwerking automatisch wanneer nieuwe foto arriveert
 FILEBROWSER_UNRANK_TOOLTIP;Verwijder sterwaardering\nSneltoets: <b>Shift-0</b>
 FILEBROWSER_ZOOMINHINT;Groter
 FILEBROWSER_ZOOMOUTHINT;Kleiner
@@ -2125,6 +2121,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !DONT_SHOW_AGAIN;Don't show this message again.
 !EXIFPANEL_SHOWALL;Show all
 !GENERAL_SLIDER;Slider
@@ -2168,6 +2165,12 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !PARTIALPASTE_LOCALCONTRAST;Local contrast
 !PARTIALPASTE_TM_FATTAL;HDR Tone mapping
 !PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
+!PREFERENCES_CROP;Crop editing
+!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
+!PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
+!PREFERENCES_CROP_GUIDES_FRAME;Frame
+!PREFERENCES_CROP_GUIDES_FULL;Original
+!PREFERENCES_CROP_GUIDES_NONE;None
 !PREFERENCES_D50_OLD;5000K
 !PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_EDITORCMDLINE;Custom command line

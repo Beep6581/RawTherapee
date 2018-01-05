@@ -13,6 +13,7 @@ ABOUT_TAB_RELEASENOTES;Примечания к выпуску
 ABOUT_TAB_SPLASH;Заставка
 ADJUSTER_RESET_TO_DEFAULT;Сбросить настройки
 BATCHQUEUE_AUTOSTART;Автостарт
+BATCHQUEUE_AUTOSTARTHINT;Автоматически запускать обработку при добавлении файла в очередь
 BATCHQUEUE_DESTFILENAME;Имя файла и путь к нему
 BATCH_PROCESSING;Пакетная обработка
 CURVEEDITOR_CURVE;Кривая
@@ -173,12 +174,7 @@ FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Показать изображения, с
 FILEBROWSER_SHOWTRASHHINT;Показать содержимое корзины.\nГорячая клавиша: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Показать изображения без цветовой метки.\nГорячая клавиша: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Показать изображения без рейтинга\nГорячая клавиша: <b>0</b>
-FILEBROWSER_STARTPROCESSING;Начать обработку
-FILEBROWSER_STARTPROCESSINGHINT;Запуск обработки помещенных в очередь изображений
-FILEBROWSER_STOPPROCESSING;Остановить обработку
-FILEBROWSER_STOPPROCESSINGHINT;Отмена обработки изображений
 FILEBROWSER_THUMBSIZE;Размер эскиза
-FILEBROWSER_TOOLTIP_STOPPROCESSING;Автоматически запускать обработку при добавлении файла в очередь
 FILEBROWSER_UNRANK_TOOLTIP;Удалить рейтинг\nГорячая клавиша: <b>Shift-~</b>
 FILEBROWSER_ZOOMINHINT;Увеличить размер эскиза\nГорячая клавиша: <b>+</b>\n\nГорячая клавиша в режиме Одиночного редактора: <b>Alt-+</b>
 FILEBROWSER_ZOOMOUTHINT;Уменьшить размер эскиза\nГорячая клавиша: <b>+</b>\n\nГорячая клавиша в режиме Одиночного редактора: <b>Alt--</b>
@@ -1262,6 +1258,7 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !CURVEEDITOR_AXIS_IN;I:
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
 !CURVEEDITOR_AXIS_OUT;O:
@@ -1610,6 +1607,12 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
 !PREFERENCES_CMMBPC;Black point compensation
+!PREFERENCES_CROP;Crop editing
+!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
+!PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
+!PREFERENCES_CROP_GUIDES_FRAME;Frame
+!PREFERENCES_CROP_GUIDES_FULL;Original
+!PREFERENCES_CROP_GUIDES_NONE;None
 !PREFERENCES_CURVEBBOXPOS;Position of curve copy & paste buttons
 !PREFERENCES_CURVEBBOXPOS_ABOVE;Above
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below
