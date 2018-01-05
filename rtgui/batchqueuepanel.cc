@@ -249,6 +249,12 @@ void BatchQueuePanel::queueSizeChanged (int qsize, bool queueEmptied, bool queue
 {
     updateTab ( qsize);
 
+    if (qsize == 0 || (qsize == 1 && !fdir->get_sensitive())) {
+        qStartStop->set_sensitive(false);
+    } else {
+        qStartStop->set_sensitive(true);
+    }
+
     if (queueEmptied || queueError) {
         stopBatchProc ();
         fdir->set_sensitive (true);
@@ -283,6 +289,9 @@ void BatchQueuePanel::startBatchProc ()
     if (batchQueue->hasJobs()) {
         fdir->set_sensitive (false);
         fformat->set_sensitive (false);
+        if (batchQueue->getEntries().size() == 1) {
+            qStartStop->set_sensitive(false);
+        }
         saveOptions();
         batchQueue->startProcessing ();
     } else {
