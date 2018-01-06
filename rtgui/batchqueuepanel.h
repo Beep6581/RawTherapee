@@ -34,11 +34,9 @@ class BatchQueuePanel : public Gtk::VBox,
 
     Gtk::Button* zoomInButton;
     Gtk::Button* zoomOutButton;
-    Gtk::ToggleButton* start;
-    Gtk::ToggleButton* stop;
-    Gtk::CheckButton* autoStart;
-    sigc::connection startConnection;
-    sigc::connection stopConnection;
+    Gtk::Switch* qStartStop;
+    sigc::connection qStartStopConn;
+    Gtk::CheckButton* qAutoStart;
 
     Gtk::Entry* outdirTemplate;
     MyFileChooserButton* outdirFolder;
@@ -69,6 +67,7 @@ public:
 
     void startBatchProc ();
     void stopBatchProc ();
+    void startOrStopBatchProc();
 
     void saveOptions ();
     void pathFolderChanged ();

@@ -40,6 +40,7 @@ ABOUT_TAB_RELEASENOTES;リリースノート
 ABOUT_TAB_SPLASH;スプラッシュ
 ADJUSTER_RESET_TO_DEFAULT;デフォルト値に戻す
 BATCHQUEUE_AUTOSTART;オートスタート
+BATCHQUEUE_AUTOSTARTHINT;新しいrawファイルが送られて来たら自動的に現像処理を開始します
 BATCHQUEUE_DESTFILENAME;パスとファイル名
 BATCH_PROCESSING;バッチ処理
 CURVEEDITOR_AXIS_IN;I:
@@ -210,12 +211,7 @@ FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;最近保存されていない画像を表�
 FILEBROWSER_SHOWTRASHHINT;ゴミ箱の内容を表示\nショートカット: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;カラー・ラベルのない画像を表示\nショートカット: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;ランクなし画像を表示\nショートカット:  <b>0</b>
-FILEBROWSER_STARTPROCESSING;処理開始
-FILEBROWSER_STARTPROCESSINGHINT;キューにある画像の処理を開始\n\nショートカット:<b>Ctrl</b>+<b>s</b>
-FILEBROWSER_STOPPROCESSING;処理中止
-FILEBROWSER_STOPPROCESSINGHINT;キューにある画像の処理を中止\n\nショートカット:<b>Ctrl</b>+<b>s</b>
 FILEBROWSER_THUMBSIZE;サムネイルのサイズ
-FILEBROWSER_TOOLTIP_STOPPROCESSING;新しいrawファイルが送られて来たら自動的に現像処理を開始します
 FILEBROWSER_UNRANK_TOOLTIP;ランクなし\nショートカット: <b>Shift-0</b>
 FILEBROWSER_ZOOMINHINT;サムネイルサイズの拡大\nショートカット: <b>+</b>\n\nシングル・エディタ・タブのショートカット: <b>Alt-+</b>
 FILEBROWSER_ZOOMOUTHINT;サムネイルサイズの縮小\nショートカット: <b>-</b>\n\nシングル・エディタ・タブのショートカット: <b>Alt--</b>
@@ -1861,6 +1857,7 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !DONT_SHOW_AGAIN;Don't show this message again.
 !DYNPROFILEEDITOR_DELETE;Delete
 !DYNPROFILEEDITOR_EDIT;Edit
@@ -2007,6 +2004,12 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !PARTIALPASTE_TM_FATTAL;HDR Tone mapping
 !PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_CMMBPC;Black point compensation
+!PREFERENCES_CROP;Crop editing
+!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
+!PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
+!PREFERENCES_CROP_GUIDES_FRAME;Frame
+!PREFERENCES_CROP_GUIDES_FULL;Original
+!PREFERENCES_CROP_GUIDES_NONE;None
 !PREFERENCES_D50_OLD;5000K
 !PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_EDITORCMDLINE;Custom command line

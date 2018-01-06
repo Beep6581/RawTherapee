@@ -15,6 +15,7 @@ ABOUT_TAB_RELEASENOTES;Notatki eksploatacyjne
 ABOUT_TAB_SPLASH;Ekran powitalny
 ADJUSTER_RESET_TO_DEFAULT;Przywróć domyślne
 BATCHQUEUE_AUTOSTART;Autostart
+BATCHQUEUE_AUTOSTARTHINT;Rozpocznij przetwarzanie automatycznie gdy pojawi się nowe zadanie.
 BATCHQUEUE_DESTFILENAME;Ścieżka i nazwa pliku
 BATCH_PROCESSING;Przetwarzanie wsadowe
 CURVEEDITOR_CURVE;Krzywa
@@ -178,12 +179,7 @@ FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Pokazuje niezapisane zdjęcia.\nSkrót: <b>
 FILEBROWSER_SHOWTRASHHINT;Pokazuje zawartość kosza.\nSkrót: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Pokazuje zdjęcia bez kolorowej etykiety.\nSkrót: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Pokazuje nieocenione zdjęcia.\nSkrót: <b>0</b>
-FILEBROWSER_STARTPROCESSING;Rozpocznij przetwarzanie
-FILEBROWSER_STARTPROCESSINGHINT;Rozpoczyna przetwarzanie/zapisywanie plików z kolejki.
-FILEBROWSER_STOPPROCESSING;Zatrzymaj przetwarzanie
-FILEBROWSER_STOPPROCESSINGHINT;Zatrzymuje przetwarzanie zdjęć.
 FILEBROWSER_THUMBSIZE;Rozmiar minaturek
-FILEBROWSER_TOOLTIP_STOPPROCESSING;Rozpocznij przetwarzanie automatycznie gdy pojawi się nowe zadanie.
 FILEBROWSER_UNRANK_TOOLTIP;Usuń ocenę.\nSkrót: <b>Shift-0</b>
 FILEBROWSER_ZOOMINHINT;Zwiększa rozmiar miniaturek.\n\nSkróty:\n<b>+</b> - Tryb wielu zakładek,\n<b>Alt</b>-<b>+</b> - Tryb pojedyńczej zakładki.
 FILEBROWSER_ZOOMOUTHINT;Zmniejsza rozmiar miniaturek.\n\nSkróty:\n<b>-</b> - Tryb wielu zakładek,\n<b>Alt</b>-<b>-</b> - Tryb pojedyńczej zakładki.
@@ -1449,6 +1445,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !CURVEEDITOR_AXIS_IN;I:
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
 !CURVEEDITOR_AXIS_OUT;O:
@@ -1732,6 +1729,12 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CMMBPC;Black point compensation
+!PREFERENCES_CROP;Crop editing
+!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
+!PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
+!PREFERENCES_CROP_GUIDES_FRAME;Frame
+!PREFERENCES_CROP_GUIDES_FULL;Original
+!PREFERENCES_CROP_GUIDES_NONE;None
 !PREFERENCES_CURVEBBOXPOS;Position of curve copy & paste buttons
 !PREFERENCES_CURVEBBOXPOS_ABOVE;Above
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below

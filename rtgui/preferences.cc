@@ -600,6 +600,22 @@ Gtk::Widget* Preferences::getProcParamsPanel()
     cdf->add(*dirgrid);
     mvbpp->pack_start(*cdf, Gtk::PACK_SHRINK, 4);
 
+    // Crop
+    Gtk::Frame *cropframe = Gtk::manage(new Gtk::Frame(M("PREFERENCES_CROP")));
+    Gtk::VBox *cropvb = Gtk::manage(new Gtk::VBox());
+    Gtk::HBox *crophb = Gtk::manage(new Gtk::HBox());
+    cropGuides = Gtk::manage(new Gtk::ComboBoxText());
+    cropGuides->append(M("PREFERENCES_CROP_GUIDES_NONE"));
+    cropGuides->append(M("PREFERENCES_CROP_GUIDES_FRAME"));
+    cropGuides->append(M("PREFERENCES_CROP_GUIDES_FULL"));
+    crophb->pack_start(*Gtk::manage(new Gtk::Label(M("PREFERENCES_CROP_GUIDES") + ": ")), Gtk::PACK_SHRINK, 4);
+    crophb->pack_start(*cropGuides);
+    cropvb->pack_start(*crophb);
+    cropAutoFit = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_CROP_AUTO_FIT")));
+    cropvb->pack_start(*cropAutoFit);
+    cropframe->add(*cropvb);
+    mvbpp->pack_start(*cropframe, Gtk::PACK_SHRINK, 4);
+
     return mvbpp;
 }
 
@@ -1852,6 +1868,9 @@ void Preferences::storePreferences()
     moptions.sndLngEditProcDone = txtSndLngEditProcDone->get_text();
     moptions.sndLngEditProcDoneSecs = spbSndLngEditProcDoneSecs->get_value();
 #endif
+
+    moptions.cropGuides = Options::CropGuidesMode(cropGuides->get_active_row_number());
+    moptions.cropAutoFit = cropAutoFit->get_active();
 }
 
 void Preferences::fillPreferences()
@@ -2084,6 +2103,9 @@ void Preferences::fillPreferences()
             adjs->set_value(behavColumns.bset, !add);
         }
     }
+
+    cropGuides->set_active(moptions.cropGuides);
+    cropAutoFit->set_active(moptions.cropAutoFit);
 
     addc.block(false);
     setc.block(false);

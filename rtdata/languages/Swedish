@@ -10,6 +10,7 @@ ABOUT_TAB_RELEASENOTES;Versionsnyheter
 ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Återställ till standard
 BATCHQUEUE_AUTOSTART;Autostart
+BATCHQUEUE_AUTOSTARTHINT;Starta behandlingen automatiskt när en ny bild kommer in
 BATCHQUEUE_DESTFILENAME;Sökväg och filnamn
 BATCH_PROCESSING;Batchbehandling
 CURVEEDITOR_AXIS_IN;I:
@@ -178,12 +179,7 @@ FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Visa bilder som inte nyligen sparats\nKortk
 FILEBROWSER_SHOWTRASHHINT;Visa innehållet i papperskorgen
 FILEBROWSER_SHOWUNCOLORHINT;Visa bilder utan färgetikett\nKortkommando: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Visa icke-betygsatta bilder
-FILEBROWSER_STARTPROCESSING;Starta behandlingen
-FILEBROWSER_STARTPROCESSINGHINT;Starta behandlingen och spara bilderna i behandlingskön
-FILEBROWSER_STOPPROCESSING;Avbryt behandlingen
-FILEBROWSER_STOPPROCESSINGHINT;Avbryt behandlingen av bilderna
 FILEBROWSER_THUMBSIZE;Miniatyrbildens storlek
-FILEBROWSER_TOOLTIP_STOPPROCESSING;Starta behandlingen automatiskt när en ny bild kommer in
 FILEBROWSER_UNRANK_TOOLTIP;Ta bort betyg\nKortkommando: <b>Shift-0</b>
 FILEBROWSER_ZOOMINHINT;Förstora miniatyrbilderna.\nKortkommando: <b>+</b>\nKortkommado i enkelbildsläget: <b>Alt-+</b>
 FILEBROWSER_ZOOMOUTHINT;Förminska miniatyrbilderna.\nKortkommando: <b>-</b>\nKortkommado i enkelbildsläget: <b>Alt--</b>
@@ -1869,6 +1865,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
 !CURVEEDITOR_AXIS_RIGHT_TAN;RT:
 !CURVEEDITOR_EDITPOINT_HINT;Enable edition of node in/out values.\n\nRight-click on a node to select it.\nRight-click on empty space to de-select the node.
@@ -1998,6 +1995,12 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !PARTIALPASTE_TM_FATTAL;HDR Tone mapping
 !PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_CMMBPC;Black point compensation
+!PREFERENCES_CROP;Crop editing
+!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
+!PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
+!PREFERENCES_CROP_GUIDES_FRAME;Frame
+!PREFERENCES_CROP_GUIDES_FULL;Original
+!PREFERENCES_CROP_GUIDES_NONE;None
 !PREFERENCES_D50_OLD;5000K
 !PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_EDITORCMDLINE;Custom command line

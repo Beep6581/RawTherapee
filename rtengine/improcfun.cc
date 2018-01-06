@@ -214,39 +214,28 @@ void customToneCurve(const ToneCurve &customToneCurve, ToneCurveParams::TcMode c
 {
 
     if (curveMode == ToneCurveParams::TcMode::STD) { // Standard
+        const StandardToneCurve& userToneCurve = static_cast<const StandardToneCurve&> (customToneCurve);
         for (int i = istart, ti = 0; i < tH; i++, ti++) {
-            const StandardToneCurve& userToneCurve = static_cast<const StandardToneCurve&>(customToneCurve);
-            userToneCurve.BatchApply(
-                0, tW - jstart,
-                &rtemp[ti * tileSize], &gtemp[ti * tileSize], &btemp[ti * tileSize]);
+            userToneCurve.BatchApply(0, tW - jstart, &rtemp[ti * tileSize], &gtemp[ti * tileSize], &btemp[ti * tileSize]);
         }
     } else if (curveMode == ToneCurveParams::TcMode::FILMLIKE) { // Adobe like
+        const AdobeToneCurve& userToneCurve = static_cast<const AdobeToneCurve&> (customToneCurve);
         for (int i = istart, ti = 0; i < tH; i++, ti++) {
             for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                const AdobeToneCurve& userToneCurve = static_cast<const AdobeToneCurve&>(customToneCurve);
                 userToneCurve.Apply(rtemp[ti * tileSize + tj], gtemp[ti * tileSize + tj], btemp[ti * tileSize + tj]);
             }
         }
     } else if (curveMode == ToneCurveParams::TcMode::SATANDVALBLENDING) { // apply the curve on the saturation and value channels
+        const SatAndValueBlendingToneCurve& userToneCurve = static_cast<const SatAndValueBlendingToneCurve&> (customToneCurve);
         for (int i = istart, ti = 0; i < tH; i++, ti++) {
             for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                const SatAndValueBlendingToneCurve& userToneCurve = static_cast<const SatAndValueBlendingToneCurve&>(customToneCurve);
-                rtemp[ti * tileSize + tj] = CLIP<float> (rtemp[ti * tileSize + tj]);
-                gtemp[ti * tileSize + tj] = CLIP<float> (gtemp[ti * tileSize + tj]);
-                btemp[ti * tileSize + tj] = CLIP<float> (btemp[ti * tileSize + tj]);
                 userToneCurve.Apply(rtemp[ti * tileSize + tj], gtemp[ti * tileSize + tj], btemp[ti * tileSize + tj]);
             }
         }
     } else if (curveMode == ToneCurveParams::TcMode::WEIGHTEDSTD) { // apply the curve to the rgb channels, weighted
         const WeightedStdToneCurve& userToneCurve = static_cast<const WeightedStdToneCurve&>(customToneCurve);
-
         for (int i = istart, ti = 0; i < tH; i++, ti++) {
-            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                rtemp[ti * tileSize + tj] = CLIP<float> (rtemp[ti * tileSize + tj]);
-                gtemp[ti * tileSize + tj] = CLIP<float> (gtemp[ti * tileSize + tj]);
-                btemp[ti * tileSize + tj] = CLIP<float> (btemp[ti * tileSize + tj]);
-                userToneCurve.Apply(rtemp[ti * tileSize + tj], gtemp[ti * tileSize + tj], btemp[ti * tileSize + tj]);
-            }
+            userToneCurve.BatchApply(0, tW - jstart, &rtemp[ti * tileSize], &gtemp[ti * tileSize], &btemp[ti * tileSize]);
         }
     } else if (curveMode == ToneCurveParams::TcMode::LUMINANCE) { // apply the curve to the luminance channel
         const LuminanceToneCurve& userToneCurve = static_cast<const LuminanceToneCurve&>(customToneCurve);
@@ -261,14 +250,8 @@ void customToneCurve(const ToneCurve &customToneCurve, ToneCurveParams::TcMode c
         }
     } else if (curveMode == ToneCurveParams::TcMode::PERCEPTUAL) { // apply curve while keeping color appearance constant
         const PerceptualToneCurve& userToneCurve = static_cast<const PerceptualToneCurve&>(customToneCurve);
-
         for (int i = istart, ti = 0; i < tH; i++, ti++) {
-            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                rtemp[ti * tileSize + tj] = CLIP<float> (rtemp[ti * tileSize + tj]);
-                gtemp[ti * tileSize + tj] = CLIP<float> (gtemp[ti * tileSize + tj]);
-                btemp[ti * tileSize + tj] = CLIP<float> (btemp[ti * tileSize + tj]);
-                userToneCurve.Apply(rtemp[ti * tileSize + tj], gtemp[ti * tileSize + tj], btemp[ti * tileSize + tj], ptcApplyState);
-            }
+            userToneCurve.BatchApply(0, tW - jstart, &rtemp[ti * tileSize], &gtemp[ti * tileSize], &btemp[ti * tileSize], ptcApplyState);
         }
     }
 }

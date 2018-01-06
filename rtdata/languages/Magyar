@@ -7,6 +7,7 @@ ABOUT_TAB_RELEASENOTES;Kiadási megjegyzések
 ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Alaphelyzetbe állítás
 BATCHQUEUE_AUTOSTART;Auto start
+BATCHQUEUE_AUTOSTARTHINT;Új kép érkezése esetén a feldolgozás automatikus indítása.
 BATCH_PROCESSING;Kötegelt feldolgozás
 CURVEEDITOR_CURVE;Görbe
 CURVEEDITOR_CURVES;Görbék
@@ -143,12 +144,7 @@ FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Korábban mentett képek megjelenítése.\n
 FILEBROWSER_SHOWTRASHHINT;A kuka tartalmának mutatása
 FILEBROWSER_SHOWUNCOLORHINT;Színcímke nélküli képek megjelenítése.\nGyorsbillentyű: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Meg nem jelölt képek mutatása
-FILEBROWSER_STARTPROCESSING;Feldolgozás indítása
-FILEBROWSER_STARTPROCESSINGHINT;A sorban álló képek feldolgozásának elindítása
-FILEBROWSER_STOPPROCESSING;Feldolgozás leállítása
-FILEBROWSER_STOPPROCESSINGHINT;A sorban álló képek feldolgozásának leállítása
 FILEBROWSER_THUMBSIZE;Bélyegméret
-FILEBROWSER_TOOLTIP_STOPPROCESSING;Új kép érkezése esetén a feldolgozás automatikus indítása.
 FILEBROWSER_ZOOMINHINT;Növelés
 FILEBROWSER_ZOOMOUTHINT;Csökkentés
 GENERAL_ABOUT;Névjegy
@@ -871,6 +867,7 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !BATCHQUEUE_DESTFILENAME;Path and file name
+!BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !CURVEEDITOR_AXIS_IN;I:
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
 !CURVEEDITOR_AXIS_OUT;O:
@@ -1357,6 +1354,12 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
 !PREFERENCES_CMMBPC;Black point compensation
+!PREFERENCES_CROP;Crop editing
+!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
+!PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
+!PREFERENCES_CROP_GUIDES_FRAME;Frame
+!PREFERENCES_CROP_GUIDES_FULL;Original
+!PREFERENCES_CROP_GUIDES_NONE;None
 !PREFERENCES_CURVEBBOXPOS;Position of curve copy & paste buttons
 !PREFERENCES_CURVEBBOXPOS_ABOVE;Above
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below

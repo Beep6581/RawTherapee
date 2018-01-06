@@ -208,6 +208,9 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
 
     DynamicProfilePanel *dynProfilePanel;
 
+    Gtk::ComboBoxText *cropGuides;
+    Gtk::CheckButton *cropAutoFit;
+
     Glib::ustring storedValueRaw;
     Glib::ustring storedValueImg;
 
