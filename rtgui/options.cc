@@ -2323,7 +2323,7 @@ void Options::load (bool lightweight)
         }
     }
 
-    langMgr.load ({localeTranslation, languageTranslation, defaultTranslation});
+    langMgr.load (options.language, {localeTranslation, languageTranslation, defaultTranslation});
 
     rtengine::init (&options.rtSettings, argv0, rtdir, !lightweight);
 }
