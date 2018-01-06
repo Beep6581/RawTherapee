@@ -1643,7 +1643,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
                     return true;
 
                 case GDK_KEY_f:
-                    iareapanel->imageArea->zoomPanel->zoomFitClicked();
+                    iareapanel->imageArea->zoomPanel->zoomFitCropClicked();
                     return true;
 
                 case GDK_KEY_F5:
@@ -1718,7 +1718,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
                 return true;
 
             case GDK_KEY_f:
-                iareapanel->imageArea->zoomPanel->zoomFitCropClicked();
+                iareapanel->imageArea->zoomPanel->zoomFitClicked();
                 return true;
         }
     }

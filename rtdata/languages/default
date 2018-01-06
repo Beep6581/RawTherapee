@@ -2190,7 +2190,7 @@ TP_WBALANCE_WATER_HEADER;UnderWater
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Open (new) detail window
 ZOOMPANEL_ZOOM100;Zoom to 100%\nShortcut: <b>z</b>
-ZOOMPANEL_ZOOMFITCROPSCREEN;Fit crop to screen\nShortcut: <b>Alt</b>-<b>f</b>
-ZOOMPANEL_ZOOMFITSCREEN;Fit whole image to screen\nShortcut: <b>f</b>
+ZOOMPANEL_ZOOMFITCROPSCREEN;Fit crop to screen\nShortcut: <b>f</b>
+ZOOMPANEL_ZOOMFITSCREEN;Fit whole image to screen\nShortcut: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom In\nShortcut: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Out\nShortcut: <b>-</b>
