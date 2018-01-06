@@ -1118,6 +1118,10 @@ inline void SatAndValueBlendingToneCurve::Apply (float& r, float& g, float& b) c
     const float lum = (r + g + b) / 3.f;
     const float newLum = lutToneCurve[lum];
 
+    if (newLum == lum) {
+        return;
+    }
+
     float h, s, v;
     Color::rgb2hsvtc(r, g, b, h, s, v);
 
