@@ -7,6 +7,7 @@ ABOUT_TAB_RELEASENOTES;Notes de la versió
 ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Restaura predeterminats
 BATCHQUEUE_AUTOSTART;Auto engega
+BATCHQUEUE_AUTOSTARTHINT;Inicia processat automàticament en rebre un nou treball
 BATCH_PROCESSING;Processament per lots
 CURVEEDITOR_CURVE;Corba
 CURVEEDITOR_CURVES;Corbes
@@ -148,12 +149,7 @@ FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Mostra imatges no recentment desades.\nDrec
 FILEBROWSER_SHOWTRASHHINT;Veure què hi ha a la paperera.\nDrecera: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Mostra imatges sense etiqueta de color.\nDrecera: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Mostra imatges sense rang.\nDrecera: <b>0</b>
-FILEBROWSER_STARTPROCESSING;Inicia procés
-FILEBROWSER_STARTPROCESSINGHINT;Inicia el processament de les imatges de la cua
-FILEBROWSER_STOPPROCESSING;Atura processament
-FILEBROWSER_STOPPROCESSINGHINT;Atura processament d'imatges de la cua
 FILEBROWSER_THUMBSIZE;Tamany minifoto
-FILEBROWSER_TOOLTIP_STOPPROCESSING;Inicia processat automàticament en rebre un nou treball
 FILEBROWSER_ZOOMINHINT;Engrandir minifoto.\nDrecera: <b>+</b>
 FILEBROWSER_ZOOMOUTHINT;Reduïr minifoto.\nDrecera: <b>-</b>
 GENERAL_ABOUT;Respecte a
@@ -356,7 +352,6 @@ HISTORY_MSG_169;Corba 'CH'
 HISTORY_MSG_170;Vibrància - corba
 HISTORY_MSG_171;Corba 'LC'
 HISTORY_MSG_172;Restriccció LC als tons vermell i pell
-HISTORY_MSG_173;RS - Detall de la luminància
 HISTORY_NEWSNAPSHOT;Afegeix
 HISTORY_SNAPSHOT;Instantània
 HISTORY_SNAPSHOTS;Instantànies
@@ -523,7 +518,6 @@ PREFERENCES_DIRLAST;Últim directori usat
 PREFERENCES_DIROTHER;Un altre
 PREFERENCES_DIRSELECTDLG;Selecc. directori d'inici...
 PREFERENCES_DIRSOFTWARE;Instal·lació al directori
-PREFERENCES_EDITORCMDLINE;Una altra línia de comandament
 PREFERENCES_EDITORLAYOUT;Sortida d'editor
 PREFERENCES_EXTERNALEDITOR;Editor extern
 PREFERENCES_FBROWSEROPTS;Opcions de navegador i minifotos
@@ -686,11 +680,11 @@ TP_DARKFRAME_LABEL;Marc fosc
 TP_DEFRINGE_LABEL;Desserrella
 TP_DEFRINGE_RADIUS;Radi
 TP_DEFRINGE_THRESHOLD;Llindar
-TP_DIRPYRDENOISE_CHROMA;Crominància
-TP_DIRPYRDENOISE_GAMMA;Gama
-TP_DIRPYRDENOISE_LABEL;Reducció de soroll (només imatges raw)
-TP_DIRPYRDENOISE_LDETAIL;Detall de luminància
-TP_DIRPYRDENOISE_LUMA;Luminància
+TP_DIRPYRDENOISE_CHROMINANCE_MASTER;Crominància
+TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Detall de luminància
+TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminància
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Reducció de soroll (només imatges raw)
+TP_DIRPYRDENOISE_MAIN_GAMMA;Gama
 TP_DIRPYREQUALIZER_LABEL;Contrast per grau de detall
 TP_DIRPYREQUALIZER_LUMACOARSEST;Més bast
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrast-
@@ -957,6 +951,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !BATCHQUEUE_DESTFILENAME;Path and file name
+!BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !CURVEEDITOR_AXIS_IN;I:
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
 !CURVEEDITOR_AXIS_OUT;O:
@@ -1016,9 +1011,11 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !GENERAL_AUTO;Automatic
 !GENERAL_CLOSE;Close
 !GENERAL_OPEN;Open
+!GENERAL_SLIDER;Slider
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
 !HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram.
 !HISTORY_MSG_166;Exposure - Reset
+!HISTORY_MSG_173;NR - Detail recovery
 !HISTORY_MSG_174;CIECAM02
 !HISTORY_MSG_175;CAM02 - CAT02 adaptation
 !HISTORY_MSG_176;CAM02 - Viewing surround
@@ -1048,7 +1045,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !HISTORY_MSG_200;CAM02 - Tone mapping
 !HISTORY_MSG_201;NR - Chrominance - R&amp;G
 !HISTORY_MSG_202;NR - Chrominance - B&amp;Y
-!HISTORY_MSG_203;NR - Method
+!HISTORY_MSG_203;NR - Color space
 !HISTORY_MSG_204;LMMSE enhancement steps
 !HISTORY_MSG_205;CAM02 - Hot/bad pixel filter
 !HISTORY_MSG_206;CAT02 - Auto scene luminosity
@@ -1100,7 +1097,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !HISTORY_MSG_253;CbDL - Reduce artifacts
 !HISTORY_MSG_254;CbDL - Skin hue
 !HISTORY_MSG_255;NR - Median filter
-!HISTORY_MSG_256;NR - Median type
+!HISTORY_MSG_256;NR - Median - Type
 !HISTORY_MSG_257;Color Toning
 !HISTORY_MSG_258;CT - Color curve
 !HISTORY_MSG_259;CT - Opacity curve
@@ -1141,7 +1138,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !HISTORY_MSG_294;Film Simulation - Strength
 !HISTORY_MSG_295;Film Simulation - Film
 !HISTORY_MSG_296;NR - Luminance curve
-!HISTORY_MSG_297;NR - Quality
+!HISTORY_MSG_297;NR - Mode
 !HISTORY_MSG_298;Dead pixel filter
 !HISTORY_MSG_299;NR - Chrominance curve
 !HISTORY_MSG_300;-
@@ -1322,6 +1319,12 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !HISTORY_MSG_491;White Balance
 !HISTORY_MSG_492;RGB Curves
 !HISTORY_MSG_493;L*a*b* Adjustments
+!HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
+!HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
+!HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
+!HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
+!HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
+!HISTORY_MSG_METADATA_MODE;Metadata copy mode
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
@@ -1383,6 +1386,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PARTIALPASTE_FILMSIMULATION;Film simulation
 !PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control
 !PARTIALPASTE_GRADIENT;Graduated filter
+!PARTIALPASTE_LOCALCONTRAST;Local contrast
 !PARTIALPASTE_PCVIGNETTE;Vignette filter
 !PARTIALPASTE_PREPROCESS_DEADPIXFILT;Dead pixel filter
 !PARTIALPASTE_PREPROCESS_HOTPIXFILT;Hot pixel filter
@@ -1414,6 +1418,12 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
 !PREFERENCES_CMMBPC;Black point compensation
+!PREFERENCES_CROP;Crop editing
+!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
+!PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
+!PREFERENCES_CROP_GUIDES_FRAME;Frame
+!PREFERENCES_CROP_GUIDES_FULL;Original
+!PREFERENCES_CROP_GUIDES_NONE;None
 !PREFERENCES_CURVEBBOXPOS;Position of curve copy & paste buttons
 !PREFERENCES_CURVEBBOXPOS_ABOVE;Above
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below
@@ -1430,6 +1440,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_DAUB_LABEL;Use Daubechies D6 wavelets instead of D4
 !PREFERENCES_DAUB_TOOLTIP;The Noise Reduction and Wavelet Levels tools use a Debauchies mother wavelet. If you choose D6 instead of D4 you increase the number of orthogonal Daubechies coefficients and probably increase quality of small-scale levels. There is no memory or processing time difference between the two.
 !PREFERENCES_DIRECTORIES;Directories
+!PREFERENCES_EDITORCMDLINE;Custom command line
 !PREFERENCES_EXPAUT;Expert
 !PREFERENCES_FLUOF2;Fluorescent F2
 !PREFERENCES_FLUOF7;Fluorescent F7
@@ -1711,63 +1722,59 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_CROP_GTHARMMEANS;Harmonic Means
 !TP_CROP_GTTRIANGLE1;Golden Triangles 1
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
-!TP_DIRPYRDENOISE_3X3;3×3
-!TP_DIRPYRDENOISE_3X3_SOFT;3×3 soft
-!TP_DIRPYRDENOISE_5X5;5×5
-!TP_DIRPYRDENOISE_5X5_SOFT;5×5 soft
-!TP_DIRPYRDENOISE_7X7;7×7
-!TP_DIRPYRDENOISE_9X9;9×9
-!TP_DIRPYRDENOISE_ABM;Chroma only
-!TP_DIRPYRDENOISE_AUT;Automatic global
-!TP_DIRPYRDENOISE_AUTO;Automatic global
-!TP_DIRPYRDENOISE_AUTO_TOOLTIP;Try to evaluate chroma noise\nBe careful, this calculation is average, and is quite subjective !
-!TP_DIRPYRDENOISE_BLUE;Chrominance - Blue-Yellow
-!TP_DIRPYRDENOISE_C2TYPE_TOOLTIP;Manual\nActs on the full image.\nYou control the noise reduction settings manually.\n\nAutomatic global\nActs on the full image.\n9 zones are used to calculate a global chrominance noise reduction setting.\n\nPreview\nActs on the whole image.\nThe part of the image visible in the preview is used to calculate global chrominance noise reduction settings.
-!TP_DIRPYRDENOISE_CCCURVE;Chrominance curve
-!TP_DIRPYRDENOISE_CHROMAFR;Chrominance
-!TP_DIRPYRDENOISE_CTYPE;Method
-!TP_DIRPYRDENOISE_CTYPE_TOOLTIP;Manual\nActs on the full image.\nYou control the noise reduction settings manually.\n\nAutomatic global\nActs on the full image.\n9 zones are used to calculate a global chrominance noise reduction setting.\n\nAutomatic multi-zones\nNo preview - works only during saving, but using the "Preview" method by matching the tile size and center to the preview size and center you can get an idea of the expected results.\nThe image is divided into tiles (about 10 to 70 depending on image size) and each tile receives its own chrominance noise reduction settings.\n\nPreview\nActs on the whole image.\nThe part of the image visible in the preview is used to calculate global chrominance noise reduction settings.
-!TP_DIRPYRDENOISE_CUR;Curve
-!TP_DIRPYRDENOISE_CURVEEDITOR_CC;Chroma
-!TP_DIRPYRDENOISE_CURVEEDITOR_CC_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
-!TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Modulates action of 'Luminance' denoise
+!TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto multi-zones
+!TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Automatic global
+!TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;Try to evaluate chroma noise\nBe careful, this calculation is average, and is quite subjective !
+!TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;Chrominance - Blue-Yellow
+!TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Chrominance curve
+!TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
+!TP_DIRPYRDENOISE_CHROMINANCE_FRAME;Chrominance
+!TP_DIRPYRDENOISE_CHROMINANCE_MANUAL;Manual
+!TP_DIRPYRDENOISE_CHROMINANCE_METHOD;Method
+!TP_DIRPYRDENOISE_CHROMINANCE_METHODADVANCED_TOOLTIP;Manual\nActs on the full image.\nYou control the noise reduction settings manually.\n\nAutomatic global\nActs on the full image.\n9 zones are used to calculate a global chrominance noise reduction setting.\n\nPreview\nActs on the whole image.\nThe part of the image visible in the preview is used to calculate global chrominance noise reduction settings.
+!TP_DIRPYRDENOISE_CHROMINANCE_METHOD_TOOLTIP;Manual\nActs on the full image.\nYou control the noise reduction settings manually.\n\nAutomatic global\nActs on the full image.\n9 zones are used to calculate a global chrominance noise reduction setting.\n\nAutomatic multi-zones\nNo preview - works only during saving, but using the "Preview" method by matching the tile size and center to the preview size and center you can get an idea of the expected results.\nThe image is divided into tiles (about 10 to 70 depending on image size) and each tile receives its own chrominance noise reduction settings.\n\nPreview\nActs on the whole image.\nThe part of the image visible in the preview is used to calculate global chrominance noise reduction settings.
+!TP_DIRPYRDENOISE_CHROMINANCE_PMZ;Preview multi-zones
+!TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW;Preview
+!TP_DIRPYRDENOISE_CHROMINANCE_PREVIEWRESIDUAL_INFO_TOOLTIP;Displays the remaining noise levels of the part of the image visible in the preview after wavelet.\n\n>300 Very noisy\n100-300 Noisy\n50-100 A little noisy\n<50 Very low noise\n\nBeware, the values will differ between RGB and L*a*b* mode. The RGB values are less accurate because the RGB mode does not completely separate luminance and chrominance.
+!TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_INFO;Preview size=%1, Center: Px=%2  Py=%3
+!TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO;Preview noise: Mean=%1  High=%2
+!TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY;Preview noise: Mean= -   High= -
+!TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;Tile size=%1, Center: Tx=%2  Ty=%3
+!TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;Chrominance - Red-Green
 !TP_DIRPYRDENOISE_ENH;Enhanced mode
 !TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases noise reduction quality at the expense of a 20% processing time increase.
-!TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varies noise reduction strength across the range of tones. Smaller values will target shadows, while larger values will stretch the effect to the brighter tones.
-!TP_DIRPYRDENOISE_LAB;L*a*b*
-!TP_DIRPYRDENOISE_LABM;L*a*b*
-!TP_DIRPYRDENOISE_LCURVE;Luminance curve
-!TP_DIRPYRDENOISE_LM;Luminance only
-!TP_DIRPYRDENOISE_LPLABM;Weighted L* (little) + a*b* (normal)
-!TP_DIRPYRDENOISE_LTYPE;Luminance control
-!TP_DIRPYRDENOISE_LUMAFR;Luminance
-!TP_DIRPYRDENOISE_MAN;Manual
-!TP_DIRPYRDENOISE_MANU;Manual
-!TP_DIRPYRDENOISE_MED;Median Filter
-!TP_DIRPYRDENOISE_MEDMETHOD;Median method
-!TP_DIRPYRDENOISE_MEDTYPE;Median type
-!TP_DIRPYRDENOISE_METHOD;Method
-!TP_DIRPYRDENOISE_METHOD11;Quality
-!TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Quality can be adapted to the noise pattern. A setting of "high" increases the noise reduction effect at a cost of extended processing time.
-!TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or L*a*b* methods can be used.\n\nFor non-raw images the L*a*b* method will be used, regardless of the selection.
-!TP_DIRPYRDENOISE_METM_TOOLTIP;When using the "Luminance only" and "L*a*b*" methods, median filtering will be performed just after the wavelet step in the noise reduction pipeline.\nWhen using the "RGB" mode, it will be performed at the very end of the noise reduction pipeline.
-!TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
-!TP_DIRPYRDENOISE_NOISELABEL;Preview noise: Mean=%1  High=%2
-!TP_DIRPYRDENOISE_NOISELABELEMPTY;Preview noise: Mean= -   High= -
-!TP_DIRPYRDENOISE_NRESID_TOOLTIP;Displays the remaining noise levels of the part of the image visible in the <b>preview</b> after wavelet.\n\n>300 Very noisy\n100-300 Noisy\n50-100 A little noisy\n<50 Very low noise\n\nBeware, the values will differ between RGB and L*a*b* mode. The RGB values are less accurate because the RGB mode does not completely separate luminance and chrominance.
-!TP_DIRPYRDENOISE_PASSES;Median iterations
-!TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.
-!TP_DIRPYRDENOISE_PON;Auto multi-zones
-!TP_DIRPYRDENOISE_PRE;Preview multi-zones
-!TP_DIRPYRDENOISE_PREV;Preview
-!TP_DIRPYRDENOISE_PREVLABEL;Preview size=%1, Center: Px=%2  Py=%3
-!TP_DIRPYRDENOISE_RED;Chrominance - Red-Green
-!TP_DIRPYRDENOISE_RGB;RGB
-!TP_DIRPYRDENOISE_RGBM;RGB
-!TP_DIRPYRDENOISE_SHAL;Standard
-!TP_DIRPYRDENOISE_SHALBI;High
+!TP_DIRPYRDENOISE_LABEL;Noise Reduction
+!TP_DIRPYRDENOISE_LUMINANCE_CONTROL;Luminance control
+!TP_DIRPYRDENOISE_LUMINANCE_CURVE;Luminance curve
+!TP_DIRPYRDENOISE_LUMINANCE_FRAME;Luminance
+!TP_DIRPYRDENOISE_MAIN_COLORSPACE;Color space
+!TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;L*a*b*
+!TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
+!TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;For raw images either RGB or L*a*b* methods can be used.\n\nFor non-raw images the L*a*b* method will be used, regardless of the selection.
+!TP_DIRPYRDENOISE_MAIN_GAMMA_TOOLTIP;Gamma varies noise reduction strength across the range of tones. Smaller values will target shadows, while larger values will stretch the effect to the brighter tones.
+!TP_DIRPYRDENOISE_MAIN_MODE;Mode
+!TP_DIRPYRDENOISE_MAIN_MODE_AGGRESSIVE;Aggressive
+!TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE;Conservative
+!TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;"Conservative" preserves low frequency chroma patterns, while "aggressive" obliterates them.
+!TP_DIRPYRDENOISE_MEDIAN_METHOD;Median method
+!TP_DIRPYRDENOISE_MEDIAN_METHOD_CHROMINANCE;Chroma only
+!TP_DIRPYRDENOISE_MEDIAN_METHOD_LAB;L*a*b*
+!TP_DIRPYRDENOISE_MEDIAN_METHOD_LABEL;Median Filter
+!TP_DIRPYRDENOISE_MEDIAN_METHOD_LUMINANCE;Luminance only
+!TP_DIRPYRDENOISE_MEDIAN_METHOD_RGB;RGB
+!TP_DIRPYRDENOISE_MEDIAN_METHOD_TOOLTIP;When using the "Luminance only" and "L*a*b*" methods, median filtering will be performed just after the wavelet step in the noise reduction pipeline.\nWhen using the "RGB" mode, it will be performed at the very end of the noise reduction pipeline.
+!TP_DIRPYRDENOISE_MEDIAN_METHOD_WEIGHTED;Weighted L* (little) + a*b* (normal)
+!TP_DIRPYRDENOISE_MEDIAN_PASSES;Median iterations
+!TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.
+!TP_DIRPYRDENOISE_MEDIAN_TYPE;Median type
+!TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
 !TP_DIRPYRDENOISE_SLI;Slider
-!TP_DIRPYRDENOISE_TILELABEL;Tile size=%1, Center: Tx=%2  Ty=%3
+!TP_DIRPYRDENOISE_TYPE_3X3;3×3
+!TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 soft
+!TP_DIRPYRDENOISE_TYPE_5X5;5×5
+!TP_DIRPYRDENOISE_TYPE_5X5SOFT;5×5 soft
+!TP_DIRPYRDENOISE_TYPE_7X7;7×7
+!TP_DIRPYRDENOISE_TYPE_9X9;9×9
 !TP_DIRPYREQUALIZER_ALGO;Skin Color Range
 !TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fine: closer to the colors of the skin, minimizing the action on other colors\nLarge: avoid more artifacts.
 !TP_DIRPYREQUALIZER_ARTIF;Reduce artifacts
@@ -1826,6 +1833,15 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_LABCURVE_CURVEEDITOR_LH;LH
 !TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H)
 !TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance according to luminance L=f(L)
+!TP_LOCALCONTRAST_AMOUNT;Amount
+!TP_LOCALCONTRAST_DARKNESS;Darkness level
+!TP_LOCALCONTRAST_LABEL;Local Contrast
+!TP_LOCALCONTRAST_LIGHTNESS;Lightness level
+!TP_LOCALCONTRAST_RADIUS;Radius
+!TP_METADATA_EDIT;Apply modifications
+!TP_METADATA_MODE;Metadata copy mode
+!TP_METADATA_STRIP;Strip all metadata
+!TP_METADATA_TUNNEL;Copy unchanged
 !TP_NEUTRAL;Reset
 !TP_PCVIGNETTE_FEATHER;Feather
 !TP_PCVIGNETTE_FEATHER_TOOLTIP;Feathering:\n0 = corners only,\n50 = halfway to center,\n100 = to center.
@@ -1858,7 +1874,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_RAW_DCB;DCB
 !TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
 !TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
-!TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.\nPixel Shift is for Pentax Pixel Shift files. It falls back to AMaZE for non-Pixel Shift files.
+!TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.\nPixel Shift is for Pentax/Sony Pixel Shift files. It falls back to AMaZE for non-Pixel Shift files.
 !TP_RAW_EAHD;EAHD
 !TP_RAW_FAST;Fast
 !TP_RAW_HD;Threshold
@@ -1866,7 +1882,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_RAW_HPHD;HPHD
 !TP_RAW_IGV;IGV
 !TP_RAW_IMAGENUM;Sub-image
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
+!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
 !TP_RAW_LMMSE;LMMSE
 !TP_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 !TP_RAW_LMMSE_TOOLTIP;Adds gamma (step 1), median (steps 2-4) and refinement (steps 5-6) to reduce artifacts and improve the signal-to-noise ratio.
@@ -1905,6 +1921,8 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Check red/blue horizontal
 !TP_RAW_PIXELSHIFTNONGREENVERTICAL;Check red/blue vertical
 !TP_RAW_PIXELSHIFTNREADISO;nRead
+!TP_RAW_PIXELSHIFTONEGREEN;Use one green instead of average
+!TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Use one green instead of averaging two greens for regions without motion.
 !TP_RAW_PIXELSHIFTPRNU;PRNU (%)
 !TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
 !TP_RAW_PIXELSHIFTSHOWMOTION;Show motion mask

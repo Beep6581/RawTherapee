@@ -19,6 +19,9 @@
 #ifndef __REFRESHMAP__
 #define __REFRESHMAP__
 
+#include <unordered_map>
+#include "procevents.h"
+
 // Use M_VOID if you wish to update the proc params without updating the preview at all !
 #define M_VOID       (1<<17)
 // Use M_MINUPDATE if you wish to update the preview without modifying the image (think about it like a "refreshPreview")
@@ -53,7 +56,7 @@
 #define FLATFIELD        (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
 #define DEMOSAIC                   (M_RAW|M_INIT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
 #define ALLNORAW                         (M_INIT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define HDR                                                  (M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define HDR                                     (M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
 #define TRANSFORM                                                  (M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
 #define AUTOEXP                                                                          (M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
 #define RGBCURVE                                                                                   (M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
@@ -74,4 +77,23 @@
 #define OUTPUTPROFILE     M_MONITOR
 
 extern int refreshmap[];
+
+namespace rtengine {
+
+class RefreshMapper {
+public:
+    static RefreshMapper *getInstance();
+    ProcEvent newEvent();
+    void mapEvent(ProcEvent event, int action);
+    int getAction(ProcEvent event) const;
+    
+private:
+    RefreshMapper();
+
+    int next_event_;
+    std::unordered_map<int, int> actions_;
+};
+
+} // namespace rtengine
+
 #endif

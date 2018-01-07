@@ -51,11 +51,10 @@ class ImageProcessor
 {
 public:
     ImageProcessor (ProcessingJob* pjob, int& errorCode,
-                    ProgressListener* pl, bool tunnelMetaData, bool flush):
+                    ProgressListener* pl, bool flush):
         job (static_cast<ProcessingJobImpl*> (pjob)),
         errorCode (errorCode),
         pl (pl),
-        tunnelMetaData (tunnelMetaData),
         flush (flush),
         // internal state
         ipf_p (nullptr),
@@ -1291,13 +1290,19 @@ private:
             readyImg = tempImage;
         }
 
-        if (tunnelMetaData) {
+        switch (params.metadata.mode) {
+        case MetaDataParams::TUNNEL:
             // Sending back the whole first root, which won't necessarily be the selected frame number
             // and may contain subframe depending on initial raw's hierarchy
             readyImg->setMetadata (ii->getMetaData()->getRootExifData ());
-        } else {
+            break;
+        case MetaDataParams::EDIT:
             // ask for the correct frame number, but may contain subframe depending on initial raw's hierarchy
             readyImg->setMetadata (ii->getMetaData()->getBestExifData(imgsrc, &params.raw), params.exif, params.iptc);
+            break;
+        default: // case MetaDataParams::STRIP
+            // nothing to do
+            break;
         }
 
 
@@ -1423,8 +1428,7 @@ private:
         if (params.prsharpening.enabled) {
             params.sharpening = params.prsharpening;
         } else {
-            adjust_radius (defaultparams.sharpening.radius, scale_factor,
-                           params.sharpening.radius);
+            params.sharpening.radius *= scale_factor;
         }
 
         params.impulseDenoise.thresh *= scale_factor;
@@ -1477,7 +1481,8 @@ private:
 
         adjust_radius (defaultparams.defringe.radius, scale_factor,
                        params.defringe.radius);
-        adjust_radius (defaultparams.sh.radius, scale_factor, params.sh.radius);
+        params.sh.radius *= scale_factor;
+        params.localContrast.radius *= scale_factor;
 
         if (params.raw.xtranssensor.method == procparams::RAWParams::XTransSensor::getMethodString(procparams::RAWParams::XTransSensor::Method::THREE_PASS)) {
             params.raw.xtranssensor.method = procparams::RAWParams::XTransSensor::getMethodString(procparams::RAWParams::XTransSensor::Method::ONE_PASS);
@@ -1492,7 +1497,6 @@ private:
     ProcessingJobImpl* job;
     int& errorCode;
     ProgressListener* pl;
-    bool tunnelMetaData;
     bool flush;
 
     // internal state
@@ -1566,20 +1570,20 @@ private:
 } // namespace
 
 
-IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* pl, bool tunnelMetaData, bool flush)
+IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* pl, bool flush)
 {
-    ImageProcessor proc (pjob, errorCode, pl, tunnelMetaData, flush);
+    ImageProcessor proc (pjob, errorCode, pl, flush);
     return proc();
 }
 
-void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData)
+void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl)
 {
 
     ProcessingJob* currentJob = job;
 
     while (currentJob) {
         int errorCode;
-        IImage16* img = processImage (currentJob, errorCode, bpl, tunnelMetaData, true);
+        IImage16* img = processImage (currentJob, errorCode, bpl, true);
 
         if (errorCode) {
             bpl->error (M ("MAIN_MSG_CANNOTLOAD"));
@@ -1595,11 +1599,11 @@ void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl, bo
     }
 }
 
-void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData)
+void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl)
 {
 
     if (bpl) {
-        Glib::Thread::create (sigc::bind (sigc::ptr_fun (batchProcessingThread), job, bpl, tunnelMetaData), 0, true, true, Glib::THREAD_PRIORITY_LOW);
+        Glib::Thread::create (sigc::bind (sigc::ptr_fun (batchProcessingThread), job, bpl), 0, true, true, Glib::THREAD_PRIORITY_LOW);
     }
 
 }

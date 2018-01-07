@@ -703,7 +703,7 @@ float** RawImage::compress_image(int frameNum, bool freeImage)
     } else if (colors == 1) {
         // Monochrome
         if (!allocation) {
-            allocation = new float[height * width];
+            allocation = new float[static_cast<unsigned long>(height) * static_cast<unsigned long>(width)];
             data = new float*[height];
 
             for (int i = 0; i < height; i++) {
@@ -712,7 +712,7 @@ float** RawImage::compress_image(int frameNum, bool freeImage)
         }
     } else {
         if (!allocation) {
-            allocation = new float[3 * height * width];
+            allocation = new float[3UL * static_cast<unsigned long>(height) * static_cast<unsigned long>(width)];
             data = new float*[height];
 
             for (int i = 0; i < height; i++) {

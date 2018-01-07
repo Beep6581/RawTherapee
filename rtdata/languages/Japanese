@@ -40,6 +40,7 @@ ABOUT_TAB_RELEASENOTES;リリースノート
 ABOUT_TAB_SPLASH;スプラッシュ
 ADJUSTER_RESET_TO_DEFAULT;デフォルト値に戻す
 BATCHQUEUE_AUTOSTART;オートスタート
+BATCHQUEUE_AUTOSTARTHINT;新しいrawファイルが送られて来たら自動的に現像処理を開始します
 BATCHQUEUE_DESTFILENAME;パスとファイル名
 BATCH_PROCESSING;バッチ処理
 CURVEEDITOR_AXIS_IN;I:
@@ -210,12 +211,7 @@ FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;最近保存されていない画像を表�
 FILEBROWSER_SHOWTRASHHINT;ゴミ箱の内容を表示\nショートカット: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;カラー・ラベルのない画像を表示\nショートカット: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;ランクなし画像を表示\nショートカット:  <b>0</b>
-FILEBROWSER_STARTPROCESSING;処理開始
-FILEBROWSER_STARTPROCESSINGHINT;キューにある画像の処理を開始\n\nショートカット:<b>Ctrl</b>+<b>s</b>
-FILEBROWSER_STOPPROCESSING;処理中止
-FILEBROWSER_STOPPROCESSINGHINT;キューにある画像の処理を中止\n\nショートカット:<b>Ctrl</b>+<b>s</b>
 FILEBROWSER_THUMBSIZE;サムネイルのサイズ
-FILEBROWSER_TOOLTIP_STOPPROCESSING;新しいrawファイルが送られて来たら自動的に現像処理を開始します
 FILEBROWSER_UNRANK_TOOLTIP;ランクなし\nショートカット: <b>Shift-0</b>
 FILEBROWSER_ZOOMINHINT;サムネイルサイズの拡大\nショートカット: <b>+</b>\n\nシングル・エディタ・タブのショートカット: <b>Alt-+</b>
 FILEBROWSER_ZOOMOUTHINT;サムネイルサイズの縮小\nショートカット: <b>-</b>\n\nシングル・エディタ・タブのショートカット: <b>Alt--</b>
@@ -430,7 +426,6 @@ HISTORY_MSG_169;L*a*b* CH カーブ
 HISTORY_MSG_170;自然な彩度 - カーブ
 HISTORY_MSG_171;L*a*b* LC カーブ
 HISTORY_MSG_172;LCの適用をレッドと肌色トーンだけに制限
-HISTORY_MSG_173;輝度ノイズ　細部の復元
 HISTORY_MSG_174;CIE色の見えモデル2002
 HISTORY_MSG_175;CAM02 - 色順応量
 HISTORY_MSG_176;CAM02 - 観視の暗い周囲環境
@@ -460,7 +455,6 @@ HISTORY_MSG_199;CAM02 - カーブでCIECAM02出力のヒストグラムを表示
 HISTORY_MSG_200;CAM02 - CIECAM02 Q でトーンマッピング
 HISTORY_MSG_201;色差 レッド／グリーン
 HISTORY_MSG_202;色差 ブルー／イエロー
-HISTORY_MSG_203;ノイズ低減 - 方式
 HISTORY_MSG_204;LMMSE 拡張処理
 HISTORY_MSG_205;CAM02 ホット／バッドピクセル
 HISTORY_MSG_206;CAT02 - 自動で順応
@@ -512,7 +506,6 @@ HISTORY_MSG_252;CbDL　肌色の目標/保護
 HISTORY_MSG_253;CbDL　アーティファクトを軽減
 HISTORY_MSG_254;CbDL　肌色の色相
 HISTORY_MSG_255;ノイズ低減　-　メディアン
-HISTORY_MSG_256;ノイズ低減 - フィルターの種類
 HISTORY_MSG_257;カラートーン調整
 HISTORY_MSG_258;カラートーン調整　-　カラーのカーブ
 HISTORY_MSG_259;カラートーン調整　-　不透明度のカーブ
@@ -553,7 +546,6 @@ HISTORY_MSG_293;フィルムシミュレーション
 HISTORY_MSG_294;フィルムシミュレーション　－　強さ
 HISTORY_MSG_295;フィルムシミュレーション　－　フィルム
 HISTORY_MSG_296;輝度ノイズ低減のカーブ
-HISTORY_MSG_297;ノイズ低減　－　質
 HISTORY_MSG_298;デッドピクセルフィルター
 HISTORY_MSG_299;色ノイズ低減のカーブ
 HISTORY_MSG_300;-
@@ -894,7 +886,6 @@ PREFERENCES_DIRLAST;最近参照したディレクトリ
 PREFERENCES_DIROTHER;他
 PREFERENCES_DIRSELECTDLG;起動時の画像ディレクトリ選択...
 PREFERENCES_DIRSOFTWARE;インストール・ディレクトリ
-PREFERENCES_EDITORCMDLINE;その他・コマンド入力
 PREFERENCES_EDITORLAYOUT;編集 レイアウト
 PREFERENCES_EXPAUT;高度
 PREFERENCES_EXTERNALEDITOR;外部エディタ
@@ -1050,7 +1041,7 @@ PROFILEPANEL_TOOLTIPSAVE;現在のプロファイルを保存\nCtrl-クリック
 PROGRESSBAR_LOADING;画像読み込み中...
 PROGRESSBAR_LOADINGTHUMBS;サムネイルの読み込み...
 PROGRESSBAR_LOADJPEG;JPEGファイル読み込み中...
-PROGRESSBAR_LOADPNG;;PNGファイル読み込み中...
+PROGRESSBAR_LOADPNG;PNGファイル読み込み中...
 PROGRESSBAR_LOADTIFF;TIFFファイル読み込み中...
 PROGRESSBAR_NOIMAGES;画像が見つかりません
 PROGRESSBAR_PROCESSING;画像処理中...
@@ -1294,60 +1285,54 @@ TP_DARKFRAME_LABEL;ダークフレーム
 TP_DEFRINGE_LABEL;フリンジ低減
 TP_DEFRINGE_RADIUS;半径
 TP_DEFRINGE_THRESHOLD;しきい値
-TP_DIRPYRDENOISE_ABM;色ノイズだけ
-TP_DIRPYRDENOISE_AUT;自動（分割方式）
-TP_DIRPYRDENOISE_AUTO;自動（分割方式）
-TP_DIRPYRDENOISE_AUTO_TOOLTIP;色ノイズ低減の効果を確認して下さい\n注意：設定値の計算はあくまで平均的なもので、かなり主観的でです
-TP_DIRPYRDENOISE_BLUE;色差 ブルー/イエロー
-TP_DIRPYRDENOISE_C2TYPE_TOOLTIP;手動\n画像全体に作用します\nノイズ低減の設定を手動で行います\n\n自動（分割方式）\n画像全体に作用します\n画像を9つに分割して、そこから全体の色ノイズ低減に適した設定を自動的に行います\n\n自動（プレビュー方式）\n画像全体に作用します\nプレビューで見えている画像の一部を使って全体の色ノイズ低減に適した設定を自動で行います
-TP_DIRPYRDENOISE_CCCURVE;色ノイズ低減のカーブ
-TP_DIRPYRDENOISE_CHROMA;色(マスター)
-TP_DIRPYRDENOISE_CHROMAFR;色ノイズ
-TP_DIRPYRDENOISE_CTYPE;色ノイズの調整法
-TP_DIRPYRDENOISE_CTYPE_TOOLTIP;手動\n画像全体に作用します\nノイズ低減の設定を手動で行います\n\n自動（分割方式）\n画像全体に作用します\n画像を9つに分割して、そこから全体の色ノイズ低減に適した設定を自動的に行います\n\n自動（多分割方式）\nプレビュー画像には反映されません-保存画像だけに反映されます。但し、タイルサイズとその中心をプレビューサイズとその中心にマッチさせる〝プレビュー”方式を使えば、効果がどれ位か予測がつきます。\n画像をタイル状に分割し（タイル数は画像サイズ次第で、10～70枚になります）、各タイルにあった色ノイズ低減の設定を自動で行います\n\n自動（プレビュー方式）\n画像全体に作用します\nプレビューで見えている画像の一部を使って全体の色ノイズ低減に適した設定を自動で行います
-TP_DIRPYRDENOISE_CUR;カーブ
-TP_DIRPYRDENOISE_CURVEEDITOR_CC;色度
-TP_DIRPYRDENOISE_CURVEEDITOR_CC_TOOLTIP;色度のスライダーの値を全て増やします（乗数）\nこれは色度に応じて色ノイズの低減効果の強弱を調節するカーブです。例えば、色度の低い部分で低減効果を高めるとか、色度の高い部分で低減効果を緩める、という具合です。
-TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;‘輝度’の位置でノイズ低減の強さを加減します
+TP_DIRPYRDENOISE_CHROMINANCE_AMZ;自動（多分割方式）
+TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;自動（分割方式）
+TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;色ノイズ低減の効果を確認して下さい\n注意：設定値の計算はあくまで平均的なもので、かなり主観的でです
+TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;色差 ブルー/イエロー
+TP_DIRPYRDENOISE_CHROMINANCE_CURVE;色ノイズ低減のカーブ
+TP_DIRPYRDENOISE_CHROMINANCE_FRAME;色ノイズ
+TP_DIRPYRDENOISE_CHROMINANCE_MANUAL;手動
+TP_DIRPYRDENOISE_CHROMINANCE_MASTER;色(マスター)
+TP_DIRPYRDENOISE_CHROMINANCE_METHOD;色ノイズの調整法
+TP_DIRPYRDENOISE_CHROMINANCE_METHODADVANCED_TOOLTIP;手動\n画像全体に作用します\nノイズ低減の設定を手動で行います\n\n自動（分割方式）\n画像全体に作用します\n画像を9つに分割して、そこから全体の色ノイズ低減に適した設定を自動的に行います\n\n自動（プレビュー方式）\n画像全体に作用します\nプレビューで見えている画像の一部を使って全体の色ノイズ低減に適した設定を自動で行います
+TP_DIRPYRDENOISE_CHROMINANCE_METHOD_TOOLTIP;手動\n画像全体に作用します\nノイズ低減の設定を手動で行います\n\n自動（分割方式）\n画像全体に作用します\n画像を9つに分割して、そこから全体の色ノイズ低減に適した設定を自動的に行います\n\n自動（多分割方式）\nプレビュー画像には反映されません-保存画像だけに反映されます。但し、タイルサイズとその中心をプレビューサイズとその中心にマッチさせる〝プレビュー”方式を使えば、効果がどれ位か予測がつきます。\n画像をタイル状に分割し（タイル数は画像サイズ次第で、10～70枚になります）、各タイルにあった色ノイズ低減の設定を自動で行います\n\n自動（プレビュー方式）\n画像全体に作用します\nプレビューで見えている画像の一部を使って全体の色ノイズ低減に適した設定を自動で行います
+TP_DIRPYRDENOISE_CHROMINANCE_PMZ;自動（プレビュー方式）
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW;プレビュー方式
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEWRESIDUAL_INFO_TOOLTIP;ウェーブレット変換後、プレビューで見える部分画像で残ったノイズのレベルを表示します\n\n>300以上　非常にノイズが多い\n100～300 ノイズが多い\n50～100　ノイズが少ない\n50以下 ノイズが非常に少ない\n\n算出値はRGBとL*a*b*モードでは異なります。RGBモードは輝度と色を完全に切り離すことが出来ないので、算出値の精度は劣ります。
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_INFO;プレビューのサイズ=%1, 中心: Px=%2  Py=%3
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO;プレビューのノイズ: 中間色度=%1  高色度=%2
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY;プレビューのノイズ: 中間色度= -   高色度= -
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;タイルのサイズ=%1, 中心位置: X座標=%2  Y座標=%3
+TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;色差 レッド/グリーン
 TP_DIRPYRDENOISE_ENH;強化モード
 TP_DIRPYRDENOISE_ENH_TOOLTIP;ノイズ低減の効果を髙めますが、代わりに演算時間が約20%増えます。
-TP_DIRPYRDENOISE_GAMMA;ガンマ
-TP_DIRPYRDENOISE_GAMMA_TOOLTIP;ガンマは、トーンの範囲全体でノイズ低減の量を変化させます。値が大きいほど明るいトーンに効果を及ぼし、値が小さいほどシャドウをターゲットにします
-TP_DIRPYRDENOISE_LAB;L*a*b*
-TP_DIRPYRDENOISE_LABEL;ノイズ低減
-TP_DIRPYRDENOISE_LABM;L*a*b*
-TP_DIRPYRDENOISE_LCURVE;輝度カーブ
-TP_DIRPYRDENOISE_LDETAIL;輝度　細部の復元
-TP_DIRPYRDENOISE_LM;輝度のみ
-TP_DIRPYRDENOISE_LPLABM;加重平均 L* (少なめ) + a*b* (普通)
-TP_DIRPYRDENOISE_LTYPE;輝度ノイズの調整法
-TP_DIRPYRDENOISE_LUMA;輝度
-TP_DIRPYRDENOISE_LUMAFR;輝度ノイズ
-TP_DIRPYRDENOISE_MAN;手動
-TP_DIRPYRDENOISE_MANU;手動
-TP_DIRPYRDENOISE_MED;メディアンフィルター
-TP_DIRPYRDENOISE_MEDMETHOD;方式
-TP_DIRPYRDENOISE_MEDTYPE;フィルターの種類
-TP_DIRPYRDENOISE_METHOD;方式
-TP_DIRPYRDENOISE_METHOD11;ノイズ低減の質
-TP_DIRPYRDENOISE_METHOD11_TOOLTIP;ノイズの状態に応じて低減効果の質を選べます：1-標準　2－高い\n2の方がノイズ低減効果は高くなりますが、その分処理時間が増えます。
-TP_DIRPYRDENOISE_METHOD_TOOLTIP;raw画像は、RGBまたはL*a*b*方式のいずれかを使用することができます。\n\nraw以外の画像は、選択にかかわらずL*a*b*方式が採用されます
-TP_DIRPYRDENOISE_METM_TOOLTIP;フィルタリングの方式で、"輝度のみ"と"L*a*b*"を選択した場合、メディアンフィルタリングはノイズ低減行程でウェーブレット変換が行われた直後に適用されます\n"RGB"モードの場合は、ノイズ低減行程の最後で適用されます
-TP_DIRPYRDENOISE_NOISELABEL;プレビューのノイズ: 中間色度=%1  高色度=%2
-TP_DIRPYRDENOISE_NOISELABELEMPTY;プレビューのノイズ: 中間色度= -   高色度= -
-TP_DIRPYRDENOISE_NRESID_TOOLTIP;ウェーブレット変換後、プレビューで見える部分画像で残ったノイズのレベルを表示します\n\n>300以上　非常にノイズが多い\n100～300 ノイズが多い\n50～100　ノイズが少ない\n50以下 ノイズが非常に少ない\n\n算出値はRGBとL*a*b*モードでは異なります。RGBモードは輝度と色を完全に切り離すことが出来ないので、算出値の精度は劣ります。
-TP_DIRPYRDENOISE_PASSES;フィルタリングの繰り返し回数
-TP_DIRPYRDENOISE_PON;自動（多分割方式）
-TP_DIRPYRDENOISE_PRE;自動（プレビュー方式）
-TP_DIRPYRDENOISE_PREV;プレビュー方式
-TP_DIRPYRDENOISE_PREVLABEL;プレビューのサイズ=%1, 中心: Px=%2  Py=%3
-TP_DIRPYRDENOISE_RED;色差 レッド/グリーン
-TP_DIRPYRDENOISE_RGB;RGB
-TP_DIRPYRDENOISE_RGBM;RGB
-TP_DIRPYRDENOISE_SHAL;標準
-TP_DIRPYRDENOISE_SHALBI;高い
+TP_DIRPYRDENOISE_LUMINANCE_CONTROL;輝度ノイズの調整法
+TP_DIRPYRDENOISE_LUMINANCE_CURVE;輝度カーブ
+TP_DIRPYRDENOISE_LUMINANCE_DETAIL;輝度　細部の復元
+TP_DIRPYRDENOISE_LUMINANCE_FRAME;輝度ノイズ
+TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;輝度
+TP_DIRPYRDENOISE_MAIN_COLORSPACE;方式
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;L*a*b*
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;ノイズ低減
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;raw画像は、RGBまたはL*a*b*方式のいずれかを使用することができます。\n\nraw以外の画像は、選択にかかわらずL*a*b*方式が採用されます
+TP_DIRPYRDENOISE_MAIN_GAMMA;ガンマ
+TP_DIRPYRDENOISE_MAIN_GAMMA_TOOLTIP;ガンマは、トーンの範囲全体でノイズ低減の量を変化させます。値が大きいほど明るいトーンに効果を及ぼし、値が小さいほどシャドウをターゲットにします
+TP_DIRPYRDENOISE_MAIN_MODE;ノイズ低減の質
+TP_DIRPYRDENOISE_MAIN_MODE_AGGRESSIVE;高い
+TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE;標準
+TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;ノイズの状態に応じて低減効果の質を選べます：1-標準　2－高い\n2の方がノイズ低減効果は高くなりますが、その分処理時間が増えます。
+TP_DIRPYRDENOISE_MEDIAN_METHOD;方式
+TP_DIRPYRDENOISE_MEDIAN_METHOD_CHROMINANCE;色ノイズだけ
+TP_DIRPYRDENOISE_MEDIAN_METHOD_LAB;L*a*b*
+TP_DIRPYRDENOISE_MEDIAN_METHOD_LABEL;メディアンフィルター
+TP_DIRPYRDENOISE_MEDIAN_METHOD_LUMINANCE;輝度のみ
+TP_DIRPYRDENOISE_MEDIAN_METHOD_RGB;RGB
+TP_DIRPYRDENOISE_MEDIAN_METHOD_TOOLTIP;フィルタリングの方式で、"輝度のみ"と"L*a*b*"を選択した場合、メディアンフィルタリングはノイズ低減行程でウェーブレット変換が行われた直後に適用されます\n"RGB"モードの場合は、ノイズ低減行程の最後で適用されます
+TP_DIRPYRDENOISE_MEDIAN_METHOD_WEIGHTED;加重平均 L* (少なめ) + a*b* (普通)
+TP_DIRPYRDENOISE_MEDIAN_PASSES;フィルタリングの繰り返し回数
+TP_DIRPYRDENOISE_MEDIAN_TYPE;フィルターの種類
 TP_DIRPYRDENOISE_SLI;スライダー
-TP_DIRPYRDENOISE_TILELABEL;タイルのサイズ=%1, 中心位置: X座標=%2  Y座標=%3
 TP_DIRPYREQUALIZER_ALGO;肌色の範囲
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;ファイン：撮影の肌色に近い部分に働くアルゴリズム、他の色への影響を最小限に抑えます\n広範：　アーティファクトの増加を避けるアルゴリズムです
 TP_DIRPYREQUALIZER_ARTIF;アーティファクトを軽減
@@ -1872,6 +1857,7 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !DONT_SHOW_AGAIN;Don't show this message again.
 !DYNPROFILEEDITOR_DELETE;Delete
 !DYNPROFILEEDITOR_EDIT;Edit
@@ -1892,8 +1878,13 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
 !GENERAL_APPLY;Apply
 !GENERAL_OPEN;Open
+!GENERAL_SLIDER;Slider
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
 !HISTORY_MSG_166;Exposure - Reset
+!HISTORY_MSG_173;NR - Detail recovery
+!HISTORY_MSG_203;NR - Color space
+!HISTORY_MSG_256;NR - Median - Type
+!HISTORY_MSG_297;NR - Mode
 !HISTORY_MSG_407;Retinex - Method
 !HISTORY_MSG_408;Retinex - Radius
 !HISTORY_MSG_409;Retinex - Contrast
@@ -1965,6 +1956,12 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !HISTORY_MSG_491;White Balance
 !HISTORY_MSG_492;RGB Curves
 !HISTORY_MSG_493;L*a*b* Adjustments
+!HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
+!HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
+!HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
+!HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
+!HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
+!HISTORY_MSG_METADATA_MODE;Metadata copy mode
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
 !IPTCPANEL_COPYRIGHT;Copyright notice
@@ -1998,6 +1995,7 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
 !MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
 !MONITOR_PROFILE_SYSTEM;System default
+!PARTIALPASTE_LOCALCONTRAST;Local contrast
 !PARTIALPASTE_PRSHARPENING;Post-resize sharpening
 !PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
@@ -2006,8 +2004,15 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !PARTIALPASTE_TM_FATTAL;HDR Tone mapping
 !PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_CMMBPC;Black point compensation
+!PREFERENCES_CROP;Crop editing
+!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
+!PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
+!PREFERENCES_CROP_GUIDES_FRAME;Frame
+!PREFERENCES_CROP_GUIDES_FULL;Original
+!PREFERENCES_CROP_GUIDES_NONE;None
 !PREFERENCES_D50_OLD;5000K
 !PREFERENCES_DIRECTORIES;Directories
+!PREFERENCES_EDITORCMDLINE;Custom command line
 !PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
 !PREFERENCES_LANG;Language
 !PREFERENCES_MONINTENT;Default rendering intent
@@ -2052,19 +2057,30 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !TP_COLORAPP_YB;Yb% (mean luminance)
 !TP_COLORAPP_YBSCENE;Yb% (mean luminance)
 !TP_COLORAPP_YBSCENE_TOOLTIP;if auto is enabled, Yb is calculated from the mean value of the actual image's luminance
-!TP_DIRPYRDENOISE_3X3;3×3
-!TP_DIRPYRDENOISE_3X3_SOFT;3×3 soft
-!TP_DIRPYRDENOISE_5X5;5×5
-!TP_DIRPYRDENOISE_5X5_SOFT;5×5 soft
-!TP_DIRPYRDENOISE_7X7;7×7
-!TP_DIRPYRDENOISE_9X9;9×9
-!TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
-!TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.
+!TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
+!TP_DIRPYRDENOISE_LABEL;Noise Reduction
+!TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.
+!TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
+!TP_DIRPYRDENOISE_TYPE_3X3;3×3
+!TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 soft
+!TP_DIRPYRDENOISE_TYPE_5X5;5×5
+!TP_DIRPYRDENOISE_TYPE_5X5SOFT;5×5 soft
+!TP_DIRPYRDENOISE_TYPE_7X7;7×7
+!TP_DIRPYRDENOISE_TYPE_9X9;9×9
 !TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
 !TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
 !TP_ICM_BPC;Black Point Compensation
 !TP_ICM_PROFILEINTENT;Rendering Intent
 !TP_ICM_SAVEREFERENCE;Save Reference Image
+!TP_LOCALCONTRAST_AMOUNT;Amount
+!TP_LOCALCONTRAST_DARKNESS;Darkness level
+!TP_LOCALCONTRAST_LABEL;Local Contrast
+!TP_LOCALCONTRAST_LIGHTNESS;Lightness level
+!TP_LOCALCONTRAST_RADIUS;Radius
+!TP_METADATA_EDIT;Apply modifications
+!TP_METADATA_MODE;Metadata copy mode
+!TP_METADATA_STRIP;Strip all metadata
+!TP_METADATA_TUNNEL;Copy unchanged
 !TP_NEUTRAL;Reset
 !TP_RAWCACORR_CASTR;Strength
 !TP_RAW_1PASSMEDIUM;1-Pass (Medium)
@@ -2077,7 +2093,7 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !TP_RAW_HPHD;HPHD
 !TP_RAW_IGV;IGV
 !TP_RAW_IMAGENUM;Sub-image
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
+!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
 !TP_RAW_LMMSE;LMMSE
 !TP_RAW_MONO;Mono
 !TP_RAW_NONE;None (Shows sensor pattern)
@@ -2114,6 +2130,8 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Check red/blue horizontal
 !TP_RAW_PIXELSHIFTNONGREENVERTICAL;Check red/blue vertical
 !TP_RAW_PIXELSHIFTNREADISO;nRead
+!TP_RAW_PIXELSHIFTONEGREEN;Use one green instead of average
+!TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Use one green instead of averaging two greens for regions without motion.
 !TP_RAW_PIXELSHIFTPRNU;PRNU (%)
 !TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
 !TP_RAW_PIXELSHIFTSHOWMOTION;Show motion mask

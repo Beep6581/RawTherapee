@@ -143,7 +143,7 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"),
     );
 
     ccshape->setBottomBarColorProvider(this, 2);
-    ccshape->setLeftBarColorProvider(this, 2);
+    ccshape->setLeftBarColorProvider(this, 7);
     ccshape->setRangeDefaultMilestones(0.05, 0.2, 0.58);
 
     lcshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_LABCURVE_CURVEEDITOR_LC")));
@@ -162,7 +162,7 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"),
     clshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP"));
     clshape->setEditID(EUID_Lab_CLCurve, BT_SINGLEPLANE_FLOAT);
 
-    clshape->setLeftBarColorProvider(this, 2);
+    clshape->setLeftBarColorProvider(this, 7);
     clshape->setRangeDefaultMilestones(0.25, 0.5, 0.75);
     milestones.push_back( GradientMilestone(0., 0., 0., 0.) );
     milestones.push_back( GradientMilestone(1., 1., 1., 1.) );
@@ -571,62 +571,52 @@ void LCurve::colorForValue (double valX, double valY, enum ColorCaller::ElemType
     }
 
     if (callerId == 1) {         // ch - main curve
-
         Color::hsv2rgb01(float(valX), float(valY), 0.5f, R, G, B);
     } else if (callerId == 2) {  // cc - bottom bar
-
         float value = (1.f - 0.7f) * float(valX) + 0.7f;
         // whole hue range
         // Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
-        Color::hsv2rgb01(float(valY), float(valX), value, R, G, B);
+        Color::hsv2rgb01(float(valY*0.8), float(valX), value, R, G, B);
     } else if (callerId == 6) {  // cc - left bar
-
         float value = (1.f - 0.7f) * float(valX) + 0.7f;
-            float hue = (1.14056f - 0.92f) * float(valY) + 0.92f;
-
-            if (hue > 1.0f) {
-                hue -= 1.0f;
-            }
-
-            // Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
-            Color::hsv2rgb01(hue, float(valX), value, R, G, B);
-		
-        // whole hue range
+        float hue = (1.14056f - 0.92f) * float(valY) + 0.92f;
+        if (hue > 1.0f) {
+            hue -= 1.0f;
+        }
         // Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
-      //  Color::hsv2rgb01(float(valY), float(valX), value, R, G, B);
+        Color::hsv2rgb01(hue, float(valX), value, R, G, B);
     } else if (callerId == 3) {  // lc - bottom bar
-
         float value = (1.f - 0.7f) * float(valX) + 0.7f;
-
         if (lcredsk->get_active()) {
             // skin range
             // -0.1 rad < Hue < 1.6 rad
             // Y axis / from 0.92 up to 0.14056
             float hue = (1.14056f - 0.92f) * float(valY) + 0.92f;
-
             if (hue > 1.0f) {
                 hue -= 1.0f;
             }
-
             // Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
             Color::hsv2rgb01(hue, float(valX), value, R, G, B);
         } else {
             // whole hue range
             // Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
-            Color::hsv2rgb01(float(valY), float(valX), value, R, G, B);
+            Color::hsv2rgb01(float(valY*0.8), float(valX), value, R, G, B);
         }
     } else if (callerId == 4) {  // LH - bottom bar
         Color::hsv2rgb01(float(valX), 0.5f, float(valY), R, G, B);
     } else if (callerId == 5) {  // HH - bottom bar
         float h = float((valY - 0.5) * 0.3 + valX);
-
         if (h > 1.0f) {
             h -= 1.0f;
         } else if (h < 0.0f) {
             h += 1.0f;
         }
-
         Color::hsv2rgb01(h, 0.5f, 0.5f, R, G, B);
+    } else if (callerId == 7) {  // cc and cl - left bar
+        float value = (1.f - 0.7f) * float(valX) + 0.7f;
+        // whole hue range
+        // Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
+        Color::hsv2rgb01(float(valY*0.8), 1.f - float(valX), value, R, G, B);
     }
 
     caller->ccRed = double(R);

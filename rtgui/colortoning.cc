@@ -41,7 +41,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     colorCurveEditorG->setCurveListener (this);
 
     colorShape = static_cast<FlatCurveEditor*>(colorCurveEditorG->addCurve(CT_Flat, "", nullptr, false, false));
-    colorShape->setCurveColorProvider(this, 1);
+    colorShape->setCurveColorProvider(this, 4);
     std::vector<GradientMilestone> milestones;
 
     // whole hue range
@@ -951,8 +951,8 @@ void ColorToning::colorForValue (double valX, double valY, enum ColorCaller::Ele
 
     float R = 0.f, G = 0.f, B = 0.f;
 
-    if (callerId == 1) {         // ch - main curve
-        Color::hsv2rgb01(float(valY), 1.0f, 0.5f, R, G, B);
+    if (callerId == 1) {         // opacity curve left bar(s)
+        Color::hsv2rgb01(float(valY*0.8), 1.0f, 0.5f, R, G, B);
     } else if (callerId == 2) {  // Slider 1 background
         if (valY <= 0.5)
             // the hue range
@@ -983,6 +983,8 @@ void ColorToning::colorForValue (double valX, double valY, enum ColorCaller::Ele
             G = (gray * (1.0 - valX)) + G * valX;
             B = (gray * (1.0 - valX)) + B * valX;
         }
+    } else if (callerId == 4) {  // color curve vertical and horizontal crosshair
+        Color::hsv2rgb01(float(valY), 1.0f, 0.5f, R, G, B);
     }
 
     caller->ccRed = double(R);

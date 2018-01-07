@@ -1,7 +1,8 @@
-/*
+/* -*- C++ -*-
+ *  
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2017 Alberto Griggio <alberto.griggio@gmail.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,34 +17,21 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _MULTILANGMGR_
-#define _MULTILANGMGR_
+#pragma once
 
-#include <map>
 #include <string>
-#include <vector>
+#include <unordered_map>
+#include "../rtengine/refreshmap.h"
 
-#include <glibmm/ustring.h>
 
-class MultiLangMgr
-{
+class ProcEventMapper {
 public:
-    MultiLangMgr ();
-
-    void load(const Glib::ustring &language, const std::vector<Glib::ustring> &fnames);
-    Glib::ustring getStr(const std::string& key) const;
-    static bool isOSLanguageDetectSupported();
-    static Glib::ustring getOSUserLanguage();
+    static ProcEventMapper *getInstance();
+    rtengine::ProcEvent newEvent(int action, const std::string &history_msg="");
+    const std::string &getHistoryMsg(rtengine::ProcEvent event) const;
 
 private:
-    std::map<std::string, Glib::ustring> translations;
+    ProcEventMapper();
+    
+    std::unordered_map<int, std::string> history_msgs_;
 };
-
-extern MultiLangMgr langMgr;
-
-inline Glib::ustring M (const std::string& key)
-{
-    return langMgr.getStr (key);
-}
-
-#endif

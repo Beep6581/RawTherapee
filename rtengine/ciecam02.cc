@@ -608,31 +608,31 @@ void Ciecam02::calculate_ab ( double &aa, double &bb, double h, double e, double
 }
 void Ciecam02::calculate_abfloat ( float &aa, float &bb, float h, float e, float t, float nbb, float a )
 {
-    float2 sincosval = xsincosf ((h * rtengine::RT_PI) / 180.0f);
+    float2 sincosval = xsincosf(h * rtengine::RT_PI_F_180);
     float sinh = sincosval.x;
     float cosh = sincosval.y;
     float x = (a / nbb) + 0.305f;
-    float p3 = 1.05f;
-    bool swapValues = fabs ( sinh ) > fabs ( cosh );
+    constexpr float p3 = 1.05f;
+    const bool swapValues = fabs(sinh) > fabs(cosh);
 
     if (swapValues) {
-        std::swap (sinh, cosh);
+        std::swap(sinh, cosh);
     }
 
     float c1 = 1.f;
     float c2 = sinh / cosh;
 
     if (swapValues) {
-        std::swap (c1, c2);
+        std::swap(c1, c2);
     }
 
-    float div = ((e / (t * cosh)) - (-0.31362f - (p3 * 0.15681f)) * c1 - ((0.01924f - (p3 * 4.49038f)) * (c2)));
+    float div = ((e / (t * cosh)) - (-0.31362f - (p3 * 0.15681f)) * c1 - ((0.01924f - (p3 * 4.49038f)) * c2));
     // for large values of t the above calculation can change its sign which results in a hue shift of 180 degree
     // so we have to check the sign to avoid this shift.
     // Additionally it seems useful to limit the minimum value of div
     // I limited it, but I'm sure the actual limit is not the best one
 
-    if (signf (div) != signf (cosh) || fabsf (div) <= fabsf (cosh) * 2.f) {
+    if (signf(div) != signf(cosh) || fabsf(div) <= fabsf(cosh) * 2.f) {
         div = cosh * 2.f;
     }
 
@@ -640,7 +640,7 @@ void Ciecam02::calculate_abfloat ( float &aa, float &bb, float h, float e, float
     bb = (aa * sinh) / cosh;
 
     if (swapValues) {
-        std::swap (aa, bb);
+        std::swap(aa, bb);
     }
 }
 #ifdef __SSE2__
@@ -1007,9 +1007,18 @@ void Ciecam02::xyz2jch_ciecam02float ( float &J, float &C, float &h, float aw, f
         bp = MAXR (bp, 0.0f);
     }
 
-    rpa = nonlinear_adaptationfloat ( rp, fl );
-    gpa = nonlinear_adaptationfloat ( gp, fl );
-    bpa = nonlinear_adaptationfloat ( bp, fl );
+#ifdef __SSE2__
+    vfloat pv = _mm_setr_ps(rp, gp, bp, 1.f);
+    vfloat fv = F2V(fl);
+    vfloat outv = nonlinear_adaptationfloat(pv, fv);
+    rpa = outv[0];
+    gpa = outv[1];
+    bpa = outv[2];
+#else
+    rpa = nonlinear_adaptationfloat(rp, fl);
+    gpa = nonlinear_adaptationfloat(gp, fl);
+    bpa = nonlinear_adaptationfloat(bp, fl);
+#endif
 
     ca = rpa - ((12.0f * gpa) - bpa) / 11.0f;
     cb = (0.11111111f) * (rpa + gpa - (2.0f * bpa));
@@ -1084,26 +1093,43 @@ void Ciecam02::jch2xyz_ciecam02float ( float &x, float &y, float &z, float J, fl
     float a, ca, cb;
     float e, t;
     gamu = 1;
-    xyz_to_cat02float ( rw, gw, bw, xw, yw, zw, gamu );
-    e = ((961.53846f) * nc * ncb) * (xcosf ( ((h * rtengine::RT_PI) / 180.0f) + 2.0f ) + 3.8f);
-    a = pow_F ( J / 100.0f, 1.0f / (c * cz) ) * aw;
-    t = pow_F ( 10.f * C / (sqrtf ( J ) * pow1), 1.1111111f );
+    xyz_to_cat02float(rw, gw, bw, xw, yw, zw, gamu);
+    e = ((961.53846f) * nc * ncb) * (xcosf(h * rtengine::RT_PI_F_180 + 2.0f) + 3.8f);
 
-    calculate_abfloat ( ca, cb, h, e, t, nbb, a );
-    Aab_to_rgbfloat ( rpa, gpa, bpa, a, ca, cb, nbb );
+#ifdef __SSE2__
+    vfloat powinv1 = _mm_setr_ps(J / 100.0f, 10.f * C / (sqrtf(J) * pow1), 1.f, 1.f);
+    vfloat powinv2 = _mm_setr_ps(1.0f / (c * cz), 1.1111111f, 1.f, 1.f);
+    vfloat powoutv = pow_F(powinv1, powinv2);
+    a = powoutv[0] * aw;
+    t = powoutv[1];
+#else
+    a = pow_F(J / 100.0f, 1.0f / (c * cz)) * aw;
+    t = pow_F(10.f * C / (sqrtf(J) * pow1), 1.1111111f);
+#endif
 
-    rp = inverse_nonlinear_adaptationfloat ( rpa, fl );
-    gp = inverse_nonlinear_adaptationfloat ( gpa, fl );
-    bp = inverse_nonlinear_adaptationfloat ( bpa, fl );
+    calculate_abfloat(ca, cb, h, e, t, nbb, a);
+    Aab_to_rgbfloat(rpa, gpa, bpa, a, ca, cb, nbb);
 
-    hpe_to_xyzfloat ( x, y, z, rp, gp, bp );
-    xyz_to_cat02float ( rc, gc, bc, x, y, z, gamu );
+#ifdef __SSE2__
+    vfloat pav = _mm_setr_ps(rpa, gpa, bpa, 1.f);
+    vfloat fv = F2V(fl);
+    vfloat outv = inverse_nonlinear_adaptationfloat(pav, fv);
+    rp = outv[0];
+    gp = outv[1];
+    bp = outv[2];
+#else
+    rp = inverse_nonlinear_adaptationfloat(rpa, fl);
+    gp = inverse_nonlinear_adaptationfloat(gpa, fl);
+    bp = inverse_nonlinear_adaptationfloat(bpa, fl);
+#endif
+    hpe_to_xyzfloat(x, y, z, rp, gp, bp);
+    xyz_to_cat02float(rc, gc, bc, x, y, z, gamu);
 
     r = rc / (((yw * d) / rw) + (1.0f - d));
     g = gc / (((yw * d) / gw) + (1.0f - d));
     b = bc / (((yw * d) / bw) + (1.0f - d));
 
-    cat02_to_xyzfloat ( x, y, z, r, g, b, gamu );
+    cat02_to_xyzfloat(x, y, z, r, g, b, gamu);
 }
 
 #ifdef __SSE2__

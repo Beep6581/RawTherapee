@@ -1643,7 +1643,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
                     return true;
 
                 case GDK_KEY_f:
-                    iareapanel->imageArea->zoomPanel->zoomFitClicked();
+                    iareapanel->imageArea->zoomPanel->zoomFitCropClicked();
                     return true;
 
                 case GDK_KEY_F5:
@@ -1718,7 +1718,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
                 return true;
 
             case GDK_KEY_f:
-                iareapanel->imageArea->zoomPanel->zoomFitCropClicked();
+                iareapanel->imageArea->zoomPanel->zoomFitClicked();
                 return true;
         }
     }
@@ -1938,7 +1938,7 @@ void EditorPanel::saveAsPressed ()
                 rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
 
                 ProgressConnector<rtengine::IImage16*> *ld = new ProgressConnector<rtengine::IImage16*>();
-                ld->startFunc (sigc::bind (sigc::ptr_fun (&rtengine::processImage), job, err, parent->getProgressListener(), options.tunnelMetaData, false ),
+                ld->startFunc (sigc::bind (sigc::ptr_fun (&rtengine::processImage), job, err, parent->getProgressListener(), false ),
                                sigc::bind (sigc::mem_fun ( *this, &EditorPanel::idle_saveImage ), ld, fnameOut, sf, pparams));
                 saveimgas->set_sensitive (false);
                 sendtogimp->set_sensitive (false);
@@ -1982,7 +1982,7 @@ void EditorPanel::sendToGimpPressed ()
     ipc->getParams (&pparams);
     rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
     ProgressConnector<rtengine::IImage16*> *ld = new ProgressConnector<rtengine::IImage16*>();
-    ld->startFunc (sigc::bind (sigc::ptr_fun (&rtengine::processImage), job, err, parent->getProgressListener(), options.tunnelMetaData, false ),
+    ld->startFunc (sigc::bind (sigc::ptr_fun (&rtengine::processImage), job, err, parent->getProgressListener(), false ),
                    sigc::bind (sigc::mem_fun ( *this, &EditorPanel::idle_sendToGimp ), ld, openThm->getFileName() ));
     saveimgas->set_sensitive (false);
     sendtogimp->set_sensitive (false);
@@ -1996,7 +1996,7 @@ bool EditorPanel::saveImmediately (const Glib::ustring &filename, const SaveForm
     rtengine::ProcessingJob *job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
 
     // save immediately
-    rtengine::IImage16 *img = rtengine::processImage (job, err, nullptr, options.tunnelMetaData, false);
+    rtengine::IImage16 *img = rtengine::processImage (job, err, nullptr, false);
 
     int err = 0;
 

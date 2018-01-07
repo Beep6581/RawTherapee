@@ -98,6 +98,11 @@ void ParamsEdited::set (bool v)
     labCurve.avoidcolorshift = v;
     labCurve.rstprotection   = v;
     labCurve.lcredsk         = v;
+    localContrast.enabled = v;
+    localContrast.radius = v;
+    localContrast.amount = v;
+    localContrast.darkness = v;
+    localContrast.lightness = v;
     rgbCurves.enabled = v;
     rgbCurves.lumamode       = v;
     rgbCurves.rcurve         = v;
@@ -276,7 +281,6 @@ void ParamsEdited::set (bool v)
     sh.htonalwidth   = v;
     sh.shadows       = v;
     sh.stonalwidth   = v;
-    sh.localcontrast = v;
     sh.radius        = v;
     crop.enabled = v;
     crop.x       = v;
@@ -564,6 +568,7 @@ void ParamsEdited::set (bool v)
     filmSimulation.enabled = v;
     filmSimulation.clutFilename = v;
     filmSimulation.strength = v;
+    metadata.mode = v;
 
     exif = v;
     iptc = v;
@@ -649,6 +654,13 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         labCurve.avoidcolorshift = labCurve.avoidcolorshift && p.labCurve.avoidcolorshift == other.labCurve.avoidcolorshift;
         labCurve.rstprotection = labCurve.rstprotection && p.labCurve.rstprotection == other.labCurve.rstprotection;
         labCurve.lcredsk = labCurve.lcredsk && p.labCurve.lcredsk == other.labCurve.lcredsk;
+
+        localContrast.enabled = localContrast.enabled && p.localContrast.enabled == other.localContrast.enabled;        
+        localContrast.radius = localContrast.radius && p.localContrast.radius == other.localContrast.radius;
+        localContrast.amount = localContrast.amount && p.localContrast.amount == other.localContrast.amount;
+        localContrast.darkness = localContrast.darkness && p.localContrast.darkness == other.localContrast.darkness;
+        localContrast.lightness = localContrast.lightness && p.localContrast.lightness == other.localContrast.lightness;
+        
         rgbCurves.enabled = rgbCurves.enabled && p.rgbCurves.enabled == other.rgbCurves.enabled;
         rgbCurves.lumamode = rgbCurves.lumamode && p.rgbCurves.lumamode == other.rgbCurves.lumamode;
         rgbCurves.rcurve = rgbCurves.rcurve && p.rgbCurves.rcurve == other.rgbCurves.rcurve;
@@ -831,7 +843,6 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         sh.htonalwidth = sh.htonalwidth && p.sh.htonalwidth == other.sh.htonalwidth;
         sh.shadows = sh.shadows && p.sh.shadows == other.sh.shadows;
         sh.stonalwidth = sh.stonalwidth && p.sh.stonalwidth == other.sh.stonalwidth;
-        sh.localcontrast = sh.localcontrast && p.sh.localcontrast == other.sh.localcontrast;
         sh.radius = sh.radius && p.sh.radius == other.sh.radius;
         crop.enabled = crop.enabled && p.crop.enabled == other.crop.enabled;
         crop.x = crop.x && p.crop.x == other.crop.x;
@@ -1112,6 +1123,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         filmSimulation.enabled = filmSimulation.enabled && p.filmSimulation.enabled == other.filmSimulation.enabled;
         filmSimulation.clutFilename = filmSimulation.clutFilename && p.filmSimulation.clutFilename == other.filmSimulation.clutFilename;
         filmSimulation.strength = filmSimulation.strength && p.filmSimulation.strength == other.filmSimulation.strength;
+        metadata.mode = metadata.mode && p.metadata.mode == other.metadata.mode;
 
 //      How the hell can we handle that???
 //      exif = exif && p.exif==other.exif
@@ -1380,6 +1392,22 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (labCurve.lcredsk) {
         toEdit.labCurve.lcredsk     = mods.labCurve.lcredsk;
+    }
+
+    if (localContrast.enabled) {
+        toEdit.localContrast.enabled = mods.localContrast.enabled;
+    }
+    if (localContrast.radius) {
+        toEdit.localContrast.radius = mods.localContrast.radius;
+    }
+    if (localContrast.amount) {
+        toEdit.localContrast.amount = mods.localContrast.amount;
+    }
+    if (localContrast.darkness) {
+        toEdit.localContrast.darkness = mods.localContrast.darkness;
+    }
+    if (localContrast.lightness) {
+        toEdit.localContrast.lightness = mods.localContrast.lightness;
     }
 
     if (rgbCurves.enabled) {
@@ -2045,10 +2073,6 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (sh.stonalwidth) {
         toEdit.sh.stonalwidth     = mods.sh.stonalwidth;
-    }
-
-    if (sh.localcontrast) {
-        toEdit.sh.localcontrast = dontforceSet && options.baBehav[ADDSET_SH_LOCALCONTRAST] ? toEdit.sh.localcontrast + mods.sh.localcontrast : mods.sh.localcontrast;
     }
 
     if (sh.radius) {
@@ -3098,6 +3122,9 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.filmSimulation.strength        = dontforceSet && options.baBehav[ADDSET_FILMSIMULATION_STRENGTH] ? toEdit.filmSimulation.strength + mods.filmSimulation.strength : mods.filmSimulation.strength;
     }
 
+    if (metadata.mode) {
+        toEdit.metadata.mode     = mods.metadata.mode;
+    }
 
     // Exif changes are added to the existing ones
     if (exif)

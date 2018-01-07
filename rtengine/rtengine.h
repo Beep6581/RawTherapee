@@ -413,6 +413,7 @@ public:
       * The image update starts immediately in the background. If it is ready, the result is passed to a PreviewImageListener
       * and to a DetailedCropListener (if enabled). */
     virtual void        endUpdateParams (ProcEvent change) = 0;
+    void endUpdateParams(ProcEventCode change) { endUpdateParams(ProcEvent(change)); }
     virtual void        endUpdateParams (int changeFlags) = 0;
     // Starts a minimal update
     virtual void        startProcessing (int changeCode) = 0;
@@ -532,9 +533,8 @@ public:
    * @param job the ProcessingJob to cancel.
    * @param errorCode is the error code if an error occured (e.g. the input image could not be loaded etc.)
    * @param pl is an optional ProgressListener if you want to keep track of the progress
-   * @param tunnelMetaData tunnels IPTC and XMP to output without change
    * @return the resulting image, with the output profile applied, exif and iptc data set. You have to save it or you can access the pixel data directly.  */
-IImage16* processImage (ProcessingJob* job, int& errorCode, ProgressListener* pl = nullptr, bool tunnelMetaData = false, bool flush = false);
+IImage16* processImage (ProcessingJob* job, int& errorCode, ProgressListener* pl = nullptr, bool flush = false);
 
 /** This class is used to control the batch processing. The class implementing this interface will be called when the full processing of an
    * image is ready and the next job to process is needed. */
@@ -554,8 +554,8 @@ public:
    * The ProcessingJob passed becomes invalid, you can not use it any more.
    * @param job the ProcessingJob to cancel.
    * @param bpl is the BatchProcessingListener that is called when the image is ready or the next job is needed. It also acts as a ProgressListener.
-   * @param tunnelMetaData tunnels IPTC and XMP to output without change */
-void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData);
+   **/
+void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl);
 
 
 extern MyMutex* lcmsMutex;

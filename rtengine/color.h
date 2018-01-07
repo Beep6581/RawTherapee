@@ -298,6 +298,30 @@ public:
         }
     }
 
+    static inline void rgb2hsvtc(float r, float g, float b, float &h, float &s, float &v)
+    {
+        const float var_Min = min(r, g, b);
+        const float var_Max = max(r, g, b);
+        const float del_Max = var_Max - var_Min;
+
+        v = var_Max / 65535.f;
+
+        if (del_Max < 0.00001f) {
+            h = 0.f;
+            s = 0.f;
+        } else {
+            s = del_Max / var_Max;
+
+            if (r == var_Max) {
+                h = (g < b ? 6.f : 0.f) + (g - b) / del_Max;
+            } else if (g == var_Max) {
+                h = 2.f + (b - r) / del_Max;
+            } else { /*if ( b == var_Max ) */
+                h = 4.f + (r - g) / del_Max;
+            }
+        }
+    }
+
     /**
     * @brief Convert hue saturation value in red green blue
     * @param h hue channel [0 ; 1]
@@ -312,14 +336,14 @@ public:
     static inline void hsv2rgbdcp (float h, float s, float v, float &r, float &g, float &b)
     {
         // special version for dcp which saves 1 division (in caller) and six multiplications (inside this function)
-        int sector = h;  // sector 0 to 5, floor() is very slow, and h is always >0
-        float f = h - sector; // fractional part of h
+        const int sector = h;  // sector 0 to 5, floor() is very slow, and h is always > 0
+        const float f = h - sector; // fractional part of h
 
         v *= 65535.f;
-        float vs = v * s;
-        float p = v - vs;
-        float q = v - f * vs;
-        float t = p + v - q;
+        const float vs = v * s;
+        const float p = v - vs;
+        const float q = v - f * vs;
+        const float t = p + v - q;
 
         switch (sector) {
             case 1:
@@ -475,7 +499,7 @@ public:
     * @param b channel [-42000 ; +42000] ; can be more than 42000 (return value)
     */
     static void XYZ2Lab(float x, float y, float z, float &L, float &a, float &b);
-
+    static void RGB2Lab(float *X, float *Y, float *Z, float *L, float *a, float *b, const float wp[3][3], int width);
 
     /**
     * @brief Convert Lab in Yuv

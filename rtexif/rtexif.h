@@ -282,9 +282,9 @@ public:
     int     toInt         (int ofs = 0, TagType astype = INVALID) const;
     void    fromInt       (int v);
     double  toDouble      (int ofs = 0) const;
-    double *toDoubleArray (int ofs = 0);
-    void    toRational    (int& num, int& denom, int ofs = 0);
-    void    toString      (char* buffer, int ofs = 0);
+    double* toDoubleArray (int ofs = 0) const;
+    void    toRational    (int& num, int& denom, int ofs = 0) const;
+    void    toString      (char* buffer, int ofs = 0) const;
     void    fromString    (const char* v, int size = -1);
     void    setInt        (int v, int ofs = 0, TagType astype = LONG);
 
@@ -361,6 +361,7 @@ public:
     static std::vector<Tag*> getDefaultTIFFTags (TagDirectory* forthis);
     static int    createJPEGMarker (const TagDirectory* root, const rtengine::procparams::ExifPairs& changeList, int W, int H, unsigned char* buffer);
     static int    createTIFFHeader (const TagDirectory* root, const rtengine::procparams::ExifPairs& changeList, int W, int H, int bps, const char* profiledata, int profilelen, const char* iptcdata, int iptclen, unsigned char *&buffer, unsigned &bufferSize);
+    static int createPNGMarker(const TagDirectory *root, const rtengine::procparams::ExifPairs &changeList, int W, int H, int bps, const char *iptcdata, int iptclen, unsigned char *&buffer, unsigned &bufferSize);
 };
 
 class Interpreter

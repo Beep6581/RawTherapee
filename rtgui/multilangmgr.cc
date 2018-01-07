@@ -94,9 +94,33 @@ struct LocaleToLang : private std::map<std::pair<Glib::ustring, Glib::ustring>, 
 
         return "default";
     }
+
+    std::string getLocale(const Glib::ustring &language) const
+    {
+        for (auto &p : *this) {
+            if (p.second == language) {
+                std::string ret = p.first.first;
+                if (!p.first.second.empty()) {
+                    ret += "_" + p.first.second;
+                }
+                return ret;
+            }
+        }
+        return "C";
+    }
 };
 
 const LocaleToLang localeToLang;
+
+void setGtkLanguage(const Glib::ustring &language)
+{
+    auto l = localeToLang.getLocale(language);
+#ifdef WIN32
+    putenv(("LANG=" + l).c_str());
+#else
+    setenv("LANG", l.c_str(), true);
+#endif
+}
 
 }
 
@@ -106,8 +130,10 @@ MultiLangMgr::MultiLangMgr ()
 {
 }
 
-void MultiLangMgr::load (const std::vector<Glib::ustring> &fnames)
+void MultiLangMgr::load(const Glib::ustring &language, const std::vector<Glib::ustring> &fnames)
 {
+    setGtkLanguage(language);
+
     translations.clear();
 
     for (const auto& fname : fnames) {

@@ -191,7 +191,6 @@ public:
     int showFilePanelState; // 0: normal, 1: maximized, 2: normal, 3: hidden
     bool showInfo;
     bool mainNBVertical;  // main notebook vertical tabs?
-    int cropPPI;
     bool showClippedHighlights;
     bool showClippedShadows;
     int highlightThreshold;
@@ -249,7 +248,6 @@ public:
     double sndLngEditProcDoneSecs;  // Minimum processing time seconds till the sound is played
     bool sndEnable;
 
-    bool tunnelMetaData;    // Pass through IPTC and XMP unchanged
     int histogramPosition;  // 0=disabled, 1=left pane, 2=right pane
     //int histogramWorking;  // 0=disabled, 1=left pane, 2=right pane
     bool histogramBar;
@@ -261,6 +259,12 @@ public:
     int curvebboxpos; // 0=above, 1=right, 2=below, 3=left
 
     bool showFilmStripToolBar;
+
+    // cropping options
+    int cropPPI;
+    enum CropGuidesMode { CROP_GUIDE_NONE, CROP_GUIDE_FRAME, CROP_GUIDE_FULL };
+    CropGuidesMode cropGuides;
+    bool cropAutoFit;    
 
     // Performance options
     Glib::ustring clutsDir;

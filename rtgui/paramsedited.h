@@ -118,6 +118,17 @@ public:
     bool clcurve;
 };
 
+
+class LocalContrastParamsEdited {
+public:
+    bool enabled;
+    bool radius;
+    bool amount;
+    bool darkness;
+    bool lightness;
+};
+
+
 class RGBCurvesParamsEdited
 {
 
@@ -384,7 +395,6 @@ public:
     bool htonalwidth;
     bool shadows;
     bool stonalwidth;
-    bool localcontrast;
     bool radius;
 };
 
@@ -792,6 +802,13 @@ public:
     bool isUnchanged() const;
 };
 
+
+class MetaDataParamsEdited {
+public:
+    bool mode;
+};
+
+
 class ParamsEdited
 {
 
@@ -799,6 +816,7 @@ public:
     GeneralParamsEdited           general;
     ToneCurveParamsEdited         toneCurve;
     LCurveParamsEdited            labCurve;
+    LocalContrastParamsEdited     localContrast;
     RGBCurvesParamsEdited         rgbCurves;
     ColorToningEdited             colorToning;
     RetinexParamsEdited             retinex;
@@ -839,6 +857,7 @@ public:
     WaveletParamsEdited             wavelet;
     HSVEqualizerParamsEdited      hsvequalizer;
     FilmSimulationParamsEdited    filmSimulation;
+    MetaDataParamsEdited          metadata;
     bool                          exif;
     bool                          iptc;
 
