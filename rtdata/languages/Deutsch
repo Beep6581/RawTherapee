@@ -2241,7 +2241,7 @@ PREFERENCES_CROP_GUIDES_FRAME;Rahmen
 PREFERENCES_CROP_GUIDES_FULL;Vorgabe des Ausschnittswerkzeuges
 PREFERENCES_CROP_GUIDES_NONE;Keine
 PREFERENCES_EDITORCMDLINE;Benutzerdefinierte Befehlszeile
-TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Erhöht / Reduziert die Intensität der\nChrominanz-Rauschreduzierung in\nAbhängigkeit der Farbsättigung.\n
+TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Erhöht / Reduziert die Intensität der\nChrominanz-Rauschreduzierung in\nAbhängigkeit der Farbsättigung.
 TP_DIRPYRDENOISE_LABEL;Rauschreduzierung
 TP_METADATA_EDIT;Veränderte Daten
 TP_METADATA_MODE;Kopiermodus
