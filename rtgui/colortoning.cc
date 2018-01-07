@@ -4,9 +4,257 @@
 #include "colortoning.h"
 #include "mycurve.h"
 #include "rtimage.h"
+#include "eventmapper.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
+
+namespace {
+
+// adapted from the "color correction" module of Darktable. Original copyright follows
+/*
+    copyright (c) 2009--2010 johannes hanika.
+
+    darktable is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    darktable is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with darktable.  If not, see <http://www.gnu.org/licenses/>.
+*/
+class LabGrid: public Gtk::DrawingArea {
+private:
+    rtengine::ProcEvent evt_;
+    enum State { OFF, HIGH, LOW };
+    State selected_;
+    float low_a_;
+    float high_a_;
+    float low_b_;
+    float high_b_;
+    float saturation_;
+    ToolPanelListener *listener_;
+    bool edited_;
+    static const int inset = 2;
+
+    void notify_listener()
+    {
+        if (listener_) {
+            auto fmt = [](float f) -> Glib::ustring
+                {
+                    return Glib::ustring::format(std::setw(4), std::fixed, std::setprecision(3), f);
+                };
+            listener_->panelChanged(evt_, Glib::ustring::compose("%1, %2, %3, %4", fmt(low_a_), fmt(low_b_), fmt(high_a_), fmt(high_b_)));
+        }        
+    }
+    
+public:
+    LabGrid(rtengine::ProcEvent evt):
+        Gtk::DrawingArea(),
+        evt_(evt), selected_(OFF),
+        low_a_(0.f), high_a_(0.f), low_b_(0.f), high_b_(0.f),
+        listener_(nullptr),
+        edited_(false)
+    {
+        set_can_focus(true);
+        add_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK);
+    }
+
+    void get_params(double &la, double &lb, double &ha, double &hb) const
+    {
+        la = low_a_;
+        ha = high_a_;
+        lb = low_b_;
+        hb = high_b_;
+    }
+
+    void set_params(double la, double lb, double ha, double hb)
+    {
+        low_a_ = la;
+        low_b_ = lb;
+        high_a_ = ha;
+        high_b_ = hb;
+        queue_draw();
+    }
+
+    void set_edited(bool yes)
+    {
+        edited_ = yes;
+    }
+
+
+    bool get_edited() const
+    {
+        return edited_;
+    }
+
+    void set_listener(ToolPanelListener *l)
+    {
+        listener_ = l;
+    }
+
+    bool on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
+    {
+        int width = get_allocated_width();
+        int height = get_allocated_height();
+        Cairo::RefPtr<Cairo::ImageSurface> cst =
+            Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, width, height);
+        Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(cst);
+        // clear bg
+        cr->set_source_rgb(.2, .2, .2);
+        cr->paint();
+
+        cr->translate(inset, inset);
+        cr->set_antialias(Cairo::ANTIALIAS_NONE);
+        width -= 2 * inset;
+        height -= 2 * inset;
+        // flip y:
+        cr->translate(0, height);
+        cr->scale(1., -1.);
+        const int cells = 8;
+        float step = rtengine::ColorToningParams::LABGRID_CORR_MAX / float(cells/2);
+        for (int j = 0; j < cells; j++) {
+            for(int i = 0; i < cells; i++) {
+                float R, G, B;
+                float x, y, z;
+                int ii = i - cells/2;
+                int jj = j - cells/2;
+                float a = step * (ii + 0.5) * 1.5;
+                float b = step * (jj + 0.5) * 1.5;
+                Color::Lab2XYZ(25000.f, a, b, x, y, z);
+                Color::xyz2srgb(x, y, z, R, G, B);
+                cr->set_source_rgb(R / 65535.f, G / 65535.f, B / 65535.f);
+                cr->rectangle(width * i / (float)cells, height * j / (float)cells,
+                                width / (float)cells - 1,
+                                height / (float)cells - 1);
+                cr->fill();
+            }
+        }
+        cr->set_antialias(Cairo::ANTIALIAS_DEFAULT);
+        float loa, hia, lob, hib;
+        loa = .5f * (width + width * low_a_ / rtengine::ColorToningParams::LABGRID_CORR_MAX);
+        hia = .5f * (width + width * high_a_ / rtengine::ColorToningParams::LABGRID_CORR_MAX);
+        lob = .5f * (height + height * low_b_ / rtengine::ColorToningParams::LABGRID_CORR_MAX);
+        hib = .5f * (height + height * high_b_ / rtengine::ColorToningParams::LABGRID_CORR_MAX);
+        cr->set_line_width(2.);
+        cr->set_source_rgb(0.6, 0.6, 0.6);
+        cr->move_to(loa, lob);
+        cr->line_to(hia, hib);
+        cr->stroke();
+
+        cr->set_source_rgb(0.1, 0.1, 0.1);
+        if (selected_ == LOW) {
+            cr->arc(loa, lob, 5, 0, 2. * M_PI);
+        } else {
+            cr->arc(loa, lob, 3, 0, 2. * M_PI);
+        }
+        cr->fill();
+
+        cr->set_source_rgb(0.9, 0.9, 0.9);
+        if (selected_ == HIGH) {
+            cr->arc(hia, hib, 5, 0, 2. * M_PI);
+        } else {
+            cr->arc(hia, hib, 3, 0, 2. * M_PI);
+        }
+        cr->fill();
+
+        crf->set_source(cst, 0, 0);
+        crf->paint();
+        
+        return true;
+    }
+    
+    bool on_button_release_event(GdkEventButton *event)
+    {
+        if (selected_ != OFF) {
+            edited_ = true;
+            notify_listener();
+        }
+        return true;
+    }
+
+    bool on_button_press_event(GdkEventButton *event)
+    {
+        if (event->button == 1 && event->type == GDK_2BUTTON_PRESS) {
+            switch (selected_) {
+            case OFF:
+                low_a_ = low_b_ = high_a_ = high_b_ = 0.f;
+                break;
+            case LOW:
+                low_a_ = low_b_ = 0.f;
+                break;
+            case HIGH:
+                high_a_ = high_b_ = 0.f;
+                break;
+            }
+            edited_ = true;
+            notify_listener();
+        }
+        return true;
+    }
+    
+    bool on_motion_notify_event(GdkEventMotion *event)
+    {
+        int width = get_allocated_width() - 2 * inset, height = get_allocated_height() - 2 * inset;
+        const float mouse_x = std::min(std::max(event->x - inset, 0.), double(width));
+        const float mouse_y = std::min(std::max(height - 1 - event->y + inset, 0.), double(height));
+        const float ma = (2.0 * mouse_x - width) / (float)width;
+        const float mb = (2.0 * mouse_y - height) / (float)height;
+        if (event->state & GDK_BUTTON1_MASK) {
+            if (selected_ == LOW) {
+                low_a_ = ma * rtengine::ColorToningParams::LABGRID_CORR_MAX;
+                low_b_ = mb * rtengine::ColorToningParams::LABGRID_CORR_MAX;
+            } else if (selected_ == HIGH) {
+                high_a_ = ma * rtengine::ColorToningParams::LABGRID_CORR_MAX;
+                high_b_ = mb * rtengine::ColorToningParams::LABGRID_CORR_MAX;
+            }
+        } else {
+            selected_ = OFF;
+            float la = low_a_ / rtengine::ColorToningParams::LABGRID_CORR_MAX;
+            float lb = low_b_ / rtengine::ColorToningParams::LABGRID_CORR_MAX;
+            float ha = high_a_ / rtengine::ColorToningParams::LABGRID_CORR_MAX;
+            float hb = high_b_ / rtengine::ColorToningParams::LABGRID_CORR_MAX;
+            const float thrs = 0.05f;
+            const float distlo = (la - ma) * (la - ma) + (lb - mb) * (lb - mb);
+            const float disthi = (ha - ma) * (ha - ma) + (hb - mb) * (hb - mb);
+            if (distlo < thrs * thrs && distlo < disthi) {
+                selected_ = LOW;
+            } else if (disthi < thrs * thrs && disthi <= distlo) {
+                selected_ = HIGH;
+            }
+        }
+        if (selected_ != OFF) {
+            grab_focus();
+        }
+        queue_draw();
+        return true;
+    }
+    
+    Gtk::SizeRequestMode get_request_mode_vfunc() const
+    {
+        return Gtk::SIZE_REQUEST_HEIGHT_FOR_WIDTH;
+    }
+
+    void get_preferred_width_vfunc(int &minimum_width, int &natural_width) const
+    {
+        minimum_width = 100;
+        natural_width = 200;
+    }
+
+    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
+    {
+        minimum_height = natural_height = width;
+    }
+};
+
+
+} // namespace
+
 
 ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLORTONING_LABEL"), false, true)
 {
@@ -21,6 +269,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     method->append (M("TP_COLORTONING_RGBCURVES"));
     method->append (M("TP_COLORTONING_SPLITCOCO"));
     method->append (M("TP_COLORTONING_SPLITLR"));
+    method->append(M("TP_COLORTONING_LABGRID"));
     method->set_active (0);
     method->set_tooltip_text (M("TP_COLORTONING_METHOD_TOOLTIP"));
 
@@ -312,6 +561,14 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     greenhigh->setAdjusterListener (this);
     bluehigh->setAdjusterListener (this);
 
+    //------------------------------------------------------------------------
+    // LAB grid
+    auto m = ProcEventMapper::getInstance();    
+    EvColorToningLabGridValue = m->newEvent(RGBCURVE, "HISTORY_MSG_COLORTONING_LABGRID_VALUE");
+    labgridArea = Gtk::manage(new LabGrid(EvColorToningLabGridValue));
+    pack_start(*labgridArea, Gtk::PACK_EXPAND_WIDGET, 4);
+    //------------------------------------------------------------------------
+    
     show_all();
 
     disableListener();
@@ -327,6 +584,13 @@ ColorToning::~ColorToning()
     delete opacityCurveEditorG;
     delete clCurveEditorG;
     delete cl2CurveEditorG;
+}
+
+
+void ColorToning::setListener(ToolPanelListener *tpl)
+{
+    ToolPanel::setListener(tpl);
+    static_cast<LabGrid *>(labgridArea)->set_listener(tpl);
 }
 
 /*
@@ -400,6 +664,8 @@ void ColorToning::read (const ProcParams* pp, const ParamsEdited* pedited)
         clshape->setUnChanged  (!pedited->colorToning.clcurve);
         cl2shape->setUnChanged  (!pedited->colorToning.cl2curve);
         lumamode->set_inconsistent (!pedited->colorToning.lumamode);
+
+        static_cast<LabGrid *>(labgridArea)->set_edited(pedited->colorToning.labgridALow || pedited->colorToning.labgridBLow || pedited->colorToning.labgridAHigh || pedited->colorToning.labgridBHigh);
     }
 
     redlow->setValue    (pp->colorToning.redlow);
@@ -431,6 +697,8 @@ void ColorToning::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     lastLumamode = pp->colorToning.lumamode;
 
+    static_cast<LabGrid *>(labgridArea)->set_params(pp->colorToning.labgridALow, pp->colorToning.labgridBLow, pp->colorToning.labgridAHigh, pp->colorToning.labgridBHigh);
+
     if (pedited && !pedited->colorToning.method) {
         method->set_active (5);
     } else if (pp->colorToning.method == "Lab") {
@@ -443,6 +711,8 @@ void ColorToning::read (const ProcParams* pp, const ParamsEdited* pedited)
         method->set_active (3);
     } else if (pp->colorToning.method == "Splitlr") {
         method->set_active (4);
+    } else if (pp->colorToning.method == "LabGrid") {
+        method->set_active(5);
     }
 
     methodChanged();
@@ -495,6 +765,8 @@ void ColorToning::write (ProcParams* pp, ParamsEdited* pedited)
     pp->colorToning.saturatedOpacity       = saturatedOpacity->getIntValue();
     pp->colorToning.strength               = strength->getIntValue();
 
+    static_cast<LabGrid *>(labgridArea)->get_params(pp->colorToning.labgridALow, pp->colorToning.labgridBLow, pp->colorToning.labgridAHigh, pp->colorToning.labgridBHigh);
+
     if (pedited) {
         pedited->colorToning.redlow     = redlow->getEditedState ();
         pedited->colorToning.greenlow   = greenlow->getEditedState ();
@@ -519,6 +791,8 @@ void ColorToning::write (ProcParams* pp, ParamsEdited* pedited)
 
         pedited->colorToning.hlColSat      = hlColSat->getEditedState ();
         pedited->colorToning.shadowsColSat = shadowsColSat->getEditedState ();
+
+        pedited->colorToning.labgridALow = pedited->colorToning.labgridBLow = pedited->colorToning.labgridAHigh = pedited->colorToning.labgridBHigh = static_cast<LabGrid *>(labgridArea)->get_edited();
     }
 
     if (method->get_active_row_number() == 0) {
@@ -531,6 +805,8 @@ void ColorToning::write (ProcParams* pp, ParamsEdited* pedited)
         pp->colorToning.method = "Splitco";
     } else if (method->get_active_row_number() == 4) {
         pp->colorToning.method = "Splitlr";
+    } else if (method->get_active_row_number() == 5) {
+        pp->colorToning.method = "LabGrid";
     }
 
     if (twocolor->get_active_row_number() == 0) {
@@ -782,6 +1058,8 @@ void ColorToning::methodChanged ()
 {
 
     if (!batchMode) {
+        labgridArea->hide();
+        
         if (method->get_active_row_number() == 0) { // Lab
             colorSep->show();
             colorCurveEditorG->show();
@@ -929,6 +1207,26 @@ void ColorToning::methodChanged ()
             chanMixerBox->hide();
             neutrHBox->hide();
             lumamode->show();
+        } else if (method->get_active_row_number() == 5) { // Lab Grid
+            colorSep->hide();
+            colorCurveEditorG->hide();
+            twocolor->hide();
+            opacityCurveEditorG->hide();
+            clCurveEditorG->hide();
+            cl2CurveEditorG->hide();
+            hlColSat->hide();
+            shadowsColSat->hide();
+            balance->hide();
+            p1Frame->hide();
+            autosat->hide();
+            satProtectionThreshold->hide();
+            saturatedOpacity->hide();
+            strength->hide();
+            chanMixerBox->hide();
+            neutrHBox->hide();
+            lumamode->hide();
+
+            labgridArea->show();
         }
     }
 

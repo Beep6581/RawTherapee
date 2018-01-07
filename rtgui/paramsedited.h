@@ -170,6 +170,11 @@ public:
     bool satlow;
     bool sathigh;
     bool lumamode;
+    bool labgridALow;
+    bool labgridBLow;
+    bool labgridAHigh;
+    bool labgridBHigh;
+    bool labgridSaturation;
 };
 
 class SharpenEdgeParamsEdited

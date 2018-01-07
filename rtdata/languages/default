@@ -723,6 +723,7 @@ HISTORY_MSG_490;HDR TM - Amount
 HISTORY_MSG_491;White Balance
 HISTORY_MSG_492;RGB Curves
 HISTORY_MSG_493;L*a*b* Adjustments
+HISTORY_MSG_COLORTONING_LABGRID_VALUE;L*a*b* color correction
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
@@ -1405,6 +1406,7 @@ TP_COLORTONING_HIGHLIGHT;Highlights
 TP_COLORTONING_HUE;Hue
 TP_COLORTONING_LAB;L*a*b* blending
 TP_COLORTONING_LABEL;Color Toning
+TP_COLORTONING_LABGRID;L*a*b* color correction grid
 TP_COLORTONING_LUMA;Luminance
 TP_COLORTONING_LUMAMODE;Preserve luminance
 TP_COLORTONING_LUMAMODE_TOOLTIP;If enabled, when you change color (red, green, cyan, blue, etc.) the luminance of each pixel is preserved.

@@ -424,6 +424,7 @@ struct ColorToningParams {
      *  Lch        :
      *  RGBSliders :
      *  RGBCurves  :
+     *  LabGrid    :
      */
     Glib::ustring method;
 
@@ -446,6 +447,12 @@ struct ColorToningParams {
     double satlow;
     double sathigh;
     bool lumamode;
+
+    double labgridALow;
+    double labgridBLow;
+    double labgridAHigh;
+    double labgridBHigh;
+    static constexpr double LABGRID_CORR_MAX = 8000.f;
 
     ColorToningParams();
 

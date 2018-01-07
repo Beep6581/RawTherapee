@@ -3477,7 +3477,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
         userToneCurve.initApplyState (ptc2ApplyState, params->icm.working);
     }
 
-    bool hasColorToning = params->colorToning.enabled && bool (ctOpacityCurve) &&  bool (ctColorCurve);
+    bool hasColorToning = params->colorToning.enabled && bool (ctOpacityCurve) &&  bool (ctColorCurve) && params->colorToning.method != "LabGrid";
     //  float satLimit = float(params->colorToning.satProtectionThreshold)/100.f*0.7f+0.3f;
     //  float satLimitOpacity = 1.f-(float(params->colorToning.saturatedOpacity)/100.f);
     float strProtect = (float (params->colorToning.strength) / 100.f);
@@ -4950,6 +4950,10 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
     if (vCurveEnabled) {
         delete vCurve;
+    }
+
+    if (params->colorToning.enabled && params->colorToning.method == "LabGrid") {
+        colorToningLabGrid(lab);
     }
 
     if (params->localContrast.enabled) {
@@ -7174,5 +7178,42 @@ SSEFUNCTION void ImProcFunctions::lab2rgb (const LabImage &src, Imagefloat &dst,
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+// adapted from the "color correction" module of Darktable. Original copyright follows
+/*
+    copyright (c) 2009--2010 johannes hanika.
+
+    darktable is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    darktable is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with darktable.  If not, see <http://www.gnu.org/licenses/>.
+*/
+void ImProcFunctions::colorToningLabGrid(LabImage *lab)
+{
+    const float factor = ColorToningParams::LABGRID_CORR_MAX * 1.6f;
+    float a_scale = (params->colorToning.labgridAHigh - params->colorToning.labgridALow) / factor;
+    float a_base = params->colorToning.labgridALow;
+    float b_scale = (params->colorToning.labgridBHigh - params->colorToning.labgridBLow) / factor;
+    float b_base = params->colorToning.labgridBLow;
+
+#ifdef _OPENMP
+    #pragma omp parallel for if (multiThread)
+#endif
+    for (int y = 0; y < lab->H; ++y) {
+        for (int x = 0; x < lab->W; ++x) {
+            lab->a[y][x] += lab->L[y][x] * a_scale + a_base;
+            lab->b[y][x] += lab->L[y][x] * b_scale + b_base;
+        }
+    }
+}
 
 }

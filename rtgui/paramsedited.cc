@@ -134,6 +134,10 @@ void ParamsEdited::set (bool v)
     colorToning.greenhigh  = v;
     colorToning.bluehigh   = v;
     colorToning.lumamode   = v;
+    colorToning.labgridALow = v;
+    colorToning.labgridBLow = v;
+    colorToning.labgridAHigh = v;
+    colorToning.labgridBHigh = v;
 
     sharpening.enabled            = v;
     sharpening.radius             = v;
@@ -687,6 +691,10 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         colorToning.greenhigh = colorToning.greenhigh && p.colorToning.greenhigh == other.colorToning.greenhigh;
         colorToning.bluehigh = colorToning.bluehigh && p.colorToning.bluehigh == other.colorToning.bluehigh;
         colorToning.lumamode = colorToning.lumamode && p.colorToning.lumamode == other.colorToning.lumamode;
+        colorToning.labgridALow = colorToning.labgridALow && p.colorToning.labgridALow == other.colorToning.labgridALow;
+        colorToning.labgridBLow = colorToning.labgridBLow && p.colorToning.labgridBLow == other.colorToning.labgridBLow;
+        colorToning.labgridAHigh = colorToning.labgridAHigh && p.colorToning.labgridAHigh == other.colorToning.labgridAHigh;
+        colorToning.labgridBHigh = colorToning.labgridBHigh && p.colorToning.labgridBHigh == other.colorToning.labgridBHigh;
         sharpenEdge.enabled = sharpenEdge.enabled && p.sharpenEdge.enabled == other.sharpenEdge.enabled;
         sharpenEdge.passes = sharpenEdge.passes && p.sharpenEdge.passes == other.sharpenEdge.passes;
         sharpenEdge.amount = sharpenEdge.amount && p.sharpenEdge.amount == other.sharpenEdge.amount;
@@ -1530,6 +1538,22 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (colorToning.bluehigh) {
         toEdit.colorToning.bluehigh   = dontforceSet && options.baBehav[ADDSET_COLORTONING_SPLIT] ? toEdit.colorToning.bluehigh + mods.colorToning.bluehigh : mods.colorToning.bluehigh;
+    }
+
+    if (colorToning.labgridALow) {
+        toEdit.colorToning.labgridALow = mods.colorToning.labgridALow;
+    }
+    if (colorToning.labgridALow) {
+        toEdit.colorToning.labgridALow = mods.colorToning.labgridALow;
+    }
+    if (colorToning.labgridBLow) {
+        toEdit.colorToning.labgridBLow = mods.colorToning.labgridBLow;
+    }
+    if (colorToning.labgridAHigh) {
+        toEdit.colorToning.labgridAHigh = mods.colorToning.labgridAHigh;
+    }
+    if (colorToning.labgridBHigh) {
+        toEdit.colorToning.labgridBHigh = mods.colorToning.labgridBHigh;
     }
 
     if (sharpenEdge.enabled) {
