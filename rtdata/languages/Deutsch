@@ -2234,7 +2234,7 @@ HISTORY_MSG_203;(Rauschreduzierung)\nFarbraum
 HISTORY_MSG_256;(Rauschreduzierung)\nMedianfilter - Mediantyp
 HISTORY_MSG_297;(Rauschreduzierung)\nQualität
 HISTORY_MSG_METADATA_MODE;(Metadaten)\nKopiermodus
-PREFERENCES_CROP;Einstelleung des Ausschnittswerkzeuges
+PREFERENCES_CROP;Einstellung des Ausschnittswerkzeuges
 PREFERENCES_CROP_AUTO_FIT;Automatischer Zoom des Ausschnitts
 PREFERENCES_CROP_GUIDES;Hilfslinien anzeigen wenn Ausschnitt nicht verändert wird
 PREFERENCES_CROP_GUIDES_FRAME;Rahmen
