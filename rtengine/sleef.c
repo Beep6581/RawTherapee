@@ -923,9 +923,8 @@ __inline float mulsignf(float x, float y) {
   return intBitsToFloat(floatToRawIntBits(x) ^ (floatToRawIntBits(y) & (1 << 31)));
 }
 
-__inline float signf(float d) { return mulsignf(1, d); }
+__inline float signf(float d) { return copysign(1, d); }
 __inline float mlaf(float x, float y, float z) { return x * y + z; }
-__inline float xrintf(float x) { return x < 0 ? (int)(x - 0.5f) : (int)(x + 0.5f); }
 
 __inline int xisnanf(float x) { return x != x; }
 __inline int xisinff(float x) { return x == rtengine::RT_INFINITY_F || x == -rtengine::RT_INFINITY_F; }
@@ -984,7 +983,7 @@ __inline float xsinf(float d) {
   int q;
   float u, s;
 
-  q = (int)xrintf(d * (float)rtengine::RT_1_PI);
+  q = rint(d * rtengine::RT_1_PI_F);
 
   d = mlaf(q, -PI4_Af*4, d);
   d = mlaf(q, -PI4_Bf*4, d);
@@ -1009,7 +1008,7 @@ __inline float xcosf(float d) {
   int q;
   float u, s;
 
-  q = 1 + 2*(int)xrintf(d * (float)rtengine::RT_1_PI - 0.5f);
+  q = 1 + 2*rint(d * rtengine::RT_1_PI_F - 0.5f);
 
   d = mlaf(q, -PI4_Af*2, d);
   d = mlaf(q, -PI4_Bf*2, d);
@@ -1035,7 +1034,7 @@ __inline float2 xsincosf(float d) {
   float u, s, t;
   float2 r;
 
-  q = (int)rint(d * ((float)(2 * rtengine::RT_1_PI)));
+  q = rint(d * rtengine::RT_2_PI_F);
 
   s = d;
 
@@ -1076,7 +1075,7 @@ __inline float xtanf(float d) {
   int q;
   float u, s, x;
 
-  q = (int)xrintf(d * (float)(2 * rtengine::RT_1_PI));
+  q = rint(d * (float)(2 * rtengine::RT_1_PI));
 
   x = d;
 
@@ -1202,7 +1201,7 @@ __inline float xlogf(float d) {
 __inline float xexpf(float d) {
   if(d<=-104.0f) return 0.0f;
 
-  int q = (int)xrintf(d * R_LN2f);
+  int q = rint(d * R_LN2f);
   float s, u;
 
   s = mlaf(q, -L2Uf, d);
