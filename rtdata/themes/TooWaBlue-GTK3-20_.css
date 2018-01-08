@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.60
+  Version 2.61
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -211,10 +211,6 @@ dialog frame > label {
 }
 #BatchQueueButtonsMainContainer frame:nth-child(3) > border {
     padding-left: 0.91667em;
-}
-
-#BatchQueueButtons {
-    margin-top: 0.66667em;
 }
 
 frame > label {
@@ -635,6 +631,11 @@ scale:disabled trough {
     background-color: shade(@bg-grey,.9);
     box-shadow: none;
     background-image: none;
+}
+
+#BatchQueueButtonsMainContainer scale:disabled slider,
+#BatchQueueButtonsMainContainer scale:disabled trough {
+    background-color: shade(@bg-light-grey,.85);
 }
 
 /*** end ***************************************************************************************/
@@ -1225,6 +1226,51 @@ popover.background modelbutton:hover {
 }
 /** end ****************************************************************************************/
 
+/*** Switch ***********************************************************************************/
+switch {
+    min-height: 2.16667em;
+    min-width: 11em;
+    margin: 0;
+    padding: 0;
+    border-radius: 0.2em;
+    background-image: none;
+    box-shadow: inset 0.08334em 0.08334em rgba(0, 0, 0, 0.08), 0 0.08334em rgba(242, 242, 242, 0.1);
+    border: 0.08334em solid @bg-entry-border;
+    background-color: @bg-scale-entry;
+    margin-bottom: 0.5em;
+}
+
+switch slider {
+    border: 0.08334em solid @bg-entry-border;
+    background-image: linear-gradient(to bottom, shade (@accent-color2,1.15), shade (@accent-color2,.85));
+    border: 0.08334em solid @bg-entry-border;
+    box-shadow: inset 0 0.08334em rgba(242, 242, 242, 0.1);
+    border-radius: 0.2em 0 0 0.2em;
+}
+switch:checked  slider{
+    border-radius: 0 0.2em 0.2em 0;
+}
+
+switch:hover slider {
+    background-image: linear-gradient(to bottom, shade (@accent-color2,1.20), shade (@accent-color2,.90));
+}
+
+switch:checked {
+    background-color: rgb(140,0,20);
+	color: @headline-big;
+}
+
+switch:disabled:not(:checked) {
+    box-shadow: none;
+    background-image: none;
+    background-color: shade (@bg-light-grey, .85);
+}
+switch:disabled slider {
+    background-image: linear-gradient(to bottom, rgba(125,125,125,.4), rgba(60,60,60,.4));
+	background-color: shade (@bg-light-grey, .85);
+}
+/** end ****************************************************************************************/
+
 /*** Buttons ***********************************************************************************/
 button {
     min-height: 2.16667em;
@@ -1355,6 +1401,7 @@ button.MiddleH {
 /**/
 
 /* Button base format for Toolbox and dialogs */
+#ToolPanelNotebook > stack > box > box > combobox .combo,
 dialog button,
 #MyExpander button,
 #BatchQueueButtonsMainContainer button {
@@ -1371,7 +1418,7 @@ combobox .combo,
 dialog combobox .combo,
 #ToolPanelNotebook combobox .combo,
 #BatchQueueButtonsMainContainer combobox .combo {
-    padding: 0 0.208334em;
+    padding: 0 0.26667em;
 }
 /**/
 
@@ -1386,6 +1433,7 @@ dialog combobox .combo,
 #MyExpander combobox + label */ {
     margin-left: 0.16667em;
 }
+
 #MyExpander label + * > button:not(.flat).Left,
 #MyExpander label + combobox:not(:first-child):not(:only-child),
 #MyExpander label + button:not(.flat):not(spinbutton) {
@@ -1452,13 +1500,6 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(1) {
 }
 messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
     margin-left: 0.25em;
-}
-/**/
-
-/* Queue */
-#BatchQueueButtons button {
-    min-height: 2.16667em;
-    min-width: 10em;
 }
 /**/
 

@@ -30,7 +30,7 @@ class MultiLangMgr
 public:
     MultiLangMgr ();
 
-    void load(const std::vector<Glib::ustring> &fnames);
+    void load(const Glib::ustring &language, const std::vector<Glib::ustring> &fnames);
     Glib::ustring getStr(const std::string& key) const;
     static bool isOSLanguageDetectSupported();
     static Glib::ustring getOSUserLanguage();
