@@ -104,6 +104,7 @@ private:
     sigc::connection lumamodeConn;
 
     rtengine::ProcEvent EvColorToningLabGridValue;
+    Gtk::Button *labgridReset;
     Gtk::DrawingArea *labgridArea;
 
     IdleRegister idle_register;

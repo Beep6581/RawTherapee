@@ -37,7 +37,6 @@ private:
     float high_a_;
     float low_b_;
     float high_b_;
-    float saturation_;
     ToolPanelListener *listener_;
     bool edited_;
     static const int inset = 2;
@@ -45,11 +44,7 @@ private:
     void notify_listener()
     {
         if (listener_) {
-            auto fmt = [](float f) -> Glib::ustring
-                {
-                    return Glib::ustring::format(std::setw(4), std::fixed, std::setprecision(3), f);
-                };
-            listener_->panelChanged(evt_, Glib::ustring::compose("%1, %2, %3, %4", fmt(low_a_), fmt(low_b_), fmt(high_a_), fmt(high_b_)));
+            listener_->panelChanged(evt_, Glib::ustring::compose("%1 %2 %3 %4", int(low_a_), int(low_b_), int(high_a_), int(high_b_)));
         }        
     }
     
@@ -73,13 +68,16 @@ public:
         hb = high_b_;
     }
 
-    void set_params(double la, double lb, double ha, double hb)
+    void set_params(double la, double lb, double ha, double hb, bool notify)
     {
         low_a_ = la;
         low_b_ = lb;
         high_a_ = ha;
         high_b_ = hb;
         queue_draw();
+        if (notify) {
+            notify_listener();
+        }
     }
 
     void set_edited(bool yes)
@@ -191,6 +189,7 @@ public:
                 break;
             }
             edited_ = true;
+            queue_draw();
             notify_listener();
         }
         return true;
@@ -240,7 +239,7 @@ public:
 
     void get_preferred_width_vfunc(int &minimum_width, int &natural_width) const
     {
-        minimum_width = 100;
+        minimum_width = 50;
         natural_width = 200;
     }
 
@@ -563,8 +562,20 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     // LAB grid
     auto m = ProcEventMapper::getInstance();    
     EvColorToningLabGridValue = m->newEvent(RGBCURVE, "HISTORY_MSG_COLORTONING_LABGRID_VALUE");
+    Gtk::HBox *labgridBox = Gtk::manage(new Gtk::HBox());
     labgridArea = Gtk::manage(new LabGrid(EvColorToningLabGridValue));
-    pack_start(*labgridArea, Gtk::PACK_EXPAND_WIDGET, 4);
+    labgridBox->pack_start(*labgridArea, true, true);
+    labgridReset = Gtk::manage(new Gtk::Button ());
+    labgridReset->add (*Gtk::manage(new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
+    setExpandAlignProperties(labgridReset, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+    labgridReset->set_relief(Gtk::RELIEF_NONE);
+    labgridReset->set_tooltip_text(M("ADJUSTER_RESET_TO_DEFAULT"));
+    labgridReset->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
+    labgridReset->set_can_focus(false);
+    labgridReset->set_size_request(-1, 20);
+    labgridReset->signal_pressed().connect([=]() { static_cast<LabGrid *>(labgridArea)->set_params(0.0, 0.0, 0.0, 0.0, true); });
+    labgridBox->pack_start(*labgridReset, false, false);
+    pack_start(*labgridBox, Gtk::PACK_EXPAND_WIDGET, 4);
     //------------------------------------------------------------------------
     
     show_all();
@@ -695,7 +706,7 @@ void ColorToning::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     lastLumamode = pp->colorToning.lumamode;
 
-    static_cast<LabGrid *>(labgridArea)->set_params(pp->colorToning.labgridALow, pp->colorToning.labgridBLow, pp->colorToning.labgridAHigh, pp->colorToning.labgridBHigh);
+    static_cast<LabGrid *>(labgridArea)->set_params(pp->colorToning.labgridALow, pp->colorToning.labgridBLow, pp->colorToning.labgridAHigh, pp->colorToning.labgridBHigh, false);
 
     if (pedited && !pedited->colorToning.method) {
         method->set_active (5);
@@ -1056,6 +1067,7 @@ void ColorToning::methodChanged ()
 {
 
     if (!batchMode) {
+        labgridReset->hide();
         labgridArea->hide();
         
         if (method->get_active_row_number() == 0) { // Lab
@@ -1224,6 +1236,7 @@ void ColorToning::methodChanged ()
             neutrHBox->hide();
             lumamode->hide();
 
+            labgridReset->show();
             labgridArea->show();
         }
     }
