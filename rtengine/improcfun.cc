@@ -7199,7 +7199,7 @@ SSEFUNCTION void ImProcFunctions::lab2rgb (const LabImage &src, Imagefloat &dst,
 */
 void ImProcFunctions::colorToningLabGrid(LabImage *lab)
 {
-    const float factor = ColorToningParams::LABGRID_CORR_MAX * 1.6f;
+    const float factor = ColorToningParams::LABGRID_CORR_MAX * 3.f;
     float a_scale = (params->colorToning.labgridAHigh - params->colorToning.labgridALow) / factor;
     float a_base = params->colorToning.labgridALow;
     float b_scale = (params->colorToning.labgridBHigh - params->colorToning.labgridBLow) / factor;

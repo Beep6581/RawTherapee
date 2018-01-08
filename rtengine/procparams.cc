@@ -618,6 +618,8 @@ bool LocalContrastParams::operator!=(const LocalContrastParams &other) const
 }
 
 
+const double ColorToningParams::LABGRID_CORR_MAX = 12000.f;
+
 ColorToningParams::ColorToningParams() :
     enabled(false),
     autosat(true),

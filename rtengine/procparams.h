@@ -452,7 +452,7 @@ struct ColorToningParams {
     double labgridBLow;
     double labgridAHigh;
     double labgridBHigh;
-    static constexpr double LABGRID_CORR_MAX = 8000.f;
+    static const double LABGRID_CORR_MAX;
 
     ColorToningParams();
 

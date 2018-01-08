@@ -119,19 +119,17 @@ public:
         const int cells = 8;
         float step = rtengine::ColorToningParams::LABGRID_CORR_MAX / float(cells/2);
         for (int j = 0; j < cells; j++) {
-            for(int i = 0; i < cells; i++) {
+            for (int i = 0; i < cells; i++) {
                 float R, G, B;
                 float x, y, z;
                 int ii = i - cells/2;
                 int jj = j - cells/2;
-                float a = step * (ii + 0.5) * 1.5;
-                float b = step * (jj + 0.5) * 1.5;
+                float a = step * (ii + 0.5);
+                float b = step * (jj + 0.5);
                 Color::Lab2XYZ(25000.f, a, b, x, y, z);
                 Color::xyz2srgb(x, y, z, R, G, B);
                 cr->set_source_rgb(R / 65535.f, G / 65535.f, B / 65535.f);
-                cr->rectangle(width * i / (float)cells, height * j / (float)cells,
-                                width / (float)cells - 1,
-                                height / (float)cells - 1);
+                cr->rectangle(width * i / float(cells), height * j / float(cells), width / float(cells) - 1, height / float(cells) - 1);
                 cr->fill();
             }
         }
