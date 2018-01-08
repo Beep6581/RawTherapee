@@ -145,17 +145,17 @@ public:
 
         cr->set_source_rgb(0.1, 0.1, 0.1);
         if (selected_ == LOW) {
-            cr->arc(loa, lob, 5, 0, 2. * M_PI);
+            cr->arc(loa, lob, 5, 0, 2. * rtengine::RT_PI);
         } else {
-            cr->arc(loa, lob, 3, 0, 2. * M_PI);
+            cr->arc(loa, lob, 3, 0, 2. * rtengine::RT_PI);
         }
         cr->fill();
 
         cr->set_source_rgb(0.9, 0.9, 0.9);
         if (selected_ == HIGH) {
-            cr->arc(hia, hib, 5, 0, 2. * M_PI);
+            cr->arc(hia, hib, 5, 0, 2. * rtengine::RT_PI);
         } else {
-            cr->arc(hia, hib, 3, 0, 2. * M_PI);
+            cr->arc(hia, hib, 3, 0, 2. * rtengine::RT_PI);
         }
         cr->fill();
 
