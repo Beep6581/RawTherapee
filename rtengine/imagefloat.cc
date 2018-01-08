@@ -154,10 +154,24 @@ void Imagefloat::getScanline (int row, unsigned char* buffer, int bps)
         int ix = 0;
         float* sbuffer = (float*) buffer;
 
+        // agriggio -- assume the image is normalized to [0, 65535]
         for (int i = 0; i < width; i++) {
+            sbuffer[ix++] = r(row, i) / 65535.f;
+            sbuffer[ix++] = g(row, i) / 65535.f;
+            sbuffer[ix++] = b(row, i) / 65535.f;
+        }
+    } else if (bps == 16) {
+        unsigned short *sbuffer = (unsigned short *)buffer;
+        for (int i = 0, ix = 0; i < width; i++) {
             sbuffer[ix++] = r(row, i);
             sbuffer[ix++] = g(row, i);
             sbuffer[ix++] = b(row, i);
+        }
+    } else if (bps == 8) {
+        for (int i = 0, ix = 0; i < width; i++) {
+            buffer[ix++] = rtengine::uint16ToUint8Rounded(r(row, i));
+            buffer[ix++] = rtengine::uint16ToUint8Rounded(g(row, i));
+            buffer[ix++] = rtengine::uint16ToUint8Rounded(b(row, i));
         }
     }
 }
@@ -512,6 +526,54 @@ void Imagefloat::ExecCMSTransform(cmsHTRANSFORM hTransform)
                 *(pR++) = *(p++);
                 *(pG++) = *(p++);
                 *(pB++) = *(p++);
+            }
+        } // End of parallelization
+    }
+}
+
+// Parallized transformation; create transform with cmsFLAGS_NOCACHE!
+void Imagefloat::ExecCMSTransform(cmsHTRANSFORM hTransform, const LabImage &labImage, int cx, int cy)
+{
+    // LittleCMS cannot parallelize planar Lab float images
+    // so build temporary buffers to allow multi processor execution
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        AlignedBuffer<float> bufferLab(width * 3);
+        AlignedBuffer<float> bufferRGB(width * 3);
+
+#ifdef _OPENMP
+        #pragma omp for schedule(static)
+#endif
+
+        for (int y = cy; y < cy + height; y++)
+        {
+            float *pRGB, *pR, *pG, *pB;
+            float *pLab, *pL, *pa, *pb;
+
+            pLab= bufferLab.data;
+            pL = labImage.L[y] + cx;
+            pa = labImage.a[y] + cx;
+            pb = labImage.b[y] + cx;
+
+            for (int x = 0; x < width; x++) {
+                *(pLab++) = *(pL++)  / 327.68f;
+                *(pLab++) = *(pa++)  / 327.68f;
+                *(pLab++) = *(pb++)  / 327.68f;
+            }
+
+            cmsDoTransform (hTransform, bufferLab.data, bufferRGB.data, width);
+
+            pRGB = bufferRGB.data;
+            pR = r(y - cy);
+            pG = g(y - cy);
+            pB = b(y - cy);
+
+            for (int x = 0; x < width; x++) {
+                *(pR++) = *(pRGB++);
+                *(pG++) = *(pRGB++);
+                *(pB++) = *(pRGB++);
             }
         } // End of parallelization
     }

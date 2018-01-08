@@ -62,7 +62,7 @@ public:
         return (!fd.empty());
     }
 
-    rtengine::ProcessingJob* imageReady (rtengine::IImage16* img);
+    rtengine::ProcessingJob* imageReady (rtengine::IImagefloat* img);
     void error (Glib::ustring msg);
     void setProgress (double p);
     void rightClicked (ThumbBrowserEntryBase* entry);
