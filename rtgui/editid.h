@@ -64,6 +64,7 @@ enum BufferType {
 
 /// @brief Number of object to be handled (for optimization purpose)
 enum ObjectMode {
+    OM_0,     /// do not require mouse over buffer
     OM_255,   /// less or equal than 255 objects
     OM_65535  /// less or equal than 65535 objects
 };

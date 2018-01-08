@@ -44,7 +44,7 @@ public:
 };
 
 class ImageArea;
-class CropWindow : public LWButtonListener, public CropDisplayHandler, public EditCoordSystem, public ObjectMOBuffer
+class CropWindow : public LWButtonListener, public CropDisplayHandler, public rtedit::EditCoordSystem, public rtedit::ObjectMOBuffer
 {
 
     // state management
@@ -194,7 +194,7 @@ public:
 
     void expose        (Cairo::RefPtr<Cairo::Context> cr);
 
-    void setEditSubscriber (EditSubscriber* newSubscriber);
+    void setEditSubscriber (rtedit::EditSubscriber* newSubscriber);
 
     // interface lwbuttonlistener
     void buttonPressed (LWButton* button, int actionCode, void* actionData);

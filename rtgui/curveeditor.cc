@@ -398,7 +398,7 @@ void CurveEditor::switchOffEditMode ()
 
 bool CurveEditor::mouseOver(const int modifierKey)
 {
-    EditDataProvider* provider = getEditProvider();
+    rtedit::EditDataProvider* provider = getEditProvider();
     subGroup->pipetteMouseOver(provider, modifierKey);
     subGroup->refresh(this);
     return true; // return true will ask the preview to be redrawn, for the cursor
@@ -406,7 +406,7 @@ bool CurveEditor::mouseOver(const int modifierKey)
 
 bool CurveEditor::button1Pressed(const int modifierKey)
 {
-    EditDataProvider* provider = getEditProvider();
+    rtedit::EditDataProvider* provider = getEditProvider();
 
     if (provider->object) {
         remoteDrag = subGroup->pipetteButton1Pressed(provider, modifierKey);
@@ -422,7 +422,7 @@ bool CurveEditor::button1Pressed(const int modifierKey)
 
 bool CurveEditor::button1Released()
 {
-    EditDataProvider* provider = getEditProvider();
+    rtedit::EditDataProvider* provider = getEditProvider();
     subGroup->pipetteButton1Released(provider);
     remoteDrag = false;
     subGroup->refresh(this);
@@ -431,7 +431,7 @@ bool CurveEditor::button1Released()
 
 bool CurveEditor::drag1(const int modifierKey)
 {
-    EditDataProvider* provider = getEditProvider();
+    rtedit::EditDataProvider* provider = getEditProvider();
     subGroup->pipetteDrag(provider, modifierKey);
     subGroup->refresh(this);
     return false;

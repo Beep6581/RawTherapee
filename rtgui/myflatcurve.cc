@@ -1206,7 +1206,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
     return retval;
 }
 
-void MyFlatCurve::pipetteMouseOver (CurveEditor *ce, EditDataProvider *provider, int modifierKey)
+void MyFlatCurve::pipetteMouseOver (CurveEditor *ce, rtedit::EditDataProvider *provider, int modifierKey)
 {
     if (!provider) {
         // occurs when leaving the preview area -> cleanup the curve editor
@@ -1294,7 +1294,7 @@ void MyFlatCurve::pipetteMouseOver (CurveEditor *ce, EditDataProvider *provider,
 }
 
 // returns true if a point is being dragged
-bool MyFlatCurve::pipetteButton1Pressed(EditDataProvider *provider, int modifierKey)
+bool MyFlatCurve::pipetteButton1Pressed(rtedit::EditDataProvider *provider, int modifierKey)
 {
     if (edited_point > -1) {
         return false;
@@ -1377,7 +1377,7 @@ bool MyFlatCurve::pipetteButton1Pressed(EditDataProvider *provider, int modifier
     return true;
 }
 
-void MyFlatCurve::pipetteButton1Released(EditDataProvider *provider)
+void MyFlatCurve::pipetteButton1Released(rtedit::EditDataProvider *provider)
 {
     if (edited_point > -1) {
         return;
@@ -1399,7 +1399,7 @@ void MyFlatCurve::pipetteButton1Released(EditDataProvider *provider)
     //notifyListener ();
 }
 
-void MyFlatCurve::pipetteDrag(EditDataProvider *provider, int modifierKey)
+void MyFlatCurve::pipetteDrag(rtedit::EditDataProvider *provider, int modifierKey)
 {
     if (edited_point > -1) {
         return;

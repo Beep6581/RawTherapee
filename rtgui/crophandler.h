@@ -52,7 +52,7 @@ public:
     {
         displayHandler = l;
     }
-    void    setEditSubscriber      (EditSubscriber* newSubscriber);
+    void    setEditSubscriber      (rtedit::EditSubscriber* newSubscriber);
 
     void    newImage      (rtengine::StagedImageProcessor* ipc_, bool isDetailWindow);
     void    setZoom       (int z, int centerx = -1, int centery = -1);

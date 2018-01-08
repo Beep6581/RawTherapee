@@ -7,6 +7,7 @@
 
 using namespace rtengine;
 using namespace rtengine::procparams;
+using namespace rtedit;
 
 Gradient::Gradient () : FoldableToolPanel(this, "gradient", M("TP_GRADIENT_LABEL"), false, true), EditSubscriber(ET_OBJECTS), lastObject(-1), draggedPointOldAngle(-1000.)
 {

@@ -95,7 +95,7 @@ void HSVEqualizer::read (const ProcParams* pp, const ParamsEdited* pedited)
     enableListener ();
 }
 
-void HSVEqualizer::setEditProvider (EditDataProvider *provider)
+void HSVEqualizer::setEditProvider (rtedit::EditDataProvider *provider)
 {
     hshape->setEditProvider(provider);
     sshape->setEditProvider(provider);

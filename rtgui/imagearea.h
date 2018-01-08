@@ -33,7 +33,7 @@
 #include "edit.h"
 
 class ImageAreaPanel;
-class ImageArea : public Gtk::DrawingArea, public CropWindowListener, public EditDataProvider, public LockablePickerToolListener
+class ImageArea : public Gtk::DrawingArea, public CropWindowListener, public rtedit::EditDataProvider, public LockablePickerToolListener
 {
 
     friend class ZoomPanel;
@@ -140,7 +140,7 @@ public:
     void   setZoom   (double zoom);
 
     // EditDataProvider interface
-    void subscribe(EditSubscriber *subscriber);
+    void subscribe(rtedit::EditSubscriber *subscriber);
     void unsubscribe();
     void getImageSize (int &w, int&h);
 

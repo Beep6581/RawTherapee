@@ -73,10 +73,10 @@ protected:
     void freeAll ();
 
 public:
-    Crop             (ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow);
+    Crop             (ImProcCoordinator* parent, rtedit::EditDataProvider *editDataProvider, bool isDetailWindow);
     virtual ~Crop    ();
 
-    void setEditSubscriber(EditSubscriber* newSubscriber);
+    void setEditSubscriber(rtedit::EditSubscriber* newSubscriber);
     bool hasListener();
     void update      (int todo);
     void setWindow   (int cropX, int cropY, int cropW, int cropH, int skip)

@@ -55,6 +55,7 @@ set(NONCLISOURCEFILES
     exifpanel.cc
     exportpanel.cc
     extprog.cc
+    fattaltonemap.cc
     filebrowser.cc
     filebrowserentry.cc
     filecatalog.cc
@@ -109,6 +110,7 @@ set(NONCLISOURCEFILES
     profilestorecombobox.cc
     prsharpening.cc
     rawcacorrection.cc
+    rawcrop.cc
     rawexposure.cc
     recentbrowser.cc
     renamedlg.cc

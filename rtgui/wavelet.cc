@@ -1434,7 +1434,7 @@ void Wavelet::read (const ProcParams* pp, const ParamsEdited* pedited)
     enableListener ();
 }
 
-void Wavelet::setEditProvider  (EditDataProvider *provider)
+void Wavelet::setEditProvider  (rtedit::EditDataProvider *provider)
 {
     ccshape->setEditProvider(provider);
     opacityShapeRG->setEditProvider(provider);

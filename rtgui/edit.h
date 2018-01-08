@@ -1,7 +1,7 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2014 Jean-Christophe FRISCH (aka Hombre57) <natureh.510@gmail.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@
 #include "../rtengine/coord.h"
 #include "guiutils.h"
 #include "options.h"
+
+namespace rtedit {
 
 class EditDataProvider;
 class EditSubscriber;
@@ -171,7 +173,6 @@ protected:
     // instead of pointing to the EditSubscriber directly
     EditDataProvider* dataProvider;
 
-    void createBuffer(int width, int height);
     void resize(int newWidth, int newHeight);
     void flush();
     EditSubscriber *getEditSubscriber ();
@@ -553,6 +554,11 @@ public:
     @return true if the preview has to be redrawn, false otherwise */
     virtual bool pick3 (const bool picked);
 
+    /** @brief Get whether the subscriber has Mouse Over geometry
+        By default, it will return true if mouseOverGeometry has at least one element. However EditSubscriber with dynamic handling if
+        mouseOverGeometry will be able to override this function and return true even if empty */
+    virtual bool hasMouseOverGeometry ();
+
     /** @brief Get the geometry to be shown to the user */
     const std::vector<Geometry*>& getVisibleGeometry ();
 
@@ -575,8 +581,8 @@ public:
     int object;            /// ET_OBJECTS mode: Object detected under the cursor, 0 otherwise; ET_PIPETTE mode: 1 if above the image, 0 otherwise
     float pipetteVal[3];   /// Current pipette values; if bufferType==BT_SINGLEPLANE_FLOAT, #2 & #3 will be set to 0
 
-    rtengine::Coord posScreen;       /// Location of the mouse button press, in preview image space
-    rtengine::Coord posImage;        /// Location of the mouse button press, in the full image space
+    rtengine::Coord posScreen;       /// Location of the 'mouse overs' and mouse button press, in preview image space
+    rtengine::Coord posImage;        /// Location of the 'mouse overs' and mouse button press, in the full image space
     rtengine::Coord deltaScreen;     /// Delta relative to posScreen
     rtengine::Coord deltaImage;      /// Delta relative to posImage
     rtengine::Coord deltaPrevScreen; /// Delta relative to the previous mouse location, in preview image space
@@ -850,6 +856,8 @@ inline Line::Line (rtengine::Coord& begin, rtengine::Coord& end) :
 
 inline Line::Line (int beginX, int beginY, int endX, int endY) :
         begin (beginX, beginY), end (endX, endY) {
+}
+
 }
 
 #endif

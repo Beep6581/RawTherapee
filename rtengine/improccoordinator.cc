@@ -126,7 +126,7 @@ ImProcCoordinator::~ImProcCoordinator ()
     updaterThreadStart.unlock ();
 }
 
-DetailedCrop* ImProcCoordinator::createCrop  (::EditDataProvider *editDataProvider, bool isDetailWindow)
+DetailedCrop* ImProcCoordinator::createCrop  (rtedit::EditDataProvider *editDataProvider, bool isDetailWindow)
 {
 
     return new Crop (this, editDataProvider, isDetailWindow);

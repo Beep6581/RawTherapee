@@ -49,7 +49,7 @@ public:
     void curveChanged    (CurveEditor* ce);
     //void setDefaults     (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
     void setBatchMode    (bool batchMode);
-    void setEditProvider (EditDataProvider *provider);
+    void setEditProvider (rtedit::EditDataProvider *provider);
     void autoOpenCurve   ();
     virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
 

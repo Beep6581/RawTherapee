@@ -346,7 +346,7 @@ bool ImageArea::on_leave_notify_event  (GdkEventCrossing* event)
     return true;
 }
 
-void ImageArea::subscribe(EditSubscriber *subscriber)
+void ImageArea::subscribe(rtedit::EditSubscriber *subscriber)
 {
     EditDataProvider::subscribe(subscriber);
 
@@ -368,7 +368,7 @@ void ImageArea::subscribe(EditSubscriber *subscriber)
 void ImageArea::unsubscribe()
 {
     bool wasObjectType = false;
-    EditSubscriber*  oldSubscriber = EditDataProvider::getCurrSubscriber();
+    rtedit::EditSubscriber*  oldSubscriber = EditDataProvider::getCurrSubscriber();
 
     if (oldSubscriber && oldSubscriber->getEditingType() == ET_OBJECTS) {
         wasObjectType = true;

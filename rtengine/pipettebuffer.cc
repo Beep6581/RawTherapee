@@ -22,7 +22,7 @@
 namespace rtengine
 {
 
-PipetteBuffer::PipetteBuffer(::EditDataProvider *dataProvider) :
+PipetteBuffer::PipetteBuffer(rtedit::EditDataProvider *dataProvider) :
     dataProvider(dataProvider), imgFloatBuffer(nullptr), LabBuffer(nullptr), singlePlaneBuffer(), ready(false) {}
 
 PipetteBuffer::~PipetteBuffer()
@@ -67,7 +67,7 @@ void PipetteBuffer::resize(int newWidth, int newHeight)
 }
 
 // Resize buffers if they already exist
-void PipetteBuffer::resize(int newWidth, int newHeight, EditSubscriber* newSubscriber)
+void PipetteBuffer::resize(int newWidth, int newHeight, rtedit::EditSubscriber* newSubscriber)
 {
     if (newSubscriber) {
         if (newSubscriber->getEditingType() == ET_PIPETTE) {
@@ -112,7 +112,7 @@ void PipetteBuffer::resize(int newWidth, int newHeight, EditSubscriber* newSubsc
 
 bool PipetteBuffer::bufferCreated()
 {
-    EditSubscriber* subscriber;
+    rtedit::EditSubscriber* subscriber;
 
     if (dataProvider && (subscriber = dataProvider->getCurrSubscriber())) {
         if (subscriber->getEditingType() == ET_PIPETTE) {

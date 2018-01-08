@@ -46,7 +46,7 @@ public:
     void setDefaults     (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
     void setBatchMode    (bool batchMode);
     void autoOpenCurve   ();
-    void setEditProvider (EditDataProvider *provider);
+    void setEditProvider (rtedit::EditDataProvider *provider);
 
     void autoch_toggled  ();
     void neutral_pressed ();

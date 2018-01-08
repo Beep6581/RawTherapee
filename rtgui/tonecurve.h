@@ -85,7 +85,7 @@ public:
     void setAdjusterBehavior (bool expadd, bool hlcompadd, bool hlcompthreshadd, bool bradd, bool blackadd, bool shcompadd, bool contradd, bool satadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
     void autoOpenCurve       ();
-    void setEditProvider     (EditDataProvider *provider);
+    void setEditProvider     (rtedit::EditDataProvider *provider);
 
     virtual float blendPipetteValues (CurveEditor *ce, float chan1, float chan2, float chan3);
 

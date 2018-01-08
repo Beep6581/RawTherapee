@@ -38,7 +38,7 @@ class CurveEditorSubGroup;
 /** @brief This class is an interface between RT and the curve editor group
  * It handles the methods related to a specific curve. It is created by CurveEditorGroup::addCurve
  */
-class CurveEditor : public EditSubscriber
+class CurveEditor : public rtedit::EditSubscriber
 {
 
     friend class CurveEditorGroup;

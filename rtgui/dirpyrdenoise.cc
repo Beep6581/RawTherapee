@@ -652,7 +652,7 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited)
     enableListener ();
 
 }
-void DirPyrDenoise::setEditProvider  (EditDataProvider *provider)
+void DirPyrDenoise::setEditProvider  (rtedit::EditDataProvider *provider)
 {
     lshape->setEditProvider(provider);
     ccshape->setEditProvider(provider);

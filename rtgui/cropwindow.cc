@@ -33,6 +33,7 @@
 #include "lockablecolorpicker.h"
 
 using namespace rtengine;
+using namespace rtedit;
 
 CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDetailWindow)
     : ObjectMOBuffer(parent), state(SNormal), press_x(0), press_y(0), action_x(0), action_y(0), pickedObject(-1), pickModifierKey(0), rot_deg(0), onResizeArea(false), deleted(false),
@@ -1245,7 +1246,7 @@ void CropWindow::updateCursor (int x, int y)
                 objectID = ObjectMOBuffer::getObjectID(cropPos);
             }
 
-            if (objectID > -1) {
+            if (objectID == -2 || objectID > -1) {
                 newType = editSubscriber->getCursor(objectID);
             } else if (tm == TMHand) {
                 if (onArea (CropObserved, x, y)) {
@@ -1805,7 +1806,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
             }
 
             EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
-            if (editSubscriber && editSubscriber->getEditingType() == ET_OBJECTS && bufferCreated()) {
+            if (editSubscriber && editSubscriber->getEditingType() == ET_OBJECTS && (bufferCreated() || getObjectMode() == OM_0)) {
 
                 if (this != iarea->mainCropWindow) {
                     cr->set_line_width (0.);
@@ -1830,9 +1831,9 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                 }
 
                 // drawing to the "mouse over" channel
-                const auto mouseOverGeom = editSubscriber->getMouseOverGeometry();
-                if (mouseOverGeom.size()) {
-                    if (mouseOverGeom.size() > 65534) {
+                if (getObjectMode() != OM_0 && editSubscriber->hasMouseOverGeometry()) {
+                    const auto mouseOverGeom = editSubscriber->getMouseOverGeometry();
+                    if (mouseOverGeom.size() > 255) {
                         // once it has been switched to OM_65535, it won't return back to OM_255
                         // to avoid constant memory allocations in some particular situation.
                         // It will return to OM_255 on a new editing session
@@ -1856,6 +1857,8 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                         moGeom->drawToMOChannel(crMO, a, this, *this);
                         ++a;
                     }
+                } else {
+                    setObjectMode(OM_0);
                 }
                 if (this != iarea->mainCropWindow) {
                     cr->reset_clip();

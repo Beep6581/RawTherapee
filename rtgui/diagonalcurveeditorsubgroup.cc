@@ -389,7 +389,7 @@ void DiagonalCurveEditorSubGroup::editModeSwitchedOff ()
     }
 }
 
-void DiagonalCurveEditorSubGroup::pipetteMouseOver(EditDataProvider *provider, int modifierKey)
+void DiagonalCurveEditorSubGroup::pipetteMouseOver(rtedit::EditDataProvider *provider, int modifierKey)
 {
     CurveEditor *curveEditor = static_cast<DiagonalCurveEditor*>(parent->displayedCurve);
 
@@ -461,7 +461,7 @@ void DiagonalCurveEditorSubGroup::pipetteMouseOver(EditDataProvider *provider, i
     }
 }
 
-bool DiagonalCurveEditorSubGroup::pipetteButton1Pressed(EditDataProvider *provider, int modifierKey)
+bool DiagonalCurveEditorSubGroup::pipetteButton1Pressed(rtedit::EditDataProvider *provider, int modifierKey)
 {
     CurveEditor *curveEditor = static_cast<DiagonalCurveEditor*>(parent->displayedCurve);
 
@@ -491,7 +491,7 @@ bool DiagonalCurveEditorSubGroup::pipetteButton1Pressed(EditDataProvider *provid
     return isDragging;
 }
 
-void DiagonalCurveEditorSubGroup::pipetteButton1Released(EditDataProvider *provider)
+void DiagonalCurveEditorSubGroup::pipetteButton1Released(rtedit::EditDataProvider *provider)
 {
     CurveEditor *curveEditor = static_cast<DiagonalCurveEditor*>(parent->displayedCurve);
 
@@ -514,7 +514,7 @@ void DiagonalCurveEditorSubGroup::pipetteButton1Released(EditDataProvider *provi
     }
 }
 
-void DiagonalCurveEditorSubGroup::pipetteDrag(EditDataProvider *provider, int modifierKey)
+void DiagonalCurveEditorSubGroup::pipetteDrag(rtedit::EditDataProvider *provider, int modifierKey)
 {
     CurveEditor *curveEditor = static_cast<DiagonalCurveEditor*>(parent->displayedCurve);
 

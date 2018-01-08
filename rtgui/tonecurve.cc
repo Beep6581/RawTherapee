@@ -289,7 +289,7 @@ void ToneCurve::autoOpenCurve  ()
     shape2->openIfNonlinear();
 }
 
-void ToneCurve::setEditProvider  (EditDataProvider *provider)
+void ToneCurve::setEditProvider (rtedit::EditDataProvider *provider)
 {
     shape->setEditProvider(provider);
     shape2->setEditProvider(provider);

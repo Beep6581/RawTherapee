@@ -40,7 +40,11 @@
  *
  */
 
+namespace rtedit {
+
 class EditDataProvider;
+
+}
 
 namespace rtengine
 {
@@ -445,7 +449,7 @@ public:
     /** Creates and returns a Crop instance that acts as a window on the image
       * @param editDataProvider pointer to the EditDataProvider that communicates with the EditSubscriber
       * @return a pointer to the Crop object that handles the image data trough its own pipeline */
-    virtual DetailedCrop* createCrop  (::EditDataProvider *editDataProvider, bool isDetailWindow) = 0;
+    virtual DetailedCrop* createCrop  (rtedit::EditDataProvider *editDataProvider, bool isDetailWindow) = 0;
 
     virtual bool        getAutoWB   (double& temp, double& green, double equal, double tempBias) = 0;
     virtual void        getCamWB    (double& temp, double& green) = 0;

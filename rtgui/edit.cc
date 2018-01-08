@@ -1,7 +1,7 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2014 Jean-Christophe FRISCH (aka Hombre57) <natureh.510@gmail.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,7 +20,11 @@
 #include "edit.h"
 #include "../rtengine/icons.h"
 
-ObjectMOBuffer::ObjectMOBuffer(EditDataProvider *dataProvider) : objectMap(nullptr), objectMode(OM_255), dataProvider(dataProvider) {}
+namespace rtedit {
+
+ObjectMOBuffer::ObjectMOBuffer(EditDataProvider *dataProvider) : objectMap(nullptr), objectMode(OM_255), dataProvider(dataProvider) {
+    printf("objectMap of %p=%p - ctor : mode=%s\n", this, objectMap, objectMode == OM_0 ? "OM_0" : (objectMode == OM_255 ? "OM_255" : "OM_65535"));
+}
 
 ObjectMOBuffer::~ObjectMOBuffer()
 {
@@ -28,9 +32,13 @@ ObjectMOBuffer::~ObjectMOBuffer()
 }
 
 
-/* Upgrade or downgrade the objectModeType */
+/* Upgrade or downgrade the objectModeType ; To be used for reallocation only! For first allocation, use 'resize' */
 void ObjectMOBuffer::setObjectMode(ObjectMode newType)
 {
+    if (objectMode == newType) {
+        return;
+    }
+
     if (!objectMap) {
         objectMode = newType;
         return;
@@ -40,17 +48,28 @@ void ObjectMOBuffer::setObjectMode(ObjectMode newType)
     int h = objectMap->get_height ();
     if (w && h) {
         switch (newType) {
+        case (OM_0):
+            printf("objectMap of %p=%p - unreference : ", this, objectMap);
+            objectMap->unreference();
+            printf("OK\n");
+            break;
         case (OM_255):
             if (objectMode==OM_65535) {
+                printf("objectMap of %p=%p - unreference : ", this, objectMap);
                 objectMap->unreference();
+                printf("OK\n");
                 objectMap = Cairo::ImageSurface::create(Cairo::FORMAT_A8, w, h);
+                printf("objectMap of %p=%p now\n", this, objectMap);
             }
             break;
 
         case (OM_65535):
             if (objectMode==OM_255) {
+                printf("objectMap of %p=%p - unreference : ", this, objectMap);
                 objectMap->unreference();
+                printf("OK\n");
                 objectMap = Cairo::ImageSurface::create(Cairo::FORMAT_RGB16_565, w, h);
+                printf("objectMap of %p=%p now\n", this, objectMap);
             }
             break;
         }
@@ -60,7 +79,8 @@ void ObjectMOBuffer::setObjectMode(ObjectMode newType)
 
 void ObjectMOBuffer::flush()
 {
-    if (objectMap ) {
+    if (objectMap) {
+        printf("objectMap(%p) - cleard !\n");
         objectMap.clear();
     }
 }
@@ -74,7 +94,7 @@ EditSubscriber *ObjectMOBuffer::getEditSubscriber () {
 }
 
 
-// Resize buffers if they already exist
+// Resize buffers
 void ObjectMOBuffer::resize(int newWidth, int newHeight)
 {
     if (!dataProvider) {
@@ -83,12 +103,18 @@ void ObjectMOBuffer::resize(int newWidth, int newHeight)
 
     if (const auto currSubscriber = dataProvider->getCurrSubscriber ()) {
         if (currSubscriber->getEditingType() == ET_OBJECTS) {
-            if (objectMap && (objectMap->get_width() != newWidth || objectMap->get_height() != newHeight)) {
+            if (objectMap && (objectMap->get_width() != newWidth || objectMap->get_height() != newHeight || !currSubscriber->hasMouseOverGeometry())) {
+                printf("objectMap(%p) - cleard !\n");
                 objectMap.clear();
             }
 
-            if (!objectMap && newWidth>0 && newHeight>0) {
+            if (!currSubscriber->hasMouseOverGeometry()) {
+                objectMode = OM_0;
+            }
+
+            if (!objectMap && newWidth>0 && newHeight>0 && objectMode != OM_0) {
                 objectMap = Cairo::ImageSurface::create(objectMode==OM_255?Cairo::FORMAT_A8:Cairo::FORMAT_RGB16_565, newWidth, newHeight);
+                printf("objectMap of %p=%p now\n", this, objectMap);
             }
 
         } else {
@@ -103,7 +129,9 @@ int ObjectMOBuffer::getObjectID(const rtengine::Coord& location)
 {
     int id = 0;
 
-    if (!objectMap || location.x < 0 || location.y < 0 || location.x >= objectMap->get_width() || location.y >= objectMap->get_height()) {
+    if (objectMode == OM_0) {
+        return -2;
+    } else if (!objectMap || location.x < 0 || location.y < 0 || location.x >= objectMap->get_width() || location.y >= objectMap->get_height()) {
         return -1;
     }
 
@@ -1060,6 +1088,11 @@ bool EditSubscriber::isCurrentSubscriber()
     return false;
 }
 
+bool EditSubscriber::hasMouseOverGeometry ()
+{
+    return !mouseOverGeometry.empty();
+}
+
 void EditSubscriber::subscribe()
 {
     if (provider) {
@@ -1148,3 +1181,4 @@ EditSubscriber* EditDataProvider::getCurrSubscriber()
     return currSubscriber;
 }
 
+}

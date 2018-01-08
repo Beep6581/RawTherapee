@@ -102,7 +102,7 @@ void RGBCurves::read (const ProcParams* pp, const ParamsEdited* pedited)
     enableListener ();
 }
 
-void RGBCurves::setEditProvider (EditDataProvider *provider)
+void RGBCurves::setEditProvider (rtedit::EditDataProvider *provider)
 {
     Rshape->setEditProvider(provider);
     Gshape->setEditProvider(provider);

@@ -260,7 +260,7 @@ public:
         return pH;
     }
 
-    DetailedCrop* createCrop  (::EditDataProvider *editDataProvider, bool isDetailWindow);
+    DetailedCrop* createCrop  (rtedit::EditDataProvider *editDataProvider, bool isDetailWindow);
 
     bool getAutoWB   (double& temp, double& green, double equal, double tempBias);
     void getCamWB    (double& temp, double& green);

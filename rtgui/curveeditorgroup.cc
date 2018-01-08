@@ -245,7 +245,7 @@ void CurveEditorGroup::curveTypeToggled(CurveEditor* ce)
     bool curveRestored = false;
 
     if (displayedCurve) {
-        EditDataProvider* editProvider = displayedCurve->getEditProvider();
+        rtedit::EditDataProvider* editProvider = displayedCurve->getEditProvider();
 
         if (editProvider && editProvider->getCurrSubscriber() == displayedCurve) {
             displayedCurve->switchOffEditMode();

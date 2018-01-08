@@ -194,7 +194,7 @@ void FlatCurveEditorSubGroup::editModeSwitchedOff ()
     }
 }
 
-void FlatCurveEditorSubGroup::pipetteMouseOver(EditDataProvider *provider, int modifierKey)
+void FlatCurveEditorSubGroup::pipetteMouseOver(rtedit::EditDataProvider *provider, int modifierKey)
 {
     CurveEditor *curveEditor = static_cast<FlatCurveEditor*>(parent->displayedCurve);
 
@@ -210,7 +210,7 @@ void FlatCurveEditorSubGroup::pipetteMouseOver(EditDataProvider *provider, int m
     }
 }
 
-bool FlatCurveEditorSubGroup::pipetteButton1Pressed(EditDataProvider *provider, int modifierKey)
+bool FlatCurveEditorSubGroup::pipetteButton1Pressed(rtedit::EditDataProvider *provider, int modifierKey)
 {
     CurveEditor *curveEditor = static_cast<FlatCurveEditor*>(parent->displayedCurve);
 
@@ -230,7 +230,7 @@ bool FlatCurveEditorSubGroup::pipetteButton1Pressed(EditDataProvider *provider, 
     return isDragging;
 }
 
-void FlatCurveEditorSubGroup::pipetteButton1Released(EditDataProvider *provider)
+void FlatCurveEditorSubGroup::pipetteButton1Released(rtedit::EditDataProvider *provider)
 {
     CurveEditor *curveEditor = static_cast<FlatCurveEditor*>(parent->displayedCurve);
 
@@ -246,7 +246,7 @@ void FlatCurveEditorSubGroup::pipetteButton1Released(EditDataProvider *provider)
     }
 }
 
-void FlatCurveEditorSubGroup::pipetteDrag(EditDataProvider *provider, int modifierKey)
+void FlatCurveEditorSubGroup::pipetteDrag(rtedit::EditDataProvider *provider, int modifierKey)
 {
     CurveEditor *curveEditor = static_cast<FlatCurveEditor*>(parent->displayedCurve);
 

@@ -28,6 +28,7 @@
 #include "../rtengine/rt_math.h"
 
 using namespace rtengine;
+using namespace rtedit;
 
 CropHandler::CropHandler ()
     : zoom(100), ww(0), wh(0), cax(-1), cay(-1),

@@ -52,7 +52,7 @@ public:
     void setAdjusterBehavior (bool multiplieradd, bool thresholdadd, bool threshold2add, bool thresadd, bool chroadd, bool chromaadd, bool contrastadd, bool skinadd, bool reschroadd, bool tmrsadd, bool resconadd, bool resconHadd, bool thradd, bool thrHadd, bool skyadd, bool edgradadd, bool edgvaladd, bool strengthadd, bool gammaadd, bool edgedetectadd, bool edgedetectthradd, bool edgedetectthr2add);
     void setBatchMode (bool batchMode);
     void setDefaults  (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void setEditProvider (EditDataProvider *provider);
+    void setEditProvider (rtedit::EditDataProvider *provider);
     void updateToolState (std::vector<int> &tpOpen);
     void write (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
     void writeOptions (std::vector<int> &tpOpen);

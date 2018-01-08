@@ -53,10 +53,10 @@ public:
     void switchGUI();
     void refresh(CurveEditor *curveToRefresh);
     void editModeSwitchedOff();
-    void pipetteMouseOver(EditDataProvider *provider, int modifierKey);
-    bool pipetteButton1Pressed(EditDataProvider *provider, int modifierKey);
-    void pipetteButton1Released(EditDataProvider *provider);
-    void pipetteDrag(EditDataProvider *provider, int modifierKey);
+    void pipetteMouseOver(rtedit::EditDataProvider *provider, int modifierKey);
+    bool pipetteButton1Pressed(rtedit::EditDataProvider *provider, int modifierKey);
+    void pipetteButton1Released(rtedit::EditDataProvider *provider);
+    void pipetteDrag(rtedit::EditDataProvider *provider, int modifierKey);
     void showCoordinateAdjuster(CoordinateProvider *provider);
     void stopNumericalAdjustment();
 

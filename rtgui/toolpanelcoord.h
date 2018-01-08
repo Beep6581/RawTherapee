@@ -80,6 +80,8 @@
 #include "fattaltonemap.h"
 #include "localcontrast.h"
 #include "guiutils.h"
+#include "rawcrop.h"
+
 
 class ImageEditorCoordinator;
 
@@ -147,7 +149,8 @@ protected:
     RAWExposure* rawexposure;
     BayerRAWExposure* bayerrawexposure;
     XTransRAWExposure* xtransrawexposure;
-    FattalToneMapping *fattal;
+    FattalToneMapping* fattal;
+    RawCrop* rawCrop;
     MetaDataPanel* metadata;
 
     std::vector<PParamsChangeListener*> paramcListeners;
@@ -192,7 +195,7 @@ protected:
 
 private:
 
-    EditDataProvider *editDataProvider;
+    rtedit::EditDataProvider *editDataProvider;
 
 public:
 

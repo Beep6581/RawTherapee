@@ -976,7 +976,7 @@ CursorShape MyDiagonalCurve::motionNotify(CursorShape type, double minDistanceX,
     return new_type;
 }
 
-void MyDiagonalCurve::pipetteMouseOver (CurveEditor *ce, EditDataProvider *provider, int modifierKey)
+void MyDiagonalCurve::pipetteMouseOver (CurveEditor *ce, rtedit::EditDataProvider *provider, int modifierKey)
 {
     if (!provider) {
         // occurs when leaving the preview area -> cleanup the curve editor
@@ -1063,7 +1063,7 @@ void MyDiagonalCurve::pipetteMouseOver (CurveEditor *ce, EditDataProvider *provi
 }
 
 // returns true if a point is being dragged
-bool MyDiagonalCurve::pipetteButton1Pressed(EditDataProvider *provider, int modifierKey)
+bool MyDiagonalCurve::pipetteButton1Pressed(rtedit::EditDataProvider *provider, int modifierKey)
 {
     if (edited_point > 1) {
         return false;
@@ -1141,7 +1141,7 @@ bool MyDiagonalCurve::pipetteButton1Pressed(EditDataProvider *provider, int modi
     return false;
 }
 
-void MyDiagonalCurve::pipetteButton1Released(EditDataProvider *provider)
+void MyDiagonalCurve::pipetteButton1Released(rtedit::EditDataProvider *provider)
 {
     if (edited_point > 1) {
         return;
@@ -1183,7 +1183,7 @@ void MyDiagonalCurve::pipetteButton1Released(EditDataProvider *provider)
     }
 }
 
-void MyDiagonalCurve::pipetteDrag(EditDataProvider *provider, int modifierKey)
+void MyDiagonalCurve::pipetteDrag(rtedit::EditDataProvider *provider, int modifierKey)
 {
     if (edited_point > -1 || curve.type == DCT_Parametric || graphW < 0 || graphH < 0) {
         return;

@@ -92,10 +92,10 @@ public:
     void reset (const std::vector<double> &resetCurve, double identityValue = 0.5);
     void updateBackgroundHistogram (LUTu & hist);
 
-    void pipetteMouseOver (CurveEditor *ce, EditDataProvider *provider, int modifierKey);
-    bool pipetteButton1Pressed(EditDataProvider *provider, int modifierKey);
-    void pipetteButton1Released(EditDataProvider *provider);
-    void pipetteDrag(EditDataProvider *provider, int modifierKey);
+    void pipetteMouseOver (CurveEditor *ce, rtedit::EditDataProvider *provider, int modifierKey);
+    bool pipetteButton1Pressed(rtedit::EditDataProvider *provider, int modifierKey);
+    void pipetteButton1Released(rtedit::EditDataProvider *provider);
+    void pipetteDrag(rtedit::EditDataProvider *provider, int modifierKey);
 
     virtual void setPos(double pos, int chanIdx);
     virtual void stopNumericalAdjustment();

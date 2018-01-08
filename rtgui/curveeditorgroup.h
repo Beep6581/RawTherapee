@@ -143,10 +143,10 @@ public:
     virtual void showCoordinateAdjuster(CoordinateProvider *provider) = 0;
     virtual void stopNumericalAdjustment() = 0;
 
-    virtual void pipetteMouseOver(EditDataProvider *provider, int modifierKey) = 0;
-    virtual bool pipetteButton1Pressed(EditDataProvider *provider, int modifierKey) = 0;
-    virtual void pipetteButton1Released(EditDataProvider *provider) = 0;
-    virtual void pipetteDrag(EditDataProvider *provider, int modifierKey) = 0;
+    virtual void pipetteMouseOver(rtedit::EditDataProvider *provider, int modifierKey) = 0;
+    virtual bool pipetteButton1Pressed(rtedit::EditDataProvider *provider, int modifierKey) = 0;
+    virtual void pipetteButton1Released(rtedit::EditDataProvider *provider) = 0;
+    virtual void pipetteDrag(rtedit::EditDataProvider *provider, int modifierKey) = 0;
 
     virtual bool curveReset (CurveEditor *ce) = 0; // Reset a curve editor, return TRUE if successful (curve changed)
 

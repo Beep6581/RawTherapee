@@ -35,6 +35,8 @@ constexpr T skips (T a, T b)
 
 }
 
+using namespace rtedit;
+
 namespace rtengine
 {
 

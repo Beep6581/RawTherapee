@@ -34,7 +34,7 @@ protected:
 
     // To avoid duplicated information, we points to a EditDataProvider that contains the current EditSubscriber
     // instead of pointing to the EditSubscriber directly
-    ::EditDataProvider* dataProvider;
+    rtedit::EditDataProvider* dataProvider;
 
     // TODO: Unfortunately, buffer can be of several type, each one representing a floating point image. Maybe we could unify everything one day!?
     // Only one of the following pointers will be allocated at a time, if any; "one chunk" allocation
@@ -45,12 +45,12 @@ protected:
     bool ready;  // flag that indicates if the _pipette_ buffer is ready
 
     void createBuffer(int width, int height);
-    void resize(int newWidth, int newHeight, EditSubscriber* newSubscriber);
+    void resize(int newWidth, int newHeight, rtedit::EditSubscriber* newSubscriber);
     void resize(int newWidth, int newHeight);
     void flush();
 
 public:
-    explicit PipetteBuffer(::EditDataProvider *dataProvider);
+    explicit PipetteBuffer(rtedit::EditDataProvider *dataProvider);
     ~PipetteBuffer();
 
     /** @brief Getter to know if the pipette buffer is correctly filled */
@@ -66,7 +66,7 @@ public:
         ready = true;
     }
 
-    ::EditDataProvider* getDataProvider()
+    rtedit::EditDataProvider* getDataProvider()
     {
         return dataProvider;
     }

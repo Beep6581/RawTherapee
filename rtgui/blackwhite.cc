@@ -1229,7 +1229,7 @@ void BlackWhite::autoOpenCurve ()
     beforeCurve->openIfNonlinear();
     afterCurve->openIfNonlinear();
 }
-void BlackWhite::setEditProvider (EditDataProvider *provider)
+void BlackWhite::setEditProvider (rtedit::EditDataProvider *provider)
 {
     luminanceCurve->setEditProvider(provider);
     beforeCurve->setEditProvider(provider);

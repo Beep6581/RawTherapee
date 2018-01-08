@@ -325,7 +325,7 @@ void LCurve::autoOpenCurve ()
 
 }
 
-void LCurve::setEditProvider  (EditDataProvider *provider)
+void LCurve::setEditProvider  (rtedit::EditDataProvider *provider)
 {
     lshape->setEditProvider(provider);
     ccshape->setEditProvider(provider);

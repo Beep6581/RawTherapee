@@ -10,6 +10,8 @@
 #include "edit.h"
 #include "guiutils.h"
 
+using namespace rtedit;
+
 class Gradient : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public EditSubscriber
 {
 
