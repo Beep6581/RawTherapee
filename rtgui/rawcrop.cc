@@ -476,30 +476,33 @@ void RawCrop::updateGeometry(const int x, const int y, const int width, const in
     bottomLeft.points.at(1) = rtengine::Coord(x2, y2);
     bottomLeft.points.at(2) = rtengine::Coord(x2 + cornerW, y2);
 
+    cornerW = bigCornerW;
+    cornerH = bigCornerH;
+
     switch (litArea) {
     case LitArea::top:
-        side.points.at(0) = rtengine::Coord(x, y + cornerW);
+        side.points.at(0) = rtengine::Coord(x, y + cornerH);
         side.points.at(1) = rtengine::Coord(x, y);
         side.points.at(2) = rtengine::Coord(x + width, y);
-        side.points.at(3) = rtengine::Coord(x + width, y + cornerW);
+        side.points.at(3) = rtengine::Coord(x + width, y + cornerH);
         break;
     case LitArea::left:
-        side.points.at(0) = rtengine::Coord(x + cornerH, y);
+        side.points.at(0) = rtengine::Coord(x + cornerW, y);
         side.points.at(1) = rtengine::Coord(x, y);
         side.points.at(2) = rtengine::Coord(x, y + height);
-        side.points.at(3) = rtengine::Coord(x + cornerH, y + height);
+        side.points.at(3) = rtengine::Coord(x + cornerW, y + height);
         break;
     case LitArea::right:
-        side.points.at(0) = rtengine::Coord(x + width - cornerH, y);
+        side.points.at(0) = rtengine::Coord(x + width - cornerW, y);
         side.points.at(1) = rtengine::Coord(x + width, y);
         side.points.at(2) = rtengine::Coord(x + width, y + height);
-        side.points.at(3) = rtengine::Coord(x + width - cornerH, y + height);
+        side.points.at(3) = rtengine::Coord(x + width - cornerW, y + height);
         break;
     case LitArea::bottom:
-        side.points.at(0) = rtengine::Coord(x, y + height - cornerW);
+        side.points.at(0) = rtengine::Coord(x, y + height - cornerH);
         side.points.at(1) = rtengine::Coord(x, y + height);
         side.points.at(2) = rtengine::Coord(x + width, y + height);
-        side.points.at(3) = rtengine::Coord(x + width, y + height -cornerW);
+        side.points.at(3) = rtengine::Coord(x + width, y + height -cornerH);
         break;
     default:
         break;
@@ -582,51 +585,38 @@ bool RawCrop::mouseOver(const int modifierKey)
 
     if (editProvider) {
         editProvider->getImageSize(imgWidth, imgHeight);
-        int cornerW = imgWidth / 6;
-        int cornerH = imgHeight / 6;
-
-
-
-
-        Factoriser les calcul (déplacer dans inArea), si possible
-
-        Voir pourquoi la zone left n'est pas reconnue ?
-
-
-
-
-
-
+        int cornerW = w_ / 5;
+        int cornerH = h_ / 5;
 
         if (inArea(0, 0, x_ + cornerW, y_ + cornerH, editProvider->posImage)) {
-            printf("Area: %d,%d to %d,%d / %d,%d\n", 0, 0, x_ + cornerW, y_ + cornerH, editProvider->posImage.x, editProvider->posImage.y);
+//            printf("Area: %d,%d to %d,%d / %d,%d\n", 0, 0, x_ + cornerW, y_ + cornerH, editProvider->posImage.x, editProvider->posImage.y);
             litArea = LitArea::topLeft;
         } else if (inArea(x_ + cornerW, 0, x_ + w_ - cornerW, y_ + cornerH, editProvider->posImage)) {
-            printf("Area: %d,%d to %d,%d / %d,%d\n", x_ + cornerW, 0, x_ + w_ - cornerW, y_ + cornerH, editProvider->posImage.x, editProvider->posImage.y);
+//            printf("Area: %d,%d to %d,%d / %d,%d\n", x_ + cornerW, 0, x_ + w_ - cornerW, y_ + cornerH, editProvider->posImage.x, editProvider->posImage.y);
             litArea = LitArea::top;
         } else if (inArea(x_ + w_ - cornerW, 0, imgWidth, y_ + cornerH, editProvider->posImage)) {
-            printf("Area: %d,%d to %d,%d / %d,%d\n", x_ + w_ - cornerW, 0, imgWidth, y_ + cornerH, editProvider->posImage.x, editProvider->posImage.y);
+//            printf("Area: %d,%d to %d,%d / %d,%d\n", x_ + w_ - cornerW, 0, imgWidth, y_ + cornerH, editProvider->posImage.x, editProvider->posImage.y);
             litArea = LitArea::topRight;
         } else if (inArea(0, y_ + cornerH, x_ + cornerW, y_ + h_ - cornerH, editProvider->posImage)) {
-            printf("Area: %d,%d to %d,%d / %d,%d\n", 0, y_ + cornerH, x_ + cornerW, y_ + h_ - cornerH, editProvider->posImage.x, editProvider->posImage.y);
+//            printf("Area: %d,%d to %d,%d / %d,%d\n", 0, y_ + cornerH, x_ + cornerW, y_ + h_ - cornerH, editProvider->posImage.x, editProvider->posImage.y);
             litArea = LitArea::left;
-        } else if (inArea(x_ + cornerW, y_ + cornerW, x_ + w_ - cornerW, y_ + h_ - cornerH, editProvider->posImage)) {
-            printf("Area: %d,%d to %d,%d / %d,%d\n", x_ + cornerW, y_ + cornerW, x_ + w_ - cornerW, y_ + h_ - cornerH, editProvider->posImage.x, editProvider->posImage.y);
+        } else if (inArea(x_ + cornerW, y_ + cornerH, x_ + w_ - cornerW, y_ + h_ - cornerH, editProvider->posImage)) {
+//            printf("Area: %d,%d to %d,%d / %d,%d\n", x_ + cornerW, y_ + cornerW, x_ + w_ - cornerW, y_ + h_ - cornerH, editProvider->posImage.x, editProvider->posImage.y);
             litArea = LitArea::center;
         } else if (inArea(x_ + w_ - cornerW, y_ + cornerH, imgWidth, y_ + h_ - cornerH, editProvider->posImage)) {
-            printf("Area: %d,%d to %d,%d / %d,%d\n", x_ + w_ - cornerW, y_ + cornerH, imgWidth, y_ + h_ - cornerH, editProvider->posImage.x, editProvider->posImage.y);
+//            printf("Area: %d,%d to %d,%d / %d,%d\n", x_ + w_ - cornerW, y_ + cornerH, imgWidth, y_ + h_ - cornerH, editProvider->posImage.x, editProvider->posImage.y);
             litArea = LitArea::right;
         } else if (inArea(0, y_ - cornerH, x_ + cornerW, imgHeight, editProvider->posImage)) {
-            printf("Area: %d,%d to %d,%d / %d,%d\n", 0, y_ - cornerH, x_ + cornerW, imgHeight, editProvider->posImage.x, editProvider->posImage.y);
+//            printf("Area: %d,%d to %d,%d / %d,%d\n", 0, y_ - cornerH, x_ + cornerW, imgHeight, editProvider->posImage.x, editProvider->posImage.y);
             litArea = LitArea::bottomLeft;
         } else if (inArea(x_ + cornerW, y_ - cornerH, x_ + w_ - cornerW, imgHeight, editProvider->posImage)) {
-            printf("Area: %d,%d to %d,%d / %d,%d\n", x_ + cornerW, y_ - cornerH, x_ + w_ - cornerW, imgHeight, editProvider->posImage.x, editProvider->posImage.y);
+//            printf("Area: %d,%d to %d,%d / %d,%d\n", x_ + cornerW, y_ - cornerH, x_ + w_ - cornerW, imgHeight, editProvider->posImage.x, editProvider->posImage.y);
             litArea = LitArea::bottom;
         } else if (inArea(x_ + w_ - cornerW, y_ - cornerH, imgWidth, imgHeight, editProvider->posImage)) {
-            printf("Area: %d,%d to %d,%d / %d,%d\n", x_ + w_ - cornerW, y_ - cornerH, imgWidth, imgHeight, editProvider->posImage.x, editProvider->posImage.y);
+//            printf("Area: %d,%d to %d,%d / %d,%d\n", x_ + w_ - cornerW, y_ - cornerH, imgWidth, imgHeight, editProvider->posImage.x, editProvider->posImage.y);
             litArea = LitArea::bottomRight;
         } else {
-            printf("Area:  / %d,%d\n", editProvider->posImage.x, editProvider->posImage.y);
+//            printf("Area:  / %d,%d\n", editProvider->posImage.x, editProvider->posImage.y);
             litArea = LitArea::none;
         }
     }
@@ -689,7 +679,6 @@ bool RawCrop::button1Pressed(const int modifierKey)
     oldY[1] = rtengine::max<int>(h->get_value_as_int() - 1, 0) + oldY[0];
 
     EditSubscriber::action = ES_ACTION_DRAGGING;
-    centerCircle.radius = 6;  // same value as in ctor
     updateState();
 
     return true;
