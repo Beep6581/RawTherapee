@@ -1131,7 +1131,7 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
     float max_YThr = 0.f;
     int max_xThr = 0, max_yThr = 0;
 #ifdef _OPENMP
-    #pragma omp for nowait
+    #pragma omp for schedule(dynamic,16) nowait
 #endif
     for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++) {
@@ -1193,10 +1193,10 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
     const float hr = float(h2) / float(h);
     const float wr = float(w2) / float(w);
 
-    const float scale = std::max(L(max_x * wr + 1, max_y * hr + 1), epsilon) * (65535.f / Yr(max_x, max_y));
+    const float scale = 65535.f / std::max(L(max_x * wr + 1, max_y * hr + 1), epsilon) * (65535.f / Yr(max_x, max_y));
     
 #ifdef _OPENMP
-    #pragma omp parallel for if(multiThread)
+    #pragma omp parallel for schedule(dynamic,16) if(multiThread)
 #endif
     for (int y = 0; y < h; y++) {
         int yy = y * hr + 1;
@@ -1205,7 +1205,7 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
             int xx = x * wr + 1;
             
             float Y = Yr (x, y);
-            float l = std::max (L (xx, yy), epsilon) * (65535.f / Y) / scale;
+            float l = std::max (L (xx, yy), epsilon) * (scale / Y);
             rgb->r (y, x) = std::max (rgb->r (y, x), 0.f) * l;
             rgb->g (y, x) = std::max (rgb->g (y, x), 0.f) * l;
             rgb->b (y, x) = std::max (rgb->b (y, x), 0.f) * l;
