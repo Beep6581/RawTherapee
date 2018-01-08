@@ -1121,13 +1121,20 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
     const float min_luminance = 1.f;
     TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
 
+    float max_Y = 0.f;
+    int max_x = 0, max_y = 0;
+
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
 #endif
-
     for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++) {
             Yr (x, y) = std::max (luminance (rgb->r (y, x), rgb->g (y, x), rgb->b (y, x), ws), min_luminance); // clip really black pixels
+            if (Yr(x, y) > max_Y) {
+                max_Y = Yr(x, y);
+                max_x = x;
+                max_y = y;
+            }
         }
     }
 
@@ -1170,6 +1177,8 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
 
     const float hr = float(h2) / float(h);
     const float wr = float(w2) / float(w);
+
+    const float scale = std::max(L(max_x * wr + 1, max_y * hr + 1), epsilon) * (65535.f / Yr(max_x, max_y));
     
 #ifdef _OPENMP
     #pragma omp parallel for if(multiThread)
@@ -1181,7 +1190,7 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
             int xx = x * wr + 1;
             
             float Y = Yr (x, y);
-            float l = std::max (L (xx, yy), epsilon) * (65535.f / Y);
+            float l = std::max (L (xx, yy), epsilon) * (65535.f / Y) / scale;
             rgb->r (y, x) = std::max (rgb->r (y, x), 0.f) * l;
             rgb->g (y, x) = std::max (rgb->g (y, x), 0.f) * l;
             rgb->b (y, x) = std::max (rgb->b (y, x), 0.f) * l;
