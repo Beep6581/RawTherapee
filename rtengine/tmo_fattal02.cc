@@ -1125,18 +1125,33 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
     int max_x = 0, max_y = 0;
 
 #ifdef _OPENMP
-    #pragma omp parallel for if (multiThread)
+    #pragma omp parallel if (multiThread)
+#endif
+{
+    float max_YThr = 0.f;
+    int max_xThr = 0, max_yThr = 0;
+#ifdef _OPENMP
+    #pragma omp for
 #endif
     for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++) {
             Yr (x, y) = std::max (luminance (rgb->r (y, x), rgb->g (y, x), rgb->b (y, x), ws), min_luminance); // clip really black pixels
-            if (Yr(x, y) > max_Y) {
-                max_Y = Yr(x, y);
-                max_x = x;
-                max_y = y;
+            if (Yr(x, y) > max_YThr) {
+                max_YThr = Yr(x, y);
+                max_xThr = x;
+                max_yThr = y;
             }
         }
     }
+#ifdef _OPENMP
+#pragma omp critical
+#endif
+    if (max_YThr > max_Y) {
+        max_Y = max_YThr;
+        max_x = max_xThr;
+        max_y = max_yThr;
+    }
+}
 
     // median filter on the deep shadows, to avoid boosting noise
     // because w2 >= w and h2 >= h, we can use the L buffer as temporary buffer for Median_Denoise()
