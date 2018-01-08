@@ -1131,7 +1131,7 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
     float max_YThr = 0.f;
     int max_xThr = 0, max_yThr = 0;
 #ifdef _OPENMP
-    #pragma omp for
+    #pragma omp for nowait
 #endif
     for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++) {
