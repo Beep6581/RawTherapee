@@ -236,6 +236,8 @@ public:
     void initLongArray   (const char* data, int len);
     void initRational    (int num, int den);
 
+    static void swapByteOrder2 (char *buffer, int count);
+
     // get basic tag properties
     int                  getID          () const
     {

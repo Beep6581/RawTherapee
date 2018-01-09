@@ -54,7 +54,7 @@ using namespace rtengine;
 // begin of helper function for rgbProc()
 void shadowToneCurve(const LUTf &shtonecurve, float *rtemp, float *gtemp, float *btemp, int istart, int tH, int jstart, int tW, int tileSize) {
 
-#ifdef __SSE2__
+#if defined( __SSE2__ ) && defined( __x86_64__ )
     vfloat cr = F2V(0.299f);
     vfloat cg = F2V(0.587f);
     vfloat cb = F2V(0.114f);
@@ -62,7 +62,7 @@ void shadowToneCurve(const LUTf &shtonecurve, float *rtemp, float *gtemp, float 
 
     for (int i = istart, ti = 0; i < tH; i++, ti++) {
         int j = jstart, tj = 0;
-#ifdef __SSE2__
+#if defined( __SSE2__ ) && defined( __x86_64__ )
         for (; j < tW - 3; j+=4, tj+=4) {
 
             vfloat rv = LVF(rtemp[ti * tileSize + tj]);
@@ -95,14 +95,14 @@ void shadowToneCurve(const LUTf &shtonecurve, float *rtemp, float *gtemp, float 
 
 void highlightToneCurve(const LUTf &hltonecurve, float *rtemp, float *gtemp, float *btemp, int istart, int tH, int jstart, int tW, int tileSize, float exp_scale, float comp, float hlrange) {
 
-#ifdef __SSE2__
+#if defined( __SSE2__ ) && defined( __x86_64__ )
     vfloat threev = F2V(3.f);
     vfloat maxvalfv = F2V(MAXVALF);
 #endif
 
     for (int i = istart, ti = 0; i < tH; i++, ti++) {
         int j = jstart, tj = 0;
-#ifdef __SSE2__
+#if defined( __SSE2__ ) && defined( __x86_64__ )
         for (; j < tW - 3; j+=4, tj+=4) {
 
             vfloat rv = LVF(rtemp[ti * tileSize + tj]);
@@ -159,7 +159,7 @@ void proPhotoBlue(float *rtemp, float *gtemp, float *btemp, int istart, int tH, 
     // this is a hack to avoid the blue=>black bug (Issue 2141)
     for (int i = istart, ti = 0; i < tH; i++, ti++) {
         int j = jstart, tj = 0;
-#ifdef __SSE2__
+#if defined( __SSE2__ ) && defined( __x86_64__ )
         for (; j < tW - 3; j+=4, tj+=4) {
             vfloat rv = LVF(rtemp[ti * tileSize + tj]);
             vfloat gv = LVF(gtemp[ti * tileSize + tj]);
@@ -2170,7 +2170,9 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
         const float pow1 = pow_F ( 1.64f - pow_F ( 0.29f, n ), 0.73f );
         float nj, nbbj, ncbj, czj, awj, flj;
         Ciecam02::initcam2float (gamu, yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj);
+#ifdef __SSE2__
         const float reccmcz = 1.f / (c2 * czj);
+#endif
         const float pow1n = pow_F ( 1.64f - pow_F ( 0.29f, nj ), 0.73f );
 
         const float epsil = 0.0001f;
@@ -2735,7 +2737,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                             Ciecam02::jch2xyz_ciecam02float ( xx, yy, zz,
                                                               J,  C, h,
                                                               xw2, yw2,  zw2,
-                                                              f2,  c2, nc2, gamu, pow1n, nbbj, ncbj, flj, czj, dj, awj);
+                                                              c2, nc2, gamu, pow1n, nbbj, ncbj, flj, czj, dj, awj);
                             float x, y, z;
                             x = xx * 655.35f;
                             y = yy * 655.35f;
@@ -2746,10 +2748,9 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
 
                             // gamut control in Lab mode; I must study how to do with cIECAM only
                             if (gamu == 1) {
-                                float HH, Lprov1, Chprov1;
+                                float Lprov1, Chprov1;
                                 Lprov1 = Ll / 327.68f;
                                 Chprov1 = sqrtf (SQR (aa) + SQR (bb)) / 327.68f;
-                                HH = xatan2f (bb, aa);
                                 float2  sincosval;
 
                                 if (Chprov1 == 0.0f) {
@@ -3079,7 +3080,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                         Ciecam02::jch2xyz_ciecam02float ( xx, yy, zz,
                                                           ncie->J_p[i][j],  ncie_C_p, ncie->h_p[i][j],
                                                           xw2, yw2,  zw2,
-                                                          f2,  c2, nc2, gamu, pow1n, nbbj, ncbj, flj, czj, dj, awj);
+                                                          c2, nc2, gamu, pow1n, nbbj, ncbj, flj, czj, dj, awj);
                         float x = (float)xx * 655.35f;
                         float y = (float)yy * 655.35f;
                         float z = (float)zz * 655.35f;
@@ -3762,7 +3763,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 } else {
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         int j = jstart, tj = 0;
-#ifdef __SSE2__
+#if defined( __SSE2__ ) && defined( __x86_64__ )
                         for (; j < tW - 3; j+=4, tj+=4) {
                             //brightness/contrast
                             STVF(rtemp[ti * TS + tj], tonecurve(LVF(rtemp[ti * TS + tj])));

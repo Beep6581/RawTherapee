@@ -330,50 +330,50 @@ Image16::tofloat()
     return imgfloat;
 }
 
-// Parallized transformation; create transform with cmsFLAGS_NOCACHE!
-void Image16::ExecCMSTransform(cmsHTRANSFORM hTransform, const LabImage &labImage, int cx, int cy)
-{
-    // LittleCMS cannot parallelize planar Lab float images
-    // so build temporary buffers to allow multi processor execution
-#ifdef _OPENMP
-    #pragma omp parallel
-#endif
-    {
-        AlignedBuffer<float> bufferLab(width * 3);
-        AlignedBuffer<unsigned short> bufferRGB(width * 3);
+// // Parallized transformation; create transform with cmsFLAGS_NOCACHE!
+// void Image16::ExecCMSTransform(cmsHTRANSFORM hTransform, const LabImage &labImage, int cx, int cy)
+// {
+//     // LittleCMS cannot parallelize planar Lab float images
+//     // so build temporary buffers to allow multi processor execution
+// #ifdef _OPENMP
+//     #pragma omp parallel
+// #endif
+//     {
+//         AlignedBuffer<float> bufferLab(width * 3);
+//         AlignedBuffer<unsigned short> bufferRGB(width * 3);
 
-#ifdef _OPENMP
-        #pragma omp for schedule(static)
-#endif
+// #ifdef _OPENMP
+//         #pragma omp for schedule(static)
+// #endif
 
-        for (int y = cy; y < cy + height; y++)
-        {
-            unsigned short *pRGB, *pR, *pG, *pB;
-            float *pLab, *pL, *pa, *pb;
+//         for (int y = cy; y < cy + height; y++)
+//         {
+//             unsigned short *pRGB, *pR, *pG, *pB;
+//             float *pLab, *pL, *pa, *pb;
 
-            pLab= bufferLab.data;
-            pL = labImage.L[y] + cx;
-            pa = labImage.a[y] + cx;
-            pb = labImage.b[y] + cx;
+//             pLab= bufferLab.data;
+//             pL = labImage.L[y] + cx;
+//             pa = labImage.a[y] + cx;
+//             pb = labImage.b[y] + cx;
 
-            for (int x = 0; x < width; x++) {
-                *(pLab++) = *(pL++)  / 327.68f;
-                *(pLab++) = *(pa++)  / 327.68f;
-                *(pLab++) = *(pb++)  / 327.68f;
-            }
+//             for (int x = 0; x < width; x++) {
+//                 *(pLab++) = *(pL++)  / 327.68f;
+//                 *(pLab++) = *(pa++)  / 327.68f;
+//                 *(pLab++) = *(pb++)  / 327.68f;
+//             }
 
-            cmsDoTransform (hTransform, bufferLab.data, bufferRGB.data, width);
+//             cmsDoTransform (hTransform, bufferLab.data, bufferRGB.data, width);
 
-            pRGB = bufferRGB.data;
-            pR = r(y - cy);
-            pG = g(y - cy);
-            pB = b(y - cy);
+//             pRGB = bufferRGB.data;
+//             pR = r(y - cy);
+//             pG = g(y - cy);
+//             pB = b(y - cy);
 
-            for (int x = 0; x < width; x++) {
-                *(pR++) = *(pRGB++);
-                *(pG++) = *(pRGB++);
-                *(pB++) = *(pRGB++);
-            }
-        } // End of parallelization
-    }
-}
+//             for (int x = 0; x < width; x++) {
+//                 *(pR++) = *(pRGB++);
+//                 *(pG++) = *(pRGB++);
+//                 *(pB++) = *(pRGB++);
+//             }
+//         } // End of parallelization
+//     }
+// }

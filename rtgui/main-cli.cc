@@ -822,7 +822,7 @@ int processLineParams ( int argc, char **argv )
         }
 
         // Process image
-        rtengine::IImage16* resultImage = rtengine::processImage (job, errorCode, nullptr);
+        rtengine::IImagefloat* resultImage = rtengine::processImage (job, errorCode, nullptr);
 
         if ( !resultImage ) {
             errors++;

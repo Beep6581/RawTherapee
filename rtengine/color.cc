@@ -1786,7 +1786,7 @@ void Color::Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, vfloat &
 void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, const float wp[3][3], int width)
 {
 
-#ifdef __SSE2__
+#if defined( __SSE2__ ) && defined( __x86_64__ )
     vfloat maxvalfv = F2V(MAXVALF);
     vfloat c116v = F2V(116.f);
     vfloat c5242d88v = F2V(5242.88f);
@@ -1794,7 +1794,7 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
     vfloat c200v = F2V(200.f);
 #endif
     int i = 0;
-#ifdef __SSE2__
+#if defined( __SSE2__ ) && defined( __x86_64__ )
     for(;i < width - 3; i+=4) {
         const vfloat rv = LVFU(R[i]);
         const vfloat gv = LVFU(G[i]);

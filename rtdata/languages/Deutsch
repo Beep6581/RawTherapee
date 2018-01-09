@@ -48,6 +48,7 @@
 #47 19.11.2017 HDR-Dynamikkompression (TooWaBoo) RT 5.3
 #48 13.12.2017 Erweiterung (TooWaBoo) RT 5.3
 #49 21.12.2017 Lokaler Kontrast (TooWaBoo) RT 5.3
+#50 07.01.2018 Crop Settings (TooWaBoo) RT 5.3
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -572,9 +573,9 @@ HISTORY_MSG_281;(Farbanpassungen)\nSättigung schützen\nIntensität
 HISTORY_MSG_282;(Farbanpassungen)\nSättigung schützen\nSchwelle
 HISTORY_MSG_283;(Farbanpassungen)\nIntensität
 HISTORY_MSG_284;(Farbanpassungen)\nSättigung schützen\nAutomatisch
-HISTORY_MSG_285;(Rauschreduzierung)\nMedianmethode
+HISTORY_MSG_285;(Rauschreduzierung)\nMedianfilter - Methode
 HISTORY_MSG_286;(Rauschreduzierung)\nMediantyp
-HISTORY_MSG_287;(Rauschreduzierung)\nMedianiterationen
+HISTORY_MSG_287;(Rauschreduzierung)\nMedianfilter - Iterationen
 HISTORY_MSG_288;(Weißbild)\nKontrolle zu heller Bereiche
 HISTORY_MSG_289;(Weißbild)\nAuto-Kontrolle zu\nheller Bereiche
 HISTORY_MSG_290;(Sensor-Matrix)\nSchwarzpunkt - Rot
@@ -1151,7 +1152,7 @@ PREFERENCES_REMEMBERZOOMPAN;Zoom und Bildposition merken
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Öffnen eines neuen Bildes mit den Zoom- und Positionswerten\ndes vorangegangenen Bildes.\n\nFunktioniert nur unter folgenden Bedingungen:\nEin-Reitermodus aktiv\n“Demosaikmethode für 100%-Ansicht“ muss auf “Wie im Bild-\nverarbeitungsprofil vorgegeben“ eingestellt sein.
 PREFERENCES_RGBDTL_LABEL;Maximale Anzahl Threads für Rauschreduzierung
 PREFERENCES_RGBDTL_TOOLTIP;Die Rauschreduzierung benötigt mindestens 128MB RAM für ein 10 Megapixel-Bild oder 512MB für ein 40 Megapixel-Bild, und zusätzlich 128MB RAM pro Thread. Je mehr Threads parallel ablaufen, desto schneller ist die Berechnung. Bei Einstellung "0" werden so viele Threads wie möglich benutzt.
-PREFERENCES_SAVE_TP_OPEN_NOW;Werkzeugstatus jetzt sichern
+PREFERENCES_SAVE_TP_OPEN_NOW;Werkzeugstatus jetzt speichern
 PREFERENCES_SELECTFONT;Schriftart
 PREFERENCES_SELECTFONT_COLPICKER;Schriftart für die Farbwähler
 PREFERENCES_SELECTLANG;Sprache
@@ -1513,7 +1514,7 @@ TP_DIRPYRDENOISE_LUMINANCE_CURVE;Luminanzkurve
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Luminanzdetails
 TP_DIRPYRDENOISE_LUMINANCE_FRAME;Luminanz
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminanz
-TP_DIRPYRDENOISE_MAIN_COLORSPACE;Methode
+TP_DIRPYRDENOISE_MAIN_COLORSPACE;Farbraum
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;L*a*b*
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Rauschreduzierung
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
@@ -1524,7 +1525,7 @@ TP_DIRPYRDENOISE_MAIN_MODE;Qualität
 TP_DIRPYRDENOISE_MAIN_MODE_AGGRESSIVE;Hoch
 TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE;Standard
 TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;Einstellung der Qualität der Rauschreduzierung.\nDie Einstellung “Hoch“ verbessert die Rausch-\nreduzierung auf Kosten der Verarbeitungszeit.
-TP_DIRPYRDENOISE_MEDIAN_METHOD;Medianmethode
+TP_DIRPYRDENOISE_MEDIAN_METHOD;Methode
 TP_DIRPYRDENOISE_MEDIAN_METHOD_CHROMINANCE;Nur Farbe
 TP_DIRPYRDENOISE_MEDIAN_METHOD_LAB;L*a*b*
 TP_DIRPYRDENOISE_MEDIAN_METHOD_LABEL;Medianfilter
@@ -1532,7 +1533,7 @@ TP_DIRPYRDENOISE_MEDIAN_METHOD_LUMINANCE;Nur Luminanz
 TP_DIRPYRDENOISE_MEDIAN_METHOD_RGB;RGB
 TP_DIRPYRDENOISE_MEDIAN_METHOD_TOOLTIP;Bei der Methode “Nur Luminanz“ und “L*a*b*“,\nwird der Medianfilter nach den Waveletschritten\nverarbeitet.\nBei RGB wird der Medianfilter am Ende der\nRauschreduzierung verarbeitet.
 TP_DIRPYRDENOISE_MEDIAN_METHOD_WEIGHTED;Gewichtet L* (wenig) + a*b* (normal)
-TP_DIRPYRDENOISE_MEDIAN_PASSES;Medianiterationen
+TP_DIRPYRDENOISE_MEDIAN_PASSES;Iterationen
 TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Manchmal führt ein kleines 3×3-Fenster mit\nmehreren Iterationen zu besseren Ergebnissen\nals ein 7×7-Fenster mit nur einer Iteration.
 TP_DIRPYRDENOISE_MEDIAN_TYPE;Mediantyp
 TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Einen Medianfilter mit der gewünschten Fenstergröße auswählen.\nJe größer das Fenster, umso länger dauert die Verarbeitungszeit.\n\n3×3 weich: Nutzt 5 Pixel in einem 3×3-Pixelfenster.\n3×3: Nutzt 9 Pixel in einem 3×3-Pixelfenster.\n5×5 weich: Nutzt 13 Pixel in einem 5×5-Pixelfenster.\n5×5: Nutzt 25 Pixel in einem 5×5-Pixelfenster.\n7×7: Nutzt 49 Pixel in einem 7×7-Pixelfenster.\n9×9: Nutzt 81 Pixel in einem 9×9-Pixelfenster.\n\nManchmal ist das Ergebnis mit einem kleineren Fenster und mehreren Iterationen besser, als mit einem größeren und nur einer Iteration.
@@ -2226,25 +2227,25 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
-!GENERAL_SLIDER;Slider
-!HISTORY_MSG_173;NR - Detail recovery
-!HISTORY_MSG_203;NR - Color space
-!HISTORY_MSG_256;NR - Median - Type
-!HISTORY_MSG_297;NR - Mode
-!HISTORY_MSG_METADATA_MODE;Metadata copy mode
-!PREFERENCES_CROP;Crop editing
-!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
-!PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
-!PREFERENCES_CROP_GUIDES_FRAME;Frame
-!PREFERENCES_CROP_GUIDES_FULL;Original
-!PREFERENCES_CROP_GUIDES_NONE;None
-!PREFERENCES_EDITORCMDLINE;Custom command line
-!TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
-!TP_DIRPYRDENOISE_LABEL;Noise Reduction
-!TP_METADATA_EDIT;Apply modifications
-!TP_METADATA_MODE;Metadata copy mode
-!TP_METADATA_STRIP;Strip all metadata
-!TP_METADATA_TUNNEL;Copy unchanged
-!TP_RAW_PIXELSHIFTONEGREEN;Use one green instead of average
-!TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Use one green instead of averaging two greens for regions without motion.
+BATCHQUEUE_STARTSTOPHINT;Startet / Stoppt die Verarbeitung\nder Warteschlange.\n\nTaste: <b>Strg</b> + <b>s</b>
+GENERAL_SLIDER;Regler
+HISTORY_MSG_173;(Rauschreduzierung)\nLuminanzdetails
+HISTORY_MSG_203;(Rauschreduzierung)\nFarbraum
+HISTORY_MSG_256;(Rauschreduzierung)\nMedianfilter - Mediantyp
+HISTORY_MSG_297;(Rauschreduzierung)\nQualität
+HISTORY_MSG_METADATA_MODE;(Metadaten)\nKopiermodus
+PREFERENCES_CROP;Einstellung des Ausschnittswerkzeuges
+PREFERENCES_CROP_AUTO_FIT;Automatischer Zoom des Ausschnitts
+PREFERENCES_CROP_GUIDES;Hilfslinien anzeigen wenn Ausschnitt nicht verändert wird
+PREFERENCES_CROP_GUIDES_FRAME;Rahmen
+PREFERENCES_CROP_GUIDES_FULL;Vorgabe des Ausschnittswerkzeuges
+PREFERENCES_CROP_GUIDES_NONE;Keine
+PREFERENCES_EDITORCMDLINE;Benutzerdefinierte Befehlszeile
+TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Erhöht / Reduziert die Intensität der\nChrominanz-Rauschreduzierung in\nAbhängigkeit der Farbsättigung.
+TP_DIRPYRDENOISE_LABEL;Rauschreduzierung
+TP_METADATA_EDIT;Veränderte Daten
+TP_METADATA_MODE;Kopiermodus
+TP_METADATA_STRIP;Keine
+TP_METADATA_TUNNEL;Unveränderte Daten
+TP_RAW_PIXELSHIFTONEGREEN;Benutze ein Grün
+TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Benutze ein Grün anstelle des\nDurchschnitts beider Grüns für\nBereiche ohne Bewegung.
