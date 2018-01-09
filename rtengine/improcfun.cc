@@ -3479,6 +3479,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     }
 
     bool hasColorToning = params->colorToning.enabled && bool (ctOpacityCurve) &&  bool (ctColorCurve) && params->colorToning.method != "LabGrid";
+    bool hasColorToningLabGrid = params->colorToning.enabled && params->colorToning.method == "LabGrid";
     //  float satLimit = float(params->colorToning.satProtectionThreshold)/100.f*0.7f+0.3f;
     //  float satLimitOpacity = 1.f-(float(params->colorToning.saturatedOpacity)/100.f);
     float strProtect = (float (params->colorToning.strength) / 100.f);
@@ -4521,6 +4522,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         Color::RGB2Lab(&rtemp[ti * TS], &gtemp[ti * TS], &btemp[ti * TS], &(lab->L[i][jstart]), &(lab->a[i][jstart]), &(lab->b[i][jstart]), toxyz, tW - jstart);
                     }
+                    if (hasColorToningLabGrid) {
+                        colorToningLabGrid(lab, jstart, tW, istart, tH, false);
+                    }
                 } else { // black & white
                     // Auto channel mixer needs whole image, so we now copy to tmpImage and close the tiled processing
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
@@ -4932,6 +4936,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
         for (int i = 0; i < tH; i++) {
             Color::RGB2Lab(tmpImage->r(i), tmpImage->g(i), tmpImage->b(i), lab->L[i], lab->a[i], lab->b[i], toxyz, tW);
+            if (hasColorToningLabGrid) {
+                colorToningLabGrid(lab, 0, tW, i, i + 1, false);
+            }
         }
 
 
@@ -4951,10 +4958,6 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
     if (vCurveEnabled) {
         delete vCurve;
-    }
-
-    if (params->colorToning.enabled && params->colorToning.method == "LabGrid") {
-        colorToningLabGrid(lab);
     }
 
     if (params->localContrast.enabled) {
@@ -7198,7 +7201,7 @@ SSEFUNCTION void ImProcFunctions::lab2rgb (const LabImage &src, Imagefloat &dst,
     You should have received a copy of the GNU General Public License
     along with darktable.  If not, see <http://www.gnu.org/licenses/>.
 */
-void ImProcFunctions::colorToningLabGrid(LabImage *lab)
+void ImProcFunctions::colorToningLabGrid(LabImage *lab, int xstart, int xend, int ystart, int yend, bool MultiThread)
 {
     const float factor = ColorToningParams::LABGRID_CORR_MAX * 3.f;
     float a_scale = (params->colorToning.labgridAHigh - params->colorToning.labgridALow) / factor;
@@ -7209,8 +7212,8 @@ void ImProcFunctions::colorToningLabGrid(LabImage *lab)
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
 #endif
-    for (int y = 0; y < lab->H; ++y) {
-        for (int x = 0; x < lab->W; ++x) {
+    for (int y = ystart; y < yend; ++y) {
+        for (int x = xstart; x < xend; ++x) {
             lab->a[y][x] += lab->L[y][x] * a_scale + a_base;
             lab->b[y][x] += lab->L[y][x] * b_scale + b_base;
         }
