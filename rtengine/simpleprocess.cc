@@ -1436,12 +1436,12 @@ private:
         }
 
         params.wavelet.strength *= scale_factor;
-        params.dirpyrDenoise.luma *= scale_factor;
+        params.dirpyrDenoise.luma *= scale_factor * scale_factor;
         //params.dirpyrDenoise.Ldetail += (100 - params.dirpyrDenoise.Ldetail) * scale_factor;
         auto &lcurve = params.dirpyrDenoise.lcurve;
 
         for (size_t i = 2; i < lcurve.size(); i += 4) {
-            lcurve[i] *= min (scale_factor * 2, 1.0);
+            lcurve[i] *= min (scale_factor * scale_factor, 1.0);
         }
 
         noiseLCurve.Set (lcurve);
