@@ -80,7 +80,7 @@ void ObjectMOBuffer::setObjectMode(ObjectMode newType)
 void ObjectMOBuffer::flush()
 {
     if (objectMap) {
-        printf("objectMap(%p) - cleard !\n");
+        printf("objectMap(%p) - cleard !\n", objectMap);
         objectMap.clear();
     }
 }
@@ -104,7 +104,7 @@ void ObjectMOBuffer::resize(int newWidth, int newHeight)
     if (const auto currSubscriber = dataProvider->getCurrSubscriber ()) {
         if (currSubscriber->getEditingType() == ET_OBJECTS) {
             if (objectMap && (objectMap->get_width() != newWidth || objectMap->get_height() != newHeight || !currSubscriber->hasMouseOverGeometry())) {
-                printf("objectMap(%p) - cleard !\n");
+                printf("objectMap(%p) - cleard !\n", objectMap);
                 objectMap.clear();
             }
 
