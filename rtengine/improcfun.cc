@@ -3929,22 +3929,14 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 }
 
                 if (sat != 0 || hCurveEnabled || sCurveEnabled || vCurveEnabled) {
+                    const float satby100 = sat / 100.f;
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-
-                            const float satby100 = sat / 100.f;
-                            float r = rtemp[ti * TS + tj];
-                            float g = gtemp[ti * TS + tj];
-                            float b = btemp[ti * TS + tj];
                             float h, s, v;
-                            Color::rgb2hsv (r, g, b, h, s, v);
-
+                            Color::rgb2hsvtc(rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj], h, s, v);
+                            h /= 6.f;
                             if (sat > 0) {
-                                s = (1.f - satby100) * s + satby100 * (1.f - SQR (SQR (1.f - min (s, 1.0f))));
-
-                                if (s < 0.f) {
-                                    s = 0.f;
-                                }
+                                s = std::max(0.f, intp(satby100, 1.f - SQR(SQR(1.f - std::min(s, 1.0f))), s));
                             } else { /*if (sat < 0)*/
                                 s *= 1.f + satby100;
                             }
@@ -3999,7 +3991,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                             }
 
-                            Color::hsv2rgb (h, s, v, rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
+                            Color::hsv2rgbdcp(h * 6.f, s, v, rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
                         }
                     }
                 }
