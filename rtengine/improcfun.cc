@@ -4175,29 +4175,25 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                                 // Luminance = (0.299f*r + 0.587f*g + 0.114f*b)
 
-                                float h, s, l;
-                                Color::rgb2hsl (r, g, b, h, s, l);
+                                float s, l;
+                                Color::rgb2slfloat (r, g, b, s, l);
 
-                                float l_ = Color::gamma_srgb (l * 65535.f) / 65535.f;
+                                float l_ = Color::gammatab_srgb1[l * 65535.f];
 
                                 // get the opacity and tweak it to preserve saturated colors
-                                float opacity;
+                                float opacity = 0.f;
 
                                 if (ctOpacityCurve) {
                                     opacity = (1.f - min<float> (s / satLimit, 1.f) * (1.f - satLimitOpacity)) * ctOpacityCurve.lutOpacityCurve[l_ * 500.f];
-                                }
-
-                                if (!ctOpacityCurve) {
-                                    opacity = 0.f;
                                 }
 
                                 float r2, g2, b2;
                                 ctColorCurve.getVal (l_, r2, g2, b2); // get the color from the color curve
 
                                 float h2, s2, l2;
-                                Color::rgb2hsl (r2, g2, b2, h2, s2, l2); // transform this new color to hsl
+                                Color::rgb2hslfloat (r2, g2, b2, h2, s2, l2); // transform this new color to hsl
 
-                                Color::hsl2rgb (h2, s + ((1.f - s) * (1.f - l) * 0.7f), l, r2, g2, b2);
+                                Color::hsl2rgbfloat (h2, s + ((1.f - s) * (1.f - l) * 0.7f), l, r2, g2, b2);
 
                                 rtemp[ti * TS + tj] = r + (r2 - r) * opacity; // merge the color to the old color, depending on the opacity
                                 gtemp[ti * TS + tj] = g + (g2 - g) * opacity;
