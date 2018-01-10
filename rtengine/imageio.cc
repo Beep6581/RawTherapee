@@ -1485,9 +1485,9 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
     }
 
 #if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
-    bool needsReverse = (bps == 16 || bps == 32) && exifRoot->getOrder() == rtexif::MOTOROLA;
+    bool needsReverse = (bps == 16 || bps == 32) && exifRoot && exifRoot->getOrder() == rtexif::MOTOROLA;
 #else
-    bool needsReverse = (bps == 16 || bps == 32) && exifRoot->getOrder() == rtexif::INTEL;
+    bool needsReverse = (bps == 16 || bps == 32) && exifRoot && exifRoot->getOrder() == rtexif::INTEL;
 #endif
 
     for (int row = 0; row < height; row++) {
