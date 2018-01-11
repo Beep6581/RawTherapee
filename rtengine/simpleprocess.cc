@@ -72,7 +72,7 @@ public:
     {
     }
 
-    Image16 *operator()()
+    Imagefloat *operator()()
     {
         if (!job->fast) {
             return normal_pipeline();
@@ -82,7 +82,7 @@ public:
     }
 
 private:
-    Image16 *normal_pipeline()
+    Imagefloat *normal_pipeline()
     {
         if (!stage_init()) {
             return nullptr;
@@ -93,7 +93,7 @@ private:
         return stage_finish();
     }
 
-    Image16 *fast_pipeline()
+    Imagefloat *fast_pipeline()
     {
         if (!job->pparams.resize.enabled) {
             return normal_pipeline();
@@ -842,7 +842,7 @@ private:
         }
     }
 
-    Image16 *stage_finish()
+    Imagefloat *stage_finish()
     {
         procparams::ProcParams& params = job->pparams;
         //ImProcFunctions ipf (&params, true);
@@ -2404,7 +2404,7 @@ private:
             }
         }
 
-        Image16* readyImg = nullptr;
+        Imagefloat* readyImg = nullptr;
         cmsHPROFILE jprof = nullptr;
         bool customGamma = false;
         bool useLCMS = false;
@@ -2414,7 +2414,7 @@ private:
 
             GammaValues ga;
             //  if(params.blackwhite.enabled) params.toneCurve.hrenabled=false;
-            readyImg = ipf.lab2rgb16(labView, cx, cy, cw, ch, params.icm, &ga);
+            readyImg = ipf.lab2rgbOut (labView, cx, cy, cw, ch, params.icm, &ga);
             customGamma = true;
 
             //or selected Free gamma
@@ -2428,7 +2428,7 @@ private:
             // if Default gamma mode: we use the profile selected in the "Output profile" combobox;
             // gamma come from the selected profile, otherwise it comes from "Free gamma" tool
 
-            readyImg = ipf.lab2rgb16(labView, cx, cy, cw, ch, params.icm);
+            readyImg = ipf.lab2rgbOut (labView, cx, cy, cw, ch, params.icm);
 
             if (settings->verbose) {
                 printf("Output profile_: \"%s\"\n", params.icm.output.c_str());
@@ -2460,7 +2460,7 @@ private:
         }
 
         if (tmpScale != 1.0 && params.resize.method == "Nearest") { // resize rgb data (gamma applied)
-            Image16* tempImage = new Image16(imw, imh);
+            Imagefloat* tempImage = new Imagefloat (imw, imh);
             ipf.resize(readyImg, tempImage, tmpScale);
             delete readyImg;
             readyImg = tempImage;
@@ -2616,12 +2616,12 @@ private:
         }
 
         params.wavelet.strength *= scale_factor;
-        params.dirpyrDenoise.luma *= scale_factor;
+        params.dirpyrDenoise.luma *= scale_factor * scale_factor;
         //params.dirpyrDenoise.Ldetail += (100 - params.dirpyrDenoise.Ldetail) * scale_factor;
         auto &lcurve = params.dirpyrDenoise.lcurve;
 
         for (size_t i = 2; i < lcurve.size(); i += 4) {
-            lcurve[i] *= min(scale_factor * 2, 1.0);
+            lcurve[i] *= min (scale_factor * scale_factor, 1.0);
         }
 
         noiseLCurve.Set(lcurve);
@@ -2749,7 +2749,7 @@ private:
 } // namespace
 
 
-IImage16* processImage(ProcessingJob* pjob, int& errorCode, ProgressListener* pl, bool flush)
+IImagefloat* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* pl, bool flush)
 {
     ImageProcessor proc(pjob, errorCode, pl, flush);
     return proc();
@@ -2762,7 +2762,7 @@ void batchProcessingThread(ProcessingJob* job, BatchProcessingListener* bpl)
 
     while (currentJob) {
         int errorCode;
-        IImage16* img = processImage(currentJob, errorCode, bpl, true);
+        IImagefloat* img = processImage (currentJob, errorCode, bpl, true);
 
         if (errorCode) {
             bpl->error(M("MAIN_MSG_CANNOTLOAD"));

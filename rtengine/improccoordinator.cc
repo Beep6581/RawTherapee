@@ -4572,21 +4572,20 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring & fname, bool 
         }
     }
 
-    Image16* im16 = im->to16();
-    delete im;
-
     int imw, imh;
     double tmpScale = ipf.resizeScale(&params, fW, fH, imw, imh);
 
     if (tmpScale != 1.0) {
-        Image16* tempImage = new Image16(imw, imh);
-        ipf.resize(im16, tempImage, tmpScale);
-        delete im16;
-        im16 = tempImage;
+        Imagefloat* tempImage = new Imagefloat (imw, imh);
+        ipf.resize (im, tempImage, tmpScale);
+        delete im;
+        im = tempImage;
     }
 
-    im16->saveTIFF(fname, 16, true);
-    delete im16;
+    im->setMetadata (imgsrc->getMetaData()->getRootExifData ());
+
+    im->saveTIFF (fname, 16, true);
+    delete im;
 
     if (plistener) {
         plistener->setProgressState(false);

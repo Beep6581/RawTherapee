@@ -18,6 +18,8 @@
  */
 #ifndef _ALIGNEDBUFFER_
 #define _ALIGNEDBUFFER_
+
+#include <cstdint>
 #include <cstdlib>
 #include <utility>
 

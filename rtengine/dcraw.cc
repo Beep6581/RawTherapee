@@ -3851,7 +3851,7 @@ float CLASS foveon_avg (short *pix, int range[2], float cfilt)
 short * CLASS foveon_make_curve (double max, double mul, double filt)
 {
   short *curve;
-  unsigned i, size;
+  size_t i, size;
   double x;
 
   if (!filt) filt = 0.8;
