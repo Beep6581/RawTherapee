@@ -39,13 +39,15 @@ private:
     float high_b_;
     ToolPanelListener *listener_;
     bool edited_;
+    sigc::connection delay_conn_;
     static const int inset = 2;
 
-    void notify_listener()
+    bool notify_listener()
     {
         if (listener_) {
             listener_->panelChanged(evt_, Glib::ustring::compose("%1 %2 %3 %4", int(low_a_), int(low_b_), int(high_a_), int(high_b_)));
-        }        
+        }
+        return false;
     }
     
 public:
@@ -57,7 +59,7 @@ public:
         edited_(false)
     {
         set_can_focus(true);
-        add_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK);
+        add_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::POINTER_MOTION_MASK);
     }
 
     void get_params(double &la, double &lb, double &ha, double &hb) const
@@ -165,15 +167,6 @@ public:
         return true;
     }
     
-    bool on_button_release_event(GdkEventButton *event)
-    {
-        if (selected_ != OFF) {
-            edited_ = true;
-            notify_listener();
-        }
-        return true;
-    }
-
     bool on_button_press_event(GdkEventButton *event)
     {
         if (event->button == 1 && event->type == GDK_2BUTTON_PRESS) {
@@ -197,11 +190,16 @@ public:
     
     bool on_motion_notify_event(GdkEventMotion *event)
     {
+        if (delay_conn_.connected()) {
+            delay_conn_.disconnect();
+        }
+        
         int width = get_allocated_width() - 2 * inset, height = get_allocated_height() - 2 * inset;
         const float mouse_x = std::min(std::max(event->x - inset, 0.), double(width));
         const float mouse_y = std::min(std::max(height - 1 - event->y + inset, 0.), double(height));
         const float ma = (2.0 * mouse_x - width) / (float)width;
         const float mb = (2.0 * mouse_y - height) / (float)height;
+        bool refresh = selected_ != OFF;
         if (event->state & GDK_BUTTON1_MASK) {
             if (selected_ == LOW) {
                 low_a_ = ma * rtengine::ColorToningParams::LABGRID_CORR_MAX;
@@ -227,8 +225,15 @@ public:
         }
         if (selected_ != OFF) {
             grab_focus();
+            if (options.adjusterMinDelay == 0) {
+                notify_listener();
+            } else {
+                delay_conn_ = Glib::signal_timeout().connect(sigc::mem_fun(*this, &LabGrid::notify_listener), options.adjusterMinDelay);
+            }
         }
-        queue_draw();
+        if (refresh) {
+            queue_draw();
+        }
         return true;
     }
     
