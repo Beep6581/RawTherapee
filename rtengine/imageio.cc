@@ -1484,29 +1484,8 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
         TIFFSetField (out, TIFFTAG_ICCPROFILE, profileLength, profileData);
     }
 
-#if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
-    bool needsReverse = (bps == 16 || bps == 32) && exifRoot->getOrder() == rtexif::MOTOROLA;
-#else
-    bool needsReverse = (bps == 16 || bps == 32) && exifRoot->getOrder() == rtexif::INTEL;
-#endif
-
     for (int row = 0; row < height; row++) {
         getScanline (row, linebuffer, bps);
-
-        if (needsReverse) {
-            if (bps == 16) {
-                for (int i = 0; i < lineWidth; i += 2) {
-                    char c = linebuffer[i];
-                    linebuffer[i] = linebuffer[i + 1];
-                    linebuffer[i + 1] = c;
-                }
-            } else {
-                for (int i = 0; i < lineWidth; i += 4) {
-                    std::swap(linebuffer[i], linebuffer[i+3]);
-                    std::swap(linebuffer[i+1], linebuffer[i+2]);
-                }
-            }
-        }
 
         if (TIFFWriteScanline (out, linebuffer, row, 0) < 0) {
             TIFFClose (out);
