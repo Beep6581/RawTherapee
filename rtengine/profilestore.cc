@@ -49,6 +49,7 @@ bool ProfileStore::init (bool loadAll)
     if ((storeState == STORESTATE_NOTINITIALIZED || storeState == STORESTATE_DIRTY) && loadAll) {
         storeState = STORESTATE_BEINGINITIALIZED;
         _parseProfiles ();
+        std::stable_partition(entries.begin(), entries.end(), [](const ProfileStoreEntry *e) { return e->type == PSET_FOLDER; });
         storeState = STORESTATE_INITIALIZED;
     }
 
