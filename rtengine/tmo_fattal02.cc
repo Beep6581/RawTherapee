@@ -1119,6 +1119,12 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
     const float epsilon = 1e-4f;
     const float luminance_noise_floor = 65.535f;
     const float min_luminance = 1.f;
+    const auto unclipped =
+        [=](int y, int x) -> bool
+        {
+            const float c = 65500.f;
+            return rgb->r(y, x) < c && rgb->g(y, x) < c && rgb->b(y, x) < c;
+        };
     TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
 
     float max_Y = 0.f;
@@ -1136,7 +1142,7 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
     for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++) {
             Yr (x, y) = std::max (luminance (rgb->r (y, x), rgb->g (y, x), rgb->b (y, x), ws), min_luminance); // clip really black pixels
-            if (Yr(x, y) > max_YThr) {
+            if (Yr(x, y) > max_YThr && unclipped(y, x)) {
                 max_YThr = Yr(x, y);
                 max_xThr = x;
                 max_yThr = y;
