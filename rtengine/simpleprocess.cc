@@ -49,19 +49,48 @@ void adjust_radius (const T &default_param, double scale_factor, T &param)
 class ImageProcessor
 {
 public:
-    ImageProcessor (ProcessingJob* pjob, int& errorCode,
-                    ProgressListener* pl, bool flush):
+    ImageProcessor(
+        ProcessingJob* pjob,
+        int& errorCode,
+        ProgressListener* pl,
+        bool flush
+    ) :
         job (static_cast<ProcessingJobImpl*> (pjob)),
         errorCode (errorCode),
         pl (pl),
         flush (flush),
         // internal state
-        ipf_p (nullptr),
-        ii (nullptr),
-        imgsrc (nullptr),
-        fw (-1),
-        fh (-1),
-        pp (0, 0, 0, 0, 0)
+        ii(nullptr),
+        imgsrc(nullptr),
+        fw(0),
+        fh(0),
+        tr(0),
+        pp(0, 0, 0, 0, 0),
+        calclum(nullptr),
+        autoNR(0.f),
+        autoNRmax(0.f),
+        tilesize(0),
+        overlap(0),
+        ch_M(nullptr),
+        max_r(nullptr),
+        max_b(nullptr),
+        min_b(nullptr),
+        min_r(nullptr),
+        lumL(nullptr),
+        chromC(nullptr),
+        ry(nullptr),
+        sk(nullptr),
+        pcsk(nullptr),
+        expcomp(0.0),
+        bright(0),
+        contr(0),
+        black(0),
+        hlcompr(0),
+        hlcomprthresh(0),
+        baseImg(nullptr),
+        labView(nullptr),
+        autili(false),
+        butili(false)
     {
     }
 
@@ -814,7 +843,7 @@ private:
         if (params.fattal.enabled) {
             ipf.ToneMapFattal02(baseImg);
         }
-                
+
         // perform transform (excepted resizing)
         if (ipf.needsTransform()) {
             Imagefloat* trImg = nullptr;

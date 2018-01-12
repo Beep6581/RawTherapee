@@ -1116,13 +1116,13 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
 
     Array2Df Yr (w, h);
 
-    const float epsilon = 1e-4f;
-    const float luminance_noise_floor = 65.535f;
-    const float min_luminance = 1.f;
+    constexpr float epsilon = 1e-4f;
+    constexpr float luminance_noise_floor = 65.535f;
+    constexpr float min_luminance = 1.f;
     const auto unclipped =
-        [=](int y, int x) -> bool
+        [rgb](int y, int x) -> bool
         {
-            const float c = 65500.f;
+            constexpr float c = 65500.f;
             return rgb->r(y, x) < c && rgb->g(y, x) < c && rgb->b(y, x) < c;
         };
     TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
@@ -1200,16 +1200,16 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
     const float wr = float(w2) / float(w);
 
     const float scale = 65535.f / std::max(L(max_x * wr + 1, max_y * hr + 1), epsilon) * (65535.f / Yr(max_x, max_y));
-    
+
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16) if(multiThread)
 #endif
     for (int y = 0; y < h; y++) {
         int yy = y * hr + 1;
-        
+
         for (int x = 0; x < w; x++) {
             int xx = x * wr + 1;
-            
+
             float Y = Yr (x, y);
             float l = std::max (L (xx, yy), epsilon) * (scale / Y);
             rgb->r (y, x) = std::max (rgb->r (y, x), 0.f) * l;
