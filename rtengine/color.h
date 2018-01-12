@@ -205,7 +205,64 @@ public:
     * @param l luminance channel [0; 1] (return value)
     */
     static void rgb2hsl (float r, float g, float b, float &h, float &s, float &l);
-    static void rgb2hslfloat (float r, float g, float b, float &h, float &s, float &l);
+
+    static inline void rgb2slfloat(float r, float g, float b, float &s, float &l)
+    {
+
+        float m = min(r, g, b);
+        float M = max(r, g, b);
+        float C = M - m;
+
+        l = (M + m) * 7.6295109e-6f; // (0.5f / 65535.f)
+
+        if (C < 0.65535f) { // 0.00001f * 65535.f
+            s = 0.f;
+        } else {
+
+            if (l <= 0.5f) {
+                s = C / (M + m);
+            } else {
+                s = C / (131070.f - (M + m)); // 131070.f = 2.f * 65535.f
+            }
+        }
+    }
+
+    static inline void rgb2hslfloat(float r, float g, float b, float &h, float &s, float &l)
+    {
+
+        float m = min(r, g, b);
+        float M = max(r, g, b);
+        float C = M - m;
+
+        l = (M + m) * 7.6295109e-6f; // (0.5f / 65535.f)
+
+        if (C < 0.65535f) { // 0.00001f * 65535.f
+            h = 0.f;
+            s = 0.f;
+        } else {
+
+            if (l <= 0.5f) {
+                s = C / (M + m);
+            } else {
+                s = C / (131070.f - (M + m)); // 131070.f = 2.f * 65535.f
+            }
+
+            if ( r == M ) {
+                h = (g - b);
+            } else if ( g == M ) {
+                h = (2.f * C) + (b - r);
+            } else {
+                h = (4.f * C) + (r - g);
+            }
+
+            h /= (6.f * C);
+
+            if ( h < 0.f ) {
+                h += 1.f;
+            }
+        }
+    }
+
 #ifdef __SSE2__
     static void rgb2hsl (vfloat r, vfloat g, vfloat b, vfloat &h, vfloat &s, vfloat &l);
 #endif
@@ -220,7 +277,29 @@ public:
     * @param b blue channel [0 ; 65535] (return value)
     */
     static void hsl2rgb (float h, float s, float l, float &r, float &g, float &b);
-    static void hsl2rgbfloat (float h, float s, float l, float &r, float &g, float &b);
+
+    static inline void hsl2rgbfloat (float h, float s, float l, float &r, float &g, float &b)
+    {
+
+        if (s == 0.f) {
+            r = g = b = 65535.f * l;    //  achromatic
+        } else {
+            float m2;
+
+            if (l <= 0.5f) {
+                m2 = l * (1.f + s);
+            } else {
+                m2 = l + s - l * s;
+            }
+
+            float m1 = 2.f * l - m2;
+
+            r = 65535.f * hue2rgbfloat (m1, m2, h * 6.f + 2.f);
+            g = 65535.f * hue2rgbfloat (m1, m2, h * 6.f);
+            b = 65535.f * hue2rgbfloat (m1, m2, h * 6.f - 2.f);
+        }
+    }
+
 #ifdef __SSE2__
     static void hsl2rgb (vfloat h, vfloat s, vfloat l, vfloat &r, vfloat &g, vfloat &b);
 #endif
@@ -254,11 +333,7 @@ public:
         float var_Max = max(r, g, b);
         float del_Max = var_Max - var_Min;
 
-        if (del_Max < 0.00001f) {
-            return 0.f;
-        } else {
-            return del_Max / var_Max;
-        }
+        return del_Max / (var_Max == 0.f ? 1.f : var_Max);
     }
 
     static inline bool rgb2hsvdcp(float r, float g, float b, float &h, float &s, float &v)
