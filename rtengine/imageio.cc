@@ -1439,16 +1439,16 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
     }
 
     if (iptcdata) {
-        rtexif::Tag* iptcTag = new rtexif::Tag (nullptr, rtexif::lookupAttrib (rtexif::ifdAttribs, "IPTCData"));
-        iptcTag->initLongArray((char*)iptcdata, iptclen);
+        rtexif::Tag iptcTag(nullptr, rtexif::lookupAttrib (rtexif::ifdAttribs, "IPTCData"));
+        iptcTag.initLongArray((char*)iptcdata, iptclen);
 #if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
         bool needsReverse = exifRoot && exifRoot->getOrder() == rtexif::MOTOROLA;
 #else
         bool needsReverse = exifRoot && exifRoot->getOrder() == rtexif::INTEL;
 #endif
         if (needsReverse) {
-            unsigned char *ptr = iptcTag->getValue();
-            for (int a = 0; a < iptcTag->getCount(); ++a) {
+            unsigned char *ptr = iptcTag.getValue();
+            for (int a = 0; a < iptcTag.getCount(); ++a) {
                 unsigned char cc;
                 cc = ptr[3];
                 ptr[3] = ptr[0];
@@ -1459,7 +1459,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
                 ptr += 4;
             }
         }
-        TIFFSetField (out, TIFFTAG_RICHTIFFIPTC, iptcTag->getCount(), (long*)iptcTag->getValue());
+        TIFFSetField (out, TIFFTAG_RICHTIFFIPTC, iptcTag.getCount(), (long*)iptcTag.getValue());
         iptc_data_free_buf (iptc, iptcdata);
     }
 
