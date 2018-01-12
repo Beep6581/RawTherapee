@@ -49,6 +49,8 @@ public:
 
     void colorForValue         (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
 
+    void setListener(ToolPanelListener *tpl);
+    
 private:
     //Gtk::HSeparator* satLimiterSep;
     Gtk::HSeparator* colorSep;
@@ -100,6 +102,10 @@ private:
     Gtk::CheckButton* lumamode;
     bool lastLumamode;
     sigc::connection lumamodeConn;
+
+    rtengine::ProcEvent EvColorToningLabGridValue;
+    Gtk::Button *labgridReset;
+    Gtk::DrawingArea *labgridArea;
 
     IdleRegister idle_register;
 };

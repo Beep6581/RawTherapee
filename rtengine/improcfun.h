@@ -345,8 +345,8 @@ public:
     void BadpixelsLab (LabImage * src, LabImage * dst, double radius, int thresh, int mode, float skinprot, float chrom);
 
     void ToneMapFattal02(Imagefloat *rgb);
-    //void localContrast(float *r, float *g, float *b, int width, int height);
     void localContrast(LabImage *lab);
+    void colorToningLabGrid(LabImage *lab, int xstart, int xend, int ystart, int yend, bool MultiThread);
     
     Image8*     lab2rgb   (LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm);
     Imagefloat*    lab2rgbOut (LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm, GammaValues *ga = nullptr);
