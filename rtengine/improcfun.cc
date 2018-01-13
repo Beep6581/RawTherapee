@@ -4003,23 +4003,21 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                 if (hasColorToning && !blackwhite) {
                     if (params->colorToning.method == "Splitlr") {
-                        float balanS, balanH;
-                        float reducac = 0.4f;
+                        constexpr float reducac = 0.4f;
                         int preser = 0;
 
                         if (params->colorToning.lumamode) {
                             preser = 1;
                         }
 
-                        balanS = 1.f + Balan / 100.f; //balan between 0 and 2
-                        balanH = 1.f - Balan / 100.f;
+                        const float balanS = 1.f + Balan / 100.f; //balan between 0 and 2
+                        const float balanH = 1.f - Balan / 100.f;
                         float rh, gh, bh;
                         float rl, gl, bl;
                         float xh, yh, zh;
                         float xl, yl, zl;
-                        float iplow, iphigh;
-                        iplow = (float)ctColorCurve.low;
-                        iphigh = (float)ctColorCurve.high;
+                        const float iplow = (float)ctColorCurve.low;
+                        const float iphigh = (float)ctColorCurve.high;
                         //2 colours
                         ctColorCurve.getVal (iphigh, xh, yh, zh);
                         ctColorCurve.getVal (iplow, xl, yl, zl);
@@ -4028,20 +4026,18 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                         Color::xyz2rgb (xl, yl, zl, rl, gl, bl, wip);
                         //reteave rgb value with s and l =1
                         retreavergb (rl, gl, bl);
+                        const float krl = rl / (rl + gl + bl);
+                        const float kgl = gl / (rl + gl + bl);
+                        const float kbl = bl / (rl + gl + bl);
                         retreavergb (rh, gh, bh);
-                        //printf("rl=%f gl=%f bl=%f\n",rl,gl,bl);
+                        const float krh = rh / (rh + gh + bh);
+                        const float kgh = gh / (rh + gh + bh);
+                        const float kbh = bh / (rh + gh + bh);
 
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
                             for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                float r = rtemp[ti * TS + tj];
-                                float g = gtemp[ti * TS + tj];
-                                float b = btemp[ti * TS + tj];
-                                float ro, go, bo;
                                 int mode = 0;
-                                toning2col (r, g, b, ro, go, bo, iplow, iphigh, rl, gl, bl, rh, gh, bh, SatLow, SatHigh, balanS, balanH, reducac, mode, preser, strProtect);
-                                rtemp[ti * TS + tj] = ro;
-                                gtemp[ti * TS + tj] = go;
-                                btemp[ti * TS + tj] = bo;
+                                toning2col(rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj], rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj], iplow, iphigh, krl, kgl, kbl, krh, kgh, kbh, SatLow, SatHigh, balanS, balanH, reducac, mode, preser, strProtect);
                             }
                         }
                     }
@@ -4746,23 +4742,21 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
             }
 
             else if (params->colorToning.method == "Splitlr") {
-                float balanS, balanH;
-                float reducac =  0.4f;
+                constexpr float reducac = 0.4f;
                 int preser = 0;
 
                 if (params->colorToning.lumamode) {
                     preser = 1;
                 }
 
-                balanS = 1.f + Balan / 100.f; //balan between 0 and 2
-                balanH = 1.f - Balan / 100.f;
+                const float balanS = 1.f + Balan / 100.f; //balan between 0 and 2
+                const float balanH = 1.f - Balan / 100.f;
                 float rh, gh, bh;
                 float rl, gl, bl;
                 float xh, yh, zh;
                 float xl, yl, zl;
-                float iplow, iphigh;
-                iplow = (float)ctColorCurve.low;
-                iphigh = (float)ctColorCurve.high;
+                const float iplow = ctColorCurve.low;
+                const float iphigh = ctColorCurve.high;
 
                 //2 colours
                 ctColorCurve.getVal (iphigh, xh, yh, zh);
@@ -4773,23 +4767,23 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                 //retrieve rgb value with s and l =1
                 retreavergb (rl, gl, bl);
+                const float krl = rl / (rl + gl + bl);
+                const float kgl = gl / (rl + gl + bl);
+                const float kbl = bl / (rl + gl + bl);
+
                 retreavergb (rh, gh, bh);
+                const float krh = rh / (rh + gh + bh);
+                const float kgh = gh / (rh + gh + bh);
+                const float kbh = bh / (rh + gh + bh);
+
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic, 5)
 #endif
 
                 for (int i = 0; i < tH; i++) {
                     for (int j = 0; j < tW; j++) {
-                        float r = tmpImage->r (i, j);
-                        float g = tmpImage->g (i, j);
-                        float b = tmpImage->b (i, j);
-
-                        float ro, go, bo;
                         int mode = 1;
-                        toning2col (r, g, b, ro, go, bo, iplow, iphigh, rl, gl, bl, rh, gh, bh, SatLow, SatHigh, balanS, balanH, reducac, mode, preser, strProtect);
-                        tmpImage->r (i, j) = ro;
-                        tmpImage->g (i, j) = go;
-                        tmpImage->b (i, j) = bo;
+                        toning2col(tmpImage->r(i, j), tmpImage->g(i, j), tmpImage->b(i, j), tmpImage->r(i, j), tmpImage->g(i, j), tmpImage->b(i, j), iplow, iphigh, krl, kgl, kbl, krh, kgh, kbh, SatLow, SatHigh, balanS, balanH, reducac, mode, preser, strProtect);
                     }
                 }
             }
@@ -5024,11 +5018,8 @@ void ImProcFunctions::secondeg_end (float reducac, float vinf, float &aa, float 
 **/
 void ImProcFunctions::secondeg_begin (float reducac, float vend, float &aam, float &bbm)
 {
-    float zrmd = reducac; //linear = 0.5
-    float v0m = vend;
-    float mem = vend / 2.f; //(0. + 0.8)/2.f
-    aam = (1.f - zrmd * v0m / mem) / (v0m * v0m - mem * v0m); //
-    bbm = (1.f - aam * v0m * v0m) / v0m;
+    aam = (2.f - 4.f * reducac) / (vend * vend);
+    bbm = 1.f / vend - aam * vend;
 }
 
 
@@ -5324,79 +5315,57 @@ void ImProcFunctions::toningsmh (float r, float g, float b, float &ro, float &go
 * @param balanH [0..1] balance for highlights (same slider than for balanS)
 * @param reducac value of the reduction in the middle of the range for second degree, increase or decrease action
 **/
-void ImProcFunctions::toning2col (float r, float g, float b, float &ro, float &go, float &bo, float iplow, float iphigh, float rl, float gl, float bl, float rh, float gh, float bh, float SatLow, float SatHigh, float balanS, float balanH, float reducac, int mode, int preser, float strProtect)
+void ImProcFunctions::toning2col (float r, float g, float b, float &ro, float &go, float &bo, float iplow, float iphigh, float krl, float kgl, float kbl, float krh, float kgh, float kbh, float SatLow, float SatHigh, float balanS, float balanH, float reducac, int mode, int preser, float strProtect)
 {
-    float lumbefore = 0.299f * r + 0.587f * g + 0.114f * b;
-    float h, s, l;
-    Color::rgb2hsl (r, g, b, h, s, l);
-    float v;
-    Color::rgb2hsv (r, g, b, h, s, v);
-    float ksat = 1.f;
-    float ksatlow = 1.f;
-    /*
-        if(mode==0) {//color
-            if(s < s_0) ksat=SQR((1.f/s_0)*s);
-            if(s > s_1) ksat=SQR((1.f/(s_1-1.f))*s - (1.f/(s_1-1.f)));
-        }
-        */
-    float kl = 1.f;
-    float rlo = 1.f;
-    float rlh = 2.2f;
-    rlo *= pow_F (strProtect, 0.4f); //0.5 ==> 0.75  transfered value for more action
-    rlh *= pow_F (strProtect, 0.4f);
+    const float lumbefore = 0.299f * r + 0.587f * g + 0.114f * b;
+    const float v = max(r, g, b) / 65535.f;
+
+    const float rlo = pow_F (strProtect, 0.4f);  //0.5 ==> 0.75  transfered value for more action
+    const float rlh = 2.2f * pow_F (strProtect, 0.4f);
+
     //low tones
     //second degree
     float aa, bb, cc;
     //fixed value of reducac =0.4;
     secondeg_end (reducac, iplow, aa, bb, cc);
-    float aab, bbb;
 
+    float aab, bbb;
     secondeg_begin (0.7f, iplow, aab, bbb);
 
-    if (v > iplow) {
-        kl = aa * v * v + bb * v + cc;
-    } else if (mode == 0) {
-        kl = aab * v * v + bbb * v;
-    }
-
-
     if (SatLow > 0.f) {
-        //rl gl bl
-        float krl = rl / (rl + gl + bl);
-        float kgl = gl / (rl + gl + bl);
-        float kbl = bl / (rl + gl + bl);
-        float RedL, GreenL, BlueL;
-
-        if (g < 20000.f || b < 20000.f || r < 20000.f) {
-            float kmgb = min (r, g, b);   //I have tested ...0.85 compromise...
-            kl *= pow ((kmgb / 20000.f), 0.85f);
+        float kl = 1.f;
+        if (v > iplow) {
+            kl = aa * v * v + bb * v + cc;
+        } else if (mode == 0) {
+            kl = aab * v * v + bbb * v;
+        }
+        const float kmgb = min(r, g, b);
+        if (kmgb < 20000.f) {
+            //I have tested ...0.85 compromise...
+            kl *= pow_F ((kmgb / 20000.f), 0.85f);
         }
 
-        RedL = 1.f + (SatLow * krl) * kl * ksat * rlo * balanS; //0.4
+        const float factor = 20000.f * SatLow * kl * rlo * balanS;
 
         if (krl > 0.f) {
-            g -= 20000.f * (RedL - 1.f) * ksatlow;
-            b -= 20000.f * (RedL - 1.f) * ksatlow;
+            g -= factor * krl;
+            b -= factor * krl;
         }
 
         g = CLIP (g);
         b = CLIP (b);
 
-        GreenL = 1.f + (SatLow * kgl) * kl * ksat * rlo * balanS; //0.4
-
         if (kgl > 0.f) {
-            r -= 20000.f * (GreenL - 1.f) * ksatlow;
-            b -= 20000.f * (GreenL - 1.f) * ksatlow;
+            r -= factor * kgl;
+            b -= factor * kgl;
         }
 
         r = CLIP (r);
         b = CLIP (b);
 
-        BlueL = 1.f + (SatLow * kbl) * kl * ksat * rlo * balanS; //0.4
-
         if (kbl > 0.f) {
-            r -= 20000.f * (BlueL - 1.f) * ksatlow;
-            g -= 20000.f * (BlueL - 1.f) * ksatlow;
+            r -= factor * kbl;
+            g -= factor * kbl;
         }
 
         r = CLIP (r);
@@ -5404,84 +5373,43 @@ void ImProcFunctions::toning2col (float r, float g, float b, float &ro, float &g
     }
 
     //high tones
-    float kh = 1.f;
     float aa0, bb0;
     //fixed value of reducac ==0.4;
     secondeg_begin (reducac, iphigh, aa0, bb0);
 
-    if (v > iphigh) {
-        kh = (-1.f / (1.f - iphigh)) * v + (1.f) / (1.f - iphigh);    //Low light ==> decrease action after iplow
-    } else {
-        kh = aa0 * v * v + bb0 * v;
-    }
-
-
-    if (g > 45535.f || b > 45535.f || r > 45535.f) {
-        float kmgb = max (r, g, b);
-        float cora = 1.f / (45535.f - 65535.f);
-        float corb = 1.f - cora * 45535.f;
-        float cor = kmgb * cora + corb;
-        kh *= cor;
-        /* best algo if necessary with non linear response...little differences and more time!
-        float aa=1.f /(pow(45535.f,0.65f) - pow(65535.f,0.65f));
-        float bb=1.f-aa*pow(45535.f,0.65f);
-        float cor=aa*pow(kmbg,0.65f)+bb;
-        kh*=cor;*/
-    }
-
-
     if (SatHigh > 0.f) {
-        float RedH, GreenH, BlueH;
-        float krh = rh / (rh + gh + bh);
-        float kgh = gh / (rh + gh + bh);
-        float kbh = bh / (rh + gh + bh);
-        RedH = 1.f + (SatHigh * krh) * kh * rlh * balanH; //1.2
-
-        if (krh > 0.f) {
-            r += 20000.f * (RedH - 1.f);
-            r = CLIP (r);
+        float kh = 1.f;
+        if (v > iphigh) {
+            kh = (1.f - v) / (1.f - iphigh);    //Low light ==> decrease action after iplow
+        } else {
+            kh = aa0 * v * v + bb0 * v;
         }
 
-        g = CLIP (g);
-        b = CLIP (b);
-
-        GreenH = 1.f + (SatHigh * kgh) * kh * rlh * balanH; //1.2
-
-        if (kgh > 0.f) {
-            g += 20000.f * (GreenH - 1.f);
-            g = CLIP (g);
+        const float kmgb = max(r, g, b);
+        if (kmgb > 45535.f) {
+            constexpr float cora = 1.f / (45535.f - 65535.f);
+            constexpr float corb = 1.f - cora * 45535.f;
+            kh *= kmgb * cora + corb;
         }
+        const float factor = 20000.f * SatHigh * kh * rlh * balanH;
+        r += factor * (krh > 0.f ? krh : 0.f);
+        g += factor * (kgh > 0.f ? kgh : 0.f);
+        b += factor * (kbh > 0.f ? kbh : 0.f);
 
-        r = CLIP (r);
-        b = CLIP (b);
-        BlueH = 1.f + (SatHigh * kbh) * kh * rlh * balanH; //1.2
-
-        if (kbh > 0.f) {
-            b += 20000.f * (BlueH - 1.f);
-            b = CLIP (b);
-        }
-
-        r = CLIP (r);
-        g = CLIP (g);
+        r = CLIP(r);
+        g = CLIP(g);
+        b = CLIP(b);
     }
 
-    float lumafter = 0.299f * r + 0.587f * g + 0.114f * b;
     float preserv = 1.f;
-
     if (preser == 1) {
+        float lumafter = 0.299f * r + 0.587f * g + 0.114f * b;
         preserv = lumbefore / lumafter;
     }
 
-    //float preserv=lumbefore/lumafter;
-    ro = r;
-    go = g;
-    bo = b;
-    ro *= preserv;
-    go *= preserv;
-    bo *= preserv;
-    ro = CLIP (ro);
-    go = CLIP (go);
-    bo = CLIP (bo);
+    ro = CLIP(r * preserv);
+    go = CLIP(g * preserv);
+    bo = CLIP(b * preserv);
 }
 
 /**
