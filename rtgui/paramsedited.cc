@@ -1543,9 +1543,6 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (colorToning.labgridALow) {
         toEdit.colorToning.labgridALow = mods.colorToning.labgridALow;
     }
-    if (colorToning.labgridALow) {
-        toEdit.colorToning.labgridALow = mods.colorToning.labgridALow;
-    }
     if (colorToning.labgridBLow) {
         toEdit.colorToning.labgridBLow = mods.colorToning.labgridBLow;
     }

@@ -320,9 +320,9 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     // LAB grid
     auto m = ProcEventMapper::getInstance();    
     EvColorToningLabGridValue = m->newEvent(RGBCURVE, "HISTORY_MSG_COLORTONING_LABGRID_VALUE");
-    Gtk::HBox *labgridBox = Gtk::manage(new Gtk::HBox());
-    labgridArea = Gtk::manage(new LabGrid(EvColorToningLabGridValue));
-    labgridBox->pack_start(*labgridArea, true, true);
+    labgridBox = Gtk::manage(new Gtk::HBox());
+    labgrid = Gtk::manage(new LabGrid(EvColorToningLabGridValue));
+    labgridBox->pack_start(*labgrid, true, true);
     labgridReset = Gtk::manage(new Gtk::Button ());
     labgridReset->add (*Gtk::manage(new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
     setExpandAlignProperties(labgridReset, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
@@ -331,11 +331,11 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     labgridReset->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
     labgridReset->set_can_focus(false);
     labgridReset->set_size_request(-1, 20);
-    labgridReset->signal_pressed().connect([=]() { static_cast<LabGrid *>(labgridArea)->set_params(0.0, 0.0, 0.0, 0.0, true); });
+    labgridReset->signal_button_release_event().connect([=](GdkEventButton* release_event) { labgrid->reset(release_event->state & GDK_CONTROL_MASK ? true : false); return false; });
     labgridBox->pack_start(*labgridReset, false, false);
     pack_start(*labgridBox, Gtk::PACK_EXPAND_WIDGET, 4);
     //------------------------------------------------------------------------
-    
+
     show_all();
 
     disableListener();
@@ -357,7 +357,7 @@ ColorToning::~ColorToning()
 void ColorToning::setListener(ToolPanelListener *tpl)
 {
     ToolPanel::setListener(tpl);
-    static_cast<LabGrid *>(labgridArea)->set_listener(tpl);
+    labgrid->setListener(tpl);
 }
 
 /*
@@ -432,7 +432,7 @@ void ColorToning::read (const ProcParams* pp, const ParamsEdited* pedited)
         cl2shape->setUnChanged  (!pedited->colorToning.cl2curve);
         lumamode->set_inconsistent (!pedited->colorToning.lumamode);
 
-        static_cast<LabGrid *>(labgridArea)->set_edited(pedited->colorToning.labgridALow || pedited->colorToning.labgridBLow || pedited->colorToning.labgridAHigh || pedited->colorToning.labgridBHigh);
+        labgrid->setEdited(pedited->colorToning.labgridALow || pedited->colorToning.labgridBLow || pedited->colorToning.labgridAHigh || pedited->colorToning.labgridBHigh);
     }
 
     redlow->setValue    (pp->colorToning.redlow);
@@ -464,7 +464,7 @@ void ColorToning::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     lastLumamode = pp->colorToning.lumamode;
 
-    static_cast<LabGrid *>(labgridArea)->set_params(pp->colorToning.labgridALow, pp->colorToning.labgridBLow, pp->colorToning.labgridAHigh, pp->colorToning.labgridBHigh, false);
+    labgrid->setParams(pp->colorToning.labgridALow, pp->colorToning.labgridBLow, pp->colorToning.labgridAHigh, pp->colorToning.labgridBHigh, false);
 
     if (pedited && !pedited->colorToning.method) {
         method->set_active (5);
@@ -532,7 +532,7 @@ void ColorToning::write (ProcParams* pp, ParamsEdited* pedited)
     pp->colorToning.saturatedOpacity       = saturatedOpacity->getIntValue();
     pp->colorToning.strength               = strength->getIntValue();
 
-    static_cast<LabGrid *>(labgridArea)->get_params(pp->colorToning.labgridALow, pp->colorToning.labgridBLow, pp->colorToning.labgridAHigh, pp->colorToning.labgridBHigh);
+    labgrid->getParams(pp->colorToning.labgridALow, pp->colorToning.labgridBLow, pp->colorToning.labgridAHigh, pp->colorToning.labgridBHigh);
 
     if (pedited) {
         pedited->colorToning.redlow     = redlow->getEditedState ();
@@ -559,7 +559,7 @@ void ColorToning::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->colorToning.hlColSat      = hlColSat->getEditedState ();
         pedited->colorToning.shadowsColSat = shadowsColSat->getEditedState ();
 
-        pedited->colorToning.labgridALow = pedited->colorToning.labgridBLow = pedited->colorToning.labgridAHigh = pedited->colorToning.labgridBHigh = static_cast<LabGrid *>(labgridArea)->get_edited();
+        pedited->colorToning.labgridALow = pedited->colorToning.labgridBLow = pedited->colorToning.labgridAHigh = pedited->colorToning.labgridBHigh = labgrid->getEdited();
     }
 
     if (method->get_active_row_number() == 0) {
@@ -630,6 +630,7 @@ void ColorToning::setDefaults (const ProcParams* defParams, const ParamsEdited* 
     hlColSat->setDefault<int> (defParams->colorToning.hlColSat);
     shadowsColSat->setDefault<int> (defParams->colorToning.shadowsColSat);
     strength->setDefault (defParams->colorToning.strength);
+    labgrid->setDefault(defParams->colorToning.labgridALow, defParams->colorToning.labgridBLow, defParams->colorToning.labgridAHigh, defParams->colorToning.labgridBHigh);
 
     if (pedited) {
         redlow->setDefaultEditedState (pedited->colorToning.redlow ? Edited : UnEdited);
@@ -647,6 +648,7 @@ void ColorToning::setDefaults (const ProcParams* defParams, const ParamsEdited* 
         hlColSat->setDefaultEditedState (pedited->colorToning.hlColSat ? Edited : UnEdited);
         shadowsColSat->setDefaultEditedState (pedited->colorToning.shadowsColSat ? Edited : UnEdited);
         strength->setDefaultEditedState (pedited->colorToning.strength ? Edited : UnEdited);
+        labgrid->setEdited((pedited->colorToning.labgridALow || pedited->colorToning.labgridBLow || pedited->colorToning.labgridAHigh || pedited->colorToning.labgridBHigh) ? Edited : UnEdited);
     } else {
         redlow->setDefaultEditedState (Irrelevant);
         greenlow->setDefaultEditedState (Irrelevant);
@@ -663,6 +665,7 @@ void ColorToning::setDefaults (const ProcParams* defParams, const ParamsEdited* 
         hlColSat->setDefaultEditedState (Irrelevant);
         shadowsColSat->setDefaultEditedState (Irrelevant);
         strength->setDefaultEditedState (Irrelevant);
+        labgrid->setEdited(Edited);
     }
 }
 
@@ -825,8 +828,7 @@ void ColorToning::methodChanged ()
 {
 
     if (!batchMode) {
-        labgridReset->hide();
-        labgridArea->hide();
+        labgridBox->hide();
         
         if (method->get_active_row_number() == 0) { // Lab
             colorSep->show();
@@ -994,8 +996,7 @@ void ColorToning::methodChanged ()
             neutrHBox->hide();
             lumamode->hide();
 
-            labgridReset->show();
-            labgridArea->show();
+            labgridBox->show();
         }
     }
 
