@@ -237,6 +237,8 @@ bool LabGrid::on_button_press_event(GdkEventButton *event)
                 break;
             }
             edited = true;
+            notifyListener();
+            queue_draw();
         } else if (event->type == GDK_BUTTON_PRESS && litPoint != NONE) {
             isDragged = true;
         }
@@ -277,6 +279,7 @@ bool LabGrid::on_motion_notify_event(GdkEventMotion *event)
             high_a = ma * rtengine::ColorToningParams::LABGRID_CORR_MAX;
             high_b = mb * rtengine::ColorToningParams::LABGRID_CORR_MAX;
         }
+        edited = true;
         grab_focus();
         if (options.adjusterMinDelay == 0) {
             notifyListener();
