@@ -12,6 +12,7 @@
 #include "curveeditorgroup.h"
 #include "thresholdadjuster.h"
 #include "colorprovider.h"
+#include "labgrid.h"
 
 class ColorToning final :
     public ToolParamBlock,
@@ -105,7 +106,8 @@ private:
 
     rtengine::ProcEvent EvColorToningLabGridValue;
     Gtk::Button *labgridReset;
-    Gtk::DrawingArea *labgridArea;
+    LabGrid *labgrid;
+    Gtk::HBox *labgridBox;
 
     IdleRegister idle_register;
 };
