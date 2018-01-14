@@ -36,7 +36,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
     colorPanel      = Gtk::manage (new ToolVBox ());
     transformPanel  = Gtk::manage (new ToolVBox ());
     rawPanel        = Gtk::manage (new ToolVBox ());
-    waveletPanel    = Gtk::manage (new ToolVBox ());
+    advancedPanel    = Gtk::manage (new ToolVBox ());
 
     coarse              = Gtk::manage (new CoarsePanel ());
     toneCurve           = Gtk::manage (new ToneCurve ());
@@ -102,7 +102,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
     addPanel (colorPanel, whitebalance);
     addPanel (exposurePanel, toneCurve);
     addPanel (colorPanel, vibrance);
-    addPanel (colorPanel, chmixer);
+    addPanel (advancedPanel, chmixer);
     addPanel (colorPanel, blackwhite);
     addPanel (exposurePanel, localContrast);
     addPanel (exposurePanel, shadowshighlights);
@@ -115,16 +115,16 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
     addPanel (colorPanel, colortoning);
     addPanel (exposurePanel, epd);
     addPanel (exposurePanel, fattal);
-    addPanel (exposurePanel, retinex);
+    addPanel (advancedPanel, retinex);
     addPanel (exposurePanel, pcvignette);
     addPanel (exposurePanel, gradient);
     addPanel (exposurePanel, lcurve);
-    addPanel (exposurePanel, colorappearance);
+    addPanel (advancedPanel, colorappearance);
     addPanel (detailsPanel, impulsedenoise);
     addPanel (detailsPanel, dirpyrdenoise);
     addPanel (detailsPanel, defringe);
     addPanel (detailsPanel, dirpyrequalizer);
-    addPanel (waveletPanel, wavelet);
+    addPanel (advancedPanel, wavelet);
     addPanel (transformPanel, crop);
     addPanel (transformPanel, resize);
     addPanel (resize->getPackBox(), prsharpening, 2);
@@ -161,7 +161,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
     colorPanelSW       = Gtk::manage (new MyScrolledWindow ());
     transformPanelSW   = Gtk::manage (new MyScrolledWindow ());
     rawPanelSW         = Gtk::manage (new MyScrolledWindow ());
-    waveletPanelSW     = Gtk::manage (new MyScrolledWindow ());
+    advancedPanelSW     = Gtk::manage (new MyScrolledWindow ());
     updateVScrollbars (options.hideTPVScrollbar);
 
     // load panel endings
@@ -185,9 +185,9 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
     colorPanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
     colorPanel->pack_start (*vbPanelEnd[2], Gtk::PACK_SHRINK, 4);
 
-    waveletPanelSW->add       (*waveletPanel);
-    waveletPanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
-    waveletPanel->pack_start (*vbPanelEnd[5], Gtk::PACK_SHRINK, 0);
+    advancedPanelSW->add       (*advancedPanel);
+    advancedPanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
+    advancedPanel->pack_start (*vbPanelEnd[5], Gtk::PACK_SHRINK, 0);
 
     transformPanelSW->add (*transformPanel);
     transformPanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
@@ -204,7 +204,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
     toiE = Gtk::manage (new TextOrIcon ("exposure.png", M ("MAIN_TAB_EXPOSURE"), M ("MAIN_TAB_EXPOSURE_TOOLTIP"), type));
     toiD = Gtk::manage (new TextOrIcon ("detail.png", M ("MAIN_TAB_DETAIL"), M ("MAIN_TAB_DETAIL_TOOLTIP"), type));
     toiC = Gtk::manage (new TextOrIcon ("colour.png", M ("MAIN_TAB_COLOR"), M ("MAIN_TAB_COLOR_TOOLTIP"), type));
-    toiW = Gtk::manage (new TextOrIcon ("wavelet.png", M ("MAIN_TAB_WAVELET"), M ("MAIN_TAB_WAVELET_TOOLTIP"), type));
+    toiW = Gtk::manage (new TextOrIcon ("wavelet.png", M ("MAIN_TAB_ADVANCED"), M ("MAIN_TAB_ADVANCED_TOOLTIP"), type));
     toiT = Gtk::manage (new TextOrIcon ("transform.png", M ("MAIN_TAB_TRANSFORM"), M ("MAIN_TAB_TRANSFORM_TOOLTIP"), type));
     toiR = Gtk::manage (new TextOrIcon ("raw.png", M ("MAIN_TAB_RAW"), M ("MAIN_TAB_RAW_TOOLTIP"), type));
     toiM = Gtk::manage (new TextOrIcon ("meta.png", M ("MAIN_TAB_METADATA"), M ("MAIN_TAB_METADATA_TOOLTIP"), type));
@@ -212,7 +212,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
     toolPanelNotebook->append_page (*exposurePanelSW,  *toiE);
     toolPanelNotebook->append_page (*detailsPanelSW,   *toiD);
     toolPanelNotebook->append_page (*colorPanelSW,     *toiC);
-    toolPanelNotebook->append_page (*waveletPanelSW,   *toiW);
+    toolPanelNotebook->append_page (*advancedPanelSW,   *toiW);
     toolPanelNotebook->append_page (*transformPanelSW, *toiT);
     toolPanelNotebook->append_page (*rawPanelSW,       *toiR);
     toolPanelNotebook->append_page (*metadata,    *toiM);
@@ -801,7 +801,7 @@ bool ToolPanelCoordinator::handleShortcutKey (GdkEventKey* event)
                 return true;
 
             case GDK_KEY_w:
-                toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*waveletPanelSW));
+                toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*advancedPanelSW));
                 return true;
 
             case GDK_KEY_m:
@@ -822,7 +822,7 @@ void ToolPanelCoordinator::updateVScrollbars (bool hide)
     colorPanelSW->set_policy        (Gtk::POLICY_AUTOMATIC, policy);
     transformPanelSW->set_policy    (Gtk::POLICY_AUTOMATIC, policy);
     rawPanelSW->set_policy          (Gtk::POLICY_AUTOMATIC, policy);
-    waveletPanelSW->set_policy      (Gtk::POLICY_AUTOMATIC, policy);
+    advancedPanelSW->set_policy      (Gtk::POLICY_AUTOMATIC, policy);
 
     for (auto currExp : expList) {
         currExp->updateVScrollbars (hide);
