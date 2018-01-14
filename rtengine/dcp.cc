@@ -1074,7 +1074,7 @@ void DCPProfile::apply(
                 float s;
                 float v;
 
-                if(Color::rgb2hsvdcp(newr, newg, newb, h , s, v)) {
+                if (LIKELY(Color::rgb2hsvdcp(newr, newg, newb, h , s, v))) {
 
                     hsdApply(delta_info, delta_base, h, s, v);
 

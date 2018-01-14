@@ -25,6 +25,8 @@ constexpr double RT_NAN = std::numeric_limits<double>::quiet_NaN();
 constexpr float RT_PI_F = RT_PI;
 constexpr float RT_PI_F_2 = RT_PI_2;
 constexpr float RT_PI_F_180 = RT_PI_180;
+constexpr float RT_1_PI_F = RT_1_PI;
+constexpr float RT_2_PI_F = RT_2_PI;
 
 constexpr float RT_INFINITY_F = std::numeric_limits<float>::infinity();
 constexpr float RT_NAN_F = std::numeric_limits<float>::quiet_NaN();

@@ -1003,7 +1003,7 @@ void BlackWhite::autoch_toggled ()
         bool wasEnabled = disableListener();
 
         if (mixerRed->getAddMode()) {
-            mixerRed->resetValue(false);
+            mixerRed->resetValue(true);
         }
 
         if (mixerGreen->getAddMode()) {
@@ -1053,14 +1053,14 @@ void BlackWhite::autoch_toggled ()
     } else {
         if (autoch->get_active()) {
             bool wasEnabled = disableListener();
-            mixerRed->setValue(33);
-            mixerGreen->setValue(33);
-            mixerBlue->setValue(33);
-            mixerOrange->setValue(33);
-            mixerYellow->setValue(33);
-            mixerMagenta->setValue(33);
-            mixerPurple->setValue(33);
-            mixerCyan->setValue(33);
+            mixerRed->resetValue(false);
+            mixerGreen->resetValue(false);
+            mixerBlue->resetValue(false);
+            mixerOrange->resetValue(false);
+            mixerYellow->resetValue(false);
+            mixerMagenta->resetValue(false);
+            mixerPurple->resetValue(false);
+            mixerCyan->resetValue(false);
             setting->set_active (11);
             filter->set_active (0);
 

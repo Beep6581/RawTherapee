@@ -46,7 +46,7 @@ static inline float Lanc (float x, float a)
     }
 }
 
-void ImProcFunctions::Lanczos (const Image16* src, Image16* dst, float scale)
+void ImProcFunctions::Lanczos (const Imagefloat* src, Imagefloat* dst, float scale)
 {
 
     const float delta = 1.0f / scale;
@@ -106,6 +106,9 @@ void ImProcFunctions::Lanczos (const Image16* src, Image16* dst, float scale)
 
             // weights for interpolation in y direction
             float w[support];
+            for (auto& f : w) {
+                f = 0.f;
+            }
 
             // sum of weights used for normalization
             float ws = 0.0f;
@@ -159,9 +162,9 @@ void ImProcFunctions::Lanczos (const Image16* src, Image16* dst, float scale)
                     b += wh[k] * lb[jj];
                 }
 
-                dst->r (i, j) = CLIP (static_cast<int> (r));
-                dst->g (i, j) = CLIP (static_cast<int> (g));
-                dst->b (i, j) = CLIP (static_cast<int> (b));
+                dst->r (i, j) = CLIP (r);//static_cast<int> (r));
+                dst->g (i, j) = CLIP (g);//static_cast<int> (g));
+                dst->b (i, j) = CLIP (b);//static_cast<int> (b));
             }
         }
 
@@ -396,7 +399,7 @@ float ImProcFunctions::resizeScale (const ProcParams* params, int fw, int fh, in
     return (float)dScale;
 }
 
-void ImProcFunctions::resize (Image16* src, Image16* dst, float dScale)
+void ImProcFunctions::resize (Imagefloat* src, Imagefloat* dst, float dScale)
 {
 #ifdef PROFILE
     time_t t1 = clock();

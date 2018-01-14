@@ -1382,6 +1382,7 @@ TP_COLORTONING_HIGHLIGHT;Hautes lumières
 TP_COLORTONING_HUE;Teinte
 TP_COLORTONING_LAB;Mixage Lab
 TP_COLORTONING_LABEL;Virage Partiel
+TP_COLORTONING_LABGRID_VALUES;HL: a=%1 b=%2\nO: a=%3 b=%4
 TP_COLORTONING_LUMA;Luminance
 TP_COLORTONING_LUMAMODE;Préserver la luminance
 TP_COLORTONING_LUMAMODE_TOOLTIP;Si activé, lorsque vous changez la couleur (rouge, vert, cyan, bleu, etc.), la luminance de chaque pixel est préservé

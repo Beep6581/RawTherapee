@@ -50,23 +50,52 @@ void adjust_radius (const T &default_param, double scale_factor, T &param)
 class ImageProcessor
 {
 public:
-    ImageProcessor (ProcessingJob* pjob, int& errorCode,
-                    ProgressListener* pl, bool flush):
+    ImageProcessor(
+        ProcessingJob* pjob,
+        int& errorCode,
+        ProgressListener* pl,
+        bool flush
+    ) :
         job (static_cast<ProcessingJobImpl*> (pjob)),
         errorCode (errorCode),
         pl (pl),
         flush (flush),
         // internal state
-        ipf_p (nullptr),
-        ii (nullptr),
-        imgsrc (nullptr),
-        fw (-1),
-        fh (-1),
-        pp (0, 0, 0, 0, 0)
+        ii(nullptr),
+        imgsrc(nullptr),
+        fw(0),
+        fh(0),
+        tr(0),
+        pp(0, 0, 0, 0, 0),
+        calclum(nullptr),
+        autoNR(0.f),
+        autoNRmax(0.f),
+        tilesize(0),
+        overlap(0),
+        ch_M(nullptr),
+        max_r(nullptr),
+        max_b(nullptr),
+        min_b(nullptr),
+        min_r(nullptr),
+        lumL(nullptr),
+        chromC(nullptr),
+        ry(nullptr),
+        sk(nullptr),
+        pcsk(nullptr),
+        expcomp(0.0),
+        bright(0),
+        contr(0),
+        black(0),
+        hlcompr(0),
+        hlcomprthresh(0),
+        baseImg(nullptr),
+        labView(nullptr),
+        autili(false),
+        butili(false)
     {
     }
 
-    Image16 *operator()()
+    Imagefloat *operator()()
     {
         if (!job->fast) {
             return normal_pipeline();
@@ -76,7 +105,7 @@ public:
     }
 
 private:
-    Image16 *normal_pipeline()
+    Imagefloat *normal_pipeline()
     {
         BENCHFUN
         if (!stage_init()) {
@@ -88,7 +117,7 @@ private:
         return stage_finish();
     }
 
-    Image16 *fast_pipeline()
+    Imagefloat *fast_pipeline()
     {
         if (!job->pparams.resize.enabled) {
             return normal_pipeline();
@@ -816,7 +845,7 @@ private:
         if (params.fattal.enabled) {
             ipf.ToneMapFattal02(baseImg);
         }
-                
+
         // perform transform (excepted resizing)
         if (ipf.needsTransform()) {
             Imagefloat* trImg = nullptr;
@@ -834,7 +863,7 @@ private:
         }
     }
 
-    Image16 *stage_finish()
+    Imagefloat *stage_finish()
     {
         procparams::ProcParams& params = job->pparams;
         //ImProcFunctions ipf (&params, true);
@@ -912,7 +941,7 @@ private:
         float satLimit = float (params.colorToning.satProtectionThreshold) / 100.f * 0.7f + 0.3f;
         float satLimitOpacity = 1.f - (float (params.colorToning.saturatedOpacity) / 100.f);
 
-        if (params.colorToning.enabled  && params.colorToning.autosat) { //for colortoning evaluation of saturation settings
+        if (params.colorToning.enabled  && params.colorToning.autosat && params.colorToning.method != "LabGrid") { //for colortoning evaluation of saturation settings
             float moyS = 0.f;
             float eqty = 0.f;
             ipf.moyeqt (baseImg, moyS, eqty);//return image : mean saturation and standard dev of saturation
@@ -1230,7 +1259,7 @@ private:
             }
         }
 
-        Image16* readyImg = nullptr;
+        Imagefloat* readyImg = nullptr;
         cmsHPROFILE jprof = nullptr;
         bool customGamma = false;
         bool useLCMS = false;
@@ -1240,7 +1269,7 @@ private:
 
             GammaValues ga;
             //  if(params.blackwhite.enabled) params.toneCurve.hrenabled=false;
-            readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm, &ga);
+            readyImg = ipf.lab2rgbOut (labView, cx, cy, cw, ch, params.icm, &ga);
             customGamma = true;
 
             //or selected Free gamma
@@ -1254,7 +1283,7 @@ private:
             // if Default gamma mode: we use the profile selected in the "Output profile" combobox;
             // gamma come from the selected profile, otherwise it comes from "Free gamma" tool
 
-            readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm);
+            readyImg = ipf.lab2rgbOut (labView, cx, cy, cw, ch, params.icm);
 
             if (settings->verbose) {
                 printf ("Output profile_: \"%s\"\n", params.icm.output.c_str());
@@ -1284,7 +1313,7 @@ private:
         }
 
         if (tmpScale != 1.0 && params.resize.method == "Nearest") { // resize rgb data (gamma applied)
-            Image16* tempImage = new Image16 (imw, imh);
+            Imagefloat* tempImage = new Imagefloat (imw, imh);
             ipf.resize (readyImg, tempImage, tmpScale);
             delete readyImg;
             readyImg = tempImage;
@@ -1438,12 +1467,12 @@ private:
         }
 
         params.wavelet.strength *= scale_factor;
-        params.dirpyrDenoise.luma *= scale_factor;
+        params.dirpyrDenoise.luma *= scale_factor * scale_factor;
         //params.dirpyrDenoise.Ldetail += (100 - params.dirpyrDenoise.Ldetail) * scale_factor;
         auto &lcurve = params.dirpyrDenoise.lcurve;
 
         for (size_t i = 2; i < lcurve.size(); i += 4) {
-            lcurve[i] *= min (scale_factor * 2, 1.0);
+            lcurve[i] *= min (scale_factor * scale_factor, 1.0);
         }
 
         noiseLCurve.Set (lcurve);
@@ -1570,7 +1599,7 @@ private:
 } // namespace
 
 
-IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* pl, bool flush)
+IImagefloat* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* pl, bool flush)
 {
     ImageProcessor proc (pjob, errorCode, pl, flush);
     return proc();
@@ -1583,7 +1612,7 @@ void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl)
 
     while (currentJob) {
         int errorCode;
-        IImage16* img = processImage (currentJob, errorCode, bpl, true);
+        IImagefloat* img = processImage (currentJob, errorCode, bpl, true);
 
         if (errorCode) {
             bpl->error (M ("MAIN_MSG_CANNOTLOAD"));

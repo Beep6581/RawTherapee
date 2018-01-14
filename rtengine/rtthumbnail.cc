@@ -1159,7 +1159,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     float satLimit = float (params.colorToning.satProtectionThreshold) / 100.f * 0.7f + 0.3f;
     float satLimitOpacity = 1.f - (float (params.colorToning.saturatedOpacity) / 100.f);
 
-    if (params.colorToning.enabled  && params.colorToning.autosat) { //for colortoning evaluation of saturation settings
+    if (params.colorToning.enabled  && params.colorToning.autosat && params.colorToning.method != "LabGrid") { //for colortoning evaluation of saturation settings
         float moyS = 0.f;
         float eqty = 0.f;
         ipf.moyeqt (baseImg, moyS, eqty);//return image : mean saturation and standard dev of saturation
