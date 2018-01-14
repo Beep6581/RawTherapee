@@ -105,7 +105,10 @@ void ImProcFunctions::Lanczos (const Imagefloat* src, Imagefloat* dst, float sca
             float y0 = (static_cast<float> (i) + 0.5f) * delta - 0.5f;
 
             // weights for interpolation in y direction
-            float w[support] = {};
+            float w[support];
+            for (auto& f : w) {
+                f = 0.f;
+            }
 
             // sum of weights used for normalization
             float ws = 0.0f;
