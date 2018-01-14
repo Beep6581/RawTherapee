@@ -12,6 +12,7 @@
 #include "curveeditorgroup.h"
 #include "thresholdadjuster.h"
 #include "colorprovider.h"
+#include "labgrid.h"
 
 class ColorToning final :
     public ToolParamBlock,
@@ -49,6 +50,8 @@ public:
 
     void colorForValue         (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
 
+    void setListener(ToolPanelListener *tpl);
+    
 private:
     //Gtk::HSeparator* satLimiterSep;
     Gtk::HSeparator* colorSep;
@@ -100,6 +103,11 @@ private:
     Gtk::CheckButton* lumamode;
     bool lastLumamode;
     sigc::connection lumamodeConn;
+
+    rtengine::ProcEvent EvColorToningLabGridValue;
+    Gtk::Button *labgridReset;
+    LabGrid *labgrid;
+    Gtk::HBox *labgridBox;
 
     IdleRegister idle_register;
 };

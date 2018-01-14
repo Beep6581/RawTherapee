@@ -152,6 +152,7 @@ set(NONCLISOURCEFILES
     localcontrast.cc
     eventmapper.cc
     metadatapanel.cc
+    labgrid.cc
     )
 
 include_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")

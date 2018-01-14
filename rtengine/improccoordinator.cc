@@ -659,7 +659,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
         int satPR = 30;
         int indi = 0;
 
-        if (params.colorToning.enabled  && params.colorToning.autosat) { //for colortoning evaluation of saturation settings
+        if (params.colorToning.enabled  && params.colorToning.autosat && params.colorToning.method != "LabGrid") { //for colortoning evaluation of saturation settings
             float moyS = 0.f;
             float eqty = 0.f;
             ipf.moyeqt(oprevi, moyS, eqty); //return image : mean saturation and standard dev of saturation
