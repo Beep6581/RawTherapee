@@ -12,10 +12,6 @@
 #define SLEEFSSEAVX
 
 #include <assert.h>
-//#include <math.h>
-//#include <bits/nan.h>
-//#include <bits/inf.h>
-//#include "sleefsseavx.h"
 #include "rt_math.h"
 #ifdef __SSE2__
 #include "helpersse2.h"
@@ -30,8 +26,6 @@
 #define INLINE inline
 #endif
 
-//
-
 #define PI4_A .7853981554508209228515625
 #define PI4_B .794662735614792836713604629039764404296875e-8
 #define PI4_C .306161699786838294306516483068750264552437361480769e-16
@@ -40,8 +34,6 @@
 #define L2U .69314718055966295651160180568695068359375
 #define L2L .28235290563031577122588448175013436025525412068e-12
 #define R_LN2 1.442695040888963407359924681001892137426645954152985934135449406931
-
-//
 
 #define PI4_Af 0.78515625f
 #define PI4_Bf 0.00024127960205078125f
@@ -54,8 +46,6 @@
 
 #define INFINITYf ((float)rtengine::RT_INFINITY)
 #define NANf ((float)rtengine::RT_NAN)
-
-//
 
 static INLINE vdouble vadd3(vdouble v0, vdouble v1, vdouble v2) {
   return vadd(vadd(v0, v1), v2);
@@ -1323,10 +1313,8 @@ static INLINE vfloat xexpf(vfloat d) {
 
   u = vldexpf(u, q);
 
-  u = vself(vmaskf_isminf(d), vcast_vf_f(0.0f), u);
-// -104.0
-  u = vself(vmaskf_gt(vcast_vf_f(-104), d), vcast_vf_f(0), u);
-  return u;
+  // -104.0
+  return vselfnotzero(vmaskf_gt(vcast_vf_f(-104.f), d), u);
 }
 
 static INLINE vfloat xexpfNoCheck(vfloat d) { // this version does not check input values. Use it only when you know the input values are > -104.f e.g. when filling a lookup table

@@ -135,7 +135,11 @@ void CoordinateAdjuster::createWidgets(const std::vector<Axis> &axis)
         box->attach_next_to(*(currAdjuster->spinButton), Gtk::POS_LEFT, 1, 1);
         box->attach_next_to(*(currAdjuster->label), Gtk::POS_LEFT, 1, 1);
 
-        add(*box);
+        Gtk::FlowBoxChild *fbChild = Gtk::manage(new Gtk::FlowBoxChild());
+        fbChild->set_can_focus(false);
+        fbChild->add(*box);
+
+        add(*fbChild);
     }
 }
 

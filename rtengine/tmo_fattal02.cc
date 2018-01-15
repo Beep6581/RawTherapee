@@ -1055,8 +1055,9 @@ inline int find_fast_dim (int dim)
 {
     // as per the FFTW docs:
     //
-    //   FFTW is generally best at handling sizes of the form 2a 3b 5c 7d 11e
-    //   13f, where e+f is either 0 or 1.
+    //   FFTW is generally best at handling sizes of the form
+    //     2^a 3^b 5^c 7^d 11^e 13^f,
+    //   where e+f is either 0 or 1.
     //
     // Here, we try to round up to the nearest dim that can be expressed in
     // the above form. This is not exhaustive, but should be ok for pictures
@@ -1125,39 +1126,32 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
             constexpr float c = 65500.f;
             return rgb->r(y, x) < c && rgb->g(y, x) < c && rgb->b(y, x) < c;
         };
+
     TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
 
     float max_Y = 0.f;
     int max_x = 0, max_y = 0;
 
-#ifdef _OPENMP
-    #pragma omp parallel if (multiThread)
-#endif
-{
-    float max_YThr = 0.f;
-    int max_xThr = 0, max_yThr = 0;
-#ifdef _OPENMP
-    #pragma omp for schedule(dynamic,16) nowait
-#endif
+    const auto biggerY =
+        [](float cur_Y, float prev_Y) -> bool
+        {
+            if (!prev_Y) {
+                return true;
+            }
+            float e = (cur_Y - prev_Y) / max(cur_Y, prev_Y);
+            return e >= 0.05;
+        };
+    
     for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++) {
             Yr (x, y) = std::max (luminance (rgb->r (y, x), rgb->g (y, x), rgb->b (y, x), ws), min_luminance); // clip really black pixels
-            if (Yr(x, y) > max_YThr && unclipped(y, x)) {
-                max_YThr = Yr(x, y);
-                max_xThr = x;
-                max_yThr = y;
+            if (biggerY(Yr(x, y), max_Y) && unclipped(y, x)) {
+                max_Y = Yr(x, y);
+                max_x = x;
+                max_y = y;
             }
         }
     }
-#ifdef _OPENMP
-#pragma omp critical
-#endif
-    if (max_YThr > max_Y) {
-        max_Y = max_YThr;
-        max_x = max_xThr;
-        max_y = max_yThr;
-    }
-}
 
     // median filter on the deep shadows, to avoid boosting noise
     // because w2 >= w and h2 >= h, we can use the L buffer as temporary buffer for Median_Denoise()
