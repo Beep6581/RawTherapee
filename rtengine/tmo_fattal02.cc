@@ -416,8 +416,8 @@ void tmo_fattal02 (size_t width,
 //     msec_timer stop_watch;
 //     stop_watch.start();
 // #endif
-    static const float black_point = 0.1f;
-    static const float white_point = 0.5f;
+    // static const float black_point = 0.1f;
+    // static const float white_point = 0.5f;
     static const float gamma = 1.0f; // 0.8f;
 
     // static const int   detail_level = 3;
@@ -452,7 +452,7 @@ void tmo_fattal02 (size_t width,
     int size = width * height;
 
     // find max value, normalize to range 0..100 and take logarithm
-    float minLum = Y (0, 0);
+    // float minLum = Y (0, 0);
     float maxLum = Y (0, 0);
 
     #pragma omp parallel for reduction(max:maxLum) if(multithread)
