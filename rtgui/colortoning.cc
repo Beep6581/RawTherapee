@@ -331,7 +331,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     labgridReset->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
     labgridReset->set_can_focus(false);
     labgridReset->set_size_request(-1, 20);
-    labgridReset->signal_button_release_event().connect([=](GdkEventButton* release_event) { labgrid->reset(release_event->state & GDK_CONTROL_MASK ? true : false); return false; });
+    labgridReset->signal_button_release_event().connect(sigc::mem_fun(*this, &ColorToning::resetPressed));
     labgridBox->pack_start(*labgridReset, false, false);
     pack_start(*labgridBox, Gtk::PACK_EXPAND_WIDGET, 4);
     //------------------------------------------------------------------------
@@ -1164,4 +1164,10 @@ void ColorToning::setBatchMode (bool batchMode)
     clCurveEditorG->setBatchMode (batchMode);
     cl2CurveEditorG->setBatchMode (batchMode);
 
+}
+
+bool ColorToning::resetPressed(GdkEventButton* event)
+{
+    labgrid->reset(event->state & GDK_CONTROL_MASK);
+    return false;
 }
