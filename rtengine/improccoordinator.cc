@@ -199,11 +199,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         imgsrc->preprocess ( rp, params.lensProf, params.coarse );
         imgsrc->getRAWHistogram ( histRedRaw, histGreenRaw, histBlueRaw );
 
-        if (highDetailNeeded) {
-            highDetailPreprocessComputed = true;
-        } else {
-            highDetailPreprocessComputed = false;
-        }
+        highDetailPreprocessComputed = highDetailNeeded;
     }
 
     /*
@@ -266,21 +262,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
         if (dehaListener) {
             dehaListener->minmaxChanged (maxCD, minCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
-        }
-    }
-
-
-    // Updating toneCurve.hrenabled if necessary
-    // It has to be done there, because the next 'if' statement will use the value computed here
-    if (todo & M_AUTOEXP) {
-        if (params.toneCurve.autoexp) {// this enabled HLRecovery
-            if (ToneCurveParams::HLReconstructionNecessary (histRedRaw, histGreenRaw, histBlueRaw) && !params.toneCurve.hrenabled) {
-                // switching params.toneCurve.hrenabled to true -> shouting in listener's ears!
-                params.toneCurve.hrenabled = true;
-
-                // forcing INIT to be done, to reconstruct HL again
-                todo |= M_INIT;
-            }
         }
     }
 

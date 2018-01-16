@@ -286,7 +286,6 @@ struct ToneCurveParams {
     bool operator ==(const ToneCurveParams& other) const;
     bool operator !=(const ToneCurveParams& other) const;
 
-    static bool HLReconstructionNecessary(const LUTu& histRedRaw, const LUTu& histGreenRaw, const LUTu& histBlueRaw);
 };
 
 /**
