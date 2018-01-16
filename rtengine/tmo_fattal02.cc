@@ -416,8 +416,8 @@ void tmo_fattal02 (size_t width,
 //     msec_timer stop_watch;
 //     stop_watch.start();
 // #endif
-    static const float black_point = 0.1f;
-    static const float white_point = 0.5f;
+    // static const float black_point = 0.1f;
+    // static const float white_point = 0.5f;
     static const float gamma = 1.0f; // 0.8f;
 
     // static const int   detail_level = 3;
@@ -452,7 +452,7 @@ void tmo_fattal02 (size_t width,
     int size = width * height;
 
     // find max value, normalize to range 0..100 and take logarithm
-    float minLum = Y (0, 0);
+    // float minLum = Y (0, 0);
     float maxLum = Y (0, 0);
 
     #pragma omp parallel for reduction(max:maxLum) if(multithread)
@@ -646,22 +646,6 @@ void tmo_fattal02 (size_t width,
             for (; j < width; j++) {
                 L[i][j] = xexpf ( gamma * L[i][j]);
             }
-        }
-    }
-
-    // remove percentile of min and max values and renormalize
-    float cut_min = 0.01f * black_point;
-    float cut_max = 1.0f - 0.01f * white_point;
-    assert (cut_min >= 0.0f && (cut_max <= 1.0f) && (cut_min < cut_max));
-    findMinMaxPercentile (L.data(), L.getRows() * L.getCols(), cut_min, minLum, cut_max, maxLum, multithread);
-    float dividor = (maxLum - minLum);
-
-    #pragma omp parallel for if(multithread)
-
-    for (size_t i = 0; i < height; ++i) {
-        for (size_t j = 0; j < width; ++j) {
-            L[i][j] = std::max ((L[i][j] - minLum) / dividor, 0.f);
-            // note, we intentionally do not cut off values > 1.0
         }
     }
 }
@@ -1120,39 +1104,20 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
     constexpr float epsilon = 1e-4f;
     constexpr float luminance_noise_floor = 65.535f;
     constexpr float min_luminance = 1.f;
-    const auto unclipped =
-        [rgb](int y, int x) -> bool
-        {
-            constexpr float c = 65500.f;
-            return rgb->r(y, x) < c && rgb->g(y, x) < c && rgb->b(y, x) < c;
-        };
 
     TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
 
-    float max_Y = 0.f;
-    int max_x = 0, max_y = 0;
-
-    const auto biggerY =
-        [](float cur_Y, float prev_Y) -> bool
-        {
-            if (!prev_Y) {
-                return true;
-            }
-            float e = (cur_Y - prev_Y) / max(cur_Y, prev_Y);
-            return e >= 0.05;
-        };
-    
+#ifdef _OPENMP
+    #pragma omp parallel for if(multiThread)
+#endif
     for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++) {
             Yr (x, y) = std::max (luminance (rgb->r (y, x), rgb->g (y, x), rgb->b (y, x), ws), min_luminance); // clip really black pixels
-            if (biggerY(Yr(x, y), max_Y) && unclipped(y, x)) {
-                max_Y = Yr(x, y);
-                max_x = x;
-                max_y = y;
-            }
         }
     }
 
+    float oldMedian;
+    findMinMaxPercentile (Yr.data(), Yr.getRows() * Yr.getCols(), 0.5f, oldMedian, 0.5f, oldMedian, multiThread);
     // median filter on the deep shadows, to avoid boosting noise
     // because w2 >= w and h2 >= h, we can use the L buffer as temporary buffer for Median_Denoise()
     int w2 = find_fast_dim (w) + 1;
@@ -1193,7 +1158,9 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
     const float hr = float(h2) / float(h);
     const float wr = float(w2) / float(w);
 
-    const float scale = 65535.f / std::max(L(max_x * wr + 1, max_y * hr + 1), epsilon) * (65535.f / Yr(max_x, max_y));
+    float newMedian;
+    findMinMaxPercentile (L.data(), L.getRows() * L.getCols(), 0.5f, newMedian, 0.5f, newMedian, multiThread);
+    const float scale = (oldMedian == 0.f || newMedian == 0.f) ? 65535.f : (oldMedian / newMedian); // avoid Nan
 
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16) if(multiThread)
@@ -1204,7 +1171,7 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
         for (int x = 0; x < w; x++) {
             int xx = x * wr + 1;
 
-            float Y = Yr (x, y);
+            float Y = std::max(Yr (x, y), epsilon);
             float l = std::max (L (xx, yy), epsilon) * (scale / Y);
             rgb->r (y, x) = std::max (rgb->r (y, x), 0.f) * l;
             rgb->g (y, x) = std::max (rgb->g (y, x), 0.f) * l;
