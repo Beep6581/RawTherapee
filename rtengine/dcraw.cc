@@ -5497,7 +5497,8 @@ nf: order = 0x4949;
       for (c=i=2; (ushort) c != 0xbbbb && i < len; i++)
 	c = c << 8 | fgetc(ifp);
       while ((i+=4) < len-5)
-	if (get4() == 257 && (i=len) && (c = (get4(),fgetc(ifp))) < 3)
+    if (get4() == 257 && (i=len) && (c = (get4(),fgetc(ifp))) < 3 && strcmp(make,"Canon"))
+      // don't use this tag for Canon cameras as it's known to give wrong orientation some times
 	  flip = "065"[c]-'0';
     }
     if (tag == 0x10 && type == 4)
