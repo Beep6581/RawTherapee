@@ -145,8 +145,6 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
         PreviewProps pp(0, 0, fw, fh, skip);
         ColorTemp currWB = getWB();
         std::unique_ptr<Imagefloat> image(new Imagefloat(int(fw / skip), int(fh / skip)));
-        neutral.raw.bayersensor.method = procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::FAST);
-        neutral.raw.xtranssensor.method = procparams::RAWParams::XTransSensor::getMethodString(procparams::RAWParams::XTransSensor::Method::FAST);
         getImage(currWB, tr, image.get(), pp, neutral.toneCurve, neutral.raw);
 
         // this could probably be made faster -- ideally we would need to just
