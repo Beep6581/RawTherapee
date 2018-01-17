@@ -26,9 +26,14 @@
 #include "iccstore.h"
 #include "../rtgui/mydiagonalcurve.h"
 #include "improcfun.h"
+#define BENCHMARK
+#include "StopWatch.h"
+#include <iostream>
 
 
 namespace rtengine {
+
+extern const Settings *settings;
 
 namespace {
 
@@ -123,6 +128,12 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
 
 void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
 {
+    BENCHFUN
+        
+    if (settings->verbose) {
+        std::cout << "performing histogram matching for " << getFileName() << " on the embedded thumbnail" << std::endl;
+    }
+    
     const int rheight = 200;
     ProcParams neutral;
     std::unique_ptr<IImage8> target;
@@ -149,6 +160,10 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
         ipf.rgb2lab(*image, tmplab, neutral.icm.working);
         image.reset(ipf.lab2rgbOut(&tmplab, 0, 0, tmplab.W, tmplab.H, neutral.icm));
         target.reset(image->to8());
+
+        if (settings->verbose) {
+            std::cout << "histogram matching: generated neutral rendering" << std::endl;
+        }
     }
     std::unique_ptr<IImage8> source;
     {
@@ -157,6 +172,10 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
         int w, h;
         std::unique_ptr<Thumbnail> thumb(Thumbnail::loadQuickFromRaw(getFileName(), rml, sensor_type, w, h, 1, false, true));
         source.reset(thumb->quickProcessImage(neutral, target->getHeight(), TI_Nearest));
+
+        if (settings->verbose) {
+            std::cout << "histogram matching: extracted embedded thumbnail" << std::endl;
+        }
     }
     if (target->getWidth() != source->getWidth() || target->getHeight() != source->getHeight()) {
         Image8 *tmp = new Image8(source->getWidth(), source->getHeight());
@@ -174,6 +193,10 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
     }
 
     mappingToCurve(mapping, outCurve);
+
+    if (settings->verbose) {
+        std::cout << "histogram matching: generated curve with " << outCurve.size()/2 << " control points" << std::endl;
+    }
 }
 
 } // namespace rtengine
