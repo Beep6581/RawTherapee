@@ -185,6 +185,7 @@ public:
     }
     void        getAutoExpHistogram (LUTu & histogram, int& histcompr);
     void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw);
+    void getAutoMatchedToneCurve(std::vector<double> &outCurve);
     DCPProfile *getDCP(const ColorManagementParams &cmp, DCPProfile::ApplyState &as);
 
     void convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb);

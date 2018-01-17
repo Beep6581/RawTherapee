@@ -53,6 +53,7 @@ public:
     bool expcomp;
     bool hrenabled;
     bool method;
+    bool histmatching;
 };
 
 class RetinexParamsEdited

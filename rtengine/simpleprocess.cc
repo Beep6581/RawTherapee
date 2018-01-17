@@ -749,7 +749,17 @@ private:
             int aehistcompr;
             imgsrc->getAutoExpHistogram (aehist, aehistcompr);
             ipf.getAutoExp (aehist, aehistcompr, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
-        }
+        } else if (params.toneCurve.histmatching) {
+            imgsrc->getAutoMatchedToneCurve(params.toneCurve.curve);
+            
+            params.toneCurve.curveMode = ToneCurveParams::TcMode::FILMLIKE;
+            params.toneCurve.curve2 = { 0 };
+            params.toneCurve.expcomp = 0.0;
+            params.toneCurve.brightness = 0;
+            params.toneCurve.contrast = 0;
+            params.toneCurve.black = 0;
+            params.toneCurve.hlcompr = 0;
+        }        
 
         // at this stage, we can flush the raw data to free up quite an important amount of memory
         // commented out because it makes the application crash when batch processing...
