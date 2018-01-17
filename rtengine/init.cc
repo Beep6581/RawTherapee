@@ -16,6 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <fftw3.h>
 #include "../rtgui/profilestorecombobox.h"
 #include "rtengine.h"
 #include "iccstore.h"
@@ -108,10 +109,15 @@ int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDi
 
 void cleanup ()
 {
-
     ProcParams::cleanup ();
     Color::cleanup ();
     RawImageSource::cleanup ();
+#ifdef RT_FFTW3F_OMP
+    fftwf_cleanup_threads();
+#else
+    fftwf_cleanup();
+#endif
+
 }
 
 StagedImageProcessor* StagedImageProcessor::create (InitialImage* initialImage)
