@@ -907,18 +907,6 @@ void solve_pde_fft (Array2Df *F, Array2Df *U, Array2Df *buf, bool multithread)/*
     for (int i = 0; i < width * height; i++) {
         (*U) (i) -= max;
     }
-
-    // fft parallel threads cleanup, better handled outside this function?
-#ifdef RT_FFTW3F_OMP
-
-    if (multithread) {
-        fftwf_cleanup_threads();
-    }
-
-#endif
-
-    // ph.setValue(90);
-    //DEBUG_STR << "solve_pde_fft: done" << std::endl;
 }
 
 
