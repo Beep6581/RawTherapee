@@ -79,7 +79,7 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
 {
     curve.clear();
     
-    const int npoints = 20;
+    const int npoints = 8;
     int idx = 1;
     for (; idx < int(mapping.size()); ++idx) {
         if (mapping[idx] >= idx) {
@@ -133,10 +133,17 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
         source.reset(thumb->quickProcessImage(neutral, rheight, TI_Nearest));
     }
     std::unique_ptr<IImage8> target;
-    {
+    if (true) {
+        neutral.icm.working = "RT_sRGB";
+        // faster, but has problems likely due to color space transformations that I do not properly understand...
         double scale;
         std::unique_ptr<Thumbnail> thumb(Thumbnail::loadFromRaw(getFileName(), rml, sensor_type, w, h, 1, 0.0, false));
-        target.reset(thumb->processImage(neutral, sensor_type, rheight, TI_Nearest, getMetaData(), scale));
+        target.reset(thumb->processImage(neutral, sensor_type, rheight, TI_Nearest, getMetaData(), scale, false));
+    } else {
+        ProcessingJob *job = ProcessingJob::create(this, neutral, true);
+        int err = 0;
+        std::unique_ptr<IImagefloat> tmp(processImage(job, err, nullptr, false));
+        target.reset(static_cast<Imagefloat *>(tmp.get())->to8());
     }
     if (target->getWidth() != source->getWidth() || target->getHeight() != source->getHeight()) {
         Image8 *tmp = new Image8(source->getWidth(), source->getHeight());
