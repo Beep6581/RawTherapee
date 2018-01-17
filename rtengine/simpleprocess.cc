@@ -207,16 +207,6 @@ private:
         imgsrc->setCurrentFrame(params.raw.bayersensor.imageNum);
         imgsrc->preprocess(params.raw, params.lensProf, params.coarse, params.dirpyrDenoise.enabled);
 
-        if (params.toneCurve.autoexp) {// this enabled HLRecovery
-            LUTu histRedRaw(256), histGreenRaw(256), histBlueRaw(256);
-            imgsrc->getRAWHistogram(histRedRaw, histGreenRaw, histBlueRaw);
-
-            if (ToneCurveParams::HLReconstructionNecessary(histRedRaw, histGreenRaw, histBlueRaw) && !params.toneCurve.hrenabled) {
-                params.toneCurve.hrenabled = true;
-                // WARNING: Highlight Reconstruction is being forced 'on', should we force a method here too?
-            }
-        }
-
         if (pl) {
             pl->setProgress(0.20);
         }

@@ -361,22 +361,6 @@ bool ToneCurveParams::operator !=(const ToneCurveParams& other) const
     return !(*this == other);
 }
 
-bool ToneCurveParams::HLReconstructionNecessary(const LUTu& histRedRaw, const LUTu& histGreenRaw, const LUTu& histBlueRaw)
-{
-    if (options.rtSettings.verbose) {
-        printf("histRedRaw[  0]=%07d, histGreenRaw[  0]=%07d, histBlueRaw[  0]=%07d\nhistRedRaw[255]=%07d, histGreenRaw[255]=%07d, histBlueRaw[255]=%07d\n",
-               histRedRaw[0], histGreenRaw[0], histBlueRaw[0], histRedRaw[255], histGreenRaw[255], histBlueRaw[255]);
-    }
-
-    return
-        histRedRaw[255] > 50
-        || histGreenRaw[255] > 50
-        || histBlueRaw[255] > 50
-        || histRedRaw[0] > 50
-        || histGreenRaw[0] > 50
-        || histBlueRaw[0] > 50;
-}
-
 RetinexParams::RetinexParams() :
     enabled(false),
     cdcurve{
