@@ -134,14 +134,13 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
         std::cout << "performing histogram matching for " << getFileName() << " on the embedded thumbnail" << std::endl;
     }
     
-    const int rheight = 200;
     ProcParams neutral;
     std::unique_ptr<IImage8> target;
     { 
         int tr = TR_NONE;
         int fw, fh;
         getFullSize(fw, fh, tr);
-        int skip = fh / rheight;
+        int skip = 10;
         PreviewProps pp(0, 0, fw, fh, skip);
         ColorTemp currWB = getWB();
         std::unique_ptr<Imagefloat> image(new Imagefloat(int(fw / skip), int(fh / skip)));
