@@ -68,6 +68,7 @@ protected:
     DiagonalCurveEditor* shape2;
 
     rtengine::ProcEvent EvHistMatching;
+    rtengine::ProcEvent EvHistMatchingBatch;
     
     // used temporarily in eventing
     double nextExpcomp;

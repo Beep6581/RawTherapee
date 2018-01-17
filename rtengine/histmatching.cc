@@ -25,6 +25,7 @@
 #include "rt_math.h"
 #include "iccstore.h"
 #include "../rtgui/mydiagonalcurve.h"
+#include "improcfun.h"
 
 
 namespace rtengine {
@@ -54,7 +55,7 @@ std::vector<int> getCdf(const IImage8 &img)
 int findMatch(int val, const std::vector<int> &cdf, int j)
 {
     if (cdf[j] <= val) {
-        for (; j < cdf.size(); ++j) {
+        for (; j < int(cdf.size()); ++j) {
             if (cdf[j] == val) {
                 return j;
             } else if (cdf[j] > val) {
@@ -123,27 +124,39 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
 void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
 {
     const int rheight = 200;
-    RawMetaDataLocation rml;
-    eSensorType sensor_type;
-    int w, h;
     ProcParams neutral;
+    std::unique_ptr<IImage8> target;
+    { 
+        int tr = TR_NONE;
+        int fw, fh;
+        getFullSize(fw, fh, tr);
+        int skip = fh / rheight;
+        PreviewProps pp(0, 0, fw, fh, skip);
+        ColorTemp currWB = getWB();
+        std::unique_ptr<Imagefloat> image(new Imagefloat(int(fw / skip), int(fh / skip)));
+        neutral.raw.bayersensor.method = procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::FAST);
+        neutral.raw.xtranssensor.method = procparams::RAWParams::XTransSensor::getMethodString(procparams::RAWParams::XTransSensor::Method::FAST);
+        getImage(currWB, tr, image.get(), pp, neutral.toneCurve, neutral.raw);
+
+        // this could probably be made faster -- ideally we would need to just
+        // perform the transformation from camera space to the output space
+        // (taking gamma into account), but I couldn't find anything
+        // ready-made, so for now this will do. Remember the famous quote:
+        // "premature optimization is the root of all evil" :-)
+        convertColorSpace(image.get(), neutral.icm, currWB);
+        ImProcFunctions ipf(&neutral);
+        LabImage tmplab(image->getWidth(), image->getHeight());
+        ipf.rgb2lab(*image, tmplab, neutral.icm.working);
+        image.reset(ipf.lab2rgbOut(&tmplab, 0, 0, tmplab.W, tmplab.H, neutral.icm));
+        target.reset(image->to8());
+    }
     std::unique_ptr<IImage8> source;
     {
+        RawMetaDataLocation rml;
+        eSensorType sensor_type;
+        int w, h;
         std::unique_ptr<Thumbnail> thumb(Thumbnail::loadQuickFromRaw(getFileName(), rml, sensor_type, w, h, 1, false, true));
-        source.reset(thumb->quickProcessImage(neutral, rheight, TI_Nearest));
-    }
-    std::unique_ptr<IImage8> target;
-    if (true) {
-        neutral.icm.working = "RT_sRGB";
-        // faster, but has problems likely due to color space transformations that I do not properly understand...
-        double scale;
-        std::unique_ptr<Thumbnail> thumb(Thumbnail::loadFromRaw(getFileName(), rml, sensor_type, w, h, 1, 0.0, false));
-        target.reset(thumb->processImage(neutral, sensor_type, rheight, TI_Nearest, getMetaData(), scale, false));
-    } else {
-        ProcessingJob *job = ProcessingJob::create(this, neutral, true);
-        int err = 0;
-        std::unique_ptr<IImagefloat> tmp(processImage(job, err, nullptr, false));
-        target.reset(static_cast<Imagefloat *>(tmp.get())->to8());
+        source.reset(thumb->quickProcessImage(neutral, target->getHeight(), TI_Nearest));
     }
     if (target->getWidth() != source->getWidth() || target->getHeight() != source->getHeight()) {
         Image8 *tmp = new Image8(source->getWidth(), source->getHeight());

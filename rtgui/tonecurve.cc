@@ -31,6 +31,7 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
 {
     auto m = ProcEventMapper::getInstance();
     EvHistMatching = m->newEvent(AUTOEXP, "HISTORY_MSG_HISTMATCHING");
+    EvHistMatchingBatch = m->newEvent(M_VOID, "HISTORY_MSG_HISTMATCHING");
 
     CurveListener::setMulti(true);
 
@@ -901,11 +902,15 @@ void ToneCurve::setHistmatching(bool enabled)
 void ToneCurve::histmatchingToggled()
 {
     if (listener) {
-        if (histmatching->get_active()) {
-            listener->panelChanged(EvHistMatching, M("GENERAL_ENABLED"));
-            waitForAutoExp();
+        if (!batchMode) {
+            if (histmatching->get_active()) {
+                listener->panelChanged(EvHistMatching, M("GENERAL_ENABLED"));
+                waitForAutoExp();
+            } else {
+                listener->panelChanged(EvHistMatching, M("GENERAL_DISABLED"));
+            }
         } else {
-            listener->panelChanged(EvHistMatching, M("GENERAL_DISABLED"));
+            listener->panelChanged(EvHistMatchingBatch, histmatching->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
         }
     }
 }
@@ -948,6 +953,7 @@ bool ToneCurve::histmatchingComputed()
         autolevels->set_inconsistent(false);
     }
 
+    histmatching->set_active(false);
     toneCurveMode->set_active(rtengine::toUnderlying(nextToneCurveMode));
     shape->setCurve(nextToneCurve);
     shape2->setCurve({ DCT_Linear });
