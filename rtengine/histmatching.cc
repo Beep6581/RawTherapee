@@ -96,31 +96,35 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
 
     auto coord = [](int v) -> double { return double(v)/255.0; };
     auto doit =
-        [&](int start, int stop, int step) -> void
+        [&](int start, int stop, int step, bool addstart) -> void
         {
             int prev = start;
+            if (addstart) {
+                curve.push_back(coord(start));
+                curve.push_back(coord(mapping[start]));
+            }
             for (int i = start; i < stop; ++i) {
                 int v = mapping[i];
                 bool change = i > 0 && v != mapping[i-1];
                 int diff = i - prev;
                 if (change && std::abs(diff - step) <= 1) {
-                    curve.emplace_back(coord(i));
-                    curve.emplace_back(coord(v));
+                    curve.push_back(coord(i));
+                    curve.push_back(coord(v));
                     prev = i;
                 }
             }
         };
-    doit(0, idx, idx > step ? step : idx / 2);
-    doit(idx, int(mapping.size()), step);
-    if (curve[1] > 0.01) {
-        curve.insert(curve.begin(), 0.0);
-        curve.insert(curve.begin(), 0.0);
-    }
-    if (curve.back() < 0.99 || (1 - curve[curve.size()-2] > step / 512.0 && curve.back() < coord(mapping.back()))) {
+    doit(0, idx, idx > step ? step : idx / 2, true);
+    doit(idx, int(mapping.size()), step, idx - step > step / 2);
+    if (curve.size() <= 2 || curve.back() < 0.99 || (1 - curve[curve.size()-2] > step / 512.0 && curve.back() < coord(mapping.back()))) {
         curve.emplace_back(1.0);
         curve.emplace_back(coord(mapping.back()));
     }
-    curve.insert(curve.begin(), DCT_Spline);
+    if (curve.size() < 4) {
+        curve = { DCT_Linear }; // not enough points, fall back to linear
+    } else {
+        curve.insert(curve.begin(), DCT_Spline);
+    }
 }
 
 } // namespace
@@ -133,6 +137,8 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
     if (settings->verbose) {
         std::cout << "performing histogram matching for " << getFileName() << " on the embedded thumbnail" << std::endl;
     }
+
+    outCurve = { DCT_Linear };
     
     ProcParams neutral;
     std::unique_ptr<IImage8> target;
@@ -168,6 +174,12 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
         eSensorType sensor_type;
         int w, h;
         std::unique_ptr<Thumbnail> thumb(Thumbnail::loadQuickFromRaw(getFileName(), rml, sensor_type, w, h, 1, false, true));
+        if (!thumb) {
+            if (settings->verbose) {
+                std::cout << "histogram matching: no thumbnail found, generating a neutral curve" << std::endl;
+            }
+            return;
+        }
         source.reset(thumb->quickProcessImage(neutral, target->getHeight(), TI_Nearest));
 
         if (settings->verbose) {
@@ -186,7 +198,7 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
     int j = 0;
     for (size_t i = 0; i < tcdf.size(); ++i) {
         j = findMatch(tcdf[i], scdf, j);
-        mapping.emplace_back(j);
+        mapping.push_back(j);
     }
 
     mappingToCurve(mapping, outCurve);
