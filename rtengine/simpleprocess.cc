@@ -739,7 +739,8 @@ private:
             int aehistcompr;
             imgsrc->getAutoExpHistogram (aehist, aehistcompr);
             ipf.getAutoExp (aehist, aehistcompr, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
-        } else if (params.toneCurve.histmatching) {
+        }
+        if (params.toneCurve.histmatching) {
             imgsrc->getAutoMatchedToneCurve(params.toneCurve.curve);
 
             params.toneCurve.histmatching = false;

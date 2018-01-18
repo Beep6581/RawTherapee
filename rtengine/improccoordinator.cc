@@ -445,7 +445,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             if (aeListener)
                 aeListener->autoExpChanged (params.toneCurve.expcomp, params.toneCurve.brightness, params.toneCurve.contrast,
                                             params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.hrenabled);
-        } else if (params.toneCurve.histmatching) {
+        }
+        if (params.toneCurve.histmatching) {
             imgsrc->getAutoMatchedToneCurve(params.toneCurve.curve);
 
             params.toneCurve.histmatching = false;
