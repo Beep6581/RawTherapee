@@ -41,6 +41,7 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+#include "StopWatch.h"
 
 #define TS 64       // Tile size
 #define offset 25   // shift between tiles
@@ -475,6 +476,7 @@ enum nrquality {QUALITY_STANDARD, QUALITY_HIGH};
 
 SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagefloat * dst, Imagefloat * calclum, float * ch_M, float *max_r, float *max_b, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, const NoiseCurve & noiseLCurve, const NoiseCurve & noiseCCurve, float &nresi, float &highresi)
 {
+BENCHFUN
 //#ifdef _DEBUG
     MyTime t1e, t2e;
     t1e.set();
@@ -1782,7 +1784,6 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                 fftwf_destroy_plan(plan_backward_blox[0]);
                 fftwf_destroy_plan(plan_forward_blox[1]);
                 fftwf_destroy_plan(plan_backward_blox[1]);
-                fftwf_cleanup();
             }
         } while (memoryAllocationFailed && numTries < 2 && (options.rgbDenoiseThreadLimit == 0) && !ponder);
 
