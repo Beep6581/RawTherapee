@@ -29,6 +29,7 @@
 #define BENCHMARK
 #include "StopWatch.h"
 #include <iostream>
+#include <iomanip>
 
 
 namespace rtengine {
@@ -139,18 +140,62 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
     }
 
     outCurve = { DCT_Linear };
-    
+
+    int fw, fh;
+    getFullSize(fw, fh, TR_NONE);
+    int skip = 10;
+
+    if (settings->verbose) {
+        std::cout << "histogram matching: full raw image size is " << fw << "x" << fh << std::endl;
+    }
+
     ProcParams neutral;
+    
+    std::unique_ptr<IImage8> source;
+    {
+        RawMetaDataLocation rml;
+        eSensorType sensor_type;
+        int w, h;
+        std::unique_ptr<Thumbnail> thumb(Thumbnail::loadQuickFromRaw(getFileName(), rml, sensor_type, w, h, 1, false, true));
+        if (!thumb) {
+            if (settings->verbose) {
+                std::cout << "histogram matching: no thumbnail found, generating a neutral curve" << std::endl;
+            }
+            return;
+        }
+        source.reset(thumb->quickProcessImage(neutral, fh / skip, TI_Nearest));
+
+        if (settings->verbose) {
+            std::cout << "histogram matching: extracted embedded thumbnail" << std::endl;
+        }
+    }
+    
     std::unique_ptr<IImage8> target;
-    { 
-        int tr = TR_NONE;
-        int fw, fh;
-        getFullSize(fw, fh, tr);
-        int skip = 10;
+    {
+        int tw = source->getWidth(), th = source->getHeight();
+        float thumb_ratio = float(std::max(tw, th)) / float(std::min(tw, th));
+        float target_ratio = float(std::max(fw, fh)) / float(std::min(fw, fh));
+        int cx = 0, cy = 0;
+        if (std::abs(thumb_ratio - target_ratio) > 0.01) {
+            if (thumb_ratio > target_ratio) {
+                // crop the height
+                int ch = fh - (fw * float(th) / float(tw));
+                cy += ch / 2;
+                fh -= ch;
+            } else {
+                // crop the width
+                int cw = fw - (fh * float(tw) / float(th));
+                cx += cw / 2;
+                fw -= cw;
+            }
+            if (settings->verbose) {
+                std::cout << "histogram matching: cropping target to get an aspect ratio of " << std::fixed << std::setprecision(2) << thumb_ratio << ":1, new full size is " << fw << "x" << fh << std::endl;
+            }
+        }
         PreviewProps pp(0, 0, fw, fh, skip);
         ColorTemp currWB = getWB();
         std::unique_ptr<Imagefloat> image(new Imagefloat(int(fw / skip), int(fh / skip)));
-        getImage(currWB, tr, image.get(), pp, neutral.toneCurve, neutral.raw);
+        getImage(currWB, TR_NONE, image.get(), pp, neutral.toneCurve, neutral.raw);
 
         // this could probably be made faster -- ideally we would need to just
         // perform the transformation from camera space to the output space
@@ -166,24 +211,6 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
 
         if (settings->verbose) {
             std::cout << "histogram matching: generated neutral rendering" << std::endl;
-        }
-    }
-    std::unique_ptr<IImage8> source;
-    {
-        RawMetaDataLocation rml;
-        eSensorType sensor_type;
-        int w, h;
-        std::unique_ptr<Thumbnail> thumb(Thumbnail::loadQuickFromRaw(getFileName(), rml, sensor_type, w, h, 1, false, true));
-        if (!thumb) {
-            if (settings->verbose) {
-                std::cout << "histogram matching: no thumbnail found, generating a neutral curve" << std::endl;
-            }
-            return;
-        }
-        source.reset(thumb->quickProcessImage(neutral, target->getHeight(), TI_Nearest));
-
-        if (settings->verbose) {
-            std::cout << "histogram matching: extracted embedded thumbnail" << std::endl;
         }
     }
     if (target->getWidth() != source->getWidth() || target->getHeight() != source->getHeight()) {
