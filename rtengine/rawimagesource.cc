@@ -4737,21 +4737,22 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
         } // end of critical region
     } // end of parallel region
 
+    constexpr float gammaLimit = 32767.f * 65536.f; // Color::gamma overflows when the LUT is accessed with too large values
     for(int i = 0; i < 65536; i++) {
         int idx;
-        idx = CLIP((int)Color::gamma(mult[0] * (i - (cblacksom[0]/*+black_lev[0]*/))));
+        idx = CLIP((int)Color::gamma(std::min(mult[0] * (i - (cblacksom[0]/*+black_lev[0]*/)), gammaLimit)));
         histRedRaw[idx >> 8] += hist[0][i];
 
         if (ri->get_colors() > 1) {
-            idx = CLIP((int)Color::gamma(mult[1] * (i - (cblacksom[1]/*+black_lev[1]*/))));
+            idx = CLIP((int)Color::gamma(std::min(mult[1] * (i - (cblacksom[1]/*+black_lev[1]*/)), gammaLimit)));
             histGreenRaw[idx >> 8] += hist[1][i];
 
             if (fourColours) {
-                idx = CLIP((int)Color::gamma(mult[3] * (i - (cblacksom[3]/*+black_lev[3]*/))));
+                idx = CLIP((int)Color::gamma(std::min(mult[3] * (i - (cblacksom[3]/*+black_lev[3]*/)), gammaLimit)));
                 histGreenRaw[idx >> 8] += hist[3][i];
             }
 
-            idx = CLIP((int)Color::gamma(mult[2] * (i - (cblacksom[2]/*+black_lev[2]*/))));
+            idx = CLIP((int)Color::gamma(std::min(mult[2] * (i - (cblacksom[2]/*+black_lev[2]*/)), gammaLimit)));
             histBlueRaw[idx >> 8] += hist[2][i];
         }
     }
