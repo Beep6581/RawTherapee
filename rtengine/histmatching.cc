@@ -139,6 +139,14 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
         std::cout << "performing histogram matching for " << getFileName() << " on the embedded thumbnail" << std::endl;
     }
 
+    if (!histMatchingCache.empty()) {
+        if (settings->verbose) {
+            std::cout << "tone curve found in cache" << std::endl;
+            outCurve = histMatchingCache;
+            return;
+        }
+    }
+
     outCurve = { DCT_Linear };
 
     int fw, fh;
@@ -161,6 +169,7 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
             if (settings->verbose) {
                 std::cout << "histogram matching: no thumbnail found, generating a neutral curve" << std::endl;
             }
+            histMatchingCache = outCurve;
             return;
         }
         source.reset(thumb->quickProcessImage(neutral, fh / skip, TI_Nearest));
@@ -233,6 +242,8 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
     if (settings->verbose) {
         std::cout << "histogram matching: generated curve with " << outCurve.size()/2 << " control points" << std::endl;
     }
+
+    histMatchingCache = outCurve;
 }
 
 } // namespace rtengine

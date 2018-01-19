@@ -953,7 +953,6 @@ bool ToneCurve::histmatchingComputed()
         autolevels->set_inconsistent(false);
     }
 
-    histmatching->set_active(false);
     toneCurveMode->set_active(rtengine::toUnderlying(nextToneCurveMode));
     shape->setCurve(nextToneCurve);
     shape2->setCurve({ DCT_Linear });

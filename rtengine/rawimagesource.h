@@ -95,6 +95,7 @@ protected:
     float psGreenBrightness[4];
     float psBlueBrightness[4];
 
+    std::vector<double> histMatchingCache;
 
     void hphd_vertical       (float** hpmap, int col_from, int col_to);
     void hphd_horizontal     (float** hpmap, int row_from, int row_to);
