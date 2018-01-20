@@ -102,7 +102,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
     addPanel (colorPanel, whitebalance);
     addPanel (exposurePanel, toneCurve);
     addPanel (colorPanel, vibrance);
-    addPanel (advancedPanel, chmixer);
+    addPanel (colorPanel, chmixer);
     addPanel (colorPanel, blackwhite);
     addPanel (exposurePanel, localContrast);
     addPanel (exposurePanel, shadowshighlights);

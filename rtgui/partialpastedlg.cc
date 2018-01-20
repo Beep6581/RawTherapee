@@ -168,6 +168,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[2]->pack_start (*icm, Gtk::PACK_SHRINK, 2);
     //vboxes[2]->pack_start (*gam, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*vibrance, Gtk::PACK_SHRINK, 2);
+    vboxes[2]->pack_start (*chmixer, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*blackwhite, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*hsveq, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*filmSimulation, Gtk::PACK_SHRINK, 2);
@@ -196,7 +197,6 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     //WAVELET
     vboxes[5]->pack_start (*advanced, Gtk::PACK_SHRINK, 2);
     vboxes[5]->pack_start (*hseps[5], Gtk::PACK_SHRINK, 2);
-    vboxes[5]->pack_start (*chmixer, Gtk::PACK_SHRINK, 2);
     vboxes[5]->pack_start (*retinex, Gtk::PACK_SHRINK, 2);
     vboxes[5]->pack_start (*colorappearance, Gtk::PACK_SHRINK, 2);
     vboxes[5]->pack_start (*wavelet, Gtk::PACK_SHRINK, 2);
@@ -522,13 +522,11 @@ void PartialPasteDlg::advancedToggled ()
 {
 
     ConnectionBlocker waveletBlocker(waveletConn);
-    ConnectionBlocker chmixerBlocker(chmixerConn);
     ConnectionBlocker retinexBlocker(retinexConn);
     ConnectionBlocker colorappearanceBlocker(colorappearanceConn);
 
     advanced->set_inconsistent (false);
     wavelet->set_active (advanced->get_active ());
-    chmixer->set_active (color->get_active ());
     retinex->set_active (basic->get_active ());
     colorappearance->set_active (basic->get_active ());
 }
@@ -538,6 +536,7 @@ void PartialPasteDlg::colorToggled ()
 
     ConnectionBlocker icmBlocker(icmConn);
     ConnectionBlocker vibranceBlocker(vibranceConn);
+    ConnectionBlocker chmixerBlocker(chmixerConn);
     ConnectionBlocker chmixerbwBlocker(chmixerbwConn);
     ConnectionBlocker hsveqBlocker(hsveqConn);
     ConnectionBlocker filmSimulationBlocker(filmSimulationConn);
@@ -550,6 +549,7 @@ void PartialPasteDlg::colorToggled ()
     icm->set_active (color->get_active ());
     //gam->set_active (color->get_active ());
     vibrance->set_active (color->get_active ());
+    chmixer->set_active (color->get_active ());
     blackwhite->set_active (color->get_active ());
     hsveq->set_active (color->get_active ());
     filmSimulation->set_active (color->get_active ());
