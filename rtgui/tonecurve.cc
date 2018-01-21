@@ -936,7 +936,6 @@ bool ToneCurve::histmatchingComputed()
     GThreadLock lock;
     disableListener();
     enableAll();
-    expcomp->setValue(0);
     brightness->setValue(0);
     contrast->setValue(0);
     black->setValue(0);
@@ -947,6 +946,7 @@ bool ToneCurve::histmatchingComputed()
     }
 
     if (autolevels->get_active() ) {
+        expcomp->setValue(0);
         autoconn.block(true);
         autolevels->set_active(false);
         autoconn.block(false);
