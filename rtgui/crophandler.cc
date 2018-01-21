@@ -427,11 +427,11 @@ bool CropHandler::getWindow (int& cwx, int& cwy, int& cww, int& cwh, int& cskip)
     cwh = cropH;
 
     // hack: if called before first size allocation the size will be 0
-    if (cww < 10) {
+    if (cww == 0) {
         cww = 10;
     }
 
-    if (cwh < 32) {
+    if (cwh == 0) {
         cwh = 32;
     }
 

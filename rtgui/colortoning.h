@@ -53,6 +53,8 @@ public:
     void setListener(ToolPanelListener *tpl);
     
 private:
+    bool resetPressed(GdkEventButton* event);
+
     //Gtk::HSeparator* satLimiterSep;
     Gtk::HSeparator* colorSep;
     CurveEditorGroup* colorCurveEditorG;

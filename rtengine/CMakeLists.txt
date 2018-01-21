@@ -116,6 +116,7 @@ set(RTENGINESOURCEFILES
     rtlensfun.cc
     tmo_fattal02.cc
     iplocalcontrast.cc
+    histmatching.cc
     )
 
 if(LENSFUN_HAS_LOAD_DIRECTORY)

@@ -12,10 +12,8 @@
 
 #include <assert.h>
 #include <stdint.h>
-//#include <math.h>
 #include "rt_math.h"
-//#include <bits/nan.h>
-//#include <bits/inf.h>
+#include "opthelper.h"
 
 #define PI4_A .7853981554508209228515625
 #define PI4_B .794662735614792836713604629039764404296875e-8
@@ -1005,6 +1003,10 @@ __inline float xsinf(float d) {
 }
 
 __inline float xcosf(float d) {
+#ifdef __SSE2__
+  // faster than scalar version
+  return xcosf(_mm_set_ss(d))[0];
+#else
   int q;
   float u, s;
 
@@ -1027,9 +1029,15 @@ __inline float xcosf(float d) {
   u = mlaf(s, u * d, d);
 
   return u;
+#endif
 }
 
 __inline float2 xsincosf(float d) {
+#ifdef __SSE2__
+  // faster than scalar version
+    vfloat2 res = xsincosf(_mm_set_ss(d));
+    return {res.x[0], res.y[0]};
+#else
   int q;
   float u, s, t;
   float2 r;
@@ -1069,6 +1077,7 @@ __inline float2 xsincosf(float d) {
   if (xisinff(d)) { r.x = r.y = rtengine::RT_NAN_F; }
 
   return r;
+#endif
 }
 
 __inline float xtanf(float d) {

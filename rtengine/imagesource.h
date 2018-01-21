@@ -138,6 +138,13 @@ public:
         histGreenRaw.clear();
         histBlueRaw.clear(); // only some sources will supply this
     }
+
+    // for RAW files, compute a tone curve using histogram matching on the embedded thumbnail
+    virtual void getAutoMatchedToneCurve(std::vector<double> &outCurve)
+    {
+        outCurve = { 0.0 };
+    }
+    
     double getDirPyrDenoiseExpComp ( )
     {
         return dirpyrdenoiseExpComp;

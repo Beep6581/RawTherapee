@@ -327,7 +327,8 @@ ToneCurveParams::ToneCurveParams() :
     saturation(0),
     shcompr(50),
     hlcompr(0),
-    hlcomprthresh(33)
+    hlcomprthresh(33),
+    histmatching(false)
 {
 }
 
@@ -349,28 +350,13 @@ bool ToneCurveParams::operator ==(const ToneCurveParams& other) const
         && saturation == other.saturation
         && shcompr == other.shcompr
         && hlcompr == other.hlcompr
-        && hlcomprthresh == other.hlcomprthresh;
+        && hlcomprthresh == other.hlcomprthresh
+        && histmatching == other.histmatching;
 }
 
 bool ToneCurveParams::operator !=(const ToneCurveParams& other) const
 {
     return !(*this == other);
-}
-
-bool ToneCurveParams::HLReconstructionNecessary(const LUTu& histRedRaw, const LUTu& histGreenRaw, const LUTu& histBlueRaw)
-{
-    if (options.rtSettings.verbose) {
-        printf("histRedRaw[  0]=%07d, histGreenRaw[  0]=%07d, histBlueRaw[  0]=%07d\nhistRedRaw[255]=%07d, histGreenRaw[255]=%07d, histBlueRaw[255]=%07d\n",
-                histRedRaw[0], histGreenRaw[0], histBlueRaw[0], histRedRaw[255], histGreenRaw[255], histBlueRaw[255]);
-    }
-
-    return
-        histRedRaw[255] > 50
-        || histGreenRaw[255] > 50
-        || histBlueRaw[255] > 50
-        || histRedRaw[0] > 50
-        || histGreenRaw[0] > 50
-        || histBlueRaw[0] > 50;
 }
 
 RetinexParams::RetinexParams() :
@@ -2772,6 +2758,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->toneCurve.hlcompr, "Exposure", "HighlightCompr", toneCurve.hlcompr, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.hlcomprthresh, "Exposure", "HighlightComprThreshold", toneCurve.hlcomprthresh, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.shcompr, "Exposure", "ShadowCompr", toneCurve.shcompr, keyFile);
+        saveToKeyfile(!pedited || pedited->toneCurve.histmatching, "Exposure", "HistogramMatching", toneCurve.histmatching, keyFile);
 
 // Highlight recovery
         saveToKeyfile(!pedited || pedited->toneCurve.hrenabled, "HLRecovery", "Enabled", toneCurve.hrenabled, keyFile);
@@ -3551,6 +3538,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Exposure", "Curve", pedited, toneCurve.curve, pedited->toneCurve.curve);
                 assignFromKeyfile(keyFile, "Exposure", "Curve2", pedited, toneCurve.curve2, pedited->toneCurve.curve2);
             }
+            assignFromKeyfile(keyFile, "Exposure", "HistogramMatching", pedited, toneCurve.histmatching, pedited->toneCurve.histmatching);
         }
 
         if (keyFile.has_group ("HLRecovery")) {

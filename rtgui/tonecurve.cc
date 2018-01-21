@@ -22,12 +22,16 @@
 #include <iomanip>
 #include "ppversion.h"
 #include "edit.h"
+#include "eventmapper.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
 ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LABEL"))
 {
+    auto m = ProcEventMapper::getInstance();
+    EvHistMatching = m->newEvent(AUTOEXP, "HISTORY_MSG_HISTMATCHING");
+    EvHistMatchingBatch = m->newEvent(M_VOID, "HISTORY_MSG_HISTMATCHING");
 
     CurveListener::setMulti(true);
 
@@ -121,6 +125,11 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
 
 //----------- Curve 1 ------------------------------
     pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+
+    histmatching = Gtk::manage(new Gtk::ToggleButton(M("TP_EXPOSURE_HISTMATCHING")));
+    histmatching->set_tooltip_markup(M("TP_EXPOSURE_HISTMATCHING_TOOLTIP"));
+    histmatchconn = histmatching->signal_toggled().connect(sigc::mem_fun(*this, &ToneCurve::histmatchingToggled));
+    pack_start(*histmatching, true, true, 2);
 
     toneCurveMode = Gtk::manage (new MyComboBoxText ());
     toneCurveMode->append (M("TP_EXPOSURE_TCMODE_STANDARD"));
@@ -226,6 +235,8 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
     toneCurveMode->set_active(rtengine::toUnderlying(pp->toneCurve.curveMode));
     toneCurveMode2->set_active(rtengine::toUnderlying(pp->toneCurve.curveMode2));
 
+    histmatching->set_active(pp->toneCurve.histmatching);
+
     if (pedited) {
         expcomp->setEditedState (pedited->toneCurve.expcomp ? Edited : UnEdited);
         black->setEditedState (pedited->toneCurve.black ? Edited : UnEdited);
@@ -248,6 +259,8 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
         if (!pedited->toneCurve.curveMode2) {
             toneCurveMode2->set_active(6);
         }
+
+        histmatching->set_inconsistent(!pedited->toneCurve.histmatching);
     }
 
     enaconn.block (true);
@@ -343,6 +356,8 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited)
         pp->toneCurve.curveMode2 = ToneCurveParams::TcMode::PERCEPTUAL;
     }
 
+    pp->toneCurve.histmatching = histmatching->get_active();
+
     if (pedited) {
         pedited->toneCurve.expcomp    = expcomp->getEditedState ();
         pedited->toneCurve.black      = black->getEditedState ();
@@ -360,6 +375,7 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->toneCurve.curveMode2 = toneCurveMode2->get_active_row_number() != 6;
         pedited->toneCurve.method     = method->get_active_row_number() != 4;
         pedited->toneCurve.hrenabled  = !hrenabled->get_inconsistent();
+        pedited->toneCurve.histmatching = !histmatching->get_inconsistent();
     }
 
     pp->toneCurve.hrenabled = hrenabled->get_active();
@@ -408,6 +424,8 @@ void ToneCurve::hrenabledChanged ()
             autolevels->set_inconsistent (false);
         }
 
+        setHistmatching(false);
+
         if (hrenabled->get_active ()) {
             listener->panelChanged (EvHREnabled, M("GENERAL_ENABLED"));
         } else {
@@ -419,6 +437,7 @@ void ToneCurve::methodChanged ()
 {
 
     if (listener) {
+        setHistmatching(false);
         if (hrenabled->get_active ()) {
             listener->panelChanged (EvHRMethod, method->get_active_text ());
         }
@@ -430,6 +449,7 @@ void ToneCurve::setRaw (bool raw)
     disableListener ();
     method->set_sensitive (raw);
     hrenabled->set_sensitive (raw);
+    histmatching->set_sensitive(raw);
     enableListener ();
 }
 
@@ -471,6 +491,7 @@ void ToneCurve::curveChanged (CurveEditor* ce)
 {
 
     if (listener) {
+        setHistmatching(false);
         if (ce == shape) {
             listener->panelChanged (EvToneCurve1, M("HISTORY_CUSTOMCURVE"));
         } else if (ce == shape2) {
@@ -483,6 +504,7 @@ void ToneCurve::curveMode1Changed ()
 {
     //if (listener)  listener->panelChanged (EvToneCurveMode, toneCurveMode->get_active_text());
     if (listener) {
+        setHistmatching(false);
         Glib::signal_idle().connect (sigc::mem_fun(*this, &ToneCurve::curveMode1Changed_));
     }
 }
@@ -500,6 +522,7 @@ void ToneCurve::curveMode2Changed ()
 {
     //if (listener)  listener->panelChanged (EvToneCurveMode, toneCurveMode->get_active_text());
     if (listener) {
+        setHistmatching(false);
         Glib::signal_idle().connect (sigc::mem_fun(*this, &ToneCurve::curveMode2Changed_));
     }
 }
@@ -544,6 +567,10 @@ void ToneCurve::adjusterChanged (Adjuster* a, double newval)
         return;
     }
 
+    if (a != expcomp && a != hlcompr && a != hlcomprthresh) {
+        setHistmatching(false);
+    }
+    
     Glib::ustring costr;
 
     if (a == expcomp) {
@@ -580,6 +607,8 @@ void ToneCurve::neutral_pressed ()
 // This method deselects auto levels and HL reconstruction auto
 // and sets neutral values to params in exposure panel
 
+    setHistmatching(false);
+    
     if (batchMode) {
         autolevels->set_inconsistent (false);
         autoconn.block (true);
@@ -617,6 +646,7 @@ void ToneCurve::neutral_pressed ()
 }
 void ToneCurve::autolevels_toggled ()
 {
+    setHistmatching(false);
 
     if (batchMode) {
         if (autolevels->get_inconsistent()) {
@@ -727,6 +757,7 @@ void ToneCurve::waitForAutoExp ()
     toneCurveMode2->set_sensitive (false);
     hrenabled->set_sensitive(false);
     method->set_sensitive(false);
+    histmatching->set_sensitive(false);
 }
 
 void ToneCurve::autoExpChanged (double expcomp, int bright, int contr, int black, int hlcompr, int hlcomprthresh, bool hlrecons)
@@ -766,6 +797,7 @@ void ToneCurve::enableAll ()
     toneCurveMode2->set_sensitive (true);
     hrenabled->set_sensitive(true);
     method->set_sensitive(true);
+    histmatching->set_sensitive(true);
 }
 
 bool ToneCurve::autoExpComputed_ ()
@@ -857,4 +889,80 @@ void ToneCurve::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & his
 {
 
     shape->updateBackgroundHistogram (histToneCurve);
+}
+
+
+void ToneCurve::setHistmatching(bool enabled)
+{
+    if (histmatching->get_active()) {
+        histmatchconn.block(true);
+        histmatching->set_active(enabled);
+        histmatchconn.block(false);
+        histmatching->set_inconsistent(false);
+    }
+}
+
+
+void ToneCurve::histmatchingToggled()
+{
+    if (listener) {
+        if (!batchMode) {
+            if (histmatching->get_active()) {
+                listener->panelChanged(EvHistMatching, M("GENERAL_ENABLED"));
+                waitForAutoExp();
+            } else {
+                listener->panelChanged(EvHistMatching, M("GENERAL_DISABLED"));
+            }
+        } else {
+            listener->panelChanged(EvHistMatchingBatch, histmatching->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        }
+    }
+}
+
+
+void ToneCurve::autoMatchedToneCurveChanged(rtengine::procparams::ToneCurveParams::TcMode curveMode, const std::vector<double> &curve)
+{
+    nextToneCurveMode = curveMode;
+    nextToneCurve = curve;
+
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<ToneCurve*>(data)->histmatchingComputed();
+
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
+}
+
+
+bool ToneCurve::histmatchingComputed()
+{
+    GThreadLock lock;
+    disableListener();
+    enableAll();
+    brightness->setValue(0);
+    contrast->setValue(0);
+    black->setValue(0);
+    hlcompr->setValue(0);
+
+    if (!black->getAddMode()) {
+        shcompr->set_sensitive(!((int)black->getValue() == 0));
+    }
+
+    if (autolevels->get_active() ) {
+        expcomp->setValue(0);
+        autoconn.block(true);
+        autolevels->set_active(false);
+        autoconn.block(false);
+        autolevels->set_inconsistent(false);
+    }
+
+    toneCurveMode->set_active(rtengine::toUnderlying(nextToneCurveMode));
+    shape->setCurve(nextToneCurve);
+    shape2->setCurve({ DCT_Linear });
+    shape->openIfNonlinear();
+
+    enableListener();
+
+    return false;
 }

@@ -208,11 +208,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         imgsrc->preprocess ( rp, params.lensProf, params.coarse );
         imgsrc->getRAWHistogram ( histRedRaw, histGreenRaw, histBlueRaw );
 
-        if (highDetailNeeded) {
-            highDetailPreprocessComputed = true;
-        } else {
-            highDetailPreprocessComputed = false;
-        }
+        highDetailPreprocessComputed = highDetailNeeded;
     }
 
     /*
@@ -275,21 +271,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
         if (dehaListener) {
             dehaListener->minmaxChanged (maxCD, minCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
-        }
-    }
-
-
-    // Updating toneCurve.hrenabled if necessary
-    // It has to be done there, because the next 'if' statement will use the value computed here
-    if (todo & M_AUTOEXP) {
-        if (params.toneCurve.autoexp) {// this enabled HLRecovery
-            if (ToneCurveParams::HLReconstructionNecessary (histRedRaw, histGreenRaw, histBlueRaw) && !params.toneCurve.hrenabled) {
-                // switching params.toneCurve.hrenabled to true -> shouting in listener's ears!
-                params.toneCurve.hrenabled = true;
-
-                // forcing INIT to be done, to reconstruct HL again
-                todo |= M_INIT;
-            }
         }
     }
 
@@ -473,6 +454,24 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             if (aeListener)
                 aeListener->autoExpChanged (params.toneCurve.expcomp, params.toneCurve.brightness, params.toneCurve.contrast,
                                             params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.hrenabled);
+        }
+        if (params.toneCurve.histmatching) {
+            imgsrc->getAutoMatchedToneCurve(params.toneCurve.curve);
+
+            if (params.toneCurve.autoexp) {
+                params.toneCurve.expcomp = 0.0;
+            }
+
+            params.toneCurve.autoexp = false;
+            params.toneCurve.curveMode = ToneCurveParams::TcMode::FILMLIKE;
+            params.toneCurve.curve2 = { 0 };
+            params.toneCurve.brightness = 0;
+            params.toneCurve.contrast = 0;
+            params.toneCurve.black = 0;
+
+            if (aeListener) {
+                aeListener->autoMatchedToneCurveChanged(params.toneCurve.curveMode, params.toneCurve.curve);
+            }
         }
     }
 

@@ -57,14 +57,19 @@ protected:
     Adjuster* saturation;
     MyComboBoxText* toneCurveMode;
     MyComboBoxText* toneCurveMode2;
+    Gtk::ToggleButton *histmatching;
 
     bool clipDirty, lastAuto;
     sigc::connection autoconn, neutralconn, tcmodeconn, tcmode2conn;
+    sigc::connection histmatchconn;
     CurveEditorGroup* curveEditorG;
     CurveEditorGroup* curveEditorG2;
     DiagonalCurveEditor* shape;
     DiagonalCurveEditor* shape2;
 
+    rtengine::ProcEvent EvHistMatching;
+    rtengine::ProcEvent EvHistMatchingBatch;
+    
     // used temporarily in eventing
     double nextExpcomp;
     int nextBrightness;
@@ -73,6 +78,10 @@ protected:
     int nextHlcompr;
     int nextHlcomprthresh;
     bool nextHLRecons;
+    rtengine::procparams::ToneCurveParams::TcMode nextToneCurveMode;
+    std::vector<double> nextToneCurve;
+
+    void setHistmatching(bool enabled);
 
 public:
     ToneCurve ();
@@ -106,6 +115,10 @@ public:
     void expandCurve (bool isExpanded);
     bool isCurveExpanded ();
     void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM, LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI);
+
+    void histmatchingToggled();
+    void autoMatchedToneCurveChanged(rtengine::procparams::ToneCurveParams::TcMode curveMode, const std::vector<double> &curve);
+    bool histmatchingComputed();
 
     void setRaw (bool raw);
 

@@ -202,16 +202,6 @@ private:
         imgsrc->setCurrentFrame (params.raw.bayersensor.imageNum);
         imgsrc->preprocess ( params.raw, params.lensProf, params.coarse, params.dirpyrDenoise.enabled);
 
-        if (params.toneCurve.autoexp) {// this enabled HLRecovery
-            LUTu histRedRaw (256), histGreenRaw (256), histBlueRaw (256);
-            imgsrc->getRAWHistogram (histRedRaw, histGreenRaw, histBlueRaw);
-
-            if (ToneCurveParams::HLReconstructionNecessary (histRedRaw, histGreenRaw, histBlueRaw) && !params.toneCurve.hrenabled) {
-                params.toneCurve.hrenabled = true;
-                // WARNING: Highlight Reconstruction is being forced 'on', should we force a method here too?
-            }
-        }
-
         if (pl) {
             pl->setProgress (0.20);
         }
@@ -752,6 +742,21 @@ private:
             imgsrc->getAutoExpHistogram (aehist, aehistcompr);
             ipf.getAutoExp (aehist, aehistcompr, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
         }
+        if (params.toneCurve.histmatching) {
+            imgsrc->getAutoMatchedToneCurve(params.toneCurve.curve);
+
+            if (params.toneCurve.autoexp) {
+                params.toneCurve.expcomp = 0.0;
+            }
+
+            params.toneCurve.autoexp = false;
+            params.toneCurve.curveMode = ToneCurveParams::TcMode::FILMLIKE;
+            params.toneCurve.curve2 = { 0 };
+            params.toneCurve.brightness = 0;
+            params.toneCurve.contrast = 0;
+            params.toneCurve.black = 0;
+
+        }        
 
         // at this stage, we can flush the raw data to free up quite an important amount of memory
         // commented out because it makes the application crash when batch processing...
