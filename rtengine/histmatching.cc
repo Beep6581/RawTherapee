@@ -119,7 +119,7 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
     doit(idx, int(mapping.size()), step, idx - step > step / 2);
     if (curve.size() <= 2 || curve.back() < 0.99 || (1 - curve[curve.size()-2] > step / 512.0 && curve.back() < coord(mapping.back()))) {
         curve.emplace_back(1.0);
-        curve.emplace_back(coord(mapping.back()));
+        curve.emplace_back(1.0);
     }
     if (curve.size() < 4) {
         curve = { DCT_Linear }; // not enough points, fall back to linear
