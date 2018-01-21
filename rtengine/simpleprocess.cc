@@ -753,7 +753,6 @@ private:
             params.toneCurve.brightness = 0;
             params.toneCurve.contrast = 0;
             params.toneCurve.black = 0;
-            params.toneCurve.hlcompr = 0;
 
         }        
 

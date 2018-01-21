@@ -567,7 +567,9 @@ void ToneCurve::adjusterChanged (Adjuster* a, double newval)
         return;
     }
 
-    setHistmatching(false);
+    if (a != expcomp && a != hlcompr && a != hlcomprthresh) {
+        setHistmatching(false);
+    }
     
     Glib::ustring costr;
 
