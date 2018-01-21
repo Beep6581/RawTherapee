@@ -127,6 +127,7 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
     pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
     histmatching = Gtk::manage(new Gtk::ToggleButton(M("TP_EXPOSURE_HISTMATCHING")));
+    histmatching->set_tooltip_markup(M("TP_EXPOSURE_HISTMATCHING_TOOLTIP"));
     histmatchconn = histmatching->signal_toggled().connect(sigc::mem_fun(*this, &ToneCurve::histmatchingToggled));
     pack_start(*histmatching, true, true, 2);
 
@@ -448,6 +449,7 @@ void ToneCurve::setRaw (bool raw)
     disableListener ();
     method->set_sensitive (raw);
     hrenabled->set_sensitive (raw);
+    histmatching->set_sensitive(raw);
     enableListener ();
 }
 
