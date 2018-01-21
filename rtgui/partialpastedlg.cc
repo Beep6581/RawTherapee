@@ -43,8 +43,8 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     meta        ->set_name("PartialPasteHeader");
     raw         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWGROUP")));
     raw         ->set_name("PartialPasteHeader");
-    wav         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_WAVELETGROUP")));
-    wav         ->set_name("PartialPasteHeader");
+    advanced         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_ADVANCEDGROUP")));
+    advanced         ->set_name("PartialPasteHeader");
 
     // options in basic:
     wb          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_WHITEBALANCE")));
@@ -147,11 +147,9 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[0]->pack_start (*sh, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*epd, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*fattal, Gtk::PACK_SHRINK, 2);
-    vboxes[0]->pack_start (*retinex, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*pcvignette, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*gradient, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*labcurve, Gtk::PACK_SHRINK, 2);
-    vboxes[0]->pack_start (*colorappearance, Gtk::PACK_SHRINK, 2);
 
     //DETAIL
     vboxes[1]->pack_start (*detail, Gtk::PACK_SHRINK, 2);
@@ -197,8 +195,10 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[4]->pack_start (*commonTrans, Gtk::PACK_SHRINK, 2);
 
     //WAVELET
-    vboxes[5]->pack_start (*wav, Gtk::PACK_SHRINK, 2);
+    vboxes[5]->pack_start (*advanced, Gtk::PACK_SHRINK, 2);
     vboxes[5]->pack_start (*hseps[5], Gtk::PACK_SHRINK, 2);
+    vboxes[5]->pack_start (*retinex, Gtk::PACK_SHRINK, 2);
+    vboxes[5]->pack_start (*colorappearance, Gtk::PACK_SHRINK, 2);
     vboxes[5]->pack_start (*wavelet, Gtk::PACK_SHRINK, 2);
 
     //RAW
@@ -296,7 +296,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     compositionConn = composition->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::compositionToggled));
     metaConn        = meta->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::metaToggled));
     rawConn         = raw->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::rawToggled));
-    wavConn         = wav->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::wavToggled));
+    advancedConn         = advanced->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::advancedToggled));
 
     wbConn          = wb->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     exposureConn    = exposure->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
@@ -318,7 +318,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     dirpyreqConn    = dirpyreq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     defringeConn    = defringe->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
 
-    waveletConn = wavelet->signal_toggled().connect (sigc::bind (sigc::mem_fun(*wav, &Gtk::CheckButton::set_inconsistent), true));
+    waveletConn = wavelet->signal_toggled().connect (sigc::bind (sigc::mem_fun(*advanced, &Gtk::CheckButton::set_inconsistent), true));
 
     icmConn         = icm->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
     //gamcsconn      = gam->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
@@ -389,7 +389,7 @@ void PartialPasteDlg::everythingToggled ()
     ConnectionBlocker compositionBlocker(compositionConn);
     ConnectionBlocker metaBlocker(metaConn);
     ConnectionBlocker rawBlocker(rawConn);
-    ConnectionBlocker wavBlocker(wavConn);
+    ConnectionBlocker advancedBlocker(advancedConn);
 
     everything->set_inconsistent (false);
 
@@ -401,7 +401,7 @@ void PartialPasteDlg::everythingToggled ()
     composition->set_active(everything->get_active());
     meta->set_active(everything->get_active());
     raw->set_active(everything->get_active());
-    wav->set_active(everything->get_active());
+    advanced->set_active(everything->get_active());
 
     //toggle group children
     PartialPasteDlg::basicToggled ();
@@ -411,7 +411,7 @@ void PartialPasteDlg::everythingToggled ()
     PartialPasteDlg::compositionToggled ();
     PartialPasteDlg::metaToggled ();
     PartialPasteDlg::rawToggled ();
-    PartialPasteDlg::wavToggled ();
+    PartialPasteDlg::advancedToggled ();
 }
 
 void PartialPasteDlg::rawToggled ()
@@ -481,9 +481,7 @@ void PartialPasteDlg::basicToggled ()
     ConnectionBlocker fattalBlocker(fattalConn);
     ConnectionBlocker pcvignetteBlocker(pcvignetteConn);
     ConnectionBlocker gradientBlocker(gradientConn);
-    ConnectionBlocker retinexBlocker(retinexConn);
     ConnectionBlocker labcurveBlocker(labcurveConn);
-    ConnectionBlocker colorappearanceBlocker(colorappearanceConn);
 
     basic->set_inconsistent (false);
 
@@ -495,9 +493,7 @@ void PartialPasteDlg::basicToggled ()
     fattal->set_active (basic->get_active ());
     pcvignette->set_active (basic->get_active ());
     gradient->set_active (basic->get_active ());
-    retinex->set_active (basic->get_active ());
     labcurve->set_active (basic->get_active ());
-    colorappearance->set_active (basic->get_active ());
 }
 
 void PartialPasteDlg::detailToggled ()
@@ -522,13 +518,17 @@ void PartialPasteDlg::detailToggled ()
     dirpyreq->set_active (detail->get_active ());
 }
 
-void PartialPasteDlg::wavToggled ()
+void PartialPasteDlg::advancedToggled ()
 {
 
     ConnectionBlocker waveletBlocker(waveletConn);
+    ConnectionBlocker retinexBlocker(retinexConn);
+    ConnectionBlocker colorappearanceBlocker(colorappearanceConn);
 
-    wav->set_inconsistent (false);
-    wavelet->set_active (wav->get_active ());
+    advanced->set_inconsistent (false);
+    wavelet->set_active (advanced->get_active ());
+    retinex->set_active (basic->get_active ());
+    colorappearance->set_active (basic->get_active ());
 }
 
 void PartialPasteDlg::colorToggled ()
