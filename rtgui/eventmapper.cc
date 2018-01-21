@@ -39,15 +39,27 @@ ProcEventMapper *ProcEventMapper::getInstance()
 rtengine::ProcEvent ProcEventMapper::newEvent(int action, const std::string &history_msg)
 {
     rtengine::ProcEvent event = rtengine::RefreshMapper::getInstance()->newEvent();
-    rtengine::RefreshMapper::getInstance()->mapEvent(event, action);    
+    rtengine::RefreshMapper::getInstance()->mapEvent(event, action);
 
     if (history_msg.empty()) {
         history_msgs_[event] = "HISTORY_MSG_" + std::to_string(event + 1);
     } else {
         history_msgs_[event] = history_msg;
     }
-    
+
     return event;
+}
+
+
+void ProcEventMapper::remapEvent(rtengine::ProcEvent event, int action, const std::string &history_msg)
+{
+    rtengine::RefreshMapper::getInstance()->mapEvent(event, action);
+
+    if (history_msg.empty()) {
+        history_msgs_[event] = "HISTORY_MSG_" + std::to_string(event + 1);
+    } else {
+        history_msgs_[event] = history_msg;
+    }
 }
 
 

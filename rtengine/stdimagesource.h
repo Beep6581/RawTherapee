@@ -43,6 +43,7 @@ public:
     ~StdImageSource ();
 
     int         load        (const Glib::ustring &fname, RAWParams *raw = nullptr);
+    int         reload      (RAWParams *raw, bool noRotate) { return 0; }
     void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw);
 
     ColorTemp   getWB       () const

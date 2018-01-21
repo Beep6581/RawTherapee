@@ -19,6 +19,8 @@
 #include "rawcrop.h"
 #include "options.h"
 #include "rtimage.h"
+#include "eventmapper.h"
+#include "../rtengine/refreshmap.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -124,6 +126,13 @@ RawCrop::RawCrop():
     yconn = y->signal_value_changed().connect ( std::bind(sigc::mem_fun(*this, &RawCrop::spinChanged), y), true);
     wconn = w->signal_value_changed().connect ( std::bind(sigc::mem_fun(*this, &RawCrop::spinChanged), w), true);
     hconn = h->signal_value_changed().connect ( std::bind(sigc::mem_fun(*this, &RawCrop::spinChanged), h), true);
+
+    // ---------------- ProcEvents -------------
+
+    auto m = ProcEventMapper::getInstance();
+    EvRawCropEnabled = m->newEvent(RAWCROP, "TP_RAW_CROP_LABEL");
+    EvRawCropDims = m->newEvent(RAWCROP, "HISTORY_MSG_RAW_CROP_DIM");
+    EvRawCropDimsOPA = m->newEvent(MINUPDATE, "");
 
     // ---------------- On preview geometry -------------
 
@@ -292,13 +301,11 @@ void RawCrop::trim (ProcParams* pp, int ow, int oh)
     }
 }
 
-bool RawCrop::inImageArea (int x, int y)
-{
-    return x >= 0 && x < maxw && y >= 0 && y < maxh;
-}
-
 void RawCrop::enabledChanged ()
 {
+
+    auto m = ProcEventMapper::getInstance();
+    m->remapEvent(EvRawCropEnabled, edit->get_active() ? RAWCROP|M_MODE_RAWCROPADJUST : RAWCROP, "TP_RAW_CROP_LABEL");
 
     if (listener) {
         if (get_inconsistent()) {
@@ -390,10 +397,20 @@ void RawCrop::setEditProvider (EditDataProvider* provider)
 
 void RawCrop::editToggled ()
 {
-    if (edit->get_active()) {
-        subscribe();
-    } else {
-        unsubscribe();
+    if (listener) {
+        auto m = ProcEventMapper::getInstance();
+        m->remapEvent(EvRawCropDims, edit->get_active() ? RAWCROP|M_MODE_RAWCROPADJUST : RAWCROP, "HISTORY_MSG_RAW_CROP_DIM");
+        m->remapEvent(EvRawCropDimsOPA, edit->get_active() ? MINUPDATE|M_MODE_RAWCROPADJUST : MINUPDATE, "");
+
+        if (edit->get_active()) {
+            // this will refresh the preview with RawCrop disabled
+            listener->refreshPreview(EvRawCropDimsOPA);
+            subscribe();
+        } else {
+            // this will refresh the preview with RawCrop enabled, if active
+            unsubscribe();
+            listener->refreshPreview(EvRawCropDims);
+        }
     }
 }
 
@@ -577,46 +594,42 @@ bool RawCrop::mouseOver(const int modifierKey)
     EditDataProvider* editProvider = getEditProvider();
     LitArea lastLitArea = litArea;
 
+
     int x_ = x->get_value_as_int();
     int y_ = y->get_value_as_int();
     int w_ = w->get_value_as_int();
     int h_ = h->get_value_as_int();
     int imgWidth = -1, imgHeight = -1;
 
-    if (editProvider) {
+    if (!(modifierKey & GDK_CONTROL_MASK)) {
+        litArea = LitArea::none;
+        if (editProvider) {
+            editProvider->getImageSize(imgWidth, imgHeight);
+        }
+    } else if (editProvider) {
         editProvider->getImageSize(imgWidth, imgHeight);
         int cornerW = w_ / 5;
         int cornerH = h_ / 5;
 
         if (inArea(0, 0, x_ + cornerW, y_ + cornerH, editProvider->posImage)) {
-//            printf("Area: %d,%d to %d,%d / %d,%d\n", 0, 0, x_ + cornerW, y_ + cornerH, editProvider->posImage.x, editProvider->posImage.y);
             litArea = LitArea::topLeft;
         } else if (inArea(x_ + cornerW, 0, x_ + w_ - cornerW, y_ + cornerH, editProvider->posImage)) {
-//            printf("Area: %d,%d to %d,%d / %d,%d\n", x_ + cornerW, 0, x_ + w_ - cornerW, y_ + cornerH, editProvider->posImage.x, editProvider->posImage.y);
             litArea = LitArea::top;
         } else if (inArea(x_ + w_ - cornerW, 0, imgWidth, y_ + cornerH, editProvider->posImage)) {
-//            printf("Area: %d,%d to %d,%d / %d,%d\n", x_ + w_ - cornerW, 0, imgWidth, y_ + cornerH, editProvider->posImage.x, editProvider->posImage.y);
             litArea = LitArea::topRight;
         } else if (inArea(0, y_ + cornerH, x_ + cornerW, y_ + h_ - cornerH, editProvider->posImage)) {
-//            printf("Area: %d,%d to %d,%d / %d,%d\n", 0, y_ + cornerH, x_ + cornerW, y_ + h_ - cornerH, editProvider->posImage.x, editProvider->posImage.y);
             litArea = LitArea::left;
         } else if (inArea(x_ + cornerW, y_ + cornerH, x_ + w_ - cornerW, y_ + h_ - cornerH, editProvider->posImage)) {
-//            printf("Area: %d,%d to %d,%d / %d,%d\n", x_ + cornerW, y_ + cornerW, x_ + w_ - cornerW, y_ + h_ - cornerH, editProvider->posImage.x, editProvider->posImage.y);
             litArea = LitArea::center;
         } else if (inArea(x_ + w_ - cornerW, y_ + cornerH, imgWidth, y_ + h_ - cornerH, editProvider->posImage)) {
-//            printf("Area: %d,%d to %d,%d / %d,%d\n", x_ + w_ - cornerW, y_ + cornerH, imgWidth, y_ + h_ - cornerH, editProvider->posImage.x, editProvider->posImage.y);
             litArea = LitArea::right;
         } else if (inArea(0, y_ - cornerH, x_ + cornerW, imgHeight, editProvider->posImage)) {
-//            printf("Area: %d,%d to %d,%d / %d,%d\n", 0, y_ - cornerH, x_ + cornerW, imgHeight, editProvider->posImage.x, editProvider->posImage.y);
             litArea = LitArea::bottomLeft;
         } else if (inArea(x_ + cornerW, y_ - cornerH, x_ + w_ - cornerW, imgHeight, editProvider->posImage)) {
-//            printf("Area: %d,%d to %d,%d / %d,%d\n", x_ + cornerW, y_ - cornerH, x_ + w_ - cornerW, imgHeight, editProvider->posImage.x, editProvider->posImage.y);
             litArea = LitArea::bottom;
         } else if (inArea(x_ + w_ - cornerW, y_ - cornerH, imgWidth, imgHeight, editProvider->posImage)) {
-//            printf("Area: %d,%d to %d,%d / %d,%d\n", x_ + w_ - cornerW, y_ - cornerH, imgWidth, imgHeight, editProvider->posImage.x, editProvider->posImage.y);
             litArea = LitArea::bottomRight;
         } else {
-//            printf("Area:  / %d,%d\n", editProvider->posImage.x, editProvider->posImage.y);
             litArea = LitArea::none;
         }
     }
@@ -784,9 +797,12 @@ bool RawCrop::drag1(const int modifierKey)
 
 void RawCrop::notifyListener(int nx, int ny, int nw, int nh)
 {
-    return;
     if (listener) {
-        listener->panelChanged (EvRawCropDims,
+        auto m = ProcEventMapper::getInstance();
+        m->remapEvent(EvRawCropDims, edit->get_active() ? RAWCROP|M_MODE_RAWCROPADJUST : RAWCROP, "HISTORY_MSG_RAW_CROP_DIM");
+        m->remapEvent(EvRawCropDimsOPA, edit->get_active() ? MINUPDATE|M_MODE_RAWCROPADJUST : MINUPDATE, "");
+
+        listener->panelChanged (edit->get_active() ? EvRawCropDimsOPA : EvRawCropDims,
                                 Glib::ustring::compose ("%1=%2, %3=%4\n%5=%6, %7=%8",
                                         M("TP_CROP_X"),
                                         x->get_value_as_int(),
@@ -803,13 +819,20 @@ void RawCrop::switchOffEditMode ()
 {
     if (edit->get_active()) {
         // switching off the toggle button
-        bool wasBlocked = editConn.block(true);
         edit->set_active(false);
-
-        if (!wasBlocked) {
-            editConn.block(false);
-        }
     }
+}
 
-    EditSubscriber::switchOffEditMode();  // disconnect
+rtengine::ProcEvent RawCrop::getCropEnabledEvent() const
+{
+    return EvRawCropEnabled;
+}
+
+rtengine::ProcEvent RawCrop::getCropDimsEvent() const
+{
+    return EvRawCropDims;
+}
+rtengine::ProcEvent RawCrop::getCropDimsOPAEvent() const
+{
+    return EvRawCropDimsOPA;
 }

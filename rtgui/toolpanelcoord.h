@@ -219,6 +219,7 @@ public:
     }
 
     // toolpanellistener interface
+    void refreshPreview (rtengine::ProcEvent event);
     void panelChanged   (rtengine::ProcEvent event, const Glib::ustring& descr);
 
     void imageTypeChanged (bool isRaw, bool isBayer, bool isXtrans);

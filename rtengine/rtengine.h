@@ -205,9 +205,15 @@ public:
       * @param fname the name of the file
       * @param isRaw shall be true if it is a raw file
       * @param errorCode is a pointer to a variable that is set to nonzero if an error happened (output)
+      * @param raw is the raw params to be used
       * @param pl is a pointer pointing to an object implementing a progress listener. It can be NULL, in this case progress is not reported.
       * @return an object representing the loaded and pre-processed image */
     static InitialImage* load (const Glib::ustring& fname, bool isRaw, int* errorCode, procparams::RAWParams *raw, ProgressListener* pl = nullptr);
+
+    /** Reloads an image into the memory.
+      * @param errorCode is a pointer to a variable that is set to nonzero if an error happened (output)
+      * @param raw is the raw params to be used */
+    void reload (int* errorCode, procparams::RAWParams *raw, bool noRotate);
 };
 
 /** When the preview image is ready for display during staged processing (thus the changes have been updated),

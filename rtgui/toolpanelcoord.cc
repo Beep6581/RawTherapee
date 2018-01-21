@@ -291,6 +291,48 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
 
 }
 
+void ToolPanelCoordinator::refreshPreview (rtengine::ProcEvent event)
+{
+
+    if (!ipc) {
+        return;
+    }
+
+    ProcParams* params = ipc->beginUpdateParams ();
+    for (auto toolPanel : toolPanels) {
+        toolPanel->write (params);
+    }
+
+    rtengine::ProcEvent rc = rawCrop->getCropDimsOPAEvent();  // HOMBRE: the limits of dynamic IDs, sorry for this hack...
+
+    if (event == rc) {
+        // refreshPreview with EvRawCropDimsOPA = entering RawCrop mode
+        // we need to hack somewhere, it will be here, not in ImProcCoordinator
+
+        // -> disabling the preview of RawCrop
+        params->raw.rawCrop = false;
+        // -> force fast demozaicing for maximum speed
+        params->raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
+        params->raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
+        // -> disabling all transform
+        params->coarse = CoarseTransformParams();
+        params->lensProf = LensProfParams();
+        params->cacorrection = CACorrParams();
+        params->distortion = DistortionParams();
+        params->rotate = RotateParams();
+        params->perspective = PerspectiveParams();
+        params->gradient = GradientParams();
+        params->pcvignette = PCVignetteParams();
+        params->vignetting = VignettingParams();
+        // -> disabling time consuming and unnecessary tool
+        params->sh = SHParams();
+
+        // now replacing the event itself to get a full reprocessing of the image with the new conditions
+        event = rawCrop->getCropDimsEvent();
+    }
+
+    ipc->endUpdateParams (event);   // starts the IPC processing
+}
 
 void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::ustring& descr)
 {
@@ -332,6 +374,7 @@ void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::
         int fw, fh;
         ipc->getInitialImage()->getImageSource()->getFullSize (fw, fh, tr);
         gradient->updateGeometry (params->gradient.centerX, params->gradient.centerY, params->gradient.feather, params->gradient.degree, fw, fh);
+        rawCrop->updateGeometry(params->raw.rcX, params->raw.rcY, params->raw.rcWidth, params->raw.rcHeight);
     }
 
     // some transformations make the crop change for convenience

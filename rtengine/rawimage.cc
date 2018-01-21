@@ -408,7 +408,7 @@ skip_block:
     }
 }
 
-int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, ProgressListener *plistener, double progressRange)
+int RawImage::loadRaw (bool loadData, bool noRotate, unsigned int imageNum, bool closeFile, ProgressListener *plistener, double progressRange)
 {
     ifname = filename.c_str();
     image = nullptr;
@@ -456,18 +456,22 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
 
     if(!strcmp(make,"Fujifilm") && raw_height * raw_width * 2u != raw_size) {
         parse_fuji_compressed_header();
-	}
+    }
 
-    if (flip == 5) {
-        this->rotate_deg = 270;
-    } else if (flip == 3) {
-        this->rotate_deg = 180;
-    } else if (flip == 6) {
-        this->rotate_deg = 90;
-    } else if (flip % 90 == 0 && flip < 360) {
-        this->rotate_deg = flip;
-    } else {
+    if (noRotate) {
         this->rotate_deg = 0;
+    } else {
+        if (flip == 5) {
+            this->rotate_deg = 270;
+        } else if (flip == 3) {
+            this->rotate_deg = 180;
+        } else if (flip == 6) {
+            this->rotate_deg = 90;
+        } else if (flip % 90 == 0 && flip < 360) {
+            this->rotate_deg = flip;
+        } else {
+            this->rotate_deg = 0;
+        }
     }
 
     if( loadData ) {

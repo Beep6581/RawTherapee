@@ -31,12 +31,17 @@
 class ToolPanel;
 class FoldableToolPanel;
 
+/// @brief Event handling utility class
 class ToolPanelListener
 {
 
 public:
 
     virtual ~ToolPanelListener() {}
+
+    /// @brief Ask to refresh the preview not triggered by a parameter change (e.g. 'On Preview' editing).
+    virtual void refreshPreview (rtengine::ProcEvent event) {}
+    /// @brief Used to notify all listeners that a parameters has been effectively changed
     virtual void panelChanged   (rtengine::ProcEvent event, const Glib::ustring& descr) {}
 };
 

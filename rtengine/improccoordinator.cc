@@ -24,6 +24,7 @@
 #include "colortemp.h"
 #include "improcfun.h"
 #include "iccstore.h"
+#include <iostream>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -143,6 +144,14 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
     int readyphase = 0;
 
     bwAutoR = bwAutoG = bwAutoB = -9000.f;
+
+    if ((todo & M_RELOADRAW) && getInitialImage()->getImageSource()->isRAW()) {
+        int errCode = 0;
+        getInitialImage()->reload(&errCode, &params.raw, todo & M_MODE_RAWCROPADJUST);
+        if (errCode) {
+            std::cerr << "ERROR #" << errCode << " during reloading the raw image" << std::endl;
+        }
+    }
 
     if (todo == CROP && ipf.needsPCVignetting()) {
         todo |= TRANSFORM;    // Change about Crop does affect TRANSFORM

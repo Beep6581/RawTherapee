@@ -250,7 +250,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 {
     RawImage *ri = new RawImage (fname, nullptr);
     unsigned int imageNum = 0;
-    int r = ri->loadRaw (false, imageNum, false);
+    int r = ri->loadRaw (false, false, imageNum, false);
 
     if ( r ) {
         delete ri;
@@ -369,7 +369,7 @@ RawMetaDataLocation Thumbnail::loadMetaDataFromRaw (const Glib::ustring& fname)
     RawImage ri (fname, nullptr);
     unsigned int imageNum = 0;
 
-    int r = ri.loadRaw (false, imageNum);
+    int r = ri.loadRaw (false, false, imageNum);
 
     if ( !r ) {
         rml.exifBase = ri.get_exifBase();
@@ -385,7 +385,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
     RawImage *ri = new RawImage (fname, nullptr);
     unsigned int tempImageNum = 0;
 
-    int r = ri->loadRaw (1, tempImageNum, 0);
+    int r = ri->loadRaw (1, false, tempImageNum, 0);
 
     if ( r ) {
         delete ri;

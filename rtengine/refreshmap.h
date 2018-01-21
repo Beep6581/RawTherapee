@@ -22,16 +22,20 @@
 #include <unordered_map>
 #include "procevents.h"
 
+// Use M_MODE_RAWCROPADJUST to update the rendering for On Preview Adjustment of the RawCrop tool
+#define M_MODE_RAWCROPADJUST  (1<<19)
+
 // Use M_VOID if you wish to update the proc params without updating the preview at all !
-#define M_VOID       (1<<17)
+#define M_VOID       (1<<18)
 // Use M_MINUPDATE if you wish to update the preview without modifying the image (think about it like a "refreshPreview")
 // Must NOT be used with other event (i.e. will be used for MINUPDATE only)
-#define M_MINUPDATE  (1<<16)
+#define M_MINUPDATE  (1<<17)
 // Force high quality
-#define M_HIGHQUAL   (1<<15)
+#define M_HIGHQUAL   (1<<16)
 
 // Elementary functions that can be done to
 // the preview image when an event occurs
+#define M_RELOADRAW   (1<<15)
 #define M_MONITOR     (1<<14)
 #define M_RETINEX     (1<<13)
 #define M_CROP        (1<<12)
@@ -67,6 +71,7 @@
 #define DIRPYRDENOISE                                                                                                     (M_LUMINANCE|M_COLOR)
 #define DIRPYREQUALIZER                                                                                                   (M_LUMINANCE|M_COLOR)
 #define GAMMA             M_MONITOR
+#define RAWCROP           (M_RELOADRAW|ALL)
 #define CROP              M_CROP
 #define RESIZE            M_VOID
 #define EXIF              M_VOID

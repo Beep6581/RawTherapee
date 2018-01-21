@@ -1531,7 +1531,7 @@ int RawImageSource::load (const Glib::ustring &fname, RAWParams *raw)
     }
 
     ri = new RawImage(fname, raw);
-    int errCode = ri->loadRaw (false, 0, false);
+    int errCode = ri->loadRaw (false, false, 0, false);
 
     if (errCode) {
         return errCode;
@@ -1552,10 +1552,10 @@ int RawImageSource::load (const Glib::ustring &fname, RAWParams *raw)
             for(unsigned int i = 0; i < numFrames; ++i) {
                 if(i == 0) {
                     riFrames[i] = ri;
-                    errCodeThr = riFrames[i]->loadRaw (true, i, true, plistener, 0.8);
+                    errCodeThr = riFrames[i]->loadRaw (true, false, i, true, plistener, 0.8);
                 } else {
                     riFrames[i] = new RawImage(fname, raw);
-                    errCodeThr = riFrames[i]->loadRaw (true, i);
+                    errCodeThr = riFrames[i]->loadRaw (true, false, i);
                 }
             }
 #ifdef _OPENMP
@@ -1567,7 +1567,7 @@ int RawImageSource::load (const Glib::ustring &fname, RAWParams *raw)
         }
     } else {
         riFrames[0] = ri;
-        errCode = riFrames[0]->loadRaw (true, 0, true, plistener, 0.8);
+        errCode = riFrames[0]->loadRaw (true, false, 0, true, plistener, 0.8);
     }
 
     if(!errCode) {
@@ -1719,6 +1719,85 @@ int RawImageSource::load (const Glib::ustring &fname, RAWParams *raw)
 
     if( settings->verbose ) {
         printf("Load %s: %d usec\n", fname.c_str(), t2.etime(t1));
+    }
+
+    return 0; // OK!
+}
+
+int RawImageSource::reload (RAWParams *raw, bool noRotate)
+{
+    for(size_t i = 0; i < numFrames; ++i) {
+        delete riFrames[i];
+    }
+
+    flushRawData();
+    flushRGB();
+
+    ri = new RawImage(fileName, raw);
+    int errCode = ri->loadRaw (false, noRotate, 0, false);
+
+    if (errCode) {
+        return errCode;
+    }
+    numFrames = ri->getFrameCount();
+
+    errCode = 0;
+
+    if(numFrames > 1) {
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            int errCodeThr = 0;
+#ifdef _OPENMP
+            #pragma omp for nowait
+#endif
+            for(unsigned int i = 0; i < numFrames; ++i) {
+                if(i == 0) {
+                    riFrames[i] = ri;
+                    errCodeThr = riFrames[i]->loadRaw (true, noRotate, i, true, nullptr, 0.8);
+                } else {
+                    riFrames[i] = new RawImage(fileName, raw);
+                    errCodeThr = riFrames[i]->loadRaw (true, noRotate, i);
+                }
+            }
+#ifdef _OPENMP
+            #pragma omp critical
+#endif
+            {
+                errCode = errCodeThr ? errCodeThr : errCode;
+            }
+        }
+    } else {
+        riFrames[0] = ri;
+        errCode = riFrames[0]->loadRaw (true, noRotate, 0, true, nullptr, 0.8);
+    }
+
+    if(!errCode) {
+        for(unsigned int i = 0; i < numFrames; ++i) {
+            riFrames[i]->compress_image(i);
+        }
+    } else {
+        return errCode;
+    }
+
+    if(numFrames > 1 ) { // this disables multi frame support for Fuji S5 until I found a solution to handle different dimensions
+        if(riFrames[0]->get_width() != riFrames[1]->get_width() || riFrames[0]->get_height() != riFrames[1]->get_height()) {
+            numFrames = 1;
+        }
+    }
+
+    /***** Copy once constant data extracted from raw *******/
+    W = ri->get_width();
+    H = ri->get_height();
+
+    green(W, H);
+    red(W, H);
+    blue(W, H);
+    //hpmap = allocArray<char>(W, H);
+
+    if( settings->verbose ) {
+        printf("Reloaded %s\n", fileName.c_str());
     }
 
     return 0; // OK!

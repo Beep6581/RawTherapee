@@ -28,10 +28,11 @@ class ProcEventMapper {
 public:
     static ProcEventMapper *getInstance();
     rtengine::ProcEvent newEvent(int action, const std::string &history_msg="");
+    void remapEvent(rtengine::ProcEvent event, int action, const std::string &history_msg=""); // TODO: Delete this !!!
     const std::string &getHistoryMsg(rtengine::ProcEvent event) const;
 
 private:
     ProcEventMapper();
-    
+
     std::unordered_map<int, std::string> history_msgs_;
 };

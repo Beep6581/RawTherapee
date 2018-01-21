@@ -67,6 +67,7 @@ public:
 
     virtual ~ImageSource            () {}
     virtual int         load        (const Glib::ustring &fname, RAWParams *raw) = 0;
+    virtual int         reload      (RAWParams *raw, bool noRotate) = 0;
     virtual void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse, bool prepareDenoise = true) {};
     virtual void        demosaic    (const RAWParams &raw) {};
     virtual void        retinex       (const ColorManagementParams& cmp, const RetinexParams &deh, const ToneCurveParams& Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI) {};

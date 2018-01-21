@@ -115,7 +115,7 @@ public:
     explicit RawImage( const Glib::ustring &name, procparams::RAWParams *raw);
     ~RawImage();
 
-    int loadRaw (bool loadData, unsigned int imageNum = 0, bool closeFile = true, ProgressListener *plistener = nullptr, double progressRange = 1.0);
+    int loadRaw (bool loadData, bool noRotate, unsigned int imageNum = 0, bool closeFile = true, ProgressListener *plistener = nullptr, double progressRange = 1.0);
     void get_colorsCoeff( float* pre_mul_, float* scale_mul_, float* cblack_, bool forceAutoWB );
     void set_prefilters()
     {

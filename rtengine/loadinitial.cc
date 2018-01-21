@@ -45,5 +45,14 @@ InitialImage* InitialImage::load (const Glib::ustring& fname, bool isRaw, int* e
 
     return isrc;
 }
+
+void InitialImage::reload (int* errorCode, procparams::RAWParams *raw, bool noRotate)
+{
+
+    if (getImageSource()) {
+        *errorCode = getImageSource()->reload(raw, noRotate);
+    }
+}
+
 }
 

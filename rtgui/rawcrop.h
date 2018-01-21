@@ -43,7 +43,7 @@ public:
     void spinChanged(MySpinButton *spinButton);
     void trim(rtengine::procparams::ProcParams* pp, int ow, int oh);
 
-    bool inImageArea(int x, int y);
+    void updateGeometry  (const int x, const int y, const int width, const int height, const int fullWidth=-1, const int fullHeight=-1);
 
     void sizeChanged(int w, int h, int ow, int oh);
     void resizeScaleChanged (double rsc);
@@ -57,6 +57,9 @@ public:
     bool button1Released();
     bool drag1(const int modifierKey);
     void switchOffEditMode ();
+    rtengine::ProcEvent getCropEnabledEvent() const;
+    rtengine::ProcEvent getCropDimsEvent() const;
+    rtengine::ProcEvent getCropDimsOPAEvent() const;
 
 private:
 
@@ -72,6 +75,12 @@ private:
         bottom,
         bottomRight
     };
+
+    rtengine::ProcEvent EvRawCropEnabled;
+    rtengine::ProcEvent EvRawCropDims;
+    rtengine::ProcEvent EvRawCropDimsOPA;  // used to toggle-on the RawCrop On Preview Adjustment mode
+
+    rtengine::ProcEvent evt;
 
     LitArea litArea;
 
@@ -99,7 +108,6 @@ private:
 
     void notifyListener(int nx, int ny, int nw, int nh);
     void updateState();
-    void updateGeometry  (const int x, const int y, const int width, const int height, const int fullWidth=-1, const int fullHeight=-1);
     bool inArea(const int x1, const int y1, const int x2, const int y2, const rtengine::Coord &mousePos);
     void editToggled();
     void setDimensions(int mw, int mh);
