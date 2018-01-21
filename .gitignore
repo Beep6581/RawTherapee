@@ -13,8 +13,8 @@ Makefile
 cmake_install.cmake
 install_manifest.txt
 
-build
-Build
+build*
+Build*
 Debug
 RelWithDebInfo
 MinSizeRel
