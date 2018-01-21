@@ -789,8 +789,12 @@ Gtk::Widget* Preferences::getColorManagementPanel()
     setExpandAlignProperties(iccdgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     iccdgrid->set_column_spacing(4);
 
+    Gtk::Label* monProfileRestartNeeded = Gtk::manage ( new Gtk::Label (Glib::ustring (" (") + M ("PREFERENCES_APPLNEXTSTARTUP") + ")") );
+    setExpandAlignProperties(monProfileRestartNeeded, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+
     iccdgrid->attach(*pdlabel, 0, 0, 1, 1);
     iccdgrid->attach(*iccDir, 1, 0, 1, 1);
+    iccdgrid->attach (*monProfileRestartNeeded, 2, 0, 1, 1);
 
     iccDir->signal_selection_changed().connect(sigc::mem_fun(this, &Preferences::iccDirChanged));
 
