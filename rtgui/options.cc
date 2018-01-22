@@ -567,8 +567,6 @@ void Options::setDefaults ()
     rtSettings.ed_detec = 3; //between 2 and 10
     rtSettings.ed_detecStr = 1.3; //not use
     rtSettings.ed_low = 15.; //between 5 to 40
-    rtSettings.ed_lipinfl = 0.8; //between 0.5 to 0.9
-    rtSettings.ed_lipampl = 1.1; //between 1 and 2
 
 
     rtSettings.ciecamfloat = true;
@@ -746,15 +744,6 @@ void Options::readFromFile (Glib::ustring fname)
                 if (keyFile.has_key ("General", "EDLow")) {
                     rtSettings.ed_low = keyFile.get_double ("General", "EDLow");
                 }
-
-                if (keyFile.has_key ("General", "EDLipinfl")) {
-                    rtSettings.ed_lipinfl = keyFile.get_double ("General", "EDLipinfl");
-                }
-
-                if (keyFile.has_key ("General", "EDLipampl")) {
-                    rtSettings.ed_lipampl = keyFile.get_double ("General", "EDLipampl");
-                }
-
 
             }
 
@@ -1847,9 +1836,6 @@ void Options::saveToFile (Glib::ustring fname)
         keyFile.set_double  ("General", "EDdetec", rtSettings.ed_detec);
         keyFile.set_double  ("General", "EDdetecStr", rtSettings.ed_detecStr);
         keyFile.set_double  ("General", "EDLow", rtSettings.ed_low);
-        keyFile.set_double  ("General", "EDLipinfl", rtSettings.ed_lipinfl);
-        keyFile.set_double  ("General", "EDLipampl", rtSettings.ed_lipampl);
-
 
         keyFile.set_integer ("External Editor", "EditorKind", editorToSendTo);
         keyFile.set_string  ("External Editor", "GimpDir", gimpDir);

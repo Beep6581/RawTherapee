@@ -90,8 +90,6 @@ public:
     double          ed_detec;
     double          ed_detecStr;
     double          ed_low;
-    double          ed_lipinfl;
-    double          ed_lipampl;
 
     Glib::ustring   lensfunDbDirectory; ///< The directory containing the lensfun database. If empty, the system defaults will be used (as described in http://lensfun.sourceforge.net/manual/dbsearch.html)
     
