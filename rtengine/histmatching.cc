@@ -203,7 +203,7 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
                 std::cout << "histogram matching: cropping target to get an aspect ratio of " << std::fixed << std::setprecision(2) << thumb_ratio << ":1, new full size is " << fw << "x" << fh << std::endl;
             }
         }
-        PreviewProps pp(0, 0, fw, fh, skip);
+        PreviewProps pp(cx, cy, fw, fh, skip);
         ColorTemp currWB = getWB();
         std::unique_ptr<Imagefloat> image(new Imagefloat(int(fw / skip), int(fh / skip)));
         getImage(currWB, TR_NONE, image.get(), pp, neutral.toneCurve, neutral.raw);
