@@ -845,6 +845,7 @@ HISTORY_MSG_599;Local - Noise bilateral
 HISTORY_MSG_600;Local - Noise Equal. Black-White
 HISTORY_MSG_601;Local - Shape Rt-spot method
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
+HISTORY_MSG_HISTMATCHING;Auto-matched Tone Curve
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
@@ -936,6 +937,8 @@ MAIN_MSG_QOVERWRITE;Do you want to overwrite it?
 MAIN_MSG_SETPATHFIRST;You first have to set a target path in Preferences in order to use this function!
 MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
 MAIN_MSG_WRITEFAILED;Failed to write\n<b>"%1"</b>\n\nMake sure that the folder exists and that you have write permission to it.
+MAIN_TAB_ADVANCED;Advanced
+MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt-w</b>
 MAIN_TAB_COLOR;Color
 MAIN_TAB_COLOR_TOOLTIP;Shortcut: <b>Alt-c</b>
 MAIN_TAB_DETAIL;Detail
@@ -956,8 +959,6 @@ MAIN_TAB_RAW;Raw
 MAIN_TAB_RAW_TOOLTIP;Shortcut: <b>Alt-r</b>
 MAIN_TAB_TRANSFORM;Transform
 MAIN_TAB_TRANSFORM_TOOLTIP;Shortcut: <b>Alt-t</b>
-MAIN_TAB_WAVELET;Wavelet
-MAIN_TAB_WAVELET_TOOLTIP;Shortcut: <b>Alt-w</b>
 MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>Theme-based</b>\nShortcut: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>Black</b>\nShortcut: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>9</b>
@@ -992,6 +993,7 @@ NAVIGATOR_XY_FULL;Width: %1, Height: %2
 NAVIGATOR_XY_NA;x: --, y: --
 OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
+PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
 PARTIALPASTE_BASICGROUP;Basic Settings
 PARTIALPASTE_CACORRECTION;Chromatic aberration correction
 PARTIALPASTE_CHANNELMIXER;Channel mixer
@@ -1065,7 +1067,6 @@ PARTIALPASTE_SHARPENMICRO;Microcontrast
 PARTIALPASTE_TM_FATTAL;HDR Tone mapping
 PARTIALPASTE_VIBRANCE;Vibrance
 PARTIALPASTE_VIGNETTING;Vignetting correction
-PARTIALPASTE_WAVELETGROUP;Wavelet Levels
 PARTIALPASTE_WHITEBALANCE;White balance
 PREFERENCES_ADD;Add
 PREFERENCES_APPLNEXTSTARTUP;restart required
@@ -1689,6 +1690,8 @@ TP_EXPOSURE_CURVEEDITOR1;Tone curve 1
 TP_EXPOSURE_CURVEEDITOR2;Tone curve 2
 TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Please refer to the "Exposure > Tone Curves" RawPedia article to learn how to achieve the best results by using two tone curves.
 TP_EXPOSURE_EXPCOMP;Exposure compensation
+TP_EXPOSURE_HISTMATCHING;Auto-matched Tone Curve
+TP_EXPOSURE_HISTMATCHING_TOOLTIP;Automatically adjust sliders and curves (except exposure compensation) to match the look of the embedded JPEG thumbnail.
 TP_EXPOSURE_LABEL;Exposure
 TP_EXPOSURE_SATURATION;Saturation
 TP_EXPOSURE_TCMODE_FILMLIKE;Film-like

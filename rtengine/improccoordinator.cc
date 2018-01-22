@@ -596,6 +596,24 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 aeListener->autoExpChanged(params.toneCurve.expcomp, params.toneCurve.brightness, params.toneCurve.contrast,
                                            params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.hrenabled);
         }
+        if (params.toneCurve.histmatching) {
+            imgsrc->getAutoMatchedToneCurve(params.toneCurve.curve);
+
+            if (params.toneCurve.autoexp) {
+                params.toneCurve.expcomp = 0.0;
+            }
+
+            params.toneCurve.autoexp = false;
+            params.toneCurve.curveMode = ToneCurveParams::TcMode::FILMLIKE;
+            params.toneCurve.curve2 = { 0 };
+            params.toneCurve.brightness = 0;
+            params.toneCurve.contrast = 0;
+            params.toneCurve.black = 0;
+
+            if (aeListener) {
+                aeListener->autoMatchedToneCurveChanged(params.toneCurve.curveMode, params.toneCurve.curve);
+            }
+        }
     }
 
     progress("Exposure curve & CIELAB conversion...", 100 * readyphase / numofphases);

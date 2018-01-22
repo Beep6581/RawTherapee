@@ -162,7 +162,7 @@ protected:
     ToolVBox* colorPanel;
     ToolVBox* transformPanel;
     ToolVBox* rawPanel;
-    ToolVBox* waveletPanel;
+    ToolVBox* advancedPanel;
 //<<<<<<< HEAD
     ToolVBox* locallabPanel;
 //    Gtk::Notebook* metadataPanel;
@@ -189,7 +189,7 @@ protected:
     Gtk::ScrolledWindow* colorPanelSW;
     Gtk::ScrolledWindow* transformPanelSW;
     Gtk::ScrolledWindow* rawPanelSW;
-    Gtk::ScrolledWindow* waveletPanelSW;
+    Gtk::ScrolledWindow* advancedPanelSW;
     Gtk::ScrolledWindow* locallabPanelSW;
 
     std::vector<MyExpander*> expList;

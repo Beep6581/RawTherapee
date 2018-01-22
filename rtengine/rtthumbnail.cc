@@ -915,7 +915,7 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 }
 
 // Full thumbnail processing, second stage if complete profile exists
-IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorType sensorType, int rheight, TypeInterpolation interp, const FramesMetaData *metadata, double& myscale)
+IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorType sensorType, int rheight, TypeInterpolation interp, const FramesMetaData *metadata, double& myscale, bool forMonitor)
 {
     unsigned int imgNum = 0;
     if (isRaw) {
@@ -1294,8 +1294,13 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     //ipf.colorCurve (labView, labView);
 
     // obtain final image
-    Image8* readyImg = new Image8 (fw, fh);
-    ipf.lab2monitorRgb (labView, readyImg);
+    Image8* readyImg = nullptr;
+    if (forMonitor) {
+        readyImg = new Image8 (fw, fh);
+        ipf.lab2monitorRgb (labView, readyImg);
+    } else {
+        readyImg = ipf.lab2rgb(labView, 0, 0, fw, fh, params.icm);
+    }
     delete labView;
     delete baseImg;
 

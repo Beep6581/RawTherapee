@@ -39,7 +39,7 @@ public:
     Gtk::CheckButton* composition;
     Gtk::CheckButton* meta;
     Gtk::CheckButton* raw;
-    Gtk::CheckButton* wav;
+    Gtk::CheckButton* advanced;
     Gtk::CheckButton* loc;
 
     // options in basic:
@@ -127,7 +127,7 @@ public:
     Gtk::CheckButton* ff_BlurType;
     Gtk::CheckButton* ff_ClipControl;
 
-    sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaConn, rawConn, wavConn, locConn;
+    sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaConn, rawConn, advancedConn, locConn;
 
     sigc::connection wbConn, exposureConn, localcontrastConn, shConn, pcvignetteConn, gradientConn, labcurveConn, colorappearanceConn, locallabConn;
     sigc::connection sharpenConn, gradsharpenConn, microcontrastConn, impdenConn, dirpyrdenConn, defringeConn, epdConn, fattalConn, dirpyreqConn, waveletConn, retinexConn;
@@ -151,7 +151,7 @@ public:
     void compositionToggled ();
     void metaToggled ();
     void rawToggled ();
-    void wavToggled ();
+    void advancedToggled ();
     void locToggled ();
 
 };
