@@ -90,8 +90,6 @@ public:
     double          ed_detec;
     double          ed_detecStr;
     double          ed_low;
-    double          ed_lipinfl;
-    double          ed_lipampl;
 
     int             nspot;
     bool            locdelay;

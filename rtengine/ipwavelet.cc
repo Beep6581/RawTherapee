@@ -1877,8 +1877,6 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
         //one can also chnage in calckoe
         float edd = settings->ed_detec;
         float eddlow = settings->ed_low; //5 to 40
-        //  float eddlipinfl=settings->ed_lipinfl;
-        //  float eddlipampl=settings->ed_lipampl;
         float eddlipinfl = 0.005f * cp.edgsens + 0.4f;
         float eddlipampl = 1.f + cp.edgampl / 50.f;
         //  float eddlow=5.f + cp.edgampl/2.f;//settings->ed_low;//5 to 40
