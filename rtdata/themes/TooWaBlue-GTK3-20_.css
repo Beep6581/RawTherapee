@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.61
+  Version 2.62
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1242,7 +1242,8 @@ switch {
 
 switch slider {
     border: 0.08334em solid @bg-entry-border;
-    background-image: linear-gradient(to bottom, shade (@accent-color2,1.15), shade (@accent-color2,.85));
+    background-color: shade (@bg-light-grey, .85);
+    background-image: linear-gradient(to bottom, rgba(125,125,125,.4), rgba(60,60,60,.4));
     border: 0.08334em solid @bg-entry-border;
     box-shadow: inset 0 0.08334em rgba(242, 242, 242, 0.1);
     border-radius: 0.2em 0 0 0.2em;
@@ -1252,12 +1253,13 @@ switch:checked  slider{
 }
 
 switch:hover slider {
-    background-image: linear-gradient(to bottom, shade (@accent-color2,1.20), shade (@accent-color2,.90));
+    background-color: shade (@bg-light-grey, .65);
+    background-image: linear-gradient(to bottom, rgba(125,125,125,.4), rgba(60,60,60,.4));
 }
 
 switch:checked {
-    background-color: rgb(140,0,20);
-	color: @headline-big;
+    background-color: @accent-color2;
+    color: @headline-big;
 }
 
 switch:disabled:not(:checked) {
@@ -1265,10 +1267,8 @@ switch:disabled:not(:checked) {
     background-image: none;
     background-color: shade (@bg-light-grey, .85);
 }
-switch:disabled slider {
-    background-image: linear-gradient(to bottom, rgba(125,125,125,.4), rgba(60,60,60,.4));
-	background-color: shade (@bg-light-grey, .85);
-}
+
+
 /** end ****************************************************************************************/
 
 /*** Buttons ***********************************************************************************/
