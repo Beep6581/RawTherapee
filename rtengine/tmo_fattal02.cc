@@ -69,7 +69,6 @@
 #include "improcfun.h"
 #include "settings.h"
 #include "iccstore.h"
-//#define BENCHMARK
 #include "StopWatch.h"
 #include "sleef.c"
 #include "opthelper.h"

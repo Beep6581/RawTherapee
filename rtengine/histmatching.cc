@@ -26,7 +26,6 @@
 #include "iccstore.h"
 #include "../rtgui/mydiagonalcurve.h"
 #include "improcfun.h"
-#define BENCHMARK
 #include "StopWatch.h"
 #include <iostream>
 #include <iomanip>
