@@ -137,6 +137,7 @@ cmake \
     -DWITH_PROF="OFF" \
     -DWITH_SAN="OFF" \
     -DWITH_SYSTEM_KLT="OFF" \
+    -DWITH_BENCHFUN="OFF" \
     "$HOME/programs/code-${prog}" || exit 1
 
 make --jobs="$cpuCount" install || exit 1
