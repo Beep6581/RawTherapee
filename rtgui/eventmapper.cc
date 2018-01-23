@@ -51,18 +51,6 @@ rtengine::ProcEvent ProcEventMapper::newEvent(int action, const std::string &his
 }
 
 
-void ProcEventMapper::remapEvent(rtengine::ProcEvent event, int action, const std::string &history_msg)
-{
-    rtengine::RefreshMapper::getInstance()->mapEvent(event, action);
-
-    if (history_msg.empty()) {
-        history_msgs_[event] = "HISTORY_MSG_" + std::to_string(event + 1);
-    } else {
-        history_msgs_[event] = history_msg;
-    }
-}
-
-
 const std::string &ProcEventMapper::getHistoryMsg(rtengine::ProcEvent event) const
 {
     static std::string empty;
@@ -72,4 +60,9 @@ const std::string &ProcEventMapper::getHistoryMsg(rtengine::ProcEvent event) con
     } else {
         return it->second;
     }
+}
+
+int ProcEventMapper::getAction(rtengine::ProcEvent event)
+{
+    return rtengine::RefreshMapper::getInstance()->getAction(event);
 }

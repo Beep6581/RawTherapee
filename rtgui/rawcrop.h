@@ -77,6 +77,7 @@ private:
     };
 
     rtengine::ProcEvent EvRawCropEnabled;
+    rtengine::ProcEvent EvRawCropEnabledOPA;
     rtengine::ProcEvent EvRawCropDims;
     rtengine::ProcEvent EvRawCropDimsOPA;  // used to toggle-on the RawCrop On Preview Adjustment mode
 

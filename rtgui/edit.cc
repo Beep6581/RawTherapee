@@ -23,7 +23,6 @@
 namespace rtedit {
 
 ObjectMOBuffer::ObjectMOBuffer(EditDataProvider *dataProvider) : objectMap(nullptr), objectMode(OM_255), dataProvider(dataProvider) {
-    printf("objectMap of %p=%p - ctor : mode=%s\n", this, objectMap, objectMode == OM_0 ? "OM_0" : (objectMode == OM_255 ? "OM_255" : "OM_65535"));
 }
 
 ObjectMOBuffer::~ObjectMOBuffer()
@@ -49,27 +48,19 @@ void ObjectMOBuffer::setObjectMode(ObjectMode newType)
     if (w && h) {
         switch (newType) {
         case (OM_0):
-            printf("objectMap of %p=%p - unreference : ", this, objectMap);
             objectMap->unreference();
-            printf("OK\n");
             break;
         case (OM_255):
             if (objectMode==OM_65535) {
-                printf("objectMap of %p=%p - unreference : ", this, objectMap);
                 objectMap->unreference();
-                printf("OK\n");
                 objectMap = Cairo::ImageSurface::create(Cairo::FORMAT_A8, w, h);
-                printf("objectMap of %p=%p now\n", this, objectMap);
             }
             break;
 
         case (OM_65535):
             if (objectMode==OM_255) {
-                printf("objectMap of %p=%p - unreference : ", this, objectMap);
                 objectMap->unreference();
-                printf("OK\n");
                 objectMap = Cairo::ImageSurface::create(Cairo::FORMAT_RGB16_565, w, h);
-                printf("objectMap of %p=%p now\n", this, objectMap);
             }
             break;
         }
@@ -80,7 +71,6 @@ void ObjectMOBuffer::setObjectMode(ObjectMode newType)
 void ObjectMOBuffer::flush()
 {
     if (objectMap) {
-        printf("objectMap(%p) - cleard !\n", objectMap);
         objectMap.clear();
     }
 }
@@ -104,7 +94,6 @@ void ObjectMOBuffer::resize(int newWidth, int newHeight)
     if (const auto currSubscriber = dataProvider->getCurrSubscriber ()) {
         if (currSubscriber->getEditingType() == ET_OBJECTS) {
             if (objectMap && (objectMap->get_width() != newWidth || objectMap->get_height() != newHeight || !currSubscriber->hasMouseOverGeometry())) {
-                printf("objectMap(%p) - cleard !\n", objectMap);
                 objectMap.clear();
             }
 
@@ -114,7 +103,6 @@ void ObjectMOBuffer::resize(int newWidth, int newHeight)
 
             if (!objectMap && newWidth>0 && newHeight>0 && objectMode != OM_0) {
                 objectMap = Cairo::ImageSurface::create(objectMode==OM_255?Cairo::FORMAT_A8:Cairo::FORMAT_RGB16_565, newWidth, newHeight);
-                printf("objectMap of %p=%p now\n", this, objectMap);
             }
 
         } else {

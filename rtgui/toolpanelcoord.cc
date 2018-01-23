@@ -303,34 +303,6 @@ void ToolPanelCoordinator::refreshPreview (rtengine::ProcEvent event)
         toolPanel->write (params);
     }
 
-    rtengine::ProcEvent rc = rawCrop->getCropDimsOPAEvent();  // HOMBRE: the limits of dynamic IDs, sorry for this hack...
-
-    if (event == rc) {
-        // refreshPreview with EvRawCropDimsOPA = entering RawCrop mode
-        // we need to hack somewhere, it will be here, not in ImProcCoordinator
-
-        // -> disabling the preview of RawCrop
-        params->raw.rawCrop = false;
-        // -> force fast demozaicing for maximum speed
-        params->raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
-        params->raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
-        // -> disabling all transform
-        params->coarse = CoarseTransformParams();
-        params->lensProf = LensProfParams();
-        params->cacorrection = CACorrParams();
-        params->distortion = DistortionParams();
-        params->rotate = RotateParams();
-        params->perspective = PerspectiveParams();
-        params->gradient = GradientParams();
-        params->pcvignette = PCVignetteParams();
-        params->vignetting = VignettingParams();
-        // -> disabling time consuming and unnecessary tool
-        params->sh = SHParams();
-
-        // now replacing the event itself to get a full reprocessing of the image with the new conditions
-        event = rawCrop->getCropDimsEvent();
-    }
-
     ipc->endUpdateParams (event);   // starts the IPC processing
 }
 

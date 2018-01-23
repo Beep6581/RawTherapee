@@ -132,7 +132,8 @@ RawCrop::RawCrop():
     auto m = ProcEventMapper::getInstance();
     EvRawCropEnabled = m->newEvent(RAWCROP, "TP_RAW_CROP_LABEL");
     EvRawCropDims = m->newEvent(RAWCROP, "HISTORY_MSG_RAW_CROP_DIM");
-    EvRawCropDimsOPA = m->newEvent(MINUPDATE, "");
+    EvRawCropEnabledOPA = m->newEvent(RAWCROP|M_MODE_RAWCROPADJUST, "");
+    EvRawCropDimsOPA = m->newEvent(MINUPDATE|M_MODE_RAWCROPADJUST, "");
 
     // ---------------- On preview geometry -------------
 
@@ -304,16 +305,13 @@ void RawCrop::trim (ProcParams* pp, int ow, int oh)
 void RawCrop::enabledChanged ()
 {
 
-    auto m = ProcEventMapper::getInstance();
-    m->remapEvent(EvRawCropEnabled, edit->get_active() ? RAWCROP|M_MODE_RAWCROPADJUST : RAWCROP, "TP_RAW_CROP_LABEL");
-
     if (listener) {
         if (get_inconsistent()) {
-            listener->panelChanged (EvRawCropEnabled, M("GENERAL_UNCHANGED"));
+            listener->panelChanged (edit->get_active() ? EvRawCropEnabledOPA : EvRawCropEnabled, M("GENERAL_UNCHANGED"));
         } else if (getEnabled()) {
-            listener->panelChanged (EvRawCropEnabled, M("GENERAL_ENABLED"));
+            listener->panelChanged (edit->get_active() ? EvRawCropEnabledOPA : EvRawCropEnabled, M("GENERAL_ENABLED"));
         } else {
-            listener->panelChanged (EvRawCropEnabled, M("GENERAL_DISABLED"));
+            listener->panelChanged (edit->get_active() ? EvRawCropEnabledOPA : EvRawCropEnabled, M("GENERAL_DISABLED"));
         }
     }
 }
@@ -398,18 +396,14 @@ void RawCrop::setEditProvider (EditDataProvider* provider)
 void RawCrop::editToggled ()
 {
     if (listener) {
-        auto m = ProcEventMapper::getInstance();
-        m->remapEvent(EvRawCropDims, edit->get_active() ? RAWCROP|M_MODE_RAWCROPADJUST : RAWCROP, "HISTORY_MSG_RAW_CROP_DIM");
-        m->remapEvent(EvRawCropDimsOPA, edit->get_active() ? MINUPDATE|M_MODE_RAWCROPADJUST : MINUPDATE, "");
-
         if (edit->get_active()) {
             // this will refresh the preview with RawCrop disabled
-            listener->refreshPreview(EvRawCropDimsOPA);
+            listener->refreshPreview(EvRawCropEnabledOPA);
             subscribe();
         } else {
             // this will refresh the preview with RawCrop enabled, if active
             unsubscribe();
-            listener->refreshPreview(EvRawCropDims);
+            listener->refreshPreview(EvRawCropEnabled);
         }
     }
 }
@@ -798,10 +792,6 @@ bool RawCrop::drag1(const int modifierKey)
 void RawCrop::notifyListener(int nx, int ny, int nw, int nh)
 {
     if (listener) {
-        auto m = ProcEventMapper::getInstance();
-        m->remapEvent(EvRawCropDims, edit->get_active() ? RAWCROP|M_MODE_RAWCROPADJUST : RAWCROP, "HISTORY_MSG_RAW_CROP_DIM");
-        m->remapEvent(EvRawCropDimsOPA, edit->get_active() ? MINUPDATE|M_MODE_RAWCROPADJUST : MINUPDATE, "");
-
         listener->panelChanged (edit->get_active() ? EvRawCropDimsOPA : EvRawCropDims,
                                 Glib::ustring::compose ("%1=%2, %3=%4\n%5=%6, %7=%8",
                                         M("TP_CROP_X"),

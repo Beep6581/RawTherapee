@@ -145,6 +145,30 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     bwAutoR = bwAutoG = bwAutoB = -9000.f;
 
+    if (todo & M_MODE_RAWCROPADJUST) {
+        // TWEAKING THE PROCPARAMS FOR THE RAWCROP ADJUTMENT MODE
+
+        // -> disabling raw crop
+        params.raw.rawCrop = false;
+        // -> using fast demozaicing method
+        params.raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
+        params.raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
+        // -> disabling all transform
+        params.coarse = CoarseTransformParams();
+        params.lensProf = LensProfParams();
+        params.cacorrection = CACorrParams();
+        params.distortion = DistortionParams();
+        params.rotate = RotateParams();
+        params.perspective = PerspectiveParams();
+        params.gradient = GradientParams();
+        params.pcvignette = PCVignetteParams();
+        params.vignetting = VignettingParams();
+        // -> disabling standard crop
+        params.crop.enabled = false; // Don't apply crop
+        // -> disabling time consuming and unnecessary tool
+        params.sh = SHParams();
+    }
+
     if ((todo & M_RELOADRAW) && getInitialImage()->getImageSource()->isRAW()) {
         int errCode = 0;
         getInitialImage()->reload(&errCode, &params.raw, todo & M_MODE_RAWCROPADJUST);
