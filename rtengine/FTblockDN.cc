@@ -474,7 +474,7 @@ void ImProcFunctions::Tile_calc(int tilesize, int overlap, int kall, int imwidth
 int denoiseNestedLevels = 1;
 enum nrquality {QUALITY_STANDARD, QUALITY_HIGH};
 
-SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagefloat * dst, Imagefloat * calclum, float * ch_M, float *max_r, float *max_b, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, const NoiseCurve & noiseLCurve, const NoiseCurve & noiseCCurve, float &nresi, float &highresi)
+void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagefloat * dst, Imagefloat * calclum, float * ch_M, float *max_r, float *max_b, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, const NoiseCurve & noiseLCurve, const NoiseCurve & noiseCCurve, float &nresi, float &highresi)
 {
 BENCHFUN
 //#ifdef _DEBUG
@@ -783,7 +783,7 @@ BENCHFUN
                 numthreads = MIN(numthreads, options.rgbDenoiseThreadLimit);
             }
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
             denoiseNestedLevels = omp_get_max_threads() / numthreads;
             bool oldNested = omp_get_nested();
 
@@ -916,7 +916,7 @@ BENCHFUN
 
                             if (!denoiseMethodRgb) { //lab mode
                                 //modification Jacques feb 2013 and july 2014
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
                                 #pragma omp parallel for num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
 #endif
 
@@ -964,7 +964,7 @@ BENCHFUN
                                     }
                                 }
                             } else {//RGB mode
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
                                 #pragma omp parallel for num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
 #endif
 
@@ -999,7 +999,7 @@ BENCHFUN
                                 }
                             }
                         } else {//image is not raw; use Lab parametrization
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
                             #pragma omp parallel for num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
 #endif
 
@@ -1159,7 +1159,7 @@ BENCHFUN
                             if (!memoryAllocationFailed) {
                                 // precalculate madL, because it's used in adecomp and bdecomp
                                 int maxlvl = Ldecomp->maxlevel();
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic) collapse(2) num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
 #endif
 
@@ -1284,7 +1284,7 @@ BENCHFUN
                                         if (!memoryAllocationFailed) {
                                             // copy labdn->L to Lin before it gets modified by reconstruction
                                             Lin = new array2D<float>(width, height);
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
                                             #pragma omp parallel for num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
 #endif
 
@@ -1337,14 +1337,14 @@ BENCHFUN
                                     }
                                 }
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
                                 int masterThread = omp_get_thread_num();
 #endif
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
                                 #pragma omp parallel num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
 #endif
                                 {
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
                                     int subThread = masterThread * denoiseNestedLevels + omp_get_thread_num();
 #else
                                     int subThread = 0;
@@ -1354,7 +1354,7 @@ BENCHFUN
                                     float *fLblox = fLbloxArray[subThread];
                                     float pBuf[width + TS + 2 * blkrad * offset] ALIGNED16;
                                     float nbrwt[TS * TS] ALIGNED64;
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
                                     #pragma omp for
 #endif
 
@@ -1454,7 +1454,7 @@ BENCHFUN
                                 }
                                 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
                                 #pragma omp parallel for num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
 #endif
 
@@ -1591,7 +1591,7 @@ BENCHFUN
                                     realred /= 100.f;
                                     realblue /= 100.f;
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
                                     #pragma omp parallel for schedule(dynamic,16) num_threads(denoiseNestedLevels)
 #endif
 
@@ -1641,7 +1641,7 @@ BENCHFUN
                                         }
                                     }
                                 } else {//RGB mode
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
                                     #pragma omp parallel for num_threads(denoiseNestedLevels)
 #endif
 
@@ -1681,7 +1681,7 @@ BENCHFUN
 
                                 }
                             } else {
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
                                 #pragma omp parallel for num_threads(denoiseNestedLevels)
 #endif
 
@@ -1748,7 +1748,7 @@ BENCHFUN
                 }
             }
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
             omp_set_nested(oldNested);
 #endif
 
@@ -2043,7 +2043,7 @@ BENCHFUN
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-SSEFUNCTION void ImProcFunctions::RGBtile_denoise(float * fLblox, int hblproc, float noisevar_Ldetail, float * nbrwt, float * blurbuffer)  //for DCT
+void ImProcFunctions::RGBtile_denoise(float * fLblox, int hblproc, float noisevar_Ldetail, float * nbrwt, float * blurbuffer)  //for DCT
 {
     int blkstart = hblproc * TS * TS;
 
@@ -2254,7 +2254,7 @@ void ImProcFunctions::Noise_residualAB(wavelet_decomposition &WaveletCoeffs_ab, 
     chmaxresid = maxresid;
 }
 
-SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposition &WaveletCoeffs_L, float *noisevarlum, float madL[8][3])
+bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposition &WaveletCoeffs_L, float *noisevarlum, float madL[8][3])
 {
     int maxlvl = min(WaveletCoeffs_L.maxlevel(), 5);
     const float eps = 0.01f;
@@ -2272,7 +2272,7 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposit
     }
 
     bool memoryAllocationFailed = false;
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
     #pragma omp parallel num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
 #endif
     {
@@ -2287,7 +2287,7 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposit
 
         if (!memoryAllocationFailed) {
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
             #pragma omp for schedule(dynamic) collapse(2)
 #endif
 
@@ -2387,7 +2387,7 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposit
     return (!memoryAllocationFailed);
 }
 
-SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_ab,
+bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_ab,
         float *noisevarchrom, float madL[8][3], float noisevar_ab, const bool useNoiseCCurve, bool autoch, bool denoiseMethodRgb)
 {
     int maxlvl = WaveletCoeffs_L.maxlevel();
@@ -2411,7 +2411,7 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
     }
 
     bool memoryAllocationFailed = false;
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
     #pragma omp parallel num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
 #endif
     {
@@ -2427,7 +2427,7 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
         if (!memoryAllocationFailed) {
 
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
             #pragma omp for schedule(dynamic) collapse(2)
 #endif
 
@@ -2446,7 +2446,7 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
                 }
             }
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
             #pragma omp for schedule(dynamic) collapse(2)
 #endif
 
@@ -2550,7 +2550,7 @@ bool ImProcFunctions::WaveletDenoiseAllL(wavelet_decomposition &WaveletCoeffs_L,
     }
 
     bool memoryAllocationFailed = false;
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
     #pragma omp parallel num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
 #endif
     {
@@ -2565,7 +2565,7 @@ bool ImProcFunctions::WaveletDenoiseAllL(wavelet_decomposition &WaveletCoeffs_L,
         }
 
         if (!memoryAllocationFailed) {
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
             #pragma omp for schedule(dynamic) collapse(2)
 #endif
 
@@ -2605,7 +2605,7 @@ bool ImProcFunctions::WaveletDenoiseAllAB(wavelet_decomposition &WaveletCoeffs_L
     }
 
     bool memoryAllocationFailed = false;
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
     #pragma omp parallel num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
 #endif
     {
@@ -2619,7 +2619,7 @@ bool ImProcFunctions::WaveletDenoiseAllAB(wavelet_decomposition &WaveletCoeffs_L
         }
 
         if (!memoryAllocationFailed) {
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
             #pragma omp for schedule(dynamic) collapse(2)
 #endif
 
@@ -2643,7 +2643,7 @@ bool ImProcFunctions::WaveletDenoiseAllAB(wavelet_decomposition &WaveletCoeffs_L
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-SSEFUNCTION void ImProcFunctions::ShrinkAllL(wavelet_decomposition &WaveletCoeffs_L, float **buffer, int level, int dir,
+void ImProcFunctions::ShrinkAllL(wavelet_decomposition &WaveletCoeffs_L, float **buffer, int level, int dir,
         float *noisevarlum, float * madL, float * vari, int edge)
 
 {
@@ -2733,7 +2733,7 @@ SSEFUNCTION void ImProcFunctions::ShrinkAllL(wavelet_decomposition &WaveletCoeff
 }
 
 
-SSEFUNCTION void ImProcFunctions::ShrinkAllAB(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_ab, float **buffer, int level, int dir,
+void ImProcFunctions::ShrinkAllAB(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_ab, float **buffer, int level, int dir,
         float *noisevarchrom, float noisevar_ab, const bool useNoiseCCurve, bool autoch,
         bool denoiseMethodRgb, float * madL, float * madaab,  bool madCalculated)
 
@@ -2848,7 +2848,7 @@ SSEFUNCTION void ImProcFunctions::ShrinkAllAB(wavelet_decomposition &WaveletCoef
 
 }
 
-SSEFUNCTION void ImProcFunctions::ShrinkAll_info(float ** WavCoeffs_a, float ** WavCoeffs_b,
+void ImProcFunctions::ShrinkAll_info(float ** WavCoeffs_a, float ** WavCoeffs_b,
         int W_ab, int H_ab, float **noisevarlum, float **noisevarchrom, float **noisevarhue, float &chaut, int &Nb, float &redaut, float &blueaut,
         float &maxredaut, float &maxblueaut, float &minredaut, float &minblueaut, int schoice, int lvl, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc,
         float &maxchred, float &maxchblue, float &minchred, float &minchblue, int &nb, float &chau, float &chred, float &chblue, bool denoiseMethodRgb)
@@ -2988,7 +2988,7 @@ void ImProcFunctions::WaveletDenoiseAll_info(int levwav, wavelet_decomposition &
     }
 }
 
-SSEFUNCTION void ImProcFunctions::RGB_denoise_infoGamCurve(const procparams::DirPyrDenoiseParams & dnparams, bool isRAW, LUTf &gamcurve, float &gam, float &gamthresh, float &gamslope)
+void ImProcFunctions::RGB_denoise_infoGamCurve(const procparams::DirPyrDenoiseParams & dnparams, bool isRAW, LUTf &gamcurve, float &gam, float &gamthresh, float &gamslope)
 {
     gam = dnparams.gamma;
     gamthresh = 0.001f;
@@ -3153,7 +3153,7 @@ void ImProcFunctions::calcautodn_info(float &chaut, float &delta, int Nb, int le
 
 }
 
-SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat * provicalc, const bool isRAW, LUTf &gamcurve, float gam, float gamthresh, float gamslope, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, float &chaut, int &Nb,  float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &minredaut, float &minblueaut, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc, bool multiThread)
+void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat * provicalc, const bool isRAW, LUTf &gamcurve, float gam, float gamthresh, float gamslope, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, float &chaut, int &Nb,  float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &minredaut, float &minblueaut, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc, bool multiThread)
 {
     if ((settings->leveldnautsimpl == 1 && dnparams.Cmethod == "MAN") || (settings->leveldnautsimpl == 0 && dnparams.C2method == "MANU")) {
         //nothing to do
@@ -3192,7 +3192,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
         bcalc[i] = new float[wid];
     }
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
 #endif
 
@@ -3315,7 +3315,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
             //fill tile from image; convert RGB to "luma/chroma"
 
             if (isRAW) {//image is raw; use channel differences for chroma channels
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
                 #pragma omp parallel for if (multiThread)
 #endif
 
@@ -3368,7 +3368,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
 #endif
                 }
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
                 #pragma omp parallel for if (multiThread)
 #endif
 
@@ -3386,7 +3386,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
 
                 if (!denoiseMethodRgb) { //lab mode, modification Jacques feb 2013 and july 2014
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
 
@@ -3523,17 +3523,17 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
             }
 
             const int levwav = 5;
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
             #pragma omp parallel sections if (multiThread)
 #endif
             {
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
                 #pragma omp section
 #endif
                 {
                     adecomp = new wavelet_decomposition(labdn->data + datalen, labdn->W, labdn->H, levwav, 1);
                 }
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
                 #pragma omp section
 #endif
                 {

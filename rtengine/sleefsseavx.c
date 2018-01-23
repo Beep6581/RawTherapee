@@ -906,7 +906,7 @@ typedef struct {
 static INLINE vfloat vabsf(vfloat f) { return (vfloat)vandnotm((vmask)vcast_vf_f(-0.0f), (vmask)f); }
 static INLINE vfloat vnegf(vfloat f) { return (vfloat)vxorm((vmask)f, (vmask)vcast_vf_f(-0.0f)); }
 
-#if defined( __SSE4_1__ ) && defined( __x86_64__ )
+#ifdef __SSE4_1__
 	// only one instruction when using SSE4.1
 	static INLINE vfloat vself(vmask mask, vfloat x, vfloat y) {
 		return _mm_blendv_ps(y,x,(vfloat)mask);

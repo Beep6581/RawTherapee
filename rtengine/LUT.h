@@ -104,7 +104,7 @@ protected:
     unsigned int upperBound;  // always equals size-1, parameter created for performance reason
 private:
     unsigned int owner;
-#if defined( __SSE2__ ) && defined( __x86_64__ )
+#ifdef __SSE2__
     vfloat maxsv ALIGNED16;
     vfloat sizev ALIGNED16;
     vint sizeiv ALIGNED16;
@@ -136,7 +136,7 @@ public:
         maxs = size - 2;
         maxsf = (float)maxs;
         maxIndexFloat = ((float)upperBound) - 1e-5;
-#if defined( __SSE2__ ) && defined( __x86_64__ )
+#ifdef __SSE2__
         maxsv =  F2V( maxs );
         sizeiv =  _mm_set1_epi32( (int)(size - 1) );
         sizev = F2V( size - 1 );
@@ -167,7 +167,7 @@ public:
         maxs = size - 2;
         maxsf = (float)maxs;
         maxIndexFloat = ((float)upperBound) - 1e-5;
-#if defined( __SSE2__ ) && defined( __x86_64__ )
+#ifdef __SSE2__
         maxsv =  F2V( maxs );
         sizeiv =  _mm_set1_epi32( (int)(size - 1) );
         sizev = F2V( size - 1 );
@@ -178,7 +178,7 @@ public:
     {
         data = nullptr;
         reset();
-#if defined( __SSE2__ ) && defined( __x86_64__ )
+#ifdef __SSE2__
         maxsv = ZEROV;
         sizev = ZEROV;
         sizeiv = _mm_setzero_si128();
@@ -243,7 +243,7 @@ public:
             this->maxs = this->size - 2;
             this->maxsf = (float)this->maxs;
             this->maxIndexFloat = ((float)this->upperBound) - 1e-5;
-#if defined( __SSE2__ ) && defined( __x86_64__ )
+#ifdef __SSE2__
             this->maxsv =  F2V( this->size - 2);
             this->sizeiv =  _mm_set1_epi32( (int)(this->size - 1) );
             this->sizev = F2V( this->size - 1 );
@@ -258,7 +258,7 @@ public:
     LUT<T> & operator+=(LUT<T> &rhs)
     {
         if (rhs.size == this->size) {
-#ifdef _RT_NESTED_OPENMP // temporary solution to fix Issue #3324
+#ifdef _OPENMP
             #pragma omp simd
 #endif
 
@@ -274,7 +274,7 @@ public:
     template<typename U = T, typename = typename std::enable_if<std::is_same<U, float>::value>::type>
     LUT<float> & operator*=(float factor)
     {
-#ifdef _RT_NESTED_OPENMP // temporary solution to fix Issue #3324
+#ifdef _OPENMP
         #pragma omp simd
 #endif
 
@@ -289,7 +289,7 @@ public:
     template<typename U = T, typename = typename std::enable_if<std::is_same<U, float>::value>::type>
     LUT<float> & operator/=(float divisor)
     {
-#ifdef _RT_NESTED_OPENMP // temporary solution to fix Issue #3324
+#ifdef _OPENMP
         #pragma omp simd
 #endif
 
@@ -307,7 +307,7 @@ public:
         return data[ rtengine::LIM<int>(index, 0, upperBound) ];
     }
 
-#if defined( __SSE2__ ) && defined( __x86_64__ )
+#ifdef __SSE2__
 
 
     // NOTE: This function requires LUTs which clips only at lower bound
@@ -698,7 +698,7 @@ public:
         maxs = size - 2;
         maxsf = (float)maxs;
         maxIndexFloat = ((float)upperBound) - 1e-5;
-#if defined( __SSE2__ ) && defined( __x86_64__ )
+#ifdef __SSE2__
         maxsv =  F2V( size - 2);
         sizeiv =  _mm_set1_epi32( (int)(size - 1) );
         sizev = F2V( size - 1 );

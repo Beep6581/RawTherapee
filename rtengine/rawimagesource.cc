@@ -1341,7 +1341,7 @@ int RawImageSource::interpolateBadPixelsXtrans( PixelsMap &bitmapBads )
  *  (Taken from Emil Martinec idea)
  *  (Optimized by Ingo Weyrich 2013 and 2015)
  */
-SSEFUNCTION int RawImageSource::findHotDeadPixels( PixelsMap &bpMap, float thresh, bool findHotPixels, bool findDeadPixels )
+int RawImageSource::findHotDeadPixels( PixelsMap &bpMap, float thresh, bool findHotPixels, bool findDeadPixels )
 {
     float varthresh = (20.0 * (thresh / 100.0) + 1.0 ) / 24.f;
 
@@ -3169,7 +3169,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
     }
 }
 
-SSEFUNCTION void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, const int boxH, const int boxW)
+void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, const int boxH, const int boxW)
 {
 
     if(boxW == 0 && boxH == 0) { // nothing to blur

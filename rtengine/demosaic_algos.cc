@@ -1314,7 +1314,7 @@ void RawImageSource::jdl_interpolate_omp()  // from "Lassus"
 // Adapted to RawTherapee by Jacques Desmis 3/2013
 // Improved speed and reduced memory consumption by Ingo Weyrich 2/2015
 //TODO Tiles to reduce memory consumption
-SSEFUNCTION void RawImageSource::lmmse_interpolate_omp(int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, int iterations)
+void RawImageSource::lmmse_interpolate_omp(int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, int iterations)
 {
     const int width = winw, height = winh;
     const int ba = 10;
@@ -1946,7 +1946,7 @@ SSEFUNCTION void RawImageSource::lmmse_interpolate_omp(int winw, int winh, array
 // SSE version by Ingo Weyrich 5/2013
 #ifdef __SSE2__
 #define CLIPV(a) LIMV(a,zerov,c65535v)
-SSEFUNCTION void RawImageSource::igv_interpolate(int winw, int winh)
+void RawImageSource::igv_interpolate(int winw, int winh)
 {
     static const float eps = 1e-5f, epssq = 1e-5f; //mod epssq -10f =>-5f Jacques 3/2013 to prevent artifact (divide by zero)
 
@@ -2873,7 +2873,7 @@ void RawImageSource::nodemosaic(bool bw)
 #ifdef __SSE2__
 #define CLIPV(a) LIMV(a,ZEROV,c65535v)
 #endif
-SSEFUNCTION void RawImageSource::refinement(int PassCount)
+void RawImageSource::refinement(int PassCount)
 {
     MyTime t1e, t2e;
     t1e.set();
@@ -3870,7 +3870,7 @@ void RawImageSource::cielab (const float (*rgb)[3], float* l, float* a, float *b
         return;
     }
 
-#if defined( __SSE2__ ) && defined( __x86_64__ )
+#ifdef __SSE2__
     vfloat zd5v = F2V(0.5f);
     vfloat c116v = F2V(116.f);
     vfloat c16v = F2V(16.f);
@@ -3887,7 +3887,7 @@ void RawImageSource::cielab (const float (*rgb)[3], float* l, float* a, float *b
 
     for(int i = 0; i < height; i++) {
         int j = 0;
-#if defined( __SSE2__ ) && defined( __x86_64__ ) // vectorized LUT access is restricted to __x86_64__ => we have to use the same restriction
+#ifdef __SSE2__
 
         for(; j < labWidth - 3; j += 4) {
             vfloat redv, greenv, bluev;

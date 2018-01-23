@@ -1131,7 +1131,7 @@ void rtengine::LCPMapper::correctCA(double& x, double& y, int cx, int cy, int ch
     y -= cy;
 }
 
-SSEFUNCTION void rtengine::LCPMapper::processVignetteLine(int width, int y, float* line) const
+void rtengine::LCPMapper::processVignetteLine(int width, int y, float* line) const
 {
     // No need for swapXY, since vignette is in RAW and always before rotation
     float yd = ((float)y - mc.y0) * mc.rfy;
@@ -1169,7 +1169,7 @@ SSEFUNCTION void rtengine::LCPMapper::processVignetteLine(int width, int y, floa
     }
 }
 
-SSEFUNCTION void rtengine::LCPMapper::processVignetteLine3Channels(int width, int y, float* line) const
+void rtengine::LCPMapper::processVignetteLine3Channels(int width, int y, float* line) const
 {
     // No need for swapXY, since vignette is in RAW and always before rotation
     float yd = ((float)y - mc.y0) * mc.rfy;

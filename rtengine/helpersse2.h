@@ -29,29 +29,13 @@ typedef __m128 vfloat;
 typedef __m128i vint2;
 
 //
-#ifdef __GNUC__
-#if (!defined(WIN32) || defined( __x86_64__ ))
 #define LVF(x) _mm_load_ps((float*)&x)
 #define LVFU(x) _mm_loadu_ps(&x)
 #define STVF(x,y) _mm_store_ps(&x,y)
 #define STVFU(x,y) _mm_storeu_ps(&x,y)
 #define LVI(x) _mm_load_si128((__m128i*)&x)
-#else // there is a bug in gcc 4.7.x when using openmp and aligned memory and -O3, also need to map the aligned functions to unaligned functions for WIN32 builds
-#define LVF(x) _mm_loadu_ps((float*)&x)
-#define LVFU(x) _mm_loadu_ps(&x)
-#define STVF(x,y) _mm_storeu_ps(&x,y)
-#define STVFU(x,y) _mm_storeu_ps(&x,y)
-#define LVI(x) _mm_loadu_si128((__m128i*)&x)
-#endif
-#else
-#define LVF(x) _mm_load_ps((float*)&x)
-#define LVFU(x) _mm_loadu_ps(&x)
-#define STVF(x,y) _mm_store_ps(&x,y)
-#define STVFU(x,y) _mm_storeu_ps(&x,y)
-#define LVI(x) _mm_load_si128((__m128i*)&x)
-#endif
 
-#if defined(__x86_64__) && defined(__AVX__)
+#ifdef __AVX__
 #define PERMUTEPS(a,mask) _mm_permute_ps(a,mask)
 #else
 #define PERMUTEPS(a,mask) _mm_shuffle_ps(a,a,mask)
@@ -67,7 +51,7 @@ static INLINE vfloat LC2VFU(float &a)
 
 
 // Store a vector of 4 floats in a[0],a[2],a[4] and a[6]
-#if defined(__x86_64__) && defined(__SSE4_1__)
+#ifdef __SSE4_1__
 // SSE4.1 => use _mm_blend_ps instead of _mm_set_epi32 and vself
 #define STC2VFU(a,v) {\
                          __m128 TST1V = _mm_loadu_ps(&a);\
