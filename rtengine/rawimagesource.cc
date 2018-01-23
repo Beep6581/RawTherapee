@@ -38,7 +38,6 @@
 #include <omp.h>
 #endif
 #include "opthelper.h"
-#define BENCHMARK
 #include "StopWatch.h"
 #define clipretinex( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
 #undef CLIPD

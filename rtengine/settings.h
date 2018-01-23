@@ -83,14 +83,6 @@ public:
     double          artifact_cbdl;
     double          level0_cbdl;
     double          level123_cbdl;
-    double          bot_left;
-    double          top_left;
-    double          top_right;
-    double          bot_right;
-    double          ed_detec;
-    double          ed_detecStr;
-    double          ed_low;
-
     int             nspot;
     bool            locdelay;
     int             cropsleep;

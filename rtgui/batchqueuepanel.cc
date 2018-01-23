@@ -228,7 +228,7 @@ void BatchQueuePanel::updateTab (int qsize, int forceOrientation)
         if (!qsize ) {
             grid->attach_next_to(*Gtk::manage (new RTImage ("processing.png")), Gtk::POS_RIGHT, 1, 1);
             grid->attach_next_to(*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE") )), Gtk::POS_RIGHT, 1, 1);
-        } else if (!qStartStop->get_active()) {
+        } else if (qStartStop->get_active()) {
             grid->attach_next_to(*Gtk::manage (new RTImage ("processing-play.png")), Gtk::POS_RIGHT, 1, 1);
             grid->attach_next_to(*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE") + " [" + Glib::ustring::format( qsize ) + "]" )), Gtk::POS_RIGHT, 1, 1);
         } else {

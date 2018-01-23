@@ -150,6 +150,11 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
 
     ImageIO* img = imgSrc.getImageIO();
 
+    // agriggio -- hotfix for #3794, to be revised once a proper solution is implemented
+    if (std::max(img->getWidth(), img->getHeight()) / std::min(img->getWidth(), img->getHeight()) >= 10) {
+        return nullptr;
+    }
+    
     Thumbnail* tpp = new Thumbnail ();
 
     unsigned char* data;

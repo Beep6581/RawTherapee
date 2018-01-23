@@ -1875,11 +1875,10 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
         // I adapted the principle but have profoundly changed the algorithm
         // One can 1) change all parameters and found good parameters;
         //one can also chnage in calckoe
-        float edd = settings->ed_detec;
-        float eddlow = settings->ed_low; //5 to 40
+        float edd = 3.f;
+        float eddlow = 15.f;
         float eddlipinfl = 0.005f * cp.edgsens + 0.4f;
         float eddlipampl = 1.f + cp.edgampl / 50.f;
-        //  float eddlow=5.f + cp.edgampl/2.f;//settings->ed_low;//5 to 40
 
 
         if (cp.detectedge) { //enabled Lipschitz control...more memory..more time...
@@ -2578,11 +2577,11 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
         scaleskip[sc] = scales[sc] / skip;
     }
 
-    float t_r = settings->top_right;
-    float t_l = settings->top_left;
-    float b_r = settings->bot_right;
-    float edd = settings->ed_detec;
-    float eddstrength = settings->ed_detecStr;
+    float t_r = 40.f;
+    float t_l = 10.f;
+    float b_r = 75.f;
+    float edd = 3.f;
+    float eddstrength = 1.3f;
     float aedstr = (eddstrength - 1.f) / 90.f;
     float bedstr = 1.f - 10.f * aedstr;
 
