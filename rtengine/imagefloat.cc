@@ -163,15 +163,15 @@ void Imagefloat::getScanline (int row, unsigned char* buffer, int bps)
     } else if (bps == 16) {
         unsigned short *sbuffer = (unsigned short *)buffer;
         for (int i = 0, ix = 0; i < width; i++) {
-            sbuffer[ix++] = r(row, i);
-            sbuffer[ix++] = g(row, i);
-            sbuffer[ix++] = b(row, i);
+            sbuffer[ix++] = CLIP(r(row, i));
+            sbuffer[ix++] = CLIP(g(row, i));
+            sbuffer[ix++] = CLIP(b(row, i));
         }
     } else if (bps == 8) {
         for (int i = 0, ix = 0; i < width; i++) {
-            buffer[ix++] = rtengine::uint16ToUint8Rounded(r(row, i));
-            buffer[ix++] = rtengine::uint16ToUint8Rounded(g(row, i));
-            buffer[ix++] = rtengine::uint16ToUint8Rounded(b(row, i));
+            buffer[ix++] = rtengine::uint16ToUint8Rounded(CLIP(r(row, i)));
+            buffer[ix++] = rtengine::uint16ToUint8Rounded(CLIP(g(row, i)));
+            buffer[ix++] = rtengine::uint16ToUint8Rounded(CLIP(b(row, i)));
         }
     }
 }
