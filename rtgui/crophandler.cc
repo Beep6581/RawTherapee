@@ -412,7 +412,7 @@ void CropHandler::setDetailedCrop (IImage8* im, IImage8* imtrue, rtengine::procp
             return FALSE;
         };
 
-        idle_register.add(func, idle_helper);
+        idle_register.add(func, idle_helper, G_PRIORITY_HIGH_IDLE);
     }
 
     cimg.unlock ();

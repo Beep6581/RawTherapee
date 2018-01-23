@@ -26,7 +26,6 @@
 #include "iccstore.h"
 #include "../rtgui/mydiagonalcurve.h"
 #include "improcfun.h"
-#define BENCHMARK
 #include "StopWatch.h"
 #include <iostream>
 #include <iomanip>
@@ -108,7 +107,7 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
                 int v = mapping[i];
                 bool change = i > 0 && v != mapping[i-1];
                 int diff = i - prev;
-                if (change && std::abs(diff - step) <= 1) {
+                if ((change && std::abs(diff - step) <= 1) || diff > step * 2) {
                     curve.push_back(coord(i));
                     curve.push_back(coord(v));
                     prev = i;
@@ -117,10 +116,13 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
         };
     doit(0, idx, idx > step ? step : idx / 2, true);
     doit(idx, int(mapping.size()), step, idx - step > step / 2);
-    if (curve.size() <= 2 || curve.back() < 0.99 || (1 - curve[curve.size()-2] > step / 512.0 && curve.back() < coord(mapping.back()))) {
-        curve.emplace_back(1.0);
-        curve.emplace_back(1.0);
+    if (curve.size() > 2 && (1 - curve[curve.size()-2] <= step / (256.0 * 3))) {
+        curve.pop_back();
+        curve.pop_back();
     }
+    curve.push_back(1.0);
+    curve.push_back(1.0);
+        
     if (curve.size() < 4) {
         curve = { DCT_Linear }; // not enough points, fall back to linear
     } else {
@@ -201,7 +203,7 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
                 std::cout << "histogram matching: cropping target to get an aspect ratio of " << std::fixed << std::setprecision(2) << thumb_ratio << ":1, new full size is " << fw << "x" << fh << std::endl;
             }
         }
-        PreviewProps pp(0, 0, fw, fh, skip);
+        PreviewProps pp(cx, cy, fw, fh, skip);
         ColorTemp currWB = getWB();
         std::unique_ptr<Imagefloat> image(new Imagefloat(int(fw / skip), int(fh / skip)));
         getImage(currWB, TR_NONE, image.get(), pp, neutral.toneCurve, neutral.raw);
