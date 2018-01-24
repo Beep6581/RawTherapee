@@ -30,8 +30,13 @@
 
     #ifdef __GNUC__
         #define RESTRICT    __restrict__
-        #define LIKELY(x)   __builtin_expect (!!(x), 1)
-        #define UNLIKELY(x) __builtin_expect (!!(x), 0)
+        #if __SIZEOF_POINTER__ == 4 &&  __GNUC__ >= 7 // there seems to be a bug with __builtin_expect on 32bit systems when using gcc >= 7
+            #define LIKELY(x)    (x)
+            #define UNLIKELY(x)  (x)
+        #else
+            #define LIKELY(x)   __builtin_expect (!!(x), 1)
+            #define UNLIKELY(x) __builtin_expect (!!(x), 0)
+        #endif
         #define ALIGNED64 __attribute__ ((aligned (64)))
         #define ALIGNED16 __attribute__ ((aligned (16)))
     #else
