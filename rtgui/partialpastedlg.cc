@@ -97,6 +97,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     commonTrans  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COMMONTRANSFORMPARAMS")));
 
     // Metadata:
+    metadata = Gtk::manage(new Gtk::CheckButton(M("PARTIALPASTE_METADATA")));
     exifch      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EXIFCHANGES")));
     iptc        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_IPTCINFO")));
 
@@ -349,6 +350,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     commonTransConn = commonTrans->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
 
     // Metadata:
+    metadataConn = metadata->signal_toggled().connect(sigc::bind (sigc::mem_fun(*meta, &Gtk::CheckButton::set_inconsistent), true));
     exifchConn      = exifch->signal_toggled().connect (sigc::bind (sigc::mem_fun(*meta, &Gtk::CheckButton::set_inconsistent), true));
     iptcConn        = iptc->signal_toggled().connect (sigc::bind (sigc::mem_fun(*meta, &Gtk::CheckButton::set_inconsistent), true));
 
@@ -605,11 +607,13 @@ void PartialPasteDlg::compositionToggled ()
 void PartialPasteDlg::metaToggled ()
 {
 
+    ConnectionBlocker metadataBlocker(metadataConn);
     ConnectionBlocker exifchBlocker(exifchConn);
     ConnectionBlocker iptcBlocker(iptcConn);
 
     meta->set_inconsistent (false);
 
+    metadata->set_active(meta->get_active());
     exifch->set_active (meta->get_active ());
     iptc->set_active (meta->get_active ());
 }
@@ -783,6 +787,10 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 
     if (!commonTrans->get_active ()) {
         filterPE.commonTrans = falsePE.commonTrans;
+    }
+
+    if (!metadata->get_active()) {
+        filterPE.metadata = falsePE.metadata;
     }
 
     if (!exifch->get_active ()) {
