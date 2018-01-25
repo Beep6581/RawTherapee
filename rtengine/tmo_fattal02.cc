@@ -1104,7 +1104,8 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
     }
 
     float oldMedian;
-    findMinMaxPercentile (Yr.data(), Yr.getRows() * Yr.getCols(), 0.5f, oldMedian, 0.5f, oldMedian, multiThread);
+    const float percentile = float(LIM(1, params->fattal.anchor, 100)) / 100.f;
+    findMinMaxPercentile (Yr.data(), Yr.getRows() * Yr.getCols(), percentile, oldMedian, percentile, oldMedian, multiThread);
     // median filter on the deep shadows, to avoid boosting noise
     // because w2 >= w and h2 >= h, we can use the L buffer as temporary buffer for Median_Denoise()
     int w2 = find_fast_dim (w) + 1;
@@ -1146,7 +1147,7 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
     const float wr = float(w2) / float(w);
 
     float newMedian;
-    findMinMaxPercentile (L.data(), L.getRows() * L.getCols(), 0.5f, newMedian, 0.5f, newMedian, multiThread);
+    findMinMaxPercentile (L.data(), L.getRows() * L.getCols(), percentile, newMedian, percentile, newMedian, multiThread);
     const float scale = (oldMedian == 0.f || newMedian == 0.f) ? 65535.f : (oldMedian / newMedian); // avoid Nan
 
 #ifdef _OPENMP

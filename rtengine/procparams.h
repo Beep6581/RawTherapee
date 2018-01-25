@@ -728,6 +728,7 @@ struct FattalToneMappingParams {
     bool enabled;
     int threshold;
     int amount;
+    int anchor;
 
     FattalToneMappingParams();
 
