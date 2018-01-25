@@ -46,29 +46,21 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
 
     batchQueue = Gtk::manage( new BatchQueue(aFileCatalog) );
 
-    // construct batch queue panel with the extra "start" and "stop" button
     Gtk::VBox* batchQueueButtonBox = Gtk::manage (new Gtk::VBox);
     batchQueueButtonBox->set_name("BatchQueueButtons");
 
-    start = Gtk::manage (new Gtk::ToggleButton ());
-    stop = Gtk::manage (new Gtk::ToggleButton ());
-    autoStart = Gtk::manage (new Gtk::CheckButton (M("BATCHQUEUE_AUTOSTART")));
-    start->set_tooltip_markup (M("FILEBROWSER_STARTPROCESSINGHINT"));
-    stop->set_tooltip_markup (M("FILEBROWSER_STOPPROCESSINGHINT"));
-    autoStart->set_tooltip_text (M("FILEBROWSER_TOOLTIP_STOPPROCESSING"));
-    start->set_active (false);
-    stop->set_active (true);
-    autoStart->set_active (options.procQueueEnabled);
+    qStartStop = Gtk::manage (new Gtk::Switch());
+    qStartStop->set_tooltip_markup (M("BATCHQUEUE_STARTSTOPHINT"));
+    qStartStopConn = qStartStop->property_active().signal_changed().connect (sigc::mem_fun(*this, &BatchQueuePanel::startOrStopBatchProc));
 
-    start->set_image (*Gtk::manage (new RTImage ("gtk-media-play.png")));
-    start->get_style_context()->add_class("BIG");
-    startConnection = start->signal_toggled().connect (sigc::mem_fun(*this, &BatchQueuePanel::startBatchProc));
-    stop->set_image (*Gtk::manage (new RTImage ("gtk-media-stop.png")));
-    stop->get_style_context()->add_class("BIG");
-    stopConnection = stop->signal_toggled().connect (sigc::mem_fun(*this, &BatchQueuePanel::stopBatchProc));
-    batchQueueButtonBox->pack_start (*start, Gtk::PACK_SHRINK, 4);
-    batchQueueButtonBox->pack_start (*stop, Gtk::PACK_SHRINK, 4);
-    batchQueueButtonBox->pack_start (*autoStart, Gtk::PACK_SHRINK, 4);
+    qAutoStart = Gtk::manage (new Gtk::CheckButton (M("BATCHQUEUE_AUTOSTART")));
+    qAutoStart->set_tooltip_text (M("BATCHQUEUE_AUTOSTARTHINT"));
+    qAutoStart->set_active (options.procQueueEnabled);
+
+    batchQueueButtonBox->pack_start (*qStartStop, Gtk::PACK_SHRINK, 4);
+    batchQueueButtonBox->pack_start (*qAutoStart, Gtk::PACK_SHRINK, 4);
+    Gtk::Frame *bbox = Gtk::manage(new Gtk::Frame(M("MAIN_FRAME_BATCHQUEUE")));
+    bbox->add(*batchQueueButtonBox);
 
     // Output directory selection
     fdir = Gtk::manage (new Gtk::Frame (M("PREFERENCES_OUTDIR")));
@@ -141,7 +133,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     pack_start (*topBox, Gtk::PACK_SHRINK);
     topBox->set_name("BatchQueueButtonsMainContainer");
 
-    topBox->pack_start (*batchQueueButtonBox, Gtk::PACK_SHRINK, 4);
+    topBox->pack_start (*bbox, Gtk::PACK_SHRINK, 4);
     topBox->pack_start (*fdir, Gtk::PACK_EXPAND_WIDGET, 4);
     topBox->pack_start (*fformat, Gtk::PACK_EXPAND_WIDGET, 4);
 
@@ -216,7 +208,7 @@ void BatchQueuePanel::updateTab (int qsize, int forceOrientation)
         if(!qsize ) {
             grid->attach_next_to(*Gtk::manage (new RTImage ("processing.png")), Gtk::POS_TOP, 1, 1);
             l = Gtk::manage (new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_BATCHQUEUE")) );
-        } else if( start->get_active () ) {
+        } else if (qStartStop->get_active()) {
             grid->attach_next_to(*Gtk::manage (new RTImage ("processing-play.png")), Gtk::POS_TOP, 1, 1);
             l = Gtk::manage (new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_BATCHQUEUE") + " [" + Glib::ustring::format( qsize ) + "]"));
         } else {
@@ -236,7 +228,7 @@ void BatchQueuePanel::updateTab (int qsize, int forceOrientation)
         if (!qsize ) {
             grid->attach_next_to(*Gtk::manage (new RTImage ("processing.png")), Gtk::POS_RIGHT, 1, 1);
             grid->attach_next_to(*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE") )), Gtk::POS_RIGHT, 1, 1);
-        } else if ( start->get_active () ) {
+        } else if (qStartStop->get_active()) {
             grid->attach_next_to(*Gtk::manage (new RTImage ("processing-play.png")), Gtk::POS_RIGHT, 1, 1);
             grid->attach_next_to(*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE") + " [" + Glib::ustring::format( qsize ) + "]" )), Gtk::POS_RIGHT, 1, 1);
         } else {
@@ -257,6 +249,12 @@ void BatchQueuePanel::queueSizeChanged (int qsize, bool queueEmptied, bool queue
 {
     updateTab ( qsize);
 
+    if (qsize == 0 || (qsize == 1 && !fdir->get_sensitive())) {
+        qStartStop->set_sensitive(false);
+    } else {
+        qStartStop->set_sensitive(true);
+    }
+
     if (queueEmptied || queueError) {
         stopBatchProc ();
         fdir->set_sensitive (true);
@@ -271,19 +269,29 @@ void BatchQueuePanel::queueSizeChanged (int qsize, bool queueEmptied, bool queue
     }
 }
 
+void BatchQueuePanel::startOrStopBatchProc()
+{
+    bool state = qStartStop->get_state();
+    if (state) {
+        startBatchProc();
+    } else {
+        stopBatchProc();
+    }
+}
+
 void BatchQueuePanel::startBatchProc ()
 {
-
-    stopConnection.block (true);
-    startConnection.block (true);
-    stop->set_active (false);
-    start->set_active (true);
-    stopConnection.block (false);
-    startConnection.block (false);
+    // Update switch when queue started programmatically
+    qStartStopConn.block (true);
+    qStartStop->set_active(true);
+    qStartStopConn.block (false);
 
     if (batchQueue->hasJobs()) {
         fdir->set_sensitive (false);
         fformat->set_sensitive (false);
+        if (batchQueue->getEntries().size() == 1) {
+            qStartStop->set_sensitive(false);
+        }
         saveOptions();
         batchQueue->startProcessing ();
     } else {
@@ -295,13 +303,11 @@ void BatchQueuePanel::startBatchProc ()
 
 void BatchQueuePanel::stopBatchProc ()
 {
+    // Update switch when queue started programmatically
+    qStartStopConn.block (true);
+    qStartStop->set_active(false);
+    qStartStopConn.block (false);
 
-    stopConnection.block (true);
-    startConnection.block (true);
-    stop->set_active (true);
-    start->set_active (false);
-    stopConnection.block (false);
-    startConnection.block (false);
     updateTab (batchQueue->getEntries().size());
 }
 
@@ -310,7 +316,7 @@ void BatchQueuePanel::addBatchQueueJobs ( std::vector<BatchQueueEntry*> &entries
 
     batchQueue->addEntries (entries, head);
 
-    if (stop->get_active () && autoStart->get_active ()) {
+    if (!qStartStop->get_active() && qAutoStart->get_active()) {
         startBatchProc ();
     }
 }
@@ -318,7 +324,7 @@ void BatchQueuePanel::addBatchQueueJobs ( std::vector<BatchQueueEntry*> &entries
 bool BatchQueuePanel::canStartNext ()
 {
 
-    if (start->get_active ()) {
+    if (qStartStop->get_active()) {
         return true;
     } else {
         fdir->set_sensitive (true);
@@ -332,7 +338,7 @@ void BatchQueuePanel::saveOptions ()
 
     options.savePathTemplate    = outdirTemplate->get_text();
     options.saveUsePathTemplate = useTemplate->get_active();
-    options.procQueueEnabled    = autoStart->get_active ();
+    options.procQueueEnabled    = qAutoStart->get_active();
 }
 
 void BatchQueuePanel::pathFolderButtonPressed ()
@@ -375,7 +381,7 @@ bool BatchQueuePanel::handleShortcutKey (GdkEventKey* event)
     if (ctrl) {
         switch(event->keyval) {
         case GDK_KEY_s:
-            if (start->get_active()) {
+            if (qStartStop->get_active()) {
                 stopBatchProc();
             } else {
                 startBatchProc();

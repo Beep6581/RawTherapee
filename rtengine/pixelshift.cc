@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////
 //
-//  Algorithm for Pentax Pixel Shift raw files with motion detection
+//  Algorithm for Pentax/Sony Pixel Shift raw files with motion detection
 //
 //  Copyright (C) 2016 - 2017 Ingo Weyrich <heckflosse67@gmx.de>
 //
@@ -294,12 +294,11 @@ void calcFrameBrightnessFactor(unsigned int frame, uint32_t datalen, LUT<uint32_
 
 }
 
-
 }
 
 using namespace std;
 using namespace rtengine;
-void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RAWParams::BayerSensor &bayerParamsIn, unsigned int frame, const std::string &model, float rawWpCorrection)
+void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RAWParams::BayerSensor &bayerParamsIn, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection)
 {
 
     if(numFrames != 4) { // fallback for non pixelshift files
@@ -505,6 +504,42 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 
     static const float ePerIsoK70 = 0.5f;
 
+    // preliminary ILCE-7RM3 data, good fidelity except from A) small innaccuracy at places
+    // due to integer scaling quantization, B) much different noise behavior of PDAF pixels
+    static const float nReadILCE7RM3[] = { 4.2f,  // ISO 100
+                                        3.9f,  // ISO 125
+                                        3.6f,  // ISO 160
+                                        3.55f, // ISO 200
+                                        3.5f,  // ISO 250
+                                        3.45f, // ISO 320
+                                        3.35f, // ISO 400
+                                        3.3f,  // ISO 500
+                                        1.3f,  // ISO 640
+                                        1.2f,  // ISO 800
+                                        1.2f,  // ISO 1000
+                                        1.2f,  // ISO 1250
+                                        1.15f, // ISO 1600
+                                        1.2f,  // ISO 2000
+                                        1.15f, // ISO 2500
+                                        1.15f, // ISO 3200
+                                        1.1f,  // ISO 4000
+                                        1.1f,  // ISO 5000
+                                        1.05f, // ISO 6400
+                                        1.05f, // ISO 8000
+                                        1.05f, // ISO 10000
+                                        1.0f,  // ISO 12800
+                                        1.0f,  // ISO 16000
+                                        1.0f,  // ISO 20000
+                                        1.0f,  // ISO 25600
+                                        1.0f,  // ISO 32000
+                                        1.0f,  // ISO 40000
+                                        1.0f,  // ISO 51200
+                                        1.1f,  // ISO 64000
+                                        1.1f,  // ISO 80000
+                                        1.1f,  // ISO 102400
+                                   };
+    static const float ePerIsoILCE7RM3 = 0.8f;
+
     if(plistener) {
         plistener->setProgressStr(Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)));
         plistener->setProgress(0.0);
@@ -531,6 +566,9 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     } else if(model.find("K-1") != string::npos) {
         nRead = nReadK1[nReadIndex];
         eperIsoModel = ePerIsoK1;
+    } else if(model.find("ILCE-7RM3") != string::npos) {
+        nRead = nReadILCE7RM3[nReadIndex];
+        eperIsoModel = ePerIsoILCE7RM3;
     } else { // as long as we don't have values for Pentax KP, we use the values from K-70
         nRead = nReadK70[nReadIndex];
         eperIsoModel = ePerIsoK70;
@@ -887,11 +925,25 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                         const float blend = smoothFactor == 0.f ? 1.f : pow_F(std::max(psMask[i][j] - 1.f, 0.f), smoothFactor);
 #endif
                         redDest[j + offsX] = intp(blend, redDest[j + offsX], psRed[i][j] );
-                        greenDest[j + offsX] = intp(blend, greenDest[j + offsX], ((*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset] + (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset]) * 0.5f);
+                        if(bayerParams.pixelShiftOneGreen) {
+                            int greenFrame = (1 - offset != 0) ? 1 - offset : 3 - offset;
+                            int greenJ = (1 - offset != 0) ? j : j + 1;
+                            int greenI = (1 - offset != 0) ? i - offset + 1 : i + offset;
+                            greenDest[j + offsX] = intp(blend, greenDest[j + offsX], (*rawDataFrames[greenFrame])[greenI][greenJ] * greenBrightness[greenFrame]);
+                        } else {
+                            greenDest[j + offsX] = intp(blend, greenDest[j + offsX], ((*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset] + (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset]) * 0.5f);
+                        }
                         blueDest[j + offsX] = intp(blend, blueDest[j + offsX], psBlue[i][j]);
                     } else {
                         redDest[j + offsX] = psRed[i][j];
-                        greenDest[j + offsX] = ((*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset] + (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset]) * 0.5f;
+                        if(bayerParams.pixelShiftOneGreen) {
+                            int greenFrame = (1 - offset != 0) ? 1 - offset : 3 - offset;
+                            int greenJ = (1 - offset != 0) ? j : j + 1;
+                            int greenI = (1 - offset != 0) ? i - offset + 1 : i + offset;
+                            greenDest[j + offsX] = (*rawDataFrames[greenFrame])[greenI][greenJ] * greenBrightness[greenFrame];
+                        } else {
+                            greenDest[j + offsX] = ((*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset] + (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset]) * 0.5f;
+                        }
                         blueDest[j + offsX] = psBlue[i][j];
                     }
                 }
@@ -924,7 +976,14 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 
             for(; j < winw - 1; ++j) {
                 // set red, green and blue values
-                green[i][j] = ((*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset] + (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset]) * 0.5f;
+                if(bayerParams.pixelShiftOneGreen) {
+                    int greenFrame = (1 - offset != 0) ? 1 - offset : 3 - offset;
+                    int greenJ = (1 - offset != 0) ? j : j + 1;
+                    int greenI = (1 - offset != 0) ? i - offset + 1 : i + offset;
+                    green[i][j] = (*rawDataFrames[greenFrame])[greenI][greenJ] * greenBrightness[greenFrame];
+                } else {
+                    green[i][j] = ((*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset] + (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset]) * 0.5f;
+                }
                 nonGreenDest0[j] = (*rawDataFrames[(offset << 1) + offset])[i][j + offset] * ngbright[ng][(offset << 1) + offset];
                 nonGreenDest1[j] = (*rawDataFrames[2 - offset])[i + 1][j - offset + 1] * ngbright[ng ^ 1][2 - offset];
                 offset ^= 1; // 0 => 1 or 1 => 0

@@ -22,6 +22,7 @@ ABOUT_TAB_RELEASENOTES;Uitgave-opmerkingen
 ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Terug naar beginwaarde
 BATCHQUEUE_AUTOSTART;Autostart
+BATCHQUEUE_AUTOSTARTHINT;Start verwerking automatisch wanneer nieuwe foto arriveert
 BATCHQUEUE_DESTFILENAME;Pad en bestandsnaam
 BATCH_PROCESSING;Batch-verwerking
 CURVEEDITOR_AXIS_IN;I:
@@ -208,12 +209,7 @@ FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Toon niet-opgeslagen/verwerkte foto's.\nSne
 FILEBROWSER_SHOWTRASHHINT;Toon inhoud prullenbak\nSneltoets: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Toon foto's zonder kleurlabel.\nSneltoets: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Toon foto's zonder sterwaardering.\nSneltoets: <b>0</b>
-FILEBROWSER_STARTPROCESSING;Start verwerking
-FILEBROWSER_STARTPROCESSINGHINT;Start verwerking van bestanden in verwerkingsrij
-FILEBROWSER_STOPPROCESSING;Stop verwerking
-FILEBROWSER_STOPPROCESSINGHINT;Stop verwerking van bestanden in verwerkingsrij
 FILEBROWSER_THUMBSIZE;Miniaturen
-FILEBROWSER_TOOLTIP_STOPPROCESSING;Start verwerking automatisch wanneer nieuwe foto arriveert
 FILEBROWSER_UNRANK_TOOLTIP;Verwijder sterwaardering\nSneltoets: <b>Shift-0</b>
 FILEBROWSER_ZOOMINHINT;Groter
 FILEBROWSER_ZOOMOUTHINT;Kleiner
@@ -431,7 +427,6 @@ HISTORY_MSG_169;L*a*b* - CH curve
 HISTORY_MSG_170;Levendigheid curve
 HISTORY_MSG_171;L*a*b* - LC curve
 HISTORY_MSG_172;L*a*b* - Beperk LC
-HISTORY_MSG_173;RO - Luminantie Detail
 HISTORY_MSG_174;CIECAM02
 HISTORY_MSG_175;CAM02 - CAT02 toepassing
 HISTORY_MSG_176;CAM02 - Weergave omgeving
@@ -461,7 +456,6 @@ HISTORY_MSG_199;CAM02 - Toont in histogram
 HISTORY_MSG_200;CAM02 - Tonemapping
 HISTORY_MSG_201;RO - Chromin. rood-groen
 HISTORY_MSG_202;RO - Chromin. blauw-geel
-HISTORY_MSG_203;RO - Methode
 HISTORY_MSG_204;LMMSE Verbetering
 HISTORY_MSG_205;CAM02 hete/dode pixels
 HISTORY_MSG_206;CAT02 - Opname Lum.  Auto
@@ -513,7 +507,6 @@ HISTORY_MSG_252;DC - Huidtonen
 HISTORY_MSG_253;DC - Verminder artefacten
 HISTORY_MSG_254;DC - Huidtint
 HISTORY_MSG_255;DC - Algoritme
-HISTORY_MSG_256;RO - Mediaan Type
 HISTORY_MSG_257;Kleurtint
 HISTORY_MSG_258;KT - Kleur curve
 HISTORY_MSG_259;KT - Dekking
@@ -554,7 +547,6 @@ HISTORY_MSG_293;Film Simuleren
 HISTORY_MSG_294;Film - Sterkte
 HISTORY_MSG_295;Film - Film
 HISTORY_MSG_296;RO - Luminantie curve
-HISTORY_MSG_297;RO - Kwaliteit
 HISTORY_MSG_298;Dode pixels filter
 HISTORY_MSG_299;RO - Chrominantie curve
 HISTORY_MSG_300;-
@@ -979,7 +971,6 @@ PREFERENCES_DIRLAST;Laatst bezochte map
 PREFERENCES_DIROTHER;Anders
 PREFERENCES_DIRSELECTDLG;Selecteer standaardmap bij opstarten...
 PREFERENCES_DIRSOFTWARE;Installatiemap
-PREFERENCES_EDITORCMDLINE;Andere editor, geef pad
 PREFERENCES_EDITORLAYOUT;Bewerkingsvenster
 PREFERENCES_EXPAUT;Expert
 PREFERENCES_EXTERNALEDITOR;Externe editor
@@ -1402,69 +1393,63 @@ TP_DARKFRAME_LABEL;Donkerframe
 TP_DEFRINGE_LABEL;Verzachten (Lab/CIECAM02)
 TP_DEFRINGE_RADIUS;Straal
 TP_DEFRINGE_THRESHOLD;Drempel
-TP_DIRPYRDENOISE_3X3;3×3
-TP_DIRPYRDENOISE_3X3_SOFT;3×3 zacht
-TP_DIRPYRDENOISE_5X5;5×5
-TP_DIRPYRDENOISE_5X5_SOFT;5×5 zacht
-TP_DIRPYRDENOISE_7X7;7×7
-TP_DIRPYRDENOISE_9X9;9×9
-TP_DIRPYRDENOISE_ABM;Alleen chroma
-TP_DIRPYRDENOISE_AUT;Automatisch algemeen
-TP_DIRPYRDENOISE_AUTO;Automatisch algemeen
-TP_DIRPYRDENOISE_AUTO_TOOLTIP;Probeert chroma ruis te bepalen\nWees voorzichtig, deze berekening is een gemiddelde en kan subjectief zijn!
-TP_DIRPYRDENOISE_BLUE;Chrominantie Blauw & Geel
-TP_DIRPYRDENOISE_C2TYPE_TOOLTIP;Handmatig\nWerkt op de hele afbeelding.\nDe instellingen voor ruisonderdrukking moeten zelf worden bepaald.\n\nAutomatisch algemeen\nWerkt op de hele afbeelding.\n9 gebieden worden gebruikt om de chroma ruisonderdrukking te bepalen.\n\nVoorbeeld\nWerkt op de hele afbeelding.\nHet deel van de afbeelding dat zichtbaar is in het voorbeeld wordt gebruikt om de chroma ruisonderdrukking te bepalen.
-TP_DIRPYRDENOISE_CCCURVE;Chrominantie curve
-TP_DIRPYRDENOISE_CHROMA;Chrominantie (master)
-TP_DIRPYRDENOISE_CHROMAFR;Chrominantie
-TP_DIRPYRDENOISE_CTYPE;Auto methode
-TP_DIRPYRDENOISE_CTYPE_TOOLTIP;Handmatig\nWerkt op de hele afbeelding.\nDe instellingen voor ruisonderdrukking moeten zelf worden bepaald.\n\nAutomatisch algemeen\nWerkt op de hele afbeelding.\n9 gebieden worden gebruikt om de chroma ruisonderdrukking te bepalen.\n\nAutomatisch multi-zones\nGeen voorbeeld - werkt alleen bij opslaan. Gebruik de "Voorbeeld" methode om een idee te krijgen van het verwachte resultaat door de tegelgrootte en het centrum van het voorbeeld te matchen.\nDe afbeelding is verdeeld in tegels (10 tot 70 afhankelijk van de afbeeldingsgrootte) en van elke tegel wordt de eigen chroma ruisonderdrukking bepaald.\n\Voorbeeld\nWerkt op de hele afbeelding.\nHet deel van de afbeelding dat zichtbaar is in het voorbeeld wordt gebruikt om de chroma ruisonderdrukking te bepalen.
-TP_DIRPYRDENOISE_CUR;Curve
-TP_DIRPYRDENOISE_CURVEEDITOR_CC;Chroma
-TP_DIRPYRDENOISE_CURVEEDITOR_CC_TOOLTIP;Vergroot (vermenigvuldigt) de waarde van alle chrominantie schuifbalken.\nMet deze curve kun je de sterkte aanpassen van de chromatische ruisonderdrukking. Bijvoorbeeld door de werking te vergroten in gebieden met lage verzadiging en te verminderen in gebieden met hoge verzadiging.
-TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Luminantie ruisonderdrukking. Werkt niet lineair maar modulerend
+TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto multi-zone
+TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Automatisch algemeen
+TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;Probeert chroma ruis te bepalen\nWees voorzichtig, deze berekening is een gemiddelde en kan subjectief zijn!
+TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;Chrominantie Blauw & Geel
+TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Chrominantie curve
+TP_DIRPYRDENOISE_CHROMINANCE_FRAME;Chrominantie
+TP_DIRPYRDENOISE_CHROMINANCE_MANUAL;Handmatig
+TP_DIRPYRDENOISE_CHROMINANCE_MASTER;Chrominantie (master)
+TP_DIRPYRDENOISE_CHROMINANCE_METHOD;Auto methode
+TP_DIRPYRDENOISE_CHROMINANCE_METHODADVANCED_TOOLTIP;Handmatig\nWerkt op de hele afbeelding.\nDe instellingen voor ruisonderdrukking moeten zelf worden bepaald.\n\nAutomatisch algemeen\nWerkt op de hele afbeelding.\n9 gebieden worden gebruikt om de chroma ruisonderdrukking te bepalen.\n\nVoorbeeld\nWerkt op de hele afbeelding.\nHet deel van de afbeelding dat zichtbaar is in het voorbeeld wordt gebruikt om de chroma ruisonderdrukking te bepalen.
+TP_DIRPYRDENOISE_CHROMINANCE_METHOD_TOOLTIP;Handmatig\nWerkt op de hele afbeelding.\nDe instellingen voor ruisonderdrukking moeten zelf worden bepaald.\n\nAutomatisch algemeen\nWerkt op de hele afbeelding.\n9 gebieden worden gebruikt om de chroma ruisonderdrukking te bepalen.\n\nAutomatisch multi-zones\nGeen voorbeeld - werkt alleen bij opslaan. Gebruik de "Voorbeeld" methode om een idee te krijgen van het verwachte resultaat door de tegelgrootte en het centrum van het voorbeeld te matchen.\nDe afbeelding is verdeeld in tegels (10 tot 70 afhankelijk van de afbeeldingsgrootte) en van elke tegel wordt de eigen chroma ruisonderdrukking bepaald.\n\Voorbeeld\nWerkt op de hele afbeelding.\nHet deel van de afbeelding dat zichtbaar is in het voorbeeld wordt gebruikt om de chroma ruisonderdrukking te bepalen.
+TP_DIRPYRDENOISE_CHROMINANCE_PMZ;Voorbeeld multi-zone
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW;Voorbeeld
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEWRESIDUAL_INFO_TOOLTIP;Toont de overgebleven ruisniveaus van het zichtbare deel van de afbeelding in het <b>voorbeeld</b> na wavelet.\n\n>300 Veel ruis\n100-300 Gemiddeld ruis\n50-100 Weinig ruis\n<50 Zeer weinig ruis\n\nVoorzichtig, de waarden zullen verschillen tussen RGB en L*a*b* mode. De RGB waarden zijn minder accuraat omdat de RGB mode luminantie en chrominantie niet volledig scheidt.
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_INFO;Voorbeeld grootte=%1, Centrum: Px=%2  Py=%3
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO;Voorbeeld ruis: Gemiddeld=%1  Hoog=%2
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY;Voorbeeld ruis: Gemiddeld= -   Hoog= -
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;Tegel grootte=%1, Centrum: Tx=%2  Ty=%3
+TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;Chrominantie Rood & Groen
 TP_DIRPYRDENOISE_ENH;Verbeteren
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Verbetert de ruisonderdrukking, maar vergroot de verwerkingstijd met ongeveer 20%
-TP_DIRPYRDENOISE_GAMMA;Gamma
-TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varieert de mate van ruisonderdrukking  over het bereik van tinten. Kleinere waarden beperken zich tot schaduwen, terwijl grotere waarden het bereik oprekken tot heldere tinten
-TP_DIRPYRDENOISE_LAB;L*a*b*
-TP_DIRPYRDENOISE_LABEL;Ruisonderdrukking
-TP_DIRPYRDENOISE_LABM;L*a*b*
-TP_DIRPYRDENOISE_LCURVE;Luminantie curve
-TP_DIRPYRDENOISE_LDETAIL;Luminantie Detail
-TP_DIRPYRDENOISE_LM;Alleen Luminantie
-TP_DIRPYRDENOISE_LPLABM;Gewogen L* (weinig) + a*b* (normaal)
-TP_DIRPYRDENOISE_LTYPE;Type gereedschap
-TP_DIRPYRDENOISE_LUMA;Luminantie
-TP_DIRPYRDENOISE_LUMAFR;Luminantie
-TP_DIRPYRDENOISE_MAN;Handmatig
-TP_DIRPYRDENOISE_MANU;Handmatig
-TP_DIRPYRDENOISE_MED;Mediaan filter
-TP_DIRPYRDENOISE_MEDMETHOD;Methode
-TP_DIRPYRDENOISE_MEDTYPE;Type
-TP_DIRPYRDENOISE_METHOD;Methode
-TP_DIRPYRDENOISE_METHOD11;Kwaliteit
-TP_DIRPYRDENOISE_METHOD11_TOOLTIP;De kwaliteit kan worden aangepast aan de hoeveelheid ruis. \nHoog verbetert de ruisonderdrukking, maar verlengt de verwerkingstijd
-TP_DIRPYRDENOISE_METHOD_TOOLTIP;Voor raw afbeeldingen kan RGB of Lab methode worden gebruikt.\n\nVoor niet-raw afbeeldingen zal altijd de Lab methode worden gebruikt, ongeacht de geselecteerde methode.
-TP_DIRPYRDENOISE_METM_TOOLTIP;De "Alleen Luminantie" en "L*a*b*" methodes worden meteen na de wavelet stap uitgevoerd bij het onderdrukken van ruis.\nDe "RGB" methode, wordt echter als laatste stap uitgevoerd bij ruisonderdrukking.
-TP_DIRPYRDENOISE_MET_TOOLTIP;Gebruik een mediaan filter van gewenste venster grootte. Hoe groter het venster hoe langer het duurt.\n\n3×3 zacht: behandeld 5 pixels in een 3×3 pixel venster.\n3×3: behandeld 9 pixels in een 3×3 pixel venster.\n5×5 zacht: behandeld 13 pixels in een 5×5 pixel venster.\n5×5: behandeld 25 pixels in een 5×5 pixel venster.\n7×7: behandeld 49 pixels in een 7×7 pixel venster.\n9×9: behandeld 81 pixels in a 9×9 pixel venster.\n\nSoms is het mogelijk om een betere kwaliteit te krijgen door het uitvoeren van meerdere herhalingen met een kleiner venster dan één uitvoering met een groter venster.
-TP_DIRPYRDENOISE_NOISELABEL;Voorbeeld ruis: Gemiddeld=%1  Hoog=%2
-TP_DIRPYRDENOISE_NOISELABELEMPTY;Voorbeeld ruis: Gemiddeld= -   Hoog= -
-TP_DIRPYRDENOISE_NRESID_TOOLTIP;Toont de overgebleven ruisniveaus van het zichtbare deel van de afbeelding in het <b>voorbeeld</b> na wavelet.\n\n>300 Veel ruis\n100-300 Gemiddeld ruis\n50-100 Weinig ruis\n<50 Zeer weinig ruis\n\nVoorzichtig, de waarden zullen verschillen tussen RGB en L*a*b* mode. De RGB waarden zijn minder accuraat omdat de RGB mode luminantie en chrominantie niet volledig scheidt.
+TP_DIRPYRDENOISE_LUMINANCE_CONTROL;Type gereedschap
+TP_DIRPYRDENOISE_LUMINANCE_CURVE;Luminantie curve
+TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Luminantie Detail
+TP_DIRPYRDENOISE_LUMINANCE_FRAME;Luminantie
+TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminantie
+TP_DIRPYRDENOISE_MAIN_COLORSPACE;Methode
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;L*a*b*
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Ruisonderdrukking
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;Voor raw afbeeldingen kan RGB of Lab methode worden gebruikt.\n\nVoor niet-raw afbeeldingen zal altijd de Lab methode worden gebruikt, ongeacht de geselecteerde methode.
+TP_DIRPYRDENOISE_MAIN_GAMMA;Gamma
+TP_DIRPYRDENOISE_MAIN_GAMMA_TOOLTIP;Gamma varieert de mate van ruisonderdrukking  over het bereik van tinten. Kleinere waarden beperken zich tot schaduwen, terwijl grotere waarden het bereik oprekken tot heldere tinten
+TP_DIRPYRDENOISE_MAIN_MODE;Kwaliteit
+TP_DIRPYRDENOISE_MAIN_MODE_AGGRESSIVE;Hoog
+TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE;Standaard
+TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;De kwaliteit kan worden aangepast aan de hoeveelheid ruis. \nHoog verbetert de ruisonderdrukking, maar verlengt de verwerkingstijd
+TP_DIRPYRDENOISE_MEDIAN_METHOD;Methode
+TP_DIRPYRDENOISE_MEDIAN_METHOD_CHROMINANCE;Alleen chroma
+TP_DIRPYRDENOISE_MEDIAN_METHOD_LAB;L*a*b*
+TP_DIRPYRDENOISE_MEDIAN_METHOD_LABEL;Mediaan filter
+TP_DIRPYRDENOISE_MEDIAN_METHOD_LUMINANCE;Alleen Luminantie
+TP_DIRPYRDENOISE_MEDIAN_METHOD_RGB;RGB
+TP_DIRPYRDENOISE_MEDIAN_METHOD_TOOLTIP;De "Alleen Luminantie" en "L*a*b*" methodes worden meteen na de wavelet stap uitgevoerd bij het onderdrukken van ruis.\nDe "RGB" methode, wordt echter als laatste stap uitgevoerd bij ruisonderdrukking.
+TP_DIRPYRDENOISE_MEDIAN_METHOD_WEIGHTED;Gewogen L* (weinig) + a*b* (normaal)
+TP_DIRPYRDENOISE_MEDIAN_PASSES;Mediaan herhalingen
+TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Het gebruik van drie mediaan filter herhalingen met een 3×3 venster grootte geeft meestal een beter resultaat dan het gebruik van één mediaan filter herhaling met eeen 7×7 venster grootte.
+TP_DIRPYRDENOISE_MEDIAN_TYPE;Type
+TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Gebruik een mediaan filter van gewenste venster grootte. Hoe groter het venster hoe langer het duurt.\n\n3×3 zacht: behandeld 5 pixels in een 3×3 pixel venster.\n3×3: behandeld 9 pixels in een 3×3 pixel venster.\n5×5 zacht: behandeld 13 pixels in een 5×5 pixel venster.\n5×5: behandeld 25 pixels in een 5×5 pixel venster.\n7×7: behandeld 49 pixels in een 7×7 pixel venster.\n9×9: behandeld 81 pixels in a 9×9 pixel venster.\n\nSoms is het mogelijk om een betere kwaliteit te krijgen door het uitvoeren van meerdere herhalingen met een kleiner venster dan één uitvoering met een groter venster.
 TP_DIRPYRDENOISE_PASSE;Herhalingen
-TP_DIRPYRDENOISE_PASSES;Mediaan herhalingen
-TP_DIRPYRDENOISE_PASSES_TOOLTIP;Het gebruik van drie mediaan filter herhalingen met een 3×3 venster grootte geeft meestal een beter resultaat dan het gebruik van één mediaan filter herhaling met eeen 7×7 venster grootte.
-TP_DIRPYRDENOISE_PON;Auto multi-zone
-TP_DIRPYRDENOISE_PRE;Voorbeeld multi-zone
-TP_DIRPYRDENOISE_PREV;Voorbeeld
-TP_DIRPYRDENOISE_PREVLABEL;Voorbeeld grootte=%1, Centrum: Px=%2  Py=%3
-TP_DIRPYRDENOISE_RED;Chrominantie Rood & Groen
-TP_DIRPYRDENOISE_RGB;RGB
-TP_DIRPYRDENOISE_RGBM;RGB
-TP_DIRPYRDENOISE_SHAL;Standaard
-TP_DIRPYRDENOISE_SHALBI;Hoog
 TP_DIRPYRDENOISE_SLI;Schuifbalk
-TP_DIRPYRDENOISE_TILELABEL;Tegel grootte=%1, Centrum: Tx=%2  Ty=%3
+TP_DIRPYRDENOISE_TYPE_3X3;3×3
+TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 zacht
+TP_DIRPYRDENOISE_TYPE_5X5;5×5
+TP_DIRPYRDENOISE_TYPE_5X5SOFT;5×5 zacht
+TP_DIRPYRDENOISE_TYPE_7X7;7×7
+TP_DIRPYRDENOISE_TYPE_9X9;9×9
 TP_DIRPYREQUALIZER_ALGO;Algoritme Huid
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fijn: behoud de kleuren van de huid, minimaliseert de actie op andere kleuren\nGroot: vermijd artefacten
 TP_DIRPYREQUALIZER_ARTIF;Verminder artefacten
@@ -2136,9 +2121,15 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !DONT_SHOW_AGAIN;Don't show this message again.
 !EXIFPANEL_SHOWALL;Show all
+!GENERAL_SLIDER;Slider
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
+!HISTORY_MSG_173;NR - Detail recovery
+!HISTORY_MSG_203;NR - Color space
+!HISTORY_MSG_256;NR - Median - Type
+!HISTORY_MSG_297;NR - Mode
 !HISTORY_MSG_441;Retinex - Gain transmission
 !HISTORY_MSG_475;PS - Equalize channel
 !HISTORY_MSG_476;CAM02 - Temp out
@@ -2156,16 +2147,33 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !HISTORY_MSG_488;HDR Tone Mapping
 !HISTORY_MSG_489;HDR TM - Threshold
 !HISTORY_MSG_490;HDR TM - Amount
+!HISTORY_MSG_491;White Balance
+!HISTORY_MSG_492;RGB Curves
+!HISTORY_MSG_493;L*a*b* Adjustments
+!HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
+!HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
+!HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
+!HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
+!HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
+!HISTORY_MSG_METADATA_MODE;Metadata copy mode
 !LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
 !LENSPROFILE_CORRECTION_LCPFILE;LCP File
 !LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
 !LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
 !MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
 !MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
+!PARTIALPASTE_LOCALCONTRAST;Local contrast
 !PARTIALPASTE_TM_FATTAL;HDR Tone mapping
 !PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
+!PREFERENCES_CROP;Crop editing
+!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
+!PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
+!PREFERENCES_CROP_GUIDES_FRAME;Frame
+!PREFERENCES_CROP_GUIDES_FULL;Original
+!PREFERENCES_CROP_GUIDES_NONE;None
 !PREFERENCES_D50_OLD;5000K
 !PREFERENCES_DIRECTORIES;Directories
+!PREFERENCES_EDITORCMDLINE;Custom command line
 !PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
 !PREFERENCES_LANG;Language
 !PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
@@ -2184,13 +2192,27 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 !TP_COLORAPP_NEUTRAL;Reset
 !TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
-!TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
+!TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
 !TP_COLORAPP_YB;Yb% (mean luminance)
 !TP_COLORAPP_YBSCENE;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE_TOOLTIP;if auto enable, Yb is calculated from the mean value of actual image luminance
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
+!TP_COLORAPP_YBSCENE_TOOLTIP;if auto is enabled, Yb is calculated from the mean value of the actual image's luminance
+!TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
+!TP_DIRPYRDENOISE_LABEL;Noise Reduction
+!TP_LOCALCONTRAST_AMOUNT;Amount
+!TP_LOCALCONTRAST_DARKNESS;Darkness level
+!TP_LOCALCONTRAST_LABEL;Local Contrast
+!TP_LOCALCONTRAST_LIGHTNESS;Lightness level
+!TP_LOCALCONTRAST_RADIUS;Radius
+!TP_METADATA_EDIT;Apply modifications
+!TP_METADATA_MODE;Metadata copy mode
+!TP_METADATA_STRIP;Strip all metadata
+!TP_METADATA_TUNNEL;Copy unchanged
+!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
 !TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Equalize per channel
 !TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the RGB channels individually.\nDisabled: Use same equalization factor for all channels.
+!TP_RAW_PIXELSHIFTONEGREEN;Use one green instead of average
+!TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Use one green instead of averaging two greens for regions without motion.
+!TP_RAW_RCD;RCD
 !TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
 !TP_RETINEX_GAINTRANSMISSION;Gain transmission
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce transmission map to achieve luminance.\nAbscissa: transmission -min from 0, mean, and values (max).\nOrdinate: gain.

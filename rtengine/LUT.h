@@ -93,8 +93,11 @@ class LUT :
 {
 protected:
     // list of variables ordered to improve cache speed
-    unsigned int maxs;
+    int maxs;
     float maxsf;
+    // For the SSE routine operator[](vfloat), we just clip float lookup values
+    // to just below the max value.
+    float maxIndexFloat;
     T * data;
     unsigned int clip;
     unsigned int size;
@@ -123,12 +126,16 @@ public:
 #endif
         dirty = true;
         clip = flags;
-        data = new T[s];
+        // Add a few extra elements so [](vfloat) won't access out-of-bounds memory.
+        // The routine would still produce the right answer, but might cause issues
+        // with address/heap checking programs.
+        data = new T[s + 3];
         owner = 1;
         size = s;
         upperBound = size - 1;
         maxs = size - 2;
         maxsf = (float)maxs;
+        maxIndexFloat = ((float)upperBound) - 1e-5;
 #if defined( __SSE2__ ) && defined( __x86_64__ )
         maxsv =  F2V( maxs );
         sizeiv =  _mm_set1_epi32( (int)(size - 1) );
@@ -152,12 +159,14 @@ public:
 
         dirty = true; // Assumption!
         clip = flags;
-        data = new T[s];
+        // See comment in constructor.
+        data = new T[s + 3];
         owner = 1;
         size = s;
         upperBound = size - 1;
         maxs = size - 2;
         maxsf = (float)maxs;
+        maxIndexFloat = ((float)upperBound) - 1e-5;
 #if defined( __SSE2__ ) && defined( __x86_64__ )
         maxsv =  F2V( maxs );
         sizeiv =  _mm_set1_epi32( (int)(size - 1) );
@@ -191,6 +200,10 @@ public:
         clip = flags;
     }
 
+    int getClip() const {
+        return clip;
+    }
+
     /** @brief Get the number of element in the LUT (i.e. dimension of the array)
      *  For a LUT(500), it will return 500
      *  @return number of element in the array
@@ -218,7 +231,8 @@ public:
             }
 
             if (this->data == nullptr) {
-                this->data = new T[rhs.size];
+                // See comment in constructor.
+                this->data = new T[rhs.size + 3];
             }
 
             this->clip = rhs.clip;
@@ -228,6 +242,7 @@ public:
             this->upperBound = rhs.upperBound;
             this->maxs = this->size - 2;
             this->maxsf = (float)this->maxs;
+            this->maxIndexFloat = ((float)this->upperBound) - 1e-5;
 #if defined( __SSE2__ ) && defined( __x86_64__ )
             this->maxsv =  F2V( this->size - 2);
             this->sizeiv =  _mm_set1_epi32( (int)(this->size - 1) );
@@ -293,72 +308,101 @@ public:
     }
 
 #if defined( __SSE2__ ) && defined( __x86_64__ )
-/*
-    vfloat operator[](vfloat indexv ) const
+
+
+    // NOTE: This function requires LUTs which clips only at lower bound
+    vfloat cb(vfloat indexv) const
     {
-//      printf("don't use this operator. It's not ready for production");
-        return _mm_setzero_ps();
+        static_assert(std::is_same<T, float>::value, "This method only works for float LUTs");
 
-        // convert floats to ints
-        vint idxv =  _mm_cvttps_epi32( indexv );
-        vfloat tempv, resultv, p1v, p2v;
-        vmask maxmask = vmaskf_gt(indexv, maxsv);
-        idxv = _mm_castps_si128(vself(maxmask, maxsv, _mm_castsi128_ps(idxv)));
-        vmask minmask = vmaskf_lt(indexv, _mm_setzero_ps());
-        idxv = _mm_castps_si128(vself(minmask, _mm_setzero_ps(), _mm_castsi128_ps(idxv)));
-        // access the LUT 4 times and shuffle the values into p1v and p2v
+        // Clamp and convert to integer values. Extract out of SSE register because all
+        // lookup operations use regular addresses.
+        vfloat clampedIndexes = vmaxf(ZEROV, vminf(F2V(maxIndexFloat), indexv));
+        vint indexes = _mm_cvttps_epi32(clampedIndexes);
+        int indexArray[4];
+        _mm_storeu_si128(reinterpret_cast<__m128i*>(&indexArray[0]), indexes);
 
-        int idx;
+        // Load data from the table. This reads more than necessary, but there don't seem
+        // to exist more granular operations (though we could try non-SSE).
+        // Cast to int for convenience in the next operation (partial transpose).
+        vint values[4];
+        for (int i = 0; i < 4; ++i) {
+            values[i] = _mm_castps_si128(LVFU(data[indexArray[i]]));
+        }
 
-        // get 4th value
-        idx = _mm_cvtsi128_si32 (_mm_shuffle_epi32(idxv, _MM_SHUFFLE(3, 3, 3, 3)));
-        tempv = LVFU(data[idx]);
-        p1v = _mm_shuffle_ps(tempv, tempv, _MM_SHUFFLE(0, 0, 0, 0));
-        p2v = _mm_shuffle_ps(tempv, tempv, _MM_SHUFFLE(1, 1, 1, 1));
-        // now p1v is 3 3 3 3
-        //     p2v is 3 3 3 3
+        // Partial 4x4 transpose operation. We want two new vectors, the first consisting
+        // of [values[0][0] ... values[3][0]] and the second [values[0][1] ... values[3][1]].
+        __m128i temp0 = _mm_unpacklo_epi32(values[0], values[1]);
+        __m128i temp1 = _mm_unpacklo_epi32(values[2], values[3]);
+        vfloat lower = _mm_castsi128_ps(_mm_unpacklo_epi64(temp0, temp1));
+        vfloat upper = _mm_castsi128_ps(_mm_unpackhi_epi64(temp0, temp1));
 
-        // get 3rd value
-        idx = _mm_cvtsi128_si32 (_mm_shuffle_epi32(idxv, _MM_SHUFFLE(2, 2, 2, 2)));
-        tempv = LVFU(data[idx]);
-        p1v = _mm_move_ss( p1v, tempv);
-        tempv = _mm_shuffle_ps(tempv, tempv, _MM_SHUFFLE(1, 1, 1, 1));
-        p2v = _mm_move_ss( p2v, tempv);
-        // now p1v is 3 3 3 2
-        //     p2v is 3 3 3 2
-
-        // get 2nd value
-        idx = _mm_cvtsi128_si32 (_mm_shuffle_epi32(idxv, _MM_SHUFFLE(1, 1, 1, 1)));
-        tempv = LVFU(data[idx]);
-        p1v = _mm_shuffle_ps( p1v, p1v, _MM_SHUFFLE(1, 0, 1, 0));
-        p2v = _mm_shuffle_ps( p2v, p2v, _MM_SHUFFLE(1, 0, 1, 0));
-        // now p1v is 3 2 3 2
-        // now p2v is 3 2 3 2
-        p1v = _mm_move_ss( p1v, tempv );
-        // now p1v is 3 2 3 1
-        tempv = _mm_shuffle_ps(tempv, tempv, _MM_SHUFFLE(1, 1, 1, 1));
-        p2v = _mm_move_ss( p2v, tempv);
-        // now p1v is 3 2 3 1
-
-        // get 1st value
-        idx = _mm_cvtsi128_si32 (_mm_shuffle_epi32(idxv, _MM_SHUFFLE(0, 0, 0, 0)));
-        tempv = LVFU(data[idx]);
-        p1v = _mm_shuffle_ps( p1v, p1v, _MM_SHUFFLE(3, 2, 0, 0));
-        // now p1v is 3 2 1 1
-        p2v = _mm_shuffle_ps( p2v, p2v, _MM_SHUFFLE(3, 2, 0, 0));
-        // now p2v is 3 2 1 1
-        p1v = _mm_move_ss( p1v, tempv );
-        // now p1v is 3 2 1 0
-        tempv = _mm_shuffle_ps(tempv, tempv, _MM_SHUFFLE(1, 1, 1, 1));
-        p2v = _mm_move_ss( p2v, tempv);
-        // now p2v is 3 2 1 0
-
-        vfloat diffv = indexv - _mm_cvtepi32_ps ( idxv );
-        diffv = vself(vorm(maxmask, minmask), _mm_setzero_ps(), diffv);
-        resultv = p1v + p2v * diffv;
-        return resultv  ;
+        vfloat diff = vmaxf(ZEROV, indexv) - _mm_cvtepi32_ps(indexes);
+        return vintpf(diff, upper, lower);
     }
-*/
+
+    // NOTE: This version requires LUTs which clip at upper and lower bounds
+    // (which is the default).
+    vfloat operator[](vfloat indexv) const
+    {
+        static_assert(std::is_same<T, float>::value, "This method only works for float LUTs");
+
+        // Clamp and convert to integer values. Extract out of SSE register because all
+        // lookup operations use regular addresses.
+        vfloat clampedIndexes = vmaxf(ZEROV, vminf(F2V(maxIndexFloat), indexv));
+        vint indexes = _mm_cvttps_epi32(clampedIndexes);
+        int indexArray[4];
+        _mm_storeu_si128(reinterpret_cast<__m128i*>(&indexArray[0]), indexes);
+
+        // Load data from the table. This reads more than necessary, but there don't seem
+        // to exist more granular operations (though we could try non-SSE).
+        // Cast to int for convenience in the next operation (partial transpose).
+        vint values[4];
+        for (int i = 0; i < 4; ++i) {
+            values[i] = _mm_castps_si128(LVFU(data[indexArray[i]]));
+        }
+
+        // Partial 4x4 transpose operation. We want two new vectors, the first consisting
+        // of [values[0][0] ... values[3][0]] and the second [values[0][1] ... values[3][1]].
+        __m128i temp0 = _mm_unpacklo_epi32(values[0], values[1]);
+        __m128i temp1 = _mm_unpacklo_epi32(values[2], values[3]);
+        vfloat lower = _mm_castsi128_ps(_mm_unpacklo_epi64(temp0, temp1));
+        vfloat upper = _mm_castsi128_ps(_mm_unpackhi_epi64(temp0, temp1));
+
+        vfloat diff = clampedIndexes - _mm_cvtepi32_ps(indexes);
+        return vintpf(diff, upper, lower);
+    }
+
+    // NOTE: This version requires LUTs which do not clip at upper and lower bounds
+    vfloat operator()(vfloat indexv) const
+    {
+        static_assert(std::is_same<T, float>::value, "This method only works for float LUTs");
+
+        // Clamp and convert to integer values. Extract out of SSE register because all
+        // lookup operations use regular addresses.
+        vfloat clampedIndexes = vmaxf(ZEROV, vminf(F2V(maxsf), indexv));
+        vint indexes = _mm_cvttps_epi32(clampedIndexes);
+        int indexArray[4];
+        _mm_storeu_si128(reinterpret_cast<__m128i*>(&indexArray[0]), indexes);
+
+        // Load data from the table. This reads more than necessary, but there don't seem
+        // to exist more granular operations (though we could try non-SSE).
+        // Cast to int for convenience in the next operation (partial transpose).
+        vint values[4];
+        for (int i = 0; i < 4; ++i) {
+            values[i] = _mm_castps_si128(LVFU(data[indexArray[i]]));
+        }
+
+        // Partial 4x4 transpose operation. We want two new vectors, the first consisting
+        // of [values[0][0] ... values[3][0]] and the second [values[0][1] ... values[3][1]].
+        __m128i temp0 = _mm_unpacklo_epi32(values[0], values[1]);
+        __m128i temp1 = _mm_unpacklo_epi32(values[2], values[3]);
+        vfloat lower = _mm_castsi128_ps(_mm_unpacklo_epi64(temp0, temp1));
+        vfloat upper = _mm_castsi128_ps(_mm_unpackhi_epi64(temp0, temp1));
+
+        vfloat diff = indexv - _mm_cvtepi32_ps(indexes);
+        return vintpf(diff, upper, lower);
+    }
 #ifdef __SSE4_1__
     template<typename U = T, typename = typename std::enable_if<std::is_same<U, float>::value>::type>
     vfloat operator[](vint idxv ) const
@@ -456,7 +500,7 @@ public:
             }
 
             idx = 0;
-        } else if (index > maxsf) {
+        } else if (idx > maxs) {
             if (clip & LUT_CLIP_ABOVE) {
                 return data[upperBound];
             }
@@ -543,6 +587,7 @@ public:
         maxs = 0;
         maxsf = 0.f;
         clip = 0;
+        maxIndexFloat = ((float)upperBound) - 1e-5;
     }
 
     // create an identity LUT (LUT(x) = x) or a scaled identity LUT (LUT(x) = x / divisor)
@@ -652,6 +697,7 @@ public:
         upperBound = size - 1;
         maxs = size - 2;
         maxsf = (float)maxs;
+        maxIndexFloat = ((float)upperBound) - 1e-5;
 #if defined( __SSE2__ ) && defined( __x86_64__ )
         maxsv =  F2V( size - 2);
         sizeiv =  _mm_set1_epi32( (int)(size - 1) );

@@ -2349,6 +2349,37 @@ void CLASS unpacked_load_raw()
 	&& (unsigned) (col-left_margin) < width) derror();
 }
 
+
+// RT
+void CLASS sony_arq_load_raw()
+{
+  static unsigned frame2pos[] = { 0, 1, 3, 2 };
+  int row, col, bits=0;
+  ushort samples[4];
+  unsigned frame = frame2pos[shot_select];
+
+  while (1 << ++bits < maximum);
+  for (row=0; row < ((frame < 2) ? 1 : raw_height); row++) {
+    for (col=0; col < ((row == 0) ? raw_width : 1); col++) {
+      RAW(row,col) = 0;
+    }
+  }
+  for (row=0; row < raw_height; row++) {
+    int r = row + (frame & 1);
+    for (col=0; col < raw_width; col++) {
+      int c = col + ((frame >> 1) & 1);
+      read_shorts(samples, 4);
+      if (r < raw_height && c < raw_width) {
+          RAW(r,c) = samples[(2 * (r & 1)) + (c & 1)];
+          if ((RAW(r,c) >>= load_flags) >> bits
+              && (unsigned) (row-top_margin) < height
+              && (unsigned) (col-left_margin) < width) derror();
+      }
+    }
+  }
+}
+
+
 void CLASS sinar_4shot_load_raw()
 {
   ushort *pixel;
@@ -3820,7 +3851,7 @@ float CLASS foveon_avg (short *pix, int range[2], float cfilt)
 short * CLASS foveon_make_curve (double max, double mul, double filt)
 {
   short *curve;
-  unsigned i, size;
+  size_t i, size;
   double x;
 
   if (!filt) filt = 0.8;
@@ -5466,7 +5497,8 @@ nf: order = 0x4949;
       for (c=i=2; (ushort) c != 0xbbbb && i < len; i++)
 	c = c << 8 | fgetc(ifp);
       while ((i+=4) < len-5)
-	if (get4() == 257 && (i=len) && (c = (get4(),fgetc(ifp))) < 3)
+    if (get4() == 257 && (i=len) && (c = (get4(),fgetc(ifp))) < 3 && strcmp(make,"Canon"))
+      // don't use this tag for Canon cameras as it's known to give wrong orientation some times
 	  flip = "065"[c]-'0';
     }
     if (tag == 0x10 && type == 4)
@@ -6524,6 +6556,17 @@ void CLASS apply_tiff()
 		   if (!strncmp(make,"OLYMPUS",7) &&
 			tiff_ifd[raw].bytes*7 > raw_width*raw_height)
 		     load_raw = &CLASS olympus_load_raw;
+                   // ------- RT -------
+                   if (!strncmp(make,"SONY",4) &&
+                       !strncmp(model,"ILCE-7RM3",9) &&
+                       tiff_samples == 4 &&
+                       tiff_ifd[raw].bytes == raw_width*raw_height*tiff_samples*2) {
+                       load_raw = &CLASS sony_arq_load_raw;
+                       colors = 3;
+                       is_raw = 4;
+                       filters = 0x94949494;
+                   }
+                   // ------------------
 	}
 	break;
       case 6:  case 7:  case 99:

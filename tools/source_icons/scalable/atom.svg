@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="24"
+   height="24"
+   viewBox="0 0 6.3499999 6.3500002"
+   version="1.1"
+   id="svg3944"
+   inkscape:export-filename="/tmp/1.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   inkscape:version="0.92.1 r"
+   sodipodi:docname="atom.svg">
+  <title
+     id="title5085">Icons for the &quot;Expert&quot; tab in RawTherapee</title>
+  <defs
+     id="defs3938" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="34"
+     inkscape:cx="12"
+     inkscape:cy="12"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="px"
+     inkscape:window-width="1920"
+     inkscape:window-height="1023"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:snap-bbox="false"
+     inkscape:bbox-paths="true"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:snap-global="true"
+     inkscape:object-nodes="true"
+     showguides="true"
+     inkscape:guide-bbox="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3946"
+       originx="0.52916667"
+       originy="0.52916667" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata3941">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Icons for the &quot;Expert&quot; tab in RawTherapee</dc:title>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Morgan Hardwood</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-290.64998)">
+    <g
+       id="g8515">
+      <path
+         transform="matrix(0.26458334,0,0,0.26458334,0,290.64998)"
+         sodipodi:nodetypes="cccccccccccccccccccc"
+         inkscape:connector-curvature="0"
+         d="m 6.0625,3.3339844 c -1.2662984,0.058816 -2.0871429,0.3184442 -2.9394531,1.0488281 -1.3408668,1.340863 -1.3216513,3.5019342 -0.53125,5.7382815 0.7904088,2.236271 2.3860793,4.682969 4.6171875,6.914062 2.2311004,2.231093 4.6816676,3.830644 6.9179686,4.621094 2.236328,0.790413 4.397426,0.809651 5.738281,-0.53125 1.422718,-1.700718 1.143441,-3.754118 0.613232,-5.492234 l -1.271485,1.175782 c 0.136382,1.15246 0.472932,2.272617 -0.433598,3.222654 -0.723389,0.723364 -2.182487,0.854986 -4.13086,0.166016 C 12.69429,19.508684 10.3929,18.033551 8.3027344,15.943359 6.2125345,13.853205 4.7394076,11.553815 4.0507812,9.6054688 3.5328941,7.619056 3.4447054,6.2444783 4.7949219,5.1503906 5.6024633,4.7765954 6.8024331,4.7580544 8.3496094,5.3046875 c 1.0184163,0.359811 2.1318286,0.9560669 3.2617186,1.7207031 2.167289,1.4490193 3.560285,2.9785964 5.132813,5.0781254 l 1.042968,-1.169922 C 16.580073,9.1130045 14.827882,7.5583939 13.25,6.3789062 11.771853,5.2737724 10.282875,4.3487084 8.8652344,3.8476562 7.8904073,3.5029633 6.9392672,3.3206048 6.0625,3.3339844 Z"
+         style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.7;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#2a7fff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.99999988;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+         id="path4987" />
+      <path
+         sodipodi:nodetypes="sccccccccccccccccsccccc"
+         inkscape:connector-curvature="0"
+         transform="matrix(0.26458334,0,0,0.26458334,0,290.64998)"
+         id="ellipse4751"
+         d="m 17.212891,4.796875 c -0.285429,-4.658e-4 -0.575507,0.01012 -0.871094,0.033203 -0.697281,0.054498 -1.433563,0.180074 -2.191406,0.359375 0.57898,0.4171777 1.042436,0.8569245 1.496093,1.2792969 0.279503,-0.042285 0.551514,-0.075168 0.814454,-0.095703 2.060201,-0.1610079 3.437693,0.3483025 3.949218,1.234375 0.511514,0.885959 0.261243,2.3274766 -0.908203,4.0312501 -1.169454,1.703697 -3.192011,3.547444 -5.751953,5.02539 -2.559942,1.478024 -5.1624774,2.30395 -7.2226562,2.464844 C 4.4671421,19.289536 3.093545,18.786387 2.5820312,17.900391 2.1502856,17.152577 2.2677121,16.002878 3.015625,14.638672 2.6830598,14.145927 2.3829299,13.651425 2.1074219,13.154297 0.84551988,15.061555 0.32266586,17.07582 1.2441406,18.671875 c 0.9481512,1.642243 3.0396015,2.184668 5.4042969,2 C 9.0131178,20.487056 11.78895,19.577613 14.521484,18 c 2.732531,-1.57765 4.913564,-3.530801 6.25586,-5.486328 1.34228,-1.955528 1.918854,-4.0374829 0.970703,-5.6796876 C 20.918382,5.3969891 19.210888,4.8001356 17.212891,4.796875 Z M 8.9765625,7.2226562 C 7.856122,7.8311965 6.6870483,8.6077358 5.78125,9.3105469 5.9561768,9.7589728 6.1904996,10.236693 6.4707031,10.740234 7.8294937,9.6507684 9.1028652,8.8904551 10.519531,8.1621094 9.9887667,7.8020408 9.4678391,7.4760585 8.9765625,7.2226562 Z"
+         style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.7;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#2a7fff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.99999988;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
+      <circle
+         style="opacity:1;fill:#2a7fff;fill-opacity:1;stroke:none;stroke-width:0.99999994;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="circle4739"
+         cx="3.0572746"
+         cy="294.11932"
+         r="0.79535115" />
+    </g>
+  </g>
+</svg>

@@ -147,7 +147,7 @@ static double wbTemp2Slider(double temp)
     return sval;
 }
 
-WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WBALANCE_LABEL")), wbp(nullptr), wblistener(nullptr)
+WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WBALANCE_LABEL"), false, true), wbp(nullptr), wblistener(nullptr)
 {
 
     Gtk::HBox* hbox = Gtk::manage (new Gtk::HBox ());
@@ -349,9 +349,23 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     spotsize->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::spotSizeChanged) );
 }
 
+
+void WhiteBalance::enabledChanged()
+{
+    if (listener) {
+        if (get_inconsistent()) {
+            listener->panelChanged(EvWBEnabled, M("GENERAL_UNCHANGED"));
+        } else if (getEnabled()) {
+            listener->panelChanged(EvWBEnabled, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged(EvWBEnabled, M("GENERAL_DISABLED"));
+        }
+    }
+}
+
+
 void WhiteBalance::adjusterChanged (Adjuster* a, double newval)
 {
-
     int tVal = (int)temp->getValue();
     double gVal = green->getValue();
     double eVal = equal->getValue();
@@ -400,7 +414,7 @@ void WhiteBalance::adjusterChanged (Adjuster* a, double newval)
 
         // Recomputing AutoWB if it's the current method will happen in improccoordinator.cc
 
-    if (listener) {
+    if (listener && getEnabled()) {
         if (a == temp) {
             listener->panelChanged (EvWBTemp, Glib::ustring::format ((int)a->getValue()));
         } else if (a == green) {
@@ -415,7 +429,6 @@ void WhiteBalance::adjusterChanged (Adjuster* a, double newval)
 
 void WhiteBalance::optChanged ()
 {
-
     Gtk::TreeModel::Row row = getActiveMethod();
 
     if (row == refTreeModel->children().end()) {
@@ -520,7 +533,7 @@ void WhiteBalance::optChanged ()
             }
         }
 
-        if (listener) {
+        if (listener && getEnabled()) {
             listener->panelChanged (EvWBMethod, row[methodColumns.colLabel]);
         }
     }
@@ -528,7 +541,6 @@ void WhiteBalance::optChanged ()
 
 void WhiteBalance::spotPressed ()
 {
-
     if (wblistener) {
         wblistener->spotWBRequested (getSize());
     }
@@ -667,6 +679,11 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         tempBias->set_sensitive(wbValues.type == WBEntry::Type::AUTO);
     }
 
+    setEnabled(pp->wb.enabled);
+    if (pedited) {
+        set_inconsistent(multiImage && !pedited->wb.enabled);
+    }
+
     methconn.block (false);
     enableListener ();
 }
@@ -682,7 +699,10 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->wb.equal = equal->getEditedState ();
         pedited->wb.tempBias = tempBias->getEditedState ();
         pedited->wb.method = row[methodColumns.colLabel] != M("GENERAL_UNCHANGED");
+        pedited->wb.enabled = !get_inconsistent();
     }
+
+    pp->wb.enabled = getEnabled();
 
     const std::pair<bool, const WBEntry&> ppMethod = findWBEntry (row[methodColumns.colLabel], WBLT_GUI);
 
@@ -756,6 +776,7 @@ void WhiteBalance::setWB (int vtemp, double vgreen)
 
     methconn.block(true);
     const std::pair<bool, const WBEntry&> wbValues = findWBEntry("Custom", WBLT_PP);
+    setEnabled(true);
     temp->setValue (vtemp);
     green->setValue (vgreen);
     opt = setActiveMethod(wbValues.second.GUILabel);
@@ -876,6 +897,7 @@ void WhiteBalance::WBChanged(double temperature, double greenVal)
 {
     GThreadLock lock;
     disableListener();
+    setEnabled(true);
     temp->setValue(temperature);
     green->setValue(greenVal);
     temp->setDefault(temperature);

@@ -119,7 +119,7 @@ public:
     /** @return the orientation of the image */
     virtual std::string getOrientation (unsigned int frame = 0) const = 0;
 
-    /** @return true if the file is a PixelShift shot (Pentax bodies) */
+    /** @return true if the file is a PixelShift shot (Pentax and Sony bodies) */
     virtual bool getPixelShift (unsigned int frame = 0) const = 0;
     /** @return false: not an HDR file ; true: single or multi-frame HDR file (e.g. Pentax HDR raw file or 32 bit float DNG file or Log compressed) */
     virtual bool getHDR (unsigned int frame = 0) const = 0;
@@ -294,6 +294,8 @@ public:
       * @param hlcomprthresh is the new threshold for hlcompr
       * @param hlrecons set to true if HighLight Reconstruction is enabled */
     virtual void autoExpChanged (double brightness, int bright, int contrast, int black, int hlcompr, int hlcomprthresh, bool hlrecons) {}
+
+    virtual void autoMatchedToneCurveChanged(procparams::ToneCurveParams::TcMode curveMode, const std::vector<double> &curve) {}
 };
 
 class AutoCamListener
@@ -413,6 +415,7 @@ public:
       * The image update starts immediately in the background. If it is ready, the result is passed to a PreviewImageListener
       * and to a DetailedCropListener (if enabled). */
     virtual void        endUpdateParams (ProcEvent change) = 0;
+    void endUpdateParams(ProcEventCode change) { endUpdateParams(ProcEvent(change)); }
     virtual void        endUpdateParams (int changeFlags) = 0;
     // Starts a minimal update
     virtual void        startProcessing (int changeCode) = 0;
@@ -532,9 +535,8 @@ public:
    * @param job the ProcessingJob to cancel.
    * @param errorCode is the error code if an error occured (e.g. the input image could not be loaded etc.)
    * @param pl is an optional ProgressListener if you want to keep track of the progress
-   * @param tunnelMetaData tunnels IPTC and XMP to output without change
    * @return the resulting image, with the output profile applied, exif and iptc data set. You have to save it or you can access the pixel data directly.  */
-IImage16* processImage (ProcessingJob* job, int& errorCode, ProgressListener* pl = nullptr, bool tunnelMetaData = false, bool flush = false);
+IImagefloat* processImage (ProcessingJob* job, int& errorCode, ProgressListener* pl = nullptr, bool flush = false);
 
 /** This class is used to control the batch processing. The class implementing this interface will be called when the full processing of an
    * image is ready and the next job to process is needed. */
@@ -545,7 +547,7 @@ public:
                    * there is no jobs left.
                    * @param img is the result of the last ProcessingJob
                    * @return the next ProcessingJob to process */
-    virtual ProcessingJob* imageReady (IImage16* img) = 0;
+    virtual ProcessingJob* imageReady (IImagefloat* img) = 0;
     virtual void error (Glib::ustring message) = 0;
 };
 /** This function performs all the image processinf steps corresponding to the given ProcessingJob. It runs in the background, thus it returns immediately,
@@ -554,8 +556,8 @@ public:
    * The ProcessingJob passed becomes invalid, you can not use it any more.
    * @param job the ProcessingJob to cancel.
    * @param bpl is the BatchProcessingListener that is called when the image is ready or the next job is needed. It also acts as a ProgressListener.
-   * @param tunnelMetaData tunnels IPTC and XMP to output without change */
-void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData);
+   **/
+void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl);
 
 
 extern MyMutex* lcmsMutex;

@@ -739,11 +739,12 @@ void TagDirectory::applyChange (std::string name, Glib::ustring value)
         } else {
             const TagAttrib* attrib = nullptr;
 
-            for (int i = 0; attribs[i].ignore != -1; i++)
+            for (int i = 0; attribs[i].ignore != -1; i++) {
                 if (!strcmp (attribs[i].name, fseg.c_str())) {
                     attrib = &attribs[i];
                     break;
                 }
+            }
 
             if (attrib) {
                 Tag* nt = new Tag (this, attrib);
@@ -1572,7 +1573,7 @@ double Tag::toDouble (int ofs) const
 /**
  * @brief Create an array of the elements
  */
-double *Tag::toDoubleArray (int ofs)
+double* Tag::toDoubleArray (int ofs) const
 {
     double *values = new double[count];
 
@@ -1583,7 +1584,7 @@ double *Tag::toDoubleArray (int ofs)
     return values;
 }
 
-void Tag::toRational (int& num, int& denom, int ofs)
+void Tag::toRational (int& num, int& denom, int ofs) const
 {
 
     switch (type) {
@@ -1632,7 +1633,7 @@ void Tag::toRational (int& num, int& denom, int ofs)
     }
 }
 
-void Tag::toString (char* buffer, int ofs)
+void Tag::toString (char* buffer, int ofs) const
 {
 
     if (type == UNDEFINED && !directory) {
@@ -1663,15 +1664,11 @@ void Tag::toString (char* buffer, int ofs)
         return;
     }
 
-    size_t maxcount = 4;
-
-    if (count < 4) {
-        maxcount = count;
-    }
+    size_t maxcount = rtengine::min<size_t>(count, 10);
 
     strcpy (buffer, "");
 
-    for (size_t i = 0; i < std::min<int>(maxcount, valuesize - ofs); i++) {
+    for (ssize_t i = 0; i < rtengine::min<int>(maxcount, valuesize - ofs); i++) {
         if (i > 0) {
             strcat (buffer, ", ");
         }
@@ -1931,24 +1928,48 @@ void Tag::initInt (int data, TagType t, int cnt)
     setInt (data, 0, t);
 }
 
+void Tag::swapByteOrder2(char *buffer, int count)
+{
+    char* ptr = buffer;
+    for (int i = 0; i < count; i+=2) {
+        unsigned char c = ptr[0];
+        ptr[0] = ptr[1];
+        ptr[1] = c;
+        ptr += 2;
+    }
+}
 void Tag::initUserComment (const Glib::ustring &text)
 {
+    const bool useBOM = false; // set it to true if you want to output BOM in UCS-2/UTF-8 UserComments ; this could be turned to an options entry
     type = UNDEFINED;
     if (text.is_ascii()) {
-        count = 8 + strlen (text.c_str());
-        valuesize = count;
+        valuesize = count = 8 + strlen (text.c_str());
         value = new unsigned char[valuesize];
-        strcpy ((char*)value, "ASCII");
-        value[5] = value[6] = value[7] = 0;
-        strcpy ((char*)value + 8, text.c_str());
+        memcpy(value, "ASCII\0\0\0", 8);
+        memcpy(value + 8, text.c_str(), valuesize - 8);
     } else {
-        wchar_t *commentStr = (wchar_t*)g_utf8_to_utf16 (text.c_str(), -1, NULL, NULL, NULL);
-        count = 8 + wcslen(commentStr)*2;
-        valuesize = count;
-        value = (unsigned char*)new char[valuesize];
-        strcpy ((char*)value, "UNICODE");
-        value[7] = 0;
-        wcscpy(((wchar_t*)value) + 4, commentStr);
+        wchar_t *commentStr = (wchar_t*)g_utf8_to_utf16 (text.c_str(), -1, nullptr, nullptr, nullptr);
+        size_t wcStrSize = wcslen(commentStr);
+        valuesize = count = wcStrSize * 2 + 8 + (useBOM ? 2 : 0);
+        value = new unsigned char[valuesize];
+        memcpy(value, "UNICODE\0", 8);
+
+        if (useBOM) {
+            if (getOrder() == INTEL) { //Little Endian
+                value[8] = 0xFF;
+                value[9] = 0xFE;
+            } else {
+                value[8] = 0xFE;
+                value[9] = 0xFF;
+            }
+        }
+
+        // Swapping byte order to match the Exif's byte order
+        if (getOrder() != HOSTORDER) {
+            swapByteOrder2((char*)commentStr, wcStrSize * 2);
+        }
+
+        memcpy(value + 8 + (useBOM ? 2 : 0), (char*)commentStr, wcStrSize * 2);
         g_free(commentStr);
     }
 }
@@ -3199,9 +3220,8 @@ int ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::pro
     return size + 6;
 }
 
-int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::procparams::ExifPairs& changeList, int W, int H, int bps, const char* profiledata, int profilelen, const char* iptcdata, int iptclen, unsigned char *&buffer, unsigned &bufferSize)
+int ExifManager::createPNGMarker(const TagDirectory* root, const rtengine::procparams::ExifPairs &changeList, int W, int H, int bps, const char* iptcdata, int iptclen, unsigned char *&buffer, unsigned &bufferSize)
 {
-
 // write tiff header
     int offs = 0;
     ByteOrder order = HOSTORDER;
@@ -3228,35 +3248,6 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
         }
     } else {
         cl = new TagDirectory (nullptr, ifdAttribs, HOSTORDER);
-    }
-
-// add tiff strip data
-    int rps = 8;
-    int strips = ceil ((double)H / rps);
-    cl->replaceTag (new Tag (cl, lookupAttrib (ifdAttribs, "RowsPerStrip"), rps, LONG));
-    Tag* stripBC   = new Tag (cl, lookupAttrib (ifdAttribs, "StripByteCounts"));
-    stripBC->initInt (0, LONG, strips);
-    cl->replaceTag (stripBC);
-    Tag* stripOffs = new Tag (cl, lookupAttrib (ifdAttribs, "StripOffsets"));
-    stripOffs->initInt (0, LONG, strips);
-    cl->replaceTag (stripOffs);
-
-    for (int i = 0; i < strips - 1; i++) {
-        stripBC->setInt (rps * W * 3 * bps / 8, i * 4);
-    }
-
-    int remaining = (H - rps * floor ((double)H / rps)) * W * 3 * bps / 8;
-
-    if (remaining) {
-        stripBC->setInt (remaining, (strips - 1) * 4);
-    } else {
-        stripBC->setInt (rps * W * 3 * bps / 8, (strips - 1) * 4);
-    }
-
-    if (profiledata) {
-        Tag* icc = new Tag (cl, lookupAttrib (ifdAttribs, "ICCProfile"));
-        icc->initUndefArray (profiledata, profilelen);
-        cl->replaceTag (icc);
     }
 
     if (iptcdata) {
@@ -3287,14 +3278,6 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
         delete defTag;
     }
 
-// calculate strip offsets
-    int size = cl->calculateSize ();
-    int byps = bps / 8;
-
-    for (int i = 0; i < strips; i++) {
-        stripOffs->setInt (size + 8 + i * rps * W * 3 * byps, i * 4);
-    }
-
     cl->sort ();
     bufferSize = cl->calculateSize() + 8;
     buffer = new unsigned char[bufferSize]; // this has to be deleted in caller
@@ -3311,6 +3294,7 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
 
     return endOffs;
 }
+
 
 //-----------------------------------------------------------------------------
 // global functions to read byteorder dependent data

@@ -312,8 +312,10 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                     screenCoordToImage (x, y, action_x, action_y);
                     changeZoom (zoom11index, true, action_x, action_y);
                     fitZoom = false;
+                } else if (options.cropAutoFit) {
+                    zoomFitCrop();
                 } else {
-                    zoomFit ();
+                    zoomFit();
                 }
             } else {
                 zoom11 ();
@@ -612,6 +614,10 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
         }
 
         needRedraw = true;
+
+        if (fitZoom && options.cropAutoFit) {
+            zoomFitCrop();
+        }
     } else if (state == SCropWinMove) {
         if (iarea->showColorPickers () && !colorPickers.empty()) {
             needRedraw = true;
@@ -722,6 +728,10 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
         cropgl->cropManipReady ();
         iarea->setToolHand ();
         needRedraw = true;
+
+        if (fitZoom && options.cropAutoFit) {
+            zoomFitCrop();
+        }
     }
 
     if (decorated) {
@@ -1356,6 +1366,21 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
             drawObservedFrame (cr);
         }
     } else {
+        CropParams cropParams = cropHandler.cropParams;
+        if (state == SNormal) {
+            switch (options.cropGuides) {
+            case Options::CROP_GUIDE_NONE:
+                cropParams.guide = "None";
+                break;
+            case Options::CROP_GUIDE_FRAME:
+                cropParams.guide = "Frame";
+                break;
+            default:
+                break;
+            }
+        }
+        bool useBgColor = (state == SNormal);
+    
         if (cropHandler.cropPixbuf) {
             imgW = cropHandler.cropPixbuf->get_width ();
             imgH = cropHandler.cropPixbuf->get_height ();
@@ -1772,7 +1797,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
             if (cropHandler.cropParams.enabled) {
                 int cropX, cropY;
                 cropHandler.getPosition (cropX, cropY);
-                drawCrop (cr, x + imgAreaX + imgX, y + imgAreaY + imgY, imgW, imgH, cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams, (this == iarea->mainCropWindow), true, cropHandler.isFullDisplay ());
+                drawCrop (cr, x + imgAreaX + imgX, y + imgAreaY + imgY, imgW, imgH, cropX, cropY, zoomSteps[cropZoom].zoom, cropParams, (this == iarea->mainCropWindow), useBgColor, cropHandler.isFullDisplay ());
             }
 
             if (observedCropWin) {
@@ -1853,7 +1878,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                 cr->fill();
 
                 if (cropHandler.cropParams.enabled) {
-                    drawCrop (cr, x + imgAreaX + imgX, y + imgAreaY + imgY, rough->get_width(), rough->get_height(), cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams, (this == iarea->mainCropWindow), true, cropHandler.isFullDisplay ());
+                    drawCrop (cr, x + imgAreaX + imgX, y + imgAreaY + imgY, rough->get_width(), rough->get_height(), cropX, cropY, zoomSteps[cropZoom].zoom, cropParams, (this == iarea->mainCropWindow), useBgColor, cropHandler.isFullDisplay ());
                 }
 
                 if (observedCropWin) {
@@ -2097,7 +2122,7 @@ void CropWindow::zoomFitCrop ()
         centerY = cropHandler.cropParams.y + cropHandler.cropParams.h / 2;
         setCropAnchorPosition(centerX, centerY);
         changeZoom (cz, true, centerX, centerY);
-        fitZoom = false;
+        fitZoom = options.cropAutoFit;
     } else {
         zoomFit();
     }

@@ -49,24 +49,52 @@ void adjust_radius (const T &default_param, double scale_factor, T &param)
 class ImageProcessor
 {
 public:
-    ImageProcessor (ProcessingJob* pjob, int& errorCode,
-                    ProgressListener* pl, bool tunnelMetaData, bool flush):
+    ImageProcessor(
+        ProcessingJob* pjob,
+        int& errorCode,
+        ProgressListener* pl,
+        bool flush
+    ) :
         job (static_cast<ProcessingJobImpl*> (pjob)),
         errorCode (errorCode),
         pl (pl),
-        tunnelMetaData (tunnelMetaData),
         flush (flush),
         // internal state
-        ipf_p (nullptr),
-        ii (nullptr),
-        imgsrc (nullptr),
-        fw (-1),
-        fh (-1),
-        pp (0, 0, 0, 0, 0)
+        ii(nullptr),
+        imgsrc(nullptr),
+        fw(0),
+        fh(0),
+        tr(0),
+        pp(0, 0, 0, 0, 0),
+        calclum(nullptr),
+        autoNR(0.f),
+        autoNRmax(0.f),
+        tilesize(0),
+        overlap(0),
+        ch_M(nullptr),
+        max_r(nullptr),
+        max_b(nullptr),
+        min_b(nullptr),
+        min_r(nullptr),
+        lumL(nullptr),
+        chromC(nullptr),
+        ry(nullptr),
+        sk(nullptr),
+        pcsk(nullptr),
+        expcomp(0.0),
+        bright(0),
+        contr(0),
+        black(0),
+        hlcompr(0),
+        hlcomprthresh(0),
+        baseImg(nullptr),
+        labView(nullptr),
+        autili(false),
+        butili(false)
     {
     }
 
-    Image16 *operator()()
+    Imagefloat *operator()()
     {
         if (!job->fast) {
             return normal_pipeline();
@@ -76,7 +104,7 @@ public:
     }
 
 private:
-    Image16 *normal_pipeline()
+    Imagefloat *normal_pipeline()
     {
         if (!stage_init()) {
             return nullptr;
@@ -87,7 +115,7 @@ private:
         return stage_finish();
     }
 
-    Image16 *fast_pipeline()
+    Imagefloat *fast_pipeline()
     {
         if (!job->pparams.resize.enabled) {
             return normal_pipeline();
@@ -172,16 +200,6 @@ private:
         imgsrc->setCurrentFrame (params.raw.bayersensor.imageNum);
         imgsrc->preprocess ( params.raw, params.lensProf, params.coarse, params.dirpyrDenoise.enabled);
 
-        if (params.toneCurve.autoexp) {// this enabled HLRecovery
-            LUTu histRedRaw (256), histGreenRaw (256), histBlueRaw (256);
-            imgsrc->getRAWHistogram (histRedRaw, histGreenRaw, histBlueRaw);
-
-            if (ToneCurveParams::HLReconstructionNecessary (histRedRaw, histGreenRaw, histBlueRaw) && !params.toneCurve.hrenabled) {
-                params.toneCurve.hrenabled = true;
-                // WARNING: Highlight Reconstruction is being forced 'on', should we force a method here too?
-            }
-        }
-
         if (pl) {
             pl->setProgress (0.20);
         }
@@ -223,7 +241,9 @@ private:
         // set the color temperature
         currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
 
-        if (params.wb.method == "Camera") {
+        if (!params.wb.enabled) {
+            currWB = ColorTemp();
+        } else if (params.wb.method == "Camera") {
             currWB = imgsrc->getWB ();
         } else if (params.wb.method == "Auto") {
             double rm, gm, bm;
@@ -720,6 +740,21 @@ private:
             imgsrc->getAutoExpHistogram (aehist, aehistcompr);
             ipf.getAutoExp (aehist, aehistcompr, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
         }
+        if (params.toneCurve.histmatching) {
+            imgsrc->getAutoMatchedToneCurve(params.toneCurve.curve);
+
+            if (params.toneCurve.autoexp) {
+                params.toneCurve.expcomp = 0.0;
+            }
+
+            params.toneCurve.autoexp = false;
+            params.toneCurve.curveMode = ToneCurveParams::TcMode::FILMLIKE;
+            params.toneCurve.curve2 = { 0 };
+            params.toneCurve.brightness = 0;
+            params.toneCurve.contrast = 0;
+            params.toneCurve.black = 0;
+
+        }        
 
         // at this stage, we can flush the raw data to free up quite an important amount of memory
         // commented out because it makes the application crash when batch processing...
@@ -813,7 +848,7 @@ private:
         if (params.fattal.enabled) {
             ipf.ToneMapFattal02(baseImg);
         }
-                
+
         // perform transform (excepted resizing)
         if (ipf.needsTransform()) {
             Imagefloat* trImg = nullptr;
@@ -831,7 +866,7 @@ private:
         }
     }
 
-    Image16 *stage_finish()
+    Imagefloat *stage_finish()
     {
         procparams::ProcParams& params = job->pparams;
         //ImProcFunctions ipf (&params, true);
@@ -915,7 +950,7 @@ private:
         float satLimit = float (params.colorToning.satProtectionThreshold) / 100.f * 0.7f + 0.3f;
         float satLimitOpacity = 1.f - (float (params.colorToning.saturatedOpacity) / 100.f);
 
-        if (params.colorToning.enabled  && params.colorToning.autosat) { //for colortoning evaluation of saturation settings
+        if (params.colorToning.enabled  && params.colorToning.autosat && params.colorToning.method != "LabGrid") { //for colortoning evaluation of saturation settings
             float moyS = 0.f;
             float eqty = 0.f;
             ipf.moyeqt (baseImg, moyS, eqty);//return image : mean saturation and standard dev of saturation
@@ -1233,7 +1268,7 @@ private:
             }
         }
 
-        Image16* readyImg = nullptr;
+        Imagefloat* readyImg = nullptr;
         cmsHPROFILE jprof = nullptr;
         bool customGamma = false;
         bool useLCMS = false;
@@ -1243,7 +1278,7 @@ private:
 
             GammaValues ga;
             //  if(params.blackwhite.enabled) params.toneCurve.hrenabled=false;
-            readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm, &ga);
+            readyImg = ipf.lab2rgbOut (labView, cx, cy, cw, ch, params.icm, &ga);
             customGamma = true;
 
             //or selected Free gamma
@@ -1257,7 +1292,7 @@ private:
             // if Default gamma mode: we use the profile selected in the "Output profile" combobox;
             // gamma come from the selected profile, otherwise it comes from "Free gamma" tool
 
-            readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm);
+            readyImg = ipf.lab2rgbOut (labView, cx, cy, cw, ch, params.icm);
 
             if (settings->verbose) {
                 printf ("Output profile_: \"%s\"\n", params.icm.output.c_str());
@@ -1287,19 +1322,25 @@ private:
         }
 
         if (tmpScale != 1.0 && params.resize.method == "Nearest") { // resize rgb data (gamma applied)
-            Image16* tempImage = new Image16 (imw, imh);
+            Imagefloat* tempImage = new Imagefloat (imw, imh);
             ipf.resize (readyImg, tempImage, tmpScale);
             delete readyImg;
             readyImg = tempImage;
         }
 
-        if (tunnelMetaData) {
+        switch (params.metadata.mode) {
+        case MetaDataParams::TUNNEL:
             // Sending back the whole first root, which won't necessarily be the selected frame number
             // and may contain subframe depending on initial raw's hierarchy
             readyImg->setMetadata (ii->getMetaData()->getRootExifData ());
-        } else {
+            break;
+        case MetaDataParams::EDIT:
             // ask for the correct frame number, but may contain subframe depending on initial raw's hierarchy
             readyImg->setMetadata (ii->getMetaData()->getBestExifData(imgsrc, &params.raw), params.exif, params.iptc);
+            break;
+        default: // case MetaDataParams::STRIP
+            // nothing to do
+            break;
         }
 
 
@@ -1425,8 +1466,7 @@ private:
         if (params.prsharpening.enabled) {
             params.sharpening = params.prsharpening;
         } else {
-            adjust_radius (defaultparams.sharpening.radius, scale_factor,
-                           params.sharpening.radius);
+            params.sharpening.radius *= scale_factor;
         }
 
         params.impulseDenoise.thresh *= scale_factor;
@@ -1436,12 +1476,12 @@ private:
         }
 
         params.wavelet.strength *= scale_factor;
-        params.dirpyrDenoise.luma *= scale_factor;
+        params.dirpyrDenoise.luma *= scale_factor * scale_factor;
         //params.dirpyrDenoise.Ldetail += (100 - params.dirpyrDenoise.Ldetail) * scale_factor;
         auto &lcurve = params.dirpyrDenoise.lcurve;
 
         for (size_t i = 2; i < lcurve.size(); i += 4) {
-            lcurve[i] *= min (scale_factor * 2, 1.0);
+            lcurve[i] *= min (scale_factor * scale_factor, 1.0);
         }
 
         noiseLCurve.Set (lcurve);
@@ -1479,7 +1519,8 @@ private:
 
         adjust_radius (defaultparams.defringe.radius, scale_factor,
                        params.defringe.radius);
-        adjust_radius (defaultparams.sh.radius, scale_factor, params.sh.radius);
+        params.sh.radius *= scale_factor;
+        params.localContrast.radius *= scale_factor;
 
         if (params.raw.xtranssensor.method == procparams::RAWParams::XTransSensor::getMethodString(procparams::RAWParams::XTransSensor::Method::THREE_PASS)) {
             params.raw.xtranssensor.method = procparams::RAWParams::XTransSensor::getMethodString(procparams::RAWParams::XTransSensor::Method::ONE_PASS);
@@ -1494,7 +1535,6 @@ private:
     ProcessingJobImpl* job;
     int& errorCode;
     ProgressListener* pl;
-    bool tunnelMetaData;
     bool flush;
 
     // internal state
@@ -1568,20 +1608,20 @@ private:
 } // namespace
 
 
-IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* pl, bool tunnelMetaData, bool flush)
+IImagefloat* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* pl, bool flush)
 {
-    ImageProcessor proc (pjob, errorCode, pl, tunnelMetaData, flush);
+    ImageProcessor proc (pjob, errorCode, pl, flush);
     return proc();
 }
 
-void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData)
+void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl)
 {
 
     ProcessingJob* currentJob = job;
 
     while (currentJob) {
         int errorCode;
-        IImage16* img = processImage (currentJob, errorCode, bpl, tunnelMetaData, true);
+        IImagefloat* img = processImage (currentJob, errorCode, bpl, true);
 
         if (errorCode) {
             bpl->error (M ("MAIN_MSG_CANNOTLOAD"));
@@ -1597,11 +1637,11 @@ void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl, bo
     }
 }
 
-void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData)
+void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl)
 {
 
     if (bpl) {
-        Glib::Thread::create (sigc::bind (sigc::ptr_fun (batchProcessingThread), job, bpl, tunnelMetaData), 0, true, true, Glib::THREAD_PRIORITY_LOW);
+        Glib::Thread::create (sigc::bind (sigc::ptr_fun (batchProcessingThread), job, bpl), 0, true, true, Glib::THREAD_PRIORITY_LOW);
     }
 
 }

@@ -574,6 +574,7 @@ public:
 
     void setDefaultMonitorProfileName(const Glib::ustring &name)
     {
+        MyMutex::MyLock lock(mutex);
         defaultMonitorProfile = name;
     }
 

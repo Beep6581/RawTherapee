@@ -446,6 +446,11 @@ menuitem {
     min-height: 10px;
 }
 
+/* FlowBoxChild */
+flowboxchild:selected {
+    background-color: inherit;
+}
+
 #HistogramPanel {
     margin: 0;
     padding: 0;

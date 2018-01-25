@@ -46,11 +46,7 @@ ExifPanel::ExifPanel () : idata (nullptr)
     exifTreeModel = Gtk::TreeStore::create (exifColumns);
     exifTree->set_model (exifTreeModel);
     exifTree->set_grid_lines (Gtk::TREE_VIEW_GRID_LINES_NONE);
-    exifTree->set_row_separator_func (
-    [&] (const Glib::RefPtr<Gtk::TreeModel>& model, const Gtk::TreeModel::iterator & row) {
-        return row->get_value (exifColumns.isSeparator);
-    }
-    );
+    exifTree->set_row_separator_func (sigc::mem_fun(*this, &ExifPanel::rowSeperatorFunc));
 
     delicon = RTImage::createFromFile ("gtk-close.png");
     keepicon = RTImage::createFromFile ("gtk-apply.png");
@@ -538,6 +534,11 @@ void ExifPanel::showAlltoggled ()
 {
     options.lastShowAllExif = showAll->get_active();
     setImageData (idata);
+}
+
+bool ExifPanel::rowSeperatorFunc(const Glib::RefPtr<Gtk::TreeModel>& model, const Gtk::TreeModel::iterator& iter)
+{
+    return iter->get_value(exifColumns.isSeparator);
 }
 
 void ExifPanel::editTag (Gtk::TreeModel::Children root, Glib::ustring name, Glib::ustring value)

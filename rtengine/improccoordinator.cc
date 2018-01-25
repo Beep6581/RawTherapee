@@ -199,11 +199,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         imgsrc->preprocess ( rp, params.lensProf, params.coarse );
         imgsrc->getRAWHistogram ( histRedRaw, histGreenRaw, histBlueRaw );
 
-        if (highDetailNeeded) {
-            highDetailPreprocessComputed = true;
-        } else {
-            highDetailPreprocessComputed = false;
-        }
+        highDetailPreprocessComputed = highDetailNeeded;
     }
 
     /*
@@ -269,21 +265,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         }
     }
 
-
-    // Updating toneCurve.hrenabled if necessary
-    // It has to be done there, because the next 'if' statement will use the value computed here
-    if (todo & M_AUTOEXP) {
-        if (params.toneCurve.autoexp) {// this enabled HLRecovery
-            if (ToneCurveParams::HLReconstructionNecessary (histRedRaw, histGreenRaw, histBlueRaw) && !params.toneCurve.hrenabled) {
-                // switching params.toneCurve.hrenabled to true -> shouting in listener's ears!
-                params.toneCurve.hrenabled = true;
-
-                // forcing INIT to be done, to reconstruct HL again
-                todo |= M_INIT;
-            }
-        }
-    }
-
     if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
         MyMutex::MyLock initLock (minit); // Also used in crop window
 
@@ -296,7 +277,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
         currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
 
-        if (params.wb.method == "Camera") {
+        if (!params.wb.enabled) {
+            currWB = ColorTemp();
+        } else if (params.wb.method == "Camera") {
             currWB = imgsrc->getWB ();
         } else if (params.wb.method == "Auto") {
             if (lastAwbEqual != params.wb.equal || lastAwbTempBias != params.wb.tempBias) {
@@ -320,10 +303,12 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             currWB = autoWB;
         }
 
-        params.wb.temperature = currWB.getTemp ();
-        params.wb.green = currWB.getGreen ();
+        if (params.wb.enabled) {
+            params.wb.temperature = currWB.getTemp ();
+            params.wb.green = currWB.getGreen ();
+        }
 
-        if (params.wb.method == "Auto" && awbListener) {
+        if (params.wb.method == "Auto" && awbListener && params.wb.enabled) {
             awbListener->WBChanged (params.wb.temperature, params.wb.green);
         }
 
@@ -479,6 +464,24 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 aeListener->autoExpChanged (params.toneCurve.expcomp, params.toneCurve.brightness, params.toneCurve.contrast,
                                             params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.hrenabled);
         }
+        if (params.toneCurve.histmatching) {
+            imgsrc->getAutoMatchedToneCurve(params.toneCurve.curve);
+
+            if (params.toneCurve.autoexp) {
+                params.toneCurve.expcomp = 0.0;
+            }
+
+            params.toneCurve.autoexp = false;
+            params.toneCurve.curveMode = ToneCurveParams::TcMode::FILMLIKE;
+            params.toneCurve.curve2 = { 0 };
+            params.toneCurve.brightness = 0;
+            params.toneCurve.contrast = 0;
+            params.toneCurve.black = 0;
+
+            if (aeListener) {
+                aeListener->autoMatchedToneCurveChanged(params.toneCurve.curveMode, params.toneCurve.curve);
+            }
+        }
     }
 
     progress ("Exposure curve & CIELAB conversion...", 100 * readyphase / numofphases);
@@ -523,7 +526,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         int satPR = 30;
         int indi = 0;
 
-        if (params.colorToning.enabled  && params.colorToning.autosat) { //for colortoning evaluation of saturation settings
+        if (params.colorToning.enabled  && params.colorToning.autosat && params.colorToning.method != "LabGrid") { //for colortoning evaluation of saturation settings
             float moyS = 0.f;
             float eqty = 0.f;
             ipf.moyeqt (spotprevi, moyS, eqty);//return image : mean saturation and standard dev of saturation
@@ -1293,21 +1296,20 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname, bool 
         }
     }
 
-    Image16* im16 = im->to16();
-    delete im;
-
     int imw, imh;
     double tmpScale = ipf.resizeScale (&params, fW, fH, imw, imh);
 
     if (tmpScale != 1.0) {
-        Image16* tempImage = new Image16 (imw, imh);
-        ipf.resize (im16, tempImage, tmpScale);
-        delete im16;
-        im16 = tempImage;
+        Imagefloat* tempImage = new Imagefloat (imw, imh);
+        ipf.resize (im, tempImage, tmpScale);
+        delete im;
+        im = tempImage;
     }
 
-    im16->saveTIFF (fname, 16, true);
-    delete im16;
+    im->setMetadata (imgsrc->getMetaData()->getRootExifData ());
+
+    im->saveTIFF (fname, 16, true);
+    delete im;
 
     if (plistener) {
         plistener->setProgressState (false);
@@ -1397,7 +1399,8 @@ ProcParams* ImProcCoordinator::beginUpdateParams ()
 
 void ImProcCoordinator::endUpdateParams (ProcEvent change)
 {
-    endUpdateParams ( refreshmap[ (int)change] );
+    int action = RefreshMapper::getInstance()->getAction(change);
+    endUpdateParams(action);
 }
 
 void ImProcCoordinator::endUpdateParams (int changeFlags)

@@ -553,44 +553,6 @@ void Color::rgb2hsl(float r, float g, float b, float &h, float &s, float &l)
     }
 }
 
-void Color::rgb2hslfloat(float r, float g, float b, float &h, float &s, float &l)
-{
-
-    float m = min(r, g, b);
-    float M = max(r, g, b);
-    float C = M - m;
-
-    l = (M + m) * 7.6295109e-6f; // (0.5f / 65535.f)
-
-    if (fabsf(C) < 0.65535f) { // 0.00001f * 65535.f
-        h = 0.f;
-        s = 0.f;
-    } else {
-
-        if (l <= 0.5f) {
-            s = (M - m) / (M + m);
-        } else {
-            s = (M - m) / (131070.f - M - m); // 131070.f = 2.f * 65535.f
-        }
-
-        if ( r == M ) {
-            h = (g - b);
-        } else if ( g == M ) {
-            h = (2.f * C) + (b - r);
-        } else {
-            h = (4.f * C) + (r - g);
-        }
-
-        h /= (6.f * C);
-
-        if ( h < 0.f ) {
-            h += 1.f;
-        } else if ( h > 1.f ) {
-            h -= 1.f;
-        }
-    }
-}
-
 #ifdef __SSE2__
 void Color::rgb2hsl(vfloat r, vfloat g, vfloat b, vfloat &h, vfloat &s, vfloat &l)
 {
@@ -609,9 +571,8 @@ void Color::rgb2hsl(vfloat r, vfloat g, vfloat b, vfloat &h, vfloat &s, vfloat &
     h /= (F2V(6.f) * C);
     vfloat onev = F2V(1.f);
     h = vself(vmaskf_lt(h, ZEROV), h + onev, h);
-    h = vself(vmaskf_gt(h, onev), h - onev, h);
 
-    vmask zeromask = vmaskf_lt(vabsf(C), F2V(0.65535f));
+    vmask zeromask = vmaskf_lt(C, F2V(0.65535f));
     h = vself(zeromask, ZEROV, h);
     s = vself(zeromask, ZEROV, s);
 }
@@ -694,28 +655,6 @@ void Color::hsl2rgb (float h, float s, float l, float &r, float &g, float &b)
         r = float(65535.0 * hue2rgb (m1, m2, h_ * 6.0 + 2.0));
         g = float(65535.0 * hue2rgb (m1, m2, h_ * 6.0));
         b = float(65535.0 * hue2rgb (m1, m2, h_ * 6.0 - 2.0));
-    }
-}
-
-void Color::hsl2rgbfloat (float h, float s, float l, float &r, float &g, float &b)
-{
-
-    if (s == 0.f) {
-        r = g = b = 65535.f * l;    //  achromatic
-    } else {
-        float m2;
-
-        if (l <= 0.5f) {
-            m2 = l * (1.f + s);
-        } else {
-            m2 = l + s - l * s;
-        }
-
-        float m1 = 2.f * l - m2;
-
-        r = 65535.f * hue2rgbfloat (m1, m2, h * 6.f + 2.f);
-        g = 65535.f * hue2rgbfloat (m1, m2, h * 6.f);
-        b = 65535.f * hue2rgbfloat (m1, m2, h * 6.f - 2.f);
     }
 }
 
@@ -1782,6 +1721,71 @@ void Color::Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, vfloat &
     y *= c65535;
 }
 #endif // __SSE2__
+
+void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, const float wp[3][3], int width)
+{
+
+#if defined( __SSE2__ ) && defined( __x86_64__ )
+    vfloat maxvalfv = F2V(MAXVALF);
+    vfloat c116v = F2V(116.f);
+    vfloat c5242d88v = F2V(5242.88f);
+    vfloat c500v = F2V(500.f);
+    vfloat c200v = F2V(200.f);
+#endif
+    int i = 0;
+#if defined( __SSE2__ ) && defined( __x86_64__ )
+    for(;i < width - 3; i+=4) {
+        const vfloat rv = LVFU(R[i]);
+        const vfloat gv = LVFU(G[i]);
+        const vfloat bv = LVFU(B[i]);
+        const vfloat xv = F2V(wp[0][0]) * rv + F2V(wp[0][1]) * gv + F2V(wp[0][2]) * bv;
+        const vfloat yv = F2V(wp[1][0]) * rv + F2V(wp[1][1]) * gv + F2V(wp[1][2]) * bv;
+        const vfloat zv = F2V(wp[2][0]) * rv + F2V(wp[2][1]) * gv + F2V(wp[2][2]) * bv;
+
+        vmask maxMask = vmaskf_gt(vmaxf(xv, vmaxf(yv, zv)), maxvalfv);
+        if (_mm_movemask_ps((vfloat)maxMask)) {
+            // take slower code path for all 4 pixels if one of the values is > MAXVALF. Still faster than non SSE2 version
+            for(int k = 0; k < 4; ++k) {
+                float x = xv[k];
+                float y = yv[k];
+                float z = zv[k];
+                float fx = (x <= 65535.f ? cachef[x] : (327.68f * xcbrtf(x / MAXVALF)));
+                float fy = (y <= 65535.f ? cachef[y] : (327.68f * xcbrtf(y / MAXVALF)));
+                float fz = (z <= 65535.f ? cachef[z] : (327.68f * xcbrtf(z / MAXVALF)));
+
+                L[i + k] = (116.f *  fy - 5242.88f); //5242.88=16.0*327.68;
+                a[i + k] = (500.f * (fx - fy) );
+                b[i + k] = (200.f * (fy - fz) );
+            }
+        } else {
+            const vfloat fx = cachef[xv];
+            const vfloat fy = cachef[yv];
+            const vfloat fz = cachef[zv];
+
+            STVFU(L[i], c116v *  fy - c5242d88v); //5242.88=16.0*327.68;
+            STVFU(a[i], c500v * (fx - fy));
+            STVFU(b[i], c200v * (fy - fz));
+        }
+    }
+#endif
+    for(;i < width; ++i) {
+        const float rv = R[i];
+        const float gv = G[i];
+        const float bv = B[i];
+        float x = wp[0][0] * rv + wp[0][1] * gv + wp[0][2] * bv;
+        float y = wp[1][0] * rv + wp[1][1] * gv + wp[1][2] * bv;
+        float z = wp[2][0] * rv + wp[2][1] * gv + wp[2][2] * bv;
+        float fx, fy, fz;
+
+        fx = (x <= 65535.0f ? cachef[x] : (327.68f * xcbrtf(x / MAXVALF)));
+        fy = (y <= 65535.0f ? cachef[y] : (327.68f * xcbrtf(y / MAXVALF)));
+        fz = (z <= 65535.0f ? cachef[z] : (327.68f * xcbrtf(z / MAXVALF)));
+
+        L[i] = 116.0f *  fy - 5242.88f; //5242.88=16.0*327.68;
+        a[i] = 500.0f * (fx - fy);
+        b[i] = 200.0f * (fy - fz);
+    }
+}
 
 void Color::XYZ2Lab(float X, float Y, float Z, float &L, float &a, float &b)
 {

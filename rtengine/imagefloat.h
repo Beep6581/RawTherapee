@@ -107,6 +107,7 @@ public:
     void                 calcCroppedHistogram(const ProcParams &params, float scale, LUTu & hist);
 
     void                 ExecCMSTransform(cmsHTRANSFORM hTransform);
+    void                 ExecCMSTransform(cmsHTRANSFORM hTransform, const LabImage &labImage, int cx, int cy);
 };
 
 }

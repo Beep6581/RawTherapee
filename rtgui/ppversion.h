@@ -1,11 +1,15 @@
 #pragma once
 
 // This number has to be incremented whenever the PP3 file format is modified or the behaviour of a tool changes
-#define PPVERSION 328
+#define PPVERSION 330
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /*
   Log of version changes
+   330  2018-20-01
+        Added 'Auto-matched Tone Curve' button, performing histogram matching
+   329  2017-12-09
+        Added 'Enabled' flag for Channel Mixer, RGB Curves, HSV Equalizer and L*a*b* Adjustments
    328  2017-11-22
         Fix wrong type of ff_clipControl
    327  2017-09-15

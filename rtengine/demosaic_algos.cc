@@ -37,7 +37,6 @@
 #include "sleef.c"
 #include "opthelper.h"
 #include "median.h"
-//#define BENCHMARK
 #include "StopWatch.h"
 #ifdef _OPENMP
 #include <omp.h>
@@ -4213,7 +4212,7 @@ void RawImageSource::rcd_demosaic()
         }
     }
 
-    border_interpolate2(width, height, 4);
+    border_interpolate2(width, height, 8);
 
     if (plistener) {
         plistener->setProgress(1);

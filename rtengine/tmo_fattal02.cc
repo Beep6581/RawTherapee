@@ -69,7 +69,6 @@
 #include "improcfun.h"
 #include "settings.h"
 #include "iccstore.h"
-//#define BENCHMARK
 #include "StopWatch.h"
 #include "sleef.c"
 #include "opthelper.h"
@@ -416,8 +415,8 @@ void tmo_fattal02 (size_t width,
 //     msec_timer stop_watch;
 //     stop_watch.start();
 // #endif
-    static const float black_point = 0.1f;
-    static const float white_point = 0.5f;
+    // static const float black_point = 0.1f;
+    // static const float white_point = 0.5f;
     static const float gamma = 1.0f; // 0.8f;
 
     // static const int   detail_level = 3;
@@ -452,7 +451,7 @@ void tmo_fattal02 (size_t width,
     int size = width * height;
 
     // find max value, normalize to range 0..100 and take logarithm
-    float minLum = Y (0, 0);
+    // float minLum = Y (0, 0);
     float maxLum = Y (0, 0);
 
     #pragma omp parallel for reduction(max:maxLum) if(multithread)
@@ -646,22 +645,6 @@ void tmo_fattal02 (size_t width,
             for (; j < width; j++) {
                 L[i][j] = xexpf ( gamma * L[i][j]);
             }
-        }
-    }
-
-    // remove percentile of min and max values and renormalize
-    float cut_min = 0.01f * black_point;
-    float cut_max = 1.0f - 0.01f * white_point;
-    assert (cut_min >= 0.0f && (cut_max <= 1.0f) && (cut_min < cut_max));
-    findMinMaxPercentile (L.data(), L.getRows() * L.getCols(), cut_min, minLum, cut_max, maxLum, multithread);
-    float dividor = (maxLum - minLum);
-
-    #pragma omp parallel for if(multithread)
-
-    for (size_t i = 0; i < height; ++i) {
-        for (size_t j = 0; j < width; ++j) {
-            L[i][j] = std::max ((L[i][j] - minLum) / dividor, 0.f);
-            // note, we intentionally do not cut off values > 1.0
         }
     }
 }
@@ -923,18 +906,6 @@ void solve_pde_fft (Array2Df *F, Array2Df *U, Array2Df *buf, bool multithread)/*
     for (int i = 0; i < width * height; i++) {
         (*U) (i) -= max;
     }
-
-    // fft parallel threads cleanup, better handled outside this function?
-#ifdef RT_FFTW3F_OMP
-
-    if (multithread) {
-        fftwf_cleanup_threads();
-    }
-
-#endif
-
-    // ph.setValue(90);
-    //DEBUG_STR << "solve_pde_fft: done" << std::endl;
 }
 
 
@@ -1055,8 +1026,9 @@ inline int find_fast_dim (int dim)
 {
     // as per the FFTW docs:
     //
-    //   FFTW is generally best at handling sizes of the form 2a 3b 5c 7d 11e
-    //   13f, where e+f is either 0 or 1.
+    //   FFTW is generally best at handling sizes of the form
+    //     2^a 3^b 5^c 7^d 11^e 13^f,
+    //   where e+f is either 0 or 1.
     //
     // Here, we try to round up to the nearest dim that can be expressed in
     // the above form. This is not exhaustive, but should be ok for pictures
@@ -1116,21 +1088,23 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
 
     Array2Df Yr (w, h);
 
-    const float epsilon = 1e-4f;
-    const float luminance_noise_floor = 65.535f;
-    const float min_luminance = 1.f;
+    constexpr float epsilon = 1e-4f;
+    constexpr float luminance_noise_floor = 65.535f;
+    constexpr float min_luminance = 1.f;
+
     TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
 
 #ifdef _OPENMP
-    #pragma omp parallel for if (multiThread)
+    #pragma omp parallel for if(multiThread)
 #endif
-
     for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++) {
             Yr (x, y) = std::max (luminance (rgb->r (y, x), rgb->g (y, x), rgb->b (y, x), ws), min_luminance); // clip really black pixels
         }
     }
 
+    float oldMedian;
+    findMinMaxPercentile (Yr.data(), Yr.getRows() * Yr.getCols(), 0.5f, oldMedian, 0.5f, oldMedian, multiThread);
     // median filter on the deep shadows, to avoid boosting noise
     // because w2 >= w and h2 >= h, we can use the L buffer as temporary buffer for Median_Denoise()
     int w2 = find_fast_dim (w) + 1;
@@ -1170,18 +1144,22 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
 
     const float hr = float(h2) / float(h);
     const float wr = float(w2) / float(w);
-    
+
+    float newMedian;
+    findMinMaxPercentile (L.data(), L.getRows() * L.getCols(), 0.5f, newMedian, 0.5f, newMedian, multiThread);
+    const float scale = (oldMedian == 0.f || newMedian == 0.f) ? 65535.f : (oldMedian / newMedian); // avoid Nan
+
 #ifdef _OPENMP
-    #pragma omp parallel for if(multiThread)
+    #pragma omp parallel for schedule(dynamic,16) if(multiThread)
 #endif
     for (int y = 0; y < h; y++) {
         int yy = y * hr + 1;
-        
+
         for (int x = 0; x < w; x++) {
             int xx = x * wr + 1;
-            
-            float Y = Yr (x, y);
-            float l = std::max (L (xx, yy), epsilon) * (65535.f / Y);
+
+            float Y = std::max(Yr (x, y), epsilon);
+            float l = std::max (L (xx, yy), epsilon) * (scale / Y);
             rgb->r (y, x) = std::max (rgb->r (y, x), 0.f) * l;
             rgb->g (y, x) = std::max (rgb->g (y, x), 0.f) * l;
             rgb->b (y, x) = std::max (rgb->b (y, x), 0.f) * l;

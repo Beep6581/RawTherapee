@@ -75,15 +75,6 @@ FILE* g_fopen_withBinaryAndLock(const Glib::ustring& fname)
     return f;
 }
 
-Glib::ustring to_utf8 (const std::string& str)
-{
-    try {
-        return Glib::locale_to_utf8 (str);
-    } catch (Glib::Error&) {
-        return Glib::convert_with_fallback (str, "UTF-8", "ISO-8859-1", "?");
-    }
-}
-
 }
 
 Glib::ustring ImageIO::errorMsg[6] = {"Success", "Cannot read file.", "Invalid header.", "Error while reading header.", "File reading error", "Image format not supported."};
@@ -136,13 +127,19 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
 
     iptc = iptc_data_new ();
 
+    const unsigned char utf8Esc[] = {0x1B, '%', 'G'};
+    IptcDataSet * ds = iptc_dataset_new ();
+    iptc_dataset_set_tag (ds, IPTC_RECORD_OBJECT_ENV, IPTC_TAG_CHARACTER_SET);
+    iptc_dataset_set_data (ds, utf8Esc, 3, IPTC_DONT_VALIDATE);
+    iptc_data_add_dataset (iptc, ds);
+    iptc_dataset_unref (ds);
+
     for (rtengine::procparams::IPTCPairs::const_iterator i = iptcc.begin(); i != iptcc.end(); ++i) {
         if (i->first == "Keywords" && !(i->second.empty())) {
             for (unsigned int j = 0; j < i->second.size(); j++) {
                 IptcDataSet * ds = iptc_dataset_new ();
                 iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, IPTC_TAG_KEYWORDS);
-                std::string loc = to_utf8(i->second.at(j));
-                iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), min(static_cast<size_t>(64), loc.size()), IPTC_DONT_VALIDATE);
+                iptc_dataset_set_data (ds, (unsigned char*)i->second.at(j).c_str(), min(static_cast<size_t>(64), i->second.at(j).bytes()), IPTC_DONT_VALIDATE);
                 iptc_data_add_dataset (iptc, ds);
                 iptc_dataset_unref (ds);
             }
@@ -152,8 +149,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
             for (unsigned int j = 0; j < i->second.size(); j++) {
                 IptcDataSet * ds = iptc_dataset_new ();
                 iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, IPTC_TAG_SUPPL_CATEGORY);
-                std::string loc = to_utf8(i->second.at(j));
-                iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), min(static_cast<size_t>(32), loc.size()), IPTC_DONT_VALIDATE);
+                iptc_dataset_set_data (ds, (unsigned char*)i->second.at(j).c_str(), min(static_cast<size_t>(32), i->second.at(j).bytes()), IPTC_DONT_VALIDATE);
                 iptc_data_add_dataset (iptc, ds);
                 iptc_dataset_unref (ds);
             }
@@ -165,8 +161,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
             if (i->first == strTags[j].field && !(i->second.empty())) {
                 IptcDataSet * ds = iptc_dataset_new ();
                 iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, strTags[j].tag);
-                std::string loc = to_utf8(i->second.at(0));
-                iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), min(strTags[j].size, loc.size()), IPTC_DONT_VALIDATE);
+                iptc_dataset_set_data (ds, (unsigned char*)i->second.at(0).c_str(), min(strTags[j].size, i->second.at(0).bytes()), IPTC_DONT_VALIDATE);
                 iptc_data_add_dataset (iptc, ds);
                 iptc_dataset_unref (ds);
             }
@@ -308,6 +303,11 @@ int ImageIO::loadPNG  (Glib::ustring fname)
         return IMIO_HEADERERROR;
     }
 
+    // silence the warning about "invalid" sRGB profiles -- see #4260
+#if defined(PNG_SKIP_sRGB_CHECK_PROFILE) && defined(PNG_SET_OPTION_SUPPORTED)
+    png_set_option(png, PNG_SKIP_sRGB_CHECK_PROFILE, PNG_OPTION_ON);
+#endif
+
     png_infop info = png_create_info_struct (png);
     png_infop end_info = png_create_info_struct (png);
 
@@ -354,6 +354,22 @@ int ImageIO::loadPNG  (Glib::ustring fname)
 
     if (color_type & PNG_COLOR_MASK_ALPHA) {
         png_set_strip_alpha(png);
+    }
+
+    // reading the embedded ICC profile if any
+    if (png_get_valid(png, info, PNG_INFO_iCCP)) {
+        png_charp name;
+        int compression_type;
+#if PNG_LIBPNG_VER < 10500
+        png_charp profdata;
+#else
+        png_bytep profdata;
+#endif
+        png_uint_32 proflen;
+        png_get_iCCP(png, info, &name, &compression_type, &profdata, &proflen);
+        embProfile = cmsOpenProfileFromMem(profdata, proflen);
+        loadedProfileData = new char[proflen];
+        memcpy(loadedProfileData, profdata, proflen);
     }
 
     //setting gamma
@@ -905,6 +921,77 @@ int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool s
     return IMIO_SUCCESS;
 }
 
+
+namespace {
+
+// Taken from Darktable -- src/imageio/format/png.c
+//
+/* Write EXIF data to PNG file.
+ * Code copied from DigiKam's libs/dimg/loaders/pngloader.cpp.
+ * The EXIF embedding is defined by ImageMagicK.
+ * It is documented in the ExifTool page:
+ * http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/PNG.html
+ *
+ * ..and in turn copied from ufraw. thanks to udi and colleagues
+ * for making useful code much more readable and discoverable ;)
+ */
+
+void PNGwriteRawProfile(png_struct *ping, png_info *ping_info, const char *profile_type, guint8 *profile_data, png_uint_32 length)
+{
+    png_textp text;
+    long i;
+    guint8 *sp;
+    png_charp dp;
+    png_uint_32 allocated_length, description_length;
+
+    const guint8 hex[16] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+    text = static_cast<png_textp>(png_malloc(ping, sizeof(png_text)));
+    description_length = strlen(profile_type);
+    allocated_length = length * 2 + (length >> 5) + 20 + description_length;
+
+    text[0].text = static_cast<png_charp>(png_malloc(ping, allocated_length));
+    text[0].key = static_cast<png_charp>(png_malloc(ping, 80));
+    text[0].key[0] = '\0';
+
+    g_strlcat(text[0].key, "Raw profile type ", 80);
+    g_strlcat(text[0].key, profile_type, 80);
+
+    sp = profile_data;
+    dp = text[0].text;
+    *dp++ = '\n';
+
+    g_strlcpy(dp, profile_type, allocated_length);
+
+    dp += description_length;
+    *dp++ = '\n';
+    *dp = '\0';
+
+    g_snprintf(dp, allocated_length - strlen(text[0].text), "%8lu ", static_cast<unsigned long int>(length));
+
+    dp += 8;
+
+    for(i = 0; i < long(length); i++)
+    {
+        if(i % 36 == 0) *dp++ = '\n';
+
+        *(dp++) = hex[((*sp >> 4) & 0x0f)];
+        *(dp++) = hex[((*sp++) & 0x0f)];
+    }
+
+    *dp++ = '\n';
+    *dp = '\0';
+    text[0].text_length = (dp - text[0].text);
+    text[0].compression = -1;
+
+    if(text[0].text_length <= allocated_length) png_set_text(ping, ping_info, text, 1);
+
+    png_free(ping, text[0].text);
+    png_free(ping, text[0].key);
+    png_free(ping, text);
+}
+
+} // namespace
+
 int ImageIO::savePNG  (Glib::ustring fname, volatile int bps)
 {
     if (getWidth() < 1 || getHeight() < 1) {
@@ -929,6 +1016,11 @@ int ImageIO::savePNG  (Glib::ustring fname, volatile int bps)
         return IMIO_HEADERERROR;
     }
 
+    // silence the warning about "invalid" sRGB profiles -- see #4260
+#if defined(PNG_SKIP_sRGB_CHECK_PROFILE) && defined(PNG_SET_OPTION_SUPPORTED)
+    png_set_option(png, PNG_SKIP_sRGB_CHECK_PROFILE, PNG_OPTION_ON);
+#endif
+    
     png_infop info = png_create_info_struct(png);
 
     if (!info) {
@@ -958,6 +1050,38 @@ int ImageIO::savePNG  (Glib::ustring fname, volatile int bps)
 
     png_set_IHDR(png, info, width, height, bps, PNG_COLOR_TYPE_RGB,
                  PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_BASE);
+
+    if (profileData) {
+#if PNG_LIBPNG_VER < 10500
+        png_charp profdata = reinterpret_cast<png_charp>(profileData);
+#else
+        png_bytep profdata = reinterpret_cast<png_bytep>(profileData);
+#endif
+        png_set_iCCP(png, info, const_cast<png_charp>("icc"), 0, profdata, profileLength);
+    }
+
+    {
+        // buffer for the exif and iptc
+        unsigned int bufferSize;
+        unsigned char* buffer = nullptr; // buffer will be allocated in createTIFFHeader
+        unsigned char* iptcdata = nullptr;
+        unsigned int iptclen = 0;
+
+        if (iptc && iptc_data_save (iptc, &iptcdata, &iptclen) && iptcdata) {
+            iptc_data_free_buf (iptc, iptcdata);
+            iptcdata = nullptr;
+        }
+
+        int size = rtexif::ExifManager::createPNGMarker(exifRoot, exifChange, width, height, bps, (char*)iptcdata, iptclen, buffer, bufferSize);
+
+        if (iptcdata) {
+            iptc_data_free_buf (iptc, iptcdata);
+        }
+        if (buffer && size) {
+            PNGwriteRawProfile(png, info, "exif", buffer, size);
+            delete[] buffer;
+        }
+    }
 
 
     int rowlen = width * 3 * bps / 8;
@@ -1121,11 +1245,11 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
         int bytes = 0;
 
         if (!error && (bytes = iptc_jpeg_ps3_save_iptc (nullptr, 0, iptcdata, size, buffer, 65532)) < 0) {
-            if (iptcdata) {
-                iptc_data_free_buf (iptc, iptcdata);
-            }
-
             error = true;
+        }
+
+        if (iptcdata) {
+            iptc_data_free_buf (iptc, iptcdata);
         }
 
         if (!error) {
@@ -1212,188 +1336,176 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
     int lineWidth = width * 3 * bps / 8;
     unsigned char* linebuffer = new unsigned char[lineWidth];
 
-// TODO the following needs to be looked into - do we really need two ways to write a Tiff file ?
-    if (exifRoot && uncompressed) {
-        FILE *file = g_fopen_withBinaryAndLock (fname);
+    // little hack to get libTiff to use proper byte order (see TIFFClienOpen()):
+    const char *mode = !exifRoot ? "w" : (exifRoot->getOrder() == rtexif::INTEL ? "wl" : "wb");
+#ifdef WIN32
+    FILE *file = g_fopen_withBinaryAndLock (fname);
+    int fileno = _fileno(file);
+    int osfileno = _get_osfhandle(fileno);
+    TIFF* out = TIFFFdOpen (osfileno, fname.c_str(), mode);
+#else
+    TIFF* out = TIFFOpen(fname.c_str(), mode);
+    int fileno = TIFFFileno (out);
+#endif
 
-        if (!file) {
-            delete [] linebuffer;
-            return IMIO_CANNOTWRITEFILE;
+    if (!out) {
+        delete [] linebuffer;
+        return IMIO_CANNOTWRITEFILE;
+    }
+
+    if (pl) {
+        pl->setProgressStr ("PROGRESSBAR_SAVETIFF");
+        pl->setProgress (0.0);
+    }
+
+    if (exifRoot) {
+        rtexif::TagDirectory* cl = (const_cast<rtexif::TagDirectory*> (exifRoot))->clone (nullptr);
+
+        // ------------------ remove some unknown top level tags which produce warnings when opening a tiff (might be useless) -----------------
+
+        rtexif::Tag *removeTag = cl->getTag (0x9003);
+
+        if (removeTag) {
+            removeTag->setKeep (false);
         }
 
-        if (pl) {
-            pl->setProgressStr ("PROGRESSBAR_SAVETIFF");
-            pl->setProgress (0.0);
+        removeTag = cl->getTag (0x9211);
+
+        if (removeTag) {
+            removeTag->setKeep (false);
         }
 
-        // buffer for the exif and iptc
-        unsigned int bufferSize;
-        unsigned char* buffer = nullptr; // buffer will be allocated in createTIFFHeader
-        unsigned char* iptcdata = nullptr;
-        unsigned int iptclen = 0;
+        // ------------------ Apply list of change -----------------
 
-        if (iptc && iptc_data_save (iptc, &iptcdata, &iptclen) && iptcdata) {
+        for (auto currExifChange : exifChange) {
+            cl->applyChange (currExifChange.first, currExifChange.second);
+        }
+
+        rtexif::Tag *tag = cl->getTag (TIFFTAG_EXIFIFD);
+
+        if (tag && tag->isDirectory()) {
+            rtexif::TagDirectory *exif = tag->getDirectory();
+
+            if (exif)   {
+                int exif_size = exif->calculateSize();
+                unsigned char *buffer = new unsigned char[exif_size + 8];
+                // TIFFOpen writes out the header and sets file pointer at position 8
+
+                exif->write (8, buffer);
+
+                write (fileno, buffer + 8, exif_size);
+
+                delete [] buffer;
+                // let libtiff know that scanlines or any other following stuff should go
+                // at a different offset:
+                TIFFSetWriteOffset (out, exif_size + 8);
+                TIFFSetField (out, TIFFTAG_EXIFIFD, 8);
+            }
+        }
+
+        //TODO Even though we are saving EXIF IFD - MakerNote still comes out screwed.
+
+        if ((tag = cl->getTag (TIFFTAG_MODEL)) != nullptr) {
+            TIFFSetField (out, TIFFTAG_MODEL, tag->getValue());
+        }
+
+        if ((tag = cl->getTag (TIFFTAG_MAKE)) != nullptr) {
+            TIFFSetField (out, TIFFTAG_MAKE, tag->getValue());
+        }
+
+        if ((tag = cl->getTag (TIFFTAG_DATETIME)) != nullptr) {
+            TIFFSetField (out, TIFFTAG_DATETIME, tag->getValue());
+        }
+
+        if ((tag = cl->getTag (TIFFTAG_ARTIST)) != nullptr) {
+            TIFFSetField (out, TIFFTAG_ARTIST, tag->getValue());
+        }
+
+        if ((tag = cl->getTag (TIFFTAG_COPYRIGHT)) != nullptr) {
+            TIFFSetField (out, TIFFTAG_COPYRIGHT, tag->getValue());
+        }
+
+        delete cl;
+    }
+
+    unsigned char* iptcdata = nullptr;
+    unsigned int iptclen = 0;
+
+    if (iptc && iptc_data_save (iptc, &iptcdata, &iptclen)) {
+        if (iptcdata) {
             iptc_data_free_buf (iptc, iptcdata);
             iptcdata = nullptr;
         }
+    }
 
-        int size = rtexif::ExifManager::createTIFFHeader (exifRoot, exifChange, width, height, bps, profileData, profileLength, (char*)iptcdata, iptclen, buffer, bufferSize);
-
-        if (iptcdata) {
-            iptc_data_free_buf (iptc, iptcdata);
-        }
-
-        // The maximum lenght is strangely not the same than for the JPEG file...
-        // Which maximum length is the good one ?
-        if (size > 0 && size <= static_cast<int>(bufferSize)) {
-            fwrite (buffer, size, 1, file);
-        }
-
+    if (iptcdata) {
+        rtexif::Tag iptcTag(nullptr, rtexif::lookupAttrib (rtexif::ifdAttribs, "IPTCData"));
+        iptcTag.initLongArray((char*)iptcdata, iptclen);
 #if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
-        bool needsReverse = bps == 16 && exifRoot->getOrder() == rtexif::MOTOROLA;
+        bool needsReverse = exifRoot && exifRoot->getOrder() == rtexif::MOTOROLA;
 #else
-        bool needsReverse = bps == 16 && exifRoot->getOrder() == rtexif::INTEL;
+        bool needsReverse = exifRoot && exifRoot->getOrder() == rtexif::INTEL;
 #endif
-
-        for (int i = 0; i < height; i++) {
-            getScanline (i, linebuffer, bps);
-
-            if (needsReverse)
-                for (int i = 0; i < lineWidth; i += 2) {
-                    char c = linebuffer[i];
-                    linebuffer[i] = linebuffer[i + 1];
-                    linebuffer[i + 1] = c;
-                }
-
-            fwrite (linebuffer, lineWidth, 1, file);
-
-            if (pl && !(i % 100)) {
-                pl->setProgress ((double)(i + 1) / height);
+        if (needsReverse) {
+            unsigned char *ptr = iptcTag.getValue();
+            for (int a = 0; a < iptcTag.getCount(); ++a) {
+                unsigned char cc;
+                cc = ptr[3];
+                ptr[3] = ptr[0];
+                ptr[0] = cc;
+                cc = ptr[2];
+                ptr[2] = ptr[1];
+                ptr[1] = cc;
+                ptr += 4;
             }
         }
+        TIFFSetField (out, TIFFTAG_RICHTIFFIPTC, iptcTag.getCount(), (long*)iptcTag.getValue());
+        iptc_data_free_buf (iptc, iptcdata);
+    }
 
-        if(buffer) {
-            delete [] buffer;
-        }
+    TIFFSetField (out, TIFFTAG_SOFTWARE, "RawTherapee " RTVERSION);
+    TIFFSetField (out, TIFFTAG_IMAGEWIDTH, width);
+    TIFFSetField (out, TIFFTAG_IMAGELENGTH, height);
+    TIFFSetField (out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
+    TIFFSetField (out, TIFFTAG_SAMPLESPERPIXEL, 3);
+    TIFFSetField (out, TIFFTAG_ROWSPERSTRIP, height);
+    TIFFSetField (out, TIFFTAG_BITSPERSAMPLE, bps);
+    TIFFSetField (out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
+    TIFFSetField (out, TIFFTAG_SAMPLEFORMAT, SAMPLEFORMAT_UINT);
+    TIFFSetField (out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
+    TIFFSetField (out, TIFFTAG_COMPRESSION, uncompressed ? COMPRESSION_NONE : COMPRESSION_DEFLATE);
+    TIFFSetField (out, TIFFTAG_SAMPLEFORMAT, bps == 32 ? SAMPLEFORMAT_IEEEFP : SAMPLEFORMAT_UINT);
 
-        if (ferror(file)) {
-            writeOk = false;
-        }
+    if (!uncompressed) {
+        TIFFSetField (out, TIFFTAG_PREDICTOR, bps == 32 ? PREDICTOR_FLOATINGPOINT : PREDICTOR_HORIZONTAL);
+    }
 
-        fclose (file);
-    } else {
-        // little hack to get libTiff to use proper byte order (see TIFFClienOpen()):
-        const char *mode = !exifRoot ? "w" : (exifRoot->getOrder() == rtexif::INTEL ? "wl" : "wb");
-#ifdef WIN32
-        FILE *file = g_fopen_withBinaryAndLock (fname);
-        int fileno = _fileno(file);
-        int osfileno = _get_osfhandle(fileno);
-        TIFF* out = TIFFFdOpen (osfileno, fname.c_str(), mode);
-#else
-        TIFF* out = TIFFOpen(fname.c_str(), mode);
-        int fileno = TIFFFileno (out);
-#endif
+    if (profileData) {
+        TIFFSetField (out, TIFFTAG_ICCPROFILE, profileLength, profileData);
+    }
 
-        if (!out) {
+    for (int row = 0; row < height; row++) {
+        getScanline (row, linebuffer, bps);
+
+        if (TIFFWriteScanline (out, linebuffer, row, 0) < 0) {
+            TIFFClose (out);
             delete [] linebuffer;
             return IMIO_CANNOTWRITEFILE;
         }
 
-        if (pl) {
-            pl->setProgressStr ("PROGRESSBAR_SAVETIFF");
-            pl->setProgress (0.0);
+        if (pl && !(row % 100)) {
+            pl->setProgress ((double)(row + 1) / height);
         }
-
-        if (exifRoot) {
-            rtexif::Tag *tag = exifRoot->getTag (TIFFTAG_EXIFIFD);
-
-            if (tag && tag->isDirectory()) {
-                rtexif::TagDirectory *exif = tag->getDirectory();
-
-                if (exif)   {
-                    int exif_size = exif->calculateSize();
-                    unsigned char *buffer = new unsigned char[exif_size + 8];
-                    // TIFFOpen writes out the header and sets file pointer at position 8
-
-                    exif->write (8, buffer);
-
-                    write (fileno, buffer + 8, exif_size);
-
-                    delete [] buffer;
-                    // let libtiff know that scanlines or any other following stuff should go
-                    // at a different offset:
-                    TIFFSetWriteOffset (out, exif_size + 8);
-                    TIFFSetField (out, TIFFTAG_EXIFIFD, 8);
-                }
-            }
-
-//TODO Even though we are saving EXIF IFD - MakerNote still comes out screwed.
-
-            if ((tag = exifRoot->getTag (TIFFTAG_MODEL)) != nullptr) {
-                TIFFSetField (out, TIFFTAG_MODEL, tag->getValue());
-            }
-
-            if ((tag = exifRoot->getTag (TIFFTAG_MAKE)) != nullptr) {
-                TIFFSetField (out, TIFFTAG_MAKE, tag->getValue());
-            }
-
-            if ((tag = exifRoot->getTag (TIFFTAG_DATETIME)) != nullptr) {
-                TIFFSetField (out, TIFFTAG_DATETIME, tag->getValue());
-            }
-
-            if ((tag = exifRoot->getTag (TIFFTAG_ARTIST)) != nullptr) {
-                TIFFSetField (out, TIFFTAG_ARTIST, tag->getValue());
-            }
-
-            if ((tag = exifRoot->getTag (TIFFTAG_COPYRIGHT)) != nullptr) {
-                TIFFSetField (out, TIFFTAG_COPYRIGHT, tag->getValue());
-            }
-
-        }
-
-        TIFFSetField (out, TIFFTAG_SOFTWARE, "RawTherapee " RTVERSION);
-        TIFFSetField (out, TIFFTAG_IMAGEWIDTH, width);
-        TIFFSetField (out, TIFFTAG_IMAGELENGTH, height);
-        TIFFSetField (out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
-        TIFFSetField (out, TIFFTAG_SAMPLESPERPIXEL, 3);
-        TIFFSetField (out, TIFFTAG_ROWSPERSTRIP, height);
-        TIFFSetField (out, TIFFTAG_BITSPERSAMPLE, bps);
-        TIFFSetField (out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
-        TIFFSetField (out, TIFFTAG_SAMPLEFORMAT, SAMPLEFORMAT_UINT);
-        TIFFSetField (out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
-        TIFFSetField (out, TIFFTAG_COMPRESSION, uncompressed ? COMPRESSION_NONE : COMPRESSION_DEFLATE);
-
-        if (!uncompressed) {
-            TIFFSetField (out, TIFFTAG_PREDICTOR, PREDICTOR_NONE);
-        }
-
-        if (profileData) {
-            TIFFSetField (out, TIFFTAG_ICCPROFILE, profileLength, profileData);
-        }
-
-        for (int row = 0; row < height; row++) {
-            getScanline (row, linebuffer, bps);
-
-            if (TIFFWriteScanline (out, linebuffer, row, 0) < 0) {
-                TIFFClose (out);
-                delete [] linebuffer;
-                return IMIO_CANNOTWRITEFILE;
-            }
-
-            if (pl && !(row % 100)) {
-                pl->setProgress ((double)(row + 1) / height);
-            }
-        }
-
-        if (TIFFFlush(out) != 1) {
-            writeOk = false;
-        }
-
-        TIFFClose (out);
-#ifdef WIN32
-        fclose (file);
-#endif
     }
+
+    if (TIFFFlush(out) != 1) {
+        writeOk = false;
+    }
+
+    TIFFClose (out);
+#ifdef WIN32
+    fclose (file);
+#endif
 
     delete [] linebuffer;
 

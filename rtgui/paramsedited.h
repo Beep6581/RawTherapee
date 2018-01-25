@@ -53,6 +53,7 @@ public:
     bool expcomp;
     bool hrenabled;
     bool method;
+    bool histmatching;
 };
 
 class RetinexParamsEdited
@@ -100,6 +101,7 @@ public:
 class LCurveParamsEdited
 {
 public:
+    bool enabled;
     bool brightness;
     bool contrast;
     bool chromaticity;
@@ -115,14 +117,24 @@ public:
     bool hhcurve;
     bool lccurve;
     bool clcurve;
-    bool enabled;
-    bool method;
 };
+
+
+class LocalContrastParamsEdited {
+public:
+    bool enabled;
+    bool radius;
+    bool amount;
+    bool darkness;
+    bool lightness;
+};
+
 
 class RGBCurvesParamsEdited
 {
 
 public:
+    bool enabled;
     bool lumamode;
     bool rcurve;
     bool gcurve;
@@ -159,6 +171,10 @@ public:
     bool satlow;
     bool sathigh;
     bool lumamode;
+    bool labgridALow;
+    bool labgridBLow;
+    bool labgridAHigh;
+    bool labgridBHigh;
 };
 
 class SharpenEdgeParamsEdited
@@ -229,6 +245,7 @@ class WBParamsEdited
 {
 
 public:
+    bool enabled;
     bool method;
     bool temperature;
     bool green;
@@ -383,7 +400,6 @@ public:
     bool htonalwidth;
     bool shadows;
     bool stonalwidth;
-    bool localcontrast;
     bool radius;
 };
 
@@ -487,6 +503,7 @@ class ChannelMixerParamsEdited
 {
 
 public:
+    bool enabled;
     bool red[3];
     bool green[3];
     bool blue[3];
@@ -684,6 +701,7 @@ class HSVEqualizerParamsEdited
 {
 
 public:
+    bool enabled;
     bool hcurve;
     bool scurve;
     bool vcurve;
@@ -741,6 +759,7 @@ public:
         bool pixelShiftSmooth;
         bool pixelShiftExp0;
         bool pixelShiftLmmse;
+        bool pixelShiftOneGreen;
         bool pixelShiftEqualBright;
         bool pixelShiftEqualBrightChannel;
         bool pixelShiftNonGreenCross;
@@ -790,6 +809,13 @@ public:
     bool isUnchanged() const;
 };
 
+
+class MetaDataParamsEdited {
+public:
+    bool mode;
+};
+
+
 class ParamsEdited
 {
 
@@ -797,6 +823,7 @@ public:
     GeneralParamsEdited           general;
     ToneCurveParamsEdited         toneCurve;
     LCurveParamsEdited            labCurve;
+    LocalContrastParamsEdited     localContrast;
     RGBCurvesParamsEdited         rgbCurves;
     ColorToningEdited             colorToning;
     RetinexParamsEdited             retinex;
@@ -838,6 +865,7 @@ public:
     WaveletParamsEdited             wavelet;
     HSVEqualizerParamsEdited      hsvequalizer;
     FilmSimulationParamsEdited    filmSimulation;
+    MetaDataParamsEdited          metadata;
     bool                          exif;
     bool                          iptc;
 

@@ -150,6 +150,11 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
 
     ImageIO* img = imgSrc.getImageIO();
 
+    // agriggio -- hotfix for #3794, to be revised once a proper solution is implemented
+    if (std::max(img->getWidth(), img->getHeight()) / std::min(img->getWidth(), img->getHeight()) >= 10) {
+        return nullptr;
+    }
+    
     Thumbnail* tpp = new Thumbnail ();
 
     unsigned char* data;
@@ -915,7 +920,7 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 }
 
 // Full thumbnail processing, second stage if complete profile exists
-IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorType sensorType, int rheight, TypeInterpolation interp, const FramesMetaData *metadata, double& myscale)
+IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorType sensorType, int rheight, TypeInterpolation interp, const FramesMetaData *metadata, double& myscale, bool forMonitor)
 {
     unsigned int imgNum = 0;
     if (isRaw) {
@@ -944,7 +949,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     // compute WB multipliers
     ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
 
-    if (params.wb.method == "Camera") {
+    if (!params.wb.enabled) {
+        currWB = ColorTemp();
+    } else if (params.wb.method == "Camera") {
         //recall colorMatrix is rgb_cam
         double cam_r = colorMatrix[0][0] * camwbRed + colorMatrix[0][1] * camwbGreen + colorMatrix[0][2] * camwbBlue;
         double cam_g = colorMatrix[1][0] * camwbRed + colorMatrix[1][1] * camwbGreen + colorMatrix[1][2] * camwbBlue;
@@ -954,12 +961,19 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         currWB = ColorTemp (autoWBTemp, autoWBGreen, wbEqual, "Custom");
     }
 
-    double r, g, b;
-    currWB.getMultipliers (r, g, b);
-    //iColorMatrix is cam_rgb
-    double rm = iColorMatrix[0][0] * r + iColorMatrix[0][1] * g + iColorMatrix[0][2] * b;
-    double gm = iColorMatrix[1][0] * r + iColorMatrix[1][1] * g + iColorMatrix[1][2] * b;
-    double bm = iColorMatrix[2][0] * r + iColorMatrix[2][1] * g + iColorMatrix[2][2] * b;
+    double rm, gm, bm;
+    if (currWB.getTemp() < 0) {
+        rm = redMultiplier;
+        gm = greenMultiplier;
+        bm = blueMultiplier;
+    } else {
+        double r, g, b;
+        currWB.getMultipliers (r, g, b);
+        //iColorMatrix is cam_rgb
+        rm = iColorMatrix[0][0] * r + iColorMatrix[0][1] * g + iColorMatrix[0][2] * b;
+        gm = iColorMatrix[1][0] * r + iColorMatrix[1][1] * g + iColorMatrix[1][2] * b;
+        bm = iColorMatrix[2][0] * r + iColorMatrix[2][1] * g + iColorMatrix[2][2] * b;
+    }
     rm = camwbRed / rm;
     gm = camwbGreen / gm;
     bm = camwbBlue / bm;
@@ -1150,7 +1164,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     float satLimit = float (params.colorToning.satProtectionThreshold) / 100.f * 0.7f + 0.3f;
     float satLimitOpacity = 1.f - (float (params.colorToning.saturatedOpacity) / 100.f);
 
-    if (params.colorToning.enabled  && params.colorToning.autosat) { //for colortoning evaluation of saturation settings
+    if (params.colorToning.enabled  && params.colorToning.autosat && params.colorToning.method != "LabGrid") { //for colortoning evaluation of saturation settings
         float moyS = 0.f;
         float eqty = 0.f;
         ipf.moyeqt (baseImg, moyS, eqty);//return image : mean saturation and standard dev of saturation
@@ -1284,8 +1298,13 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     //ipf.colorCurve (labView, labView);
 
     // obtain final image
-    Image8* readyImg = new Image8 (fw, fh);
-    ipf.lab2monitorRgb (labView, readyImg);
+    Image8* readyImg = nullptr;
+    if (forMonitor) {
+        readyImg = new Image8 (fw, fh);
+        ipf.lab2monitorRgb (labView, readyImg);
+    } else {
+        readyImg = ipf.lab2rgb(labView, 0, 0, fw, fh, params.icm);
+    }
     delete labView;
     delete baseImg;
 

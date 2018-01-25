@@ -409,6 +409,7 @@ sony_decrypt_t sony_decrypt;
 void sony_load_raw();
 void sony_arw_load_raw();
 void sony_arw2_load_raw();
+void sony_arq_load_raw(); // RT
 void smal_decode_segment (unsigned seg[2][2], int holes);
 void smal_v6_load_raw();
 

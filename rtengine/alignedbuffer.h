@@ -18,8 +18,14 @@
  */
 #ifndef _ALIGNEDBUFFER_
 #define _ALIGNEDBUFFER_
+
+#include <cstdint>
 #include <cstdlib>
 #include <utility>
+
+inline size_t padToAlignment(size_t size, size_t align = 16) {
+    return align * ((size + align - 1) / align);
+}
 
 // Aligned buffer that should be faster
 template <class T> class AlignedBuffer

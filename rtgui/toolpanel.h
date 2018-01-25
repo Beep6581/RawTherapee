@@ -88,7 +88,7 @@ public:
     {
         multiImage = m;
     }
-    void           setListener     (ToolPanelListener* tpl)
+    virtual void           setListener     (ToolPanelListener* tpl)
     {
         listener = tpl;
     }

@@ -31,7 +31,6 @@ protected:
     Adjuster* h_tonalwidth;
     Adjuster* shadows;
     Adjuster* s_tonalwidth;
-    Adjuster* lcontrast;
     Adjuster* radius;
     Gtk::CheckButton* hq;
     bool lastHQ;
@@ -50,7 +49,7 @@ public:
     void enabledChanged  ();
     void hqChanged       ();
 
-    void setAdjusterBehavior (bool hadd, bool sadd, bool lcadd);
+    void setAdjusterBehavior (bool hadd, bool sadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 

@@ -411,7 +411,7 @@ void CropHandler::setDetailedCrop (IImage8* im, IImage8* imtrue, rtengine::procp
             return FALSE;
         };
 
-        idle_register.add(func, idle_helper);
+        idle_register.add(func, idle_helper, G_PRIORITY_HIGH_IDLE);
     }
 
     cimg.unlock ();
@@ -426,11 +426,11 @@ bool CropHandler::getWindow (int& cwx, int& cwy, int& cww, int& cwh, int& cskip)
     cwh = cropH;
 
     // hack: if called before first size allocation the size will be 0
-    if (cww < 10) {
+    if (cww == 0) {
         cww = 10;
     }
 
-    if (cwh < 32) {
+    if (cwh == 0) {
         cwh = 32;
     }
 

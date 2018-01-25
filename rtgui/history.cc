@@ -20,6 +20,7 @@
 #include "multilangmgr.h"
 #include "rtimage.h"
 #include "guiutils.h"
+#include "eventmapper.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -231,7 +232,7 @@ void History::procParamsChanged (ProcParams* params, ProcEvent ev, Glib::ustring
     }
 
     // construct formatted list content
-    Glib::ustring text = M("HISTORY_MSG_" + std::to_string(ev + 1));
+    Glib::ustring text = M(ProcEventMapper::getInstance()->getHistoryMsg(ev));
 
     Glib::RefPtr<Gtk::TreeSelection> selection = hTreeView->get_selection();
     Gtk::TreeModel::iterator iter = selection->get_selected();

@@ -187,6 +187,14 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     appendBehavList (mi, M ("TP_EXPOSURE_CONTRAST"), ADDSET_TC_CONTRAST, false);
     appendBehavList (mi, M ("TP_EXPOSURE_SATURATION"), ADDSET_TC_SATURATION, false);
 
+    mi = behModel->append();
+    mi->set_value(behavColumns.label, M("TP_LOCALCONTRAST_LABEL"));
+    appendBehavList(mi, M("TP_LOCALCONTRAST_RADIUS"), ADDSET_LOCALCONTRAST_RADIUS, false);
+    appendBehavList(mi, M("TP_LOCALCONTRAST_AMOUNT"), ADDSET_LOCALCONTRAST_AMOUNT, false);
+    appendBehavList(mi, M("TP_LOCALCONTRAST_DARKNESS"), ADDSET_LOCALCONTRAST_DARKNESS, false);
+    appendBehavList(mi, M("TP_LOCALCONTRAST_LIGHTNESS"), ADDSET_LOCALCONTRAST_LIGHTNESS, false);
+    
+
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_EPD_LABEL"));
     appendBehavList (mi, M ("TP_EPD_STRENGTH"), ADDSET_EPD_STRENGTH, false);
@@ -197,8 +205,8 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_TM_FATTAL_LABEL"));
-    appendBehavList (mi, M ("TP_TM_FATTAL_ALPHA"), ADDSET_FATTAL_ALPHA, false);
-    appendBehavList (mi, M ("TP_TM_FATTAL_BETA"), ADDSET_FATTAL_BETA, false);
+    appendBehavList (mi, M ("TP_TM_FATTAL_THRESHOLD"), ADDSET_FATTAL_ALPHA, false);
+    appendBehavList (mi, M ("TP_TM_FATTAL_AMOUNT"), ADDSET_FATTAL_BETA, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_RETINEX_LABEL"));
@@ -215,7 +223,6 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     mi->set_value (behavColumns.label, M ("TP_SHADOWSHLIGHTS_LABEL"));
     appendBehavList (mi, M ("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), ADDSET_SH_HIGHLIGHTS, false);
     appendBehavList (mi, M ("TP_SHADOWSHLIGHTS_SHADOWS"), ADDSET_SH_SHADOWS, false);
-    appendBehavList (mi, M ("TP_SHADOWSHLIGHTS_LOCALCONTR"), ADDSET_SH_LOCALCONTRAST, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_LABCURVE_LABEL"));
@@ -575,13 +582,21 @@ Gtk::Widget* Preferences::getProcParamsPanel ()
     cdf->add(*dirgrid);
     mvbpp->pack_start (*cdf, Gtk::PACK_SHRINK, 4 );
 
-    // Metadata
-    Gtk::Frame* fmd = Gtk::manage (new Gtk::Frame (M ("PREFERENCES_METADATA")));
-    Gtk::VBox* vbmd = Gtk::manage (new Gtk::VBox ());
-    ckbTunnelMetaData = Gtk::manage (new Gtk::CheckButton (M ("PREFERENCES_TUNNELMETADATA")));
-    vbmd->pack_start (*ckbTunnelMetaData, Gtk::PACK_SHRINK, 4);
-    fmd->add (*vbmd);
-    mvbpp->pack_start (*fmd, Gtk::PACK_SHRINK, 4);
+    // Crop
+    Gtk::Frame *cropframe = Gtk::manage(new Gtk::Frame(M("PREFERENCES_CROP")));
+    Gtk::VBox *cropvb = Gtk::manage(new Gtk::VBox());
+    Gtk::HBox *crophb = Gtk::manage(new Gtk::HBox());
+    cropGuides = Gtk::manage(new Gtk::ComboBoxText());
+    cropGuides->append(M("PREFERENCES_CROP_GUIDES_NONE"));
+    cropGuides->append(M("PREFERENCES_CROP_GUIDES_FRAME"));
+    cropGuides->append(M("PREFERENCES_CROP_GUIDES_FULL"));
+    crophb->pack_start(*Gtk::manage(new Gtk::Label(M("PREFERENCES_CROP_GUIDES") + ": ")), Gtk::PACK_SHRINK, 4);
+    crophb->pack_start(*cropGuides);
+    cropvb->pack_start(*crophb);
+    cropAutoFit = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_CROP_AUTO_FIT")));
+    cropvb->pack_start(*cropAutoFit);
+    cropframe->add(*cropvb);
+    mvbpp->pack_start(*cropframe, Gtk::PACK_SHRINK, 4);
 
     return mvbpp;
 }
@@ -742,8 +757,12 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
     setExpandAlignProperties (iccdgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     iccdgrid->set_column_spacing (4);
 
+    Gtk::Label* monProfileRestartNeeded = Gtk::manage ( new Gtk::Label (Glib::ustring (" (") + M ("PREFERENCES_APPLNEXTSTARTUP") + ")") );
+    setExpandAlignProperties(monProfileRestartNeeded, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+
     iccdgrid->attach (*pdlabel, 0, 0, 1, 1);
     iccdgrid->attach (*iccDir, 1, 0, 1, 1);
+    iccdgrid->attach (*monProfileRestartNeeded, 2, 0, 1, 1);
 
     iccDir->signal_selection_changed ().connect (sigc::mem_fun (this, &Preferences::iccDirChanged));
 
@@ -1003,6 +1022,11 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     setExpandAlignProperties (hb4label, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     ckbHideTPVScrollbar = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_TP_VSCROLLBAR")) );
     setExpandAlignProperties (ckbHideTPVScrollbar, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+#if defined(__linux__) && ((GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION > 18) || GTK_MAJOR_VERSION > 3)
+    // Cannot scroll toolbox with mousewheel when HideTPVScrollbar=true #3413
+    ckbHideTPVScrollbar->set_active(false);
+    ckbHideTPVScrollbar->set_sensitive(false);
+#endif
     ckbUseIconNoText = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_TP_USEICONORTEXT")) );
     setExpandAlignProperties (ckbUseIconNoText, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     workflowGrid->attach_next_to (*hb4label, *ckbFileBrowserToolbarSingleRow, Gtk::POS_BOTTOM, 1, 1);
@@ -1798,8 +1822,6 @@ void Preferences::storePreferences ()
     moptions.paramsLoadLocation = (PPLoadLocation)loadParamsPreference->get_active_row_number ();
     moptions.useBundledProfiles = useBundledProfiles->get_active ();
 
-    moptions.tunnelMetaData = ckbTunnelMetaData->get_active ();
-
     moptions.rtSettings.darkFramesPath = darkFrameDir->get_filename();
     moptions.rtSettings.flatFieldsPath = flatFieldDir->get_filename();
 
@@ -1838,6 +1860,9 @@ void Preferences::storePreferences ()
     moptions.sndLngEditProcDone = txtSndLngEditProcDone->get_text ();
     moptions.sndLngEditProcDoneSecs = spbSndLngEditProcDoneSecs->get_value ();
 #endif
+
+    moptions.cropGuides = Options::CropGuidesMode(cropGuides->get_active_row_number());
+    moptions.cropAutoFit = cropAutoFit->get_active();
 }
 
 void Preferences::fillPreferences ()
@@ -2027,8 +2052,6 @@ void Preferences::fillPreferences ()
     loadParamsPreference->set_active (moptions.paramsLoadLocation);
     useBundledProfiles->set_active (moptions.useBundledProfiles);
 
-    ckbTunnelMetaData->set_active (moptions.tunnelMetaData);
-
     if (!moptions.tabbedUI) {
         editorLayout->set_active (moptions.mainNBVertical ? 1 : 0);
     } else {
@@ -2069,6 +2092,9 @@ void Preferences::fillPreferences ()
             adjs->set_value (behavColumns.bset, !add);
         }
     }
+
+    cropGuides->set_active(moptions.cropGuides);
+    cropAutoFit->set_active(moptions.cropAutoFit);
 
     addc.block (false);
     setc.block (false);

@@ -426,7 +426,6 @@ void Options::setDefaults ()
     tabbedUI = false;
     mainNBVertical = true;
     multiDisplayMode = 0;
-    tunnelMetaData = true;
     histogramPosition = 1;
     histogramBar = true;
     histogramFullMode = false;
@@ -561,16 +560,6 @@ void Options::setDefaults ()
     rtSettings.artifact_cbdl = 4.;
     rtSettings.level0_cbdl = 0;
     rtSettings.level123_cbdl = 30;
-    rtSettings.bot_left = 0;
-    rtSettings.top_left = 10;
-    rtSettings.top_right = 40;
-    rtSettings.bot_right = 75;
-    rtSettings.ed_detec = 3; //between 2 and 10
-    rtSettings.ed_detecStr = 1.3; //not use
-    rtSettings.ed_low = 15.; //between 5 to 40
-    rtSettings.ed_lipinfl = 0.8; //between 0.5 to 0.9
-    rtSettings.ed_lipampl = 1.1; //between 1 and 2
-
 
     rtSettings.ciecamfloat = true;
     rtSettings.protectred = 60;
@@ -615,6 +604,8 @@ void Options::setDefaults ()
     gimpPluginShowInfoDialog = true;
     maxRecentFolders = 15;
     rtSettings.lensfunDbDirectory = ""; // set also in main.cc and main-cli.cc
+    cropGuides = CROP_GUIDE_FULL;
+    cropAutoFit = false;
 }
 
 Options* Options::copyFrom (Options* other)
@@ -717,44 +708,6 @@ void Options::readFromFile (Glib::ustring fname)
                 if ( keyFile.has_key ("General", "Verbose")) {
                     rtSettings.verbose = keyFile.get_boolean ( "General", "Verbose");
                 }
-
-                if (keyFile.has_key ("General", "BotLeft")) {
-                    rtSettings.bot_left = keyFile.get_double ("General", "BotLeft");
-                }
-
-                if (keyFile.has_key ("General", "TopLeft")) {
-                    rtSettings.top_left = keyFile.get_double ("General", "TopLeft");
-                }
-
-                if (keyFile.has_key ("General", "TopRight")) {
-                    rtSettings.top_right = keyFile.get_double ("General", "TopRight");
-                }
-
-                if (keyFile.has_key ("General", "BotRight")) {
-                    rtSettings.bot_right = keyFile.get_double ("General", "BotRight");
-                }
-
-                if (keyFile.has_key ("General", "EDdetec")) {
-                    rtSettings.ed_detec = keyFile.get_double ("General", "EDdetec");
-                }
-
-                if (keyFile.has_key ("General", "EDdetecStr")) {
-                    rtSettings.ed_detecStr = keyFile.get_double ("General", "EDdetecStr");
-                }
-
-                if (keyFile.has_key ("General", "EDLow")) {
-                    rtSettings.ed_low = keyFile.get_double ("General", "EDLow");
-                }
-
-                if (keyFile.has_key ("General", "EDLipinfl")) {
-                    rtSettings.ed_lipinfl = keyFile.get_double ("General", "EDLipinfl");
-                }
-
-                if (keyFile.has_key ("General", "EDLipampl")) {
-                    rtSettings.ed_lipampl = keyFile.get_double ("General", "EDLipampl");
-                }
-
-
             }
 
             if (keyFile.has_group ("External Editor")) {
@@ -867,10 +820,6 @@ void Options::readFromFile (Glib::ustring fname)
 
                 if (keyFile.has_key ("Output", "OverwriteOutputFile")) {
                     overwriteOutputFile = keyFile.get_boolean ("Output", "OverwriteOutputFile");
-                }
-
-                if (keyFile.has_key ("Output", "TunnelMetaData")) {
-                    tunnelMetaData = keyFile.get_boolean ("Output", "TunnelMetaData");
                 }
             }
 
@@ -1366,10 +1315,14 @@ void Options::readFromFile (Glib::ustring fname)
                     FileBrowserToolbarSingleRow = keyFile.get_boolean ("GUI", "FileBrowserToolbarSingleRow");
                 }
 
+#if defined(__linux__) && ((GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION > 18) || GTK_MAJOR_VERSION > 3)
+                // Cannot scroll toolbox with mousewheel when HideTPVScrollbar=true #3413
+                hideTPVScrollbar = false;
+#else
                 if (keyFile.has_key ("GUI", "HideTPVScrollbar")) {
                     hideTPVScrollbar = keyFile.get_boolean ("GUI", "HideTPVScrollbar");
                 }
-
+#endif
                 if (keyFile.has_key ("GUI", "UseIconNoText")) {
                     UseIconNoText = keyFile.get_boolean ("GUI", "UseIconNoText");
                 }
@@ -1386,6 +1339,12 @@ void Options::readFromFile (Glib::ustring fname)
             if (keyFile.has_group ("Crop Settings")) {
                 if (keyFile.has_key ("Crop Settings", "PPI")) {
                     cropPPI = keyFile.get_integer ("Crop Settings", "PPI");
+                }
+                if (keyFile.has_key("Crop Settings", "GuidesMode")) {
+                    cropGuides = CropGuidesMode(std::max(int(CROP_GUIDE_NONE), std::min(keyFile.get_integer("Crop Settings", "GuidesMode"), int(CROP_GUIDE_FULL))));
+                }
+                if (keyFile.has_key("Crop Settings", "AutoFit")) {
+                    cropAutoFit = keyFile.get_boolean("Crop Settings", "AutoFit");
                 }
             }
 
@@ -1833,17 +1792,6 @@ void Options::saveToFile (Glib::ustring fname)
         keyFile.set_string  ("General", "DarkFramesPath", rtSettings.darkFramesPath);
         keyFile.set_string  ("General", "FlatFieldsPath", rtSettings.flatFieldsPath);
         keyFile.set_boolean ("General", "Verbose", rtSettings.verbose);
-        keyFile.set_double  ("General", "BotLeft", rtSettings.bot_left);
-        keyFile.set_double  ("General", "TopLeft", rtSettings.top_left);
-        keyFile.set_double  ("General", "TopRight", rtSettings.top_right);
-        keyFile.set_double  ("General", "BotRight", rtSettings.bot_right);
-        keyFile.set_double  ("General", "EDdetec", rtSettings.ed_detec);
-        keyFile.set_double  ("General", "EDdetecStr", rtSettings.ed_detecStr);
-        keyFile.set_double  ("General", "EDLow", rtSettings.ed_low);
-        keyFile.set_double  ("General", "EDLipinfl", rtSettings.ed_lipinfl);
-        keyFile.set_double  ("General", "EDLipampl", rtSettings.ed_lipampl);
-
-
         keyFile.set_integer ("External Editor", "EditorKind", editorToSendTo);
         keyFile.set_string  ("External Editor", "GimpDir", gimpDir);
         keyFile.set_string  ("External Editor", "PhotoshopDir", psDir);
@@ -1938,7 +1886,6 @@ void Options::saveToFile (Glib::ustring fname)
         keyFile.set_boolean ("Output", "UsePathTemplate", saveUsePathTemplate);
         keyFile.set_string  ("Output", "LastSaveAsPath", lastSaveAsPath);
         keyFile.set_boolean ("Output", "OverwriteOutputFile", overwriteOutputFile);
-        keyFile.set_boolean ("Output", "TunnelMetaData", tunnelMetaData);
 
         keyFile.set_string  ("Profiles", "Directory", profilePath);
         keyFile.set_boolean ("Profiles", "UseBundledProfiles", useBundledProfiles);
@@ -2020,6 +1967,8 @@ void Options::saveToFile (Glib::ustring fname)
         //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);
 
         keyFile.set_integer ("Crop Settings", "PPI", cropPPI);
+        keyFile.set_integer("Crop Settings", "GuidesMode", cropGuides);
+        keyFile.set_boolean("Crop Settings", "AutoFit", cropAutoFit);
 
         keyFile.set_string  ("Color Management", "PrinterProfile", rtSettings.printerProfile);
         keyFile.set_integer ("Color Management", "PrinterIntent", rtSettings.printerIntent);
@@ -2315,7 +2264,7 @@ void Options::load (bool lightweight)
         }
     }
 
-    langMgr.load ({localeTranslation, languageTranslation, defaultTranslation});
+    langMgr.load (options.language, {localeTranslation, languageTranslation, defaultTranslation});
 
     rtengine::init (&options.rtSettings, argv0, rtdir, !lightweight);
 }

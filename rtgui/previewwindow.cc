@@ -86,7 +86,18 @@ void PreviewWindow::updatePreviewImage ()
             cc->fill();
 
             if (previewHandler->getCropParams().enabled) {
-                drawCrop (cc, imgX, imgY, imgW, imgH, 0, 0, zoom, previewHandler->getCropParams(), true, false);
+                rtengine::CropParams cparams = previewHandler->getCropParams();
+                switch (options.cropGuides) {
+                case Options::CROP_GUIDE_NONE:
+                    cparams.guide = "None";
+                    break;
+                case Options::CROP_GUIDE_FRAME:
+                    cparams.guide = "Frame";
+                    break;
+                default:
+                    break;
+                }
+                drawCrop (cc, imgX, imgY, imgW, imgH, 0, 0, zoom, cparams, true, false);
             }
         }
     }

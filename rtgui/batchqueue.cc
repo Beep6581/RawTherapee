@@ -373,7 +373,7 @@ Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring &filenam
 {
     timeval tv;
     gettimeofday(&tv, nullptr);
-    char mseconds[4];
+    char mseconds[11];
     sprintf(mseconds, "%d", (int)(tv.tv_usec / 1000));
     time_t rawtime;
     struct tm *timeinfo;
@@ -572,13 +572,13 @@ void BatchQueue::startProcessing ()
             next->removeButtonSet ();
 
             // start batch processing
-            rtengine::startBatchProcessing (next->job, this, options.tunnelMetaData);
+            rtengine::startBatchProcessing (next->job, this);
             queue_draw ();
         }
     }
 }
 
-rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img)
+rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImagefloat* img)
 {
 
     // save image img

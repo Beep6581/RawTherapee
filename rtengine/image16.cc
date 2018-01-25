@@ -151,17 +151,22 @@ void Image16::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, const P
 {
 
     // compute channel multipliers
-    double drm, dgm, dbm;
-    ctemp.getMultipliers (drm, dgm, dbm);
-    float rm = drm, gm = dgm, bm = dbm;
+    float rm = 1.f, gm = 1.f, bm = 1.f;
+    if (ctemp.getTemp() >= 0) {
+        double drm, dgm, dbm;
+        ctemp.getMultipliers (drm, dgm, dbm);
+        rm = drm;
+        gm = dgm;
+        bm = dbm;
 
-    rm = 1.0 / rm;
-    gm = 1.0 / gm;
-    bm = 1.0 / bm;
-    float mul_lum = 0.299 * rm + 0.587 * gm + 0.114 * bm;
-    rm /= mul_lum;
-    gm /= mul_lum;
-    bm /= mul_lum;
+        rm = 1.0 / rm;
+        gm = 1.0 / gm;
+        bm = 1.0 / bm;
+        float mul_lum = 0.299 * rm + 0.587 * gm + 0.114 * bm;
+        rm /= mul_lum;
+        gm /= mul_lum;
+        bm /= mul_lum;
+    }
 
     int sx1, sy1, sx2, sy2;
 
@@ -339,50 +344,50 @@ Image16::tofloat()
     return imgfloat;
 }
 
-// Parallized transformation; create transform with cmsFLAGS_NOCACHE!
-void Image16::ExecCMSTransform(cmsHTRANSFORM hTransform, const LabImage &labImage, int cx, int cy)
-{
-    // LittleCMS cannot parallelize planar Lab float images
-    // so build temporary buffers to allow multi processor execution
-#ifdef _OPENMP
-    #pragma omp parallel
-#endif
-    {
-        AlignedBuffer<float> bufferLab(width * 3);
-        AlignedBuffer<unsigned short> bufferRGB(width * 3);
+// // Parallized transformation; create transform with cmsFLAGS_NOCACHE!
+// void Image16::ExecCMSTransform(cmsHTRANSFORM hTransform, const LabImage &labImage, int cx, int cy)
+// {
+//     // LittleCMS cannot parallelize planar Lab float images
+//     // so build temporary buffers to allow multi processor execution
+// #ifdef _OPENMP
+//     #pragma omp parallel
+// #endif
+//     {
+//         AlignedBuffer<float> bufferLab(width * 3);
+//         AlignedBuffer<unsigned short> bufferRGB(width * 3);
 
-#ifdef _OPENMP
-        #pragma omp for schedule(static)
-#endif
+// #ifdef _OPENMP
+//         #pragma omp for schedule(static)
+// #endif
 
-        for (int y = cy; y < cy + height; y++)
-        {
-            unsigned short *pRGB, *pR, *pG, *pB;
-            float *pLab, *pL, *pa, *pb;
+//         for (int y = cy; y < cy + height; y++)
+//         {
+//             unsigned short *pRGB, *pR, *pG, *pB;
+//             float *pLab, *pL, *pa, *pb;
 
-            pLab= bufferLab.data;
-            pL = labImage.L[y] + cx;
-            pa = labImage.a[y] + cx;
-            pb = labImage.b[y] + cx;
+//             pLab= bufferLab.data;
+//             pL = labImage.L[y] + cx;
+//             pa = labImage.a[y] + cx;
+//             pb = labImage.b[y] + cx;
 
-            for (int x = 0; x < width; x++) {
-                *(pLab++) = *(pL++)  / 327.68f;
-                *(pLab++) = *(pa++)  / 327.68f;
-                *(pLab++) = *(pb++)  / 327.68f;
-            }
+//             for (int x = 0; x < width; x++) {
+//                 *(pLab++) = *(pL++)  / 327.68f;
+//                 *(pLab++) = *(pa++)  / 327.68f;
+//                 *(pLab++) = *(pb++)  / 327.68f;
+//             }
 
-            cmsDoTransform (hTransform, bufferLab.data, bufferRGB.data, width);
+//             cmsDoTransform (hTransform, bufferLab.data, bufferRGB.data, width);
 
-            pRGB = bufferRGB.data;
-            pR = r(y - cy);
-            pG = g(y - cy);
-            pB = b(y - cy);
+//             pRGB = bufferRGB.data;
+//             pR = r(y - cy);
+//             pG = g(y - cy);
+//             pB = b(y - cy);
 
-            for (int x = 0; x < width; x++) {
-                *(pR++) = *(pRGB++);
-                *(pG++) = *(pRGB++);
-                *(pB++) = *(pRGB++);
-            }
-        } // End of parallelization
-    }
-}
+//             for (int x = 0; x < width; x++) {
+//                 *(pR++) = *(pRGB++);
+//                 *(pG++) = *(pRGB++);
+//                 *(pB++) = *(pRGB++);
+//             }
+//         } // End of parallelization
+//     }
+// }
