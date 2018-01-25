@@ -32,7 +32,9 @@ FattalToneMapping::FattalToneMapping(): FoldableToolPanel(this, "fattal", M("TP_
     
     amount = Gtk::manage(new Adjuster (M("TP_TM_FATTAL_AMOUNT"), 1., 100., 1., 30.));
     threshold = Gtk::manage(new Adjuster (M("TP_TM_FATTAL_THRESHOLD"), -100., 100., 1., 0.0));
-    anchor = Gtk::manage(new Adjuster(M("TP_TM_FATTAL_ANCHOR"), 1, 100, 1, 50));
+    Gtk::Image *al = Gtk::manage(new RTImage("cglabel0.png"));
+    Gtk::Image *ar = Gtk::manage(new RTImage("clabel0.png"));
+    anchor = Gtk::manage(new Adjuster(M("TP_TM_FATTAL_ANCHOR"), 1, 100, 1, 50, al, ar));
 
     amount->setAdjusterListener(this);
     threshold->setAdjusterListener(this);
