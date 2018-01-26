@@ -43,7 +43,7 @@ namespace rtengine
 {
 extern const Settings* settings;
 
-SSEFUNCTION void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radius, int thresh)
+void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radius, int thresh)
 {
     const int halfwin = ceil(2 * radius) + 1;
 
@@ -285,7 +285,7 @@ SSEFUNCTION void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, 
     free(fringe);
 }
 
-SSEFUNCTION void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * dst, double radius, int thresh)
+void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * dst, double radius, int thresh)
 {
     const int halfwin = ceil(2 * radius) + 1;
 
@@ -655,7 +655,7 @@ SSEFUNCTION void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * ds
     free(fringe);
 }
 
-SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, double radius, int thresh, int mode, float skinprot, float chrom, int hotbad)
+void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, double radius, int thresh, int mode, float skinprot, float chrom, int hotbad)
 {
     const int halfwin = ceil(2 * radius) + 1;
     MyTime t1, t2;
@@ -1263,7 +1263,7 @@ SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, d
 
 }
 
-SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, double radius, int thresh, int mode, float skinprot, float chrom)
+void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, double radius, int thresh, int mode, float skinprot, float chrom)
 {
     const int halfwin = ceil(2 * radius) + 1;
     MyTime t1, t2;

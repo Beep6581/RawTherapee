@@ -291,7 +291,7 @@ bool MultiDiagonalSymmetricMatrix::LazySetEntry(float value, int row, int column
     return true;
 }
 
-SSEFUNCTION void MultiDiagonalSymmetricMatrix::VectorProduct(float* RESTRICT Product, float* RESTRICT x)
+void MultiDiagonalSymmetricMatrix::VectorProduct(float* RESTRICT Product, float* RESTRICT x)
 {
 
     int srm = StartRows[m - 1];
@@ -693,7 +693,7 @@ EdgePreservingDecomposition::~EdgePreservingDecomposition()
     delete A;
 }
 
-SSEFUNCTION float *EdgePreservingDecomposition::CreateBlur(float *Source, float Scale, float EdgeStopping, int Iterates, float *Blur, bool UseBlurForEdgeStop)
+float *EdgePreservingDecomposition::CreateBlur(float *Source, float Scale, float EdgeStopping, int Iterates, float *Blur, bool UseBlurForEdgeStop)
 {
 
     if(Blur == nullptr)
@@ -884,7 +884,7 @@ float *EdgePreservingDecomposition::CreateIteratedBlur(float *Source, float Scal
     return Blur;
 }
 
-SSEFUNCTION void EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Scale, float EdgeStopping, float CompressionExponent, float DetailBoost, int Iterates, int Reweightings)
+void EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Scale, float EdgeStopping, float CompressionExponent, float DetailBoost, int Iterates, int Reweightings)
 {
     if(w < 300 && h < 300) { // set number of Reweightings to zero for small images (thumbnails). We could try to find a better solution here.
         Reweightings = 0;

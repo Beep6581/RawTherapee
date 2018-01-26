@@ -244,7 +244,7 @@ template<typename T> void wavelet_level<T>::SynthesisFilterHaarHorizontal (const
      * Applies a Haar filter
      *
      */
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
     #pragma omp parallel for num_threads(numThreads) if(numThreads>1)
 #endif
 
@@ -266,11 +266,11 @@ template<typename T> void wavelet_level<T>::SynthesisFilterHaarVertical (const T
      * Applies a Haar filter
      *
      */
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
     #pragma omp parallel num_threads(numThreads) if(numThreads>1)
 #endif
     {
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
         #pragma omp for nowait
 #endif
 
@@ -281,7 +281,7 @@ template<typename T> void wavelet_level<T>::SynthesisFilterHaarVertical (const T
             }
         }
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
         #pragma omp for
 #endif
 
@@ -328,7 +328,7 @@ void wavelet_level<T>::AnalysisFilterSubsampHorizontal (T * RESTRICT srcbuffer, 
 }
 
 #ifdef __SSE2__
-template<typename T> SSEFUNCTION void wavelet_level<T>::AnalysisFilterSubsampVertical (T * RESTRICT srcbuffer, T * RESTRICT dstLo, T * RESTRICT dstHi, float (* RESTRICT filterLo)[4], float (* RESTRICT filterHi)[4],
+template<typename T> void wavelet_level<T>::AnalysisFilterSubsampVertical (T * RESTRICT srcbuffer, T * RESTRICT dstLo, T * RESTRICT dstHi, float (* RESTRICT filterLo)[4], float (* RESTRICT filterHi)[4],
         const int taps, const int offset, const int width, const int height, const int row)
 {
 
@@ -455,7 +455,7 @@ template<typename T> void wavelet_level<T>::SynthesisFilterSubsampHorizontal (T 
 
     // calculate coefficients
     int shift = skip * (taps - offset - 1); //align filter with data
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
     #pragma omp parallel for num_threads(numThreads) if(numThreads>1)
 #endif
 
@@ -506,7 +506,7 @@ template<typename T> void wavelet_level<T>::SynthesisFilterSubsampHorizontal (T 
 }
 
 #ifdef __SSE2__
-template<typename T> SSEFUNCTION void wavelet_level<T>::SynthesisFilterSubsampVertical (T * RESTRICT srcLo, T * RESTRICT srcHi, T * RESTRICT dst, float (* RESTRICT filterLo)[4], float (* RESTRICT filterHi)[4], const int taps, const int offset, const int width, const int srcheight, const int dstheight, const float blend)
+template<typename T> void wavelet_level<T>::SynthesisFilterSubsampVertical (T * RESTRICT srcLo, T * RESTRICT srcHi, T * RESTRICT dst, float (* RESTRICT filterLo)[4], float (* RESTRICT filterHi)[4], const int taps, const int offset, const int width, const int srcheight, const int dstheight, const float blend)
 {
 
     /* Basic convolution code
@@ -521,7 +521,7 @@ template<typename T> SSEFUNCTION void wavelet_level<T>::SynthesisFilterSubsampVe
     __m128 fourv = _mm_set1_ps(4.f);
     __m128 srcFactorv = _mm_set1_ps(srcFactor);
     __m128 dstFactorv = _mm_set1_ps(blend);
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
     #pragma omp parallel for num_threads(numThreads) if(numThreads>1)
 #endif
 
@@ -594,7 +594,7 @@ template<typename T> void wavelet_level<T>::SynthesisFilterSubsampVertical (T * 
     // calculate coefficients
     int shift = skip * (taps - offset - 1); //align filter with data
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
     #pragma omp parallel for num_threads(numThreads) if(numThreads>1)
 #endif
 
@@ -630,7 +630,7 @@ template<typename T> void wavelet_level<T>::SynthesisFilterSubsampVertical (T * 
 #endif
 
 #ifdef __SSE2__
-template<typename T> template<typename E> SSEFUNCTION void wavelet_level<T>::decompose_level(E *src, E *dst, float *filterV, float *filterH, int taps, int offset)
+template<typename T> template<typename E> void wavelet_level<T>::decompose_level(E *src, E *dst, float *filterV, float *filterH, int taps, int offset)
 {
 
     /* filter along rows and columns */
@@ -644,7 +644,7 @@ template<typename T> template<typename E> SSEFUNCTION void wavelet_level<T>::dec
         }
     }
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
     #pragma omp parallel num_threads(numThreads) if(numThreads>1)
 #endif
     {
@@ -652,7 +652,7 @@ template<typename T> template<typename E> SSEFUNCTION void wavelet_level<T>::dec
         T tmpHi[m_w] ALIGNED64;
 
         if(subsamp_out) {
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
             #pragma omp for
 #endif
 
@@ -662,7 +662,7 @@ template<typename T> template<typename E> SSEFUNCTION void wavelet_level<T>::dec
                 AnalysisFilterSubsampHorizontal (tmpHi, wavcoeffs[2], wavcoeffs[3], filterH, filterH + taps, taps, offset, m_w, m_w2, row / 2);
             }
         } else {
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
             #pragma omp for
 #endif
 
@@ -678,7 +678,7 @@ template<typename T> template<typename E> SSEFUNCTION void wavelet_level<T>::dec
 template<typename T> template<typename E> void wavelet_level<T>::decompose_level(E *src, E *dst, float *filterV, float *filterH, int taps, int offset)
 {
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
     #pragma omp parallel num_threads(numThreads) if(numThreads>1)
 #endif
     {
@@ -687,7 +687,7 @@ template<typename T> template<typename E> void wavelet_level<T>::decompose_level
         /* filter along rows and columns */
         if(subsamp_out)
         {
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
             #pragma omp for
 #endif
 
@@ -697,7 +697,7 @@ template<typename T> template<typename E> void wavelet_level<T>::decompose_level
                 AnalysisFilterSubsampHorizontal (tmpHi, wavcoeffs[2], wavcoeffs[3], filterH, filterH + taps, taps, offset, m_w, m_w2, row / 2);
             }
         } else {
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
             #pragma omp for
 #endif
 
@@ -714,7 +714,7 @@ template<typename T> template<typename E> void wavelet_level<T>::decompose_level
 
 #ifdef __SSE2__
 
-template<typename T> template<typename E> SSEFUNCTION void wavelet_level<T>::reconstruct_level(E* tmpLo, E* tmpHi, E * src, E *dst, float *filterV, float *filterH, int taps, int offset, const float blend)
+template<typename T> template<typename E> void wavelet_level<T>::reconstruct_level(E* tmpLo, E* tmpHi, E * src, E *dst, float *filterV, float *filterH, int taps, int offset, const float blend)
 {
     if(memoryAllocationFailed) {
         return;

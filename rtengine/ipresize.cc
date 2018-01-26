@@ -178,7 +178,7 @@ void ImProcFunctions::Lanczos (const Imagefloat* src, Imagefloat* dst, float sca
 }
 
 
-SSEFUNCTION void ImProcFunctions::Lanczos (const LabImage* src, LabImage* dst, float scale)
+void ImProcFunctions::Lanczos (const LabImage* src, LabImage* dst, float scale)
 {
     const float delta = 1.0f / scale;
     const float a = 3.0f;

@@ -476,7 +476,7 @@ void CurveFactory::complexsgnCurve (bool & autili,  bool & butili, bool & ccutil
 
 }
 
-SSEFUNCTION void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh,
+void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh,
         double shcompr, double br, double contr,
         const std::vector<double>& curvePoints,
         const std::vector<double>& curvePoints2,

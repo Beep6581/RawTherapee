@@ -73,14 +73,8 @@ void BatchQueueEntryUpdater::process (guint8* oimg, int ow, int oh, int newh, BQ
         stopped = false;
         tostop  = false;
 
-#if __GNUC__ == 4 && __GNUC_MINOR__ == 8 && defined( WIN32 ) && defined(__x86_64__)
-#undef THREAD_PRIORITY_NORMAL
-        // See Issue 2384 comment #3
-        thread = Glib::Thread::create(sigc::mem_fun(*this, &BatchQueueEntryUpdater::processThread), (unsigned long int)0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-#else
 #undef THREAD_PRIORITY_LOW
         thread = Glib::Thread::create(sigc::mem_fun(*this, &BatchQueueEntryUpdater::processThread), (unsigned long int)0, true, true, Glib::THREAD_PRIORITY_LOW);
-#endif
     }
 }
 

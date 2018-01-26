@@ -229,7 +229,7 @@ template<class T> void gaussHorizontal3 (T** src, T** dst, int W, int H, const f
 }
 
 #ifdef __SSE2__
-template<class T> SSEFUNCTION void gaussVertical3 (T** src, T** dst, int W, int H, const float c0, const float c1)
+template<class T> void gaussVertical3 (T** src, T** dst, int W, int H, const float c0, const float c1)
 {
     vfloat Tv = F2V(0.f), Tm1v, Tp1v;
     vfloat Tv1 = F2V(0.f), Tm1v1, Tp1v1;
@@ -314,7 +314,7 @@ template<class T> void gaussVertical3 (T** src, T** dst, int W, int H, const flo
 
 #ifdef __SSE2__
 // fast gaussian approximation if the support window is large
-template<class T> SSEFUNCTION void gaussHorizontalSse (T** src, T** dst, const int W, const int H, const float sigma)
+template<class T> void gaussHorizontalSse (T** src, T** dst, const int W, const int H, const float sigma)
 {
     double b1, b2, b3, B, M[3][3];
     calculateYvVFactors<double>(sigma, b1, b2, b3, B, M);
@@ -474,7 +474,7 @@ template<class T> void gaussHorizontal (T** src, T** dst, const int W, const int
 }
 
 #ifdef __SSE2__
-template<class T> SSEFUNCTION void gaussVerticalSse (T** src, T** dst, const int W, const int H, const float sigma)
+template<class T> void gaussVerticalSse (T** src, T** dst, const int W, const int H, const float sigma)
 {
     double b1, b2, b3, B, M[3][3];
     calculateYvVFactors<double>(sigma, b1, b2, b3, B, M);
@@ -617,7 +617,7 @@ template<class T> SSEFUNCTION void gaussVerticalSse (T** src, T** dst, const int
 #endif
 
 #ifdef __SSE2__
-template<class T> SSEFUNCTION void gaussVerticalSsemult (T** RESTRICT src, T** RESTRICT dst, const int W, const int H, const float sigma)
+template<class T> void gaussVerticalSsemult (T** RESTRICT src, T** RESTRICT dst, const int W, const int H, const float sigma)
 {
     double b1, b2, b3, B, M[3][3];
     calculateYvVFactors<double>(sigma, b1, b2, b3, B, M);
@@ -758,7 +758,7 @@ template<class T> SSEFUNCTION void gaussVerticalSsemult (T** RESTRICT src, T** R
     }
 }
 
-template<class T> SSEFUNCTION void gaussVerticalSsediv (T** RESTRICT src, T** RESTRICT dst, T** divBuffer, const int W, const int H, const float sigma)
+template<class T> void gaussVerticalSsediv (T** RESTRICT src, T** RESTRICT dst, T** divBuffer, const int W, const int H, const float sigma)
 {
     double b1, b2, b3, B, M[3][3];
     calculateYvVFactors<double>(sigma, b1, b2, b3, B, M);
