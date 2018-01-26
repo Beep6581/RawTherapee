@@ -62,7 +62,7 @@ void ImProcFunctions::localContrast(LabImage *lab)
                 bufval *= (bufval > 0.f) ? light : dark;
             }
 
-            lab->L[y][x] += bufval;
+            lab->L[y][x] = std::max(0.0001f, lab->L[y][x] + bufval);
         }
     }
 }

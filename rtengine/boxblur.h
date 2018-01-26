@@ -121,7 +121,7 @@ template<class T, class A> void boxblur (T** src, A** dst, int radx, int rady, i
 
 }
 
-template<class T, class A> SSEFUNCTION void boxblur (T** src, A** dst, T* buffer, int radx, int rady, int W, int H)
+template<class T, class A> void boxblur (T** src, A** dst, T* buffer, int radx, int rady, int W, int H)
 {
     //box blur image; box range = (radx,rady)
 
@@ -309,7 +309,7 @@ template<class T, class A> SSEFUNCTION void boxblur (T** src, A** dst, T* buffer
 
 }
 
-template<class T, class A> SSEFUNCTION void boxblur (T* src, A* dst, A* buffer, int radx, int rady, int W, int H)
+template<class T, class A> void boxblur (T* src, A* dst, A* buffer, int radx, int rady, int W, int H)
 {
     //box blur image; box range = (radx,rady) i.e. box size is (2*radx+1)x(2*rady+1)
 
@@ -496,7 +496,7 @@ template<class T, class A> SSEFUNCTION void boxblur (T* src, A* dst, A* buffer, 
 
 }
 
-template<class T, class A> SSEFUNCTION void boxabsblur (T* src, A* dst, int radx, int rady, int W, int H, float * temp)
+template<class T, class A> void boxabsblur (T* src, A* dst, int radx, int rady, int W, int H, float * temp)
 {
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

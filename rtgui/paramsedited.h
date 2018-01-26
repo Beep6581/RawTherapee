@@ -389,6 +389,7 @@ public:
     bool enabled;
     bool threshold;
     bool amount;
+    bool anchor;
 };
 
 

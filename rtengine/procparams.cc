@@ -1468,7 +1468,8 @@ bool EPDParams::operator !=(const EPDParams& other) const
 FattalToneMappingParams::FattalToneMappingParams() :
     enabled(false),
     threshold(0),
-    amount(30)
+    amount(30),
+    anchor(50)
 {
 }
 
@@ -1477,7 +1478,8 @@ bool FattalToneMappingParams::operator ==(const FattalToneMappingParams& other) 
     return
         enabled == other.enabled
         && threshold == other.threshold
-        && amount == other.amount;
+        && amount == other.amount
+        && anchor == other.anchor;
 }
 
 bool FattalToneMappingParams::operator !=(const FattalToneMappingParams& other) const
@@ -3426,6 +3428,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->fattal.enabled, "FattalToneMapping", "Enabled", fattal.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->fattal.threshold, "FattalToneMapping", "Threshold", fattal.threshold, keyFile);
         saveToKeyfile(!pedited || pedited->fattal.amount, "FattalToneMapping", "Amount", fattal.amount, keyFile);
+        saveToKeyfile(!pedited || pedited->fattal.anchor, "FattalToneMapping", "Anchor", fattal.anchor, keyFile);
 
 // Shadows & highlights
         saveToKeyfile(!pedited || pedited->sh.enabled, "Shadows & Highlights", "Enabled", sh.enabled, keyFile);
@@ -3890,7 +3893,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftSmooth, "RAW Bayer", "pixelShiftSmoothFactor", raw.bayersensor.pixelShiftSmoothFactor, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftExp0, "RAW Bayer", "pixelShiftExp0", raw.bayersensor.pixelShiftExp0, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftLmmse, "RAW Bayer", "pixelShiftLmmse", raw.bayersensor.pixelShiftLmmse, keyFile);
-        saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftOneGreen, "RAW Bayer", "pixelShiftOneGreen", raw.bayersensor.pixelShiftOneGreen, keyFile);
+//        saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftOneGreen, "RAW Bayer", "pixelShiftOneGreen", raw.bayersensor.pixelShiftOneGreen, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftEqualBright, "RAW Bayer", "pixelShiftEqualBright", raw.bayersensor.pixelShiftEqualBright, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftEqualBrightChannel, "RAW Bayer", "pixelShiftEqualBrightChannel", raw.bayersensor.pixelShiftEqualBrightChannel, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftNonGreenCross, "RAW Bayer", "pixelShiftNonGreenCross", raw.bayersensor.pixelShiftNonGreenCross, keyFile);
@@ -4446,6 +4449,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "FattalToneMapping", "Enabled", pedited, fattal.enabled, pedited->fattal.enabled);
             assignFromKeyfile(keyFile, "FattalToneMapping", "Threshold", pedited, fattal.threshold, pedited->fattal.threshold);
             assignFromKeyfile(keyFile, "FattalToneMapping", "Amount", pedited, fattal.amount, pedited->fattal.amount);
+            assignFromKeyfile(keyFile, "FattalToneMapping", "Anchor", pedited, fattal.anchor, pedited->fattal.anchor);
         }
 
         if (keyFile.has_group("Shadows & Highlights")) {
@@ -5377,7 +5381,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftSmoothFactor", pedited, raw.bayersensor.pixelShiftSmoothFactor, pedited->raw.bayersensor.pixelShiftSmooth);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftExp0", pedited, raw.bayersensor.pixelShiftExp0, pedited->raw.bayersensor.pixelShiftExp0);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftLmmse", pedited, raw.bayersensor.pixelShiftLmmse, pedited->raw.bayersensor.pixelShiftLmmse);
-            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftOneGreen", pedited, raw.bayersensor.pixelShiftOneGreen, pedited->raw.bayersensor.pixelShiftOneGreen);
+//            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftOneGreen", pedited, raw.bayersensor.pixelShiftOneGreen, pedited->raw.bayersensor.pixelShiftOneGreen);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftEqualBright", pedited, raw.bayersensor.pixelShiftEqualBright, pedited->raw.bayersensor.pixelShiftEqualBright);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftEqualBrightChannel", pedited, raw.bayersensor.pixelShiftEqualBrightChannel, pedited->raw.bayersensor.pixelShiftEqualBrightChannel);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftNonGreenCross", pedited, raw.bayersensor.pixelShiftNonGreenCross, pedited->raw.bayersensor.pixelShiftNonGreenCross);

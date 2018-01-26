@@ -26,52 +26,24 @@
 
     #ifdef __SSE2__
         #include "sleefsseavx.c"
-        #ifdef __GNUC__
-            #if defined(WIN32) && !defined( __x86_64__ )
-                // needed for actual versions of GCC with 32-Bit Windows
-                #define SSEFUNCTION __attribute__((force_align_arg_pointer))
-            #else
-                #define SSEFUNCTION
-            #endif
-        #else
-            #define SSEFUNCTION
-        #endif
-    #else
-        #ifdef __SSE__
-            #ifdef __GNUC__
-                #if defined(WIN32) && !defined( __x86_64__ )
-                    // needed for actual versions of GCC with 32-Bit Windows
-                    #define SSEFUNCTION __attribute__((force_align_arg_pointer))
-                #else
-                    #define SSEFUNCTION
-                #endif
-            #else
-                #define SSEFUNCTION
-            #endif
-        #else
-            #define SSEFUNCTION
-        #endif
     #endif
 
     #ifdef __GNUC__
         #define RESTRICT    __restrict__
-        #define LIKELY(x)   __builtin_expect (!!(x), 1)
-        #define UNLIKELY(x) __builtin_expect (!!(x), 0)
-        #if (!defined(WIN32) || defined( __x86_64__ ))
-            #define ALIGNED64 __attribute__ ((aligned (64)))
-            #define ALIGNED16 __attribute__ ((aligned (16)))
-        #else // there is a bug in gcc 4.7.x when using openmp and aligned memory and -O3, also needed for WIN32 builds
-            #define ALIGNED64
-            #define ALIGNED16
+        #if __SIZEOF_POINTER__ == 4 &&  __GNUC__ >= 7 // there seems to be a bug with __builtin_expect on 32bit systems when using gcc >= 7
+            #define LIKELY(x)    (x)
+            #define UNLIKELY(x)  (x)
+        #else
+            #define LIKELY(x)   __builtin_expect (!!(x), 1)
+            #define UNLIKELY(x) __builtin_expect (!!(x), 0)
         #endif
+        #define ALIGNED64 __attribute__ ((aligned (64)))
+        #define ALIGNED16 __attribute__ ((aligned (16)))
     #else
         #define RESTRICT
         #define LIKELY(x)    (x)
         #define UNLIKELY(x)  (x)
         #define ALIGNED64
         #define ALIGNED16
-    #endif
-    #if defined _OPENMP
-        #define _RT_NESTED_OPENMP
     #endif
 #endif

@@ -34,7 +34,7 @@ namespace rtengine
 #define ABS(a) ((a)<0?-(a):(a))
 
 extern const Settings* settings;
-SSEFUNCTION void ImProcFunctions::dcdamping (float** aI, float** aO, float damping, int W, int H)
+void ImProcFunctions::dcdamping (float** aI, float** aO, float damping, int W, int H)
 {
 
     const float dampingFac = -2.0 / (damping * damping);

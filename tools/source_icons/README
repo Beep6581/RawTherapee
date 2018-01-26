@@ -29,4 +29,4 @@ How to easily work with new icons
 2- Creates a .file for each .svg (change "w22" and "actions" as needed, explained above):
      for f in *.svg; do printf "%s\n" "${f%%.*}.png,w22,actions" > "${f%%.*}.file"; done
 3- Makes the PNG icons (you need to run the script from it's containing dir):
-     cd ~/rawtherapee/tools/source_icons/script && ./make_all_icon_theme.bash /path/to/new/svg/icons/ /tmp/png
+     cd ~/programs/code-rawtherapee/tools/source_icons/script && ./make_all_icon_theme.bash /path/to/new/svg/icons/ /tmp/png

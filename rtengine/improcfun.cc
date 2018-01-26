@@ -55,7 +55,7 @@ using namespace rtengine;
 void shadowToneCurve(const LUTf &shtonecurve, float *rtemp, float *gtemp, float *btemp, int istart, int tH, int jstart, int tW, int tileSize)
 {
 
-#if defined( __SSE2__ ) && defined( __x86_64__ )
+#ifdef __SSE2__
     vfloat cr = F2V(0.299f);
     vfloat cg = F2V(0.587f);
     vfloat cb = F2V(0.114f);
@@ -63,7 +63,7 @@ void shadowToneCurve(const LUTf &shtonecurve, float *rtemp, float *gtemp, float 
 
     for (int i = istart, ti = 0; i < tH; i++, ti++) {
         int j = jstart, tj = 0;
-#if defined( __SSE2__ ) && defined( __x86_64__ )
+#ifdef __SSE2__
 
         for (; j < tW - 3; j += 4, tj += 4) {
 
@@ -100,14 +100,14 @@ void shadowToneCurve(const LUTf &shtonecurve, float *rtemp, float *gtemp, float 
 void highlightToneCurve(const LUTf &hltonecurve, float *rtemp, float *gtemp, float *btemp, int istart, int tH, int jstart, int tW, int tileSize, float exp_scale, float comp, float hlrange)
 {
 
-#if defined( __SSE2__ ) && defined( __x86_64__ )
+#ifdef __SSE2__
     vfloat threev = F2V(3.f);
     vfloat maxvalfv = F2V(MAXVALF);
 #endif
 
     for (int i = istart, ti = 0; i < tH; i++, ti++) {
         int j = jstart, tj = 0;
-#if defined( __SSE2__ ) && defined( __x86_64__ )
+#ifdef __SSE2__
 
         for (; j < tW - 3; j += 4, tj += 4) {
 
@@ -169,7 +169,7 @@ void proPhotoBlue(float *rtemp, float *gtemp, float *btemp, int istart, int tH, 
     // this is a hack to avoid the blue=>black bug (Issue 2141)
     for (int i = istart, ti = 0; i < tH; i++, ti++) {
         int j = jstart, tj = 0;
-#if defined( __SSE2__ ) && defined( __x86_64__ )
+#ifdef __SSE2__
 
         for (; j < tW - 3; j += 4, tj += 4) {
             vfloat rv = LVF(rtemp[ti * tileSize + tj]);
@@ -3791,7 +3791,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                 } else {
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         int j = jstart, tj = 0;
-#if defined( __SSE2__ ) && defined( __x86_64__ )
+#ifdef __SSE2__
 
                         for (; j < tW - 3; j += 4, tj += 4) {
                             //brightness/contrast
@@ -5423,7 +5423,7 @@ void ImProcFunctions::luminanceCurve(LabImage* lold, LabImage* lnew, LUTf & curv
 
 
 
-SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve(PipetteBuffer *pipetteBuffer, int pW, LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve, LUTf & lhskcurve, LUTf & clcurve, LUTf & curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histLCurve)
+void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW, LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve, LUTf & lhskcurve, LUTf & clcurve, LUTf & curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histLCurve)
 {
     if (!params->labCurve.enabled) {
         return;
@@ -7078,7 +7078,7 @@ void ImProcFunctions::rgb2lab(const Imagefloat &src, LabImage &dst, const Glib::
     }
 }
 
-SSEFUNCTION void ImProcFunctions::lab2rgb(const LabImage &src, Imagefloat &dst, const Glib::ustring &workingSpace)
+void ImProcFunctions::lab2rgb (const LabImage &src, Imagefloat &dst, const Glib::ustring &workingSpace)
 {
     TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(workingSpace);
     const float wip[3][3] = {

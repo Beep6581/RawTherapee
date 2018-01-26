@@ -1074,7 +1074,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc)
         // normal redraw don't work, so this is the hard way
         // Disabled this with Issue 2435 because it seems to work fine now
 //        if (!options.tabbedUI && iareapanel->imageArea->mainCropWindow->getZoomFitVal() == 1.0) {
-//          iareapanel->imageArea->mainCropWindow->cropHandler.update();
+        iareapanel->imageArea->mainCropWindow->cropHandler.update();
 //        }
     } else {
         Gtk::Allocation alloc;

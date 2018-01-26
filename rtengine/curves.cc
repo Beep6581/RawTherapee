@@ -734,7 +734,7 @@ void CurveFactory::complexsgnCurve(bool & autili,  bool & butili, bool & ccutili
 
 }
 
-SSEFUNCTION void CurveFactory::complexCurve(double ecomp, double black, double hlcompr, double hlcomprthresh,
+void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh,
         double shcompr, double br, double contr,
         const std::vector<double>& curvePoints,
         const std::vector<double>& curvePoints2,
@@ -1016,7 +1016,7 @@ SSEFUNCTION void CurveFactory::complexCurve(double ecomp, double black, double h
 
 
 
-SSEFUNCTION void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr, double hlcomprthresh,
+void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr, double hlcomprthresh,
         double shcompr, double br, double contr,
         LUTu & histogram,
         LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,

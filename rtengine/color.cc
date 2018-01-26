@@ -1742,7 +1742,7 @@ void Color::Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, vfloat &
 void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, const float wp[3][3], int width)
 {
 
-#if defined( __SSE2__ ) && defined( __x86_64__ )
+#ifdef __SSE2__
     vfloat maxvalfv = F2V(MAXVALF);
     vfloat c116v = F2V(116.f);
     vfloat c5242d88v = F2V(5242.88f);
@@ -1750,7 +1750,7 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
     vfloat c200v = F2V(200.f);
 #endif
     int i = 0;
-#if defined( __SSE2__ ) && defined( __x86_64__ )
+#ifdef __SSE2__
 
     for (; i < width - 3; i += 4) {
         const vfloat rv = LVFU(R[i]);
@@ -2627,7 +2627,7 @@ void Color::gamutLchonly(float2 sincosval, float &Lprov1, float &Chprov1, const 
  *    const double wip[3][3]: matrix for working profile
  *    bool multiThread      : parallelize the loop
  */
-SSEFUNCTION  void Color::LabGamutMunsell(float *labL, float *laba, float *labb, const int N, bool corMunsell, bool lumaMuns, bool isHLEnabled, bool gamut, const double wip[3][3])
+void Color::LabGamutMunsell(float *labL, float *laba, float *labb, const int N, bool corMunsell, bool lumaMuns, bool isHLEnabled, bool gamut, const double wip[3][3])
 {
 #ifdef _DEBUG
     MyTime t1e, t2e;

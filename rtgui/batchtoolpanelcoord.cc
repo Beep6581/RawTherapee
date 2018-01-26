@@ -153,7 +153,7 @@ void BatchToolPanelCoordinator::initSession ()
             sharpenMicro->setAdjusterBehavior (false, false);
             icm->setAdjusterBehavior (false, false);
             epd->setAdjusterBehavior (false, false, false, false, false);
-            fattal->setAdjusterBehavior (false, false);
+            fattal->setAdjusterBehavior (false, false, false);
 
             chmixer->setAdjusterBehavior (false);
             blackwhite->setAdjusterBehavior (false, false);
@@ -194,7 +194,7 @@ void BatchToolPanelCoordinator::initSession ()
             sharpening->setAdjusterBehavior (options.baBehav[ADDSET_SHARP_RADIUS], options.baBehav[ADDSET_SHARP_AMOUNT], options.baBehav[ADDSET_SHARP_DAMPING], options.baBehav[ADDSET_SHARP_ITER], options.baBehav[ADDSET_SHARP_EDGETOL], options.baBehav[ADDSET_SHARP_HALOCTRL]);
             prsharpening->setAdjusterBehavior (options.baBehav[ADDSET_SHARP_RADIUS], options.baBehav[ADDSET_SHARP_AMOUNT], options.baBehav[ADDSET_SHARP_DAMPING], options.baBehav[ADDSET_SHARP_ITER], options.baBehav[ADDSET_SHARP_EDGETOL], options.baBehav[ADDSET_SHARP_HALOCTRL]);
             epd->setAdjusterBehavior (options.baBehav[ADDSET_EPD_STRENGTH], options.baBehav[ADDSET_EPD_GAMMA], options.baBehav[ADDSET_EPD_EDGESTOPPING], options.baBehav[ADDSET_EPD_SCALE], options.baBehav[ADDSET_EPD_REWEIGHTINGITERATES]);
-            fattal->setAdjusterBehavior (options.baBehav[ADDSET_FATTAL_ALPHA], options.baBehav[ADDSET_FATTAL_BETA]);
+            fattal->setAdjusterBehavior (options.baBehav[ADDSET_FATTAL_AMOUNT], options.baBehav[ADDSET_FATTAL_THRESHOLD], options.baBehav[ADDSET_FATTAL_ANCHOR]);
             localContrast->setAdjusterBehavior(options.baBehav[ADDSET_LOCALCONTRAST_RADIUS], options.baBehav[ADDSET_LOCALCONTRAST_AMOUNT], options.baBehav[ADDSET_LOCALCONTRAST_DARKNESS], options.baBehav[ADDSET_LOCALCONTRAST_LIGHTNESS]);
 
             sharpenEdge->setAdjusterBehavior (options.baBehav[ADDSET_SHARPENEDGE_AMOUNT], options.baBehav[ADDSET_SHARPENEDGE_PASS]);

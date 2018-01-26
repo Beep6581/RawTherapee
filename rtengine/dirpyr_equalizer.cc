@@ -42,7 +42,7 @@ extern const Settings* settings;
 
 //sequence of scales
 
-SSEFUNCTION void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst, int srcwidth, int srcheight, float ** l_a, float ** l_b, const double * mult, const double dirpyrThreshold, const double skinprot, float b_l, float t_l, float t_r, int scaleprev)
+void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst, int srcwidth, int srcheight, float ** l_a, float ** l_b, const double * mult, const double dirpyrThreshold, const double skinprot, float b_l, float t_l, float t_r, int scaleprev)
 {
     int lastlevel = maxlevel;
 
@@ -247,7 +247,7 @@ SSEFUNCTION void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst,
 
 }
 
-SSEFUNCTION void ImProcFunctions :: cbdl_local_temp(float ** src, float ** dst, float ** loctemp, int srcwidth, int srcheight, const float * mult, float kchro, const double dirpyrThreshold, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r, int choice, int scaleprev)
+void ImProcFunctions::cbdl_local_temp(float ** src, float ** dst, float ** loctemp, int srcwidth, int srcheight, const float * mult, float kchro, const double dirpyrThreshold, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r, int choice, int scaleprev)
 {
     int lastlevel = maxlevelloc;
 
@@ -506,7 +506,7 @@ void ImProcFunctions :: dirpyr_equalizercam(CieImage *ncie, float ** src, float 
     }
 }
 
-SSEFUNCTION void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, int width, int height, int level, int scale)
+void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, int width, int height, int level, int scale)
 {
     // scale is spacing of directional averaging weights
     // calculate weights, compute directionally weighted average

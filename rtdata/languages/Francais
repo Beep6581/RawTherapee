@@ -9,6 +9,7 @@ ADJUSTER_RESET_TO_DEFAULT;Réglages par défaut
 BATCHQUEUE_AUTOSTART;Démarrage auto
 BATCHQUEUE_AUTOSTARTHINT;Démarrer automatiquement le traitement à l'arrivée d'une nouvelle tâche
 BATCHQUEUE_DESTFILENAME;Chemin et nom de fichier
+BATCHQUEUE_STARTSTOPHINT;Démarre ou arrête le traitement des images dans la file.\n\nRaccourci: <b>Ctrl</b>+<b>s</b>
 BATCH_PROCESSING;Traitement par lot
 CURVEEDITOR_AXIS_IN;E:
 CURVEEDITOR_AXIS_LEFT_TAN;TG:
@@ -228,6 +229,7 @@ GENERAL_OK;OK
 GENERAL_OPEN;Ouvrir
 GENERAL_PORTRAIT;Portrait
 GENERAL_SAVE;Enregistrer
+GENERAL_SLIDER;Curseur
 GENERAL_UNCHANGED;(Inchangé)
 GENERAL_WARNING;Attention
 GIMP_PLUGIN_INFO;Bienvenue dans le plugin RawTherapee de GIMP!\nUne fois l'édition terminée, fermez simplement la fenêtre principale de RawTherapee et l'image sera importée automatiquement dans GIMP.
@@ -415,6 +417,7 @@ HISTORY_MSG_169;Courbe 'CT'
 HISTORY_MSG_170;Vib. - Courbe
 HISTORY_MSG_171;Courbe 'LC'
 HISTORY_MSG_172;Lab - Restreindre 'LC'
+HISTORY_MSG_173;Réd. de bruit - Récupération des détails
 HISTORY_MSG_174;Modèle d'Apparence de la Couleur 2002
 HISTORY_MSG_175;CAM02 - Adaptation CAT02
 HISTORY_MSG_176;CAM02 - Environ. de visionnage
@@ -444,6 +447,7 @@ HISTORY_MSG_199;CAM02 - Histogrammes de sortie
 HISTORY_MSG_200;CAM02 - Compression tonale
 HISTORY_MSG_201;Réd. de bruit - Chrom. R,V
 HISTORY_MSG_202;Réd. de bruit - Chrom. B,J
+HISTORY_MSG_203;Réd. de bruit - Espace couleur
 HISTORY_MSG_204;Niveau d'amélioration LMMSE
 HISTORY_MSG_205;CAM02 Pixels chauds/morts
 HISTORY_MSG_206;CAT02 - Luminosité de la scène auto
@@ -495,6 +499,7 @@ HISTORY_MSG_252;CpND - Tons chair
 HISTORY_MSG_253;CpND - Réduction des artéfactes
 HISTORY_MSG_254;CpND - Teinte chair
 HISTORY_MSG_255;Réd. de bruit - Filtre médian
+HISTORY_MSG_256;Réd. de bruit - Médian - Type
 HISTORY_MSG_257;Virage Partiel
 HISTORY_MSG_258;Virage Partiel - Couleur
 HISTORY_MSG_259;Virage Partiel - Opacité
@@ -535,6 +540,7 @@ HISTORY_MSG_293;Simulation de Film
 HISTORY_MSG_294;Simulation de Film - Force
 HISTORY_MSG_295;Simulation de Film - Film
 HISTORY_MSG_296;Réd. de bruit - Courbe de luminance
+HISTORY_MSG_297;Réd. de bruit - Mode
 HISTORY_MSG_298;Filtre de pixel mort
 HISTORY_MSG_299;Réd. de bruit - Courbe de chrominance
 HISTORY_MSG_300;-
@@ -712,6 +718,17 @@ HISTORY_MSG_487;Corr. d'Obj. - Objectif
 HISTORY_MSG_488;Compression tonale HDR
 HISTORY_MSG_489;CT HDR - Seuil
 HISTORY_MSG_490;CT HDR - Quantité
+HISTORY_MSG_491;Balances des Blancs
+HISTORY_MSG_492;Courbes RVB
+HISTORY_MSG_493;Ajustements L*a*b*
+HISTORY_MSG_COLORTONING_LABGRID_VALUE;Virage Partiel - Correction couleur
+HISTORY_MSG_HISTMATCHING;Calcul Courbe Tonale svt Aperçu
+HISTORY_MSG_LOCALCONTRAST_AMOUNT;Contraste Local - Quantité
+HISTORY_MSG_LOCALCONTRAST_DARKNESS;Contraste Local - Ombres
+HISTORY_MSG_LOCALCONTRAST_ENABLED;Contraste Local
+HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Contraste Local - H.L.
+HISTORY_MSG_LOCALCONTRAST_RADIUS;Contraste Local - Rayon
+HISTORY_MSG_METADATA_MODE;Mode de copie des métadonnées
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourci: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Capture
@@ -797,6 +814,8 @@ MAIN_MSG_QOVERWRITE;Voulez-vous l'écraser?
 MAIN_MSG_SETPATHFIRST;Vous devez d'abord choisir un dossier cible dans Préférences\npour pouvoir utiliser cette fonction!
 MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
 MAIN_MSG_WRITEFAILED;Échec de l'enregistrement du fichier\n\n<b>"%1"</b>\n\nAssurez-vous que le dossier existe et qu'il est permis d'y écrire.
+MAIN_TAB_ADVANCED;Avancé
+MAIN_TAB_ADVANCED_TOOLTIP;Raccourci: <b>Alt-w</b>
 MAIN_TAB_COLOR;Couleur
 MAIN_TAB_COLOR_TOOLTIP;Raccourci:<b>Alt-c</b>
 MAIN_TAB_DETAIL;Détail
@@ -851,6 +870,7 @@ NAVIGATOR_XY_FULL;Largeur = %1, Hauteur = %2
 NAVIGATOR_XY_NA;x = n/d, y = n/d
 OPTIONS_DEFIMG_MISSING;Le profil par défaut pour les <b>images standards</b> n'a pas été trouvé ou n'a pas été réglé.\n\nVérifiez également le dossier de vos profils, il peut être manquant ou endommagé\n\nLes valeurs internes pas défaut seront utilisées.
 OPTIONS_DEFRAW_MISSING;Le profil par défaut pour les <b>images Raw</b> n'a pas été trouvé ou n'a pas été réglé.\n\nVérifiez également le dossier de vos profils, il peut être manquant ou endommagé\n\nLes valeurs internes pas défaut seront utilisées.
+PARTIALPASTE_ADVANCEDGROUP;Réglages Avancés
 PARTIALPASTE_BASICGROUP;Réglages de base
 PARTIALPASTE_CACORRECTION;Aberration chromatique
 PARTIALPASTE_CHANNELMIXER;Mixage des canaux
@@ -889,6 +909,8 @@ PARTIALPASTE_IPTCINFO;Infos IPTC
 PARTIALPASTE_LABCURVE;Courbes Lab
 PARTIALPASTE_LENSGROUP;Réglages de l'objectif
 PARTIALPASTE_LENSPROFILE;Profil de correction d'Objectif
+PARTIALPASTE_LOCALCONTRAST;Contraste local
+PARTIALPASTE_METADATA;Mode des Metadonnées
 PARTIALPASTE_METAGROUP;Réglages des Métadonnées
 PARTIALPASTE_PCVIGNETTE;Filtre Vignettage
 PARTIALPASTE_PERSPECTIVE;Perspective
@@ -955,6 +977,12 @@ PREFERENCES_CLUTSCACHE;Cache HaldCLUT
 PREFERENCES_CLUTSCACHE_LABEL;Nombre maximum de chache CLUT
 PREFERENCES_CLUTSDIR;Dossier HaldCLUT
 PREFERENCES_CMMBPC;Compensation du point noir
+PREFERENCES_CROP;Édition du recadrage
+PREFERENCES_CROP_AUTO_FIT;Zommer automatiquement sur la zone recadrée
+PREFERENCES_CROP_GUIDES;Guides affichés en dehors de l'édition du recadrage
+PREFERENCES_CROP_GUIDES_FRAME;Cadre
+PREFERENCES_CROP_GUIDES_FULL;Original
+PREFERENCES_CROP_GUIDES_NONE;Aucun
 PREFERENCES_CURVEBBOXPOS;Position des boutons copier/coller des courbes
 PREFERENCES_CURVEBBOXPOS_ABOVE;Au-dessus
 PREFERENCES_CURVEBBOXPOS_BELOW;En-dessous
@@ -986,6 +1014,7 @@ PREFERENCES_DIRLAST;Dernier dossier visité
 PREFERENCES_DIROTHER;Autre
 PREFERENCES_DIRSELECTDLG;Choix du dossier Image au lancement...
 PREFERENCES_DIRSOFTWARE;Dossier d'installation
+PREFERENCES_EDITORCMDLINE;Ligne de commande personnelle
 PREFERENCES_EDITORLAYOUT;Disposition de l'éditeur
 PREFERENCES_EXPAUT;Expert
 PREFERENCES_EXTERNALEDITOR;Éditeur externe
@@ -1381,6 +1410,7 @@ TP_COLORTONING_HIGHLIGHT;Hautes lumières
 TP_COLORTONING_HUE;Teinte
 TP_COLORTONING_LAB;Mixage Lab
 TP_COLORTONING_LABEL;Virage Partiel
+TP_COLORTONING_LABGRID;Grille de correction L*a*b*
 TP_COLORTONING_LABGRID_VALUES;HL: a=%1 b=%2\nO: a=%3 b=%4
 TP_COLORTONING_LUMA;Luminance
 TP_COLORTONING_LUMAMODE;Préserver la luminance
@@ -1435,6 +1465,7 @@ TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Global automatique
 TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;Essaie d'évaluer le bruit chroma\nFaites attention, cela calcul une moyenne, et est très subjectif !
 TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;Chrominance - Bleu-Jaune
 TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Courbe de chrominance
+TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Augmente (multiplie) la valeur de tous les curseurs de chrominance.\nCette courbe vous permet d'ajuster la force de la réduction de bruit chromatique en fonction de la chromaticité, par exemple pour augmenter l'action dans les zones faiblement saturées et pour la diminuer dans celles très saturées.
 TP_DIRPYRDENOISE_CHROMINANCE_FRAME;Chrominance
 TP_DIRPYRDENOISE_CHROMINANCE_MANUAL;Manuel
 TP_DIRPYRDENOISE_CHROMINANCE_MASTER;Chrominance - Maître
@@ -1451,6 +1482,7 @@ TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;Taille des tuiles =%1, Centre: Tx=
 TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;Chrominance - Rouge-Vert
 TP_DIRPYRDENOISE_ENH;Mode amélioré
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Augmente la qualité du débruitage, mais augmente le temps de traitement d'environ 20%
+TP_DIRPYRDENOISE_LABEL;Réduction de Bruit
 TP_DIRPYRDENOISE_LUMINANCE_CONTROL;Contrôle de luminance
 TP_DIRPYRDENOISE_LUMINANCE_CURVE;Courbe de luminance
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Niveau de détails de Luminance
@@ -1526,6 +1558,8 @@ TP_EXPOSURE_CURVEEDITOR1;Courbe Tonale 1
 TP_EXPOSURE_CURVEEDITOR2;Courbe Tonale 2
 TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Référez-vous à la section suivante du manuel pour en savoir plus sur les manières d'obtenir les meilleurs résultats avec l'option de double courbe:\nThe Toolbox > Exposure Tab > Exposure Panel > Tone Curve
 TP_EXPOSURE_EXPCOMP;Compensation d'exposition
+TP_EXPOSURE_HISTMATCHING;Calcul Courbe Tonale svt Aperçu
+TP_EXPOSURE_HISTMATCHING_TOOLTIP;Ajuste automatiquement les curseurs et courbes (excepté la compensation d'exposition) pour obtenir l'aspect de l'aperçu JPEG inclus.
 TP_EXPOSURE_LABEL;Exposition
 TP_EXPOSURE_SATURATION;Saturation
 TP_EXPOSURE_TCMODE_FILMLIKE;Similaire Film
@@ -1662,6 +1696,15 @@ TP_LENSPROFILE_LABEL;Profil de correction d'objectif
 TP_LENSPROFILE_USECA;Corr. de l'aber. chromatique
 TP_LENSPROFILE_USEDIST;Corr. de la distortion
 TP_LENSPROFILE_USEVIGN;Corr. du vignettage
+TP_LOCALCONTRAST_AMOUNT;Quantité
+TP_LOCALCONTRAST_DARKNESS;Niveau des ombres
+TP_LOCALCONTRAST_LABEL;Contraste Local
+TP_LOCALCONTRAST_LIGHTNESS;Niveau des hautes-lumières
+TP_LOCALCONTRAST_RADIUS;Rayon
+TP_METADATA_EDIT;Appliquer les modifications
+TP_METADATA_MODE;Mode de copie des métadonnées
+TP_METADATA_STRIP;Retirer toutes les métadonnées
+TP_METADATA_TUNNEL;Copier à l'identique
 TP_NEUTRAL;Réinit.
 TP_NEUTRAL_TIP;Réinitialise les valeurs de l'exposition à des valeurs neutres
 TP_PCVIGNETTE_FEATHER;Étendue
@@ -1761,6 +1804,8 @@ TP_RAW_PIXELSHIFTNONGREENCROSS2;Vérifier vert AMaZE
 TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Vérifier rouge/bleu horizontal
 TP_RAW_PIXELSHIFTNONGREENVERTICAL;Vérifier rouge/bleu vertical
 TP_RAW_PIXELSHIFTNREADISO;Lire
+TP_RAW_PIXELSHIFTONEGREEN;Utiliser un seul canal vert
+TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Utilise un seul canal vert au lieu de faire la moyennes des deux canaux verts pour détecter les régions sans mouvement.
 TP_RAW_PIXELSHIFTPRNU;PRNU (%)
 TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Poid Rouge&Bleu
 TP_RAW_PIXELSHIFTSHOWMOTION;Voir le masque de mouvement
@@ -1774,6 +1819,7 @@ TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Adouci les transitions entre les zones avec mouv
 TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;Facteur DevStd Bleu
 TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;Facteur DevStd Vert
 TP_RAW_PIXELSHIFTSTDDEVFACTORRED;Facteur DevStd Rouge
+TP_RAW_RCD;RCD
 TP_RAW_SENSOR_BAYER_LABEL;Capteur à matrice de Bayer
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-passes donne les meilleurs résultats (recommendé pour les images de faible ISO).\n1-passe est presque indifférentiable de 3-passes pour les images à haut ISO et est plus rapide.
 TP_RAW_SENSOR_XTRANS_LABEL;Capteur à matrice X-Trans
@@ -2160,44 +2206,3 @@ ZOOMPANEL_ZOOMFITSCREEN;Affiche l'image entière\nRaccourci: <b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom Avant\nRaccourci: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
-!GENERAL_SLIDER;Slider
-!HISTORY_MSG_173;NR - Detail recovery
-!HISTORY_MSG_203;NR - Color space
-!HISTORY_MSG_256;NR - Median - Type
-!HISTORY_MSG_297;NR - Mode
-!HISTORY_MSG_491;White Balance
-!HISTORY_MSG_492;RGB Curves
-!HISTORY_MSG_493;L*a*b* Adjustments
-!HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
-!HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
-!HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
-!HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
-!HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
-!HISTORY_MSG_METADATA_MODE;Metadata copy mode
-!PARTIALPASTE_LOCALCONTRAST;Local contrast
-!PREFERENCES_CROP;Crop editing
-!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
-!PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
-!PREFERENCES_CROP_GUIDES_FRAME;Frame
-!PREFERENCES_CROP_GUIDES_FULL;Original
-!PREFERENCES_CROP_GUIDES_NONE;None
-!PREFERENCES_EDITORCMDLINE;Custom command line
-!TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
-!TP_DIRPYRDENOISE_LABEL;Noise Reduction
-!TP_LOCALCONTRAST_AMOUNT;Amount
-!TP_LOCALCONTRAST_DARKNESS;Darkness level
-!TP_LOCALCONTRAST_LABEL;Local Contrast
-!TP_LOCALCONTRAST_LIGHTNESS;Lightness level
-!TP_LOCALCONTRAST_RADIUS;Radius
-!TP_METADATA_EDIT;Apply modifications
-!TP_METADATA_MODE;Metadata copy mode
-!TP_METADATA_STRIP;Strip all metadata
-!TP_METADATA_TUNNEL;Copy unchanged
-!TP_RAW_PIXELSHIFTONEGREEN;Use one green instead of average
-!TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Use one green instead of averaging two greens for regions without motion.
-!TP_RAW_RCD;RCD

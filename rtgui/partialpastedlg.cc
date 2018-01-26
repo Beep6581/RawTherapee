@@ -43,56 +43,53 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     meta        ->set_name ("PartialPasteHeader");
     raw         = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RAWGROUP")));
     raw         ->set_name ("PartialPasteHeader");
-    advanced         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_ADVANCEDGROUP")));
-    advanced         ->set_name("PartialPasteHeader");
+    advanced    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_ADVANCEDGROUP")));
+    advanced    ->set_name("PartialPasteHeader");
     loc         = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_LOCGROUP")));
     loc         ->set_name ("PartialPasteHeader");
 
-    // options in basic:
+    // Basic Settings:
     wb          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_WHITEBALANCE")));
     exposure    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EXPOSURE")));
     localcontrast = Gtk::manage(new Gtk::CheckButton(M("PARTIALPASTE_LOCALCONTRAST")));
     sh          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_SHADOWSHIGHLIGHTS")));
     epd         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EPD")));
     fattal      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_TM_FATTAL")));
-    retinex     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RETINEX")));
     pcvignette  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PCVIGNETTE")));
     gradient    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_GRADIENT")));
     labcurve    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_LABCURVE")));
-    colorappearance = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COLORAPP")));
 
-    // options in detail:
+    // Detail Settings:
     sharpen     = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_SHARPENING")));
     sharpenedge = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_SHARPENEDGE")));
     sharpenmicro = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_SHARPENMICRO")));
     impden      = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_IMPULSEDENOISE")));
-    dirpyreq    = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_DIRPYREQUALIZER")));
+    dirpyrden   = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DIRPYRDENOISE")));
     defringe    = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_DEFRINGE")));
+    dirpyreq    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DIRPYREQUALIZER")));
 
-    // options in wavelet:
-    wavelet     = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_EQUALIZER"))); //TODO - rename to wavelet
-    // options in loc:
- //   locallab  = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_LOCALLAB")));
+    // Advanced Settings:
+    retinex     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RETINEX")));
+    colorappearance = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COLORAPP")));
+    wavelet     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EQUALIZER")));
 
-    // options in color:
+    // Color-Related Settings
     icm         = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_ICMSETTINGS")));
-    //gam         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_ICMGAMMA")));
     vibrance    = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_VIBRANCE")));
     chmixer     = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_CHANNELMIXER")));
     blackwhite  = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_CHANNELMIXERBW")));
-    dirpyrden   = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_DIRPYRDENOISE")));
     hsveq       = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_HSVEQUALIZER")));
     filmSimulation = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_FILMSIMULATION")) );
     rgbcurves   = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RGBCURVES")));
     colortoning = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_COLORTONING")));
 
-    // options in lens:
+    // Lens-Related Settings
     distortion  = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_DISTORTION")));
     cacorr      = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_CACORRECTION")));
     vignetting  = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_VIGNETTING")));
     lcp         = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_LENSPROFILE")));
 
-    // options in composition:
+    // Composition Settings:
     coarserot    = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_COARSETRANS")));
     finerot      = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_ROTATION")));
     crop         = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_CROP")));
@@ -101,36 +98,40 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     perspective  = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_PERSPECTIVE")));
     commonTrans  = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_COMMONTRANSFORMPARAMS")));
 
-    // options in meta:
+    // Metadata:
+    metadata = Gtk::manage(new Gtk::CheckButton(M("PARTIALPASTE_METADATA")));
     exifch      = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_EXIFCHANGES")));
     iptc        = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_IPTCINFO")));
 
-    // options in raw:
-    raw_expos           = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RAWEXPOS_LINEAR")));
-    raw_preser          = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RAWEXPOS_PRESER")));
-    raw_black           = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RAWEXPOS_BLACK")));
-    raw_ca_autocorrect  = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RAWCACORR_AUTO")));
-    raw_caredblue       = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RAWCACORR_CAREDBLUE")));
-    raw_hotpix_filt     = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_PREPROCESS_HOTPIXFILT")));
-    raw_deadpix_filt    = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_PREPROCESS_DEADPIXFILT")));
-    raw_linenoise       = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_PREPROCESS_LINEDENOISE")));
-    raw_greenthresh     = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_PREPROCESS_GREENEQUIL")));
+    // Raw Settings:
     raw_method          = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RAW_DMETHOD")));
     raw_imagenum        = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RAW_IMAGENUM")));
     raw_pixelshift      = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RAW_PIXELSHIFT")));
     raw_ccSteps         = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RAW_FALSECOLOR")));
     raw_dcb_iterations  = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RAW_DCBITERATIONS")));
     raw_dcb_enhance     = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RAW_DCBENHANCE")));
-    //raw_all_enhance   = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_ALLENHANCE")));
     raw_lmmse_iterations = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RAW_LMMSEITERATIONS")));
-
+    //---
+    raw_linenoise       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCESS_LINEDENOISE")));
+    raw_greenthresh     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCESS_GREENEQUIL")));
+    raw_hotpix_filt     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCESS_HOTPIXFILT")));
+    raw_deadpix_filt    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCESS_DEADPIXFILT")));
+    //---
+    raw_expos           = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWEXPOS_LINEAR")));
+    raw_preser          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWEXPOS_PRESER")));
+    raw_black           = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWEXPOS_BLACK")));
+    //---
     df_file             = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_DARKFRAMEFILE")));
     df_AutoSelect       = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_DARKFRAMEAUTOSELECT")));
+    //---
     ff_file             = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_FLATFIELDFILE")));
     ff_AutoSelect       = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_FLATFIELDAUTOSELECT")));
-    ff_BlurRadius       = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_FLATFIELDBLURRADIUS")));
     ff_BlurType         = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_FLATFIELDBLURTYPE")));
+    ff_BlurRadius       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FLATFIELDBLURRADIUS")));
     ff_ClipControl      = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_FLATFIELDCLIPCONTROL")));
+    //---
+    raw_ca_autocorrect  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWCACORR_AUTO")));
+    raw_caredblue       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWCACORR_CAREDBLUE")));
 
     Gtk::VBox* vboxes[9];
     Gtk::HSeparator* hseps[9];
@@ -171,7 +172,6 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[2]->pack_start (*color, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*hseps[2], Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*icm, Gtk::PACK_SHRINK, 2);
-    //vboxes[2]->pack_start (*gam, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*vibrance, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*chmixer, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*blackwhite, Gtk::PACK_SHRINK, 2);
@@ -199,17 +199,24 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[4]->pack_start (*perspective, Gtk::PACK_SHRINK, 2);
     vboxes[4]->pack_start (*commonTrans, Gtk::PACK_SHRINK, 2);
 
-    //WAVELET
+    //ADVANCED
     vboxes[5]->pack_start (*advanced, Gtk::PACK_SHRINK, 2);
     vboxes[5]->pack_start (*hseps[5], Gtk::PACK_SHRINK, 2);
     vboxes[5]->pack_start (*retinex, Gtk::PACK_SHRINK, 2);
     vboxes[5]->pack_start (*colorappearance, Gtk::PACK_SHRINK, 2);
     vboxes[5]->pack_start (*wavelet, Gtk::PACK_SHRINK, 2);
 
-    //LOC
-    vboxes[6]->pack_start (*loc, Gtk::PACK_SHRINK, 2);
+    //META
+    vboxes[6]->pack_start (*meta, Gtk::PACK_SHRINK, 2);
     vboxes[6]->pack_start (*hseps[6], Gtk::PACK_SHRINK, 2);
- //   vboxes[6]->pack_start (*locallab, Gtk::PACK_SHRINK, 2);
+    vboxes[6]->pack_start(*metadata, Gtk::PACK_SHRINK, 2);
+    vboxes[6]->pack_start (*exifch, Gtk::PACK_SHRINK, 2);
+    vboxes[6]->pack_start (*iptc, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*raw_pixelshift, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*raw_ccSteps, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*raw_dcb_iterations, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*raw_dcb_enhance, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*raw_lmmse_iterations, Gtk::PACK_SHRINK, 2);
 
     //RAW
     vboxes[7]->pack_start (*raw, Gtk::PACK_SHRINK, 2);
@@ -221,7 +228,6 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[7]->pack_start (*raw_dcb_iterations, Gtk::PACK_SHRINK, 2);
     vboxes[7]->pack_start (*raw_dcb_enhance, Gtk::PACK_SHRINK, 2);
     vboxes[7]->pack_start (*raw_lmmse_iterations, Gtk::PACK_SHRINK, 2);
-    //vboxes[6]->pack_start (*raw_all_enhance, Gtk::PACK_SHRINK, 2);
     vboxes[7]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
     vboxes[7]->pack_start (*raw_linenoise, Gtk::PACK_SHRINK, 2);
     vboxes[7]->pack_start (*raw_greenthresh, Gtk::PACK_SHRINK, 2);
@@ -244,12 +250,6 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[7]->pack_start (*raw_ca_autocorrect, Gtk::PACK_SHRINK, 2);
     vboxes[7]->pack_start (*raw_caredblue, Gtk::PACK_SHRINK, 2);
 
-    //META
-    vboxes[8]->pack_start (*meta, Gtk::PACK_SHRINK, 2);
-    vboxes[8]->pack_start (*hseps[8], Gtk::PACK_SHRINK, 2);
-    vboxes[8]->pack_start (*exifch, Gtk::PACK_SHRINK, 2);
-    vboxes[8]->pack_start (*iptc, Gtk::PACK_SHRINK, 2);
-
     Gtk::VBox* vbCol1 = Gtk::manage (new Gtk::VBox ());
     Gtk::VBox* vbCol2 = Gtk::manage (new Gtk::VBox ());
     Gtk::VBox* vbCol3 = Gtk::manage (new Gtk::VBox ());
@@ -262,14 +262,14 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
         vbCol2->pack_start (*vboxes[i], Gtk::PACK_SHRINK, 2);
     }
 
-    for (int i = 7; i < 9; i++) {
+    for (int i = 7; i < 8; i++) {
         vbCol3->pack_start (*vboxes[i], Gtk::PACK_SHRINK, 2);
     }
 
     Gtk::VBox* vbtop = Gtk::manage (new Gtk::VBox ());
     vbtop->pack_start (*everything, Gtk::PACK_SHRINK, 2);
 
-    Gtk::Dialog::get_content_area()->pack_start (*vbtop, Gtk::PACK_SHRINK, 2); // TODO replace with get_content_area() with GTK upgrade
+    Gtk::Dialog::get_content_area()->pack_start (*vbtop, Gtk::PACK_SHRINK, 2);
 
     Gtk::HBox* hbmain = Gtk::manage (new Gtk::HBox ());
     hbmain->pack_start (*vbCol1);
@@ -291,7 +291,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
 
     scrolledwindow->add (*hbmain);
 
-    Gtk::Dialog::get_content_area()->pack_start (*scrolledwindow, Gtk::PACK_EXPAND_WIDGET, 2);// TODO replace with get_content_area() with GTK upgrade
+    Gtk::Dialog::get_content_area()->pack_start (*scrolledwindow, Gtk::PACK_EXPAND_WIDGET, 2);
 
     hbmain->show();
     scrolledwindow->show ();
@@ -306,34 +306,36 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     compositionConn = composition->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::compositionToggled));
     metaConn        = meta->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::metaToggled));
     rawConn         = raw->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::rawToggled));
-    advancedConn         = advanced->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::advancedToggled));
+    advancedConn    = advanced->signal_toggled().connect (sigc::mem_fun(*this, &PartialPasteDlg::advancedToggled));
 //    locConn         = loc->signal_toggled().connect (sigc::mem_fun (*this, &PartialPasteDlg::locToggled));
 
+    // Basic Settings
     wbConn          = wb->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     exposureConn    = exposure->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     localcontrastConn = localcontrast->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     shConn          = sh->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     epdConn         = epd->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     fattalConn      = fattal->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
-    retinexConn     = retinex->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     pcvignetteConn  = pcvignette->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     gradientConn    = gradient->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     labcurveConn    = labcurve->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
-    colorappearanceConn = colorappearance->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
 
+    // Detail Settings:
     sharpenConn     = sharpen->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     gradsharpenConn = sharpenedge->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     microcontrastConn = sharpenmicro->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     impdenConn      = impden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     dirpyrdenConn   = dirpyrden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
-    dirpyreqConn    = dirpyreq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     defringeConn    = defringe->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
-  //  locallabConn     = locallab->signal_toggled().connect (sigc::bind (sigc::mem_fun (*basic, &Gtk::CheckButton::set_inconsistent), true));
+    dirpyreqConn    = dirpyreq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
 
+    // Advanced Settings:
+    retinexConn     = retinex->signal_toggled().connect (sigc::bind (sigc::mem_fun(*advanced, &Gtk::CheckButton::set_inconsistent), true));
+    colorappearanceConn = colorappearance->signal_toggled().connect (sigc::bind (sigc::mem_fun(*advanced, &Gtk::CheckButton::set_inconsistent), true));
     waveletConn = wavelet->signal_toggled().connect (sigc::bind (sigc::mem_fun(*advanced, &Gtk::CheckButton::set_inconsistent), true));
 
+    // Color-related Settings:
     icmConn         = icm->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
-    //gamcsconn      = gam->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
     vibranceConn    = vibrance->signal_toggled().connect (sigc::bind (sigc::mem_fun (*color, &Gtk::CheckButton::set_inconsistent), true));
     chmixerConn     = chmixer->signal_toggled().connect (sigc::bind (sigc::mem_fun (*color, &Gtk::CheckButton::set_inconsistent), true));
     chmixerbwConn   = blackwhite->signal_toggled().connect (sigc::bind (sigc::mem_fun (*color, &Gtk::CheckButton::set_inconsistent), true));
@@ -342,11 +344,13 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     rgbcurvesConn   = rgbcurves->signal_toggled().connect (sigc::bind (sigc::mem_fun (*color, &Gtk::CheckButton::set_inconsistent), true));
     colortoningConn = colortoning->signal_toggled().connect (sigc::bind (sigc::mem_fun (*color, &Gtk::CheckButton::set_inconsistent), true));
 
+    // Lens-Related Settings:
     distortionConn  = distortion->signal_toggled().connect (sigc::bind (sigc::mem_fun (*lens, &Gtk::CheckButton::set_inconsistent), true));
     cacorrConn      = cacorr->signal_toggled().connect (sigc::bind (sigc::mem_fun (*lens, &Gtk::CheckButton::set_inconsistent), true));
     vignettingConn  = vignetting->signal_toggled().connect (sigc::bind (sigc::mem_fun (*lens, &Gtk::CheckButton::set_inconsistent), true));
     lcpConn         = lcp->signal_toggled().connect (sigc::bind (sigc::mem_fun (*lens, &Gtk::CheckButton::set_inconsistent), true));
 
+    // Composition Settings:
     coarserotConn   = coarserot->signal_toggled().connect (sigc::bind (sigc::mem_fun (*composition, &Gtk::CheckButton::set_inconsistent), true));
     finerotConn     = finerot->signal_toggled().connect (sigc::bind (sigc::mem_fun (*composition, &Gtk::CheckButton::set_inconsistent), true));
     cropConn        = crop->signal_toggled().connect (sigc::bind (sigc::mem_fun (*composition, &Gtk::CheckButton::set_inconsistent), true));
@@ -355,34 +359,40 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     perspectiveConn = perspective->signal_toggled().connect (sigc::bind (sigc::mem_fun (*composition, &Gtk::CheckButton::set_inconsistent), true));
     commonTransConn = commonTrans->signal_toggled().connect (sigc::bind (sigc::mem_fun (*composition, &Gtk::CheckButton::set_inconsistent), true));
 
+    // Metadata:
+    metadataConn = metadata->signal_toggled().connect(sigc::bind (sigc::mem_fun(*meta, &Gtk::CheckButton::set_inconsistent), true));
     exifchConn      = exifch->signal_toggled().connect (sigc::bind (sigc::mem_fun (*meta, &Gtk::CheckButton::set_inconsistent), true));
     iptcConn        = iptc->signal_toggled().connect (sigc::bind (sigc::mem_fun (*meta, &Gtk::CheckButton::set_inconsistent), true));
 
+    // Raw Settings:
     raw_methodConn          = raw_method->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_imagenumConn        = raw_imagenum->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
+    raw_pixelshiftConn      = raw_pixelshift->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_ccStepsConn         = raw_ccSteps->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_dcb_iterationsConn  = raw_dcb_iterations->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_dcb_enhanceConn     = raw_dcb_enhance->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
-    //raw_all_enhanceConn     = raw_all_enhance->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_lmmse_iterationsConn  = raw_lmmse_iterations->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
-    raw_pixelshiftConn      = raw_pixelshift->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
-
+    //---
+    raw_linenoiseConn       = raw_linenoise->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    raw_greenthreshConn     = raw_greenthresh->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    raw_hotpix_filtConn     = raw_hotpix_filt->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    raw_deadpix_filtConn    = raw_deadpix_filt->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    //---
     raw_exposConn           = raw_expos->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_preserConn          = raw_preser->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_blackConn           = raw_black->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
-    raw_ca_autocorrectConn  = raw_ca_autocorrect->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
-    raw_caredblueConn       = raw_caredblue->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
-    raw_hotpix_filtConn     = raw_hotpix_filt->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
-    raw_deadpix_filtConn    = raw_deadpix_filt->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
-    raw_linenoiseConn       = raw_linenoise->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
-    raw_greenthreshConn     = raw_greenthresh->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
+    //---
     df_fileConn             = df_file->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
     df_AutoSelectConn       = df_AutoSelect->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
+    //---
     ff_fileConn             = ff_file->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
     ff_AutoSelectConn       = ff_AutoSelect->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
-    ff_BlurRadiusConn       = ff_BlurRadius->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
     ff_BlurTypeConn         = ff_BlurType->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
+    ff_BlurRadiusConn       = ff_BlurRadius->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     ff_ClipControlConn      = ff_ClipControl->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
+    //---
+    raw_ca_autocorrectConn  = raw_ca_autocorrect->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    raw_caredblueConn       = raw_caredblue->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
 
     add_button (M ("GENERAL_OK"), Gtk::RESPONSE_OK);
     add_button (M ("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
@@ -434,55 +444,53 @@ void PartialPasteDlg::rawToggled ()
 
     ConnectionBlocker raw_methodBlocker(raw_methodConn);
     ConnectionBlocker raw_imagenumBlocker(raw_imagenumConn);
+    ConnectionBlocker raw_pixelshiftBlocker(raw_pixelshiftConn);
     ConnectionBlocker raw_ccStepsBlocker(raw_ccStepsConn);
     ConnectionBlocker raw_dcb_iterationsBlocker(raw_dcb_iterationsConn);
     ConnectionBlocker raw_dcb_enhanceBlocker(raw_dcb_enhanceConn);
-    //ConnectionBlocker raw_all_enhanceConnBlocker(raw_all_enhanceConnConn);
     ConnectionBlocker raw_lmmse_iterationsBlocker(raw_lmmse_iterationsConn);
-    ConnectionBlocker raw_pixelshiftBlocker(raw_pixelshiftConn);
+    ConnectionBlocker raw_linenoiseBlocker(raw_linenoiseConn);
+    ConnectionBlocker raw_greenthreshBlocker(raw_greenthreshConn);
+    ConnectionBlocker raw_hotpix_filtBlocker(raw_hotpix_filtConn);
+    ConnectionBlocker raw_deadpix_filtBlocker(raw_deadpix_filtConn);
     ConnectionBlocker raw_exposBlocker(raw_exposConn);
     ConnectionBlocker raw_preserBlocker(raw_preserConn);
     ConnectionBlocker raw_blackBlocker(raw_blackConn);
-    ConnectionBlocker raw_ca_autocorrectBlocker(raw_ca_autocorrectConn);
-    ConnectionBlocker raw_caredblueBlocker(raw_caredblueConn);
-    ConnectionBlocker raw_hotpix_filtBlocker(raw_hotpix_filtConn);
-    ConnectionBlocker raw_deadpix_filtBlocker(raw_deadpix_filtConn);
-    ConnectionBlocker raw_linenoiseBlocker(raw_linenoiseConn);
-    ConnectionBlocker raw_greenthreshBlocker(raw_greenthreshConn);
     ConnectionBlocker df_fileBlocker(df_fileConn);
     ConnectionBlocker df_AutoSelectBlocker(df_AutoSelectConn);
     ConnectionBlocker ff_fileBlocker(ff_fileConn);
     ConnectionBlocker ff_AutoSelectBlocker(ff_AutoSelectConn);
-    ConnectionBlocker ff_BlurRadiusBlocker(ff_BlurRadiusConn);
     ConnectionBlocker ff_BlurTypeBlocker(ff_BlurTypeConn);
+    ConnectionBlocker ff_BlurRadiusBlocker(ff_BlurRadiusConn);
     ConnectionBlocker ff_ClipControlBlocker(ff_ClipControlConn);
+    ConnectionBlocker raw_ca_autocorrectBlocker(raw_ca_autocorrectConn);
+    ConnectionBlocker raw_caredblueBlocker(raw_caredblueConn);
 
     raw->set_inconsistent (false);
 
     raw_method->set_active (raw->get_active ());
     raw_imagenum->set_active (raw->get_active ());
+    raw_pixelshift->set_active (raw->get_active ());
     raw_ccSteps->set_active (raw->get_active ());
     raw_dcb_iterations->set_active (raw->get_active ());
     raw_dcb_enhance->set_active (raw->get_active ());
     raw_lmmse_iterations->set_active (raw->get_active ());
-    raw_pixelshift->set_active (raw->get_active ());
-    //raw_all_enhance->set_active (raw->get_active ());
+    raw_linenoise->set_active (raw->get_active ());
+    raw_greenthresh->set_active (raw->get_active ());
+    raw_hotpix_filt->set_active (raw->get_active ());
+    raw_deadpix_filt->set_active (raw->get_active ());
     raw_expos->set_active (raw->get_active ());
     raw_preser->set_active (raw->get_active ());
     raw_black->set_active (raw->get_active ());
-    raw_ca_autocorrect->set_active (raw->get_active ());
-    raw_caredblue->set_active (raw->get_active ());
-    raw_hotpix_filt->set_active (raw->get_active ());
-    raw_deadpix_filt->set_active (raw->get_active ());
-    raw_linenoise->set_active (raw->get_active ());
-    raw_greenthresh->set_active (raw->get_active ());
     df_file->set_active (raw->get_active ());
     df_AutoSelect->set_active (raw->get_active ());
     ff_file->set_active (raw->get_active ());
     ff_AutoSelect->set_active (raw->get_active ());
-    ff_BlurRadius->set_active (raw->get_active ());
     ff_BlurType->set_active (raw->get_active ());
+    ff_BlurRadius->set_active (raw->get_active ());
     ff_ClipControl->set_active (raw->get_active ());
+    raw_ca_autocorrect->set_active (raw->get_active ());
+    raw_caredblue->set_active (raw->get_active ());
 }
 
 void PartialPasteDlg::basicToggled ()
@@ -554,14 +562,15 @@ void PartialPasteDlg::detailToggled ()
 void PartialPasteDlg::advancedToggled ()
 {
 
-    ConnectionBlocker waveletBlocker(waveletConn);
     ConnectionBlocker retinexBlocker(retinexConn);
     ConnectionBlocker colorappearanceBlocker(colorappearanceConn);
+    ConnectionBlocker waveletBlocker(waveletConn);
 
     advanced->set_inconsistent (false);
+
+    retinex->set_active (advanced->get_active ());
+    colorappearance->set_active (advanced->get_active ());
     wavelet->set_active (advanced->get_active ());
-    retinex->set_active (basic->get_active ());
-    colorappearance->set_active (basic->get_active ());
 }
 /*
 void PartialPasteDlg::locToggled ()
@@ -585,14 +594,12 @@ void PartialPasteDlg::colorToggled ()
     ConnectionBlocker chmixerbwBlocker(chmixerbwConn);
     ConnectionBlocker hsveqBlocker(hsveqConn);
     ConnectionBlocker filmSimulationBlocker(filmSimulationConn);
-    //ConnectionBlocker gamcsconnBlocker(gamcsconnConn);
     ConnectionBlocker rgbcurvesBlocker(rgbcurvesConn);
     ConnectionBlocker colortoningBlocker(colortoningConn);
 
     color->set_inconsistent (false);
 
     icm->set_active (color->get_active ());
-    //gam->set_active (color->get_active ());
     vibrance->set_active (color->get_active ());
     chmixer->set_active (color->get_active ());
     blackwhite->set_active (color->get_active ());
@@ -643,11 +650,13 @@ void PartialPasteDlg::compositionToggled ()
 void PartialPasteDlg::metaToggled ()
 {
 
+    ConnectionBlocker metadataBlocker(metadataConn);
     ConnectionBlocker exifchBlocker(exifchConn);
     ConnectionBlocker iptcBlocker(iptcConn);
 
     meta->set_inconsistent (false);
 
+    metadata->set_active(meta->get_active());
     exifch->set_active (meta->get_active ());
     iptc->set_active (meta->get_active ());
 }
@@ -826,6 +835,10 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 
     if (!commonTrans->get_active ()) {
         filterPE.commonTrans = falsePE.commonTrans;
+    }
+
+    if (!metadata->get_active()) {
+        filterPE.metadata = falsePE.metadata;
     }
 
     if (!exifch->get_active ()) {
