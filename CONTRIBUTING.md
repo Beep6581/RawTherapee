@@ -17,4 +17,10 @@ The most useful feedback is based on the latest development code, and in the cas
 - Work in a new branch. Fork if necessary.
 - Keep branches small so that completed and working features can be merged into the "dev" branch often, and so that they can be abandoned if they head in the wrong direction.
 - Use C++11
+- The naming isn't homogeneous throughout the code but here is a rough guideline:
+  - *Types* (classes, structs, enums, typedefs...) should be named with `UpperCamelCase`
+  - *Functions* and *methods* should be named with `lowerCamelCase`
+  - *Variables* should be either named with `lowerCamelCase` or better with `lower_underscores` to avoid conflicts
+  - *Enum values* should be named with `UPPER_UNDERSCORES`
+  - Most important: Be consistent, even when not sticking to the rules
 - Code may be run through astyle version 3 or newer. If using astyle, it is important that the astyle changes go into their own commit, so that style changes are not mixed with actual code changes. Command: `astyle --options=rawtherapee.astylerc code.cc`
