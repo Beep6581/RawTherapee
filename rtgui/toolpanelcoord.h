@@ -301,6 +301,9 @@ public:
     void editModeSwitchedOff ();
 
     void setEditProvider (EditDataProvider *provider);
+
+private:
+    IdleRegister idle_register;
 };
 
 #endif

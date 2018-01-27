@@ -29,19 +29,35 @@
 
 using namespace rtengine;
 
-CropHandler::CropHandler ()
-    : zoom(100), ww(0), wh(0), cax(-1), cay(-1),
-      cx(0), cy(0), cw(0), ch(0), cropX(0), cropY(0), cropW(0), cropH(0), enabled(false),
-      cropimg(nullptr), cropimgtrue(nullptr), cropimg_width(0), cropimg_height(0),
-      cix(0), ciy(0), ciw(0), cih(0), cis(1),
-      initial(false), isLowUpdatePriority(false), ipc(nullptr), crop(nullptr),
-      displayHandler(nullptr)
+CropHandler::CropHandler() :
+    zoom(100),
+    ww(0),
+    wh(0),
+    cax(-1),
+    cay(-1),
+    cx(0),
+    cy(0),
+    cw(0),
+    ch(0),
+    cropX(0),
+    cropY(0),
+    cropW(0),
+    cropH(0),
+    enabled(false),
+    cropimg_width(0),
+    cropimg_height(0),
+    cix(0),
+    ciy(0),
+    ciw(0),
+    cih(0),
+    cis(1),
+    isLowUpdatePriority(false),
+    ipc(nullptr),
+    crop(nullptr),
+    displayHandler(nullptr),
+    redraw_needed(false),
+    initial(false)
 {
-
-    idle_helper = new IdleHelper;
-    idle_helper->destroyed = false;
-    idle_helper->pending = 0;
-    idle_helper->cropHandler = this;
 }
 
 CropHandler::~CropHandler ()
@@ -59,16 +75,6 @@ CropHandler::~CropHandler ()
         delete crop; // will do the same than destroy, plus delete the object
         crop = nullptr;
     }
-
-    cimg.lock ();
-
-    if (idle_helper->pending) {
-        idle_helper->destroyed = true;
-    } else {
-        delete idle_helper;
-    }
-
-    cimg.unlock ();
 }
 
 void CropHandler::setEditSubscriber (EditSubscriber* newSubscriber)
@@ -308,110 +314,94 @@ void CropHandler::setDetailedCrop (IImage8* im, IImage8* imtrue, rtengine::procp
 
     cropPixbuf.clear ();
 
-    if (cropimg) {
-        delete [] cropimg;
+    if (!cropimg.empty()) {
+        cropimg.clear();
     }
 
-    cropimg = nullptr;
-
-    if (cropimgtrue) {
-        delete [] cropimgtrue;
+    if (!cropimgtrue.empty()) {
+        cropimgtrue.clear();
     }
-
-    cropimgtrue = nullptr;
 
     if (ax == cropX && ay == cropY && aw == cropW && ah == cropH && askip == (zoom >= 1000 ? 1 : zoom / 10)) {
         cropimg_width = im->getWidth ();
         cropimg_height = im->getHeight ();
-        cropimg = new unsigned char [3 * cropimg_width * cropimg_height];
-        cropimgtrue = new unsigned char [3 * cropimg_width * cropimg_height];
-        memcpy (cropimg, im->getData(), 3 * cropimg_width * cropimg_height);
-        memcpy (cropimgtrue, imtrue->getData(), 3 * cropimg_width * cropimg_height);
+        const std::size_t cropimg_size = 3 * cropimg_width * cropimg_height;
+        cropimg.assign(im->getData(), im->getData() + cropimg_size);
+        cropimgtrue.assign(imtrue->getData(), imtrue->getData() + cropimg_size);
         cix = ax;
         ciy = ay;
         ciw = aw;
         cih = ah;
         cis = askip;
-        idle_helper->pending++;
 
-        const auto func = [](gpointer data) -> gboolean {
-            IdleHelper* const idle_helper = static_cast<IdleHelper*>(data);
+        bool expected = false;
 
-            if (idle_helper->destroyed) {
-                if (idle_helper->pending == 1) {
-                    delete idle_helper;
+        if (redraw_needed.compare_exchange_strong(expected, true)) {
+            const auto func = [](gpointer data) -> gboolean {
+                CropHandler* const self = static_cast<CropHandler*>(data);
+
+                self->cimg.lock ();
+
+                if (self->redraw_needed.exchange(false)) {
+                    self->cropPixbuf.clear ();
+
+                    if (!self->enabled) {
+                        self->cropimg.clear();
+                        self->cropimgtrue.clear();
+                        self->cimg.unlock ();
+                        return FALSE;
+                    }
+
+                    if (!self->cropimg.empty()) {
+                        if (self->cix == self->cropX && self->ciy == self->cropY && self->ciw == self->cropW && self->cih == self->cropH && self->cis == (self->zoom >= 1000 ? 1 : self->zoom / 10)) {
+                            // calculate final image size
+                            float czoom = self->zoom >= 1000 ?
+                                self->zoom / 1000.f :
+                                float((self->zoom/10) * 10) / float(self->zoom);
+                            int imw = self->cropimg_width * czoom;
+                            int imh = self->cropimg_height * czoom;
+
+                            if (imw > self->ww) {
+                                imw = self->ww;
+                            }
+
+                            if (imh > self->wh) {
+                                imh = self->wh;
+                            }
+
+                            Glib::RefPtr<Gdk::Pixbuf> tmpPixbuf = Gdk::Pixbuf::create_from_data (self->cropimg.data(), Gdk::COLORSPACE_RGB, false, 8, self->cropimg_width, self->cropimg_height, 3 * self->cropimg_width);
+                            self->cropPixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, imw, imh);
+                            tmpPixbuf->scale (self->cropPixbuf, 0, 0, imw, imh, 0, 0, czoom, czoom, Gdk::INTERP_TILES);
+                            tmpPixbuf.clear ();
+
+                            Glib::RefPtr<Gdk::Pixbuf> tmpPixbuftrue = Gdk::Pixbuf::create_from_data (self->cropimgtrue.data(), Gdk::COLORSPACE_RGB, false, 8, self->cropimg_width, self->cropimg_height, 3 * self->cropimg_width);
+                            self->cropPixbuftrue = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, imw, imh);
+                            tmpPixbuftrue->scale (self->cropPixbuftrue, 0, 0, imw, imh, 0, 0, czoom, czoom, Gdk::INTERP_TILES);
+                            tmpPixbuftrue.clear ();
+                        }
+
+                        self->cropimg.clear();
+                        self->cropimgtrue.clear();
+                    }
+
+                    self->cimg.unlock ();
+
+                    if (self->displayHandler) {
+                        self->displayHandler->cropImageUpdated ();
+
+                        if (self->initial.exchange(false)) {
+                            self->displayHandler->initialImageArrived ();
+                        }
+                    }
                 } else {
-                    idle_helper->pending--;
+                    self->cimg.unlock();
                 }
 
                 return FALSE;
-            }
+            };
 
-            CropHandler* ch = idle_helper->cropHandler;
-
-            ch->cimg.lock ();
-            ch->cropPixbuf.clear ();
-
-            if (!ch->enabled) {
-                delete [] ch->cropimg;
-                ch->cropimg = nullptr;
-                delete [] ch->cropimgtrue;
-                ch->cropimgtrue = nullptr;
-                ch->cimg.unlock ();
-                return FALSE;
-            }
-
-            if (ch->cropimg) {
-                if (ch->cix == ch->cropX && ch->ciy == ch->cropY && ch->ciw == ch->cropW && ch->cih == ch->cropH && ch->cis == (ch->zoom >= 1000 ? 1 : ch->zoom / 10)) {
-                    // calculate final image size
-                    float czoom = ch->zoom >= 1000 ?
-                        ch->zoom / 1000.f :
-                        float((ch->zoom/10) * 10) / float(ch->zoom);
-                    int imw = ch->cropimg_width * czoom;
-                    int imh = ch->cropimg_height * czoom;
-
-                    if (imw > ch->ww) {
-                        imw = ch->ww;
-                    }
-
-                    if (imh > ch->wh) {
-                        imh = ch->wh;
-                    }
-
-                    Glib::RefPtr<Gdk::Pixbuf> tmpPixbuf = Gdk::Pixbuf::create_from_data (ch->cropimg, Gdk::COLORSPACE_RGB, false, 8, ch->cropimg_width, ch->cropimg_height, 3 * ch->cropimg_width);
-                    ch->cropPixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, imw, imh);
-                    tmpPixbuf->scale (ch->cropPixbuf, 0, 0, imw, imh, 0, 0, czoom, czoom, Gdk::INTERP_TILES);
-                    tmpPixbuf.clear ();
-
-                    Glib::RefPtr<Gdk::Pixbuf> tmpPixbuftrue = Gdk::Pixbuf::create_from_data (ch->cropimgtrue, Gdk::COLORSPACE_RGB, false, 8, ch->cropimg_width, ch->cropimg_height, 3 * ch->cropimg_width);
-                    ch->cropPixbuftrue = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, imw, imh);
-                    tmpPixbuftrue->scale (ch->cropPixbuftrue, 0, 0, imw, imh, 0, 0, czoom, czoom, Gdk::INTERP_TILES);
-                    tmpPixbuftrue.clear ();
-                }
-
-                delete [] ch->cropimg;
-                ch->cropimg = nullptr;
-                delete [] ch->cropimgtrue;
-                ch->cropimgtrue = nullptr;
-            }
-
-            ch->cimg.unlock ();
-
-            if (ch->displayHandler) {
-                ch->displayHandler->cropImageUpdated ();
-
-                if (ch->initial) {
-                    ch->displayHandler->initialImageArrived ();
-                    ch->initial = false;
-                }
-            }
-
-            idle_helper->pending--;
-
-            return FALSE;
-        };
-
-        idle_register.add(func, idle_helper, G_PRIORITY_HIGH_IDLE);
+            idle_register.add(func, this/*, G_PRIORITY_HIGH_IDLE*/);
+        }
     }
 
     cimg.unlock ();
@@ -468,13 +458,11 @@ void CropHandler::setEnabled (bool e)
             crop->setListener (nullptr);
         }
 
-        cimg.lock ();
-        delete [] cropimg;
-        cropimg = nullptr;
-        delete [] cropimgtrue;
-        cropimgtrue = nullptr;
-        cropPixbuf.clear ();
-        cimg.unlock ();
+        cimg.lock();
+        cropimg.clear();
+        cropimgtrue.clear();
+        cropPixbuf.clear();
+        cimg.unlock();
     } else {
         update ();
     }
