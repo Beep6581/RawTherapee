@@ -31,6 +31,7 @@
 #include <string>
 #include <unistd.h>
 #include "../rtengine/improcfun.h"
+#include "eventmapper.h"
 
 #define MINCHRO 0.
 #define MAXCHRO 150
@@ -337,6 +338,117 @@ Locallab::Locallab():
 {
     CurveListener::setMulti(true);
     ProcParams params;
+
+    auto m = ProcEventMapper::getInstance();
+    EvLocenacolor = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCENACOLOR");//548
+    EvLocenaexpose = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCENAEXPOSE");//572
+    EvLocenavibrance = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCENAVIBR");//563
+    EvLocenablur = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCENABLUR");//549
+    EvLocenatonemap = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCENATM");//550
+    EvLocenareti = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCENARETI");//551
+    EvLocenasharp = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCENASHARP");//552
+    EvLocenacbdl = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCENACBDL");//553
+    EvLocenadenoi = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCENADENOI");//554
+	
+    EvlocallablocX = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCLOCX"); //= 494,
+    EvlocallabCenter = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCENTER"); //= 495,
+    EvlocallabDegree = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCDEGRE"); //= 496,
+    Evlocallablightness = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCLIGHT"); //= 497,
+    Evlocallabcontrast = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCONTRA"); //= 498,
+    Evlocallabchroma = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCHROMA"); //= 499,
+    Evlocallabtransit = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCTRANSIT"); //= 500,
+    Evlocallabavoid = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCAVOID"); //= 501,
+    EvlocallablocYT = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCLOCYT"); // = 502,
+    EvlocallablocXL = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCXL"); //= 503,
+    EvlocallabSmet = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSMET"); //= 504,
+    Evlocallabinvers = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCINVERS"); //= 505,
+    Evlocallabradius = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCRADIUS"); //= 506,
+    Evlocallabinversrad = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCINVRAD"); //= 507,
+    Evlocallabstrength = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSTRENGTH"); //= 508,
+    Evlocallabsensi = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSENSI"); //= 509,
+    EvlocallabretinexMethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCRETIMETH");//510
+    Evlocallabstr = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCRETISTR");//= 511,
+    Evlocallabneigh = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCRETINEIGH");//= 512,
+    Evlocallabvart = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCRETIVART");//= 513,
+    EvlocallabCTgainCurve = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCRETIGAINCURV");//= 514,
+    Evlocallabchrrt = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCHRRT");//= 515,
+    Evlocallabinversret = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCINVRET");//= 516,
+    Evlocallabsensih = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSENSIH");//= 517,
+    Evlocallabnbspot = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCNBSPOT");//= 518,
+    Evlocallabactivlum = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCACTIVLUM");//= 519,
+    Evlocallabanbspot = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCANBSPOT");//= 520,
+    Evlocallabsharradius = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSHARADIUS");//= 521,
+    Evlocallabsharamount = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSHAAMOUNT");//= 522,
+    Evlocallabshardamping = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSHADAMPING");//= 523,
+    Evlocallabshariter = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSHAITER");//= 524,
+    Evlocallabsensis = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSENSIS");//= 525,
+    Evlocallabinverssha = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCINVSHA");//= 526,
+    Evlocallabcircrad = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCIRCRAD");//= 527,
+    Evlocallabthres = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCTHRES");//= 528,
+    Evlocallabproxi = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCPROXI");//= 529,
+    EvlocallabqualityMethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCQUALMETH");//= 530,
+    Evlocallabnoiselumf = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCNOISLUMF");//= 531,
+    Evlocallabnoiselumc = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCNOISLUMC");//= 532,
+    Evlocallabnoisechrof = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCNOISCHROF");//= 533,
+    Evlocallabnoisechroc = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCNOISCHROC");//= 534,
+    EvlocallabThresho = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCBDLTHRESHO");//= 535,
+    EvlocallabEqualizer = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCBDLEQUALIZ");//= 536,
+    Evlocallabsensicb = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSENSICB");//= 537,
+    Evlocallabsensibn = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSENSIBN");//= 538,
+    Evlocallabstren = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSTREN");//= 539,
+    Evlocallabgamma = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCGAMM");//= 540,
+    Evlocallabestop = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCESTOP");//= 541,
+    Evlocallabscaltm = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSCALTM");//= 542,
+    Evlocallabrewei = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCREWEI");//= 543,
+    Evlocallabsensitm = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSENSITM");//= 544,
+    EvlocallabCTgainCurverab = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCGAINCURRAB");//= 545,
+    Evlocallabretrab = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCRETRAB");//= 546,
+    Evlocallabllshape = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCLSHAPE");//= 547,
+    EvlocallabLHshape = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCLHSHAPE");// = 555,
+    Evlocallabcurvactiv = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCURVACTIV");// = 556,
+    Evlocallabccshape = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCCSHAPE");// = 557,
+    EvlocallabqualitycurveMethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCQUALCURVMETH");// = 558,
+    Evlocallabhueref = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCHUEREF");// = 559,
+    Evlocallabchromaref = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCHROMAREF");// = 560,
+    Evlocallablumaref = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCLUMAREF");// = 561,
+    EvlocallabHHshape = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCHHSHAPE");// = 562,
+    EvlocallabSkinTonesCurve = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSKINTONCURV");// = 564,
+    EvlocallabProtectSkins = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCPROTSKIN");// = 565,
+    EvlocallabAvoidColorShift = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCAVOIDCOLORSHIFT");// = 566,
+    EvlocallabPastSatTog = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCPASTSATTOG");// = 567,
+    EvlocallabPastels = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCPASTEL");// = 568,
+    EvlocallabSaturated = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSATUR");// = 569,
+    EvlocallabPastSatThreshold = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCPASTSATTHRES");// = 570,
+    Evlocallabsensiv = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSENSIV");// = 571,
+    Evlocallabexpcomp = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCEXPCOMP");// = 573,
+    Evlocallabhlcompr = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCHLCOMPR");// = 574,
+    Evlocallabhlcomprthresh = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCHLCOMPRTHRESH");// = 575,
+    Evlocallabblack = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCBLACK");// = 576,
+    Evlocallabshcompr = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSHCOMPR");// = 577,
+    Evlocallabsensiex = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSENSIEX");// = 578,
+    Evlocallabshape = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSHAPE");// = 579,
+    EvlocallabCenterbuf = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCENTERBUF");// = 580,
+    Evlocallabadjblur = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCNOISEEQUALBLURED");// = 581,
+    Evlocallabcutpast = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCUTPAST");// = 582,
+    Evlocallabchromacbdl = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCHROCBDL");// = 583,
+    EvlocallabblurMethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCBLURMETH"); //584
+    EvlocallabdustMethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCDUSTMETH");// = 585,
+    Evlocallablastdust = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCLASTDUST");// = 586,
+    Evlocallabsobelref = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSOBELREF");// = 587,
+    Evlocallabexclumethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCEXCLUMETH");// = 588,
+    Evlocallabsensiexclu = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSENSIEXCL");// = 589,
+    Evlocallabstruc = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSTRUC");// = 590,
+    Evlocallabwarm = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCWARM");// = 591,
+    Evlocallabnoiselumdetail = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCNOISELUMDETAIL");// = 592,
+    Evlocallabnoisechrodetail = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCNOISECHRODETAIL");// = 593,
+    Evlocallabsensiden = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSENSIDEN");// = 594,
+    Evlocallabhuerefblur = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCHUEREFBLUR");// = 595,
+    EvlocallabEnabled = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCENABLED");// = 596,
+    EvlocallablocY = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCLOCY");// = 597,
+    Evlocallabbilateral = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCBILATERAL");// = 598,
+    Evlocallabnoiselequal = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCNOISELEQUAL");// = 599,
+    Evlocallabshapemethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSHAPEMETH");// = 600,
+
     editHBox = Gtk::manage(new Gtk::HBox());
     edit = Gtk::manage(new Gtk::ToggleButton());
     edit->add(*Gtk::manage(new RTImage("editmodehand.png")));
