@@ -54,8 +54,8 @@ CcSteps=2
 LMMSEIterations=2
 
 [RAW X-Trans]
-Method=3-pass (best)
-CcSteps=0
+Method=1-pass (medium)
+CcSteps=2
 
 [Color Management]
 ToneCurve=false
