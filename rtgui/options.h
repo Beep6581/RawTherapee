@@ -32,9 +32,9 @@
 
 // Default bundled profile name to use for Raw images
 #ifdef WIN32
-#define DEFPROFILE_RAW      "${G}\\Default"
+#define DEFPROFILE_RAW      "${G}\\Auto-Matched Curve - ISO Low"
 #else
-#define DEFPROFILE_RAW      "${G}/Default"
+#define DEFPROFILE_RAW      "${G}/Auto-Matched Curve - ISO Low"
 #endif
 // Default bundled profile name to use for Standard images
 #define DEFPROFILE_IMG      "Neutral"

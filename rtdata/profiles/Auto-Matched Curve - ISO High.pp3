@@ -1,0 +1,64 @@
+[Version]
+AppVersion=5.3-524-g4046a3c9
+Version=330
+
+[Exposure]
+Auto=false
+Clip=0.02
+Compensation=0
+Brightness=0
+Contrast=0
+Saturation=0
+Black=0
+HighlightCompr=0
+HighlightComprThreshold=33
+ShadowCompr=50
+HistogramMatching=true
+CurveMode=FilmLike
+CurveMode2=WeightedStd
+Curve=1;0;0;1;1;
+Curve2=0;
+
+[HLRecovery]
+Enabled=true
+Method=Blend
+
+[Directional Pyramid Denoising]
+Enabled=true
+Enhance=false
+Median=true
+Luma=50
+Ldetail=60
+Method=Lab
+LMethod=SLI
+CMethod=AUT
+C2Method=AUTO
+SMethod=shal
+MedMethod=55
+RGBMethod=soft
+MethodMed=Lpab
+Redchro=0
+Bluechro=0
+Gamma=1.7
+Passes=1
+LCurve=0
+CCCurve=0
+
+[RAW]
+CA=true
+
+[RAW Bayer]
+Method=lmmse
+CcSteps=2
+LMMSEIterations=2
+
+[RAW X-Trans]
+Method=3-pass (best)
+CcSteps=0
+
+[Color Management]
+ToneCurve=false
+ApplyLookTable=true
+ApplyBaselineExposureOffset=true
+ApplyHueSatMap=true
+DCPIlluminant=0
