@@ -265,6 +265,7 @@ void ToolPanelCoordinator::addPanel(Gtk::Box* where, FoldableToolPanel* panel, i
 
 ToolPanelCoordinator::~ToolPanelCoordinator()
 {
+    idle_register.destroy();
 
     closeImage();
 
@@ -274,29 +275,58 @@ ToolPanelCoordinator::~ToolPanelCoordinator()
 
 void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans)
 {
-    GThreadLock lock;
-
     if (isRaw) {
-        rawPanelSW->set_sensitive(true);
-
         if (isBayer) {
-            sensorxtrans->FoldableToolPanel::hide();
-            sensorbayer->FoldableToolPanel::show();
-            preprocess->FoldableToolPanel::show();
-            flatfield->FoldableToolPanel::show();
-        } else if (isXtrans) {
-            sensorxtrans->FoldableToolPanel::show();
-            sensorbayer->FoldableToolPanel::hide();
-            preprocess->FoldableToolPanel::show();
-            flatfield->FoldableToolPanel::show();
-        } else {
-            sensorbayer->FoldableToolPanel::hide();
-            sensorxtrans->FoldableToolPanel::hide();
-            preprocess->FoldableToolPanel::hide();
-            flatfield->FoldableToolPanel::hide();
+            const auto func = [](gpointer data) -> gboolean {
+                ToolPanelCoordinator* const self = static_cast<ToolPanelCoordinator*>(data);
+
+                self->rawPanelSW->set_sensitive (true);
+                self->sensorxtrans->FoldableToolPanel::hide();
+                self->sensorbayer->FoldableToolPanel::show();
+                self->preprocess->FoldableToolPanel::show();
+                self->flatfield->FoldableToolPanel::show();
+
+                return FALSE;
+            };
+            idle_register.add(func, this);
+        }
+        else if (isXtrans) {
+            const auto func = [](gpointer data) -> gboolean {
+                ToolPanelCoordinator* const self = static_cast<ToolPanelCoordinator*>(data);
+
+                self->rawPanelSW->set_sensitive (true);
+                self->sensorxtrans->FoldableToolPanel::show();
+                self->sensorbayer->FoldableToolPanel::hide();
+                self->preprocess->FoldableToolPanel::show();
+                self->flatfield->FoldableToolPanel::show();
+
+                return FALSE;
+            };
+            idle_register.add(func, this);
+        }
+        else {
+            const auto func = [](gpointer data) -> gboolean {
+                ToolPanelCoordinator* const self = static_cast<ToolPanelCoordinator*>(data);
+
+                self->rawPanelSW->set_sensitive (true);
+                self->sensorbayer->FoldableToolPanel::hide();
+                self->sensorxtrans->FoldableToolPanel::hide();
+                self->preprocess->FoldableToolPanel::hide();
+                self->flatfield->FoldableToolPanel::hide();
+
+                return FALSE;
+            };
+            idle_register.add(func, this);
         }
     } else {
-        rawPanelSW->set_sensitive(false);
+        const auto func = [](gpointer data) -> gboolean {
+            ToolPanelCoordinator* const self = static_cast<ToolPanelCoordinator*>(data);
+
+            self->rawPanelSW->set_sensitive (false);
+
+            return FALSE;
+        };
+        idle_register.add(func, this);
     }
 
 }
@@ -503,7 +533,6 @@ void ToolPanelCoordinator::initImage(rtengine::StagedImageProcessor* ipc_, bool 
 
 
     toneCurve->setRaw(raw);
-//>>>>>>> dev
     hasChanged = true;
 }
 

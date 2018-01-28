@@ -19,11 +19,16 @@
 #ifndef __CROPHANDLER__
 #define __CROPHANDLER__
 
+#include <atomic>
+#include <vector>
+
+#include <gtkmm.h>
+
 #include "../rtengine/rtengine.h"
-#include "threadutils.h"
+
 #include "edit.h"
 #include "lockablecolorpicker.h"
-#include <gtkmm.h>
+#include "threadutils.h"
 
 class CropDisplayHandler
 {
@@ -98,12 +103,6 @@ public:
     MyMutex cimg;
 
 private:
-    struct IdleHelper {
-        CropHandler* cropHandler;
-        bool destroyed;
-        int pending;
-    };
-
     void    compDim ();
 
     int zoom;               // scale factor (e.g. 5 if 1:5 scale) ; if 1:1 scale and bigger, factor is multiplied by 1000  (i.e. 1000 for 1:1 scale, 2000 for 2:1, etc...)
@@ -112,17 +111,18 @@ private:
     int cx, cy, cw, ch;     // position and size of the requested crop ; position expressed in image coordinates, so cx and cy might be negative and cw and ch higher than the image's 1:1 size
     int cropX, cropY, cropW, cropH; // cropPixbuf's displayed area (position and size), i.e. coordinates in 1:1 scale, i.e. cx, cy, cw & ch trimmed to the image's bounds
     bool enabled;
-    unsigned char* cropimg;
-    unsigned char* cropimgtrue;
+    std::vector<unsigned char> cropimg;
+    std::vector<unsigned char> cropimgtrue;
     int cropimg_width, cropimg_height, cix, ciy, ciw, cih, cis;
-    bool initial;
     bool isLowUpdatePriority;
 
     rtengine::StagedImageProcessor* ipc;
     rtengine::DetailedCrop* crop;
 
     CropDisplayHandler* displayHandler;
-    IdleHelper* idle_helper;
+
+    std::atomic<bool> redraw_needed;
+    std::atomic<bool> initial;
 
     IdleRegister idle_register;
 };
