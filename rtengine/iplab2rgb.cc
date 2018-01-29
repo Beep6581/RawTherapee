@@ -318,7 +318,7 @@ Imagefloat* ImProcFunctions::lab2rgbOut (LabImage* lab, int cx, int cy, int cw, 
 
             for (int j = cx; j < cx + cw; j++) {
 
-                float fy = (0.0086206897f * rL[j]) / 327.68f + 0.1379310345f; // (L+16)/116
+                float fy = (Color::c1By116 * rL[j]) / 327.68f + Color::c16By116; // (L+16)/116
                 float fx = (0.002f * ra[j]) / 327.68f + fy;
                 float fz = fy - (0.005f * rb[j]) / 327.68f;
                 float LL = rL[j] / 327.68f;

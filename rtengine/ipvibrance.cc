@@ -700,7 +700,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
                     aprovn = Chprov * sincosval.y;
                     bprovn = Chprov * sincosval.x;
 
-                    float fyy = (0.00862069f * Lprov ) + 0.137932f;
+                    float fyy = (Color::c1By116 * Lprov ) + Color::c16By116;
                     float fxx = (0.002f * aprovn) + fyy;
                     float fzz = fyy - (0.005f * bprovn);
                     float xx_ = 65535.f * Color::f2xyz (fxx) * Color::D50x;

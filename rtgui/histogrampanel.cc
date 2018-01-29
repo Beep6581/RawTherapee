@@ -476,7 +476,7 @@ void HistogramRGBArea::updateFreeze (bool f)
     return;
 }
 
-void HistogramRGBArea::updateBackBuffer (int r, int g, int b, Glib::ustring profile, Glib::ustring profileW)
+void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustring &profile, const Glib::ustring &profileW)
 {
     if (!get_realized () || frozen || !showMode) {
         return;
@@ -531,7 +531,7 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, Glib::ustring prof
 
             if(needLuma || needChroma) {
                 float Lab_L, Lab_a, Lab_b;
-                rgb2lab( profile, profileW, r, g, b, Lab_L, Lab_a, Lab_b);
+                rtengine::Color::rgb2lab01(profile, profileW, r / 255.f, g / 255.f, b / 255.f, Lab_L, Lab_a, Lab_b, options.rtSettings.HistogramWorking);
 
                 if (needLuma) {
                     // Luma
@@ -555,153 +555,6 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, Glib::ustring prof
     }
 
     setDirty(false);
-}
-
-void HistogramRGBArea::rgb2lab (Glib::ustring profile, Glib::ustring profileW, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b)
-{
-    double xyz_rgb[3][3];
-    const double ep = 216.0 / 24389.0;
-    const double ka = 24389.0 / 27.0;
-
-    double var_R = r / 255.0;
-    double var_G = g / 255.0;
-    double var_B = b / 255.0;
-
-    Glib::ustring profileCalc;
-    profileCalc = "sRGB"; //default
-
-    if(options.rtSettings.HistogramWorking) {
-        profileCalc = profileW;    //display working
-    }
-
-    else {// if you want display = output space
-        if (profile == "RT_sRGB" || profile == "RT_sRGB_gBT709" || profile == "RT_sRGB_g10") {
-            profileCalc = "sRGB";
-        }
-
-        if (profile == "ProPhoto" || profile == "RT_Large_gBT709" || profile == "RT_Large_g10"  || profile == "RT_Large_gsRGB") {
-            profileCalc = "ProPhoto";
-        }
-
-        if (profile == "AdobeRGB1998" || profile == "RT_Medium_gsRGB") {
-            profileCalc = "Adobe RGB";
-        }
-
-        if (profile == "WideGamutRGB") {
-            profileCalc = "WideGamut";
-        }
-    }
-
-    if(options.rtSettings.HistogramWorking) {//display working
-        if (profileW == "sRGB") { //apply sRGB inverse gamma
-
-            if ( var_R > 0.04045 ) {
-                var_R = pow ( ( ( var_R + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
-            } else {
-                var_R = var_R / 12.92;
-            }
-
-            if ( var_G > 0.04045 ) {
-                var_G = pow ( ( ( var_G + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
-            } else {
-                var_G = var_G / 12.92;
-            }
-
-            if ( var_B > 0.04045 ) {
-                var_B = pow ( ( ( var_B + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
-            } else {
-                var_B = var_B / 12.92;
-            }
-        } else if (profileW == "ProPhoto") { // apply inverse gamma 1.8
-            var_R = pow ( var_R, 1.8);
-            var_G = pow ( var_G, 1.8);
-            var_B = pow ( var_B, 1.8);
-        } else { // apply inverse gamma 2.2
-            var_R = pow ( var_R, 2.2);
-            var_G = pow ( var_G, 2.2);
-            var_B = pow ( var_B, 2.2);
-        }
-    } else { //display outout profile
-
-        if (profile == "RT_sRGB" || profile == "RT_Large_gsRGB"  || profile == "RT_Medium_gsRGB") { //apply sRGB inverse gamma
-            if ( var_R > 0.04045 ) {
-                var_R = pow ( ( ( var_R + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
-            } else {
-                var_R = var_R / 12.92;
-            }
-
-            if ( var_G > 0.04045 ) {
-                var_G = pow ( ( ( var_G + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
-            } else {
-                var_G = var_G / 12.92;
-            }
-
-            if ( var_B > 0.04045 ) {
-                var_B = pow ( ( ( var_B + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
-            } else {
-                var_B = var_B / 12.92;
-            }
-        }
-
-        else if (profile == "RT_sRGB_gBT709"  || profile == "RT_Large_gBT709") { //
-            if ( var_R > 0.0795 ) {
-                var_R = pow ( ( ( var_R + 0.0954 ) / 1.0954 ), 2.2);
-            } else {
-                var_R = var_R / 4.5;
-            }
-
-            if ( var_G > 0.0795 ) {
-                var_G = pow ( ( ( var_G + 0.0954 ) / 1.0954 ), 2.2);
-            } else {
-                var_G = var_G / 4.5;
-            }
-
-            if ( var_B > 0.0795 ) {
-                var_B = pow ( ( ( var_B + 0.0954 ) / 1.0954 ), 2.2);
-            } else {
-                var_B = var_B / 4.5;
-            }
-
-        } else if (profile == "ProPhoto") { // apply inverse gamma 1.8
-
-            var_R = pow ( var_R, 1.8);
-            var_G = pow ( var_G, 1.8);
-            var_B = pow ( var_B, 1.8);
-        } else if (profile == "RT_sRGB_g10"  || profile == "RT_Large_g10") { // apply inverse gamma 1.8
-
-            var_R = pow ( var_R, 1.);
-            var_G = pow ( var_G, 1.);
-            var_B = pow ( var_B, 1.);
-        }
-
-        else {// apply inverse gamma 2.2
-            var_R = pow ( var_R, 2.2);
-            var_G = pow ( var_G, 2.2);
-            var_B = pow ( var_B, 2.2);
-        }
-    }
-
-    // TMatrix wprof = rtengine::ICCStore::getInstance()->workingSpaceMatrix (profileW);
-
-    TMatrix wprof = rtengine::ICCStore::getInstance()->workingSpaceMatrix (profileCalc);
-
-    for (int m = 0; m < 3; m++)
-        for (int n = 0; n < 3; n++) {
-            xyz_rgb[m][n] = wprof[m][n];
-        }
-
-    double varxx, varyy, varzz;
-    double var_X = ( xyz_rgb[0][0] * var_R + xyz_rgb[0][1] * var_G + xyz_rgb[0][2] * var_B ) / Color::D50x;
-    double var_Y = ( xyz_rgb[1][0] * var_R + xyz_rgb[1][1] * var_G + xyz_rgb[1][2] * var_B ) ;
-    double var_Z = ( xyz_rgb[2][0] * var_R + xyz_rgb[2][1] * var_G + xyz_rgb[2][2] * var_B ) / Color::D50z;
-
-    varxx = var_X > ep ? cbrt(var_X) : ( ka * var_X  +  16.0) / 116.0 ;
-    varyy = var_Y > ep ? cbrt(var_Y) : ( ka * var_Y  +  16.0) / 116.0 ;
-    varzz = var_Z > ep ? cbrt(var_Z) : ( ka * var_Z  +  16.0) / 116.0 ;
-    LAB_l = ( 116 * varyy ) - 16;
-    LAB_a = 500 * ( varxx - varyy );
-    LAB_b = 200 * ( varyy - varzz );
-
 }
 
 void HistogramRGBArea::update (int valh, int rh, int  gh, int bh)

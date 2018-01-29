@@ -123,12 +123,15 @@ public:
     const static double sRGBGamma;        // standard average gamma
     const static double sRGBGammaCurve;   // 2.4 in the curve
     const static double eps, eps_max, kappa, epskap;
+    const static float epsf, kappaf;
     const static float D50x, D50z;
     const static double u0, v0;
-
+    constexpr static float c1By116 = 0.00862068965517241379310344827586f;  //  1/116
+    constexpr static float c16By116 = 0.13793103448275862068965517241379f; // 16/116
     static cmsToneCurve* linearGammaTRC;
 
     static LUTf cachef;
+    static LUTf cachefy;
     static LUTf gamma2curve;
 
     // look-up tables for the standard srgb gamma and its inverse (filled by init())
@@ -184,16 +187,16 @@ public:
     * @brief Convert red/green/blue to hue/saturation/luminance
     * @param profile output profile name
     * @param profileW working profile name
-    * @param r red channel [0 ; 65535]
-    * @param g green channel [0 ; 65535]
-    * @param b blue channel [0 ; 65535]
+    * @param r red channel [0 ; 1]
+    * @param g green channel [0 ; 1]
+    * @param b blue channel [0 ; 1]
     * @param L Lab L channel [0 ; 1] (return value)
-    * @param a Lab  a channel [0 ; 1] (return value)
+    * @param a Lab a channel [0 ; 1] (return value)
     * @param b Lab b channel [0; 1] (return value)
     * @param workingSpace true: compute the Lab value using the Working color space ; false: use the Output color space
     */
-    static void rgb2lab (Glib::ustring profile, Glib::ustring profileW, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b, bool workingSpace);
-
+    // do not use this function in a loop. It really eats processing time caused by Glib::ustring comparisons
+    static void rgb2lab01 (const Glib::ustring &profile, const Glib::ustring &profileW, float r, float g, float b, float &LAB_l, float &LAB_a, float &LAB_b, bool workingSpace);
 
     /**
     * @brief Convert red/green/blue to hue/saturation/luminance
@@ -326,6 +329,17 @@ public:
     * @param v value channel [0 ; 1] (return value)
     */
     static void rgb2hsv (float r, float g, float b, float &h, float &s, float &v);
+
+    /**
+    * @brief Convert red green blue to hue saturation value
+    * @param r red channel [0 ; 1]
+    * @param g green channel [0 ; 1]
+    * @param b blue channel [0 ; 1]
+    * @param h hue channel [0 ; 1] (return value)
+    * @param s saturation channel [0 ; 1] (return value)
+    * @param v value channel [0 ; 1] (return value)
+    */
+    static void rgb2hsv01 (float r, float g, float b, float &h, float &s, float &v);
 
     static inline float rgb2s(float r, float g, float b) // fast version if only saturation is needed
     {

@@ -290,13 +290,13 @@ void Navigator::pointerMoved (bool validPos, Glib::ustring profile, Glib::ustrin
         G->set_text (s2);
         B->set_text (s3);
 
-        Color::rgb2hsv (r * 0xffff / 0xff, g * 0xffff / 0xff, b * 0xffff / 0xff, h, s, v);
+        Color::rgb2hsv01(r / 255.f, g / 255.f, b / 255.f, h, s, v);
         getHSVText (h, s, v, s1, s2, s3);
         H->set_text (s1);
         S->set_text (s2);
         V->set_text (s3);
 
-        Color::rgb2lab (profile, profileW, r * 0xffff / 0xff, g * 0xffff / 0xff, b * 0xffff / 0xff, LAB_l, LAB_a, LAB_b, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
+        Color::rgb2lab01(profile, profileW, r / 255.f, g / 255.f, b / 255.f, LAB_l, LAB_a, LAB_b, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
         getLABText (LAB_l, LAB_a, LAB_b, s1, s2, s3);
         LAB_L->set_text (s1);
         LAB_A->set_text (s2);
