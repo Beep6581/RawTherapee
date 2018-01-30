@@ -194,58 +194,47 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
     
     std::unique_ptr<IImage8> target;
     {
-        int tw = source->getWidth(), th = source->getHeight();
-        float thumb_ratio = float(std::max(tw, th)) / float(std::min(tw, th));
-        float target_ratio = float(std::max(fw, fh)) / float(std::min(fw, fh));
+        RawMetaDataLocation rml;
+        eSensorType sensor_type;
+        double scale;
+        int w = fw / skip, h = fh / skip;
+        std::unique_ptr<Thumbnail> thumb(Thumbnail::loadFromRaw(getFileName(), rml, sensor_type, w, h, 1, false, false));
+        target.reset(thumb->processImage(neutral, sensor_type, fh / skip, TI_Nearest, getMetaData(), scale, false));
+
+        int sw = source->getWidth(), sh = source->getHeight();
+        int tw = target->getWidth(), th = target->getHeight();
+        float thumb_ratio = float(std::max(sw, sh)) / float(std::min(sw, sh));
+        float target_ratio = float(std::max(tw, th)) / float(std::min(tw, th));
         int cx = 0, cy = 0;
         if (std::abs(thumb_ratio - target_ratio) > 0.01) {
             if (thumb_ratio > target_ratio) {
                 // crop the height
-                int ch = fh - (fw * float(th) / float(tw));
+                int ch = th - (tw * float(sh) / float(sw));
                 cy += ch / 2;
-                fh -= ch;
+                th -= ch;
             } else {
                 // crop the width
-                int cw = fw - (fh * float(tw) / float(th));
+                int cw = tw - (th * float(sw) / float(sh));
                 cx += cw / 2;
-                fw -= cw;
+                tw -= cw;
             }
             if (settings->verbose) {
-                std::cout << "histogram matching: cropping target to get an aspect ratio of " << std::fixed << std::setprecision(2) << thumb_ratio << ":1, new full size is " << fw << "x" << fh << std::endl;
+                std::cout << "histogram matching: cropping target to get an aspect ratio of " << std::fixed << std::setprecision(2) << thumb_ratio << ":1, new size is " << tw << "x" << th << std::endl;
             }
-        }
-        PreviewProps pp(cx, cy, fw, fh, skip);
-        ColorTemp currWB = getWB();
 
-        {
-            RawMetaDataLocation rml;
-            eSensorType sensor_type;
-            double scale;
-            int w = fw / skip, h = fh / skip;
-            std::unique_ptr<Thumbnail> thumb(Thumbnail::loadFromRaw(getFileName(), rml, sensor_type, w, h, 1, false, false));
-            target.reset(thumb->processImage(neutral, sensor_type, fh / skip, TI_Nearest, getMetaData(), scale, false));
+            Image8 *tmp = new Image8(tw, th);
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+            for (int y = 0; y < th; ++y) {
+                for (int x = 0; x < tw; ++x) {
+                    tmp->r(y, x) = target->r(y+cy, x+cx);
+                    tmp->g(y, x) = target->g(y+cy, x+cx);
+                    tmp->b(y, x) = target->b(y+cy, x+cx);
+                }
+            }
+            target.reset(tmp);
         }
-        
-        // std::unique_ptr<Imagefloat> image(new Imagefloat(int(fw / skip), int(fh / skip)));
-        // {
-        //     RawImageSource rsrc;
-        //     rsrc.load(getFileName());
-        //     rsrc.preprocess(neutral.raw, neutral.lensProf, neutral.coarse, false);
-        //     rsrc.demosaic(neutral.raw);
-        //     rsrc.getImage(currWB, TR_NONE, image.get(), pp, neutral.toneCurve, neutral.raw);
-        // }
-
-        // this could probably be made faster -- ideally we would need to just
-        // perform the transformation from camera space to the output space
-        // (taking gamma into account), but I couldn't find anything
-        // ready-made, so for now this will do. Remember the famous quote:
-        // "premature optimization is the root of all evil" :-)
-        // convertColorSpace(image.get(), neutral.icm, currWB);
-        // ImProcFunctions ipf(&neutral);
-        // LabImage tmplab(image->getWidth(), image->getHeight());
-        // ipf.rgb2lab(*image, tmplab, neutral.icm.working);
-        // image.reset(ipf.lab2rgbOut(&tmplab, 0, 0, tmplab.W, tmplab.H, neutral.icm));
-        // target.reset(image->to8());
 
         if (settings->verbose) {
             std::cout << "histogram matching: generated neutral rendering" << std::endl;
