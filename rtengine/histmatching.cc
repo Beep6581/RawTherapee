@@ -208,26 +208,35 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
         PreviewProps pp(cx, cy, fw, fh, skip);
         ColorTemp currWB = getWB();
 
-        std::unique_ptr<Imagefloat> image(new Imagefloat(int(fw / skip), int(fh / skip)));
         {
-            RawImageSource rsrc;
-            rsrc.load(getFileName());
-            rsrc.preprocess(neutral.raw, neutral.lensProf, neutral.coarse, false);
-            rsrc.demosaic(neutral.raw);
-            rsrc.getImage(currWB, TR_NONE, image.get(), pp, neutral.toneCurve, neutral.raw);
+            RawMetaDataLocation rml;
+            eSensorType sensor_type;
+            double scale;
+            int w = fw / skip, h = fh / skip;
+            std::unique_ptr<Thumbnail> thumb(Thumbnail::loadFromRaw(getFileName(), rml, sensor_type, w, h, 1, false, false));
+            target.reset(thumb->processImage(neutral, sensor_type, fh / skip, TI_Nearest, getMetaData(), scale, false));
         }
+        
+        // std::unique_ptr<Imagefloat> image(new Imagefloat(int(fw / skip), int(fh / skip)));
+        // {
+        //     RawImageSource rsrc;
+        //     rsrc.load(getFileName());
+        //     rsrc.preprocess(neutral.raw, neutral.lensProf, neutral.coarse, false);
+        //     rsrc.demosaic(neutral.raw);
+        //     rsrc.getImage(currWB, TR_NONE, image.get(), pp, neutral.toneCurve, neutral.raw);
+        // }
 
         // this could probably be made faster -- ideally we would need to just
         // perform the transformation from camera space to the output space
         // (taking gamma into account), but I couldn't find anything
         // ready-made, so for now this will do. Remember the famous quote:
         // "premature optimization is the root of all evil" :-)
-        convertColorSpace(image.get(), neutral.icm, currWB);
-        ImProcFunctions ipf(&neutral);
-        LabImage tmplab(image->getWidth(), image->getHeight());
-        ipf.rgb2lab(*image, tmplab, neutral.icm.working);
-        image.reset(ipf.lab2rgbOut(&tmplab, 0, 0, tmplab.W, tmplab.H, neutral.icm));
-        target.reset(image->to8());
+        // convertColorSpace(image.get(), neutral.icm, currWB);
+        // ImProcFunctions ipf(&neutral);
+        // LabImage tmplab(image->getWidth(), image->getHeight());
+        // ipf.rgb2lab(*image, tmplab, neutral.icm.working);
+        // image.reset(ipf.lab2rgbOut(&tmplab, 0, 0, tmplab.W, tmplab.H, neutral.icm));
+        // target.reset(image->to8());
 
         if (settings->verbose) {
             std::cout << "histogram matching: generated neutral rendering" << std::endl;
