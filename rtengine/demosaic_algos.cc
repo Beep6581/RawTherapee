@@ -3861,7 +3861,7 @@ void RawImageSource::cielab (const float (*rgb)[3], float* l, float* a, float *b
         if(!cbrtinit) {
             for (int i = 0; i < 0x14000; i++) {
                 double r = i / 65535.0;
-                cbrt[i] = r > 0.008856f ? std::cbrt(r) : 7.787f * r + 16.f / 116.f;
+                cbrt[i] = r > Color::eps ? std::cbrt(r) : (Color::kappa * r + 16.0) / 116.0;
             }
 
             cbrtinit = true;
@@ -3871,7 +3871,6 @@ void RawImageSource::cielab (const float (*rgb)[3], float* l, float* a, float *b
     }
 
 #ifdef __SSE2__
-    vfloat zd5v = F2V(0.5f);
     vfloat c116v = F2V(116.f);
     vfloat c16v = F2V(16.f);
     vfloat c500v = F2V(500.f);
@@ -3892,12 +3891,12 @@ void RawImageSource::cielab (const float (*rgb)[3], float* l, float* a, float *b
         for(; j < labWidth - 3; j += 4) {
             vfloat redv, greenv, bluev;
             vconvertrgbrgbrgbrgb2rrrrggggbbbb(rgb[i * width + j], redv, greenv, bluev);
-            vfloat xyz0v = zd5v + redv * xyz_camv[0][0] + greenv * xyz_camv[0][1] + bluev * xyz_camv[0][2];
-            vfloat xyz1v = zd5v + redv * xyz_camv[1][0] + greenv * xyz_camv[1][1] + bluev * xyz_camv[1][2];
-            vfloat xyz2v = zd5v + redv * xyz_camv[2][0] + greenv * xyz_camv[2][1] + bluev * xyz_camv[2][2];
-            xyz0v = cbrt[_mm_cvttps_epi32(xyz0v)];
-            xyz1v = cbrt[_mm_cvttps_epi32(xyz1v)];
-            xyz2v = cbrt[_mm_cvttps_epi32(xyz2v)];
+            vfloat xyz0v = redv * xyz_camv[0][0] + greenv * xyz_camv[0][1] + bluev * xyz_camv[0][2];
+            vfloat xyz1v = redv * xyz_camv[1][0] + greenv * xyz_camv[1][1] + bluev * xyz_camv[1][2];
+            vfloat xyz2v = redv * xyz_camv[2][0] + greenv * xyz_camv[2][1] + bluev * xyz_camv[2][2];
+            xyz0v = cbrt[_mm_cvtps_epi32(xyz0v)];
+            xyz1v = cbrt[_mm_cvtps_epi32(xyz1v)];
+            xyz2v = cbrt[_mm_cvtps_epi32(xyz2v)];
 
             STVFU(l[i * labWidth + j], c116v * xyz1v - c16v);
             STVFU(a[i * labWidth + j], c500v * (xyz0v - xyz1v));

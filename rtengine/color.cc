@@ -56,24 +56,6 @@ LUTf Color::igammatab_115_2;
 LUTf Color::gammatab_145_3;
 LUTf Color::igammatab_145_3;
 
-// Wikipedia sRGB: Unlike most other RGB color spaces, the sRGB gamma cannot be expressed as a single numerical value.
-// The overall gamma is approximately 2.2, consisting of a linear (gamma 1.0) section near black, and a non-linear section elsewhere involving a 2.4 exponent
-// and a gamma (slope of log output versus log input) changing from 1.0 through about 2.3.
-const double Color::sRGBGamma = 2.2;
-const double Color::sRGBGammaCurve = 2.4;
-
-const double Color::eps_max = 580.40756; //(MAXVALF* 216.0f/24389.0);
-const double Color::eps = 216.0f / 24389.0; //0.008856
-const double Color::kappa = 24389.0 / 27.0; //903.29630;
-
-const float Color::epsf = eps;
-const float Color::kappaf = kappa;
-
-const float Color::D50x = 0.9642f; //0.96422;
-const float Color::D50z = 0.8249f; //0.82521;
-const double Color::u0 = 4.0 * D50x / (D50x + 15 + 3 * D50z);
-const double Color::v0 = 9.0 / (D50x + 15 + 3 * D50z);
-const double Color::epskap = 8.0;
 /*
  * Munsell Lch correction
  * Copyright (c) 2011  Jacques Desmis <jdesmis@gmail.com>

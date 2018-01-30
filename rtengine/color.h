@@ -120,14 +120,32 @@ public:
         ID_DOWN      /// Interpolate color by decreasing the hue value, crossing the lower limit
     } eInterpolationDirection;
 
-    const static double sRGBGamma;        // standard average gamma
-    const static double sRGBGammaCurve;   // 2.4 in the curve
-    const static double eps, eps_max, kappa, epskap;
-    const static float epsf, kappaf;
-    const static float D50x, D50z;
-    const static double u0, v0;
-    constexpr static float c1By116 = 0.00862068965517241379310344827586f;  //  1/116
-    constexpr static float c16By116 = 0.13793103448275862068965517241379f; // 16/116
+    // Wikipedia sRGB: Unlike most other RGB color spaces, the sRGB gamma cannot be expressed as a single numerical value.
+    // The overall gamma is approximately 2.2, consisting of a linear (gamma 1.0) section near black, and a non-linear section elsewhere involving a 2.4 exponent
+    // and a gamma (slope of log output versus log input) changing from 1.0 through about 2.3.
+    constexpr static double sRGBGamma = 2.2;
+    constexpr static double sRGBGammaCurve = 2.4;
+
+    constexpr static double eps = 216.0 / 24389.0; //0.008856
+    constexpr static double eps_max = MAXVALF * eps; //580.40756;
+    constexpr static double kappa = 24389.0 / 27.0; //903.29630;
+    constexpr static double kappaInv = 27.0 / 24389.0;
+    constexpr static double epsilonExpInv3 = 6.0 / 29.0;
+
+    constexpr static float epsf = eps;
+    constexpr static float kappaf = kappa;
+    constexpr static float kappaInvf = kappaInv;
+    constexpr static float epsilonExpInv3f = epsilonExpInv3;
+
+    constexpr static float D50x = 0.9642f; //0.96422;
+    constexpr static float D50z = 0.8249f; //0.82521;
+    constexpr static double u0 = 4.0 * D50x / (D50x + 15 + 3 * D50z);
+    constexpr static double v0 = 9.0 / (D50x + 15 + 3 * D50z);
+    constexpr static double epskap = 8.0;
+
+    constexpr static float c1By116 = 1.0 / 116.0;
+    constexpr static float c16By116 = 16.0 / 116.0;
+
     static cmsToneCurve* linearGammaTRC;
 
     static LUTf cachef;
@@ -689,27 +707,21 @@ public:
     */
     static inline double f2xyz(double f)
     {
-        const double epsilonExpInv3 = 6.0 / 29.0;
-        const double kappaInv = 27.0 / 24389.0; // inverse of kappa
-
         return (f > epsilonExpInv3) ? f * f * f : (116. * f - 16.) * kappaInv;
 
     }
     static inline float f2xyz(float f)
     {
-        const float epsilonExpInv3 = 0.20689655f; // 6.0f/29.0f;
-        const float kappaInv = 0.0011070565f; // 27.0f/24389.0f;  // inverse of kappa
-
-        return (f > epsilonExpInv3) ? f * f * f : (116.f * f - 16.f) * kappaInv;
+        return (f > epsilonExpInv3f) ? f * f * f : (116.f * f - 16.f) * kappaInvf;
     }
 #ifdef __SSE2__
     static inline vfloat f2xyz(vfloat f)
     {
-        const vfloat epsilonExpInv3 = F2V(0.20689655f); // 6.0f/29.0f;
-        const vfloat kappaInv = F2V(0.0011070565f); // 27.0f/24389.0f;  // inverse of kappa
+        const vfloat epsilonExpInv3v = F2V(epsilonExpInv3f);
+        const vfloat kappaInvv = F2V(kappaInvf);
         vfloat res1 = f * f * f;
-        vfloat res2 = (F2V(116.f) * f - F2V(16.f)) * kappaInv;
-        return vself(vmaskf_gt(f, epsilonExpInv3), res1, res2);
+        vfloat res2 = (F2V(116.f) * f - F2V(16.f)) * kappaInvv;
+        return vself(vmaskf_gt(f, epsilonExpInv3v), res1, res2);
     }
 #endif
 
