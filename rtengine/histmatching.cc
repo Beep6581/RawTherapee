@@ -120,6 +120,15 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
         curve.pop_back();
         curve.pop_back();
     }
+    // remove the plateau at the end (if any)
+    size_t j = curve.size() / 2;
+    for (; j > 1; --j) {
+        if (std::abs(curve[2*(j-1)-1] - curve.back()) > 0.01) {
+            break;
+        }
+    }
+    curve.resize(2*j);
+        
     curve.push_back(1.0);
     curve.push_back(1.0);
         
