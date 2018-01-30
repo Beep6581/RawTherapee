@@ -448,7 +448,8 @@ Locallab::Locallab():
     Evlocallabbilateral = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCBILATERAL");// = 598,
     Evlocallabnoiselequal = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCNOISELEQUAL");// = 599,
     Evlocallabshapemethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSHAPEMETH");// = 600,
-
+	Evlocallabspotduplicated = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSPOTDUP");
+	
     editHBox = Gtk::manage(new Gtk::HBox());
     edit = Gtk::manage(new Gtk::ToggleButton());
     edit->add(*Gtk::manage(new RTImage("editmodehand.png")));
@@ -569,6 +570,11 @@ Locallab::Locallab():
 
     circrad->setAdjusterListener(this);
 
+    spotduplicated = Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SPOTDUPLI")));
+    spotduplicated->set_active(false);
+    spotduplicatedConn  = spotduplicated->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::spotduplicatedChanged));
+    spotduplicated->set_tooltip_markup(M("TP_LOCALLAB_SPOTDUPLI_TOOLTIP"));
+   // labspotdup = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SPOTDUP_ENA")));
 
     qualityMethod->append(M("TP_LOCALLAB_STD"));
     qualityMethod->append(M("TP_LOCALLAB_ENH"));
@@ -844,6 +850,8 @@ Locallab::Locallab():
     shapeBox->pack_start(*centerX);
     shapeBox->pack_start(*centerY);
     shapeBox->pack_start(*circrad);
+    shapeBox->pack_start(*spotduplicated);
+	//shapeBox->pack_start (*labspotdup);
     qualbox->pack_start(*labqual, Gtk::PACK_SHRINK, 4);
     qualbox->pack_start(*qualityMethod);
     shapeBox->pack_start(*qualbox);
@@ -2017,6 +2025,7 @@ bool Locallab::localComputed_()
     } else if (nextdatasp[15] == 3) {
         Smethod->set_active(3);
     }
+    //nbspot->setValue(nextdatasp[16]);
 
     //sliders blurr
     radius->setValue(nextdatasp[17]);
@@ -2707,6 +2716,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
         pastSatTog->set_inconsistent(!pedited->locallab.pastsattog);
         skinTonesCurve->setUnChanged(!pedited->locallab.skintonescurve);
         sensiv->setEditedState(pedited->locallab.sensiv ? Edited : UnEdited);
+        spotduplicated->set_inconsistent(!pedited->locallab.spotduplicated);
 
         for (int i = 0; i < 5; i++) {
             multiplier[i]->setEditedState(pedited->locallab.mult[i] ? Edited : UnEdited);
@@ -2934,6 +2944,13 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
     ashiftconn.block(false);
     lastAvoidColorShift = pp->locallab.avoidcolorshift;
 
+	
+    spotduplicatedConn.block(true);
+    spotduplicated->set_active(pp->locallab.spotduplicated);
+    spotduplicatedConn.block(false);
+    lastspotduplicated = pp->locallab.spotduplicated;
+	
+	
     pastsattogconn.block(true);
     pastSatTog->set_active(pp->locallab.pastsattog);
     pastsattogconn.block(false);
@@ -3437,6 +3454,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
     pp->locallab.pastsattog      = pastSatTog->get_active();
     pp->locallab.skintonescurve  = skinTonesCurve->getCurve();
     pp->locallab.sensiv = sensiv->getIntValue();
+    pp->locallab.spotduplicated = spotduplicated->get_active();
 
 
     if (pedited) {
@@ -3555,7 +3573,9 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.pastsattog      = !pastSatTog->get_inconsistent();
         pedited->locallab.skintonescurve  = !skinTonesCurve->isUnChanged();
         pedited->locallab.sensiv = sensiv->getEditedState();
+        pedited->locallab.spotduplicated = !spotduplicated->get_inconsistent();
 
+		
     }
 
     if (retinexMethod->get_active_row_number() == 0) {
@@ -3689,6 +3709,74 @@ void Locallab::avoidcolorshift_toggled()
         }
     }
 }
+
+
+void Locallab::spotdupChanged(bool spotchan)
+{
+    nextspotdup = spotchan;
+
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<Locallab*>(data)->spotdupComputed_();
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
+}
+
+bool Locallab::spotdupComputed_()
+{
+
+    disableListener();
+	spotduplicated->set_active(nextspotdup);
+	if(nextspotdup){
+	//labspotdup->show();
+	//usleep(4000000);
+	}
+	else {
+	//labspotdup->hide();
+	}
+    enableListener();
+
+    return false;
+}
+
+
+/*
+void Locallab::spotdupChanged(bool spotchan)
+{
+    GThreadLock lock;
+    disableListener();
+	spotduplicated->set_active(spotchan);
+    enableListener();
+}
+*/
+
+void Locallab::spotduplicatedChanged()
+{
+    if (batchMode) {
+        if (spotduplicated->get_inconsistent()) {
+            spotduplicated->set_inconsistent(false);
+            spotduplicatedConn.block(true);
+            spotduplicated->set_active(false);
+            spotduplicatedConn.block(false);
+        } else if (lastspotduplicated) {
+            spotduplicated->set_inconsistent(true);
+        }
+
+        lastspotduplicated = spotduplicated->get_active();
+    }
+
+    if (listener && getEnabled()) {
+		
+        if (spotduplicated->get_active()) {
+            listener->panelChanged(Evlocallabspotduplicated, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged(Evlocallabspotduplicated, M("GENERAL_DISABLED"));
+        }
+    }
+}
+
+
 
 void Locallab::pastsattog_toggled()
 {

@@ -2472,16 +2472,19 @@ expsharp(false),
 expcbdl(false),
 expdenoi(false),
 threshold(20),
-chromacbdl(0)
+chromacbdl(0),
+spotduplicated(false)
 {
 }
 
 bool LocallabParams::operator ==(const LocallabParams& other) const
 {
+	
     return
         enabled == other.enabled
         && avoid == other.avoid
         && invers == other.invers
+        && spotduplicated == other.spotduplicated
         && cutpast == other.cutpast
         && lastdust == other.lastdust
         && curvactiv == other.curvactiv
@@ -3604,6 +3607,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->locallab.estop, "Locallab", "Estop", locallab.estop, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.scaltm, "Locallab", "Scaltm", locallab.scaltm, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.rewei, "Locallab", "Rewei", locallab.rewei, keyFile);
+        saveToKeyfile(!pedited || pedited->locallab.spotduplicated, "Locallab", "Spotduplicated", locallab.spotduplicated, keyFile);
 
 
 
@@ -4742,6 +4746,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
             assignFromKeyfile(keyFile, "Locallab", "Threshold", pedited, locallab.threshold, pedited->locallab.threshold);
             assignFromKeyfile(keyFile, "Locallab", "Chromacbdl", pedited, locallab.chromacbdl, pedited->locallab.chromacbdl);
+            assignFromKeyfile(keyFile, "Locallab", "Spotduplicated", pedited, locallab.spotduplicated, pedited->locallab.spotduplicated);
 
         }
 

@@ -435,6 +435,7 @@ void ParamsEdited::set(bool v)
     locallab.pastsattog       = v;
     locallab.skintonescurve   = v;
     locallab.sensiv = v;
+    locallab.spotduplicated = v;
 
 
     pcvignette.enabled = v;
@@ -1114,7 +1115,9 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         locallab.pastsattog = locallab.pastsattog && p.locallab.pastsattog == other.locallab.pastsattog;
         locallab.skintonescurve = locallab.skintonescurve && p.locallab.skintonescurve == other.locallab.skintonescurve;
         locallab.sensiv = locallab.sensiv && p.locallab.sensiv == other.locallab.sensiv;
+        locallab.spotduplicated = locallab.spotduplicated && p.locallab.spotduplicated == other.locallab.spotduplicated;
 
+		
         pcvignette.enabled = pcvignette.enabled && p.pcvignette.enabled == other.pcvignette.enabled;
         pcvignette.strength = pcvignette.strength && p.pcvignette.strength == other.pcvignette.strength;
         pcvignette.feather = pcvignette.feather && p.pcvignette.feather == other.pcvignette.feather;
@@ -2690,6 +2693,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.locallab.sensiv     = mods.locallab.sensiv;
     }
 
+    if (locallab.spotduplicated) {
+        toEdit.locallab.spotduplicated     = mods.locallab.spotduplicated;
+    }
+	
     if (locallab.sensiex) {
         toEdit.locallab.sensiex     = mods.locallab.sensiex;
     }

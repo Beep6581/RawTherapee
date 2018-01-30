@@ -348,7 +348,7 @@ public :
     virtual ~localListener() {}
     virtual void localChanged (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str,  std::string ex_str, int sp, int maxdat) {}
     virtual void localretChanged (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str,  std::string ex_str, int sp, int maxdat) {}
-
+	virtual void spotdupChanged(bool spotchan) {};
 };
 
 

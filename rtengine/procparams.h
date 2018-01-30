@@ -1007,7 +1007,8 @@ struct LocallabParams {
     bool expdenoi;
     double threshold;
     int chromacbdl;
-
+	bool spotduplicated;
+	
     LocallabParams();
 
     bool operator ==(const LocallabParams& other) const;

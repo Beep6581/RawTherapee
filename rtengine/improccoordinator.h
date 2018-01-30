@@ -382,7 +382,7 @@ protected:
     void process();
     float colourToningSatLimit;
     float colourToningSatLimitOpacity;
-
+    bool lastspotdup;
 public:
 
     ImProcCoordinator();

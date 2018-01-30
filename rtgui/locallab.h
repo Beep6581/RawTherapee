@@ -140,7 +140,10 @@ private:
     rtengine::ProcEvent Evlocallabbilateral;// = 598,
     rtengine::ProcEvent Evlocallabnoiselequal;// = 599,
     rtengine::ProcEvent Evlocallabshapemethod;// = 600,
+	rtengine::ProcEvent Evlocallabspotduplicated;
 
+    IdleRegister idle_register;
+	
     int lastObject;
     void foldAllButMe(GdkEventButton* event, MyExpander *expander);
     void enableToggled(MyExpander *expander);
@@ -295,6 +298,9 @@ private:
     Gtk::CheckButton* const cutpast;
     Gtk::CheckButton* const lastdust;
 
+    Gtk::CheckButton* spotduplicated;
+    Gtk::Label* labspotdup;
+	
     Gtk::Button* neutral;
     Gtk::HBox* neutrHBox;
     Gtk::Button* neutral1;
@@ -348,17 +354,19 @@ private:
     sigc::connection enableretiConn, enablesharpConn, enablecbdlConn;
     sigc::connection enabledenoiConn;
     sigc::connection  editConn, avoidConn, inversConn, cutpastConn, lastdustConn, curvactivConn, activlumConn, inversradConn, inversretConn, inversshaConn,  neutralconn, neutralconn1;
-    sigc::connection  Smethodconn, shapemethodconn, Exclumethodconn;
+    sigc::connection  Smethodconn, shapemethodconn, Exclumethodconn, spotduplicatedConn;
     sigc::connection retinexMethodConn;
     sigc::connection qualityMethodConn;
     sigc::connection qualitycurveMethodConn;
     sigc::connection blurMethodConn;
     sigc::connection dustMethodConn;
 
+    bool lastspotduplicated;
 
 
     int nextdatasp[102];
     int nextlength;
+	bool nextspotdup;
     std::string nextstr;
     std::string nextstr2;
     std::string nextll_str;
@@ -422,7 +430,10 @@ public:
     void inversshaChanged();
     void cutpastChanged();
     void lastdustChanged();
-
+	void spotduplicatedChanged();
+    bool spotdupComputed_();
+	
+	void spotdupChanged(bool spotchan);
     void curveChanged(CurveEditor* ce);
     void autoOpenCurve();
     void localChanged(int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat);

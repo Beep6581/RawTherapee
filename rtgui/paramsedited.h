@@ -564,7 +564,7 @@ public:
     bool pastsattog;
     bool skintonescurve;
     bool sensiv;
-
+	bool spotduplicated;
 
 };
 

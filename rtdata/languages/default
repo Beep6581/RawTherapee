@@ -1921,6 +1921,8 @@ TP_LOCALLAB_SENSIH;Hue Scope
 TP_LOCALLAB_SENSIH_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
 TP_LOCALLAB_SHAPETYPE;Shape RT-spot area
 TP_LOCALLAB_SHAPE_TOOLTIP;Rectangle is only in normal mode.
+TP_LOCALLAB_SPOTDUPLI;Duplicate Current Spot
+TP_LOCALLAB_SPOTDUPLI_TOOLTIP;If check, a copy of all datas will be done, except center X=200 and centerY=200\nto show it is a duplicated spot.\nYou must first increase Control spot.\nIf the spot (current) is not empty, datas will be crushed.
 TP_LOCALLAB_ELI;Elipse
 TP_LOCALLAB_RECT;Rectangle
 TP_LOCALLAB_SHARP;Sharpening
