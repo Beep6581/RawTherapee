@@ -1,6 +1,10 @@
 [Version]
-AppVersion=5.3-524-g4046a3c9
+AppVersion=5.3-544-gc2e7d924
 Version=330
+
+[HLRecovery]
+Enabled=true
+Method=Blend
 
 [Exposure]
 Auto=false
@@ -18,10 +22,6 @@ CurveMode=FilmLike
 CurveMode2=WeightedStd
 Curve=1;0;0;1;1;
 Curve2=0;
-
-[HLRecovery]
-Enabled=true
-Method=Blend
 
 [Directional Pyramid Denoising]
 Enabled=true
@@ -43,6 +43,12 @@ Gamma=1.7
 Passes=1
 LCurve=0
 CCCurve=0
+
+[LensProfile]
+LcMode=lfauto
+UseDistortion=true
+UseVignette=true
+UseCA=false
 
 [RAW]
 CA=true

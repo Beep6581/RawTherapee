@@ -1,6 +1,10 @@
 [Version]
-AppVersion=5.3-524-g4046a3c9
+AppVersion=5.3-544-gc2e7d924
 Version=330
+
+[HLRecovery]
+Enabled=true
+Method=Blend
 
 [Exposure]
 Auto=false
@@ -19,9 +23,11 @@ CurveMode2=WeightedStd
 Curve=0;
 Curve2=0;
 
-[HLRecovery]
-Enabled=true
-Method=Blend
+[LensProfile]
+LcMode=lfauto
+UseDistortion=true
+UseVignette=true
+UseCA=false
 
 [RAW]
 CA=true
