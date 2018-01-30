@@ -86,10 +86,17 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
     curve.clear();
     
     const int npoints = 8;
-    int idx = 1;
+    int idx = 15;
     for (; idx < int(mapping.size()); ++idx) {
         if (mapping[idx] >= idx) {
             break;
+        }
+    }
+    if (idx == int(mapping.size())) {
+        for (idx = 1; idx < int(mapping.size()); ++idx) {
+            if (mapping[idx] >= idx) {
+                break;
+            }
         }
     }
     int step = max(int(mapping.size())/npoints, 1);
