@@ -369,8 +369,8 @@ void Color::rgb2lab01 (const Glib::ustring &profile, const Glib::ustring &profil
 
     Glib::ustring profileCalc = "sRGB"; //default
 
-    if (workingSpace) {//display working
-        profileCalc = profileW;    //display working
+    if (workingSpace) {//display working profile
+        profileCalc = profileW;
         if (profileW == "sRGB") { //apply sRGB inverse gamma
 
             if (r > 0.04045f) {
@@ -400,7 +400,8 @@ void Color::rgb2lab01 (const Glib::ustring &profile, const Glib::ustring &profil
             b = pow_F(b, 2.2f);
         }
     } else { //display output profile
-        if (profile == "RT_sRGB" || profile == "RT_sRGB_gBT709" || profile == "RT_sRGB_g10") { // use default "sRGB"
+        if (profile == "RT_sRGB" || profile == "RT_sRGB_gBT709" || profile == "RT_sRGB_g10") {
+            // use default "sRGB"
         } else if (profile == "ProPhoto" || profile == "RT_Large_gBT709" || profile == "RT_Large_g10"  || profile == "RT_Large_gsRGB") {
             profileCalc = "ProPhoto";
         } else if (profile == "AdobeRGB1998" || profile == "RT_Medium_gsRGB") {
@@ -427,7 +428,7 @@ void Color::rgb2lab01 (const Glib::ustring &profile, const Glib::ustring &profil
             } else {
                 b /= 12.92f;
             }
-        } else if (profile == "RT_sRGB_gBT709"  || profile == "RT_Large_gBT709") { //
+        } else if (profile == "RT_sRGB_gBT709"  || profile == "RT_Large_gBT709") {
             if (r > 0.0795f) {
                 r = pow_F(((r + 0.0954f) / 1.0954f), 2.2f);
             } else {
@@ -451,7 +452,8 @@ void Color::rgb2lab01 (const Glib::ustring &profile, const Glib::ustring &profil
             r = pow_F(r, 1.8f);
             g = pow_F(g, 1.8f);
             b = pow_F(b, 1.8f);
-        } else if (profile == "RT_sRGB_g10"  || profile == "RT_Large_g10") { // gamma 1.0, do nothing
+        } else if (profile == "RT_sRGB_g10"  || profile == "RT_Large_g10") {
+            // gamma 1.0, do nothing
 
         } else {// apply inverse gamma 2.2
 
@@ -461,25 +463,24 @@ void Color::rgb2lab01 (const Glib::ustring &profile, const Glib::ustring &profil
         }
     }
 
-    TMatrix wprof = rtengine::ICCStore::getInstance()->workingSpaceMatrix(profileCalc);
+    const TMatrix wprof = rtengine::ICCStore::getInstance()->workingSpaceMatrix(profileCalc);
 
-    float xyz_rgb[3][3];
+    const float xyz_rgb[3][3] = { {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
+                                  {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
+                                  {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
+                                };
 
-    for (int m = 0; m < 3; m++)
-        for (int n = 0; n < 3; n++) {
-            xyz_rgb[m][n] = wprof[m][n];
-        }
+    const float var_X = (xyz_rgb[0][0] * r + xyz_rgb[0][1] * g + xyz_rgb[0][2] * b) / Color::D50x;
+    const float var_Y = (xyz_rgb[1][0] * r + xyz_rgb[1][1] * g + xyz_rgb[1][2] * b);
+    const float var_Z = (xyz_rgb[2][0] * r + xyz_rgb[2][1] * g + xyz_rgb[2][2] * b) / Color::D50z;
 
-    float var_X = (xyz_rgb[0][0] * r + xyz_rgb[0][1] * g + xyz_rgb[0][2] * b) / Color::D50x;
-    float var_Y = (xyz_rgb[1][0] * r + xyz_rgb[1][1] * g + xyz_rgb[1][2] * b);
-    float var_Z = (xyz_rgb[2][0] * r + xyz_rgb[2][1] * g + xyz_rgb[2][2] * b) / Color::D50z;
+    const float varxx = var_X > epsf ? xcbrtf(var_X) : (kappaf * var_X  + 16.f) / 116.f ;
+    const float varyy = var_Y > epsf ? xcbrtf(var_Y) : (kappaf * var_Y  + 16.f) / 116.f ;
+    const float varzz = var_Z > epsf ? xcbrtf(var_Z) : (kappaf * var_Z  + 16.f) / 116.f ;
 
-    float varxx = var_X > epsf ? xcbrtf(var_X) : (kappaf * var_X  + 16.f) / 116.f ;
-    float varyy = var_Y > epsf ? xcbrtf(var_Y) : (kappaf * var_Y  + 16.f) / 116.f ;
-    float varzz = var_Z > epsf ? xcbrtf(var_Z) : (kappaf * var_Z  + 16.f) / 116.f ;
     LAB_l = var_Y > epsf ? (xcbrtf(var_Y) * 116.f) - 16.f : kappaf * var_Y;
-    LAB_a = 500.f * ( varxx - varyy );
-    LAB_b = 200.f * ( varyy - varzz );
+    LAB_a = 500.f * (varxx - varyy);
+    LAB_b = 200.f * (varyy - varzz);
 
 }
 
@@ -725,24 +726,23 @@ void Color::rgb2hsv(float r, float g, float b, float &h, float &s, float &v)
 void Color::rgb2hsv01(float r, float g, float b, float &h, float &s, float &v)
 {
 
-    const float var_Min = min(r, g, b);
-    const float var_Max = max(r, g, b);
-    const float del_Max = var_Max - var_Min;
+    const float minVal = min(r, g, b);
+    v = max(r, g, b);
+    const float delta = v - minVal;
 
     h = 0.f;
-    v = var_Max;
 
-    if (del_Max < 0.00001f) {
+    if (delta < 0.00001f) {
         s = 0.f;
     } else {
-        s = del_Max / var_Max;
+        s = delta / (v == 0.f ? 1.f : v);
 
-        if (r == var_Max) {
-            h = (g - b) / del_Max;
-        } else if (g == var_Max) {
-            h = 2.f + (b - r) / del_Max;
-        } else if (b == var_Max) {
-            h = 4.f + (r - g) / del_Max;
+        if (r == v) {
+            h = (g - b) / delta;
+        } else if (g == v) {
+            h = 2.f + (b - r) / delta;
+        } else if (b == v) {
+            h = 4.f + (r - g) / delta;
         }
 
         h /= 6.f;
