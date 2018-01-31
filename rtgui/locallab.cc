@@ -1687,6 +1687,12 @@ void Locallab::neutral_pressed()
     chrrt->resetValue(false);
     sensih->resetValue(false);
     retrab->resetValue(false);
+    expcomp->resetValue(false);
+	hlcompr->resetValue(false);
+	hlcomprthresh->resetValue(false);
+	black->resetValue(false);
+	shcompr->resetValue(false);
+	sensiex->resetValue(false);
     cTgainshape->reset();
 	llshape->reset();
 	ccshape->reset();
