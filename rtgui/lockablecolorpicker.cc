@@ -277,8 +277,8 @@ void LockableColorPicker::setRGB (const float R, const float G, const float B, c
     gpreview = previewG;
     bpreview = previewB;
 
-    rtengine::Color::rgb2hsv(r*65535.f, g*65535.f, b*65535.f, hue, sat, val);
-    rtengine::Color::rgb2lab (*outputProfile, *workingProfile, r * 65535.f, g * 65535.f, b * 65535.f, L, a, bb, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
+    rtengine::Color::rgb2hsv01(r, g, b, hue, sat, val);
+    rtengine::Color::rgb2lab01(*outputProfile, *workingProfile, r, g, b, L, a, bb, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
 
     if (validity != Validity::OUTSIDE) {
         setDirty(true);

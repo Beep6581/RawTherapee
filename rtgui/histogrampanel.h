@@ -76,7 +76,7 @@ public:
     HistogramRGBArea();
     ~HistogramRGBArea();
 
-    void updateBackBuffer (int r, int g, int b, Glib::ustring profile = "", Glib::ustring profileW = "");
+    void updateBackBuffer (int r, int g, int b, const Glib::ustring &profile = "", const Glib::ustring &profileW = "");
     void updateFreeze (bool f);
     bool getFreeze ();
     bool getShow ();
@@ -92,7 +92,6 @@ public:
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
     bool on_button_press_event (GdkEventButton* event);
 private:
-    void rgb2lab (Glib::ustring profile, Glib::ustring profileW, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b);
     Gtk::SizeRequestMode get_request_mode_vfunc () const;
     void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;

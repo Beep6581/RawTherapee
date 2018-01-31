@@ -34,6 +34,7 @@ extern const Settings* settings;
 
 cmsToneCurve* Color::linearGammaTRC;
 LUTf Color::cachef;
+LUTf Color::cachefy;
 LUTf Color::gamma2curve;
 
 LUTf Color::gammatab;
@@ -55,21 +56,6 @@ LUTf Color::igammatab_115_2;
 LUTf Color::gammatab_145_3;
 LUTf Color::igammatab_145_3;
 
-// Wikipedia sRGB: Unlike most other RGB color spaces, the sRGB gamma cannot be expressed as a single numerical value.
-// The overall gamma is approximately 2.2, consisting of a linear (gamma 1.0) section near black, and a non-linear section elsewhere involving a 2.4 exponent
-// and a gamma (slope of log output versus log input) changing from 1.0 through about 2.3.
-const double Color::sRGBGamma = 2.2;
-const double Color::sRGBGammaCurve = 2.4;
-
-const double Color::eps_max = 580.40756; //(MAXVALF* 216.0f/24389.0);
-const double Color::eps = 216.0f / 24389.0; //0.008856
-const double Color::kappa = 24389.0 / 27.0; //903.29630;
-
-const float Color::D50x = 0.9642f; //0.96422;
-const float Color::D50z = 0.8249f; //0.82521;
-const double Color::u0 = 4.0 * D50x / (D50x + 15 + 3 * D50z);
-const double Color::v0 = 9.0 / (D50x + 15 + 3 * D50z);
-const double Color::epskap = 8.0;
 /*
  * Munsell Lch correction
  * Copyright (c) 2011  Jacques Desmis <jdesmis@gmail.com>
@@ -137,6 +123,7 @@ void Color::init ()
     constexpr auto maxindex = 65536;
 
     cachef(maxindex, LUT_CLIP_BELOW);
+    cachefy(maxindex, LUT_CLIP_BELOW);
     gammatab(maxindex, 0);
     gammatabThumb(maxindex, 0);
 
@@ -176,6 +163,23 @@ void Color::init ()
             for(; i < maxindex; i++)
             {
                 cachef[i] = 327.68 * std::cbrt((double)i / MAXVALF);
+            }
+        }
+#ifdef _OPENMP
+        #pragma omp section
+#endif
+        {
+            int i = 0;
+            int epsmaxint = eps_max;
+
+            for (; i <= epsmaxint; i++)
+            {
+                cachefy[i] = 327.68 * (kappa * i / MAXVALF);
+            }
+
+            for(; i < maxindex; i++)
+            {
+                cachefy[i] = 327.68 * (116.0 * std::cbrt((double)i / MAXVALF) - 16.0);
             }
         }
 #ifdef _OPENMP
@@ -360,150 +364,141 @@ void Color::cleanup ()
     }
 }
 
-void Color::rgb2lab (Glib::ustring profile, Glib::ustring profileW, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b, bool workingSpace)
-{
-    double xyz_rgb[3][3];
-    const double ep = 216.0 / 24389.0;
-    const double ka = 24389.0 / 27.0;
+void Color::rgb2lab01 (const Glib::ustring &profile, const Glib::ustring &profileW, float r, float g, float b, float &LAB_l, float &LAB_a, float &LAB_b, bool workingSpace)
+{ // do not use this function in a loop. It really eats processing time caused by Glib::ustring comparisons
 
-    double var_R = r / 65535.0;
-    double var_G = g / 65535.0;
-    double var_B = b / 65535.0;
+    Glib::ustring profileCalc = "sRGB"; //default
 
-    Glib::ustring profileCalc;
-    profileCalc = "sRGB"; //default
-
-    if (workingSpace) {
-        profileCalc = profileW;    //display working
-    }
-
-    else {// if you want display = output space
-        if (profile == "RT_sRGB" || profile == "RT_sRGB_gBT709" || profile == "RT_sRGB_g10") {
-            profileCalc = "sRGB";
-        }
-
-        if (profile == "ProPhoto" || profile == "RT_Large_gBT709" || profile == "RT_Large_g10"  || profile == "RT_Large_gsRGB") {
-            profileCalc = "ProPhoto";
-        }
-
-        if (profile == "AdobeRGB1998" || profile == "RT_Medium_gsRGB") {
-            profileCalc = "Adobe RGB";
-        }
-
-        if (profile == "WideGamutRGB") {
-            profileCalc = "WideGamut";
-        }
-    }
-
-    if (workingSpace) {//display working
+    if (workingSpace) {//display working profile
+        profileCalc = profileW;
         if (profileW == "sRGB") { //apply sRGB inverse gamma
 
-            if ( var_R > 0.04045 ) {
-                var_R = pow ( ( ( var_R + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+            if (r > 0.04045f) {
+                r = pow_F(((r + 0.055f) / 1.055f), rtengine::Color::sRGBGammaCurve);
             } else {
-                var_R = var_R / 12.92;
+                r /= 12.92f;
             }
 
-            if ( var_G > 0.04045 ) {
-                var_G = pow ( ( ( var_G + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+            if (g > 0.04045f) {
+                g = pow_F(((g + 0.055f) / 1.055f), rtengine::Color::sRGBGammaCurve);
             } else {
-                var_G = var_G / 12.92;
+                g /= 12.92f;
             }
 
-            if ( var_B > 0.04045 ) {
-                var_B = pow ( ( ( var_B + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+            if (b > 0.04045f) {
+                b = pow_F(((b + 0.055f) / 1.055f), rtengine::Color::sRGBGammaCurve);
             } else {
-                var_B = var_B / 12.92;
+                b /= 12.92f;
             }
         } else if (profileW == "ProPhoto") { // apply inverse gamma 1.8
-            var_R = pow ( var_R, 1.8);
-            var_G = pow ( var_G, 1.8);
-            var_B = pow ( var_B, 1.8);
+            r = pow_F(r, 1.8f);
+            g = pow_F(g, 1.8f);
+            b = pow_F(b, 1.8f);
+        } else if (profile == "Rec2020") {
+            if (r > 0.0795f) {
+                r = pow_F(((r + 0.0954f) / 1.0954f), 2.2f);
+            } else {
+                r /= 4.5f;
+            }
+
+            if (g > 0.0795f) {
+                g = pow_F(((g + 0.0954f) / 1.0954f), 2.2f);
+            } else {
+                g /= 4.5f;
+            }
+
+            if (b > 0.0795f) {
+                b = pow_F(((b + 0.0954f) / 1.0954f), 2.2f);
+            } else {
+                b /= 4.5f;
+            }
         } else { // apply inverse gamma 2.2
-            var_R = pow ( var_R, 2.2);
-            var_G = pow ( var_G, 2.2);
-            var_B = pow ( var_B, 2.2);
+            r = pow_F(r, 2.2f);
+            g = pow_F(g, 2.2f);
+            b = pow_F(b, 2.2f);
         }
-    } else { //display outout profile
+    } else { //display output profile
+        if (profile == "RT_sRGB" || profile == "RT_sRGB_gBT709" || profile == "RT_sRGB_g10") {
+            // use default "sRGB"
+        } else if (profile == "ProPhoto" || profile == "RT_Large_gBT709" || profile == "RT_Large_g10"  || profile == "RT_Large_gsRGB") {
+            profileCalc = "ProPhoto";
+        } else if (profile == "AdobeRGB1998" || profile == "RT_Medium_gsRGB") {
+            profileCalc = "Adobe RGB";
+        } else if (profile == "WideGamutRGB") {
+            profileCalc = "WideGamut";
+        }
 
         if (profile == "RT_sRGB" || profile == "RT_Large_gsRGB"  || profile == "RT_Medium_gsRGB") { //apply sRGB inverse gamma
-            if ( var_R > 0.04045 ) {
-                var_R = pow ( ( ( var_R + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+            if (r > 0.04045f) {
+                r = pow_F(((r + 0.055f) / 1.055f), rtengine::Color::sRGBGammaCurve);
             } else {
-                var_R = var_R / 12.92;
+                r /= 12.92f;
             }
 
-            if ( var_G > 0.04045 ) {
-                var_G = pow ( ( ( var_G + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+            if (g > 0.04045f) {
+                g = pow_F(((g + 0.055f) / 1.055f), rtengine::Color::sRGBGammaCurve);
             } else {
-                var_G = var_G / 12.92;
+                g /= 12.92f;
             }
 
-            if ( var_B > 0.04045 ) {
-                var_B = pow ( ( ( var_B + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+            if (b > 0.04045f) {
+                b = pow_F(((b + 0.055f) / 1.055f), rtengine::Color::sRGBGammaCurve);
             } else {
-                var_B = var_B / 12.92;
+                b /= 12.92f;
             }
-        }
-
-        else if (profile == "RT_sRGB_gBT709"  || profile == "RT_Large_gBT709") { //
-            if ( var_R > 0.0795 ) {
-                var_R = pow ( ( ( var_R + 0.0954 ) / 1.0954 ), 2.2);
+        } else if (profile == "RT_sRGB_gBT709"  || profile == "RT_Large_gBT709" || profile == "Rec2020") {
+            if (r > 0.0795f) {
+                r = pow_F(((r + 0.0954f) / 1.0954f), 2.2f);
             } else {
-                var_R = var_R / 4.5;
+                r /= 4.5f;
             }
 
-            if ( var_G > 0.0795 ) {
-                var_G = pow ( ( ( var_G + 0.0954 ) / 1.0954 ), 2.2);
+            if (g > 0.0795f) {
+                g = pow_F(((g + 0.0954f) / 1.0954f), 2.2f);
             } else {
-                var_G = var_G / 4.5;
+                g /= 4.5f;
             }
 
-            if ( var_B > 0.0795 ) {
-                var_B = pow ( ( ( var_B + 0.0954 ) / 1.0954 ), 2.2);
+            if (b > 0.0795f) {
+                b = pow_F(((b + 0.0954f) / 1.0954f), 2.2f);
             } else {
-                var_B = var_B / 4.5;
+                b /= 4.5f;
             }
 
         } else if (profile == "ProPhoto") { // apply inverse gamma 1.8
 
-            var_R = pow ( var_R, 1.8);
-            var_G = pow ( var_G, 1.8);
-            var_B = pow ( var_B, 1.8);
-        } else if (profile == "RT_sRGB_g10"  || profile == "RT_Large_g10") { // apply inverse gamma 1.8
+            r = pow_F(r, 1.8f);
+            g = pow_F(g, 1.8f);
+            b = pow_F(b, 1.8f);
+        } else if (profile == "RT_sRGB_g10"  || profile == "RT_Large_g10") {
+            // gamma 1.0, do nothing
 
-            var_R = pow ( var_R, 1.);
-            var_G = pow ( var_G, 1.);
-            var_B = pow ( var_B, 1.);
-        }
+        } else {// apply inverse gamma 2.2
 
-        else {// apply inverse gamma 2.2
-            var_R = pow ( var_R, 2.2);
-            var_G = pow ( var_G, 2.2);
-            var_B = pow ( var_B, 2.2);
+            r = pow_F(r, 2.2f);
+            g = pow_F(g, 2.2f);
+            b = pow_F(b, 2.2f);
         }
     }
 
-    // TMatrix wprof = rtengine::ICCStore::getInstance()->workingSpaceMatrix (profileW);
+    const TMatrix wprof = rtengine::ICCStore::getInstance()->workingSpaceMatrix(profileCalc);
 
-    TMatrix wprof = rtengine::ICCStore::getInstance()->workingSpaceMatrix (profileCalc);
+    const float xyz_rgb[3][3] = { {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
+                                  {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
+                                  {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
+                                };
 
-    for (int m = 0; m < 3; m++)
-        for (int n = 0; n < 3; n++) {
-            xyz_rgb[m][n] = wprof[m][n];
-        }
+    const float var_X = (xyz_rgb[0][0] * r + xyz_rgb[0][1] * g + xyz_rgb[0][2] * b) / Color::D50x;
+    const float var_Y = (xyz_rgb[1][0] * r + xyz_rgb[1][1] * g + xyz_rgb[1][2] * b);
+    const float var_Z = (xyz_rgb[2][0] * r + xyz_rgb[2][1] * g + xyz_rgb[2][2] * b) / Color::D50z;
 
-    double varxx, varyy, varzz;
-    double var_X = ( xyz_rgb[0][0] * var_R + xyz_rgb[0][1] * var_G + xyz_rgb[0][2] * var_B ) / Color::D50x;
-    double var_Y = ( xyz_rgb[1][0] * var_R + xyz_rgb[1][1] * var_G + xyz_rgb[1][2] * var_B ) ;
-    double var_Z = ( xyz_rgb[2][0] * var_R + xyz_rgb[2][1] * var_G + xyz_rgb[2][2] * var_B ) / Color::D50z;
+    const float varxx = var_X > epsf ? xcbrtf(var_X) : (kappaf * var_X  + 16.f) / 116.f ;
+    const float varyy = var_Y > epsf ? xcbrtf(var_Y) : (kappaf * var_Y  + 16.f) / 116.f ;
+    const float varzz = var_Z > epsf ? xcbrtf(var_Z) : (kappaf * var_Z  + 16.f) / 116.f ;
 
-    varxx = var_X > ep ? cbrt(var_X) : ( ka * var_X  +  16.0) / 116.0 ;
-    varyy = var_Y > ep ? cbrt(var_Y) : ( ka * var_Y  +  16.0) / 116.0 ;
-    varzz = var_Z > ep ? cbrt(var_Z) : ( ka * var_Z  +  16.0) / 116.0 ;
-    LAB_l = ( 116 * varyy ) - 16;
-    LAB_a = 500 * ( varxx - varyy );
-    LAB_b = 200 * ( varyy - varzz );
+    LAB_l = var_Y > epsf ? (xcbrtf(var_Y) * 116.f) - 16.f : kappaf * var_Y;
+    LAB_a = 500.f * (varxx - varyy);
+    LAB_b = 200.f * (varyy - varzz);
 
 }
 
@@ -742,6 +737,36 @@ void Color::rgb2hsv(float r, float g, float b, float &h, float &s, float &v)
 
         if (h > 1.f) {
             h -= 1.f;
+        }
+    }
+}
+
+void Color::rgb2hsv01(float r, float g, float b, float &h, float &s, float &v)
+{
+
+    const float minVal = min(r, g, b);
+    v = max(r, g, b);
+    const float delta = v - minVal;
+
+    h = 0.f;
+
+    if (delta < 0.00001f) {
+        s = 0.f;
+    } else {
+        s = delta / (v == 0.f ? 1.f : v);
+
+        if (r == v) {
+            h = (g - b) / delta;
+        } else if (g == v) {
+            h = 2.f + (b - r) / delta;
+        } else if (b == v) {
+            h = 4.f + (r - g) / delta;
+        }
+
+        h /= 6.f;
+
+        if (h < 0.f) {
+            h += 1.f;
         }
     }
 }
@@ -1683,7 +1708,7 @@ void Color::Lab2XYZ(float L, float a, float b, float &x, float &y, float &z)
     float LL = L / 327.68f;
     float aa = a / 327.68f;
     float bb = b / 327.68f;
-    float fy = (0.00862069f * LL) + 0.137932f; // (L+16)/116
+    float fy = (c1By116 * LL) + c16By116; // (L+16)/116
     float fx = (0.002f * aa) + fy;
     float fz = fy - (0.005f * bb);
     x = 65535.0f * f2xyz(fx) * D50x;
@@ -1694,7 +1719,7 @@ void Color::Lab2XYZ(float L, float a, float b, float &x, float &y, float &z)
 void Color::L2XYZ(float L, float &x, float &y, float &z) // for black & white
 {
     float LL = L / 327.68f;
-    float fy = (0.00862069f * LL) + 0.137932f; // (L+16)/116
+    float fy = (c1By116 * LL) + c16By116; // (L+16)/116
     float fxz = 65535.f * f2xyz(fy);
     x = fxz * D50x;
     z = fxz * D50z;
@@ -1709,7 +1734,7 @@ void Color::Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, vfloat &
     L /= c327d68;
     a /= c327d68;
     b /= c327d68;
-    vfloat fy = F2V(0.00862069f) * L + F2V(0.137932f);
+    vfloat fy = F2V(c1By116) * L + F2V(c16By116);
     vfloat fx = F2V(0.002f) * a + fy;
     vfloat fz = fy - (F2V(0.005f) * b);
     vfloat c65535 = F2V(65535.f);
@@ -1727,8 +1752,6 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
 
 #ifdef __SSE2__
     vfloat maxvalfv = F2V(MAXVALF);
-    vfloat c116v = F2V(116.f);
-    vfloat c5242d88v = F2V(5242.88f);
     vfloat c500v = F2V(500.f);
     vfloat c200v = F2V(200.f);
 #endif
@@ -1753,7 +1776,7 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
                 float fy = (y <= 65535.f ? cachef[y] : (327.68f * xcbrtf(y / MAXVALF)));
                 float fz = (z <= 65535.f ? cachef[z] : (327.68f * xcbrtf(z / MAXVALF)));
 
-                L[i + k] = (116.f *  fy - 5242.88f); //5242.88=16.0*327.68;
+                L[i + k] = (y <= 65535.0f ? cachefy[y] : 327.68f * (116.f * xcbrtf(y / MAXVALF) - 16.f));
                 a[i + k] = (500.f * (fx - fy) );
                 b[i + k] = (200.f * (fy - fz) );
             }
@@ -1762,7 +1785,7 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
             const vfloat fy = cachef[yv];
             const vfloat fz = cachef[zv];
 
-            STVFU(L[i], c116v *  fy - c5242d88v); //5242.88=16.0*327.68;
+            STVFU(L[i], cachefy[yv]);
             STVFU(a[i], c500v * (fx - fy));
             STVFU(b[i], c200v * (fy - fz));
         }
@@ -1781,7 +1804,7 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
         fy = (y <= 65535.0f ? cachef[y] : (327.68f * xcbrtf(y / MAXVALF)));
         fz = (z <= 65535.0f ? cachef[z] : (327.68f * xcbrtf(z / MAXVALF)));
 
-        L[i] = 116.0f *  fy - 5242.88f; //5242.88=16.0*327.68;
+        L[i] = (y <= 65535.0f ? cachefy[y] : 327.68f * (116.f * xcbrtf(y / MAXVALF) - 16.f));
         a[i] = 500.0f * (fx - fy);
         b[i] = 200.0f * (fy - fz);
     }
@@ -1799,14 +1822,14 @@ void Color::XYZ2Lab(float X, float Y, float Z, float &L, float &a, float &b)
     fy = (y <= 65535.0f ? cachef[y] : (327.68f * xcbrtf(y / MAXVALF)));
     fz = (z <= 65535.0f ? cachef[z] : (327.68f * xcbrtf(z / MAXVALF)));
 
-    L = (116.0f *  fy - 5242.88f); //5242.88=16.0*327.68;
+    L = (y <= 65535.0f ? cachefy[y] : 327.68f * (116.f * xcbrtf(y / MAXVALF) - 16.f));
     a = (500.0f * (fx - fy) );
     b = (200.0f * (fy - fz) );
 }
 
 void Color::Lab2Yuv(float L, float a, float b, float &Y, float &u, float &v)
 {
-    float fy = (0.00862069 * L / 327.68) + 0.137932; // (L+16)/116
+    float fy = (c1By116 * L / 327.68) + c16By116; // (L+16)/116
     float fx = (0.002 * a / 327.68) + fy;
     float fz = fy - (0.005 * b / 327.68);
     float LL = L / 327.68;
@@ -1835,7 +1858,7 @@ void Color::Yuv2Lab(float Yin, float u, float v, float &L, float &a, float &b, c
     float fy = (Y <= 65535.0 ? cachef[Y] : (327.68 * std::cbrt(Y / MAXVALF)));
     float fz = (Z <= 65535.0 ? cachef[Z] : (327.68 * std::cbrt(Z / MAXVALF)));
 
-    L = (116.0 * fy - 5242.88); //5242.88=16.0*327.68;
+    L = (Y <= 65535.0f ? cachefy[Y] : 327.68f * (116.f * xcbrtf(Y / MAXVALF) - 16.f));
     a = (500.0 * (fx - fy) );
     b = (200.0 * (fy - fz) );
 }
@@ -2304,7 +2327,7 @@ void Color::gamutLchonly (float HH, float &Lprov1, float &Chprov1, float &R, flo
         float bprov1 = Chprov1 * sincosval.x;
 
         //conversion Lab RGB to limit Lab values - this conversion is useful before Munsell correction
-        float fy = (0.00862069f * Lprov1 ) + 0.137932f;
+        float fy = (c1By116 * Lprov1 ) + c16By116;
         float fx = (0.002f * aprov1) + fy;
         float fz = fy - (0.005f * bprov1);
 
@@ -2424,7 +2447,7 @@ void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chpr
         float bprov1 = Chprov1 * sincosval.x;
 
         //conversion Lab RGB to limit Lab values - this conversion is useful before Munsell correction
-        float fy = (0.00862069f * Lprov1 ) + 0.137932f;
+        float fy = (c1By116 * Lprov1 ) + c16By116;
         float fx = (0.002f * aprov1) + fy;
         float fz = fy - (0.005f * bprov1);
 
@@ -2533,7 +2556,7 @@ void Color::gamutLchonly (float2 sincosval, float &Lprov1, float &Chprov1, const
         float bprov1 = Chprov1 * sincosval.x;
 
         //conversion Lab RGB to limit Lab values - this conversion is useful before Munsell correction
-        float fy = (0.00862069f * Lprov1 ) + 0.137932f;
+        float fy = (c1By116 * Lprov1 ) + c16By116;
         float fx = (0.002f * aprov1) + fy;
         float fz = fy - (0.005f * bprov1);
 
