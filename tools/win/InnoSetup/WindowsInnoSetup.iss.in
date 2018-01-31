@@ -89,6 +89,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 ;Name: "desktopicon\common"; Description: "For all users"; GroupDescription: "Additional icons:"; Flags: exclusive
 ;Name: "desktopicon\user"; Description: "For the current user only"; GroupDescription: "Additional icons:"; Flags: exclusive unchecked
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
+Name: regBrowseFolder; Description: "Add ""Browse with RawTherapee"" option to context menu when right-clicking on a folder."; GroupDescription: File extensions:
+Name: regOpenFile; Description: "Add ""Open with RawTherapee"" option to context menu when right-clicking on a file."; GroupDescription: File extensions:
 
 [Files]
 Source: "{#MyBuildBasePath}\rawtherapee*.exe"; DestDir: "{app}"; Flags: ignoreversion
@@ -125,3 +127,8 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName} {#MyA
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
+[Registry]
+Root: HKCU; Subkey: "SOFTWARE\Classes\Directory\shell\Browse with RawTherapee"; ValueType: string; ValueData: "Browse with RawTherapee"; Flags: uninsdeletekey; Tasks: regBrowseFolder
+Root: HKCU; Subkey: "SOFTWARE\Classes\Directory\shell\Browse with RawTherapee\command"; ValueType: string; ValueData: "{app}\{#MyAppExeName} -w ""%1"""; Flags: uninsdeletekey; Tasks: regBrowseFolder
+Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\Open with RawTherapee"; ValueType: string; ValueData: "Open with RawTherapee"; Flags: uninsdeletekey; Tasks: regOpenFile
+Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\Open with RawTherapee\command"; ValueType: string; ValueData: "{app}\{#MyAppExeName} -R ""%1"""; Flags: uninsdeletekey; Tasks: regOpenFile
