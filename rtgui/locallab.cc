@@ -1674,6 +1674,18 @@ void Locallab::neutral_pressed()
     curvactiv->set_active(false);
     inversrad->set_active(false);
     inversret->set_active(false);
+	protectSkins->set_active(false);
+	avoidColorShift->set_active(true);
+	pastSatTog->set_active(true);
+	expcolor->setEnabled(false);
+	expexpose->setEnabled(false);
+	expvibrance->setEnabled(false);
+	expblur->setEnabled(false);
+	exptonemap->setEnabled(false);
+	expreti->setEnabled(false);
+	expsharp->setEnabled(false);
+	expcbdl->setEnabled(false);
+	expdenoi->setEnabled(false);
     stren->resetValue(false);
     gamma->resetValue(false);
     estop->resetValue(false);
