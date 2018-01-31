@@ -102,6 +102,7 @@ Source: "{#MyBuildBasePath}\images\*"; DestDir: "{app}\images\"; Flags: ignoreve
 Source: "{#MyBuildBasePath}\languages\*"; DestDir: "{app}\languages\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#MyBuildBasePath}\licenses\*"; DestDir: "{app}\licenses\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#MyBuildBasePath}\lib\*"; DestDir: "{app}\lib\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#MyBuildBasePath}\share\*"; DestDir: "{app}\share\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#MyBuildBasePath}\profiles\*"; DestDir: "{app}\profiles\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#MyBuildBasePath}\sounds\*"; DestDir: "{app}\sounds\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#MyBuildBasePath}\themes\*"; DestDir: "{app}\themes\"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -113,14 +114,14 @@ Source: "{#MyBuildBasePath}\options"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MyBuildBasePath}\*.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MyBuildBasePath}\gspawn-win{#MyBitDepth}-helper.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MyBuildBasePath}\gspawn-win{#MyBitDepth}-helper-console.exe"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "{#MyBuildBasePath}\gdb.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#MyBuildBasePath}\gdb.exe"; DestDir: "{app}"; Flags: skipifsourcedoesntexist ignoreversion
 Source: "{#MyBuildBasePath}\fonts\DroidSansMonoSlashed.ttf"; DestDir: "{fonts}"; FontInstall: "Droid Sans Mono Slashed"; Flags: onlyifdoesntexist uninsneveruninstall
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
 Name: "{group}\{#MyAppName} {#MyAppVersion}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:ProgramOnTheWeb,{#MyAppName}}"; Filename: "{#MyAppURL}"
-Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
+Name: "{group}\{cm:UninstallProgram,{#MyAppName} {#MyAppVersion}}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\{#MyAppName} {#MyAppVersion}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName} {#MyAppVersion}"; Filename: "{app}\{#MyAppExeName}"; Tasks: quicklaunchicon
 
