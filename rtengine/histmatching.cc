@@ -257,18 +257,20 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
                 std::cout << "histogram matching: cropping target to get an aspect ratio of " << round(thumb_ratio * 100)/100.0 << ":1, new size is " << tw << "x" << th << std::endl;
             }
 
-            Image8 *tmp = new Image8(tw, th);
+            if (cx || cy) {
+                Image8 *tmp = new Image8(tw, th);
 #ifdef _OPENMP
-            #pragma omp parallel for
+                #pragma omp parallel for
 #endif
-            for (int y = 0; y < th; ++y) {
-                for (int x = 0; x < tw; ++x) {
-                    tmp->r(y, x) = target->r(y+cy, x+cx);
-                    tmp->g(y, x) = target->g(y+cy, x+cx);
-                    tmp->b(y, x) = target->b(y+cy, x+cx);
+                for (int y = 0; y < th; ++y) {
+                    for (int x = 0; x < tw; ++x) {
+                        tmp->r(y, x) = target->r(y+cy, x+cx);
+                        tmp->g(y, x) = target->g(y+cy, x+cx);
+                        tmp->b(y, x) = target->b(y+cy, x+cx);
+                    }
                 }
+                target.reset(tmp);
             }
-            target.reset(tmp);
         }
 
         if (settings->verbose) {
