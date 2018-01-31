@@ -2469,7 +2469,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 lastspotdup = true;//probably unused
             }
 
-            if (params.locallab.spotduplicated && spottodupli > 1) {
+            if (params.locallab.spotduplicated && spottodupli >= 1) {
                 //perhaps some datas are redondant..to verify
                 circrads[0] = circrads[spottodupli] = dataspot[2][0] = dataspot[2][spottodupli] = dataspot[2][spottodupli - 1];
                 locx[0] = locx[spottodupli] = dataspot[3][0] = dataspot[3][spottodupli] = dataspot[3][spottodupli - 1];
