@@ -1687,8 +1687,13 @@ void Locallab::neutral_pressed()
     chrrt->resetValue(false);
     sensih->resetValue(false);
     retrab->resetValue(false);
-//    cTgainshape->reset();
-//  cTgainshape->setCurve (creti);
+    cTgainshape->reset();
+	llshape->reset();
+	ccshape->reset();
+	LHshape->reset();
+	HHshape->reset();
+	shape->reset();
+	skinTonesCurve->reset();
     avoid->set_active(false);
 
     for (int i = 0; i < 5; i++) {
