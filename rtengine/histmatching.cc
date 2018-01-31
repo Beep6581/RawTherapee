@@ -189,7 +189,7 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
 
     int fw, fh;
     getFullSize(fw, fh, TR_NONE);
-    int skip = 10;
+    int skip = 3;
 
     if (settings->verbose) {
         std::cout << "histogram matching: full raw image size is " << fw << "x" << fh << std::endl;
@@ -213,6 +213,7 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
             histMatchingCache = outCurve;
             return;
         }
+        skip = LIM(5, skip * fh / h, 10); // adjust the skip factor -- the larger the thumbnail, the less we should skip to get a good match
         source.reset(thumb->quickProcessImage(neutral, fh / skip, TI_Nearest));
 
         if (settings->verbose) {
