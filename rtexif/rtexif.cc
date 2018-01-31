@@ -1928,9 +1928,9 @@ void Tag::initInt (int data, TagType t, int cnt)
     setInt (data, 0, t);
 }
 
-void Tag::swapByteOrder2(char *buffer, int count)
+void Tag::swapByteOrder2(unsigned char *buffer, int count)
 {
-    char* ptr = buffer;
+    unsigned char* ptr = buffer;
     for (int i = 0; i < count; i+=2) {
         unsigned char c = ptr[0];
         ptr[0] = ptr[1];
@@ -1966,7 +1966,7 @@ void Tag::initUserComment (const Glib::ustring &text)
 
         // Swapping byte order to match the Exif's byte order
         if (getOrder() != HOSTORDER) {
-            swapByteOrder2((char*)commentStr, wcStrSize * 2);
+            swapByteOrder2((unsigned char*)commentStr, wcStrSize * 2);
         }
 
         memcpy(value + 8 + (useBOM ? 2 : 0), (char*)commentStr, wcStrSize * 2);

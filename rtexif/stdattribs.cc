@@ -452,8 +452,8 @@ public:
         }
 
         count = std::min (count, 65535); // limit to 65535 chars to avoid crashes in case of corrupted metadata
-        char *buffer = new char[count - 6]; // include 2 ending null chars for UCS-2 string (possibly)
-        char *value = (char*)t->getValue();
+        unsigned char *buffer = new unsigned char[count - 6]; // include 2 ending null chars for UCS-2 string (possibly)
+        unsigned char *value = t->getValue();
 
         if (!memcmp(value, "ASCII\0\0\0", 8)) {
             memcpy(buffer, value + 8, count - 8);
@@ -461,14 +461,14 @@ public:
         } else if (!memcmp(value, "UNICODE\0", 8)) {
             memcpy(buffer, value + 8, count - 8);
             buffer[count - 7] = buffer[count - 8] = '\0';
-            Glib::ustring tmp1(buffer);
+            Glib::ustring tmp1((char*)buffer);
 
 
             bool hasBOM = false;
             enum ByteOrder bo = UNKNOWN;
             if (count % 2 || (count >= 11 && (buffer[0] == 0xEF && buffer[1] == 0xBB && buffer[2] == 0xBF))) {
                 // odd string length can only be UTF-8, don't change anything
-                std::string retVal (buffer + 3);
+                std::string retVal ((char*)buffer + 3);
                 delete [] buffer;
                 return retVal;
             } else if (count >= 10) {
@@ -484,7 +484,7 @@ public:
                 // auto-detecting byte order; we still don't know if it's UCS-2 or UTF-8
                 int a = 0, b = 0, c = 0, d = 0;
                 for (int j = 8; j < count; j++) {
-                    char cc = value[j];
+                    unsigned char cc = value[j];
                     if (!(j%2)) {
                         // counting zeros for first byte
                         if (!cc) {
@@ -505,7 +505,7 @@ public:
                 }
                 if (c == (count - 8) && d) {
                     // this is an UTF-8 string
-                    std::string retVal (buffer);
+                    std::string retVal ((char*)buffer);
                     delete [] buffer;
                     return retVal;
                 }
@@ -532,7 +532,7 @@ public:
             glong written;
             char* utf8Str = g_utf16_to_utf8((unsigned short int*)buffer, -1, nullptr, &written, nullptr);
             delete [] buffer;
-            buffer = new char[written + 1];
+            buffer = new unsigned char[written + 1];
             memcpy(buffer, utf8Str, written);
             buffer[written] = 0;
         } else if (!memcmp(value, "\0\0\0\0\0\0\0\0", 8)) {
@@ -541,12 +541,12 @@ public:
             buffer[count - 7] = buffer[count - 8] = '\0';
 
             gsize written = 0;
-            char *utf8Str = g_locale_to_utf8(buffer, count - 8, nullptr, &written, nullptr);
+            char *utf8Str = g_locale_to_utf8((char*)buffer, count - 8, nullptr, &written, nullptr);
             if (utf8Str && written) {
                 delete [] buffer;
                 size_t length = strlen(utf8Str);
-                buffer = new char[length + 1];
-                strcpy(buffer, utf8Str);
+                buffer = new unsigned char[length + 1];
+                strcpy((char*)buffer, utf8Str);
             } else {
                 buffer[0] = 0;
             }
@@ -558,7 +558,7 @@ public:
             buffer[0] = 0;
         }
 
-        std::string retVal (buffer);
+        std::string retVal ((char*)buffer);
         delete [] buffer;
         return retVal;
     }

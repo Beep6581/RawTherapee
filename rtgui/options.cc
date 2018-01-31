@@ -2261,11 +2261,11 @@ void Options::load (bool lightweight)
 
         if (!tmpFName.empty()) {
             if (options.rtSettings.verbose) {
-                printf ("Raws' default profile \"%s\" found\n", options.defProfRaw.c_str());
+                printf ("Default profile for raw images \"%s\" found\n", options.defProfRaw.c_str());
             }
         } else {
             if (options.rtSettings.verbose) {
-                printf ("Raws' default profile \"%s\" not found or not set -> using Internal values\n", options.defProfRaw.c_str());
+                printf ("Default profile for raw images \"%s\" not found or not set -> using Internal values\n", options.defProfRaw.c_str());
             }
 
             options.defProfRaw = DEFPROFILE_INTERNAL;
@@ -2280,11 +2280,11 @@ void Options::load (bool lightweight)
 
         if (!tmpFName.empty()) {
             if (options.rtSettings.verbose) {
-                printf ("Images' default profile \"%s\" found\n", options.defProfImg.c_str());
+                printf ("Default profile for non-raw images \"%s\" found\n", options.defProfImg.c_str());
             }
         } else {
             if (options.rtSettings.verbose) {
-                printf ("Images' default profile \"%s\" not found or not set -> using Internal values\n", options.defProfImg.c_str());
+                printf ("Default profile for non-raw images \"%s\" not found or not set -> using Internal values\n", options.defProfImg.c_str());
             }
 
             options.defProfImg = DEFPROFILE_INTERNAL;

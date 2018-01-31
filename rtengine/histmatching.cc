@@ -160,6 +160,8 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
     }
 
     ProcParams neutral;
+    neutral.raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
+    neutral.raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
     
     std::unique_ptr<IImage8> source;
     {
@@ -205,8 +207,15 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
         }
         PreviewProps pp(cx, cy, fw, fh, skip);
         ColorTemp currWB = getWB();
+
         std::unique_ptr<Imagefloat> image(new Imagefloat(int(fw / skip), int(fh / skip)));
-        getImage(currWB, TR_NONE, image.get(), pp, neutral.toneCurve, neutral.raw);
+        {
+            RawImageSource rsrc;
+            rsrc.load(getFileName());
+            rsrc.preprocess(neutral.raw, neutral.lensProf, neutral.coarse, false);
+            rsrc.demosaic(neutral.raw);
+            rsrc.getImage(currWB, TR_NONE, image.get(), pp, neutral.toneCurve, neutral.raw);
+        }
 
         // this could probably be made faster -- ideally we would need to just
         // perform the transformation from camera space to the output space
