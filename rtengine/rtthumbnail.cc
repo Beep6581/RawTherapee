@@ -466,8 +466,8 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
         skip--;
     }
 
-    if (skip < 1) {
-        skip = 1;
+    if (skip < 2) {
+        skip = 2;
     }
 
     int hskip = skip, vskip = skip;

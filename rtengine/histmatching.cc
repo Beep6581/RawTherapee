@@ -213,7 +213,7 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
             histMatchingCache = outCurve;
             return;
         }
-        skip = LIM(5, skip * fh / h, 10); // adjust the skip factor -- the larger the thumbnail, the less we should skip to get a good match
+        skip = LIM(skip * fh / h, 6, 10); // adjust the skip factor -- the larger the thumbnail, the less we should skip to get a good match
         source.reset(thumb->quickProcessImage(neutral, fh / skip, TI_Nearest));
 
         if (settings->verbose) {
