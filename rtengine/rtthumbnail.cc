@@ -137,6 +137,7 @@ extern Options options;
 
 namespace rtengine
 {
+
 using namespace procparams;
 
 Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, double wbEq, bool inspectorMode)
@@ -465,8 +466,8 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
         skip--;
     }
 
-    if (skip < 1) {
-        skip = 1;
+    if (skip < 2) {
+        skip = 2;
     }
 
     int hskip = skip, vskip = skip;
@@ -1303,7 +1304,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         readyImg = new Image8 (fw, fh);
         ipf.lab2monitorRgb (labView, readyImg);
     } else {
-        readyImg = ipf.lab2rgb(labView, 0, 0, fw, fh, params.icm);
+        readyImg = ipf.lab2rgb(labView, 0, 0, fw, fh, params.icm, false);
     }
     delete labView;
     delete baseImg;

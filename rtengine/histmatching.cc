@@ -28,7 +28,6 @@
 #include "improcfun.h"
 #include "StopWatch.h"
 #include <iostream>
-#include <iomanip>
 
 
 namespace rtengine {
@@ -37,20 +36,36 @@ extern const Settings *settings;
 
 namespace {
 
-std::vector<int> getCdf(const IImage8 &img)
+struct CdfInfo {
+    std::vector<int> cdf;
+    int min_val;
+    int max_val;
+
+    CdfInfo(): cdf(256), min_val(-1), max_val(-1) {}
+};
+
+
+CdfInfo getCdf(const IImage8 &img)
 {
-    std::vector<int> ret(256);
+    CdfInfo ret;
+
     for (int y = 0; y < img.getHeight(); ++y) {
         for (int x = 0; x < img.getWidth(); ++x) {
             int lum = LIM(0, int(Color::rgbLuminance(float(img.r(y, x)), float(img.g(y, x)), float(img.b(y, x)))), 255);
-            ++ret[lum];
+            ++ret.cdf[lum];
         }
     }
 
     int sum = 0;
-    for (size_t i = 0; i < ret.size(); ++i) {
-        sum += ret[i];
-        ret[i] = sum;
+    for (size_t i = 0; i < ret.cdf.size(); ++i) {
+        if (ret.cdf[i] > 0) {
+            if (ret.min_val < 0) {
+                ret.min_val = i;
+            }
+            ret.max_val = i;
+        }
+        sum += ret.cdf[i];
+        ret.cdf[i] = sum;
     }
     
     return ret;
@@ -86,25 +101,35 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
     curve.clear();
     
     const int npoints = 8;
-    int idx = 1;
+    int idx = 15;
     for (; idx < int(mapping.size()); ++idx) {
         if (mapping[idx] >= idx) {
             break;
         }
     }
-    int step = max(int(mapping.size())/npoints, 1);
+    if (idx == int(mapping.size())) {
+        for (idx = 1; idx < int(mapping.size()); ++idx) {
+            if (mapping[idx] >= idx) {
+                break;
+            }
+        }
+    }
+    int step = std::max(int(mapping.size())/npoints, 1);
 
     auto coord = [](int v) -> double { return double(v)/255.0; };
     auto doit =
         [&](int start, int stop, int step, bool addstart) -> void
         {
             int prev = start;
-            if (addstart) {
+            if (addstart && mapping[start] >= 0) {
                 curve.push_back(coord(start));
                 curve.push_back(coord(mapping[start]));
             }
             for (int i = start; i < stop; ++i) {
                 int v = mapping[i];
+                if (v < 0) {
+                    continue;
+                }
                 bool change = i > 0 && v != mapping[i-1];
                 int diff = i - prev;
                 if ((change && std::abs(diff - step) <= 1) || diff > step * 2) {
@@ -114,12 +139,23 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
                 }
             }
         };
-    doit(0, idx, idx > step ? step : idx / 2, true);
-    doit(idx, int(mapping.size()), step, idx - step > step / 2);
+
+    curve.push_back(0.0);
+    curve.push_back(0.0);
+
+    int start = 0;
+    while (start < idx && (mapping[start] < 0 || start < idx / 2)) {
+        ++start;
+    }
+    
+    doit(start, idx, idx > step ? step : idx / 2, true);
+    doit(idx, int(mapping.size()), step, idx - step > step / 2 && std::abs(curve[curve.size()-2] - coord(idx)) > 0.01);
+    
     if (curve.size() > 2 && (1 - curve[curve.size()-2] <= step / (256.0 * 3))) {
         curve.pop_back();
         curve.pop_back();
     }
+        
     curve.push_back(1.0);
     curve.push_back(1.0);
         
@@ -153,7 +189,7 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
 
     int fw, fh;
     getFullSize(fw, fh, TR_NONE);
-    int skip = 10;
+    int skip = 3;
 
     if (settings->verbose) {
         std::cout << "histogram matching: full raw image size is " << fw << "x" << fh << std::endl;
@@ -162,6 +198,7 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
     ProcParams neutral;
     neutral.raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
     neutral.raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
+    neutral.icm.output = "sRGB";
     
     std::unique_ptr<IImage8> source;
     {
@@ -176,6 +213,7 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
             histMatchingCache = outCurve;
             return;
         }
+        skip = LIM(skip * fh / h, 6, 10); // adjust the skip factor -- the larger the thumbnail, the less we should skip to get a good match
         source.reset(thumb->quickProcessImage(neutral, fh / skip, TI_Nearest));
 
         if (settings->verbose) {
@@ -185,49 +223,56 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
     
     std::unique_ptr<IImage8> target;
     {
-        int tw = source->getWidth(), th = source->getHeight();
-        float thumb_ratio = float(std::max(tw, th)) / float(std::min(tw, th));
-        float target_ratio = float(std::max(fw, fh)) / float(std::min(fw, fh));
+        RawMetaDataLocation rml;
+        eSensorType sensor_type;
+        double scale;
+        int w = fw / skip, h = fh / skip;
+        std::unique_ptr<Thumbnail> thumb(Thumbnail::loadFromRaw(getFileName(), rml, sensor_type, w, h, 1, false, false));
+        if (!thumb) {
+            if (settings->verbose) {
+                std::cout << "histogram matching: raw decoding failed, generating a neutral curve" << std::endl;
+            }
+            histMatchingCache = outCurve;
+            return;
+        }
+        target.reset(thumb->processImage(neutral, sensor_type, fh / skip, TI_Nearest, getMetaData(), scale, false));
+
+        int sw = source->getWidth(), sh = source->getHeight();
+        int tw = target->getWidth(), th = target->getHeight();
+        float thumb_ratio = float(std::max(sw, sh)) / float(std::min(sw, sh));
+        float target_ratio = float(std::max(tw, th)) / float(std::min(tw, th));
         int cx = 0, cy = 0;
         if (std::abs(thumb_ratio - target_ratio) > 0.01) {
             if (thumb_ratio > target_ratio) {
                 // crop the height
-                int ch = fh - (fw * float(th) / float(tw));
+                int ch = th - (tw * float(sh) / float(sw));
                 cy += ch / 2;
-                fh -= ch;
+                th -= ch;
             } else {
                 // crop the width
-                int cw = fw - (fh * float(tw) / float(th));
+                int cw = tw - (th * float(sw) / float(sh));
                 cx += cw / 2;
-                fw -= cw;
+                tw -= cw;
             }
             if (settings->verbose) {
-                std::cout << "histogram matching: cropping target to get an aspect ratio of " << std::fixed << std::setprecision(2) << thumb_ratio << ":1, new full size is " << fw << "x" << fh << std::endl;
+                std::cout << "histogram matching: cropping target to get an aspect ratio of " << round(thumb_ratio * 100)/100.0 << ":1, new size is " << tw << "x" << th << std::endl;
+            }
+
+            if (cx || cy) {
+                Image8 *tmp = new Image8(tw, th);
+#ifdef _OPENMP
+                #pragma omp parallel for
+#endif
+                for (int y = 0; y < th; ++y) {
+                    for (int x = 0; x < tw; ++x) {
+                        tmp->r(y, x) = target->r(y+cy, x+cx);
+                        tmp->g(y, x) = target->g(y+cy, x+cx);
+                        tmp->b(y, x) = target->b(y+cy, x+cx);
+                    }
+                }
+                target.reset(tmp);
             }
         }
-        PreviewProps pp(cx, cy, fw, fh, skip);
-        ColorTemp currWB = getWB();
-
-        std::unique_ptr<Imagefloat> image(new Imagefloat(int(fw / skip), int(fh / skip)));
-        {
-            RawImageSource rsrc;
-            rsrc.load(getFileName());
-            rsrc.preprocess(neutral.raw, neutral.lensProf, neutral.coarse, false);
-            rsrc.demosaic(neutral.raw);
-            rsrc.getImage(currWB, TR_NONE, image.get(), pp, neutral.toneCurve, neutral.raw);
-        }
-
-        // this could probably be made faster -- ideally we would need to just
-        // perform the transformation from camera space to the output space
-        // (taking gamma into account), but I couldn't find anything
-        // ready-made, so for now this will do. Remember the famous quote:
-        // "premature optimization is the root of all evil" :-)
-        convertColorSpace(image.get(), neutral.icm, currWB);
-        ImProcFunctions ipf(&neutral);
-        LabImage tmplab(image->getWidth(), image->getHeight());
-        ipf.rgb2lab(*image, tmplab, neutral.icm.working);
-        image.reset(ipf.lab2rgbOut(&tmplab, 0, 0, tmplab.W, tmplab.H, neutral.icm));
-        target.reset(image->to8());
 
         if (settings->verbose) {
             std::cout << "histogram matching: generated neutral rendering" << std::endl;
@@ -238,14 +283,18 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
         target->resizeImgTo(source->getWidth(), source->getHeight(), TI_Nearest, tmp);
         target.reset(tmp);
     }
-    std::vector<int> scdf = getCdf(*source);
-    std::vector<int> tcdf = getCdf(*target);
+    CdfInfo scdf = getCdf(*source);
+    CdfInfo tcdf = getCdf(*target);
 
     std::vector<int> mapping;
     int j = 0;
-    for (size_t i = 0; i < tcdf.size(); ++i) {
-        j = findMatch(tcdf[i], scdf, j);
-        mapping.push_back(j);
+    for (int i = 0; i < int(tcdf.cdf.size()); ++i) {
+        j = findMatch(tcdf.cdf[i], scdf.cdf, j);
+        if (i >= tcdf.min_val && i <= tcdf.max_val && j >= scdf.min_val && j <= scdf.max_val) {
+            mapping.push_back(j);
+        } else {
+            mapping.push_back(-1);
+        }
     }
 
     mappingToCurve(mapping, outCurve);

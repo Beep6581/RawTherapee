@@ -13,6 +13,6 @@ Comment[pl]=Zaawansowany program do wywoływania zdjęć typu raw
 Icon=rawtherapee
 Exec=rawtherapee %f
 Terminal=false
-MimeType=image/jpeg;image/png;image/tiff;image/x-adobe-dng;image/x-canon-cr2;image/x-canon-crf;image/x-canon-crw;image/x-fuji-raf;image/x-jpg;image/x-kodak-dcr;image/x-kodak-k25;image/x-kodak-kdc;image/x-mamiya-mef;image/x-minolta-mrw;image/x-nikon-nef;image/x-nikon-nrw;image/x-olympus-orf;image/x-panasonic-raw;image/x-panasonic-rw2;image/x-pentax-pef;image/x-pentax-raw;image/x-raw;image/x-rwz;image/x-samsung-srw;image/x-sony-arw;image/x-sony-sr2;image/x-sony-srf;image/x-hasselblad-3fr;image/x-hasselblad-fff;image/x-leaf-mos;image/x-phaseone-iiq;image/x-tif;
+MimeType=image/jpeg;image/png;image/tiff;image/x-adobe-dng;image/x-canon-cr2;image/x-canon-crf;image/x-canon-crw;image/x-fuji-raf;image/x-hasselblad-3fr;image/x-hasselblad-fff;image/x-jpg;image/x-kodak-dcr;image/x-kodak-k25;image/x-kodak-kdc;image/x-leaf-mos;image/x-leica-rwl;image/x-mamiya-mef;image/x-minolta-mrw;image/x-nikon-nef;image/x-nikon-nrw;image/x-olympus-orf;image/x-panasonic-raw;image/x-panasonic-rw2;image/x-pentax-pef;image/x-pentax-raw;image/x-phaseone-iiq;image/x-raw;image/x-rwz;image/x-samsung-srw;image/x-sigma-x3f;image/x-sony-arq;image/x-sony-arw;image/x-sony-sr2;image/x-sony-srf;image/x-tif;
 Categories=Photography;Graphics;2DGraphics;RasterGraphics;GTK;
 Keywords=raw;photography;develop;pp3;graphics;

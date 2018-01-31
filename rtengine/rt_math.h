@@ -74,9 +74,9 @@ constexpr const T& max(const T& a, const T& b, const ARGS&... args)
 }
 
 template<typename T>
-constexpr const T& LIM(const T& a, const T& b, const T& c)
+constexpr const T& LIM(const T& val, const T& low, const T& high)
 {
-    return max(b, min(a, c));
+    return max(low, min(val, high));
 }
 
 template<typename T>
