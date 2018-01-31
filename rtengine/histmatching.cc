@@ -36,20 +36,36 @@ extern const Settings *settings;
 
 namespace {
 
-std::vector<int> getCdf(const IImage8 &img)
+struct CdfInfo {
+    std::vector<int> cdf;
+    int min_val;
+    int max_val;
+
+    CdfInfo(): cdf(256), min_val(-1), max_val(-1) {}
+};
+
+
+CdfInfo getCdf(const IImage8 &img)
 {
-    std::vector<int> ret(256);
+    CdfInfo ret;
+
     for (int y = 0; y < img.getHeight(); ++y) {
         for (int x = 0; x < img.getWidth(); ++x) {
             int lum = LIM(0, int(Color::rgbLuminance(float(img.r(y, x)), float(img.g(y, x)), float(img.b(y, x)))), 255);
-            ++ret[lum];
+            ++ret.cdf[lum];
         }
     }
 
     int sum = 0;
-    for (size_t i = 0; i < ret.size(); ++i) {
-        sum += ret[i];
-        ret[i] = sum;
+    for (size_t i = 0; i < ret.cdf.size(); ++i) {
+        if (ret.cdf[i] > 0) {
+            if (ret.min_val < 0) {
+                ret.min_val = i;
+            }
+            ret.max_val = i;
+        }
+        sum += ret.cdf[i];
+        ret.cdf[i] = sum;
     }
     
     return ret;
@@ -105,12 +121,15 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
         [&](int start, int stop, int step, bool addstart) -> void
         {
             int prev = start;
-            if (addstart) {
+            if (addstart && mapping[start] >= 0) {
                 curve.push_back(coord(start));
                 curve.push_back(coord(mapping[start]));
             }
             for (int i = start; i < stop; ++i) {
                 int v = mapping[i];
+                if (v < 0) {
+                    continue;
+                }
                 bool change = i > 0 && v != mapping[i-1];
                 int diff = i - prev;
                 if ((change && std::abs(diff - step) <= 1) || diff > step * 2) {
@@ -120,20 +139,22 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
                 }
             }
         };
-    doit(0, idx, idx > step ? step : idx / 2, true);
-    doit(idx, int(mapping.size()), step, idx - step > step / 2);
+
+    curve.push_back(0.0);
+    curve.push_back(0.0);
+
+    int start = 0;
+    while (start < idx && (mapping[start] < 0 || start < idx / 2)) {
+        ++start;
+    }
+    
+    doit(start, idx, idx > step ? step : idx / 2, true);
+    doit(idx, int(mapping.size()), step, idx - step > step / 2 && std::abs(curve[curve.size()-2] - coord(idx)) > 0.01);
+    
     if (curve.size() > 2 && (1 - curve[curve.size()-2] <= step / (256.0 * 3))) {
         curve.pop_back();
         curve.pop_back();
     }
-    // remove the plateau at the end (if any)
-    size_t j = curve.size() / 2;
-    for (; j > 1; --j) {
-        if (std::abs(curve[2*(j-1)-1] - curve.back()) > 0.01) {
-            break;
-        }
-    }
-    curve.resize(2*j);
         
     curve.push_back(1.0);
     curve.push_back(1.0);
@@ -259,14 +280,18 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
         target->resizeImgTo(source->getWidth(), source->getHeight(), TI_Nearest, tmp);
         target.reset(tmp);
     }
-    std::vector<int> scdf = getCdf(*source);
-    std::vector<int> tcdf = getCdf(*target);
+    CdfInfo scdf = getCdf(*source);
+    CdfInfo tcdf = getCdf(*target);
 
     std::vector<int> mapping;
     int j = 0;
-    for (size_t i = 0; i < tcdf.size(); ++i) {
-        j = findMatch(tcdf[i], scdf, j);
-        mapping.push_back(j);
+    for (int i = 0; i < int(tcdf.cdf.size()); ++i) {
+        j = findMatch(tcdf.cdf[i], scdf.cdf, j);
+        if (i >= tcdf.min_val && i <= tcdf.max_val && j >= scdf.min_val && j <= scdf.max_val) {
+            mapping.push_back(j);
+        } else {
+            mapping.push_back(-1);
+        }
     }
 
     mappingToCurve(mapping, outCurve);
