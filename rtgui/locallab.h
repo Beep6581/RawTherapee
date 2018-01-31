@@ -226,15 +226,10 @@ private:
     Adjuster* const shardamping;
     Adjuster* const shariter;
     Adjuster* const sensisha;
-//   Adjuster* const noiselumf;
-//   Adjuster* const noiselumc;
     Adjuster* const noiselumdetail;
     Adjuster* const noisechrodetail;
     Adjuster* const bilateral;
     Adjuster* const sensiden;
-
-//    Adjuster* const noisechrof;
-//    Adjuster* const noisechroc;
     Adjuster* const hueref;
     Adjuster* const huerefblur;
     Adjuster* const chromaref;
@@ -276,18 +271,6 @@ private:
     Gtk::HBox* const qualbox;
     Gtk::HBox* const qualcurvbox;
 
-    /*
-        Gtk::VBox* const artifVBox;
-        Gtk::VBox* const shapeVBox;
-        Gtk::VBox* const tmBox;
-        Gtk::VBox* const retiBox;
-        Gtk::VBox* const colorVBox;
-        Gtk::VBox* const blurrVBox;
-        Gtk::VBox* const sharpVBox;
-        Gtk::VBox* const cbdlVBox;
-        Gtk::VBox* const denoisVBox;
-        Gtk::VBox* const superVBox;
-    */
     Gtk::CheckButton* const avoid;
     Gtk::CheckButton* const activlum;
     Gtk::CheckButton* const invers;
