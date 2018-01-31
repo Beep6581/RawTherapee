@@ -394,6 +394,24 @@ void Color::rgb2lab01 (const Glib::ustring &profile, const Glib::ustring &profil
             r = pow_F(r, 1.8f);
             g = pow_F(g, 1.8f);
             b = pow_F(b, 1.8f);
+        } else if (profile == "Rec2020") {
+            if (r > 0.0795f) {
+                r = pow_F(((r + 0.0954f) / 1.0954f), 2.2f);
+            } else {
+                r /= 4.5f;
+            }
+
+            if (g > 0.0795f) {
+                g = pow_F(((g + 0.0954f) / 1.0954f), 2.2f);
+            } else {
+                g /= 4.5f;
+            }
+
+            if (b > 0.0795f) {
+                b = pow_F(((b + 0.0954f) / 1.0954f), 2.2f);
+            } else {
+                b /= 4.5f;
+            }
         } else { // apply inverse gamma 2.2
             r = pow_F(r, 2.2f);
             g = pow_F(g, 2.2f);
@@ -428,7 +446,7 @@ void Color::rgb2lab01 (const Glib::ustring &profile, const Glib::ustring &profil
             } else {
                 b /= 12.92f;
             }
-        } else if (profile == "RT_sRGB_gBT709"  || profile == "RT_Large_gBT709") {
+        } else if (profile == "RT_sRGB_gBT709"  || profile == "RT_Large_gBT709" || profile == "Rec2020") {
             if (r > 0.0795f) {
                 r = pow_F(((r + 0.0954f) / 1.0954f), 2.2f);
             } else {
