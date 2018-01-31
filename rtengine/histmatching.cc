@@ -28,7 +28,6 @@
 #include "improcfun.h"
 #include "StopWatch.h"
 #include <iostream>
-#include <iomanip>
 
 
 namespace rtengine {
@@ -99,7 +98,7 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
             }
         }
     }
-    int step = max(int(mapping.size())/npoints, 1);
+    int step = std::max(int(mapping.size())/npoints, 1);
 
     auto coord = [](int v) -> double { return double(v)/255.0; };
     auto doit =
@@ -207,6 +206,13 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
         double scale;
         int w = fw / skip, h = fh / skip;
         std::unique_ptr<Thumbnail> thumb(Thumbnail::loadFromRaw(getFileName(), rml, sensor_type, w, h, 1, false, false));
+        if (!thumb) {
+            if (settings->verbose) {
+                std::cout << "histogram matching: raw decoding failed, generating a neutral curve" << std::endl;
+            }
+            histMatchingCache = outCurve;
+            return;
+        }
         target.reset(thumb->processImage(neutral, sensor_type, fh / skip, TI_Nearest, getMetaData(), scale, false));
 
         int sw = source->getWidth(), sh = source->getHeight();
@@ -227,7 +233,7 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
                 tw -= cw;
             }
             if (settings->verbose) {
-                std::cout << "histogram matching: cropping target to get an aspect ratio of " << std::fixed << std::setprecision(2) << thumb_ratio << ":1, new size is " << tw << "x" << th << std::endl;
+                std::cout << "histogram matching: cropping target to get an aspect ratio of " << round(thumb_ratio * 100)/100.0 << ":1, new size is " << tw << "x" << th << std::endl;
             }
 
             Image8 *tmp = new Image8(tw, th);
