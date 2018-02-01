@@ -323,6 +323,7 @@ protected:
     LUTi sensicbs;
     LUTi activlums;
     int versionmip;
+	int mipver;
     LUTi strens;
     LUTi gammas;
     LUTi estops;
@@ -401,8 +402,14 @@ public:
     void        stopProcessing();
 //    void updatePreviewImage (int todo, Crop* cropCall = NULL);
     void        spotduplic(int **dataspot, int spottodupli, int maxdata);
+    void        changenumberofspot(int **dataspot, int maxdata, int maxspot, int ns, Glib::ustring datal, int versionmip);
+	
+ //           Glib::ustring datal;
+	
     std::string *retistrsav;
 
+	
+	
     void setPreviewScale(int scale)
     {
         setScale(scale);

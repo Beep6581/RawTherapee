@@ -747,6 +747,7 @@ private:
             imgsrc->getAutoExpHistogram(aehist, aehistcompr);
             ipf.getAutoExp(aehist, aehistcompr, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
         }
+
         if (params.toneCurve.histmatching) {
             imgsrc->getAutoMatchedToneCurve(params.toneCurve.curve);
 
@@ -761,7 +762,7 @@ private:
             params.toneCurve.contrast = 0;
             params.toneCurve.black = 0;
 
-        }        
+        }
 
         // at this stage, we can flush the raw data to free up quite an important amount of memory
         // commented out because it makes the application crash when batch processing...
@@ -1137,6 +1138,7 @@ private:
 
             ifstream fich(datalab, ios::in);
             int maxdata = 102; //101 10023 //100 10022 //99 10021 // 91 10021 //88 10019 //87 10018//86 10017//85 10016 //82;//78;//73 10011
+            //it must be the same value as in improccoordinator.cc
 
             if (fich && versionmip != 0) {
                 std::string inser;
@@ -2448,7 +2450,7 @@ private:
 
             GammaValues ga;
             //  if(params.blackwhite.enabled) params.toneCurve.hrenabled=false;
-            readyImg = ipf.lab2rgbOut (labView, cx, cy, cw, ch, params.icm, &ga);
+            readyImg = ipf.lab2rgbOut(labView, cx, cy, cw, ch, params.icm, &ga);
             customGamma = true;
 
             //or selected Free gamma
@@ -2462,7 +2464,7 @@ private:
             // if Default gamma mode: we use the profile selected in the "Output profile" combobox;
             // gamma come from the selected profile, otherwise it comes from "Free gamma" tool
 
-            readyImg = ipf.lab2rgbOut (labView, cx, cy, cw, ch, params.icm);
+            readyImg = ipf.lab2rgbOut(labView, cx, cy, cw, ch, params.icm);
 
             if (settings->verbose) {
                 printf("Output profile_: \"%s\"\n", params.icm.output.c_str());
@@ -2494,7 +2496,7 @@ private:
         }
 
         if (tmpScale != 1.0 && params.resize.method == "Nearest") { // resize rgb data (gamma applied)
-            Imagefloat* tempImage = new Imagefloat (imw, imh);
+            Imagefloat* tempImage = new Imagefloat(imw, imh);
             ipf.resize(readyImg, tempImage, tmpScale);
             delete readyImg;
             readyImg = tempImage;
@@ -2655,7 +2657,7 @@ private:
         auto &lcurve = params.dirpyrDenoise.lcurve;
 
         for (size_t i = 2; i < lcurve.size(); i += 4) {
-            lcurve[i] *= min (scale_factor * scale_factor, 1.0);
+            lcurve[i] *= min(scale_factor * scale_factor, 1.0);
         }
 
         noiseLCurve.Set(lcurve);
@@ -2783,7 +2785,7 @@ private:
 } // namespace
 
 
-IImagefloat* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* pl, bool flush)
+IImagefloat* processImage(ProcessingJob* pjob, int& errorCode, ProgressListener* pl, bool flush)
 {
     ImageProcessor proc(pjob, errorCode, pl, flush);
     return proc();
@@ -2796,7 +2798,7 @@ void batchProcessingThread(ProcessingJob* job, BatchProcessingListener* bpl)
 
     while (currentJob) {
         int errorCode;
-        IImagefloat* img = processImage (currentJob, errorCode, bpl, true);
+        IImagefloat* img = processImage(currentJob, errorCode, bpl, true);
 
         if (errorCode) {
             bpl->error(M("MAIN_MSG_CANNOTLOAD"));

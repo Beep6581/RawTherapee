@@ -173,6 +173,7 @@ ImProcCoordinator::ImProcCoordinator()
       sensicbs(500, -10000),
       activlums(500, -10000),
       versionmip(0),
+      mipver(0),
       strens(500, -10000),
       gammas(500, -10000),
       estops(500, -10000),
@@ -890,6 +891,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
 
             int maxdata = 102; //101 10023 //100 10022 //99 10021 // 90 10020 //88 10019//87 10018  //86 10017 //85 10016;// 82 10015//78;//73 for 10011
+            //same value in simpleprocess.cc
 
             if (fic0) {
                 //find current version mip
@@ -927,15 +929,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 }
 
 
-                if (fic)
+                if (fic) {
+                    mipver = 10024;//to actualize  for each change, must be change also at the end just before save all datas mip files
 
-                {
                     //***************************************************************************************
                     //initialize new values when first utilisation of Locallab. Prepare creation of Mip files
                     //****************************************************************************************
                     for (int sp = 1; sp < maxspot; sp++) { // spots default
                         int t_sp = sp;
-                        int t_mipversion = 10024;//new value for each change
+                        int t_mipversion = mipver;//new value for each change neads here, if it is first use
                         int t_circrad = 18;
                         int t_locX = 250;
                         int t_locY = 250;
@@ -2106,353 +2108,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
             //**************************************************************
             //here we change the number of spot if change in options
             //**************************************************************
-            if (ns < (maxspot - 1)) {
-                ofstream fic(datal, ios::out | ios::app);  // ouverture en écriture avec effacement du fichier ouvert
-
-
-                for (int sp = ns + 1 ; sp < maxspot; sp++) { // spots default
-                    int t_sp = sp;
-                    int t_mipversion = 10024;
-                    int t_circrad = 18;
-                    int t_locX = 250;
-                    int t_locY = 250;
-                    int t_locYT = 250;
-                    int t_locXL = 250;
-                    int t_centerX = 0;
-                    int t_centerY = 0;
-                    int t_lightness = 0;
-                    int t_contrast = 0;
-                    int t_chroma = 0;
-                    int t_sensi = 19;
-                    int t_transit = 60;
-                    int t_invers = 0;
-                    int t_Smeth = 0;
-                    int t_currentspot = 1;
-                    int t_radius = 1;
-                    int t_strength = 0;
-                    int t_sensibn = 40;
-                    int t_inversrad = 0;
-                    int t_str = 0;
-                    int t_chrrt = 0;
-                    int t_neigh = 50;
-                    int t_vart = 200;
-                    int t_sensih = 19;
-                    int t_inversret = 0;
-                    int t_retinexMethod = 2;
-                    int t_sharradius = 40;
-                    int t_sharamount = 75;
-                    int t_shardamping = 75;
-                    int t_shariter = 30;
-                    int t_sensisha = 19;
-                    int t_inverssha = 0;
-                    int t_qualityMethod = 1;
-                    int t_thres = 18;
-                    int t_proxi = 0;
-                    int t_noiselumf = 0;
-                    int t_noiselumc = 0;
-                    int t_noisechrof = 0;
-                    int t_noisechroc = 0;
-                    int t_mult0 = 100;
-                    int t_mult1 = 100;
-                    int t_mult2 = 100;
-                    int t_mult3 = 100;
-                    int t_mult4 = 100;
-                    int t_threshold = 20;
-                    int t_sensicb = 19;
-                    int t_activlum = 0;
-                    //10001 TM
-                    int t_stren = 0;
-                    int t_gamma = 100;
-                    int t_estop = 140;
-                    int t_scaltm = 10;
-                    int t_rewei = 0;
-                    int t_sensitm = 19;
-
-                    //10002 curve
-                    int t_retrab = 500;
-
-                    std::string t_curvret = "1000A0B120C350D350E700F500G350H350I1000J120K350L350M";//12 points
-                    //10003
-                    std::string t_curvll = "3000A0B0C1000D1000E"; //"3000A0B0C499D501E1000F1000G"; //"3000A0B0C1000D1000E";//0 points with marks
-                    //10004
-                    std::string t_curvlh = "1000A0B500C350D350E166F500G350H350I333J500K350L350M500N500O350P350Q666R500S350T350U833V500W350X350Y";
-                    //10005
-                    int t_curvactiv = 0;
-                    //10006
-                    std::string t_curvcc = "3000A0B0C1000D1000E";
-                    //10007
-                    int t_qualitycurveMethod = 0;
-                    //10008
-                    std::string t_curvhh = "1000A0B500C350D350E166F500G350H350I333J500K350L350M500N500O350P350Q666R500S350T350U833V500W350X350Y";
-
-                    //10009
-                    int t_sensiv = 19;
-                    int t_pastel = 0;
-                    int t_saturated = 0;
-                    std::string t_psthres = "0A75B";
-                    int t_proskin = 0;
-                    int t_avoidcsh = 0;
-                    int t_pastsat = 0;
-                    std::string t_curvskin = "3000A0B0C1000D1000E"; //"3000A0B0C499D501E1000F1000G"; //"3000A0B0C1000D1000E";//0 points with marks
-
-                    int t_expcomp       = 0;
-                    int t_black         = 0;
-                    int t_hlcompr       = 20;
-                    int t_hlcomprthresh = 33;
-                    int t_shcompr       = 50;
-                    int t_sensiex = 19;
-                    //10010
-                    std::string t_curvex = "3000A0B0C1000D1000E";
-
-                    //10012
-                    int t_centerXbuf = 0;
-                    int t_centerYbuf = 0;
-                    int t_adjblur = 0;
-                    int t_cutpast = 0;
-
-                    //10013
-                    int t_chromacbdl = 0;
-
-                    //10014
-                    int t_lastdust = 0;
-                    int t_blurMethod = 0;
-                    int t_dustMethod = 1;
-
-                    //10016
-                    int t_excludemeth = 0;
-                    int t_sensiexclu = 19;
-                    int t_struc = 0;
-
-                    //10017
-                    int t_warm = 0;
-                    //10018
-                    int t_noiselumdetail = 0;
-                    //10019
-                    int t_noisechrodetail = 0;
-                    //10020
-                    int t_sensiden = 30;
-
-                    //10021
-                    int t_expdenoi = 0;
-
-                    int t_expcolor = 0;
-                    int t_expvibrance = 0;
-                    int t_expblur = 0;
-                    int t_exptonemap = 0;
-                    int t_expreti = 0;
-                    int t_expsharp = 0;
-                    int t_expcbdl = 0;
-                    int t_expexpose = 0;
-
-                    //10022
-                    int t_bilateral = 0;
-
-                    //10023
-                    int t_noiselequal = 7;
-                    //10024
-                    int t_shapemeth = 0;
-
-                    fic << "Mipversion=" << t_mipversion << '@' << endl;
-                    fic << "Spot=" << t_sp << '@' << endl;
-                    fic << "Circrad=" << t_circrad << '@' << endl;
-                    fic << "LocX=" << t_locX << '@' << endl;
-                    fic << "LocY=" << t_locY << '@' << endl;
-                    fic << "LocYT=" << t_locYT << '@' << endl;
-                    fic << "LocXL=" << t_locXL << '@' << endl ;
-                    fic << "CenterX=" << t_centerX << '@' << endl;
-                    fic << "CenterY=" << t_centerY << '@' << endl;
-                    fic << "Lightness=" << t_lightness << '@' << endl;
-                    fic << "Contrast=" << t_contrast << '@' <<  endl;
-                    fic << "Chroma=" << t_chroma << '@' << endl;
-                    fic << "Sensi=" << t_sensi << '@' << endl;
-                    fic << "Transit=" << t_transit << '@' << endl;
-                    fic << "Invers=" << t_invers << '@' << endl;
-                    fic << "Smethod=" << t_Smeth << '@' << endl;
-                    fic << "Currentspot=" << t_currentspot << '@' << endl;
-                    fic << "Radius=" << t_radius << '@' << endl;
-                    fic << "Strength=" << t_strength << '@' << endl;
-                    fic << "Sensibn=" << t_sensibn << '@' << endl;
-                    fic << "Inversrad=" << t_inversrad << '@' << endl;
-                    fic << "Str=" << t_str << '@' << endl;
-                    fic << "Chroma=" << t_chrrt << '@' << endl;
-                    fic << "Neigh=" << t_neigh << '@' << endl;
-                    fic << "Vart=" << t_vart << '@' << endl;
-                    fic << "Sensih=" << t_sensih << '@' << endl;
-                    fic << "Inversret=" << t_inversret << '@' << endl;
-                    fic << "retinexMethod=" << t_retinexMethod << '@' << endl;
-                    fic << "Sharradius=" << t_sharradius << '@' << endl;
-                    fic << "Sharamount=" << t_sharamount << '@' << endl;
-                    fic << "Shardamping=" << t_shardamping << '@' << endl;
-                    fic << "Shariter=" << t_shariter << '@' << endl;
-                    fic << "Sensisha=" << t_sensisha << '@' << endl;
-                    fic << "Inverssha=" << t_inverssha << '@' << endl;
-                    fic << "qualityMethod=" << t_qualityMethod << '@' << endl;
-                    fic << "Thres=" << t_thres << '@' << endl;
-                    fic << "Proxi=" << t_proxi << '@' << endl;
-                    fic << "Noiselumf=" << t_noiselumf << '@' << endl;
-                    fic << "Noiselumc=" << t_noiselumc << '@' << endl;
-                    fic << "Noisechrof=" << t_noisechrof << '@' << endl;
-                    fic << "Noisechroc=" << t_noisechroc << '@' << endl;
-                    fic << "Mult0=" << t_mult0 << '@' << endl;
-                    fic << "Mult1=" << t_mult1 << '@' << endl;
-                    fic << "Mult2=" << t_mult2 << '@' << endl;
-                    fic << "Mult3=" << t_mult3 << '@' << endl;
-                    fic << "Mult4=" << t_mult4 << '@' << endl;
-                    fic << "Threshold=" << t_threshold << '@' << endl;
-                    fic << "Sensicb=" << t_sensicb << '@' << endl;
-                    fic << "Activblurlum=" << t_activlum << '@' << endl;
-
-                    fic << "Stren=" << t_stren << '@' << endl;
-                    fic << "Gamma=" << t_gamma << '@' << endl;
-                    fic << "Estop=" << t_estop << '@' << endl;
-                    fic << "Scaltm=" << t_scaltm << '@' << endl;
-                    fic << "Rewei=" << t_rewei << '@' << endl;
-                    fic << "Sensitm=" << t_sensitm << '@' << endl;
-                    fic << "Retrab=" << t_retrab << '@' << endl;
-                    fic << "Curvactiv=" << t_curvactiv << '@' << endl;
-                    fic << "qualitycurveMethod=" << t_qualitycurveMethod << '@' << endl;
-
-                    fic << "Sensiv=" << t_sensiv << '@' << endl;
-                    fic << "Pastel=" << t_pastel << '@' << endl;
-                    fic << "Saturated=" << t_saturated << '@' << endl;
-                    fic << "Proskin=" << t_proskin << '@' << endl;
-                    fic << "Avoidcsh=" << t_avoidcsh << '@' << endl;
-                    fic << "Pastsat=" << t_pastsat << '@' << endl;
-
-                    fic << "Expcomp=" << t_expcomp << '@' << endl;
-                    fic << "Black=" << t_black << '@' << endl;
-                    fic << "Hlcompr=" << t_hlcompr << '@' << endl;
-                    fic << "Hlcomprthresh=" << t_hlcomprthresh << '@' << endl;
-                    fic << "Shcompr=" << t_shcompr  << '@' << endl;
-                    fic << "Sensiex=" << t_sensiex << '@' << endl;
-
-                    fic << "CenterXbuf=" << t_centerXbuf << '@' << endl;
-                    fic << "CenterYbuf=" << t_centerYbuf << '@' << endl;
-                    fic << "Adjblur=" << t_adjblur << '@' << endl;
-                    fic << "Cutpast=" << t_cutpast << '@' <<  endl;
-
-                    fic << "Chromacbdl=" << t_chromacbdl << '@' <<  endl;
-                    fic << "Lastdust=" << t_lastdust << '@' <<  endl;
-                    fic << "BlurMethod=" << t_blurMethod << '@' <<  endl;
-                    fic << "DustMethod=" << t_dustMethod << '@' <<  endl;
-
-                    fic << "ExcludeMethod=" << t_excludemeth << '@' <<  endl;
-                    fic << "Sensiexclu=" << t_sensiexclu << '@' << endl;
-                    fic << "Struc=" << t_struc << '@' << endl;
-                    fic << "Warm=" << t_warm << '@' << endl;
-                    fic << "Noiselumdetail=" << t_noiselumdetail << '@' << endl;
-                    fic << "Noisechrodetail=" << t_noisechrodetail << '@' << endl;
-
-                    fic << "Sensiden=" << t_sensiden << '@' << endl;
-                    fic << "Expdenoi=" << t_expdenoi << '@' << endl;
-                    fic << "Expcolor=" << t_expcolor << '@' << endl;
-                    fic << "Expvibrance=" << t_expvibrance << '@' << endl;
-                    fic << "Expblur=" << t_expblur << '@' << endl;
-                    fic << "Exptonemap=" << t_exptonemap << '@' << endl;
-                    fic << "Expreti=" << t_expreti << '@' << endl;
-                    fic << "Expsharp=" << t_expsharp << '@' << endl;
-                    fic << "Expcbdl=" << t_expcbdl << '@' << endl;
-                    fic << "Expexpose=" << t_expexpose << '@' << endl;
-
-                    fic << "Bilateral=" << t_bilateral << '@' << endl;
-                    fic << "Noiselequal=" << t_noiselequal << '@' << endl;
-                    fic << "ShapeMethod=" << t_shapemeth << '@' <<  endl;
-
-                    fic << "curveReti=" << t_curvret << '@' << endl;
-                    fic << "curveLL=" << t_curvll << '@' << endl;
-                    fic << "curveLH=" << t_curvlh << '@' << endl;
-                    fic << "curveCC=" << t_curvcc << '@' << endl;
-                    fic << "curveHH=" << t_curvhh << '@' << endl;
-                    fic << "curveskin=" << t_curvskin << '@' << endl;
-                    fic << "pthres=" << t_psthres << '@' << endl;
-                    fic << "curveex=" << t_curvex << '@' << endl;
-
-
-
-                    fic << endl;
-                }
-
-                fic.close();
-
-                ifstream fich2(datal, ios::in);
-
-                if (fich2) {
-
-                    std::string line2;
-                    std::string spotline2;
-                    int cont2 = 0;
-                    int ns2 = 0;
-                    int maxin = maxdata - 5; //70 ;//64
-
-                    while (getline(fich2, line2)) {
-                        spotline2 = line2;
-                        std::size_t pos2 = spotline2.find("=");
-                        std::size_t posend2 = spotline2.find("@");  //in case of for futur use
-
-                        if (spotline2.substr(0, pos2) == "Mipversion") {
-                            std::string strversion = spotline2.substr(pos2 + 1, (posend2 - pos2));
-                            versionmip = std::stoi(strversion.c_str());
-                        }
-
-                        if (spotline2.substr(0, pos2) == "Spot") {
-                            cont2 = 0;
-                        }
-
-                        cont2++;
-                        std::string str32 = spotline2.substr(pos2 + 1, (posend2 - pos2));
-
-                        if (cont2 == 1) {
-                            ns2 =  std::stoi(str32.c_str());
-                        }
-
-                        if (cont2 >= 2  && cont2 < 16) {
-                            dataspot[cont2][ns2] = std::stoi(str32.c_str());
-                        }
-
-                        if (spotline2.substr(0, pos2) == "Currentspot") {
-                            dataspot[16][0] = std::stoi(str32.c_str());
-                        }
-
-                        if (cont2 > 16  && cont2 < maxin) {
-                            dataspot[cont2][ns2] = std::stoi(str32.c_str());
-                        }
-
-                        if (spotline2.substr(0, pos2) == "curveReti") {
-                            retistr[ns2] = str32;
-                        }
-
-                        if (spotline2.substr(0, pos2) == "curveLL") {
-                            llstr[ns2] = str32;
-                        }
-
-                        if (spotline2.substr(0, pos2) == "curveLH") {
-                            lhstr[ns2] = str32;
-                        }
-
-                        if (spotline2.substr(0, pos2) == "curveCC") {
-                            ccstr[ns2] = str32;
-                        }
-
-                        if (spotline2.substr(0, pos2) == "curveHH") {
-                            hhstr[ns2] = str32;
-                        }
-
-                        if (spotline2.substr(0, pos2) == "curveskin") {
-                            skinstr[ns2] = str32;
-                        }
-
-                        if (spotline2.substr(0, pos2) == "pthres") {
-                            pthstr[ns2] = str32;
-                        }
-
-                        if (spotline2.substr(0, pos2) == "curveex") {
-                            exstr[ns2] = str32;
-                        }
-
-                    }
-
-                    fich2.close() ;
-                }
+            if (ns < (maxspot - 1)) { //only for increasing, in case of decreasing, datas are "forgoten"
+                changenumberofspot(dataspot, maxdata, maxspot, ns, datal, versionmip);
 
             }
 
@@ -3729,13 +3386,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
             ofstream fou(datal, ios::out | ios::trunc);
 
-            if (fou)
-
-            {
+            if (fou) {
+                mipver = 10024; //confirm new versionmip - last - same value as at beginning,
 
                 for (int spe = 1; spe < maxspot; spe++) {
                     int t_sp = spe;
-                    int t_mipversion = 10024;
+                    int t_mipversion = mipver;//actualize for current usage
                     int t_circrad  = dataspot[2][spe];
                     int t_locX  = dataspot[3][spe];
                     int t_locY  = dataspot[4][spe];
@@ -4885,5 +4541,355 @@ void ImProcCoordinator::spotduplic(int **dataspot, int spottodupli, int maxdata)
 
 }
 
+void ImProcCoordinator::changenumberofspot(int **dataspot, int maxdata, int maxspot, int ns, Glib::ustring datal, int versionmip)
+{
+    ofstream fic(datal, ios::out | ios::app);  // ouverture en écriture avec effacement du fichier ouvert
+
+
+    for (int sp = ns + 1 ; sp < maxspot; sp++) { // spots default
+        int t_sp = sp;
+        int t_mipversion = versionmip;
+        int t_circrad = 18;
+        int t_locX = 250;
+        int t_locY = 250;
+        int t_locYT = 250;
+        int t_locXL = 250;
+        int t_centerX = 0;
+        int t_centerY = 0;
+        int t_lightness = 0;
+        int t_contrast = 0;
+        int t_chroma = 0;
+        int t_sensi = 19;
+        int t_transit = 60;
+        int t_invers = 0;
+        int t_Smeth = 0;
+        int t_currentspot = 1;
+        int t_radius = 1;
+        int t_strength = 0;
+        int t_sensibn = 40;
+        int t_inversrad = 0;
+        int t_str = 0;
+        int t_chrrt = 0;
+        int t_neigh = 50;
+        int t_vart = 200;
+        int t_sensih = 19;
+        int t_inversret = 0;
+        int t_retinexMethod = 2;
+        int t_sharradius = 40;
+        int t_sharamount = 75;
+        int t_shardamping = 75;
+        int t_shariter = 30;
+        int t_sensisha = 19;
+        int t_inverssha = 0;
+        int t_qualityMethod = 1;
+        int t_thres = 18;
+        int t_proxi = 0;
+        int t_noiselumf = 0;
+        int t_noiselumc = 0;
+        int t_noisechrof = 0;
+        int t_noisechroc = 0;
+        int t_mult0 = 100;
+        int t_mult1 = 100;
+        int t_mult2 = 100;
+        int t_mult3 = 100;
+        int t_mult4 = 100;
+        int t_threshold = 20;
+        int t_sensicb = 19;
+        int t_activlum = 0;
+        //10001 TM
+        int t_stren = 0;
+        int t_gamma = 100;
+        int t_estop = 140;
+        int t_scaltm = 10;
+        int t_rewei = 0;
+        int t_sensitm = 19;
+
+        //10002 curve
+        int t_retrab = 500;
+
+        std::string t_curvret = "1000A0B120C350D350E700F500G350H350I1000J120K350L350M";//12 points
+        //10003
+        std::string t_curvll = "3000A0B0C1000D1000E"; //"3000A0B0C499D501E1000F1000G"; //"3000A0B0C1000D1000E";//0 points with marks
+        //10004
+        std::string t_curvlh = "1000A0B500C350D350E166F500G350H350I333J500K350L350M500N500O350P350Q666R500S350T350U833V500W350X350Y";
+        //10005
+        int t_curvactiv = 0;
+        //10006
+        std::string t_curvcc = "3000A0B0C1000D1000E";
+        //10007
+        int t_qualitycurveMethod = 0;
+        //10008
+        std::string t_curvhh = "1000A0B500C350D350E166F500G350H350I333J500K350L350M500N500O350P350Q666R500S350T350U833V500W350X350Y";
+
+        //10009
+        int t_sensiv = 19;
+        int t_pastel = 0;
+        int t_saturated = 0;
+        std::string t_psthres = "0A75B";
+        int t_proskin = 0;
+        int t_avoidcsh = 0;
+        int t_pastsat = 0;
+        std::string t_curvskin = "3000A0B0C1000D1000E"; //"3000A0B0C499D501E1000F1000G"; //"3000A0B0C1000D1000E";//0 points with marks
+
+        int t_expcomp       = 0;
+        int t_black         = 0;
+        int t_hlcompr       = 20;
+        int t_hlcomprthresh = 33;
+        int t_shcompr       = 50;
+        int t_sensiex = 19;
+        //10010
+        std::string t_curvex = "3000A0B0C1000D1000E";
+
+        //10012
+        int t_centerXbuf = 0;
+        int t_centerYbuf = 0;
+        int t_adjblur = 0;
+        int t_cutpast = 0;
+
+        //10013
+        int t_chromacbdl = 0;
+
+        //10014
+        int t_lastdust = 0;
+        int t_blurMethod = 0;
+        int t_dustMethod = 1;
+
+        //10016
+        int t_excludemeth = 0;
+        int t_sensiexclu = 19;
+        int t_struc = 0;
+
+        //10017
+        int t_warm = 0;
+        //10018
+        int t_noiselumdetail = 0;
+        //10019
+        int t_noisechrodetail = 0;
+        //10020
+        int t_sensiden = 30;
+
+        //10021
+        int t_expdenoi = 0;
+
+        int t_expcolor = 0;
+        int t_expvibrance = 0;
+        int t_expblur = 0;
+        int t_exptonemap = 0;
+        int t_expreti = 0;
+        int t_expsharp = 0;
+        int t_expcbdl = 0;
+        int t_expexpose = 0;
+
+        //10022
+        int t_bilateral = 0;
+
+        //10023
+        int t_noiselequal = 7;
+        //10024
+        int t_shapemeth = 0;
+
+        fic << "Mipversion=" << t_mipversion << '@' << endl;
+        fic << "Spot=" << t_sp << '@' << endl;
+        fic << "Circrad=" << t_circrad << '@' << endl;
+        fic << "LocX=" << t_locX << '@' << endl;
+        fic << "LocY=" << t_locY << '@' << endl;
+        fic << "LocYT=" << t_locYT << '@' << endl;
+        fic << "LocXL=" << t_locXL << '@' << endl ;
+        fic << "CenterX=" << t_centerX << '@' << endl;
+        fic << "CenterY=" << t_centerY << '@' << endl;
+        fic << "Lightness=" << t_lightness << '@' << endl;
+        fic << "Contrast=" << t_contrast << '@' <<  endl;
+        fic << "Chroma=" << t_chroma << '@' << endl;
+        fic << "Sensi=" << t_sensi << '@' << endl;
+        fic << "Transit=" << t_transit << '@' << endl;
+        fic << "Invers=" << t_invers << '@' << endl;
+        fic << "Smethod=" << t_Smeth << '@' << endl;
+        fic << "Currentspot=" << t_currentspot << '@' << endl;
+        fic << "Radius=" << t_radius << '@' << endl;
+        fic << "Strength=" << t_strength << '@' << endl;
+        fic << "Sensibn=" << t_sensibn << '@' << endl;
+        fic << "Inversrad=" << t_inversrad << '@' << endl;
+        fic << "Str=" << t_str << '@' << endl;
+        fic << "Chroma=" << t_chrrt << '@' << endl;
+        fic << "Neigh=" << t_neigh << '@' << endl;
+        fic << "Vart=" << t_vart << '@' << endl;
+        fic << "Sensih=" << t_sensih << '@' << endl;
+        fic << "Inversret=" << t_inversret << '@' << endl;
+        fic << "retinexMethod=" << t_retinexMethod << '@' << endl;
+        fic << "Sharradius=" << t_sharradius << '@' << endl;
+        fic << "Sharamount=" << t_sharamount << '@' << endl;
+        fic << "Shardamping=" << t_shardamping << '@' << endl;
+        fic << "Shariter=" << t_shariter << '@' << endl;
+        fic << "Sensisha=" << t_sensisha << '@' << endl;
+        fic << "Inverssha=" << t_inverssha << '@' << endl;
+        fic << "qualityMethod=" << t_qualityMethod << '@' << endl;
+        fic << "Thres=" << t_thres << '@' << endl;
+        fic << "Proxi=" << t_proxi << '@' << endl;
+        fic << "Noiselumf=" << t_noiselumf << '@' << endl;
+        fic << "Noiselumc=" << t_noiselumc << '@' << endl;
+        fic << "Noisechrof=" << t_noisechrof << '@' << endl;
+        fic << "Noisechroc=" << t_noisechroc << '@' << endl;
+        fic << "Mult0=" << t_mult0 << '@' << endl;
+        fic << "Mult1=" << t_mult1 << '@' << endl;
+        fic << "Mult2=" << t_mult2 << '@' << endl;
+        fic << "Mult3=" << t_mult3 << '@' << endl;
+        fic << "Mult4=" << t_mult4 << '@' << endl;
+        fic << "Threshold=" << t_threshold << '@' << endl;
+        fic << "Sensicb=" << t_sensicb << '@' << endl;
+        fic << "Activblurlum=" << t_activlum << '@' << endl;
+
+        fic << "Stren=" << t_stren << '@' << endl;
+        fic << "Gamma=" << t_gamma << '@' << endl;
+        fic << "Estop=" << t_estop << '@' << endl;
+        fic << "Scaltm=" << t_scaltm << '@' << endl;
+        fic << "Rewei=" << t_rewei << '@' << endl;
+        fic << "Sensitm=" << t_sensitm << '@' << endl;
+        fic << "Retrab=" << t_retrab << '@' << endl;
+        fic << "Curvactiv=" << t_curvactiv << '@' << endl;
+        fic << "qualitycurveMethod=" << t_qualitycurveMethod << '@' << endl;
+
+        fic << "Sensiv=" << t_sensiv << '@' << endl;
+        fic << "Pastel=" << t_pastel << '@' << endl;
+        fic << "Saturated=" << t_saturated << '@' << endl;
+        fic << "Proskin=" << t_proskin << '@' << endl;
+        fic << "Avoidcsh=" << t_avoidcsh << '@' << endl;
+        fic << "Pastsat=" << t_pastsat << '@' << endl;
+
+        fic << "Expcomp=" << t_expcomp << '@' << endl;
+        fic << "Black=" << t_black << '@' << endl;
+        fic << "Hlcompr=" << t_hlcompr << '@' << endl;
+        fic << "Hlcomprthresh=" << t_hlcomprthresh << '@' << endl;
+        fic << "Shcompr=" << t_shcompr  << '@' << endl;
+        fic << "Sensiex=" << t_sensiex << '@' << endl;
+
+        fic << "CenterXbuf=" << t_centerXbuf << '@' << endl;
+        fic << "CenterYbuf=" << t_centerYbuf << '@' << endl;
+        fic << "Adjblur=" << t_adjblur << '@' << endl;
+        fic << "Cutpast=" << t_cutpast << '@' <<  endl;
+
+        fic << "Chromacbdl=" << t_chromacbdl << '@' <<  endl;
+        fic << "Lastdust=" << t_lastdust << '@' <<  endl;
+        fic << "BlurMethod=" << t_blurMethod << '@' <<  endl;
+        fic << "DustMethod=" << t_dustMethod << '@' <<  endl;
+
+        fic << "ExcludeMethod=" << t_excludemeth << '@' <<  endl;
+        fic << "Sensiexclu=" << t_sensiexclu << '@' << endl;
+        fic << "Struc=" << t_struc << '@' << endl;
+        fic << "Warm=" << t_warm << '@' << endl;
+        fic << "Noiselumdetail=" << t_noiselumdetail << '@' << endl;
+        fic << "Noisechrodetail=" << t_noisechrodetail << '@' << endl;
+
+        fic << "Sensiden=" << t_sensiden << '@' << endl;
+        fic << "Expdenoi=" << t_expdenoi << '@' << endl;
+        fic << "Expcolor=" << t_expcolor << '@' << endl;
+        fic << "Expvibrance=" << t_expvibrance << '@' << endl;
+        fic << "Expblur=" << t_expblur << '@' << endl;
+        fic << "Exptonemap=" << t_exptonemap << '@' << endl;
+        fic << "Expreti=" << t_expreti << '@' << endl;
+        fic << "Expsharp=" << t_expsharp << '@' << endl;
+        fic << "Expcbdl=" << t_expcbdl << '@' << endl;
+        fic << "Expexpose=" << t_expexpose << '@' << endl;
+
+        fic << "Bilateral=" << t_bilateral << '@' << endl;
+        fic << "Noiselequal=" << t_noiselequal << '@' << endl;
+        fic << "ShapeMethod=" << t_shapemeth << '@' <<  endl;
+
+        fic << "curveReti=" << t_curvret << '@' << endl;
+        fic << "curveLL=" << t_curvll << '@' << endl;
+        fic << "curveLH=" << t_curvlh << '@' << endl;
+        fic << "curveCC=" << t_curvcc << '@' << endl;
+        fic << "curveHH=" << t_curvhh << '@' << endl;
+        fic << "curveskin=" << t_curvskin << '@' << endl;
+        fic << "pthres=" << t_psthres << '@' << endl;
+        fic << "curveex=" << t_curvex << '@' << endl;
+
+
+
+        fic << endl;
+    }
+
+    fic.close();
+
+    ifstream fich2(datal, ios::in);
+
+    if (fich2) {
+
+        std::string line2;
+        std::string spotline2;
+        int cont2 = 0;
+        int ns2 = 0;
+        int maxin = maxdata - 5; //70 ;//64
+
+        while (getline(fich2, line2)) {
+            spotline2 = line2;
+            std::size_t pos2 = spotline2.find("=");
+            std::size_t posend2 = spotline2.find("@");  //in case of for futur use
+
+            if (spotline2.substr(0, pos2) == "Mipversion") {
+                std::string strversion = spotline2.substr(pos2 + 1, (posend2 - pos2));
+                versionmip = std::stoi(strversion.c_str());
+            }
+
+            if (spotline2.substr(0, pos2) == "Spot") {
+                cont2 = 0;
+            }
+
+            cont2++;
+            std::string str32 = spotline2.substr(pos2 + 1, (posend2 - pos2));
+
+            if (cont2 == 1) {
+                ns2 =  std::stoi(str32.c_str());
+            }
+
+            if (cont2 >= 2  && cont2 < 16) {
+                dataspot[cont2][ns2] = std::stoi(str32.c_str());
+            }
+
+            if (spotline2.substr(0, pos2) == "Currentspot") {
+                dataspot[16][0] = std::stoi(str32.c_str());
+            }
+
+            if (cont2 > 16  && cont2 < maxin) {
+                dataspot[cont2][ns2] = std::stoi(str32.c_str());
+            }
+
+            if (spotline2.substr(0, pos2) == "curveReti") {
+                retistr[ns2] = str32;
+            }
+
+            if (spotline2.substr(0, pos2) == "curveLL") {
+                llstr[ns2] = str32;
+            }
+
+            if (spotline2.substr(0, pos2) == "curveLH") {
+                lhstr[ns2] = str32;
+            }
+
+            if (spotline2.substr(0, pos2) == "curveCC") {
+                ccstr[ns2] = str32;
+            }
+
+            if (spotline2.substr(0, pos2) == "curveHH") {
+                hhstr[ns2] = str32;
+            }
+
+            if (spotline2.substr(0, pos2) == "curveskin") {
+                skinstr[ns2] = str32;
+            }
+
+            if (spotline2.substr(0, pos2) == "pthres") {
+                pthstr[ns2] = str32;
+            }
+
+            if (spotline2.substr(0, pos2) == "curveex") {
+                exstr[ns2] = str32;
+            }
+
+        }
+
+        fich2.close() ;
+    }
+
+}
 
 }
