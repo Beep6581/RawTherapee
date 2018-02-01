@@ -324,6 +324,15 @@ scale:disabled trough {
     padding: 4px;
 }
 
+/* Better on/off state separation for text toggle buttons, e.g. auto-levels or histogram matching. */
+button.text-button {
+    background-image: linear-gradient(to bottom, rgba(100,100,100,.3), rgba(30,30,30,.3));
+}
+
+button.text-button:checked {
+    background-image: linear-gradient(to bottom, rgba(30,30,30,.3), rgba(0,0,0,.4));
+}
+
 separator {
     color: #363636;
     margin: 5px;

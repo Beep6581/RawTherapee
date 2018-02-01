@@ -180,9 +180,9 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
     if (!histMatchingCache.empty()) {
         if (settings->verbose) {
             std::cout << "tone curve found in cache" << std::endl;
-            outCurve = histMatchingCache;
-            return;
         }
+        outCurve = histMatchingCache;
+        return;
     }
 
     outCurve = { DCT_Linear };
