@@ -767,10 +767,10 @@ Locallab::Locallab():
     adjblur = Gtk::manage(new Adjuster(M("TP_LOCALLAB_ADJ"), -100., 100., 1., 0., iblueredL1, iblueredR1));
     adjblur->setAdjusterListener(this);
 
-    Gtk::Image* bleq = Gtk::manage(new RTImage("previewmodeBC1-on.png"));
-    Gtk::Image* wheq = Gtk::manage(new RTImage("previewmodeBC2-on.png"));
+    Gtk::Image *ar = Gtk::manage(new RTImage("adj-black.png"));
+    Gtk::Image *al = Gtk::manage(new RTImage("adj-white.png"));
 
-    noiselequal = Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELEQUAL"), -2, 10, 1, 7, wheq, bleq));
+    noiselequal = Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELEQUAL"), -2, 10, 1, 7, al, ar));
     noiselequal->setAdjusterListener(this);
 
     if (noiselequal->delay < 200) {
