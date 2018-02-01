@@ -400,7 +400,7 @@ public:
     void        endUpdateParams(int changeFlags);
     void        stopProcessing();
 //    void updatePreviewImage (int todo, Crop* cropCall = NULL);
-
+    void        spotduplic(int **dataspot, int spottodupli, int maxdata);
     std::string *retistrsav;
 
     void setPreviewScale(int scale)

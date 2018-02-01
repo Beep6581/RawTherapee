@@ -2470,122 +2470,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
             }
 
             if (params.locallab.spotduplicated && spottodupli >= 1) {
-                //perhaps some datas are redondant..to verify
-                circrads[0] = circrads[spottodupli] = dataspot[2][0] = dataspot[2][spottodupli] = dataspot[2][spottodupli - 1];
-                locx[0] = locx[spottodupli] = dataspot[3][0] = dataspot[3][spottodupli] = dataspot[3][spottodupli - 1];
-                locy[0] = locy[spottodupli] = dataspot[4][0] =  dataspot[4][spottodupli] = dataspot[4][spottodupli - 1];
-                locyt[0] = locyt[spottodupli] = dataspot[5][0] = dataspot[5][spottodupli] = dataspot[5][spottodupli - 1];
-                locxl[0] =  locxl[spottodupli] = dataspot[6][0] = dataspot[6][spottodupli] = dataspot[6][spottodupli - 1];
-                //change only center position to 200 200 to see changes
-                centerx[0] = centerx[spottodupli]  = dataspot[7][0] = dataspot[7][spottodupli] = 200; //not to center
-                centery[0] = centery[spottodupli]  = dataspot[8][0] = dataspot[8][spottodupli] = 200;//not to center to see it is a duplicated spot
-                //
-                lights[0] = lights[spottodupli] = dataspot[9][0] = dataspot[9][spottodupli] = dataspot[9][spottodupli - 1];
-                contrs[0] = contrs[spottodupli] = dataspot[10][0] = dataspot[10][spottodupli] = dataspot[10][spottodupli - 1];
-                chroms[0] = chroms[spottodupli] = dataspot[11][0] = dataspot[11][spottodupli] = dataspot[11][spottodupli - 1];
-                sensis[0] = sensis[spottodupli] = dataspot[12][0] = dataspot[12][spottodupli] = dataspot[12][spottodupli - 1];
-                transits[0] = transits[spottodupli] = dataspot[13][0] = dataspot[13][spottodupli] = dataspot[13][spottodupli - 1];
-                inverss[0] = inverss[spottodupli] = dataspot[14][0] = dataspot[14][spottodupli] = dataspot[14][spottodupli - 1];
-                smeths[0]  = smeths[spottodupli] = dataspot[15][0] = dataspot[15][spottodupli] = dataspot[15][spottodupli - 1];
-                //no chnage to spot current value  16
-                radiuss[0]  = radiuss[spottodupli] = dataspot[17][0] = dataspot[17][spottodupli] = dataspot[17][spottodupli - 1];
-                strengths[0]  = strengths[spottodupli] = dataspot[18][0] = dataspot[18][spottodupli] = dataspot[18][spottodupli - 1];
-                sensibns[0]  = sensibns[spottodupli] = dataspot[19][0] = dataspot[19][spottodupli] = dataspot[19][spottodupli - 1];
-                inversrads[0]  = inversrads[spottodupli] = dataspot[20][0] = dataspot[20][spottodupli] = dataspot[20][spottodupli - 1];
-                strs[0]  = strs[spottodupli] = dataspot[21][0] = dataspot[21][spottodupli] = dataspot[21][spottodupli - 1];
-                chrrts[0]  = chrrts[spottodupli] = dataspot[22][0] = dataspot[22][spottodupli] = dataspot[22][spottodupli - 1];
-                neighs[0]  = neighs[spottodupli] = dataspot[23][0] = dataspot[23][spottodupli] = dataspot[23][spottodupli - 1];
-                varts[0]  = varts[spottodupli] = dataspot[24][0] = dataspot[24][spottodupli] = dataspot[24][spottodupli - 1];
-                sensihs[0]  = sensihs[spottodupli] = dataspot[25][0] = dataspot[25][spottodupli] = dataspot[25][spottodupli - 1];
-                inversrets[0]  = inversrets[spottodupli] = dataspot[26][0] = dataspot[26][spottodupli] = dataspot[26][spottodupli - 1];
-                retinexs[0]  = retinexs[spottodupli] = dataspot[27][0] = dataspot[27][spottodupli] = dataspot[27][spottodupli - 1];
-                sharradiuss[0]  = sharradiuss[spottodupli] = dataspot[28][0] = dataspot[28][spottodupli] = dataspot[28][spottodupli - 1];
-                sharamounts[0]  = sharamounts[spottodupli] = dataspot[29][0] = dataspot[29][spottodupli] = dataspot[29][spottodupli - 1];
-                shardampings[0]  = shardampings[spottodupli] = dataspot[30][0] = dataspot[30][spottodupli] = dataspot[30][spottodupli - 1];
-                shariters[0]  = shariters[spottodupli] = dataspot[31][0] = dataspot[31][spottodupli] = dataspot[31][spottodupli - 1];
-                sensishas[0]  = sensishas[spottodupli] = dataspot[32][0] = dataspot[32][spottodupli] = dataspot[32][spottodupli - 1];
-                inversshas[0]  = inversshas[spottodupli] = dataspot[33][0] = dataspot[33][spottodupli] = dataspot[33][spottodupli - 1];
-                qualitys[0]  = qualitys[spottodupli] = dataspot[34][0] = dataspot[34][spottodupli] = dataspot[34][spottodupli - 1];
-                thress[0]  = thress[spottodupli] = dataspot[35][0] = dataspot[35][spottodupli] = dataspot[35][spottodupli - 1];
-                proxis[0]  = proxis[spottodupli] = dataspot[36][0] = dataspot[36][spottodupli] = dataspot[36][spottodupli - 1];
-                noiselumfs[0]  = noiselumfs[spottodupli] = dataspot[37][0] = dataspot[37][spottodupli] = dataspot[37][spottodupli - 1];
-                noiselumcs[0]  = noiselumcs[spottodupli] = dataspot[38][0] = dataspot[38][spottodupli] = dataspot[38][spottodupli - 1];
-                noisechrofs[0]  = noisechrofs[spottodupli] = dataspot[39][0] = dataspot[39][spottodupli] = dataspot[39][spottodupli - 1];
-                noisechrocs[0]  = noisechrocs[spottodupli] = dataspot[40][0] = dataspot[40][spottodupli] = dataspot[40][spottodupli - 1];
-                mult0s[0]  = mult0s[spottodupli] = dataspot[41][0] = dataspot[41][spottodupli] = dataspot[41][spottodupli - 1];
-                mult1s[0]  = mult1s[spottodupli] = dataspot[42][0] = dataspot[42][spottodupli] = dataspot[42][spottodupli - 1];
-                mult2s[0]  = mult2s[spottodupli] = dataspot[43][0] = dataspot[43][spottodupli] = dataspot[43][spottodupli - 1];
-                mult3s[0]  = mult3s[spottodupli] = dataspot[44][0] = dataspot[44][spottodupli] = dataspot[44][spottodupli - 1];
-                mult4s[0]  = mult4s[spottodupli] = dataspot[45][0] = dataspot[45][spottodupli] = dataspot[45][spottodupli - 1];
-                thresholds[0]  = thresholds[spottodupli] = dataspot[46][0] = dataspot[46][spottodupli] = dataspot[46][spottodupli - 1];
-                sensicbs[0]  = sensicbs[spottodupli] = dataspot[47][0] = dataspot[47][spottodupli] = dataspot[47][spottodupli - 1];
-                activlums[0]  = activlums[spottodupli] = dataspot[48][0] = dataspot[48][spottodupli] = dataspot[48][spottodupli - 1];
-                strens[0]  = strens[spottodupli] = dataspot[49][0] = dataspot[49][spottodupli] = dataspot[49][spottodupli - 1];
-                gammas[0]  = gammas[spottodupli] = dataspot[50][0] = dataspot[50][spottodupli] = dataspot[50][spottodupli - 1];
-                estops[0]  = estops[spottodupli] = dataspot[51][0] = dataspot[51][spottodupli] = dataspot[51][spottodupli - 1];
-                scaltms[0]  = scaltms[spottodupli] = dataspot[52][0] = dataspot[52][spottodupli] = dataspot[52][spottodupli - 1];
-                reweis[0]  = reweis[spottodupli] = dataspot[53][0] = dataspot[53][spottodupli] = dataspot[53][spottodupli - 1];
-                sensitms[0]  = sensitms[spottodupli] = dataspot[54][0] = dataspot[54][spottodupli] = dataspot[54][spottodupli - 1];
-                retrabs[0]  = retrabs[spottodupli] = dataspot[55][0] = dataspot[55][spottodupli] = dataspot[55][spottodupli - 1];
-                curvactivs[0]  = curvactivs[spottodupli] = dataspot[56][0] = dataspot[56][spottodupli] = dataspot[56][spottodupli - 1];
-                qualitycurves[0]  = qualitycurves[spottodupli] = dataspot[57][0] = dataspot[57][spottodupli] = dataspot[57][spottodupli - 1];
-                sensivs[0]  = sensivs[spottodupli] = dataspot[58][0] = dataspot[58][spottodupli] = dataspot[58][spottodupli - 1];
-                pastels[0]  = pastels[spottodupli] = dataspot[59][0] = dataspot[59][spottodupli] = dataspot[59][spottodupli - 1];
-                saturateds[0]  = saturateds[spottodupli] = dataspot[60][0] = dataspot[60][spottodupli] = dataspot[60][spottodupli - 1];
-                protectskinss[0]  = protectskinss[spottodupli] = dataspot[61][0] = dataspot[61][spottodupli] = dataspot[61][spottodupli - 1];
-                avoidcolorshifts[0]  = avoidcolorshifts[spottodupli] = dataspot[62][0] = dataspot[62][spottodupli] = dataspot[62][spottodupli - 1];
-                pastsattogs[0]  = pastsattogs[spottodupli] = dataspot[63][0] = dataspot[63][spottodupli] = dataspot[63][spottodupli - 1];
-                expcomps[0]  = expcomps[spottodupli] = dataspot[64][0] = dataspot[64][spottodupli] = dataspot[64][spottodupli - 1];
-                blacks[0]  = blacks[spottodupli] = dataspot[65][0] = dataspot[65][spottodupli] = dataspot[65][spottodupli - 1];
-                hlcomprs[0]  = hlcomprs[spottodupli] = dataspot[66][0] = dataspot[66][spottodupli] = dataspot[66][spottodupli - 1];
-                hlcomprthreshs[0]  = hlcomprthreshs[spottodupli] = dataspot[67][0] = dataspot[67][spottodupli] = dataspot[67][spottodupli - 1];
-                shcomprs[0]  = shcomprs[spottodupli] = dataspot[68][0] = dataspot[68][spottodupli] = dataspot[68][spottodupli - 1];
-                sensiexs[0]  = sensiexs[spottodupli] = dataspot[69][0] = dataspot[69][spottodupli] = dataspot[69][spottodupli - 1];
-                centerxbufs[0]  = centerxbufs[spottodupli] = dataspot[70][0] = dataspot[70][spottodupli] = dataspot[70][spottodupli - 1];
-                centerybufs[0]  = centerybufs[spottodupli] = dataspot[71][0] = dataspot[71][spottodupli] = dataspot[71][spottodupli - 1];
-                adjblurs[0]  = adjblurs[spottodupli] = dataspot[72][0] = dataspot[72][spottodupli] = dataspot[72][spottodupli - 1];
-                cutpasts[0]  = cutpasts[spottodupli] = dataspot[73][0] = dataspot[73][spottodupli] = dataspot[73][spottodupli - 1];
-                chromacbdls[0]  = chromacbdls[spottodupli] = dataspot[74][0] = dataspot[74][spottodupli] = dataspot[74][spottodupli - 1];
-                lastdusts[0]  = lastdusts[spottodupli] = dataspot[75][0] = dataspot[75][spottodupli] = dataspot[75][spottodupli - 1];
-                blurmets[0]  = blurmets[spottodupli] = dataspot[76][0] = dataspot[76][spottodupli] = dataspot[76][spottodupli - 1];
-                dustmets[0]  = dustmets[spottodupli] = dataspot[77][0] = dataspot[77][spottodupli] = dataspot[77][spottodupli - 1];
-                exclumets[0]  = exclumets[spottodupli] = dataspot[78][0] = dataspot[78][spottodupli] = dataspot[78][spottodupli - 1];
-                sensiexclus[0]  = sensiexclus[spottodupli] = dataspot[79][0] = dataspot[79][spottodupli] = dataspot[79][spottodupli - 1];
-                strucs[0]  = strucs[spottodupli] = dataspot[80][0] = dataspot[80][spottodupli] = dataspot[80][spottodupli - 1];
-                warms[0]  = warms[spottodupli] = dataspot[81][0] = dataspot[81][spottodupli] = dataspot[81][spottodupli - 1];
-                noiselumdetails[0]  = noiselumdetails[spottodupli] = dataspot[82][0] = dataspot[82][spottodupli] = dataspot[82][spottodupli - 1];
-                noisechrodetails[0]  = noisechrodetails[spottodupli] = dataspot[83][0] = dataspot[83][spottodupli] = dataspot[83][spottodupli - 1];
-                sensidens[0]  = sensidens[spottodupli] = dataspot[84][0] = dataspot[84][spottodupli] = dataspot[84][spottodupli - 1];
-                expdenois[0]  = expdenois[spottodupli] = dataspot[85][0] = dataspot[85][spottodupli] = dataspot[85][spottodupli - 1];
-                expcolors[0]  = expcolors[spottodupli] = dataspot[86][0] = dataspot[86][spottodupli] = dataspot[86][spottodupli - 1];
-                expvibrances[0]  = expvibrances[spottodupli] = dataspot[87][0] = dataspot[87][spottodupli] = dataspot[87][spottodupli - 1];
-                expblurs[0]  = expblurs[spottodupli] = dataspot[88][0] = dataspot[88][spottodupli] = dataspot[88][spottodupli - 1];
-                exptonemaps[0]  = exptonemaps[spottodupli] = dataspot[89][0] = dataspot[89][spottodupli] = dataspot[89][spottodupli - 1];
-                expretis[0]  = expretis[spottodupli] = dataspot[90][0] = dataspot[90][spottodupli] = dataspot[90][spottodupli - 1];
-                expsharps[0]  = expsharps[spottodupli] = dataspot[91][0] = dataspot[91][spottodupli] = dataspot[91][spottodupli - 1];
-                expcbdls[0]  = expcbdls[spottodupli] = dataspot[92][0] = dataspot[92][spottodupli] = dataspot[92][spottodupli - 1];
-                expexposes[0]  = expexposes[spottodupli] = dataspot[93][0] = dataspot[93][spottodupli] = dataspot[93][spottodupli - 1];
-                bilaterals[0]  = bilaterals[spottodupli] = dataspot[94][0] = dataspot[94][spottodupli] = dataspot[94][spottodupli - 1];
-                noiselequals[0]  = noiselequals[spottodupli] = dataspot[95][0] = dataspot[95][spottodupli] = dataspot[95][spottodupli - 1];
-                shapemets[0]  = shapemets[spottodupli] = dataspot[96][0] = dataspot[96][spottodupli] = dataspot[96][spottodupli - 1];
 
-                //datas for end ... references hue, etc.
-                huerefblurs[0] = huerefblurs[spottodupli] = dataspot[maxdata - 5][0] = dataspot[maxdata - 5][spottodupli] = dataspot[maxdata - 5][spottodupli - 1];
-                huerefs[0] = huerefs[spottodupli] = dataspot[maxdata - 4][0] = dataspot[maxdata - 4][spottodupli] = dataspot[maxdata - 4][spottodupli - 1];
-                chromarefs[0] = chromarefs[spottodupli] = dataspot[maxdata - 3][0] = dataspot[maxdata - 3][spottodupli] = dataspot[maxdata - 3][spottodupli - 1];
-                lumarefs[0] = lumarefs[spottodupli] = dataspot[maxdata - 2][0] = dataspot[maxdata - 2][spottodupli] = dataspot[maxdata - 2][spottodupli - 1];
-                sobelrefs[0] = sobelrefs[spottodupli] = dataspot[maxdata - 1][0] = dataspot[maxdata - 1][spottodupli] = dataspot[maxdata - 1][spottodupli - 1];
-
-                //perhaps not good after ?? to verify and to complete ?? difficult but "only" curves
-                retistr[spottodupli] = retistr[spottodupli - 1];
-                llstr[spottodupli] = llstr[spottodupli - 1];
-                lhstr[spottodupli] = lhstr[spottodupli - 1];
-                ccstr[spottodupli] = ccstr[spottodupli - 1];
-                hhstr[spottodupli] = hhstr[spottodupli - 1];
-                skinstr[spottodupli] = skinstr[spottodupli - 1];
-                pthstr[spottodupli] = pthstr[spottodupli - 1];
-                exstr[spottodupli] = exstr[spottodupli - 1];
-
+                spotduplic(dataspot, spottodupli, maxdata);
 
                 if (aloListener && params.locallab.spotduplicated) {
                     //update GUI and MIP
@@ -4877,6 +4763,126 @@ void ImProcCoordinator::endUpdateParams(int changeFlags)
 
     paramsUpdateMutex.unlock();
     startProcessing();
+}
+
+void ImProcCoordinator::spotduplic(int **dataspot, int spottodupli, int maxdata)
+{
+    //perhaps some datas are redondant..to verify
+    circrads[0] = circrads[spottodupli] = dataspot[2][0] = dataspot[2][spottodupli] = dataspot[2][spottodupli - 1];
+    locx[0] = locx[spottodupli] = dataspot[3][0] = dataspot[3][spottodupli] = dataspot[3][spottodupli - 1];
+    locy[0] = locy[spottodupli] = dataspot[4][0] =  dataspot[4][spottodupli] = dataspot[4][spottodupli - 1];
+    locyt[0] = locyt[spottodupli] = dataspot[5][0] = dataspot[5][spottodupli] = dataspot[5][spottodupli - 1];
+    locxl[0] =  locxl[spottodupli] = dataspot[6][0] = dataspot[6][spottodupli] = dataspot[6][spottodupli - 1];
+    //change only center position to 200 200 to see changes
+    centerx[0] = centerx[spottodupli]  = dataspot[7][0] = dataspot[7][spottodupli] = 200; //not to center
+    centery[0] = centery[spottodupli]  = dataspot[8][0] = dataspot[8][spottodupli] = 200;//not to center to see it is a duplicated spot
+    //
+    lights[0] = lights[spottodupli] = dataspot[9][0] = dataspot[9][spottodupli] = dataspot[9][spottodupli - 1];
+    contrs[0] = contrs[spottodupli] = dataspot[10][0] = dataspot[10][spottodupli] = dataspot[10][spottodupli - 1];
+    chroms[0] = chroms[spottodupli] = dataspot[11][0] = dataspot[11][spottodupli] = dataspot[11][spottodupli - 1];
+    sensis[0] = sensis[spottodupli] = dataspot[12][0] = dataspot[12][spottodupli] = dataspot[12][spottodupli - 1];
+    transits[0] = transits[spottodupli] = dataspot[13][0] = dataspot[13][spottodupli] = dataspot[13][spottodupli - 1];
+    inverss[0] = inverss[spottodupli] = dataspot[14][0] = dataspot[14][spottodupli] = dataspot[14][spottodupli - 1];
+    smeths[0]  = smeths[spottodupli] = dataspot[15][0] = dataspot[15][spottodupli] = dataspot[15][spottodupli - 1];
+    //no chnage to spot current value  16
+    radiuss[0]  = radiuss[spottodupli] = dataspot[17][0] = dataspot[17][spottodupli] = dataspot[17][spottodupli - 1];
+    strengths[0]  = strengths[spottodupli] = dataspot[18][0] = dataspot[18][spottodupli] = dataspot[18][spottodupli - 1];
+    sensibns[0]  = sensibns[spottodupli] = dataspot[19][0] = dataspot[19][spottodupli] = dataspot[19][spottodupli - 1];
+    inversrads[0]  = inversrads[spottodupli] = dataspot[20][0] = dataspot[20][spottodupli] = dataspot[20][spottodupli - 1];
+    strs[0]  = strs[spottodupli] = dataspot[21][0] = dataspot[21][spottodupli] = dataspot[21][spottodupli - 1];
+    chrrts[0]  = chrrts[spottodupli] = dataspot[22][0] = dataspot[22][spottodupli] = dataspot[22][spottodupli - 1];
+    neighs[0]  = neighs[spottodupli] = dataspot[23][0] = dataspot[23][spottodupli] = dataspot[23][spottodupli - 1];
+    varts[0]  = varts[spottodupli] = dataspot[24][0] = dataspot[24][spottodupli] = dataspot[24][spottodupli - 1];
+    sensihs[0]  = sensihs[spottodupli] = dataspot[25][0] = dataspot[25][spottodupli] = dataspot[25][spottodupli - 1];
+    inversrets[0]  = inversrets[spottodupli] = dataspot[26][0] = dataspot[26][spottodupli] = dataspot[26][spottodupli - 1];
+    retinexs[0]  = retinexs[spottodupli] = dataspot[27][0] = dataspot[27][spottodupli] = dataspot[27][spottodupli - 1];
+    sharradiuss[0]  = sharradiuss[spottodupli] = dataspot[28][0] = dataspot[28][spottodupli] = dataspot[28][spottodupli - 1];
+    sharamounts[0]  = sharamounts[spottodupli] = dataspot[29][0] = dataspot[29][spottodupli] = dataspot[29][spottodupli - 1];
+    shardampings[0]  = shardampings[spottodupli] = dataspot[30][0] = dataspot[30][spottodupli] = dataspot[30][spottodupli - 1];
+    shariters[0]  = shariters[spottodupli] = dataspot[31][0] = dataspot[31][spottodupli] = dataspot[31][spottodupli - 1];
+    sensishas[0]  = sensishas[spottodupli] = dataspot[32][0] = dataspot[32][spottodupli] = dataspot[32][spottodupli - 1];
+    inversshas[0]  = inversshas[spottodupli] = dataspot[33][0] = dataspot[33][spottodupli] = dataspot[33][spottodupli - 1];
+    qualitys[0]  = qualitys[spottodupli] = dataspot[34][0] = dataspot[34][spottodupli] = dataspot[34][spottodupli - 1];
+    thress[0]  = thress[spottodupli] = dataspot[35][0] = dataspot[35][spottodupli] = dataspot[35][spottodupli - 1];
+    proxis[0]  = proxis[spottodupli] = dataspot[36][0] = dataspot[36][spottodupli] = dataspot[36][spottodupli - 1];
+    noiselumfs[0]  = noiselumfs[spottodupli] = dataspot[37][0] = dataspot[37][spottodupli] = dataspot[37][spottodupli - 1];
+    noiselumcs[0]  = noiselumcs[spottodupli] = dataspot[38][0] = dataspot[38][spottodupli] = dataspot[38][spottodupli - 1];
+    noisechrofs[0]  = noisechrofs[spottodupli] = dataspot[39][0] = dataspot[39][spottodupli] = dataspot[39][spottodupli - 1];
+    noisechrocs[0]  = noisechrocs[spottodupli] = dataspot[40][0] = dataspot[40][spottodupli] = dataspot[40][spottodupli - 1];
+    mult0s[0]  = mult0s[spottodupli] = dataspot[41][0] = dataspot[41][spottodupli] = dataspot[41][spottodupli - 1];
+    mult1s[0]  = mult1s[spottodupli] = dataspot[42][0] = dataspot[42][spottodupli] = dataspot[42][spottodupli - 1];
+    mult2s[0]  = mult2s[spottodupli] = dataspot[43][0] = dataspot[43][spottodupli] = dataspot[43][spottodupli - 1];
+    mult3s[0]  = mult3s[spottodupli] = dataspot[44][0] = dataspot[44][spottodupli] = dataspot[44][spottodupli - 1];
+    mult4s[0]  = mult4s[spottodupli] = dataspot[45][0] = dataspot[45][spottodupli] = dataspot[45][spottodupli - 1];
+    thresholds[0]  = thresholds[spottodupli] = dataspot[46][0] = dataspot[46][spottodupli] = dataspot[46][spottodupli - 1];
+    sensicbs[0]  = sensicbs[spottodupli] = dataspot[47][0] = dataspot[47][spottodupli] = dataspot[47][spottodupli - 1];
+    activlums[0]  = activlums[spottodupli] = dataspot[48][0] = dataspot[48][spottodupli] = dataspot[48][spottodupli - 1];
+    strens[0]  = strens[spottodupli] = dataspot[49][0] = dataspot[49][spottodupli] = dataspot[49][spottodupli - 1];
+    gammas[0]  = gammas[spottodupli] = dataspot[50][0] = dataspot[50][spottodupli] = dataspot[50][spottodupli - 1];
+    estops[0]  = estops[spottodupli] = dataspot[51][0] = dataspot[51][spottodupli] = dataspot[51][spottodupli - 1];
+    scaltms[0]  = scaltms[spottodupli] = dataspot[52][0] = dataspot[52][spottodupli] = dataspot[52][spottodupli - 1];
+    reweis[0]  = reweis[spottodupli] = dataspot[53][0] = dataspot[53][spottodupli] = dataspot[53][spottodupli - 1];
+    sensitms[0]  = sensitms[spottodupli] = dataspot[54][0] = dataspot[54][spottodupli] = dataspot[54][spottodupli - 1];
+    retrabs[0]  = retrabs[spottodupli] = dataspot[55][0] = dataspot[55][spottodupli] = dataspot[55][spottodupli - 1];
+    curvactivs[0]  = curvactivs[spottodupli] = dataspot[56][0] = dataspot[56][spottodupli] = dataspot[56][spottodupli - 1];
+    qualitycurves[0]  = qualitycurves[spottodupli] = dataspot[57][0] = dataspot[57][spottodupli] = dataspot[57][spottodupli - 1];
+    sensivs[0]  = sensivs[spottodupli] = dataspot[58][0] = dataspot[58][spottodupli] = dataspot[58][spottodupli - 1];
+    pastels[0]  = pastels[spottodupli] = dataspot[59][0] = dataspot[59][spottodupli] = dataspot[59][spottodupli - 1];
+    saturateds[0]  = saturateds[spottodupli] = dataspot[60][0] = dataspot[60][spottodupli] = dataspot[60][spottodupli - 1];
+    protectskinss[0]  = protectskinss[spottodupli] = dataspot[61][0] = dataspot[61][spottodupli] = dataspot[61][spottodupli - 1];
+    avoidcolorshifts[0]  = avoidcolorshifts[spottodupli] = dataspot[62][0] = dataspot[62][spottodupli] = dataspot[62][spottodupli - 1];
+    pastsattogs[0]  = pastsattogs[spottodupli] = dataspot[63][0] = dataspot[63][spottodupli] = dataspot[63][spottodupli - 1];
+    expcomps[0]  = expcomps[spottodupli] = dataspot[64][0] = dataspot[64][spottodupli] = dataspot[64][spottodupli - 1];
+    blacks[0]  = blacks[spottodupli] = dataspot[65][0] = dataspot[65][spottodupli] = dataspot[65][spottodupli - 1];
+    hlcomprs[0]  = hlcomprs[spottodupli] = dataspot[66][0] = dataspot[66][spottodupli] = dataspot[66][spottodupli - 1];
+    hlcomprthreshs[0]  = hlcomprthreshs[spottodupli] = dataspot[67][0] = dataspot[67][spottodupli] = dataspot[67][spottodupli - 1];
+    shcomprs[0]  = shcomprs[spottodupli] = dataspot[68][0] = dataspot[68][spottodupli] = dataspot[68][spottodupli - 1];
+    sensiexs[0]  = sensiexs[spottodupli] = dataspot[69][0] = dataspot[69][spottodupli] = dataspot[69][spottodupli - 1];
+    centerxbufs[0]  = centerxbufs[spottodupli] = dataspot[70][0] = dataspot[70][spottodupli] = dataspot[70][spottodupli - 1];
+    centerybufs[0]  = centerybufs[spottodupli] = dataspot[71][0] = dataspot[71][spottodupli] = dataspot[71][spottodupli - 1];
+    adjblurs[0]  = adjblurs[spottodupli] = dataspot[72][0] = dataspot[72][spottodupli] = dataspot[72][spottodupli - 1];
+    cutpasts[0]  = cutpasts[spottodupli] = dataspot[73][0] = dataspot[73][spottodupli] = dataspot[73][spottodupli - 1];
+    chromacbdls[0]  = chromacbdls[spottodupli] = dataspot[74][0] = dataspot[74][spottodupli] = dataspot[74][spottodupli - 1];
+    lastdusts[0]  = lastdusts[spottodupli] = dataspot[75][0] = dataspot[75][spottodupli] = dataspot[75][spottodupli - 1];
+    blurmets[0]  = blurmets[spottodupli] = dataspot[76][0] = dataspot[76][spottodupli] = dataspot[76][spottodupli - 1];
+    dustmets[0]  = dustmets[spottodupli] = dataspot[77][0] = dataspot[77][spottodupli] = dataspot[77][spottodupli - 1];
+    exclumets[0]  = exclumets[spottodupli] = dataspot[78][0] = dataspot[78][spottodupli] = dataspot[78][spottodupli - 1];
+    sensiexclus[0]  = sensiexclus[spottodupli] = dataspot[79][0] = dataspot[79][spottodupli] = dataspot[79][spottodupli - 1];
+    strucs[0]  = strucs[spottodupli] = dataspot[80][0] = dataspot[80][spottodupli] = dataspot[80][spottodupli - 1];
+    warms[0]  = warms[spottodupli] = dataspot[81][0] = dataspot[81][spottodupli] = dataspot[81][spottodupli - 1];
+    noiselumdetails[0]  = noiselumdetails[spottodupli] = dataspot[82][0] = dataspot[82][spottodupli] = dataspot[82][spottodupli - 1];
+    noisechrodetails[0]  = noisechrodetails[spottodupli] = dataspot[83][0] = dataspot[83][spottodupli] = dataspot[83][spottodupli - 1];
+    sensidens[0]  = sensidens[spottodupli] = dataspot[84][0] = dataspot[84][spottodupli] = dataspot[84][spottodupli - 1];
+    expdenois[0]  = expdenois[spottodupli] = dataspot[85][0] = dataspot[85][spottodupli] = dataspot[85][spottodupli - 1];
+    expcolors[0]  = expcolors[spottodupli] = dataspot[86][0] = dataspot[86][spottodupli] = dataspot[86][spottodupli - 1];
+    expvibrances[0]  = expvibrances[spottodupli] = dataspot[87][0] = dataspot[87][spottodupli] = dataspot[87][spottodupli - 1];
+    expblurs[0]  = expblurs[spottodupli] = dataspot[88][0] = dataspot[88][spottodupli] = dataspot[88][spottodupli - 1];
+    exptonemaps[0]  = exptonemaps[spottodupli] = dataspot[89][0] = dataspot[89][spottodupli] = dataspot[89][spottodupli - 1];
+    expretis[0]  = expretis[spottodupli] = dataspot[90][0] = dataspot[90][spottodupli] = dataspot[90][spottodupli - 1];
+    expsharps[0]  = expsharps[spottodupli] = dataspot[91][0] = dataspot[91][spottodupli] = dataspot[91][spottodupli - 1];
+    expcbdls[0]  = expcbdls[spottodupli] = dataspot[92][0] = dataspot[92][spottodupli] = dataspot[92][spottodupli - 1];
+    expexposes[0]  = expexposes[spottodupli] = dataspot[93][0] = dataspot[93][spottodupli] = dataspot[93][spottodupli - 1];
+    bilaterals[0]  = bilaterals[spottodupli] = dataspot[94][0] = dataspot[94][spottodupli] = dataspot[94][spottodupli - 1];
+    noiselequals[0]  = noiselequals[spottodupli] = dataspot[95][0] = dataspot[95][spottodupli] = dataspot[95][spottodupli - 1];
+    shapemets[0]  = shapemets[spottodupli] = dataspot[96][0] = dataspot[96][spottodupli] = dataspot[96][spottodupli - 1];
+
+    //datas for end ... references hue, etc.
+    huerefblurs[0] = huerefblurs[spottodupli] = dataspot[maxdata - 5][0] = dataspot[maxdata - 5][spottodupli] = dataspot[maxdata - 5][spottodupli - 1];
+    huerefs[0] = huerefs[spottodupli] = dataspot[maxdata - 4][0] = dataspot[maxdata - 4][spottodupli] = dataspot[maxdata - 4][spottodupli - 1];
+    chromarefs[0] = chromarefs[spottodupli] = dataspot[maxdata - 3][0] = dataspot[maxdata - 3][spottodupli] = dataspot[maxdata - 3][spottodupli - 1];
+    lumarefs[0] = lumarefs[spottodupli] = dataspot[maxdata - 2][0] = dataspot[maxdata - 2][spottodupli] = dataspot[maxdata - 2][spottodupli - 1];
+    sobelrefs[0] = sobelrefs[spottodupli] = dataspot[maxdata - 1][0] = dataspot[maxdata - 1][spottodupli] = dataspot[maxdata - 1][spottodupli - 1];
+
+    //perhaps not good after ?? to verify and to complete ?? difficult but "only" curves
+    retistr[spottodupli] = retistr[spottodupli - 1];
+    llstr[spottodupli] = llstr[spottodupli - 1];
+    lhstr[spottodupli] = lhstr[spottodupli - 1];
+    ccstr[spottodupli] = ccstr[spottodupli - 1];
+    hhstr[spottodupli] = hhstr[spottodupli - 1];
+    skinstr[spottodupli] = skinstr[spottodupli - 1];
+    pthstr[spottodupli] = pthstr[spottodupli - 1];
+    exstr[spottodupli] = exstr[spottodupli - 1];
+
 }
 
 
