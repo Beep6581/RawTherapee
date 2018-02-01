@@ -122,7 +122,7 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
 //
 // If output profile used, divide by 327.68 then apply the "profile" profile (eventually with a standard gamma)
 // otherwise divide by 327.68, convert to xyz and apply the RGB transform, before converting with gamma2curve
-Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm)
+Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm, bool consider_histogram_settings)
 {
     //gamutmap(lab);
 
@@ -147,7 +147,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 
     bool standard_gamma;
 
-    if(settings->HistogramWorking) {
+    if(settings->HistogramWorking && consider_histogram_settings) {
         profile = icm.working;
         standard_gamma = true;
     } else {
@@ -318,7 +318,7 @@ Imagefloat* ImProcFunctions::lab2rgbOut (LabImage* lab, int cx, int cy, int cw, 
 
             for (int j = cx; j < cx + cw; j++) {
 
-                float fy = (0.0086206897f * rL[j]) / 327.68f + 0.1379310345f; // (L+16)/116
+                float fy = (Color::c1By116 * rL[j]) / 327.68f + Color::c16By116; // (L+16)/116
                 float fx = (0.002f * ra[j]) / 327.68f + fy;
                 float fz = fy - (0.005f * rb[j]) / 327.68f;
                 float LL = rL[j] / 327.68f;

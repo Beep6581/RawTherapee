@@ -3908,8 +3908,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                                 // Luminosity after
                                 // only Luminance in Lab
                                 float newy = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
-                                float newfy = newy < MAXVALF ? Color::cachef[newy] : 327.68f * std::cbrt(newy / MAXVALF);
-                                float L_2 = 116.0f * newfy - 5242.88f;
+                                float L_2 = newy <= MAXVALF ? Color::cachefy[newy] : 327.68f * (116.f * xcbrtf(newy / MAXVALF) - 16.f);
 
                                 //gamut control
                                 if (settings->rgbcurveslumamode_gamut) {
@@ -5810,7 +5809,7 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                         float aprov1 = Chprov2 * sincosval.y;
                         float bprov1 = Chprov2 * sincosval.x;
 
-                        float fy = (0.00862069f * Lprov1) + 0.137932f;
+                        float fy = (Color::c1By116 * Lprov1 ) + Color::c1By116;
                         float fx = (0.002f * aprov1) + fy;
                         float fz = fy - (0.005f * bprov1);
 
