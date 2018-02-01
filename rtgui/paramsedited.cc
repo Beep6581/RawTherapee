@@ -1403,18 +1403,19 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (localContrast.enabled) {
         toEdit.localContrast.enabled = mods.localContrast.enabled;
     }
-    if (localContrast.radius) {
-        toEdit.localContrast.radius = mods.localContrast.radius;
-    }
-    if (localContrast.amount) {
-        toEdit.localContrast.amount = mods.localContrast.amount;
-    }
-    if (localContrast.darkness) {
-        toEdit.localContrast.darkness = mods.localContrast.darkness;
-    }
-    if (localContrast.lightness) {
-        toEdit.localContrast.lightness = mods.localContrast.lightness;
-    }
+
+#define ADDSETVAL_(v, i)                                                   \
+    do {                                                                \
+        if ( v ) {                                                      \
+            toEdit. v = dontforceSet && options.baBehav[ i ] ? toEdit. v + mods. v : mods. v ; \
+        }                                                               \
+    } while (false)
+
+    ADDSETVAL_(localContrast.radius, ADDSET_LOCALCONTRAST_RADIUS);
+    ADDSETVAL_(localContrast.amount, ADDSET_LOCALCONTRAST_AMOUNT);
+    ADDSETVAL_(localContrast.darkness, ADDSET_LOCALCONTRAST_DARKNESS);
+    ADDSETVAL_(localContrast.lightness, ADDSET_LOCALCONTRAST_LIGHTNESS);
+#undef ADDSETVAL_
 
     if (rgbCurves.enabled) {
         toEdit.rgbCurves.enabled = mods.rgbCurves.enabled;
