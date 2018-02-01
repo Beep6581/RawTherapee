@@ -89,6 +89,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 ;Name: "desktopicon\common"; Description: "For all users"; GroupDescription: "Additional icons:"; Flags: exclusive
 ;Name: "desktopicon\user"; Description: "For the current user only"; GroupDescription: "Additional icons:"; Flags: exclusive unchecked
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
+Name: regBrowseFolder; Description: "Add ""Browse with RawTherapee"" option to context menu when right-clicking on a folder."; GroupDescription: File extensions:
+Name: regOpenFile; Description: "Add ""Open with RawTherapee"" option to context menu when right-clicking on a file."; GroupDescription: File extensions:
 
 [Files]
 Source: "{#MyBuildBasePath}\rawtherapee*.exe"; DestDir: "{app}"; Flags: ignoreversion
@@ -100,6 +102,7 @@ Source: "{#MyBuildBasePath}\images\*"; DestDir: "{app}\images\"; Flags: ignoreve
 Source: "{#MyBuildBasePath}\languages\*"; DestDir: "{app}\languages\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#MyBuildBasePath}\licenses\*"; DestDir: "{app}\licenses\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#MyBuildBasePath}\lib\*"; DestDir: "{app}\lib\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#MyBuildBasePath}\share\*"; DestDir: "{app}\share\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#MyBuildBasePath}\profiles\*"; DestDir: "{app}\profiles\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#MyBuildBasePath}\sounds\*"; DestDir: "{app}\sounds\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#MyBuildBasePath}\themes\*"; DestDir: "{app}\themes\"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -111,17 +114,22 @@ Source: "{#MyBuildBasePath}\options"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MyBuildBasePath}\*.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MyBuildBasePath}\gspawn-win{#MyBitDepth}-helper.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MyBuildBasePath}\gspawn-win{#MyBitDepth}-helper-console.exe"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "{#MyBuildBasePath}\gdb.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#MyBuildBasePath}\gdb.exe"; DestDir: "{app}"; Flags: skipifsourcedoesntexist ignoreversion
 Source: "{#MyBuildBasePath}\fonts\DroidSansMonoSlashed.ttf"; DestDir: "{fonts}"; FontInstall: "Droid Sans Mono Slashed"; Flags: onlyifdoesntexist uninsneveruninstall
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
 Name: "{group}\{#MyAppName} {#MyAppVersion}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:ProgramOnTheWeb,{#MyAppName}}"; Filename: "{#MyAppURL}"
-Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
+Name: "{group}\{cm:UninstallProgram,{#MyAppName} {#MyAppVersion}}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\{#MyAppName} {#MyAppVersion}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName} {#MyAppVersion}"; Filename: "{app}\{#MyAppExeName}"; Tasks: quicklaunchicon
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
+[Registry]
+Root: HKCU; Subkey: "SOFTWARE\Classes\Directory\shell\Browse with RawTherapee"; ValueType: string; ValueData: "Browse with RawTherapee"; Flags: uninsdeletekey; Tasks: regBrowseFolder
+Root: HKCU; Subkey: "SOFTWARE\Classes\Directory\shell\Browse with RawTherapee\command"; ValueType: string; ValueData: "{app}\{#MyAppExeName} -w ""%1"""; Flags: uninsdeletekey; Tasks: regBrowseFolder
+Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\Open with RawTherapee"; ValueType: string; ValueData: "Open with RawTherapee"; Flags: uninsdeletekey; Tasks: regOpenFile
+Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\Open with RawTherapee\command"; ValueType: string; ValueData: "{app}\{#MyAppExeName} -R ""%1"""; Flags: uninsdeletekey; Tasks: regOpenFile
