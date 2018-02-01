@@ -41,12 +41,12 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
     coarse              = Gtk::manage (new CoarsePanel ());
     toneCurve           = Gtk::manage (new ToneCurve ());
     shadowshighlights   = Gtk::manage (new ShadowsHighlights ());
-    localContrast       = Gtk::manage(new LocalContrast());
     impulsedenoise      = Gtk::manage (new ImpulseDenoise ());
     defringe            = Gtk::manage (new Defringe ());
     dirpyrdenoise       = Gtk::manage (new DirPyrDenoise ());
     epd                 = Gtk::manage (new EdgePreservingDecompositionUI ());
     sharpening          = Gtk::manage (new Sharpening ());
+    localContrast       = Gtk::manage(new LocalContrast());
     sharpenEdge         = Gtk::manage (new SharpenEdge ());
     sharpenMicro        = Gtk::manage (new SharpenMicro ());
     lcurve              = Gtk::manage (new LCurve ());
@@ -104,9 +104,9 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
     addPanel (colorPanel, vibrance);
     addPanel (colorPanel, chmixer);
     addPanel (colorPanel, blackwhite);
-    addPanel (exposurePanel, localContrast);
     addPanel (exposurePanel, shadowshighlights);
     addPanel (detailsPanel, sharpening);
+    addPanel (detailsPanel, localContrast);
     addPanel (detailsPanel, sharpenEdge);
     addPanel (detailsPanel, sharpenMicro);
     addPanel (colorPanel, hsvequalizer);
