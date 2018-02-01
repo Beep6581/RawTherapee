@@ -179,7 +179,7 @@ Locallab::Locallab():
     EvLocenasharp = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCENASHARP");//552
     EvLocenacbdl = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCENACBDL");//553
     EvLocenadenoi = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCENADENOI");//554
-	
+
     EvlocallablocX = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCLOCX"); //= 494,
     EvlocallabCenter = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCENTER"); //= 495,
     EvlocallabDegree = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCDEGRE"); //= 496,
@@ -278,8 +278,8 @@ Locallab::Locallab():
     Evlocallabbilateral = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCBILATERAL");// = 598,
     Evlocallabnoiselequal = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCNOISELEQUAL");// = 599,
     Evlocallabshapemethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSHAPEMETH");// = 600,
-	Evlocallabspotduplicated = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSPOTDUP");
-	
+    Evlocallabspotduplicated = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSPOTDUP");
+
     editHBox = Gtk::manage(new Gtk::HBox());
     edit = Gtk::manage(new Gtk::ToggleButton());
     edit->add(*Gtk::manage(new RTImage("editmodehand.png")));
@@ -397,7 +397,7 @@ Locallab::Locallab():
     spotduplicated->set_active(false);
     spotduplicatedConn  = spotduplicated->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::spotduplicatedChanged));
     spotduplicated->set_tooltip_markup(M("TP_LOCALLAB_SPOTDUPLI_TOOLTIP"));
-   // labspotdup = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SPOTDUP_ENA")));
+    // labspotdup = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SPOTDUP_ENA")));
 
     qualityMethod->append(M("TP_LOCALLAB_STD"));
     qualityMethod->append(M("TP_LOCALLAB_ENH"));
@@ -663,7 +663,7 @@ Locallab::Locallab():
     shapeBox->pack_start(*centerY);
     shapeBox->pack_start(*circrad);
     shapeBox->pack_start(*spotduplicated);
-	//shapeBox->pack_start (*labspotdup);
+    //shapeBox->pack_start (*labspotdup);
     qualbox->pack_start(*labqual, Gtk::PACK_SHRINK, 4);
     qualbox->pack_start(*qualityMethod);
     shapeBox->pack_start(*qualbox);
@@ -1466,18 +1466,18 @@ void Locallab::neutral_pressed()
     curvactiv->set_active(false);
     inversrad->set_active(false);
     inversret->set_active(false);
-	protectSkins->set_active(false);
-	avoidColorShift->set_active(true);
-	pastSatTog->set_active(true);
-	expcolor->setEnabled(false);
-	expexpose->setEnabled(false);
-	expvibrance->setEnabled(false);
-	expblur->setEnabled(false);
-	exptonemap->setEnabled(false);
-	expreti->setEnabled(false);
-	expsharp->setEnabled(false);
-	expcbdl->setEnabled(false);
-	expdenoi->setEnabled(false);
+    protectSkins->set_active(false);
+    avoidColorShift->set_active(true);
+    pastSatTog->set_active(true);
+    expcolor->setEnabled(false);
+    expexpose->setEnabled(false);
+    expvibrance->setEnabled(false);
+    expblur->setEnabled(false);
+    exptonemap->setEnabled(false);
+    expreti->setEnabled(false);
+    expsharp->setEnabled(false);
+    expcbdl->setEnabled(false);
+    expdenoi->setEnabled(false);
     stren->resetValue(false);
     gamma->resetValue(false);
     estop->resetValue(false);
@@ -1492,18 +1492,18 @@ void Locallab::neutral_pressed()
     sensih->resetValue(false);
     retrab->resetValue(false);
     expcomp->resetValue(false);
-	hlcompr->resetValue(false);
-	hlcomprthresh->resetValue(false);
-	black->resetValue(false);
-	shcompr->resetValue(false);
-	sensiex->resetValue(false);
+    hlcompr->resetValue(false);
+    hlcomprthresh->resetValue(false);
+    black->resetValue(false);
+    shcompr->resetValue(false);
+    sensiex->resetValue(false);
     cTgainshape->reset();
-	llshape->reset();
-	ccshape->reset();
-	LHshape->reset();
-	HHshape->reset();
-	shape->reset();
-	skinTonesCurve->reset();
+    llshape->reset();
+    ccshape->reset();
+    LHshape->reset();
+    HHshape->reset();
+    shape->reset();
+    skinTonesCurve->reset();
     avoid->set_active(false);
 
     for (int i = 0; i < 5; i++) {
@@ -1838,6 +1838,7 @@ bool Locallab::localComputed_()
     } else if (nextdatasp[15] == 3) {
         Smethod->set_active(3);
     }
+
     //nbspot->setValue(nextdatasp[16]);
 
     //sliders blurr
@@ -2097,18 +2098,17 @@ bool Locallab::localComputed_()
     } else if (nextdatasp[96] == 1) {
         shapemethod->set_active(1);
     }
-	
 
-	//be carefull to value of nexdatasp for hueref, etc. and  
-	
-    double intermedblur = 0.01 * (double) nextdatasp[97];
+
+
+    double intermedblur = 0.01 * (double) nextdatasp[nextlength - 5];
     huerefblur->setValue(intermedblur);
-    double intermed = 0.01 * (double) nextdatasp[98];
+    double intermed = 0.01 * (double) nextdatasp[nextlength - 4];
     hueref->setValue(intermed);
 
-    chromaref->setValue(nextdatasp[99]);
-    lumaref->setValue(nextdatasp[100]);
-    sobelref->setValue(nextdatasp[101]);
+    chromaref->setValue(nextdatasp[nextlength - 3]);
+    lumaref->setValue(nextdatasp[nextlength - 2]);
+    sobelref->setValue(nextdatasp[nextlength - 1]);
 
     int *s_datc;
     s_datc = new int[70];
@@ -2278,8 +2278,8 @@ bool Locallab::localComputed_()
 
 
     //add events for each cases whitout that localalb does not work...
-	//there is probably an other solution !
-	
+    //there is probably an other solution !
+
     if (listener) { //for all sliders
         listener->panelChanged(Evlocallabanbspot, ""); //anbspot->getTextValue());
     }
@@ -2431,9 +2431,6 @@ bool Locallab::localComputed_()
 
 void Locallab::localChanged(int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat)
 {
-    for (int i = 2; i < 102; i++) {//be carefull to this value 102 must be the same as above ==> sobelref->setValue(nextdatasp[101]);
-        nextdatasp[i] = datasp[i][sp];
-    }
 
     nextstr = datastr;
     nextll_str = ll_str;
@@ -2443,8 +2440,12 @@ void Locallab::localChanged(int **datasp, std::string datastr, std::string ll_st
     nextsk_str = sk_str;
     nextps_str = ps_str;
     nextex_str = ex_str;
-
     nextlength = maxdat;
+
+    for (int i = 2; i < nextlength; i++) {//be carefull to this value 102 must be the same as above ==> sobelref->setValue(nextdatasp[101]);
+        nextdatasp[i] = datasp[i][sp];
+    }
+
     g_idle_add(localChangedUI, this);
 }
 
@@ -2762,13 +2763,13 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
     ashiftconn.block(false);
     lastAvoidColorShift = pp->locallab.avoidcolorshift;
 
-	
+
     spotduplicatedConn.block(true);
     spotduplicated->set_active(pp->locallab.spotduplicated);
     spotduplicatedConn.block(false);
     lastspotduplicated = pp->locallab.spotduplicated;
-	
-	
+
+
     pastsattogconn.block(true);
     pastSatTog->set_active(pp->locallab.pastsattog);
     pastsattogconn.block(false);
@@ -3374,7 +3375,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.sensiv = sensiv->getEditedState();
         pedited->locallab.spotduplicated = !spotduplicated->get_inconsistent();
 
-		
+
     }
 
     if (retinexMethod->get_active_row_number() == 0) {
@@ -3526,14 +3527,15 @@ bool Locallab::spotdupComputed_()
 {
 
     disableListener();
-	spotduplicated->set_active(nextspotdup);
-	if(nextspotdup){
-	//labspotdup->show();
-	//usleep(4000000);
-	}
-	else {
-	//labspotdup->hide();
-	}
+    spotduplicated->set_active(nextspotdup);
+
+    if (nextspotdup) {
+        //labspotdup->show();
+        //usleep(4000000);
+    } else {
+        //labspotdup->hide();
+    }
+
     enableListener();
 
     return false;
@@ -3556,7 +3558,7 @@ void Locallab::spotduplicatedChanged()
     }
 
     if (listener && getEnabled()) {
-		
+
         if (spotduplicated->get_active()) {
             listener->panelChanged(Evlocallabspotduplicated, M("GENERAL_ENABLED"));
         } else {
@@ -4619,7 +4621,8 @@ void Locallab::avoidChanged()
 }
 
 void Locallab::setAdjusterBehavior(bool degreeadd, bool locYadd, bool locXadd, bool locYTadd, bool locXLadd, bool centeradd, bool lightnessadd, bool contrastadd, bool chromaadd, bool sensiadd, bool transitadd, bool radiusadd,  bool strengthadd)
-{  // can I suppress ...no used
+{
+    // can I suppress ...no used
     degree->setAddMode(degreeadd);
     locY->setAddMode(locYadd);
     locX->setAddMode(locXadd);

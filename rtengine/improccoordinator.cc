@@ -892,6 +892,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
             int maxdata = 102; //101 10023 //100 10022 //99 10021 // 90 10020 //88 10019//87 10018  //86 10017 //85 10016;// 82 10015//78;//73 for 10011
             //same value in simpleprocess.cc
+            //same value in locallab.h for int nextdatasp[102];//102 = maxdata
 
             if (fic0) {
                 //find current version mip
@@ -2133,7 +2134,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 if (aloListener && params.locallab.spotduplicated) {
                     //update GUI and MIP
                     int sp = spottodupli;
-                    int maxreal = 1;
+                    int maxreal = maxdata;
                     aloListener->localChanged(dataspot, retistr[sp], llstr[sp], lhstr[sp], ccstr[sp], hhstr[sp], skinstr[sp], pthstr[sp], exstr[sp], sp, maxreal);
                     aloListener->spotdupChanged(false);//put checkbox to false, and spotduplicated to false
                     params.locallab.spotduplicated = false;
@@ -2732,7 +2733,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
             int sp ;
             sp = realspot;
             //now for current spot
-            int maxreal = 1;
+            int maxreal = maxdata;
 
             //*************************************************************
             //update GUI and Mip files
