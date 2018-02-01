@@ -56,7 +56,7 @@ bool checkRawImageThumb (const rtengine::RawImage& raw_image)
 }
 
 
-void scale_colors (rtengine::RawImage *ri, float scale_mul[4], float cblack[4])
+void scale_colors (rtengine::RawImage *ri, float scale_mul[4], float cblack[4], bool multiThread)
 {
     DCraw::dcrawImage_t image = ri->get_image();
 
@@ -64,6 +64,9 @@ void scale_colors (rtengine::RawImage *ri, float scale_mul[4], float cblack[4])
         const int height = ri->get_iheight();
         const int width = ri->get_iwidth();
 
+#ifdef _OPENMP
+        #pragma omp parallel for if(multiThread)
+#endif
         for (int row = 0; row < height; ++row) {
             unsigned c0 = ri->FC (row, 0);
             unsigned c1 = ri->FC (row, 1);
@@ -90,9 +93,12 @@ void scale_colors (rtengine::RawImage *ri, float scale_mul[4], float cblack[4])
     } else if (ri->isXtrans()) {
         const int height = ri->get_iheight();
         const int width = ri->get_iwidth();
-        unsigned c[6];
 
+#ifdef _OPENMP
+        #pragma omp parallel for if(multiThread)
+#endif
         for (int row = 0; row < height; ++row) {
+            unsigned c[6];
             for (int i = 0; i < 6; ++i) {
                 c[i] = ri->XTRANSFC (row, i);
             }
@@ -120,6 +126,9 @@ void scale_colors (rtengine::RawImage *ri, float scale_mul[4], float cblack[4])
     } else {
         const int size = ri->get_iheight() * ri->get_iwidth();
 
+#ifdef _OPENMP
+        #pragma omp parallel for if(multiThread)
+#endif
         for (int i = 0; i < size; ++i) {
             for (int j = 0; j < 4; ++j) {
                 float val = image[i][j];
@@ -386,7 +395,7 @@ RawMetaDataLocation Thumbnail::loadMetaDataFromRaw (const Glib::ustring& fname)
     return rml;
 }
 
-Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, bool rotate)
+Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, bool rotate, bool multiThread)
 {
     RawImage *ri = new RawImage (fname);
     unsigned int tempImageNum = 0;
@@ -421,7 +430,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
     //ri->scale_colors();
     float pre_mul[4], scale_mul[4], cblack[4];
     ri->get_colorsCoeff (pre_mul, scale_mul, cblack, false);
-    scale_colors (ri, scale_mul, cblack);
+    scale_colors (ri, scale_mul, cblack, multiThread);
 
     ri->pre_interpolate();
 
@@ -921,7 +930,7 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 }
 
 // Full thumbnail processing, second stage if complete profile exists
-IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorType sensorType, int rheight, TypeInterpolation interp, const FramesMetaData *metadata, double& myscale, bool forMonitor)
+IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorType sensorType, int rheight, TypeInterpolation interp, const FramesMetaData *metadata, double& myscale, bool forMonitor, bool multiThread)
 {
     unsigned int imgNum = 0;
     if (isRaw) {
@@ -1053,7 +1062,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     int fh = baseImg->getHeight();
     //ColorTemp::CAT02 (baseImg, &params)   ;//perhaps not good!
 
-    ImProcFunctions ipf (&params, false);
+    ImProcFunctions ipf (&params, multiThread);
     ipf.setScale (sqrt (double (fw * fw + fh * fh)) / sqrt (double (thumbImg->getWidth() * thumbImg->getWidth() + thumbImg->getHeight() * thumbImg->getHeight()))*scale);
     ipf.updateColorProfiles (ICCStore::getInstance()->getDefaultMonitorProfileName(), options.rtSettings.monitorIntent, false, false);
 

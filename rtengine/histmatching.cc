@@ -227,7 +227,7 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
         eSensorType sensor_type;
         double scale;
         int w = fw / skip, h = fh / skip;
-        std::unique_ptr<Thumbnail> thumb(Thumbnail::loadFromRaw(getFileName(), rml, sensor_type, w, h, 1, false, false));
+        std::unique_ptr<Thumbnail> thumb(Thumbnail::loadFromRaw(getFileName(), rml, sensor_type, w, h, 1, false, false, true));
         if (!thumb) {
             if (settings->verbose) {
                 std::cout << "histogram matching: raw decoding failed, generating a neutral curve" << std::endl;
@@ -235,7 +235,7 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
             histMatchingCache = outCurve;
             return;
         }
-        target.reset(thumb->processImage(neutral, sensor_type, fh / skip, TI_Nearest, getMetaData(), scale, false));
+        target.reset(thumb->processImage(neutral, sensor_type, fh / skip, TI_Nearest, getMetaData(), scale, false, true));
 
         int sw = source->getWidth(), sh = source->getHeight();
         int tw = target->getWidth(), th = target->getHeight();
