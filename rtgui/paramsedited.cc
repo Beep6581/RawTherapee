@@ -1404,11 +1404,11 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.localContrast.enabled = mods.localContrast.enabled;
     }
 
-#define ADDSETVAL_(v, i)                                                   \
-    do {                                                                \
-        if ( v ) {                                                      \
-            toEdit. v = dontforceSet && options.baBehav[ i ] ? toEdit. v + mods. v : mods. v ; \
-        }                                                               \
+#define ADDSETVAL_(v, i)                                                                        \
+    do {                                                                                        \
+        if ( v ) {                                                                              \
+            toEdit. v = dontforceSet && options.baBehav[ i ] ? toEdit. v + mods. v : mods. v ;  \
+        }                                                                                       \
     } while (false)
 
     ADDSETVAL_(localContrast.radius, ADDSET_LOCALCONTRAST_RADIUS);
