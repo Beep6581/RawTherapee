@@ -514,3 +514,11 @@ GtkButton.text-button {
 GtkButton.text-button:checked {
     background-image: linear-gradient(to bottom, rgba(30,30,30,.3), rgba(0,0,0,.4));
 }
+
+GtkCheckButton.text-button {
+    background-image: none;
+}
+
+GtkCheckButton.text-button:checked {
+    background-image: none;
+}
