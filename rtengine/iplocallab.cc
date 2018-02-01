@@ -1950,7 +1950,7 @@ void ImProcFunctions::addGaNoise(LabImage *lab, LabImage *dst, const float mean,
     }
 }
 
-void ImProcFunctions::DeNoise_Local_imp(const struct local_params& lp,  int levred, float hueplus, float huemoins, float hueref, float dhueden, LabImage* original, LabImage* transformed, LabImage* tmp1, int cx, int cy, int sk)
+void ImProcFunctions::DeNoise_Local_imp(int call, const struct local_params& lp,  int levred, float hueplus, float huemoins, float hueref, float dhueden, LabImage* original, LabImage* transformed, LabImage* tmp1, int cx, int cy, int sk)
 {
     // local denoise
     //simple algo , perhaps we can improve as the others, but noise is here and not good for hue detection
@@ -2139,10 +2139,16 @@ void ImProcFunctions::DeNoise_Local_imp(const struct local_params& lp,  int levr
                     case 1: { // inside transition zone
                         float factorx = localFactor;
                         float difL, difa, difb;
+                        if (call == 2  /*|| call == 1  || call == 3 */) { //simpleprocess
+                            difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
+                            difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
+                            difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
+                        } else  { //dcrop
+                            difL = tmp1->L[y][x] - original->L[y][x];
+                            difa = tmp1->a[y][x] - original->a[y][x];
+                            difb = tmp1->b[y][x] - original->b[y][x];
 
-                        difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
-                        difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
-                        difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
+                        }
 
                         difL *= factorx * khu;
                         difa *= factorx * khu;
@@ -2156,9 +2162,16 @@ void ImProcFunctions::DeNoise_Local_imp(const struct local_params& lp,  int levr
                     case 2: { // inside selection => full effect, no transition
                         float difL, difa, difb;
 
-                        difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
-                        difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
-                        difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
+                        if (call == 2 /*|| call == 1 || call == 3 */) { //simpleprocess
+                            difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
+                            difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
+                            difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
+                        } else  { //dcrop
+                            difL = tmp1->L[y][x] - original->L[y][x];
+                            difa = tmp1->a[y][x] - original->a[y][x];
+                            difb = tmp1->b[y][x] - original->b[y][x];
+
+                        }
 
                         difL *= khu;
                         difa *= khu;
@@ -9603,15 +9616,6 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
             int bfw = int (lp.lx + lp.lxL) + del;
 
             LabImage *bufwv = nullptr;
-
-
-            bufwv = new LabImage(bfw, bfh); //buffer for data in zone limit
-
-
-            int begy = lp.yc - lp.lyT;
-            int begx = lp.xc - lp.lxL;
-            int yEn = lp.yc + lp.ly;
-            int xEn = lp.xc + lp.lx;
             float hueplus = huerefblur + dhueden;
             float huemoins = huerefblur - dhueden;
 
@@ -9623,22 +9627,49 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 huemoins = huerefblur - dhueden + 2.f * rtengine::RT_PI;
             }
 
+            if (call == 2) {//simpleprocess
+                bufwv = new LabImage(bfw, bfh); //buffer for data in zone limit
+
+
+                int begy = lp.yc - lp.lyT;
+                int begx = lp.xc - lp.lxL;
+                int yEn = lp.yc + lp.ly;
+                int xEn = lp.xc + lp.lx;
+
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+                #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-            for (int y = 0; y < transformed->H ; y++) //{
-                for (int x = 0; x < transformed->W; x++) {
-                    int lox = cx + x;
-                    int loy = cy + y;
+                for (int y = 0; y < transformed->H ; y++) //{
+                    for (int x = 0; x < transformed->W; x++) {
+                        int lox = cx + x;
+                        int loy = cy + y;
 
-                    if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                        bufwv->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                        bufwv->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
-                        bufwv->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                            bufwv->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                            bufwv->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
+                            bufwv->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                        }
+
+                    }
+            } else {//dcrop.cc
+
+                int GH = transformed->H;
+                int GW = transformed->W;
+
+                bufwv = new LabImage(GW, GH);
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+                for (int ir = 0; ir < GH; ir++)
+                    for (int jr = 0; jr < GW; jr++) {
+                        bufwv->L[ir][jr] = original->L[ir][jr];
+                        bufwv->a[ir][jr] = original->a[ir][jr];
+                        bufwv->b[ir][jr] = original->b[ir][jr];
                     }
 
-                }
+
+            } //end dcrop
 
             double thr = (float) lp.bilat / 20.0;
 
@@ -9646,7 +9677,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 ImProcFunctions::impulse_nr(bufwv, thr);
             }
 
-            DeNoise_Local_imp(lp,  levred, hueplus, huemoins, huerefblur, dhueden, original, transformed, bufwv, cx, cy, sk);
+            DeNoise_Local_imp(call, lp,  levred, hueplus, huemoins, huerefblur, dhueden, original, transformed, bufwv, cx, cy, sk);
             delete bufwv;
         }
 
