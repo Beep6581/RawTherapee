@@ -508,18 +508,18 @@ GtkNotebook {
 }
 
 /* Better on/off state separation for text toggle buttons, e.g. auto-levels or histogram matching. */
-GtkButton.text-button.toggle {
+GtkToggleButton.button.text-button {
     background-image: linear-gradient(to bottom, rgba(100,100,100,.3), rgba(30,30,30,.3));
 }
 
-GtkButton.text-button.toggle:hover {
+GtkToggleButton.button.text-button:hover {
     background-image: linear-gradient(to bottom, rgba(128,128,128,.3), rgba(64,64,64,.3));
 }
 
-GtkButton.text-button.toggle:checked {
+GtkToggleButton.button.text-button:checked {
     background-image: linear-gradient(to bottom, rgba(30,30,30,.3), rgba(0,0,0,.4));
 }
 
-GtkButton.text-button.toggle:hover:checked {
+GtkToggleButton.text-button:hover:checked {
     background-image: linear-gradient(to bottom, rgba(48,48,48,.3), rgba(0,0,0,.3));
 }
