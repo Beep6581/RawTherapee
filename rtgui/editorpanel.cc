@@ -1081,6 +1081,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc)
     }
 
     history->resetSnapShotNumber();
+    navigator->setInvalid(ipc->getFullWidth(),ipc->getFullHeight());
 }
 
 void EditorPanel::close ()
