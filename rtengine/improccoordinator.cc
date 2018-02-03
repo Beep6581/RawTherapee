@@ -447,7 +447,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                                             params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.hrenabled);
         }
         if (params.toneCurve.histmatching) {
-            imgsrc->getAutoMatchedToneCurve(params.toneCurve.curve);
+            imgsrc->getAutoMatchedToneCurve(params.icm, params.toneCurve.curve);
 
             if (params.toneCurve.autoexp) {
                 params.toneCurve.expcomp = 0.0;
