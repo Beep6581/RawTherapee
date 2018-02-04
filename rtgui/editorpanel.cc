@@ -205,7 +205,7 @@ private:
 
     void prepareSoftProofingBox ()
     {
-        Gtk::Image *softProofImage = Gtk::manage (new RTImage ("softProof.png"));
+        Gtk::Image *softProofImage = Gtk::manage (new RTImage ("gamut-softproof.png"));
         softProofImage->set_padding (0, 0);
         softProof.add (*softProofImage);
         softProof.set_relief (Gtk::RELIEF_NONE);
@@ -215,7 +215,7 @@ private:
         softProof.set_sensitive (canSProof);
         softProof.show ();
 
-        Gtk::Image *spGamutCheckImage = Gtk::manage (new RTImage ("spGamutCheck.png"));
+        Gtk::Image *spGamutCheckImage = Gtk::manage (new RTImage ("gamut-warning.png"));
         spGamutCheckImage->set_padding (0, 0);
         spGamutCheck.add (*spGamutCheckImage);
         spGamutCheck.set_relief (Gtk::RELIEF_NONE);
