@@ -2139,6 +2139,7 @@ void ImProcFunctions::DeNoise_Local_imp(int call, const struct local_params& lp,
                     case 1: { // inside transition zone
                         float factorx = localFactor;
                         float difL, difa, difb;
+
                         if (call == 2  /*|| call == 1  || call == 3 */) { //simpleprocess
                             difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
                             difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
@@ -8476,7 +8477,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 
 
 
-void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, int cx, int cy, int oW, int oH, int sk,
+void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, LUTf & sobelrefs, LUTi & centerx, LUTi & centery, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, int cx, int cy, int oW, int oH, int sk,
                                 const LocretigainCurve & locRETgainCcurve, LUTf & lllocalcurve, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve,
                                 bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localskutili, LUTf & sklocalcurve, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, double & huerefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref)
 {
@@ -8697,7 +8698,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 
             bool titi = false;
 
-            if (titi) {
+            if (titi) { //&& call == 3
 
 
 
@@ -8709,6 +8710,20 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 //Cdeltae Ldeltae - deltaE Chroma and Luma in area bfw bfh
                 //Cdeltaesob Ldeltaesob - Sobel transformed of deltaE Chroma and Luma in area bfw bfh
 
+                //retreive coordonate and values of references around current exclude Spot
+                //  hueref dataspot[maxdata - 4][sp] = huerefs[sp] = 100.f * params.locallab.hueref;
+                //    dataspot[maxdata - 1][sp] = sobelrefs[sp] = params.locallab.sobelref;
+
+				//retrieve datas for hueref, sobelref and centerX Y for all spot around
+				/*
+				huerefs[sp];
+				sobelrefs[sp];
+				centerx[sp];
+				centery[sp];
+				*/
+				//int currentcenterx = centerx[0];
+				//int currentcentery = centery[0];
+				
                 const JaggedArray<float> Cdeltae(bfw, bfh);
                 const JaggedArray<float> Cdeltaesob(bfw, bfh);
                 const JaggedArray<float> Ldeltae(bfw, bfh);
@@ -8845,7 +8860,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 float *radlimR = nullptr;
                 radlimR = new float[yEn - begy + ar];
 
-
+				printf("huar=%f sob=%f cx=%i\n", huerefs[2], sobelrefs[2], centerx[1]);
 
 
                 for (int w = 0; w < (xEn - begx); w++) {
@@ -9352,6 +9367,8 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
                 delete[] meanaft;
                 delete[] meanbef;
 
+
+
             }
 
             //then restore non modified area
@@ -9661,6 +9678,7 @@ void ImProcFunctions::Lab_Local(int call, float** shbuffer, LabImage * original,
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
+
                 for (int ir = 0; ir < GH; ir++)
                     for (int jr = 0; jr < GW; jr++) {
                         bufwv->L[ir][jr] = original->L[ir][jr];

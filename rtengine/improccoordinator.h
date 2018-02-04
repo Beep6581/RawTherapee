@@ -242,6 +242,7 @@ protected:
     bool curveutili;
 
     int **dataspot;
+	int maxdata;
     std::string *retistr;
     std::string *llstr;
     std::string *lhstr;

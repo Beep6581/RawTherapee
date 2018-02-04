@@ -1145,6 +1145,10 @@ private:
 
                 int **dataspots;
                 dataspots = new int*[maxdata];
+					LUTf huerefs(500, -10000.f);	
+					LUTf sobelrefs(500, -10000.f);
+					LUTi centerx (500, -10000); 
+					LUTi centery (500, -10000);
 
                 for (int i = 0; i < maxdata; i++) {
                     dataspots[i] = new int[maxspot];
@@ -1718,8 +1722,8 @@ private:
                     params.locallab.locY = dataspots[4][sp];
                     params.locallab.locYT = dataspots[5][sp];
                     params.locallab.locXL = dataspots[6][sp];
-                    params.locallab.centerX = dataspots[7][sp];
-                    params.locallab.centerY = dataspots[8][sp];
+                    params.locallab.centerX = centerx[sp]= dataspots[7][sp];
+                    params.locallab.centerY = centery[sp] = dataspots[8][sp];
                     params.locallab.lightness = dataspots[9][sp];
                     params.locallab.contrast = dataspots[10][sp];
                     params.locallab.chroma = dataspots[11][sp];
@@ -1978,10 +1982,11 @@ private:
                     }
 
                     params.locallab.huerefblur = ((float) dataspots[maxdata - 5][sp]) / 100.f;
-                    params.locallab.hueref = ((float) dataspots[maxdata - 4][sp]) / 100.f;
+                    params.locallab.hueref = huerefs[sp] = ((float) dataspots[maxdata - 4][sp]) / 100.f;
+					huerefs[sp] *= 100.f;
                     params.locallab.chromaref = dataspots[maxdata - 3][sp];
                     params.locallab.lumaref = dataspots[maxdata - 2][sp];
-                    params.locallab.sobelref = dataspots[maxdata - 1][sp];
+                    params.locallab.sobelref = sobelrefs[sp] = dataspots[maxdata - 1][sp];
 
 
                     int *s_datc;
@@ -2168,8 +2173,9 @@ private:
                     params.locallab.chromaref = chromare;
                     params.locallab.lumaref = lumare;
                     params.locallab.sobelref = sobelre;
-
-                    ipf.Lab_Local(2, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve,
+									//nullptr or dataspot ??
+ 
+                    ipf.Lab_Local(2, maxspot, sp, huerefs, sobelrefs, centerx, centery, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve,
                                   LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.huerefblur, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref, params.locallab.sobelref);
                     lllocalcurve.clear();
                     cclocalcurve.clear();

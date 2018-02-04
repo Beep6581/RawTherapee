@@ -100,7 +100,7 @@ ImProcCoordinator::ImProcCoordinator()
       plistener(nullptr), awbListener(nullptr), imageListener(nullptr), aeListener(nullptr), acListener(nullptr), abwListener(nullptr),  aloListener(nullptr), actListener(nullptr), adnListener(nullptr), awavListener(nullptr), dehaListener(nullptr), frameCountListener(nullptr), imageTypeListener(nullptr), hListener(nullptr),
       resultValid(false), lastOutputProfile("BADFOOD"), lastOutputIntent(RI__COUNT), lastOutputBPC(false), thread(nullptr), changeSinceLast(0), updaterRunning(false), destroying(false), utili(false), autili(false),
       butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false),  wavcontlutili(false),
-      dataspot(nullptr), retistr(nullptr), llstr(nullptr), lhstr(nullptr), ccstr(nullptr), hhstr(nullptr), skinstr(nullptr), pthstr(nullptr), exstr(nullptr),
+      dataspot(nullptr), maxdata(0), retistr(nullptr), llstr(nullptr), lhstr(nullptr), ccstr(nullptr), hhstr(nullptr), skinstr(nullptr), pthstr(nullptr), exstr(nullptr),
       circrads(500, -10000),
       centerx(500, -10000),
       centery(500, -10000),
@@ -890,7 +890,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                                     };
 
 
-            int maxdata = 102; //101 10023 //100 10022 //99 10021 // 90 10020 //88 10019//87 10018  //86 10017 //85 10016;// 82 10015//78;//73 for 10011
+            maxdata = 102; //101 10023 //100 10022 //99 10021 // 90 10020 //88 10019//87 10018  //86 10017 //85 10016;// 82 10015//78;//73 for 10011
             //same value in simpleprocess.cc
             //same value in locallab.h for int nextdatasp[102];//102 = maxdata
 
@@ -2717,7 +2717,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 dataspot[maxdata - 2][sp] = lumarefs[sp] = params.locallab.lumaref;
                 dataspot[maxdata - 1][sp] = sobelrefs[sp] = params.locallab.sobelref;
                 //printf("sp=%i huerefsp=%f\n", sp, huerefs[sp]);
-                ipf.Lab_Local(3, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, loclhCurve,  lochhCurve,
+                ipf.Lab_Local(3, maxspot, sp, huerefs, sobelrefs, centerx, centery, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, loclhCurve,  lochhCurve,
                               LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.huerefblur, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref, params.locallab.sobelref);
                 lllocalcurve.clear();
                 cclocalcurve.clear();
@@ -3370,7 +3370,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
             params.locallab.chromaref = chromarefs[sp];
             params.locallab.lumaref = lumarefs[sp];
             params.locallab.sobelref = sobelrefs[sp];
-            ipf.Lab_Local(3, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve,
+            ipf.Lab_Local(3, maxspot, sp, huerefs, sobelrefs, centerx, centery, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve,
                           localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.huerefblur, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref, params.locallab.sobelref);
             lllocalcurve.clear();
             cclocalcurve.clear();
