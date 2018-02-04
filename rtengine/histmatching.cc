@@ -169,7 +169,7 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
 } // namespace
 
 
-void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
+void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, std::vector<double> &outCurve)
 {
     BENCHFUN
         
@@ -177,7 +177,18 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
         std::cout << "performing histogram matching for " << getFileName() << " on the embedded thumbnail" << std::endl;
     }
 
-    if (!histMatchingCache.empty()) {
+    const auto same_profile =
+        [](const ColorManagementParams &a, const ColorManagementParams &b) -> bool
+        {
+            return (a.input == b.input
+                    && a.toneCurve == b.toneCurve
+                    && a.applyLookTable == b.applyLookTable
+                    && a.applyBaselineExposureOffset == b.applyBaselineExposureOffset
+                    && a.applyHueSatMap == b.applyHueSatMap
+                    && a.dcpIlluminant == b.dcpIlluminant);
+        };
+
+    if (!histMatchingCache.empty() && same_profile(histMatchingParams, cp)) {
         if (settings->verbose) {
             std::cout << "tone curve found in cache" << std::endl;
         }
@@ -196,9 +207,12 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
     }
 
     ProcParams neutral;
+    neutral.icm = cp;
     neutral.raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
     neutral.raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
     neutral.icm.output = "sRGB";
+    neutral.icm.gamma = "default";
+    neutral.icm.freegamma = false;
     
     std::unique_ptr<IImage8> source;
     {
@@ -211,6 +225,7 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
                 std::cout << "histogram matching: no thumbnail found, generating a neutral curve" << std::endl;
             }
             histMatchingCache = outCurve;
+            histMatchingParams = cp;
             return;
         }
         skip = LIM(skip * fh / h, 6, 10); // adjust the skip factor -- the larger the thumbnail, the less we should skip to get a good match
@@ -233,6 +248,7 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
                 std::cout << "histogram matching: raw decoding failed, generating a neutral curve" << std::endl;
             }
             histMatchingCache = outCurve;
+            histMatchingParams = cp;
             return;
         }
         target.reset(thumb->processImage(neutral, sensor_type, fh / skip, TI_Nearest, getMetaData(), scale, false, true));
@@ -304,6 +320,7 @@ void RawImageSource::getAutoMatchedToneCurve(std::vector<double> &outCurve)
     }
 
     histMatchingCache = outCurve;
+    histMatchingParams = cp;
 }
 
 } // namespace rtengine

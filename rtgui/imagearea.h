@@ -65,7 +65,6 @@ protected:
     void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
     void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
 
-    bool firstOpen;
     int fullImageWidth, fullImageHeight;
 public:
     CropWindow* mainCropWindow;
@@ -148,7 +147,7 @@ public:
     void cropPositionChanged   (CropWindow* cw);
     void cropWindowSizeChanged (CropWindow* cw);
     void cropZoomChanged       (CropWindow* cw);
-    void initialImageArrived   (CropWindow* cw) ;
+    void initialImageArrived   ();
 
     // LockablePickerToolListener interface
     void switchPickerVisibility (bool isVisible);

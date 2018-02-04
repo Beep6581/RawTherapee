@@ -96,6 +96,7 @@ protected:
     float psBlueBrightness[4];
 
     std::vector<double> histMatchingCache;
+    ColorManagementParams histMatchingParams;
 
     void hphd_vertical(float** hpmap, int col_from, int col_to);
     void hphd_horizontal(float** hpmap, int row_from, int row_to);
@@ -186,7 +187,7 @@ public:
     }
     void        getAutoExpHistogram(LUTu & histogram, int& histcompr);
     void        getRAWHistogram(LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw);
-    void getAutoMatchedToneCurve(std::vector<double> &outCurve);
+    void getAutoMatchedToneCurve(const ColorManagementParams &cp, std::vector<double> &outCurve);
     DCPProfile *getDCP(const ColorManagementParams &cmp, DCPProfile::ApplyState &as);
 
     void convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb);

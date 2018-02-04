@@ -5809,7 +5809,7 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                         float aprov1 = Chprov2 * sincosval.y;
                         float bprov1 = Chprov2 * sincosval.x;
 
-                        float fy = (Color::c1By116 * Lprov1 ) + Color::c1By116;
+                        float fy = (Color::c1By116 * Lprov1 ) + Color::c16By116;
                         float fx = (0.002f * aprov1) + fy;
                         float fz = fy - (0.005f * bprov1);
 

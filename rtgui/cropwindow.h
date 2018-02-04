@@ -40,7 +40,7 @@ public:
     virtual void cropPositionChanged   (CropWindow*) {}
     virtual void cropWindowSizeChanged (CropWindow*) {}
     virtual void cropZoomChanged       (CropWindow*) {}
-    virtual void initialImageArrived   (CropWindow*) {}
+    virtual void initialImageArrived   () {}
 };
 
 class ImageArea;

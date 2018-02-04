@@ -25,7 +25,7 @@
 #include "../rtengine/refreshmap.h"
 #include "options.h"
 
-ImageArea::ImageArea (ImageAreaPanel* p) : parent(p), firstOpen(true), fullImageWidth(0), fullImageHeight(0)
+ImageArea::ImageArea (ImageAreaPanel* p) : parent(p), fullImageWidth(0), fullImageHeight(0)
 {
 
     infotext = "";
@@ -633,33 +633,23 @@ void ImageArea::setZoom (double zoom)
     zoomPanel->refreshZoomLabel ();
 }
 
-void ImageArea::initialImageArrived (CropWindow* cw)
+void ImageArea::initialImageArrived ()
 {
 
     if (mainCropWindow) {
-        if(firstOpen || options.prevdemo != PD_Sidecar || (!options.rememberZoomAndPan) ) {
+        int w, h;
+        mainCropWindow->cropHandler.getFullImageSize(w, h);
+        if(options.prevdemo != PD_Sidecar || !options.rememberZoomAndPan || w != fullImageWidth || h != fullImageHeight) {
             if (options.cropAutoFit || options.bgcolor != 0) {
                 mainCropWindow->zoomFitCrop();
             } else {
                 mainCropWindow->zoomFit();
             }
-            firstOpen = false;
-            mainCropWindow->cropHandler.getFullImageSize(fullImageWidth, fullImageHeight);
-        } else {
-            int w, h;
-            mainCropWindow->cropHandler.getFullImageSize(w, h);
-
-            if(w != fullImageWidth || h != fullImageHeight) {
-                if (options.cropAutoFit) {
-                    mainCropWindow->zoomFitCrop();
-                } else {
-                    mainCropWindow->zoomFit();
-                }
-            }
-
-            fullImageWidth = w;
-            fullImageHeight = h;
+        } else if ((options.cropAutoFit || options.bgcolor != 0) && mainCropWindow->cropHandler.cropParams.enabled) {
+            mainCropWindow->zoomFitCrop();
         }
+        fullImageWidth = w;
+        fullImageHeight = h;
     }
 }
 

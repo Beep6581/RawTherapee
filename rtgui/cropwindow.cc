@@ -2577,7 +2577,7 @@ void CropWindow::initialImageArrived ()
 {
 
     for (auto listener : listeners) {
-        listener->initialImageArrived (this);
+        listener->initialImageArrived();
     }
 }
 
