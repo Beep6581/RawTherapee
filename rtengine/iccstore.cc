@@ -335,7 +335,7 @@ public:
         defaultMonitorProfile = settings->monitorProfile;
 
         // initialize the alarm colours for lcms gamut checking -- we use bright green
-        cmsUInt16Number cms_alarm_codes[cmsMAXCHANNELS] = { 0, 65535, 0 };
+        cmsUInt16Number cms_alarm_codes[cmsMAXCHANNELS] = { 0, 65535, 65535 };
         cmsSetAlarmCodes(cms_alarm_codes);
     }
 
