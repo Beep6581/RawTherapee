@@ -1956,12 +1956,15 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !HISTORY_MSG_491;White Balance
 !HISTORY_MSG_492;RGB Curves
 !HISTORY_MSG_493;L*a*b* Adjustments
+!HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
+!HISTORY_MSG_HISTMATCHING;Auto-matched Tone Curve
 !HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 !HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 !HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
 !HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
 !HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
 !HISTORY_MSG_METADATA_MODE;Metadata copy mode
+!HISTORY_MSG_TM_FATTAL_ANCHOR;HDR TM - Anchor
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
 !IPTCPANEL_COPYRIGHT;Copyright notice
@@ -1993,9 +1996,13 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
 !MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
 !MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
+!MAIN_TAB_ADVANCED;Advanced
+!MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt-w</b>
 !MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
 !MONITOR_PROFILE_SYSTEM;System default
+!PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
 !PARTIALPASTE_LOCALCONTRAST;Local contrast
+!PARTIALPASTE_METADATA;Metadata mode
 !PARTIALPASTE_PRSHARPENING;Post-resize sharpening
 !PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
@@ -2043,8 +2050,8 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !SAMPLEFORMAT_8;LogLuv 32 bits
 !SAMPLEFORMAT_16;32 bits floating point
 !SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
-!SOFTPROOF_GAMUTCHECK_TOOLTIP;If active, indicates in grey the pixels which have out of gamut colors from the Printer profile.
-!SOFTPROOF_TOOLTIP;Soft-proofing\nIf active, let you simulate the printer's output by using the Printer profile set in Preferences > Color Management.
+!SOFTPROOF_GAMUTCHECK_TOOLTIP;If active, pixels with colors that are outside the gamut of the Printer/Output profile are highlighted.
+!SOFTPROOF_TOOLTIP;Soft-proofing\nIf active, lets you simulate the appearance of the image when printed (if a Printer profile set in Preferences > Color Management) or when viewed on a display that uses the current output profile (if no printer profile is selected).
 !TOOLBAR_TOOLTIP_COLORPICKER;Lockable Color Picker\n\nWhen enabled:\nClick in the preview with left mouse button to add a color picker\nDrag it around while pressing the left mouse button\nDelete the color picker with a right mouse button click\nDelete all color pickers with Shift + Right mouse button click\nRight click away from any color picker to go back to the Hand tool
 !TP_CBDL_AFT;After Black-and-White
 !TP_CBDL_BEF;Before Black-and-White
@@ -2057,6 +2064,8 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !TP_COLORAPP_YB;Yb% (mean luminance)
 !TP_COLORAPP_YBSCENE;Yb% (mean luminance)
 !TP_COLORAPP_YBSCENE_TOOLTIP;if auto is enabled, Yb is calculated from the mean value of the actual image's luminance
+!TP_COLORTONING_LABGRID;L*a*b* color correction grid
+!TP_COLORTONING_LABGRID_VALUES;HL: a=%1 b=%2\nS: a=%3 b=%4
 !TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
 !TP_DIRPYRDENOISE_LABEL;Noise Reduction
 !TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.
@@ -2068,6 +2077,8 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !TP_DIRPYRDENOISE_TYPE_7X7;7×7
 !TP_DIRPYRDENOISE_TYPE_9X9;9×9
 !TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
+!TP_EXPOSURE_HISTMATCHING;Auto-matched Tone Curve
+!TP_EXPOSURE_HISTMATCHING_TOOLTIP;Automatically adjust sliders and curves (except exposure compensation) to match the look of the embedded JPEG thumbnail.
 !TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
 !TP_ICM_BPC;Black Point Compensation
 !TP_ICM_PROFILEINTENT;Rendering Intent
@@ -2228,6 +2239,7 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !TP_RETINEX_VIEW_TRAN2;Transmission - Fixed
 !TP_RETINEX_VIEW_UNSHARP;Unsharp mask
 !TP_TM_FATTAL_AMOUNT;Amount
+!TP_TM_FATTAL_ANCHOR;Anchor
 !TP_TM_FATTAL_LABEL;HDR Tone Mapping
 !TP_TM_FATTAL_THRESHOLD;Threshold
 !TP_WBALANCE_TEMPBIAS;AWB temperature bias

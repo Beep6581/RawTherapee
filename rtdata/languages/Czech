@@ -2211,13 +2211,20 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_256;NR - Median - Type
 !HISTORY_MSG_297;NR - Mode
 !HISTORY_MSG_493;L*a*b* Adjustments
+!HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
+!HISTORY_MSG_HISTMATCHING;Auto-matched Tone Curve
 !HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 !HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 !HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
 !HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
 !HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
 !HISTORY_MSG_METADATA_MODE;Metadata copy mode
+!HISTORY_MSG_TM_FATTAL_ANCHOR;HDR TM - Anchor
+!MAIN_TAB_ADVANCED;Advanced
+!MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt-w</b>
+!PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
 !PARTIALPASTE_LOCALCONTRAST;Local contrast
+!PARTIALPASTE_METADATA;Metadata mode
 !PREFERENCES_CROP;Crop editing
 !PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
 !PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
@@ -2225,8 +2232,12 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !PREFERENCES_CROP_GUIDES_FULL;Original
 !PREFERENCES_CROP_GUIDES_NONE;None
 !PREFERENCES_EDITORCMDLINE;Custom command line
+!TP_COLORTONING_LABGRID;L*a*b* color correction grid
+!TP_COLORTONING_LABGRID_VALUES;HL: a=%1 b=%2\nS: a=%3 b=%4
 !TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
 !TP_DIRPYRDENOISE_LABEL;Noise Reduction
+!TP_EXPOSURE_HISTMATCHING;Auto-matched Tone Curve
+!TP_EXPOSURE_HISTMATCHING_TOOLTIP;Automatically adjust sliders and curves (except exposure compensation) to match the look of the embedded JPEG thumbnail.
 !TP_LOCALCONTRAST_AMOUNT;Amount
 !TP_LOCALCONTRAST_DARKNESS;Darkness level
 !TP_LOCALCONTRAST_LABEL;Local Contrast
@@ -2238,3 +2249,4 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_METADATA_TUNNEL;Copy unchanged
 !TP_RAW_PIXELSHIFTONEGREEN;Use one green instead of average
 !TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Use one green instead of averaging two greens for regions without motion.
+!TP_TM_FATTAL_ANCHOR;Anchor
