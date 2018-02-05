@@ -59,6 +59,7 @@ ADJUSTER_RESET_TO_DEFAULT;Standard wiederherstellen
 BATCHQUEUE_AUTOSTART;Automatisch starten
 BATCHQUEUE_AUTOSTARTHINT;Bei neuem Job die Verarbeitung automatisch starten
 BATCHQUEUE_DESTFILENAME;Pfad und Dateiname
+BATCHQUEUE_STARTSTOPHINT;Startet / Stoppt die Verarbeitung\nder Warteschlange.\n\nTaste: <b>Strg</b> + <b>s</b>
 BATCH_PROCESSING;Stapelverarbeitung
 CURVEEDITOR_AXIS_IN;x:
 CURVEEDITOR_AXIS_LEFT_TAN;LT:
@@ -278,6 +279,7 @@ GENERAL_OK;OK
 GENERAL_OPEN;Öffnen
 GENERAL_PORTRAIT;Portrait
 GENERAL_SAVE;Speichern
+GENERAL_SLIDER;Regler
 GENERAL_UNCHANGED;(Unverändert)
 GENERAL_WARNING;Warnung
 GIMP_PLUGIN_INFO;Willkommen zum RawTherapee GIMP-Plugin!\nNach den Änderungen bitte das RawTherapee-Fenster schließen.\nDas Bild wird dann automatisch in GIMP importiert.
@@ -465,6 +467,7 @@ HISTORY_MSG_169;(L*a*b*) - CH-Kurve
 HISTORY_MSG_170;(Dynamik) - HH-Kurve
 HISTORY_MSG_171;(L*a*b*) - LC-Kurve
 HISTORY_MSG_172;(L*a*b*) - LC-Kurve\nbeschränken
+HISTORY_MSG_173;(Rauschreduzierung)\nLuminanzdetails
 HISTORY_MSG_174;(CIECAM02)
 HISTORY_MSG_175;(CIECAM02) - Szene\nCAT02-Adaptation
 HISTORY_MSG_176;(CIECAM02)\nBetrachtungsbed.\nUmgebung
@@ -494,6 +497,7 @@ HISTORY_MSG_199;(CIECAM02) - Ausgabe-\nHistogramm anzeigen
 HISTORY_MSG_200;(CIECAM02)\nDynamikkompression
 HISTORY_MSG_201;(Rauschreduzierung)\nDelta-Chrominanz\nRot / Grün
 HISTORY_MSG_202;(Rauschreduzierung)\nDelta-Chrominanz\nBlau / Gelb
+HISTORY_MSG_203;(Rauschreduzierung)\nFarbraum
 HISTORY_MSG_204;(Sensor-Matrix)\nFarbinterpolation\nLMMSE-Verbesserung
 HISTORY_MSG_205;(CIECAM02)\nBetrachtungsbed.\nHot / Bad-Pixelfilter
 HISTORY_MSG_206;(CIECAM02) - Szene\nAuto-Luminanz
@@ -545,6 +549,7 @@ HISTORY_MSG_252;(Detailebenenkontrast)\nHautfarbtöne schützen
 HISTORY_MSG_253;(Detailebenenkontrast)\nArtefakte reduzieren
 HISTORY_MSG_254;(Detailebenenkontrast)\nHautfarbton
 HISTORY_MSG_255;(Rauschreduzierung)\nMedianfilter
+HISTORY_MSG_256;(Rauschreduzierung)\nMedianfilter - Mediantyp
 HISTORY_MSG_257;(Farbanpassungen)
 HISTORY_MSG_258;(Farbanpassungen)\nFarbkurve
 HISTORY_MSG_259;(Farbanpassungen)\nDeckkraftkurve
@@ -585,6 +590,7 @@ HISTORY_MSG_293;(Filmsimulation)
 HISTORY_MSG_294;(Filmsimulation)\nIntensität
 HISTORY_MSG_295;(Filmsimulation) - Film
 HISTORY_MSG_296;(Rauschreduzierung)\nLuminanzkurve
+HISTORY_MSG_297;(Rauschreduzierung)\nQualität
 HISTORY_MSG_298;(Vorverarbeitung)\nDead-Pixel-Filter
 HISTORY_MSG_299;(Rauschreduzierung)\nChrominanzkurve
 HISTORY_MSG_300;-
@@ -770,6 +776,7 @@ HISTORY_MSG_LOCALCONTRAST_DARKNESS;(Lokaler Kontrast)\nDunkle Bereiche
 HISTORY_MSG_LOCALCONTRAST_ENABLED;(Lokaler Kontrast)
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;(Lokaler Kontrast)\nHelle Bereiche
 HISTORY_MSG_LOCALCONTRAST_RADIUS;(Lokaler Kontrast)\nRadius
+HISTORY_MSG_METADATA_MODE;(Metadaten)\nKopiermodus
 HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
 HISTORY_SNAPSHOT;Schnappschuss
@@ -1014,6 +1021,12 @@ PREFERENCES_CLUTSCACHE;HaldCLUT-Zwischenspeicher
 PREFERENCES_CLUTSCACHE_LABEL;Maximale Anzahl CLUTs im Zwischenspeicher
 PREFERENCES_CLUTSDIR;HaldCLUT-Verzeichnis
 PREFERENCES_CMMBPC;Schwarzpunkt-Kompensation
+PREFERENCES_CROP;Einstellung des Ausschnittswerkzeuges
+PREFERENCES_CROP_AUTO_FIT;Automatischer Zoom des Ausschnitts
+PREFERENCES_CROP_GUIDES;Hilfslinien anzeigen wenn Ausschnitt nicht verändert wird
+PREFERENCES_CROP_GUIDES_FRAME;Rahmen
+PREFERENCES_CROP_GUIDES_FULL;Vorgabe des Ausschnittswerkzeuges
+PREFERENCES_CROP_GUIDES_NONE;Keine
 PREFERENCES_CURVEBBOXPOS;Position der Kurven-Buttons
 PREFERENCES_CURVEBBOXPOS_ABOVE;Oben
 PREFERENCES_CURVEBBOXPOS_BELOW;Unten
@@ -1045,6 +1058,7 @@ PREFERENCES_DIRLAST;Zuletzt geöffnetes Verzeichnis
 PREFERENCES_DIROTHER;Anderes
 PREFERENCES_DIRSELECTDLG;Wähle das Bild-Verzeichnis beim Programmstart...
 PREFERENCES_DIRSOFTWARE;Installationsverzeichnis
+PREFERENCES_EDITORCMDLINE;Benutzerdefinierte Befehlszeile
 PREFERENCES_EDITORLAYOUT;Editor-Layout
 PREFERENCES_EXPAUT;Experte
 PREFERENCES_EXTERNALEDITOR;Externer Editor
@@ -1493,6 +1507,7 @@ TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Automatisch Global
 TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;Bewertung des Farbrauschens.\nDie Bewertung ist ungenau und sehr subjektiv!
 TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;Delta-Chrominanz Blau / Gelb
 TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Chrominanzkurve
+TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Erhöht / Reduziert die Intensität der\nChrominanz-Rauschreduzierung in\nAbhängigkeit der Farbsättigung.
 TP_DIRPYRDENOISE_CHROMINANCE_FRAME;Chrominanz
 TP_DIRPYRDENOISE_CHROMINANCE_MANUAL;Benutzerdefiniert
 TP_DIRPYRDENOISE_CHROMINANCE_MASTER;Chrominanz (Master)
@@ -1509,6 +1524,7 @@ TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;Kachelgröße = %1 Zentrum: Tx = %
 TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;Delta-Chrominanz Rot / Grün
 TP_DIRPYRDENOISE_ENH;Erweiterter Modus
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Erhöht die Qualität der Rauschreduzierung auf Kosten einer um 20% erhöhten Verarbeitungszeit.
+TP_DIRPYRDENOISE_LABEL;Rauschreduzierung
 TP_DIRPYRDENOISE_LUMINANCE_CONTROL;Luminanzkontrolle
 TP_DIRPYRDENOISE_LUMINANCE_CURVE;Luminanzkurve
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Luminanzdetails
@@ -1724,6 +1740,10 @@ TP_LOCALCONTRAST_DARKNESS;Dunkle Bereiche
 TP_LOCALCONTRAST_LABEL;Lokaler Kontrast
 TP_LOCALCONTRAST_LIGHTNESS;Helle Bereiche
 TP_LOCALCONTRAST_RADIUS;Radius
+TP_METADATA_EDIT;Veränderte Daten
+TP_METADATA_MODE;Kopiermodus
+TP_METADATA_STRIP;Keine
+TP_METADATA_TUNNEL;Unveränderte Daten
 TP_NEUTRAL;Zurücksetzen
 TP_NEUTRAL_TIP;Belichtungseinstellungen auf\nneutrale Werte zurücksetzen
 TP_PCVIGNETTE_FEATHER;Bereich
@@ -1823,6 +1843,8 @@ TP_RAW_PIXELSHIFTNONGREENCROSS2;Check green amaze
 TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Check red/blue horizontal
 TP_RAW_PIXELSHIFTNONGREENVERTICAL;Check red/blue vertical
 TP_RAW_PIXELSHIFTNREADISO;nRead
+TP_RAW_PIXELSHIFTONEGREEN;Benutze ein Grün
+TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Benutze ein Grün anstelle des\nDurchschnitts beider Grüns für\nBereiche ohne Bewegung.
 TP_RAW_PIXELSHIFTPRNU;PRNU (%)
 TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
 TP_RAW_PIXELSHIFTSHOWMOTION;Bewegungsmaske anzeigen
@@ -2227,25 +2249,15 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-BATCHQUEUE_STARTSTOPHINT;Startet / Stoppt die Verarbeitung\nder Warteschlange.\n\nTaste: <b>Strg</b> + <b>s</b>
-GENERAL_SLIDER;Regler
-HISTORY_MSG_173;(Rauschreduzierung)\nLuminanzdetails
-HISTORY_MSG_203;(Rauschreduzierung)\nFarbraum
-HISTORY_MSG_256;(Rauschreduzierung)\nMedianfilter - Mediantyp
-HISTORY_MSG_297;(Rauschreduzierung)\nQualität
-HISTORY_MSG_METADATA_MODE;(Metadaten)\nKopiermodus
-PREFERENCES_CROP;Einstellung des Ausschnittswerkzeuges
-PREFERENCES_CROP_AUTO_FIT;Automatischer Zoom des Ausschnitts
-PREFERENCES_CROP_GUIDES;Hilfslinien anzeigen wenn Ausschnitt nicht verändert wird
-PREFERENCES_CROP_GUIDES_FRAME;Rahmen
-PREFERENCES_CROP_GUIDES_FULL;Vorgabe des Ausschnittswerkzeuges
-PREFERENCES_CROP_GUIDES_NONE;Keine
-PREFERENCES_EDITORCMDLINE;Benutzerdefinierte Befehlszeile
-TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Erhöht / Reduziert die Intensität der\nChrominanz-Rauschreduzierung in\nAbhängigkeit der Farbsättigung.
-TP_DIRPYRDENOISE_LABEL;Rauschreduzierung
-TP_METADATA_EDIT;Veränderte Daten
-TP_METADATA_MODE;Kopiermodus
-TP_METADATA_STRIP;Keine
-TP_METADATA_TUNNEL;Unveränderte Daten
-TP_RAW_PIXELSHIFTONEGREEN;Benutze ein Grün
-TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Benutze ein Grün anstelle des\nDurchschnitts beider Grüns für\nBereiche ohne Bewegung.
+!HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
+!HISTORY_MSG_HISTMATCHING;Auto-matched Tone Curve
+!HISTORY_MSG_TM_FATTAL_ANCHOR;HDR TM - Anchor
+!MAIN_TAB_ADVANCED;Advanced
+!MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt-w</b>
+!PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
+!PARTIALPASTE_METADATA;Metadata mode
+!TP_COLORTONING_LABGRID;L*a*b* color correction grid
+!TP_COLORTONING_LABGRID_VALUES;HL: a=%1 b=%2\nS: a=%3 b=%4
+!TP_EXPOSURE_HISTMATCHING;Auto-matched Tone Curve
+!TP_EXPOSURE_HISTMATCHING_TOOLTIP;Automatically adjust sliders and curves (except exposure compensation) to match the look of the embedded JPEG thumbnail.
+!TP_TM_FATTAL_ANCHOR;Anchor

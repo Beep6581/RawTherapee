@@ -22,6 +22,7 @@ HISTORY_MSG_258;CT - Colour curve
 HISTORY_MSG_322;W - Gamut - Avoid colour shift
 HISTORY_MSG_385;W - Residual - Colour Balance
 HISTORY_MSG_419;Retinex - Colour space
+HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Colour correction
 MAIN_TAB_COLOR;Colour
 MAIN_TOOLTIP_BACKCOLOR0;Background colour of the preview: <b>Theme-based</b>\nShortcut: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR1;Background colour of the preview: <b>Black</b>\nShortcut: <b>9</b>
@@ -43,8 +44,8 @@ PREFERENCES_NAVGUIDEBRUSH;Navigator guide colour
 PREFERENCES_PRTPROFILE;Colour profile
 PREFERENCES_SELECTFONT_COLPICKER;Select Colour Picker's font
 PREFERENCES_TAB_COLORMGR;Colour Management
-SOFTPROOF_GAMUTCHECK_TOOLTIP;If active, indicates in grey the pixels which have out of gamut colours from the Printer profile.
-SOFTPROOF_TOOLTIP;Soft-proofing\nIf active, let you simulate the printer's output by using the Printer profile set in Preferences > Colour Management.
+SOFTPROOF_GAMUTCHECK_TOOLTIP;If active, pixels with colours that are outside the gamut of the Printer/Output profile are highlighted.
+SOFTPROOF_TOOLTIP;Soft-proofing\nIf active, lets you simulate the appearance of the image when printed (if a Printer profile set in Preferences > Colour Management) or when viewed on a display that uses the current output profile (if no printer profile is selected).
 TOOLBAR_TOOLTIP_COLORPICKER;Lockable Colour Picker\n\nWhen enabled:\nClick in the preview with left mouse button to add a colour picker\nDrag it around while pressing the left mouse button\nDelete the colour picker with a right mouse button click\nDelete all colour pickers with Shift + Right mouse button click\nRight click away from any colour picker to go back to the Hand tool
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Straighten</b> / <b>fine rotation</b>.\nShortcut: <b>s</b>\n\nIndicate the vertical or horizontal by drawing a guide line over the image preview. Angle of rotation will be shown next to the guide line. Centre of rotation is the geometrical centre of the image.
 TP_BWMIX_CC_ENABLED;Adjust complementary colour
@@ -65,6 +66,7 @@ TP_COLORAPP_SURROUND_TOOLTIP;Changes tones and colours to take into account the 
 TP_COLORAPP_TCMODE_COLORF;Colourfulness
 TP_COLORTONING_COLOR;Colour
 TP_COLORTONING_LABEL;Colour Toning
+TP_COLORTONING_LABGRID;L*a*b* colour correction grid
 TP_COLORTONING_LUMAMODE_TOOLTIP;If enabled, when you change colour (red, green, cyan, blue, etc.) the luminance of each pixel is preserved.
 TP_COLORTONING_METHOD_TOOLTIP;"L*a*b* blending", "RGB sliders" and "RGB curves" use interpolated colour blending.\n"Colour balance (Shadows/Midtones/Highlights)" and "Saturation 2 colours" use direct colours.\n\nThe Black-and-White tool can be enabled when using any colour toning method, which allows for colour toning.
 TP_COLORTONING_SPLITCOCO;Colour Balance Shadows/Midtones/Highlights
@@ -807,12 +809,14 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !HISTORY_MSG_491;White Balance
 !HISTORY_MSG_492;RGB Curves
 !HISTORY_MSG_493;L*a*b* Adjustments
+!HISTORY_MSG_HISTMATCHING;Auto-matched Tone Curve
 !HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 !HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 !HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
 !HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
 !HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
 !HISTORY_MSG_METADATA_MODE;Metadata copy mode
+!HISTORY_MSG_TM_FATTAL_ANCHOR;HDR TM - Anchor
 !HISTORY_NEWSNAPSHOT;Add
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !HISTORY_SNAPSHOT;Snapshot
@@ -898,6 +902,8 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !MAIN_MSG_SETPATHFIRST;You first have to set a target path in Preferences in order to use this function!
 !MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
 !MAIN_MSG_WRITEFAILED;Failed to write\n<b>"%1"</b>\n\nMake sure that the folder exists and that you have write permission to it.
+!MAIN_TAB_ADVANCED;Advanced
+!MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt-w</b>
 !MAIN_TAB_COLOR_TOOLTIP;Shortcut: <b>Alt-c</b>
 !MAIN_TAB_DETAIL;Detail
 !MAIN_TAB_DETAIL_TOOLTIP;Shortcut: <b>Alt-d</b>
@@ -915,8 +921,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !MAIN_TAB_RAW_TOOLTIP;Shortcut: <b>Alt-r</b>
 !MAIN_TAB_TRANSFORM;Transform
 !MAIN_TAB_TRANSFORM_TOOLTIP;Shortcut: <b>Alt-t</b>
-!MAIN_TAB_WAVELET;Wavelet
-!MAIN_TAB_WAVELET_TOOLTIP;Shortcut: <b>Alt-w</b>
 !MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> view\n\n<b>Lock</b>: keep the <b>Before</b> view unchanged.\nUseful to evaluate the cumulative effect of multiple tools.\nAdditionally, comparisons can be made to any state in the History.\n\n<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view one step behind, showing the image before the effect of the currently used tool.
 !MAIN_TOOLTIP_HIDEHP;Show/Hide the left panel (including the history).\nShortcut: <b>l</b>
 !MAIN_TOOLTIP_INDCLIPPEDH;Clipped highlight indication.\nShortcut: <b>&lt;</b>
@@ -947,6 +951,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !NAVIGATOR_XY_NA;x: --, y: --
 !OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
+!PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
 !PARTIALPASTE_BASICGROUP;Basic Settings
 !PARTIALPASTE_CACORRECTION;Chromatic aberration correction
 !PARTIALPASTE_CHANNELMIXER;Channel mixer
@@ -983,7 +988,8 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PARTIALPASTE_LENSGROUP;Lens Related Settings
 !PARTIALPASTE_LENSPROFILE;Profiled lens correction
 !PARTIALPASTE_LOCALCONTRAST;Local contrast
-!PARTIALPASTE_METAGROUP;Metadata
+!PARTIALPASTE_METADATA;Metadata mode
+!PARTIALPASTE_METAGROUP;Metadata settings
 !PARTIALPASTE_PCVIGNETTE;Vignette filter
 !PARTIALPASTE_PERSPECTIVE;Perspective
 !PARTIALPASTE_PREPROCESS_DEADPIXFILT;Dead pixel filter
@@ -1014,7 +1020,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PARTIALPASTE_TM_FATTAL;HDR Tone mapping
 !PARTIALPASTE_VIBRANCE;Vibrance
 !PARTIALPASTE_VIGNETTING;Vignetting correction
-!PARTIALPASTE_WAVELETGROUP;Wavelet Levels
 !PARTIALPASTE_WHITEBALANCE;White balance
 !PREFERENCES_ADD;Add
 !PREFERENCES_APPLNEXTSTARTUP;restart required
@@ -1446,6 +1451,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_COLORTONING_HIGHLIGHT;Highlights
 !TP_COLORTONING_HUE;Hue
 !TP_COLORTONING_LAB;L*a*b* blending
+!TP_COLORTONING_LABGRID_VALUES;HL: a=%1 b=%2\nS: a=%3 b=%4
 !TP_COLORTONING_LUMA;Luminance
 !TP_COLORTONING_LUMAMODE;Preserve luminance
 !TP_COLORTONING_METHOD;Method
@@ -1576,6 +1582,8 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_EXPOSURE_CURVEEDITOR2;Tone curve 2
 !TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Please refer to the "Exposure > Tone Curves" RawPedia article to learn how to achieve the best results by using two tone curves.
 !TP_EXPOSURE_EXPCOMP;Exposure compensation
+!TP_EXPOSURE_HISTMATCHING;Auto-matched Tone Curve
+!TP_EXPOSURE_HISTMATCHING_TOOLTIP;Automatically adjust sliders and curves (except exposure compensation) to match the look of the embedded JPEG thumbnail.
 !TP_EXPOSURE_LABEL;Exposure
 !TP_EXPOSURE_SATURATION;Saturation
 !TP_EXPOSURE_TCMODE_FILMLIKE;Film-like
@@ -1960,6 +1968,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
 !TP_SHARPENMICRO_UNIFORMITY;Uniformity
 !TP_TM_FATTAL_AMOUNT;Amount
+!TP_TM_FATTAL_ANCHOR;Anchor
 !TP_TM_FATTAL_LABEL;HDR Tone Mapping
 !TP_TM_FATTAL_THRESHOLD;Threshold
 !TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
@@ -2191,7 +2200,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !ZOOMPANEL_100;(100%)
 !ZOOMPANEL_NEWCROPWINDOW;Open (new) detail window
 !ZOOMPANEL_ZOOM100;Zoom to 100%\nShortcut: <b>z</b>
-!ZOOMPANEL_ZOOMFITCROPSCREEN;Fit crop to screen\nShortcut: <b>Alt</b>-<b>f</b>
-!ZOOMPANEL_ZOOMFITSCREEN;Fit whole image to screen\nShortcut: <b>f</b>
+!ZOOMPANEL_ZOOMFITCROPSCREEN;Fit crop to screen\nShortcut: <b>f</b>
+!ZOOMPANEL_ZOOMFITSCREEN;Fit whole image to screen\nShortcut: <b>Alt</b>-<b>f</b>
 !ZOOMPANEL_ZOOMIN;Zoom In\nShortcut: <b>+</b>
 !ZOOMPANEL_ZOOMOUT;Zoom Out\nShortcut: <b>-</b>
