@@ -505,8 +505,9 @@ void ImageArea::addCropWindow ()
 
     mainCropWindow->setObservedCropWin (cropWins.front());
 
-    if(cropWins.size() == 1) { // after first detail window we already have high quality
+    if(!ipc->getHighQualComputed()) {
         ipc->startProcessing(M_HIGHQUAL);
+        ipc->setHighQualComputed();
     }
 }
 
