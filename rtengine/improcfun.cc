@@ -337,6 +337,17 @@ void ImProcFunctions::updateColorProfiles (const Glib::ustring& monitorProfile, 
                     softProofCreated = true;
                 }
             }
+        } else if (gamutCheck) {
+            flags = cmsFLAGS_GAMUTCHECK | cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;
+            if (settings->monitorBPC) {
+                flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
+            }
+
+            monitorTransform = cmsCreateProofingTransform(iprof, TYPE_Lab_FLT, monitor, TYPE_RGB_8, monitor, monitorIntent, monitorIntent, flags);
+
+            if (monitorTransform) {
+                softProofCreated = true;
+            }
         }
 
         if (!softProofCreated) {

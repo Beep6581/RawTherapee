@@ -220,7 +220,7 @@ private:
         spGamutCheck.set_tooltip_markup (M ("SOFTPROOF_GAMUTCHECK_TOOLTIP"));
 
         spGamutCheck.set_active (false);
-        spGamutCheck.set_sensitive (false);
+        spGamutCheck.set_sensitive (true);
         spGamutCheck.show ();
     }
 
@@ -300,7 +300,7 @@ private:
                 intentBox.setItemSensitivity (1, supportsRelativeColorimetric);
                 intentBox.setItemSensitivity (2, supportsAbsoluteColorimetric);
                 softProof.set_sensitive (true);
-                spGamutCheck.set_sensitive (softProof.get_active());
+                spGamutCheck.set_sensitive (true);
             } else {
                 intentBox.setItemSensitivity (0, true);
                 intentBox.setItemSensitivity (1, true);
@@ -308,7 +308,7 @@ private:
                 intentBox.set_sensitive (false);
                 intentBox.setSelected (1);
                 softProof.set_sensitive (false);
-                spGamutCheck.set_sensitive (false);
+                spGamutCheck.set_sensitive (true);
             }
 
             profileBox.set_tooltip_text (profileBox.get_active_text ());
@@ -352,9 +352,9 @@ private:
     {
 #if !defined(__APPLE__) // monitor profile not supported on apple
         softProof.set_sensitive (profileBox.get_active_row_number () > 0);
+        spGamutCheck.set_sensitive(profileBox.get_active_row_number () > 0);
 #endif
 
-        spGamutCheck.set_sensitive (softProof.get_sensitive() && softProof.get_active());
 
 #if !defined(__APPLE__) // monitor profile not supported on apple
 
@@ -366,7 +366,7 @@ private:
                     processor->beginUpdateParams ();
                 }
 
-                processor->setSoftProofing (softProof.get_sensitive() && softProof.get_active(), spGamutCheck.get_sensitive() && spGamutCheck.get_active());
+                processor->setSoftProofing (softProof.get_sensitive() && softProof.get_active(), spGamutCheck.get_active());
 
                 if (!noEvent) {
                     processor->endUpdateParams (rtengine::EvMonitorTransform);

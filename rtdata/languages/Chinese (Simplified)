@@ -1519,8 +1519,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !SAMPLEFORMAT_16;32 bits floating point
 !SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
 !SHCSELECTOR_TOOLTIP;Click right mouse button to reset the position of those 3 sliders.
-!SOFTPROOF_GAMUTCHECK_TOOLTIP;If active, indicates in grey the pixels which have out of gamut colors from the Printer profile.
-!SOFTPROOF_TOOLTIP;Soft-proofing\nIf active, let you simulate the printer's output by using the Printer profile set in Preferences > Color Management.
 !THRESHOLDSELECTOR_B;Bottom
 !THRESHOLDSELECTOR_BL;Bottom-left
 !THRESHOLDSELECTOR_BR;Bottom-right
