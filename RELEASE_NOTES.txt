@@ -28,7 +28,7 @@ New features since 5.3:
 - Added support for reading and writing metadata and ICC profiles to and from PNG images.
 - Added support for processing Sony Pixel Shift ARQ raw files - make sure that the ARQ extension is enabled in Preferences > File Browser > Parsed Extensions.
 - Create Sony ARQ raw files using https://github.com/agriggio/make_arq
-- Added support for saving 32-bit floating-point TIFFs clamped to [0-1].
+- Added support for saving 32-bit floating-point TIFFs clamped to [0;1].
 - Added profiled chromatic aberration correction support using Lensfun.
 - More tools now have an on/off switch.
 - The user interface is cleaner, with all power-house tools moved into a new "Advanced" tab to prevent slider-shock to newcomers.
