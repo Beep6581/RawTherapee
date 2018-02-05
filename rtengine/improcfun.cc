@@ -47,8 +47,7 @@
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
 
-namespace
-{
+namespace {
 
 using namespace rtengine;
 // begin of helper function for rgbProc()
@@ -319,18 +318,26 @@ void ImProcFunctions::updateColorProfiles(const Glib::ustring& monitorProfile, R
 
         if (softProof) {
             cmsHPROFILE oprof = nullptr;
+            RenderingIntent outIntent;
+            
+            flags = cmsFLAGS_SOFTPROOFING | cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;
 
             if (!settings->printerProfile.empty()) {
                 oprof = ICCStore::getInstance()->getProfile(settings->printerProfile);
+                if (settings->printerBPC) {
+                    flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
+                }
+                outIntent = settings->printerIntent;
+            } else {
+                oprof = ICCStore::getInstance()->getProfile(params->icm.output);
+                if (params->icm.outputBPC) {
+                    flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
+                }
+                outIntent = params->icm.outputIntent;
             }
 
             if (oprof) {
                 // NOCACHE is for thread safety, NOOPTIMIZE for precision
-                flags = cmsFLAGS_SOFTPROOFING | cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;
-
-                if (settings->printerBPC) {
-                    flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
-                }
 
                 if (gamutCheck) {
                     flags |= cmsFLAGS_GAMUTCHECK;
@@ -340,7 +347,7 @@ void ImProcFunctions::updateColorProfiles(const Glib::ustring& monitorProfile, R
                                        iprof, TYPE_Lab_FLT,
                                        monitor, TYPE_RGB_8,
                                        oprof,
-                                       monitorIntent, settings->printerIntent,
+                                       monitorIntent, outIntent,
                                        flags
                                    );
 

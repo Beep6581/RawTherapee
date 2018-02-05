@@ -38,6 +38,8 @@ Navigator::Navigator () : currentRGBUnit(options.navRGBUnit), currentHSVUnit(opt
     mbox->set_name("Navigator");
     previewWindow = Gtk::manage (new PreviewWindow ());
     mbox->pack_start (*previewWindow, Gtk::PACK_SHRINK, 2);
+    dimension = Gtk::manage (new Gtk::Label ());
+    mbox->pack_start (*dimension, Gtk::PACK_SHRINK, 2);
     position = Gtk::manage (new Gtk::Label ());
     mbox->pack_start (*position, Gtk::PACK_SHRINK, 2);
 
@@ -207,10 +209,9 @@ Navigator::Navigator () : currentRGBUnit(options.navRGBUnit), currentHSVUnit(opt
 void Navigator::setInvalid (int fullWidth, int fullHeight)
 {
     if (fullWidth > 0 && fullHeight > 0) {
-        position->set_text (Glib::ustring::compose (M("NAVIGATOR_XY_FULL"), fullWidth, fullHeight));
-    } else {
-        position->set_text (M("NAVIGATOR_XY_NA"));
+        dimension->set_text (Glib::ustring::compose (M("NAVIGATOR_XY_FULL"), fullWidth, fullHeight));
     }
+    position->set_text (M("NAVIGATOR_XY_NA"));
 
     R->set_text (M("NAVIGATOR_NA"));
     G->set_text (M("NAVIGATOR_NA"));

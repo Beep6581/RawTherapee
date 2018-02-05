@@ -37,6 +37,7 @@ private:
     void cycleUnitsHSV (GdkEventButton *event);
 
 protected:
+    Gtk::Label* dimension;
     Gtk::Label* position;
     Gtk::Label *R, *G, *B;
     Gtk::Label *H, *S, *V;
