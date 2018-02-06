@@ -229,16 +229,9 @@ ImProcCoordinator::ImProcCoordinator()
       chromar(0),
       lumar(0),
       sobeler(0),
-      colourToningSatLimit(0.f), colourToningSatLimitOpacity(0.f), lastspotdup(false),
+      colourToningSatLimit(0.f), colourToningSatLimitOpacity(0.f), lastspotdup(false), highQualityComputed (false), 
 
       retistrsav(nullptr)
-      /*
-      =======
-            plistener (nullptr), imageListener (nullptr), aeListener (nullptr), acListener (nullptr), abwListener (nullptr), awbListener (nullptr), frameCountListener (nullptr), imageTypeListener (nullptr), actListener (nullptr), adnListener (nullptr), awavListener (nullptr), dehaListener (nullptr), hListener (nullptr),
-            resultValid (false), lastOutputProfile ("BADFOOD"), lastOutputIntent (RI__COUNT), lastOutputBPC (false), thread (nullptr), changeSinceLast (0), updaterRunning (false), destroying (false), utili (false), autili (false),
-            butili (false), ccutili (false), cclutili (false), clcutili (false), opautili (false), wavcontlutili (false), colourToningSatLimit (0.f), colourToningSatLimitOpacity (0.f)
-      >>>>>>> dev
-      */
 {}
 
 void ImProcCoordinator::assign(ImageSource* imgsrc)
@@ -4890,7 +4883,27 @@ void ImProcCoordinator::changenumberofspot(int **dataspot, int maxdata, int maxs
 
         fich2.close() ;
     }
+}
+bool ImProcCoordinator::getHighQualComputed() {
+    // this function may only be called from detail windows
+    if(!highQualityComputed) {
+        if(options.prevdemo == PD_Sidecar) {
+            // we already have high quality preview
+            setHighQualComputed();
+        } else {
+            for (size_t i = 0; i < crops.size() - 1; ++i) { // -1, because last entry is the freshly created detail window
+                if (crops[i]->get_skip() == 1 ) {  // there is at least one crop with skip == 1 => we already have high quality preview
+                    setHighQualComputed();
+                    break;
+                }
+            }
+        }
+    }
+    return highQualityComputed;
+}
 
+void ImProcCoordinator::setHighQualComputed() {
+    highQualityComputed = true;
 }
 
 }

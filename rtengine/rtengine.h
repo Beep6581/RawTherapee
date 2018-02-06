@@ -451,6 +451,9 @@ public:
       * @return the height of the preview image */
     virtual int         getPreviewHeight () = 0;
 
+    virtual bool        getHighQualComputed() = 0;
+    virtual void        setHighQualComputed() = 0;
+
     virtual bool        updateTryLock() = 0;
 
     virtual void        updateUnLock() = 0;

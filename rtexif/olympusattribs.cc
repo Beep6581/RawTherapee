@@ -125,7 +125,9 @@ public:
         lenses["00 26 10"] = "Olympus M.Zuiko Digital ED 12-100mm f/4.0 IS Pro";
         lenses["00 27 10"] = "Olympus M.Zuiko Digital ED 30mm f/3.5 Macro";
         lenses["00 28 10"] = "Olympus M.Zuiko Digital ED 25mm f/1.2 Pro";
+        lenses["00 29 10"] = "Olympus M.Zuiko Digital ED 17mm f/1.2 Pro";
         lenses["00 30 00"] = "Olympus Zuiko Digital ED 50-200mm f/2.8-3.5 SWD";
+        lenses["00 30 10"] = "Olympus M.Zuiko Digital ED 45mm f/1.2 Pro";
         lenses["00 31 00"] = "Olympus Zuiko Digital ED 12-60mm f/2.8-4.0 SWD";
         lenses["00 32 00"] = "Olympus Zuiko Digital ED 14-35mm f/2.0 SWD";
         lenses["00 33 00"] = "Olympus Zuiko Digital 25mm f/2.8";

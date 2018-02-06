@@ -693,6 +693,7 @@ public:
             {216, "Tamron SP 45mm f/1.8 Di USD"},
             {217, "Tamron SP 35mm f/1.8 Di USD"},
             {218, "Tamron SP 90mm f/2.8 Di Macro 1:1 USD (F017)"},
+            {220, "Tamron SP 150-600mm f/5-6.3 Di USD G2"},
             {224, "Tamron SP 90mm f/2.8 Di Macro 1:1 USD (F004)"},
             {255, "Tamron Lens (255)"},
             {255, "Tamron SP AF 17-50mm f/2.8 XR Di II LD Aspherical"},
@@ -745,6 +746,7 @@ public:
             {2561, "Tokina AF 730 II 75-300mm f/4.5-5.6"},
             {2561, "Sigma 800mm f/5.6 APO"},
             {2561, "Sigma AF 400mm f/5.6 APO Macro"},
+            {2561, "Sigma 1000mm f/8 APO"},
             {2562, "Minolta AF 50mm f/1.4 [New]"},
             {2563, "Minolta AF 300mm f/2.8 APO or Sigma Lens"},
             {2563, "Sigma AF 50-500mm f/4-6.3 EX DG APO"},
@@ -849,6 +851,7 @@ public:
             {6553, "Sony FE 12-24mm f/4 G"},
             {6553, "Sony FE 90mm f/2.8 Macro G OSS"},
             {6553, "Sony E 18-50mm f/4-5.6"},
+            {6553, "Sony FE 24-105mm f/4 G OSS"},
             {6553, "Sony E PZ 18-200mm f/3.5-6.3 OSS"},
             {6553, "Sony FE 55mm f/1.8 ZA"},
             {6553, "Sony FE 70-200mm f/4 G OSS"},
@@ -871,6 +874,7 @@ public:
             {6553, "Sony FE 100-400mm f/4.5-5.6 GM OSS"},
             {6553, "Sony FE 70-200mm f/2.8 GM OSS"},
             {6553, "Sony FE 16-35mm f/2.8 GM"},
+            {6553, "Sony E 18-135mm f/3.5-5.6 OSS"},
             {6553, "Sony FE 70-200mm f/2.8 GM OSS + 1.4X Teleconverter"},
             {6553, "Sony FE 70-200mm f/2.8 GM OSS + 2X Teleconverter"},
             {6553, "Sony FE 100-400mm f/4.5-5.6 GM OSS + 1.4X Teleconverter"},
@@ -882,6 +886,7 @@ public:
             {6553, "Sigma 30mm f/2.8 [EX] DN"},
             {6553, "Sigma 60mm f/2.8 DN"},
             {6553, "Sigma 30mm f/1.4 DC DN | C"},
+            {6553, "Sigma 16mm f/1.4 DC DN | C"},
             {6553, "Tamron 18-200mm f/3.5-6.3 Di III VC"},
             {6553, "Tokina Firin 20mm f/2 FE MF"},
             {6553, "Voigtlander SUPER WIDE-HELIAR 15mm f/4.5 III"},
@@ -948,6 +953,7 @@ public:
             {25611, "Tokina AF 730 II 75-300mm f/4.5-5.6"},
             {25611, "Sigma 800mm f/5.6 APO"},
             {25611, "Sigma AF 400mm f/5.6 APO Macro"},
+            {25611, "Sigma 1000mm f/8 APO"},
             {25621, "Minolta AF 50mm f/1.4 [New]"},
             {25631, "Minolta AF 300mm f/2.8 APO or Sigma Lens"},
             {25631, "Sigma AF 50-500mm f/4-6.3 EX DG APO"},
@@ -1052,6 +1058,7 @@ public:
             {65535, "Sony FE 12-24mm f/4 G"},
             {65535, "Sony FE 90mm f/2.8 Macro G OSS"},
             {65535, "Sony E 18-50mm f/4-5.6"},
+            {65535, "Sony FE 24-105mm f/4 G OSS"},
             {65535, "Sony E PZ 18-200mm f/3.5-6.3 OSS"},
             {65535, "Sony FE 55mm f/1.8 ZA"},
             {65535, "Sony FE 70-200mm f/4 G OSS"},
@@ -1074,6 +1081,7 @@ public:
             {65535, "Sony FE 100-400mm f/4.5-5.6 GM OSS"},
             {65535, "Sony FE 70-200mm f/2.8 GM OSS"},
             {65535, "Sony FE 16-35mm f/2.8 GM"},
+            {65535, "Sony E 18-135mm f/3.5-5.6 OSS"},
             {65535, "Sony FE 70-200mm f/2.8 GM OSS + 1.4X Teleconverter"},
             {65535, "Sony FE 70-200mm f/2.8 GM OSS + 2X Teleconverter"},
             {65535, "Sony FE 100-400mm f/4.5-5.6 GM OSS + 1.4X Teleconverter"},
@@ -1085,6 +1093,7 @@ public:
             {65535, "Sigma 30mm f/2.8 [EX] DN"},
             {65535, "Sigma 60mm f/2.8 DN"},
             {65535, "Sigma 30mm f/1.4 DC DN | C"},
+            {65535, "Sigma 16mm f/1.4 DC DN | C"},
             {65535, "Tamron 18-200mm f/3.5-6.3 Di III VC"},
             {65535, "Tokina Firin 20mm f/2 FE MF"},
             {65535, "Voigtlander SUPER WIDE-HELIAR 15mm f/4.5 III"},
@@ -1183,6 +1192,7 @@ public:
         choices.insert (p_t (32801, "Sony FE 12-24mm f/4 G"));
         choices.insert (p_t (32802, "Sony FE 90mm f/2.8 Macro G OSS"));
         choices.insert (p_t (32803, "Sony E 18-50mm f/4-5.6"));
+        choices.insert (p_t (32805, "Sony FE 24-105mm f/4 G OSS"));
         choices.insert (p_t (32807, "Sony E PZ 18-200mm f/3.5-6.3 OSS"));
         choices.insert (p_t (32808, "Sony FE 55mm f/1.8 ZA"));
         choices.insert (p_t (32810, "Sony FE 70-200mm f/4 G OSS"));
@@ -1205,7 +1215,7 @@ public:
         choices.insert (p_t (32829, "Sony FE 100-400mm f/4.5-5.6 GM OSS"));
         choices.insert (p_t (32830, "Sony FE 70-200mm f/2.8 GM OSS"));
         choices.insert (p_t (32831, "Sony FE 16-35mm f/2.8 GM"));
-        choices.insert (p_t (33002, "Sigma 85mm f/1.4 DG HSM | A (+ Metabones Ver.50)"));
+        choices.insert (p_t (32849, "Sony E 18-135mm f/3.5-5.6 OSS"));
         choices.insert (p_t (33072, "Sony FE 70-200mm f/2.8 GM OSS + 1.4X Teleconverter"));
         choices.insert (p_t (33073, "Sony FE 70-200mm f/2.8 GM OSS + 2X Teleconverter"));
         choices.insert (p_t (33076, "Sony FE 100mm f/2.8 STF GM OSS (macro mode)"));
@@ -1235,6 +1245,7 @@ public:
         choices.insert (p_t (50492, "Sigma 24-105mm f/4 DG OS HSM | A + MC-11"));
         choices.insert (p_t (50493, "Sigma 17-70mm f/2.8-4 DC MACRO OS HSM | C + MC-11"));
         choices.insert (p_t (50495, "Sigma 50-100mm f/1.8 DC HSM | A + MC-11"));
+        choices.insert (p_t (50503, "Sigma 16mm f/1.4 DC DN | C"));
         choices.insert (p_t (50992, "Voigtlander SUPER WIDE-HELIAR 15mm f/4.5 III"));
         choices.insert (p_t (50993, "Voigtlander HELIAR-HYPER WIDE 10mm f/5.6"));
         choices.insert (p_t (50994, "Voigtlander ULTRA WIDE-HELIAR 12mm f/5.6 III"));
