@@ -198,9 +198,10 @@ void CropHandler::setZoom (int z, int centerx, int centery)
     compDim ();
 
     if (enabled && (oldZoom != zoom || oldcax != cax || oldcay != cay || oldCropX != cropX || oldCropY != cropY || oldCropW != cropW || oldCropH != cropH)) {
-        if (needsFullRefresh) {
+        if (needsFullRefresh && !ipc->getHighQualComputed()) {
             cropPixbuf.clear ();
             ipc->startProcessing(M_HIGHQUAL);
+            ipc->setHighQualComputed();
         } else {
             update ();
         }
