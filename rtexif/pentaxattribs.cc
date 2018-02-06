@@ -783,6 +783,7 @@ public:
         choices.insert (p_t (256 * 4 + 2, "smc PENTAX-FA 80-320mm f/4.5-5.6"));
         choices.insert (p_t (256 * 4 + 3, "smc PENTAX-FA 43mm f/1.9 Limited"));
         choices.insert (p_t (256 * 4 + 6, "smc PENTAX-FA 35-80mm f/4-5.6"));
+        choices.insert (p_t (256 * 4 + 9, "Irix 11mm f/4 Firefly"));
         choices.insert (p_t (256 * 4 + 10, "Irix 15mm f/2.4"));
         choices.insert (p_t (256 * 4 + 12, "smc PENTAX-FA 50mm f/1.4"));
         choices.insert (p_t (256 * 4 + 15, "smc PENTAX-FA 28-105mm f/4-5.6 [IF]"));
@@ -928,7 +929,7 @@ public:
         choices.insert (p_t (256 * 8 + 30, "Sigma 17-70mm f/2.8-4 DC Macro HSM | C"));
         choices.insert (p_t (256 * 8 + 31, "Sigma 18-35mm f/1.8 DC HSM"));
         choices.insert (p_t (256 * 8 + 32, "Sigma 30mm f/1.4 DC HSM | A"));
-        choices.insert (p_t (256 * 8 + 33, "Sigma 18-200mm f/3.5-6.3 DC MACRO HSM"));
+        choices.insert (p_t (256 * 8 + 33, "Sigma 18-200mm f/3.5-6.3 DC Macro HSM"));
         choices.insert (p_t (256 * 8 + 34, "Sigma 18-300mm f/3.5-6.3 DC Macro HSM"));
         choices.insert (p_t (256 * 8 + 59, "HD PENTAX-D FA 150-450mm f/4.5-5.6 ED DC AW"));
         choices.insert (p_t (256 * 8 + 60, "HD PENTAX-D FA* 70-200mm f/2.8 ED DC AW"));
