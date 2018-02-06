@@ -426,7 +426,7 @@ void ImageArea::addCropWindow ()
     }
 
     CropWindow* cw = new CropWindow (this, true, true);
-    cw->zoom11();
+    cw->zoom11(false);
     cw->setCropGUIListener (cropgl);
     cw->setPointerMotionListener (pmlistener);
     cw->setPointerMotionHListener (pmhlistener);

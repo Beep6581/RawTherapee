@@ -106,7 +106,7 @@ class CropWindow : public LWButtonListener, public CropDisplayHandler, public Ed
     void drawScaledSpotRectangle   (Cairo::RefPtr<Cairo::Context> cr, int rectSize);
     void drawUnscaledSpotRectangle (Cairo::RefPtr<Cairo::Context> cr, int rectSize);
     void drawObservedFrame         (Cairo::RefPtr<Cairo::Context> cr, int rw = 0, int rh = 0);
-    void changeZoom                (int zoom, bool notify = true, int centerx = -1, int centery = -1);
+    void changeZoom                (int zoom, bool notify = true, int centerx = -1, int centery = -1, bool needsRedraw = true);
     void updateHoveredPicker       (rtengine::Coord *imgPos = nullptr);
     void cycleRGB                  ();
     void cycleHSV                  ();
@@ -176,7 +176,7 @@ public:
     // zoomlistener interface
     void zoomIn      (bool toCursor = false, int cursorX = -1, int cursorY = -1);
     void zoomOut     (bool toCursor = false, int cursorX = -1, int cursorY = -1);
-    void zoom11      ();
+    void zoom11      (bool notify = true);
     void zoomFit     ();
     void zoomFitCrop ();
     double getZoom   ();
