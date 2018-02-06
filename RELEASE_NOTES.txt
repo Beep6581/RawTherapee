@@ -42,6 +42,10 @@ New features since 5.3:
 
 There were several hundred commits optimizing processing speed and memory usage as well as bug fixes and code refactoring, though the details of these are too arcane to list here. The effort involved thousands of developer-hours.
 
+RawTherapee and other open-source projects require access to sample raw files from various camera makes and models in order to support those raw formats correctly.
+You can help by submitting raw files to RPU:
+https://raw.pixls.us/
+
 News Relevant to Package Maintainers
 ------------------------------------
 In general:
