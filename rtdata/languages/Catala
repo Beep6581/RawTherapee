@@ -1541,8 +1541,6 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !SAMPLEFORMAT_16;32 bits floating point
 !SAVEDLG_FORCEFORMATOPTS;Force saving options
 !SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
-!SOFTPROOF_GAMUTCHECK_TOOLTIP;If active, pixels with colors that are outside the gamut of the Printer/Output profile are highlighted.
-!SOFTPROOF_TOOLTIP;Soft-proofing\nIf active, lets you simulate the appearance of the image when printed (if a Printer profile set in Preferences > Color Management) or when viewed on a display that uses the current output profile (if no printer profile is selected).
 !TOOLBAR_TOOLTIP_COLORPICKER;Lockable Color Picker\n\nWhen enabled:\nClick in the preview with left mouse button to add a color picker\nDrag it around while pressing the left mouse button\nDelete the color picker with a right mouse button click\nDelete all color pickers with Shift + Right mouse button click\nRight click away from any color picker to go back to the Hand tool
 !TP_BWMIX_ALGO;Algorithm OYCPM
 !TP_BWMIX_ALGO_LI;Linear
