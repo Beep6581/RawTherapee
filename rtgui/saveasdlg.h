@@ -57,7 +57,7 @@ public:
     bool            getToTailOfQueue   ();
     int             getSaveMethodNum   ();
 
-    void  setInitialFileName (Glib::ustring iname);
+    void  setInitialFileName (const Glib::ustring& iname);
     void  setImagePath (const Glib::ustring& imagePath);
 
     void okPressed ();
