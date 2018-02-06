@@ -8700,7 +8700,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
 
             if (titi) { //&& call == 3
 
-
+//actually does not work at all, I make diffrent tests !
 
                 //     if (lp.strucc > 0) {
                 //change coordonate to XX, YY XX=x, YY=-y to can use easily trigo functions and polar coordonates
@@ -8711,8 +8711,6 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                 //Cdeltaesob Ldeltaesob - Sobel transformed of deltaE Chroma and Luma in area bfw bfh
 
                 //retreive coordonate and values of references around current exclude Spot
-                //  hueref dataspot[maxdata - 4][sp] = huerefs[sp] = 100.f * params.locallab.hueref;
-                //    dataspot[maxdata - 1][sp] = sobelrefs[sp] = params.locallab.sobelref;
 
 				//retrieve datas for hueref, sobelref and centerX Y for all spot around
 				/*
@@ -8721,8 +8719,13 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
 				centerx[sp];
 				centery[sp];
 				*/
-				//int currentcenterx = centerx[0];
-				//int currentcentery = centery[0];
+				int currentcenterx = centerx[0];
+				int currentcentery = centery[0];
+				printf("cuX=%i cuY=%i sp=%i\n", currentcenterx, currentcentery, sp);
+				for(int i=1; i < maxspot; i++) {
+					printf("i=%i hue=%f sob=%f cex=%i cey=%i\n",i, huerefs[i], sobelrefs[i], centerx[i],centery[i]);
+					
+				}	
 				
                 const JaggedArray<float> Cdeltae(bfw, bfh);
                 const JaggedArray<float> Cdeltaesob(bfw, bfh);
@@ -8860,7 +8863,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                 float *radlimR = nullptr;
                 radlimR = new float[yEn - begy + ar];
 
-				printf("huar=%f sob=%f cx=%i\n", huerefs[2], sobelrefs[2], centerx[1]);
+				//printf("huar=%f sob=%f cx=%i\n", huerefs[2], sobelrefs[2], centerx[1]);
 
 
                 for (int w = 0; w < (xEn - begx); w++) {
@@ -9129,7 +9132,8 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                     float maxso = -10000.f;
                     //  int rmaxso = 0;
                     float maxch = -10000.f;
-                    int rmaxch = 0;
+                //    int rmaxch = 0;
+					int rma = 0;
 
                     //average convolution and first max
                     for (int r = 1; r < radlim[m] - (ar + 3); r++) {
@@ -9162,7 +9166,10 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                             meanaf += val[m][r];
                             nbaft ++;
                         }
+						
+						if(val[m][r] < 0.4f* sobelrefs[1]) {rma = r; break;}
                     }
+                    rad[m] = rma;
 
                     meanbe /= nbbef;
                     meanaf /= nbaft;
@@ -9184,6 +9191,8 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
 
                             //    printf("X=%i m=%i r=%i So=%i Chd=%i Ld=%i Sdri=%i Csodri=%i Lsodri=%i\n", XX, m, r, (int) val[m][r], (int)CdE[m][r], (int)LdE[m][r], (int) Soderiv[m][r], (int) Chderiv[m][r], (int) Luderiv[m][r]);
                         }
+						
+					//	if(val[m][r] < 1.5f* sobelrefs[1]) rad[m] = r;
                     }
 
                     //pseudo second derivative
@@ -9204,16 +9213,16 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
 
                             Totalderiv2[m][r] = Luderiv2[m][r] + Chderiv2[m][r] + Soderiv2[m][r];
 
-                            if (Chderiv2[m][r] > maxch) {
+                            if (Chderiv2[m][r] > maxch ) {
                                 maxch = Chderiv2[m][r];
-                                rmaxch = r;
+                              //  rmaxch = r;
                             }
 
 
                             if (Soderiv2[m][r] > maxso) {
                                 maxso = Soderiv2[m][r];
                                 //    rmaxso = r;
-                            }
+                            } 
 
                         }
 
@@ -9226,7 +9235,9 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                     }
 
                     //we must now calculate rad[m] in function of others criterail
-                    rad[m] = rmaxch;
+            //        rad[m] = rmaxch;
+										//	if(val[m][r] < 1.5f* sobelrefs[1]) rad[m] = r;
+
 
                 }
 
