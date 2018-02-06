@@ -2005,7 +2005,7 @@ void CropWindow::zoomOut (bool toCursor, int cursorX, int cursorY)
     fitZoom = false;
 }
 
-void CropWindow::zoom11 ()
+void CropWindow::zoom11 (bool notify)
 {
 
     int x = -1;
@@ -2027,7 +2027,7 @@ void CropWindow::zoom11 ()
         screenCoordToImage(xpos + imgX + imgW / 2, ypos + imgY + imgH / 2, x, y);
     }
 
-    changeZoom (zoom11index, true, x, y);
+    changeZoom (zoom11index, notify, x, y, notify);
     fitZoom = false;
 }
 
@@ -2182,7 +2182,7 @@ void CropWindow::updateHoveredPicker (rtengine::Coord *imgPos)
         }
     }
 }
-void CropWindow::changeZoom  (int zoom, bool notify, int centerx, int centery)
+void CropWindow::changeZoom (int zoom, bool notify, int centerx, int centery, bool needsRedraw)
 {
 
     if (zoom < 0) {
@@ -2201,7 +2201,8 @@ void CropWindow::changeZoom  (int zoom, bool notify, int centerx, int centery)
             listener->cropZoomChanged (this);
         }
 
-    iarea->redraw ();
+    if (needsRedraw)
+        iarea->redraw ();
 }
 
 LockableColorPicker::Validity CropWindow::checkValidity (LockableColorPicker*  picker, const rtengine::Coord &pos)
