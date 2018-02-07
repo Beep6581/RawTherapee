@@ -1730,6 +1730,8 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !SAMPLEFORMAT_4;LogLuv 24 bits
 !SAMPLEFORMAT_8;LogLuv 32 bits
 !SAMPLEFORMAT_16;32 bits floating point
+!SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
+!SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
 !THRESHOLDSELECTOR_BL;Bottom-left
 !TOOLBAR_TOOLTIP_COLORPICKER;Lockable Color Picker\n\nWhen enabled:\nClick in the preview with left mouse button to add a color picker\nDrag it around while pressing the left mouse button\nDelete the color picker with a right mouse button click\nDelete all color pickers with Shift + Right mouse button click\nRight click away from any color picker to go back to the Hand tool
 !TP_BWMIX_FILTER_TOOLTIP;The color filter simulates shots taken with a colored filter placed in front of the lens. Colored filters reduce the transmission of specific color ranges and therefore affect their lightness. E.g. a red filter darkens blue skies.
