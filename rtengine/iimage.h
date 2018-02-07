@@ -126,6 +126,11 @@ inline void ImageDatas::convertTo(unsigned char src, float& dst) const
 {
     dst = src * 257;
 }
+template<>
+inline void ImageDatas::convertTo(float src, float& dst) const
+{
+    dst = std::isnan(src) ? 0.f : src;
+}
 
 // --------------------------------------------------------------------
 //                       Planar order classes
