@@ -3347,7 +3347,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
             std::string t_none2 = "0A@";
 
             if (skinstr[sp].c_str() != t_curvskinref2 && skinstr[sp].c_str() != t_none2) {
-                localskutili = true;
+              // localskutili = true;
             }
 
             std::string t_curvexref2 = "3000A0B0C1000D1000E@";
