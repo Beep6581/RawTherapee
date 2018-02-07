@@ -1555,10 +1555,12 @@ void LocHHCurve::Set(const Curve &pCurve)
 
 void LocHHCurve::Set(const std::vector<double> &curvePoints, bool &HHutili)
 {
-    if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+  //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         Set(ttcurve);
+		HHutili = true;
     } else {
         Reset();
     }
@@ -1602,10 +1604,12 @@ void LocLHCurve::Set(const Curve &pCurve)
 void LocLHCurve::Set(const std::vector<double> &curvePoints, bool &LHutili)
 {
 
-    if (LHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+//    if (LHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
         FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         tcurve.setIdentityValue(0.);
         Set(tcurve);
+		LHutili = true;
     } else {
         Reset();
     }

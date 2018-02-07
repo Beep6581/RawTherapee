@@ -2119,11 +2119,11 @@ private:
                     std::string t_curvhhref = "1000A0B500C350D350E166F500G350H350I333J500K350L350M500N500O350P350Q666R500S350T350U833V500W350X350Y@";
 
                     if (lhstrs[sp].c_str() != t_curvhhref) {
-                        LHutili = true;
+                      //  LHutili = true;
                     }
 
                     if (hhstrs[sp].c_str() != t_curvhhref) {
-                        HHutili = true;
+                    //    HHutili = true;
                     }
 
 
@@ -2136,13 +2136,13 @@ private:
                     std::string t_none = "0A@";
 
                     if (skinstrs[sp].c_str() != t_curvskinref  && skinstrs[sp].c_str() != t_none) {
-                        localskutili = true;
+                      //  localskutili = true;
                     }
 
                     std::string t_curvexref = "3000A0B0C1000D1000E@";
 
                     if (exstrs[sp].c_str() != t_curvexref  && exstrs[sp].c_str() != t_none) {
-                        localexutili = true;
+                     //   localexutili = true;
                     }
 
                     CurveFactory::curveLocal(locallutili, params.locallab.llcurve, lllocalcurve, 1);

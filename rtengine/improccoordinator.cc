@@ -1700,6 +1700,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 }
 
                 locallutili = false;
+				localexutili = false;
+                localcutili = false;
+                localskutili = false;
+
+                LHutili = false;
+                HHutili = false;
 
             }
             //******************************************************************
@@ -2651,24 +2657,24 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 std::string t_curvhhref = "1000A0B500C350D350E166F500G350H350I333J500K350L350M500N500O350P350Q666R500S350T350U833V500W350X350Y@";
 
                 if (lhstr[sp].c_str() != t_curvhhref) {
-                    LHutili = true;
+                    //LHutili = true;
                 }
 
                 if (hhstr[sp].c_str() != t_curvhhref) {
-                    HHutili = true;
+                  //  HHutili = true;
                 }
 
                 std::string t_curvskinref = "3000A0B0C1000D1000E@";
                 std::string t_none = "0A@";
 
                 if (skinstr[sp].c_str() != t_curvskinref  && skinstr[sp].c_str() != t_none) {
-                    localskutili = true;
+                 //   localskutili = true;
                 }
 
                 std::string t_curvexref = "3000A0B0C1000D1000E@";
 
                 if (exstr[sp].c_str() != t_curvexref  && exstr[sp].c_str() != t_none) {
-                    localexutili = true;
+                  //  localexutili = true;
                 }
 
                 params.locallab.getCurves(locRETgainCurve, locRETgainCurverab, loclhCurve, lochhCurve, LHutili, HHutili);
@@ -2746,6 +2752,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
             params.locallab.lumaref = INFINITY;
             params.locallab.sobelref = INFINITY;
             locallutili = false;
+            localexutili = false;
+              //  locallutili = false;
+                localcutili = false;
+                localskutili = false;
+             //   localexutili = false;
+
+                LHutili = false;
+                HHutili = false;
 
             sps[sp] = sp;
             dataspot[2][sp] = circrads[sp] = params.locallab.circrad = dataspot[2][0];
@@ -3316,11 +3330,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
             std::string t_curvhhref2 = "1000A0B500C350D350E166F500G350H350I333J500K350L350M500N500O350P350Q666R500S350T350U833V500W350X350Y@";
 
             if (hhstr[sp].c_str() != t_curvhhref2) {
-                HHutili = true;
+              //  HHutili = true;
             }
 
             if (lhstr[sp].c_str() != t_curvhhref2) {
-                LHutili = true;
+             //   LHutili = true;
             }
 
             params.locallab.getCurves(locRETgainCurve, locRETgainCurverab, loclhCurve, lochhCurve, LHutili, HHutili);
@@ -3339,7 +3353,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
             std::string t_curvexref2 = "3000A0B0C1000D1000E@";
 
             if (exstr[sp].c_str() != t_curvexref2 && exstr[sp].c_str() != t_none2) {
-                localexutili = true;
+              //  localexutili = true;
             }
 
             double br = 0.;
