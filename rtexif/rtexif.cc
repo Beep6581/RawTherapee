@@ -3077,7 +3077,7 @@ void ExifManager::parse (bool isRaw, bool skipIgnored)
         root->printAll ();
 #endif
 
-    } while (ifdOffset && !onlyFirst);
+    } while (ifdOffset > 0 && !onlyFirst);
 
     // Security check : if there's at least one root, there must be at least one image.
     // If the following occurs, then image detection above has failed or it's an unsupported file type.
