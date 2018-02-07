@@ -280,8 +280,6 @@ void SaveAsDialog::okPressed ()
 
 void SaveAsDialog::cancelPressed ()
 {
-
-    fname = fchooser->get_filename();
     response (Gtk::RESPONSE_CANCEL);
 }
 
@@ -297,7 +295,7 @@ void SaveAsDialog::formatChanged (Glib::ustring f)
     }
 }
 
-void SaveAsDialog::setInitialFileName (Glib::ustring fname)
+void SaveAsDialog::setInitialFileName (const Glib::ustring& fname)
 {
     this->fname = fname;
     fchooser->set_current_name(fname);
