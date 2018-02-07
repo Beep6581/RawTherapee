@@ -118,7 +118,7 @@ private:
     rtengine::ProcEvent Evlocallabblack;// = 576,
     rtengine::ProcEvent Evlocallabshcompr;// = 577,
     rtengine::ProcEvent Evlocallabsensiex;// = 578,
-    rtengine::ProcEvent Evlocallabshape;// = 579,
+    rtengine::ProcEvent Evlocallabshapeexpos;// = 579,
     rtengine::ProcEvent EvlocallabCenterbuf;// = 580,
     rtengine::ProcEvent Evlocallabadjblur;// = 581,
     rtengine::ProcEvent Evlocallabcutpast;// = 582,
@@ -291,7 +291,7 @@ private:
 
     CurveEditorGroup* curveEditorG;
     CurveEditorGroup* curveEditorG2;
-    DiagonalCurveEditor* shape;
+    DiagonalCurveEditor* shapeexpos;
     DiagonalCurveEditor* shape2;
 
     FlatCurveEditor* cTgainshape;

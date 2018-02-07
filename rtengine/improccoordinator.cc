@@ -1664,8 +1664,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
                 pthstr[0] = ps_str + "@";
                 //end local ps
-
-
+				
+				
                 //Exp curve
                 int sizex = params.locallab.excurve.size();
 
@@ -3287,6 +3287,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
             //end local PS
 
+			
             //expos
             int *s_datcex;
             s_datcex = new int[70];

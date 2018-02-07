@@ -256,7 +256,7 @@ Locallab::Locallab():
     Evlocallabblack = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCBLACK");// = 576,
     Evlocallabshcompr = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSHCOMPR");// = 577,
     Evlocallabsensiex = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSENSIEX");// = 578,
-    Evlocallabshape = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSHAPE");// = 579,
+    Evlocallabshapeexpos = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSHAPE");// = 579,
     EvlocallabCenterbuf = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCENTERBUF");// = 580,
     Evlocallabadjblur = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCNOISEEQUALBLURED");// = 581,
     Evlocallabcutpast = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCUTPAST");// = 582,
@@ -925,8 +925,8 @@ Locallab::Locallab():
     curveEditorG = new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_CURVEEDITOR_TONES_LABEL"));
     curveEditorG->setCurveListener(this);
 
-    shape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, ""));
-    shape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP"));
+    shapeexpos = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, ""));
+    shapeexpos->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP"));
     curveEditorG->curveListComplete();
 
 
@@ -1502,7 +1502,7 @@ void Locallab::neutral_pressed()
     ccshape->reset();
     LHshape->reset();
     HHshape->reset();
-    shape->reset();
+    shapeexpos->reset();
     skinTonesCurve->reset();
     avoid->set_active(false);
 
@@ -1706,7 +1706,7 @@ bool Locallab::localretComputed_()
 
     delete [] s_datcex;
 
-    shape->setCurve(cex);
+    shapeexpos->setCurve(cex);
 
     enableListener();
 
@@ -1790,8 +1790,8 @@ bool Locallab::localretComputed_()
         listener->panelChanged(EvlocallabPastSatThreshold, M(""));
     }
 
-    if (listener) {//for PSthreshold
-        listener->panelChanged(Evlocallabshape, M(""));
+    if (listener) {//for excurve
+        listener->panelChanged(Evlocallabshapeexpos, M(""));
     }
 
 
@@ -2212,7 +2212,7 @@ bool Locallab::localComputed_()
     ImProcFunctions::strcurv_data(nextps_str, s_datcps, sizps);
     psThreshold->setValue(s_datcps[0], s_datcps[1]);
 
-
+	
     //exCurve
     int *s_datcex;
     s_datcex = new int[70];
@@ -2225,7 +2225,7 @@ bool Locallab::localComputed_()
     }
 
     delete [] s_datcex;
-    shape->setCurve(cex);
+    shapeexpos->setCurve(cex);
 
 
     enableListener();
@@ -2389,8 +2389,8 @@ bool Locallab::localComputed_()
         listener->panelChanged(EvlocallabPastSatTog, M(""));
     }
 
-    if (listener) {//for
-        listener->panelChanged(Evlocallabshape, M(""));
+    if (listener) {//for expo curv
+        listener->panelChanged(Evlocallabshapeexpos, M(""));
     }
 
     if (listener) {//for expander denoise
@@ -2586,7 +2586,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
         ccshape->setUnChanged(!pedited->locallab.cccurve);
         LHshape->setUnChanged(!pedited->locallab.LHcurve);
         HHshape->setUnChanged(!pedited->locallab.HHcurve);
-        shape->setUnChanged(!pedited->locallab.excurve);
+        shapeexpos->setUnChanged(!pedited->locallab.excurve);
         inversret->set_inconsistent(multiImage && !pedited->locallab.inversret);
         cTgainshaperab->setUnChanged(!pedited->locallab.localTgaincurverab);
         expcolor->set_inconsistent(!pedited->locallab.expcolor);
@@ -2735,7 +2735,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
     llshape->setCurve(pp->locallab.llcurve);
     ccshape->setCurve(pp->locallab.cccurve);
     LHshape->setCurve(pp->locallab.LHcurve);
-    shape->setCurve(pp->locallab.excurve);
+    shapeexpos->setCurve(pp->locallab.excurve);
     HHshape->setCurve(pp->locallab.HHcurve);
     lastactivlum = pp->locallab.activlum;
     lastanbspot = pp->locallab.anbspot;
@@ -3228,7 +3228,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
     pp->locallab.cccurve       = ccshape->getCurve();
     pp->locallab.LHcurve       = LHshape->getCurve();
     pp->locallab.HHcurve       = HHshape->getCurve();
-    pp->locallab.excurve       = shape->getCurve();
+    pp->locallab.excurve       = shapeexpos->getCurve();
     pp->locallab.expcolor      = expcolor->getEnabled();
     pp->locallab.expexpose      = expexpose->getEnabled();
     pp->locallab.expvibrance      = expvibrance->getEnabled();
@@ -3347,8 +3347,10 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.llcurve        = !llshape->isUnChanged();
         pedited->locallab.cccurve        = !ccshape->isUnChanged();
         pedited->locallab.LHcurve        = !LHshape->isUnChanged();
-        pedited->locallab.excurve        = !shape->isUnChanged();
+        pedited->locallab.excurve        = !shapeexpos->isUnChanged();
         pedited->locallab.HHcurve        = !HHshape->isUnChanged();
+		
+		
         pedited->locallab.expcolor     = !expcolor->get_inconsistent();
         pedited->locallab.expexpose     = !expexpose->get_inconsistent();
         pedited->locallab.expvibrance     = !expvibrance->get_inconsistent();
@@ -3639,8 +3641,8 @@ void Locallab::curveChanged(CurveEditor* ce)
             adjusterChanged(retrab, strval + 1);
             usleep(10000);  //to test
             retrab->setValue(strval);
-        } else if (ce == shape) {
-            listener->panelChanged(Evlocallabshape, M("HISTORY_CUSTOMCURVE"));
+        } else if (ce == shapeexpos) {
+            listener->panelChanged(Evlocallabshapeexpos, M("HISTORY_CUSTOMCURVE"));
             int strval = retrab->getValue();
             //update MIP
             retrab->setValue(strval + 1);
