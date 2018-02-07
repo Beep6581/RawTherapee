@@ -1172,8 +1172,6 @@ SAVEDLG_SUBSAMP_TOOLTIP;Beste Compressie:\nJ:a:b 4:2:0\nh/v 2/2\nChroma gehalvee
 SAVEDLG_TIFFUNCOMPRESSED;Geen compressie
 SAVEDLG_WARNFILENAME;Bestandsnaam wordt
 SHCSELECTOR_TOOLTIP;Klik op de rechtermuisknop om\nde 3 knoppen te verschuiven
-SOFTPROOF_GAMUTCHECK_TOOLTIP;Toont in grijs de pixels die buiten het kleurengamma vallen van het uitvoerprofiel
-SOFTPROOF_TOOLTIP;Proefafdruk\nSimuleert grafische weergave op basis van het ICM uitvoerprofiel. Voral bruikbaar voor het simuleren van afdrukken.
 THRESHOLDSELECTOR_B;Onderkant
 THRESHOLDSELECTOR_BL;Onderkant-links
 THRESHOLDSELECTOR_BR;Onderkant-rechts
@@ -2196,6 +2194,8 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !SAMPLEFORMAT_4;LogLuv 24 bits
 !SAMPLEFORMAT_8;LogLuv 32 bits
 !SAMPLEFORMAT_16;32 bits floating point
+!SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
+!SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
 !TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 !TP_COLORAPP_NEUTRAL;Reset
 !TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values

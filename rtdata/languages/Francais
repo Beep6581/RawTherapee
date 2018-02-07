@@ -1230,8 +1230,6 @@ SAVEDLG_SUBSAMP_TOOLTIP;Meilleurs compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma div
 SAVEDLG_TIFFUNCOMPRESSED;TIFF non compressé
 SAVEDLG_WARNFILENAME;Le fichier sera nommé
 SHCSELECTOR_TOOLTIP;Cliquez le bouton droit de la souris\npour réinitialiser la position de ces 3 curseurs
-SOFTPROOF_GAMUTCHECK_TOOLTIP;Si activé, indique en gris les pixels dont la couleurs est en dehors du gamut du profil Imprimante
-SOFTPROOF_TOOLTIP;Épreuvage écran\nSi activé, vous permet de simuler le rendu obtenu par votre imprimante en utilisant le profil Imprimante réglé dans Préférences > Gestion des couleurs.
 THRESHOLDSELECTOR_B;Bas
 THRESHOLDSELECTOR_BL;Bas-gauche
 THRESHOLDSELECTOR_BR;Bas-droite
@@ -2211,4 +2209,6 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !HISTORY_MSG_TM_FATTAL_ANCHOR;HDR TM - Anchor
+!SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
+!SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
 !TP_TM_FATTAL_ANCHOR;Anchor
