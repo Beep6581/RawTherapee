@@ -334,6 +334,8 @@ public:
         fileStdProfilesFileNames.clear();
         if (loadAll) {
             loadProfiles(stdProfilesDir, nullptr, nullptr, &fileStdProfilesFileNames, true);
+            Glib::ustring user_input_icc_dir = Glib::build_filename(options.rtdir, "iccprofiles", "input");
+            loadProfiles(user_input_icc_dir, nullptr, nullptr, &fileStdProfilesFileNames, true);
         }
 
         defaultMonitorProfile = settings->monitorProfile;

@@ -1737,51 +1737,50 @@ void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
     file_std_profiles.clear();
 
     if (!loadAll) {
-        profileDir.assign (rt_profile_dir);
+        profileDir = { rt_profile_dir, Glib::build_filename(options.rtdir, "dcpprofiles") };
         return;
     }
 
-    if (!rt_profile_dir.empty()) {
-        std::deque<Glib::ustring> dirs = {
-            rt_profile_dir
-        };
+    std::deque<Glib::ustring> dirs = {
+        rt_profile_dir,
+        Glib::build_filename(options.rtdir, "dcpprofiles")        
+    };
 
-        while (!dirs.empty()) {
-            // Process directory
-            Glib::ustring dirname = dirs.back();
-            dirs.pop_back();
+    while (!dirs.empty()) {
+        // Process directory
+        Glib::ustring dirname = dirs.back();
+        dirs.pop_back();
 
-            std::unique_ptr<Glib::Dir> dir;
+        std::unique_ptr<Glib::Dir> dir;
 
-            try {
-                if (!Glib::file_test(dirname, Glib::FILE_TEST_IS_DIR)) {
-                    return;
-                }
-
-                dir.reset(new Glib::Dir(dirname));
-            } catch (Glib::Exception& exception) {
+        try {
+            if (!Glib::file_test(dirname, Glib::FILE_TEST_IS_DIR)) {
                 return;
             }
 
-            for (const Glib::ustring& sname : *dir) {
-                const Glib::ustring fname = Glib::build_filename(dirname, sname);
+            dir.reset(new Glib::Dir(dirname));
+        } catch (Glib::Exception& exception) {
+            return;
+        }
 
-                if (!Glib::file_test(fname, Glib::FILE_TEST_IS_DIR)) {
-                    // File
-                    const auto lastdot = sname.rfind('.');
+        for (const Glib::ustring& sname : *dir) {
+            const Glib::ustring fname = Glib::build_filename(dirname, sname);
 
-                    if (
-                        lastdot != Glib::ustring::npos
-                        && lastdot <= sname.size() - 4
-                        && !sname.casefold().compare(lastdot, 4, ".dcp")
+            if (!Glib::file_test(fname, Glib::FILE_TEST_IS_DIR)) {
+                // File
+                const auto lastdot = sname.rfind('.');
+
+                if (
+                    lastdot != Glib::ustring::npos
+                    && lastdot <= sname.size() - 4
+                    && !sname.casefold().compare(lastdot, 4, ".dcp")
                     ) {
-                        const Glib::ustring cam_short_name = sname.substr(0, lastdot).uppercase();
-                        file_std_profiles[cam_short_name] = fname; // They will be loaded and cached on demand
-                    }
-                } else {
-                    // Directory
-                    dirs.push_front(fname);
+                    const Glib::ustring cam_short_name = sname.substr(0, lastdot).uppercase();
+                    file_std_profiles[cam_short_name] = fname; // They will be loaded and cached on demand
                 }
+            } else {
+                // Directory
+                dirs.push_front(fname);
             }
         }
     }
@@ -1839,11 +1838,13 @@ DCPProfile* DCPStore::getStdProfile(const Glib::ustring& requested_cam_short_nam
     }
 
     // profile not found, looking if we're in loadAll=false mode
-    if (!profileDir.empty()) {
-        const Glib::ustring fname = Glib::build_filename(profileDir, requested_cam_short_name + Glib::ustring(".dcp"));
+    for (const auto &dir : profileDir) {
+        if (!dir.empty()) {
+            const Glib::ustring fname = Glib::build_filename(dir, requested_cam_short_name + Glib::ustring(".dcp"));
 
-        if (Glib::file_test(fname, Glib::FILE_TEST_EXISTS)) {
-            return getProfile(fname);
+            if (Glib::file_test(fname, Glib::FILE_TEST_EXISTS)) {
+                return getProfile(fname);
+            }
         }
     }
 
