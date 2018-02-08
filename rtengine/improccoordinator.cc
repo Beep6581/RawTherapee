@@ -229,7 +229,7 @@ ImProcCoordinator::ImProcCoordinator()
       chromar(0),
       lumar(0),
       sobeler(0),
-      colourToningSatLimit(0.f), colourToningSatLimitOpacity(0.f), lastspotdup(false), highQualityComputed (false), 
+      colourToningSatLimit(0.f), colourToningSatLimitOpacity(0.f), lastspotdup(false), highQualityComputed(false),
 
       retistrsav(nullptr)
 {}
@@ -1664,8 +1664,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
                 pthstr[0] = ps_str + "@";
                 //end local ps
-				
-				
+
+
                 //Exp curve
                 int sizex = params.locallab.excurve.size();
 
@@ -1700,7 +1700,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 }
 
                 locallutili = false;
-				localexutili = false;
+                localexutili = false;
                 localcutili = false;
                 localskutili = false;
 
@@ -2661,20 +2661,20 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 }
 
                 if (hhstr[sp].c_str() != t_curvhhref) {
-                  //  HHutili = true;
+                    //  HHutili = true;
                 }
 
                 std::string t_curvskinref = "3000A0B0C1000D1000E@";
                 std::string t_none = "0A@";
 
                 if (skinstr[sp].c_str() != t_curvskinref  && skinstr[sp].c_str() != t_none) {
-                 //   localskutili = true;
+                    //   localskutili = true;
                 }
 
                 std::string t_curvexref = "3000A0B0C1000D1000E@";
 
                 if (exstr[sp].c_str() != t_curvexref  && exstr[sp].c_str() != t_none) {
-                  //  localexutili = true;
+                    //  localexutili = true;
                 }
 
                 params.locallab.getCurves(locRETgainCurve, locRETgainCurverab, loclhCurve, lochhCurve, LHutili, HHutili);
@@ -2698,7 +2698,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 double huere, chromare, lumare, huerefblu;
                 double sobelre;
 
-                ipf.calc_ref(nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, huere, chromare, lumare, sobelre);
+                if (params.locallab.Exclumethod == "exc") {
+                    ipf.calc_ref(reserv, reserv, 0, 0, pW, pH, scale, huerefblu, huere, chromare, lumare, sobelre);
+                } else {
+                    ipf.calc_ref(nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, huere, chromare, lumare, sobelre);
+                }
+
                 huerblu = huerefblu;
                 huer = huere;
                 chromar = chromare;
@@ -2753,13 +2758,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
             params.locallab.sobelref = INFINITY;
             locallutili = false;
             localexutili = false;
-              //  locallutili = false;
-                localcutili = false;
-                localskutili = false;
-             //   localexutili = false;
+            //  locallutili = false;
+            localcutili = false;
+            localskutili = false;
+            //   localexutili = false;
 
-                LHutili = false;
-                HHutili = false;
+            LHutili = false;
+            HHutili = false;
 
             sps[sp] = sp;
             dataspot[2][sp] = circrads[sp] = params.locallab.circrad = dataspot[2][0];
@@ -3301,7 +3306,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
             //end local PS
 
-			
+
             //expos
             int *s_datcex;
             s_datcex = new int[70];
@@ -3330,11 +3335,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
             std::string t_curvhhref2 = "1000A0B500C350D350E166F500G350H350I333J500K350L350M500N500O350P350Q666R500S350T350U833V500W350X350Y@";
 
             if (hhstr[sp].c_str() != t_curvhhref2) {
-              //  HHutili = true;
+                //  HHutili = true;
             }
 
             if (lhstr[sp].c_str() != t_curvhhref2) {
-             //   LHutili = true;
+                //   LHutili = true;
             }
 
             params.locallab.getCurves(locRETgainCurve, locRETgainCurverab, loclhCurve, lochhCurve, LHutili, HHutili);
@@ -3347,13 +3352,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
             std::string t_none2 = "0A@";
 
             if (skinstr[sp].c_str() != t_curvskinref2 && skinstr[sp].c_str() != t_none2) {
-              // localskutili = true;
+                // localskutili = true;
             }
 
             std::string t_curvexref2 = "3000A0B0C1000D1000E@";
 
             if (exstr[sp].c_str() != t_curvexref2 && exstr[sp].c_str() != t_none2) {
-              //  localexutili = true;
+                //  localexutili = true;
             }
 
             double br = 0.;
@@ -4899,25 +4904,28 @@ void ImProcCoordinator::changenumberofspot(int **dataspot, int maxdata, int maxs
         fich2.close() ;
     }
 }
-bool ImProcCoordinator::getHighQualComputed() {
+bool ImProcCoordinator::getHighQualComputed()
+{
     // this function may only be called from detail windows
-    if(!highQualityComputed) {
-        if(options.prevdemo == PD_Sidecar) {
+    if (!highQualityComputed) {
+        if (options.prevdemo == PD_Sidecar) {
             // we already have high quality preview
             setHighQualComputed();
         } else {
             for (size_t i = 0; i < crops.size() - 1; ++i) { // -1, because last entry is the freshly created detail window
-                if (crops[i]->get_skip() == 1 ) {  // there is at least one crop with skip == 1 => we already have high quality preview
+                if (crops[i]->get_skip() == 1) {   // there is at least one crop with skip == 1 => we already have high quality preview
                     setHighQualComputed();
                     break;
                 }
             }
         }
     }
+
     return highQualityComputed;
 }
 
-void ImProcCoordinator::setHighQualComputed() {
+void ImProcCoordinator::setHighQualComputed()
+{
     highQualityComputed = true;
 }
 

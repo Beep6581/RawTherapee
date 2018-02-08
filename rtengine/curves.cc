@@ -477,7 +477,7 @@ void CurveFactory::curveexLocal(bool & localexutili, const std::vector<double>& 
 
         if (dCurve && !dCurve->isIdentity()) {
             needed = true;
-			localexutili = true;
+            localexutili = true;
         }
     }
 
@@ -737,16 +737,16 @@ void CurveFactory::complexsgnCurve(bool & autili,  bool & butili, bool & ccutili
 
 }
 
-void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh,
-        double shcompr, double br, double contr,
-        const std::vector<double>& curvePoints,
-        const std::vector<double>& curvePoints2,
-        LUTu & histogram,
-        LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
-        LUTu & outBeforeCCurveHistogram,
-        ToneCurve & customToneCurve1,
-        ToneCurve & customToneCurve2,
-        int skip)
+void CurveFactory::complexCurve(double ecomp, double black, double hlcompr, double hlcomprthresh,
+                                double shcompr, double br, double contr,
+                                const std::vector<double>& curvePoints,
+                                const std::vector<double>& curvePoints2,
+                                LUTu & histogram,
+                                LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
+                                LUTu & outBeforeCCurveHistogram,
+                                ToneCurve & customToneCurve1,
+                                ToneCurve & customToneCurve2,
+                                int skip)
 {
 
     // the curve shapes are defined in sRGB gamma, but the output curves will operate on linear floating point data,
@@ -1020,10 +1020,10 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 
 
 void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr, double hlcomprthresh,
-        double shcompr, double br, double contr,
-        LUTu & histogram,
-        LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
-        int skip)
+                                     double shcompr, double br, double contr,
+                                     LUTu & histogram,
+                                     LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
+                                     int skip)
 {
 
     // the curve shapes are defined in sRGB gamma, but the output curves will operate on linear floating point data,
@@ -1558,12 +1558,12 @@ void LocHHCurve::Set(const Curve &pCurve)
 
 void LocHHCurve::Set(const std::vector<double> &curvePoints, bool &HHutili)
 {
-  //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
     if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         Set(ttcurve);
-		HHutili = true;
+        HHutili = true;
     } else {
         Reset();
     }
@@ -1612,7 +1612,7 @@ void LocLHCurve::Set(const std::vector<double> &curvePoints, bool &LHutili)
         FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         tcurve.setIdentityValue(0.);
         Set(tcurve);
-		LHutili = true;
+        LHutili = true;
     } else {
         Reset();
     }
@@ -2566,11 +2566,11 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
         Color::Prophotoxyz(r, g, b, x, y, z);
 
         float J, C, h;
-        Ciecam02::xyz2jch_ciecam02float( J, C, h,
-                                         aw, fl,
-                                         x * 0.0015259022f,  y * 0.0015259022f,  z * 0.0015259022f,
-                                         xw, yw,  zw,
-                                         c,  nc, pow1, nbb, ncb, cz, d);
+        Ciecam02::xyz2jch_ciecam02float(J, C, h,
+                                        aw, fl,
+                                        x * 0.0015259022f,  y * 0.0015259022f,  z * 0.0015259022f,
+                                        xw, yw,  zw,
+                                        c,  nc, pow1, nbb, ncb, cz, d);
 
 
         if (!isfinite(J) || !isfinite(C) || !isfinite(h)) {
@@ -2583,6 +2583,7 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
                 g = newg;
                 b = newb;
             }
+
             rc[i] = r;
             gc[i] = g;
             bc[i] = b;
@@ -2677,10 +2678,10 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
 
         C *= cmul;
 
-        Ciecam02::jch2xyz_ciecam02float( x, y, z,
-                                         J, C, h,
-                                         xw, yw,  zw,
-                                         c, nc, 1, pow1, nbb, ncb, fl, cz, d, aw );
+        Ciecam02::jch2xyz_ciecam02float(x, y, z,
+                                        J, C, h,
+                                        xw, yw,  zw,
+                                        c, nc, 1, pow1, nbb, ncb, fl, cz, d, aw);
 
         if (!isfinite(x) || !isfinite(y) || !isfinite(z)) {
             // can happen for colours on the rim of being outside gamut, that worked without chroma scaling but not with. Then we return only the curve's result.
@@ -2756,6 +2757,7 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
             g = newg;
             b = newb;
         }
+
         rc[i] = r;
         gc[i] = g;
         bc[i] = b;

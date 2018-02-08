@@ -1145,10 +1145,10 @@ private:
 
                 int **dataspots;
                 dataspots = new int*[maxdata];
-					LUTf huerefs(500, -10000.f);	
-					LUTf sobelrefs(500, -10000.f);
-					LUTi centerx (500, -10000); 
-					LUTi centery (500, -10000);
+                LUTf huerefs(500, -10000.f);
+                LUTf sobelrefs(500, -10000.f);
+                LUTi centerx(500, -10000);
+                LUTi centery(500, -10000);
 
                 for (int i = 0; i < maxdata; i++) {
                     dataspots[i] = new int[maxspot];
@@ -1722,7 +1722,7 @@ private:
                     params.locallab.locY = dataspots[4][sp];
                     params.locallab.locYT = dataspots[5][sp];
                     params.locallab.locXL = dataspots[6][sp];
-                    params.locallab.centerX = centerx[sp]= dataspots[7][sp];
+                    params.locallab.centerX = centerx[sp] = dataspots[7][sp];
                     params.locallab.centerY = centery[sp] = dataspots[8][sp];
                     params.locallab.lightness = dataspots[9][sp];
                     params.locallab.contrast = dataspots[10][sp];
@@ -1983,7 +1983,7 @@ private:
 
                     params.locallab.huerefblur = ((float) dataspots[maxdata - 5][sp]) / 100.f;
                     params.locallab.hueref = huerefs[sp] = ((float) dataspots[maxdata - 4][sp]) / 100.f;
-					huerefs[sp] *= 100.f;
+                    huerefs[sp] *= 100.f;
                     params.locallab.chromaref = dataspots[maxdata - 3][sp];
                     params.locallab.lumaref = dataspots[maxdata - 2][sp];
                     params.locallab.sobelref = sobelrefs[sp] = dataspots[maxdata - 1][sp];
@@ -2119,11 +2119,11 @@ private:
                     std::string t_curvhhref = "1000A0B500C350D350E166F500G350H350I333J500K350L350M500N500O350P350Q666R500S350T350U833V500W350X350Y@";
 
                     if (lhstrs[sp].c_str() != t_curvhhref) {
-                      //  LHutili = true;
+                        //  LHutili = true;
                     }
 
                     if (hhstrs[sp].c_str() != t_curvhhref) {
-                    //    HHutili = true;
+                        //    HHutili = true;
                     }
 
 
@@ -2136,13 +2136,13 @@ private:
                     std::string t_none = "0A@";
 
                     if (skinstrs[sp].c_str() != t_curvskinref  && skinstrs[sp].c_str() != t_none) {
-                      //  localskutili = true;
+                        //  localskutili = true;
                     }
 
                     std::string t_curvexref = "3000A0B0C1000D1000E@";
 
                     if (exstrs[sp].c_str() != t_curvexref  && exstrs[sp].c_str() != t_none) {
-                     //   localexutili = true;
+                        //   localexutili = true;
                     }
 
                     CurveFactory::curveLocal(locallutili, params.locallab.llcurve, lllocalcurve, 1);
@@ -2166,15 +2166,21 @@ private:
                     double huere, chromare, lumare, huerefblu;
                     double sobelre;
 
-                    ipf.calc_ref(labView, labView, 0, 0, fw, fh, 1, huerefblu, huere, chromare, lumare, sobelre);
+                    if (params.locallab.Exclumethod == "exc") {
+
+                        ipf.calc_ref(reservView, reservView, 0, 0, fw, fh, 1, huerefblu, huere, chromare, lumare, sobelre);
+                    } else {
+                        ipf.calc_ref(labView, labView, 0, 0, fw, fh, 1, huerefblu, huere, chromare, lumare, sobelre);
+
+                    }
 
                     params.locallab.huerefblur = huerefblu;
                     params.locallab.hueref = huere;
                     params.locallab.chromaref = chromare;
                     params.locallab.lumaref = lumare;
                     params.locallab.sobelref = sobelre;
-									//nullptr or dataspot ??
- 
+                    //nullptr or dataspot ??
+
                     ipf.Lab_Local(2, maxspot, sp, huerefs, sobelrefs, centerx, centery, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve,
                                   LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.huerefblur, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref, params.locallab.sobelref);
                     lllocalcurve.clear();
