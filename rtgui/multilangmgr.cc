@@ -114,11 +114,22 @@ const LocaleToLang localeToLang;
 
 void setGtkLanguage(const Glib::ustring &language)
 {
-    auto l = localeToLang.getLocale(language);
+    std::string lang = localeToLang.getLocale(language);
+
+    if (lang != "C") {
+        const std::string env_lang = getenv("LANG");
+        if (!env_lang.empty()) {
+            const std::string::size_type suffix_pos = env_lang.find_first_of(".");
+            if (suffix_pos != std::string::npos) {
+                lang += env_lang.substr(suffix_pos);
+            }
+        }
+    }
+
 #ifdef WIN32
-    putenv(("LANG=" + l).c_str());
+    putenv(("LANG=" + lang).c_str());
 #else
-    setenv("LANG", l.c_str(), true);
+    setenv("LANG", lang.c_str(), true);
 #endif
 }
 
