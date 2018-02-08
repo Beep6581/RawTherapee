@@ -218,13 +218,6 @@ int processLineParams ( int argc, char **argv )
 
 bool init_rt()
 {
-    try {
-        Options::load();
-    } catch (Options::Error &e) {
-        std::cout << "ERROR: " << e.get_msg() << std::endl;
-        return false;
-    }
-
     extProgStore->init();
     SoundManager::init();
 
@@ -487,9 +480,6 @@ int main (int argc, char **argv)
     argv2 = "";
 
     Glib::init();  // called by Gtk::Main, but this may be important for thread handling, so we call it ourselves now
-    gdk_threads_set_lock_functions (G_CALLBACK (myGdkLockEnter), (G_CALLBACK (myGdkLockLeave)));
-    gdk_threads_init();
-    gtk_init (&argc, &argv);  // use the "--g-fatal-warnings" command line flag to make warnings fatal
     Gio::init ();
 
 
@@ -530,7 +520,7 @@ int main (int argc, char **argv)
     }
 
     options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
-    
+
 #else
     argv0 = DATA_SEARCH_PATH;
     creditsPath = CREDITS_SEARCH_PATH;
@@ -648,6 +638,19 @@ int main (int argc, char **argv)
     }
 
     int ret = 0;
+
+    try {
+        Options::load();
+    } catch (Options::Error &e) {
+        std::cout << "ERROR: " << e.get_msg() << std::endl;
+        std::cerr << "Fatal error!" << std::endl;
+        std::cerr << "The RT_SETTINGS and/or RT_PATH environment variables are set, but use a relative path. The path must be absolute!" << std::endl;
+        return -2;
+    }
+
+    gdk_threads_set_lock_functions (G_CALLBACK (myGdkLockEnter), (G_CALLBACK (myGdkLockLeave)));
+    gdk_threads_init();
+    gtk_init (&argc, &argv);  // use the "--g-fatal-warnings" command line flag to make warnings fatal
 
     if (remote) {
         char *app_argv[2] = { const_cast<char *> (argv0.c_str()) };
