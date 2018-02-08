@@ -343,7 +343,6 @@ Locallab::Locallab():
 
 
     ctboxshape->pack_start(*labmshape, Gtk::PACK_SHRINK, 4);
-    //ctboxshape->set_tooltip_markup(M("TP_LOCALLAB_SHAPE_TOOLTIP"));
 
     ctboxEx->pack_start(*labmEx, Gtk::PACK_SHRINK, 4);
     ctboxEx->set_tooltip_markup(M("TP_LOCALLAB_EXCLUTYPE_TOOLTIP"));
@@ -1567,8 +1566,6 @@ void Locallab::lumacontrastMinusPressed()
 void Locallab::autoOpenCurve()
 {
     cTgainshape->openIfNonlinear();
-    //  llshape->openIfNonlinear();
-    //  LHshape->openIfNonlinear();
 
 }
 
@@ -2212,7 +2209,7 @@ bool Locallab::localComputed_()
     ImProcFunctions::strcurv_data(nextps_str, s_datcps, sizps);
     psThreshold->setValue(s_datcps[0], s_datcps[1]);
 
-	
+
     //exCurve
     int *s_datcex;
     s_datcex = new int[70];
@@ -3349,8 +3346,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.LHcurve        = !LHshape->isUnChanged();
         pedited->locallab.excurve        = !shapeexpos->isUnChanged();
         pedited->locallab.HHcurve        = !HHshape->isUnChanged();
-		
-		
+
+
         pedited->locallab.expcolor     = !expcolor->get_inconsistent();
         pedited->locallab.expexpose     = !expexpose->get_inconsistent();
         pedited->locallab.expvibrance     = !expvibrance->get_inconsistent();
