@@ -674,15 +674,8 @@ int main (int argc, char **argv)
             m.run (*rtWindow);
             gdk_threads_leave();
 
-            if (gimpPlugin &&
-                    rtWindow->epanel && rtWindow->epanel->isRealized()) {
-                SaveFormat sf;
-                sf.format = "tif";
-                sf.tiffBits = 16;
-                sf.tiffUncompressed = true;
-                sf.saveParams = true;
-
-                if (!rtWindow->epanel->saveImmediately (argv2, sf)) {
+            if (gimpPlugin && rtWindow->epanel && rtWindow->epanel->isRealized()) {
+                if (!rtWindow->epanel->saveImmediately(argv2, SaveFormat())) {
                     ret = -2;
                 }
             }

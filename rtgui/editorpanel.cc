@@ -1978,6 +1978,11 @@ bool EditorPanel::saveImmediately (const Glib::ustring &filename, const SaveForm
 {
     rtengine::procparams::ProcParams pparams;
     ipc->getParams (&pparams);
+
+    if (gimpPlugin) {
+        pparams.icm.gamma = "linear_g1.0";
+    }
+
     rtengine::ProcessingJob *job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
 
     // save immediately
@@ -1985,7 +1990,9 @@ bool EditorPanel::saveImmediately (const Glib::ustring &filename, const SaveForm
 
     int err = 0;
 
-    if (sf.format == "tif") {
+    if (gimpPlugin) {
+        err = img->saveAsTIFF (filename, 32, true);
+    } else if (sf.format == "tif") {
         err = img->saveAsTIFF (filename, sf.tiffBits, sf.tiffUncompressed);
     } else if (sf.format == "png") {
         err = img->saveAsPNG (filename, sf.pngBits);

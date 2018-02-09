@@ -1184,13 +1184,17 @@ void DCPProfile::step2ApplyTile(float* rc, float* gc, float* bc, int width, int 
                 }
 
                 // with looktable and tonecurve we need to clip
-                newr = FCLIP(newr);
-                newg = FCLIP(newg);
-                newb = FCLIP(newb);
+                // newr = FCLIP(newr);
+                // newg = FCLIP(newg);
+                // newb = FCLIP(newb);
 
                 if (as_in.data->apply_look_table) {
+                    float cnewr = FCLIP(newr);
+                    float cnewg = FCLIP(newg);
+                    float cnewb = FCLIP(newb);
+                    
                     float h, s, v;
-                    Color::rgb2hsvdcp(newr, newg, newb, h, s, v);
+                    Color::rgb2hsvdcp(cnewr, cnewg, cnewb, h, s, v);
 
                     hsdApply(look_info, look_table, h, s, v);
                     s = CLIP01(s);
@@ -1203,7 +1207,11 @@ void DCPProfile::step2ApplyTile(float* rc, float* gc, float* bc, int width, int 
                         h -= 6.0f;
                     }
 
-                    Color::hsv2rgbdcp( h, s, v, newr, newg, newb);
+                    Color::hsv2rgbdcp( h, s, v, cnewr, cnewg, cnewb);
+
+                    setUnlessOOG(newr, cnewr);
+                    setUnlessOOG(newg, cnewg);
+                    setUnlessOOG(newb, cnewb);
                 }
 
                 if (as_in.data->use_tone_curve) {
