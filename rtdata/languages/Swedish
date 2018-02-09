@@ -1063,8 +1063,6 @@ SAVEDLG_SUBSAMP_TOOLTIP;Bästa komprimering:\nJ:a:b 4:2:0\nh/v 2/2\nKroma halver
 SAVEDLG_TIFFUNCOMPRESSED;Okomprimerad TIFF
 SAVEDLG_WARNFILENAME;Filen kommer att heta
 SHCSELECTOR_TOOLTIP;Klicka på höger musknapp för att återställa\nde tre reglagens positioner
-SOFTPROOF_GAMUTCHECK_TOOLTIP;Om aktiverad så indikeras i grått de pixlar som hamnar utanför utprofilens tonomfång.
-SOFTPROOF_TOOLTIP;Färggodkännande\nOm aktiverad så kan du simulera renderingen som skapas av utprofilen från ICM-verktyget. Användbar för att simulera utskrifter.
 THRESHOLDSELECTOR_B;Nederst
 THRESHOLDSELECTOR_BL;Nederst till vänster
 THRESHOLDSELECTOR_BR;Nederst till höger
@@ -2038,6 +2036,8 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !SAMPLEFORMAT_4;LogLuv 24 bits
 !SAMPLEFORMAT_8;LogLuv 32 bits
 !SAMPLEFORMAT_16;32 bits floating point
+!SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
+!SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
 !TP_CBDL_METHOD;Process located
 !TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 !TP_COLORAPP_NEUTRAL;Reset
