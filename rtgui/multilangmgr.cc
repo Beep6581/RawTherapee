@@ -38,30 +38,30 @@ struct LocaleToLang : private std::map<std::pair<Glib::ustring, Glib::ustring>, 
 
     LocaleToLang ()
     {
-        emplace (key ("ca"), "Catala");
-        emplace (key ("cs"), "Czech");
-        emplace (key ("da"), "Dansk");
-        emplace (key ("de"), "Deutsch");
-        emplace (key ("es"), "Espanol");
-        emplace (key ("eu"), "Euskara");
-        emplace (key ("fr"), "Francais");
-        emplace (key ("el"), "Greek");
-        emplace (key ("he"), "Hebrew");
-        emplace (key ("it"), "Italiano");
-        emplace (key ("ja"), "Japanese");
-        emplace (key ("lv"), "Latvian");
-        emplace (key ("hu"), "Magyar");
-        emplace (key ("nl"), "Nederlands");
-        emplace (key ("nn"), "Norsk BM");
-        emplace (key ("nb"), "Norsk BM");
-        emplace (key ("pl"), "Polish");
-        emplace (key ("pt"), "Portugues (Brasil)");
-        emplace (key ("ru"), "Russian");
-        emplace (key ("sr"), "Serbian (Cyrilic Characters)");
-        emplace (key ("sk"), "Slovak");
-        emplace (key ("fi"), "Suomi");
-        emplace (key ("sv"), "Swedish");
-        emplace (key ("tr"), "Turkish");
+        emplace (key ("ca", "ES"), "Catala");
+        emplace (key ("cs", "CZ"), "Czech");
+        emplace (key ("da", "DK"), "Dansk");
+        emplace (key ("de", "DE"), "Deutsch");
+        emplace (key ("es", "ES"), "Espanol");
+        emplace (key ("eu", "ES"), "Euskara");
+        emplace (key ("fr", "FR"), "Francais");
+        emplace (key ("el", "GR"), "Greek");
+        emplace (key ("he", "IL"), "Hebrew");
+        emplace (key ("it", "IT"), "Italiano");
+        emplace (key ("ja", "JP"), "Japanese");
+        emplace (key ("lv", "LV"), "Latvian");
+        emplace (key ("hu", "HU"), "Magyar");
+        emplace (key ("nl", "NL"), "Nederlands");
+        emplace (key ("nn", "NO"), "Norsk BM");
+        emplace (key ("nb", "NO"), "Norsk BM");
+        emplace (key ("pl", "PL"), "Polish");
+        emplace (key ("pt", "PT"), "Portugues (Brasil)");
+        emplace (key ("ru", "RU"), "Russian");
+        emplace (key ("sr", "RS"), "Serbian (Cyrilic Characters)");
+        emplace (key ("sk", "SK"), "Slovak");
+        emplace (key ("fi", "FI"), "Suomi");
+        emplace (key ("sv", "SE"), "Swedish");
+        emplace (key ("tr", "TR"), "Turkish");
         emplace (key ("zh", "CN"), "Chinese (Simplified)");
         emplace (key ("zh", "SG"), "Chinese (Traditional)");
     }
@@ -115,9 +115,9 @@ const LocaleToLang localeToLang;
 void setGtkLanguage(const Glib::ustring &language)
 {
     std::string lang = localeToLang.getLocale(language);
-
-    if (lang != "C") {
-        const std::string env_lang = getenv("LANG");
+    char *env_langc = getenv("LANG");
+    if(env_langc) {
+        std::string env_lang(env_langc);
         if (!env_lang.empty()) {
             const std::string::size_type suffix_pos = env_lang.find_first_of(".");
             if (suffix_pos != std::string::npos) {
