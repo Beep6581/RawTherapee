@@ -1873,7 +1873,7 @@ void ImProcFunctions::addGaNoise(LabImage *lab, LabImage *dst, const float mean,
         }
     }
 }
-
+/*
 void ImProcFunctions::DeNoise_Local_imp(int call, const struct local_params& lp,  int levred, float hueplus, float huemoins, float hueref, float dhueden, LabImage* original, LabImage* transformed, LabImage* tmp1, int cx, int cy, int sk)
 {
     // local denoise
@@ -2053,7 +2053,7 @@ void ImProcFunctions::DeNoise_Local_imp(int call, const struct local_params& lp,
                         float factorx = localFactor;
                         float difL, difa, difb;
 
-                        if (call == 2  /*|| call == 1  || call == 3 */) { //simpleprocess
+                        if (call == 2 ) { //simpleprocess
                             difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
                             difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
                             difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
@@ -2076,7 +2076,7 @@ void ImProcFunctions::DeNoise_Local_imp(int call, const struct local_params& lp,
                     case 2: { // inside selection => full effect, no transition
                         float difL, difa, difb;
 
-                        if (call == 2 /*|| call == 1 || call == 3 */) { //simpleprocess
+                        if (call == 2 ) { //simpleprocess
                             difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
                             difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
                             difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
@@ -2104,12 +2104,12 @@ void ImProcFunctions::DeNoise_Local_imp(int call, const struct local_params& lp,
 
 }
 
+*/
 
 
-
-void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp,  int levred, float hueplus, float huemoins, float hueref, float dhueden, LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy, int sk)
+void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp,  int levred, float hueplus, float huemoins, float hueref, float dhueden, LabImage* original, LabImage* transformed, LabImage &tmp1, int cx, int cy, int sk)
 {
-    // local denoise
+    // local denoise and impulse
     //simple algo , perhaps we can improve as the others, but noise is here and not good for hue detection
     // BENCHFUN
     const float ach = (float)lp.trans / 100.f;
@@ -5616,6 +5616,7 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, const float hueplus
 
 void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, float **bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, LabImage * rsv, int cx, int cy, int sk)
 {
+//perhaps we can group with expo_vib_Local ?? but I prefer keep as that for now
 
     BENCHFUN {
         const float ach = (float)lp.trans / 100.f;
@@ -6052,11 +6053,11 @@ void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, 
     }
 }
 
-
+/*
 void ImProcFunctions::vibrance_Local(float **buflight, float **bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int sk)
 {
 
-//local exposure
+//local vibran
     BENCHFUN {
         const float ach = (float)lp.trans / 100.f;
         float varsens =  lp.sensv;
@@ -6317,16 +6318,6 @@ void ImProcFunctions::vibrance_Local(float **buflight, float **bufchro, const fl
                         kzon = true;
                     }
 
-                    /*
-                                        //printf("re=%f",  realstrch);
-                                        if (realstrch > maxc) {
-                                            maxc = realstrch;
-                                        }
-
-                                        if (realstrch < minc) {
-                                            minc = realstrch;
-                                        }
-                    */
                     //shape detection for hue chroma and luma
                     if (varsens <= 20.f) { //to try...
 
@@ -6461,15 +6452,25 @@ void ImProcFunctions::vibrance_Local(float **buflight, float **bufchro, const fl
     }
 }
 
+*/
 
-
-void ImProcFunctions::Expose_Local(float **buflight, float **bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int sk)
+void ImProcFunctions::Expo_vibr_Local(int senstype, float **buflight, float **bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int sk)
 {
 
-//local exposure
+//local exposure and vibrance
     BENCHFUN {
         const float ach = (float)lp.trans / 100.f;
         float varsens =  lp.sensex;
+
+        if (senstype == 1) //exposure
+        {
+            varsens =  lp.sensex;
+        }
+
+        if (senstype == 2) //vibrance
+        {
+            varsens =  lp.sensv;
+        }
 
         //chroma
         constexpr float amplchsens = 2.5f;
@@ -9872,7 +9873,25 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                 ImProcFunctions::impulse_nr(bufwv, thr);
             }
 
-            DeNoise_Local_imp(call, lp,  levred, hueplus, huemoins, huerefblur, dhueden, original, transformed, bufwv, cx, cy, sk);
+            LabImage tmp1(bufwv->W, bufwv->H);
+            //copy bufwv to tmp1 to use same algo for Denoise_local and DeNoise_Local_imp
+
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+            for (int ir = 0; ir < bufwv->H; ir++)
+                for (int jr = 0; jr < bufwv->W; jr++) {
+                    tmp1.L[ir][jr] = bufwv->L[ir][jr];
+                    tmp1.a[ir][jr] = bufwv->a[ir][jr];
+                    tmp1.b[ir][jr] = bufwv->b[ir][jr];
+                }
+
+
+
+            //    DeNoise_Local_imp(call, lp,  levred, hueplus, huemoins, huerefblur, dhueden, original, transformed, bufwv, cx, cy, sk);
+            DeNoise_Local(call, lp,  levred, hueplus, huemoins, huerefblur, dhueden, original, transformed, tmp1, cx, cy, sk);
+
             delete bufwv;
         }
 
@@ -11609,8 +11628,8 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                         }
                     }
 
-                Expose_Local(buflight, bufl_ab, hueplus, huemoins, hueref, dhueex, chromaref, lumaref, lp, original, transformed, bufexpfin, cx, cy, sk);
-
+                Expo_vibr_Local(1, buflight, bufl_ab, hueplus, huemoins, hueref, dhueex, chromaref, lumaref, lp, original, transformed, bufexpfin, cx, cy, sk);
+				//call Expo_vibr_Local with first parameter = 1 for exposure
             }
 
             if (call <= 3) {
@@ -11728,7 +11747,8 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                         }
                     }
 
-                vibrance_Local(buflight, bufl_ab, hueplus, huemoins, hueref, dhuev, chromaref, lumaref, lp, original, transformed, bufexpfin, cx, cy, sk);
+                Expo_vibr_Local(2, buflight, bufl_ab, hueplus, huemoins, hueref, dhuev, chromaref, lumaref, lp, original, transformed, bufexpfin, cx, cy, sk);
+				//call Expo_vibr_Local with first parameter = 2 for vibrance
 
             }
 
