@@ -19,6 +19,7 @@
 #include "multilangmgr.h"
 
 #include <fstream>
+#include <glib.h>
 
 #ifdef WIN32
 #include <windows.h>
@@ -115,9 +116,9 @@ const LocaleToLang localeToLang;
 void setGtkLanguage(const Glib::ustring &language)
 {
     std::string lang = localeToLang.getLocale(language);
-    char *env_langc = getenv("LANG");
+    const gchar *env_langc = g_getenv("LANG");
     if(env_langc) {
-        std::string env_lang(env_langc);
+        const std::string env_lang(env_langc);
         if (!env_lang.empty()) {
             const std::string::size_type suffix_pos = env_lang.find_first_of(".");
             if (suffix_pos != std::string::npos) {
@@ -126,11 +127,7 @@ void setGtkLanguage(const Glib::ustring &language)
         }
     }
 
-#ifdef WIN32
-    putenv(("LANG=" + lang).c_str());
-#else
-    setenv("LANG", lang.c_str(), true);
-#endif
+    g_setenv("LANG", lang.c_str(), true);
 }
 
 }
