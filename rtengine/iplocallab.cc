@@ -11508,7 +11508,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
 // end contrast interior and exterior
 
 //exposure
-        if (lp.exposena && (lp.expcomp != 0.f)) { //interior ellipse renforced lightness and chroma  //locallutili
+        if (lp.exposena && (lp.expcomp != 0.f || (exlocalcurve  && localexutili))) {  //interior ellipse renforced lightness and chroma  //locallutili
             float hueplus = hueref + dhuev;
             float huemoins = hueref - dhuev;
 
@@ -11523,6 +11523,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
 
             LabImage *bufexporig = nullptr;
             LabImage *bufexpfin = nullptr;
+            LabImage *bufexptemp = nullptr;
 
             int bfh = 0.f, bfw = 0.f;
             bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
@@ -11537,6 +11538,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
 
                 bufexporig = new LabImage(bfw, bfh); //buffer for data in zone limit
                 bufexpfin = new LabImage(bfw, bfh); //buffer for data in zone limit
+                bufexptemp = new LabImage(bfw, bfh); //buffer for data in zone limit
 
 
 #ifdef _OPENMP
@@ -11548,6 +11550,9 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                         bufexporig->L[ir][jr] = 0.f;
                         bufexporig->a[ir][jr] = 0.f;
                         bufexporig->b[ir][jr] = 0.f;
+                        bufexptemp->L[ir][jr] = 0.f;
+                        bufexptemp->a[ir][jr] = 0.f;
+                        bufexptemp->b[ir][jr] = 0.f;
                         bufexpfin->L[ir][jr] = 0.f;
                         bufexpfin->a[ir][jr] = 0.f;
                         bufexpfin->b[ir][jr] = 0.f;
@@ -11576,6 +11581,9 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                             bufexporig->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
                             bufexporig->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
                             bufexporig->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                            bufexptemp->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                            bufexptemp->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
+                            bufexptemp->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
 
                         }
                     }
@@ -11599,14 +11607,21 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
 
                                 float lh;
                                 lh = exlocalcurve[lighn]; // / ((lighn) / 1.9f) / 3.61f; //lh between 0 and 0 50 or more
-                                bufexporig->L[loy - begy][lox - begx] = lh;
+                                bufexptemp->L[loy - begy][lox - begx] = lh;
                             }
                         }
+
+                    if (lp.expcomp == 0.f) {
+                        lp.expcomp = 0.1f;    // to enabled
+                    }
+
+                    ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexptemp, bufexpfin, hltonecurveloc, shtonecurveloc, tonecurveloc);
+
+
+                } else {
+
+                    ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexporig, bufexpfin, hltonecurveloc, shtonecurveloc, tonecurveloc);
                 }
-
-
-                ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexporig, bufexpfin, hltonecurveloc, shtonecurveloc, tonecurveloc);
-
 
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
@@ -11629,13 +11644,14 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                     }
 
                 Expo_vibr_Local(1, buflight, bufl_ab, hueplus, huemoins, hueref, dhueex, chromaref, lumaref, lp, original, transformed, bufexpfin, cx, cy, sk);
-				//call Expo_vibr_Local with first parameter = 1 for exposure
+                //call Expo_vibr_Local with first parameter = 1 for exposure
             }
 
             if (call <= 3) {
 
                 delete bufexporig;
                 delete bufexpfin;
+                delete bufexptemp;
             }
 
         }
@@ -11748,7 +11764,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                     }
 
                 Expo_vibr_Local(2, buflight, bufl_ab, hueplus, huemoins, hueref, dhuev, chromaref, lumaref, lp, original, transformed, bufexpfin, cx, cy, sk);
-				//call Expo_vibr_Local with first parameter = 2 for vibrance
+                //call Expo_vibr_Local with first parameter = 2 for vibrance
 
             }
 
