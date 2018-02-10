@@ -835,7 +835,6 @@ int ImageIO::loadTIFF (Glib::ustring fname)
 
     allocate (width, height);
 
-    float minValue[3] = {0.f, 0.f, 0.f}, maxValue[3] = {0.f, 0.f, 0.f};
     unsigned char* linebuffer = new unsigned char[TIFFScanlineSize(in) * (samplesperpixel == 1 ? 3 : 1)];
 
     for (int row = 0; row < height; row++) {
@@ -861,31 +860,11 @@ int ImageIO::loadTIFF (Glib::ustring fname)
             }
         }
 
-        if (sampleFormat & (IIOSF_LOGLUV24 | IIOSF_LOGLUV32 | IIOSF_FLOAT)) {
-            setScanline (row, linebuffer, bitspersample, minValue, maxValue);
-        } else {
-            setScanline (row, linebuffer, bitspersample, nullptr, nullptr);
-        }
+        setScanline (row, linebuffer, bitspersample, nullptr, nullptr);
 
         if (pl && !(row % 100)) {
             pl->setProgress ((double)(row + 1) / height);
         }
-    }
-
-    if (sampleFormat & (IIOSF_FLOAT | IIOSF_LOGLUV24 | IIOSF_LOGLUV32)) {
-#ifdef _DEBUG
-
-        if (options.rtSettings.verbose)
-            printf("Normalizing \"%s\" image \"%s\" whose mini/maxi values are:\n   Red:   minimum value=%0.5f / maximum value=%0.5f\n   Green: minimum value=%0.5f / maximum value=%0.5f\n   Blue:  minimum value=%0.5f / maximum value=%0.5f\n",
-                   getType(), fname.c_str(),
-                   minValue[0], maxValue[0], minValue[1],
-                   maxValue[1], minValue[2], maxValue[2]
-                  );
-
-#endif
-        float minVal = rtengine::min(minValue[0], minValue[1], minValue[2]);
-        float maxVal = rtengine::max(maxValue[0], maxValue[1], maxValue[2]);
-        normalizeFloat(minVal, maxVal);
     }
 
     TIFFClose(in);
