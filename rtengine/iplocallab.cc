@@ -1737,7 +1737,7 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
                 }
 
 
-                float niv = maxran;
+            //    float niv = maxran;
 
                 for (int i = istart, ti = 0; i < tH; i++, ti++) {
                     for (int j = jstart, tj = 0; j < tW; j++, tj++) {
@@ -11606,7 +11606,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                                 float lighn = bufexporig->L[loy - begy][lox - begx];
 
                                 float lh;
-                                lh = exlocalcurve[lighn]; // / ((lighn) / 1.9f) / 3.61f; //lh between 0 and 0 50 or more
+                                lh = 0.5f*exlocalcurve[2.f*lighn]; // / ((lighn) / 1.9f) / 3.61f; //lh between 0 and 0 50 or more
                                 bufexptemp->L[loy - begy][lox - begx] = lh;
                             }
                         }
