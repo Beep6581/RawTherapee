@@ -2260,5 +2260,5 @@ SOFTPROOF_TOOLTIP;Soft-Proofing simuliert das Aussehen des Bildes:\n- für den D
 TP_COLORTONING_LABGRID;L*a*b* - Farbkorrektur
 TP_COLORTONING_LABGRID_VALUES;HL: a=%1, b=%2\nS: a=%3, b=%4
 TP_EXPOSURE_HISTMATCHING;Auto-Tonwertkurve
-TP_EXPOSURE_HISTMATCHING_TOOLTIP;Passt Regler und Kurven (mit Ausnahme der Belichtungskorrektur)\nautomatisch an das Aussehen des eingebetteten JPEG-Bildes an.
+TP_EXPOSURE_HISTMATCHING_TOOLTIP;Passt Regler und Kurven (mit Ausnahme der Belichtungskorrektur)\nautomatisch an, um das eingebettete JPEG-Bild zu simulieren.
 TP_TM_FATTAL_ANCHOR;Helligkeitsverschiebung
