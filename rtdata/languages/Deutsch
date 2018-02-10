@@ -49,6 +49,8 @@
 #48 13.12.2017 Erweiterung (TooWaBoo) RT 5.3
 #49 21.12.2017 Lokaler Kontrast (TooWaBoo) RT 5.3
 #50 07.01.2018 Crop Settings (TooWaBoo) RT 5.3
+#51 10.02.2018 Erweiterung (TooWaBoo) RT 5.3
+#52 10.02.2018 Korrektur (TooWaBoo) RT 5.3
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -2247,17 +2249,17 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
-!HISTORY_MSG_HISTMATCHING;Auto-matched Tone Curve
-!HISTORY_MSG_TM_FATTAL_ANCHOR;HDR TM - Anchor
-!MAIN_TAB_ADVANCED;Advanced
-!MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt-w</b>
-!PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
-!PARTIALPASTE_METADATA;Metadata mode
-!SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
-!SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
-!TP_COLORTONING_LABGRID;L*a*b* color correction grid
-!TP_COLORTONING_LABGRID_VALUES;HL: a=%1 b=%2\nS: a=%3 b=%4
-!TP_EXPOSURE_HISTMATCHING;Auto-matched Tone Curve
-!TP_EXPOSURE_HISTMATCHING_TOOLTIP;Automatically adjust sliders and curves (except exposure compensation) to match the look of the embedded JPEG thumbnail.
-!TP_TM_FATTAL_ANCHOR;Anchor
+HISTORY_MSG_COLORTONING_LABGRID_VALUE;(Farbanpassungen)\nL*a*b* - Farbkorrektur
+HISTORY_MSG_HISTMATCHING;(Belichtung)\nAuto-Tonwertkurve
+HISTORY_MSG_TM_FATTAL_ANCHOR;(HDR-Dynamikkompression)\nHelligkeitsverschiebung
+MAIN_TAB_ADVANCED;Erweitert
+MAIN_TAB_ADVANCED_TOOLTIP;Taste: <b>Alt</b> + <b>w</b>
+PARTIALPASTE_ADVANCEDGROUP;Erweiterte Einstellungen
+PARTIALPASTE_METADATA;Kopiermodus
+SOFTPROOF_GAMUTCHECK_TOOLTIP;Markiert Pixel deren Farbe außerhalb des Farbumfangs liegen in Abhängigkeit des:\n- Druckerprofils, wenn eines eingestellt und Soft-Proofing aktiviert ist.\n- Ausgabeprofils, wenn ein Druckerprofil nicht eingestellt und Soft-Proofing aktiviert ist.\n- Monitorprofils, wenn Soft-Proofing deaktiviert ist.
+SOFTPROOF_TOOLTIP;Soft-Proofing simuliert das Aussehen des Bildes:\n- für den Druck, wenn ein Druckerprofil unter Einstellungen > Farbmanagement eingestellt ist.\n- wenn es auf einem Bildschirm dargestellt wird, der das aktuelle Ausgabeprofil verwendet und kein Druckerprofil eingestellt ist.
+TP_COLORTONING_LABGRID;L*a*b* - Farbkorrektur
+TP_COLORTONING_LABGRID_VALUES;HL: a=%1, b=%2\nS: a=%3, b=%4
+TP_EXPOSURE_HISTMATCHING;Auto-Tonwertkurve
+TP_EXPOSURE_HISTMATCHING_TOOLTIP;Passt Regler und Kurven (mit Ausnahme der Belichtungskorrektur)\nautomatisch an, um das eingebettete JPEG-Bild zu simulieren.
+TP_TM_FATTAL_ANCHOR;Helligkeitsverschiebung
