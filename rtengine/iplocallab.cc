@@ -1743,7 +1743,7 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
                     for (int j = jstart, tj = 0; j < tW; j++, tj++) {
 
                         float L = Ltemp[ti * TSE + tj];
-                        float tonefactor = (2*L < MAXVALF ? 0.5f*hltonecurve[2*L] : 0.5f*CurveFactory::hlcurve(exp_scale, comp, hlrange, 2*L));// niv));
+                        float tonefactor = (2*L < MAXVALF ? hltonecurve[2*L] : CurveFactory::hlcurve(exp_scale, comp, hlrange, 2*L));// niv));
                         Ltemp[ti * TSE + tj] = L * tonefactor;
                     }
                 }
@@ -1754,7 +1754,7 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
                         float L = Ltemp[ti * TSE + tj];
                         //shadow tone curve
                         float Y = L;
-                        float tonefactor = 0.5f*shtonecurve[2*Y];
+                        float tonefactor = shtonecurve[2*Y];
                         Ltemp[ti * TSE + tj] = Ltemp[ti * TSE + tj] * tonefactor;
                     }
                 }
