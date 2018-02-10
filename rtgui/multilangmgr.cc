@@ -43,6 +43,8 @@ struct LocaleToLang : private std::map<std::pair<Glib::ustring, Glib::ustring>, 
         emplace (key ("cs", "CZ"), "Czech");
         emplace (key ("da", "DK"), "Dansk");
         emplace (key ("de", "DE"), "Deutsch");
+        emplace (key ("en", "GB"), "English (UK)");
+        emplace (key ("en", "US"), "English (US)");
         emplace (key ("es", "ES"), "Espanol");
         emplace (key ("eu", "ES"), "Euskara");
         emplace (key ("fr", "FR"), "Francais");
@@ -115,19 +117,21 @@ const LocaleToLang localeToLang;
 
 void setGtkLanguage(const Glib::ustring &language)
 {
-    std::string lang = localeToLang.getLocale(language);
-    const gchar *env_langc = g_getenv("LANG");
-    if(env_langc) {
-        const std::string env_lang(env_langc);
-        if (!env_lang.empty()) {
-            const std::string::size_type suffix_pos = env_lang.find_first_of(".");
-            if (suffix_pos != std::string::npos) {
-                lang += env_lang.substr(suffix_pos);
+    if(language != "default") { // nothing to change when using default
+        std::string lang = localeToLang.getLocale(language);
+        const gchar *env_langc = g_getenv("LANG");
+        if(env_langc) {
+            const std::string env_lang(env_langc);
+            if (!env_lang.empty()) {
+                const std::string::size_type suffix_pos = env_lang.find_first_of(".");
+                if (suffix_pos != std::string::npos) {
+                    lang += env_lang.substr(suffix_pos);
+                }
             }
         }
-    }
 
-    g_setenv("LANG", lang.c_str(), true);
+        g_setenv("LANG", lang.c_str(), true);
+    }
 }
 
 }
