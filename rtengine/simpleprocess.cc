@@ -1088,10 +1088,10 @@ private:
             LUTf lllocalcurve(65536, 0);
             LUTf cclocalcurve(65536, 0);
             LUTf sklocalcurve(65536, 0);
-            LUTf hltonecurveloc(32768, 0);
-            LUTf shtonecurveloc(32768, 0);
-            LUTf tonecurveloc(32768, 0);
-            LUTf exlocalcurve(32768, 0);
+            LUTf hltonecurveloc(65536, 0);
+            LUTf shtonecurveloc(65536, 0);
+            LUTf tonecurveloc(65536, 0);
+            LUTf exlocalcurve(65536, 0);
             //    int realspot = params.locallab.nbspot;
             int maxspot = settings->nspot + 1;
             ifstream fic0(datalab, ios::in);

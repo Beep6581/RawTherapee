@@ -279,28 +279,6 @@ public:
         }
     }
 
-    static inline float hlcurveloc(const float exp_scale, const float comp, const float hlrange, float level, float niv)
-    {
-        if (comp > 0.0) {
-            float val = level + (hlrange - niv);//655536 32768
-
-            if (val == 0.0f) { // to avoid division by zero
-                val = 0.000001f;
-            }
-
-            float Y = val * exp_scale / hlrange;
-            Y *= comp;
-
-            if (Y <= -1.0) { // to avoid log(<=0)
-                Y = -.999999f;
-            }
-
-            float R = hlrange / (val * comp);
-            return log1p(Y) * R;
-        } else {
-            return exp_scale;
-        }
-    }
 
 public:
     static void complexCurve(double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr,

@@ -1033,7 +1033,7 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
     const float slope = 1.055 * powf(start, 1.0 / gamma_ - 1) - 0.055 / start;
     const float mul = 1.055;
     const float add = 0.055;
-    float maxran = 32768.f; //65536
+    float maxran = 65536.f; //65536
 
     ecomp /= 100.;//for mip files in integer * 100
 
@@ -1049,7 +1049,7 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
 
     std::unique_ptr<DiagonalCurve> brightcurve;
 
-    // check if brightness curve is needed
+    // check if brightness curve is needed  ==> never in this case
     if (br > 0.00001 || br < -0.00001) {
 
         std::vector<double> brightcurvePoints(9);
@@ -1149,8 +1149,8 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
     shCurve[0] = CLIPD(val2) / val;
     // gamma correction
 
-    // val = Color::gammatab_srgb[0] / maxran;
-    val = Color::gammatab_srgb327[0] / 32767.f;
+     val = Color::gammatab_srgb[0] / maxran;
+   // val = Color::gammatab_srgb327[0] / 32767.f;
 
     // apply brightness curve
     if (brightcurve) {
@@ -1169,8 +1169,8 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
         shCurve[i] = val2 / val;
 
         // gamma correction
-        //  val = Color::gammatab_srgb[i] / maxran;
-        val = Color::gammatab_srgb327[i] / 32767.f;
+          val = Color::gammatab_srgb[i] / maxran;
+      //  val = Color::gammatab_srgb327[i] / 32767.f;
 
         // apply brightness curve
         if (brightcurve) {
@@ -1187,7 +1187,7 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    // check if contrast curve is needed
+    // check if contrast curve is needed ==> never in this case
     if (contr > 0.00001 || contr < -0.00001) {
 
         // compute mean luminance of the image with the curve applied

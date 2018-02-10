@@ -61,9 +61,9 @@ ImProcCoordinator::ImProcCoordinator()
       cclocalcurve(65536, 0),
       sklocalcurve(65536, 0),
       exlocalcurve(65536, 0),
-      hltonecurveloc(32768, 0), //32768
-      shtonecurveloc(32768, 0),
-      tonecurveloc(32768, 0),
+      hltonecurveloc(65536, 0), //32768
+      shtonecurveloc(65536, 0),
+      tonecurveloc(65536, 0),
       cl2Toningcurve(65536, 0),
       Noisecurve(65536, 0),
       NoiseCCcurve(65536, 0),

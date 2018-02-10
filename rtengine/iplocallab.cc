@@ -1688,7 +1688,7 @@ void ImProcFunctions::vibrancelocal(int bfw, int bfh, LabImage* lab,  LabImage* 
 void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabImage* bufexporig, LabImage* lab,  LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve)
 {
 
-    float maxran = 32768.f; //65536
+    float maxran = 65536.f; //65536
     const float exp_scale = pow(2.0, lp.expcomp); //lp.expcomp
     const float comp = (max(0.0, lp.expcomp) + 1.0) * lp.hlcomp / 100.0;
     const float shoulder = ((maxran / max(1.0f, exp_scale)) * (lp.hlcompthr / 200.0)) + 0.1;
@@ -1730,7 +1730,7 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
 
                 for (int i = istart, ti = 0; i < tH; i++, ti++) {
                     for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                        Ltemp[ti * TSE + tj] = 2.f * bufexporig->L[i][j];
+                        Ltemp[ti * TSE + tj] = bufexporig->L[i][j];
                         atemp[ti * TSE + tj] = bufexporig->a[i][j];
                         btemp[ti * TSE + tj] = bufexporig->b[i][j];;
                     }
@@ -1743,7 +1743,7 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
                     for (int j = jstart, tj = 0; j < tW; j++, tj++) {
 
                         float L = Ltemp[ti * TSE + tj];
-                        float tonefactor = (L < MAXVALF ? hltonecurve[L] : CurveFactory::hlcurveloc(exp_scale, comp, hlrange, L, niv));
+                        float tonefactor = (2*L < MAXVALF ? 0.5f*hltonecurve[2*L] : 0.5f*CurveFactory::hlcurve(exp_scale, comp, hlrange, 2*L));// niv));
                         Ltemp[ti * TSE + tj] = L * tonefactor;
                     }
                 }
@@ -1754,7 +1754,7 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
                         float L = Ltemp[ti * TSE + tj];
                         //shadow tone curve
                         float Y = L;
-                        float tonefactor = shtonecurve[Y];
+                        float tonefactor = 0.5f*shtonecurve[2*Y];
                         Ltemp[ti * TSE + tj] = Ltemp[ti * TSE + tj] * tonefactor;
                     }
                 }
@@ -1791,7 +1791,7 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
 
-                            lab->L[i][j] = 0.5f * Ltemp[ti * TSE + tj];
+                            lab->L[i][j] = Ltemp[ti * TSE + tj];
                             lab->a[i][j] = atemp[ti * TSE + tj];
                             lab->b[i][j] = btemp[ti * TSE + tj];
                         }
@@ -6795,7 +6795,7 @@ void ImProcFunctions::Expo_vibr_Local(int senstype, float **buflight, float **bu
                     if (rchro < kcr && chromaref > kcr) { // reduce artifacts in grey tones near hue spot and improve algorithm
                         falL *= pow(rchro / kcr, lp.iterat / 10.f);
                     }
-
+					if(varsens > 99.f) {falu = 1.f; kch=1.f; fach=1.f; }
 
                     if (rL > 0.1f) { //to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
                         switch (zone) {

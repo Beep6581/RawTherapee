@@ -904,9 +904,9 @@ void Crop::update(int todo)
         LUTf sklocalcurve2(65536, 0);
         bool localexutili = parent->localexutili;
         LUTf exlocalcurve2(65536, 0);
-        LUTf hltonecurveloc2(32768, 0); //65536
-        LUTf shtonecurveloc2(32768, 0);
-        LUTf tonecurveloc2(32768, 0);
+        LUTf hltonecurveloc2(65536, 0); //65536
+        LUTf shtonecurveloc2(65536, 0);
+        LUTf tonecurveloc2(65536, 0);
         bool LHutili = parent->LHutili;
         bool HHutili = parent->HHutili;
 
