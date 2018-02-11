@@ -43,7 +43,11 @@ struct LocaleToLang : private std::map<std::pair<Glib::ustring, Glib::ustring>, 
         emplace (key ("cs", "CZ"), "Czech");
         emplace (key ("da", "DK"), "Dansk");
         emplace (key ("de", "DE"), "Deutsch");
+#ifdef __APPLE__
+        emplace (key ("en", "UK"), "English (UK)");
+#else
         emplace (key ("en", "GB"), "English (UK)");
+#endif
         emplace (key ("en", "US"), "English (US)");
         emplace (key ("es", "ES"), "Espanol");
         emplace (key ("eu", "ES"), "Euskara");
