@@ -2683,16 +2683,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 CurveFactory::curveskLocal(localskutili, params.locallab.skintonescurve, sklocalcurve, sca);
                 CurveFactory::curveexLocal(localexutili, params.locallab.excurve, exlocalcurve, sca);
                 //provisory
-                double br = 0.;
-                double contr = 0.;
                 double ecomp = params.locallab.expcomp;
                 double black = params.locallab.black;
                 double hlcompr = params.locallab.hlcompr;
                 double hlcomprthresh = params.locallab.hlcomprthresh;
                 double shcompr = params.locallab.shcompr;
 
-                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, contr,
-                                                lhist16, hltonecurveloc, shtonecurveloc, tonecurveloc,
+                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr,
+                                                hltonecurveloc, shtonecurveloc, tonecurveloc,
                                                 sca);
 
                 double huere, chromare, lumare, huerefblu;
@@ -3361,16 +3359,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 //  localexutili = true;
             }
 
-            double br = 0.;
-            double contr = 0.;
             double ecomp = params.locallab.expcomp;
             double black = params.locallab.black;
             double hlcompr = params.locallab.hlcompr;
             double hlcomprthresh = params.locallab.hlcomprthresh;
             double shcompr = params.locallab.shcompr;
 
-            CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, contr,
-                                            lhist16, hltonecurveloc, shtonecurveloc, tonecurveloc,
+            CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr,
+                                            hltonecurveloc, shtonecurveloc, tonecurveloc,
                                             sca);
 
             CurveFactory::curveLocal(locallutili, params.locallab.llcurve, lllocalcurve, sca);

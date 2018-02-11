@@ -287,8 +287,8 @@ public:
 
                              int skip = 1);
 
-    static void complexCurvelocal(double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr,
-                                  LUTu & histogram, LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
+    static void complexCurvelocal(double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr,
+                                  LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
                                   int skip = 1);
 
     static void curveBW(const std::vector<double>& curvePointsbw, const std::vector<double>& curvePointsbw2, const LUTu & histogrambw, LUTu & outBeforeCCurveHistogrambw,
@@ -1147,11 +1147,11 @@ inline float WeightedStdToneCurve::Triangle(float a, float a1, float b) const
 #ifdef __SSE2__
 inline vfloat WeightedStdToneCurve::Triangle(vfloat a, vfloat a1, vfloat b) const
 {
-        vfloat a2 = a1 - a;
-        vmask cmask = vmaskf_lt(b, a);
-        vfloat b3 = vself(cmask, b, F2V(65535.f) - b);
-        vfloat a3 = vself(cmask, a, F2V(65535.f) - a);
-        return b + a2 * b3 / a3;
+    vfloat a2 = a1 - a;
+    vmask cmask = vmaskf_lt(b, a);
+    vfloat b3 = vself(cmask, b, F2V(65535.f) - b);
+    vfloat a3 = vself(cmask, a, F2V(65535.f) - a);
+    return b + a2 * b3 / a3;
 }
 #endif
 
@@ -1182,17 +1182,19 @@ inline void WeightedStdToneCurve::Apply(float& r, float& g, float& b) const
     b = CLIP<float> (b1 * 0.25f + b2 * 0.25f + b3 * 0.50f);
 }
 
-inline void WeightedStdToneCurve::BatchApply(const size_t start, const size_t end, float *r, float *g, float *b) const {
-    assert (lutToneCurve);
-    assert (lutToneCurve.getClip() & LUT_CLIP_BELOW);
-    assert (lutToneCurve.getClip() & LUT_CLIP_ABOVE);
+inline void WeightedStdToneCurve::BatchApply(const size_t start, const size_t end, float *r, float *g, float *b) const
+{
+    assert(lutToneCurve);
+    assert(lutToneCurve.getClip() & LUT_CLIP_BELOW);
+    assert(lutToneCurve.getClip() & LUT_CLIP_ABOVE);
 
     // All pointers must have the same alignment for SSE usage. In the loop body below,
     // we will only check `r`, assuming that the same result would hold for `g` and `b`.
-    assert (reinterpret_cast<uintptr_t>(r) % 16 == reinterpret_cast<uintptr_t>(g) % 16);
-    assert (reinterpret_cast<uintptr_t>(g) % 16 == reinterpret_cast<uintptr_t>(b) % 16);
+    assert(reinterpret_cast<uintptr_t>(r) % 16 == reinterpret_cast<uintptr_t>(g) % 16);
+    assert(reinterpret_cast<uintptr_t>(g) % 16 == reinterpret_cast<uintptr_t>(b) % 16);
 
     size_t i = start;
+
     while (true) {
         if (i >= end) {
             // If we get to the end before getting to an aligned address, just return.
@@ -1204,6 +1206,7 @@ inline void WeightedStdToneCurve::BatchApply(const size_t start, const size_t en
             break;
 #endif
         }
+
         Apply(r[i], g[i], b[i]);
         i++;
     }
@@ -1238,6 +1241,7 @@ inline void WeightedStdToneCurve::BatchApply(const size_t start, const size_t en
     for (; i < end; ++i) {
         Apply(r[i], g[i], b[i]);
     }
+
 #endif
 }
 
@@ -1274,6 +1278,7 @@ inline void SatAndValueBlendingToneCurve::Apply(float& r, float& g, float& b) co
         const float coef = (newLum - lum) / lum ;
         dV = v * coef;
     }
+
     Color::hsv2rgbdcp(h, s, v + dV, r, g, b);
 }
 

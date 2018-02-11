@@ -2151,16 +2151,14 @@ private:
 
                     CurveFactory::curveexLocal(localexutili, params.locallab.excurve, exlocalcurve, 1);
                     //provisory
-                    double br = 0.;
-                    double contr = 0.;
                     double ecomp = params.locallab.expcomp;
                     double black = params.locallab.black;
                     double hlcompr = params.locallab.hlcompr;
                     double hlcomprthresh = params.locallab.hlcomprthresh;
                     double shcompr = params.locallab.shcompr;
 
-                    CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, contr,
-                                                    hist16, hltonecurveloc, shtonecurveloc, tonecurveloc,
+                    CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr,
+                                                    hltonecurveloc, shtonecurveloc, tonecurveloc,
                                                     1);
 
                     double huere, chromare, lumare, huerefblu;

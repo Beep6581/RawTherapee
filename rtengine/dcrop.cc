@@ -1290,16 +1290,14 @@ void Crop::update(int todo)
                         CurveFactory::curveexLocal(localexutili, params.locallab.excurve, exlocalcurve2, sca);
 
 
-                        double br = 0.;
-                        double contr = 0.;
                         double ecomp = params.locallab.expcomp;
                         double black = params.locallab.black;
                         double hlcompr = params.locallab.hlcompr;
                         double hlcomprthresh = params.locallab.hlcomprthresh;
                         double shcompr = params.locallab.shcompr;
 
-                        CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, contr,
-                                                        parent->lhist16, hltonecurveloc2, shtonecurveloc2, tonecurveloc2,
+                        CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr,
+                                                        hltonecurveloc2, shtonecurveloc2, tonecurveloc2,
                                                         sca);
 
                         params.locallab.huerefblur = (parent->huerefblurs[sp]) / 100.f;
@@ -1782,16 +1780,14 @@ void Crop::update(int todo)
                 CurveFactory::curveskLocal(localskutili, params.locallab.skintonescurve, sklocalcurve2, sca);
                 CurveFactory::curveexLocal(localexutili, params.locallab.excurve, exlocalcurve2, sca);
 
-                double br = 0.;
-                double contr = 0.;
                 double ecomp = params.locallab.expcomp;
                 double black = params.locallab.black;
                 double hlcompr = params.locallab.hlcompr;
                 double hlcomprthresh = params.locallab.hlcomprthresh;
                 double shcompr = params.locallab.shcompr;
 
-                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, contr,
-                                                parent->lhist16, hltonecurveloc2, shtonecurveloc2, tonecurveloc2,
+                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr,
+                                                hltonecurveloc2, shtonecurveloc2, tonecurveloc2,
                                                 sca);
 
                 params.locallab.huerefblur = (parent->huerefblurs[sp]) / 100.f;

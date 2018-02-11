@@ -1020,8 +1020,7 @@ void CurveFactory::complexCurve(double ecomp, double black, double hlcompr, doub
 
 
 void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr, double hlcomprthresh,
-                                     double shcompr, double br, double contr,
-                                     LUTu & histogram,
+                                     double shcompr,
                                      LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
                                      int skip)
 {
@@ -1029,56 +1028,22 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
     // the curve shapes are defined in sRGB gamma, but the output curves will operate on linear floating point data,
     // hence we do both forward and inverse gamma conversions here.
     const float gamma_ = Color::sRGBGammaCurve;
-    const float start = expf(gamma_ * logf(-0.055 / ((1.0 / gamma_ - 1.0) * 1.055)));
-    const float slope = 1.055 * powf(start, 1.0 / gamma_ - 1) - 0.055 / start;
-    const float mul = 1.055;
-    const float add = 0.055;
+    const float start = expf(gamma_ * logf(-0.055f / ((1.0f / gamma_ - 1.0f) * 1.055f)));
+    const float slope = 1.055f * powf(start, 1.0f / gamma_ - 1.f) - 0.055f / start;
+    const float mul = 1.055f;
+    const float add = 0.055f;
     float maxran = 65536.f; //65536
 
     ecomp /= 100.;//for mip files in integer * 100
 
     // a: slope of the curve, black: starting point at the x axis
-    const float a = powf(2.0, ecomp);
+    const float a = powf(2.0f, ecomp);
 
-    // clear array that stores histogram valid before applying the custom curve
-    // outBeforeCCurveHistogram.clear();
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // tone curve base. a: slope (from exp.comp.), b: black, def_mul: max. x value (can be>1), hr,sr: highlight,shadow recovery
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    std::unique_ptr<DiagonalCurve> brightcurve;
-
-    // check if brightness curve is needed  ==> never in this case
-    if (br > 0.00001 || br < -0.00001) {
-
-        std::vector<double> brightcurvePoints(9);
-        brightcurvePoints[0] = DCT_NURBS;
-
-        brightcurvePoints[1] = 0.; //black point.  Value in [0 ; 1] range
-        brightcurvePoints[2] = 0.; //black point.  Value in [0 ; 1] range
-
-        if (br > 0) {
-            brightcurvePoints[3] = 0.1; //toe point
-            brightcurvePoints[4] = 0.1 + br / 150.0; //value at toe point
-
-            brightcurvePoints[5] = 0.7; //shoulder point
-            brightcurvePoints[6] = min(1.0, 0.7 + br / 300.0);  //value at shoulder point
-        } else {
-            brightcurvePoints[3] = max(0.0, 0.1 - br / 150.0);  //toe point
-            brightcurvePoints[4] = 0.1; //value at toe point
-
-            brightcurvePoints[5] = 0.7 - br / 300.0; //shoulder point
-            brightcurvePoints[6] = 0.7; //value at shoulder point
-        }
-
-        brightcurvePoints[7] = 1.; // white point
-        brightcurvePoints[8] = 1.; // value at white point
-
-        brightcurve = std::unique_ptr<DiagonalCurve> (new DiagonalCurve(brightcurvePoints, CURVES_MIN_POLY_POINTS / skip));
-    }
-
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     hlCurve.setClip(LUT_CLIP_BELOW);  // used LUT_CLIP_BELOW, because we want to have a baseline of 2^expcomp in this curve. If we don't clip the lut we get wrong values, see Issue 2621 #14 for details
     float exp_scale = a;
@@ -1101,7 +1066,7 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
             // change to [0,1] range
             float val = (float)i - shoulder;
             float R = val * comp / (scalemshoulder);
-            hlCurve[i] = xlog(1.0 + R * exp_scale) / R;  // don't use xlogf or 1.f here. Leads to errors caused by too low precision
+            hlCurve[i] = xlog(1.0f + R * exp_scale) / R;  // don't use xlogf or 1.f here. Leads to errors caused by too low precision
             i++;
         }
 
@@ -1128,7 +1093,7 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
         // for (int i = shoulder + 1; i < 0x10000; i++) {
         for (int i = shoulder + 1; i < maxran; i++) {
             // change to [0,1] range
-            hlCurve[i] = xlog(1.0 + R * exp_scale) / R;  // don't use xlogf or 1.f here. Leads to errors caused by too low precision
+            hlCurve[i] = xlog(1.0f + R * exp_scale) / R;  // don't use xlogf or 1.f here. Leads to errors caused by too low precision
             R += increment;
         }
 
@@ -1149,14 +1114,8 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
     shCurve[0] = CLIPD(val2) / val;
     // gamma correction
 
-     val = Color::gammatab_srgb[0] / maxran;
-   // val = Color::gammatab_srgb327[0] / 32767.f;
-
-    // apply brightness curve
-    if (brightcurve) {
-        val = brightcurve->getVal(val);     // TODO: getVal(double) is very slow! Optimize with a LUTf
-    }
-
+    val = Color::gammatab_srgb[0] / maxran;
+    // val = Color::gammatab_srgb327[0] / 32767.f;
     // store result in a temporary array
     dcurve[0] = CLIPD(val);
 
@@ -1169,67 +1128,12 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
         shCurve[i] = val2 / val;
 
         // gamma correction
-          val = Color::gammatab_srgb[i] / maxran;
-      //  val = Color::gammatab_srgb327[i] / 32767.f;
-
-        // apply brightness curve
-        if (brightcurve) {
-            val = CLIPD(brightcurve->getVal(val));     // TODO: getVal(double) is very slow! Optimize with a LUTf
-        }
-
+        val = Color::gammatab_srgb[i] / maxran;
+        //  val = Color::gammatab_srgb327[i] / 32767.f;
         // store result in a temporary array
         dcurve[i] = val;
     }
 
-    brightcurve = nullptr;
-
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-    // check if contrast curve is needed ==> never in this case
-    if (contr > 0.00001 || contr < -0.00001) {
-
-        // compute mean luminance of the image with the curve applied
-        unsigned int sum = 0;
-        float avg = 0;
-
-        //    for (int i = 0; i <= 0xffff; i++) {
-        for (int i = 0; i <= (maxran - 1.f); i++) {
-            float fi = i * hlCurve[i];
-            avg += dcurve[(int)(shCurve[fi] * fi)] * histogram[i];
-            sum += histogram[i];
-        }
-
-        avg /= sum;
-
-        //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        std::vector<double> contrastcurvePoints(9);
-        contrastcurvePoints[0] = DCT_NURBS;
-
-        contrastcurvePoints[1] = 0; //black point.  Value in [0 ; 1] range
-        contrastcurvePoints[2] = 0; //black point.  Value in [0 ; 1] range
-
-        contrastcurvePoints[3] = avg - avg * (0.6 - contr / 250.0); //toe point
-        contrastcurvePoints[4] = avg - avg * (0.6 + contr / 250.0); //value at toe point
-
-        contrastcurvePoints[5] = avg + (1 - avg) * (0.6 - contr / 250.0); //shoulder point
-        contrastcurvePoints[6] = avg + (1 - avg) * (0.6 + contr / 250.0); //value at shoulder point
-
-        contrastcurvePoints[7] = 1.; // white point
-        contrastcurvePoints[8] = 1.; // value at white point
-
-        const DiagonalCurve contrastcurve(contrastcurvePoints, CURVES_MIN_POLY_POINTS / skip);
-
-        //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        // apply contrast enhancement
-        // for (int i = 0; i <= 0xffff; i++) {
-        for (int i = 0; i <= (maxran - 1.f); i++) {
-            dcurve[i] = contrastcurve.getVal(dcurve[i]);
-        }
-    }
-
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 #ifdef __SSE2__
     vfloat gamma_v = F2V(gamma_);
@@ -1257,6 +1161,7 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
         outCurve[i] = ((maxran - 1.) * val);
     }
 
+//outcurve not used now
 #endif
 
 }
