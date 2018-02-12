@@ -485,13 +485,13 @@ Locallab::Locallab():
     lightness->setAdjusterListener(this);
 
     contrast->setAdjusterListener(this);
-
+/*
     Gtk::Image* iblueredL = Gtk::manage(new RTImage("ajd-wb-bluered1.png"));
     Gtk::Image* iblueredR = Gtk::manage(new RTImage("ajd-wb-bluered2.png"));
 
     warm = Gtk::manage(new Adjuster(M("TP_LOCALLAB_WARM"), -100., 100., 1., 0., iblueredL, iblueredR));
     warm->setAdjusterListener(this);
-
+*/
     chroma->setAdjusterListener(this);
 
     sensi->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
@@ -510,6 +510,12 @@ Locallab::Locallab():
     shcompr->setAdjusterListener(this);
     sensiex->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
     sensiex->setAdjusterListener(this);
+    Gtk::Image* iblueredL = Gtk::manage(new RTImage("ajd-wb-bluered1.png"));
+    Gtk::Image* iblueredR = Gtk::manage(new RTImage("ajd-wb-bluered2.png"));
+
+    warm = Gtk::manage(new Adjuster(M("TP_LOCALLAB_WARM"), -100., 100., 1., 0., iblueredL, iblueredR));
+    warm->setAdjusterListener(this);
+    warm->set_tooltip_text(M("TP_LOCALLAB_WARM_TOOLTIP"));
 
     radius->setAdjusterListener(this);
     strength->setAdjusterListener(this);
@@ -890,7 +896,7 @@ Locallab::Locallab():
     superFrame->add(*superBox);
     colorBox->pack_start(*superFrame);
 
-    colorBox->pack_start(*warm);
+//    colorBox->pack_start(*warm);
     colorBox->pack_start(*sensi);
     /*
         dustFrame->set_label_align(0.025, 0.5);
@@ -934,6 +940,7 @@ Locallab::Locallab():
     exposeBox->pack_start(*hlcomprthresh);
     exposeBox->pack_start(*black);
     exposeBox->pack_start(*shcompr);
+    exposeBox->pack_start(*warm);
     exposeBox->pack_start(*sensiex);
     exposeBox->pack_start(*curveEditorG);
 
@@ -3877,7 +3884,7 @@ void Locallab::inversChanged()
     }
 
     if (invers->get_active()) {
-        warm->hide();
+      //  warm->hide();
         sensi->show();
         llCurveEditorG->hide();
         curvactiv->hide();
@@ -3887,7 +3894,7 @@ void Locallab::inversChanged()
 
     } else {
         sensi->show();
-        warm->show();
+      //  warm->show();
         llCurveEditorG->show();
         curvactiv->show();
         qualitycurveMethod->show();

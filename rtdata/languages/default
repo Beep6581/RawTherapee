@@ -1945,7 +1945,8 @@ TP_LOCALLAB_CURVEEDITOR_TONES_LABEL;Tone curve
 TP_LOCALLAB_TRANSIT;Transition
 TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and unaffected areas.
 TP_LOCALLAB_VIBRANCE;Vibrance
-TP_LOCALLAB_WARM;Warm - Cool
+TP_LOCALLAB_WARM;Warm - Cool & Color artifacts
+TP_LOCALLAB_WARM_TOOLTIP;This slider use Ciecam algorithm and acts as White Balance, it can warm or cool the area selected.\nIt can also in some cases reduce color artifacts.
 TP_LOCAL_HEIGHT;Bottom
 TP_LOCAL_HEIGHT_T;Top
 TP_LOCAL_WIDTH;Right

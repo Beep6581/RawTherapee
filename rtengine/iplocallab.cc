@@ -2345,7 +2345,7 @@ void ImProcFunctions::cat02_Local(float **buflightcat, float **buf_a_cat, float 
 //local cat02
     BENCHFUN {
         const float ach = (float)lp.trans / 100.f;
-        float varsens =  lp.sens;
+        float varsens =  lp.sensex;
 
 
         //chroma
@@ -10921,17 +10921,17 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
         }
 
 
-        if (lp.war != 0  && !lp.inv  && lp.colorena) {
-            float hueplus = hueref + dhue;
-            float huemoins = hueref - dhue;
+        if (lp.war != 0  && lp.exposena) {//move cat02WB to exposure ==> reduce color artifacts
+            float hueplus = hueref + dhueex;
+            float huemoins = hueref - dhueex;
             // float ddhue = 0.f;
 
             if (hueplus > rtengine::RT_PI) {
-                hueplus = hueref + dhue - 2.f * rtengine::RT_PI;
+                hueplus = hueref + dhueex - 2.f * rtengine::RT_PI;
             }
 
             if (huemoins < -rtengine::RT_PI) {
-                huemoins = hueref - dhue + 2.f * rtengine::RT_PI;
+                huemoins = hueref - dhueex + 2.f * rtengine::RT_PI;
             }
 
             int bfh = 0.f, bfw = 0.f;
@@ -11011,7 +11011,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                     }
                 }
 
-            cat02_Local(buflightcat, buf_a_cat, buf_b_cat, hueplus, huemoins, hueref, dhue, chromaref, lumaref, lp, original, transformed, bufcat02fin, cx, cy, sk);
+            cat02_Local(buflightcat, buf_a_cat, buf_b_cat, hueplus, huemoins, hueref, dhueex, chromaref, lumaref, lp, original, transformed, bufcat02fin, cx, cy, sk);
 
 
 
