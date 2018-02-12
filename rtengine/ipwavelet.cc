@@ -2745,7 +2745,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
 
         float edgePrecalc = 1.f + refin; //estimate edge "pseudo variance"
 
-        if(cp.EDmet == 2) { //curve
+        if(cp.EDmet == 2 && MaxP[level] > 0.f) { //curve
             //  if(exa) {//curve
             float insigma = 0.666f; //SD
             float logmax = log(MaxP[level]); //log Max
