@@ -773,12 +773,15 @@ HISTORY_MSG_490;(HDR-Dynamikkompression)\nIntensität
 HISTORY_MSG_491;(Weißabgleich)
 HISTORY_MSG_492;(RGB-Kurven)
 HISTORY_MSG_493;(L*a*b*)
+HISTORY_MSG_COLORTONING_LABGRID_VALUE;(Farbanpassungen)\nL*a*b* - Farbkorrektur
+HISTORY_MSG_HISTMATCHING;(Belichtung)\nAuto-Tonwertkurve
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;(Lokaler Kontrast)\nIntensität
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;(Lokaler Kontrast)\nDunkle Bereiche
 HISTORY_MSG_LOCALCONTRAST_ENABLED;(Lokaler Kontrast)
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;(Lokaler Kontrast)\nHelle Bereiche
 HISTORY_MSG_LOCALCONTRAST_RADIUS;(Lokaler Kontrast)\nRadius
 HISTORY_MSG_METADATA_MODE;(Metadaten)\nKopiermodus
+HISTORY_MSG_TM_FATTAL_ANCHOR;(HDR-Dynamikkompression)\nHelligkeitsverschiebung
 HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
 HISTORY_SNAPSHOT;Schnappschuss
@@ -864,6 +867,8 @@ MAIN_MSG_QOVERWRITE;Möchten Sie die Datei überschreiben?
 MAIN_MSG_SETPATHFIRST;Um diese Funktion zu nutzen, müssen Sie zuerst in den Einstellungen einen Zielpfad setzen.
 MAIN_MSG_TOOMANYOPENEDITORS;Zu viele geöffnete Editorfenster.\nUm fortzufahren, schließen sie bitte ein Editorfenster.
 MAIN_MSG_WRITEFAILED;Fehler beim Schreiben von\n\n<b>"%1"</b>\n\nStellen Sie sicher, dass das Verzeichnis existiert und dass Sie Schreibrechte besitzen.
+MAIN_TAB_ADVANCED;Erweitert
+MAIN_TAB_ADVANCED_TOOLTIP;Taste: <b>Alt</b> + <b>w</b>
 MAIN_TAB_COLOR;Farbe
 MAIN_TAB_COLOR_TOOLTIP;Taste: <b>Alt</b> + <b>c</b>
 MAIN_TAB_DETAIL;Details
@@ -918,6 +923,7 @@ NAVIGATOR_XY_FULL;Breite = %1, Höhe = %2
 NAVIGATOR_XY_NA;x: --, y: --
 OPTIONS_DEFIMG_MISSING;Die Standard-Profile für <b>Nicht-RAW-Bilder</b> wurden nicht gefunden oder nicht festgelegt.\n\nBitte prüfen Sie das Profil-Verzeichnis, es fehlt möglicherweise oder ist beschädigt.\n\nEs werden stattdessen interne Standardwerte verwendet.
 OPTIONS_DEFRAW_MISSING;Die Standard-Profile für <b>RAW-Bilder</b> wurden nicht gefunden oder nicht festgelegt.\n\nBitte prüfen Sie das Profil-Verzeichnis, es fehlt möglicherweise oder ist beschädigt.\n\nEs werden stattdessen interne Standardwerte verwendet.
+PARTIALPASTE_ADVANCEDGROUP;Erweiterte Einstellungen
 PARTIALPASTE_BASICGROUP;Basisparameter
 PARTIALPASTE_CACORRECTION;Farbsaum entfernen
 PARTIALPASTE_CHANNELMIXER;RGB-Kanalmixer
@@ -957,6 +963,7 @@ PARTIALPASTE_LABCURVE;L*a*b* - Einstellungen
 PARTIALPASTE_LENSGROUP;Objektivkorrekturen
 PARTIALPASTE_LENSPROFILE;Objektivkorrekturprofil
 PARTIALPASTE_LOCALCONTRAST;Lokaler Kontrast
+PARTIALPASTE_METADATA;Kopiermodus
 PARTIALPASTE_METAGROUP;Metadaten
 PARTIALPASTE_PCVIGNETTE;Vignettierungsfilter
 PARTIALPASTE_PERSPECTIVE;Perspektive
@@ -1276,6 +1283,8 @@ SAVEDLG_SUBSAMP_TOOLTIP;Beste Kompression: 4:2:0\nAusgeglichen: 4:2:2\nBeste Qua
 SAVEDLG_TIFFUNCOMPRESSED;Unkomprimiertes TIFF
 SAVEDLG_WARNFILENAME;Die Datei wird gespeichert als
 SHCSELECTOR_TOOLTIP;Um die 3 Regler zurückzusetzen, rechte Maustaste klicken.
+SOFTPROOF_GAMUTCHECK_TOOLTIP;Markiert Pixel deren Farbe außerhalb des Farbumfangs liegen in Abhängigkeit des:\n- Druckerprofils, wenn eines eingestellt und Soft-Proofing aktiviert ist.\n- Ausgabeprofils, wenn ein Druckerprofil nicht eingestellt und Soft-Proofing aktiviert ist.\n- Monitorprofils, wenn Soft-Proofing deaktiviert ist.
+SOFTPROOF_TOOLTIP;Soft-Proofing simuliert das Aussehen des Bildes:\n- für den Druck, wenn ein Druckerprofil unter Einstellungen > Farbmanagement eingestellt ist.\n- wenn es auf einem Bildschirm dargestellt wird, der das aktuelle Ausgabeprofil verwendet und kein Druckerprofil eingestellt ist.
 THRESHOLDSELECTOR_B;Unten
 THRESHOLDSELECTOR_BL;Unten-Links
 THRESHOLDSELECTOR_BR;Unten-Rechts
@@ -1454,6 +1463,8 @@ TP_COLORTONING_HIGHLIGHT;Lichter
 TP_COLORTONING_HUE;Farbton
 TP_COLORTONING_LAB;L*a*b*-Überlagerung
 TP_COLORTONING_LABEL;Farbanpassungen
+TP_COLORTONING_LABGRID;L*a*b* - Farbkorrektur
+TP_COLORTONING_LABGRID_VALUES;HL: a=%1, b=%2\nS: a=%3, b=%4
 TP_COLORTONING_LUMA;Luminanz
 TP_COLORTONING_LUMAMODE;Luminanz schützen
 TP_COLORTONING_LUMAMODE_TOOLTIP;Wenn aktiviert, wird die Luminanz der Farben Rot, Grün, Cyan, Blau... geschützt.
@@ -1599,6 +1610,8 @@ TP_EXPOSURE_CURVEEDITOR1;Tonwertkurve 1
 TP_EXPOSURE_CURVEEDITOR2;Tonwertkurve 2
 TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Um mit den doppelten Tonwert-Kurven die besten Ergenisse zu erzielen, lesen Sie bitte den Abschnitt im Handbuch unter:\nDer Werkzeugkasten > Reiter Belichtung > Belichtungsbereich > Tonwertkurve.
 TP_EXPOSURE_EXPCOMP;Belichtungskorrektur
+TP_EXPOSURE_HISTMATCHING;Auto-Tonwertkurve
+TP_EXPOSURE_HISTMATCHING_TOOLTIP;Passt Regler und Kurven (mit Ausnahme der Belichtungskorrektur)\nautomatisch an, um das eingebettete JPEG-Bild zu simulieren.
 TP_EXPOSURE_LABEL;Belichtung
 TP_EXPOSURE_SATURATION;Sättigung
 TP_EXPOSURE_TCMODE_FILMLIKE;Filmähnlich
@@ -2000,6 +2013,7 @@ TP_SHARPENMICRO_LABEL;Mikrokontrast
 TP_SHARPENMICRO_MATRIX;3×3-Matrix statt 5×5-Matrix
 TP_SHARPENMICRO_UNIFORMITY;Gleichmäßigkeit
 TP_TM_FATTAL_AMOUNT;Intensität
+TP_TM_FATTAL_ANCHOR;Helligkeitsverschiebung
 TP_TM_FATTAL_LABEL;HDR-Dynamikkompression
 TP_TM_FATTAL_THRESHOLD;Schwelle
 TP_VIBRANCE_AVOIDCOLORSHIFT;Farbverschiebungen vermeiden
@@ -2245,21 +2259,3 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-HISTORY_MSG_COLORTONING_LABGRID_VALUE;(Farbanpassungen)\nL*a*b* - Farbkorrektur
-HISTORY_MSG_HISTMATCHING;(Belichtung)\nAuto-Tonwertkurve
-HISTORY_MSG_TM_FATTAL_ANCHOR;(HDR-Dynamikkompression)\nHelligkeitsverschiebung
-MAIN_TAB_ADVANCED;Erweitert
-MAIN_TAB_ADVANCED_TOOLTIP;Taste: <b>Alt</b> + <b>w</b>
-PARTIALPASTE_ADVANCEDGROUP;Erweiterte Einstellungen
-PARTIALPASTE_METADATA;Kopiermodus
-SOFTPROOF_GAMUTCHECK_TOOLTIP;Markiert Pixel deren Farbe außerhalb des Farbumfangs liegen in Abhängigkeit des:\n- Druckerprofils, wenn eines eingestellt und Soft-Proofing aktiviert ist.\n- Ausgabeprofils, wenn ein Druckerprofil nicht eingestellt und Soft-Proofing aktiviert ist.\n- Monitorprofils, wenn Soft-Proofing deaktiviert ist.
-SOFTPROOF_TOOLTIP;Soft-Proofing simuliert das Aussehen des Bildes:\n- für den Druck, wenn ein Druckerprofil unter Einstellungen > Farbmanagement eingestellt ist.\n- wenn es auf einem Bildschirm dargestellt wird, der das aktuelle Ausgabeprofil verwendet und kein Druckerprofil eingestellt ist.
-TP_COLORTONING_LABGRID;L*a*b* - Farbkorrektur
-TP_COLORTONING_LABGRID_VALUES;HL: a=%1, b=%2\nS: a=%3, b=%4
-TP_EXPOSURE_HISTMATCHING;Auto-Tonwertkurve
-TP_EXPOSURE_HISTMATCHING_TOOLTIP;Passt Regler und Kurven (mit Ausnahme der Belichtungskorrektur)\nautomatisch an, um das eingebettete JPEG-Bild zu simulieren.
-TP_TM_FATTAL_ANCHOR;Helligkeitsverschiebung
