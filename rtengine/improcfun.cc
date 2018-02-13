@@ -4109,9 +4109,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                     bo *= preserv;
                                 }
 
-                                rtemp[ti * TS + tj] = /*CLIP*/(ro);
-                                gtemp[ti * TS + tj] = /*CLIP*/(go);
-                                btemp[ti * TS + tj] = /*CLIP*/(bo);
+                                setUnlessOOG(rtemp[ti * TS + tj], CLIP(ro));
+                                setUnlessOOG(gtemp[ti * TS + tj], CLIP(go));
+                                setUnlessOOG(btemp[ti * TS + tj], CLIP(bo));
                             }
                         }
                     }
@@ -4165,9 +4165,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                     float b = btemp[ti * TS + tj];
                                     float ro, go, bo;
                                     labtoning (r, g, b, ro, go, bo, algm, metchrom, twoc, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, clToningcurve, cl2Toningcurve, iplow, iphigh, wp, wip);
-                                    rtemp[ti * TS + tj] = /*CLIP*/ (ro); //I used CLIP because there is a little bug in gamutLchonly that return 65536.ii intead of 65535 ==> crash
-                                    gtemp[ti * TS + tj] = /*CLIP*/ (go);
-                                    btemp[ti * TS + tj] = /*CLIP*/ (bo);
+                                    setUnlessOOG(rtemp[ti * TS + tj], CLIP (ro)); // I used CLIP because there is a little bug in gamutLchonly that return 65536.ii intead of 65535 ==> crash
+                                    setUnlessOOG(gtemp[ti * TS + tj], CLIP (go));
+                                    setUnlessOOG(btemp[ti * TS + tj], CLIP (bo));
                                 }
                             }
                         }
@@ -5356,9 +5356,9 @@ void ImProcFunctions::toning2col (float r, float g, float b, float &ro, float &g
         preserv = lumbefore / lumafter;
     }
 
-    ro = /*CLIP*/(r * preserv);
-    go = /*CLIP*/(g * preserv);
-    bo = /*CLIP*/(b * preserv);
+    setUnlessOOG(ro, CLIP(r * preserv));
+    setUnlessOOG(go, CLIP(g * preserv));
+    setUnlessOOG(bo, CLIP(b * preserv));
 }
 
 /**
@@ -5422,11 +5422,15 @@ void ImProcFunctions::labtoning (float r, float g, float b, float &ro, float &go
         luma = 1.f - SQR (SQR ((lm * 65535.f) / (cl2Toningcurve[ (lm) * 65535.f]))); //apply C2=f(L) acts only on 'b'
     }
 
+    float rr, gg, bb;
     if (algm == 1) {
-        Color::interpolateRGBColor (realL, iplow, iphigh, algm, opacity, twoc, metchrom, chromat, luma, r, g, b, xl, yl, zl, x2, y2, z2, wp, wip, ro, go, bo);
+        Color::interpolateRGBColor (realL, iplow, iphigh, algm, opacity, twoc, metchrom, chromat, luma, r, g, b, xl, yl, zl, x2, y2, z2, wp, wip, rr, gg, bb);
     } else {
-        Color::interpolateRGBColor (realL, iplow, iphigh, algm, opacity2, twoc, metchrom, chromat, luma, r, g, b, xl, yl, zl, x2, y2, z2, wp, wip, ro, go, bo);
+        Color::interpolateRGBColor (realL, iplow, iphigh, algm, opacity2, twoc, metchrom, chromat, luma, r, g, b, xl, yl, zl, x2, y2, z2, wp, wip, rr, gg, bb);
     }
+    setUnlessOOG(ro, rr);
+    setUnlessOOG(go, gg);
+    setUnlessOOG(bo, bb);
 }
 
 
