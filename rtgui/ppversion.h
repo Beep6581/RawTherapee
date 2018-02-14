@@ -1,11 +1,13 @@
 #pragma once
 
 // This number has to be incremented whenever the PP3 file format is modified or the behaviour of a tool changes
-#define PPVERSION 330
+#define PPVERSION 331
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /*
   Log of version changes
+   331  2018-14-02
+        changed wavelet.Lmethod to int
    330  2018-20-01
         Added 'Auto-matched Tone Curve' button, performing histogram matching
    329  2017-12-09
