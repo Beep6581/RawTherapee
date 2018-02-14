@@ -1270,7 +1270,7 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
             }
 
             if (settings->verbose) {
-                double correl_temp;
+                double correl_temp = 0.0;
                 XYZtoCorColorTemp(Xwb, Ywb, Zwb, correl_temp);
                 printf("Correlated temperature (lamp)=%i\n", (int) correl_temp); //use only for lamp...otherwise It give an information!!
             }
