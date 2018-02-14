@@ -25,7 +25,7 @@
    321  2014-08-17
         [Film Simulation] new  tool using HALDCLUT files
    320  2014-07-02  (yes, same version number... this is an error due to a wrong version number set in comment of previous change)
-        New [RAW Bayer] and [RAW X-Trans] sections, with some parameters transfered from [RAW] to [RAW Bayer]
+        New [RAW Bayer] and [RAW X-Trans] sections, with some parameters transferred from [RAW] to [RAW Bayer]
    320  2014-03-29
         [ColorToning] new tool for color toning
    319  2014-02-11

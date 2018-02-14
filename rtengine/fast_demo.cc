@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////
 //
-//      Fast demosaicing algorythm
+//      Fast demosaicing algorithm
 //
 //      copyright (c) 2008-2010  Emil Martinec <ejmartin@uchicago.edu>
 //

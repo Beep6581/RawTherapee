@@ -207,7 +207,7 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
         // Focus distance from EXIF or XMP. MakerNote ones are scattered and partly encrypted
         int num = -3, denom = -3;
 
-        // First try, offical EXIF. Set by Adobe on some DNGs
+        // First try, official EXIF. Set by Adobe on some DNGs
         tag = exif->getTag("SubjectDistance");
 
         if (tag) {

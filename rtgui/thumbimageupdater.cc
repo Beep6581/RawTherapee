@@ -208,7 +208,7 @@ ThumbImageUpdater::add(ThumbBrowserEntryBase* tbe, bool* priority, bool upgrade,
     }
 
     // create a new job and append to queue
-    DEBUG("queing job %s", tbe->shortname.c_str());
+    DEBUG("queueing job %s", tbe->shortname.c_str());
     impl_->jobs_.push_back(Impl::Job(tbe, priority, upgrade, l));
 
     DEBUG("adding run request %s", tbe->shortname.c_str());

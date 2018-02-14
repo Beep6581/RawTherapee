@@ -118,7 +118,7 @@ void Curve::fillHash()
     hash.at(hashSize + 1).higherValue = poly_x.size();
 
     /*
-     * Uncoment the code below to dump the polygon points and the hash table in files
+     * Uncomment the code below to dump the polygon points and the hash table in files
     if (poly_x.size() > 500) {
         printf("Files generated (%d points)\n", poly_x.size());
         FILE* f = fopen ("hash.txt", "wt");
@@ -1905,7 +1905,7 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
         // depending on color, the chroma scaling factor can be fine-tuned below
 
         {
-            // decrease chroma scaling sligthly of extremely saturated colors
+            // decrease chroma scaling slightly of extremely saturated colors
             float saturated_scale_factor = 0.95f;
             constexpr float lolim = 35.f; // lower limit, below this chroma all colors will keep original chroma scaling factor
             constexpr float hilim = 60.f; // high limit, above this chroma the chroma scaling factor is multiplied with the saturated scale factor value above
