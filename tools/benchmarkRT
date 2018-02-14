@@ -31,7 +31,7 @@ download () {
         wget --progress=dot:binary --continue --trust-server-names --tries=1 --timestamping "$1" 2>&1 | sed "s/^/\t/"
         return=${PIPESTATUS[0]}
         ((retries--))
-        if [[ $return -eq 0 ]]; then # I don't trust wget to only exit with 0 if it downloaded the file succesfully, so I check.
+        if [[ $return -eq 0 ]]; then # I don't trust wget to only exit with 0 if it downloaded the file successfully, so I check.
             if [[ -f "$(basename "$1")" ]]; then
                 break
             fi
@@ -145,7 +145,7 @@ if [[ ${inFile} = http* ]]; then # if inFile is a url and if we haven't download
     echo
 }
 else # otherwise if inFile is not a url, check if it exists
-    [[ ! -e "${inFile}" ]] && { # if it doesnt exist, choke
+    [[ ! -e "${inFile}" ]] && { # if it doesn't exist, choke
     printf "%s\n" "You specified" "-i ${inFile}" "but that file does not exist."
     exit 1
 }
@@ -242,7 +242,7 @@ for s in "${!sidecarFinal[@]}"; do
         ##  t="$(( $RANDOM %20 )).$(( $RANDOM %999 ))"
         #   benchmark stores time array of each run, gets reset after each PP3
         benchmark+=("$t")
-        #   total stores time array of each run, doesnt get reset, adds up total afterwards
+        #   total stores time array of each run, doesn't get reset, adds up total afterwards
         total+=("$t")
         i="$(printf "%02d\n" "$i")"
         if [[ $testAllTools -eq 1 ]]; then

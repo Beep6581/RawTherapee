@@ -674,7 +674,7 @@ void FileCatalog::_refreshProgressBar ()
     // Also mention that this progress bar only measures the FIRST pass (quick thumbnails)
     // The second, usually longer pass is done multithreaded down in the single entries and is NOT measured by this
     if (!inTabMode) {
-        GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
+        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
         Gtk::Notebook *nb = (Gtk::Notebook *)(filepanel->get_parent());
         Gtk::Grid* grid = Gtk::manage (new Gtk::Grid ());
@@ -790,7 +790,7 @@ void FileCatalog::previewsFinishedUI ()
 {
 
     {
-        GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
+        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
         redrawAll ();
         previewsToLoad = 0;
 
@@ -872,7 +872,7 @@ void FileCatalog::refreshHeight ()
 {
     int newHeight = fileBrowser->getEffectiveHeight();
 
-    if (newHeight < 5) {  // This may occure if there's no thumbnail.
+    if (newHeight < 5) {  // This may occur if there's no thumbnail.
         int w, h;
         get_size_request(w, h);
         newHeight = h;

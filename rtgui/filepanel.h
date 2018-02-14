@@ -58,7 +58,7 @@ public:
     {
         parent = p;
     }
-    void init (); // dont call it directly, the constructor calls it as idle source
+    void init (); // don't call it directly, the constructor calls it as idle source
     void on_realize ();
     void setAspect();
     void open (const Glib::ustring& d); // open a file or a directory
