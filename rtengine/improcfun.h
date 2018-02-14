@@ -339,10 +339,10 @@ public:
     void badpixcam      (CieImage* ncie, double rad, int thr, int mode, float skinprot, float chrom, int hotbad);
     void badpixlab      (LabImage* lab, double rad, int thr, int mode, float skinprot, float chrom);
 
-    void PF_correct_RT    (LabImage * src, LabImage * dst, double radius, int thresh);
-    void PF_correct_RTcam (CieImage * src, CieImage * dst, double radius, int thresh);
-    void Badpixelscam (CieImage * src, CieImage * dst, double radius, int thresh, int mode, float skinprot, float chrom, int hotbad);
-    void BadpixelsLab (LabImage * src, LabImage * dst, double radius, int thresh, int mode, float skinprot, float chrom);
+    void PF_correct_RT    (LabImage * src, double radius, int thresh);
+    void PF_correct_RTcam (CieImage * src, double radius, int thresh);
+    void Badpixelscam (CieImage * src, double radius, int thresh, int mode, float skinprot, float chrom, int hotbad);
+    void BadpixelsLab (LabImage * src, double radius, int thresh, int mode, float chrom);
 
     void ToneMapFattal02(Imagefloat *rgb);
     void localContrast(LabImage *lab);

@@ -557,7 +557,6 @@ void Options::setDefaults ()
     rtSettings.gamutICC = true;
     rtSettings.gamutLch = true;
     rtSettings.amchroma = 40;//between 20 and 140   low values increase effect..and also artefacts, high values reduces
-    rtSettings.artifact_cbdl = 4.;
     rtSettings.level0_cbdl = 0;
     rtSettings.level123_cbdl = 30;
 
@@ -1411,9 +1410,6 @@ void Options::readFromFile (Glib::ustring fname)
                                     rtSettings.viewinggreySc = keyFile.get_integer ("Color Management", "greySc");
                                 }
                 */
-                if (keyFile.has_key ("Color Management", "CBDLArtif")) {
-                    rtSettings.artifact_cbdl = keyFile.get_double ("Color Management", "CBDLArtif");
-                }
 
                 if (keyFile.has_key ("Color Management", "CBDLlevel0")) {
                     rtSettings.level0_cbdl = keyFile.get_double ("Color Management", "CBDLlevel0");
@@ -2006,7 +2002,6 @@ void Options::saveToFile (Glib::ustring fname)
         keyFile.set_integer ("Color Management", "CRI", rtSettings.CRI_color);
         keyFile.set_integer ("Color Management", "DenoiseLabgamma", rtSettings.denoiselabgamma);
         //keyFile.set_boolean ("Color Management", "Ciebadpixgauss", rtSettings.ciebadpixgauss);
-        keyFile.set_double  ("Color Management", "CBDLArtif", rtSettings.artifact_cbdl);
         keyFile.set_double  ("Color Management", "CBDLlevel0", rtSettings.level0_cbdl);
         keyFile.set_double  ("Color Management", "CBDLlevel123", rtSettings.level123_cbdl);
         //keyFile.set_double  ("Color Management", "Colortoningab", rtSettings.colortoningab);
