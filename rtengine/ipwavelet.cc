@@ -1739,6 +1739,11 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
 
     }
 
+    if(max0 <= 0.0) {
+        // completely black image => nothing to do
+        return;
+    }
+
     //      printf("MAXmax0=%f MINmin0=%f\n",max0,min0);
 
 //tone mapping
