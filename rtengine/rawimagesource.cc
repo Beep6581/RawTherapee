@@ -1346,7 +1346,7 @@ int RawImageSource::findHotDeadPixels( PixelsMap &bpMap, float thresh, bool find
     float varthresh = (20.0 * (thresh / 100.0) + 1.0 ) / 24.f;
 
     // allocate temporary buffer
-    float (*cfablur);
+    float* cfablur;
     cfablur = (float (*)) malloc (H * W * sizeof * cfablur);
 
     // counter for dead or hot pixels
