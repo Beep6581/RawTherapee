@@ -742,7 +742,7 @@ void ImProcFunctions::ciecam_02(CieImage* ncie, double adap, int pW, int pwb, La
                         hist16Q[CLIP((int)(32768.f * sqrt((koef * (lab->L[i][j])) / 32768.f)))]++;     //for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
                     }
 
-                    sum += koef * lab->L[i][j]; //evaluate mean J to calcualte Yb
+                    sum += koef * lab->L[i][j]; //evaluate mean J to calculate Yb
                 }
 
             //mean=(sum/((endh-begh)*width))/327.68f;//for Yb  for all image...if one day "pipette" we can adapt Yb for each zone
@@ -904,7 +904,7 @@ void ImProcFunctions::ciecam_02(CieImage* ncie, double adap, int pW, int pwb, La
                     c_ = c;
                     f_l = fl;
 
-                    // we cannot have all algoritms with all chroma curves
+                    // we cannot have all algorithms with all chroma curves
                     if (alg == 1)  {
                         // Lightness saturation
                         if (Jpro > 99.9f) {
@@ -1082,7 +1082,7 @@ void ImProcFunctions::ciecam_02(CieImage* ncie, double adap, int pW, int pwb, La
 
                             t1L = true;
                         } else if (curveMode == ColorAppearanceParams::TcMode::BRIGHT) {
-                            //attention! Brightness curves are open - unlike Lightness or Lab or RGB==> rendering  and algoritms will be different
+                            //attention! Brightness curves are open - unlike Lightness or Lab or RGB==> rendering  and algorithms will be different
                             float coef = ((aw + 4.f) * (4.f / c)) / 100.f;
                             float Qanc = Qpro;
                             float Qq = (float) Qpro * 327.68f * (1.f / coef);
@@ -2487,7 +2487,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                                 Jpro = 1.f;
                             }
                         } else if (curveMode == ColorAppearanceParams::TcMode::BRIGHT) {
-                            //attention! Brightness curves are open - unlike Lightness or Lab or RGB==> rendering  and algoritms will be different
+                            //attention! Brightness curves are open - unlike Lightness or Lab or RGB==> rendering  and algorithms will be different
                             float coef = ((aw + 4.f) * (4.f / c)) / 100.f;
                             float Qanc = Qpro;
                             float Qq = (float) Qpro * 327.68f * (1.f / coef);
@@ -2925,7 +2925,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
 
 
 
-//all this treatments reduce artefacts, but can leed to slighty  different results
+//all this treatments reduce artifacts, but can lead to slighty different results
 
                 if (params->defringe.enabled)
                     if (execsharp) {
@@ -4026,7 +4026,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                                 valparam *= (1.f - SQR(SQR(1.f - min(s, 1.0f))));
 
                                 if (valparam > 0.00001f) {
-                                    v = (1.f - valparam) * v + valparam * (1.f - SQR(1.f - min(v, 1.0f)));   // SQR (SQR  to increase action and avoid artefacts
+                                    v = (1.f - valparam) * v + valparam * (1.f - SQR (1.f - min (v, 1.0f))); // SQR (SQR  to increase action and avoid artifacts
 
                                     if (v < 0) {
                                         v = 0;
@@ -4167,7 +4167,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                                     float b = btemp[ti * TS + tj];
                                     float ro, go, bo;
                                     labtoning(r, g, b, ro, go, bo, algm, metchrom, twoc, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, clToningcurve, cl2Toningcurve, iplow, iphigh, wp, wip);
-                                    rtemp[ti * TS + tj] = CLIP(ro);  //I used CLIP because there is a little bug in gamutLchonly that return 65536.ii intead of 65535 ==> crash
+                                    rtemp[ti * TS + tj] = CLIP (ro); //I used CLIP because there is a little bug in gamutLchonly that return 65536.ii instead of 65535 ==> crash
                                     gtemp[ti * TS + tj] = CLIP(go);
                                     btemp[ti * TS + tj] = CLIP(bo);
                                 }
@@ -4316,7 +4316,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 #endif
 
                         }
-                    } else if (algm == 1) { //Luminance mixer in Lab mode to avoid artefacts
+                    } else if (algm == 1) { //Luminance mixer in Lab mode to avoid artifacts
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
                             for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                                 //rgb => xyz
@@ -4713,7 +4713,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 
                         const float lumbefore = 0.299f * r + 0.587f * g + 0.114f * b;
 
-                        if (lumbefore < 65000.f  && lumbefore > 500.f) { //reduce artefacts for highlights and extreme shadows
+                        if (lumbefore < 65000.f  && lumbefore > 500.f) { //reduce artifacts for highlights and extreme shadows
                             float ro, go, bo;
                             toningsmh(r, g, b, ro, go, bo, RedLow, GreenLow, BlueLow, RedMed, GreenMed, BlueMed, RedHigh, GreenHigh, BlueHigh, reducac, mode, strProtect);
 
@@ -5261,7 +5261,7 @@ void ImProcFunctions::toning2col (float r, float g, float b, float &ro, float &g
     const float lumbefore = 0.299f * r + 0.587f * g + 0.114f * b;
     const float v = max(r, g, b) / 65535.f;
 
-    const float rlo = strProtect;  //0.5 ==> 0.75  transfered value for more action
+    const float rlo = strProtect;  //0.5 ==> 0.75  transferred value for more action
     const float rlh = 2.2f * strProtect;
 
     //low tones
@@ -5819,7 +5819,7 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                     Lprov1 = l_r * 100.f;
 
                     float Chprov2 = sqrt(SQR(atmp) + SQR(btmp)) / 327.68f;
-                    //Gamut control especialy fot negative values slightly different of gamutlchonly
+                    //Gamut control especially for negative values slightly different from gamutlchonly
                     bool inRGB;
 
                     do {
@@ -6448,7 +6448,7 @@ void ImProcFunctions::EPDToneMapCIE(CieImage *ncie, float a_w, float c_, int Wid
 
             for (int i=heir; i<Hei; i++)
                 for (int j=0; j<Wid; j++) { Qpr2[(i-heir)*Wid+j]=ncie->Q_p[i][j];}
-        if(minQ>0.0) minQ=0.0;//normaly minQ always > 0...
+        if(minQ>0.0) minQ=0.0;//normally minQ always > 0...
     //  EdgePreservingDecomposition epd = EdgePreservingDecomposition(Wid, Hei);
     //EdgePreservingDecomposition epd = EdgePreservingDecomposition(Wid, Hei/2);
         for(i = N2; i != N; i++)
@@ -6925,7 +6925,7 @@ void ImProcFunctions::getAutoExp(const LUTu &histogram, int histcompr, double cl
     gavg /= sum;
 
     if (black < gavg) {
-        int maxwhiteclip = (gavg - black) * 4 / 3 + black; // dont let whiteclip be such large that the histogram average goes above 3/4
+        int maxwhiteclip = (gavg - black) * 4 / 3 + black; // don't let whiteclip be such large that the histogram average goes above 3/4
 
         if (whiteclipg < maxwhiteclip) {
             whiteclipg = maxwhiteclip;
@@ -6971,7 +6971,7 @@ void ImProcFunctions::getAutoExp(const LUTu &histogram, int histcompr, double cl
      gavg += histogram[i] * CurveFactory::gamma2((int)(corr*(i<<histcompr)<65535 ? corr*(i<<histcompr) : 65535)) / sum;
 
      if (black < gavg) {
-     int maxwhiteclip = (gavg - black) * 4 / 3 + black; // dont let whiteclip be such large that the histogram average goes above 3/4
+     int maxwhiteclip = (gavg - black) * 4 / 3 + black; // don't let whiteclip be such large that the histogram average goes above 3/4
      //double mavg = 65536.0 / (whiteclipg-black) * (gavg - black);
      if (whiteclipg < maxwhiteclip)
      whiteclipg = maxwhiteclip;

@@ -394,7 +394,7 @@ void ImProcFunctions::sharpenHaloCtrl (float** luminance, float** blurmap, float
 // Thanks to Manuel for this excellent job (Jacques Desmis JDC or frej83)
 void ImProcFunctions::MLsharpen (LabImage* lab)
 {
-    // JD: this algorithm maximize clarity of images; it does not play on accutance. It can remove (partialy) the effects of the AA filter)
+    // JD: this algorithm maximize clarity of images; it does not play on accutance. It can remove (partially) the effects of the AA filter)
     // I think we can use this algorithm alone in most cases, or first to clarify image and if you want a very little USM (unsharp mask sharpening) after...
     if (!params->sharpenEdge.enabled) {
         return;
@@ -644,7 +644,7 @@ void ImProcFunctions::MLmicrocontrast (float** luminance, int W, int H)
     const int width = W, height = H;
     const float uniform = params->sharpenMicro.uniformity; //between 0 to 100
     const int unif = (int)(uniform / 10.0f); //put unif between 0 to 10
-    float amount = params->sharpenMicro.amount / 1500.0f; //amount 2000.0 quasi no artefacts ==> 1500 = maximum, after artefacts
+    float amount = params->sharpenMicro.amount / 1500.0f; //amount 2000.0 quasi no artifacts ==> 1500 = maximum, after artifacts
 
     if (amount < 0.000001f) {
         return;

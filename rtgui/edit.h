@@ -148,7 +148,7 @@ class EditSubscriber;
  *
  * When the Edit process stops, the Subscriber is removed from the DataProvider, so buffers can be freed up.
  * A new ToolPanelListener::panelChanged event is also thrown to update the preview again, without the tool's
- * graphical objects. The Edit button is also toggled off (by the user or programatically).
+ * graphical objects. The Edit button is also toggled off (by the user or programmatically).
  *
  * It means that each Edit buttons toggled on will start an update of the preview which might or might not create
  * a new History entry, depending on the ProcEvent used.

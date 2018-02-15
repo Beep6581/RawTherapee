@@ -272,7 +272,7 @@ void LensProfilePanel::setRawMeta(bool raw, const rtengine::FramesMetaData* pMet
     if (!raw || pMeta->getFocusDist() <= 0) {
         disableListener();
 
-        // CA is very focus layer dependend, otherwise it might even worsen things
+        // CA is very focus layer dependent, otherwise it might even worsen things
         allowFocusDep = false;
         ckbUseCA->set_active(false);
         ckbUseCA->set_sensitive(false);

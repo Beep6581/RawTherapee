@@ -35,11 +35,11 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn)
     ppn = poly_pn > 65500 ? 65500 : poly_pn;
 
     if (ppn < 500) {
-        hashSize = 100;    // Arbitrary cut-off value, but mutliple of 10
+        hashSize = 100;    // Arbitrary cut-off value, but multiple of 10
     }
 
     if (ppn < 50) {
-        hashSize = 10;    // Arbitrary cut-off value, but mutliple of 10
+        hashSize = 10;    // Arbitrary cut-off value, but multiple of 10
     }
 
     if (p.size() < 3) {

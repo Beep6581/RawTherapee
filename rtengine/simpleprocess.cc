@@ -393,7 +393,7 @@ private:
                             }
 
                             if (!imgsrc->isRAW()) {
-                                multip = 2.f;    //take into account gamma for TIF / JPG approximate value...not good fot gamma=1
+                                multip = 2.f;    //take into account gamma for TIF / JPG approximate value...not good for gamma=1
                             }
 
                             float maxmax = max(maxredaut, maxblueaut);
@@ -544,7 +544,7 @@ private:
                 float gam, gamthresh, gamslope;
                 ipf.RGB_denoise_infoGamCurve(params.dirpyrDenoise, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope);
                 int Nb[9];
-                int  coordW[3];//coordonate of part of image to mesure noise
+                int  coordW[3];//coordinate of part of image to measure noise
                 int  coordH[3];
                 int begW = 50;
                 int begH = 50;
@@ -636,7 +636,7 @@ private:
                 }
 
                 if (!imgsrc->isRAW()) {
-                    multip = 2.f;    //take into account gamma for TIF / JPG approximate value...not good fot gamma=1
+                    multip = 2.f;    //take into account gamma for TIF / JPG approximate value...not good for gamma=1
                 }
 
                 float delta[9];

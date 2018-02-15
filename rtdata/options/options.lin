@@ -6,7 +6,7 @@
 
 [General]
 # Setting MultiUser to false will use the application's installation directory as cache directory,
-# which can be usefull if you want to keep the application and all the cache datas in a single place,
+# which can be useful if you want to keep the application and all the cache datas in a single place,
 # an external HD for example
 MultiUser=true
 

@@ -77,7 +77,7 @@ int main (int argc, char* argv[])
     rtengine::procparams::ProcParams params;
     params.load (argv[2]);
 
-    /* First, simplest scenario. Develope image and save it in a file */
+    /* First, simplest scenario. Develop image and save it in a file */
     // create a processing job with the loaded image and the current processing parameters
     rtengine::ProcessingJob* job = ProcessingJob::create (i, params);
     // process image. The error is given back in errorcode.

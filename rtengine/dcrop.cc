@@ -444,7 +444,7 @@ void Crop::update(int todo)
                 Imagefloat *origCropPart = new Imagefloat(crW, crH); //allocate memory
                 Imagefloat *provicalc = new Imagefloat((crW + 1) / 2, (crH + 1) / 2);  //for denoise curves
 
-                int  coordW[3];//coordonate of part of image to mesure noise
+                int  coordW[3];//coordinate of part of image to measure noise
                 int  coordH[3];
                 int begW = 50;
                 int begH = 50;
@@ -517,7 +517,7 @@ void Crop::update(int todo)
             float multip = 1.f;
 
             if (!parent->imgsrc->isRAW()) {
-                multip = 2.f;    //take into account gamma for TIF / JPG approximate value...not good fot gamma=1
+                multip = 2.f;    //take into account gamma for TIF / JPG approximate value...not good for gamma=1
             }
 
             float adjustr = 1.f;
@@ -1970,7 +1970,7 @@ void Crop::update(int todo)
                                       dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 5, skip, execsharp, dd, dj, 1);
             }
         } else {
-            // CIECAM is disbaled, we free up its image buffer to save some space
+            // CIECAM is disabled, we free up its image buffer to save some space
             if (cieCrop) {
                 delete cieCrop;
             }

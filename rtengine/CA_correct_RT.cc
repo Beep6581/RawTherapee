@@ -38,7 +38,7 @@ bool LinEqSolve(int nDim, double* pfMatr, double* pfVect, double* pfSolution)
 // pfMatr - matrix with coefficients
 // pfVect - vector with free members
 // pfSolution - vector with system solution
-// pfMatr becames trianglular after function call
+// pfMatr becomes triangular after function call
 // pfVect changes after function call
 //
 // Developer: Henry Guennadi Levkin

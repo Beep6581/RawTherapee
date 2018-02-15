@@ -1627,7 +1627,7 @@ private:
   * saving too)
   *
   * PartialProfile is not responsible of ProcParams and ParamsEdited object creation
-  * and hence is not responsible of their destructions. The function that instanciate
+  * and hence is not responsible of their destructions. The function that instantiate
   * PartialProfile object has to handle all this itself.
   */
 class PartialProfile :

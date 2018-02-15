@@ -483,7 +483,7 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustrin
     }
 
     // Mostly not necessary, but should be in some case
-    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
+    GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
     Glib::RefPtr<Gdk::Window> window = get_window();
     int winx, winy, winw, winh;

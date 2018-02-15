@@ -789,7 +789,7 @@ int ImageIO::loadTIFF (Glib::ustring fname)
      * effective minimum and maximum values
      */
     if (options.rtSettings.verbose) {
-        printf("Informations of \"%s\":\n", fname.c_str());
+        printf("Information of \"%s\":\n", fname.c_str());
         uint16 tiffDefaultScale, tiffBaselineExposure, tiffLinearResponseLimit;
         if (TIFFGetField(in, TIFFTAG_DEFAULTSCALE, &tiffDefaultScale)) {
             printf("   DefaultScale: %d\n", tiffDefaultScale);

@@ -967,12 +967,12 @@ void ColorTemp::cieCAT02(double Xw, double Yw, double Zw, double &CAM02BB00, dou
     double D = adap;
 
     //white destination Wd : RT use always D50
-    cam_dest[0] = CAT02[0][0] * whiteD50p[0] + CAT02[0][1] * whiteD50p[1] + CAT02[0][2] * whiteD50p[2]; //Cone reponse RoD
+    cam_dest[0] = CAT02[0][0] * whiteD50p[0] + CAT02[0][1] * whiteD50p[1] + CAT02[0][2] * whiteD50p[2]; //Cone response RoD
     cam_dest[1] = CAT02[1][0] * whiteD50p[0] + CAT02[1][1] * whiteD50p[1] + CAT02[1][2] * whiteD50p[2]; //GaD
     cam_dest[2] = CAT02[2][0] * whiteD50p[0] + CAT02[2][1] * whiteD50p[1] + CAT02[2][2] * whiteD50p[2]; //BeD
 
     //origin white Ws : A, D65, custom, etc.
-    cam_orig[0] = CAT02[0][0] * Xw + CAT02[0][1] * Yw + CAT02[0][2] * Zw; //Cone reponse RoS
+    cam_orig[0] = CAT02[0][0] * Xw + CAT02[0][1] * Yw + CAT02[0][2] * Zw; //Cone response RoS
     cam_orig[1] = CAT02[1][0] * Xw + CAT02[1][1] * Yw + CAT02[1][2] * Zw;
     cam_orig[2] = CAT02[2][0] * Xw + CAT02[2][1] * Yw + CAT02[2][2] * Zw;
 
@@ -1373,7 +1373,7 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
                 bbb[i] = 200.*(fy[i] - fz[i]);
             }
 
-            //display value to verify calculs
+            //display value to verify calculus
             if(settings->CRI_color != 0) {
                 printf("Color Number %i\n", numero_color);
                 printf("L_refer=%2.2f a=%2.2f b=%2.2f\n", Lbb[numero_color], abb[numero_color], bbb[numero_color]);

@@ -1280,7 +1280,7 @@ void MyDiagonalCurve::pipetteDrag(EditDataProvider *provider, int modifierKey)
 void MyDiagonalCurve::getCursorPositionFromCurve(float x)
 {
 
-    // the graph is refreshed only if a new point is created (snaped to a pixel)
+    // the graph is refreshed only if a new point is created (snapped to a pixel)
     clampedX = x;
     clampedY = point.getVal01(x);
 
@@ -1292,7 +1292,7 @@ void MyDiagonalCurve::getCursorPositionFromCurve(float x)
 void MyDiagonalCurve::getCursorPositionFromCurve(int x)
 {
 
-    // the graph is refreshed only if a new point is created (snaped to a pixel)
+    // the graph is refreshed only if a new point is created (snapped to a pixel)
     cursorX = x - graphX;
     clampedX = (float(cursorX) - 1.5) / float(graphW - 3);
     clampedY = point.getVal01(clampedX);
