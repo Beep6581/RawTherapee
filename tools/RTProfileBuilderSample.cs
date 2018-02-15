@@ -115,7 +115,7 @@ namespace RTProfilerBuilder {
 			}  // end if camera=xxx
 
 
-			// This is for camera independend settings
+			// This is for camera independent settings
 			switch (sectionEntry) {
 				// These are parsed from EXIFTOOL and XMP in DNG (see http://en.wikipedia.org/wiki/Extensible_Metadata_Platform)
 				case "IPTC/City":
@@ -262,7 +262,7 @@ namespace RTProfilerBuilder {
 		/// <param name="correct">Correction factors</param>
 		public DistortionCorrectProf(double[] focLen, double[] correct) {
 			if (focLen == null || correct == null || focLen.Length != correct.Length || focLen.Length < 2)
-				throw new Exception("DistortionCorrectProf inputs must be valid and of the same lenghts, at least 2 points");
+				throw new Exception("DistortionCorrectProf inputs must be valid and of the same lengths, at least 2 points");
 
 			adFocLen = focLen; adCorrect = correct;
 

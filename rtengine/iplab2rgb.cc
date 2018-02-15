@@ -252,7 +252,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
  * Used in processImage   (rtengine/simpleprocess.cc)
  *
  * Provide a pointer to a 7 floats array for "ga" (uninitialized ; this array will be filled with the gamma values) if you want
- * to use the custom gamma scenario. Thoses gamma values will correspond to the ones of the chosen standard output profile
+ * to use the custom gamma scenario. Those gamma values will correspond to the ones of the chosen standard output profile
  * (Prophoto if non standard output profile given)
  *
  * If "ga" is NULL, then we're considering standard gamma with the chosen output profile.
