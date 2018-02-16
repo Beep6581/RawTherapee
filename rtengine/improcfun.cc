@@ -4165,9 +4165,11 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                     float b = btemp[ti * TS + tj];
                                     float ro, go, bo;
                                     labtoning (r, g, b, ro, go, bo, algm, metchrom, twoc, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, clToningcurve, cl2Toningcurve, iplow, iphigh, wp, wip);
-                                    setUnlessOOG(rtemp[ti * TS + tj], CLIP (ro)); // I used CLIP because there is a little bug in gamutLchonly that return 65536.ii intead of 65535 ==> crash
-                                    setUnlessOOG(gtemp[ti * TS + tj], CLIP (go));
-                                    setUnlessOOG(btemp[ti * TS + tj], CLIP (bo));
+                                    if (!OOG(rtemp[ti * TS + tj]) || !OOG(gtemp[ti * TS + tj]) || !OOG(btemp[ti * TS + tj])) {
+                                        rtemp[ti * TS + tj] = ro;
+                                        gtemp[ti * TS + tj] = go;
+                                        btemp[ti * TS + tj] = bo;
+                                    }
                                 }
                             }
                         }
@@ -4842,9 +4844,11 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                             float b = tmpImage->b (i, j);
                             float ro, bo, go;
                             labtoning (r, g, b, ro, go, bo, algm, metchrom,  twoc, satLimit, satLimitOpacity, ctColorCurve,  ctOpacityCurve, clToningcurve, cl2Toningcurve,  iplow, iphigh,  wp,  wip);
-                            tmpImage->r (i, j) = /*CLIP*/ (ro);
-                            tmpImage->g (i, j) = /*CLIP*/ (go);
-                            tmpImage->b (i, j) = /*CLIP*/ (bo);
+                            if (!OOG(tmpImage->r(i, j)) || !OOG(tmpImage->g(i, j)) || !OOG(tmpImage->b(i, j))) {
+                                tmpImage->r (i, j) = ro;
+                                tmpImage->g (i, j) = go;
+                                tmpImage->b (i, j) = bo;
+                            }
 
                         }
                     }
@@ -5375,9 +5379,13 @@ void ImProcFunctions::toning2col (float r, float g, float b, float &ro, float &g
 **/
 void ImProcFunctions::labtoning (float r, float g, float b, float &ro, float &go, float &bo, int algm, int metchrom, int twoc, float satLimit, float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, LUTf & clToningcurve, LUTf & cl2Toningcurve, float iplow, float iphigh, double wp[3][3], double wip[3][3]  )
 {
+    ro = CLIP(r);
+    go = CLIP(g);
+    bo = CLIP(b);
+    
     float realL;
     float h, s, l;
-    Color::rgb2hsl (r, g, b, h, s, l);
+    Color::rgb2hsl (ro, go, bo, h, s, l);
     float x2, y2, z2;
     float xl, yl, zl;
 
@@ -5422,15 +5430,11 @@ void ImProcFunctions::labtoning (float r, float g, float b, float &ro, float &go
         luma = 1.f - SQR (SQR ((lm * 65535.f) / (cl2Toningcurve[ (lm) * 65535.f]))); //apply C2=f(L) acts only on 'b'
     }
 
-    float rr, gg, bb;
     if (algm == 1) {
-        Color::interpolateRGBColor (realL, iplow, iphigh, algm, opacity, twoc, metchrom, chromat, luma, r, g, b, xl, yl, zl, x2, y2, z2, wp, wip, rr, gg, bb);
+        Color::interpolateRGBColor (realL, iplow, iphigh, algm, opacity, twoc, metchrom, chromat, luma, r, g, b, xl, yl, zl, x2, y2, z2, wp, wip, ro, go, bo);
     } else {
-        Color::interpolateRGBColor (realL, iplow, iphigh, algm, opacity2, twoc, metchrom, chromat, luma, r, g, b, xl, yl, zl, x2, y2, z2, wp, wip, rr, gg, bb);
+        Color::interpolateRGBColor (realL, iplow, iphigh, algm, opacity2, twoc, metchrom, chromat, luma, r, g, b, xl, yl, zl, x2, y2, z2, wp, wip, ro, go, bo);
     }
-    setUnlessOOG(ro, rr);
-    setUnlessOOG(go, gg);
-    setUnlessOOG(bo, bb);
 }
 
 
