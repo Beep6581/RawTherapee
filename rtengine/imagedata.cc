@@ -71,7 +71,7 @@ FramesMetaData* FramesMetaData::fromFile (const Glib::ustring& fname, std::uniqu
 
 FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* rootDir, rtexif::TagDirectory* firstRootDir)
     : frameRootDir(frameRootDir_), iptc(nullptr), time(), timeStamp(), iso_speed(0), aperture(0.), focal_len(0.), focal_len35mm(0.), focus_dist(0.f),
-      shutter(0.), expcomp(0.), make("Unknown"), model("Unknown"), orientation("Unknown"), lens("Unknown"),
+      shutter(0.), expcomp(0.), make("Unknown"), model("Unknown"), orientation("Unknown"), rating(0), lens("Unknown"),
       sampleFormat(IIOSF_UNKNOWN), isPixelShift(false), isHDR(false)
 {
     memset (&time, 0, sizeof(time));
@@ -97,6 +97,7 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
     serial.clear();
     orientation.clear();
     lens.clear();
+    rating = 0;
 
     tag = newFrameRootDir->findTag("Make");
     if (!tag) {
@@ -185,6 +186,11 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
     tag = newFrameRootDir->findTagUpward("Orientation");
     if (tag) {
         orientation = tag->valueToString ();
+    }
+
+    tag = newFrameRootDir->findTagUpward("Rating");
+    if (tag) {
+        rating = tag->toInt();
     }
 
     tag = newFrameRootDir->findTagUpward("MakerNote");
@@ -876,6 +882,11 @@ std::string FrameData::getOrientation () const
     return orientation;
 }
 
+int FrameData::getRating () const
+{
+    return rating;
+}
+
 
 
 void FramesData::setDCRawFrameCount (unsigned int frameCount)
@@ -1167,6 +1178,10 @@ std::string FramesData::getOrientation(unsigned int frame) const
             return frame_data.getOrientation();
         }
     );
+}
+int FramesData::getRating (unsigned int frame) const
+{
+    return frames.empty() || frame >= frames.size()  ? 0 : frames.at(frame)->getRating ();
 }
 
 

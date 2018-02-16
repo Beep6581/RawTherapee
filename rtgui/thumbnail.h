@@ -164,7 +164,10 @@ public:
         return cfs.md5;
     }
 
-    int             getRank  () const;
+    int             getRank  () const
+    {
+        return cfs.rating;
+    }
     void            setRank  (int rank);
 
     int             getColorLabel  () const;

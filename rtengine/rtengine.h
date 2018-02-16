@@ -133,6 +133,8 @@ public:
     virtual std::string getLens     (unsigned int frame = 0) const = 0;
     /** @return the orientation of the image */
     virtual std::string getOrientation (unsigned int frame = 0) const = 0;
+    /** @return the rating of the image */
+    virtual int getRating (unsigned int frame = 0) const = 0;
 
     /** @return true if the file is a PixelShift shot (Pentax and Sony bodies) */
     virtual bool getPixelShift () const = 0;
