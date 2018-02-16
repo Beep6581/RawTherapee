@@ -34,15 +34,11 @@
 #include "jaggedarray.h"
 #define BENCHMARK
 #include "StopWatch.h"
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 using namespace std;
 
 namespace rtengine
 {
-extern const Settings* settings;
 
 void ImProcFunctions::PF_correct_RT(LabImage * src, double radius, int thresh)
 {
@@ -1243,50 +1239,68 @@ void ImProcFunctions::BadpixelsLab(LabImage * src, double radius, int thresh, in
                     float atot = 0.f;
                     float btot = 0.f;
                     float norm = 0.f;
-                    float wt;
 
                     for (int i1 = max(0, i - halfwin + 1); i1 < min(height, i + halfwin); i1++)
                         for (int j1 = 0; j1 < j + halfwin; j1++) {
-                            wt = badpix[i1 * width + j1];
+                            float wt = badpix[i1 * width + j1];
                             atot += wt * src->a[i1][j1];
                             btot += wt * src->b[i1][j1];
                             norm += wt;
                         }
 
-                    if(norm > 0.f) {
-                        const float a = atot / norm;
-                        const float b = btot / norm;
-                        if(SQR(a) + SQR(b) < chrom) {
-                            src->a[i][j] = a;
-                            src->b[i][j] = b;
-                        }
+                    if(SQR(atot) + SQR(btot) < chrom * SQR(norm)) {
+                        src->a[i][j] = atot / norm;
+                        src->b[i][j] = btot / norm;
                     }
                 }
             }
 
-            for(; j < width - halfwin; j++) { // this loop is the hot spot. Maybe worth to vectorize
+#ifdef __SSE2__
+            vfloat chromv = F2V(chrom);
+            vfloat threshfactorv = F2V(threshfactor);
+            for(; j < width - halfwin - 3; j+=4) {
+
+                vmask selMask = vmaskf_lt(LVFU(badpix[i * width + j]), threshfactorv);
+                if (_mm_movemask_ps((vfloat)selMask)) {
+                    vfloat atotv = ZEROV;
+                    vfloat btotv = ZEROV;
+                    vfloat normv = ZEROV;
+
+                    for (int i1 = max(0, i - halfwin + 1); i1 < min(height, i + halfwin); i1++)
+                        for (int j1 = j - halfwin + 1; j1 < j + halfwin; j1++) {
+                            vfloat wtv = LVFU(badpix[i1 * width + j1]);
+                            atotv += wtv * LVFU(src->a[i1][j1]);
+                            btotv += wtv * LVFU(src->b[i1][j1]);
+                            normv += wtv;
+                        }
+                    selMask = vandm(selMask, vmaskf_lt(SQRV(atotv) + SQR(btotv), chromv * SQRV(normv)));
+                    if(_mm_movemask_ps((vfloat)selMask)) {
+                        vfloat aOrig = LVFU(src->a[i][j]);
+                        vfloat bOrig = LVFU(src->b[i][j]);
+                        STVFU(src->a[i][j], vself(selMask, atotv / normv, aOrig));
+                        STVFU(src->b[i][j], vself(selMask, btotv / normv, bOrig));
+                    }
+                }
+            }
+#endif
+            for(; j < width - halfwin; j++) {
 
                 if (badpix[i * width + j] < threshfactor) {
                     float atot = 0.f;
                     float btot = 0.f;
                     float norm = 0.f;
-                    float wt;
 
                     for (int i1 = max(0, i - halfwin + 1); i1 < min(height, i + halfwin); i1++)
                         for (int j1 = j - halfwin + 1; j1 < j + halfwin; j1++) {
-                            wt = badpix[i1 * width + j1];
+                            float wt = badpix[i1 * width + j1];
                             atot += wt * src->a[i1][j1];
                             btot += wt * src->b[i1][j1];
                             norm += wt;
                         }
 
-                    if(norm > 0.f) {
-                        const float a = atot / norm;
-                        const float b = btot / norm;
-                        if(SQR(a) + SQR(b) < chrom) {
-                            src->a[i][j] = a;
-                            src->b[i][j] = b;
-                        }
+                    if(SQR(atot) + SQR(btot) < chrom * SQR(norm)) {
+                        src->a[i][j] = atot / norm;
+                        src->b[i][j] = btot / norm;
                     }
                 }
             }
@@ -1297,23 +1311,18 @@ void ImProcFunctions::BadpixelsLab(LabImage * src, double radius, int thresh, in
                     float atot = 0.f;
                     float btot = 0.f;
                     float norm = 0.f;
-                    float wt;
 
                     for (int i1 = max(0, i - halfwin + 1); i1 < min(height, i + halfwin); i1++)
                         for (int j1 = j - halfwin + 1; j1 < width; j1++) {
-                            wt = badpix[i1 * width + j1];
+                            float wt = badpix[i1 * width + j1];
                             atot += wt * src->a[i1][j1];
                             btot += wt * src->b[i1][j1];
                             norm += wt;
                         }
 
-                    if(norm > 0.f) {
-                        const float a = atot / norm;
-                        const float b = btot / norm;
-                        if(SQR(a) + SQR(b) < chrom) {
-                            src->a[i][j] = a;
-                            src->b[i][j] = b;
-                        }
+                    if(SQR(atot) + SQR(btot) < chrom * SQR(norm)) {
+                        src->a[i][j] = atot / norm;
+                        src->b[i][j] = btot / norm;
                     }
                 }
             }
