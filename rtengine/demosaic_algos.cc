@@ -1880,7 +1880,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, array2D<float> &r
         gamtab->makeIdentity();
     }
 
-    array2D<float> (*rgb[3]);
+    array2D<float>* rgb[3];
     rgb[0] = &red;
     rgb[1] = &green;
     rgb[2] = &blue;
@@ -2619,7 +2619,7 @@ void RawImageSource::ahd_demosaic()
     static const int dir[4] = { -1, 1, -TS, TS };
     float ldiff[2][4], abdiff[2][4], leps, abeps;
     float xyz[3], xyz_cam[3][4];
-    float (*cbrt);
+    float* cbrt;
     float (*rgb)[TS][TS][3];
     float (*lab)[TS][TS][3];
     float (*lix)[3];
@@ -3982,10 +3982,10 @@ void RawImageSource::rcd_demosaic()
     //float V_Stat, H_Stat, P_Stat, Q_Stat;
     float VH_Central_Value, VH_Neighbour_Value, PQ_Central_Value, PQ_Neighbour_Value;
 */    
-    float ( *VH_Dir ), ( *PQ_Dir );
+    float *VH_Dir, *PQ_Dir;
 
     //Low pass filter
-    float ( *lpf );
+    float *lpf;
 
 
     /**

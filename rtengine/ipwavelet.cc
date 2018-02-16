@@ -2457,7 +2457,7 @@ void ImProcFunctions::finalContAllL (float ** WavCoeffs_L, float * WavCoeffs_L0,
         }
     }
 
-    int choicelevel = atoi (params->wavelet.Lmethod.data()) - 1;
+    int choicelevel = params->wavelet.Lmethod - 1;
     choicelevel = choicelevel == -1 ? 4 : choicelevel;
 
     int choiceClevel = 0;
@@ -3270,7 +3270,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
     }
 
     // to see each level of wavelet ...level from 0 to 8
-    int choicelevel = atoi (params->wavelet.Lmethod.data()) - 1;
+    int choicelevel = params->wavelet.Lmethod - 1;
     choicelevel = choicelevel == -1 ? 4 : choicelevel;
 }
 
@@ -3528,7 +3528,7 @@ void ImProcFunctions::ContAllAB (LabImage * labco, int maxlvl, float ** varhue, 
     }
 
     // to see each level of wavelet ...level from 0 to 8
-    int choicelevel = atoi (params->wavelet.Lmethod.data()) - 1;
+    int choicelevel = params->wavelet.Lmethod - 1;
     choicelevel = choicelevel == -1 ? 4 : choicelevel;
     int choiceClevel = 0;
 

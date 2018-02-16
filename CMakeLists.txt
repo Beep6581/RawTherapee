@@ -92,6 +92,17 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PROC_FLAGS}")
 # Stop compilation on typos such as std:swap (missing colon will be detected as unused label):
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=unused-label")
 
+# Special treatment for x87 and x86-32 SSE (see GitHub issue #4324)
+include(FindX87Math)
+if(HAVE_X87_MATH)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffloat-store")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ffloat-store")
+endif()
+if(HAVE_X86_SSE_MATH)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse2 -mfpmath=sse")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse2 -mfpmath=sse")
+endif()
+
 if(WIN32)
     # Add additional paths. Look in the MinGW path first, then in the Gtkmm path.
     # If you wish to build some dependent libraries, you have to install them in MinGW to use them:

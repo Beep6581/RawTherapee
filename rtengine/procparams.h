@@ -1237,7 +1237,7 @@ struct WaveletParams {
     bool exptoning;
     bool expnoise;
 
-    Glib::ustring Lmethod;
+    int Lmethod;
     Glib::ustring CLmethod;
     Glib::ustring Backmethod;
     Glib::ustring Tilesmethod;
