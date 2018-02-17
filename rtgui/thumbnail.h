@@ -168,7 +168,13 @@ public:
     {
         return cfs.rating;
     }
-    void            setRank  (int rank);
+    void            setRank  (int rank)
+    {
+        if (cfs.rating != rank) {
+            cfs.rating = rank;
+        }
+        pparamsValid = true; // FIXME-piotr Is this the right way to refresh the cache? Probably not since pparams and cache should be 2 different things
+    }
 
     int             getColorLabel  () const;
     void            setColorLabel  (int colorlabel);

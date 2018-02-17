@@ -66,6 +66,10 @@ int CacheImageData::load (const Glib::ustring& fname)
                     rankOld     = keyFile.get_integer ("General", "Rank");
                 }
 
+                if (keyFile.has_key ("General", "Rating")) {
+                    rating     = keyFile.get_integer ("General", "Rating");
+                }
+
                 if (keyFile.has_key ("General", "InTrash")) {
                     inTrashOld  = keyFile.get_boolean ("General", "InTrash");
                 }
@@ -227,6 +231,7 @@ int CacheImageData::save (const Glib::ustring& fname)
     keyFile.set_boolean ("General", "Supported", supported);
     keyFile.set_integer ("General", "Format", format);
     keyFile.set_boolean ("General", "RecentlySaved", recentlySaved);
+    keyFile.set_integer ("General", "Rating", rating);
 
     // remove the old implementation of Rank and InTrash from cache
     if (keyFile.has_key ("General", "Rank")) {
