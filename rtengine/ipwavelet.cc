@@ -1739,11 +1739,6 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
 
     }
 
-    if(max0 <= 0.0) {
-        // completely black image => nothing to do
-        return;
-    }
-
     //      printf("MAXmax0=%f MINmin0=%f\n",max0,min0);
 
 //tone mapping
@@ -1791,7 +1786,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
     #pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
     {
-        if(contrast != 0.f  && cp.resena) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
+        if(contrast != 0.f  && cp.resena && max0 > 0.0) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
             {
 #ifdef _OPENMP
                 #pragma omp for
