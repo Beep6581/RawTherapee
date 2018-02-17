@@ -95,8 +95,6 @@ protected:
     // list of variables ordered to improve cache speed
     int maxs;
     float maxsf;
-    // For the SSE routine operator[](vfloat), we just clip float lookup values
-    // to just below the max value.
     T * data;
     unsigned int clip;
     unsigned int size;
