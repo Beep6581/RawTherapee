@@ -97,7 +97,6 @@ protected:
     float maxsf;
     // For the SSE routine operator[](vfloat), we just clip float lookup values
     // to just below the max value.
-    float maxIndexFloat;
     T * data;
     unsigned int clip;
     unsigned int size;
@@ -135,7 +134,6 @@ public:
         upperBound = size - 1;
         maxs = size - 2;
         maxsf = (float)maxs;
-        maxIndexFloat = ((float)upperBound) - 1e-5;
 #ifdef __SSE2__
         maxsv =  F2V( maxs );
         sizeiv =  _mm_set1_epi32( (int)(size - 1) );
@@ -166,7 +164,6 @@ public:
         upperBound = size - 1;
         maxs = size - 2;
         maxsf = (float)maxs;
-        maxIndexFloat = ((float)upperBound) - 1e-5;
 #ifdef __SSE2__
         maxsv =  F2V( maxs );
         sizeiv =  _mm_set1_epi32( (int)(size - 1) );
@@ -242,7 +239,6 @@ public:
             this->upperBound = rhs.upperBound;
             this->maxs = this->size - 2;
             this->maxsf = (float)this->maxs;
-            this->maxIndexFloat = ((float)this->upperBound) - 1e-5;
 #ifdef __SSE2__
             this->maxsv =  F2V( this->size - 2);
             this->sizeiv =  _mm_set1_epi32( (int)(this->size - 1) );
@@ -317,7 +313,7 @@ public:
 
         // Clamp and convert to integer values. Extract out of SSE register because all
         // lookup operations use regular addresses.
-        vfloat clampedIndexes = vmaxf(ZEROV, vminf(F2V(maxIndexFloat), indexv));
+        vfloat clampedIndexes = vmaxf(ZEROV, vminf(maxsv, indexv));
         vint indexes = _mm_cvttps_epi32(clampedIndexes);
         int indexArray[4];
         _mm_storeu_si128(reinterpret_cast<__m128i*>(&indexArray[0]), indexes);
@@ -349,7 +345,7 @@ public:
 
         // Clamp and convert to integer values. Extract out of SSE register because all
         // lookup operations use regular addresses.
-        vfloat clampedIndexes = vmaxf(ZEROV, vminf(F2V(maxIndexFloat), indexv));
+        vfloat clampedIndexes = vmaxf(ZEROV, vminf(maxsv, indexv));
         vint indexes = _mm_cvttps_epi32(clampedIndexes);
         int indexArray[4];
         _mm_storeu_si128(reinterpret_cast<__m128i*>(&indexArray[0]), indexes);
@@ -369,7 +365,7 @@ public:
         vfloat lower = _mm_castsi128_ps(_mm_unpacklo_epi64(temp0, temp1));
         vfloat upper = _mm_castsi128_ps(_mm_unpackhi_epi64(temp0, temp1));
 
-        vfloat diff = clampedIndexes - _mm_cvtepi32_ps(indexes);
+        vfloat diff = vmaxf(ZEROV, vminf(sizev, indexv)) - _mm_cvtepi32_ps(indexes);
         return vintpf(diff, upper, lower);
     }
 
@@ -380,7 +376,7 @@ public:
 
         // Clamp and convert to integer values. Extract out of SSE register because all
         // lookup operations use regular addresses.
-        vfloat clampedIndexes = vmaxf(ZEROV, vminf(F2V(maxsf), indexv));
+        vfloat clampedIndexes = vmaxf(ZEROV, vminf(maxsv, indexv));
         vint indexes = _mm_cvttps_epi32(clampedIndexes);
         int indexArray[4];
         _mm_storeu_si128(reinterpret_cast<__m128i*>(&indexArray[0]), indexes);
@@ -587,7 +583,6 @@ public:
         maxs = 0;
         maxsf = 0.f;
         clip = 0;
-        maxIndexFloat = ((float)upperBound) - 1e-5;
     }
 
     // create an identity LUT (LUT(x) = x) or a scaled identity LUT (LUT(x) = x / divisor)
@@ -697,7 +692,6 @@ public:
         upperBound = size - 1;
         maxs = size - 2;
         maxsf = (float)maxs;
-        maxIndexFloat = ((float)upperBound) - 1e-5;
 #ifdef __SSE2__
         maxsv =  F2V( size - 2);
         sizeiv =  _mm_set1_epi32( (int)(size - 1) );
