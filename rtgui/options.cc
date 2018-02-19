@@ -2192,7 +2192,7 @@ void Options::load (bool lightweight)
 
     // Check default Raw and Img procparams existence
     if (options.defProfRaw.empty()) {
-        options.defProfRaw = DEFPROFILE_INTERNAL;
+        options.defProfRaw = DEFPROFILE_RAW;
     } else {
         Glib::ustring tmpFName = options.findProfilePath (options.defProfRaw);
 
@@ -2201,17 +2201,23 @@ void Options::load (bool lightweight)
                 printf ("Default profile for raw images \"%s\" found\n", options.defProfRaw.c_str());
             }
         } else {
-            if (options.rtSettings.verbose) {
-                printf ("Default profile for raw images \"%s\" not found or not set -> using Internal values\n", options.defProfRaw.c_str());
+            if (options.defProfRaw != DEFPROFILE_RAW) {
+                if (options.rtSettings.verbose) {
+                    printf ("Default profile for raw images \"%s\" not found or not set -> using RawTherapee's default raw profile\n", options.defProfRaw.c_str());
+                }
+                options.defProfRaw = DEFPROFILE_RAW;
+            } else {
+                if (options.rtSettings.verbose) {
+                    printf ("Default profile for raw images \"%s\" not found or not set -> using Internal values\n", options.defProfRaw.c_str());
+                }
+                options.defProfRaw = DEFPROFILE_INTERNAL;
             }
-
-            options.defProfRaw = DEFPROFILE_INTERNAL;
             options.defProfRawMissing = true;
         }
     }
 
     if (options.defProfImg.empty()) {
-        options.defProfImg = DEFPROFILE_INTERNAL;
+        options.defProfImg = DEFPROFILE_IMG;
     } else {
         Glib::ustring tmpFName = options.findProfilePath (options.defProfImg);
 
@@ -2220,11 +2226,17 @@ void Options::load (bool lightweight)
                 printf ("Default profile for non-raw images \"%s\" found\n", options.defProfImg.c_str());
             }
         } else {
-            if (options.rtSettings.verbose) {
-                printf ("Default profile for non-raw images \"%s\" not found or not set -> using Internal values\n", options.defProfImg.c_str());
+            if (options.defProfImg != DEFPROFILE_IMG) {
+                if (options.rtSettings.verbose) {
+                    printf ("Default profile for non-raw images \"%s\" not found or not set -> using RawTherapee's default non-raw profile\n", options.defProfImg.c_str());
+                }
+                options.defProfImg = DEFPROFILE_IMG;
+            } else {
+                if (options.rtSettings.verbose) {
+                    printf ("Default profile for non-raw images \"%s\" not found or not set -> using Internal values\n", options.defProfImg.c_str());
+                }
+                options.defProfImg = DEFPROFILE_INTERNAL;
             }
-
-            options.defProfImg = DEFPROFILE_INTERNAL;
             options.defProfImgMissing = true;
         }
     }

@@ -868,8 +868,8 @@ NAVIGATOR_S;S:
 NAVIGATOR_V;V:
 NAVIGATOR_XY_FULL;Largeur = %1, Hauteur = %2
 NAVIGATOR_XY_NA;x = n/d, y = n/d
-OPTIONS_DEFIMG_MISSING;Le profil par défaut pour les <b>images standards</b> n'a pas été trouvé ou n'a pas été réglé.\n\nVérifiez également le dossier de vos profils, il peut être manquant ou endommagé\n\nLes valeurs internes pas défaut seront utilisées.
-OPTIONS_DEFRAW_MISSING;Le profil par défaut pour les <b>images Raw</b> n'a pas été trouvé ou n'a pas été réglé.\n\nVérifiez également le dossier de vos profils, il peut être manquant ou endommagé\n\nLes valeurs internes pas défaut seront utilisées.
+OPTIONS_DEFIMG_MISSING;Le profil par défaut pour les <b>images standards</b> n'a pas été trouvé ou n'a pas été réglé.\n\nVérifiez également le dossier de vos profils, il peut être manquant ou endommagé\n\n"<b>%1</b>" sera utilisé à la place.
+OPTIONS_DEFRAW_MISSING;Le profil par défaut pour les <b>images Raw</b> n'a pas été trouvé ou n'a pas été réglé.\n\nVérifiez également le dossier de vos profils, il peut être manquant ou endommagé\n\n"<b>%1</b>" sera utilisé à la place.
 PARTIALPASTE_ADVANCEDGROUP;Réglages Avancés
 PARTIALPASTE_BASICGROUP;Réglages de base
 PARTIALPASTE_CACORRECTION;Aberration chromatique
