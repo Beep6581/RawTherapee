@@ -919,8 +919,8 @@ void ImProcFunctions::Badpixelscam(CieImage * src, double radius, int thresh, in
 
                             selMask = vandm(selMask, vmaskf_lt(CCv, chromv));
                             if(_mm_movemask_ps((vfloat)selMask)) {
-                                STVFU(src->h_p[i][j], xatan2f(interbv, interav) / piBy180v);
-                                STVFU(src->C_p[i][j], CCv);
+                                STVFU(src->h_p[i][j], vself(selMask, xatan2f(interbv, interav) / piBy180v, LVFU(src->h_p[i][j])));
+                                STVFU(src->C_p[i][j], vself(selMask, CCv, LVFU(src->C_p[i][j])));
                             }
                         }
                     }
