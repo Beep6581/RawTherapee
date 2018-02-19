@@ -124,7 +124,7 @@ void ImProcFunctions::PF_correct_RT(LabImage * src, double radius, int thresh)
     }
 
     chromave /= (height * width);
-    std::cout << chromave << std::endl;
+
     if(chromave > 0.f) {
         // now as chromave is calculated, we postprocess fringe to reduce the number of divisions in future
 #ifdef _OPENMP
