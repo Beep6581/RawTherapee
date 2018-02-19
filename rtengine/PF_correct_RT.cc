@@ -485,7 +485,7 @@ void ImProcFunctions::PF_correct_RTcam(CieImage * src, double radius, int thresh
     delete [] fringe;
 }
 
-void ImProcFunctions::Badpixelscam(CieImage * src, double radius, int thresh, int mode, float skinprot, float chrom, int hotbad)
+void ImProcFunctions::Badpixelscam(CieImage * src, double radius, int thresh, int mode, float chrom, bool hotbad)
 {
     BENCHFUN
     const int halfwin = ceil(2 * radius) + 1;
@@ -526,7 +526,7 @@ void ImProcFunctions::Badpixelscam(CieImage * src, double radius, int thresh, in
             int j = 0;
             for (; j < 2; j++) {
                 float shfabs = fabs(src->sh_p[i][j] - tmL[i][j]);
-                float shmed = 0.0f;
+                float shmed = 0.f;
 
                 for (int i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (int j1 = 0; j1 <= j + 2; j1++ ) {
@@ -552,7 +552,7 @@ void ImProcFunctions::Badpixelscam(CieImage * src, double radius, int thresh, in
 #endif
             for (; j < width - 2; j++) {
                 float shfabs = fabs(src->sh_p[i][j] - tmL[i][j]);
-                float shmed = 0.0f;
+                float shmed = 0.f;
 
                 for (int i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (int j1 = j - 2; j1 <= j + 2; j1++ ) {
@@ -564,7 +564,7 @@ void ImProcFunctions::Badpixelscam(CieImage * src, double radius, int thresh, in
 
             for (; j < width; j++) {
                 float shfabs = fabs(src->sh_p[i][j] - tmL[i][j]);
-                float shmed = 0.0f;
+                float shmed = 0.f;
 
                 for (int i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (int j1 = j - 2; j1 < width; j1++ ) {
@@ -588,9 +588,9 @@ void ImProcFunctions::Badpixelscam(CieImage * src, double radius, int thresh, in
                 continue;
             }
 
-            float norm = 0.0f;
-            float shsum = 0.0f;
-            float sum = 0.0f;
+            float norm = 0.f;
+            float shsum = 0.f;
+            float sum = 0.f;
             int tot = 0;
 
             for (int i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
@@ -622,9 +622,9 @@ void ImProcFunctions::Badpixelscam(CieImage * src, double radius, int thresh, in
                 continue;
             }
 
-            float norm = 0.0f;
-            float shsum = 0.0f;
-            float sum = 0.0f;
+            float norm = 0.f;
+            float shsum = 0.f;
+            float sum = 0.f;
             int tot = 0;
 
             for (int i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
@@ -656,9 +656,9 @@ void ImProcFunctions::Badpixelscam(CieImage * src, double radius, int thresh, in
                 continue;
             }
 
-            float norm = 0.0f;
-            float shsum = 0.0f;
-            float sum = 0.0f;
+            float norm = 0.f;
+            float shsum = 0.f;
+            float sum = 0.f;
             int tot = 0;
 
             for (int i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
@@ -811,138 +811,175 @@ void ImProcFunctions::Badpixelscam(CieImage * src, double radius, int thresh, in
     }
 
     // begin chroma badpixels
-    double chrommed = 0.0; // use double precision for large summations
+    if(hotbad) {
+        double chrommed = 0.0; // use double precision for large summations
 #ifdef _OPENMP
-    #pragma omp parallel for reduction(+:chrommed)
+        #pragma omp parallel for reduction(+:chrommed)
 #endif
 
-    for(int i = 0; i < height; i++ ) {
-        for(int j = 0; j < width; j++) {
-            float chroma = SQR(sraa[i][j] - tmaa[i][j]) + SQR(srbb[i][j] - tmbb[i][j]);
-            chrommed += chroma;
-            badpix[i * width + j] = chroma;
+        for(int i = 0; i < height; i++ ) {
+            for(int j = 0; j < width; j++) {
+                float chroma = SQR(sraa[i][j] - tmaa[i][j]) + SQR(srbb[i][j] - tmbb[i][j]);
+                chrommed += chroma;
+                badpix[i * width + j] = chroma;
+            }
         }
-    }
 
-    chrommed /= (height * width);
+        chrommed /= (height * width);
 
-    if(chrommed > 0.0) {
-        // now chrommed is calculated, so we postprocess badpix to reduce the number of divisions in future
+        if(chrommed > 0.0) {
+        // now as chrommed is calculated, we postprocess badpix to reduce the number of divisions in future
 #ifdef _OPENMP
-        #pragma omp parallel
+            #pragma omp parallel
 #endif
-        {
+            {
 #ifdef __SSE2__
-            vfloat chrommedv = F2V(chrommed);
-            vfloat onev = F2V(1.f);
+                vfloat chrommedv = F2V(chrommed);
+                vfloat onev = F2V(1.f);
 #endif
 #ifdef _OPENMP
             #pragma omp for
 #endif
 
-            for(int i = 0; i < height; i++) {
-                int j = 0;
+                for(int i = 0; i < height; i++) {
+                    int j = 0;
 #ifdef __SSE2__
-                for(; j < width - 3; j += 4) {
-                    STVFU(badpix[i * width + j], onev / (LVFU(badpix[i * width + j]) + chrommedv));
-                }
+                    for(; j < width - 3; j += 4) {
+                        STVFU(badpix[i * width + j], onev / (LVFU(badpix[i * width + j]) + chrommedv));
+                    }
 #endif
-                for(; j < width; j++) {
-                    badpix[i * width + j] = 1.f / (badpix[i * width + j] + chrommed);
+                    for(; j < width; j++) {
+                        badpix[i * width + j] = 1.f / (badpix[i * width + j] + chrommed);
+                    }
                 }
             }
-        }
 
-        const float threshfactor = 1.f / ((thresh * chrommed) / 33.f + chrommed);
+            const float threshfactor = 1.f / ((thresh * chrommed) / 33.f + chrommed);
 
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-        for(int i = 0; i < height; i++ ) {
-            int j = 0;
-            for(; j < halfwin; j++) {
+            for(int i = 0; i < height; i++ ) {
+                int j = 0;
+                for(; j < halfwin; j++) {
 
-                if (badpix[i * width + j] < threshfactor) {
-                    float atot = 0.f;
-                    float btot = 0.f;
-                    float norm = 0.f;
-                    float wt;
+                    if (badpix[i * width + j] < threshfactor) {
+                        float atot = 0.f;
+                        float btot = 0.f;
+                        float norm = 0.f;
+                        float wt;
 
-                    for (int i1 = max(0, i - halfwin + 1); i1 < min(height, i + halfwin); i1++)
-                        for (int j1 = 0; j1 < j + halfwin; j1++) {
-                            wt = badpix[i1 * width + j1];
-                            atot += wt * sraa[i1][j1];
-                            btot += wt * srbb[i1][j1];
-                            norm += wt;
-                        }
+                        for (int i1 = max(0, i - halfwin + 1); i1 < min(height, i + halfwin); i1++)
+                            for (int j1 = 0; j1 < j + halfwin; j1++) {
+                                wt = badpix[i1 * width + j1];
+                                atot += wt * sraa[i1][j1];
+                                btot += wt * srbb[i1][j1];
+                                norm += wt;
+                            }
 
-                    if(norm > 0.f) {
-                        const float intera = atot / norm;
-                        const float interb = atot / norm;
-                        const float CC = sqrt(SQR(interb) + SQR(intera));
+                        if(norm > 0.f) {
+                            const float intera = atot / norm;
+                            const float interb = btot / norm;
+                            const float CC = sqrt(SQR(interb) + SQR(intera));
 
-                        if(hotbad != 0 || (CC < chrom && skinprot != 0.f)) {
-                            src->h_p[i][j] = xatan2f(interb, intera) / RT_PI_F_180;
-                            src->C_p[i][j] = CC;
-                        }
-                    }
-                }
-            }
-
-            for(; j < width - halfwin; j++) {
-
-                if (badpix[i * width + j] < threshfactor) {
-                    float atot = 0.f;
-                    float btot = 0.f;
-                    float norm = 0.f;
-                    float wt;
-
-                    for (int i1 = max(0, i - halfwin + 1); i1 < min(height, i + halfwin); i1++)
-                        for (int j1 = j - halfwin + 1; j1 < j + halfwin; j1++) {
-                            wt = badpix[i1 * width + j1];
-                            atot += wt * sraa[i1][j1];
-                            btot += wt * srbb[i1][j1];
-                            norm += wt;
-                        }
-
-                    if(norm > 0.f) {
-                        const float intera = atot / norm;
-                        const float interb = atot / norm;
-                        const float CC = sqrt(SQR(interb) + SQR(intera));
-
-                        if(hotbad != 0 || (CC < chrom && skinprot != 0.f)) {
-                            src->h_p[i][j] = xatan2f(interb, intera) / RT_PI_F_180;
-                            src->C_p[i][j] = CC;
+                            if(CC < chrom) {
+                                src->h_p[i][j] = xatan2f(interb, intera) / RT_PI_F_180;
+                                src->C_p[i][j] = CC;
+                            }
                         }
                     }
                 }
-            }
 
-            for(; j < width; j++) {
+#ifdef __SSE2__
+                vfloat threshfactorv = F2V(threshfactor);
+                vfloat chromv = F2V(chrom);
+                vfloat piBy180v = F2V(RT_PI_F_180);
+                for(; j < width - halfwin - 3; j+=4) {
 
-                if (badpix[i * width + j] < threshfactor) {
-                    float atot = 0.f;
-                    float btot = 0.f;
-                    float norm = 0.f;
-                    float wt;
+                    vmask selMask = vmaskf_lt(LVFU(badpix[i * width + j]), threshfactorv);
+                    if(_mm_movemask_ps((vfloat)selMask)) {
+                        vfloat atotv = ZEROV;
+                        vfloat btotv = ZEROV;
+                        vfloat normv = ZEROV;
 
-                    for (int i1 = max(0, i - halfwin + 1); i1 < min(height, i + halfwin); i1++)
-                        for (int j1 = j - halfwin + 1; j1 < width; j1++) {
-                            wt = badpix[i1 * width + j1];
-                            atot += wt * sraa[i1][j1];
-                            btot += wt * srbb[i1][j1];
-                            norm += wt;
+                        for (int i1 = max(0, i - halfwin + 1); i1 < min(height, i + halfwin); i1++)
+                            for (int j1 = j - halfwin + 1; j1 < j + halfwin; j1++) {
+                                vfloat wtv = LVFU(badpix[i1 * width + j1]);
+                                atotv += wtv * LVFU(sraa[i1][j1]);
+                                btotv += wtv * LVFU(srbb[i1][j1]);
+                                normv += wtv;
+                            }
+
+                        selMask = vandm(selMask, vmaskf_gt(normv, ZEROV));
+                        if(_mm_movemask_ps((vfloat)selMask)) {
+                            vfloat interav = atotv / normv;
+                            vfloat interbv = btotv / normv;
+                            vfloat CCv = vsqrtf(SQRV(interbv) + SQRV(interav));
+
+                            selMask = vandm(selMask, vmaskf_lt(CCv, chromv));
+                            if(_mm_movemask_ps((vfloat)selMask)) {
+                                STVFU(src->h_p[i][j], xatan2f(interbv, interav) / piBy180v);
+                                STVFU(src->C_p[i][j], CCv);
+                            }
                         }
+                    }
+                }
+#endif
+                for(; j < width - halfwin; j++) {
 
-                    if(norm > 0.f) {
-                        const float intera = atot / norm;
-                        const float interb = atot / norm;
-                        const float CC = sqrt(SQR(interb) + SQR(intera));
+                    if (badpix[i * width + j] < threshfactor) {
+                        float atot = 0.f;
+                        float btot = 0.f;
+                        float norm = 0.f;
+                        float wt;
 
-                        if(hotbad != 0 || (CC < chrom && skinprot != 0.f)) {
-                            src->h_p[i][j] = xatan2f(interb, intera) / RT_PI_F_180;
-                            src->C_p[i][j] = CC;
+                        for (int i1 = max(0, i - halfwin + 1); i1 < min(height, i + halfwin); i1++)
+                            for (int j1 = j - halfwin + 1; j1 < j + halfwin; j1++) {
+                                wt = badpix[i1 * width + j1];
+                                atot += wt * sraa[i1][j1];
+                                btot += wt * srbb[i1][j1];
+                                norm += wt;
+                            }
+
+                        if(norm > 0.f) {
+                            const float intera = atot / norm;
+                            const float interb = btot / norm;
+                            const float CC = sqrt(SQR(interb) + SQR(intera));
+
+                            if(CC < chrom) {
+                                src->h_p[i][j] = xatan2f(interb, intera) / RT_PI_F_180;
+                                src->C_p[i][j] = CC;
+                            }
+                        }
+                    }
+                }
+
+                for(; j < width; j++) {
+
+                    if (badpix[i * width + j] < threshfactor) {
+                        float atot = 0.f;
+                        float btot = 0.f;
+                        float norm = 0.f;
+                        float wt;
+
+                        for (int i1 = max(0, i - halfwin + 1); i1 < min(height, i + halfwin); i1++)
+                            for (int j1 = j - halfwin + 1; j1 < width; j1++) {
+                                wt = badpix[i1 * width + j1];
+                                atot += wt * sraa[i1][j1];
+                                btot += wt * srbb[i1][j1];
+                                norm += wt;
+                            }
+
+                        if(norm > 0.f) {
+                            const float intera = atot / norm;
+                            const float interb = btot / norm;
+                            const float CC = sqrt(SQR(interb) + SQR(intera));
+
+                            if(CC < chrom) {
+                                src->h_p[i][j] = xatan2f(interb, intera) / RT_PI_F_180;
+                                src->C_p[i][j] = CC;
+                            }
                         }
                     }
                 }
@@ -994,7 +1031,7 @@ void ImProcFunctions::BadpixelsLab(LabImage * src, double radius, int thresh, fl
             int j = 0;
             for (; j < 2; j++) {
                 float shfabs = fabs(src->L[i][j] - tmL[i][j]);
-                float shmed = 0.0f;
+                float shmed = 0.f;
 
                 for (int i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++) {
                     for (int j1 = 0; j1 <= j + 2; j1++) {
@@ -1020,7 +1057,7 @@ void ImProcFunctions::BadpixelsLab(LabImage * src, double radius, int thresh, fl
 #endif
             for (; j < width - 2; j++) {
                 float shfabs = fabs(src->L[i][j] - tmL[i][j]);
-                float shmed = 0.0f;
+                float shmed = 0.f;
 
                 for (int i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++) {
                     for (int j1 = j - 2; j1 <= j + 2; j1++) {
@@ -1032,7 +1069,7 @@ void ImProcFunctions::BadpixelsLab(LabImage * src, double radius, int thresh, fl
 
             for (; j < width; j++) {
                 float shfabs = fabs(src->L[i][j] - tmL[i][j]);
-                float shmed = 0.0f;
+                float shmed = 0.f;
 
                 for (int i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++) {
                     for (int j1 = j - 2; j1 < width; j1++) {

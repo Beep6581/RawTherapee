@@ -1485,17 +1485,17 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int pW, int pwb, L
 
 //if(params->dirpyrequalizer.enabled) if(execsharp) {
             if (params->dirpyrequalizer.enabled) {
-                if (params->dirpyrequalizer.gamutlab  /*&& execsharp*/) {
+                if (params->dirpyrequalizer.gamutlab) {
                     constexpr float artifact = 4.f;
                     constexpr float chrom = 50.f;
-                    constexpr int hotbad = 0;
-                    ImProcFunctions::badpixcam (ncie, artifact, 5, 2, params->dirpyrequalizer.skinprotect, chrom, hotbad);      //enabled remove artifacts for cbDL
+                    const bool hotbad = params->dirpyrequalizer.skinprotect != 0.0;
+                    ImProcFunctions::badpixcam (ncie, artifact, 5, 2, chrom, hotbad);      //enabled remove artifacts for cbDL
                 }
             }
 
             if (params->colorappearance.badpixsl > 0) if (execsharp) {
                     int mode = params->colorappearance.badpixsl;
-                    ImProcFunctions::badpixcam (ncie, 3.4, 5, mode, 0, 0, 1);//for bad pixels CIECAM
+                    ImProcFunctions::badpixcam (ncie, 3.4, 5, mode, 0, true);//for bad pixels CIECAM
                 }
 
             if (params->sharpenMicro.enabled)if (execsharp) {
@@ -2905,13 +2905,13 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
 
 //if(params->dirpyrequalizer.enabled) if(execsharp) {
                 if (params->dirpyrequalizer.enabled)  {
-                    if (params->dirpyrequalizer.gamutlab  /*&& execsharp*/) { //remove artifacts by gaussian blur - skin control
+                    if (params->dirpyrequalizer.gamutlab) { //remove artifacts by gaussian blur - skin control
                         constexpr float artifact = 4.f;
-                        constexpr int hotbad = 0;
                         constexpr float chrom = 50.f;
+                        const bool hotbad = params->dirpyrequalizer.skinprotect != 0.0;
 
                         lab->deleteLab();
-                        ImProcFunctions::badpixcam (ncie, artifact, 5, 2, params->dirpyrequalizer.skinprotect, chrom, hotbad);  //enabled remove artifacts for cbDL
+                        ImProcFunctions::badpixcam (ncie, artifact, 5, 2, chrom, hotbad);  //enabled remove artifacts for cbDL
                         lab->reallocLab();
                     }
                 }
@@ -2920,7 +2920,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                 if (params->colorappearance.badpixsl > 0) if (execsharp) {
                         int mode = params->colorappearance.badpixsl;
                         lab->deleteLab();
-                        ImProcFunctions::badpixcam (ncie, 3.0, 10, mode, 0, 0, 1);//for bad pixels CIECAM
+                        ImProcFunctions::badpixcam (ncie, 3.0, 10, mode, 0, true);//for bad pixels CIECAM
                         lab->reallocLab();
                     }
 
@@ -6282,10 +6282,10 @@ void ImProcFunctions::defringecam (CieImage* ncie)
     }
 }
 
-void ImProcFunctions::badpixcam (CieImage* ncie, double rad, int thr, int mode, float skinprot, float chrom, int hotbad)
+void ImProcFunctions::badpixcam (CieImage* ncie, double rad, int thr, int mode, float chrom, bool hotbad)
 {
     if (ncie->W >= 8 && ncie->H >= 8) {
-        Badpixelscam (ncie, rad, thr, mode, skinprot, chrom, hotbad);
+        Badpixelscam (ncie, rad, thr, mode, chrom, hotbad);
     }
 }
 

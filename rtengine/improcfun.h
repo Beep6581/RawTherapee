@@ -336,12 +336,12 @@ public:
     void idirpyr_eq_channelcam  (float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float multi[6], const double dirpyrThreshold, float ** l_a_h, float ** l_b_c, const double skinprot, float b_l, float t_l, float t_r);
     void defringe       (LabImage* lab);
     void defringecam    (CieImage* ncie);
-    void badpixcam      (CieImage* ncie, double rad, int thr, int mode, float skinprot, float chrom, int hotbad);
+    void badpixcam      (CieImage* ncie, double rad, int thr, int mode, float chrom, bool hotbad);
     void badpixlab      (LabImage* lab, double rad, int thr, float skinprot, float chrom);
 
     void PF_correct_RT    (LabImage * src, double radius, int thresh);
     void PF_correct_RTcam (CieImage * src, double radius, int thresh);
-    void Badpixelscam (CieImage * src, double radius, int thresh, int mode, float skinprot, float chrom, int hotbad);
+    void Badpixelscam (CieImage * src, double radius, int thresh, int mode, float chrom, bool hotbad);
     void BadpixelsLab (LabImage * src, double radius, int thresh, float chrom);
 
     void ToneMapFattal02(Imagefloat *rgb);
