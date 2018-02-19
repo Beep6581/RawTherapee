@@ -6289,10 +6289,10 @@ void ImProcFunctions::badpixcam (CieImage* ncie, double rad, int thr, int mode, 
     }
 }
 
-void ImProcFunctions::badpixlab (LabImage* lab, double rad, int thr, int mode, float skinprot, float chrom)
+void ImProcFunctions::badpixlab (LabImage* lab, double rad, int thr, float skinprot, float chrom)
 {
     if (lab->W >= 8 && lab->H >= 8) {
-        BadpixelsLab (lab, rad, thr, mode, chrom);
+        BadpixelsLab (lab, rad, thr, chrom);
     }
 }
 
@@ -6308,7 +6308,7 @@ void ImProcFunctions::dirpyrequalizer (LabImage* lab, int scale)
 
         if (params->dirpyrequalizer.gamutlab && params->dirpyrequalizer.skinprotect != 0) {
             constexpr float chrom = 50.f;
-            ImProcFunctions::badpixlab (lab, artifact, 5, 3, params->dirpyrequalizer.skinprotect, chrom);    //for artifacts
+            ImProcFunctions::badpixlab (lab, artifact, 5, params->dirpyrequalizer.skinprotect, chrom);    //for artifacts
         }
 
         //dirpyrLab_equalizer(lab, lab, params->dirpyrequalizer.mult);

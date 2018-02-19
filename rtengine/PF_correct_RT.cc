@@ -69,7 +69,7 @@ void ImProcFunctions::PF_correct_RT(LabImage * src, double radius, int thresh)
         gaussianBlur(src->b, tmpb, src->W, src->H, radius);
     }
 
-    double chromave = 0.f; // use double precision for large summations
+    double chromave = 0.0; // use double precision for large summations
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -125,7 +125,7 @@ void ImProcFunctions::PF_correct_RT(LabImage * src, double radius, int thresh)
 
     chromave /= (height * width);
 
-    if(chromave > 0.f) {
+    if(chromave > 0.0) {
         // now as chromave is calculated, we postprocess fringe to reduce the number of divisions in future
 #ifdef _OPENMP
         #pragma omp parallel for simd
@@ -285,7 +285,7 @@ void ImProcFunctions::PF_correct_RTcam(CieImage * src, double radius, int thresh
         gaussianBlur(srbb, tmbb, src->W, src->H, radius);
     }
 
-    double chromave = 0.0f; // use double precision for large summations
+    double chromave = 0.0; // use double precision for large summations
 
 #ifdef __SSE2__
 
@@ -351,7 +351,7 @@ void ImProcFunctions::PF_correct_RTcam(CieImage * src, double radius, int thresh
 
     chromave /= (height * width);
 
-    if(chromave > 0.f) {
+    if(chromave > 0.0) {
         // now as chromave is calculated, we postprocess fringe to reduce the number of divisions in future
 #ifdef _OPENMP
         #pragma omp parallel for simd
@@ -811,7 +811,7 @@ void ImProcFunctions::Badpixelscam(CieImage * src, double radius, int thresh, in
     }
 
     // begin chroma badpixels
-    double chrommed = 0.f; // use double precision for large summations
+    double chrommed = 0.0; // use double precision for large summations
 #ifdef _OPENMP
     #pragma omp parallel for reduction(+:chrommed)
 #endif
@@ -826,7 +826,7 @@ void ImProcFunctions::Badpixelscam(CieImage * src, double radius, int thresh, in
 
     chrommed /= (height * width);
 
-    if(chrommed > 0.f) {
+    if(chrommed > 0.0) {
         // now chrommed is calculated, so we postprocess badpix to reduce the number of divisions in future
 #ifdef _OPENMP
         #pragma omp parallel
@@ -953,7 +953,7 @@ void ImProcFunctions::Badpixelscam(CieImage * src, double radius, int thresh, in
 
 }
 
-void ImProcFunctions::BadpixelsLab(LabImage * src, double radius, int thresh, int mode, float chrom)
+void ImProcFunctions::BadpixelsLab(LabImage * src, double radius, int thresh, float chrom)
 {
     BENCHFUN
     const int halfwin = ceil(2 * radius) + 1;
@@ -1159,7 +1159,7 @@ void ImProcFunctions::BadpixelsLab(LabImage * src, double radius, int thresh, in
     }
 
 // begin chroma badpixels
-    double chrommed = 0.f; // use double precision for large summations
+    double chrommed = 0.0; // use double precision for large summations
 
 #ifdef _OPENMP
     #pragma omp parallel for reduction(+:chrommed)
@@ -1174,7 +1174,7 @@ void ImProcFunctions::BadpixelsLab(LabImage * src, double radius, int thresh, in
     }
 
     chrommed /= (height * width);
-    if(chrommed > 0.f) {
+    if(chrommed > 0.0) {
 
     // now as chrommed is calculated, we postprocess badpix to reduce the number of divisions in future
 
