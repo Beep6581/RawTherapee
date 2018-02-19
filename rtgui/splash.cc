@@ -116,7 +116,7 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
     nb->append_page (*splashImage,  M("ABOUT_TAB_SPLASH"));
     splashImage->show ();
 
-    // Tab 2: the informations about the current version
+    // Tab 2: the information about the current version
     std::string buildFileName = Glib::build_filename (creditsPath, "AboutThisBuild.txt");
 
     if ( Glib::file_test(buildFileName, (Glib::FILE_TEST_EXISTS)) ) {

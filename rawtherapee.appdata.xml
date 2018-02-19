@@ -1,49 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2017 Maciej Dworak www.rawtherapee.com -->
-<component>
-    <id type="desktop">rawtherapee.desktop</id>
-    <metadata_license>CC-BY-SA-4.0</metadata_license>
-    <project_license>GPL-3.0+</project_license>
+<component type="desktop">
+    <id>rawtherapee.desktop</id>
     <name>RawTherapee</name>
-    <summary>A powerful cross-platform raw image processing program</summary>
+    <summary>An advanced raw photo development program</summary>
+    <summary xml:lang="cs">Program pro konverzi a zpracování digitálních raw fotografií</summary>
+    <summary xml:lang="fr">Logiciel de conversion et de traitement de photos numériques de format raw (but de capteur)</summary>
+    <summary xml:lang="pl">Zaawansowany program do wywoływania zdjęć typu raw</summary>
     <description>
         <p>
-            RawTherapee is a powerful raw image processing program. All the internal calculations are done in a high precision 32-bit floating point engine which facilitates non-destructive editing. Images are opened directly without the hassle of having to import them. Adjustments made by the user are immediately reflected in the preview and saved to a separate sidecar file. These adjustments are then applied during the export process, or can be copied (fully and partially) onto other images, thereby allowing easy batch image processing.
+            RawTherapee is a powerful, cross-platform raw photo processing program. It is written mostly in C++ using a GTK+ front-end. It uses a patched version of dcraw for reading raw files, with an in-house solution which adds the highest quality support for certain camera models unsupported by dcraw and enhances the accuracy of certain raw files already supported by dcraw. It is notable for the advanced control it gives the user over the demosaicing and development process.
         </p>
         <p>
-            All aspects of RawTherapee are documented in the RawPedia wiki. There is also an active forum and IRC channel for interaction with the developers and other users.
+            RawTherapee is designed for developing raw files from a broad range of digital cameras, as well as HDR DNG files and non-raw image formats (JPEG, TIFF and PNG). The target audience ranges from enthusiast newcomers who wish to broaden their understanding of how digital imaging works to semi-professional photographers. Knowledge in color science is not compulsory, but it is recommended that you are eager to learn and ready to read our documentation (RawPedia) as well as look up basic concepts which lie outside the scope of RawPedia, such as color balance, elsewhere.
+        </p>
+        <p>
+            Of course, professionals may use RawTherapee too while enjoying complete freedom, but will probably lack some peripheral features such as Digital Asset Management, printing, uploading, etc. RawTherapee is not aimed at being an inclusive all-in-one program, and the open-source community is sufficiently developed by now to offer all those peripheral features in other specialized software.
         </p>
     </description>
-    <screenshots>
-        <screenshot type="default">
-            <image>http://rawpedia.rawtherapee.com/images/9/99/Rt-5-misty1.jpg</image>
-        </screenshot>
-        <screenshot>
-            <image>http://rawpedia.rawtherapee.com/images/2/2f/Rt-5-cc24-lcp.jpg</image>
-        </screenshot>
-        <screenshot>
-            <image>http://rawtherapee.com/images/screenshots/rt-42_07-hdr-landscape.jpg</image>
-        </screenshot>
-        <screenshot>
-            <image>http://rawtherapee.com/images/screenshots/rt-42_03-macro-detail-toning.jpg</image>
-        </screenshot>
-        <screenshot>
-            <image>http://rawtherapee.com/images/screenshots/rt-42_05-cow-bw-toning.jpg</image>
-        </screenshot>
-        <screenshot>
-            <image>http://rawtherapee.com/images/screenshots/rt-42_08-fb-metadata.jpg</image>
-        </screenshot>
-        <screenshot>
-            <image>http://rawtherapee.com/images/screenshots/rt-42_09-queue.jpg</image>
-        </screenshot>
-    </screenshots>
     <keywords>
         <keyword>raw</keyword>
+        <keyword>photo</keyword>
         <keyword>photography</keyword>
         <keyword>develop</keyword>
         <keyword>pp3</keyword>
         <keyword>graphics</keyword>
     </keywords>
+    <metadata_license>CC-BY-SA-4.0</metadata_license>
+    <project_license>GPL-3.0+</project_license>
+    <url type="bugtracker">https://github.com/Beep6581/RawTherapee/issues/new</url>
+    <url type="donation">https://www.paypal.me/rawtherapee</url>
+    <url type="help">http://rawpedia.rawtherapee.com/</url>
     <url type="homepage">http://rawtherapee.com/</url>
+    <url type="translate">https://discuss.pixls.us/t/localization-how-to-translate-rawtherapee-and-rawpedia/2594</url>
+    <screenshots>
+        <screenshot type="default">
+            <caption>HDR DNG of a misty morning in the countryside</caption>
+            <image width="1920" height="1080">http://rawtherapee.com/images/screenshots/rt540_1.jpg</image>
+        </screenshot>
+        <screenshot>
+            <caption>Straight-out-of-camera vs RawTherapee</caption>
+            <image width="1920" height="1080">http://rawtherapee.com/images/screenshots/rt540_2.jpg</image>
+        </screenshot>
+        <screenshot>
+            <caption>RawTherapee using the Auto-Matched Tone Curve tool</caption>
+            <image width="1920" height="1080">http://rawtherapee.com/images/screenshots/rt540_3.jpg</image>
+        </screenshot>
+    </screenshots>
     <update_contact>contactus@rawtherapee.com</update_contact>
 </component>

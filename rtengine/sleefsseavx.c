@@ -1377,8 +1377,7 @@ static INLINE vfloat SQRV(vfloat a){
 static inline void vswap( vmask condition, vfloat &a, vfloat &b) {
     // conditional swap the elements of two vfloats
     vfloat temp = vself(condition, a, b); // the values which fit to condition
-    condition = vnotm(condition); // invert the condition
-    a = vself(condition, a, b); // the values which fit to inverted condition
+    a = vself(condition, b, a); // the values which fit to inverted condition
     b = temp;
 }
 

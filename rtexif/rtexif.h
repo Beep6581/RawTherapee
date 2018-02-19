@@ -78,7 +78,7 @@ struct TIFFHeader {
 class Tag;
 class Interpreter;
 
-/// Structure of informations describing an Exif tag
+/// Structure of information describing an Exif tag
 struct TagAttrib {
     int                 ignore;   // =0: never ignore, =1: always ignore, =2: ignore if the subdir type is reduced image, =-1: end of table
     ActionCode          action;

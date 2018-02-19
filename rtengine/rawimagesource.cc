@@ -1346,7 +1346,7 @@ int RawImageSource::findHotDeadPixels( PixelsMap &bpMap, float thresh, bool find
     float varthresh = (20.0 * (thresh / 100.0) + 1.0 ) / 24.f;
 
     // allocate temporary buffer
-    float (*cfablur);
+    float* cfablur;
     cfablur = (float (*)) malloc (H * W * sizeof * cfablur);
 
     // counter for dead or hot pixels
@@ -1698,7 +1698,7 @@ int RawImageSource::load (const Glib::ustring &fname)
     }
 
 
-    // Load complete Exif informations
+    // Load complete Exif information
     std::unique_ptr<RawMetaDataLocation> rml(new RawMetaDataLocation (ri->get_exifBase(), ri->get_ciffBase(), ri->get_ciffLen()));
     idata = new FramesData (fname, std::move(rml));
     idata->setDCRawFrameCount (numFrames);

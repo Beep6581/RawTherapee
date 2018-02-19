@@ -545,7 +545,7 @@ void Imagefloat::ExecCMSTransform(cmsHTRANSFORM hTransform)
     }
 }
 
-// Parallized transformation; create transform with cmsFLAGS_NOCACHE!
+// Parallelized transformation; create transform with cmsFLAGS_NOCACHE!
 void Imagefloat::ExecCMSTransform(cmsHTRANSFORM hTransform, const LabImage &labImage, int cx, int cy)
 {
     // LittleCMS cannot parallelize planar Lab float images

@@ -1786,7 +1786,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
     #pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
     {
-        if(contrast != 0.f  && cp.resena) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
+        if(contrast != 0.f  && cp.resena && max0 > 0.0) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
             {
 #ifdef _OPENMP
                 #pragma omp for
@@ -1875,7 +1875,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
         // I was inspired by the principle of Canny and Lipschitz (continuity and derivability)
         // I adapted the principle but have profoundly changed the algorithm
         // One can 1) change all parameters and found good parameters;
-        //one can also chnage in calckoe
+        //one can also change in calckoe
         float edd = 3.f;
         float eddlow = 15.f;
         float eddlipinfl = 0.005f * cp.edgsens + 0.4f;
@@ -1920,7 +1920,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                         float interm = 0.f;
 
                         if(cp.lip3 && cp.lipp) {
-                            // comparaison between pixel and neighbours
+                            // comparison between pixel and neighbours
                             const auto neigh = cp.neigh == 1;
                             const auto kneigh = neigh ? 28.f : 38.f;
                             const auto somm = neigh ? 40.f : 50.f;
@@ -1987,7 +1987,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                             kampli = AmpLip / aamp;
                         }
 
-                        // comparaison betwwen pixel and neighbours to do ==> I think 3 dir above is better
+                        // comparison betwwen pixel and neighbours to do ==> I think 3 dir above is better
                         /*      if(cp.lip3){
                                 koeLi[lvl*3][i*W_L + j] = (koeLi[lvl*3][i*W_L + j] + koeLi[lvl*3][(i-1)*W_L + j] + koeLi[lvl*3][(i+1)*W_L + j]
                                         + koeLi[lvl*3][i*W_L + j+1] + koeLi[lvl*3][i*W_L + j-1] + koeLi[lvl*3][(i-1)*W_L + j-1]
@@ -2453,7 +2453,7 @@ void ImProcFunctions::finalContAllL (float ** WavCoeffs_L, float * WavCoeffs_L0,
         }
     }
 
-    int choicelevel = atoi(params->wavelet.Lmethod.data()) - 1;
+    int choicelevel = params->wavelet.Lmethod - 1;
     choicelevel = choicelevel == -1 ? 4 : choicelevel;
 
     int choiceClevel = 0;
@@ -2745,7 +2745,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
 
         float edgePrecalc = 1.f + refin; //estimate edge "pseudo variance"
 
-        if(cp.EDmet == 2) { //curve
+        if(cp.EDmet == 2 && MaxP[level] > 0.f) { //curve
             //  if(exa) {//curve
             float insigma = 0.666f; //SD
             float logmax = log(MaxP[level]); //log Max
@@ -3266,7 +3266,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
     }
 
     // to see each level of wavelet ...level from 0 to 8
-    int choicelevel = atoi(params->wavelet.Lmethod.data()) - 1;
+    int choicelevel = params->wavelet.Lmethod - 1;
     choicelevel = choicelevel == -1 ? 4 : choicelevel;
 }
 
@@ -3524,7 +3524,7 @@ void ImProcFunctions::ContAllAB (LabImage * labco, int maxlvl, float ** varhue, 
     }
 
     // to see each level of wavelet ...level from 0 to 8
-    int choicelevel = atoi(params->wavelet.Lmethod.data()) - 1;
+    int choicelevel = params->wavelet.Lmethod - 1;
     choicelevel = choicelevel == -1 ? 4 : choicelevel;
     int choiceClevel = 0;
 

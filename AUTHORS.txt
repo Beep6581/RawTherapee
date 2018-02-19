@@ -3,7 +3,7 @@ Project initiator:
 
   Gábor Horváth <hgabor@rawtherapee.com>
 
-Developement contributors, in last name alphabetical order:
+Development contributors, in last name alphabetical order:
 
   Martin Burri
   Javier Celaya

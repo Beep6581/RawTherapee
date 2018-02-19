@@ -556,7 +556,7 @@ void Options::setDefaults ()
     rtSettings.verbose = false;
     rtSettings.gamutICC = true;
     rtSettings.gamutLch = true;
-    rtSettings.amchroma = 40;//between 20 and 140   low values increase effect..and also artefacts, high values reduces
+    rtSettings.amchroma = 40;//between 20 and 140   low values increase effect..and also artifacts, high values reduces
     rtSettings.artifact_cbdl = 4.;
     rtSettings.level0_cbdl = 0;
     rtSettings.level123_cbdl = 30;
