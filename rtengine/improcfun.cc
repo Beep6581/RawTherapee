@@ -1484,16 +1484,14 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int pW, int pwb, L
                 }
 
 //if(params->dirpyrequalizer.enabled) if(execsharp) {
-            if (params->dirpyrequalizer.enabled) {
-                if (params->dirpyrequalizer.gamutlab) {
-                    constexpr float artifact = 4.f;
-                    constexpr float chrom = 50.f;
-                    const bool hotbad = params->dirpyrequalizer.skinprotect != 0.0;
-                    ImProcFunctions::badpixcam (ncie, artifact, 5, 2, chrom, hotbad);      //enabled remove artifacts for cbDL
-                }
+            if (params->dirpyrequalizer.enabled && params->dirpyrequalizer.gamutlab && rtt) { //remove artifacts by gaussian blur - skin control, but not for thumbs
+                constexpr float artifact = 4.f;
+                constexpr float chrom = 50.f;
+                const bool hotbad = params->dirpyrequalizer.skinprotect != 0.0;
+                ImProcFunctions::badpixcam (ncie, artifact / scale, 5, 2, chrom, hotbad);      //enabled remove artifacts for cbDL
             }
 
-            if (params->colorappearance.badpixsl > 0) if (execsharp) {
+            if (params->colorappearance.badpixsl > 0 && execsharp) {
                     int mode = params->colorappearance.badpixsl;
                     ImProcFunctions::badpixcam (ncie, 3.4, 5, mode, 0, true);//for bad pixels CIECAM
                 }
@@ -2904,25 +2902,23 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                     }
 
 //if(params->dirpyrequalizer.enabled) if(execsharp) {
-                if (params->dirpyrequalizer.enabled)  {
-                    if (params->dirpyrequalizer.gamutlab) { //remove artifacts by gaussian blur - skin control
-                        constexpr float artifact = 4.f;
-                        constexpr float chrom = 50.f;
-                        const bool hotbad = params->dirpyrequalizer.skinprotect != 0.0;
+                if (params->dirpyrequalizer.enabled && params->dirpyrequalizer.gamutlab && rtt) { //remove artifacts by gaussian blur - skin control, but not for thumbs
+                    constexpr float artifact = 4.f;
+                    constexpr float chrom = 50.f;
+                    const bool hotbad = params->dirpyrequalizer.skinprotect != 0.0;
 
-                        lab->deleteLab();
-                        ImProcFunctions::badpixcam (ncie, artifact, 5, 2, chrom, hotbad);  //enabled remove artifacts for cbDL
-                        lab->reallocLab();
-                    }
+                    lab->deleteLab();
+                    ImProcFunctions::badpixcam (ncie, artifact / scale, 5, 2, chrom, hotbad);  //enabled remove artifacts for cbDL
+                    lab->reallocLab();
                 }
 
 //if(params->colorappearance.badpixsl > 0) { int mode=params->colorappearance.badpixsl;
-                if (params->colorappearance.badpixsl > 0) if (execsharp) {
-                        int mode = params->colorappearance.badpixsl;
-                        lab->deleteLab();
-                        ImProcFunctions::badpixcam (ncie, 3.0, 10, mode, 0, true);//for bad pixels CIECAM
-                        lab->reallocLab();
-                    }
+                if (params->colorappearance.badpixsl > 0 && execsharp) {
+                    int mode = params->colorappearance.badpixsl;
+                    lab->deleteLab();
+                    ImProcFunctions::badpixcam (ncie, 3.0, 10, mode, 0, true);//for bad pixels CIECAM
+                    lab->reallocLab();
+                }
 
                 if (params->impulseDenoise.enabled) if (execsharp) {
                         float **buffers[3];
