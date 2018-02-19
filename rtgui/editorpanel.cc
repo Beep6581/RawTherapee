@@ -1979,10 +1979,6 @@ bool EditorPanel::saveImmediately (const Glib::ustring &filename, const SaveForm
     rtengine::procparams::ProcParams pparams;
     ipc->getParams (&pparams);
 
-    if (gimpPlugin) {
-        pparams.icm.gamma = "linear_g1.0";
-    }
-
     rtengine::ProcessingJob *job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
 
     // save immediately

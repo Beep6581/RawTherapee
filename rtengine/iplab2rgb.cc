@@ -394,9 +394,9 @@ Imagefloat* ImProcFunctions::lab2rgbOut (LabImage* lab, int cx, int cy, int cw, 
 
                 Color::xyz2srgb(x_, y_, z_, R, G, B);
 
-                setUnlessOOG(image->r(i - cy, j - cx), Color::gamma2curve[CLIP(R)]);
-                setUnlessOOG(image->g(i - cy, j - cx), Color::gamma2curve[CLIP(G)]);
-                setUnlessOOG(image->b(i - cy, j - cx), Color::gamma2curve[CLIP(B)]);
+                image->r(i - cy, j - cx) = Color::gamma2curve[CLIP(R)];
+                image->g(i - cy, j - cx) = Color::gamma2curve[CLIP(G)];
+                image->b(i - cy, j - cx) = Color::gamma2curve[CLIP(B)];
             }
         }
     }

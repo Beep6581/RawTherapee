@@ -97,6 +97,10 @@ private:
 #ifdef __SSE2__
     static vfloat hue2rgb(vfloat p, vfloat q, vfloat t);
 #endif
+
+    static float computeXYZ2Lab(float f);
+    static float computeXYZ2LabY(float f);
+    
 public:
 
     typedef enum Channel {
