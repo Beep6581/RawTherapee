@@ -1951,7 +1951,7 @@ void CLASS parse_hasselblad_gain()
          Data block format. Seems to differ depending on sensor type. For tested H4D-50
          and H3D-31: 10 16 bit signed values per row
          value 0: a correction factor (k) used on even columns, where the new pixel value is
-         calulated as follows:
+         calculated as follows:
          new_value = old_value + (2 * ((k * (old_value_on_row_above-256)) / 32767) - 2)
          note the connection to the value on the row above, seems to be some sort of signal
          leakage correction.
@@ -2023,7 +2023,7 @@ void CLASS hasselblad_correct()
       TODO:
        - Support all gain tag formats
           - The 0x19 tag varies a bit between models. We don't have parsers for all models.
-          - The reference model used was during inital reverse-engineering was a H4D-50,
+          - The reference model used was during initial reverse-engineering was a H4D-50,
             we probably support the Hasselblads with Kodak 31, 39, 40 and 50 megapixels
             well, but more work is needed for Kodak 16 and 22, Dalsa 60 and Sony 50.
        - Apply bad column(?) data (hbd.unknown1)
@@ -4378,7 +4378,7 @@ mask_set:
 //}
 
 /*
-   Seach from the current directory up to the root looking for
+   Search from the current directory up to the root looking for
    a ".badpixels" file, and fix those pixels now.
  */
 //void CLASS bad_pixels (const char *cfname)

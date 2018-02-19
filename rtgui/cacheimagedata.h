@@ -29,7 +29,7 @@ class CacheImageData: public rtengine::FramesMetaData
 
 public:
 
-    // basic informations
+    // basic information
     Glib::ustring  md5;
     Glib::ustring  version;
     bool  supported;

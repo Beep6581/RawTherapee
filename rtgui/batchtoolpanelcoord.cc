@@ -390,7 +390,7 @@ void BatchToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const G
     }
 
     // If only a single item is selected, we emulate the behaviour of the editor tool panel coordinator,
-    // otherwise we adjust the inital parameters on a per-image basis.
+    // otherwise we adjust the initial parameters on a per-image basis.
     if (selected.size() == 1) {
         // Compensate rotation on flip
         if (event == rtengine::EvCTHFlip || event == rtengine::EvCTVFlip) {

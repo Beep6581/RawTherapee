@@ -359,7 +359,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                                     calclum->b(ii>>1,jj>>1) = orig_prev->b(ii,jj);
                                 }
                             }
-                            imgsrc->convertColorSpace(calclum, params.icm, currWB);//claculate values after colorspace conversion
+                            imgsrc->convertColorSpace(calclum, params.icm, currWB);//calculate values after colorspace conversion
                         }
 
                         int kall=1;

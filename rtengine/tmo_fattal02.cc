@@ -153,7 +153,7 @@ void downSample (const Array2Df& A, Array2Df& B)
     const int height = B.getRows();
 
     // Note, I've uncommented all omp directives. They are all ok but are
-    // applied to too small problems and in total don't lead to noticable
+    // applied to too small problems and in total don't lead to noticeable
     // speed improvements. The main issue is the pde solver and in case of the
     // fft solver uses optimised threaded fftw routines.
     //#pragma omp parallel for
@@ -293,7 +293,7 @@ float calculateGradients (Array2Df* H, Array2Df* G, int k, bool multithread)
             gx = ((*H) (w, y) - (*H) (e, y));
 
             gy = ((*H) (x, s) - (*H) (x, n));
-            // note this implicitely assumes that H(-1)=H(0)
+            // note this implicitly assumes that H(-1)=H(0)
             // for the fft-pde slover this would need adjustment as H(-1)=H(1)
             // is assumed, which means gx=0.0, gy=0.0 at the boundaries
             // however, the impact is not visible so we ignore this here

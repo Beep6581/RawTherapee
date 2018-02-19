@@ -890,7 +890,7 @@ void Wavelet::wavChanged (double nlevel)
     nextnlevel = nlevel;
 
     const auto func = [](gpointer data) -> gboolean {
-        GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
+        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
         static_cast<Wavelet*>(data)->wavComputed_();
 
         return FALSE;

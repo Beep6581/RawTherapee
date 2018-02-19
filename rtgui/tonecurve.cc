@@ -803,7 +803,7 @@ void ToneCurve::enableAll ()
 bool ToneCurve::autoExpComputed_ ()
 {
 
-    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
+    GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
     disableListener ();
     enableAll ();
     expcomp->setValue (nextExpcomp);

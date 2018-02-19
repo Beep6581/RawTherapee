@@ -192,7 +192,7 @@ void BatchQueuePanel::init (RTWindow *parent)
     saveFormatPanel->init (options.saveFormatBatch);
 }
 
-// it is expected to have a non null forceOrientation value on Preferences update only. In this case, qsize is ingored and computed automatically
+// it is expected to have a non null forceOrientation value on Preferences update only. In this case, qsize is ignored and computed automatically
 void BatchQueuePanel::updateTab (int qsize, int forceOrientation)
 {
     Gtk::Notebook *nb = (Gtk::Notebook *)(this->get_parent());

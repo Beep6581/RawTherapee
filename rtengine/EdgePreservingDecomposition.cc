@@ -789,7 +789,7 @@ float *EdgePreservingDecomposition::CreateBlur(float *Source, float Scale, float
 
 
 // checked for race condition here
-// a0[] is read and write but adressed by i only
+// a0[] is read and write but addressed by i only
 // a[] is read only
 // a_w_1 is write only
 // a_w is write only

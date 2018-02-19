@@ -512,7 +512,7 @@ Camera constants:
     { // Quality B, some missing scaling factors are safely guessed
         "make_model": "Canon EOS 6D Mark II",
         "dcraw_matrix": [ 6875,-970,-932,-4691,12459,2501,-874,1953,5809 ], // DNG v_9.12 D65
-        "raw_crop": [ 120, 44, 6264, 4180 ], // fullraw size 6384x4224 usefull 120,44,6264x4180
+        "raw_crop": [ 120, 44, 6264, 4180 ], // fullraw size 6384x4224 useful 120,44,6264x4180
         // "raw_crop": [ 128, 52, 6248, 4168 ], // official jpeg crop 120+12,44+12,6240x4160
         "masked_areas": [ 44, 4, 4220, 116 ], 
         "ranges": {
@@ -1209,7 +1209,7 @@ Camera constants:
         "make_model": "FUJIFILM GFX 50S",
         "dcraw_matrix": [ 11756,-4754,-874,-3056,11045,2305,-381,1457,6006 ], // DNGv9.9 D65
         //"dcraw_matrix": [ 12407,-5222,-1086,-2971,11116,2120,-294,1029,5284 ], // copy from X-A3 DNGv9.8 D65
-        "raw_crop": [ 0, 0, 8280, 6208 ], // full raw 9216X6210 - usefull 8280x6208
+        "raw_crop": [ 0, 0, 8280, 6208 ], // full raw 9216X6210 - useful 8280x6208
         //"raw_crop": [ 6, 6, 8264, 6200 ], // fuji official JPEG 8256X6192 10,11,9,8 - experimental crop to match with official
         "ranges": { "white": 16000 }
     },
@@ -1996,7 +1996,7 @@ Camera constants:
         "make_model": [ "RICOH PENTAX K-70", "PENTAX K-70" ],
         //"dcraw_matrix": [ 8050,-2061,-1264,-4359,12953,1515,-1096,1965,6075 ], // PENTAX DNG D65
         "dcraw_matrix": [ 8766,-3149,-747,-3976,11943,2292,-517,1259,5552 ], // Adobe DNGv9.8 D65
-        "raw_crop": [ 58, 28, 6022, 4020 ], // full frame 6080x4064, usefull raw frame 56,28,6080,4049, official DNG raw_crop 58,28,6080,4052, official jpeg crop 58+8,28+4 6000x4000
+        "raw_crop": [ 58, 28, 6022, 4020 ], // full frame 6080x4064, useful raw frame 56,28,6080,4049, official DNG raw_crop 58,28,6080,4052, official jpeg crop 58+8,28+4 6000x4000
         //"raw_crop": [ 62, 28, 6000, 4000 ], // matched to official jpeg crop 58+8,28+4 6000x4000
         "ranges": {
             "white": [
@@ -2015,7 +2015,7 @@ Camera constants:
     { // Quality B, Intemediate ISO samples missing. Pentax_DNG WLtags are after BL sutraction and not valid
         "make_model": [ "RICOH PENTAX KP", "PENTAX KP" ],
         "dcraw_matrix": [ 7357,-2031,-1320,-4842,13555,1349,-1538,2416,5736 ], // Adobe DNGv9.12 D65
-        "raw_crop": [ 52, 28, 6032, 4030 ], // full frame 6112x4060, usefull raw frame 52,28,6084,4049, official DNG raw_crop 54,28,6082,4060
+        "raw_crop": [ 52, 28, 6032, 4030 ], // full frame 6112x4060, useful raw frame 52,28,6084,4049, official DNG raw_crop 54,28,6082,4060
         "ranges": {
             "white": [
                 { "iso": 100, "levels": 16300 }, // 16383
