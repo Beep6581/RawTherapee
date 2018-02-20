@@ -337,7 +337,7 @@ public:
     void defringe       (LabImage* lab);
     void defringecam    (CieImage* ncie);
     void badpixcam      (CieImage* ncie, double rad, int thr, int mode, float chrom, bool hotbad);
-    void badpixlab      (LabImage* lab, double rad, int thr, float skinprot, float chrom);
+    void badpixlab      (LabImage* lab, double rad, int thr, float chrom);
 
     void PF_correct_RT    (LabImage * src, double radius, int thresh);
     void PF_correct_RTcam (CieImage * src, double radius, int thresh);

@@ -60,7 +60,6 @@ void ImProcFunctions::PF_correct_RT(LabImage * src, double radius, int thresh)
     const JaggedArray<float> tmpa(width, height);
     const JaggedArray<float> tmpb(width, height);
 
-
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -482,7 +481,7 @@ void ImProcFunctions::Badpixelscam(CieImage * src, double radius, int thresh, in
 
         //luma badpixels
         constexpr float sh_thr = 4.5f; //low value for luma sh_p to avoid artifacts
-        constexpr float shthr = sh_thr / 24.0f; // divide by 24 because we are using an 5x5 grid and centre point is excluded from summation
+        constexpr float shthr = sh_thr / 24.0f; // divide by 24 because we are using a 5x5 grid and centre point is excluded from summation
 
 #ifdef _OPENMP
         #pragma omp parallel
@@ -886,6 +885,11 @@ void ImProcFunctions::Badpixelscam(CieImage * src, double radius, int thresh, in
 void ImProcFunctions::BadpixelsLab(LabImage * src, double radius, int thresh, float chrom)
 {
     BENCHFUN
+
+    if(radius < 0.25) { // for gauss sigma less than 0.25 gaussianblur() just calls memcpy => nothing to do here
+        return;
+    }
+
     const int halfwin = ceil(2 * radius) + 1;
 
     const int width = src->W, height = src->H;
@@ -896,161 +900,164 @@ void ImProcFunctions::BadpixelsLab(LabImage * src, double radius, int thresh, fl
 
     std::unique_ptr<float[]> badpix(new float[width * height]);
 
-#ifdef _OPENMP
-    #pragma omp parallel
-#endif
-    {
-        // blur L channel
-        gaussianBlur(src->L, tmL, width, height, 2.0);//low value to avoid artifacts
-    }
-
-//luma badpixels
-    constexpr float sh_thr = 4.5f;//low value for luma sh_p to avoid artifacts
-    constexpr float shthr = sh_thr / 24.0f;
+    if(radius >= 0.5) { // for gauss sigma less than 0.25 gaussianblur() just calls memcpy => nothing to do here
 
 #ifdef _OPENMP
-    #pragma omp parallel
+        #pragma omp parallel
 #endif
-    {
+        {
+            // blur L channel
+            gaussianBlur(src->L, tmL, width, height, radius / 2.0);//low value to avoid artifacts
+        }
+
+        //luma badpixels
+        constexpr float sh_thr = 4.5f; //low value for luma sh_p to avoid artifacts
+        constexpr float shthr = sh_thr / 24.0f; // divide by 24 because we are using a 5x5 grid and centre point is excluded from summation
+
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
 #ifdef __SSE2__
-        vfloat shthrv = F2V(shthr);
-        vfloat onev = F2V(1.f);
-#endif // __SSE2__
+            vfloat shthrv = F2V(shthr);
+            vfloat onev = F2V(1.f);
+#endif
 #ifdef _OPENMP
-        #pragma omp for
+            #pragma omp for
+#endif
+
+            for (int i = 0; i < height; i++) {
+                int j = 0;
+                for (; j < 2; j++) {
+                    float shfabs = fabs(src->L[i][j] - tmL[i][j]);
+                    float shmed = 0.f;
+
+                    for (int i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++) {
+                        for (int j1 = 0; j1 <= j + 2; j1++) {
+                            shmed += fabs(src->L[i1][j1] - tmL[i1][j1]);
+                        }
+                    }
+                    badpix[i * width + j] = (shfabs > ((shmed - shfabs) * shthr));
+                }
+
+#ifdef __SSE2__
+
+                for (; j < width - 5; j += 4) {
+                    vfloat shfabsv = vabsf(LVFU(src->L[i][j]) - LVFU(tmL[i][j]));
+                    vfloat shmedv = ZEROV;
+
+                    for (int i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++) {
+                        for (int j1 = j - 2; j1 <= j + 2; j1++) {
+                            shmedv += vabsf(LVFU(src->L[i1][j1]) - LVFU(tmL[i1][j1]));
+                        }
+                    }
+                    STVFU(badpix[i * width + j], vselfzero(vmaskf_gt(shfabsv, (shmedv - shfabsv) * shthrv), onev));
+                }
+#endif
+                for (; j < width - 2; j++) {
+                    float shfabs = fabs(src->L[i][j] - tmL[i][j]);
+                    float shmed = 0.f;
+
+                    for (int i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++) {
+                        for (int j1 = j - 2; j1 <= j + 2; j1++) {
+                            shmed += fabs(src->L[i1][j1] - tmL[i1][j1]);
+                        }
+                    }
+                    badpix[i * width + j] = (shfabs > ((shmed - shfabs) * shthr));
+                }
+
+                for (; j < width; j++) {
+                    float shfabs = fabs(src->L[i][j] - tmL[i][j]);
+                    float shmed = 0.f;
+
+                    for (int i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++) {
+                        for (int j1 = j - 2; j1 < width; j1++) {
+                            shmed += fabs(src->L[i1][j1] - tmL[i1][j1]);
+                        }
+                    }
+                    badpix[i * width + j] = (shfabs > ((shmed - shfabs) * shthr));
+                }
+            }
+        }
+
+#ifdef _OPENMP
+        #pragma omp for schedule(dynamic,16)
 #endif
 
         for (int i = 0; i < height; i++) {
             int j = 0;
             for (; j < 2; j++) {
-                float shfabs = fabs(src->L[i][j] - tmL[i][j]);
-                float shmed = 0.f;
+                if (badpix[i * width + j]) {
+                    float norm = 0.f, shsum = 0.f, sum = 0.f, tot = 0.f;
 
-                for (int i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++) {
-                    for (int j1 = 0; j1 <= j + 2; j1++) {
-                        shmed += fabs(src->L[i1][j1] - tmL[i1][j1]);
+                    for (int i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++) {
+                        for (int j1 = 0; j1 <= j + 2; j1++) {
+                            if (!badpix[i1 * width + j1]) {
+                                sum += src->L[i1][j1];
+                                tot += 1.f;
+                                float dirsh = 1.f / (SQR(src->L[i1][j1] - src->L[i][j]) + eps);
+                                shsum += dirsh * src->L[i1][j1];
+                                norm += dirsh;
+                            }
+                        }
+                    }
+                    if (norm > 0.f) {
+                        src->L[i][j] = shsum / norm;
+                    } else if(tot > 0.f) {
+                        src->L[i][j] = sum / tot;
                     }
                 }
-                badpix[i * width + j] = (shfabs > ((shmed - shfabs) * shthr));
             }
 
-#ifdef __SSE2__
-
-            for (; j < width - 5; j += 4) {
-                vfloat shfabsv = vabsf(LVFU(src->L[i][j]) - LVFU(tmL[i][j]));
-                vfloat shmedv = ZEROV;
-
-                for (int i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++) {
-                    for (int j1 = j - 2; j1 <= j + 2; j1++) {
-                        shmedv += vabsf(LVFU(src->L[i1][j1]) - LVFU(tmL[i1][j1]));
-                    }
-                }
-                STVFU(badpix[i * width + j], vselfzero(vmaskf_gt(shfabsv, (shmedv - shfabsv) * shthrv), onev));
-            }
-#endif
             for (; j < width - 2; j++) {
-                float shfabs = fabs(src->L[i][j] - tmL[i][j]);
-                float shmed = 0.f;
+                if (badpix[i * width + j]) {
+                    float norm = 0.f, shsum = 0.f, sum = 0.f, tot = 0.f;
 
-                for (int i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++) {
-                    for (int j1 = j - 2; j1 <= j + 2; j1++) {
-                        shmed += fabs(src->L[i1][j1] - tmL[i1][j1]);
+                    for (int i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++) {
+                        for (int j1 = j - 2; j1 <= j + 2; j1++) {
+                            if (!badpix[i1 * width + j1]) {
+                                sum += src->L[i1][j1];
+                                tot += 1.f;
+                                float dirsh = 1.f / (SQR(src->L[i1][j1] - src->L[i][j]) + eps);
+                                shsum += dirsh * src->L[i1][j1];
+                                norm += dirsh;
+                            }
+                        }
+                    }
+                    if (norm > 0.f) {
+                        src->L[i][j] = shsum / norm;
+                    } else if(tot > 0.f) {
+                        src->L[i][j] = sum / tot;
                     }
                 }
-                badpix[i * width + j] = (shfabs > ((shmed - shfabs) * shthr));
             }
 
             for (; j < width; j++) {
-                float shfabs = fabs(src->L[i][j] - tmL[i][j]);
-                float shmed = 0.f;
+                if (badpix[i * width + j]) {
+                    float norm = 0.f, shsum = 0.f, sum = 0.f, tot = 0.f;
 
-                for (int i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++) {
-                    for (int j1 = j - 2; j1 < width; j1++) {
-                        shmed += fabs(src->L[i1][j1] - tmL[i1][j1]);
-                    }
-                }
-                badpix[i * width + j] = (shfabs > ((shmed - shfabs) * shthr));
-            }
-        }
-    }
-
-#ifdef _OPENMP
-    #pragma omp for schedule(dynamic,16)
-#endif
-
-    for (int i = 0; i < height; i++) {
-        int j = 0;
-        for (; j < 2; j++) {
-            if (badpix[i * width + j]) {
-                float norm = 0.f, shsum = 0.f, sum = 0.f, tot = 0.f;
-
-                for (int i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++) {
-                    for (int j1 = 0; j1 <= j + 2; j1++) {
-                        if (!badpix[i1 * width + j1]) {
-                            sum += src->L[i1][j1];
-                            tot += 1.f;
-                            float dirsh = 1.f / (SQR(src->L[i1][j1] - src->L[i][j]) + eps);
-                            shsum += dirsh * src->L[i1][j1];
-                            norm += dirsh;
+                    for (int i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++) {
+                        for (int j1 = j - 2; j1 < width; j1++) {
+                            if (!badpix[i1 * width + j1]) {
+                                sum += src->L[i1][j1];
+                                tot += 1.f;
+                                float dirsh = 1.f / (SQR(src->L[i1][j1] - src->L[i][j]) + eps);
+                                shsum += dirsh * src->L[i1][j1];
+                                norm += dirsh;
+                            }
                         }
                     }
-                }
-                if (norm > 0.f) {
-                    src->L[i][j] = shsum / norm;
-                } else if(tot > 0.f) {
-                    src->L[i][j] = sum / tot;
-                }
-            }
-        }
-
-        for (; j < width - 2; j++) {
-            if (badpix[i * width + j]) {
-                float norm = 0.f, shsum = 0.f, sum = 0.f, tot = 0.f;
-
-                for (int i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++) {
-                    for (int j1 = j - 2; j1 <= j + 2; j1++) {
-                        if (!badpix[i1 * width + j1]) {
-                            sum += src->L[i1][j1];
-                            tot += 1.f;
-                            float dirsh = 1.f / (SQR(src->L[i1][j1] - src->L[i][j]) + eps);
-                            shsum += dirsh * src->L[i1][j1];
-                            norm += dirsh;
-                        }
+                    if (norm > 0.f) {
+                        src->L[i][j] = shsum / norm;
+                    } else if(tot > 0.f) {
+                        src->L[i][j] = sum / tot;
                     }
-                }
-                if (norm > 0.f) {
-                    src->L[i][j] = shsum / norm;
-                } else if(tot > 0.f) {
-                    src->L[i][j] = sum / tot;
-                }
-            }
-        }
-
-        for (; j < width; j++) {
-            if (badpix[i * width + j]) {
-                float norm = 0.f, shsum = 0.f, sum = 0.f, tot = 0.f;
-
-                for (int i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++) {
-                    for (int j1 = j - 2; j1 < width; j1++) {
-                        if (!badpix[i1 * width + j1]) {
-                            sum += src->L[i1][j1];
-                            tot += 1.f;
-                            float dirsh = 1.f / (SQR(src->L[i1][j1] - src->L[i][j]) + eps);
-                            shsum += dirsh * src->L[i1][j1];
-                            norm += dirsh;
-                        }
-                    }
-                }
-                if (norm > 0.f) {
-                    src->L[i][j] = shsum / norm;
-                } else if(tot > 0.f) {
-                    src->L[i][j] = sum / tot;
                 }
             }
         }
     }
 
-// end luma badpixels
+    // end luma badpixels
 
     float ** tmaa = tmL; // reuse tmL buffer
     const JaggedArray<float> tmbb(width, height);
