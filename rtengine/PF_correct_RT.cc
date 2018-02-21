@@ -70,7 +70,7 @@ void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radiu
         gaussianBlur (src->b, tmp1->b, src->W, src->H, radius);
     }
 
-    float chromave = 0.0f;
+    double chromave = 0.0; // use double precision for large summations
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -382,7 +382,7 @@ void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * dst, double ra
         gaussianBlur (srbb, tmbb, src->W, src->H, radius);
     }
 
-    float chromave = 0.0f;
+    double chromave = 0.0; // use double precision for large summations
 
 #ifdef __SSE2__
 
@@ -1042,7 +1042,7 @@ void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, double radius
 
 
 // begin chroma badpixels
-    float chrommed = 0.f;
+    double chrommed = 0.0; // use double precision for large summations
 #ifdef _OPENMP
     #pragma omp parallel for reduction(+:chrommed)
 #endif
@@ -1646,7 +1646,7 @@ void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, double radius
 
     if(mode == 3) {
 // begin chroma badpixels
-        float chrommed = 0.f;
+        double chrommed = 0.0; // use double precision for large summations
 #ifdef _OPENMP
         #pragma omp parallel for reduction(+:chrommed)
 #endif
