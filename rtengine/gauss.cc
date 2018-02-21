@@ -758,7 +758,7 @@ template<class T> void gaussVerticalSsemult (T** RESTRICT src, T** RESTRICT dst,
     }
 }
 
-template<class T> void gaussVerticalSsediv (T** RESTRICT src, T** RESTRICT dst, T** divBuffer, const int W, const int H, const float sigma)
+template<class T> void gaussVerticalSsediv (T** src, T** dst, T** divBuffer, const int W, const int H, const float sigma)
 {
     double b1, b2, b3, B, M[3][3];
     calculateYvVFactors<double>(sigma, b1, b2, b3, B, M);

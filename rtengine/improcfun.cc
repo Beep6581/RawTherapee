@@ -1989,8 +1989,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                 hist16Q.clear();
             }
 
-            float sum = 0.f;
-//            float sumQ = 0.f;
+            double sum = 0.0; // use double precision for large summations
 
 #ifdef _OPENMP
             const int numThreads = min (max (width * height / 65536, 1), omp_get_max_threads());
@@ -2010,7 +2009,6 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                     hist16Qthr.clear();
                 }
 
-                //    #pragma omp for reduction(+:sum,sumQ)
                 #pragma omp for reduction(+:sum)
 
 
