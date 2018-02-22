@@ -719,7 +719,7 @@ void Color::rgb2hsv(float r, float g, float b, float &h, float &s, float &v)
     if (del_Max < 0.00001 && del_Max > -0.00001) { // no fabs, slow!
         s = 0.f;
     } else {
-        s = del_Max / var_Max;
+        s = del_Max / (var_Max == 0.0 ? 1.0 : var_Max);
 
         if (var_R == var_Max) {
             h = (var_G - var_B) / del_Max;

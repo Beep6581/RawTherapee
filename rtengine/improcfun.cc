@@ -178,8 +178,9 @@ void proPhotoBlue(float *rtemp, float *gtemp, float *btemp, int istart, int tH, 
                 for (int k = 0; k < 4; ++k) {
                     float r = rtemp[ti * tileSize + tj + k];
                     float g = gtemp[ti * tileSize + tj + k];
-                    if (r == 0.0f || g == 0.0f) {
-                        float b = btemp[ti * tileSize + tj + k];
+                    float b = btemp[ti * tileSize + tj + k];
+                    
+                    if ((r == 0.0f || g == 0.0f) && rtengine::min(r, g, b) >= 0.f) {
                         float h, s, v;
                         Color::rgb2hsv (r, g, b, h, s, v);
                         s *= 0.99f;
@@ -192,9 +193,9 @@ void proPhotoBlue(float *rtemp, float *gtemp, float *btemp, int istart, int tH, 
         for (; j < tW; j++, tj++) {
             float r = rtemp[ti * tileSize + tj];
             float g = gtemp[ti * tileSize + tj];
+            float b = btemp[ti * tileSize + tj];
 
-            if (r == 0.0f || g == 0.0f) {
-                float b = btemp[ti * tileSize + tj];
+            if ((r == 0.0f || g == 0.0f) && rtengine::min(r, g, b) >= 0.f) {
                 float h, s, v;
                 Color::rgb2hsv (r, g, b, h, s, v);
                 s *= 0.99f;
@@ -3795,9 +3796,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                         }
                     }
                 } else {
-                    float tmpr[4];
-                    float tmpg[4];
-                    float tmpb[4];
+                    vfloat tmpr;
+                    vfloat tmpg;
+                    vfloat tmpb;
                     
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         int j = jstart, tj = 0;
