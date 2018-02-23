@@ -430,15 +430,9 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
     const std::unique_ptr<float[]> badpix(new float[width * height]);
 
     if (radius >= 0.5) { // for gauss sigma less than 0.25 gaussianblur() just calls memcpy => nothing to do here
-#ifdef _OPENMP
-        #pragma omp parallel
-#endif
-        {
-            //luma sh_p
-            gaussianBlur(ncie->sh_p, tmL, width, height, radius / 2.0); // low value to avoid artifacts
-        }
-
-        //luma badpixels
+        // luma badpixels
+        // for bad pixels in sh channel we need 0 / != 0 information. Use 1 byte per pixel instead of 4 to reduce memory pressure
+        uint8_t *badpixb = reinterpret_cast<uint8_t*>(badpix.get());
         constexpr float sh_thr = 4.5f; // low value for luma sh_p to avoid artifacts
         constexpr float shthr = sh_thr / 24.0f; // divide by 24 because we are using a 5x5 grid and centre point is excluded from summation
 
@@ -446,9 +440,11 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
         #pragma omp parallel
 #endif
         {
+            //luma sh_p
+            gaussianBlur(ncie->sh_p, tmL, width, height, radius / 2.0); // low value to avoid artifacts
+
 #ifdef __SSE2__
             const vfloat shthrv = F2V(shthr);
-            const vfloat onev = F2V(1.f);
 #endif
 #ifdef _OPENMP
             #pragma omp for
@@ -466,7 +462,7 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
                         }
                     }
 
-                    badpix[i * width + j] = shfabs > ((shmed - shfabs) * shthr);
+                    badpixb[i * width + j] = shfabs > ((shmed - shfabs) * shthr);
                 }
 
 #ifdef __SSE2__
@@ -481,7 +477,11 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
                         }
                     }
 
-                    STVFU(badpix[i * width + j], vselfzero(vmaskf_gt(shfabsv, (shmedv - shfabsv) * shthrv), onev));
+                    uint8_t mask = _mm_movemask_ps((vfloat)vmaskf_gt(shfabsv, (shmedv - shfabsv) * shthrv));
+                    badpixb[i * width + j] = mask & 1;
+                    badpixb[i * width + j + 1] = mask & 2;
+                    badpixb[i * width + j + 2] = mask & 4;
+                    badpixb[i * width + j + 3] = mask & 8;
                 }
 #endif
                 for (; j < width - 2; j++) {
@@ -494,7 +494,7 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
                         }
                     }
 
-                    badpix[i * width + j] = shfabs > ((shmed - shfabs) * shthr);
+                    badpixb[i * width + j] = shfabs > ((shmed - shfabs) * shthr);
                 }
 
                 for (; j < width; j++) {
@@ -507,7 +507,7 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
                         }
                     }
 
-                    badpix[i * width + j] = shfabs > ((shmed - shfabs) * shthr);
+                    badpixb[i * width + j] = shfabs > ((shmed - shfabs) * shthr);
                 }
             }
         }
@@ -519,12 +519,12 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
         for (int i = 0; i < height; i++) {
             int j = 0;
             for (; j < 2; j++) {
-                if (badpix[i * width + j]) {
+                if (badpixb[i * width + j]) {
                     float norm = 0.f, shsum = 0.f, sum = 0.f, tot = 0.f;
 
                     for (int i1 = std::max(0, i - 2); i1 <= std::min(i + 2, height - 1); i1++) {
                         for (int j1 = 0; j1 <= j + 2; j1++) {
-                            if (!badpix[i1 * width + j1]) {
+                            if (!badpixb[i1 * width + j1]) {
                                 sum += ncie->sh_p[i1][j1];
                                 tot += 1.f;
                                 const float dirsh = 1.f / (SQR(ncie->sh_p[i1][j1] - ncie->sh_p[i][j]) + eps);
@@ -542,12 +542,12 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
             }
 
             for (; j < width - 2; j++) {
-                if (badpix[i * width + j]) {
+                if (badpixb[i * width + j]) {
                     float norm = 0.f, shsum = 0.f, sum = 0.f, tot = 0.f;
 
                     for (int i1 = std::max(0, i - 2); i1 <= std::min(i + 2, height - 1); i1++) {
                         for (int j1 = j - 2; j1 <= j + 2; j1++) {
-                            if (!badpix[i1 * width + j1]) {
+                            if (!badpixb[i1 * width + j1]) {
                                 sum += ncie->sh_p[i1][j1];
                                 tot += 1.f;
                                 const float dirsh = 1.f / (SQR(ncie->sh_p[i1][j1] - ncie->sh_p[i][j]) + eps);
@@ -565,12 +565,12 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
             }
 
             for (; j < width; j++) {
-                if (badpix[i * width + j]) {
+                if (badpixb[i * width + j]) {
                     float norm = 0.f, shsum = 0.f, sum = 0.f, tot = 0.f;
 
                     for (int i1 = std::max(0, i - 2); i1 <= std::min(i + 2, height - 1); i1++) {
                         for (int j1 = j - 2; j1 < width; j1++) {
-                            if (!badpix[i1 * width + j1]) {
+                            if (!badpixb[i1 * width + j1]) {
                                 sum += ncie->sh_p[i1][j1];
                                 tot += 1.f;
                                 const float dirsh = 1.f / (SQR(ncie->sh_p[i1][j1] - ncie->sh_p[i][j]) + eps);
@@ -691,17 +691,19 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
         chrommed /= height * width;
 
         if (chrommed > 0.0) {
-        // now as chrommed is calculated, we postprocess badpix to reduce the number of divisions in future
+            // now as chrommed is calculated, we postprocess badpix to reduce the number of divisions in future
+            const float threshfactor = 1.f / ((thresh * chrommed) / 33.f + chrommed);
+            const int halfwin = std::ceil(2 * radius) + 1;
 #ifdef _OPENMP
             #pragma omp parallel
 #endif
             {
 #ifdef __SSE2__
                 const vfloat chrommedv = F2V(chrommed);
-                const  vfloat onev = F2V(1.f);
+                const vfloat onev = F2V(1.f);
 #endif
 #ifdef _OPENMP
-            #pragma omp for
+                #pragma omp for
 #endif
 
                 for (int i = 0; i < height; i++) {
@@ -715,31 +717,26 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
                         badpix[i * width + j] = 1.f / (badpix[i * width + j] + chrommed);
                     }
                 }
-            }
-
-            const float threshfactor = 1.f / ((thresh * chrommed) / 33.f + chrommed);
-            const int halfwin = std::ceil(2 * radius) + 1;
 
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+                #pragma omp for schedule(dynamic,16)
 #endif
 
-            for (int i = 0; i < height; i++) {
-                int j = 0;
-                for (; j < halfwin; j++) {
+                for (int i = 0; i < height; i++) {
+                    int j = 0;
+                    for (; j < halfwin; j++) {
 
-                    if (badpix[i * width + j] < threshfactor) {
-                        float atot = 0.f, btot = 0.f, norm = 0.f;
+                        if (badpix[i * width + j] < threshfactor) {
+                            float atot = 0.f, btot = 0.f, norm = 0.f;
 
-                        for (int i1 = std::max(0, i - halfwin + 1); i1 < std::min(height, i + halfwin); i1++)
-                            for (int j1 = 0; j1 < j + halfwin; j1++) {
-                                const float wt = badpix[i1 * width + j1];
-                                atot += wt * sraa[i1][j1];
-                                btot += wt * srbb[i1][j1];
-                                norm += wt;
+                            for (int i1 = std::max(0, i - halfwin + 1); i1 < std::min(height, i + halfwin); i1++) {
+                                for (int j1 = 0; j1 < j + halfwin; j1++) {
+                                    const float wt = badpix[i1 * width + j1];
+                                    atot += wt * sraa[i1][j1];
+                                    btot += wt * srbb[i1][j1];
+                                    norm += wt;
+                                }
                             }
-
-                        if (norm > 0.f) {
                             const float intera = atot / norm;
                             const float interb = btot / norm;
                             const float CC = sqrt(SQR(interb) + SQR(intera));
@@ -750,28 +747,25 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
                             }
                         }
                     }
-                }
 
 #ifdef __SSE2__
-                const vfloat threshfactorv = F2V(threshfactor);
-                const vfloat chromv = F2V(chrom);
-                const vfloat piDiv180v = F2V(RT_PI_F_180);
-                for (; j < width - halfwin - 3; j+=4) {
+                    const vfloat threshfactorv = F2V(threshfactor);
+                    const vfloat chromv = F2V(chrom);
+                    const vfloat piDiv180v = F2V(RT_PI_F_180);
+                    for (; j < width - halfwin - 3; j+=4) {
 
-                    vmask selMask = vmaskf_lt(LVFU(badpix[i * width + j]), threshfactorv);
-                    if (_mm_movemask_ps((vfloat)selMask)) {
-                        vfloat atotv = ZEROV, btotv = ZEROV, normv = ZEROV;
-
-                        for (int i1 = std::max(0, i - halfwin + 1); i1 < std::min(height, i + halfwin); i1++)
-                            for (int j1 = j - halfwin + 1; j1 < j + halfwin; j1++) {
-                                const vfloat wtv = LVFU(badpix[i1 * width + j1]);
-                                atotv += wtv * LVFU(sraa[i1][j1]);
-                                btotv += wtv * LVFU(srbb[i1][j1]);
-                                normv += wtv;
-                            }
-
-                        selMask = vandm(selMask, vmaskf_gt(normv, ZEROV));
+                        vmask selMask = vmaskf_lt(LVFU(badpix[i * width + j]), threshfactorv);
                         if (_mm_movemask_ps((vfloat)selMask)) {
+                            vfloat atotv = ZEROV, btotv = ZEROV, normv = ZEROV;
+
+                            for (int i1 = std::max(0, i - halfwin + 1); i1 < std::min(height, i + halfwin); i1++) {
+                                for (int j1 = j - halfwin + 1; j1 < j + halfwin; j1++) {
+                                    const vfloat wtv = LVFU(badpix[i1 * width + j1]);
+                                    atotv += wtv * LVFU(sraa[i1][j1]);
+                                    btotv += wtv * LVFU(srbb[i1][j1]);
+                                    normv += wtv;
+                                }
+                            }
                             const vfloat interav = atotv / normv;
                             const vfloat interbv = btotv / normv;
                             const vfloat CCv = vsqrtf(SQRV(interbv) + SQRV(interav));
@@ -783,22 +777,20 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
                             }
                         }
                     }
-                }
 #endif
-                for (; j < width - halfwin; j++) {
+                    for (; j < width - halfwin; j++) {
 
-                    if (badpix[i * width + j] < threshfactor) {
-                        float atot = 0.f, btot = 0.f, norm = 0.f;
+                        if (badpix[i * width + j] < threshfactor) {
+                            float atot = 0.f, btot = 0.f, norm = 0.f;
 
-                        for (int i1 = std::max(0, i - halfwin + 1); i1 < std::min(height, i + halfwin); i1++)
-                            for (int j1 = j - halfwin + 1; j1 < j + halfwin; j1++) {
-                                const float wt = badpix[i1 * width + j1];
-                                atot += wt * sraa[i1][j1];
-                                btot += wt * srbb[i1][j1];
-                                norm += wt;
+                            for (int i1 = std::max(0, i - halfwin + 1); i1 < std::min(height, i + halfwin); i1++) {
+                                for (int j1 = j - halfwin + 1; j1 < j + halfwin; j1++) {
+                                    const float wt = badpix[i1 * width + j1];
+                                    atot += wt * sraa[i1][j1];
+                                    btot += wt * srbb[i1][j1];
+                                    norm += wt;
+                                }
                             }
-
-                        if (norm > 0.f) {
                             const float intera = atot / norm;
                             const float interb = btot / norm;
                             const float CC = sqrt(SQR(interb) + SQR(intera));
@@ -809,22 +801,20 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
                             }
                         }
                     }
-                }
 
-                for (; j < width; j++) {
+                    for (; j < width; j++) {
 
-                    if (badpix[i * width + j] < threshfactor) {
-                        float atot = 0.f, btot = 0.f, norm = 0.f;
+                        if (badpix[i * width + j] < threshfactor) {
+                            float atot = 0.f, btot = 0.f, norm = 0.f;
 
-                        for (int i1 = std::max(0, i - halfwin + 1); i1 < std::min(height, i + halfwin); i1++)
-                            for (int j1 = j - halfwin + 1; j1 < width; j1++) {
-                                const float wt = badpix[i1 * width + j1];
-                                atot += wt * sraa[i1][j1];
-                                btot += wt * srbb[i1][j1];
-                                norm += wt;
+                            for (int i1 = std::max(0, i - halfwin + 1); i1 < std::min(height, i + halfwin); i1++) {
+                                for (int j1 = j - halfwin + 1; j1 < width; j1++) {
+                                    const float wt = badpix[i1 * width + j1];
+                                    atot += wt * sraa[i1][j1];
+                                    btot += wt * srbb[i1][j1];
+                                    norm += wt;
+                                }
                             }
-
-                        if (norm > 0.f) {
                             const float intera = atot / norm;
                             const float interb = btot / norm;
                             const float CC = sqrt(SQR(interb) + SQR(intera));
@@ -864,7 +854,7 @@ void ImProcFunctions::BadpixelsLab(LabImage * lab, double radius, int thresh, fl
         //luma badpixels
         // for bad pixels in L channel we need 0 / != 0 information. Use 1 byte per pixel instead of 4 to reduce memory pressure
         uint8_t *badpixb = reinterpret_cast<uint8_t*>(badpix.get());
-        constexpr float sh_thr = 4.5f; // low value for luma sh_p to avoid artifacts
+        constexpr float sh_thr = 4.5f; // low value for luma L to avoid artifacts
         constexpr float shthr = sh_thr / 24.0f; // divide by 24 because we are using a 5x5 grid and centre point is excluded from summation
 
 #ifdef _OPENMP
