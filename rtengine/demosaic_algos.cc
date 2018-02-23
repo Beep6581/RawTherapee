@@ -92,7 +92,7 @@ void RawImageSource::eahd_demosaic ()
 
     // end of cielab preparation
 
-    const JaggedArray<float>
+    JaggedArray<float>
     rh (W, 3), gh (W, 4), bh (W, 3),
     rv (W, 3), gv (W, 4), bv (W, 3),
     lLh (W, 3), lah (W, 3), lbh (W, 3),
@@ -497,7 +497,7 @@ void RawImageSource::hphd_demosaic ()
         plistener->setProgress (0.0);
     }
 
-    const JaggedArray<float> hpmap (W, H, true);
+    JaggedArray<float> hpmap (W, H, true);
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -3943,7 +3943,7 @@ void RawImageSource::rcd_demosaic()
         plistener->setProgressStr(Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "rcd"));
         plistener->setProgress(0);
     }
-    
+
     int width = W, height = H;
 
     std::vector<float> cfa(width * height);
@@ -3963,15 +3963,15 @@ void RawImageSource::rcd_demosaic()
         plistener->setProgress(0.05);
     }
     // ------------------------------------------------------------------------
-/* RT    
+/* RT
     int row, col, indx, c;
-*/    
+*/
     int w1 = width, w2 = 2 * width, w3 = 3 * width, w4 = 4 * width;
 
     //Tolerance to avoid dividing by zero
     static const float eps = 1e-5, epssq = 1e-10;
 
-/* RT    
+/* RT
     //Gradients
     float N_Grad, E_Grad, W_Grad, S_Grad, NW_Grad, NE_Grad, SW_Grad, SE_Grad;
 
@@ -3981,7 +3981,7 @@ void RawImageSource::rcd_demosaic()
     //Directional discrimination
     //float V_Stat, H_Stat, P_Stat, Q_Stat;
     float VH_Central_Value, VH_Neighbour_Value, PQ_Central_Value, PQ_Neighbour_Value;
-*/    
+*/
     float *VH_Dir, *PQ_Dir;
 
     //Low pass filter
@@ -4001,7 +4001,7 @@ void RawImageSource::rcd_demosaic()
         for (int col = 4, indx = row * width + col; col < width - 4; col++, indx++ ) {
             //Calculate h/v local discrimination
             float V_Stat = max(epssq, - 18.0f  *  cfa[indx] * cfa[indx - w1] - 18.0f * cfa[indx] * cfa[indx + w1] - 36.0f * cfa[indx] * cfa[indx - w2] - 36.0f * cfa[indx] * cfa[indx + w2] + 18.0f * cfa[indx] * cfa[indx - w3] + 18.0f * cfa[indx] * cfa[indx + w3] - 2.0f * cfa[indx] * cfa[indx - w4] - 2.0f * cfa[indx] * cfa[indx + w4] + 38.0f * cfa[indx] * cfa[indx] - 70.0f * cfa[indx - w1] * cfa[indx + w1] - 12.0f * cfa[indx - w1] * cfa[indx - w2] + 24.0f * cfa[indx - w1] * cfa[indx + w2] - 38.0f * cfa[indx - w1] * cfa[indx - w3] + 16.0f * cfa[indx - w1] * cfa[indx + w3] + 12.0f * cfa[indx - w1] * cfa[indx - w4] - 6.0f * cfa[indx - w1] * cfa[indx + w4] + 46.0f * cfa[indx - w1] * cfa[indx - w1] + 24.0f * cfa[indx + w1] * cfa[indx - w2] - 12.0f * cfa[indx + w1] * cfa[indx + w2] + 16.0f * cfa[indx + w1] * cfa[indx - w3] - 38.0f * cfa[indx + w1] * cfa[indx + w3] - 6.0f * cfa[indx + w1] * cfa[indx - w4] + 12.0f * cfa[indx + w1] * cfa[indx + w4] + 46.0f * cfa[indx + w1] * cfa[indx + w1] + 14.0f * cfa[indx - w2] * cfa[indx + w2] - 12.0f * cfa[indx - w2] * cfa[indx + w3] - 2.0f * cfa[indx - w2] * cfa[indx - w4] + 2.0f * cfa[indx - w2] * cfa[indx + w4] + 11.0f * cfa[indx - w2] * cfa[indx - w2] - 12.0f * cfa[indx + w2] * cfa[indx - w3] + 2.0f * cfa[indx + w2] * cfa[indx - w4] - 2.0f * cfa[indx + w2] * cfa[indx + w4] + 11.0f * cfa[indx + w2] * cfa[indx + w2] + 2.0f * cfa[indx - w3] * cfa[indx + w3] - 6.0f * cfa[indx - w3] * cfa[indx - w4] + 10.0f * cfa[indx - w3] * cfa[indx - w3] - 6.0f * cfa[indx + w3] * cfa[indx + w4] + 10.0f * cfa[indx + w3] * cfa[indx + w3] + 1.0f * cfa[indx - w4] * cfa[indx - w4] + 1.0f * cfa[indx + w4] * cfa[indx + w4]);
-            
+
             float H_Stat = max(epssq, - 18.0f  *  cfa[indx] * cfa[indx -  1] - 18.0f * cfa[indx] * cfa[indx +  1] - 36.0f * cfa[indx] * cfa[indx -  2] - 36.0f * cfa[indx] * cfa[indx +  2] + 18.0f * cfa[indx] * cfa[indx -  3] + 18.0f * cfa[indx] * cfa[indx +  3] - 2.0f * cfa[indx] * cfa[indx -  4] - 2.0f * cfa[indx] * cfa[indx +  4] + 38.0f * cfa[indx] * cfa[indx] - 70.0f * cfa[indx -  1] * cfa[indx +  1] - 12.0f * cfa[indx -  1] * cfa[indx -  2] + 24.0f * cfa[indx -  1] * cfa[indx +  2] - 38.0f * cfa[indx -  1] * cfa[indx -  3] + 16.0f * cfa[indx -  1] * cfa[indx +  3] + 12.0f * cfa[indx -  1] * cfa[indx -  4] - 6.0f * cfa[indx -  1] * cfa[indx +  4] + 46.0f * cfa[indx -  1] * cfa[indx -  1] + 24.0f * cfa[indx +  1] * cfa[indx -  2] - 12.0f * cfa[indx +  1] * cfa[indx +  2] + 16.0f * cfa[indx +  1] * cfa[indx -  3] - 38.0f * cfa[indx +  1] * cfa[indx +  3] - 6.0f * cfa[indx +  1] * cfa[indx -  4] + 12.0f * cfa[indx +  1] * cfa[indx +  4] + 46.0f * cfa[indx +  1] * cfa[indx +  1] + 14.0f * cfa[indx -  2] * cfa[indx +  2] - 12.0f * cfa[indx -  2] * cfa[indx +  3] - 2.0f * cfa[indx -  2] * cfa[indx -  4] + 2.0f * cfa[indx -  2] * cfa[indx +  4] + 11.0f * cfa[indx -  2] * cfa[indx -  2] - 12.0f * cfa[indx +  2] * cfa[indx -  3] + 2.0f * cfa[indx +  2] * cfa[indx -  4] - 2.0f * cfa[indx +  2] * cfa[indx +  4] + 11.0f * cfa[indx +  2] * cfa[indx +  2] + 2.0f * cfa[indx -  3] * cfa[indx +  3] - 6.0f * cfa[indx -  3] * cfa[indx -  4] + 10.0f * cfa[indx -  3] * cfa[indx -  3] - 6.0f * cfa[indx +  3] * cfa[indx +  4] + 10.0f * cfa[indx +  3] * cfa[indx +  3] + 1.0f * cfa[indx -  4] * cfa[indx -  4] + 1.0f * cfa[indx +  4] * cfa[indx +  4]);
 
             VH_Dir[indx] = V_Stat / (V_Stat + H_Stat);
@@ -4023,7 +4023,7 @@ void RawImageSource::rcd_demosaic()
 
 #ifdef _OPENMP
     #pragma omp parallel for
-#endif    
+#endif
     for ( int row = 2; row < height - 2; row++ ) {
         for ( int col = 2 + (FC( row, 0 ) & 1), indx = row * width + col; col < width - 2; col += 2, indx += 2 ) {
 
@@ -4084,7 +4084,7 @@ void RawImageSource::rcd_demosaic()
         plistener->setProgress(0.5);
     }
     // ------------------------------------------------------------------------
-    
+
     /**
     * STEP 4: Populate the red and blue channels
     */
@@ -4154,7 +4154,7 @@ void RawImageSource::rcd_demosaic()
         plistener->setProgress(0.825);
     }
     // -------------------------------------------------------------------------
-        
+
     // Step 4.3: Populate the red and blue channels at green CFA positions
 #ifdef _OPENMP
     #pragma omp parallel for
@@ -4165,7 +4165,7 @@ void RawImageSource::rcd_demosaic()
             // Refined vertical and horizontal local discrimination
             float VH_Central_Value   = VH_Dir[indx];
             float VH_Neighbourhood_Value = 0.25f * ( VH_Dir[indx - w1 - 1] + VH_Dir[indx - w1 + 1] + VH_Dir[indx + w1 - 1] + VH_Dir[indx + w1 + 1] );
-            
+
             float VH_Disc = ( fabs( 0.5f - VH_Central_Value ) < fabs( 0.5f - VH_Neighbourhood_Value ) ) ? VH_Neighbourhood_Value : VH_Central_Value;
 
             for ( int c = 0; c <= 2; c += 2 ) {

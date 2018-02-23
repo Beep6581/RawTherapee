@@ -124,7 +124,7 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
         rangefn[lutSize - 1] = 1e-15f;
 
         // We need one temporary buffer
-        const JaggedArray<float> buffer (W, H);
+        JaggedArray<float> buffer (W, H);
 
         // the final result has to be in map
         // for an even number of levels that means: map => buffer, buffer => map
@@ -255,7 +255,7 @@ void SHMap::updateL (float** L, double radius, bool hq, int skip)
         //printf("lut=%d rf5=%f rfm=%f\n thre=%f",lutSize, rangefn[5],rangefn[lutSize-10],thresh );
 
         // We need one temporary buffer
-        const JaggedArray<float> buffer (W, H);
+        JaggedArray<float> buffer (W, H);
 
         // the final result has to be in map
         // for an even number of levels that means: map => buffer, buffer => map
