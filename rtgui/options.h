@@ -90,8 +90,13 @@ public:
     };
 
 private:
-    bool defProfRawMissing;
-    bool defProfImgMissing;
+    enum class DefProfError : short {
+        defProfRawMissing        = 1 << 0,
+        bundledDefProfRawMissing = 1 << 1,
+        defProfImgMissing        = 1 << 2,
+        bundledDefProfImgMissing = 1 << 3
+    };
+    short defProfError;
     Glib::ustring userProfilePath;
     Glib::ustring globalProfilePath;
     bool checkProfilePath (Glib::ustring &path);
@@ -344,9 +349,9 @@ public:
 
     Options ();
 
-    Options*    copyFrom        (Options* other);
-    void        filterOutParsedExtensions ();
-    void        setDefaults     ();
+    Options* copyFrom        (Options* other);
+    void filterOutParsedExtensions ();
+    void setDefaults     ();
     void readFromFile (Glib::ustring fname);
     void saveToFile (Glib::ustring fname);
     static void load (bool lightweight = false);
@@ -354,34 +359,20 @@ public:
 
     // if multiUser=false, send back the global profile path
     Glib::ustring getPreferredProfilePath();
-    Glib::ustring getUserProfilePath()
-    {
-        return userProfilePath;
-    }
-    Glib::ustring getGlobalProfilePath()
-    {
-        return globalProfilePath;
-    }
+    Glib::ustring getUserProfilePath();
+    Glib::ustring getGlobalProfilePath();
     Glib::ustring findProfilePath (Glib::ustring &profName);
-    bool        is_parse_extention (Glib::ustring fname);
-    bool        has_retained_extention (Glib::ustring fname);
-    bool        is_extention_enabled (Glib::ustring ext);
-    bool        is_defProfRawMissing()
-    {
-        return defProfRawMissing;
-    }
-    bool        is_defProfImgMissing()
-    {
-        return defProfImgMissing;
-    }
-    void        setDefProfRawMissing (bool value)
-    {
-        defProfRawMissing = value;
-    }
-    void        setDefProfImgMissing (bool value)
-    {
-        defProfImgMissing = value;
-    }
+    bool is_parse_extention (Glib::ustring fname);
+    bool has_retained_extention (Glib::ustring fname);
+    bool is_extention_enabled (Glib::ustring ext);
+    bool is_defProfRawMissing();
+    bool is_bundledDefProfRawMissing();
+    bool is_defProfImgMissing();
+    bool is_bundledDefProfImgMissing();
+    void setDefProfRawMissing (bool value);
+    void setBundledDefProfRawMissing (bool value);
+    void setDefProfImgMissing (bool value);
+    void setBundledDefProfImgMissing (bool value);
 };
 
 extern Options options;
