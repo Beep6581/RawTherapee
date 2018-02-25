@@ -729,6 +729,7 @@ HISTORY_MSG_LOCALCONTRAST_ENABLED;Contraste Local
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Contraste Local - H.L.
 HISTORY_MSG_LOCALCONTRAST_RADIUS;Contraste Local - Rayon
 HISTORY_MSG_METADATA_MODE;Mode de copie des métadonnées
+HISTORY_MSG_TM_FATTAL_ANCHOR;CT HDR - Ancre
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourci: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Capture
@@ -1230,6 +1231,8 @@ SAVEDLG_SUBSAMP_TOOLTIP;Meilleurs compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma div
 SAVEDLG_TIFFUNCOMPRESSED;TIFF non compressé
 SAVEDLG_WARNFILENAME;Le fichier sera nommé
 SHCSELECTOR_TOOLTIP;Cliquez le bouton droit de la souris\npour réinitialiser la position de ces 3 curseurs
+SOFTPROOF_GAMUTCHECK_TOOLTIP;Met en lumière les pixels en dehors du gamut en fonction:\n- du profile de l'imprimante, si l'un est sélectionné et que l'épreuvage écran est activé,\n- du profile de sortie, si aucun profile d'imprimante n'est sélectionné et que l'épreuvage écran est activé,\n- du profile du moniteur, si l'épreuvage écran est désactivé.
+SOFTPROOF_TOOLTIP;L'épreuvage écran simule l'apparence de l'image:\n- lorsque imprimé, si un profile d'imprimante a été sélectionné dans Préférences > Gestion des couleurs,\n- lorsque visionné sur un écran qui utilise le profile de sortie actuel, si un profile d'imprimante n'est pas sélectionné.
 THRESHOLDSELECTOR_B;Bas
 THRESHOLDSELECTOR_BL;Bas-gauche
 THRESHOLDSELECTOR_BR;Bas-droite
@@ -1959,6 +1962,7 @@ TP_SHARPENMICRO_LABEL;Microcontraste
 TP_SHARPENMICRO_MATRIX;Matrice 3×3 au lieu de 5×5
 TP_SHARPENMICRO_UNIFORMITY;Uniformité
 TP_TM_FATTAL_AMOUNT;Quantité
+TP_TM_FATTAL_ANCHOR;Ancre
 TP_TM_FATTAL_LABEL;Compression Tonale HDR
 TP_TM_FATTAL_THRESHOLD;Seuil
 TP_VIBRANCE_AVOIDCOLORSHIFT;Éviter les dérives de teinte
@@ -2204,11 +2208,3 @@ ZOOMPANEL_ZOOMFITSCREEN;Affiche l'image entière\nRaccourci: <b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom Avant\nRaccourci: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!HISTORY_MSG_TM_FATTAL_ANCHOR;HDR TM - Anchor
-!SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
-!SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
-!TP_TM_FATTAL_ANCHOR;Anchor
