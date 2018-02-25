@@ -3877,9 +3877,9 @@ lab2ProphotoRgbD50(float L, float A, float B, float& r, float& g, float& b)
     r = prophoto_xyz[0][0] * X + prophoto_xyz[0][1] * Y + prophoto_xyz[0][2] * Z;
     g = prophoto_xyz[1][0] * X + prophoto_xyz[1][1] * Y + prophoto_xyz[1][2] * Z;
     b = prophoto_xyz[2][0] * X + prophoto_xyz[2][1] * Y + prophoto_xyz[2][2] * Z;
-    r = CLIP01(r);
-    g = CLIP01(g);
-    b = CLIP01(b);
+    // r = CLIP01(r);
+    // g = CLIP01(g);
+    // b = CLIP01(b);
 }
 
 // Converts raw image including ICC input profile to working space - floating point version
