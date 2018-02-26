@@ -1271,7 +1271,7 @@ void ImProcFunctions::Aver( float *  RESTRICT DataList, int datalen, float &aver
 
     //find absolute mean
     int countP = 0, countN = 0;
-    float averaP = 0.f, averaN = 0.f;
+    double averaP = 0.0, averaN = 0.0; // use double precision for large summations
 
     float thres = 5.f;//different fom zero to take into account only data large enough
     max = 0.f;
@@ -1332,7 +1332,7 @@ void ImProcFunctions::Aver( float *  RESTRICT DataList, int datalen, float &aver
 void ImProcFunctions::Sigma( float *  RESTRICT DataList, int datalen, float averagePlus, float averageNeg, float &sigmaPlus, float &sigmaNeg)
 {
     int countP = 0, countN = 0;
-    float variP = 0.f, variN = 0.f;
+    double variP = 0.0, variN = 0.0; // use double precision for large summations
     float thres = 5.f;//different fom zero to take into account only data large enough
 
 #ifdef _OPENMP
@@ -1687,7 +1687,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
     float contrast = cp.contrast;
     float multL = (float)contrast * (maxl - 1.f) / 100.f + 1.f;
     float multH = (float) contrast * (maxh - 1.f) / 100.f + 1.f;
-    double avedbl = 0.f; // use double precision for big summations
+    double avedbl = 0.0; // use double precision for large summations
     float max0 = 0.f;
     float min0 = FLT_MAX;
 

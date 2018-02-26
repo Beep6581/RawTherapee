@@ -276,7 +276,7 @@ float calculateGradients (Array2Df* H, Array2Df* G, int k, bool multithread)
     const int width = H->getCols();
     const int height = H->getRows();
     const float divider = pow ( 2.0f, k + 1 );
-    float avgGrad = 0.0f;
+    double avgGrad = 0.0; // use double precision for large summations
 
     #pragma omp parallel for reduction(+:avgGrad) if(multithread)
 

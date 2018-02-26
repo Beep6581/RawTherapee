@@ -6,6 +6,7 @@
     <summary xml:lang="cs">Program pro konverzi a zpracování digitálních raw fotografií</summary>
     <summary xml:lang="fr">Logiciel de conversion et de traitement de photos numériques de format raw (but de capteur)</summary>
     <summary xml:lang="pl">Zaawansowany program do wywoływania zdjęć typu raw</summary>
+    <translation type="gettext">rawtherapee</translation>
     <description>
         <p>
             RawTherapee is a powerful, cross-platform raw photo processing program. It is written mostly in C++ using a GTK+ front-end. It uses a patched version of dcraw for reading raw files, with an in-house solution which adds the highest quality support for certain camera models unsupported by dcraw and enhances the accuracy of certain raw files already supported by dcraw. It is notable for the advanced control it gives the user over the demosaicing and development process.
