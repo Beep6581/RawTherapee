@@ -608,8 +608,6 @@ NAVIGATOR_S;S:
 NAVIGATOR_V;V:
 NAVIGATOR_XY_FULL;Szerokosc: %1, Wysokosc: %2
 NAVIGATOR_XY_NA;x: --, y: --
-OPTIONS_DEFIMG_MISSING;Nie znaleziono domyslnego profilu dla plikow <b>innych niz raw</b>, lub profil nie jest ustawiony.\n\nProsze sprawdz folder z profilami - mozliwe ze zostal skasowany badz uszkodzony.\n\nDomyslne wewnetrzne ustawienia zostana uzyte.
-OPTIONS_DEFRAW_MISSING;Nie znaleziono domyslnego profilu dla plikow <b>raw</b>, lub profil nie jest ustawiony.\n\nProsze sprawdz folder z profilami - mozliwe ze zostal skasowany badz uszkodzony.\n\nDomyslne wewnetrzne ustawienia zostana uzyte.
 PARTIALPASTE_BASICGROUP;Podstawowe ustawienia
 PARTIALPASTE_CACORRECTION;Korekcja aberacji chr.
 PARTIALPASTE_CHANNELMIXER;Mieszacz kanalow
@@ -1712,6 +1710,9 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !MAIN_TAB_INSPECT; Inspect
 !MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
 !MONITOR_PROFILE_SYSTEM;System default
+!OPTIONS_BUNDLED_MISSING;The bundled profile "<b>%1</b>" could not be found!\n\nYour installation could be damaged.\n\nDefault internal values will be used instead.
+!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
+!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
 !PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
 !PARTIALPASTE_EQUALIZER;Wavelet levels
 !PARTIALPASTE_LOCALCONTRAST;Local contrast

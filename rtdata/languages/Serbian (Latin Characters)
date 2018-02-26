@@ -534,8 +534,6 @@ MAIN_TOOLTIP_THRESHOLD;Prag
 MAIN_TOOLTIP_TOGGLE;Prikazuje sliku pre i posle obrade <b>B</b>
 NAVIGATOR_XY_FULL;Širina = %1, Visina = %2
 NAVIGATOR_XY_NA;x = ○, y = ○
-OPTIONS_DEFIMG_MISSING;Nije pronađen ili dostupan podrazumevani profil za <b>slike koje nisu u sirovom formatu</b>.\n\nProverite fasciklu sa profilima, možda ne postoji ili je oštećena.\n\nBiće korišćene podrazumevane vrednosti.
-OPTIONS_DEFRAW_MISSING;Nije pronađen ili dostupan podrazumevani profil za <b>slike u sirovom formatu</b>.\n\nProverite fasciklu sa profilima, možda ne postoji ili je oštećena.\n\nBiće korišćene podrazumevane vrednosti.
 PARTIALPASTE_BASICGROUP;Osnovna podešavanja
 PARTIALPASTE_CACORRECTION;Ispravljanje aberacija
 PARTIALPASTE_CHANNELMIXER;Mešanje kanala
@@ -1615,6 +1613,9 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !NAVIGATOR_R;R:
 !NAVIGATOR_S;S:
 !NAVIGATOR_V;V:
+!OPTIONS_BUNDLED_MISSING;The bundled profile "<b>%1</b>" could not be found!\n\nYour installation could be damaged.\n\nDefault internal values will be used instead.
+!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
+!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
 !PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
 !PARTIALPASTE_COLORTONING;Color toning
 !PARTIALPASTE_EQUALIZER;Wavelet levels
