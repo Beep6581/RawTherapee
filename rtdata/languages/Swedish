@@ -748,8 +748,6 @@ NAVIGATOR_S;S:
 NAVIGATOR_V;V:
 NAVIGATOR_XY_FULL;Bredd = %1, Höjd = %2
 NAVIGATOR_XY_NA;x = -, y = -
-OPTIONS_DEFIMG_MISSING;Standardprofilen för <b>icke-råbilder</b> kunde inte hittas eller är inte angiven.\n\nVar vänlig kontrollera din profilmapp: den kanske ej finns  eller är skadad.\n\nInterna värden kommer att användas som standard.
-OPTIONS_DEFRAW_MISSING;Standardprofilen för <b>råbilder</b> kunde inte hittas eller är den ej angiven.\n\nVar vänlig kontrollera din profilmapp: kanske finns den ej eller är filen skadad.\n\nInterna värden kommer att användas som standard.
 PARTIALPASTE_BASICGROUP;Grundläggande inställningar
 PARTIALPASTE_CACORRECTION;Reducera kromatiska abberationer
 PARTIALPASTE_CHANNELMIXER;Kanalmixer
@@ -1989,6 +1987,9 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !MAIN_TAB_ADVANCED;Advanced
 !MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt-w</b>
 !MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
+!OPTIONS_BUNDLED_MISSING;The bundled profile "<b>%1</b>" could not be found!\n\nYour installation could be damaged.\n\nDefault internal values will be used instead.
+!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
+!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
 !PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
 !PARTIALPASTE_COLORTONING;Color toning
 !PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control

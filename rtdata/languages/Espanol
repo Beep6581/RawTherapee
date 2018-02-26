@@ -654,8 +654,6 @@ MAIN_TOOLTIP_TOGGLE;Cambiar vista antes/después.\nAtajo: <b>Shift-B</b>
 NAVIGATOR_NA; --
 NAVIGATOR_XY_FULL;Ancho = %1, Alto = %2
 NAVIGATOR_XY_NA;x = n/a, y = n/a
-OPTIONS_DEFIMG_MISSING;El perfil predeterminado para <b>fotos no raw</b> no se pudo encontrar o no está establecido.\n\nPor favor verifique su folder de perfiles, puede estar dañado o no existir.\n\nSe usarán valores predeterminados internos.
-OPTIONS_DEFRAW_MISSING;El perfil predeterminado para <b>fotos raw</b>  no se pudo encontrar o no está establecido.\n\nPor favor verifique su folder de perfiles, puede estar dañado o no existir.\n\nSe usarán valores predeterminados internos.
 PARTIALPASTE_BASICGROUP;Ajustes básicos
 PARTIALPASTE_CACORRECTION;Corrección de aberraciones cromáticas
 PARTIALPASTE_CHANNELMIXER;Mezclador de canales
@@ -1763,6 +1761,9 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 !NAVIGATOR_R;R:
 !NAVIGATOR_S;S:
 !NAVIGATOR_V;V:
+!OPTIONS_BUNDLED_MISSING;The bundled profile "<b>%1</b>" could not be found!\n\nYour installation could be damaged.\n\nDefault internal values will be used instead.
+!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
+!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
 !PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
 !PARTIALPASTE_EQUALIZER;Wavelet levels
 !PARTIALPASTE_GRADIENT;Graduated filter

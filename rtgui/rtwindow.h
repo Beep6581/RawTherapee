@@ -59,6 +59,7 @@ private:
     bool splashClosed (GdkEventAny* event);
     bool isEditorPanel (Widget* panel);
     bool isEditorPanel (guint pageNum);
+    void showErrors ();
 
     Glib::ustring versionStr;
 #if defined(__APPLE__)
