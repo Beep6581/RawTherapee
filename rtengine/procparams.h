@@ -1260,6 +1260,12 @@ struct RAWParams {
         double black3;
         bool twogreen;
         int linenoise;
+        enum class LineNoiseDirection {
+            HORIZONTAL = 1,
+            VERTICAL,
+            BOTH
+        };
+        LineNoiseDirection linenoiseDirection;
         int greenthresh;
         int dcb_iterations;
         int lmmse_iterations;

@@ -234,7 +234,7 @@ protected:
     int  interpolateBadPixelsXtrans( PixelsMap &bitmapBads );
     int  findHotDeadPixels( PixelsMap &bpMap, float thresh, bool findHotPixels, bool findDeadPixels );
 
-    void cfa_linedn (float linenoiselevel);//Emil's line denoise
+    void cfa_linedn (float linenoiselevel, bool horizontal, bool vertical);//Emil's line denoise
 
     void green_equilibrate_global (array2D<float> &rawData);
     void green_equilibrate (float greenthresh, array2D<float> &rawData);//Emil's green equilibration

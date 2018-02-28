@@ -39,7 +39,7 @@ using namespace rtengine;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::CLASS cfa_linedn(float noise)
+void RawImageSource::CLASS cfa_linedn(float noise, bool horizontal, bool vertical)
 {
     // local variables
     int height = H, width = W;
@@ -183,14 +183,14 @@ void RawImageSource::CLASS cfa_linedn(float noise)
                             }
 
                         //horizontal lines
-                        if (noisevarm4 > (linehvar[0] + linehvar[1])) { //horizontal lines
+                        if (horizontal && noisevarm4 > (linehvar[0] + linehvar[1])) { //horizontal lines
                             for (int i = 1; i < 8; i++) {
                                 dctblock[0][0][i] *= 0.5f * (noisefactor[0][i][1] + noisefactor[1][i][1]); //or should we use MIN???
                                 dctblock[1][0][i] *= 0.5f * (noisefactor[0][i][1] + noisefactor[1][i][1]); //or should we use MIN???
                             }
                         }
 
-                        if (noisevarm4 > (linehvar[2] + linehvar[3])) { //horizontal lines
+                        if (horizontal && noisevarm4 > (linehvar[2] + linehvar[3])) { //horizontal lines
                             for (int i = 1; i < 8; i++) {
                                 dctblock[2][0][i] *= 0.5f * (noisefactor[2][i][1] + noisefactor[3][i][1]); //or should we use MIN???
                                 dctblock[3][0][i] *= 0.5f * (noisefactor[2][i][1] + noisefactor[3][i][1]); //or should we use MIN???
@@ -198,14 +198,14 @@ void RawImageSource::CLASS cfa_linedn(float noise)
                         }
 
                         //vertical lines
-                        if (noisevarm4 > (linevvar[0] + linevvar[2])) { //vertical lines
+                        if (vertical && noisevarm4 > (linevvar[0] + linevvar[2])) { //vertical lines
                             for (int i = 1; i < 8; i++) {
                                 dctblock[0][i][0] *= 0.5f * (noisefactor[0][i][0] + noisefactor[2][i][0]); //or should we use MIN???
                                 dctblock[2][i][0] *= 0.5f * (noisefactor[0][i][0] + noisefactor[2][i][0]); //or should we use MIN???
                             }
                         }
 
-                        if (noisevarm4 > (linevvar[1] + linevvar[3])) { //vertical lines
+                        if (vertical && noisevarm4 > (linevvar[1] + linevvar[3])) { //vertical lines
                             for (int i = 1; i < 8; i++) {
                                 dctblock[1][i][0] *= 0.5f * (noisefactor[1][i][0] + noisefactor[3][i][0]); //or should we use MIN???
                                 dctblock[3][i][0] *= 0.5f * (noisefactor[1][i][0] + noisefactor[3][i][0]); //or should we use MIN???

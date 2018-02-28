@@ -875,6 +875,7 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 
     if (!raw_linenoise->get_active ()) {
         filterPE.raw.bayersensor.linenoise       = falsePE.raw.bayersensor.linenoise;
+        filterPE.raw.bayersensor.linenoiseDirection = falsePE.raw.bayersensor.linenoiseDirection;
     }
 
     if (!raw_greenthresh->get_active ()) {

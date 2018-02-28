@@ -30,8 +30,11 @@ class BayerPreProcess : public ToolParamBlock, public AdjusterListener, public F
 protected:
 
     Adjuster* lineDenoise;
+    MyComboBoxText *lineDenoiseDirection;
     Adjuster* greenEqThreshold;
 
+    rtengine::ProcEvent EvLineDenoiseDirection;
+    
 public:
 
     BayerPreProcess ();
@@ -45,6 +48,7 @@ public:
     void hotDeadPixelChanged();
     void setAdjusterBehavior (bool linedenoiseadd, bool greenequiladd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
+    void lineDenoiseDirectionChanged();
 };
 
 #endif
