@@ -1312,7 +1312,7 @@ TP_WBALANCE_WATER_HEADER;Subacqueo
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Apri (nuova) finestra di dettaglio
 ZOOMPANEL_ZOOM100;Ingrandimento al 100%.\nScorciatoia: <b>z</b>
-ZOOMPANEL_ZOOMFITSCREEN;Adatta allo schermo.\nScorciatoia: <b>f</b>
+ZOOMPANEL_ZOOMFITSCREEN;Adatta allo schermo.\nScorciatoia: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Ingrandisci.\nScorciatoia: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 

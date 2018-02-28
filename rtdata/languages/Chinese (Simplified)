@@ -1017,8 +1017,8 @@ TP_WBALANCE_WATER_HEADER;水下
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;开启(新)细节窗口
 ZOOMPANEL_ZOOM100;缩放到100%\n快捷键: <b>z</b>
-ZOOMPANEL_ZOOMFITCROPSCREEN;适应边缘到屏幕\n快捷键：<b>Alt</b>-<b>f</b>
-ZOOMPANEL_ZOOMFITSCREEN;适应屏幕\n快捷键: <b>f</b>
+ZOOMPANEL_ZOOMFITCROPSCREEN;适应边缘到屏幕\n快捷键：<b>f</b>
+ZOOMPANEL_ZOOMFITSCREEN;适应屏幕\n快捷键: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;缩放拉近\n快捷键: <b>+</b>
 ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 

@@ -858,7 +858,7 @@ TP_WBALANCE_TUNGSTEN;Tungsten
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;(Új) lupe megnyitása
 ZOOMPANEL_ZOOM100;Nagyítás 100%-ra <b>z</b>
-ZOOMPANEL_ZOOMFITSCREEN;Képernyő méretéhez igazítás <b>f</b>
+ZOOMPANEL_ZOOMFITSCREEN;Képernyő méretéhez igazítás <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Nagyítás <b>+</b>
 ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 

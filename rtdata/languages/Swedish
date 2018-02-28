@@ -1852,8 +1852,8 @@ TP_WBALANCE_WATER_HEADER;Under vattnet
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Öppna (nytt) detaljfönster.
 ZOOMPANEL_ZOOM100;Förstora till 100%.\nKortkommando: <b>z</b>
-ZOOMPANEL_ZOOMFITCROPSCREEN;Anpassa beskärningen till skärmen\nKortkommando: <b>Alt</b>-<b>f</b>
-ZOOMPANEL_ZOOMFITSCREEN;Passa till skärmen.\nKortkommando: <b>f</b>
+ZOOMPANEL_ZOOMFITCROPSCREEN;Anpassa beskärningen till skärmen\nKortkommando: <b>f</b>
+ZOOMPANEL_ZOOMFITSCREEN;Passa till skärmen.\nKortkommando: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Förstora.\nKortkommando: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 
