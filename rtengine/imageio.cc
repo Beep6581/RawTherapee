@@ -1337,6 +1337,8 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
         pl->setProgress (0.0);
     }
 
+    bool applyExifPatch = false;
+
     if (exifRoot) {
         rtexif::TagDirectory* cl = (const_cast<rtexif::TagDirectory*> (exifRoot))->clone (nullptr);
 
@@ -1379,6 +1381,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
                 // at a different offset:
                 TIFFSetWriteOffset (out, exif_size + 8);
                 TIFFSetField (out, TIFFTAG_EXIFIFD, 8);
+                applyExifPatch = true;
             }
         }
 
@@ -1489,6 +1492,40 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
     if (TIFFFlush(out) != 1) {
         writeOk = false;
     }
+
+    /************************************************************************************************************
+     *
+     * Hombre: This is a dirty hack to update the Exif tag data type to 0x0004 so that Windows can understand it.
+     *         libtiff will set this data type to 0x000d and doesn't provide any mechanism to update it before
+     *         dumping to the file.
+     *
+     */
+    if (applyExifPatch) {
+        unsigned char b[10];
+        uint16 tagCount = 0;
+        lseek(fileno, 4, SEEK_SET);
+        read(fileno, b, 4);
+        uint32 ifd0Offset = rtexif::sget4(b, exifRoot->getOrder());
+        printf("IFD0Offset: %d\n", ifd0Offset);
+        lseek(fileno, ifd0Offset, SEEK_SET);
+        read(fileno, b, 2);
+        tagCount = rtexif::sget2(b, exifRoot->getOrder());
+        for (size_t i = 0; i < tagCount ; ++i) {
+            uint16 tagID = 0;
+            read(fileno, b, 2);
+            tagID = rtexif::sget2(b, exifRoot->getOrder());
+            printf("TagID: %d\n", tagID);
+            if (tagID == 0x8769) {
+                rtexif::sset2(4, b, exifRoot->getOrder());
+                write(fileno, b, 4);
+                break;
+            } else {
+                read(fileno, b, 10);
+            }
+        }
+    }
+    /************************************************************************************************************/
+
 
     TIFFClose (out);
 #ifdef WIN32
