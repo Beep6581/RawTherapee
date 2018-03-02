@@ -318,14 +318,14 @@ void RawImageSource::CLASS cfa_linedn(float noise, bool horizontal, bool vertica
 /* Cn_kI = sqrt(2.0/n) * sin(pi/2*k/n) */
 /* Wn_kR = cos(pi/2*k/n) */
 /* Wn_kI = sin(pi/2*k/n) */
-#define C8_1R   0.49039264020161522456
-#define C8_1I   0.09754516100806413392
-#define C8_2R   0.46193976625564337806
-#define C8_2I   0.19134171618254488586
-#define C8_3R   0.41573480615127261854
-#define C8_3I   0.27778511650980111237
-#define C8_4R   0.35355339059327376220
-#define W8_4R   0.70710678118654752440
+#define C8_1R   0.49039264020161522456f
+#define C8_1I   0.09754516100806413392f
+#define C8_2R   0.46193976625564337806f
+#define C8_2I   0.19134171618254488586f
+#define C8_3R   0.41573480615127261854f
+#define C8_3I   0.27778511650980111237f
+#define C8_4R   0.35355339059327376220f
+#define W8_4R   0.70710678118654752440f
 
 
 void RawImageSource::ddct8x8s(int isgn, float a[8][8])
