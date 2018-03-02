@@ -1506,7 +1506,6 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
         lseek(fileno, 4, SEEK_SET);
         read(fileno, b, 4);
         uint32 ifd0Offset = rtexif::sget4(b, exifRoot->getOrder());
-        printf("IFD0Offset: %d\n", ifd0Offset);
         lseek(fileno, ifd0Offset, SEEK_SET);
         read(fileno, b, 2);
         tagCount = rtexif::sget2(b, exifRoot->getOrder());
@@ -1514,10 +1513,9 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
             uint16 tagID = 0;
             read(fileno, b, 2);
             tagID = rtexif::sget2(b, exifRoot->getOrder());
-            printf("TagID: %d\n", tagID);
             if (tagID == 0x8769) {
                 rtexif::sset2(4, b, exifRoot->getOrder());
-                write(fileno, b, 4);
+                write(fileno, b, 2);
                 break;
             } else {
                 read(fileno, b, 10);
