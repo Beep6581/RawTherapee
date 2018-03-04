@@ -425,6 +425,8 @@ void ClutComboBox::setSelectedClut( Glib::ustring filename )
 
         if ( found ) {
             set_active( found );
+        } else {
+            set_active(-1);
         }
     }
 }

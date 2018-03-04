@@ -52,8 +52,7 @@ Glib::ustring paramFileExtension = ".pp3";
 Options::Options ()
 {
 
-    defProfRawMissing = false;
-    defProfImgMissing = false;
+    defProfError = 0;
     setDefaults ();
 }
 
@@ -2255,48 +2254,52 @@ void Options::load (bool lightweight)
 
     // Check default Raw and Img procparams existence
     if (options.defProfRaw.empty()) {
-        options.defProfRaw = DEFPROFILE_INTERNAL;
+        options.defProfRaw = DEFPROFILE_RAW;
     } else {
-        Glib::ustring tmpFName = options.findProfilePath (options.defProfRaw);
-
-        if (!tmpFName.empty()) {
+        if (!options.findProfilePath (options.defProfRaw).empty()) {
             if (options.rtSettings.verbose) {
-                printf ("Default profile for raw images \"%s\" found\n", options.defProfRaw.c_str());
+                std::cout << "Default profile for raw images \"" << options.defProfRaw << "\" found" << std::endl;
             }
         } else {
-            if (options.rtSettings.verbose) {
-                printf ("Default profile for raw images \"%s\" not found or not set -> using Internal values\n", options.defProfRaw.c_str());
-            }
+            if (options.defProfRaw != DEFPROFILE_RAW) {
+                options.setDefProfRawMissing(true);
 
-            options.defProfRaw = DEFPROFILE_INTERNAL;
-            options.defProfRawMissing = true;
+                Glib::ustring dpr(DEFPROFILE_RAW);
+                if (options.findProfilePath (dpr).empty()) {
+                    options.setBundledDefProfRawMissing(true);
+                }
+            } else {
+                options.setBundledDefProfRawMissing(true);
+            }
         }
     }
 
     if (options.defProfImg.empty()) {
-        options.defProfImg = DEFPROFILE_INTERNAL;
+        options.defProfImg = DEFPROFILE_IMG;
     } else {
-        Glib::ustring tmpFName = options.findProfilePath (options.defProfImg);
-
-        if (!tmpFName.empty()) {
+        if (!options.findProfilePath (options.defProfImg).empty()) {
             if (options.rtSettings.verbose) {
-                printf ("Default profile for non-raw images \"%s\" found\n", options.defProfImg.c_str());
+                std::cout << "Default profile for non-raw images \"" << options.defProfImg << "\" found" << std::endl;
             }
         } else {
-            if (options.rtSettings.verbose) {
-                printf ("Default profile for non-raw images \"%s\" not found or not set -> using Internal values\n", options.defProfImg.c_str());
-            }
+            if (options.defProfImg != DEFPROFILE_IMG) {
+                options.setDefProfImgMissing(true);
 
-            options.defProfImg = DEFPROFILE_INTERNAL;
-            options.defProfImgMissing = true;
+                Glib::ustring dpi(DEFPROFILE_IMG);
+                if (options.findProfilePath (dpi).empty()) {
+                    options.setBundledDefProfImgMissing(true);
+                }
+            } else {
+                options.setBundledDefProfImgMissing(true);
+            }
         }
     }
 
-    //We handle languages using a hierarchy of translations.  The top of the hierarchy is default.  This includes a default translation for all items
+    // We handle languages using a hierarchy of translations.  The top of the hierarchy is default.  This includes a default translation for all items
     // (most likely using simple English).  The next level is the language: for instance, English, French, Chinese, etc.  This file should contain a
     // generic translation for all items which differ from default.  Finally there is the locale.  This is region-specific items which differ from the
     // language file.  These files must be name in the format <Language> (<LC>), where Language is the name of the language which it inherits from,
-    // and LC is the local code.  Some examples of this would be English (US) (American English), French (FR) (Franch French), French (CA) (Canadian
+    // and LC is the local code.  Some examples of this would be English (US) (American English), French (FR) (France French), French (CA) (Canadian
     // French), etc.
     //
     // Each level will only contain the differences between itself and its parent translation.  For instance, English (UK) or English (CA) may
@@ -2397,3 +2400,63 @@ bool Options::is_extention_enabled (Glib::ustring ext)
 
     return false;
 }
+
+Glib::ustring Options::getUserProfilePath()
+{
+    return userProfilePath;
+}
+
+Glib::ustring Options::getGlobalProfilePath()
+{
+    return globalProfilePath;
+}
+
+bool Options::is_defProfRawMissing()
+{
+    return defProfError & rtengine::toUnderlying(DefProfError::defProfRawMissing);
+}
+bool Options::is_defProfImgMissing()
+{
+    return defProfError & rtengine::toUnderlying(DefProfError::defProfImgMissing);
+}
+void Options::setDefProfRawMissing (bool value)
+{
+    if (value) {
+        defProfError |= rtengine::toUnderlying(DefProfError::defProfRawMissing);
+    } else {
+        defProfError &= ~rtengine::toUnderlying(DefProfError::defProfRawMissing);
+    }
+}
+void Options::setDefProfImgMissing (bool value)
+{
+    if (value) {
+        defProfError |= rtengine::toUnderlying(DefProfError::defProfImgMissing);
+    } else {
+        defProfError &= ~rtengine::toUnderlying(DefProfError::defProfImgMissing);
+    }
+}
+bool Options::is_bundledDefProfRawMissing()
+{
+    return defProfError & rtengine::toUnderlying(DefProfError::bundledDefProfRawMissing);
+}
+bool Options::is_bundledDefProfImgMissing()
+{
+    return defProfError & rtengine::toUnderlying(DefProfError::bundledDefProfImgMissing);
+}
+void Options::setBundledDefProfRawMissing (bool value)
+{
+    if (value) {
+        defProfError |= rtengine::toUnderlying(DefProfError::bundledDefProfRawMissing);
+    } else {
+        defProfError &= ~rtengine::toUnderlying(DefProfError::bundledDefProfRawMissing);
+    }
+}
+void Options::setBundledDefProfImgMissing (bool value)
+{
+    if (value) {
+        defProfError |= rtengine::toUnderlying(DefProfError::bundledDefProfImgMissing);
+    } else {
+        defProfError &= ~rtengine::toUnderlying(DefProfError::bundledDefProfImgMissing);
+    }
+}
+

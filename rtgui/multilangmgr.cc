@@ -20,7 +20,6 @@
 
 #include <fstream>
 #include <glib.h>
-
 #ifdef WIN32
 #include <windows.h>
 #include <winnls.h>
@@ -93,7 +92,7 @@ struct LocaleToLang : private std::map<std::pair<Glib::ustring, Glib::ustring>, 
         }
 
         // Look for matching language only.
-        iterator = find (key (major));
+        iterator = find (key (major, major.uppercase()));
 
         if (iterator != end ()) {
             return iterator->second;

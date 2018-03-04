@@ -281,4 +281,5 @@ void Splash::showReleaseNotes()
 void Splash::closePressed()
 {
     hide();
+    close();
 }

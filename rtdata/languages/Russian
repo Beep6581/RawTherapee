@@ -609,8 +609,6 @@ NAVIGATOR_S;S:
 NAVIGATOR_V;V:
 NAVIGATOR_XY_FULL;Ширина: %1, Высота: %2
 NAVIGATOR_XY_NA;x: --, y: --
-OPTIONS_DEFIMG_MISSING;Профиль по умолчанию для <b>не-raw снимков</b> не найден или не установлен.\n\nПожалуйста, проверьте папку с профилями, она может отсутствовать или быть повреждена.\n\nБудут использованы значения по умолчанию.
-OPTIONS_DEFRAW_MISSING;Профиль по умолчанию для <b>raw снимков</b> не найден или не установлен.\n\nПожалуйста, проверьте папку с профилями, она может отсутствовать или быть повреждена.\n\nБудут использованы значения по умолчанию.
 PARTIALPASTE_ADVANCEDGROUP;Дополнительные параметры
 PARTIALPASTE_BASICGROUP;Базовые настройки
 PARTIALPASTE_CACORRECTION;Коррекция C/A
@@ -1408,7 +1406,7 @@ ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Новое окно детального просмотра
 ZOOMPANEL_ZOOM100;Масштаб 100%\nГорячая клавиша: <b>z</b>
 ZOOMPANEL_ZOOMFITCROPSCREEN;Уместить кадрированное изображение по размеру экрану\nГорячая клавиша: <b>f</b>
-ZOOMPANEL_ZOOMFITSCREEN;Уместить изображение по размерам окна\nГорячая клавиша: <b>Alt-f</b>
+ZOOMPANEL_ZOOMFITSCREEN;Уместить изображение по размерам окна\nГорячая клавиша: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Приблизить\nГорячая клавиша: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 
@@ -1681,6 +1679,9 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
 !MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
 !MONITOR_PROFILE_SYSTEM;System default
+!OPTIONS_BUNDLED_MISSING;The bundled profile "<b>%1</b>" could not be found!\n\nYour installation could be damaged.\n\nDefault internal values will be used instead.
+!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
+!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
 !PARTIALPASTE_COLORTONING;Color toning
 !PARTIALPASTE_EQUALIZER;Wavelet levels
 !PARTIALPASTE_FILMSIMULATION;Film simulation

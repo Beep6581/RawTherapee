@@ -2022,8 +2022,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                 hist16Q.clear();
             }
 
-            float sum = 0.f;
-//            float sumQ = 0.f;
+            double sum = 0.0; // use double precision for large summations
 
 #ifdef _OPENMP
             const int numThreads = min(max(width * height / 65536, 1), omp_get_max_threads());
@@ -2043,7 +2042,6 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                     hist16Qthr.clear();
                 }
 
-                //    #pragma omp for reduction(+:sum,sumQ)
                 #pragma omp for reduction(+:sum)
 
 
@@ -5919,7 +5917,7 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                         editWhatever->v(i, j) = LIM01<float> (LL / 100.f);   // Lab C=f(L) pipette
                     }
 
-                    if (clut) { // begin C=f(L)
+                    if (clut && LL > 0.f) { // begin C=f(L)
                         float factorskin, factorsat, factor, factorskinext;
                         float chromaCfactor = (clcurve[LL * 655.35f]) / (LL * 655.35f); //apply C=f(L)
                         float curf = 0.7f; //empirical coeff because curve is more progressive

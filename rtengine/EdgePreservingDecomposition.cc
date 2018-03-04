@@ -42,7 +42,8 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
     }
 
     //s is preconditionment of r. Without, direct to r.
-    float *s = r, rs = 0.0f;
+    float *s = r;
+    double rs = 0.0; // use double precision for large summations
 
     if(Preconditioner != nullptr) {
         s = new float[n];
@@ -77,7 +78,7 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 
     for(iterate = 0; iterate < MaximumIterates; iterate++) {
         //Get step size alpha, store ax while at it.
-        float ab = 0.0f;
+        double ab = 0.0; // use double precision for large summations
         Ax(ax, d, Pass);
 #ifdef _OPENMP
         #pragma omp parallel for reduction(+:ab)
@@ -94,7 +95,7 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
         ab = rs / ab;
 
         //Update x and r with this step size.
-        float rms = 0.0;
+        double rms = 0.0; // use double precision for large summations
 #ifdef _OPENMP
         #pragma omp parallel for reduction(+:rms)
 #endif

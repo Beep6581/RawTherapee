@@ -348,17 +348,6 @@ RTWindow *create_rt_window()
     //gdk_threads_enter ();
     RTWindow *rtWindow = new RTWindow();
 
-    // alerting users if the default raw and image profiles are missing
-    if (options.is_defProfRawMissing()) {
-        Gtk::MessageDialog msgd (Glib::ustring::compose (M ("OPTIONS_DEFRAW_MISSING"), options.defProfRaw), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-        msgd.run ();
-    }
-
-    if (options.is_defProfImgMissing()) {
-        Gtk::MessageDialog msgd (Glib::ustring::compose (M ("OPTIONS_DEFIMG_MISSING"), options.defProfImg), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-        msgd.run ();
-    }
-
     return rtWindow;
 }
 

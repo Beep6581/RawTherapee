@@ -163,6 +163,36 @@ int main (int argc, char **argv)
         return -2;
     }
 
+    if (options.is_defProfRawMissing()) {
+        options.defProfRaw = DEFPROFILE_RAW;
+        std::cerr << std::endl
+                  << "The default profile for raw photos could not be found or is not set." << std::endl
+                  << "Please check your profiles' directory, it may be missing or damaged." << std::endl
+                  << "\"" << DEFPROFILE_RAW << "\" will be used instead." << std::endl << std::endl;
+    }
+    if (options.is_bundledDefProfRawMissing()) {
+        std::cerr << std::endl
+                  << "The bundled profile \"" << options.defProfRaw << "\" could not be found!" << std::endl
+                  << "Your installation could be damaged." << std::endl
+                  << "Default internal values will be used instead." << std::endl << std::endl;
+        options.defProfRaw = DEFPROFILE_INTERNAL;
+    }
+
+    if (options.is_defProfImgMissing()) {
+        options.defProfImg = DEFPROFILE_IMG;
+        std::cerr << std::endl
+                  << "The default profile for non-raw photos could not be found or is not set." << std::endl
+                  << "Please check your profiles' directory, it may be missing or damaged." << std::endl
+                  << "\"" << DEFPROFILE_IMG << "\" will be used instead." << std::endl << std::endl;
+    }
+    if (options.is_bundledDefProfImgMissing()) {
+        std::cerr << std::endl
+                  << "The bundled profile " << options.defProfImg << " could not be found!" << std::endl
+                  << "Your installation could be damaged." << std::endl
+                  << "Default internal values will be used instead." << std::endl << std::endl;
+        options.defProfImg = DEFPROFILE_INTERNAL;
+    }
+
     rtengine::setPaths();
 
     TIFFSetWarningHandler (nullptr);   // avoid annoying message boxes
