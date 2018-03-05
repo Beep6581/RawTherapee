@@ -114,6 +114,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     raw_greenthresh     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCESS_GREENEQUIL")));
     raw_hotpix_filt     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCESS_HOTPIXFILT")));
     raw_deadpix_filt    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCESS_DEADPIXFILT")));
+    raw_pdaf_lines_filter = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCESS_PDAFLINESFILTER")));
     //---
     raw_expos           = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWEXPOS_LINEAR")));
     raw_preser          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWEXPOS_PRESER")));
@@ -225,6 +226,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[7]->pack_start (*raw_greenthresh, Gtk::PACK_SHRINK, 2);
     vboxes[7]->pack_start (*raw_hotpix_filt, Gtk::PACK_SHRINK, 2);
     vboxes[7]->pack_start (*raw_deadpix_filt, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*raw_pdaf_lines_filter, Gtk::PACK_SHRINK, 2);
     vboxes[7]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
     vboxes[7]->pack_start (*raw_expos, Gtk::PACK_SHRINK, 2);
     vboxes[7]->pack_start (*raw_preser, Gtk::PACK_SHRINK, 2);
@@ -368,6 +370,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     raw_greenthreshConn     = raw_greenthresh->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_hotpix_filtConn     = raw_hotpix_filt->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_deadpix_filtConn    = raw_deadpix_filt->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    raw_pdaf_lines_filterConn = raw_pdaf_lines_filter->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     //---
     raw_exposConn           = raw_expos->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_preserConn          = raw_preser->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
@@ -441,6 +444,7 @@ void PartialPasteDlg::rawToggled ()
     ConnectionBlocker raw_greenthreshBlocker(raw_greenthreshConn);
     ConnectionBlocker raw_hotpix_filtBlocker(raw_hotpix_filtConn);
     ConnectionBlocker raw_deadpix_filtBlocker(raw_deadpix_filtConn);
+    ConnectionBlocker raw_pdaf_lines_filterBlocker(raw_pdaf_lines_filterConn);
     ConnectionBlocker raw_exposBlocker(raw_exposConn);
     ConnectionBlocker raw_preserBlocker(raw_preserConn);
     ConnectionBlocker raw_blackBlocker(raw_blackConn);
@@ -467,6 +471,7 @@ void PartialPasteDlg::rawToggled ()
     raw_greenthresh->set_active (raw->get_active ());
     raw_hotpix_filt->set_active (raw->get_active ());
     raw_deadpix_filt->set_active (raw->get_active ());
+    raw_pdaf_lines_filter->set_active (raw->get_active ());
     raw_expos->set_active (raw->get_active ());
     raw_preser->set_active (raw->get_active ());
     raw_black->set_active (raw->get_active ());
@@ -909,6 +914,10 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 
     if (!raw_deadpix_filt->get_active () && !raw_hotpix_filt->get_active ()) {
         filterPE.raw.hotdeadpix_thresh = falsePE.raw.hotdeadpix_thresh;
+    }
+
+    if (!raw_pdaf_lines_filter->get_active ())    {
+        filterPE.raw.bayersensor.pdafLinesFilter = falsePE.raw.bayersensor.pdafLinesFilter;
     }
 
     if (!df_file->get_active ()) {

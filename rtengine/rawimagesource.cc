@@ -34,6 +34,7 @@
 #include "rt_math.h"
 #include "improcfun.h"
 #include "rtlensfun.h"
+#include "pdaflinesfilter.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -1916,6 +1917,20 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
         if( settings->verbose && nFound > 0) {
             printf( "Correcting %d hot/dead pixels found inside image\n", nFound );
+        }
+    }
+
+    if (ri->getSensorType() == ST_BAYER && raw.bayersensor.pdafLinesFilter) {
+        PDAFLinesFilter f(ri);
+
+        if (!bitmapBads) {
+            bitmapBads = new PixelsMap(W, H);
+        }
+        
+        int n = f.mark(rawData, *bitmapBads);
+
+        if (settings->verbose && n > 0) {
+            printf("Marked %d hot pixels from PDAF lines\n", n);            
         }
     }
 

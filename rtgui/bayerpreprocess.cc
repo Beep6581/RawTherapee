@@ -28,6 +28,7 @@ BayerPreProcess::BayerPreProcess () : FoldableToolPanel(this, "bayerpreprocess",
 {
     auto m = ProcEventMapper::getInstance();
     EvLineDenoiseDirection = m->newEvent(DARKFRAME, "HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION");
+    EvPDAFLinesFilter = m->newEvent(DARKFRAME, "HISTORY_MSG_PREPROCESS_PDAFLINESFILTER");
 
     lineDenoise = Gtk::manage(new Adjuster (M("TP_PREPROCESS_LINEDENOISE"), 0, 1000, 1, 0));
     lineDenoise->setAdjusterListener (this);
@@ -65,6 +66,13 @@ BayerPreProcess::BayerPreProcess () : FoldableToolPanel(this, "bayerpreprocess",
 
     pack_start( *greenEqThreshold, Gtk::PACK_SHRINK, 4);
 
+    pdafLinesFilter = Gtk::manage(new Gtk::CheckButton((M("TP_PREPROCESS_PDAFLINESFILTER"))));
+    pdafLinesFilter->set_tooltip_markup(M("TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP"));
+    pdafLinesFilter->show();
+    pdafLinesFilter->signal_toggled().connect(sigc::mem_fun(*this, &BayerPreProcess::pdafLinesFilterChanged), true);
+
+    pack_start(*Gtk::manage(new Gtk::HSeparator()));
+    pack_start(*pdafLinesFilter, Gtk::PACK_SHRINK, 4);
 }
 
 void BayerPreProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
@@ -77,11 +85,13 @@ void BayerPreProcess::read(const rtengine::procparams::ProcParams* pp, const Par
         if (!pedited->raw.bayersensor.linenoiseDirection) {
             lineDenoiseDirection->set_active(3);
         }
+        pdafLinesFilter->set_inconsistent(!pedited->raw.bayersensor.pdafLinesFilter);
     }
 
     lineDenoise->setValue (pp->raw.bayersensor.linenoise);
     lineDenoiseDirection->set_active(int(pp->raw.bayersensor.linenoiseDirection)-1);
     greenEqThreshold->setValue (pp->raw.bayersensor.greenthresh);
+    pdafLinesFilter->set_active(pp->raw.bayersensor.pdafLinesFilter);
 
     enableListener ();
 }
@@ -91,11 +101,13 @@ void BayerPreProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited*
     pp->raw.bayersensor.linenoise = lineDenoise->getIntValue();
     pp->raw.bayersensor.linenoiseDirection = RAWParams::BayerSensor::LineNoiseDirection(lineDenoiseDirection->get_active_row_number() + 1);
     pp->raw.bayersensor.greenthresh = greenEqThreshold->getIntValue();
+    pp->raw.bayersensor.pdafLinesFilter = pdafLinesFilter->get_active();
 
     if (pedited) {
         pedited->raw.bayersensor.linenoise = lineDenoise->getEditedState ();
         pedited->raw.bayersensor.greenEq = greenEqThreshold->getEditedState ();
         pedited->raw.bayersensor.linenoise = lineDenoiseDirection->get_active_row_number() != 3;
+        pedited->raw.bayersensor.pdafLinesFilter = !pdafLinesFilter->get_inconsistent();
     }
 }
 
@@ -156,5 +168,12 @@ void BayerPreProcess::lineDenoiseDirectionChanged()
 {
     if (listener) {
         listener->panelChanged(EvLineDenoiseDirection, lineDenoiseDirection->get_active_text());
+    }
+}
+
+void BayerPreProcess::pdafLinesFilterChanged()
+{
+    if (listener) {
+        listener->panelChanged(EvPDAFLinesFilter, pdafLinesFilter->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
     }
 }

@@ -764,6 +764,7 @@ public:
         bool greenEq;
         bool linenoise;
         bool linenoiseDirection;
+        bool pdafLinesFilter;
 
         bool isUnchanged() const;
     };

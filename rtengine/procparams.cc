@@ -2384,7 +2384,8 @@ RAWParams::BayerSensor::BayerSensor() :
     pixelShiftNonGreenCross(true),
     pixelShiftNonGreenCross2(false),
     pixelShiftNonGreenAmaze(false),
-    dcb_enhance(true)
+    dcb_enhance(true),
+    pdafLinesFilter(false)
 {
 }
 
@@ -2435,7 +2436,8 @@ bool RAWParams::BayerSensor::operator ==(const BayerSensor& other) const
         && pixelShiftNonGreenCross == other.pixelShiftNonGreenCross
         && pixelShiftNonGreenCross2 == other.pixelShiftNonGreenCross2
         && pixelShiftNonGreenAmaze == other.pixelShiftNonGreenAmaze
-        && dcb_enhance == other.dcb_enhance;
+        && dcb_enhance == other.dcb_enhance
+        && pdafLinesFilter == other.pdafLinesFilter;
 }
 
 bool RAWParams::BayerSensor::operator !=(const BayerSensor& other) const
@@ -3404,6 +3406,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftNonGreenCross, "RAW Bayer", "pixelShiftNonGreenCross", raw.bayersensor.pixelShiftNonGreenCross, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftNonGreenCross2, "RAW Bayer", "pixelShiftNonGreenCross2", raw.bayersensor.pixelShiftNonGreenCross2, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftNonGreenAmaze, "RAW Bayer", "pixelShiftNonGreenAmaze", raw.bayersensor.pixelShiftNonGreenAmaze, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.bayersensor.pdafLinesFilter, "RAW Bayer", "PDAFLinesFilter", raw.bayersensor.pdafLinesFilter, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.method, "RAW X-Trans", "Method", raw.xtranssensor.method, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.ccSteps, "RAW X-Trans", "CcSteps", raw.xtranssensor.ccSteps, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.exBlackRed, "RAW X-Trans", "PreBlackRed", raw.xtranssensor.blackred, keyFile);
@@ -4743,6 +4746,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftNonGreenCross", pedited, raw.bayersensor.pixelShiftNonGreenCross, pedited->raw.bayersensor.pixelShiftNonGreenCross);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftNonGreenCross2", pedited, raw.bayersensor.pixelShiftNonGreenCross2, pedited->raw.bayersensor.pixelShiftNonGreenCross2);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftNonGreenAmaze", pedited, raw.bayersensor.pixelShiftNonGreenAmaze, pedited->raw.bayersensor.pixelShiftNonGreenAmaze);
+            assignFromKeyfile(keyFile, "RAW Bayer", "PDAFLinesFilter", pedited, raw.bayersensor.pdafLinesFilter, pedited->raw.bayersensor.pdafLinesFilter);
         }
 
         if (keyFile.has_group ("RAW X-Trans")) {

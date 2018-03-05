@@ -32,8 +32,10 @@ protected:
     Adjuster* lineDenoise;
     MyComboBoxText *lineDenoiseDirection;
     Adjuster* greenEqThreshold;
+    Gtk::CheckButton *pdafLinesFilter;
 
     rtengine::ProcEvent EvLineDenoiseDirection;
+    rtengine::ProcEvent EvPDAFLinesFilter;
     
 public:
 
@@ -49,6 +51,7 @@ public:
     void setAdjusterBehavior (bool linedenoiseadd, bool greenequiladd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
     void lineDenoiseDirectionChanged();
+    void pdafLinesFilterChanged();
 };
 
 #endif

@@ -1301,6 +1301,7 @@ struct RAWParams {
         bool pixelShiftNonGreenCross2;
         bool pixelShiftNonGreenAmaze;
         bool dcb_enhance;
+        bool pdafLinesFilter;
 
         BayerSensor();
 
