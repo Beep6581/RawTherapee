@@ -970,6 +970,7 @@ static INLINE vmask vmaskf_isinf(vfloat d) { return vmaskf_eq(vabsf(d), vcast_vf
 static INLINE vmask vmaskf_ispinf(vfloat d) { return vmaskf_eq(d, vcast_vf_f(INFINITYf)); }
 static INLINE vmask vmaskf_isminf(vfloat d) { return vmaskf_eq(d, vcast_vf_f(-INFINITYf)); }
 static INLINE vmask vmaskf_isnan(vfloat d) { return vmaskf_neq(d, d); }
+// the following is equivalent to vorm(vmaskf_isnan(a), vmaskf_isnan(b)), but faster
 static INLINE vmask vmaskf_isnan(vfloat a, vfloat b) { return (vmask)_mm_cmpunord_ps(a, b); }
 static INLINE vfloat visinf2f(vfloat d, vfloat m) { return (vfloat)vandm(vmaskf_isinf(d), vorm(vsignbitf(d), (vmask)m)); }
 static INLINE vfloat visinff(vfloat d) { return visinf2f(d, vcast_vf_f(1.0f)); }
