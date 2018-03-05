@@ -970,6 +970,7 @@ static INLINE vmask vmaskf_isinf(vfloat d) { return vmaskf_eq(vabsf(d), vcast_vf
 static INLINE vmask vmaskf_ispinf(vfloat d) { return vmaskf_eq(d, vcast_vf_f(INFINITYf)); }
 static INLINE vmask vmaskf_isminf(vfloat d) { return vmaskf_eq(d, vcast_vf_f(-INFINITYf)); }
 static INLINE vmask vmaskf_isnan(vfloat d) { return vmaskf_neq(d, d); }
+static INLINE vmask vmaskf_isnan(vfloat a, vfloat b) { return (vmask)_mm_cmpunord_ps(a, b); }
 static INLINE vfloat visinf2f(vfloat d, vfloat m) { return (vfloat)vandm(vmaskf_isinf(d), vorm(vsignbitf(d), (vmask)m)); }
 static INLINE vfloat visinff(vfloat d) { return visinf2f(d, vcast_vf_f(1.0f)); }
 
@@ -1201,7 +1202,7 @@ static INLINE vfloat xatan2f(vfloat y, vfloat x) {
   r = vself(vmaskf_isinf(y), vsubf(vcast_vf_f((float)(rtengine::RT_PI/2)), visinf2f(x, vmulsignf(vcast_vf_f((float)(rtengine::RT_PI/4)), x))), r);
   r = vself(vmaskf_eq(y, vcast_vf_f(0.0f)), vselfzero(vmaskf_eq(vsignf(x), vcast_vf_f(-1.0f)), vcast_vf_f((float)rtengine::RT_PI)), r);
 
-  return vself(vorm(vmaskf_isnan(x), vmaskf_isnan(y)), vcast_vf_f(NANf), vmulsignf(r, y));
+  return vself(vmaskf_isnan(x, y), vcast_vf_f(NANf), vmulsignf(r, y));
 }
 
 static INLINE vfloat xasinf(vfloat d) {
