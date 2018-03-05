@@ -1928,6 +1928,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         }
         
         int n = f.mark(rawData, *bitmapBads);
+        totBP += n;
 
         if (settings->verbose && n > 0) {
             printf("Marked %d hot pixels from PDAF lines\n", n);            
