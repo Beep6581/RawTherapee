@@ -2,7 +2,7 @@
  *
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2017 Alberto Griggio <alberto.griggio@gmail.com>
+ *  Copyright (c) 2018 Alberto Griggio <alberto.griggio@gmail.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -64,6 +64,48 @@ PDAFLinesFilter::PDAFLinesFilter(RawImage *ri):
 }
 
 
+int PDAFLinesFilter::markLine(array2D<float> &rawData, PixelsMap &bpMap, int y)
+{
+    rowmap_.clear();
+    rowmap_.resize((W_+1)/2, false);
+    int marked = 0;
+    
+    for (int x = 1; x < W_-1; ++x) {
+        if (ri_->FC(y, x) == 1) {
+            const float
+                g0 = rawData[y][x],
+                g1 = rawData[y-1][x+1],
+                g2 = rawData[y+1][x+1],
+                g3 = rawData[y-1][x-1],
+                g4 = rawData[y+1][x-1];
+            if (g0 > max(g1, g2, g3, g4)) {
+                const float gu = g2 + g4;
+                const float gd = g1 + g3;
+                const float gM = max(gu, gd);
+                const float gm = min(gu, gd);
+                if ((gM - gm) / gM < 0.2f) {
+                    rowmap_[x/2] = true;
+                }
+            }
+        }
+    }
+
+    for (int x = 2; x < W_-2; ++x) {
+        if (ri_->FC(y, x) == 1) {
+            const int i = x/2;
+            if (rowmap_[i-1] && rowmap_[i] && rowmap_[i+1]) {
+                for (int xx = x-2; xx <= x+2; ++xx) {
+                    bpMap.set(xx, y);
+                    ++marked;
+                }
+            }
+        }
+    }
+
+    return marked;
+}
+
+
 int PDAFLinesFilter::mark(array2D<float> &rawData, PixelsMap &bpMap)
 {
     if (pattern_.empty()) {
@@ -80,34 +122,40 @@ int PDAFLinesFilter::mark(array2D<float> &rawData, PixelsMap &bpMap)
     for (int y = 1; y < H_-1; ++y) {
         int yy = pattern_[idx] + off;
         if (y == yy) {
-            int n = 0;
-            for (int x = 1; x < W_-1; ++x) {
-                if (ri_->FC(y, x) == 1) {
-                    const float
-                        g0 = rawData[y][x],
-                        g1 = rawData[y-1][x+1],
-                        g2 = rawData[y+1][x+1],
-                        g3 = rawData[y-1][x-1],
-                        g4 = rawData[y+1][x-1];
-                    const float g = max(g0, g1, g2);
-                    if (g > max(g3, g4)) {
-                        int row = y;
-                        if (g == g1) {
-                            --row;
-                        } else if (g == g2) {
-                            ++row;
-                        }
-                        bpMap.set(x, row);
-                        bpMap.set(x-1, row);
-                        bpMap.set(x+1, row);
-                        n += 2;
-                    }
+            int n = markLine(rawData, bpMap, y) + markLine(rawData, bpMap, y-1) + markLine(rawData, bpMap, y+1);
+            if (n) {
+                found += n;
+                if (settings->verbose) {
+                    std::cout << "marked " << n << " pixels in PDAF line at " << y << std::endl;
                 }
             }
-            found += n;
-            if (n && settings->verbose) {
-                std::cout << "marked " << n << " pixels in PDAF line at " << y << std::endl;
-            }
+            // for (int x = 1; x < W_-1; ++x) {
+            //     if (ri_->FC(y, x) == 1) {
+            //         const float
+            //             g0 = rawData[y][x],
+            //             g1 = rawData[y-1][x+1],
+            //             g2 = rawData[y+1][x+1],
+            //             g3 = rawData[y-1][x-1],
+            //             g4 = rawData[y+1][x-1];
+            //         const float g = max(g0, g1, g2);
+            //         if (g > max(g3, g4)) {
+            //             int row = y;
+            //             if (g == g1) {
+            //                 --row;
+            //             } else if (g == g2) {
+            //                 ++row;
+            //             }
+            //             bpMap.set(x, row);
+            //             bpMap.set(x-1, row);
+            //             bpMap.set(x+1, row);
+            //             n += 2;
+            //         }
+            //     }
+            // }
+            // found += n;
+            // if (n && settings->verbose) {
+            //     std::cout << "marked " << n << " pixels in PDAF line at " << y << std::endl;
+            // }
         } else if (y > yy) {
             ++idx;
             if (idx >= pattern_.size()) {

@@ -2,7 +2,7 @@
  *
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2017 Alberto Griggio <alberto.griggio@gmail.com>
+ *  Copyright (c) 2018 Alberto Griggio <alberto.griggio@gmail.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -31,11 +31,14 @@ public:
     int mark(array2D<float> &rawData, PixelsMap &bpMap);
 
 private:
+    int markLine(array2D<float> &rawData, PixelsMap &bpMap, int y);
+    
     RawImage *ri_;
     int W_;
     int H_;
     std::vector<int> pattern_;
     int offset_;
+    std::vector<char> rowmap_;
 };
 
 } // namespace rtengine
