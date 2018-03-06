@@ -32,24 +32,34 @@ PDAFLinesFilter::PDAFLinesFilter(RawImage *ri):
     W_(ri->get_width()),
     H_(ri->get_height())
 {
-    if (ri_->get_maker() == "Sony" && ri_->get_model() == "ILCE-7M3") {
-        // A7III, from https://www.dpreview.com/forums/post/60843139
-        // in the original post:
-        //   P 5 P 17 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 17 P 5 P 11 P 17 P 5 P 17 P 5 P 11 P 11 P 11 P 17 P 5 P 11 P 11 P 11 P 5 P 17 P 5 P 17 P 11
-        //   
-        // rotated to match the start of the frame
-        //   P 11 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 17 P 5 P 11 P 17 P 5 P 17 P 5 P 11 P 11 P 11 P 17 P 5 P 11 P 11 P 11 P 5 P 17 P 5 P 17 P 11 P 5 P 17 P 11 P 11 P 17 P 11 P 5
-        pattern_ = {
-            0, 12, 24, 36, 54, 66, 72, 84, 96, 114, 120, 132, 150, 156, 174, 180, 192, 204, 216, 234, 240, 252, 264, 276, 282, 300, 306, 324, 336, 342, 360, 372, 384, 402, 414, 420
-        };
-        offset_ = 9;
-    } else if (ri_->get_maker() == "Sony" && ri_->get_model() == "ILCE-6000") {
-        // detected by hand, using the picture from https://www.dpreview.com/forums/thread/3923513
-        // P 11 P 23 P 17 P 17 P 17 P 23 P 11 P 17 P 17 P 17 P 23 P 11 P 23 P 11 P 17 P 23 P 11 P 17 P 17 P 23 P 17 P 11 P 17 P 17 P 17 P 23 P 17 P 11 P 17 P 17 P 23 P 11 P 17 P 11 P 23
-        pattern_ = {
-            0, 12, 36, 54, 72, 90, 114, 126, 144, 162, 180, 204, 216, 240, 252, 270, 294, 306, 324, 342, 366, 384, 396, 414, 432, 450, 474, 492, 504, 522, 540, 564, 576, 594, 606, 630
-        };
-        offset_ = 3;
+    if (ri_->get_maker() == "Sony") {
+        if (ri_->get_model() == "ILCE-7M3") {
+            // A7III, from https://www.dpreview.com/forums/post/60843139
+            // in the original post:
+            //   P 5 P 17 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 17 P 5 P 11 P 17 P 5 P 17 P 5 P 11 P 11 P 11 P 17 P 5 P 11 P 11 P 11 P 5 P 17 P 5 P 17 P 11
+            //   
+            // rotated to match the start of the frame
+            //   P 11 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 17 P 5 P 11 P 17 P 5 P 17 P 5 P 11 P 11 P 11 P 17 P 5 P 11 P 11 P 11 P 5 P 17 P 5 P 17 P 11 P 5 P 17 P 11 P 11 P 17 P 11 P 5
+            pattern_ = {
+                0, 12, 24, 36, 54, 66, 72, 84, 96, 114, 120, 132, 150, 156, 174, 180, 192, 204, 216, 234, 240, 252, 264, 276, 282, 300, 306, 324, 336, 342, 360, 372, 384, 402, 414, 420
+            };
+            offset_ = 9;
+        } else if (ri_->get_model() == "ILCE-6000") {
+            // detected by hand, using the picture from https://www.dpreview.com/forums/thread/3923513
+            // P 11 P 23 P 17 P 17 P 17 P 23 P 11 P 17 P 17 P 17 P 23 P 11 P 23 P 11 P 17 P 23 P 11 P 17 P 17 P 23 P 17 P 11 P 17 P 17 P 17 P 23 P 17 P 11 P 17 P 17 P 23 P 11 P 17 P 11 P 23
+            pattern_ = {
+                0, 12, 36, 54, 72, 90, 114, 126, 144, 162, 180, 204, 216, 240, 252, 270, 294, 306, 324, 342, 366, 384, 396, 414, 432, 450, 474, 492, 504, 522, 540, 564, 576, 594, 606, 630
+            };
+            offset_ = 3;
+        } else if (ri_->get_model() == "ILCE-9") {
+            // the A9 is the same as the A7III, rotated of 1 position
+            // source: https://www.dpreview.com/forums/post/60857788
+            // P 11 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 17 P 5 P 11 P 17 P 5 P 17 P 5 P 11 P 11 P 11 P 17 P 5 P 11 P 11 P 11 P 5 P 17 P 5 P 17 P 11 P 5 P 17 P 11 P 11 P 17 P 11 P 5
+            pattern_ = {
+                0, 12, 24, 36, 54, 66, 72, 84, 96, 114, 120, 132, 150, 156, 174, 180, 192, 204, 216, 234, 240, 252, 264, 276, 282, 300, 306, 324, 336, 342, 360, 372, 384, 402, 414, 420
+            };
+            offset_ = -7;
+        }
     }
 }
 
@@ -81,7 +91,7 @@ int PDAFLinesFilter::mark(array2D<float> &rawData, PixelsMap &bpMap)
             }
             found += n;
             if (n && settings->verbose) {
-                std::cout << "marked " << n << "pixels in PDAF line at " << y << std::endl;
+                std::cout << "marked " << n << " pixels in PDAF line at " << y << std::endl;
             }
         } else if (y > yy) {
             ++idx;
