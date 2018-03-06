@@ -82,11 +82,26 @@ int PDAFLinesFilter::mark(array2D<float> &rawData, PixelsMap &bpMap)
         if (y == yy) {
             int n = 0;
             for (int x = 1; x < W_-1; ++x) {
-                if (ri_->FC(y, x) == 1 && rawData[y][x] > max(rawData[y-1][x-1], rawData[y-1][x+1], rawData[y+1][x-1], rawData[y+1][x+1])) {
-                    bpMap.set(x, y);
-                    bpMap.set(x-1, y);
-                    bpMap.set(x+1, y);
-                    n += 2;
+                if (ri_->FC(y, x) == 1) {
+                    const float
+                        g0 = rawData[y][x],
+                        g1 = rawData[y-1][x+1],
+                        g2 = rawData[y+1][x+1],
+                        g3 = rawData[y-1][x-1],
+                        g4 = rawData[y+1][x-1];
+                    const float g = max(g0, g1, g2);
+                    if (g > max(g3, g4)) {
+                        int row = y;
+                        if (g == g1) {
+                            --row;
+                        } else if (g == g2) {
+                            ++row;
+                        }
+                        bpMap.set(x, row);
+                        bpMap.set(x-1, row);
+                        bpMap.set(x+1, row);
+                        n += 2;
+                    }
                 }
             }
             found += n;
