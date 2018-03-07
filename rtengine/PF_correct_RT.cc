@@ -9,6 +9,9 @@
 // optimized: September 2013, Ingo Weyrich
 // further optimized: February 2018, Ingo Weyrich
 //
+//  Ingo Weyrich March 1028: The above comment 'Chromatic Aberration Auto-correction' sounds wrong
+//                           I guess it should have been 'Purple fringe correction' though it's not restricted to 'Purple'
+//
 //  PF_correct_RT.cc is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
@@ -393,7 +396,12 @@ void ImProcFunctions::PF_correct_RTcam(CieImage * ncie, double radius, int thres
                     tmbb[i][j] = srbb[i][j];
                 }
             }
-            j = 0;
+        } // end of ab channel averaging
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+        for(int i = 0; i < height; i++) {
+            int j = 0;
 #ifdef __SSE2__
 
             for (; j < width - 3; j += 4) {
@@ -409,7 +417,7 @@ void ImProcFunctions::PF_correct_RTcam(CieImage * ncie, double radius, int thres
                 ncie->h_p[i][j] = xatan2f(interb, intera) / RT_PI_F_180;
                 ncie->C_p[i][j] = sqrt(SQR(interb) + SQR(intera));
             }
-        } // end of ab channel averaging
+        }
     }
 }
 
