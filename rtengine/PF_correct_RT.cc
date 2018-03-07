@@ -9,7 +9,7 @@
 // optimized: September 2013, Ingo Weyrich
 // further optimized: February 2018, Ingo Weyrich
 //
-//  Ingo Weyrich March 1028: The above comment 'Chromatic Aberration Auto-correction' sounds wrong
+//  Ingo Weyrich March 2018: The above comment 'Chromatic Aberration Auto-correction' sounds wrong
 //                           I guess it should have been 'Purple fringe correction' though it's not restricted to 'Purple'
 //
 //  PF_correct_RT.cc is free software: you can redistribute it and/or modify
