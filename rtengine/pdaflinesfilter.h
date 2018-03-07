@@ -38,7 +38,7 @@ private:
     int H_;
     std::vector<int> pattern_;
     int offset_;
-    std::vector<char> rowmap_;
+    std::vector<bool> rowmap_;
 };
 
 } // namespace rtengine

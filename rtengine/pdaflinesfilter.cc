@@ -79,11 +79,12 @@ int PDAFLinesFilter::markLine(array2D<float> &rawData, PixelsMap &bpMap, int y)
                 g3 = rawData[y-1][x-1],
                 g4 = rawData[y+1][x-1];
             if (g0 > max(g1, g2, g3, g4)) {
-                const float gu = g2 + g4;
-                const float gd = g1 + g3;
+                const float gu = (g2 + g4) / 2.f;
+                const float gd = (g1 + g3) / 2.f;
                 const float gM = max(gu, gd);
                 const float gm = min(gu, gd);
-                if ((gM - gm) / gM < 0.2f) {
+                const float d = (gM - gm) / gM;
+                if (d < 0.2f && (g0 - (gm + gM)/2.f) / g0 > std::min(d, 0.1f)) {
                     rowmap_[x/2] = true;
                 }
             }
@@ -129,33 +130,6 @@ int PDAFLinesFilter::mark(array2D<float> &rawData, PixelsMap &bpMap)
                     std::cout << "marked " << n << " pixels in PDAF line at " << y << std::endl;
                 }
             }
-            // for (int x = 1; x < W_-1; ++x) {
-            //     if (ri_->FC(y, x) == 1) {
-            //         const float
-            //             g0 = rawData[y][x],
-            //             g1 = rawData[y-1][x+1],
-            //             g2 = rawData[y+1][x+1],
-            //             g3 = rawData[y-1][x-1],
-            //             g4 = rawData[y+1][x-1];
-            //         const float g = max(g0, g1, g2);
-            //         if (g > max(g3, g4)) {
-            //             int row = y;
-            //             if (g == g1) {
-            //                 --row;
-            //             } else if (g == g2) {
-            //                 ++row;
-            //             }
-            //             bpMap.set(x, row);
-            //             bpMap.set(x-1, row);
-            //             bpMap.set(x+1, row);
-            //             n += 2;
-            //         }
-            //     }
-            // }
-            // found += n;
-            // if (n && settings->verbose) {
-            //     std::cout << "marked " << n << " pixels in PDAF line at " << y << std::endl;
-            // }
         } else if (y > yy) {
             ++idx;
             if (idx >= pattern_.size()) {
