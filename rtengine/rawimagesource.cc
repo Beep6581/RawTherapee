@@ -1933,6 +1933,15 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         if (settings->verbose && n > 0) {
             printf("Marked %d hot pixels from PDAF lines\n", n);            
         }
+
+        auto &thresh = f.greenEqThreshold();        
+        if (numFrames == 4) {
+            for (int i = 0; i < 4; ++i) {
+                green_equilibrate(thresh, *rawDataFrames[i]);
+            }
+        } else {
+            green_equilibrate(thresh, rawData);
+        }
     }
 
     // check if it is an olympus E camera or green equilibration is enabled. If yes, compute G channel pre-compensation factors
@@ -1953,12 +1962,14 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             plistener->setProgress (0.0);
         }
 
+        GreenEqulibrateThreshold thresh(0.01 * raw.bayersensor.greenthresh);
+
         if(numFrames == 4) {
             for(int i = 0; i < 4; ++i) {
-                green_equilibrate(0.01 * raw.bayersensor.greenthresh, *rawDataFrames[i]);
+                green_equilibrate(thresh, *rawDataFrames[i]);
             }
         } else {
-            green_equilibrate(0.01 * raw.bayersensor.greenthresh, rawData);
+            green_equilibrate(thresh, rawData);
         }
     }
 

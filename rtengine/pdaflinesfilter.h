@@ -28,17 +28,21 @@ namespace rtengine {
 class PDAFLinesFilter {
 public:
     PDAFLinesFilter(RawImage *ri);
+    ~PDAFLinesFilter();
+    
     int mark(array2D<float> &rawData, PixelsMap &bpMap);
+    RawImageSource::GreenEqulibrateThreshold &greenEqThreshold();
 
 private:
     int markLine(array2D<float> &rawData, PixelsMap &bpMap, int y);
-    
+
     RawImage *ri_;
     int W_;
     int H_;
     std::vector<int> pattern_;
     int offset_;
     std::vector<bool> rowmap_;
+    RawImageSource::GreenEqulibrateThreshold *gthresh_;
 };
 
 } // namespace rtengine

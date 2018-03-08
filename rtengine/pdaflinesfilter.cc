@@ -27,11 +27,92 @@ namespace rtengine {
 extern const Settings *settings;
 
 
+namespace {
+
+class PDAFGreenEqulibrateThreshold: public RawImageSource::GreenEqulibrateThreshold {
+    static constexpr float base_threshold = 0.5f;
+public:
+    PDAFGreenEqulibrateThreshold(int w, int h, int ntiles=20):
+        RawImageSource::GreenEqulibrateThreshold(base_threshold),
+        w_(w),
+        h_(h)
+    {
+        tw_ = (w_ + 1) / ntiles;
+        th_ = (h_ + 1) / ntiles;
+        area_ = tw_ * th_;
+        tiles_.resize(ntiles+1, std::vector<int>(ntiles+1));
+    }
+
+    void increment(int row, int col)
+    {
+        auto &r = tiles_[row / th_];
+        ++r[col / tw_];
+    }
+    
+    float operator()(int row, int col) const
+    {
+        int y = row / th_;
+        int x = col / tw_;
+
+        float f = tile_factor(y, x);
+        int cy = y * th_ + th_/2;
+        int cx = x * tw_ + tw_/2;
+
+        if (std::abs(y - cy) > std::abs(x - cx)) {
+            int y1 = y > cy ? y+1 : y-1;
+            if (y1 >= 0 && size_t(y1) < tiles_.size()) {
+                float f2 = tile_factor(y1, x);
+                int d = std::abs(cy - row);
+                f = f * float(th_ - d)/float(th_) + f2 * float(d)/float(th_);
+            }
+        } else {
+            int x1 = x > cx ? x+1 : x-1;
+            if (x1 >= 0 && size_t(x1) < tiles_[y].size()) {
+                float f2 = tile_factor(y, x1);
+                int d = std::abs(cx - col);
+                f = f * float(tw_ - d)/float(tw_) + f2 * float(d)/float(tw_);
+            }
+        }
+        return thresh_ * f;
+    }
+
+    void print() const
+    {
+        std::cout << "PDAFGreenEqulibrateThreshold:\n";
+        for (size_t row = 0; row < tiles_.size(); ++row) {
+            for (size_t col = 0; col < tiles_.size(); ++col) {
+                std::cout << " " << tile_factor(row, col);
+            }
+            std::cout << std::endl;
+        }
+    }
+
+private:
+    float tile_factor(int y, int x) const
+    {
+        return float(tiles_[y][x] * 12) / area_;
+    }
+    
+    int w_;
+    int h_;
+    int ntiles_;
+    int tw_;
+    int th_;
+    float area_;
+    std::vector<std::vector<int>> tiles_;
+};
+
+} // namespace
+
+
+
 PDAFLinesFilter::PDAFLinesFilter(RawImage *ri):
     ri_(ri),
     W_(ri->get_width()),
     H_(ri->get_height())
 {
+    gthresh_ = new PDAFGreenEqulibrateThreshold(W_, H_);
+    
     if (ri_->get_maker() == "Sony") {
         if (ri_->get_model() == "ILCE-7M3") {
             // A7III, from https://www.dpreview.com/forums/post/60843139
@@ -64,6 +145,18 @@ PDAFLinesFilter::PDAFLinesFilter(RawImage *ri):
 }
 
 
+PDAFLinesFilter::~PDAFLinesFilter()
+{
+    delete gthresh_;
+}
+
+
+RawImageSource::GreenEqulibrateThreshold &PDAFLinesFilter::greenEqThreshold()
+{
+    return *gthresh_;
+}
+
+
 int PDAFLinesFilter::markLine(array2D<float> &rawData, PixelsMap &bpMap, int y)
 {
     rowmap_.clear();
@@ -91,13 +184,18 @@ int PDAFLinesFilter::markLine(array2D<float> &rawData, PixelsMap &bpMap, int y)
         }
     }
 
+    PDAFGreenEqulibrateThreshold *m = static_cast<PDAFGreenEqulibrateThreshold *>(gthresh_);
+
     for (int x = 2; x < W_-2; ++x) {
         if (ri_->FC(y, x) == 1) {
             const int i = x/2;
             if (rowmap_[i-1] && rowmap_[i] && rowmap_[i+1]) {
                 for (int xx = x-2; xx <= x+2; ++xx) {
-                    bpMap.set(xx, y);
-                    ++marked;
+                    if (!bpMap.get(xx, y)) {
+                        bpMap.set(xx, y);
+                        m->increment(y, xx);
+                        ++marked;
+                    }
                 }
             }
         }
@@ -138,6 +236,11 @@ int PDAFLinesFilter::mark(array2D<float> &rawData, PixelsMap &bpMap)
             }
         }
     }
+
+    if (settings->verbose) {
+        static_cast<PDAFGreenEqulibrateThreshold *>(gthresh_)->print();
+    }
+    
     return found;
 }
 

@@ -213,6 +213,15 @@ public:
     }
     int getFrameCount() {return numFrames;}
 
+    class GreenEqulibrateThreshold {
+    public:
+        explicit GreenEqulibrateThreshold(float thresh): thresh_(thresh) {}
+        virtual ~GreenEqulibrateThreshold() {}
+        virtual float operator()(int row, int column) const { return thresh_; }
+    protected:
+        const float thresh_;
+    };
+    
 protected:
     typedef unsigned short ushort;
     void processFalseColorCorrection (Imagefloat* i, const int steps);
@@ -237,7 +246,7 @@ protected:
     void cfa_linedn (float linenoiselevel, bool horizontal, bool vertical);//Emil's line denoise
 
     void green_equilibrate_global (array2D<float> &rawData);
-    void green_equilibrate (float greenthresh, array2D<float> &rawData);//Emil's green equilibration
+    void green_equilibrate (const GreenEqulibrateThreshold &greenthresh, array2D<float> &rawData);//Emil's green equilibration
 
     void nodemosaic(bool bw);
     void eahd_demosaic();
