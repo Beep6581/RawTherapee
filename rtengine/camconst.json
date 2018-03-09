@@ -2235,7 +2235,11 @@ Camera constants:
         "make_model": "Sony ILCE-6000",
         "dcraw_matrix": [ 5991,-1456,-455,-4764,12135,2980,-707,1425,6701 ], // adobe dcp d65
         "raw_crop": [ 0, 0, 6024, 4024 ],
-        "ranges": { "black": 512, "white": 16300 }
+        "ranges": { "black": 512, "white": 16300 },
+        // detected by hand, using the picture from https://www.dpreview.com/forums/thread/3923513
+        // P 11 P 23 P 17 P 17 P 17 P 23 P 11 P 17 P 17 P 17 P 23 P 11 P 23 P 11 P 17 P 23 P 11 P 17 P 17 P 23 P 17 P 11 P 17 P 17 P 17 P 23 P 17 P 11 P 17 P 17 P 23 P 11 P 17 P 11 P 23
+        "pdafPattern" : [ 0,12,36,54,72,90,114,126,144,162,180,204,216,240,252,270,294,306,324,342,366,384,396,414,432,450,474,492,504,522,540,564,576,594,606,630 ],
+        "pdafOffset" : 3
     },
 
     { // Quality A
@@ -2249,6 +2253,18 @@ Camera constants:
         "make_model": "Sony ILCE-7M2",
         "dcraw_matrix": [ 5271,-712,-347,-6153,13653,2763,-1601,2366,7242 ], // DNGv8.7.1
         "ranges": { "black": 512, "white": 16300 }
+    },
+
+    { // Quality C, only pdaf data
+        "make_model": "Sony ILCE-7M3",
+        // A7III, from https://www.dpreview.com/forums/post/60843139
+        // in the original post:
+        //   P 5 P 17 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 17 P 5 P 11 P 17 P 5 P 17 P 5 P 11 P 11 P 11 P 17 P 5 P 11 P 11 P 11 P 5 P 17 P 5 P 17 P 11
+        //
+        // rotated to match the start of the frame
+        //   P 11 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 17 P 5 P 11 P 17 P 5 P 17 P 5 P 11 P 11 P 11 P 17 P 5 P 11 P 11 P 11 P 5 P 17 P 5 P 17 P 11 P 5 P 17 P 11 P 11 P 17 P 11 P 5
+        "pdafPattern" : [ 0,12,24,36,54,66,72,84,96,114,120,132,150,156,174,180,192,204,216,234,240,252,264,276,282,300,306,324,336,342,360,372,384,402,414,420],
+        "pdafOffset" : 9
     },
 
     { // Quality A, correction for frame width
@@ -2269,7 +2285,12 @@ Camera constants:
         "make_model": "Sony ILCE-9",
         "dcraw_matrix": [ 6389,-1703,-378,-4562,12265,2587,-670,1489,6550 ], // DNG_v9.12 D65
         "raw_crop": [ 8, 8, 6008, 4008 ], // full raw frame 6048x4024 Dcraw auto identify 6024x4024, jpeg 12,12,6000x4000
-        "ranges": { "black": 512, "white": 16300 }
+        "ranges": { "black": 512, "white": 16300 },
+        // the A9 is the same as the A7III, rotated of 1 position
+        // source: https://www.dpreview.com/forums/post/60857788
+        // P 11 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 17 P 5 P 11 P 17 P 5 P 17 P 5 P 11 P 11 P 11 P 17 P 5 P 11 P 11 P 11 P 5 P 17 P 5 P 17 P 11 P 5 P 17 P 11 P 11 P 17 P 11 P 5
+        "pdafPattern" : [ 0,12,24,36,54,66,72,84,96,114,120,132,150,156,174,180,192,204,216,234,240,252,264,276,282,300,306,324,336,342,360,372,384,402,414,420 ],
+        "pdafOffset" : -7
     },
 
     { // Quality B, correction for frame width

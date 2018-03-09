@@ -19,7 +19,7 @@ namespace rtengine
 
 extern const Settings* settings;
 
-CameraConst::CameraConst()
+CameraConst::CameraConst() : pdafOffset(0)
 {
     memset(dcraw_matrix, 0, sizeof(dcraw_matrix));
     memset(raw_crop, 0, sizeof(raw_crop));
@@ -310,6 +310,35 @@ CameraConst::parseEntry(void *cJSON_, const char *make_model)
         }
     }
 
+    ji = cJSON_GetObjectItem(js, "pdafPattern");
+
+    if (ji) {
+        if (ji->type != cJSON_Array) {
+            fprintf(stderr, "\"pdafPattern\" must be an array\n");
+            goto parse_error;
+        }
+
+        for (ji = ji->child; ji != nullptr; ji = ji->next) {
+            if (ji->type != cJSON_Number) {
+                fprintf(stderr, "\"pdafPattern\" array must contain numbers\n");
+                goto parse_error;
+            }
+
+            cc->pdafPattern.push_back(ji->valueint);
+        }
+    }
+
+    ji = cJSON_GetObjectItem(js, "pdafOffset");
+
+    if (ji) {
+        if (ji->type != cJSON_Number) {
+            fprintf(stderr, "\"pdafOffset\" must contain a number\n");
+            goto parse_error;
+        }
+
+        cc->pdafOffset = ji->valueint;
+    }
+
     return cc;
 
 parse_error:
@@ -343,6 +372,18 @@ CameraConst::get_dcrawMatrix()
     }
 
     return dcraw_matrix;
+}
+
+bool
+CameraConst::has_pdafPattern()
+{
+    return pdafPattern.size() > 0;
+}
+
+void
+CameraConst::get_pdafPattern(std::vector<int> &pattern)
+{
+    pattern = pdafPattern;
 }
 
 bool

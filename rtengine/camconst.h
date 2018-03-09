@@ -24,7 +24,8 @@ private:
     int white_max;
     std::map<int, struct camera_const_levels> mLevels[2];
     std::map<float, float> mApertureScaling;
-
+    std::vector<int> pdafPattern;
+    int pdafOffset;
     CameraConst();
     static bool parseLevels(CameraConst *cc, int bw, void *ji);
     static bool parseApertureScaling(CameraConst *cc, void *ji);
@@ -33,8 +34,11 @@ private:
 public:
     static CameraConst *parseEntry(void *cJSON, const char *make_model);
     bool has_dcrawMatrix(void);
+    bool has_pdafPattern(void);
     void update_dcrawMatrix(const short *other);
     const short *get_dcrawMatrix(void);
+    void get_pdafPattern(std::vector<int> &pattern);
+    int get_pdafOffset() {return pdafOffset;}
     bool has_rawCrop(void);
     void get_rawCrop(int& left_margin, int& top_margin, int& width, int& height);
     bool has_rawMask(int idx);
