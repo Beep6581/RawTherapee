@@ -82,6 +82,11 @@ Examples:
         // It is useful after detecting the masked areas, to not fully use these areas but leave a border of 2-4 pixels
         // instead, to take care of possible light leaks from the light sensing area to the optically black (masked)
         // area or sensor imperfections at the outer borders.
+
+        // list of indices of the rows with on-sensor PDAF pixels, for cameras that have such features. The indices here form a pattern that is repeated for the whole height of the sensor. The values are relative to the "pdafOffset" value (see below)
+        "pdafPattern" : [ 0,12,36,54,72,90,114,126,144,162,180,204,216,240,252,270,294,306,324,342,366,384,396,414,432,450,474,492,504,522,540,564,576,594,606,630 ],
+        // index of the first row of the PDAF pattern in the sensor (0 is the topmost row). Allowed to be negative for convenience (this means that the first repetition of the pattern doesn't start from the first row)
+        "pdafOffset" : 3
     },
 
     {
@@ -2246,7 +2251,10 @@ Camera constants:
         "make_model": [ "Sony ILCE-6300","Sony ILCE-6500" ],
         "dcraw_matrix": [ 5973,-1695,-419,-3826,11797,2293,-639,1398,5789 ], // DNG_v9.8 D65
         "raw_crop": [ 0, 0, 6024, 4024 ],
-        "ranges": { "black": 512, "white": 16300 }
+        "ranges": { "black": 512, "white": 16300 },
+        // contributed by Horshak from https://www.dpreview.com/forums/post/60873077
+        "pdafPattern" : [ 0,12,36,54,72,90,114,126,144,162,180,204,216,240,252,270,294,306,324,342,366,384,396,414,432,450,474,492,504,522,540,564,576,594,606,630 ],
+        "pdafOffset" : 3        
     },
 
     { // Quality A
