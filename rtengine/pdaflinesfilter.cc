@@ -30,49 +30,69 @@ extern const Settings *settings;
 namespace {
 
 class PDAFGreenEqulibrateThreshold: public RawImageSource::GreenEqulibrateThreshold {
-    static constexpr float base_threshold = 0.5f;
+    static constexpr float BASE_THRESHOLD = 0.5f;
+    static constexpr int TILE_SIZE = 200;
+    static constexpr float AREA = TILE_SIZE * TILE_SIZE;
+    static constexpr int PIXEL_COUNT_FACTOR = 12;
+    
 public:
-    PDAFGreenEqulibrateThreshold(int w, int h, int ntiles=20):
-        RawImageSource::GreenEqulibrateThreshold(base_threshold),
+    PDAFGreenEqulibrateThreshold(int w, int h):
+        RawImageSource::GreenEqulibrateThreshold(BASE_THRESHOLD),
         w_(w),
         h_(h)
     {
-        tw_ = (w_ + 1) / ntiles;
-        th_ = (h_ + 1) / ntiles;
-        area_ = tw_ * th_;
-        tiles_.resize(ntiles+1, std::vector<int>(ntiles+1));
+        int ctiles = w_ / TILE_SIZE;
+        int rtiles = h_ / TILE_SIZE;
+        tiles_.resize(rtiles+1, std::vector<int>(ctiles+1));
     }
 
     void increment(int row, int col)
     {
-        auto &r = tiles_[row / th_];
-        ++r[col / tw_];
+        auto &r = tiles_[row / TILE_SIZE];
+        ++r[col / TILE_SIZE];
     }
     
     float operator()(int row, int col) const
     {
-        int y = row / th_;
-        int x = col / tw_;
+        int y = row / TILE_SIZE;
+        int x = col / TILE_SIZE;
 
-        float f = tile_factor(y, x);
-        int cy = y * th_ + th_/2;
-        int cx = x * tw_ + tw_/2;
+        int cy = y * TILE_SIZE + TILE_SIZE/2;
+        int cx = x * TILE_SIZE + TILE_SIZE/2;
 
-        if (std::abs(y - cy) > std::abs(x - cx)) {
-            int y1 = y > cy ? y+1 : y-1;
+        int x1 = col > cx ? x+1 : x-1;
+        int y1 = row > cy ? y+1 : y-1;
+
+        float fxy = tile_factor(y, x);
+        float f = 0.f;
+
+        if (x1 >= 0 && size_t(x1) < tiles_[y].size()) {
             if (y1 >= 0 && size_t(y1) < tiles_.size()) {
-                float f2 = tile_factor(y1, x);
-                int d = std::abs(cy - row);
-                f = f * float(th_ - d)/float(th_) + f2 * float(d)/float(th_);
-            }
-        } else {
-            int x1 = x > cx ? x+1 : x-1;
-            if (x1 >= 0 && size_t(x1) < tiles_[y].size()) {
+                // bilinear interpolation
+                float fx1y = tile_factor(y, x1);
+                float fx1y1 = tile_factor(y1, x1);
+                float fxy1 = tile_factor(y1, x);
+
+                // x direction
+                int d = std::abs(cx - col);
+                float f1 = fxy * float(TILE_SIZE - d)/float(TILE_SIZE) + fx1y * float(d)/float(TILE_SIZE);
+                float f2 = fxy1 * float(TILE_SIZE - d)/float(TILE_SIZE) + fx1y1 * float(d)/float(TILE_SIZE);
+                // y direction
+                d = std::abs(cy - row);
+                f = f1 * float(TILE_SIZE - d)/float(TILE_SIZE) + f2 * float(d)/float(TILE_SIZE);
+            } else {
                 float f2 = tile_factor(y, x1);
                 int d = std::abs(cx - col);
-                f = f * float(tw_ - d)/float(tw_) + f2 * float(d)/float(tw_);
+                f = fxy * float(TILE_SIZE - d)/float(TILE_SIZE) + f2 * float(d)/float(TILE_SIZE);
             }
+        } else if (y1 >= 0 && size_t(y1) < tiles_.size()) {
+            float f2 = tile_factor(y1, x);
+            int d = std::abs(cy - row);
+            f = fxy * float(TILE_SIZE - d)/float(TILE_SIZE) + f2 * float(d)/float(TILE_SIZE);
+        } else {
+            f = fxy;
         }
+
         return thresh_ * f;
     }
 
@@ -90,15 +110,11 @@ public:
 private:
     float tile_factor(int y, int x) const
     {
-        return float(tiles_[y][x] * 12) / area_;
+        return float(tiles_[y][x] * PIXEL_COUNT_FACTOR) / AREA;
     }
     
     int w_;
     int h_;
-    int ntiles_;
-    int tw_;
-    int th_;
-    float area_;
     std::vector<std::vector<int>> tiles_;
 };
 

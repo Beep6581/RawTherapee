@@ -1930,17 +1930,19 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         int n = f.mark(rawData, *bitmapBads);
         totBP += n;
 
-        if (settings->verbose && n > 0) {
-            printf("Marked %d hot pixels from PDAF lines\n", n);            
-        }
-
-        auto &thresh = f.greenEqThreshold();        
-        if (numFrames == 4) {
-            for (int i = 0; i < 4; ++i) {
-                green_equilibrate(thresh, *rawDataFrames[i]);
+        if (n > 0) {
+            if (settings->verbose) {
+                printf("Marked %d hot pixels from PDAF lines\n", n);            
             }
-        } else {
-            green_equilibrate(thresh, rawData);
+
+            auto &thresh = f.greenEqThreshold();        
+            if (numFrames == 4) {
+                for (int i = 0; i < 4; ++i) {
+                    green_equilibrate(thresh, *rawDataFrames[i]);
+                }
+            } else {
+                green_equilibrate(thresh, rawData);
+            }
         }
     }
 
