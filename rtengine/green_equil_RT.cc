@@ -166,11 +166,10 @@ void RawImageSource::green_equilibrate(const GreenEqulibrateThreshold &thresh, a
                 vfloat c2 = (vabsf(o2_1 - o2_2) + vabsf(o2_1 - o2_3) + vabsf(o2_1 - o2_4) + vabsf(o2_2 - o2_3) + vabsf(o2_3 - o2_4) + vabsf(o2_2 - o2_4));
 
                 vfloat tfv;
-                vfloat tf6v;
                 for (int k = 0; k < 4; ++k) {
-                    tfv[k] = thresh(rr, cc+k);
-                    tf6v[k] = 6 * tfv[k];
+                    tfv[k] = thresh(rr, cc + 2 * k);
                 }
+                vfloat tf6v = F2V(6.f) * tfv;
 
                 vmask mask1 = vmaskf_lt(c1 + c2, tf6v * vabsf(d1 - d2));
 
