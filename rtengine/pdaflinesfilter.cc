@@ -160,41 +160,45 @@ int PDAFLinesFilter::markLine(array2D<float> &rawData, PixelsMap &bpMap, int y)
     rowmap_.resize((W_+1)/2, false);
     int marked = 0;
     
-    for (int x = 1; x < W_-1; ++x) {
-        if (ri_->FC(y, x) == 1) {
-            const float
-                g0 = rawData[y][x],
-                g1 = rawData[y-1][x+1],
-                g2 = rawData[y+1][x+1],
-                g3 = rawData[y-1][x-1],
-                g4 = rawData[y+1][x-1];
-            if (g0 > max(g1, g2, g3, g4)) {
-                const float gu = (g2 + g4) / 2.f;
-                const float gd = (g1 + g3) / 2.f;
-                const float gM = max(gu, gd);
-                const float gm = min(gu, gd);
-                const float d = (gM - gm) / gM;
-                if (d < 0.2f && (g0 - (gm + gM)/2.f) / g0 > std::min(d, 0.1f)) {
-                    rowmap_[x/2] = true;
-                }
+    for (int x = 1 + (ri_->FC(y, 0) & 1); x < W_-1; x += 2) {
+        const float
+            g0 = rawData[y][x],
+            g1 = rawData[y-1][x+1],
+            g2 = rawData[y+1][x+1],
+            g3 = rawData[y-1][x-1],
+            g4 = rawData[y+1][x-1];
+        if (g0 > max(g1, g2, g3, g4)) {
+            const float gu = g2 + g4;
+            const float gd = g1 + g3;
+            const float gM = max(gu, gd);
+            const float gm = min(gu, gd);
+            const float d = (gM - gm) / gM;
+            if (d < 0.2f && (1.f - (gm + gM)/(4.f * g0)) > std::min(d, 0.1f)) {
+                rowmap_[x/2] = true;
             }
         }
     }
 
     PDAFGreenEqulibrateThreshold *m = static_cast<PDAFGreenEqulibrateThreshold *>(gthresh_);
 
-    for (int x = 2; x < W_-2; ++x) {
-        if (ri_->FC(y, x) == 1) {
-            const int i = x/2;
-            if (rowmap_[i-1] && rowmap_[i] && rowmap_[i+1]) {
-                for (int xx = x-2; xx <= x+2; ++xx) {
-                    if (!bpMap.get(xx, y)) {
-                        bpMap.set(xx, y);
-                        m->increment(y, xx);
-                        ++marked;
+    for (int x = 2 + (ri_->FC(y, 1) & 1); x < W_-2; x += 2) {
+        const int i = x/2;
+        if (rowmap_[i+1]) {
+            if (rowmap_[i]) {
+                if (rowmap_[i-1]) {
+                    for (int xx = x-2; xx <= x+2; ++xx) {
+                        if (!bpMap.get(xx, y)) {
+                            bpMap.set(xx, y);
+                            m->increment(y, xx);
+                            ++marked;
+                        }
                     }
                 }
+            } else {
+                x += 2;
             }
+        } else {
+            x += 4;
         }
     }
 
