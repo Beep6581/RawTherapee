@@ -102,7 +102,8 @@ void Options::updatePaths()
             g_mkdir_with_parents (profilePath.c_str (), 511);
 
             if (!checkDirPath (profilePath, "")) { // had problems with mkdir_with_parents return value on OS X, just check dir again
-                printf ("Error: creation of the user's processing profile directory \"%s\" failed!\n", profilePath.c_str());
+                Glib::ustring msg = Glib::ustring::compose ("Creation of the user's processing profile directory \"%1\" failed!\n", profilePath);
+                throw Error (msg);
             }
         }
 
@@ -130,7 +131,8 @@ void Options::updatePaths()
             g_mkdir_with_parents (tmpPath.c_str (), 511);
 
             if (!checkDirPath (tmpPath, "")) {
-                printf ("Error: creation of the user's processing profile directory \"%s\" failed!\n", tmpPath.c_str());
+                Glib::ustring msg = Glib::ustring::compose ("Creation of the user's processing profile directory \"%1\" failed!\n", tmpPath.c_str());
+                throw Error (msg);
             }
         }
 
