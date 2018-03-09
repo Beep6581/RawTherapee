@@ -102,15 +102,15 @@ void Options::updatePaths()
             g_mkdir_with_parents (profilePath.c_str (), 511);
 
             if (!checkDirPath (profilePath, "")) { // had problems with mkdir_with_parents return value on OS X, just check dir again
-                printf ("Error: user's profiles' directory \"%s\" creation failed\n", profilePath.c_str());
+                printf ("Error: creation of the user's processing profile directory \"%s\" failed!\n", profilePath.c_str());
             }
         }
 
-        if (checkDirPath (profilePath, "Error: the specified user's profiles' path doesn't point to a directory or doesn't exist!\n")) {
+        if (checkDirPath (profilePath, "Error: the user's processing profile path doesn't point to a directory or doesn't exist!\n")) {
             userProfilePath = profilePath;
             tmpPath = Glib::build_filename (argv0, "profiles");
 
-            if (checkDirPath (tmpPath, "Error: the global's profiles' path doesn't point to a directory or doesn't exist!\n")) {
+            if (checkDirPath (tmpPath, "Error: the global's processing profile path doesn't point to a directory or doesn't exist!\n")) {
                 if (userProfilePath != tmpPath) {
                     globalProfilePath = tmpPath;
                 }
@@ -118,7 +118,7 @@ void Options::updatePaths()
         } else {
             tmpPath = Glib::build_filename (argv0, "profiles");
 
-            if (checkDirPath (tmpPath, "Error: the global's profiles' path doesn't point to a directory or doesn't exist!\n")) {
+            if (checkDirPath (tmpPath, "Error: the global's processing profile path doesn't point to a directory or doesn't exist!\n")) {
                 globalProfilePath = tmpPath;
             }
         }
@@ -130,17 +130,17 @@ void Options::updatePaths()
             g_mkdir_with_parents (tmpPath.c_str (), 511);
 
             if (!checkDirPath (tmpPath, "")) {
-                printf ("Error: user's profiles' directory \"%s\" creation failed\n", tmpPath.c_str());
+                printf ("Error: creation of the user's processing profile directory \"%s\" failed!\n", tmpPath.c_str());
             }
         }
 
-        if (checkDirPath (tmpPath, "Error: the specified user's profiles' path doesn't point to a directory!\n")) {
+        if (checkDirPath (tmpPath, "Error: the user's processing profile path doesn't point to a directory!\n")) {
             userProfilePath = tmpPath;
         }
 
         tmpPath = Glib::build_filename (argv0, "profiles");
 
-        if (checkDirPath (tmpPath, "Error: the specified user's profiles' path doesn't point to a directory or doesn't exist!\n")) {
+        if (checkDirPath (tmpPath, "Error: the user's processing profile path doesn't point to a directory or doesn't exist!\n")) {
             globalProfilePath = tmpPath;
         }
     }
