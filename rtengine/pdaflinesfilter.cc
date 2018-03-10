@@ -44,7 +44,16 @@ public:
     {
         int ctiles = w_ / TILE_SIZE;
         int rtiles = h_ / TILE_SIZE;
-        tiles_.resize(rtiles+1, std::vector<int>(ctiles+1));
+        tiles_.resize(rtiles+1, std::vector<float>(ctiles+1));
+    }
+
+    void processTiles()
+    {
+        for(size_t i = 0; i < tiles_.size(); ++i) {
+            for(size_t j = 0; j < tiles_[i].size(); ++j) {
+                tiles_[i][j] = tiles_[i][j] * PIXEL_COUNT_FACTOR / (AREA * AREA);
+            }
+        }
     }
 
     void increment(int row, int col)
@@ -76,22 +85,22 @@ public:
 
                 // x direction
                 int d = std::abs(cx - col);
-                float f1 = fxy * float(TILE_SIZE - d)/float(TILE_SIZE) + fx1y * float(d)/float(TILE_SIZE);
-                float f2 = fxy1 * float(TILE_SIZE - d)/float(TILE_SIZE) + fx1y1 * float(d)/float(TILE_SIZE);
+                float f1 = fxy * (TILE_SIZE - d) + fx1y * float(d);
+                float f2 = fxy1 * (TILE_SIZE - d) + fx1y1 * float(d);
                 // y direction
                 d = std::abs(cy - row);
-                f = f1 * float(TILE_SIZE - d)/float(TILE_SIZE) + f2 * float(d)/float(TILE_SIZE);
+                f = (f1 * (TILE_SIZE - d) + f2 * float(d));
             } else {
                 float f2 = tile_factor(y, x1);
                 int d = std::abs(cx - col);
-                f = fxy * float(TILE_SIZE - d)/float(TILE_SIZE) + f2 * float(d)/float(TILE_SIZE);
+                f = (fxy * float(TILE_SIZE - d) + f2 * float(d)) * TILE_SIZE;
             }
         } else if (y1 >= 0 && size_t(y1) < tiles_.size()) {
             float f2 = tile_factor(y1, x);
             int d = std::abs(cy - row);
-            f = fxy * float(TILE_SIZE - d)/float(TILE_SIZE) + f2 * float(d)/float(TILE_SIZE);
+            f = (fxy * float(TILE_SIZE - d) + f2 * float(d)) * TILE_SIZE;
         } else {
-            f = fxy;
+            f = fxy * AREA;
         }
 
         return thresh_ * f;
@@ -111,12 +120,12 @@ public:
 private:
     float tile_factor(int y, int x) const
     {
-        return float(tiles_[y][x] * PIXEL_COUNT_FACTOR) / AREA;
+        return tiles_[y][x];
     }
     
     int w_;
     int h_;
-    std::vector<std::vector<int>> tiles_;
+    std::vector<std::vector<float>> tiles_;
 };
 
 } // namespace
@@ -208,6 +217,7 @@ int PDAFLinesFilter::markLine(array2D<float> &rawData, PixelsMap &bpMap, int y)
 
 int PDAFLinesFilter::mark(array2D<float> &rawData, PixelsMap &bpMap)
 {
+
     if (pattern_.empty()) {
         if (settings->verbose) {
             std::cout << "no PDAF pattern known for " << ri_->get_maker() << " " << ri_->get_model() << std::endl;
@@ -241,7 +251,7 @@ int PDAFLinesFilter::mark(array2D<float> &rawData, PixelsMap &bpMap)
     if (settings->verbose) {
         static_cast<PDAFGreenEqulibrateThreshold *>(gthresh_)->print();
     }
-    
+    static_cast<PDAFGreenEqulibrateThreshold *>(gthresh_)->processTiles();
     return found;
 }
 
