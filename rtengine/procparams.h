@@ -1263,7 +1263,8 @@ struct RAWParams {
         enum class LineNoiseDirection {
             HORIZONTAL = 1,
             VERTICAL,
-            BOTH
+            BOTH,
+            PDAF_LINES = 5
         };
         LineNoiseDirection linenoiseDirection;
         int greenthresh;

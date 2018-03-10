@@ -39,7 +39,7 @@ using namespace rtengine;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::CLASS cfa_linedn(float noise, bool horizontal, bool vertical)
+void RawImageSource::CLASS cfa_linedn(float noise, bool horizontal, bool vertical, const CFALineDenoiseRowBlender &rowblender)
 {
     // local variables
     int height = H, width = W;
@@ -254,10 +254,15 @@ void RawImageSource::CLASS cfa_linedn(float noise, bool horizontal, bool vertica
 // copy temporary buffer back to image matrix
         #pragma omp for
 
-        for(int i = 0; i < height; i++)
-            for(int j = 0; j < width; j++) {
-                rawData[i][j] = RawDataTmp[i * width + j];
+        for(int i = 0; i < height; i++) {
+            float f = rowblender(i);
+            if (f > 0.f) {
+                float f2 = 1.f - f;
+                for(int j = 0; j < width; j++) {
+                    rawData[i][j] = f * RawDataTmp[i * width + j] + f2 * rawData[i][j];
+                }
             }
+        }
 
     } // end of parallel processing
 

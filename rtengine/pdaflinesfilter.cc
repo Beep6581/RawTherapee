@@ -128,6 +128,39 @@ private:
     std::vector<std::vector<float>> tiles_;
 };
 
+
+class PDAFLineDenoiseRowFilter: public RawImageSource::CFALineDenoiseRowBlender {
+    static constexpr int BORDER1 = 1;
+    static constexpr int BORDER2 = 2;
+public:
+    PDAFLineDenoiseRowFilter(const std::vector<int> &pattern, int offset):
+        pattern_(pattern),
+        offset_(offset)
+    {}
+
+    float operator()(int row) const
+    {
+        if (!pattern_.empty()) {
+            int key = (row - offset_) % pattern_.back();
+            auto it = std::lower_bound(pattern_.begin(), pattern_.end(), key);
+            int d = *it - key;
+            if (d <= BORDER2) {
+                return d <= BORDER1 ? 1.f : 0.5f;
+            } else if (it > pattern_.begin()) {
+                d = key - *(it-1);
+                if (d <= BORDER2) {
+                    return d <= BORDER1 ? 1.f : 0.5f;
+                }
+            }
+        }
+        return 0.f;
+    }
+
+private:
+    std::vector<int> pattern_;
+    int offset_;
+};
+
 } // namespace
 
 
@@ -160,6 +193,12 @@ PDAFLinesFilter::~PDAFLinesFilter()
 RawImageSource::GreenEqulibrateThreshold &PDAFLinesFilter::greenEqThreshold()
 {
     return *gthresh_;
+}
+
+
+std::unique_ptr<RawImageSource::CFALineDenoiseRowBlender> PDAFLinesFilter::lineDenoiseRowBlender()
+{
+    return std::unique_ptr<RawImageSource::CFALineDenoiseRowBlender>(new PDAFLineDenoiseRowFilter(pattern_, offset_));
 }
 
 
