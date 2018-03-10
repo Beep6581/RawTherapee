@@ -134,7 +134,7 @@ PDAFLinesFilter::PDAFLinesFilter(RawImage *ri):
     CameraConst *cc = ccs->get(ri_->get_maker().c_str(), ri_->get_model().c_str());
 
     if (cc) {
-        cc->get_pdafPattern(pattern_);
+        pattern_ = cc->get_pdafPattern();
         if(!pattern_.empty()) {
             offset_ = cc->get_pdafOffset();
         }

@@ -380,10 +380,28 @@ CameraConst::has_pdafPattern()
     return pdafPattern.size() > 0;
 }
 
-void
-CameraConst::get_pdafPattern(std::vector<int> &pattern)
+std::vector<int>
+CameraConst::get_pdafPattern()
 {
-    pattern = pdafPattern;
+    return pdafPattern;
+}
+
+void
+CameraConst::update_pdafPattern(const std::vector<int> &other)
+{
+    if (other.empty()) {
+        return;
+    }
+    pdafPattern = other;
+}
+
+void
+CameraConst::update_pdafOffset(int other)
+{
+    if (other == 0) {
+        return;
+    }
+    pdafOffset = other;
 }
 
 bool
@@ -719,6 +737,8 @@ CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
                 // deleting all the existing levels, replaced by the new ones
                 existingcc->update_Levels(cc);
                 existingcc->update_Crop(cc);
+                existingcc->update_pdafPattern(cc->get_pdafPattern());
+                existingcc->update_pdafOffset(cc->get_pdafOffset());
 
                 if (settings->verbose) {
                     printf("Merging camera constants for \"%s\"\n", make_model.c_str());

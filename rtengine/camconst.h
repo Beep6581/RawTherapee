@@ -37,7 +37,7 @@ public:
     bool has_pdafPattern(void);
     void update_dcrawMatrix(const short *other);
     const short *get_dcrawMatrix(void);
-    void get_pdafPattern(std::vector<int> &pattern);
+    std::vector<int> get_pdafPattern();
     int get_pdafOffset() {return pdafOffset;}
     bool has_rawCrop(void);
     void get_rawCrop(int& left_margin, int& top_margin, int& width, int& height);
@@ -47,6 +47,8 @@ public:
     int get_WhiteLevel(int idx, int iso_speed, float fnumber);
     void update_Levels(const CameraConst *other);
     void update_Crop(CameraConst *other);
+    void update_pdafPattern(const std::vector<int> &other);
+    void update_pdafOffset(int other);
 };
 
 class CameraConstantsStore
