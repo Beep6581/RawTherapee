@@ -32,6 +32,7 @@ public:
     
     int mark(array2D<float> &rawData, PixelsMap &bpMap);
     RawImageSource::GreenEqulibrateThreshold &greenEqThreshold();
+    std::unique_ptr<RawImageSource::CFALineDenoiseRowBlender> lineDenoiseRowBlender();
 
 private:
     int markLine(array2D<float> &rawData, PixelsMap &bpMap, int y);

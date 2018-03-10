@@ -54,6 +54,7 @@ BayerPreProcess::BayerPreProcess () : FoldableToolPanel(this, "bayerpreprocess",
     lineDenoiseDirection->append(M("TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL"));
     lineDenoiseDirection->append(M("TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL"));
     lineDenoiseDirection->append(M("TP_PREPROCESS_LINEDENOISE_DIRECTION_BOTH"));
+    lineDenoiseDirection->append(M("TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES"));
     lineDenoiseDirection->show();
     lineDenoiseDirection->signal_changed().connect(sigc::mem_fun(*this, &BayerPreProcess::lineDenoiseDirectionChanged));
     
@@ -89,7 +90,11 @@ void BayerPreProcess::read(const rtengine::procparams::ProcParams* pp, const Par
     }
 
     lineDenoise->setValue (pp->raw.bayersensor.linenoise);
-    lineDenoiseDirection->set_active(int(pp->raw.bayersensor.linenoiseDirection)-1);
+    int d = int(pp->raw.bayersensor.linenoiseDirection)-1;
+    if (d == 4) {
+        --d;
+    }
+    lineDenoiseDirection->set_active(d);
     greenEqThreshold->setValue (pp->raw.bayersensor.greenthresh);
     pdafLinesFilter->set_active(pp->raw.bayersensor.pdafLinesFilter);
 
@@ -99,7 +104,11 @@ void BayerPreProcess::read(const rtengine::procparams::ProcParams* pp, const Par
 void BayerPreProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
 {
     pp->raw.bayersensor.linenoise = lineDenoise->getIntValue();
-    pp->raw.bayersensor.linenoiseDirection = RAWParams::BayerSensor::LineNoiseDirection(lineDenoiseDirection->get_active_row_number() + 1);
+    int d = lineDenoiseDirection->get_active_row_number() + 1;
+    if (d == 4) {
+        ++d;
+    }
+    pp->raw.bayersensor.linenoiseDirection = RAWParams::BayerSensor::LineNoiseDirection(d);
     pp->raw.bayersensor.greenthresh = greenEqThreshold->getIntValue();
     pp->raw.bayersensor.pdafLinesFilter = pdafLinesFilter->get_active();
 

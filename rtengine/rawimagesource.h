@@ -221,6 +221,12 @@ public:
     protected:
         const float thresh_;
     };
+
+    class CFALineDenoiseRowBlender {
+    public:
+        virtual ~CFALineDenoiseRowBlender() {}
+        virtual float operator()(int row) const { return 1.f; }
+    };
     
 protected:
     typedef unsigned short ushort;
@@ -243,7 +249,7 @@ protected:
     int  interpolateBadPixelsXtrans( PixelsMap &bitmapBads );
     int  findHotDeadPixels( PixelsMap &bpMap, float thresh, bool findHotPixels, bool findDeadPixels );
 
-    void cfa_linedn (float linenoiselevel, bool horizontal, bool vertical);//Emil's line denoise
+    void cfa_linedn (float linenoiselevel, bool horizontal, bool vertical, const CFALineDenoiseRowBlender &rowblender);//Emil's line denoise
 
     void green_equilibrate_global (array2D<float> &rawData);
     void green_equilibrate (const GreenEqulibrateThreshold &greenthresh, array2D<float> &rawData);//Emil's green equilibration
