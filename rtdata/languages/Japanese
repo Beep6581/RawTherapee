@@ -759,8 +759,6 @@ NAVIGATOR_S;S:
 NAVIGATOR_V;V:
 NAVIGATOR_XY_FULL;幅 = %1, 高さ = %2
 NAVIGATOR_XY_NA;x = n/a, y = n/a
-OPTIONS_DEFIMG_MISSING;<b>rawではない画像</b>のデフォルプロファイルが見つからないか、設定されていません\n\nプロファイル・ディレクトリを確認してください、存在しないか破損しているかもしれません\n\nデフォルト設定値が使用されます
-OPTIONS_DEFRAW_MISSING;<b>raw画像</b>のデフォル・プロファイルが見つからないか、設定されていません\n\nプロファイル・ディレクトリを確認してください、存在しないか破損しているかもしれません\n\nデフォルト設定値が使用されます
 PARTIALPASTE_BASICGROUP;基本設定
 PARTIALPASTE_CACORRECTION;色収差補正
 PARTIALPASTE_CHANNELMIXER;チャンネル・ミキサー
@@ -1848,8 +1846,8 @@ TP_WBALANCE_WATER_HEADER;水中
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;新規ディテール ウィンドウを開く
 ZOOMPANEL_ZOOM100;100%にズーム\nショートカット: <b>z</b>
-ZOOMPANEL_ZOOMFITCROPSCREEN;切り抜き画像を画面に合わせる\nショートカット：　<b>Alt</b>-<b>f</b>
-ZOOMPANEL_ZOOMFITSCREEN;画像全体を画面に合わせる\nショートカット: <b>f</b>
+ZOOMPANEL_ZOOMFITCROPSCREEN;切り抜き画像を画面に合わせる\nショートカット： <b>f</b>
+ZOOMPANEL_ZOOMFITSCREEN;画像全体を画面に合わせる\nショートカット: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
@@ -2000,6 +1998,9 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt-w</b>
 !MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
 !MONITOR_PROFILE_SYSTEM;System default
+!OPTIONS_BUNDLED_MISSING;The bundled profile "<b>%1</b>" could not be found!\n\nYour installation could be damaged.\n\nDefault internal values will be used instead.
+!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
+!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
 !PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
 !PARTIALPASTE_LOCALCONTRAST;Local contrast
 !PARTIALPASTE_METADATA;Metadata mode

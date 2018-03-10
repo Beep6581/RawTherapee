@@ -93,14 +93,19 @@ RTWindow::RTWindow ()
     WhiteBalance::init();
     ProfilePanel::init (this);
 
-    Glib::ustring fName = "rt-logo-small.png";
-    Glib::ustring fullPath = rtengine::findIconAbsolutePath (fName);
-
+#ifndef WIN32
+    const std::vector<Glib::RefPtr<Gdk::Pixbuf>> appIcons = {
+        RTImage::createFromFile("rt-logo-tiny.png"),
+        RTImage::createFromFile("rt-logo-small.png"),
+        RTImage::createFromFile("rt-logo-medium.png"),
+        RTImage::createFromFile("rt-logo-large.png")
+    };
     try {
-        set_default_icon_from_file (fullPath);
+        set_default_icon_list(appIcons);
     } catch (Glib::Exception& ex) {
         printf ("%s\n", ex.what().c_str());
     }
+#endif
 
 #if defined(__APPLE__)
     {
@@ -321,6 +326,7 @@ void RTWindow::on_realize ()
         vMajor.emplace_back(v, 0, v.find_first_not_of("0123456789."));
     }
 
+    bool waitForSplash = false;
     if (vMajor.size() == 2 && vMajor[0] != vMajor[1]) {
         // Update the version parameter with the right value
         options.version = versionString;
@@ -330,12 +336,43 @@ void RTWindow::on_realize ()
         splash->signal_delete_event().connect ( sigc::mem_fun (*this, &RTWindow::splashClosed) );
 
         if (splash->hasReleaseNotes()) {
+            waitForSplash = true;
             splash->showReleaseNotes();
             splash->show ();
         } else {
             delete splash;
             splash = nullptr;
         }
+    }
+
+    if (!waitForSplash) {
+        showErrors();
+    }
+}
+
+void RTWindow::showErrors()
+{
+    // alerting users if the default raw and image profiles are missing
+    if (options.is_defProfRawMissing()) {
+        options.defProfRaw = DEFPROFILE_RAW;
+        Gtk::MessageDialog msgd (*this, Glib::ustring::compose (M ("OPTIONS_DEFRAW_MISSING"), options.defProfRaw), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        msgd.run ();
+    }
+    if (options.is_bundledDefProfRawMissing()) {
+        Gtk::MessageDialog msgd (*this, Glib::ustring::compose (M ("OPTIONS_BUNDLED_MISSING"), options.defProfRaw), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        msgd.run ();
+        options.defProfRaw = DEFPROFILE_INTERNAL;
+    }
+
+    if (options.is_defProfImgMissing()) {
+        options.defProfImg = DEFPROFILE_IMG;
+        Gtk::MessageDialog msgd (*this, Glib::ustring::compose (M ("OPTIONS_DEFIMG_MISSING"), options.defProfImg), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        msgd.run ();
+    }
+    if (options.is_bundledDefProfImgMissing()) {
+        Gtk::MessageDialog msgd (*this, Glib::ustring::compose (M ("OPTIONS_BUNDLED_MISSING"), options.defProfImg), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        msgd.run ();
+        options.defProfImg = DEFPROFILE_INTERNAL;
     }
 }
 
@@ -875,6 +912,7 @@ bool RTWindow::splashClosed (GdkEventAny* event)
 {
     delete splash;
     splash = nullptr;
+    showErrors();
     return true;
 }
 

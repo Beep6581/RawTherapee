@@ -838,8 +838,6 @@ NAVIGATOR_S;S:
 NAVIGATOR_V;V:
 NAVIGATOR_XY_FULL;Breedte: %1, Hoogte: %2
 NAVIGATOR_XY_NA;x: --, y: --
-OPTIONS_DEFIMG_MISSING;Het standaard profiel voor <b>non-raw foto's</b> kan niet worden gevonden of is niet ingesteld.\n\nControleer de map met de profielen, deze kan missen of beschadigd zijn.\n\nDe standaard waarden zullen worden gebruikt.
-OPTIONS_DEFRAW_MISSING;Het standaard profiel voor <b>raw foto's</b> kan niet worden gevonden of is niet ingesteld.\n\nControleer de map met de profielen, deze kan missen of beschadigd zijn.\n\nDe standaard waarden zullen worden gebruikt.
 PARTIALPASTE_BASICGROUP;Basisinstellingen
 PARTIALPASTE_CACORRECTION;C/A-correctie
 PARTIALPASTE_CHANNELMIXER;Kleurkanaal mixer
@@ -2110,8 +2108,8 @@ TP_WBALANCE_WATER_HEADER;Onderwater
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Open (nieuw) detailvenster
 ZOOMPANEL_ZOOM100;Zoom naar 100%\nSneltoets: <b>z</b>
-ZOOMPANEL_ZOOMFITCROPSCREEN;Maak uitsnede passend in het scherm\nSneltoets: <b>Alt</b>-<b>f</b>
-ZOOMPANEL_ZOOMFITSCREEN;Passend in venster\nSneltoets: <b>f</b>
+ZOOMPANEL_ZOOMFITCROPSCREEN;Maak uitsnede passend in het scherm\nSneltoets: <b>f</b>
+ZOOMPANEL_ZOOMFITSCREEN;Passend in venster\nSneltoets: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom in\nSneltoets: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 
@@ -2165,6 +2163,9 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !MAIN_TAB_ADVANCED;Advanced
 !MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt-w</b>
 !MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
+!OPTIONS_BUNDLED_MISSING;The bundled profile "<b>%1</b>" could not be found!\n\nYour installation could be damaged.\n\nDefault internal values will be used instead.
+!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
+!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
 !PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
 !PARTIALPASTE_LOCALCONTRAST;Local contrast
 !PARTIALPASTE_METADATA;Metadata mode

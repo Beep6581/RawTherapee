@@ -563,8 +563,6 @@ NAVIGATOR_S;S:
 NAVIGATOR_V;V:
 NAVIGATOR_XY_FULL;Larghezza: %1, Altezza: %2
 NAVIGATOR_XY_NA;x: --, y: --
-OPTIONS_DEFIMG_MISSING;Il profilo predefinito per le <b>foto non-raw</b> non può essere trovato o non è stato impostato.\n\nControlla la tua cartella dei profili, potrebbe essere assente o danneggiata.\n\nSaranno utilizzati i valori di default.
-OPTIONS_DEFRAW_MISSING;Il profilo predefinito per le <b>foto raw</b> non può essere trovato o non è stato impostato.\n\nControlla la tua cartella dei profili, potrebbe essere assente o danneggiata.\n\nSaranno utilizzati i valori di default.
 PARTIALPASTE_BASICGROUP;Parametri principali
 PARTIALPASTE_CACORRECTION;Correzione AC
 PARTIALPASTE_CHANNELMIXER;Miscelatore Canali
@@ -1314,7 +1312,7 @@ TP_WBALANCE_WATER_HEADER;Subacqueo
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Apri (nuova) finestra di dettaglio
 ZOOMPANEL_ZOOM100;Ingrandimento al 100%.\nScorciatoia: <b>z</b>
-ZOOMPANEL_ZOOMFITSCREEN;Adatta allo schermo.\nScorciatoia: <b>f</b>
+ZOOMPANEL_ZOOMFITSCREEN;Adatta allo schermo.\nScorciatoia: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Ingrandisci.\nScorciatoia: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 
@@ -1630,6 +1628,9 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !MAIN_TAB_INSPECT; Inspect
 !MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
 !MONITOR_PROFILE_SYSTEM;System default
+!OPTIONS_BUNDLED_MISSING;The bundled profile "<b>%1</b>" could not be found!\n\nYour installation could be damaged.\n\nDefault internal values will be used instead.
+!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
+!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
 !PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
 !PARTIALPASTE_COLORTONING;Color toning
 !PARTIALPASTE_EQUALIZER;Wavelet levels

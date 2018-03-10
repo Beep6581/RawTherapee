@@ -435,8 +435,6 @@ MAIN_TOOLTIP_THRESHOLD;Llindar
 MAIN_TOOLTIP_TOGGLE;Alterna vista abans/després.\nDrecera: <b>Majús-B</b>
 NAVIGATOR_XY_FULL;Amplada = %1, Altura = %2
 NAVIGATOR_XY_NA;x = n/a, y = n/a
-OPTIONS_DEFIMG_MISSING;No es troba el perfil per omissió per a fotografies <b>no-raw</b> o no s'ha especificat.\n\nReviseu el directori de perfils, potser falta o està fet malbé.\n\nEs faran servir els valors interns per omissió.
-OPTIONS_DEFRAW_MISSING;No es troba el perfil per omissió per a fotografies <b>raw</b>.\n\nReviseu el directori de perfils, potser falta o està fet malbé.\n\nEs faran servir els valors interns per omissió.
 PARTIALPASTE_BASICGROUP;Ajustos bàsics
 PARTIALPASTE_CACORRECTION;Correcció A. C.(Aberració Cromàtica)
 PARTIALPASTE_CHANNELMIXER;Barrejador de canals
@@ -942,7 +940,7 @@ TP_WBALANCE_TUNGSTEN;Tungstèn
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Obre una altra finestra de detall
 ZOOMPANEL_ZOOM100;Zoom 100%\nDrecera: <b>z</b>
-ZOOMPANEL_ZOOMFITSCREEN;Ajusta a la finestra\nDrecera: <b>f</b>
+ZOOMPANEL_ZOOMFITSCREEN;Ajusta a la finestra\nDrecera: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Apropa\nDrecera: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 
@@ -1382,6 +1380,9 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !NAVIGATOR_R;R:
 !NAVIGATOR_S;S:
 !NAVIGATOR_V;V:
+!OPTIONS_BUNDLED_MISSING;The bundled profile "<b>%1</b>" could not be found!\n\nYour installation could be damaged.\n\nDefault internal values will be used instead.
+!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
+!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
 !PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
 !PARTIALPASTE_CHANNELMIXERBW;Black-and-white
 !PARTIALPASTE_COLORAPP;CIECAM02

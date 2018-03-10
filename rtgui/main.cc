@@ -347,17 +347,6 @@ RTWindow *create_rt_window()
     //gdk_threads_enter ();
     RTWindow *rtWindow = new RTWindow();
 
-    // alerting users if the default raw and image profiles are missing
-    if (options.is_defProfRawMissing()) {
-        Gtk::MessageDialog msgd (Glib::ustring::compose (M ("OPTIONS_DEFRAW_MISSING"), options.defProfRaw), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-        msgd.run ();
-    }
-
-    if (options.is_defProfImgMissing()) {
-        Gtk::MessageDialog msgd (Glib::ustring::compose (M ("OPTIONS_DEFIMG_MISSING"), options.defProfImg), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-        msgd.run ();
-    }
-
     return rtWindow;
 }
 
@@ -639,20 +628,19 @@ int main (int argc, char **argv)
 
     int ret = 0;
 
+    Glib::ustring fatalError;
+
     try {
         Options::load();
     } catch (Options::Error &e) {
-        std::cout << "ERROR: " << e.get_msg() << std::endl;
-        std::cerr << "Fatal error!" << std::endl;
-        std::cerr << "The RT_SETTINGS and/or RT_PATH environment variables are set, but use a relative path. The path must be absolute!" << std::endl;
-        return -2;
+        fatalError = e.get_msg();
     }
 
     gdk_threads_set_lock_functions (G_CALLBACK (myGdkLockEnter), (G_CALLBACK (myGdkLockLeave)));
     gdk_threads_init();
     gtk_init (&argc, &argv);  // use the "--g-fatal-warnings" command line flag to make warnings fatal
 
-    if (remote) {
+    if (fatalError.empty() && remote) {
         char *app_argv[2] = { const_cast<char *> (argv0.c_str()) };
         int app_argc = 1;
 
@@ -664,7 +652,7 @@ int main (int argc, char **argv)
         RTApplication app;
         ret = app.run (app_argc, app_argv);
     } else {
-        if (init_rt()) {
+        if (fatalError.empty() && init_rt()) {
             Gtk::Main m (&argc, &argv);
             gdk_threads_enter();
             const std::unique_ptr<RTWindow> rtWindow (create_rt_window());
@@ -690,7 +678,7 @@ int main (int argc, char **argv)
             cleanup_rt();
         } else {
             Gtk::Main m (&argc, &argv);
-            Gtk::MessageDialog msgd ("Fatal error!\nThe RT_SETTINGS and/or RT_PATH environment variables are set, but use a relative path. The path must be absolute!", true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+            Gtk::MessageDialog msgd (Glib::ustring::compose("FATAL ERROR!\n\n%1", fatalError), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
             msgd.run ();
             ret = -2;
         }

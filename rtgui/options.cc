@@ -52,8 +52,7 @@ Glib::ustring paramFileExtension = ".pp3";
 Options::Options ()
 {
 
-    defProfRawMissing = false;
-    defProfImgMissing = false;
+    defProfError = 0;
     setDefaults ();
 }
 
@@ -82,7 +81,7 @@ bool Options::checkDirPath (Glib::ustring &path, Glib::ustring errString)
         return true;
     } else {
         if (!errString.empty()) {
-            printf ("%s\n", errString.c_str());
+            std::cerr << errString << std::endl;
         }
 
         return false;
@@ -103,60 +102,48 @@ void Options::updatePaths()
             g_mkdir_with_parents (profilePath.c_str (), 511);
 
             if (!checkDirPath (profilePath, "")) { // had problems with mkdir_with_parents return value on OS X, just check dir again
-                printf ("Error: user's profiles' directory \"%s\" creation failed\n", profilePath.c_str());
+                Glib::ustring msg = Glib::ustring::compose ("Creation of the user's processing profile directory \"%1\" failed!\n", profilePath);
+                throw Error (msg);
             }
         }
 
-        if (checkDirPath (profilePath, "Error: the specified user's profiles' path doesn't point to a directory or doesn't exist!\n")) {
-            if (multiUser) {
-                userProfilePath = profilePath;
-                tmpPath = Glib::build_filename (argv0, "profiles");
+        if (checkDirPath (profilePath, "Error: the user's processing profile path doesn't point to a directory or doesn't exist!\n")) {
+            userProfilePath = profilePath;
+            tmpPath = Glib::build_filename (argv0, "profiles");
 
-                if (checkDirPath (tmpPath, "Error: the global's profiles' path doesn't point to a directory or doesn't exist!\n")) {
-                    if (userProfilePath != tmpPath) {
-                        globalProfilePath = tmpPath;
-                    }
+            if (checkDirPath (tmpPath, "Error: the global's processing profile path doesn't point to a directory or doesn't exist!\n")) {
+                if (userProfilePath != tmpPath) {
+                    globalProfilePath = tmpPath;
                 }
-            } else {
-                globalProfilePath = profilePath;
             }
         } else {
             tmpPath = Glib::build_filename (argv0, "profiles");
 
-            if (checkDirPath (tmpPath, "Error: the global's profiles' path doesn't point to a directory or doesn't exist!\n")) {
+            if (checkDirPath (tmpPath, "Error: the global's processing profile path doesn't point to a directory or doesn't exist!\n")) {
                 globalProfilePath = tmpPath;
             }
         }
     } else {
         // relative paths
-        if (multiUser) {
-            tmpPath = Glib::build_filename (rtdir, profilePath);
+        tmpPath = Glib::build_filename (rtdir, profilePath);
+
+        if (!checkDirPath (tmpPath, "")) {
+            g_mkdir_with_parents (tmpPath.c_str (), 511);
 
             if (!checkDirPath (tmpPath, "")) {
-                g_mkdir_with_parents (tmpPath.c_str (), 511);
-
-                if (!checkDirPath (tmpPath, "")) {
-                    printf ("Error: user's profiles' directory \"%s\" creation failed\n", tmpPath.c_str());
-                }
+                Glib::ustring msg = Glib::ustring::compose ("Creation of the user's processing profile directory \"%1\" failed!\n", tmpPath.c_str());
+                throw Error (msg);
             }
+        }
 
-            if (checkDirPath (tmpPath, "Error: the specified user's profiles' path doesn't point to a directory!\n")) {
-                userProfilePath = tmpPath;
-            }
+        if (checkDirPath (tmpPath, "Error: the user's processing profile path doesn't point to a directory!\n")) {
+            userProfilePath = tmpPath;
+        }
 
-            tmpPath = Glib::build_filename (argv0, "profiles");
+        tmpPath = Glib::build_filename (argv0, "profiles");
 
-            if (checkDirPath (tmpPath, "Error: the specified user's profiles' path doesn't point to a directory or doesn't exist!\n")) {
-                globalProfilePath = tmpPath;
-            }
-        } else {
-            // common directory
-            // directory name set in options is ignored, we use the default directory name
-            tmpPath = Glib::build_filename (argv0, "profiles");
-
-            if (checkDirPath (tmpPath, "Error: no global profiles' directory found!\n")) {
-                globalProfilePath = tmpPath;
-            }
+        if (checkDirPath (tmpPath, "Error: the user's processing profile path doesn't point to a directory or doesn't exist!\n")) {
+            globalProfilePath = tmpPath;
         }
     }
 
@@ -2129,13 +2116,17 @@ void Options::load (bool lightweight)
     }
 
     // Set the cache folder in RT's base folder
-    cacheBaseDir = Glib::build_filename (argv0, "cache");
+    cacheBaseDir = Glib::build_filename (argv0, "mycache");
 
     // Read the global option file (the one located in the application's base folder)
     try {
         options.readFromFile (Glib::build_filename (argv0, "options"));
     } catch (Options::Error &) {
         // ignore errors here
+    }
+
+    if (!options.multiUser && path == nullptr) {
+        rtdir = Glib::build_filename (argv0, "mysettings");
     }
 
     // Modify the path of the cache folder to the one provided in RT_CACHE environment variable
@@ -2149,7 +2140,7 @@ void Options::load (bool lightweight)
             throw Error (msg);
         }
     }
-    // No environment variable provided, so falling back to the multi user mode, is enabled
+    // No environment variable provided, so falling back to the multi user mode, if enabled
     else if (options.multiUser) {
 #ifdef WIN32
         cacheBaseDir = Glib::build_filename (rtdir, "cache");
@@ -2158,25 +2149,24 @@ void Options::load (bool lightweight)
 #endif
     }
 
-    // Check if RT is installed in Multi-User mode
-    if (options.multiUser) {
-        // Read the user option file (the one located somewhere in the user's home folder)
-        // Those values supersets those of the global option file
-        try {
-            options.readFromFile (Glib::build_filename (rtdir, "options"));
-        } catch (Options::Error &) {
-            // If the local option file does not exist or is broken, and the local cache folder does not exist, recreate it
-            if (!g_mkdir_with_parents (rtdir.c_str (), 511)) {
-                // Save the option file
-                options.saveToFile (Glib::build_filename (rtdir, "options"));
-            }
+    // Read the user option file (the one located somewhere in the user's home folder)
+    // Those values supersets those of the global option file
+    try {
+        options.readFromFile (Glib::build_filename (rtdir, "options"));
+    } catch (Options::Error &) {
+        // If the local option file does not exist or is broken, and the local cache folder does not exist, recreate it
+        if (!g_mkdir_with_parents (rtdir.c_str (), 511)) {
+            // Save the option file
+            options.saveToFile (Glib::build_filename (rtdir, "options"));
         }
+    }
 
 #ifdef __APPLE__
+    if (options.multiUser) {
         // make sure .local/share exists on OS X so we don't get problems with recently-used.xbel
         g_mkdir_with_parents (g_get_user_data_dir(), 511);
-#endif
     }
+#endif
 
     if (options.rtSettings.verbose) {
         printf ("Cache directory (cacheBaseDir) = %s\n", cacheBaseDir.c_str());
@@ -2187,48 +2177,52 @@ void Options::load (bool lightweight)
 
     // Check default Raw and Img procparams existence
     if (options.defProfRaw.empty()) {
-        options.defProfRaw = DEFPROFILE_INTERNAL;
+        options.defProfRaw = DEFPROFILE_RAW;
     } else {
-        Glib::ustring tmpFName = options.findProfilePath (options.defProfRaw);
-
-        if (!tmpFName.empty()) {
+        if (!options.findProfilePath (options.defProfRaw).empty()) {
             if (options.rtSettings.verbose) {
-                printf ("Default profile for raw images \"%s\" found\n", options.defProfRaw.c_str());
+                std::cout << "Default profile for raw images \"" << options.defProfRaw << "\" found" << std::endl;
             }
         } else {
-            if (options.rtSettings.verbose) {
-                printf ("Default profile for raw images \"%s\" not found or not set -> using Internal values\n", options.defProfRaw.c_str());
-            }
+            if (options.defProfRaw != DEFPROFILE_RAW) {
+                options.setDefProfRawMissing(true);
 
-            options.defProfRaw = DEFPROFILE_INTERNAL;
-            options.defProfRawMissing = true;
+                Glib::ustring dpr(DEFPROFILE_RAW);
+                if (options.findProfilePath (dpr).empty()) {
+                    options.setBundledDefProfRawMissing(true);
+                }
+            } else {
+                options.setBundledDefProfRawMissing(true);
+            }
         }
     }
 
     if (options.defProfImg.empty()) {
-        options.defProfImg = DEFPROFILE_INTERNAL;
+        options.defProfImg = DEFPROFILE_IMG;
     } else {
-        Glib::ustring tmpFName = options.findProfilePath (options.defProfImg);
-
-        if (!tmpFName.empty()) {
+        if (!options.findProfilePath (options.defProfImg).empty()) {
             if (options.rtSettings.verbose) {
-                printf ("Default profile for non-raw images \"%s\" found\n", options.defProfImg.c_str());
+                std::cout << "Default profile for non-raw images \"" << options.defProfImg << "\" found" << std::endl;
             }
         } else {
-            if (options.rtSettings.verbose) {
-                printf ("Default profile for non-raw images \"%s\" not found or not set -> using Internal values\n", options.defProfImg.c_str());
-            }
+            if (options.defProfImg != DEFPROFILE_IMG) {
+                options.setDefProfImgMissing(true);
 
-            options.defProfImg = DEFPROFILE_INTERNAL;
-            options.defProfImgMissing = true;
+                Glib::ustring dpi(DEFPROFILE_IMG);
+                if (options.findProfilePath (dpi).empty()) {
+                    options.setBundledDefProfImgMissing(true);
+                }
+            } else {
+                options.setBundledDefProfImgMissing(true);
+            }
         }
     }
 
-    //We handle languages using a hierarchy of translations.  The top of the hierarchy is default.  This includes a default translation for all items
+    // We handle languages using a hierarchy of translations.  The top of the hierarchy is default.  This includes a default translation for all items
     // (most likely using simple English).  The next level is the language: for instance, English, French, Chinese, etc.  This file should contain a
     // generic translation for all items which differ from default.  Finally there is the locale.  This is region-specific items which differ from the
     // language file.  These files must be name in the format <Language> (<LC>), where Language is the name of the language which it inherits from,
-    // and LC is the local code.  Some examples of this would be English (US) (American English), French (FR) (Franch French), French (CA) (Canadian
+    // and LC is the local code.  Some examples of this would be English (US) (American English), French (FR) (France French), French (CA) (Canadian
     // French), etc.
     //
     // Each level will only contain the differences between itself and its parent translation.  For instance, English (UK) or English (CA) may
@@ -2267,11 +2261,7 @@ void Options::load (bool lightweight)
 void Options::save ()
 {
 
-    if (!options.multiUser) {
-        options.saveToFile (Glib::build_filename (argv0, "options"));
-    } else {
-        options.saveToFile (Glib::build_filename (rtdir, "options"));
-    }
+    options.saveToFile (Glib::build_filename (rtdir, "options"));
 }
 
 /*
@@ -2329,3 +2319,63 @@ bool Options::is_extention_enabled (Glib::ustring ext)
 
     return false;
 }
+
+Glib::ustring Options::getUserProfilePath()
+{
+    return userProfilePath;
+}
+
+Glib::ustring Options::getGlobalProfilePath()
+{
+    return globalProfilePath;
+}
+
+bool Options::is_defProfRawMissing()
+{
+    return defProfError & rtengine::toUnderlying(DefProfError::defProfRawMissing);
+}
+bool Options::is_defProfImgMissing()
+{
+    return defProfError & rtengine::toUnderlying(DefProfError::defProfImgMissing);
+}
+void Options::setDefProfRawMissing (bool value)
+{
+    if (value) {
+        defProfError |= rtengine::toUnderlying(DefProfError::defProfRawMissing);
+    } else {
+        defProfError &= ~rtengine::toUnderlying(DefProfError::defProfRawMissing);
+    }
+}
+void Options::setDefProfImgMissing (bool value)
+{
+    if (value) {
+        defProfError |= rtengine::toUnderlying(DefProfError::defProfImgMissing);
+    } else {
+        defProfError &= ~rtengine::toUnderlying(DefProfError::defProfImgMissing);
+    }
+}
+bool Options::is_bundledDefProfRawMissing()
+{
+    return defProfError & rtengine::toUnderlying(DefProfError::bundledDefProfRawMissing);
+}
+bool Options::is_bundledDefProfImgMissing()
+{
+    return defProfError & rtengine::toUnderlying(DefProfError::bundledDefProfImgMissing);
+}
+void Options::setBundledDefProfRawMissing (bool value)
+{
+    if (value) {
+        defProfError |= rtengine::toUnderlying(DefProfError::bundledDefProfRawMissing);
+    } else {
+        defProfError &= ~rtengine::toUnderlying(DefProfError::bundledDefProfRawMissing);
+    }
+}
+void Options::setBundledDefProfImgMissing (bool value)
+{
+    if (value) {
+        defProfError |= rtengine::toUnderlying(DefProfError::bundledDefProfImgMissing);
+    } else {
+        defProfError &= ~rtengine::toUnderlying(DefProfError::bundledDefProfImgMissing);
+    }
+}
+

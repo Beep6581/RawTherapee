@@ -534,8 +534,6 @@ MAIN_TOOLTIP_THRESHOLD;Праг
 MAIN_TOOLTIP_TOGGLE;Приказује слику пре и после обраде <b>Б</b>
 NAVIGATOR_XY_FULL;Ширина = %1, Висина = %2
 NAVIGATOR_XY_NA;x = ○, y = ○
-OPTIONS_DEFIMG_MISSING;Није пронађен или доступан подразумевани профил за <b>слике које нису у сировом формату</b>.\n\nПроверите фасциклу са профилима, можда не постоји или је оштећена.\n\nБиће коришћене подразумеване вредности.
-OPTIONS_DEFRAW_MISSING;Није пронађен или доступан подразумевани профил за <b>слике у сировом формату</b>.\n\nПроверите фасциклу са профилима, можда не постоји или је оштећена.\n\nБиће коришћене подразумеване вредности.
 PARTIALPASTE_BASICGROUP;Основна подешавања
 PARTIALPASTE_CACORRECTION;Исправљање аберација
 PARTIALPASTE_CHANNELMIXER;Мешање канала
@@ -1271,7 +1269,7 @@ TP_WBALANCE_WATER_HEADER;Подводна фотографија
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Отвара нови прозор са детаљима
 ZOOMPANEL_ZOOM100;Повећава преглед на 100% <b>z</b>
-ZOOMPANEL_ZOOMFITSCREEN;Уклапа слику у величину прозора <b>Ф</b>
+ZOOMPANEL_ZOOMFITSCREEN;Уклапа слику у величину прозора <b>Alt</b>-<b>Ф</b>
 ZOOMPANEL_ZOOMIN;Увећава приказ слике <b>+</b>
 ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 
@@ -1615,6 +1613,9 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !NAVIGATOR_R;R:
 !NAVIGATOR_S;S:
 !NAVIGATOR_V;V:
+!OPTIONS_BUNDLED_MISSING;The bundled profile "<b>%1</b>" could not be found!\n\nYour installation could be damaged.\n\nDefault internal values will be used instead.
+!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
+!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
 !PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
 !PARTIALPASTE_COLORTONING;Color toning
 !PARTIALPASTE_EQUALIZER;Wavelet levels
