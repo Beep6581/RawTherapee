@@ -2108,8 +2108,8 @@ TP_WBALANCE_WATER_HEADER;Onderwater
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Open (nieuw) detailvenster
 ZOOMPANEL_ZOOM100;Zoom naar 100%\nSneltoets: <b>z</b>
-ZOOMPANEL_ZOOMFITCROPSCREEN;Maak uitsnede passend in het scherm\nSneltoets: <b>Alt</b>-<b>f</b>
-ZOOMPANEL_ZOOMFITSCREEN;Passend in venster\nSneltoets: <b>f</b>
+ZOOMPANEL_ZOOMFITCROPSCREEN;Maak uitsnede passend in het scherm\nSneltoets: <b>f</b>
+ZOOMPANEL_ZOOMFITSCREEN;Passend in venster\nSneltoets: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom in\nSneltoets: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 

@@ -922,6 +922,9 @@ NAVIGATOR_S;S:
 NAVIGATOR_V;V:
 NAVIGATOR_XY_FULL;Breite = %1, Höhe = %2
 NAVIGATOR_XY_NA;x: --, y: --
+OPTIONS_BUNDLED_MISSING;Das mitgelieferte Profil <b>%1</b> konnte nicht gefunden werden!\n\nIhre Installation könnte beschädigt sein.\n\nEs werden die internen Standardwerte verwendet.
+OPTIONS_DEFIMG_MISSING;Das Standardprofil für <b>Bilddateien</b> wurde nicht gefunden oder ist beschädigt.\n\nBitte überprüfen Sie das Verzeichnis Ihrer Profile.\n\nProfil <b>%1</b> wird stattdessen verwendet.
+OPTIONS_DEFRAW_MISSING;Das Standardprofil für <b>RAW-Dateien</b> wurde nicht gefunden oder ist beschädigt.\n\nBitte überprüfen Sie das Verzeichnis Ihrer Profile.\n\nProfil <b>%1</b> wird stattdessen verwendet.
 PARTIALPASTE_ADVANCEDGROUP;Erweiterte Einstellungen
 PARTIALPASTE_BASICGROUP;Basisparameter
 PARTIALPASTE_CACORRECTION;Farbsaum entfernen
@@ -2253,15 +2256,8 @@ TP_WBALANCE_WATER_HEADER;Unterwasser
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Neues Detailfenster öffnen
 ZOOMPANEL_ZOOM100;Zoom 100%\nTaste: <b>z</b>
-ZOOMPANEL_ZOOMFITCROPSCREEN;Ausschnitt an Bildschirm anpassen\nTaste: <b>Alt</b> + <b>f</b>
-ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>f</b>
+ZOOMPANEL_ZOOMFITCROPSCREEN;Ausschnitt an Bildschirm anpassen\nTaste: <b>f</b>
+ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-OPTIONS_BUNDLED_MISSING;Das mitgelieferte Profil <b>%1</b> konnte nicht gefunden werden!\n\nIhre Installation könnte beschädigt sein.\n\nEs werden die internen Standardwerte verwendet.
-OPTIONS_DEFIMG_MISSING;Das Standardprofil für <b>Bilddateien</b> wurde nicht gefunden oder ist beschädigt.\n\nBitte überprüfen Sie das Verzeichnis Ihrer Profile.\n\nProfil <b>%1</b> wird stattdessen verwendet.
-OPTIONS_DEFRAW_MISSING;Das Standardprofil für <b>RAW-Dateien</b> wurde nicht gefunden oder ist beschädigt.\n\nBitte überprüfen Sie das Verzeichnis Ihrer Profile.\n\nProfil <b>%1</b> wird stattdessen verwendet.

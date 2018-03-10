@@ -93,14 +93,19 @@ RTWindow::RTWindow ()
     WhiteBalance::init();
     ProfilePanel::init (this);
 
-    Glib::ustring fName = "rt-logo-small.png";
-    Glib::ustring fullPath = rtengine::findIconAbsolutePath (fName);
-
+#ifndef WIN32
+    const std::vector<Glib::RefPtr<Gdk::Pixbuf>> appIcons = {
+        RTImage::createFromFile("rt-logo-tiny.png"),
+        RTImage::createFromFile("rt-logo-small.png"),
+        RTImage::createFromFile("rt-logo-medium.png"),
+        RTImage::createFromFile("rt-logo-large.png")
+    };
     try {
-        set_default_icon_from_file (fullPath);
+        set_default_icon_list(appIcons);
     } catch (Glib::Exception& ex) {
         printf ("%s\n", ex.what().c_str());
     }
+#endif
 
 #if defined(__APPLE__)
     {

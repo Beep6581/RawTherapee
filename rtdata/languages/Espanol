@@ -1477,7 +1477,7 @@ TP_WBALANCE_WATER_HEADER;Subacuático
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Abrir (nueva) ventana de detalle
 ZOOMPANEL_ZOOM100;Zoom al 100%\nAtajo: <b>z</b>
-ZOOMPANEL_ZOOMFITSCREEN;Ajustar a pantalla\nAtajo: <b>f</b>
+ZOOMPANEL_ZOOMFITSCREEN;Ajustar a pantalla\nAtajo: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Aumentar Zoom\nAtajo: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 

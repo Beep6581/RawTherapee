@@ -940,7 +940,7 @@ TP_WBALANCE_TUNGSTEN;Tungstèn
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Obre una altra finestra de detall
 ZOOMPANEL_ZOOM100;Zoom 100%\nDrecera: <b>z</b>
-ZOOMPANEL_ZOOMFITSCREEN;Ajusta a la finestra\nDrecera: <b>f</b>
+ZOOMPANEL_ZOOMFITSCREEN;Ajusta a la finestra\nDrecera: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Apropa\nDrecera: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 

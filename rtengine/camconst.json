@@ -1266,6 +1266,12 @@ Camera constants:
     },
 
     { // Quality B
+        "make_model": "FUJIFILM X-E3",
+        "dcraw_matrix": [ 11434,-4948,-1210,-3746,12042,1903,-666,1479,5235 ], // DNG v10 D65
+        "ranges": { "white": 16100 }
+    },
+
+    { // Quality B
         "make_model": "FUJIFILM X-PRO1",
         "dcraw_matrix": [ 10413,-3996,-993,-3721,11640,2361,-733,1540,6011 ], // DNG_v9.4 D65
         "ranges": { "white": 4080 }

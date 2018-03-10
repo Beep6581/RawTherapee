@@ -1846,8 +1846,8 @@ TP_WBALANCE_WATER_HEADER;水中
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;新規ディテール ウィンドウを開く
 ZOOMPANEL_ZOOM100;100%にズーム\nショートカット: <b>z</b>
-ZOOMPANEL_ZOOMFITCROPSCREEN;切り抜き画像を画面に合わせる\nショートカット：　<b>Alt</b>-<b>f</b>
-ZOOMPANEL_ZOOMFITSCREEN;画像全体を画面に合わせる\nショートカット: <b>f</b>
+ZOOMPANEL_ZOOMFITCROPSCREEN;切り抜き画像を画面に合わせる\nショートカット： <b>f</b>
+ZOOMPANEL_ZOOMFITSCREEN;画像全体を画面に合わせる\nショートカット: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 

@@ -2204,8 +2204,8 @@ TP_WBALANCE_WATER_HEADER;Sous-marin
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Ouvrir une (nouvelle) vue détaillée
 ZOOMPANEL_ZOOM100;Zoom à 100%\nRaccourci: <b>z</b>
-ZOOMPANEL_ZOOMFITCROPSCREEN;Zoom/affiche la zone recadrée\nRaccourci: <b>Alt</b>-<b>f</b>
-ZOOMPANEL_ZOOMFITSCREEN;Affiche l'image entière\nRaccourci: <b>f</b>
+ZOOMPANEL_ZOOMFITCROPSCREEN;Zoom/affiche la zone recadrée\nRaccourci: <b>f</b>
+ZOOMPANEL_ZOOMFITSCREEN;Affiche l'image entière\nRaccourci: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom Avant\nRaccourci: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 

@@ -499,7 +499,7 @@ TP_WBALANCE_TEMPERATURE;Teplota
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Otvoriť (nové) okno s detailom
 ZOOMPANEL_ZOOM100;Priblíženie na 100% <b>z</b>
-ZOOMPANEL_ZOOMFITSCREEN;Prispôsobiť obrazovke <b>f</b>
+ZOOMPANEL_ZOOMFITSCREEN;Prispôsobiť obrazovke <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Priblížiť <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 
