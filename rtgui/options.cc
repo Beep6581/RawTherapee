@@ -81,7 +81,7 @@ bool Options::checkDirPath (Glib::ustring &path, Glib::ustring errString)
         return true;
     } else {
         if (!errString.empty()) {
-            printf ("%s\n", errString.c_str());
+            std::cerr << errString << std::endl;
         }
 
         return false;
