@@ -4842,7 +4842,7 @@ void ImProcFunctions::InverseContrast_Local(float ave, struct local_contra & lco
     delete origblur;
 }
 
-static void calclight(float lum, float  koef, float & lumnew, bool inv)
+static void calclight(float lum, float  koef, float & lumnew, bool inv, LUTf & lightCurveloc)
 //replace L-curve that does not work in local or bad
 {
 
@@ -4857,19 +4857,24 @@ static void calclight(float lum, float  koef, float & lumnew, bool inv)
     }
 
     if (koef >= 0.f) {
-        lumnew = lum + 0.2f * (33000.f - lum) * koef / 100.f;
+        //  lumnew = lum + 0.2f * (33000.f - lum) * koef / 100.f;
+        lumnew = lightCurveloc[lum];
     }
 
     if (koef < 0.f) {
-        lumnew = lum + blac * lum * koef / 100.f;//0.999 instead of 0.2
+        lumnew = lightCurveloc[lum];
 
-        if (lumnew < 0.f) {
-            float kc = lum / (lum - lumnew);
-            lumnew = lum + kc * 0.2f * lum * koef / 100.f;
+        /*
+           lumnew = lum + blac * lum * koef / 100.f;//0.999 instead of 0.2
 
-        }
+           if (lumnew < 0.f) {
+               float kc = lum / (lum - lumnew);
+               lumnew = lum + kc * 0.2f * lum * koef / 100.f;
 
-        //    if (inv == false && koef == -100.f) {
+           }
+
+           //    if (inv == false && koef == -100.f) {
+           */
         if (koef == -100.f) {
             lumnew = 0.f;
         }
@@ -6245,7 +6250,7 @@ void ImProcFunctions::Expo_vibr_Local(int senstype, float **buflight, float **bu
 }
 
 
-void ImProcFunctions::ColorLight_Local(int call, LabImage * bufcolorig, float ** buflight, float ** bufchro, float ** bufchroslid, float ** bufhh, float ** buflightslid, bool &LHutili, bool &HHutili, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, const LocHHCurve & lochhCurve, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::ColorLight_Local(int call, LabImage * bufcolorig, float ** buflight, float ** bufchro, float ** bufchroslid, float ** bufhh, float ** buflightslid, bool &LHutili, bool &HHutili, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, const LocHHCurve & lochhCurve, LUTf & lightCurveloc, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
     BENCHFUN
 // chroma and lightness
@@ -6834,7 +6839,7 @@ void ImProcFunctions::ColorLight_Local(int call, LabImage * bufcolorig, float **
                                 }
 
                                 if (lp.ligh != 0.f && lp.curvact == false) {
-                                    calclight(lumnew, lp.ligh, lumnew, true);  //replace L-curve
+                                    calclight(lumnew, lp.ligh, lumnew, true, lightCurveloc);  //replace L-curve
                                     lightcont = lumnew;
 
                                 } else {
@@ -6954,7 +6959,7 @@ void ImProcFunctions::ColorLight_Local(int call, LabImage * bufcolorig, float **
 
 
                                 if (lp.ligh != 0.f && lp.curvact == false) {
-                                    calclight(lumnew, lp.ligh, lumnew, true);  //replace L-curve
+                                    calclight(lumnew, lp.ligh, lumnew, true, lightCurveloc);  //replace L-curve
                                     lightcont = lumnew;
 
                                 } else {
@@ -7048,7 +7053,7 @@ void ImProcFunctions::ColorLight_Local(int call, LabImage * bufcolorig, float **
 
 }
 
-void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, int sk)
+void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LUTf & lightCurveloc, LabImage * original, LabImage * transformed, int cx, int cy, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, int sk)
 {
     // BENCHFUN
     float ach = (float)lp.trans / 100.f;
@@ -7445,7 +7450,7 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, La
                                 float lightcont;
 
                                 if (lp.ligh != 0.f) {
-                                    calclight(lumnew, lp.ligh, lumnew, true);  //replace L-curve
+                                    calclight(lumnew, lp.ligh, lumnew, true, lightCurveloc);  //replace L-curve
                                     lightcont = lumnew;
 
                                 } else {
@@ -7472,7 +7477,7 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, La
                                 float lumnew = original->L[y][x];
 
                                 if (lp.ligh != 0.f) {
-                                    calclight(original->L[y][x], lp.ligh, lumnew, false);
+                                    calclight(original->L[y][x], lp.ligh, lumnew, false, lightCurveloc);
                                 }
 
                                 float lightcont = lumnew ; //apply lightness
@@ -7497,7 +7502,7 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, La
                                 float lightcont;
 
                                 if (lp.ligh != 0.f) {
-                                    calclight(lumnew, lp.ligh, lumnew, true);  //replace L-curve
+                                    calclight(lumnew, lp.ligh, lumnew, true, lightCurveloc);  //replace L-curve
                                     lightcont = lumnew;
 
                                 } else {
@@ -7521,7 +7526,7 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, La
 
                             } else {
                                 if (lp.ligh != 0.f) {
-                                    calclight(original->L[y][x], lp.ligh, lumnew, false);
+                                    calclight(original->L[y][x], lp.ligh, lumnew, false, lightCurveloc);
                                 }
 
                                 float lightcont = lumnew ;
@@ -8035,7 +8040,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 
 void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, LUTf & sobelrefs, LUTi & centerx, LUTi & centery, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, int cx, int cy, int oW, int oH, int sk,
                                 const LocretigainCurve & locRETgainCcurve, LUTf & lllocalcurve, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve,
-                                bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localskutili, LUTf & sklocalcurve, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, double & huerefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref)
+                                bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localskutili, LUTf & sklocalcurve, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc, double & huerefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref)
 {
     //general call of others functions : important return hueref, chromaref, lumaref
     if (params->locallab.enabled) {
@@ -10544,7 +10549,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                                 float lighLnew;
                                 float amplil = 140.f;
                                 float lighL = bufcolorig->L[loy - begy][lox - begx];
-                                calclight(lighL, lp.ligh, lighLnew, true);  //replace L-curve
+                                calclight(lighL, lp.ligh, lighLnew, true, lightCurveloc);  //replace L-curve
                                 lL = lighLnew / lighL;
 
                                 if (lL <= 1.f) {//convert data curve near values of slider -100 + 100, to be used after to detection shape
@@ -10578,7 +10583,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                     }
             }
 
-            ColorLight_Local(call, bufcolorig, buflight, bufchro, bufchroslid, bufhh, buflightslid, LHutili, HHutili, hueplus, huemoins, hueref, dhue, chromaref, lumaref, lllocalcurve, loclhCurve, lochhCurve, lp, original, transformed, cx, cy, sk);
+            ColorLight_Local(call, bufcolorig, buflight, bufchro, bufchroslid, bufhh, buflightslid, LHutili, HHutili, hueplus, huemoins, hueref, dhue, chromaref, lumaref, lllocalcurve, loclhCurve, lochhCurve, lightCurveloc, lp, original, transformed, cx, cy, sk);
 
             if (call <= 3) {
 
@@ -10603,11 +10608,11 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                 huemoins = hueref - dhue + 2.f * rtengine::RT_PI;
             }
 
-            InverseColorLight_Local(lp, original, transformed, cx, cy,  hueplus, huemoins, hueref, dhue, chromaref, lumaref, sk);
+            InverseColorLight_Local(lp, lightCurveloc, original, transformed, cx, cy,  hueplus, huemoins, hueref, dhue, chromaref, lumaref, sk);
         }
 
 
-        if (!lp.inv  && lp.cont != 0 && lp.colorena) {  //contrast interior ellipse
+        if (!lp.inv  && lp.cont != 0 && lp.colorena  && lp.ligh > -99) {  //contrast interior ellipse
             const float pm = lp.cont < 0.f ? -1.f : 1.f;
             float hueplus = hueref + dhue;
             float huemoins = hueref - dhue;
@@ -10752,7 +10757,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
             }
 
 
-        } else if (lp.inv && lp.cont != 0 && lp.colorena) {
+        } else if (lp.inv && lp.cont != 0 && lp.colorena && lp.ligh > -99) {
             float hueplus = hueref + dhue;
             float huemoins = hueref - dhue;
 

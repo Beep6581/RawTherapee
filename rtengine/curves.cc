@@ -756,7 +756,8 @@ void CurveFactory::complexCurve(double ecomp, double black, double hlcompr, doub
     const float slope = 1.055 * powf(start, 1.0 / gamma_ - 1) - 0.055 / start;
     const float mul = 1.055;
     const float add = 0.055;
-
+	
+	
     // a: slope of the curve, black: starting point at the x axis
     const float a = powf(2.0, ecomp);
 
@@ -1016,12 +1017,9 @@ void CurveFactory::complexCurve(double ecomp, double black, double hlcompr, doub
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
 void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr, double hlcomprthresh,
-                                     double shcompr,
-                                     LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
+                                     double shcompr, double br,
+                                     LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, LUTf & lightCurveloc,
                                      int skip)
 {
 
@@ -1036,6 +1034,62 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
 
     ecomp /= 100.;//for mip files in integer * 100
 
+    // check if brightness curve is needed
+    if (br > 0.00001 || br < -0.00001) {
+   //     utili = true;
+
+        std::vector<double> brightcurvePoints;
+        brightcurvePoints.resize(9);
+        brightcurvePoints.at(0) = double (DCT_NURBS);
+
+        brightcurvePoints.at(1) = 0.;  // black point.  Value in [0 ; 1] range
+        brightcurvePoints.at(2) = 0.;  // black point.  Value in [0 ; 1] range
+
+        if (br > 0) {
+            brightcurvePoints.at(3) = 0.1;  // toe point
+            brightcurvePoints.at(4) = 0.1 + br / 150.0;  //value at toe point
+
+            brightcurvePoints.at(5) = 0.7;  // shoulder point
+            brightcurvePoints.at(6) = min(1.0, 0.7 + br / 300.0);   //value at shoulder point
+        } else {
+            brightcurvePoints.at(3) = 0.1 - br / 150.0;  // toe point
+            brightcurvePoints.at(4) = 0.1;  // value at toe point
+
+            brightcurvePoints.at(5) = min(1.0, 0.7 - br / 300.0);   // shoulder point
+            brightcurvePoints.at(6) = 0.7;  // value at shoulder point
+        }
+
+        brightcurvePoints.at(7) = 1.;  // white point
+        brightcurvePoints.at(8) = 1.;  // value at white point
+
+        DiagonalCurve brightcurve(brightcurvePoints, CURVES_MIN_POLY_POINTS / skip);
+        //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+        // Applying brightness curve
+        for (int i = 0; i < 32768; i++) { // L values range up to 32767, higher values are for highlight overflow
+
+            // change to [0,1] range
+            float val = (float)i / 32767.0;
+
+            // apply brightness curve
+            val = brightcurve.getVal(val);
+
+            // store result in a temporary array
+            lightCurveloc[i] = CLIPD(val);
+        }
+		lightCurveloc *= 32767.f;
+    for (int i = 32768; i < 32770; i++) { // set last two elements of lut to 32768 and 32769 to allow linear interpolation
+        lightCurveloc[i] = (float)i;
+    }
+		
+
+    } else {
+        lightCurveloc.makeIdentity(32767.f);
+    }
+
+
+	
+	
     // a: slope of the curve, black: starting point at the x axis
     const float a = powf(2.0f, ecomp);
 
@@ -1165,6 +1219,173 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
 #endif
 
 }
+
+
+
+
+
+/*
+void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr, double hlcomprthresh,
+                                     double shcompr, double br,
+                                     LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
+                                     int skip)
+{
+    float maxran = 65536.f; //65536
+
+    ecomp /= 100.;//for mip files in integer * 100
+
+    // a: slope of the curve, black: starting point at the x axis
+    const float a = powf(2.0f, ecomp);
+
+
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // tone curve base. a: slope (from exp.comp.), b: black, def_mul: max. x value (can be>1), hr,sr: highlight,shadow recovery
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+    if (br > 0.00001 || br < -0.00001) {
+     //   utili = true;
+
+        std::vector<double> brightcurvePoints;
+        brightcurvePoints.resize(9);
+        brightcurvePoints.at(0) = double (DCT_NURBS);
+
+        brightcurvePoints.at(1) = 0.;  // black point.  Value in [0 ; 1] range
+        brightcurvePoints.at(2) = 0.;  // black point.  Value in [0 ; 1] range
+
+        if (br > 0) {
+            brightcurvePoints.at(3) = 0.1;  // toe point
+            brightcurvePoints.at(4) = 0.1 + br / 150.0;  //value at toe point
+
+            brightcurvePoints.at(5) = 0.7;  // shoulder point
+            brightcurvePoints.at(6) = min(1.0, 0.7 + br / 300.0);   //value at shoulder point
+        } else {
+            brightcurvePoints.at(3) = 0.1 - br / 150.0;  // toe point
+            brightcurvePoints.at(4) = 0.1;  // value at toe point
+
+            brightcurvePoints.at(5) = min(1.0, 0.7 - br / 300.0);   // shoulder point
+            brightcurvePoints.at(6) = 0.7;  // value at shoulder point
+        }
+
+        brightcurvePoints.at(7) = 1.;  // white point
+        brightcurvePoints.at(8) = 1.;  // value at white point
+
+        DiagonalCurve brightcurve(brightcurvePoints, CURVES_MIN_POLY_POINTS / skip);
+        //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+        // Applying brightness curve
+        for (int i = 0; i < 32768; i++) { // L values range up to 32767, higher values are for highlight overflow
+
+            // change to [0,1] range
+            float val = (float)i / 32767.0;
+
+            // apply brightness curve
+            val = brightcurve.getVal(val);
+
+            // store result in a temporary array
+            outCurve[i] = CLIPD(val);
+        }
+
+    } else {
+        outCurve.makeIdentity(32767.f);
+    }
+
+
+
+    hlCurve.setClip(LUT_CLIP_BELOW);  // used LUT_CLIP_BELOW, because we want to have a baseline of 2^expcomp in this curve. If we don't clip the lut we get wrong values, see Issue 2621 #14 for details
+    float exp_scale = a;
+//   float scale = 65536.0;
+    float scale = maxran;
+    float comp = (max(0.0, ecomp) + 1.0) * hlcompr / 100.0;
+    float shoulder = ((scale / max(1.0f, exp_scale)) * (hlcomprthresh / 200.0)) + 0.1;
+
+    if (comp <= 0.0f) {
+        hlCurve.makeConstant(exp_scale);
+    } else {
+        hlCurve.makeConstant(exp_scale, shoulder + 1);
+
+        float scalemshoulder = scale - shoulder;
+
+#ifdef __SSE2__
+        int i = shoulder + 1;
+
+        if (i & 1) { // original formula, slower than optimized formulas below but only used once or none, so I let it as is for reference
+            // change to [0,1] range
+            float val = (float)i - shoulder;
+            float R = val * comp / (scalemshoulder);
+            hlCurve[i] = xlog(1.0f + R * exp_scale) / R;  // don't use xlogf or 1.f here. Leads to errors caused by too low precision
+            i++;
+        }
+
+        vdouble onev = _mm_set1_pd(1.0);
+        vdouble Rv = _mm_set_pd((i + 1 - shoulder) * (double)comp / scalemshoulder, (i - shoulder) * (double)comp / scalemshoulder);
+        vdouble incrementv = _mm_set1_pd(2.0 * comp / scalemshoulder);
+        vdouble exp_scalev = _mm_set1_pd(exp_scale);
+
+        //  for (; i < 0x10000; i += 2) {
+        for (; i < maxran; i += 2) {
+            // change to [0,1] range
+            vdouble resultv = xlog(onev + Rv * exp_scalev) / Rv;
+            vfloat resultfv = _mm_cvtpd_ps(resultv);
+            _mm_store_ss(&hlCurve[i], resultfv);
+            resultfv = PERMUTEPS(resultfv, _MM_SHUFFLE(1, 1, 1, 1));
+            _mm_store_ss(&hlCurve[i + 1], resultfv);
+            Rv += incrementv;
+        }
+
+#else
+        float R = comp / scalemshoulder;
+        float increment = R;
+
+        // for (int i = shoulder + 1; i < 0x10000; i++) {
+        for (int i = shoulder + 1; i < maxran; i++) {
+            // change to [0,1] range
+            hlCurve[i] = xlog(1.0f + R * exp_scale) / R;  // don't use xlogf or 1.f here. Leads to errors caused by too low precision
+            R += increment;
+        }
+
+#endif
+
+    }
+
+
+    // curve without contrast
+    //  LUTf dcurve (0x10000);
+    LUTf dcurve(maxran);
+
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // change to [0,1] range
+    shCurve.setClip(LUT_CLIP_ABOVE);  // used LUT_CLIP_ABOVE, because the curve converges to 1.0 at the upper end and we don't want to exceed this value.
+    float val = 1.f / (maxran - 1.f);
+    float val2 = simplebasecurve(val, black, 0.015 * shcompr);
+    shCurve[0] = CLIPD(val2) / val;
+    // gamma correction
+
+    val = Color::gammatab_srgb[0] / maxran;
+   // val = 0.f / maxran;
+	
+    // val = Color::gammatab_srgb327[0] / 32767.f;
+    // store result in a temporary array
+    dcurve[0] = CLIPD(val);
+
+//   for (int i = 1; i < 0x10000; i++) {
+//       float val = i / 65535.f;
+    for (int i = 1; i < maxran; i++) {
+        float val = i / (maxran - 1.f);
+
+        float   val2 = simplebasecurve(val, black, 0.015 * shcompr);
+        shCurve[i] = val2 / val;
+
+        // gamma correction
+        val = Color::gammatab_srgb[i] / maxran;
+      //  val = i / maxran;
+		
+        //  val = Color::gammatab_srgb327[i] / 32767.f;
+        // store result in a temporary array
+        dcurve[i] = val;
+    }
+
+}
+*/
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

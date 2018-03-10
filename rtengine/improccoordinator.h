@@ -121,6 +121,8 @@ protected:
     LUTf hltonecurveloc;
     LUTf shtonecurveloc;
     LUTf tonecurveloc;
+    LUTf lightCurveloc;
+	
 //    ToneCurve customToneCurve1loc;
 
     LUTf cl2Toningcurve;
