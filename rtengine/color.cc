@@ -179,7 +179,7 @@ void Color::init()
                 cachefy[i] = 327.68 * (kappa * i / MAXVALF);
             }
 
-            for(; i < maxindex; i++)
+            for (; i < maxindex; i++)
             {
                 cachefy[i] = 327.68 * (116.0 * std::cbrt((double)i / MAXVALF) - 16.0);
             }
@@ -379,13 +379,15 @@ void Color::cleanup()
     }
 }
 
-void Color::rgb2lab01 (const Glib::ustring &profile, const Glib::ustring &profileW, float r, float g, float b, float &LAB_l, float &LAB_a, float &LAB_b, bool workingSpace)
-{ // do not use this function in a loop. It really eats processing time caused by Glib::ustring comparisons
+void Color::rgb2lab01(const Glib::ustring &profile, const Glib::ustring &profileW, float r, float g, float b, float &LAB_l, float &LAB_a, float &LAB_b, bool workingSpace)
+{
+    // do not use this function in a loop. It really eats processing time caused by Glib::ustring comparisons
 
     Glib::ustring profileCalc = "sRGB"; //default
 
     if (workingSpace) {//display working profile
         profileCalc = profileW;
+
         if (profileW == "sRGB") { //apply sRGB inverse gamma
 
             if (r > 0.04045f) {
@@ -499,9 +501,9 @@ void Color::rgb2lab01 (const Glib::ustring &profile, const Glib::ustring &profil
     const TMatrix wprof = rtengine::ICCStore::getInstance()->workingSpaceMatrix(profileCalc);
 
     const float xyz_rgb[3][3] = { {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
-                                  {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
-                                  {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
-                                };
+        {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
+        {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
+    };
 
     const float var_X = (xyz_rgb[0][0] * r + xyz_rgb[0][1] * g + xyz_rgb[0][2] * b) / Color::D50x;
     const float var_Y = (xyz_rgb[1][0] * r + xyz_rgb[1][1] * g + xyz_rgb[1][2] * b);
@@ -2348,7 +2350,7 @@ void Color::gamutLchonly(float HH, float &Lprov1, float &Chprov1, float &R, floa
         float bprov1 = Chprov1 * sincosval.x;
 
         //conversion Lab RGB to limit Lab values - this conversion is useful before Munsell correction
-        float fy = (c1By116 * Lprov1 ) + c16By116;
+        float fy = (c1By116 * Lprov1) + c16By116;
         float fx = (0.002f * aprov1) + fy;
         float fz = fy - (0.005f * bprov1);
 
@@ -2468,7 +2470,7 @@ void Color::gamutLchonly(float HH, float2 sincosval, float &Lprov1, float &Chpro
         float bprov1 = Chprov1 * sincosval.x;
 
         //conversion Lab RGB to limit Lab values - this conversion is useful before Munsell correction
-        float fy = (c1By116 * Lprov1 ) + c16By116;
+        float fy = (c1By116 * Lprov1) + c16By116;
         float fx = (0.002f * aprov1) + fy;
         float fz = fy - (0.005f * bprov1);
 
@@ -2577,7 +2579,7 @@ void Color::gamutLchonly(float2 sincosval, float &Lprov1, float &Chprov1, const 
         float bprov1 = Chprov1 * sincosval.x;
 
         //conversion Lab RGB to limit Lab values - this conversion is useful before Munsell correction
-        float fy = (c1By116 * Lprov1 ) + c16By116;
+        float fy = (c1By116 * Lprov1) + c16By116;
         float fx = (0.002f * aprov1) + fy;
         float fz = fy - (0.005f * bprov1);
 

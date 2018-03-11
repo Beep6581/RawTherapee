@@ -215,7 +215,7 @@ public:
     * @param workingSpace true: compute the Lab value using the Working color space ; false: use the Output color space
     */
     // do not use this function in a loop. It really eats processing time caused by Glib::ustring comparisons
-    static void rgb2lab01 (const Glib::ustring &profile, const Glib::ustring &profileW, float r, float g, float b, float &LAB_l, float &LAB_a, float &LAB_b, bool workingSpace);
+    static void rgb2lab01(const Glib::ustring &profile, const Glib::ustring &profileW, float r, float g, float b, float &LAB_l, float &LAB_a, float &LAB_b, bool workingSpace);
 
     /**
     * @brief Convert red/green/blue to hue/saturation/luminance
@@ -269,9 +269,9 @@ public:
                 s = C / (131070.f - (M + m)); // 131070.f = 2.f * 65535.f
             }
 
-            if ( r == M ) {
+            if (r == M) {
                 h = (g - b);
-            } else if ( g == M ) {
+            } else if (g == M) {
                 h = (2.f * C) + (b - r);
             } else {
                 h = (4.f * C) + (r - g);
@@ -279,7 +279,7 @@ public:
 
             h /= (6.f * C);
 
-            if ( h < 0.f ) {
+            if (h < 0.f) {
                 h += 1.f;
             }
         }
@@ -300,7 +300,7 @@ public:
     */
     static void hsl2rgb(float h, float s, float l, float &r, float &g, float &b);
 
-    static inline void hsl2rgbfloat (float h, float s, float l, float &r, float &g, float &b)
+    static inline void hsl2rgbfloat(float h, float s, float l, float &r, float &g, float &b)
     {
 
         if (s == 0.f) {
@@ -316,9 +316,9 @@ public:
 
             float m1 = 2.f * l - m2;
 
-            r = 65535.f * hue2rgbfloat (m1, m2, h * 6.f + 2.f);
-            g = 65535.f * hue2rgbfloat (m1, m2, h * 6.f);
-            b = 65535.f * hue2rgbfloat (m1, m2, h * 6.f - 2.f);
+            r = 65535.f * hue2rgbfloat(m1, m2, h * 6.f + 2.f);
+            g = 65535.f * hue2rgbfloat(m1, m2, h * 6.f);
+            b = 65535.f * hue2rgbfloat(m1, m2, h * 6.f - 2.f);
         }
     }
 
@@ -358,7 +358,7 @@ public:
     * @param s saturation channel [0 ; 1] (return value)
     * @param v value channel [0 ; 1] (return value)
     */
-    static void rgb2hsv01 (float r, float g, float b, float &h, float &s, float &v);
+    static void rgb2hsv01(float r, float g, float b, float &h, float &s, float &v);
 
     static inline float rgb2s(float r, float g, float b)  // fast version if only saturation is needed
     {

@@ -1741,14 +1741,13 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
 
                 for (int i = istart, ti = 0; i < tH; i++, ti++) {
                     for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-
-                        //brightness/contrast  not used
+						
                         Ltemp[ti * TSE + tj] = tonecurve[Ltemp[ti * TSE + tj] ];
 
                     }
                 }
 
-
+/*
                 if (lp.chro != 0) {
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
@@ -1762,7 +1761,7 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
                         }
                     }
                 }
-
+*/
 
                 bool vasy = true;
 
@@ -4845,7 +4844,7 @@ void ImProcFunctions::InverseContrast_Local(float ave, struct local_contra & lco
 static void calclight(float lum, float  koef, float & lumnew, bool inv, LUTf & lightCurveloc)
 //replace L-curve that does not work in local or bad
 {
-
+/*
     float blac = 0.3f;
 
     if (inv == false) {
@@ -4855,7 +4854,7 @@ static void calclight(float lum, float  koef, float & lumnew, bool inv, LUTf & l
             blac = -0.069f * koef - 5.91f;
         }
     }
-
+*/
     if (koef >= 0.f) {
         //  lumnew = lum + 0.2f * (33000.f - lum) * koef / 100.f;
         lumnew = lightCurveloc[lum];

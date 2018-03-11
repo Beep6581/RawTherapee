@@ -122,7 +122,7 @@ protected:
     LUTf shtonecurveloc;
     LUTf tonecurveloc;
     LUTf lightCurveloc;
-	
+
 //    ToneCurve customToneCurve1loc;
 
     LUTf cl2Toningcurve;
@@ -244,7 +244,7 @@ protected:
     bool curveutili;
 
     int **dataspot;
-	int maxdata;
+    int maxdata;
     std::string *retistr;
     std::string *llstr;
     std::string *lhstr;
@@ -445,29 +445,29 @@ public:
     }
 
     DetailedCrop* createCrop(::EditDataProvider *editDataProvider, bool isDetailWindow);
-/*
-<<<<<<< HEAD
+    /*
+    <<<<<<< HEAD
+        bool getAutoWB(double& temp, double& green, double equal, double tempBias);
+        void getCamWB(double& temp, double& green);
+        void getSpotWB(int x, int y, int rectSize, double& temp, double& green);
+        void getAutoCrop(double ratio, int &x, int &y, int &w, int &h);
+
+        void setMonitorProfile(const Glib::ustring& profile, RenderingIntent intent);
+        void getMonitorProfile(Glib::ustring& profile, RenderingIntent& intent) const;
+        void setSoftProofing(bool softProof, bool gamutCheck);
+        void getSoftProofing(bool &softProof, bool &gamutCheck);
+    =======
+    */
     bool getAutoWB(double& temp, double& green, double equal, double tempBias);
     void getCamWB(double& temp, double& green);
     void getSpotWB(int x, int y, int rectSize, double& temp, double& green);
     void getAutoCrop(double ratio, int &x, int &y, int &w, int &h);
-
+    bool getHighQualComputed();
+    void setHighQualComputed();
     void setMonitorProfile(const Glib::ustring& profile, RenderingIntent intent);
     void getMonitorProfile(Glib::ustring& profile, RenderingIntent& intent) const;
     void setSoftProofing(bool softProof, bool gamutCheck);
     void getSoftProofing(bool &softProof, bool &gamutCheck);
-=======
-*/
-    bool getAutoWB   (double& temp, double& green, double equal, double tempBias);
-    void getCamWB    (double& temp, double& green);
-    void getSpotWB   (int x, int y, int rectSize, double& temp, double& green);
-    void getAutoCrop (double ratio, int &x, int &y, int &w, int &h);
-    bool getHighQualComputed();
-    void setHighQualComputed();
-    void setMonitorProfile (const Glib::ustring& profile, RenderingIntent intent);
-    void getMonitorProfile (Glib::ustring& profile, RenderingIntent& intent) const;
-    void setSoftProofing   (bool softProof, bool gamutCheck);
-    void getSoftProofing   (bool &softProof, bool &gamutCheck);
 //>>>>>>> dev
 
     bool updateTryLock()

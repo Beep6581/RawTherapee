@@ -1296,7 +1296,7 @@ void Crop::update(int todo)
                         double hlcompr = params.locallab.hlcompr;
                         double hlcomprthresh = params.locallab.hlcomprthresh;
                         double shcompr = params.locallab.shcompr;
-						double br = params.locallab.lightness;
+                        double br = params.locallab.lightness;
 
                         CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br,
                                                         hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,
@@ -1787,10 +1787,10 @@ void Crop::update(int todo)
                 double hlcompr = params.locallab.hlcompr;
                 double hlcomprthresh = params.locallab.hlcomprthresh;
                 double shcompr = params.locallab.shcompr;
-				double br = params.locallab.lightness;
+                double br = params.locallab.lightness;
 
-                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, 
-                                                hltonecurveloc2, shtonecurveloc2, tonecurveloc2,lightCurveloc2,
+                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br,
+                                                hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,
                                                 sca);
 
                 params.locallab.huerefblur = (parent->huerefblurs[sp]) / 100.f;

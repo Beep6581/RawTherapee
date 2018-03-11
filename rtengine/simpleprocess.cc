@@ -2157,10 +2157,10 @@ private:
                     double hlcompr = params.locallab.hlcompr;
                     double hlcomprthresh = params.locallab.hlcomprthresh;
                     double shcompr = params.locallab.shcompr;
-					double br = params.locallab.lightness;
+                    double br = params.locallab.lightness;
 
-                    CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, 
-                                                    hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, 
+                    CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br,
+                                                    hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
 
                                                     1);
 
