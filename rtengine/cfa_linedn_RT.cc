@@ -68,11 +68,10 @@ void RawImageSource::CLASS cfa_linedn(float noise, bool horizontal, bool vertica
     {
 
         // allocate memory and assure the arrays don't have same 64 byte boundary to avoid L1 conflict misses
-        float *cfain = (float*)malloc(4 * TS * TS * sizeof(float) + 3 * 16 * sizeof(float));
-        float *cfablur = (cfain + (TS * TS) + 1 * 16);
-        float *cfadiff = (cfain + (2 * TS * TS) + 2 * 16);
-        float *cfadn = (cfain + (3 * TS * TS) + 3 * 16);
-
+        float *cfain = (float*)malloc(3 * TS * TS * sizeof(float) + 2 * 16 * sizeof(float));
+        float *cfadiff = (cfain + (1 * TS * TS) + 1 * 16);
+        float *cfadn = (cfain + (2 * TS * TS) + 2 * 16);
+        float cfablur[TS];
 
         float linehvar[4], linevvar[4], noisefactor[4][8][2], coeffsq;
         float dctblock[4][8][8];
@@ -130,19 +129,19 @@ void RawImageSource::CLASS cfa_linedn(float noise, bool horizontal, bool vertica
 
                 //gaussian blur of CFA data
                 for (int rr = 8; rr < numrows - 8; rr++) {
-                    for (int indx = rr * TS; indx < rr * TS + numcols; indx++) {
-                        cfablur[indx] = gauss[0] * cfain[indx];
+                    for (int indx = rr * TS, indxb = 0; indx < rr * TS + numcols; indx++, indxb++) {
+                        cfablur[indxb] = gauss[0] * cfain[indx];
 
                         for (int i = 1; i < 5; i++) {
-                            cfablur[indx] += gauss[i] * (cfain[indx - (2 * i) * TS] + cfain[indx + (2 * i) * TS]);
+                            cfablur[indxb] += gauss[i] * (cfain[indx - (2 * i) * TS] + cfain[indx + (2 * i) * TS]);
                         }
                     }
 
-                    for (int indx = rr * TS + 8; indx < rr * TS + numcols - 8; indx++) {
-                        cfadn[indx] = gauss[0] * cfablur[indx];
+                    for (int indx = rr * TS + 8, indxb = 8; indx < rr * TS + numcols - 8; indx++, indxb++) {
+                        cfadn[indx] = gauss[0] * cfablur[indxb];
 
                         for (int i = 1; i < 5; i++) {
-                            cfadn[indx] += gauss[i] * (cfablur[indx - 2 * i] + cfablur[indx + 2 * i]);
+                            cfadn[indx] += gauss[i] * (cfablur[indxb - 2 * i] + cfablur[indxb + 2 * i]);
                         }
 
                         cfadiff[indx] = cfain[indx] - cfadn[indx]; // hipass cfa data
@@ -252,7 +251,7 @@ void RawImageSource::CLASS cfa_linedn(float noise, bool horizontal, bool vertica
         free(cfain);
 
 // copy temporary buffer back to image matrix
-        #pragma omp for
+        #pragma omp for schedule(dynamic,16)
 
         for(int i = 0; i < height; i++) {
             float f = rowblender(i);
