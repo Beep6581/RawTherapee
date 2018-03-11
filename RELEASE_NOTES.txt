@@ -1,6 +1,6 @@
-RAWTHERAPEE 5.4-RC2 RELEASE NOTES
+RAWTHERAPEE 5.4-RC3 RELEASE NOTES
 ---------------------------------
-This is RawTherapee 5.4 Release Candidate 2, released on 2018-02-26.
+This is RawTherapee 5.4 Release Candidate 3, released on 2018-03-11.
 
 Start by reading the "Getting Started" article on RawPedia:
 http://rawpedia.rawtherapee.com/
