@@ -1269,7 +1269,7 @@ TP_WBALANCE_WATER_HEADER;Podvodna fotografija
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Otvara novi prozor sa detaljima
 ZOOMPANEL_ZOOM100;Povećava pregled na 100% <b>z</b>
-ZOOMPANEL_ZOOMFITSCREEN;Uklapa sliku u veličinu prozora <b>F</b>
+ZOOMPANEL_ZOOMFITSCREEN;Uklapa sliku u veličinu prozora <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Uvećava prikaz slike <b>+</b>
 ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 

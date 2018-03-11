@@ -1948,8 +1948,8 @@ void Tag::initUserComment (const Glib::ustring &text)
         memcpy(value, "ASCII\0\0\0", 8);
         memcpy(value + 8, text.c_str(), valuesize - 8);
     } else {
-        wchar_t *commentStr = (wchar_t*)g_utf8_to_utf16 (text.c_str(), -1, nullptr, nullptr, nullptr);
-        size_t wcStrSize = wcslen(commentStr);
+        glong wcStrSize = 0;
+        gunichar2 *commentStr = g_utf8_to_utf16 (text.c_str(), -1, nullptr, &wcStrSize, nullptr);
         valuesize = count = wcStrSize * 2 + 8 + (useBOM ? 2 : 0);
         value = new unsigned char[valuesize];
         memcpy(value, "UNICODE\0", 8);

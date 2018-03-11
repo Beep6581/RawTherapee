@@ -1434,8 +1434,8 @@ TP_WBALANCE_WATER_HEADER;Pod woda
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Otworz (nowa) lupe
 ZOOMPANEL_ZOOM100;Powieksz do 100%\nSkrot: <b>z</b>
-ZOOMPANEL_ZOOMFITCROPSCREEN;Dopasuj kadr do ekranu\nSkrot: <b>Alt</b>-<b>f</b>
-ZOOMPANEL_ZOOMFITSCREEN;Dopasuj caly obraz do ekranu\nSkrot: <b>f</b>
+ZOOMPANEL_ZOOMFITCROPSCREEN;Dopasuj kadr do ekranu\nSkrot: <b>f</b>
+ZOOMPANEL_ZOOMFITSCREEN;Dopasuj caly obraz do ekranu\nSkrot: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Przybliz\nSkrot: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 

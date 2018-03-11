@@ -1406,7 +1406,7 @@ ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Новое окно детального просмотра
 ZOOMPANEL_ZOOM100;Масштаб 100%\nГорячая клавиша: <b>z</b>
 ZOOMPANEL_ZOOMFITCROPSCREEN;Уместить кадрированное изображение по размеру экрану\nГорячая клавиша: <b>f</b>
-ZOOMPANEL_ZOOMFITSCREEN;Уместить изображение по размерам окна\nГорячая клавиша: <b>Alt-f</b>
+ZOOMPANEL_ZOOMFITSCREEN;Уместить изображение по размерам окна\nГорячая клавиша: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Приблизить\nГорячая клавиша: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 

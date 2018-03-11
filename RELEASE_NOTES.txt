@@ -49,6 +49,7 @@ https://raw.pixls.us/
 News Relevant to Package Maintainers
 ------------------------------------
 In general:
+- To get the source code, either clone from git or use the tarball from http://rawtherapee.com/shared/source/ . Do not use the auto-generated GitHub release tarballs.
 - Requires GTK+ version >=3.16, though >=3.22.24 is recommended.
 - RawTherapee 5 requires GCC-4.9 or higher, or Clang.
 - Do not use -ffast-math, it will not make RawTherapee faster but will introduce artifacts.
