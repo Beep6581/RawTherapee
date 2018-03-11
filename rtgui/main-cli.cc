@@ -158,8 +158,10 @@ int main (int argc, char **argv)
 
     try {
         Options::load (quickstart);
-    } catch (Options::Error &) {
-        printf ("Fatal error!\nThe RT_SETTINGS and/or RT_PATH environment variables are set, but use a relative path. The path must be absolute!\n");
+    } catch (Options::Error &e) {
+        std::cerr << std::endl
+                  << "FATAL ERROR:" << std::endl
+                  << e.get_msg() << std::endl;
         return -2;
     }
 

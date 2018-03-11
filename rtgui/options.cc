@@ -81,7 +81,7 @@ bool Options::checkDirPath (Glib::ustring &path, Glib::ustring errString)
         return true;
     } else {
         if (!errString.empty()) {
-            printf ("%s\n", errString.c_str());
+            std::cerr << errString << std::endl;
         }
 
         return false;
@@ -102,60 +102,48 @@ void Options::updatePaths()
             g_mkdir_with_parents (profilePath.c_str (), 511);
 
             if (!checkDirPath (profilePath, "")) { // had problems with mkdir_with_parents return value on OS X, just check dir again
-                printf ("Error: user's profiles' directory \"%s\" creation failed\n", profilePath.c_str());
+                Glib::ustring msg = Glib::ustring::compose ("Creation of the user's processing profile directory \"%1\" failed!\n", profilePath);
+                throw Error (msg);
             }
         }
 
-        if (checkDirPath (profilePath, "Error: the specified user's profiles' path doesn't point to a directory or doesn't exist!\n")) {
-            if (multiUser) {
-                userProfilePath = profilePath;
-                tmpPath = Glib::build_filename (argv0, "profiles");
+        if (checkDirPath (profilePath, "Error: the user's processing profile path doesn't point to a directory or doesn't exist!\n")) {
+            userProfilePath = profilePath;
+            tmpPath = Glib::build_filename (argv0, "profiles");
 
-                if (checkDirPath (tmpPath, "Error: the global's profiles' path doesn't point to a directory or doesn't exist!\n")) {
-                    if (userProfilePath != tmpPath) {
-                        globalProfilePath = tmpPath;
-                    }
+            if (checkDirPath (tmpPath, "Error: the global's processing profile path doesn't point to a directory or doesn't exist!\n")) {
+                if (userProfilePath != tmpPath) {
+                    globalProfilePath = tmpPath;
                 }
-            } else {
-                globalProfilePath = profilePath;
             }
         } else {
             tmpPath = Glib::build_filename (argv0, "profiles");
 
-            if (checkDirPath (tmpPath, "Error: the global's profiles' path doesn't point to a directory or doesn't exist!\n")) {
+            if (checkDirPath (tmpPath, "Error: the global's processing profile path doesn't point to a directory or doesn't exist!\n")) {
                 globalProfilePath = tmpPath;
             }
         }
     } else {
         // relative paths
-        if (multiUser) {
-            tmpPath = Glib::build_filename (rtdir, profilePath);
+        tmpPath = Glib::build_filename (rtdir, profilePath);
+
+        if (!checkDirPath (tmpPath, "")) {
+            g_mkdir_with_parents (tmpPath.c_str (), 511);
 
             if (!checkDirPath (tmpPath, "")) {
-                g_mkdir_with_parents (tmpPath.c_str (), 511);
-
-                if (!checkDirPath (tmpPath, "")) {
-                    printf ("Error: user's profiles' directory \"%s\" creation failed\n", tmpPath.c_str());
-                }
+                Glib::ustring msg = Glib::ustring::compose ("Creation of the user's processing profile directory \"%1\" failed!\n", tmpPath.c_str());
+                throw Error (msg);
             }
+        }
 
-            if (checkDirPath (tmpPath, "Error: the specified user's profiles' path doesn't point to a directory!\n")) {
-                userProfilePath = tmpPath;
-            }
+        if (checkDirPath (tmpPath, "Error: the user's processing profile path doesn't point to a directory!\n")) {
+            userProfilePath = tmpPath;
+        }
 
-            tmpPath = Glib::build_filename (argv0, "profiles");
+        tmpPath = Glib::build_filename (argv0, "profiles");
 
-            if (checkDirPath (tmpPath, "Error: the specified user's profiles' path doesn't point to a directory or doesn't exist!\n")) {
-                globalProfilePath = tmpPath;
-            }
-        } else {
-            // common directory
-            // directory name set in options is ignored, we use the default directory name
-            tmpPath = Glib::build_filename (argv0, "profiles");
-
-            if (checkDirPath (tmpPath, "Error: no global profiles' directory found!\n")) {
-                globalProfilePath = tmpPath;
-            }
+        if (checkDirPath (tmpPath, "Error: the user's processing profile path doesn't point to a directory or doesn't exist!\n")) {
+            globalProfilePath = tmpPath;
         }
     }
 
@@ -2196,13 +2184,17 @@ void Options::load (bool lightweight)
     }
 
     // Set the cache folder in RT's base folder
-    cacheBaseDir = Glib::build_filename (argv0, "cache");
+    cacheBaseDir = Glib::build_filename (argv0, "mycache");
 
     // Read the global option file (the one located in the application's base folder)
     try {
         options.readFromFile (Glib::build_filename (argv0, "options"));
     } catch (Options::Error &) {
         // ignore errors here
+    }
+
+    if (!options.multiUser && path == nullptr) {
+        rtdir = Glib::build_filename (argv0, "mysettings");
     }
 
     // Modify the path of the cache folder to the one provided in RT_CACHE environment variable
@@ -2216,7 +2208,7 @@ void Options::load (bool lightweight)
             throw Error (msg);
         }
     }
-    // No environment variable provided, so falling back to the multi user mode, is enabled
+    // No environment variable provided, so falling back to the multi user mode, if enabled
     else if (options.multiUser) {
 #ifdef WIN32
         cacheBaseDir = Glib::build_filename (rtdir, "cache");
@@ -2225,25 +2217,24 @@ void Options::load (bool lightweight)
 #endif
     }
 
-    // Check if RT is installed in Multi-User mode
-    if (options.multiUser) {
-        // Read the user option file (the one located somewhere in the user's home folder)
-        // Those values supersets those of the global option file
-        try {
-            options.readFromFile (Glib::build_filename (rtdir, "options"));
-        } catch (Options::Error &) {
-            // If the local option file does not exist or is broken, and the local cache folder does not exist, recreate it
-            if (!g_mkdir_with_parents (rtdir.c_str (), 511)) {
-                // Save the option file
-                options.saveToFile (Glib::build_filename (rtdir, "options"));
-            }
+    // Read the user option file (the one located somewhere in the user's home folder)
+    // Those values supersets those of the global option file
+    try {
+        options.readFromFile (Glib::build_filename (rtdir, "options"));
+    } catch (Options::Error &) {
+        // If the local option file does not exist or is broken, and the local cache folder does not exist, recreate it
+        if (!g_mkdir_with_parents (rtdir.c_str (), 511)) {
+            // Save the option file
+            options.saveToFile (Glib::build_filename (rtdir, "options"));
         }
+    }
 
 #ifdef __APPLE__
+    if (options.multiUser) {
         // make sure .local/share exists on OS X so we don't get problems with recently-used.xbel
         g_mkdir_with_parents (g_get_user_data_dir(), 511);
-#endif
     }
+#endif
 
     if (options.rtSettings.verbose) {
         printf ("Cache directory (cacheBaseDir) = %s\n", cacheBaseDir.c_str());
@@ -2338,11 +2329,7 @@ void Options::load (bool lightweight)
 void Options::save ()
 {
 
-    if (!options.multiUser) {
-        options.saveToFile (Glib::build_filename (argv0, "options"));
-    } else {
-        options.saveToFile (Glib::build_filename (rtdir, "options"));
-    }
+    options.saveToFile (Glib::build_filename (rtdir, "options"));
 }
 
 /*
