@@ -130,8 +130,6 @@ private:
 
 
 class PDAFLineDenoiseRowFilter: public RawImageSource::CFALineDenoiseRowBlender {
-    static constexpr int BORDER1 = 1;
-    static constexpr int BORDER2 = 2;
 public:
     PDAFLineDenoiseRowFilter(const std::vector<int> &pattern, int offset):
         pattern_(pattern),
@@ -140,17 +138,24 @@ public:
 
     float operator()(int row) const
     {
+        static constexpr float BORDER[] = { 1.f, 1.f, 0.8f, 0.5f, 0.2f };
+        static constexpr int BORDER_WIDTH = sizeof(BORDER)/sizeof(float) - 1;
+        
         if (!pattern_.empty()) {
             int key = (row - offset_) % pattern_.back();
             auto it = std::lower_bound(pattern_.begin(), pattern_.end(), key);
-            int d = *it - key;
-            if (d <= BORDER2) {
-                return d <= BORDER1 ? 1.f : 0.5f;
-            } else if (it > pattern_.begin()) {
-                d = key - *(it-1);
-                if (d <= BORDER2) {
-                    return d <= BORDER1 ? 1.f : 0.5f;
-                }
+
+            int b = *it;
+            int d = b - key;
+
+            if (it > pattern_.begin()) {
+                int b2 = *(it-1);
+                int d2 = key - b2;
+                float f = BORDER[std::min(std::min(d, d2), BORDER_WIDTH)];
+                return f;
+            } else {
+                float f = BORDER[std::min(d, BORDER_WIDTH)];
+                return f;
             }
         }
         return 0.f;
