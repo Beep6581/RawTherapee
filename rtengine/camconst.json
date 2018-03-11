@@ -2286,7 +2286,10 @@ Camera constants:
         "make_model": [ "Sony ILCE-7RM2", "Sony DSC-RX1RM2" ],
         "dcraw_matrix": [ 6629,-1900,-483,-4618,12349,2550,-622,1381,6514 ], // DNG_v9.1.1 D65
         "raw_crop": [ 0, 0, -36, 0 ], // full raw frame 8000x5320 - 36 rightmost columns are garbage
-        "ranges": { "black": 512, "white": 16300 }
+        "ranges": { "black": 512, "white": 16300 },
+        // PDAF info provided by Horshack with the rawshack tool (http://testcams.com/rawshack/)
+        "pdafPattern" : [ 0,24,36,60,84,120,132,156,192,204,240,252,276,300,324,360,372,396,420 ],
+        "pdafOffset" : 31
     },
 
     { // Quality B, color matrix copied from a7rm2
