@@ -943,7 +943,6 @@ bool ToneCurve::histmatchingComputed()
     brightness->setValue(0);
     contrast->setValue(0);
     black->setValue(0);
-    hlcompr->setValue(0);
 
     if (!black->getAddMode()) {
         shcompr->set_sensitive(!((int)black->getValue() == 0));
