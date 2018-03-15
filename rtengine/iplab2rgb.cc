@@ -46,12 +46,28 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
         int H = lab->H;
         unsigned char * data = image->data;
 
+        const auto set_gamut_warning =
+            [](Image8 *image, int y, int x) -> void
+            {
+                image->r(y, x) = 0;
+                image->g(y, x) = 255;
+                image->b(y, x) = 255;
+            };
+
         // cmsDoTransform is relatively expensive
 #ifdef _OPENMP
         #pragma omp parallel firstprivate(lab, data, W, H)
 #endif
         {
             AlignedBuffer<float> pBuf(3 * lab->W);
+
+            AlignedBuffer<float> gwBuf1;
+            AlignedBuffer<float> gwBuf2;
+            if (gw_softproof2refTransform) {
+                gwBuf1.resize(3 * lab->W);
+                gwBuf2.resize(3 * lab->W);
+            }
+            
             float *buffer = pBuf.data;
 
 #ifdef _OPENMP
@@ -74,6 +90,40 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
                 }
 
                 cmsDoTransform (monitorTransform, buffer, data + ix, W);
+
+                if (gw_softproof2refTransform) {
+                    float delta_max = gw_lab2refTransform ? 0.0001f : 4.9999f;
+                    cmsDoTransform(gw_lab2softproofTransform, buffer, gwBuf2.data, W);
+                    
+                    cmsDoTransform(gw_softproof2refTransform, gwBuf2.data, gwBuf1.data, W);
+                    float *proofdata = gwBuf1.data;
+                    float *refdata = buffer;
+                    if (gw_lab2refTransform) {
+                        cmsDoTransform(gw_lab2refTransform, buffer, gwBuf2.data, W);
+                        refdata = gwBuf2.data;
+
+                        int iy = 0;
+                        for (int j = 0; j < W; ++j) {
+                            float delta = max(std::abs(proofdata[iy] - refdata[iy]), std::abs(proofdata[iy+1] - refdata[iy+1]), std::abs(proofdata[iy+2] - refdata[iy+2]));
+                            iy += 3;
+
+                            if (delta > delta_max) {
+                                set_gamut_warning(image, i, j);
+                            }
+                        }
+                    } else {
+                        int iy = 0;
+                        for (int j = 0; j < W; ++j) {
+                            cmsCIELab lab1 = { proofdata[iy], proofdata[iy+1], proofdata[iy+2] };
+                            cmsCIELab lab2 = { refdata[iy], refdata[iy+1], refdata[iy+2] };
+                            iy += 3;
+                            float delta = cmsDeltaE(&lab1, &lab2);
+                            if (delta > delta_max) {
+                                set_gamut_warning(image, i, j);
+                            }
+                        }
+                    }
+                }
             }
         } // End of parallelization
     } else {
