@@ -24,6 +24,7 @@ New features since 5.3:
 - New Local Contrast tool to boost clarity using a simple interface.
 - New color toning method L*a*b* Color Correction Grid.
 - New RCD demosaicing algorithm to minimize artifacts even with artificial lighting and strong chromatic aberration.
+- New thumbnail overlay icons in the File Browser and Filmstrip to help you distinguish normal images from HDR and Pixel Shift ones.
 - Added support for showing out-of-gamut areas based on the output profile.
 - Added support for reading and writing metadata and ICC profiles to and from PNG images.
 - Added support for processing Sony Pixel Shift ARQ raw files - make sure that the ARQ extension is enabled in Preferences > File Browser > Parsed Extensions.
