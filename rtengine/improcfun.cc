@@ -263,15 +263,6 @@ ImProcFunctions::~ImProcFunctions ()
     if (monitorTransform) {
         cmsDeleteTransform (monitorTransform);
     }
-    if (gw_softproof2refTransform) {
-        cmsDeleteTransform(gw_softproof2refTransform);
-    }
-    if (gw_lab2refTransform) {
-        cmsDeleteTransform(gw_lab2refTransform);
-    }
-    if (gw_lab2softproofTransform) {
-        cmsDeleteTransform(gw_lab2softproofTransform);
-    }
 }
 
 void ImProcFunctions::setScale (double iscale)
@@ -280,33 +271,15 @@ void ImProcFunctions::setScale (double iscale)
 }
 
 
-static void cms_log_handler(cmsContext ContextID, cmsUInt32Number ErrorCode, const char *Text)
-{
-    std::cout << "\n*** LCMS ERROR: " << ErrorCode << ": " << Text << "\n" << std::endl;
-}
-
 void ImProcFunctions::updateColorProfiles (const Glib::ustring& monitorProfile, RenderingIntent monitorIntent, bool softProof, bool gamutCheck)
 {
     // set up monitor transform
     if (monitorTransform) {
         cmsDeleteTransform (monitorTransform);
     }
-    if (gw_softproof2refTransform) {
-        cmsDeleteTransform(gw_softproof2refTransform);
-    }
-    if (gw_lab2refTransform) {
-        cmsDeleteTransform(gw_lab2refTransform);
-    }
-    if (gw_lab2softproofTransform) {
-        cmsDeleteTransform(gw_lab2softproofTransform);
-    }
-
-    cmsSetLogErrorHandler(&cms_log_handler);
+    gamutWarning.reset(nullptr);
 
     monitorTransform = nullptr;
-    gw_softproof2refTransform = nullptr;
-    gw_lab2refTransform = nullptr;
-    gw_lab2softproofTransform = nullptr;
 
     cmsHPROFILE monitor = nullptr;
 
@@ -402,30 +375,7 @@ void ImProcFunctions::updateColorProfiles (const Glib::ustring& monitorProfile, 
         }
 
         if (gamutCheck) {
-            if (cmsIsMatrixShaper(gamutprof)) {
-                cmsHPROFILE aces = ICCStore::getInstance()->getProfile("ACES");
-                if (aces) {
-                    gw_lab2refTransform = cmsCreateTransform(iprof, TYPE_Lab_FLT, aces, TYPE_RGB_FLT, INTENT_ABSOLUTE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
-                    gw_lab2softproofTransform = cmsCreateTransform(iprof, TYPE_Lab_FLT, gamutprof, TYPE_RGB_FLT, INTENT_ABSOLUTE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
-                    gw_softproof2refTransform = cmsCreateTransform(gamutprof, TYPE_RGB_FLT, aces, TYPE_RGB_FLT, INTENT_ABSOLUTE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE | gamutbpc);
-                }
-            } else {
-                gw_lab2refTransform = nullptr;
-                gw_lab2softproofTransform = cmsCreateTransform(iprof, TYPE_Lab_FLT, gamutprof, TYPE_RGB_FLT, INTENT_ABSOLUTE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
-                gw_softproof2refTransform = cmsCreateTransform(gamutprof, TYPE_RGB_FLT, iprof, TYPE_Lab_FLT, INTENT_ABSOLUTE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE | gamutbpc);
-            }
-
-            if (!gw_softproof2refTransform) {
-                if (gw_lab2softproofTransform) {
-                    cmsDeleteTransform(gw_lab2softproofTransform);
-                    gw_lab2softproofTransform = nullptr;
-                }
-            } else if (!gw_lab2softproofTransform) {
-                if (gw_softproof2refTransform) {
-                    cmsDeleteTransform(gw_softproof2refTransform);
-                    gw_softproof2refTransform = nullptr;
-                }
-            }
+            gamutWarning.reset(new GamutWarning(iprof, gamutprof, gamutbpc));
         }
 
         cmsCloseProfile (iprof);
