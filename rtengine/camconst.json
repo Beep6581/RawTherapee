@@ -2245,12 +2245,6 @@ Camera constants:
         "ranges": { "black": 512, "white": 16300 }
     },
 
-    { // Quality A
-        "make_model": "Sony ILCE-7M2",
-        "dcraw_matrix": [ 5271,-712,-347,-6153,13653,2763,-1601,2366,7242 ], // DNGv8.7.1
-        "ranges": { "black": 512, "white": 16300 }
-    },
-
     { // Quality A, correction for frame width
         "make_model": "Sony ILCE-7R",
         "dcraw_matrix": [ 4913,-541,-202,-6130,13513,2906,-1564,2151,7183 ],
@@ -2258,9 +2252,44 @@ Camera constants:
         "ranges": { "black": 512, "white": 16300 }
     },
 
+    { // Quality A
+        "make_model": "Sony ILCE-7M2",
+        "dcraw_matrix": [ 5271,-712,-347,-6153,13653,2763,-1601,2366,7242 ], // DNGv8.7.1
+        "ranges": { "black": 512, "white": 16300 }
+    },
+
     { // Quality B, correction for frame width, crop modes covered
         "make_model": [ "Sony ILCE-7RM2", "Sony DSC-RX1RM2" ],
         "dcraw_matrix": [ 6629,-1900,-483,-4618,12349,2550,-622,1381,6514 ], // DNG_v9.1.1 D65
+        "raw_crop": [ 0, 0, -36, 0 ], // full raw frame 8000x5320 - 36 rightmost columns are garbage
+        "ranges": { "black": 512, "white": 16300 }
+    },
+
+    { // Quality C, color matrix copied from ILCE-9, LongExposures 2-3sec only
+        "make_model": "Sony ILCE-7M3",
+        "dcraw_matrix": [ 6389,-1703,-378,-4562,12265,2587,-670,1489,6550 ], // ILCE-9, DNG_v9.12 D65
+        //  "raw_crop": [ 8, 8, 6008, 4008 ], // full raw frame 6048x4024 Dcraw auto identify 6024x4024, jpeg 12,12,6000x4000
+        //  "ranges": { "black": 512, "white": 16300 }
+        "ranges": {
+            "black": 512,
+            "white": [
+                { "iso": [ 50, 64 ], "levels": 16100 }, // typical compressed 16372, non compressed 16383, LongEx iso50,16150 , 16275
+                { "iso": [ 80, 100, 125, 160 ], "levels": 16200 }, // typical compressed 16372, non compressed 16383, LongEx iso50,16150 , 16275
+                { "iso": [ 200, 250, 320, 400, 500, 640, 800, 1000, 1250 ], "levels": 16200 }, // compressed 16372, non compressed 16383, LongExp 16275
+                { "iso": [ 1600, 2000, 2500, 3200, 4000, 5000 ], "levels": 16200 }, // compressed 16372, non compressed 16383, LongExp 16275
+                { "iso": [ 6400, 8000, 10000, 12800 ], "levels": 16200 }, // compressed 16372, non compressed 16365-16375-16383, LongExp 16275
+                { "iso": [ 16000, 20000, 25600 ], "levels": 16100 }, // 16275-16340-16372, nc 16375-16325-16280, LongExp 16210
+                { "iso": [ 32000, 40000, 51200 ], "levels": 16100 }, // 16210-16340-16372, nc 16330, LongExp 16210
+                { "iso": [ 64000, 80000, 102400 ], "levels": 16100 }, // g16340 , nc 16330, LongExp 16210
+                { "iso": [ 128000, 160000, 204800 ], "levels": 16000 } // r16275, g16340, nc 16330, LongExp 16330-16370
+            ]
+        }
+
+    },
+
+    { // Quality C,
+        "make_model": "Sony ILCE-7RM3",
+        "dcraw_matrix": [ 6640,-1847,-503,-5238,13010,2474,-993,1673,6527 ], // DNG_v10.1 D65
         "raw_crop": [ 0, 0, -36, 0 ], // full raw frame 8000x5320 - 36 rightmost columns are garbage
         "ranges": { "black": 512, "white": 16300 }
     },
@@ -2289,13 +2318,6 @@ Camera constants:
         "make_model": [ "Sony DSC-RX10M2", "Sony DSC-RX10M3", "Sony DSC-RX10M4" ],
         "dcraw_matrix": [ 6679,-1825,-745,-5047,13256,1953,-1580,2422,5183 ], // DNG_v9.6 D65
         "ranges": { "black": 800, "white": 16300 }
-    },
-
-    { // Quality C,
-        "make_model": "Sony ILCE-7RM3",
-        "dcraw_matrix": [ 6640,-1847,-503,-5238,13010,2474,-993,1673,6527 ], // DNG_v10.1 D65
-        "raw_crop": [ 0, 0, -36, 0 ], // full raw frame 8000x5320 - 36 rightmost columns are garbage
-        "ranges": { "black": 512, "white": 16300 }
     },
 
     { // Quality C, No proper color data, beta samples, frame set to official jpeg,
