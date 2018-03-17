@@ -33,7 +33,7 @@ namespace rtengine {
 
 class GamutWarning: public NonCopyable {
 public:
-    GamutWarning(cmsHPROFILE iprof, cmsHPROFILE gamutprof, bool bpc);
+    GamutWarning(cmsHPROFILE iprof, cmsHPROFILE gamutprof, RenderingIntent intent, bool bpc);
     ~GamutWarning();
     void markLine(Image8 *image, int y, float *srcbuf, float *buf1, float *buf2);
     

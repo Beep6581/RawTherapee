@@ -24,15 +24,16 @@
  */
 
 #include "gamutwarning.h"
+#include <iostream>
 
 namespace rtengine {
 
-GamutWarning::GamutWarning(cmsHPROFILE iprof, cmsHPROFILE gamutprof, bool gamutbpc):
+GamutWarning::GamutWarning(cmsHPROFILE iprof, cmsHPROFILE gamutprof, RenderingIntent intent, bool gamutbpc):
     lab2ref(nullptr),
     lab2softproof(nullptr),
     softproof2ref(nullptr)
 {
-    if (cmsIsMatrixShaper(gamutprof)) {
+    if (cmsIsMatrixShaper(gamutprof) && !cmsIsCLUT(gamutprof, intent, LCMS_USED_AS_OUTPUT)) {
         cmsHPROFILE aces = ICCStore::getInstance()->getProfile("ACES");
         if (aces) {
             lab2ref = cmsCreateTransform(iprof, TYPE_Lab_FLT, aces, TYPE_RGB_FLT, INTENT_ABSOLUTE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
