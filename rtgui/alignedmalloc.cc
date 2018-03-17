@@ -1,13 +1,13 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2010 Lukas Jirkovsky <l.jirkovsky@gmail.com>
+ *  Copyright (C) 2018 Flössie <floessie.mail@gmail.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -17,15 +17,15 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __CONFIG_H__
-#define __CONFIG_H__
+#include "config.h"
 
-#cmakedefine BUILD_BUNDLE
-#cmakedefine HAVE_UNALIGNED_MALLOC
-#define DATA_SEARCH_PATH "${DATADIR}"
-#define DOC_SEARCH_PATH "${DOCDIR}"
-#define CREDITS_SEARCH_PATH "${CREDITSDIR}"
-#define LICENCE_SEARCH_PATH "${LICENCEDIR}"
-#define LENSFUN_DB_PATH "${LENSFUNDBDIR}"
+#ifdef HAVE_UNALIGNED_MALLOC
+
+#include <malloc.h>
+
+void* malloc(size_t size)
+{
+    return memalign(16, size);
+}
 
 #endif
