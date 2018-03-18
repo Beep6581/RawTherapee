@@ -1,5 +1,6 @@
 # Common source files for both CLI and non-CLI execautables
 set(CLISOURCEFILES
+    alignedmalloc.cc
     edit.cc
     main-cli.cc
     multilangmgr.cc
@@ -11,6 +12,7 @@ set(CLISOURCEFILES
 
 set(NONCLISOURCEFILES
     adjuster.cc
+    alignedmalloc.cc
     batchqueue.cc
     batchqueuebuttonset.cc
     batchqueueentry.cc

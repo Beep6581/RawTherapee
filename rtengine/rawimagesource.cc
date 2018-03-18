@@ -5358,6 +5358,10 @@ void RawImageSource::init()
 
 void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int &B)
 {
+    if(d1x) { // Nikon D1x has special sensor. We just skip it
+        R = G = B = 0;
+        return;
+    }
     int xnew = x + border;
     int ynew = y + border;
     rotate += ri->get_rotateDegree();
