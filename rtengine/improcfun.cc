@@ -377,7 +377,7 @@ void ImProcFunctions::updateColorProfiles (const Glib::ustring& monitorProfile, 
             monitorTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, monitor, TYPE_RGB_8, monitorIntent, flags);
         }
 
-        if (gamutCheck) {
+        if (gamutCheck && gamutprof) {
             gamutWarning.reset(new GamutWarning(iprof, gamutprof, gamutintent, gamutbpc));
         }
 
