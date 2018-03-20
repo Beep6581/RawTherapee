@@ -92,7 +92,7 @@ void RawImageSource::eahd_demosaic ()
 
     // end of cielab preparation
 
-    const JaggedArray<float>
+    JaggedArray<float>
     rh (W, 3), gh (W, 4), bh (W, 3),
     rv (W, 3), gv (W, 4), bv (W, 3),
     lLh (W, 3), lah (W, 3), lbh (W, 3),
@@ -497,7 +497,7 @@ void RawImageSource::hphd_demosaic ()
         plistener->setProgress (0.0);
     }
 
-    const JaggedArray<float> hpmap (W, H, true);
+    JaggedArray<float> hpmap (W, H, true);
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -3925,6 +3925,7 @@ void RawImageSource::cielab (const float (*rgb)[3], float* l, float* a, float *b
         }
     }
 }
+
 
 #define fcol(row,col) xtrans[(row)%6][(col)%6]
 #define isgreen(row,col) (xtrans[(row)%3][(col)%3]&1)

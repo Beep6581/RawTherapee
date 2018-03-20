@@ -1484,29 +1484,16 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int pW, int pwb, L
                 }
 
 //if(params->dirpyrequalizer.enabled) if(execsharp) {
-            if (params->dirpyrequalizer.enabled) {
-                if (params->dirpyrequalizer.gamutlab  /*&& execsharp*/) {
-                    float artifact = (float) settings->artifact_cbdl;
-
-                    if (artifact > 6.f) {
-                        artifact = 6.f;
-                    }
-
-                    if (artifact < 0.f) {
-                        artifact = 1.f;
-                    }
-
-                    float chrom = 50.f;
-                    {
-                        int hotbad = 0;
-                        ImProcFunctions::badpixcam (ncie, artifact, 5, 2, params->dirpyrequalizer.skinprotect, chrom, hotbad);      //enabled remove artifacts for cbDL
-                    }
-                }
+            if (params->dirpyrequalizer.enabled && params->dirpyrequalizer.gamutlab && rtt) { //remove artifacts by gaussian blur - skin control, but not for thumbs
+                constexpr float artifact = 4.f;
+                constexpr float chrom = 50.f;
+                const bool hotbad = params->dirpyrequalizer.skinprotect != 0.0;
+                ImProcFunctions::badpixcam (ncie, artifact / scale, 5, 2, chrom, hotbad);      //enabled remove artifacts for cbDL
             }
 
-            if (params->colorappearance.badpixsl > 0) if (execsharp) {
+            if (params->colorappearance.badpixsl > 0 && execsharp) {
                     int mode = params->colorappearance.badpixsl;
-                    ImProcFunctions::badpixcam (ncie, 3.4, 5, mode, 0, 0, 1);//for bad pixels CIECAM
+                    ImProcFunctions::badpixcam (ncie, 3.4, 5, mode, 0, true);//for bad pixels CIECAM
                 }
 
             if (params->sharpenMicro.enabled)if (execsharp) {
@@ -2913,33 +2900,23 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                     }
 
 //if(params->dirpyrequalizer.enabled) if(execsharp) {
-                if (params->dirpyrequalizer.enabled)  {
-                    if (params->dirpyrequalizer.gamutlab  /*&& execsharp*/) { //remove artifacts by gaussian blur - skin control
-                        float artifact = (float) settings->artifact_cbdl;
+                if (params->dirpyrequalizer.enabled && params->dirpyrequalizer.gamutlab && rtt) { //remove artifacts by gaussian blur - skin control, but not for thumbs
+                    constexpr float artifact = 4.f;
+                    constexpr float chrom = 50.f;
+                    const bool hotbad = params->dirpyrequalizer.skinprotect != 0.0;
 
-                        if (artifact > 6.f) {
-                            artifact = 6.f;
-                        }
-
-                        if (artifact < 0.f) {
-                            artifact = 1.f;
-                        }
-
-                        int hotbad = 0;
-                        float chrom = 50.f;
-                        lab->deleteLab();
-                        ImProcFunctions::badpixcam (ncie, artifact, 5, 2, params->dirpyrequalizer.skinprotect, chrom, hotbad);  //enabled remove artifacts for cbDL
-                        lab->reallocLab();
-                    }
+                    lab->deleteLab();
+                    ImProcFunctions::badpixcam (ncie, artifact / scale, 5, 2, chrom, hotbad);  //enabled remove artifacts for cbDL
+                    lab->reallocLab();
                 }
 
 //if(params->colorappearance.badpixsl > 0) { int mode=params->colorappearance.badpixsl;
-                if (params->colorappearance.badpixsl > 0) if (execsharp) {
-                        int mode = params->colorappearance.badpixsl;
-                        lab->deleteLab();
-                        ImProcFunctions::badpixcam (ncie, 3.0, 10, mode, 0, 0, 1);//for bad pixels CIECAM
-                        lab->reallocLab();
-                    }
+                if (params->colorappearance.badpixsl > 0 && execsharp) {
+                    int mode = params->colorappearance.badpixsl;
+                    lab->deleteLab();
+                    ImProcFunctions::badpixcam (ncie, 3.0, 10, mode, 0, true);//for bad pixels CIECAM
+                    lab->reallocLab();
+                }
 
                 if (params->impulseDenoise.enabled) if (execsharp) {
                         float **buffers[3];
@@ -6288,53 +6265,44 @@ void ImProcFunctions::defringe (LabImage* lab)
     if (params->defringe.enabled && lab->W >= 8 && lab->H >= 8)
 
     {
-        PF_correct_RT (lab, lab, params->defringe.radius, params->defringe.threshold);
+        PF_correct_RT (lab, params->defringe.radius, params->defringe.threshold);
     }
 }
 
 void ImProcFunctions::defringecam (CieImage* ncie)
 {
     if (params->defringe.enabled && ncie->W >= 8 && ncie->H >= 8) {
-        PF_correct_RTcam (ncie, ncie, params->defringe.radius, params->defringe.threshold);
+        PF_correct_RTcam (ncie, params->defringe.radius, params->defringe.threshold);
     }
 }
 
-void ImProcFunctions::badpixcam (CieImage* ncie, double rad, int thr, int mode, float skinprot, float chrom, int hotbad)
+void ImProcFunctions::badpixcam (CieImage* ncie, double rad, int thr, int mode, float chrom, bool hotbad)
 {
     if (ncie->W >= 8 && ncie->H >= 8) {
-        Badpixelscam (ncie, ncie, rad, thr, mode, skinprot, chrom, hotbad);
+        Badpixelscam (ncie, rad, thr, mode, chrom, hotbad);
     }
 }
 
-void ImProcFunctions::badpixlab (LabImage* lab, double rad, int thr, int mode, float skinprot, float chrom)
+void ImProcFunctions::badpixlab (LabImage* lab, double rad, int thr, float chrom)
 {
     if (lab->W >= 8 && lab->H >= 8) {
-        BadpixelsLab (lab, lab, rad, thr, mode, skinprot, chrom);
+        BadpixelsLab (lab, rad, thr, chrom);
     }
 }
 
 void ImProcFunctions::dirpyrequalizer (LabImage* lab, int scale)
 {
     if (params->dirpyrequalizer.enabled && lab->W >= 8 && lab->H >= 8) {
-        float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.getBottomLeft()) / 100.0f;
-        float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.getTopLeft()) / 100.0f;
-        float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.getTopRight()) / 100.0f;
+        float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.getBottomLeft()) / 100.f;
+        float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.getTopLeft()) / 100.f;
+        float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.getTopRight()) / 100.f;
         //      if     (params->dirpyrequalizer.algo=="FI") choice=0;
         //      else if(params->dirpyrequalizer.algo=="LA") choice=1;
-        float artifact = (float) settings->artifact_cbdl;
 
-        if (artifact > 6.f) {
-            artifact = 6.f;
-        }
-
-        if (artifact < 0.f) {
-            artifact = 1.f;
-        }
-
-        float chrom = 50.f;
-
-        if (params->dirpyrequalizer.gamutlab) {
-            ImProcFunctions::badpixlab (lab, artifact, 5, 3, params->dirpyrequalizer.skinprotect, chrom);    //for artifacts
+        if (params->dirpyrequalizer.gamutlab && params->dirpyrequalizer.skinprotect != 0) {
+            constexpr float artifact = 4.f;
+            constexpr float chrom = 50.f;
+            ImProcFunctions::badpixlab (lab, artifact / scale, 5, chrom);    //for artifacts
         }
 
         //dirpyrLab_equalizer(lab, lab, params->dirpyrequalizer.mult);
