@@ -1,12 +1,14 @@
 RAWTHERAPEE 5.4 RELEASE NOTES
------------------------------
+
 This is RawTherapee 5.4, released on 2018-03-20.
 
 Start by reading the "Getting Started" article on RawPedia:
 http://rawpedia.rawtherapee.com/
 
-News Relevant to Photographers
-------------------------------
+
+
+NEWS RELEVANT TO PHOTOGRAPHERS
+
 RawTherapee supports most raw formats, including Pentax and Sony Pixel Shift, Canon Dual-Pixel, and those from Foveon and X-Trans sensors.
 If you're wondering whether it supports your camera's raw format, first download RawTherapee and try for yourself. If a raw format is not supported it will either not open, or the preview in the Editor tab will appear black, white, or have a strong color cast - usually magenta. In that case, read the "Adding Support for New Raw Formats" RawPedia article.
 
@@ -47,8 +49,10 @@ RawTherapee and other open-source projects require access to sample raw files fr
 You can help by submitting raw files to RPU:
 https://raw.pixls.us/
 
-News Relevant to Package Maintainers
-------------------------------------
+
+
+NEWS RELEVANT TO PACKAGE MAINTAINERS
+
 In general:
 - To get the source code, either clone from git or use the tarball from http://rawtherapee.com/shared/source/ . Do not use the auto-generated GitHub release tarballs.
 - Requires GTK+ version >=3.16, though >=3.22.24 is recommended.
@@ -58,27 +62,37 @@ In general:
 - For stable releases use -DCACHE_NAME_SUFFIX=""
 - For development builds and release-candidates use -DCACHE_NAME_SUFFIX="5-dev"
 
-News Relevant to Developers
----------------------------
+
+
+NEWS RELEVANT TO DEVELOPERS
+
 See CONTRIBUTING.md
 
+
+
 DOCUMENTATION
--------------
-http://rawtherapee.com/blog/documentation
+
 http://rawpedia.rawtherapee.com/
+http://rawtherapee.com/blog/documentation
+
+
 
 REPORTING BUGS
---------------
+
 If you found a problem, don't keep it to yourself. Read the "How to write useful bug reports" article to get the problem fixed:
 http://rawpedia.rawtherapee.com/How_to_write_useful_bug_reports
 
+
+
 FORUM
------
+
 RawTherapee shares a forum with users and developers of other Free/Libre/Open Source Software:
 https://discuss.pixls.us/c/software/rawtherapee
 
+
+
 LIVE CHAT WITH USERS AND DEVELOPERS
------------------------------------
+
 Network: freenode
 Server: chat.freenode.net
 Channel: #rawtherapee
@@ -87,12 +101,16 @@ You can use freenode webchat to communicate without installing anything:
 http://webchat.freenode.net/?randomnick=1&channels=rawtherapee&prompt=1
 More information here: http://rawpedia.rawtherapee.com/IRC
 
+
+
 SOCIAL NETWORKS
----------------
+
 Google+
 https://plus.google.com/+RawTherapee
 
+
+
 REVISION HISTORY
-----------------
+
 The complete changelog is available at:
 https://github.com/Beep6581/RawTherapee/commits/
