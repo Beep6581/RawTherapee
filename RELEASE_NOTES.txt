@@ -1,10 +1,16 @@
-RAWTHERAPEE 5.4 RELEASE NOTES
+RAWTHERAPEE 5.5-dev RELEASE NOTES
 
-This is RawTherapee 5.4, released on 2018-03-20.
+This is a development version of RawTherapee. We update the code almost daily. Every few months, once enough changes have accumulated and the code is stabilized, we make a new official release. Every code change between these releases is known as a "development" version, and this is one of them.
 
 Start by reading the "Getting Started" article on RawPedia:
 http://rawpedia.rawtherapee.com/
 
+While we only commit tested and relatively stable code and so the development versions should be fairly stable, you should be aware that:
+- Development versions only had limited testing, so there may be bugs unknown to us.
+- You should report these bugs so that they get fixed for the next stable release. See
+  www.rawpedia.rawtherapee.com/How_to_write_useful_bug_reports
+- The way new tools work in the development versions is likely to change as we tweak and tune them, so your processing profiles may produce different results when used in a future stable version.
+- Bugs present in the stable versions get fixed in the development versions, and make it into the next stable version when we make a new official release. That means that in some ways the development versions can be "more stable" than the latest stable release. At the same time, new features may introduce new bugs. This is a trade-off you should be aware of.
 
 
 NEWS RELEVANT TO PHOTOGRAPHERS
@@ -19,31 +25,8 @@ In order to use RawTherapee efficiently you should know that:
 - All curves support the Shift and Ctrl keys while dragging a point. Shift+drag makes the point snap to a meaningful axis (top, bottom, diagonal, other), while Ctrl+drag makes your mouse movement super-fine for precise point positioning.
 - There are many keyboard shortcuts which make working with RawTherapee much faster and give you greater control. Make sure you familiarize yourself with them on RawPedia's "Keyboard Shortcuts" page!
 
-New features since 5.3:
-- New default processing profiles, now the default look for raw photos closely matches the out-of-camera look with regard to tones and includes lens distortion and vignetting correction.
-- New histogram matching tool, to have RawTherapee automatically adjust the image for you to match the out-of-camera look with a single click of a button.
-- New HDR Tone Mapping tool to compress the light in scenes with a high dynamic range, allowing you to show details in both shadows and highlights in a realistic way.
-- New Local Contrast tool to boost clarity using a simple interface.
-- New color toning method L*a*b* Color Correction Grid.
-- New RCD demosaicing algorithm to minimize artifacts even with artificial lighting and strong chromatic aberration.
-- New thumbnail overlay icons in the File Browser and Filmstrip to help you distinguish normal images from HDR and Pixel Shift ones.
-- Added support for showing out-of-gamut areas based on the output profile.
-- Added support for reading and writing metadata and ICC profiles to and from PNG images.
-- Added support for processing Sony Pixel Shift ARQ raw files - make sure that the ARQ extension is enabled in Preferences > File Browser > Parsed Extensions.
-- Create Sony ARQ raw files using https://github.com/agriggio/make_arq
-- Added support for saving 32-bit floating-point TIFFs clamped to [0;1].
-- Added profiled chromatic aberration correction support using Lensfun.
-- More tools now have an on/off switch.
-- The user interface is cleaner, with all power-house tools moved into a new "Advanced" tab to prevent slider-shock to newcomers.
-- The Metadata tab now lets you choose whether you want to copy metadata unchanged, edit metadata or strip metadata when saving images. Now you can also make metadata changes in batch mode.
-- The choice of whether the main histogram should display information using the working profile or the output profile is now available from the Editor tab's top toolbar.
-- The Crop tool's aspect ratio now defaults to that of the image, and RawTherapee automatically zooms-to-fit the crop once it's placed.
-- RGB input-type ICC profiles can now be used as output profiles.
-- The saved reference image for profiling (created from within the Color Management tool) now contains metadata.
-- PNG and compressed TIFF images make use of better compression.
-- Shortcut key changes: Zoom-to-fit the crop using "f", fit the whole image using "Alt+f".
-
-There were several hundred commits optimizing processing speed and memory usage as well as bug fixes and code refactoring, though the details of these are too arcane to list here. The effort involved thousands of developer-hours.
+New features since 5.4:
+- TODO.
 
 RawTherapee and other open-source projects require access to sample raw files from various camera makes and models in order to support those raw formats correctly.
 You can help by submitting raw files to RPU:
@@ -61,6 +44,9 @@ In general:
 - Use -O3, it will make RawTherapee faster with no known side-effects.
 - For stable releases use -DCACHE_NAME_SUFFIX=""
 - For development builds and release-candidates use -DCACHE_NAME_SUFFIX="5-dev"
+
+Changes since 5.4:
+- TODO.
 
 
 
