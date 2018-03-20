@@ -103,6 +103,9 @@ if(HAVE_X86_SSE_MATH)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse2 -mfpmath=sse")
 endif()
 
+# On i386 Linux we can fix unaligned SSE malloc (see GitHub issue #4432)
+include(FindUnalignedMalloc)
+
 if(WIN32)
     # Add additional paths. Look in the MinGW path first, then in the Gtkmm path.
     # If you wish to build some dependent libraries, you have to install them in MinGW to use them:
