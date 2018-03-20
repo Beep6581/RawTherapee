@@ -333,6 +333,11 @@ skip_block:
     }
 
     if (colors == 1)
+        // there are monochrome cameras with wrong matrix. We just replace with this one.
+        rgb_cam[0][0] = 1; rgb_cam[1][0] = 0; rgb_cam[2][0] = 0;
+        rgb_cam[0][1] = 0; rgb_cam[1][1] = 1; rgb_cam[2][1] = 0;
+        rgb_cam[0][2] = 0; rgb_cam[1][2] = 0; rgb_cam[2][2] = 1;
+
         for (c = 1; c < 4; c++) {
             cblack_[c] = cblack_[0];
         }
