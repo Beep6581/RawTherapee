@@ -1,4 +1,4 @@
-RAWTHERAPEE 5.5-dev RELEASE NOTES
+RAWTHERAPEE 5.4-dev RELEASE NOTES
 
 This is a development version of RawTherapee. We update the code almost daily. Every few months, once enough changes have accumulated and the code is stabilized, we make a new official release. Every code change between these releases is known as a "development" version, and this is one of them.
 

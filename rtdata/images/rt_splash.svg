@@ -599,7 +599,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -902,7 +902,7 @@
          y="2.2370076"
          x="283.85016"
          id="tspan3664"
-         sodipodi:role="line">. 5</tspan></text>
+         sodipodi:role="line">. 4</tspan></text>
     <rect
        style="fill:#2a2a2a;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.26458338;enable-background:new"
        id="rect1167"
