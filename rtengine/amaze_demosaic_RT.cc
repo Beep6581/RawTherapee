@@ -33,7 +33,6 @@
 #include "sleef.c"
 #include "opthelper.h"
 #include "median.h"
-#define BENCHMARK
 #include "StopWatch.h"
 
 namespace rtengine

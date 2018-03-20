@@ -22,7 +22,6 @@
 #include "rt_math.h"
 #include "../rtgui/multilangmgr.h"
 #include "opthelper.h"
-#define BENCHMARK
 #include "StopWatch.h"
 
 using namespace std;
