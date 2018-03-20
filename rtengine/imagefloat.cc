@@ -44,7 +44,7 @@ Imagefloat::~Imagefloat ()
 }
 
 // Call this method to handle floating points input values of different size
-void Imagefloat::setScanline (int row, unsigned char* buffer, int bps, float *minValue, float *maxValue)
+void Imagefloat::setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples, float *minValue, float *maxValue)
 {
 
     if (data == nullptr) {
