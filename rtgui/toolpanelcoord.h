@@ -223,7 +223,7 @@ public:
     // toolpanellistener interface
     void panelChanged(rtengine::ProcEvent event, const Glib::ustring& descr);
 
-    void imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans);
+    void imageTypeChanged (bool isRaw, bool isBayer, bool isXtrans, bool isMono = false);
     // profilechangelistener interface
     void profileChange(const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited = nullptr);
     void setDefaults(rtengine::procparams::ProcParams* defparams);

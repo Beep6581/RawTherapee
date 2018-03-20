@@ -145,6 +145,10 @@ public:
     {
         return ri != nullptr ? ri->getSensorType() : ST_NONE;
     }
+    bool        isMono () const
+    {
+        return ri->get_colors() == 1;
+    }
     ColorTemp   getWB() const
     {
         return camera_wb;

@@ -273,7 +273,7 @@ ToolPanelCoordinator::~ToolPanelCoordinator()
     delete toolBar;
 }
 
-void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans)
+void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXtrans, bool isMono)
 {
     if (isRaw) {
         if (isBayer) {
@@ -304,7 +304,20 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
             };
             idle_register.add(func, this);
         }
-        else {
+        else if (isMono) {
+            const auto func = [](gpointer data) -> gboolean {
+                ToolPanelCoordinator* const self = static_cast<ToolPanelCoordinator*>(data);
+
+                self->rawPanelSW->set_sensitive (true);
+                self->sensorbayer->FoldableToolPanel::hide();
+                self->sensorxtrans->FoldableToolPanel::hide();
+                self->preprocess->FoldableToolPanel::hide();
+                self->flatfield->FoldableToolPanel::show();
+
+                return FALSE;
+            };
+            idle_register.add(func, this);
+        } else {
             const auto func = [](gpointer data) -> gboolean {
                 ToolPanelCoordinator* const self = static_cast<ToolPanelCoordinator*>(data);
 

@@ -80,7 +80,6 @@ public:
     //  double          colortoningab; //
     //  double          decaction;
     //  bool            bw_complementary;
-    double          artifact_cbdl;
     double          level0_cbdl;
     double          level123_cbdl;
     int             nspot;

@@ -8168,8 +8168,8 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
             int xEn = lp.xc + lp.lx;
             bufsob = new LabImage(bfw, bfh);
             bufreserv = new LabImage(bfw, bfh);
-            const JaggedArray<float> buflight(bfw, bfh);
-            const JaggedArray<float> bufchro(bfw, bfh);
+            JaggedArray<float> buflight(bfw, bfh);
+            JaggedArray<float> bufchro(bfw, bfh);
 
             float *orig[bfh] ALIGNED16;
             origBuffer = new float[bfh * bfw];
@@ -8281,10 +8281,10 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
 
                 }
 
-                const JaggedArray<float> Cdeltae(bfw, bfh);
-                const JaggedArray<float> Cdeltaesob(bfw, bfh);
-                const JaggedArray<float> Ldeltae(bfw, bfh);
-                const JaggedArray<float> Ldeltaesob(bfw, bfh);
+                JaggedArray<float> Cdeltae(bfw, bfh);
+                JaggedArray<float> Cdeltaesob(bfw, bfh);
+                JaggedArray<float> Ldeltae(bfw, bfh);
+                JaggedArray<float> Ldeltaesob(bfw, bfh);
 
 
 #ifdef _OPENMP
@@ -8326,19 +8326,19 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                 //rr maximum radius to stock data
                 int rr = sqrt(SQR(XR) + SQR(Ye)) + ar;    //+ ar to prevent crash due to round float
                 //polar coord
-                const JaggedArray<float> val(rr, xEn - begx + ar);
-                const JaggedArray<float> CdE(rr, xEn - begx + ar);
-                const JaggedArray<float> LdE(rr, xEn - begx + ar);
-                const JaggedArray<float> CdEsob(rr, xEn - begx + ar);
-                const JaggedArray<float> LdEsob(rr, xEn - begx + ar);
-                const JaggedArray<float> Soderiv(rr, xEn - begx + ar);
-                const JaggedArray<float> Chderiv(rr, xEn - begx + ar);
-                const JaggedArray<float> Luderiv(rr, xEn - begx + ar);
-                const JaggedArray<float> goodmax(rr, xEn - begx + ar);
-                const JaggedArray<float> Soderiv2(rr, xEn - begx + ar);
-                const JaggedArray<float> Chderiv2(rr, xEn - begx + ar);
-                const JaggedArray<float> Luderiv2(rr, xEn - begx + ar);
-                const JaggedArray<float> Totalderiv2(rr, xEn - begx + ar);
+                JaggedArray<float> val(rr, xEn - begx + ar);
+                JaggedArray<float> CdE(rr, xEn - begx + ar);
+                JaggedArray<float> LdE(rr, xEn - begx + ar);
+                JaggedArray<float> CdEsob(rr, xEn - begx + ar);
+                JaggedArray<float> LdEsob(rr, xEn - begx + ar);
+                JaggedArray<float> Soderiv(rr, xEn - begx + ar);
+                JaggedArray<float> Chderiv(rr, xEn - begx + ar);
+                JaggedArray<float> Luderiv(rr, xEn - begx + ar);
+                JaggedArray<float> goodmax(rr, xEn - begx + ar);
+                JaggedArray<float> Soderiv2(rr, xEn - begx + ar);
+                JaggedArray<float> Chderiv2(rr, xEn - begx + ar);
+                JaggedArray<float> Luderiv2(rr, xEn - begx + ar);
+                JaggedArray<float> Totalderiv2(rr, xEn - begx + ar);
 
                 //cDe and LdE to stock delta E chroma and luma in area top and polar coord
                 //cDesob and LdEsob Sobel canny of delta E chroma and luma
@@ -8366,14 +8366,14 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                 int YL = max(-Yo, Ye);
                 int rrL = sqrt(SQR(YL) + SQR(Xo)) + ar;
 
-                const JaggedArray<float> valL(rrL, yEn - begy + ar);
-                const JaggedArray<float> CdEL(rrL, yEn - begy + ar);
-                const JaggedArray<float> LdEL(rrL, yEn - begy + ar);
-                const JaggedArray<float> CdEsobL(rrL, yEn - begy + ar);
-                const JaggedArray<float> LdEsobL(rrL, yEn - begy + ar);
-                const JaggedArray<float> SoderivL(rrL, yEn - begy + ar);
-                const JaggedArray<float> ChderivL(rrL, yEn - begy + ar);
-                const JaggedArray<float> LuderivL(rrL, yEn - begy + ar);
+                JaggedArray<float> valL(rrL, yEn - begy + ar);
+                JaggedArray<float> CdEL(rrL, yEn - begy + ar);
+                JaggedArray<float> LdEL(rrL, yEn - begy + ar);
+                JaggedArray<float> CdEsobL(rrL, yEn - begy + ar);
+                JaggedArray<float> LdEsobL(rrL, yEn - begy + ar);
+                JaggedArray<float> SoderivL(rrL, yEn - begy + ar);
+                JaggedArray<float> ChderivL(rrL, yEn - begy + ar);
+                JaggedArray<float> LuderivL(rrL, yEn - begy + ar);
 
                 float *radL = nullptr;
                 radL = new float[yEn - begy + ar];
@@ -8385,14 +8385,14 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                 XR = max(-Xo, Xe);
                 int rrB = sqrt(SQR(XR) + SQR(Yo)) + ar;
 
-                const JaggedArray<float> valB(rrB, xEn - begx + ar);
-                const JaggedArray<float> CdEB(rrB, xEn - begx + ar);
-                const JaggedArray<float> LdEB(rrB, xEn - begx + ar);
-                const JaggedArray<float> CdEsobB(rrB, xEn - begx + ar);
-                const JaggedArray<float> LdEsobB(rrB, xEn - begx + ar);
-                const JaggedArray<float> SoderivB(rrB, xEn - begx + ar);
-                const JaggedArray<float> ChderivB(rrB, xEn - begx + ar);
-                const JaggedArray<float> LuderivB(rrB, xEn - begx + ar);
+                JaggedArray<float> valB(rrB, xEn - begx + ar);
+                JaggedArray<float> CdEB(rrB, xEn - begx + ar);
+                JaggedArray<float> LdEB(rrB, xEn - begx + ar);
+                JaggedArray<float> CdEsobB(rrB, xEn - begx + ar);
+                JaggedArray<float> LdEsobB(rrB, xEn - begx + ar);
+                JaggedArray<float> SoderivB(rrB, xEn - begx + ar);
+                JaggedArray<float> ChderivB(rrB, xEn - begx + ar);
+                JaggedArray<float> LuderivB(rrB, xEn - begx + ar);
 
                 float *radB = nullptr;
                 radB = new float[xEn - begx + ar];
@@ -8403,14 +8403,14 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                 //init fourth quarter right
                 YL = max(-Yo, Ye);
                 int rrR = sqrt(SQR(YL) + SQR(Xe)) + ar;
-                const JaggedArray<float> valR(rrR, yEn - begy + ar);
-                const JaggedArray<float> CdER(rrR, yEn - begy + ar);
-                const JaggedArray<float> LdER(rrR, yEn - begy + ar);
-                const JaggedArray<float> CdEsobR(rrR, yEn - begy + ar);
-                const JaggedArray<float> LdEsobR(rrR, yEn - begy + ar);
-                const JaggedArray<float> SoderivR(rrR, yEn - begy + ar);
-                const JaggedArray<float> ChderivR(rrR, yEn - begy + ar);
-                const JaggedArray<float> LuderivR(rrR, yEn - begy + ar);
+                JaggedArray<float> valR(rrR, yEn - begy + ar);
+                JaggedArray<float> CdER(rrR, yEn - begy + ar);
+                JaggedArray<float> LdER(rrR, yEn - begy + ar);
+                JaggedArray<float> CdEsobR(rrR, yEn - begy + ar);
+                JaggedArray<float> LdEsobR(rrR, yEn - begy + ar);
+                JaggedArray<float> SoderivR(rrR, yEn - begy + ar);
+                JaggedArray<float> ChderivR(rrR, yEn - begy + ar);
+                JaggedArray<float> LuderivR(rrR, yEn - begy + ar);
 
                 float *radR = nullptr;
                 radR = new float[yEn - begy + ar];
@@ -9014,8 +9014,8 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
             int GH = transformed->H;
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
-            const JaggedArray<float> buflight(bfw, bfh);
-            const JaggedArray<float> bufchro(bfw, bfh);
+            JaggedArray<float> buflight(bfw, bfh);
+            JaggedArray<float> bufchro(bfw, bfh);
 
             float *orig[bfh] ALIGNED16;
 
@@ -10349,11 +10349,11 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
             int bfh = 0.f, bfw = 0.f;
             bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             bfw = int (lp.lx + lp.lxL) + del;
-            const JaggedArray<float> buflight(bfw, bfh);
-            const JaggedArray<float> bufchro(bfw, bfh);
-            const JaggedArray<float> buflightslid(bfw, bfh);
-            const JaggedArray<float> bufchroslid(bfw, bfh);
-            const JaggedArray<float> bufhh(bfw, bfh);
+            JaggedArray<float> buflight(bfw, bfh);
+            JaggedArray<float> bufchro(bfw, bfh);
+            JaggedArray<float> buflightslid(bfw, bfh);
+            JaggedArray<float> bufchroslid(bfw, bfh);
+            JaggedArray<float> bufhh(bfw, bfh);
 
             float adjustr = 1.0f;
 
@@ -10627,7 +10627,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
             LabImage *bufcontorig = nullptr;
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
-            const JaggedArray<float> buflightc(bfw, bfh);
+            JaggedArray<float> buflightc(bfw, bfh);
 
             float clighc = 0.f;
             const float localtype = lumaref;
@@ -10803,9 +10803,9 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
             LabImage *bufcat02 = nullptr;
             LabImage *bufcat02fin = nullptr;
 
-            const JaggedArray<float> buflightcat(bfw, bfh, true);
-            const JaggedArray<float> buf_a_cat(bfw, bfh, true);
-            const JaggedArray<float> buf_b_cat(bfw, bfh, true);
+            JaggedArray<float> buflightcat(bfw, bfh, true);
+            JaggedArray<float> buf_a_cat(bfw, bfh, true);
+            JaggedArray<float> buf_b_cat(bfw, bfh, true);
 
             bufcat02 = new LabImage(bfw, bfh); //buffer for data in zone limit
             bufcat02fin = new LabImage(bfw, bfh); //buffer for data in zone limit
@@ -10904,9 +10904,9 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
             int bfh = 0.f, bfw = 0.f;
             bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             bfw = int (lp.lx + lp.lxL) + del;
-            const JaggedArray<float> buflight(bfw, bfh);
-            const JaggedArray<float> bufl_ab(bfw, bfh);
-            const JaggedArray<float> buflightcurv(bfw, bfh);
+            JaggedArray<float> buflight(bfw, bfh);
+            JaggedArray<float> bufl_ab(bfw, bfh);
+            JaggedArray<float> buflightcurv(bfw, bfh);
 
 
             if (call <= 3) { //simpleprocess, dcrop, improccoordinator
@@ -11057,8 +11057,8 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
 
-            const JaggedArray<float> buflight(bfw, bfh);
-            const JaggedArray<float> bufl_ab(bfw, bfh);
+            JaggedArray<float> buflight(bfw, bfh);
+            JaggedArray<float> bufl_ab(bfw, bfh);
 
 
             if (call <= 3) { //simpleprocess, dcrop, improccoordinator
@@ -11164,7 +11164,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
             LabImage *bufgb = nullptr;
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
-            const JaggedArray<float> buflight(bfw, bfh);
+            JaggedArray<float> buflight(bfw, bfh);
 
             if (call <= 3) { //simpleprocess dcrop improcc
 
@@ -11266,12 +11266,12 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
         if ((lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f) && lp.cbdlena) {
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
-            const JaggedArray<float> buflight(bfw, bfh);
-            const JaggedArray<float> bufchrom(bfw, bfh);
-            const JaggedArray<float> bufchr(bfw, bfh);
-            const JaggedArray<float> bufsh(bfw, bfh);
-            const JaggedArray<float> loctemp(bfw, bfh);
-            const JaggedArray<float> loctempch(bfw, bfh);
+            JaggedArray<float> buflight(bfw, bfh);
+            JaggedArray<float> bufchrom(bfw, bfh);
+            JaggedArray<float> bufchr(bfw, bfh);
+            JaggedArray<float> bufsh(bfw, bfh);
+            JaggedArray<float> loctemp(bfw, bfh);
+            JaggedArray<float> loctempch(bfw, bfh);
 
             float b_l = -5.f;
             float t_l = 25.f;
@@ -11411,12 +11411,11 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
         if (!lp.invshar && lp.shrad > 0.42 && call < 3  && lp.sharpena) { //interior ellipse for sharpening, call = 1 and 2 only with Dcrop and simpleprocess
             int bfh = call == 2 ? int (lp.ly + lp.lyT) + del : original->H; //bfw bfh real size of square zone
             int bfw = call == 2 ? int (lp.lx + lp.lxL) + del : original->W;
-            const JaggedArray<float> loctemp(bfw, bfh);
+            JaggedArray<float> loctemp(bfw, bfh);
 
             if (call == 2) { //call from simpleprocess
-                const JaggedArray<float> bufsh(bfw, bfh, true);
-                const JaggedArray<float> hbuffer(bfw, bfh);
-
+                JaggedArray<float> bufsh(bfw, bfh, true);
+                JaggedArray<float> hbuffer(bfw, bfh);
                 int begy = lp.yc - lp.lyT;
                 int begx = lp.xc - lp.lxL;
                 int yEn = lp.yc + lp.ly;
@@ -11463,7 +11462,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
         } else if (lp.invshar && lp.shrad > 0.42 && call < 3 && lp.sharpena) {
             int GW = original->W;
             int GH = original->H;
-            const JaggedArray<float> loctemp(GW, GH);
+            JaggedArray<float> loctemp(GW, GH);
 
             ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, GW, GH, loctemp, params->locallab.shardamping, (double)params->locallab.sharradius / 100., params->locallab.shariter, params->locallab.sharamount);
 
@@ -11490,8 +11489,8 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
             LabImage *bufreti = nullptr;
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
-            const JaggedArray<float> buflight(bfw, bfh);
-            const JaggedArray<float> bufchro(bfw, bfh);
+            JaggedArray<float> buflight(bfw, bfh);
+            JaggedArray<float> bufchro(bfw, bfh);
 
             float hueplus = hueref + dhueret;
             float huemoins = hueref - dhueret;

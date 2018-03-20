@@ -370,7 +370,7 @@ class ImageTypeListener
 {
 public :
     virtual ~ImageTypeListener() = default;
-    virtual void imageTypeChanged (bool isRaw, bool isBayer, bool isXtrans) = 0;
+    virtual void imageTypeChanged (bool isRaw, bool isBayer, bool isXtrans, bool is_Mono = false) = 0;
 };
 
 class WaveletListener

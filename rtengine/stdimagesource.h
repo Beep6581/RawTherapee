@@ -52,6 +52,7 @@ public:
     ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal);
 
     eSensorType getSensorType() const {return ST_NONE;}
+    bool isMono() const {return false;}
 
     bool        isWBProviderReady ()
     {
