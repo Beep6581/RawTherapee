@@ -9262,8 +9262,8 @@ canon_a5:
     } else if (load_raw != &CLASS packed_load_raw)
       maximum = (is_raw == 2 && shot_select) ? 0x2f00 : 0x3e00;
     if (!strncmp(model,"X-A10",5)) {
-        raw_width = 4912;
-        raw_height = 3278;
+        width = raw_width = 4912;
+        height = raw_height = 3278;
     }
     top_margin = (raw_height - height) >> 2 << 1;
     left_margin = (raw_width - width ) >> 2 << 1;
