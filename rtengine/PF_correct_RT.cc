@@ -35,7 +35,6 @@
 #include "opthelper.h"
 #include "median.h"
 #include "jaggedarray.h"
-#define BENCHMARK
 #include "StopWatch.h"
 
 namespace rtengine

@@ -15,7 +15,7 @@
    viewBox="0 0 146.05 91.545836"
    version="1.1"
    id="svg783"
-   inkscape:version="0.92.1 r"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06"
    sodipodi:docname="rt_splash.svg"
    inkscape:export-filename="/tmp/splash.png"
    inkscape:export-xdpi="96"
@@ -517,10 +517,10 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.6106713"
-     inkscape:cx="274.80436"
-     inkscape:cy="87.101745"
-     inkscape:document-units="mm"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="366.55779"
+     inkscape:cy="87.326779"
+     inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      units="px"
@@ -544,7 +544,7 @@
      inkscape:snap-nodes="false"
      inkscape:snap-global="true"
      inkscape:window-width="1920"
-     inkscape:window-height="1023"
+     inkscape:window-height="1019"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1">
@@ -599,7 +599,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -902,10 +902,34 @@
          y="2.2370076"
          x="283.85016"
          id="tspan3664"
-         sodipodi:role="line">. 3</tspan></text>
+         sodipodi:role="line">. 5</tspan></text>
+    <rect
+       style="fill:#2a2a2a;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.26458338;enable-background:new"
+       id="rect1167"
+       width="73.670166"
+       height="9.4604874"
+       x="153.45833"
+       y="279.20517" />
+    <g
+       style="fill:#ffffff;enable-background:new"
+       transform="matrix(0.24804687,0,0,0.2480469,-16.632726,273.1232)"
+       id="g1249">
+      <text
+         transform="skewX(3)"
+         id="text1247"
+         y="49.720543"
+         x="596.36224"
+         style="font-style:normal;font-weight:normal;font-size:12.80000019px;line-height:0%;font-family:sans-serif;text-align:end;letter-spacing:-1.06666672px;word-spacing:0px;text-anchor:end;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.06666672px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:17.06666565px;line-height:110.00000238%;font-family:'ITC Eras Std';-inkscape-font-specification:'ITC Eras Std Bold';text-align:end;letter-spacing:-1.06666672px;text-anchor:end;fill:#ffffff;stroke-width:1.06666672px"
+           y="49.720543"
+           x="595.29559"
+           sodipodi:role="line"
+           id="tspan1245">Development</tspan></text>
+    </g>
     <g
        id="g3712"
-       transform="matrix(0.24804687,0,0,0.2480469,-10.282719,273.1232)"
+       transform="matrix(0.24804687,0,0,0.2480469,58.508951,273.1232)"
        style="fill:#ffffff;enable-background:new">
       <text
          xml:space="preserve"
@@ -918,7 +942,7 @@
            sodipodi:role="line"
            x="595.29559"
            y="49.720543"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:24px;line-height:110.00000238%;font-family:'ITC Eras Std';-inkscape-font-specification:'ITC Eras Std Bold';text-align:end;letter-spacing:-1.06666672px;text-anchor:end;fill:#ffffff;stroke-width:1.06666672px">Development</tspan></text>
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:17.06666565px;line-height:110.00000238%;font-family:'ITC Eras Std';-inkscape-font-specification:'ITC Eras Std Bold';text-align:end;letter-spacing:-1.06666672px;text-anchor:end;fill:#ffffff;stroke-width:1.06666672px">Release Candidate 1</tspan></text>
     </g>
   </g>
 </svg>
