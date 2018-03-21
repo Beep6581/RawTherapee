@@ -78,7 +78,7 @@ void Image16::getScanline (int row, unsigned char* buffer, int bps)
  * void Image16::setScanline (int row, unsigned char* buffer, int bps, int minValue[3], int maxValue[3]);
  * has not been implemented yet, because as of now, this method is called for IIOSF_FLOAT sample format only
  */
-void Image16::setScanline (int row, unsigned char* buffer, int bps, float *minValue, float *maxValue)
+void Image16::setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples, float *minValue, float *maxValue)
 {
 
     if (data == nullptr) {
@@ -92,12 +92,17 @@ void Image16::setScanline (int row, unsigned char* buffer, int bps, float *minVa
         case (IIOSF_UNSIGNED_CHAR): {
             int ix = 0;
 
-            for (int i = 0; i < width; ++i) {
-                r(row, i) = static_cast<unsigned short>(buffer[ix++]) * 257;
-                g(row, i) = static_cast<unsigned short>(buffer[ix++]) * 257;
-                b(row, i) = static_cast<unsigned short>(buffer[ix++]) * 257;
+            if(numSamples == 1) {
+                for (int i = 0; i < width; ++i) {
+                    r(row, i) = g(row, i) = b(row, i) = static_cast<unsigned short>(buffer[ix++]) * 257;
+                }
+            } else {
+                for (int i = 0; i < width; ++i) {
+                    r(row, i) = static_cast<unsigned short>(buffer[ix++]) * 257;
+                    g(row, i) = static_cast<unsigned short>(buffer[ix++]) * 257;
+                    b(row, i) = static_cast<unsigned short>(buffer[ix++]) * 257;
+                }
             }
-
             break;
         }
 

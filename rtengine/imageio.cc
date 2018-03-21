@@ -523,7 +523,7 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
             return IMIO_READERROR;
         }
 
-        setScanline (cinfo.output_scanline - 1, row, 8);
+        setScanline (cinfo.output_scanline - 1, row, 8, cinfo.num_components);
 
         if (pl && !(cinfo.output_scanline % 100)) {
             pl->setProgress ((double)(cinfo.output_scanline) / cinfo.output_height);
@@ -860,7 +860,7 @@ int ImageIO::loadTIFF (Glib::ustring fname)
             }
         }
 
-        setScanline (row, linebuffer, bitspersample, nullptr, nullptr);
+        setScanline (row, linebuffer, bitspersample);
 
         if (pl && !(row % 100)) {
             pl->setProgress ((double)(row + 1) / height);
