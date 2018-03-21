@@ -290,6 +290,7 @@ void fuji_decode_strip(const struct fuji_compressed_params* info_common, int cur
 void fuji_compressed_load_raw();
 void fuji_decode_loop(const struct fuji_compressed_params* common_info, int count, INT64* raw_block_offsets, unsigned *block_sizes);
 void parse_fuji_compressed_header();
+void fuji_14bit_load_raw();    
 void pentax_load_raw();
 void nikon_load_raw();
 int nikon_is_compressed();

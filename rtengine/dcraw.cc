@@ -9263,6 +9263,9 @@ canon_a5:
     if (!strncmp(model,"X-A10",5)) {
         width = raw_width = 4912;
         height = raw_height = 3278;
+    } else if (!strncmp(model, "X-A3", 4) || !strncmp(model, "X-A5", 4)) {
+        width = raw_width = 6016;
+        height = raw_height = 4014;
     }
     top_margin = (raw_height - height) >> 2 << 1;
     left_margin = (raw_width - width ) >> 2 << 1;

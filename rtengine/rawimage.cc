@@ -460,8 +460,12 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
     }
 
     if(!strcmp(make,"Fujifilm") && raw_height * raw_width * 2u != raw_size) {
-        parse_fuji_compressed_header();
-	}
+        if (raw_width * raw_height * 7 / 4 == raw_size) {
+            load_raw = &RawImage::fuji_14bit_load_raw;
+        } else {
+            parse_fuji_compressed_header();
+        }
+    }
 
     if (flip == 5) {
         this->rotate_deg = 270;
