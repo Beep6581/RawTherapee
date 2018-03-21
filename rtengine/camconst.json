@@ -1241,7 +1241,8 @@ Camera constants:
     { // Quality B
         "make_model": "FUJIFILM X-A3",
         "dcraw_matrix": [ 12407,-5222,-1086,-2971,11116,2120,-294,1029,5284 ], // DNGv9.8 D65
-        "ranges": { "white": 4050 }
+        "raw_crop": [ 0, 0, 6016, 4014 ], // full raw 6016x4014
+        "ranges": { "white": 16100 }
     },
 
     { // Quality B
