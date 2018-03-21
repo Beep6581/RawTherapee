@@ -166,6 +166,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::SpinButton*  rgbDenoiseTreadLimitSB;
     Gtk::SpinButton*  clutCacheSizeSB;
     Gtk::SpinButton*  maxInspectorBuffersSB;
+    Gtk::ComboBoxText *thumbnailInspectorMode;
 
     Gtk::CheckButton* ckbmenuGroupRank;
     Gtk::CheckButton* ckbmenuGroupLabel;

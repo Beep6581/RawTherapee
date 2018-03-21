@@ -1518,7 +1518,7 @@ void RawImageSource::vflip (Imagefloat* image)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int RawImageSource::load (const Glib::ustring &fname)
+int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
 {
 
     MyTime t1, t2;
@@ -1535,7 +1535,7 @@ int RawImageSource::load (const Glib::ustring &fname)
     if (errCode) {
         return errCode;
     }
-    numFrames = ri->getFrameCount();
+    numFrames = firstFrameOnly ? 1 : ri->getFrameCount();
 
     errCode = 0;
 
