@@ -55,7 +55,7 @@ void Image8::getScanline (int row, unsigned char* buffer, int bps)
     }
 }
 
-void Image8::setScanline (int row, unsigned char* buffer, int bps, float *minValue, float *maxValue)
+void Image8::setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples, float *minValue, float *maxValue)
 {
 
     if (data == nullptr) {
@@ -67,7 +67,13 @@ void Image8::setScanline (int row, unsigned char* buffer, int bps, float *minVal
 
     switch (sampleFormat) {
     case (IIOSF_UNSIGNED_CHAR):
-        memcpy (data + row * width * 3u, buffer, width * 3);
+        if(numSamples == 1) {
+            for(size_t i = 0; i < static_cast<size_t>(width); ++i) {
+                data[row * width * 3 + 3 * i] = data[row * width * 3 + 3 * i + 1] = data[row * width * 3 + 3 * i + 2] = buffer[i];
+            }
+        } else {
+            memcpy (data + row * width * 3u, buffer, width * 3);
+        }
         break;
 
     case (IIOSF_UNSIGNED_SHORT): {

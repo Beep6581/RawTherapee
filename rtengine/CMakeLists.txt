@@ -105,6 +105,7 @@ set(RTENGINESOURCEFILES
     profilestore.cc
     rawimage.cc
     rawimagesource.cc
+    rcd_demosaic.cc
     refreshmap.cc
     rt_algo.cc
     rtthumbnail.cc
