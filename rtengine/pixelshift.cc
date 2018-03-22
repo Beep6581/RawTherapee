@@ -382,11 +382,12 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     constexpr float greenWeight = 2.f;
     const bool blurMap = bayerParams.pixelShiftBlur;
     const float sigma = bayerParams.pixelShiftSigma;
-    constexpr float threshold = 3.f + 9.f;
+    constexpr float noMotion = 0.99f;
+    constexpr float threshold = 3.f + 9 * noMotion;
     const bool holeFill = bayerParams.pixelShiftHoleFill;
     const bool equalBrightness = bayerParams.pixelShiftEqualBright;
     const bool equalChannel = bayerParams.pixelShiftEqualBrightChannel;
-    const bool smoothTransitions = blurMap && bayerParams.pixelShiftSmoothFactor > 0. && !showOnlyMask;
+    const bool smoothTransitions = blurMap && bayerParams.pixelShiftSmoothFactor > 0.;
     const float smoothFactor = 1.0 - bayerParams.pixelShiftSmoothFactor;
 
     static const float nReadK3II[] = { 3.4f,  // ISO 100
@@ -775,7 +776,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             unsigned int offset = FC(i, winx + border - offsX) & 1;
 
             for(int j = winx + border - offsX; j < winw - (border + offsX); ++j, offset ^= 1) {
-                psMask[i][j] = 1.f;
+                psMask[i][j] = noMotion;
 
                 if(checkGreen) {
                     if(greenDiff((*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset], (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset], stddevFactorGreen, eperIsoGreen, nRead, prnu) > 0.f) {
@@ -912,10 +913,14 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             unsigned int offset = FC(i, winx + border - offsX) & 1;
 
             for(int j = winx + border - offsX; j < winw - (border + offsX); ++j, offset ^= 1) {
-                if(mask[i][j] == 255) {
+                if(showOnlyMask) {
+                    if(smoothTransitions) { // we want only motion mask => paint areas according to their motion (dark = no motion, bright = motion)
+                        redDest[j + offsX] = greenDest[j + offsX] = blueDest[j + offsX] = psMask[i][j] * 32768.f;
+                    } else {
+                        redDest[j + offsX] = greenDest[j + offsX] = blueDest[j + offsX] = mask[i][j] == 255 ? 65535.f : 0.f;
+                    }
+                } else if(mask[i][j] == 255) {
                     paintMotionMask(j + offsX, showMotion, showOnlyMask, greenDest, redDest, blueDest);
-                } else if(showOnlyMask) { // we want only motion mask => paint areas without motion in pure black
-                    redDest[j + offsX] = greenDest[j + offsX] = blueDest[j + offsX] = 0.f;
                 } else {
                     if(smoothTransitions) {
 #ifdef __SSE2__
