@@ -2349,6 +2349,7 @@ RAWParams::BayerSensor::BayerSensor() :
     black3(0.0),
     twogreen(true),
     linenoise(0),
+    linenoiseDirection(LineNoiseDirection::BOTH),
     greenthresh(0),
     dcb_iterations(2),
     lmmse_iterations(2),
@@ -2383,7 +2384,8 @@ RAWParams::BayerSensor::BayerSensor() :
     pixelShiftNonGreenCross(true),
     pixelShiftNonGreenCross2(false),
     pixelShiftNonGreenAmaze(false),
-    dcb_enhance(true)
+    dcb_enhance(true),
+    pdafLinesFilter(false)
 {
 }
 
@@ -2399,6 +2401,7 @@ bool RAWParams::BayerSensor::operator ==(const BayerSensor& other) const
         && black3 == other.black3
         && twogreen == other.twogreen
         && linenoise == other.linenoise
+        && linenoiseDirection == other.linenoiseDirection
         && greenthresh == other.greenthresh
         && dcb_iterations == other.dcb_iterations
         && lmmse_iterations == other.lmmse_iterations
@@ -2433,7 +2436,8 @@ bool RAWParams::BayerSensor::operator ==(const BayerSensor& other) const
         && pixelShiftNonGreenCross == other.pixelShiftNonGreenCross
         && pixelShiftNonGreenCross2 == other.pixelShiftNonGreenCross2
         && pixelShiftNonGreenAmaze == other.pixelShiftNonGreenAmaze
-        && dcb_enhance == other.dcb_enhance;
+        && dcb_enhance == other.dcb_enhance
+        && pdafLinesFilter == other.pdafLinesFilter;
 }
 
 bool RAWParams::BayerSensor::operator !=(const BayerSensor& other) const
@@ -3366,6 +3370,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.bayersensor.exBlack3, "RAW Bayer", "PreBlack3", raw.bayersensor.black3, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.exTwoGreen, "RAW Bayer", "PreTwoGreen", raw.bayersensor.twogreen, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.linenoise, "RAW Bayer", "LineDenoise", raw.bayersensor.linenoise, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.bayersensor.linenoise, "RAW Bayer", "LineDenoiseDirection", toUnderlying(raw.bayersensor.linenoiseDirection), keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.greenEq, "RAW Bayer", "GreenEqThreshold", raw.bayersensor.greenthresh, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.dcbIterations, "RAW Bayer", "DCBIterations", raw.bayersensor.dcb_iterations, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.dcbEnhance, "RAW Bayer", "DCBEnhance", raw.bayersensor.dcb_enhance, keyFile);
@@ -3401,6 +3406,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftNonGreenCross, "RAW Bayer", "pixelShiftNonGreenCross", raw.bayersensor.pixelShiftNonGreenCross, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftNonGreenCross2, "RAW Bayer", "pixelShiftNonGreenCross2", raw.bayersensor.pixelShiftNonGreenCross2, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftNonGreenAmaze, "RAW Bayer", "pixelShiftNonGreenAmaze", raw.bayersensor.pixelShiftNonGreenAmaze, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.bayersensor.pdafLinesFilter, "RAW Bayer", "PDAFLinesFilter", raw.bayersensor.pdafLinesFilter, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.method, "RAW X-Trans", "Method", raw.xtranssensor.method, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.ccSteps, "RAW X-Trans", "CcSteps", raw.xtranssensor.ccSteps, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.exBlackRed, "RAW X-Trans", "PreBlackRed", raw.xtranssensor.blackred, keyFile);
@@ -4684,6 +4690,12 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW Bayer", "PreBlack3", pedited, raw.bayersensor.black3, pedited->raw.bayersensor.exBlack3);
             assignFromKeyfile(keyFile, "RAW Bayer", "PreTwoGreen", pedited, raw.bayersensor.twogreen, pedited->raw.bayersensor.exTwoGreen);
             assignFromKeyfile(keyFile, "RAW Bayer", "LineDenoise", pedited, raw.bayersensor.linenoise, pedited->raw.bayersensor.linenoise);
+            if (keyFile.has_key("RAW Bayer", "LineDenoiseDirection")) {
+                raw.bayersensor.linenoiseDirection = RAWParams::BayerSensor::LineNoiseDirection(keyFile.get_integer("RAW Bayer", "LineDenoiseDirection"));
+                if (pedited) {
+                    pedited->raw.bayersensor.linenoiseDirection = true;
+                }
+            }
             assignFromKeyfile(keyFile, "RAW Bayer", "GreenEqThreshold", pedited, raw.bayersensor.greenthresh, pedited->raw.bayersensor.greenEq);
             assignFromKeyfile(keyFile, "RAW Bayer", "DCBIterations", pedited, raw.bayersensor.dcb_iterations, pedited->raw.bayersensor.dcbIterations);
             assignFromKeyfile(keyFile, "RAW Bayer", "DCBEnhance", pedited, raw.bayersensor.dcb_enhance, pedited->raw.bayersensor.dcbEnhance);
@@ -4734,6 +4746,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftNonGreenCross", pedited, raw.bayersensor.pixelShiftNonGreenCross, pedited->raw.bayersensor.pixelShiftNonGreenCross);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftNonGreenCross2", pedited, raw.bayersensor.pixelShiftNonGreenCross2, pedited->raw.bayersensor.pixelShiftNonGreenCross2);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftNonGreenAmaze", pedited, raw.bayersensor.pixelShiftNonGreenAmaze, pedited->raw.bayersensor.pixelShiftNonGreenAmaze);
+            assignFromKeyfile(keyFile, "RAW Bayer", "PDAFLinesFilter", pedited, raw.bayersensor.pdafLinesFilter, pedited->raw.bayersensor.pdafLinesFilter);
         }
 
         if (keyFile.has_group ("RAW X-Trans")) {

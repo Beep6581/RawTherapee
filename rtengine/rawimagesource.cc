@@ -34,6 +34,7 @@
 #include "rt_math.h"
 #include "improcfun.h"
 #include "rtlensfun.h"
+#include "pdaflinesfilter.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -1919,6 +1920,32 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         }
     }
 
+    if (ri->getSensorType() == ST_BAYER && raw.bayersensor.pdafLinesFilter) {
+        PDAFLinesFilter f(ri);
+
+        if (!bitmapBads) {
+            bitmapBads = new PixelsMap(W, H);
+        }
+        
+        int n = f.mark(rawData, *bitmapBads);
+        totBP += n;
+
+        if (n > 0) {
+            if (settings->verbose) {
+                printf("Marked %d hot pixels from PDAF lines\n", n);            
+            }
+
+            auto &thresh = f.greenEqThreshold();        
+            if (numFrames == 4) {
+                for (int i = 0; i < 4; ++i) {
+                    green_equilibrate(thresh, *rawDataFrames[i]);
+                }
+            } else {
+                green_equilibrate(thresh, rawData);
+            }
+        }
+    }
+
     // check if it is an olympus E camera or green equilibration is enabled. If yes, compute G channel pre-compensation factors
     if ( ri->getSensorType() == ST_BAYER && (raw.bayersensor.greenthresh || (((idata->getMake().size() >= 7 && idata->getMake().substr(0, 7) == "OLYMPUS" && idata->getModel()[0] == 'E') || (idata->getMake().size() >= 9 && idata->getMake().substr(0, 9) == "Panasonic")) && raw.bayersensor.method != RAWParams::BayerSensor::getMethodString( RAWParams::BayerSensor::Method::VNG4))) ) {
         // global correction
@@ -1937,12 +1964,14 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             plistener->setProgress (0.0);
         }
 
+        GreenEqulibrateThreshold thresh(0.01 * raw.bayersensor.greenthresh);
+
         if(numFrames == 4) {
             for(int i = 0; i < 4; ++i) {
-                green_equilibrate(0.01 * raw.bayersensor.greenthresh, *rawDataFrames[i]);
+                green_equilibrate(thresh, *rawDataFrames[i]);
             }
         } else {
-            green_equilibrate(0.01 * raw.bayersensor.greenthresh, rawData);
+            green_equilibrate(thresh, rawData);
         }
     }
 
@@ -1969,7 +1998,15 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             plistener->setProgress (0.0);
         }
 
-        cfa_linedn(0.00002 * (raw.bayersensor.linenoise));
+        std::unique_ptr<CFALineDenoiseRowBlender> line_denoise_rowblender;
+        if (raw.bayersensor.linenoiseDirection == RAWParams::BayerSensor::LineNoiseDirection::PDAF_LINES) {
+            PDAFLinesFilter f(ri);
+            line_denoise_rowblender = f.lineDenoiseRowBlender();
+        } else {
+            line_denoise_rowblender.reset(new CFALineDenoiseRowBlender());
+        }
+
+        cfa_linedn(0.00002 * (raw.bayersensor.linenoise), int(raw.bayersensor.linenoiseDirection) & int(RAWParams::BayerSensor::LineNoiseDirection::VERTICAL), int(raw.bayersensor.linenoiseDirection) & int(RAWParams::BayerSensor::LineNoiseDirection::HORIZONTAL), *line_denoise_rowblender);
     }
 
     if ( (raw.ca_autocorrect || fabs(raw.cared) > 0.001 || fabs(raw.cablue) > 0.001) && ri->getSensorType() == ST_BAYER ) { // Auto CA correction disabled for X-Trans, for now...

@@ -82,6 +82,11 @@ Examples:
         // It is useful after detecting the masked areas, to not fully use these areas but leave a border of 2-4 pixels
         // instead, to take care of possible light leaks from the light sensing area to the optically black (masked)
         // area or sensor imperfections at the outer borders.
+
+        // list of indices of the rows with on-sensor PDAF pixels, for cameras that have such features. The indices here form a pattern that is repeated for the whole height of the sensor. The values are relative to the "pdafOffset" value (see below)
+        "pdafPattern" : [ 0,12,36,54,72,90,114,126,144,162,180,204,216,240,252,270,294,306,324,342,366,384,396,414,432,450,474,492,504,522,540,564,576,594,606,630 ],
+        // index of the first row of the PDAF pattern in the sensor (0 is the topmost row). Allowed to be negative for convenience (this means that the first repetition of the pattern doesn't start from the first row)
+        "pdafOffset" : 3
     },
 
     {
@@ -2236,14 +2241,33 @@ Camera constants:
         "make_model": "Sony ILCE-6000",
         "dcraw_matrix": [ 5991,-1456,-455,-4764,12135,2980,-707,1425,6701 ], // adobe dcp d65
         "raw_crop": [ 0, 0, 6024, 4024 ],
-        "ranges": { "black": 512, "white": 16300 }
+        "ranges": { "black": 512, "white": 16300 },
+        // detected by hand, using the picture from https://www.dpreview.com/forums/thread/3923513
+        // P 11 P 23 P 17 P 17 P 17 P 23 P 11 P 17 P 17 P 17 P 23 P 11 P 23 P 11 P 17 P 23 P 11 P 17 P 17 P 23 P 17 P 11 P 17 P 17 P 17 P 23 P 17 P 11 P 17 P 17 P 23 P 11 P 17 P 11 P 23
+        "pdafPattern" : [ 0,12,36,54,72,90,114,126,144,162,180,204,216,240,252,270,294,306,324,342,366,384,396,414,432,450,474,492,504,522,540,564,576,594,606,630 ],
+        "pdafOffset" : 3
     },
 
     { // Quality A
         "make_model": [ "Sony ILCE-6300","Sony ILCE-6500" ],
         "dcraw_matrix": [ 5973,-1695,-419,-3826,11797,2293,-639,1398,5789 ], // DNG_v9.8 D65
         "raw_crop": [ 0, 0, 6024, 4024 ],
-        "ranges": { "black": 512, "white": 16300 }
+        "ranges": { "black": 512, "white": 16300 },
+        // contributed by Horshak from https://www.dpreview.com/forums/post/60873077
+        "pdafPattern" : [ 0,12,36,54,72,90,114,126,144,162,180,204,216,240,252,270,294,306,324,342,366,384,396,414,432,450,474,492,504,522,540,564,576,594,606,630 ],
+        "pdafOffset" : 3        
+    },
+
+    { // Quality C, only pdaf data
+        "make_model": "Sony ILCE-7M3",
+        // A7III, from https://www.dpreview.com/forums/post/60843139
+        // in the original post:
+        //   P 5 P 17 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 17 P 5 P 11 P 17 P 5 P 17 P 5 P 11 P 11 P 11 P 17 P 5 P 11 P 11 P 11 P 5 P 17 P 5 P 17 P 11
+        //
+        // rotated to match the start of the frame
+        //   P 11 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 17 P 5 P 11 P 17 P 5 P 17 P 5 P 11 P 11 P 11 P 17 P 5 P 11 P 11 P 11 P 5 P 17 P 5 P 17 P 11 P 5 P 17 P 11 P 11 P 17 P 11 P 5
+        "pdafPattern" : [ 0,12,24,36,54,66,72,84,96,114,120,132,150,156,174,180,192,204,216,234,240,252,264,276,282,300,306,324,336,342,360,372,384,402,414,420],
+        "pdafOffset" : 9
     },
 
     { // Quality A, correction for frame width
@@ -2263,7 +2287,10 @@ Camera constants:
         "make_model": [ "Sony ILCE-7RM2", "Sony DSC-RX1RM2" ],
         "dcraw_matrix": [ 6629,-1900,-483,-4618,12349,2550,-622,1381,6514 ], // DNG_v9.1.1 D65
         "raw_crop": [ 0, 0, -36, 0 ], // full raw frame 8000x5320 - 36 rightmost columns are garbage
-        "ranges": { "black": 512, "white": 16300 }
+        "ranges": { "black": 512, "white": 16300 },
+        // PDAF info provided by Horshack with the rawshack tool (http://testcams.com/rawshack/)
+        "pdafPattern" : [ 0,24,36,60,84,120,132,156,192,204,240,252,276,300,324,360,372,396,420 ],
+        "pdafOffset" : 31
     },
 
     { // Quality C, color matrix copied from ILCE-9, LongExposures 2-3sec only
@@ -2299,7 +2326,12 @@ Camera constants:
         "make_model": "Sony ILCE-9",
         "dcraw_matrix": [ 6389,-1703,-378,-4562,12265,2587,-670,1489,6550 ], // DNG_v9.12 D65
         "raw_crop": [ 8, 8, 6008, 4008 ], // full raw frame 6048x4024 Dcraw auto identify 6024x4024, jpeg 12,12,6000x4000
-        "ranges": { "black": 512, "white": 16300 }
+        "ranges": { "black": 512, "white": 16300 },
+        // the A9 is the same as the A7III, rotated of 1 position
+        // source: https://www.dpreview.com/forums/post/60857788
+        // P 11 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 17 P 5 P 11 P 17 P 5 P 17 P 5 P 11 P 11 P 11 P 17 P 5 P 11 P 11 P 11 P 5 P 17 P 5 P 17 P 11 P 5 P 17 P 11 P 11 P 17 P 11 P 5
+        "pdafPattern" : [ 0,12,24,36,54,66,72,84,96,114,120,132,150,156,174,180,192,204,216,234,240,252,264,276,282,300,306,324,336,342,360,372,384,402,414,420 ],
+        "pdafOffset" : -7
     },
 
     { // Quality B, correction for frame width
