@@ -260,7 +260,6 @@ extern const Settings* settings;
 
 ImProcFunctions::~ImProcFunctions ()
 {
-
     if (monitorTransform) {
         cmsDeleteTransform (monitorTransform);
     }
@@ -271,12 +270,14 @@ void ImProcFunctions::setScale (double iscale)
     scale = iscale;
 }
 
+
 void ImProcFunctions::updateColorProfiles (const Glib::ustring& monitorProfile, RenderingIntent monitorIntent, bool softProof, bool gamutCheck)
 {
     // set up monitor transform
     if (monitorTransform) {
         cmsDeleteTransform (monitorTransform);
     }
+    gamutWarning.reset(nullptr);
 
     monitorTransform = nullptr;
 
@@ -295,6 +296,9 @@ void ImProcFunctions::updateColorProfiles (const Glib::ustring& monitorProfile, 
 
         cmsUInt32Number flags;
         cmsHPROFILE iprof  = cmsCreateLab4Profile (nullptr);
+        cmsHPROFILE gamutprof = nullptr;
+        cmsUInt32Number gamutbpc = 0;
+        RenderingIntent gamutintent = RI_RELATIVE;
 
         bool softProofCreated = false;
 
@@ -321,9 +325,9 @@ void ImProcFunctions::updateColorProfiles (const Glib::ustring& monitorProfile, 
             if (oprof) {
                 // NOCACHE is for thread safety, NOOPTIMIZE for precision
 
-                if (gamutCheck) {
-                    flags |= cmsFLAGS_GAMUTCHECK;
-                }
+                // if (gamutCheck) {
+                //     flags |= cmsFLAGS_GAMUTCHECK;
+                // }
 
                 monitorTransform = cmsCreateProofingTransform (
                                        iprof, TYPE_Lab_FLT,
@@ -336,18 +340,31 @@ void ImProcFunctions::updateColorProfiles (const Glib::ustring& monitorProfile, 
                 if (monitorTransform) {
                     softProofCreated = true;
                 }
+
+                if (gamutCheck) {
+                    gamutprof = oprof;
+                    if (params->icm.outputBPC) {
+                        gamutbpc = cmsFLAGS_BLACKPOINTCOMPENSATION;
+                    }
+                    gamutintent = outIntent;
+                }
             }
         } else if (gamutCheck) {
-            flags = cmsFLAGS_GAMUTCHECK | cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;
+            // flags = cmsFLAGS_GAMUTCHECK | cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;
+            // if (settings->monitorBPC) {
+            //     flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
+            // }
+
+            // monitorTransform = cmsCreateProofingTransform(iprof, TYPE_Lab_FLT, monitor, TYPE_RGB_8, monitor, monitorIntent, monitorIntent, flags);
+
+            // if (monitorTransform) {
+            //     softProofCreated = true;
+            // }
+            gamutprof = monitor;
             if (settings->monitorBPC) {
-                flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
+                gamutbpc = cmsFLAGS_BLACKPOINTCOMPENSATION;
             }
-
-            monitorTransform = cmsCreateProofingTransform(iprof, TYPE_Lab_FLT, monitor, TYPE_RGB_8, monitor, monitorIntent, monitorIntent, flags);
-
-            if (monitorTransform) {
-                softProofCreated = true;
-            }
+            gamutintent = monitorIntent;
         }
 
         if (!softProofCreated) {
@@ -358,6 +375,10 @@ void ImProcFunctions::updateColorProfiles (const Glib::ustring& monitorProfile, 
             }
 
             monitorTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, monitor, TYPE_RGB_8, monitorIntent, flags);
+        }
+
+        if (gamutCheck && gamutprof) {
+            gamutWarning.reset(new GamutWarning(iprof, gamutprof, gamutintent, gamutbpc));
         }
 
         cmsCloseProfile (iprof);

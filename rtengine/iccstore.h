@@ -22,7 +22,7 @@
 #include <string>
 #include <vector>
 
-#include <glib/gstring.h>
+#include <glibmm.h>
 
 #include <lcms2.h>
 

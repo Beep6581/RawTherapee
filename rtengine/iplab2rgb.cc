@@ -52,6 +52,14 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
 #endif
         {
             AlignedBuffer<float> pBuf(3 * lab->W);
+
+            AlignedBuffer<float> gwBuf1;
+            AlignedBuffer<float> gwBuf2;
+            if (gamutWarning) {
+                gwBuf1.resize(3 * lab->W);
+                gwBuf2.resize(3 * lab->W);
+            }
+            
             float *buffer = pBuf.data;
 
 #ifdef _OPENMP
@@ -74,6 +82,10 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
                 }
 
                 cmsDoTransform (monitorTransform, buffer, data + ix, W);
+
+                if (gamutWarning) {
+                    gamutWarning->markLine(image, i, buffer, gwBuf1.data, gwBuf2.data);
+                }
             }
         } // End of parallelization
     } else {

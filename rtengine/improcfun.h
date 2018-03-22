@@ -34,6 +34,7 @@
 #include "curves.h"
 #include "cplx_wavelet_dec.h"
 #include "pipettebuffer.h"
+#include "gamutwarning.h"
 
 namespace rtengine
 {
@@ -45,8 +46,7 @@ class ImProcFunctions
 
 
     cmsHTRANSFORM monitorTransform;
-    cmsHTRANSFORM lab2outputTransform;
-    cmsHTRANSFORM output2monitorTransform;
+    std::unique_ptr<GamutWarning> gamutWarning;
 
     const ProcParams* params;
     double scale;
@@ -197,7 +197,7 @@ public:
     double lumimul[3];
 
     ImProcFunctions       (const ProcParams* iparams, bool imultiThread = true)
-        : monitorTransform (nullptr), lab2outputTransform (nullptr), output2monitorTransform (nullptr), params (iparams), scale (1), multiThread (imultiThread), lumimul{} {}
+        : monitorTransform (nullptr), params (iparams), scale (1), multiThread (imultiThread), lumimul{} {}
     ~ImProcFunctions      ();
     bool needsLuminanceOnly() { return !(needsCA() || needsDistortion() || needsRotation() || needsPerspective() || needsLCP() || needsLensfun()) && (needsVignetting() || needsPCVignetting() || needsGradient());}
     void setScale         (double iscale);
