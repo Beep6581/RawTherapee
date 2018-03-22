@@ -38,12 +38,12 @@ GamutWarning::GamutWarning(cmsHPROFILE iprof, cmsHPROFILE gamutprof, RenderingIn
         if (aces) {
             lab2ref = cmsCreateTransform(iprof, TYPE_Lab_FLT, aces, TYPE_RGB_FLT, INTENT_ABSOLUTE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
             lab2softproof = cmsCreateTransform(iprof, TYPE_Lab_FLT, gamutprof, TYPE_RGB_FLT, INTENT_ABSOLUTE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
-            softproof2ref = cmsCreateTransform(gamutprof, TYPE_RGB_FLT, aces, TYPE_RGB_FLT, INTENT_ABSOLUTE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE | gamutbpc);
+            softproof2ref = cmsCreateTransform(gamutprof, TYPE_RGB_FLT, aces, TYPE_RGB_FLT, INTENT_ABSOLUTE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE | (gamutbpc ? cmsFLAGS_BLACKPOINTCOMPENSATION : 0));
         }
     } else {
         lab2ref = nullptr;
         lab2softproof = cmsCreateTransform(iprof, TYPE_Lab_FLT, gamutprof, TYPE_RGB_FLT, INTENT_ABSOLUTE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
-        softproof2ref = cmsCreateTransform(gamutprof, TYPE_RGB_FLT, iprof, TYPE_Lab_FLT, INTENT_ABSOLUTE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE | gamutbpc);
+        softproof2ref = cmsCreateTransform(gamutprof, TYPE_RGB_FLT, iprof, TYPE_Lab_FLT, INTENT_ABSOLUTE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE | (gamutbpc ? cmsFLAGS_BLACKPOINTCOMPENSATION : 0));
     }
 
     if (!softproof2ref) {
