@@ -70,10 +70,10 @@ void fillCurveArrayVib (DiagonalCurve* diagCurve, LUTf &outCurve)
  */
 void ImProcFunctions::vibrance (LabImage* lab)
 {
-    BENCHFUN
     if (!params->vibrance.enabled) {
         return;
     }
+    BENCHFUN
 
 //  int skip=1; //scale==1 ? 1 : 16;
     bool skinCurveIsSet = false;
