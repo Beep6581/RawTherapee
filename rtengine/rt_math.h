@@ -138,8 +138,6 @@ constexpr std::uint8_t uint16ToUint8Rounded(std::uint16_t i)
     return ((i + 128) - ((i + 128) >> 8)) >> 8;
 }
 
-}
-
 
 template <typename T>
 bool invertMatrix(const std::array<std::array<T, 3>, 3> &in, std::array<std::array<T, 3>, 3> &out)
@@ -199,5 +197,8 @@ std::array<T, 3> dotProduct(const std::array<std::array<T, 3>, 3> &a, const std:
     }
 
     return res;
+}
+
+
 }
 
