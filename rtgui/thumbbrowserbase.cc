@@ -71,20 +71,24 @@ void ThumbBrowserBase::scrollChanged ()
 void ThumbBrowserBase::scroll (int direction)
 {
     // GUI already acquired when here
-    if (arrangement == TB_Vertical) {
-        vscroll.set_value (vscroll.get_value() + (direction == GDK_SCROLL_DOWN ? +1 : -1) * vscroll.get_adjustment()->get_step_increment());
-    } else {
-        hscroll.set_value (hscroll.get_value() + (direction == GDK_SCROLL_DOWN ? +1 : -1) * hscroll.get_adjustment()->get_step_increment());
+    if (direction == GDK_SCROLL_UP || direction == GDK_SCROLL_DOWN) {
+        if (arrangement == TB_Vertical) {
+            vscroll.set_value (vscroll.get_value() + (direction == GDK_SCROLL_DOWN ? +1 : -1) * vscroll.get_adjustment()->get_step_increment());
+        } else {
+            hscroll.set_value (hscroll.get_value() + (direction == GDK_SCROLL_DOWN ? +1 : -1) * hscroll.get_adjustment()->get_step_increment());
+        }
     }
 }
 
 void ThumbBrowserBase::scrollPage (int direction)
 {
     // GUI already acquired when here
-    if (arrangement == TB_Vertical) {
-        vscroll.set_value (vscroll.get_value() + (direction == GDK_SCROLL_DOWN ? +1 : -1) * vscroll.get_adjustment()->get_page_increment());
-    } else {
-        hscroll.set_value (hscroll.get_value() + (direction == GDK_SCROLL_DOWN ? +1 : -1) * hscroll.get_adjustment()->get_page_increment());
+    if (direction == GDK_SCROLL_UP || direction == GDK_SCROLL_DOWN) {
+        if (arrangement == TB_Vertical) {
+            vscroll.set_value (vscroll.get_value() + (direction == GDK_SCROLL_DOWN ? +1 : -1) * vscroll.get_adjustment()->get_page_increment());
+        } else {
+            hscroll.set_value (hscroll.get_value() + (direction == GDK_SCROLL_DOWN ? +1 : -1) * hscroll.get_adjustment()->get_page_increment());
+        }
     }
 }
 
