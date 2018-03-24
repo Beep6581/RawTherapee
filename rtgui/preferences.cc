@@ -1528,7 +1528,7 @@ Gtk::Widget* Preferences::getSoundPanel ()
     txtSndLngEditProcDone = Gtk::manage (new Gtk::Entry());
     pSndLngEditProcDone->pack_start (*txtSndLngEditProcDone, Gtk::PACK_EXPAND_WIDGET, 4);
 
-    Gtk::Label* lSndLngEditProcDoneSecs = Gtk::manage (new Gtk::Label (M ("PREFERENCES_SND_TRESHOLDSECS") + Glib::ustring (":")));
+    Gtk::Label* lSndLngEditProcDoneSecs = Gtk::manage (new Gtk::Label (M ("PREFERENCES_SND_THRESHOLDSECS") + Glib::ustring (":")));
     pSndLngEditProcDone->pack_start (*lSndLngEditProcDoneSecs, Gtk::PACK_SHRINK, 12);
 
     spbSndLngEditProcDoneSecs = Gtk::manage ( new Gtk::SpinButton () );
