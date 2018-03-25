@@ -1092,7 +1092,7 @@ PREFERENCES_SMA;Klein (250x287)
 PREFERENCES_SND_BATCHQUEUEDONE;Verwerkingsrij klaar
 PREFERENCES_SND_HELP;Typ bestandsnaam (of niets: geen geluid).\nWindows: gebruik 'SystemDefault', 'SystemAsterisk', etc. voor systeemgeluiden.\nLinux: gebruik "complete", "window-attention" etc. voor systeemgeluiden
 PREFERENCES_SND_LNGEDITPROCDONE;Bewerking klaar
-PREFERENCES_SND_TRESHOLDSECS;na seconden
+PREFERENCES_SND_THRESHOLDSECS;na seconden
 PREFERENCES_STARTUPIMDIR;Standaardmap bij opstarten
 PREFERENCES_STDAUT;Standaard
 PREFERENCES_TAB_BROWSER;Bestandsnavigator
@@ -2154,6 +2154,8 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
 !HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
 !HISTORY_MSG_METADATA_MODE;Metadata copy mode
+!HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
+!HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_TM_FATTAL_ANCHOR;HDR TM - Anchor
 !LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
 !LENSPROFILE_CORRECTION_LCPFILE;LCP File
@@ -2219,6 +2221,13 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_METADATA_MODE;Metadata copy mode
 !TP_METADATA_STRIP;Strip all metadata
 !TP_METADATA_TUNNEL;Copy unchanged
+!TP_PREPROCESS_LINEDENOISE_DIRECTION;Direction
+!TP_PREPROCESS_LINEDENOISE_DIRECTION_BOTH;Both
+!TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL;Horizontal
+!TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;Horizontal only on PDAF rows
+!TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertical
+!TP_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
+!TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.
 !TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
 !TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Equalize per channel
 !TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the RGB channels individually.\nDisabled: Use same equalization factor for all channels.

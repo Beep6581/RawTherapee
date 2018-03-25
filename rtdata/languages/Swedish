@@ -986,7 +986,7 @@ PREFERENCES_SMA;Liten (250x287)
 PREFERENCES_SND_BATCHQUEUEDONE;Batchkön färdig
 PREFERENCES_SND_HELP;Fyll i en sökväg till ett ljud.\nI Windows kan "SystemDefault", "SystemAsterisk" o.s.v. användas.\nPå Linuxbaserade system kan du prova med "complete", "windows-attention" o.s.v.
 PREFERENCES_SND_LNGEDITPROCDONE;När behandlingen är klar
-PREFERENCES_SND_TRESHOLDSECS;Ljudet kommer efter så här många sekunder
+PREFERENCES_SND_THRESHOLDSECS;Ljudet kommer efter så här många sekunder
 PREFERENCES_STARTUPIMDIR;Bildkatalog som visas vid uppstart
 PREFERENCES_STDAUT;Standard
 PREFERENCES_TAB_BROWSER;Filbläddrare
@@ -1953,6 +1953,8 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
 !HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
 !HISTORY_MSG_METADATA_MODE;Metadata copy mode
+!HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
+!HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_TM_FATTAL_ANCHOR;HDR TM - Anchor
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
@@ -2086,6 +2088,13 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_METADATA_MODE;Metadata copy mode
 !TP_METADATA_STRIP;Strip all metadata
 !TP_METADATA_TUNNEL;Copy unchanged
+!TP_PREPROCESS_LINEDENOISE_DIRECTION;Direction
+!TP_PREPROCESS_LINEDENOISE_DIRECTION_BOTH;Both
+!TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL;Horizontal
+!TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;Horizontal only on PDAF rows
+!TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertical
+!TP_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
+!TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.
 !TP_RAW_1PASSMEDIUM;1-Pass (Medium)
 !TP_RAW_3PASSBEST;3-Pass (Best)
 !TP_RAW_AHD;AHD

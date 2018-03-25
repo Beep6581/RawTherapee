@@ -1198,7 +1198,7 @@ PREFERENCES_SMA;Klein (250x287)
 PREFERENCES_SND_BATCHQUEUEDONE;Warteschlange abgearbeitet
 PREFERENCES_SND_HELP;Geben Sie einen Pfad zu einer Sounddatei oder einen Systemklang ein.\n\nBeispiel Systemklänge:\nWindows: SystemDefault, SystemAsterisk ...\nLinux: complete, window-attention ...\n
 PREFERENCES_SND_LNGEDITPROCDONE;Bearbeitung abgeschlossen
-PREFERENCES_SND_TRESHOLDSECS;Verzögerung in Sekunden
+PREFERENCES_SND_THRESHOLDSECS;Verzögerung in Sekunden
 PREFERENCES_STARTUPIMDIR;Bildverzeichnis beim Programmstart
 PREFERENCES_STDAUT;Standard
 PREFERENCES_TAB_BROWSER;Dateiverwaltung
@@ -2261,3 +2261,16 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
+!HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
+!TP_PREPROCESS_LINEDENOISE_DIRECTION;Direction
+!TP_PREPROCESS_LINEDENOISE_DIRECTION_BOTH;Both
+!TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL;Horizontal
+!TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;Horizontal only on PDAF rows
+!TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertical
+!TP_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
+!TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.
