@@ -289,7 +289,7 @@ void CropWindow::scroll (int state, GdkScrollDirection direction, int x, int y)
 
         if (direction == GDK_SCROLL_UP && !isMaxZoom()) {
             zoomIn (true, newCenterX, newCenterY);
-        } else if (!isMinZoom()) {
+        } else if (direction == GDK_SCROLL_DOWN && !isMinZoom()) {
             zoomOut (true, newCenterX, newCenterY);
         }
     }

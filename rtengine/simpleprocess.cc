@@ -2656,6 +2656,7 @@ private:
             params.sharpening = params.prsharpening;
         } else {
             params.sharpening.radius *= scale_factor;
+            params.sharpening.deconvradius *= scale_factor;
         }
 
         params.impulseDenoise.thresh *= scale_factor;
@@ -2665,12 +2666,13 @@ private:
         }
 
         params.wavelet.strength *= scale_factor;
-        params.dirpyrDenoise.luma *= scale_factor * scale_factor;
+        double noise_factor = (1.0 - scale_factor);
+        params.dirpyrDenoise.luma *= noise_factor; // * scale_factor;
         //params.dirpyrDenoise.Ldetail += (100 - params.dirpyrDenoise.Ldetail) * scale_factor;
         auto &lcurve = params.dirpyrDenoise.lcurve;
 
         for (size_t i = 2; i < lcurve.size(); i += 4) {
-            lcurve[i] *= min(scale_factor * scale_factor, 1.0);
+            lcurve[i] *= min(noise_factor /* * scale_factor*/, 1.0);
         }
 
         noiseLCurve.Set(lcurve);
@@ -2717,6 +2719,8 @@ private:
 
         if (params.raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::PIXELSHIFT)) {
             params.raw.bayersensor.method = procparams::RAWParams::BayerSensor::getMethodString(params.raw.bayersensor.pixelShiftLmmse ? procparams::RAWParams::BayerSensor::Method::LMMSE : procparams::RAWParams::BayerSensor::Method::AMAZE);
+        } else if (params.raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::AMAZE)) {
+            params.raw.bayersensor.method = procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::RCD);
         }
 
         // Use Rcd instead of Amaze for fast export

@@ -2362,7 +2362,6 @@ void CLASS sony_arq_load_raw()
     int bits = 0;
     while (1 << ++bits < maximum)
         ;
-    ++bits;
     bits = (1 << bits) - 1;
 
     for (int row = 0; row < ((frame < 2) ? 1 : raw_height); row++) {
@@ -2376,8 +2375,8 @@ void CLASS sony_arq_load_raw()
         read_shorts(samples, 4 * raw_width);
         if (r < raw_height) {
             int offset = 2 * (r & 1);
-            for (int c = (frame >> 1) & 1; c < raw_width; ++c, offset = (offset + 4) ^ 1) {
-                RAW(r, c) = samples[offset] & bits;
+            for (int c = (frame >> 1) & 1; c < raw_width; ++c, offset += 4) {
+                RAW(r, c) = samples[offset + (c & 1)] & bits;
             }
         }
     }
@@ -9264,6 +9263,9 @@ canon_a5:
     if (!strncmp(model,"X-A10",5)) {
         width = raw_width = 4912;
         height = raw_height = 3278;
+    } else if (!strncmp(model, "X-A3", 4) || !strncmp(model, "X-A5", 4)) {
+        width = raw_width = 6016;
+        height = raw_height = 4014;
     }
     top_margin = (raw_height - height) >> 2 << 1;
     left_margin = (raw_width - width ) >> 2 << 1;

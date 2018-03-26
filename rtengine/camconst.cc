@@ -19,7 +19,7 @@ namespace rtengine
 
 extern const Settings* settings;
 
-CameraConst::CameraConst()
+CameraConst::CameraConst() : pdafOffset(0)
 {
     memset(dcraw_matrix, 0, sizeof(dcraw_matrix));
     memset(raw_crop, 0, sizeof(raw_crop));
@@ -310,6 +310,35 @@ CameraConst::parseEntry(void *cJSON_, const char *make_model)
         }
     }
 
+    ji = cJSON_GetObjectItem(js, "pdafPattern");
+
+    if (ji) {
+        if (ji->type != cJSON_Array) {
+            fprintf(stderr, "\"pdafPattern\" must be an array\n");
+            goto parse_error;
+        }
+
+        for (ji = ji->child; ji != nullptr; ji = ji->next) {
+            if (ji->type != cJSON_Number) {
+                fprintf(stderr, "\"pdafPattern\" array must contain numbers\n");
+                goto parse_error;
+            }
+
+            cc->pdafPattern.push_back(ji->valueint);
+        }
+    }
+
+    ji = cJSON_GetObjectItem(js, "pdafOffset");
+
+    if (ji) {
+        if (ji->type != cJSON_Number) {
+            fprintf(stderr, "\"pdafOffset\" must contain a number\n");
+            goto parse_error;
+        }
+
+        cc->pdafOffset = ji->valueint;
+    }
+
     return cc;
 
 parse_error:
@@ -343,6 +372,36 @@ CameraConst::get_dcrawMatrix()
     }
 
     return dcraw_matrix;
+}
+
+bool
+CameraConst::has_pdafPattern()
+{
+    return pdafPattern.size() > 0;
+}
+
+std::vector<int>
+CameraConst::get_pdafPattern()
+{
+    return pdafPattern;
+}
+
+void
+CameraConst::update_pdafPattern(const std::vector<int> &other)
+{
+    if (other.empty()) {
+        return;
+    }
+    pdafPattern = other;
+}
+
+void
+CameraConst::update_pdafOffset(int other)
+{
+    if (other == 0) {
+        return;
+    }
+    pdafOffset = other;
 }
 
 bool
@@ -678,6 +737,8 @@ CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
                 // deleting all the existing levels, replaced by the new ones
                 existingcc->update_Levels(cc);
                 existingcc->update_Crop(cc);
+                existingcc->update_pdafPattern(cc->get_pdafPattern());
+                existingcc->update_pdafOffset(cc->get_pdafOffset());
 
                 if (settings->verbose) {
                     printf("Merging camera constants for \"%s\"\n", make_model.c_str());

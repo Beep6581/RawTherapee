@@ -39,7 +39,7 @@ using namespace rtengine;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::CLASS cfa_linedn(float noise)
+void RawImageSource::CLASS cfa_linedn(float noise, bool horizontal, bool vertical, const CFALineDenoiseRowBlender &rowblender)
 {
     // local variables
     int height = H, width = W;
@@ -68,11 +68,10 @@ void RawImageSource::CLASS cfa_linedn(float noise)
     {
 
         // allocate memory and assure the arrays don't have same 64 byte boundary to avoid L1 conflict misses
-        float *cfain = (float*)malloc(4 * TS * TS * sizeof(float) + 3 * 16 * sizeof(float));
-        float *cfablur = (cfain + (TS * TS) + 1 * 16);
-        float *cfadiff = (cfain + (2 * TS * TS) + 2 * 16);
-        float *cfadn = (cfain + (3 * TS * TS) + 3 * 16);
-
+        float *cfain = (float*)malloc(3 * TS * TS * sizeof(float) + 2 * 16 * sizeof(float));
+        float *cfadiff = (cfain + (1 * TS * TS) + 1 * 16);
+        float *cfadn = (cfain + (2 * TS * TS) + 2 * 16);
+        float cfablur[TS];
 
         float linehvar[4], linevvar[4], noisefactor[4][8][2], coeffsq;
         float dctblock[4][8][8];
@@ -130,19 +129,19 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 
                 //gaussian blur of CFA data
                 for (int rr = 8; rr < numrows - 8; rr++) {
-                    for (int indx = rr * TS; indx < rr * TS + numcols; indx++) {
-                        cfablur[indx] = gauss[0] * cfain[indx];
+                    for (int indx = rr * TS, indxb = 0; indx < rr * TS + numcols; indx++, indxb++) {
+                        cfablur[indxb] = gauss[0] * cfain[indx];
 
                         for (int i = 1; i < 5; i++) {
-                            cfablur[indx] += gauss[i] * (cfain[indx - (2 * i) * TS] + cfain[indx + (2 * i) * TS]);
+                            cfablur[indxb] += gauss[i] * (cfain[indx - (2 * i) * TS] + cfain[indx + (2 * i) * TS]);
                         }
                     }
 
-                    for (int indx = rr * TS + 8; indx < rr * TS + numcols - 8; indx++) {
-                        cfadn[indx] = gauss[0] * cfablur[indx];
+                    for (int indx = rr * TS + 8, indxb = 8; indx < rr * TS + numcols - 8; indx++, indxb++) {
+                        cfadn[indx] = gauss[0] * cfablur[indxb];
 
                         for (int i = 1; i < 5; i++) {
-                            cfadn[indx] += gauss[i] * (cfablur[indx - 2 * i] + cfablur[indx + 2 * i]);
+                            cfadn[indx] += gauss[i] * (cfablur[indxb - 2 * i] + cfablur[indxb + 2 * i]);
                         }
 
                         cfadiff[indx] = cfain[indx] - cfadn[indx]; // hipass cfa data
@@ -183,14 +182,14 @@ void RawImageSource::CLASS cfa_linedn(float noise)
                             }
 
                         //horizontal lines
-                        if (noisevarm4 > (linehvar[0] + linehvar[1])) { //horizontal lines
+                        if (horizontal && noisevarm4 > (linehvar[0] + linehvar[1])) { //horizontal lines
                             for (int i = 1; i < 8; i++) {
                                 dctblock[0][0][i] *= 0.5f * (noisefactor[0][i][1] + noisefactor[1][i][1]); //or should we use MIN???
                                 dctblock[1][0][i] *= 0.5f * (noisefactor[0][i][1] + noisefactor[1][i][1]); //or should we use MIN???
                             }
                         }
 
-                        if (noisevarm4 > (linehvar[2] + linehvar[3])) { //horizontal lines
+                        if (horizontal && noisevarm4 > (linehvar[2] + linehvar[3])) { //horizontal lines
                             for (int i = 1; i < 8; i++) {
                                 dctblock[2][0][i] *= 0.5f * (noisefactor[2][i][1] + noisefactor[3][i][1]); //or should we use MIN???
                                 dctblock[3][0][i] *= 0.5f * (noisefactor[2][i][1] + noisefactor[3][i][1]); //or should we use MIN???
@@ -198,14 +197,14 @@ void RawImageSource::CLASS cfa_linedn(float noise)
                         }
 
                         //vertical lines
-                        if (noisevarm4 > (linevvar[0] + linevvar[2])) { //vertical lines
+                        if (vertical && noisevarm4 > (linevvar[0] + linevvar[2])) { //vertical lines
                             for (int i = 1; i < 8; i++) {
                                 dctblock[0][i][0] *= 0.5f * (noisefactor[0][i][0] + noisefactor[2][i][0]); //or should we use MIN???
                                 dctblock[2][i][0] *= 0.5f * (noisefactor[0][i][0] + noisefactor[2][i][0]); //or should we use MIN???
                             }
                         }
 
-                        if (noisevarm4 > (linevvar[1] + linevvar[3])) { //vertical lines
+                        if (vertical && noisevarm4 > (linevvar[1] + linevvar[3])) { //vertical lines
                             for (int i = 1; i < 8; i++) {
                                 dctblock[1][i][0] *= 0.5f * (noisefactor[1][i][0] + noisefactor[3][i][0]); //or should we use MIN???
                                 dctblock[3][i][0] *= 0.5f * (noisefactor[1][i][0] + noisefactor[3][i][0]); //or should we use MIN???
@@ -252,12 +251,17 @@ void RawImageSource::CLASS cfa_linedn(float noise)
         free(cfain);
 
 // copy temporary buffer back to image matrix
-        #pragma omp for
+        #pragma omp for schedule(dynamic,16)
 
-        for(int i = 0; i < height; i++)
-            for(int j = 0; j < width; j++) {
-                rawData[i][j] = RawDataTmp[i * width + j];
+        for(int i = 0; i < height; i++) {
+            float f = rowblender(i);
+            if (f > 0.f) {
+                float f2 = 1.f - f;
+                for(int j = 0; j < width; j++) {
+                    rawData[i][j] = f * RawDataTmp[i * width + j] + f2 * rawData[i][j];
+                }
             }
+        }
 
     } // end of parallel processing
 
@@ -318,14 +322,14 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 /* Cn_kI = sqrt(2.0/n) * sin(pi/2*k/n) */
 /* Wn_kR = cos(pi/2*k/n) */
 /* Wn_kI = sin(pi/2*k/n) */
-#define C8_1R   0.49039264020161522456
-#define C8_1I   0.09754516100806413392
-#define C8_2R   0.46193976625564337806
-#define C8_2I   0.19134171618254488586
-#define C8_3R   0.41573480615127261854
-#define C8_3I   0.27778511650980111237
-#define C8_4R   0.35355339059327376220
-#define W8_4R   0.70710678118654752440
+#define C8_1R   0.49039264020161522456f
+#define C8_1I   0.09754516100806413392f
+#define C8_2R   0.46193976625564337806f
+#define C8_2I   0.19134171618254488586f
+#define C8_3R   0.41573480615127261854f
+#define C8_3I   0.27778511650980111237f
+#define C8_4R   0.35355339059327376220f
+#define W8_4R   0.70710678118654752440f
 
 
 void RawImageSource::ddct8x8s(int isgn, float a[8][8])

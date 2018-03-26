@@ -1399,6 +1399,13 @@ struct RAWParams {
         double black3;
         bool twogreen;
         int linenoise;
+        enum class LineNoiseDirection {
+            HORIZONTAL = 1,
+            VERTICAL,
+            BOTH,
+            PDAF_LINES = 5
+        };
+        LineNoiseDirection linenoiseDirection;
         int greenthresh;
         int dcb_iterations;
         int lmmse_iterations;
@@ -1434,6 +1441,7 @@ struct RAWParams {
         bool pixelShiftNonGreenCross2;
         bool pixelShiftNonGreenAmaze;
         bool dcb_enhance;
+        bool pdafLinesFilter;
 
         BayerSensor();
 

@@ -284,7 +284,7 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
         dialog.add_shortcut_folder(imagePath);
     } catch (Glib::Error&) {}
 
-    //Add response buttons the the dialog:
+    //Add response buttons to the dialog:
     dialog.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
     dialog.add_button(M("GENERAL_SAVE"), Gtk::RESPONSE_OK);
 
@@ -457,7 +457,7 @@ void ProfilePanel::load_clicked (GdkEventButton* event)
         dialog.add_shortcut_folder(imagePath);
     } catch (Glib::Error&) {}
 
-    //Add response buttons the the dialog:
+    //Add response buttons to the dialog:
     dialog.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
     dialog.add_button(M("GENERAL_OPEN"), Gtk::RESPONSE_OK);
 

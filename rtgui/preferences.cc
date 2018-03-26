@@ -1537,7 +1537,7 @@ Gtk::Widget* Preferences::getSoundPanel()
     txtSndLngEditProcDone = Gtk::manage(new Gtk::Entry());
     pSndLngEditProcDone->pack_start(*txtSndLngEditProcDone, Gtk::PACK_EXPAND_WIDGET, 4);
 
-    Gtk::Label* lSndLngEditProcDoneSecs = Gtk::manage(new Gtk::Label(M("PREFERENCES_SND_TRESHOLDSECS") + Glib::ustring(":")));
+    Gtk::Label* lSndLngEditProcDoneSecs = Gtk::manage (new Gtk::Label (M ("PREFERENCES_SND_THRESHOLDSECS") + Glib::ustring (":")));
     pSndLngEditProcDone->pack_start(*lSndLngEditProcDoneSecs, Gtk::PACK_SHRINK, 12);
 
     spbSndLngEditProcDoneSecs = Gtk::manage(new Gtk::SpinButton());
@@ -2230,7 +2230,7 @@ void Preferences::selectStartupDir()
     Gtk::FileChooserDialog dialog(getToplevelWindow(this), M("PREFERENCES_DIRSELECTDLG"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
 //    dialog.set_transient_for(*this);
 
-    //Add response buttons the the dialog:
+    //Add response buttons to the dialog:
     dialog.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
     dialog.add_button(M("GENERAL_OPEN"), Gtk::RESPONSE_OK);
 

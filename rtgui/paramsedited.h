@@ -882,6 +882,8 @@ public:
         //bool allEnhance;
         bool greenEq;
         bool linenoise;
+        bool linenoiseDirection;
+        bool pdafLinesFilter;
 
         bool isUnchanged() const;
     };

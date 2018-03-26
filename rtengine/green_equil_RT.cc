@@ -89,7 +89,7 @@ void RawImageSource::green_equilibrate_global(array2D<float> &rawData)
 }
 
 //void green_equilibrate()//for dcraw implementation
-void RawImageSource::green_equilibrate(float thresh, array2D<float> &rawData)
+void RawImageSource::green_equilibrate(const GreenEqulibrateThreshold &thresh, array2D<float> &rawData)
 {
     // thresh = threshold for performing green equilibration; max percentage difference of G1 vs G2
     // G1-G2 differences larger than this will be assumed to be Nyquist texture, and left untouched
@@ -119,7 +119,7 @@ void RawImageSource::green_equilibrate(float thresh, array2D<float> &rawData)
     }
 
     constexpr float eps = 1.f; //tolerance to avoid dividing by zero
-    const float thresh6 = 6 * thresh;
+    // const float thresh6 = 6 * thresh;
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     // Fill G interpolated values with border interpolation and input values
@@ -136,8 +136,8 @@ void RawImageSource::green_equilibrate(float thresh, array2D<float> &rawData)
 #ifdef __SSE2__
         vfloat zd5v = F2V(0.5f);
         vfloat onev = F2V(1.f);
-        vfloat threshv = F2V(thresh);
-        vfloat thresh6v = F2V(thresh6);
+        // vfloat threshv = F2V(thresh);
+        // vfloat thresh6v = F2V(thresh6);
         vfloat epsv = F2V(eps);
 #endif
 #ifdef _OPENMP
@@ -165,7 +165,13 @@ void RawImageSource::green_equilibrate(float thresh, array2D<float> &rawData)
                 vfloat c1 = (vabsf(o1_1 - o1_2) + vabsf(o1_1 - o1_3) + vabsf(o1_1 - o1_4) + vabsf(o1_2 - o1_3) + vabsf(o1_3 - o1_4) + vabsf(o1_2 - o1_4));
                 vfloat c2 = (vabsf(o2_1 - o2_2) + vabsf(o2_1 - o2_3) + vabsf(o2_1 - o2_4) + vabsf(o2_2 - o2_3) + vabsf(o2_3 - o2_4) + vabsf(o2_2 - o2_4));
 
-                vmask mask1 = vmaskf_lt(c1 + c2, thresh6v * vabsf(d1 - d2));
+                vfloat tfv;
+                for (int k = 0; k < 4; ++k) {
+                    tfv[k] = thresh(rr, cc + 2 * k);
+                }
+                vfloat tf6v = F2V(6.f) * tfv;
+
+                vmask mask1 = vmaskf_lt(c1 + c2, tf6v * vabsf(d1 - d2));
 
                 if (_mm_movemask_ps((vfloat)mask1)) {  // if for any of the 4 pixels the condition is true, do the maths for all 4 pixels and mask the unused out at the end
                     //pixel interpolation
@@ -188,7 +194,7 @@ void RawImageSource::green_equilibrate(float thresh, array2D<float> &rawData)
 
                     vfloat ginterp = (gse * wtse + gnw * wtnw + gne * wtne + gsw * wtsw) / (wtse + wtnw + wtne + wtsw);
 
-                    vfloat val = vself(vmaskf_lt(ginterp - gin, threshv * (ginterp + gin)), zd5v * (ginterp + gin), gin);
+                    vfloat val = vself(vmaskf_lt(ginterp - gin, tfv * (ginterp + gin)), zd5v * (ginterp + gin), gin);
                     val = vself(mask1, val, gin);
                     STC2VFU(rawData[rr][cc], val);
                 }
@@ -213,7 +219,9 @@ void RawImageSource::green_equilibrate(float thresh, array2D<float> &rawData)
                 float c1 = (fabs(o1_1 - o1_2) + fabs(o1_1 - o1_3) + fabs(o1_1 - o1_4) + fabs(o1_2 - o1_3) + fabs(o1_3 - o1_4) + fabs(o1_2 - o1_4));
                 float c2 = (fabs(o2_1 - o2_2) + fabs(o2_1 - o2_3) + fabs(o2_1 - o2_4) + fabs(o2_2 - o2_3) + fabs(o2_3 - o2_4) + fabs(o2_2 - o2_4));
 
-                if (c1 + c2 < thresh6 * fabs(d1 - d2)) {
+                float tf = thresh(rr, cc);
+
+                if (c1 + c2 < 6 * tf * fabs(d1 - d2)) {
                     //pixel interpolation
                     float gin = cfa[rr][cc >> 1];
 
@@ -234,7 +242,7 @@ void RawImageSource::green_equilibrate(float thresh, array2D<float> &rawData)
 
                     float ginterp = (gse * wtse + gnw * wtnw + gne * wtne + gsw * wtsw) / (wtse + wtnw + wtne + wtsw);
 
-                    if (ginterp - gin < thresh * (ginterp + gin)) {
+                    if (ginterp - gin < tf * (ginterp + gin)) {
                         rawData[rr][cc] = 0.5f * (ginterp + gin);
                     }
                 }
