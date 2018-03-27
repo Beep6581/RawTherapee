@@ -69,7 +69,7 @@ public:
     void init(const Glib::ustring& usrICCDir, const Glib::ustring& stdICCDir, bool loadAll);
 
     cmsHPROFILE      workingSpace(const Glib::ustring& name) const;
-    cmsHPROFILE      workingSpaceGamma(const Glib::ustring& name) const;
+    // cmsHPROFILE      workingSpaceGamma(const Glib::ustring& name) const;
     TMatrix          workingSpaceMatrix(const Glib::ustring& name) const;
     TMatrix          workingSpaceInverseMatrix(const Glib::ustring& name) const;
 
@@ -95,7 +95,7 @@ public:
     std::uint8_t     getOutputIntents(const Glib::ustring& name) const;
     std::uint8_t     getProofIntents(const Glib::ustring& name) const;
 
-    static std::vector<Glib::ustring> getWorkingProfiles();
+    /*static*/ std::vector<Glib::ustring> getWorkingProfiles();
     static std::vector<Glib::ustring> getGamma();
 
     static void        getGammaArray(const procparams::ColorManagementParams& icm, GammaValues& ga);

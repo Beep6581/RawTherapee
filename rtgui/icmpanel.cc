@@ -160,7 +160,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     wnames = Gtk::manage (new MyComboBoxText ());
     wVBox->pack_start (*wnames, Gtk::PACK_SHRINK);
 
-    std::vector<Glib::ustring> wpnames = rtengine::ICCStore::getWorkingProfiles();
+    std::vector<Glib::ustring> wpnames = rtengine::ICCStore::getInstance()->getWorkingProfiles();
 
     for (size_t i = 0; i < wpnames.size(); i++) {
         wnames->append (wpnames[i]);
