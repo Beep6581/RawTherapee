@@ -90,6 +90,13 @@ public:
 
 
     Glib::ustring   lensfunDbDirectory; ///< The directory containing the lensfun database. If empty, the system defaults will be used (as described in http://lensfun.sourceforge.net/manual/dbsearch.html)
+
+    enum class ThumbnailInspectorMode {
+        JPEG,
+        RAW,
+        RAW_IF_NOT_JPEG_FULLSIZE
+    };
+    ThumbnailInspectorMode thumbnail_inspector_mode;
     
     /** Creates a new instance of Settings.
       * @return a pointer to the new Settings instance. */

@@ -210,6 +210,23 @@ void Inspector::switchImage (const Glib::ustring &fullPath)
         return;
     }
 
+    if (delayconn.connected()) {
+        delayconn.disconnect();
+    }
+
+    next_image_path = fullPath;
+    if (!options.inspectorDelay) {
+        doSwitchImage();
+    } else {
+        delayconn = Glib::signal_timeout().connect(sigc::mem_fun(*this, &Inspector::doSwitchImage), options.inspectorDelay);
+    }
+}
+
+
+bool Inspector::doSwitchImage()
+{
+    Glib::ustring fullPath = next_image_path;
+    
     // we first check the size of the list, it may have been changed in Preference
     if (images.size() > size_t(options.maxInspectorBuffers)) {
         // deleting the last entries
@@ -225,7 +242,6 @@ void Inspector::switchImage (const Glib::ustring &fullPath)
     if (fullPath.empty()) {
         currImage = nullptr;
         queue_draw();
-        return;
     } else {
         bool found = false;
 
@@ -264,6 +280,8 @@ void Inspector::switchImage (const Glib::ustring &fullPath)
             }
         }
     }
+
+    return true;
 }
 
 void Inspector::deleteBuffers ()
