@@ -1146,7 +1146,7 @@ PREFERENCES_SMA;Small (250x287)
 PREFERENCES_SND_BATCHQUEUEDONE;Queue processing done
 PREFERENCES_SND_HELP;Enter a full file path to set a sound, or leave blank for no sound.\nFor system sounds on Windows use "SystemDefault", "SystemAsterisk" etc., and on Linux use "complete", "window-attention" etc.
 PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
-PREFERENCES_SND_TRESHOLDSECS;After seconds
+PREFERENCES_SND_THRESHOLDSECS;After seconds
 PREFERENCES_STARTUPIMDIR;Image Directory at Startup
 PREFERENCES_STDAUT;Standard
 PREFERENCES_TAB_BROWSER;File Browser
@@ -1157,6 +1157,10 @@ PREFERENCES_TAB_IMPROC;Image Processing
 PREFERENCES_TAB_PERFORMANCE;Performance & Quality
 PREFERENCES_TAB_SOUND;Sounds
 PREFERENCES_THEME;Theme
+PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
+PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
+PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering 
+PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
 PREFERENCES_TIMAX;High
 PREFERENCES_TINB;Number of tiles
 PREFERENCES_TISTD;Standard

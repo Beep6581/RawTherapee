@@ -48,8 +48,13 @@ private:
     double zoom;
     bool active;
 
+    sigc::connection delayconn;
+    Glib::ustring next_image_path;
+
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
     void deleteBuffers();
+
+    bool doSwitchImage();
 
 public:
     Inspector();

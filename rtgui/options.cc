@@ -426,6 +426,7 @@ void Options::setDefaults ()
 #endif
     filledProfile = false;
     maxInspectorBuffers = 2; //  a rather conservative value for low specced systems...
+    inspectorDelay = 0;
     serializeTiffRead = true;
 
     FileBrowserToolbarSingleRow = false;
@@ -592,6 +593,8 @@ void Options::setDefaults ()
     rtSettings.lensfunDbDirectory = ""; // set also in main.cc and main-cli.cc
     cropGuides = CROP_GUIDE_FULL;
     cropAutoFit = false;
+
+    rtSettings.thumbnail_inspector_mode = rtengine::Settings::ThumbnailInspectorMode::JPEG;
 }
 
 Options* Options::copyFrom (Options* other)
@@ -1054,6 +1057,10 @@ void Options::readFromFile (Glib::ustring fname)
                     maxInspectorBuffers = keyFile.get_integer ("Performance", "MaxInspectorBuffers");
                 }
 
+                if (keyFile.has_key ("Performance", "InspectorDelay")) {
+                    inspectorDelay = keyFile.get_integer("Performance", "InspectorDelay");
+                }
+
                 if (keyFile.has_key ("Performance", "PreviewDemosaicFromSidecar")) {
                     prevdemo = (prevdemo_t)keyFile.get_integer ("Performance", "PreviewDemosaicFromSidecar");
                 }
@@ -1064,6 +1071,10 @@ void Options::readFromFile (Glib::ustring fname)
 
                 if (keyFile.has_key ("Performance", "SerializeTiffRead")) {
                     serializeTiffRead = keyFile.get_boolean ("Performance", "SerializeTiffRead");
+                }
+
+                if (keyFile.has_key("Performance", "ThumbnailInspectorMode")) {
+                    rtSettings.thumbnail_inspector_mode = static_cast<rtengine::Settings::ThumbnailInspectorMode>(keyFile.get_integer("Performance", "ThumbnailInspectorMode"));
                 }
             }
 
@@ -1841,9 +1852,11 @@ void Options::saveToFile (Glib::ustring fname)
         keyFile.set_integer ("Performance", "SIMPLNRAUT", rtSettings.leveldnautsimpl);
         keyFile.set_integer ("Performance", "ClutCacheSize", clutCacheSize);
         keyFile.set_integer ("Performance", "MaxInspectorBuffers", maxInspectorBuffers);
+        keyFile.set_integer ("Performance", "InspectorDelay", inspectorDelay);
         keyFile.set_integer ("Performance", "PreviewDemosaicFromSidecar", prevdemo);
         keyFile.set_boolean ("Performance", "Daubechies", rtSettings.daubech);
         keyFile.set_boolean ("Performance", "SerializeTiffRead", serializeTiffRead);
+        keyFile.set_integer("Performance", "ThumbnailInspectorMode", int(rtSettings.thumbnail_inspector_mode));
 
         keyFile.set_string  ("Output", "Format", saveFormat.format);
         keyFile.set_integer ("Output", "JpegQuality", saveFormat.jpegQuality);

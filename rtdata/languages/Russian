@@ -804,7 +804,7 @@ PREFERENCES_SINGLETABVERTAB;Одна вкладка редактирования
 PREFERENCES_SND_BATCHQUEUEDONE;Пакетная обработка завершена
 PREFERENCES_SND_HELP;Введите имя файла, либо оставьте поле пустым (без звука). \nДля использования системных звуков в Windows можно использовать "SystemDefault", "SystemAsterisk", в Linux "complete", "window-attention" и т.д.
 PREFERENCES_SND_LNGEDITPROCDONE;Обработка в редакторе завершена
-PREFERENCES_SND_TRESHOLDSECS;после, секунд
+PREFERENCES_SND_THRESHOLDSECS;после, секунд
 PREFERENCES_STARTUPIMDIR;Каталог изображений при запуске
 PREFERENCES_TAB_BROWSER;Файловый браузер
 PREFERENCES_TAB_COLORMGR;Управление цветом
@@ -1651,6 +1651,8 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !HISTORY_MSG_486;Lens Correction - Camera
 !HISTORY_MSG_487;Lens Correction - Lens
 !HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
+!HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
+!HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
 !IPTCPANEL_COPYRIGHT;Copyright notice
@@ -1913,6 +1915,13 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_PREPROCESS_DEADPIXFILT_TOOLTIP;Tries to suppress dead pixels.
 !TP_PREPROCESS_HOTPIXFILT;Hot pixel filter
 !TP_PREPROCESS_HOTPIXFILT_TOOLTIP;Tries to suppress hot pixels.
+!TP_PREPROCESS_LINEDENOISE_DIRECTION;Direction
+!TP_PREPROCESS_LINEDENOISE_DIRECTION_BOTH;Both
+!TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL;Horizontal
+!TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;Horizontal only on PDAF rows
+!TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertical
+!TP_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
+!TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.
 !TP_PRSHARPENING_LABEL;Post-Resize Sharpening
 !TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
 !TP_RAWCACORR_CASTR;Strength

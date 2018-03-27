@@ -5408,6 +5408,13 @@ void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, LUTf & cur
 void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW, LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve, LUTf & lhskcurve, LUTf & clcurve, LUTf & curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histLCurve)
 {
     if (!params->labCurve.enabled) {
+        if (params->blackwhite.enabled && !params->colorToning.enabled) {
+            for (int i = 0; i < lnew->H; ++i) {
+                for (int j = 0; j < lnew->W; ++j) {
+                    lnew->a[i][j] = lnew->b[i][j] = 0.f;
+                }
+            }
+        }
         return;
     }
     

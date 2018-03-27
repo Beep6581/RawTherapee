@@ -1518,7 +1518,7 @@ void RawImageSource::vflip (Imagefloat* image)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int RawImageSource::load (const Glib::ustring &fname)
+int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
 {
 
     MyTime t1, t2;
@@ -1535,7 +1535,7 @@ int RawImageSource::load (const Glib::ustring &fname)
     if (errCode) {
         return errCode;
     }
-    numFrames = ri->getFrameCount();
+    numFrames = firstFrameOnly ? 1 : ri->getFrameCount();
 
     errCode = 0;
 
@@ -3997,7 +3997,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
 
             }
     } else {
-        const bool working_space_is_prophoto = (cmp.working == "ProPhoto");
+        bool working_space_is_prophoto = (cmp.working == "ProPhoto");
 
         // use supplied input profile
 
@@ -4066,6 +4066,33 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
         cmsHPROFILE prophoto = ICCStore::getInstance()->workingSpace("ProPhoto"); // We always use Prophoto to apply the ICC profile to minimize problems with clipping in LUT conversion.
         bool transform_via_pcs_lab = false;
         bool separate_pcs_lab_highlights = false;
+
+        // check if the working space is fully contained in prophoto
+        if (!working_space_is_prophoto) {
+            TMatrix toxyz = ICCStore::getInstance()->workingSpaceMatrix(cmp.working);
+            TMatrix torgb = ICCStore::getInstance()->workingSpaceInverseMatrix("ProPhoto");
+            float rgb[3] = {0.f, 0.f, 0.f};
+            for (int i = 0; i < 2 && !working_space_is_prophoto; ++i) {
+                rgb[i] = 1.f;
+                float x, y, z;
+
+                Color::rgbxyz(rgb[0], rgb[1], rgb[2], x, y, z, toxyz);
+                Color::xyz2rgb(x, y, z, rgb[0], rgb[1], rgb[2], torgb);
+
+                for (int j = 0; j < 2; ++j) {
+                    if (rgb[j] < 0.f || rgb[j] > 1.f) {
+                        working_space_is_prophoto = true;
+                        prophoto = ICCStore::getInstance()->workingSpace(cmp.working);
+                        if (settings->verbose) {
+                            std::cout << "colorSpaceConversion_: converting directly to " << cmp.working << " instead of passing through ProPhoto" << std::endl;
+                        }
+                        break;
+                    }
+                    rgb[j] = 0.f;
+                }
+            }
+        }
+        
         lcmsMutex->lock ();
 
         switch (camera_icc_type) {

@@ -219,10 +219,17 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
         RawMetaDataLocation rml;
         eSensorType sensor_type;
         int w, h;
-        std::unique_ptr<Thumbnail> thumb(Thumbnail::loadQuickFromRaw(getFileName(), rml, sensor_type, w, h, 1, false, true));
+        std::unique_ptr<Thumbnail> thumb(Thumbnail::loadQuickFromRaw(getFileName(), rml, sensor_type, w, h, 1, false, true, true));
         if (!thumb) {
             if (settings->verbose) {
                 std::cout << "histogram matching: no thumbnail found, generating a neutral curve" << std::endl;
+            }
+            histMatchingCache = outCurve;
+            histMatchingParams = cp;
+            return;
+        } else if (w * 10 < fw) {
+            if (settings->verbose) {
+                std::cout << "histogram matching: the embedded thumbnail is too small: " << w << "x" << h << std::endl;
             }
             histMatchingCache = outCurve;
             histMatchingParams = cp;
