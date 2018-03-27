@@ -227,6 +227,13 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
             histMatchingCache = outCurve;
             histMatchingParams = cp;
             return;
+        } else if (w * 10 < fw) {
+            if (settings->verbose) {
+                std::cout << "histogram matching: the embedded thumbnail is too small: " << w << "x" << h << std::endl;
+            }
+            histMatchingCache = outCurve;
+            histMatchingParams = cp;
+            return;
         }
         skip = LIM(skip * fh / h, 6, 10); // adjust the skip factor -- the larger the thumbnail, the less we should skip to get a good match
         source.reset(thumb->quickProcessImage(neutral, fh / skip, TI_Nearest));
