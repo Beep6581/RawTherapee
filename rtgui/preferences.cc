@@ -657,7 +657,19 @@ Gtk::Widget* Preferences::getPerformancePanel ()
     maxInspectorBuffersSB->set_range (1, 12); // ... we have to set a limit, 12 seem to be enough even for systems with tons of RAM
     maxIBuffersHB->pack_start (*maxIBufferLbl, Gtk::PACK_SHRINK, 0);
     maxIBuffersHB->pack_end (*maxInspectorBuffersSB, Gtk::PACK_SHRINK, 0);
-    finspect->add (*maxIBuffersHB);
+
+    Gtk::VBox *inspectorvb = Gtk::manage(new Gtk::VBox());
+    inspectorvb->add(*maxIBuffersHB);
+
+    Gtk::HBox *insphb = Gtk::manage(new Gtk::HBox());
+    thumbnailInspectorMode = Gtk::manage(new Gtk::ComboBoxText());
+    thumbnailInspectorMode->append(M("PREFERENCES_THUMBNAIL_INSPECTOR_JPEG"));
+    thumbnailInspectorMode->append(M("PREFERENCES_THUMBNAIL_INSPECTOR_RAW"));
+    thumbnailInspectorMode->append(M("PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE"));
+    insphb->pack_start(*Gtk::manage(new Gtk::Label(M("PREFERENCES_THUMBNAIL_INSPECTOR_MODE") + ": ")), Gtk::PACK_SHRINK, 4);
+    insphb->pack_start(*thumbnailInspectorMode);
+    inspectorvb->pack_start(*insphb);
+    finspect->add (*inspectorvb);
     mainContainer->pack_start (*finspect, Gtk::PACK_SHRINK, 4);
 
     Gtk::Frame* fdenoise = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_NOISE")) );
@@ -1853,6 +1865,7 @@ void Preferences::storePreferences ()
     moptions.rgbDenoiseThreadLimit = rgbDenoiseTreadLimitSB->get_value_as_int();
     moptions.clutCacheSize = clutCacheSizeSB->get_value_as_int();
     moptions.maxInspectorBuffers = maxInspectorBuffersSB->get_value_as_int();
+    moptions.rtSettings.thumbnail_inspector_mode = static_cast<rtengine::Settings::ThumbnailInspectorMode>(thumbnailInspectorMode->get_active_row_number());
 
 // Sounds only on Windows and Linux
 #if defined(WIN32) || defined(__linux__)
@@ -2072,6 +2085,7 @@ void Preferences::fillPreferences ()
     rgbDenoiseTreadLimitSB->set_value (moptions.rgbDenoiseThreadLimit);
     clutCacheSizeSB->set_value (moptions.clutCacheSize);
     maxInspectorBuffersSB->set_value (moptions.maxInspectorBuffers);
+    thumbnailInspectorMode->set_active(int(moptions.rtSettings.thumbnail_inspector_mode));
 
     darkFrameDir->set_current_folder ( moptions.rtSettings.darkFramesPath );
     darkFrameChanged ();
