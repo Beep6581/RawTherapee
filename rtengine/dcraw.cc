@@ -6386,6 +6386,26 @@ guess_cfa_pc:
 	  ((int *)mask)[i] = getint(type);
 	black = 0;
 	break;
+      case 51008:           /* OpcodeList1 */
+        {
+            unsigned oldOrder = order;
+            order = 0x4d4d; // always big endian per definition in https://www.adobe.com/content/dam/acom/en/products/photoshop/pdfs/dng_spec_1.4.0.0.pdf chapter 7
+            unsigned ntags = get4(); // read the number of opcodes
+            while (ntags--) {
+              unsigned opcode = get4();
+              fseek (ifp, 8, SEEK_CUR); // skip 8 bytes as they don't interest us currently
+              if (opcode == 4) { // FixBadPixelsConstant
+                fseek (ifp, 4, SEEK_CUR); // skip 4 bytes as we know that the opcode 4 takes 4 byte
+                if(get4() == 0) { // if raw 0 values should be treated as bad pixels, set zero_is_bad to true (1). That's the only value currently supported by rt
+                    zero_is_bad = 1;
+                }
+              } else {
+                fseek (ifp, get4(), SEEK_CUR);
+              }
+            }
+            order = oldOrder;
+          break;
+        }
       case 51009:			/* OpcodeList2 */
 	meta_offset = ftell(ifp);
 	break;
