@@ -1827,6 +1827,14 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
     const AdobeToneCurve& adobeTC = static_cast<const AdobeToneCurve&>((const ToneCurve&) * this);
 
     for (size_t i = start; i < end; ++i) {
+        const bool oog_r = OOG(rc[i]);
+        const bool oog_g = OOG(gc[i]);
+        const bool oog_b = OOG(bc[i]);
+
+        if (oog_r && oog_g && oog_b) {
+            continue;
+        }
+        
         float r = CLIP(rc[i]);
         float g = CLIP(gc[i]);
         float b = CLIP(bc[i]);
@@ -1848,12 +1856,18 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
 
         if (ar >= 65535.f && ag >= 65535.f && ab >= 65535.f) {
             // clip fast path, will also avoid strange colours of clipped highlights
-            rc[i] = gc[i] = bc[i] = 65535.f;
+            //rc[i] = gc[i] = bc[i] = 65535.f;
+            if (!oog_r) rc[i] = 65535.f;
+            if (!oog_g) gc[i] = 65535.f;
+            if (!oog_b) bc[i] = 65535.f;
             continue;
         }
 
         if (ar <= 0.f && ag <= 0.f && ab <= 0.f) {
-            rc[i] = gc[i] = bc[i] = 0;
+            //rc[i] = gc[i] = bc[i] = 0;
+            if (!oog_r) rc[i] = 0.f;
+            if (!oog_g) gc[i] = 0.f;
+            if (!oog_b) bc[i] = 0.f;
             continue;
         }
 
@@ -1893,9 +1907,9 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
                 g = newg;
                 b = newb;
             }
-            rc[i] = r;
-            gc[i] = g;
-            bc[i] = b;
+            if (!oog_r) rc[i] = r;
+            if (!oog_g) gc[i] = g;
+            if (!oog_b) bc[i] = b;
 
             continue;
         }
@@ -2003,9 +2017,9 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
                 b = newb;
             }
 
-            rc[i] = r;
-            gc[i] = g;
-            bc[i] = b;
+            if (!oog_r) rc[i] = r;
+            if (!oog_g) gc[i] = g;
+            if (!oog_b) bc[i] = b;
 
             continue;
         }
@@ -2066,9 +2080,9 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
             g = newg;
             b = newb;
         }
-        rc[i] = r;
-        gc[i] = g;
-        bc[i] = b;
+        if (!oog_r) rc[i] = r;
+        if (!oog_g) gc[i] = g;
+        if (!oog_b) bc[i] = b;
     }
 }
 float PerceptualToneCurve::cf_range[2];

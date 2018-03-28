@@ -1104,7 +1104,7 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
     }
 
     float oldMedian;
-    const float percentile = float(LIM(1, params->fattal.anchor, 100)) / 100.f;
+    const float percentile = float(LIM(params->fattal.anchor, 1, 100)) / 100.f;
     findMinMaxPercentile (Yr.data(), Yr.getRows() * Yr.getCols(), percentile, oldMedian, percentile, oldMedian, multiThread);
     // median filter on the deep shadows, to avoid boosting noise
     // because w2 >= w and h2 >= h, we can use the L buffer as temporary buffer for Median_Denoise()
@@ -1159,15 +1159,15 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
         for (int x = 0; x < w; x++) {
             int xx = x * wr + 1;
 
-            float Y = std::max(Yr (x, y), epsilon);
-            float l = std::max (L (xx, yy), epsilon) * (scale / Y);
-            rgb->r (y, x) = std::max (rgb->r (y, x), 0.f) * l;
-            rgb->g (y, x) = std::max (rgb->g (y, x), 0.f) * l;
-            rgb->b (y, x) = std::max (rgb->b (y, x), 0.f) * l;
+            float Y = std::max(Yr(x, y), epsilon);
+            float l = std::max(L(xx, yy), epsilon) * (scale / Y);
+            rgb->r(y, x) *= l;
+            rgb->g(y, x) *= l;
+            rgb->b(y, x) *= l;
 
-            assert (std::isfinite (rgb->r (y, x)));
-            assert (std::isfinite (rgb->g (y, x)));
-            assert (std::isfinite (rgb->b (y, x)));
+            assert(std::isfinite(rgb->r(y, x)));
+            assert(std::isfinite(rgb->g(y, x)));
+            assert(std::isfinite(rgb->b(y, x)));
         }
     }
 }

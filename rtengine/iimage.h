@@ -119,7 +119,7 @@ inline void ImageDatas::convertTo(unsigned char src, unsigned short& dst) const
 template<>
 inline void ImageDatas::convertTo(float src, unsigned char& dst) const
 {
-    dst = uint16ToUint8Rounded(src);
+    dst = uint16ToUint8Rounded(CLIP(src));
 }
 template<>
 inline void ImageDatas::convertTo(unsigned char src, float& dst) const
