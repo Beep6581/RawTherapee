@@ -242,7 +242,7 @@ void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst, int srcwidt
 
     for (int i = 0; i < srcheight; i++)
         for (int j = 0; j < srcwidth; j++) {
-            dst[i][j] = CLIP(buffer[i][j]);  // TODO: Really a clip necessary?
+            dst[i][j] = /*CLIP*/(buffer[i][j]);  // TODO: Really a clip necessary?
         }
 
 }
@@ -493,7 +493,7 @@ void ImProcFunctions :: dirpyr_equalizercam(CieImage *ncie, float ** src, float 
         for (int i = 0; i < srcheight; i++)
             for (int j = 0; j < srcwidth; j++) {
                 if (ncie->J_p[i][j] > 8.f && ncie->J_p[i][j] < 92.f) {
-                    dst[i][j] = CLIP(buffer[i][j]);      // TODO: Really a clip necessary?
+                    dst[i][j] = /*CLIP*/( buffer[i][j] );    // TODO: Really a clip necessary?
                 } else {
                     dst[i][j] = src[i][j];
                 }
@@ -501,7 +501,7 @@ void ImProcFunctions :: dirpyr_equalizercam(CieImage *ncie, float ** src, float 
     } else {
         for (int i = 0; i < srcheight; i++)
             for (int j = 0; j < srcwidth; j++) {
-                dst[i][j] = CLIP(buffer[i][j]);    // TODO: Really a clip necessary?
+                dst[i][j] = /*CLIP*/( buffer[i][j] );  // TODO: Really a clip necessary?
             }
     }
 }

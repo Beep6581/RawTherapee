@@ -736,7 +736,7 @@ void Color::rgb2hsv(float r, float g, float b, float &h, float &s, float &v)
     if (del_Max < 0.00001 && del_Max > -0.00001) { // no fabs, slow!
         s = 0.f;
     } else {
-        s = del_Max / var_Max;
+        s = del_Max / (var_Max == 0.0 ? 1.0 : var_Max);
 
         if (var_R == var_Max) {
             h = (var_G - var_B) / del_Max;
@@ -1766,15 +1766,41 @@ void Color::Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, vfloat &
 }
 #endif // __SSE2__
 
+inline float Color::computeXYZ2Lab(float f)
+{
+    if (f < 0.f) {
+        return 327.68 * ((kappa * f / MAXVALF + 16.0) / 116.0);
+    } else if (f > 65535.f) {
+        return (327.68f * xcbrtf(f / MAXVALF));
+    } else {
+        return cachef[f];
+    }
+}
+
+
+inline float Color::computeXYZ2LabY(float f)
+{
+    if (f < 0.f) {
+        return 327.68 * (kappa * f / MAXVALF);
+    } else if (f > 65535.f) {
+        return 327.68f * (116.f * xcbrtf(f / MAXVALF) - 16.f);
+    } else {
+        return cachefy[f];
+    }
+}
+
+
 void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, const float wp[3][3], int width)
 {
 
 #ifdef __SSE2__
+    vfloat minvalfv = F2V(0.f);
     vfloat maxvalfv = F2V(MAXVALF);
     vfloat c500v = F2V(500.f);
     vfloat c200v = F2V(200.f);
 #endif
     int i = 0;
+    
 #ifdef __SSE2__
 
     for (; i < width - 3; i += 4) {
@@ -1786,18 +1812,18 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
         const vfloat zv = F2V(wp[2][0]) * rv + F2V(wp[2][1]) * gv + F2V(wp[2][2]) * bv;
 
         vmask maxMask = vmaskf_gt(vmaxf(xv, vmaxf(yv, zv)), maxvalfv);
-
-        if (_mm_movemask_ps((vfloat)maxMask)) {
+        vmask minMask = vmaskf_lt(vminf(xv, vminf(yv, zv)), minvalfv);
+        if (_mm_movemask_ps((vfloat)maxMask) || _mm_movemask_ps((vfloat)minMask)) {
             // take slower code path for all 4 pixels if one of the values is > MAXVALF. Still faster than non SSE2 version
             for (int k = 0; k < 4; ++k) {
                 float x = xv[k];
                 float y = yv[k];
                 float z = zv[k];
-                float fx = (x <= 65535.f ? cachef[x] : (327.68f * xcbrtf(x / MAXVALF)));
-                float fy = (y <= 65535.f ? cachef[y] : (327.68f * xcbrtf(y / MAXVALF)));
-                float fz = (z <= 65535.f ? cachef[z] : (327.68f * xcbrtf(z / MAXVALF)));
+                float fx = computeXYZ2Lab(x);
+                float fy = computeXYZ2Lab(y);
+                float fz = computeXYZ2Lab(z);
 
-                L[i + k] = (y <= 65535.0f ? cachefy[y] : 327.68f * (116.f * xcbrtf(y / MAXVALF) - 16.f));
+                L[i + k] = computeXYZ2LabY(y);
                 a[i + k] = (500.f * (fx - fy));
                 b[i + k] = (200.f * (fy - fz));
             }
@@ -1823,11 +1849,11 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
         float z = wp[2][0] * rv + wp[2][1] * gv + wp[2][2] * bv;
         float fx, fy, fz;
 
-        fx = (x <= 65535.0f ? cachef[x] : (327.68f * xcbrtf(x / MAXVALF)));
-        fy = (y <= 65535.0f ? cachef[y] : (327.68f * xcbrtf(y / MAXVALF)));
-        fz = (z <= 65535.0f ? cachef[z] : (327.68f * xcbrtf(z / MAXVALF)));
+        fx = computeXYZ2Lab(x);
+        fy = computeXYZ2Lab(y);
+        fz = computeXYZ2Lab(z);
 
-        L[i] = (y <= 65535.0f ? cachefy[y] : 327.68f * (116.f * xcbrtf(y / MAXVALF) - 16.f));
+        L[i] = computeXYZ2LabY(y);
         a[i] = 500.0f * (fx - fy);
         b[i] = 200.0f * (fy - fz);
     }
@@ -1841,11 +1867,11 @@ void Color::XYZ2Lab(float X, float Y, float Z, float &L, float &a, float &b)
     float y = Y;
     float fx, fy, fz;
 
-    fx = (x <= 65535.0f ? cachef[x] : (327.68f * xcbrtf(x / MAXVALF)));
-    fy = (y <= 65535.0f ? cachef[y] : (327.68f * xcbrtf(y / MAXVALF)));
-    fz = (z <= 65535.0f ? cachef[z] : (327.68f * xcbrtf(z / MAXVALF)));
+    fx = computeXYZ2Lab(x);
+    fy = computeXYZ2Lab(y);
+    fz = computeXYZ2Lab(z);
 
-    L = (y <= 65535.0f ? cachefy[y] : 327.68f * (116.f * xcbrtf(y / MAXVALF) - 16.f));
+    L = computeXYZ2LabY(y);
     a = (500.0f * (fx - fy));
     b = (200.0f * (fy - fz));
 }
@@ -1877,11 +1903,11 @@ void Color::Yuv2Lab(float Yin, float u, float v, float &L, float &a, float &b, c
 
     gamutmap(X, Y, Z, wp);
 
-    float fx = (X <= 65535.0 ? cachef[X] : (327.68 * std::cbrt(X / MAXVALF)));
-    float fy = (Y <= 65535.0 ? cachef[Y] : (327.68 * std::cbrt(Y / MAXVALF)));
-    float fz = (Z <= 65535.0 ? cachef[Z] : (327.68 * std::cbrt(Z / MAXVALF)));
+    float fx = computeXYZ2Lab(X);
+    float fy = computeXYZ2Lab(Y);
+    float fz = computeXYZ2Lab(Z);
 
-    L = (Y <= 65535.0f ? cachefy[Y] : 327.68f * (116.f * xcbrtf(Y / MAXVALF) - 16.f));
+    L = computeXYZ2LabY(Y);
     a = (500.0 * (fx - fy));
     b = (200.0 * (fy - fz));
 }

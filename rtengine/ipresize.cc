@@ -162,9 +162,9 @@ void ImProcFunctions::Lanczos (const Imagefloat* src, Imagefloat* dst, float sca
                     b += wh[k] * lb[jj];
                 }
 
-                dst->r (i, j) = CLIP (r);//static_cast<int> (r));
-                dst->g (i, j) = CLIP (g);//static_cast<int> (g));
-                dst->b (i, j) = CLIP (b);//static_cast<int> (b));
+                dst->r (i, j) = /*CLIP*/ (r);//static_cast<int> (r));
+                dst->g (i, j) = /*CLIP*/ (g);//static_cast<int> (g));
+                dst->b (i, j) = /*CLIP*/ (b);//static_cast<int> (b));
             }
         }
 

@@ -1131,11 +1131,11 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
         for (int j = 0; j < rwidth; j++) {
             float red = baseImg->r (i, j) * rmi;
-            baseImg->r (i, j) = CLIP (red);
+            baseImg->r (i, j) = /*CLIP*/ (red);
             float green = baseImg->g (i, j) * gmi;
-            baseImg->g (i, j) = CLIP (green);
+            baseImg->g (i, j) = /*CLIP*/ (green);
             float blue = baseImg->b (i, j) * bmi;
-            baseImg->b (i, j) = CLIP (blue);
+            baseImg->b (i, j) = /*CLIP*/ (blue);
 
         }
     }
@@ -1327,6 +1327,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
             }
     }
 
+    
     // luminance processing
 //  ipf.EPDToneMap(labView,0,6);
 
@@ -1397,7 +1398,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         ipf.ciecam_02float (cieView, adap, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, sk, execsharp, d, dj, yb, rtt);
         delete cieView;
     }
-
+    
     // color processing
     //ipf.colorCurve (labView, labView);
 

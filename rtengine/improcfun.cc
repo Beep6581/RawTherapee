@@ -50,11 +50,13 @@
 namespace {
 
 using namespace rtengine;
+
+
 // begin of helper function for rgbProc()
 void shadowToneCurve(const LUTf &shtonecurve, float *rtemp, float *gtemp, float *btemp, int istart, int tH, int jstart, int tW, int tileSize)
 {
 
-#ifdef __SSE2__
+#if defined( __SSE2__ ) && defined( __x86_64__ )
     vfloat cr = F2V(0.299f);
     vfloat cg = F2V(0.587f);
     vfloat cb = F2V(0.114f);
@@ -62,7 +64,7 @@ void shadowToneCurve(const LUTf &shtonecurve, float *rtemp, float *gtemp, float 
 
     for (int i = istart, ti = 0; i < tH; i++, ti++) {
         int j = jstart, tj = 0;
-#ifdef __SSE2__
+#if defined( __SSE2__ ) && defined( __x86_64__ )
 
         for (; j < tW - 3; j += 4, tj += 4) {
 
@@ -99,14 +101,14 @@ void shadowToneCurve(const LUTf &shtonecurve, float *rtemp, float *gtemp, float 
 void highlightToneCurve(const LUTf &hltonecurve, float *rtemp, float *gtemp, float *btemp, int istart, int tH, int jstart, int tW, int tileSize, float exp_scale, float comp, float hlrange)
 {
 
-#ifdef __SSE2__
+#if defined( __SSE2__ ) && defined( __x86_64__ )
     vfloat threev = F2V(3.f);
     vfloat maxvalfv = F2V(MAXVALF);
 #endif
 
     for (int i = istart, ti = 0; i < tH; i++, ti++) {
         int j = jstart, tj = 0;
-#ifdef __SSE2__
+#if defined( __SSE2__ ) && defined( __x86_64__ )
 
         for (; j < tW - 3; j += 4, tj += 4) {
 
@@ -180,8 +182,9 @@ void proPhotoBlue(float *rtemp, float *gtemp, float *btemp, int istart, int tH, 
                     float r = rtemp[ti * tileSize + tj + k];
                     float g = gtemp[ti * tileSize + tj + k];
 
-                    if (r == 0.0f || g == 0.0f) {
-                        float b = btemp[ti * tileSize + tj + k];
+                    float b = btemp[ti * tileSize + tj + k];
+                    
+                    if ((r == 0.0f || g == 0.0f) && rtengine::min(r, g, b) >= 0.f) {
                         float h, s, v;
                         Color::rgb2hsv(r, g, b, h, s, v);
                         s *= 0.99f;
@@ -196,9 +199,9 @@ void proPhotoBlue(float *rtemp, float *gtemp, float *btemp, int istart, int tH, 
         for (; j < tW; j++, tj++) {
             float r = rtemp[ti * tileSize + tj];
             float g = gtemp[ti * tileSize + tj];
+            float b = btemp[ti * tileSize + tj];
 
-            if (r == 0.0f || g == 0.0f) {
-                float b = btemp[ti * tileSize + tj];
+            if ((r == 0.0f || g == 0.0f) && rtengine::min(r, g, b) >= 0.f) {
                 float h, s, v;
                 Color::rgb2hsv(r, g, b, h, s, v);
                 s *= 0.99f;
@@ -240,9 +243,6 @@ void customToneCurve(const ToneCurve &customToneCurve, ToneCurveParams::TcMode c
 
         for (int i = istart, ti = 0; i < tH; i++, ti++) {
             for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                rtemp[ti * tileSize + tj] = CLIP<float> (rtemp[ti * tileSize + tj]);
-                gtemp[ti * tileSize + tj] = CLIP<float> (gtemp[ti * tileSize + tj]);
-                btemp[ti * tileSize + tj] = CLIP<float> (btemp[ti * tileSize + tj]);
                 userToneCurve.Apply(rtemp[ti * tileSize + tj], gtemp[ti * tileSize + tj], btemp[ti * tileSize + tj]);
             }
         }
@@ -3276,7 +3276,7 @@ filmlike_clip_rgb_tone(float *r, float *g, float *b, const float L)
     *b = b_;
 }
 
-static void
+/*static*/ void
 filmlike_clip(float *r, float *g, float *b)
 {
     // This is Adobe's hue-stable film-like curve with a diagonal, ie only used for clipping. Can probably be further optimized.
@@ -3693,6 +3693,9 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
         }
 
         float out_rgbx[4 * TS] ALIGNED16; // Line buffer for CLUT
+        float clutr[TS] ALIGNED16;
+        float clutg[TS] ALIGNED16;
+        float clutb[TS] ALIGNED16;
 
         LUTu histToneCurveThr;
 
@@ -3783,9 +3786,9 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                             filmlike_clip(&r, &g, &b);
                         }
 
-                        rtemp[ti * TS + tj] = r;
-                        gtemp[ti * TS + tj] = g;
-                        btemp[ti * TS + tj] = b;
+                        setUnlessOOG(rtemp[ti * TS + tj], r);
+                        setUnlessOOG(gtemp[ti * TS + tj], g);
+                        setUnlessOOG(btemp[ti * TS + tj], b);
                     }
                 }
 
@@ -3794,33 +3797,46 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
 
                             //brightness/contrast
-                            rtemp[ti * TS + tj] = tonecurve[ rtemp[ti * TS + tj] ];
-                            gtemp[ti * TS + tj] = tonecurve[ gtemp[ti * TS + tj] ];
-                            btemp[ti * TS + tj] = tonecurve[ btemp[ti * TS + tj] ];
+                            float r = tonecurve[ CLIP(rtemp[ti * TS + tj]) ];
+                            float g = tonecurve[ CLIP(gtemp[ti * TS + tj]) ];
+                            float b = tonecurve[ CLIP(btemp[ti * TS + tj]) ];
 
                             int y = CLIP<int> (lumimulf[0] * Color::gamma2curve[rtemp[ti * TS + tj]] + lumimulf[1] * Color::gamma2curve[gtemp[ti * TS + tj]] + lumimulf[2] * Color::gamma2curve[btemp[ti * TS + tj]]);
                             histToneCurveThr[y >> histToneCurveCompression]++;
+
+                            setUnlessOOG(rtemp[ti * TS + tj], r);
+                            setUnlessOOG(gtemp[ti * TS + tj], g);
+                            setUnlessOOG(btemp[ti * TS + tj], b);
                         }
                     }
                 } else {
+                    vfloat tmpr;
+                    vfloat tmpg;
+                    vfloat tmpb;
+                    
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         int j = jstart, tj = 0;
 #ifdef __SSE2__
 
                         for (; j < tW - 3; j += 4, tj += 4) {
                             //brightness/contrast
-                            STVF(rtemp[ti * TS + tj], tonecurve(LVF(rtemp[ti * TS + tj])));
-                            STVF(gtemp[ti * TS + tj], tonecurve(LVF(gtemp[ti * TS + tj])));
-                            STVF(btemp[ti * TS + tj], tonecurve(LVF(btemp[ti * TS + tj])));
+                            STVF(tmpr[0], tonecurve(LVF(rtemp[ti * TS + tj])));
+                            STVF(tmpg[0], tonecurve(LVF(gtemp[ti * TS + tj])));
+                            STVF(tmpb[0], tonecurve(LVF(btemp[ti * TS + tj])));
+                            for (int k = 0; k < 4; ++k) {
+                                setUnlessOOG(rtemp[ti * TS + tj + k], tmpr[k]);
+                                setUnlessOOG(gtemp[ti * TS + tj + k], tmpg[k]);
+                                setUnlessOOG(btemp[ti * TS + tj + k], tmpb[k]);
+                            }
                         }
 
 #endif
 
                         for (; j < tW; j++, tj++) {
                             //brightness/contrast
-                            rtemp[ti * TS + tj] = tonecurve[rtemp[ti * TS + tj]];
-                            gtemp[ti * TS + tj] = tonecurve[gtemp[ti * TS + tj]];
-                            btemp[ti * TS + tj] = tonecurve[btemp[ti * TS + tj]];
+                            setUnlessOOG(rtemp[ti * TS + tj], tonecurve[rtemp[ti * TS + tj]]);
+                            setUnlessOOG(gtemp[ti * TS + tj], tonecurve[gtemp[ti * TS + tj]]);
+                            setUnlessOOG(btemp[ti * TS + tj], tonecurve[btemp[ti * TS + tj]]);
                         }
                     }
                 }
@@ -3868,17 +3884,17 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                             for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                                 // individual R tone curve
                                 if (rCurve) {
-                                    rtemp[ti * TS + tj] = rCurve[ rtemp[ti * TS + tj] ];
+                                    setUnlessOOG(rtemp[ti * TS + tj], rCurve[ rtemp[ti * TS + tj] ]);
                                 }
 
                                 // individual G tone curve
                                 if (gCurve) {
-                                    gtemp[ti * TS + tj] = gCurve[ gtemp[ti * TS + tj] ];
+                                    setUnlessOOG(gtemp[ti * TS + tj], gCurve[ gtemp[ti * TS + tj] ]);
                                 }
 
                                 // individual B tone curve
                                 if (bCurve) {
-                                    btemp[ti * TS + tj] = bCurve[ btemp[ti * TS + tj] ];
+                                    setUnlessOOG(btemp[ti * TS + tj], bCurve[ btemp[ti * TS + tj] ]);
                                 }
                             }
                         }
@@ -3945,18 +3961,22 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                                     bool neg = false;
                                     bool more_rgb = false;
                                     //gamut control : Lab values are in gamut
-                                    Color::gamutLchonly(HH, sincosval, Lpro, Chpro, rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj], wip, highlight, 0.15f, 0.96f, neg, more_rgb);
+                                    Color::gamutLchonly (HH, sincosval, Lpro, Chpro, r, g, b, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
 #else
                                     //gamut control : Lab values are in gamut
-                                    Color::gamutLchonly(HH, sincosval, Lpro, Chpro, rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj], wip, highlight, 0.15f, 0.96f);
+                                    Color::gamutLchonly (HH, sincosval, Lpro, Chpro, r, g, b, wip, highlight, 0.15f, 0.96f);
 #endif
                                     //end of gamut control
                                 } else {
                                     float x_, y_, z_;
                                     //calculate RGB with L_2 and old value of a and b
                                     Color::Lab2XYZ(L_2, a_1, b_1, x_, y_, z_) ;
-                                    Color::xyz2rgb(x_, y_, z_, rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj], wip);
+                                    Color::xyz2rgb (x_, y_, z_, r, g, b, wip);
                                 }
+
+                                setUnlessOOG(rtemp[ti * TS + tj], r);
+                                setUnlessOOG(gtemp[ti * TS + tj], g);
+                                setUnlessOOG(btemp[ti * TS + tj], b);
                             }
                         }
                     }
@@ -4107,9 +4127,9 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                                     bo *= preserv;
                                 }
 
-                                rtemp[ti * TS + tj] = CLIP(ro);
-                                gtemp[ti * TS + tj] = CLIP(go);
-                                btemp[ti * TS + tj] = CLIP(bo);
+                                setUnlessOOG(rtemp[ti * TS + tj], CLIP(ro));
+                                setUnlessOOG(gtemp[ti * TS + tj], CLIP(go));
+                                setUnlessOOG(btemp[ti * TS + tj], CLIP(bo));
                             }
                         }
                     }
@@ -4163,9 +4183,11 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                                     float b = btemp[ti * TS + tj];
                                     float ro, go, bo;
                                     labtoning(r, g, b, ro, go, bo, algm, metchrom, twoc, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, clToningcurve, cl2Toningcurve, iplow, iphigh, wp, wip);
-                                    rtemp[ti * TS + tj] = CLIP (ro); //I used CLIP because there is a little bug in gamutLchonly that return 65536.ii instead of 65535 ==> crash
-                                    gtemp[ti * TS + tj] = CLIP(go);
-                                    btemp[ti * TS + tj] = CLIP(bo);
+                                    if (!OOG(rtemp[ti * TS + tj]) || !OOG(gtemp[ti * TS + tj]) || !OOG(btemp[ti * TS + tj])) {
+                                        rtemp[ti * TS + tj] = ro;
+                                        gtemp[ti * TS + tj] = go;
+                                        btemp[ti * TS + tj] = bo;
+                                    }
                                 }
                             }
                         }
@@ -4247,9 +4269,9 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                             for (int i = istart, ti = 0; i < tH; i++, ti++) {
                                 for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                                     const SatAndValueBlendingToneCurve& userToneCurvebw = static_cast<const SatAndValueBlendingToneCurve&>(customToneCurvebw1);
-                                    rtemp[ti * TS + tj] = CLIP<float> (rtemp[ti * TS + tj]);
-                                    gtemp[ti * TS + tj] = CLIP<float> (gtemp[ti * TS + tj]);
-                                    btemp[ti * TS + tj] = CLIP<float> (btemp[ti * TS + tj]);
+                                    // rtemp[ti * TS + tj] = CLIP<float> (rtemp[ti * TS + tj]);
+                                    // gtemp[ti * TS + tj] = CLIP<float> (gtemp[ti * TS + tj]);
+                                    // btemp[ti * TS + tj] = CLIP<float> (btemp[ti * TS + tj]);
                                     userToneCurvebw.Apply(rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
                                 }
                             }
@@ -4257,9 +4279,9 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                             for (int i = istart, ti = 0; i < tH; i++, ti++) {
                                 for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                                     const WeightedStdToneCurve& userToneCurvebw = static_cast<const WeightedStdToneCurve&>(customToneCurvebw1);
-                                    rtemp[ti * TS + tj] = CLIP<float> (rtemp[ti * TS + tj]);
-                                    gtemp[ti * TS + tj] = CLIP<float> (gtemp[ti * TS + tj]);
-                                    btemp[ti * TS + tj] = CLIP<float> (btemp[ti * TS + tj]);
+                                    // rtemp[ti * TS + tj] = CLIP<float> (rtemp[ti * TS + tj]);
+                                    // gtemp[ti * TS + tj] = CLIP<float> (gtemp[ti * TS + tj]);
+                                    // btemp[ti * TS + tj] = CLIP<float> (btemp[ti * TS + tj]);
 
                                     userToneCurvebw.Apply(rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
                                 }
@@ -4412,28 +4434,32 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                                 Color::rgbxyz(sourceR, sourceG, sourceB, x, y, z, v_work2xyz);
                                 Color::xyz2rgb(x, y, z, sourceR, sourceG, sourceB, v_xyz2clut);
 
-                                STVF(rtemp[ti * TS + tj], sourceR);
-                                STVF(gtemp[ti * TS + tj], sourceG);
-                                STVF(btemp[ti * TS + tj], sourceB);
+                                STVF (clutr[tj], sourceR);
+                                STVF (clutg[tj], sourceG);
+                                STVF (clutb[tj], sourceB);
                             }
 
 #endif
 
                             for (; j < tW; j++, tj++) {
-                                float &sourceR = rtemp[ti * TS + tj];
-                                float &sourceG = gtemp[ti * TS + tj];
-                                float &sourceB = btemp[ti * TS + tj];
+                                float sourceR = rtemp[ti * TS + tj];
+                                float sourceG = gtemp[ti * TS + tj];
+                                float sourceB = btemp[ti * TS + tj];
 
                                 float x, y, z;
                                 Color::rgbxyz(sourceR, sourceG, sourceB, x, y, z, wprof);
-                                Color::xyz2rgb(x, y, z, sourceR, sourceG, sourceB, xyz2clut);
+                                Color::xyz2rgb (x, y, z, clutr[tj], clutg[tj], clutb[tj], xyz2clut);
                             }
+                        } else {
+                            memcpy(clutr, &rtemp[ti * TS], sizeof(float) * TS);
+                            memcpy(clutg, &gtemp[ti * TS], sizeof(float) * TS);
+                            memcpy(clutb, &btemp[ti * TS], sizeof(float) * TS);
                         }
 
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                            float &sourceR = rtemp[ti * TS + tj];
-                            float &sourceG = gtemp[ti * TS + tj];
-                            float &sourceB = btemp[ti * TS + tj];
+                            float &sourceR = clutr[tj];
+                            float &sourceG = clutg[tj];
+                            float &sourceB = clutb[tj];
 
                             // Apply gamma sRGB (default RT)
                             sourceR = Color::gamma_srgbclipped(sourceR);
@@ -4441,20 +4467,19 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                             sourceB = Color::gamma_srgbclipped(sourceB);
                         }
 
-                        const std::size_t line_offset = ti * TS;
                         hald_clut->getRGB(
                             film_simulation_strength,
                             std::min(TS, tW - jstart),
-                            rtemp + line_offset,
-                            gtemp + line_offset,
-                            btemp + line_offset,
+                            clutr,
+                            clutg,
+                            clutb,
                             out_rgbx
                         );
 
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                            float &sourceR = rtemp[ti * TS + tj];
-                            float &sourceG = gtemp[ti * TS + tj];
-                            float &sourceB = btemp[ti * TS + tj];
+                            float &sourceR = clutr[tj];
+                            float &sourceG = clutg[tj];
+                            float &sourceB = clutb[tj];
 
                             // Apply inverse gamma sRGB
                             sourceR = Color::igamma_srgb(out_rgbx[tj * 4 + 0]);
@@ -4470,9 +4495,9 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 #ifdef __SSE2__
 
                             for (; j < tW - 3; j += 4, tj += 4) {
-                                vfloat sourceR = LVF(rtemp[ti * TS + tj]);
-                                vfloat sourceG = LVF(gtemp[ti * TS + tj]);
-                                vfloat sourceB = LVF(btemp[ti * TS + tj]);
+                                vfloat sourceR = LVF (clutr[tj]);
+                                vfloat sourceG = LVF (clutg[tj]);
+                                vfloat sourceB = LVF (clutb[tj]);
 
                                 vfloat x;
                                 vfloat y;
@@ -4480,21 +4505,29 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                                 Color::rgbxyz(sourceR, sourceG, sourceB, x, y, z, v_clut2xyz);
                                 Color::xyz2rgb(x, y, z, sourceR, sourceG, sourceB, v_xyz2work);
 
-                                STVF(rtemp[ti * TS + tj], sourceR);
-                                STVF(gtemp[ti * TS + tj], sourceG);
-                                STVF(btemp[ti * TS + tj], sourceB);
+                                STVF (clutr[tj], sourceR);
+                                STVF (clutg[tj], sourceG);
+                                STVF (clutb[tj], sourceB);
                             }
 
 #endif
 
                             for (; j < tW; j++, tj++) {
-                                float &sourceR = rtemp[ti * TS + tj];
-                                float &sourceG = gtemp[ti * TS + tj];
-                                float &sourceB = btemp[ti * TS + tj];
+                                float &sourceR = clutr[tj];
+                                float &sourceG = clutg[tj];
+                                float &sourceB = clutb[tj];
 
                                 float x, y, z;
                                 Color::rgbxyz(sourceR, sourceG, sourceB, x, y, z, clut2xyz);
                                 Color::xyz2rgb(x, y, z, sourceR, sourceG, sourceB, wiprof);
+                            }
+                        }
+
+                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                            if (!OOG(rtemp[ti * TS + tj]) || !OOG(gtemp[ti * TS + tj]) || !OOG(btemp[ti * TS + tj])) {
+                                rtemp[ti * TS + tj] = clutr[tj];
+                                gtemp[ti * TS + tj] = clutg[tj];
+                                btemp[ti * TS + tj] = clutb[tj];
                             }
                         }
                     }
@@ -4625,7 +4658,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                 for (int j = 0; j < tW; j++) {
 
                     //mix channel
-                    tmpImage->r(i, j) = tmpImage->g(i, j) = tmpImage->b(i, j) = CLIP((bwr * tmpImage->r(i, j) + bwg * tmpImage->g(i, j) + bwb * tmpImage->b(i, j)) * kcorec);
+                    tmpImage->r (i, j) = tmpImage->g (i, j) = tmpImage->b (i, j) = /*CLIP*/ ((bwr * tmpImage->r (i, j) + bwg * tmpImage->g (i, j) + bwb * tmpImage->b (i, j)) * kcorec);
 
 #ifndef __SSE2__
 
@@ -4682,9 +4715,9 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                     for (int j = 0; j < tW; j++) {
                         const WeightedStdToneCurve& userToneCurve = static_cast<const WeightedStdToneCurve&>(customToneCurvebw2);
 
-                        tmpImage->r(i, j) = CLIP<float> (tmpImage->r(i, j));
-                        tmpImage->g(i, j) = CLIP<float> (tmpImage->g(i, j));
-                        tmpImage->b(i, j) = CLIP<float> (tmpImage->b(i, j));
+                        // tmpImage->r (i, j) = CLIP<float> (tmpImage->r (i, j));
+                        // tmpImage->g (i, j) = CLIP<float> (tmpImage->g (i, j));
+                        // tmpImage->b (i, j) = CLIP<float> (tmpImage->b (i, j));
 
                         userToneCurve.Apply(tmpImage->r(i, j), tmpImage->g(i, j), tmpImage->b(i, j));
                     }
@@ -4721,9 +4754,9 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                                 bo *= preserv;
                             }
 
-                            tmpImage->r(i, j) = CLIP(ro);
-                            tmpImage->g(i, j) = CLIP(go);
-                            tmpImage->b(i, j) = CLIP(bo);
+                            tmpImage->r(i, j) = /*CLIP*/(ro);
+                            tmpImage->g(i, j) = /*CLIP*/(go);
+                            tmpImage->b(i, j) = /*CLIP*/(bo);
                         }
                     }
                 }
@@ -4830,9 +4863,11 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                             float b = tmpImage->b(i, j);
                             float ro, bo, go;
                             labtoning(r, g, b, ro, go, bo, algm, metchrom,  twoc, satLimit, satLimitOpacity, ctColorCurve,  ctOpacityCurve, clToningcurve, cl2Toningcurve,  iplow, iphigh,  wp,  wip);
-                            tmpImage->r(i, j) = CLIP(ro);
-                            tmpImage->g(i, j) = CLIP(go);
-                            tmpImage->b(i, j) = CLIP(bo);
+                            if (!OOG(tmpImage->r(i, j)) || !OOG(tmpImage->g(i, j)) || !OOG(tmpImage->b(i, j))) {
+                                tmpImage->r (i, j) = ro;
+                                tmpImage->g (i, j) = go;
+                                tmpImage->b (i, j) = bo;
+                            }
 
                         }
                     }
@@ -5076,9 +5111,9 @@ void ImProcFunctions::toningsmh(float r, float g, float b, float &ro, float &go,
             r += corr;
         }
 
-        r = CLIP(r);
-        g = CLIP(g);
-        b = CLIP(b);
+        // r = CLIP(r);
+        // g = CLIP(g);
+        // b = CLIP(b);
     }
 
     {
@@ -5090,9 +5125,9 @@ void ImProcFunctions::toningsmh(float r, float g, float b, float &ro, float &go,
             g += corr;
         }
 
-        r = CLIP(r);
-        b = CLIP(b);
-        g = CLIP(g);
+        // r = CLIP(r);
+        // b = CLIP(b);
+        // g = CLIP(g);
     }
 
 
@@ -5106,9 +5141,9 @@ void ImProcFunctions::toningsmh(float r, float g, float b, float &ro, float &go,
             b += corr;
         }
 
-        r = CLIP(r);
-        g = CLIP(g);
-        b = CLIP(b);
+        // r = CLIP(r);
+        // g = CLIP(g);
+        // b = CLIP(b);
     }
 
     // mid tones
@@ -5139,9 +5174,9 @@ void ImProcFunctions::toningsmh(float r, float g, float b, float &ro, float &go,
             g -= 20000.f * RedM;
             b -= 20000.f * RedM;
         }
-        r = CLIP(r);
-        g = CLIP(g);
-        b = CLIP(b);
+        // r = CLIP(r);
+        // g = CLIP(g);
+        // b = CLIP(b);
     }
 
     {
@@ -5156,9 +5191,9 @@ void ImProcFunctions::toningsmh(float r, float g, float b, float &ro, float &go,
             g += 10000.f * GreenM;
             b -= 20000.f * GreenM;
         }
-        r = CLIP(r);
-        g = CLIP(g);
-        b = CLIP(b);
+        // r = CLIP(r);
+        // g = CLIP(g);
+        // b = CLIP(b);
     }
 
     {
@@ -5173,9 +5208,9 @@ void ImProcFunctions::toningsmh(float r, float g, float b, float &ro, float &go,
             g -= 20000.f * BlueM;
             b += 10000.f * BlueM;
         }
-        r = CLIP(r);
-        g = CLIP(g);
-        b = CLIP(b);
+        // r = CLIP(r);
+        // g = CLIP(g);
+        // b = CLIP(b);
     }
 
     //high tones
@@ -5200,9 +5235,9 @@ void ImProcFunctions::toningsmh(float r, float g, float b, float &ro, float &go,
             b -= corr;
         }
 
-        r = CLIP(r);
-        g = CLIP(g);
-        b = CLIP(b);
+        // r = CLIP(r);
+        // g = CLIP(g);
+        // b = CLIP(b);
     }
 
     {
@@ -5215,9 +5250,9 @@ void ImProcFunctions::toningsmh(float r, float g, float b, float &ro, float &go,
             b -= corr;
         }
 
-        r = CLIP(r);
-        g = CLIP(g);
-        b = CLIP(b);
+        // r = CLIP(r);
+        // g = CLIP(g);
+        // b = CLIP(b);
     }
 
     {
@@ -5230,9 +5265,9 @@ void ImProcFunctions::toningsmh(float r, float g, float b, float &ro, float &go,
             g -= corr;
         }
 
-        r = CLIP(r);
-        g = CLIP(g);
-        b = CLIP(b);
+        // r = CLIP(r);
+        // g = CLIP(g);
+        // b = CLIP(b);
     }
 
     ro = r;
@@ -5289,24 +5324,24 @@ void ImProcFunctions::toning2col (float r, float g, float b, float &ro, float &g
             b -= factor * krl;
         }
 
-        g = CLIP(g);
-        b = CLIP(b);
+        // g = CLIP(g);
+        // b = CLIP(b);
 
         if (kgl > 0.f) {
             r -= factor * kgl;
             b -= factor * kgl;
         }
 
-        r = CLIP(r);
-        b = CLIP(b);
+        // r = CLIP(r);
+        // b = CLIP(b);
 
         if (kbl > 0.f) {
             r -= factor * kbl;
             g -= factor * kbl;
         }
 
-        r = CLIP(r);
-        g = CLIP(g);
+        // r = CLIP(r);
+        // g = CLIP(g);
     }
 
     //high tones
@@ -5333,9 +5368,9 @@ void ImProcFunctions::toning2col (float r, float g, float b, float &ro, float &g
         g += factor * (kgh > 0.f ? kgh : 0.f);
         b += factor * (kbh > 0.f ? kbh : 0.f);
 
-        r = CLIP(r);
-        g = CLIP(g);
-        b = CLIP(b);
+        // r = CLIP(r);
+        // g = CLIP(g);
+        // b = CLIP(b);
     }
 
     float preserv = 1.f;
@@ -5344,9 +5379,9 @@ void ImProcFunctions::toning2col (float r, float g, float b, float &ro, float &g
         preserv = lumbefore / lumafter;
     }
 
-    ro = CLIP(r * preserv);
-    go = CLIP(g * preserv);
-    bo = CLIP(b * preserv);
+    setUnlessOOG(ro, CLIP(r * preserv));
+    setUnlessOOG(go, CLIP(g * preserv));
+    setUnlessOOG(bo, CLIP(b * preserv));
 }
 
 /**
@@ -5363,9 +5398,13 @@ void ImProcFunctions::toning2col (float r, float g, float b, float &ro, float &g
 **/
 void ImProcFunctions::labtoning(float r, float g, float b, float &ro, float &go, float &bo, int algm, int metchrom, int twoc, float satLimit, float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, LUTf & clToningcurve, LUTf & cl2Toningcurve, float iplow, float iphigh, double wp[3][3], double wip[3][3])
 {
+    ro = CLIP(r);
+    go = CLIP(g);
+    bo = CLIP(b);
+    
     float realL;
     float h, s, l;
-    Color::rgb2hsl(r, g, b, h, s, l);
+    Color::rgb2hsl (ro, go, bo, h, s, l);
     float x2, y2, z2;
     float xl, yl, zl;
 
