@@ -37,12 +37,12 @@ SaveFormatPanel::SaveFormatPanel () : listener (nullptr)
     setExpandAlignProperties(format, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     format->signal_changed ().connect (sigc::mem_fun (*this, &SaveFormatPanel::formatChanged));
 
-    format->append ("JPEG (8 bit)");
-    format->append ("TIFF (8 bit)");
-    format->append ("TIFF (16 bit)");
-    format->append ("TIFF (32 bit float)");
-    format->append ("PNG (8 bit)");
-    format->append ("PNG (16 bit)");
+    format->append ("JPEG (8-bit)");
+    format->append ("TIFF (8-bit)");
+    format->append ("TIFF (16-bit)");
+    format->append ("TIFF (32-bit float)");
+    format->append ("PNG (8-bit)");
+    format->append ("PNG (16-bit)");
 
     fstr[0] = "jpg";
     fstr[1] = "tif";
