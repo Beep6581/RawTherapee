@@ -2274,7 +2274,7 @@ TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL;Horizontal
 TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;Horizontal (nur PDAF-Zeilen)
 TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertikal
 TP_PREPROCESS_PDAFLINESFILTER;PDAF-Zeilenfilter
-TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Minimiert Streifenrauschen das bei Gegenlichtaufnahmen mit\nsichtbaren Flares einiger spiegellosen Sony-Kameras entsteht.
+TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Minimiert Streifenrauschen, das bei Gegenlichtaufnahmen mit\nsichtbaren Flares einiger spiegellosen Sony-Kameras entsteht.
 PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Eingebundenes JPEG
 PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Bildanzeige
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutrales RAW-Bild 
