@@ -176,7 +176,7 @@ void SaveFormatPanel::formatChanged ()
 
     int act = format->get_active_row_number();
 
-    if (act < 0 || act > 4) {
+    if (act < 0 || act > 5) {
         return;
     }
 
