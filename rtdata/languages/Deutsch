@@ -52,6 +52,7 @@
 #51 10.02.2018 Erweiterung (TooWaBoo) RT 5.3
 #52 10.02.2018 Korrektur (TooWaBoo) RT 5.3
 #53 26.02.2018 Erweiterung (TooWaBoo) RT 5.3
+#54 30.03.2018 Erweiterung (TooWaBoo) RT 5.4
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -2265,12 +2266,16 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
-!HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
-!TP_PREPROCESS_LINEDENOISE_DIRECTION;Direction
-!TP_PREPROCESS_LINEDENOISE_DIRECTION_BOTH;Both
-!TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL;Horizontal
-!TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;Horizontal only on PDAF rows
-!TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertical
-!TP_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
-!TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.
+HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;(Sensor-Matrix)\nVorverarbeitung\nRichtung
+HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;(Sensor-Matrix)\nVorverarbeitung\nPDAF-Zeilenfilter
+TP_PREPROCESS_LINEDENOISE_DIRECTION;Richtung
+TP_PREPROCESS_LINEDENOISE_DIRECTION_BOTH;Beide
+TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL;Horizontal
+TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;Horizontal (nur PDAF-Zeilen)
+TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertikal
+TP_PREPROCESS_PDAFLINESFILTER;PDAF-Zeilenfilter
+TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Minimiert Streifenrauschen, das bei Gegenlichtaufnahmen mit\nsichtbaren Flares einiger spiegellosen Sony-Kameras entsteht.
+PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Eingebundenes JPEG
+PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Bildanzeige
+PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutrales RAW-Bild 
+PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Eingebundenes JPEG wenn in Originalgröße, sonst neutrales RAW-Bild
