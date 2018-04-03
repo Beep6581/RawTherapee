@@ -4185,7 +4185,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
 
                 for ( int w = 0; w < im->getWidth(); ++w ) {
 
-                    float r, g, b, hr, hg, hb;
+                    float r, g, b, hr = 0.f, hg = 0.f, hb = 0.f;
 
                     if (transform_via_pcs_lab) {
                         float L = *(p++);
