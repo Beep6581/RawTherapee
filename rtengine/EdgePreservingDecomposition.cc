@@ -125,28 +125,14 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
         #pragma omp parallel
 #endif
         {
-            float c = 0.0f;
 #ifdef _OPENMP
-            #pragma omp for reduction(+:rs)                            // Summation with error correction
+            #pragma omp for reduction(+:rs)
 #endif
 
             for(int ii = 0; ii < n; ii++) {
-                float temp = r[ii] * s[ii];
-                float t = rs + temp;
-
-                if( fabsf(rs) >= fabsf(temp) ) {
-                    c += ((rs - t) + temp);
-                } else {
-                    c += ((temp - t) + rs);
-                }
-
-                rs = t;
+                rs += r[ii] * s[ii];
             }
 
-#ifdef _OPENMP
-            #pragma omp critical
-#endif
-            rs += c;
         }
 
         ab = rs / ab;
