@@ -3782,13 +3782,12 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                         float g = std::max(gtemp[ti * TS + tj], 0.f);
                         float b = std::max(btemp[ti * TS + tj], 0.f);
 
-                        if (r > 65535 || g > 65535 || b > 65535) {
+                        if (max(r, g, b) > MAXVALF && min(r, g, b) < MAXVALF) {
                             filmlike_clip(&r, &g, &b);
                         }
-
-                        setUnlessOOG(rtemp[ti * TS + tj], r);
-                        setUnlessOOG(gtemp[ti * TS + tj], g);
-                        setUnlessOOG(btemp[ti * TS + tj], b);
+                        rtemp[ti * TS + tj] = r;
+                        gtemp[ti * TS + tj] = g;
+                        btemp[ti * TS + tj] = b;
                     }
                 }
 
