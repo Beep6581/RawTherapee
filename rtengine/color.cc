@@ -190,7 +190,6 @@ void Color::init ()
             {
                 gammatab_srgb[i] = gammatab_srgb1[i] = gamma2(i / 65535.0);
             }
-
             gammatab_srgb *= 65535.f;
             gamma2curve.share(gammatab_srgb, LUT_CLIP_BELOW | LUT_CLIP_ABOVE); // shares the buffer with gammatab_srgb but has different clip flags
         }

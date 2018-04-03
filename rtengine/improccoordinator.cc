@@ -24,6 +24,10 @@
 #include "colortemp.h"
 #include "improcfun.h"
 #include "iccstore.h"
+#include <iostream>
+#include <fstream>
+#include <string>
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -311,7 +315,20 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         if (params.wb.method == "Auto" && awbListener && params.wb.enabled) {
             awbListener->WBChanged (params.wb.temperature, params.wb.green);
         }
-
+            Glib::ustring datal;
+			datal = "lutsrgb.txt";
+		            ofstream fou(datal, ios::out | ios::trunc);
+	
+		for(int i=0; i < 1024; i++) {
+			//printf("igamma2=%i\n", (int) 65535.f*Color::igamma2(i/212.0));
+					float gam = Color::igamma2(i/1023.0);
+					int lutga = 65535.f* gam;
+                  //  fou << 65535*(int)Color::igamma2(i/212.0) << endl;
+                    fou << i << " " << lutga << endl;
+			
+		}	
+                fou.close();
+		
         int tr = getCoarseBitMask (params.coarse);
 
         imgsrc->getFullSize (fw, fh, tr);
