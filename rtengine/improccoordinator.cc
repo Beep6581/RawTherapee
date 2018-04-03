@@ -315,6 +315,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         if (params.wb.method == "Auto" && awbListener && params.wb.enabled) {
             awbListener->WBChanged (params.wb.temperature, params.wb.green);
         }
+		/*
             Glib::ustring datal;
 			datal = "lutsrgb.txt";
 		            ofstream fou(datal, ios::out | ios::trunc);
@@ -328,7 +329,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 			
 		}	
                 fou.close();
-		
+*/		
         int tr = getCoarseBitMask (params.coarse);
 
         imgsrc->getFullSize (fw, fh, tr);
