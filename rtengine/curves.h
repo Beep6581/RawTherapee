@@ -943,9 +943,9 @@ inline void StandardToneCurve::BatchApply(
     }
 
 #ifdef __SSE2__
-    vfloat tmpr;
-    vfloat tmpg;
-    vfloat tmpb;
+    float tmpr[4] ALIGNED16;
+    float tmpg[4] ALIGNED16;
+    float tmpb[4] ALIGNED16;
     float mv = lutToneCurve[MAXVALF];
     for (; i + 3 < end; i += 4) {
         __m128 r_val = LVF(r[i]);
@@ -1130,9 +1130,9 @@ inline void WeightedStdToneCurve::BatchApply(const size_t start, const size_t en
     const vfloat zd5v = F2V(0.5f);
     const vfloat zd25v = F2V(0.25f);
 
-    vfloat tmpr;
-    vfloat tmpg;
-    vfloat tmpb;
+    float tmpr[4] ALIGNED16;
+    float tmpg[4] ALIGNED16;
+    float tmpb[4] ALIGNED16;
 
     for (; i + 3 < end; i += 4) {
         vfloat r_val = LIMV(LVF(r[i]), ZEROV, c65535v);
