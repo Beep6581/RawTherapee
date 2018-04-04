@@ -154,7 +154,7 @@ void transLineFuji (const float* const red, const float* const green, const floa
     }
 }
 
-void transLineD1x (const float* const red, const float* const green, const float* const blue, const int i, rtengine::Imagefloat* const image, const int tran, const int imwidth, const int imheight, const bool oddHeight, const bool clip)
+void transLineD1x (const float* const red, const float* const green, const float* const blue, const int i, rtengine::Imagefloat* const image, const int tran, const int imwidth, const int imheight, const bool oddHeight)
 {
     // Nikon D1X has an uncommon sensor with 4028 x 1324 sensels.
     // Vertical sensel size is 2x horizontal sensel size
@@ -223,12 +223,6 @@ void transLineD1x (const float* const red, const float* const green, const float
                     image->r(row, col) = MAX(0.f, -0.0625f * (red[j] + image->r(row + 3, col)) + 0.5625f * (image->r(row - 1, col) + image->r(row + 1, col)));
                     image->g(row, col) = MAX(0.f, -0.0625f * (green[j] + image->g(row + 3, col)) + 0.5625f * (image->g(row - 1, col) + image->g(row + 1, col)));
                     image->b(row, col) = MAX(0.f, -0.0625f * (blue[j] + image->b(row + 3, col)) + 0.5625f * (image->b(row - 1, col) + image->b(row + 1, col)));
-
-                    if(clip) {
-                        image->r(row, col) = MIN(image->r(row, col), rtengine::MAXVALF);
-                        image->g(row, col) = MIN(image->g(row, col), rtengine::MAXVALF);
-                        image->b(row, col) = MIN(image->b(row, col), rtengine::MAXVALF);
-                    }
                 }
             }
 
@@ -286,12 +280,6 @@ void transLineD1x (const float* const red, const float* const green, const float
                     image->r(j, col) = MAX(0.f, -0.0625f * (red[j] + image->r(j, col + 3)) + 0.5625f * (image->r(j, col - 1) + image->r(j, col + 1)));
                     image->g(j, col) = MAX(0.f, -0.0625f * (green[j] + image->g(j, col + 3)) + 0.5625f * (image->g(j, col - 1) + image->g(j, col + 1)));
                     image->b(j, col) = MAX(0.f, -0.0625f * (blue[j] + image->b(j, col + 3)) + 0.5625f * (image->b(j, col - 1) + image->b(j, col + 1)));
-
-                    if(clip) {
-                        image->r(j, col) = MIN(image->r(j, col), rtengine::MAXVALF);
-                        image->g(j, col) = MIN(image->g(j, col), rtengine::MAXVALF);
-                        image->b(j, col) = MIN(image->b(j, col), rtengine::MAXVALF);
-                    }
                 }
             }
 
@@ -319,12 +307,6 @@ void transLineD1x (const float* const red, const float* const green, const float
                     image->g(row, 2 * i - 3) = MAX(0.f, -0.0625f * (green[j] + image->g(row, 2 * i - 6)) + 0.5625f * (image->g(row, 2 * i - 2) + image->g(row, 2 * i - 4)));
                     image->b(row, 2 * i - 3) = MAX(0.f, -0.0625f * (blue[j] + image->b(row, 2 * i - 6)) + 0.5625f * (image->b(row, 2 * i - 2) + image->b(row, 2 * i - 4)));
 
-                    if(clip) {
-                        image->r(row, 2 * i - 3) = MIN(image->r(row, 2 * i - 3), rtengine::MAXVALF);
-                        image->g(row, 2 * i - 3) = MIN(image->g(row, 2 * i - 3), rtengine::MAXVALF);
-                        image->b(row, 2 * i - 3) = MIN(image->b(row, 2 * i - 3), rtengine::MAXVALF);
-                    }
-
                     image->r(row, 2 * i) = red[j];
                     image->g(row, 2 * i) = green[j];
                     image->b(row, 2 * i) = blue[j];
@@ -336,12 +318,6 @@ void transLineD1x (const float* const red, const float* const green, const float
                     image->r(row, 2 * i - 1) = MAX(0.f, -0.0625f * (red[j] + image->r(row, 2 * i - 4)) + 0.5625f * (image->r(row, 2 * i) + image->r(row, 2 * i - 2)));
                     image->g(row, 2 * i - 1) = MAX(0.f, -0.0625f * (green[j] + image->g(row, 2 * i - 4)) + 0.5625f * (image->g(row, 2 * i) + image->g(row, 2 * i - 2)));
                     image->b(row, 2 * i - 1) = MAX(0.f, -0.0625f * (blue[j] + image->b(row, 2 * i - 4)) + 0.5625f * (image->b(row, 2 * i) + image->b(row, 2 * i - 2)));
-
-                    if(clip) {
-                        image->r(j, 2 * i - 1) = MIN(image->r(j, 2 * i - 1), rtengine::MAXVALF);
-                        image->g(j, 2 * i - 1) = MIN(image->g(j, 2 * i - 1), rtengine::MAXVALF);
-                        image->b(j, 2 * i - 1) = MIN(image->b(j, 2 * i - 1), rtengine::MAXVALF);
-                    }
 
                     image->r(row, 2 * i + 1) = (red[j] + image->r(row, 2 * i - 1)) / 2;
                     image->g(row, 2 * i + 1) = (green[j] + image->g(row, 2 * i - 1)) / 2;
@@ -374,12 +350,6 @@ void transLineD1x (const float* const red, const float* const green, const float
                     image->r(2 * i - 3, j) = MAX(0.f, -0.0625f * (red[j] + image->r(2 * i - 6, j)) + 0.5625f * (image->r(2 * i - 2, j) + image->r(2 * i - 4, j)));
                     image->g(2 * i - 3, j) = MAX(0.f, -0.0625f * (green[j] + image->g(2 * i - 6, j)) + 0.5625f * (image->g(2 * i - 2, j) + image->g(2 * i - 4, j)));
                     image->b(2 * i - 3, j) = MAX(0.f, -0.0625f * (blue[j] + image->b(2 * i - 6, j)) + 0.5625f * (image->b(2 * i - 2, j) + image->b(2 * i - 4, j)));
-
-                    if(clip) {
-                        image->r(2 * i - 3, j) = MIN(image->r(2 * i - 3, j), rtengine::MAXVALF);
-                        image->g(2 * i - 3, j) = MIN(image->g(2 * i - 3, j), rtengine::MAXVALF);
-                        image->b(2 * i - 3, j) = MIN(image->b(2 * i - 3, j), rtengine::MAXVALF);
-                    }
                 }
             }
 
@@ -388,12 +358,6 @@ void transLineD1x (const float* const red, const float* const green, const float
                     image->r(2 * i - 1, j) = MAX(0.f, -0.0625f * (red[j] + image->r(2 * i - 4, j)) + 0.5625f * (image->r(2 * i, j) + image->r(2 * i - 2, j)));
                     image->g(2 * i - 1, j) = MAX(0.f, -0.0625f * (green[j] + image->g(2 * i - 4, j)) + 0.5625f * (image->g(2 * i, j) + image->g(2 * i - 2, j)));
                     image->b(2 * i - 1, j) = MAX(0.f, -0.0625f * (blue[j] + image->b(2 * i - 4, j)) + 0.5625f * (image->b(2 * i, j) + image->b(2 * i - 2, j)));
-
-                    if(clip) {
-                        image->r(2 * i - 1, j) = MIN(image->r(2 * i - 1, j), rtengine::MAXVALF);
-                        image->g(2 * i - 1, j) = MIN(image->g(2 * i - 1, j), rtengine::MAXVALF);
-                        image->b(2 * i - 1, j) = MIN(image->b(2 * i - 1, j), rtengine::MAXVALF);
-                    }
 
                     image->r(2 * i + 1, j) = (red[j] + image->r(2 * i - 1, j)) / 2;
                     image->g(2 * i + 1, j) = (green[j] + image->g(2 * i - 1, j)) / 2;
@@ -724,8 +688,6 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     hlmax[1] = clmax[1] * gm;
     hlmax[2] = clmax[2] * bm;
 
-    const bool doClip = (chmax[0] >= clmax[0] || chmax[1] >= clmax[1] || chmax[2] >= clmax[2]) && !hrp.hrenabled;
-
     float area = skip * skip;
     rm /= area;
     gm /= area;
@@ -768,17 +730,6 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
                     gtot *= gm;
                     btot *= bm;
 
-                    if (doClip) {
-                        // note: as hlmax[] can be larger than CLIP and we can later apply negative
-                        // exposure this means that we can clip away local highlights which actually
-                        // are not clipped. We have to do that though as we only check pixel by pixel
-                        // and don't know if this will transition into a clipped area, if so we need
-                        // to clip also surrounding to make a good colour transition
-                        rtot = CLIP(rtot);
-                        gtot = CLIP(gtot);
-                        btot = CLIP(btot);
-                    }
-
                     line_red[j] = rtot;
                     line_grn[j] = gtot;
                     line_blue[j] = btot;
@@ -803,12 +754,6 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
                     gtot *= gm;
                     btot *= bm;
 
-                    if (doClip) {
-                        rtot = CLIP(rtot);
-                        gtot = CLIP(gtot);
-                        btot = CLIP(btot);
-                    }
-
                     line_red[j] = rtot;
                     line_grn[j] = gtot;
                     line_blue[j] = btot;
@@ -822,7 +767,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
             }
 
             if(d1x) {
-                transLineD1x (line_red, line_grn, line_blue, ix, image, tran, imwidth, imheight, d1xHeightOdd, doClip);
+                transLineD1x (line_red, line_grn, line_blue, ix, image, tran, imwidth, imheight, d1xHeightOdd);
             } else if(fuji) {
                 transLineFuji (line_red, line_grn, line_blue, ix, image, tran, imheight, fw);
             } else {
@@ -1853,7 +1798,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     }
 
     // Correct vignetting of lens profile
-    if (!hasFlatField && lensProf.useVign) {
+    if (!hasFlatField && lensProf.useVign && lensProf.lcMode != LensProfParams::LcMode::NONE) {
         std::unique_ptr<LensCorrection> pmap;
         if (lensProf.useLensfun()) {
             pmap = LFDatabase::findModifier(lensProf, idata, W, H, coarse, -1);
@@ -3931,9 +3876,9 @@ lab2ProphotoRgbD50(float L, float A, float B, float& r, float& g, float& b)
     r = prophoto_xyz[0][0] * X + prophoto_xyz[0][1] * Y + prophoto_xyz[0][2] * Z;
     g = prophoto_xyz[1][0] * X + prophoto_xyz[1][1] * Y + prophoto_xyz[1][2] * Z;
     b = prophoto_xyz[2][0] * X + prophoto_xyz[2][1] * Y + prophoto_xyz[2][2] * Z;
-    r = CLIP01(r);
-    g = CLIP01(g);
-    b = CLIP01(b);
+    // r = CLIP01(r);
+    // g = CLIP01(g);
+    // b = CLIP01(b);
 }
 
 // Converts raw image including ICC input profile to working space - floating point version
@@ -4240,7 +4185,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
 
                 for ( int w = 0; w < im->getWidth(); ++w ) {
 
-                    float r, g, b, hr, hg, hb;
+                    float r, g, b, hr = 0.f, hg = 0.f, hb = 0.f;
 
                     if (transform_via_pcs_lab) {
                         float L = *(p++);

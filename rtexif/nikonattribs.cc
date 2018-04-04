@@ -23,7 +23,6 @@
 #include <cstring>
 #include <sstream>
 #include <iomanip>
-
 #include "rtexif.h"
 
 using namespace std;
@@ -543,7 +542,16 @@ public:
 
         if (r != lenses.end()) {
             if (r == lenses.begin() && EffectiveMaxApertureString != "") {      // first entry is for unchipped lenses
-                ld << "Lens = Unknown $FL$mm f/" << EffectiveMaxApertureString;
+                Tag *FLTag = t->getParent()->getRoot()->findTag ("FocalLength");
+                ld << "Lens = MF ";
+
+                if(FLTag) {
+                    ld << FLTag->valueToString () << "mm";
+                } else {
+                    ld << "0mm";
+                }
+
+                ld << " f/" << EffectiveMaxApertureString;
             } else {
                 ld << "Lens = " << r->second;
             }
