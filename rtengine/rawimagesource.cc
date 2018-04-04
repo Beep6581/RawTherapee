@@ -2103,7 +2103,7 @@ void RawImageSource::retinexPrepareBuffers(const ColorManagementParams& cmp, con
         int mode = 0;
         Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope
 
-        //    printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
+   //        printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
         double start;
         double add;
 

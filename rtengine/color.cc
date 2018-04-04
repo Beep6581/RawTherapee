@@ -1593,7 +1593,7 @@ void Color::calcGamma (double pwr, double ts, int mode, GammaValues &gamma)
     bnd[g[1] >= 1.] = 1.;
 
     if (g[1] && (g[1] - 1.) * (g[0] - 1.) <= 0.) {
-        for (i = 0; i < 48; i++) {
+        for (i = 0; i < 99; i++) {
             g[2] = (bnd[0] + bnd[1]) / 2.;
 
             if (g[0]) {

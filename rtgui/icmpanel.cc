@@ -243,7 +243,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     freegamma->set_active (false);
     fgFrame->set_label_widget(*freegamma);
 
-    gampos = Gtk::manage(new Adjuster (M("TP_GAMMA_CURV"), 1, 3.5, 0.01, 2.22));
+    gampos = Gtk::manage(new Adjuster (M("TP_GAMMA_CURV"), 1, 3.5, 0.00001, 2.22));
     gampos->setAdjusterListener (this);
 
     if (gampos->delay < options.adjusterMaxDelay) {

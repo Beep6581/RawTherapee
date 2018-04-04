@@ -1073,25 +1073,29 @@ public:
 
     /**
     * @brief sRGB gamma
-    * See also calcGamma above with the following values: pwr=2.4  ts=12.92  mode=0.003041  imax=0.055011
+    * See also calcGamma above with the following values: pwr=2.399  ts=12.92  mode=0.003041  imax=0.055
     * @param x red, green or blue channel's value [0 ; 1]
     * @return the gamma modified's value [0 ; 1]
     */
     static inline double gamma2     (double x)      //  g3                  1+g4
     {
-        return x <= 0.003041 ? x * 12.92 : 1.055011 * exp(log(x) / sRGBGammaCurve) - 0.055011;
+      //  return x <= 0.003041 ? x * 12.92 : 1.055 * exp(log(x) / 2.39990) - 0.055;//calculate with calcgamma
+        return x <= 0.0031308 ? x * 12.92 : 1.055 * exp(log(x) / sRGBGammaCurve) - 0.055;
+		//very small differences between the 2
     }
 
 
     /**
     * @brief Inverse sRGB gamma
-    * See also calcGamma above with the following values: pwr=2.4  ts=12.92  mode=0.003041  imax=0.055011
+    * See also calcGamma above with the following values: pwr=2.3999  ts=12.92  mode=0.003041  imax=0.055
     * @param x red, green or blue channel's value [0 ; 1]
     * @return the inverse gamma modified's value [0 ; 1]
     */
     static inline double igamma2    (double x)      //g2
     {
-        return x <= 0.039293 ? x / 12.92 : exp(log((x + 0.055011) / 1.055011) * sRGBGammaCurve);
+       // return x <= 0.039289 ? x / 12.92 : exp(log((x + 0.055) / 1.055) * 2.39990);//calculate with calcgamma
+        return x <= 0.04045 ? x / 12.92 : exp(log((x + 0.055) / 1.055) * sRGBGammaCurve);
+		//very small differences between the 2
     }
 
 

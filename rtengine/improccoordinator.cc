@@ -27,6 +27,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include "color.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -316,6 +317,16 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             awbListener->WBChanged (params.wb.temperature, params.wb.green);
         }
 		
+/*		
+        GammaValues g_a;
+        double pwr = 1.0 / params.icm.gampos;
+        double ts = params.icm.slpos;
+
+
+        int mode = 0;
+        Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope
+	        printf("ga[0]=%f ga[1]=%f ga[2]=%f ga[3]=%f ga[4]=%f\n", g_a[0],g_a[1],g_a[2],g_a[3],g_a[4]);
+	
             Glib::ustring datal;
 			datal = "lutsrgb.txt";
 		            ofstream fou(datal, ios::out | ios::trunc);
@@ -323,13 +334,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 		for(int i=0; i < 212; i++) {
 			//printf("igamma2=%i\n", (int) 65535.f*Color::igamma2(i/212.0));
 					float gam = Color::igamma2(i/211.0);
-					int lutga = 65535.f* gam;
+					int lutga = nearbyint(65535.f* gam);
                   //  fou << 65535*(int)Color::igamma2(i/212.0) << endl;
                     fou << i << " " << lutga << endl;
 			
 		}	
                 fou.close();
-		
+*/		
         int tr = getCoarseBitMask (params.coarse);
 
         imgsrc->getFullSize (fw, fh, tr);
