@@ -123,6 +123,9 @@ public:
     virtual bool getPixelShift (unsigned int frame = 0) const = 0;
     /** @return false: not an HDR file ; true: single or multi-frame HDR file (e.g. Pentax HDR raw file or 32 bit float DNG file or Log compressed) */
     virtual bool getHDR (unsigned int frame = 0) const = 0;
+
+    /** @return false: not an HDR file ; true: single or multi-frame HDR file (e.g. Pentax HDR raw file or 32 bit float DNG file or Log compressed) */
+    virtual std::string getRawType (unsigned int frame) const = 0;
     /** @return the sample format based on MetaData */
     virtual IIOSampleFormat getSampleFormat (unsigned int frame = 0) const = 0;
 

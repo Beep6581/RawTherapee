@@ -692,6 +692,10 @@ bool FrameData::getHDR () const
 {
     return isHDR;
 }
+std::string FrameData::getRawType () const
+{
+    return isPixelShift ? "PS" : isHDR ? "HDR" : "STD";
+}
 IIOSampleFormat FrameData::getSampleFormat () const
 {
     return sampleFormat;
@@ -806,6 +810,11 @@ bool FramesData::getHDR (unsigned int frame) const
 
     //return frames.at(frame)->getHDR ();
     return frames.empty() || frame >= frames.size()  ? false : frames.at(0)->getHDR ();
+}
+
+std::string FramesData::getRawType (unsigned int frame) const
+{
+    return frames.empty() || frame >= frames.size() ? "STD" : frames.at(0)->getRawType();
 }
 
 IIOSampleFormat FramesData::getSampleFormat (unsigned int frame) const

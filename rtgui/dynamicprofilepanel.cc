@@ -41,6 +41,7 @@ DynamicProfilePanel::EditDialog::EditDialog (const Glib::ustring &title, Gtk::Wi
 
     add_optional (M ("EXIFFILTER_CAMERA"), has_camera_, camera_);
     add_optional (M ("EXIFFILTER_LENS"), has_lens_, lens_);
+    add_optional (M ("EXIFFILTER_RAWTYPE"), has_rawtype_, rawtype_);
 
     add_range (M ("EXIFFILTER_ISO"), iso_min_, iso_max_);
     add_range (M ("EXIFFILTER_APERTURE"), fnumber_min_, fnumber_max_);
@@ -81,6 +82,9 @@ void DynamicProfilePanel::EditDialog::set_rule (
     has_lens_->set_active (rule.lens.enabled);
     lens_->set_text (rule.lens.value);
 
+    has_rawtype_->set_active (rule.rawType.enabled);
+    rawtype_->set_text (rule.rawType.value);
+
     profilepath_->updateProfileList();
 
     if (!profilepath_->setActiveRowFromFullPath (rule.profilepath)) {
@@ -111,6 +115,9 @@ DynamicProfileRule DynamicProfilePanel::EditDialog::get_rule()
 
     ret.lens.enabled = has_lens_->get_active();
     ret.lens.value = lens_->get_text();
+
+    ret.rawType.enabled = has_rawtype_->get_active();
+    ret.rawType.value = rawtype_->get_text();
 
     ret.profilepath = profilepath_->getFullPathFromActiveRow();
 

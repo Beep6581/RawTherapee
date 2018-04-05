@@ -59,6 +59,7 @@ public:
     Range<double> expcomp;
     Optional camera;
     Optional lens;
+    Optional rawType;
     Glib::ustring profilepath;
 };
 

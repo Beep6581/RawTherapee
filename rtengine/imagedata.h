@@ -63,6 +63,7 @@ public:
 
     bool getPixelShift () const;
     bool getHDR () const;
+    std::string getRawType () const;
     IIOSampleFormat getSampleFormat () const;
     rtexif::TagDirectory* getExifData () const;
     procparams::IPTCPairs getIPTCData () const;
@@ -104,6 +105,7 @@ public:
     FrameData *getFrameData (unsigned int frame) const;
     bool getPixelShift (unsigned int frame = 0) const;
     bool getHDR (unsigned int frame = 0) const;
+    std::string getRawType (unsigned int frame) const;
     IIOSampleFormat getSampleFormat (unsigned int frame = 0) const;
     rtexif::TagDirectory* getFrameExifData (unsigned int frame = 0) const;
     rtexif::TagDirectory* getRootExifData (unsigned int root = 0) const;

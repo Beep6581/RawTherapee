@@ -109,6 +109,9 @@ private:
         Gtk::CheckButton *has_lens_;
         Gtk::Entry *lens_;
 
+        Gtk::CheckButton *has_rawtype_;
+        Gtk::Entry *rawtype_;
+
         ProfileStoreComboBox *profilepath_;
     };
 

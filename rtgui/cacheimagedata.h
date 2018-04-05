@@ -110,6 +110,7 @@ public:
     std::string getOrientation (unsigned int frame = 0) const { return ""; } // TODO
     bool getPixelShift (unsigned int frame = 0) const { return isPixelShift; }
     bool getHDR (unsigned int frame = 0) const { return isHDR; }
+    std::string getRawType (unsigned int frame) const { return isPixelShift ? "PS" : isHDR ? "HDR" : "STD"; }
     rtengine::IIOSampleFormat getSampleFormat (unsigned int frame = 0) const { return sampleFormat; }
 };
 #endif
