@@ -42,7 +42,6 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
 
 //----------- OOG clamping ----------------------------------
     clampOOG = Gtk::manage(new Gtk::CheckButton(M("TP_EXPOSURE_CLAMPOOG")));
-    clampOOG->set_tooltip_markup(M("TP_EXPOSURE_CLAMPOOG_TOOLTIP"));
     pack_start(*clampOOG);
     pack_start (*Gtk::manage (new  Gtk::HSeparator()));
     clampOOG->signal_toggled().connect(sigc::mem_fun(*this, &ToneCurve::clampOOGChanged));

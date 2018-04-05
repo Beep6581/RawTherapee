@@ -1554,7 +1554,6 @@ TP_EXPOSURE_AUTOLEVELS_TIP;Toggles execution of Auto Levels to automatically set
 TP_EXPOSURE_BLACKLEVEL;Black
 TP_EXPOSURE_BRIGHTNESS;Lightness
 TP_EXPOSURE_CLAMPOOG;Clip out-of-gamut colours
-TP_EXPOSURE_CLAMPOOG_TOOLTIP;Clip coulours that are outside the gamut of the current working space early in the pipeline. Turning this off allows to produce 32-bit TIFFs with values that exceed the 0-1 range, but might lead to artifacts. Under normal circumstances, this should be left enabled.
 TP_EXPOSURE_CLIP;Clip %
 TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in Auto Levels operation.
 TP_EXPOSURE_COMPRHIGHLIGHTS;Highlight compression
