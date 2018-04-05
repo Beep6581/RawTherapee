@@ -1083,7 +1083,7 @@ void rtengine::ICCStore::getGammaArray(const procparams::ColorManagementParams &
         ga[3] = 1. / slope;
         ga[5] = 0.0;
         ga[6] = 0.0;
-        printf("ga[0]=%f ga[1]=%f ga[2]=%f ga[3]=%f ga[4]=%f\n", ga[0],ga[1],ga[2],ga[3],ga[4]);
+     //   printf("ga[0]=%f ga[1]=%f ga[2]=%f ga[3]=%f ga[4]=%f\n", ga[0],ga[1],ga[2],ga[3],ga[4]);
     }
 }
 
