@@ -50,6 +50,7 @@ void ParamsEdited::set (bool v)
     toneCurve.hrenabled   = v;
     toneCurve.method    = v;
     toneCurve.histmatching = v;
+    toneCurve.clampOOG = v;
     retinex.cdcurve    = v;
     retinex.mapcurve    = v;
     retinex.cdHcurve    = v;
@@ -610,6 +611,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         toneCurve.hrenabled = toneCurve.hrenabled && p.toneCurve.hrenabled == other.toneCurve.hrenabled;
         toneCurve.method = toneCurve.method && p.toneCurve.method == other.toneCurve.method;
         toneCurve.histmatching = toneCurve.histmatching && p.toneCurve.histmatching == other.toneCurve.histmatching;
+        toneCurve.clampOOG = toneCurve.clampOOG && p.toneCurve.clampOOG == other.toneCurve.clampOOG;
         retinex.cdcurve = retinex.cdcurve && p.retinex.cdcurve == other.retinex.cdcurve;
         retinex.mapcurve = retinex.mapcurve && p.retinex.mapcurve == other.retinex.mapcurve;
         retinex.cdHcurve = retinex.cdHcurve && p.retinex.cdHcurve == other.retinex.cdHcurve;
@@ -1210,6 +1212,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.toneCurve.histmatching   = mods.toneCurve.histmatching;
     }
 
+    if (toneCurve.clampOOG) {
+        toEdit.toneCurve.clampOOG = mods.toneCurve.clampOOG;
+    }
+    
     if (retinex.enabled) {
         toEdit.retinex.enabled        = mods.retinex.enabled;
     }
