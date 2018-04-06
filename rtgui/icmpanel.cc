@@ -19,6 +19,8 @@
 #include <iomanip>
 #include "icmpanel.h"
 #include "options.h"
+#include "eventmapper.h"
+
 #include "guiutils.h"
 #include "../rtengine/iccstore.h"
 #include "../rtengine/dcp.h"
@@ -31,7 +33,9 @@ extern Options options;
 
 ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunchanged(nullptr), icmplistener(nullptr), lastRefFilename(""), camName("")
 {
-
+    auto m = ProcEventMapper::getInstance();
+	EvICMprimariMethod = m->newEvent(GAMMA, "HISTORY_MSG_ICMPRIMARI");
+	
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = lastgamfree = false;
 
     ipDialog = Gtk::manage (new MyFileChooserButton (M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
@@ -239,11 +243,30 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     Gtk::VBox *fgVBox = Gtk::manage ( new Gtk::VBox());
     fgVBox->set_spacing(2);
 
+		
     freegamma = Gtk::manage(new Gtk::CheckButton((M("TP_GAMMA_FREE"))));
     freegamma->set_active (false);
     fgFrame->set_label_widget(*freegamma);
 
-    gampos = Gtk::manage(new Adjuster (M("TP_GAMMA_CURV"), 1, 3.5, 0.00001, 2.22));
+	
+    Gtk::HBox* priHBox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Label* prilab = Gtk::manage (new Gtk::Label (M("TP_GAMMA_PRIM") + ":"));
+
+    priHBox->pack_start (*prilab, Gtk::PACK_SHRINK);
+    wprimari = Gtk::manage (new MyComboBoxText ());
+    priHBox->pack_start (*wprimari, Gtk::PACK_EXPAND_WIDGET);
+
+    fgVBox->pack_start(*priHBox, Gtk::PACK_EXPAND_WIDGET);
+
+    std::vector<Glib::ustring> wprinames = rtengine::ICCStore::getInstance()->getWorkingProfiles();
+
+    for (size_t i = 0; i < wprinames.size(); i++) {
+        wprimari->append (wprinames[i]);
+    }
+
+    wprimari->set_active (6);
+	
+    gampos = Gtk::manage(new Adjuster (M("TP_GAMMA_CURV"), 1, 3.5, 0.00001, 2.4));
     gampos->setAdjusterListener (this);
 
     if (gampos->delay < options.adjusterMaxDelay) {
@@ -251,7 +274,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     }
 
     gampos->show();
-    slpos = Gtk::manage(new Adjuster (M("TP_GAMMA_SLOP"), 0, 15, 0.00001, 4.5));
+    slpos = Gtk::manage(new Adjuster (M("TP_GAMMA_SLOP"), 0, 15, 0.00001, 12.92310));
     slpos->setAdjusterListener (this);
 
     if (slpos->delay < options.adjusterMaxDelay) {
@@ -309,6 +332,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     ointentconn = ointent->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::oiChanged) );
     wgammaconn = wgamma->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::gpChanged) );
     dcpillconn = dcpIll->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::dcpIlluminantChanged) );
+    wprimariconn = wprimari->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::wprimariChanged) );
 
     obpcconn = obpc->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::oBPCChanged) );
     gamcsconn = freegamma->signal_toggled().connect ( sigc::mem_fun(*this, &ICMPanel::GamChanged));
@@ -496,6 +520,7 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
     ConnectionBlocker ointentconn_(ointentconn);
     ConnectionBlocker wgammaconn_(wgammaconn);
     ConnectionBlocker dcpillconn_(dcpillconn);
+    ConnectionBlocker wprimariconn_(wprimariconn);
 
     if(pp->icm.input.substr(0, 5) != "file:" && !ipDialog->get_filename().empty()) {
         ipDialog->set_filename(pp->icm.input);
@@ -531,6 +556,7 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     wnames->set_active_text (pp->icm.working);
     wgamma->set_active_text (pp->icm.gamma);
+    wprimari->set_active_text (pp->icm.wprimari);
 
     if (pp->icm.output == ColorManagementParams::NoICMString) {
         onames->set_active_text (M("TP_ICM_NOICM"));
@@ -562,6 +588,7 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
         gampos->set_sensitive(pp->icm.freegamma);
         slpos->set_sensitive(pp->icm.freegamma);
         updateRenderingIntent(pp->icm.output);
+        //wprimari->set_sensitive(!pp->icm.freegamma);
     }
 
     gampos->setValue (pp->icm.gampos);
@@ -596,6 +623,9 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
             wgamma->set_active_text(M("GENERAL_UNCHANGED"));
             wgamma->set_active_text(M("GENERAL_UNCHANGED"));
         }
+        if (!pedited->icm.wprimari) {
+            wprimari->set_active_text(M("GENERAL_UNCHANGED"));
+        }
 
         gampos->setEditedState (pedited->icm.gampos ? Edited : UnEdited);
         slpos->setEditedState  (pedited->icm.slpos  ? Edited : UnEdited);
@@ -629,6 +659,7 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited)
     pp->icm.working = wnames->get_active_text ();
     pp->icm.gamma = wgamma->get_active_text ();
     pp->icm.dcpIlluminant = rtengine::max<int>(dcpIll->get_active_row_number(), 0);
+    pp->icm.wprimari = wprimari->get_active_text ();
 
     if (onames->get_active_text() == M("TP_ICM_NOICM")) {
         pp->icm.output  = ColorManagementParams::NoICMString;
@@ -667,6 +698,7 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.freegamma = !freegamma->get_inconsistent();
         pedited->icm.gampos = gampos->getEditedState ();
         pedited->icm.slpos = slpos->getEditedState ();
+        pedited->icm.wprimari = wprimari->get_active_text() != M("GENERAL_UNCHANGED");
     }
 }
 
@@ -712,6 +744,15 @@ void ICMPanel::wpChanged ()
         listener->panelChanged (EvWProfile, wnames->get_active_text ());
     }
 }
+
+void ICMPanel::wprimariChanged ()
+{
+
+    if (listener) {
+        listener->panelChanged (EvICMprimariMethod, wprimari->get_active_text ());
+    }
+}
+
 
 void ICMPanel::gpChanged ()
 {
@@ -1063,6 +1104,7 @@ void ICMPanel::setBatchMode (bool batchMode)
     ointent->show();
     wnames->append (M("GENERAL_UNCHANGED"));
     wgamma->append (M("GENERAL_UNCHANGED"));
+    wprimari->append (M("GENERAL_UNCHANGED"));
     dcpIll->append (M("GENERAL_UNCHANGED"));
     gampos->showEditedCB ();
     slpos->showEditedCB ();

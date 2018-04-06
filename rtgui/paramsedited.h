@@ -586,6 +586,7 @@ public:
     bool gampos;
     bool slpos;
     bool freegamma;
+	bool wprimari;
 };
 class WaveletParamsEdited
 {

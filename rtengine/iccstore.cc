@@ -1291,14 +1291,14 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
 
     //primaries for 7 working profiles ==> output profiles
     // eventually to adapt primaries  if RT used special profiles !
-    if (icm.output == "WideGamut") {
+    if (icm.wprimari == "WideGamut") {
         p[0] = 0.7350;    //Widegamut primaries
         p[1] = 0.2650;
         p[2] = 0.1150;
         p[3] = 0.8260;
         p[4] = 0.1570;
         p[5] = 0.0180;
-    } else if (icm.output == "Adobe RGB") {
+    } else if (icm.wprimari == "Adobe RGB") {
         p[0] = 0.6400;    //Adobe primaries
         p[1] = 0.3300;
         p[2] = 0.2100;
@@ -1306,7 +1306,7 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[4] = 0.1500;
         p[5] = 0.0600;
         temp = ColorTemp::D65;
-    } else if (icm.output == "sRGB") {
+    } else if (icm.wprimari == "sRGB") {
         p[0] = 0.6400;    // sRGB primaries
         p[1] = 0.3300;
         p[2] = 0.3000;
@@ -1314,7 +1314,7 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[4] = 0.1500;
         p[5] = 0.0600;
         temp = ColorTemp::D65;
-    } else if (icm.output == "BruceRGB") {
+    } else if (icm.wprimari == "BruceRGB") {
         p[0] = 0.6400;    // Bruce primaries
         p[1] = 0.3300;
         p[2] = 0.2800;
@@ -1322,21 +1322,21 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[4] = 0.1500;
         p[5] = 0.0600;
         temp = ColorTemp::D65;
-    } else if (icm.output == "Beta RGB") {
+    } else if (icm.wprimari == "Beta RGB") {
         p[0] = 0.6888;    // Beta primaries
         p[1] = 0.3112;
         p[2] = 0.1986;
         p[3] = 0.7551;
         p[4] = 0.1265;
         p[5] = 0.0352;
-    } else if (icm.output == "BestRGB") {
+    } else if (icm.wprimari == "BestRGB") {
         p[0] = 0.7347;    // Best primaries
         p[1] = 0.2653;
         p[2] = 0.2150;
         p[3] = 0.7750;
         p[4] = 0.1300;
         p[5] = 0.0350;
-    } else if (icm.output == "Rec2020") {
+    } else if (icm.wprimari == "Rec2020") {
         p[0] = 0.7080;    // Rec2020 primaries
         p[1] = 0.2920;
         p[2] = 0.1700;
@@ -1352,7 +1352,16 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[4] = 0.0366;
         p[5] = 0.0001;
     }
-
+//printf("prim p2=%f \n",  p[2]);
+/*	
+        p[0] = 0.6400;    // sRGB primaries
+        p[1] = 0.3300;
+        p[2] = 0.3000;
+        p[3] = 0.6000;
+        p[4] = 0.1500;
+        p[5] = 0.0600;
+        temp = ColorTemp::D65;
+*/	
     cmsCIExyY xyD;
     cmsCIExyYTRIPLE Primaries = {
         {p[0], p[1], 1.0}, // red
@@ -1387,6 +1396,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         pro = true;    //pro=0  RT_sRGB || Prophoto
     }
 
+/*
     // Check that output profiles exist, otherwise use LCMS2
     // Use the icc/icm profiles associated to possible working profiles, set in "options"
     if (icm.working == "ProPhoto"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto)   && !pro) {
@@ -1417,11 +1427,43 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
 
         return nullptr;
     }
+	*/
+ //outProfile = options.rtSettings.srgb;
+	
+    if (icm.wprimari == "ProPhoto"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto)   && !pro) {
+        outProfile = options.rtSettings.prophoto;
+    } else if (icm.wprimari == "Adobe RGB" && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.adobe)             ) {
+        outProfile = options.rtSettings.adobe;
+    } else if (icm.wprimari == "WideGamut" && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.widegamut)         ) {
+        outProfile = options.rtSettings.widegamut;
+    } else if (icm.wprimari == "Beta RGB"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.beta)              ) {
+        outProfile = options.rtSettings.beta;
+    } else if (icm.wprimari == "BestRGB"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.best)              ) {
+        outProfile = options.rtSettings.best;
+    } else if (icm.wprimari == "BruceRGB"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.bruce)             ) {
+        outProfile = options.rtSettings.bruce;
+    } else if (icm.wprimari == "sRGB"      && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.srgb)       && !pro) {
+        outProfile = options.rtSettings.srgb;
+    } else if (icm.wprimari == "sRGB"      && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.srgb10)     &&  pro) {
+        outProfile = options.rtSettings.srgb10;
+    } else if (icm.wprimari == "ProPhoto"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto10) &&  pro) {
+        outProfile = options.rtSettings.prophoto10;
+    } else if (icm.wprimari == "Rec2020"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.rec2020)           ) {
+        outProfile = options.rtSettings.rec2020;
+    } else {
+        // Should not occurs
+        if (settings->verbose) {
+            printf("\"%s\": unknown working profile! - use LCMS2 substitution\n", icm.working.c_str() );
+        }
 
+        return nullptr;
+    }
+	
+	
     //begin adaptation rTRC gTRC bTRC
     //"outputProfile" profile has the same characteristics than RGB values, but TRC are adapted... for applying profile
     if (settings->verbose) {
-        printf("Output Gamma - profile: \"%s\"\n", outProfile.c_str()  );    //c_str()
+        printf("Output Gamma - profile Primaries as RT profile: \"%s\"\n", outProfile.c_str()  );    //c_str()
     }
 
     outputProfile = ICCStore::getInstance()->getProfile(outProfile); //get output profile

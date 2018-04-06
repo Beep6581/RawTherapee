@@ -1591,7 +1591,8 @@ TP_FLATFIELD_CLIPCONTROL;Clip control
 TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, clip control can lead to color cast.
 TP_FLATFIELD_LABEL;Flat-Field
 TP_GAMMA_CURV;Gamma
-TP_GAMMA_FREE;Free gamma
+TP_GAMMA_FREE;Free Output Integrate Profile (FOIP)
+TP_GAMMA_PRIM;Primaries Output profile
 TP_GAMMA_OUTPUT;Output gamma
 TP_GAMMA_SLOP;Slope (linear)
 TP_GENERAL_11SCALE_TOOLTIP;The effects of this tool are only visible or only accurate at a preview scale of 1:1.

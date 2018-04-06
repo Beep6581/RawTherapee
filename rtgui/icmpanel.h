@@ -59,6 +59,8 @@ protected:
     bool isBatchMode;
 
 private:
+    rtengine::ProcEvent EvICMprimariMethod;
+
     Gtk::VBox       *  iVBox;
 
     Gtk::CheckButton*  obpc;
@@ -80,6 +82,8 @@ private:
     sigc::connection   wnamesconn;
     MyComboBoxText*    wgamma;
     sigc::connection   wgammaconn;
+    MyComboBoxText*    wprimari;
+    sigc::connection   wprimariconn;
 
     MyComboBoxText*    onames;
     sigc::connection   onamesconn;
@@ -109,6 +113,7 @@ public:
     void setAdjusterBehavior (bool gammaadd, bool slopeadd);
 
     void wpChanged ();
+    void wprimariChanged ();
     void opChanged ();
     void oiChanged (int n);
     void oBPCChanged ();

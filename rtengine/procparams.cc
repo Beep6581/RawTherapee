@@ -1948,8 +1948,9 @@ ColorManagementParams::ColorManagementParams() :
     outputIntent(RI_RELATIVE),
     outputBPC(true),
     gamma("default"),
-    gampos(2.22),
-    slpos(4.5),
+    gampos(2.4),
+    slpos(12.92310),
+    wprimari("sRGB"),
     freegamma(false)
 {
 }
@@ -1970,6 +1971,7 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && gamma == other.gamma
         && gampos == other.gampos
         && slpos == other.slpos
+        && wprimari == other.wprimari
         && freegamma == other.freegamma;
 }
 
@@ -3182,6 +3184,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->icm.freegamma, "Color Management", "Freegamma", icm.freegamma, keyFile);
         saveToKeyfile(!pedited || pedited->icm.gampos, "Color Management", "GammaValue", icm.gampos, keyFile);
         saveToKeyfile(!pedited || pedited->icm.slpos, "Color Management", "GammaSlope", icm.slpos, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.wprimari, "Color Management", "GammaPrimari", icm.wprimari, keyFile);
 
 // Wavelet
         saveToKeyfile(!pedited || pedited->wavelet.enabled, "Wavelet", "Enabled", wavelet.enabled, keyFile);
@@ -4206,6 +4209,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "Freegamma", pedited, icm.freegamma, pedited->icm.freegamma);
             assignFromKeyfile(keyFile, "Color Management", "GammaValue", pedited, icm.gampos, pedited->icm.gampos);
             assignFromKeyfile(keyFile, "Color Management", "GammaSlope", pedited, icm.slpos, pedited->icm.slpos);
+            assignFromKeyfile(keyFile, "Color Management", "GammaPrimari", pedited, icm.wprimari, pedited->icm.wprimari);
         }
 
         if (keyFile.has_group ("Wavelet")) {
