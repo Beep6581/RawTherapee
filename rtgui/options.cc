@@ -548,7 +548,6 @@ void Options::setDefaults ()
     rtSettings.level0_cbdl = 0;
     rtSettings.level123_cbdl = 30;
 
-    rtSettings.ciecamfloat = true;
     rtSettings.protectred = 60;
     rtSettings.protectredh = 0.3;
     rtSettings.CRI_color = 0;
@@ -1428,11 +1427,6 @@ void Options::readFromFile (Glib::ustring fname)
                     rtSettings.gamutICC = keyFile.get_boolean ("Color Management", "GamutICC");
                 }
 
-                //if ( keyFile.has_key ("Color Management", "BWcomplement")) rtSettings.bw_complementary = keyFile.get_boolean("Color Management", "BWcomplement");
-                if ( keyFile.has_key ("Color Management", "Ciecamfloat")) {
-                    rtSettings.ciecamfloat = keyFile.get_boolean ("Color Management", "Ciecamfloat");
-                }
-
                 if ( keyFile.has_key ("Color Management", "AdobeRGB")) {
                     rtSettings.adobe = keyFile.get_string ("Color Management", "AdobeRGB");
                 }
@@ -1993,8 +1987,6 @@ void Options::saveToFile (Glib::ustring fname)
         keyFile.set_string  ("Color Management", "Bruce", rtSettings.bruce);
         keyFile.set_integer ("Color Management", "WhiteBalanceSpotSize", whiteBalanceSpotSize);
         keyFile.set_boolean ("Color Management", "GamutICC", rtSettings.gamutICC);
-        //keyFile.set_boolean ("Color Management", "BWcomplement", rtSettings.bw_complementary);
-        keyFile.set_boolean ("Color Management", "Ciecamfloat", rtSettings.ciecamfloat);
         keyFile.set_boolean ("Color Management", "GamutLch", rtSettings.gamutLch);
         keyFile.set_integer ("Color Management", "ProtectRed", rtSettings.protectred);
         keyFile.set_integer ("Color Management", "Amountchroma", rtSettings.amchroma);
