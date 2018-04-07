@@ -27,7 +27,6 @@
 #include "../rtgui/thresholdselector.h"
 #include "curves.h"
 #include "color.h"
-#define BENCHMARK
 #include "StopWatch.h"
 #ifdef _OPENMP
 #include <omp.h>
