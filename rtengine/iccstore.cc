@@ -1483,6 +1483,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     cmsMLU *mlu;
     cmsContext ContextID = cmsGetProfileContextID(outputProfile); // create context to modify some TAGs
     mlu = cmsMLUalloc(ContextID, 1);
+    Glib::ustring outPro;
 
     // instruction with //ICC are used to generate ICC profile
     if (mlu == nullptr) {
@@ -1513,25 +1514,29 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         } else {
             // create description with gamma + slope + primaries
             std::wostringstream gammaWs;
-            gammaWs.precision(2);
-            gammaWs << "Manual GammaTRC: g=" <<(float)icm.gampos << " s=" <<(float)icm.slpos;
+            //std::string gammaWsICC;
+            std::wstring gammaStrICC;
+			
+            gammaWs.precision(6);
+          //  gammaWs << "Manual GammaTRC: g=" <<(float)icm.gampos << " s=" <<(float)icm.slpos;
+			//Glib::ustring outPro;
+			outPro = outProfile + "_FOIP"+ std::to_string((float)icm.gampos)+" "+ std::to_string((float)icm.slpos) + ".icc";
+		  
+            gammaWs << outPro.c_str() <<(float)icm.gampos << " s=" <<(float)icm.slpos;
 
             cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
+
+		//	cmsSaveProfileToFile(outputProfile,  outPro.c_str());		
+			
         }
 
         cmsWriteTag(outputProfile, cmsSigProfileDescriptionTag,  mlu);//desc changed
 
-        /*
-        cmsMLUsetWide(mlu, "en", "US", L"General Public License - AdobeRGB compatible");//adapt to profil
-        cmsWriteTag(outputProfile, cmsSigCopyrightTag, mlu);
+		Glib::ustring manufacturer;
 
-        cmsMLUsetWide(mlu, "en", "US", L"RawTherapee");
-        cmsWriteTag(outputProfile, cmsSigDeviceMfgDescTag, mlu);
-
-        cmsMLUsetWide(mlu, "en", "US", L"RTMedium");   //adapt to profil
-        cmsWriteTag(outputProfile, cmsSigDeviceModelDescTag, mlu);
-
-        */
+		manufacturer="RawTherapee_FOIP";
+		cmsMLUsetASCII(mlu, "en", "US", manufacturer.c_str());
+        cmsWriteTag(outputProfile, cmsSigDeviceMfgDescTag,mlu);
 
         cmsMLUfree(mlu);
     }
@@ -1541,6 +1546,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     cmsWriteTag(outputProfile, cmsSigRedTRCTag,(void*)GammaTRC );
     cmsWriteTag(outputProfile, cmsSigGreenTRCTag,(void*)GammaTRC );
     cmsWriteTag(outputProfile, cmsSigBlueTRCTag,(void*)GammaTRC );
+			cmsSaveProfileToFile(outputProfile,  outPro.c_str());		
 
     if (GammaTRC) {
         cmsFreeToneCurve(GammaTRC);
