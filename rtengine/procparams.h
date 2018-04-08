@@ -1022,11 +1022,10 @@ struct ColorManagementParams {
     Glib::ustring gamma;
     double gampos;
     double slpos;
-    bool freegamma;
     Glib::ustring wprimari;
     Glib::ustring wprofile;
-
     static const Glib::ustring NoICMString;
+    bool freegamma;
 
     ColorManagementParams();
 
