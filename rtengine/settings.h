@@ -61,6 +61,7 @@ public:
     Glib::ustring   srgb;                   // default name of SRGB space profile
     Glib::ustring   srgb10;                 // default name of SRGB space profile
     Glib::ustring   rec2020;                   // default name of rec2020
+    Glib::ustring   ACEScg;                   // default name of ACEScg
 
     bool            gamutICC; // no longer used
     bool            gamutLch;
