@@ -60,6 +60,7 @@ protected:
 
 private:
     rtengine::ProcEvent EvICMprimariMethod;
+    rtengine::ProcEvent EvICMprofileMethod;
 
     Gtk::VBox       *  iVBox;
 
@@ -84,6 +85,8 @@ private:
     sigc::connection   wgammaconn;
     MyComboBoxText*    wprimari;
     sigc::connection   wprimariconn;
+    MyComboBoxText*    wprofile;
+    sigc::connection   wprofileconn;
 
     MyComboBoxText*    onames;
     sigc::connection   onamesconn;
@@ -114,6 +117,7 @@ public:
 
     void wpChanged ();
     void wprimariChanged ();
+    void wprofileChanged ();
     void opChanged ();
     void oiChanged (int n);
     void oBPCChanged ();

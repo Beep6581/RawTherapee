@@ -389,6 +389,7 @@ void ParamsEdited::set (bool v)
     icm.gampos      = v;
     icm.slpos       = v;
     icm.wprimari       = v;
+    icm.wprofile       = v;
     raw.bayersensor.method = v;
     raw.bayersensor.imageNum = v;
     raw.bayersensor.ccSteps = v;
@@ -953,6 +954,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         icm.gampos = icm.gampos && p.icm.gampos == other.icm.gampos;
         icm.slpos = icm.slpos && p.icm.slpos == other.icm.slpos;
         icm.wprimari = icm.wprimari && p.icm.wprimari == other.icm.wprimari;
+        icm.wprofile = icm.wprofile && p.icm.wprofile == other.icm.wprofile;
         raw.bayersensor.method = raw.bayersensor.method && p.raw.bayersensor.method == other.raw.bayersensor.method;
         raw.bayersensor.imageNum = raw.bayersensor.imageNum && p.raw.bayersensor.imageNum == other.raw.bayersensor.imageNum;
         raw.bayersensor.ccSteps = raw.bayersensor.ccSteps && p.raw.bayersensor.ccSteps == other.raw.bayersensor.ccSteps;
@@ -2470,6 +2472,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.icm.wprimari        = mods.icm.wprimari;
     }
 
+    if (icm.wprofile) {
+        toEdit.icm.wprofile        = mods.icm.wprofile;
+    }
+	
     if (icm.freegamma) {
         toEdit.icm.freegamma    = mods.icm.freegamma;
     }

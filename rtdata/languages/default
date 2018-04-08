@@ -1594,6 +1594,10 @@ TP_GAMMA_CURV;Gamma
 TP_GAMMA_FREE;Free Output Integrate Profile (FOIP)
 TP_GAMMA_PRIM;Primaries Output profile
 TP_GAMMA_OUTPUT;Output gamma
+TP_GAMMA_PROF;Generate ICC profile
+TP_GAMMA_PROF_NONE;none
+TP_GAMMA_PROF_V2;ICC V2
+TP_GAMMA_PROF_V4;ICC V4
 TP_GAMMA_SLOP;Slope (linear)
 TP_GENERAL_11SCALE_TOOLTIP;The effects of this tool are only visible or only accurate at a preview scale of 1:1.
 TP_GRADIENT_CENTER;Center

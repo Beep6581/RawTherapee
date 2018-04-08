@@ -1520,8 +1520,12 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             std::wstring gammaStrICC;
 			
             gammaWs.precision(6);
-			outPro = outProfile + "_FOIP"+ std::to_string((float)icm.gampos)+" "+ std::to_string((float)icm.slpos) + ".icc";
-		  
+			if(icm.wprofile == "v4") {
+				outPro = outProfile + "_FOIP_V4_"+ std::to_string((float)icm.gampos)+" "+ std::to_string((float)icm.slpos) + ".icc";
+			} else if(icm.wprofile == "v2") {
+				outPro = outProfile + "_FOIP_V2_"+ std::to_string((float)icm.gampos)+" "+ std::to_string((float)icm.slpos) + ".icc";
+			}
+			
             gammaWs << outPro.c_str() <<(float)icm.gampos << " s=" <<(float)icm.slpos;
 
             cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
@@ -1538,7 +1542,12 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
 
         cmsMLUfree(mlu);
     }
-	cmsSetProfileVersion(outputProfile, 4.3);
+	if(icm.wprofile == "v4") {
+		cmsSetProfileVersion(outputProfile, 4.3);
+	}
+	else {
+		cmsSetProfileVersion(outputProfile, 2.0);
+	}	
 //change 	
     enum class ColorTemp {
         D50 = 5003,  // for Widegamut, Prophoto Best, Beta -> D50
@@ -1622,12 +1631,15 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
 	
     // Calculate output profile's rTRC gTRC bTRC
     GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, Parameters);
-    outputProfile = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC);
+ 	if(icm.wprofile == "v4") {
+		outputProfile = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC);
+   	}
     cmsWriteTag(outputProfile, cmsSigRedTRCTag,GammaTRC[0] );
     cmsWriteTag(outputProfile, cmsSigGreenTRCTag,GammaTRC[1] );
     cmsWriteTag(outputProfile, cmsSigBlueTRCTag,GammaTRC[2] );
-	cmsSaveProfileToFile(outputProfile,  outPro.c_str());		
-
+	if(icm.wprofile == "v2" || icm.wprofile == "v4") {
+		cmsSaveProfileToFile(outputProfile,  outPro.c_str());		
+	}
     if (GammaTRC) {
         cmsFreeToneCurve(GammaTRC[0]);
     }

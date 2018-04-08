@@ -35,6 +35,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
 {
     auto m = ProcEventMapper::getInstance();
 	EvICMprimariMethod = m->newEvent(GAMMA, "HISTORY_MSG_ICMPRIMARI");
+	EvICMprofileMethod = m->newEvent(GAMMA, "HISTORY_MSG_ICMPROFILE");
 	
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = lastgamfree = false;
 
@@ -285,6 +286,23 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     fgVBox->pack_start( *gampos, Gtk::PACK_SHRINK);//gamma
     fgVBox->pack_start( *slpos, Gtk::PACK_SHRINK);//slope
 
+	
+    Gtk::HBox* profHBox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Label* proflab = Gtk::manage (new Gtk::Label (M("TP_GAMMA_PROF") + ":"));
+
+    profHBox->pack_start (*proflab, Gtk::PACK_SHRINK);
+    wprofile = Gtk::manage (new MyComboBoxText ());
+    profHBox->pack_start (*wprofile, Gtk::PACK_EXPAND_WIDGET);
+
+    fgVBox->pack_start(*profHBox, Gtk::PACK_EXPAND_WIDGET);
+    wprofile->append (M("TP_GAMMA_PROF_NONE"));
+    wprofile->append (M("TP_GAMMA_PROF_V2"));
+    wprofile->append (M("TP_GAMMA_PROF_V4"));
+    wprofileconn = wprofile->signal_changed().connect ( sigc::mem_fun(*this, &ICMPanel::wprofileChanged) );
+
+
+    wprofile->set_active (0);
+	
     fgFrame->add(*fgVBox);
     oVBox->pack_start(*fgFrame, Gtk::PACK_EXPAND_WIDGET);
 
@@ -521,6 +539,7 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
     ConnectionBlocker wgammaconn_(wgammaconn);
     ConnectionBlocker dcpillconn_(dcpillconn);
     ConnectionBlocker wprimariconn_(wprimariconn);
+    ConnectionBlocker wprofileconn_(wprofileconn);
 
     if(pp->icm.input.substr(0, 5) != "file:" && !ipDialog->get_filename().empty()) {
         ipDialog->set_filename(pp->icm.input);
@@ -557,7 +576,18 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
     wnames->set_active_text (pp->icm.working);
     wgamma->set_active_text (pp->icm.gamma);
     wprimari->set_active_text (pp->icm.wprimari);
+ //   wprofile->set_active_text (pp->icm.wprofile);
 
+        if (pp->icm.wprofile == "none") {
+            wprofile->set_active (0);
+        } else if (pp->icm.wprofile == "v2") {
+            wprofile->set_active (1);
+        } else if (pp->icm.wprofile == "v4") {
+            wprofile->set_active (2);
+        }
+	 //   wprofileChanged();
+
+	
     if (pp->icm.output == ColorManagementParams::NoICMString) {
         onames->set_active_text (M("TP_ICM_NOICM"));
     } else {
@@ -626,6 +656,9 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
         if (!pedited->icm.wprimari) {
             wprimari->set_active_text(M("GENERAL_UNCHANGED"));
         }
+        if (!pedited->icm.wprofile) {
+            wprofile->set_active_text(M("GENERAL_UNCHANGED"));
+        }
 
         gampos->setEditedState (pedited->icm.gampos ? Edited : UnEdited);
         slpos->setEditedState  (pedited->icm.slpos  ? Edited : UnEdited);
@@ -660,6 +693,7 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited)
     pp->icm.gamma = wgamma->get_active_text ();
     pp->icm.dcpIlluminant = rtengine::max<int>(dcpIll->get_active_row_number(), 0);
     pp->icm.wprimari = wprimari->get_active_text ();
+  //  pp->icm.wprofile = wprofile->get_active_text ();
 
     if (onames->get_active_text() == M("TP_ICM_NOICM")) {
         pp->icm.output  = ColorManagementParams::NoICMString;
@@ -674,6 +708,14 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited)
         pp->icm.outputIntent  = rtengine::RI_RELATIVE;
     }
 
+        if (wprofile->get_active_row_number() == 0) {
+            pp->icm.wprofile = "none";
+        } else if (wprofile->get_active_row_number() == 1) {
+            pp->icm.wprofile = "v2";
+        } else if (wprofile->get_active_row_number() == 2) {
+            pp->icm.wprofile = "v4";
+		}
+		
     pp->icm.freegamma = freegamma->get_active();
     pp->icm.toneCurve = ckbToneCurve->get_active ();
     pp->icm.applyLookTable = ckbApplyLookTable->get_active ();
@@ -699,6 +741,7 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.gampos = gampos->getEditedState ();
         pedited->icm.slpos = slpos->getEditedState ();
         pedited->icm.wprimari = wprimari->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->icm.wprofile = wprofile->get_active_text() != M("GENERAL_UNCHANGED");
     }
 }
 
@@ -753,6 +796,13 @@ void ICMPanel::wprimariChanged ()
     }
 }
 
+void ICMPanel::wprofileChanged ()
+{
+
+    if (listener) {
+        listener->panelChanged (EvICMprofileMethod, wprofile->get_active_text ());
+    }
+}
 
 void ICMPanel::gpChanged ()
 {
@@ -1105,6 +1155,7 @@ void ICMPanel::setBatchMode (bool batchMode)
     wnames->append (M("GENERAL_UNCHANGED"));
     wgamma->append (M("GENERAL_UNCHANGED"));
     wprimari->append (M("GENERAL_UNCHANGED"));
+    wprofile->append (M("GENERAL_UNCHANGED"));
     dcpIll->append (M("GENERAL_UNCHANGED"));
     gampos->showEditedCB ();
     slpos->showEditedCB ();
