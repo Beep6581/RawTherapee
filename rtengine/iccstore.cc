@@ -38,7 +38,6 @@
 #include "../rtgui/threadutils.h"
 
 #include "cJSON.h"
-
 namespace rtengine
 {
 
@@ -1377,6 +1376,8 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
     cmsWhitePointFromTemp(&xyD,(double)temp);
     GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, Parameters); //5 = smoother than 4
     cmsHPROFILE oprofdef = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC); //oprofdef  become Outputprofile
+	//cmsSetProfileVersion(oprofdef, 4.3);
+	
     cmsFreeToneCurve(GammaTRC[0]);
     //lcmsMutex->unlock();
 
@@ -1389,7 +1390,8 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     bool pro = false;
     Glib::ustring outProfile;
     cmsHPROFILE outputProfile = nullptr;
-
+	
+	
     if (icm.freegamma && icm.gampos < 1.35) {
         pro = true;    //select profil with gammaTRC modified :
     } else if (icm.gamma == "linear_g1.0" ||(icm.gamma == "High_g1.3_s3.35")) {
@@ -1518,15 +1520,11 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             std::wstring gammaStrICC;
 			
             gammaWs.precision(6);
-          //  gammaWs << "Manual GammaTRC: g=" <<(float)icm.gampos << " s=" <<(float)icm.slpos;
-			//Glib::ustring outPro;
 			outPro = outProfile + "_FOIP"+ std::to_string((float)icm.gampos)+" "+ std::to_string((float)icm.slpos) + ".icc";
 		  
             gammaWs << outPro.c_str() <<(float)icm.gampos << " s=" <<(float)icm.slpos;
 
             cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
-
-		//	cmsSaveProfileToFile(outputProfile,  outPro.c_str());		
 			
         }
 
@@ -1540,16 +1538,98 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
 
         cmsMLUfree(mlu);
     }
+	cmsSetProfileVersion(outputProfile, 4.3);
+//change 	
+    enum class ColorTemp {
+        D50 = 5003,  // for Widegamut, Prophoto Best, Beta -> D50
+        D65 = 6504   // for sRGB, AdobeRGB, Bruce Rec2020  -> D65
+    };
+    ColorTemp temp = ColorTemp::D50;
+    float p[6]; //primaries
 
+    if (icm.wprimari == "WideGamut") {
+        p[0] = 0.7350;    //Widegamut primaries
+        p[1] = 0.2650;
+        p[2] = 0.1150;
+        p[3] = 0.8260;
+        p[4] = 0.1570;
+        p[5] = 0.0180;
+    } else if (icm.wprimari == "Adobe RGB") {
+        p[0] = 0.6400;    //Adobe primaries
+        p[1] = 0.3300;
+        p[2] = 0.2100;
+        p[3] = 0.7100;
+        p[4] = 0.1500;
+        p[5] = 0.0600;
+        temp = ColorTemp::D65;
+    } else if (icm.wprimari == "sRGB") {
+        p[0] = 0.6400;    // sRGB primaries
+        p[1] = 0.3300;
+        p[2] = 0.3000;
+        p[3] = 0.6000;
+        p[4] = 0.1500;
+        p[5] = 0.0600;
+        temp = ColorTemp::D65;
+    } else if (icm.wprimari == "BruceRGB") {
+        p[0] = 0.6400;    // Bruce primaries
+        p[1] = 0.3300;
+        p[2] = 0.2800;
+        p[3] = 0.6500;
+        p[4] = 0.1500;
+        p[5] = 0.0600;
+        temp = ColorTemp::D65;
+    } else if (icm.wprimari == "Beta RGB") {
+        p[0] = 0.6888;    // Beta primaries
+        p[1] = 0.3112;
+        p[2] = 0.1986;
+        p[3] = 0.7551;
+        p[4] = 0.1265;
+        p[5] = 0.0352;
+    } else if (icm.wprimari == "BestRGB") {
+        p[0] = 0.7347;    // Best primaries
+        p[1] = 0.2653;
+        p[2] = 0.2150;
+        p[3] = 0.7750;
+        p[4] = 0.1300;
+        p[5] = 0.0350;
+    } else if (icm.wprimari == "Rec2020") {
+        p[0] = 0.7080;    // Rec2020 primaries
+        p[1] = 0.2920;
+        p[2] = 0.1700;
+        p[3] = 0.7970;
+        p[4] = 0.1310;
+        p[5] = 0.0460;
+        temp = ColorTemp::D65;
+    } else {
+        p[0] = 0.7347;    //ProPhoto and default primaries
+        p[1] = 0.2653;
+        p[2] = 0.1596;
+        p[3] = 0.8404;
+        p[4] = 0.0366;
+        p[5] = 0.0001;
+    }
+	
+    cmsCIExyY xyD;
+    cmsCIExyYTRIPLE Primaries = {
+        {p[0], p[1], 1.0}, // red
+        {p[2], p[3], 1.0}, // green
+        {p[4], p[5], 1.0}  // blue
+    };
+	
+    cmsWhitePointFromTemp(&xyD,(double)temp);
+    cmsToneCurve* GammaTRC[3];
+	
+	
     // Calculate output profile's rTRC gTRC bTRC
-    cmsToneCurve* GammaTRC = cmsBuildParametricToneCurve(nullptr, 5, Parameters);
-    cmsWriteTag(outputProfile, cmsSigRedTRCTag,(void*)GammaTRC );
-    cmsWriteTag(outputProfile, cmsSigGreenTRCTag,(void*)GammaTRC );
-    cmsWriteTag(outputProfile, cmsSigBlueTRCTag,(void*)GammaTRC );
-			cmsSaveProfileToFile(outputProfile,  outPro.c_str());		
+    GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, Parameters);
+    outputProfile = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC);
+    cmsWriteTag(outputProfile, cmsSigRedTRCTag,GammaTRC[0] );
+    cmsWriteTag(outputProfile, cmsSigGreenTRCTag,GammaTRC[1] );
+    cmsWriteTag(outputProfile, cmsSigBlueTRCTag,GammaTRC[2] );
+	cmsSaveProfileToFile(outputProfile,  outPro.c_str());		
 
     if (GammaTRC) {
-        cmsFreeToneCurve(GammaTRC);
+        cmsFreeToneCurve(GammaTRC[0]);
     }
 
     return outputProfile;
