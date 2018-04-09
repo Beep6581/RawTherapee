@@ -256,13 +256,14 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     priHBox->pack_start (*prilab, Gtk::PACK_SHRINK);
     wprimari = Gtk::manage (new MyComboBoxText ());
     priHBox->pack_start (*wprimari, Gtk::PACK_EXPAND_WIDGET);
-
     fgVBox->pack_start(*priHBox, Gtk::PACK_EXPAND_WIDGET);
 
     std::vector<Glib::ustring> wprinames = rtengine::ICCStore::getInstance()->getWorkingProfiles();
 
-    for (size_t i = 0; i < wprinames.size(); i++) {
+    for (size_t i = 1; i < wprinames.size(); i++) {
+		if(i == 1  || i >= 5  ) {
         wprimari->append (wprinames[i]);
+		}
     }
 
     wprimari->set_active (6);
@@ -976,6 +977,9 @@ void ICMPanel::GamChanged()
                 wgamma->set_sensitive(false);
                 gampos->set_sensitive(true);
                 slpos->set_sensitive(true);
+				wprimari->set_sensitive(true);
+				wprofile->set_sensitive(true);
+				
             }
         } else {
             listener->panelChanged (EvGAMFREE, M("GENERAL_DISABLED"));
@@ -984,6 +988,8 @@ void ICMPanel::GamChanged()
                 wgamma->set_sensitive(true);
                 gampos->set_sensitive(false);
                 slpos->set_sensitive(false);
+				wprimari->set_sensitive(false);
+				wprofile->set_sensitive(false);
             }
         }
     }

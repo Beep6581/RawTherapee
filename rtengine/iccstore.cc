@@ -1383,7 +1383,11 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
     cmsFloat64Number Parameters[7] = { ga[0],  ga[1], ga[2], ga[3], ga[4], ga[5], ga[6] } ;
 
     //lcmsMutex->lock();  Mutex acquired by the caller
-    cmsWhitePointFromTemp(&xyD,(double)temp);
+	cmsWhitePointFromTemp(&xyD,(double)temp);
+//	cmsCIExyY d60_aces= {0.32168, 0.33767, 1.0};
+	
+//	xyD = d60_aces;
+	
     GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, Parameters); //5 = smoother than 4
     cmsHPROFILE oprofdef = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC); //oprofdef  become Outputprofile
 	//cmsSetProfileVersion(oprofdef, 4.3);
@@ -1444,41 +1448,41 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
  //outProfile = options.rtSettings.srgb;
 	
     if (icm.wprimari == "ProPhoto"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto)   && !pro) {
-        outProfile = options.rtSettings.prophoto;
+		outProfile = options.rtSettings.prophoto;
 		outPr = "RT_large";
 
     } else if (icm.wprimari == "Adobe RGB" && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.adobe)             ) {
-        outProfile = options.rtSettings.adobe;
+		outProfile = options.rtSettings.adobe;
 		outPr = "RT_adob";
     } else if (icm.wprimari == "WideGamut" && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.widegamut)         ) {
-        outProfile = options.rtSettings.widegamut;
+		outProfile = options.rtSettings.widegamut;
 		outPr = "RT_wide";
     } else if (icm.wprimari == "Beta RGB"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.beta)              ) {
         outProfile = options.rtSettings.beta;
 		outPr = "RT_beta";
     } else if (icm.wprimari == "BestRGB"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.best)              ) {
-        outProfile = options.rtSettings.best;
+		outProfile = options.rtSettings.best;
 		outPr = "RT_best";
     } else if (icm.wprimari == "BruceRGB"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.bruce)             ) {
-        outProfile = options.rtSettings.bruce;
+		outProfile = options.rtSettings.bruce;
 		outPr = "RT_bruce";		
     } else if (icm.wprimari == "sRGB"      && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.srgb)       && !pro) {
-        outProfile = options.rtSettings.srgb;
+		outProfile = options.rtSettings.srgb;
 		outPr = "RT_srgb";
     } else if (icm.wprimari == "sRGB"      && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.srgb10)     &&  pro) {
-        outProfile = options.rtSettings.srgb10;
+		outProfile = options.rtSettings.srgb10;
 		outPr = "RT_srgb";
 		
     } else if (icm.wprimari == "ProPhoto"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto10) &&  pro) {
-        outProfile = options.rtSettings.prophoto10;
+		outProfile = options.rtSettings.prophoto10;
 		outPr = "RT_large";
 		
     } else if (icm.wprimari == "Rec2020"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.rec2020)           ) {
-        outProfile = options.rtSettings.rec2020;
+		outProfile = options.rtSettings.rec2020;
 		outPr = "RT_rec2020";
 		
     } else if (icm.wprimari == "ACEScg"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACEScg)          ) {
-        outProfile = options.rtSettings.ACEScg;
+		outProfile = options.rtSettings.ACEScg;
 		outPr = "RT_acescg";
 
     } else {
@@ -1490,6 +1494,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         return nullptr;
     }
 	
+ //   outProfile = options.rtSettings.prophoto;
 	
     //begin adaptation rTRC gTRC bTRC
     //"outputProfile" profile has the same characteristics than RGB values, but TRC are adapted... for applying profile
@@ -1558,18 +1563,35 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             gammaWs << outPro.c_str() <<(float)icm.gampos << " s=" <<(float)icm.slpos;
 
             cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
+			cmsMLU *copyright = cmsMLUalloc(NULL, 1);
+
+			cmsMLUsetASCII(copyright, "en", "US", "No copyright Rawtherapee");
+			cmsWriteTag(outputProfile, cmsSigCopyrightTag, copyright);
+			cmsMLUfree(copyright);
+			cmsMLU *descrip = cmsMLUalloc(NULL, 1);
+
+			cmsMLUsetASCII(descrip, "en", "US", "Rawtherapee");
+			cmsWriteTag(outputProfile, cmsSigDeviceModelDescTag, descrip);
+			cmsMLUfree(descrip);
 			
+
         }
 
         cmsWriteTag(outputProfile, cmsSigProfileDescriptionTag,  mlu);//desc changed
+        cmsMLUfree(mlu);
 
 		Glib::ustring manufacturer;
 
 		manufacturer="RawTherapee_FOIP";
-		cmsMLUsetASCII(mlu, "en", "US", manufacturer.c_str());
-        cmsWriteTag(outputProfile, cmsSigDeviceMfgDescTag,mlu);
+		cmsMLU *MfgDesc;
+		MfgDesc   = cmsMLUalloc(NULL, 1);
+		cmsMLUsetASCII(MfgDesc, "en", "US", manufacturer.c_str());
+		cmsWriteTag(outputProfile, cmsSigDeviceMfgDescTag, MfgDesc);
+        cmsMLUfree(MfgDesc);
+		
+		//cmsMLUsetASCII(mlu, "en", "US", manufacturer.c_str());
+        //cmsWriteTag(outputProfile, cmsSigDeviceMfgDescTag,mlu);
 
-        cmsMLUfree(mlu);
     }
 	if(icm.wprofile == "v4") {
 		cmsSetProfileVersion(outputProfile, 4.3);
@@ -1646,7 +1668,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         p[3] = 0.999993;
         p[4] = 0.00009989;
         p[5] = -0.077007;
-        temp = ColorTemp::D60;		
+        temp = ColorTemp::D50;		
     } else {
         p[0] = 0.7347;    //ProPhoto and default primaries
         p[1] = 0.2653;
@@ -1664,6 +1686,9 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     };
 	
     cmsWhitePointFromTemp(&xyD,(double)temp);
+	//cmsCIExyY d60_aces= {0.32168, 0.33767, 1.0};
+	
+	//xyD = d60_aces;
     cmsToneCurve* GammaTRC[3];
 	
 	
