@@ -195,9 +195,9 @@ cmsHPROFILE createXYZProfile()
     return rtengine::ICCStore::createFromMatrix(mat, false, "XYZ");
 }
 
-const double(*wprofiles[])[3]  = {xyz_sRGB, xyz_adobe, xyz_prophoto, xyz_widegamut, xyz_bruce, xyz_beta, xyz_best, xyz_rec2020, xyz_ACEScg};
-const double(*iwprofiles[])[3] = {sRGB_xyz, adobe_xyz, prophoto_xyz, widegamut_xyz, bruce_xyz, beta_xyz, best_xyz, rec2020_xyz, ACEScg_xyz};
-const char* wpnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB", "Beta RGB", "BestRGB", "Rec2020", "ACEScg"};
+const double(*wprofiles[])[3]  = {xyz_sRGB, xyz_adobe, xyz_prophoto, xyz_widegamut, xyz_bruce, xyz_beta, xyz_best, xyz_rec2020, xyz_ACESc};
+const double(*iwprofiles[])[3] = {sRGB_xyz, adobe_xyz, prophoto_xyz, widegamut_xyz, bruce_xyz, beta_xyz, best_xyz, rec2020_xyz, ACESc_xyz};
+const char* wpnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB", "Beta RGB", "BestRGB", "Rec2020", "ACESc"};
 const char* wpgamma[] = {"default", "BT709_g2.2_s4.5", "sRGB_g2.4_s12.92", "linear_g1.0", "standard_g2.2", "standard_g1.8", "High_g1.3_s3.35", "Low_g2.6_s6.9"}; //gamma free
 //default = gamma inside profile
 //BT709 g=2.22 s=4.5  sRGB g=2.4 s=12.92
@@ -1285,7 +1285,7 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
     enum class ColorTemp {
         D50 = 5003,  // for Widegamut, Prophoto Best, Beta -> D50
         D65 = 6504,   // for sRGB, AdobeRGB, Bruce Rec2020  -> D65
-		D60 = 6005        //for ACEScg
+		D60 = 6005        //for ACESc
 		
     };
     ColorTemp temp = ColorTemp::D50;
@@ -1345,8 +1345,8 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[4] = 0.1310;
         p[5] = 0.0460;
         temp = ColorTemp::D65;
-    } else if (icm.wprimari == "ACEScg") {	
-        p[0] = 0.734704;    // ACEScg primaries
+    } else if (icm.wprimari == "ACESc") {	
+        p[0] = 0.734704;    // ACESc primaries
         p[1] = 0.265298;
         p[2] = -0.000004;
         p[3] = 0.999993;
@@ -1481,9 +1481,9 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
 		outProfile = options.rtSettings.rec2020;
 		outPr = "RT_rec2020";
 		
-    } else if (icm.wprimari == "ACEScg"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACEScg)          ) {
-		outProfile = options.rtSettings.ACEScg;
-		outPr = "RT_acescg";
+    } else if (icm.wprimari == "ACESc"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESc)          ) {
+		outProfile = options.rtSettings.ACESc;
+		outPr = "RT_acesc";
 
     } else {
         // Should not occurs
@@ -1494,7 +1494,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         return nullptr;
     }
 	
- //   outProfile = options.rtSettings.prophoto;
+   // outProfile = options.rtSettings.prophoto;
 	
     //begin adaptation rTRC gTRC bTRC
     //"outputProfile" profile has the same characteristics than RGB values, but TRC are adapted... for applying profile
@@ -1603,7 +1603,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     enum class ColorTemp {
         D50 = 5003,  // for Widegamut, Prophoto Best, Beta -> D50
         D65 = 6504,   // for sRGB, AdobeRGB, Bruce Rec2020  -> D65
-		D60 = 6005        //for ACEScg->D60
+		D60 = 6005        //for ACESc->D60
     };
     ColorTemp temp = ColorTemp::D50;
     float p[6]; //primaries
@@ -1661,14 +1661,14 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         p[4] = 0.1310;
         p[5] = 0.0460;
         temp = ColorTemp::D65;
-    } else if (icm.wprimari == "ACEScg") {	
-        p[0] = 0.734704;    // ACEScg primaries
+    } else if (icm.wprimari == "ACESc") {	
+        p[0] = 0.734704;    // ACESc primaries
         p[1] = 0.265298;
         p[2] = -0.000004;
         p[3] = 0.999993;
         p[4] = 0.00009989;
         p[5] = -0.077007;
-        temp = ColorTemp::D50;		
+        temp = ColorTemp::D60;		
     } else {
         p[0] = 0.7347;    //ProPhoto and default primaries
         p[1] = 0.2653;
@@ -1696,12 +1696,20 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, Parameters);
  	if(icm.wprofile == "v4") {
 		outputProfile = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC);
+		/*
+		cmsCIEXYZ  *red = (cmsCIEXYZ *)cmsReadTag(outputProfile, cmsSigRedColorantTag); 
+		cmsCIEXYZ red_tag = *red;		
+		cmsWriteTag (outputProfile, cmsSigRedColorantTag, &red_tag);
+		*/
    	}
     cmsWriteTag(outputProfile, cmsSigRedTRCTag,GammaTRC[0] );
     cmsWriteTag(outputProfile, cmsSigGreenTRCTag,GammaTRC[1] );
     cmsWriteTag(outputProfile, cmsSigBlueTRCTag,GammaTRC[2] );
+	
+	
 	if(icm.wprofile == "v2" || icm.wprofile == "v4") {
-		cmsSaveProfileToFile(outputProfile,  outPro.c_str());		
+		cmsSaveProfileToFile(outputProfile,  outPro.c_str());
+		
 	}
     if (GammaTRC) {
         cmsFreeToneCurve(GammaTRC[0]);

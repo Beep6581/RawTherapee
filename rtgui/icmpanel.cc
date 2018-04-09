@@ -260,8 +260,8 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
 
     std::vector<Glib::ustring> wprinames = rtengine::ICCStore::getInstance()->getWorkingProfiles();
 
-    for (size_t i = 1; i < wprinames.size(); i++) {
-		if(i == 1  || i >= 5  ) {
+    for (size_t i = 0; i < wprinames.size(); i++) {
+		if(i <= 1  || i >= 5  ) {
         wprimari->append (wprinames[i]);
 		}
     }
