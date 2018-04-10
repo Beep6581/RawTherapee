@@ -2341,6 +2341,25 @@ bool FilmSimulationParams::operator !=(const FilmSimulationParams& other) const
     return !(*this == other);
 }
 
+
+SoftLightParams::SoftLightParams() :
+    enabled(false),
+    strength(30)
+{
+}
+
+bool SoftLightParams::operator ==(const SoftLightParams& other) const
+{
+    return
+        enabled == other.enabled
+        && strength == other.strength;
+}
+
+bool SoftLightParams::operator !=(const SoftLightParams& other) const
+{
+    return !(*this == other);
+}
+
 RAWParams::BayerSensor::BayerSensor() :
     method(getMethodString(Method::AMAZE)),
     imageNum(0),
@@ -2710,6 +2729,8 @@ void ProcParams::setDefaults ()
     hsvequalizer = HSVEqualizerParams();
 
     filmSimulation = FilmSimulationParams();
+
+    softlight = SoftLightParams();
 
     raw = RAWParams();
 
@@ -3305,6 +3326,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->hsvequalizer.hcurve, "HSV Equalizer", "HCurve", hsvequalizer.hcurve, keyFile);
         saveToKeyfile(!pedited || pedited->hsvequalizer.scurve, "HSV Equalizer", "SCurve", hsvequalizer.scurve, keyFile);
         saveToKeyfile(!pedited || pedited->hsvequalizer.vcurve, "HSV Equalizer", "VCurve", hsvequalizer.vcurve, keyFile);
+
+// Soft Light
+        saveToKeyfile(!pedited || pedited->softlight.enabled, "SoftLight", "Enabled", softlight.enabled, keyFile);
+        saveToKeyfile(!pedited || pedited->softlight.strength, "SoftLight", "Strength", softlight.strength, keyFile);
 
 // Film simulation
         saveToKeyfile(!pedited || pedited->filmSimulation.enabled, "Film Simulation", "Enabled", filmSimulation.enabled, keyFile);
@@ -4512,6 +4537,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
         }
 
+        if (keyFile.has_group("SoftLight")) {
+            assignFromKeyfile(keyFile, "SoftLight", "Enabled", pedited, softlight.enabled, pedited->softlight.enabled);
+            assignFromKeyfile(keyFile, "SoftLight", "Strength", pedited, softlight.strength, pedited->softlight.strength);
+        }
+
         if (keyFile.has_group ("Film Simulation")) {
             assignFromKeyfile(keyFile, "Film Simulation", "Enabled", pedited, filmSimulation.enabled, pedited->filmSimulation.enabled);
             assignFromKeyfile(keyFile, "Film Simulation", "ClutFilename", pedited, filmSimulation.clutFilename, pedited->filmSimulation.clutFilename);
@@ -4878,6 +4908,7 @@ bool ProcParams::operator ==(const ProcParams& other) const
         && dirpyrequalizer == other.dirpyrequalizer
         && hsvequalizer == other.hsvequalizer
         && filmSimulation == other.filmSimulation
+        && softlight == other.softlight
         && rgbCurves == other.rgbCurves
         && colorToning == other.colorToning
         && metadata == other.metadata

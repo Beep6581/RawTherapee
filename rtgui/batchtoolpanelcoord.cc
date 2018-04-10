@@ -201,6 +201,7 @@ void BatchToolPanelCoordinator::initSession ()
 //          colortoning->setAdjusterBehavior (options.baBehav[ADDSET_COLORTONING_SPLIT], options.baBehav[ADDSET_COLORTONING_SATTHRESHOLD], options.baBehav[ADDSET_COLORTONING_SATOPACITY], options.baBehav[ADDSET_COLORTONING_STRPROTECT], options.baBehav[ADDSET_COLORTONING_BALANCE]);
             colortoning->setAdjusterBehavior (options.baBehav[ADDSET_COLORTONING_SPLIT], options.baBehav[ADDSET_COLORTONING_SATTHRESHOLD], options.baBehav[ADDSET_COLORTONING_SATOPACITY], options.baBehav[ADDSET_COLORTONING_STRENGTH], options.baBehav[ADDSET_COLORTONING_BALANCE]);
             filmSimulation->setAdjusterBehavior(options.baBehav[ADDSET_FILMSIMULATION_STRENGTH]);
+            softlight->setAdjusterBehavior(options.baBehav[ADDSET_SOFTLIGHT_STRENGTH]);
             retinex->setAdjusterBehavior (options.baBehav[ADDSET_RETI_STR], options.baBehav[ADDSET_RETI_NEIGH], options.baBehav[ADDSET_RETI_LIMD], options.baBehav[ADDSET_RETI_OFFS], options.baBehav[ADDSET_RETI_VART], options.baBehav[ADDSET_RETI_GAM], options.baBehav[ADDSET_RETI_SLO]);
 
             chmixer->setAdjusterBehavior (options.baBehav[ADDSET_CHMIXER] );
@@ -289,6 +290,7 @@ void BatchToolPanelCoordinator::initSession ()
             if (options.baBehav[ADDSET_COLORTONING_BALANCE]) { pparams.colorToning.balance = 0; }
             if (options.baBehav[ADDSET_COLORTONING_STRENGTH]) { pparams.colorToning.strength = 0; }
             if (options.baBehav[ADDSET_FILMSIMULATION_STRENGTH]) { pparams.filmSimulation.strength = 0; }
+            if (options.baBehav[ADDSET_SOFTLIGHT_STRENGTH]) { pparams.softlight.strength = 0; }
             if (options.baBehav[ADDSET_ROTATE_DEGREE]) { pparams.rotate.degree = 0; }
             if (options.baBehav[ADDSET_RESIZE_SCALE]) { pparams.resize.scale = 0; }
             if (options.baBehav[ADDSET_DIST_AMOUNT]) { pparams.distortion.amount = 0; }

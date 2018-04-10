@@ -572,6 +572,8 @@ void ParamsEdited::set (bool v)
     filmSimulation.enabled = v;
     filmSimulation.clutFilename = v;
     filmSimulation.strength = v;
+    softlight.enabled = v;
+    softlight.strength = v;
     metadata.mode = v;
 
     exif = v;
@@ -1131,6 +1133,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         filmSimulation.enabled = filmSimulation.enabled && p.filmSimulation.enabled == other.filmSimulation.enabled;
         filmSimulation.clutFilename = filmSimulation.clutFilename && p.filmSimulation.clutFilename == other.filmSimulation.clutFilename;
         filmSimulation.strength = filmSimulation.strength && p.filmSimulation.strength == other.filmSimulation.strength;
+        softlight.enabled = softlight.enabled && p.softlight.enabled == other.softlight.enabled;
+        softlight.strength = softlight.strength && p.softlight.strength == other.softlight.strength;
         metadata.mode = metadata.mode && p.metadata.mode == other.metadata.mode;
 
 //      How the hell can we handle that???
@@ -3143,6 +3147,14 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.filmSimulation.strength        = dontforceSet && options.baBehav[ADDSET_FILMSIMULATION_STRENGTH] ? toEdit.filmSimulation.strength + mods.filmSimulation.strength : mods.filmSimulation.strength;
     }
 
+    if (softlight.enabled) {
+        toEdit.softlight.enabled     = mods.softlight.enabled;
+    }
+
+    if (softlight.strength) {
+        toEdit.softlight.strength        = dontforceSet && options.baBehav[ADDSET_SOFTLIGHT_STRENGTH] ? toEdit.softlight.strength + mods.softlight.strength : mods.softlight.strength;
+    }
+    
     if (metadata.mode) {
         toEdit.metadata.mode     = mods.metadata.mode;
     }

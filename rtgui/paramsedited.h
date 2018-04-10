@@ -710,6 +710,13 @@ public:
     bool strength;
 };
 
+class SoftLightParamsEdited
+{
+public:
+    bool enabled;
+    bool strength;
+};
+
 class RAWParamsEdited
 {
 
@@ -861,6 +868,7 @@ public:
     WaveletParamsEdited             wavelet;
     HSVEqualizerParamsEdited      hsvequalizer;
     FilmSimulationParamsEdited    filmSimulation;
+    SoftLightParamsEdited         softlight;
     MetaDataParamsEdited          metadata;
     bool                          exif;
     bool                          iptc;
