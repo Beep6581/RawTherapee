@@ -1,4 +1,49 @@
+// This file is part of RawTherapee.
+//
+// Copyright (C) 2018 Flössie <floessie.mail@gmail.com>
+//
+// RawTherapee is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// RawTherapee is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+
+// Source: http://rawspeed.org/CameraSupport.html
+
 {
+    "Canon EOS 1000D": ["Canon EOS Kiss Digital F", "Canon EOS Digital Rebel XS"],
+    "Canon EOS 100D": ["Canon EOS Kiss X7", "Canon EOS Rebel SL1"],
+    "Canon EOS 1200D": ["Canon EOS Kiss X70", "Canon EOS Rebel T5"],
+    "Canon EOS 1300D": ["Canon EOS Kiss X80", "Canon EOS Rebel T6"],
+    "Canon EOS 200D": ["Canon EOS Kiss X9", "Canon EOS Rebel SL2"],
+    "Canon EOS 300D": ["Canon EOS Kiss Digital", "Canon EOS Digital Rebel"],
+    "Canon EOS 350D": ["Canon EOS Kiss Digital N", "Canon EOS Digital Rebel XT"],
+    "Canon EOS 400D": ["Canon EOS Kiss Digital X", "Canon EOS Digital Rebel XTi"],
+    "Canon EOS 450D": ["Canon EOS Kiss Digital X2", "Canon EOS Kiss X2", "Canon EOS Digital Rebel XSi"],
+    "Canon EOS 500D": ["Canon EOS Kiss X3", "Canon EOS Rebel T1i"],
+    "Canon EOS 550D": ["Canon EOS Kiss X4", "Canon EOS Rebel T2i"],
     "Canon EOS 600D": ["Canon EOS Kiss X5", "Canon EOS Rebel T3i"],
-    "Canon EOS 1300D": ["Canon EOS Kiss X80", "Canon EOS Rebel T6"]
+    "Canon EOS 650D": ["Canon EOS Kiss X6i", "Canon EOS Rebel T4i"],
+    "Canon EOS 700D": ["Canon EOS Kiss X7i", "Canon EOS Rebel T5i"],
+    "Canon EOS 750D": ["Canon EOS Kiss X8i", "Canon EOS Rebel T6i"],
+    "Canon EOS 760D": ["Canon EOS 8000D", "Canon EOS Rebel T6s"],
+    "Canon EOS 800D": ["Canon EOS Kiss X9i", "Canon EOS Rebel T7i"],
+
+    "Minolta Dynax 5D": ["Minolta Maxxum 5D", "Minolta Alpha 5D"],
+    "Minolta Dynax 7D": ["Minolta Maxxum 7D", "Minolta Alpha 7D"],
+
+    "Panasonic DC-FZ82": ["Panasonic DMC-FZ80", "Panasonic DMC-FZ85"],
+    "Panasonic DC-TZ90": ["Panasonic DC-ZS70", "Panasonic DC-FZ91", "Panasonic DC-FZ92", "Panasonic DC-FZ93"],
+    "Panasonic DMC-G8": ["Panasonic DMC-G80", "Panasonic DMC-G81", "Panasonic DMC-G85"],
+    "Panasonic DMC-LX15": ["Panasonic DMC-LX9", "Panasonic DMC-LX10"],
+    "Panasonic DC-TZ100": ["Panasonic DC-ZS100", "Panasonic DC-ZS110", "Panasonic DC-TZ101", "Panasonic DC-TZ110"],
+    "Panasonic DMC-TZ71": ["Panasonic DMC-TZ70", "Panasonic DMC-ZS50"],
+    "Panasonic DMC-TZ81": ["Panasonic DMC-TZ80", "Panasonic DMC-TZ85", "Panasonic DMC-ZS60"]
 }
