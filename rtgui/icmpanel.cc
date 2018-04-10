@@ -229,7 +229,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wgamma = Gtk::manage(new MyComboBoxText());
     gaHBox->pack_start(*wgamma, Gtk::PACK_EXPAND_WIDGET);
 
-    oVBox->pack_start(*gaHBox, Gtk::PACK_EXPAND_WIDGET);
+ //   oVBox->pack_start(*gaHBox, Gtk::PACK_EXPAND_WIDGET);
 
     std::vector<Glib::ustring> wpgamma = rtengine::ICCStore::getGamma();
 
@@ -267,6 +267,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     }
 
     wprimari->set_active(6);
+    fgVBox->pack_start(*gaHBox, Gtk::PACK_EXPAND_WIDGET);
 
     gampos = Gtk::manage(new Adjuster(M("TP_GAMMA_CURV"), 1, 3.5, 0.00001, 2.4));
     gampos->setAdjusterListener(this);
@@ -617,12 +618,12 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     lastgamfree = pp->icm.freegamma;
 
     if (!batchMode) {
-        onames->set_sensitive(wgamma->get_active_row_number() == 0 && !pp->icm.freegamma); //"default"
-        wgamma->set_sensitive(!pp->icm.freegamma);
+        onames->set_sensitive(/*wgamma->get_active_row_number() == 0 &&*/ !pp->icm.freegamma); //"default"
+        wgamma->set_sensitive(pp->icm.freegamma);
         gampos->set_sensitive(pp->icm.freegamma);
         slpos->set_sensitive(pp->icm.freegamma);
         updateRenderingIntent(pp->icm.output);
-        //wprimari->set_sensitive(!pp->icm.freegamma);
+        wprimari->set_sensitive(pp->icm.freegamma);
     }
 
     gampos->setValue(pp->icm.gampos);
@@ -813,6 +814,13 @@ void ICMPanel::wprofileChanged()
 
 void ICMPanel::gpChanged()
 {
+    if (wgamma->get_active_row_number() == 0) {	
+        gampos->set_sensitive(true);
+        slpos->set_sensitive(true);
+	} else {
+        gampos->set_sensitive(false);
+        slpos->set_sensitive(false);
+	}	
 
     if (listener) {
         listener->panelChanged(EvGAMMA, wgamma->get_active_text());
@@ -931,6 +939,19 @@ void ICMPanel::applyHueSatMapChanged()
     }
 }
 
+void ICMPanel::TRCChanged(double gamm, double slo)
+{
+    GThreadLock lock;
+    disableListener();
+    setEnabled(true);
+    gampos->setValue(gamm);
+    slpos->setValue(slo);
+    gampos->setDefault(gamm);
+    slpos->setDefault(slo);
+    enableListener();
+}
+
+
 void ICMPanel::ipChanged()
 {
 
@@ -980,7 +1001,7 @@ void ICMPanel::GamChanged()
 
             if (!batchMode) {
                 onames->set_sensitive(false);//disabled choice
-                wgamma->set_sensitive(false);
+                wgamma->set_sensitive(true);
                 gampos->set_sensitive(true);
                 slpos->set_sensitive(true);
                 wprimari->set_sensitive(true);
@@ -991,8 +1012,9 @@ void ICMPanel::GamChanged()
             listener->panelChanged(EvGAMFREE, M("GENERAL_DISABLED"));
 
             if (!batchMode) {
-                onames->set_sensitive(wgamma->get_active_row_number() == 0);
-                wgamma->set_sensitive(true);
+              //  onames->set_sensitive(wgamma->get_active_row_number() == 0);
+                onames->set_sensitive(true);
+                wgamma->set_sensitive(false);
                 gampos->set_sensitive(false);
                 slpos->set_sensitive(false);
                 wprimari->set_sensitive(false);

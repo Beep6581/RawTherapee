@@ -159,6 +159,7 @@ protected:
     AutoCamListener* acListener;
     AutoBWListener* abwListener;
     AutoWBListener* awbListener;
+    ICMListener* icmListener;
     FrameCountListener *frameCountListener;
     ImageTypeListener *imageTypeListener;
 
@@ -323,6 +324,11 @@ public:
     {
         awbListener = awb;
     }
+    void setICMListener   (ICMListener* icml)
+    {
+        icmListener = icml;
+    }
+	
     void setAutoColorTonListener   (AutoColorTonListener* bwct)
     {
         actListener = bwct;

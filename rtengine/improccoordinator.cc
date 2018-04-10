@@ -93,7 +93,7 @@ ImProcCoordinator::ImProcCoordinator ()
       fw (0), fh (0), tr (0),
       fullw (1), fullh (1),
       pW (-1), pH (-1),
-      plistener (nullptr), imageListener (nullptr), aeListener (nullptr), acListener (nullptr), abwListener (nullptr), awbListener (nullptr), frameCountListener (nullptr), imageTypeListener (nullptr), actListener (nullptr), adnListener (nullptr), awavListener (nullptr), dehaListener (nullptr), hListener (nullptr),
+      plistener (nullptr), imageListener (nullptr), aeListener (nullptr), acListener (nullptr), abwListener (nullptr), awbListener (nullptr), icmListener (nullptr), frameCountListener (nullptr), imageTypeListener (nullptr), actListener (nullptr), adnListener (nullptr), awavListener (nullptr), dehaListener (nullptr), hListener (nullptr),
       resultValid (false), lastOutputProfile ("BADFOOD"), lastOutputIntent (RI__COUNT), lastOutputBPC (false), thread (nullptr), changeSinceLast (0), updaterRunning (false), destroying (false), utili (false), autili (false),
       butili (false), ccutili (false), cclutili (false), clcutili (false), opautili (false), wavcontlutili (false), colourToningSatLimit (0.f), colourToningSatLimitOpacity (0.f), highQualityComputed (false)
 {}

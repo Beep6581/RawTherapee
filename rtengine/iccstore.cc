@@ -199,7 +199,7 @@ cmsHPROFILE createXYZProfile()
 const double(*wprofiles[])[3]  = {xyz_sRGB, xyz_adobe, xyz_prophoto, xyz_widegamut, xyz_bruce, xyz_beta, xyz_best, xyz_rec2020, xyz_ACESc};
 const double(*iwprofiles[])[3] = {sRGB_xyz, adobe_xyz, prophoto_xyz, widegamut_xyz, bruce_xyz, beta_xyz, best_xyz, rec2020_xyz, ACESc_xyz};
 const char* wpnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB", "Beta RGB", "BestRGB", "Rec2020", "ACESc"};
-const char* wpgamma[] = {"default", "BT709_g2.2_s4.5", "sRGB_g2.4_s12.92", "linear_g1.0", "standard_g2.2", "standard_g1.8", "High_g1.3_s3.35", "Low_g2.6_s6.9"}; //gamma free
+const char* wpgamma[] = {"Free", "BT709_g2.2_s4.5", "sRGB_g2.4_s12.92", "linear_g1.0", "standard_g2.2", "standard_g1.8", "High_g1.3_s3.35", "Low_g2.6_s6.9", "Lab_g3.0s9.03296"}; //gamma free
 //default = gamma inside profile
 //BT709 g=2.22 s=4.5  sRGB g=2.4 s=12.92
 //linear g=1.0
@@ -1067,7 +1067,7 @@ void rtengine::ICCStore::getGammaArray(const procparams::ColorManagementParams &
 {
     const double eps = 0.000000001; // not divide by zero
 
-    if (!icm.freegamma) {//if Free gamma not selected
+    if (icm.freegamma  && icm.gamma != "Free") { //if Free gamma selected with other than Free
         // gamma : ga[0],ga[1],ga[2],ga[3],ga[4],ga[5] by calcul
         if (icm.gamma == "BT709_g2.2_s4.5")      {
             ga[0] = 2.22;    //BT709  2.2  4.5  - my preferred as D.Coffin
@@ -1105,6 +1105,13 @@ void rtengine::ICCStore::getGammaArray(const procparams::ColorManagementParams &
             ga[2] = 0.;
             ga[3] = 1. / eps;
             ga[4] = 0.;
+        } else if (icm.gamma == "Lab_g3.0s9.03296")   {
+            ga[0] = 3.0;    //Lab gamma =3 slope=9.03296
+            ga[1] = 0.8621;
+            ga[2] = 0.1379;
+            ga[3] = 0.1107;
+            ga[4] = 0.08;
+			
         } else { /* if (icm.gamma == "linear_g1.0") */
             ga[0] = 1.0;    //gamma=1 linear : for high dynamic images(cf : D.Coffin...)
             ga[1] = 1.;
@@ -1455,6 +1462,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     Glib::ustring outProfile;
     cmsHPROFILE outputProfile = nullptr;
     Glib::ustring outPr;
+    Glib::ustring gammaStr;
 
 
     if (icm.freegamma && icm.gampos < 1.35) {
@@ -1463,7 +1471,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         pro = true;    //pro=0  RT_sRGB || Prophoto
     }
 
-		//necessary for V2 profile
+    //necessary for V2 profile
     if (icm.wprimari == "ProPhoto"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto)   && !pro) {
         outProfile = options.rtSettings.prophoto;
         outPr = "RT_large";
@@ -1538,32 +1546,52 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     mlu = cmsMLUalloc(ContextID, 1);
     Glib::ustring outPro;
 
+    if (icm.gamma == "High_g1.3_s3.35") {
+        gammaStr = "_High_g=1.3_s=3.35";
+    } else if (icm.gamma == "Low_g2.6_s6.9") {
+        gammaStr = "_Low_g=2.6_s=6.9";
+    } else if (icm.gamma == "sRGB_g2.4_s12.92") {
+        gammaStr = "_sRGB_g=2.4_s=12.92";
+    } else if (icm.gamma == "BT709_g2.2_s4.5") {
+        gammaStr = "_BT709_g=2.2_s=4.5";
+    } else if (icm.gamma == "linear_g1.0") {
+        gammaStr = "_Linear_g=1.0";
+    } else if (icm.gamma == "standard_g2.2") {
+        gammaStr = "_g=2.2";
+    } else if (icm.gamma == "standard_g1.8") {
+        gammaStr = "_g=1.8";
+    } else if (icm.gamma == "Lab_g3.0s9.03296") {
+        gammaStr = "_LAB_g3.0_s9.03296";
+    }
+
     // instruction with //ICC are used to generate ICC profile
     if (mlu == nullptr) {
         printf("Description error\n");
     } else {
 
         // Description TAG : selection of gamma and Primaries
-        if (!icm.freegamma) {
-            std::wstring gammaStr;
+        if (icm.freegamma  && icm.gamma != "Free") {
+            /*
+            //  std::wstring gammaStr;
 
             if (icm.gamma == "High_g1.3_s3.35") {
-                gammaStr = std::wstring(L"GammaTRC: High g=1.3 s=3.35");
+                gammaStr = "_TRC: High g=1.3 s=3.35";
             } else if (icm.gamma == "Low_g2.6_s6.9") {
-                gammaStr = std::wstring(L"GammaTRC: Low g=2.6 s=6.9");
+                gammaStr = "_TRC: Low g=2.6 s=6.9";
             } else if (icm.gamma == "sRGB_g2.4_s12.92") {
-                gammaStr = std::wstring(L"GammaTRC: sRGB g=2.4 s=12.92");
+                gammaStr = "_TRC: sRGB g=2.4 s=12.92";
             } else if (icm.gamma == "BT709_g2.2_s4.5") {
-                gammaStr = std::wstring(L"GammaTRC: BT709 g=2.2 s=4.5");
+                gammaStr = "_TRC: BT709 g=2.2 s=4.5";
             } else if (icm.gamma == "linear_g1.0") {
-                gammaStr = std::wstring(L"GammaTRC: Linear g=1.0");
+                gammaStr = "_TRC: Linear g=1.0";
             } else if (icm.gamma == "standard_g2.2") {
-                gammaStr = std::wstring(L"GammaTRC: g=2.2");
+                gammaStr = "GammaTRC: g=2.2";
             } else if (icm.gamma == "standard_g1.8") {
-                gammaStr = std::wstring(L"GammaTRC: g=1.8");
+                gammaStr = "GammaTRC: g=1.8";
             }
+            */
+            //cmsMLUsetWide(mlu,  "en", "US", gammaStr.c_str());
 
-            cmsMLUsetWide(mlu,  "en", "US", gammaStr.c_str());
         } else {
             /*
             // create description with gamma + slope + primaries
@@ -1709,25 +1737,43 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         // create description with gamma + slope + primaries
         std::wostringstream gammaWs;
         //std::string gammaWsICC;
-        std::wstring gammaStrICC;
+        std::wstring gammaStrIC;
 
         gammaWs.precision(6);
 
-        if (icm.wprofile == "v4") {
-            outPro = outPr + "_FOIP_V4_" + std::to_string((float)icm.gampos) + " " + std::to_string((float)icm.slpos) + ".icc";
-        } else if (icm.wprofile == "v2") {
-            outPro = outPr + "_FOIP_V2_" + std::to_string((float)icm.gampos) + " " + std::to_string((float)icm.slpos) + ".icc";
+        if (icm.gamma == "Free") {
+            if (icm.wprofile == "v4") {
+                outPro = outPr + "_FOIP_V4_" + std::to_string((float)icm.gampos) + " " + std::to_string((float)icm.slpos) + ".icc";
+            } else if (icm.wprofile == "v2") {
+                outPro = outPr + "_FOIP_V2_" + std::to_string((float)icm.gampos) + " " + std::to_string((float)icm.slpos) + ".icc";
+            }
+
+            gammaWs << outPro.c_str() << (float)icm.gampos << " s=" << (float)icm.slpos;
+
+            cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
+
+        } else {
+
+            if (icm.wprofile == "v4") {
+                outPro = outPr + "_FOIP_V4_" + gammaStr + ".icc";
+
+            } else if (icm.wprofile == "v2") {
+                outPro = outPr + "_FOIP_V2_" + gammaStr + ".icc";
+            }
+
+            gammaWs << outPro.c_str()  << " s=";
+            cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
+
+
         }
 
-        gammaWs << outPro.c_str() << (float)icm.gampos << " s=" << (float)icm.slpos;
-
-        cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
         cmsMLU *copyright = cmsMLUalloc(NULL, 1);
 
         cmsMLUsetASCII(copyright, "en", "US", "No copyright Rawtherapee");
         cmsWriteTag(outputProfile, cmsSigCopyrightTag, copyright);
         cmsMLUfree(copyright);
     }
+
     cmsMLU *descrip = cmsMLUalloc(NULL, 1);
     cmsMLUsetASCII(descrip, "en", "US", "Rawtherapee");
     cmsWriteTag(outputProfile, cmsSigDeviceModelDescTag, descrip);

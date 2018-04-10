@@ -1595,7 +1595,7 @@ TP_FLATFIELD_LABEL;Flat-Field
 TP_GAMMA_CURV;Gamma
 TP_GAMMA_FREE;Free Output Integrate Profile (FOIP)
 TP_GAMMA_PRIM;Primaries Output profile
-TP_GAMMA_OUTPUT;Output gamma
+TP_GAMMA_OUTPUT;Gamma - TRC
 TP_GAMMA_PROF;Generate ICC profile
 TP_GAMMA_PROF_NONE;none
 TP_GAMMA_PROF_V2;ICC V2

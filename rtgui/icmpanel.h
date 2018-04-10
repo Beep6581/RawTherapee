@@ -36,7 +36,7 @@ public:
     virtual void saveInputICCReference(Glib::ustring fname, bool apply_wb) {}
 };
 
-class ICMPanel : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class ICMPanel : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::ICMListener
 {
 
 protected:
@@ -130,6 +130,7 @@ public:
     void applyLookTableChanged();
     void applyBaselineExposureOffsetChanged();
     void applyHueSatMapChanged();
+    void TRCChanged           (double gamm, double slo);
 
     void setRawMeta(bool raw, const rtengine::FramesData* pMeta);
     void saveReferencePressed();
