@@ -91,13 +91,13 @@ public:
         RAW_IF_NOT_JPEG_FULLSIZE
     };
     ThumbnailInspectorMode thumbnail_inspector_mode;
-    
+
     /** Creates a new instance of Settings.
       * @return a pointer to the new Settings instance. */
-    static Settings* create  ();
+    static Settings* create();
     /** Destroys an instance of Settings.
       * @param s a pointer to the Settings instance to destroy. */
-    static void      destroy (Settings* s);
+    static void      destroy(Settings* s);
 };
 }
 

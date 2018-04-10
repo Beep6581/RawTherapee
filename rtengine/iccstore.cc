@@ -156,6 +156,7 @@ bool loadProfile(
                     if (profileContents) {
                         profileContents->emplace(name, content);
                     }
+
                     return true;
                 }
             }
@@ -220,7 +221,8 @@ rtengine::ProfileContent::ProfileContent(const Glib::ustring& fileName)
 
     fseek(f, 0, SEEK_END);
     long length = ftell(f);
-    if(length > 0) {
+
+    if (length > 0) {
         char* d = new char[length + 1];
         fseek(f, 0, SEEK_SET);
         length = fread(d, 1, length, f);
@@ -230,6 +232,7 @@ rtengine::ProfileContent::ProfileContent(const Glib::ustring& fileName)
     } else {
         data.clear();
     }
+
     fclose(f);
 
 }
@@ -254,8 +257,8 @@ cmsHPROFILE rtengine::ProfileContent::toProfile() const
 
     return
         !data.empty()
-            ? cmsOpenProfileFromMem(data.c_str(), data.size())
-            : nullptr;
+        ? cmsOpenProfileFromMem(data.c_str(), data.size())
+        : nullptr;
 }
 
 const std::string& rtengine::ProfileContent::getData() const
@@ -290,20 +293,23 @@ public:
                 cmsCloseProfile(p.second);
             }
         }
+
         // for (auto &p : wProfilesGamma) {
         //     if (p.second) {
         //         cmsCloseProfile(p.second);
         //     }
         // }
         for (auto &p : fileProfiles) {
-            if(p.second) {
+            if (p.second) {
                 cmsCloseProfile(p.second);
             }
         }
-        if(srgb) {
+
+        if (srgb) {
             cmsCloseProfile(srgb);
         }
-        if(xyz) {
+
+        if (xyz) {
             cmsCloseProfile(xyz);
         }
     }
@@ -321,6 +327,7 @@ public:
         userICCDir = usrICCDir;
         fileProfiles.clear();
         fileProfileContents.clear();
+
         if (loadAll) {
             loadProfiles(profilesDir, &fileProfiles, &fileProfileContents, nullptr, false);
             loadProfiles(userICCDir, &fileProfiles, &fileProfileContents, nullptr, false);
@@ -331,6 +338,7 @@ public:
         stdProfilesDir = Glib::build_filename(rtICCDir, "input");
         fileStdProfiles.clear();
         fileStdProfilesFileNames.clear();
+
         if (loadAll) {
             loadProfiles(stdProfilesDir, nullptr, nullptr, &fileStdProfilesFileNames, true);
         }
@@ -339,7 +347,7 @@ public:
 
         loadWorkingSpaces(rtICCDir);
         loadWorkingSpaces(userICCDir);
-        
+
         // initialize the alarm colours for lcms gamut checking -- we use bright green
         cmsUInt16Number cms_alarm_codes[cmsMAXCHANNELS] = { 0, 65535, 65535 };
         cmsSetAlarmCodes(cms_alarm_codes);
@@ -351,8 +359,8 @@ public:
 
         return
             r != wProfiles.end()
-                ? r->second
-                : wProfiles.find("sRGB")->second;
+            ? r->second
+            : wProfiles.find("sRGB")->second;
     }
 
     // cmsHPROFILE workingSpaceGamma(const Glib::ustring& name) const
@@ -372,8 +380,8 @@ public:
 
         return
             r != wMatrices.end()
-                ? r->second
-                : wMatrices.find("sRGB")->second;
+            ? r->second
+            : wMatrices.find("sRGB")->second;
     }
 
     TMatrix workingSpaceInverseMatrix(const Glib::ustring& name) const
@@ -383,8 +391,8 @@ public:
 
         return
             r != iwMatrices.end()
-                ? r->second
-                : iwMatrices.find("sRGB")->second;
+            ? r->second
+            : iwMatrices.find("sRGB")->second;
     }
 
     bool outputProfileExist(const Glib::ustring& name) const
@@ -418,7 +426,9 @@ public:
             if (!loadProfile(name, profilesDir, &fileProfiles, &fileProfileContents)) {
                 loadProfile(name, userICCDir, &fileProfiles, &fileProfileContents);
             }
+
             const ProfileMap::const_iterator r = fileProfiles.find(name);
+
             if (r != fileProfiles.end()) {
                 return r->second;
             }
@@ -443,7 +453,9 @@ public:
             if (!loadProfile(name, profilesDir, &fileProfiles, &fileProfileContents)) {
                 loadProfile(name, userICCDir, &fileProfiles, &fileProfileContents);
             }
+
             const ProfileMap::const_iterator r = fileProfiles.find(name);
+
             if (r != fileProfiles.end()) {
                 return r->second;
             }
@@ -478,8 +490,8 @@ public:
 
         return
             r != fileProfileContents.end()
-                ? r->second
-                : ProfileContent();
+            ? r->second
+            : ProfileContent();
     }
 
     cmsHPROFILE getXYZProfile() const
@@ -500,22 +512,22 @@ public:
 
         for (const auto profile : fileProfiles) {
             if (
-               (
-                   type==ICCStore::ProfileType::MONITOR
-                   && cmsGetDeviceClass(profile.second) == cmsSigDisplayClass
-                   && cmsGetColorSpace(profile.second) == cmsSigRgbData
-               )
-               ||(
-                   type==ICCStore::ProfileType::PRINTER
-                   && cmsGetDeviceClass(profile.second) == cmsSigOutputClass
-               )
-               ||(
-                   type==ICCStore::ProfileType::OUTPUT
-                   && (cmsGetDeviceClass(profile.second) == cmsSigDisplayClass
-                       || cmsGetDeviceClass(profile.second) == cmsSigInputClass
-                       || cmsGetDeviceClass(profile.second) == cmsSigOutputClass)
-                   && cmsGetColorSpace(profile.second) == cmsSigRgbData
-               )
+                (
+                    type == ICCStore::ProfileType::MONITOR
+                    && cmsGetDeviceClass(profile.second) == cmsSigDisplayClass
+                    && cmsGetColorSpace(profile.second) == cmsSigRgbData
+                )
+                || (
+                    type == ICCStore::ProfileType::PRINTER
+                    && cmsGetDeviceClass(profile.second) == cmsSigOutputClass
+                )
+                || (
+                    type == ICCStore::ProfileType::OUTPUT
+                    && (cmsGetDeviceClass(profile.second) == cmsSigDisplayClass
+                        || cmsGetDeviceClass(profile.second) == cmsSigInputClass
+                        || cmsGetDeviceClass(profile.second) == cmsSigOutputClass)
+                    && cmsGetColorSpace(profile.second) == cmsSigRgbData
+                )
             ) {
                 res.push_back(profile.first);
             }
@@ -598,7 +610,7 @@ public:
         for (const auto &p : wProfiles) {
             res.push_back(p.first);
         }
-        
+
         return res;
     }
 
@@ -616,11 +628,13 @@ private:
         CMatrix toMatrix() const
         {
             CMatrix ret;
+
             for (int i = 0; i < 3; ++i) {
                 for (int j = 0; j < 3; ++j) {
                     ret[i][j] = matrix[i][j];
                 }
             }
+
             return ret;
         }
 
@@ -637,22 +651,28 @@ private:
     bool computeWorkingSpaceMatrix(const Glib::ustring &path, const Glib::ustring &filename, PMatrix &out)
     {
         Glib::ustring fullpath = filename;
+
         if (!Glib::path_is_absolute(fullpath)) {
             fullpath = Glib::build_filename(path, filename);
         }
+
         ProfileContent content(fullpath);
         cmsHPROFILE prof = content.toProfile();
+
         if (!prof) {
             return false;
         }
+
         if (cmsGetColorSpace(prof) != cmsSigRgbData) {
             cmsCloseProfile(prof);
             return false;
         }
+
         if (!cmsIsMatrixShaper(prof)) {
             cmsCloseProfile(prof);
             return false;
         }
+
         cmsCIEXYZ *white = static_cast<cmsCIEXYZ *>(cmsReadTag(prof, cmsSigMediaWhitePointTag));
         cmsCIEXYZ *red = static_cast<cmsCIEXYZ *>(cmsReadTag(prof, cmsSigRedMatrixColumnTag));
         cmsCIEXYZ *green  = static_cast<cmsCIEXYZ *>(cmsReadTag(prof, cmsSigGreenMatrixColumnTag));
@@ -681,23 +701,29 @@ private:
 
         CVector srcw = dotProduct(bradford_MA, CVector({ white->X, white->Y, white->Z }));
         CMatrix m = {
-            CVector({ bradford_MA_dot_D50[0]/srcw[0], 0.0, 0.0 }),
-            CVector({ 0.0, bradford_MA_dot_D50[1]/srcw[1], 0.0 }),
-            CVector({ 0.0, 0.0, bradford_MA_dot_D50[2]/srcw[2] })
+            CVector({ bradford_MA_dot_D50[0] / srcw[0], 0.0, 0.0 }),
+            CVector({ 0.0, bradford_MA_dot_D50[1] / srcw[1], 0.0 }),
+            CVector({ 0.0, 0.0, bradford_MA_dot_D50[2] / srcw[2] })
         };
         CMatrix adapt = dotProduct(dotProduct(bradford_MA_inv, m), bradford_MA);
 
-        m[0][0] = red->X; m[0][1] = green->X; m[0][2] = blue->X;
-        m[1][0] = red->Y; m[1][1] = green->Y; m[1][2] = blue->Y;
-        m[2][0] = red->Z; m[2][1] = green->Z; m[2][2] = blue->Z;
+        m[0][0] = red->X;
+        m[0][1] = green->X;
+        m[0][2] = blue->X;
+        m[1][0] = red->Y;
+        m[1][1] = green->Y;
+        m[1][2] = blue->Y;
+        m[2][0] = red->Z;
+        m[2][1] = green->Z;
+        m[2][2] = blue->Z;
 
         m = dotProduct(adapt, m);
         out.set(m);
-        
+
         cmsCloseProfile(prof);
         return true;
     }
-    
+
     bool loadWorkingSpaces(const Glib::ustring &path)
     {
         Glib::ustring fileName = Glib::build_filename(path, "workingspaces.json");
@@ -706,29 +732,32 @@ private:
         if (settings->verbose) {
             std::cout << "trying to load extra working spaces from " << fileName << std::flush;
         }
-        
+
         if (!f) {
             if (settings->verbose) {
                 std::cout << " FAIL" << std::endl;
             }
+
             return false;
         }
 
         fseek(f, 0, SEEK_END);
         long length = ftell(f);
+
         if (length <= 0) {
             if (settings->verbose) {
                 std::cout << " FAIL" << std::endl;
             }
+
             fclose(f);
             return false;
         }
-        
+
         char *buf = new char[length + 1];
         fseek(f, 0, SEEK_SET);
         length = fread(buf, 1, length, f);
         buf[length] = 0;
-            
+
         fclose(f);
 
         cJSON_Minify(buf);
@@ -738,21 +767,23 @@ private:
             if (settings->verbose) {
                 std::cout << " FAIL" << std::endl;
             }
+
             return false;
         }
 
         delete[] buf;
 
         cJSON *js = cJSON_GetObjectItem(root, "working_spaces");
+
         if (!js) {
             goto parse_error;
         }
-            
+
         for (js = js->child; js != nullptr; js = js->next) {
             cJSON *ji = cJSON_GetObjectItem(js, "name");
             std::unique_ptr<PMatrix> m(new PMatrix);
             std::string name;
-            
+
             if (!ji || ji->type != cJSON_String) {
                 goto parse_error;
             }
@@ -764,19 +795,22 @@ private:
             }
 
             bool found_matrix = false;
-            
+
             ji = cJSON_GetObjectItem(js, "matrix");
+
             if (ji) {
                 if (ji->type != cJSON_Array) {
                     goto parse_error;
                 }
 
                 ji = ji->child;
+
                 for (int i = 0; i < 3; ++i) {
                     for (int j = 0; j < 3; ++j, ji = ji->next) {
                         if (!ji || ji->type != cJSON_Number) {
                             goto parse_error;
                         }
+
                         m->matrix[i][j] = ji->valuedouble;
                     }
                 }
@@ -784,12 +818,15 @@ private:
                 if (ji) {
                     goto parse_error;
                 }
+
                 found_matrix = true;
             } else {
                 ji = cJSON_GetObjectItem(js, "file");
+
                 if (!ji || ji->type != cJSON_String) {
                     goto parse_error;
                 }
+
                 found_matrix = computeWorkingSpaceMatrix(path, ji->valuestring, *m);
             }
 
@@ -797,6 +834,7 @@ private:
                 if (settings->verbose) {
                     std::cout << "Could not find suitable matrix for working space: " << name << std::endl;
                 }
+
                 continue;
             }
 
@@ -804,10 +842,12 @@ private:
             TMatrix w = pMatrices.back()->matrix;
 
             CMatrix b = {};
+
             if (!rtengine::invertMatrix(pMatrices.back()->toMatrix(), b)) {
                 if (settings->verbose) {
                     std::cout << "Matrix for working space: " << name << " is not invertible, skipping" << std::endl;
                 }
+
                 pMatrices.pop_back();
             } else {
                 wMatrices[name] = w;
@@ -819,29 +859,36 @@ private:
                 if (settings->verbose) {
                     std::cout << "Added working space: " << name << std::endl;
                     std::cout << "  matrix: [";
+
                     for (int i = 0; i < 3; ++i) {
                         std::cout << " [";
+
                         for (int j = 0; j < 3; ++j) {
                             std::cout << " " << w[i][j];
                         }
+
                         std::cout << "]";
                     }
+
                     std::cout << " ]" << std::endl;
                 }
             }
         }
 
         cJSON_Delete(root);
+
         if (settings->verbose) {
             std::cout << " OK" << std::endl;
         }
+
         return true;
 
-      parse_error:
+parse_error:
+
         if (settings->verbose) {
             std::cout << " ERROR in parsing " << fileName << std::endl;
         }
-        
+
         cJSON_Delete(root);
         return false;
     }
@@ -1019,9 +1066,10 @@ std::vector<Glib::ustring> rtengine::ICCStore::getGamma()
 void rtengine::ICCStore::getGammaArray(const procparams::ColorManagementParams &icm, GammaValues &ga)
 {
     const double eps = 0.000000001; // not divide by zero
+
     if (!icm.freegamma) {//if Free gamma not selected
         // gamma : ga[0],ga[1],ga[2],ga[3],ga[4],ga[5] by calcul
-        if(icm.gamma == "BT709_g2.2_s4.5")      {
+        if (icm.gamma == "BT709_g2.2_s4.5")      {
             ga[0] = 2.22;    //BT709  2.2  4.5  - my preferred as D.Coffin
             ga[1] = 0.909995;
             ga[2] = 0.090005;
@@ -1057,13 +1105,14 @@ void rtengine::ICCStore::getGammaArray(const procparams::ColorManagementParams &
             ga[2] = 0.;
             ga[3] = 1. / eps;
             ga[4] = 0.;
-        } else /* if (icm.gamma == "linear_g1.0") */   {
+        } else { /* if (icm.gamma == "linear_g1.0") */
             ga[0] = 1.0;    //gamma=1 linear : for high dynamic images(cf : D.Coffin...)
             ga[1] = 1.;
             ga[2] = 0.;
             ga[3] = 1. / eps;
             ga[4] = 0.;
         }
+
         ga[5] = 0.0;
         ga[6] = 0.0;
     } else { //free gamma selected
@@ -1077,12 +1126,12 @@ void rtengine::ICCStore::getGammaArray(const procparams::ColorManagementParams &
         ga[4] = g_a[3] * ts;
         //printf("g_a.gamma0=%f g_a.gamma1=%f g_a.gamma2=%f g_a.gamma3=%f g_a.gamma4=%f\n", g_a.gamma0,g_a.gamma1,g_a.gamma2,g_a.gamma3,g_a.gamma4);
         ga[0] = icm.gampos;
-        ga[1] = 1. /(1.0 + g_a[4]);
-        ga[2] = g_a[4] /(1.0 + g_a[4]);
+        ga[1] = 1. / (1.0 + g_a[4]);
+        ga[2] = g_a[4] / (1.0 + g_a[4]);
         ga[3] = 1. / slope;
         ga[5] = 0.0;
         ga[6] = 0.0;
-     //   printf("ga[0]=%f ga[1]=%f ga[2]=%f ga[3]=%f ga[4]=%f\n", ga[0],ga[1],ga[2],ga[3],ga[4]);
+        //   printf("ga[0]=%f ga[1]=%f ga[2]=%f ga[3]=%f ga[4]=%f\n", ga[0],ga[1],ga[2],ga[3],ga[4]);
     }
 }
 
@@ -1117,7 +1166,7 @@ cmsHPROFILE rtengine::ICCStore::makeStdGammaProfile(cmsHPROFILE iprof)
 
     const uint32_t gamma = 0x239;
     int gamma_size = 14;
-    int data_size =(gamma_size + 3) & ~3;
+    int data_size = (gamma_size + 3) & ~3;
 
     for (uint32_t i = 0; i < tag_count; i++) {
         memcpy(&tags[i], p, 12);
@@ -1130,7 +1179,7 @@ cmsHPROFILE rtengine::ICCStore::makeStdGammaProfile(cmsHPROFILE iprof)
                 tags[i].sig != 0x67545243 && // gTRC
                 tags[i].sig != 0x72545243 && // rTRC
                 tags[i].sig != 0x6B545243) { // kTRC
-            data_size +=(tags[i].size + 3) & ~3;
+            data_size += (tags[i].size + 3) & ~3;
         }
     }
 
@@ -1161,7 +1210,7 @@ cmsHPROFILE rtengine::ICCStore::makeStdGammaProfile(cmsHPROFILE iprof)
                     memcpy(&nd[offset + 12], &gm, 2);
                 }
 
-                offset +=(gamma_size + 3) & ~3;
+                offset += (gamma_size + 3) & ~3;
             }
 
             tag.offset = htonl(gamma_offset);
@@ -1170,7 +1219,7 @@ cmsHPROFILE rtengine::ICCStore::makeStdGammaProfile(cmsHPROFILE iprof)
             tag.offset = htonl(offset);
             tag.size = htonl(tags[i].size);
             memcpy(&nd[offset], &data[tags[i].offset], tags[i].size);
-            offset +=(tags[i].size + 3) & ~3;
+            offset += (tags[i].size + 3) & ~3;
         }
 
         memcpy(&nd[128 + 4 + i * 12], &tag, 12);
@@ -1235,9 +1284,9 @@ cmsHPROFILE rtengine::ICCStore::createFromMatrix(const double matrix[3][3], bool
     // 0x74657874 : text
     // 0x64657363 : description tag
     for (unsigned int i = 0; i < pbody[0]; i++) {
-        oprof[oprof[0] / 4] = i ?(i > 1 ? 0x58595a20 : 0x64657363) : 0x74657874;
+        oprof[oprof[0] / 4] = i ? (i > 1 ? 0x58595a20 : 0x64657363) : 0x74657874;
         pbody[i * 3 + 2] = oprof[0];
-        oprof[0] +=(pbody[i * 3 + 3] + 3) & -4;
+        oprof[0] += (pbody[i * 3 + 3] + 3) & -4;
     }
 
     memcpy(oprof + 32, pbody, sizeof(pbody));
@@ -1285,8 +1334,8 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
     enum class ColorTemp {
         D50 = 5003,  // for Widegamut, Prophoto Best, Beta -> D50
         D65 = 6504,   // for sRGB, AdobeRGB, Bruce Rec2020  -> D65
-		D60 = 6005        //for ACESc
-		
+        D60 = 6005        //for ACESc
+
     };
     ColorTemp temp = ColorTemp::D50;
 
@@ -1345,7 +1394,7 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[4] = 0.1310;
         p[5] = 0.0460;
         temp = ColorTemp::D65;
-    } else if (icm.wprimari == "ACESc") {	
+    } else if (icm.wprimari == "ACESc") {
         p[0] = 0.734704;    // ACESc primaries
         p[1] = 0.265298;
         p[2] = -0.000004;
@@ -1361,16 +1410,17 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[4] = 0.0366;
         p[5] = 0.0001;
     }
+
 //printf("prim p2=%f \n",  p[2]);
-/*	
-        p[0] = 0.6400;    // sRGB primaries
-        p[1] = 0.3300;
-        p[2] = 0.3000;
-        p[3] = 0.6000;
-        p[4] = 0.1500;
-        p[5] = 0.0600;
-        temp = ColorTemp::D65;
-*/	
+    /*
+            p[0] = 0.6400;    // sRGB primaries
+            p[1] = 0.3300;
+            p[2] = 0.3000;
+            p[3] = 0.6000;
+            p[4] = 0.1500;
+            p[5] = 0.0600;
+            temp = ColorTemp::D65;
+    */
     cmsCIExyY xyD;
     cmsCIExyYTRIPLE Primaries = {
         {p[0], p[1], 1.0}, // red
@@ -1383,15 +1433,15 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
     cmsFloat64Number Parameters[7] = { ga[0],  ga[1], ga[2], ga[3], ga[4], ga[5], ga[6] } ;
 
     //lcmsMutex->lock();  Mutex acquired by the caller
-	cmsWhitePointFromTemp(&xyD,(double)temp);
-//	cmsCIExyY d60_aces= {0.32168, 0.33767, 1.0};
-	
-//	xyD = d60_aces;
-	
+    cmsWhitePointFromTemp(&xyD, (double)temp);
+//  cmsCIExyY d60_aces= {0.32168, 0.33767, 1.0};
+
+//  xyD = d60_aces;
+
     GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, Parameters); //5 = smoother than 4
     cmsHPROFILE oprofdef = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC); //oprofdef  become Outputprofile
-	//cmsSetProfileVersion(oprofdef, 4.3);
-	
+    //cmsSetProfileVersion(oprofdef, 4.3);
+
     cmsFreeToneCurve(GammaTRC[0]);
     //lcmsMutex->unlock();
 
@@ -1405,101 +1455,67 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     Glib::ustring outProfile;
     cmsHPROFILE outputProfile = nullptr;
     Glib::ustring outPr;
-	
-	
+
+
     if (icm.freegamma && icm.gampos < 1.35) {
         pro = true;    //select profil with gammaTRC modified :
-    } else if (icm.gamma == "linear_g1.0" ||(icm.gamma == "High_g1.3_s3.35")) {
+    } else if (icm.gamma == "linear_g1.0" || (icm.gamma == "High_g1.3_s3.35")) {
         pro = true;    //pro=0  RT_sRGB || Prophoto
     }
 
-/*
-    // Check that output profiles exist, otherwise use LCMS2
-    // Use the icc/icm profiles associated to possible working profiles, set in "options"
-    if (icm.working == "ProPhoto"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto)   && !pro) {
-        outProfile = options.rtSettings.prophoto;
-    } else if (icm.working == "Adobe RGB" && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.adobe)             ) {
-        outProfile = options.rtSettings.adobe;
-    } else if (icm.working == "WideGamut" && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.widegamut)         ) {
-        outProfile = options.rtSettings.widegamut;
-    } else if (icm.working == "Beta RGB"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.beta)              ) {
-        outProfile = options.rtSettings.beta;
-    } else if (icm.working == "BestRGB"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.best)              ) {
-        outProfile = options.rtSettings.best;
-    } else if (icm.working == "BruceRGB"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.bruce)             ) {
-        outProfile = options.rtSettings.bruce;
-    } else if (icm.working == "sRGB"      && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.srgb)       && !pro) {
-        outProfile = options.rtSettings.srgb;
-    } else if (icm.working == "sRGB"      && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.srgb10)     &&  pro) {
-        outProfile = options.rtSettings.srgb10;
-    } else if (icm.working == "ProPhoto"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto10) &&  pro) {
-        outProfile = options.rtSettings.prophoto10;
-    } else if (icm.working == "Rec2020"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.rec2020)           ) {
-        outProfile = options.rtSettings.rec2020;
-    } else {
-        // Should not occurs
-        if (settings->verbose) {
-            printf("\"%s\": unknown working profile! - use LCMS2 substitution\n", icm.working.c_str() );
-        }
-
-        return nullptr;
-    }
-	*/
- //outProfile = options.rtSettings.srgb;
-	
+		//necessary for V2 profile
     if (icm.wprimari == "ProPhoto"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto)   && !pro) {
-		outProfile = options.rtSettings.prophoto;
-		outPr = "RT_large";
+        outProfile = options.rtSettings.prophoto;
+        outPr = "RT_large";
 
-    } else if (icm.wprimari == "Adobe RGB" && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.adobe)             ) {
-		outProfile = options.rtSettings.adobe;
-		outPr = "RT_adob";
-    } else if (icm.wprimari == "WideGamut" && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.widegamut)         ) {
-		outProfile = options.rtSettings.widegamut;
-		outPr = "RT_wide";
-    } else if (icm.wprimari == "Beta RGB"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.beta)              ) {
+    } else if (icm.wprimari == "Adobe RGB" && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.adobe)) {
+        outProfile = options.rtSettings.adobe;
+        outPr = "RT_adob";
+    } else if (icm.wprimari == "WideGamut" && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.widegamut)) {
+        outProfile = options.rtSettings.widegamut;
+        outPr = "RT_wide";
+    } else if (icm.wprimari == "Beta RGB"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.beta)) {
         outProfile = options.rtSettings.beta;
-		outPr = "RT_beta";
-    } else if (icm.wprimari == "BestRGB"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.best)              ) {
-		outProfile = options.rtSettings.best;
-		outPr = "RT_best";
-    } else if (icm.wprimari == "BruceRGB"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.bruce)             ) {
-		outProfile = options.rtSettings.bruce;
-		outPr = "RT_bruce";		
+        outPr = "RT_beta";
+    } else if (icm.wprimari == "BestRGB"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.best)) {
+        outProfile = options.rtSettings.best;
+        outPr = "RT_best";
+    } else if (icm.wprimari == "BruceRGB"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.bruce)) {
+        outProfile = options.rtSettings.bruce;
+        outPr = "RT_bruce";
     } else if (icm.wprimari == "sRGB"      && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.srgb)       && !pro) {
-		outProfile = options.rtSettings.srgb;
-		outPr = "RT_srgb";
+        outProfile = options.rtSettings.srgb;
+        outPr = "RT_srgb";
     } else if (icm.wprimari == "sRGB"      && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.srgb10)     &&  pro) {
-		outProfile = options.rtSettings.srgb10;
-		outPr = "RT_srgb";
-		
+        outProfile = options.rtSettings.srgb10;
+        outPr = "RT_srgb";
+
     } else if (icm.wprimari == "ProPhoto"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto10) &&  pro) {
-		outProfile = options.rtSettings.prophoto10;
-		outPr = "RT_large";
-		
-    } else if (icm.wprimari == "Rec2020"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.rec2020)           ) {
-		outProfile = options.rtSettings.rec2020;
-		outPr = "RT_rec2020";
-		
-    } else if (icm.wprimari == "ACESc"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESc)          ) {
-		outProfile = options.rtSettings.ACESc;
-		outPr = "RT_acesc";
+        outProfile = options.rtSettings.prophoto10;
+        outPr = "RT_large";
+
+    } else if (icm.wprimari == "Rec2020"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.rec2020)) {
+        outProfile = options.rtSettings.rec2020;
+        outPr = "RT_rec2020";
+
+    } else if (icm.wprimari == "ACESc"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESc)) {
+        outProfile = options.rtSettings.ACESc;
+        outPr = "RT_acesc";
 
     } else {
         // Should not occurs
         if (settings->verbose) {
-            printf("\"%s\": unknown working profile! - use LCMS2 substitution\n", icm.working.c_str() );
+            printf("\"%s\": unknown working profile! - use LCMS2 substitution\n", icm.working.c_str());
         }
 
         return nullptr;
     }
-	
-   // outProfile = options.rtSettings.prophoto;
-	
+
+
     //begin adaptation rTRC gTRC bTRC
     //"outputProfile" profile has the same characteristics than RGB values, but TRC are adapted... for applying profile
     if (settings->verbose) {
-        printf("Output Gamma - profile Primaries as RT profile: \"%s\"\n", outProfile.c_str()  );    //c_str()
+        printf("Output Gamma - profile Primaries as RT profile: \"%s\"\n", outProfile.c_str());      //c_str()
     }
 
     outputProfile = ICCStore::getInstance()->getProfile(outProfile); //get output profile
@@ -1509,6 +1525,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         if (settings->verbose) {
             printf("\"%s\" ICC output profile not found!\n", outProfile.c_str());
         }
+
         return nullptr;
     }
 
@@ -1530,7 +1547,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         if (!icm.freegamma) {
             std::wstring gammaStr;
 
-            if(icm.gamma == "High_g1.3_s3.35") {
+            if (icm.gamma == "High_g1.3_s3.35") {
                 gammaStr = std::wstring(L"GammaTRC: High g=1.3 s=3.35");
             } else if (icm.gamma == "Low_g2.6_s6.9") {
                 gammaStr = std::wstring(L"GammaTRC: Low g=2.6 s=6.9");
@@ -1548,62 +1565,50 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
 
             cmsMLUsetWide(mlu,  "en", "US", gammaStr.c_str());
         } else {
+            /*
             // create description with gamma + slope + primaries
             std::wostringstream gammaWs;
             //std::string gammaWsICC;
             std::wstring gammaStrICC;
-			
+
             gammaWs.precision(6);
-			if(icm.wprofile == "v4") {
-				outPro = outPr + "_FOIP_V4_"+ std::to_string((float)icm.gampos)+" "+ std::to_string((float)icm.slpos) + ".icc";
-			} else if(icm.wprofile == "v2") {
-				outPro = outPr + "_FOIP_V2_"+ std::to_string((float)icm.gampos)+" "+ std::to_string((float)icm.slpos) + ".icc";
-			}
-			
+            if(icm.wprofile == "v4") {
+                outPro = outPr + "_FOIP_V4_"+ std::to_string((float)icm.gampos)+" "+ std::to_string((float)icm.slpos) + ".icc";
+            } else if(icm.wprofile == "v2") {
+                outPro = outPr + "_FOIP_V2_"+ std::to_string((float)icm.gampos)+" "+ std::to_string((float)icm.slpos) + ".icc";
+            }
+
             gammaWs << outPro.c_str() <<(float)icm.gampos << " s=" <<(float)icm.slpos;
 
             cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
-			cmsMLU *copyright = cmsMLUalloc(NULL, 1);
+            cmsMLU *copyright = cmsMLUalloc(NULL, 1);
 
-			cmsMLUsetASCII(copyright, "en", "US", "No copyright Rawtherapee");
-			cmsWriteTag(outputProfile, cmsSigCopyrightTag, copyright);
-			cmsMLUfree(copyright);
-			cmsMLU *descrip = cmsMLUalloc(NULL, 1);
+            cmsMLUsetASCII(copyright, "en", "US", "No copyright Rawtherapee");
+            cmsWriteTag(outputProfile, cmsSigCopyrightTag, copyright);
+            cmsMLUfree(copyright);
+            cmsMLU *descrip = cmsMLUalloc(NULL, 1);
 
-			cmsMLUsetASCII(descrip, "en", "US", "Rawtherapee");
-			cmsWriteTag(outputProfile, cmsSigDeviceModelDescTag, descrip);
-			cmsMLUfree(descrip);
-			
+            cmsMLUsetASCII(descrip, "en", "US", "Rawtherapee");
+            cmsWriteTag(outputProfile, cmsSigDeviceModelDescTag, descrip);
+            cmsMLUfree(descrip);
+            */
 
         }
 
-        cmsWriteTag(outputProfile, cmsSigProfileDescriptionTag,  mlu);//desc changed
-        cmsMLUfree(mlu);
-
-		Glib::ustring manufacturer;
-
-		manufacturer="RawTherapee_FOIP";
-		cmsMLU *MfgDesc;
-		MfgDesc   = cmsMLUalloc(NULL, 1);
-		cmsMLUsetASCII(MfgDesc, "en", "US", manufacturer.c_str());
-		cmsWriteTag(outputProfile, cmsSigDeviceMfgDescTag, MfgDesc);
-        cmsMLUfree(MfgDesc);
-		
-		//cmsMLUsetASCII(mlu, "en", "US", manufacturer.c_str());
-        //cmsWriteTag(outputProfile, cmsSigDeviceMfgDescTag,mlu);
 
     }
-	if(icm.wprofile == "v4") {
-		cmsSetProfileVersion(outputProfile, 4.3);
-	}
-	else {
-		cmsSetProfileVersion(outputProfile, 2.0);
-	}	
-//change 	
+
+    if (icm.wprofile == "v4") {
+        cmsSetProfileVersion(outputProfile, 4.3);
+    } else {
+        cmsSetProfileVersion(outputProfile, 2.0);
+    }
+
+//change
     enum class ColorTemp {
         D50 = 5003,  // for Widegamut, Prophoto Best, Beta -> D50
         D65 = 6504,   // for sRGB, AdobeRGB, Bruce Rec2020  -> D65
-		D60 = 6005        //for ACESc->D60
+        D60 = 6005        //for ACESc->D60
     };
     ColorTemp temp = ColorTemp::D50;
     float p[6]; //primaries
@@ -1661,14 +1666,14 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         p[4] = 0.1310;
         p[5] = 0.0460;
         temp = ColorTemp::D65;
-    } else if (icm.wprimari == "ACESc") {	
+    } else if (icm.wprimari == "ACESc") {
         p[0] = 0.734704;    // ACESc primaries
         p[1] = 0.265298;
         p[2] = -0.000004;
         p[3] = 0.999993;
         p[4] = 0.00009989;
         p[5] = -0.077007;
-        temp = ColorTemp::D60;		
+        temp = ColorTemp::D60;
     } else {
         p[0] = 0.7347;    //ProPhoto and default primaries
         p[1] = 0.2653;
@@ -1677,40 +1682,75 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         p[4] = 0.0366;
         p[5] = 0.0001;
     }
-	
+
     cmsCIExyY xyD;
     cmsCIExyYTRIPLE Primaries = {
         {p[0], p[1], 1.0}, // red
         {p[2], p[3], 1.0}, // green
         {p[4], p[5], 1.0}  // blue
     };
-	
-    cmsWhitePointFromTemp(&xyD,(double)temp);
-	//cmsCIExyY d60_aces= {0.32168, 0.33767, 1.0};
-	
-	//xyD = d60_aces;
+
+    cmsWhitePointFromTemp(&xyD, (double)temp);
     cmsToneCurve* GammaTRC[3];
-	
-	
+
+
     // Calculate output profile's rTRC gTRC bTRC
     GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, Parameters);
- 	if(icm.wprofile == "v4") {
-		outputProfile = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC);
-		/*
-		cmsCIEXYZ  *red = (cmsCIEXYZ *)cmsReadTag(outputProfile, cmsSigRedColorantTag); 
-		cmsCIEXYZ red_tag = *red;		
-		cmsWriteTag (outputProfile, cmsSigRedColorantTag, &red_tag);
-		*/
-   	}
-    cmsWriteTag(outputProfile, cmsSigRedTRCTag,GammaTRC[0] );
-    cmsWriteTag(outputProfile, cmsSigGreenTRCTag,GammaTRC[1] );
-    cmsWriteTag(outputProfile, cmsSigBlueTRCTag,GammaTRC[2] );
-	
-	
-	if(icm.wprofile == "v2" || icm.wprofile == "v4") {
-		cmsSaveProfileToFile(outputProfile,  outPro.c_str());
-		
-	}
+
+    if (icm.wprofile == "v4") {
+        outputProfile = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC);
+    }
+
+    cmsWriteTag(outputProfile, cmsSigRedTRCTag, GammaTRC[0]);
+    cmsWriteTag(outputProfile, cmsSigGreenTRCTag, GammaTRC[1]);
+    cmsWriteTag(outputProfile, cmsSigBlueTRCTag, GammaTRC[2]);
+
+    if (icm.freegamma) {
+        // create description with gamma + slope + primaries
+        std::wostringstream gammaWs;
+        //std::string gammaWsICC;
+        std::wstring gammaStrICC;
+
+        gammaWs.precision(6);
+
+        if (icm.wprofile == "v4") {
+            outPro = outPr + "_FOIP_V4_" + std::to_string((float)icm.gampos) + " " + std::to_string((float)icm.slpos) + ".icc";
+        } else if (icm.wprofile == "v2") {
+            outPro = outPr + "_FOIP_V2_" + std::to_string((float)icm.gampos) + " " + std::to_string((float)icm.slpos) + ".icc";
+        }
+
+        gammaWs << outPro.c_str() << (float)icm.gampos << " s=" << (float)icm.slpos;
+
+        cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
+        cmsMLU *copyright = cmsMLUalloc(NULL, 1);
+
+        cmsMLUsetASCII(copyright, "en", "US", "No copyright Rawtherapee");
+        cmsWriteTag(outputProfile, cmsSigCopyrightTag, copyright);
+        cmsMLUfree(copyright);
+    }
+    cmsMLU *descrip = cmsMLUalloc(NULL, 1);
+    cmsMLUsetASCII(descrip, "en", "US", "Rawtherapee");
+    cmsWriteTag(outputProfile, cmsSigDeviceModelDescTag, descrip);
+    cmsMLUfree(descrip);
+
+    cmsWriteTag(outputProfile, cmsSigProfileDescriptionTag,  mlu);//desc changed
+    cmsMLUfree(mlu);
+
+    Glib::ustring manufacturer;
+
+    manufacturer = "RawTherapee_FOIP";
+    cmsMLU *MfgDesc;
+    MfgDesc   = cmsMLUalloc(NULL, 1);
+    cmsMLUsetASCII(MfgDesc, "en", "US", manufacturer.c_str());
+    cmsWriteTag(outputProfile, cmsSigDeviceMfgDescTag, MfgDesc);
+    cmsMLUfree(MfgDesc);
+
+
+    if (icm.wprofile == "v2" || icm.wprofile == "v4") {
+        cmsSaveProfileToFile(outputProfile,  outPro.c_str());
+
+    }
+
     if (GammaTRC) {
         cmsFreeToneCurve(GammaTRC[0]);
     }

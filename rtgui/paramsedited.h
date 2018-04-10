@@ -120,7 +120,8 @@ public:
 };
 
 
-class LocalContrastParamsEdited {
+class LocalContrastParamsEdited
+{
 public:
     bool enabled;
     bool radius;
@@ -382,7 +383,8 @@ public:
 };
 
 
-class FattalToneMappingParamsEdited {
+class FattalToneMappingParamsEdited
+{
 public:
     bool enabled;
     bool threshold;
@@ -586,8 +588,8 @@ public:
     bool gampos;
     bool slpos;
     bool freegamma;
-	bool wprimari;
-	bool wprofile;
+    bool wprimari;
+    bool wprofile;
 };
 class WaveletParamsEdited
 {
@@ -808,7 +810,8 @@ public:
 };
 
 
-class MetaDataParamsEdited {
+class MetaDataParamsEdited
+{
 public:
     bool mode;
 };
@@ -866,10 +869,10 @@ public:
     bool                          exif;
     bool                          iptc;
 
-    explicit ParamsEdited (bool value = false);
+    explicit ParamsEdited(bool value = false);
 
-    void set   (bool v);
-    void initFrom (const std::vector<rtengine::procparams::ProcParams>& src);
-    void combine (rtengine::procparams::ProcParams& toEdit, const rtengine::procparams::ProcParams& mods, bool forceSet);
+    void set(bool v);
+    void initFrom(const std::vector<rtengine::procparams::ProcParams>& src);
+    void combine(rtengine::procparams::ProcParams& toEdit, const rtengine::procparams::ProcParams& mods, bool forceSet);
 };
 #endif

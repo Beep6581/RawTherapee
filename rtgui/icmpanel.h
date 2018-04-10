@@ -33,7 +33,7 @@ class ICMPanelListener
 
 public:
     virtual ~ICMPanelListener() {}
-    virtual void saveInputICCReference (Glib::ustring fname, bool apply_wb) {}
+    virtual void saveInputICCReference(Glib::ustring fname, bool apply_wb) {}
 };
 
 class ICMPanel : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
@@ -104,37 +104,37 @@ private:
     Glib::ustring lastRefFilename;
     Glib::ustring camName;
     void updateDCP(int dcpIlluminant, Glib::ustring dcp_name);
-    void updateRenderingIntent (const Glib::ustring &profile);
+    void updateRenderingIntent(const Glib::ustring &profile);
 public:
-    ICMPanel ();
+    ICMPanel();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setBatchMode   (bool batchMode);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void adjusterChanged (Adjuster* a, double newval);
-    void setAdjusterBehavior (bool gammaadd, bool slopeadd);
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
+    void setBatchMode(bool batchMode);
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
+    void adjusterChanged(Adjuster* a, double newval);
+    void setAdjusterBehavior(bool gammaadd, bool slopeadd);
 
-    void wpChanged ();
-    void wprimariChanged ();
-    void wprofileChanged ();
-    void opChanged ();
-    void oiChanged (int n);
-    void oBPCChanged ();
-    void ipChanged ();
-    void gpChanged ();
-    void GamChanged ();
-    void ipSelectionChanged ();
+    void wpChanged();
+    void wprimariChanged();
+    void wprofileChanged();
+    void opChanged();
+    void oiChanged(int n);
+    void oBPCChanged();
+    void ipChanged();
+    void gpChanged();
+    void GamChanged();
+    void ipSelectionChanged();
     void dcpIlluminantChanged();
     void toneCurveChanged();
     void applyLookTableChanged();
     void applyBaselineExposureOffsetChanged();
     void applyHueSatMapChanged();
 
-    void setRawMeta (bool raw, const rtengine::FramesData* pMeta);
-    void saveReferencePressed ();
+    void setRawMeta(bool raw, const rtengine::FramesData* pMeta);
+    void saveReferencePressed();
 
-    void setICMPanelListener (ICMPanelListener* ipl)
+    void setICMPanelListener(ICMPanelListener* ipl)
     {
         icmplistener = ipl;
     }
