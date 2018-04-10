@@ -18,13 +18,17 @@
 */
 
 #include <iostream>
+#include <cstdio>
 #include <cstring>
+#include <functional>
 
 #include "dcp.h"
+
+#include "cJSON.h"
 #include "iccmatrices.h"
 #include "iccstore.h"
-#include "rawimagesource.h"
 #include "improcfun.h"
+#include "rawimagesource.h"
 #include "rt_math.h"
 
 using namespace rtengine;
@@ -42,7 +46,7 @@ DCPProfile::Matrix invert3x3(const DCPProfile::Matrix& a)
         std::cerr << "DCP matrix cannot be inverted! Expect weird output." << std::endl;
     }
     return res;
-    
+
     // const double res00 = a[1][1] * a[2][2] - a[2][1] * a[1][2];
     // const double res10 = a[2][0] * a[1][2] - a[1][0] * a[2][2];
     // const double res20 = a[1][0] * a[2][1] - a[2][0] * a[1][1];
@@ -377,6 +381,53 @@ double xyCoordToTemperature(const std::array<double, 2>& white_xy)
         last_dt = dt;
         last_du = du;
         last_dv = dv;
+    }
+
+    return res;
+}
+
+std::map<std::string, std::string> getAliases(const Glib::ustring& profile_dir)
+{
+    const std::unique_ptr<std::FILE, std::function<void (std::FILE*)>> file(
+        g_fopen(Glib::build_filename(profile_dir, "camera_model_aliases.json").c_str(), "rb"),
+        [](std::FILE* file)
+        {
+            std::fclose(file);
+        }
+    );
+
+    if (!file) {
+        return {};
+    }
+
+    std::fseek(file.get(), 0, SEEK_END);
+    const long length = std::ftell(file.get());
+    if (length <= 0) {
+        return {};
+    }
+
+    std::unique_ptr<char[]> buffer(new char[length + 1]);
+    std::fseek(file.get(), 0, SEEK_SET);
+    std::fread(buffer.get(), 1, length, file.get());
+    buffer[length] = 0;
+
+    std::unique_ptr<cJSON> root(cJSON_Parse(buffer.get()));
+    if (!root || !root->child) {
+        return {};
+    }
+
+    std::map<std::string, std::string> res;
+
+    for (cJSON* camera = root->child; camera; camera = camera->next) {
+        if (cJSON_IsArray(camera)) {
+            const std::size_t array_size = cJSON_GetArraySize(camera);
+            for (std::size_t index = 0; index < array_size; ++index) {
+                const cJSON* const alias = cJSON_GetArrayItem(camera, index);
+                if (cJSON_IsString(alias)) {
+                    res[alias->valuestring] = camera->string;
+                }
+            }
+        }
     }
 
     return res;
@@ -953,9 +1004,7 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
     valid = true;
 }
 
-DCPProfile::~DCPProfile()
-{
-}
+DCPProfile::~DCPProfile() = default;
 
 DCPProfile::operator bool() const
 {
@@ -1203,7 +1252,7 @@ void DCPProfile::step2ApplyTile(float* rc, float* gc, float* bc, int width, int 
                     float cnewr = FCLIP(newr);
                     float cnewg = FCLIP(newg);
                     float cnewb = FCLIP(newb);
-                    
+
                     float h, s, v;
                     Color::rgb2hsvdcp(cnewr, cnewg, cnewb, h, s, v);
 
@@ -1721,14 +1770,12 @@ DCPStore* DCPStore::getInstance()
     return &instance;
 }
 
-
 DCPStore::~DCPStore()
 {
     for (auto &p : profile_cache) {
         delete p.second;
     }
 }
-
 
 void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
 {
@@ -1748,7 +1795,7 @@ void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
 
         while (!dirs.empty()) {
             // Process directory
-            Glib::ustring dirname = dirs.back();
+            const Glib::ustring dirname = dirs.back();
             dirs.pop_back();
 
             std::unique_ptr<Glib::Dir> dir;
@@ -1782,6 +1829,16 @@ void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
                     // Directory
                     dirs.push_front(fname);
                 }
+            }
+        }
+
+        for (const auto& alias : getAliases(rt_profile_dir)) {
+            const Glib::ustring alias_name = Glib::ustring(alias.first).uppercase();
+            const Glib::ustring real_name = Glib::ustring(alias.second).uppercase();
+            const std::map<Glib::ustring, Glib::ustring>::const_iterator real = file_std_profiles.find(real_name);
+
+            if (real != file_std_profiles.end()) {
+                file_std_profiles[alias_name] = real->second;
             }
         }
     }
