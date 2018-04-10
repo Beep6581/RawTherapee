@@ -1807,7 +1807,7 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
     }
 
     // Correct vignetting of lens profile
-    if (!hasFlatField && lensProf.useVign) {
+    if (!hasFlatField && lensProf.useVign && lensProf.lcMode != LensProfParams::LcMode::NONE) {
         std::unique_ptr<LensCorrection> pmap;
 
         if (lensProf.useLensfun()) {
@@ -4196,7 +4196,7 @@ void RawImageSource::colorSpaceConversion_(Imagefloat* im, const ColorManagement
 
                 for (int w = 0; w < im->getWidth(); ++w) {
 
-                    float r, g, b, hr, hg, hb;
+                    float r, g, b, hr = 0.f, hg = 0.f, hb = 0.f;
 
                     if (transform_via_pcs_lab) {
                         float L = * (p++);

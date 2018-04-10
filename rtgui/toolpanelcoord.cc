@@ -597,7 +597,6 @@ void ToolPanelCoordinator::updateToolState()
         locallab->setExpanded(true);
 
         wavelet->updateToolState(temp);
-        wavelet->setExpanded(true);
         retinex->updateToolState(temp);
 
 

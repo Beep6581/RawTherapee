@@ -45,6 +45,16 @@ namespace rtengine
 class ToneCurve;
 class ColorAppearance;
 
+template <typename T>
+void setUnlessOOG(T &r, T &g, T &b, const T &rr, const T &gg, const T &bb)
+{
+    if (!OOG(r) || !OOG(g) || !OOG(b)) {
+        r = rr;
+        g = gg;
+        b = bb;
+    }
+}
+
 namespace curves {
 
 inline void setLutVal(const LUTf &lut, float &val)
@@ -60,6 +70,21 @@ inline void setLutVal(const LUTf &lut, float &val)
     }
 }
 
+
+inline void setLutVal(const LUTf &lut, float &rval, float &gval, float &bval)
+{
+    if (!OOG(rval) || !OOG(gval) || !OOG(bval)) {
+        rval = lut[std::max(rval, 0.f)];
+        gval = lut[std::max(rval, 0.f)];
+        bval = lut[std::max(rval, 0.f)];
+    } else {
+        setLutVal(lut, rval);
+        setLutVal(lut, gval);
+        setLutVal(lut, bval);
+    }
+}
+
+
 inline void setLutVal(float &val, float lutval, float maxval)
 {
     if (!OOG(val)) {
@@ -68,6 +93,7 @@ inline void setLutVal(float &val, float lutval, float maxval)
         val += maxval - MAXVALF;
     }
 }
+
 
 } // namespace curves
 
@@ -1038,9 +1064,7 @@ inline void StandardToneCurve::Apply(float& r, float& g, float& b) const
 
     assert(lutToneCurve);
 
-    curves::setLutVal(lutToneCurve, r);
-    curves::setLutVal(lutToneCurve, g);
-    curves::setLutVal(lutToneCurve, b);
+    curves::setLutVal(lutToneCurve, r, g, b);
 }
 
 inline void StandardToneCurve::BatchApply(
@@ -1069,17 +1093,15 @@ inline void StandardToneCurve::BatchApply(
             break;
 #endif
         }
-        curves::setLutVal(lutToneCurve, r[i]);
-        curves::setLutVal(lutToneCurve, g[i]);
-        curves::setLutVal(lutToneCurve, b[i]);
+        curves::setLutVal(lutToneCurve, r[i], g[i], b[i]);
         i++;
     }
 
 #ifdef __SSE2__
-    vfloat tmpr;
-    vfloat tmpg;
-    vfloat tmpb;
-    float mv = lutToneCurve[MAXVALF];
+    float tmpr[4] ALIGNED16;
+    float tmpg[4] ALIGNED16;
+    float tmpb[4] ALIGNED16;
+    // float mv = lutToneCurve[MAXVALF];
     for (; i + 3 < end; i += 4) {
         __m128 r_val = LVF(r[i]);
         __m128 g_val = LVF(g[i]);
@@ -1088,17 +1110,16 @@ inline void StandardToneCurve::BatchApply(
         STVF(tmpg[0], lutToneCurve[g_val]);
         STVF(tmpb[0], lutToneCurve[b_val]);
         for (int j = 0; j < 4; ++j) {
-            curves::setLutVal(r[i+j], tmpr[j], mv);
-            curves::setLutVal(g[i+j], tmpg[j], mv);
-            curves::setLutVal(b[i+j], tmpb[j], mv);
+            setUnlessOOG(r[i+j], g[i+j], b[i+j], tmpr[j], tmpg[j], tmpb[j]);
+            // curves::setLutVal(r[i+j], tmpr[j], mv);
+            // curves::setLutVal(g[i+j], tmpg[j], mv);
+            // curves::setLutVal(b[i+j], tmpb[j], mv);
         }
     }
 
     // Remainder in non-SSE.
     for (; i < end; ++i) {
-        curves::setLutVal(lutToneCurve, r[i]);
-        curves::setLutVal(lutToneCurve, g[i]);
-        curves::setLutVal(lutToneCurve, b[i]);
+        curves::setLutVal(lutToneCurve, r[i], g[i], b[i]);
     }
 
 #endif
@@ -1137,9 +1158,7 @@ inline void AdobeToneCurve::Apply (float& ir, float& ig, float& ib) const
         }
     }
 
-    setUnlessOOG(ir, r);
-    setUnlessOOG(ig, g);
-    setUnlessOOG(ib, b);
+    setUnlessOOG(ir, ig, ib, r, g, b);
 }
 
 inline void AdobeToneCurve::RGBTone(float& r, float& g, float& b) const
@@ -1169,9 +1188,7 @@ inline void LuminanceToneCurve::Apply(float &ir, float &ig, float &ib) const
     g = LIM<float> (g * coef, 0.f, 65535.f);
     b = LIM<float> (b * coef, 0.f, 65535.f);
 
-    setUnlessOOG(ir, r);
-    setUnlessOOG(ig, g);
-    setUnlessOOG(ib, b);
+    setUnlessOOG(ir, ig, ib, r, g, b);
 }
 
 inline float WeightedStdToneCurve::Triangle(float a, float a1, float b) const
@@ -1229,9 +1246,7 @@ inline void WeightedStdToneCurve::Apply (float& ir, float& ig, float& ib) const
     g = CLIP<float> (g1 * 0.25f + g2 * 0.50f + g3 * 0.25f);
     b = CLIP<float> (b1 * 0.25f + b2 * 0.25f + b3 * 0.50f);
 
-    setUnlessOOG(ir, r);
-    setUnlessOOG(ig, g);
-    setUnlessOOG(ib, b);
+    setUnlessOOG(ir, ig, ib, r, g, b);
 }
 
 inline void WeightedStdToneCurve::BatchApply(const size_t start, const size_t end, float *r, float *g, float *b) const
@@ -1268,9 +1283,9 @@ inline void WeightedStdToneCurve::BatchApply(const size_t start, const size_t en
     const vfloat zd5v = F2V(0.5f);
     const vfloat zd25v = F2V(0.25f);
 
-    vfloat tmpr;
-    vfloat tmpg;
-    vfloat tmpb;
+    float tmpr[4] ALIGNED16;
+    float tmpg[4] ALIGNED16;
+    float tmpb[4] ALIGNED16;
 
     for (; i + 3 < end; i += 4) {
         vfloat r_val = LIMV(LVF(r[i]), ZEROV, c65535v);
@@ -1292,9 +1307,7 @@ inline void WeightedStdToneCurve::BatchApply(const size_t start, const size_t en
         STVF(tmpg[0], LIMV(g1 * zd25v + g2 * zd5v + g3 * zd25v, ZEROV, c65535v));
         STVF(tmpb[0], LIMV(b1 * zd25v + b2 * zd25v + b3 * zd5v, ZEROV, c65535v));
         for (int j = 0; j < 4; ++j) {
-            setUnlessOOG(r[i+j], tmpr[j]);
-            setUnlessOOG(g[i+j], tmpg[j]);
-            setUnlessOOG(b[i+j], tmpb[j]);
+            setUnlessOOG(r[i+j], g[i+j], b[i+j], tmpr[j], tmpg[j], tmpb[j]);
         }
     }
 
@@ -1342,9 +1355,7 @@ inline void SatAndValueBlendingToneCurve::Apply (float& ir, float& ig, float& ib
 
     Color::hsv2rgbdcp(h, s, v + dV, r, g, b);
 
-    setUnlessOOG(ir, r);
-    setUnlessOOG(ig, g);
-    setUnlessOOG(ib, b);
+    setUnlessOOG(ir, ig, ib, r, g, b);
 }
 
 }

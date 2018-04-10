@@ -32,6 +32,7 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
     auto m = ProcEventMapper::getInstance();
     EvHistMatching = m->newEvent(AUTOEXP, "HISTORY_MSG_HISTMATCHING");
     EvHistMatchingBatch = m->newEvent(M_VOID, "HISTORY_MSG_HISTMATCHING");
+    EvClampOOG = m->newEvent(RGBCURVE, "HISTORY_MSG_CLAMPOOG");
 
     CurveListener::setMulti(true);
 
@@ -39,6 +40,12 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
     bottomMilestones.push_back( GradientMilestone(0., 0., 0., 0.) );
     bottomMilestones.push_back( GradientMilestone(1., 1., 1., 1.) );
 
+//----------- OOG clamping ----------------------------------
+    clampOOG = Gtk::manage(new Gtk::CheckButton(M("TP_EXPOSURE_CLAMPOOG")));
+    pack_start(*clampOOG);
+    pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+    clampOOG->signal_toggled().connect(sigc::mem_fun(*this, &ToneCurve::clampOOGChanged));
+    
 //----------- Auto Levels ----------------------------------
     abox = Gtk::manage (new Gtk::HBox ());
     abox->set_spacing (10);
@@ -236,6 +243,7 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
     toneCurveMode2->set_active(rtengine::toUnderlying(pp->toneCurve.curveMode2));
 
     histmatching->set_active(pp->toneCurve.histmatching);
+    clampOOG->set_active(pp->toneCurve.clampOOG);
 
     if (pedited) {
         expcomp->setEditedState (pedited->toneCurve.expcomp ? Edited : UnEdited);
@@ -261,6 +269,7 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
         }
 
         histmatching->set_inconsistent(!pedited->toneCurve.histmatching);
+        clampOOG->set_inconsistent(!pedited->toneCurve.clampOOG);
     }
 
     enaconn.block (true);
@@ -357,6 +366,7 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited)
     }
 
     pp->toneCurve.histmatching = histmatching->get_active();
+    pp->toneCurve.clampOOG = clampOOG->get_active();
 
     if (pedited) {
         pedited->toneCurve.expcomp    = expcomp->getEditedState ();
@@ -376,6 +386,7 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->toneCurve.method     = method->get_active_row_number() != 4;
         pedited->toneCurve.hrenabled  = !hrenabled->get_inconsistent();
         pedited->toneCurve.histmatching = !histmatching->get_inconsistent();
+        pedited->toneCurve.clampOOG = !clampOOG->get_inconsistent();
     }
 
     pp->toneCurve.hrenabled = hrenabled->get_active();
@@ -443,6 +454,17 @@ void ToneCurve::methodChanged ()
         }
     }
 }
+
+
+void ToneCurve::clampOOGChanged()
+{
+    if (listener) {
+        listener->panelChanged(EvClampOOG, clampOOG->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    }
+}
+
+
+
 void ToneCurve::setRaw (bool raw)
 {
 

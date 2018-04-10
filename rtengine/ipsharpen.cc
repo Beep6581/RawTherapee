@@ -106,7 +106,7 @@ void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, int W, i
 
     for (int i = 0; i < H; i++) {
         for (int j = 0; j < W; j++) {
-            tmpI[i][j] = luminance[i][j];
+            tmpI[i][j] = max(luminance[i][j], 0.f);
         }
     }
 
@@ -122,6 +122,14 @@ void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, int W, i
             if (!needdamp) {
                 // apply gaussian blur and divide luminance by result of gaussian blur
                 gaussianBlur (tmpI, tmp, W, H, sigma, nullptr, GAUSS_DIV, luminance);
+#ifdef _OPENMP
+                #pragma omp for
+#endif
+                for (int i = 0; i < H; i++) {
+                    for(int j = 0; j < W; j++) {
+                        tmp[i][j] = max(tmp[i][j], 0.f);
+                    }
+                }
             } else {
                 // apply gaussian blur + damping
                 gaussianBlur (tmpI, tmp, W, H, sigma);

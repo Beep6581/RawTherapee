@@ -114,7 +114,6 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::CheckButton* monBPC;
     Gtk::CheckButton* cbAutoMonProfile;
     //Gtk::CheckButton* cbAutocielab;
-    Gtk::CheckButton* cbciecamfloat;
     Gtk::CheckButton* cbdaubech;
     Gtk::SpinButton*  hlThresh;
     Gtk::SpinButton*  shThresh;

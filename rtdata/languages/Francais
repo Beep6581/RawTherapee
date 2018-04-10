@@ -2213,8 +2213,14 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!HISTORY_MSG_CLAMPOOG;Out-of-gamut colours clipping
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
+!PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
+!PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
+!PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
+!PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
+!TP_EXPOSURE_CLAMPOOG;Clip out-of-gamut colours
 !TP_PREPROCESS_LINEDENOISE_DIRECTION;Direction
 !TP_PREPROCESS_LINEDENOISE_DIRECTION_BOTH;Both
 !TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL;Horizontal

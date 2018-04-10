@@ -53,6 +53,7 @@
 #52 10.02.2018 Korrektur (TooWaBoo) RT 5.3
 #53 26.02.2018 Erweiterung (TooWaBoo) RT 5.3
 #54 30.03.2018 Erweiterung (TooWaBoo) RT 5.4
+#55 06.04.2018 Erweiterung (TooWaBoo) RT 5.4
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -783,6 +784,8 @@ HISTORY_MSG_LOCALCONTRAST_ENABLED;(Lokaler Kontrast)
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;(Lokaler Kontrast)\nHelle Bereiche
 HISTORY_MSG_LOCALCONTRAST_RADIUS;(Lokaler Kontrast)\nRadius
 HISTORY_MSG_METADATA_MODE;(Metadaten)\nKopiermodus
+HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;(Sensor-Matrix)\nVorverarbeitung\nRichtung
+HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;(Sensor-Matrix)\nVorverarbeitung\nPDAF-Zeilenfilter
 HISTORY_MSG_TM_FATTAL_ANCHOR;(HDR-Dynamikkompression)\nHelligkeitsverschiebung
 HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
@@ -1210,6 +1213,10 @@ PREFERENCES_TAB_IMPROC;Bildbearbeitung
 PREFERENCES_TAB_PERFORMANCE;Performance & Qualität
 PREFERENCES_TAB_SOUND;Klänge
 PREFERENCES_THEME;Oberflächendesign
+PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Eingebundenes JPEG
+PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Bildanzeige
+PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutrales RAW-Bild 
+PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Eingebundenes JPEG wenn in Originalgröße, sonst neutrales RAW-Bild
 PREFERENCES_TIMAX;Hoch
 PREFERENCES_TINB;Anzahl Kacheln
 PREFERENCES_TISTD;Standard
@@ -1781,7 +1788,14 @@ TP_PREPROCESS_HOTPIXFILT;Hot-Pixel-Filter
 TP_PREPROCESS_HOTPIXFILT_TOOLTIP;Entfernt Hot-Pixel
 TP_PREPROCESS_LABEL;Vorverarbeitung
 TP_PREPROCESS_LINEDENOISE;Zeilenrauschfilter
+TP_PREPROCESS_LINEDENOISE_DIRECTION;Richtung
+TP_PREPROCESS_LINEDENOISE_DIRECTION_BOTH;Beide
+TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL;Horizontal
+TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;Horizontal (nur PDAF-Zeilen)
+TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertikal
 TP_PREPROCESS_NO_FOUND;Nichts gefunden
+TP_PREPROCESS_PDAFLINESFILTER;PDAF-Zeilenfilter
+TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Minimiert Streifenrauschen, das bei Gegenlichtaufnahmen mit\nsichtbaren Flares einiger spiegellosen Sony-Kameras entsteht.
 TP_PRSHARPENING_LABEL;Nach Skalierung schärfen
 TP_PRSHARPENING_TOOLTIP;Schärft das Bild nach der Größenänderung.\nFunktioniert nur mit der Methode “Lanczos“.\nDas Ergebnis wird nicht in RawTherapee\nangezeigt.\n\nWeitere Informationen finden Sie auf “RawPedia“.
 TP_RAWCACORR_AUTO;Automatische Korrektur
@@ -2266,16 +2280,5 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;(Sensor-Matrix)\nVorverarbeitung\nRichtung
-HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;(Sensor-Matrix)\nVorverarbeitung\nPDAF-Zeilenfilter
-TP_PREPROCESS_LINEDENOISE_DIRECTION;Richtung
-TP_PREPROCESS_LINEDENOISE_DIRECTION_BOTH;Beide
-TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL;Horizontal
-TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;Horizontal (nur PDAF-Zeilen)
-TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertikal
-TP_PREPROCESS_PDAFLINESFILTER;PDAF-Zeilenfilter
-TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Minimiert Streifenrauschen, das bei Gegenlichtaufnahmen mit\nsichtbaren Flares einiger spiegellosen Sony-Kameras entsteht.
-PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Eingebundenes JPEG
-PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Bildanzeige
-PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutrales RAW-Bild 
-PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Eingebundenes JPEG wenn in Originalgröße, sonst neutrales RAW-Bild
+HISTORY_MSG_CLAMPOOG;(Belichtung) - Farben\nauf den Farbraum\nbeschränken
+TP_EXPOSURE_CLAMPOOG;Farben auf den Farbraum beschränken

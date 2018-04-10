@@ -270,7 +270,6 @@ Gtk::Widget* Preferences::getBatchProcPanel()
 
     mi = behModel->append();
     mi->set_value(behavColumns.label, M("TP_COLORAPP_LABEL"));
-    appendBehavList(mi, M("TP_COLORAPP_CIECAT_DEGREE"), ADDSET_CAT_DEGREE, true);
     appendBehavList(mi, M("TP_COLORAPP_ADAPTSCENE"), ADDSET_CAT_ADAPTSCENE, true);
     appendBehavList(mi, M("TP_COLORAPP_LIGHT"), ADDSET_CAT_LIGHT, true);
     appendBehavList(mi, M("TP_COLORAPP_BRIGHT"), ADDSET_CAT_BRIGHT, true);
@@ -934,30 +933,6 @@ Gtk::Widget* Preferences::getColorManagementPanel()
     fprinter->add(*gprinter);
 
     mvbcm->pack_start(*fprinter, Gtk::PACK_SHRINK);
-    Gtk::Frame* fcielab = Gtk::manage(new Gtk::Frame(M("PREFERENCES_CIEART_FRAME")));
-    setExpandAlignProperties(fcielab, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-
-    Gtk::Grid* colo = Gtk::manage(new Gtk::Grid());
-    setExpandAlignProperties(colo, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
-    Gtk::Label* lreloadneeded1 = Gtk::manage(new Gtk::Label(M("PREFERENCES_IMG_RELOAD_NEEDED"), Gtk::ALIGN_START));
-    setExpandAlignProperties(lreloadneeded1, true, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    colo->attach(*lreloadneeded1, 0, 0, 2, 1);
-    /*
-        colo->attach    (*viewlab,        0, 1, 1, 1);
-        colo->attach    (*view,           1, 1, 1, 1);
-        colo->attach    (*greylab,        0, 2, 1, 1);
-        colo->attach    (*grey,           1, 2, 1, 1);
-    */
-//    colo->attach    (*greySclab,      0, 3, 1, 1);
-//    colo->attach    (*greySc,         1, 3, 1, 1);
-    cbciecamfloat = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_CIEART_LABEL")));
-    setExpandAlignProperties(cbciecamfloat, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    colo->attach(*cbciecamfloat, 0, 4, 2, 1);
-    cbciecamfloat->set_tooltip_markup(M("PREFERENCES_CIEART_TOOLTIP"));
-    fcielab->add(*colo);
-
-    mvbcm->pack_start(*fcielab, Gtk::PACK_SHRINK, 4);
-
     return mvbcm;
 }
 
@@ -1798,7 +1773,6 @@ void Preferences::storePreferences()
 // moptions.rtSettings.viewingdevicegrey = grey->get_active_row_number ();
 //    moptions.rtSettings.viewinggreySc = greySc->get_active_row_number ();
 // moptions.rtSettings.autocielab = cbAutocielab->get_active ();
-    moptions.rtSettings.ciecamfloat = cbciecamfloat->get_active();
     moptions.rtSettings.leveldnv = dnv->get_active_row_number();
     moptions.rtSettings.leveldnti = dnti->get_active_row_number();
     moptions.rtSettings.leveldnliss = dnliss->get_active_row_number();
@@ -1975,7 +1949,6 @@ void Preferences::fillPreferences()
 //    clocalajust->set_active (moptions.locaaju);
 
 //  cbAutocielab->set_active (moptions.rtSettings.autocielab);
-    cbciecamfloat->set_active(moptions.rtSettings.ciecamfloat);
     languages->set_active_text(moptions.language);
     ckbLangAutoDetect->set_active(moptions.languageAutoDetect);
     int themeNbr = getThemeRowNumber(moptions.theme);

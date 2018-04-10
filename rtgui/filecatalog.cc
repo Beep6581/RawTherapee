@@ -942,9 +942,8 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe, bool inc
         return;
     }
 
-    Gtk::MessageDialog msd (M("FILEBROWSER_DELETEDLGLABEL"), true, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true);
+    Gtk::MessageDialog msd (getToplevelWindow(this), M("FILEBROWSER_DELETEDLGLABEL"), true, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true);
     msd.set_secondary_text(Glib::ustring::compose ( inclBatchProcessed ? M("FILEBROWSER_DELETEDLGMSGINCLPROC") : M("FILEBROWSER_DELETEDLGMSG"), tbe.size()), true);
-
     if (msd.run() == Gtk::RESPONSE_YES) {
         for (unsigned int i = 0; i < tbe.size(); i++) {
             const auto fname = tbe[i]->filename;
