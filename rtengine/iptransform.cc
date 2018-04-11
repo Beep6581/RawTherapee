@@ -327,25 +327,29 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
     } else {
         bool highQuality;
         std::unique_ptr<Imagefloat> tmpimg;
+        Imagefloat *dest = transformed;
         if (!needsCA() && scale != 1) {
             highQuality = false;
         } else {
             highQuality = true;
             // agriggio: CA correction via the lens profile has to be
-            // performed before all the other transformations (except for the
-            // coarse rotation/flipping). In order to not change the code too
-            // much, I simply introduced a new mode
-            // TRANSFORM_HIGH_QUALITY_CA, which applies *only*
-            // profile-based CA correction. So, the correction in this case
-            // occurs in two steps, using an intermediate temporary
-            // image. There's room for optimization of course...
+            // performed before separately from the the other transformations
+            // (except for the coarse rotation/flipping). In order to not
+            // change the code too much, I simply introduced a new mode
+            // TRANSFORM_HIGH_QUALITY_CA, which applies *only* profile-based
+            // CA correction. So, the correction in this case occurs in two
+            // steps, using an intermediate temporary image. There's room for
+            // optimization of course...
             if (pLCPMap && params->lensProf.useCA && pLCPMap->isCACorrectionAvailable()) {
                 tmpimg.reset(new Imagefloat(original->getWidth(), original->getHeight()));
-                transformLCPCAOnly(original, tmpimg.get(), cx, cy, pLCPMap.get());
-                original = tmpimg.get();
+                dest = tmpimg.get();
             }
         }
-        transformGeneral(highQuality, original, transformed, cx, cy, sx, sy, oW, oH, fW, fH, pLCPMap.get());
+        transformGeneral(highQuality, original, dest, cx, cy, sx, sy, oW, oH, fW, fH, pLCPMap.get());
+        
+        if (highQuality && dest != transformed) {
+            transformLCPCAOnly(dest, transformed, cx, cy, pLCPMap.get());
+        }
     }
 }
 
