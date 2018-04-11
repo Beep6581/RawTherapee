@@ -38,25 +38,6 @@ namespace rtengine
 extern const Settings* settings;
 #endif
 
-void Ciecam02::curvecolor (double satind, double satval, double &sres, double parsat)
-{
-    if (satind >= 0.0) {
-        sres = (1. - (satind) / 100.) * satval + (satind) / 100.* (1. - SQR (SQR (1. - min (satval, 1.0))));
-
-        if (sres > parsat) {
-            sres = parsat;
-        }
-
-        if (sres < 0.) {
-            sres = 0.;
-        }
-    } else {
-        if (satind < -0.1) {
-            sres = satval * (1. + (satind) / 100.);
-        }
-    }
-}
-
 void Ciecam02::curvecolorfloat (float satind, float satval, float &sres, float parsat)
 {
     if (satind > 0.f) {
@@ -74,111 +55,6 @@ void Ciecam02::curvecolorfloat (float satind, float satval, float &sres, float p
     } else { // satind == 0 means we don't want to change the value at all
         sres = satval;
     }
-}
-
-void Ciecam02::curveJ (double br, double contr, int db, LUTf & outCurve, LUTu & histogram )
-{
-    LUTf dcurve (65536, 0);
-    int skip = 1;
-
-    // check if brightness curve is needed
-    if (br > 0.00001 || br < -0.00001) {
-
-        std::vector<double> brightcurvePoints;
-        brightcurvePoints.resize (9);
-        brightcurvePoints.at (0) = double (DCT_NURBS);
-
-        brightcurvePoints.at (1) = 0.; // black point.  Value in [0 ; 1] range
-        brightcurvePoints.at (2) = 0.; // black point.  Value in [0 ; 1] range
-
-        if (br > 0) {
-            brightcurvePoints.at (3) = 0.1; // toe point
-            brightcurvePoints.at (4) = 0.1 + br / 150.0; //value at toe point
-
-            brightcurvePoints.at (5) = 0.7; // shoulder point
-            brightcurvePoints.at (6) = min (1.0, 0.7 + br / 300.0); //value at shoulder point
-        } else {
-            brightcurvePoints.at (3) = 0.1 - br / 150.0; // toe point
-            brightcurvePoints.at (4) = 0.1; // value at toe point
-
-            brightcurvePoints.at (5) = min (1.0, 0.7 - br / 300.0); // shoulder point
-            brightcurvePoints.at (6) = 0.7; // value at shoulder point
-        }
-
-        brightcurvePoints.at (7) = 1.; // white point
-        brightcurvePoints.at (8) = 1.; // value at white point
-
-        DiagonalCurve* brightcurve = new DiagonalCurve (brightcurvePoints, CURVES_MIN_POLY_POINTS / skip);
-
-        // Applying brightness curve
-        for (int i = 0; i < 32768; i++) {
-
-            // change to [0,1] range
-            float val = (float)i / 32767.0;
-
-            // apply brightness curve
-            val = brightcurve->getVal (val);
-
-            // store result in a temporary array
-            dcurve[i] = CLIPD (val);
-        }
-
-        delete brightcurve;
-    } else {
-        //  for (int i=0; i<32768; i++) { // L values range up to 32767, higher values are for highlight overflow
-        for (int i = 0; i < (32768 * db); i++) { // L values range up to 32767, higher values are for highlight overflow
-
-            // set the identity curve in the temporary array
-            dcurve[i] = (float)i / (db * 32768.0f);
-        }
-    }
-
-
-    if (contr > 0.00001 || contr < -0.00001) {
-
-        // compute mean luminance of the image with the curve applied
-        int sum = 0;
-        float avg = 0;
-
-        //float sqavg = 0;
-        for (int i = 0; i < 32768; i++) {
-            avg += dcurve[i] * histogram[i];//approximation for average : usage of L (lab) instead of J
-            sum += histogram[i];
-        }
-
-        avg /= sum;
-        std::vector<double> contrastcurvePoints;
-        contrastcurvePoints.resize (9);
-        contrastcurvePoints.at (0) = double (DCT_NURBS);
-
-        contrastcurvePoints.at (1) = 0.; // black point.  Value in [0 ; 1] range
-        contrastcurvePoints.at (2) = 0.; // black point.  Value in [0 ; 1] range
-
-        contrastcurvePoints.at (3) = avg - avg * (0.6 - contr / 250.0); // toe point
-        contrastcurvePoints.at (4) = avg - avg * (0.6 + contr / 250.0); // value at toe point
-
-        contrastcurvePoints.at (5) = avg + (1 - avg) * (0.6 - contr / 250.0); // shoulder point
-        contrastcurvePoints.at (6) = avg + (1 - avg) * (0.6 + contr / 250.0); // value at shoulder point
-
-        contrastcurvePoints.at (7) = 1.; // white point
-        contrastcurvePoints.at (8) = 1.; // value at white point
-
-        DiagonalCurve* contrastcurve = new DiagonalCurve (contrastcurvePoints, CURVES_MIN_POLY_POINTS / skip);
-
-        // apply contrast enhancement
-        for (int i = 0; i < (32768 * db); i++) {
-            dcurve[i]  = contrastcurve->getVal (dcurve[i]);
-        }
-
-        delete contrastcurve;
-    }
-
-    //   for (int i=0; i<32768; i++) outCurve[i] = 32768.0*dcurve[i];
-    for (int i = 0; i < (db * 32768); i++) {
-        outCurve[i] = db * 32768.0 * dcurve[i];
-    }
-//	printf("double out500=%f out15000=%f\n", outCurve[500], outCurve[15000]);
-	
 }
 
 void Ciecam02::curveJfloat (float br, float contr, const LUTu & histogram, LUTf & outCurve)
@@ -298,26 +174,9 @@ void Ciecam02::curveJfloat (float br, float contr, const LUTu & histogram, LUTf 
  *
  */
 
-double Ciecam02::d_factor ( double f, double la )
-{
-    return f * (1.0 - ((1.0 / 3.6) * exp ((-la - 42.0) / 92.0)));
-}
-
 float Ciecam02::d_factorfloat ( float f, float la )
 {
     return f * (1.0f - ((1.0f / 3.6f) * xexpf ((-la - 42.0f) / 92.0f)));
-}
-
-double Ciecam02::calculate_fl_from_la_ciecam02 ( double la )
-{
-    double la5 = la * 5.0;
-    double k = 1.0 / (la5 + 1.0);
-
-    /* Calculate k^4. */
-    k = k * k;
-    k = k * k;
-
-    return (0.2 * k * la5) + (0.1 * (1.0 - k) * (1.0 - k) * std::cbrt (la5));
 }
 
 float Ciecam02::calculate_fl_from_la_ciecam02float ( float la )
@@ -330,34 +189,6 @@ float Ciecam02::calculate_fl_from_la_ciecam02float ( float la )
     k = k * k;
 
     return (0.2f * k * la5) + (0.1f * (1.0f - k) * (1.0f - k) * std::cbrt (la5));
-}
-
-double Ciecam02::achromatic_response_to_white ( double x, double y, double z, double d, double fl, double nbb, int gamu )
-{
-    double r, g, b;
-    double rc, gc, bc;
-    double rp, gp, bp;
-    double rpa, gpa, bpa;
-    gamu = 1;
-    xyz_to_cat02 ( r, g, b, x, y, z, gamu );
-
-    rc = r * (((y * d) / r) + (1.0 - d));
-    gc = g * (((y * d) / g) + (1.0 - d));
-    bc = b * (((y * d) / b) + (1.0 - d));
-
-    cat02_to_hpe ( rp, gp, bp, rc, gc, bc, gamu );
-
-    if (gamu == 1) { //gamut correction M.H.Brill S.Susstrunk
-        rp = MAXR (rp, 0.0);
-        gp = MAXR (gp, 0.0);
-        bp = MAXR (bp, 0.0);
-    }
-
-    rpa = nonlinear_adaptation ( rp, fl );
-    gpa = nonlinear_adaptation ( gp, fl );
-    bpa = nonlinear_adaptation ( bp, fl );
-
-    return ((2.0 * rpa) + gpa + ((1.0 / 20.0) * bpa) - 0.305) * nbb;
 }
 
 float Ciecam02::achromatic_response_to_whitefloat ( float x, float y, float z, float d, float fl, float nbb, int gamu )
@@ -388,24 +219,6 @@ float Ciecam02::achromatic_response_to_whitefloat ( float x, float y, float z, f
     return ((2.0f * rpa) + gpa + ((1.0f / 20.0f) * bpa) - 0.305f) * nbb;
 }
 
-void Ciecam02::xyz_to_cat02 ( double &r, double &g, double &b, double x, double y, double z, int gamu )
-{
-    gamu = 1;
-
-    if (gamu == 0) {
-        r = ( 0.7328 * x) + (0.4296 * y) - (0.1624 * z);
-        g = (-0.7036 * x) + (1.6975 * y) + (0.0061 * z);
-        b = ( 0.0030 * x) + (0.0136 * y) + (0.9834 * z);
-    } else if (gamu == 1) { //gamut correction M.H.Brill S.Susstrunk
-        //r = ( 0.7328 * x) + (0.4296 * y) - (0.1624 * z);
-        //g = (-0.7036 * x) + (1.6975 * y) + (0.0061 * z);
-        //b = ( 0.0000 * x) + (0.0000 * y) + (1.0000 * z);
-        r = ( 1.007245 * x) + (0.011136 * y) - (0.018381 * z); //Changjun Li
-        g = (-0.318061 * x) + (1.314589 * y) + (0.003471 * z);
-        b = ( 0.0000 * x) + (0.0000 * y) + (1.0000 * z);
-    }
-}
-
 void Ciecam02::xyz_to_cat02float ( float &r, float &g, float &b, float x, float y, float z, int gamu )
 {
     gamu = 1;
@@ -432,24 +245,6 @@ void Ciecam02::xyz_to_cat02float ( vfloat &r, vfloat &g, vfloat &b, vfloat x, vf
     b = z;
 }
 #endif
-
-void Ciecam02::cat02_to_xyz ( double &x, double &y, double &z, double r, double g, double b, int gamu )
-{
-    gamu = 1;
-
-    if (gamu == 0) {
-        x = ( 1.096124 * r) - (0.278869 * g) + (0.182745 * b);
-        y = ( 0.454369 * r) + (0.473533 * g) + (0.072098 * b);
-        z = (-0.009628 * r) - (0.005698 * g) + (1.015326 * b);
-    } else if (gamu == 1) { //gamut correction M.H.Brill S.Susstrunk
-        //x = ( 1.0978566 * r) - (0.277843 * g) + (0.179987 * b);
-        //y = ( 0.455053 * r) + (0.473938 * g) + (0.0710096* b);
-        //z = ( 0.000000 * r) - (0.000000 * g) + (1.000000 * b);
-        x = ( 0.99015849 * r) - (0.00838772 * g) + (0.018229217 * b); //Changjun Li
-        y = ( 0.239565979 * r) + (0.758664642 * g) + (0.001770137 * b);
-        z = ( 0.000000 * r) - (0.000000 * g) + (1.000000 * b);
-    }
-}
 
 void Ciecam02::cat02_to_xyzfloat ( float &x, float &y, float &z, float r, float g, float b, int gamu )
 {
@@ -478,14 +273,6 @@ void Ciecam02::cat02_to_xyzfloat ( vfloat &x, vfloat &y, vfloat &z, vfloat r, vf
 }
 #endif
 
-void Ciecam02::hpe_to_xyz ( double &x, double &y, double &z, double r, double g, double b )
-{
-    x = (1.910197 * r) - (1.112124 * g) + (0.201908 * b);
-    y = (0.370950 * r) + (0.629054 * g) - (0.000008 * b);
-    z = b;
-}
-
-
 void Ciecam02::hpe_to_xyzfloat ( float &x, float &y, float &z, float r, float g, float b )
 {
     x = (1.910197f * r) - (1.112124f * g) + (0.201908f * b);
@@ -500,21 +287,6 @@ void Ciecam02::hpe_to_xyzfloat ( vfloat &x, vfloat &y, vfloat &z, vfloat r, vflo
     z = b;
 }
 #endif
-
-void Ciecam02::cat02_to_hpe ( double &rh, double &gh, double &bh, double r, double g, double b, int gamu )
-{
-    gamu = 1;
-
-    if (gamu == 0) {
-        rh = ( 0.7409792 * r) + (0.2180250 * g) + (0.0410058 * b);
-        gh = ( 0.2853532 * r) + (0.6242014 * g) + (0.0904454 * b);
-        bh = (-0.0096280 * r) - (0.0056980 * g) + (1.0153260 * b);
-    } else if (gamu == 1) { //Changjun Li
-        rh = ( 0.550930835 * r) + (0.519435987 * g) - ( 0.070356303 * b);
-        gh = ( 0.055954056 * r) + (0.89973132 * g) + (0.044315524 * b);
-        bh = (0.0 * r) - (0.0 * g) + (1.0 * b);
-    }
-}
 
 void Ciecam02::cat02_to_hpefloat ( float &rh, float &gh, float &bh, float r, float g, float b, int gamu )
 {
@@ -541,18 +313,6 @@ void Ciecam02::cat02_to_hpefloat ( vfloat &rh, vfloat &gh, vfloat &bh, vfloat r,
 }
 #endif
 
-void Ciecam02::Aab_to_rgb ( double &r, double &g, double &b, double A, double aa, double bb, double nbb )
-{
-    double x = (A / nbb) + 0.305;
-
-    /*       c1              c2               c3       */
-    r = (0.32787 * x) + (0.32145 * aa) + (0.20527 * bb);
-    /*       c1              c4               c5       */
-    g = (0.32787 * x) - (0.63507 * aa) - (0.18603 * bb);
-    /*       c1              c6               c7       */
-    b = (0.32787 * x) - (0.15681 * aa) - (4.49038 * bb);
-}
-
 void Ciecam02::Aab_to_rgbfloat ( float &r, float &g, float &b, float A, float aa, float bb, float nbb )
 {
     float x = (A / nbb) + 0.305f;
@@ -578,34 +338,6 @@ void Ciecam02::Aab_to_rgbfloat ( vfloat &r, vfloat &g, vfloat &b, vfloat A, vflo
 }
 #endif
 
-void Ciecam02::calculate_ab ( double &aa, double &bb, double h, double e, double t, double nbb, double a )
-{
-    double hrad = (h * rtengine::RT_PI) / 180.0;
-    double sinh = sin ( hrad );
-    double cosh = cos ( hrad );
-    double x = (a / nbb) + 0.305;
-    double p3 = 21.0 / 20.0;
-
-    if ( fabs ( sinh ) >= fabs ( cosh ) ) {
-        bb =    ((0.32787 * x) * (2.0 + p3)) /
-                ((e / (t * sinh)) -
-                 // ((0.32145 - 0.63507 - (p3 * 0.15681)) * (cosh / sinh)) -
-                 //  (0.20527 - 0.18603 - (p3 * 4.49038)));
-                 ((-0.31362 - (p3 * 0.15681)) * (cosh / sinh)) -
-                 (0.01924 - (p3 * 4.49038)));
-
-        aa = (bb * cosh) / sinh;
-    } else {
-        aa =    ((0.32787 * x) * (2.0 + p3)) /
-                ((e / (t * cosh)) -
-                 //  (0.32145 - 0.63507 - (p3 * 0.15681)) -
-                 // ((0.20527 - 0.18603 - (p3 * 4.49038)) * (sinh / cosh)));
-                 (-0.31362 - (p3 * 0.15681)) -
-                 ((0.01924 - (p3 * 4.49038)) * (sinh / cosh)));
-
-        bb = (aa * sinh) / cosh;
-    }
-}
 void Ciecam02::calculate_abfloat ( float &aa, float &bb, float h, float e, float t, float nbb, float a )
 {
     float2 sincosval = xsincosf(h * rtengine::RT_PI_F_180);
@@ -675,32 +407,6 @@ void Ciecam02::calculate_abfloat ( vfloat &aa, vfloat &bb, vfloat h, vfloat e, v
 
 #endif
 
-void Ciecam02::initcam1 (double gamu, double yb, double pilotd, double f, double la, double xw, double yw, double zw, double &n, double &d, double &nbb, double &ncb,
-                         double &cz, double &aw, double &wh, double &pfl, double &fl, double &c)
-{
-    n = yb / yw;
-
-    if (pilotd == 2.0) {
-        d = d_factor ( f, la );
-    } else {
-        d = pilotd;
-    }
-
-    fl = calculate_fl_from_la_ciecam02 ( la );
-    nbb = ncb = 0.725 * pow ( 1.0 / n, 0.2 );
-    cz = 1.48 + sqrt ( n );
-    aw = achromatic_response_to_white ( xw, yw, zw, d, fl, nbb, gamu );
-    wh = ( 4.0 / c ) * ( aw + 4.0 ) * pow ( fl, 0.25 );
-    pfl = pow ( fl, 0.25 );
-#ifdef _DEBUG
-
-    if (settings->verbose) {
-        printf ("Source double d=%f aw=%f fl=%f wh=%f\n", d, aw, fl, wh);
-    }
-
-#endif
-}
-
 void Ciecam02::initcam1float (float gamu, float yb, float pilotd, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
                               float &cz, float &aw, float &wh, float &pfl, float &fl, float &c)
 {
@@ -722,31 +428,6 @@ void Ciecam02::initcam1float (float gamu, float yb, float pilotd, float f, float
 
     if (settings->verbose) {
         printf ("Source float d=%f aw=%f fl=%f wh=%f c=%f  awc=%f\n", d, aw, fl, wh, c, (4.f / c) * (aw + 4.f));
-    }
-
-#endif
-}
-
-void Ciecam02::initcam2 (double gamu, double yb, double pilotd, double f, double la, double xw, double yw, double zw, double &n, double &d, double &nbb, double &ncb,
-                         double &cz, double &aw, double &fl)
-{
-    n = yb / yw;
-
-    if (pilotd == 2.0) {
-        d = d_factorfloat ( f, la );
-    } else {
-        d = pilotd;
-    }
-
-//    d = d_factor( f, la );
-    fl = calculate_fl_from_la_ciecam02 ( la );
-    nbb = ncb = 0.725 * pow ( 1.0 / n, 0.2 );
-    cz = 1.48 + sqrt ( n );
-    aw = achromatic_response_to_white ( xw, yw, zw, d, fl, nbb, gamu );
-#ifdef _DEBUG
-
-    if (settings->verbose) {
-        printf ("Viewing double d=%f aw=%f fl=%f n=%f\n", d, aw, fl, n);
     }
 
 #endif
@@ -775,89 +456,6 @@ void Ciecam02::initcam2float (float gamu, float yb, float pilotd, float f, float
     }
 
 #endif
-}
-
-void Ciecam02::xyz2jchqms_ciecam02 ( double &J, double &C, double &h, double &Q, double &M, double &s, double &aw, double &fl, double &wh,
-                                     double x, double y, double z, double xw, double yw, double zw,
-                                     double c, double nc, int gamu, double n, double nbb, double ncb, double pfl, double cz, double d)
-{
-    double r, g, b;
-    double rw, gw, bw;
-    double rc, gc, bc;
-    double rp, gp, bp;
-    double rpa, gpa, bpa;
-    double a, ca, cb;
-    double e, t;
-    double myh;
-    gamu = 1;
-    xyz_to_cat02 ( r, g, b, x, y, z, gamu );
-    xyz_to_cat02 ( rw, gw, bw, xw, yw, zw, gamu );
-    rc = r * (((yw * d) / rw) + (1.0 - d));
-    gc = g * (((yw * d) / gw) + (1.0 - d));
-    bc = b * (((yw * d) / bw) + (1.0 - d));
-
-    cat02_to_hpe ( rp, gp, bp, rc, gc, bc, gamu );
-
-    if (gamu == 1) { //gamut correction M.H.Brill S.Susstrunk
-        rp = MAXR (rp, 0.0);
-        gp = MAXR (gp, 0.0);
-        bp = MAXR (bp, 0.0);
-    }
-
-    rpa = nonlinear_adaptation ( rp, fl );
-    gpa = nonlinear_adaptation ( gp, fl );
-    bpa = nonlinear_adaptation ( bp, fl );
-
-    ca = rpa - ((12.0 * gpa) / 11.0) + (bpa / 11.0);
-    cb = (1.0 / 9.0) * (rpa + gpa - (2.0 * bpa));
-
-    myh = (180.0 / rtengine::RT_PI) * atan2 ( cb, ca );
-
-    if ( myh < 0.0 ) {
-        myh += 360.0;
-    }
-
-    //we can also calculate H, if necessary...but it's using time...for  what usage ?
-    /*double temp;
-    if(myh<20.14) {
-        temp = ((myh + 122.47)/1.2) + ((20.14 - myh)/0.8);
-        H = 300 + (100*((myh + 122.47)/1.2)) / temp;
-    }
-    else if(myh < 90.0) {
-        temp = ((myh - 20.14)/0.8) + ((90.00 - myh)/0.7);
-        H = (100*((myh - 20.14)/0.8)) / temp;
-    }
-    else if (myh < 164.25) {
-        temp = ((myh - 90.00)/0.7) + ((164.25 - myh)/1.0);
-        H = 100 + ((100*((myh - 90.00)/0.7)) / temp);
-    }
-    else if (myh < 237.53) {
-        temp = ((myh - 164.25)/1.0) + ((237.53 - myh)/1.2);
-        H = 200 + ((100*((myh - 164.25)/1.0)) / temp);
-    }
-    else {
-        temp = ((myh - 237.53)/1.2) + ((360 - myh + 20.14)/0.8);
-        H = 300 + ((100*((myh - 237.53)/1.2)) / temp);
-    }
-    */
-    a = ((2.0 * rpa) + gpa + ((1.0 / 20.0) * bpa) - 0.305) * nbb;
-
-    if (gamu == 1) {
-        a = MAXR (a, 0.0);   //gamut correction M.H.Brill S.Susstrunk
-    }
-
-    J = 100.0 * pow ( a / aw, c * cz );
-
-    e = ((12500.0 / 13.0) * nc * ncb) * (cos ( ((myh * rtengine::RT_PI) / 180.0) + 2.0 ) + 3.8);
-    t = (e * sqrt ( (ca * ca) + (cb * cb) )) / (rpa + gpa + ((21.0 / 20.0) * bpa));
-
-    C = pow ( t, 0.9 ) * sqrt ( J / 100.0 )
-        * pow ( 1.64 - pow ( 0.29, n ), 0.73 );
-
-    Q = wh * sqrt ( J / 100.0 );
-    M = C * pfl;
-    s = 100.0 * sqrt ( M / Q );
-    h = myh;
 }
 
 void Ciecam02::xyz2jchqms_ciecam02float ( float &J, float &C, float &h, float &Q, float &M, float &s, float aw, float fl, float wh,
@@ -1046,41 +644,6 @@ void Ciecam02::xyz2jch_ciecam02float ( float &J, float &C, float &h, float aw, f
     h = (myh * 180.f) / (float)rtengine::RT_PI;
 }
 
-
-void Ciecam02::jch2xyz_ciecam02 ( double &x, double &y, double &z, double J, double C, double h,
-                                  double xw, double yw, double zw,
-                                  double c, double nc, int gamu, double n, double nbb, double ncb, double fl, double cz, double d, double aw )
-{
-    double r, g, b;
-    double rc, gc, bc;
-    double rp, gp, bp;
-    double rpa, gpa, bpa;
-    double rw, gw, bw;
-    double a, ca, cb;
-    double e, t;
-    gamu = 1;
-    xyz_to_cat02 ( rw, gw, bw, xw, yw, zw, gamu );
-    e = ((12500.0 / 13.0) * nc * ncb) * (cos ( ((h * rtengine::RT_PI) / 180.0) + 2.0 ) + 3.8);
-    a = pow ( J / 100.0, 1.0 / (c * cz) ) * aw;
-    t = pow ( C / (sqrt ( J / 100) * pow ( 1.64 - pow ( 0.29, n ), 0.73 )), 10.0 / 9.0 );
-
-    calculate_ab ( ca, cb, h, e, t, nbb, a );
-    Aab_to_rgb ( rpa, gpa, bpa, a, ca, cb, nbb );
-
-    rp = inverse_nonlinear_adaptation ( rpa, fl );
-    gp = inverse_nonlinear_adaptation ( gpa, fl );
-    bp = inverse_nonlinear_adaptation ( bpa, fl );
-
-    hpe_to_xyz ( x, y, z, rp, gp, bp );
-    xyz_to_cat02 ( rc, gc, bc, x, y, z, gamu );
-
-    r = rc / (((yw * d) / rw) + (1.0 - d));
-    g = gc / (((yw * d) / gw) + (1.0 - d));
-    b = bc / (((yw * d) / bw) + (1.0 - d));
-
-    cat02_to_xyz ( x, y, z, r, g, b, gamu );
-}
-
 void Ciecam02::jch2xyz_ciecam02float ( float &x, float &y, float &z, float J, float C, float h,
                                        float xw, float yw, float zw,
                                        float c, float nc, int gamu, float pow1, float nbb, float ncb, float fl, float cz, float d, float aw)
@@ -1167,19 +730,6 @@ void Ciecam02::jch2xyz_ciecam02float ( vfloat &x, vfloat &y, vfloat &z, vfloat J
 }
 #endif
 
-double Ciecam02::nonlinear_adaptation ( double c, double fl )
-{
-    double p;
-
-    if (c < 0.0) {
-        p = pow ( (-1.0 * fl * c) / 100.0, 0.42 );
-        return ((-1.0 * 400.0 * p) / (27.13 + p)) + 0.1;
-    } else {
-        p = pow ( (fl * c) / 100.0, 0.42 );
-        return ((400.0 * p) / (27.13 + p)) + 0.1;
-    }
-}
-
 float Ciecam02::nonlinear_adaptationfloat ( float c, float fl )
 {
     float p;
@@ -1206,19 +756,6 @@ vfloat Ciecam02::nonlinear_adaptationfloat ( vfloat c, vfloat fl )
     return ((c400 * p) / (c27d13 + p)) + czd1;
 }
 #endif
-
-double Ciecam02::inverse_nonlinear_adaptation ( double c, double fl )
-{
-    int c1;
-
-    if (c - 0.1 < 0.0) {
-        c1 = -1;
-    } else {
-        c1 = 1;
-    }
-
-    return c1 * (100.0 / fl) * pow ( (27.13 * fabs ( c - 0.1 )) / (400.0 - fabs ( c - 0.1 )), 1.0 / 0.42 );
-}
 
 float Ciecam02::inverse_nonlinear_adaptationfloat ( float c, float fl )
 {

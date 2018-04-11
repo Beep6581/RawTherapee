@@ -376,7 +376,7 @@ HISTORY_MSG_126;Flat-Field - File
 HISTORY_MSG_127;Flat-Field - Auto-selection
 HISTORY_MSG_128;Flat-Field - Blur radius
 HISTORY_MSG_129;Flat-Field - Blur type
-HISTORY_MSG_130;Auto distorion correction
+HISTORY_MSG_130;Auto distortion correction
 HISTORY_MSG_131;NR - Luma
 HISTORY_MSG_132;NR - Chroma
 HISTORY_MSG_133;Output gamma
@@ -533,8 +533,8 @@ HISTORY_MSG_284;CT - Auto sat. protection
 HISTORY_MSG_285;NR - Median - Method
 HISTORY_MSG_286;NR - Median - Type
 HISTORY_MSG_287;NR - Median - Iterations
-HISTORY_MSG_288;Flat Field - Clip control
-HISTORY_MSG_289;Flat Field - Clip control - Auto
+HISTORY_MSG_288;Flat-Field - Clip control
+HISTORY_MSG_289;Flat-Field - Clip control - Auto
 HISTORY_MSG_290;Black Level - Red
 HISTORY_MSG_291;Black Level - Green
 HISTORY_MSG_292;Black Level - Blue
@@ -723,8 +723,9 @@ HISTORY_MSG_490;HDR TM - Amount
 HISTORY_MSG_491;White Balance
 HISTORY_MSG_492;RGB Curves
 HISTORY_MSG_493;L*a*b* Adjustments
+HISTORY_MSG_CLAMPOOG;Out-of-gamut colours clipping
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
-HISTORY_MSG_HISTMATCHING;Auto-matched Tone Curve
+HISTORY_MSG_HISTMATCHING;Auto-Matched Tone Curve
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
@@ -973,10 +974,6 @@ PREFERENCES_CACHECLEARTHUMBS;Clear Thumbnails
 PREFERENCES_CACHEMAXENTRIES;Maximum number of cache entries
 PREFERENCES_CACHEOPTS;Cache Options
 PREFERENCES_CACHETHUMBHEIGHT;Maximum thumbnail height
-PREFERENCES_CIEART;CIECAM02 optimization
-PREFERENCES_CIEART_FRAME;CIECAM02-Specific Settings
-PREFERENCES_CIEART_LABEL;Use float precision instead of double
-PREFERENCES_CIEART_TOOLTIP;If enabled, CIECAM02 calculations are performed in the single-precision floating-point format instead of the double-precision one. This provides a small increase in speed at the expense of a negligible loss of quality.
 PREFERENCES_CLIPPINGIND;Clipping Indication
 PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
@@ -1406,7 +1403,7 @@ TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
 TP_COLORAPP_WBRT;WB [RT] + [output]
 TP_COLORAPP_YB;Yb% (mean luminance)
 TP_COLORAPP_YBSCENE;Yb% (mean luminance)
-TP_COLORAPP_YBSCENE_TOOLTIP;if auto is enabled, Yb is calculated from the mean value of the actual image's luminance 
+TP_COLORAPP_YBSCENE_TOOLTIP;If "auto" is enabled, Yb is calculated from the mean value of the actual image's luminance
 TP_COLORTONING_AB;o C/L
 TP_COLORTONING_AUTOSAT;Automatic
 TP_COLORTONING_BALANCE;Balance
@@ -1554,6 +1551,7 @@ TP_EXPOSURE_AUTOLEVELS;Auto Levels
 TP_EXPOSURE_AUTOLEVELS_TIP;Toggles execution of Auto Levels to automatically set Exposure slider values based on an image analysis.\nEnables Highlight Reconstruction if necessary.
 TP_EXPOSURE_BLACKLEVEL;Black
 TP_EXPOSURE_BRIGHTNESS;Lightness
+TP_EXPOSURE_CLAMPOOG;Clip out-of-gamut colours
 TP_EXPOSURE_CLIP;Clip %
 TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in Auto Levels operation.
 TP_EXPOSURE_COMPRHIGHLIGHTS;Highlight compression
@@ -1564,7 +1562,7 @@ TP_EXPOSURE_CURVEEDITOR1;Tone curve 1
 TP_EXPOSURE_CURVEEDITOR2;Tone curve 2
 TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Please refer to the "Exposure > Tone Curves" RawPedia article to learn how to achieve the best results by using two tone curves.
 TP_EXPOSURE_EXPCOMP;Exposure compensation
-TP_EXPOSURE_HISTMATCHING;Auto-matched Tone Curve
+TP_EXPOSURE_HISTMATCHING;Auto-Matched Tone Curve
 TP_EXPOSURE_HISTMATCHING_TOOLTIP;Automatically adjust sliders and curves (except exposure compensation) to match the look of the embedded JPEG thumbnail.
 TP_EXPOSURE_LABEL;Exposure
 TP_EXPOSURE_SATURATION;Saturation

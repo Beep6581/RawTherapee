@@ -58,6 +58,7 @@ protected:
     MyComboBoxText* toneCurveMode;
     MyComboBoxText* toneCurveMode2;
     Gtk::ToggleButton *histmatching;
+    Gtk::CheckButton *clampOOG;
 
     bool clipDirty, lastAuto;
     sigc::connection autoconn, neutralconn, tcmodeconn, tcmode2conn;
@@ -69,6 +70,7 @@ protected:
 
     rtengine::ProcEvent EvHistMatching;
     rtengine::ProcEvent EvHistMatchingBatch;
+    rtengine::ProcEvent EvClampOOG;
     
     // used temporarily in eventing
     double nextExpcomp;
@@ -124,6 +126,7 @@ public:
 
     void hrenabledChanged ();
     void methodChanged ();
+    void clampOOGChanged();
 };
 
 #endif
