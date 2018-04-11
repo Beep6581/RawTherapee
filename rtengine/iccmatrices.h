@@ -93,31 +93,62 @@ constexpr double ACESc_xyz[3][3] = {
 };
 
 
-//Matrix ACESc from LCMS calculation same as ACES.icm 
+//Matrix ACESc from LCMS calculation same as ACES.icm , used after with Bradford transformation D60
 constexpr double xyz_ACESc[3][3] = {
     {0.99089,  0.01224, -0.03893},
     {0.36189,  0.72252, -0.08441},
     {-0.00272,  0.00826,  0.81937}
 };
+*/
+/*
+//matrix from Alberto
+//wrong result
+constexpr double ACESc_xyz[3][3] = {
+{0.99089050, 0.36189270, -0.00271606},
+{0.01223755, 0.72251892, 0.00825500},
+{-0.03892517, -0.08441162, 0.81936646}
+};
+constexpr double xyz_ACESc[3][3] = {
+    {1.015496031,  -0.50764724, 0.008480669},
+    {-0.01723464, 1.391035243  , -0.01407161},
+    {0.003048736,  0.140893628, 1.219045754}
+};
 
+*/
+/*
+//matrix fromAlberto symetric above quasi the same as the one I take, only precision!
+//wrong result
+constexpr double ACESc_xyz[3][3] = {
+{0.99089050, 0.01223755, -0.03892517},
+{0.36189270, 0.72251892, -0.08441162},
+{-0.00271606, 0.0082550, 0.81936646}
+};
+constexpr double xyz_ACESc[3][3] = {
+    {1.015496031,  -0.01723464, 0.003048736},
+    {-0.50764724, 1.391035243  , 0.140893628},
+    {0.008480669,  -0.01407161, 1.219045754}
+};
+*/	
+/*	
 constexpr double xyz_ACESc[3][3] = {
     {0.9699974,  0.432792, -0.04566},
     {0.237431,  0.52681, -0.05590},
     {0.127169,  0.043493,  0.793903}
 };
+
 */
 //with Bradford adaptation D50 D60 J.Desmis 04 2018
-// ACESc_xyz = matrix ACESc * matrix d60 D50
+// ACESc_xyz = matrix ACESc * matrix d60 D50 from Matrix ACESc from LCMS calculation same as ACES.icm 
 constexpr double ACESc_xyz[3][3] = {
-    {0.956674714, 0.334059262, 0.033764461},
-    {-0.00914767, 0.719456271  , 0.020585086},
-    {-0.03959528, -0.11114562, 1.008891993}
+    {0.9566756689, 0.334061821, 0.0337682},
+    {-0.00916399, 0.719455101  , 0.02057992},
+    {-0.03958909, -0.11114757, 1.008887738}
 };
 
 constexpr double xyz_ACESc[3][3] = {
-    {1.039605861,  -0.48655298, -0.0248649},
-    {0.012013027, 1.379948826  , -0.02855804},
-    {0.04212411,  0.132928069, 0.987064397}
+    {1.039596401,  -0.48655409, -0.02487101},
+    {0.012036915, 1.379940825  , -0.02855178},
+    {0.042120199,  0.132933363, 0.987069107}
 };
 //end modification ACES matrix
 
