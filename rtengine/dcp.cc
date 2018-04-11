@@ -31,6 +31,13 @@
 #include "rawimagesource.h"
 #include "rt_math.h"
 
+namespace rtengine
+{
+
+extern const Settings* settings;
+
+}
+
 using namespace rtengine;
 using namespace rtexif;
 
@@ -408,17 +415,21 @@ std::map<std::string, std::string> getAliases(const Glib::ustring& profile_dir)
 
     std::unique_ptr<char[]> buffer(new char[length + 1]);
     std::fseek(file.get(), 0, SEEK_SET);
-    std::fread(buffer.get(), 1, length, file.get());
-    buffer[length] = 0;
+    const std::size_t read = std::fread(buffer.get(), 1, length, file.get());
+    buffer[read] = 0;
 
-    std::unique_ptr<cJSON> root(cJSON_Parse(buffer.get()));
+    cJSON_Minify(buffer.get());
+    const std::unique_ptr<cJSON> root(cJSON_Parse(buffer.get()));
     if (!root || !root->child) {
+        if (settings->verbose) {
+            std::cout << "Could not parse 'camera_model_aliases.json' file." << std::endl;
+        }
         return {};
     }
 
     std::map<std::string, std::string> res;
 
-    for (cJSON* camera = root->child; camera; camera = camera->next) {
+    for (const cJSON* camera = root->child; camera; camera = camera->next) {
         if (cJSON_IsArray(camera)) {
             const std::size_t array_size = cJSON_GetArraySize(camera);
             for (std::size_t index = 0; index < array_size; ++index) {
