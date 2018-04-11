@@ -1,22 +1,3 @@
-// This file is part of RawTherapee.
-//
-// Copyright (C) 2018 Flössie <floessie.mail@gmail.com>
-//
-// RawTherapee is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// RawTherapee is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
-
-// Source: http://rawspeed.org/CameraSupport.html
-
 {
     "Canon EOS 1000D": ["Canon EOS Kiss Digital F", "Canon EOS Digital Rebel XS"],
     "Canon EOS 100D": ["Canon EOS Kiss X7", "Canon EOS Rebel SL1"],
@@ -36,7 +17,7 @@
     "Canon EOS 760D": ["Canon EOS 8000D", "Canon EOS Rebel T6s"],
     "Canon EOS 800D": ["Canon EOS Kiss X9i", "Canon EOS Rebel T7i"],
 
-    "Minolta Dynax 5D": ["Minolta Maxxum 5D", "Minolta Alpha 5D"],
+    "Minolta Dynax 5D": ["Minolta Maxxum 5D", "Minolta Alpha 5D", "Minolta Alpha Sweet"],
     "Minolta Dynax 7D": ["Minolta Maxxum 7D", "Minolta Alpha 7D"],
 
     "Panasonic DC-FZ82": ["Panasonic DMC-FZ80", "Panasonic DMC-FZ85"],
