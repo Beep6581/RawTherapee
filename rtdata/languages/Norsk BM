@@ -1149,10 +1149,6 @@ TP_WBALANCE_TEMPERATURE;Temperatur
 !PREFERENCES_BEHSETALL;All to 'Set'
 !PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed.
 !PREFERENCES_BLACKBODY;Tungsten
-!PREFERENCES_CIEART;CIECAM02 optimization
-!PREFERENCES_CIEART_FRAME;CIECAM02-Specific Settings
-!PREFERENCES_CIEART_LABEL;Use float precision instead of double
-!PREFERENCES_CIEART_TOOLTIP;If enabled, CIECAM02 calculations are performed in the single-precision floating-point format instead of the double-precision one. This provides a small increase in speed at the expense of a negligible loss of quality.
 !PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
