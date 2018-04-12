@@ -1499,10 +1499,10 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
 
     } else if (icm.wprimari == "acesp0"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESc)) {
         outProfile = options.rtSettings.ACESc;
-        outPr = "RT_acesc";
+        outPr = "RT_acesp0";
     } else if (icm.wprimari == "acesp1"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESc)) {
         outProfile = options.rtSettings.ACESc;
-        outPr = "RT_acesc";
+        outPr = "RT_acesp1";
 
     } else {
         // Should not occurs
@@ -1633,7 +1633,6 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         D60 = 6005        //for ACESc->D60
     };
     ColorTemp temp = ColorTemp::D50;
-    float p[6]; //primaries
 
     if (icm.wprimari == "wideg") {
         p[0] = 0.7350;    //Widegamut primaries
@@ -1642,6 +1641,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         p[3] = 0.8260;
         p[4] = 0.1570;
         p[5] = 0.0180;
+				
     } else if (icm.wprimari == "adob") {
         p[0] = 0.6400;    //Adobe primaries
         p[1] = 0.3300;
