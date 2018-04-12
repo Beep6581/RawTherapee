@@ -1627,6 +1627,9 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     }
 
 //change
+    float p[6]; //primaries
+    ga[6] = 0.0;
+
     enum class ColorTemp {
         D50 = 5003,  // for Widegamut, Prophoto Best, Beta -> D50
         D65 = 6504,   // for sRGB, AdobeRGB, Bruce Rec2020  -> D65
