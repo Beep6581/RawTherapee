@@ -257,16 +257,23 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wprimari = Gtk::manage(new MyComboBoxText());
     priHBox->pack_start(*wprimari, Gtk::PACK_EXPAND_WIDGET);
     fgVBox->pack_start(*priHBox, Gtk::PACK_EXPAND_WIDGET);
-
+    wprimari->append(M("TP_GAMMA_PRIM_ACESP0"));
+    wprimari->append(M("TP_GAMMA_PRIM_ACESP1"));
+    wprimari->append(M("TP_GAMMA_PRIM_ADOBE"));
+    wprimari->append(M("TP_GAMMA_PRIM_PROPH"));
+    wprimari->append(M("TP_GAMMA_PRIM_REC2020"));
+    wprimari->append(M("TP_GAMMA_PRIM_SRGB"));
+    wprimari->append(M("TP_GAMMA_PRIM_WIDEG"));
+/*
     std::vector<Glib::ustring> wprinames = rtengine::ICCStore::getInstance()->getWorkingProfiles();
 
     for (size_t i = 0; i < wprinames.size(); i++) {
-        if (i <= 1  || i >= 5) {
+        if (i <= 2  || i >= 6) {
             wprimari->append(wprinames[i]);
         }
     }
-
-    wprimari->set_active(6);
+*/
+    wprimari->set_active(5);
     fgVBox->pack_start(*gaHBox, Gtk::PACK_EXPAND_WIDGET);
 
     gampos = Gtk::manage(new Adjuster(M("TP_GAMMA_CURV"), 1, 3.5, 0.00001, 2.4));
@@ -277,6 +284,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     }
 
     gampos->show();
+   // slpos = Gtk::manage(new Adjuster(M("TP_GAMMA_SLOP"), 5800, 6200, 0.00001, 6000.));
+	
     slpos = Gtk::manage(new Adjuster(M("TP_GAMMA_SLOP"), 0, 15, 0.00001, 12.92310));
     slpos->setAdjusterListener(this);
 
@@ -578,8 +587,26 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     wnames->set_active_text(pp->icm.working);
     wgamma->set_active_text(pp->icm.gamma);
-    wprimari->set_active_text(pp->icm.wprimari);
+//    wprimari->set_active_text(pp->icm.wprimari);
 //   wprofile->set_active_text (pp->icm.wprofile);
+
+    if (pp->icm.wprimari == "acesp0") {
+        wprimari->set_active(0);
+    } else if (pp->icm.wprimari == "acesp1") {
+        wprimari->set_active(1);
+    } else if (pp->icm.wprimari == "adob") {
+        wprimari->set_active(2);
+    } else if (pp->icm.wprimari == "proph") {
+        wprimari->set_active(3);
+    } else if (pp->icm.wprimari == "rec2020") {
+        wprimari->set_active(4);
+    } else if (pp->icm.wprimari == "srgb") {
+        wprimari->set_active(5);
+    } else if (pp->icm.wprimari == "wideg") {
+        wprimari->set_active(6);
+    }
+
+
 
     if (pp->icm.wprofile == "none") {
         wprofile->set_active(0);
@@ -724,6 +751,23 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pp->icm.wprofile = "v4";
     }
 
+    if (wprimari->get_active_row_number() == 0) {
+        pp->icm.wprimari = "acesp0";
+    } else if (wprimari->get_active_row_number() == 1) {
+        pp->icm.wprimari = "acesp1";
+    } else if (wprimari->get_active_row_number() == 2) {
+        pp->icm.wprimari = "adob";
+    } else if (wprimari->get_active_row_number() == 3) {
+        pp->icm.wprimari = "proph";
+    } else if (wprimari->get_active_row_number() == 4) {
+        pp->icm.wprimari = "rec2020";
+    } else if (wprimari->get_active_row_number() == 5) {
+        pp->icm.wprimari = "srgb";
+    } else if (wprimari->get_active_row_number() == 6) {
+        pp->icm.wprimari = "wideg";
+    }
+		
+	
     pp->icm.freegamma = freegamma->get_active();
     pp->icm.toneCurve = ckbToneCurve->get_active();
     pp->icm.applyLookTable = ckbApplyLookTable->get_active();

@@ -196,9 +196,9 @@ cmsHPROFILE createXYZProfile()
     return rtengine::ICCStore::createFromMatrix(mat, false, "XYZ");
 }
 
-const double(*wprofiles[])[3]  = {xyz_sRGB, xyz_adobe, xyz_prophoto, xyz_widegamut, xyz_bruce, xyz_beta, xyz_best, xyz_rec2020, xyz_ACESc};//
-const double(*iwprofiles[])[3] = {sRGB_xyz, adobe_xyz, prophoto_xyz, widegamut_xyz, bruce_xyz, beta_xyz, best_xyz, rec2020_xyz, ACESc_xyz};//
-const char* wpnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB", "Beta RGB", "BestRGB", "Rec2020", "ACESc"};//
+const double(*wprofiles[])[3]  = {xyz_sRGB, xyz_adobe, xyz_prophoto, xyz_widegamut, xyz_bruce, xyz_beta, xyz_best, xyz_rec2020, xyz_ACESp0, xyz_ACESp1};//
+const double(*iwprofiles[])[3] = {sRGB_xyz, adobe_xyz, prophoto_xyz, widegamut_xyz, bruce_xyz, beta_xyz, best_xyz, rec2020_xyz, ACESp0_xyz, ACESp1_xyz};//
+const char* wpnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB", "Beta RGB", "BestRGB", "Rec2020", "ACESp0", "ACESp1"};//
 const char* wpgamma[] = {"Free", "BT709_g2.2_s4.5", "sRGB_g2.4_s12.92", "linear_g1.0", "standard_g2.2", "standard_g1.8", "High_g1.3_s3.35", "Low_g2.6_s6.9", "Lab_g3.0s9.03296"}; //gamma free
 //default = gamma inside profile
 //BT709 g=2.22 s=4.5  sRGB g=2.4 s=12.92
@@ -1324,14 +1324,14 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
 
     //primaries for 7 working profiles ==> output profiles
     // eventually to adapt primaries  if RT used special profiles !
-    if (icm.wprimari == "WideGamut") {
+    if (icm.wprimari == "wideg") {
         p[0] = 0.7350;    //Widegamut primaries
         p[1] = 0.2650;
         p[2] = 0.1150;
         p[3] = 0.8260;
         p[4] = 0.1570;
         p[5] = 0.0180;
-    } else if (icm.wprimari == "Adobe RGB") {
+    } else if (icm.wprimari == "adob") {
         p[0] = 0.6400;    //Adobe primaries
         p[1] = 0.3300;
         p[2] = 0.2100;
@@ -1339,7 +1339,7 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[4] = 0.1500;
         p[5] = 0.0600;
         temp = ColorTemp::D65;
-    } else if (icm.wprimari == "sRGB") {
+    } else if (icm.wprimari == "srgb") {
         p[0] = 0.6400;    // sRGB primaries
         p[1] = 0.3300;
         p[2] = 0.3000;
@@ -1369,7 +1369,7 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[3] = 0.7750;
         p[4] = 0.1300;
         p[5] = 0.0350;
-    } else if (icm.wprimari == "Rec2020") {
+    } else if (icm.wprimari == "rec2020") {
         p[0] = 0.7080;    // Rec2020 primaries
         p[1] = 0.2920;
         p[2] = 0.1700;
@@ -1377,14 +1377,29 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[4] = 0.1310;
         p[5] = 0.0460;
         temp = ColorTemp::D65;
-    } else if (icm.wprimari == "ACESc") {
-        p[0] = 0.7347;    // ACESc primaries
+    } else if (icm.wprimari == "acesp0") {
+        p[0] = 0.7347;    // ACES P0 primaries
         p[1] = 0.2653;
         p[2] = 0.0000;
         p[3] = 1.0;
         p[4] = 0.0001;
         p[5] = -0.0770;
         temp = ColorTemp::D60;
+    } else if (icm.wprimari == "acesp1") {		
+        p[0] = 0.713;    // ACES P1 primaries
+        p[1] = 0.293;
+        p[2] = 0.165;
+        p[3] = 0.830;
+        p[4] = 0.128;
+        p[5] = 0.044;
+        temp = ColorTemp::D60;
+    } else if (icm.wprimari == "proph") {		
+        p[0] = 0.7347;    //ProPhoto and default primaries
+        p[1] = 0.2653;
+        p[2] = 0.1596;
+        p[3] = 0.8404;
+        p[4] = 0.0366;
+        p[5] = 0.0001;		
     } else {
         p[0] = 0.7347;    //ProPhoto and default primaries
         p[1] = 0.2653;
@@ -1448,14 +1463,14 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     }
 
     //necessary for V2 profile
-    if (icm.wprimari == "ProPhoto"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto)   && !pro) {
+    if (icm.wprimari == "proph"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto)   && !pro) {
         outProfile = options.rtSettings.prophoto;
         outPr = "RT_large";
 
-    } else if (icm.wprimari == "Adobe RGB" && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.adobe)) {
+    } else if (icm.wprimari == "adob" && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.adobe)) {
         outProfile = options.rtSettings.adobe;
         outPr = "RT_adob";
-    } else if (icm.wprimari == "WideGamut" && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.widegamut)) {
+    } else if (icm.wprimari == "wideg" && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.widegamut)) {
         outProfile = options.rtSettings.widegamut;
         outPr = "RT_wide";
     } else if (icm.wprimari == "Beta RGB"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.beta)) {
@@ -1467,22 +1482,25 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     } else if (icm.wprimari == "BruceRGB"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.bruce)) {
         outProfile = options.rtSettings.bruce;
         outPr = "RT_bruce";
-    } else if (icm.wprimari == "sRGB"      && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.srgb)       && !pro) {
+    } else if (icm.wprimari == "srgb"      && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.srgb)       && !pro) {
         outProfile = options.rtSettings.srgb;
         outPr = "RT_srgb";
     } else if (icm.wprimari == "sRGB"      && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.srgb10)     &&  pro) {
         outProfile = options.rtSettings.srgb10;
         outPr = "RT_srgb";
 
-    } else if (icm.wprimari == "ProPhoto"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto10) &&  pro) {
+    } else if (icm.wprimari == "proph"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto10) &&  pro) {
         outProfile = options.rtSettings.prophoto10;
         outPr = "RT_large";
 
-    } else if (icm.wprimari == "Rec2020"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.rec2020)) {
+    } else if (icm.wprimari == "rec2020"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.rec2020)) {
         outProfile = options.rtSettings.rec2020;
         outPr = "RT_rec2020";
 
-    } else if (icm.wprimari == "ACESc"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESc)) {
+    } else if (icm.wprimari == "acesp0"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESc)) {
+        outProfile = options.rtSettings.ACESc;
+        outPr = "RT_acesc";
+    } else if (icm.wprimari == "acesp1"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESc)) {
         outProfile = options.rtSettings.ACESc;
         outPr = "RT_acesc";
 
@@ -1617,14 +1635,14 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     ColorTemp temp = ColorTemp::D50;
     float p[6]; //primaries
 
-    if (icm.wprimari == "WideGamut") {
+    if (icm.wprimari == "wideg") {
         p[0] = 0.7350;    //Widegamut primaries
         p[1] = 0.2650;
         p[2] = 0.1150;
         p[3] = 0.8260;
         p[4] = 0.1570;
         p[5] = 0.0180;
-    } else if (icm.wprimari == "Adobe RGB") {
+    } else if (icm.wprimari == "adob") {
         p[0] = 0.6400;    //Adobe primaries
         p[1] = 0.3300;
         p[2] = 0.2100;
@@ -1632,7 +1650,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         p[4] = 0.1500;
         p[5] = 0.0600;
         temp = ColorTemp::D65;
-    } else if (icm.wprimari == "sRGB") {
+    } else if (icm.wprimari == "srgb") {
         p[0] = 0.6400;    // sRGB primaries
         p[1] = 0.3300;
         p[2] = 0.3000;
@@ -1662,7 +1680,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         p[3] = 0.7750;
         p[4] = 0.1300;
         p[5] = 0.0350;
-    } else if (icm.wprimari == "Rec2020") {
+    } else if (icm.wprimari == "rec2020") {
         p[0] = 0.7080;    // Rec2020 primaries
         p[1] = 0.2920;
         p[2] = 0.1700;
@@ -1670,13 +1688,29 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         p[4] = 0.1310;
         p[5] = 0.0460;
         temp = ColorTemp::D65;
-    } else if (icm.wprimari == "ACESc") {
-        p[0] = 0.7347;    // ACESc primaries
+    } else if (icm.wprimari == "acesp0") {
+        p[0] = 0.7347;    // ACES P0 primaries
         p[1] = 0.2653;
         p[2] = 0.0000;
         p[3] = 1.0;
         p[4] = 0.0001;
         p[5] = -0.0770;
+        temp = ColorTemp::D60;
+    } else if (icm.wprimari == "acesp1") {		
+        p[0] = 0.713;    // ACES P1 primaries
+        p[1] = 0.293;
+        p[2] = 0.165;
+        p[3] = 0.830;
+        p[4] = 0.128;
+        p[5] = 0.044;
+        temp = ColorTemp::D60;
+    } else if (icm.wprimari == "proph") {		
+        p[0] = 0.7347;    //ProPhoto and default primaries
+        p[1] = 0.2653;
+        p[2] = 0.1596;
+        p[3] = 0.8404;
+        p[4] = 0.0366;
+        p[5] = 0.0001;		
     } else {
         p[0] = 0.7347;    //ProPhoto and default primaries
         p[1] = 0.2653;
