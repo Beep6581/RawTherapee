@@ -1,0 +1,30 @@
+{
+    "Canon EOS 100D": ["Canon EOS Kiss X7", "Canon EOS REBEL SL1"],
+    "Canon EOS 200D": ["Canon EOS Kiss X9", "Canon EOS Rebel SL2"],
+    "Canon EOS 300D": ["Canon EOS Kiss Digital", "Canon EOS Digital Rebel"],
+    "Canon EOS 350D": ["Canon EOS 350D DIGITAL", "Canon EOS Kiss Digital N", "Canon EOS DIGITAL REBEL XT"],
+    "Canon EOS 400D": ["Canon EOS 400D DIGITAL", "Canon EOS Kiss Digital X", "Canon EOS DIGITAL REBEL XTi"],
+    "Canon EOS 450D": ["Canon EOS Kiss Digital X2", "Canon EOS Kiss X2", "Canon EOS DIGITAL REBEL XSi"],
+    "Canon EOS 500D": ["Canon EOS Kiss X3", "Canon EOS REBEL T1i"],
+    "Canon EOS 550D": ["Canon EOS Kiss X4", "Canon EOS REBEL T2i"],
+    "Canon EOS 600D": ["Canon EOS Kiss X5", "Canon EOS REBEL T3i"],
+    "Canon EOS 650D": ["Canon EOS Kiss X6i", "Canon EOS REBEL T4i"],
+    "Canon EOS 700D": ["Canon EOS Kiss X7i", "Canon EOS REBEL T5i"],
+    "Canon EOS 750D": ["Canon EOS Kiss X8i", "Canon EOS Rebel T6i"],
+    "Canon EOS 760D": ["Canon EOS 8000D", "Canon EOS Rebel T6s"],
+    "Canon EOS 800D": ["Canon EOS Kiss X9i", "Canon EOS Rebel T7i"],
+    "Canon EOS 1000D": ["Canon EOS Kiss Digital F", "Canon EOS DIGITAL REBEL XS"],
+    "Canon EOS 1200D": ["Canon EOS Kiss X70", "Canon EOS REBEL T5"],
+    "Canon EOS 1300D": ["Canon EOS Kiss X80", "Canon EOS Rebel T6"],
+
+    "MINOLTA DYNAX 5D": ["Minolta Maxxum 5D", "Minolta Alpha 5D", "Minolta Alpha Sweet"],
+    "MINOLTA DYNAX 7D": ["Minolta Maxxum 7D", "Minolta Alpha 7D"],
+
+    "Panasonic DC-FZ82": ["Panasonic DMC-FZ80", "Panasonic DMC-FZ85"],
+    "Panasonic DC-TZ90": ["Panasonic DC-ZS70", "Panasonic DC-FZ91", "Panasonic DC-FZ92", "Panasonic DC-FZ93"],
+    "Panasonic DMC-G8": ["Panasonic DMC-G80", "Panasonic DMC-G81", "Panasonic DMC-G85"],
+    "Panasonic DMC-LX15": ["Panasonic DMC-LX9", "Panasonic DMC-LX10"],
+    "Panasonic DC-TZ100": ["Panasonic DC-ZS100", "Panasonic DC-ZS110", "Panasonic DC-TZ101", "Panasonic DC-TZ110"],
+    "Panasonic DMC-TZ71": ["Panasonic DMC-TZ70", "Panasonic DMC-ZS50"],
+    "Panasonic DMC-TZ81": ["Panasonic DMC-TZ80", "Panasonic DMC-TZ85", "Panasonic DMC-ZS60"]
+}
