@@ -4013,7 +4013,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
         bool separate_pcs_lab_highlights = false;
 
         // check if the working space is fully contained in prophoto
-        if (!working_space_is_prophoto) {
+        if (!working_space_is_prophoto && camera_icc_type == CAMERA_ICC_TYPE_GENERIC) {
             TMatrix toxyz = ICCStore::getInstance()->workingSpaceMatrix(cmp.working);
             TMatrix torgb = ICCStore::getInstance()->workingSpaceInverseMatrix("ProPhoto");
             float rgb[3] = {0.f, 0.f, 0.f};
