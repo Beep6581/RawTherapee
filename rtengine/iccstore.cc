@@ -196,9 +196,9 @@ cmsHPROFILE createXYZProfile()
     return rtengine::ICCStore::createFromMatrix(mat, false, "XYZ");
 }
 
-const double(*wprofiles[])[3]  = {xyz_sRGB, xyz_adobe, xyz_prophoto, xyz_widegamut, xyz_bruce, xyz_beta, xyz_best, xyz_rec2020, xyz_ACESc};
-const double(*iwprofiles[])[3] = {sRGB_xyz, adobe_xyz, prophoto_xyz, widegamut_xyz, bruce_xyz, beta_xyz, best_xyz, rec2020_xyz, ACESc_xyz};
-const char* wpnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB", "Beta RGB", "BestRGB", "Rec2020", "ACESc"};
+const double(*wprofiles[])[3]  = {xyz_sRGB, xyz_adobe, xyz_prophoto, xyz_widegamut, xyz_bruce, xyz_beta, xyz_best, xyz_rec2020, xyz_ACESc};//
+const double(*iwprofiles[])[3] = {sRGB_xyz, adobe_xyz, prophoto_xyz, widegamut_xyz, bruce_xyz, beta_xyz, best_xyz, rec2020_xyz, ACESc_xyz};//
+const char* wpnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB", "Beta RGB", "BestRGB", "Rec2020", "ACESc"};//
 const char* wpgamma[] = {"Free", "BT709_g2.2_s4.5", "sRGB_g2.4_s12.92", "linear_g1.0", "standard_g2.2", "standard_g1.8", "High_g1.3_s3.35", "Low_g2.6_s6.9", "Lab_g3.0s9.03296"}; //gamma free
 //default = gamma inside profile
 //BT709 g=2.22 s=4.5  sRGB g=2.4 s=12.92
@@ -1378,12 +1378,12 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[5] = 0.0460;
         temp = ColorTemp::D65;
     } else if (icm.wprimari == "ACESc") {
-        p[0] = 0.734704;    // ACESc primaries
-        p[1] = 0.265298;
-        p[2] = -0.000004;
-        p[3] = 0.999993;
-        p[4] = 0.00009989;
-        p[5] = -0.077007;
+        p[0] = 0.7347;    // ACESc primaries
+        p[1] = 0.2653;
+        p[2] = 0.0000;
+        p[3] = 1.0;
+        p[4] = 0.0001;
+        p[5] = -0.0770;
         temp = ColorTemp::D60;
     } else {
         p[0] = 0.7347;    //ProPhoto and default primaries
@@ -1671,13 +1671,12 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         p[5] = 0.0460;
         temp = ColorTemp::D65;
     } else if (icm.wprimari == "ACESc") {
-        p[0] = 0.734704;    // ACESc primaries
-        p[1] = 0.265298;
-        p[2] = -0.000004;
-        p[3] = 0.999993;
-        p[4] = 0.00009989;
-        p[5] = -0.077007;
-        temp = ColorTemp::D60;
+        p[0] = 0.7347;    // ACESc primaries
+        p[1] = 0.2653;
+        p[2] = 0.0000;
+        p[3] = 1.0;
+        p[4] = 0.0001;
+        p[5] = -0.0770;
     } else {
         p[0] = 0.7347;    //ProPhoto and default primaries
         p[1] = 0.2653;
