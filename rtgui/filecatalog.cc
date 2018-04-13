@@ -1129,10 +1129,6 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
                         params.dirpyrDenoise.enabled = false;
                     }
 
-                    if (options.fastexport_bypass_sh_hq) {
-                        params.sh.hq = false;
-                    }
-
                     if (options.fastexport_bypass_dirpyrequalizer) {
                         params.dirpyrequalizer.enabled = false;
                     }

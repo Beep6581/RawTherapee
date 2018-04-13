@@ -1184,21 +1184,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         baseImg = trImg;
     }
 
-    // update blurmap
-    SHMap* shmap = nullptr;
-
-    // if (params.sh.enabled) {
-    //     shmap = new SHMap (fw, fh, false);
-    //     double radius = sqrt (double (fw * fw + fh * fh)) / 2.0;
-    //     double shradius = params.sh.radius;
-
-    //     if (!params.sh.hq) {
-    //         shradius *= radius / 1800.0;
-    //     }
-
-    //     shmap->update (baseImg, shradius, ipf.lumimul, params.sh.hq, 16);
-    // }
-
     // RGB processing
     double  expcomp = params.toneCurve.expcomp;
     int     bright = params.toneCurve.brightness;
@@ -1308,7 +1293,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     }
 
     LUTu histToneCurve;
-    ipf.rgbProc (baseImg, labView, nullptr, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve);
+    ipf.rgbProc (baseImg, labView, nullptr, curve1, curve2, curve, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve);
 
     // freeing up some memory
     customToneCurve1.Reset();
@@ -1317,10 +1302,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     ctOpacityCurve.Reset();
     customToneCurvebw1.Reset();
     customToneCurvebw2.Reset();
-
-    if (shmap) {
-        delete shmap;
-    }
 
     // luminance histogram update
     if (params.labCurve.contrast != 0) {

@@ -51,7 +51,6 @@ ExportPanel::ExportPanel () : listener (nullptr)
     //bypass_colorDenoise     = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_COLORDENOISE")));
     bypass_defringe         = Gtk::manage ( new Gtk::CheckButton (M ("EXPORT_BYPASS_DEFRINGE")));
     bypass_dirpyrDenoise    = Gtk::manage ( new Gtk::CheckButton (M ("EXPORT_BYPASS_DIRPYRDENOISE")));
-    bypass_sh_hq            = Gtk::manage ( new Gtk::CheckButton (M ("EXPORT_BYPASS_SH_HQ")));
     bypass_dirpyrequalizer  = Gtk::manage ( new Gtk::CheckButton (M ("EXPORT_BYPASS_DIRPYREQUALIZER")));
     bypass_wavelet  = Gtk::manage ( new Gtk::CheckButton (M ("EXPORT_BYPASS_EQUALIZER")));
     bypass_raw_ccSteps      = Gtk::manage ( new Gtk::CheckButton (M ("EXPORT_BYPASS_RAW_CCSTEPS")));
@@ -120,7 +119,6 @@ ExportPanel::ExportPanel () : listener (nullptr)
     //pack_start(*bypass_colorDenoise , Gtk::PACK_SHRINK, 4);
     bypass_box->pack_start (*bypass_defringe, Gtk::PACK_SHRINK, 4);
     bypass_box->pack_start (*bypass_dirpyrDenoise, Gtk::PACK_SHRINK, 4);
-    bypass_box->pack_start (*bypass_sh_hq, Gtk::PACK_SHRINK, 4);
     bypass_box->pack_start (*bypass_dirpyrequalizer, Gtk::PACK_SHRINK, 4);
     bypass_box->pack_start (*bypass_wavelet, Gtk::PACK_SHRINK, 4);
 
@@ -206,7 +204,6 @@ ExportPanel::ExportPanel () : listener (nullptr)
     //bypass_colorDenoiseConn       = bypass_colorDenoise->signal_toggled().connect (sigc::bind (sigc::mem_fun(*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
     bypass_defringeConn             = bypass_defringe->signal_toggled().connect (sigc::bind (sigc::mem_fun (*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
     bypass_dirpyrDenoiseConn        = bypass_dirpyrDenoise->signal_toggled().connect (sigc::bind (sigc::mem_fun (*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
-    bypass_sh_hqConn                = bypass_sh_hq->signal_toggled().connect (sigc::bind (sigc::mem_fun (*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
     bypass_dirpyrequalizerConn      = bypass_dirpyrequalizer->signal_toggled().connect (sigc::bind (sigc::mem_fun (*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
     bypass_waveletConn      = bypass_wavelet->signal_toggled().connect (sigc::bind (sigc::mem_fun (*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
     //bypass_raw_all_enhanceConn    = bypass_raw_bayer_all_enhance->signal_toggled().connect (sigc::bind (sigc::mem_fun(*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
@@ -258,7 +255,6 @@ void ExportPanel::SaveSettingsAsDefault()
     //options.fastexport_bypass_colorDenoise       = bypass_colorDenoise->get_active      ();
     FE_OPT_STORE_ (options.fastexport_bypass_defringe, bypass_defringe->get_active          ());
     FE_OPT_STORE_ (options.fastexport_bypass_dirpyrDenoise, bypass_dirpyrDenoise->get_active     ());
-    FE_OPT_STORE_ (options.fastexport_bypass_sh_hq, bypass_sh_hq->get_active             ());
     FE_OPT_STORE_ (options.fastexport_bypass_dirpyrequalizer, bypass_dirpyrequalizer->get_active   ());
     FE_OPT_STORE_ (options.fastexport_bypass_wavelet, bypass_wavelet->get_active   ());
     //options.fastexport_bypass_raw_bayer_all_enhance    = bypass_raw_all_enhance->get_active           ();
@@ -322,7 +318,6 @@ void ExportPanel::LoadDefaultSettings()
     //bypass_colorDenoise->set_active    (options.fastexport_bypass_colorDenoise       );
     bypass_defringe->set_active          (options.fastexport_bypass_defringe           );
     bypass_dirpyrDenoise->set_active     (options.fastexport_bypass_dirpyrDenoise      );
-    bypass_sh_hq->set_active             (options.fastexport_bypass_sh_hq              );
     bypass_dirpyrequalizer->set_active   (options.fastexport_bypass_dirpyrequalizer    );
     bypass_wavelet->set_active   (options.fastexport_bypass_wavelet    );
     //bypass_raw_bayer_all_enhance->set_active   (options.fastexport_bypass_raw_bayer_all_enhance     );
@@ -394,7 +389,6 @@ void ExportPanel::bypassALL_Toggled()
     //bypass_colorDenoiseConn.block       (true);
     bypass_defringeConn.block           (true);
     bypass_dirpyrDenoiseConn.block      (true);
-    bypass_sh_hqConn.block              (true);
     bypass_dirpyrequalizerConn.block    (true);
     bypass_waveletConn.block    (true);
     //bypass_raw_bayer_all_enhanceConn.block    (true);
@@ -417,7 +411,6 @@ void ExportPanel::bypassALL_Toggled()
     //bypass_colorDenoise->set_active(bypass_ALL->get_active());
     bypass_defringe->set_active (bypass_ALL->get_active());
     bypass_dirpyrDenoise->set_active (bypass_ALL->get_active());
-    bypass_sh_hq->set_active (bypass_ALL->get_active());
     bypass_dirpyrequalizer->set_active (bypass_ALL->get_active());
     bypass_wavelet->set_active (bypass_ALL->get_active());
     //bypass_raw_bayer_all_enhance->set_active(bypass_ALL->get_active());
@@ -438,7 +431,6 @@ void ExportPanel::bypassALL_Toggled()
     //bypass_colorDenoiseConn.block       (false);
     bypass_defringeConn.block             (false);
     bypass_dirpyrDenoiseConn.block        (false);
-    bypass_sh_hqConn.block                (false);
     bypass_dirpyrequalizerConn.block      (false);
     bypass_waveletConn.block      (false);
     //bypass_raw_bayer_all_enhanceConn.block    (false);
@@ -466,7 +458,6 @@ fastexport_bypass_lumaDenoise
 fastexport_bypass_colorDenoise
 fastexport_bypass_defringe
 fastexport_bypass_dirpyrDenoise
-fastexport_bypass_sh_hq
 fastexport_bypass_dirpyrequalizer
 fastexport_raw_bayer_method
 fastexport_bypass_raw_bayer_all_enhance
