@@ -42,7 +42,6 @@ void ImProcFunctions::shadowsHighlights(LabImage *lab)
     const auto apply =
         [&](int amount, int tonalwidth, bool hl) -> void
         {
-            // first highlights
             const float thresh = tonalwidth * 327.68f;
             const float scale = hl ? (thresh > 0.f ? 0.9f / thresh : 1.f) : thresh * 0.9f;
 #ifdef _OPENMP
