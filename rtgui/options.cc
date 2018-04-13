@@ -541,7 +541,8 @@ void Options::setDefaults()
     rtSettings.beta = "BetaRGB";
     rtSettings.best = "BestRGB";
     rtSettings.rec2020 = "RT_Rec2020-V2-srgbtrc";
-    rtSettings.ACESc = "RT_ACES-V2-srgbtrc";
+    rtSettings.ACESp0 = "RT_ACES-V2-srgbtrc";
+    rtSettings.ACESp1 = "RT_acesp1_V4";
     rtSettings.verbose = false;
     rtSettings.gamutICC = true;
     rtSettings.gamutLch = true;

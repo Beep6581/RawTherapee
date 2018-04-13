@@ -693,7 +693,6 @@ private:
         m[2][0] = red->Z;
         m[2][1] = green->Z;
         m[2][2] = blue->Z;
-        
         out.set(m);
 
         cmsCloseProfile(prof);
@@ -1497,11 +1496,11 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         outProfile = options.rtSettings.rec2020;
         outPr = "RT_rec2020";
 
-    } else if (icm.wprimari == "acesp0"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESc)) {
-        outProfile = options.rtSettings.ACESc;
+    } else if (icm.wprimari == "acesp0"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp0)) {
+        outProfile = options.rtSettings.ACESp0;
         outPr = "RT_acesp0";
-    } else if (icm.wprimari == "acesp1"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESc)) {
-        outProfile = options.rtSettings.ACESc;
+    } else if (icm.wprimari == "acesp1"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp1)) {
+        outProfile = options.rtSettings.ACESp1;
         outPr = "RT_acesp1";
 
     } else {
@@ -1784,6 +1783,8 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         cmsMLUsetASCII(copyright, "en", "US", "No copyright Rawtherapee");
         cmsWriteTag(outputProfile, cmsSigCopyrightTag, copyright);
         cmsMLUfree(copyright);
+		
+		
     }
 
     cmsMLU *descrip = cmsMLUalloc(NULL, 1);
@@ -1802,8 +1803,14 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     cmsMLUsetASCII(MfgDesc, "en", "US", manufacturer.c_str());
     cmsWriteTag(outputProfile, cmsSigDeviceMfgDescTag, MfgDesc);
     cmsMLUfree(MfgDesc);
+	/*
+		cmsCIEXYZ *red = static_cast<cmsCIEXYZ *>(cmsReadTag(outputProfile, cmsSigRedMatrixColumnTag));
+        cmsCIEXYZ *green  = static_cast<cmsCIEXYZ *>(cmsReadTag(outputProfile, cmsSigGreenMatrixColumnTag));
+        cmsCIEXYZ *blue  = static_cast<cmsCIEXYZ *>(cmsReadTag(outputProfile, cmsSigBlueMatrixColumnTag));
+		printf("rx=%f gx=%f bx=%f ry=%f gy=%f by=%f rz=%f gz=%f bz=%f\n", red->X, green->X, blue->X, red->Y, green->Y, blue->Y, red->Z, green->Z, blue->Z);
+	*/
 
-
+	
     if (icm.wprofile == "v2" || icm.wprofile == "v4") {
         cmsSaveProfileToFile(outputProfile,  outPro.c_str());
 
