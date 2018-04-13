@@ -63,7 +63,10 @@ private:
     rtengine::ProcEvent EvICMprofileMethod;
 
     Gtk::VBox       *  iVBox;
-
+	Gtk::HBox* priHBox;
+	Gtk::HBox* gaHBox;
+	Gtk::HBox* profHBox;
+	
     Gtk::CheckButton*  obpc;
     Gtk::CheckButton*  freegamma;
     Gtk::RadioButton*  inone;

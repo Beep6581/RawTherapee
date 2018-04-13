@@ -220,8 +220,9 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     oVBox->pack_start(*obpc, Gtk::PACK_SHRINK);
 
     // Output gamma
+    gaHBox = Gtk::manage(new Gtk::HBox());
 
-    Gtk::HBox* gaHBox = Gtk::manage(new Gtk::HBox());
+    //Gtk::HBox* gaHBox = Gtk::manage(new Gtk::HBox());
     Gtk::Label* galab = Gtk::manage(new Gtk::Label(M("TP_GAMMA_OUTPUT") + ":"));
     //galab->set_alignment (0.0, 0.5);
 
@@ -250,7 +251,9 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     fgFrame->set_label_widget(*freegamma);
 
 
-    Gtk::HBox* priHBox = Gtk::manage(new Gtk::HBox());
+    //Gtk::HBox* priHBox = Gtk::manage(new Gtk::HBox());
+    priHBox = Gtk::manage(new Gtk::HBox());
+	
     Gtk::Label* prilab = Gtk::manage(new Gtk::Label(M("TP_GAMMA_PRIM") + ":"));
 
     priHBox->pack_start(*prilab, Gtk::PACK_SHRINK);
@@ -297,8 +300,9 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     fgVBox->pack_start(*gampos, Gtk::PACK_SHRINK); //gamma
     fgVBox->pack_start(*slpos, Gtk::PACK_SHRINK); //slope
 
+    profHBox = Gtk::manage(new Gtk::HBox());
 
-    Gtk::HBox* profHBox = Gtk::manage(new Gtk::HBox());
+   // Gtk::HBox* profHBox = Gtk::manage(new Gtk::HBox());
     Gtk::Label* proflab = Gtk::manage(new Gtk::Label(M("TP_GAMMA_PROF") + ":"));
 
     profHBox->pack_start(*proflab, Gtk::PACK_SHRINK);
@@ -1050,7 +1054,9 @@ void ICMPanel::GamChanged()
                 slpos->set_sensitive(true);
                 wprimari->set_sensitive(true);
                 wprofile->set_sensitive(true);
-
+				priHBox->set_sensitive(true);
+				gaHBox->set_sensitive(true);
+				profHBox->set_sensitive(true);
             }
         } else {
             listener->panelChanged(EvGAMFREE, M("GENERAL_DISABLED"));
@@ -1063,6 +1069,10 @@ void ICMPanel::GamChanged()
                 slpos->set_sensitive(false);
                 wprimari->set_sensitive(false);
                 wprofile->set_sensitive(false);
+				priHBox->set_sensitive(false);
+				gaHBox->set_sensitive(false);
+				profHBox->set_sensitive(false);
+				
             }
         }
     }
