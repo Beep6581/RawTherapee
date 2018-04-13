@@ -328,7 +328,8 @@ ToneCurveParams::ToneCurveParams() :
     shcompr(50),
     hlcompr(0),
     hlcomprthresh(33),
-    histmatching(false)
+    histmatching(false),
+    clampOOG(true)
 {
 }
 
@@ -351,7 +352,8 @@ bool ToneCurveParams::operator ==(const ToneCurveParams& other) const
         && shcompr == other.shcompr
         && hlcompr == other.hlcompr
         && hlcomprthresh == other.hlcomprthresh
-        && histmatching == other.histmatching;
+        && histmatching == other.histmatching
+        && clampOOG == other.clampOOG;
 }
 
 bool ToneCurveParams::operator !=(const ToneCurveParams& other) const
@@ -2368,8 +2370,8 @@ RAWParams::BayerSensor::BayerSensor() :
     pixelShiftShowMotion(false),
     pixelShiftShowMotionMaskOnly(false),
     pixelShiftAutomatic(true),
-    pixelShiftNonGreenHorizontal(false),
-    pixelShiftNonGreenVertical(false),
+//    pixelShiftNonGreenHorizontal(false),
+//    pixelShiftNonGreenVertical(false),
     pixelShiftHoleFill(true),
     pixelShiftMedian(false),
     pixelShiftMedian3(false),
@@ -2378,7 +2380,6 @@ RAWParams::BayerSensor::BayerSensor() :
     pixelShiftSmoothFactor(0.7),
     pixelShiftExp0(false),
     pixelShiftLmmse(false),
-    pixelShiftOneGreen(false),
     pixelShiftEqualBright(false),
     pixelShiftEqualBrightChannel(false),
     pixelShiftNonGreenCross(true),
@@ -2420,8 +2421,8 @@ bool RAWParams::BayerSensor::operator ==(const BayerSensor& other) const
         && pixelShiftShowMotion == other.pixelShiftShowMotion
         && pixelShiftShowMotionMaskOnly == other.pixelShiftShowMotionMaskOnly
         && pixelShiftAutomatic == other.pixelShiftAutomatic
-        && pixelShiftNonGreenHorizontal == other.pixelShiftNonGreenHorizontal
-        && pixelShiftNonGreenVertical == other.pixelShiftNonGreenVertical
+//        && pixelShiftNonGreenHorizontal == other.pixelShiftNonGreenHorizontal
+//        && pixelShiftNonGreenVertical == other.pixelShiftNonGreenVertical
         && pixelShiftHoleFill == other.pixelShiftHoleFill
         && pixelShiftMedian == other.pixelShiftMedian
         && pixelShiftMedian3 == other.pixelShiftMedian3
@@ -2430,7 +2431,6 @@ bool RAWParams::BayerSensor::operator ==(const BayerSensor& other) const
         && pixelShiftSmoothFactor == other.pixelShiftSmoothFactor
         && pixelShiftExp0 == other.pixelShiftExp0
         && pixelShiftLmmse == other.pixelShiftLmmse
-        && pixelShiftOneGreen == other.pixelShiftOneGreen
         && pixelShiftEqualBright == other.pixelShiftEqualBright
         && pixelShiftEqualBrightChannel == other.pixelShiftEqualBrightChannel
         && pixelShiftNonGreenCross == other.pixelShiftNonGreenCross
@@ -2460,8 +2460,8 @@ void RAWParams::BayerSensor::setPixelShiftDefaults()
     pixelShiftSum = 3.0;
     pixelShiftRedBlueWeight = 0.7;
     pixelShiftAutomatic = true;
-    pixelShiftNonGreenHorizontal = false;
-    pixelShiftNonGreenVertical = false;
+//    pixelShiftNonGreenHorizontal = false;
+//    pixelShiftNonGreenVertical = false;
     pixelShiftHoleFill = true;
     pixelShiftMedian = false;
     pixelShiftMedian3 = false;
@@ -2470,7 +2470,6 @@ void RAWParams::BayerSensor::setPixelShiftDefaults()
     pixelShiftSmoothFactor = 0.7;
     pixelShiftExp0 = false;
     pixelShiftLmmse = false;
-    pixelShiftOneGreen = false;
     pixelShiftEqualBright = false;
     pixelShiftEqualBrightChannel = false;
     pixelShiftNonGreenCross = true;
@@ -3390,8 +3389,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftShowMotion, "RAW Bayer", "PixelShiftShowMotion", raw.bayersensor.pixelShiftShowMotion, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftShowMotionMaskOnly, "RAW Bayer", "PixelShiftShowMotionMaskOnly", raw.bayersensor.pixelShiftShowMotionMaskOnly, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftAutomatic, "RAW Bayer", "pixelShiftAutomatic", raw.bayersensor.pixelShiftAutomatic, keyFile);
-        saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftNonGreenHorizontal, "RAW Bayer", "pixelShiftNonGreenHorizontal", raw.bayersensor.pixelShiftNonGreenHorizontal, keyFile);
-        saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftNonGreenVertical, "RAW Bayer", "pixelShiftNonGreenVertical", raw.bayersensor.pixelShiftNonGreenVertical, keyFile);
+//        saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftNonGreenHorizontal, "RAW Bayer", "pixelShiftNonGreenHorizontal", raw.bayersensor.pixelShiftNonGreenHorizontal, keyFile);
+//        saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftNonGreenVertical, "RAW Bayer", "pixelShiftNonGreenVertical", raw.bayersensor.pixelShiftNonGreenVertical, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftHoleFill, "RAW Bayer", "pixelShiftHoleFill", raw.bayersensor.pixelShiftHoleFill, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftMedian, "RAW Bayer", "pixelShiftMedian", raw.bayersensor.pixelShiftMedian, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftMedian3, "RAW Bayer", "pixelShiftMedian3", raw.bayersensor.pixelShiftMedian3, keyFile);
@@ -3400,7 +3399,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftSmooth, "RAW Bayer", "pixelShiftSmoothFactor", raw.bayersensor.pixelShiftSmoothFactor, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftExp0, "RAW Bayer", "pixelShiftExp0", raw.bayersensor.pixelShiftExp0, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftLmmse, "RAW Bayer", "pixelShiftLmmse", raw.bayersensor.pixelShiftLmmse, keyFile);
-//        saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftOneGreen, "RAW Bayer", "pixelShiftOneGreen", raw.bayersensor.pixelShiftOneGreen, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftEqualBright, "RAW Bayer", "pixelShiftEqualBright", raw.bayersensor.pixelShiftEqualBright, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftEqualBrightChannel, "RAW Bayer", "pixelShiftEqualBrightChannel", raw.bayersensor.pixelShiftEqualBrightChannel, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftNonGreenCross, "RAW Bayer", "pixelShiftNonGreenCross", raw.bayersensor.pixelShiftNonGreenCross, keyFile);
@@ -4730,8 +4728,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW Bayer", "PixelShiftShowMotion", pedited, raw.bayersensor.pixelShiftShowMotion, pedited->raw.bayersensor.pixelShiftShowMotion);
             assignFromKeyfile(keyFile, "RAW Bayer", "PixelShiftShowMotionMaskOnly", pedited, raw.bayersensor.pixelShiftShowMotionMaskOnly, pedited->raw.bayersensor.pixelShiftShowMotionMaskOnly);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftAutomatic", pedited, raw.bayersensor.pixelShiftAutomatic, pedited->raw.bayersensor.pixelShiftAutomatic);
-            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftNonGreenHorizontal", pedited, raw.bayersensor.pixelShiftNonGreenHorizontal, pedited->raw.bayersensor.pixelShiftNonGreenHorizontal);
-            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftNonGreenVertical", pedited, raw.bayersensor.pixelShiftNonGreenVertical, pedited->raw.bayersensor.pixelShiftNonGreenVertical);
+//            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftNonGreenHorizontal", pedited, raw.bayersensor.pixelShiftNonGreenHorizontal, pedited->raw.bayersensor.pixelShiftNonGreenHorizontal);
+//            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftNonGreenVertical", pedited, raw.bayersensor.pixelShiftNonGreenVertical, pedited->raw.bayersensor.pixelShiftNonGreenVertical);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftHoleFill", pedited, raw.bayersensor.pixelShiftHoleFill, pedited->raw.bayersensor.pixelShiftHoleFill);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftMedian", pedited, raw.bayersensor.pixelShiftMedian, pedited->raw.bayersensor.pixelShiftMedian);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftMedian3", pedited, raw.bayersensor.pixelShiftMedian3, pedited->raw.bayersensor.pixelShiftMedian3);
@@ -4740,7 +4738,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftSmoothFactor", pedited, raw.bayersensor.pixelShiftSmoothFactor, pedited->raw.bayersensor.pixelShiftSmooth);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftExp0", pedited, raw.bayersensor.pixelShiftExp0, pedited->raw.bayersensor.pixelShiftExp0);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftLmmse", pedited, raw.bayersensor.pixelShiftLmmse, pedited->raw.bayersensor.pixelShiftLmmse);
-//            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftOneGreen", pedited, raw.bayersensor.pixelShiftOneGreen, pedited->raw.bayersensor.pixelShiftOneGreen);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftEqualBright", pedited, raw.bayersensor.pixelShiftEqualBright, pedited->raw.bayersensor.pixelShiftEqualBright);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftEqualBrightChannel", pedited, raw.bayersensor.pixelShiftEqualBrightChannel, pedited->raw.bayersensor.pixelShiftEqualBrightChannel);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftNonGreenCross", pedited, raw.bayersensor.pixelShiftNonGreenCross, pedited->raw.bayersensor.pixelShiftNonGreenCross);

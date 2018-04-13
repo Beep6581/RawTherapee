@@ -108,9 +108,9 @@ public:
     std::string getModel    (unsigned int frame = 0) const { return camModel; }
     std::string getLens     (unsigned int frame = 0) const { return lens; }
     std::string getOrientation (unsigned int frame = 0) const { return ""; } // TODO
-    bool getPixelShift (unsigned int frame = 0) const { return isPixelShift; }
+    bool getPixelShift () const { return isPixelShift; }
     bool getHDR (unsigned int frame = 0) const { return isHDR; }
-    std::string getRawType (unsigned int frame) const { return isPixelShift ? "PS" : isHDR ? "HDR" : "STD"; }
+    std::string getImageType (unsigned int frame) const { return isPixelShift ? "PS" : isHDR ? "HDR" : "STD"; }
     rtengine::IIOSampleFormat getSampleFormat (unsigned int frame = 0) const { return sampleFormat; }
 };
 #endif

@@ -281,6 +281,7 @@ struct ToneCurveParams {
     int         hlcompr;        // Highlight Recovery's compression
     int         hlcomprthresh;  // Highlight Recovery's threshold
     bool histmatching; // histogram matching
+    bool clampOOG; // clamp out of gamut colours
 
     ToneCurveParams();
 
@@ -1295,7 +1296,6 @@ struct RAWParams {
         double pixelShiftSmoothFactor;
         bool pixelShiftExp0;
         bool pixelShiftLmmse;
-        bool pixelShiftOneGreen;
         bool pixelShiftEqualBright;
         bool pixelShiftEqualBrightChannel;
         bool pixelShiftNonGreenCross;

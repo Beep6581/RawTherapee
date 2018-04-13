@@ -753,7 +753,6 @@ public:
         bool pixelShiftSmooth;
         bool pixelShiftExp0;
         bool pixelShiftLmmse;
-        bool pixelShiftOneGreen;
         bool pixelShiftEqualBright;
         bool pixelShiftEqualBrightChannel;
         bool pixelShiftNonGreenCross;

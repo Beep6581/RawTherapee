@@ -481,8 +481,8 @@ enum ProcEventCode {
     EvPixelshiftShowMotion = 451,
     EvPixelshiftShowMotionMaskOnly = 452,
     EvPixelShiftAutomatic = 453,
-    EvPixelShiftNonGreenHorizontal = 454,
-    EvPixelShiftNonGreenVertical = 455,
+//    EvPixelShiftNonGreenHorizontal = 454,
+//    EvPixelShiftNonGreenVertical = 455,
     EvPixelShiftNonGreenCross = 456,
     EvPixelShiftStddevFactorRed = 457,
     EvPixelShiftStddevFactorBlue = 458,
@@ -520,7 +520,7 @@ enum ProcEventCode {
     EvWBEnabled = 490,
     EvRGBEnabled = 491,
     EvLEnabled = 492,
-    EvPixelShiftOneGreen = 493,
+//    EvPixelShiftOneGreen = 493,   can be reused
 
     NUMOFEVENTS
 

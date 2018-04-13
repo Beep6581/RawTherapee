@@ -2,7 +2,7 @@
 //
 //  Algorithm for Pentax/Sony Pixel Shift raw files with motion detection
 //
-//  Copyright (C) 2016 - 2017 Ingo Weyrich <heckflosse67@gmx.de>
+//  Copyright (C) 2016 - 2018 Ingo Weyrich <heckflosse67@gmx.de>
 //
 //
 //  pixelshift.cc is free software: you can redistribute it and/or modify
@@ -26,7 +26,8 @@
 #include "procparams.h"
 #include "gauss.h"
 #include "median.h"
-
+#define BENCHMARK
+#include "StopWatch.h"
 namespace
 {
 
@@ -63,16 +64,12 @@ float nonGreenDiffCross(float right, float left, float top, float bottom, float 
     return std::min(hDiff, vDiff) - stddev;
 }
 
-void paintMotionMask(int index, bool showMotion, bool showOnlyMask, float *maskDest, float *nonMaskDest0, float *nonMaskDest1)
+void paintMotionMask(int index, bool showMotion, float *maskDest, float *nonMaskDest0, float *nonMaskDest1)
 {
     if(showMotion) {
-        if(!showOnlyMask) {
-            // if showMotion is enabled colourize the pixel
-            maskDest[index] = 13500.f;
-            nonMaskDest1[index] = nonMaskDest0[index] = 0.f;
-        } else {
-            maskDest[index] = nonMaskDest0[index] = nonMaskDest1[index] = 65535.f;
-        }
+        // if showMotion is enabled colourize the pixel
+        maskDest[index] = 13500.f;
+        nonMaskDest1[index] = nonMaskDest0[index] = 0.f;
     }
 }
 
@@ -271,7 +268,7 @@ void floodFill4(int xStart, int xEnd, int yStart, int yEnd, array2D<uint8_t> &ma
     }
 }
 
-void calcFrameBrightnessFactor(unsigned int frame, uint32_t datalen, LUT<uint32_t> *histo[4], float brightnessFactor[4])
+void calcFrameBrightnessFactor(unsigned int frame, uint32_t datalen, LUTu *histo[4], float brightnessFactor[4])
 {
     float medians[4];
 
@@ -300,7 +297,7 @@ using namespace std;
 using namespace rtengine;
 void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RAWParams::BayerSensor &bayerParamsIn, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection)
 {
-
+BENCHFUN
     if(numFrames != 4) { // fallback for non pixelshift files
         amaze_demosaic_RT(winx, winy, winw, winh, rawData, red, green, blue);
         return;
@@ -321,10 +318,11 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 
     const bool showMotion = bayerParams.pixelShiftShowMotion;
     const bool showOnlyMask = bayerParams.pixelShiftShowMotionMaskOnly && showMotion;
+    const float smoothFactor = 1.0 - bayerParams.pixelShiftSmoothFactor;
 
     if(bayerParams.pixelShiftAutomatic) {
         if(!showOnlyMask) {
-            if(bayerParams.pixelShiftMedian) { // We need the amaze demosaiced frames for motion correction
+            if(bayerParams.pixelShiftMedian) { // We need the demosaiced frames for motion correction
                 if(bayerParams.pixelShiftLmmse) {
                     lmmse_interpolate_omp(winw, winh, *(rawDataFrames[0]), red, green, blue, bayerParams.lmmse_iterations);
                 } else {
@@ -370,7 +368,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
         }
     }
 
-    const bool adaptive = bayerParams.pixelShiftAutomatic;
+    const bool automatic = bayerParams.pixelShiftAutomatic;
     constexpr float stddevFactorGreen = 25.f;
     constexpr float stddevFactorRed = 25.f;
     constexpr float stddevFactorBlue = 25.f;
@@ -388,7 +386,6 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     const bool equalBrightness = bayerParams.pixelShiftEqualBright;
     const bool equalChannel = bayerParams.pixelShiftEqualBrightChannel;
     const bool smoothTransitions = blurMap && bayerParams.pixelShiftSmoothFactor > 0.;
-    const float smoothFactor = 1.0 - bayerParams.pixelShiftSmoothFactor;
 
     static const float nReadK3II[] = { 3.4f,  // ISO 100
                                        3.1f,  // ISO 125
@@ -422,6 +419,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 
     static const float ePerIsoK3II = 0.35f;
 
+    // currently we use the same values for K-1 and K-1 Mark II, though for the K-1 Mark II the values seem a bit aggressive
     static const float nReadK1[] = {   3.45f, // ISO 100
                                        3.15f, // ISO 125
                                        3.45f, // ISO 160
@@ -455,15 +453,21 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                                        2.4f,  // ISO 102400
                                        2.4f,  // ISO 128000
                                        2.4f,  // ISO 160000
-                                       2.4f   // ISO 204800
+                                       2.4f,  // ISO 204800
+                                       2.4f,  // ISO 256000  // these are for K-1 Mark II to avoid crashes when using high-ISO files
+                                       2.4f,  // ISO 320000
+                                       2.4f,  // ISO 409600
+                                       2.4f,  // ISO 512000
+                                       2.4f,  // ISO 640000
+                                       2.4f   // ISO 819200
                                    };
 
     static const float ePerIsoK1 = 0.75f;
 
     // currently nReadK70 is used for K-70 and KP
-    static const float nReadK70[] = {  4.0f, // ISO 100
-                                       4.0f, // ISO 125
-                                       4.0f, // ISO 160
+    static const float nReadK70[] = {  4.0f,  // ISO 100
+                                       4.0f,  // ISO 125
+                                       4.0f,  // ISO 160
                                        4.0f,  // ISO 200
                                        4.0f,  // ISO 250
                                        4.0f,  // ISO 320
@@ -505,40 +509,41 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 
     static const float ePerIsoK70 = 0.5f;
 
-    // preliminary ILCE-7RM3 data, good fidelity except from A) small innaccuracy at places
-    // due to integer scaling quantization, B) much different noise behavior of PDAF pixels
+    // preliminary ILCE-7RM3 data, good fidelity except from A) small inaccuracy at places
+    // due to integer scaling quantization, B) much different noise behaviour of PDAF pixels
     static const float nReadILCE7RM3[] = { 4.2f,  // ISO 100
-                                        3.9f,  // ISO 125
-                                        3.6f,  // ISO 160
-                                        3.55f, // ISO 200
-                                        3.5f,  // ISO 250
-                                        3.45f, // ISO 320
-                                        3.35f, // ISO 400
-                                        3.3f,  // ISO 500
-                                        1.3f,  // ISO 640
-                                        1.2f,  // ISO 800
-                                        1.2f,  // ISO 1000
-                                        1.2f,  // ISO 1250
-                                        1.15f, // ISO 1600
-                                        1.2f,  // ISO 2000
-                                        1.15f, // ISO 2500
-                                        1.15f, // ISO 3200
-                                        1.1f,  // ISO 4000
-                                        1.1f,  // ISO 5000
-                                        1.05f, // ISO 6400
-                                        1.05f, // ISO 8000
-                                        1.05f, // ISO 10000
-                                        1.0f,  // ISO 12800
-                                        1.0f,  // ISO 16000
-                                        1.0f,  // ISO 20000
-                                        1.0f,  // ISO 25600
-                                        1.0f,  // ISO 32000
-                                        1.0f,  // ISO 40000
-                                        1.0f,  // ISO 51200
-                                        1.1f,  // ISO 64000
-                                        1.1f,  // ISO 80000
-                                        1.1f,  // ISO 102400
-                                   };
+                                           3.9f,  // ISO 125
+                                           3.6f,  // ISO 160
+                                           3.55f, // ISO 200
+                                           3.5f,  // ISO 250
+                                           3.45f, // ISO 320
+                                           3.35f, // ISO 400
+                                           3.3f,  // ISO 500
+                                           1.3f,  // ISO 640
+                                           1.2f,  // ISO 800
+                                           1.2f,  // ISO 1000
+                                           1.2f,  // ISO 1250
+                                           1.15f, // ISO 1600
+                                           1.2f,  // ISO 2000
+                                           1.15f, // ISO 2500
+                                           1.15f, // ISO 3200
+                                           1.1f,  // ISO 4000
+                                           1.1f,  // ISO 5000
+                                           1.05f, // ISO 6400
+                                           1.05f, // ISO 8000
+                                           1.05f, // ISO 10000
+                                           1.0f,  // ISO 12800
+                                           1.0f,  // ISO 16000
+                                           1.0f,  // ISO 20000
+                                           1.0f,  // ISO 25600
+                                           1.0f,  // ISO 32000
+                                           1.0f,  // ISO 40000
+                                           1.0f,  // ISO 51200
+                                           1.1f,  // ISO 64000
+                                           1.1f,  // ISO 80000
+                                           1.1f,  // ISO 102400
+                                        };
+
     static const float ePerIsoILCE7RM3 = 0.8f;
 
     if(plistener) {
@@ -546,15 +551,13 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
         plistener->setProgress(0.0);
     }
 
-    if(adaptive && blurMap && smoothFactor == 0.f && !showMotion) {
+    if(automatic && blurMap && smoothFactor == 0.f && !showMotion) {
         if(plistener) {
             plistener->setProgress(1.0);
         }
 
         return;
     }
-
-    const float scaleGreen = 1.f / scale_mul[1];
 
     float nRead;
     float eperIsoModel;
@@ -564,7 +567,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     if(model.find("K-3") != string::npos) {
         nRead = nReadK3II[nReadIndex];
         eperIsoModel = ePerIsoK3II;
-    } else if(model.find("K-1") != string::npos) {
+    } else if(model.find("K-1") != string::npos) { // this also matches K-1 Mark II
         nRead = nReadK1[nReadIndex];
         eperIsoModel = ePerIsoK1;
     } else if(model.find("ILCE-7RM3") != string::npos) {
@@ -580,7 +583,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     eperIso = eperIsoModel * (100.f / (rawWpCorrection * idata->getISOSpeed()));
 
     const float eperIsoRed = (eperIso / scale_mul[0]) * (65535.f / (c_white[0] - c_black[0]));
-    const float eperIsoGreen = (eperIso * scaleGreen) * (65535.f / (c_white[1] - c_black[1]));
+    const float eperIsoGreen = (eperIso / scale_mul[1]) * (65535.f / (c_white[1] - c_black[1]));
     const float eperIsoBlue = (eperIso / scale_mul[2]) * (65535.f / (c_white[2] - c_black[2]));
 
     const float clippedRed = 65535.f / scale_mul[0];
@@ -588,41 +591,35 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 
     nRead *= nRead;
 
-    // calculate average green brightness for each frame
+    // calculate channel median brightness for each frame
     float greenBrightness[4] = {1.f, 1.f, 1.f, 1.f};
     float redBrightness[4] = {1.f, 1.f, 1.f, 1.f};
     float blueBrightness[4] = {1.f, 1.f, 1.f, 1.f};
 
     if(equalBrightness) {
         if(rawDirty) {
-            LUT<uint32_t> *histogreen[4];
-            LUT<uint32_t> *histored[4];
-            LUT<uint32_t> *histoblue[4];
+            LUTu *histogreen[4];
+            LUTu *histored[4];
+            LUTu *histoblue[4];
 
             for(int i = 0; i < 4; ++i) {
-                histogreen[i] = new LUT<uint32_t>(65536);
-                histogreen[i]->clear();
-                histored[i] = new LUT<uint32_t>(65536);
-                histored[i]->clear();
-                histoblue[i] = new LUT<uint32_t>(65536);
-                histoblue[i]->clear();
+                histogreen[i] = new LUTu(65536, LUT_CLIP_BELOW | LUT_CLIP_ABOVE, true);
+                histored[i] = new LUTu(65536, LUT_CLIP_BELOW | LUT_CLIP_ABOVE, true);
+                histoblue[i] = new LUTu(65536, LUT_CLIP_BELOW | LUT_CLIP_ABOVE, true);
             }
 
 #ifdef _OPENMP
             #pragma omp parallel
 #endif
             {
-                LUT<uint32_t> *histogreenThr[4];
-                LUT<uint32_t> *historedThr[4];
-                LUT<uint32_t> *histoblueThr[4];
+                LUTu *histogreenThr[4];
+                LUTu *historedThr[4];
+                LUTu *histoblueThr[4];
 
                 for(int i = 0; i < 4; ++i) {
-                    histogreenThr[i] = new LUT<uint32_t>(65536);
-                    histogreenThr[i]->clear();
-                    historedThr[i] = new LUT<uint32_t>(65536);
-                    historedThr[i]->clear();
-                    histoblueThr[i] = new LUT<uint32_t>(65536);
-                    histoblueThr[i]->clear();
+                    histogreenThr[i] = new LUTu(65536, LUT_CLIP_BELOW | LUT_CLIP_ABOVE, true);
+                    historedThr[i] = new LUTu(65536, LUT_CLIP_BELOW | LUT_CLIP_ABOVE, true);
+                    histoblueThr[i] = new LUTu(65536, LUT_CLIP_BELOW | LUT_CLIP_ABOVE, true);
                 }
 
 #ifdef _OPENMP
@@ -699,7 +696,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     }
 
 
-    if(adaptive) {
+    if(automatic) {
         // fill channels psRed and psBlue
         array2D<float> psRed(winw + 32, winh); // increase width to avoid cache conflicts
         array2D<float> psBlue(winw + 32, winh);
@@ -712,8 +709,8 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             float *nonGreenDest0 = psRed[i];
             float *nonGreenDest1 = psBlue[i];
             float ngbright[2][4] = {{redBrightness[0], redBrightness[1], redBrightness[2], redBrightness[3]},
-                {blueBrightness[0], blueBrightness[1], blueBrightness[2], blueBrightness[3]}
-            };
+                                    {blueBrightness[0], blueBrightness[1], blueBrightness[2], blueBrightness[3]}
+                                   };
             int ng = 0;
             int j = winx + 1;
             int c = FC(i, j);
@@ -788,12 +785,12 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 
                 if(checkNonGreenCross) {
                     // check red cross
-                    float redTop    = psRed[i - 1][ j ];
-                    float redLeft   = psRed[ i ][j - 1];
-                    float redCentre = psRed[ i ][ j ];
-                    float redRight  = psRed[ i ][j + 1];
-                    float redBottom = psRed[i + 1][ j ];
-                    float redDiff = nonGreenDiffCross(redRight, redLeft, redTop, redBottom, redCentre, clippedRed, stddevFactorRed, eperIsoRed, nRead, prnu);
+                    float redTop    = psRed[i - 1][j];
+                    float redLeft   = psRed[i][j - 1];
+                    float redCentre = psRed[i][j];
+                    float redRight  = psRed[i][j + 1];
+                    float redBottom = psRed[i + 1][j];
+                    float redDiff   = nonGreenDiffCross(redRight, redLeft, redTop, redBottom, redCentre, clippedRed, stddevFactorRed, eperIsoRed, nRead, prnu);
 
                     if(redDiff > 0.f) {
                         psMask[i][j] = redBlueWeight;
@@ -801,12 +798,12 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                     }
 
                     // check blue cross
-                    float blueTop    = psBlue[i - 1][ j ];
-                    float blueLeft   = psBlue[ i ][j - 1];
-                    float blueCentre = psBlue[ i ][ j ];
-                    float blueRight  = psBlue[ i ][j + 1];
-                    float blueBottom = psBlue[i + 1][ j ];
-                    float blueDiff = nonGreenDiffCross(blueRight, blueLeft, blueTop, blueBottom, blueCentre, clippedBlue, stddevFactorBlue, eperIsoBlue, nRead, prnu);
+                    float blueTop    = psBlue[i - 1][j];
+                    float blueLeft   = psBlue[i][j - 1];
+                    float blueCentre = psBlue[i][j];
+                    float blueRight  = psBlue[i][j + 1];
+                    float blueBottom = psBlue[i + 1][j];
+                    float blueDiff   = nonGreenDiffCross(blueRight, blueLeft, blueTop, blueBottom, blueCentre, clippedBlue, stddevFactorBlue, eperIsoBlue, nRead, prnu);
 
                     if(blueDiff > 0.f) {
                         psMask[i][j] = redBlueWeight;
@@ -830,7 +827,6 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             if(plistener) {
                 plistener->setProgress(0.6);
             }
-
         }
 
         array2D<uint8_t> mask(winw, winh, ARRAY2D_CLEAR_DATA);
@@ -886,7 +882,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
         for(int i = winy + border - offsY; i < winh - (border + offsY); ++i) {
 #ifdef __SSE2__
 
-            // pow() is expensive => precalculate blend factor using SSE
+            // pow() is expensive => pre calculate blend factor using SSE
             if(smoothTransitions) { //
                 vfloat onev = F2V(1.f);
                 vfloat smoothv = F2V(smoothFactor);
@@ -915,40 +911,32 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             for(int j = winx + border - offsX; j < winw - (border + offsX); ++j, offset ^= 1) {
                 if(showOnlyMask) {
                     if(smoothTransitions) { // we want only motion mask => paint areas according to their motion (dark = no motion, bright = motion)
-                        redDest[j + offsX] = greenDest[j + offsX] = blueDest[j + offsX] = psMask[i][j] * 32768.f;
-                    } else {
-                        redDest[j + offsX] = greenDest[j + offsX] = blueDest[j + offsX] = mask[i][j] == 255 ? 65535.f : 0.f;
-                    }
-                } else if(mask[i][j] == 255) {
-                    paintMotionMask(j + offsX, showMotion, showOnlyMask, greenDest, redDest, blueDest);
-                } else {
-                    if(smoothTransitions) {
 #ifdef __SSE2__
-                        // use precalculated blend factor
+                        // use pre calculated blend factor
                         const float blend = psMask[i][j];
 #else
                         const float blend = smoothFactor == 0.f ? 1.f : pow_F(std::max(psMask[i][j] - 1.f, 0.f), smoothFactor);
 #endif
-                        redDest[j + offsX] = intp(blend, redDest[j + offsX], psRed[i][j] );
-                        if(bayerParams.pixelShiftOneGreen) {
-                            int greenFrame = (1 - offset != 0) ? 1 - offset : 3 - offset;
-                            int greenJ = (1 - offset != 0) ? j : j + 1;
-                            int greenI = (1 - offset != 0) ? i - offset + 1 : i + offset;
-                            greenDest[j + offsX] = intp(blend, greenDest[j + offsX], (*rawDataFrames[greenFrame])[greenI][greenJ] * greenBrightness[greenFrame]);
-                        } else {
-                            greenDest[j + offsX] = intp(blend, greenDest[j + offsX], ((*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset] + (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset]) * 0.5f);
-                        }
-                        blueDest[j + offsX] = intp(blend, blueDest[j + offsX], psBlue[i][j]);
+                        redDest[j + offsX] = greenDest[j + offsX] = blueDest[j + offsX] = blend * 32768.f;
+                    } else {
+                        redDest[j + offsX] = greenDest[j + offsX] = blueDest[j + offsX] = mask[i][j] == 255 ? 65535.f : 0.f;
+                    }
+                } else if(mask[i][j] == 255) {
+                    paintMotionMask(j + offsX, showMotion, greenDest, redDest, blueDest);
+                } else {
+                    if(smoothTransitions) {
+#ifdef __SSE2__
+                        // use pre calculated blend factor
+                        const float blend = psMask[i][j];
+#else
+                        const float blend = smoothFactor == 0.f ? 1.f : pow_F(std::max(psMask[i][j] - 1.f, 0.f), smoothFactor);
+#endif
+                        redDest[j + offsX] = intp(blend, showMotion ? 0.f : redDest[j + offsX], psRed[i][j] );
+                        greenDest[j + offsX] = intp(blend, showMotion ? 13500.f : greenDest[j + offsX], ((*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset] + (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset]) * 0.5f);
+                        blueDest[j + offsX] = intp(blend, showMotion ? 0.f : blueDest[j + offsX], psBlue[i][j]);
                     } else {
                         redDest[j + offsX] = psRed[i][j];
-                        if(bayerParams.pixelShiftOneGreen) {
-                            int greenFrame = (1 - offset != 0) ? 1 - offset : 3 - offset;
-                            int greenJ = (1 - offset != 0) ? j : j + 1;
-                            int greenI = (1 - offset != 0) ? i - offset + 1 : i + offset;
-                            greenDest[j + offsX] = (*rawDataFrames[greenFrame])[greenI][greenJ] * greenBrightness[greenFrame];
-                        } else {
-                            greenDest[j + offsX] = ((*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset] + (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset]) * 0.5f;
-                        }
+                        greenDest[j + offsX] = ((*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset] + (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset]) * 0.5f;
                         blueDest[j + offsX] = psBlue[i][j];
                     }
                 }
@@ -957,7 +945,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     } else {
         // motion detection off => combine the 4 raw frames
         float ngbright[2][4] = {{redBrightness[0], redBrightness[1], redBrightness[2], redBrightness[3]},
-            {blueBrightness[0], blueBrightness[1], blueBrightness[2], blueBrightness[3]}
+                                {blueBrightness[0], blueBrightness[1], blueBrightness[2], blueBrightness[3]}
         };
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16)
@@ -981,14 +969,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 
             for(; j < winw - 1; ++j) {
                 // set red, green and blue values
-                if(bayerParams.pixelShiftOneGreen) {
-                    int greenFrame = (1 - offset != 0) ? 1 - offset : 3 - offset;
-                    int greenJ = (1 - offset != 0) ? j : j + 1;
-                    int greenI = (1 - offset != 0) ? i - offset + 1 : i + offset;
-                    green[i][j] = (*rawDataFrames[greenFrame])[greenI][greenJ] * greenBrightness[greenFrame];
-                } else {
-                    green[i][j] = ((*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset] + (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset]) * 0.5f;
-                }
+                green[i][j] = ((*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset] + (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset]) * 0.5f;
                 nonGreenDest0[j] = (*rawDataFrames[(offset << 1) + offset])[i][j + offset] * ngbright[ng][(offset << 1) + offset];
                 nonGreenDest1[j] = (*rawDataFrames[2 - offset])[i + 1][j - offset + 1] * ngbright[ng ^ 1][2 - offset];
                 offset ^= 1; // 0 => 1 or 1 => 0
