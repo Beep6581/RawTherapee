@@ -415,20 +415,20 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
     readyphase++;
     progress ("Preparing shadow/highlight map...", 100 * readyphase / numofphases);
 
-    if ((todo & M_BLURMAP) && params.sh.enabled) {
-        double radius = sqrt (double (pW * pW + pH * pH)) / 2.0;
-        double shradius = params.sh.radius;
+    // if ((todo & M_BLURMAP) && params.sh.enabled) {
+    //     double radius = sqrt (double (pW * pW + pH * pH)) / 2.0;
+    //     double shradius = params.sh.radius;
 
-        if (!params.sh.hq) {
-            shradius *= radius / 1800.0;
-        }
+    //     if (!params.sh.hq) {
+    //         shradius *= radius / 1800.0;
+    //     }
 
-        if (!shmap) {
-            shmap = new SHMap (pW, pH, true);
-        }
+    //     if (!shmap) {
+    //         shmap = new SHMap (pW, pH, true);
+    //     }
 
-        shmap->update (oprevi, shradius, ipf.lumimul, params.sh.hq, scale);
-    }
+    //     shmap->update (oprevi, shradius, ipf.lumimul, params.sh.hq, scale);
+    // }
 
 
 
@@ -966,9 +966,9 @@ void ImProcCoordinator::setScale (int prevscale)
         previmg = new Image8 (pW, pH);
         workimg = new Image8 (pW, pH);
 
-        if (params.sh.enabled) {
-            shmap = new SHMap (pW, pH, true);
-        }
+        // if (params.sh.enabled) {
+        //     shmap = new SHMap (pW, pH, true);
+        // }
 
         allocated = true;
     }

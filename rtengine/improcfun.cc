@@ -2047,7 +2047,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
         s_th = params->sh.stonalwidth * (shmap->avg - shmap->min_f) / 100;
     }
 
-    bool processSH  = params->sh.enabled && shmap && (params->sh.highlights > 0 || params->sh.shadows > 0);
+    bool processSH  = false; //params->sh.enabled && shmap && (params->sh.highlights > 0 || params->sh.shadows > 0);
 
     TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
     TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.working);
@@ -2437,30 +2437,30 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                     }
                 }
 
-                if (processSH) {
-                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                // if (processSH) {
+                //     for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                //         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
 
-                            float r = rtemp[ti * TS + tj];
-                            float g = gtemp[ti * TS + tj];
-                            float b = btemp[ti * TS + tj];
+                //             float r = rtemp[ti * TS + tj];
+                //             float g = gtemp[ti * TS + tj];
+                //             float b = btemp[ti * TS + tj];
 
 
-                            float mapval = 1.f + shmap->map[i][j];
-                            float factor = 1.f;
+                //             float mapval = 1.f + shmap->map[i][j];
+                //             float factor = 1.f;
 
-                            if (mapval > h_th) {
-                                factor = (h_th + (100.0 - shHighlights) * (mapval - h_th) / 100.0) / mapval;
-                            } else if (mapval < s_th) {
-                                factor = (s_th - (100.0 - shShadows) * (s_th - mapval) / 100.0) / mapval;
-                            }
+                //             if (mapval > h_th) {
+                //                 factor = (h_th + (100.0 - shHighlights) * (mapval - h_th) / 100.0) / mapval;
+                //             } else if (mapval < s_th) {
+                //                 factor = (s_th - (100.0 - shShadows) * (s_th - mapval) / 100.0) / mapval;
+                //             }
 
-                            rtemp[ti * TS + tj] = factor * r;
-                            gtemp[ti * TS + tj] = factor * g;
-                            btemp[ti * TS + tj] = factor * b;
-                        }
-                    }
-                }
+                //             rtemp[ti * TS + tj] = factor * r;
+                //             gtemp[ti * TS + tj] = factor * g;
+                //             btemp[ti * TS + tj] = factor * b;
+                //         }
+                //     }
+                // }
 
                 highlightToneCurve(hltonecurve, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS, exp_scale, comp, hlrange);
                 shadowToneCurve(shtonecurve, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS);
@@ -3646,6 +3646,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     if (vCurveEnabled) {
         delete vCurve;
     }
+
+    shadowsHighlights(lab);
 
     if (params->localContrast.enabled) {
         // Alberto's local contrast

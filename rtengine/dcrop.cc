@@ -800,24 +800,24 @@ void Crop::update (int todo)
     }
 
     // blurmap for shadow & highlights
-    if ((todo & M_BLURMAP) && params.sh.enabled) {
-        double radius = sqrt (double (skips (parent->fw, skip) * skips (parent->fw, skip) + skips (parent->fh, skip) * skips (parent->fh, skip))) / 2.0;
-        double shradius = params.sh.radius;
+    // if ((todo & M_BLURMAP) && params.sh.enabled) {
+    //     double radius = sqrt (double (skips (parent->fw, skip) * skips (parent->fw, skip) + skips (parent->fh, skip) * skips (parent->fh, skip))) / 2.0;
+    //     double shradius = params.sh.radius;
 
-        if (!params.sh.hq) {
-            shradius *= radius / 1800.0;
-        }
+    //     if (!params.sh.hq) {
+    //         shradius *= radius / 1800.0;
+    //     }
 
-        if (!cshmap) {
-            cshmap = new SHMap (cropw, croph, true);
-        }
+    //     if (!cshmap) {
+    //         cshmap = new SHMap (cropw, croph, true);
+    //     }
 
-        cshmap->update (baseCrop, shradius, parent->ipf.lumimul, params.sh.hq, skip);
+    //     cshmap->update (baseCrop, shradius, parent->ipf.lumimul, params.sh.hq, skip);
 
-        if (parent->shmap->min_f < 65535.f) { // don't call forceStat with wrong values
-            cshmap->forceStat (parent->shmap->max_f, parent->shmap->min_f, parent->shmap->avg);
-        }
-    }
+    //     if (parent->shmap->min_f < 65535.f) { // don't call forceStat with wrong values
+    //         cshmap->forceStat (parent->shmap->max_f, parent->shmap->min_f, parent->shmap->avg);
+    //     }
+    // }
 
 
     // shadows & highlights & tone curve & convert to cielab
@@ -1330,9 +1330,9 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
             cbuffer[i] = cbuf_real + cropw * i + cropw;
         }
 
-        if (params.sh.enabled) {
-            cshmap = new SHMap (cropw, croph, true);
-        }
+        // if (params.sh.enabled) {
+        //     cshmap = new SHMap (cropw, croph, true);
+        // }
 
         if (editType == ET_PIPETTE) {
             PipetteBuffer::resize (cropw, croph);

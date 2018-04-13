@@ -1187,17 +1187,17 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     // update blurmap
     SHMap* shmap = nullptr;
 
-    if (params.sh.enabled) {
-        shmap = new SHMap (fw, fh, false);
-        double radius = sqrt (double (fw * fw + fh * fh)) / 2.0;
-        double shradius = params.sh.radius;
+    // if (params.sh.enabled) {
+    //     shmap = new SHMap (fw, fh, false);
+    //     double radius = sqrt (double (fw * fw + fh * fh)) / 2.0;
+    //     double shradius = params.sh.radius;
 
-        if (!params.sh.hq) {
-            shradius *= radius / 1800.0;
-        }
+    //     if (!params.sh.hq) {
+    //         shradius *= radius / 1800.0;
+    //     }
 
-        shmap->update (baseImg, shradius, ipf.lumimul, params.sh.hq, 16);
-    }
+    //     shmap->update (baseImg, shradius, ipf.lumimul, params.sh.hq, 16);
+    // }
 
     // RGB processing
     double  expcomp = params.toneCurve.expcomp;
