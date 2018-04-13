@@ -1708,8 +1708,9 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 !HISTORY_MSG_491;White Balance
 !HISTORY_MSG_492;RGB Curves
 !HISTORY_MSG_493;L*a*b* Adjustments
+!HISTORY_MSG_CLAMPOOG;Out-of-gamut colours clipping
 !HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
-!HISTORY_MSG_HISTMATCHING;Auto-matched Tone Curve
+!HISTORY_MSG_HISTMATCHING;Auto-Matched Tone Curve
 !HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 !HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 !HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
@@ -1784,7 +1785,6 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 !PREFERENCES_AUTLOW;Low
 !PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_AUTSTD;Standard
-!PREFERENCES_CIEART_FRAME;CIECAM02-Specific Settings
 !PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CMMBPC;Black point compensation
@@ -1855,6 +1855,10 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 !PREFERENCES_STDAUT;Standard
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
 !PREFERENCES_THEME;Theme
+!PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
+!PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
+!PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
+!PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
 !PREFERENCES_TIMAX;High
 !PREFERENCES_TINB;Number of tiles
 !PREFERENCES_TISTD;Standard
@@ -1887,7 +1891,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 !TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
 !TP_COLORAPP_YB;Yb% (mean luminance)
 !TP_COLORAPP_YBSCENE;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE_TOOLTIP;if auto is enabled, Yb is calculated from the mean value of the actual image's luminance
+!TP_COLORAPP_YBSCENE_TOOLTIP;If "auto" is enabled, Yb is calculated from the mean value of the actual image's luminance
 !TP_COLORTONING_LABGRID;L*a*b* color correction grid
 !TP_COLORTONING_LABGRID_VALUES;HL: a=%1 b=%2\nS: a=%3 b=%4
 !TP_CROP_GTHARMMEANS;Harmonic Means
@@ -1928,7 +1932,8 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 !TP_DIRPYREQUALIZER_ARTIF;Reduce artifacts
 !TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
 !TP_EPD_GAMMA;Gamma
-!TP_EXPOSURE_HISTMATCHING;Auto-matched Tone Curve
+!TP_EXPOSURE_CLAMPOOG;Clip out-of-gamut colours
+!TP_EXPOSURE_HISTMATCHING;Auto-Matched Tone Curve
 !TP_EXPOSURE_HISTMATCHING_TOOLTIP;Automatically adjust sliders and curves (except exposure compensation) to match the look of the embedded JPEG thumbnail.
 !TP_EXPOSURE_TCMODE_LUMINANCE;Luminance
 !TP_EXPOSURE_TCMODE_PERCEPTUAL;Perceptual

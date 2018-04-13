@@ -654,45 +654,21 @@ private:
             cmsCloseProfile(prof);
             return false;
         }
-        cmsCIEXYZ *white = static_cast<cmsCIEXYZ *>(cmsReadTag(prof, cmsSigMediaWhitePointTag));
         cmsCIEXYZ *red = static_cast<cmsCIEXYZ *>(cmsReadTag(prof, cmsSigRedMatrixColumnTag));
         cmsCIEXYZ *green  = static_cast<cmsCIEXYZ *>(cmsReadTag(prof, cmsSigGreenMatrixColumnTag));
         cmsCIEXYZ *blue  = static_cast<cmsCIEXYZ *>(cmsReadTag(prof, cmsSigBlueMatrixColumnTag));
 
-        if (!white || !red || !green || !blue) {
+        if (!red || !green || !blue) {
             cmsCloseProfile(prof);
             return false;
         }
 
-        // do the Bradford adaptation to D50
-        // matrices from Bruce Lindbloom's webpage
-        static constexpr CMatrix bradford_MA = {
-            CVector({0.8951000,  0.2664000, -0.1614000}),
-            CVector({-0.7502000,  1.7135000,  0.0367000}),
-            CVector({0.0389000, -0.0685000,  1.0296000})
-        };
-        static constexpr CMatrix bradford_MA_inv = {
-            CVector({0.9869929, -0.1470543,  0.1599627}),
-            CVector({0.4323053,  0.5183603,  0.0492912}),
-            CVector({-0.0085287,  0.0400428,  0.9684867})
-        };
-        static constexpr CVector bradford_MA_dot_D50 = {
-            0.99628443, 1.02042736, 0.81864437
-        };
-
-        CVector srcw = dotProduct(bradford_MA, CVector({ white->X, white->Y, white->Z }));
         CMatrix m = {
-            CVector({ bradford_MA_dot_D50[0]/srcw[0], 0.0, 0.0 }),
-            CVector({ 0.0, bradford_MA_dot_D50[1]/srcw[1], 0.0 }),
-            CVector({ 0.0, 0.0, bradford_MA_dot_D50[2]/srcw[2] })
+            CVector({ red->X, green->X, blue->X }),
+            CVector({ red->Y, green->Y, blue->Y }),
+            CVector({ red->Z, green->Z, blue->Z })
         };
-        CMatrix adapt = dotProduct(dotProduct(bradford_MA_inv, m), bradford_MA);
-
-        m[0][0] = red->X; m[0][1] = green->X; m[0][2] = blue->X;
-        m[1][0] = red->Y; m[1][1] = green->Y; m[1][2] = blue->Y;
-        m[2][0] = red->Z; m[2][1] = green->Z; m[2][2] = blue->Z;
-
-        m = dotProduct(adapt, m);
+        
         out.set(m);
         
         cmsCloseProfile(prof);
