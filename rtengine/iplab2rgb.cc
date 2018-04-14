@@ -38,7 +38,7 @@ inline void clipLAB(float iL, float ia, float ib, float &oL, float &oa, float &o
 {
     if (iL < 0.f) {
         oL = oa = ob = 0.f;
-    } else if (iL > 32768.f) {
+    } else if (iL > 32768.f || min(ia, ib) < -42000.f || max(ia, ib) > 42000.f) {
         
         float X, Y, Z;
         float r, g, b;
