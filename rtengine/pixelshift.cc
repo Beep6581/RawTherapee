@@ -305,14 +305,14 @@ BENCHFUN
 
     RAWParams::BayerSensor bayerParams = bayerParamsIn;
 
-    bayerParams.pixelShiftAutomatic = true;
+    bool motionDetection = true;
 
     if(bayerParams.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::PSMotionCorrectionMethod::AUTO) {
         bool pixelShiftEqualBright = bayerParams.pixelShiftEqualBright;
         bayerParams.setPixelShiftDefaults();
         bayerParams.pixelShiftEqualBright = pixelShiftEqualBright;
     } else if(bayerParams.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::PSMotionCorrectionMethod::OFF) {
-        bayerParams.pixelShiftAutomatic = false;
+        motionDetection = false;
         bayerParams.pixelShiftShowMotion = false;
     }
 
@@ -320,7 +320,7 @@ BENCHFUN
     const bool showOnlyMask = bayerParams.pixelShiftShowMotionMaskOnly && showMotion;
     const float smoothFactor = 1.0 - bayerParams.pixelShiftSmoothFactor;
 
-    if(bayerParams.pixelShiftAutomatic) {
+    if(motionDetection) {
         if(!showOnlyMask) {
             if(bayerParams.pixelShiftMedian) { // We need the demosaiced frames for motion correction
                 if(bayerParams.pixelShiftLmmse) {
@@ -368,7 +368,6 @@ BENCHFUN
         }
     }
 
-    const bool automatic = bayerParams.pixelShiftAutomatic;
     constexpr float stddevFactorGreen = 25.f;
     constexpr float stddevFactorRed = 25.f;
     constexpr float stddevFactorBlue = 25.f;
@@ -551,7 +550,7 @@ BENCHFUN
         plistener->setProgress(0.0);
     }
 
-    if(automatic && blurMap && smoothFactor == 0.f && !showMotion) {
+    if(motionDetection && blurMap && smoothFactor == 0.f && !showMotion) {
         if(plistener) {
             plistener->setProgress(1.0);
         }
@@ -696,7 +695,7 @@ BENCHFUN
     }
 
 
-    if(automatic) {
+    if(motionDetection) {
         // fill channels psRed and psBlue
         array2D<float> psRed(winw + 32, winh); // increase width to avoid cache conflicts
         array2D<float> psBlue(winw + 32, winh);

@@ -1237,15 +1237,6 @@ struct RAWParams {
             PIXELSHIFT
         };
 
-        enum class PSMotionCorrection {
-            GRID_1X1,
-            GRID_1X2,
-            GRID_3X3,
-            GRID_5X5,
-            GRID_7X7,
-            GRID_3X3_NEW
-        };
-
         enum class PSMotionCorrectionMethod {
             OFF,
             AUTO,
@@ -1271,36 +1262,20 @@ struct RAWParams {
         int greenthresh;
         int dcb_iterations;
         int lmmse_iterations;
-        int pixelShiftMotion;
-        PSMotionCorrection pixelShiftMotionCorrection;
         PSMotionCorrectionMethod pixelShiftMotionCorrectionMethod;
-        double pixelShiftStddevFactorGreen;
-        double pixelShiftStddevFactorRed;
-        double pixelShiftStddevFactorBlue;
         double pixelShiftEperIso;
-        double pixelShiftNreadIso;
-        double pixelShiftPrnu;
         double pixelShiftSigma;
-        double pixelShiftSum;
-        double pixelShiftRedBlueWeight;
         bool pixelShiftShowMotion;
         bool pixelShiftShowMotionMaskOnly;
-        bool pixelShiftAutomatic;
-        bool pixelShiftNonGreenHorizontal;
-        bool pixelShiftNonGreenVertical;
         bool pixelShiftHoleFill;
         bool pixelShiftMedian;
-        bool pixelShiftMedian3;
         bool pixelShiftGreen;
         bool pixelShiftBlur;
         double pixelShiftSmoothFactor;
-        bool pixelShiftExp0;
         bool pixelShiftLmmse;
         bool pixelShiftEqualBright;
         bool pixelShiftEqualBrightChannel;
         bool pixelShiftNonGreenCross;
-        bool pixelShiftNonGreenCross2;
-        bool pixelShiftNonGreenAmaze;
         bool dcb_enhance;
         bool pdafLinesFilter;
 

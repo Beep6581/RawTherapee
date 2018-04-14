@@ -472,36 +472,36 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     OUTPUTPROFILE,    // EvOBPCompens
     ALLNORAW,          // EvWBtempBias
     DARKFRAME,        // EvRawImageNum
-    DEMOSAIC,         // EvPixelShiftMotion
-    DEMOSAIC,         // EvPixelShiftMotionCorrection
-    DEMOSAIC,         // EvPixelShiftStddevFactorGreen
+    0,                // unused
+    0,                // unused
+    0,                // unused
     DEMOSAIC,         // EvPixelShiftEperIso
-    DEMOSAIC,         // EvPixelShiftNreadIso
-    DEMOSAIC,         // EvPixelShiftPrnu
+    0,                // unused
+    0,                // unused
     DEMOSAIC,         // EvPixelshiftShowMotion
     DEMOSAIC,         // EvPixelshiftShowMotionMaskOnly
-    DEMOSAIC,         // EvPixelShiftAutomatic
-    DEMOSAIC,         // EvPixelShiftNonGreenHorizontal
-    DEMOSAIC,         // EvPixelShiftNonGreenVertical
+    0,                // unused
+    0,                // unused
+    0,                // unused
     DEMOSAIC,         // EvPixelShiftNonGreenCross
-    DEMOSAIC,         // EvPixelShiftStddevFactorRed
-    DEMOSAIC,         // EvPixelShiftStddevFactorBlue
-    DEMOSAIC,         // EvPixelShiftNonGreenCross2
-    DEMOSAIC,         // EvPixelShiftNonGreenAmaze
+    0,                // unused
+    0,                // unused
+    0,                // unused
+    0,                // unused
     DEMOSAIC,         // EvPixelShiftGreen
-    DEMOSAIC,         // EvPixelShiftRedBlueWeight
+    0,                // unused
     DEMOSAIC,         // EvPixelShiftBlur
     DEMOSAIC,         // EvPixelShiftSigma
-    DEMOSAIC,         // EvPixelShiftSum
-    DEMOSAIC,         // EvPixelShiftExp0
+    0,                // unused
+    0,                // unused
     DEMOSAIC,         // EvPixelShiftHoleFill
     DEMOSAIC,         // EvPixelShiftMedian
-    DEMOSAIC,         // EvPixelShiftMedian3
+    0,                // unused
     DEMOSAIC,         // EvPixelShiftMotionMethod
     DEMOSAIC,         // EvPixelShiftSmooth
     DEMOSAIC,         // EvPixelShiftLmmse
     DEMOSAIC,         // EvPixelShiftEqualBright
-    DEMOSAIC,          // EvPixelShiftEqualBrightChannel
+    DEMOSAIC,         // EvPixelShiftEqualBrightChannel
     LUMINANCECURVE,   // EvCATtempout
     LUMINANCECURVE,   // EvCATgreenout
     LUMINANCECURVE,   // EvCATybout
