@@ -2882,6 +2882,7 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
             c4[1][1] = c[1][1];
         }
 
+        constexpr float minValue = 1.f; // if the pixel value in the flat field is less or equal this value, no correction will be applied.
 
 #ifdef __SSE2__
         vfloat refcolorv[2] = {_mm_set_ps(refcolor[0][1], refcolor[0][0], refcolor[0][1], refcolor[0][0]),
@@ -2891,7 +2892,8 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
                             _mm_set_ps(black[c4[1][1]], black[c4[1][0]], black[c4[1][1]], black[c4[1][0]])
                            };
 
-        vfloat epsv = F2V(1e-5f);
+        vfloat onev = F2V(1.f);
+        vfloat minValuev = F2V(minValue);
 #endif
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16)
@@ -2904,7 +2906,9 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
             vfloat rowRefcolorv = refcolorv[row & 1];
 
             for (; col < W - 3; col += 4) {
-                vfloat vignettecorrv = rowRefcolorv / vmaxf(epsv, LVFU(cfablur[(row) * W + col]) - rowBlackv);
+                vfloat blurv = LVFU(cfablur[(row) * W + col]) - rowBlackv;
+                vfloat vignettecorrv = rowRefcolorv / blurv;
+                vignettecorrv = vself(vmaskf_le(blurv, minValuev), onev, vignettecorrv);
                 vfloat valv = LVFU(rawData[row][col]);
                 valv -= rowBlackv;
                 STVFU(rawData[row][col], valv * vignettecorrv + rowBlackv);
@@ -2913,7 +2917,8 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
 #endif
 
             for (; col < W; col ++) {
-                float vignettecorr = refcolor[row & 1][col & 1] / max(1e-5f, cfablur[(row) * W + col] - black[c4[row & 1][col & 1]]);
+                float blur = cfablur[(row) * W + col] - black[c4[row & 1][col & 1]];
+                float vignettecorr = blur <= minValue ? 1.f : refcolor[row & 1][col & 1] / blur;
                 rawData[row][col] = (rawData[row][col] - black[c4[row & 1][col & 1]]) * vignettecorr + black[c4[row & 1][col & 1]];
             }
         }
