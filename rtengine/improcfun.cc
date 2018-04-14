@@ -4710,8 +4710,8 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                         factorsat = chromaCfactor;
                         factor = factorsat;
                         Color::transitred(HH, Chprov1, dred, factorskin, protect_redcur, factorskinext, deltaHH, factorsat, factor);
-                        atmp *= factor;
-                        btmp *= factor;
+                        atmp = LIM(atmp * factor, min(-42000.f, atmp), max(42000.f, atmp));
+                        btmp = LIM(btmp * factor, min(-42000.f, btmp), max(42000.f, btmp));
                     }
 
                     // end C=f(L)

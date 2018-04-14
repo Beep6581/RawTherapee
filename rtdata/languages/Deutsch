@@ -776,6 +776,7 @@ HISTORY_MSG_490;(HDR-Dynamikkompression)\nIntensität
 HISTORY_MSG_491;(Weißabgleich)
 HISTORY_MSG_492;(RGB-Kurven)
 HISTORY_MSG_493;(L*a*b*)
+HISTORY_MSG_CLAMPOOG;(Belichtung) - Farben\nauf den Farbraum\nbeschränken
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;(Farbanpassungen)\nL*a*b* - Farbkorrektur
 HISTORY_MSG_HISTMATCHING;(Belichtung)\nAuto-Tonwertkurve
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;(Lokaler Kontrast)\nIntensität
@@ -1610,6 +1611,7 @@ TP_EXPOSURE_AUTOLEVELS;Auto
 TP_EXPOSURE_AUTOLEVELS_TIP;Automatische Belichtungseinstellung\nbasierend auf Bildanalyse.
 TP_EXPOSURE_BLACKLEVEL;Schwarzwert
 TP_EXPOSURE_BRIGHTNESS;Helligkeit
+TP_EXPOSURE_CLAMPOOG;Farben auf den Farbraum beschränken
 TP_EXPOSURE_CLIP;Clip %:
 TP_EXPOSURE_CLIP_TIP;Anteil der Pixel, die sich bei automatischer\nBelichtungseinstellung im Bereich der\nSpitzlichter und Schatten befinden sollen.
 TP_EXPOSURE_COMPRHIGHLIGHTS;Lichterkompression
@@ -2276,9 +2278,3 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-HISTORY_MSG_CLAMPOOG;(Belichtung) - Farben\nauf den Farbraum\nbeschränken
-TP_EXPOSURE_CLAMPOOG;Farben auf den Farbraum beschränken
