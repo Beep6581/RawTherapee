@@ -224,13 +224,11 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
 
     //Gtk::HBox* gaHBox = Gtk::manage(new Gtk::HBox());
     Gtk::Label* galab = Gtk::manage(new Gtk::Label(M("TP_GAMMA_OUTPUT") + ":"));
-    //galab->set_alignment (0.0, 0.5);
 
     gaHBox->pack_start(*galab, Gtk::PACK_SHRINK);
     wgamma = Gtk::manage(new MyComboBoxText());
     gaHBox->pack_start(*wgamma, Gtk::PACK_EXPAND_WIDGET);
 
- //   oVBox->pack_start(*gaHBox, Gtk::PACK_EXPAND_WIDGET);
 
     std::vector<Glib::ustring> wpgamma = rtengine::ICCStore::getGamma();
 
@@ -251,8 +249,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     fgFrame->set_label_widget(*freegamma);
 
 
-    //Gtk::HBox* priHBox = Gtk::manage(new Gtk::HBox());
-    priHBox = Gtk::manage(new Gtk::HBox());
+    //primaries
+	priHBox = Gtk::manage(new Gtk::HBox());
 	
     Gtk::Label* prilab = Gtk::manage(new Gtk::Label(M("TP_GAMMA_PRIM") + ":"));
 
@@ -267,18 +265,10 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wprimari->append(M("TP_GAMMA_PRIM_REC2020"));
     wprimari->append(M("TP_GAMMA_PRIM_SRGB"));
     wprimari->append(M("TP_GAMMA_PRIM_WIDEG"));
-/*
-    std::vector<Glib::ustring> wprinames = rtengine::ICCStore::getInstance()->getWorkingProfiles();
-
-    for (size_t i = 0; i < wprinames.size(); i++) {
-        if (i <= 2  || i >= 6) {
-            wprimari->append(wprinames[i]);
-        }
-    }
-*/
     wprimari->set_active(5);
+	
+	//sliders gampos and slpos
     fgVBox->pack_start(*gaHBox, Gtk::PACK_EXPAND_WIDGET);
-
     gampos = Gtk::manage(new Adjuster(M("TP_GAMMA_CURV"), 1, 3.5, 0.00001, 2.4));
     gampos->setAdjusterListener(this);
 
@@ -287,7 +277,6 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     }
 
     gampos->show();
-   // slpos = Gtk::manage(new Adjuster(M("TP_GAMMA_SLOP"), 5800, 6200, 0.00001, 6000.));
 	
     slpos = Gtk::manage(new Adjuster(M("TP_GAMMA_SLOP"), 0, 15, 0.00001, 12.92310));
     slpos->setAdjusterListener(this);
@@ -300,9 +289,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     fgVBox->pack_start(*gampos, Gtk::PACK_SHRINK); //gamma
     fgVBox->pack_start(*slpos, Gtk::PACK_SHRINK); //slope
 
-    profHBox = Gtk::manage(new Gtk::HBox());
-
-   // Gtk::HBox* profHBox = Gtk::manage(new Gtk::HBox());
+    //V2  or V4 profiles
+	profHBox = Gtk::manage(new Gtk::HBox());
     Gtk::Label* proflab = Gtk::manage(new Gtk::Label(M("TP_GAMMA_PROF") + ":"));
 
     profHBox->pack_start(*proflab, Gtk::PACK_SHRINK);
@@ -313,7 +301,6 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wprofile->append(M("TP_GAMMA_PROF_NONE"));
     wprofile->append(M("TP_GAMMA_PROF_V2"));
     wprofile->append(M("TP_GAMMA_PROF_V4"));
-    wprofileconn = wprofile->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wprofileChanged));
 
 
     wprofile->set_active(0);
@@ -366,6 +353,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wgammaconn = wgamma->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::gpChanged));
     dcpillconn = dcpIll->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::dcpIlluminantChanged));
     wprimariconn = wprimari->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wprimariChanged));
+    wprofileconn = wprofile->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wprofileChanged));
 
     obpcconn = obpc->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::oBPCChanged));
     gamcsconn = freegamma->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::GamChanged));
@@ -592,9 +580,8 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     wnames->set_active_text(pp->icm.working);
     wgamma->set_active_text(pp->icm.gamma);
 	gpChanged();
-//    wprimari->set_active_text(pp->icm.wprimari);
-//   wprofile->set_active_text (pp->icm.wprofile);
 
+	
     if (pp->icm.wprimari == "acesp0") {
         wprimari->set_active(0);
     } else if (pp->icm.wprimari == "acesp1") {
@@ -612,7 +599,6 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     }
 
 
-
     if (pp->icm.wprofile == "none") {
         wprofile->set_active(0);
     } else if (pp->icm.wprofile == "v2") {
@@ -621,7 +607,6 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wprofile->set_active(2);
     }
 
-    //   wprofileChanged();
 
 
     if (pp->icm.output == ColorManagementParams::NoICMString) {
@@ -691,7 +676,6 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
         if (!pedited->icm.gamma) {
             wgamma->set_active_text(M("GENERAL_UNCHANGED"));
-            wgamma->set_active_text(M("GENERAL_UNCHANGED"));
         }
 
         if (!pedited->icm.wprimari) {
@@ -735,7 +719,6 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.gamma = wgamma->get_active_text();
     pp->icm.dcpIlluminant = rtengine::max<int>(dcpIll->get_active_row_number(), 0);
     pp->icm.wprimari = wprimari->get_active_text();
-    //  pp->icm.wprofile = wprofile->get_active_text ();
 
     if (onames->get_active_text() == M("TP_ICM_NOICM")) {
         pp->icm.output  = ColorManagementParams::NoICMString;
@@ -876,7 +859,7 @@ void ICMPanel::gpChanged()
 
     if (listener) {
         listener->panelChanged(EvGAMMA, wgamma->get_active_text());
-        onames->set_sensitive(wgamma->get_active_row_number() == 0); //"default"
+        onames->set_sensitive(wgamma->get_active_row_number() == 0); 
     }
 }
 
@@ -1066,7 +1049,6 @@ void ICMPanel::GamChanged()
             listener->panelChanged(EvGAMFREE, M("GENERAL_DISABLED"));
 
             if (!batchMode) {
-              //  onames->set_sensitive(wgamma->get_active_row_number() == 0);
                 onames->set_sensitive(true);
                 wgamma->set_sensitive(false);
                 gampos->set_sensitive(false);

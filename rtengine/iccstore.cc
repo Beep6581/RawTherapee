@@ -1316,13 +1316,12 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
     enum class ColorTemp {
         D50 = 5003,  // for Widegamut, Prophoto Best, Beta -> D50
         D65 = 6504,   // for sRGB, AdobeRGB, Bruce Rec2020  -> D65
-        D60 = 6005        //for ACESc
+        D60 = 6005        //for ACESP0 and AcesP1
 
     };
     ColorTemp temp = ColorTemp::D50;
 
-    //primaries for 7 working profiles ==> output profiles
-    // eventually to adapt primaries  if RT used special profiles !
+    //primaries for 10 working profiles ==> output profiles
     if (icm.wprimari == "wideg") {
         p[0] = 0.7350;    //Widegamut primaries
         p[1] = 0.2650;
@@ -1400,7 +1399,7 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[4] = 0.0366;
         p[5] = 0.0001;
     } else {
-        p[0] = 0.7347;    //ProPhoto and default primaries
+        p[0] = 0.7347;    //default primaries
         p[1] = 0.2653;
         p[2] = 0.1596;
         p[3] = 0.8404;
@@ -1408,16 +1407,7 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[5] = 0.0001;
     }
 
-//printf("prim p2=%f \n",  p[2]);
-    /*
-            p[0] = 0.6400;    // sRGB primaries
-            p[1] = 0.3300;
-            p[2] = 0.3000;
-            p[3] = 0.6000;
-            p[4] = 0.1500;
-            p[5] = 0.0600;
-            temp = ColorTemp::D65;
-    */
+
     cmsCIExyY xyD;
     cmsCIExyYTRIPLE Primaries = {
         {p[0], p[1], 1.0}, // red
@@ -1431,13 +1421,9 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
 
     //lcmsMutex->lock();  Mutex acquired by the caller
     cmsWhitePointFromTemp(&xyD, (double)temp);
-//  cmsCIExyY d60_aces= {0.32168, 0.33767, 1.0};
-
-//  xyD = d60_aces;
 
     GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, Parameters); //5 = smoother than 4
     cmsHPROFILE oprofdef = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC); //oprofdef  become Outputprofile
-    //cmsSetProfileVersion(oprofdef, 4.3);
 
     cmsFreeToneCurve(GammaTRC[0]);
     //lcmsMutex->unlock();
@@ -1487,22 +1473,18 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     } else if (icm.wprimari == "sRGB"      && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.srgb10)     &&  pro) {
         outProfile = options.rtSettings.srgb10;
         outPr = "RT_srgb";
-
     } else if (icm.wprimari == "proph"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto10) &&  pro) {
         outProfile = options.rtSettings.prophoto10;
         outPr = "RT_large";
-
     } else if (icm.wprimari == "rec2020"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.rec2020)) {
         outProfile = options.rtSettings.rec2020;
         outPr = "RT_rec2020";
-
     } else if (icm.wprimari == "acesp0"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp0)) {
         outProfile = options.rtSettings.ACESp0;
         outPr = "RT_acesp0";
     } else if (icm.wprimari == "acesp1"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp1)) {
         outProfile = options.rtSettings.ACESp1;
         outPr = "RT_acesp1";
-
     } else {
         // Should not occurs
         if (settings->verbose) {
@@ -1614,9 +1596,6 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         printf("Description error\n");
     } else {
 
-
-
-
         if (icm.wprofile == "v4") {
             cmsSetProfileVersion(outputProfile, 4.3);
         } else {
@@ -1712,7 +1691,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             p[4] = 0.0366;
             p[5] = 0.0001;
         } else {
-            p[0] = 0.7347;    //ProPhoto and default primaries
+            p[0] = 0.7347;    //default primaries
             p[1] = 0.2653;
             p[2] = 0.1596;
             p[3] = 0.8404;
@@ -1743,7 +1722,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         cmsWriteTag(outputProfile, cmsSigBlueTRCTag, GammaTRC[2]);
         cmsWriteTag(outputProfile, cmsSigProfileDescriptionTag,  mlu);//desc changed
 
-        /*
+        /*  //to read XYZ values
             cmsCIEXYZ *redT = static_cast<cmsCIEXYZ*>(cmsReadTag(outputProfile, cmsSigRedMatrixColumnTag));
             cmsCIEXYZ *greenT  = static_cast<cmsCIEXYZ*>(cmsReadTag(outputProfile, cmsSigGreenMatrixColumnTag));
             cmsCIEXYZ *blueT  = static_cast<cmsCIEXYZ*>(cmsReadTag(outputProfile, cmsSigBlueMatrixColumnTag));
