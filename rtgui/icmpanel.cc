@@ -591,6 +591,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     wnames->set_active_text(pp->icm.working);
     wgamma->set_active_text(pp->icm.gamma);
+	gpChanged();
 //    wprimari->set_active_text(pp->icm.wprimari);
 //   wprofile->set_active_text (pp->icm.wprofile);
 
@@ -652,9 +653,12 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         onames->set_sensitive(/*wgamma->get_active_row_number() == 0 &&*/ !pp->icm.freegamma); //"default"
         wgamma->set_sensitive(pp->icm.freegamma);
         gampos->set_sensitive(pp->icm.freegamma);
+        gampos->set_sensitive(pp->icm.gamma == "Free");
         slpos->set_sensitive(pp->icm.freegamma);
+        slpos->set_sensitive(pp->icm.gamma == "Free");	
         updateRenderingIntent(pp->icm.output);
         wprimari->set_sensitive(pp->icm.freegamma);
+        wprofile->set_sensitive(pp->icm.freegamma);
     }
 
     gampos->setValue(pp->icm.gampos);

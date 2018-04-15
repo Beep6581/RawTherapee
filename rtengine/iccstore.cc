@@ -1086,7 +1086,7 @@ void rtengine::ICCStore::getGammaArray(const procparams::ColorManagementParams &
             ga[2] = 0.1379;
             ga[3] = 0.1107;
             ga[4] = 0.08;
-			
+
         } else { /* if (icm.gamma == "linear_g1.0") */
             ga[0] = 1.0;    //gamma=1 linear : for high dynamic images(cf : D.Coffin...)
             ga[1] = 1.;
@@ -1384,7 +1384,7 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[4] = 0.0001;
         p[5] = -0.0770;
         temp = ColorTemp::D60;
-    } else if (icm.wprimari == "acesp1") {		
+    } else if (icm.wprimari == "acesp1") {
         p[0] = 0.713;    // ACES P1 primaries
         p[1] = 0.293;
         p[2] = 0.165;
@@ -1392,13 +1392,13 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[4] = 0.128;
         p[5] = 0.044;
         temp = ColorTemp::D60;
-    } else if (icm.wprimari == "proph") {		
+    } else if (icm.wprimari == "proph") {
         p[0] = 0.7347;    //ProPhoto and default primaries
         p[1] = 0.2653;
         p[2] = 0.1596;
         p[3] = 0.8404;
         p[4] = 0.0366;
-        p[5] = 0.0001;		
+        p[5] = 0.0001;
     } else {
         p[0] = 0.7347;    //ProPhoto and default primaries
         p[1] = 0.2653;
@@ -1557,268 +1557,213 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         gammaStr = "_LAB_g3.0_s9.03296";
     }
 
+    // create description with gamma + slope + primaries
+    std::wostringstream gammaWs;
+    std::wstring gammaStrICC;
+
+    gammaWs.precision(3);
+
+    if (icm.gamma == "Free") {
+        if (icm.wprofile == "v4") {
+            outPro = outPr + "_V4_" + std::to_string((float)icm.gampos) + " " + std::to_string((float)icm.slpos) + ".icc";
+        } else if (icm.wprofile == "v2") {
+            outPro = outPr + "_V2_" + std::to_string((float)icm.gampos) + " " + std::to_string((float)icm.slpos) + ".icc";
+        }
+
+        gammaWs.precision(2);
+        gammaWs << outPr << (float)icm.gampos << " s=" << (float)icm.slpos;
+
+
+        cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
+
+    } else {
+
+        if (icm.wprofile == "v4") {
+            outPro = outPr + "_V4_" + gammaStr + ".icc";
+
+        } else if (icm.wprofile == "v2") {
+            outPro = outPr + "_V2_" + gammaStr + ".icc";
+        }
+
+        gammaWs << outPro.c_str()  << " s=";
+
+
+    }
+
+
+
+    cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
+    cmsMLU *copyright = cmsMLUalloc(NULL, 1);
+
+    cmsMLUsetASCII(copyright, "en", "US", "No copyright Rawtherapee");
+    cmsWriteTag(outputProfile, cmsSigCopyrightTag, copyright);
+    cmsMLUfree(copyright);
+
+    cmsWriteTag(outputProfile, cmsSigProfileDescriptionTag,  mlu);//desc changed
+
+    cmsMLU *descrip = cmsMLUalloc(NULL, 1);
+
+    cmsMLUsetASCII(descrip, "en", "US", "Rawtherapee");
+    cmsWriteTag(outputProfile, cmsSigDeviceModelDescTag, descrip);
+    cmsMLUfree(descrip);
+
+
+
     // instruction with //ICC are used to generate ICC profile
     if (mlu == nullptr) {
         printf("Description error\n");
     } else {
 
-        // Description TAG : selection of gamma and Primaries
-        if (icm.freegamma  && icm.gamma != "Free") {
-            /*
-            //  std::wstring gammaStr;
 
-            if (icm.gamma == "High_g1.3_s3.35") {
-                gammaStr = "_TRC: High g=1.3 s=3.35";
-            } else if (icm.gamma == "Low_g2.6_s6.9") {
-                gammaStr = "_TRC: Low g=2.6 s=6.9";
-            } else if (icm.gamma == "sRGB_g2.4_s12.92") {
-                gammaStr = "_TRC: sRGB g=2.4 s=12.92";
-            } else if (icm.gamma == "BT709_g2.2_s4.5") {
-                gammaStr = "_TRC: BT709 g=2.2 s=4.5";
-            } else if (icm.gamma == "linear_g1.0") {
-                gammaStr = "_TRC: Linear g=1.0";
-            } else if (icm.gamma == "standard_g2.2") {
-                gammaStr = "GammaTRC: g=2.2";
-            } else if (icm.gamma == "standard_g1.8") {
-                gammaStr = "GammaTRC: g=1.8";
-            }
-            */
-            //cmsMLUsetWide(mlu,  "en", "US", gammaStr.c_str());
 
+
+        if (icm.wprofile == "v4") {
+            cmsSetProfileVersion(outputProfile, 4.3);
         } else {
-            /*
-            // create description with gamma + slope + primaries
-            std::wostringstream gammaWs;
-            //std::string gammaWsICC;
-            std::wstring gammaStrICC;
-
-            gammaWs.precision(6);
-            if(icm.wprofile == "v4") {
-                outPro = outPr + "_FOIP_V4_"+ std::to_string((float)icm.gampos)+" "+ std::to_string((float)icm.slpos) + ".icc";
-            } else if(icm.wprofile == "v2") {
-                outPro = outPr + "_FOIP_V2_"+ std::to_string((float)icm.gampos)+" "+ std::to_string((float)icm.slpos) + ".icc";
-            }
-
-            gammaWs << outPro.c_str() <<(float)icm.gampos << " s=" <<(float)icm.slpos;
-
-            cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
-            cmsMLU *copyright = cmsMLUalloc(NULL, 1);
-
-            cmsMLUsetASCII(copyright, "en", "US", "No copyright Rawtherapee");
-            cmsWriteTag(outputProfile, cmsSigCopyrightTag, copyright);
-            cmsMLUfree(copyright);
-            cmsMLU *descrip = cmsMLUalloc(NULL, 1);
-
-            cmsMLUsetASCII(descrip, "en", "US", "Rawtherapee");
-            cmsWriteTag(outputProfile, cmsSigDeviceModelDescTag, descrip);
-            cmsMLUfree(descrip);
-            */
-
+            cmsSetProfileVersion(outputProfile, 2.0);
         }
-
-
-    }
-
-    if (icm.wprofile == "v4") {
-        cmsSetProfileVersion(outputProfile, 4.3);
-    } else {
-        cmsSetProfileVersion(outputProfile, 2.0);
-    }
 
 //change
-    float p[6]; //primaries
-    ga[6] = 0.0;
+        float p[6]; //primaries
+        ga[6] = 0.0;
 
-    enum class ColorTemp {
-        D50 = 5003,  // for Widegamut, Prophoto Best, Beta -> D50
-        D65 = 6504,   // for sRGB, AdobeRGB, Bruce Rec2020  -> D65
-        D60 = 6005        //for ACESc->D60
-    };
-    ColorTemp temp = ColorTemp::D50;
+        enum class ColorTemp {
+            D50 = 5003,  // for Widegamut, Prophoto Best, Beta -> D50
+            D65 = 6504,   // for sRGB, AdobeRGB, Bruce Rec2020  -> D65
+            D60 = 6005        //for ACESc->D60
+        };
+        ColorTemp temp = ColorTemp::D50;
 
-    if (icm.wprimari == "wideg") {
-        p[0] = 0.7350;    //Widegamut primaries
-        p[1] = 0.2650;
-        p[2] = 0.1150;
-        p[3] = 0.8260;
-        p[4] = 0.1570;
-        p[5] = 0.0180;
-				
-    } else if (icm.wprimari == "adob") {
-        p[0] = 0.6400;    //Adobe primaries
-        p[1] = 0.3300;
-        p[2] = 0.2100;
-        p[3] = 0.7100;
-        p[4] = 0.1500;
-        p[5] = 0.0600;
-        temp = ColorTemp::D65;
-    } else if (icm.wprimari == "srgb") {
-        p[0] = 0.6400;    // sRGB primaries
-        p[1] = 0.3300;
-        p[2] = 0.3000;
-        p[3] = 0.6000;
-        p[4] = 0.1500;
-        p[5] = 0.0600;
-        temp = ColorTemp::D65;
-    } else if (icm.wprimari == "BruceRGB") {
-        p[0] = 0.6400;    // Bruce primaries
-        p[1] = 0.3300;
-        p[2] = 0.2800;
-        p[3] = 0.6500;
-        p[4] = 0.1500;
-        p[5] = 0.0600;
-        temp = ColorTemp::D65;
-    } else if (icm.wprimari == "Beta RGB") {
-        p[0] = 0.6888;    // Beta primaries
-        p[1] = 0.3112;
-        p[2] = 0.1986;
-        p[3] = 0.7551;
-        p[4] = 0.1265;
-        p[5] = 0.0352;
-    } else if (icm.wprimari == "BestRGB") {
-        p[0] = 0.7347;    // Best primaries
-        p[1] = 0.2653;
-        p[2] = 0.2150;
-        p[3] = 0.7750;
-        p[4] = 0.1300;
-        p[5] = 0.0350;
-    } else if (icm.wprimari == "rec2020") {
-        p[0] = 0.7080;    // Rec2020 primaries
-        p[1] = 0.2920;
-        p[2] = 0.1700;
-        p[3] = 0.7970;
-        p[4] = 0.1310;
-        p[5] = 0.0460;
-        temp = ColorTemp::D65;
-    } else if (icm.wprimari == "acesp0") {
-        p[0] = 0.7347;    // ACES P0 primaries
-        p[1] = 0.2653;
-        p[2] = 0.0000;
-        p[3] = 1.0;
-        p[4] = 0.0001;
-        p[5] = -0.0770;
-        temp = ColorTemp::D60;
-    } else if (icm.wprimari == "acesp1") {		
-        p[0] = 0.713;    // ACES P1 primaries
-        p[1] = 0.293;
-        p[2] = 0.165;
-        p[3] = 0.830;
-        p[4] = 0.128;
-        p[5] = 0.044;
-        temp = ColorTemp::D60;
-    } else if (icm.wprimari == "proph") {		
-        p[0] = 0.7347;    //ProPhoto and default primaries
-        p[1] = 0.2653;
-        p[2] = 0.1596;
-        p[3] = 0.8404;
-        p[4] = 0.0366;
-        p[5] = 0.0001;		
-    } else {
-        p[0] = 0.7347;    //ProPhoto and default primaries
-        p[1] = 0.2653;
-        p[2] = 0.1596;
-        p[3] = 0.8404;
-        p[4] = 0.0366;
-        p[5] = 0.0001;
-    }
+        if (icm.wprimari == "wideg") {
+            p[0] = 0.7350;    //Widegamut primaries
+            p[1] = 0.2650;
+            p[2] = 0.1150;
+            p[3] = 0.8260;
+            p[4] = 0.1570;
+            p[5] = 0.0180;
 
-    cmsCIExyY xyD;
-    cmsCIExyYTRIPLE Primaries = {
-        {p[0], p[1], 1.0}, // red
-        {p[2], p[3], 1.0}, // green
-        {p[4], p[5], 1.0}  // blue
-    };
-
-    cmsWhitePointFromTemp(&xyD, (double)temp);
-    cmsToneCurve* GammaTRC[3];
-
-
-    // Calculate output profile's rTRC gTRC bTRC
-    GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, Parameters);
-
-    if (icm.wprofile == "v4") {
-        outputProfile = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC);
-    }
-
-    cmsWriteTag(outputProfile, cmsSigRedTRCTag, GammaTRC[0]);
-    cmsWriteTag(outputProfile, cmsSigGreenTRCTag, GammaTRC[1]);
-    cmsWriteTag(outputProfile, cmsSigBlueTRCTag, GammaTRC[2]);
-
-    if (icm.freegamma) {
-        // create description with gamma + slope + primaries
-        std::wostringstream gammaWs;
-        //std::string gammaWsICC;
-        std::wstring gammaStrIC;
-
-        gammaWs.precision(6);
-
-        if (icm.gamma == "Free") {
-            if (icm.wprofile == "v4") {
-                outPro = outPr + "_FOIP_V4_" + std::to_string((float)icm.gampos) + " " + std::to_string((float)icm.slpos) + ".icc";
-            } else if (icm.wprofile == "v2") {
-                outPro = outPr + "_FOIP_V2_" + std::to_string((float)icm.gampos) + " " + std::to_string((float)icm.slpos) + ".icc";
-            }
-
-            gammaWs << outPro.c_str() << (float)icm.gampos << " s=" << (float)icm.slpos;
-
-            cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
-
+        } else if (icm.wprimari == "adob") {
+            p[0] = 0.6400;    //Adobe primaries
+            p[1] = 0.3300;
+            p[2] = 0.2100;
+            p[3] = 0.7100;
+            p[4] = 0.1500;
+            p[5] = 0.0600;
+            temp = ColorTemp::D65;
+        } else if (icm.wprimari == "srgb") {
+            p[0] = 0.6400;    // sRGB primaries
+            p[1] = 0.3300;
+            p[2] = 0.3000;
+            p[3] = 0.6000;
+            p[4] = 0.1500;
+            p[5] = 0.0600;
+            temp = ColorTemp::D65;
+        } else if (icm.wprimari == "BruceRGB") {
+            p[0] = 0.6400;    // Bruce primaries
+            p[1] = 0.3300;
+            p[2] = 0.2800;
+            p[3] = 0.6500;
+            p[4] = 0.1500;
+            p[5] = 0.0600;
+            temp = ColorTemp::D65;
+        } else if (icm.wprimari == "Beta RGB") {
+            p[0] = 0.6888;    // Beta primaries
+            p[1] = 0.3112;
+            p[2] = 0.1986;
+            p[3] = 0.7551;
+            p[4] = 0.1265;
+            p[5] = 0.0352;
+        } else if (icm.wprimari == "BestRGB") {
+            p[0] = 0.7347;    // Best primaries
+            p[1] = 0.2653;
+            p[2] = 0.2150;
+            p[3] = 0.7750;
+            p[4] = 0.1300;
+            p[5] = 0.0350;
+        } else if (icm.wprimari == "rec2020") {
+            p[0] = 0.7080;    // Rec2020 primaries
+            p[1] = 0.2920;
+            p[2] = 0.1700;
+            p[3] = 0.7970;
+            p[4] = 0.1310;
+            p[5] = 0.0460;
+            temp = ColorTemp::D65;
+        } else if (icm.wprimari == "acesp0") {
+            p[0] = 0.7347;    // ACES P0 primaries
+            p[1] = 0.2653;
+            p[2] = 0.0000;
+            p[3] = 1.0;
+            p[4] = 0.0001;
+            p[5] = -0.0770;
+            temp = ColorTemp::D60;
+        } else if (icm.wprimari == "acesp1") {
+            p[0] = 0.713;    // ACES P1 primaries
+            p[1] = 0.293;
+            p[2] = 0.165;
+            p[3] = 0.830;
+            p[4] = 0.128;
+            p[5] = 0.044;
+            temp = ColorTemp::D60;
+        } else if (icm.wprimari == "proph") {
+            p[0] = 0.7347;    //ProPhoto and default primaries
+            p[1] = 0.2653;
+            p[2] = 0.1596;
+            p[3] = 0.8404;
+            p[4] = 0.0366;
+            p[5] = 0.0001;
         } else {
+            p[0] = 0.7347;    //ProPhoto and default primaries
+            p[1] = 0.2653;
+            p[2] = 0.1596;
+            p[3] = 0.8404;
+            p[4] = 0.0366;
+            p[5] = 0.0001;
+        }
 
-            if (icm.wprofile == "v4") {
-                outPro = outPr + "_FOIP_V4_" + gammaStr + ".icc";
+        cmsCIExyY xyD;
+        cmsCIExyYTRIPLE Primaries = {
+            {p[0], p[1], 1.0}, // red
+            {p[2], p[3], 1.0}, // green
+            {p[4], p[5], 1.0}  // blue
+        };
 
-            } else if (icm.wprofile == "v2") {
-                outPro = outPr + "_FOIP_V2_" + gammaStr + ".icc";
-            }
+        cmsWhitePointFromTemp(&xyD, (double)temp);
+        cmsToneCurve* GammaTRC[3];
 
-            gammaWs << outPro.c_str()  << " s=";
-            cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
 
+        // Calculate output profile's rTRC gTRC bTRC
+        GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, Parameters);
+
+        if (icm.wprofile == "v4") {
+            outputProfile = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC);
+        }
+
+        cmsWriteTag(outputProfile, cmsSigRedTRCTag, GammaTRC[0]);
+        cmsWriteTag(outputProfile, cmsSigGreenTRCTag, GammaTRC[1]);
+        cmsWriteTag(outputProfile, cmsSigBlueTRCTag, GammaTRC[2]);
+        cmsWriteTag(outputProfile, cmsSigProfileDescriptionTag,  mlu);//desc changed
+
+        /*
+            cmsCIEXYZ *redT = static_cast<cmsCIEXYZ*>(cmsReadTag(outputProfile, cmsSigRedMatrixColumnTag));
+            cmsCIEXYZ *greenT  = static_cast<cmsCIEXYZ*>(cmsReadTag(outputProfile, cmsSigGreenMatrixColumnTag));
+            cmsCIEXYZ *blueT  = static_cast<cmsCIEXYZ*>(cmsReadTag(outputProfile, cmsSigBlueMatrixColumnTag));
+            printf("rx=%f gx=%f bx=%f ry=%f gy=%f by=%f rz=%f gz=%f bz=%f\n", redT->X, greenT->X, blueT->X, redT->Y, greenT->Y, blueT->Y, redT->Z, greenT->Z, blueT->Z);
+        */
+
+        cmsMLUfree(mlu);
+
+
+
+        if (icm.wprofile == "v2" || icm.wprofile == "v4") {
+            cmsSaveProfileToFile(outputProfile,  outPro.c_str());
 
         }
 
-        cmsMLU *copyright = cmsMLUalloc(NULL, 1);
-
-        cmsMLUsetASCII(copyright, "en", "US", "No copyright Rawtherapee");
-        cmsWriteTag(outputProfile, cmsSigCopyrightTag, copyright);
-        cmsMLUfree(copyright);
-		
-		
-    }
-
-    cmsMLU *descrip = cmsMLUalloc(NULL, 1);
-    cmsMLUsetASCII(descrip, "en", "US", "Rawtherapee");
-    cmsWriteTag(outputProfile, cmsSigDeviceModelDescTag, descrip);
-    cmsMLUfree(descrip);
-
-    cmsWriteTag(outputProfile, cmsSigProfileDescriptionTag,  mlu);//desc changed
-    cmsMLUfree(mlu);
-
-    Glib::ustring manufacturer;
-
-    manufacturer = "RawTherapee_FOIP";
-    cmsMLU *MfgDesc;
-    MfgDesc   = cmsMLUalloc(NULL, 1);
-    cmsMLUsetASCII(MfgDesc, "en", "US", manufacturer.c_str());
-    cmsWriteTag(outputProfile, cmsSigDeviceMfgDescTag, MfgDesc);
-    cmsMLUfree(MfgDesc);
-	/*
-		cmsCIEXYZ *red = static_cast<cmsCIEXYZ *>(cmsReadTag(outputProfile, cmsSigRedMatrixColumnTag));
-        cmsCIEXYZ *green  = static_cast<cmsCIEXYZ *>(cmsReadTag(outputProfile, cmsSigGreenMatrixColumnTag));
-        cmsCIEXYZ *blue  = static_cast<cmsCIEXYZ *>(cmsReadTag(outputProfile, cmsSigBlueMatrixColumnTag));
-		printf("rx=%f gx=%f bx=%f ry=%f gy=%f by=%f rz=%f gz=%f bz=%f\n", red->X, green->X, blue->X, red->Y, green->Y, blue->Y, red->Z, green->Z, blue->Z);
-	*/
-
-	
-    if (icm.wprofile == "v2" || icm.wprofile == "v4") {
-        cmsSaveProfileToFile(outputProfile,  outPro.c_str());
-
-    }
-
-    if (GammaTRC) {
-        cmsFreeToneCurve(GammaTRC[0]);
+        if (GammaTRC) {
+            cmsFreeToneCurve(GammaTRC[0]);
+        }
     }
 
     return outputProfile;
+
 }

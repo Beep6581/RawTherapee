@@ -1956,7 +1956,7 @@ ColorManagementParams::ColorManagementParams() :
     output("RT_sRGB"),
     outputIntent(RI_RELATIVE),
     outputBPC(true),
-    gamma("default"),
+    gamma("Free"),
     gampos(2.4),
     slpos(12.92310),
     wprimari("sRGB"),
