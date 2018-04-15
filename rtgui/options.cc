@@ -467,7 +467,7 @@ void Options::setDefaults()
     fastexport_icm_output                = "RT_sRGB";
     fastexport_icm_outputIntent          = rtengine::RI_RELATIVE;
     fastexport_icm_outputBPC             = true;
-    fastexport_icm_gamma                 = "default";
+    fastexport_icm_gamma                 = "Free";
     fastexport_resize_enabled            = true;
     fastexport_resize_scale              = 1;
     fastexport_resize_appliesTo          = "Cropped area";

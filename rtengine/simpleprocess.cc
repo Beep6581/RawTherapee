@@ -1253,7 +1253,7 @@ private:
         bool useLCMS = false;
         bool bwonly = params.blackwhite.enabled && !params.colorToning.enabled && !autili && !butili ;
 
-        if (params.icm.gamma != "default" || params.icm.freegamma) { // if select gamma output between BT709, sRGB, linear, low, high, 2.2 , 1.8
+        if (params.icm.gamma != "Free" || params.icm.freegamma) { // if select gamma output between BT709, sRGB, linear, low, high, 2.2 , 1.8
 
             GammaValues ga;
             //  if(params.blackwhite.enabled) params.toneCurve.hrenabled=false;
