@@ -2990,6 +2990,8 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
             refcolor[c] *= limitFactor;
         }
 
+        constexpr float minValue = 1.f; // if the pixel value in the flat field is less or equal this value, no correction will be applied.
+
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -2997,7 +2999,8 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
         for (int row = 0; row < H; row++) {
             for (int col = 0; col < W; col++) {
                 int c  = ri->XTRANSFC(row, col);
-                float vignettecorr = ( refcolor[c] / max(1e-5f, cfablur[(row) * W + col] - black[c]) );
+                float blur = cfablur[(row) * W + col] - black[c];
+                float vignettecorr = blur <= minValue ? 1.f : refcolor[c] / blur;
                 rawData[row][col] = (rawData[row][col] - black[c]) * vignettecorr + black[c];
             }
         }
