@@ -1548,7 +1548,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     if (icm.gamma == "Free") {
         if (icm.wprofile == "v4") {
             outPro = outPr + "_V4_" + std::to_string((float)icm.gampos) + " " + std::to_string((float)icm.slpos) + ".icc";
-        } else if (icm.wprofile == "v2") {
+        } else if (icm.wprofile == "v2" || icm.wprofile == "none" ) { 
             outPro = outPr + "_V2_" + std::to_string((float)icm.gampos) + " " + std::to_string((float)icm.slpos) + ".icc";
         }
 
@@ -1563,7 +1563,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         if (icm.wprofile == "v4") {
             outPro = outPr + "_V4_" + gammaStr + ".icc";
 
-        } else if (icm.wprofile == "v2") {
+        } else if (icm.wprofile == "v2" || icm.wprofile == "none" ) {
             outPro = outPr + "_V2_" + gammaStr + ".icc";
         }
 
