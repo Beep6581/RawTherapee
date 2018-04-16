@@ -1553,10 +1553,10 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         }
 
         gammaWs.precision(2);
-        gammaWs << outPr << (float)icm.gampos << " s=" << (float)icm.slpos;
+        gammaWs << outPr  << " g=" << (float)icm.gampos << " s=" << (float)icm.slpos;
 
 
-        cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
+     //   cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
 
     } else {
 
@@ -1567,7 +1567,8 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             outPro = outPr + "_V2_" + gammaStr + ".icc";
         }
 
-        gammaWs << outPro.c_str()  << " s=";
+        gammaWs << outPro.c_str() ;
+     //   cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
 
 
     }
