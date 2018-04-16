@@ -1353,7 +1353,7 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[4] = 0.1500;
         p[5] = 0.0600;
         temp = ColorTemp::D65;
-    } else if (icm.wprimari == "Beta RGB") {
+    } else if (icm.wprimari == "BetaRGB") {
         p[0] = 0.6888;    // Beta primaries
         p[1] = 0.3112;
         p[2] = 0.1986;
@@ -1458,7 +1458,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     } else if (icm.wprimari == "wideg" && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.widegamut)) {
         outProfile = options.rtSettings.widegamut;
         outPr = "RT_wide";
-    } else if (icm.wprimari == "Beta RGB"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.beta)) {
+    } else if (icm.wprimari == "BetaRGB"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.beta)) {
         outProfile = options.rtSettings.beta;
         outPr = "RT_beta";
     } else if (icm.wprimari == "BestRGB"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.best)) {
@@ -1645,7 +1645,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             p[4] = 0.1500;
             p[5] = 0.0600;
             temp = ColorTemp::D65;
-        } else if (icm.wprimari == "Beta RGB") {
+        } else if (icm.wprimari == "BetaRGB") {
             p[0] = 0.6888;    // Beta primaries
             p[1] = 0.3112;
             p[2] = 0.1986;

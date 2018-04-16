@@ -537,9 +537,9 @@ void Options::setDefaults()
     rtSettings.srgb10 = "RT_sRGB_g10";
     rtSettings.widegamut = "WideGamutRGB";
     rtSettings.srgb = "RT_sRGB-V2-srgbtrc";
-    rtSettings.bruce = "Bruce";
-    rtSettings.beta = "BetaRGB";
-    rtSettings.best = "BestRGB";
+    rtSettings.bruce = "RT_bruce_V4";
+    rtSettings.beta = "RT_beta_V4";
+    rtSettings.best = "RT_best_V4";
     rtSettings.rec2020 = "RT_Rec2020-V2-srgbtrc";
     rtSettings.ACESp0 = "RT_ACES-V2-srgbtrc";
     rtSettings.ACESp1 = "RT_acesp1_V4";

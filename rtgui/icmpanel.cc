@@ -265,6 +265,9 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wprimari->append(M("TP_GAMMA_PRIM_REC2020"));
     wprimari->append(M("TP_GAMMA_PRIM_SRGB"));
     wprimari->append(M("TP_GAMMA_PRIM_WIDEG"));
+    wprimari->append(M("TP_GAMMA_PRIM_BEST"));
+    wprimari->append(M("TP_GAMMA_PRIM_BETA"));
+    wprimari->append(M("TP_GAMMA_PRIM_BRUCE"));
     wprimari->set_active(5);
 	
 	//sliders gampos and slpos
@@ -596,6 +599,12 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wprimari->set_active(5);
     } else if (pp->icm.wprimari == "wideg") {
         wprimari->set_active(6);
+    } else if (pp->icm.wprimari == "BestRGB") {
+        wprimari->set_active(7);
+    } else if (pp->icm.wprimari == "BetaRGB") {
+        wprimari->set_active(8);
+    } else if (pp->icm.wprimari == "BruceRGB") {
+        wprimari->set_active(9);
     }
 
 
@@ -756,6 +765,12 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pp->icm.wprimari = "srgb";
     } else if (wprimari->get_active_row_number() == 6) {
         pp->icm.wprimari = "wideg";
+    } else if (wprimari->get_active_row_number() == 7) {
+        pp->icm.wprimari = "BestRGB";
+    } else if (wprimari->get_active_row_number() == 8) {
+        pp->icm.wprimari = "BetaRGB";
+    } else if (wprimari->get_active_row_number() == 9) {
+        pp->icm.wprimari = "BruceRGB";
     }
 		
 	
