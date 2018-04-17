@@ -1023,6 +1023,7 @@ struct ColorManagementParams {
     double slpos;
     Glib::ustring wprimari;
     Glib::ustring wprofile;
+    Glib::ustring wtemp;
     static const Glib::ustring NoICMString;
     bool freegamma;
 

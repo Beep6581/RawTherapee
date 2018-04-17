@@ -591,6 +591,7 @@ public:
     bool freegamma;
     bool wprimari;
     bool wprofile;
+    bool wtemp;
 };
 class WaveletParamsEdited
 {

@@ -1418,9 +1418,45 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
 
     // 7 parameters for smoother curves
     cmsFloat64Number Parameters[7] = { ga[0],  ga[1], ga[2], ga[3], ga[4], ga[5], ga[6] } ;
+    /*
+            if(icm.wprofile == "v4" && icm.wtemp != "DEF") {
+                if(icm.wtemp == "D41") outPr = outPr + "D41";
+                else if(icm.wtemp == "D50") outPr = outPr + "D50";
+                else if(icm.wtemp == "D55") outPr = outPr + "D55";
+                else if(icm.wtemp == "D60") outPr = outPr + "D60";
+                else if(icm.wtemp == "D65") outPr = outPr + "D65";
+                else if(icm.wtemp == "D80") outPr = outPr + "D80";
 
+            }
+    */
     //lcmsMutex->lock();  Mutex acquired by the caller
-    cmsWhitePointFromTemp(&xyD, (double)temp);
+    double tempv4 = 5000.;
+
+    if (icm.wprofile == "v4" && icm.wtemp != "DEF") {
+        if (icm.wtemp == "D41") {
+            tempv4 = 4100.;
+        } else if (icm.wtemp == "D50") {
+            tempv4 = 5003.;
+        } else if (icm.wtemp == "D55") {
+            tempv4 = 5500.;
+        } else if (icm.wtemp == "D60") {
+            tempv4 = 6005.;
+        } else if (icm.wtemp == "D65") {
+            tempv4 = 6504.;
+        } else if (icm.wtemp == "D80") {
+            tempv4 = 8000.;
+        }
+
+    }
+
+    if (icm.wprofile == "v4" && icm.wtemp != "DEF") {
+        cmsWhitePointFromTemp(&xyD, tempv4);
+    } else {
+        cmsWhitePointFromTemp(&xyD, (double)temp);
+    }
+
+
+    // cmsWhitePointFromTemp(&xyD, (double)temp);
 
     GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, Parameters); //5 = smoother than 4
     cmsHPROFILE oprofdef = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC); //oprofdef  become Outputprofile
@@ -1520,6 +1556,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     cmsContext ContextID = cmsGetProfileContextID(outputProfile); // create context to modify some TAGs
     mlu = cmsMLUalloc(ContextID, 1);
     Glib::ustring outPro;
+    Glib::ustring outTemp;
 
     if (icm.gamma == "High_g1.3_s3.35") {
         gammaStr = "_High_g=1.3_s=3.35";
@@ -1538,6 +1575,24 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     } else if (icm.gamma == "Lab_g3.0s9.03296") {
         gammaStr = "_LAB_g3.0_s9.03296";
     }
+	outTemp = outPr;
+    if (icm.wprofile == "v4" && icm.wtemp != "DEF") {
+        if (icm.wtemp == "D41") {
+            outPr = outPr + "D41";
+        } else if (icm.wtemp == "D50") {
+            outPr = outPr + "D50";
+        } else if (icm.wtemp == "D55") {
+            outPr = outPr + "D55";
+        } else if (icm.wtemp == "D60") {
+            outPr = outPr + "D60";
+        } else if (icm.wtemp == "D65") {
+            outPr = outPr + "D65";
+        } else if (icm.wtemp == "D80") {
+            outPr = outPr + "D80";
+        }
+		//	printf("outpr=%s \n",outPr.c_str());
+
+    }
 
     // create description with gamma + slope + primaries
     std::wostringstream gammaWs;
@@ -1548,31 +1603,31 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     if (icm.gamma == "Free") {
         if (icm.wprofile == "v4") {
             outPro = outPr + "_V4_" + std::to_string((float)icm.gampos) + " " + std::to_string((float)icm.slpos) + ".icc";
-        } else if (icm.wprofile == "v2" || icm.wprofile == "none" ) { 
+        } else if (icm.wprofile == "v2" || icm.wprofile == "none") {
             outPro = outPr + "_V2_" + std::to_string((float)icm.gampos) + " " + std::to_string((float)icm.slpos) + ".icc";
         }
 
         gammaWs.precision(2);
-        gammaWs << outPr  << " g=" << (float)icm.gampos << " s=" << (float)icm.slpos;
+        gammaWs << outTemp  << " g=" << (float)icm.gampos << " s=" << (float)icm.slpos;
 
 
-     //   cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
+        //   cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
 
     } else {
 
         if (icm.wprofile == "v4") {
             outPro = outPr + "_V4_" + gammaStr + ".icc";
 
-        } else if (icm.wprofile == "v2" || icm.wprofile == "none" ) {
+        } else if (icm.wprofile == "v2" || icm.wprofile == "none") {
             outPro = outPr + "_V2_" + gammaStr + ".icc";
         }
+        gammaWs << outTemp << gammaStr;
 
-        gammaWs << outPro.c_str() ;
-     //   cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
+       // gammaWs << outPro.c_str() ;
+        //   cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
 
 
     }
-
 
 
     cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
@@ -1706,8 +1761,32 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             {p[2], p[3], 1.0}, // green
             {p[4], p[5], 1.0}  // blue
         };
+        double tempv4 = 5000.;
 
-        cmsWhitePointFromTemp(&xyD, (double)temp);
+        if (icm.wprofile == "v4" && icm.wtemp != "DEF") {
+            if (icm.wtemp == "D41") {
+                tempv4 = 4100.;
+            } else if (icm.wtemp == "D50") {
+                tempv4 = 5003.;
+            } else if (icm.wtemp == "D55") {
+                tempv4 = 5500.;
+            } else if (icm.wtemp == "D60") {
+                tempv4 = 6005.;
+            } else if (icm.wtemp == "D65") {
+                tempv4 = 6504.;
+            } else if (icm.wtemp == "D80") {
+                tempv4 = 8000.;
+            }
+			printf("tempv4=%f \n", tempv4);
+
+        }
+
+        if (icm.wprofile == "v4" && icm.wtemp != "DEF") {
+            cmsWhitePointFromTemp(&xyD, tempv4);
+        } else {
+            cmsWhitePointFromTemp(&xyD, (double)temp);
+        }
+
         cmsToneCurve* GammaTRC[3];
 
 

@@ -61,12 +61,14 @@ protected:
 private:
     rtengine::ProcEvent EvICMprimariMethod;
     rtengine::ProcEvent EvICMprofileMethod;
+    rtengine::ProcEvent EvICMtempMethod;
 
     Gtk::VBox       *  iVBox;
-	Gtk::HBox* priHBox;
-	Gtk::HBox* gaHBox;
-	Gtk::HBox* profHBox;
-	
+    Gtk::HBox* priHBox;
+    Gtk::HBox* gaHBox;
+    Gtk::HBox* profHBox;
+    Gtk::HBox* tempHBox;
+
     Gtk::CheckButton*  obpc;
     Gtk::CheckButton*  freegamma;
     Gtk::RadioButton*  inone;
@@ -90,6 +92,8 @@ private:
     sigc::connection   wprimariconn;
     MyComboBoxText*    wprofile;
     sigc::connection   wprofileconn;
+    MyComboBoxText*    wtemp;
+    sigc::connection   wtempconn;
 
     MyComboBoxText*    onames;
     sigc::connection   onamesconn;
@@ -121,6 +125,7 @@ public:
     void wpChanged();
     void wprimariChanged();
     void wprofileChanged();
+    void wtempChanged();
     void opChanged();
     void oiChanged(int n);
     void oBPCChanged();
@@ -133,7 +138,7 @@ public:
     void applyLookTableChanged();
     void applyBaselineExposureOffsetChanged();
     void applyHueSatMapChanged();
-    void TRCChanged           (double gamm, double slo);
+    void TRCChanged(double gamm, double slo);
 
     void setRawMeta(bool raw, const rtengine::FramesData* pMeta);
     void saveReferencePressed();

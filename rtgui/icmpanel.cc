@@ -36,6 +36,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     auto m = ProcEventMapper::getInstance();
     EvICMprimariMethod = m->newEvent(GAMMA, "HISTORY_MSG_ICMPRIMARI");
     EvICMprofileMethod = m->newEvent(GAMMA, "HISTORY_MSG_ICMPROFILE");
+    EvICMtempMethod = m->newEvent(GAMMA, "HISTORY_MSG_ICMTEMP");
 
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = lastgamfree = false;
 
@@ -269,6 +270,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wprimari->append(M("TP_GAMMA_PRIM_BETA"));
     wprimari->append(M("TP_GAMMA_PRIM_BRUCE"));
     wprimari->set_active(5);
+
 	
 	//sliders gampos and slpos
     fgVBox->pack_start(*gaHBox, Gtk::PACK_EXPAND_WIDGET);
@@ -307,6 +309,25 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
 
 
     wprofile->set_active(0);
+	
+    //temperature
+	tempHBox = Gtk::manage(new Gtk::HBox());
+	
+    Gtk::Label* templab = Gtk::manage(new Gtk::Label(M("TP_GAMMA_TEMP") + ":"));
+
+    tempHBox->pack_start(*templab, Gtk::PACK_SHRINK);
+    wtemp = Gtk::manage(new MyComboBoxText());
+    tempHBox->pack_start(*wtemp, Gtk::PACK_EXPAND_WIDGET);
+    fgVBox->pack_start(*tempHBox, Gtk::PACK_EXPAND_WIDGET);
+    wtemp->append(M("TP_GAMMA_TEMP_DEF"));
+    wtemp->append(M("TP_GAMMA_TEMP_41"));
+    wtemp->append(M("TP_GAMMA_TEMP_50"));
+    wtemp->append(M("TP_GAMMA_TEMP_55"));
+    wtemp->append(M("TP_GAMMA_TEMP_60"));
+    wtemp->append(M("TP_GAMMA_TEMP_65"));
+    wtemp->append(M("TP_GAMMA_TEMP_80"));
+    wtemp->set_active(0);
+    wtemp->set_tooltip_text(M("TP_GAMMA_TEMP_TOOLTIP"));
 
     fgFrame->add(*fgVBox);
     oVBox->pack_start(*fgFrame, Gtk::PACK_EXPAND_WIDGET);
@@ -357,6 +378,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     dcpillconn = dcpIll->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::dcpIlluminantChanged));
     wprimariconn = wprimari->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wprimariChanged));
     wprofileconn = wprofile->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wprofileChanged));
+    wtempconn = wtemp->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wtempChanged));
 
     obpcconn = obpc->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::oBPCChanged));
     gamcsconn = freegamma->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::GamChanged));
@@ -547,6 +569,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     ConnectionBlocker dcpillconn_(dcpillconn);
     ConnectionBlocker wprimariconn_(wprimariconn);
     ConnectionBlocker wprofileconn_(wprofileconn);
+    ConnectionBlocker wtempconn_(wtempconn);
 
     if (pp->icm.input.substr(0, 5) != "file:" && !ipDialog->get_filename().empty()) {
         ipDialog->set_filename(pp->icm.input);
@@ -582,7 +605,6 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     wnames->set_active_text(pp->icm.working);
     wgamma->set_active_text(pp->icm.gamma);
-	gpChanged();
 
 	
     if (pp->icm.wprimari == "acesp0") {
@@ -607,6 +629,22 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wprimari->set_active(9);
     }
 
+    if (pp->icm.wtemp == "DEF") {
+        wtemp->set_active(0);
+    } else if (pp->icm.wtemp == "D41") {
+        wtemp->set_active(1);
+    } else if (pp->icm.wtemp == "D50") {
+        wtemp->set_active(2);
+    } else if (pp->icm.wtemp == "D55") {
+        wtemp->set_active(3);
+    } else if (pp->icm.wtemp == "D60") {
+        wtemp->set_active(4);
+    } else if (pp->icm.wtemp == "D65") {
+        wtemp->set_active(5);
+    } else if (pp->icm.wtemp == "D80") {
+        wtemp->set_active(6);
+    }
+
 
     if (pp->icm.wprofile == "none") {
         wprofile->set_active(0);
@@ -616,7 +654,9 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wprofile->set_active(2);
     }
 
-
+	gpChanged();
+	wprofileChanged();
+	wtempChanged();
 
     if (pp->icm.output == ColorManagementParams::NoICMString) {
         onames->set_active_text(M("TP_ICM_NOICM"));
@@ -653,6 +693,10 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         updateRenderingIntent(pp->icm.output);
         wprimari->set_sensitive(pp->icm.freegamma);
         wprofile->set_sensitive(pp->icm.freegamma);
+		if(wprofile->get_active_row_number() == 2)  {wtemp->set_sensitive(pp->icm.freegamma);}
+		else {wtemp->set_sensitive(false);}
+       //  wtemp->set_sensitive(pp->icm.freegamma);
+
     }
 
     gampos->setValue(pp->icm.gampos);
@@ -695,6 +739,10 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wprofile->set_active_text(M("GENERAL_UNCHANGED"));
         }
 
+        if (!pedited->icm.wtemp) {
+            wtemp->set_active_text(M("GENERAL_UNCHANGED"));
+        }
+		
         gampos->setEditedState(pedited->icm.gampos ? Edited : UnEdited);
         slpos->setEditedState(pedited->icm.slpos  ? Edited : UnEdited);
 
@@ -728,6 +776,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.gamma = wgamma->get_active_text();
     pp->icm.dcpIlluminant = rtengine::max<int>(dcpIll->get_active_row_number(), 0);
     pp->icm.wprimari = wprimari->get_active_text();
+    pp->icm.wtemp = wtemp->get_active_text();
 
     if (onames->get_active_text() == M("TP_ICM_NOICM")) {
         pp->icm.output  = ColorManagementParams::NoICMString;
@@ -773,6 +822,21 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pp->icm.wprimari = "BruceRGB";
     }
 		
+    if (wtemp->get_active_row_number() == 0) {
+        pp->icm.wtemp = "DEF";
+    } else if (wtemp->get_active_row_number() == 1) {
+        pp->icm.wtemp = "D41";
+    } else if (wtemp->get_active_row_number() == 2) {
+        pp->icm.wtemp = "D50";
+    } else if (wtemp->get_active_row_number() == 3) {
+        pp->icm.wtemp = "D55";
+    } else if (wprimari->get_active_row_number() == 4) {
+        pp->icm.wtemp = "D60";
+    } else if (wtemp->get_active_row_number() == 5) {
+        pp->icm.wtemp = "D65";
+    } else if (wtemp->get_active_row_number() == 6) {
+        pp->icm.wtemp = "D80";
+    }
 	
     pp->icm.freegamma = freegamma->get_active();
     pp->icm.toneCurve = ckbToneCurve->get_active();
@@ -800,6 +864,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.slpos = slpos->getEditedState();
         pedited->icm.wprimari = wprimari->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.wprofile = wprofile->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->icm.wtemp = wtemp->get_active_text() != M("GENERAL_UNCHANGED");
     }
 }
 
@@ -840,7 +905,8 @@ void ICMPanel::adjusterChanged(Adjuster* a, double newval)
 
 void ICMPanel::wpChanged()
 {
-
+	if(wprofile->get_active_row_number() == 2) {wtemp->set_sensitive(true);}
+	else {wtemp->set_sensitive(false);}
     if (listener) {
         listener->panelChanged(EvWProfile, wnames->get_active_text());
     }
@@ -854,11 +920,24 @@ void ICMPanel::wprimariChanged()
     }
 }
 
+void ICMPanel::wtempChanged()
+{
+	if(wprofile->get_active_row_number() == 2){wtemp->set_sensitive(true);}
+	else {wtemp->set_sensitive(false);}
+	
+    if (listener) {
+        listener->panelChanged(EvICMtempMethod, wtemp->get_active_text());
+    }
+}
+
 void ICMPanel::wprofileChanged()
 {
+	if(wprofile->get_active_row_number() == 2){wtemp->set_sensitive(true);}
+	else {wtemp->set_sensitive(false);}
 
     if (listener) {
         listener->panelChanged(EvICMprofileMethod, wprofile->get_active_text());
+		
     }
 }
 
@@ -1030,6 +1109,10 @@ void ICMPanel::ipChanged()
 
 void ICMPanel::GamChanged()
 {
+		
+	if(wprofile->get_active_row_number() == 2) {wtemp->set_sensitive(true);}
+	else {wtemp->set_sensitive(false);}
+
     if (multiImage) {
         if (freegamma->get_inconsistent()) {
             freegamma->set_inconsistent(false);
@@ -1056,9 +1139,12 @@ void ICMPanel::GamChanged()
                 slpos->set_sensitive(true);
                 wprimari->set_sensitive(true);
                 wprofile->set_sensitive(true);
+				//wtemp->set_sensitive(true);
+				if(wprofile->get_active_row_number() == 2) wtemp->set_sensitive(true);
 				priHBox->set_sensitive(true);
 				gaHBox->set_sensitive(true);
 				profHBox->set_sensitive(true);
+				tempHBox->set_sensitive(true);
             }
         } else {
             listener->panelChanged(EvGAMFREE, M("GENERAL_DISABLED"));
@@ -1070,9 +1156,12 @@ void ICMPanel::GamChanged()
                 slpos->set_sensitive(false);
                 wprimari->set_sensitive(false);
                 wprofile->set_sensitive(false);
+				if(wprofile->get_active_row_number() != 2) wtemp->set_sensitive(false);
+				//wtemp->set_sensitive(false);
 				priHBox->set_sensitive(false);
 				gaHBox->set_sensitive(false);
 				profHBox->set_sensitive(false);
+				tempHBox->set_sensitive(false);
 				
             }
         }
@@ -1252,6 +1341,7 @@ void ICMPanel::setBatchMode(bool batchMode)
     wgamma->append(M("GENERAL_UNCHANGED"));
     wprimari->append(M("GENERAL_UNCHANGED"));
     wprofile->append(M("GENERAL_UNCHANGED"));
+    wtemp->append(M("GENERAL_UNCHANGED"));
     dcpIll->append(M("GENERAL_UNCHANGED"));
     gampos->showEditedCB();
     slpos->showEditedCB();
