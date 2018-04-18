@@ -38,7 +38,7 @@
 AppId={#MyAppName}{#MyAppVersion}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-VersionInfoVersion={#MyAppVersionNumeric}
+;VersionInfoVersion={#MyAppVersionNumeric}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
