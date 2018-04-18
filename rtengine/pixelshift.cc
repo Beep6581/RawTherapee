@@ -577,7 +577,7 @@ BENCHFUN
         eperIsoModel = ePerIsoK70;
     }
 
-    eperIsoModel *= pow(2.f, eperIso);
+    eperIsoModel *= pow(2.f, eperIso - 1.f);
 
     eperIso = eperIsoModel * (100.f / (rawWpCorrection * idata->getISOSpeed()));
 
