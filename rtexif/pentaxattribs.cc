@@ -44,6 +44,7 @@ public:
         choices[5] = "Premium";
         choices[6] = "RAW (HDR enabled)";
         choices[7] = "RAW (pixel shift enabled)";
+        choices[8] = "RAW (pixel shift handheld mode enabled)";
         choices[65535] = "n/a";
     }
 };

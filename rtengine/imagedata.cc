@@ -506,7 +506,7 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
 
         if (!isHDR) {
             const rtexif::Tag* const q = mnote->findTag("Quality");
-            if (q && q->toInt() == 7) {
+            if (q && (q->toInt() == 7 || q->toInt() == 8)) {
                 isPixelShift = true;
 #if PRINT_HDR_PS_DETECTION
                 printf("PixelShift detected ! -> \"Quality\" = 7\n");
@@ -692,6 +692,10 @@ bool FrameData::getHDR () const
 {
     return isHDR;
 }
+std::string FrameData::getImageType () const
+{
+    return isPixelShift ? "PS" : isHDR ? "HDR" : "STD";
+}
 IIOSampleFormat FrameData::getSampleFormat () const
 {
     return sampleFormat;
@@ -787,25 +791,28 @@ FrameData *FramesData::getFrameData (unsigned int frame) const
     return frames.empty() || frame >= frames.size() ? nullptr : frames.at(frame);
 }
 
-bool FramesData::getPixelShift (unsigned int frame) const
+bool FramesData::getPixelShift () const
 {
-    // So far only Pentax and Sony provide multi-frame HDR file.
-    // Only the first frame contains the HDR tag
+    // So far only Pentax and Sony provide multi-frame Pixel Shift files.
+    // Only the first frame contains the Pixel Shift tag
     // If more brand have to be supported, this rule may need
     // to evolve
 
-    //return frames.at(frame)->getPixelShift ();
-    return frames.empty() || frame >= frames.size()  ? false : frames.at(0)->getPixelShift ();
+    return frames.empty() ? false : frames.at(0)->getPixelShift ();
 }
 bool FramesData::getHDR (unsigned int frame) const
 {
-    // So far only Pentax provide multi-frame HDR file.
+    // So far only Pentax provides multi-frame HDR file.
     // Only the first frame contains the HDR tag
     // If more brand have to be supported, this rule may need
     // to evolve
 
-    //return frames.at(frame)->getHDR ();
     return frames.empty() || frame >= frames.size()  ? false : frames.at(0)->getHDR ();
+}
+
+std::string FramesData::getImageType (unsigned int frame) const
+{
+    return frames.empty() || frame >= frames.size() ? "STD" : frames.at(0)->getImageType();
 }
 
 IIOSampleFormat FramesData::getSampleFormat (unsigned int frame) const
