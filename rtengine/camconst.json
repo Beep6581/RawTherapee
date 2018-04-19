@@ -2004,6 +2004,11 @@ Camera constants:
         "ranges": { "white": 4080 } // nominal at ISO200 4094
     },
 
+    {
+        "make_model": [ "PENTAX K-S1" ],
+        "raw_crop": [ 0, 0, -8, 0 ]
+    },
+
     { // Quality B, Intemediate ISO samples missing, Pentax_DNG WLtags are after BL sutraction and not valid
         "make_model": [ "RICOH PENTAX K-70", "PENTAX K-70" ],
         //"dcraw_matrix": [ 8050,-2061,-1264,-4359,12953,1515,-1096,1965,6075 ], // PENTAX DNG D65
