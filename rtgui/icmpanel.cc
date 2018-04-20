@@ -326,6 +326,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wtemp->append(M("TP_GAMMA_TEMP_60"));
     wtemp->append(M("TP_GAMMA_TEMP_65"));
     wtemp->append(M("TP_GAMMA_TEMP_80"));
+    wtemp->append(M("TP_GAMMA_TEMP_INC"));
+	
     wtemp->set_active(0);
     wtemp->set_tooltip_text(M("TP_GAMMA_TEMP_TOOLTIP"));
 
@@ -643,6 +645,8 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wtemp->set_active(5);
     } else if (pp->icm.wtemp == "D80") {
         wtemp->set_active(6);
+    } else if (pp->icm.wtemp == "INC") {
+        wtemp->set_active(7);
     }
 
 
@@ -836,6 +840,8 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pp->icm.wtemp = "D65";
     } else if (wtemp->get_active_row_number() == 6) {
         pp->icm.wtemp = "D80";
+    } else if (wtemp->get_active_row_number() == 7) {
+        pp->icm.wtemp = "INC";
     }
 	
     pp->icm.freegamma = freegamma->get_active();

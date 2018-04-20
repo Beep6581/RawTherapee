@@ -1440,11 +1440,13 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         } else if (icm.wtemp == "D55") {
             tempv4 = 5500.;
         } else if (icm.wtemp == "D60") {
-            tempv4 = 6005.;
+            tempv4 = 6004.;
         } else if (icm.wtemp == "D65") {
             tempv4 = 6504.;
         } else if (icm.wtemp == "D80") {
             tempv4 = 8000.;
+        } else if (icm.wtemp == "INC") {
+            tempv4 = 5003.;
         }
 
     }
@@ -1454,7 +1456,8 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
     } else {
         cmsWhitePointFromTemp(&xyD, (double)temp);
     }
-
+	
+	if (icm.wtemp == "INC") xyD = {0.447573, 0.407440, 1.0};
 
     // cmsWhitePointFromTemp(&xyD, (double)temp);
 
@@ -1589,6 +1592,8 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             outPr = outPr + "D65";
         } else if (icm.wtemp == "D80") {
             outPr = outPr + "D80";
+        } else if (icm.wtemp == "INC") {
+            outPr = outPr + "INC";
         }
 		//	printf("outpr=%s \n",outPr.c_str());
 
@@ -1771,13 +1776,15 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             } else if (icm.wtemp == "D55") {
                 tempv4 = 5500.;
             } else if (icm.wtemp == "D60") {
-                tempv4 = 6005.;
+                tempv4 = 6004.;
             } else if (icm.wtemp == "D65") {
                 tempv4 = 6504.;
             } else if (icm.wtemp == "D80") {
                 tempv4 = 8000.;
+            } else if (icm.wtemp == "INC") {
+                tempv4 = 5003.;
             }
-			printf("tempv4=%f \n", tempv4);
+			//printf("tempv4=%f \n", tempv4);
 
         }
 
@@ -1786,6 +1793,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         } else {
             cmsWhitePointFromTemp(&xyD, (double)temp);
         }
+		if (icm.wtemp == "INC") xyD = {0.447573, 0.407440, 1.0};
 
         cmsToneCurve* GammaTRC[3];
 
