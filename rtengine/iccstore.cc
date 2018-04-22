@@ -1398,6 +1398,13 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[3] = 0.8404;
         p[4] = 0.0366;
         p[5] = 0.0001;
+    } else if (icm.wprimari == "pfree") {
+        p[0] = icm.predx;
+        p[1] = icm.predy;
+        p[2] = icm.pgrex;
+        p[3] = icm.pgrey;
+        p[4] = icm.pblux;
+        p[5] = icm.pbluy;	
     } else {
         p[0] = 0.7347;    //default primaries
         p[1] = 0.2653;
@@ -1524,6 +1531,11 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     } else if (icm.wprimari == "acesp1"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp1)) {
         outProfile = options.rtSettings.ACESp1;
         outPr = "RT_acesp1";
+    } else if (icm.wprimari == "pfree") {
+        outProfile = options.rtSettings.srgb;
+		printf("PFRRE\n");
+        outPr = "RT_pfree";
+		
     } else {
         // Should not occurs
         if (settings->verbose) {
@@ -1751,6 +1763,14 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             p[3] = 0.8404;
             p[4] = 0.0366;
             p[5] = 0.0001;
+        } else if (icm.wprimari == "pfree") {
+            p[0] = icm.predx;
+            p[1] = icm.predy;
+            p[2] = icm.pgrex;
+            p[3] = icm.pgrey;
+            p[4] = icm.pblux;
+            p[5] = icm.pbluy;
+			
         } else {
             p[0] = 0.7347;    //default primaries
             p[1] = 0.2653;

@@ -389,6 +389,12 @@ void ParamsEdited::set(bool v)
     icm.freegamma   = v;
     icm.gampos      = v;
     icm.slpos       = v;
+    icm.predx       = v;
+    icm.predy       = v;
+    icm.pgrex       = v;
+    icm.pgrey       = v;
+    icm.pblux       = v;
+    icm.pbluy       = v;
     icm.wprimari       = v;
     icm.wprofile       = v;
     icm.wtemp       = v;
@@ -939,6 +945,13 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.freegamma = icm.freegamma && p.icm.freegamma == other.icm.freegamma;
         icm.gampos = icm.gampos && p.icm.gampos == other.icm.gampos;
         icm.slpos = icm.slpos && p.icm.slpos == other.icm.slpos;
+        icm.predx = icm.predx && p.icm.predx == other.icm.predx;
+        icm.predy = icm.predy && p.icm.predy == other.icm.predy;
+        icm.pgrex = icm.pgrex && p.icm.pgrex == other.icm.pgrex;
+        icm.pgrey = icm.pgrey && p.icm.pgrey == other.icm.pgrey;
+        icm.pblux = icm.pblux && p.icm.pblux == other.icm.pblux;
+        icm.pbluy = icm.pbluy && p.icm.pbluy == other.icm.pbluy;
+		
         icm.wprimari = icm.wprimari && p.icm.wprimari == other.icm.wprimari;
         icm.wprofile = icm.wprofile && p.icm.wprofile == other.icm.wprofile;
         icm.wtemp = icm.wtemp && p.icm.wtemp == other.icm.wtemp;
@@ -2442,6 +2455,30 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (icm.slpos) {
         toEdit.icm.slpos      = dontforceSet && options.baBehav[ADDSET_FREE_OUTPUT_SLOPE] ? toEdit.icm.slpos + mods.icm.slpos : mods.icm.slpos;
+    }
+
+    if (icm.predx) {
+        toEdit.icm.predx        = mods.icm.predx;
+    }
+
+    if (icm.predy) {
+        toEdit.icm.predy        = mods.icm.predy;
+    }
+
+    if (icm.pgrex) {
+        toEdit.icm.pgrex        = mods.icm.pgrex;
+    }
+
+    if (icm.pgrey) {
+        toEdit.icm.pgrey        = mods.icm.pgrey;
+    }
+	
+    if (icm.pblux) {
+        toEdit.icm.pblux        = mods.icm.pblux;
+    }
+
+    if (icm.pbluy) {
+        toEdit.icm.pbluy        = mods.icm.pbluy;
     }
 
     if (icm.gamma) {

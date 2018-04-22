@@ -37,6 +37,12 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     EvICMprimariMethod = m->newEvent(GAMMA, "HISTORY_MSG_ICMPRIMARI");
     EvICMprofileMethod = m->newEvent(GAMMA, "HISTORY_MSG_ICMPROFILE");
     EvICMtempMethod = m->newEvent(GAMMA, "HISTORY_MSG_ICMTEMP");
+    EvICMpredx = m->newEvent(GAMMA, "HISTORY_MSG_ICMPREDX");
+    EvICMpredy = m->newEvent(GAMMA, "HISTORY_MSG_ICMPREDY");
+    EvICMpgrex = m->newEvent(GAMMA, "HISTORY_MSG_ICMPGREX");
+    EvICMpgrey = m->newEvent(GAMMA, "HISTORY_MSG_ICMPGREY");
+    EvICMpblux = m->newEvent(GAMMA, "HISTORY_MSG_ICMPBLUX");
+    EvICMpbluy = m->newEvent(GAMMA, "HISTORY_MSG_ICMPBLUY");
 
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = lastgamfree = false;
 
@@ -269,8 +275,45 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wprimari->append(M("TP_GAMMA_PRIM_BEST"));
     wprimari->append(M("TP_GAMMA_PRIM_BETA"));
     wprimari->append(M("TP_GAMMA_PRIM_BRUCE"));
+    wprimari->append(M("TP_GAMMA_PRIM_FREE"));
     wprimari->set_active(5);
 
+	prifreeVBox = Gtk::manage(new Gtk::VBox());
+    Gtk::Image* gamuts0 =  Gtk::manage (new RTImage ("rt-logo-tiny.png"));
+    Gtk::Image* gamutl0 =  Gtk::manage (new RTImage ("rt-logo-small.png"));
+    Gtk::Image* gamuts1 =  Gtk::manage (new RTImage ("rt-logo-tiny.png"));
+    Gtk::Image* gamutl1 =  Gtk::manage (new RTImage ("rt-logo-small.png"));
+    Gtk::Image* gamuts2 =  Gtk::manage (new RTImage ("rt-logo-tiny.png"));
+    Gtk::Image* gamutl2 =  Gtk::manage (new RTImage ("rt-logo-small.png"));
+    Gtk::Image* gamuts3 =  Gtk::manage (new RTImage ("rt-logo-tiny.png"));
+    Gtk::Image* gamutl3 =  Gtk::manage (new RTImage ("rt-logo-small.png"));
+    Gtk::Image* gamuts4 =  Gtk::manage (new RTImage ("rt-logo-tiny.png"));
+    Gtk::Image* gamutl4 =  Gtk::manage (new RTImage ("rt-logo-small.png"));
+    Gtk::Image* gamuts5 =  Gtk::manage (new RTImage ("rt-logo-tiny.png"));
+    Gtk::Image* gamutl5 =  Gtk::manage (new RTImage ("rt-logo-small.png"));
+
+    predx = Gtk::manage(new Adjuster(M("TP_GAMMA_PRIM_REDX"), 0.6300, 0.7350, 0.0001, 0.6400, gamuts0, gamutl0));
+    predy = Gtk::manage(new Adjuster(M("TP_GAMMA_PRIM_REDY"), 0.2650, 0.3350, 0.0001, 0.3300, gamutl1, gamuts1));
+    pgrex = Gtk::manage(new Adjuster(M("TP_GAMMA_PRIM_GREX"), 0.0000, 0.3100, 0.0001, 0.3000, gamutl2, gamuts2));
+    pgrey = Gtk::manage(new Adjuster(M("TP_GAMMA_PRIM_GREY"), 0.5900, 1.0000, 0.0001, 0.6000, gamuts3, gamutl3));
+    pblux = Gtk::manage(new Adjuster(M("TP_GAMMA_PRIM_BLUX"), 0.0001, 0.1600, 0.0001, 0.1500, gamutl4, gamuts4));
+    pbluy = Gtk::manage(new Adjuster(M("TP_GAMMA_PRIM_BLUY"), -0.0700, 0.0700, 0.0001, 0.060, gamutl5, gamuts5));
+
+
+    prifreeVBox->pack_start(*predx, Gtk::PACK_SHRINK);
+    prifreeVBox->pack_start(*predy, Gtk::PACK_SHRINK);
+    prifreeVBox->pack_start(*pgrex, Gtk::PACK_SHRINK);
+    prifreeVBox->pack_start(*pgrey, Gtk::PACK_SHRINK);
+    prifreeVBox->pack_start(*pblux, Gtk::PACK_SHRINK);
+    prifreeVBox->pack_start(*pbluy, Gtk::PACK_SHRINK);
+    fgVBox->pack_start(*prifreeVBox, Gtk::PACK_SHRINK);
+	
+    predx->setAdjusterListener(this);
+    predy->setAdjusterListener(this);
+    pgrex->setAdjusterListener(this);
+    pgrey->setAdjusterListener(this);
+    pblux->setAdjusterListener(this);
+    pbluy->setAdjusterListener(this);
 	
 	//sliders gampos and slpos
     fgVBox->pack_start(*gaHBox, Gtk::PACK_EXPAND_WIDGET);
@@ -629,8 +672,13 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wprimari->set_active(8);
     } else if (pp->icm.wprimari == "BruceRGB") {
         wprimari->set_active(9);
-    }
+     } else if (pp->icm.wprimari == "pfree") {
+        wprimari->set_active(10);
+   }
+	if(wprimari->get_active_row_number() == 10) prifreeVBox->set_sensitive(true);
+	else prifreeVBox->set_sensitive(false);
 
+   
     if (pp->icm.wtemp == "DEF") {
         wtemp->set_active(0);
     } else if (pp->icm.wtemp == "D41") {
@@ -661,7 +709,8 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 	gpChanged();
 	wprofileChanged();
 	wtempChanged();
-
+	wprimariChanged();
+	
     if (pp->icm.output == ColorManagementParams::NoICMString) {
         onames->set_active_text(M("TP_ICM_NOICM"));
     } else {
@@ -705,6 +754,12 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     gampos->setValue(pp->icm.gampos);
     slpos->setValue(pp->icm.slpos);
+    predx->setValue(pp->icm.predx);
+    predy->setValue(pp->icm.predy);
+    pgrex->setValue(pp->icm.pgrex);
+    pgrey->setValue(pp->icm.pgrey);
+    pblux->setValue(pp->icm.pblux);
+    pbluy->setValue(pp->icm.pbluy);
 
     if (pedited) {
         iunchanged->set_active(!pedited->icm.input);
@@ -749,6 +804,12 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 		
         gampos->setEditedState(pedited->icm.gampos ? Edited : UnEdited);
         slpos->setEditedState(pedited->icm.slpos  ? Edited : UnEdited);
+        predx->setEditedState(pedited->icm.predx  ? Edited : UnEdited);
+        predy->setEditedState(pedited->icm.predy  ? Edited : UnEdited);
+        pgrex->setEditedState(pedited->icm.pgrex  ? Edited : UnEdited);
+        pgrey->setEditedState(pedited->icm.pgrey  ? Edited : UnEdited);
+        pblux->setEditedState(pedited->icm.pblux  ? Edited : UnEdited);
+        pbluy->setEditedState(pedited->icm.pbluy  ? Edited : UnEdited);
 
     }
 
@@ -824,6 +885,8 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pp->icm.wprimari = "BetaRGB";
     } else if (wprimari->get_active_row_number() == 9) {
         pp->icm.wprimari = "BruceRGB";
+    } else if (wprimari->get_active_row_number() == 10) {
+        pp->icm.wprimari = "pfree";
     }
 		
     if (wtemp->get_active_row_number() == 0) {
@@ -834,7 +897,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pp->icm.wtemp = "D50";
     } else if (wtemp->get_active_row_number() == 3) {
         pp->icm.wtemp = "D55";
-    } else if (wprimari->get_active_row_number() == 4) {
+    } else if (wtemp->get_active_row_number() == 4) {
         pp->icm.wtemp = "D60";
     } else if (wtemp->get_active_row_number() == 5) {
         pp->icm.wtemp = "D65";
@@ -852,6 +915,12 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.gampos = (double) gampos->getValue();
     pp->icm.slpos = (double) slpos->getValue();
     pp->icm.outputBPC = obpc->get_active();
+    pp->icm.predx = (double) predx->getValue();
+    pp->icm.predy = (double) predy->getValue();
+    pp->icm.pgrex = (double) pgrex->getValue();
+    pp->icm.pgrey = (double) pgrey->getValue();
+    pp->icm.pblux = (double) pblux->getValue();
+    pp->icm.pbluy = (double) pbluy->getValue();
 
     if (pedited) {
         pedited->icm.input = !iunchanged->get_active();
@@ -868,6 +937,13 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.freegamma = !freegamma->get_inconsistent();
         pedited->icm.gampos = gampos->getEditedState();
         pedited->icm.slpos = slpos->getEditedState();
+        pedited->icm.predx = predx->getEditedState();
+        pedited->icm.predy = predy->getEditedState();
+        pedited->icm.pgrex = pgrex->getEditedState();
+        pedited->icm.pgrey = pgrey->getEditedState();
+        pedited->icm.pblux = pblux->getEditedState();
+        pedited->icm.pbluy = pbluy->getEditedState();
+		
         pedited->icm.wprimari = wprimari->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.wprofile = wprofile->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.wtemp = wtemp->get_active_text() != M("GENERAL_UNCHANGED");
@@ -878,13 +954,33 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
 {
     gampos->setDefault(defParams->icm.gampos);
     slpos->setDefault(defParams->icm.slpos);
+    predx->setDefault(defParams->icm.predx);
+    predy->setDefault(defParams->icm.predy);
+    pgrex->setDefault(defParams->icm.pgrex);
+    pgrey->setDefault(defParams->icm.pgrey);
+    pblux->setDefault(defParams->icm.pblux);
+    pbluy->setDefault(defParams->icm.pbluy);
 
     if (pedited) {
         gampos->setDefaultEditedState(pedited->icm.gampos ? Edited : UnEdited);
         slpos->setDefaultEditedState(pedited->icm.slpos ? Edited : UnEdited);
+        predx->setDefaultEditedState(pedited->icm.predx ? Edited : UnEdited);
+        predy->setDefaultEditedState(pedited->icm.predy ? Edited : UnEdited);
+        pgrex->setDefaultEditedState(pedited->icm.pgrex ? Edited : UnEdited);
+        pgrey->setDefaultEditedState(pedited->icm.pgrey ? Edited : UnEdited);
+        pblux->setDefaultEditedState(pedited->icm.pblux ? Edited : UnEdited);
+        pbluy->setDefaultEditedState(pedited->icm.pbluy ? Edited : UnEdited);
+		
     } else {
         gampos->setDefaultEditedState(Irrelevant);
         slpos->setDefaultEditedState(Irrelevant);
+        predx->setDefaultEditedState(Irrelevant);
+        predy->setDefaultEditedState(Irrelevant);
+        pgrex->setDefaultEditedState(Irrelevant);
+        pgrey->setDefaultEditedState(Irrelevant);
+        pblux->setDefaultEditedState(Irrelevant);
+        pbluy->setDefaultEditedState(Irrelevant);
+		
     }
 }
 
@@ -905,6 +1001,18 @@ void ICMPanel::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvGAMPOS, costr);
         } else if (a == slpos) {
             listener->panelChanged(EvSLPOS, costr);
+        } else if (a == predx) {
+            listener->panelChanged(EvICMpredx, costr);
+        } else if (a == predy) {
+            listener->panelChanged(EvICMpredy, costr);
+        } else if (a == pgrex) {
+            listener->panelChanged(EvICMpgrex, costr);
+        } else if (a == pgrey) {
+            listener->panelChanged(EvICMpgrey, costr);
+        } else if (a == pblux) {
+            listener->panelChanged(EvICMpblux, costr);
+        } else if (a == pbluy) {
+            listener->panelChanged(EvICMpbluy, costr);
         }
     }
 }
@@ -920,6 +1028,8 @@ void ICMPanel::wpChanged()
 
 void ICMPanel::wprimariChanged()
 {
+	if(wprimari->get_active_row_number() == 10) prifreeVBox->set_sensitive(true);
+	else prifreeVBox->set_sensitive(false);
 
     if (listener) {
         listener->panelChanged(EvICMprimariMethod, wprimari->get_active_text());
@@ -1148,6 +1258,9 @@ void ICMPanel::GamChanged()
 				//wtemp->set_sensitive(true);
 				if(wprofile->get_active_row_number() == 2) wtemp->set_sensitive(true);
 				priHBox->set_sensitive(true);
+				if(wprimari->get_active_row_number() == 10) prifreeVBox->set_sensitive(true);
+				else prifreeVBox->set_sensitive(false);
+				
 				gaHBox->set_sensitive(true);
 				profHBox->set_sensitive(true);
 				tempHBox->set_sensitive(true);
@@ -1165,6 +1278,8 @@ void ICMPanel::GamChanged()
 				if(wprofile->get_active_row_number() != 2) wtemp->set_sensitive(false);
 				//wtemp->set_sensitive(false);
 				priHBox->set_sensitive(false);
+				prifreeVBox->set_sensitive(false);
+				
 				gaHBox->set_sensitive(false);
 				profHBox->set_sensitive(false);
 				tempHBox->set_sensitive(false);

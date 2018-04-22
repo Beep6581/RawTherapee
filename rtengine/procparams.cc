@@ -1959,6 +1959,13 @@ ColorManagementParams::ColorManagementParams() :
     gamma("Free"),
     gampos(2.4),
     slpos(12.92310),
+	predx(0.6400),
+	predy(0.3300),
+	pgrex(0.3000),
+	pgrey(0.6000),
+	pblux(0.1500),
+	pbluy(0.0600),
+	
     wprimari("sRGB"),
     wprofile("none"),
     wtemp("DEF"),
@@ -1982,6 +1989,12 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && gamma == other.gamma
         && gampos == other.gampos
         && slpos == other.slpos
+        && predx == other.predx
+        && predy == other.predy
+        && pgrex == other.pgrex
+        && pgrey == other.pgrey
+        && pblux == other.pblux
+        && pbluy == other.pbluy
         && wprimari == other.wprimari
         && wprofile == other.wprofile
         && wtemp == other.wtemp
@@ -3150,6 +3163,13 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->icm.freegamma, "Color Management", "Freegamma", icm.freegamma, keyFile);
         saveToKeyfile(!pedited || pedited->icm.gampos, "Color Management", "GammaValue", icm.gampos, keyFile);
         saveToKeyfile(!pedited || pedited->icm.slpos, "Color Management", "GammaSlope", icm.slpos, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.predx, "Color Management", "GammaPredx", icm.predx, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.predy, "Color Management", "GammaPredy", icm.predy, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.pgrex, "Color Management", "GammaPgrex", icm.pgrex, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.pgrey, "Color Management", "GammaPgrey", icm.pgrey, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.pblux, "Color Management", "GammaPblux", icm.pblux, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.pbluy, "Color Management", "GammaPbluy", icm.pbluy, keyFile);
+
         saveToKeyfile(!pedited || pedited->icm.wprimari, "Color Management", "GammaPrimari", icm.wprimari, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wtemp, "Color Management", "GammaTemp", icm.wtemp, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wprofile, "Color Management", "GammaProfile", icm.wprofile, keyFile);
@@ -4175,6 +4195,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "Freegamma", pedited, icm.freegamma, pedited->icm.freegamma);
             assignFromKeyfile(keyFile, "Color Management", "GammaValue", pedited, icm.gampos, pedited->icm.gampos);
             assignFromKeyfile(keyFile, "Color Management", "GammaSlope", pedited, icm.slpos, pedited->icm.slpos);
+            assignFromKeyfile(keyFile, "Color Management", "GammaPredx", pedited, icm.predx, pedited->icm.predx);
+            assignFromKeyfile(keyFile, "Color Management", "GammaPredy", pedited, icm.predy, pedited->icm.predy);
+            assignFromKeyfile(keyFile, "Color Management", "GammaPgrex", pedited, icm.pgrex, pedited->icm.pgrex);
+            assignFromKeyfile(keyFile, "Color Management", "GammaPgrey", pedited, icm.pgrey, pedited->icm.pgrey);
+            assignFromKeyfile(keyFile, "Color Management", "GammaPblux", pedited, icm.pblux, pedited->icm.pblux);
+            assignFromKeyfile(keyFile, "Color Management", "GammaPbluy", pedited, icm.pbluy, pedited->icm.pbluy);
+			
             assignFromKeyfile(keyFile, "Color Management", "GammaPrimari", pedited, icm.wprimari, pedited->icm.wprimari);
             assignFromKeyfile(keyFile, "Color Management", "GammaProfile", pedited, icm.wprofile, pedited->icm.wprofile);
             assignFromKeyfile(keyFile, "Color Management", "GammaTemp", pedited, icm.wtemp, pedited->icm.wtemp);

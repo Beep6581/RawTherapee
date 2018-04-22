@@ -588,6 +588,12 @@ public:
     bool gamma;
     bool gampos;
     bool slpos;
+    bool predx;
+    bool predy;
+    bool pgrex;
+    bool pgrey;
+    bool pblux;
+    bool pbluy;
     bool freegamma;
     bool wprimari;
     bool wprofile;

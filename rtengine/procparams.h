@@ -1021,6 +1021,13 @@ struct ColorManagementParams {
     Glib::ustring gamma;
     double gampos;
     double slpos;
+    double predx;
+    double predy;
+    double pgrex;
+    double pgrey;
+    double pblux;
+    double pbluy;
+	
     Glib::ustring wprimari;
     Glib::ustring wprofile;
     Glib::ustring wtemp;

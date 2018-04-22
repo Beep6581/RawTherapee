@@ -43,6 +43,14 @@ protected:
     Gtk::Frame*        dcpFrame;
     Adjuster* gampos;
     Adjuster* slpos;
+    Adjuster* predx;
+    Adjuster* predy;
+    Adjuster* pgrex;
+    Adjuster* pgrey;
+    Adjuster* pblux;
+    Adjuster* pbluy;
+	
+	
     bool lastgamfree;
     sigc::connection  gamcsconn;
     //bool freegamma;
@@ -62,12 +70,19 @@ private:
     rtengine::ProcEvent EvICMprimariMethod;
     rtengine::ProcEvent EvICMprofileMethod;
     rtengine::ProcEvent EvICMtempMethod;
+    rtengine::ProcEvent EvICMpredx;
+    rtengine::ProcEvent EvICMpredy;
+    rtengine::ProcEvent EvICMpgrex;
+    rtengine::ProcEvent EvICMpgrey;
+    rtengine::ProcEvent EvICMpblux;
+    rtengine::ProcEvent EvICMpbluy;
 
     Gtk::VBox       *  iVBox;
     Gtk::HBox* priHBox;
     Gtk::HBox* gaHBox;
     Gtk::HBox* profHBox;
     Gtk::HBox* tempHBox;
+    Gtk::VBox* prifreeVBox;
 
     Gtk::CheckButton*  obpc;
     Gtk::CheckButton*  freegamma;
