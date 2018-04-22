@@ -49,31 +49,12 @@ protected:
     CheckBox* pixelShiftBlur;
     CheckBox* pixelShiftHoleFill;
     CheckBox* pixelShiftMedian;
-//    CheckBox* pixelShiftOneGreen;
     CheckBox* pixelShiftLmmse;
     CheckBox* pixelShiftEqualBright;
     CheckBox* pixelShiftEqualBrightChannel;
     Adjuster* pixelShiftSmooth;
     Adjuster* pixelShiftEperIso;
     Adjuster* pixelShiftSigma;
-#ifdef PIXELSHIFTDEV
-    Adjuster* pixelShiftSum;
-    Adjuster* pixelShiftMotion;
-    MyComboBoxText* pixelShiftMotionCorrection;
-    CheckBox* pixelShiftAutomatic;
-    CheckBox* pixelShiftNonGreenHorizontal;
-    CheckBox* pixelShiftNonGreenVertical;
-    CheckBox* pixelShiftNonGreenCross2;
-    CheckBox* pixelShiftNonGreenAmaze;
-    CheckBox* pixelShiftExp0;
-    CheckBox* pixelShiftMedian3;
-    Adjuster* pixelShiftStddevFactorGreen;
-    Adjuster* pixelShiftStddevFactorRed;
-    Adjuster* pixelShiftStddevFactorBlue;
-    Adjuster* pixelShiftNreadIso;
-    Adjuster* pixelShiftPrnu;
-    Adjuster* pixelShiftRedBlueWeight;
-#endif
     int oldMethod;
 
     IdleRegister idle_register;
@@ -92,9 +73,6 @@ public:
     void checkBoxToggled (CheckBox* c, CheckValue newval);
     void pixelShiftMotionMethodChanged();
     void FrameCountChanged(int n, int frameNum);
-#ifdef PIXELSHIFTDEV
-    void psMotionCorrectionChanged ();
-#endif
 };
 
 #endif
