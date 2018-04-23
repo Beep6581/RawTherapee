@@ -2238,6 +2238,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Equalize per channel
 !TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the RGB channels individually.\nDisabled: Use same equalization factor for all channels.
 !TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a green mask showing the regions with motion.
+!TP_RAW_RCD;RCD
 !TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
 !TP_RETINEX_GAINTRANSMISSION;Gain transmission
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce transmission map to achieve luminance.\nAbscissa: transmission -min from 0, mean, and values (max).\nOrdinate: gain.

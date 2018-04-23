@@ -1955,6 +1955,7 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;The default radius of 1.0 usually fits well for base ISO.\nIncrease the value for high ISO shots, 5.0 is a good starting point.\nWatch the motion mask while changing the value.
 !TP_RAW_PIXELSHIFTSMOOTH;Smooth transitions
 !TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Smooth transitions between areas with motion and areas without.\nSet to 0 to disable transition smoothing.\nSet to 1 to either get the AMaZE/LMMSE result of the selected frame (depending on whether "Use LMMSE" is selected), or the median of all four frames if "Use median" is selected.
+!TP_RAW_RCD;RCD
 !TP_RAW_SENSOR_BAYER_LABEL;Sensor with Bayer Matrix
 !TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.
 !TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix
