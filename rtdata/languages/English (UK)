@@ -1794,8 +1794,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_RAW_PIXELSHIFT;Pixel Shift
 !TP_RAW_PIXELSHIFTADAPTIVE;Adaptive detection
 !TP_RAW_PIXELSHIFTBLUR;Blur motion mask
-!TP_RAW_PIXELSHIFTEPERISO;ISO adaption
-!TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value of 0 should work fine for base ISO.\nIncrease the value to improve motion detection for higher ISO.\nIncrease in small steps and watch the motion mask while increasing.
 !TP_RAW_PIXELSHIFTEQUALBRIGHT;Equalize brightness of frames
 !TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Equalize per channel
 !TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the RGB channels individually.\nDisabled: Use same equalization factor for all channels.
@@ -1831,7 +1829,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_RAW_PIXELSHIFTSHOWMOTION;Show motion mask
 !TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Show only motion mask
 !TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Shows the motion mask without the image.
-!TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a mask showing the regions with motion.
 !TP_RAW_PIXELSHIFTSIGMA;Blur radius
 !TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;The default radius of 1.0 usually fits well for base ISO.\nIncrease the value for high ISO shots, 5.0 is a good starting point.\nWatch the motion mask while changing the value.
 !TP_RAW_PIXELSHIFTSMOOTH;Smooth transitions

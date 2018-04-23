@@ -1845,8 +1845,6 @@ TP_RAW_NONE;Keine
 TP_RAW_PIXELSHIFT;Pixel Shift
 TP_RAW_PIXELSHIFTADAPTIVE;Adaptive Erkennung
 TP_RAW_PIXELSHIFTBLUR;Unschärfebewegungsmaske
-TP_RAW_PIXELSHIFTEPERISO;ISO-Anpassung
-TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;Der Standardwert (0.0) empfiehlt sich für die Basis-ISO.\nErhöhen Sie den Wert, um die Bewegungserkennung für höhere ISO-Werte zu verbessern.\nErhöhen Sie den Wert nur in kleinen Schritten und achten Sie dabei auf die Bewegungsmaske.
 TP_RAW_PIXELSHIFTEQUALBRIGHT;Frame-Helligkeit angleichen
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Ausgleich pro Kanal
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;EIN: Individueller Ausgleich der RGB-Kanäle.\nAUS: Identischer Ausgleichsfaktor für alle Kanäle.
@@ -1882,7 +1880,6 @@ TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
 TP_RAW_PIXELSHIFTSHOWMOTION;Bewegungsmaske anzeigen
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Nur Maske anzeigen
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Zeigt die Bewegungsmaske ohne Bild.
-TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Überlagert das Bild mit einer Maske um die\nBereiche mit Bewegung hervorzuheben.
 TP_RAW_PIXELSHIFTSIGMA;Unschärferadius
 TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Der Standard-Radius von 1,0 passt in der Regel für die Basis-ISO.\nErhöhen Sie den Wert für High-ISO-Aufnahmen, 5,0 ist ein guter\nAusgangspunkt für High-ISO-Aufnahmen. Achten Sie auf die\nBewegungsmaske, während Sie den Wert ändern.
 TP_RAW_PIXELSHIFTSMOOTH;Weicher Übergang

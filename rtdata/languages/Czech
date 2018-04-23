@@ -1811,8 +1811,6 @@ TP_RAW_NONE;Žádná (zobrazí strukturu senzoru)
 TP_RAW_PIXELSHIFT;Pixel Shift
 TP_RAW_PIXELSHIFTADAPTIVE;Přizpůsobivá detekce
 TP_RAW_PIXELSHIFTBLUR;Maska pohybové neostrosti
-TP_RAW_PIXELSHIFTEPERISO;Přizpůsobení ISO
-TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;Výchozí hodnota 0 by měla dostačovat pro základní hodnoty ISO.\nDetekci pohybu na vyšších hodnotách ISO vylepšíte navýšením této hodnoty.\nZvyšujte po malých krocích a sledujte přitom masku pohybu.
 TP_RAW_PIXELSHIFTEQUALBRIGHT;Vyrovnat jas snímků
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Korekce po kanálech
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Zapnuto: Nezávislá korekce jednotlivých RGB kanálů.\nVypnuto: Použije se stejná hodnota pro všechny kanály.
@@ -1848,7 +1846,6 @@ TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Váha červené a modré
 TP_RAW_PIXELSHIFTSHOWMOTION;Ukázat masku pohybu
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Ukázat pouze masku pohybu
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Ukázat masku pohybu bez obrázku.
-TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Překryje obrázek maskou, která ukazuje oblasti s pohybem.
 TP_RAW_PIXELSHIFTSIGMA;Poloměr rozostření
 TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Výchozí poloměr 1,0 většinou velmi dobře funguje pro základní ISO.\nU snímků s vysokým ISO poloměr zvětšete. Hodnota 5,0 je dobrým výchozím bodem.\nBěhem změny hodnoty sledujte masku pohybu.
 TP_RAW_PIXELSHIFTSMOOTH;Hladké přechody

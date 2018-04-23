@@ -1776,8 +1776,6 @@ TP_RAW_NONE;Aucun (montre ce que voit le capteur)
 TP_RAW_PIXELSHIFT;Pixel Shift
 TP_RAW_PIXELSHIFTADAPTIVE;Détection adaptative
 TP_RAW_PIXELSHIFTBLUR;Flouter le masque de mouvement
-TP_RAW_PIXELSHIFTEPERISO;Adaptation ISO
-TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;La valeur par défaut de 0 devrait bien fonctionner pour l'ISO de base.\nAugmenter la valeur pour améliorer la détection de mouvement pour les ISO plus haut.\nAugmentez par petit incrément et vérifier le masque de mouvement à chaque itération.
 TP_RAW_PIXELSHIFTEQUALBRIGHT;Égaliser la luminosité des sous-images
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Égaliser par canal
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Activé: Égalise les canaux RVB individuellement.\nDésactivé: Utilise le même facteur d'égalisation pour tous les canaux.
@@ -1813,7 +1811,6 @@ TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Poid Rouge&Bleu
 TP_RAW_PIXELSHIFTSHOWMOTION;Voir le masque de mouvement
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Voir uniquement le masque
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Affiche le masque sans l'image.
-TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Superpose sur l'image le masque montrant les zones avec mouvement.
 TP_RAW_PIXELSHIFTSIGMA;Rayon de floutage
 TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Le rayon par défaut de 1.0 fonctionne généralement bien pour l'ISO de base.\nAugmentez cette valeur pour les images de haut ISO, 5.0 est un bon point de départ.\nContrôlez le masque de mouvement à chaque nouvelle valeur.
 TP_RAW_PIXELSHIFTSMOOTH;Adoucir les transitions

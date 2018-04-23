@@ -1690,8 +1690,6 @@ TP_RAW_NONE;Geen (Toont sensor patroon)
 TP_RAW_PIXELSHIFT;Pixel Verschuiven
 TP_RAW_PIXELSHIFTADAPTIVE;Adaptieve detectie
 TP_RAW_PIXELSHIFTBLUR;Vervaag bewegingsmasker
-TP_RAW_PIXELSHIFTEPERISO;ISO toepassing
-TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;De standaard waarde (0.0) werkt goed voor normale ISO.\nVergroot de waarde om de bewegingsdetectie te verbeteren voor hogere ISO.\nVergroot in kleine stappen en bekijk het bewegingsmasker tijdens het verhogen.
 TP_RAW_PIXELSHIFTEQUALBRIGHT;Balanseer de helderheid van de frames
 TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Balanseer de helderheid van de frames t.o.v. de helderheid van het geslecteerde frame.\nAls er overbelichte gebieden zijn in de frames, selecteer dan het helderste frame om een magenta kleurzweem te vermijden of selecteer bewegingsorrectie.
 TP_RAW_PIXELSHIFTEXP0;Experimenteel
@@ -1723,7 +1721,6 @@ TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Rood&Blauw gewicht
 TP_RAW_PIXELSHIFTSHOWMOTION;Toon beweging
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Toon alleen masker
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Toont het bewegingsmasker zonder de afbeelding
-TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Maakt een doorzichtig masker dat de gebieden toont met beweging
 TP_RAW_PIXELSHIFTSIGMA;Vervagen straal
 TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;De standaard straal van 1.0 is goed voor normale ISO. Verhoog de waarde voor hogere ISO.\n5.0 is een goed startpunt voor hoge ISO afbeeldingen.\nControleer het bewegingsmasker bij het veranderen van de waarde.
 TP_RAW_PIXELSHIFTSMOOTH;Zachte overgang
