@@ -706,6 +706,9 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wprofile->set_active(2);
     }
 
+	
+    if(wprimari->get_active_row_number() == 10) wprofile->set_active(2);
+	
 	gpChanged();
 	wprofileChanged();
 	wtempChanged();
@@ -1030,6 +1033,7 @@ void ICMPanel::wprimariChanged()
 {
 	if(wprimari->get_active_row_number() == 10) prifreeVBox->set_sensitive(true);
 	else prifreeVBox->set_sensitive(false);
+    if(wprimari->get_active_row_number() == 10) wprofile->set_active(2);
 
     if (listener) {
         listener->panelChanged(EvICMprimariMethod, wprimari->get_active_text());
@@ -1040,7 +1044,8 @@ void ICMPanel::wtempChanged()
 {
 	if(wprofile->get_active_row_number() == 2){wtemp->set_sensitive(true);}
 	else {wtemp->set_sensitive(false);}
-	
+	if(wtemp->get_active_row_number() != 0) wprofile->set_active(2);
+
     if (listener) {
         listener->panelChanged(EvICMtempMethod, wtemp->get_active_text());
     }
@@ -1050,6 +1055,7 @@ void ICMPanel::wprofileChanged()
 {
 	if(wprofile->get_active_row_number() == 2){wtemp->set_sensitive(true);}
 	else {wtemp->set_sensitive(false);}
+	if(wtemp->get_active_row_number() != 0) wprofile->set_active(2);
 
     if (listener) {
         listener->panelChanged(EvICMprofileMethod, wprofile->get_active_text());
