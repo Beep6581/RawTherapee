@@ -68,11 +68,25 @@ void ImProcFunctions::shadowsHighlights(LabImage *lab)
             const float gamma = hl ? base : 1.f / base;
 
             LUTf f(32768);
+            const float contrast = std::pow(2.f, float(amount)/100.f);
+            DiagonalCurve sh_contrast({
+                    DCT_NURBS,
+                    0, 0,
+                    0.125, std::pow(0.125 / 0.25, contrast) * 0.25, 
+                    0.25, 0.25,
+                    0.375, std::pow(0.375 / 0.25, contrast) * 0.25,
+                    1, 1
+                });
 #ifdef _OPENMP
             #pragma omp parallel for if (multiThread)
 #endif
             for (int l = 0; l < 32768; ++l) {
-                f[l] = std::pow(l / 32768.f, gamma) * 32768.f;
+                auto base = std::pow(l / 32768.f, gamma);
+                if (!hl) {
+                    // get a bit more contrast in the shadows
+                    base = sh_contrast.getVal(base);
+                }
+                f[l] = base * 32768.f;
             }
             
 #ifdef _OPENMP
