@@ -37,7 +37,7 @@ ShadowsHighlights::ShadowsHighlights () : FoldableToolPanel(this, "shadowshighli
 
     pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
-    radius = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_RADIUS"), 5, 100, 1, 30));
+    radius = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_RADIUS"), 5, 100, 1, 40));
     pack_start (*radius);
 
     radius->setAdjusterListener (this);

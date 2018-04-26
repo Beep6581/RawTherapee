@@ -1165,8 +1165,6 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
     orw = bw;
     orh = bh;
 
-    ProcParams& params = parent->params;
-
     parent->ipf.transCoord (parent->fw, parent->fh, bx1, by1, bw, bh, orx, ory, orw, orh);
 
     if (check_need_larger_crop_for_lcp_distortion (parent->fw, parent->fh, orx, ory, orw, orh, parent->params)) {

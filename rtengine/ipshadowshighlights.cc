@@ -18,12 +18,10 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 #include "improcfun.h"
 #include "gauss.h"
+#include "sleef.c"
+#include "opthelper.h"
 
 namespace rtengine {
 
@@ -38,36 +36,39 @@ void ImProcFunctions::shadowsHighlights(LabImage *lab)
 
     array2D<float> mask(width, height);
     const float sigma = params->sh.radius * 5.f / scale;
+    LUTf f(32768);
 
     const auto apply =
         [&](int amount, int tonalwidth, bool hl) -> void
         {
             const float thresh = tonalwidth * 327.68f;
             const float scale = hl ? (thresh > 0.f ? 0.9f / thresh : 1.f) : thresh * 0.9f;
+
 #ifdef _OPENMP
-            #pragma omp parallel for if (multiThread)
-#endif
-            for (int y = 0; y < height; ++y) {
-                for (int x = 0; x < width; ++x) {
-                    float l = lab->L[y][x];
-                    if (hl) {
-                        mask[y][x] = (l > thresh) ? 1.f : std::pow(l * scale, 4);
-                    } else {
-                        mask[y][x] = l <= thresh ? 1.f : std::pow(scale / l, 4);
-                    }
-                }
-            }
-#ifdef _OPENMP
-            #pragma omp parallel
+            #pragma omp parallel if (multiThread)
 #endif
             {
+
+#ifdef _OPENMP
+                #pragma omp for
+#endif
+                for (int y = 0; y < height; ++y) {
+                    for (int x = 0; x < width; ++x) {
+                        float l = lab->L[y][x];
+                        if (hl) {
+                            mask[y][x] = (l > thresh) ? 1.f : pow4(l * scale);
+                        } else {
+                            mask[y][x] = l <= thresh ? 1.f : pow4(scale / l);
+                        }
+                    }
+                }
+
                 gaussianBlur(mask, mask, width, height, sigma);
             }
 
             const float base = std::pow(4.f, float(amount)/100.f);
             const float gamma = hl ? base : 1.f / base;
 
-            LUTf f(32768);
             const float contrast = std::pow(2.f, float(amount)/100.f);
             DiagonalCurve sh_contrast({
                     DCT_NURBS,
@@ -77,20 +78,41 @@ void ImProcFunctions::shadowsHighlights(LabImage *lab)
                     0.375, std::pow(0.375 / 0.25, contrast) * 0.25,
                     1, 1
                 });
+
+            if(!hl) {
 #ifdef _OPENMP
-            #pragma omp parallel for if (multiThread)
+                #pragma omp parallel for if (multiThread)
 #endif
-            for (int l = 0; l < 32768; ++l) {
-                auto base = std::pow(l / 32768.f, gamma);
-                if (!hl) {
+                for (int l = 0; l < 32768; ++l) {
+                    auto base = pow_F(l / 32768.f, gamma);
                     // get a bit more contrast in the shadows
                     base = sh_contrast.getVal(base);
+                    f[l] = base * 32768.f;
                 }
-                f[l] = base * 32768.f;
-            }
-            
+            } else {
+#ifdef __SSE2__
+                vfloat c32768v = F2V(32768.f);
+                vfloat lv = _mm_setr_ps(0,1,2,3);
+                vfloat fourv = F2V(4.f);
+                vfloat gammav = F2V(gamma);
+                for (int l = 0; l < 32768; l += 4) {
+                    vfloat basev = pow_F(lv / c32768v, gammav);
+                    STVFU(f[l], basev * c32768v);
+                    lv += fourv;
+                }
+#else
 #ifdef _OPENMP
-            #pragma omp parallel for if (multiThread)
+                #pragma omp parallel for if (multiThread)
+#endif
+                for (int l = 0; l < 32768; ++l) {
+                    auto base = pow_F(l / 32768.f, gamma);
+                    f[l] = base * 32768.f;
+                }
+#endif
+            }
+
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
             for (int y = 0; y < height; ++y) {
                 for (int x = 0; x < width; ++x) {
