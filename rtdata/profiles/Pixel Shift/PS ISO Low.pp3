@@ -1,6 +1,6 @@
 [Version]
-AppVersion=5.0-r1-gtk3-503-g9e1fc78
-Version=326
+AppVersion=5.4
+Version=332
 
 [Sharpening]
 Enabled=true

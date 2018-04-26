@@ -1690,8 +1690,6 @@ TP_RAW_NONE;Geen (Toont sensor patroon)
 TP_RAW_PIXELSHIFT;Pixel Verschuiven
 TP_RAW_PIXELSHIFTADAPTIVE;Adaptieve detectie
 TP_RAW_PIXELSHIFTBLUR;Vervaag bewegingsmasker
-TP_RAW_PIXELSHIFTEPERISO;ISO toepassing
-TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;De standaard waarde (0.0) werkt goed voor normale ISO.\nVergroot de waarde om de bewegingsdetectie te verbeteren voor hogere ISO.\nVergroot in kleine stappen en bekijk het bewegingsmasker tijdens het verhogen.
 TP_RAW_PIXELSHIFTEQUALBRIGHT;Balanseer de helderheid van de frames
 TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Balanseer de helderheid van de frames t.o.v. de helderheid van het geslecteerde frame.\nAls er overbelichte gebieden zijn in de frames, selecteer dan het helderste frame om een magenta kleurzweem te vermijden of selecteer bewegingsorrectie.
 TP_RAW_PIXELSHIFTEXP0;Experimenteel
@@ -1723,7 +1721,6 @@ TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Rood&Blauw gewicht
 TP_RAW_PIXELSHIFTSHOWMOTION;Toon beweging
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Toon alleen masker
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Toont het bewegingsmasker zonder de afbeelding
-TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Maakt een doorzichtig masker dat de gebieden toont met beweging
 TP_RAW_PIXELSHIFTSIGMA;Vervagen straal
 TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;De standaard straal van 1.0 is goed voor normale ISO. Verhoog de waarde voor hogere ISO.\n5.0 is een goed startpunt voor hoge ISO afbeeldingen.\nControleer het bewegingsmasker bij het veranderen van de waarde.
 TP_RAW_PIXELSHIFTSMOOTH;Zachte overgang
@@ -2119,6 +2116,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 
 !BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !DONT_SHOW_AGAIN;Don't show this message again.
+!EXIFFILTER_IMAGETYPE;Image type
 !EXIFPANEL_SHOWALL;Show all
 !GENERAL_SLIDER;Slider
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
@@ -2146,7 +2144,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !HISTORY_MSG_491;White Balance
 !HISTORY_MSG_492;RGB Curves
 !HISTORY_MSG_493;L*a*b* Adjustments
-!HISTORY_MSG_CLAMPOOG;Out-of-gamut colours clipping
+!HISTORY_MSG_CLAMPOOG;Out-of-gamut color clipping
 !HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 !HISTORY_MSG_HISTMATCHING;Auto-Matched Tone Curve
 !HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
@@ -2215,7 +2213,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_COLORTONING_LABGRID_VALUES;HL: a=%1 b=%2\nS: a=%3 b=%4
 !TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
 !TP_DIRPYRDENOISE_LABEL;Noise Reduction
-!TP_EXPOSURE_CLAMPOOG;Clip out-of-gamut colours
+!TP_EXPOSURE_CLAMPOOG;Clip out-of-gamut colors
 !TP_EXPOSURE_HISTMATCHING;Auto-Matched Tone Curve
 !TP_EXPOSURE_HISTMATCHING_TOOLTIP;Automatically adjust sliders and curves (except exposure compensation) to match the look of the embedded JPEG thumbnail.
 !TP_LOCALCONTRAST_AMOUNT;Amount
@@ -2235,10 +2233,11 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.
 !TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
+!TP_RAW_PIXELSHIFTEPERISO;Sensitivity
+!TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value of 0 should work fine for base ISO.\nHigher values increase sensitivity of motion detection.\nChange in small steps and watch the motion mask while changing.\nIncrease sensitivity for underexposed or high ISO images.
 !TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Equalize per channel
 !TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the RGB channels individually.\nDisabled: Use same equalization factor for all channels.
-!TP_RAW_PIXELSHIFTONEGREEN;Use one green instead of average
-!TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Use one green instead of averaging two greens for regions without motion.
+!TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a green mask showing the regions with motion.
 !TP_RAW_RCD;RCD
 !TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
 !TP_RETINEX_GAINTRANSMISSION;Gain transmission

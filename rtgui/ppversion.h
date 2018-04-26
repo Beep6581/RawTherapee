@@ -1,13 +1,15 @@
 #pragma once
 
 // This number has to be incremented whenever the PP3 file format is modified or the behaviour of a tool changes
-#define PPVERSION 332
+#define PPVERSION 333
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /*
   Log of version changes
-   332  2018-04-26
+   333  2018-04-26
         new Shadows/Highlights tool
+   332  2018-04-18
+        changed pixelShiftEperIso calculation
    331  2018-02-14
         changed wavelet.Lmethod to int
    330  2018-01-20

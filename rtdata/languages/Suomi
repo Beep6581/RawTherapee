@@ -460,6 +460,7 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
 !EXIFFILTER_EXPOSURECOMPENSATION;Exposure compensation (EV)
 !EXIFFILTER_FILETYPE;File type
+!EXIFFILTER_IMAGETYPE;Image type
 !EXIFFILTER_METADATAFILTER;Enable metadata filters
 !EXIFPANEL_SHOWALL;Show all
 !EXPORT_BYPASS;Processing steps to bypass
@@ -976,7 +977,7 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !HISTORY_MSG_491;White Balance
 !HISTORY_MSG_492;RGB Curves
 !HISTORY_MSG_493;L*a*b* Adjustments
-!HISTORY_MSG_CLAMPOOG;Out-of-gamut colours clipping
+!HISTORY_MSG_CLAMPOOG;Out-of-gamut color clipping
 !HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 !HISTORY_MSG_HISTMATCHING;Auto-Matched Tone Curve
 !HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
@@ -1621,7 +1622,7 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !TP_EPD_STRENGTH;Strength
 !TP_EPD_TOOLTIP;Tone mapping is possible in L*a*b* mode (standard) and CIECAM02 mode.\n\nWhen in L*a*b* mode, tone mapping can also be used on the residual image of the Wavelet Levels tool.\n\nTo engage CIECAM02 tone mapping mode enable the following settings:\n1. CIECAM02\n2. Algorithm="Brightness + Colorfulness (QM)"\n3. "Tone mapping using CIECAM02 brightness (Q)"
 !TP_EXPOSURE_AUTOLEVELS_TIP;Toggles execution of Auto Levels to automatically set Exposure slider values based on an image analysis.\nEnables Highlight Reconstruction if necessary.
-!TP_EXPOSURE_CLAMPOOG;Clip out-of-gamut colours
+!TP_EXPOSURE_CLAMPOOG;Clip out-of-gamut colors
 !TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in Auto Levels operation.
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight compression threshold
 !TP_EXPOSURE_CURVEEDITOR1;Tone curve 1
@@ -1831,53 +1832,34 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !TP_RAW_MONO;Mono
 !TP_RAW_NONE;None (Shows sensor pattern)
 !TP_RAW_PIXELSHIFT;Pixel Shift
-!TP_RAW_PIXELSHIFTADAPTIVE;Adaptive detection
 !TP_RAW_PIXELSHIFTBLUR;Blur motion mask
-!TP_RAW_PIXELSHIFTEPERISO;ISO adaption
-!TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value of 0 should work fine for base ISO.\nIncrease the value to improve motion detection for higher ISO.\nIncrease in small steps and watch the motion mask while increasing.
+!TP_RAW_PIXELSHIFTEPERISO;Sensitivity
+!TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value of 0 should work fine for base ISO.\nHigher values increase sensitivity of motion detection.\nChange in small steps and watch the motion mask while changing.\nIncrease sensitivity for underexposed or high ISO images.
 !TP_RAW_PIXELSHIFTEQUALBRIGHT;Equalize brightness of frames
 !TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Equalize per channel
 !TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the RGB channels individually.\nDisabled: Use same equalization factor for all channels.
-!TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Equalize the brightness of the frames to the brightness of the selected frame.\nIf there are overexposed areas in the frames select the brightest frame to avoid magenta colour cast in overexposed areas or enable motion correction.
-!TP_RAW_PIXELSHIFTEXP0;Experimental
+!TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Equalize the brightness of the frames to the brightness of the selected frame.\nIf there are overexposed areas in the frames select the brightest frame to avoid magenta color cast in overexposed areas or enable motion correction.
 !TP_RAW_PIXELSHIFTGREEN;Check green channel for motion
 !TP_RAW_PIXELSHIFTHOLEFILL;Fill holes in motion mask
 !TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fill holes in motion mask
 !TP_RAW_PIXELSHIFTLMMSE;Use LMMSE for moving parts
 !TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Use LMMSE instead of AMaZE for areas of motion.\nUseful for high ISO images.
-!TP_RAW_PIXELSHIFTMASKTHRESHOLD;3x3 new threshold
 !TP_RAW_PIXELSHIFTMEDIAN;Use median for moving parts
-!TP_RAW_PIXELSHIFTMEDIAN3;Exclude selected frame from median
-!TP_RAW_PIXELSHIFTMEDIAN3_TOOLTIP;Excludes selected frame from median.\nUseful if moving objects overlap in frame 2 and 3
 !TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Use median of all frames instead of selected frame for regions with motion.\nRemoves objects which are at different places in all frames.\nGives motion effect on slow moving (overlapping) objects.
 !TP_RAW_PIXELSHIFTMM_AUTO;Automatic
 !TP_RAW_PIXELSHIFTMM_CUSTOM;Custom
 !TP_RAW_PIXELSHIFTMM_OFF;Off
-!TP_RAW_PIXELSHIFTMOTION;Motion detection level (deprecated)
-!TP_RAW_PIXELSHIFTMOTIONCORRECTION;Green motion correction size
 !TP_RAW_PIXELSHIFTMOTIONMETHOD;Motion Correction
 !TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection.\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate.\n100 means the AMaZE-demosaiced frame will be used.
-!TP_RAW_PIXELSHIFTNONGREENAMAZE;Check red/blue AMaZE
 !TP_RAW_PIXELSHIFTNONGREENCROSS;Check red/blue channels for motion
-!TP_RAW_PIXELSHIFTNONGREENCROSS2;Check green AMaZE
-!TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Check red/blue horizontal
-!TP_RAW_PIXELSHIFTNONGREENVERTICAL;Check red/blue vertical
-!TP_RAW_PIXELSHIFTNREADISO;nRead
-!TP_RAW_PIXELSHIFTONEGREEN;Use one green instead of average
-!TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Use one green instead of averaging two greens for regions without motion.
-!TP_RAW_PIXELSHIFTPRNU;PRNU (%)
-!TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
 !TP_RAW_PIXELSHIFTSHOWMOTION;Show motion mask
 !TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Show only motion mask
 !TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Shows the motion mask without the image.
-!TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a mask showing the regions with motion.
+!TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a green mask showing the regions with motion.
 !TP_RAW_PIXELSHIFTSIGMA;Blur radius
 !TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;The default radius of 1.0 usually fits well for base ISO.\nIncrease the value for high ISO shots, 5.0 is a good starting point.\nWatch the motion mask while changing the value.
 !TP_RAW_PIXELSHIFTSMOOTH;Smooth transitions
 !TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Smooth transitions between areas with motion and areas without.\nSet to 0 to disable transition smoothing.\nSet to 1 to either get the AMaZE/LMMSE result of the selected frame (depending on whether "Use LMMSE" is selected), or the median of all four frames if "Use median" is selected.
-!TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;StdDev factor Blue
-!TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;StdDev factor Green
-!TP_RAW_PIXELSHIFTSTDDEVFACTORRED;StdDev factor Red
 !TP_RAW_RCD;RCD
 !TP_RAW_SENSOR_BAYER_LABEL;Sensor with Bayer Matrix
 !TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.
@@ -2092,7 +2074,7 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !TP_WAVELET_EDGESENSI;Edge sensitivity
 !TP_WAVELET_EDGREINF_TOOLTIP;Reinforce or reduce the action of the first level, do the opposite to the second level, and leave the rest unchanged.
 !TP_WAVELET_EDGTHRESH;Detail
-!TP_WAVELET_EDGTHRESH_TOOLTIP;Change the repartition between the first levels and the others. The higher the threshold the more the action is centred on the first levels. Be careful with negative values, they increase the action of high levels and can introduce artifacts.
+!TP_WAVELET_EDGTHRESH_TOOLTIP;Change the repartition between the first levels and the others. The higher the threshold the more the action is centered on the first levels. Be careful with negative values, they increase the action of high levels and can introduce artifacts.
 !TP_WAVELET_EDRAD;Radius
 !TP_WAVELET_EDRAD_TOOLTIP;This radius adjustment is very different from those in other sharpening tools. Its value is compared to each level through a complex function. In this sense, a value of zero still has an effect.
 !TP_WAVELET_EDSL;Threshold Sliders

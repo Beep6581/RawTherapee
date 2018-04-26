@@ -74,8 +74,9 @@
 
 // Bit representations of flags
 enum {
-    LUT_CLIP_BELOW = 1 << 0,
-    LUT_CLIP_ABOVE = 1 << 1
+    LUT_CLIP_OFF,   // LUT does not clip input values
+    LUT_CLIP_BELOW, // LUT clips input values at lower bound
+    LUT_CLIP_ABOVE  // LUT clips input values at upper bound
 };
 
 template<typename T>
@@ -111,7 +112,7 @@ public:
     /// The user have to handle it itself, even if some method can (re)initialize it
     bool dirty;
 
-    LUT(int s, int flags = 0xfffffff)
+    LUT(int s, int flags = LUT_CLIP_BELOW | LUT_CLIP_ABOVE, bool initZero = false)
     {
 #ifndef NDEBUG
 
@@ -137,8 +138,11 @@ public:
         sizeiv =  _mm_set1_epi32( (int)(size - 1) );
         sizev = F2V( size - 1 );
 #endif
+        if (initZero) {
+            clear();
+        }
     }
-    void operator ()(int s, int flags = 0xfffffff)
+    void operator ()(int s, int flags = LUT_CLIP_BELOW | LUT_CLIP_ABOVE, bool initZero = false)
     {
 #ifndef NDEBUG
 
@@ -167,6 +171,10 @@ public:
         sizeiv =  _mm_set1_epi32( (int)(size - 1) );
         sizev = F2V( size - 1 );
 #endif
+        if (initZero) {
+            clear();
+        }
+
     }
 
     LUT()
@@ -616,7 +624,7 @@ public:
     }
 
     // share the buffer with another LUT, handy for same data but different clip flags
-    void share(const LUT<T> &source, int flags = 0xfffffff)
+    void share(const LUT<T> &source, int flags = LUT_CLIP_BELOW | LUT_CLIP_ABOVE)
     {
         if (owner && data) {
             delete[] data;
