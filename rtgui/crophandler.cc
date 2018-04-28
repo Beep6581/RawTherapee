@@ -313,8 +313,6 @@ void CropHandler::setDetailedCrop (IImage8* im, IImage8* imtrue, rtengine::procp
     cropParams = cp;
     colorParams = cmp;
 
-    cropPixbuf.clear ();
-
     if (!cropimg.empty()) {
         cropimg.clear();
     }
