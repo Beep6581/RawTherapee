@@ -742,7 +742,6 @@ struct FattalToneMappingParams {
   */
 struct SHParams {
     bool    enabled;
-    bool    hq;
     int     highlights;
     int     htonalwidth;
     int     shadows;
