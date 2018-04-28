@@ -54,6 +54,7 @@
 #53 26.02.2018 Erweiterung (TooWaBoo) RT 5.3
 #54 30.03.2018 Erweiterung (TooWaBoo) RT 5.4
 #55 06.04.2018 Erweiterung (TooWaBoo) RT 5.4
+#56 27.04.2018 Erweiterung (TooWaBoo) RT 5.4
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -776,7 +777,7 @@ HISTORY_MSG_490;(HDR-Dynamikkompression)\nIntensität
 HISTORY_MSG_491;(Weißabgleich)
 HISTORY_MSG_492;(RGB-Kurven)
 HISTORY_MSG_493;(L*a*b*)
-HISTORY_MSG_CLAMPOOG;(Belichtung) - Farben\nauf den Farbraum\nbeschränken
+HISTORY_MSG_CLAMPOOG;(Belichtung) - Farben\nauf Farbraum beschränken
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;(Farbanpassungen)\nL*a*b* - Farbkorrektur
 HISTORY_MSG_HISTMATCHING;(Belichtung)\nAuto-Tonwertkurve
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;(Lokaler Kontrast)\nIntensität
@@ -1611,7 +1612,7 @@ TP_EXPOSURE_AUTOLEVELS;Auto
 TP_EXPOSURE_AUTOLEVELS_TIP;Automatische Belichtungseinstellung\nbasierend auf Bildanalyse.
 TP_EXPOSURE_BLACKLEVEL;Schwarzwert
 TP_EXPOSURE_BRIGHTNESS;Helligkeit
-TP_EXPOSURE_CLAMPOOG;Farben auf den Farbraum beschränken
+TP_EXPOSURE_CLAMPOOG;Farben auf Farbraum beschränken
 TP_EXPOSURE_CLIP;Clip %:
 TP_EXPOSURE_CLIP_TIP;Anteil der Pixel, die sich bei automatischer\nBelichtungseinstellung im Bereich der\nSpitzlichter und Schatten befinden sollen.
 TP_EXPOSURE_COMPRHIGHLIGHTS;Lichterkompression
@@ -2279,7 +2280,7 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!EXIFFILTER_IMAGETYPE;Image type
-!TP_RAW_PIXELSHIFTEPERISO;Sensitivity
-!TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value of 0 should work fine for base ISO.\nHigher values increase sensitivity of motion detection.\nChange in small steps and watch the motion mask while changing.\nIncrease sensitivity for underexposed or high ISO images.
-!TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a green mask showing the regions with motion.
+EXIFFILTER_IMAGETYPE;Bildtyp
+TP_RAW_PIXELSHIFTEPERISO;Empfindlichkeit
+TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;Der Standardwert 0 wird für die Basis-ISO empfohlen.\nHöhere Werte erhöhen die Empfindlichkeit der Bewegungserkennung.\nVerändern Sie den Wert in kleinen Schritten und beobachten Sie die\nBewegungsmaske. Erhöhen Sie die Empfindlichkeit für unterbelichtete\noder High-ISO-Bilder.
+TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Überlagert das Bild mit einer grünen Maske,\num die Bewegungsbereiche hervorzuheben.
