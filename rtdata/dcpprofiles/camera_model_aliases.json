@@ -20,6 +20,8 @@
     "MINOLTA DYNAX 5D": ["Minolta Maxxum 5D", "Minolta Alpha 5D", "Minolta Alpha Sweet"],
     "MINOLTA DYNAX 7D": ["Minolta Maxxum 7D", "Minolta Alpha 7D"],
 
+    "NIKON D800E": ["NIKON D800"],
+
     "Panasonic DC-FZ82": ["Panasonic DMC-FZ80", "Panasonic DMC-FZ85"],
     "Panasonic DC-TZ91": ["Panasonic DC-TZ90", "Panasonic DC-TZ92", "Panasonic DC-TZ93", "Panasonic DC-ZS70"],
     "Panasonic DMC-G8": ["Panasonic DMC-G80", "Panasonic DMC-G81", "Panasonic DMC-G85"],
