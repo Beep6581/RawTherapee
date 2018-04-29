@@ -1404,7 +1404,7 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[2] = icm.pgrex;
         p[3] = icm.pgrey;
         p[4] = icm.pblux;
-        p[5] = icm.pbluy;	
+        p[5] = icm.pbluy;
     } else {
         p[0] = 0.7347;    //default primaries
         p[1] = 0.2653;
@@ -1463,15 +1463,17 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
     } else {
         cmsWhitePointFromTemp(&xyD, (double)temp);
     }
-	
-	if (icm.wtemp == "INC") xyD = {0.447573, 0.407440, 1.0};
+
+    if (icm.wtemp == "INC") xyD = {0.447573, 0.407440, 1.0};
 
     // cmsWhitePointFromTemp(&xyD, (double)temp);
 
     GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, Parameters); //5 = smoother than 4
+
     cmsHPROFILE oprofdef = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC); //oprofdef  become Outputprofile
 
     cmsFreeToneCurve(GammaTRC[0]);
+
     //lcmsMutex->unlock();
 
     return oprofdef;
@@ -1533,9 +1535,9 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         outPr = "RT_acesp1";
     } else if (icm.wprimari == "pfree") {
         outProfile = options.rtSettings.srgb;
-		printf("PFRRE\n");
+        printf("PFRRE\n");
         outPr = "RT_pfree";
-		
+
     } else {
         // Should not occurs
         if (settings->verbose) {
@@ -1590,7 +1592,9 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     } else if (icm.gamma == "Lab_g3.0s9.03296") {
         gammaStr = "_LAB_g3.0_s9.03296";
     }
-	outTemp = outPr;
+
+    outTemp = outPr;
+
     if (icm.wprofile == "v4" && icm.wtemp != "DEF") {
         if (icm.wtemp == "D41") {
             outPr = outPr + "D41";
@@ -1607,7 +1611,8 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         } else if (icm.wtemp == "INC") {
             outPr = outPr + "INC";
         }
-		//	printf("outpr=%s \n",outPr.c_str());
+
+        //  printf("outpr=%s \n",outPr.c_str());
 
     }
 
@@ -1638,9 +1643,10 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         } else if (icm.wprofile == "v2" || icm.wprofile == "none") {
             outPro = outPr + "_V2_" + gammaStr + ".icc";
         }
+
         gammaWs << outTemp << gammaStr;
 
-       // gammaWs << outPro.c_str() ;
+        // gammaWs << outPro.c_str() ;
         //   cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
 
 
@@ -1770,7 +1776,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             p[3] = icm.pgrey;
             p[4] = icm.pblux;
             p[5] = icm.pbluy;
-			
+
         } else {
             p[0] = 0.7347;    //default primaries
             p[1] = 0.2653;
@@ -1804,7 +1810,8 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             } else if (icm.wtemp == "INC") {
                 tempv4 = 5003.;
             }
-			//printf("tempv4=%f \n", tempv4);
+
+            //printf("tempv4=%f \n", tempv4);
 
         }
 
@@ -1813,7 +1820,8 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         } else {
             cmsWhitePointFromTemp(&xyD, (double)temp);
         }
-		if (icm.wtemp == "INC") xyD = {0.447573, 0.407440, 1.0};
+
+        if (icm.wtemp == "INC") xyD = {0.447573, 0.407440, 1.0};
 
         cmsToneCurve* GammaTRC[3];
 

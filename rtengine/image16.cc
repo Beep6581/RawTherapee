@@ -25,7 +25,7 @@
 namespace
 {
 
-void getScanline8 (const uint16_t *red, const uint16_t *green, const uint16_t *blue, int width, unsigned char* buffer)
+void getScanline8(const uint16_t *red, const uint16_t *green, const uint16_t *blue, int width, unsigned char* buffer)
 {
     for (int i = 0, ix = 0; i < width; i++) {
         buffer[ix++] = rtengine::uint16ToUint8Rounded(red[i]);
@@ -34,7 +34,7 @@ void getScanline8 (const uint16_t *red, const uint16_t *green, const uint16_t *b
     }
 }
 
-void getScanline16 (const uint16_t *red, const uint16_t *green, const uint16_t *blue, int width, unsigned short* buffer)
+void getScanline16(const uint16_t *red, const uint16_t *green, const uint16_t *blue, int width, unsigned short* buffer)
 {
     for (int i = 0, ix = 0; i < width; i++) {
         buffer[ix++] = red[i];
@@ -47,20 +47,20 @@ void getScanline16 (const uint16_t *red, const uint16_t *green, const uint16_t *
 
 using namespace rtengine;
 
-Image16::Image16 ()
+Image16::Image16()
 {
 }
 
-Image16::Image16 (int w, int h)
+Image16::Image16(int w, int h)
 {
-    allocate (w, h);
+    allocate(w, h);
 }
 
-Image16::~Image16 ()
+Image16::~Image16()
 {
 }
 
-void Image16::getScanline (int row, unsigned char* buffer, int bps)
+void Image16::getScanline(int row, unsigned char* buffer, int bps)
 {
 
     if (data == nullptr) {
@@ -68,9 +68,9 @@ void Image16::getScanline (int row, unsigned char* buffer, int bps)
     }
 
     if (bps == 16) {
-        getScanline16 (r(row), g(row), b(row), width, (unsigned short*)buffer);
+        getScanline16(r(row), g(row), b(row), width, (unsigned short*)buffer);
     } else if (bps == 8) {
-        getScanline8 (r(row), g(row), b(row), width, buffer);
+        getScanline8(r(row), g(row), b(row), width, buffer);
     }
 }
 
@@ -78,7 +78,7 @@ void Image16::getScanline (int row, unsigned char* buffer, int bps)
  * void Image16::setScanline (int row, unsigned char* buffer, int bps, int minValue[3], int maxValue[3]);
  * has not been implemented yet, because as of now, this method is called for IIOSF_FLOAT sample format only
  */
-void Image16::setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples, float *minValue, float *maxValue)
+void Image16::setScanline(int row, unsigned char* buffer, int bps, unsigned int numSamples, float *minValue, float *maxValue)
 {
 
     if (data == nullptr) {
@@ -92,7 +92,7 @@ void Image16::setScanline (int row, unsigned char* buffer, int bps, unsigned int
         case (IIOSF_UNSIGNED_CHAR): {
             int ix = 0;
 
-            if(numSamples == 1) {
+            if (numSamples == 1) {
                 for (int i = 0; i < width; ++i) {
                     r(row, i) = g(row, i) = b(row, i) = static_cast<unsigned short>(buffer[ix++]) * 257;
                 }
@@ -103,6 +103,7 @@ void Image16::setScanline (int row, unsigned char* buffer, int bps, unsigned int
                     b(row, i) = static_cast<unsigned short>(buffer[ix++]) * 257;
                 }
             }
+
             break;
         }
 
@@ -130,22 +131,23 @@ void Image16::setScanline (int row, unsigned char* buffer, int bps, unsigned int
      */
 }
 
-Image16* Image16::copy ()
+Image16* Image16::copy()
 {
 
-    Image16* cp = new Image16 (width, height);
+    Image16* cp = new Image16(width, height);
     copyData(cp);
     return cp;
 }
 
-void Image16::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::ToneCurveParams hrp)
+void Image16::getStdImage(ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::ToneCurveParams hrp)
 {
 
     // compute channel multipliers
     float rm = 1.f, gm = 1.f, bm = 1.f;
+
     if (ctemp.getTemp() >= 0) {
         double drm, dgm, dbm;
-        ctemp.getMultipliers (drm, dgm, dbm);
+        ctemp.getMultipliers(drm, dgm, dbm);
         rm = drm;
         gm = dgm;
         bm = dbm;
@@ -161,7 +163,7 @@ void Image16::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, Preview
 
     int sx1, sy1, sx2, sy2;
 
-    transform (pp, tran, sx1, sy1, sx2, sy2);
+    transform(pp, tran, sx1, sy1, sx2, sy2);
 
     int imwidth = image->getWidth(); // Destination image
     int imheight = image->getHeight(); // Destination image
@@ -271,25 +273,22 @@ void Image16::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, Preview
                 }
             }
 
-            if      (mtran == TR_NONE)
+            if (mtran == TR_NONE)
                 for (int dst_x = 0, src_x = sx1; dst_x < imwidth; dst_x++, src_x += skip) {
                     image->r(iy, dst_x) = lineR[dst_x];
                     image->g(iy, dst_x) = lineG[dst_x];
                     image->b(iy, dst_x) = lineB[dst_x];
-                }
-            else if (mtran == TR_R180)
+                } else if (mtran == TR_R180)
                 for (int dst_x = 0; dst_x < imwidth; dst_x++) {
                     image->r(imheight - 1 - iy, imwidth - 1 - dst_x) = lineR[dst_x];
                     image->g(imheight - 1 - iy, imwidth - 1 - dst_x) = lineG[dst_x];
                     image->b(imheight - 1 - iy, imwidth - 1 - dst_x) = lineB[dst_x];
-                }
-            else if (mtran == TR_R90)
+                } else if (mtran == TR_R90)
                 for (int dst_x = 0, src_x = sx1; dst_x < imwidth; dst_x++, src_x += skip) {
                     image->r(dst_x, imheight - 1 - iy) = lineR[dst_x];
                     image->g(dst_x, imheight - 1 - iy) = lineG[dst_x];
                     image->b(dst_x, imheight - 1 - iy) = lineB[dst_x];
-                }
-            else if (mtran == TR_R270)
+                } else if (mtran == TR_R270)
                 for (int dst_x = 0, src_x = sx1; dst_x < imwidth; dst_x++, src_x += skip) {
                     image->r(imwidth - 1 - dst_x, iy) = lineR[dst_x];
                     image->g(imwidth - 1 - dst_x, iy) = lineG[dst_x];
@@ -333,6 +332,48 @@ Image16::tofloat()
     }
 
     return imgfloat;
+}
+// Parallized transformation; create transform with cmsFLAGS_NOCACHE!
+void Image16::ExecCMSTransform(cmsHTRANSFORM hTransform)
+{
+    //cmsDoTransform(hTransform, data, data, planestride);
+
+    // LittleCMS cannot parallelize planar setups -- Hombre: LCMS2.4 can! But it we use this new feature, memory allocation have to be modified too
+    // so build temporary buffers to allow multi processor execution
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        AlignedBuffer<unsigned short> buffer(width * 3);
+
+#ifdef _OPENMP
+        #pragma omp for schedule(static)
+#endif
+
+        for (int y = 0; y < height; y++)
+        {
+            unsigned short *p = buffer.data, *pR = r(y), *pG = g(y), *pB = b(y);
+
+            for (int x = 0; x < width; x++) {
+                *(p++) = *(pR++);
+                *(p++) = *(pG++);
+                *(p++) = *(pB++);
+            }
+
+            cmsDoTransform(hTransform, buffer.data, buffer.data, width);
+
+            p = buffer.data;
+            pR = r(y);
+            pG = g(y);
+            pB = b(y);
+
+            for (int x = 0; x < width; x++) {
+                *(pR++) = *(p++);
+                *(pG++) = *(p++);
+                *(pB++) = *(p++);
+            }
+        } // End of parallelization
+    }
 }
 
 // // Parallelized transformation; create transform with cmsFLAGS_NOCACHE!

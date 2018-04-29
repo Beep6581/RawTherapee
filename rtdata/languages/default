@@ -736,6 +736,9 @@ HISTORY_MSG_METADATA_MODE;Metadata copy mode
 HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 HISTORY_MSG_TM_FATTAL_ANCHOR;HDR TM - Anchor
+HISTORY_MSG_ICMGAMM;Working gamma
+HISTORY_MSG_ICMSLOP;Working slope
+HISTORY_MSG_ICMTRCIN;TRC working method
 HISTORY_MSG_ICMPROFILE;Output profile type
 HISTORY_MSG_ICMPRIMARI;Output profile primaries
 HISTORY_MSG_ICMTEMP;Output IccV4 D illuminant
@@ -1628,6 +1631,12 @@ TP_GAMMA_TEMP_65;D65
 TP_GAMMA_TEMP_80;D80
 TP_GAMMA_TEMP_INC;Incandescent 2856K
 TP_GAMMA_TEMP_TOOLTIP;Only whith generate ICC V4, you can change the illuminant and Free primaries
+TP_GAMMA_TRCIN;Gamma - TRC
+TP_GAMMA_TRCIN_NONE;None
+TP_GAMMA_TRCIN_FREE;Free
+TP_GAMMA_TRCIN_TOOLTIP;Only for build in profiles
+TP_GAMMAWORK_GAMMA;Gamma
+TP_GAMMAWORK_SLOPE;Slope
 TP_GENERAL_11SCALE_TOOLTIP;The effects of this tool are only visible or only accurate at a preview scale of 1:1.
 TP_GRADIENT_CENTER;Center
 TP_GRADIENT_CENTER_X;Center X

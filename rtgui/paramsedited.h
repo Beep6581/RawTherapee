@@ -598,6 +598,9 @@ public:
     bool wprimari;
     bool wprofile;
     bool wtemp;
+    bool gamm;
+    bool slop;
+    bool wtrcin;
 };
 class WaveletParamsEdited
 {

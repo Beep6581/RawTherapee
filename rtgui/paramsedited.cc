@@ -395,9 +395,12 @@ void ParamsEdited::set(bool v)
     icm.pgrey       = v;
     icm.pblux       = v;
     icm.pbluy       = v;
+    icm.gamm      = v;
+    icm.slop       = v;
     icm.wprimari       = v;
     icm.wprofile       = v;
     icm.wtemp       = v;
+    icm.wtrcin       = v;
     raw.bayersensor.method = v;
     raw.bayersensor.imageNum = v;
     raw.bayersensor.ccSteps = v;
@@ -951,10 +954,13 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.pgrey = icm.pgrey && p.icm.pgrey == other.icm.pgrey;
         icm.pblux = icm.pblux && p.icm.pblux == other.icm.pblux;
         icm.pbluy = icm.pbluy && p.icm.pbluy == other.icm.pbluy;
-		
+        icm.gamm = icm.gamm && p.icm.gamm == other.icm.gamm;
+        icm.slop = icm.slop && p.icm.slop == other.icm.slop;
+
         icm.wprimari = icm.wprimari && p.icm.wprimari == other.icm.wprimari;
         icm.wprofile = icm.wprofile && p.icm.wprofile == other.icm.wprofile;
         icm.wtemp = icm.wtemp && p.icm.wtemp == other.icm.wtemp;
+        icm.wtrcin = icm.wtrcin && p.icm.wtrcin == other.icm.wtrcin;
         raw.bayersensor.method = raw.bayersensor.method && p.raw.bayersensor.method == other.raw.bayersensor.method;
         raw.bayersensor.imageNum = raw.bayersensor.imageNum && p.raw.bayersensor.imageNum == other.raw.bayersensor.imageNum;
         raw.bayersensor.ccSteps = raw.bayersensor.ccSteps && p.raw.bayersensor.ccSteps == other.raw.bayersensor.ccSteps;
@@ -1200,7 +1206,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     if (toneCurve.clampOOG) {
         toEdit.toneCurve.clampOOG = mods.toneCurve.clampOOG;
     }
-    
+
     if (retinex.enabled) {
         toEdit.retinex.enabled        = mods.retinex.enabled;
     }
@@ -2457,6 +2463,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.icm.slpos      = dontforceSet && options.baBehav[ADDSET_FREE_OUTPUT_SLOPE] ? toEdit.icm.slpos + mods.icm.slpos : mods.icm.slpos;
     }
 
+    if (icm.gamm) {
+        toEdit.icm.gamm        = mods.icm.gamm;
+    }
+
+    if (icm.slop) {
+        toEdit.icm.slop        = mods.icm.slop;
+    }
+
     if (icm.predx) {
         toEdit.icm.predx        = mods.icm.predx;
     }
@@ -2472,7 +2486,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     if (icm.pgrey) {
         toEdit.icm.pgrey        = mods.icm.pgrey;
     }
-	
+
     if (icm.pblux) {
         toEdit.icm.pblux        = mods.icm.pblux;
     }
@@ -2496,7 +2510,11 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     if (icm.wtemp) {
         toEdit.icm.wtemp        = mods.icm.wtemp;
     }
-	
+
+    if (icm.wtrcin) {
+        toEdit.icm.wtrcin        = mods.icm.wtrcin;
+    }
+
     if (icm.freegamma) {
         toEdit.icm.freegamma    = mods.icm.freegamma;
     }

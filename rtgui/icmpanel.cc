@@ -43,6 +43,9 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     EvICMpgrey = m->newEvent(GAMMA, "HISTORY_MSG_ICMPGREY");
     EvICMpblux = m->newEvent(GAMMA, "HISTORY_MSG_ICMPBLUX");
     EvICMpbluy = m->newEvent(GAMMA, "HISTORY_MSG_ICMPBLUY");
+    EvICMgamm = m->newEvent(ALLNORAW, "HISTORY_MSG_ICMGAMM");
+    EvICMslop = m->newEvent(ALLNORAW, "HISTORY_MSG_ICMSLOP");
+    EvICMtrcinMethod = m->newEvent(ALLNORAW, "HISTORY_MSG_ICMTRCIN");
 
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = lastgamfree = false;
 
@@ -180,7 +183,50 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
 
     wnames->set_active(0);
 
+    // wFrame->add(*wVBox);
+
+    //-----------------gamma TRC working
+
+    trcinHBox = Gtk::manage(new Gtk::HBox());
+
+    Gtk::Label* trcinlab = Gtk::manage(new Gtk::Label(M("TP_GAMMA_TRCIN") + ":"));
+
+    trcinHBox->pack_start(*trcinlab, Gtk::PACK_SHRINK);
+    wtrcin = Gtk::manage(new MyComboBoxText());
+    trcinHBox->pack_start(*wtrcin, Gtk::PACK_EXPAND_WIDGET);
+    wVBox->pack_start(*trcinHBox, Gtk::PACK_EXPAND_WIDGET);
+    wtrcin->append(M("TP_GAMMA_TRCIN_NONE"));
+    wtrcin->append(M("TP_GAMMA_TRCIN_FREE"));
+
+    wtrcin->set_active(0);
+    wtrcin->set_tooltip_text(M("TP_GAMMA_TRCIN_TOOLTIP"));
+
+
+    Gtk::VBox * gammaVBox = Gtk::manage(new Gtk::VBox());
+    gammaVBox->set_spacing(2);
+
+    gamm = Gtk::manage(new Adjuster(M("TP_GAMMAWORK_GAMMA"), 0.40, 6.0, 0.001, 2.4));
+    slop = Gtk::manage(new Adjuster(M("TP_GAMMAWORK_SLOPE"), 0., 40., 0.01, 12.92));
+    wVBox->pack_start(*gamm, Gtk::PACK_SHRINK);
+    gamm->show();
+
+    wVBox->pack_start(*slop, Gtk::PACK_SHRINK);
+    slop->show();
+
+
+    gamm->setAdjusterListener(this);
+    slop->setAdjusterListener(this);
+
+    if (gamm->delay < options.adjusterMaxDelay) {
+        gamm->delay = options.adjusterMaxDelay;
+    }
+
+    if (slop->delay < options.adjusterMaxDelay) {
+        slop->delay = options.adjusterMaxDelay;
+    }
+
     wFrame->add(*wVBox);
+
     pack_start(*wFrame, Gtk::PACK_EXPAND_WIDGET);
 
 
@@ -257,8 +303,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
 
 
     //primaries
-	priHBox = Gtk::manage(new Gtk::HBox());
-	
+    priHBox = Gtk::manage(new Gtk::HBox());
+
     Gtk::Label* prilab = Gtk::manage(new Gtk::Label(M("TP_GAMMA_PRIM") + ":"));
 
     priHBox->pack_start(*prilab, Gtk::PACK_SHRINK);
@@ -278,19 +324,19 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wprimari->append(M("TP_GAMMA_PRIM_FREE"));
     wprimari->set_active(5);
 
-	prifreeVBox = Gtk::manage(new Gtk::VBox());
-    Gtk::Image* gamuts0 =  Gtk::manage (new RTImage ("rt-logo-tiny.png"));
-    Gtk::Image* gamutl0 =  Gtk::manage (new RTImage ("rt-logo-small.png"));
-    Gtk::Image* gamuts1 =  Gtk::manage (new RTImage ("rt-logo-tiny.png"));
-    Gtk::Image* gamutl1 =  Gtk::manage (new RTImage ("rt-logo-small.png"));
-    Gtk::Image* gamuts2 =  Gtk::manage (new RTImage ("rt-logo-tiny.png"));
-    Gtk::Image* gamutl2 =  Gtk::manage (new RTImage ("rt-logo-small.png"));
-    Gtk::Image* gamuts3 =  Gtk::manage (new RTImage ("rt-logo-tiny.png"));
-    Gtk::Image* gamutl3 =  Gtk::manage (new RTImage ("rt-logo-small.png"));
-    Gtk::Image* gamuts4 =  Gtk::manage (new RTImage ("rt-logo-tiny.png"));
-    Gtk::Image* gamutl4 =  Gtk::manage (new RTImage ("rt-logo-small.png"));
-    Gtk::Image* gamuts5 =  Gtk::manage (new RTImage ("rt-logo-tiny.png"));
-    Gtk::Image* gamutl5 =  Gtk::manage (new RTImage ("rt-logo-small.png"));
+    prifreeVBox = Gtk::manage(new Gtk::VBox());
+    Gtk::Image* gamuts0 =  Gtk::manage(new RTImage("rt-logo-tiny.png"));
+    Gtk::Image* gamutl0 =  Gtk::manage(new RTImage("rt-logo-small.png"));
+    Gtk::Image* gamuts1 =  Gtk::manage(new RTImage("rt-logo-tiny.png"));
+    Gtk::Image* gamutl1 =  Gtk::manage(new RTImage("rt-logo-small.png"));
+    Gtk::Image* gamuts2 =  Gtk::manage(new RTImage("rt-logo-tiny.png"));
+    Gtk::Image* gamutl2 =  Gtk::manage(new RTImage("rt-logo-small.png"));
+    Gtk::Image* gamuts3 =  Gtk::manage(new RTImage("rt-logo-tiny.png"));
+    Gtk::Image* gamutl3 =  Gtk::manage(new RTImage("rt-logo-small.png"));
+    Gtk::Image* gamuts4 =  Gtk::manage(new RTImage("rt-logo-tiny.png"));
+    Gtk::Image* gamutl4 =  Gtk::manage(new RTImage("rt-logo-small.png"));
+    Gtk::Image* gamuts5 =  Gtk::manage(new RTImage("rt-logo-tiny.png"));
+    Gtk::Image* gamutl5 =  Gtk::manage(new RTImage("rt-logo-small.png"));
 
     predx = Gtk::manage(new Adjuster(M("TP_GAMMA_PRIM_REDX"), 0.6300, 0.7350, 0.0001, 0.6400, gamuts0, gamutl0));
     predy = Gtk::manage(new Adjuster(M("TP_GAMMA_PRIM_REDY"), 0.2650, 0.3350, 0.0001, 0.3300, gamutl1, gamuts1));
@@ -307,15 +353,15 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     prifreeVBox->pack_start(*pblux, Gtk::PACK_SHRINK);
     prifreeVBox->pack_start(*pbluy, Gtk::PACK_SHRINK);
     fgVBox->pack_start(*prifreeVBox, Gtk::PACK_SHRINK);
-	
+
     predx->setAdjusterListener(this);
     predy->setAdjusterListener(this);
     pgrex->setAdjusterListener(this);
     pgrey->setAdjusterListener(this);
     pblux->setAdjusterListener(this);
     pbluy->setAdjusterListener(this);
-	
-	//sliders gampos and slpos
+
+    //sliders gampos and slpos
     fgVBox->pack_start(*gaHBox, Gtk::PACK_EXPAND_WIDGET);
     gampos = Gtk::manage(new Adjuster(M("TP_GAMMA_CURV"), 1, 3.5, 0.00001, 2.4));
     gampos->setAdjusterListener(this);
@@ -325,7 +371,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     }
 
     gampos->show();
-	
+
     slpos = Gtk::manage(new Adjuster(M("TP_GAMMA_SLOP"), 0, 15, 0.00001, 12.92310));
     slpos->setAdjusterListener(this);
 
@@ -338,7 +384,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     fgVBox->pack_start(*slpos, Gtk::PACK_SHRINK); //slope
 
     //V2  or V4 profiles
-	profHBox = Gtk::manage(new Gtk::HBox());
+    profHBox = Gtk::manage(new Gtk::HBox());
     Gtk::Label* proflab = Gtk::manage(new Gtk::Label(M("TP_GAMMA_PROF") + ":"));
 
     profHBox->pack_start(*proflab, Gtk::PACK_SHRINK);
@@ -352,10 +398,10 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
 
 
     wprofile->set_active(0);
-	
+
     //temperature
-	tempHBox = Gtk::manage(new Gtk::HBox());
-	
+    tempHBox = Gtk::manage(new Gtk::HBox());
+
     Gtk::Label* templab = Gtk::manage(new Gtk::Label(M("TP_GAMMA_TEMP") + ":"));
 
     tempHBox->pack_start(*templab, Gtk::PACK_SHRINK);
@@ -370,7 +416,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wtemp->append(M("TP_GAMMA_TEMP_65"));
     wtemp->append(M("TP_GAMMA_TEMP_80"));
     wtemp->append(M("TP_GAMMA_TEMP_INC"));
-	
+
     wtemp->set_active(0);
     wtemp->set_tooltip_text(M("TP_GAMMA_TEMP_TOOLTIP"));
 
@@ -424,6 +470,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wprimariconn = wprimari->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wprimariChanged));
     wprofileconn = wprofile->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wprofileChanged));
     wtempconn = wtemp->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wtempChanged));
+    wtrcinconn = wtrcin->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wtrcinChanged));
 
     obpcconn = obpc->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::oBPCChanged));
     gamcsconn = freegamma->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::GamChanged));
@@ -615,6 +662,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     ConnectionBlocker wprimariconn_(wprimariconn);
     ConnectionBlocker wprofileconn_(wprofileconn);
     ConnectionBlocker wtempconn_(wtempconn);
+//    ConnectionBlocker wtrcinconn_(wtrcinconn);
 
     if (pp->icm.input.substr(0, 5) != "file:" && !ipDialog->get_filename().empty()) {
         ipDialog->set_filename(pp->icm.input);
@@ -651,7 +699,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     wnames->set_active_text(pp->icm.working);
     wgamma->set_active_text(pp->icm.gamma);
 
-	
+
     if (pp->icm.wprimari == "acesp0") {
         wprimari->set_active(0);
     } else if (pp->icm.wprimari == "acesp1") {
@@ -672,13 +720,17 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wprimari->set_active(8);
     } else if (pp->icm.wprimari == "BruceRGB") {
         wprimari->set_active(9);
-     } else if (pp->icm.wprimari == "pfree") {
+    } else if (pp->icm.wprimari == "pfree") {
         wprimari->set_active(10);
-   }
-	if(wprimari->get_active_row_number() == 10) prifreeVBox->set_sensitive(true);
-	else prifreeVBox->set_sensitive(false);
+    }
 
-   
+    if (wprimari->get_active_row_number() == 10) {
+        prifreeVBox->set_sensitive(true);
+    } else {
+        prifreeVBox->set_sensitive(false);
+    }
+
+
     if (pp->icm.wtemp == "DEF") {
         wtemp->set_active(0);
     } else if (pp->icm.wtemp == "D41") {
@@ -697,6 +749,11 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wtemp->set_active(7);
     }
 
+    if (pp->icm.wtrcin == "none") {
+        wtrcin->set_active(0);
+    } else if (pp->icm.wtrcin == "free") {
+        wtrcin->set_active(1);
+    }
 
     if (pp->icm.wprofile == "none") {
         wprofile->set_active(0);
@@ -706,14 +763,17 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wprofile->set_active(2);
     }
 
-	
-    if(wprimari->get_active_row_number() == 10) wprofile->set_active(2);
-	
-	gpChanged();
-	wprofileChanged();
-	wtempChanged();
-	wprimariChanged();
-	
+
+    if (wprimari->get_active_row_number() == 10) {
+        wprofile->set_active(2);
+    }
+
+    gpChanged();
+    wprofileChanged();
+    wtempChanged();
+    wprimariChanged();
+    wtrcinChanged();
+
     if (pp->icm.output == ColorManagementParams::NoICMString) {
         onames->set_active_text(M("TP_ICM_NOICM"));
     } else {
@@ -745,13 +805,18 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         gampos->set_sensitive(pp->icm.freegamma);
         gampos->set_sensitive(pp->icm.gamma == "Free");
         slpos->set_sensitive(pp->icm.freegamma);
-        slpos->set_sensitive(pp->icm.gamma == "Free");	
+        slpos->set_sensitive(pp->icm.gamma == "Free");
         updateRenderingIntent(pp->icm.output);
         wprimari->set_sensitive(pp->icm.freegamma);
         wprofile->set_sensitive(pp->icm.freegamma);
-		if(wprofile->get_active_row_number() == 2)  {wtemp->set_sensitive(pp->icm.freegamma);}
-		else {wtemp->set_sensitive(false);}
-       //  wtemp->set_sensitive(pp->icm.freegamma);
+
+        if (wprofile->get_active_row_number() == 2)  {
+            wtemp->set_sensitive(pp->icm.freegamma);
+        } else {
+            wtemp->set_sensitive(false);
+        }
+
+        //  wtemp->set_sensitive(pp->icm.freegamma);
 
     }
 
@@ -763,6 +828,8 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     pgrey->setValue(pp->icm.pgrey);
     pblux->setValue(pp->icm.pblux);
     pbluy->setValue(pp->icm.pbluy);
+    gamm->setValue(pp->icm.gamm);
+    slop->setValue(pp->icm.slop);
 
     if (pedited) {
         iunchanged->set_active(!pedited->icm.input);
@@ -804,7 +871,11 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         if (!pedited->icm.wtemp) {
             wtemp->set_active_text(M("GENERAL_UNCHANGED"));
         }
-		
+
+        if (!pedited->icm.wtrcin) {
+            wtrcin->set_active_text(M("GENERAL_UNCHANGED"));
+        }
+
         gampos->setEditedState(pedited->icm.gampos ? Edited : UnEdited);
         slpos->setEditedState(pedited->icm.slpos  ? Edited : UnEdited);
         predx->setEditedState(pedited->icm.predx  ? Edited : UnEdited);
@@ -813,6 +884,8 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         pgrey->setEditedState(pedited->icm.pgrey  ? Edited : UnEdited);
         pblux->setEditedState(pedited->icm.pblux  ? Edited : UnEdited);
         pbluy->setEditedState(pedited->icm.pbluy  ? Edited : UnEdited);
+        gamm->setEditedState(pedited->icm.gamm ? Edited : UnEdited);
+        slop->setEditedState(pedited->icm.slop  ? Edited : UnEdited);
 
     }
 
@@ -845,6 +918,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.dcpIlluminant = rtengine::max<int>(dcpIll->get_active_row_number(), 0);
     pp->icm.wprimari = wprimari->get_active_text();
     pp->icm.wtemp = wtemp->get_active_text();
+    pp->icm.wtrcin = wtrcin->get_active_text();
 
     if (onames->get_active_text() == M("TP_ICM_NOICM")) {
         pp->icm.output  = ColorManagementParams::NoICMString;
@@ -891,7 +965,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     } else if (wprimari->get_active_row_number() == 10) {
         pp->icm.wprimari = "pfree";
     }
-		
+
     if (wtemp->get_active_row_number() == 0) {
         pp->icm.wtemp = "DEF";
     } else if (wtemp->get_active_row_number() == 1) {
@@ -909,7 +983,13 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     } else if (wtemp->get_active_row_number() == 7) {
         pp->icm.wtemp = "INC";
     }
-	
+
+    if (wtrcin->get_active_row_number() == 0) {
+        pp->icm.wtrcin = "none";
+    } else if (wtrcin->get_active_row_number() == 1) {
+        pp->icm.wtrcin = "free";
+    }
+
     pp->icm.freegamma = freegamma->get_active();
     pp->icm.toneCurve = ckbToneCurve->get_active();
     pp->icm.applyLookTable = ckbApplyLookTable->get_active();
@@ -924,6 +1004,8 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.pgrey = (double) pgrey->getValue();
     pp->icm.pblux = (double) pblux->getValue();
     pp->icm.pbluy = (double) pbluy->getValue();
+    pp->icm.gamm = (double) gamm->getValue();
+    pp->icm.slop = (double) slop->getValue();
 
     if (pedited) {
         pedited->icm.input = !iunchanged->get_active();
@@ -946,10 +1028,13 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.pgrey = pgrey->getEditedState();
         pedited->icm.pblux = pblux->getEditedState();
         pedited->icm.pbluy = pbluy->getEditedState();
-		
+        pedited->icm.gamm = gamm->getEditedState();
+        pedited->icm.slop = slop->getEditedState();
+
         pedited->icm.wprimari = wprimari->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.wprofile = wprofile->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.wtemp = wtemp->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->icm.wtrcin = wtrcin->get_active_text() != M("GENERAL_UNCHANGED");
     }
 }
 
@@ -963,6 +1048,8 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
     pgrey->setDefault(defParams->icm.pgrey);
     pblux->setDefault(defParams->icm.pblux);
     pbluy->setDefault(defParams->icm.pbluy);
+    gamm->setDefault(defParams->icm.gamm);
+    slop->setDefault(defParams->icm.slop);
 
     if (pedited) {
         gampos->setDefaultEditedState(pedited->icm.gampos ? Edited : UnEdited);
@@ -973,7 +1060,9 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
         pgrey->setDefaultEditedState(pedited->icm.pgrey ? Edited : UnEdited);
         pblux->setDefaultEditedState(pedited->icm.pblux ? Edited : UnEdited);
         pbluy->setDefaultEditedState(pedited->icm.pbluy ? Edited : UnEdited);
-		
+        gamm->setDefaultEditedState(pedited->icm.gamm ? Edited : UnEdited);
+        slop->setDefaultEditedState(pedited->icm.slop ? Edited : UnEdited);
+
     } else {
         gampos->setDefaultEditedState(Irrelevant);
         slpos->setDefaultEditedState(Irrelevant);
@@ -983,7 +1072,9 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
         pgrey->setDefaultEditedState(Irrelevant);
         pblux->setDefaultEditedState(Irrelevant);
         pbluy->setDefaultEditedState(Irrelevant);
-		
+        gamm->setDefaultEditedState(Irrelevant);
+        slop->setDefaultEditedState(Irrelevant);
+
     }
 }
 
@@ -1018,12 +1109,27 @@ void ICMPanel::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvICMpbluy, costr);
         }
     }
+
+    if (listener  || batchMode) {
+        Glib::ustring costr2 = Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2), newval);
+
+        if (a == gamm) {
+            listener->panelChanged(EvICMgamm, costr2);
+        } else if (a == slop) {
+            listener->panelChanged(EvICMslop, costr2);
+        }
+
+    }
 }
 
 void ICMPanel::wpChanged()
 {
-	if(wprofile->get_active_row_number() == 2) {wtemp->set_sensitive(true);}
-	else {wtemp->set_sensitive(false);}
+    if (wprofile->get_active_row_number() == 2) {
+        wtemp->set_sensitive(true);
+    } else {
+        wtemp->set_sensitive(false);
+    }
+
     if (listener) {
         listener->panelChanged(EvWProfile, wnames->get_active_text());
     }
@@ -1031,9 +1137,15 @@ void ICMPanel::wpChanged()
 
 void ICMPanel::wprimariChanged()
 {
-	if(wprimari->get_active_row_number() == 10) prifreeVBox->set_sensitive(true);
-	else prifreeVBox->set_sensitive(false);
-    if(wprimari->get_active_row_number() == 10) wprofile->set_active(2);
+    if (wprimari->get_active_row_number() == 10) {
+        prifreeVBox->set_sensitive(true);
+    } else {
+        prifreeVBox->set_sensitive(false);
+    }
+
+    if (wprimari->get_active_row_number() == 10) {
+        wprofile->set_active(2);
+    }
 
     if (listener) {
         listener->panelChanged(EvICMprimariMethod, wprimari->get_active_text());
@@ -1042,40 +1154,68 @@ void ICMPanel::wprimariChanged()
 
 void ICMPanel::wtempChanged()
 {
-	if(wprofile->get_active_row_number() == 2){wtemp->set_sensitive(true);}
-	else {wtemp->set_sensitive(false);}
-	if(wtemp->get_active_row_number() != 0) wprofile->set_active(2);
+    if (wprofile->get_active_row_number() == 2) {
+        wtemp->set_sensitive(true);
+    } else {
+        wtemp->set_sensitive(false);
+    }
+
+    if (wtemp->get_active_row_number() != 0) {
+        wprofile->set_active(2);
+    }
 
     if (listener) {
         listener->panelChanged(EvICMtempMethod, wtemp->get_active_text());
     }
 }
 
+void ICMPanel::wtrcinChanged()
+{
+    if (wtrcin->get_active_row_number() == 0) {
+        gamm->set_sensitive(false);
+        slop->set_sensitive(false);
+
+    } else {
+        gamm->set_sensitive(true);
+        slop->set_sensitive(true);
+    }
+
+    if (listener) {
+        listener->panelChanged(EvICMtrcinMethod, wtrcin->get_active_text());
+    }
+}
+
 void ICMPanel::wprofileChanged()
 {
-	if(wprofile->get_active_row_number() == 2){wtemp->set_sensitive(true);}
-	else {wtemp->set_sensitive(false);}
-	if(wtemp->get_active_row_number() != 0) wprofile->set_active(2);
+    if (wprofile->get_active_row_number() == 2) {
+        wtemp->set_sensitive(true);
+    } else {
+        wtemp->set_sensitive(false);
+    }
+
+    if (wtemp->get_active_row_number() != 0) {
+        wprofile->set_active(2);
+    }
 
     if (listener) {
         listener->panelChanged(EvICMprofileMethod, wprofile->get_active_text());
-		
+
     }
 }
 
 void ICMPanel::gpChanged()
 {
-    if (wgamma->get_active_row_number() == 0) {	
+    if (wgamma->get_active_row_number() == 0) {
         gampos->set_sensitive(true);
         slpos->set_sensitive(true);
-	} else {
+    } else {
         gampos->set_sensitive(false);
         slpos->set_sensitive(false);
-	}	
+    }
 
     if (listener) {
         listener->panelChanged(EvGAMMA, wgamma->get_active_text());
-        onames->set_sensitive(wgamma->get_active_row_number() == 0); 
+        onames->set_sensitive(wgamma->get_active_row_number() == 0);
     }
 }
 
@@ -1231,9 +1371,12 @@ void ICMPanel::ipChanged()
 
 void ICMPanel::GamChanged()
 {
-		
-	if(wprofile->get_active_row_number() == 2) {wtemp->set_sensitive(true);}
-	else {wtemp->set_sensitive(false);}
+
+    if (wprofile->get_active_row_number() == 2) {
+        wtemp->set_sensitive(true);
+    } else {
+        wtemp->set_sensitive(false);
+    }
 
     if (multiImage) {
         if (freegamma->get_inconsistent()) {
@@ -1261,15 +1404,23 @@ void ICMPanel::GamChanged()
                 slpos->set_sensitive(true);
                 wprimari->set_sensitive(true);
                 wprofile->set_sensitive(true);
-				//wtemp->set_sensitive(true);
-				if(wprofile->get_active_row_number() == 2) wtemp->set_sensitive(true);
-				priHBox->set_sensitive(true);
-				if(wprimari->get_active_row_number() == 10) prifreeVBox->set_sensitive(true);
-				else prifreeVBox->set_sensitive(false);
-				
-				gaHBox->set_sensitive(true);
-				profHBox->set_sensitive(true);
-				tempHBox->set_sensitive(true);
+
+                //wtemp->set_sensitive(true);
+                if (wprofile->get_active_row_number() == 2) {
+                    wtemp->set_sensitive(true);
+                }
+
+                priHBox->set_sensitive(true);
+
+                if (wprimari->get_active_row_number() == 10) {
+                    prifreeVBox->set_sensitive(true);
+                } else {
+                    prifreeVBox->set_sensitive(false);
+                }
+
+                gaHBox->set_sensitive(true);
+                profHBox->set_sensitive(true);
+                tempHBox->set_sensitive(true);
             }
         } else {
             listener->panelChanged(EvGAMFREE, M("GENERAL_DISABLED"));
@@ -1281,15 +1432,19 @@ void ICMPanel::GamChanged()
                 slpos->set_sensitive(false);
                 wprimari->set_sensitive(false);
                 wprofile->set_sensitive(false);
-				if(wprofile->get_active_row_number() != 2) wtemp->set_sensitive(false);
-				//wtemp->set_sensitive(false);
-				priHBox->set_sensitive(false);
-				prifreeVBox->set_sensitive(false);
-				
-				gaHBox->set_sensitive(false);
-				profHBox->set_sensitive(false);
-				tempHBox->set_sensitive(false);
-				
+
+                if (wprofile->get_active_row_number() != 2) {
+                    wtemp->set_sensitive(false);
+                }
+
+                //wtemp->set_sensitive(false);
+                priHBox->set_sensitive(false);
+                prifreeVBox->set_sensitive(false);
+
+                gaHBox->set_sensitive(false);
+                profHBox->set_sensitive(false);
+                tempHBox->set_sensitive(false);
+
             }
         }
     }
@@ -1469,8 +1624,11 @@ void ICMPanel::setBatchMode(bool batchMode)
     wprimari->append(M("GENERAL_UNCHANGED"));
     wprofile->append(M("GENERAL_UNCHANGED"));
     wtemp->append(M("GENERAL_UNCHANGED"));
+    wtrcin->append(M("GENERAL_UNCHANGED"));
     dcpIll->append(M("GENERAL_UNCHANGED"));
     gampos->showEditedCB();
     slpos->showEditedCB();
+    gamm->showEditedCB();
+    slop->showEditedCB();
 }
 

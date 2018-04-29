@@ -896,6 +896,57 @@ private:
             shmap->update (baseImg, shradius, ipf.lumimul, params.sh.hq, 1);
         }
 
+		
+		//gamma TRC working
+     {
+        if (params.icm.wtrcin == "free") { //exec TRC IN free
+            Glib::ustring profi;
+            profi = params.icm.working;
+
+            if (profi == "sRGB" || profi == "Adobe RGB" || profi == "ProPhoto" || profi == "WideGamut" || profi == "BruceRGB" || profi == "Beta RGB" || profi == "BestRGB" || profi == "Rec2020" || profi == "ACESp0" || profi == "ACESp1") {
+                int  cw = baseImg->getWidth();
+                int  ch = baseImg->getHeight();
+                // put gamma TRC to 1
+                Image16* readyImg0 = NULL;
+
+                double ga0, ga1, ga2, ga3, ga4, ga5, ga6;
+                int mul = -5;
+                double gga = 2.4, ssl = 12.92;
+
+                readyImg0 = ipf.workingtrc(baseImg, cw, ch, mul, params.icm.working, gga, ssl, ga0, ga1, ga2, ga3, ga4, ga5, ga6);
+                #pragma omp parallel for
+
+                for (int row = 0; row < ch; row++) {
+                    for (int col = 0; col < cw; col++) {
+                        baseImg->r(row, col) = (float)readyImg0->r(row, col);
+                        baseImg->g(row, col) = (float)readyImg0->g(row, col);
+                        baseImg->b(row, col) = (float)readyImg0->b(row, col);
+                    }
+                }
+
+                delete readyImg0;
+                //adjust TRC
+                Image16* readyImg = NULL;
+                gga = params.icm.gamm, ssl = params.icm.slop;
+                mul = 5;
+                readyImg = ipf.workingtrc(baseImg, cw, ch, mul, params.icm.working, gga, ssl, ga0, ga1, ga2, ga3, ga4, ga5, ga6);
+                #pragma omp parallel for
+
+                for (int row = 0; row < ch; row++) {
+                    for (int col = 0; col < cw; col++) {
+                        baseImg->r(row, col) = (float)readyImg->r(row, col);
+                        baseImg->g(row, col) = (float)readyImg->g(row, col);
+                        baseImg->b(row, col) = (float)readyImg->b(row, col);
+                    }
+                }
+
+                delete readyImg;
+
+            }
+        }
+    }
+		
+		
         // RGB processing
 
         curve1 (65536);

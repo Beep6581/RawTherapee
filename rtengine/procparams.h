@@ -1027,12 +1027,15 @@ struct ColorManagementParams {
     double pgrey;
     double pblux;
     double pbluy;
+    double gamm;
+    double slop;
 	
     Glib::ustring wprimari;
     Glib::ustring wprofile;
     Glib::ustring wtemp;
     static const Glib::ustring NoICMString;
     bool freegamma;
+    Glib::ustring wtrcin;
 
     ColorManagementParams();
 

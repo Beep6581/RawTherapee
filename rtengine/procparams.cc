@@ -1965,11 +1965,15 @@ ColorManagementParams::ColorManagementParams() :
 	pgrey(0.6000),
 	pblux(0.1500),
 	pbluy(0.0600),
+    gamm(2.4),
+    slop(12.92),
 	
     wprimari("sRGB"),
     wprofile("none"),
     wtemp("DEF"),
-    freegamma(false)
+    freegamma(false),
+    wtrcin("none")
+	
 {
 }
 
@@ -1995,9 +1999,12 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && pgrey == other.pgrey
         && pblux == other.pblux
         && pbluy == other.pbluy
+        && gamm == other.gamm
+        && slop == other.slop
         && wprimari == other.wprimari
         && wprofile == other.wprofile
         && wtemp == other.wtemp
+        && wtrcin == other.wtrcin
         && freegamma == other.freegamma;
 }
 
@@ -3169,10 +3176,13 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->icm.pgrey, "Color Management", "GammaPgrey", icm.pgrey, keyFile);
         saveToKeyfile(!pedited || pedited->icm.pblux, "Color Management", "GammaPblux", icm.pblux, keyFile);
         saveToKeyfile(!pedited || pedited->icm.pbluy, "Color Management", "GammaPbluy", icm.pbluy, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.gamm, "Color Management", "GammaValueIn", icm.gamm, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.slop, "Color Management", "GammaSlopeIn", icm.slop, keyFile);
 
         saveToKeyfile(!pedited || pedited->icm.wprimari, "Color Management", "GammaPrimari", icm.wprimari, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wtemp, "Color Management", "GammaTemp", icm.wtemp, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wprofile, "Color Management", "GammaProfile", icm.wprofile, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.wtrcin, "Color Management", "GammaTRCIN", icm.wtrcin, keyFile);
 
 // Wavelet
         saveToKeyfile(!pedited || pedited->wavelet.enabled, "Wavelet", "Enabled", wavelet.enabled, keyFile);
@@ -4201,10 +4211,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "GammaPgrey", pedited, icm.pgrey, pedited->icm.pgrey);
             assignFromKeyfile(keyFile, "Color Management", "GammaPblux", pedited, icm.pblux, pedited->icm.pblux);
             assignFromKeyfile(keyFile, "Color Management", "GammaPbluy", pedited, icm.pbluy, pedited->icm.pbluy);
+
+            assignFromKeyfile(keyFile, "Color Management", "GammaValueIn", pedited, icm.gamm, pedited->icm.gamm);
+            assignFromKeyfile(keyFile, "Color Management", "GammaSlopeIn", pedited, icm.slop, pedited->icm.slop);
 			
             assignFromKeyfile(keyFile, "Color Management", "GammaPrimari", pedited, icm.wprimari, pedited->icm.wprimari);
             assignFromKeyfile(keyFile, "Color Management", "GammaProfile", pedited, icm.wprofile, pedited->icm.wprofile);
             assignFromKeyfile(keyFile, "Color Management", "GammaTemp", pedited, icm.wtemp, pedited->icm.wtemp);
+            assignFromKeyfile(keyFile, "Color Management", "GammaTRCIN", pedited, icm.wtrcin, pedited->icm.wtrcin);
         }
 
         if (keyFile.has_group("Wavelet")) {

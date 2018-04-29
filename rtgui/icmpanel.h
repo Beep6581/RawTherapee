@@ -36,7 +36,11 @@ public:
     virtual void saveInputICCReference(Glib::ustring fname, bool apply_wb) {}
 };
 
-class ICMPanel : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::ICMListener
+class ICMPanel :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel,
+    public rtengine::ICMListener
 {
 
 protected:
@@ -49,8 +53,13 @@ protected:
     Adjuster* pgrey;
     Adjuster* pblux;
     Adjuster* pbluy;
-	
-	
+    Adjuster* gamm;
+    Adjuster* slop;
+
+    Gtk::Label* labmga;
+    Gtk::HBox* gabox;
+
+
     bool lastgamfree;
     sigc::connection  gamcsconn;
     //bool freegamma;
@@ -76,6 +85,9 @@ private:
     rtengine::ProcEvent EvICMpgrey;
     rtengine::ProcEvent EvICMpblux;
     rtengine::ProcEvent EvICMpbluy;
+    rtengine::ProcEvent EvICMgamm;
+    rtengine::ProcEvent EvICMslop;
+    rtengine::ProcEvent EvICMtrcinMethod;
 
     Gtk::VBox       *  iVBox;
     Gtk::HBox* priHBox;
@@ -83,6 +95,7 @@ private:
     Gtk::HBox* profHBox;
     Gtk::HBox* tempHBox;
     Gtk::VBox* prifreeVBox;
+    Gtk::HBox* trcinHBox;
 
     Gtk::CheckButton*  obpc;
     Gtk::CheckButton*  freegamma;
@@ -109,6 +122,8 @@ private:
     sigc::connection   wprofileconn;
     MyComboBoxText*    wtemp;
     sigc::connection   wtempconn;
+    MyComboBoxText*    wtrcin;
+    sigc::connection   wtrcinconn;
 
     MyComboBoxText*    onames;
     sigc::connection   onamesconn;
@@ -141,6 +156,7 @@ public:
     void wprimariChanged();
     void wprofileChanged();
     void wtempChanged();
+    void wtrcinChanged();
     void opChanged();
     void oiChanged(int n);
     void oBPCChanged();
