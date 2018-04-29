@@ -852,6 +852,8 @@ void Crop::update(int todo)
                 int  cw = baseCrop->getWidth();
                 int  ch = baseCrop->getHeight();
                 Image16* readyImg0 = NULL;
+				// I used Image16 because Imagefloat does not work
+
                 double ga0, ga1, ga2, ga3, ga4, ga5, ga6;
                 int mul = -5;
                 double gga = 2.4, ssl = 12.92;

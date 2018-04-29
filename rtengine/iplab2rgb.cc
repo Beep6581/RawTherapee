@@ -426,16 +426,13 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
     return image;
 }
 
+
+// I don't know why, but with Imagefloat process does not work...It is probably due to my bad skill !
 Image16* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int mul, Glib::ustring profi, double gampos, double slpos, double &ga0, double &ga1, double &ga2, double &ga3, double &ga4, double &ga5, double &ga6)
 {
     TMatrix wprof;
 
-    if (true) {
         wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.working);
-    } else {
-        wprof = ICCStore::getInstance()->workingSpaceMatrix("ProPhoto");
-        profi = "ProPhoto";
-    }
 
     double dx = Color::D50x;
     double dz = Color::D50z;
@@ -473,7 +470,6 @@ Image16* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int mu
         pwr = gampos;
         gampos = 1. / gampos;
         five = -mul;
-        //    if(ts < 2.) five=-4;
     }
 
     //  int select_temp = 1; //5003K
@@ -593,7 +589,7 @@ Image16* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int mu
         ga2 = g_a[4] / (1.0 + g_a[4]);
         ga3 = 1. / slpos;
         ga5 = 0.0;
-        printf("ga0=%f ga1=%f ga2=%f ga3=%f ga4=%f\n", ga0, ga1, ga2, ga3, ga4);
+       // printf("ga0=%f ga1=%f ga2=%f ga3=%f ga4=%f\n", ga0, ga1, ga2, ga3, ga4);
 
         cmsCIExyY       xyD;
 
