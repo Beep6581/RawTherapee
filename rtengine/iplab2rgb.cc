@@ -427,8 +427,7 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
 }
 
 
-// I don't know why, but with Imagefloat process does not work...It is probably due to my bad skill !
-Image16* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int mul, Glib::ustring profi, double gampos, double slpos, double &ga0, double &ga1, double &ga2, double &ga3, double &ga4, double &ga5, double &ga6)
+Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int mul, Glib::ustring profi, double gampos, double slpos, double &ga0, double &ga1, double &ga2, double &ga3, double &ga4, double &ga5, double &ga6)
 {
     TMatrix wprof;
 
@@ -455,7 +454,7 @@ Image16* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int mu
         }
     };
 
-    Image16* image = new  Image16(cw, ch);
+    Imagefloat* image = new  Imagefloat(cw, ch);
 
     double pwr;
     double ts;
@@ -565,14 +564,14 @@ Image16* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int mu
             p[4] = 0.0366;
             p[5] = 0.0001;
         } else {
-            /*
-            p[0] = 0.7347;    //default primaries
+            
+            p[0] = 0.7347;    //default primaries always unused
             p[1] = 0.2653;
             p[2] = 0.1596;
             p[3] = 0.8404;
             p[4] = 0.0366;
             p[5] = 0.0001;
-            */
+            
         }
 
         if (slpos == 0) {
@@ -622,11 +621,12 @@ Image16* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int mu
             float* rr = working->r(i);
             float* rg = working->g(i);
             float* rb = working->b(i);
-
-            short* xa = (short*)image->r(i);
-            short* ya = (short*)image->g(i);
-            short* za = (short*)image->b(i);
-
+			
+            float* xa = (float*)image->r(i);
+            float* ya = (float*)image->g(i);
+            float* za = (float*)image->b(i);
+			
+			
             for (int j = 0; j < cw; j++) {
                 float r1 = rr[j];
                 float g1 = rg[j];
@@ -636,27 +636,28 @@ Image16* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int mu
                 float x_ = toxyz[0][0] * r1 + toxyz[0][1] * g1 + toxyz[0][2] * b1;
                 float y_ = toxyz[1][0] * r1 + toxyz[1][1] * g1 + toxyz[1][2] * b1;
                 float z_ = toxyz[2][0] * r1 + toxyz[2][1] * g1 + toxyz[2][2] * b1;
-
-                xa[j] = CLIP((int) round(x_)) ;
-                ya[j] = CLIP((int) round(y_));
-                za[j] = CLIP((int) round(z_));
+	
+			
+                xa[j] = ( x_) ;
+                ya[j] = ( y_);
+                za[j] = ( z_);
 
             }
         }
 
         cmsUInt32Number flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;
 
-        cmsHPROFILE iprof = ICCStore::getInstance()->getXYZProfile();
-        lcmsMutex->lock();
-        cmsHTRANSFORM hTransform = cmsCreateTransform(iprof, TYPE_RGB_16, oprofdef, TYPE_RGB_16, params->icm.outputIntent,  cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
 
-        //    cmsHTRANSFORM hTransform = cmsCreateTransform(iprof, TYPE_RGB_FLT, oprofdef, TYPE_RGB_FLT, params->icm.outputIntent, flags);
-        lcmsMutex->unlock();
+        lcmsMutex->lock();
+        cmsHPROFILE iprof = ICCStore::getInstance()->getXYZProfile();
+		//   cmsHTRANSFORM hTransform = cmsCreateTransform(iprof, TYPE_RGB_16, oprofdef, TYPE_RGB_16, params->icm.outputIntent,  cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
+		cmsHTRANSFORM hTransform = cmsCreateTransform(iprof, TYPE_RGB_FLT, oprofdef, TYPE_RGB_FLT, params->icm.outputIntent, flags);
+		lcmsMutex->unlock();
 
         image->ExecCMSTransform(hTransform);
+		
         cmsDeleteTransform(hTransform);
-
-
+        image->normalizeFloatTo65535();
 
     }
 

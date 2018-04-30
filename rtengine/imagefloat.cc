@@ -524,9 +524,9 @@ void Imagefloat::ExecCMSTransform(cmsHTRANSFORM hTransform)
             float *p = pBuf.data, *pR = r(y), *pG = g(y), *pB = b(y);
 
             for (int x = 0; x < width; x++) {
-                *(p++) = *(pR++);
-                *(p++) = *(pG++);
-                *(p++) = *(pB++);
+                *(p++) = *(pR++)/ 65535.f;
+                *(p++) = *(pG++)/ 65535.f;
+                *(p++) = *(pB++)/ 65535.f;
             }
 
             cmsDoTransform (hTransform, pBuf.data, pBuf.data, width);

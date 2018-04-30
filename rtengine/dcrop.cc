@@ -817,8 +817,7 @@ void Crop::update(int todo)
                 //first put gamma TRC to 1
                 int  cw = baseCrop->getWidth();
                 int  ch = baseCrop->getHeight();
-                Image16* readyImg0 = NULL;
-				// I used Image16 because Imagefloat does not work
+                Imagefloat* readyImg0 = NULL;
 
                 double ga0, ga1, ga2, ga3, ga4, ga5, ga6;
                 int mul = -5;
@@ -838,7 +837,7 @@ void Crop::update(int todo)
 
                 delete readyImg0;
                 //adjust gamma TRC
-                Image16* readyImg = NULL;
+                Imagefloat* readyImg = NULL;
                 gga = params.icm.gamm, ssl = params.icm.slop;
                 mul = 5;
                 readyImg = parent->ipf.workingtrc(baseCrop, cw, ch, mul, params.icm.working, gga, ssl, ga0, ga1, ga2, ga3, ga4, ga5, ga6);

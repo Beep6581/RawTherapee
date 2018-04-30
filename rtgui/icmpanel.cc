@@ -205,8 +205,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     Gtk::VBox * gammaVBox = Gtk::manage(new Gtk::VBox());
     gammaVBox->set_spacing(2);
 
-    gamm = Gtk::manage(new Adjuster(M("TP_GAMMAWORK_GAMMA"), 0.40, 8.0, 0.001, 2.4));
-    slop = Gtk::manage(new Adjuster(M("TP_GAMMAWORK_SLOPE"), 0., 60., 0.01, 12.92));
+    gamm = Gtk::manage(new Adjuster(M("TP_GAMMAWORK_GAMMA"), 0.40, 10.0, 0.001, 2.4));
+    slop = Gtk::manage(new Adjuster(M("TP_GAMMAWORK_SLOPE"), 0., 80., 0.01, 12.92));
     wVBox->pack_start(*gamm, Gtk::PACK_SHRINK);
     gamm->show();
 
