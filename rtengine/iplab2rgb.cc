@@ -32,63 +32,60 @@ namespace rtengine
 
 extern void filmlike_clip(float *r, float *g, float *b);
 
+extern const Settings* settings;
+
 namespace {
 
-inline void clipLAB(float iL, float ia, float ib, float &oL, float &oa, float &ob, const float scale, const float wp[3][3], const float wip[3][3])
+inline void copyAndClampLine(const float *src, unsigned char *dst, const int W)
 {
-    if (iL < 0.f) {
-        oL = oa = ob = 0.f;
-    } else if (iL > 32768.f || min(ia, ib) < -42000.f || max(ia, ib) > 42000.f) {
-        
-        float X, Y, Z;
-        float r, g, b;
-        Color::Lab2XYZ(iL, ia, ib, X, Y, Z);
-        Color::xyz2rgb(X, Y, Z, r, g, b, wip);
-        filmlike_clip(&r, &g, &b);
-        Color::rgbxyz(r, g, b, X, Y, Z, wp);
-        Color::XYZ2Lab(X, Y, Z, oL, oa, ob);
-        oL /= scale;
-        oa /= scale;
-        ob /= scale;
-        
-        // oL = 32768.f / scale;
-        // oa = ob = 0.f;
-    } else {
-        oL = iL / scale;
-        oa = ia / scale;
-        ob = ib / scale;
+    for (int j = 0, iy = 0; j < W; ++j) {
+        float r = src[iy] * MAXVALF;
+        float g = src[iy+1] * MAXVALF;
+        float b = src[iy+2] * MAXVALF;
+        if (r > MAXVALF || g > MAXVALF || b > MAXVALF) {
+            filmlike_clip(&r, &g, &b);
+        }
+        dst[iy] = uint16ToUint8Rounded(CLIP(r));
+        dst[iy+1] = uint16ToUint8Rounded(CLIP(g));
+        dst[iy+2] = uint16ToUint8Rounded(CLIP(b));
+        iy += 3;
     }
 }
 
 
-inline void clipLAB(float iL, float ia, float ib, double &oL, double &oa, double &ob, const float scale, const float wp[3][3], const float wip[3][3])
+inline void copyAndClamp(const LabImage *src, unsigned char *dst, const double rgb_xyz[3][3], bool multiThread)
 {
-    float tL, ta, tb;
-    clipLAB(iL, ia, ib, tL, ta, tb, scale, wp, wip);
-    oL = tL;
-    oa = ta;
-    ob = tb;
+    int W = src->W;
+    int H = src->H;
+
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+    for (int i = 0; i < H; ++i) {
+        float* rL = src->L[i];
+        float* ra = src->a[i];
+        float* rb = src->b[i];
+        int ix = i * 3 * W;
+
+        float R, G, B;
+        float x_, y_, z_;
+
+        for (int j = 0; j < W; ++j) {
+            Color::Lab2XYZ(rL[j], ra[j], rb[j], x_, y_, z_ );
+            Color::xyz2rgb(x_, y_, z_, R, G, B, rgb_xyz);
+
+            if (R > MAXVALF || G > MAXVALF || B > MAXVALF) {
+                filmlike_clip(&R, &G, &B);
+            }
+
+            dst[ix++] = uint16ToUint8Rounded(Color::gamma2curve[R]);
+            dst[ix++] = uint16ToUint8Rounded(Color::gamma2curve[G]);
+            dst[ix++] = uint16ToUint8Rounded(Color::gamma2curve[B]);
+        }
+    }
 }
 
 } // namespace
-
-extern const Settings* settings;
-
-#define DECLARE_WORKING_MATRICES_(space) \
-    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix ( space ); \
-    const float wp[3][3] = {                                            \
-        {static_cast<float> (wprof[0][0]), static_cast<float> (wprof[0][1]), static_cast<float> (wprof[0][2])}, \
-        {static_cast<float> (wprof[1][0]), static_cast<float> (wprof[1][1]), static_cast<float> (wprof[1][2])}, \
-        {static_cast<float> (wprof[2][0]), static_cast<float> (wprof[2][1]), static_cast<float> (wprof[2][2])} \
-    };                                                                  \
-                                                                        \
-    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix ( space ); \
-    const float wip[3][3] = {                                           \
-        {static_cast<float> (wiprof[0][0]), static_cast<float> (wiprof[0][1]), static_cast<float> (wiprof[0][2])}, \
-        {static_cast<float> (wiprof[1][0]), static_cast<float> (wiprof[1][1]), static_cast<float> (wiprof[1][2])}, \
-        {static_cast<float> (wiprof[2][0]), static_cast<float> (wiprof[2][1]), static_cast<float> (wiprof[2][2])} \
-    }
-    
 
 // Used in ImProcCoordinator::updatePreviewImage  (rtengine/improccoordinator.cc)
 //         Crop::update                           (rtengine/dcrop.cc)
@@ -98,8 +95,6 @@ extern const Settings* settings;
 // otherwise divide by 327.68, convert to xyz and apply the sRGB transform, before converting with gamma2curve
 void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
 {
-    DECLARE_WORKING_MATRICES_(params->icm.working);
-    
     if (monitorTransform) {
 
         int W = lab->W;
@@ -112,6 +107,7 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
 #endif
         {
             AlignedBuffer<float> pBuf(3 * lab->W);
+            AlignedBuffer<float> mBuf(3 * lab->W);
 
             AlignedBuffer<float> gwBuf1;
             AlignedBuffer<float> gwBuf2;
@@ -121,6 +117,7 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
             }
             
             float *buffer = pBuf.data;
+            float *outbuffer = mBuf.data;
 
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
@@ -136,11 +133,13 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
                 float* rb = lab->b[i];
 
                 for (int j = 0; j < W; j++) {
-                    clipLAB(rL[j], ra[j], rb[j], buffer[iy], buffer[iy+1], buffer[iy+2], 327.68f, wp, wip);
-                    iy += 3;
+                    buffer[iy++] = rL[j] / 327.68f;
+                    buffer[iy++] = ra[j] / 327.68f;
+                    buffer[iy++] = rb[j] / 327.68f;
                 }
 
-                cmsDoTransform (monitorTransform, buffer, data + ix, W);
+                cmsDoTransform (monitorTransform, buffer, outbuffer, W);
+                copyAndClampLine(outbuffer, data + ix, W);
 
                 if (gamutWarning) {
                     gamutWarning->markLine(image, i, buffer, gwBuf1.data, gwBuf2.data);
@@ -148,41 +147,7 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
             }
         } // End of parallelization
     } else {
-
-        int W = lab->W;
-        int H = lab->H;
-        unsigned char * data = image->data;
-
-#ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif
-
-        for (int i = 0; i < H; ++i) {
-            float* rL = lab->L[i];
-            float* ra = lab->a[i];
-            float* rb = lab->b[i];
-            int ix = i * 3 * W;
-
-            float R, G, B;
-            float x_, y_, z_;
-            float L, a, b;
-
-            for (int j = 0; j < W; ++j) {
-
-                //float L1=rL[j],a1=ra[j],b1=rb[j];//for testing
-                clipLAB(rL[j], ra[j], rb[j], L, a, b, 1.f, wp, wip);
-
-                Color::Lab2XYZ(L, a, b, x_, y_, z_ );
-
-                Color::xyz2srgb(x_, y_, z_, R, G, B);
-
-                /* copy RGB */
-                //int R1=((int)gamma2curve[(R)])
-                data[ix++] = uint16ToUint8Rounded(Color::gamma2curve[R]);
-                data[ix++] = uint16ToUint8Rounded(Color::gamma2curve[G]);
-                data[ix++] = uint16ToUint8Rounded(Color::gamma2curve[B]);
-            }
-        }
+        copyAndClamp(lab, image->data, sRGB_xyz, multiThread);
     }
 }
 
@@ -197,8 +162,6 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
 // otherwise divide by 327.68, convert to xyz and apply the RGB transform, before converting with gamma2curve
 Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm, bool consider_histogram_settings)
 {
-    DECLARE_WORKING_MATRICES_(icm.working);
-    
     //gamutmap(lab);
 
     if (cx < 0) {
@@ -248,7 +211,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
         }
         lcmsMutex->lock ();
         cmsHPROFILE LabIProf  = cmsCreateLab4Profile(nullptr);
-        cmsHTRANSFORM hTransform = cmsCreateTransform (LabIProf, TYPE_Lab_DBL, oprofG, TYPE_RGB_8, icm.outputIntent, flags);  // NOCACHE is important for thread safety
+        cmsHTRANSFORM hTransform = cmsCreateTransform (LabIProf, TYPE_Lab_DBL, oprofG, TYPE_RGB_FLT, icm.outputIntent, flags);  // NOCACHE is important for thread safety
         cmsCloseProfile(LabIProf);
         lcmsMutex->unlock ();
 
@@ -260,7 +223,9 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 #endif
         {
             AlignedBuffer<double> pBuf(3 * cw);
+            AlignedBuffer<float> oBuf(3 * cw);
             double *buffer = pBuf.data;
+            float *outbuffer = oBuf.data;
             int condition = cy + ch;
 
 #ifdef _OPENMP
@@ -275,11 +240,13 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
                 float* rb = lab->b[i];
 
                 for (int j = cx; j < cx + cw; j++) {
-                    clipLAB(rL[j], ra[j], rb[j], buffer[iy], buffer[iy+1], buffer[iy+2], 327.68f, wp, wip);
-                    iy += 3;
+                    buffer[iy++] = rL[j] / 327.68f;
+                    buffer[iy++] = ra[j] / 327.68f;
+                    buffer[iy++] = rb[j] / 327.68f;
                 }
 
-                cmsDoTransform (hTransform, buffer, data + ix, cw);
+                cmsDoTransform (hTransform, buffer, outbuffer, cw);
+                copyAndClampLine(outbuffer, data + ix, cw);
             }
         } // End of parallelization
 
@@ -289,34 +256,8 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
             cmsCloseProfile(oprofG);
         }
     } else {
-
         const auto xyz_rgb = ICCStore::getInstance()->workingSpaceInverseMatrix (profile);
-
-#ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif
-
-        for (int i = cy; i < cy + ch; ++i) {
-            float* rL = lab->L[i];
-            float* ra = lab->a[i];
-            float* rb = lab->b[i];
-            int ix = 3 * i * cw;
-
-            float R, G, B;
-            float x_, y_, z_;
-            float L, a, b;
-
-            for (int j = cx; j < cx + cw; ++j) {
-                clipLAB(rL[j], ra[j], rb[j], L, a, b, 1.f, wp, wip);
-                Color::Lab2XYZ(rL[j], ra[j], rb[j], x_, y_, z_);
-
-                Color::xyz2rgb(x_, y_, z_, R, G, B, xyz_rgb);
-
-                image->data[ix++] = uint16ToUint8Rounded(Color::gamma2curve[R]);
-                image->data[ix++] = uint16ToUint8Rounded(Color::gamma2curve[G]);
-                image->data[ix++] = uint16ToUint8Rounded(Color::gamma2curve[B]);
-            }
-        }
+        copyAndClamp(lab, image->data, xyz_rgb, multiThread);
     }
 
     return image;
@@ -383,6 +324,7 @@ Imagefloat* ImProcFunctions::lab2rgbOut (LabImage* lab, int cx, int cy, int cw, 
         cmsDeleteTransform(hTransform);
         image->normalizeFloatTo65535();
     } else {
+        
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
