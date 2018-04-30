@@ -54,6 +54,7 @@
 #53 26.02.2018 Erweiterung (TooWaBoo) RT 5.3
 #54 30.03.2018 Erweiterung (TooWaBoo) RT 5.4
 #55 06.04.2018 Erweiterung (TooWaBoo) RT 5.4
+#56 27.04.2018 Erweiterung (TooWaBoo) RT 5.4
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -776,7 +777,7 @@ HISTORY_MSG_490;(HDR-Dynamikkompression)\nIntensität
 HISTORY_MSG_491;(Weißabgleich)
 HISTORY_MSG_492;(RGB-Kurven)
 HISTORY_MSG_493;(L*a*b*)
-HISTORY_MSG_CLAMPOOG;(Belichtung) - Farben\nauf den Farbraum\nbeschränken
+HISTORY_MSG_CLAMPOOG;(Belichtung) - Farben\nauf Farbraum beschränken
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;(Farbanpassungen)\nL*a*b* - Farbkorrektur
 HISTORY_MSG_HISTMATCHING;(Belichtung)\nAuto-Tonwertkurve
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;(Lokaler Kontrast)\nIntensität
@@ -1611,7 +1612,7 @@ TP_EXPOSURE_AUTOLEVELS;Auto
 TP_EXPOSURE_AUTOLEVELS_TIP;Automatische Belichtungseinstellung\nbasierend auf Bildanalyse.
 TP_EXPOSURE_BLACKLEVEL;Schwarzwert
 TP_EXPOSURE_BRIGHTNESS;Helligkeit
-TP_EXPOSURE_CLAMPOOG;Farben auf den Farbraum beschränken
+TP_EXPOSURE_CLAMPOOG;Farben auf Farbraum beschränken
 TP_EXPOSURE_CLIP;Clip %:
 TP_EXPOSURE_CLIP_TIP;Anteil der Pixel, die sich bei automatischer\nBelichtungseinstellung im Bereich der\nSpitzlichter und Schatten befinden sollen.
 TP_EXPOSURE_COMPRHIGHLIGHTS;Lichterkompression
@@ -1845,8 +1846,6 @@ TP_RAW_NONE;Keine
 TP_RAW_PIXELSHIFT;Pixel Shift
 TP_RAW_PIXELSHIFTADAPTIVE;Adaptive Erkennung
 TP_RAW_PIXELSHIFTBLUR;Unschärfebewegungsmaske
-TP_RAW_PIXELSHIFTEPERISO;ISO-Anpassung
-TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;Der Standardwert (0.0) empfiehlt sich für die Basis-ISO.\nErhöhen Sie den Wert, um die Bewegungserkennung für höhere ISO-Werte zu verbessern.\nErhöhen Sie den Wert nur in kleinen Schritten und achten Sie dabei auf die Bewegungsmaske.
 TP_RAW_PIXELSHIFTEQUALBRIGHT;Frame-Helligkeit angleichen
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Ausgleich pro Kanal
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;EIN: Individueller Ausgleich der RGB-Kanäle.\nAUS: Identischer Ausgleichsfaktor für alle Kanäle.
@@ -1882,7 +1881,6 @@ TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
 TP_RAW_PIXELSHIFTSHOWMOTION;Bewegungsmaske anzeigen
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Nur Maske anzeigen
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Zeigt die Bewegungsmaske ohne Bild.
-TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Überlagert das Bild mit einer Maske um die\nBereiche mit Bewegung hervorzuheben.
 TP_RAW_PIXELSHIFTSIGMA;Unschärferadius
 TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Der Standard-Radius von 1,0 passt in der Regel für die Basis-ISO.\nErhöhen Sie den Wert für High-ISO-Aufnahmen, 5,0 ist ein guter\nAusgangspunkt für High-ISO-Aufnahmen. Achten Sie auf die\nBewegungsmaske, während Sie den Wert ändern.
 TP_RAW_PIXELSHIFTSMOOTH;Weicher Übergang
@@ -2278,3 +2276,11 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+EXIFFILTER_IMAGETYPE;Bildtyp
+TP_RAW_PIXELSHIFTEPERISO;Empfindlichkeit
+TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;Der Standardwert 0 wird für die Basis-ISO empfohlen.\nHöhere Werte erhöhen die Empfindlichkeit der Bewegungserkennung.\nVerändern Sie den Wert in kleinen Schritten und beobachten Sie die\nBewegungsmaske. Erhöhen Sie die Empfindlichkeit für unterbelichtete\noder High-ISO-Bilder.
+TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Überlagert das Bild mit einer grünen Maske,\num die Bewegungsbereiche hervorzuheben.

@@ -48,7 +48,6 @@ protected:
     //Gtk::CheckButton* bypass_colorDenoise;
     Gtk::CheckButton* bypass_defringe;
     Gtk::CheckButton* bypass_dirpyrDenoise;
-    Gtk::CheckButton* bypass_sh_hq;
 
     /*      icm_input   = "(camera)";
             icm_working = "sRGB";
@@ -88,7 +87,6 @@ protected:
     //sigc::connection bypass_colorDenoiseConn    ;
     sigc::connection bypass_defringeConn          ;
     sigc::connection bypass_dirpyrDenoiseConn     ;
-    sigc::connection bypass_sh_hqConn             ;
     sigc::connection bypass_dirpyrequalizerConn   ;
     sigc::connection bypass_waveletConn   ;
     //sigc::connection bypass_raw_bayer_all_enhanceConn   ;

@@ -42,7 +42,7 @@ extern const Settings* settings;
 
 Crop::Crop(ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow)
     : PipetteBuffer(editDataProvider), origCrop(nullptr), laboCrop(nullptr), labnCrop(nullptr),
-      cropImg(nullptr), cbuf_real(nullptr), cshmap(nullptr), transCrop(nullptr), cieCrop(nullptr), cbuffer(nullptr),
+      cropImg (nullptr), cbuf_real (nullptr), transCrop (nullptr), cieCrop (nullptr), cbuffer (nullptr),
       updating(false), newUpdatePending(false), skip(10),
       cropx(0), cropy(0), cropw(-1), croph(-1),
       trafx(0), trafy(0), trafw(-1), trafh(-1),
@@ -807,40 +807,6 @@ void Crop::update(int todo)
 
     }
 
-    // blurmap for shadow & highlights
-    if ((todo & M_BLURMAP) && params.sh.enabled) {
-        double radius = sqrt(double (skips(parent->fw, skip) * skips(parent->fw, skip) + skips(parent->fh, skip) * skips(parent->fh, skip))) / 2.0;
-        double shradius = params.sh.radius;
-
-        if (!params.sh.hq) {
-            shradius *= radius / 1800.0;
-        }
-
-        if (!cshmap) {
-            cshmap = new SHMap(cropw, croph, true);
-        }
-
-        cshmap->update(baseCrop, shradius, parent->ipf.lumimul, params.sh.hq, skip);
-
-        if (parent->shmap->min_f < 65535.f) { // don't call forceStat with wrong values
-            cshmap->forceStat(parent->shmap->max_f, parent->shmap->min_f, parent->shmap->avg);
-        }
-    }
-
-
-    // shadows & highlights & tone curve & convert to cielab
-    /*int xref,yref;
-    xref=000;yref=000;
-    if (colortest && cropw>115 && croph>115)
-        for(int j=1;j<5;j++){
-            xref+=j*30;yref+=j*30;
-            if (settings->verbose) printf("before rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f gamma=%f  \n",xref,yref,skip,
-                   baseCrop->r[(int)(xref/skip)][(int)(yref/skip)]/256,
-                   baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256,
-                   baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256,
-                   parent->imgsrc->getGamma());
-        }*/
-
     if (todo & M_INIT) {
         if (params.icm.wtrcin == "free") { //exec TRC IN free
             Glib::ustring profi;
@@ -898,7 +864,7 @@ void Crop::update(int todo)
         DCPProfile *dcpProf = parent->imgsrc->getDCP(params.icm, as);
 
         LUTu histToneCurve;
-        parent->ipf.rgbProc(baseCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
+        parent->ipf.rgbProc (baseCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, 
                             params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->colourToningSatLimit, parent->colourToningSatLimitOpacity, parent->ctColorCurve, parent->ctOpacityCurve, parent->opautili, parent->clToningcurve, parent->cl2Toningcurve,
                             parent->customToneCurve1, parent->customToneCurve2, parent->beforeToneCurveBW, parent->afterToneCurveBW, rrm, ggm, bbm,
                             parent->bwAutoR, parent->bwAutoG, parent->bwAutoB, dcpProf, as, histToneCurve);
@@ -1185,11 +1151,6 @@ void Crop::freeAll()
             cbuffer = nullptr;
         }
 
-        if (cshmap) {
-            delete    cshmap;
-            cshmap = nullptr;
-        }
-
         PipetteBuffer::flush();
     }
 
@@ -1262,8 +1223,6 @@ bool Crop::setCropSizes(int rcx, int rcy, int rcw, int rch, int skip, bool inter
     ory = by1;
     orw = bw;
     orh = bh;
-
-    ProcParams& params = parent->params;
 
     parent->ipf.transCoord(parent->fw, parent->fh, bx1, by1, bw, bh, orx, ory, orw, orh);
 
@@ -1377,20 +1336,11 @@ bool Crop::setCropSizes(int rcx, int rcy, int rcw, int rch, int skip, bool inter
             delete [] cbuf_real;
         }
 
-        if (cshmap) {
-            delete    cshmap;
-            cshmap = nullptr;
-        }
-
         cbuffer = new float*[croph];
         cbuf_real = new float[(croph + 2)*cropw];
 
         for (int i = 0; i < croph; i++) {
             cbuffer[i] = cbuf_real + cropw * i + cropw;
-        }
-
-        if (params.sh.enabled) {
-            cshmap = new SHMap(cropw, croph, true);
         }
 
         if (editType == ET_PIPETTE) {

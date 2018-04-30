@@ -1491,11 +1491,10 @@ bool FattalToneMappingParams::operator !=(const FattalToneMappingParams& other) 
 
 SHParams::SHParams() :
     enabled(false),
-    hq(false),
     highlights(0),
-    htonalwidth(80),
+    htonalwidth(70),
     shadows(0),
-    stonalwidth(80),
+    stonalwidth(30),
     radius(40)
 {
 }
@@ -1504,7 +1503,6 @@ bool SHParams::operator ==(const SHParams& other) const
 {
     return
         enabled == other.enabled
-        && hq == other.hq
         && highlights == other.highlights
         && htonalwidth == other.htonalwidth
         && shadows == other.shadows
@@ -3047,7 +3045,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Shadows & highlights
         saveToKeyfile(!pedited || pedited->sh.enabled, "Shadows & Highlights", "Enabled", sh.enabled, keyFile);
-        saveToKeyfile(!pedited || pedited->sh.hq, "Shadows & Highlights", "HighQuality", sh.hq, keyFile);
         saveToKeyfile(!pedited || pedited->sh.highlights, "Shadows & Highlights", "Highlights", sh.highlights, keyFile);
         saveToKeyfile(!pedited || pedited->sh.htonalwidth, "Shadows & Highlights", "HighlightTonalWidth", sh.htonalwidth, keyFile);
         saveToKeyfile(!pedited || pedited->sh.shadows, "Shadows & Highlights", "Shadows", sh.shadows, keyFile);
@@ -3946,9 +3943,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "FattalToneMapping", "Anchor", pedited, fattal.anchor, pedited->fattal.anchor);
         }
 
-        if (keyFile.has_group("Shadows & Highlights")) {
+        if (keyFile.has_group ("Shadows & Highlights") && ppVersion >= 333) {
             assignFromKeyfile(keyFile, "Shadows & Highlights", "Enabled", pedited, sh.enabled, pedited->sh.enabled);
-            assignFromKeyfile(keyFile, "Shadows & Highlights", "HighQuality", pedited, sh.hq, pedited->sh.hq);
             assignFromKeyfile(keyFile, "Shadows & Highlights", "Highlights", pedited, sh.highlights, pedited->sh.highlights);
             assignFromKeyfile(keyFile, "Shadows & Highlights", "HighlightTonalWidth", pedited, sh.htonalwidth, pedited->sh.htonalwidth);
             assignFromKeyfile(keyFile, "Shadows & Highlights", "Shadows", pedited, sh.shadows, pedited->sh.shadows);
@@ -3957,7 +3953,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
             if (keyFile.has_key("Shadows & Highlights", "LocalContrast") && ppVersion < 329) {
                 int lc = keyFile.get_integer("Shadows & Highlights", "LocalContrast");
-                localContrast.amount = float(lc) / (sh.hq ? 500.0 : 30.);
+                localContrast.amount = float(lc) / 30.;
 
                 if (pedited) {
                     pedited->localContrast.amount = true;

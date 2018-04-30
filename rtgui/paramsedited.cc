@@ -283,7 +283,6 @@ void ParamsEdited::set(bool v)
     fattal.amount    = v;
     fattal.anchor    = v;
     sh.enabled       = v;
-    sh.hq            = v;
     sh.highlights    = v;
     sh.htonalwidth   = v;
     sh.shadows       = v;
@@ -844,7 +843,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         fattal.anchor = fattal.anchor && p.fattal.anchor == other.fattal.anchor;
 
         sh.enabled = sh.enabled && p.sh.enabled == other.sh.enabled;
-        sh.hq = sh.hq && p.sh.hq == other.sh.hq;
         sh.highlights = sh.highlights && p.sh.highlights == other.sh.highlights;
         sh.htonalwidth = sh.htonalwidth && p.sh.htonalwidth == other.sh.htonalwidth;
         sh.shadows = sh.shadows && p.sh.shadows == other.sh.shadows;
@@ -2083,10 +2081,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (sh.enabled) {
         toEdit.sh.enabled         = mods.sh.enabled;
-    }
-
-    if (sh.hq) {
-        toEdit.sh.hq          = mods.sh.hq;
     }
 
     if (sh.highlights) {
