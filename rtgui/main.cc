@@ -514,15 +514,6 @@ int main (int argc, char **argv)
     options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
 #endif
 
-    Glib::ustring fatalError;
-
-    try {
-        Options::load();
-    } catch (Options::Error &e) {
-        fatalError = e.get_msg();
-    }
-
-
 #ifdef WIN32
     bool consoleOpened = false;
 
@@ -599,6 +590,14 @@ int main (int argc, char **argv)
     }
 
 #endif
+
+    Glib::ustring fatalError;
+
+    try {
+        Options::load();
+    } catch (Options::Error &e) {
+        fatalError = e.get_msg();
+    }
 
     if (gimpPlugin) {
         if (!Glib::file_test (argv1, Glib::FILE_TEST_EXISTS) || Glib::file_test (argv1, Glib::FILE_TEST_IS_DIR)) {
