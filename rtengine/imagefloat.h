@@ -104,6 +104,7 @@ public:
     void                 normalizeFloatTo1();
     void                 normalizeFloatTo65535();
     void                 calcCroppedHistogram(const ProcParams &params, float scale, LUTu & hist);
+    void                 ExecCMSTransform2(cmsHTRANSFORM hTransform);
 
     void                 ExecCMSTransform(cmsHTRANSFORM hTransform);
     void                 ExecCMSTransform(cmsHTRANSFORM hTransform, const LabImage &labImage, int cx, int cy);

@@ -654,7 +654,7 @@ Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int
 		cmsHTRANSFORM hTransform = cmsCreateTransform(iprof, TYPE_RGB_FLT, oprofdef, TYPE_RGB_FLT, params->icm.outputIntent, flags);
 		lcmsMutex->unlock();
 
-        image->ExecCMSTransform(hTransform);
+        image->ExecCMSTransform2(hTransform);
 		
         cmsDeleteTransform(hTransform);
         image->normalizeFloatTo65535();
