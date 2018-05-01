@@ -1311,6 +1311,7 @@ cmsHPROFILE rtengine::ICCStore::createFromMatrix(const double matrix[3][3], bool
 cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManagementParams &icm, GammaValues &ga)
 {
     float p[6]; //primaries
+    ga[5] = 0.0;
     ga[6] = 0.0;
 
     enum class ColorTemp {

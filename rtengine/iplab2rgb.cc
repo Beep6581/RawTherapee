@@ -529,6 +529,7 @@ Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int
         ga2 = g_a[4] / (1.0 + g_a[4]);
         ga3 = 1. / slpos;
         ga5 = 0.0;
+		ga6 = 0.0;
        // printf("ga0=%f ga1=%f ga2=%f ga3=%f ga4=%f\n", ga0, ga1, ga2, ga3, ga4);
 
         cmsCIExyY       xyD;
