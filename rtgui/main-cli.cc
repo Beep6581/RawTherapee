@@ -208,75 +208,6 @@ int main (int argc, char **argv)
 
 #endif
 
-#ifdef WIN32
-    bool consoleOpened = false;
-
-    // suppression of annoying error boxes
-    SetErrorMode (SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX | SEM_NOOPENFILEERRORBOX);
-
-    if (argc > 1 || options.rtSettings.verbose) {
-        Glib::ustring fname (fname_to_utf8 (argv[1]));
-#if ECLIPSE_ARGS
-        fname = fname.substr (1, fname.length() - 2);
-#endif
-
-        if (options.rtSettings.verbose || ( !Glib::file_test (fname, Glib::FILE_TEST_EXISTS ) && !Glib::file_test (fname, Glib::FILE_TEST_IS_DIR))) {
-            bool stdoutRedirectedtoFile = (GetFileType (GetStdHandle (STD_OUTPUT_HANDLE)) == 0x0001);
-            bool stderrRedirectedtoFile = (GetFileType (GetStdHandle (STD_ERROR_HANDLE)) == 0x0001);
-
-            // no console, if stdout and stderr both are redirected to file
-            if ( ! (stdoutRedirectedtoFile && stderrRedirectedtoFile)) {
-                // check if parameter -w was passed.
-                // We have to do that in this step, because it controls whether to open a console to show the output of following steps
-                bool Console = true;
-
-                for (int i = 1; i < argc; i++)
-                    if (!strcmp (argv[i], "-w")) {
-                        Console = false;
-                        break;
-                    }
-
-                if (Console && AllocConsole()) {
-                    AttachConsole ( GetCurrentProcessId() ) ;
-                    // Don't allow CTRL-C in console to terminate RT
-                    SetConsoleCtrlHandler ( NULL, true );
-                    // Set title of console
-                    char consoletitle[128];
-                    sprintf (consoletitle, "RawTherapee %s Console", RTVERSION);
-                    SetConsoleTitle (consoletitle);
-                    // increase size of screen buffer
-                    COORD c;
-                    c.X = 200;
-                    c.Y = 1000;
-                    SetConsoleScreenBufferSize ( GetStdHandle ( STD_OUTPUT_HANDLE ), c );
-                    // Disable console-Cursor
-                    CONSOLE_CURSOR_INFO cursorInfo;
-                    cursorInfo.dwSize = 100;
-                    cursorInfo.bVisible = false;
-                    SetConsoleCursorInfo ( GetStdHandle ( STD_OUTPUT_HANDLE ), &cursorInfo );
-
-                    if (!stdoutRedirectedtoFile) {
-                        freopen ( "CON", "w", stdout ) ;
-                    }
-
-                    if (!stderrRedirectedtoFile) {
-                        freopen ( "CON", "w", stderr ) ;
-                    }
-
-                    freopen ( "CON", "r", stdin ) ;
-
-                    consoleOpened = true;
-
-                    // printing RT's version in every case, particularly useful for the 'verbose' mode, but also for the batch processing
-                    std::cout << "RawTherapee, version " << RTVERSION << ", command line" << std::endl;
-                    std::cout << "WARNING: closing this window will close RawTherapee!" << std::endl << std::endl;
-                }
-            }
-        }
-    }
-
-#endif
-
     int ret = 0;
 
     // printing RT's version in all case, particularly useful for the 'verbose' mode, but also for the batch processing
@@ -287,16 +218,6 @@ int main (int argc, char **argv)
     } else {
         std::cout << "Terminating without anything to do." << std::endl;
     }
-
-#ifdef WIN32
-
-    if (consoleOpened) {
-        printf ("Press any key to exit RawTherapee\n");
-        FlushConsoleInputBuffer (GetStdHandle (STD_INPUT_HANDLE));
-        getch();
-    }
-
-#endif
 
     return ret;
 }
@@ -575,11 +496,6 @@ int processLineParams ( int argc, char **argv )
                     }
 
                     break;
-#ifdef WIN32
-
-                case 'w': // This case is handled outside this function
-                    break;
-#endif
 
                 case 'h':
                 case '?':
@@ -602,10 +518,6 @@ int processLineParams ( int argc, char **argv )
                     std::cout << "  " << Glib::path_get_basename (argv[0]) << " -c <dir>|<files>   Convert files in batch with default parameters." << std::endl;
                     std::cout << "  " << Glib::path_get_basename (argv[0]) << " <other options> -c <dir>|<files>   Convert files in batch with your own settings." << std::endl;
                     std::cout << std::endl;
-#ifdef WIN32
-                    std::cout << "  -w Do not open the Windows console" << std::endl;
-                    std::cout << std::endl;
-#endif
                     std::cout << "Options:" << std::endl;
                     std::cout << "  " << Glib::path_get_basename (argv[0]) << "[-o <output>|-O <output>] [-q] [-a] [-s|-S] [-p <one.pp3> [-p <two.pp3> ...] ] [-d] [ -j[1-100] [-js<1-3>] | [-b<8|16>] [-t[z] | [-n]] ] [-Y] [-f] -c <input>" << std::endl;
                     std::cout << std::endl;

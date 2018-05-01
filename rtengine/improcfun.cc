@@ -340,7 +340,7 @@ void ImProcFunctions::updateColorProfiles (const Glib::ustring& monitorProfile, 
 
                 monitorTransform = cmsCreateProofingTransform (
                                        iprof, TYPE_Lab_FLT,
-                                       monitor, TYPE_RGB_8,
+                                       monitor, TYPE_RGB_FLT,
                                        oprof,
                                        monitorIntent, outIntent,
                                        flags
@@ -383,7 +383,7 @@ void ImProcFunctions::updateColorProfiles (const Glib::ustring& monitorProfile, 
                 flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
             }
 
-            monitorTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, monitor, TYPE_RGB_8, monitorIntent, flags);
+            monitorTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, monitor, TYPE_RGB_FLT, monitorIntent, flags);
         }
 
         if (gamutCheck && gamutprof) {
