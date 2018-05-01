@@ -1190,7 +1190,9 @@ template<class T> void gaussianBlurImpl(T** src, T** dst, const int W, const int
         if (sigma < GAUSS_SKIP) {
             // don't perform filtering
             if (src != dst) {
-                memcpy (dst[0], src[0], W * H * sizeof(T));
+                for(int i = 0; i < H; ++i) {
+                    memcpy(dst[i], src[i], W * sizeof(T));
+                }
             }
         } else if (sigma < GAUSS_3X3_LIMIT) {
             if(src != dst) {
