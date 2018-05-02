@@ -532,7 +532,7 @@ void Options::setDefaults()
     rtSettings.autoMonitorProfile = false;
     rtSettings.adobe = "RT_ClayRGB-V2-srgbtrc"; // put the name of yours profiles (here windows)
     rtSettings.prophoto = "RT_LargeRGB-V2-rgbtrc"; // these names appear in the menu "output profile"
-    rtSettings.prophoto10 = "RT_Large_g10"; // these names appear in the menu "output profile"
+    rtSettings.prophoto10 = "RT_Large-V4-g10"; // these names appear in the menu "output profile"
     rtSettings.srgb10 = "RT_sRGB_g10";
     rtSettings.widegamut = "WideGamutRGB";
     rtSettings.srgb = "RT_sRGB-V2-srgbtrc";
@@ -540,7 +540,7 @@ void Options::setDefaults()
     rtSettings.beta = "RT_beta_V4";
     rtSettings.best = "RT_best_V4";
     rtSettings.rec2020 = "RT_Rec2020-V2-srgbtrc";
-    rtSettings.ACESp0 = "RT_ACES-V2-srgbtrc";
+    rtSettings.ACESp0 = "RT_ACEScg-V2-srgbtrc";
     rtSettings.ACESp1 = "RT_acesp1_V4";
     rtSettings.verbose = false;
     rtSettings.gamutICC = true;
