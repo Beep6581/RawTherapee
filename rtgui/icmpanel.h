@@ -45,6 +45,8 @@ class ICMPanel :
 
 protected:
     Gtk::Frame*        dcpFrame;
+    Gtk::Frame*        coipFrame;
+	
     Adjuster* gampos;
     Adjuster* slpos;
     Adjuster* predx;

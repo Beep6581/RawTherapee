@@ -808,7 +808,7 @@ void Crop::update(int todo)
     }
 
     if (todo & M_INIT) {
-        if (params.icm.wtrcin == "free") { //exec TRC IN free
+        if (params.icm.wtrcin == "Custom") { //exec TRC IN free
             Glib::ustring profile;
             profile = params.icm.working;
 

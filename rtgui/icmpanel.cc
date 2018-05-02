@@ -751,7 +751,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     if (pp->icm.wtrcin == "none") {
         wtrcin->set_active(0);
-    } else if (pp->icm.wtrcin == "free") {
+    } else if (pp->icm.wtrcin == "Custom") {
         wtrcin->set_active(1);
     }
 
@@ -803,9 +803,9 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         onames->set_sensitive(/*wgamma->get_active_row_number() == 0 &&*/ !pp->icm.freegamma); //"default"
         wgamma->set_sensitive(pp->icm.freegamma);
         gampos->set_sensitive(pp->icm.freegamma);
-        gampos->set_sensitive(pp->icm.gamma == "Free");
+        gampos->set_sensitive(pp->icm.gamma == "Custom");
         slpos->set_sensitive(pp->icm.freegamma);
-        slpos->set_sensitive(pp->icm.gamma == "Free");
+        slpos->set_sensitive(pp->icm.gamma == "Custom");
         updateRenderingIntent(pp->icm.output);
         wprimaries->set_sensitive(pp->icm.freegamma);
         wprofile->set_sensitive(pp->icm.freegamma);
@@ -987,7 +987,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     if (wtrcin->get_active_row_number() == 0) {
         pp->icm.wtrcin = "none";
     } else if (wtrcin->get_active_row_number() == 1) {
-        pp->icm.wtrcin = "free";
+        pp->icm.wtrcin = "Custom";
     }
 
     pp->icm.freegamma = freegamma->get_active();
@@ -1399,6 +1399,13 @@ void ICMPanel::GamChanged()
 
             if (!batchMode) {
                 onames->set_sensitive(false);//disabled choice
+                wgamma->show();
+                gampos->show();
+                slpos->show();
+                wprimaries->show();
+                wprofile->show();
+                wtemp->show();
+			
                 wgamma->set_sensitive(true);
                 gampos->set_sensitive(true);
                 slpos->set_sensitive(true);
@@ -1409,14 +1416,18 @@ void ICMPanel::GamChanged()
                 if (wprofile->get_active_row_number() == 2) {
                     wtemp->set_sensitive(true);
                 }
+                priHBox->show();
+				prifreeVBox->show();
 
                 priHBox->set_sensitive(true);
-
                 if (wprimaries->get_active_row_number() == 10) {
                     prifreeVBox->set_sensitive(true);
                 } else {
                     prifreeVBox->set_sensitive(false);
                 }
+                gaHBox->show();
+                profHBox->show();
+                tempHBox->show();
 
                 gaHBox->set_sensitive(true);
                 profHBox->set_sensitive(true);
@@ -1427,23 +1438,36 @@ void ICMPanel::GamChanged()
 
             if (!batchMode) {
                 onames->set_sensitive(true);
+                wgamma->hide();
+                gampos->hide();
+                slpos->hide();
+                wprimaries->hide();
+                wprofile->hide();
+				wtemp->hide();
+				
                 wgamma->set_sensitive(false);
                 gampos->set_sensitive(false);
                 slpos->set_sensitive(false);
                 wprimaries->set_sensitive(false);
                 wprofile->set_sensitive(false);
-
+				
                 if (wprofile->get_active_row_number() != 2) {
                     wtemp->set_sensitive(false);
                 }
+                priHBox->hide();
+                prifreeVBox->hide();
 
-                //wtemp->set_sensitive(false);
+                gaHBox->hide();
+                profHBox->hide();
+                tempHBox->hide();
+
                 priHBox->set_sensitive(false);
                 prifreeVBox->set_sensitive(false);
 
                 gaHBox->set_sensitive(false);
                 profHBox->set_sensitive(false);
                 tempHBox->set_sensitive(false);
+
 
             }
         }

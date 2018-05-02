@@ -1596,13 +1596,13 @@ TP_FLATFIELD_CLIPCONTROL;Clip control
 TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, clip control can lead to color cast.
 TP_FLATFIELD_LABEL;Flat-Field
 TP_GAMMA_CURV;Gamma
-TP_GAMMA_FREE;Free Output Integrate Profile (FOIP)-generate ICC V2 V4
+TP_GAMMA_FREE;Custom Output Integrate Profile & generate ICC
 TP_GAMMA_PRIM;Primaries Output profile
 TP_GAMMA_OUTPUT;Gamma - TRC
 TP_GAMMA_PROF;Generate ICC profile
 TP_GAMMA_PROF_NONE;none
-TP_GAMMA_PROF_V2;ICC V2
-TP_GAMMA_PROF_V4;ICC V4
+TP_GAMMA_PROF_V2;ICC v2
+TP_GAMMA_PROF_V4;ICC v4
 TP_GAMMA_SLOP;Slope (linear)
 TP_GAMMA_PRIM_ACESP0;AcesP0
 TP_GAMMA_PRIM_ACESP1;AcesP1
@@ -1614,14 +1614,14 @@ TP_GAMMA_PRIM_WIDEG;Widegamut
 TP_GAMMA_PRIM_BEST;BestRGB
 TP_GAMMA_PRIM_BETA;BetaRGB
 TP_GAMMA_PRIM_BRUCE;BruceRGB
-TP_GAMMA_PRIM_FREE;Free primaries -ICC V4
-TP_GAMMA_PRIM_REDX;Red x primari
-TP_GAMMA_PRIM_REDY;Red y primari
-TP_GAMMA_PRIM_GREX;Green x primari
-TP_GAMMA_PRIM_GREY;Green y primari
-TP_GAMMA_PRIM_BLUX;Blue x primari
-TP_GAMMA_PRIM_BLUY;Blue y primari
-TP_GAMMA_TEMP;Illuminant (icc V4)temp
+TP_GAMMA_PRIM_FREE;Custom primaries - ICC v4
+TP_GAMMA_PRIM_REDX;Red x primary
+TP_GAMMA_PRIM_REDY;Red y primary
+TP_GAMMA_PRIM_GREX;Green x primary
+TP_GAMMA_PRIM_GREY;Green y primary
+TP_GAMMA_PRIM_BLUX;Blue x primary
+TP_GAMMA_PRIM_BLUY;Blue y primary
+TP_GAMMA_TEMP;Illuminant (ICC v4)
 TP_GAMMA_TEMP_DEF;Default
 TP_GAMMA_TEMP_41;D41
 TP_GAMMA_TEMP_50;D50
@@ -1629,11 +1629,11 @@ TP_GAMMA_TEMP_55;D55
 TP_GAMMA_TEMP_60;D60
 TP_GAMMA_TEMP_65;D65
 TP_GAMMA_TEMP_80;D80
-TP_GAMMA_TEMP_INC;Incandescent 2856K
-TP_GAMMA_TEMP_TOOLTIP;Only whith generate ICC V4, you can change the illuminant and Free primaries
+TP_GAMMA_TEMP_INC;stdA 2856K
+TP_GAMMA_TEMP_TOOLTIP;Only whith generate ICC v4, you can change the illuminant and Custom primaries
 TP_GAMMA_TRCIN;Gamma - TRC
 TP_GAMMA_TRCIN_NONE;None
-TP_GAMMA_TRCIN_FREE;Free
+TP_GAMMA_TRCIN_FREE;Custom
 TP_GAMMA_TRCIN_TOOLTIP;Only for build in profiles
 TP_GAMMAWORK_GAMMA;Gamma
 TP_GAMMAWORK_SLOPE;Slope

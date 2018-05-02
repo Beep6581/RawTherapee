@@ -884,7 +884,7 @@ private:
 		
 		//gamma TRC working
      {
-        if (params.icm.wtrcin == "free") { //exec TRC IN free
+        if (params.icm.wtrcin == "Custom") { //exec TRC IN free
             Glib::ustring profile;
             profile = params.icm.working;
 
