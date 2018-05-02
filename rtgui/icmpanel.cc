@@ -308,21 +308,21 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     Gtk::Label* prilab = Gtk::manage(new Gtk::Label(M("TP_GAMMA_PRIM") + ":"));
 
     priHBox->pack_start(*prilab, Gtk::PACK_SHRINK);
-    wprimari = Gtk::manage(new MyComboBoxText());
-    priHBox->pack_start(*wprimari, Gtk::PACK_EXPAND_WIDGET);
+    wprimaries = Gtk::manage(new MyComboBoxText());
+    priHBox->pack_start(*wprimaries, Gtk::PACK_EXPAND_WIDGET);
     fgVBox->pack_start(*priHBox, Gtk::PACK_EXPAND_WIDGET);
-    wprimari->append(M("TP_GAMMA_PRIM_ACESP0"));
-    wprimari->append(M("TP_GAMMA_PRIM_ACESP1"));
-    wprimari->append(M("TP_GAMMA_PRIM_ADOBE"));
-    wprimari->append(M("TP_GAMMA_PRIM_PROPH"));
-    wprimari->append(M("TP_GAMMA_PRIM_REC2020"));
-    wprimari->append(M("TP_GAMMA_PRIM_SRGB"));
-    wprimari->append(M("TP_GAMMA_PRIM_WIDEG"));
-    wprimari->append(M("TP_GAMMA_PRIM_BEST"));
-    wprimari->append(M("TP_GAMMA_PRIM_BETA"));
-    wprimari->append(M("TP_GAMMA_PRIM_BRUCE"));
-    wprimari->append(M("TP_GAMMA_PRIM_FREE"));
-    wprimari->set_active(5);
+    wprimaries->append(M("TP_GAMMA_PRIM_ACESP0"));
+    wprimaries->append(M("TP_GAMMA_PRIM_ACESP1"));
+    wprimaries->append(M("TP_GAMMA_PRIM_ADOBE"));
+    wprimaries->append(M("TP_GAMMA_PRIM_PROPH"));
+    wprimaries->append(M("TP_GAMMA_PRIM_REC2020"));
+    wprimaries->append(M("TP_GAMMA_PRIM_SRGB"));
+    wprimaries->append(M("TP_GAMMA_PRIM_WIDEG"));
+    wprimaries->append(M("TP_GAMMA_PRIM_BEST"));
+    wprimaries->append(M("TP_GAMMA_PRIM_BETA"));
+    wprimaries->append(M("TP_GAMMA_PRIM_BRUCE"));
+    wprimaries->append(M("TP_GAMMA_PRIM_FREE"));
+    wprimaries->set_active(5);
 
     prifreeVBox = Gtk::manage(new Gtk::VBox());
     Gtk::Image* gamuts0 =  Gtk::manage(new RTImage("rt-logo-tiny.png"));
@@ -467,7 +467,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     ointentconn = ointent->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::oiChanged));
     wgammaconn = wgamma->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::gpChanged));
     dcpillconn = dcpIll->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::dcpIlluminantChanged));
-    wprimariconn = wprimari->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wprimariChanged));
+    wprimariesconn = wprimaries->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wprimariesChanged));
     wprofileconn = wprofile->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wprofileChanged));
     wtempconn = wtemp->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wtempChanged));
     wtrcinconn = wtrcin->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wtrcinChanged));
@@ -659,7 +659,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     ConnectionBlocker ointentconn_(ointentconn);
     ConnectionBlocker wgammaconn_(wgammaconn);
     ConnectionBlocker dcpillconn_(dcpillconn);
-    ConnectionBlocker wprimariconn_(wprimariconn);
+    ConnectionBlocker wprimariesconn_(wprimariesconn);
     ConnectionBlocker wprofileconn_(wprofileconn);
     ConnectionBlocker wtempconn_(wtempconn);
 //    ConnectionBlocker wtrcinconn_(wtrcinconn);
@@ -700,31 +700,31 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     wgamma->set_active_text(pp->icm.gamma);
 
 
-    if (pp->icm.wprimari == "acesp0") {
-        wprimari->set_active(0);
-    } else if (pp->icm.wprimari == "acesp1") {
-        wprimari->set_active(1);
-    } else if (pp->icm.wprimari == "adob") {
-        wprimari->set_active(2);
-    } else if (pp->icm.wprimari == "proph") {
-        wprimari->set_active(3);
-    } else if (pp->icm.wprimari == "rec2020") {
-        wprimari->set_active(4);
-    } else if (pp->icm.wprimari == "srgb") {
-        wprimari->set_active(5);
-    } else if (pp->icm.wprimari == "wideg") {
-        wprimari->set_active(6);
-    } else if (pp->icm.wprimari == "BestRGB") {
-        wprimari->set_active(7);
-    } else if (pp->icm.wprimari == "BetaRGB") {
-        wprimari->set_active(8);
-    } else if (pp->icm.wprimari == "BruceRGB") {
-        wprimari->set_active(9);
-    } else if (pp->icm.wprimari == "pfree") {
-        wprimari->set_active(10);
+    if (pp->icm.wprimaries == "Acesp0") {
+        wprimaries->set_active(0);
+    } else if (pp->icm.wprimaries == "Acesp1") {
+        wprimaries->set_active(1);
+    } else if (pp->icm.wprimaries == "Adobe") {
+        wprimaries->set_active(2);
+    } else if (pp->icm.wprimaries == "Prophoto") {
+        wprimaries->set_active(3);
+    } else if (pp->icm.wprimaries == "Rec2020") {
+        wprimaries->set_active(4);
+    } else if (pp->icm.wprimaries == "sRGB") {
+        wprimaries->set_active(5);
+    } else if (pp->icm.wprimaries == "Widegamut") {
+        wprimaries->set_active(6);
+    } else if (pp->icm.wprimaries == "BestRGB") {
+        wprimaries->set_active(7);
+    } else if (pp->icm.wprimaries == "BetaRGB") {
+        wprimaries->set_active(8);
+    } else if (pp->icm.wprimaries == "BruceRGB") {
+        wprimaries->set_active(9);
+    } else if (pp->icm.wprimaries == "pfree") {
+        wprimaries->set_active(10);
     }
 
-    if (wprimari->get_active_row_number() == 10) {
+    if (wprimaries->get_active_row_number() == 10) {
         prifreeVBox->set_sensitive(true);
     } else {
         prifreeVBox->set_sensitive(false);
@@ -745,7 +745,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wtemp->set_active(5);
     } else if (pp->icm.wtemp == "D80") {
         wtemp->set_active(6);
-    } else if (pp->icm.wtemp == "INC") {
+    } else if (pp->icm.wtemp == "stdA") {
         wtemp->set_active(7);
     }
 
@@ -764,14 +764,14 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     }
 
 
-    if (wprimari->get_active_row_number() == 10) {
+    if (wprimaries->get_active_row_number() == 10) {
         wprofile->set_active(2);
     }
 
     gpChanged();
     wprofileChanged();
     wtempChanged();
-    wprimariChanged();
+    wprimariesChanged();
     wtrcinChanged();
 
     if (pp->icm.output == ColorManagementParams::NoICMString) {
@@ -807,7 +807,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         slpos->set_sensitive(pp->icm.freegamma);
         slpos->set_sensitive(pp->icm.gamma == "Free");
         updateRenderingIntent(pp->icm.output);
-        wprimari->set_sensitive(pp->icm.freegamma);
+        wprimaries->set_sensitive(pp->icm.freegamma);
         wprofile->set_sensitive(pp->icm.freegamma);
 
         if (wprofile->get_active_row_number() == 2)  {
@@ -860,8 +860,8 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wgamma->set_active_text(M("GENERAL_UNCHANGED"));
         }
 
-        if (!pedited->icm.wprimari) {
-            wprimari->set_active_text(M("GENERAL_UNCHANGED"));
+        if (!pedited->icm.wprimaries) {
+            wprimaries->set_active_text(M("GENERAL_UNCHANGED"));
         }
 
         if (!pedited->icm.wprofile) {
@@ -916,7 +916,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.working = wnames->get_active_text();
     pp->icm.gamma = wgamma->get_active_text();
     pp->icm.dcpIlluminant = rtengine::max<int>(dcpIll->get_active_row_number(), 0);
-    pp->icm.wprimari = wprimari->get_active_text();
+    pp->icm.wprimaries = wprimaries->get_active_text();
     pp->icm.wtemp = wtemp->get_active_text();
     pp->icm.wtrcin = wtrcin->get_active_text();
 
@@ -942,28 +942,28 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pp->icm.wprofile = "v4";
     }
 
-    if (wprimari->get_active_row_number() == 0) {
-        pp->icm.wprimari = "acesp0";
-    } else if (wprimari->get_active_row_number() == 1) {
-        pp->icm.wprimari = "acesp1";
-    } else if (wprimari->get_active_row_number() == 2) {
-        pp->icm.wprimari = "adob";
-    } else if (wprimari->get_active_row_number() == 3) {
-        pp->icm.wprimari = "proph";
-    } else if (wprimari->get_active_row_number() == 4) {
-        pp->icm.wprimari = "rec2020";
-    } else if (wprimari->get_active_row_number() == 5) {
-        pp->icm.wprimari = "srgb";
-    } else if (wprimari->get_active_row_number() == 6) {
-        pp->icm.wprimari = "wideg";
-    } else if (wprimari->get_active_row_number() == 7) {
-        pp->icm.wprimari = "BestRGB";
-    } else if (wprimari->get_active_row_number() == 8) {
-        pp->icm.wprimari = "BetaRGB";
-    } else if (wprimari->get_active_row_number() == 9) {
-        pp->icm.wprimari = "BruceRGB";
-    } else if (wprimari->get_active_row_number() == 10) {
-        pp->icm.wprimari = "pfree";
+    if (wprimaries->get_active_row_number() == 0) {
+        pp->icm.wprimaries = "Acesp0";
+    } else if (wprimaries->get_active_row_number() == 1) {
+        pp->icm.wprimaries = "Acesp1";
+    } else if (wprimaries->get_active_row_number() == 2) {
+        pp->icm.wprimaries = "Adobe";
+    } else if (wprimaries->get_active_row_number() == 3) {
+        pp->icm.wprimaries = "Prophoto";
+    } else if (wprimaries->get_active_row_number() == 4) {
+        pp->icm.wprimaries = "Rec2020";
+    } else if (wprimaries->get_active_row_number() == 5) {
+        pp->icm.wprimaries = "sRGB";
+    } else if (wprimaries->get_active_row_number() == 6) {
+        pp->icm.wprimaries = "Widegamut";
+    } else if (wprimaries->get_active_row_number() == 7) {
+        pp->icm.wprimaries = "BestRGB";
+    } else if (wprimaries->get_active_row_number() == 8) {
+        pp->icm.wprimaries = "BetaRGB";
+    } else if (wprimaries->get_active_row_number() == 9) {
+        pp->icm.wprimaries = "BruceRGB";
+    } else if (wprimaries->get_active_row_number() == 10) {
+        pp->icm.wprimaries = "pfree";
     }
 
     if (wtemp->get_active_row_number() == 0) {
@@ -981,7 +981,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     } else if (wtemp->get_active_row_number() == 6) {
         pp->icm.wtemp = "D80";
     } else if (wtemp->get_active_row_number() == 7) {
-        pp->icm.wtemp = "INC";
+        pp->icm.wtemp = "stdA";
     }
 
     if (wtrcin->get_active_row_number() == 0) {
@@ -1031,7 +1031,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.gamm = gamm->getEditedState();
         pedited->icm.slop = slop->getEditedState();
 
-        pedited->icm.wprimari = wprimari->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->icm.wprimaries = wprimaries->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.wprofile = wprofile->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.wtemp = wtemp->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.wtrcin = wtrcin->get_active_text() != M("GENERAL_UNCHANGED");
@@ -1135,20 +1135,20 @@ void ICMPanel::wpChanged()
     }
 }
 
-void ICMPanel::wprimariChanged()
+void ICMPanel::wprimariesChanged()
 {
-    if (wprimari->get_active_row_number() == 10) {
+    if (wprimaries->get_active_row_number() == 10) {
         prifreeVBox->set_sensitive(true);
     } else {
         prifreeVBox->set_sensitive(false);
     }
 
-    if (wprimari->get_active_row_number() == 10) {
+    if (wprimaries->get_active_row_number() == 10) {
         wprofile->set_active(2);
     }
 
     if (listener) {
-        listener->panelChanged(EvICMprimariMethod, wprimari->get_active_text());
+        listener->panelChanged(EvICMprimariMethod, wprimaries->get_active_text());
     }
 }
 
@@ -1402,7 +1402,7 @@ void ICMPanel::GamChanged()
                 wgamma->set_sensitive(true);
                 gampos->set_sensitive(true);
                 slpos->set_sensitive(true);
-                wprimari->set_sensitive(true);
+                wprimaries->set_sensitive(true);
                 wprofile->set_sensitive(true);
 
                 //wtemp->set_sensitive(true);
@@ -1412,7 +1412,7 @@ void ICMPanel::GamChanged()
 
                 priHBox->set_sensitive(true);
 
-                if (wprimari->get_active_row_number() == 10) {
+                if (wprimaries->get_active_row_number() == 10) {
                     prifreeVBox->set_sensitive(true);
                 } else {
                     prifreeVBox->set_sensitive(false);
@@ -1430,7 +1430,7 @@ void ICMPanel::GamChanged()
                 wgamma->set_sensitive(false);
                 gampos->set_sensitive(false);
                 slpos->set_sensitive(false);
-                wprimari->set_sensitive(false);
+                wprimaries->set_sensitive(false);
                 wprofile->set_sensitive(false);
 
                 if (wprofile->get_active_row_number() != 2) {
@@ -1621,7 +1621,7 @@ void ICMPanel::setBatchMode(bool batchMode)
     ointent->show();
     wnames->append(M("GENERAL_UNCHANGED"));
     wgamma->append(M("GENERAL_UNCHANGED"));
-    wprimari->append(M("GENERAL_UNCHANGED"));
+    wprimaries->append(M("GENERAL_UNCHANGED"));
     wprofile->append(M("GENERAL_UNCHANGED"));
     wtemp->append(M("GENERAL_UNCHANGED"));
     wtrcin->append(M("GENERAL_UNCHANGED"));

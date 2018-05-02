@@ -1029,7 +1029,7 @@ struct ColorManagementParams {
     double gamm;
     double slop;
 	
-    Glib::ustring wprimari;
+    Glib::ustring wprimaries;
     Glib::ustring wprofile;
     Glib::ustring wtemp;
     static const Glib::ustring NoICMString;

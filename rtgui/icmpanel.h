@@ -116,8 +116,8 @@ private:
     sigc::connection   wnamesconn;
     MyComboBoxText*    wgamma;
     sigc::connection   wgammaconn;
-    MyComboBoxText*    wprimari;
-    sigc::connection   wprimariconn;
+    MyComboBoxText*    wprimaries;
+    sigc::connection   wprimariesconn;
     MyComboBoxText*    wprofile;
     sigc::connection   wprofileconn;
     MyComboBoxText*    wtemp;
@@ -153,7 +153,7 @@ public:
     void setAdjusterBehavior(bool gammaadd, bool slopeadd);
 
     void wpChanged();
-    void wprimariChanged();
+    void wprimariesChanged();
     void wprofileChanged();
     void wtempChanged();
     void wtrcinChanged();

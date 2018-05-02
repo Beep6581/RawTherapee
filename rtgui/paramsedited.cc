@@ -396,7 +396,7 @@ void ParamsEdited::set(bool v)
     icm.pbluy       = v;
     icm.gamm      = v;
     icm.slop       = v;
-    icm.wprimari       = v;
+    icm.wprimaries       = v;
     icm.wprofile       = v;
     icm.wtemp       = v;
     icm.wtrcin       = v;
@@ -955,7 +955,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.gamm = icm.gamm && p.icm.gamm == other.icm.gamm;
         icm.slop = icm.slop && p.icm.slop == other.icm.slop;
 
-        icm.wprimari = icm.wprimari && p.icm.wprimari == other.icm.wprimari;
+        icm.wprimaries = icm.wprimaries && p.icm.wprimaries == other.icm.wprimaries;
         icm.wprofile = icm.wprofile && p.icm.wprofile == other.icm.wprofile;
         icm.wtemp = icm.wtemp && p.icm.wtemp == other.icm.wtemp;
         icm.wtrcin = icm.wtrcin && p.icm.wtrcin == other.icm.wtrcin;
@@ -2493,8 +2493,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.icm.gamma        = mods.icm.gamma;
     }
 
-    if (icm.wprimari) {
-        toEdit.icm.wprimari        = mods.icm.wprimari;
+    if (icm.wprimaries) {
+        toEdit.icm.wprimaries        = mods.icm.wprimaries;
     }
 
     if (icm.wprofile) {

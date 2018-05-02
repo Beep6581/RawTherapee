@@ -487,10 +487,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
     if (todo &  M_INIT) {
         if (params.icm.wtrcin == "free") { //exec TRC IN free
-            Glib::ustring profi;
-            profi = params.icm.working;
+            Glib::ustring profile;
+            profile = params.icm.working;
 
-            if (profi == "sRGB" || profi == "Adobe RGB" || profi == "ProPhoto" || profi == "WideGamut" || profi == "BruceRGB" || profi == "Beta RGB" || profi == "BestRGB" || profi == "Rec2020" || profi == "ACESp0" || profi == "ACESp1") {
+            if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1") {
                 int  cw = oprevi->getWidth();
                 int  ch = oprevi->getHeight();
                 // put gamma TRC to 1

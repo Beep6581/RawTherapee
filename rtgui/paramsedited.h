@@ -595,7 +595,7 @@ public:
     bool pblux;
     bool pbluy;
     bool freegamma;
-    bool wprimari;
+    bool wprimaries;
     bool wprofile;
     bool wtemp;
     bool gamm;

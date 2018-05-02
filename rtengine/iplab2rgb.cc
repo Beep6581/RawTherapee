@@ -368,7 +368,7 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
 }
 
 
-Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int mul, Glib::ustring profi, double gampos, double slpos, double &ga0, double &ga1, double &ga2, double &ga3, double &ga4, double &ga5, double &ga6)
+Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int mul, Glib::ustring profile, double gampos, double slpos, double &ga0, double &ga1, double &ga2, double &ga3, double &ga4, double &ga5, double &ga6)
 {
     TMatrix wprof;
 
@@ -428,14 +428,14 @@ Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int
 
     if (true) {
         //primaries for 10 working profiles ==> output profiles
-        if (profi == "WideGamut") {
+        if (profile == "WideGamut") {
             p[0] = 0.7350;    //Widegamut primaries
             p[1] = 0.2650;
             p[2] = 0.1150;
             p[3] = 0.8260;
             p[4] = 0.1570;
             p[5] = 0.0180;
-        } else if (profi == "Adobe RGB") {
+        } else if (profile == "Adobe RGB") {
             p[0] = 0.6400;    //Adobe primaries
             p[1] = 0.3300;
             p[2] = 0.2100;
@@ -443,7 +443,7 @@ Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int
             p[4] = 0.1500;
             p[5] = 0.0600;
             temp = ColorTemp::D65;
-        } else if (profi == "sRGB") {
+        } else if (profile == "sRGB") {
             p[0] = 0.6400;    // sRGB primaries
             p[1] = 0.3300;
             p[2] = 0.3000;
@@ -451,7 +451,7 @@ Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int
             p[4] = 0.1500;
             p[5] = 0.0600;
             temp = ColorTemp::D65;
-        } else if (profi == "BruceRGB") {
+        } else if (profile == "BruceRGB") {
             p[0] = 0.6400;    // Bruce primaries
             p[1] = 0.3300;
             p[2] = 0.2800;
@@ -459,21 +459,21 @@ Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int
             p[4] = 0.1500;
             p[5] = 0.0600;
             temp = ColorTemp::D65;
-        } else if (profi == "Beta RGB") {
+        } else if (profile == "Beta RGB") {
             p[0] = 0.6888;    // Beta primaries
             p[1] = 0.3112;
             p[2] = 0.1986;
             p[3] = 0.7551;
             p[4] = 0.1265;
             p[5] = 0.0352;
-        } else if (profi == "BestRGB") {
+        } else if (profile == "BestRGB") {
             p[0] = 0.7347;    // Best primaries
             p[1] = 0.2653;
             p[2] = 0.2150;
             p[3] = 0.7750;
             p[4] = 0.1300;
             p[5] = 0.0350;
-        } else if (profi == "Rec2020") {
+        } else if (profile == "Rec2020") {
             p[0] = 0.7080;    // Rec2020 primaries
             p[1] = 0.2920;
             p[2] = 0.1700;
@@ -481,7 +481,7 @@ Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int
             p[4] = 0.1310;
             p[5] = 0.0460;
             temp = ColorTemp::D65;
-        } else if (profi == "ACESp0") {
+        } else if (profile == "ACESp0") {
             p[0] = 0.7347;    // ACES P0 primaries
             p[1] = 0.2653;
             p[2] = 0.0000;
@@ -489,7 +489,7 @@ Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int
             p[4] = 0.0001;
             p[5] = -0.0770;
             temp = ColorTemp::D60;
-        } else if (profi == "ACESp1") {
+        } else if (profile == "ACESp1") {
             p[0] = 0.713;    // ACES P1 primaries
             p[1] = 0.293;
             p[2] = 0.165;
@@ -497,7 +497,7 @@ Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int
             p[4] = 0.128;
             p[5] = 0.044;
             temp = ColorTemp::D60;
-        } else if (profi == "ProPhoto") {
+        } else if (profile == "ProPhoto") {
             p[0] = 0.7347;    //ProPhoto and default primaries
             p[1] = 0.2653;
             p[2] = 0.1596;

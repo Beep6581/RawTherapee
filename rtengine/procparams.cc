@@ -1966,7 +1966,7 @@ ColorManagementParams::ColorManagementParams() :
     gamm(2.4),
     slop(12.92),
 	
-    wprimari("sRGB"),
+    wprimaries("sRGB"),
     wprofile("none"),
     wtemp("DEF"),
     freegamma(false),
@@ -1999,7 +1999,7 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && pbluy == other.pbluy
         && gamm == other.gamm
         && slop == other.slop
-        && wprimari == other.wprimari
+        && wprimaries == other.wprimaries
         && wprofile == other.wprofile
         && wtemp == other.wtemp
         && wtrcin == other.wtrcin
@@ -3176,7 +3176,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->icm.gamm, "Color Management", "GammaValueIn", icm.gamm, keyFile);
         saveToKeyfile(!pedited || pedited->icm.slop, "Color Management", "GammaSlopeIn", icm.slop, keyFile);
 
-        saveToKeyfile(!pedited || pedited->icm.wprimari, "Color Management", "GammaPrimari", icm.wprimari, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.wprimaries, "Color Management", "GammaPrimaries", icm.wprimaries, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wtemp, "Color Management", "GammaTemp", icm.wtemp, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wprofile, "Color Management", "GammaProfile", icm.wprofile, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wtrcin, "Color Management", "GammaTRCIN", icm.wtrcin, keyFile);
@@ -4211,7 +4211,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "GammaValueIn", pedited, icm.gamm, pedited->icm.gamm);
             assignFromKeyfile(keyFile, "Color Management", "GammaSlopeIn", pedited, icm.slop, pedited->icm.slop);
 			
-            assignFromKeyfile(keyFile, "Color Management", "GammaPrimari", pedited, icm.wprimari, pedited->icm.wprimari);
+            assignFromKeyfile(keyFile, "Color Management", "GammaPrimaries", pedited, icm.wprimaries, pedited->icm.wprimaries);
             assignFromKeyfile(keyFile, "Color Management", "GammaProfile", pedited, icm.wprofile, pedited->icm.wprofile);
             assignFromKeyfile(keyFile, "Color Management", "GammaTemp", pedited, icm.wtemp, pedited->icm.wtemp);
             assignFromKeyfile(keyFile, "Color Management", "GammaTRCIN", pedited, icm.wtrcin, pedited->icm.wtrcin);
