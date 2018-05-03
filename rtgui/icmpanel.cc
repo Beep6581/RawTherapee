@@ -325,7 +325,6 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wprimaries->set_active(5);
 
     prifreeVBox = Gtk::manage(new Gtk::VBox());
-    prinulHBox = Gtk::manage(new Gtk::HBox());
     prigreenHBox = Gtk::manage(new Gtk::HBox());
     priblueHBox = Gtk::manage(new Gtk::HBox());
     priredHBox = Gtk::manage(new Gtk::HBox());

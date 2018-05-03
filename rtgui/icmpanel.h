@@ -57,8 +57,6 @@ protected:
     Adjuster* pbluy;
     Adjuster* gamm;
     Adjuster* slop;
-    Adjuster* pnulx;
-    Adjuster* pnuly;
 
     Gtk::Label* labmga;
     Gtk::HBox* gabox;
@@ -103,7 +101,6 @@ private:
     Gtk::HBox* prigreenHBox;
     Gtk::HBox* priblueHBox;
     Gtk::HBox* trcHBox;
-    Gtk::HBox* prinulHBox;
     Gtk::HBox* priredHBox;
 
     Gtk::CheckButton*  obpc;
