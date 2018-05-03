@@ -325,6 +325,10 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wprimaries->set_active(5);
 
     prifreeVBox = Gtk::manage(new Gtk::VBox());
+    priredHBox = Gtk::manage(new Gtk::HBox());
+    prigreenHBox = Gtk::manage(new Gtk::HBox());
+    priblueHBox = Gtk::manage(new Gtk::HBox());
+	
     Gtk::Image* gamuts0 =  Gtk::manage(new RTImage("rt-logo-tiny.png"));
     Gtk::Image* gamutl0 =  Gtk::manage(new RTImage("rt-logo-small.png"));
     Gtk::Image* gamuts1 =  Gtk::manage(new RTImage("rt-logo-tiny.png"));
@@ -346,12 +350,18 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     pbluy = Gtk::manage(new Adjuster(M("TP_GAMMA_PRIM_BLUY"), -0.0700, 0.0700, 0.0001, 0.060, gamutl5, gamuts5));
 
 
-    prifreeVBox->pack_start(*predx, Gtk::PACK_SHRINK);
-    prifreeVBox->pack_start(*predy, Gtk::PACK_SHRINK);
-    prifreeVBox->pack_start(*pgrex, Gtk::PACK_SHRINK);
-    prifreeVBox->pack_start(*pgrey, Gtk::PACK_SHRINK);
-    prifreeVBox->pack_start(*pblux, Gtk::PACK_SHRINK);
-    prifreeVBox->pack_start(*pbluy, Gtk::PACK_SHRINK);
+    priredHBox->pack_start(*predx, Gtk::PACK_SHRINK);
+    priredHBox->pack_start(*predy, Gtk::PACK_SHRINK);
+    prifreeVBox->pack_start(*priredHBox, Gtk::PACK_SHRINK);	
+
+    prigreenHBox->pack_start(*pgrex, Gtk::PACK_SHRINK);
+    prigreenHBox->pack_start(*pgrey, Gtk::PACK_SHRINK);
+    prifreeVBox->pack_start(*prigreenHBox, Gtk::PACK_SHRINK);	
+
+    priblueHBox->pack_start(*pblux, Gtk::PACK_SHRINK);
+    priblueHBox->pack_start(*pbluy, Gtk::PACK_SHRINK);
+    prifreeVBox->pack_start(*priblueHBox, Gtk::PACK_SHRINK);	
+	
     fgVBox->pack_start(*prifreeVBox, Gtk::PACK_SHRINK);
 
     predx->setAdjusterListener(this);
@@ -363,6 +373,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
 
     //sliders gampos and slpos
     fgVBox->pack_start(*gaHBox, Gtk::PACK_EXPAND_WIDGET);
+    trcHBox = Gtk::manage(new Gtk::HBox());
+	
     gampos = Gtk::manage(new Adjuster(M("TP_GAMMA_CURV"), 1, 3.5, 0.00001, 2.4));
     gampos->setAdjusterListener(this);
 
@@ -380,9 +392,10 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     }
 
     slpos->show();
-    fgVBox->pack_start(*gampos, Gtk::PACK_SHRINK); //gamma
-    fgVBox->pack_start(*slpos, Gtk::PACK_SHRINK); //slope
-
+    trcHBox->pack_start(*gampos, Gtk::PACK_SHRINK); //gamma
+    trcHBox->pack_start(*slpos, Gtk::PACK_SHRINK); //slope
+	fgVBox->pack_start(*trcHBox, Gtk::PACK_SHRINK);
+	
     //V2  or V4 profiles
     profHBox = Gtk::manage(new Gtk::HBox());
     Gtk::Label* proflab = Gtk::manage(new Gtk::Label(M("TP_GAMMA_PROF") + ":"));
@@ -391,7 +404,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wprofile = Gtk::manage(new MyComboBoxText());
     profHBox->pack_start(*wprofile, Gtk::PACK_EXPAND_WIDGET);
 
-    fgVBox->pack_start(*profHBox, Gtk::PACK_EXPAND_WIDGET);
+ //   fgVBox->pack_start(*profHBox, Gtk::PACK_EXPAND_WIDGET);
     wprofile->append(M("TP_GAMMA_PROF_NONE"));
     wprofile->append(M("TP_GAMMA_PROF_V2"));
     wprofile->append(M("TP_GAMMA_PROF_V4"));
@@ -419,6 +432,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
 
     wtemp->set_active(0);
     wtemp->set_tooltip_text(M("TP_GAMMA_TEMP_TOOLTIP"));
+	
+    fgVBox->pack_start(*profHBox, Gtk::PACK_EXPAND_WIDGET);
 
     fgFrame->add(*fgVBox);
     oVBox->pack_start(*fgFrame, Gtk::PACK_EXPAND_WIDGET);

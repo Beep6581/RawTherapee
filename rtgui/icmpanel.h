@@ -98,6 +98,10 @@ private:
     Gtk::HBox* tempHBox;
     Gtk::VBox* prifreeVBox;
     Gtk::HBox* trcinHBox;
+    Gtk::HBox* priredHBox;
+    Gtk::HBox* prigreenHBox;
+    Gtk::HBox* priblueHBox;
+    Gtk::HBox* trcHBox;
 
     Gtk::CheckButton*  obpc;
     Gtk::CheckButton*  freegamma;
