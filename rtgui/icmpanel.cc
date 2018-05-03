@@ -325,9 +325,10 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wprimaries->set_active(5);
 
     prifreeVBox = Gtk::manage(new Gtk::VBox());
-    priredHBox = Gtk::manage(new Gtk::HBox());
+    prinulHBox = Gtk::manage(new Gtk::HBox());
     prigreenHBox = Gtk::manage(new Gtk::HBox());
     priblueHBox = Gtk::manage(new Gtk::HBox());
+    priredHBox = Gtk::manage(new Gtk::HBox());
 	
     Gtk::Image* gamuts0 =  Gtk::manage(new RTImage("rt-logo-tiny.png"));
     Gtk::Image* gamutl0 =  Gtk::manage(new RTImage("rt-logo-small.png"));
@@ -349,18 +350,19 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     pblux = Gtk::manage(new Adjuster(M("TP_GAMMA_PRIM_BLUX"), 0.0001, 0.1600, 0.0001, 0.1500, gamutl4, gamuts4));
     pbluy = Gtk::manage(new Adjuster(M("TP_GAMMA_PRIM_BLUY"), -0.0700, 0.0700, 0.0001, 0.060, gamutl5, gamuts5));
 
+    priredHBox->pack_start(*predx,Gtk::PACK_EXPAND_WIDGET, 4);
+	priredHBox->pack_start(*predy,Gtk::PACK_EXPAND_WIDGET, 4);
+    prifreeVBox->pack_start(*priredHBox,Gtk::PACK_EXPAND_WIDGET, 4);	
 
-    priredHBox->pack_start(*predx, Gtk::PACK_SHRINK);
-    priredHBox->pack_start(*predy, Gtk::PACK_SHRINK);
-    prifreeVBox->pack_start(*priredHBox, Gtk::PACK_SHRINK);	
+    prigreenHBox->pack_start(*pgrex, Gtk::PACK_EXPAND_WIDGET, 4);
+    prigreenHBox->pack_start(*pgrey, Gtk::PACK_EXPAND_WIDGET, 4);
+    prifreeVBox->pack_start(*prigreenHBox, Gtk::PACK_EXPAND_WIDGET, 4);	
 
-    prigreenHBox->pack_start(*pgrex, Gtk::PACK_SHRINK);
-    prigreenHBox->pack_start(*pgrey, Gtk::PACK_SHRINK);
-    prifreeVBox->pack_start(*prigreenHBox, Gtk::PACK_SHRINK);	
-
-    priblueHBox->pack_start(*pblux, Gtk::PACK_SHRINK);
-    priblueHBox->pack_start(*pbluy, Gtk::PACK_SHRINK);
-    prifreeVBox->pack_start(*priblueHBox, Gtk::PACK_SHRINK);	
+	
+    priblueHBox->pack_start(*pblux, Gtk::PACK_EXPAND_WIDGET, 4);
+    priblueHBox->pack_start(*pbluy, Gtk::PACK_EXPAND_WIDGET, 4);
+    prifreeVBox->pack_start(*priblueHBox,Gtk::PACK_EXPAND_WIDGET, 4);;	
+	
 	
     fgVBox->pack_start(*prifreeVBox, Gtk::PACK_SHRINK);
 
@@ -392,9 +394,9 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     }
 
     slpos->show();
-    trcHBox->pack_start(*gampos, Gtk::PACK_SHRINK); //gamma
-    trcHBox->pack_start(*slpos, Gtk::PACK_SHRINK); //slope
-	fgVBox->pack_start(*trcHBox, Gtk::PACK_SHRINK);
+    trcHBox->pack_start(*gampos, Gtk::PACK_EXPAND_WIDGET, 4); //gamma
+    trcHBox->pack_start(*slpos, Gtk::PACK_EXPAND_WIDGET, 4); //slope
+	fgVBox->pack_start(*trcHBox, Gtk::PACK_EXPAND_WIDGET, 4);
 	
     //V2  or V4 profiles
     profHBox = Gtk::manage(new Gtk::HBox());
