@@ -468,6 +468,12 @@ int main (int argc, char **argv)
     Glib::init();  // called by Gtk::Main, but this may be important for thread handling, so we call it ourselves now
     Gio::init ();
 
+#ifdef WIN32
+    if (GetFileType (GetStdHandle (STD_OUTPUT_HANDLE)) == 0x0003) {
+        // started from msys2 console => do not buffer stdout
+        setbuf(stdout, NULL);
+    }
+#endif
 
 #ifdef BUILD_BUNDLE
     char exname[512] = {0};
