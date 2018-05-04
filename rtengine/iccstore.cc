@@ -1848,10 +1848,12 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
 
         cmsMLUfree(mlu);
 
+		Glib::ustring realoutPro;
+		realoutPro = options.cacheBaseDir + "/" + outPro;//ICC profile in cache
 
 
         if (icm.wprofile == "v2" || icm.wprofile == "v4") {
-            cmsSaveProfileToFile(outputProfile,  outPro.c_str());
+            cmsSaveProfileToFile(outputProfile,  realoutPro.c_str());
 
         }
 

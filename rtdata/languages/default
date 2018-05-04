@@ -1596,7 +1596,7 @@ TP_FLATFIELD_CLIPCONTROL;Clip control
 TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, clip control can lead to color cast.
 TP_FLATFIELD_LABEL;Flat-Field
 TP_GAMMA_CURV;Gamma
-TP_GAMMA_FREE;Custom Output Integrate Profile & generate ICC
+TP_GAMMA_FREE;Custom Output Embedded Profile & generate ICC
 TP_GAMMA_PRIM;Primaries Output profile
 TP_GAMMA_OUTPUT;Tone responce curve
 TP_GAMMA_PROF;Generate ICC profile
