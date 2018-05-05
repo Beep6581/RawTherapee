@@ -468,6 +468,12 @@ int main (int argc, char **argv)
     Glib::init();  // called by Gtk::Main, but this may be important for thread handling, so we call it ourselves now
     Gio::init ();
 
+#ifdef WIN32
+    if (GetFileType (GetStdHandle (STD_OUTPUT_HANDLE)) == 0x0003) {
+        // started from msys2 console => do not buffer stdout
+        setbuf(stdout, NULL);
+    }
+#endif
 
 #ifdef BUILD_BUNDLE
     char exname[512] = {0};
@@ -513,15 +519,6 @@ int main (int argc, char **argv)
     licensePath = LICENCE_SEARCH_PATH;
     options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
 #endif
-
-    Glib::ustring fatalError;
-
-    try {
-        Options::load();
-    } catch (Options::Error &e) {
-        fatalError = e.get_msg();
-    }
-
 
 #ifdef WIN32
     bool consoleOpened = false;
@@ -599,6 +596,14 @@ int main (int argc, char **argv)
     }
 
 #endif
+
+    Glib::ustring fatalError;
+
+    try {
+        Options::load();
+    } catch (Options::Error &e) {
+        fatalError = e.get_msg();
+    }
 
     if (gimpPlugin) {
         if (!Glib::file_test (argv1, Glib::FILE_TEST_EXISTS) || Glib::file_test (argv1, Glib::FILE_TEST_IS_DIR)) {
