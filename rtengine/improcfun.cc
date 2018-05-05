@@ -349,7 +349,7 @@ void ImProcFunctions::updateColorProfiles(const Glib::ustring& monitorProfile, R
 
                 monitorTransform = cmsCreateProofingTransform(
                                        iprof, TYPE_Lab_FLT,
-                                       monitor, TYPE_RGB_8,
+                                       monitor, TYPE_RGB_FLT,
                                        oprof,
                                        monitorIntent, outIntent,
                                        flags
@@ -392,7 +392,7 @@ void ImProcFunctions::updateColorProfiles(const Glib::ustring& monitorProfile, R
                 flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
             }
 
-            monitorTransform = cmsCreateTransform(iprof, TYPE_Lab_FLT, monitor, TYPE_RGB_8, monitorIntent, flags);
+            monitorTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, monitor, TYPE_RGB_FLT, monitorIntent, flags);
         }
 
         if (gamutCheck && gamutprof) {
@@ -2027,15 +2027,15 @@ filmlike_clip(float *r, float *g, float *b)
 
 
 void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer *pipetteBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
-                              SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit, float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili,  LUTf & clToningcurve, LUTf & cl2Toningcurve,
+                               int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit, float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili,  LUTf & clToningcurve, LUTf & cl2Toningcurve,
                               const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2, const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, DCPProfile *dcpProf, const DCPProfile::ApplyState &asIn, LUTu &histToneCurve)
 {
-    rgbProc(working, lab, pipetteBuffer, hltonecurve, shtonecurve, tonecurve, shmap, sat, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2,  customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh, dcpProf, asIn, histToneCurve);
+    rgbProc (working, lab, pipetteBuffer, hltonecurve, shtonecurve, tonecurve, sat, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2,  customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh, dcpProf, asIn, histToneCurve);
 }
 
 // Process RGB image and convert to LAB space
 void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer *pipetteBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
-                              SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit, float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clToningcurve, LUTf & cl2Toningcurve,
+                               int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit, float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clToningcurve, LUTf & cl2Toningcurve,
                               const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,  const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, double expcomp, int hlcompr, int hlcomprthresh, DCPProfile *dcpProf, const DCPProfile::ApplyState &asIn, LUTu &histToneCurve)
 {
     BENCHFUN
@@ -2059,15 +2059,6 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                 break;
         }
     }
-
-    int h_th = 0, s_th = 0;
-
-    if (shmap) {
-        h_th = shmap->max_f - params->sh.htonalwidth * (shmap->max_f - shmap->avg) / 100;
-        s_th = params->sh.stonalwidth * (shmap->avg - shmap->min_f) / 100;
-    }
-
-    bool processSH  = params->sh.enabled && shmap && (params->sh.highlights > 0 || params->sh.shadows > 0);
 
     TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.working);
     TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.working);
@@ -2293,8 +2284,6 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
     float chMixBG = float (params->chmixer.blue[1]);
     float chMixBB = float (params->chmixer.blue[2]);
 
-    int shHighlights = params->sh.highlights;
-    int shShadows = params->sh.shadows;
     bool blackwhite = params->blackwhite.enabled;
     bool complem = params->blackwhite.enabledcc;
     float bwr = float (params->blackwhite.mixerRed);
@@ -2452,31 +2441,6 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                             rtemp[ti * TS + tj] = rmix;
                             gtemp[ti * TS + tj] = gmix;
                             btemp[ti * TS + tj] = bmix;
-                        }
-                    }
-                }
-
-                if (processSH) {
-                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-
-                            float r = rtemp[ti * TS + tj];
-                            float g = gtemp[ti * TS + tj];
-                            float b = btemp[ti * TS + tj];
-
-
-                            float mapval = 1.f + shmap->map[i][j];
-                            float factor = 1.f;
-
-                            if (mapval > h_th) {
-                                factor = (h_th + (100.0 - shHighlights) * (mapval - h_th) / 100.0) / mapval;
-                            } else if (mapval < s_th) {
-                                factor = (s_th - (100.0 - shShadows) * (s_th - mapval) / 100.0) / mapval;
-                            }
-
-                            rtemp[ti * TS + tj] = factor * r;
-                            gtemp[ti * TS + tj] = factor * g;
-                            btemp[ti * TS + tj] = factor * b;
                         }
                     }
                 }
@@ -3669,6 +3633,8 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
     if (vCurveEnabled) {
         delete vCurve;
     }
+
+    shadowsHighlights(lab);
 
     if (params->localContrast.enabled) {
         // Alberto's local contrast

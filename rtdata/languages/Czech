@@ -40,7 +40,7 @@
 #39 2017-07-21 updated by mkyral
 #40 2017-12-13 updated by mkyral
 #41 2018-03-03 updated by mkyral
-
+#42 2018-04-28 updated by mkyral
 ABOUT_TAB_BUILD;Verze
 ABOUT_TAB_CREDITS;Zásluhy
 ABOUT_TAB_LICENSE;Licence
@@ -95,6 +95,7 @@ EXIFFILTER_CAMERA;Fotoaparát
 EXIFFILTER_EXPOSURECOMPENSATION;Kompenzace expozice (EV)
 EXIFFILTER_FILETYPE;Typ souboru
 EXIFFILTER_FOCALLEN;Ohnisková vzdálenost
+EXIFFILTER_IMAGETYPE;Typ obrázku
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objektiv
 EXIFFILTER_METADATAFILTER;Povolit filtr metadat
@@ -572,8 +573,8 @@ HISTORY_MSG_284;Barevné tónování - Aut. ochrana nasycení
 HISTORY_MSG_285;Redukce šumu - Medián - Metoda
 HISTORY_MSG_286;Redukce šumu - Medián - Typ
 HISTORY_MSG_287;Redukce šumu - Medián - Průchody
-HISTORY_MSG_288;Flat Field - kontrola oříznutí
-HISTORY_MSG_289;Flat Field - kontrola oříznutí - Auto
+HISTORY_MSG_288;Flat-Field - kontrola oříznutí
+HISTORY_MSG_289;Flat-Field - kontrola oříznutí - Auto
 HISTORY_MSG_290;Úroveň černé - Červená
 HISTORY_MSG_291;Úroveň černé - Zelená 1
 HISTORY_MSG_292;Úroveň černé - Modrá
@@ -762,14 +763,17 @@ HISTORY_MSG_490;HDR TM - Míra
 HISTORY_MSG_491;Vyvážení bílé
 HISTORY_MSG_492;RGB křivky
 HISTORY_MSG_493;L*a*b* úpravy
+HISTORY_MSG_CLAMPOOG;Oříznutí barvy mimo gamut
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;Barevné tónování - Korekce barev
-HISTORY_MSG_HISTMATCHING;Automaticky nalezená Tónová křivka
+HISTORY_MSG_HISTMATCHING;Automaticky přizpůsobená Tónová křivka
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;Místní kontrast - Míra
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;Místní kontrast - Tmavé
 HISTORY_MSG_LOCALCONTRAST_ENABLED;Místní kontrast
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Místní kontrast - Světlé
 HISTORY_MSG_LOCALCONTRAST_RADIUS;Místní kontrast - Poloměr
 HISTORY_MSG_METADATA_MODE;Režim kopírování metadat
+HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Směr filtru linkového rušení
+HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;Filtr PDAF linek
 HISTORY_MSG_TM_FATTAL_ANCHOR;HDR TM - Kotva
 HISTORY_NEWSNAPSHOT;Přidat
 HISTORY_NEWSNAPSHOT_TOOLTIP;Zkratka: <b>Alt-s</b>
@@ -862,13 +866,13 @@ MAIN_TAB_COLOR;Barvy
 MAIN_TAB_COLOR_TOOLTIP;Zkratka: <b>Alt-c</b>
 MAIN_TAB_DETAIL;Detaily
 MAIN_TAB_DETAIL_TOOLTIP;Zkratka: <b>Alt-d</b>
-MAIN_TAB_DEVELOP; Dávková editace
+MAIN_TAB_DEVELOP; Dávková editace 
 MAIN_TAB_EXIF;Exif
-MAIN_TAB_EXPORT; Rychlý export
+MAIN_TAB_EXPORT; Rychlý export 
 MAIN_TAB_EXPOSURE;Expozice
 MAIN_TAB_EXPOSURE_TOOLTIP;Zkratka: <b>Alt-e</b>
-MAIN_TAB_FILTER; Filtr
-MAIN_TAB_INSPECT; Prohlížení
+MAIN_TAB_FILTER; Filtr 
+MAIN_TAB_INSPECT; Prohlížení 
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
 MAIN_TAB_METADATA_TOOLTIP;Zkratka: <b>Alt-m</b>
@@ -1008,10 +1012,6 @@ PREFERENCES_CACHECLEARTHUMBS;Vymazat náhledy
 PREFERENCES_CACHEMAXENTRIES;Maximální počet záznamů v mezipaměti
 PREFERENCES_CACHEOPTS;Vlastnosti mezipaměti
 PREFERENCES_CACHETHUMBHEIGHT;Maximální výška náhledu
-PREFERENCES_CIEART;CIECAM02 optimalizace
-PREFERENCES_CIEART_FRAME;CIECAM02 - Specifická nastavení
-PREFERENCES_CIEART_LABEL;Použít jednoduchou přesnost místo dvojnásobné
-PREFERENCES_CIEART_TOOLTIP;Pokud je povoleno, budou pro CIECAM02 výpočty použita reálná čísla s jednoduchou přesností místo čísel s dvojnásobnou přesností. Tím se dosáhne mírného zrychlení výpočtů za cenu nepatrné ztráty kvality.
 PREFERENCES_CLIPPINGIND;Indikace oříznutí
 PREFERENCES_CLUTSCACHE;Mezipaměť HaldCLUT
 PREFERENCES_CLUTSCACHE_LABEL;Maximální počet  přednačtených CLUTů
@@ -1194,6 +1194,10 @@ PREFERENCES_TAB_IMPROC;Zpracování obrázku
 PREFERENCES_TAB_PERFORMANCE;Výkon a kvalita
 PREFERENCES_TAB_SOUND;Zvuky
 PREFERENCES_THEME;Vzhled
+PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Vložený JPEG náhled
+PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Obrázek k zobrazení
+PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutrální vykreslení raw
+PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Vložený JPEG náhled pokud je v plné velikosti, jinak neutrální raw
 PREFERENCES_TIMAX;Vysoký
 PREFERENCES_TINB;Počet dlaždic
 PREFERENCES_TISTD;Běžný
@@ -1363,7 +1367,7 @@ TP_COLORAPP_ADAPTSCENE;Absolutní jas scény
 TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolutní jas scény prostředí (cd/m²).\n 1) Vypočítáno z Exifu:\nRychlost závěrky - citlivost - clona - expoziční korekce fotoaparátu.\n 2) Vypočítáno z hodnoty raw bílého bodu a expoziční kompenzace Rawtherapee.
 TP_COLORAPP_ADAPTVIEWING;Absolutní jas prohlížení (cd/m²)
 TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolutní jas prostředí prohlížení\n(obvykle 16cd/m²).
-TP_COLORAPP_ADAP_AUTO_TOOLTIP;Pokud je povoleno (doporučeno), RawTherapee vypočítá optimální hodnotu z Exif dat.\nPokud si přejete zadat hodnotu ručně, nejprve zrušte zatržení tohoto pole.
+TP_COLORAPP_ADAP_AUTO_TOOLTIP;Pokud je povoleno (doporučeno), RawTherapee vypočítá optimální hodnotu z Exif dat.\nPokud si přejete zadat hodnotu ručně, nejprve zrušte zatržení tohoto pole. 
 TP_COLORAPP_ALGO;Algoritmus
 TP_COLORAPP_ALGO_ALL;Vše
 TP_COLORAPP_ALGO_JC;Světlost + Barevnost (JC)
@@ -1371,7 +1375,7 @@ TP_COLORAPP_ALGO_JS;Světlost + Nasycení (JS)
 TP_COLORAPP_ALGO_QM;Jas a pestrobarevnost (QM)
 TP_COLORAPP_ALGO_TOOLTIP;Umožňuje vybrat mezi podmnožinou nebo všemi parametry.
 TP_COLORAPP_BADPIXSL;Filtr vypálených/mrtvých pixelů
-TP_COLORAPP_BADPIXSL_TOOLTIP;Potlačení vypálených/mrtvých (jasně zabarvených) pixelů.\n0 = Bez efektu\n1 = Medián\n2 = Gaussův.\nPopřípadě obrázek upravte tak, aby jste se vyhnuli velmi tmavým stínům.\n\nTyto artefakty vznikají díky omezením CIECAM02.
+TP_COLORAPP_BADPIXSL_TOOLTIP;Potlačení vypálených/mrtvých (jasně zabarvených) pixelů.\n0 = Bez efektu\n1 = Medián\n2 = Gaussův.\nPopřípadě obrázek upravte tak, aby jste se vyhnuli velmi tmavým stínům.\n\nTyto artefakty vznikají díky omezením CIECAM02. 
 TP_COLORAPP_BRIGHT;Jas (O)
 TP_COLORAPP_BRIGHT_TOOLTIP;Jas v CIECAM02 bere v potaz svítivost bílé a rozdíly jasů mezi L*a*b* a RGB.
 TP_COLORAPP_CHROMA;Barevnost (C)
@@ -1437,7 +1441,7 @@ TP_COLORAPP_WBCAM;WB [RT+CAT02] + [výstup]
 TP_COLORAPP_WBRT;WB [RT] + [výstup]
 TP_COLORAPP_YB;Yb% (střední jas)
 TP_COLORAPP_YBSCENE;Yb% (střední jas)
-TP_COLORAPP_YBSCENE_TOOLTIP;Pokud je povolena automatika, Yb je vypočteno ze střední hodnoty jasu aktuálního obrázku
+TP_COLORAPP_YBSCENE_TOOLTIP;Pokud je povolena automatika, Yb je vypočteno ze střední hodnoty jasu aktuálního obrázku 
 TP_COLORTONING_AB;o C/L
 TP_COLORTONING_AUTOSAT;Automaticky
 TP_COLORTONING_BALANCE;Vyvážené
@@ -1585,6 +1589,7 @@ TP_EXPOSURE_AUTOLEVELS;Automatické úrovně
 TP_EXPOSURE_AUTOLEVELS_TIP;Přepne provedení Automatické úrovně na automatickou sadu hodnot parametrů založených na analýze obrázku\nPokud to je nezbytné, povolí rekonstrukci světel.
 TP_EXPOSURE_BLACKLEVEL;Černá
 TP_EXPOSURE_BRIGHTNESS;Světlost
+TP_EXPOSURE_CLAMPOOG;Oříznout barvy mimo gamut
 TP_EXPOSURE_CLIP;Oříznutí %
 TP_EXPOSURE_CLIP_TIP;Podíl klipujících bodů v automatických operacích úrovní.
 TP_EXPOSURE_COMPRHIGHLIGHTS;Komprese světel
@@ -1595,7 +1600,7 @@ TP_EXPOSURE_CURVEEDITOR1;Tónová křivka 1
 TP_EXPOSURE_CURVEEDITOR2;Tónová křivka 2
 TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Podívejte se prosím na článek "Exposure > Tone Curves" na RawPedii, kde se můžete naučit. jak pomocí dvou tónových křivek dosáhnout ten nejlepší výsledek.
 TP_EXPOSURE_EXPCOMP;Kompenzace expozice
-TP_EXPOSURE_HISTMATCHING;Automaticky nalezená Tónová křivka
+TP_EXPOSURE_HISTMATCHING;Automaticky přizpůsobená Tónová křivka
 TP_EXPOSURE_HISTMATCHING_TOOLTIP;Automatické nastavení posuvníků a křivek (kromě kompenzace expozice) tak, aby bylo dosaženo co největší shody s vloženým Jpeg náhledem.
 TP_EXPOSURE_LABEL;Expozice
 TP_EXPOSURE_SATURATION;Nasycení
@@ -1763,7 +1768,14 @@ TP_PREPROCESS_HOTPIXFILT;Filtr vypálených pixelů
 TP_PREPROCESS_HOTPIXFILT_TOOLTIP;Zkusí potlačit vypálené pixely.
 TP_PREPROCESS_LABEL;Předzpracování
 TP_PREPROCESS_LINEDENOISE;Filtrovat linkové rušení
+TP_PREPROCESS_LINEDENOISE_DIRECTION;Směr
+TP_PREPROCESS_LINEDENOISE_DIRECTION_BOTH;Oba
+TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL;Vodorovně
+TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;Vodorovně pouze PDAF řádky
+TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Svisle
 TP_PREPROCESS_NO_FOUND;Nic nenalezeno
+TP_PREPROCESS_PDAFLINESFILTER;Filtr PDAF linek
+TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Pokusí se potlačit proužkový šum způsobený PDAF pixely na sensoru, vznikající na některých bezzrcadlovkách Sony v některých scénách se záblesky v protisvětle.
 TP_PRSHARPENING_LABEL;Doostření po změně velikosti
 TP_PRSHARPENING_TOOLTIP;Obrázek po zmenšení doostří. Funguje pouze pokud je použita "Lanczos" metoda zmenšení. Náhled výsledku není v tomto nástroji možný. Podívejte se do RawPedie pro návod k použití.
 TP_RAWCACORR_AUTO;Automatická korekce
@@ -1809,53 +1821,34 @@ TP_RAW_LMMSE_TOOLTIP;Přidá gamu (krok 1) - přidá mediány (kroky 2, až 4) a
 TP_RAW_MONO;Mono
 TP_RAW_NONE;Žádná (zobrazí strukturu senzoru)
 TP_RAW_PIXELSHIFT;Pixel Shift
-TP_RAW_PIXELSHIFTADAPTIVE;Přizpůsobivá detekce
 TP_RAW_PIXELSHIFTBLUR;Maska pohybové neostrosti
-TP_RAW_PIXELSHIFTEPERISO;Přizpůsobení ISO
-TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;Výchozí hodnota 0 by měla dostačovat pro základní hodnoty ISO.\nDetekci pohybu na vyšších hodnotách ISO vylepšíte navýšením této hodnoty.\nZvyšujte po malých krocích a sledujte přitom masku pohybu.
+TP_RAW_PIXELSHIFTEPERISO;Citlivost
+TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;Výchozí hodnota 0 by měla dostatečně fungovat pro základní hodnoty ISO.\nDetekci pohybu na vyšších hodnotách ISO vylepšíte navýšením této hodnoty.\nZvyšujte po malých krocích a sledujte přitom masku pohybu.\nPro podexponované nebo obrázky s vysokým ISO zvyšte citlivost. 
 TP_RAW_PIXELSHIFTEQUALBRIGHT;Vyrovnat jas snímků
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Korekce po kanálech
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Zapnuto: Nezávislá korekce jednotlivých RGB kanálů.\nVypnuto: Použije se stejná hodnota pro všechny kanály.
 TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Vyrovná jas ostatních snímků podle jasu vybraného snímku.\nPokud jsou ve snímku přeexponované oblasti, vyberte jasnější snímek abyste zamezili výskytu purpurové barvy v přeexponovaných oblastech nebo povolte korekci pohybu.
-TP_RAW_PIXELSHIFTEXP0;Testovací
 TP_RAW_PIXELSHIFTGREEN;Kontrolovat zelený kanál na pohyb
 TP_RAW_PIXELSHIFTHOLEFILL;Vyplnit díry v masce pohybu
 TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Vyplnit díry v masce pohybu
 TP_RAW_PIXELSHIFTLMMSE;Použít LMMSE pro části s pohybem
 TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Pro oblasti s pohybem použít LMMSE namísto AMaZE.\nUžitečné pro fotografie s vysokým ISO.
-TP_RAW_PIXELSHIFTMASKTHRESHOLD;3x3 nový práh
 TP_RAW_PIXELSHIFTMEDIAN;Použít medián pro části s pohybem
-TP_RAW_PIXELSHIFTMEDIAN3;Vyjmout vybraný snímek z mediánu
-TP_RAW_PIXELSHIFTMEDIAN3_TOOLTIP;Vyjme vybraný snímek z mediánu.\nUžitečné, pokud se pohybující se objekty překrývají jen ve druhém a třetím.
 TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Pro oblasti s pohybem použijte medián všech snímků namísto vybraného.\nOdstraní objekty, které jsou na všech snímcích na různých místech.\nVytvoří efekt pohybu pro pomalu se pohybující (překrývající se) objekty.
 TP_RAW_PIXELSHIFTMM_AUTO;Automatická
 TP_RAW_PIXELSHIFTMM_CUSTOM;Vlastní
 TP_RAW_PIXELSHIFTMM_OFF;Vypnuto
-TP_RAW_PIXELSHIFTMOTION;Úroveň kontroly pohybu (zastaralé)
-TP_RAW_PIXELSHIFTMOTIONCORRECTION;Míra korekce pohybu v zelené
 TP_RAW_PIXELSHIFTMOTIONMETHOD;Korekce pohybu
 TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 znamená bez detekce pohybu.\n1 - 99 znamená, že pohybu bude detekován dle této hodnoty. Pro zvýšení míry detekce použijte vyšší hodnotu.\n100 znamená, že bude použito AMaZE demozajkování snímku.
-TP_RAW_PIXELSHIFTNONGREENAMAZE;Kontrolovat červené/modré AMaZE
 TP_RAW_PIXELSHIFTNONGREENCROSS;Kontrolovat pohyb v červeném a modrém kanálu
-TP_RAW_PIXELSHIFTNONGREENCROSS2;Kontrolovat zelené AMaZE
-TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Kontrolovat červenou/modrou vodorovně
-TP_RAW_PIXELSHIFTNONGREENVERTICAL;Kontrolovat červenou/modrou svisle
-TP_RAW_PIXELSHIFTNREADISO;nRead
-TP_RAW_PIXELSHIFTONEGREEN;Použít jednu zelenou místo průměru
-TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;V oblastech bez pohybu použije jednu zelenou namísto zprůměrování obou zelených.
-TP_RAW_PIXELSHIFTPRNU;PRNU (%)
-TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Váha červené a modré
 TP_RAW_PIXELSHIFTSHOWMOTION;Ukázat masku pohybu
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Ukázat pouze masku pohybu
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Ukázat masku pohybu bez obrázku.
-TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Překryje obrázek maskou, která ukazuje oblasti s pohybem.
+TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Překryje obrázek zelenou maskou, která ukazuje oblasti s pohybem.
 TP_RAW_PIXELSHIFTSIGMA;Poloměr rozostření
 TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Výchozí poloměr 1,0 většinou velmi dobře funguje pro základní ISO.\nU snímků s vysokým ISO poloměr zvětšete. Hodnota 5,0 je dobrým výchozím bodem.\nBěhem změny hodnoty sledujte masku pohybu.
 TP_RAW_PIXELSHIFTSMOOTH;Hladké přechody
 TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Vyhlazení přechodů mezi oblastmi s pohybem a bez pohybu.\nNastavte na 0 pro vypnutí vyhlazování přechodů.\nNastavte na 1 pro získání AMaZE/LMMSE výsledku pro vybraný snímek (závisí na tom, zda je vybrána volba "Použít LMMSE") nebo mediánu všech čtyř snímků (pokud je vybrána volba "Použít medián").
-TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;StdDev faktor modrý
-TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;StdDev faktor zelený
-TP_RAW_PIXELSHIFTSTDDEVFACTORRED;StdDev faktor červený
 TP_RAW_RCD;RCD
 TP_RAW_SENSOR_BAYER_LABEL;Snímač s Bayerovou maskou
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;Tří průchodová dává lepší výsledky (doporučeno pro fotky s nízkým ISO).\nJednoprůchodová je téměř k nerozeznání od tří průchodové pro vysoké ISO a je rychlejší.
@@ -2243,23 +2236,3 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Přizpůsobit ořez obrazovce\nZkratka: <b>f</b>
 ZOOMPANEL_ZOOMFITSCREEN;Přizpůsobit celý obrázek obrazovce\nZkratka: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Přiblížit\nZkratka: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
-
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!HISTORY_MSG_CLAMPOOG;Out-of-gamut colours clipping
-!HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
-!HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
-!PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
-!PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
-!PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
-!PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
-!TP_EXPOSURE_CLAMPOOG;Clip out-of-gamut colours
-!TP_PREPROCESS_LINEDENOISE_DIRECTION;Direction
-!TP_PREPROCESS_LINEDENOISE_DIRECTION_BOTH;Both
-!TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL;Horizontal
-!TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;Horizontal only on PDAF rows
-!TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertical
-!TP_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
-!TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.

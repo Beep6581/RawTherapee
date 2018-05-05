@@ -80,7 +80,8 @@ bool DynamicProfileRule::matches (const rtengine::FramesMetaData *im) const
             && shutterspeed (im->getShutterSpeed())
             && expcomp (im->getExpComp())
             && camera (im->getCamera())
-            && lens (im->getLens()));
+            && lens (im->getLens())
+            && imagetype(im->getImageType(0)));
 }
 
 namespace
@@ -208,6 +209,7 @@ bool DynamicProfileRules::loadRules()
         get_double_range (rule.expcomp, kf, group, "expcomp");
         get_optional (rule.camera, kf, group, "camera");
         get_optional (rule.lens, kf, group, "lens");
+        get_optional (rule.imagetype, kf, group, "imagetype");
 
         try {
             rule.profilepath = kf.get_string (group, "profilepath");
@@ -240,6 +242,7 @@ bool DynamicProfileRules::storeRules()
         set_double_range (kf, group, "expcomp", rule.expcomp);
         set_optional (kf, group, "camera", rule.camera);
         set_optional (kf, group, "lens", rule.lens);
+        set_optional (kf, group, "imagetype", rule.imagetype);
         kf.set_string (group, "profilepath", rule.profilepath);
     }
 

@@ -1192,7 +1192,9 @@ template<class T> void gaussianBlurImpl(T** src, T** dst, const int W, const int
 #pragma omp single
 #endif
             if (src != dst) {
-                memcpy (dst[0], src[0], W * H * sizeof(T));
+                for(int i = 0; i < H; ++i) {
+                    memcpy(dst[i], src[i], W * sizeof(T));
+                }
             }
         } else if (sigma < GAUSS_3X3_LIMIT) {
             if(src != dst) {

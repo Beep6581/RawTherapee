@@ -39,6 +39,12 @@ constexpr T SQR(T x)
 }
 
 template<typename T>
+constexpr T pow4(T x)
+{
+    return SQR(SQR(x));
+}
+
+template<typename T>
 constexpr const T& min(const T& a)
 {
     return a;

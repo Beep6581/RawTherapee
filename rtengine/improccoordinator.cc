@@ -41,7 +41,7 @@ extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator()
     : orig_prev(nullptr), oprevi(nullptr), oprevl(nullptr), nprevl(nullptr), reserv(nullptr), fattal_11_dcrop_cache(nullptr), previmg(nullptr), workimg(nullptr),
-      ncie(nullptr), imgsrc(nullptr), shmap(nullptr), lastAwbEqual(0.), lastAwbTempBias(0.0), ipf(&params, true), monitorIntent(RI_RELATIVE),
+      ncie (nullptr), imgsrc (nullptr), lastAwbEqual (0.), lastAwbTempBias (0.0), ipf (&params, true), monitorIntent (RI_RELATIVE),
       softProof(false), gamutCheck(false), scale(10), highDetailPreprocessComputed(false), highDetailRawComputed(false),
       allocated(false), bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(NAN), coordX(0), coordY(0), localX(0), localY(0),
       ctColorCurve(),
@@ -561,23 +561,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
     readyphase++;
     progress("Preparing shadow/highlight map...", 100 * readyphase / numofphases);
 
-    if ((todo & M_BLURMAP) && params.sh.enabled) {
-        double radius = sqrt(double (pW * pW + pH * pH)) / 2.0;
-        double shradius = params.sh.radius;
-
-        if (!params.sh.hq) {
-            shradius *= radius / 1800.0;
-        }
-
-        if (!shmap) {
-            shmap = new SHMap(pW, pH, true);
-        }
-
-        shmap->update(oprevi, shradius, ipf.lumimul, params.sh.hq, scale);
-    }
-
-
-
     readyphase++;
 
     if (todo & M_AUTOEXP) {
@@ -713,7 +696,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
             DCPProfile::ApplyState as;
             DCPProfile *dcpProf = imgsrc->getDCP(params.icm, as);
 
-            ipf.rgbProc(oprevi, oprevl, nullptr, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
+            ipf.rgbProc (oprevi, oprevl, nullptr, hltonecurve, shtonecurve, tonecurve, params.toneCurve.saturation,
                         rCurve, gCurve, bCurve, colourToningSatLimit, colourToningSatLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, dcpProf, as, histToneCurve);
 
             if (params.blackwhite.enabled && params.blackwhite.autoc && abwListener) {
@@ -3952,12 +3935,6 @@ void ImProcCoordinator::freeAll()
 
         delete workimg;
 
-        if (shmap) {
-            delete shmap;
-        }
-
-        shmap = nullptr;
-
     }
 
     allocated = false;
@@ -4010,10 +3987,6 @@ void ImProcCoordinator::setScale(int prevscale)
         //ncie is only used in ImProcCoordinator::updatePreviewImage, it will be allocated on first use and deleted if not used anymore
         previmg = new Image8(pW, pH);
         workimg = new Image8(pW, pH);
-
-        if (params.sh.enabled) {
-            shmap = new SHMap(pW, pH, true);
-        }
 
         allocated = true;
     }

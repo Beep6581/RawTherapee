@@ -69,8 +69,6 @@ protected:
 
     ImageSource* imgsrc;
 
-    SHMap* shmap;
-
     ColorTemp currWB;
     ColorTemp autoWB;
 

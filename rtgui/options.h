@@ -300,7 +300,6 @@ public:
     //bool fastexport_bypass_colorDenoise;
     bool fastexport_bypass_defringe;
     bool fastexport_bypass_dirpyrDenoise;
-    bool fastexport_bypass_sh_hq;
     bool fastexport_bypass_dirpyrequalizer;
     bool fastexport_bypass_wavelet;
     Glib::ustring fastexport_raw_bayer_method;

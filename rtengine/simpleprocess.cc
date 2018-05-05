@@ -892,21 +892,6 @@ private:
             ipf.lab2rgb(labcbdl, *baseImg, params.icm.working);
         }
 
-        // update blurmap
-        SHMap* shmap = nullptr;
-
-        if (params.sh.enabled) {
-            shmap = new SHMap(fw, fh, true);
-            double radius = sqrt(double (fw * fw + fh * fh)) / 2.0;
-            double shradius = params.sh.radius;
-
-            if (!params.sh.hq) {
-                shradius *= radius / 1800.0;
-            }
-
-            shmap->update(baseImg, shradius, ipf.lumimul, params.sh.hq, 1);
-        }
-
         // RGB processing
 
         curve1(65536);
@@ -981,7 +966,7 @@ private:
 
         LUTu histToneCurve;
 
-        ipf.rgbProc(baseImg, labView, nullptr, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve);
+        ipf.rgbProc (baseImg, labView, nullptr, curve1, curve2, curve, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve);
 
         if (settings->verbose) {
             printf("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", autor, autog, autob);
@@ -1005,12 +990,6 @@ private:
         // Freeing baseImg because not used anymore
         delete baseImg;
         baseImg = nullptr;
-
-        if (shmap) {
-            delete shmap;
-        }
-
-        shmap = nullptr;
 
         if (pl) {
             pl->setProgress(0.55);

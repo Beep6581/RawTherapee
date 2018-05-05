@@ -846,34 +846,18 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
     }
 
     if (!raw_pixelshift->get_active ()) {
-        filterPE.raw.bayersensor.pixelShiftAutomatic              = falsePE.raw.bayersensor.pixelShiftAutomatic;
         filterPE.raw.bayersensor.pixelShiftBlur                   = falsePE.raw.bayersensor.pixelShiftBlur;
         filterPE.raw.bayersensor.pixelShiftEperIso                = falsePE.raw.bayersensor.pixelShiftEperIso;
         filterPE.raw.bayersensor.pixelShiftEqualBright            = falsePE.raw.bayersensor.pixelShiftEqualBright;
         filterPE.raw.bayersensor.pixelShiftEqualBrightChannel     = falsePE.raw.bayersensor.pixelShiftEqualBrightChannel;
-        filterPE.raw.bayersensor.pixelShiftExp0                   = falsePE.raw.bayersensor.pixelShiftExp0;
         filterPE.raw.bayersensor.pixelShiftGreen                  = falsePE.raw.bayersensor.pixelShiftGreen;
         filterPE.raw.bayersensor.pixelShiftHoleFill               = falsePE.raw.bayersensor.pixelShiftHoleFill;
         filterPE.raw.bayersensor.pixelShiftLmmse                  = falsePE.raw.bayersensor.pixelShiftLmmse;
         filterPE.raw.bayersensor.pixelShiftMedian                 = falsePE.raw.bayersensor.pixelShiftMedian;
-        filterPE.raw.bayersensor.pixelShiftMedian3                = falsePE.raw.bayersensor.pixelShiftMedian3;
-        filterPE.raw.bayersensor.pixelShiftMotion                 = falsePE.raw.bayersensor.pixelShiftMotion;
-        filterPE.raw.bayersensor.pixelShiftMotionCorrection       = falsePE.raw.bayersensor.pixelShiftMotionCorrection;
         filterPE.raw.bayersensor.pixelShiftMotionCorrectionMethod = falsePE.raw.bayersensor.pixelShiftMotionCorrectionMethod;
-        filterPE.raw.bayersensor.pixelShiftNonGreenAmaze          = falsePE.raw.bayersensor.pixelShiftNonGreenAmaze;
         filterPE.raw.bayersensor.pixelShiftNonGreenCross          = falsePE.raw.bayersensor.pixelShiftNonGreenCross;
-        filterPE.raw.bayersensor.pixelShiftNonGreenCross2         = falsePE.raw.bayersensor.pixelShiftNonGreenCross2;
-        filterPE.raw.bayersensor.pixelShiftNonGreenHorizontal     = falsePE.raw.bayersensor.pixelShiftNonGreenHorizontal;
-        filterPE.raw.bayersensor.pixelShiftNonGreenVertical       = falsePE.raw.bayersensor.pixelShiftNonGreenVertical;
-        filterPE.raw.bayersensor.pixelShiftNreadIso               = falsePE.raw.bayersensor.pixelShiftNreadIso;
-        filterPE.raw.bayersensor.pixelShiftPrnu                   = falsePE.raw.bayersensor.pixelShiftPrnu;
-        filterPE.raw.bayersensor.pixelShiftRedBlueWeight          = falsePE.raw.bayersensor.pixelShiftRedBlueWeight;
         filterPE.raw.bayersensor.pixelShiftSigma                  = falsePE.raw.bayersensor.pixelShiftSigma;
         filterPE.raw.bayersensor.pixelShiftSmooth                 = falsePE.raw.bayersensor.pixelShiftSmooth;
-        filterPE.raw.bayersensor.pixelShiftStddevFactorBlue       = falsePE.raw.bayersensor.pixelShiftStddevFactorBlue;
-        filterPE.raw.bayersensor.pixelShiftStddevFactorGreen      = falsePE.raw.bayersensor.pixelShiftStddevFactorGreen;
-        filterPE.raw.bayersensor.pixelShiftStddevFactorRed        = falsePE.raw.bayersensor.pixelShiftStddevFactorRed;
-        filterPE.raw.bayersensor.pixelShiftSum                    = falsePE.raw.bayersensor.pixelShiftSum;
         filterPE.raw.bayersensor.pixelShiftShowMotion             = falsePE.raw.bayersensor.pixelShiftShowMotion;
         filterPE.raw.bayersensor.pixelShiftShowMotionMaskOnly     = falsePE.raw.bayersensor.pixelShiftShowMotionMaskOnly;
     }

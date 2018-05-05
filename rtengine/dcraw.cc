@@ -24,6 +24,8 @@
 /*RT*/#define DJGPP
 /*RT*/#include "jpeg.h"
 
+#include <utility>
+#include <vector>
 #include "opthelper.h"
 
 /*
@@ -9095,7 +9097,7 @@ void CLASS identify()
     filters = 0;
     simple_coeff(0);
    	adobe_coeff (make, model);
-  } else if (!strcmp(make,"Canon") && tiff_bps == 15) {
+  } else if (!strcmp(make,"Canon") && tiff_bps == 15) { // Canon mRaw/sRaw
     switch (width) {
       case 3344: width -= 66;
       case 3872: width -= 6;
@@ -9104,9 +9106,27 @@ void CLASS identify()
       SWAP(height,width);
       SWAP(raw_height,raw_width);
     }
-    if (width == 7200 && height == 3888) {
-      raw_width  = width  = 6480;
-      raw_height = height = 4320;
+
+    if(std::fabs(static_cast<float>(width) / height - 1.5f) > 0.02f) {
+        // wrong image dimensions. Calculate correct dimensions. width / height should be close to 1.5
+        std::vector<std::pair<float, int>> dimensions;
+
+        int size = width * height;
+        int newHeight = sqrt(size / 1.48f);
+        while (--newHeight && std::fabs(static_cast<float>(size) / (newHeight * newHeight) - 1.5f) <= 0.02f) {
+            if(size % newHeight == 0) {
+                dimensions.emplace_back(std::fabs(static_cast<float>(size) / (newHeight * newHeight) - 1.5f), newHeight);
+            }
+        }
+        // find ratio closest to 1.5
+        float val = 1.f;
+        while(!dimensions.empty()) {
+            if(dimensions.back().first < val) {
+                raw_height = height = dimensions.back().second;
+                raw_width = width = size / raw_height;
+            }
+            dimensions.pop_back();
+        }
     }
     filters = 0;
     tiff_samples = colors = 3;

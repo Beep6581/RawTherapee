@@ -1776,8 +1776,6 @@ TP_RAW_NONE;Aucun (montre ce que voit le capteur)
 TP_RAW_PIXELSHIFT;Pixel Shift
 TP_RAW_PIXELSHIFTADAPTIVE;Détection adaptative
 TP_RAW_PIXELSHIFTBLUR;Flouter le masque de mouvement
-TP_RAW_PIXELSHIFTEPERISO;Adaptation ISO
-TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;La valeur par défaut de 0 devrait bien fonctionner pour l'ISO de base.\nAugmenter la valeur pour améliorer la détection de mouvement pour les ISO plus haut.\nAugmentez par petit incrément et vérifier le masque de mouvement à chaque itération.
 TP_RAW_PIXELSHIFTEQUALBRIGHT;Égaliser la luminosité des sous-images
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Égaliser par canal
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Activé: Égalise les canaux RVB individuellement.\nDésactivé: Utilise le même facteur d'égalisation pour tous les canaux.
@@ -1813,7 +1811,6 @@ TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Poid Rouge&Bleu
 TP_RAW_PIXELSHIFTSHOWMOTION;Voir le masque de mouvement
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Voir uniquement le masque
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Affiche le masque sans l'image.
-TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Superpose sur l'image le masque montrant les zones avec mouvement.
 TP_RAW_PIXELSHIFTSIGMA;Rayon de floutage
 TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Le rayon par défaut de 1.0 fonctionne généralement bien pour l'ISO de base.\nAugmentez cette valeur pour les images de haut ISO, 5.0 est un bon point de départ.\nContrôlez le masque de mouvement à chaque nouvelle valeur.
 TP_RAW_PIXELSHIFTSMOOTH;Adoucir les transitions
@@ -2213,14 +2210,15 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!HISTORY_MSG_CLAMPOOG;Out-of-gamut colours clipping
+!EXIFFILTER_IMAGETYPE;Image type
+!HISTORY_MSG_CLAMPOOG;Out-of-gamut color clipping
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
 !PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
-!TP_EXPOSURE_CLAMPOOG;Clip out-of-gamut colours
+!TP_EXPOSURE_CLAMPOOG;Clip out-of-gamut colors
 !TP_PREPROCESS_LINEDENOISE_DIRECTION;Direction
 !TP_PREPROCESS_LINEDENOISE_DIRECTION_BOTH;Both
 !TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL;Horizontal
@@ -2228,3 +2226,6 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertical
 !TP_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.
+!TP_RAW_PIXELSHIFTEPERISO;Sensitivity
+!TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value of 0 should work fine for base ISO.\nHigher values increase sensitivity of motion detection.\nChange in small steps and watch the motion mask while changing.\nIncrease sensitivity for underexposed or high ISO images.
+!TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a green mask showing the regions with motion.
