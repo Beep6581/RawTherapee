@@ -1212,13 +1212,13 @@ QINFO_ISO;ISO
 QINFO_NOEXIF;Exif data not available.
 QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
 SAMPLEFORMAT_0;Unknown data format
-SAMPLEFORMAT_1;Unsigned 8 bits
-SAMPLEFORMAT_2;Unsigned 16 bits
-SAMPLEFORMAT_4;LogLuv 24 bits
-SAMPLEFORMAT_8;LogLuv 32 bits
-SAMPLEFORMAT_16;16 bits floating point
-SAMPLEFORMAT_32;24 bits floating point
-SAMPLEFORMAT_64;32 bits floating point
+SAMPLEFORMAT_1;8-bit unsigned
+SAMPLEFORMAT_2;16-bit unsigned
+SAMPLEFORMAT_4;24-bit LogLuv
+SAMPLEFORMAT_8;32-bit LogLuv
+SAMPLEFORMAT_16;16-bit floating-point
+SAMPLEFORMAT_32;24-bit floating-point
+SAMPLEFORMAT_64;32-bit floating-point
 SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
 SAVEDLG_FILEFORMAT;File format
 SAVEDLG_FORCEFORMATOPTS;Force saving options
