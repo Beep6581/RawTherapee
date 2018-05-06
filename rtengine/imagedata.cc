@@ -562,21 +562,21 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
                 sampleFormat = IIOSF_FLOAT16;
                 isHDR = true;
 #if PRINT_HDR_PS_DETECTION
-                printf("HDR detected ! -> sampleFormat = %d   (16 bits)\n", sampleFormat);
+                printf("HDR detected ! -> sampleFormat = %d   (16-bit)\n", sampleFormat);
 #endif
             }
             else if (bitspersample == 24) {
                 sampleFormat = IIOSF_FLOAT24;
                 isHDR = true;
 #if PRINT_HDR_PS_DETECTION
-                printf("HDR detected ! -> sampleFormat = %d   (24 bits)\n", sampleFormat);
+                printf("HDR detected ! -> sampleFormat = %d   (24-bit)\n", sampleFormat);
 #endif
             }
             else if (bitspersample == 32) {
                 sampleFormat = IIOSF_FLOAT32;
                 isHDR = true;
 #if PRINT_HDR_PS_DETECTION
-                printf("HDR detected ! -> sampleFormat = %d   (32 bits)\n", sampleFormat);
+                printf("HDR detected ! -> sampleFormat = %d   (32-bit)\n", sampleFormat);
 #endif
             }
         }
@@ -586,21 +586,21 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
                 sampleFormat = IIOSF_FLOAT16;
                 isHDR = true;
 #if PRINT_HDR_PS_DETECTION
-                printf("HDR detected ! -> sampleFormat = %d   (16 bits)\n", sampleFormat);
+                printf("HDR detected ! -> sampleFormat = %d   (16-bit)\n", sampleFormat);
 #endif
             }
             else if (bitspersample == 24) {
                 sampleFormat = IIOSF_FLOAT24;
                 isHDR = true;
 #if PRINT_HDR_PS_DETECTION
-                printf("HDR detected ! -> sampleFormat = %d   (24 bits)\n", sampleFormat);
+                printf("HDR detected ! -> sampleFormat = %d   (24-bit)\n", sampleFormat);
 #endif
             }
             else if (bitspersample == 32) {
                 sampleFormat = IIOSF_FLOAT32;
                 isHDR = true;
 #if PRINT_HDR_PS_DETECTION
-                printf("HDR detected ! -> sampleFormat = %d   (32 bits)\n", sampleFormat);
+                printf("HDR detected ! -> sampleFormat = %d   (32-bit)\n", sampleFormat);
 #endif
             }
         } else if (sampleformat == SAMPLEFORMAT_INT || sampleformat == SAMPLEFORMAT_UINT) {
