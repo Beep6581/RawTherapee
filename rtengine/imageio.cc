@@ -705,15 +705,16 @@ int ImageIO::getTIFFSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat,
                 return IMIO_SUCCESS;
             }
         } else if (samplesperpixel == 3 && sampleformat == SAMPLEFORMAT_IEEEFP) {
-            /*
-             * Not yet supported
-             *
-             if (bitspersample==16) {
-                sFormat = IIOSF_HALF;
+            if (bitspersample==16) {
+                sFormat = IIOSF_FLOAT16;
                 return IMIO_SUCCESS;
-            }*/
+            }
+            if (bitspersample == 24) {
+                sFormat = IIOSF_FLOAT24;
+                return IMIO_SUCCESS;
+            }
             if (bitspersample == 32) {
-                sFormat = IIOSF_FLOAT;
+                sFormat = IIOSF_FLOAT32;
                 return IMIO_SUCCESS;
             }
         }

@@ -463,20 +463,32 @@ Tag* TagDirectory::findTag (const char* name, bool lookUpward) const
         return t;
     }
 
+    Tag* foundTag = nullptr;
+    int tagDistance = 10000;
+
     for (auto tag : tags) {
         if (tag->isDirectory()) {
             TagDirectory *dir;
             int i = 0;
+            // Find the shortest path to that tag
             while ((dir = tag->getDirectory(i)) != nullptr) {
                 TagDirectory *dir = tag->getDirectory();
                 Tag* t = dir->findTag (name);
 
                 if (t) {
-                    return t;
+                    int currTagDistance = t->getDistanceFrom(this);
+                    if (currTagDistance < tagDistance) {
+                        tagDistance = currTagDistance;
+                        foundTag = t;
+                    }
                 }
                 ++i;
             }
         }
+    }
+
+    if (foundTag) {
+        return foundTag;
     }
 
     if (lookUpward && parent) {
@@ -1418,6 +1430,20 @@ Tag::~Tag ()
 
         delete [] directory;
     }
+}
+
+int Tag::getDistanceFrom(const TagDirectory *root)
+{
+    int i = 0;
+    TagDirectory *currTagDir = parent;
+    while (currTagDir != nullptr && currTagDir != root) {
+        ++i;
+        if (parent->getParent() == currTagDir) {
+            break;
+        }
+        currTagDir = parent->getParent();
+    }
+    return  i;
 }
 
 void Tag::setInt (int v, int ofs, TagType astype)

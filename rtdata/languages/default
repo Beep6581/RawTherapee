@@ -1216,7 +1216,9 @@ SAMPLEFORMAT_1;Unsigned 8 bits
 SAMPLEFORMAT_2;Unsigned 16 bits
 SAMPLEFORMAT_4;LogLuv 24 bits
 SAMPLEFORMAT_8;LogLuv 32 bits
-SAMPLEFORMAT_16;32 bits floating point
+SAMPLEFORMAT_16;16 bits floating point
+SAMPLEFORMAT_32;24 bits floating point
+SAMPLEFORMAT_64;32 bits floating point
 SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
 SAVEDLG_FILEFORMAT;File format
 SAVEDLG_FORCEFORMATOPTS;Force saving options

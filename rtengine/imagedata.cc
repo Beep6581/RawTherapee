@@ -483,7 +483,7 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
     if (mnote && (!make.compare (0, 6, "PENTAX") || (!make.compare (0, 5, "RICOH") && !model.compare (0, 6, "PENTAX")))) {
         const rtexif::Tag* const hdr = mnote->findTag("HDR");
         if (hdr) {
-            if (hdr->toInt() > 0 && hdr->toInt(2) > 0) {
+            if (hdr->toInt() > 0) {
                 isHDR = true;
 #if PRINT_HDR_PS_DETECTION
                 printf("HDR detected ! -> \"HDR\" tag found\n");
@@ -558,28 +558,51 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
                 sampleFormat = IIOSF_UNSIGNED_SHORT;
             }
         } else if (sampleformat == SAMPLEFORMAT_IEEEFP) {
-            /*
-             * Not yet supported
-             *
-             if (bitspersample==16) {
-                sampleFormat = IIOSF_HALF;
-                isHDR = true;
-            }*/
-            if (bitspersample == 32) {
-                sampleFormat = IIOSF_FLOAT;
+            if (bitspersample==16) {
+                sampleFormat = IIOSF_FLOAT16;
                 isHDR = true;
 #if PRINT_HDR_PS_DETECTION
-                printf("HDR detected ! -> sampleFormat = %d\n", sampleFormat);
+                printf("HDR detected ! -> sampleFormat = %d   (16 bits)\n", sampleFormat);
+#endif
+            }
+            else if (bitspersample == 24) {
+                sampleFormat = IIOSF_FLOAT24;
+                isHDR = true;
+#if PRINT_HDR_PS_DETECTION
+                printf("HDR detected ! -> sampleFormat = %d   (24 bits)\n", sampleFormat);
+#endif
+            }
+            else if (bitspersample == 32) {
+                sampleFormat = IIOSF_FLOAT32;
+                isHDR = true;
+#if PRINT_HDR_PS_DETECTION
+                printf("HDR detected ! -> sampleFormat = %d   (32 bits)\n", sampleFormat);
 #endif
             }
         }
     } else if (photometric == PHOTOMETRIC_CFA) {
         if (sampleformat == SAMPLEFORMAT_IEEEFP) {
-            sampleFormat = IIOSF_FLOAT;
-            isHDR = true;
+            if (bitspersample == 16) {
+                sampleFormat = IIOSF_FLOAT16;
+                isHDR = true;
 #if PRINT_HDR_PS_DETECTION
-            printf("HDR detected ! -> sampleFormat = %d\n", sampleFormat);
+                printf("HDR detected ! -> sampleFormat = %d   (16 bits)\n", sampleFormat);
 #endif
+            }
+            else if (bitspersample == 24) {
+                sampleFormat = IIOSF_FLOAT24;
+                isHDR = true;
+#if PRINT_HDR_PS_DETECTION
+                printf("HDR detected ! -> sampleFormat = %d   (24 bits)\n", sampleFormat);
+#endif
+            }
+            else if (bitspersample == 32) {
+                sampleFormat = IIOSF_FLOAT32;
+                isHDR = true;
+#if PRINT_HDR_PS_DETECTION
+                printf("HDR detected ! -> sampleFormat = %d   (32 bits)\n", sampleFormat);
+#endif
+            }
         } else if (sampleformat == SAMPLEFORMAT_INT || sampleformat == SAMPLEFORMAT_UINT) {
             if (bitspersample == 8) {   // shouldn't occur...
                 sampleFormat = IIOSF_UNSIGNED_CHAR;
@@ -589,7 +612,7 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
         }
     } else if (photometric == 34892 || photometric == 32892  /* Linear RAW (see DNG spec ; 32892 seem to be a flaw from Sony's ARQ files) */) {
         if (sampleformat == SAMPLEFORMAT_IEEEFP) {
-            sampleFormat = IIOSF_FLOAT;
+            sampleFormat = IIOSF_FLOAT32;
             isHDR = true;
 #if PRINT_HDR_PS_DETECTION
             printf("HDR detected ! -> sampleFormat = %d\n", sampleFormat);
