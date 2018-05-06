@@ -391,8 +391,8 @@ int processLineParams ( int argc, char **argv )
                 case 'b':
                     bits = atoi (currParam.substr (2).c_str());
 
-                    if (bits != 8 && bits != 16) {
-                        std::cerr << "Error: specify -b8 for 8-bit or -b16 for 16-bit output." << std::endl;
+                    if (bits != 8 && bits != 16 && bits != 32) {
+                        std::cerr << "Error: specify -b8 for 8-bit/integer or -b16 for 16-bit/integer or -b32 for 32-bit/float output." << std::endl;
                         deleteProcParams (processingParams);
                         return -3;
                     }
@@ -550,8 +550,10 @@ int processLineParams ( int argc, char **argv )
                     std::cout << "                       Chroma halved horizontally." << std::endl;
                     std::cout << "                   3 = Best quality:       1x1, 1x1, 1x1 (4:4:4)" << std::endl;
                     std::cout << "                       No chroma subsampling." << std::endl;
-                    std::cout << "  -b<8|16>         Specify bit depth per channel (default value: 16 for TIFF, 8 for PNG)." << std::endl;
-                    std::cout << "                   Only applies to TIFF and PNG output, JPEG is always 8." << std::endl;
+                    std::cout << "  -b<8|16|32>      Specify bit depth per channel (default value: 16 for TIFF, 8 for PNG)." << std::endl;
+                    std::cout << "                   TIFF can be 8-bit/int, 16-bit/int or 32-bit/float" << std::endl;
+                    std::cout << "                   PNG can be 8-bit/int or 16-bit/int." << std::endl;
+                    std::cout << "                   JPEG is only 8-bit/int." << std::endl;
                     std::cout << "  -t[z]            Specify output to be TIFF." << std::endl;
                     std::cout << "                   Uncompressed by default, or deflate compression with 'z'." << std::endl;
                     std::cout << "  -n               Specify output to be compressed PNG." << std::endl;

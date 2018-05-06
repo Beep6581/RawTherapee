@@ -1026,6 +1026,9 @@ int ImageIO::savePNG  (Glib::ustring fname, volatile int bps)
     if (bps < 0) {
         bps = getBPS ();
     }
+    if (bps > 16) {
+        bps = 16;
+    }
 
     png_set_IHDR(png, info, width, height, bps, PNG_COLOR_TYPE_RGB,
                  PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_BASE);
