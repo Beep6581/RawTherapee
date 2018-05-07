@@ -298,6 +298,7 @@ void Options::setDefaults ()
     saveFormat.jpegSubSamp = 2;
     saveFormat.pngBits = 8;
     saveFormat.tiffBits = 16;
+    saveFormat.tiffFloat = false;
     saveFormat.tiffUncompressed = true;
     saveFormat.saveParams = true;
 
@@ -306,6 +307,7 @@ void Options::setDefaults ()
     saveFormatBatch.jpegSubSamp = 2;
     saveFormatBatch.pngBits = 8;
     saveFormatBatch.tiffBits = 16;
+    saveFormatBatch.tiffFloat = false;
     saveFormatBatch.tiffUncompressed = true;
     saveFormatBatch.saveParams = true;
 
@@ -736,6 +738,10 @@ void Options::readFromFile (Glib::ustring fname)
                     saveFormat.tiffBits = keyFile.get_integer ("Output", "TiffBps");
                 }
 
+                if (keyFile.has_key ("Output", "TiffFloat")) {
+                    saveFormat.tiffFloat = keyFile.get_boolean ("Output", "TiffFloat");
+                }
+
                 if (keyFile.has_key ("Output", "TiffUncompressed")) {
                     saveFormat.tiffUncompressed = keyFile.get_boolean ("Output", "TiffUncompressed");
                 }
@@ -763,6 +769,10 @@ void Options::readFromFile (Glib::ustring fname)
 
                 if (keyFile.has_key ("Output", "TiffBpsBatch")) {
                     saveFormatBatch.tiffBits = keyFile.get_integer ("Output", "TiffBpsBatch");
+                }
+
+                if (keyFile.has_key ("Output", "TiffFloatBatch")) {
+                    saveFormatBatch.tiffFloat = keyFile.get_boolean ("Output", "TiffFloatBatch");
                 }
 
                 if (keyFile.has_key ("Output", "TiffUncompressedBatch")) {
@@ -1852,6 +1862,7 @@ void Options::saveToFile (Glib::ustring fname)
         keyFile.set_integer ("Output", "JpegSubSamp", saveFormat.jpegSubSamp);
         keyFile.set_integer ("Output", "PngBps", saveFormat.pngBits);
         keyFile.set_integer ("Output", "TiffBps", saveFormat.tiffBits);
+        keyFile.set_boolean ("Output", "TiffFloat", saveFormat.tiffFloat);
         keyFile.set_boolean ("Output", "TiffUncompressed", saveFormat.tiffUncompressed);
         keyFile.set_boolean ("Output", "SaveProcParams", saveFormat.saveParams);
 
@@ -1860,6 +1871,7 @@ void Options::saveToFile (Glib::ustring fname)
         keyFile.set_integer ("Output", "JpegSubSampBatch", saveFormatBatch.jpegSubSamp);
         keyFile.set_integer ("Output", "PngBpsBatch", saveFormatBatch.pngBits);
         keyFile.set_integer ("Output", "TiffBpsBatch", saveFormatBatch.tiffBits);
+        keyFile.set_boolean ("Output", "TiffFloatBatch", saveFormatBatch.tiffFloat);
         keyFile.set_boolean ("Output", "TiffUncompressedBatch", saveFormatBatch.tiffUncompressed);
         keyFile.set_boolean ("Output", "SaveProcParamsBatch", saveFormatBatch.saveParams);
 

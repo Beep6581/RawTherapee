@@ -50,6 +50,7 @@ struct SaveFormat {
         jpegQuality (90),
         jpegSubSamp (2),
         tiffBits (8),
+        tiffFloat(false),
         tiffUncompressed (true),
         saveParams (true)
     {
@@ -60,6 +61,7 @@ struct SaveFormat {
     int jpegQuality;
     int jpegSubSamp;  // 1=best compression, 3=best quality
     int tiffBits;
+    bool tiffFloat;
     bool tiffUncompressed;
     bool saveParams;
 };

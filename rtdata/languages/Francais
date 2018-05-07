@@ -1216,6 +1216,7 @@ SAMPLEFORMAT_8;LogLuv 32 bits
 SAMPLEFORMAT_16;32 bits à virgule flottante
 SAVEDLG_AUTOSUFFIX;Ajouter automatiquement un suffixe si le fichier existe déjà
 SAVEDLG_FILEFORMAT;Format de fichier
+SAVEDLG_FILEFORMAT_FLOAT; virgule flottante
 SAVEDLG_FORCEFORMATOPTS;Forcer les options d'enregistrement
 SAVEDLG_JPEGQUAL;Qualité JPEG
 SAVEDLG_PNGCOMPR;Compression PNG

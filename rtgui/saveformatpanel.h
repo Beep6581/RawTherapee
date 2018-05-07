@@ -44,7 +44,7 @@ protected:
     Gtk::Grid*          jpegOpts;
     Gtk::Label*         jpegSubSampLabel;
     FormatChangeListener* listener;
-    Glib::ustring       fstr[6];
+    Glib::ustring       fstr[7];
     Gtk::CheckButton*   savesPP;
 
 

@@ -175,9 +175,10 @@ Glib::ustring BatchQueueEntry::getToolTip (int x, int y)
         tooltip += Glib::ustring::compose("\n\n%1: %2", M("BATCHQUEUE_DESTFILENAME"), outFileName);
 
         if (forceFormatOpts) {
-            tooltip += Glib::ustring::compose("\n\n%1: %2 (%3 bits)", M("SAVEDLG_FILEFORMAT"), saveFormat.format,
+            tooltip += Glib::ustring::compose("\n\n%1: %2 (%3-bits%4)", M("SAVEDLG_FILEFORMAT"), saveFormat.format,
                                               saveFormat.format == "png" ? saveFormat.pngBits :
-                                              saveFormat.format == "tif" ? saveFormat.tiffBits : 8);
+                                              saveFormat.format == "tif" ? saveFormat.tiffBits : 8,
+                                              saveFormat.format == "tif" && saveFormat.tiffFloat ? M("SAVEDLG_FILEFORMAT_FLOAT") : "");
 
             if (saveFormat.format == "jpg") {
                 tooltip += Glib::ustring::compose("\n%1: %2\n%3: %4",

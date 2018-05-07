@@ -1300,13 +1300,12 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
     return IMIO_SUCCESS;
 }
 
-int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
+int ImageIO::saveTIFF (Glib::ustring fname, int bps, float isFloat, bool uncompressed)
 {
     if (getWidth() < 1 || getHeight() < 1) {
         return IMIO_HEADERERROR;
     }
 
-    //TODO: Handling 32 bits floating point output images!
     bool writeOk = true;
     int width = getWidth ();
     int height = getHeight ();
@@ -1458,10 +1457,10 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
     TIFFSetField (out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
     TIFFSetField (out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
     TIFFSetField (out, TIFFTAG_COMPRESSION, uncompressed ? COMPRESSION_NONE : COMPRESSION_ADOBE_DEFLATE);
-    TIFFSetField (out, TIFFTAG_SAMPLEFORMAT, bps == 32 ? SAMPLEFORMAT_IEEEFP : SAMPLEFORMAT_UINT);
+    TIFFSetField (out, TIFFTAG_SAMPLEFORMAT, (bps == 16 || bps == 32) && isFloat ? SAMPLEFORMAT_IEEEFP : SAMPLEFORMAT_UINT);
 
     if (!uncompressed) {
-        TIFFSetField (out, TIFFTAG_PREDICTOR, bps == 32 ? PREDICTOR_FLOATINGPOINT : PREDICTOR_HORIZONTAL);
+        TIFFSetField (out, TIFFTAG_PREDICTOR, (bps == 16 || bps == 32) && isFloat ? PREDICTOR_FLOATINGPOINT : PREDICTOR_HORIZONTAL);
     }
     if (profileData) {
         TIFFSetField (out, TIFFTAG_ICCPROFILE, profileLength, profileData);
@@ -1470,14 +1469,24 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
     for (int row = 0; row < height; row++) {
         getScanline (row, linebuffer, bps);
 
-        if(needsReverse && !uncompressed && bps == 32) {
-            for(int i = 0; i < lineWidth; i += 4) {
-                char temp = linebuffer[i];
-                linebuffer[i] = linebuffer[i + 3];
-                linebuffer[i + 3] = temp;
-                temp = linebuffer[i + 1];
-                linebuffer[i + 1] = linebuffer[i + 2];
-                linebuffer[i + 2] = temp;
+        /*if (bps == 16) {
+            if(needsReverse && !uncompressed) {
+                for(int i = 0; i < lineWidth; i += 2) {
+                    char temp = linebuffer[i];
+                    linebuffer[i] = linebuffer[i + 1];
+                    linebuffer[i + 1] = temp;
+                }
+            }
+        } else */ if (bps == 32) {
+            if(needsReverse && !uncompressed) {
+                for(int i = 0; i < lineWidth; i += 4) {
+                    char temp = linebuffer[i];
+                    linebuffer[i] = linebuffer[i + 3];
+                    linebuffer[i + 3] = temp;
+                    temp = linebuffer[i + 1];
+                    linebuffer[i + 1] = linebuffer[i + 2];
+                    linebuffer[i + 2] = temp;
+                }
             }
         }
 

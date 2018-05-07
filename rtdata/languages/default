@@ -1219,6 +1219,7 @@ SAMPLEFORMAT_8;LogLuv 32 bits
 SAMPLEFORMAT_16;32 bits floating point
 SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
 SAVEDLG_FILEFORMAT;File format
+SAVEDLG_FILEFORMAT_FLOAT; floating-point
 SAVEDLG_FORCEFORMATOPTS;Force saving options
 SAVEDLG_JPEGQUAL;JPEG quality
 SAVEDLG_PUTTOQUEUE;Put into processing queue

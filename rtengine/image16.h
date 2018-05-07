@@ -83,9 +83,9 @@ public:
     {
         return saveJPEG (fname, quality, subSamp);
     }
-    virtual int          saveAsTIFF (Glib::ustring fname, int bps = -1, bool uncompressed = false)
+    virtual int          saveAsTIFF (Glib::ustring fname, int bps = -1, float isFloat = false, bool uncompressed = false)
     {
-        return saveTIFF (fname, bps, uncompressed);
+        return saveTIFF (fname, bps, isFloat, uncompressed);
     }
     virtual void         setSaveProgressListener (ProgressListener* pl)
     {
