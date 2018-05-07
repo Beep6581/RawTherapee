@@ -76,7 +76,7 @@ void Image16::getScanline (int row, unsigned char* buffer, int bps)
 
 /*
  * void Image16::setScanline (int row, unsigned char* buffer, int bps, int minValue[3], int maxValue[3]);
- * has not been implemented yet, because as of now, this method is called for IIOSF_FLOAT sample format only
+ * has not been implemented yet, because as of now, this method is called for IIOSF_FLOATxx sample format only
  */
 void Image16::setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples, float *minValue, float *maxValue)
 {

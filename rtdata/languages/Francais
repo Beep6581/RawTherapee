@@ -1213,7 +1213,9 @@ SAMPLEFORMAT_1;8 bits non signé
 SAMPLEFORMAT_2;16 bits non signé
 SAMPLEFORMAT_4;LogLuv 24 bits
 SAMPLEFORMAT_8;LogLuv 32 bits
-SAMPLEFORMAT_16;32 bits à virgule flottante
+SAMPLEFORMAT_16;16 bits à virgule flottante
+SAMPLEFORMAT_32;24 bits à virgule flottante
+SAMPLEFORMAT_64;32 bits à virgule flottante
 SAVEDLG_AUTOSUFFIX;Ajouter automatiquement un suffixe si le fichier existe déjà
 SAVEDLG_FILEFORMAT;Format de fichier
 SAVEDLG_FILEFORMAT_FLOAT; virgule flottante

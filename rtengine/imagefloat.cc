@@ -51,8 +51,13 @@ void Imagefloat::setScanline (int row, unsigned char* buffer, int bps, unsigned 
         return;
     }
 
+    // The DNG decoder convert to 32 bits float data even if the file contains 16 or 24 bits data.
+    // DNG_HalfToFloat and DNG_FP24ToFloat from dcraw.cc can be used to manually convert
+    // from 16 and 24 bits to 32 bits float respectively
     switch (sampleFormat) {
-    case (IIOSF_FLOAT): {
+    case (IIOSF_FLOAT16):
+    case (IIOSF_FLOAT24):
+    case (IIOSF_FLOAT32): {
         int ix = 0;
         float* sbuffer = (float*) buffer;
 
