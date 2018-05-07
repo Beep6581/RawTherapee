@@ -32,7 +32,9 @@ typedef enum IIO_Sample_Format {
     //IIOSF_HALF               ,    // OpenEXR & NVidia's Half Float, not yet supported
     IIOSF_LOGLUV24       = 1 << 2,
     IIOSF_LOGLUV32       = 1 << 3,
-    IIOSF_FLOAT          = 1 << 4
+    IIOSF_FLOAT16        = 1 << 4,
+    IIOSF_FLOAT24        = 1 << 5,
+    IIOSF_FLOAT32        = 1 << 6
 } IIOSampleFormat;
 
 typedef enum IIO_Sample_Arrangement {
