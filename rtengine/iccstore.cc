@@ -1042,7 +1042,7 @@ void rtengine::ICCStore::getGammaArray(const procparams::ColorManagementParams &
 {
     const double eps = 0.000000001; // not divide by zero
 
-    if (icm.freegamma  && icm.gamma != "Free") { //if Free gamma selected with other than Free
+    if (icm.freegamma  && icm.gamma != "Custom") { //if Free gamma selected with other than Free
         // gamma : ga[0],ga[1],ga[2],ga[3],ga[4],ga[5] by calcul
         if (icm.gamma == "BT709_g2.2_s4.5")      {
             ga[0] = 2.22;    //BT709  2.2  4.5  - my preferred as D.Coffin
@@ -1623,7 +1623,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
 
     gammaWs.precision(3);
 
-    if (icm.gamma == "Free") {
+    if (icm.gamma == "Custom") {
         if (icm.wprofile == "v4") {
             outPro = outPr + "_v4_" + std::to_string((float)icm.gampos) + " " + std::to_string((float)icm.slpos) + ".icc";
         } else if (icm.wprofile == "v2" || icm.wprofile == "none") {
