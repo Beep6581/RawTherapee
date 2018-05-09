@@ -190,7 +190,9 @@ public:
     void selectImage (Glib::ustring fname);
     void openNextPreviousEditorImage (Glib::ustring fname, eRTNav eNextPrevious);
 
+#ifdef WIN32
     void openDefaultViewer (int destination);
+#endif
 
     void thumbRearrangementNeeded ();
     void _thumbRearrangementNeeded ();
