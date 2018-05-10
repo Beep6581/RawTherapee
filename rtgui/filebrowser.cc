@@ -127,7 +127,9 @@ void findOriginalEntries (const std::vector<ThumbBrowserEntryBase*>& entries)
 
 FileBrowser::FileBrowser () :
     menuLabel(nullptr),
+#ifdef WIN32
     miOpenDefaultViewer(nullptr),
+#endif
     selectDF(nullptr),
     thisIsDF(nullptr),
     autoDF(nullptr),
@@ -1193,6 +1195,7 @@ bool FileBrowser::keyPressed (GdkEventKey* event)
         }
 
         openRequested(mselected);
+#ifdef WIN32
     } else if (event->keyval == GDK_KEY_F5) {
         int dest = 1;
 
@@ -1204,6 +1207,7 @@ bool FileBrowser::keyPressed (GdkEventKey* event)
 
         openDefaultViewer (dest);
         return true;
+#endif
     } else if (event->keyval == GDK_KEY_Page_Up) {
         scrollPage(GDK_SCROLL_UP);
         return true;
