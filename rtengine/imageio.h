@@ -112,8 +112,8 @@ public:
     }
 
     virtual int     getBPS      () = 0;
-    virtual void    getScanline (int row, unsigned char* buffer, int bps) {}
-    virtual void    setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples = 3, float minValue[3] = nullptr, float  maxValue[3] = nullptr) {}
+    virtual void    getScanline (int row, unsigned char* buffer, int bps, bool isFloat = false) {}
+    virtual void    setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples = 3) {}
 
     virtual bool    readImage   (Glib::ustring &fname, FILE *fh)
     {

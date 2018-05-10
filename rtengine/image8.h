@@ -50,8 +50,8 @@ public:
     {
         return 8 * sizeof(unsigned char);
     }
-    virtual void         getScanline (int row, unsigned char* buffer, int bps);
-    virtual void         setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples, float *minValue = nullptr, float *maxValue = nullptr);
+    virtual void         getScanline (int row, unsigned char* buffer, int bps, bool isFloat = false);
+    virtual void         setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples);
 
     // functions inherited from IImage*:
     virtual MyMutex&     getMutex ()

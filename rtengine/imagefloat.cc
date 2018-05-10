@@ -44,7 +44,7 @@ Imagefloat::~Imagefloat ()
 }
 
 // Call this method to handle floating points input values of different size
-void Imagefloat::setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples, float *minValue, float *maxValue)
+void Imagefloat::setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples)
 {
 
     if (data == nullptr) {
@@ -55,45 +55,27 @@ void Imagefloat::setScanline (int row, unsigned char* buffer, int bps, unsigned 
     // DNG_HalfToFloat and DNG_FP24ToFloat from dcraw.cc can be used to manually convert
     // from 16 and 24 bits to 32 bits float respectively
     switch (sampleFormat) {
-    case (IIOSF_FLOAT16):
-    case (IIOSF_FLOAT24):
+    case (IIOSF_FLOAT16): {
+        int ix = 0;
+        uint16_t* sbuffer = (uint16_t*) buffer;
+
+        for (int i = 0; i < width; i++) {
+            r(row, i) = 65535.f * DNG_HalfToFloat(sbuffer[ix++]);
+            g(row, i) = 65535.f * DNG_HalfToFloat(sbuffer[ix++]);
+            b(row, i) = 65535.f * DNG_HalfToFloat(sbuffer[ix++]);
+        }
+
+        break;
+    }
+    //case (IIOSF_FLOAT24):
     case (IIOSF_FLOAT32): {
         int ix = 0;
         float* sbuffer = (float*) buffer;
 
         for (int i = 0; i < width; i++) {
-            r(row, i) = 65535.f * sbuffer[ix];
-
-            if (minValue) {
-                if (sbuffer[ix] < minValue[0]) {
-                    minValue[0] = sbuffer[ix];
-                } else if (sbuffer[ix] > maxValue[0]) {
-                    maxValue[0] = sbuffer[ix];
-                }
-            }
-            ++ix;
-
-            g(row, i) = 65535.f * sbuffer[ix];
-
-            if (minValue) {
-                if (sbuffer[ix] < minValue[1]) {
-                    minValue[1] = sbuffer[ix];
-                } else if (sbuffer[ix] > maxValue[1]) {
-                    maxValue[1] = sbuffer[ix];
-                }
-            }
-            ++ix;
-
-            b(row, i) = 65535.f * sbuffer[ix];
-
-            if (minValue) {
-                if (sbuffer[ix] < minValue[2]) {
-                    minValue[2] = sbuffer[ix];
-                } else if (sbuffer[ix] > maxValue[2]) {
-                    maxValue[2] = sbuffer[ix];
-                }
-            }
-            ++ix;
+            r(row, i) = 65535.f * sbuffer[ix++];
+            g(row, i) = 65535.f * sbuffer[ix++];
+            b(row, i) = 65535.f * sbuffer[ix++];
         }
 
         break;
@@ -112,34 +94,8 @@ void Imagefloat::setScanline (int row, unsigned char* buffer, int bps, unsigned 
             // TODO: we may have to handle other color space than sRGB!
             Color::xyz2srgb(xyzvalues[0], xyzvalues[1], xyzvalues[2], rgbvalues[0], rgbvalues[1], rgbvalues[2]);
             r(row, i) = rgbvalues[0];
-
-            if (minValue) {
-                if (rgbvalues[0] < minValue[0]) {
-                    minValue[0] = rgbvalues[0];
-                } else if (rgbvalues[0] > maxValue[0]) {
-                    maxValue[0] = rgbvalues[0];
-                }
-            }
-
             g(row, i) = rgbvalues[1];
-
-            if (minValue) {
-                if (rgbvalues[1] < minValue[1]) {
-                    minValue[1] = rgbvalues[1];
-                } else if (rgbvalues[1] > maxValue[1]) {
-                    maxValue[1] = rgbvalues[1];
-                }
-            }
-
             b(row, i) = rgbvalues[2];
-
-            if (minValue) {
-                if (rgbvalues[2] < minValue[2]) {
-                    minValue[2] = rgbvalues[2];
-                } else if (rgbvalues[2] > maxValue[2]) {
-                    maxValue[2] = rgbvalues[2];
-                }
-            }
         }
 
         break;
@@ -154,22 +110,32 @@ void Imagefloat::setScanline (int row, unsigned char* buffer, int bps, unsigned 
 
 namespace rtengine { extern void filmlike_clip(float *r, float *g, float *b); }
 
-void Imagefloat::getScanline (int row, unsigned char* buffer, int bps)
+void Imagefloat::getScanline (int row, unsigned char* buffer, int bps, bool isFloat)
 {
 
     if (data == nullptr) {
         return;
     }
 
-    if (bps == 32) {
-        int ix = 0;
-        float* sbuffer = (float*) buffer;
-
-        // agriggio -- assume the image is normalized to [0, 65535]
-        for (int i = 0; i < width; i++) {
-            sbuffer[ix++] = r(row, i) / 65535.f;
-            sbuffer[ix++] = g(row, i) / 65535.f;
-            sbuffer[ix++] = b(row, i) / 65535.f;
+    if (isFloat) {
+        if (bps == 32) {
+            int ix = 0;
+            float* sbuffer = (float*) buffer;
+            // agriggio -- assume the image is normalized to [0, 65535]
+            for (int i = 0; i < width; i++) {
+                sbuffer[ix++] = r(row, i) / 65535.f;
+                sbuffer[ix++] = g(row, i) / 65535.f;
+                sbuffer[ix++] = b(row, i) / 65535.f;
+            }
+        } else if (bps == 16) {
+            int ix = 0;
+            uint16_t* sbuffer = (uint16_t*) buffer;
+            // agriggio -- assume the image is normalized to [0, 65535]
+            for (int i = 0; i < width; i++) {
+                sbuffer[ix++] = DNG_FloatToHalf(r(row, i) / 65535.f);
+                sbuffer[ix++] = DNG_FloatToHalf(g(row, i) / 65535.f);
+                sbuffer[ix++] = DNG_FloatToHalf(b(row, i) / 65535.f);
+            }
         }
     } else {
         unsigned short *sbuffer = (unsigned short *)buffer;

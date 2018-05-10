@@ -60,7 +60,7 @@ Image16::~Image16 ()
 {
 }
 
-void Image16::getScanline (int row, unsigned char* buffer, int bps)
+void Image16::getScanline (int row, unsigned char* buffer, int bps, bool isFloat)
 {
 
     if (data == nullptr) {
@@ -74,19 +74,12 @@ void Image16::getScanline (int row, unsigned char* buffer, int bps)
     }
 }
 
-/*
- * void Image16::setScanline (int row, unsigned char* buffer, int bps, int minValue[3], int maxValue[3]);
- * has not been implemented yet, because as of now, this method is called for IIOSF_FLOATxx sample format only
- */
-void Image16::setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples, float *minValue, float *maxValue)
+void Image16::setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples)
 {
 
     if (data == nullptr) {
         return;
     }
-
-    // For optimization purpose, we're assuming that this class never has to provide min/max bounds
-    assert(!minValue);
 
     switch (sampleFormat) {
         case (IIOSF_UNSIGNED_CHAR): {

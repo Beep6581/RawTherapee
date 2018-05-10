@@ -1468,9 +1468,9 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, float isFloat, bool uncompr
     }
 
     for (int row = 0; row < height; row++) {
-        getScanline (row, linebuffer, bps);
+        getScanline (row, linebuffer, bps, isFloat);
 
-        /*if (bps == 16) {
+        if (bps == 16) {
             if(needsReverse && !uncompressed) {
                 for(int i = 0; i < lineWidth; i += 2) {
                     char temp = linebuffer[i];
@@ -1478,7 +1478,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, float isFloat, bool uncompr
                     linebuffer[i + 1] = temp;
                 }
             }
-        } else */ if (bps == 32) {
+        } else if (bps == 32) {
             if(needsReverse && !uncompressed) {
                 for(int i = 0; i < lineWidth; i += 4) {
                     char temp = linebuffer[i];

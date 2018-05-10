@@ -37,7 +37,7 @@ Image8::~Image8 ()
 {
 }
 
-void Image8::getScanline (int row, unsigned char* buffer, int bps)
+void Image8::getScanline (int row, unsigned char* buffer, int bps, bool isFloat)
 {
 
     if (data == nullptr) {
@@ -55,15 +55,12 @@ void Image8::getScanline (int row, unsigned char* buffer, int bps)
     }
 }
 
-void Image8::setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples, float *minValue, float *maxValue)
+void Image8::setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples)
 {
 
     if (data == nullptr) {
         return;
     }
-
-    // For optimization purpose, we're assuming that this class never have to provide min/max bound
-    assert(!minValue);
 
     switch (sampleFormat) {
     case (IIOSF_UNSIGNED_CHAR):
