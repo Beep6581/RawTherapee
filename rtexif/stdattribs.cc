@@ -535,6 +535,7 @@ public:
             buffer = new unsigned char[written + 1];
             memcpy(buffer, utf8Str, written);
             buffer[written] = 0;
+            g_free(utf8Str);
         } else if (!memcmp(value, "\0\0\0\0\0\0\0\0", 8)) {
             // local charset string, whatever it is
             memcpy(buffer, value + 8, count - 8);
