@@ -1293,7 +1293,8 @@ private:
             useLCMS = false;
 
             if ((jprof = ICCStore::getInstance()->createCustomGammaOutputProfile (params.icm, ga)) == nullptr) {
-                useLCMS = true;
+
+			useLCMS = true;
             }
 
         } else {
