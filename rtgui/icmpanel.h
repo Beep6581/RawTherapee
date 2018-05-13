@@ -55,8 +55,8 @@ protected:
     Adjuster* pgrey;
     Adjuster* pblux;
     Adjuster* pbluy;
-    Adjuster* gamm;
-    Adjuster* slop;
+    Adjuster* wGamma;
+    Adjuster* wSlope;
 
     Gtk::Label* labmga;
     Gtk::HBox* gabox;
@@ -92,19 +92,19 @@ private:
     rtengine::ProcEvent EvICMtrcinMethod;
 
     Gtk::VBox       *  iVBox;
-    Gtk::HBox* priHBox;
-    Gtk::HBox* gaHBox;
+    Gtk::HBox* primariesHBox;
+    Gtk::HBox* oTRCHBox;
     Gtk::HBox* profHBox;
     Gtk::HBox* tempHBox;
     Gtk::VBox* prifreeVBox;
-    Gtk::HBox* trcinHBox;
+    Gtk::HBox* wTRCHBox;
     Gtk::HBox* prigreenHBox;
     Gtk::HBox* priblueHBox;
     Gtk::HBox* trcHBox;
     Gtk::HBox* priredHBox;
 
     Gtk::CheckButton*  obpc;
-    Gtk::CheckButton*  freegamma;
+    Gtk::CheckButton*  customOutProfile;
     Gtk::RadioButton*  inone;
 
     Gtk::RadioButton*  iembedded;
@@ -118,22 +118,22 @@ private:
     Gtk::CheckButton*  ckbApplyLookTable;
     Gtk::CheckButton*  ckbApplyBaselineExposureOffset;
     Gtk::CheckButton*  ckbApplyHueSatMap;
-    MyComboBoxText*    wnames;
+    MyComboBoxText*    wProfNames;
     sigc::connection   wnamesconn;
-    MyComboBoxText*    wgamma;
+    MyComboBoxText*    oTRCPresets;
     sigc::connection   wgammaconn;
-    MyComboBoxText*    wprimaries;
+    MyComboBoxText*    primaries;
     sigc::connection   wprimariesconn;
     MyComboBoxText*    wprofile;
     sigc::connection   wprofileconn;
     MyComboBoxText*    wtemp;
     sigc::connection   wtempconn;
-    MyComboBoxText*    wtrcin;
+    MyComboBoxText*    wTRC;
     sigc::connection   wtrcinconn;
 
-    MyComboBoxText*    onames;
+    MyComboBoxText*    oProfNames;
     sigc::connection   onamesconn;
-    std::unique_ptr<PopUpButton>       ointent;
+    std::unique_ptr<PopUpButton>       oRendIntent;
     sigc::connection   ointentconn;
     Gtk::RadioButton*  iunchanged;
     MyFileChooserButton* ipDialog;

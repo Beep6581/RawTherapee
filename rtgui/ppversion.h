@@ -1,11 +1,13 @@
 #pragma once
 
 // This number has to be incremented whenever the PP3 file format is modified or the behaviour of a tool changes
-#define PPVERSION 333
+#define PPVERSION 334
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /*
   Log of version changes
+   334  2018-05-14
+        [ICM] enhanced custom output profile
    333  2018-04-26
         new Shadows/Highlights tool
    332  2018-04-18

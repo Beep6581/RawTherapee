@@ -218,9 +218,9 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, const ColorManagement
 
     bool skipTransform = false;
     cmsHPROFILE in = nullptr;
-    cmsHPROFILE out = ICCStore::getInstance()->workingSpace (cmp.working);
+    cmsHPROFILE out = ICCStore::getInstance()->workingSpace (cmp.workingProfile);
 
-    if (cmp.input == "(embedded)" || cmp.input == "" || cmp.input == "(camera)" || cmp.input == "(cameraICC)") {
+    if (cmp.inputProfile == "(embedded)" || cmp.inputProfile == "" || cmp.inputProfile == "(camera)" || cmp.inputProfile == "(cameraICC)") {
         if (embedded) {
             in = embedded;
         } else {
@@ -231,8 +231,8 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, const ColorManagement
             }
         }
     } else {
-        if (cmp.input != "(none)") {
-            in = ICCStore::getInstance()->getProfile (cmp.input);
+        if (cmp.inputProfile != "(none)") {
+            in = ICCStore::getInstance()->getProfile (cmp.inputProfile);
 
             if (in == nullptr && embedded) {
                 in = embedded;
@@ -268,7 +268,7 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, const ColorManagement
 
             cmsDeleteTransform(hTransform);
         } else {
-            printf("Could not convert from %s to %s\n", in == embedded ? "embedded profile" : cmp.input.data(), cmp.working.data());
+            printf("Could not convert from %s to %s\n", in == embedded ? "embedded profile" : cmp.inputProfile.data(), cmp.workingProfile.data());
         }
     }
 }

@@ -273,8 +273,8 @@ void BatchToolPanelCoordinator::initSession ()
             if (options.baBehav[ADDSET_CAT_CONTRAST]) { pparams.colorappearance.contrast = 0; }
             if (options.baBehav[ADDSET_CAT_CONTRAST_Q]) { pparams.colorappearance.qcontrast = 0; }
             if (options.baBehav[ADDSET_CAT_HUE]) { pparams.colorappearance.colorh = 0; }
-            if (options.baBehav[ADDSET_FREE_OUPUT_GAMMA]) { pparams.icm.gampos = 0; }
-            if (options.baBehav[ADDSET_FREE_OUTPUT_SLOPE]) { pparams.icm.slpos = 0; }
+            if (options.baBehav[ADDSET_FREE_OUPUT_GAMMA]) { pparams.icm.workingTRCGamma = 0; }
+            if (options.baBehav[ADDSET_FREE_OUTPUT_SLOPE]) { pparams.icm.workingTRCSlope = 0; }
             //if (options.baBehav[ADDSET_CBOOST_AMOUNT])  pparams.colorBoost.amount = 0;
             //if (options.baBehav[ADDSET_CS_BLUEYELLOW])  pparams.colorShift.a = 0;
             //if (options.baBehav[ADDSET_CS_GREENMAGENTA])  pparams.colorShift.b = 0;

@@ -1180,12 +1180,12 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
 
                     params.raw.bayersensor.method = options.fastexport_raw_bayer_method;
                     params.raw.xtranssensor.method = options.fastexport_raw_xtrans_method;
-                    params.icm.input = options.fastexport_icm_input;
-                    params.icm.working = options.fastexport_icm_working;
-                    params.icm.output = options.fastexport_icm_output;
+                    params.icm.inputProfile = options.fastexport_icm_input_profile;
+                    params.icm.workingProfile = options.fastexport_icm_working_profile;
+                    params.icm.outputProfile = options.fastexport_icm_output_profile;
                     params.icm.outputIntent = options.fastexport_icm_outputIntent;
                     params.icm.outputBPC = options.fastexport_icm_outputBPC;
-                    params.icm.gamma = options.fastexport_icm_gamma;
+                    params.icm.outputGammaPreset = options.fastexport_icm_custom_output_profile;
                 }
 
                 if (params.resize.enabled) {

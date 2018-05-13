@@ -914,16 +914,16 @@ DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, DCPProfile:
 {
     DCPProfile *dcpProf = nullptr;
     cmsHPROFILE dummy;
-    findInputProfile(cmp.input, nullptr, (static_cast<const FramesData*>(getMetaData()))->getCamera(), &dcpProf, dummy);
+    findInputProfile(cmp.inputProfile, nullptr, (static_cast<const FramesData*>(getMetaData()))->getCamera(), &dcpProf, dummy);
 
     if (dcpProf == nullptr) {
         if (settings->verbose) {
-            printf("Can't load DCP profile '%s'!\n", cmp.input.c_str());
+            printf("Can't load DCP profile '%s'!\n", cmp.inputProfile.c_str());
         }
         return nullptr;
     }
 
-    dcpProf->setStep2ApplyState(cmp.working, cmp.toneCurve, cmp.applyLookTable, cmp.applyBaselineExposureOffset, as);
+    dcpProf->setStep2ApplyState(cmp.workingProfile, cmp.toneCurve, cmp.applyLookTable, cmp.applyBaselineExposureOffset, as);
     return dcpProf;
 }
 
@@ -2320,7 +2320,7 @@ void RawImageSource::retinexPrepareBuffers(const ColorManagementParams& cmp, con
 
         }
     } else {
-        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (cmp.working);
+        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (cmp.workingProfile);
         const float wp[3][3] = {
             {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
             {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
@@ -2597,7 +2597,7 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
         }
 
     } else {
-        TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (cmp.working);
+        TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (cmp.workingProfile);
 
         double wip[3][3] = {
             {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
@@ -3953,7 +3953,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
     cmsHPROFILE in;
     DCPProfile *dcpProf;
 
-    if (!findInputProfile(cmp.input, embedded, camName, &dcpProf, in)) {
+    if (!findInputProfile(cmp.inputProfile, embedded, camName, &dcpProf, in)) {
         return;
     }
 
@@ -3970,7 +3970,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
                 {camMatrix[2][0], camMatrix[2][1], camMatrix[2][2]}
             }
         };
-        dcpProf->apply(im, cmp.dcpIlluminant, cmp.working, wb, pre_mul_row, cam_matrix, cmp.applyHueSatMap);
+        dcpProf->apply(im, cmp.dcpIlluminant, cmp.workingProfile, wb, pre_mul_row, cam_matrix, cmp.applyHueSatMap);
         return;
     }
 
@@ -3979,7 +3979,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
         // in this case we avoid using the slllllooooooowwww lcms
 
         // Calculate matrix for direct conversion raw>working space
-        TMatrix work = ICCStore::getInstance()->workingSpaceInverseMatrix (cmp.working);
+        TMatrix work = ICCStore::getInstance()->workingSpaceInverseMatrix (cmp.workingProfile);
         double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
 
         for (int i = 0; i < 3; i++)
@@ -4005,7 +4005,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
 
             }
     } else {
-        bool working_space_is_prophoto = (cmp.working == "ProPhoto");
+        bool working_space_is_prophoto = (cmp.workingProfile == "ProPhoto");
 
         // use supplied input profile
 
@@ -4077,7 +4077,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
 
         // check if the working space is fully contained in prophoto
         if (!working_space_is_prophoto && camera_icc_type == CAMERA_ICC_TYPE_GENERIC) {
-            TMatrix toxyz = ICCStore::getInstance()->workingSpaceMatrix(cmp.working);
+            TMatrix toxyz = ICCStore::getInstance()->workingSpaceMatrix(cmp.workingProfile);
             TMatrix torgb = ICCStore::getInstance()->workingSpaceInverseMatrix("ProPhoto");
             float rgb[3] = {0.f, 0.f, 0.f};
             for (int i = 0; i < 2 && !working_space_is_prophoto; ++i) {
@@ -4090,9 +4090,9 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
                 for (int j = 0; j < 2; ++j) {
                     if (rgb[j] < 0.f || rgb[j] > 1.f) {
                         working_space_is_prophoto = true;
-                        prophoto = ICCStore::getInstance()->workingSpace(cmp.working);
+                        prophoto = ICCStore::getInstance()->workingSpace(cmp.workingProfile);
                         if (settings->verbose) {
-                            std::cout << "colorSpaceConversion_: converting directly to " << cmp.working << " instead of passing through ProPhoto" << std::endl;
+                            std::cout << "colorSpaceConversion_: converting directly to " << cmp.workingProfile << " instead of passing through ProPhoto" << std::endl;
                         }
                         break;
                     }
@@ -4145,7 +4145,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
 
         if (!working_space_is_prophoto) {
             toxyz = ICCStore::getInstance()->workingSpaceMatrix ("ProPhoto");
-            torgb = ICCStore::getInstance()->workingSpaceInverseMatrix (cmp.working); //sRGB .. Adobe...Wide...
+            torgb = ICCStore::getInstance()->workingSpaceInverseMatrix (cmp.workingProfile); //sRGB .. Adobe...Wide...
         }
 
 #ifdef _OPENMP

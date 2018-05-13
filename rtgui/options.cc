@@ -461,12 +461,12 @@ void Options::setDefaults()
     fastexport_bypass_raw_ca             = true;
     fastexport_bypass_raw_df             = true;
     fastexport_bypass_raw_ff             = true;
-    fastexport_icm_input                 = "(camera)";
-    fastexport_icm_working               = "ProPhoto";
-    fastexport_icm_output                = "RT_sRGB";
+    fastexport_icm_input_profile         = "(camera)";
+    fastexport_icm_working_profile       = "ProPhoto";
+    fastexport_icm_output_profile        = "RT_sRGB";
     fastexport_icm_outputIntent          = rtengine::RI_RELATIVE;
     fastexport_icm_outputBPC             = true;
-    fastexport_icm_gamma                 = "Free";
+    fastexport_icm_custom_output_profile = "Custom";
     fastexport_resize_enabled            = true;
     fastexport_resize_scale              = 1;
     fastexport_resize_appliesTo          = "Cropped area";
@@ -1622,15 +1622,15 @@ void Options::readFromFile(Glib::ustring fname)
                 }
 
                 if (keyFile.has_key("Fast Export", "fastexport_icm_input")) {
-                    fastexport_icm_input = keyFile.get_string("Fast Export", "fastexport_icm_input");
+                    fastexport_icm_input_profile = keyFile.get_string("Fast Export", "fastexport_icm_input");
                 }
 
                 if (keyFile.has_key("Fast Export", "fastexport_icm_working")) {
-                    fastexport_icm_working = keyFile.get_string("Fast Export", "fastexport_icm_working");
+                    fastexport_icm_working_profile = keyFile.get_string("Fast Export", "fastexport_icm_working");
                 }
 
                 if (keyFile.has_key("Fast Export", "fastexport_icm_output")) {
-                    fastexport_icm_output = keyFile.get_string("Fast Export", "fastexport_icm_output");
+                    fastexport_icm_output_profile = keyFile.get_string("Fast Export", "fastexport_icm_output");
                 }
 
                 if (keyFile.has_key("Fast Export", "fastexport_icm_output_intent")) {
@@ -1642,7 +1642,7 @@ void Options::readFromFile(Glib::ustring fname)
                 }
 
                 if (keyFile.has_key("Fast Export", "fastexport_icm_gamma")) {
-                    fastexport_icm_gamma = keyFile.get_string("Fast Export", "fastexport_icm_gamma");
+                    fastexport_icm_custom_output_profile = keyFile.get_string("Fast Export", "fastexport_icm_gamma");
                 }
 
                 if (keyFile.has_key("Fast Export", "fastexport_resize_enabled")) {
@@ -2033,12 +2033,12 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("Fast Export", "fastexport_bypass_raw_ca", fastexport_bypass_raw_ca);
         keyFile.set_boolean("Fast Export", "fastexport_bypass_raw_df", fastexport_bypass_raw_df);
         keyFile.set_boolean("Fast Export", "fastexport_bypass_raw_ff", fastexport_bypass_raw_ff);
-        keyFile.set_string("Fast Export", "fastexport_icm_input", fastexport_icm_input);
-        keyFile.set_string("Fast Export", "fastexport_icm_working", fastexport_icm_working);
-        keyFile.set_string("Fast Export", "fastexport_icm_output", fastexport_icm_output);
+        keyFile.set_string("Fast Export", "fastexport_icm_input", fastexport_icm_input_profile);
+        keyFile.set_string("Fast Export", "fastexport_icm_working", fastexport_icm_working_profile);
+        keyFile.set_string("Fast Export", "fastexport_icm_output", fastexport_icm_output_profile);
         keyFile.set_integer("Fast Export", "fastexport_icm_output_intent", fastexport_icm_outputIntent);
         keyFile.set_boolean("Fast Export", "fastexport_icm_output_bpc", fastexport_icm_outputBPC);
-        keyFile.set_string("Fast Export", "fastexport_icm_gamma", fastexport_icm_gamma);
+        keyFile.set_string("Fast Export", "fastexport_icm_gamma", fastexport_icm_custom_output_profile);
         keyFile.set_boolean("Fast Export", "fastexport_resize_enabled", fastexport_resize_enabled);
         keyFile.set_double("Fast Export", "fastexport_resize_scale", fastexport_resize_scale);
         keyFile.set_string("Fast Export", "fastexport_resize_appliesTo", fastexport_resize_appliesTo);

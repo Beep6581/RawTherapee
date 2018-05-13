@@ -374,32 +374,32 @@ void ParamsEdited::set(bool v)
     resize.width     = v;
     resize.height    = v;
     resize.enabled   = v;
-    icm.input        = v;
+    icm.inputProfile = v;
     icm.toneCurve = v;
     icm.applyLookTable = v;
     icm.applyBaselineExposureOffset = v;
     icm.applyHueSatMap = v;
     icm.dcpIlluminant = v;
-    icm.working      = v;
-    icm.output       = v;
+    icm.workingProfile = v;
+    icm.outputProfile = v;
     icm.outputIntent = v;
-    icm.outputBPC    = v;
-    icm.gamma       = v;
-    icm.freegamma   = v;
-    icm.gampos      = v;
-    icm.slpos       = v;
-    icm.predx       = v;
-    icm.predy       = v;
-    icm.pgrex       = v;
-    icm.pgrey       = v;
-    icm.pblux       = v;
-    icm.pbluy       = v;
-    icm.gamm      = v;
-    icm.slop       = v;
-    icm.wprimaries       = v;
-    icm.wprofile       = v;
-    icm.wtemp       = v;
-    icm.wtrcin       = v;
+    icm.outputBPC = v;
+    icm.outputGammaPreset = v;
+    icm.customOutputProfile = v;
+    icm.workingTRCGamma = v;
+    icm.workingTRCSlope = v;
+    icm.redPrimaryX = v;
+    icm.redPrimaryY = v;
+    icm.greenPrimaryX = v;
+    icm.greenPrimaryY = v;
+    icm.bluePrimaryX = v;
+    icm.bluePrimaryY = v;
+    icm.outputGamma = v;
+    icm.outputSlope = v;
+    icm.outputPrimariesPreset = v;
+    icm.outputProfileVersion = v;
+    icm.outputIlluminant = v;
+    icm.workingTRC = v;
     raw.bayersensor.method = v;
     raw.bayersensor.imageNum = v;
     raw.bayersensor.ccSteps = v;
@@ -932,33 +932,32 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         resize.width = resize.width && p.resize.width == other.resize.width;
         resize.height = resize.height && p.resize.height == other.resize.height;
         resize.enabled = resize.enabled && p.resize.enabled == other.resize.enabled;
-        icm.input = icm.input && p.icm.input == other.icm.input;
+        icm.inputProfile = icm.inputProfile && p.icm.inputProfile == other.icm.inputProfile;
         icm.toneCurve = icm.toneCurve && p.icm.toneCurve == other.icm.toneCurve;
         icm.applyLookTable = icm.applyLookTable && p.icm.applyLookTable == other.icm.applyLookTable;
         icm.applyBaselineExposureOffset = icm.applyBaselineExposureOffset && p.icm.applyBaselineExposureOffset == other.icm.applyBaselineExposureOffset;
         icm.applyHueSatMap = icm.applyHueSatMap && p.icm.applyHueSatMap == other.icm.applyHueSatMap;
         icm.dcpIlluminant = icm.dcpIlluminant && p.icm.dcpIlluminant == other.icm.dcpIlluminant;
-        icm.working = icm.working && p.icm.working == other.icm.working;
-        icm.output = icm.output && p.icm.output == other.icm.output;
+        icm.workingProfile = icm.workingProfile && p.icm.workingProfile == other.icm.workingProfile;
+        icm.outputProfile = icm.outputProfile && p.icm.outputProfile == other.icm.outputProfile;
         icm.outputIntent = icm.outputIntent && p.icm.outputIntent == other.icm.outputIntent;
         icm.outputBPC = icm.outputBPC && p.icm.outputBPC == other.icm.outputBPC ;
-        icm.gamma = icm.gamma && p.icm.gamma == other.icm.gamma;
-        icm.freegamma = icm.freegamma && p.icm.freegamma == other.icm.freegamma;
-        icm.gampos = icm.gampos && p.icm.gampos == other.icm.gampos;
-        icm.slpos = icm.slpos && p.icm.slpos == other.icm.slpos;
-        icm.predx = icm.predx && p.icm.predx == other.icm.predx;
-        icm.predy = icm.predy && p.icm.predy == other.icm.predy;
-        icm.pgrex = icm.pgrex && p.icm.pgrex == other.icm.pgrex;
-        icm.pgrey = icm.pgrey && p.icm.pgrey == other.icm.pgrey;
-        icm.pblux = icm.pblux && p.icm.pblux == other.icm.pblux;
-        icm.pbluy = icm.pbluy && p.icm.pbluy == other.icm.pbluy;
-        icm.gamm = icm.gamm && p.icm.gamm == other.icm.gamm;
-        icm.slop = icm.slop && p.icm.slop == other.icm.slop;
-
-        icm.wprimaries = icm.wprimaries && p.icm.wprimaries == other.icm.wprimaries;
-        icm.wprofile = icm.wprofile && p.icm.wprofile == other.icm.wprofile;
-        icm.wtemp = icm.wtemp && p.icm.wtemp == other.icm.wtemp;
-        icm.wtrcin = icm.wtrcin && p.icm.wtrcin == other.icm.wtrcin;
+        icm.outputGammaPreset = icm.outputGammaPreset && p.icm.outputGammaPreset == other.icm.outputGammaPreset;
+        icm.customOutputProfile = icm.customOutputProfile && p.icm.customOutputProfile == other.icm.customOutputProfile;
+        icm.workingTRCGamma = icm.workingTRCGamma && p.icm.workingTRCGamma == other.icm.workingTRCGamma;
+        icm.workingTRCSlope = icm.workingTRCSlope && p.icm.workingTRCSlope == other.icm.workingTRCSlope;
+        icm.redPrimaryX = icm.redPrimaryX && p.icm.redPrimaryX == other.icm.redPrimaryX;
+        icm.redPrimaryY = icm.redPrimaryY && p.icm.redPrimaryY == other.icm.redPrimaryY;
+        icm.greenPrimaryX = icm.greenPrimaryX && p.icm.greenPrimaryX == other.icm.greenPrimaryX;
+        icm.greenPrimaryY = icm.greenPrimaryY && p.icm.greenPrimaryY == other.icm.greenPrimaryY;
+        icm.bluePrimaryX = icm.bluePrimaryX && p.icm.bluePrimaryX == other.icm.bluePrimaryX;
+        icm.bluePrimaryY = icm.bluePrimaryY && p.icm.bluePrimaryY == other.icm.bluePrimaryY;
+        icm.outputGamma = icm.outputGamma && p.icm.outputGamma == other.icm.outputGamma;
+        icm.outputSlope = icm.outputSlope && p.icm.outputSlope == other.icm.outputSlope;
+        icm.outputPrimariesPreset = icm.outputPrimariesPreset && p.icm.outputPimariesPreset == other.icm.outputPimariesPreset;
+        icm.outputProfileVersion = icm.outputProfileVersion && p.icm.outputProfileVersion == other.icm.outputProfileVersion;
+        icm.outputIlluminant = icm.outputIlluminant && p.icm.outputIlluminant == other.icm.outputIlluminant;
+        icm.workingTRC = icm.workingTRC && p.icm.workingTRC == other.icm.workingTRC;
         raw.bayersensor.method = raw.bayersensor.method && p.raw.bayersensor.method == other.raw.bayersensor.method;
         raw.bayersensor.imageNum = raw.bayersensor.imageNum && p.raw.bayersensor.imageNum == other.raw.bayersensor.imageNum;
         raw.bayersensor.ccSteps = raw.bayersensor.ccSteps && p.raw.bayersensor.ccSteps == other.raw.bayersensor.ccSteps;
@@ -2409,8 +2408,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.resize.enabled     = mods.resize.enabled;
     }
 
-    if (icm.input) {
-        toEdit.icm.input      = mods.icm.input;
+    if (icm.inputProfile) {
+        toEdit.icm.inputProfile = mods.icm.inputProfile;
     }
 
     if (icm.toneCurve) {
@@ -2433,12 +2432,12 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.icm.dcpIlluminant = mods.icm.dcpIlluminant;
     }
 
-    if (icm.working) {
-        toEdit.icm.working        = mods.icm.working;
+    if (icm.workingProfile) {
+        toEdit.icm.workingProfile = mods.icm.workingProfile;
     }
 
-    if (icm.output) {
-        toEdit.icm.output       = mods.icm.output;
+    if (icm.outputProfile) {
+        toEdit.icm.outputProfile = mods.icm.outputProfile;
     }
 
     if (icm.outputIntent) {
@@ -2449,68 +2448,68 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.icm.outputBPC = mods.icm.outputBPC;
     }
 
-    if (icm.gampos) {
-        toEdit.icm.gampos     = dontforceSet && options.baBehav[ADDSET_FREE_OUPUT_GAMMA] ? toEdit.icm.gampos + mods.icm.gampos : mods.icm.gampos;
+    if (icm.workingTRCGamma) {
+        toEdit.icm.workingTRCGamma = dontforceSet && options.baBehav[ADDSET_FREE_OUPUT_GAMMA] ? toEdit.icm.workingTRCGamma + mods.icm.workingTRCGamma : mods.icm.workingTRCGamma;
     }
 
-    if (icm.slpos) {
-        toEdit.icm.slpos      = dontforceSet && options.baBehav[ADDSET_FREE_OUTPUT_SLOPE] ? toEdit.icm.slpos + mods.icm.slpos : mods.icm.slpos;
+    if (icm.workingTRCSlope) {
+        toEdit.icm.workingTRCSlope = dontforceSet && options.baBehav[ADDSET_FREE_OUTPUT_SLOPE] ? toEdit.icm.workingTRCSlope + mods.icm.workingTRCSlope : mods.icm.workingTRCSlope;
     }
 
-    if (icm.gamm) {
-        toEdit.icm.gamm        = mods.icm.gamm;
+    if (icm.outputGamma) {
+        toEdit.icm.outputGamma = mods.icm.outputGamma;
     }
 
-    if (icm.slop) {
-        toEdit.icm.slop        = mods.icm.slop;
+    if (icm.outputSlope) {
+        toEdit.icm.outputSlope = mods.icm.outputSlope;
     }
 
-    if (icm.predx) {
-        toEdit.icm.predx        = mods.icm.predx;
+    if (icm.redPrimaryX) {
+        toEdit.icm.redPrimaryX = mods.icm.redPrimaryX;
     }
 
-    if (icm.predy) {
-        toEdit.icm.predy        = mods.icm.predy;
+    if (icm.redPrimaryY) {
+        toEdit.icm.redPrimaryY = mods.icm.redPrimaryY;
     }
 
-    if (icm.pgrex) {
-        toEdit.icm.pgrex        = mods.icm.pgrex;
+    if (icm.greenPrimaryX) {
+        toEdit.icm.greenPrimaryX = mods.icm.greenPrimaryX;
     }
 
-    if (icm.pgrey) {
-        toEdit.icm.pgrey        = mods.icm.pgrey;
+    if (icm.greenPrimaryY) {
+        toEdit.icm.greenPrimaryY = mods.icm.greenPrimaryY;
     }
 
-    if (icm.pblux) {
-        toEdit.icm.pblux        = mods.icm.pblux;
+    if (icm.bluePrimaryX) {
+        toEdit.icm.bluePrimaryX = mods.icm.bluePrimaryX;
     }
 
-    if (icm.pbluy) {
-        toEdit.icm.pbluy        = mods.icm.pbluy;
+    if (icm.bluePrimaryY) {
+        toEdit.icm.bluePrimaryY = mods.icm.bluePrimaryY;
     }
 
-    if (icm.gamma) {
-        toEdit.icm.gamma        = mods.icm.gamma;
+    if (icm.outputGammaPreset) {
+        toEdit.icm.outputGammaPreset = mods.icm.outputGammaPreset;
     }
 
-    if (icm.wprimaries) {
-        toEdit.icm.wprimaries        = mods.icm.wprimaries;
+    if (icm.outputPrimariesPreset) {
+        toEdit.icm.outputPimariesPreset = mods.icm.outputPimariesPreset;
     }
 
-    if (icm.wprofile) {
-        toEdit.icm.wprofile        = mods.icm.wprofile;
+    if (icm.outputProfileVersion) {
+        toEdit.icm.outputProfileVersion = mods.icm.outputProfileVersion;
     }
 
-    if (icm.wtemp) {
-        toEdit.icm.wtemp        = mods.icm.wtemp;
+    if (icm.outputIlluminant) {
+        toEdit.icm.outputIlluminant = mods.icm.outputIlluminant;
     }
 
-    if (icm.wtrcin) {
-        toEdit.icm.wtrcin        = mods.icm.wtrcin;
+    if (icm.workingTRC) {
+        toEdit.icm.workingTRC = mods.icm.workingTRC;
     }
 
-    if (icm.freegamma) {
-        toEdit.icm.freegamma    = mods.icm.freegamma;
+    if (icm.customOutputProfile) {
+        toEdit.icm.customOutputProfile = mods.icm.customOutputProfile;
     }
 
     if (raw.bayersensor.method) {

@@ -1044,45 +1044,45 @@ void rtengine::ICCStore::getGammaArray(const procparams::ColorManagementParams &
 {
     const double eps = 0.000000001; // not divide by zero
 
-    if (icm.freegamma  && icm.gamma != "Custom") { //if Free gamma selected with other than Free
+    if (icm.customOutputProfile  && icm.outputGammaPreset != "Custom") { //if Free gamma selected with other than Free
         // gamma : ga[0],ga[1],ga[2],ga[3],ga[4],ga[5] by calcul
-        if (icm.gamma == "BT709_g2.2_s4.5")      {
+        if (icm.outputGammaPreset == "BT709_g2.2_s4.5")      {
             ga[0] = 2.22;    //BT709  2.2  4.5  - my preferred as D.Coffin
             ga[1] = 0.909995;
             ga[2] = 0.090005;
             ga[3] = 0.222222;
             ga[4] = 0.081071;
-        } else if (icm.gamma == "sRGB_g2.4_s12.92")   {
+        } else if (icm.outputGammaPreset == "sRGB_g2.4_s12.92")   {
             ga[0] = 2.40;    //sRGB 2.4 12.92  - RT default as Lightroom
             ga[1] = 0.947858;
             ga[2] = 0.052142;
             ga[3] = 0.077399;
             ga[4] = 0.039293;
-        } else if (icm.gamma == "High_g1.3_s3.35")    {
+        } else if (icm.outputGammaPreset == "High_g1.3_s3.35")    {
             ga[0] = 1.3 ;    //for high dynamic images
             ga[1] = 0.998279;
             ga[2] = 0.001721;
             ga[3] = 0.298507;
             ga[4] = 0.005746;
-        } else if (icm.gamma == "Low_g2.6_s6.9")   {
+        } else if (icm.outputGammaPreset == "Low_g2.6_s6.9")   {
             ga[0] = 2.6 ;    //gamma 2.6 variable : for low contrast images
             ga[1] = 0.891161;
             ga[2] = 0.108839;
             ga[3] = 0.144928;
             ga[4] = 0.076332;
-        } else if (icm.gamma == "standard_g2.2")   {
+        } else if (icm.outputGammaPreset == "standard_g2.2")   {
             ga[0] = 2.2;    //gamma=2.2(as gamma of Adobe, Widegamut...)
             ga[1] = 1.;
             ga[2] = 0.;
             ga[3] = 1. / eps;
             ga[4] = 0.;
-        } else if (icm.gamma == "standard_g1.8")   {
+        } else if (icm.outputGammaPreset == "standard_g1.8")   {
             ga[0] = 1.8;    //gamma=1.8(as gamma of Prophoto)
             ga[1] = 1.;
             ga[2] = 0.;
             ga[3] = 1. / eps;
             ga[4] = 0.;
-        } else if (icm.gamma == "Lab_g3.0s9.03296")   {
+        } else if (icm.outputGammaPreset == "Lab_g3.0s9.03296")   {
             ga[0] = 3.0;    //Lab gamma =3 slope=9.03296
             ga[1] = 0.8621;
             ga[2] = 0.1379;
@@ -1101,15 +1101,15 @@ void rtengine::ICCStore::getGammaArray(const procparams::ColorManagementParams &
         ga[6] = 0.0;
     } else { //free gamma selected
         GammaValues g_a; //gamma parameters
-        double pwr = 1.0 / icm.gampos;
-        double ts = icm.slpos;
-        double slope = icm.slpos == 0 ? eps : icm.slpos;
+        double pwr = 1.0 / icm.workingTRCGamma;
+        double ts = icm.workingTRCSlope;
+        double slope = icm.workingTRCSlope == 0 ? eps : icm.workingTRCSlope;
 
         int mode = 0;
         Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
         ga[4] = g_a[3] * ts;
         //printf("g_a.gamma0=%f g_a.gamma1=%f g_a.gamma2=%f g_a.gamma3=%f g_a.gamma4=%f\n", g_a.gamma0,g_a.gamma1,g_a.gamma2,g_a.gamma3,g_a.gamma4);
-        ga[0] = icm.gampos;
+        ga[0] = icm.workingTRCGamma;
         ga[1] = 1. / (1.0 + g_a[4]);
         ga[2] = g_a[4] / (1.0 + g_a[4]);
         ga[3] = 1. / slope;
@@ -1325,14 +1325,14 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
     ColorTemp temp = ColorTemp::D50;
 
     //primaries for 10 working profiles ==> output profiles
-    if (icm.wprimaries == "Widegamut") {
+    if (icm.outputPimariesPreset == "Widegamut") {
         p[0] = 0.7350;    //Widegamut primaries
         p[1] = 0.2650;
         p[2] = 0.1150;
         p[3] = 0.8260;
         p[4] = 0.1570;
         p[5] = 0.0180;
-    } else if (icm.wprimaries == "Adobe") {
+    } else if (icm.outputPimariesPreset == "Adobe") {
         p[0] = 0.6400;    //Adobe primaries
         p[1] = 0.3300;
         p[2] = 0.2100;
@@ -1340,7 +1340,7 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[4] = 0.1500;
         p[5] = 0.0600;
         temp = ColorTemp::D65;
-    } else if (icm.wprimaries == "sRGB") {
+    } else if (icm.outputPimariesPreset == "sRGB") {
         p[0] = 0.6400;    // sRGB primaries
         p[1] = 0.3300;
         p[2] = 0.3000;
@@ -1348,7 +1348,7 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[4] = 0.1500;
         p[5] = 0.0600;
         temp = ColorTemp::D65;
-    } else if (icm.wprimaries == "BruceRGB") {
+    } else if (icm.outputPimariesPreset == "BruceRGB") {
         p[0] = 0.6400;    // Bruce primaries
         p[1] = 0.3300;
         p[2] = 0.2800;
@@ -1356,21 +1356,21 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[4] = 0.1500;
         p[5] = 0.0600;
         temp = ColorTemp::D65;
-    } else if (icm.wprimaries == "BetaRGB") {
+    } else if (icm.outputPimariesPreset == "BetaRGB") {
         p[0] = 0.6888;    // Beta primaries
         p[1] = 0.3112;
         p[2] = 0.1986;
         p[3] = 0.7551;
         p[4] = 0.1265;
         p[5] = 0.0352;
-    } else if (icm.wprimaries == "BestRGB") {
+    } else if (icm.outputPimariesPreset == "BestRGB") {
         p[0] = 0.7347;    // Best primaries
         p[1] = 0.2653;
         p[2] = 0.2150;
         p[3] = 0.7750;
         p[4] = 0.1300;
         p[5] = 0.0350;
-    } else if (icm.wprimaries == "Rec2020") {
+    } else if (icm.outputPimariesPreset == "Rec2020") {
         p[0] = 0.7080;    // Rec2020 primaries
         p[1] = 0.2920;
         p[2] = 0.1700;
@@ -1378,7 +1378,7 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[4] = 0.1310;
         p[5] = 0.0460;
         temp = ColorTemp::D65;
-    } else if (icm.wprimaries == "Acesp0") {
+    } else if (icm.outputPimariesPreset == "Acesp0") {
         p[0] = 0.7347;    // ACES P0 primaries
         p[1] = 0.2653;
         p[2] = 0.0000;
@@ -1386,7 +1386,7 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[4] = 0.0001;
         p[5] = -0.0770;
         temp = ColorTemp::D60;
-    } else if (icm.wprimaries == "Acesp1") {
+    } else if (icm.outputPimariesPreset == "Acesp1") {
         p[0] = 0.713;    // ACES P1 primaries
         p[1] = 0.293;
         p[2] = 0.165;
@@ -1394,20 +1394,20 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[4] = 0.128;
         p[5] = 0.044;
         temp = ColorTemp::D60;
-    } else if (icm.wprimaries == "Prophoto") {
+    } else if (icm.outputPimariesPreset == "Prophoto") {
         p[0] = 0.7347;    //ProPhoto and default primaries
         p[1] = 0.2653;
         p[2] = 0.1596;
         p[3] = 0.8404;
         p[4] = 0.0366;
         p[5] = 0.0001;
-    } else if (icm.wprimaries == "pfree") {
-        p[0] = icm.predx;
-        p[1] = icm.predy;
-        p[2] = icm.pgrex;
-        p[3] = icm.pgrey;
-        p[4] = icm.pblux;
-        p[5] = icm.pbluy;
+    } else if (icm.outputPimariesPreset == "pfree") {
+        p[0] = icm.redPrimaryX;
+        p[1] = icm.redPrimaryY;
+        p[2] = icm.greenPrimaryX;
+        p[3] = icm.greenPrimaryY;
+        p[4] = icm.bluePrimaryX;
+        p[5] = icm.bluePrimaryY;
     } else {
         p[0] = 0.7347;    //default primaries
         p[1] = 0.2653;
@@ -1442,32 +1442,32 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
     //lcmsMutex->lock();  Mutex acquired by the caller
     double tempv4 = 5000.;
 
-    if (icm.wprofile == "v4" && icm.wtemp != "DEF") {
-        if (icm.wtemp == "D41") {
+    if (icm.outputProfileVersion == "v4" && icm.outputIlluminant != "DEF") {
+        if (icm.outputIlluminant == "D41") {
             tempv4 = 4100.;
-        } else if (icm.wtemp == "D50") {
+        } else if (icm.outputIlluminant == "D50") {
             tempv4 = 5003.;
-        } else if (icm.wtemp == "D55") {
+        } else if (icm.outputIlluminant == "D55") {
             tempv4 = 5500.;
-        } else if (icm.wtemp == "D60") {
+        } else if (icm.outputIlluminant == "D60") {
             tempv4 = 6004.;
-        } else if (icm.wtemp == "D65") {
+        } else if (icm.outputIlluminant == "D65") {
             tempv4 = 6504.;
-        } else if (icm.wtemp == "D80") {
+        } else if (icm.outputIlluminant == "D80") {
             tempv4 = 8000.;
-        } else if (icm.wtemp == "stdA") {
+        } else if (icm.outputIlluminant == "stdA") {
             tempv4 = 5003.;
         }
 
     }
 
-    if (icm.wprofile == "v4" && icm.wtemp != "DEF") {
+    if (icm.outputProfileVersion == "v4" && icm.outputIlluminant != "DEF") {
         cmsWhitePointFromTemp(&xyD, tempv4);
     } else {
         cmsWhitePointFromTemp(&xyD, (double)temp);
     }
 
-    if (icm.wtemp == "stdA") xyD = {0.447573, 0.407440, 1.0};
+    if (icm.outputIlluminant == "stdA") xyD = {0.447573, 0.407440, 1.0};
 
     // cmsWhitePointFromTemp(&xyD, (double)temp);
 
@@ -1492,51 +1492,51 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     Glib::ustring gammaStr;
 
 
-    if (icm.freegamma && icm.gampos < 1.35) {
+    if (icm.customOutputProfile && icm.workingTRCGamma < 1.35) {
         pro = true;    //select profil with gammaTRC modified :
-    } else if (icm.gamma == "linear_g1.0" || (icm.gamma == "High_g1.3_s3.35")) {
+    } else if (icm.outputGammaPreset == "linear_g1.0" || (icm.outputGammaPreset == "High_g1.3_s3.35")) {
         pro = true;    //pro=0  RT_sRGB || Prophoto
     }
 
     //necessary for V2 profile
-    if (icm.wprimaries == "Prophoto"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto)   && !pro) {
+    if (icm.outputPimariesPreset == "Prophoto"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto)   && !pro) {
         outProfile = options.rtSettings.prophoto;
         outPr = "Large_";
 
-    } else if (icm.wprimaries == "Adobe" && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.adobe)) {
+    } else if (icm.outputPimariesPreset == "Adobe" && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.adobe)) {
         outProfile = options.rtSettings.adobe;
         outPr = "Medium_";
-    } else if (icm.wprimaries == "Widegamut" && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.widegamut)) {
+    } else if (icm.outputPimariesPreset == "Widegamut" && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.widegamut)) {
         outProfile = options.rtSettings.widegamut;
         outPr = "Wide_";
-    } else if (icm.wprimaries == "BetaRGB"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.beta)) {
+    } else if (icm.outputPimariesPreset == "BetaRGB"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.beta)) {
         outProfile = options.rtSettings.beta;
         outPr = "Beta_";
-    } else if (icm.wprimaries == "BestRGB"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.best)) {
+    } else if (icm.outputPimariesPreset == "BestRGB"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.best)) {
         outProfile = options.rtSettings.best;
         outPr = "Best_";
-    } else if (icm.wprimaries == "BruceRGB"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.bruce)) {
+    } else if (icm.outputPimariesPreset == "BruceRGB"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.bruce)) {
         outProfile = options.rtSettings.bruce;
         outPr = "Bruce_";
-    } else if (icm.wprimaries == "sRGB"      && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.srgb)       && !pro) {
+    } else if (icm.outputPimariesPreset == "sRGB"      && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.srgb)       && !pro) {
         outProfile = options.rtSettings.srgb;
         outPr = "sRGB_";
-    } else if (icm.wprimaries == "sRGB"      && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.srgb10)     &&  pro) {
+    } else if (icm.outputPimariesPreset == "sRGB"      && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.srgb10)     &&  pro) {
         outProfile = options.rtSettings.srgb10;
         outPr = "sRGB_";
-    } else if (icm.wprimaries == "Prophoto"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto10) &&  pro) {
+    } else if (icm.outputPimariesPreset == "Prophoto"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto10) &&  pro) {
         outProfile = options.rtSettings.prophoto10;
         outPr = "Large_";
-    } else if (icm.wprimaries == "Rec2020"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.rec2020)) {
+    } else if (icm.outputPimariesPreset == "Rec2020"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.rec2020)) {
         outProfile = options.rtSettings.rec2020;
         outPr = "Rec2020_";
-    } else if (icm.wprimaries == "Acesp0"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp0)) {
+    } else if (icm.outputPimariesPreset == "Acesp0"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp0)) {
         outProfile = options.rtSettings.ACESp0;
         outPr = "Acesp0_";
-    } else if (icm.wprimaries == "Acesp1"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp1)) {
+    } else if (icm.outputPimariesPreset == "Acesp1"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp1)) {
         outProfile = options.rtSettings.ACESp1;
         outPr = "Acesp1_";
-    } else if (icm.wprimaries == "pfree") {
+    } else if (icm.outputPimariesPreset == "pfree") {
         outProfile = options.rtSettings.srgb;
         printf("PFRRE\n");
         outPr = "pfree_";
@@ -1544,7 +1544,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     } else {
         // Should not occurs
         if (settings->verbose) {
-            printf("\"%s\": unknown working profile! - use LCMS2 substitution\n", icm.working.c_str());
+            printf("\"%s\": unknown working profile! - use LCMS2 substitution\n", icm.workingProfile.c_str());
         }
 
         return nullptr;
@@ -1577,58 +1577,58 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     mlu = cmsMLUalloc(ContextID, 1);
     Glib::ustring outPro;
     Glib::ustring outTemp;
-	double gammsave = 2.4;
-	double slopesave = 12.92;
-    if (icm.gamma == "High_g1.3_s3.35") {
+    double gammsave = 2.4;
+    double slopesave = 12.92;
+    if (icm.outputGammaPreset == "High_g1.3_s3.35") {
         gammaStr = "_High_g=1.3_s=3.35";
-		gammsave = 1.3;
-		slopesave = 3.35;
-    } else if (icm.gamma == "Low_g2.6_s6.9") {
+        gammsave = 1.3;
+        slopesave = 3.35;
+    } else if (icm.outputGammaPreset == "Low_g2.6_s6.9") {
         gammaStr = "_Low_g=2.6_s=6.9";
-		gammsave = 2.6;
-		slopesave = 6.9;
-    } else if (icm.gamma == "sRGB_g2.4_s12.92") {
+        gammsave = 2.6;
+        slopesave = 6.9;
+    } else if (icm.outputGammaPreset == "sRGB_g2.4_s12.92") {
         gammaStr = "_sRGB_g=2.4_s=12.92";
-		gammsave = 2.4;
-		slopesave = 12.92;
-    } else if (icm.gamma == "BT709_g2.2_s4.5") {
+        gammsave = 2.4;
+        slopesave = 12.92;
+    } else if (icm.outputGammaPreset == "BT709_g2.2_s4.5") {
         gammaStr = "_BT709_g=2.2_s=4.5";
-		gammsave = 2.22;
-		slopesave = 4.5;
-    } else if (icm.gamma == "linear_g1.0") {
+        gammsave = 2.22;
+        slopesave = 4.5;
+    } else if (icm.outputGammaPreset == "linear_g1.0") {
         gammaStr = "_Linear_g=1.0";
-		gammsave = 1.;
-		slopesave = 0.;		
-    } else if (icm.gamma == "standard_g2.2") {
+        gammsave = 1.;
+        slopesave = 0.;
+    } else if (icm.outputGammaPreset == "standard_g2.2") {
         gammaStr = "_g=2.2";
-		gammsave = 2.2;
-		slopesave = 0.;
-    } else if (icm.gamma == "standard_g1.8") {
+        gammsave = 2.2;
+        slopesave = 0.;
+    } else if (icm.outputGammaPreset == "standard_g1.8") {
         gammaStr = "_g=1.8";
-		gammsave = 1.8;
-		slopesave = 0.;
-    } else if (icm.gamma == "Lab_g3.0s9.03296") {
+        gammsave = 1.8;
+        slopesave = 0.;
+    } else if (icm.outputGammaPreset == "Lab_g3.0s9.03296") {
         gammaStr = "_LAB_g3.0_s9.03296";
-		gammsave = 3.0;
-		slopesave = 9.03296;
+        gammsave = 3.0;
+        slopesave = 9.03296;
     }
 
     outTemp = outPr;
 
-    if (icm.wprofile == "v4" && icm.wtemp != "DEF") {
-        if (icm.wtemp == "D41") {
+    if (icm.outputProfileVersion == "v4" && icm.outputIlluminant != "DEF") {
+        if (icm.outputIlluminant == "D41") {
             outPr = outPr + "D41";
-        } else if (icm.wtemp == "D50") {
+        } else if (icm.outputIlluminant == "D50") {
             outPr = outPr + "D50";
-        } else if (icm.wtemp == "D55") {
+        } else if (icm.outputIlluminant == "D55") {
             outPr = outPr + "D55";
-        } else if (icm.wtemp == "D60") {
+        } else if (icm.outputIlluminant == "D60") {
             outPr = outPr + "D60";
-        } else if (icm.wtemp == "D65") {
+        } else if (icm.outputIlluminant == "D65") {
             outPr = outPr + "D65";
-        } else if (icm.wtemp == "D80") {
+        } else if (icm.outputIlluminant == "D80") {
             outPr = outPr + "D80";
-        } else if (icm.wtemp == "stdA") {
+        } else if (icm.outputIlluminant == "stdA") {
             outPr = outPr + "stdA";
         }
 
@@ -1637,42 +1637,39 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     }
 
     // create description with gamma + slope + primaries
-	std::wostringstream gammaWs;
+    std::wostringstream gammaWs;
     std::wstring gammaStrICC;
 
     gammaWs.precision(3);
-        
-	Glib::ustring gammaGS;//to save gamma and slope in a tag
 
-    if (icm.gamma == "Custom") {
-        if (icm.wprofile == "v4") {
-            outPro = "RTv4_" + outPr + std::to_string((float)icm.gampos) + " " + std::to_string((float)icm.slpos) + ".icc";
-        } else if (icm.wprofile == "v2" || icm.wprofile == "none") {
-            outPro = "RTv2_" + outPr + std::to_string((float)icm.gampos) + " " + std::to_string((float)icm.slpos) + ".icc";
+    Glib::ustring gammaGS;//to save gamma and slope in a tag
+
+    if (icm.outputGammaPreset == "Custom") {
+        if (icm.outputProfileVersion == "v4") {
+            outPro = "RTv4_" + outPr + std::to_string((float)icm.workingTRCGamma) + " " + std::to_string((float)icm.workingTRCSlope) + ".icc";
+        } else if (icm.outputProfileVersion == "v2" || icm.outputProfileVersion == "none") {
+            outPro = "RTv2_" + outPr + std::to_string((float)icm.workingTRCGamma) + " " + std::to_string((float)icm.workingTRCSlope) + ".icc";
         }
 
         gammaWs.precision(2);
-        gammaWs << outTemp  << " g=" << (float)icm.gampos << " s=" << (float)icm.slpos;
-		gammaGS ="g" +std::to_string((double)icm.gampos) + "s" + std::to_string((double)icm.slpos) + "!";
+        gammaWs << outTemp  << " g=" << (float)icm.workingTRCGamma << " s=" << (float)icm.workingTRCSlope;
+        gammaGS ="g" +std::to_string((double)icm.workingTRCGamma) + "s" + std::to_string((double)icm.workingTRCSlope) + "!";
 
 
     } else {
 
-        if (icm.wprofile == "v4") {
+        if (icm.outputProfileVersion == "v4") {
             outPro = "RTv4_" + outPr + gammaStr + ".icc";
 
-        } else if (icm.wprofile == "v2" || icm.wprofile == "none") {
+        } else if (icm.outputProfileVersion == "v2" || icm.outputProfileVersion == "none") {
             outPro = "RTv2_" + outPr + gammaStr + ".icc";
         }
 
         gammaWs << outTemp << gammaStr;
-		gammaGS = "g" + std::to_string(gammsave) + "s" + std::to_string(slopesave) + "!";
-
-
-
+        gammaGS = "g" + std::to_string(gammsave) + "s" + std::to_string(slopesave) + "!";
     }
-	
-		//write in tag 'dmdd' values of current gamma and slope to retrive after in Output profile 
+
+        //write in tag 'dmdd' values of current gamma and slope to retrive after in Output profile
         wchar_t *wGammaGS = (wchar_t*)g_utf8_to_utf16 (gammaGS.c_str(), -1, NULL, NULL, NULL);
         if (!wGammaGS) {
             printf("Error: lab2rgbOut  /  g_utf8_to_utf16 failed!\n");
@@ -1686,7 +1683,6 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             printf("Error: lab2rgbOut  /  cmsMLUsetWide failed for \"%s\" !\n", gammaGS.c_str());
         }
 
-	
     cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
     cmsMLU *copyright = cmsMLUalloc(NULL, 1);
 
@@ -1695,7 +1691,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     cmsMLUfree(copyright);
 
     cmsWriteTag(outputProfile, cmsSigProfileDescriptionTag,  mlu);//desc changed
-	
+
     cmsMLUfree(description);
 
     // instruction with //ICC are used to generate ICC profile
@@ -1703,7 +1699,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         printf("Description error\n");
     } else {
 
-        if (icm.wprofile == "v4") {
+        if (icm.outputProfileVersion == "v4") {
             cmsSetProfileVersion(outputProfile, 4.3);
         } else {
             cmsSetProfileVersion(outputProfile, 2.0);
@@ -1720,7 +1716,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         };
         ColorTemp temp = ColorTemp::D50;
 
-        if (icm.wprimaries == "Widegamut") {
+        if (icm.outputPimariesPreset == "Widegamut") {
             p[0] = 0.7350;    //Widegamut primaries
             p[1] = 0.2650;
             p[2] = 0.1150;
@@ -1728,7 +1724,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             p[4] = 0.1570;
             p[5] = 0.0180;
 
-        } else if (icm.wprimaries == "Adobe") {
+        } else if (icm.outputPimariesPreset == "Adobe") {
             p[0] = 0.6400;    //Adobe primaries
             p[1] = 0.3300;
             p[2] = 0.2100;
@@ -1736,7 +1732,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             p[4] = 0.1500;
             p[5] = 0.0600;
             temp = ColorTemp::D65;
-        } else if (icm.wprimaries == "sRGB") {
+        } else if (icm.outputPimariesPreset == "sRGB") {
             p[0] = 0.6400;    // sRGB primaries
             p[1] = 0.3300;
             p[2] = 0.3000;
@@ -1744,7 +1740,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             p[4] = 0.1500;
             p[5] = 0.0600;
             temp = ColorTemp::D65;
-        } else if (icm.wprimaries == "BruceRGB") {
+        } else if (icm.outputPimariesPreset == "BruceRGB") {
             p[0] = 0.6400;    // Bruce primaries
             p[1] = 0.3300;
             p[2] = 0.2800;
@@ -1752,21 +1748,21 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             p[4] = 0.1500;
             p[5] = 0.0600;
             temp = ColorTemp::D65;
-        } else if (icm.wprimaries == "BetaRGB") {
+        } else if (icm.outputPimariesPreset == "BetaRGB") {
             p[0] = 0.6888;    // Beta primaries
             p[1] = 0.3112;
             p[2] = 0.1986;
             p[3] = 0.7551;
             p[4] = 0.1265;
             p[5] = 0.0352;
-        } else if (icm.wprimaries == "BestRGB") {
+        } else if (icm.outputPimariesPreset == "BestRGB") {
             p[0] = 0.7347;    // Best primaries
             p[1] = 0.2653;
             p[2] = 0.2150;
             p[3] = 0.7750;
             p[4] = 0.1300;
             p[5] = 0.0350;
-        } else if (icm.wprimaries == "Rec2020") {
+        } else if (icm.outputPimariesPreset == "Rec2020") {
             p[0] = 0.7080;    // Rec2020 primaries
             p[1] = 0.2920;
             p[2] = 0.1700;
@@ -1774,7 +1770,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             p[4] = 0.1310;
             p[5] = 0.0460;
             temp = ColorTemp::D65;
-        } else if (icm.wprimaries == "Acesp0") {
+        } else if (icm.outputPimariesPreset == "Acesp0") {
             p[0] = 0.7347;    // ACES P0 primaries
             p[1] = 0.2653;
             p[2] = 0.0000;
@@ -1782,7 +1778,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             p[4] = 0.0001;
             p[5] = -0.0770;
             temp = ColorTemp::D60;
-        } else if (icm.wprimaries == "Acesp1") {
+        } else if (icm.outputPimariesPreset == "Acesp1") {
             p[0] = 0.713;    // ACES P1 primaries
             p[1] = 0.293;
             p[2] = 0.165;
@@ -1790,20 +1786,20 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             p[4] = 0.128;
             p[5] = 0.044;
             temp = ColorTemp::D60;
-        } else if (icm.wprimaries == "Prophoto") {
+        } else if (icm.outputPimariesPreset == "Prophoto") {
             p[0] = 0.7347;    //ProPhoto and default primaries
             p[1] = 0.2653;
             p[2] = 0.1596;
             p[3] = 0.8404;
             p[4] = 0.0366;
             p[5] = 0.0001;
-        } else if (icm.wprimaries == "pfree") {
-            p[0] = icm.predx;
-            p[1] = icm.predy;
-            p[2] = icm.pgrex;
-            p[3] = icm.pgrey;
-            p[4] = icm.pblux;
-            p[5] = icm.pbluy;
+        } else if (icm.outputPimariesPreset == "pfree") {
+            p[0] = icm.redPrimaryX;
+            p[1] = icm.redPrimaryY;
+            p[2] = icm.greenPrimaryX;
+            p[3] = icm.greenPrimaryY;
+            p[4] = icm.bluePrimaryX;
+            p[5] = icm.bluePrimaryY;
 
         } else {
             p[0] = 0.7347;    //default primaries
@@ -1822,20 +1818,20 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         };
         double tempv4 = 5000.;
 
-        if (icm.wprofile == "v4" && icm.wtemp != "DEF") {
-            if (icm.wtemp == "D41") {
+        if (icm.outputProfileVersion == "v4" && icm.outputIlluminant != "DEF") {
+            if (icm.outputIlluminant == "D41") {
                 tempv4 = 4100.;
-            } else if (icm.wtemp == "D50") {
+            } else if (icm.outputIlluminant == "D50") {
                 tempv4 = 5003.;
-            } else if (icm.wtemp == "D55") {
+            } else if (icm.outputIlluminant == "D55") {
                 tempv4 = 5500.;
-            } else if (icm.wtemp == "D60") {
+            } else if (icm.outputIlluminant == "D60") {
                 tempv4 = 6004.;
-            } else if (icm.wtemp == "D65") {
+            } else if (icm.outputIlluminant == "D65") {
                 tempv4 = 6504.;
-            } else if (icm.wtemp == "D80") {
+            } else if (icm.outputIlluminant == "D80") {
                 tempv4 = 8000.;
-            } else if (icm.wtemp == "stdA") {
+            } else if (icm.outputIlluminant == "stdA") {
                 tempv4 = 5003.;
             }
 
@@ -1843,13 +1839,13 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
 
         }
 
-        if (icm.wprofile == "v4" && icm.wtemp != "DEF") {
+        if (icm.outputProfileVersion == "v4" && icm.outputIlluminant != "DEF") {
             cmsWhitePointFromTemp(&xyD, tempv4);
         } else {
             cmsWhitePointFromTemp(&xyD, (double)temp);
         }
 
-        if (icm.wtemp == "stdA") xyD = {0.447573, 0.407440, 1.0};
+        if (icm.outputIlluminant == "stdA") xyD = {0.447573, 0.407440, 1.0};
 
         cmsToneCurve* GammaTRC[3];
 
@@ -1857,7 +1853,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         // Calculate output profile's rTRC gTRC bTRC
         GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, Parameters);
 
-        if (icm.wprofile == "v4") {
+        if (icm.outputProfileVersion == "v4") {
             outputProfile = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC);
         }
 
@@ -1875,11 +1871,11 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
 
         cmsMLUfree(mlu);
 
-		Glib::ustring realoutPro;
-		realoutPro = options.cacheBaseDir + "/" + outPro;//ICC profile in cache
+        Glib::ustring realoutPro;
+        realoutPro = options.cacheBaseDir + "/" + outPro;//ICC profile in cache
 
 
-        if (icm.wprofile == "v2" || icm.wprofile == "v4") {
+        if (icm.outputProfileVersion == "v2" || icm.outputProfileVersion == "v4") {
             cmsSaveProfileToFile(outputProfile,  realoutPro.c_str());
 
         }

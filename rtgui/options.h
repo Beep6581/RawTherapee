@@ -309,12 +309,12 @@ public:
     bool fastexport_bypass_raw_ca;
     bool fastexport_bypass_raw_df;
     bool fastexport_bypass_raw_ff;
-    Glib::ustring fastexport_icm_input;
-    Glib::ustring fastexport_icm_working;
-    Glib::ustring fastexport_icm_output;
+    Glib::ustring fastexport_icm_input_profile;
+    Glib::ustring fastexport_icm_working_profile;
+    Glib::ustring fastexport_icm_output_profile;
     rtengine::RenderingIntent fastexport_icm_outputIntent;
     bool          fastexport_icm_outputBPC;
-    Glib::ustring fastexport_icm_gamma;
+    Glib::ustring fastexport_icm_custom_output_profile;
     bool          fastexport_resize_enabled;
     double        fastexport_resize_scale;
     Glib::ustring fastexport_resize_appliesTo;

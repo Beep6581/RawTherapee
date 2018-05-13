@@ -575,32 +575,35 @@ class ColorManagementParamsEdited
 {
 
 public:
-    bool input;
+    bool inputProfile;
     bool toneCurve;
     bool applyLookTable;
     bool applyBaselineExposureOffset;
     bool applyHueSatMap;
     bool dcpIlluminant;
-    bool working;
-    bool output;
+
+    bool workingProfile;
+    bool workingTRC;
+    bool workingTRCGamma;
+    bool workingTRCSlope;
+
+    bool outputProfile;
     bool outputIntent;
     bool outputBPC;
-    bool gamma;
-    bool gampos;
-    bool slpos;
-    bool predx;
-    bool predy;
-    bool pgrex;
-    bool pgrey;
-    bool pblux;
-    bool pbluy;
-    bool freegamma;
-    bool wprimaries;
-    bool wprofile;
-    bool wtemp;
-    bool gamm;
-    bool slop;
-    bool wtrcin;
+
+    bool customOutputProfile;
+    bool outputPrimariesPreset;
+    bool redPrimaryX;
+    bool redPrimaryY;
+    bool greenPrimaryX;
+    bool greenPrimaryY;
+    bool bluePrimaryX;
+    bool bluePrimaryY;
+    bool outputGammaPreset;
+    bool outputGamma;
+    bool outputSlope;
+    bool outputProfileVersion;
+    bool outputIlluminant;
 };
 class WaveletParamsEdited
 {

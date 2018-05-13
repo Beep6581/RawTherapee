@@ -33,7 +33,6 @@
 #include "../rtgui/version.h"
 
 using namespace std;
-extern Options options;
 
 namespace
 {
@@ -1944,66 +1943,64 @@ bool ResizeParams::operator !=(const ResizeParams& other) const
 const Glib::ustring ColorManagementParams::NoICMString = Glib::ustring("No ICM: sRGB output");
 
 ColorManagementParams::ColorManagementParams() :
-    input("(cameraICC)"),
+    inputProfile("(cameraICC)"),
     toneCurve(false),
     applyLookTable(false),
     applyBaselineExposureOffset(true),
     applyHueSatMap(true),
     dcpIlluminant(0),
-    working("ProPhoto"),
-    output("RT_sRGB"),
+    workingProfile("ProPhoto"),
+    workingTRC("none"),
+    workingTRCGamma(2.4),
+    workingTRCSlope(12.92310),
+    outputProfile("RT_sRGB"),
     outputIntent(RI_RELATIVE),
     outputBPC(true),
-    gamma("Custom"),
-    gampos(2.4),
-    slpos(12.92310),
-	predx(0.6400),
-	predy(0.3300),
-	pgrex(0.3000),
-	pgrey(0.6000),
-	pblux(0.1500),
-	pbluy(0.0600),
-    gamm(2.4),
-    slop(12.92),
-	
-    wprimaries("sRGB"),
-    wprofile("none"),
-    wtemp("DEF"),
-    freegamma(false),
-    wtrcin("none")
-	
+    customOutputProfile(false),
+    outputPimariesPreset("sRGB"),
+    redPrimaryX(0.6400),
+    redPrimaryY(0.3300),
+    greenPrimaryX(0.3000),
+    greenPrimaryY(0.6000),
+    bluePrimaryX(0.1500),
+    bluePrimaryY(0.0600),
+    outputGammaPreset("Custom"),
+    outputGamma(2.4),
+    outputSlope(12.92),
+    outputProfileVersion("none"),
+    outputIlluminant("DEF")
 {
 }
 
 bool ColorManagementParams::operator ==(const ColorManagementParams& other) const
 {
     return
-        input == other.input
+        inputProfile == other.inputProfile
         && toneCurve == other.toneCurve
         && applyLookTable == other.applyLookTable
         && applyBaselineExposureOffset == other.applyBaselineExposureOffset
         && applyHueSatMap == other.applyHueSatMap
         && dcpIlluminant == other.dcpIlluminant
-        && working == other.working
-        && output == other.output
+        && workingProfile == other.workingProfile
+        && workingTRC == other.workingTRC
+        && workingTRCGamma == other.workingTRCGamma
+        && workingTRCSlope == other.workingTRCSlope
+        && outputProfile == other.outputProfile
         && outputIntent == other.outputIntent
         && outputBPC == other.outputBPC
-        && gamma == other.gamma
-        && gampos == other.gampos
-        && slpos == other.slpos
-        && predx == other.predx
-        && predy == other.predy
-        && pgrex == other.pgrex
-        && pgrey == other.pgrey
-        && pblux == other.pblux
-        && pbluy == other.pbluy
-        && gamm == other.gamm
-        && slop == other.slop
-        && wprimaries == other.wprimaries
-        && wprofile == other.wprofile
-        && wtemp == other.wtemp
-        && wtrcin == other.wtrcin
-        && freegamma == other.freegamma;
+        && customOutputProfile == other.customOutputProfile
+        && outputPimariesPreset == other.outputPimariesPreset
+        && redPrimaryX == other.redPrimaryX
+        && redPrimaryY == other.redPrimaryY
+        && greenPrimaryX == other.greenPrimaryX
+        && greenPrimaryY == other.greenPrimaryY
+        && bluePrimaryX == other.bluePrimaryX
+        && bluePrimaryY == other.bluePrimaryY
+        && outputGammaPreset == other.outputGammaPreset
+        && outputGamma == other.outputGamma
+        && outputSlope == other.outputSlope
+        && outputProfileVersion == other.outputProfileVersion
+        && outputIlluminant == other.outputIlluminant;
 }
 
 bool ColorManagementParams::operator !=(const ColorManagementParams& other) const
@@ -3141,14 +3138,17 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->prsharpening.deconviter, "PostResizeSharpening", "DeconvIterations", prsharpening.deconviter, keyFile);
 
 // Color management
-        saveToKeyfile(!pedited || pedited->icm.input, "Color Management", "InputProfile", relativePathIfInside(fname, fnameAbsolute, icm.input), keyFile);
+        saveToKeyfile(!pedited || pedited->icm.inputProfile, "Color Management", "InputProfile", relativePathIfInside(fname, fnameAbsolute, icm.inputProfile), keyFile);
         saveToKeyfile(!pedited || pedited->icm.toneCurve, "Color Management", "ToneCurve", icm.toneCurve, keyFile);
         saveToKeyfile(!pedited || pedited->icm.applyLookTable, "Color Management", "ApplyLookTable", icm.applyLookTable, keyFile);
         saveToKeyfile(!pedited || pedited->icm.applyBaselineExposureOffset, "Color Management", "ApplyBaselineExposureOffset", icm.applyBaselineExposureOffset, keyFile);
         saveToKeyfile(!pedited || pedited->icm.applyHueSatMap, "Color Management", "ApplyHueSatMap", icm.applyHueSatMap, keyFile);
         saveToKeyfile(!pedited || pedited->icm.dcpIlluminant, "Color Management", "DCPIlluminant", icm.dcpIlluminant, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.working, "Color Management", "WorkingProfile", icm.working, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.output, "Color Management", "OutputProfile", icm.output, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.workingProfile, "Color Management", "WorkingProfile", icm.workingProfile, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.workingTRC, "Color Management", "WorkingTRC", icm.workingTRC, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.workingTRCGamma, "Color Management", "WorkingTRCGamma", icm.workingTRCGamma, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.workingTRCSlope, "Color Management", "WorkingTRCSlope", icm.workingTRCSlope, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.outputProfile, "Color Management", "OutputProfile", icm.outputProfile, keyFile);
         saveToKeyfile(
             !pedited || pedited->icm.outputIntent,
             "Color Management",
@@ -3163,23 +3163,19 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         keyFile
         );
         saveToKeyfile(!pedited || pedited->icm.outputBPC, "Color Management", "OutputBPC", icm.outputBPC, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.gamma, "Color Management", "GammaCustom", icm.gamma, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.freegamma, "Color Management", "Freegamma", icm.freegamma, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.gampos, "Color Management", "GammaValue", icm.gampos, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.slpos, "Color Management", "GammaSlope", icm.slpos, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.predx, "Color Management", "GammaPredx", icm.predx, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.predy, "Color Management", "GammaPredy", icm.predy, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.pgrex, "Color Management", "GammaPgrex", icm.pgrex, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.pgrey, "Color Management", "GammaPgrey", icm.pgrey, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.pblux, "Color Management", "GammaPblux", icm.pblux, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.pbluy, "Color Management", "GammaPbluy", icm.pbluy, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.gamm, "Color Management", "GammaValueIn", icm.gamm, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.slop, "Color Management", "GammaSlopeIn", icm.slop, keyFile);
-
-        saveToKeyfile(!pedited || pedited->icm.wprimaries, "Color Management", "GammaPrimaries", icm.wprimaries, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.wtemp, "Color Management", "GammaTemp", icm.wtemp, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.wprofile, "Color Management", "GammaProfile", icm.wprofile, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.wtrcin, "Color Management", "GammaTRCIN", icm.wtrcin, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.customOutputProfile, "Color Management", "CustomOutputProfile", icm.customOutputProfile, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.outputPrimariesPreset, "Color Management", "OutputPimariesPreset", icm.outputPimariesPreset, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.redPrimaryX, "Color Management", "RedPrimaryX", icm.redPrimaryX, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.redPrimaryY, "Color Management", "RedPrimaryY", icm.redPrimaryY, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.greenPrimaryX, "Color Management", "GreenPrimaryX", icm.greenPrimaryX, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.greenPrimaryY, "Color Management", "GreenPrimaryY", icm.greenPrimaryY, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.bluePrimaryX, "Color Management", "BluePrimaryX", icm.bluePrimaryX, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.bluePrimaryY, "Color Management", "BluePrimaryY", icm.bluePrimaryY, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.outputGammaPreset, "Color Management", "OutputGammaPreset", icm.outputGammaPreset, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.outputGamma, "Color Management", "OutputGamma", icm.outputGamma, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.outputSlope, "Color Management", "OutputSlope", icm.outputSlope, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.outputProfileVersion, "Color Management", "OutputProfileVersion", icm.outputProfileVersion, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.outputIlluminant, "Color Management", "OutputIlluminant", icm.outputIlluminant, keyFile);
 
 // Wavelet
         saveToKeyfile(!pedited || pedited->wavelet.enabled, "Wavelet", "Enabled", wavelet.enabled, keyFile);
@@ -4163,10 +4159,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group("Color Management")) {
             if (keyFile.has_key("Color Management", "InputProfile")) {
-                icm.input = expandRelativePath(fname, "file:", keyFile.get_string("Color Management", "InputProfile"));
+                icm.inputProfile = expandRelativePath(fname, "file:", keyFile.get_string("Color Management", "InputProfile"));
 
                 if (pedited) {
-                    pedited->icm.input = true;
+                    pedited->icm.inputProfile = true;
                 }
             }
 
@@ -4175,9 +4171,12 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "ApplyBaselineExposureOffset", pedited, icm.applyBaselineExposureOffset, pedited->icm.applyBaselineExposureOffset);
             assignFromKeyfile(keyFile, "Color Management", "ApplyHueSatMap", pedited, icm.applyHueSatMap, pedited->icm.applyHueSatMap);
             assignFromKeyfile(keyFile, "Color Management", "DCPIlluminant", pedited, icm.dcpIlluminant, pedited->icm.dcpIlluminant);
-            assignFromKeyfile(keyFile, "Color Management", "WorkingProfile", pedited, icm.working, pedited->icm.working);
-            assignFromKeyfile(keyFile, "Color Management", "OutputProfile", pedited, icm.output, pedited->icm.output);
+            assignFromKeyfile(keyFile, "Color Management", "WorkingProfile", pedited, icm.workingProfile, pedited->icm.workingProfile);
+            assignFromKeyfile(keyFile, "Color Management", "WorkingTRC", pedited, icm.workingTRC, pedited->icm.workingTRC);
+            assignFromKeyfile(keyFile, "Color Management", "WorkingTRCGamma", pedited, icm.workingTRCGamma, pedited->icm.workingTRCGamma);
+            assignFromKeyfile(keyFile, "Color Management", "WorkingTRCSlope", pedited, icm.workingTRCSlope, pedited->icm.workingTRCSlope);
 
+            assignFromKeyfile(keyFile, "Color Management", "OutputProfile", pedited, icm.outputProfile, pedited->icm.outputProfile);
             if (keyFile.has_key("Color Management", "OutputProfileIntent")) {
                 Glib::ustring intent = keyFile.get_string("Color Management", "OutputProfileIntent");
 
@@ -4195,26 +4194,24 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     pedited->icm.outputIntent = true;
                 }
             }
-
             assignFromKeyfile(keyFile, "Color Management", "OutputBPC", pedited, icm.outputBPC, pedited->icm.outputBPC);
-            assignFromKeyfile(keyFile, "Color Management", "GammaCustom", pedited, icm.gamma, pedited->icm.gamma);
-            assignFromKeyfile(keyFile, "Color Management", "Freegamma", pedited, icm.freegamma, pedited->icm.freegamma);
-            assignFromKeyfile(keyFile, "Color Management", "GammaValue", pedited, icm.gampos, pedited->icm.gampos);
-            assignFromKeyfile(keyFile, "Color Management", "GammaSlope", pedited, icm.slpos, pedited->icm.slpos);
-            assignFromKeyfile(keyFile, "Color Management", "GammaPredx", pedited, icm.predx, pedited->icm.predx);
-            assignFromKeyfile(keyFile, "Color Management", "GammaPredy", pedited, icm.predy, pedited->icm.predy);
-            assignFromKeyfile(keyFile, "Color Management", "GammaPgrex", pedited, icm.pgrex, pedited->icm.pgrex);
-            assignFromKeyfile(keyFile, "Color Management", "GammaPgrey", pedited, icm.pgrey, pedited->icm.pgrey);
-            assignFromKeyfile(keyFile, "Color Management", "GammaPblux", pedited, icm.pblux, pedited->icm.pblux);
-            assignFromKeyfile(keyFile, "Color Management", "GammaPbluy", pedited, icm.pbluy, pedited->icm.pbluy);
 
-            assignFromKeyfile(keyFile, "Color Management", "GammaValueIn", pedited, icm.gamm, pedited->icm.gamm);
-            assignFromKeyfile(keyFile, "Color Management", "GammaSlopeIn", pedited, icm.slop, pedited->icm.slop);
-			
-            assignFromKeyfile(keyFile, "Color Management", "GammaPrimaries", pedited, icm.wprimaries, pedited->icm.wprimaries);
-            assignFromKeyfile(keyFile, "Color Management", "GammaProfile", pedited, icm.wprofile, pedited->icm.wprofile);
-            assignFromKeyfile(keyFile, "Color Management", "GammaTemp", pedited, icm.wtemp, pedited->icm.wtemp);
-            assignFromKeyfile(keyFile, "Color Management", "GammaTRCIN", pedited, icm.wtrcin, pedited->icm.wtrcin);
+            if (ppVersion < 334) {
+            } else {
+            }
+            assignFromKeyfile(keyFile, "Color Management", ppVersion < 334 ? "Freegamma" : "CustomOutputProfile", pedited, icm.customOutputProfile, pedited->icm.customOutputProfile);
+            assignFromKeyfile(keyFile, "Color Management", "OutputPimariesPreset", pedited, icm.outputPimariesPreset, pedited->icm.outputPrimariesPreset);
+            assignFromKeyfile(keyFile, "Color Management", "RedPrimaryX", pedited, icm.redPrimaryX, pedited->icm.redPrimaryX);
+            assignFromKeyfile(keyFile, "Color Management", "RedPrimaryY", pedited, icm.redPrimaryY, pedited->icm.redPrimaryY);
+            assignFromKeyfile(keyFile, "Color Management", "GreenPrimaryX", pedited, icm.greenPrimaryX, pedited->icm.greenPrimaryX);
+            assignFromKeyfile(keyFile, "Color Management", "GreenPrimaryY", pedited, icm.greenPrimaryY, pedited->icm.greenPrimaryY);
+            assignFromKeyfile(keyFile, "Color Management", "BluePrimaryX", pedited, icm.bluePrimaryX, pedited->icm.bluePrimaryX);
+            assignFromKeyfile(keyFile, "Color Management", "BluePrimaryY", pedited, icm.bluePrimaryY, pedited->icm.bluePrimaryY);
+            assignFromKeyfile(keyFile, "Color Management", ppVersion < 334 ? "Gammafree" : "OutputGammaPreset", pedited, icm.outputGammaPreset, pedited->icm.outputGammaPreset);
+            assignFromKeyfile(keyFile, "Color Management", ppVersion < 334 ? "GammaValue" : "OutputGamma", pedited, icm.outputGamma, pedited->icm.outputGamma);
+            assignFromKeyfile(keyFile, "Color Management", ppVersion < 334 ? "GammaSlope" : "OutputSlope", pedited, icm.outputSlope, pedited->icm.outputSlope);
+            assignFromKeyfile(keyFile, "Color Management", "OutputProfileVersion", pedited, icm.outputProfileVersion, pedited->icm.outputProfileVersion);
+            assignFromKeyfile(keyFile, "Color Management", "OutputIlluminant", pedited, icm.outputIlluminant, pedited->icm.outputIlluminant);
         }
 
         if (keyFile.has_group("Wavelet")) {

@@ -180,7 +180,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
     const auto same_profile =
         [](const ColorManagementParams &a, const ColorManagementParams &b) -> bool
         {
-            return (a.input == b.input
+            return (a.inputProfile == b.inputProfile
                     && a.toneCurve == b.toneCurve
                     && a.applyLookTable == b.applyLookTable
                     && a.applyBaselineExposureOffset == b.applyBaselineExposureOffset
@@ -210,9 +210,9 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
     neutral.icm = cp;
     neutral.raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
     neutral.raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
-    neutral.icm.output = "sRGB";
-    neutral.icm.gamma = "Free";
-    neutral.icm.freegamma = false;
+    neutral.icm.outputProfile = "sRGB";
+    neutral.icm.outputGammaPreset = "Custom";
+    neutral.icm.customOutputProfile = false;
     
     std::unique_ptr<IImage8> source;
     {

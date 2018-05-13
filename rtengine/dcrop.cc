@@ -292,19 +292,19 @@ void Crop::update(int todo)
 
                 float adjustr = 1.f;
 
-                if (params.icm.working == "ProPhoto")   {
+                if (params.icm.workingProfile == "ProPhoto")   {
                     adjustr = 1.f;
-                } else if (params.icm.working == "Adobe RGB")  {
+                } else if (params.icm.workingProfile == "Adobe RGB")  {
                     adjustr = 1.f / 1.3f;
-                } else if (params.icm.working == "sRGB")       {
+                } else if (params.icm.workingProfile == "sRGB")       {
                     adjustr = 1.f / 1.3f;
-                } else if (params.icm.working == "WideGamut")  {
+                } else if (params.icm.workingProfile == "WideGamut")  {
                     adjustr = 1.f / 1.1f;
-                } else if (params.icm.working == "Beta RGB")   {
+                } else if (params.icm.workingProfile == "Beta RGB")   {
                     adjustr = 1.f / 1.2f;
-                } else if (params.icm.working == "BestRGB")    {
+                } else if (params.icm.workingProfile == "BestRGB")    {
                     adjustr = 1.f / 1.2f;
-                } else if (params.icm.working == "BruceRGB")   {
+                } else if (params.icm.workingProfile == "BruceRGB")   {
                     adjustr = 1.f / 1.2f;
                 }
 
@@ -512,19 +512,19 @@ void Crop::update(int todo)
 
             float adjustr = 1.f;
 
-            if (params.icm.working == "ProPhoto")   {
+            if (params.icm.workingProfile == "ProPhoto")   {
                 adjustr = 1.f;   //
-            } else if (params.icm.working == "Adobe RGB")  {
+            } else if (params.icm.workingProfile == "Adobe RGB")  {
                 adjustr = 1.f / 1.3f;
-            } else if (params.icm.working == "sRGB")       {
+            } else if (params.icm.workingProfile == "sRGB")       {
                 adjustr = 1.f / 1.3f;
-            } else if (params.icm.working == "WideGamut")  {
+            } else if (params.icm.workingProfile == "WideGamut")  {
                 adjustr = 1.f / 1.1f;
-            } else if (params.icm.working == "Beta RGB")   {
+            } else if (params.icm.workingProfile == "Beta RGB")   {
                 adjustr = 1.f / 1.2f;
-            } else if (params.icm.working == "BestRGB")    {
+            } else if (params.icm.workingProfile == "BestRGB")    {
                 adjustr = 1.f / 1.2f;
-            } else if (params.icm.working == "BruceRGB")   {
+            } else if (params.icm.workingProfile == "BruceRGB")   {
                 adjustr = 1.f / 1.2f;
             }
 
@@ -801,16 +801,16 @@ void Crop::update(int todo)
         const int W = baseCrop->getWidth();
         const int H = baseCrop->getHeight();
         LabImage labcbdl(W, H);
-        parent->ipf.rgb2lab(*baseCrop, labcbdl, params.icm.working);
+        parent->ipf.rgb2lab(*baseCrop, labcbdl, params.icm.workingProfile);
         parent->ipf.dirpyrequalizer(&labcbdl, skip);
-        parent->ipf.lab2rgb(labcbdl, *baseCrop, params.icm.working);
+        parent->ipf.lab2rgb(labcbdl, *baseCrop, params.icm.workingProfile);
 
     }
 
     if (todo & M_INIT) {
-        if (params.icm.wtrcin == "Custom") { //exec TRC IN free
+        if (params.icm.workingTRC == "Custom") { //exec TRC IN free
             Glib::ustring profile;
-            profile = params.icm.working;
+            profile = params.icm.workingProfile;
 
             if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1") {
 
@@ -823,7 +823,7 @@ void Crop::update(int todo)
                 int mul = -5;
                 double gga = 2.4, ssl = 12.92;
 
-                readyImg0 = parent->ipf.workingtrc(baseCrop, cw, ch, mul, params.icm.working, gga, ssl, ga0, ga1, ga2, ga3, ga4, ga5, ga6);
+                readyImg0 = parent->ipf.workingtrc(baseCrop, cw, ch, mul, params.icm.workingProfile, gga, ssl, ga0, ga1, ga2, ga3, ga4, ga5, ga6);
 
                 #pragma omp parallel for
 
@@ -838,9 +838,9 @@ void Crop::update(int todo)
                 delete readyImg0;
                 //adjust gamma TRC
                 Imagefloat* readyImg = NULL;
-                gga = params.icm.gamm, ssl = params.icm.slop;
+                gga = params.icm.outputGamma, ssl = params.icm.outputSlope;
                 mul = 5;
-                readyImg = parent->ipf.workingtrc(baseCrop, cw, ch, mul, params.icm.working, gga, ssl, ga0, ga1, ga2, ga3, ga4, ga5, ga6);
+                readyImg = parent->ipf.workingtrc(baseCrop, cw, ch, mul, params.icm.workingProfile, gga, ssl, ga0, ga1, ga2, ga3, ga4, ga5, ga6);
                 #pragma omp parallel for
 
                 for (int row = 0; row < ch; row++) {

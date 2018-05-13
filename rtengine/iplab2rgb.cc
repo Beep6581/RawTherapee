@@ -186,12 +186,12 @@ Image8* ImProcFunctions::lab2rgb(LabImage* lab, int cx, int cy, int cw, int ch, 
     bool standard_gamma;
 
     if (settings->HistogramWorking && consider_histogram_settings) {
-        profile = icm.working;
+        profile = icm.workingProfile;
         standard_gamma = true;
     } else {
-        profile = icm.output;
+        profile = icm.outputProfile;
 
-        if (icm.output.empty() || icm.output == ColorManagementParams::NoICMString) {
+        if (icm.outputProfile.empty() || icm.outputProfile == ColorManagementParams::NoICMString) {
             profile = "sRGB";
         }
 
@@ -312,8 +312,8 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
         oprof = ICCStore::getInstance()->createGammaProfile(icm, *ga);
         lcmsMutex->unlock();
     } else {
-        oprof = ICCStore::getInstance()->getProfile(icm.output);
-		Glib::ustring outtest = icm.output;
+        oprof = ICCStore::getInstance()->getProfile(icm.outputProfile);
+		Glib::ustring outtest = icm.outputProfile;
         std::string fileis_RTv2 = outtest.substr(0, 4);
 		//printf("IsRTv2=%s\n", fileis_RTv2.c_str());
 		if(fileis_RTv2 == "RTv2") {//Only fot ICC v2 : read tag from desc to retrieve gamma and slope save before in generate ICC v2
@@ -436,7 +436,7 @@ Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int
 {
     TMatrix wprof;
 
-        wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.working);
+        wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
     double dx = Color::D50x;
     double dz = Color::D50z;

@@ -1092,7 +1092,7 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
     constexpr float luminance_noise_floor = 65.535f;
     constexpr float min_luminance = 1.f;
 
-    TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
+    TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix (params->icm.workingProfile);
 
 #ifdef _OPENMP
     #pragma omp parallel for if(multiThread)

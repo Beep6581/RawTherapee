@@ -362,7 +362,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                             // Add a new Color Picker
                             rtengine::Coord imgPos;
                             screenCoordToImage(x, y, imgPos.x, imgPos.y);
-                            LockableColorPicker *newPicker = new LockableColorPicker(this, &cropHandler.colorParams.output, &cropHandler.colorParams.working);
+                            LockableColorPicker *newPicker = new LockableColorPicker(this, &cropHandler.colorParams.outputProfile, &cropHandler.colorParams.workingProfile);
                             colorPickers.push_back(newPicker);
                             hoveredPicker = newPicker;
                             updateHoveredPicker(&imgPos);
@@ -1016,10 +1016,10 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
                 printf("Using \"%s\" output\n", outputProfile.c_str());
                 if(outputProfile=="RT_sRGB") printf("OK SRGB2");
             */
-            pmlistener->pointerMoved (false, cropHandler.colorParams.output, cropHandler.colorParams.working, mx, my, -1, -1, -1);
+            pmlistener->pointerMoved (false, cropHandler.colorParams.outputProfile, cropHandler.colorParams.workingProfile, mx, my, -1, -1, -1);
 
             if (pmhlistener) {
-                pmhlistener->pointerMoved (false, cropHandler.colorParams.output, cropHandler.colorParams.working, mx, my, -1, -1, -1);
+                pmhlistener->pointerMoved (false, cropHandler.colorParams.outputProfile, cropHandler.colorParams.workingProfile, mx, my, -1, -1, -1);
             }
 
         } else {
@@ -1063,12 +1063,12 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
                     }
                 }
                 //      pmlistener->pointerMoved (true, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
-                pmlistener->pointerMoved (true, cropHandler.colorParams.output, cropHandler.colorParams.working, mx, my, rval, gval, bval);
+                pmlistener->pointerMoved (true, cropHandler.colorParams.outputProfile, cropHandler.colorParams.workingProfile, mx, my, rval, gval, bval);
 
                 if (pmhlistener)
                     //    pmhlistener->pointerMoved (true, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
                 {
-                    pmhlistener->pointerMoved (true, cropHandler.colorParams.output, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
+                    pmhlistener->pointerMoved (true, cropHandler.colorParams.outputProfile, cropHandler.colorParams.workingProfile, mx, my, pix[0], pix[1], pix[2]);
                 }
             }
 

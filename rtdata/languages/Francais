@@ -1588,10 +1588,10 @@ TP_FLATFIELD_BT_VERTICAL;Vertical
 TP_FLATFIELD_CLIPCONTROL;Control de l'écrêtage
 TP_FLATFIELD_CLIPCONTROL_TOOLTIP;"Contrôle de l'écrêtage" évite les hautes lumière brûlées dûs à l'application du champ uniforme. S'il y a déjà des hautes lumières brûlées avant l'application du champ uniforme, "Contrôle de l'écrêtage" peut conduire à une dérive couleur.
 TP_FLATFIELD_LABEL;Champ Uniforme
-TP_GAMMA_CURV;Gamma
-TP_GAMMA_FREE;Manuel
-TP_GAMMA_OUTPUT;Gamma de sortie
-TP_GAMMA_SLOP;Pente (linéaire)
+TP_GAMMA_CURV;Gamma:
+TP_GAMMA_CUSTOM;Manuel
+TP_GAMMA_OUTPUT_TRC_PRESET;Courbe de réponse tonale (TRC):
+TP_GAMMA_SLOP;Pente (linéaire):
 TP_GENERAL_11SCALE_TOOLTIP;Les effets de cet outil ne sont visible ou fiable qu'avec un aperçu à l'échelle 1:1.
 TP_GRADIENT_CENTER;Centre
 TP_GRADIENT_CENTER_X;Centre X

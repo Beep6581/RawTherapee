@@ -440,9 +440,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
         const int W = oprevi->getWidth();
         const int H = oprevi->getHeight();
         LabImage labcbdl(W, H);
-        ipf.rgb2lab(*oprevi, labcbdl, params.icm.working);
+        ipf.rgb2lab(*oprevi, labcbdl, params.icm.workingProfile);
         ipf.dirpyrequalizer(&labcbdl, scale);
-        ipf.lab2rgb(labcbdl, *oprevi, params.icm.working);
+        ipf.lab2rgb(labcbdl, *oprevi, params.icm.workingProfile);
     }
 
     readyphase++;
@@ -486,9 +486,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
     progress("Exposure curve & CIELAB conversion...", 100 * readyphase / numofphases);
 
     if (todo &  M_INIT) {
-        if (params.icm.wtrcin == "Custom") { //exec TRC IN free
+        if (params.icm.workingTRC == "Custom") { //exec TRC IN free
             Glib::ustring profile;
-            profile = params.icm.working;
+            profile = params.icm.workingProfile;
 
             if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1") {
                 int  cw = oprevi->getWidth();
@@ -499,7 +499,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 int mul = -5;
                 double gga = 2.4, ssl = 12.92;
 
-                readyImg0 = ipf.workingtrc(oprevi, cw, ch, mul, params.icm.working, gga, ssl, ga0, ga1, ga2, ga3, ga4, ga5, ga6);
+                readyImg0 = ipf.workingtrc(oprevi, cw, ch, mul, params.icm.workingProfile, gga, ssl, ga0, ga1, ga2, ga3, ga4, ga5, ga6);
                 #pragma omp parallel for
 
                 for (int row = 0; row < ch; row++) {
@@ -513,9 +513,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 delete readyImg0;
                 //adjust TRC
                 Imagefloat* readyImg = NULL;
-                gga = params.icm.gamm, ssl = params.icm.slop;
+                gga = params.icm.outputGamma, ssl = params.icm.outputSlope;
                 mul = 5;
-                readyImg = ipf.workingtrc(oprevi, cw, ch, mul, params.icm.working, gga, ssl, ga0, ga1, ga2, ga3, ga4, ga5, ga6);
+                readyImg = ipf.workingtrc(oprevi, cw, ch, mul, params.icm.workingProfile, gga, ssl, ga0, ga1, ga2, ga3, ga4, ga5, ga6);
                 #pragma omp parallel for
 
                 for (int row = 0; row < ch; row++) {
@@ -551,7 +551,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
         opautili = false;
 
         if (params.colorToning.enabled) {
-            TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params.icm.working);
+            TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params.icm.workingProfile);
             double wp[3][3] = {
                 {wprof[0][0], wprof[0][1], wprof[0][2]},
                 {wprof[1][0], wprof[1][1], wprof[1][2]},
@@ -887,8 +887,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
     }
 
     // Update the monitor color transform if necessary
-    if ((todo & M_MONITOR) || (lastOutputProfile != params.icm.output) || lastOutputIntent != params.icm.outputIntent || lastOutputBPC != params.icm.outputBPC) {
-        lastOutputProfile = params.icm.output;
+    if ((todo & M_MONITOR) || (lastOutputProfile != params.icm.outputProfile) || lastOutputIntent != params.icm.outputIntent || lastOutputBPC != params.icm.outputBPC) {
+        lastOutputProfile = params.icm.outputProfile;
         lastOutputIntent = params.icm.outputIntent;
         lastOutputBPC = params.icm.outputBPC;
         ipf.updateColorProfiles(monitorProfile, monitorIntent, softProof, gamutCheck);
@@ -1256,7 +1256,7 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
     PreviewProps pp(0, 0, fW, fH, 1);
     ProcParams ppar = params;
     ppar.toneCurve.hrenabled = false;
-    ppar.icm.input = "(none)";
+    ppar.icm.inputProfile = "(none)";
     Imagefloat* im = new Imagefloat(fW, fH);
     imgsrc->preprocess(ppar.raw, ppar.lensProf, ppar.coarse);
     imgsrc->demosaic(ppar.raw);
