@@ -349,6 +349,10 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     spotsize->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::spotSizeChanged) );
 }
 
+WhiteBalance::~WhiteBalance()
+{
+    idle_register.destroy();
+}
 
 void WhiteBalance::enabledChanged()
 {
@@ -395,7 +399,7 @@ void WhiteBalance::adjusterChanged (Adjuster* a, double newval)
         methconn.block(true);
         opt = setActiveMethod(wbCustom.second.GUILabel);
         tempBias->set_sensitive(false);
-        
+
         cache_customWB (tVal, gVal);
         if (a != equal) {
             cache_customEqual(eVal);
@@ -632,7 +636,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
             // the equalizer's value is restored for the AutoWB
             equal->setValue (equal->getAddMode() ? 0.0 : pp->wb.equal);
             tempBias->setValue (tempBias->getAddMode() ? 0.0 : pp->wb.tempBias);
-            
+
             // set default values first if in ADD mode, otherwise keep the current ones
             if (temp->getAddMode() ) {
                 temp->setValue (0.0);
@@ -718,7 +722,7 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
 
 void WhiteBalance::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
 {
-    
+
     equal->setDefault (defParams->wb.equal);
     tempBias->setDefault (defParams->wb.tempBias);
 
@@ -895,12 +899,28 @@ inline Gtk::TreeRow WhiteBalance::getActiveMethod ()
 
 void WhiteBalance::WBChanged(double temperature, double greenVal)
 {
-    GThreadLock lock;
-    disableListener();
-    setEnabled(true);
-    temp->setValue(temperature);
-    green->setValue(greenVal);
-    temp->setDefault(temperature);
-    green->setDefault(greenVal);
-    enableListener();
+    struct Data {
+        WhiteBalance* self;
+        double temperature;
+        double green_val;
+    };
+
+    const auto func = [](gpointer data) -> gboolean {
+        WhiteBalance* const self = static_cast<WhiteBalance*>(static_cast<Data*>(data)->self);
+        const double temperature = static_cast<Data*>(data)->temperature;
+        const double green_val = static_cast<Data*>(data)->green_val;
+        delete static_cast<Data*>(data);
+
+        self->disableListener();
+        self->setEnabled(true);
+        self->temp->setValue(temperature);
+        self->green->setValue(green_val);
+        self->temp->setDefault(temperature);
+        self->green->setDefault(green_val);
+        self->enableListener();
+
+        return FALSE;
+    };
+
+    idle_register.add(func, new Data{this, temperature, greenVal});
 }
