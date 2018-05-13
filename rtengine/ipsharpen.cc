@@ -656,7 +656,7 @@ BENCHFUN
             contrast = std::min(contrast, 1.f);
             float blend = 0.f;
             if(contrast <= contrastThreshold)
-                blend = sqrt((contrastThreshold - contrast) * contrastFactor);
+                blend = 1.f - (contrast <= contrastThreshold * 0.5f ? 0.f : sqrt((std::min(contrast, contrastThreshold) - contrastThreshold * 0.5f) * 2.f * contrastFactor));
 
             //matrix 5x5
             float temp = v + 4.f *( v * (s + sqrt2 * s)); //begin 3x3
