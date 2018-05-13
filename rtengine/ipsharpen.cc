@@ -23,7 +23,8 @@
 #include "rt_math.h"
 #include "sleef.c"
 #include "opthelper.h"
-
+#define BENCHMARK
+#include "StopWatch.h"
 using namespace std;
 
 namespace rtengine
@@ -572,12 +573,13 @@ void ImProcFunctions::MLsharpen (LabImage* lab)
 //! \param luminance : Luminance channel of image
 void ImProcFunctions::MLmicrocontrast(float** luminance, int W, int H)
 {
-    if (!params->sharpenMicro.enabled) {
+    if (!params->sharpenMicro.enabled || params->sharpenMicro.contrast == 100) {
         return;
     }
-
+BENCHFUN
     const int k = params->sharpenMicro.matrix ? 1 : 2;
-
+    const float contrastThreshold = params->sharpenMicro.contrast / 100;
+    const float contrastFactor = contrastThreshold == 0.f ? 0.f : 1.f / contrastThreshold;
     // k=2 matrix 5x5  k=1 matrix 3x3
     const int width = W, height = H;
     const float uniform = params->sharpenMicro.uniformity; //between 0 to 100
@@ -619,8 +621,8 @@ void ImProcFunctions::MLmicrocontrast(float** luminance, int W, int H)
     const float Cont5[11] = {1.0f, 1.1f, 1.2f, 1.25f, 1.3f, 1.4f, 1.45f, 1.50f, 1.6f, 1.65f, 1.80f};
 
     const float s = amount;
-    const float sqrt2 = sqrt(2.0);
-    const float sqrt1d25 = sqrt(1.25);
+    constexpr float sqrt2 = sqrt(2.0);
+    constexpr float sqrt1d25 = sqrt(1.25);
     float *LM = new float[width * height]; //allocation for Luminance
 
 #ifdef _OPENMP
@@ -652,6 +654,9 @@ void ImProcFunctions::MLmicrocontrast(float** luminance, int W, int H)
                                                        + SQR(LM[offset + 2] - LM[offset - 2]) + SQR(LM[offset + 2 * width] - LM[offset - 2 * width])) * 0.0625f; //for 5x5
 
             contrast = std::min(contrast, 1.f);
+            float blend = 0.f;
+            if(contrast <= contrastThreshold)
+                blend = sqrt((contrastThreshold - contrast) * contrastFactor);
 
             //matrix 5x5
             float temp = v + 4.f *( v * (s + sqrt2 * s)); //begin 3x3
@@ -675,13 +680,12 @@ void ImProcFunctions::MLmicrocontrast(float** luminance, int W, int H)
 
             temp = std::max(temp, 0.f);
 
-            for(int row = j + k, n = SQR(2*k+1) - 1; row >= j - k; row--) {
-                for(int offset2 = row * width + i + k; offset2 >= row * width + i - k; offset2--) {
+            for(int row = j - k; row <= j + k; ++row) {
+                for(int offset2 = row * width + i - k; offset2 <= row * width + i + k; ++offset2) {
                     if((LM[offset2] - temp) * (v - LM[offset2]) > 0.f) {
                         temp = intp(0.75f, temp, LM[offset2]);
                         goto breakout;
                     }
-                    n--;
                 }
             }
             breakout:
@@ -751,7 +755,7 @@ void ImProcFunctions::MLmicrocontrast(float** luminance, int W, int H)
                 } else {
                     temp = 0.f;
                 }
-                luminance[j][i] *= (temp * temp2 + 1.f);
+                luminance[j][i] = intp(blend, luminance[j][i], luminance[j][i] * (temp * temp2 + 1.f));
             } else {
 
                 float temp4 = LM[offset] / tempL; //
@@ -802,7 +806,7 @@ void ImProcFunctions::MLmicrocontrast(float** luminance, int W, int H)
                     } else {
                         temp = 0.f;
                     }
-                    luminance[j][i] /= (temp * temp4 + 1.f);
+                    luminance[j][i] = intp(blend, luminance[j][i], luminance[j][i] / (temp * temp4 + 1.f));
                 }
             }
         }

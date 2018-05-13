@@ -393,6 +393,7 @@ HISTORY_MSG_142;ES - Iterations
 HISTORY_MSG_143;ES - Quantity
 HISTORY_MSG_144;Microcontrast - Quantity
 HISTORY_MSG_145;Microcontrast - Uniformity
+HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 HISTORY_MSG_146;Edge sharpening
 HISTORY_MSG_147;ES - Luminance only
 HISTORY_MSG_148;Microcontrast
@@ -1950,6 +1951,7 @@ TP_SHARPENING_RLD_ITERATIONS;Iterations
 TP_SHARPENING_THRESHOLD;Threshold
 TP_SHARPENING_USM;Unsharp Mask
 TP_SHARPENMICRO_AMOUNT;Quantity
+TP_SHARPENMICRO_CONTRAST;Contrast threshold
 TP_SHARPENMICRO_LABEL;Microcontrast
 TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
 TP_SHARPENMICRO_UNIFORMITY;Uniformity

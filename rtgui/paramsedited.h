@@ -194,6 +194,7 @@ public :
     bool enabled;
     bool matrix;
     bool amount;
+    bool contrast;
     bool uniformity;
 
 };
