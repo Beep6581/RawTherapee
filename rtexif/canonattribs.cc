@@ -656,6 +656,7 @@ public:
             {82, "Canon TS-E 135mm f/4L Macro"},
             {94, "Canon TS-E 17mm f/4L"},
             {95, "Canon TS-E 24mm f/3.5L II"},
+            {103, "Samyang AF 14mm f/2.8 EF"},
             {124, "Canon MP-E 65mm f/2.8 1-5x Macro Photo"},
             {125, "Canon TS-E 24mm f/3.5L"},
             {126, "Canon TS-E 45mm f/2.8"},
@@ -860,12 +861,14 @@ public:
             {254, "Canon EF 100mm f/2.8L Macro IS USM"},
             {255, "Sigma 24-105mm f/4 DG OS HSM | A or Other Sigma Lens"},
             {255, "Sigma 180mm f/2.8 EX DG OS HSM APO Macro"},
+            {368, "Sigma 14-24mm f/2.8 DG HSM | A"},
             {488, "Canon EF-S 15-85mm f/3.5-5.6 IS USM"},
             {489, "Canon EF 70-300mm f/4-5.6L IS USM"},
             {490, "Canon EF 8-15mm f/4L Fisheye USM"},
             {491, "Canon EF 300mm f/2.8L IS II USM or Tamron Lens"},
             {491, "Tamron SP 70-200mm f/2.8 Di VC USD G2 (A025)"},
             {491, "Tamron 18-400mm f/3.5-6.3 Di II VC HLD (B028)"},
+            {491, "Tamron 100-400mm f/4.5-6.3 Di VC USD (A035)"},
             {492, "Canon EF 400mm f/2.8L IS II USM"},
             {493, "Canon EF 500mm f/4L IS II USM or EF 24-105mm f4L IS USM"},
             {493, "Canon EF 24-105mm f/4L IS USM"},
@@ -883,7 +886,7 @@ public:
             {508, "Canon EF 11-24mm f/4L USM or Tamron Lens"},
             {508, "Tamron 10-24mm f/3.5-4.5 Di II VC HLD"},
             {747, "Canon EF 100-400mm f/4.5-5.6L IS II USM or Tamron Lens"},
-            {747, "Tamron SP 150-600mm F5-6.3 Di VC USD G2"},
+            {747, "Tamron SP 150-600mm f/5-6.3 Di VC USD G2"},
             {748, "Canon EF 100-400mm f/4.5-5.6L IS II USM + 1.4x"},
             {750, "Canon EF 35mm f/1.4L II USM"},
             {751, "Canon EF 16-35mm f/2.8L III USM"},
@@ -1473,6 +1476,7 @@ class CAModelIDInterpreter : public ChoiceInterpreter
 public:
     CAModelIDInterpreter ()
     {
+        choices[1042] = "EOS M50 / Kiss M";
         choices[16842752] = "PowerShot A30";
         choices[17039360] = "PowerShot S300 / Digital IXUS 300 / IXY Digital 300";
         choices[17170432] = "PowerShot A20";
@@ -1736,6 +1740,7 @@ public:
         choices[1074257056] = "EOS C300";
         choices[1074257321] = "HF G25";
         choices[1074257844] = "XC10";
+        choices[1074258371] = "EOS C200";
         choices[2147483649] = "EOS-1D";
         choices[2147484007] = "EOS-1DS";
         choices[2147484008] = "EOS 10D";
@@ -1777,7 +1782,7 @@ public:
         choices[2147484452] = "EOS-1D C";
         choices[2147484453] = "EOS 70D";
         choices[2147484454] = "EOS Rebel T5i / 700D / Kiss X7i";
-        choices[2147484455] = "EOS Rebel T5 / 1200D / Kiss X70";
+        choices[2147484455] = "EOS Rebel T5 / 1200D / Kiss X70 / Hi";
         choices[2147484456] = "EOS-1D X MARK II";
         choices[2147484465] = "EOS M";
         choices[2147484486] = "EOS Rebel SL1 / 100D / Kiss X7";
@@ -1793,6 +1798,8 @@ public:
         choices[2147484678] = "EOS 6D Mark II";
         choices[2147484680] = "EOS 77D / 9000D";
         choices[2147484695] = "EOS Rebel SL2 / 200D / Kiss X9";
+        choices[2147484706] = "EOS Rebel T100 / 4000D / 3000D";
+        choices[2147484722] = "EOS Rebel T7 / 2000D / 1500D / Kiss X90";
     }
 };
 CAModelIDInterpreter caModelIDInterpreter;
