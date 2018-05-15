@@ -27,6 +27,15 @@
 #include "StopWatch.h"
 using namespace std;
 
+namespace {
+float calcBlendFactor(float val, float threshold) {
+    // sigmoid function
+    // result is in ]0;1] range
+    // inflexion point is at (x, y) (threshold, 0.5)
+    return threshold == 0.f ? 1.f : 1.f / (1.f + xexpf(-8.f * ((val / threshold) * (2.f - threshold) - 1.f )));
+}
+
+}
 namespace rtengine
 {
 
@@ -105,14 +114,55 @@ void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, int W, i
         tmpI[i] = tmpI[i - 1] + W;
     }
 
+    float *tmpII[H] ALIGNED16;
+
+    tmpII[0] = new float[W * H];
+
+    for (int i = 1; i < H; i++) {
+        tmpII[i] = tmpII[i - 1] + W;
+    }
+
     for (int i = 0; i < H; i++) {
         for(int j = 0; j < W; j++) {
             tmpI[i][j] = max(luminance[i][j], 0.f);
+            tmpII[i][j] = luminance[i][j];
         }
     }
+    const float contrastThreshold = sharpenParam.deconvdamping / 100.f;
+    const float contrastFactor = contrastThreshold == 0.f ? 0.f : 1.f / contrastThreshold;
+    float *LM = new float[W * H]; //allocation for Luminance
 
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+{
+
+#ifdef _OPENMP
+    #pragma omp for schedule(dynamic,16)
+#endif
+
+    for(int j = 0; j < H; j++)
+        for(int i = 0, offset = j * W + i; i < W; i++, offset++) {
+            LM[offset] = 0.f; // adjust to [0;100] and to RT variables
+        }
+
+#ifdef _OPENMP
+    #pragma omp for schedule(dynamic,16)
+#endif
+
+    for(int j = 2; j < H - 2; j++)
+        for(int i = 2, offset = j * W + i; i < W - 2; i++, offset++) {
+
+            float contrast;
+            contrast = sqrtf(SQR(luminance[j][i+1] / 327.68f - luminance[j][i-1] / 327.68f) + SQR(luminance[j+1][i] / 327.68f - luminance[j-1][i] / 327.68f)
+                                                       + SQR(luminance[j][i+1] / 327.68f - luminance[j][i-1] / 327.68f) + SQR(luminance[j+1][i] / 327.68f - luminance[j-1][i] / 327.68f)) * 0.0625f; //for 5x5
+
+            contrast = std::min(contrast, 1.f);
+            LM[offset] = 1.f - calcBlendFactor(contrast, contrastThreshold);
+        }
+}
     float damping = sharpenParam.deconvdamping / 5.0;
-    bool needdamp = sharpenParam.deconvdamping > 0;
+    bool needdamp = false; //sharpenParam.deconvdamping > 0;
     double sigma = sharpenParam.deconvradius / scale;
 
 #ifdef _OPENMP
@@ -149,12 +199,13 @@ void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, int W, i
 #endif
 
         for (int i = 0; i < H; i++)
-            for (int j = 0; j < W; j++) {
-                luminance[i][j] = luminance[i][j] * p1 + max(tmpI[i][j], 0.0f) * p2;
+            for (int j = 0, offset = i * W + j; j < W; j++, offset++) {
+                luminance[i][j] = intp(LM[offset], tmpII[i][j], luminance[i][j] * p1 + max(tmpI[i][j], 0.0f) * p2);
             }
     } // end parallel
-
+    delete [] LM;
     delete [] tmpI[0];
+    delete [] tmpII[0];
 
 }
 
@@ -654,9 +705,7 @@ BENCHFUN
                                                        + SQR(LM[offset + 2] - LM[offset - 2]) + SQR(LM[offset + 2 * width] - LM[offset - 2 * width])) * 0.0625f; //for 5x5
 
             contrast = std::min(contrast, 1.f);
-            float blend = 0.f;
-            if(contrast <= contrastThreshold)
-                blend = 1.f - (contrast <= contrastThreshold * 0.5f ? 0.f : sqrt((std::min(contrast, contrastThreshold) - contrastThreshold * 0.5f) * 2.f * contrastFactor));
+            float blend = 1.f - calcBlendFactor(contrast, contrastThreshold);
 
             //matrix 5x5
             float temp = v + 4.f *( v * (s + sqrt2 * s)); //begin 3x3
