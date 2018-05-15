@@ -47,14 +47,14 @@ protected:
     Gtk::Frame*        dcpFrame;
     Gtk::Frame*        coipFrame;
 	
-    Adjuster* gampos;
-    Adjuster* slpos;
-    Adjuster* predx;
-    Adjuster* predy;
-    Adjuster* pgrex;
-    Adjuster* pgrey;
-    Adjuster* pblux;
-    Adjuster* pbluy;
+    Adjuster* oGamma;
+    Adjuster* oSlope;
+    Adjuster* primariesRedX;
+    Adjuster* primariesRedY;
+    Adjuster* primariesGreenX;
+    Adjuster* primariesGreenY;
+    Adjuster* primariesBlueX;
+    Adjuster* primariesBlueY;
     Adjuster* wGamma;
     Adjuster* wSlope;
 
@@ -62,8 +62,8 @@ protected:
     Gtk::HBox* gabox;
 
 
-    bool lastgamfree;
-    sigc::connection  gamcsconn;
+    bool lastCustomOutputProfile;
+    sigc::connection  coprofconn;
     //bool freegamma;
     bool lastToneCurve;
     sigc::connection tcurveconn;
@@ -93,15 +93,15 @@ private:
 
     Gtk::VBox       *  iVBox;
     Gtk::HBox* primariesHBox;
-    Gtk::HBox* oTRCHBox;
+    Gtk::HBox* oTRCPresetsHBox;
     Gtk::HBox* profHBox;
-    Gtk::HBox* tempHBox;
-    Gtk::VBox* prifreeVBox;
+    Gtk::HBox* oIllHBox;
+    Gtk::VBox* primariesVBox;
     Gtk::HBox* wTRCHBox;
-    Gtk::HBox* prigreenHBox;
-    Gtk::HBox* priblueHBox;
-    Gtk::HBox* trcHBox;
-    Gtk::HBox* priredHBox;
+    Gtk::HBox* priGreenHBox;
+    Gtk::HBox* priBlueHBox;
+    Gtk::HBox* oTRCHBox;
+    Gtk::HBox* priRedHBox;
 
     Gtk::CheckButton*  obpc;
     Gtk::CheckButton*  customOutProfile;
@@ -119,22 +119,22 @@ private:
     Gtk::CheckButton*  ckbApplyBaselineExposureOffset;
     Gtk::CheckButton*  ckbApplyHueSatMap;
     MyComboBoxText*    wProfNames;
-    sigc::connection   wnamesconn;
+    sigc::connection   wprofnamesconn;
     MyComboBoxText*    oTRCPresets;
-    sigc::connection   wgammaconn;
+    sigc::connection   otrcconn;
     MyComboBoxText*    primaries;
-    sigc::connection   wprimariesconn;
+    sigc::connection   primariesconn;
     MyComboBoxText*    wprofile;
     sigc::connection   wprofileconn;
-    MyComboBoxText*    wtemp;
-    sigc::connection   wtempconn;
+    MyComboBoxText*    oIlluminant;
+    sigc::connection   oillconn;
     MyComboBoxText*    wTRC;
-    sigc::connection   wtrcinconn;
+    sigc::connection   wtrcconn;
 
     MyComboBoxText*    oProfNames;
-    sigc::connection   onamesconn;
+    sigc::connection   oprofnamesconn;
     std::unique_ptr<PopUpButton>       oRendIntent;
-    sigc::connection   ointentconn;
+    sigc::connection   orendintentconn;
     Gtk::RadioButton*  iunchanged;
     MyFileChooserButton* ipDialog;
     Gtk::RadioButton::Group opts;
