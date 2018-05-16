@@ -34,7 +34,7 @@ Glib::ustring getPaddedName(const Glib::ustring& name)
         FRACTION
     };
 
-    constexpr unsigned int pad_width = 17; // Must be at least 1
+    constexpr unsigned int pad_width = 16;
 
     Glib::ustring res;
 
