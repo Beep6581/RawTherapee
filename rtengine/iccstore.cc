@@ -1674,6 +1674,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         if (!wGammaGS) {
             printf("Error: lab2rgbOut  /  g_utf8_to_utf16 failed!\n");
         }
+        /*
         cmsMLU *description = cmsMLUalloc(NULL, 1);
         // Language code (3 letters code) : https://www.iso.org/obp/ui/
         // Country code (3 letters code)  : http://www.loc.gov/standards/iso639-2/php/code_list.php
@@ -1686,7 +1687,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
 	
 
     cmsMLUfree(description);
-
+*/
     // instruction with //ICC are used to generate ICC profile
     if (mlu == nullptr) {
         printf("Description error\n");
@@ -1863,6 +1864,18 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         */
 
         cmsMLUfree(mlu);
+        
+        cmsMLU *description = cmsMLUalloc(NULL, 1);
+        // Language code (3 letters code) : https://www.iso.org/obp/ui/
+        // Country code (3 letters code)  : http://www.loc.gov/standards/iso639-2/php/code_list.php
+        if (cmsMLUsetWide(description, "eng", "USA", wGammaGS)) {
+            cmsWriteTag(outputProfile, cmsSigDeviceModelDescTag, description); //save 'dmdd' in description
+        } else {
+        printf("Error: lab2rgbOut  /  cmsMLUsetWide failed for \"%s\" !\n", gammaGS.c_str());
+        }
+        cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
+        cmsMLUfree(description);
+       
         cmsMLU *copyright = cmsMLUalloc(NULL, 1);
         cmsMLUsetASCII(copyright, "en", "US", "Copyright RawTherapee 2018, CC0");
         cmsWriteTag(outputProfile, cmsSigCopyrightTag, copyright);
