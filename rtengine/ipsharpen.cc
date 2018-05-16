@@ -23,7 +23,7 @@
 #include "rt_math.h"
 #include "sleef.c"
 #include "opthelper.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 using namespace std;
 
@@ -32,9 +32,19 @@ float calcBlendFactor(float val, float threshold) {
     // sigmoid function
     // result is in ]0;1] range
     // inflexion point is at (x, y) (threshold, 0.5)
-    return threshold == 0.f ? 1.f : 1.f / (1.f + xexpf(-8.f * ((val / threshold) * (2.f - threshold) - 1.f )));
+    return threshold == 0.f ? 1.f : 1.f / (1.f + xexpf(16.f - 16.f * val / threshold));
 }
-
+#ifdef __SSE2__
+vfloat calcBlendFactor(vfloat valv, vfloat thresholdv) {
+    // sigmoid function
+    // result is in ]0;1] range
+    // inflexion point is at (x, y) (threshold, 0.5)
+    const vfloat onev = F2V(1.f);
+    const vfloat c16v = F2V(16.f);
+    vfloat resultv = onev / (onev + xexpf(c16v - c16v * valv / thresholdv));
+    return vself(vmaskf_eq(thresholdv, ZEROV), onev, resultv);
+}
+#endif
 }
 namespace rtengine
 {
@@ -105,7 +115,7 @@ void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, int W, i
     if (sharpenParam.deconvamount < 1) {
         return;
     }
-
+BENCHFUN
     float *tmpI[H] ALIGNED16;
 
     tmpI[0] = new float[W * H];
@@ -128,39 +138,63 @@ void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, int W, i
             tmpII[i][j] = luminance[i][j];
         }
     }
+
+    // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     const float contrastThreshold = sharpenParam.deconvdamping / 100.f;
-    const float contrastFactor = contrastThreshold == 0.f ? 0.f : 1.f / contrastThreshold;
-    float *LM = new float[W * H]; //allocation for Luminance
+    float *blend = new float[W * H]; //allocation for blend factor map
+
+    // upper border
+    for(int j = 0; j < 2; j++)
+        for(int i = 0, offset = j * W + i; i < W; i++, offset++) {
+            blend[offset] = 0.f;
+        }
 
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
 {
-
+#ifdef __SSE2__
+    vfloat contrastThresholdv = F2V(contrastThreshold);
+    vfloat scalev = F2V(0.0625f / 327.68f);
+#endif
 #ifdef _OPENMP
-    #pragma omp for schedule(dynamic,16)
+    #pragma omp for schedule(dynamic,16) nowait
 #endif
 
-    for(int j = 0; j < H; j++)
+    for(int j = 2; j < H - 2; j++) {
+        blend[j * W] = blend[j * W + 1] = 0.f;
+        int i = 2;
+        int offset = j * W + i;
+#ifdef __SSE2__
+        for(; i < W - 5; i += 4, offset += 4) {
+
+            vfloat contrastv = vsqrtf(SQRV(LVFU(luminance[j][i+1]) - LVFU(luminance[j][i-1])) + SQRV(LVFU(luminance[j+1][i]) - LVFU(luminance[j-1][i])) +
+                                      SQRV(LVFU(luminance[j][i+2]) - LVFU(luminance[j][i-2])) + SQRV(LVFU(luminance[j+2][i]) - LVFU(luminance[j-2][i]))) * scalev;
+
+            STVFU(blend[offset], calcBlendFactor(contrastv, contrastThresholdv));
+        }
+#endif
+        for(; i < W - 2; i++, offset++) {
+
+            float contrast = sqrtf(SQR(luminance[j][i+1] - luminance[j][i-1]) + SQR(luminance[j+1][i] - luminance[j-1][i]) + 
+                                   SQR(luminance[j][i+2] - luminance[j][i-2]) + SQR(luminance[j+2][i] - luminance[j-2][i])) * 0.0625f / 327.68f;
+
+            blend[offset] = calcBlendFactor(contrast, contrastThreshold);
+        }
+        blend[j * W + W - 2] = blend[j * W + W - 1] = 0.f;
+    }
+#ifdef _OPENMP
+    #pragma omp single
+#endif
+    {
+    // lower border
+    for(int j = H - 2; j < H; j++)
         for(int i = 0, offset = j * W + i; i < W; i++, offset++) {
-            LM[offset] = 0.f; // adjust to [0;100] and to RT variables
+            blend[offset] = 0.f;
         }
-
-#ifdef _OPENMP
-    #pragma omp for schedule(dynamic,16)
-#endif
-
-    for(int j = 2; j < H - 2; j++)
-        for(int i = 2, offset = j * W + i; i < W - 2; i++, offset++) {
-
-            float contrast;
-            contrast = sqrtf(SQR(luminance[j][i+1] / 327.68f - luminance[j][i-1] / 327.68f) + SQR(luminance[j+1][i] / 327.68f - luminance[j-1][i] / 327.68f)
-                                                       + SQR(luminance[j][i+1] / 327.68f - luminance[j][i-1] / 327.68f) + SQR(luminance[j+1][i] / 327.68f - luminance[j-1][i] / 327.68f)) * 0.0625f; //for 5x5
-
-            contrast = std::min(contrast, 1.f);
-            LM[offset] = 1.f - calcBlendFactor(contrast, contrastThreshold);
-        }
+    }
 }
+
     float damping = sharpenParam.deconvdamping / 5.0;
     bool needdamp = false; //sharpenParam.deconvdamping > 0;
     double sigma = sharpenParam.deconvradius / scale;
@@ -200,10 +234,10 @@ void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, int W, i
 
         for (int i = 0; i < H; i++)
             for (int j = 0, offset = i * W + j; j < W; j++, offset++) {
-                luminance[i][j] = intp(LM[offset], tmpII[i][j], luminance[i][j] * p1 + max(tmpI[i][j], 0.0f) * p2);
+                luminance[i][j] = intp(blend[offset], luminance[i][j] * p1 + max(tmpI[i][j], 0.0f) * p2, tmpII[i][j]);
             }
     } // end parallel
-    delete [] LM;
+    delete [] blend;
     delete [] tmpI[0];
     delete [] tmpII[0];
 
@@ -630,7 +664,6 @@ void ImProcFunctions::MLmicrocontrast(float** luminance, int W, int H)
 BENCHFUN
     const int k = params->sharpenMicro.matrix ? 1 : 2;
     const float contrastThreshold = params->sharpenMicro.contrast / 100;
-    const float contrastFactor = contrastThreshold == 0.f ? 0.f : 1.f / contrastThreshold;
     // k=2 matrix 5x5  k=1 matrix 3x3
     const int width = W, height = H;
     const float uniform = params->sharpenMicro.uniformity; //between 0 to 100
@@ -705,7 +738,7 @@ BENCHFUN
                                                        + SQR(LM[offset + 2] - LM[offset - 2]) + SQR(LM[offset + 2 * width] - LM[offset - 2 * width])) * 0.0625f; //for 5x5
 
             contrast = std::min(contrast, 1.f);
-            float blend = 1.f - calcBlendFactor(contrast, contrastThreshold);
+            float blend = calcBlendFactor(contrast, contrastThreshold);
 
             //matrix 5x5
             float temp = v + 4.f *( v * (s + sqrt2 * s)); //begin 3x3
@@ -804,7 +837,7 @@ BENCHFUN
                 } else {
                     temp = 0.f;
                 }
-                luminance[j][i] = intp(blend, luminance[j][i], luminance[j][i] * (temp * temp2 + 1.f));
+                luminance[j][i] = intp(blend, luminance[j][i] * (temp * temp2 + 1.f), luminance[j][i]);
             } else {
 
                 float temp4 = LM[offset] / tempL; //
@@ -855,7 +888,7 @@ BENCHFUN
                     } else {
                         temp = 0.f;
                     }
-                    luminance[j][i] = intp(blend, luminance[j][i], luminance[j][i] / (temp * temp4 + 1.f));
+                    luminance[j][i] = intp(blend, luminance[j][i] / (temp * temp4 + 1.f), luminance[j][i]);
                 }
             }
         }
