@@ -480,9 +480,9 @@ Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int
     const double eps = 0.000000001; // not divide by zero
 
     enum class ColorTemp {
-        D50 = 5003,  // for Widegamut, Prophoto Best, Beta -> D50
-        D65 = 6504,   // for sRGB, AdobeRGB, Bruce Rec2020  -> D65
-        D60 = 6005        //for ACESP0 and AcesP1
+        D50 = 5003, // for Widegamut, ProPhoto Best, Beta -> D50
+        D65 = 6504, // for sRGB, AdobeRGB, Bruce Rec2020  -> D65
+        D60 = 6005  // for ACES AP0 and AP1
 
     };
     ColorTemp temp = ColorTemp::D50;

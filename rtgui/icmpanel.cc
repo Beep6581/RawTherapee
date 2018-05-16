@@ -706,13 +706,13 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     oTRCPresets->set_active_text(pp->icm.outputGammaPreset);
 
 
-    if (pp->icm.outputPimariesPreset == "Acesp0") {
+    if (pp->icm.outputPimariesPreset == "ACES-AP0") {
         primaries->set_active(0);
-    } else if (pp->icm.outputPimariesPreset == "Acesp1") {
+    } else if (pp->icm.outputPimariesPreset == "ACES-AP1") {
         primaries->set_active(1);
     } else if (pp->icm.outputPimariesPreset == "Adobe") {
         primaries->set_active(2);
-    } else if (pp->icm.outputPimariesPreset == "Prophoto") {
+    } else if (pp->icm.outputPimariesPreset == "ProPhoto") {
         primaries->set_active(3);
     } else if (pp->icm.outputPimariesPreset == "Rec2020") {
         primaries->set_active(4);
@@ -949,13 +949,13 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     }
 
     if (primaries->get_active_row_number() == 0) {
-        pp->icm.outputPimariesPreset = "Acesp0";
+        pp->icm.outputPimariesPreset = "ACES-AP0";
     } else if (primaries->get_active_row_number() == 1) {
-        pp->icm.outputPimariesPreset = "Acesp1";
+        pp->icm.outputPimariesPreset = "ACES-AP1";
     } else if (primaries->get_active_row_number() == 2) {
         pp->icm.outputPimariesPreset = "Adobe";
     } else if (primaries->get_active_row_number() == 3) {
-        pp->icm.outputPimariesPreset = "Prophoto";
+        pp->icm.outputPimariesPreset = "ProPhoto";
     } else if (primaries->get_active_row_number() == 4) {
         pp->icm.outputPimariesPreset = "Rec2020";
     } else if (primaries->get_active_row_number() == 5) {

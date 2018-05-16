@@ -1318,9 +1318,8 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
 
     enum class ColorTemp {
         D50 = 5003,  // for Widegamut, Prophoto Best, Beta -> D50
-        D65 = 6504,   // for sRGB, AdobeRGB, Bruce Rec2020  -> D65
-        D60 = 6005        //for ACESP0 and AcesP1
-
+        D65 = 6504,  // for sRGB, AdobeRGB, Bruce Rec2020  -> D65
+        D60 = 6005   // for ACES AP0 and ACES AP1
     };
     ColorTemp temp = ColorTemp::D50;
 
@@ -1378,23 +1377,23 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
         p[4] = 0.1310;
         p[5] = 0.0460;
         temp = ColorTemp::D65;
-    } else if (icm.outputPimariesPreset == "Acesp0") {
-        p[0] = 0.7347;    // ACES P0 primaries
+    } else if (icm.outputPimariesPreset == "ACES-AP0") {
+        p[0] = 0.7347;    // ACES AP0 primaries
         p[1] = 0.2653;
         p[2] = 0.0000;
         p[3] = 1.0;
         p[4] = 0.0001;
         p[5] = -0.0770;
         temp = ColorTemp::D60;
-    } else if (icm.outputPimariesPreset == "Acesp1") {
-        p[0] = 0.713;    // ACES P1 primaries
+    } else if (icm.outputPimariesPreset == "ACES-AP1") {
+        p[0] = 0.713;    // ACES AP1 primaries
         p[1] = 0.293;
         p[2] = 0.165;
         p[3] = 0.830;
         p[4] = 0.128;
         p[5] = 0.044;
         temp = ColorTemp::D60;
-    } else if (icm.outputPimariesPreset == "Prophoto") {
+    } else if (icm.outputPimariesPreset == "ProPhoto") {
         p[0] = 0.7347;    //ProPhoto and default primaries
         p[1] = 0.2653;
         p[2] = 0.1596;
@@ -1524,21 +1523,21 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     } else if (icm.outputPimariesPreset == "sRGB"      && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.srgb10)     &&  pro) {
         outProfile = options.rtSettings.srgb10;
         outPr = "sRGB_";
-    } else if (icm.outputPimariesPreset == "Prophoto"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto10) &&  pro) {
+    } else if (icm.outputPimariesPreset == "ProPhoto"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto10) &&  pro) {
         outProfile = options.rtSettings.prophoto10;
         outPr = "Large_";
     } else if (icm.outputPimariesPreset == "Rec2020"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.rec2020)) {
         outProfile = options.rtSettings.rec2020;
         outPr = "Rec2020_";
-    } else if (icm.outputPimariesPreset == "Acesp0"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp0)) {
+    } else if (icm.outputPimariesPreset == "ACES-AP0"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp0)) {
         outProfile = options.rtSettings.ACESp0;
-        outPr = "Acesp0_";
-    } else if (icm.outputPimariesPreset == "Acesp1"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp1)) {
+        outPr = "ACES-AP0_";
+    } else if (icm.outputPimariesPreset == "ACES-AP1"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp1)) {
         outProfile = options.rtSettings.ACESp1;
-        outPr = "Acesp1_";
+        outPr = "ACES-AP1_";
     } else if (icm.outputPimariesPreset == "pfree") {
         outProfile = options.rtSettings.srgb;
-        printf("PFRRE\n");
+        printf("PFREE\n");
         outPr = "pfree_";
 
     } else {
@@ -1764,7 +1763,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             p[4] = 0.1310;
             p[5] = 0.0460;
             temp = ColorTemp::D65;
-        } else if (icm.outputPimariesPreset == "Acesp0") {
+        } else if (icm.outputPimariesPreset == "ACES-AP0") {
             p[0] = 0.7347;    // ACES P0 primaries
             p[1] = 0.2653;
             p[2] = 0.0000;
@@ -1772,7 +1771,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             p[4] = 0.0001;
             p[5] = -0.0770;
             temp = ColorTemp::D60;
-        } else if (icm.outputPimariesPreset == "Acesp1") {
+        } else if (icm.outputPimariesPreset == "ACES-AP1") {
             p[0] = 0.713;    // ACES P1 primaries
             p[1] = 0.293;
             p[2] = 0.165;
@@ -1780,8 +1779,8 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             p[4] = 0.128;
             p[5] = 0.044;
             temp = ColorTemp::D60;
-        } else if (icm.outputPimariesPreset == "Prophoto") {
-            p[0] = 0.7347;    //ProPhoto and default primaries
+        } else if (icm.outputPimariesPreset == "ProPhoto") {
+            p[0] = 0.7347;    // ProPhoto and default primaries
             p[1] = 0.2653;
             p[2] = 0.1596;
             p[3] = 0.8404;
