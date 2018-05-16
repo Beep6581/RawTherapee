@@ -1683,20 +1683,6 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             printf("Error: lab2rgbOut  /  cmsMLUsetWide failed for \"%s\" !\n", gammaGS.c_str());
         }
     cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
-    cmsMLU *copyright = cmsMLUalloc(NULL, 1);
-
-    cmsMLUsetASCII(copyright, "en", "US", "Copyright RawTherapee 2018, CC0");
-    cmsWriteTag(outputProfile, cmsSigCopyrightTag, copyright);
-    cmsMLUfree(copyright);
-
-    cmsWriteTag(outputProfile, cmsSigProfileDescriptionTag,  mlu);//desc changed
-	
-	cmsMLU *MfgDesc;
-	MfgDesc   = cmsMLUalloc(NULL, 1);
-	cmsMLUsetASCII(MfgDesc, "en", "US", "RawTherapee");
-	cmsWriteTag(outputProfile, cmsSigDeviceMfgDescTag, MfgDesc);
-	cmsMLUfree(MfgDesc);
-	
 	
 
     cmsMLUfree(description);
@@ -1877,6 +1863,16 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
         */
 
         cmsMLUfree(mlu);
+        cmsMLU *copyright = cmsMLUalloc(NULL, 1);
+        cmsMLUsetASCII(copyright, "en", "US", "Copyright RawTherapee 2018, CC0");
+        cmsWriteTag(outputProfile, cmsSigCopyrightTag, copyright);
+        cmsMLUfree(copyright);
+        cmsWriteTag(outputProfile, cmsSigProfileDescriptionTag,  mlu);//desc changed
+        cmsMLU *MfgDesc;
+        MfgDesc   = cmsMLUalloc(NULL, 1);
+        cmsMLUsetASCII(MfgDesc, "en", "US", "RawTherapee");
+        cmsWriteTag(outputProfile, cmsSigDeviceMfgDescTag, MfgDesc);
+        cmsMLUfree(MfgDesc);
 
         Glib::ustring realoutPro;
         realoutPro = options.cacheBaseDir + "/" + outPro;//ICC profile in cache
