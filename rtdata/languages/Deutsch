@@ -110,6 +110,7 @@ EXIFFILTER_CAMERA;Kamera
 EXIFFILTER_EXPOSURECOMPENSATION;Belichtungskorrektur (EV)
 EXIFFILTER_FILETYPE;Dateityp
 EXIFFILTER_FOCALLEN;Brennweite
+EXIFFILTER_IMAGETYPE;Bildtyp
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objektiv
 EXIFFILTER_METADATAFILTER;Metadatenfilter einschalten
@@ -1271,12 +1272,6 @@ QINFO_HDR;HDR / %2 Frame(s)
 QINFO_ISO;ISO
 QINFO_NOEXIF;Keine Exif-Daten vorhanden.
 QINFO_PIXELSHIFT;Pixel Shift / %2 Frame(s)
-SAMPLEFORMAT_0;Unbekanntes Format
-SAMPLEFORMAT_1;Ohne Vorzeichen 8 Bits
-SAMPLEFORMAT_2;Ohne Vorzeichen 16 Bits
-SAMPLEFORMAT_4;LogLuv 24 Bits
-SAMPLEFORMAT_8;LogLuv 32 Bits
-SAMPLEFORMAT_16;32 Bits Fließkomma
 SAVEDLG_AUTOSUFFIX;Suffix anfügen, wenn die Datei bereits existiert
 SAVEDLG_FILEFORMAT;Dateiformat
 SAVEDLG_FORCEFORMATOPTS;Erzwinge Speicheroptionen
@@ -1846,6 +1841,8 @@ TP_RAW_NONE;Keine
 TP_RAW_PIXELSHIFT;Pixel Shift
 TP_RAW_PIXELSHIFTADAPTIVE;Adaptive Erkennung
 TP_RAW_PIXELSHIFTBLUR;Unschärfebewegungsmaske
+TP_RAW_PIXELSHIFTEPERISO;Empfindlichkeit
+TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;Der Standardwert 0 wird für die Basis-ISO empfohlen.\nHöhere Werte erhöhen die Empfindlichkeit der Bewegungserkennung.\nVerändern Sie den Wert in kleinen Schritten und beobachten Sie die\nBewegungsmaske. Erhöhen Sie die Empfindlichkeit für unterbelichtete\noder High-ISO-Bilder.
 TP_RAW_PIXELSHIFTEQUALBRIGHT;Frame-Helligkeit angleichen
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Ausgleich pro Kanal
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;EIN: Individueller Ausgleich der RGB-Kanäle.\nAUS: Identischer Ausgleichsfaktor für alle Kanäle.
@@ -1881,6 +1878,7 @@ TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
 TP_RAW_PIXELSHIFTSHOWMOTION;Bewegungsmaske anzeigen
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Nur Maske anzeigen
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Zeigt die Bewegungsmaske ohne Bild.
+TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Überlagert das Bild mit einer grünen Maske,\num die Bewegungsbereiche hervorzuheben.
 TP_RAW_PIXELSHIFTSIGMA;Unschärferadius
 TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Der Standard-Radius von 1,0 passt in der Regel für die Basis-ISO.\nErhöhen Sie den Wert für High-ISO-Aufnahmen, 5,0 ist ein guter\nAusgangspunkt für High-ISO-Aufnahmen. Achten Sie auf die\nBewegungsmaske, während Sie den Wert ändern.
 TP_RAW_PIXELSHIFTSMOOTH;Weicher Übergang
@@ -2280,7 +2278,11 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-EXIFFILTER_IMAGETYPE;Bildtyp
-TP_RAW_PIXELSHIFTEPERISO;Empfindlichkeit
-TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;Der Standardwert 0 wird für die Basis-ISO empfohlen.\nHöhere Werte erhöhen die Empfindlichkeit der Bewegungserkennung.\nVerändern Sie den Wert in kleinen Schritten und beobachten Sie die\nBewegungsmaske. Erhöhen Sie die Empfindlichkeit für unterbelichtete\noder High-ISO-Bilder.
-TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Überlagert das Bild mit einer grünen Maske,\num die Bewegungsbereiche hervorzuheben.
+!SAMPLEFORMAT_0;Unknown data format
+!SAMPLEFORMAT_1;8-bit unsigned
+!SAMPLEFORMAT_2;16-bit unsigned
+!SAMPLEFORMAT_4;24-bit LogLuv
+!SAMPLEFORMAT_8;32-bit LogLuv
+!SAMPLEFORMAT_16;16-bit floating-point
+!SAMPLEFORMAT_32;24-bit floating-point
+!SAMPLEFORMAT_64;32-bit floating-point

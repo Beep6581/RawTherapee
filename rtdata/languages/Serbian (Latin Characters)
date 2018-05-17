@@ -1733,11 +1733,13 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !QINFO_HDR;HDR / %2 frame(s)
 !QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
 !SAMPLEFORMAT_0;Unknown data format
-!SAMPLEFORMAT_1;Unsigned 8 bits
-!SAMPLEFORMAT_2;Unsigned 16 bits
-!SAMPLEFORMAT_4;LogLuv 24 bits
-!SAMPLEFORMAT_8;LogLuv 32 bits
-!SAMPLEFORMAT_16;32 bits floating point
+!SAMPLEFORMAT_1;8-bit unsigned
+!SAMPLEFORMAT_2;16-bit unsigned
+!SAMPLEFORMAT_4;24-bit LogLuv
+!SAMPLEFORMAT_8;32-bit LogLuv
+!SAMPLEFORMAT_16;16-bit floating-point
+!SAMPLEFORMAT_32;24-bit floating-point
+!SAMPLEFORMAT_64;32-bit floating-point
 !SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
 !SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
 !THRESHOLDSELECTOR_BL;Bottom-left

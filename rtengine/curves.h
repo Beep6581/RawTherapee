@@ -75,8 +75,8 @@ inline void setLutVal(const LUTf &lut, float &rval, float &gval, float &bval)
 {
     if (!OOG(rval) || !OOG(gval) || !OOG(bval)) {
         rval = lut[std::max(rval, 0.f)];
-        gval = lut[std::max(rval, 0.f)];
-        bval = lut[std::max(rval, 0.f)];
+        gval = lut[std::max(gval, 0.f)];
+        bval = lut[std::max(bval, 0.f)];
     } else {
         setLutVal(lut, rval);
         setLutVal(lut, gval);

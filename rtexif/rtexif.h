@@ -281,15 +281,15 @@ public:
     }
 
     // read/write value
-    int     toInt         (int ofs = 0, TagType astype = INVALID) const;
-    void    fromInt       (int v);
-    double  toDouble      (int ofs = 0) const;
-    double* toDoubleArray (int ofs = 0) const;
-    void    toRational    (int& num, int& denom, int ofs = 0) const;
-    void    toString      (char* buffer, int ofs = 0) const;
-    void    fromString    (const char* v, int size = -1);
-    void    setInt        (int v, int ofs = 0, TagType astype = LONG);
-
+    int     toInt           (int ofs = 0, TagType astype = INVALID) const;
+    void    fromInt         (int v);
+    double  toDouble        (int ofs = 0) const;
+    double* toDoubleArray   (int ofs = 0) const;
+    void    toRational      (int& num, int& denom, int ofs = 0) const;
+    void    toString        (char* buffer, int ofs = 0) const;
+    void    fromString      (const char* v, int size = -1);
+    void    setInt          (int v, int ofs = 0, TagType astype = LONG);
+    int     getDistanceFrom (const TagDirectory *root);
 
     // additional getter/setter for more comfortable use
     std::string valueToString         ();

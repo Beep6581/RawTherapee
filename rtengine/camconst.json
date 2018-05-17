@@ -1938,6 +1938,15 @@ Camera constants:
         }
     },
 
+    { // Quality X, no white-frames nor black-frames yet, see #4550
+        "make_model": [ "Panasonic DC-GX9" ],
+        "dcraw_matrix": [ 7564,-2263,-606,-3148,11239,2177,-540,1435,4853 ], // ColorMatrix2 from Adobe DNG Converter 10.3
+        "ranges": {
+            "black": 16,
+            "white": 4080
+        }
+    },
+
     { // Quality B, Same as Panasonic G7
         "make_model": [ "Panasonic DMC-G8", "Panasonic DMC-G80", "Panasonic DMC-G81", "Panasonic DMC-G85" ],
         "dcraw_matrix": [ 7610,-2780,-576,-4614,12195,2733,-1375,2393,6490 ], // DNG_v9.7 D65
