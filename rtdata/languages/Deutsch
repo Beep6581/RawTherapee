@@ -55,6 +55,7 @@
 #54 30.03.2018 Erweiterung (TooWaBoo) RT 5.4
 #55 06.04.2018 Erweiterung (TooWaBoo) RT 5.4
 #56 27.04.2018 Erweiterung (TooWaBoo) RT 5.4
+#57 17.05.2018 Erweiterung (TooWaBoo) RT 5.4
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -2278,11 +2279,11 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!SAMPLEFORMAT_0;Unknown data format
-!SAMPLEFORMAT_1;8-bit unsigned
-!SAMPLEFORMAT_2;16-bit unsigned
-!SAMPLEFORMAT_4;24-bit LogLuv
-!SAMPLEFORMAT_8;32-bit LogLuv
-!SAMPLEFORMAT_16;16-bit floating-point
-!SAMPLEFORMAT_32;24-bit floating-point
-!SAMPLEFORMAT_64;32-bit floating-point
+SAMPLEFORMAT_0;Unbekanntes Datenformat
+SAMPLEFORMAT_1;8 Bit ohne Vorzeichen
+SAMPLEFORMAT_2;16 Bit ohne Vorzeichen
+SAMPLEFORMAT_4;24 Bit LogLuv
+SAMPLEFORMAT_8;32 Bit LogLuv
+SAMPLEFORMAT_16;16 Bit Gleitkomma
+SAMPLEFORMAT_32;24 Bit Gleitkomma
+SAMPLEFORMAT_64;32 Bit Gleitkomma
