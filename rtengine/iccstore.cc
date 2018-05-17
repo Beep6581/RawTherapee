@@ -1883,9 +1883,9 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
 
         }
 
-        if (GammaTRC) {
+    //    if (GammaTRC) {
             cmsFreeToneCurve(GammaTRC[0]);
-        }
+    //    }
     }
 
     return outputProfile;
