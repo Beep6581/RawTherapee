@@ -327,7 +327,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     labgridReset->add (*Gtk::manage(new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
     setExpandAlignProperties(labgridReset, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
     labgridReset->set_relief(Gtk::RELIEF_NONE);
-    labgridReset->set_tooltip_text(M("ADJUSTER_RESET_TO_DEFAULT"));
+    labgridReset->set_tooltip_markup(M("ADJUSTER_RESET_TO_DEFAULT"));
     labgridReset->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
     labgridReset->set_can_focus(false);
     labgridReset->set_size_request(-1, 20);
@@ -373,7 +373,7 @@ void ColorToning::neutralCurves_pressed () {
     enableListener();
 
     if (listener && enabled->get_active() && changed)
-        listener->panelChanged (EvColorToningNeutralcur, M("ADJUSTER_RESET_TO_DEFAULT"));
+        listener->panelChanged (EvColorToningNeutralcur, M("GENERAL_RESET"));
 }
 */
 
@@ -395,7 +395,7 @@ void ColorToning::neutral_pressed ()
     enableListener();
 
     if (listener && getEnabled()) {
-        listener->panelChanged (EvColorToningNeutral, M("ADJUSTER_RESET_TO_DEFAULT"));
+        listener->panelChanged (EvColorToningNeutral, M("GENERAL_RESET"));
     }
 }
 

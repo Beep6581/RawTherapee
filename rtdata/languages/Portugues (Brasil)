@@ -5,7 +5,6 @@ ABOUT_TAB_CREDITS;Créditos
 ABOUT_TAB_LICENSE;Licença
 ABOUT_TAB_RELEASENOTES;Nota de Lançamento
 ABOUT_TAB_SPLASH;Splash
-ADJUSTER_RESET_TO_DEFAULT;Restaurar ao padrão
 BATCHQUEUE_AUTOSTART;Início automático
 BATCHQUEUE_AUTOSTARTHINT;Começa a processar automaticamente um novo trabalho.
 BATCHQUEUE_DESTFILENAME;Caminho e nome do arquivo
@@ -479,9 +478,7 @@ HISTORY_MSG_231;P&amp;B - Curva 'anterior'
 HISTORY_MSG_232;P&amp;B - Tipo de curva 'anterior'
 HISTORY_MSG_233;P&amp;B - Curva 'posterior'
 HISTORY_MSG_234;P&amp;B - Tipo de curva 'posterior'
-HISTORY_MSG_235;P&amp;B - Misturador de canal automático
 HISTORY_MSG_236;--sem uso--
-HISTORY_MSG_237;P&amp;B - Misturador
 HISTORY_MSG_238;GF - Pena
 HISTORY_MSG_239;GF - Robustez
 HISTORY_MSG_240;GF - Centro
@@ -517,7 +514,6 @@ HISTORY_MSG_269;CT - Alto - Vermelho
 HISTORY_MSG_270;CT - Alto - Verde
 HISTORY_MSG_271;CT - Alto - Azul
 HISTORY_MSG_272;CT - Balanço
-HISTORY_MSG_273;CT - Restaurar
 HISTORY_MSG_274;CT - Sat. Sombras
 HISTORY_MSG_275;CT - Sat. Realces
 HISTORY_MSG_276;CT - Opacidade
@@ -636,7 +632,6 @@ HISTORY_MSG_388;W - Residual - CB verde médio
 HISTORY_MSG_389;W - Residual - CB azul médio
 HISTORY_MSG_390;W - Residual - CB verde baixo
 HISTORY_MSG_391;W - Residual - CB azul baixo
-HISTORY_MSG_392;W - Residual - CB Restaurar
 HISTORY_MSG_393;DCP - Mesa de Olhar
 HISTORY_MSG_394;DCP - Exposição linha de base
 HISTORY_MSG_395;DCP - Mesa base
@@ -1229,6 +1224,12 @@ SAVEDLG_TIFFUNCOMPRESSED;TIFF não comprimido
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
+!GENERAL_RESET;Reset
+!HISTORY_MSG_235;B&amp;W - CM - Auto
+!HISTORY_MSG_237;B&amp;W - CM
+!HISTORY_MSG_273;CT - Color Balance SMH
+!HISTORY_MSG_392;W - Residual - Color Balance
 !SAMPLEFORMAT_0;Unknown data format
 !SAMPLEFORMAT_1;8-bit unsigned
 !SAMPLEFORMAT_2;16-bit unsigned
@@ -1258,7 +1259,6 @@ SAVEDLG_TIFFUNCOMPRESSED;TIFF não comprimido
 !TP_BWMIX_ALGO_SP;Special effects
 !TP_BWMIX_ALGO_TOOLTIP;Linear: will produce a normal <b>linear</b> response.\nSpecial effects: will produce special effects by mixing channels <b>non-linearly</b>.
 !TP_BWMIX_AUTOCH;Auto
-!TP_BWMIX_AUTOCH_TIP;Calculate values optimizing Channel Mixer.
 !TP_BWMIX_CC_ENABLED;Adjust complementary color
 !TP_BWMIX_CC_TOOLTIP;Enable to allow automatic adjustment of complementary colors in ROYGCBPM mode.
 !TP_BWMIX_CHANNEL;Luminance equalizer
@@ -1285,9 +1285,8 @@ SAVEDLG_TIFFUNCOMPRESSED;TIFF não comprimido
 !TP_BWMIX_MET_CHANMIX;Channel Mixer
 !TP_BWMIX_MET_DESAT;Desaturation
 !TP_BWMIX_MET_LUMEQUAL;Luminance Equalizer
-!TP_BWMIX_MIXC;Mixer
-!TP_BWMIX_NEUTRAL;Reset mixer
-!TP_BWMIX_NEUTRAL_TIP;Reset all values (Color Filter, Channel Mixer) to default.
+!TP_BWMIX_MIXC;Channel Mixer
+!TP_BWMIX_NEUTRAL;Reset
 !TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Total: %4%%
 !TP_BWMIX_RGBLABEL_HINT;Final RGB factors that take care of all the mixer options.\n"Total" displays the sum of the RGB values:\n- always 100% in relative mode\n- higher (lighter) or lower (darker) than 100% in absolute mode.
 !TP_BWMIX_RGB_TOOLTIP;Mix the RGB channels. Use presets for guidance.\nPay attention to negative values that may cause artifacts or erratic behavior.
