@@ -56,6 +56,7 @@
 #55 06.04.2018 Erweiterung (TooWaBoo) RT 5.4
 #56 27.04.2018 Erweiterung (TooWaBoo) RT 5.4
 #57 17.05.2018 Erweiterung (TooWaBoo) RT 5.4
+#58 18.05.2018 Erweiterung (TooWaBoo) RT 5.4
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -2287,4 +2288,4 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!GENERAL_RESET;Reset
+GENERAL_RESET;Zurücksetzen
