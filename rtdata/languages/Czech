@@ -2242,5 +2242,6 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!GENERAL_RESET;Reset
 !SAMPLEFORMAT_32;24-bit floating-point
 !SAMPLEFORMAT_64;32-bit floating-point

@@ -1357,6 +1357,7 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !GENERAL_APPLY;Apply
 !GENERAL_ASIMAGE;As Image
 !GENERAL_OPEN;Open
+!GENERAL_RESET;Reset
 !GENERAL_SLIDER;Slider
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
 !HISTORY_MSG_166;Exposure - Reset
@@ -1379,7 +1380,7 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !HISTORY_MSG_270;CT - High - Green
 !HISTORY_MSG_271;CT - High - Blue
 !HISTORY_MSG_272;CT - Balance
-!HISTORY_MSG_273;CT - Reset
+!HISTORY_MSG_273;CT - Color Balance SMH
 !HISTORY_MSG_274;CT - Sat. Shadows
 !HISTORY_MSG_275;CT - Sat. Highlights
 !HISTORY_MSG_276;CT - Opacity
@@ -1498,7 +1499,7 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !HISTORY_MSG_389;W - Residual - CB blue mid
 !HISTORY_MSG_390;W - Residual - CB green low
 !HISTORY_MSG_391;W - Residual - CB blue low
-!HISTORY_MSG_392;W - Residual - CB Reset
+!HISTORY_MSG_392;W - Residual - Color Balance
 !HISTORY_MSG_393;DCP - Look table
 !HISTORY_MSG_394;DCP - Baseline exposure
 !HISTORY_MSG_395;DCP - Base table

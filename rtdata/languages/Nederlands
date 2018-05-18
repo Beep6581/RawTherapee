@@ -2118,6 +2118,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !DONT_SHOW_AGAIN;Don't show this message again.
 !EXIFFILTER_IMAGETYPE;Image type
 !EXIFPANEL_SHOWALL;Show all
+!GENERAL_RESET;Reset
 !GENERAL_SLIDER;Slider
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
 !HISTORY_MSG_173;NR - Detail recovery

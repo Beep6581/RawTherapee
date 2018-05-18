@@ -2213,6 +2213,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !EXIFFILTER_IMAGETYPE;Image type
+!GENERAL_RESET;Reset
 !HISTORY_MSG_CLAMPOOG;Out-of-gamut color clipping
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter

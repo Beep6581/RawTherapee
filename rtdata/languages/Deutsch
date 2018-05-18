@@ -1273,6 +1273,14 @@ QINFO_HDR;HDR / %2 Frame(s)
 QINFO_ISO;ISO
 QINFO_NOEXIF;Keine Exif-Daten vorhanden.
 QINFO_PIXELSHIFT;Pixel Shift / %2 Frame(s)
+SAMPLEFORMAT_0;Unbekanntes Datenformat
+SAMPLEFORMAT_1;8 Bit ohne Vorzeichen
+SAMPLEFORMAT_2;16 Bit ohne Vorzeichen
+SAMPLEFORMAT_4;24 Bit LogLuv
+SAMPLEFORMAT_8;32 Bit LogLuv
+SAMPLEFORMAT_16;16 Bit Gleitkomma
+SAMPLEFORMAT_32;24 Bit Gleitkomma
+SAMPLEFORMAT_64;32 Bit Gleitkomma
 SAVEDLG_AUTOSUFFIX;Suffix anfügen, wenn die Datei bereits existiert
 SAVEDLG_FILEFORMAT;Dateiformat
 SAVEDLG_FORCEFORMATOPTS;Erzwinge Speicheroptionen
@@ -2279,11 +2287,4 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-SAMPLEFORMAT_0;Unbekanntes Datenformat
-SAMPLEFORMAT_1;8 Bit ohne Vorzeichen
-SAMPLEFORMAT_2;16 Bit ohne Vorzeichen
-SAMPLEFORMAT_4;24 Bit LogLuv
-SAMPLEFORMAT_8;32 Bit LogLuv
-SAMPLEFORMAT_16;16 Bit Gleitkomma
-SAMPLEFORMAT_32;24 Bit Gleitkomma
-SAMPLEFORMAT_64;32 Bit Gleitkomma
+!GENERAL_RESET;Reset

@@ -573,6 +573,7 @@ TP_WBALANCE_TEMPERATURE;Temperatūra
 !GENERAL_FILE;File
 !GENERAL_NONE;None
 !GENERAL_OPEN;Open
+!GENERAL_RESET;Reset
 !GENERAL_SLIDER;Slider
 !GENERAL_UNCHANGED;(Unchanged)
 !GENERAL_WARNING;Warning
@@ -733,9 +734,9 @@ TP_WBALANCE_TEMPERATURE;Temperatūra
 !HISTORY_MSG_232;B&amp;W - 'Before' curve type
 !HISTORY_MSG_233;B&amp;W - 'After' curve
 !HISTORY_MSG_234;B&amp;W - 'After' curve type
-!HISTORY_MSG_235;B&amp;W - Auto channel mixer
+!HISTORY_MSG_235;B&amp;W - CM - Auto
 !HISTORY_MSG_236;--unused--
-!HISTORY_MSG_237;B&amp;W - Mixer
+!HISTORY_MSG_237;B&amp;W - CM
 !HISTORY_MSG_238;GF - Feather
 !HISTORY_MSG_239;GF - Strength
 !HISTORY_MSG_240;GF - Center
@@ -771,7 +772,7 @@ TP_WBALANCE_TEMPERATURE;Temperatūra
 !HISTORY_MSG_270;CT - High - Green
 !HISTORY_MSG_271;CT - High - Blue
 !HISTORY_MSG_272;CT - Balance
-!HISTORY_MSG_273;CT - Reset
+!HISTORY_MSG_273;CT - Color Balance SMH
 !HISTORY_MSG_274;CT - Sat. Shadows
 !HISTORY_MSG_275;CT - Sat. Highlights
 !HISTORY_MSG_276;CT - Opacity
@@ -890,7 +891,7 @@ TP_WBALANCE_TEMPERATURE;Temperatūra
 !HISTORY_MSG_389;W - Residual - CB blue mid
 !HISTORY_MSG_390;W - Residual - CB green low
 !HISTORY_MSG_391;W - Residual - CB blue low
-!HISTORY_MSG_392;W - Residual - CB Reset
+!HISTORY_MSG_392;W - Residual - Color Balance
 !HISTORY_MSG_393;DCP - Look table
 !HISTORY_MSG_394;DCP - Baseline exposure
 !HISTORY_MSG_395;DCP - Base table
@@ -1354,7 +1355,6 @@ TP_WBALANCE_TEMPERATURE;Temperatūra
 !TP_BWMIX_ALGO_SP;Special effects
 !TP_BWMIX_ALGO_TOOLTIP;Linear: will produce a normal <b>linear</b> response.\nSpecial effects: will produce special effects by mixing channels <b>non-linearly</b>.
 !TP_BWMIX_AUTOCH;Auto
-!TP_BWMIX_AUTOCH_TIP;Calculate values optimizing Channel Mixer.
 !TP_BWMIX_CC_ENABLED;Adjust complementary color
 !TP_BWMIX_CC_TOOLTIP;Enable to allow automatic adjustment of complementary colors in ROYGCBPM mode.
 !TP_BWMIX_CHANNEL;Luminance equalizer
@@ -1381,9 +1381,8 @@ TP_WBALANCE_TEMPERATURE;Temperatūra
 !TP_BWMIX_MET_CHANMIX;Channel Mixer
 !TP_BWMIX_MET_DESAT;Desaturation
 !TP_BWMIX_MET_LUMEQUAL;Luminance Equalizer
-!TP_BWMIX_MIXC;Mixer
-!TP_BWMIX_NEUTRAL;Reset mixer
-!TP_BWMIX_NEUTRAL_TIP;Reset all values (Color Filter, Channel Mixer) to default.
+!TP_BWMIX_MIXC;Channel Mixer
+!TP_BWMIX_NEUTRAL;Reset
 !TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Total: %4%%
 !TP_BWMIX_RGBLABEL_HINT;Final RGB factors that take care of all the mixer options.\n"Total" displays the sum of the RGB values:\n- always 100% in relative mode\n- higher (lighter) or lower (darker) than 100% in absolute mode.
 !TP_BWMIX_RGB_TOOLTIP;Mix the RGB channels. Use presets for guidance.\nPay attention to negative values that may cause artifacts or erratic behavior.
