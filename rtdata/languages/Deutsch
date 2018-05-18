@@ -2274,3 +2274,15 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
+!GENERAL_RESET;Reset
+!HISTORY_MSG_235;B&amp;W - CM - Auto
+!HISTORY_MSG_237;B&amp;W - CM
+!HISTORY_MSG_273;CT - Color Balance SMH
+!HISTORY_MSG_392;W - Residual - Color Balance
+!TP_BWMIX_MIXC;Channel Mixer
+!TP_BWMIX_NEUTRAL;Reset

@@ -2105,16 +2105,22 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
 !BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !DONT_SHOW_AGAIN;Don't show this message again.
 !EXIFFILTER_IMAGETYPE;Image type
 !EXIFPANEL_SHOWALL;Show all
+!GENERAL_RESET;Reset
 !GENERAL_SLIDER;Slider
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
 !HISTORY_MSG_173;NR - Detail recovery
 !HISTORY_MSG_203;NR - Color space
+!HISTORY_MSG_235;B&amp;W - CM - Auto
+!HISTORY_MSG_237;B&amp;W - CM
 !HISTORY_MSG_256;NR - Median - Type
+!HISTORY_MSG_273;CT - Color Balance SMH
 !HISTORY_MSG_297;NR - Mode
+!HISTORY_MSG_392;W - Residual - Color Balance
 !HISTORY_MSG_441;Retinex - Gain transmission
 !HISTORY_MSG_475;PS - Equalize channel
 !HISTORY_MSG_476;CAM02 - Temp out
@@ -2195,6 +2201,8 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !SAMPLEFORMAT_64;32-bit floating-point
 !SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
 !SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
+!TP_BWMIX_MIXC;Channel Mixer
+!TP_BWMIX_NEUTRAL;Reset
 !TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 !TP_COLORAPP_NEUTRAL;Reset
 !TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values

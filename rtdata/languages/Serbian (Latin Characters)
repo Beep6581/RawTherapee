@@ -1270,6 +1270,7 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
 !BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !CURVEEDITOR_AXIS_IN;I:
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
@@ -1323,10 +1324,13 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !GENERAL_APPLY;Apply
 !GENERAL_ASIMAGE;As Image
 !GENERAL_OPEN;Open
+!GENERAL_RESET;Reset
 !GENERAL_SLIDER;Slider
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
 !HISTORY_MSG_173;NR - Detail recovery
 !HISTORY_MSG_203;NR - Color space
+!HISTORY_MSG_235;B&amp;W - CM - Auto
+!HISTORY_MSG_237;B&amp;W - CM
 !HISTORY_MSG_252;CbDL - Skin tar/prot
 !HISTORY_MSG_253;CbDL - Reduce artifacts
 !HISTORY_MSG_254;CbDL - Skin hue
@@ -1348,6 +1352,7 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !HISTORY_MSG_270;CT - High - Green
 !HISTORY_MSG_271;CT - High - Blue
 !HISTORY_MSG_272;CT - Balance
+!HISTORY_MSG_273;CT - Color Balance SMH
 !HISTORY_MSG_274;CT - Sat. Shadows
 !HISTORY_MSG_275;CT - Sat. Highlights
 !HISTORY_MSG_276;CT - Opacity
@@ -1466,6 +1471,7 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !HISTORY_MSG_389;W - Residual - CB blue mid
 !HISTORY_MSG_390;W - Residual - CB green low
 !HISTORY_MSG_391;W - Residual - CB blue low
+!HISTORY_MSG_392;W - Residual - Color Balance
 !HISTORY_MSG_393;DCP - Look table
 !HISTORY_MSG_394;DCP - Baseline exposure
 !HISTORY_MSG_395;DCP - Base table
@@ -1739,6 +1745,8 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !TP_BWMIX_FILTER_YELLOW;Yellow
 !TP_BWMIX_GAMMA;Gamma Correction
 !TP_BWMIX_GAM_TOOLTIP;Correct gamma for each RGB channel.
+!TP_BWMIX_MIXC;Channel Mixer
+!TP_BWMIX_NEUTRAL;Reset
 !TP_CBDL_AFT;After Black-and-White
 !TP_CBDL_BEF;Before Black-and-White
 !TP_CBDL_METHOD;Process located
