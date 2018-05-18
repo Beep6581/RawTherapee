@@ -30,8 +30,7 @@ Glib::ustring getPaddedName(const Glib::ustring& name)
 {
     enum class State {
         OTHER,
-        NUMBER,
-        FRACTION
+        NUMBER
     };
 
     constexpr unsigned int pad_width = 16;
@@ -56,13 +55,8 @@ Glib::ustring getPaddedName(const Glib::ustring& name)
                     case '8':
                     case '9': {
                         number += c;
-                        state = State::NUMBER;
-                        break;
-                    }
 
-                    case '.': {
-                        res += c;
-                        state = State::FRACTION;
+                        state = State::NUMBER;
                         break;
                     }
 
@@ -98,43 +92,7 @@ Glib::ustring getPaddedName(const Glib::ustring& name)
                         res += c;
                         number.clear();
 
-                        state =
-                            c == '.'
-                                ? State::FRACTION
-                                : State::OTHER;
-                        break;
-                    }
-                }
-                break;
-            }
-
-            case State::FRACTION: {
-                switch (c) {
-                    case '0':
-                    case '1':
-                    case '2':
-                    case '3':
-                    case '4':
-                    case '5':
-                    case '6':
-                    case '7':
-                    case '8':
-                    case '9': {
-                        number += c;
-                        break;
-                    }
-
-                    default: {
-                        res += number;
-                        if (!number.empty() && number.size() < pad_width) {
-                            res.append(pad_width - number.size(), '0');
-                        }
-                        res += c;
-                        number.clear();
-
-                        if (c != '.') {
-                            state = State::OTHER;
-                        }
+                        state = State::OTHER;
                         break;
                     }
                 }
@@ -153,14 +111,6 @@ Glib::ustring getPaddedName(const Glib::ustring& name)
                 res.append(pad_width - number.size(), '0');
             }
             res += number;
-            break;
-        }
-
-        case State::FRACTION: {
-            res += number;
-            if (!number.empty() && number.size() < pad_width) {
-                res.append(pad_width - number.size(), '0');
-            }
             break;
         }
     }
