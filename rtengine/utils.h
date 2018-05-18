@@ -55,3 +55,8 @@ bool hasPngExtension(const Glib::ustring& filename);
 void swab(const void* from, void* to, ssize_t n);
 
 }
+
+#if __SIZEOF_WCHAR_T__ == 4
+Glib::ustring utf32_to_utf8(wchar_t* UTF32Buffer, size_t sizeOfUTF32Buffer);
+#endif
+

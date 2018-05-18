@@ -1683,7 +1683,6 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
             printf("Error: lab2rgbOut  /  cmsMLUsetWide failed for \"%s\" !\n", gammaGS.c_str());
         }
         cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
-	
 
         cmsMLUfree(description);
 

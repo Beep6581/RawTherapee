@@ -313,71 +313,78 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
         lcmsMutex->unlock();
     } else {
         oprof = ICCStore::getInstance()->getProfile(icm.outputProfile);
-		Glib::ustring outtest = icm.outputProfile;
+        Glib::ustring outtest = icm.outputProfile;
         std::string fileis_RTv2 = outtest.substr(0, 4);
-		//printf("IsRTv2=%s\n", fileis_RTv2.c_str());
-		if(fileis_RTv2 == "RTv2") {//Only fot ICC v2 : read tag from desc to retrieve gamma and slope save before in generate ICC v2
-		//due to bug in LCMS in CmsToneCurve
-		//printf("icmout=%s \n",icm.output.c_str());
-			GammaValues g_b; //gamma parameters
-			GammaValues gb; //gamma parameters
-			const double eps = 0.000000001; // not divide by zero
-			double gammatag = 2.4;
-			double slopetag = 12.92;
-			cmsMLU *modelDescMLU = (cmsMLU*) (cmsReadTag(oprof, cmsSigDeviceModelDescTag));
-			if (modelDescMLU) {
-				cmsUInt32Number count = cmsMLUgetWide(modelDescMLU, "eng", "USA", nullptr, 0);  // get buffer length first
-				if (count) {
-					wchar_t *buffer = new wchar_t[count];
-					count = cmsMLUgetWide(modelDescMLU, "eng", "USA", buffer, count); // now put the string in the buffer
-					char* cModelDesc = g_utf16_to_utf8((unsigned short int*)buffer, -1, nullptr, nullptr, nullptr); // convert to utf-8 in a buffer allocated by glib
-					delete [] buffer;
-					if (cModelDesc) {
-						Glib::ustring modelDesc(cModelDesc);
-						g_free(cModelDesc);
-					//    printf("dmdd=%s\n", modelDesc.c_str());
-					
-						std::size_t pos = modelDesc.find("g");
-						std::size_t posmid = modelDesc.find("s");
-						std::size_t posend = modelDesc.find("!"); 
-						std::string strgamma = modelDesc.substr(pos + 1, (posmid - pos));
-						gammatag = std::stod(strgamma.c_str());
-						std::string strslope = modelDesc.substr(posmid + 1, (posend - posmid));
-						slopetag = std::stod(strslope.c_str());
-					//	printf("gam=%f slo=%f\n", gammatag, slopetag);
-					}
-				} else {
-					printf("Error: lab2rgbOut  /  String length is null!\n");
-				}
-			} else {
-				printf("Error: lab2rgbOut  /  cmsReadTag/cmsSigDeviceModelDescTag failed!\n");
-			}
+        //printf("IsRTv2=%s\n", fileis_RTv2.c_str());
+        if(fileis_RTv2 == "RTv2") {//Only fot ICC v2 : read tag from desc to retrieve gamma and slope save before in generate ICC v2
+        //due to bug in LCMS in CmsToneCurve
+        //printf("icmout=%s \n",icm.output.c_str());
+            GammaValues g_b; //gamma parameters
+            GammaValues gb; //gamma parameters
+            const double eps = 0.000000001; // not divide by zero
+            double gammatag = 2.4;
+            double slopetag = 12.92;
+            cmsMLU *modelDescMLU = (cmsMLU*) (cmsReadTag(oprof, cmsSigDeviceModelDescTag));
+            if (modelDescMLU) {
+                cmsUInt32Number count = cmsMLUgetWide(modelDescMLU, "eng", "USA", nullptr, 0);  // get buffer length first
+                if (count) {
+                    wchar_t *buffer = new wchar_t[count];
+                    count = cmsMLUgetWide(modelDescMLU, "eng", "USA", buffer, count); // now put the string in the buffer
+                    Glib::ustring modelDesc;
+#if __SIZEOF_WCHAR_T__ == 2
+                    char* cModelDesc = g_utf16_to_utf8((unsigned short int*)buffer, -1, nullptr, nullptr, nullptr); // convert to utf-8 in a buffer allocated by glib
+                    if (cModelDesc) {
+                        modelDesc.assign(cModelDesc);
+                        g_free(cModelDesc);
+                    }
+#else
+                    modelDesc = utf32_to_utf8(buffer, count);
+#endif
+                    delete [] buffer;
+                    if (!modelDesc.empty()) {
+                        printf("dmdd=%s\n", modelDesc.c_str());
 
-			double pwr = 1.0 / gammatag;
-			double ts = slopetag;
-			double slope = slopetag == 0 ? eps : slopetag;
+                        std::size_t pos = modelDesc.find("g");
+                        std::size_t posmid = modelDesc.find("s");
+                        std::size_t posend = modelDesc.find("!");
+                        std::string strgamma = modelDesc.substr(pos + 1, (posmid - pos));
+                        gammatag = std::stod(strgamma.c_str());
+                        std::string strslope = modelDesc.substr(posmid + 1, (posend - posmid));
+                        slopetag = std::stod(strslope.c_str());
+                    //	printf("gam=%f slo=%f\n", gammatag, slopetag);
+                    }
+                } else {
+                    printf("Error: lab2rgbOut  /  String length is null!\n");
+                }
+            } else {
+                printf("Error: lab2rgbOut  /  cmsReadTag/cmsSigDeviceModelDescTag failed!\n");
+            }
 
-			int mode = 0;
-			Color::calcGamma(pwr, ts, mode, g_b); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
-			gb[4] = g_b[3] * ts;
-			gb[0] = gammatag;
-			gb[1] = 1. / (1.0 + g_b[4]);
-			gb[2] = g_b[4] / (1.0 + g_b[4]);
-			gb[3] = 1. / slope;
-			gb[5] = 0.0;
-			gb[6] = 0.0;
+            double pwr = 1.0 / gammatag;
+            double ts = slopetag;
+            double slope = slopetag == 0 ? eps : slopetag;
+
+            int mode = 0;
+            Color::calcGamma(pwr, ts, mode, g_b); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
+            gb[4] = g_b[3] * ts;
+            gb[0] = gammatag;
+            gb[1] = 1. / (1.0 + g_b[4]);
+            gb[2] = g_b[4] / (1.0 + g_b[4]);
+            gb[3] = 1. / slope;
+            gb[5] = 0.0;
+            gb[6] = 0.0;
      
-			cmsToneCurve* GammaTRC[3];	
-			cmsFloat64Number Parameters[7] = { gb[0],  gb[1], gb[2], gb[3], gb[4], gb[5], gb[6] } ;
-		
-			GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, Parameters); //5 = smoother than 4
-			cmsWriteTag(oprof, cmsSigRedTRCTag, GammaTRC[0]);
-			cmsWriteTag(oprof, cmsSigGreenTRCTag, GammaTRC[1]);
-			cmsWriteTag(oprof, cmsSigBlueTRCTag, GammaTRC[2]);
-			cmsFreeToneCurve(GammaTRC[0]);
-		}  
-		
-		
+            cmsToneCurve* GammaTRC[3];
+            cmsFloat64Number Parameters[7] = { gb[0],  gb[1], gb[2], gb[3], gb[4], gb[5], gb[6] } ;
+
+            GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, Parameters); //5 = smoother than 4
+            cmsWriteTag(oprof, cmsSigRedTRCTag, GammaTRC[0]);
+            cmsWriteTag(oprof, cmsSigGreenTRCTag, GammaTRC[1]);
+            cmsWriteTag(oprof, cmsSigBlueTRCTag, GammaTRC[2]);
+            cmsFreeToneCurve(GammaTRC[0]);
+        }
+
+
     }
 
     if (oprof) {
@@ -569,14 +576,12 @@ Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int
             p[4] = 0.0366;
             p[5] = 0.0001;
         } else {
-            
             p[0] = 0.7347;    //default primaries always unused
             p[1] = 0.2653;
             p[2] = 0.1596;
             p[3] = 0.8404;
             p[4] = 0.0366;
             p[5] = 0.0001;
-            
         }
 
         if (slpos == 0) {
@@ -593,7 +598,7 @@ Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int
         ga2 = g_a[4] / (1.0 + g_a[4]);
         ga3 = 1. / slpos;
         ga5 = 0.0;
-		ga6 = 0.0;
+        ga6 = 0.0;
        // printf("ga0=%f ga1=%f ga2=%f ga3=%f ga4=%f\n", ga0, ga1, ga2, ga3, ga4);
 
         cmsCIExyY       xyD;
@@ -627,23 +632,20 @@ Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int
             float* rr = working->r(i);
             float* rg = working->g(i);
             float* rb = working->b(i);
-			
+
             float* xa = (float*)image->r(i);
             float* ya = (float*)image->g(i);
             float* za = (float*)image->b(i);
-			
-			
+
             for (int j = 0; j < cw; j++) {
                 float r1 = rr[j];
                 float g1 = rg[j];
                 float b1 = rb[j];
 
-
                 float x_ = toxyz[0][0] * r1 + toxyz[0][1] * g1 + toxyz[0][2] * b1;
                 float y_ = toxyz[1][0] * r1 + toxyz[1][1] * g1 + toxyz[1][2] * b1;
                 float z_ = toxyz[2][0] * r1 + toxyz[2][1] * g1 + toxyz[2][2] * b1;
-	
-			
+
                 xa[j] = ( x_) ;
                 ya[j] = ( y_);
                 za[j] = ( z_);
@@ -656,12 +658,12 @@ Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int
 
         lcmsMutex->lock();
         cmsHPROFILE iprof = ICCStore::getInstance()->getXYZProfile();
-		//   cmsHTRANSFORM hTransform = cmsCreateTransform(iprof, TYPE_RGB_16, oprofdef, TYPE_RGB_16, params->icm.outputIntent,  cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
-		cmsHTRANSFORM hTransform = cmsCreateTransform(iprof, TYPE_RGB_FLT, oprofdef, TYPE_RGB_FLT, params->icm.outputIntent, flags);
-		lcmsMutex->unlock();
+        //   cmsHTRANSFORM hTransform = cmsCreateTransform(iprof, TYPE_RGB_16, oprofdef, TYPE_RGB_16, params->icm.outputIntent,  cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
+        cmsHTRANSFORM hTransform = cmsCreateTransform(iprof, TYPE_RGB_FLT, oprofdef, TYPE_RGB_FLT, params->icm.outputIntent, flags);
+        lcmsMutex->unlock();
 
         image->ExecCMSTransform2(hTransform);
-		
+
         cmsDeleteTransform(hTransform);
         image->normalizeFloatTo65535();
 

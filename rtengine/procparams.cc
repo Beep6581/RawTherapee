@@ -3152,7 +3152,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(
             !pedited || pedited->icm.outputIntent,
             "Color Management",
-        "OutputProfileIntent", {
+            "OutputProfileIntent", {
             {RI_PERCEPTUAL, "Perceptual"},
             {RI_RELATIVE, "Relative"},
             {RI_SATURATION, "Saturation"},
