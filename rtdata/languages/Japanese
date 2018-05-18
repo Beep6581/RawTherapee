@@ -38,7 +38,6 @@ ABOUT_TAB_CREDITS;クレジット
 ABOUT_TAB_LICENSE;ライセンス
 ABOUT_TAB_RELEASENOTES;リリースノート
 ABOUT_TAB_SPLASH;スプラッシュ
-ADJUSTER_RESET_TO_DEFAULT;デフォルト値に戻す
 BATCHQUEUE_AUTOSTART;オートスタート
 BATCHQUEUE_AUTOSTARTHINT;新しいrawファイルが送られて来たら自動的に現像処理を開始します
 BATCHQUEUE_DESTFILENAME;パスとファイル名
@@ -512,9 +511,7 @@ HISTORY_MSG_231;白黒　‘前の‘カーブ
 HISTORY_MSG_232;白黒　‘前の‘カーブのタイプ
 HISTORY_MSG_233;白黒　‘後の‘カーブ
 HISTORY_MSG_234;白黒　‘後の‘カーブのタイプ
-HISTORY_MSG_235;白黒　オートチャンネルミキサー
 HISTORY_MSG_236;--未使用--
-HISTORY_MSG_237;白黒　ミキサー
 HISTORY_MSG_238;グラデーションフィルター　フェザー処理
 HISTORY_MSG_239;グラデーションフィルター　強さ
 HISTORY_MSG_240;グラデーションフィルター　中央
@@ -550,7 +547,6 @@ HISTORY_MSG_269;カラートーン調整　-　ハイライトのレッド
 HISTORY_MSG_270;カラートーン調整　-　ハイライトのグリーン
 HISTORY_MSG_271;カラートーン調整　-　ハイライトのブルー
 HISTORY_MSG_272;カラートーン調整　-　バランス
-HISTORY_MSG_273;カラートーン調整　-　リセット
 HISTORY_MSG_274;カラートーン調整　-　シャドウの彩度
 HISTORY_MSG_275;カラートーン調整　-　ハイライトの彩度
 HISTORY_MSG_276;カラートーン調整　-　不透明度
@@ -669,7 +665,6 @@ HISTORY_MSG_388;W - 残差 - CB 中間のグリーン
 HISTORY_MSG_389;W - 残差 - CB 中間のブルー
 HISTORY_MSG_390;W - 残差 - CB シャドウのグリーン
 HISTORY_MSG_391;W - 残差 - CB シャドウのブルー
-HISTORY_MSG_392;W - 残差 - CB リセット
 HISTORY_MSG_393;DCP - ルックテーブル
 HISTORY_MSG_394;DCP - 基本露出
 HISTORY_MSG_395;DCP - ベーステーブル
@@ -1294,7 +1289,6 @@ TP_BWMIX_ALGO_LI;リニア
 TP_BWMIX_ALGO_SP;特殊効果
 TP_BWMIX_ALGO_TOOLTIP;リニア: 通常の <b>線形的</b> な効果です\n特殊効果: チャンネルミキサーによる <b>非線形的</b>な特殊効果です
 TP_BWMIX_AUTOCH;オート
-TP_BWMIX_AUTOCH_TIP;チャンネルミキサーの最適値を計算します
 TP_BWMIX_CC_ENABLED;補色の調整
 TP_BWMIX_CC_TOOLTIP;ROYGCBPMモードの中で補色の調整を自動で行います
 TP_BWMIX_CHANNEL;輝度イコライザ
@@ -1321,9 +1315,6 @@ TP_BWMIX_MET;方法
 TP_BWMIX_MET_CHANMIX;チャンネルミキサー
 TP_BWMIX_MET_DESAT;彩度低減
 TP_BWMIX_MET_LUMEQUAL;輝度イコライザー
-TP_BWMIX_MIXC;ミキサー
-TP_BWMIX_NEUTRAL;ミキサーのリセット
-TP_BWMIX_NEUTRAL_TIP;全ての値（フィルター、チャンネルミキサー）をデフォルトに戻します
 TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   トータル: %4%%
 TP_BWMIX_RGBLABEL_HINT;ミキサーオプションの全てを考慮した最終のRGBファクター\nトータルは実際に適用されたRGBの合計を表示:\n- 常に100％相対モード\n- 絶対モード100％より高い（明るい）、或いは低い（暗い）
 TP_BWMIX_RGB_TOOLTIP;RGBチャンネルをミックス。ガイダンスとしてプリセットを使います。\nマイナス値はアーティファクトの発生や誤った作用を起こすかもしれないことに注意します
@@ -2244,7 +2235,6 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!GENERAL_RESET;Reset
 !TP_DIRPYRDENOISE_TYPE_3X3;3×3
 !TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 soft
 !TP_DIRPYRDENOISE_TYPE_5X5;5×5

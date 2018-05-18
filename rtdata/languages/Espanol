@@ -66,7 +66,6 @@ ABOUT_TAB_CREDITS;Créditos
 ABOUT_TAB_LICENSE;Licencia
 ABOUT_TAB_RELEASENOTES;Notas de la versión
 ABOUT_TAB_SPLASH;Splash
-ADJUSTER_RESET_TO_DEFAULT;Restablece los valores predeterminados
 BATCHQUEUE_AUTOSTART;Inicio automático
 BATCHQUEUE_AUTOSTARTHINT;Iniciar automáticamente el procesamiento en cuanto llega un nuevo trabajo
 BATCHQUEUE_DESTFILENAME;Ruta y nombre del archivo
@@ -497,9 +496,7 @@ HISTORY_MSG_231;B&amp;N - Curva 'Antes'
 HISTORY_MSG_232;B&amp;N - Tipo de curva 'Antes'
 HISTORY_MSG_233;B&amp;N - Curva 'Después'
 HISTORY_MSG_234;B&amp;N - Tipo de curva 'Después'
-HISTORY_MSG_235;B&amp;N - Mezcla canales Auto.
 HISTORY_MSG_236;--Sin uso--
-HISTORY_MSG_237;B&amp;N - Mezclador
 HISTORY_MSG_238;FG - Difuminado
 HISTORY_MSG_239;FG - Intensidad
 HISTORY_MSG_240;FG - Centro
@@ -534,7 +531,6 @@ HISTORY_MSG_269;TC - Altas Luces - Rojo
 HISTORY_MSG_270;TC - Altas Luces - Verde
 HISTORY_MSG_271;TC - Altas Luces - Azul
 HISTORY_MSG_272;TC - Balance
-HISTORY_MSG_273;TC - Restablecer
 HISTORY_MSG_274;TC - Sat. de Sombras
 HISTORY_MSG_275;TC - Sat. de Altas Luces
 HISTORY_MSG_276;TC - Opacidad
@@ -921,7 +917,6 @@ TP_BWMIX_ALGO_LI;Lineal
 TP_BWMIX_ALGO_SP;Efectos especiales
 TP_BWMIX_ALGO_TOOLTIP;Lineal: producirá una respuesta <b>lineal</b> normal.\nEfectos especiales: producirá efectos especiales por mezclar <b>no linealmente</b> los canales.
 TP_BWMIX_AUTOCH;Auto
-TP_BWMIX_AUTOCH_TIP;Calcular valores óptimos para el Mezclador de Canales
 TP_BWMIX_CC_ENABLED;Ajustar color complementario
 TP_BWMIX_CC_TOOLTIP;Permite el ajuste automático de colores complementarios en modo RNAmVCAzPM
 TP_BWMIX_CHANNEL;Ecualizador de luminancia
@@ -948,9 +943,6 @@ TP_BWMIX_MET;Método
 TP_BWMIX_MET_CHANMIX;Mezclador de canales
 TP_BWMIX_MET_DESAT;Des-saturación
 TP_BWMIX_MET_LUMEQUAL;Ecualizador de Luminancia
-TP_BWMIX_MIXC;Mezclador
-TP_BWMIX_NEUTRAL;Restablece el mezclador
-TP_BWMIX_NEUTRAL_TIP;Restablece todos los parámetros (filtro, mezclador de canales) a sus valores predeterminados.
 TP_BWMIX_RGBLABEL;R: %1%%   V: %2%%   A: %3%%   Total: %4%%
 TP_BWMIX_RGBLABEL_HINT;Factores finales RGB tomando en cuenta todas las opciones del mezclador\n<b>Total</b> muestra la suma de los valores RGB actualmente aplicados:\n- <b>En modo relativo</b> Siempre 100% \n- <b>En modo absoluto</b> mayor (más claro) o menor (más oscuro) que 100%
 TP_BWMIX_RGB_TOOLTIP;Mezcla de canales RGB. Use como guía valores pre-establecidos.\nTenga en cuenta que valores negativos pueden introducir elementos extraños (artifacts) o resultados erráticos.
@@ -1523,7 +1515,6 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 !GENERAL_APPLY;Apply
 !GENERAL_ASIMAGE;As Image
 !GENERAL_OPEN;Open
-!GENERAL_RESET;Reset
 !GENERAL_SLIDER;Slider
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
 !HISTORY_MSG_166;Exposure - Reset
@@ -1624,7 +1615,6 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 !HISTORY_MSG_389;W - Residual - CB blue mid
 !HISTORY_MSG_390;W - Residual - CB green low
 !HISTORY_MSG_391;W - Residual - CB blue low
-!HISTORY_MSG_392;W - Residual - Color Balance
 !HISTORY_MSG_393;DCP - Look table
 !HISTORY_MSG_394;DCP - Baseline exposure
 !HISTORY_MSG_395;DCP - Base table

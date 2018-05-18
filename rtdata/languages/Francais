@@ -5,7 +5,6 @@ ABOUT_TAB_CREDITS;Crédits
 ABOUT_TAB_LICENSE;Licence
 ABOUT_TAB_RELEASENOTES;Notes de version
 ABOUT_TAB_SPLASH;Splash
-ADJUSTER_RESET_TO_DEFAULT;Réglages par défaut
 BATCHQUEUE_AUTOSTART;Démarrage auto
 BATCHQUEUE_AUTOSTARTHINT;Démarrer automatiquement le traitement à l'arrivée d'une nouvelle tâche
 BATCHQUEUE_DESTFILENAME;Chemin et nom de fichier
@@ -478,9 +477,7 @@ HISTORY_MSG_231;N&amp;B - Courbe 'Avant'
 HISTORY_MSG_232;N&amp;B - Type de courbe 'Avant'
 HISTORY_MSG_233;N&amp;B - Courbe 'Après'
 HISTORY_MSG_234;N&amp;B - Type de courbe 'Après'
-HISTORY_MSG_235;N&amp;B - Mixeur - Mode auto
 HISTORY_MSG_236;--inutilisé--
-HISTORY_MSG_237;N&amp;B - Mixeur
 HISTORY_MSG_238;FD - Étendu
 HISTORY_MSG_239;FD - Force
 HISTORY_MSG_240;FD - Centre
@@ -516,7 +513,6 @@ HISTORY_MSG_269;Virage Partiel - HL - Rouge
 HISTORY_MSG_270;Virage Partiel - HL - Vert
 HISTORY_MSG_271;Virage Partiel - HL - Bleu
 HISTORY_MSG_272;Virage Partiel - Balance
-HISTORY_MSG_273;Virage Partiel - Réinit.
 HISTORY_MSG_274;Virage Partiel - Saturation des ombres
 HISTORY_MSG_275;Virage Partiel - Saturation des HL
 HISTORY_MSG_276;Virage Partiel - Opacité
@@ -635,7 +631,6 @@ HISTORY_MSG_388;O - Résiduel - BC vert moyen
 HISTORY_MSG_389;O - Résiduel - BC bleu moyen
 HISTORY_MSG_390;O - Résiduel - BC vert bas
 HISTORY_MSG_391;O - Résiduel - BC bleu bas
-HISTORY_MSG_392;O - Résiduel - BC Réinitialiser
 HISTORY_MSG_393;DCP - Table de corresp. (LUT)
 HISTORY_MSG_394;DCP - Exposition de base
 HISTORY_MSG_395;DCP - Table de base
@@ -1253,7 +1248,6 @@ TP_BWMIX_ALGO_LI;Linéaire
 TP_BWMIX_ALGO_SP;Effets spéciaux
 TP_BWMIX_ALGO_TOOLTIP;Linéaire: produira une réponse normale <b>linéaire</b>.\nEffets spéciaux: produira des effets spéciaux en mixant les canaux de manière <b>non linéaire</b>.
 TP_BWMIX_AUTOCH;Auto
-TP_BWMIX_AUTOCH_TIP;Calcul les valeurs optimales du mixeur de canaux
 TP_BWMIX_CC_ENABLED;Ajuster les couleurs complémentaires
 TP_BWMIX_CC_TOOLTIP;Activer pour permettre l'ajustage automatique des couleur complémentaire dans le mode ROJVCBPM
 TP_BWMIX_CHANNEL;Égaliseur de Luminance
@@ -1280,9 +1274,6 @@ TP_BWMIX_MET;Méthode
 TP_BWMIX_MET_CHANMIX;Mixeur de Canaux
 TP_BWMIX_MET_DESAT;Désaturation
 TP_BWMIX_MET_LUMEQUAL;Égaliseur de Luminance
-TP_BWMIX_MIXC;Mixeur
-TP_BWMIX_NEUTRAL;Réinit. Mixeur
-TP_BWMIX_NEUTRAL_TIP;Réinitialise tous les paramètres (filtre, mixeur de canaux) à zéro
 TP_BWMIX_RGBLABEL;R: %1%%   V: %2%%   B: %3%%   Total: %4%%
 TP_BWMIX_RGBLABEL_HINT;Coefficients RVB finaux qui tiennent compte de toutes les options du mixeur\nTotal affiche la somme des valeurs RVB actuellement appliqué:\n- toujours 100% en mode relatif\n- supérieur (plus clair) ou inférieur (plus sombre) à 100% en mode absolu.
 TP_BWMIX_RGB_TOOLTIP;Mixe les canaux RVB. Utilisez les Préréglages pour vous guider.\nAttention aux valeurs négatives qui peuvent causer des artefacts ou un comportement erratique.
@@ -2213,7 +2204,6 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !EXIFFILTER_IMAGETYPE;Image type
-!GENERAL_RESET;Reset
 !HISTORY_MSG_CLAMPOOG;Out-of-gamut color clipping
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter

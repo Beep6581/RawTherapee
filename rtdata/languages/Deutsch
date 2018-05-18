@@ -62,7 +62,6 @@ ABOUT_TAB_CREDITS;Danksagungen
 ABOUT_TAB_LICENSE;Lizenz
 ABOUT_TAB_RELEASENOTES;Versionshinweise
 ABOUT_TAB_SPLASH;Startbild
-ADJUSTER_RESET_TO_DEFAULT;Standard wiederherstellen
 BATCHQUEUE_AUTOSTART;Automatisch starten
 BATCHQUEUE_AUTOSTARTHINT;Bei neuem Job die Verarbeitung automatisch starten
 BATCHQUEUE_DESTFILENAME;Pfad und Dateiname
@@ -536,9 +535,7 @@ HISTORY_MSG_231;(Schwarz/Weiß)\n“Bevor“-Kurve
 HISTORY_MSG_232;(Schwarz/Weiß)\n“Bevor“-Kurventyp
 HISTORY_MSG_233;(Schwarz/Weiß)\n“Danach“-Kurve
 HISTORY_MSG_234;(Schwarz/Weiß)\n“Danach“-Kurventyp
-HISTORY_MSG_235;(Schwarz/Weiß)\nAuto-Kanalmixer
 HISTORY_MSG_236;--unused--
-HISTORY_MSG_237;(Schwarz/Weiß) - Mixer
 HISTORY_MSG_238;(Grauverlaufsfilter)\nBereich
 HISTORY_MSG_239;(Grauverlaufsfilter)\nIntensität
 HISTORY_MSG_240;(Grauverlaufsfilter)\nRotationsachsen
@@ -574,7 +571,6 @@ HISTORY_MSG_269;(Farbanpassungen)\nLichter - Blau / Rot
 HISTORY_MSG_270;(Farbanpassungen)\nLichter - Cyan / Grün
 HISTORY_MSG_271;(Farbanpassungen)\nLichter - Gelb / Blau
 HISTORY_MSG_272;(Farbanpassungen)\nFarbausgleich
-HISTORY_MSG_273;(Farbanpassungen)\nZurücksetzen
 HISTORY_MSG_274;(Farbanpassungen)\nSättigung Schatten
 HISTORY_MSG_275;(Farbanpassungen)\nSättigung Lichter
 HISTORY_MSG_276;(Farbanpassungen)\nDeckkraft
@@ -693,7 +689,6 @@ HISTORY_MSG_388;(Wavelet) - Restbild\nFarbausgleich\nMitten Grün / Cyan
 HISTORY_MSG_389;(Wavelet) - Restbild\nFarbausgleich\nMitten Blau / Gelb
 HISTORY_MSG_390;(Wavelet) - Restbild\nFarbausgleich\nSchatten Grün / Cyan
 HISTORY_MSG_391;(Wavelet) - Restbild\nFarbausgleich\nSchatten Blau / Gelb
-HISTORY_MSG_392;(Wavelet) - Restbild\nFarbausgleich
 HISTORY_MSG_393;(Farbmanagement)\nEingangsfarbprofil\nDCP - Look-Tabelle
 HISTORY_MSG_394;(Farbmanagement)\nEingangsfarbprofil\nDCP - Basisbelichtung
 HISTORY_MSG_395;(Farbmanagement)\nEingangsfarbprofil\nDCP - Basistabelle
@@ -1318,7 +1313,6 @@ TP_BWMIX_ALGO_LI;Linear
 TP_BWMIX_ALGO_SP;Spezialeffekte
 TP_BWMIX_ALGO_TOOLTIP;<b>Linear</b> liefert ein lineares Ergebnis\n<b>Spezialeffekte</b> liefert einen speziellen Effekt durch Mischen von Kanälen.
 TP_BWMIX_AUTOCH;Auto
-TP_BWMIX_AUTOCH_TIP;Automatische Berechnung der RGB-Werte.
 TP_BWMIX_CC_ENABLED;Komplemantärfarbe anpassen
 TP_BWMIX_CC_TOOLTIP;Aktiviert die automatische Anpassung der\nKomplementärfarbe im ROYGCBPM-Modus
 TP_BWMIX_CHANNEL;Luminanzequalizer
@@ -1345,9 +1339,6 @@ TP_BWMIX_MET;Methode
 TP_BWMIX_MET_CHANMIX;Kanalmixer
 TP_BWMIX_MET_DESAT;Entsättigung
 TP_BWMIX_MET_LUMEQUAL;Luminanz
-TP_BWMIX_MIXC;Mixer
-TP_BWMIX_NEUTRAL;Mixer zurücksetzen
-TP_BWMIX_NEUTRAL_TIP;Alle Werte auf Standard zurücksetzen. (Farbfilter, Kanalmixer)
 TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%  Gesamt: %4%%
 TP_BWMIX_RGBLABEL_HINT;RGB-Faktoren\n\nGesamt: Summe aller RGB-Werte.\n- immer 100% im Modus Relativ\n- höher (heller), oder niedriger (dunkler) 100% im Modus Absolut
 TP_BWMIX_RGB_TOOLTIP;Mischen Sie die Kanäle. Verwenden Sie die Vorgaben zur Orientierung.\nNegative Werte können zu Artefakten führen.
@@ -2283,8 +2274,3 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!GENERAL_RESET;Reset

@@ -12,7 +12,6 @@ ABOUT_TAB_CREDITS;Авторы
 ABOUT_TAB_LICENSE;Лицензия
 ABOUT_TAB_RELEASENOTES;Примечания к выпуску
 ABOUT_TAB_SPLASH;Заставка
-ADJUSTER_RESET_TO_DEFAULT;Сбросить настройки
 BATCHQUEUE_AUTOSTART;Автостарт
 BATCHQUEUE_AUTOSTARTHINT;Автоматически запускать обработку при добавлении файла в очередь
 BATCHQUEUE_DESTFILENAME;Имя файла и путь к нему
@@ -467,9 +466,7 @@ HISTORY_MSG_231;Ч&amp;Б: Кривая 'До'
 HISTORY_MSG_232;Ч&amp;Б: Тип кривой 'До'
 HISTORY_MSG_233;Ч&amp;Б: Кривая 'После'
 HISTORY_MSG_234;Ч&amp;Б: Тип кривой 'После'
-HISTORY_MSG_235;Ч&amp;Б: Автомиксер каналов
 HISTORY_MSG_236;--неиспользуемый--
-HISTORY_MSG_237;Ч&amp;Б: Миксер
 HISTORY_MSG_238;ГФ: Растушёвка
 HISTORY_MSG_239;ГФ: Сила
 HISTORY_MSG_240;ГФ: Центр
@@ -887,7 +884,6 @@ TP_BWMIX_ALGO_LI;Линейный
 TP_BWMIX_ALGO_SP;Специальные эффекты
 TP_BWMIX_ALGO_TOOLTIP;Линейный: выдаст нормальный <b>линейный</b> отклик.\nСпециальные эффекты: выдаст специальные эффекты путём смешивания каналов <b>нелинейно</b>.
 TP_BWMIX_AUTOCH;Автоопределение
-TP_BWMIX_AUTOCH_TIP;Автоматическое вычисление значений миксера каналов
 TP_BWMIX_CC_ENABLED;Подстраивать дополнительные цвета
 TP_BWMIX_CC_TOOLTIP;Включите для автоматической регулировки дополнительных цветов в модели ROYGCBPM
 TP_BWMIX_CHANNEL;Эквалайзер яркости
@@ -914,9 +910,6 @@ TP_BWMIX_MET;Метод
 TP_BWMIX_MET_CHANMIX;Миксер каналов
 TP_BWMIX_MET_DESAT;Обесцвечивание
 TP_BWMIX_MET_LUMEQUAL;Яркостный Эквалайзер
-TP_BWMIX_MIXC;Миксер
-TP_BWMIX_NEUTRAL;Сбросить
-TP_BWMIX_NEUTRAL_TIP;Сбросить все значения (фильтр, миксер каналов) на умолчательные
 TP_BWMIX_RGBLABEL;К: %1%%  З: %2%%  С: %3%%   Итог: %4%%
 TP_BWMIX_RGBLABEL_HINT;Итоговые значения RGB, учитывающие все настройки миксера.\nИтог показывает сумму применённых значений RGB:\n- всегда 100% в относительных режимах\n- выше (светлее) или ниже (темнее) в абсолютных режимах.
 TP_BWMIX_RGB_TOOLTIP;Смешивание каналов RGB. Используйте пресеты для руководства.\nУчтите что отрицательные значения могут вызвать искажения или неустойчивое поведение.
@@ -1432,7 +1425,6 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
 !FILECHOOSER_FILTER_PP;Processing profiles
 !FILECHOOSER_FILTER_SAME;Same format as current photo
-!GENERAL_RESET;Reset
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
 !HISTORY_MSG_252;CbDL - Skin tar/prot
 !HISTORY_MSG_253;CbDL - Reduce artifacts
@@ -1455,7 +1447,6 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !HISTORY_MSG_270;CT - High - Green
 !HISTORY_MSG_271;CT - High - Blue
 !HISTORY_MSG_272;CT - Balance
-!HISTORY_MSG_273;CT - Color Balance SMH
 !HISTORY_MSG_274;CT - Sat. Shadows
 !HISTORY_MSG_275;CT - Sat. Highlights
 !HISTORY_MSG_276;CT - Opacity
@@ -1572,7 +1563,6 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !HISTORY_MSG_389;W - Residual - CB blue mid
 !HISTORY_MSG_390;W - Residual - CB green low
 !HISTORY_MSG_391;W - Residual - CB blue low
-!HISTORY_MSG_392;W - Residual - Color Balance
 !HISTORY_MSG_393;DCP - Look table
 !HISTORY_MSG_394;DCP - Baseline exposure
 !HISTORY_MSG_395;DCP - Base table

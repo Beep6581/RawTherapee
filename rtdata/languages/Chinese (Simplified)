@@ -10,7 +10,6 @@ ABOUT_TAB_CREDITS;感谢
 ABOUT_TAB_LICENSE;授权协议
 ABOUT_TAB_RELEASENOTES;发布说明
 ABOUT_TAB_SPLASH;启动页
-ADJUSTER_RESET_TO_DEFAULT;重置缺省参数
 BATCHQUEUE_AUTOSTART;自动开始
 BATCHQUEUE_DESTFILENAME;路径和文件名
 BATCH_PROCESSING;批量处理
@@ -760,9 +759,6 @@ TP_BWMIX_LABEL;黑白
 TP_BWMIX_MET;方式
 TP_BWMIX_MET_DESAT;淡化饱和度
 TP_BWMIX_MET_LUMEQUAL;明亮度平衡工具
-TP_BWMIX_MIXC;混合工具
-TP_BWMIX_NEUTRAL;重置混合工具
-TP_BWMIX_NEUTRAL_TIP;重置所有混合工具(色彩过滤、通道混合)
 TP_BWMIX_SETTING;预设
 TP_BWMIX_SETTING_TOOLTIP;不同预设 (影片、水平排布等)或手动通道混合工具设置
 TP_BWMIX_SET_HIGHCONTAST;高对比度
@@ -1062,7 +1058,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show unsaved images.\nShortcut: <b>Alt-6</b>
 !FILEBROWSER_SHOWUNCOLORHINT;Show images without a color label.\nShortcut: <b>Alt-0</b>
 !FILEBROWSER_UNRANK_TOOLTIP;Unrank.\nShortcut: <b>Shift-0</b>
-!GENERAL_RESET;Reset
 !GENERAL_SLIDER;Slider
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
 !HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar.\nRight-click on image preview to freeze/unfreeze.
@@ -1189,9 +1184,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !HISTORY_MSG_232;B&amp;W - 'Before' curve type
 !HISTORY_MSG_233;B&amp;W - 'After' curve
 !HISTORY_MSG_234;B&amp;W - 'After' curve type
-!HISTORY_MSG_235;B&amp;W - CM - Auto
 !HISTORY_MSG_236;--unused--
-!HISTORY_MSG_237;B&amp;W - CM
 !HISTORY_MSG_238;GF - Feather
 !HISTORY_MSG_240;GF - Center
 !HISTORY_MSG_241;VF - Feather
@@ -1224,7 +1217,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !HISTORY_MSG_270;CT - High - Green
 !HISTORY_MSG_271;CT - High - Blue
 !HISTORY_MSG_272;CT - Balance
-!HISTORY_MSG_273;CT - Color Balance SMH
 !HISTORY_MSG_274;CT - Sat. Shadows
 !HISTORY_MSG_275;CT - Sat. Highlights
 !HISTORY_MSG_276;CT - Opacity
@@ -1343,7 +1335,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !HISTORY_MSG_389;W - Residual - CB blue mid
 !HISTORY_MSG_390;W - Residual - CB green low
 !HISTORY_MSG_391;W - Residual - CB blue low
-!HISTORY_MSG_392;W - Residual - Color Balance
 !HISTORY_MSG_393;DCP - Look table
 !HISTORY_MSG_394;DCP - Baseline exposure
 !HISTORY_MSG_395;DCP - Base table
