@@ -56,6 +56,7 @@
 #55 06.04.2018 Erweiterung (TooWaBoo) RT 5.4
 #56 27.04.2018 Erweiterung (TooWaBoo) RT 5.4
 #57 17.05.2018 Erweiterung (TooWaBoo) RT 5.4
+#58 19.05.2018 Erweiterung (TooWaBoo) RT 5.4
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -1339,7 +1340,7 @@ TP_BWMIX_MET;Methode
 TP_BWMIX_MET_CHANMIX;Kanalmixer
 TP_BWMIX_MET_DESAT;Entsättigung
 TP_BWMIX_MET_LUMEQUAL;Luminanz
-TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%  Gesamt: %4%%
+TP_BWMIX_RGBLABEL;R: %1%% G: %2%% B: %3%% Gesamt: %4%%
 TP_BWMIX_RGBLABEL_HINT;RGB-Faktoren\n\nGesamt: Summe aller RGB-Werte.\n- immer 100% im Modus Relativ\n- höher (heller), oder niedriger (dunkler) 100% im Modus Absolut
 TP_BWMIX_RGB_TOOLTIP;Mischen Sie die Kanäle. Verwenden Sie die Vorgaben zur Orientierung.\nNegative Werte können zu Artefakten führen.
 TP_BWMIX_SETTING;Voreinstellung
@@ -2278,11 +2279,11 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
-!GENERAL_RESET;Reset
-!HISTORY_MSG_235;B&amp;W - CM - Auto
-!HISTORY_MSG_237;B&amp;W - CM
-!HISTORY_MSG_273;CT - Color Balance SMH
-!HISTORY_MSG_392;W - Residual - Color Balance
-!TP_BWMIX_MIXC;Channel Mixer
-!TP_BWMIX_NEUTRAL;Reset
+ADJUSTER_RESET_TO_DEFAULT;<b>Klick</b> - Auf Standardwert zurücksetzen.\n<b>Strg</b> + <b>Klick</b> - Auf Initialwert zurücksetzen.
+GENERAL_RESET;Zurücksetzen
+HISTORY_MSG_235;(Schwarz/Weiß)\nAuto-Kanalmixer
+HISTORY_MSG_237;(Schwarz/Weiß) - Mixer
+HISTORY_MSG_273;(Farbanpassungen)\nFarbausgleich\nRegler zurücksetzen
+HISTORY_MSG_392;(Wavelet) - Restbild\nFarbausgleich
+TP_BWMIX_MIXC;Kanalmixer
+TP_BWMIX_NEUTRAL;Zurücksetzen
