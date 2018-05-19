@@ -280,6 +280,6 @@ Glib::ustring utf32_to_utf8(wchar_t* UTF32Buffer, size_t sizeOfUTF32Buffer)
     }
     Glib::ustring modelDesc(buffer2);
     delete [] buffer2;
-    return buffer2;
+    return modelDesc;
 }
 #endif
