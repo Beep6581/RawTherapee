@@ -2015,9 +2015,14 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             plistener->setProgress (0.0);
         }
         if(numFrames == 4) {
-            for(int i=0; i<4; ++i) {
-                CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, *rawDataFrames[i]);
+            StopWatch Stop1("ps ca correction");
+            double fitParams[64];
+            float *buffer = nullptr;
+            CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, *rawDataFrames[0], fitParams, false, false, buffer, false);
+            for(int i = 1; i < 3; ++i) {
+                CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, *rawDataFrames[i], fitParams, false, false, buffer, false);
             }
+            CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, *rawDataFrames[3], fitParams, false, false, buffer);
         } else {
             CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, rawData);
         }

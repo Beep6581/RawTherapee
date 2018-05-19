@@ -27,7 +27,7 @@
 #include "rawimagesource.h"
 #include "rt_math.h"
 #include "median.h"
-
+#include "StopWatch.h"
 namespace {
 
 bool LinEqSolve(int nDim, double* pfMatr, double* pfVect, double* pfSolution)
@@ -111,7 +111,7 @@ bool LinEqSolve(int nDim, double* pfMatr, double* pfVect, double* pfSolution)
 using namespace std;
 using namespace rtengine;
 
-void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const double cablue, const double caautostrength, array2D<float> &rawData)
+void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const double cablue, const double caautostrength, array2D<float> &rawData, double *fitParamsTransfer, bool fitParamsIn, bool fitParamsOut, float *buffer, bool freeBuffer)
 {
 // multithreaded and vectorized by Ingo Weyrich
     constexpr int ts = 128;
@@ -135,11 +135,13 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
 
     // local variables
     const int width = W + (W & 1), height = H;
-    //temporary array to store simple interpolation of G
-    float *Gtmp = (float (*)) malloc ((height * width) / 2 * sizeof * Gtmp);
 
-    // temporary array to avoid race conflicts, only every second pixel needs to be saved here
-    float *RawDataTmp = (float*) malloc( (height * width) * sizeof(float) / 2);
+    //temporary array to store simple interpolation of G
+    if (!buffer) {
+        buffer = (float (*)) malloc ((height * width) / 2 * sizeof (float) + (height * width) * sizeof(float) / 2);
+    }
+    float *Gtmp = buffer;
+    float *RawDataTmp = buffer + (height * width) / 2;
 
     float blockave[2][2] = {{0, 0}, {0, 0}}, blocksqave[2][2] = {{0, 0}, {0, 0}}, blockdenom[2][2] = {{0, 0}, {0, 0}}, blockvar[2][2];
 
@@ -159,7 +161,17 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
     float (*blockshifts)[2][2] = (float (*)[2][2])(blockwt + vblsz * hblsz);
 
     double fitparams[2][2][16];
-
+    const bool fitParamsSet = fitParamsTransfer && fitParamsIn;
+    if(autoCA && fitParamsSet) {
+        int index = 0;
+        for(int c = 0; c < 2; ++c) {
+            for(int d = 0; d < 2; ++d) {
+                for(int e = 0; e < 16; ++e) {
+                    fitparams[c][d][e] = fitParamsTransfer[index++];
+                }
+            }
+        }
+    }
     //order of 2d polynomial fit (polyord), and numpar=polyord^2
     int polyord = 4, numpar = 16;
 
@@ -186,8 +198,8 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
 
         // assign working space
         constexpr int buffersize = sizeof(float) * ts * ts + 8 * sizeof(float) * ts * tsh + 8 * 64 + 63;
-        char *buffer = (char *) malloc(buffersize);
-        char *data = (char*)( ( uintptr_t(buffer) + uintptr_t(63)) / 64 * 64);
+        char *bufferThr = (char *) malloc(buffersize);
+        char *data = (char*)( ( uintptr_t(bufferThr) + uintptr_t(63)) / 64 * 64);
 
         // shift the beginning of all arrays but the first by 64 bytes to avoid cache miss conflicts on CPUs which have <=4-way associative L1-Cache
 
@@ -214,12 +226,12 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
         float *gshift  = rbhpfv; // there is no overlap in buffer usage => share
 
 
-        if (autoCA) {
+        if (autoCA && !fitParamsSet) {
             // Main algorithm: Tile loop calculating correction parameters per tile
             #pragma omp for collapse(2) schedule(dynamic) nowait
             for (int top = -border ; top < height; top += ts - border2)
                 for (int left = -border; left < width - (W & 1); left += ts - border2) {
-                    memset(buffer, 0, buffersize);
+                    memset(bufferThr, 0, buffersize);
                     const int vblock = ((top + border) / (ts - border2)) + 1;
                     const int hblock = ((left + border) / (ts - border2)) + 1;
                     const int bottom = min(top + ts, height + border);
@@ -741,7 +753,6 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                                     processpasstwo = false;
                                 }
                             }
-
                 }
 
                 //fitparams[polyord*i+j] gives the coefficients of (vblock^i hblock^j) in a polynomial fit for i,j<=4
@@ -756,7 +767,7 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
 
             for (int top = -border; top < height; top += ts - border2)
                 for (int left = -border; left < width - (W & 1); left += ts - border2) {
-                    memset(buffer, 0, buffersize);
+                    memset(bufferThr, 0, buffersize);
                     float lblockshifts[2][2];
                     const int vblock = ((top + border) / (ts - border2)) + 1;
                     const int hblock = ((left + border) / (ts - border2)) + 1;
@@ -929,6 +940,25 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                         lblockshifts[1][1] = 2 * hfrac * cablue;
                     } else {
                         //CA auto correction; use CA diagnostic pass to set shift parameters
+                        if (fitParamsIn) {
+                            for (int rr = 3; rr < rr1 - 3; rr++) {
+                                for (int cc = 3, indx = rr * ts + cc; cc < cc1 - 3; cc++, indx++) {
+                                    int c = FC(rr, cc);
+
+                                    if (c != 1) {
+                                        //compute directional weights using image gradients
+                                        float wtu = 1.f / SQR(eps + fabsf(rgb[1][(rr + 1) * ts + cc] - rgb[1][(rr - 1) * ts + cc]) + fabsf(rgb[c][(rr * ts + cc) >> 1] - rgb[c][((rr - 2) * ts + cc) >> 1]) + fabsf(rgb[1][(rr - 1) * ts + cc] - rgb[1][(rr - 3) * ts + cc]));
+                                        float wtd = 1.f / SQR(eps + fabsf(rgb[1][(rr - 1) * ts + cc] - rgb[1][(rr + 1) * ts + cc]) + fabsf(rgb[c][(rr * ts + cc) >> 1] - rgb[c][((rr + 2) * ts + cc) >> 1]) + fabsf(rgb[1][(rr + 1) * ts + cc] - rgb[1][(rr + 3) * ts + cc]));
+                                        float wtl = 1.f / SQR(eps + fabsf(rgb[1][rr * ts + cc + 1] - rgb[1][rr * ts + cc - 1]) + fabsf(rgb[c][(rr * ts + cc) >> 1] - rgb[c][(rr * ts + cc - 2) >> 1]) + fabsf(rgb[1][rr * ts + cc - 1] - rgb[1][rr * ts + cc - 3]));
+                                        float wtr = 1.f / SQR(eps + fabsf(rgb[1][rr * ts + cc - 1] - rgb[1][rr * ts + cc + 1]) + fabsf(rgb[c][(rr * ts + cc) >> 1] - rgb[c][(rr * ts + cc + 2) >> 1]) + fabsf(rgb[1][rr * ts + cc + 1] - rgb[1][rr * ts + cc + 3]));
+
+                                        //store in rgb array the interpolated G value at R/B grid points using directional weighted average
+                                        rgb[1][indx] = (wtu * rgb[1][indx - v1] + wtd * rgb[1][indx + v1] + wtl * rgb[1][indx - 1] + wtr * rgb[1][indx + 1]) / (wtu + wtd + wtl + wtr);
+                                    }
+                                }
+                            }
+                        }
+
                         lblockshifts[0][0] = lblockshifts[0][1] = 0;
                         lblockshifts[1][0] = lblockshifts[1][1] = 0;
                         double powVblock = 1.0;
@@ -1153,12 +1183,25 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
         }
 
         // clean up
+        free(bufferThr);
+    }
+
+    if(autoCA && fitParamsTransfer && fitParamsOut) {
+        int index = 0;
+        for(int c = 0; c < 2; ++c) {
+            for(int d = 0; d < 2; ++d) {
+                for(int e = 0; e < 16; ++e) {
+                    fitParamsTransfer[index++] = fitparams[c][d][e];
+                }
+            }
+        }
+    }
+
+    if(freeBuffer) {
         free(buffer);
     }
 
-    free(Gtmp);
     free(blockwt);
-    free(RawDataTmp);
 
     if(plistener) {
         plistener->setProgress(1.0);
