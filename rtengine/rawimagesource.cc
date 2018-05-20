@@ -2017,8 +2017,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         if(numFrames == 4) {
             StopWatch Stop1("ps ca correction");
             double fitParams[64];
-            float *buffer = nullptr;
-            CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, *rawDataFrames[0], fitParams, false, true, buffer, false);
+            float *buffer = CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, *rawDataFrames[0], fitParams, false, true, nullptr, false);
             for(int i = 1; i < 3; ++i) {
                 CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, *rawDataFrames[i], fitParams, true, false, buffer, false);
             }
