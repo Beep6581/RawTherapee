@@ -473,6 +473,7 @@ struct ColorToningParams {
   */
 struct SharpeningParams {
     bool           enabled;
+    double         contrast;
     double         radius;
     int            amount;
     Threshold<int> threshold;

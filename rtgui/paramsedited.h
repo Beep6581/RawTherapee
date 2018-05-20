@@ -204,6 +204,7 @@ class SharpeningParamsEdited
 
 public:
     bool enabled;
+    bool contrast;
     bool radius;
     bool amount;
     bool threshold;

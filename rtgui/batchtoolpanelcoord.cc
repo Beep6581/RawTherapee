@@ -146,7 +146,7 @@ void BatchToolPanelCoordinator::initSession ()
             gradient->setAdjusterBehavior (false, false, false, false);
             pcvignette->setAdjusterBehavior (false, false, false);
             cacorrection->setAdjusterBehavior (false);
-            sharpening->setAdjusterBehavior (false, false, false, false, false, false);
+            sharpening->setAdjusterBehavior (false, false, false, false, false, false, false);
             prsharpening->setAdjusterBehavior (false, false, false, false, false, false);
             sharpenEdge->setAdjusterBehavior (false, false);
             sharpenMicro->setAdjusterBehavior (false, false, false);
@@ -189,7 +189,7 @@ void BatchToolPanelCoordinator::initSession ()
             gradient->setAdjusterBehavior (options.baBehav[ADDSET_GRADIENT_DEGREE], options.baBehav[ADDSET_GRADIENT_FEATHER], options.baBehav[ADDSET_GRADIENT_STRENGTH], options.baBehav[ADDSET_GRADIENT_CENTER]);
             pcvignette->setAdjusterBehavior (options.baBehav[ADDSET_PCVIGNETTE_STRENGTH], options.baBehav[ADDSET_PCVIGNETTE_FEATHER], options.baBehav[ADDSET_PCVIGNETTE_ROUNDNESS]);
             cacorrection->setAdjusterBehavior (options.baBehav[ADDSET_CA]);
-            sharpening->setAdjusterBehavior (options.baBehav[ADDSET_SHARP_RADIUS], options.baBehav[ADDSET_SHARP_AMOUNT], options.baBehav[ADDSET_SHARP_DAMPING], options.baBehav[ADDSET_SHARP_ITER], options.baBehav[ADDSET_SHARP_EDGETOL], options.baBehav[ADDSET_SHARP_HALOCTRL]);
+            sharpening->setAdjusterBehavior (options.baBehav[ADDSET_SHARP_CONTRAST], options.baBehav[ADDSET_SHARP_RADIUS], options.baBehav[ADDSET_SHARP_AMOUNT], options.baBehav[ADDSET_SHARP_DAMPING], options.baBehav[ADDSET_SHARP_ITER], options.baBehav[ADDSET_SHARP_EDGETOL], options.baBehav[ADDSET_SHARP_HALOCTRL]);
             prsharpening->setAdjusterBehavior (options.baBehav[ADDSET_SHARP_RADIUS], options.baBehav[ADDSET_SHARP_AMOUNT], options.baBehav[ADDSET_SHARP_DAMPING], options.baBehav[ADDSET_SHARP_ITER], options.baBehav[ADDSET_SHARP_EDGETOL], options.baBehav[ADDSET_SHARP_HALOCTRL]);
             epd->setAdjusterBehavior (options.baBehav[ADDSET_EPD_STRENGTH], options.baBehav[ADDSET_EPD_GAMMA], options.baBehav[ADDSET_EPD_EDGESTOPPING], options.baBehav[ADDSET_EPD_SCALE], options.baBehav[ADDSET_EPD_REWEIGHTINGITERATES]);
             fattal->setAdjusterBehavior (options.baBehav[ADDSET_FATTAL_AMOUNT], options.baBehav[ADDSET_FATTAL_THRESHOLD], options.baBehav[ADDSET_FATTAL_ANCHOR]);

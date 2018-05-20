@@ -142,6 +142,7 @@ void ParamsEdited::set (bool v)
     colorToning.labgridBHigh = v;
 
     sharpening.enabled            = v;
+    sharpening.contrast           = v;
     sharpening.radius             = v;
     sharpening.amount             = v;
     sharpening.threshold          = v;
@@ -695,6 +696,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         sharpenMicro.contrast = sharpenMicro.contrast && p.sharpenMicro.contrast == other.sharpenMicro.contrast;
         sharpenMicro.uniformity = sharpenMicro.uniformity && p.sharpenMicro.uniformity == other.sharpenMicro.uniformity;
         sharpening.enabled = sharpening.enabled && p.sharpening.enabled == other.sharpening.enabled;
+        sharpening.contrast = sharpening.contrast && p.sharpening.contrast == other.sharpening.contrast;
         sharpening.radius = sharpening.radius && p.sharpening.radius == other.sharpening.radius;
         sharpening.amount = sharpening.amount && p.sharpening.amount == other.sharpening.amount;
         sharpening.threshold = sharpening.threshold && p.sharpening.threshold == other.sharpening.threshold;
@@ -1576,6 +1578,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (sharpening.enabled) {
         toEdit.sharpening.enabled     = mods.sharpening.enabled;
+    }
+
+    if (sharpening.contrast) {
+        toEdit.sharpening.contrast  = dontforceSet && options.baBehav[ADDSET_SHARP_CONTRAST] ? toEdit.sharpening.contrast + mods.sharpening.contrast : mods.sharpening.contrast;
     }
 
     if (sharpening.radius) {

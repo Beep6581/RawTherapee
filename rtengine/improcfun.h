@@ -61,7 +61,6 @@ class ImProcFunctions
     void sharpenHaloCtrl    (float** luminance, float** blurmap, float** base, int W, int H, const SharpeningParams &sharpenParam);
     void sharpenHaloCtrl    (LabImage* lab, float** blurmap, float** base, int W, int H, SharpeningParams &sharpenParam);
     void sharpenHaloCtrlcam (CieImage* ncie, float** blurmap, float** base, int W, int H);
-    void dcdamping          (float** aI, float** aO, float damping, int W, int H);
 
     bool needsCA            ();
     bool needsDistortion    ();

@@ -1007,6 +1007,7 @@ void ColorToningParams::getCurves(ColorGradientCurve& colorCurveLUT, OpacityCurv
 
 SharpeningParams::SharpeningParams() :
     enabled(false),
+    contrast(0.0),
     radius(0.5),
     amount(200),
     threshold(20, 80, 2000, 1200, false),
@@ -1027,6 +1028,7 @@ bool SharpeningParams::operator ==(const SharpeningParams& other) const
 {
     return
         enabled == other.enabled
+        && contrast == other.contrast
         && radius == other.radius
         && amount == other.amount
         && threshold == other.threshold
@@ -2853,6 +2855,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Sharpening
         saveToKeyfile(!pedited || pedited->sharpening.enabled, "Sharpening", "Enabled", sharpening.enabled, keyFile);
+        saveToKeyfile(!pedited || pedited->sharpening.contrast, "Sharpening", "Contrast", sharpening.contrast, keyFile);
         saveToKeyfile(!pedited || pedited->sharpening.method, "Sharpening", "Method", sharpening.method, keyFile);
         saveToKeyfile(!pedited || pedited->sharpening.radius, "Sharpening", "Radius", sharpening.radius, keyFile);
         saveToKeyfile(!pedited || pedited->sharpening.amount, "Sharpening", "Amount", sharpening.amount, keyFile);
@@ -3670,6 +3673,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group ("Sharpening")) {
             assignFromKeyfile(keyFile, "Sharpening", "Enabled", pedited, sharpening.enabled, pedited->sharpening.enabled);
+            assignFromKeyfile(keyFile, "Sharpening", "Contrast", pedited, sharpening.contrast, pedited->sharpening.contrast);
             assignFromKeyfile(keyFile, "Sharpening", "Radius", pedited, sharpening.radius, pedited->sharpening.radius);
             assignFromKeyfile(keyFile, "Sharpening", "Amount", pedited, sharpening.amount, pedited->sharpening.amount);
 
