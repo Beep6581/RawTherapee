@@ -1201,6 +1201,7 @@ float* RawImageSource::CA_correct_RT(const bool autoCA, const double cared, cons
 
     if(freeBuffer) {
         free(buffer);
+        buffer = nullptr;
     }
 
     if(plistener) {

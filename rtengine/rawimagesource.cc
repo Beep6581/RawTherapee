@@ -2021,9 +2021,9 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             for(int i = 1; i < 3; ++i) {
                 CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, *rawDataFrames[i], fitParams, true, false, buffer, false);
             }
-            CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, *rawDataFrames[3], fitParams, true, false, buffer);
+            CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, *rawDataFrames[3], fitParams, true, false, buffer, true);
         } else {
-            CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, rawData);
+            CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, rawData, nullptr, false, false, nullptr, true);
         }
     }
 
