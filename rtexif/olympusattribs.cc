@@ -146,6 +146,7 @@ public:
         lenses["01 06 00"] = "Sigma APO 50-500mm f/4.0-6.3 EX DG HSM";
         lenses["01 06 10"] = "Sigma 30mm f/1.4 DC DN | C";
         lenses["01 07 00"] = "Sigma Macro 105mm f/2.8 EX DG";
+        lenses["01 07 10"] = "Sigma 16mm f/1.4 DC DN | C (017)";
         lenses["01 08 00"] = "Sigma APO Macro 150mm f/2.8 EX DG HSM";
         lenses["01 09 00"] = "Sigma 18-50mm f/2.8 EX DC Macro";
         lenses["01 10 00"] = "Sigma 24mm f/1.8 EX DG Aspherical Macro";

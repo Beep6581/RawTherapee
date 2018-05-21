@@ -41,12 +41,12 @@
 #40 2017-12-13 updated by mkyral
 #41 2018-03-03 updated by mkyral
 #42 2018-04-28 updated by mkyral
+
 ABOUT_TAB_BUILD;Verze
 ABOUT_TAB_CREDITS;Zásluhy
 ABOUT_TAB_LICENSE;Licence
 ABOUT_TAB_RELEASENOTES;Poznámky k vydání
 ABOUT_TAB_SPLASH;Úvodní obrazovka
-ADJUSTER_RESET_TO_DEFAULT;Vrátit se k původnímu
 BATCHQUEUE_AUTOSTART;Automatický start
 BATCHQUEUE_AUTOSTARTHINT;Automatické spuštění zpracování po vložení nové úlohy.
 BATCHQUEUE_DESTFILENAME;Cesta a název souboru
@@ -520,9 +520,7 @@ HISTORY_MSG_231;ČB - Křivka 'Před'
 HISTORY_MSG_232;ČB - Typ křivky 'Před'
 HISTORY_MSG_233;ČB - Křivka 'Po'
 HISTORY_MSG_234;ČB - Typ křivky 'Po'
-HISTORY_MSG_235;ČB - Automatické míchání kanálů
 HISTORY_MSG_236;--nepoužito--
-HISTORY_MSG_237;ČB - Míchání
 HISTORY_MSG_238;PF - Rozptyl
 HISTORY_MSG_239;PF - Síla
 HISTORY_MSG_240;PF - Střed
@@ -558,7 +556,6 @@ HISTORY_MSG_269;Barevné tónování - Světla - červená
 HISTORY_MSG_270;Barevné tónování - Světla - zelená
 HISTORY_MSG_271;Barevné tónování - Světla - modrá
 HISTORY_MSG_272;Barevné tónování - Vyvážení
-HISTORY_MSG_273;Barevné tónování - Obnovení
 HISTORY_MSG_274;Barevné tónování - Nasycení stínů
 HISTORY_MSG_275;Barevné tónování - Nasycení světel
 HISTORY_MSG_276;Barevné tónování  - Neprůhlednost
@@ -677,7 +674,6 @@ HISTORY_MSG_388;Vlnka - Zůstatek - VB střední: zelená
 HISTORY_MSG_389;Vlnka - Zůstatek - VB střední: modrá
 HISTORY_MSG_390;Vlnka - Zůstatek - VB stíny: zelená
 HISTORY_MSG_391;Vlnka - Zůstatek - VB stíny: modrá
-HISTORY_MSG_392;Vlnka - Zůstatek - VB vrátit
 HISTORY_MSG_393;DCP - tabulka vzhledu
 HISTORY_MSG_394;DCP - základní expozice
 HISTORY_MSG_395;DCP - základní tabulka
@@ -1292,7 +1288,6 @@ TP_BWMIX_ALGO_LI;Lineární
 TP_BWMIX_ALGO_SP;Speciální efekty
 TP_BWMIX_ALGO_TOOLTIP;Lineární: výstupem bude běžná <b>lineární</b> odpověď.\nSpeciální efekty: výstupem budou speciální efekty pomocí míchání kanálů (<b>nelineární</b> odpověď).
 TP_BWMIX_AUTOCH;Automaticky
-TP_BWMIX_AUTOCH_TIP;Spočítá optimální hodnoty pro míchání kanálů.
 TP_BWMIX_CC_ENABLED;Úpravy doplňkových barev
 TP_BWMIX_CC_TOOLTIP;Povolením zapnete automatické korekce doplňkových barev v režimu ROYGCBPM.
 TP_BWMIX_CHANNEL;Korekce jasu
@@ -1319,9 +1314,6 @@ TP_BWMIX_MET;Metoda
 TP_BWMIX_MET_CHANMIX;Míchání kanálů
 TP_BWMIX_MET_DESAT;Odbarvení
 TP_BWMIX_MET_LUMEQUAL;Korekce jasu
-TP_BWMIX_MIXC;Míchání
-TP_BWMIX_NEUTRAL;Vrátit míchání
-TP_BWMIX_NEUTRAL_TIP;Vrátí všechny hodnoty (filtry, mixéry kanálů) na výchozí pozice.
 TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Celkem: %4%%
 TP_BWMIX_RGBLABEL_HINT;Výsledné RGB faktory po započtení všech mixérů\n"Celkem" zobrazí součet aktuálně aplikovaných RGB hodnot:\n- vždy 100% v relativním režimu\n- více (světlejší) nebo méně (tmavší) než 100% v absolutním režimu.
 TP_BWMIX_RGB_TOOLTIP;Mísení RGB kanálů. Jako vodítko můžete použít uložená přednastavení.\nPovšimněte si prosím, že záporné hodnoty mohou vést ke vzniku artefaktů nebo chybnému chování.
@@ -2236,3 +2228,18 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Přizpůsobit ořez obrazovce\nZkratka: <b>f</b>
 ZOOMPANEL_ZOOMFITSCREEN;Přizpůsobit celý obrázek obrazovce\nZkratka: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Přiblížit\nZkratka: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
+!GENERAL_RESET;Reset
+!HISTORY_MSG_235;B&amp;W - CM - Auto
+!HISTORY_MSG_237;B&amp;W - CM
+!HISTORY_MSG_273;CT - Color Balance SMH
+!HISTORY_MSG_392;W - Residual - Color Balance
+!SAMPLEFORMAT_32;24-bit floating-point
+!SAMPLEFORMAT_64;32-bit floating-point
+!TP_BWMIX_MIXC;Channel Mixer
+!TP_BWMIX_NEUTRAL;Reset

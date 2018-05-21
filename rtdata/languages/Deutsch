@@ -55,13 +55,13 @@
 #54 30.03.2018 Erweiterung (TooWaBoo) RT 5.4
 #55 06.04.2018 Erweiterung (TooWaBoo) RT 5.4
 #56 27.04.2018 Erweiterung (TooWaBoo) RT 5.4
+#57 17.05.2018 Erweiterung (TooWaBoo) RT 5.4
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
 ABOUT_TAB_LICENSE;Lizenz
 ABOUT_TAB_RELEASENOTES;Versionshinweise
 ABOUT_TAB_SPLASH;Startbild
-ADJUSTER_RESET_TO_DEFAULT;Standard wiederherstellen
 BATCHQUEUE_AUTOSTART;Automatisch starten
 BATCHQUEUE_AUTOSTARTHINT;Bei neuem Job die Verarbeitung automatisch starten
 BATCHQUEUE_DESTFILENAME;Pfad und Dateiname
@@ -110,6 +110,7 @@ EXIFFILTER_CAMERA;Kamera
 EXIFFILTER_EXPOSURECOMPENSATION;Belichtungskorrektur (EV)
 EXIFFILTER_FILETYPE;Dateityp
 EXIFFILTER_FOCALLEN;Brennweite
+EXIFFILTER_IMAGETYPE;Bildtyp
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objektiv
 EXIFFILTER_METADATAFILTER;Metadatenfilter einschalten
@@ -534,9 +535,7 @@ HISTORY_MSG_231;(Schwarz/Weiß)\n“Bevor“-Kurve
 HISTORY_MSG_232;(Schwarz/Weiß)\n“Bevor“-Kurventyp
 HISTORY_MSG_233;(Schwarz/Weiß)\n“Danach“-Kurve
 HISTORY_MSG_234;(Schwarz/Weiß)\n“Danach“-Kurventyp
-HISTORY_MSG_235;(Schwarz/Weiß)\nAuto-Kanalmixer
 HISTORY_MSG_236;--unused--
-HISTORY_MSG_237;(Schwarz/Weiß) - Mixer
 HISTORY_MSG_238;(Grauverlaufsfilter)\nBereich
 HISTORY_MSG_239;(Grauverlaufsfilter)\nIntensität
 HISTORY_MSG_240;(Grauverlaufsfilter)\nRotationsachsen
@@ -572,7 +571,6 @@ HISTORY_MSG_269;(Farbanpassungen)\nLichter - Blau / Rot
 HISTORY_MSG_270;(Farbanpassungen)\nLichter - Cyan / Grün
 HISTORY_MSG_271;(Farbanpassungen)\nLichter - Gelb / Blau
 HISTORY_MSG_272;(Farbanpassungen)\nFarbausgleich
-HISTORY_MSG_273;(Farbanpassungen)\nZurücksetzen
 HISTORY_MSG_274;(Farbanpassungen)\nSättigung Schatten
 HISTORY_MSG_275;(Farbanpassungen)\nSättigung Lichter
 HISTORY_MSG_276;(Farbanpassungen)\nDeckkraft
@@ -691,7 +689,6 @@ HISTORY_MSG_388;(Wavelet) - Restbild\nFarbausgleich\nMitten Grün / Cyan
 HISTORY_MSG_389;(Wavelet) - Restbild\nFarbausgleich\nMitten Blau / Gelb
 HISTORY_MSG_390;(Wavelet) - Restbild\nFarbausgleich\nSchatten Grün / Cyan
 HISTORY_MSG_391;(Wavelet) - Restbild\nFarbausgleich\nSchatten Blau / Gelb
-HISTORY_MSG_392;(Wavelet) - Restbild\nFarbausgleich
 HISTORY_MSG_393;(Farbmanagement)\nEingangsfarbprofil\nDCP - Look-Tabelle
 HISTORY_MSG_394;(Farbmanagement)\nEingangsfarbprofil\nDCP - Basisbelichtung
 HISTORY_MSG_395;(Farbmanagement)\nEingangsfarbprofil\nDCP - Basistabelle
@@ -1271,12 +1268,14 @@ QINFO_HDR;HDR / %2 Frame(s)
 QINFO_ISO;ISO
 QINFO_NOEXIF;Keine Exif-Daten vorhanden.
 QINFO_PIXELSHIFT;Pixel Shift / %2 Frame(s)
-SAMPLEFORMAT_0;Unbekanntes Format
-SAMPLEFORMAT_1;Ohne Vorzeichen 8 Bits
-SAMPLEFORMAT_2;Ohne Vorzeichen 16 Bits
-SAMPLEFORMAT_4;LogLuv 24 Bits
-SAMPLEFORMAT_8;LogLuv 32 Bits
-SAMPLEFORMAT_16;32 Bits Fließkomma
+SAMPLEFORMAT_0;Unbekanntes Datenformat
+SAMPLEFORMAT_1;8 Bit ohne Vorzeichen
+SAMPLEFORMAT_2;16 Bit ohne Vorzeichen
+SAMPLEFORMAT_4;24 Bit LogLuv
+SAMPLEFORMAT_8;32 Bit LogLuv
+SAMPLEFORMAT_16;16 Bit Gleitkomma
+SAMPLEFORMAT_32;24 Bit Gleitkomma
+SAMPLEFORMAT_64;32 Bit Gleitkomma
 SAVEDLG_AUTOSUFFIX;Suffix anfügen, wenn die Datei bereits existiert
 SAVEDLG_FILEFORMAT;Dateiformat
 SAVEDLG_FORCEFORMATOPTS;Erzwinge Speicheroptionen
@@ -1314,7 +1313,6 @@ TP_BWMIX_ALGO_LI;Linear
 TP_BWMIX_ALGO_SP;Spezialeffekte
 TP_BWMIX_ALGO_TOOLTIP;<b>Linear</b> liefert ein lineares Ergebnis\n<b>Spezialeffekte</b> liefert einen speziellen Effekt durch Mischen von Kanälen.
 TP_BWMIX_AUTOCH;Auto
-TP_BWMIX_AUTOCH_TIP;Automatische Berechnung der RGB-Werte.
 TP_BWMIX_CC_ENABLED;Komplemantärfarbe anpassen
 TP_BWMIX_CC_TOOLTIP;Aktiviert die automatische Anpassung der\nKomplementärfarbe im ROYGCBPM-Modus
 TP_BWMIX_CHANNEL;Luminanzequalizer
@@ -1341,9 +1339,6 @@ TP_BWMIX_MET;Methode
 TP_BWMIX_MET_CHANMIX;Kanalmixer
 TP_BWMIX_MET_DESAT;Entsättigung
 TP_BWMIX_MET_LUMEQUAL;Luminanz
-TP_BWMIX_MIXC;Mixer
-TP_BWMIX_NEUTRAL;Mixer zurücksetzen
-TP_BWMIX_NEUTRAL_TIP;Alle Werte auf Standard zurücksetzen. (Farbfilter, Kanalmixer)
 TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%  Gesamt: %4%%
 TP_BWMIX_RGBLABEL_HINT;RGB-Faktoren\n\nGesamt: Summe aller RGB-Werte.\n- immer 100% im Modus Relativ\n- höher (heller), oder niedriger (dunkler) 100% im Modus Absolut
 TP_BWMIX_RGB_TOOLTIP;Mischen Sie die Kanäle. Verwenden Sie die Vorgaben zur Orientierung.\nNegative Werte können zu Artefakten führen.
@@ -1846,6 +1841,8 @@ TP_RAW_NONE;Keine
 TP_RAW_PIXELSHIFT;Pixel Shift
 TP_RAW_PIXELSHIFTADAPTIVE;Adaptive Erkennung
 TP_RAW_PIXELSHIFTBLUR;Unschärfebewegungsmaske
+TP_RAW_PIXELSHIFTEPERISO;Empfindlichkeit
+TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;Der Standardwert 0 wird für die Basis-ISO empfohlen.\nHöhere Werte erhöhen die Empfindlichkeit der Bewegungserkennung.\nVerändern Sie den Wert in kleinen Schritten und beobachten Sie die\nBewegungsmaske. Erhöhen Sie die Empfindlichkeit für unterbelichtete\noder High-ISO-Bilder.
 TP_RAW_PIXELSHIFTEQUALBRIGHT;Frame-Helligkeit angleichen
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Ausgleich pro Kanal
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;EIN: Individueller Ausgleich der RGB-Kanäle.\nAUS: Identischer Ausgleichsfaktor für alle Kanäle.
@@ -1881,6 +1878,7 @@ TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
 TP_RAW_PIXELSHIFTSHOWMOTION;Bewegungsmaske anzeigen
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Nur Maske anzeigen
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Zeigt die Bewegungsmaske ohne Bild.
+TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Überlagert das Bild mit einer grünen Maske,\num die Bewegungsbereiche hervorzuheben.
 TP_RAW_PIXELSHIFTSIGMA;Unschärferadius
 TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Der Standard-Radius von 1,0 passt in der Regel für die Basis-ISO.\nErhöhen Sie den Wert für High-ISO-Aufnahmen, 5,0 ist ein guter\nAusgangspunkt für High-ISO-Aufnahmen. Achten Sie auf die\nBewegungsmaske, während Sie den Wert ändern.
 TP_RAW_PIXELSHIFTSMOOTH;Weicher Übergang
@@ -2280,7 +2278,11 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-EXIFFILTER_IMAGETYPE;Bildtyp
-TP_RAW_PIXELSHIFTEPERISO;Empfindlichkeit
-TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;Der Standardwert 0 wird für die Basis-ISO empfohlen.\nHöhere Werte erhöhen die Empfindlichkeit der Bewegungserkennung.\nVerändern Sie den Wert in kleinen Schritten und beobachten Sie die\nBewegungsmaske. Erhöhen Sie die Empfindlichkeit für unterbelichtete\noder High-ISO-Bilder.
-TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Überlagert das Bild mit einer grünen Maske,\num die Bewegungsbereiche hervorzuheben.
+!ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
+!GENERAL_RESET;Reset
+!HISTORY_MSG_235;B&amp;W - CM - Auto
+!HISTORY_MSG_237;B&amp;W - CM
+!HISTORY_MSG_273;CT - Color Balance SMH
+!HISTORY_MSG_392;W - Residual - Color Balance
+!TP_BWMIX_MIXC;Channel Mixer
+!TP_BWMIX_NEUTRAL;Reset
