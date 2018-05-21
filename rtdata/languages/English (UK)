@@ -59,7 +59,7 @@ TP_BWMIX_FILTER_TOOLTIP;The colour filter simulates shots taken with a coloured 
 TP_BWMIX_RGB_TOOLTIP;Mix the RGB channels. Use presets for guidance.\nPay attention to negative values that may cause artifacts or erratic behaviour.
 TP_COLORAPP_ALGO_QM;Brightness + Colourfulness (QM)
 TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression of hot/bad (brightly coloured) pixels.\n0 = No effect\n1 = Median\n2 = Gaussian.\nAlternatively, adjust the image to avoid very dark shadows.\n\nThese artifacts are due to limitations of CIECAM02.
-TP_COLORAPP_CHROMA_M;Colourfulnes (M)
+TP_COLORAPP_CHROMA_M;Colourfulness (M)
 TP_COLORAPP_CHROMA_M_TOOLTIP;Colourfulness in CIECAM02 differs from L*a*b* and RGB colourfulness.
 TP_COLORAPP_CURVEEDITOR3;Colour curve
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colourfulness.\n\nShows the histogram of chromaticity (L*a*b*) before CIECAM02.\nIf the "Show CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of C, s or M after CIECAM02.\n\nC, s and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel.
