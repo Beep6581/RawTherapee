@@ -26,11 +26,11 @@ using namespace rtengine::procparams;
 Sharpening::Sharpening () : FoldableToolPanel(this, "sharpening", M("TP_SHARPENING_LABEL"), true, true)
 {
     auto m = ProcEventMapper::getInstance();
-    EvSharpenContrast = m->newEvent(SHARPENING, "HISTORY_MSG_MICROCONTRAST_CONTRAST");
+    EvSharpenContrast = m->newEvent(SHARPENING, "HISTORY_MSG_SHARPENING_CONTRAST");
 
     Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
     hb->show ();
-    contrast = Gtk::manage(new Adjuster (M("TP_SHARPENMICRO_CONTRAST"), 0, 100, 1, 0));
+    contrast = Gtk::manage(new Adjuster (M("TP_SHARPENING_CONTRAST"), 0, 100, 1, 0));
     contrast->setAdjusterListener (this);
     pack_start(*contrast);
     if (contrast->delay < options.adjusterMaxDelay) {

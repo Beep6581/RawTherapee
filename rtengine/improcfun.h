@@ -58,10 +58,6 @@ class ImProcFunctions
     void transformGeneral(bool highQuality, Imagefloat *original, Imagefloat *transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LensCorrection *pLCPMap);
     void transformLCPCAOnly(Imagefloat *original, Imagefloat *transformed, int cx, int cy, const LensCorrection *pLCPMap);
 
-    void sharpenHaloCtrl    (float** luminance, float** blurmap, float** base, int W, int H, const SharpeningParams &sharpenParam);
-    void sharpenHaloCtrl    (LabImage* lab, float** blurmap, float** base, int W, int H, SharpeningParams &sharpenParam);
-    void sharpenHaloCtrlcam (CieImage* ncie, float** blurmap, float** base, int W, int H);
-
     bool needsCA            ();
     bool needsDistortion    ();
     bool needsRotation      ();
