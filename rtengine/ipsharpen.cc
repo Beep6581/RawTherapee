@@ -47,7 +47,7 @@ vfloat calcBlendFactor(vfloat valv, vfloat thresholdv) {
 }
 #endif
 
-void buildBlendMask(float** luminance, rtengine::JaggedArray<float> &blend, int W, int H, float contrastThreshold) {
+void buildBlendMask(float** luminance, rtengine::JaggedArray<float> &blend, int W, int H, float contrastThreshold, float amount = 1.f) {
     // upper border
     for(int j = 0; j < 2; j++)
         for(int i = 0; i < W; ++i) {
@@ -61,6 +61,7 @@ void buildBlendMask(float** luminance, rtengine::JaggedArray<float> &blend, int 
 #ifdef __SSE2__
     vfloat contrastThresholdv = F2V(contrastThreshold);
     vfloat scalev = F2V(0.0625f / 327.68f);
+    vfloat amountv = F2V(amount);
 #endif
 #ifdef _OPENMP
     #pragma omp for schedule(dynamic,16) nowait
@@ -75,7 +76,7 @@ void buildBlendMask(float** luminance, rtengine::JaggedArray<float> &blend, int 
             vfloat contrastv = vsqrtf(SQRV(LVFU(luminance[j][i+1]) - LVFU(luminance[j][i-1])) + SQRV(LVFU(luminance[j+1][i]) - LVFU(luminance[j-1][i])) +
                                       SQRV(LVFU(luminance[j][i+2]) - LVFU(luminance[j][i-2])) + SQRV(LVFU(luminance[j+2][i]) - LVFU(luminance[j-2][i]))) * scalev;
 
-            STVFU(blend[j][i], calcBlendFactor(contrastv, contrastThresholdv));
+            STVFU(blend[j][i], amountv * calcBlendFactor(contrastv, contrastThresholdv));
         }
 #endif
         for(; i < W - 2; ++i) {
@@ -83,7 +84,7 @@ void buildBlendMask(float** luminance, rtengine::JaggedArray<float> &blend, int 
             float contrast = sqrtf(SQR(luminance[j][i+1] - luminance[j][i-1]) + SQR(luminance[j+1][i] - luminance[j-1][i]) + 
                                    SQR(luminance[j][i+2] - luminance[j][i-2]) + SQR(luminance[j+2][i] - luminance[j-2][i])) * 0.0625f / 327.68f;
 
-            blend[j][i] = calcBlendFactor(contrast, contrastThreshold);
+            blend[j][i] = amount * calcBlendFactor(contrast, contrastThreshold);
         }
         blend[j][W - 2] = blend[j][W - 1] = 0.f;
     }
@@ -232,7 +233,6 @@ void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, int W, i
     }
 BENCHFUN
     JaggedArray<float> tmpI(W, H);
-    JaggedArray<float> tmpII(W, H);
 
 #ifdef _OPENMP
     #pragma omp parallel for
@@ -240,13 +240,12 @@ BENCHFUN
     for (int i = 0; i < H; i++) {
         for(int j = 0; j < W; j++) {
             tmpI[i][j] = max(luminance[i][j], 0.f);
-            tmpII[i][j] = luminance[i][j];
         }
     }
 
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     JaggedArray<float> blend(W, H);
-    buildBlendMask(luminance, blend, W, H, sharpenParam.contrast / 100.f);
+    buildBlendMask(luminance, blend, W, H, sharpenParam.contrast / 100.f, sharpenParam.deconvamount / 100.0);
 
     float damping = sharpenParam.deconvdamping / 5.0;
     bool needdamp = sharpenParam.deconvdamping > 0;
@@ -278,17 +277,15 @@ BENCHFUN
 
         } // end for
 
-        float p2 = sharpenParam.deconvamount / 100.0;
-        float p1 = 1.0 - p2;
-
 #ifdef _OPENMP
         #pragma omp for
 #endif
 
-        for (int i = 0; i < H; ++i)
+        for (int i = 0; i < H; ++i) {
             for (int j = 0; j < W; ++j) {
-                luminance[i][j] = intp(blend[i][j], luminance[i][j] * p1 + max(tmpI[i][j], 0.0f) * p2, tmpII[i][j]);
+                luminance[i][j] = intp(blend[i][j], max(tmpI[i][j], 0.0f), luminance[i][j]);
             }
+        }
     } // end parallel
 }
 
