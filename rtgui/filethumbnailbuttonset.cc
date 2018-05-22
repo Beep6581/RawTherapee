@@ -49,12 +49,12 @@ FileThumbnailButtonSet::FileThumbnailButtonSet (FileBrowserEntry* myEntry)
         unTrashIcon = RTImage::createFromPng ("undelete-thumbnail.png");
         processIcon = RTImage::createFromPng ("processing-thumbnail.png");
 
-        colorLabelIcon_0 = RTImage::createFromPng ("cglabel0.png"); //("nocolorlabel.png");
-        colorLabelIcon_1 = RTImage::createFromPng ("clabel1.png");
-        colorLabelIcon_2 = RTImage::createFromPng ("clabel2.png");
-        colorLabelIcon_3 = RTImage::createFromPng ("clabel3.png");
-        colorLabelIcon_4 = RTImage::createFromPng ("clabel4.png");
-        colorLabelIcon_5 = RTImage::createFromPng ("clabel5.png");
+        colorLabelIcon_0 = RTImage::createFromPng ("circle-empty-gray.png"); //("nocolorlabel.png");
+        colorLabelIcon_1 = RTImage::createFromPng ("circle-red.png");
+        colorLabelIcon_2 = RTImage::createFromPng ("circle-yellow.png");
+        colorLabelIcon_3 = RTImage::createFromPng ("circle-green.png");
+        colorLabelIcon_4 = RTImage::createFromPng ("circle-blue.png");
+        colorLabelIcon_5 = RTImage::createFromPng ("circle-purple.png");
         iconsLoaded = true;
     }
 

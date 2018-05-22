@@ -207,7 +207,7 @@ FileBrowser::FileBrowser () :
         Gtk::Menu* submenuLabel = Gtk::manage (new Gtk::Menu ());
 
         for (int i = 0; i <= 5; i++) {
-            submenuLabel->attach (*Gtk::manage(colorlabel[i] = new MyImageMenuItem (M(Glib::ustring::compose("%1%2", "FILEBROWSER_POPUPCOLORLABEL", i)), i == 0 ? "cglabel0.png" : Glib::ustring::compose("%1%2%3", "clabel", i, ".png"))), 0, 1, p, p + 1);
+            submenuLabel->attach (*Gtk::manage(colorlabel[i] = new MyImageMenuItem (M(Glib::ustring::compose("%1%2", "FILEBROWSER_POPUPCOLORLABEL", i)), i == 0 ? "circle-empty-gray.png" : Glib::ustring::compose("%1%2%3", "clabel", i, ".png"))), 0, 1, p, p + 1);
             p++;
         }
 
@@ -215,7 +215,7 @@ FileBrowser::FileBrowser () :
         menuLabel->set_submenu (*submenuLabel);
     } else {
         for (int i = 0; i <= 5; i++) {
-            pmenu->attach (*Gtk::manage(colorlabel[i] = new MyImageMenuItem (M(Glib::ustring::compose("%1%2", "FILEBROWSER_POPUPCOLORLABEL", i)), i == 0 ? "cglabel0.png" : Glib::ustring::compose("%1%2%3", "clabel", i, ".png"))), 0, 1, p, p + 1);
+            pmenu->attach (*Gtk::manage(colorlabel[i] = new MyImageMenuItem (M(Glib::ustring::compose("%1%2", "FILEBROWSER_POPUPCOLORLABEL", i)), i == 0 ? "circle-empty-gray.png" : Glib::ustring::compose("%1%2%3", "clabel", i, ".png"))), 0, 1, p, p + 1);
             p++;
         }
     }
@@ -452,7 +452,7 @@ FileBrowser::FileBrowser () :
     pmenuColorLabels = new Gtk::Menu ();
 
     for (int i = 0; i <= 5; i++) {
-        pmenuColorLabels->attach (*Gtk::manage(colorlabel_pop[i] = new MyImageMenuItem (M(Glib::ustring::compose("%1%2", "FILEBROWSER_POPUPCOLORLABEL", i)), i == 0 ? "cglabel0.png" : Glib::ustring::compose("%1%2%3", "clabel", i, ".png"))), 0, 1, c, c + 1);
+        pmenuColorLabels->attach (*Gtk::manage(colorlabel_pop[i] = new MyImageMenuItem (M(Glib::ustring::compose("%1%2", "FILEBROWSER_POPUPCOLORLABEL", i)), i == 0 ? "circle-empty-gray.png" : Glib::ustring::compose("%1%2%3", "clabel", i, ".png"))), 0, 1, c, c + 1);
         c++;
     }
 

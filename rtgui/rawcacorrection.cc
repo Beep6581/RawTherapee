@@ -25,10 +25,10 @@ using namespace rtengine::procparams;
 
 RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_CHROMATABERR_LABEL"))
 {
-    Gtk::Image* icaredL =   Gtk::manage (new RTImage ("ajd-ca-red1.png"));
-    Gtk::Image* icaredR =   Gtk::manage (new RTImage ("ajd-ca-red2.png"));
-    Gtk::Image* icablueL =  Gtk::manage (new RTImage ("ajd-ca-blue1.png"));
-    Gtk::Image* icablueR =  Gtk::manage (new RTImage ("ajd-ca-blue2.png"));
+    Gtk::Image* icaredL =   Gtk::manage (new RTImage ("circle-red-cyan.png"));
+    Gtk::Image* icaredR =   Gtk::manage (new RTImage ("circle-cyan-red.png"));
+    Gtk::Image* icablueL =  Gtk::manage (new RTImage ("circle-blue-yellow.png"));
+    Gtk::Image* icablueR =  Gtk::manage (new RTImage ("circle-yellow-blue.png"));
 
     caAutocorrect = Gtk::manage (new CheckBox(M("TP_RAWCACORR_AUTO"), multiImage));
     caAutocorrect->setCheckBoxListener (this);

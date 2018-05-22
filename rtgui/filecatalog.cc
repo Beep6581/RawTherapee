@@ -189,8 +189,8 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
         bRank[i]->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event), false);
     }
 
-    iUnCLabeled = new RTImage ("clabel0.png");
-    igUnCLabeled = new RTImage ("cglabel0.png");
+    iUnCLabeled = new RTImage ("circle-empty-darkgray.png");
+    igUnCLabeled = new RTImage ("circle-empty-gray.png");
     bUnCLabeled = Gtk::manage(new Gtk::ToggleButton ());
     bUnCLabeled->set_active (false);
     bUnCLabeled->set_image (*igUnCLabeled);

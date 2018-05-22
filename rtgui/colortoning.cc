@@ -226,26 +226,26 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     Gtk::VBox *chanMixerMidBox = Gtk::manage (new Gtk::VBox());
     Gtk::VBox *chanMixerShadowsBox = Gtk::manage (new Gtk::VBox());
 
-    Gtk::Image* iblueR   = Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
-    Gtk::Image* iyelL    = Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
-    Gtk::Image* imagL    = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
-    Gtk::Image* igreenR  = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
-    Gtk::Image* icyanL   = Gtk::manage (new RTImage ("ajd-wb-bluered1.png"));
-    Gtk::Image* iredR    = Gtk::manage (new RTImage ("ajd-wb-bluered2.png"));
+    Gtk::Image* iblueR   = Gtk::manage (new RTImage ("circle-blue.png"));
+    Gtk::Image* iyelL    = Gtk::manage (new RTImage ("circle-yellow.png"));
+    Gtk::Image* imagL    = Gtk::manage (new RTImage ("circle-magenta.png"));
+    Gtk::Image* igreenR  = Gtk::manage (new RTImage ("circle-green.png"));
+    Gtk::Image* icyanL   = Gtk::manage (new RTImage ("circle-blue.png"));
+    Gtk::Image* iredR    = Gtk::manage (new RTImage ("circle-red.png"));
 
-    Gtk::Image* iblueRm  = Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
-    Gtk::Image* iyelLm   = Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
-    Gtk::Image* imagLm   = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
-    Gtk::Image* igreenRm = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
-    Gtk::Image* icyanLm  = Gtk::manage (new RTImage ("ajd-wb-bluered1.png"));
-    Gtk::Image* iredRm   = Gtk::manage (new RTImage ("ajd-wb-bluered2.png"));
+    Gtk::Image* iblueRm  = Gtk::manage (new RTImage ("circle-blue.png"));
+    Gtk::Image* iyelLm   = Gtk::manage (new RTImage ("circle-yellow.png"));
+    Gtk::Image* imagLm   = Gtk::manage (new RTImage ("circle-magenta.png"));
+    Gtk::Image* igreenRm = Gtk::manage (new RTImage ("circle-green.png"));
+    Gtk::Image* icyanLm  = Gtk::manage (new RTImage ("circle-blue.png"));
+    Gtk::Image* iredRm   = Gtk::manage (new RTImage ("circle-red.png"));
 
-    Gtk::Image* iblueRh  = Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
-    Gtk::Image* iyelLh   = Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
-    Gtk::Image* imagLh   = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
-    Gtk::Image* igreenRh = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
-    Gtk::Image* icyanLh  = Gtk::manage (new RTImage ("ajd-wb-bluered1.png"));
-    Gtk::Image* iredRh   = Gtk::manage (new RTImage ("ajd-wb-bluered2.png"));
+    Gtk::Image* iblueRh  = Gtk::manage (new RTImage ("circle-blue.png"));
+    Gtk::Image* iyelLh   = Gtk::manage (new RTImage ("circle-yellow.png"));
+    Gtk::Image* imagLh   = Gtk::manage (new RTImage ("circle-magenta.png"));
+    Gtk::Image* igreenRh = Gtk::manage (new RTImage ("circle-green.png"));
+    Gtk::Image* icyanLh  = Gtk::manage (new RTImage ("circle-blue.png"));
+    Gtk::Image* iredRh   = Gtk::manage (new RTImage ("circle-red.png"));
 
     redhigh   = Gtk::manage (new Adjuster ("", -100., 100., 1., 0., icyanLh, iredRh  ));
     greenhigh = Gtk::manage (new Adjuster ("", -100., 100., 1., 0., imagLh , igreenRh));

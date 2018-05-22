@@ -698,20 +698,20 @@ Wavelet::Wavelet() :
     cbenabConn = cbenab->signal_toggled().connect( sigc::mem_fun(*this, &Wavelet::cbenabToggled) );
     cbenab->set_tooltip_text (M("TP_WAVELET_CB_TOOLTIP"));
 
-    Gtk::Image* const iblueR   = Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
-    Gtk::Image* const iyelL    = Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
-    Gtk::Image* const imagL    = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
-    Gtk::Image* const igreenR  = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
+    Gtk::Image* const iblueR   = Gtk::manage (new RTImage ("circle-blue.png"));
+    Gtk::Image* const iyelL    = Gtk::manage (new RTImage ("circle-yellow.png"));
+    Gtk::Image* const imagL    = Gtk::manage (new RTImage ("circle-magenta.png"));
+    Gtk::Image* const igreenR  = Gtk::manage (new RTImage ("circle-green.png"));
 
-    Gtk::Image* const  iblueRm  = Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
-    Gtk::Image* const  iyelLm   = Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
-    Gtk::Image* const  imagLm   = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
-    Gtk::Image* const  igreenRm = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
+    Gtk::Image* const  iblueRm  = Gtk::manage (new RTImage ("circle-blue.png"));
+    Gtk::Image* const  iyelLm   = Gtk::manage (new RTImage ("circle-yellow.png"));
+    Gtk::Image* const  imagLm   = Gtk::manage (new RTImage ("circle-magenta.png"));
+    Gtk::Image* const  igreenRm = Gtk::manage (new RTImage ("circle-green.png"));
 
-    Gtk::Image* const iblueRh  = Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
-    Gtk::Image* const iyelLh   = Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
-    Gtk::Image* const imagLh   = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
-    Gtk::Image* const igreenRh = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
+    Gtk::Image* const iblueRh  = Gtk::manage (new RTImage ("circle-blue.png"));
+    Gtk::Image* const iyelLh   = Gtk::manage (new RTImage ("circle-yellow.png"));
+    Gtk::Image* const imagLh   = Gtk::manage (new RTImage ("circle-magenta.png"));
+    Gtk::Image* const igreenRh = Gtk::manage (new RTImage ("circle-green.png"));
 
     greenhigh = Gtk::manage (new Adjuster ("", -100., 100., 1., 0., igreenRh, imagLh));
     bluehigh = Gtk::manage (new Adjuster ("", -100., 100., 1., 0., iblueRh, iyelLh));
