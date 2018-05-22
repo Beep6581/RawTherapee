@@ -157,6 +157,7 @@ void ParamsEdited::set (bool v)
     sharpening.deconviter     = v;
     sharpening.deconvdamping  = v;
     prsharpening.enabled            = v;
+    prsharpening.contrast           = v;
     prsharpening.radius             = v;
     prsharpening.amount             = v;
     prsharpening.threshold          = v;
@@ -711,6 +712,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         sharpening.deconviter = sharpening.deconviter && p.sharpening.deconviter == other.sharpening.deconviter;
         sharpening.deconvdamping = sharpening.deconvdamping && p.sharpening.deconvdamping == other.sharpening.deconvdamping;
         prsharpening.enabled = prsharpening.enabled && p.prsharpening.enabled == other.prsharpening.enabled;
+        prsharpening.contrast = prsharpening.contrast && p.prsharpening.contrast == other.prsharpening.contrast;
         prsharpening.radius = prsharpening.radius && p.prsharpening.radius == other.prsharpening.radius;
         prsharpening.amount = prsharpening.amount && p.prsharpening.amount == other.prsharpening.amount;
         prsharpening.threshold = prsharpening.threshold && p.prsharpening.threshold == other.prsharpening.threshold;
@@ -1638,6 +1640,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (prsharpening.enabled) {
         toEdit.prsharpening.enabled   = mods.prsharpening.enabled;
+    }
+
+    if (prsharpening.contrast) {
+        toEdit.prsharpening.contrast  = dontforceSet && options.baBehav[ADDSET_SHARP_CONTRAST] ? toEdit.prsharpening.contrast + mods.prsharpening.contrast : mods.prsharpening.contrast;
     }
 
     if (prsharpening.radius) {
