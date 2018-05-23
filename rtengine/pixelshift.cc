@@ -26,7 +26,7 @@
 #include "procparams.h"
 #include "gauss.h"
 #include "median.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 namespace
 {
