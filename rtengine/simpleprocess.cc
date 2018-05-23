@@ -1053,20 +1053,8 @@ private:
         }
 
         if (((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) && params.sharpening.enabled) {
+            ipf.sharpening (labView, params.sharpening);
 
-            float **buffer = new float*[fh];
-
-            for (int i = 0; i < fh; i++) {
-                buffer[i] = new float[fw];
-            }
-
-            ipf.sharpening (labView, (float**)buffer, params.sharpening);
-
-            for (int i = 0; i < fh; i++) {
-                delete [] buffer[i];
-            }
-
-            delete [] buffer;
         }
 
         WaveletParams WaveParams = params.wavelet;
@@ -1165,7 +1153,7 @@ private:
 
         int imw, imh;
         double tmpScale = ipf.resizeScale (&params, fw, fh, imw, imh);
-        bool labResize = params.resize.enabled && params.resize.method != "Nearest" && tmpScale != 1.0;
+        bool labResize = params.resize.enabled && params.resize.method != "Nearest" && (tmpScale != 1.0 || params.prsharpening.enabled);
         LabImage *tmplab;
 
         // crop and convert to rgb16
@@ -1196,33 +1184,23 @@ private:
         }
 
         if (labResize) { // resize lab data
-            // resize image
-            tmplab = new LabImage (imw, imh);
-            ipf.Lanczos (labView, tmplab, tmpScale);
-            delete labView;
-            labView = tmplab;
+            if(labView->W != imw || labView->H != imh) {
+                // resize image
+                tmplab = new LabImage (imw, imh);
+                ipf.Lanczos (labView, tmplab, tmpScale);
+                delete labView;
+                labView = tmplab;
+            }
             cw = labView->W;
             ch = labView->H;
 
             if (params.prsharpening.enabled) {
-                for (int i = 0; i < ch; i++)
+                for (int i = 0; i < ch; i++) {
                     for (int j = 0; j < cw; j++) {
                         labView->L[i][j] = labView->L[i][j] < 0.f ? 0.f : labView->L[i][j];
                     }
-
-                float **buffer = new float*[ch];
-
-                for (int i = 0; i < ch; i++) {
-                    buffer[i] = new float[cw];
                 }
-
-                ipf.sharpening (labView, (float**)buffer, params.prsharpening);
-
-                for (int i = 0; i < ch; i++) {
-                    delete [] buffer[i];
-                }
-
-                delete [] buffer;
+                ipf.sharpening (labView, params.prsharpening);
             }
         }
 

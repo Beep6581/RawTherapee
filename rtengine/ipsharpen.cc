@@ -24,17 +24,19 @@
 #include "rt_math.h"
 #include "sleef.c"
 #include "opthelper.h"
-//#define BENCHMARK
+#define BENCHMARK
 #include "StopWatch.h"
 using namespace std;
 
 namespace {
+
 float calcBlendFactor(float val, float threshold) {
     // sigmoid function
     // result is in ]0;1] range
     // inflexion point is at (x, y) (threshold, 0.5)
     return threshold == 0.f ? 1.f : 1.f / (1.f + xexpf(16.f - 16.f * val / threshold));
 }
+
 #ifdef __SSE2__
 vfloat calcBlendFactor(vfloat valv, vfloat thresholdv) {
     // sigmoid function
@@ -48,31 +50,33 @@ vfloat calcBlendFactor(vfloat valv, vfloat thresholdv) {
 #endif
 
 void buildBlendMask(float** luminance, rtengine::JaggedArray<float> &blend, int W, int H, float contrastThreshold, float amount = 1.f) {
+BENCHFUN
     // upper border
     for(int j = 0; j < 2; j++)
         for(int i = 0; i < W; ++i) {
             blend[j][i] = 0.f;
         }
 
+    constexpr float scale = 0.0625f / 327.68f;
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
 {
 #ifdef __SSE2__
-    vfloat contrastThresholdv = F2V(contrastThreshold);
-    vfloat scalev = F2V(0.0625f / 327.68f);
-    vfloat amountv = F2V(amount);
+    const vfloat contrastThresholdv = F2V(contrastThreshold);
+    const vfloat scalev = F2V(scale);
+    const vfloat amountv = F2V(amount);
 #endif
 #ifdef _OPENMP
     #pragma omp for schedule(dynamic,16) nowait
 #endif
 
     for(int j = 2; j < H - 2; ++j) {
+        // left two pixels
         blend[j][0] = blend[j][1] = 0.f;
         int i = 2;
 #ifdef __SSE2__
         for(; i < W - 5; i += 4) {
-
             vfloat contrastv = vsqrtf(SQRV(LVFU(luminance[j][i+1]) - LVFU(luminance[j][i-1])) + SQRV(LVFU(luminance[j+1][i]) - LVFU(luminance[j-1][i])) +
                                       SQRV(LVFU(luminance[j][i+2]) - LVFU(luminance[j][i-2])) + SQRV(LVFU(luminance[j+2][i]) - LVFU(luminance[j-2][i]))) * scalev;
 
@@ -82,10 +86,11 @@ void buildBlendMask(float** luminance, rtengine::JaggedArray<float> &blend, int 
         for(; i < W - 2; ++i) {
 
             float contrast = sqrtf(SQR(luminance[j][i+1] - luminance[j][i-1]) + SQR(luminance[j+1][i] - luminance[j-1][i]) + 
-                                   SQR(luminance[j][i+2] - luminance[j][i-2]) + SQR(luminance[j+2][i] - luminance[j-2][i])) * 0.0625f / 327.68f;
+                                   SQR(luminance[j][i+2] - luminance[j][i-2]) + SQR(luminance[j+2][i] - luminance[j-2][i])) * scale;
 
             blend[j][i] = amount * calcBlendFactor(contrast, contrastThreshold);
         }
+        // right two pixels
         blend[j][W - 2] = blend[j][W - 1] = 0.f;
     }
 #ifdef _OPENMP
@@ -98,14 +103,17 @@ void buildBlendMask(float** luminance, rtengine::JaggedArray<float> &blend, int 
             blend[j][i] = 0.f;
         }
     }
+    // blur blend mask to smooth transitions
+    gaussianBlur(blend, blend, W, H, 2.0);
+
 }
 }
 
 void sharpenHaloCtrl (float** luminance, float** blurmap, float** base, float** blend, int W, int H, const SharpeningParams &sharpenParam)
 {
 
-    float scale = (100.f - sharpenParam.halocontrol_amount) * 0.01f;
-    float sharpFac = sharpenParam.amount * 0.01f;
+    const float scale = (100.f - sharpenParam.halocontrol_amount) * 0.01f;
+    const float sharpFac = sharpenParam.amount * 0.01f;
     float** nL = base;
 
 #ifdef _OPENMP
@@ -170,12 +178,12 @@ void dcdamping (float** aI, float** aO, float damping, int W, int H)
     const float dampingFac = -2.0 / (damping * damping);
 
 #ifdef __SSE2__
-    __m128 Iv, Ov, Uv, zerov, onev, fourv, fivev, dampingFacv, Tv, Wv, Lv;
-    zerov = _mm_setzero_ps( );
-    onev = F2V( 1.0f );
-    fourv = F2V( 4.0f );
-    fivev = F2V( 5.0f );
-    dampingFacv = F2V( dampingFac );
+    vfloat Iv, Ov, Uv, zerov, onev, fourv, fivev, dampingFacv, Tv, Wv, Lv;
+    zerov = _mm_setzero_ps();
+    onev = F2V(1.f);
+    fourv = F2V(4.f);
+    fivev = F2V(5.f);
+    dampingFacv = F2V(dampingFac);
 #endif
 #ifdef _OPENMP
     #pragma omp for
@@ -186,8 +194,8 @@ void dcdamping (float** aI, float** aO, float damping, int W, int H)
 #ifdef __SSE2__
 
         for (; j < W - 3; j += 4) {
-            Iv = LVFU( aI[i][j] );
-            Ov = LVFU( aO[i][j] );
+            Iv = LVFU(aI[i][j]);
+            Ov = LVFU(aO[i][j]);
             Lv = xlogf(Iv / Ov);
             Wv = Ov - Iv;
             Uv = (Ov * Lv + Wv) * dampingFacv;
@@ -198,7 +206,7 @@ void dcdamping (float** aI, float** aO, float damping, int W, int H)
             Uv = (Wv / Iv) * Uv + onev;
             Uv = vselfzero(vmaskf_gt(Iv, zerov), Uv);
             Uv = vselfzero(vmaskf_gt(Ov, zerov), Uv);
-            STVFU( aI[i][j], Uv );
+            STVFU(aI[i][j], Uv);
         }
 
 #endif
@@ -221,6 +229,7 @@ void dcdamping (float** aI, float** aO, float damping, int W, int H)
 }
 
 }
+
 namespace rtengine
 {
 
@@ -247,9 +256,9 @@ BENCHFUN
     JaggedArray<float> blend(W, H);
     buildBlendMask(luminance, blend, W, H, sharpenParam.contrast / 100.f, sharpenParam.deconvamount / 100.0);
 
-    float damping = sharpenParam.deconvdamping / 5.0;
-    bool needdamp = sharpenParam.deconvdamping > 0;
-    double sigma = sharpenParam.deconvradius / scale;
+    const float damping = sharpenParam.deconvdamping / 5.0;
+    const bool needdamp = sharpenParam.deconvdamping > 0;
+    const double sigma = sharpenParam.deconvradius / scale;
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -289,20 +298,23 @@ BENCHFUN
     } // end parallel
 }
 
-void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &sharpenParam)
+void ImProcFunctions::sharpening (LabImage* lab, const SharpeningParams &sharpenParam)
 {
 
     if ((!sharpenParam.enabled) || sharpenParam.amount < 1 || lab->W < 8 || lab->H < 8) {
         return;
     }
 
+    int W = lab->W, H = lab->H;
+    JaggedArray<float> b2(W, H);
+
     if (sharpenParam.method == "rld") {
         deconvsharpening (lab->L, b2, lab->W, lab->H, sharpenParam);
         return;
     }
 
+
     // Rest is UNSHARP MASK
-    int W = lab->W, H = lab->H;
     float** b3 = nullptr;
 
     if (sharpenParam.edgesonly) {

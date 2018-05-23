@@ -226,7 +226,7 @@ public:
     void chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW, LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve, LUTf & satclcurve, LUTf &clcurve, LUTf &curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histLurve);
     void vibrance         (LabImage* lab);//Jacques' vibrance
 //    void colorCurve       (LabImage* lold, LabImage* lnew);
-    void sharpening       (LabImage* lab, float** buffer, SharpeningParams &sharpenParam);
+    void sharpening       (LabImage* lab, const SharpeningParams &sharpenParam);
     void sharpeningcam    (CieImage* ncie, float** buffer);
     void transform        (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const FramesMetaData *metadata, int rawRotationDeg, bool fullImage);
     float resizeScale     (const ProcParams* params, int fw, int fh, int &imw, int &imh);
