@@ -34,7 +34,7 @@ float calcBlendFactor(float val, float threshold) {
     // sigmoid function
     // result is in ]0;1] range
     // inflexion point is at (x, y) (threshold, 0.5)
-    return threshold == 0.f ? 1.f : 1.f / (1.f + xexpf(16.f - 16.f * val / threshold));
+    return 1.f / (1.f + xexpf(16.f - 16.f * val / threshold));
 }
 
 #ifdef __SSE2__
@@ -44,69 +44,79 @@ vfloat calcBlendFactor(vfloat valv, vfloat thresholdv) {
     // inflexion point is at (x, y) (threshold, 0.5)
     const vfloat onev = F2V(1.f);
     const vfloat c16v = F2V(16.f);
-    vfloat resultv = onev / (onev + xexpf(c16v - c16v * valv / thresholdv));
-    return vself(vmaskf_eq(thresholdv, ZEROV), onev, resultv);
+    return onev / (onev + xexpf(c16v - c16v * valv / thresholdv));
 }
 #endif
 
 void buildBlendMask(float** luminance, rtengine::JaggedArray<float> &blend, int W, int H, float contrastThreshold, float amount = 1.f) {
 BENCHFUN
-    // upper border
-    for(int j = 0; j < 2; j++)
-        for(int i = 0; i < W; ++i) {
-            blend[j][i] = 0.f;
+
+    if(contrastThreshold == 0.f) {
+        for(int j = 0; j < H; ++j) {
+            for(int i = 0; i < W; ++i) {
+                blend[j][i] = 1.f;
+            }
         }
-
-    constexpr float scale = 0.0625f / 327.68f;
+    } else {
+        constexpr float scale = 0.0625f / 327.68f;
 #ifdef _OPENMP
-    #pragma omp parallel
-#endif
-{
-#ifdef __SSE2__
-    const vfloat contrastThresholdv = F2V(contrastThreshold);
-    const vfloat scalev = F2V(scale);
-    const vfloat amountv = F2V(amount);
-#endif
-#ifdef _OPENMP
-    #pragma omp for schedule(dynamic,16) nowait
-#endif
-
-    for(int j = 2; j < H - 2; ++j) {
-        // left two pixels
-        blend[j][0] = blend[j][1] = 0.f;
-        int i = 2;
-#ifdef __SSE2__
-        for(; i < W - 5; i += 4) {
-            vfloat contrastv = vsqrtf(SQRV(LVFU(luminance[j][i+1]) - LVFU(luminance[j][i-1])) + SQRV(LVFU(luminance[j+1][i]) - LVFU(luminance[j-1][i])) +
-                                      SQRV(LVFU(luminance[j][i+2]) - LVFU(luminance[j][i-2])) + SQRV(LVFU(luminance[j+2][i]) - LVFU(luminance[j-2][i]))) * scalev;
-
-            STVFU(blend[j][i], amountv * calcBlendFactor(contrastv, contrastThresholdv));
-        }
-#endif
-        for(; i < W - 2; ++i) {
-
-            float contrast = sqrtf(SQR(luminance[j][i+1] - luminance[j][i-1]) + SQR(luminance[j+1][i] - luminance[j-1][i]) + 
-                                   SQR(luminance[j][i+2] - luminance[j][i-2]) + SQR(luminance[j+2][i] - luminance[j-2][i])) * scale;
-
-            blend[j][i] = amount * calcBlendFactor(contrast, contrastThreshold);
-        }
-        // right two pixels
-        blend[j][W - 2] = blend[j][W - 1] = 0.f;
-    }
-#ifdef _OPENMP
-    #pragma omp single
+        #pragma omp parallel
 #endif
     {
-    // lower border
-    for(int j = H - 2; j < H; ++j)
-        for(int i = 0; i < W; ++i) {
-            blend[j][i] = 0.f;
-        }
-    }
-    // blur blend mask to smooth transitions
-    gaussianBlur(blend, blend, W, H, 2.0);
+#ifdef __SSE2__
+        const vfloat contrastThresholdv = F2V(contrastThreshold);
+        const vfloat scalev = F2V(scale);
+        const vfloat amountv = F2V(amount);
+#endif
+#ifdef _OPENMP
+        #pragma omp for schedule(dynamic,16)
+#endif
 
-}
+        for(int j = 2; j < H - 2; ++j) {
+            int i = 2;
+#ifdef __SSE2__
+            for(; i < W - 5; i += 4) {
+                vfloat contrastv = vsqrtf(SQRV(LVFU(luminance[j][i+1]) - LVFU(luminance[j][i-1])) + SQRV(LVFU(luminance[j+1][i]) - LVFU(luminance[j-1][i])) +
+                                          SQRV(LVFU(luminance[j][i+2]) - LVFU(luminance[j][i-2])) + SQRV(LVFU(luminance[j+2][i]) - LVFU(luminance[j-2][i]))) * scalev;
+
+                STVFU(blend[j][i], amountv * calcBlendFactor(contrastv, contrastThresholdv));
+            }
+#endif
+            for(; i < W - 2; ++i) {
+
+                float contrast = sqrtf(SQR(luminance[j][i+1] - luminance[j][i-1]) + SQR(luminance[j+1][i] - luminance[j-1][i]) + 
+                                       SQR(luminance[j][i+2] - luminance[j][i-2]) + SQR(luminance[j+2][i] - luminance[j-2][i])) * scale;
+
+                blend[j][i] = amount * calcBlendFactor(contrast, contrastThreshold);
+            }
+        }
+#ifdef _OPENMP
+        #pragma omp single
+#endif
+        {
+            // upper border
+            for(int j = 0; j < 2; ++j) {
+                for(int i = 2; i < W - 2; ++i) {
+                    blend[j][i] = blend[2][i];
+                }
+            }
+            // lower border
+            for(int j = H - 2; j < H; ++j) {
+                for(int i = 2; i < W - 2; ++i) {
+                    blend[j][i] = blend[H-3][i];
+                }
+            }
+            for(int j = 0; j < H; ++j) {
+                // left border
+                blend[j][0] = blend[j][1] = blend[j][2];
+                // right border
+                blend[j][W - 2] = blend[j][W - 1] = blend[j][W - 3];
+            }
+        }
+        // blur blend mask to smooth transitions
+        gaussianBlur(blend, blend, W, H, 2.0);
+    }
+    }
 }
 
 void sharpenHaloCtrl (float** luminance, float** blurmap, float** base, float** blend, int W, int H, const SharpeningParams &sharpenParam)
@@ -644,7 +654,6 @@ void ImProcFunctions::MLmicrocontrast(float** luminance, int W, int H)
     }
 BENCHFUN
     const int k = params->sharpenMicro.matrix ? 1 : 2;
-    const float contrastThreshold = params->sharpenMicro.contrast / 100;
     // k=2 matrix 5x5  k=1 matrix 3x3
     const int width = W, height = H;
     const float uniform = params->sharpenMicro.uniformity; //between 0 to 100
@@ -690,6 +699,10 @@ BENCHFUN
     constexpr float sqrt1d25 = sqrt(1.25);
     float *LM = new float[width * height]; //allocation for Luminance
 
+    // calculate contrast based blend factors to reduce sharpening in regions with low contrast
+    JaggedArray<float> blend(W, H);
+    buildBlendMask(luminance, blend, W, H, params->sharpenMicro.contrast / 100.f);
+
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -719,7 +732,6 @@ BENCHFUN
                                                        + SQR(LM[offset + 2] - LM[offset - 2]) + SQR(LM[offset + 2 * width] - LM[offset - 2 * width])) * 0.0625f; //for 5x5
 
             contrast = std::min(contrast, 1.f);
-            float blend = calcBlendFactor(contrast, contrastThreshold);
 
             //matrix 5x5
             float temp = v + 4.f *( v * (s + sqrt2 * s)); //begin 3x3
@@ -818,7 +830,7 @@ BENCHFUN
                 } else {
                     temp = 0.f;
                 }
-                luminance[j][i] = intp(blend, luminance[j][i] * (temp * temp2 + 1.f), luminance[j][i]);
+                luminance[j][i] = intp(blend[j][i], luminance[j][i] * (temp * temp2 + 1.f), luminance[j][i]);
             } else {
 
                 float temp4 = LM[offset] / tempL; //
@@ -869,7 +881,7 @@ BENCHFUN
                     } else {
                         temp = 0.f;
                     }
-                    luminance[j][i] = intp(blend, luminance[j][i] / (temp * temp4 + 1.f), luminance[j][i]);
+                    luminance[j][i] = intp(blend[j][i], luminance[j][i] / (temp * temp4 + 1.f), luminance[j][i]);
                 }
             }
         }
