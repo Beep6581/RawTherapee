@@ -2333,7 +2333,9 @@ Camera constants:
         "make_model": "Sony ILCE-7RM3",
         "dcraw_matrix": [ 6640,-1847,-503,-5238,13010,2474,-993,1673,6527 ], // DNG_v10.1 D65
         "raw_crop": [ 0, 0, -36, 0 ], // full raw frame 8000x5320 - 36 rightmost columns are garbage
-        "ranges": { "black": 512, "white": 16300 }
+        "ranges": { "black": 512, "white": 16300 },
+        "pdafPattern" : [0, 24, 36, 60, 84, 120, 132, 156, 192, 204, 240, 252, 276, 300, 324, 360, 372, 396, 420, 444, 480, 492, 504, 540, 564, 576, 612, 636, 660, 696, 720, 732, 756, 780, 804, 840],
+        "pdafOffset" : 31
     },
 
     { // Quality B, color matrix copied from a7rm2
