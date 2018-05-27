@@ -32,40 +32,25 @@ SharpenMicro::SharpenMicro () : FoldableToolPanel(this, "sharpenmicro", M("TP_SH
     auto m = ProcEventMapper::getInstance();
     EvSharpenMicroContrast = m->newEvent(SHARPENING, "HISTORY_MSG_MICROCONTRAST_CONTRAST");
 
-    amount = Gtk::manage(new Adjuster (M("TP_SHARPENMICRO_AMOUNT"), 0, 100, 1, 20));
-    amount->setAdjusterListener (this);
-
-    if (amount->delay < options.adjusterMaxDelay) {
-        amount->delay = options.adjusterMaxDelay;
-    }
-
-    amount->show();
-
     contrast = Gtk::manage(new Adjuster (M("TP_SHARPENMICRO_CONTRAST"), 0, 100, 1, 20));
     contrast->setAdjusterListener (this);
-
-    if (contrast->delay < options.adjusterMaxDelay) {
-        contrast->delay = options.adjusterMaxDelay;
-    }
-
     contrast->show();
 
+    amount = Gtk::manage(new Adjuster (M("TP_SHARPENMICRO_AMOUNT"), 0, 100, 1, 20));
+    amount->setAdjusterListener (this);
+    amount->show();
+
     uniformity = Gtk::manage(new Adjuster (M("TP_SHARPENMICRO_UNIFORMITY"), 0, 100, 10, 50));
-
     uniformity->setAdjusterListener (this);
-
-    if (uniformity->delay < options.adjusterMaxDelay) {
-        uniformity->delay = options.adjusterMaxDelay;
-    }
-
     uniformity->show();
+
     matrix = Gtk::manage (new Gtk::CheckButton (M("TP_SHARPENMICRO_MATRIX")));
     matrix->set_active (true);
     pack_start(*matrix, Gtk::PACK_SHRINK, 0);
     matrix->show ();
 
-    pack_start( *amount, Gtk::PACK_SHRINK, 0);
     pack_start( *contrast, Gtk::PACK_SHRINK, 0);
+    pack_start( *amount, Gtk::PACK_SHRINK, 0);
     pack_start( *uniformity, Gtk::PACK_SHRINK, 0);
 
     matrixconn = matrix->signal_toggled().connect( sigc::mem_fun(*this, &SharpenMicro::matrix_toggled) );
