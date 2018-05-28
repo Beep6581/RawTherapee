@@ -473,6 +473,7 @@ struct ColorToningParams {
   */
 struct SharpeningParams {
     bool           enabled;
+    double         contrast;
     double         radius;
     int            amount;
     Threshold<int> threshold;
@@ -509,6 +510,7 @@ struct SharpenMicroParams {
     bool    enabled;
     bool    matrix;
     double  amount;
+    double  contrast;
     double  uniformity;
 
     SharpenMicroParams();

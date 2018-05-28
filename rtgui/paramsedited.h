@@ -194,6 +194,7 @@ public :
     bool enabled;
     bool matrix;
     bool amount;
+    bool contrast;
     bool uniformity;
 
 };
@@ -203,6 +204,7 @@ class SharpeningParamsEdited
 
 public:
     bool enabled;
+    bool contrast;
     bool radius;
     bool amount;
     bool threshold;
