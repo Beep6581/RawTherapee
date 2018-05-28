@@ -1007,7 +1007,7 @@ void ColorToningParams::getCurves(ColorGradientCurve& colorCurveLUT, OpacityCurv
 
 SharpeningParams::SharpeningParams() :
     enabled(false),
-    contrast(0.0),
+    contrast(20.0),
     radius(0.5),
     amount(200),
     threshold(20, 80, 2000, 1200, false),
@@ -1017,10 +1017,10 @@ SharpeningParams::SharpeningParams() :
     halocontrol(false),
     halocontrol_amount(85),
     method("usm"),
-    deconvamount(75),
+    deconvamount(100),
     deconvradius(0.75),
     deconviter(30),
-    deconvdamping(20)
+    deconvdamping(0)
 {
 }
 
@@ -3675,7 +3675,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group ("Sharpening")) {
             assignFromKeyfile(keyFile, "Sharpening", "Enabled", pedited, sharpening.enabled, pedited->sharpening.enabled);
-            assignFromKeyfile(keyFile, "Sharpening", "Contrast", pedited, sharpening.contrast, pedited->sharpening.contrast);
+            if (ppVersion >= 334) {
+                assignFromKeyfile(keyFile, "Sharpening", "Contrast", pedited, sharpening.contrast, pedited->sharpening.contrast);
+            } else {
+                sharpening.contrast = 0;
+                if (pedited) {
+                    pedited->sharpening.contrast = true;
+                }
+            }
             assignFromKeyfile(keyFile, "Sharpening", "Radius", pedited, sharpening.radius, pedited->sharpening.radius);
             assignFromKeyfile(keyFile, "Sharpening", "Amount", pedited, sharpening.amount, pedited->sharpening.amount);
 

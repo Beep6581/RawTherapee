@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "rtengine.h"
+
 #include "improcfun.h"
 #include "gauss.h"
 #include "bilateral2.h"
@@ -24,7 +24,7 @@
 #include "rt_math.h"
 #include "sleef.c"
 #include "opthelper.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 using namespace std;
 
@@ -322,7 +322,7 @@ void ImProcFunctions::sharpening (LabImage* lab, const SharpeningParams &sharpen
         deconvsharpening (lab->L, b2, lab->W, lab->H, sharpenParam);
         return;
     }
-
+BENCHFUN
 
     // Rest is UNSHARP MASK
     float** b3 = nullptr;
@@ -649,24 +649,15 @@ void ImProcFunctions::MLsharpen (LabImage* lab)
 //! \param luminance : Luminance channel of image
 void ImProcFunctions::MLmicrocontrast(float** luminance, int W, int H)
 {
-    if (!params->sharpenMicro.enabled || params->sharpenMicro.contrast == 100) {
+    if (!params->sharpenMicro.enabled || params->sharpenMicro.contrast == 100 || params->sharpenMicro.amount < 1.0) {
         return;
     }
 BENCHFUN
     const int k = params->sharpenMicro.matrix ? 1 : 2;
     // k=2 matrix 5x5  k=1 matrix 3x3
     const int width = W, height = H;
-    const float uniform = params->sharpenMicro.uniformity; //between 0 to 100
-    const int unif = (int)(uniform / 10.0f); //put unif between 0 to 10
-    float amount = params->sharpenMicro.amount / 1500.0f; //amount 2000.0 quasi no artifacts ==> 1500 = maximum, after artifacts
-
-    if (amount < 0.000001f) {
-        return;
-    }
-
-    if (k == 1) {
-        amount *= 2.7f;    //25/9 if 3x3
-    }
+    const int unif = params->sharpenMicro.uniformity / 10.0f; //put unif between 0 to 10
+    const float amount = (k == 1 ? 2.7f : 1.f) * params->sharpenMicro.amount / 1500.0f; //amount 2000.0 quasi no artifacts ==> 1500 = maximum, after artifacts, 25/9 if 3x3
 
     if (settings->verbose) {
         printf ("Micro-contrast amount %f\n", amount);
@@ -694,7 +685,6 @@ BENCHFUN
     const float Cont4[11] = {0.8f, 0.85f, 0.9f, 0.95f, 1.0f, 1.05f, 1.10f, 1.150f, 1.2f, 1.25f, 1.40f};
     const float Cont5[11] = {1.0f, 1.1f, 1.2f, 1.25f, 1.3f, 1.4f, 1.45f, 1.50f, 1.6f, 1.65f, 1.80f};
 
-    const float s = amount;
     constexpr float sqrt2 = sqrt(2.0);
     constexpr float sqrt1d25 = sqrt(1.25);
     float *LM = new float[width * height]; //allocation for Luminance
@@ -734,9 +724,9 @@ BENCHFUN
             contrast = std::min(contrast, 1.f);
 
             //matrix 5x5
-            float temp = v + 4.f *( v * (s + sqrt2 * s)); //begin 3x3
-            float temp1 = sqrt2 * s *(LM[offset - width - 1] + LM[offset - width + 1] + LM[offset + width - 1] + LM[offset + width + 1]);
-            temp1 += s * (LM[offset - width] + LM[offset - 1] + LM[offset + 1] + LM[offset + width]);
+            float temp = v + 4.f *( v * (amount + sqrt2 * amount)); //begin 3x3
+            float temp1 = sqrt2 * amount *(LM[offset - width - 1] + LM[offset - width + 1] + LM[offset + width - 1] + LM[offset + width + 1]);
+            temp1 += amount * (LM[offset - width] + LM[offset - 1] + LM[offset + 1] + LM[offset + width]);
 
             temp -= temp1;
 
@@ -749,7 +739,7 @@ BENCHFUN
 
                 temp2 -= sqrt2 * (LM[offset + 2 * width - 2] + LM[offset + 2 * width + 2] + LM[offset - 2 * width - 2] + LM[offset - 2 * width + 2]);
                 temp2 += 18.601126159f * v ; // 18.601126159 = 4 + 4 * sqrt(2) + 8 * sqrt(1.25)
-                temp2 *= 2.f * s;
+                temp2 *= 2.f * amount;
                 temp += temp2;
             }
 
