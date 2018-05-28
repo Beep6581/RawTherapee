@@ -2239,7 +2239,12 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_237;B&amp;W - CM
 !HISTORY_MSG_273;CT - Color Balance SMH
 !HISTORY_MSG_392;W - Residual - Color Balance
+!HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
+!HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
+!HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
 !SAMPLEFORMAT_32;24-bit floating-point
 !SAMPLEFORMAT_64;32-bit floating-point
 !TP_BWMIX_MIXC;Channel Mixer
 !TP_BWMIX_NEUTRAL;Reset
+!TP_SHARPENING_CONTRAST;Contrast threshold
+!TP_SHARPENMICRO_CONTRAST;Contrast threshold
