@@ -685,8 +685,8 @@ BENCHFUN
     const float Cont4[11] = {0.8f, 0.85f, 0.9f, 0.95f, 1.0f, 1.05f, 1.10f, 1.150f, 1.2f, 1.25f, 1.40f};
     const float Cont5[11] = {1.0f, 1.1f, 1.2f, 1.25f, 1.3f, 1.4f, 1.45f, 1.50f, 1.6f, 1.65f, 1.80f};
 
-    constexpr float sqrt2 = sqrt(2.0);
-    constexpr float sqrt1d25 = sqrt(1.25);
+    const float sqrt2 = sqrt(2.0);
+    const float sqrt1d25 = sqrt(1.25);
     float *LM = new float[width * height]; //allocation for Luminance
 
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
