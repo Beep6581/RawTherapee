@@ -2446,7 +2446,8 @@ const std::vector<const char*>& RAWParams::BayerSensor::getMethodStrings()
         "fast",
         "mono",
         "none",
-        "pixelshift"
+        "pixelshift",
+        "amazevng4"
     };
     return method_strings;
 }
