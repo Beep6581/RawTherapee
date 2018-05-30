@@ -1,17 +1,14 @@
 ////////////////////////////////////////////////////////////////
 //
-//          AMaZE demosaic algorithm
-// (Aliasing Minimization and Zipper Elimination)
+//          combined AMaZE + VNG4 demosaic algorithm
 //
-//  copyright (c) 2008-2010  Emil Martinec <ejmartin@uchicago.edu>
-//  optimized for speed by Ingo Weyrich
 //
-// incorporating ideas of Luis Sanz Rodrigues and Paul Lee
+//  copyright (c) 2018  Ingo Weyrich <heckflosse67@gmx.de>
 //
-// code dated: May 27, 2010
-// latest modification: Ingo Weyrich, January 25, 2016
+//  blends AMaZE and VNG4 output based on contrast
 //
-//  amaze_interpolate_RT.cc is free software: you can redistribute it and/or modify
+//
+//  amaze_vng4_demosaic_RT.cc is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
@@ -38,39 +35,57 @@ using namespace std;
 namespace rtengine
 {
 
-void RawImageSource::amaze_vng4_demosaic_RT(int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
+void RawImageSource::amaze_vng4_demosaic_RT(int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, double contrast)
 {
     BENCHFUN
 
-            vng4_demosaic ();
-            array2D<float> redTmp(winw, winh);
-            array2D<float> greenTmp(winw, winh);
-            array2D<float> blueTmp(winw, winh);
-            array2D<float> L(winw, winh);
-            amaze_demosaic_RT (0, 0, winw, winh, rawData, redTmp, greenTmp, blueTmp);
-            const float xyz_rgb[3][3] = {          // XYZ from RGB
-                                        { 0.412453, 0.357580, 0.180423 },
-                                        { 0.212671, 0.715160, 0.072169 },
-                                        { 0.019334, 0.119193, 0.950227 }
-                                        };
-            #pragma omp parallel
-            {
-                #pragma omp for
-                for(int i = 0; i < winh; ++i) {
-                    Color::RGB2L(redTmp[i], greenTmp[i], blueTmp[i], L[i], xyz_rgb, winw);
-                }
-            }
-            // calculate contrast based blend factors to reduce sharpening in regions with low contrast
-            JaggedArray<float> blend(winw, winh);
-            buildBlendMask(L, blend, winw, winh, 20.f / 100.f);
-            #pragma omp parallel for
-            for(int i = 0; i < winh; ++i) {
-                for(int j = 0; j < winw; ++j) {
-                    red[i][j] = intp(blend[i][j], redTmp[i][j], red[i][j]);
-                    green[i][j] = intp(blend[i][j], greenTmp[i][j], green[i][j]);
-                    blue[i][j] = intp(blend[i][j], blueTmp[i][j], blue[i][j]);
-                }
-            }
+    if (contrast == 0.0) {
+        // contrast == 0.0 means only AMaZE will be used
+        amaze_demosaic_RT (0, 0, winw, winh, rawData, red, green, blue);
+        return;
+    }
+
+    vng4_demosaic ();
+    array2D<float> redTmp(winw, winh);
+    array2D<float> greenTmp(winw, winh);
+    array2D<float> blueTmp(winw, winh);
+    array2D<float> L(winw, winh);
+    amaze_demosaic_RT (0, 0, winw, winh, rawData, redTmp, greenTmp, blueTmp);
+    const float xyz_rgb[3][3] = {          // XYZ from RGB
+                                { 0.412453, 0.357580, 0.180423 },
+                                { 0.212671, 0.715160, 0.072169 },
+                                { 0.019334, 0.119193, 0.950227 }
+                                };
+    #pragma omp parallel
+    {
+        #pragma omp for
+        for(int i = 0; i < winh; ++i) {
+            Color::RGB2L(redTmp[i], greenTmp[i], blueTmp[i], L[i], xyz_rgb, winw);
+        }
+    }
+    // calculate contrast based blend factors to reduce sharpening in regions with low contrast
+    JaggedArray<float> blend(winw, winh);
+    buildBlendMask(L, blend, winw, winh, contrast / 100.f);
+
+    // the following is split into 3 loops intentionally to avoid cache conflicts on CPUs with only 4-way cache
+    #pragma omp parallel for
+    for(int i = 0; i < winh; ++i) {
+        for(int j = 0; j < winw; ++j) {
+            red[i][j] = intp(blend[i][j], redTmp[i][j], red[i][j]);
+        }
+    }
+    #pragma omp parallel for
+    for(int i = 0; i < winh; ++i) {
+        for(int j = 0; j < winw; ++j) {
+            green[i][j] = intp(blend[i][j], greenTmp[i][j], green[i][j]);
+        }
+    }
+    #pragma omp parallel for
+    for(int i = 0; i < winh; ++i) {
+        for(int j = 0; j < winw; ++j) {
+            blue[i][j] = intp(blend[i][j], blueTmp[i][j], blue[i][j]);
+        }
+    }
 
 }
 }

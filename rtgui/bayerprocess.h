@@ -55,9 +55,12 @@ protected:
     Adjuster* pixelShiftSmooth;
     Adjuster* pixelShiftEperIso;
     Adjuster* pixelShiftSigma;
+    Gtk::VBox *dualDemosaicOptions;
+    Adjuster* dualDemosaicContrast;
     int oldMethod;
 
     IdleRegister idle_register;
+    rtengine::ProcEvent EvDemosaicContrast;
 public:
 
     BayerProcess ();

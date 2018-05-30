@@ -1855,7 +1855,7 @@ void Color::RGB2L(float *R, float *G, float *B, float *L, const float wp[3][3], 
 
         vmask maxMask = vmaskf_gt(yv, maxvalfv);
         vmask minMask = vmaskf_lt(yv, minvalfv);
-        if (_mm_movemask_ps((vfloat)maxMask) || _mm_movemask_ps((vfloat)minMask)) {
+        if (_mm_movemask_ps((vfloat)vorm(maxMask, minMask))) {
             // take slower code path for all 4 pixels if one of the values is > MAXVALF. Still faster than non SSE2 version
             for(int k = 0; k < 4; ++k) {
                 float y = yv[k];

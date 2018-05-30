@@ -727,6 +727,7 @@ HISTORY_MSG_492;RGB Curves
 HISTORY_MSG_493;L*a*b* Adjustments
 HISTORY_MSG_CLAMPOOG;Out-of-gamut color clipping
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
+HISTORY_MSG_DUALDEMOSAIC_CONTRAST;AMaZE+VNG4 - Contrast threshold
 HISTORY_MSG_HISTMATCHING;Auto-Matched Tone Curve
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
@@ -1771,6 +1772,7 @@ TP_RAW_DMETHOD;Method
 TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
 TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
 TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.\nPixel Shift is for Pentax/Sony Pixel Shift files. It falls back to AMaZE for non-Pixel Shift files.
+TP_RAW_DUALDEMOSAICCONTRAST;Contrast threshold
 TP_RAW_EAHD;EAHD
 TP_RAW_FALSECOLOR;False color suppression steps
 TP_RAW_FAST;Fast
