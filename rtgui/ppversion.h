@@ -1,11 +1,13 @@
 #pragma once
 
 // This number has to be incremented whenever the PP3 file format is modified or the behaviour of a tool changes
-#define PPVERSION 334
+#define PPVERSION 335
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /*
   Log of version changes
+   335  2018-05-30
+        new contrast adjuster in Bayer process tool
    334  2018-05-13
         new contrast threshold adjuster in Microcontrast tool
    333  2018-04-26

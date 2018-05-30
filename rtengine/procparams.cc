@@ -33,7 +33,6 @@
 #include "../rtgui/version.h"
 
 using namespace std;
-extern Options options;
 
 namespace
 {
@@ -4625,7 +4624,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "RAW", "DCBIterations", pedited, raw.bayersensor.dcb_iterations, pedited->raw.bayersensor.dcbIterations);
                 assignFromKeyfile(keyFile, "RAW", "DCBEnhance", pedited, raw.bayersensor.dcb_enhance, pedited->raw.bayersensor.dcbEnhance);
                 assignFromKeyfile(keyFile, "RAW", "LMMSEIterations", pedited, raw.bayersensor.lmmse_iterations, pedited->raw.bayersensor.lmmseIterations);
-                assignFromKeyfile(keyFile, "RAW", "DualDemosaicContrast", pedited, raw.bayersensor.dualDemosaicContrast, pedited->raw.bayersensor.dualDemosaicContrast);
                 assignFromKeyfile(keyFile, "RAW", "PreBlackzero", pedited, raw.bayersensor.black0, pedited->raw.bayersensor.exBlack0);
                 assignFromKeyfile(keyFile, "RAW", "PreBlackone", pedited, raw.bayersensor.black1, pedited->raw.bayersensor.exBlack1);
                 assignFromKeyfile(keyFile, "RAW", "PreBlacktwo", pedited, raw.bayersensor.black2, pedited->raw.bayersensor.exBlack2);

@@ -40,13 +40,14 @@ public:
 
     XTransProcess ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setBatchMode   (bool batchMode);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
+    void setAdjusterBehavior(bool falsecoloradd);
+    void setBatchMode(bool batchMode);
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
 
-    void methodChanged ();
-    void adjusterChanged     (Adjuster* a, double newval);
+    void methodChanged();
+    void adjusterChanged(Adjuster* a, double newval);
 };
 
 #endif

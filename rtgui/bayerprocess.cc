@@ -307,31 +307,11 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
     }
 
     if (!batchMode) {
-        if (pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::DCB) ||
-                method->get_active_row_number() == std::numeric_limits<int>::max()) {
-            dcbOptions->show();
-        } else {
-            dcbOptions->hide();
-        }
-        if (pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::LMMSE) ||
-                method->get_active_row_number() == std::numeric_limits<int>::max()) {
-            lmmseOptions->show();
-        } else {
-            lmmseOptions->hide();
-        }
-        if (pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::AMAZEVNG4) ||
-                method->get_active_row_number() == std::numeric_limits<int>::max()) {
-            dualDemosaicOptions->show();
-        } else {
-            dualDemosaicOptions->hide();
-        }
-        if (pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::PIXELSHIFT) ||
-                method->get_active_row_number() == std::numeric_limits<int>::max()) {
-            if(pp->raw.bayersensor.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::PSMotionCorrectionMethod::CUSTOM) {
-                pixelShiftOptions->show();
-            } else {
-                pixelShiftOptions->hide();
-            }
+        dcbOptions->set_visible(pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::DCB));
+        lmmseOptions->set_visible(pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::LMMSE));
+        dualDemosaicOptions->set_visible(pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::AMAZEVNG4));
+        if (pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::PIXELSHIFT)) {
+            pixelShiftOptions->set_visible(pp->raw.bayersensor.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::PSMotionCorrectionMethod::CUSTOM);
             pixelShiftFrame->show();
         } else {
             pixelShiftFrame->hide();
@@ -413,6 +393,28 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         pedited->raw.bayersensor.pixelShiftEqualBrightChannel = !pixelShiftEqualBrightChannel->get_inconsistent();
         pedited->raw.bayersensor.pixelShiftNonGreenCross = !pixelShiftNonGreenCross->get_inconsistent();
     }
+}
+
+void BayerProcess::setAdjusterBehavior (bool falsecoloradd, bool iteradd, bool dualdemozecontrastadd, bool pssigmaadd, bool pssmoothadd, bool pseperisoadd)
+{
+    ccSteps->setAddMode(falsecoloradd);
+    dcbIterations->setAddMode(iteradd);
+    lmmseIterations->setAddMode(iteradd);
+    pixelShiftSmooth->setAddMode(pssmoothadd);
+    pixelShiftEperIso->setAddMode(pseperisoadd);
+    pixelShiftSigma->setAddMode(pssigmaadd);
+    dualDemosaicContrast->setAddMode(dualdemozecontrastadd);
+}
+
+void BayerProcess::trimValues (rtengine::procparams::ProcParams* pp)
+{
+    ccSteps->trimValue(pp->raw.bayersensor.ccSteps);
+    dcbIterations->trimValue(pp->raw.bayersensor.dcb_iterations);
+    lmmseIterations->trimValue(pp->raw.bayersensor.lmmse_iterations);
+    pixelShiftSmooth->trimValue(pp->raw.bayersensor.pixelShiftSmoothFactor);
+    pixelShiftEperIso->trimValue(pp->raw.bayersensor.pixelShiftEperIso);
+    pixelShiftSigma->trimValue(pp->raw.bayersensor.pixelShiftSigma);
+    dualDemosaicContrast->trimValue(pp->raw.bayersensor.dualDemosaicContrast);
 }
 
 void BayerProcess::setBatchMode(bool batchMode)

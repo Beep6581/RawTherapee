@@ -65,15 +65,17 @@ public:
 
     BayerProcess ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setBatchMode   (bool batchMode);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
+    void setAdjusterBehavior(bool falsecoloradd, bool iteradd, bool dualdemozecontrastadd, bool pssigmaadd, bool pssmoothadd, bool pseperisoadd);
+    void trimValues(rtengine::procparams::ProcParams* pp);
+    void setBatchMode(bool batchMode);
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
 
-    void methodChanged ();
-    void imageNumberChanged ();
-    void adjusterChanged (Adjuster* a, double newval);
-    void checkBoxToggled (CheckBox* c, CheckValue newval);
+    void methodChanged();
+    void imageNumberChanged();
+    void adjusterChanged(Adjuster* a, double newval);
+    void checkBoxToggled(CheckBox* c, CheckValue newval);
     void pixelShiftMotionMethodChanged();
     void FrameCountChanged(int n, int frameNum);
 };

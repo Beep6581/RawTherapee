@@ -123,6 +123,11 @@ void XTransProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* p
     }
 }
 
+void XTransProcess::setAdjusterBehavior (bool falsecoloradd)
+{
+    ccSteps->setAddMode(falsecoloradd);
+}
+
 void XTransProcess::setBatchMode(bool batchMode)
 {
     method->append (M("GENERAL_UNCHANGED"));
