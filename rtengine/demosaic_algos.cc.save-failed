@@ -562,7 +562,7 @@ void RawImageSource::hphd_demosaic ()
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #define fc(row,col) (prefilters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
 typedef unsigned short ushort;
-void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
+void RawImageSource::vng4_demosaic ()
 {
     const signed short int *cp, terms[] = {
         -2, -2, +0, -1, 0, 0x01, -2, -2, +0, +0, 1, 0x01, -2, -1, -1, +0, 0, 0x01,
@@ -654,6 +654,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
                     }
             }
 
+StopWatch Stop1("loop 1");
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -674,8 +675,8 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
                 }
             }
         }
+Stop1.stop();
     }
-
     const int prow = 7, pcol = 1;
     int *code[8][2];
     int t, g;
@@ -737,24 +738,27 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
         plistener->setProgress (progress);
     }
 
+StopWatch Stop2("loop 2");
 
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
     {
-        float gval[8], thold, sum[3];
+        float thold;
         int g;
-        const int progressStep = 64;
+        constexpr int progressStep = 64;
         const double progressInc = (0.98 - progress) / ((height - 2) / progressStep);
 #ifdef _OPENMP
-        #pragma omp for nowait
+        #pragma omp for schedule(dynamic,16) nowait
 #endif
 
         for (int row = 2; row < height - 2; row++) {    /* Do VNG interpolation */
             for (int col = 2; col < width - 2; col++) {
                 float * pix = image[row * width + col];
                 int * ip = code[row & prow][col & pcol];
-                memset (gval, 0, sizeof gval);
+                float gval[8] = {};
+//                gval[0] = gval[1] = gval[2] = gval[3] = gval[4] = gval[5] = gval[6] = gval[7] = 0.f;
+//                memset (gval, 0, sizeof gval);
 
                 while ((g = ip[0]) != INT_MAX) {        /* Calculate gradients */
                     float diff = fabsf(pix[g] - pix[ip[1]]) * (1 << ip[2]);
@@ -772,18 +776,22 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
                     gmin = gmax = gval[0];          /* Choose a threshold */
 
                     for (g = 1; g < 8; g++) {
-                        if (gmin > gval[g]) {
-                            gmin = gval[g];
-                        }
+                        gmin = rtengine::min(gmin, gval[g]);
+//                        if (gmin > gval[g]) {
+//                            gmin = gval[g];
+//                        }
 
-                        if (gmax < gval[g]) {
-                            gmax = gval[g];
-                        }
+                        gmax = rtengine::max(gmax, gval[g]);
+//                        if (gmax < gval[g]) {
+//                            gmax = gval[g];
+//                        }
                     }
 
                     thold = gmin + (gmax / 2);
                 }
-                memset (sum, 0, sizeof sum);
+                float sum[3] = {};
+//                sum[0] = sum[1] = sum[2] = 0.f;
+//                memset (sum, 0, sizeof sum);
                 float t1, t2;
                 int color = fc(row, col);
                 t1 = t2 = pix[color];
@@ -839,12 +847,14 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
         }
 
     }
+Stop2.stop();
     free (code[0][0]);
     free (image);
 
     if(plistenerActive) {
         plistener->setProgress (0.98);
     }
+StopWatch Stop3("loop 3");
 
     // Interpolate R and B
 #ifdef _OPENMP
@@ -863,7 +873,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
             interpolate_row_rb_mul_pp (red[i], blue[i], green[i - 1], green[i], green[i + 1], i, 1.0, 1.0, 1.0, 0, W, 1);
         }
     }
-
+Stop3.stop();
     if(plistenerActive) {
         plistener->setProgress (1.0);
     }

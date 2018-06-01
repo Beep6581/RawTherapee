@@ -742,10 +742,10 @@ public:
         bool pixelShiftGreen;
         bool pixelShiftBlur;
         bool pixelShiftSmooth;
-        bool pixelShiftLmmse;
         bool pixelShiftEqualBright;
         bool pixelShiftEqualBrightChannel;
         bool pixelShiftNonGreenCross;
+        bool pixelShiftDemosaicMethod;
 
         //bool allEnhance;
         bool greenEq;

@@ -35,22 +35,24 @@ using namespace std;
 namespace rtengine
 {
 
-void RawImageSource::amaze_vng4_demosaic_RT(int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, double contrast)
+void RawImageSource::amaze_vng4_demosaic_RT(int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, double contrast)
 {
     BENCHFUN
 
     if (contrast == 0.0) {
         // contrast == 0.0 means only AMaZE will be used
-        amaze_demosaic_RT (0, 0, winw, winh, rawData, red, green, blue);
+        amaze_demosaic_RT(0, 0, winw, winh, rawData, red, green, blue);
         return;
     }
 
-    vng4_demosaic ();
+    vng4_demosaic(rawData, red, green, blue);
+
     array2D<float> redTmp(winw, winh);
     array2D<float> greenTmp(winw, winh);
     array2D<float> blueTmp(winw, winh);
     array2D<float> L(winw, winh);
-    amaze_demosaic_RT (0, 0, winw, winh, rawData, redTmp, greenTmp, blueTmp);
+
+    amaze_demosaic_RT(0, 0, winw, winh, rawData, redTmp, greenTmp, blueTmp);
     const float xyz_rgb[3][3] = {          // XYZ from RGB
                                 { 0.412453, 0.357580, 0.180423 },
                                 { 0.212671, 0.715160, 0.072169 },
@@ -63,7 +65,7 @@ void RawImageSource::amaze_vng4_demosaic_RT(int winw, int winh, array2D<float> &
             Color::RGB2L(redTmp[i], greenTmp[i], blueTmp[i], L[i], xyz_rgb, winw);
         }
     }
-    // calculate contrast based blend factors to reduce sharpening in regions with low contrast
+    // calculate contrast based blend factors to use vng4 in regions with low contrast
     JaggedArray<float> blend(winw, winh);
     buildBlendMask(L, blend, winw, winh, contrast / 100.f);
 

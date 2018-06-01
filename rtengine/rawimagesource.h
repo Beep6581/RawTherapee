@@ -262,13 +262,13 @@ protected:
     void nodemosaic(bool bw);
     void eahd_demosaic();
     void hphd_demosaic();
-    void vng4_demosaic();
+    void vng4_demosaic(const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
     void ppg_demosaic();
     void jdl_interpolate_omp();
     void igv_interpolate(int winw, int winh);
     void lmmse_interpolate_omp(int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, int iterations);
-    void amaze_demosaic_RT(int winx, int winy, int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);//Emil's code for AMaZE
-    void amaze_vng4_demosaic_RT(int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, double contrast = 0.0);
+    void amaze_demosaic_RT(int winx, int winy, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);//Emil's code for AMaZE
+    void amaze_vng4_demosaic_RT(int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, double contrast = 0.0);
     void fast_demosaic();//Emil's code for fast demosaicing
     void dcb_demosaic(int iterations, bool dcb_enhance);
     void ahd_demosaic();

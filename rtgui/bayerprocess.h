@@ -42,6 +42,7 @@ protected:
     Gtk::VBox *pixelShiftFrame;
     Gtk::VBox *pixelShiftOptions;
     MyComboBoxText* pixelShiftMotionMethod;
+    MyComboBoxText* pixelShiftDemosaicMethod;
     CheckBox* pixelShiftShowMotion;
     CheckBox* pixelShiftShowMotionMaskOnly;
     CheckBox* pixelShiftNonGreenCross;
@@ -49,7 +50,6 @@ protected:
     CheckBox* pixelShiftBlur;
     CheckBox* pixelShiftHoleFill;
     CheckBox* pixelShiftMedian;
-    CheckBox* pixelShiftLmmse;
     CheckBox* pixelShiftEqualBright;
     CheckBox* pixelShiftEqualBrightChannel;
     Adjuster* pixelShiftSmooth;
@@ -61,6 +61,7 @@ protected:
 
     IdleRegister idle_register;
     rtengine::ProcEvent EvDemosaicContrast;
+    rtengine::ProcEvent EvDemosaicPixelshiftDemosaicMethod;
 public:
 
     BayerProcess ();
@@ -77,6 +78,7 @@ public:
     void adjusterChanged(Adjuster* a, double newval);
     void checkBoxToggled(CheckBox* c, CheckValue newval);
     void pixelShiftMotionMethodChanged();
+    void pixelShiftDemosaicMethodChanged();
     void FrameCountChanged(int n, int frameNum);
 };
 

@@ -414,10 +414,10 @@ void ParamsEdited::set (bool v)
     raw.bayersensor.pixelShiftGreen = v;
     raw.bayersensor.pixelShiftBlur = v;
     raw.bayersensor.pixelShiftSmooth = v;
-    raw.bayersensor.pixelShiftLmmse = v;
     raw.bayersensor.pixelShiftEqualBright = v;
     raw.bayersensor.pixelShiftEqualBrightChannel = v;
     raw.bayersensor.pixelShiftNonGreenCross = v;
+    raw.bayersensor.pixelShiftDemosaicMethod = v;
     raw.bayersensor.greenEq = v;
     raw.bayersensor.linenoise = v;
     raw.bayersensor.linenoiseDirection = v;
@@ -964,10 +964,10 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.bayersensor.pixelShiftGreen = raw.bayersensor.pixelShiftGreen && p.raw.bayersensor.pixelShiftGreen == other.raw.bayersensor.pixelShiftGreen;
         raw.bayersensor.pixelShiftBlur = raw.bayersensor.pixelShiftBlur && p.raw.bayersensor.pixelShiftBlur == other.raw.bayersensor.pixelShiftBlur;
         raw.bayersensor.pixelShiftSmooth = raw.bayersensor.pixelShiftSmooth && p.raw.bayersensor.pixelShiftSmoothFactor == other.raw.bayersensor.pixelShiftSmoothFactor;
-        raw.bayersensor.pixelShiftLmmse = raw.bayersensor.pixelShiftLmmse && p.raw.bayersensor.pixelShiftLmmse == other.raw.bayersensor.pixelShiftLmmse;
         raw.bayersensor.pixelShiftEqualBright = raw.bayersensor.pixelShiftEqualBright && p.raw.bayersensor.pixelShiftEqualBright == other.raw.bayersensor.pixelShiftEqualBright;
         raw.bayersensor.pixelShiftEqualBrightChannel = raw.bayersensor.pixelShiftEqualBrightChannel && p.raw.bayersensor.pixelShiftEqualBrightChannel == other.raw.bayersensor.pixelShiftEqualBrightChannel;
         raw.bayersensor.pixelShiftNonGreenCross = raw.bayersensor.pixelShiftNonGreenCross && p.raw.bayersensor.pixelShiftNonGreenCross == other.raw.bayersensor.pixelShiftNonGreenCross;
+        raw.bayersensor.pixelShiftDemosaicMethod = raw.bayersensor.pixelShiftDemosaicMethod && p.raw.bayersensor.pixelShiftDemosaicMethod == other.raw.bayersensor.pixelShiftDemosaicMethod;
         raw.bayersensor.greenEq = raw.bayersensor.greenEq && p.raw.bayersensor.greenthresh == other.raw.bayersensor.greenthresh;
         raw.bayersensor.linenoise = raw.bayersensor.linenoise && p.raw.bayersensor.linenoise == other.raw.bayersensor.linenoise;
         raw.bayersensor.linenoiseDirection = raw.bayersensor.linenoiseDirection && p.raw.bayersensor.linenoiseDirection == other.raw.bayersensor.linenoiseDirection;
@@ -2542,10 +2542,6 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.raw.bayersensor.pixelShiftSmoothFactor = mods.raw.bayersensor.pixelShiftSmoothFactor;
     }
 
-    if (raw.bayersensor.pixelShiftLmmse) {
-        toEdit.raw.bayersensor.pixelShiftLmmse = mods.raw.bayersensor.pixelShiftLmmse;
-    }
-
     if (raw.bayersensor.pixelShiftEqualBright) {
         toEdit.raw.bayersensor.pixelShiftEqualBright = mods.raw.bayersensor.pixelShiftEqualBright;
     }
@@ -2556,6 +2552,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (raw.bayersensor.pixelShiftNonGreenCross) {
         toEdit.raw.bayersensor.pixelShiftNonGreenCross = mods.raw.bayersensor.pixelShiftNonGreenCross;
+    }
+
+    if (raw.bayersensor.pixelShiftDemosaicMethod) {
+        toEdit.raw.bayersensor.pixelShiftDemosaicMethod = mods.raw.bayersensor.pixelShiftDemosaicMethod;
     }
 
     if (raw.bayersensor.greenEq) {
@@ -3080,7 +3080,7 @@ bool RAWParamsEdited::BayerSensor::isUnchanged() const
 {
     return  method && imageNum && dcbIterations && dcbEnhance && lmmseIterations && dualDemosaicContrast /*&& allEnhance*/ &&  greenEq
             && pixelShiftMotionCorrectionMethod && pixelShiftEperIso && pixelShiftSigma && pixelShiftShowMotion && pixelShiftShowMotionMaskOnly
-            && pixelShiftHoleFill && pixelShiftMedian && pixelShiftNonGreenCross && pixelShiftGreen && pixelShiftBlur && pixelShiftSmooth && pixelShiftLmmse && pixelShiftEqualBright && pixelShiftEqualBrightChannel
+            && pixelShiftHoleFill && pixelShiftMedian && pixelShiftNonGreenCross && pixelShiftDemosaicMethod && pixelShiftGreen && pixelShiftBlur && pixelShiftSmooth && pixelShiftEqualBright && pixelShiftEqualBrightChannel
             && linenoise && linenoiseDirection && pdafLinesFilter && exBlack0 && exBlack1 && exBlack2 && exBlack3 && exTwoGreen;
 }
 
