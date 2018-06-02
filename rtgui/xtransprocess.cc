@@ -83,8 +83,6 @@ void XTransProcess::read(const rtengine::procparams::ProcParams* pp, const Param
     disableListener ();
     methodconn.block (true);
 
-    method->set_active(std::numeric_limits<int>::max());
-
     for (size_t i = 0; i < RAWParams::XTransSensor::getMethodStrings().size(); ++i)
         if( pp->raw.xtranssensor.method == RAWParams::XTransSensor::getMethodStrings()[i]) {
             method->set_active(i);
@@ -96,7 +94,7 @@ void XTransProcess::read(const rtengine::procparams::ProcParams* pp, const Param
         ccSteps->setEditedState (pedited->raw.xtranssensor.ccSteps ? Edited : UnEdited);
 
         if( !pedited->raw.xtranssensor.method ) {
-            method->set_active(std::numeric_limits<int>::max()); // No name
+            method->set_active_text(M("GENERAL_UNCHANGED"));
         }
     }
 
@@ -113,12 +111,12 @@ void XTransProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* p
 
     int currentRow = method->get_active_row_number();
 
-    if (currentRow >= 0 && currentRow < std::numeric_limits<int>::max()) {
+    if (currentRow >= 0 && method->get_active_text() != M("GENERAL_UNCHANGED")) {
         pp->raw.xtranssensor.method = procparams::RAWParams::XTransSensor::getMethodStrings()[currentRow];
     }
 
     if (pedited) {
-        pedited->raw.xtranssensor.method = method->get_active_row_number() != std::numeric_limits<int>::max();
+        pedited->raw.xtranssensor.method = method->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->raw.xtranssensor.ccSteps = ccSteps->getEditedState ();
     }
 }
@@ -131,7 +129,7 @@ void XTransProcess::setAdjusterBehavior (bool falsecoloradd)
 void XTransProcess::setBatchMode(bool batchMode)
 {
     method->append (M("GENERAL_UNCHANGED"));
-    method->set_active(std::numeric_limits<int>::max()); // No name
+    method->set_active_text(M("GENERAL_UNCHANGED"));
     ToolPanel::setBatchMode (batchMode);
     ccSteps->showEditedCB ();
 }
@@ -159,22 +157,14 @@ void XTransProcess::adjusterChanged (Adjuster* a, double newval)
 void XTransProcess::methodChanged ()
 {
     const int curSelection = method->get_active_row_number();
-    const RAWParams::XTransSensor::Method method = RAWParams::XTransSensor::Method(curSelection);
-
-    Glib::ustring methodName;
-    bool ppreq = false;
-
-    if (curSelection >= 0 && curSelection < std::numeric_limits<int>::max()) {
-        methodName = RAWParams::XTransSensor::getMethodStrings()[curSelection];
-
-        if (method == RAWParams::XTransSensor::Method::MONO || RAWParams::XTransSensor::Method(oldSelection) == RAWParams::XTransSensor::Method::MONO) {
-            ppreq = true;
-        }
-    }
+    const RAWParams::XTransSensor::Method currentMethod = RAWParams::XTransSensor::Method(curSelection);
 
     oldSelection = curSelection;
 
-    if (listener) {
-        listener->panelChanged (ppreq ? EvDemosaicMethodPreProc : EvDemosaicMethod, methodName);
+    if (listener && method->get_active_row_number() >= 0) {
+        listener->panelChanged (
+            currentMethod == RAWParams::XTransSensor::Method::MONO || RAWParams::XTransSensor::Method(oldSelection) == RAWParams::XTransSensor::Method::MONO
+            ? EvDemosaicMethodPreProc
+            : EvDemosaicMethod, method->get_active_text());
     }
 }

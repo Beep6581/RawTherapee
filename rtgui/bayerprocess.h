@@ -39,7 +39,7 @@ protected:
     CheckBox* dcbEnhance;
     Gtk::VBox *lmmseOptions;
     Adjuster* lmmseIterations;
-    Gtk::VBox *pixelShiftFrame;
+    Gtk::Frame *pixelShiftFrame;
     Gtk::VBox *pixelShiftOptions;
     MyComboBoxText* pixelShiftMotionMethod;
     MyComboBoxText* pixelShiftDemosaicMethod;
