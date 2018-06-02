@@ -1642,6 +1642,19 @@ Camera constants:
     and we define here the needed offset of around 15. The total BL is base+offset
 */
 
+    { // Quality C, proper ISO 100-125-160 samples missing, pixelshift files have no black offset etc. #4574
+        "make_model": [ "Panasonic DC-G9" ],
+        "dcraw_matrix": [ 7685, -2375, -634, -3687, 11700, 2249, -748, 1546, 5111 ], // Adobe DNG Converter 10.3 ColorMatrix2
+        "ranges": {
+            "black": 15, // 15 is BL offset. dcraw/RT reads the base black from Exif and calculates total BL = BLbase+BLoffset
+            "white": [
+                { "iso": 100, "levels": 3000 }, // gaussian 3100-3600 Exif_linearitylimit 2111
+                { "iso": 125, "levels": 3500 }, // guessed
+                { "iso": [ 160, 200, 250, 320, 400,500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200, 4000, 5000, 6400, 12800, 25600 ], "levels": 4080 } // nominal 4095
+            ]
+        }
+    },
+
     { // Quality B, CameraPhone, some samples are missing but has the same sensor as FZ1000 ..
         "make_model": [ "Panasonic DMC-CM1", "Panasonic DMC-CM10" ],
         "dcraw_matrix": [ 8770,-3194,-820,-2871,11281,1803,-513,1552,4434 ], // dcp_v8.7 d65
