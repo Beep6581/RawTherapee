@@ -276,7 +276,7 @@ inline void RawImageSource::interpolate_row_rb (float* ar, float* ab, float* pg,
     }
 }
 
-inline void RawImageSource::interpolate_row_rb_mul_pp (float* ar, float* ab, float* pg, float* cg, float* ng, int i, float r_mul, float g_mul, float b_mul, int x1, int width, int skip)
+inline void RawImageSource::interpolate_row_rb_mul_pp (const array2D<float> &rawData, float* ar, float* ab, float* pg, float* cg, float* ng, int i, float r_mul, float g_mul, float b_mul, int x1, int width, int skip)
 {
 
     if ((ri->ISRED(i, 0) || ri->ISRED(i, 1)) && pg && ng) {

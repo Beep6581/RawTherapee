@@ -123,6 +123,7 @@ set(RTENGINESOURCEFILES
     gamutwarning.cc
     ipshadowshighlights.cc
     xtrans_demosaic.cc
+    vng4_demosaic_RT.cc
     )
 
 if(LENSFUN_HAS_LOAD_DIRECTORY)
