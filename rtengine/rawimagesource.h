@@ -262,7 +262,7 @@ protected:
     void nodemosaic(bool bw);
     void eahd_demosaic();
     void hphd_demosaic();
-    void vng4_demosaic(const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
+    void vng4_demosaic(const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, bool keepGreens = false);
     void ppg_demosaic();
     void jdl_interpolate_omp();
     void igv_interpolate(int winw, int winh);
@@ -291,8 +291,9 @@ protected:
     void dcb_color_full(float (*image)[3], int x0, int y0, float (*chroma)[2]);
     void cielab (const float (*rgb)[3], float* l, float* a, float *b, const int width, const int height, const int labWidth, const float xyz_cam[3][3]);
     void xtransborder_interpolate (int border);
+    void xtrans_4pass_demosaic_RT (const int passes, const bool useCieLab, double contrast);
     void xtrans_interpolate (const int passes, const bool useCieLab);
-    void fast_xtrans_interpolate ();
+    void fast_xtrans_interpolate (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
     void pixelshift(int winx, int winy, int winw, int winh, const RAWParams::BayerSensor &bayerParams, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection);
     void    hflip       (Imagefloat* im);
     void    vflip       (Imagefloat* im);

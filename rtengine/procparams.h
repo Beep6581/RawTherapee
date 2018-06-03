@@ -1307,6 +1307,7 @@ struct RAWParams {
      */
     struct XTransSensor {
         enum class Method {
+            FOUR_PASS,
             THREE_PASS,
             ONE_PASS,
             FAST,
@@ -1315,6 +1316,7 @@ struct RAWParams {
         };
 
         Glib::ustring method;
+        double dualDemosaicContrast;
         int ccSteps;
         double blackred;
         double blackgreen;

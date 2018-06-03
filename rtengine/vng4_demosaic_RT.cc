@@ -32,7 +32,7 @@ namespace rtengine
 {
 #define fc(row,col) (prefilters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
 typedef unsigned short ushort;
-void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
+void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, bool keepGreens)
 {
     BENCHFUN
     const signed short int *cp, terms[] = {
@@ -75,7 +75,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
     float (*image)[4];
 
     image = (float (*)[4]) calloc (height * width, sizeof * image);
-
+StopWatch Stop1("loop1");
 #ifdef _OPENMP
     #pragma omp parallel for
 #endif
@@ -84,7 +84,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
         for (int jj = 0; jj < W; jj++) {
             image[ii * W + jj][fc(ii, jj)] = rawData[ii][jj];
         }
-
+Stop1.stop();
     {
         int lcode[16][16][32];
         float mul[16][16][8];
@@ -125,6 +125,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
                     }
             }
 
+StopWatch Stop2("loop2");
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -145,6 +146,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
                 }
             }
         }
+Stop2.stop();
     }
 
     const int prow = 7, pcol = 1;
@@ -208,7 +210,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
         plistener->setProgress (progress);
     }
 
-
+StopWatch Stop3("loop3");
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -218,83 +220,87 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
         const int progressStep = 64;
         const double progressInc = (0.98 - progress) / ((height - 2) / progressStep);
 #ifdef _OPENMP
-        #pragma omp for nowait
+        #pragma omp for schedule(dynamic, 16) nowait
 #endif
 
         for (int row = 2; row < height - 2; row++) {    /* Do VNG interpolation */
             for (int col = 2; col < width - 2; col++) {
                 float * pix = image[row * width + col];
-                int * ip = code[row & prow][col & pcol];
-                memset (gval, 0, sizeof gval);
-
-                while ((g = ip[0]) != INT_MAX) {        /* Calculate gradients */
-                    float diff = fabsf(pix[g] - pix[ip[1]]) * (1 << ip[2]);
-                    gval[ip[3]] += diff;
-                    ip += 4;
-
-                    while ((g = *ip++) != -1) {
-                        gval[g] += diff;
-                    }
-                }
-
-                ip++;
-                {
-                    float gmin, gmax;
-                    gmin = gmax = gval[0];          /* Choose a threshold */
-
-                    for (g = 1; g < 8; g++) {
-                        if (gmin > gval[g]) {
-                            gmin = gval[g];
-                        }
-
-                        if (gmax < gval[g]) {
-                            gmax = gval[g];
-                        }
-                    }
-
-                    thold = gmin + (gmax / 2);
-                }
-                memset (sum, 0, sizeof sum);
-                float t1, t2;
                 int color = fc(row, col);
-                t1 = t2 = pix[color];
-
-                if(color & 1) {
-                    int num = 0;
-
-                    for (g = 0; g < 8; g++, ip += 2) {  /* Average the neighbors */
-                        if (gval[g] <= thold) {
-                            if(ip[1]) {
-                                sum[0] += (t1 + pix[ip[1]]) * 0.5f;
-                            }
-
-                            sum[1] += pix[ip[0] + (color ^ 2)];
-                            num++;
-                        }
-                    }
-
-                    t1 += (sum[1] - sum[0]) / num;
+                if (keepGreens && (color & 1)) {
+                    green[row][col] = pix[color];
                 } else {
-                    int num = 0;
+                    int * ip = code[row & prow][col & pcol];
+                    memset (gval, 0, sizeof gval);
 
-                    for (g = 0; g < 8; g++, ip += 2) {  /* Average the neighbors */
-                        if (gval[g] <= thold) {
-                            sum[1] += pix[ip[0] + 1];
-                            sum[2] += pix[ip[0] + 3];
+                    while ((g = ip[0]) != INT_MAX) {        /* Calculate gradients */
+                        float diff = fabsf(pix[g] - pix[ip[1]]) * (1 << ip[2]);
+                        gval[ip[3]] += diff;
+                        ip += 4;
 
-                            if(ip[1]) {
-                                sum[0] += (t1 + pix[ip[1]]) * 0.5f;
-                            }
-
-                            num++;
+                        while ((g = *ip++) != -1) {
+                            gval[g] += diff;
                         }
                     }
 
-                    t1 += (sum[1] - sum[0]) / num;
-                    t2 += (sum[2] - sum[0]) / num;
-                }
+                    ip++;
+                    {
+                        float gmin, gmax;
+                        gmin = gmax = gval[0];          /* Choose a threshold */
 
-                green[row][col] = 0.5f * (t1 + t2);
+                        for (g = 1; g < 8; g++) {
+                            if (gmin > gval[g]) {
+                                gmin = gval[g];
+                            }
+
+                            if (gmax < gval[g]) {
+                                gmax = gval[g];
+                            }
+                        }
+
+                        thold = gmin + (gmax / 2);
+                    }
+                    memset (sum, 0, sizeof sum);
+                    float t1, t2;
+                    t1 = t2 = pix[color];
+
+                    if(color & 1) {
+                        int num = 0;
+
+                        for (g = 0; g < 8; g++, ip += 2) {  /* Average the neighbors */
+                            if (gval[g] <= thold) {
+                                if(ip[1]) {
+                                    sum[0] += (t1 + pix[ip[1]]) * 0.5f;
+                                }
+
+                                sum[1] += pix[ip[0] + (color ^ 2)];
+                                num++;
+                            }
+                        }
+
+                        t1 += (sum[1] - sum[0]) / num;
+                    } else {
+                        int num = 0;
+
+                        for (g = 0; g < 8; g++, ip += 2) {  /* Average the neighbors */
+                            if (gval[g] <= thold) {
+                                sum[1] += pix[ip[0] + 1];
+                                sum[2] += pix[ip[0] + 3];
+
+                                if(ip[1]) {
+                                    sum[0] += (t1 + pix[ip[1]]) * 0.5f;
+                                }
+
+                                num++;
+                            }
+                        }
+
+                        t1 += (sum[1] - sum[0]) / num;
+                        t2 += (sum[2] - sum[0]) / num;
+                    }
+
+                    green[row][col] = 0.5f * (t1 + t2);
+                }
             }
 
             if(plistenerActive) {
@@ -316,7 +322,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
     if(plistenerActive) {
         plistener->setProgress (0.98);
     }
-
+Stop3.stop();
     // Interpolate R and B
 #ifdef _OPENMP
     #pragma omp parallel for

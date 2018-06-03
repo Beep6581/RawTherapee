@@ -423,6 +423,7 @@ void ParamsEdited::set (bool v)
     raw.bayersensor.linenoiseDirection = v;
     raw.bayersensor.pdafLinesFilter = v;
     raw.xtranssensor.method = v;
+    raw.xtranssensor.dualDemosaicContrast = v;
     raw.xtranssensor.ccSteps = v;
     raw.xtranssensor.exBlackRed = v;
     raw.xtranssensor.exBlackGreen = v;
@@ -973,6 +974,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.bayersensor.linenoiseDirection = raw.bayersensor.linenoiseDirection && p.raw.bayersensor.linenoiseDirection == other.raw.bayersensor.linenoiseDirection;
         raw.bayersensor.pdafLinesFilter = raw.bayersensor.pdafLinesFilter && p.raw.bayersensor.pdafLinesFilter == other.raw.bayersensor.pdafLinesFilter;
         raw.xtranssensor.method = raw.xtranssensor.method && p.raw.xtranssensor.method == other.raw.xtranssensor.method;
+        raw.xtranssensor.dualDemosaicContrast = raw.xtranssensor.dualDemosaicContrast && p.raw.xtranssensor.dualDemosaicContrast == other.raw.xtranssensor.dualDemosaicContrast;
         raw.xtranssensor.ccSteps = raw.xtranssensor.ccSteps && p.raw.xtranssensor.ccSteps == other.raw.xtranssensor.ccSteps;
         raw.xtranssensor.exBlackRed = raw.xtranssensor.exBlackRed && p.raw.xtranssensor.blackred == other.raw.xtranssensor.blackred;
         raw.xtranssensor.exBlackGreen = raw.xtranssensor.exBlackGreen && p.raw.xtranssensor.blackgreen == other.raw.xtranssensor.blackgreen;
@@ -2576,6 +2578,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (raw.xtranssensor.method) {
         toEdit.raw.xtranssensor.method          = mods.raw.xtranssensor.method;
+    }
+
+    if (raw.xtranssensor.dualDemosaicContrast) {
+        toEdit.raw.xtranssensor.dualDemosaicContrast          = mods.raw.xtranssensor.dualDemosaicContrast;
     }
 
     if (raw.xtranssensor.ccSteps) {

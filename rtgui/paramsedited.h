@@ -761,6 +761,7 @@ public:
 
     public:
         bool method;
+        bool dualDemosaicContrast;
         bool ccSteps;
         bool exBlackRed;
         bool exBlackGreen;

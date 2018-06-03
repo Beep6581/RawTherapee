@@ -2099,11 +2099,13 @@ void RawImageSource::demosaic(const RAWParams &raw)
 
     } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
         if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST) ) {
-            fast_xtrans_interpolate();
+            fast_xtrans_interpolate(rawData, red, green, blue);
         } else if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::ONE_PASS)) {
             xtrans_interpolate(1, false);
         } else if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::THREE_PASS) ) {
             xtrans_interpolate(3, true);
+        } else if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FOUR_PASS)) {
+            xtrans_4pass_demosaic_RT(3, true, raw.xtranssensor.dualDemosaicContrast);
         } else if(raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO) ) {
             nodemosaic(true);
         } else {
