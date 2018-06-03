@@ -81,6 +81,7 @@ FilePanel::FilePanel () : parent(nullptr), error(0)
 
     tpc->addPParamsChangeListener (history);
     history->setProfileChangeListener (tpc);
+    history->set_size_request(-1, 50);
 
     Gtk::ScrolledWindow* sFilterPanel = Gtk::manage ( new Gtk::ScrolledWindow() );
     filterPanel = Gtk::manage ( new FilterPanel () );
@@ -120,7 +121,7 @@ FilePanel::FilePanel () : parent(nullptr), error(0)
 
     tpcPaned = Gtk::manage ( new Gtk::VPaned () );
     tpcPaned->pack1 (*tpc->toolPanelNotebook, false, true);
-    tpcPaned->pack2 (*history, true, true);
+    tpcPaned->pack2 (*history, true, false);
 
     rightNotebook->append_page (*sFilterPanel, *filtLab);
     rightNotebook->append_page (*inspectorPanel, *inspectLab);
