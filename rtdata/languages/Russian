@@ -483,9 +483,6 @@ HISTORY_MSG_250;ПШ: Улучшенный
 HISTORY_MSG_251;Ч&amp;Б: Алгоритм
 HISTORY_MSG_277;--неиспользуемый--
 HISTORY_MSG_300;-
-HISTORY_MSG_488;Отображение тонов HDR
-HISTORY_MSG_489;HDR: Порог
-HISTORY_MSG_490;HDR: Величина
 HISTORY_MSG_491;Баланс белого
 HISTORY_MSG_492;Кривые RGB
 HISTORY_MSG_493;Настройки L*a*b*
@@ -496,7 +493,6 @@ HISTORY_MSG_LOCALCONTRAST_ENABLED;Лок.контраст
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Лок.контраст: Светлые тона
 HISTORY_MSG_LOCALCONTRAST_RADIUS;Лок.контраст: Радиус
 HISTORY_MSG_METADATA_MODE;Режим копирования метаданных
-HISTORY_MSG_TM_FATTAL_ANCHOR;HDR: Точка привязки
 HISTORY_NEWSNAPSHOT;Добавить
 HISTORY_NEWSNAPSHOT_TOOLTIP;Горячая клавиша: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Снимок
@@ -665,7 +661,6 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Тени/света
 PARTIALPASTE_SHARPENEDGE;Края
 PARTIALPASTE_SHARPENING;Повышение резкости
 PARTIALPASTE_SHARPENMICRO;Микроконтраст
-PARTIALPASTE_TM_FATTAL;Отображение тонов HDR
 PARTIALPASTE_VIBRANCE;Красочность
 PARTIALPASTE_VIGNETTING;Коррекция виньетирования
 PARTIALPASTE_WHITEBALANCE;Баланс белого
@@ -1320,9 +1315,6 @@ TP_SHARPENMICRO_AMOUNT;Величина
 TP_SHARPENMICRO_LABEL;Микроконтраст
 TP_SHARPENMICRO_MATRIX;Матрица 3×3 вместо 5×5
 TP_SHARPENMICRO_UNIFORMITY;Равномерность
-TP_TM_FATTAL_AMOUNT;Величина
-TP_TM_FATTAL_LABEL;Отображение тонов HDR
-TP_TM_FATTAL_THRESHOLD;Порог
 TP_VIBRANCE_AVOIDCOLORSHIFT;Избегать сдвига цветов
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;ОО
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Оттенки кожи
@@ -1648,6 +1640,9 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !HISTORY_MSG_485;Lens Correction
 !HISTORY_MSG_486;Lens Correction - Camera
 !HISTORY_MSG_487;Lens Correction - Lens
+!HISTORY_MSG_488;Dynamic Range Compression
+!HISTORY_MSG_489;DRC - Threshold
+!HISTORY_MSG_490;DRC - Amount
 !HISTORY_MSG_CLAMPOOG;Out-of-gamut color clipping
 !HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 !HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
@@ -1655,6 +1650,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
+!HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
 !IPTCPANEL_COPYRIGHT;Copyright notice
@@ -1697,6 +1693,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
 !PARTIALPASTE_RAW_PIXELSHIFT;Pixel Shift
 !PARTIALPASTE_RETINEX;Retinex
+!PARTIALPASTE_TM_FATTAL;Dynamic Range Compression
 !PREFERENCES_AUTLISLOW;Low
 !PREFERENCES_AUTLISMAX;Max - Average of all tiles
 !PREFERENCES_AUTLISSTD;High
@@ -2054,7 +2051,10 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_RETINEX_VIEW_UNSHARP;Unsharp mask
 !TP_SHARPENING_CONTRAST;Contrast threshold
 !TP_SHARPENMICRO_CONTRAST;Contrast threshold
+!TP_TM_FATTAL_AMOUNT;Amount
 !TP_TM_FATTAL_ANCHOR;Anchor
+!TP_TM_FATTAL_LABEL;Dynamic Range Compression
+!TP_TM_FATTAL_THRESHOLD;Threshold
 !TP_WAVELET_1;Level 1
 !TP_WAVELET_2;Level 2
 !TP_WAVELET_3;Level 3
