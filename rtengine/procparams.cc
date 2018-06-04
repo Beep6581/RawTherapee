@@ -2436,19 +2436,19 @@ const std::vector<const char*>& RAWParams::BayerSensor::getMethodStrings()
 {
     static const std::vector<const char*> method_strings {
         "amaze",
-        "igv",
+        "amazevng4",
+        "rcd",
+        "dcb",
         "lmmse",
+        "igv",
+        "ahd",
         "eahd",
         "hphd",
         "vng4",
-        "dcb",
-        "ahd",
-        "rcd",
         "fast",
         "mono",
-        "none",
         "pixelshift",
-        "amazevng4"
+        "none"
     };
     return method_strings;
 }
