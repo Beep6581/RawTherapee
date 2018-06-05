@@ -1937,9 +1937,9 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !HISTORY_MSG_485;Lens Correction
 !HISTORY_MSG_486;Lens Correction - Camera
 !HISTORY_MSG_487;Lens Correction - Lens
-!HISTORY_MSG_488;HDR Tone Mapping
-!HISTORY_MSG_489;HDR TM - Threshold
-!HISTORY_MSG_490;HDR TM - Amount
+!HISTORY_MSG_488;Dynamic Range Compression
+!HISTORY_MSG_489;DRC - Threshold
+!HISTORY_MSG_490;DRC - Amount
 !HISTORY_MSG_491;White Balance
 !HISTORY_MSG_492;RGB Curves
 !HISTORY_MSG_493;L*a*b* Adjustments
@@ -1957,7 +1957,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
-!HISTORY_MSG_TM_FATTAL_ANCHOR;HDR TM - Anchor
+!HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
 !IPTCPANEL_COPYRIGHT;Copyright notice
@@ -2002,7 +2002,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
 !PARTIALPASTE_RAW_PIXELSHIFT;Pixel Shift
-!PARTIALPASTE_TM_FATTAL;HDR Tone mapping
+!PARTIALPASTE_TM_FATTAL;Dynamic Range Compression
 !PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_CMMBPC;Black point compensation
 !PREFERENCES_CROP;Crop editing
@@ -2178,7 +2178,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_SHARPENMICRO_CONTRAST;Contrast threshold
 !TP_TM_FATTAL_AMOUNT;Amount
 !TP_TM_FATTAL_ANCHOR;Anchor
-!TP_TM_FATTAL_LABEL;HDR Tone Mapping
+!TP_TM_FATTAL_LABEL;Dynamic Range Compression
 !TP_TM_FATTAL_THRESHOLD;Threshold
 !TP_WAVELET_CBENAB;Toning and Color Balance
 !TP_WAVELET_CB_TOOLTIP;For strong values product color-toning by combining it or not with levels decomposition 'toning'\nFor low values you can change the white balance of the background (sky, ...) without changing that of the front plane, generally more contrasted
