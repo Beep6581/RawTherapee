@@ -48,10 +48,10 @@ void RawImageSource::green_equilibrate_global(array2D<float> &rawData)
         double avgg = 0.;
         int ng = 0;
         for (int j = border + ((FC(i, border) & 1) ^ 1); j < W - border; j += 2) {
-            if(rawData[i][j] > 0.f) {
+//            if(rawData[i][j] > 0.f) {
                 avgg += rawData[i][j];
                 ng++;
-            }
+//            }
         }
 
         if (i & 1) {
