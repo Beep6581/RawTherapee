@@ -5,7 +5,6 @@ ABOUT_TAB_CREDITS;Crédits
 ABOUT_TAB_LICENSE;Licence
 ABOUT_TAB_RELEASENOTES;Notes de version
 ABOUT_TAB_SPLASH;Splash
-ADJUSTER_RESET_TO_DEFAULT;Réglages par défaut
 BATCHQUEUE_AUTOSTART;Démarrage auto
 BATCHQUEUE_AUTOSTARTHINT;Démarrer automatiquement le traitement à l'arrivée d'une nouvelle tâche
 BATCHQUEUE_DESTFILENAME;Chemin et nom de fichier
@@ -478,9 +477,7 @@ HISTORY_MSG_231;N&amp;B - Courbe 'Avant'
 HISTORY_MSG_232;N&amp;B - Type de courbe 'Avant'
 HISTORY_MSG_233;N&amp;B - Courbe 'Après'
 HISTORY_MSG_234;N&amp;B - Type de courbe 'Après'
-HISTORY_MSG_235;N&amp;B - Mixeur - Mode auto
 HISTORY_MSG_236;--inutilisé--
-HISTORY_MSG_237;N&amp;B - Mixeur
 HISTORY_MSG_238;FD - Étendu
 HISTORY_MSG_239;FD - Force
 HISTORY_MSG_240;FD - Centre
@@ -516,7 +513,6 @@ HISTORY_MSG_269;Virage Partiel - HL - Rouge
 HISTORY_MSG_270;Virage Partiel - HL - Vert
 HISTORY_MSG_271;Virage Partiel - HL - Bleu
 HISTORY_MSG_272;Virage Partiel - Balance
-HISTORY_MSG_273;Virage Partiel - Réinit.
 HISTORY_MSG_274;Virage Partiel - Saturation des ombres
 HISTORY_MSG_275;Virage Partiel - Saturation des HL
 HISTORY_MSG_276;Virage Partiel - Opacité
@@ -635,7 +631,6 @@ HISTORY_MSG_388;O - Résiduel - BC vert moyen
 HISTORY_MSG_389;O - Résiduel - BC bleu moyen
 HISTORY_MSG_390;O - Résiduel - BC vert bas
 HISTORY_MSG_391;O - Résiduel - BC bleu bas
-HISTORY_MSG_392;O - Résiduel - BC Réinitialiser
 HISTORY_MSG_393;DCP - Table de corresp. (LUT)
 HISTORY_MSG_394;DCP - Exposition de base
 HISTORY_MSG_395;DCP - Table de base
@@ -715,9 +710,6 @@ HISTORY_MSG_484;CAM02 - Yb auto scène
 HISTORY_MSG_485;Correction d'Objectif
 HISTORY_MSG_486;Corr. d'Obj. - Appareil
 HISTORY_MSG_487;Corr. d'Obj. - Objectif
-HISTORY_MSG_488;Compression tonale HDR
-HISTORY_MSG_489;CT HDR - Seuil
-HISTORY_MSG_490;CT HDR - Quantité
 HISTORY_MSG_491;Balances des Blancs
 HISTORY_MSG_492;Courbes RVB
 HISTORY_MSG_493;Ajustements L*a*b*
@@ -729,7 +721,6 @@ HISTORY_MSG_LOCALCONTRAST_ENABLED;Contraste Local
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Contraste Local - H.L.
 HISTORY_MSG_LOCALCONTRAST_RADIUS;Contraste Local - Rayon
 HISTORY_MSG_METADATA_MODE;Mode de copie des métadonnées
-HISTORY_MSG_TM_FATTAL_ANCHOR;CT HDR - Ancre
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourci: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Capture
@@ -942,7 +933,6 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Ombres/Hautes lumières
 PARTIALPASTE_SHARPENEDGE;Bords
 PARTIALPASTE_SHARPENING;Netteté
 PARTIALPASTE_SHARPENMICRO;Microcontraste
-PARTIALPASTE_TM_FATTAL;Compression tonale HDR
 PARTIALPASTE_VIBRANCE;Vibrance
 PARTIALPASTE_VIGNETTING;Correction du vignettage
 PARTIALPASTE_WAVELETGROUP;Niveaux d'ondelette
@@ -1253,7 +1243,6 @@ TP_BWMIX_ALGO_LI;Linéaire
 TP_BWMIX_ALGO_SP;Effets spéciaux
 TP_BWMIX_ALGO_TOOLTIP;Linéaire: produira une réponse normale <b>linéaire</b>.\nEffets spéciaux: produira des effets spéciaux en mixant les canaux de manière <b>non linéaire</b>.
 TP_BWMIX_AUTOCH;Auto
-TP_BWMIX_AUTOCH_TIP;Calcul les valeurs optimales du mixeur de canaux
 TP_BWMIX_CC_ENABLED;Ajuster les couleurs complémentaires
 TP_BWMIX_CC_TOOLTIP;Activer pour permettre l'ajustage automatique des couleur complémentaire dans le mode ROJVCBPM
 TP_BWMIX_CHANNEL;Égaliseur de Luminance
@@ -1280,9 +1269,6 @@ TP_BWMIX_MET;Méthode
 TP_BWMIX_MET_CHANMIX;Mixeur de Canaux
 TP_BWMIX_MET_DESAT;Désaturation
 TP_BWMIX_MET_LUMEQUAL;Égaliseur de Luminance
-TP_BWMIX_MIXC;Mixeur
-TP_BWMIX_NEUTRAL;Réinit. Mixeur
-TP_BWMIX_NEUTRAL_TIP;Réinitialise tous les paramètres (filtre, mixeur de canaux) à zéro
 TP_BWMIX_RGBLABEL;R: %1%%   V: %2%%   B: %3%%   Total: %4%%
 TP_BWMIX_RGBLABEL_HINT;Coefficients RVB finaux qui tiennent compte de toutes les options du mixeur\nTotal affiche la somme des valeurs RVB actuellement appliqué:\n- toujours 100% en mode relatif\n- supérieur (plus clair) ou inférieur (plus sombre) à 100% en mode absolu.
 TP_BWMIX_RGB_TOOLTIP;Mixe les canaux RVB. Utilisez les Préréglages pour vous guider.\nAttention aux valeurs négatives qui peuvent causer des artefacts ou un comportement erratique.
@@ -1961,10 +1947,6 @@ TP_SHARPENMICRO_AMOUNT;Quantité
 TP_SHARPENMICRO_LABEL;Microcontraste
 TP_SHARPENMICRO_MATRIX;Matrice 3×3 au lieu de 5×5
 TP_SHARPENMICRO_UNIFORMITY;Uniformité
-TP_TM_FATTAL_AMOUNT;Quantité
-TP_TM_FATTAL_ANCHOR;Ancre
-TP_TM_FATTAL_LABEL;Compression Tonale HDR
-TP_TM_FATTAL_THRESHOLD;Seuil
 TP_VIBRANCE_AVOIDCOLORSHIFT;Éviter les dérives de teinte
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;TT
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Tons chair
@@ -2212,14 +2194,30 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
 !EXIFFILTER_IMAGETYPE;Image type
+!GENERAL_RESET;Reset
+!HISTORY_MSG_235;B&amp;W - CM - Auto
+!HISTORY_MSG_237;B&amp;W - CM
+!HISTORY_MSG_273;CT - Color Balance SMH
+!HISTORY_MSG_392;W - Residual - Color Balance
+!HISTORY_MSG_488;Dynamic Range Compression
+!HISTORY_MSG_489;DRC - Threshold
+!HISTORY_MSG_490;DRC - Amount
 !HISTORY_MSG_CLAMPOOG;Out-of-gamut color clipping
+!HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
+!HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
+!HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
+!HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
+!PARTIALPASTE_TM_FATTAL;Dynamic Range Compression
 !PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
 !PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
+!TP_BWMIX_MIXC;Channel Mixer
+!TP_BWMIX_NEUTRAL;Reset
 !TP_EXPOSURE_CLAMPOOG;Clip out-of-gamut colors
 !TP_PREPROCESS_LINEDENOISE_DIRECTION;Direction
 !TP_PREPROCESS_LINEDENOISE_DIRECTION_BOTH;Both
@@ -2231,3 +2229,9 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_RAW_PIXELSHIFTEPERISO;Sensitivity
 !TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value of 0 should work fine for base ISO.\nHigher values increase sensitivity of motion detection.\nChange in small steps and watch the motion mask while changing.\nIncrease sensitivity for underexposed or high ISO images.
 !TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a green mask showing the regions with motion.
+!TP_SHARPENING_CONTRAST;Contrast threshold
+!TP_SHARPENMICRO_CONTRAST;Contrast threshold
+!TP_TM_FATTAL_AMOUNT;Amount
+!TP_TM_FATTAL_ANCHOR;Anchor
+!TP_TM_FATTAL_LABEL;Dynamic Range Compression
+!TP_TM_FATTAL_THRESHOLD;Threshold

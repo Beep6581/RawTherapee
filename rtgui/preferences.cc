@@ -225,6 +225,7 @@ Gtk::Widget* Preferences::getBatchProcPanel()
 
     mi = behModel->append();  // Used for both Resize and Post-Resize sharpening
     mi->set_value(behavColumns.label, M("TP_SHARPENING_LABEL"));
+    appendBehavList (mi, M ("TP_SHARPENING_CONTRAST"), ADDSET_SHARP_CONTRAST, false);
     appendBehavList(mi, M("TP_SHARPENING_RADIUS"), ADDSET_SHARP_RADIUS, false);
     appendBehavList(mi, M("TP_SHARPENING_AMOUNT"), ADDSET_SHARP_AMOUNT, false);
     appendBehavList(mi, M("TP_SHARPENING_RLD_DAMPING"), ADDSET_SHARP_DAMPING, false);
@@ -248,6 +249,7 @@ Gtk::Widget* Preferences::getBatchProcPanel()
     mi = behModel->append();
     mi->set_value(behavColumns.label, M("TP_SHARPENMICRO_LABEL"));
     appendBehavList(mi, M("TP_SHARPENMICRO_AMOUNT"), ADDSET_SHARPENMICRO_AMOUNT, false);
+    appendBehavList (mi, M ("TP_SHARPENMICRO_CONTRAST"), ADDSET_SHARPENMICRO_CONTRAST, false);
     appendBehavList(mi, M("TP_SHARPENMICRO_UNIFORMITY"), ADDSET_SHARPENMICRO_UNIFORMITY, false);
 
     mi = behModel->append();

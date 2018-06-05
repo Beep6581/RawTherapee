@@ -52,7 +52,7 @@ extern const Settings* settings;
 
 Crop::Crop(ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow)
     : PipetteBuffer(editDataProvider), origCrop(nullptr), laboCrop(nullptr), labnCrop(nullptr), reservCrop(nullptr),
-      cropImg (nullptr), cbuf_real (nullptr), shbuf_real(nullptr), transCrop (nullptr), cieCrop (nullptr), cbuffer (nullptr), shbuffer(nullptr),
+      cropImg (nullptr), shbuf_real(nullptr), transCrop (nullptr), cieCrop (nullptr), shbuffer(nullptr),
       updating(false), newUpdatePending(false), skip(10),
       cropx(0), cropy(0), cropw(-1), croph(-1),
       trafx(0), trafy(0), trafw(-1), trafh(-1),
@@ -1800,7 +1800,7 @@ void Crop::update(int todo)
 
             if ((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled)) {
                 parent->ipf.MLmicrocontrast(labnCrop);
-                parent->ipf.sharpening(labnCrop, (float**)cbuffer, params.sharpening);
+                parent->ipf.sharpening (labnCrop, params.sharpening);
             }
         }
 
@@ -2030,24 +2030,13 @@ void Crop::freeAll()
             cieCrop = nullptr;
         }
 
-        if (cbuf_real) {
-            delete [] cbuf_real;
-            cbuf_real = nullptr;
-        }
-
-        if (cbuffer) {
-            delete [] cbuffer;
-            cbuffer = nullptr;
-        }
-
         if (shbuffer) {
             delete [] shbuffer;
             shbuffer = nullptr;
         }
 
         PipetteBuffer::flush();
-    }
-
+	}
     cropAllocated = false;
 }
 
@@ -2237,27 +2226,11 @@ bool Crop::setCropSizes(int rcx, int rcy, int rcw, int rch, int skip, bool inter
             cieCrop = nullptr;
         }
 
-        if (cbuffer) {
-            delete [] cbuffer;
-        }
-
         if (shbuffer) {
             delete [] shbuffer;
-        }
-
-        if (cbuf_real) {
-            delete [] cbuf_real;
-        }
-
+		}
         if (shbuf_real) {
             delete [] shbuf_real;
-        }
-
-        cbuffer = new float*[croph];
-        cbuf_real = new float[(croph + 2)*cropw];
-
-        for (int i = 0; i < croph; i++) {
-            cbuffer[i] = cbuf_real + cropw * i + cropw;
         }
 
         shbuffer = new float*[croph];

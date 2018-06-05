@@ -1018,10 +1018,12 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"A8 48 80 98 30 30 AA 0E", "AF-S VR Zoom-Nikkor 200-400mm f/4G IF-ED II"},
     {"A8 48 8E 8E 30 30 C3 0E", "AF-S Nikkor 300mm f/4E PF ED VR"},
     {"A8 48 8E 8E 30 30 C3 4E", "AF-S Nikkor 300mm f/4E PF ED VR"},
+    {"A9 48 7C 98 30 30 D4 4E", "AF-S Nikkor 180-400mm f/4E TC1.4 FL ED VR"},
     {"A9 4C 31 31 14 14 C4 06", "AF-S Nikkor 20mm f/1.8G ED"},
     {"A9 54 80 80 18 18 AB 0E", "AF-S Nikkor 200mm f/2G ED VR II"},
     {"AA 3C 37 6E 30 30 AC 0E", "AF-S Nikkor 24-120mm f/4G ED VR"},
     {"AA 48 37 5C 24 24 C5 4E", "AF-S Nikkor 24-70mm f/2.8E ED VR"},
+    {"AA 48 88 A4 3C 3C D5 4E", "AF-S Nikkor 180-400mm f/4E TC1.4 FL ED VR + 1.4x TC"},
     {"AB 3C A0 A0 30 30 C6 4E", "AF-S Nikkor 500mm f/4E FL ED VR"},
     {"AC 38 53 8E 34 3C AE 0E", "AF-S DX VR Nikkor 55-300mm f/4.5-5.6G ED"},
     {"AC 3C A6 A6 30 30 C7 4E", "AF-S Nikkor 600mm f/4E FL ED VR"},
@@ -1047,9 +1049,11 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"BF 3C 1B 1B 30 30 01 04", "Irix 11mm f/4 Firefly"},
     {"BF 4E 26 26 1E 1E 01 04", "Irix 15mm f/2.4 Firefly"},
     {"C3 34 68 98 38 40 4B 4E", "Sigma 100-400mm f/5-6.3 DG OS HSM | C"},
+    {"C8 54 62 62 0C 0C 4B 46", "Sigma 85mm f/1.4 DG HSM | A"},
     {"CC 4C 50 68 14 14 4B 06", "Sigma 50-100mm f/1.8 DC HSM | A"},
     {"CD 3D 2D 70 2E 3C 4B 0E", "Sigma 18-125mm f/3.8-5.6 DC OS HSM"},
     {"CE 34 76 A0 38 40 4B 0E", "Sigma 150-500mm f/5-6.3 DG OS APO HSM"},
+    {"CE 47 37 5C 25 25 DF 4E", "Tamron SP 24-70mm f/2.8 Di VC USD G2 (A032)"},
     {"CF 38 6E 98 34 3C 4B 0E", "Sigma APO 120-400mm f/4.5-5.6 DG OS HSM"},
     {"DC 48 19 19 24 24 4B 06", "Sigma 10mm f/2.8 EX DC HSM Fisheye"},
     {"DE 54 50 50 0C 0C 4B 06", "Sigma 50mm f/1.4 EX DG HSM"},
@@ -1101,7 +1105,7 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"FE 53 5C 80 24 24 84 06", "Tamron SP AF 70-200mm f/2.8 Di LD (IF) Macro (A001)"},
     {"FE 54 5C 80 24 24 DF 0E", "Tamron SP 70-200mm f/2.8 Di VC USD (A009)"},
     {"FE 54 64 64 24 24 DF 0E", "Tamron SP 90mm f/2.8 Di VC USD Macro 1:1 (F004)"},
-    {"FF 40 2D 80 2C 40 4B 06", "Sigma 18-200mm f/3.5-6.3 DC"},
+    {"FF 40 2D 80 2C 40 4B 06", "Sigma 18-200mm f/3.5-6.3 DC"}
 };
 
 const TagAttrib nikonISOInfoAttribs[] = {

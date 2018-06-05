@@ -8,7 +8,6 @@ ABOUT_TAB_CREDITS;Erkännande
 ABOUT_TAB_LICENSE;Licens
 ABOUT_TAB_RELEASENOTES;Versionsnyheter
 ABOUT_TAB_SPLASH;Splash
-ADJUSTER_RESET_TO_DEFAULT;Återställ till standard
 BATCHQUEUE_AUTOSTART;Autostart
 BATCHQUEUE_AUTOSTARTHINT;Starta behandlingen automatiskt när en ny bild kommer in
 BATCHQUEUE_DESTFILENAME;Sökväg och filnamn
@@ -456,9 +455,7 @@ HISTORY_MSG_231;S/V 'Före'-kurva
 HISTORY_MSG_232;S/V 'Före'-kurvtyp
 HISTORY_MSG_233;S/V 'Efter'-kurva
 HISTORY_MSG_234;S/V 'Efter'-kurvtyp
-HISTORY_MSG_235;S/V Automatisk kanalmixer
 HISTORY_MSG_236;--oanvänd--
-HISTORY_MSG_237;S/V Mixer
 HISTORY_MSG_238;Graderat filter - Fjäder
 HISTORY_MSG_239;Graderat filter - Styrka
 HISTORY_MSG_240;Graderat filter - Centrum
@@ -492,7 +489,6 @@ HISTORY_MSG_269;CT - Hög - Röd
 HISTORY_MSG_270;CT - Hög - Grön
 HISTORY_MSG_271;CT - Hög - Blå
 HISTORY_MSG_272;CT - Balans
-HISTORY_MSG_273;CT - Återställ
 HISTORY_MSG_274;CT - Mättnad skuggor
 HISTORY_MSG_275;CT - Mättnad i högdagrar
 HISTORY_MSG_276;CT - Opacitet
@@ -601,7 +597,6 @@ HISTORY_MSG_388;W - Återstod - CB grön mellan
 HISTORY_MSG_389;W - Återstod - CB blå mellan
 HISTORY_MSG_390;W - Återstod - CB grön låg
 HISTORY_MSG_391;W - Återstod - CB blå låg
-HISTORY_MSG_392;W - Återstod - CB återställning
 HISTORY_MSG_394;DCP - Basexponering
 HISTORY_MSG_395;DCP - Bastabell
 HISTORY_MSG_403;W - ES - Kantkänslighet
@@ -1078,7 +1073,6 @@ TP_BWMIX_ALGO_LI;Linjär
 TP_BWMIX_ALGO_SP;Specialeffekter
 TP_BWMIX_ALGO_TOOLTIP;Linjär: kommer att procudera ett normalt <b>linjärt</b> svar.\nSpecialeffekter: kommer att producera specialeffekter genom att miza kanalerna <b>icke-linjärt</b>.
 TP_BWMIX_AUTOCH;Auto
-TP_BWMIX_AUTOCH_TIP;Beräkna värden som optimerar kanalmixern
 TP_BWMIX_CC_ENABLED;Justera komplementär färg
 TP_BWMIX_CC_TOOLTIP;Aktivera för att tillåta automatisk justering av komplementär färg i ROYGCBPM-läget
 TP_BWMIX_CHANNEL;Luminansequalizer
@@ -1105,9 +1099,6 @@ TP_BWMIX_MET;Metod
 TP_BWMIX_MET_CHANMIX;Kanalmixer
 TP_BWMIX_MET_DESAT;Reducera mättnad
 TP_BWMIX_MET_LUMEQUAL;Luminansequalizer
-TP_BWMIX_MIXC;Blanda
-TP_BWMIX_NEUTRAL;Återställ mixer
-TP_BWMIX_NEUTRAL_TIP;Återställ alla värden (filter, kanalmixer) till standard
 TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Totalt: %4%%
 TP_BWMIX_RGBLABEL_HINT;Slutliga RGB-faktorer som tar hand om alla mixerinställningar\n"Totalt" visar summan av RGB-värden som faktiskt används:\n- alltid 100% i relativt läge\n- högre (ljusare) eller lägre (mörkare) än 100% i absolut läge.
 TP_BWMIX_RGB_TOOLTIP;Blanda RGB-kanalerna. Använd förinställningar som en vägledning.\nNotera negativa värden som kan orsaka artefakter eller felaktiga beteenden.
@@ -1861,6 +1852,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
 !BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
 !CURVEEDITOR_AXIS_RIGHT_TAN;RT:
@@ -1883,12 +1875,16 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
 !EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
 !FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
+!GENERAL_RESET;Reset
 !GENERAL_SLIDER;Slider
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
 !HISTORY_MSG_173;NR - Detail recovery
 !HISTORY_MSG_203;NR - Color space
+!HISTORY_MSG_235;B&amp;W - CM - Auto
+!HISTORY_MSG_237;B&amp;W - CM
 !HISTORY_MSG_256;NR - Median - Type
 !HISTORY_MSG_257;Color Toning
+!HISTORY_MSG_273;CT - Color Balance SMH
 !HISTORY_MSG_288;Flat-Field - Clip control
 !HISTORY_MSG_289;Flat-Field - Clip control - Auto
 !HISTORY_MSG_297;NR - Mode
@@ -1899,6 +1895,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !HISTORY_MSG_330;W - Toning - Opacity BY
 !HISTORY_MSG_344;W - Meth chroma sl/cur
 !HISTORY_MSG_353;W - ES - Gradient sensitivity
+!HISTORY_MSG_392;W - Residual - Color Balance
 !HISTORY_MSG_393;DCP - Look table
 !HISTORY_MSG_396;W - Contrast sub-tool
 !HISTORY_MSG_397;W - Chroma sub-tool
@@ -1940,9 +1937,9 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !HISTORY_MSG_485;Lens Correction
 !HISTORY_MSG_486;Lens Correction - Camera
 !HISTORY_MSG_487;Lens Correction - Lens
-!HISTORY_MSG_488;HDR Tone Mapping
-!HISTORY_MSG_489;HDR TM - Threshold
-!HISTORY_MSG_490;HDR TM - Amount
+!HISTORY_MSG_488;Dynamic Range Compression
+!HISTORY_MSG_489;DRC - Threshold
+!HISTORY_MSG_490;DRC - Amount
 !HISTORY_MSG_491;White Balance
 !HISTORY_MSG_492;RGB Curves
 !HISTORY_MSG_493;L*a*b* Adjustments
@@ -1955,9 +1952,12 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
 !HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
 !HISTORY_MSG_METADATA_MODE;Metadata copy mode
+!HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
-!HISTORY_MSG_TM_FATTAL_ANCHOR;HDR TM - Anchor
+!HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
+!HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
+!HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
 !IPTCPANEL_COPYRIGHT;Copyright notice
@@ -2002,7 +2002,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
 !PARTIALPASTE_RAW_PIXELSHIFT;Pixel Shift
-!PARTIALPASTE_TM_FATTAL;HDR Tone mapping
+!PARTIALPASTE_TM_FATTAL;Dynamic Range Compression
 !PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_CMMBPC;Black point compensation
 !PREFERENCES_CROP;Crop editing
@@ -2040,13 +2040,17 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !QINFO_HDR;HDR / %2 frame(s)
 !QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
 !SAMPLEFORMAT_0;Unknown data format
-!SAMPLEFORMAT_1;Unsigned 8 bits
-!SAMPLEFORMAT_2;Unsigned 16 bits
-!SAMPLEFORMAT_4;LogLuv 24 bits
-!SAMPLEFORMAT_8;LogLuv 32 bits
-!SAMPLEFORMAT_16;32 bits floating point
+!SAMPLEFORMAT_1;8-bit unsigned
+!SAMPLEFORMAT_2;16-bit unsigned
+!SAMPLEFORMAT_4;24-bit LogLuv
+!SAMPLEFORMAT_8;32-bit LogLuv
+!SAMPLEFORMAT_16;16-bit floating-point
+!SAMPLEFORMAT_32;24-bit floating-point
+!SAMPLEFORMAT_64;32-bit floating-point
 !SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
 !SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
+!TP_BWMIX_MIXC;Channel Mixer
+!TP_BWMIX_NEUTRAL;Reset
 !TP_CBDL_METHOD;Process located
 !TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 !TP_COLORAPP_NEUTRAL;Reset
@@ -2170,9 +2174,11 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.
 !TP_RETINEX_VIEW_MASK;Mask
 !TP_RETINEX_VIEW_METHOD_TOOLTIP;Standard - Normal display.\nMask -  Displays the mask.\nUnsharp mask - Displays the image with a high radius unsharp mask.\nTransmission - Auto/Fixed - Displays the file transmission-map, before any action on contrast and brightness.\n\nAttention: the mask does not correspond to reality, but is amplified to make it more visible.
+!TP_SHARPENING_CONTRAST;Contrast threshold
+!TP_SHARPENMICRO_CONTRAST;Contrast threshold
 !TP_TM_FATTAL_AMOUNT;Amount
 !TP_TM_FATTAL_ANCHOR;Anchor
-!TP_TM_FATTAL_LABEL;HDR Tone Mapping
+!TP_TM_FATTAL_LABEL;Dynamic Range Compression
 !TP_TM_FATTAL_THRESHOLD;Threshold
 !TP_WAVELET_CBENAB;Toning and Color Balance
 !TP_WAVELET_CB_TOOLTIP;For strong values product color-toning by combining it or not with levels decomposition 'toning'\nFor low values you can change the white balance of the background (sky, ...) without changing that of the front plane, generally more contrasted

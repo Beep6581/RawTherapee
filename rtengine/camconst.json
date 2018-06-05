@@ -278,12 +278,15 @@ About black levels:
     can be derived from masked pixels (typical for Canon cameras) or otherwise be extracted from some tag.
 
     Some formats have built-in subtraction information and are pre-processed by dcraw to end up at a black level of
-    zero (Phase One's IIQ).  For Panasonic raws beginning from dcraw v9.21 dcraw/RT reads base BL from Exif data (tags 0x001c
-    BlackLevelRed, 0x001d BlackLevelGreen, 0x001e BlackLevelBlue) and we define in "ranges": { "black": the needed offset
-    of around 15. The (total) BL RT displays is base+offset In all, you typically should not care about the black
-    level in camconst.json, any information that can be derived from the raw file itself should not be specified in
-    camconst.json! Sony's ARW2 is one of the few exceptions (with single black level around 512, or 800 for
-    RX10/100 models), but dcraw generally has good constants for these already.
+    zero (Phase One's IIQ).
+
+    For Panasonic cameras, the black level defined in camconst.json is the black level offset, which comes from
+    BlackLevel3 + BlackLevel2. RawTherapee then reads the base black levels from Exif data (0x001c BlackLevelRed,
+    0x001d BlackLevelGreen and 0x001e BlackLevelBlue) and adds them to the offset.
+
+    In all, you typically should not care about the black level in camconst.json, any information that can be derived from
+    the raw file itself should not be specified in camconst.json! Sony's ARW2 is one of the few exceptions (with a single
+    black level around 512, or 800 for RX10/100 models), but dcraw generally has good constants for these already.
 
     Currently we have chosen not to provide any guide how to measure black levels as we don't think it will be a common task
     (it's also more difficult to do than measure white levels). If you experience a black level issue it's more likely due
@@ -1637,10 +1640,18 @@ Camera constants:
         "ranges": { "white": 4050 } // safe for worst case detected, nominal is 4093
     },
 
-/*  Since dcraw_v9.21 Panasonic base BL is read from Exif (tags 0x001c BlackLevelRed15 is BL offset.
-    dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset, 0x001d BlackLevelGreen, 0x001e BlackLevelBlue
-    and we define here the needed offset of around 15. The total BL is base+offset
-*/
+    { // Quality C, proper ISO 100-125-160 samples missing, pixelshift files have no black offset etc. #4574
+        "make_model": [ "Panasonic DC-G9" ],
+        "dcraw_matrix": [ 7685, -2375, -634, -3687, 11700, 2249, -748, 1546, 5111 ], // Adobe DNG Converter 10.3 ColorMatrix2
+        "ranges": {
+            "black": 15, // 15 is BL offset. dcraw/RT reads the base black from Exif and calculates total BL = BLbase+BLoffset
+            "white": [
+                { "iso": 100, "levels": 3000 }, // gaussian 3100-3600 Exif_linearitylimit 2111
+                { "iso": 125, "levels": 3500 }, // guessed
+                { "iso": [ 160, 200, 250, 320, 400,500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200, 4000, 5000, 6400, 12800, 25600 ], "levels": 4080 } // nominal 4095
+            ]
+        }
+    },
 
     { // Quality B, CameraPhone, some samples are missing but has the same sensor as FZ1000 ..
         "make_model": [ "Panasonic DMC-CM1", "Panasonic DMC-CM10" ],
@@ -2333,7 +2344,9 @@ Camera constants:
         "make_model": "Sony ILCE-7RM3",
         "dcraw_matrix": [ 6640,-1847,-503,-5238,13010,2474,-993,1673,6527 ], // DNG_v10.1 D65
         "raw_crop": [ 0, 0, -36, 0 ], // full raw frame 8000x5320 - 36 rightmost columns are garbage
-        "ranges": { "black": 512, "white": 16300 }
+        "ranges": { "black": 512, "white": 16300 },
+        "pdafPattern" : [0, 24, 36, 60, 84, 120, 132, 156, 192, 204, 240, 252, 276, 300, 324, 360, 372, 396, 420, 444, 480, 492, 504, 540, 564, 576, 612, 636, 660, 696, 720, 732, 756, 780, 804, 840],
+        "pdafOffset" : 31
     },
 
     { // Quality B, color matrix copied from a7rm2

@@ -20,7 +20,6 @@ ABOUT_TAB_CREDITS;Credits
 ABOUT_TAB_LICENSE;Licentie
 ABOUT_TAB_RELEASENOTES;Uitgave-opmerkingen
 ABOUT_TAB_SPLASH;Splash
-ADJUSTER_RESET_TO_DEFAULT;Terug naar beginwaarde
 BATCHQUEUE_AUTOSTART;Autostart
 BATCHQUEUE_AUTOSTARTHINT;Start verwerking automatisch wanneer nieuwe foto arriveert
 BATCHQUEUE_DESTFILENAME;Pad en bestandsnaam
@@ -486,9 +485,7 @@ HISTORY_MSG_231;ZW - 'Voor' curve
 HISTORY_MSG_232;ZW - 'Voor' curve type
 HISTORY_MSG_233;ZW - 'Na' curve
 HISTORY_MSG_234;ZW - 'Na' curve type
-HISTORY_MSG_235;ZW - Auto Kanaalmixer
 HISTORY_MSG_236;-
-HISTORY_MSG_237;ZW Mixer
 HISTORY_MSG_238;GF - Straal
 HISTORY_MSG_239;GF - Sterkte
 HISTORY_MSG_240;GF - Centrum
@@ -523,7 +520,6 @@ HISTORY_MSG_269;KT - Hoog - Rood
 HISTORY_MSG_270;KT - Hoog - Groen
 HISTORY_MSG_271;KT - Hoog - Blauw
 HISTORY_MSG_272;KT - Balans
-HISTORY_MSG_273;KT - Beginwaarde
 HISTORY_MSG_274;KT - Verz. Schaduwen
 HISTORY_MSG_275;KT - Verz. Hoge lichten
 HISTORY_MSG_276;KT - Dekking
@@ -641,7 +637,6 @@ HISTORY_MSG_388;W - Rest - KB groen midden
 HISTORY_MSG_389;W - Rest - KB blauw midden
 HISTORY_MSG_390;W - Rest - KB groen laag
 HISTORY_MSG_391;W - Rest - KB blauw laag
-HISTORY_MSG_392;W - Rest - KB Beginwaarde
 HISTORY_MSG_393;DCP 'Look'tabel
 HISTORY_MSG_394;DCP Basis belichting
 HISTORY_MSG_395;DCP Basis tabel
@@ -1187,7 +1182,6 @@ TP_BWMIX_ALGO_LI;Lineair
 TP_BWMIX_ALGO_SP;Speciale effecten
 TP_BWMIX_ALGO_TOOLTIP;Lineair: creëert een normale <b>lineaire</b> response.\n Speciale effecten: creëert speciale effecten door kanalen <b>non-lineair</b> te mixen.TP_BWMIX_AUTOCH;Auto
 TP_BWMIX_AUTOCH;Auto
-TP_BWMIX_AUTOCH_TIP;Bereken optimale waardes voor de kanaalmixer.
 TP_BWMIX_CC_ENABLED;Wijzig complementaire kleur
 TP_BWMIX_CC_TOOLTIP;Automatische aanpassing van complementaire kleuren in ROYGCBPM mode.
 TP_BWMIX_CHANNEL;Luminantie Balans
@@ -1214,9 +1208,6 @@ TP_BWMIX_MET;Methode
 TP_BWMIX_MET_CHANMIX;Kanaalmixer
 TP_BWMIX_MET_DESAT;Desatureren
 TP_BWMIX_MET_LUMEQUAL;Luminantie Balans
-TP_BWMIX_MIXC;Mixer
-TP_BWMIX_NEUTRAL;Terug naar beginwaarde
-TP_BWMIX_NEUTRAL_TIP;Zet alle waardes - schuifbalken - filters - kanaalmixers terug naar de standaard waarde.
 TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Totaal: %4%%
 TP_BWMIX_RGBLABEL_HINT;RGB omrekeningsfactoren. Hierin zijn alle gekozen opties vewerkt.\nTotaal toont de som van de uit te voeren RGB factoren:\n- dit is altijd 100% in relatieve mode\n- hoger (lichter) of lager (donkerder) dan 100% in absolute mode.
 TP_BWMIX_RGB_TOOLTIP;Mix de RGB kanalen. Gebruik Voorinstellingen voor aanwijzingen.\nNegatieve waarden kunnen artefacten of onregelmatigheden veroorzaken.
@@ -2114,16 +2105,22 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
 !BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !DONT_SHOW_AGAIN;Don't show this message again.
 !EXIFFILTER_IMAGETYPE;Image type
 !EXIFPANEL_SHOWALL;Show all
+!GENERAL_RESET;Reset
 !GENERAL_SLIDER;Slider
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
 !HISTORY_MSG_173;NR - Detail recovery
 !HISTORY_MSG_203;NR - Color space
+!HISTORY_MSG_235;B&amp;W - CM - Auto
+!HISTORY_MSG_237;B&amp;W - CM
 !HISTORY_MSG_256;NR - Median - Type
+!HISTORY_MSG_273;CT - Color Balance SMH
 !HISTORY_MSG_297;NR - Mode
+!HISTORY_MSG_392;W - Residual - Color Balance
 !HISTORY_MSG_441;Retinex - Gain transmission
 !HISTORY_MSG_475;PS - Equalize channel
 !HISTORY_MSG_476;CAM02 - Temp out
@@ -2138,9 +2135,9 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !HISTORY_MSG_485;Lens Correction
 !HISTORY_MSG_486;Lens Correction - Camera
 !HISTORY_MSG_487;Lens Correction - Lens
-!HISTORY_MSG_488;HDR Tone Mapping
-!HISTORY_MSG_489;HDR TM - Threshold
-!HISTORY_MSG_490;HDR TM - Amount
+!HISTORY_MSG_488;Dynamic Range Compression
+!HISTORY_MSG_489;DRC - Threshold
+!HISTORY_MSG_490;DRC - Amount
 !HISTORY_MSG_491;White Balance
 !HISTORY_MSG_492;RGB Curves
 !HISTORY_MSG_493;L*a*b* Adjustments
@@ -2153,9 +2150,12 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
 !HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
 !HISTORY_MSG_METADATA_MODE;Metadata copy mode
+!HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
-!HISTORY_MSG_TM_FATTAL_ANCHOR;HDR TM - Anchor
+!HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
+!HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
+!HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
 !LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
 !LENSPROFILE_CORRECTION_LCPFILE;LCP File
 !LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
@@ -2170,7 +2170,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
 !PARTIALPASTE_LOCALCONTRAST;Local contrast
 !PARTIALPASTE_METADATA;Metadata mode
-!PARTIALPASTE_TM_FATTAL;HDR Tone mapping
+!PARTIALPASTE_TM_FATTAL;Dynamic Range Compression
 !PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_CROP;Crop editing
 !PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
@@ -2195,13 +2195,17 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !QINFO_HDR;HDR / %2 frame(s)
 !QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
 !SAMPLEFORMAT_0;Unknown data format
-!SAMPLEFORMAT_1;Unsigned 8 bits
-!SAMPLEFORMAT_2;Unsigned 16 bits
-!SAMPLEFORMAT_4;LogLuv 24 bits
-!SAMPLEFORMAT_8;LogLuv 32 bits
-!SAMPLEFORMAT_16;32 bits floating point
+!SAMPLEFORMAT_1;8-bit unsigned
+!SAMPLEFORMAT_2;16-bit unsigned
+!SAMPLEFORMAT_4;24-bit LogLuv
+!SAMPLEFORMAT_8;32-bit LogLuv
+!SAMPLEFORMAT_16;16-bit floating-point
+!SAMPLEFORMAT_32;24-bit floating-point
+!SAMPLEFORMAT_64;32-bit floating-point
 !SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
 !SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
+!TP_BWMIX_MIXC;Channel Mixer
+!TP_BWMIX_NEUTRAL;Reset
 !TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 !TP_COLORAPP_NEUTRAL;Reset
 !TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
@@ -2242,8 +2246,10 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
 !TP_RETINEX_GAINTRANSMISSION;Gain transmission
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce transmission map to achieve luminance.\nAbscissa: transmission -min from 0, mean, and values (max).\nOrdinate: gain.
+!TP_SHARPENING_CONTRAST;Contrast threshold
+!TP_SHARPENMICRO_CONTRAST;Contrast threshold
 !TP_TM_FATTAL_AMOUNT;Amount
 !TP_TM_FATTAL_ANCHOR;Anchor
-!TP_TM_FATTAL_LABEL;HDR Tone Mapping
+!TP_TM_FATTAL_LABEL;Dynamic Range Compression
 !TP_TM_FATTAL_THRESHOLD;Threshold
 !TP_WAVELET_CB_TOOLTIP;For strong values product color-toning by combining it or not with levels decomposition 'toning'\nFor low values you can change the white balance of the background (sky, ...) without changing that of the front plane, generally more contrasted

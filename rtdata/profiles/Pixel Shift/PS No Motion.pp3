@@ -4,14 +4,16 @@ Version=332
 
 [Sharpening]
 Enabled=true
+Contrast=5
 Method=rld
 DeconvRadius=0.75
-DeconvAmount=75
+DeconvAmount=100
 DeconvDamping=0
 DeconvIterations=30
 
 [SharpenMicro]
 Enabled=true
+Contrast=15
 Matrix=false
 Strength=20
 Uniformity=50

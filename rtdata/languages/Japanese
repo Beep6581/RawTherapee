@@ -38,10 +38,11 @@ ABOUT_TAB_CREDITS;クレジット
 ABOUT_TAB_LICENSE;ライセンス
 ABOUT_TAB_RELEASENOTES;リリースノート
 ABOUT_TAB_SPLASH;スプラッシュ
-ADJUSTER_RESET_TO_DEFAULT;デフォルト値に戻す
+ADJUSTER_RESET_TO_DEFAULT;<b>クリック</b> - デフォルト値にリセット\n<b>Ctrl</b>+<b>クリック</b> - 初期値にリセット
 BATCHQUEUE_AUTOSTART;オートスタート
 BATCHQUEUE_AUTOSTARTHINT;新しいrawファイルが送られて来たら自動的に現像処理を開始します
 BATCHQUEUE_DESTFILENAME;パスとファイル名
+BATCHQUEUE_STARTSTOPHINT;キューにある画像の現像を始める、或いは中止する\n\nショートカット: <b>Ctrl</b>+<b>s</b>
 BATCH_PROCESSING;バッチ処理
 CURVEEDITOR_AXIS_IN;I:
 CURVEEDITOR_AXIS_LEFT_TAN;LT:
@@ -68,6 +69,16 @@ CURVEEDITOR_TOOLTIPPASTE;クリップボードからカーブを貼り付け
 CURVEEDITOR_TOOLTIPSAVE;現在のカーブを保存
 CURVEEDITOR_TYPE;タイプ:
 DIRBROWSER_FOLDERS;フォルダ
+DONT_SHOW_AGAIN;次回からこのメッセージを表示しない
+DYNPROFILEEDITOR_DELETE;削除
+DYNPROFILEEDITOR_EDIT;編集
+DYNPROFILEEDITOR_EDIT_RULE;ダイナミックプロファイルの規定を変更
+DYNPROFILEEDITOR_ENTRY_TOOLTIP;既定の符号は鈍いので\n入力する際に"re:"という接頭語を付けます\n通常の表現を使います
+DYNPROFILEEDITOR_MOVE_DOWN;下に移動
+DYNPROFILEEDITOR_MOVE_UP;上に移動
+DYNPROFILEEDITOR_NEW;新規
+DYNPROFILEEDITOR_NEW_RULE;新しいダイナミックプロファイルの規定
+DYNPROFILEEDITOR_PROFILE;処理プロファイル
 EDITWINDOW_TITLE;画像編集
 EDIT_OBJECT_TOOLTIP;この機能を使うための目安に、プレビュー画面にガイドを表示する
 EDIT_PIPETTE_TOOLTIP;カーブ上に調整ポイントを追加するには、Ctrlキーを押しながら、プレビューの画像上の目標ポイントを左クリックします。\n追加されたそのポイントを調整するには、Ctrlキーを押しながら、プレビュー画像のそのポイントに当たる部分を左クリックします。それからCtrlキーを離し（微妙な調整をする場合はそのまま）、左クリックしたままマウスを画面上で上下に動かすと、それに合わせてトーンカーブが調整されます。
@@ -76,6 +87,7 @@ EXIFFILTER_CAMERA;カメラ
 EXIFFILTER_EXPOSURECOMPENSATION;露光量補正 (EV)
 EXIFFILTER_FILETYPE;ファイル タイプ
 EXIFFILTER_FOCALLEN;焦点距離
+EXIFFILTER_IMAGETYPE;画像の種類
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;レンズ
 EXIFFILTER_METADATAFILTER;メタデータ絞り込みの適用
@@ -93,7 +105,9 @@ EXIFPANEL_RESET;リセット
 EXIFPANEL_RESETALL;すべてリセット
 EXIFPANEL_RESETALLHINT;すべて元の値にリセット
 EXIFPANEL_RESETHINT;選択タグを元の値にリセット
+EXIFPANEL_SHOWALL;全て表示
 EXIFPANEL_SUBDIRECTORY;サブディレクトリ
+EXPORT_BYPASS;迂回させる機能
 EXPORT_BYPASS_ALL;全て選択 / 全て解除
 EXPORT_BYPASS_DEFRINGE;フリンジ低減を迂回
 EXPORT_BYPASS_DIRPYRDENOISE;ノイズ低減を迂回
@@ -116,8 +130,12 @@ EXPORT_FASTEXPORTOPTIONS;<b>高速書き出しオプション</b>
 EXPORT_INSTRUCTIONS;現像の設定に要する時間と手間を省くために、高速書き出しを優先させるオプションです。処理速度が優先される場合や、既定の現像パラメータを変えずに何枚ものリサイズ画像が要求される場合に奨められる方法で、低解像度画像を迅速に生成します。
 EXPORT_MAXHEIGHT;最大高:
 EXPORT_MAXWIDTH;最大幅:
+EXPORT_PIPELINE;高速書き出しの方法
 EXPORT_PUTTOQUEUEFAST; 高速書き出しのキューに追加
 EXPORT_RAW_DMETHOD;デモザイクの方式
+EXPORT_USE_FAST_PIPELINE;処理速度優先(リサイズした画像に調整を全て行う)
+EXPORT_USE_FAST_PIPELINE_TIP;処理速度を優先すると、処理は速くなりますが、画像の質は落ちます。通常、画像のリサイズは全現像処理工程の最後で行われますが、ここでは処理工程の初めの方でリサイズが行われます。処理速度は著しく上がりますが、現像処理された画像にアーティファクトが発生したり、全体的な質が低下したりします。
+EXPORT_USE_NORMAL_PIPELINE;標準(リサイズ処理は最後、幾つかの処理を迂回)
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;キュー処理
 FILEBROWSER_ADDDELTEMPLATE;テンプレートの追加/削除...
@@ -189,6 +207,7 @@ FILEBROWSER_RANK3_TOOLTIP;ランク 3 *\nショートカット: <b>Shift-3</b>
 FILEBROWSER_RANK4_TOOLTIP;ランク 4 *\nショートカット: <b>Shift-4</b>
 FILEBROWSER_RANK5_TOOLTIP;ランク 5 *\nショートカット: <b>Shift-5</b>
 FILEBROWSER_RENAMEDLGLABEL;ファイル名変更
+FILEBROWSER_RESETDEFAULTPROFILE;デフォルトにリセット
 FILEBROWSER_SELECTDARKFRAME;ダークフレームの選択...
 FILEBROWSER_SELECTFLATFIELD;フラットフィールドの選択...
 FILEBROWSER_SHOWCOLORLABEL1HINT;レッド・ラベルの画像を表示\nショートカット: <b>Alt-1</b>
@@ -201,6 +220,7 @@ FILEBROWSER_SHOWEDITEDHINT;編集済み画像を表示\nショートカット: <
 FILEBROWSER_SHOWEDITEDNOTHINT;未編集画像を表示\nショートカット: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;EXIF情報を表示\nショートカット: <b>i</b>\n\nシングル・エディタ・タブのショートカット: <b>Alt-i</b>
 FILEBROWSER_SHOWNOTTRASHHINT;削除されていない画像だけ表示
+FILEBROWSER_SHOWORIGINALHINT;元画像だけを表示\n\nファイル名は同じだが拡張子が異なる画像がある場合は、環境設定の中のファイルブラウザタブにある拡張子リストの上位に位置する拡張子を持った画像を元画像とする。
 FILEBROWSER_SHOWRANK1HINT;１つ星ランクを表示\nショートカット: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;２つ星ランクを表示\nショートカット: <b>2</b>
 FILEBROWSER_SHOWRANK3HINT;３つ星ランクを表示\nショートカット: <b>3</b>
@@ -224,6 +244,7 @@ FILECHOOSER_FILTER_SAME;現在の画像と同じフォーマット
 FILECHOOSER_FILTER_TIFF;TIFFファイル
 GENERAL_ABOUT;RawTherapeeについて..
 GENERAL_AFTER;補正後
+GENERAL_APPLY;適用
 GENERAL_ASIMAGE;画像通り
 GENERAL_AUTO;自動
 GENERAL_BEFORE;補正前
@@ -239,10 +260,14 @@ GENERAL_NA;n/a
 GENERAL_NO;No
 GENERAL_NONE;なし
 GENERAL_OK;OK
+GENERAL_OPEN;開く
 GENERAL_PORTRAIT;縦
+GENERAL_RESET;リセット
 GENERAL_SAVE;保存
+GENERAL_SLIDER;スライダー
 GENERAL_UNCHANGED;(変更なし)
 GENERAL_WARNING;警告
+GIMP_PLUGIN_INFO;RawTherapee　GIMPプラグインにようこそ！\n画像編集終了後、単にRawTherapeeのメインウィンドウを閉じるだけで、画像が自動的にGIMPに送られます。
 HISTOGRAM_TOOLTIP_B;ブルー・ヒストグラム 表示/非表示
 HISTOGRAM_TOOLTIP_BAR;RGBインジケーター・バーの表示/非表示\nプレビュー画像上でマウスの右ボタンクリックで 固定/開放
 HISTOGRAM_TOOLTIP_CHRO;色度・ヒストグラム 表示/非表示
@@ -268,8 +293,8 @@ HISTORY_MSG_10;シャドウ圧縮
 HISTORY_MSG_11;トーンカーブ 1
 HISTORY_MSG_12;自動露光補正
 HISTORY_MSG_13;露光 クリッピング
-HISTORY_MSG_14;L*a*b*　-　明度
-HISTORY_MSG_15;L*a*b*　-　コントラスト
+HISTORY_MSG_14;L*a*b* - 明度
+HISTORY_MSG_15;L*a*b* - コントラスト
 HISTORY_MSG_16;輝度 黒レベル
 HISTORY_MSG_17;輝度 ハイライト圧縮
 HISTORY_MSG_18;輝度 シャドウ圧縮
@@ -349,7 +374,7 @@ HISTORY_MSG_91;色ノイズの低減
 HISTORY_MSG_92;ノイズ低減のガンマ
 HISTORY_MSG_93;ディテールのコントラスト係数
 HISTORY_MSG_94;ディテールのコントラスト
-HISTORY_MSG_95;L*a*b*の色度
+HISTORY_MSG_95;L*a*b* - 色度
 HISTORY_MSG_96;L*a*b* - a*カーブ
 HISTORY_MSG_97;L*a*b* - b*カーブ
 HISTORY_MSG_98;デモザイク 方式
@@ -365,9 +390,9 @@ HISTORY_MSG_107;フリンジ低減 しきい値
 HISTORY_MSG_108;ハイライト圧縮 しきい値
 HISTORY_MSG_109;リサイズ バウンディングボックス
 HISTORY_MSG_110;リサイズの適用領域
-HISTORY_MSG_111;L*a*b*　-　色ずれ回避
+HISTORY_MSG_111;L*a*b* - 色ずれの回避
 HISTORY_MSG_112;--未使用--
-HISTORY_MSG_113;L*a*b*　-　レッドと肌色トーンを保護
+HISTORY_MSG_113;L*a*b* - レッドと肌色トーンを保護
 HISTORY_MSG_114;DCB 反復
 HISTORY_MSG_115;偽色抑制
 HISTORY_MSG_116;DCB 拡張
@@ -420,12 +445,14 @@ HISTORY_MSG_162;トーンマッピング
 HISTORY_MSG_163;RGB カーブ - レッド
 HISTORY_MSG_164;RGB カーブ - グリーン
 HISTORY_MSG_165;RGB カーブ - ブルー
+HISTORY_MSG_166;露光補正 - リセット
 HISTORY_MSG_167;デモザイク 方式
 HISTORY_MSG_168;L*a*b* CC カーブ
 HISTORY_MSG_169;L*a*b* CH カーブ
 HISTORY_MSG_170;自然な彩度 - カーブ
 HISTORY_MSG_171;L*a*b* LC カーブ
 HISTORY_MSG_172;LCの適用をレッドと肌色トーンだけに制限
+HISTORY_MSG_173;ノイズ低減 - 細部の復元
 HISTORY_MSG_174;CIE色の見えモデル2002
 HISTORY_MSG_175;CAM02 - 色順応量
 HISTORY_MSG_176;CAM02 - 観視の暗い周囲環境
@@ -455,6 +482,7 @@ HISTORY_MSG_199;CAM02 - カーブでCIECAM02出力のヒストグラムを表示
 HISTORY_MSG_200;CAM02 - CIECAM02 Q でトーンマッピング
 HISTORY_MSG_201;色差 レッド／グリーン
 HISTORY_MSG_202;色差 ブルー／イエロー
+HISTORY_MSG_203;ノイズ低減 - 方式
 HISTORY_MSG_204;LMMSE 拡張処理
 HISTORY_MSG_205;CAM02 ホット／バッドピクセル
 HISTORY_MSG_206;CAT02 - 自動で順応
@@ -485,9 +513,9 @@ HISTORY_MSG_231;白黒　‘前の‘カーブ
 HISTORY_MSG_232;白黒　‘前の‘カーブのタイプ
 HISTORY_MSG_233;白黒　‘後の‘カーブ
 HISTORY_MSG_234;白黒　‘後の‘カーブのタイプ
-HISTORY_MSG_235;白黒　オートチャンネルミキサー
+HISTORY_MSG_235;白黒 チャンネルミキサー 自動
 HISTORY_MSG_236;--未使用--
-HISTORY_MSG_237;白黒　ミキサー
+HISTORY_MSG_237;白黒 チャンネルミキサー
 HISTORY_MSG_238;グラデーションフィルター　フェザー処理
 HISTORY_MSG_239;グラデーションフィルター　強さ
 HISTORY_MSG_240;グラデーションフィルター　中央
@@ -497,8 +525,8 @@ HISTORY_MSG_243;半径
 HISTORY_MSG_244;ビネットフィルター　強さ
 HISTORY_MSG_245;ビネットフィルター　中央
 HISTORY_MSG_246;L*a*b* CL カーブ
-HISTORY_MSG_247;L*a*b* LH　カーブ
-HISTORY_MSG_248;L*a*b* HH　カーブ
+HISTORY_MSG_247;L*a*b* LH カーブ
+HISTORY_MSG_248;L*a*b* HH カーブ
 HISTORY_MSG_249;ディテールレベルのコントラスト - しきい値
 HISTORY_MSG_250;ノイズ低減　-　強化
 HISTORY_MSG_251;白黒 - アルゴリズム
@@ -506,8 +534,9 @@ HISTORY_MSG_252;CbDL　肌色の目標/保護
 HISTORY_MSG_253;CbDL　アーティファクトを軽減
 HISTORY_MSG_254;CbDL　肌色の色相
 HISTORY_MSG_255;ノイズ低減　-　メディアン
+HISTORY_MSG_256;ノイズ低減 - フィルターの種類
 HISTORY_MSG_257;カラートーン調整
-HISTORY_MSG_258;カラートーン調整　-　カラーのカーブ
+HISTORY_MSG_258;カラートーン調整　- カラーのカーブ
 HISTORY_MSG_259;カラートーン調整　-　不透明度のカーブ
 HISTORY_MSG_260;カラートーン調整　-　a*(b*)の不透明度
 HISTORY_MSG_261;カラートーン調整　-　方法
@@ -522,7 +551,7 @@ HISTORY_MSG_269;カラートーン調整　-　ハイライトのレッド
 HISTORY_MSG_270;カラートーン調整　-　ハイライトのグリーン
 HISTORY_MSG_271;カラートーン調整　-　ハイライトのブルー
 HISTORY_MSG_272;カラートーン調整　-　バランス
-HISTORY_MSG_273;カラートーン調整　-　リセット
+HISTORY_MSG_273;カラートーン調整 - SMHでカラーバランス
 HISTORY_MSG_274;カラートーン調整　-　シャドウの彩度
 HISTORY_MSG_275;カラートーン調整　-　ハイライトの彩度
 HISTORY_MSG_276;カラートーン調整　-　不透明度
@@ -546,79 +575,80 @@ HISTORY_MSG_293;フィルムシミュレーション
 HISTORY_MSG_294;フィルムシミュレーション　－　強さ
 HISTORY_MSG_295;フィルムシミュレーション　－　フィルム
 HISTORY_MSG_296;輝度ノイズ低減のカーブ
+HISTORY_MSG_297;ノイズ低減　－　質
 HISTORY_MSG_298;デッドピクセルフィルター
 HISTORY_MSG_299;色ノイズ低減のカーブ
 HISTORY_MSG_300;-
 HISTORY_MSG_301;輝度ノイズの調整方法
 HISTORY_MSG_302;色ノイズの調整方法
 HISTORY_MSG_303;色ノイズの調整方法
-HISTORY_MSG_304;W-　コントラストレベル
+HISTORY_MSG_304;W- コントラストレベル
 HISTORY_MSG_305;ウェーブレットのレベル
-HISTORY_MSG_306;W-　プロセス
-HISTORY_MSG_307;W-　プレビュー
-HISTORY_MSG_308;W-　プレビューの方向
-HISTORY_MSG_309;W-　ES　ディテール
-HISTORY_MSG_310;W-　残差　青空の目標/保護
+HISTORY_MSG_306;W- プロセス
+HISTORY_MSG_307;W- プレビュー
+HISTORY_MSG_308;W- プレビューの方向
+HISTORY_MSG_309;W- ES ディテール
+HISTORY_MSG_310;W- 残差 青空の目標/保護
 HISTORY_MSG_311;W- ウェーブレットのレベル
-HISTORY_MSG_312;W-　残差　シャドウのしきい値
-HISTORY_MSG_313;W-　色度　明星色/純色
-HISTORY_MSG_314;W-　色域　アーティファクトの軽減
-HISTORY_MSG_315;W-　残差　コントラスト
-HISTORY_MSG_316;W-　色域　肌色の目標/保護
-HISTORY_MSG_317;W-　色域　肌色の色相
-HISTORY_MSG_318;W-　コントラスト　ハイライトレベル
-HISTORY_MSG_319;W-　コントラスト　ハイライト範囲
-HISTORY_MSG_320;W-　コントラスト　シャドウ範囲
-HISTORY_MSG_321;W-　コントラスト　シャドウレベル
-HISTORY_MSG_322;W-　色域　色ずれの回避
-HISTORY_MSG_323;W-　ES　ローカルコントラスト
-HISTORY_MSG_324;W-　色度　明星色
-HISTORY_MSG_325;W-　色度　純色
-HISTORY_MSG_326;W-　色度　方法
-HISTORY_MSG_327;W-　コントラスト　適用先
-HISTORY_MSG_328;W-　色度　リンクを強化
-HISTORY_MSG_329;W-　色調　R/Gの不透明度
-HISTORY_MSG_330;W-　色調　B/Yの不透明度
-HISTORY_MSG_331;W-　コントラストレベル　エキストラ
-HISTORY_MSG_332;W-　タイルの種類
-HISTORY_MSG_333;W-　残差　シャドウ
-HISTORY_MSG_334;W-　残差　色度
-HISTORY_MSG_335;W-　残差　ハイライト
-HISTORY_MSG_336;W-　残差　ハイライトのしきい値
-HISTORY_MSG_337;W-　残差　青空の色相
-HISTORY_MSG_338;W-　ES　半径
-HISTORY_MSG_339;W-　ES　強さ
-HISTORY_MSG_340;W-　強さ
-HISTORY_MSG_341;W-　エッジパフォーマンス
-HISTORY_MSG_342;W-　ES　最初のレベル
-HISTORY_MSG_343;W-　色度のレベル
-HISTORY_MSG_344;W-　色度　方式　スライダー/カーブ
-HISTORY_MSG_345;W-　ES　ローカルコントラスト
-HISTORY_MSG_346;W-　ES　ローカルコントラスト　方式
-HISTORY_MSG_347;W-　ノイズ低減とリファイン　レベル1
-HISTORY_MSG_348;W-　ノイズ低減とリファイン　レベル2
-HISTORY_MSG_349;W-　ノイズ低減とリファイン　レベル3
-HISTORY_MSG_350;W-　ES　エッジ検出
-HISTORY_MSG_351;W-　残差　HHカーブ
-HISTORY_MSG_352;W-　背景色
-HISTORY_MSG_353;W-　ES　グラデーション感度
-HISTORY_MSG_354;W-　ES　強化
-HISTORY_MSG_355;W-　ES　しきい値（低）
-HISTORY_MSG_356;W-　ES　しきい値（高）
-HISTORY_MSG_357;W-　ノイズ低減　ESとリンク
-HISTORY_MSG_358;W-　色域　CHカーブ
+HISTORY_MSG_312;W- 残差　シャドウのしきい値
+HISTORY_MSG_313;W- 色度　明星色/純色
+HISTORY_MSG_314;W- 色域　アーティファクトの軽減
+HISTORY_MSG_315;W- 残差　コントラスト
+HISTORY_MSG_316;W- 色域　肌色の目標/保護
+HISTORY_MSG_317;W- 色域　肌色の色相
+HISTORY_MSG_318;W- コントラスト ハイライトレベル
+HISTORY_MSG_319;W- コントラスト ハイライト範囲
+HISTORY_MSG_320;W- コントラスト シャドウ範囲
+HISTORY_MSG_321;W- コントラスト シャドウレベル
+HISTORY_MSG_322;W- 色域　色ずれの回避
+HISTORY_MSG_323;W- ES　ローカルコントラスト
+HISTORY_MSG_324;W- 色度　明星色
+HISTORY_MSG_325;W- 色度　純色
+HISTORY_MSG_326;W- 色度　方法
+HISTORY_MSG_327;W- コントラスト　適用先
+HISTORY_MSG_328;W- 色度　リンクを強化
+HISTORY_MSG_329;W- 色調　R/Gの不透明度
+HISTORY_MSG_330;W- 色調　B/Yの不透明度
+HISTORY_MSG_331;W- コントラストレベル　エキストラ
+HISTORY_MSG_332;W- タイルの種類
+HISTORY_MSG_333;W- 残差　シャドウ
+HISTORY_MSG_334;W- 残差　色度
+HISTORY_MSG_335;W- 残差　ハイライト
+HISTORY_MSG_336;W- 残差　ハイライトのしきい値
+HISTORY_MSG_337;W- 残差　青空の色相
+HISTORY_MSG_338;W- ES 半径
+HISTORY_MSG_339;W- ES 強さ
+HISTORY_MSG_340;W- 強さ
+HISTORY_MSG_341;W- エッジパフォーマンス
+HISTORY_MSG_342;W- ES 最初のレベル
+HISTORY_MSG_343;W- 色度のレベル
+HISTORY_MSG_344;W- 色度　方式　スライダー/カーブ
+HISTORY_MSG_345;W- ES　ローカルコントラスト
+HISTORY_MSG_346;W- ES　ローカルコントラスト　方式
+HISTORY_MSG_347;W- ノイズ低減とリファイン　レベル1
+HISTORY_MSG_348;W- ノイズ低減とリファイン　レベル2
+HISTORY_MSG_349;W- ノイズ低減とリファイン　レベル3
+HISTORY_MSG_350;W- ES エッジ検出
+HISTORY_MSG_351;W- 残差　HHカーブ
+HISTORY_MSG_352;W- 背景色
+HISTORY_MSG_353;W- ES グラデーション感度
+HISTORY_MSG_354;W- ES 強化
+HISTORY_MSG_355;W- ES しきい値（低）
+HISTORY_MSG_356;W- ES しきい値（高）
+HISTORY_MSG_357;W- ノイズ低減　ESとリンク
+HISTORY_MSG_358;W- 色域　CHカーブ
 HISTORY_MSG_359;ホット/デッド　しきい値
 HISTORY_MSG_360;トーンマッピング　ガンマ
-HISTORY_MSG_361;W-　最終　色度バランス
-HISTORY_MSG_362;W-　残差　圧縮の方法
-HISTORY_MSG_363;W-　残差　圧縮の強さ
-HISTORY_MSG_364;W-　最終　コントラストバランス
-HISTORY_MSG_365;W-　最終　デルタバランス
-HISTORY_MSG_366;W-　残差　圧縮のガンマ
-HISTORY_MSG_367;W-　ES　ローカルコントラストカーブ
-HISTORY_MSG_368;W-　最終　コントラストバランス
-HISTORY_MSG_369;W-　最終　バランスの方法
-HISTORY_MSG_370;W-　最終　ローカルコントラストカーブ
+HISTORY_MSG_361;W- 最終　色度バランス
+HISTORY_MSG_362;W- 残差　圧縮の方法
+HISTORY_MSG_363;W- 残差　圧縮の強さ
+HISTORY_MSG_364;W- 最終　コントラストバランス
+HISTORY_MSG_365;W- 最終　デルタバランス
+HISTORY_MSG_366;W- 残差　圧縮のガンマ
+HISTORY_MSG_367;W- ES ローカルコントラストカーブ
+HISTORY_MSG_368;W- 最終　コントラストバランス
+HISTORY_MSG_369;W- 最終　バランスの方法
+HISTORY_MSG_370;W- 最終　ローカルコントラストカーブ
 HISTORY_MSG_371;リサイズ後のシャープ化（PRS）
 HISTORY_MSG_372;PRS アンシャープマスク - 半径
 HISTORY_MSG_373;PRS アンシャープマスク - 適用量
@@ -640,7 +670,7 @@ HISTORY_MSG_388;W - 残差 - CB 中間のグリーン
 HISTORY_MSG_389;W - 残差 - CB 中間のブルー
 HISTORY_MSG_390;W - 残差 - CB シャドウのグリーン
 HISTORY_MSG_391;W - 残差 - CB シャドウのブルー
-HISTORY_MSG_392;W - 残差 - CB リセット
+HISTORY_MSG_392;W - 残差 - カラーバランス
 HISTORY_MSG_393;DCP - ルックテーブル
 HISTORY_MSG_394;DCP - 基本露出
 HISTORY_MSG_395;DCP - ベーステーブル
@@ -655,27 +685,138 @@ HISTORY_MSG_403;W - ES - エッジ検出の感度
 HISTORY_MSG_404;W - ES - 基底値の増幅
 HISTORY_MSG_405;W - ノイズ低減とリファイン　レベル4
 HISTORY_MSG_406;W - ES - 隣接するピクセルに対する効果
+HISTORY_MSG_407;レティネックス - 方式
+HISTORY_MSG_408;レティネックス - 半径
+HISTORY_MSG_409;レティネックス - コントラスト
+HISTORY_MSG_410;レティネックス - 明るさ
+HISTORY_MSG_411;レティネックス - 強さ
+HISTORY_MSG_412;レティネックス - ガウス暈しのグラデーション
+HISTORY_MSG_413;レティネックス - 差異
+HISTORY_MSG_414;レティネックス - ヒストグラム - Lab
+HISTORY_MSG_415;レティネックス - 透過
+HISTORY_MSG_416;レティネックス
+HISTORY_MSG_417;レティネックス - 透過メディアンフィルタ
+HISTORY_MSG_418;レティネックス - しきい値
+HISTORY_MSG_419;レティネックス - 色空間
+HISTORY_MSG_420;レティネックス - ヒストグラム - HSL
+HISTORY_MSG_421;レティネックス - ガンマ
+HISTORY_MSG_422;レティネックス - ガンマ
+HISTORY_MSG_423;レティネックス - 勾配
+HISTORY_MSG_424;レティネックス - HLしきい値
+HISTORY_MSG_425;レティネックス - 対数の基数
+HISTORY_MSG_426;レティネックス - 色相イコライザ
+HISTORY_MSG_427;出力レンダリングの意図
+HISTORY_MSG_428;モニターレンダリングの意図
+HISTORY_MSG_429;レティネックス - 繰り返し
+HISTORY_MSG_430;レティネックス - 透過のグラデーション
+HISTORY_MSG_431;レティネックス - 強さのグラデーション
+HISTORY_MSG_432;レティネックス - M - ハイライト
+HISTORY_MSG_433;レティネックス - M - ハイライト TW
+HISTORY_MSG_434;レティネックス - M - シャドウ
+HISTORY_MSG_435;レティネックス - M - シャドウ TW
+HISTORY_MSG_436;レティネックス - M - 半径
+HISTORY_MSG_437;レティネックス - M - 方式
+HISTORY_MSG_438;レティネックス - M - イコライザ
+HISTORY_MSG_439;レティネックス - プロセス
+HISTORY_MSG_440;ディテールのコントラスト - 適用
+HISTORY_MSG_441;レティネックス - 透過率の増加
+HISTORY_MSG_442;レティネックス - スケール
+HISTORY_MSG_443;出力のブラックポイント補正
+HISTORY_MSG_444;WB - 色温度のバイアス
+HISTORY_MSG_445;Raw サブイメージ
+HISTORY_MSG_449;PS - ISOへの適合
+HISTORY_MSG_452;PS - モーションを表示
+HISTORY_MSG_453;PS - マスクだけを表示
+HISTORY_MSG_457;PS - レッド／ブルーを確認
+HISTORY_MSG_462;PS - グリーンを確認
+HISTORY_MSG_464;PS - モーションマスクをぼかす
+HISTORY_MSG_465;PS - ぼかしの半径
+HISTORY_MSG_468;PS - 穴を埋める
+HISTORY_MSG_469;PS - メディアン
+HISTORY_MSG_471;PS - 振れの補正
+HISTORY_MSG_472;PS - 境界を滑らかにする
+HISTORY_MSG_473;PS - LMMSEを使う
+HISTORY_MSG_474;PS - 均等化
+HISTORY_MSG_475;PS - 色チャンネルの均等化
+HISTORY_MSG_476;CAM02 - 観視環境の色温度
+HISTORY_MSG_477;CAM02 - 観視環境の色偏差
+HISTORY_MSG_478;CAM02 - 観視環境のYb
+HISTORY_MSG_479;CAM02 - 観視環境のCAT02
+HISTORY_MSG_480;CAM02 - 観視環境のCAT02 自動
+HISTORY_MSG_481;CAM02 - 撮影環境の色温度
+HISTORY_MSG_482;CAM02 - 撮影環境の色偏差
+HISTORY_MSG_483;CAM02 - 撮影環境のYb
+HISTORY_MSG_484;CAM02 - 撮影環境のYb 自動
+HISTORY_MSG_485;レンズ補正
+HISTORY_MSG_486;レンズ補正 - カメラ
+HISTORY_MSG_487;レンズ補正 - レンズ
+HISTORY_MSG_491;ホワイトバランス
+HISTORY_MSG_492;RGBカーブ
+HISTORY_MSG_493;L*a*b*調整
+HISTORY_MSG_CLAMPOOG;色域外の色を切り取る
+HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - カラー補正
+HISTORY_MSG_HISTMATCHING;トーンカーブの自動調節
+HISTORY_MSG_LOCALCONTRAST_AMOUNT;ローカルコントラスト - 量
+HISTORY_MSG_LOCALCONTRAST_DARKNESS;ローカルコントラスト - 暗い部分
+HISTORY_MSG_LOCALCONTRAST_ENABLED;ローカルコントラスト
+HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;ローカルコントラスト - 明るい部分
+HISTORY_MSG_LOCALCONTRAST_RADIUS;ローカルコントラスト - 半径
+HISTORY_MSG_METADATA_MODE;メタデータ コピーモード
+HISTORY_MSG_MICROCONTRAST_CONTRAST;マイクロコントラスト - コントラストのしきい値
+HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;ラインノイズフィルタの方向
+HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAFラインフィルタ
+HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - コントラストのしきい値
+HISTORY_MSG_SHARPENING_CONTRAST;シャープ化 - コントラストのしきい値
 HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSNAPSHOT_TOOLTIP;ショートカット: <b>Alt-s</b>
 HISTORY_SNAPSHOT;スナップショット
 HISTORY_SNAPSHOTS;スナップショット
 IPTCPANEL_CATEGORY;カテゴリ
+IPTCPANEL_CATEGORYHINT;画像の意図
 IPTCPANEL_CITY;都市
+IPTCPANEL_CITYHINT;撮影地（市）
 IPTCPANEL_COPYHINT;IPTC設定をクリップボードにコピー
+IPTCPANEL_COPYRIGHT;著作権
+IPTCPANEL_COPYRIGHTHINT;画像の著作権を入力、例 @2008 Jane Doe
 IPTCPANEL_COUNTRY;撮影国
+IPTCPANEL_COUNTRYHINT;撮影地（国）
+IPTCPANEL_CREATOR;作成者
+IPTCPANEL_CREATORHINT;画像作成者の名前を入力
+IPTCPANEL_CREATORJOBTITLE;作成者の職業
+IPTCPANEL_CREATORJOBTITLEHINT;作成者の職業を入力
 IPTCPANEL_CREDIT;クレジット
 IPTCPANEL_CREDITHINT;所有者/作成者に限らず、画像の提供元の識別 (クレジット).
 IPTCPANEL_DATECREATED;作成日
+IPTCPANEL_DATECREATEDHINT;撮影日
+IPTCPANEL_DESCRIPTION;画像の解説
+IPTCPANEL_DESCRIPTIONHINT;撮影されている人や物、撮影理由などの解説を入力
+IPTCPANEL_DESCRIPTIONWRITER;解説者
+IPTCPANEL_DESCRIPTIONWRITERHINT;解説の記入、編集、修正を行った人の名前を入力
 IPTCPANEL_EMBEDDED;埋め込み
 IPTCPANEL_EMBEDDEDHINT;画像に埋め込まれたIPTCデータにリセット
 IPTCPANEL_HEADLINE;見出し
+IPTCPANEL_HEADLINEHINT;公開できる撮影画像の概略、或いはコメントを入力
 IPTCPANEL_INSTRUCTIONS;編集注記
+IPTCPANEL_INSTRUCTIONSHINT;著作権以外で禁止、或いは保護されている情報を入力
 IPTCPANEL_KEYWORDS;キーワード
+IPTCPANEL_KEYWORDSHINT;画像のテーマに関わる、キーワードや用語、フレーズを入力
 IPTCPANEL_PASTEHINT;IPTC設定をクリップボードから貼り付け
+IPTCPANEL_PROVINCE;県或いは州
+IPTCPANEL_PROVINCEHINT;撮影が行われた県或いは州の名前を入力
 IPTCPANEL_RESET;リセット
 IPTCPANEL_RESETHINT;デフォルトのプロファイルにリセット
 IPTCPANEL_SOURCE;ソース
+IPTCPANEL_SOURCEHINT;画像のサプライチェーンに関わっている、例えば、画像の送り主、人物或いは企業の名前を入力或いは編集
+IPTCPANEL_SUPPCATEGORIES;補足事項
+IPTCPANEL_SUPPCATEGORIESHINT;撮影の動機に関する更なる補足説明
 IPTCPANEL_TITLE;タイトル
+IPTCPANEL_TITLEHINT;画像を短く表す言葉や撮影者名、或いは画像のタイトルでもよい
+IPTCPANEL_TRANSREFERENCE;作業のID
+IPTCPANEL_TRANSREFERENCEHINT;作業工程の管理やトラッキングのための画像の数字或いは識別
+LENSPROFILE_CORRECTION_AUTOMATCH;自動でパラメータを補正する
+LENSPROFILE_CORRECTION_LCPFILE;LCPファイル
+LENSPROFILE_CORRECTION_MANUAL;手動でパラメータを補正する
+LENSPROFILE_LENS_WARNING;注意:レンズプロファイルに関する切り抜きの因数がカメラの因数より大きいと、誤った結果になるかもしれません
 MAIN_BUTTON_FULLSCREEN;フルスクリーン
 MAIN_BUTTON_NAVNEXT_TOOLTIP;エディタで開いている画像に対応する次の画像に移動します\nショートカット: <b>Shift-F4</b>\n\nファイルブラウザで選択したサムネイルに対応する次の画像に移動するには\nショートカット: <b>F4</b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;エディタで開いている画像に対応する前の画像に移動します\nショートカット: <b>Shift-F3</b>\n\nファイルブラウザで選択したサムネイルに対応する前の画像に移動するには\nショートカット: <b>F3</b>
@@ -683,6 +824,7 @@ MAIN_BUTTON_NAVSYNC_TOOLTIP;現在開いている画像のサムネイルを明�
 MAIN_BUTTON_PREFERENCES;環境設定
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;現在の画像をキュー処理に追加\nショートカット: <b>Ctrl+b</b>
 MAIN_BUTTON_SAVE_TOOLTIP;現在の画像を保存\nショートカット: <b>Ctrl+S</b>
+MAIN_BUTTON_SENDTOEDITOR;外部エディタで画像を編集
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;現在の画像を外部エディタで編集\nショートカット: <b>Ctrl+e</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;表示/非表示 すべてのパネル\nショートカット: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;フルスクリーン解除
@@ -708,7 +850,10 @@ MAIN_MSG_OPERATIONCANCELLED;操作キャンセル
 MAIN_MSG_PATHDOESNTEXIST;パス\n\n<b>%1</b>\n\がありません。設定ウィンドウで正しいパスを設定してください
 MAIN_MSG_QOVERWRITE;上書きしますか？
 MAIN_MSG_SETPATHFIRST;この関数を使用するには、最初に環境設定でターゲット・パスを設定する必要があります！
+MAIN_MSG_TOOMANYOPENEDITORS;編集画面が多すぎます\n操作を続けるには何れかの画面を閉じてください
 MAIN_MSG_WRITEFAILED;書き込みに失敗しました\n\n<b>"%1"</b>\n\nフォルダが在るか書き込み権限を持っているか確認してください
+MAIN_TAB_ADVANCED;高度な機能
+MAIN_TAB_ADVANCED_TOOLTIP;ショートカット: <b>Alt-w</b>
 MAIN_TAB_COLOR;カラー
 MAIN_TAB_COLOR_TOOLTIP;ショートカット: <b>Alt-c</b>
 MAIN_TAB_DETAIL;ディテール
@@ -732,6 +877,7 @@ MAIN_TAB_WAVELET_TOOLTIP;ショートカット: <b>Alt-w</b>
 MAIN_TOOLTIP_BACKCOLOR0;プレビューの背景色を指定します: <b>テーマに基づく</b>\nショートカット: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR1;プレビューの背景色を指定します: <b>黒</b>\nショートカットt: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;プレビューの背景色を指定します: <b>白</b>\nショートカット: <b>9</b>
+MAIN_TOOLTIP_BACKCOLOR3;プレビューの背景色を指定します: <b>中間のグレー</b>\nショートカット: <b>9</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>固定</b> / <b>固定解除</b> - <b>補正前</b> の表示設定\n\n<b>固定</b>: <b>補正前</b>をそのまま表示し変更されません\n複数のツールの累積効果を評価するのに役立ちます\nさらに、比較は履歴上のどこからでも行うことができます\n\n<b>固定解除</b>: 現在使用のツールの効果が <b>補正後</b> に表示され、その1段階前が <b>補正前</b> に表示されます
 MAIN_TOOLTIP_HIDEHP;左パネル 表示/非表示 (履歴含む)\nショートカット:  <b>l</b>
 MAIN_TOOLTIP_INDCLIPPEDH;ハイライト・クリッピング領域の表示\nショートカット: <b>&lt;</b>
@@ -747,6 +893,7 @@ MAIN_TOOLTIP_SHOWHIDERP1;表示/非表示 右パネル\nショートカット: <
 MAIN_TOOLTIP_SHOWHIDETP1;表示/非表示 上パネル\nショートカット: <b>Shift-L</b>
 MAIN_TOOLTIP_THRESHOLD;しきい値
 MAIN_TOOLTIP_TOGGLE;<b>補正前</b>/<b>補正後</b> 切り替え\nショートカット: <b>Shift-b</b>
+MONITOR_PROFILE_SYSTEM;システムのデフォルト
 NAVIGATOR_B;B:
 NAVIGATOR_G;G:
 NAVIGATOR_H;H:
@@ -759,6 +906,10 @@ NAVIGATOR_S;S:
 NAVIGATOR_V;V:
 NAVIGATOR_XY_FULL;幅 = %1, 高さ = %2
 NAVIGATOR_XY_NA;x = n/a, y = n/a
+OPTIONS_BUNDLED_MISSING;付属のプロファイル "<b>%1</b>"が見つかりません\n\nインストールされたプロファイルが損傷しているかもしれません\n\nその場合はデフォルトの値が使われます
+OPTIONS_DEFIMG_MISSING;<b>rawではない画像</b>のデフォルプロファイルが見つからないか、設定されていません\n\nプロファイル・ディレクトリを確認してください、存在しないか破損しているかもしれません\n\nデフォルト設定値が使用されます
+OPTIONS_DEFRAW_MISSING;<b>raw画像</b>のデフォル・プロファイルが見つからないか、設定されていません\n\nプロファイル・ディレクトリを確認してください、存在しないか破損しているかもしれません\n\nデフォルト設定値が使用されます
+PARTIALPASTE_ADVANCEDGROUP;高度な設定
 PARTIALPASTE_BASICGROUP;基本設定
 PARTIALPASTE_CACORRECTION;色収差補正
 PARTIALPASTE_CHANNELMIXER;チャンネル・ミキサー
@@ -797,6 +948,8 @@ PARTIALPASTE_IPTCINFO;IPTC 情報
 PARTIALPASTE_LABCURVE;L*a*b* 調整
 PARTIALPASTE_LENSGROUP;レンズ設定
 PARTIALPASTE_LENSPROFILE;レンズ補正プロファイル
+PARTIALPASTE_LOCALCONTRAST;ローカルコントラスト
+PARTIALPASTE_METADATA;メタデータモード
 PARTIALPASTE_METAGROUP;メタデータ
 PARTIALPASTE_PCVIGNETTE;ビネットフィルター
 PARTIALPASTE_PERSPECTIVE;パースペクティブの補正
@@ -804,7 +957,9 @@ PARTIALPASTE_PREPROCESS_DEADPIXFILT;デッドピクセルフィルターを適�
 PARTIALPASTE_PREPROCESS_GREENEQUIL;グリーン 平衡化
 PARTIALPASTE_PREPROCESS_HOTPIXFILT;ホットピクセルフィルターを適用
 PARTIALPASTE_PREPROCESS_LINEDENOISE;ラインノイズ フィルタ
+PARTIALPASTE_PRSHARPENING;リサイズ後のシャープ化
 PARTIALPASTE_RAWCACORR_AUTO;自動色収差補正
+PARTIALPASTE_RAWCACORR_CAREDBLUE;色収差 レッドとブルー
 PARTIALPASTE_RAWEXPOS_BLACK;黒レベル
 PARTIALPASTE_RAWEXPOS_LINEAR;raw ホワイトポイント リニア補正係数
 PARTIALPASTE_RAWEXPOS_PRESER;raw ホワイトポイント ハイライトを保持したまま補正 (EV)
@@ -813,8 +968,11 @@ PARTIALPASTE_RAW_DCBENHANCE;DCB 拡張処理適用
 PARTIALPASTE_RAW_DCBITERATIONS;DCB反復の数
 PARTIALPASTE_RAW_DMETHOD;デモザイクの方法
 PARTIALPASTE_RAW_FALSECOLOR;デモザイク 偽色の
+PARTIALPASTE_RAW_IMAGENUM;サブイメージ
 PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE 拡張処理
+PARTIALPASTE_RAW_PIXELSHIFT;ピクセルシフト
 PARTIALPASTE_RESIZE;リサイズ
+PARTIALPASTE_RETINEX;レティネックス
 PARTIALPASTE_RGBCURVES;RGB カーブ
 PARTIALPASTE_ROTATION;回転
 PARTIALPASTE_SHADOWSHIGHLIGHTS;シャドウ/ハイライト
@@ -833,6 +991,7 @@ PREFERENCES_AUTLISSTD;高
 PREFERENCES_AUTLISVLOW;なし
 PREFERENCES_AUTLOW;低
 PREFERENCES_AUTOMONPROFILE;OSのメインモニター・プロファイルを使用
+PREFERENCES_AUTOSAVE_TP_OPEN;プログラム終了の前に、機能パネルの開閉状態を自動的に保存する
 PREFERENCES_AUTSTD;標準
 PREFERENCES_BATCH_PROCESSING;バッチ処理
 PREFERENCES_BEHADDALL;すべて '追加'
@@ -855,6 +1014,13 @@ PREFERENCES_CLIPPINGIND;クリッピング領域の表示
 PREFERENCES_CLUTSCACHE;HaldCLUT cache
 PREFERENCES_CLUTSCACHE_LABEL;cacheに置けるHaldCLUTの最大数
 PREFERENCES_CLUTSDIR;HaldCLUTのディレクトリー
+PREFERENCES_CMMBPC;ブラックポイントの補正
+PREFERENCES_CROP;切り抜き画像の編集
+PREFERENCES_CROP_AUTO_FIT;切り抜き画像を自動的に拡大します
+PREFERENCES_CROP_GUIDES;切り抜き画像が編集されていない時はガイドを表示します
+PREFERENCES_CROP_GUIDES_FRAME;フレーム
+PREFERENCES_CROP_GUIDES_FULL;元画像
+PREFERENCES_CROP_GUIDES_NONE;なし
 PREFERENCES_CURVEBBOXPOS;カーブのコピーペイストボタンの位置
 PREFERENCES_CURVEBBOXPOS_ABOVE;上
 PREFERENCES_CURVEBBOXPOS_BELOW;下
@@ -868,6 +1034,7 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;タグID
 PREFERENCES_CUSTPROFBUILDPATH;実行ファイルのパス
 PREFERENCES_CUTOVERLAYBRUSH;切り抜きマスクカラー 不透明度
 PREFERENCES_D50;5000K
+PREFERENCES_D50_OLD;5000k
 PREFERENCES_D55;5500K
 PREFERENCES_D60;6000K
 PREFERENCES_D65;6500K
@@ -879,11 +1046,13 @@ PREFERENCES_DATEFORMATHINT;<i>次の書式を使用することができます:<
 PREFERENCES_DAUB_LABEL;ドビッシー関数のタイプ　D4の代わりにD6を使う
 PREFERENCES_DAUB_TOOLTIP;ノイズ低減とウェーブレットのレベルツールはマザーウェーブレットにドビッシーを使っています。このタイプでD4の代わりにD6を選択すると、直交系であるドビッシーの係数が増えるので、恐らくスケールの小さいレベルは質が向上するでしょう。タイプを変えても処理時間やメモリー使用量に影響はありません。
 PREFERENCES_DIRDARKFRAMES;ダークフレーム・ディレクトリ
+PREFERENCES_DIRECTORIES;ディレクトリ
 PREFERENCES_DIRHOME;ホーム・ディレクトリ
 PREFERENCES_DIRLAST;最近参照したディレクトリ
 PREFERENCES_DIROTHER;他
 PREFERENCES_DIRSELECTDLG;起動時の画像ディレクトリ選択...
 PREFERENCES_DIRSOFTWARE;インストール・ディレクトリ
+PREFERENCES_EDITORCMDLINE;カスタムコマンドライン
 PREFERENCES_EDITORLAYOUT;編集 レイアウト
 PREFERENCES_EXPAUT;高度
 PREFERENCES_EXTERNALEDITOR;外部エディタ
@@ -907,6 +1076,7 @@ PREFERENCES_GREY05;Yb=05 CIE L#30
 PREFERENCES_GREY10;Yb=10 CIE L#40
 PREFERENCES_GREY15;Yb=15 CIE L#45
 PREFERENCES_GREY18;Yb=18 CIE L#50
+PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
 PREFERENCES_GREY23;Yb=23 CIE L#55
 PREFERENCES_GREY30;Yb=30 CIE L#60
 PREFERENCES_GREY40;Yb=40 CIE L#70
@@ -928,6 +1098,7 @@ PREFERENCES_INTENT_PERCEPTUAL;知覚的
 PREFERENCES_INTENT_RELATIVE;相対的な色域を維持
 PREFERENCES_INTENT_SATURATION;彩度
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;rawファイルが未編集の場合 JPEGのサムネイルを表示
+PREFERENCES_LANG;言語
 PREFERENCES_LANGAUTODETECT;OSの言語設定を使用
 PREFERENCES_LEVAUTDN;ノイズ低減のレベル
 PREFERENCES_LEVDN;セルのサイズ
@@ -943,6 +1114,10 @@ PREFERENCES_MENUGROUPRANK;"ランキング"のグループ
 PREFERENCES_MENUOPTIONS;メニューオプションの状況
 PREFERENCES_METADATA;メタデータ
 PREFERENCES_MIN;最小 (100x115)
+PREFERENCES_MONINTENT;デフォルトのモニターインテント
+PREFERENCES_MONITOR;モニター
+PREFERENCES_MONPROFILE;デフォルトのモニタープロファイル
+PREFERENCES_MONPROFILE_WARNOSX;MacのOSの制約により、サポート出来るのはsRGBだけです
 PREFERENCES_MULTITAB;マルチ編集タブモード
 PREFERENCES_MULTITABDUALMON;独自のウィンドウモードによるマルチ編集タブ
 PREFERENCES_NAVGUIDEBRUSH;ナビゲーターのガイドカラー
@@ -961,23 +1136,33 @@ PREFERENCES_PARSEDEXT;拡張子
 PREFERENCES_PARSEDEXTADD;拡張子の追加
 PREFERENCES_PARSEDEXTADDHINT;拡張子を記入し このボタンでリストに追加します
 PREFERENCES_PARSEDEXTDELHINT;選択した拡張子をリストから削除します
+PREFERENCES_PARSEDEXTDOWNHINT;選択した拡張子をリストの下に移動
+PREFERENCES_PARSEDEXTUPHINT;選択した拡張子をリストの上に移動
 PREFERENCES_PREVDEMO;プレビューのデモザイク方式
 PREFERENCES_PREVDEMO_FAST;Fast
 PREFERENCES_PREVDEMO_LABEL;プレビューのズームレベルが100％以下の場合に使うデモザイクアルゴリズム：
 PREFERENCES_PREVDEMO_SIDECAR;PP3の記述通り
+PREFERENCES_PRINTER;プリンター(ソフトプルーフィング)
 PREFERENCES_PROFILEHANDLING;処理プロファイルの取扱い
 PREFERENCES_PROFILELOADPR;処理プロファイル読み込みの優先
 PREFERENCES_PROFILEPRCACHE;cacheの中のプロファイル
 PREFERENCES_PROFILEPRFILE;入力ファイルに隣接するプロファイル
+PREFERENCES_PROFILESAVEBOTH;処理プロファイルはcacheと入力ファイルの両方に関連付けて保存する
 PREFERENCES_PROFILESAVECACHE;処理プロファイルのパラメータをcacheに保存
 PREFERENCES_PROFILESAVEINPUT;処理プロファイルのパラメータを入力ファイルと同じディレクトリに保存
+PREFERENCES_PROFILESAVELOCATION;処理プロファイルが保存されている場所
+PREFERENCES_PROFILE_NONE;なし
 PREFERENCES_PROPERTY;プロパティ
+PREFERENCES_PRTINTENT;目標とするレンダリング
+PREFERENCES_PRTPROFILE;カラープロファイル
 PREFERENCES_PSPATH;Adobe Photoshop のインストール・ディレクトリ
 PREFERENCES_REMEMBERZOOMPAN;ズームレベルとパン速度を記憶する
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;現在の画像のズームレベルとパン速度を記憶し、新しく開く画像に適用\n\nこのオプションが使えるのは、編集画面のモードが“シングル編集”で、“プレビューのズームレベルが100%以下の場合に使うデモザイク”が“pp3に従う”と設定されている場合だけです。
 PREFERENCES_RGBDTL_LABEL;ノイズ低減とウェーブレットのための最大スレッド数
 PREFERENCES_RGBDTL_TOOLTIP;ノイズ低減は、10メガピクセル画像では128MB程度、40メガピクセル画像では512MBを必要とします、そして更にスレッドごとに128MBが必要です。複数のスレッドを同時に実行すると演算が速くなります。自動的にできる限り多くのスレッドを使用するには"0"の設定のままにします
+PREFERENCES_SAVE_TP_OPEN_NOW;機能パネルの今の開閉状態を保存する
 PREFERENCES_SELECTFONT;フォント選択
+PREFERENCES_SELECTFONT_COLPICKER;カラーピッカーのフォントを選択
 PREFERENCES_SELECTLANG;言語選択
 PREFERENCES_SELECTTHEME;テーマの選択
 PREFERENCES_SERIALIZE_TIFF_READ;TIFFファイルの読み込み設定
@@ -1001,16 +1186,23 @@ PREFERENCES_STARTUPIMDIR;起動時の画像・ディレクトリ
 PREFERENCES_STDAUT;標準
 PREFERENCES_TAB_BROWSER;ファイルブラウザ
 PREFERENCES_TAB_COLORMGR;カラーマネジメント
+PREFERENCES_TAB_DYNAMICPROFILE;ダイナミックプロファイルの規定
 PREFERENCES_TAB_GENERAL;一般
 PREFERENCES_TAB_IMPROC;画像処理
 PREFERENCES_TAB_PERFORMANCE;パフォーマンスとクォリティ
 PREFERENCES_TAB_SOUND;サウンド
+PREFERENCES_THEME;テーマ
+PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;埋め込まれているJPEGのプレビュー
+PREFERENCES_THUMBNAIL_INSPECTOR_MODE;表示する画像
+PREFERENCES_THUMBNAIL_INSPECTOR_RAW;ニュートラルなrawレンダリング
+PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;埋め込まれているJPEGがフルサイズの場合、指定がなければニュートラルなrawレンダリングで表示
 PREFERENCES_TIMAX;多数
 PREFERENCES_TINB;タイル数
 PREFERENCES_TISTD;標準
 PREFERENCES_TP_LABEL;ツール パネル:
 PREFERENCES_TP_USEICONORTEXT;テキストの代わりにタブアイコンを使用
 PREFERENCES_TP_VSCROLLBAR;ツールパネルの垂直スクロールバーを隠す
+PREFERENCES_TUNNELMETADATA;Exif/IPTC/XMPを変更を加えずに出力ファイルにコピー
 PREFERENCES_USEBUNDLEDPROFILES;付属のプロファイルを使用
 PREFERENCES_VIEW;出力デバイスのホワイトバランス設定 (モニター, TV, プロジェクター,観視...)
 PREFERENCES_WAVLEV;’高い’質の場合、ウェーブレット変換のレベルを上げる
@@ -1027,6 +1219,7 @@ PROFILEPANEL_MODE_TIP;処理プロファイルの適用モードボタン\n\nボ
 PROFILEPANEL_MYPROFILES;自分のプロファイル
 PROFILEPANEL_PASTEPPASTE;貼り付けるパラメータ
 PROFILEPANEL_PCUSTOM;カスタム
+PROFILEPANEL_PDYNAMIC;ダイナミック
 PROFILEPANEL_PFILE;ファイルから
 PROFILEPANEL_PINTERNAL;ニュートラル
 PROFILEPANEL_PLASTSAVED;更新済
@@ -1050,8 +1243,19 @@ PROGRESSBAR_SAVEPNG;PNGファイル保存中...
 PROGRESSBAR_SAVETIFF;TIFFファイル保存中...
 PROGRESSBAR_SNAPSHOT_ADDED;スナップショット追加
 PROGRESSDLG_PROFILECHANGEDINBROWSER;ブラウザでプロファイルの変更
+QINFO_FRAMECOUNT;%2 フレーム
+QINFO_HDR;HDR / %2 フレーム
 QINFO_ISO;ISO
 QINFO_NOEXIF;Exifデータがありません
+QINFO_PIXELSHIFT;ピクセルシフト / %2 フレーム
+SAMPLEFORMAT_0;データ形式不明
+SAMPLEFORMAT_1;符号なし8ビット
+SAMPLEFORMAT_2;符号なし16ビット
+SAMPLEFORMAT_4;LogLuv24ビット
+SAMPLEFORMAT_8;LogLuv32ビット
+SAMPLEFORMAT_16;16ビット浮動小数点
+SAMPLEFORMAT_32;24ビット浮動小数点
+SAMPLEFORMAT_64;32ビット浮動小数点
 SAVEDLG_AUTOSUFFIX;ファイルが存在する場合、自動的に末尾に文字を加える
 SAVEDLG_FILEFORMAT;ファイル形式
 SAVEDLG_FORCEFORMATOPTS;強制保存オプション
@@ -1066,9 +1270,12 @@ SAVEDLG_SUBSAMP;サブ・サンプリング
 SAVEDLG_SUBSAMP_1;高圧縮
 SAVEDLG_SUBSAMP_2;バランス
 SAVEDLG_SUBSAMP_3;高画質
+SAVEDLG_SUBSAMP_TOOLTIP;最適な圧縮率:\nJ:a:b 4:2:0\nh/v 2/2\n色度は水平方向・垂直方向で半分になります\n\nバランスを重視した圧縮率:\nJ:a:b 4:2:2\nh/v 2/1\n色度は水平方向で半分になります\n\n質を重視した圧縮率:\nJ:a:b 4:4:4\nh/v 1/1\n色度のサブサンプリングはありません.
 SAVEDLG_TIFFUNCOMPRESSED;非圧縮 TIFF
 SAVEDLG_WARNFILENAME;ファイルに名前が付けられます
 SHCSELECTOR_TOOLTIP;この3つのスライダーの位置をリセットするには\nマウスの右ボタンをクリック
+SOFTPROOF_GAMUTCHECK_TOOLTIP;有効にすると、出力プロファイルの色域から外れた色のピクセルをグレーで表示します
+SOFTPROOF_TOOLTIP;ソフトプルーフィング\n有効にすると、ICMツールの出力プロファイルを使った疑似的なレンダリングを行います。印刷した場合などの画像の印象を掴むのに大変便利です。
 THRESHOLDSELECTOR_B;下
 THRESHOLDSELECTOR_BL;下-左
 THRESHOLDSELECTOR_BR;下-右
@@ -1076,6 +1283,7 @@ THRESHOLDSELECTOR_HINT;個々のコントロールポイントを移動するに
 THRESHOLDSELECTOR_T;上
 THRESHOLDSELECTOR_TL;上-左
 THRESHOLDSELECTOR_TR;上-右
+TOOLBAR_TOOLTIP_COLORPICKER;ロック式カラーピッカー\n\n有効にすると:\nプレビュー画像上でマウスを左クリックするとカラーピッカーが追加されます。\n左のボタンを押しながらマウスを動かすとカラーピッカーも移動します\nカラーピッカーを削除する時はマウスを右クリックします\nカラーピッカー全てを削除する場合は、Shiftボタンを押しながらマウスを右クリックします\nカラーピッカーのマーク以外の部分でマウスを右クリックすれば、ハンドツールに戻ります
 TOOLBAR_TOOLTIP_CROP;切り抜き範囲選択\nショートカット:  <b>c</b>
 TOOLBAR_TOOLTIP_HAND;手の平ツール\nショートカット:  <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>直線選択</b> / <b>角度補正</b>\nショートカット: <b>s</b>\nプレビュー画像上にガイド線を描画し、垂直または水平方向を指示します。回転角度は、ガイド線の隣に表示されます。回転の中心は、プレビュー画像の中心です
@@ -1085,7 +1293,6 @@ TP_BWMIX_ALGO_LI;リニア
 TP_BWMIX_ALGO_SP;特殊効果
 TP_BWMIX_ALGO_TOOLTIP;リニア: 通常の <b>線形的</b> な効果です\n特殊効果: チャンネルミキサーによる <b>非線形的</b>な特殊効果です
 TP_BWMIX_AUTOCH;オート
-TP_BWMIX_AUTOCH_TIP;チャンネルミキサーの最適値を計算します
 TP_BWMIX_CC_ENABLED;補色の調整
 TP_BWMIX_CC_TOOLTIP;ROYGCBPMモードの中で補色の調整を自動で行います
 TP_BWMIX_CHANNEL;輝度イコライザ
@@ -1112,9 +1319,8 @@ TP_BWMIX_MET;方法
 TP_BWMIX_MET_CHANMIX;チャンネルミキサー
 TP_BWMIX_MET_DESAT;彩度低減
 TP_BWMIX_MET_LUMEQUAL;輝度イコライザー
-TP_BWMIX_MIXC;ミキサー
-TP_BWMIX_NEUTRAL;ミキサーのリセット
-TP_BWMIX_NEUTRAL_TIP;全ての値（フィルター、チャンネルミキサー）をデフォルトに戻します
+TP_BWMIX_MIXC;チャンネルミキサー
+TP_BWMIX_NEUTRAL;リセット
 TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   トータル: %4%%
 TP_BWMIX_RGBLABEL_HINT;ミキサーオプションの全てを考慮した最終のRGBファクター\nトータルは実際に適用されたRGBの合計を表示:\n- 常に100％相対モード\n- 絶対モード100％より高い（明るい）、或いは低い（暗い）
 TP_BWMIX_RGB_TOOLTIP;RGBチャンネルをミックス。ガイダンスとしてプリセットを使います。\nマイナス値はアーティファクトの発生や誤った作用を起こすかもしれないことに注意します
@@ -1143,6 +1349,10 @@ TP_BWMIX_VAL;L
 TP_CACORRECTION_BLUE;ブルー
 TP_CACORRECTION_LABEL;色収差補正
 TP_CACORRECTION_RED;レッド
+TP_CBDL_AFT;白黒適用の後
+TP_CBDL_BEF;白黒適用の前
+TP_CBDL_METHOD;処理の順番
+TP_CBDL_METHOD_TOOLTIP;ディテールレベルのコントラストの処理を白黒処理の前に行うか、後に行うか選びます。前を選んだ場合は同機能の作業色空間はRGBとなり、後を選んだ場合はL*a*b*となります。
 TP_CHMIXER_BLUE;ブルー
 TP_CHMIXER_GREEN;グリーン
 TP_CHMIXER_LABEL;チャンネルミキサー
@@ -1188,6 +1398,7 @@ TP_COLORAPP_DATACIE;カーブにCIECAM02出力のヒストグラムを表示
 TP_COLORAPP_DATACIE_TOOLTIP;有効の場合、CIECAM02カーブのヒストグラムは、JかQ、CIECAM02調整後のCかs、またはMの値/範囲の近似値を表示します\nこの選択はメイン・ヒストグラムパネルには影響を与えません\n\n無効の場合、CIECAM02カーブのヒストグラムは、CIECAM調整前のL*a*b*値を表示します
 TP_COLORAPP_DEGREE_AUTO_TOOLTIP;チェックボックスが有効の場合 (推奨)\nRTは、CAT02で使用され、更にCIECAM02全体で使用する最適値を算出します\n手動で値を設定するには、チェックボックスを無効にします (65以上の値を推奨)
 TP_COLORAPP_DEGREE_TOOLTIP;CIE色順応変換2002（CAT02)の量
+TP_COLORAPP_FREE;任意の色温度+グリーン + CAT02 + [出力]
 TP_COLORAPP_GAMUT;色域制御 (L*a*b*)
 TP_COLORAPP_GAMUT_TOOLTIP;L*a*b*モードの色域制御を許可
 TP_COLORAPP_HUE;色相 (h)
@@ -1200,6 +1411,8 @@ TP_COLORAPP_LIGHT;明度 (J)
 TP_COLORAPP_LIGHT_TOOLTIP;CIECAM02の明度は L*a*b*やRGBの明度とは異なります
 TP_COLORAPP_MODEL;ホワイトポイント・モデル
 TP_COLORAPP_MODEL_TOOLTIP;<b>WB [RT] + [出力]:</b>\nRTのホワイトバランスは、撮影環境に使用されます。CIECAM02はD50の設定, 出力デバイスのホワイトバランスは「環境設定」の「カラーマネジメント」の設定\n\n<b>WB [RT+CAT02] + [出力]:</b>\nRTのホワイトバランス設定は、CAT02で使用され、出力デバイスのホワイトバランスは環境設定の値を使用します
+TP_COLORAPP_NEUTRAL;リセット
+TP_COLORAPP_NEUTRAL_TIP;全てのスライダーチェックボックスとカーブをデフォルトにリセットします
 TP_COLORAPP_RSTPRO;レッドと肌色トーンを保護
 TP_COLORAPP_RSTPRO_TOOLTIP;レッドと肌色トーンを保護はスライダーとカーブの両方に影響します
 TP_COLORAPP_SHARPCIE;Q/C で､シャープ化、ディテールレベルのコントラストとフリンジ低減
@@ -1220,10 +1433,14 @@ TP_COLORAPP_TCMODE_LABEL2;カーブ・モード2
 TP_COLORAPP_TCMODE_LABEL3;カーブ・色度モード
 TP_COLORAPP_TCMODE_LIGHTNESS;明度
 TP_COLORAPP_TCMODE_SATUR;彩度
+TP_COLORAPP_TEMP_TOOLTIP;選択した光源に関し色偏差は常に1が使われます\n\n色温度=2856\nD50 色温度=5003\nD55 色温度=5503\nD65 色温度=6504\nD75 色温度=7504
 TP_COLORAPP_TONECIE;CIECAM02 明るさ(Q)を使用してトーンマッピング
 TP_COLORAPP_TONECIE_TOOLTIP;このオプションが無効になっている場合、トーンマッピングはL*a*b*空間を使用します\nこのオプションが有効になっている場合、トーンマッピングは、CIECAM02を使用します\nトーンマッピング（L*a*b*/CIECAM02）ツールを有効にするには、この設定を有効にする必要があります
 TP_COLORAPP_WBCAM;WB [RT+CAT02] + [出力]
 TP_COLORAPP_WBRT;WB [RT] + [出力]
+TP_COLORAPP_YB;Yb% (平均輝度)
+TP_COLORAPP_YBSCENE;Yb% (平均輝度)
+TP_COLORAPP_YBSCENE_TOOLTIP;自動が有効になると、Ybは画像の輝度の中間値から計算されます
 TP_COLORTONING_AB;o C/L
 TP_COLORTONING_AUTOSAT;自動彩度
 TP_COLORTONING_BALANCE;バランス
@@ -1235,6 +1452,8 @@ TP_COLORTONING_HIGHLIGHT;ハイライト
 TP_COLORTONING_HUE;色相
 TP_COLORTONING_LAB;L*a*b*モデルでブレンド
 TP_COLORTONING_LABEL;カラートーン調整
+TP_COLORTONING_LABGRID;L*a*b*カラー補正グリッド
+TP_COLORTONING_LABGRID_VALUES;HL: a=%1 b=%2\nS: a=%3 b=%4
 TP_COLORTONING_LUMA;明度
 TP_COLORTONING_LUMAMODE;明度を維持
 TP_COLORTONING_LUMAMODE_TOOLTIP;カラー（レッド、グリーン、シアン、ブルーなど）を変える際に、これを有効にすると、各ピクセルの明度は維持されます。
@@ -1283,11 +1502,18 @@ TP_DARKFRAME_LABEL;ダークフレーム
 TP_DEFRINGE_LABEL;フリンジ低減
 TP_DEFRINGE_RADIUS;半径
 TP_DEFRINGE_THRESHOLD;しきい値
+TP_DIRPYRDENOISE_3X3;3×3
+TP_DIRPYRDENOISE_3X3_SOFT;3×3 ソフト
+TP_DIRPYRDENOISE_5X5;5×5
+TP_DIRPYRDENOISE_5X5_SOFT;5×5 ソフト
+TP_DIRPYRDENOISE_7X7;7×7
+TP_DIRPYRDENOISE_9X9;9×9
 TP_DIRPYRDENOISE_CHROMINANCE_AMZ;自動（多分割方式）
 TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;自動（分割方式）
 TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;色ノイズ低減の効果を確認して下さい\n注意：設定値の計算はあくまで平均的なもので、かなり主観的でです
 TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;色差 ブルー/イエロー
 TP_DIRPYRDENOISE_CHROMINANCE_CURVE;色ノイズ低減のカーブ
+TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;クロミナンススライダー全ての値を増幅します\n色度をベースにこのカーブで色ノイズ低減の強さを加減します。例えば彩度の低い部分で作用を強める、或いは色度の高い部分で作用を弱めるように使います
 TP_DIRPYRDENOISE_CHROMINANCE_FRAME;色ノイズ
 TP_DIRPYRDENOISE_CHROMINANCE_MANUAL;手動
 TP_DIRPYRDENOISE_CHROMINANCE_MASTER;色(マスター)
@@ -1304,6 +1530,7 @@ TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;タイルのサイズ=%1, 中心�
 TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;色差 レッド/グリーン
 TP_DIRPYRDENOISE_ENH;強化モード
 TP_DIRPYRDENOISE_ENH_TOOLTIP;ノイズ低減の効果を髙めますが、代わりに演算時間が約20%増えます。
+TP_DIRPYRDENOISE_LABEL;ノイズ低減
 TP_DIRPYRDENOISE_LUMINANCE_CONTROL;輝度ノイズの調整法
 TP_DIRPYRDENOISE_LUMINANCE_CURVE;輝度カーブ
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;輝度　細部の復元
@@ -1329,8 +1556,16 @@ TP_DIRPYRDENOISE_MEDIAN_METHOD_RGB;RGB
 TP_DIRPYRDENOISE_MEDIAN_METHOD_TOOLTIP;フィルタリングの方式で、"輝度のみ"と"L*a*b*"を選択した場合、メディアンフィルタリングはノイズ低減行程でウェーブレット変換が行われた直後に適用されます\n"RGB"モードの場合は、ノイズ低減行程の最後で適用されます
 TP_DIRPYRDENOISE_MEDIAN_METHOD_WEIGHTED;加重平均 L* (少なめ) + a*b* (普通)
 TP_DIRPYRDENOISE_MEDIAN_PASSES;フィルタリングの繰り返し回数
+TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;計算領域が3x3ピクセルのメディアンフィルタを3回繰り返し適用する方が、計算領域が7x7ピクセルのメディアンフィルタを1回適用するより結果が良くなることがままあります。
 TP_DIRPYRDENOISE_MEDIAN_TYPE;フィルターの種類
+TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;適用するメディアンフィルタのサイズを決めます。大きくするとその分処理時間が増えます。大きいサイズを使うとそれだけ処理時間が増えます。\n\n3×3 ソフト: 3x3ピクセルの計算領域で5ピクセルを処理します\n3×3:3x3ピクセルの計算領域で9ピクセルを処理します\n5×5 ソフト: 5x5ピクセルの計算領域で13ピクセルを処理します\n5×5: 5x5ピクセルの計算領域で25ピクセルを処理します\n7×7: 7x7ピクセルの計算領域で49ピクセルを処理します\n9×9: 9x9ピクセルの計算領域で81ピクセルを処理します\n\n場合によっては、小さいウィンドウで複数回適用を繰り返す方が、大きいウィンドウを1回適用するより結果が良いことがあります。
 TP_DIRPYRDENOISE_SLI;スライダー
+TP_DIRPYRDENOISE_TYPE_3X3;3×3
+TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 ソフト
+TP_DIRPYRDENOISE_TYPE_5X5;5×5
+TP_DIRPYRDENOISE_TYPE_5X5SOFT;5×5 ソフト
+TP_DIRPYRDENOISE_TYPE_7X7;7×7
+TP_DIRPYRDENOISE_TYPE_9X9;9×9
 TP_DIRPYREQUALIZER_ALGO;肌色の範囲
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;ファイン：撮影の肌色に近い部分に働くアルゴリズム、他の色への影響を最小限に抑えます\n広範：　アーティファクトの増加を避けるアルゴリズムです
 TP_DIRPYREQUALIZER_ARTIF;アーティファクトを軽減
@@ -1347,6 +1582,7 @@ TP_DIRPYREQUALIZER_SKIN_TOOLTIP;-100　肌色トーンの調整が目的にな�
 TP_DIRPYREQUALIZER_THRESHOLD;しきい値
 TP_DIRPYREQUALIZER_TOOLTIP;肌色（色相、色度、明度）と他の色の間の遷移でアーティファクトが発生するのを軽減します
 TP_DISTORTION_AMOUNT;適用量
+TP_DISTORTION_AUTO_TIP;rawファイルの歪曲収差を、埋め込まれたJPEG画像とカメラによる自動歪曲収差補正と合わせることで自動的に補正します
 TP_DISTORTION_LABEL;歪曲収差補正
 TP_EPD_EDGESTOPPING;エッジ停止
 TP_EPD_GAMMA;ガンマ
@@ -1359,6 +1595,7 @@ TP_EXPOSURE_AUTOLEVELS;自動露光補正
 TP_EXPOSURE_AUTOLEVELS_TIP;画像を解析し露光補正を自動で設定します
 TP_EXPOSURE_BLACKLEVEL;黒レベル
 TP_EXPOSURE_BRIGHTNESS;明度
+TP_EXPOSURE_CLAMPOOG;色域から外れた色を切り取る
 TP_EXPOSURE_CLIP;クリップ　％
 TP_EXPOSURE_CLIP_TIP;自動露光補正によるハイライトとシャドウ部分での飽和ピクセルの割合制限
 TP_EXPOSURE_COMPRHIGHLIGHTS;ハイライト圧縮
@@ -1369,6 +1606,8 @@ TP_EXPOSURE_CURVEEDITOR1;トーンカーブ1
 TP_EXPOSURE_CURVEEDITOR2;トーンカーブ2
 TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;2つのトーンカーブで最良の結果を得るためには、RawPediaの“露光＞トーンカーブ”を参照して下さい。
 TP_EXPOSURE_EXPCOMP;露光量補正
+TP_EXPOSURE_HISTMATCHING;トーンカーブの自動調節
+TP_EXPOSURE_HISTMATCHING_TOOLTIP;埋め込まれているJPEGサムネイルに近い映りを表示するために、露光量補正を除くいたスライダーやカーブを自動的に調整します。
 TP_EXPOSURE_LABEL;露光補正
 TP_EXPOSURE_SATURATION;彩度
 TP_EXPOSURE_TCMODE_FILMLIKE;フィルム調
@@ -1382,6 +1621,7 @@ TP_EXPOSURE_TCMODE_WEIGHTEDSTD;加重平均
 TP_EXPOS_BLACKPOINT_LABEL;raw ブラック・ポイント
 TP_EXPOS_WHITEPOINT_LABEL;raw　ホワイト・ポイント
 TP_FILMSIMULATION_LABEL;フィルムシミュレーション
+TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapeeはフィルムシミュレーション機能に使う画像をHald CLUTフォルダーの中から探すよう設計されています（プログラムに組み込むにはフォルダーが大き過ぎるため）。\n変更するには、環境設定 > 画像処理 > フィルムシミュレーションと進み\nどのフォルダーが使われているか確認します。機能を利用する場合は、Hald CLUTだけが入っているフォルダーを指定するか、 この機能を使わない場合はそのフォルダーを空にしておきます。\n\n詳しくはRawPediaを参照して下さい。\n\nフィルム画像のスキャンを止めますか？
 TP_FILMSIMULATION_STRENGTH;強さ
 TP_FILMSIMULATION_ZEROCLUTSFOUND;HaldCLUTのディレクトリーを指定して下さい
 TP_FLATFIELD_AUTOSELECT;自動選択
@@ -1431,6 +1671,7 @@ TP_ICM_APPLYLOOKTABLE;ルックテーブル
 TP_ICM_APPLYLOOKTABLE_TOOLTIP;DCPに埋め込まれているルックテーブルを用います。但し、適用するDCPにこのタグがある場合に限ります。
 TP_ICM_BLENDCMSMATRIX;マトリクスとハイライト・ブレンド
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;LUTベースのICCプロファイルを使用するときに白トビを修復
+TP_ICM_BPC;ブラックポイント補正
 TP_ICM_DCPILLUMINANT;光源
 TP_ICM_DCPILLUMINANT_INTERPOLATED;補間
 TP_ICM_DCPILLUMINANT_TOOLTIP;埋め込まれているDCPの光源のどちらを使うか選択。デフォルトではホワイトバランスに基づいて二つの光源の中間に補間する。この設定は二つのDCPの光源が補間サポートされる、を選択している場合に有効。
@@ -1449,6 +1690,8 @@ TP_ICM_INPUTPROFILE;入力プロファイル
 TP_ICM_LABEL;カラー・マネジメント
 TP_ICM_NOICM;No ICM: sRGB 出力
 TP_ICM_OUTPUTPROFILE;出力プロファイル
+TP_ICM_PROFILEINTENT;目標とするレンダリング
+TP_ICM_SAVEREFERENCE;参照画像を保存
 TP_ICM_SAVEREFERENCE_APPLYWB;ホワイトバランスを適用
 TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;一般的に、ICCプロファイルを作成するための画像を保存する際に適用するホワイトバランスです、DCPプロファイルを作成する時は適用しません。
 TP_ICM_SAVEREFERENCE_TOOLTIP;入力プロファイルが適用される前のリニアなTIFF画像を保存します。キャリブレーション目的やカメラプロファイルの作成などに使います。
@@ -1501,6 +1744,16 @@ TP_LENSPROFILE_LABEL;レンズ補正 プロファイル
 TP_LENSPROFILE_USECA;色収差補正
 TP_LENSPROFILE_USEDIST;歪曲収差補正
 TP_LENSPROFILE_USEVIGN;周辺光量補正
+TP_LOCALCONTRAST_AMOUNT;量
+TP_LOCALCONTRAST_DARKNESS;暗い部分のレベル
+TP_LOCALCONTRAST_LABEL;ローカルコントラスト
+TP_LOCALCONTRAST_LIGHTNESS;明るい部分のレベル
+TP_LOCALCONTRAST_RADIUS;半径
+TP_METADATA_EDIT;変更を適用
+TP_METADATA_MODE;メタデータ コピーモード
+TP_METADATA_STRIP;メタデータを全て取り除く
+TP_METADATA_TUNNEL;変更なしでコピー
+TP_NEUTRAL;リセット
 TP_NEUTRAL_TIP;露光量補正のスライダー値をニュートラルにリセットします。\n自動露光補正の調整値ついても同様にリセットされます
 TP_PCVIGNETTE_FEATHER;フェザー処理
 TP_PCVIGNETTE_FEATHER_TOOLTIP;フェザー処理：　0=四隅だけ、50=中央までの半分、100=中央まで
@@ -1521,12 +1774,20 @@ TP_PREPROCESS_HOTPIXFILT;ホットピクセル・フィルター
 TP_PREPROCESS_HOTPIXFILT_TOOLTIP;ホットピクセルの圧縮を試みます
 TP_PREPROCESS_LABEL;前処理
 TP_PREPROCESS_LINEDENOISE;ラインノイズ フィルタ
+TP_PREPROCESS_LINEDENOISE_DIRECTION;方向
+TP_PREPROCESS_LINEDENOISE_DIRECTION_BOTH;両方向
+TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL;水平方向
+TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;PDAFの場合は水平方向だけ
+TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;垂直方向
 TP_PREPROCESS_NO_FOUND;未検出
+TP_PREPROCESS_PDAFLINESFILTER;PDAFラインフィルタ
+TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Sonyのミラーレスカメラの一部では、PDAFイメージセンサが原因で、ゴーストが出るバックライトの画像でストライプノイズが発生することがあり、これを軽減します。
 TP_PRSHARPENING_LABEL;リサイズ後のシャープ化
 TP_PRSHARPENING_TOOLTIP;リサイズ後の画像をシャープ化します。但し、リサイズの方式がランチョスの場合に限ります。プレビュー画面でこの機能の効果を見ることは出来ません。使用法に関してはRawPediaを参照して下さい。
 TP_RAWCACORR_AUTO;自動補正
 TP_RAWCACORR_CABLUE;ブルー
 TP_RAWCACORR_CARED;レッド
+TP_RAWCACORR_CASTR;強さ
 TP_RAWEXPOS_BLACKS;黒レベル
 TP_RAWEXPOS_BLACK_0;グリーン1（先頭）
 TP_RAWEXPOS_BLACK_1;レッド
@@ -1539,21 +1800,66 @@ TP_RAWEXPOS_LINEAR;ホワイトポイント補正
 TP_RAWEXPOS_PRESER;ハイライトを保持
 TP_RAWEXPOS_RGB;レッド、グリーン、ブルー
 TP_RAWEXPOS_TWOGREEN;2つのグリーンを連動
+TP_RAW_1PASSMEDIUM;1-パス (ミディアム)
+TP_RAW_3PASSBEST;3-Pass (最良)
+TP_RAW_AHD;AHD
+TP_RAW_AMAZE;AMaZE
+TP_RAW_DCB;DCB
 TP_RAW_DCBENHANCE;DCB 拡張処理
 TP_RAW_DCBITERATIONS;DCB 反復の数
 TP_RAW_DMETHOD;方式
 TP_RAW_DMETHOD_PROGRESSBAR;%1 デモザイク中...
 TP_RAW_DMETHOD_PROGRESSBAR_REFINE;デモザイク・リファイン中...
 TP_RAW_DMETHOD_TOOLTIP;注: IGVとLMMSEは高ISO画像に適しています
+TP_RAW_EAHD;EAHD
 TP_RAW_FALSECOLOR;偽色抑制処理の回数
+TP_RAW_FAST;Fast
 TP_RAW_HD;しきい値
 TP_RAW_HD_TOOLTIP;設定値を低くすると、ホット/デッドピクセルの検出が強くなりますが、偽陽性によりアーティファクトが増えるかもしれません。ホット/デッドピクセルフィルターの使用で、アーティファクトの発生が認められた場合は、しきい値を少しずつアーティファクトが消えるまで増やします。
+TP_RAW_HPHD;HPHD
+TP_RAW_IGV;IGV
+TP_RAW_IMAGENUM;サブイメージ
+TP_RAW_IMAGENUM_TOOLTIP;rawファイルの中には複数のサブイメージで構成されているものがあります（Pentaxのピクセルシフト、Pentaxの3-in-1 HDR、Canonのデュアルピクセル）。\n\nここでピクセルシフト以外のデモザイク方式を選んだ場合は、どのサブイメージだけをデモザイクに使うか選択します。\n\nピクセルシフトのrawファイルでデモザイク方式にピクセルシフトを選ぶと、全てのサブイメージがデモザイクに使われます、そしてどのサブイメージを振れのあるイメージとして使うか選択します
 TP_RAW_LABEL;デモザイク
+TP_RAW_LMMSE;LMMSE
 TP_RAW_LMMSEITERATIONS;LMMSE 拡張処理
 TP_RAW_LMMSE_TOOLTIP;ガンマ追加 (step 1) - メディアン追加 (step 2,3,4), リファイン追加 (step 5,6) アーティファクトを低減しノイズ比を向上させます
+TP_RAW_MONO;Mono
+TP_RAW_NONE;なし (センサーのパターンを表示)
+TP_RAW_PIXELSHIFT;ピクセルシフト
+TP_RAW_PIXELSHIFTBLUR;振れマスクのぼかし
+TP_RAW_PIXELSHIFTEPERISO;ISOの適合
+TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;通常のISOに関してはデフォルトの0で十分だと思われます。\n高いISOの場合は、振れの検知を良くするために設定値を上げます。\n少しづつ増加させ、振れのマスクの変化を見ます。
+TP_RAW_PIXELSHIFTEQUALBRIGHT;構成画像の明るさを均等にする
+TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;チャンネルごとに均等化
+TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;有効:RGBの色チャンネルごとに均等化を行います。\n無効:全ての色チャンネルで同じように均等化を行います。
+TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;選択した構成画像の明るさを他の構成画像の明るさに適用し均等化します。\n露出オーバーがある画像が発生する場合は、マゼンタ被りが起こるのを避けるために最も明るい画像を選択しないようにるいか、或いは振れの補正を有効にします。
+TP_RAW_PIXELSHIFTGREEN;振れに関するグリーンチャンネルを確認
+TP_RAW_PIXELSHIFTHOLEFILL;振れマスクの穴を埋める
+TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;振れマスクの穴を埋める
+TP_RAW_PIXELSHIFTLMMSE;振れのある領域にLMMSEを使用
+TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;振れのある領域にはAMaZEの代わりにLMMSEを使います。\nISO値が高い画像の処
+TP_RAW_PIXELSHIFTMEDIAN;振れのある領域にはメディアンを使用
+TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;振れのある領域に関しては、選択した画像ではなく全ての構成画像にメディアンを使います。\n全ての構成画像で異なる位置にある被写体は除きます。\n動きの遅い被写体（オーバーラッピング）には振れの効果が出ます。
+TP_RAW_PIXELSHIFTMM_AUTO;自動
+TP_RAW_PIXELSHIFTMM_CUSTOM;カスタム
+TP_RAW_PIXELSHIFTMM_OFF;オフ
+TP_RAW_PIXELSHIFTMOTIONMETHOD;振れ補正
+TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0は振れの検知が行われないことを意味します\n1 - 99は振れを検知する強さを意味します。値を増やすと検知率が上がります。\n100に設定するとAMaZEでデモザイクされた画像が使われます
+TP_RAW_PIXELSHIFTNONGREENCROSS;振れに関するレッド／ブルーのチャンネルを確認
+TP_RAW_PIXELSHIFTSHOWMOTION;振れマスクを含めて表示
+TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;振れマスクだけを表示
+TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;画像全体ではなく振れマスクだけを表示します。
+TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;振れのある画像部分をグリーンマスクを被せて表示します。
+TP_RAW_PIXELSHIFTSIGMA;ぼかしの半径
+TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;デフォルトで設定している値1.0で基本的なISO値の画像には十分です。\nISO値の高い画像ではスライダーの値を増やします。5.0から始めるのがいいでしょう。\n設定値を変えながら振れマスクを見極めます。
+TP_RAW_PIXELSHIFTSMOOTH;境界部分を滑らかにする
+TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;これは振れのある領域と振れがない領域の境を滑らかに補正するものです。\n0に設定すると機能の働きはありません。\n1に設定すると、選択された構成画像にAMaZEかLMMSEが使われた結果が得られます（"LMMSEを使う"というオプション次第）、或いは"メディアンを使う"が選択されていれば全ての構成画像にメディアンが使われます。
+TP_RAW_RCD;RCD
 TP_RAW_SENSOR_BAYER_LABEL;ベイヤー配列を使ったセンサー
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-passが最適です（低ISO画像には奨められます)\n高ISO画像の場合、1-passと3-passの違いは殆どありません、処理速度は前者の方が速いです。
 TP_RAW_SENSOR_XTRANS_LABEL;X-Transマトリクスを使ったセンサー
+TP_RAW_VNG4;VNG4
 TP_RESIZE_APPLIESTO;適用領域:
 TP_RESIZE_CROPPEDAREA;切り抜き画像
 TP_RESIZE_FITBOX;バウンディング・ボックス
@@ -1568,6 +1874,86 @@ TP_RESIZE_SCALE;スケール
 TP_RESIZE_SPECIFY;条件指定:
 TP_RESIZE_W;幅:
 TP_RESIZE_WIDTH;幅
+TP_RETINEX_CONTEDIT_HSL;ヒストグラムイコライザ HSL
+TP_RETINEX_CONTEDIT_LAB;ヒストグラムイコライザ L*a*b*
+TP_RETINEX_CONTEDIT_LH;色相イコライザ
+TP_RETINEX_CONTEDIT_MAP;マスクイコライザ
+TP_RETINEX_CURVEEDITOR_CD;輝度=f(輝度)
+TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;輝度に応じた輝度の関数 L=f(L)\nハロとアーティファクトを減らすためにrawデータを補正します
+TP_RETINEX_CURVEEDITOR_LH;強さ=f(色相)
+TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;色相に応じた強さの関数 強さ=f(色相)\nレティネックスの方式で”ハイライト”を使った場合、このカーブは色度にも作用します
+TP_RETINEX_CURVEEDITOR_MAP;輝度=f(輝度)
+TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;このカーブは単独で使うことも、ガウシアンマスクやウェーブレットマスクと併用して使うことも出来ます\n但し、アーティファクトの発生に注意
+TP_RETINEX_EQUAL;イコライザ
+TP_RETINEX_FREEGAMMA;フリーガンマ
+TP_RETINEX_GAIN;ゲイン
+TP_RETINEX_GAINOFFS;ゲインとオフセット(明るさ)
+TP_RETINEX_GAINTRANSMISSION;ゲインの透過
+TP_RETINEX_GAINTRANSMISSION_TOOLTIP;目標とする輝度を得るために、透過マップ増幅したり減衰させたりします。\n横軸：左から最小、平均、最大となります。\n縦軸：ゲイン
+TP_RETINEX_GAIN_TOOLTIP;修復画像に作用します\n\nこれは他の設定とは大きく異なります。 ブラックピクセルやホワイトピクセルに対して使う設定で、ヒストグラムのバランスを補正します
+TP_RETINEX_GAMMA;ガンマ
+TP_RETINEX_GAMMA_FREE;フリー
+TP_RETINEX_GAMMA_HIGH;高
+TP_RETINEX_GAMMA_LOW;低
+TP_RETINEX_GAMMA_MID;中間
+TP_RETINEX_GAMMA_NONE;なし
+TP_RETINEX_GAMMA_TOOLTIP;レティネックス機能の前後のガンマで画像のトーンを修復します。レティネックスのカーブや他のカーブ（Lab調整、露光補正などのカーブ）とは異なるカーブです。
+TP_RETINEX_GRAD;透過のグラデーション
+TP_RETINEX_GRADS;強さのグラデーション
+TP_RETINEX_GRADS_TOOLTIP;スライダー値が0の場合、全ての繰り返しは同じになります\n0より大きい場合は、繰り返しが増加すると強さが減ります。0より小さい場合はその逆です
+TP_RETINEX_GRAD_TOOLTIP;スライダー値が0の場合、全ての繰り返しが同じになります\n0より大きい場合は、繰り返しが増加すると差異としきい値が減ります。0より小さい場合はその逆です
+TP_RETINEX_HIGH;高
+TP_RETINEX_HIGHLIG;ハイライト
+TP_RETINEX_HIGHLIGHT;ハイライトのしきい値
+TP_RETINEX_HIGHLIGHT_TOOLTIP;”高”のアルゴリズムの作用を増加させます\nこの方式を使う場合は、”周辺ピクセル”の再調整やrawタブにある”ホワイトポイント補正”を増やす必要があるかもしれません
+TP_RETINEX_HSLSPACE_LIN;HSL-線形
+TP_RETINEX_HSLSPACE_LOG;HSL-対数
+TP_RETINEX_ITER;繰り返し（トーンマッピング）
+TP_RETINEX_ITERF;トーンマッピング
+TP_RETINEX_ITER_TOOLTIP;トーンマッピングの動作を真似たものです\n値を高くすると処理時間が増えます
+TP_RETINEX_LABEL;レティネックス
+TP_RETINEX_LABEL_MASK;マスク
+TP_RETINEX_LABSPACE;L*a*b*
+TP_RETINEX_LOW;低
+TP_RETINEX_MAP;マスクの方法
+TP_RETINEX_MAP_GAUS;ガウシアンマスク
+TP_RETINEX_MAP_MAPP;シャープマスク (一部ウェーブレット)
+TP_RETINEX_MAP_MAPT;シャープマスク (全てウェーブレット)
+TP_RETINEX_MAP_METHOD_TOOLTIP;ガウス関数を利用して生成したマスクをハロやアーティファクトを減らすために使う方法です\n\nカーブだけ:マスクにコントラストカーブを適用します\nアーティファクト発生に注意\n\nガウシアンマスク:元画像に対しガウス暈しでマスクを生成し、それを使います\n処理時間短い\n\nシャープマスク:元画像に対しウェーブレットでマスクを生成し、それを使います\n処理時間が長い
+TP_RETINEX_MAP_NONE;なし
+TP_RETINEX_MEDIAN;透過のメディアンフィルター
+TP_RETINEX_METHOD;方法
+TP_RETINEX_METHOD_TOOLTIP;高=明瞭な部分のレンダリングを補正します\n均等=明瞭な部分と不明瞭な部分をバランスよく補正します\n低=不明瞭な部分を重点的に補正します\nハイライト=ハイライト部分のマゼンタ被りを補正します
+TP_RETINEX_MLABEL;霞のない画像に修復 最小値=%1 最大値=%2
+TP_RETINEX_MLABEL_TOOLTIP;最小値=0 最大値=32768に近づける\nバランスの良い霞のない画像
+TP_RETINEX_NEIGHBOR;半径
+TP_RETINEX_NEUTRAL;リセット
+TP_RETINEX_NEUTRAL_TIP;全てのスライダー値とカーブをデフォルトの状態に戻します
+TP_RETINEX_OFFSET;オフセット（明るさ）
+TP_RETINEX_SCALES;ガウス暈しのグラデーション
+TP_RETINEX_SCALES_TOOLTIP;スライダー値が0の場合、同一の作業を繰り返します\n0より大きい値を設定すると、繰り返し作業を増やした時に、スケールと隣接するピクセルに対する作用は減ります。0より小さい場合は、その逆です
+TP_RETINEX_SETTINGS;設定
+TP_RETINEX_SKAL;スケール
+TP_RETINEX_SLOPE;フリーなガンマの勾配
+TP_RETINEX_STRENGTH;強さ
+TP_RETINEX_THRESHOLD;しきい値
+TP_RETINEX_THRESHOLD_TOOLTIP;インとアウトの制限を意味します\nイン=原画像\nアウト=ガウス暈しを施した原画像
+TP_RETINEX_TLABEL;透過　差異の最小値=%1 最大値=%2 平均=%3 標準偏差=%4
+TP_RETINEX_TLABEL2;透過 最小値=%1 最大値=%2
+TP_RETINEX_TLABEL_TOOLTIP;透過マップの結果を表示しています\n差異の最小値と最大値です\n平均と標準偏差\n透過マップの最小値と最大値です
+TP_RETINEX_TRANF;透過
+TP_RETINEX_TRANSMISSION;透過マップ
+TP_RETINEX_TRANSMISSION_TOOLTIP;透過に応じて透過を調整します\n横軸:左からマイナス値（最小を含む）、平均、プラス値（最大を含む）\n縦軸:増幅或いは減衰
+TP_RETINEX_UNIFORM;均等
+TP_RETINEX_VARIANCE;コントラスト
+TP_RETINEX_VARIANCE_TOOLTIP;差異の値を小さく取るとローカルコントラストと色度が増しますが、アーティファクトが発生するかもしれません
+TP_RETINEX_VIEW;プロセス
+TP_RETINEX_VIEW_MASK;マスク
+TP_RETINEX_VIEW_METHOD_TOOLTIP;標準 - 通常の表示\nマスク -  マスクを表示\nアンシャープマスク - 半径の大きいアンシャープマスクを施したような画像\n透過 - 自動/固定 - コントラストや明るさの調整を行う前の透過マップを表示\n\n注意:マスクの画像は現実の画像ではありません。目に見えるように増幅したものです
+TP_RETINEX_VIEW_NONE;標準
+TP_RETINEX_VIEW_TRAN;透過図 - 自動
+TP_RETINEX_VIEW_TRAN2;透過図 - 固定
+TP_RETINEX_VIEW_UNSHARP;アンシャープマスク
 TP_RGBCURVES_BLUE;B
 TP_RGBCURVES_CHANNEL;チャンネル
 TP_RGBCURVES_GREEN;G
@@ -1592,6 +1978,7 @@ TP_SHARPENEDGE_LABEL;エッジ
 TP_SHARPENEDGE_PASSES;反復
 TP_SHARPENEDGE_THREE;輝度のみ
 TP_SHARPENING_AMOUNT;適用量
+TP_SHARPENING_CONTRAST;コントラストのしきい値
 TP_SHARPENING_EDRADIUS;半径
 TP_SHARPENING_EDTOLERANCE;エッジ許容
 TP_SHARPENING_HALOCONTROL;ハロ抑制
@@ -1607,6 +1994,7 @@ TP_SHARPENING_RLD_ITERATIONS;繰返し
 TP_SHARPENING_THRESHOLD;しきい値
 TP_SHARPENING_USM;アンシャープマスク
 TP_SHARPENMICRO_AMOUNT;適用量
+TP_SHARPENMICRO_CONTRAST;コントラストのしきい値
 TP_SHARPENMICRO_LABEL;マイクロコントラスト
 TP_SHARPENMICRO_MATRIX;3×3マトリクスの代わりに 5×5
 TP_SHARPENMICRO_UNIFORMITY;均等
@@ -1838,6 +2226,8 @@ TP_WBALANCE_SOLUX41;Solux 4100K
 TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
 TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
 TP_WBALANCE_SPOTWB;スポットWB
+TP_WBALANCE_TEMPBIAS;自動ホワイトバランス　色温度のバイアス
+TP_WBALANCE_TEMPBIAS_TOOLTIP;”自動ホワイトバランスの計算に変更を加えます”\n色温度を変えることで画像の暖かみを増やしたり、冷たさを増やしたりします。\n偏向の度合いは色温度の割合で表示されます\n従って計算値は "算出した色温度 + 算出した色温度 * 偏向"で計算したものです
 TP_WBALANCE_TEMPERATURE;色温度
 TP_WBALANCE_TUNGSTEN;タングステン
 TP_WBALANCE_WATER1;水中 1
@@ -1855,390 +2245,12 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
-!DONT_SHOW_AGAIN;Don't show this message again.
-!DYNPROFILEEDITOR_DELETE;Delete
-!DYNPROFILEEDITOR_EDIT;Edit
-!DYNPROFILEEDITOR_EDIT_RULE;Edit Dynamic Profile Rule
-!DYNPROFILEEDITOR_ENTRY_TOOLTIP;The matching is case insensitive.\nUse the "re:" prefix to enter\na regular expression.
-!DYNPROFILEEDITOR_MOVE_DOWN;Move Down
-!DYNPROFILEEDITOR_MOVE_UP;Move Up
-!DYNPROFILEEDITOR_NEW;New
-!DYNPROFILEEDITOR_NEW_RULE;New Dynamic Profile Rule
-!DYNPROFILEEDITOR_PROFILE;Processing Profile
-!EXIFFILTER_IMAGETYPE;Image type
-!EXIFPANEL_SHOWALL;Show all
-!EXPORT_BYPASS;Processing steps to bypass
-!EXPORT_PIPELINE;Processing pipeline
-!EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
-!EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
-!EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
-!FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
-!FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
-!GENERAL_APPLY;Apply
-!GENERAL_OPEN;Open
-!GENERAL_SLIDER;Slider
-!GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
-!HISTORY_MSG_166;Exposure - Reset
-!HISTORY_MSG_173;NR - Detail recovery
-!HISTORY_MSG_203;NR - Color space
-!HISTORY_MSG_256;NR - Median - Type
-!HISTORY_MSG_297;NR - Mode
-!HISTORY_MSG_407;Retinex - Method
-!HISTORY_MSG_408;Retinex - Radius
-!HISTORY_MSG_409;Retinex - Contrast
-!HISTORY_MSG_410;Retinex - Offset
-!HISTORY_MSG_411;Retinex - Strength
-!HISTORY_MSG_412;Retinex - Gaussian gradient
-!HISTORY_MSG_413;Retinex - Contrast
-!HISTORY_MSG_414;Retinex - Histogram - Lab
-!HISTORY_MSG_415;Retinex - Transmission
-!HISTORY_MSG_416;Retinex
-!HISTORY_MSG_417;Retinex - Transmission median
-!HISTORY_MSG_418;Retinex - Threshold
-!HISTORY_MSG_419;Retinex - Color space
-!HISTORY_MSG_420;Retinex - Histogram - HSL
-!HISTORY_MSG_421;Retinex - Gamma
-!HISTORY_MSG_422;Retinex - Gamma
-!HISTORY_MSG_423;Retinex - Gamma slope
-!HISTORY_MSG_424;Retinex - HL threshold
-!HISTORY_MSG_425;Retinex - Log base
-!HISTORY_MSG_426;Retinex - Hue equalizer
-!HISTORY_MSG_427;Output rendering intent
-!HISTORY_MSG_428;Monitor rendering intent
-!HISTORY_MSG_429;Retinex - Iterations
-!HISTORY_MSG_430;Retinex - Transmission gradient
-!HISTORY_MSG_431;Retinex - Strength gradient
-!HISTORY_MSG_432;Retinex - M - Highlights
-!HISTORY_MSG_433;Retinex - M - Highlights TW
-!HISTORY_MSG_434;Retinex - M - Shadows
-!HISTORY_MSG_435;Retinex - M - Shadows TW
-!HISTORY_MSG_436;Retinex - M - Radius
-!HISTORY_MSG_437;Retinex - M - Method
-!HISTORY_MSG_438;Retinex - M - Equalizer
-!HISTORY_MSG_439;Retinex - Process
-!HISTORY_MSG_440;CbDL - Method
-!HISTORY_MSG_441;Retinex - Gain transmission
-!HISTORY_MSG_442;Retinex - Scale
-!HISTORY_MSG_443;Output black point compensation
-!HISTORY_MSG_444;WB - Temp bias
-!HISTORY_MSG_445;Raw sub-image
-!HISTORY_MSG_449;PS - ISO adaption
-!HISTORY_MSG_452;PS - Show motion
-!HISTORY_MSG_453;PS - Show mask only
-!HISTORY_MSG_457;PS - Check red/blue
-!HISTORY_MSG_462;PS - Check green
-!HISTORY_MSG_464;PS - Blur motion mask
-!HISTORY_MSG_465;PS - Blur radius
-!HISTORY_MSG_468;PS - Fill holes
-!HISTORY_MSG_469;PS - Median
-!HISTORY_MSG_471;PS - Motion correction
-!HISTORY_MSG_472;PS - Smooth transitions
-!HISTORY_MSG_473;PS - Use LMMSE
-!HISTORY_MSG_474;PS - Equalize
-!HISTORY_MSG_475;PS - Equalize channel
-!HISTORY_MSG_476;CAM02 - Temp out
-!HISTORY_MSG_477;CAM02 - Green out
-!HISTORY_MSG_478;CAM02 - Yb out
-!HISTORY_MSG_479;CAM02 - CAT02 adaptation out
-!HISTORY_MSG_480;CAM02 - Automatic CAT02 out
-!HISTORY_MSG_481;CAM02 - Temp scene
-!HISTORY_MSG_482;CAM02 - Green scene
-!HISTORY_MSG_483;CAM02 - Yb scene
-!HISTORY_MSG_484;CAM02 - Auto Yb scene
-!HISTORY_MSG_485;Lens Correction
-!HISTORY_MSG_486;Lens Correction - Camera
-!HISTORY_MSG_487;Lens Correction - Lens
-!HISTORY_MSG_488;HDR Tone Mapping
-!HISTORY_MSG_489;HDR TM - Threshold
-!HISTORY_MSG_490;HDR TM - Amount
-!HISTORY_MSG_491;White Balance
-!HISTORY_MSG_492;RGB Curves
-!HISTORY_MSG_493;L*a*b* Adjustments
-!HISTORY_MSG_CLAMPOOG;Out-of-gamut color clipping
-!HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
-!HISTORY_MSG_HISTMATCHING;Auto-Matched Tone Curve
-!HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
-!HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
-!HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
-!HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
-!HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
-!HISTORY_MSG_METADATA_MODE;Metadata copy mode
-!HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
-!HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
-!HISTORY_MSG_TM_FATTAL_ANCHOR;HDR TM - Anchor
-!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
-!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
-!IPTCPANEL_COPYRIGHT;Copyright notice
-!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
-!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
-!IPTCPANEL_CREATOR;Creator
-!IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
-!IPTCPANEL_CREATORJOBTITLE;Creator's job title
-!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
-!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
-!IPTCPANEL_DESCRIPTION;Description
-!IPTCPANEL_DESCRIPTIONHINT;Enter a "caption" describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
-!IPTCPANEL_DESCRIPTIONWRITER;Description writer
-!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
-!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
-!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
-!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
-!IPTCPANEL_PROVINCE;Province or state
-!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
-!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
-!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
-!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
-!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
-!IPTCPANEL_TRANSREFERENCE;Job ID
-!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
-!LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
-!LENSPROFILE_CORRECTION_LCPFILE;LCP File
-!LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
-!LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
-!MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
-!MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
-!MAIN_TAB_ADVANCED;Advanced
-!MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt-w</b>
-!MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
-!MONITOR_PROFILE_SYSTEM;System default
-!OPTIONS_BUNDLED_MISSING;The bundled profile "<b>%1</b>" could not be found!\n\nYour installation could be damaged.\n\nDefault internal values will be used instead.
-!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
-!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
-!PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
-!PARTIALPASTE_LOCALCONTRAST;Local contrast
-!PARTIALPASTE_METADATA;Metadata mode
-!PARTIALPASTE_PRSHARPENING;Post-resize sharpening
-!PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
-!PARTIALPASTE_RAW_IMAGENUM;Sub-image
-!PARTIALPASTE_RAW_PIXELSHIFT;Pixel Shift
-!PARTIALPASTE_RETINEX;Retinex
-!PARTIALPASTE_TM_FATTAL;HDR Tone mapping
-!PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
-!PREFERENCES_CMMBPC;Black point compensation
-!PREFERENCES_CROP;Crop editing
-!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
-!PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
-!PREFERENCES_CROP_GUIDES_FRAME;Frame
-!PREFERENCES_CROP_GUIDES_FULL;Original
-!PREFERENCES_CROP_GUIDES_NONE;None
-!PREFERENCES_D50_OLD;5000K
-!PREFERENCES_DIRECTORIES;Directories
-!PREFERENCES_EDITORCMDLINE;Custom command line
-!PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
-!PREFERENCES_LANG;Language
-!PREFERENCES_MONINTENT;Default rendering intent
-!PREFERENCES_MONITOR;Monitor
-!PREFERENCES_MONPROFILE;Default color profile
-!PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
-!PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
-!PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
-!PREFERENCES_PRINTER;Printer (Soft-Proofing)
-!PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
-!PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
-!PREFERENCES_PROFILE_NONE;None
-!PREFERENCES_PRTINTENT;Rendering intent
-!PREFERENCES_PRTPROFILE;Color profile
-!PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
-!PREFERENCES_SELECTFONT_COLPICKER;Select Color Picker's font
-!PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
-!PREFERENCES_THEME;Theme
-!PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
-!PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
-!PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
-!PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
-!PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
-!PROFILEPANEL_PDYNAMIC;Dynamic
-!QINFO_FRAMECOUNT;%2 frames
-!QINFO_HDR;HDR / %2 frame(s)
-!QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
-!SAMPLEFORMAT_0;Unknown data format
-!SAMPLEFORMAT_1;Unsigned 8 bits
-!SAMPLEFORMAT_2;Unsigned 16 bits
-!SAMPLEFORMAT_4;LogLuv 24 bits
-!SAMPLEFORMAT_8;LogLuv 32 bits
-!SAMPLEFORMAT_16;32 bits floating point
-!SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
-!SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
-!SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
-!TOOLBAR_TOOLTIP_COLORPICKER;Lockable Color Picker\n\nWhen enabled:\nClick in the preview with left mouse button to add a color picker\nDrag it around while pressing the left mouse button\nDelete the color picker with a right mouse button click\nDelete all color pickers with Shift + Right mouse button click\nRight click away from any color picker to go back to the Hand tool
-!TP_CBDL_AFT;After Black-and-White
-!TP_CBDL_BEF;Before Black-and-White
-!TP_CBDL_METHOD;Process located
-!TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
-!TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
-!TP_COLORAPP_NEUTRAL;Reset
-!TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
-!TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
-!TP_COLORAPP_YB;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE_TOOLTIP;If "auto" is enabled, Yb is calculated from the mean value of the actual image's luminance
-!TP_COLORTONING_LABGRID;L*a*b* color correction grid
-!TP_COLORTONING_LABGRID_VALUES;HL: a=%1 b=%2\nS: a=%3 b=%4
-!TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
-!TP_DIRPYRDENOISE_LABEL;Noise Reduction
-!TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.
-!TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
-!TP_DIRPYRDENOISE_TYPE_3X3;3×3
-!TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 soft
-!TP_DIRPYRDENOISE_TYPE_5X5;5×5
-!TP_DIRPYRDENOISE_TYPE_5X5SOFT;5×5 soft
-!TP_DIRPYRDENOISE_TYPE_7X7;7×7
-!TP_DIRPYRDENOISE_TYPE_9X9;9×9
-!TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
-!TP_EXPOSURE_CLAMPOOG;Clip out-of-gamut colors
-!TP_EXPOSURE_HISTMATCHING;Auto-Matched Tone Curve
-!TP_EXPOSURE_HISTMATCHING_TOOLTIP;Automatically adjust sliders and curves (except exposure compensation) to match the look of the embedded JPEG thumbnail.
-!TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
-!TP_ICM_BPC;Black Point Compensation
-!TP_ICM_PROFILEINTENT;Rendering Intent
-!TP_ICM_SAVEREFERENCE;Save Reference Image
-!TP_LOCALCONTRAST_AMOUNT;Amount
-!TP_LOCALCONTRAST_DARKNESS;Darkness level
-!TP_LOCALCONTRAST_LABEL;Local Contrast
-!TP_LOCALCONTRAST_LIGHTNESS;Lightness level
-!TP_LOCALCONTRAST_RADIUS;Radius
-!TP_METADATA_EDIT;Apply modifications
-!TP_METADATA_MODE;Metadata copy mode
-!TP_METADATA_STRIP;Strip all metadata
-!TP_METADATA_TUNNEL;Copy unchanged
-!TP_NEUTRAL;Reset
-!TP_PREPROCESS_LINEDENOISE_DIRECTION;Direction
-!TP_PREPROCESS_LINEDENOISE_DIRECTION_BOTH;Both
-!TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL;Horizontal
-!TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;Horizontal only on PDAF rows
-!TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertical
-!TP_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
-!TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.
-!TP_RAWCACORR_CASTR;Strength
-!TP_RAW_1PASSMEDIUM;1-Pass (Medium)
-!TP_RAW_3PASSBEST;3-Pass (Best)
-!TP_RAW_AHD;AHD
-!TP_RAW_AMAZE;AMaZE
-!TP_RAW_DCB;DCB
-!TP_RAW_EAHD;EAHD
-!TP_RAW_FAST;Fast
-!TP_RAW_HPHD;HPHD
-!TP_RAW_IGV;IGV
-!TP_RAW_IMAGENUM;Sub-image
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
-!TP_RAW_LMMSE;LMMSE
-!TP_RAW_MONO;Mono
-!TP_RAW_NONE;None (Shows sensor pattern)
-!TP_RAW_PIXELSHIFT;Pixel Shift
-!TP_RAW_PIXELSHIFTBLUR;Blur motion mask
-!TP_RAW_PIXELSHIFTEPERISO;Sensitivity
-!TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value of 0 should work fine for base ISO.\nHigher values increase sensitivity of motion detection.\nChange in small steps and watch the motion mask while changing.\nIncrease sensitivity for underexposed or high ISO images.
-!TP_RAW_PIXELSHIFTEQUALBRIGHT;Equalize brightness of frames
-!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Equalize per channel
-!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the RGB channels individually.\nDisabled: Use same equalization factor for all channels.
-!TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Equalize the brightness of the frames to the brightness of the selected frame.\nIf there are overexposed areas in the frames select the brightest frame to avoid magenta color cast in overexposed areas or enable motion correction.
-!TP_RAW_PIXELSHIFTGREEN;Check green channel for motion
-!TP_RAW_PIXELSHIFTHOLEFILL;Fill holes in motion mask
-!TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fill holes in motion mask
-!TP_RAW_PIXELSHIFTLMMSE;Use LMMSE for moving parts
-!TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Use LMMSE instead of AMaZE for areas of motion.\nUseful for high ISO images.
-!TP_RAW_PIXELSHIFTMEDIAN;Use median for moving parts
-!TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Use median of all frames instead of selected frame for regions with motion.\nRemoves objects which are at different places in all frames.\nGives motion effect on slow moving (overlapping) objects.
-!TP_RAW_PIXELSHIFTMM_AUTO;Automatic
-!TP_RAW_PIXELSHIFTMM_CUSTOM;Custom
-!TP_RAW_PIXELSHIFTMM_OFF;Off
-!TP_RAW_PIXELSHIFTMOTIONMETHOD;Motion Correction
-!TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection.\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate.\n100 means the AMaZE-demosaiced frame will be used.
-!TP_RAW_PIXELSHIFTNONGREENCROSS;Check red/blue channels for motion
-!TP_RAW_PIXELSHIFTSHOWMOTION;Show motion mask
-!TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Show only motion mask
-!TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Shows the motion mask without the image.
-!TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a green mask showing the regions with motion.
-!TP_RAW_PIXELSHIFTSIGMA;Blur radius
-!TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;The default radius of 1.0 usually fits well for base ISO.\nIncrease the value for high ISO shots, 5.0 is a good starting point.\nWatch the motion mask while changing the value.
-!TP_RAW_PIXELSHIFTSMOOTH;Smooth transitions
-!TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Smooth transitions between areas with motion and areas without.\nSet to 0 to disable transition smoothing.\nSet to 1 to either get the AMaZE/LMMSE result of the selected frame (depending on whether "Use LMMSE" is selected), or the median of all four frames if "Use median" is selected.
-!TP_RAW_RCD;RCD
-!TP_RAW_VNG4;VNG4
-!TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
-!TP_RETINEX_CONTEDIT_LAB;Histogram equalizer L*a*b*
-!TP_RETINEX_CONTEDIT_LH;Hue equalizer
-!TP_RETINEX_CONTEDIT_MAP;Mask equalizer
-!TP_RETINEX_CURVEEDITOR_CD;L=f(L)
-!TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorrect raw data to reduce halos and artifacts.
-!TP_RETINEX_CURVEEDITOR_LH;Strength=f(H)
-!TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Strength according to hue Strength=f(H)\nThis curve also acts on chroma when using the "Highlight" retinex method.
-!TP_RETINEX_CURVEEDITOR_MAP;L=f(L)
-!TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;This curve can be applied alone or with a Gaussian mask or wavelet mask.\nBeware of artifacts!
-!TP_RETINEX_EQUAL;Equalizer
-!TP_RETINEX_FREEGAMMA;Free gamma
-!TP_RETINEX_GAIN;Gain
-!TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
-!TP_RETINEX_GAINTRANSMISSION;Gain transmission
-!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce transmission map to achieve luminance.\nAbscissa: transmission -min from 0, mean, and values (max).\nOrdinate: gain.
-!TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
-!TP_RETINEX_GAMMA;Gamma
-!TP_RETINEX_GAMMA_FREE;Free
-!TP_RETINEX_GAMMA_HIGH;High
-!TP_RETINEX_GAMMA_LOW;Low
-!TP_RETINEX_GAMMA_MID;Middle
-!TP_RETINEX_GAMMA_NONE;None
-!TP_RETINEX_GAMMA_TOOLTIP;Restore tones by applying gamma before and after Retinex. Different from Retinex curves or others curves (Lab, Exposure, etc.).
-!TP_RETINEX_GRAD;Transmission gradient
-!TP_RETINEX_GRADS;Strength gradient
-!TP_RETINEX_GRADS_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Strength is reduced when iterations increase, and conversely.
-!TP_RETINEX_GRAD_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Variance and Threshold are reduced when iterations increase, and conversely.
-!TP_RETINEX_HIGH;High
-!TP_RETINEX_HIGHLIG;Highlight
-!TP_RETINEX_HIGHLIGHT;Highlight threshold
-!TP_RETINEX_HIGHLIGHT_TOOLTIP;Increase action of High algorithm.\nMay require you to re-adjust "Neighboring pixels" and to increase the "White-point correction" in the Raw tab -> Raw White Points tool.
-!TP_RETINEX_HSLSPACE_LIN;HSL-Linear
-!TP_RETINEX_HSLSPACE_LOG;HSL-Logarithmic
-!TP_RETINEX_ITER;Iterations (Tone-mapping)
-!TP_RETINEX_ITERF;Tone mapping
-!TP_RETINEX_ITER_TOOLTIP;Simulate a tone-mapping operator.\nHigh values increase the processing time.
-!TP_RETINEX_LABEL;Retinex
-!TP_RETINEX_LABEL_MASK;Mask
-!TP_RETINEX_LABSPACE;L*a*b*
-!TP_RETINEX_LOW;Low
-!TP_RETINEX_MAP;Mask method
-!TP_RETINEX_MAP_GAUS;Gaussian mask
-!TP_RETINEX_MAP_MAPP;Sharp mask (wavelet partial)
-!TP_RETINEX_MAP_MAPT;Sharp mask (wavelet total)
-!TP_RETINEX_MAP_METHOD_TOOLTIP;Use the mask generated by the Gaussian function above (Radius, Method) to reduce halos and artifacts.\n\nCurve only: apply a diagonal contrast curve on the mask.\nBeware of artifacts!\n\nGaussian mask: generate and use a Gaussian blur of the original mask.\nQuick.\n\nSharp mask: generate and use a wavelet on the original mask.\nSlow.
-!TP_RETINEX_MAP_NONE;None
-!TP_RETINEX_MEDIAN;Transmission median filter
-!TP_RETINEX_METHOD;Method
-!TP_RETINEX_METHOD_TOOLTIP;Low = Reinforce low light.\nUniform = Equalize action.\nHigh = Reinforce high light.\nHighlights = Remove magenta in highlights.
-!TP_RETINEX_MLABEL;Restored haze-free Min=%1 Max=%2
-!TP_RETINEX_MLABEL_TOOLTIP;Should be near min=0 max=32768\nRestored image with no mixture.
-!TP_RETINEX_NEIGHBOR;Radius
-!TP_RETINEX_NEUTRAL;Reset
-!TP_RETINEX_NEUTRAL_TIP;Reset all sliders and curves to their default values.
-!TP_RETINEX_OFFSET;Offset (brightness)
-!TP_RETINEX_SCALES;Gaussian gradient
-!TP_RETINEX_SCALES_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Scale and radius are reduced when iterations increase, and conversely.
-!TP_RETINEX_SETTINGS;Settings
-!TP_RETINEX_SKAL;Scale
-!TP_RETINEX_SLOPE;Free gamma slope
-!TP_RETINEX_STRENGTH;Strength
-!TP_RETINEX_THRESHOLD;Threshold
-!TP_RETINEX_THRESHOLD_TOOLTIP;Limits in/out.\nIn = image source,\nOut = image gauss.
-!TP_RETINEX_TLABEL;TM Min=%1 Max=%2 Mean=%3 Sigma=%4
-!TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
-!TP_RETINEX_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nMean and Sigma.\nTm=Min TM=Max of transmission map.
-!TP_RETINEX_TRANF;Transmission
-!TP_RETINEX_TRANSMISSION;Transmission map
-!TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.
-!TP_RETINEX_UNIFORM;Uniform
-!TP_RETINEX_VARIANCE;Contrast
-!TP_RETINEX_VARIANCE_TOOLTIP;Low variance increase local contrast and saturation, but can lead to artifacts.
-!TP_RETINEX_VIEW;Process
-!TP_RETINEX_VIEW_MASK;Mask
-!TP_RETINEX_VIEW_METHOD_TOOLTIP;Standard - Normal display.\nMask -  Displays the mask.\nUnsharp mask - Displays the image with a high radius unsharp mask.\nTransmission - Auto/Fixed - Displays the file transmission-map, before any action on contrast and brightness.\n\nAttention: the mask does not correspond to reality, but is amplified to make it more visible.
-!TP_RETINEX_VIEW_NONE;Standard
-!TP_RETINEX_VIEW_TRAN;Transmission - Auto
-!TP_RETINEX_VIEW_TRAN2;Transmission - Fixed
-!TP_RETINEX_VIEW_UNSHARP;Unsharp mask
+!HISTORY_MSG_488;Dynamic Range Compression
+!HISTORY_MSG_489;DRC - Threshold
+!HISTORY_MSG_490;DRC - Amount
+!HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
+!PARTIALPASTE_TM_FATTAL;Dynamic Range Compression
 !TP_TM_FATTAL_AMOUNT;Amount
 !TP_TM_FATTAL_ANCHOR;Anchor
-!TP_TM_FATTAL_LABEL;HDR Tone Mapping
+!TP_TM_FATTAL_LABEL;Dynamic Range Compression
 !TP_TM_FATTAL_THRESHOLD;Threshold
-!TP_WBALANCE_TEMPBIAS;AWB temperature bias
-!TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the "auto white balance"\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by "computedTemp + computedTemp * bias".

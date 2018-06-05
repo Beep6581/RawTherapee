@@ -55,13 +55,16 @@
 #54 30.03.2018 Erweiterung (TooWaBoo) RT 5.4
 #55 06.04.2018 Erweiterung (TooWaBoo) RT 5.4
 #56 27.04.2018 Erweiterung (TooWaBoo) RT 5.4
+#57 17.05.2018 Erweiterung (TooWaBoo) RT 5.4
+#58 19.05.2018 Erweiterung (TooWaBoo) RT 5.4
+#59 29.05.2018 Erweiterung (TooWaBoo) RT 5.4
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
 ABOUT_TAB_LICENSE;Lizenz
 ABOUT_TAB_RELEASENOTES;Versionshinweise
 ABOUT_TAB_SPLASH;Startbild
-ADJUSTER_RESET_TO_DEFAULT;Standard wiederherstellen
+ADJUSTER_RESET_TO_DEFAULT;<b>Klick</b> - Auf Standardwert zurücksetzen.\n<b>Strg</b> + <b>Klick</b> - Auf Initialwert zurücksetzen.
 BATCHQUEUE_AUTOSTART;Automatisch starten
 BATCHQUEUE_AUTOSTARTHINT;Bei neuem Job die Verarbeitung automatisch starten
 BATCHQUEUE_DESTFILENAME;Pfad und Dateiname
@@ -110,6 +113,7 @@ EXIFFILTER_CAMERA;Kamera
 EXIFFILTER_EXPOSURECOMPENSATION;Belichtungskorrektur (EV)
 EXIFFILTER_FILETYPE;Dateityp
 EXIFFILTER_FOCALLEN;Brennweite
+EXIFFILTER_IMAGETYPE;Bildtyp
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objektiv
 EXIFFILTER_METADATAFILTER;Metadatenfilter einschalten
@@ -284,6 +288,7 @@ GENERAL_NONE;Keine
 GENERAL_OK;OK
 GENERAL_OPEN;Öffnen
 GENERAL_PORTRAIT;Portrait
+GENERAL_RESET;Zurücksetzen
 GENERAL_SAVE;Speichern
 GENERAL_SLIDER;Regler
 GENERAL_UNCHANGED;(Unverändert)
@@ -572,7 +577,7 @@ HISTORY_MSG_269;(Farbanpassungen)\nLichter - Blau / Rot
 HISTORY_MSG_270;(Farbanpassungen)\nLichter - Cyan / Grün
 HISTORY_MSG_271;(Farbanpassungen)\nLichter - Gelb / Blau
 HISTORY_MSG_272;(Farbanpassungen)\nFarbausgleich
-HISTORY_MSG_273;(Farbanpassungen)\nZurücksetzen
+HISTORY_MSG_273;(Farbanpassungen)\nFarbausgleich\nRegler zurücksetzen
 HISTORY_MSG_274;(Farbanpassungen)\nSättigung Schatten
 HISTORY_MSG_275;(Farbanpassungen)\nSättigung Lichter
 HISTORY_MSG_276;(Farbanpassungen)\nDeckkraft
@@ -771,9 +776,6 @@ HISTORY_MSG_484;(CIECAM02) - Szene\nAuto Yb%
 HISTORY_MSG_485;(Objektivkorrektur)\nProfil
 HISTORY_MSG_486;(Objektivkorrektur)\nProfil - Kamera
 HISTORY_MSG_487;(Objektivkorrektur)\nProfil - Objektiv
-HISTORY_MSG_488;(HDR-Dynamikkompression)
-HISTORY_MSG_489;(HDR-Dynamikkompression)\nSchwelle
-HISTORY_MSG_490;(HDR-Dynamikkompression)\nIntensität
 HISTORY_MSG_491;(Weißabgleich)
 HISTORY_MSG_492;(RGB-Kurven)
 HISTORY_MSG_493;(L*a*b*)
@@ -786,9 +788,11 @@ HISTORY_MSG_LOCALCONTRAST_ENABLED;(Lokaler Kontrast)
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;(Lokaler Kontrast)\nHelle Bereiche
 HISTORY_MSG_LOCALCONTRAST_RADIUS;(Lokaler Kontrast)\nRadius
 HISTORY_MSG_METADATA_MODE;(Metadaten)\nKopiermodus
+HISTORY_MSG_MICROCONTRAST_CONTRAST;(Mikrokontrast)\nKontrastschwelle
 HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;(Sensor-Matrix)\nVorverarbeitung\nRichtung
 HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;(Sensor-Matrix)\nVorverarbeitung\nPDAF-Zeilenfilter
-HISTORY_MSG_TM_FATTAL_ANCHOR;(HDR-Dynamikkompression)\nHelligkeitsverschiebung
+HISTORY_MSG_PRSHARPEN_CONTRAST;(Skalieren) - Schärfen\nKontrastschwelle
+HISTORY_MSG_SHARPENING_CONTRAST;(Schärfung)\nKontrastschwelle
 HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
 HISTORY_SNAPSHOT;Schnappschuss
@@ -1001,7 +1005,6 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Schatten/Lichter
 PARTIALPASTE_SHARPENEDGE;Kantenschärfung
 PARTIALPASTE_SHARPENING;Schärfung
 PARTIALPASTE_SHARPENMICRO;Mikrokontrast
-PARTIALPASTE_TM_FATTAL;HDR-Dynamikkompression
 PARTIALPASTE_VIBRANCE;Dynamik
 PARTIALPASTE_VIGNETTING;Vignettierungskorrektur
 PARTIALPASTE_WAVELETGROUP;Wavelet
@@ -1271,12 +1274,14 @@ QINFO_HDR;HDR / %2 Frame(s)
 QINFO_ISO;ISO
 QINFO_NOEXIF;Keine Exif-Daten vorhanden.
 QINFO_PIXELSHIFT;Pixel Shift / %2 Frame(s)
-SAMPLEFORMAT_0;Unbekanntes Format
-SAMPLEFORMAT_1;Ohne Vorzeichen 8 Bits
-SAMPLEFORMAT_2;Ohne Vorzeichen 16 Bits
-SAMPLEFORMAT_4;LogLuv 24 Bits
-SAMPLEFORMAT_8;LogLuv 32 Bits
-SAMPLEFORMAT_16;32 Bits Fließkomma
+SAMPLEFORMAT_0;Unbekanntes Datenformat
+SAMPLEFORMAT_1;8 Bit ohne Vorzeichen
+SAMPLEFORMAT_2;16 Bit ohne Vorzeichen
+SAMPLEFORMAT_4;24 Bit LogLuv
+SAMPLEFORMAT_8;32 Bit LogLuv
+SAMPLEFORMAT_16;16 Bit Gleitkomma
+SAMPLEFORMAT_32;24 Bit Gleitkomma
+SAMPLEFORMAT_64;32 Bit Gleitkomma
 SAVEDLG_AUTOSUFFIX;Suffix anfügen, wenn die Datei bereits existiert
 SAVEDLG_FILEFORMAT;Dateiformat
 SAVEDLG_FORCEFORMATOPTS;Erzwinge Speicheroptionen
@@ -1314,7 +1319,6 @@ TP_BWMIX_ALGO_LI;Linear
 TP_BWMIX_ALGO_SP;Spezialeffekte
 TP_BWMIX_ALGO_TOOLTIP;<b>Linear</b> liefert ein lineares Ergebnis\n<b>Spezialeffekte</b> liefert einen speziellen Effekt durch Mischen von Kanälen.
 TP_BWMIX_AUTOCH;Auto
-TP_BWMIX_AUTOCH_TIP;Automatische Berechnung der RGB-Werte.
 TP_BWMIX_CC_ENABLED;Komplemantärfarbe anpassen
 TP_BWMIX_CC_TOOLTIP;Aktiviert die automatische Anpassung der\nKomplementärfarbe im ROYGCBPM-Modus
 TP_BWMIX_CHANNEL;Luminanzequalizer
@@ -1341,10 +1345,9 @@ TP_BWMIX_MET;Methode
 TP_BWMIX_MET_CHANMIX;Kanalmixer
 TP_BWMIX_MET_DESAT;Entsättigung
 TP_BWMIX_MET_LUMEQUAL;Luminanz
-TP_BWMIX_MIXC;Mixer
-TP_BWMIX_NEUTRAL;Mixer zurücksetzen
-TP_BWMIX_NEUTRAL_TIP;Alle Werte auf Standard zurücksetzen. (Farbfilter, Kanalmixer)
-TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%  Gesamt: %4%%
+TP_BWMIX_MIXC;Kanalmixer
+TP_BWMIX_NEUTRAL;Zurücksetzen
+TP_BWMIX_RGBLABEL;R: %1%% G: %2%% B: %3%% Gesamt: %4%%
 TP_BWMIX_RGBLABEL_HINT;RGB-Faktoren\n\nGesamt: Summe aller RGB-Werte.\n- immer 100% im Modus Relativ\n- höher (heller), oder niedriger (dunkler) 100% im Modus Absolut
 TP_BWMIX_RGB_TOOLTIP;Mischen Sie die Kanäle. Verwenden Sie die Vorgaben zur Orientierung.\nNegative Werte können zu Artefakten führen.
 TP_BWMIX_SETTING;Voreinstellung
@@ -1846,6 +1849,8 @@ TP_RAW_NONE;Keine
 TP_RAW_PIXELSHIFT;Pixel Shift
 TP_RAW_PIXELSHIFTADAPTIVE;Adaptive Erkennung
 TP_RAW_PIXELSHIFTBLUR;Unschärfebewegungsmaske
+TP_RAW_PIXELSHIFTEPERISO;Empfindlichkeit
+TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;Der Standardwert 0 wird für die Basis-ISO empfohlen.\nHöhere Werte erhöhen die Empfindlichkeit der Bewegungserkennung.\nVerändern Sie den Wert in kleinen Schritten und beobachten Sie die\nBewegungsmaske. Erhöhen Sie die Empfindlichkeit für unterbelichtete\noder High-ISO-Bilder.
 TP_RAW_PIXELSHIFTEQUALBRIGHT;Frame-Helligkeit angleichen
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Ausgleich pro Kanal
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;EIN: Individueller Ausgleich der RGB-Kanäle.\nAUS: Identischer Ausgleichsfaktor für alle Kanäle.
@@ -1881,6 +1886,7 @@ TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
 TP_RAW_PIXELSHIFTSHOWMOTION;Bewegungsmaske anzeigen
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Nur Maske anzeigen
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Zeigt die Bewegungsmaske ohne Bild.
+TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Überlagert das Bild mit einer grünen Maske,\num die Bewegungsbereiche hervorzuheben.
 TP_RAW_PIXELSHIFTSIGMA;Unschärferadius
 TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Der Standard-Radius von 1,0 passt in der Regel für die Basis-ISO.\nErhöhen Sie den Wert für High-ISO-Aufnahmen, 5,0 ist ein guter\nAusgangspunkt für High-ISO-Aufnahmen. Achten Sie auf die\nBewegungsmaske, während Sie den Wert ändern.
 TP_RAW_PIXELSHIFTSMOOTH;Weicher Übergang
@@ -2011,6 +2017,7 @@ TP_SHARPENEDGE_LABEL;Kantenschärfung
 TP_SHARPENEDGE_PASSES;Iterationen
 TP_SHARPENEDGE_THREE;Nur Luminanz
 TP_SHARPENING_AMOUNT;Intensität
+TP_SHARPENING_CONTRAST;Kontrastschwelle
 TP_SHARPENING_EDRADIUS;Radius
 TP_SHARPENING_EDTOLERANCE;Kantentoleranz
 TP_SHARPENING_HALOCONTROL;Halokontrolle
@@ -2026,13 +2033,10 @@ TP_SHARPENING_RLD_ITERATIONS;Iterationen
 TP_SHARPENING_THRESHOLD;Schwelle
 TP_SHARPENING_USM;Unschärfemaskierung
 TP_SHARPENMICRO_AMOUNT;Intensität
+TP_SHARPENMICRO_CONTRAST;Kontrastschwelle
 TP_SHARPENMICRO_LABEL;Mikrokontrast
 TP_SHARPENMICRO_MATRIX;3×3-Matrix statt 5×5-Matrix
 TP_SHARPENMICRO_UNIFORMITY;Gleichmäßigkeit
-TP_TM_FATTAL_AMOUNT;Intensität
-TP_TM_FATTAL_ANCHOR;Helligkeitsverschiebung
-TP_TM_FATTAL_LABEL;HDR-Dynamikkompression
-TP_TM_FATTAL_THRESHOLD;Schwelle
 TP_VIBRANCE_AVOIDCOLORSHIFT;Farbverschiebungen vermeiden
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Hautfarbtöne
@@ -2280,7 +2284,12 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-EXIFFILTER_IMAGETYPE;Bildtyp
-TP_RAW_PIXELSHIFTEPERISO;Empfindlichkeit
-TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;Der Standardwert 0 wird für die Basis-ISO empfohlen.\nHöhere Werte erhöhen die Empfindlichkeit der Bewegungserkennung.\nVerändern Sie den Wert in kleinen Schritten und beobachten Sie die\nBewegungsmaske. Erhöhen Sie die Empfindlichkeit für unterbelichtete\noder High-ISO-Bilder.
-TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Überlagert das Bild mit einer grünen Maske,\num die Bewegungsbereiche hervorzuheben.
+!HISTORY_MSG_488;Dynamic Range Compression
+!HISTORY_MSG_489;DRC - Threshold
+!HISTORY_MSG_490;DRC - Amount
+!HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
+!PARTIALPASTE_TM_FATTAL;Dynamic Range Compression
+!TP_TM_FATTAL_AMOUNT;Amount
+!TP_TM_FATTAL_ANCHOR;Anchor
+!TP_TM_FATTAL_LABEL;Dynamic Range Compression
+!TP_TM_FATTAL_THRESHOLD;Threshold

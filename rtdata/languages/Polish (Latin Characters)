@@ -13,7 +13,6 @@ ABOUT_TAB_CREDITS;Zaslugi
 ABOUT_TAB_LICENSE;Licencja
 ABOUT_TAB_RELEASENOTES;Notatki eksploatacyjne
 ABOUT_TAB_SPLASH;Ekran powitalny
-ADJUSTER_RESET_TO_DEFAULT;Przywroc domyslne
 BATCHQUEUE_AUTOSTART;Autostart
 BATCHQUEUE_AUTOSTARTHINT;Rozpocznij przetwarzanie automatycznie gdy pojawi sie nowe zadanie.
 BATCHQUEUE_DESTFILENAME;Sciezka i nazwa pliku
@@ -445,9 +444,7 @@ HISTORY_MSG_231;B&amp;W - Krzywa 'Przed'
 HISTORY_MSG_232;B&amp;W - Rodzaj krzywej 'Przed'
 HISTORY_MSG_233;B&amp;W - Krzywa 'Po'
 HISTORY_MSG_234;B&amp;W - Rodzaj krzywej 'Po'
-HISTORY_MSG_235;B&amp;W - Auto-mieszanie kolorow
 HISTORY_MSG_236;-
-HISTORY_MSG_237;B&amp;W - Mieszacz
 HISTORY_MSG_238;FP - Wtapianie
 HISTORY_MSG_239;FP - Sila
 HISTORY_MSG_240;FP - Srodek
@@ -482,7 +479,6 @@ HISTORY_MSG_269;Koloryzacja - Podswietlenia - Czerwone
 HISTORY_MSG_270;Koloryzacja - Podswietlenia - Zielona
 HISTORY_MSG_271;Koloryzacja - Podswietlenia - Niebieskie
 HISTORY_MSG_272;Koloryzacja - Balans
-HISTORY_MSG_273;Koloryzacja - Reset
 HISTORY_MSG_274;Koloryzacja - Nasycenie cieni
 HISTORY_MSG_275;Koloryzacja - Nasycenie jasnych
 HISTORY_MSG_276;Koloryzacja - Przezroczystosc
@@ -876,7 +872,6 @@ TP_BWMIX_ALGO_LI;Liniowy
 TP_BWMIX_ALGO_SP;Efekty specjalne
 TP_BWMIX_ALGO_TOOLTIP;Liniowy: mieszanie kanalow <b>liniowo</b>.\nEfekty specjalne: kanaly zostana mieszane <b>nieliniowo</b>.
 TP_BWMIX_AUTOCH;Auto
-TP_BWMIX_AUTOCH_TIP;Oblicza wartosci optymalizacji mieszacza kanalow.
 TP_BWMIX_CC_ENABLED;Dopasuj barwy dopelniajace
 TP_BWMIX_CC_TOOLTIP;Wlacz aby umozliwic automatyczne dopasowanie barw dopelniajacych w trybie CPZZCNPM.
 TP_BWMIX_CHANNEL;Ekwalizator luminancji
@@ -903,9 +898,6 @@ TP_BWMIX_MET;Metoda
 TP_BWMIX_MET_CHANMIX;Mieszacz kanalow
 TP_BWMIX_MET_DESAT;Desaturacja
 TP_BWMIX_MET_LUMEQUAL;Ekwalizator luminancji
-TP_BWMIX_MIXC;Mieszacz
-TP_BWMIX_NEUTRAL;Zresetuj mieszacz
-TP_BWMIX_NEUTRAL_TIP;Zresetuj wszystkie wartosci (filtru barwnego, mieszacza kanalow) na domyslne.
 TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Total: %4%%
 TP_BWMIX_RGBLABEL_HINT;Ostateczne wartosci RGB ktore uwzgledniaja wszystkie opcje mieszacza.\n"Total" wyswietla sume wartosci RGB:\n- zawsze 100% w trybie relatywnym,\n- ponad (jasniej) lub ponizej (ciemniej) 100% w trybie absolutnym.
 TP_BWMIX_RGB_TOOLTIP;Miesza kanaly RGB. Kieruj sie gotowymi ustawieniami.\nNalezy zwrocic uwage na ujemne wartosci poniewaz moga pojawic sie znieksztalcenia sygnalu w obrazie lub dzialac w sposob nieprzewidywalny.
@@ -1443,6 +1435,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
 !BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !CURVEEDITOR_AXIS_IN;I:
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
@@ -1480,12 +1473,16 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !GENERAL_APPLY;Apply
 !GENERAL_ASIMAGE;As Image
 !GENERAL_OPEN;Open
+!GENERAL_RESET;Reset
 !GENERAL_SLIDER;Slider
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
 !HISTORY_MSG_166;Exposure - Reset
 !HISTORY_MSG_173;NR - Detail recovery
 !HISTORY_MSG_203;NR - Color space
+!HISTORY_MSG_235;B&amp;W - CM - Auto
+!HISTORY_MSG_237;B&amp;W - CM
 !HISTORY_MSG_256;NR - Median - Type
+!HISTORY_MSG_273;CT - Color Balance SMH
 !HISTORY_MSG_297;NR - Mode
 !HISTORY_MSG_299;NR - Chrominance curve
 !HISTORY_MSG_300;-
@@ -1580,7 +1577,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !HISTORY_MSG_389;W - Residual - CB blue mid
 !HISTORY_MSG_390;W - Residual - CB green low
 !HISTORY_MSG_391;W - Residual - CB blue low
-!HISTORY_MSG_392;W - Residual - CB Reset
+!HISTORY_MSG_392;W - Residual - Color Balance
 !HISTORY_MSG_393;DCP - Look table
 !HISTORY_MSG_394;DCP - Baseline exposure
 !HISTORY_MSG_395;DCP - Base table
@@ -1660,9 +1657,9 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !HISTORY_MSG_485;Lens Correction
 !HISTORY_MSG_486;Lens Correction - Camera
 !HISTORY_MSG_487;Lens Correction - Lens
-!HISTORY_MSG_488;HDR Tone Mapping
-!HISTORY_MSG_489;HDR TM - Threshold
-!HISTORY_MSG_490;HDR TM - Amount
+!HISTORY_MSG_488;Dynamic Range Compression
+!HISTORY_MSG_489;DRC - Threshold
+!HISTORY_MSG_490;DRC - Amount
 !HISTORY_MSG_491;White Balance
 !HISTORY_MSG_492;RGB Curves
 !HISTORY_MSG_493;L*a*b* Adjustments
@@ -1675,9 +1672,12 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
 !HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
 !HISTORY_MSG_METADATA_MODE;Metadata copy mode
+!HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
-!HISTORY_MSG_TM_FATTAL_ANCHOR;HDR TM - Anchor
+!HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
+!HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
+!HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
 !IPTCPANEL_COPYRIGHT;Copyright notice
@@ -1726,7 +1726,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
 !PARTIALPASTE_RAW_PIXELSHIFT;Pixel Shift
 !PARTIALPASTE_RETINEX;Retinex
-!PARTIALPASTE_TM_FATTAL;HDR Tone mapping
+!PARTIALPASTE_TM_FATTAL;Dynamic Range Compression
 !PREFERENCES_AUTLISLOW;Low
 !PREFERENCES_AUTLISMAX;Max - Average of all tiles
 !PREFERENCES_AUTLISSTD;High
@@ -1821,15 +1821,19 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !QINFO_HDR;HDR / %2 frame(s)
 !QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
 !SAMPLEFORMAT_0;Unknown data format
-!SAMPLEFORMAT_1;Unsigned 8 bits
-!SAMPLEFORMAT_2;Unsigned 16 bits
-!SAMPLEFORMAT_4;LogLuv 24 bits
-!SAMPLEFORMAT_8;LogLuv 32 bits
-!SAMPLEFORMAT_16;32 bits floating point
+!SAMPLEFORMAT_1;8-bit unsigned
+!SAMPLEFORMAT_2;16-bit unsigned
+!SAMPLEFORMAT_4;24-bit LogLuv
+!SAMPLEFORMAT_8;32-bit LogLuv
+!SAMPLEFORMAT_16;16-bit floating-point
+!SAMPLEFORMAT_32;24-bit floating-point
+!SAMPLEFORMAT_64;32-bit floating-point
 !SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
 !SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
 !SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
 !TOOLBAR_TOOLTIP_COLORPICKER;Lockable Color Picker\n\nWhen enabled:\nClick in the preview with left mouse button to add a color picker\nDrag it around while pressing the left mouse button\nDelete the color picker with a right mouse button click\nDelete all color pickers with Shift + Right mouse button click\nRight click away from any color picker to go back to the Hand tool
+!TP_BWMIX_MIXC;Channel Mixer
+!TP_BWMIX_NEUTRAL;Reset
 !TP_CBDL_AFT;After Black-and-White
 !TP_CBDL_BEF;Before Black-and-White
 !TP_CBDL_METHOD;Process located
@@ -2045,9 +2049,11 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !TP_RETINEX_VIEW_TRAN;Transmission - Auto
 !TP_RETINEX_VIEW_TRAN2;Transmission - Fixed
 !TP_RETINEX_VIEW_UNSHARP;Unsharp mask
+!TP_SHARPENING_CONTRAST;Contrast threshold
+!TP_SHARPENMICRO_CONTRAST;Contrast threshold
 !TP_TM_FATTAL_AMOUNT;Amount
 !TP_TM_FATTAL_ANCHOR;Anchor
-!TP_TM_FATTAL_LABEL;HDR Tone Mapping
+!TP_TM_FATTAL_LABEL;Dynamic Range Compression
 !TP_TM_FATTAL_THRESHOLD;Threshold
 !TP_WAVELET_1;Level 1
 !TP_WAVELET_2;Level 2

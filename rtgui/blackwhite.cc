@@ -90,11 +90,9 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     autoHBox = Gtk::manage (new Gtk::HBox ());
 
     autoch = Gtk::manage (new Gtk::ToggleButton (M("TP_BWMIX_AUTOCH")));
-    autoch->set_tooltip_markup (M("TP_BWMIX_AUTOCH_TIP"));
     autoconn = autoch->signal_toggled().connect( sigc::mem_fun(*this, &BlackWhite::autoch_toggled) );
 
     neutral = Gtk::manage (new Gtk::Button (M("TP_BWMIX_NEUTRAL")));
-    neutral->set_tooltip_text (M("TP_BWMIX_NEUTRAL_TIP"));
     neutralconn = neutral->signal_pressed().connect( sigc::mem_fun(*this, &BlackWhite::neutral_pressed) );
     neutral->show();
 
@@ -887,7 +885,7 @@ void BlackWhite::neutral_pressed ()
     updateRGBLabel();
 
     if(listener) {
-        listener->panelChanged (EvNeutralBW, M("ADJUSTER_RESET_TO_DEFAULT"));
+        listener->panelChanged (EvNeutralBW, M("GENERAL_RESET"));
     }
 }
 

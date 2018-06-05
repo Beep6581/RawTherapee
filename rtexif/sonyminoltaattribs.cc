@@ -882,18 +882,21 @@ public:
             {6553, "Samyang AF 50mm f/1.4 FE"},
             {6553, "Samyang AF 14mm f/2.8 FE"},
             {6553, "Samyang AF 35mm f/2.8 FE"},
+            {6553, "Samyang AF 35mm f/1.4"},
             {6553, "Sigma 19mm f/2.8 [EX] DN"},
             {6553, "Sigma 30mm f/2.8 [EX] DN"},
             {6553, "Sigma 60mm f/2.8 DN"},
             {6553, "Sigma 30mm f/1.4 DC DN | C"},
             {6553, "Sigma 16mm f/1.4 DC DN | C"},
             {6553, "Tamron 18-200mm f/3.5-6.3 Di III VC"},
+            {6553, "Tamron 28-75mm f/2.8 Di III RXD"},
             {6553, "Tokina Firin 20mm f/2 FE MF"},
             {6553, "Voigtlander SUPER WIDE-HELIAR 15mm f/4.5 III"},
             {6553, "Voigtlander HELIAR-HYPER WIDE 10mm f/5.6"},
             {6553, "Voigtlander ULTRA WIDE-HELIAR 12mm f/5.6 III"},
             {6553, "Voigtlander MACRO APO-LANTHAR 65mm f/2 Aspherical"},
             {6553, "Voigtlander NOKTON 40mm f/1.2 Aspherical"},
+            {6553, "Voigtlander NOKTON classic 35mm f/1.4"},
             {6553, "Zeiss Touit 12mm f/2.8"},
             {6553, "Zeiss Touit 32mm f/1.8"},
             {6553, "Zeiss Touit 50mm f/2.8 Macro"},
@@ -905,6 +908,7 @@ public:
             {6553, "Zeiss Loxia 35mm f/2"},
             {6553, "Zeiss Loxia 21mm f/2.8"},
             {6553, "Zeiss Loxia 85mm f/2.4"},
+            {6553, "Zeiss Loxia 25mm f/2.4"},
             {6553, "Arax MC 35mm f/2.8 Tilt+Shift"},
             {6553, "Arax MC 80mm f/2.8 Tilt+Shift"},
             {6553, "Zenitar MF 16mm f/2.8 Fisheye M42"},
@@ -1089,18 +1093,21 @@ public:
             {65535, "Samyang AF 50mm f/1.4 FE"},
             {65535, "Samyang AF 14mm f/2.8 FE"},
             {65535, "Samyang AF 35mm f/2.8 FE"},
+            {65535, "Samyang AF 35mm f/1.4"},
             {65535, "Sigma 19mm f/2.8 [EX] DN"},
             {65535, "Sigma 30mm f/2.8 [EX] DN"},
             {65535, "Sigma 60mm f/2.8 DN"},
             {65535, "Sigma 30mm f/1.4 DC DN | C"},
             {65535, "Sigma 16mm f/1.4 DC DN | C"},
             {65535, "Tamron 18-200mm f/3.5-6.3 Di III VC"},
+            {65535, "Tamron 28-75mm f/2.8 Di III RXD"},
             {65535, "Tokina Firin 20mm f/2 FE MF"},
             {65535, "Voigtlander SUPER WIDE-HELIAR 15mm f/4.5 III"},
             {65535, "Voigtlander HELIAR-HYPER WIDE 10mm f/5.6"},
             {65535, "Voigtlander ULTRA WIDE-HELIAR 12mm f/5.6 III"},
             {65535, "Voigtlander MACRO APO-LANTHAR 65mm f/2 Aspherical"},
             {65535, "Voigtlander NOKTON 40mm f/1.2 Aspherical"},
+            {65535, "Voigtlander NOKTON classic 35mm f/1.4"},
             {65535, "Zeiss Touit 12mm f/2.8"},
             {65535, "Zeiss Touit 32mm f/1.8"},
             {65535, "Zeiss Touit 50mm f/2.8 Macro"},
@@ -1112,13 +1119,14 @@ public:
             {65535, "Zeiss Loxia 35mm f/2"},
             {65535, "Zeiss Loxia 21mm f/2.8"},
             {65535, "Zeiss Loxia 85mm f/2.4"},
+            {65535, "Zeiss Loxia 25mm f/2.4"},
             {65535, "Arax MC 35mm f/2.8 Tilt+Shift"},
             {65535, "Arax MC 80mm f/2.8 Tilt+Shift"},
             {65535, "Zenitar MF 16mm f/2.8 Fisheye M42"},
             {65535, "Samyang 500mm Mirror f/8.0"},
             {65535, "Pentacon Auto 135mm f/2.8"},
             {65535, "Pentacon Auto 29mm f/2.8"},
-            {65535, "Helios 44-2 58mm f/2.0"},
+            {65535, "Helios 44-2 58mm f/2.0"}
         };
     }
 
@@ -1232,6 +1240,8 @@ public:
         choices.insert (p_t (49233, "Zeiss Loxia 35mm f/2"));
         choices.insert (p_t (49234, "Zeiss Loxia 21mm f/2.8"));
         choices.insert (p_t (49235, "Zeiss Loxia 85mm f/2.4"));
+        choices.insert (p_t (49236, "Zeiss Loxia 25mm f/2.4"));
+        choices.insert (p_t (49457, "Tamron 28-75mm f/2.8 Di III RXD"));
         choices.insert (p_t (50480, "Sigma 30mm f/1.4 DC DN | C"));
         choices.insert (p_t (50481, "Sigma 50mm f/1.4 DG HSM | A + MC-11"));
         choices.insert (p_t (50482, "Sigma 18-300mm f/3.5-6.3 DC MACRO OS HSM | C + MC-11"));
@@ -1245,14 +1255,17 @@ public:
         choices.insert (p_t (50492, "Sigma 24-105mm f/4 DG OS HSM | A + MC-11"));
         choices.insert (p_t (50493, "Sigma 17-70mm f/2.8-4 DC MACRO OS HSM | C + MC-11"));
         choices.insert (p_t (50495, "Sigma 50-100mm f/1.8 DC HSM | A + MC-11"));
+        choices.insert (p_t (50501, "Sigma 100-400mm f/5-6.3 DG OS HSM | C + MC-11"));
         choices.insert (p_t (50503, "Sigma 16mm f/1.4 DC DN | C"));
         choices.insert (p_t (50992, "Voigtlander SUPER WIDE-HELIAR 15mm f/4.5 III"));
         choices.insert (p_t (50993, "Voigtlander HELIAR-HYPER WIDE 10mm f/5.6"));
         choices.insert (p_t (50994, "Voigtlander ULTRA WIDE-HELIAR 12mm f/5.6 III"));
         choices.insert (p_t (50995, "Voigtlander MACRO APO-LANTHAR 65mm f/2 Aspherical"));
         choices.insert (p_t (50996, "Voigtlander NOKTON 40mm f/1.2 Aspherical"));
+        choices.insert (p_t (50997, "Voigtlander NOKTON classic 35mm f/1.4"));
         choices.insert (p_t (51505, "Samyang AF 14mm f/2.8 FE or Samyang AF 35mm f/2.8 FE"));
         choices.insert (p_t (51505, "Samyang AF 35mm f/2.8 FE"));
+        choices.insert (p_t (51507, "Samyang AF 35mm f/1.4"));
     }
 
     virtual std::string toString (Tag* t)
