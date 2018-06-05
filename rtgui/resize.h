@@ -80,6 +80,8 @@ private:
     bool               wDirty, hDirty;
     ToolParamBlock*    packBox;
     IdleRegister       idle_register;
+
+    static constexpr int MAX_SCALE = 16; // 16 to match the main preview max scale of 1600%
 };
 
 #endif

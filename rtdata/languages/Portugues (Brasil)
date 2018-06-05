@@ -716,9 +716,6 @@ HISTORY_MSG_484;CAM02 - Cena automática Yb
 HISTORY_MSG_485;Correção de Lente
 HISTORY_MSG_486;Correção de Lente - Câmera
 HISTORY_MSG_487;Correção de Lente - Lente
-HISTORY_MSG_488;HDR Mpeamento de Tom
-HISTORY_MSG_489;HDR TM - Limiar
-HISTORY_MSG_490;HDR TM - Montante
 HISTORY_MSG_491;Balanço de Branco
 HISTORY_MSG_492;Curvas RGB
 HISTORY_MSG_493;L*a*b* Ajustes
@@ -733,7 +730,6 @@ HISTORY_MSG_LOCALCONTRAST_RADIUS;Contraste Local - Raio
 HISTORY_MSG_METADATA_MODE;Modo de cópia de metadados
 HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Direção do filtro de ruído de linha
 HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;Filtros de linha PDAF
-HISTORY_MSG_TM_FATTAL_ANCHOR;HDR TM - Âncora
 HISTORY_NEWSNAPSHOT;Adicionar
 HISTORY_NEWSNAPSHOT_TOOLTIP;Atalho: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Instantâneo
@@ -944,7 +940,6 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Sombras/realces
 PARTIALPASTE_SHARPENEDGE;Arestas
 PARTIALPASTE_SHARPENING;Nitidez (USM/RL)
 PARTIALPASTE_SHARPENMICRO;Microcontraste
-PARTIALPASTE_TM_FATTAL;Mapeamento de tom HDR
 PARTIALPASTE_VIBRANCE;Vibração
 PARTIALPASTE_VIGNETTING;Correção de vinheta
 PARTIALPASTE_WHITEBALANCE;Balanço de branco
@@ -1635,9 +1630,14 @@ TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolado
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !GENERAL_RESET;Reset
+!HISTORY_MSG_488;Dynamic Range Compression
+!HISTORY_MSG_489;DRC - Threshold
+!HISTORY_MSG_490;DRC - Amount
 !HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
+!HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
+!PARTIALPASTE_TM_FATTAL;Dynamic Range Compression
 !TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only available if a dual-illuminant DCP with interpolation support is selected.
 !TP_ICM_INPUTCAMERA;Camera standard
 !TP_ICM_INPUTCAMERAICC;Auto-matched camera profile
@@ -1964,7 +1964,7 @@ TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolado
 !TP_SHARPENMICRO_UNIFORMITY;Uniformity
 !TP_TM_FATTAL_AMOUNT;Amount
 !TP_TM_FATTAL_ANCHOR;Anchor
-!TP_TM_FATTAL_LABEL;HDR Tone Mapping
+!TP_TM_FATTAL_LABEL;Dynamic Range Compression
 !TP_TM_FATTAL_THRESHOLD;Threshold
 !TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid color shift
 !TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH

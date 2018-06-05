@@ -65,7 +65,7 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
 
     pack_start (*combos, Gtk::PACK_SHRINK, 4);
 
-    scale = new Adjuster (M("TP_RESIZE_SCALE"), 0.01, 4, 0.01, 1.);
+    scale = new Adjuster (M("TP_RESIZE_SCALE"), 0.01, MAX_SCALE, 0.01, 1.);
     scale->setAdjusterListener (this);
 
     pack_start (*scale, Gtk::PACK_SHRINK, 4);
@@ -94,12 +94,12 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     w->set_digits (0);
     w->set_increments (1, 100);
     w->set_value (800);
-    w->set_range (32, 4 * maxw);
+    w->set_range (32, MAX_SCALE * maxw);
 
     h->set_digits (0);
     h->set_increments (1, 100);
     h->set_value (600);
-    h->set_range (32, 4 * maxh);
+    h->set_range (32, MAX_SCALE * maxh);
 
     wconn = w->signal_value_changed().connect ( sigc::mem_fun(*this, &Resize::entryWChanged), true);
     hconn = h->signal_value_changed().connect ( sigc::mem_fun(*this, &Resize::entryHChanged), true);
@@ -216,7 +216,7 @@ void Resize::write (ProcParams* pp, ParamsEdited* pedited)
 
     if (pedited) {
         pedited->resize.enabled   = !get_inconsistent();
-        pedited->resize.dataspec  = dataSpec != 4;
+        pedited->resize.dataspec  = dataSpec != MAX_SCALE;
         pedited->resize.appliesTo = appliesTo->get_active_row_number() != 2;
         pedited->resize.method    = method->get_active_row_number() != 3;
 
@@ -370,8 +370,8 @@ void Resize::setDimensions ()
             refh = self->maxh;
         }
 
-        self->w->set_range(32, 4 * refw);
-        self->h->set_range(32, 4 * refh);
+        self->w->set_range(32, MAX_SCALE * refw);
+        self->h->set_range(32, MAX_SCALE * refh);
 
         switch (self->spec->get_active_row_number()) {
             case 0: {
