@@ -549,14 +549,15 @@ void BayerProcess::methodChanged ()
         }
     }
 
-    oldMethod = currentSelection;
-
     if (listener && method->get_active_row_number() >= 0) {
         listener->panelChanged (
             currentMethod == procparams::RAWParams::BayerSensor::Method::MONO || RAWParams::BayerSensor::Method(oldMethod) == procparams::RAWParams::BayerSensor::Method::MONO
             ? EvDemosaicMethodPreProc
             : EvDemosaicMethod, method->get_active_text());
     }
+
+    oldMethod = currentSelection;
+
 }
 
 void BayerProcess::pixelShiftDemosaicMethodChanged ()
