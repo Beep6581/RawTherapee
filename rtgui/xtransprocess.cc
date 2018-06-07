@@ -69,9 +69,8 @@ XTransProcess::XTransProcess () : FoldableToolPanel(this, "xtransprocess", M("TP
 
     dualDemosaicOptions = Gtk::manage (new Gtk::VBox ());
 
-    dualDemosaicContrast = Gtk::manage(new Adjuster (M("TP_RAW_DUALDEMOSAICCONTRAST"), 0, 200, 1, 20));
+    dualDemosaicContrast = Gtk::manage(new Adjuster (M("TP_RAW_DUALDEMOSAICCONTRAST"), 0, 100, 1, 20));
     dualDemosaicContrast->setAdjusterListener (this);
-//    dualDemosaicContrast->set_tooltip_markup (M("TP_RAW_LMMSE_TOOLTIP"));
 
     if (dualDemosaicContrast->delay < options.adjusterMaxDelay) {
         dualDemosaicContrast->delay = options.adjusterMaxDelay;
