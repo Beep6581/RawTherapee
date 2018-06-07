@@ -311,17 +311,17 @@ CameraConst::parseEntry(void *cJSON_, const char *make_model)
         }
     }
 
-    ji = cJSON_GetObjectItem(js, "pdafPattern");
+    ji = cJSON_GetObjectItem(js, "pdaf_pattern");
 
     if (ji) {
         if (ji->type != cJSON_Array) {
-            fprintf(stderr, "\"pdafPattern\" must be an array\n");
+            fprintf(stderr, "\"pdaf_pattern\" must be an array\n");
             goto parse_error;
         }
 
         for (ji = ji->child; ji != nullptr; ji = ji->next) {
             if (ji->type != cJSON_Number) {
-                fprintf(stderr, "\"pdafPattern\" array must contain numbers\n");
+                fprintf(stderr, "\"pdaf_pattern\" array must contain numbers\n");
                 goto parse_error;
             }
 
@@ -329,11 +329,11 @@ CameraConst::parseEntry(void *cJSON_, const char *make_model)
         }
     }
 
-    ji = cJSON_GetObjectItem(js, "pdafOffset");
+    ji = cJSON_GetObjectItem(js, "pdaf_offset");
 
     if (ji) {
         if (ji->type != cJSON_Number) {
-            fprintf(stderr, "\"pdafOffset\" must contain a number\n");
+            fprintf(stderr, "\"pdaf_offset\" must contain a number\n");
             goto parse_error;
         }
 
