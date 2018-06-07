@@ -23,9 +23,8 @@
 #include "rtengine.h"
 #include "rawimagesource.h"
 #include "rawimagesource_i.h"
-//#include "rt_math.h"
 #include "../rtgui/multilangmgr.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 
 namespace rtengine
@@ -75,7 +74,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
     float (*image)[4];
 
     image = (float (*)[4]) calloc (height * width, sizeof * image);
-StopWatch Stop1("loop1");
+
 #ifdef _OPENMP
     #pragma omp parallel for
 #endif
@@ -84,7 +83,7 @@ StopWatch Stop1("loop1");
         for (int jj = 0; jj < W; jj++) {
             image[ii * W + jj][fc(ii, jj)] = rawData[ii][jj];
         }
-Stop1.stop();
+
     {
         int lcode[16][16][32];
         float mul[16][16][8];
@@ -125,7 +124,6 @@ Stop1.stop();
                     }
             }
 
-StopWatch Stop2("loop2");
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -146,7 +144,6 @@ StopWatch Stop2("loop2");
                 }
             }
         }
-Stop2.stop();
     }
 
     const int prow = 7, pcol = 1;
@@ -210,7 +207,6 @@ Stop2.stop();
         plistener->setProgress (progress);
     }
 
-StopWatch Stop3("loop3");
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -322,7 +318,7 @@ StopWatch Stop3("loop3");
     if(plistenerActive) {
         plistener->setProgress (0.98);
     }
-Stop3.stop();
+
     // Interpolate R and B
 #ifdef _OPENMP
     #pragma omp parallel for
