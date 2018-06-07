@@ -1952,7 +1952,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             for(int i = 0; i < 4; ++i) {
                 green_equilibrate_global(*rawDataFrames[i]);
             }
-        } else if(idata->getModel() != "E-M1MarkII") {
+        } else {
             green_equilibrate_global(rawData);
         }
     }
