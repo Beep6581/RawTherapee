@@ -164,6 +164,8 @@ void BatchToolPanelCoordinator::initSession ()
             dirpyrequalizer->setAdjusterBehavior (false, false, false);
             wavelet->setAdjusterBehavior (false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
             dirpyrdenoise->setAdjusterBehavior (false, false, false, false, false, false, false);
+            bayerprocess->setAdjusterBehavior(false, false, false, false, false, false);
+            xtransprocess->setAdjusterBehavior(false, false);
             bayerpreprocess->setAdjusterBehavior (false, false);
             rawcacorrection->setAdjusterBehavior (false);
             flatfield->setAdjusterBehavior(false);
@@ -209,6 +211,8 @@ void BatchToolPanelCoordinator::initSession ()
             dirpyrequalizer->setAdjusterBehavior (options.baBehav[ADDSET_DIRPYREQ], options.baBehav[ADDSET_DIRPYREQ_THRESHOLD], options.baBehav[ADDSET_DIRPYREQ_SKINPROTECT]);
             wavelet->setAdjusterBehavior (options.baBehav[ADDSET_WA], options.baBehav[ADDSET_WA_THRESHOLD], options.baBehav[ADDSET_WA_THRESHOLD2], options.baBehav[ADDSET_WA_THRES], options.baBehav[ADDSET_WA_CHRO], options.baBehav[ADDSET_WA_CHROMA], options.baBehav[ADDSET_WA_CONTRAST], options.baBehav[ADDSET_WA_SKINPROTECT], options.baBehav[ADDSET_WA_RESCHRO], options.baBehav[ADDSET_WA_TMRS], options.baBehav[ADDSET_WA_RESCON], options.baBehav[ADDSET_WA_RESCONH], options.baBehav[ADDSET_WA_THRR], options.baBehav[ADDSET_WA_THRRH], options.baBehav[ADDSET_WA_SKYPROTECT], options.baBehav[ADDSET_WA_EDGRAD], options.baBehav[ADDSET_WA_EDGVAL], options.baBehav[ADDSET_WA_STRENGTH], options.baBehav[ADDSET_WA_GAMMA], options.baBehav[ADDSET_WA_EDGEDETECT], options.baBehav[ADDSET_WA_EDGEDETECTTHR], options.baBehav[ADDSET_WA_EDGEDETECTTHR2]);
             dirpyrdenoise->setAdjusterBehavior (options.baBehav[ADDSET_DIRPYRDN_LUMA], options.baBehav[ADDSET_DIRPYRDN_LUMDET], options.baBehav[ADDSET_DIRPYRDN_CHROMA], options.baBehav[ADDSET_DIRPYRDN_CHROMARED], options.baBehav[ADDSET_DIRPYRDN_CHROMABLUE], options.baBehav[ADDSET_DIRPYRDN_GAMMA], options.baBehav[ADDSET_DIRPYRDN_PASSES]);
+            bayerprocess->setAdjusterBehavior(options.baBehav[ADDSET_BAYER_FALSE_COLOR_SUPPRESSION], options.baBehav[ADDSET_BAYER_ITER], options.baBehav[ADDSET_BAYER_DUALDEMOZCONTRAST], options.baBehav[ADDSET_BAYER_PS_SIGMA], options.baBehav[ADDSET_BAYER_PS_SMOOTH], options.baBehav[ADDSET_BAYER_PS_EPERISO]);
+            xtransprocess->setAdjusterBehavior(options.baBehav[ADDSET_BAYER_FALSE_COLOR_SUPPRESSION], options.baBehav[ADDSET_BAYER_DUALDEMOZCONTRAST]);
             bayerpreprocess->setAdjusterBehavior (options.baBehav[ADDSET_PREPROCESS_LINEDENOISE], options.baBehav[ADDSET_PREPROCESS_GREENEQUIL]);
             rawcacorrection->setAdjusterBehavior (options.baBehav[ADDSET_RAWCACORR]);
             flatfield->setAdjusterBehavior(options.baBehav[ADDSET_RAWFFCLIPCONTROL]);
@@ -349,6 +353,13 @@ void BatchToolPanelCoordinator::initSession ()
                 pparams.raw.bayersensor.black0 = pparams.raw.bayersensor.black1 = pparams.raw.bayersensor.black2 = pparams.raw.bayersensor.black3 =
                 pparams.raw.xtranssensor.blackred = pparams.raw.xtranssensor.blackgreen = pparams.raw.xtranssensor.blackblue = 0;
             }
+            if (options.baBehav[ADDSET_BAYER_FALSE_COLOR_SUPPRESSION]) { pparams.raw.bayersensor.ccSteps = 0; }
+            if (options.baBehav[ADDSET_BAYER_ITER]) { pparams.raw.bayersensor.dcb_iterations = 0; pparams.raw.bayersensor.lmmse_iterations = 0; }
+            if (options.baBehav[ADDSET_BAYER_PS_SMOOTH]) { pparams.raw.bayersensor.pixelShiftSmoothFactor = 0; }
+            if (options.baBehav[ADDSET_BAYER_PS_EPERISO]) { pparams.raw.bayersensor.pixelShiftEperIso = 0; }
+            if (options.baBehav[ADDSET_BAYER_PS_SIGMA]) { pparams.raw.bayersensor.pixelShiftSigma = 0; }
+            if (options.baBehav[ADDSET_BAYER_DUALDEMOZCONTRAST]) { pparams.raw.bayersensor.dualDemosaicContrast = 0; }
+            if (options.baBehav[ADDSET_XTRANS_FALSE_COLOR_SUPPRESSION]) { pparams.raw.xtranssensor.ccSteps = 0; }
             if (options.baBehav[ADDSET_RAWFFCLIPCONTROL]) { pparams.raw.ff_clipControl = 0; }
             if (options.baBehav[ADDSET_PREPROCESS_GREENEQUIL]) { pparams.raw.bayersensor.greenthresh = 0; }
             if (options.baBehav[ADDSET_PREPROCESS_LINEDENOISE]) { pparams.raw.bayersensor.linenoise = 0; }

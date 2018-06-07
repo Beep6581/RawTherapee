@@ -33,6 +33,7 @@ set(RTENGINESOURCEFILES
     FTblockDN.cc
     PF_correct_RT.cc
     amaze_demosaic_RT.cc
+    amaze_vng4_demosaic_RT.cc
     cJSON.c
     calc_distort.cc
     camconst.cc
@@ -122,6 +123,7 @@ set(RTENGINESOURCEFILES
     gamutwarning.cc
     ipshadowshighlights.cc
     xtrans_demosaic.cc
+    vng4_demosaic_RT.cc
     )
 
 if(LENSFUN_HAS_LOAD_DIRECTORY)

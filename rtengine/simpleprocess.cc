@@ -1465,8 +1465,6 @@ private:
         }
 
         if (params.raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::PIXELSHIFT)) {
-            params.raw.bayersensor.method = procparams::RAWParams::BayerSensor::getMethodString(params.raw.bayersensor.pixelShiftLmmse ? procparams::RAWParams::BayerSensor::Method::LMMSE : procparams::RAWParams::BayerSensor::Method::AMAZE);
-        } else if (params.raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::AMAZE)) {
             params.raw.bayersensor.method = procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::RCD);
         }
 

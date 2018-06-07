@@ -21,6 +21,7 @@
 
 #include "rtengine.h"
 #include "rawimagesource.h"
+#include "rt_algo.h"
 #include "rt_math.h"
 #include "../rtgui/multilangmgr.h"
 #include "opthelper.h"
@@ -957,7 +958,7 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
 
 }
 #undef CLIP
-void RawImageSource::fast_xtrans_interpolate ()
+void RawImageSource::fast_xtrans_interpolate (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
 {
 //    if (settings->verbose) {
 //        printf("fast X-Trans interpolation...\n");
@@ -1017,4 +1018,61 @@ void RawImageSource::fast_xtrans_interpolate ()
 }
 #undef fcol
 #undef isgreen
+
+void RawImageSource::xtrans_4pass_demosaic_RT(int passes, bool useCieLab, double contrast)
+{
+    BENCHFUN
+
+    if (contrast == 0.0) {
+        // contrast == 0.0 means only AMaZE will be used
+        xtrans_interpolate (passes, useCieLab);
+        return;
+    }
+
+    xtrans_interpolate (passes, useCieLab);
+
+    array2D<float> redTmp(W, H);
+    array2D<float> greenTmp(W, H);
+    array2D<float> blueTmp(W, H);
+    array2D<float> L(W, H);
+
+    fast_xtrans_interpolate(rawData, redTmp, greenTmp, blueTmp);
+    const float xyz_rgb[3][3] = {          // XYZ from RGB
+                                { 0.412453, 0.357580, 0.180423 },
+                                { 0.212671, 0.715160, 0.072169 },
+                                { 0.019334, 0.119193, 0.950227 }
+                                };
+    #pragma omp parallel
+    {
+        #pragma omp for
+        for(int i = 0; i < H; ++i) {
+            Color::RGB2L(red[i], green[i], blue[i], L[i], xyz_rgb, W);
+        }
+    }
+    // calculate contrast based blend factors to use vng4 in regions with low contrast
+    JaggedArray<float> blend(W, H);
+    buildBlendMask(L, blend, W, H, contrast / 100.f);
+
+    // the following is split into 3 loops intentionally to avoid cache conflicts on CPUs with only 4-way cache
+    #pragma omp parallel for
+    for(int i = 0; i < H; ++i) {
+        for(int j = 0; j < W; ++j) {
+            red[i][j] = intp(blend[i][j], red[i][j], redTmp[i][j]);
+        }
+    }
+    #pragma omp parallel for
+    for(int i = 0; i < H; ++i) {
+        for(int j = 0; j < W; ++j) {
+            green[i][j] = intp(blend[i][j], green[i][j], greenTmp[i][j]);
+        }
+    }
+    #pragma omp parallel for
+    for(int i = 0; i < H; ++i) {
+        for(int j = 0; j < W; ++j) {
+            blue[i][j] = intp(blend[i][j], blue[i][j], blueTmp[i][j]);
+        }
+    }
+
+}
+
 }

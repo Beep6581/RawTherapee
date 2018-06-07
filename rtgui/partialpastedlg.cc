@@ -852,7 +852,7 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
         filterPE.raw.bayersensor.pixelShiftEqualBrightChannel     = falsePE.raw.bayersensor.pixelShiftEqualBrightChannel;
         filterPE.raw.bayersensor.pixelShiftGreen                  = falsePE.raw.bayersensor.pixelShiftGreen;
         filterPE.raw.bayersensor.pixelShiftHoleFill               = falsePE.raw.bayersensor.pixelShiftHoleFill;
-        filterPE.raw.bayersensor.pixelShiftLmmse                  = falsePE.raw.bayersensor.pixelShiftLmmse;
+        filterPE.raw.bayersensor.pixelShiftDemosaicMethod         = falsePE.raw.bayersensor.pixelShiftDemosaicMethod;
         filterPE.raw.bayersensor.pixelShiftMedian                 = falsePE.raw.bayersensor.pixelShiftMedian;
         filterPE.raw.bayersensor.pixelShiftMotionCorrectionMethod = falsePE.raw.bayersensor.pixelShiftMotionCorrectionMethod;
         filterPE.raw.bayersensor.pixelShiftNonGreenCross          = falsePE.raw.bayersensor.pixelShiftNonGreenCross;
