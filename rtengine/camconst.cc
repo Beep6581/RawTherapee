@@ -25,6 +25,7 @@ CameraConst::CameraConst() : pdafOffset(0)
     memset(raw_crop, 0, sizeof(raw_crop));
     memset(raw_mask, 0, sizeof(raw_mask));
     white_max = 0;
+    globalGreenEquilibration = -1;
 }
 
 
@@ -339,6 +340,17 @@ CameraConst::parseEntry(void *cJSON_, const char *make_model)
         cc->pdafOffset = ji->valueint;
     }
 
+    ji = cJSON_GetObjectItem(js, "global_green_equilibration");
+
+    if (ji) {
+        if (ji->type != cJSON_Number) {
+            fprintf(stderr, "\"global_green_equilibration\" must be a number\n");
+            goto parse_error;
+        }
+
+        cc->globalGreenEquilibration = ji->valueint;
+    }
+    
     return cc;
 
 parse_error:
@@ -607,6 +619,24 @@ CameraConst::get_WhiteLevel(const int idx, const int iso_speed, const float fnum
 }
 
 bool
+CameraConst::has_globalGreenEquilibration()
+{
+    return globalGreenEquilibration >= 0;
+}
+
+bool
+CameraConst::get_globalGreenEquilibration()
+{
+    return globalGreenEquilibration > 0;
+}
+
+void
+CameraConst::update_globalGreenEquilibration(bool other)
+{
+    globalGreenEquilibration = (other ? 1 : 0);
+}
+
+bool
 CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
 {
     // read the file into a single long string
@@ -739,6 +769,9 @@ CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
                 existingcc->update_Crop(cc);
                 existingcc->update_pdafPattern(cc->get_pdafPattern());
                 existingcc->update_pdafOffset(cc->get_pdafOffset());
+                if (cc->has_globalGreenEquilibration()) {
+                    existingcc->update_globalGreenEquilibration(cc->get_globalGreenEquilibration());
+                }
 
                 if (settings->verbose) {
                     printf("Merging camera constants for \"%s\"\n", make_model.c_str());
