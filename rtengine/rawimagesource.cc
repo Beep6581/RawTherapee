@@ -5143,7 +5143,7 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
                 gloc /= gnbrs;
                 bloc /= bnbrs;
 
-                if (rloc * initialGain < 64000. && gloc * initialGain < 64000. && bloc * initialGain < 64000.) {
+                if (rloc < clmax[0] && gloc < clmax[1] && bloc < clmax[2]) {
                     reds += rloc;
                     greens += gloc;
                     blues += bloc;
@@ -5216,7 +5216,7 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
             gloc /= std::max(1, gnbrs);
             bloc /= std::max(1, bnbrs);
 
-            if (rloc * initialGain < 64000. && gloc * initialGain < 64000. && bloc * initialGain < 64000.) {
+            if (rloc < clmax[0] && gloc < clmax[1] && bloc < clmax[2]) {
                 reds += rloc;
                 greens += gloc;
                 blues += bloc;
@@ -5252,7 +5252,7 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
             gloc /= std::max(gnbrs, 1);
             bloc /= std::max(bnbrs, 1);
 
-            if (rloc * initialGain < 64000. && gloc * initialGain < 64000. && bloc * initialGain < 64000.) {
+            if (rloc < clmax[0] && gloc < clmax[1] && bloc < clmax[2]) {
                 reds += rloc;
                 greens += gloc;
                 blues += bloc;
@@ -5288,7 +5288,7 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
             gloc /= std::max(gnbrs, 1);
             bloc /= std::max(bnbrs, 1);
 
-            if (rloc * initialGain < 64000. && gloc * initialGain < 64000. && bloc * initialGain < 64000.) {
+            if (rloc < clmax[0] && gloc < clmax[1] && bloc < clmax[2]) {
                 reds += rloc;
                 greens += gloc;
                 blues += bloc;
