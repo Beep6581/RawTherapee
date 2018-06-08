@@ -1956,6 +1956,9 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         };
     
     if ( ri->getSensorType() == ST_BAYER && (raw.bayersensor.greenthresh || (globalGreenEq() && raw.bayersensor.method != RAWParams::BayerSensor::getMethodString( RAWParams::BayerSensor::Method::VNG4))) ) {
+        if (settings->verbose) {
+            printf("Performing global green equilibration...\n");
+        }
         // global correction
         if(numFrames == 4) {
             for(int i = 0; i < 4; ++i) {

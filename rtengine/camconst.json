@@ -1563,7 +1563,7 @@ Camera constants:
 
     { // Quality B, 16Mp and 64Mp raw frames
         "make_model": "OLYMPUS E-M5MarkII",
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 9422,-3258,-711,-2655,10898,2015,-512,1354,5512 ], // DNG_v8.8 D65
         "raw_crop": [ 0, 0, -6, -6 ], // largest valid, full 64Mp 9280x6938, official crop 0 0 9216 6912
         "ranges": {
@@ -1605,14 +1605,14 @@ Camera constants:
 
     { // Quality B, missing per ISO samples
         "make_model": "OLYMPUS E-M1",
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 7687,-1984,-606,-4327,11928,2721,-1381,2339,6452 ], // dng d65
         "ranges": { "white": 4080 } // nominal 4095-4094, spread with some settings as long exposure
     },
 
     { // Quality B, crop correction
         "make_model": [ "OLYMPUS E-M10", "OLYMPUS E-M10MarkII", "OLYMPUS E-M10 Mark III" ],
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 ],
         "raw_crop": [ 0, 0, 4624, 3472 ], // largest valid - full frame is 4640x3472
         //"raw_crop": [ 4, 4, 4616, 3464 ], // olympus jpeg crop 8, 8, 4608, 3456
@@ -1621,14 +1621,14 @@ Camera constants:
 
     { // Quality A, white level correction
         "make_model": "OLYMPUS E-PM2",
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 ],
         "ranges": { "white": 4040 } // nominal 4056
     },
 
     { // Quality B, with long exposure noise reduction White Level gets WL-BL = around 256_12-bit levels less
         "make_model": [ "OLYMPUS E-PL7", "OLYMPUS E-PL8" ],
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 9197,-3190,-659,-2606,10830,2039,-458,1250,5458 ], // DNG_v9.8 D65
         "ranges": { "white": 4080 } // nominal 4093
     },
@@ -1647,7 +1647,7 @@ Camera constants:
 
     { // Quality C, proper ISO 100-125-160 samples missing, pixelshift files have no black offset etc. #4574
         "make_model": [ "Panasonic DC-G9" ],
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 7685, -2375, -634, -3687, 11700, 2249, -748, 1546, 5111 ], // Adobe DNG Converter 10.3 ColorMatrix2
         "ranges": {
             "black": 15, // 15 is BL offset. dcraw/RT reads the base black from Exif and calculates total BL = BLbase+BLoffset
@@ -1661,7 +1661,7 @@ Camera constants:
 
     { // Quality B, CameraPhone, some samples are missing but has the same sensor as FZ1000 ..
         "make_model": [ "Panasonic DMC-CM1", "Panasonic DMC-CM10" ],
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 8770,-3194,-820,-2871,11281,1803,-513,1552,4434 ], // dcp_v8.7 d65
         "ranges": {
             "black": 15, // 15 is BL offset. dcraw/RT read the base BL from Exif and calculates total BL = BLbase+BLoffset
@@ -1675,7 +1675,7 @@ Camera constants:
 
     { // Quality B
         "make_model": [ "Panasonic DC-FZ80", "Panasonic DC-FZ81", "Panasonic DC-FZ82", "Panasonic DC-FZ83" ],
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 8550,-2908,-842,-3195,11529,1881,-338,1603,4631 ], // DNGv9.10.1 D65
         "raw_crop": [ 0, 6, -8, -2 ], // fullraw4/3 5040x3688 official 8,8,4904,3680 = 4896X3672. Dcraw 0,0,4912,3688 RT's frame gets smaller than dcraw but works better with auto distortion
         "ranges": { "black": 15, "white": 4050 } // 15 is BL offset. dcraw/RT read the base offset from Exif and calculates total BL = BLbase+BLoffset
@@ -1683,21 +1683,21 @@ Camera constants:
 
     { // Quality A, replicated from rawimage.cc
         "make_model": "Panasonic DMC-FZ150",
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 10435,-3208,-72,-2293,10506,2067,-486,1725,4682 ], // RT, copy from custom dcp d55
         "ranges": { "black": 15, "white": 4050 } // 15 is BL offset. dcraw/RT read the base offset from Exif and calculates total BL = BLbase+BLoffset
     },
 
     { // Quality B,
         "make_model": [ "Panasonic DMC-FZ300", "Panasonic DMC-FZ330" ],
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 8378,-2798,-769,-3068,11410,1877,-538,1792,4623 ], // DNG-V9.1.1
         "ranges": { "black": 15, "white": 4050 } // 15 is BL offset. dcraw/RT read the base offset from Exif and calculates total BL = BLbase+BLoffset
     },
 
     { // Quality A, samples by helices at RT forums
         "make_model": [ "Panasonic DMC-FZ1000", "Leica V-LUX (Typ 114)" ],
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 7830,-2696,-763,-3325,11667,1866,-641,1712,4824 ], // dcp_v8.6 d65
         "ranges": {
             "black": 15, // 15 is BL offset. dcraw/RT read the base BL from Exif and calculates total BL = BLbase+BLoffset
@@ -1711,7 +1711,7 @@ Camera constants:
 
     { // Quality B,
         "make_model": [ "Panasonic DMC-FZ2500", "Panasonic DMC-FZ2000", "Panasonic DMC-FZH1" ],
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 7386,-2443,-743,-3437,11864,1757,-608,1660,4766  ], // dcp_v9.8 d65
         "ranges": {
             "black": 15, // 15 is BL offset. dcraw/RT read the base BL from Exif and calculates total BL = BLbase+BLoffset
@@ -1725,7 +1725,7 @@ Camera constants:
 
     { // Quality A, samples by helices at RT forums and Chris Power at github
         "make_model": [ "Panasonic DMC-ZS100", "Panasonic DMC-ZS110", "Panasonic DMC-TZ100", "Panasonic DMC-TZ101", "Panasonic DMC-TZ110", "Panasonic DMC-TX1" ],
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 7790,-2736,-755,-3452,11870,1769,-628,1647,4898 ], // dcp_v8.6 d65
         "raw_crop": [ 4, 4, -4, -4 ], // full raw frame 5488x3664 Exif crop 5472X3648 with 8pixel borders. Set the borders at 4 pixels which added with RT's 4 pixels border gives exactly the official frame.
         "ranges": {
@@ -1740,14 +1740,14 @@ Camera constants:
 
     { // Quality A
         "make_model": [ "Panasonic DMC-LF1", "Leica C (Typ 112)" ],
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 9379,-3267,-816,-3227,11560,1881,-926,1928,5340 ],
         "ranges": { "black": 15, "white": 4050 } // 15 is BL offset. dcraw/RT read the base offset from Exif and calculates total BL = BLbase+BLoffset
     },
 
     { // Quality A
         "make_model": [ "Panasonic DMC-TZ60", "Panasonic DMC-TZ61", "Panasonic DMC-ZS40", "Panasonic DMC-ZS41" ],
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 8607,-2822,-808,-3755,11930,2049,-820,2060,5224 ], // matrix from Adobe dcp v8.4
         "raw_crop": [ 8, 8, -8, -8 ], // crop according to Exif 4896 X 3672 plus 4 pixels borders. RT's frame gets smaller than dcraw but works better with auto distortion
         "ranges": { "black": 14, "white": 4050 } // 15 is BL offset. dcraw/RT read the base offset from Exif and calculates total BL = BLbase+BLoffset
@@ -1755,7 +1755,7 @@ Camera constants:
 
     { // Quality B
         "make_model": [ "Panasonic DMC-TZ70", "Panasonic DMC-TZ71", "Panasonic DMC-ZS50", "Panasonic DMC-ZS51" ],
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 8802,-3135,-789,-3151,11468,1904,-550,1745,4810 ], // DNG_V8.8 D65
         "raw_crop": [ 0, 0, -4, -4 ], // full raw 4/3 4144x3016 8,8,3008,4008 = 4000X3000. RT's frame gets smaller than dcraw but works better with auto distortion
         "ranges": { "black": 14, "white": 4050 } // 12+1+1 is BL offset
@@ -1763,7 +1763,7 @@ Camera constants:
 
     { // Quality A, samples by Hombre
         "make_model": [ "Panasonic DC-ZS70", "Panasonic DC-TZ90", "Panasonic DC-TZ91", "Panasonic DC-TZ92", "Panasonic DC-TZ93" ],
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 9052,-3117,-883,-3045,11346,1927,-205,1520,4730 ], // DNG_V9.10.1 D65
         "raw_crop": [ 0, 6, -8, -2 ], // fullraw4/3 5264x3904 official 8,8,3896,5192 = 5184X3888. Dcraw 0,0,5200,3904 RT's frame gets smaller than dcraw but works better with auto distortion
         "ranges": { "black": 16, "white": 4050 } // 12+3+1 is BL offset
@@ -1773,7 +1773,7 @@ Camera constants:
 
     { // Quality A, Replicated from rawimage.cc
         "make_model": [ "Panasonic DMC-G10", "Panasonic DMC-G2" ],
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 8310,-1811,-960,-4941,12990,2151,-1378,2468,6860 ], // Colin Walker
         "ranges": {
             "black": 15, // 15 is black offset, dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset
@@ -1786,7 +1786,7 @@ Camera constants:
 
     { // Quality A, Replicated from rawimage.cc
         "make_model": "Panasonic DMC-G1",
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 7477,-1615,-651,-5016,12769,2506,-1380,2475,7240 ], // Colin Walker
         "ranges": {
             "black": 15, // 15 is BL offset. dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset
@@ -1799,7 +1799,7 @@ Camera constants:
 
     { // Quality A, Replicated from rawimage.cc
         "make_model": "Panasonic DMC-G3",
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 6051,-1406,-671,-4015,11505,2868,-1654,2667,6219 ], // Colin Walker
         "ranges": {
             "black": 15, // 15 is BL offset. dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset
@@ -1808,7 +1808,7 @@ Camera constants:
 
     { // Quality A, Replicated from rawimage.cc
         "make_model": "Panasonic DMC-G5",
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 7122,-2092,-419,-4643,11769,3283,-1363,2413,5944 ], // RT
         "ranges": {
             "black": 15, // 15 is BL offset. dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset
@@ -1817,7 +1817,7 @@ Camera constants:
 
     { // Quality A, Replicated from rawimage.cc
         "make_model": "Panasonic DMC-GF1",
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 7863,-2080,-668,-4623,12331,2578,-1020,2066,7266 ], // Colin Walker
         "ranges": {
             "black": 15, // 15 is BL offset. dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset
@@ -1830,7 +1830,7 @@ Camera constants:
 
     { // Quality A, Replicated from rawimage.cc
         "make_model": "Panasonic DMC-GF2",
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 7694,-1791,-745,-4917,12818,2332,-1221,2322,7197 ], // Colin Walker
         "ranges": {
             "black": 15, // 15 is BL offset. dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset
@@ -1839,7 +1839,7 @@ Camera constants:
 
     { // Quality A, Replicated from rawimage.cc
         "make_model": "Panasonic DMC-GF3",
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 8074,-1846,-861,-5026,12999,2239,-1320,2375,7422 ], // Colin Walker
         "ranges": {
             "black": 15, // 15 is BL offset. dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset
@@ -1848,7 +1848,7 @@ Camera constants:
 
     { // Quality A, Replicated from rawimage.cc
         "make_model": "Panasonic DMC-GH1",
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 6360,-1557,-375,-4201,11504,3086,-1378,2518,5843 ], // Colin Walker
         "ranges": {
             "black": 15, // 15 is BL offset. dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset
@@ -1861,7 +1861,7 @@ Camera constants:
 
     { // Quality A, Replicated from rawimage.cc
         "make_model": "Panasonic DMC-GH2",
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         //"dcraw_matrix": [ 6855,-1765,-456,-4223,11600,2996,-1450,2602,5761 ], // Colin Walker - disabled due to problems with underwater
         "dcraw_matrix": [ 7780,-2410,-806,-3913,11724,2484,-1018,2390,5298 ], // dcraw d65
         "ranges": {
@@ -1875,7 +1875,7 @@ Camera constants:
 
     { // Quality B, variable WL
         "make_model": "Panasonic DMC-GH3",
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 6559,-1752,-491,-3672,11407,2586,-962,1875,5130 ], // dcp d65
         "ranges": {
             "black": 16, // 16 is BL offset. dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset
@@ -1888,7 +1888,7 @@ Camera constants:
 
     { // Quality B, some ISO WLevels are safely guessed
         "make_model": "Panasonic DMC-GH4",
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 7122,-2108,-512,-3155,11201,2231,-541,1423,5045 ], // dng_v8.5 d65
         "ranges": {
             "black": 16, // 16 is BL offset. dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset
@@ -1902,7 +1902,7 @@ Camera constants:
 
     { // Quality C
         "make_model": "Panasonic DC-GH5",
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 7641,-2336,-605,-3218,11299,2187,-485,1338,5121 ], // DNG_v9.9 D65
         "ranges": {
             "black": 15, // 16 is BL offset. dcraw/RT read the base BL from Exif and calculates total BL = BLbase+BLoffset
@@ -1916,7 +1916,7 @@ Camera constants:
 
     { // Quality A
         "make_model": "Panasonic DMC-GM1",
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 6770,-1895,-744,-5232,13145,2303,-1664,2691,5703 ],
         "ranges": {
             "black": 15, // 15 is BL offset. dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset
@@ -1930,7 +1930,7 @@ Camera constants:
 
     { // Quality B, uncertainty about ISO100 WL
         "make_model": "Panasonic DMC-GM5",
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 8238,-3244,-679,-3921,11814,2384,-836,2022,5852 ], // dng_v8.7 d65
         "ranges": {
             "black": 15, // 15 is BL offset. dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset
@@ -1943,7 +1943,7 @@ Camera constants:
 
     { // Quality A
         "make_model": [ "Panasonic DMC-GX7", "Panasonic DMC-GF7", "Panasonic DMC-GF8" ],
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 7610,-2780,-576,-4614,12195,2733,-1375,2393,6490 ],
         "ranges": {
             "black": 15, // 15 is BL offset. dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset
@@ -1957,7 +1957,7 @@ Camera constants:
 
     { // Quality A
         "make_model": [ "Panasonic DMC-G7", "Panasonic DMC-G70" ],
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 7610,-2780,-576,-4614,12195,2733,-1375,2393,6490 ], // DNG_v9.1 D65
         "ranges": {
             "black": 16, // 16 is BL offset. dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset
@@ -1971,7 +1971,7 @@ Camera constants:
 
     { // Quality B
         "make_model": [ "Panasonic DMC-GX80", "Panasonic DMC-GX85", "Panasonic DMC-GX7MK2" ],
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 7771,-3020,-629,-4029,11950,2345,-821,1977,6119 ], // DNG_v9.6 D65
         "ranges": {
             "black": 16, // 16 is BL offset. dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset
@@ -1985,7 +1985,7 @@ Camera constants:
 
     { // Quality X, no white-frames nor black-frames yet, see #4550
         "make_model": [ "Panasonic DC-GX9" ],
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 7564,-2263,-606,-3148,11239,2177,-540,1435,4853 ], // ColorMatrix2 from Adobe DNG Converter 10.3
         "ranges": {
             "black": 16,
@@ -1995,7 +1995,7 @@ Camera constants:
 
     { // Quality B, Same as Panasonic G7
         "make_model": [ "Panasonic DMC-G8", "Panasonic DMC-G80", "Panasonic DMC-G81", "Panasonic DMC-G85" ],
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 7610,-2780,-576,-4614,12195,2733,-1375,2393,6490 ], // DNG_v9.7 D65
         "ranges": {
             "black": 16, // 16 is BL offset. dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset
@@ -2009,7 +2009,7 @@ Camera constants:
 
     { // Quality B
         "make_model": "Panasonic DMC-GX8",
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 7564,-2263,-606,-3148,11239,2177,-540,1435,4853 ], // DNG_v9.1.1 D65
         "ranges": {
             "black": 15, // 16 is BL offset. dcraw/RT read the base BL from Exif and calculates total BL = BLbase+BLoffset
@@ -2023,7 +2023,7 @@ Camera constants:
 
     { // Quality B, samples by Ingo, missing some long exposure at high ISO samples with LENR ON
         "make_model": [ "Panasonic DMC-LX100", "Leica D-LUX (Typ 109)" ],
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 8844,-3538,-768,-3709,11762,2200,-698,1792,5220 ], // DNG_V8.7 d65
         //"dcraw_matrix": [ 6538,-1614,-549,-5475,13096,2646,-1780,2799,5612 ], // calculated from DxO D50
         "ranges": {
@@ -2044,7 +2044,7 @@ Camera constants:
 
     { // Quality B, Intermediate ISOs missing
         "make_model": [ "Panasonic DMC-LX9", "Panasonic DMC-LX10", "Panasonic DMC-LX15" ],
-        "global_green_equilibration" : 1,
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 7790,-2736,-755,-3452,11870,1769,-628,1647,4898 ], // DNg_v9.8 d65
         "raw_crop": [ 4, 4, -4, -4 ], // full raw frame 5488x3664 Exif crop 5472X3648 with 8pixel borders. Set the borders at 4 pixels which added with RT's 4 pixels border gives exactly the official frame.
         "ranges": {

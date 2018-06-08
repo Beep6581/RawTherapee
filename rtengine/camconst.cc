@@ -343,12 +343,12 @@ CameraConst::parseEntry(void *cJSON_, const char *make_model)
     ji = cJSON_GetObjectItem(js, "global_green_equilibration");
 
     if (ji) {
-        if (ji->type != cJSON_Number) {
-            fprintf(stderr, "\"global_green_equilibration\" must be a number\n");
+        if (ji->type != cJSON_False && ji->type != cJSON_True) {
+            fprintf(stderr, "\"global_green_equilibration\" must be a boolean\n");
             goto parse_error;
         }
 
-        cc->globalGreenEquilibration = ji->valueint;
+        cc->globalGreenEquilibration = (ji->type == cJSON_True);
     }
     
     return cc;
