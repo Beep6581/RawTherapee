@@ -865,7 +865,7 @@ void Crop::update (int todo)
 
             if ((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled)) {
                 parent->ipf.MLmicrocontrast (labnCrop);
-                parent->ipf.sharpening (labnCrop, params.sharpening);
+                parent->ipf.sharpening (labnCrop, params.sharpening, parent->sharpMask);
             }
         }
 
@@ -994,7 +994,7 @@ void Crop::update (int todo)
 
             float d, dj, yb; // not used after this block
             parent->ipf.ciecam_02float (cieCrop, float (adap), 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3,
-                                            dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 5, skip, execsharp, d, dj, yb, 1);
+                                        dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 5, skip, execsharp, d, dj, yb, 1, parent->sharpMask);
         } else {
             // CIECAM is disabled, we free up its image buffer to save some space
             if (cieCrop) {
