@@ -128,7 +128,7 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     setting->append (M("TP_BWMIX_SET_ROYGCBPMREL"));
     setting->append (M("TP_BWMIX_SET_INFRARED"));
 
-    setting->set_active (0);
+    setting->set_active (11);
     settingHBox->pack_start (*setting);
     mixerVBox->pack_start (*settingHBox);
     settingconn = setting->signal_changed().connect ( sigc::mem_fun(*this, &BlackWhite::settingChanged) );
@@ -388,9 +388,21 @@ bool BlackWhite::BWComputed_ ()
 
     disableListener ();
     mixerRed->setValue (nextredbw);
+    adjusterChanged(mixerRed, mixerRed->getValue());
     mixerGreen->setValue (nextgreenbw);
+    adjusterChanged(mixerGreen, mixerGreen->getValue());
     mixerBlue->setValue (nextbluebw);
+    adjusterChanged(mixerBlue, mixerBlue->getValue());
+    autoconn.block (true);
+    autoch->set_active (true);
+    autoconn.block (false);
+    lastAuto = false;
+    nextcount++;
     enableListener ();
+    if (listener  && nextcount <= 1 ) {
+        // activated only 1 time, but perhaps in some cases if we want that all is update pp3, auto, sliders : nextcount <= 2 but it cost time and result is identical
+        listener->panelChanged (EvAutoch, M("GENERAL_ENABLED"));
+    }
 
     updateRGBLabel();
 
@@ -789,6 +801,7 @@ void BlackWhite::filterChanged ()
 
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged (EvBWfilter, filter->get_active_text ());
+        listener->panelChanged (EvAutoch, M("GENERAL_ENABLED"));
     }
 }
 
@@ -884,6 +897,7 @@ void BlackWhite::neutral_pressed ()
 
     updateRGBLabel();
 
+    nextcount = 0;
     if(listener) {
         listener->panelChanged (EvNeutralBW, M("GENERAL_RESET"));
     }
@@ -1089,6 +1103,7 @@ void BlackWhite::adjusterChanged (Adjuster* a, double newval)
             autoch->set_inconsistent (false);
         }
 
+        nextcount = 0;
         autoconn.block(true);
         autoch->set_active (false);
         autoconn.block(false);
