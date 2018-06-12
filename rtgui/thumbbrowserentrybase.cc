@@ -23,6 +23,103 @@
 
 #include "../rtengine/mytime.h"
 
+namespace
+{
+
+Glib::ustring getPaddedName(const Glib::ustring& name)
+{
+    enum class State {
+        OTHER,
+        NUMBER
+    };
+
+    constexpr unsigned int pad_width = 16;
+
+    Glib::ustring res;
+
+    State state = State::OTHER;
+    Glib::ustring number;
+
+    for (auto c : name) {
+        switch (state) {
+            case State::OTHER: {
+                switch (c) {
+                    case '0':
+                    case '1':
+                    case '2':
+                    case '3':
+                    case '4':
+                    case '5':
+                    case '6':
+                    case '7':
+                    case '8':
+                    case '9': {
+                        number += c;
+
+                        state = State::NUMBER;
+                        break;
+                    }
+
+                    default: {
+                        res += c;
+                        break;
+                    }
+                }
+                break;
+            }
+
+            case State::NUMBER: {
+                switch (c) {
+                    case '0':
+                    case '1':
+                    case '2':
+                    case '3':
+                    case '4':
+                    case '5':
+                    case '6':
+                    case '7':
+                    case '8':
+                    case '9': {
+                        number += c;
+                        break;
+                    }
+
+                    default: {
+                        if (number.size() < pad_width) {
+                            res.append(pad_width - number.size(), '0');
+                        }
+                        res += number;
+                        res += c;
+                        number.clear();
+
+                        state = State::OTHER;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    switch (state) {
+        case State::OTHER: {
+            break;
+        }
+
+        case State::NUMBER: {
+            if (number.size() < pad_width) {
+                res.append(pad_width - number.size(), '0');
+            }
+            res += number;
+            break;
+        }
+    }
+
+    return res;
+}
+
+}
+
 ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname) :
     fnlabw(0),
     fnlabh(0),
@@ -57,7 +154,7 @@ ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname) :
     bbFramed(false),
     bbPreview(nullptr),
     cursor_type(CSUndefined),
-    collate_name(dispname.casefold().collate_key()),
+    collate_name(getPaddedName(dispname).casefold_collate_key()),
     thumbnail(nullptr),
     filename(fname),
     shortname(dispname),
