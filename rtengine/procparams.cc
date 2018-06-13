@@ -1842,7 +1842,7 @@ BlackWhiteParams::BlackWhiteParams() :
     enabledcc(true),
     enabled(false),
     filter("None"),
-    setting("NormalContrast"),
+    setting("RGB-Rel"),
     method("Desaturation"),
     mixerRed(33),
     mixerOrange(33),

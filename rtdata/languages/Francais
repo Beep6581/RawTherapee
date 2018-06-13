@@ -1464,7 +1464,7 @@ TP_DIRPYRDENOISE_CHROMINANCE_METHODADVANCED_TOOLTIP;Manuel\nAgit sur l'image ent
 TP_DIRPYRDENOISE_CHROMINANCE_METHOD_TOOLTIP;Manuel\nAgit sur l'image entière.\nVous controlez les paramètres de réduction de bruit manuellement.\n\nGlobal automatique\nAgit sur l'image entière.\n9 zones sont utilisées pour calculer un réglage de réduction de bruit de chroma.\n\nAutomatique multi-zones\nPas d'aperçu - ne fonctionne que lors de l'enregistrement, mais utiliser la méthode "Aperçu" en faisant correspondre la taille et le centre de la tuile à la taille et au centre de l'aperçu, vous permet d'avoir une idée des résultats attendus.\nL'image est divisé en tuiles (entre 10 et 70 en fonction de la taille de l'image) et chaque tuile reçoit son propre réglage de réduction de bruit de chrominance.\n\nAperçu\nAgit sur l'image entière.\nLa partie de l'image visible dans l'aperçu est utilisé pour calculer un réglage de réduction de bruit de chroma.
 TP_DIRPYRDENOISE_CHROMINANCE_PMZ;Aperçu multi-zones
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW;Aperçu
-TP_DIRPYRDENOISE_CHROMINANCE_PREVIEWRESIDUAL_INFO_TOOLTIP;Affiche les niveaux de bruit résiduel de la partie de l'image visible dans l'<b>aperçu</b> après les ondelettes.\n\n>300 Très bruité\n100-300 Bruité\n50-100 Peu bruité\n<50 Très peu bruité\n\nAttention, les valeurs diffèreront entre le mode RVB et L*a*b*. Les valeurs RVB sont moins précises car le mode RVB ne séparent pas complètement la luminance et la chrominance.
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEWRESIDUAL_INFO_TOOLTIP;Affiche les niveaux de bruit résiduels de la partie de l'image visible dans l'<b>aperçu</b> après les ondelettes.\n\n>300 Très bruité\n100-300 Bruité\n50-100 Peu bruité\n<50 Très peu bruité\n\nAttention, les valeurs diffèreront entre le mode RVB et L*a*b*. Les valeurs RVB sont moins précises car le mode RVB ne séparent pas complètement la luminance et la chrominance.
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_INFO;Taille de l'aperçu=%1, Centre: Px=%2  Py=%3
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO;Bruit de l'aperçu: Moyen=%1  Haut=%2
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY;Bruit de l'aperçu: Moyen= -   Haut= -
@@ -1478,18 +1478,18 @@ TP_DIRPYRDENOISE_LUMINANCE_CURVE;Courbe de luminance
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Niveau de détails de Luminance
 TP_DIRPYRDENOISE_LUMINANCE_FRAME;Luminance
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminance
-TP_DIRPYRDENOISE_MAIN_COLORSPACE;Méthode
+TP_DIRPYRDENOISE_MAIN_COLORSPACE;Espace colorimétrique
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;Lab
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Réduction du bruit
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RVB
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;Pour les images raw, les méthodes RVB ou Lab peuvent être utilisées.\n\nPour les images non-raw la méthode Lab sera utilisée, indépendamment de ce qu'indique ce bouton.
 TP_DIRPYRDENOISE_MAIN_GAMMA;Gamma
 TP_DIRPYRDENOISE_MAIN_GAMMA_TOOLTIP;Gamma fait varier la quantité de réduction de bruit sur l'échelle des tons. Les plus petites valeurs cibleront les ombres, les plus hautes valeurs cibleront les tons les plus clairs.
-TP_DIRPYRDENOISE_MAIN_MODE;Qualité
-TP_DIRPYRDENOISE_MAIN_MODE_AGGRESSIVE;Haut
-TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE;Standard
-TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;La qualité peut être adapté à la trame du bruit. Régler sur "haut" augmentera l'effet de la réduction de bruit au prix d'un temps de traitement plus long.
-TP_DIRPYRDENOISE_MEDIAN_METHOD;Méthode
+TP_DIRPYRDENOISE_MAIN_MODE;Mode
+TP_DIRPYRDENOISE_MAIN_MODE_AGGRESSIVE;Agressif
+TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE;Conservatif
+TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;"Conservatif" préserve les motifs chromatiques de basse fréquence tandis que "agressif" les efface.
+TP_DIRPYRDENOISE_MEDIAN_METHOD;Méthode médiane
 TP_DIRPYRDENOISE_MEDIAN_METHOD_CHROMINANCE;Chroma uniquement
 TP_DIRPYRDENOISE_MEDIAN_METHOD_LAB;L*a*b*
 TP_DIRPYRDENOISE_MEDIAN_METHOD_LABEL;Filtre Médian
@@ -2205,7 +2205,9 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_489;DRC - Threshold
 !HISTORY_MSG_490;DRC - Amount
 !HISTORY_MSG_CLAMPOOG;Out-of-gamut color clipping
+!HISTORY_MSG_DUALDEMOSAIC_CONTRAST;AMaZE+VNG4 - Contrast threshold
 !HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
+!HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - Demosaic method for motion
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
@@ -2226,6 +2228,10 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertical
 !TP_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.
+!TP_RAW_4PASS;4-Pass
+!TP_RAW_AMAZEVNG4;AMaZE+VNG4
+!TP_RAW_DUALDEMOSAICCONTRAST;Contrast threshold
+!TP_RAW_PIXELSHIFTDMETHOD;Demosaic method for motion
 !TP_RAW_PIXELSHIFTEPERISO;Sensitivity
 !TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value of 0 should work fine for base ISO.\nHigher values increase sensitivity of motion detection.\nChange in small steps and watch the motion mask while changing.\nIncrease sensitivity for underexposed or high ISO images.
 !TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a green mask showing the regions with motion.

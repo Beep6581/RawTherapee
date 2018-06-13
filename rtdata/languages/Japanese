@@ -164,7 +164,7 @@ FILEBROWSER_MOVETODARKFDIR;ダークフレーム・ディレクトリに移動
 FILEBROWSER_MOVETOFLATFIELDDIR;フラットフィールド・ディレクトリに移動
 FILEBROWSER_NEW_NAME;新しい名前:
 FILEBROWSER_OPENDEFAULTVIEWER;Windowsのデフォルト・ビューア（キュー処理）
-FILEBROWSER_PARTIALPASTEPROFILE;プロファイルの貼り付け　-　一部
+FILEBROWSER_PARTIALPASTEPROFILE;プロファイルの貼り付け　- 一部
 FILEBROWSER_PASTEPROFILE;プロファイルの貼り付け
 FILEBROWSER_POPUPCANCELJOB;ジョブ キャンセル
 FILEBROWSER_POPUPCOLORLABEL;カラー・ラベル
@@ -186,11 +186,11 @@ FILEBROWSER_POPUPPROCESSFAST;キューに追加 (高速書き出し)
 FILEBROWSER_POPUPPROFILEOPERATIONS;プロファイルの操作
 FILEBROWSER_POPUPRANK;ランク
 FILEBROWSER_POPUPRANK0;ランクなし
-FILEBROWSER_POPUPRANK1;ランク　1　*
+FILEBROWSER_POPUPRANK1;ランク　1 *
 FILEBROWSER_POPUPRANK2;ランク　2 **
-FILEBROWSER_POPUPRANK3;ランク　3　***
-FILEBROWSER_POPUPRANK4;ランク　4　****
-FILEBROWSER_POPUPRANK5;ランク　5　*****
+FILEBROWSER_POPUPRANK3;ランク　3 ***
+FILEBROWSER_POPUPRANK4;ランク　4 ****
+FILEBROWSER_POPUPRANK5;ランク　5 *****
 FILEBROWSER_POPUPREMOVE;ファイルシステムから削除
 FILEBROWSER_POPUPREMOVEINCLPROC;ファイルシステムとバッチの結果から削除
 FILEBROWSER_POPUPRENAME;名前変更
@@ -530,15 +530,15 @@ HISTORY_MSG_248;L*a*b* HH カーブ
 HISTORY_MSG_249;ディテールレベルのコントラスト - しきい値
 HISTORY_MSG_250;ノイズ低減　-　強化
 HISTORY_MSG_251;白黒 - アルゴリズム
-HISTORY_MSG_252;CbDL　肌色の目標/保護
-HISTORY_MSG_253;CbDL　アーティファクトを軽減
-HISTORY_MSG_254;CbDL　肌色の色相
-HISTORY_MSG_255;ノイズ低減　-　メディアン
+HISTORY_MSG_252;CbDL 肌色の目標/保護
+HISTORY_MSG_253;CbDL アーティファクトを軽減
+HISTORY_MSG_254;CbDL 肌色の色相
+HISTORY_MSG_255;ノイズ低減　- メディアン
 HISTORY_MSG_256;ノイズ低減 - フィルターの種類
 HISTORY_MSG_257;カラートーン調整
 HISTORY_MSG_258;カラートーン調整　- カラーのカーブ
 HISTORY_MSG_259;カラートーン調整　-　不透明度のカーブ
-HISTORY_MSG_260;カラートーン調整　-　a*(b*)の不透明度
+HISTORY_MSG_260;カラートーン調整　- a*(b*)の不透明度
 HISTORY_MSG_261;カラートーン調整　-　方法
 HISTORY_MSG_262;カラートーン調整　-　b*の不透明度
 HISTORY_MSG_263;カラートーン調整　-　シャドウのレッド
@@ -550,7 +550,7 @@ HISTORY_MSG_268;カラートーン調整　-　中間トーンのブルー
 HISTORY_MSG_269;カラートーン調整　-　ハイライトのレッド
 HISTORY_MSG_270;カラートーン調整　-　ハイライトのグリーン
 HISTORY_MSG_271;カラートーン調整　-　ハイライトのブルー
-HISTORY_MSG_272;カラートーン調整　-　バランス
+HISTORY_MSG_272;カラートーン調整　- バランス
 HISTORY_MSG_273;カラートーン調整 - SMHでカラーバランス
 HISTORY_MSG_274;カラートーン調整　-　シャドウの彩度
 HISTORY_MSG_275;カラートーン調整　-　ハイライトの彩度
@@ -558,7 +558,7 @@ HISTORY_MSG_276;カラートーン調整　-　不透明度
 HISTORY_MSG_277;カラートーン調整　-　カーブをリセット
 HISTORY_MSG_278;カラートーン調整　-　明度を維持
 HISTORY_MSG_279;カラートーン調整　-　シャドウ
-HISTORY_MSG_280;カラートーン調整　-　ハイライト
+HISTORY_MSG_280;カラートーン調整　- ハイライト
 HISTORY_MSG_281;カラートーン調整　-　彩度の保護
 HISTORY_MSG_282;カラートーン調整　-　彩度のしきい値
 HISTORY_MSG_283;カラートーン調整　-　強さを維持
@@ -583,7 +583,7 @@ HISTORY_MSG_301;輝度ノイズの調整方法
 HISTORY_MSG_302;色ノイズの調整方法
 HISTORY_MSG_303;色ノイズの調整方法
 HISTORY_MSG_304;W- コントラストレベル
-HISTORY_MSG_305;ウェーブレットのレベル
+HISTORY_MSG_305;ウェーブレット
 HISTORY_MSG_306;W- プロセス
 HISTORY_MSG_307;W- プレビュー
 HISTORY_MSG_308;W- プレビューの方向
@@ -623,8 +623,8 @@ HISTORY_MSG_341;W- エッジパフォーマンス
 HISTORY_MSG_342;W- ES 最初のレベル
 HISTORY_MSG_343;W- 色度のレベル
 HISTORY_MSG_344;W- 色度　方式　スライダー/カーブ
-HISTORY_MSG_345;W- ES　ローカルコントラスト
-HISTORY_MSG_346;W- ES　ローカルコントラスト　方式
+HISTORY_MSG_345;W- ES ローカルコントラスト
+HISTORY_MSG_346;W- ES ローカルコントラスト　方式
 HISTORY_MSG_347;W- ノイズ低減とリファイン　レベル1
 HISTORY_MSG_348;W- ノイズ低減とリファイン　レベル2
 HISTORY_MSG_349;W- ノイズ低減とリファイン　レベル3
@@ -750,6 +750,9 @@ HISTORY_MSG_484;CAM02 - 撮影環境のYb 自動
 HISTORY_MSG_485;レンズ補正
 HISTORY_MSG_486;レンズ補正 - カメラ
 HISTORY_MSG_487;レンズ補正 - レンズ
+HISTORY_MSG_488;ダイナミックレンジ圧縮
+HISTORY_MSG_489;DRC - しきい値
+HISTORY_MSG_490;DRC - 量
 HISTORY_MSG_491;ホワイトバランス
 HISTORY_MSG_492;RGBカーブ
 HISTORY_MSG_493;L*a*b*調整
@@ -767,6 +770,7 @@ HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;ラインノイズフィルタの�
 HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAFラインフィルタ
 HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - コントラストのしきい値
 HISTORY_MSG_SHARPENING_CONTRAST;シャープ化 - コントラストのしきい値
+HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - アンカー
 HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSNAPSHOT_TOOLTIP;ショートカット: <b>Alt-s</b>
 HISTORY_SNAPSHOT;スナップショット
@@ -979,6 +983,7 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;シャドウ/ハイライト
 PARTIALPASTE_SHARPENEDGE;エッジ
 PARTIALPASTE_SHARPENING;シャープ化 (USM/RL)
 PARTIALPASTE_SHARPENMICRO;マイクロコントラスト
+PARTIALPASTE_TM_FATTAL;ダイナミックレンジ圧縮
 PARTIALPASTE_VIBRANCE;自然な彩度
 PARTIALPASTE_VIGNETTING;周辺光量補正
 PARTIALPASTE_WAVELETGROUP;ウェーブレット処理
@@ -1522,10 +1527,10 @@ TP_DIRPYRDENOISE_CHROMINANCE_METHODADVANCED_TOOLTIP;手動\n画像全体に作�
 TP_DIRPYRDENOISE_CHROMINANCE_METHOD_TOOLTIP;手動\n画像全体に作用します\nノイズ低減の設定を手動で行います\n\n自動（分割方式）\n画像全体に作用します\n画像を9つに分割して、そこから全体の色ノイズ低減に適した設定を自動的に行います\n\n自動（多分割方式）\nプレビュー画像には反映されません-保存画像だけに反映されます。但し、タイルサイズとその中心をプレビューサイズとその中心にマッチさせる〝プレビュー”方式を使えば、効果がどれ位か予測がつきます。\n画像をタイル状に分割し（タイル数は画像サイズ次第で、10～70枚になります）、各タイルにあった色ノイズ低減の設定を自動で行います\n\n自動（プレビュー方式）\n画像全体に作用します\nプレビューで見えている画像の一部を使って全体の色ノイズ低減に適した設定を自動で行います
 TP_DIRPYRDENOISE_CHROMINANCE_PMZ;自動（プレビュー方式）
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW;プレビュー方式
-TP_DIRPYRDENOISE_CHROMINANCE_PREVIEWRESIDUAL_INFO_TOOLTIP;ウェーブレット変換後、プレビューで見える部分画像で残ったノイズのレベルを表示します\n\n>300以上　非常にノイズが多い\n100～300 ノイズが多い\n50～100　ノイズが少ない\n50以下 ノイズが非常に少ない\n\n算出値はRGBとL*a*b*モードでは異なります。RGBモードは輝度と色を完全に切り離すことが出来ないので、算出値の精度は劣ります。
-TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_INFO;プレビューのサイズ=%1, 中心: Px=%2  Py=%3
-TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO;プレビューのノイズ: 中間色度=%1  高色度=%2
-TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY;プレビューのノイズ: 中間色度= -   高色度= -
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEWRESIDUAL_INFO_TOOLTIP;ウェーブレット変換後、プレビューに表示されている画像のノイズのレベルを表示します\n\n>300以上　非常にノイズが多い\n100～300 ノイズが多い\n50～100　ノイズが少ない\n50以下 ノイズが非常に少ない\n\n算出値はRGBとL*a*b*モードでは異なります。RGBモードは輝度と色を完全に切り離すことが出来ないので、算出値の精度は劣ります。
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_INFO;プレビュー画像のサイズ=%1, 中心: Px=%2  Py=%3
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO;プレビュー画像のノイズ: 平均値=%1  最大値=%2
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY;プレビュー画像のノイズ: 平均値= -   最大値= -
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;タイルのサイズ=%1, 中心位置: X座標=%2  Y座標=%3
 TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;色差 レッド/グリーン
 TP_DIRPYRDENOISE_ENH;強化モード
@@ -1536,17 +1541,17 @@ TP_DIRPYRDENOISE_LUMINANCE_CURVE;輝度カーブ
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;輝度　細部の復元
 TP_DIRPYRDENOISE_LUMINANCE_FRAME;輝度ノイズ
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;輝度
-TP_DIRPYRDENOISE_MAIN_COLORSPACE;方式
+TP_DIRPYRDENOISE_MAIN_COLORSPACE;色空間
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;L*a*b*
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;ノイズ低減
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;raw画像は、RGBまたはL*a*b*方式のいずれかを使用することができます。\n\nraw以外の画像は、選択にかかわらずL*a*b*方式が採用されます
 TP_DIRPYRDENOISE_MAIN_GAMMA;ガンマ
 TP_DIRPYRDENOISE_MAIN_GAMMA_TOOLTIP;ガンマは、トーンの範囲全体でノイズ低減の量を変化させます。値が大きいほど明るいトーンに効果を及ぼし、値が小さいほどシャドウをターゲットにします
-TP_DIRPYRDENOISE_MAIN_MODE;ノイズ低減の質
-TP_DIRPYRDENOISE_MAIN_MODE_AGGRESSIVE;高い
-TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE;標準
-TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;ノイズの状態に応じて低減効果の質を選べます：1-標準　2－高い\n2の方がノイズ低減効果は高くなりますが、その分処理時間が増えます。
+TP_DIRPYRDENOISE_MAIN_MODE;モード
+TP_DIRPYRDENOISE_MAIN_MODE_AGGRESSIVE;積極的
+TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE;控えめ
+TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;”控えめ”モードは低周波の色度パターンが維持されますが、”積極的”モードではそれらも取り除かれます
 TP_DIRPYRDENOISE_MEDIAN_METHOD;方式
 TP_DIRPYRDENOISE_MEDIAN_METHOD_CHROMINANCE;色ノイズだけ
 TP_DIRPYRDENOISE_MEDIAN_METHOD_LAB;L*a*b*
@@ -1619,7 +1624,7 @@ TP_EXPOSURE_TCMODE_SATANDVALBLENDING;彩度と明度のブレンド
 TP_EXPOSURE_TCMODE_STANDARD;標準
 TP_EXPOSURE_TCMODE_WEIGHTEDSTD;加重平均
 TP_EXPOS_BLACKPOINT_LABEL;raw ブラック・ポイント
-TP_EXPOS_WHITEPOINT_LABEL;raw　ホワイト・ポイント
+TP_EXPOS_WHITEPOINT_LABEL;raw ホワイト・ポイント
 TP_FILMSIMULATION_LABEL;フィルムシミュレーション
 TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapeeはフィルムシミュレーション機能に使う画像をHald CLUTフォルダーの中から探すよう設計されています（プログラムに組み込むにはフォルダーが大き過ぎるため）。\n変更するには、環境設定 > 画像処理 > フィルムシミュレーションと進み\nどのフォルダーが使われているか確認します。機能を利用する場合は、Hald CLUTだけが入っているフォルダーを指定するか、 この機能を使わない場合はそのフォルダーを空にしておきます。\n\n詳しくはRawPediaを参照して下さい。\n\nフィルム画像のスキャンを止めますか？
 TP_FILMSIMULATION_STRENGTH;強さ
@@ -1998,6 +2003,10 @@ TP_SHARPENMICRO_CONTRAST;コントラストのしきい値
 TP_SHARPENMICRO_LABEL;マイクロコントラスト
 TP_SHARPENMICRO_MATRIX;3×3マトリクスの代わりに 5×5
 TP_SHARPENMICRO_UNIFORMITY;均等
+TP_TM_FATTAL_AMOUNT;量
+TP_TM_FATTAL_ANCHOR;アンカー
+TP_TM_FATTAL_LABEL;ダイナミックレンジ圧縮
+TP_TM_FATTAL_THRESHOLD;しきい値
 TP_VIBRANCE_AVOIDCOLORSHIFT;色ずれを回避
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;肌色トーン
@@ -2245,12 +2254,9 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!HISTORY_MSG_488;Dynamic Range Compression
-!HISTORY_MSG_489;DRC - Threshold
-!HISTORY_MSG_490;DRC - Amount
-!HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
-!PARTIALPASTE_TM_FATTAL;Dynamic Range Compression
-!TP_TM_FATTAL_AMOUNT;Amount
-!TP_TM_FATTAL_ANCHOR;Anchor
-!TP_TM_FATTAL_LABEL;Dynamic Range Compression
-!TP_TM_FATTAL_THRESHOLD;Threshold
+!HISTORY_MSG_DUALDEMOSAIC_CONTRAST;AMaZE+VNG4 - Contrast threshold
+!HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - Demosaic method for motion
+!TP_RAW_4PASS;4-Pass
+!TP_RAW_AMAZEVNG4;AMaZE+VNG4
+!TP_RAW_DUALDEMOSAICCONTRAST;Contrast threshold
+!TP_RAW_PIXELSHIFTDMETHOD;Demosaic method for motion
