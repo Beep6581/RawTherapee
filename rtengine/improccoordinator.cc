@@ -35,7 +35,7 @@ extern const Settings* settings;
 ImProcCoordinator::ImProcCoordinator ()
     : orig_prev (nullptr), oprevi (nullptr), oprevl (nullptr), nprevl (nullptr), fattal_11_dcrop_cache(nullptr), previmg (nullptr), workimg (nullptr),
       ncie (nullptr), imgsrc (nullptr), lastAwbEqual (0.), lastAwbTempBias (0.0), ipf (&params, true), monitorIntent (RI_RELATIVE),
-      softProof (false), gamutCheck (false), scale (10), highDetailPreprocessComputed (false), highDetailRawComputed (false),
+      softProof (false), gamutCheck (false), sharpMask(false), scale (10), highDetailPreprocessComputed (false), highDetailRawComputed (false),
       allocated (false), bwAutoR (-9000.f), bwAutoG (-9000.f), bwAutoB (-9000.f), CAMMean (NAN),
 
       hltonecurve (65536),
@@ -1158,6 +1158,11 @@ void ImProcCoordinator::getSoftProofing (bool &softProof, bool &gamutCheck)
 {
     softProof = this->softProof;
     gamutCheck = this->gamutCheck;
+}
+
+void ImProcCoordinator::setSharpMask (bool sharpMask)
+{
+    this->sharpMask = sharpMask;
 }
 
 void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname, bool apply_wb)

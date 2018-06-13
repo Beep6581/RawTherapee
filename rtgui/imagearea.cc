@@ -561,6 +561,14 @@ void ImageArea::spotWBSelected (int x, int y)
     }
 }
 
+void ImageArea::sharpMaskSelected (bool sharpMask)
+{
+
+    if (listener) {
+        listener->sharpMaskSelected (sharpMask);
+    }
+}
+
 void ImageArea::getScrollImageSize (int& w, int& h)
 {
 

@@ -193,7 +193,7 @@ void buildBlendMask(float** luminance, rtengine::JaggedArray<float> &blend, int 
     if(contrastThreshold == 0.f) {
         for(int j = 0; j < H; ++j) {
             for(int i = 0; i < W; ++i) {
-                blend[j][i] = 1.f;
+                blend[j][i] = amount;
             }
         }
     } else {

@@ -210,7 +210,7 @@ BENCHFUN
     } // end parallel
 }
 
-void ImProcFunctions::sharpening (LabImage* lab, const SharpeningParams &sharpenParam)
+void ImProcFunctions::sharpening (LabImage* lab, const SharpeningParams &sharpenParam, bool showMask)
 {
 
     if ((!sharpenParam.enabled) || sharpenParam.amount < 1 || lab->W < 8 || lab->H < 8) {
@@ -218,6 +218,23 @@ void ImProcFunctions::sharpening (LabImage* lab, const SharpeningParams &sharpen
     }
 
     int W = lab->W, H = lab->H;
+
+    if(showMask) {
+        // calculate contrast based blend factors to reduce sharpening in regions with low contrast
+        JaggedArray<float> blend(W, H);
+        buildBlendMask(lab->L, blend, W, H, sharpenParam.contrast / 100.f, sharpenParam.method == "rld" ? sharpenParam.deconvamount / 100.0 : 1.f);
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+
+        for (int i = 0; i < H; ++i) {
+            for (int j = 0; j < W; ++j) {
+                lab->L[i][j] = blend[i][j] * 32768.f;
+            }
+        }
+        return;
+    }
+
     JaggedArray<float> b2(W, H);
 
     if (sharpenParam.method == "rld") {
@@ -791,11 +808,30 @@ void ImProcFunctions::MLmicrocontrastcam(CieImage* ncie)
     MLmicrocontrast(ncie->sh_p, ncie->W, ncie->H);
 }
 
-void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
+void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2, bool showMask)
 {
     if ((!params->sharpening.enabled) || params->sharpening.amount < 1 || ncie->W < 8 || ncie->H < 8) {
         return;
     }
+
+    int W = ncie->W, H = ncie->H;
+
+    if(showMask) {
+        // calculate contrast based blend factors to reduce sharpening in regions with low contrast
+        JaggedArray<float> blend(W, H);
+        buildBlendMask(ncie->sh_p, blend, W, H, params->sharpening.contrast / 100.f);
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+
+        for (int i = 0; i < H; ++i) {
+            for (int j = 0; j < W; ++j) {
+                ncie->sh_p[i][j] = blend[i][j] * 32768.f;
+            }
+        }
+        return;
+    }
+
 
     if (params->sharpening.method == "rld") {
         deconvsharpening (ncie->sh_p, b2, ncie->W, ncie->H, params->sharpening);
@@ -804,7 +840,6 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
 
     // Rest is UNSHARP MASK
 
-    int W = ncie->W, H = ncie->H;
     float** b3 = nullptr;
 
     if (params->sharpening.edgesonly) {
