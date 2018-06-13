@@ -1020,14 +1020,14 @@ template<class T> void gaussVerticaldiv (T** src, T** dst, T** divBuffer, const 
         }
 
         for (int k = 0; k < numcols; k++) {
-            rtengine::max(dst[H - 1][i + k] = divBuffer[H - 1][i + k] / (temp2[H - 1][k] = temp2Hm1[k]), 0.f);
-            rtengine::max(dst[H - 2][i + k] = divBuffer[H - 2][i + k] / (temp2[H - 2][k] = B * temp2[H - 2][k] + b1 * temp2[H - 1][k] + b2 * temp2H[k] + b3 * temp2Hp1[k]), 0.f);
-            rtengine::max(dst[H - 3][i + k] = divBuffer[H - 3][i + k] / (temp2[H - 3][k] = B * temp2[H - 3][k] + b1 * temp2[H - 2][k] + b2 * temp2[H - 1][k] + b3 * temp2H[k], 0.f);
+            dst[H - 1][i + k] = rtengine::max(divBuffer[H - 1][i + k] / (temp2[H - 1][k] = temp2Hm1[k]), 0.f);
+            dst[H - 2][i + k] = rtengine::max(divBuffer[H - 2][i + k] / (temp2[H - 2][k] = B * temp2[H - 2][k] + b1 * temp2[H - 1][k] + b2 * temp2H[k] + b3 * temp2Hp1[k]), 0.f);
+            dst[H - 3][i + k] = rtengine::max(divBuffer[H - 3][i + k] / (temp2[H - 3][k] = B * temp2[H - 3][k] + b1 * temp2[H - 2][k] + b2 * temp2[H - 1][k] + b3 * temp2H[k]), 0.f);
         }
 
         for (int j = H - 4; j >= 0; j--) {
             for (int k = 0; k < numcols; k++) {
-                rtengine::max(dst[j][i + k] = divBuffer[j][i + k] / (temp2[j][k] = B * temp2[j][k] + b1 * temp2[j + 1][k] + b2 * temp2[j + 2][k] + b3 * temp2[j + 3][k]), 0.f);
+                dst[j][i + k] = rtengine::max(divBuffer[j][i + k] / (temp2[j][k] = B * temp2[j][k] + b1 * temp2[j + 1][k] + b2 * temp2[j + 2][k] + b3 * temp2[j + 3][k]), 0.f);
             }
         }
     }
