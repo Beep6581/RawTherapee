@@ -606,6 +606,7 @@ bool LocalContrastParams::operator!=(const LocalContrastParams &other) const
 
 
 const double ColorToningParams::LABGRID_CORR_MAX = 12000.f;
+const double ColorToningParams::LABGRID_CORR_SCALE = 3.f;
 
 ColorToningParams::ColorToningParams() :
     enabled(false),
@@ -4591,6 +4592,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "ColorToning", "LabGridBLow", pedited, colorToning.labgridBLow, pedited->colorToning.labgridBLow);
             assignFromKeyfile(keyFile, "ColorToning", "LabGridAHigh", pedited, colorToning.labgridAHigh, pedited->colorToning.labgridAHigh);
             assignFromKeyfile(keyFile, "ColorToning", "LabGridBHigh", pedited, colorToning.labgridBHigh, pedited->colorToning.labgridBHigh);
+            if (ppVersion < 337) {
+                const double scale = ColorToningParams::LABGRID_CORR_SCALE;
+                colorToning.labgridALow *= scale;
+                colorToning.labgridAHigh *= scale;
+                colorToning.labgridBLow *= scale;
+                colorToning.labgridBHigh *= scale;
+            }            
         }
 
         if (keyFile.has_group ("RAW")) {
