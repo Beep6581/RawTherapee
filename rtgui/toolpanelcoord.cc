@@ -656,6 +656,16 @@ void ToolPanelCoordinator::spotWBselected (int x, int y, Thumbnail* thm)
     }
 }
 
+void ToolPanelCoordinator::sharpMaskSelected(bool sharpMask)
+{
+
+    if (!ipc) {
+        return;
+    }
+    ipc->beginUpdateParams ();
+    ipc->setSharpMask(sharpMask);
+    ipc->endUpdateParams (rtengine::EvShrEnabled);
+}
 
 
 
