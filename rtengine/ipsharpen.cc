@@ -222,7 +222,7 @@ void ImProcFunctions::sharpening (LabImage* lab, const SharpeningParams &sharpen
     if(showMask) {
         // calculate contrast based blend factors to reduce sharpening in regions with low contrast
         JaggedArray<float> blend(W, H);
-        buildBlendMask(lab->L, blend, W, H, sharpenParam.contrast / 100.f);
+        buildBlendMask(lab->L, blend, W, H, sharpenParam.contrast / 100.f, sharpenParam.method == "rld" ? sharpenParam.deconvamount / 100.0 : 1.f);
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
