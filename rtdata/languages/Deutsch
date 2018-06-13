@@ -776,6 +776,9 @@ HISTORY_MSG_484;(CIECAM02) - Szene\nAuto Yb%
 HISTORY_MSG_485;(Objektivkorrektur)\nProfil
 HISTORY_MSG_486;(Objektivkorrektur)\nProfil - Kamera
 HISTORY_MSG_487;(Objektivkorrektur)\nProfil - Objektiv
+HISTORY_MSG_488;(Dynamikkompression)
+HISTORY_MSG_489;(Dynamikkompression)\nSchwelle
+HISTORY_MSG_490;(Dynamikkompression)\nIntensität
 HISTORY_MSG_491;(Weißabgleich)
 HISTORY_MSG_492;(RGB-Kurven)
 HISTORY_MSG_493;(L*a*b*)
@@ -793,6 +796,7 @@ HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;(Sensor-Matrix)\nVorverarbeitung\nR
 HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;(Sensor-Matrix)\nVorverarbeitung\nPDAF-Zeilenfilter
 HISTORY_MSG_PRSHARPEN_CONTRAST;(Skalieren) - Schärfen\nKontrastschwelle
 HISTORY_MSG_SHARPENING_CONTRAST;(Schärfung)\nKontrastschwelle
+HISTORY_MSG_TM_FATTAL_ANCHOR;(Dynamikkompression)\nHelligkeitsverschiebung
 HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
 HISTORY_SNAPSHOT;Schnappschuss
@@ -1005,6 +1009,7 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Schatten/Lichter
 PARTIALPASTE_SHARPENEDGE;Kantenschärfung
 PARTIALPASTE_SHARPENING;Schärfung
 PARTIALPASTE_SHARPENMICRO;Mikrokontrast
+PARTIALPASTE_TM_FATTAL;Dynamikkompression
 PARTIALPASTE_VIBRANCE;Dynamik
 PARTIALPASTE_VIGNETTING;Vignettierungskorrektur
 PARTIALPASTE_WAVELETGROUP;Wavelet
@@ -2037,6 +2042,10 @@ TP_SHARPENMICRO_CONTRAST;Kontrastschwelle
 TP_SHARPENMICRO_LABEL;Mikrokontrast
 TP_SHARPENMICRO_MATRIX;3×3-Matrix statt 5×5-Matrix
 TP_SHARPENMICRO_UNIFORMITY;Gleichmäßigkeit
+TP_TM_FATTAL_AMOUNT;Intensität
+TP_TM_FATTAL_ANCHOR;Helligkeitsverschiebung
+TP_TM_FATTAL_LABEL;Dynamikkompression
+TP_TM_FATTAL_THRESHOLD;Schwelle
 TP_VIBRANCE_AVOIDCOLORSHIFT;Farbverschiebungen vermeiden
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Hautfarbtöne
@@ -2284,12 +2293,9 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-HISTORY_MSG_488;(Dynamikkompression)
-HISTORY_MSG_489;(Dynamikkompression)\nSchwelle
-HISTORY_MSG_490;(Dynamikkompression)\nIntensität
-HISTORY_MSG_TM_FATTAL_ANCHOR;(Dynamikkompression)\nHelligkeitsverschiebung
-PARTIALPASTE_TM_FATTAL;Dynamikkompression
-TP_TM_FATTAL_AMOUNT;Intensität
-TP_TM_FATTAL_ANCHOR;Helligkeitsverschiebung
-TP_TM_FATTAL_LABEL;Dynamikkompression
-TP_TM_FATTAL_THRESHOLD;Schwelle
+!HISTORY_MSG_DUALDEMOSAIC_CONTRAST;AMaZE+VNG4 - Contrast threshold
+!HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - Demosaic method for motion
+!TP_RAW_4PASS;4-Pass
+!TP_RAW_AMAZEVNG4;AMaZE+VNG4
+!TP_RAW_DUALDEMOSAICCONTRAST;Contrast threshold
+!TP_RAW_PIXELSHIFTDMETHOD;Demosaic method for motion
