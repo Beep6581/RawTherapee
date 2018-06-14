@@ -59,6 +59,7 @@
 #58 19.05.2018 Erweiterung (TooWaBoo) RT 5.4
 #59 29.05.2018 Erweiterung (TooWaBoo) RT 5.4
 #60 14.06.2018 Erweiterung (TooWaBoo) RT 5.4
+#61 14.06.2018 Korrektur (TooWaBoo) RT 5.4
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -750,7 +751,7 @@ HISTORY_MSG_441;(Retinex) - Einstellungen\nVerstärkung und Ausgleich\nTransmiss
 HISTORY_MSG_442;(Retinex) - Einstellungen\nTransmission - Skalierung
 HISTORY_MSG_443;(Farbmanagement)\nAusgabeprofil\nSchwarzpunkt-Kompensation
 HISTORY_MSG_444;(Weißabgleich)\nAWB-Temperatur-Korrektur
-HISTORY_MSG_445;(Sensor-Matrix)\nFarbinterpolation - PS\nUnterbild
+HISTORY_MSG_445;(Sensor-Matrix)\nFarbinterpolation\nUnterbild
 HISTORY_MSG_449;(Sensor-Matrix)\nFarbinterpolation - PS\nISO-Anpassung
 HISTORY_MSG_452;(Sensor-Matrix)\nFarbinterpolation - PS\nBewegungsmaske\nanzeigen
 HISTORY_MSG_453;(Sensor-Matrix)\nFarbinterpolation - PS\nNur Maske anzeigen
