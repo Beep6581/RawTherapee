@@ -71,7 +71,7 @@ HistogramPanel::HistogramPanel ()
     valueImage = new RTImage ("histValue.png");
     chroImage  = new RTImage ("histChro.png");
     rawImage   = new RTImage ("histRaw.png");
-    fullImage  = new RTImage ("histFull.png");
+    //fullImage  = new RTImage ("histFull.png");
     barImage   = new RTImage ("histBar.png");
 
     redImage_g   = new RTImage ("histRedg.png");
@@ -80,7 +80,7 @@ HistogramPanel::HistogramPanel ()
     valueImage_g = new RTImage ("histValueg.png");
     chroImage_g  = new RTImage ("histChrog.png");
     rawImage_g   = new RTImage ("histRawg.png");
-    fullImage_g  = new RTImage ("histFullg.png");
+    //fullImage_g  = new RTImage ("histFullg.png");
     barImage_g   = new RTImage ("histBarg.png");
 
     showRed   = Gtk::manage (new Gtk::ToggleButton ());
@@ -89,7 +89,7 @@ HistogramPanel::HistogramPanel ()
     showValue = Gtk::manage (new Gtk::ToggleButton ());
     showChro  = Gtk::manage (new Gtk::ToggleButton ());
     showRAW   = Gtk::manage (new Gtk::ToggleButton ());
-    showFull  = Gtk::manage (new Gtk::ToggleButton ());
+    //showFull  = Gtk::manage (new Gtk::ToggleButton ());
     showBAR   = Gtk::manage (new Gtk::ToggleButton ());
 
     showRed->set_name("histButton");
@@ -104,8 +104,8 @@ HistogramPanel::HistogramPanel ()
     showChro->set_can_focus(false);
     showRAW->set_name("histButton");
     showRAW->set_can_focus(false);
-    showFull->set_name("fullButton");
-    showFull->set_can_focus(false);
+    //showFull->set_name("fullButton");
+    //showFull->set_can_focus(false);
     showBAR->set_name("histButton");
     showBAR->set_can_focus(false);
 
@@ -115,7 +115,7 @@ HistogramPanel::HistogramPanel ()
     showValue->set_relief (Gtk::RELIEF_NONE);
     showChro->set_relief (Gtk::RELIEF_NONE);
     showRAW->set_relief (Gtk::RELIEF_NONE);
-    showFull->set_relief (Gtk::RELIEF_NONE);
+    //showFull->set_relief (Gtk::RELIEF_NONE);
     showBAR->set_relief (Gtk::RELIEF_NONE);
 
     showRed->set_tooltip_text   (M("HISTOGRAM_TOOLTIP_R"));
@@ -124,7 +124,7 @@ HistogramPanel::HistogramPanel ()
     showValue->set_tooltip_text (M("HISTOGRAM_TOOLTIP_L"));
     showChro->set_tooltip_text  (M("HISTOGRAM_TOOLTIP_CHRO"));
     showRAW->set_tooltip_text   (M("HISTOGRAM_TOOLTIP_RAW"));
-    showFull->set_tooltip_text  (M("HISTOGRAM_TOOLTIP_FULL"));
+    //showFull->set_tooltip_text  (M("HISTOGRAM_TOOLTIP_FULL"));
     showBAR->set_tooltip_text   (M("HISTOGRAM_TOOLTIP_BAR"));
 
     buttonGrid = Gtk::manage (new Gtk::Grid ());
@@ -136,7 +136,7 @@ HistogramPanel::HistogramPanel ()
     showChro->set_active (false);//unactive by default
 
     showRAW->set_active (false);
-    showFull->set_active (!options.histogramFullMode);
+    //showFull->set_active (!options.histogramFullMode);
     showBAR->set_active (options.histogramBar);
 
     showRed->set_image   (showRed->get_active()   ? *redImage   : *redImage_g);
@@ -145,7 +145,7 @@ HistogramPanel::HistogramPanel ()
     showValue->set_image (showValue->get_active() ? *valueImage : *valueImage_g);
     showChro->set_image  (showChro->get_active()   ? *chroImage : *chroImage_g);
     showRAW->set_image   (showRAW->get_active()   ? *rawImage   : *rawImage_g);
-    showFull->set_image  (showFull->get_active()  ? *fullImage  : *fullImage_g);
+    //showFull->set_image  (showFull->get_active()  ? *fullImage  : *fullImage_g);
     showBAR->set_image   (showBAR->get_active()   ? *barImage   : *barImage_g);
 
     showRed->set_hexpand(false);
@@ -172,10 +172,10 @@ HistogramPanel::HistogramPanel ()
     showRAW->set_vexpand(false);
     showRAW->set_halign(Gtk::ALIGN_CENTER);
     showRAW->set_valign(Gtk::ALIGN_START);
-    showFull->set_hexpand(false);
-    showFull->set_vexpand(false);
-    showFull->set_halign(Gtk::ALIGN_CENTER);
-    showFull->set_valign(Gtk::ALIGN_START);
+    //showFull->set_hexpand(false);
+    //showFull->set_vexpand(false);
+    //showFull->set_halign(Gtk::ALIGN_CENTER);
+    //showFull->set_valign(Gtk::ALIGN_START);
     showBAR->set_hexpand(false);
     showBAR->set_vexpand(false);
     showBAR->set_halign(Gtk::ALIGN_CENTER);
@@ -187,7 +187,7 @@ HistogramPanel::HistogramPanel ()
     showValue->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::value_toggled), showValue );
     showChro->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::chro_toggled), showChro );
     showRAW->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::raw_toggled), showRAW );
-    showFull->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::full_toggled), showFull );
+    //showFull->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::full_toggled), showFull );
     showBAR->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::bar_toggled), showBAR );
 
     buttonGrid->add (*showRed);
@@ -196,7 +196,7 @@ HistogramPanel::HistogramPanel ()
     buttonGrid->add (*showValue);
     buttonGrid->add (*showChro);
     buttonGrid->add (*showRAW);
-    buttonGrid->add (*showFull);
+    //buttonGrid->add (*showFull);
     buttonGrid->add (*showBAR);
 
     // Put the button vbox next to the window's border to be less disturbing
@@ -221,7 +221,7 @@ HistogramPanel::~HistogramPanel ()
     delete valueImage;
     delete chroImage;
     delete rawImage;
-    delete fullImage;
+    //delete fullImage;
     delete barImage;
 
     delete redImage_g;
@@ -230,7 +230,7 @@ HistogramPanel::~HistogramPanel ()
     delete valueImage_g;
     delete chroImage_g;
     delete rawImage_g;
-    delete fullImage_g;
+    //delete fullImage_g;
     delete barImage_g;
 
 }
@@ -312,12 +312,12 @@ void HistogramPanel::raw_toggled ()
 
     rgbv_toggled();
 }
-void HistogramPanel::full_toggled ()
+/*void HistogramPanel::full_toggled ()
 {
     options.histogramFullMode = !showFull->get_active();
     showFull->set_image(showFull->get_active() ? *fullImage : *fullImage_g);
     rgbv_toggled();
-}
+}*/
 void HistogramPanel::bar_toggled ()
 {
     showBAR->set_image(showBAR->get_active() ? *barImage : *barImage_g);
@@ -387,11 +387,11 @@ void HistogramPanel::reorder (Gtk::PositionType align)
 }
 
 // FullModeListener interface:
-void HistogramPanel::toggle_button_full ()
+/*void HistogramPanel::toggle_button_full ()
 {
     showFull->set_active (!showFull->get_active ());
     showFull->set_image(showFull->get_active() ? *fullImage : *fullImage_g);
-}
+}*/
 
 //
 //
@@ -671,8 +671,8 @@ bool HistogramRGBArea::on_button_press_event (GdkEventButton* event)
 //
 //
 // HistogramArea
-HistogramArea::HistogramArea (FullModeListener *fml) : //needChroma unactive by default
-    valid(false), fullMode(options.histogramFullMode), myFullModeListener(fml), oldwidth(-1), oldheight(-1), needLuma(true), needRed(true), needGreen(true), needBlue(true), rawMode(false), needChroma(false)
+HistogramArea::HistogramArea (/*FullModeListener *fml*/) : //needChroma unactive by default
+    valid(false), /*fullMode(options.histogramFullMode), myFullModeListener(fml),*/ oldwidth(-1), oldheight(-1), needLuma(true), needRed(true), needGreen(true), needBlue(true), rawMode(false), needChroma(false)
 {
 
     lhist(256);
@@ -747,7 +747,7 @@ void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool raw, boo
     needBlue  = b;
     needLuma  = l;
     rawMode   = raw;
-    fullMode  = !full;
+    //fullMode  = !full;
     needChroma = c;
 
     updateBackBuffer ();
@@ -883,7 +883,7 @@ void HistogramArea::updateBackBuffer ()
         int realhistheight = fullhistheight;
 
         // though much faster than before, this still takes a lot of time especially for big files if rawMode is true
-        if (!fullMode) {
+        /*if (!fullMode) {
             int area = 0;
 
 #ifdef __SSE2__
@@ -928,7 +928,7 @@ void HistogramArea::updateBackBuffer ()
                     break;
                 }
             }
-        }
+        }*/
 
         if (realhistheight < winh - 2) {
             realhistheight = winh - 2;
@@ -1085,7 +1085,7 @@ bool HistogramArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 bool HistogramArea::on_button_press_event (GdkEventButton* event)
 {
 
-    if (event->type == GDK_2BUTTON_PRESS && event->button == 1) {
+    /*if (event->type == GDK_2BUTTON_PRESS && event->button == 1) {
         fullMode = !fullMode;
         options.histogramFullMode = fullMode;
 
@@ -1095,7 +1095,7 @@ bool HistogramArea::on_button_press_event (GdkEventButton* event)
 
         updateBackBuffer ();
         queue_draw ();
-    }
+    }*/
 
     return true;
 }
