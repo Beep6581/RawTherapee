@@ -36,7 +36,7 @@
 #35 2017-02-18 AWB bias (TooWaBoo) RT 5.0 r1
 #36 2017-02-23 Korrekturen (TooWaBoo)  RT 5.0 r1
 #37 2017-03-06 Dynamisches Profil (TooWaBoo) RT 5.0 r1
-#38 2017-03-26 Pixel Shift (TooWaBoo) RT 5.0 r1
+#38 2017-03-26 Pixel-Shift (TooWaBoo) RT 5.0 r1
 #39 06.04.2017 Fast Export (TooWaBoo) RT 5.0 r1
 #40 30.04.2017 Erweiterung/Korrekturen (TooWaBoo) RT 5.0 r1
 #41 03.05.2017 Erweiterung/Korrekturen (TooWaBoo) RT 5.0 r1
@@ -58,6 +58,8 @@
 #57 17.05.2018 Erweiterung (TooWaBoo) RT 5.4
 #58 19.05.2018 Erweiterung (TooWaBoo) RT 5.4
 #59 29.05.2018 Erweiterung (TooWaBoo) RT 5.4
+#60 14.06.2018 Erweiterung (TooWaBoo) RT 5.4
+#61 14.06.2018 Korrektur (TooWaBoo) RT 5.4
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -750,20 +752,20 @@ HISTORY_MSG_442;(Retinex) - Einstellungen\nTransmission - Skalierung
 HISTORY_MSG_443;(Farbmanagement)\nAusgabeprofil\nSchwarzpunkt-Kompensation
 HISTORY_MSG_444;(Weißabgleich)\nAWB-Temperatur-Korrektur
 HISTORY_MSG_445;(Sensor-Matrix)\nFarbinterpolation\nUnterbild
-HISTORY_MSG_449;(Sensor-Matrix)\nFarbinterpolation\nISO-Anpassung
-HISTORY_MSG_452;(Sensor-Matrix)\nFarbinterpolation\nBewegungsmaske\nanzeigen
-HISTORY_MSG_453;(Sensor-Matrix)\nFarbinterpolation\nNur Maske anzeigen
-HISTORY_MSG_457;(Sensor-Matrix)\nFarbinterpolation\nBewegung im Rot/Blau-\nKanal erkennen
-HISTORY_MSG_462;(Sensor-Matrix)\nFarbinterpolation\nBewegung im Grün-\nKanal erkennen
-HISTORY_MSG_464;(Sensor-Matrix)\nFarbinterpolation\nUnschärfebewegungsmaske
-HISTORY_MSG_465;(Sensor-Matrix)\nFarbinterpolation\nUnschärferadius
-HISTORY_MSG_468;(Sensor-Matrix)\nFarbinterpolation\nLücken in der Bewegungs-\nmaske erkennen
-HISTORY_MSG_469;(Sensor-Matrix)\nFarbinterpolation\nMedian
-HISTORY_MSG_471;(Sensor-Matrix)\nFarbinterpolation\nBewegungskorrektur
-HISTORY_MSG_472;(Sensor-Matrix)\nFarbinterpolation\nWeicher Übergang
-HISTORY_MSG_473;(Sensor-Matrix)\nFarbinterpolation\nLMMSE für Bewegungs-\nteile verwenden
-HISTORY_MSG_474;(Sensor-Matrix)\nFarbinterpolation\nFrame-Helligkeit angleichen
-HISTORY_MSG_475;(Sensor-Matrix)\nFarbinterpolation)\nAusgleich pro Kanal
+HISTORY_MSG_449;(Sensor-Matrix)\nFarbinterpolation - PS\nISO-Anpassung
+HISTORY_MSG_452;(Sensor-Matrix)\nFarbinterpolation - PS\nBewegungsmaske\nanzeigen
+HISTORY_MSG_453;(Sensor-Matrix)\nFarbinterpolation - PS\nNur Maske anzeigen
+HISTORY_MSG_457;(Sensor-Matrix)\nFarbinterpolation - PS\nBewegung im Rot/Blau-\nKanal erkennen
+HISTORY_MSG_462;(Sensor-Matrix)\nFarbinterpolation - PS\nBewegung im Grün-\nKanal erkennen
+HISTORY_MSG_464;(Sensor-Matrix)\nFarbinterpolation - PS\nUnschärfebewegungsmaske
+HISTORY_MSG_465;(Sensor-Matrix)\nFarbinterpolation - PS\nUnschärferadius
+HISTORY_MSG_468;(Sensor-Matrix)\nFarbinterpolation - PS\nLücken in der Bewegungs-\nmaske erkennen
+HISTORY_MSG_469;(Sensor-Matrix)\nFarbinterpolation - PS\nMedian
+HISTORY_MSG_471;(Sensor-Matrix)\nFarbinterpolation - PS\nBewegungskorrektur
+HISTORY_MSG_472;(Sensor-Matrix)\nFarbinterpolation - PS\nWeicher Übergang
+HISTORY_MSG_473;(Sensor-Matrix)\nFarbinterpolation - PS\nLMMSE für Bewegungs-\nteile verwenden
+HISTORY_MSG_474;(Sensor-Matrix)\nFarbinterpolation - PS\nFrame-Helligkeit angleichen
+HISTORY_MSG_475;(Sensor-Matrix)\nFarbinterpolation - PS\nAusgleich pro Kanal
 HISTORY_MSG_476;(CIECAM02)\nBetrachtungsbed.\nFarbtemperatur
 HISTORY_MSG_477;(CIECAM02)\nBetrachtungsbed.\nTönung
 HISTORY_MSG_478;(CIECAM02)\nBetrachtungsbed.\nYb% (Ø Luminanz)
@@ -1000,7 +1002,7 @@ PARTIALPASTE_RAW_DMETHOD;Farbinterpolation: Methode
 PARTIALPASTE_RAW_FALSECOLOR;Farbinterpolation: Falschfarbenreduzierung
 PARTIALPASTE_RAW_IMAGENUM;Farbinterpolation: Unterbild
 PARTIALPASTE_RAW_LMMSEITERATIONS;Farbinterpolation: LMMSE-Verbesserungsstufen
-PARTIALPASTE_RAW_PIXELSHIFT;Farbinterpolation: Pixel Shift
+PARTIALPASTE_RAW_PIXELSHIFT;Farbinterpolation: Pixel-Shift
 PARTIALPASTE_RESIZE;Skalieren
 PARTIALPASTE_RETINEX;Retinex (Bildschleier entfernen)
 PARTIALPASTE_RGBCURVES;RGB-Kurven
@@ -1278,7 +1280,7 @@ QINFO_FRAMECOUNT;%2 Frames
 QINFO_HDR;HDR / %2 Frame(s)
 QINFO_ISO;ISO
 QINFO_NOEXIF;Keine Exif-Daten vorhanden.
-QINFO_PIXELSHIFT;Pixel Shift / %2 Frame(s)
+QINFO_PIXELSHIFT;Pixel-Shift / %2 Frame(s)
 SAMPLEFORMAT_0;Unbekanntes Datenformat
 SAMPLEFORMAT_1;8 Bit ohne Vorzeichen
 SAMPLEFORMAT_2;16 Bit ohne Vorzeichen
@@ -1835,7 +1837,7 @@ TP_RAW_DCBITERATIONS;Anzahl der DCB-Iterationen
 TP_RAW_DMETHOD;Methode
 TP_RAW_DMETHOD_PROGRESSBAR;%1 verarbeitet
 TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaikoptimierung
-TP_RAW_DMETHOD_TOOLTIP;<b>IGV</b> und <b>LMMSE</b> sind speziel für High-ISO-Aufnahmen um die\nRauschreduzierung zu unterstützen ohne zu Maze-Mustern,\nPosterisierung oder einem ausgewaschenen Look zu führen.\n\n<b>Pixel Shift</b> ist für “Pentax Pixel Shift“-Dateien. Für "Nicht-Pixel-\nShift"-Dateien wird automatisch AMaZE verwendet.
+TP_RAW_DMETHOD_TOOLTIP;<b>IGV</b> und <b>LMMSE</b> sind speziel für High-ISO-Aufnahmen um die\nRauschreduzierung zu unterstützen ohne zu Maze-Mustern,\nPosterisierung oder einem ausgewaschenen Look zu führen.\n\n<b>Pixel-Shift</b> ist für “Pentax Pixel-Shift“-Dateien. Für "Nicht-Pixel-\nShift"-Dateien wird automatisch AMaZE verwendet.
 TP_RAW_EAHD;EAHD
 TP_RAW_FALSECOLOR;Falschfarbenreduzierung
 TP_RAW_FAST;Schnell
@@ -1844,14 +1846,14 @@ TP_RAW_HD_TOOLTIP;Je niedriger der Wert, umso empfindlicher reagiert\ndie “Hot
 TP_RAW_HPHD;HPHD
 TP_RAW_IGV;IGV
 TP_RAW_IMAGENUM;Unterbild
-TP_RAW_IMAGENUM_TOOLTIP;Einige RAW-Formate enthalten mehrere Unterbilder (Pentax Pixel Shift,\nPentax 3-in-1 HDR, Canon Dual Pixel).\n\n> Auswahl des zu verwendenden Unterbildes (nicht bei Pixel Shift).\n\n> Legt das Unterbild für die Bewegungsbereiche bei Pixel Shift fest.
+TP_RAW_IMAGENUM_TOOLTIP;Einige RAW-Formate enthalten mehrere Unterbilder (Pentax Pixel-Shift,\nPentax 3-in-1 HDR, Canon Dual Pixel).\n\n> Auswahl des zu verwendenden Unterbildes (nicht bei Pixel-Shift).\n\n> Legt das Unterbild für die Bewegungsbereiche bei Pixel-Shift fest.
 TP_RAW_LABEL;Farbinterpolation
 TP_RAW_LMMSE;LMMSE
 TP_RAW_LMMSEITERATIONS;LMMSE-Verbesserungsstufen
 TP_RAW_LMMSE_TOOLTIP;Fügt Gamma (Stufe 1), Median (Stufe 2-4)\nund Optimierung (Stufe 5-6) zur Minimierung\nvon Artefakten hinzu und verbessert das\nSignalrauschverhältnis.
 TP_RAW_MONO;Mono
 TP_RAW_NONE;Keine
-TP_RAW_PIXELSHIFT;Pixel Shift
+TP_RAW_PIXELSHIFT;Pixel-Shift
 TP_RAW_PIXELSHIFTADAPTIVE;Adaptive Erkennung
 TP_RAW_PIXELSHIFTBLUR;Unschärfebewegungsmaske
 TP_RAW_PIXELSHIFTEPERISO;Empfindlichkeit
@@ -2293,9 +2295,9 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!HISTORY_MSG_DUALDEMOSAIC_CONTRAST;AMaZE+VNG4 - Contrast threshold
-!HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - Demosaic method for motion
-!TP_RAW_4PASS;4-Pass
-!TP_RAW_AMAZEVNG4;AMaZE+VNG4
-!TP_RAW_DUALDEMOSAICCONTRAST;Contrast threshold
-!TP_RAW_PIXELSHIFTDMETHOD;Demosaic method for motion
+HISTORY_MSG_DUALDEMOSAIC_CONTRAST;(Sensor-Matrix)\nFarbinterpolation\nKontrastschwelle
+HISTORY_MSG_PIXELSHIFT_DEMOSAIC;(Sensor-Matrix)\nFarbinterpolation - PS\nBewegungsmethode
+TP_RAW_4PASS;4-Pass
+TP_RAW_AMAZEVNG4;AMaZE + VNG4
+TP_RAW_DUALDEMOSAICCONTRAST;Kontrastschwelle
+TP_RAW_PIXELSHIFTDMETHOD;Bewegungsmethode
