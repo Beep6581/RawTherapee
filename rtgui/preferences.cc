@@ -225,6 +225,7 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
 
     mi = behModel->append (); // Used for both Resize and Post-Resize sharpening
     mi->set_value (behavColumns.label, M ("TP_SHARPENING_LABEL"));
+    appendBehavList (mi, M ("TP_SHARPENING_CONTRAST"), ADDSET_SHARP_CONTRAST, false);
     appendBehavList (mi, M ("TP_SHARPENING_RADIUS"), ADDSET_SHARP_RADIUS, false);
     appendBehavList (mi, M ("TP_SHARPENING_AMOUNT"), ADDSET_SHARP_AMOUNT, false);
     appendBehavList (mi, M ("TP_SHARPENING_RLD_DAMPING"), ADDSET_SHARP_DAMPING, false);
@@ -248,6 +249,7 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_SHARPENMICRO_LABEL"));
     appendBehavList (mi, M ("TP_SHARPENMICRO_AMOUNT"), ADDSET_SHARPENMICRO_AMOUNT, false);
+    appendBehavList (mi, M ("TP_SHARPENMICRO_CONTRAST"), ADDSET_SHARPENMICRO_CONTRAST, false);
     appendBehavList (mi, M ("TP_SHARPENMICRO_UNIFORMITY"), ADDSET_SHARPENMICRO_UNIFORMITY, false);
 
     mi = behModel->append ();
@@ -384,6 +386,19 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     appendBehavList (mi, M ("TP_WAVELET_EDGEDETECT"), ADDSET_WA_EDGEDETECT, true);
     appendBehavList (mi, M ("TP_WAVELET_EDGEDETECTTHR"), ADDSET_WA_EDGEDETECTTHR, true);
     appendBehavList (mi, M ("TP_WAVELET_EDGEDETECTTHR2"), ADDSET_WA_EDGEDETECTTHR2, true);
+
+    mi = behModel->append ();
+    mi->set_value (behavColumns.label, M ("TP_RAW_SENSOR_BAYER_LABEL"));
+    appendBehavList (mi, M ("TP_RAW_FALSECOLOR"), ADDSET_BAYER_FALSE_COLOR_SUPPRESSION, false);
+    appendBehavList (mi, M ("TP_RAW_DCBITERATIONS") + ", " + M("TP_RAW_LMMSEITERATIONS"), ADDSET_BAYER_ITER, false);
+    appendBehavList (mi, M ("TP_RAW_DUALDEMOSAICCONTRAST"), ADDSET_BAYER_DUALDEMOZCONTRAST, false);
+    appendBehavList (mi, M ("TP_RAW_PIXELSHIFTSIGMA"), ADDSET_BAYER_PS_SIGMA, false);
+    appendBehavList (mi, M ("TP_RAW_PIXELSHIFTSMOOTH"), ADDSET_BAYER_PS_SMOOTH, false);
+    appendBehavList (mi, M ("TP_RAW_PIXELSHIFTEPERISO"), ADDSET_BAYER_PS_EPERISO, false);
+
+    mi = behModel->append ();
+    mi->set_value (behavColumns.label, M ("TP_RAW_SENSOR_XTRANS_LABEL"));
+    appendBehavList (mi, M ("TP_RAW_FALSECOLOR"), ADDSET_XTRANS_FALSE_COLOR_SUPPRESSION, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_PREPROCESS_LABEL"));

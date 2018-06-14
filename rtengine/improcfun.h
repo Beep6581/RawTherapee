@@ -58,11 +58,6 @@ class ImProcFunctions
     void transformGeneral(bool highQuality, Imagefloat *original, Imagefloat *transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LensCorrection *pLCPMap);
     void transformLCPCAOnly(Imagefloat *original, Imagefloat *transformed, int cx, int cy, const LensCorrection *pLCPMap);
 
-    void sharpenHaloCtrl(float** luminance, float** blurmap, float** base, int W, int H, const SharpeningParams &sharpenParam);
-    void sharpenHaloCtrl(LabImage* lab, float** blurmap, float** base, int W, int H, SharpeningParams &sharpenParam);
-    void sharpenHaloCtrlcam(CieImage* ncie, float** blurmap, float** base, int W, int H);
-    void dcdamping(float** aI, float** aO, float damping, int W, int H);
-
     bool needsCA();
     bool needsDistortion();
     bool needsRotation();
@@ -230,12 +225,13 @@ public:
     void luminanceCurve(LabImage* lold, LabImage* lnew, LUTf &curve);
     void ciecam_02float(CieImage* ncie, float adap, int pW, int pwb, LabImage* lab, const ProcParams* params,
                         const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3,
-                        LUTu &histLCAM, LUTu &histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, float &dj, float &yb, int rtt);
+                        LUTu &histLCAM, LUTu &histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, float &dj, float &yb, int rtt,
+                        bool showSharpMask = false);
     void chromiLuminanceCurve(PipetteBuffer *pipetteBuffer, int pW, LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve, LUTf & satclcurve, LUTf &clcurve, LUTf &curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histLurve);
     void vibrance(LabImage* lab);         //Jacques' vibrance
 //    void colorCurve       (LabImage* lold, LabImage* lnew);
-    void sharpening(LabImage* lab, float** buffer, SharpeningParams &sharpenParam);
-    void sharpeningcam(CieImage* ncie, float** buffer);
+    void sharpening(LabImage* lab, const SharpeningParams &sharpenParam, bool showMask = false);
+    void sharpeningcam(CieImage* ncie, float** buffer, bool showMask = false);
     void transform(Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const FramesMetaData *metadata, int rawRotationDeg, bool fullImage);
     float resizeScale(const ProcParams* params, int fw, int fh, int &imw, int &imh);
     void lab2monitorRgb(LabImage* lab, Image8* image);

@@ -142,6 +142,7 @@ void ParamsEdited::set(bool v)
     colorToning.labgridBHigh = v;
 
     sharpening.enabled            = v;
+    sharpening.contrast           = v;
     sharpening.radius             = v;
     sharpening.amount             = v;
     sharpening.threshold          = v;
@@ -156,6 +157,7 @@ void ParamsEdited::set(bool v)
     sharpening.deconviter     = v;
     sharpening.deconvdamping  = v;
     prsharpening.enabled            = v;
+    prsharpening.contrast           = v;
     prsharpening.radius             = v;
     prsharpening.amount             = v;
     prsharpening.threshold          = v;
@@ -175,6 +177,7 @@ void ParamsEdited::set(bool v)
     sharpenEdge.threechannels = v;
     sharpenMicro.enabled      = v;
     sharpenMicro.matrix       = v;
+    sharpenMicro.contrast     = v;
     sharpenMicro.amount       = v;
     sharpenMicro.uniformity   = v;
     vibrance.enabled          = v;
@@ -412,6 +415,7 @@ void ParamsEdited::set(bool v)
     raw.bayersensor.dcbEnhance = v;
     //raw.bayersensor.allEnhance = v;
     raw.bayersensor.lmmseIterations = v;
+    raw.bayersensor.dualDemosaicContrast = v;
     raw.bayersensor.pixelShiftMotionCorrectionMethod = v;
     raw.bayersensor.pixelShiftEperIso = v;
     raw.bayersensor.pixelShiftSigma = v;
@@ -422,15 +426,16 @@ void ParamsEdited::set(bool v)
     raw.bayersensor.pixelShiftGreen = v;
     raw.bayersensor.pixelShiftBlur = v;
     raw.bayersensor.pixelShiftSmooth = v;
-    raw.bayersensor.pixelShiftLmmse = v;
     raw.bayersensor.pixelShiftEqualBright = v;
     raw.bayersensor.pixelShiftEqualBrightChannel = v;
     raw.bayersensor.pixelShiftNonGreenCross = v;
+    raw.bayersensor.pixelShiftDemosaicMethod = v;
     raw.bayersensor.greenEq = v;
     raw.bayersensor.linenoise = v;
     raw.bayersensor.linenoiseDirection = v;
     raw.bayersensor.pdafLinesFilter = v;
     raw.xtranssensor.method = v;
+    raw.xtranssensor.dualDemosaicContrast = v;
     raw.xtranssensor.ccSteps = v;
     raw.xtranssensor.exBlackRed = v;
     raw.xtranssensor.exBlackGreen = v;
@@ -703,8 +708,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         sharpenMicro.enabled = sharpenMicro.enabled && p.sharpenMicro.enabled == other.sharpenMicro.enabled;
         sharpenMicro.matrix = sharpenMicro.matrix && p.sharpenMicro.matrix == other.sharpenMicro.matrix;
         sharpenMicro.amount = sharpenMicro.amount && p.sharpenMicro.amount == other.sharpenMicro.amount;
+        sharpenMicro.contrast = sharpenMicro.contrast && p.sharpenMicro.contrast == other.sharpenMicro.contrast;
         sharpenMicro.uniformity = sharpenMicro.uniformity && p.sharpenMicro.uniformity == other.sharpenMicro.uniformity;
         sharpening.enabled = sharpening.enabled && p.sharpening.enabled == other.sharpening.enabled;
+        sharpening.contrast = sharpening.contrast && p.sharpening.contrast == other.sharpening.contrast;
         sharpening.radius = sharpening.radius && p.sharpening.radius == other.sharpening.radius;
         sharpening.amount = sharpening.amount && p.sharpening.amount == other.sharpening.amount;
         sharpening.threshold = sharpening.threshold && p.sharpening.threshold == other.sharpening.threshold;
@@ -719,6 +726,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         sharpening.deconviter = sharpening.deconviter && p.sharpening.deconviter == other.sharpening.deconviter;
         sharpening.deconvdamping = sharpening.deconvdamping && p.sharpening.deconvdamping == other.sharpening.deconvdamping;
         prsharpening.enabled = prsharpening.enabled && p.prsharpening.enabled == other.prsharpening.enabled;
+        prsharpening.contrast = prsharpening.contrast && p.prsharpening.contrast == other.prsharpening.contrast;
         prsharpening.radius = prsharpening.radius && p.prsharpening.radius == other.prsharpening.radius;
         prsharpening.amount = prsharpening.amount && p.prsharpening.amount == other.prsharpening.amount;
         prsharpening.threshold = prsharpening.threshold && p.prsharpening.threshold == other.prsharpening.threshold;
@@ -970,6 +978,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         raw.bayersensor.dcbEnhance = raw.bayersensor.dcbEnhance && p.raw.bayersensor.dcb_enhance == other.raw.bayersensor.dcb_enhance;
         //raw.bayersensor.allEnhance = raw.bayersensor.allEnhance && p.raw.bayersensor.all_enhance == other.raw.bayersensor.all_enhance;
         raw.bayersensor.lmmseIterations = raw.bayersensor.lmmseIterations && p.raw.bayersensor.lmmse_iterations == other.raw.bayersensor.lmmse_iterations;
+        raw.bayersensor.dualDemosaicContrast = raw.bayersensor.dualDemosaicContrast && p.raw.bayersensor.dualDemosaicContrast == other.raw.bayersensor.dualDemosaicContrast;
         raw.bayersensor.pixelShiftMotionCorrectionMethod = raw.bayersensor.pixelShiftMotionCorrectionMethod && p.raw.bayersensor.pixelShiftMotionCorrectionMethod == other.raw.bayersensor.pixelShiftMotionCorrectionMethod;
         raw.bayersensor.pixelShiftEperIso = raw.bayersensor.pixelShiftEperIso && p.raw.bayersensor.pixelShiftEperIso == other.raw.bayersensor.pixelShiftEperIso;
         raw.bayersensor.pixelShiftSigma = raw.bayersensor.pixelShiftSigma && p.raw.bayersensor.pixelShiftSigma == other.raw.bayersensor.pixelShiftSigma;
@@ -980,15 +989,16 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         raw.bayersensor.pixelShiftGreen = raw.bayersensor.pixelShiftGreen && p.raw.bayersensor.pixelShiftGreen == other.raw.bayersensor.pixelShiftGreen;
         raw.bayersensor.pixelShiftBlur = raw.bayersensor.pixelShiftBlur && p.raw.bayersensor.pixelShiftBlur == other.raw.bayersensor.pixelShiftBlur;
         raw.bayersensor.pixelShiftSmooth = raw.bayersensor.pixelShiftSmooth && p.raw.bayersensor.pixelShiftSmoothFactor == other.raw.bayersensor.pixelShiftSmoothFactor;
-        raw.bayersensor.pixelShiftLmmse = raw.bayersensor.pixelShiftLmmse && p.raw.bayersensor.pixelShiftLmmse == other.raw.bayersensor.pixelShiftLmmse;
         raw.bayersensor.pixelShiftEqualBright = raw.bayersensor.pixelShiftEqualBright && p.raw.bayersensor.pixelShiftEqualBright == other.raw.bayersensor.pixelShiftEqualBright;
         raw.bayersensor.pixelShiftEqualBrightChannel = raw.bayersensor.pixelShiftEqualBrightChannel && p.raw.bayersensor.pixelShiftEqualBrightChannel == other.raw.bayersensor.pixelShiftEqualBrightChannel;
         raw.bayersensor.pixelShiftNonGreenCross = raw.bayersensor.pixelShiftNonGreenCross && p.raw.bayersensor.pixelShiftNonGreenCross == other.raw.bayersensor.pixelShiftNonGreenCross;
+        raw.bayersensor.pixelShiftDemosaicMethod = raw.bayersensor.pixelShiftDemosaicMethod && p.raw.bayersensor.pixelShiftDemosaicMethod == other.raw.bayersensor.pixelShiftDemosaicMethod;
         raw.bayersensor.greenEq = raw.bayersensor.greenEq && p.raw.bayersensor.greenthresh == other.raw.bayersensor.greenthresh;
         raw.bayersensor.linenoise = raw.bayersensor.linenoise && p.raw.bayersensor.linenoise == other.raw.bayersensor.linenoise;
         raw.bayersensor.linenoiseDirection = raw.bayersensor.linenoiseDirection && p.raw.bayersensor.linenoiseDirection == other.raw.bayersensor.linenoiseDirection;
         raw.bayersensor.pdafLinesFilter = raw.bayersensor.pdafLinesFilter && p.raw.bayersensor.pdafLinesFilter == other.raw.bayersensor.pdafLinesFilter;
         raw.xtranssensor.method = raw.xtranssensor.method && p.raw.xtranssensor.method == other.raw.xtranssensor.method;
+        raw.xtranssensor.dualDemosaicContrast = raw.xtranssensor.dualDemosaicContrast && p.raw.xtranssensor.dualDemosaicContrast == other.raw.xtranssensor.dualDemosaicContrast;
         raw.xtranssensor.ccSteps = raw.xtranssensor.ccSteps && p.raw.xtranssensor.ccSteps == other.raw.xtranssensor.ccSteps;
         raw.xtranssensor.exBlackRed = raw.xtranssensor.exBlackRed && p.raw.xtranssensor.blackred == other.raw.xtranssensor.blackred;
         raw.xtranssensor.exBlackGreen = raw.xtranssensor.exBlackGreen && p.raw.xtranssensor.blackgreen == other.raw.xtranssensor.blackgreen;
@@ -1591,12 +1601,20 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.sharpenMicro.amount    = dontforceSet && options.baBehav[ADDSET_SHARPENMICRO_AMOUNT] ? toEdit.sharpenMicro.amount + mods.sharpenMicro.amount : mods.sharpenMicro.amount;
     }
 
+    if (sharpenMicro.contrast) {
+        toEdit.sharpenMicro.contrast    = dontforceSet && options.baBehav[ADDSET_SHARPENMICRO_CONTRAST] ? toEdit.sharpenMicro.contrast + mods.sharpenMicro.contrast : mods.sharpenMicro.contrast;
+    }
+
     if (sharpenMicro.uniformity) {
         toEdit.sharpenMicro.uniformity    = dontforceSet && options.baBehav[ADDSET_SHARPENMICRO_UNIFORMITY] ? toEdit.sharpenMicro.uniformity + mods.sharpenMicro.uniformity : mods.sharpenMicro.uniformity;
     }
 
     if (sharpening.enabled) {
         toEdit.sharpening.enabled     = mods.sharpening.enabled;
+    }
+
+    if (sharpening.contrast) {
+        toEdit.sharpening.contrast  = dontforceSet && options.baBehav[ADDSET_SHARP_CONTRAST] ? toEdit.sharpening.contrast + mods.sharpening.contrast : mods.sharpening.contrast;
     }
 
     if (sharpening.radius) {
@@ -1653,6 +1671,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (prsharpening.enabled) {
         toEdit.prsharpening.enabled   = mods.prsharpening.enabled;
+    }
+
+    if (prsharpening.contrast) {
+        toEdit.prsharpening.contrast  = dontforceSet && options.baBehav[ADDSET_SHARP_CONTRAST] ? toEdit.prsharpening.contrast + mods.prsharpening.contrast : mods.prsharpening.contrast;
     }
 
     if (prsharpening.radius) {
@@ -2556,6 +2578,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.raw.bayersensor.lmmse_iterations = mods.raw.bayersensor.lmmse_iterations;
     }
 
+    if (raw.bayersensor.dualDemosaicContrast) {
+        toEdit.raw.bayersensor.dualDemosaicContrast = mods.raw.bayersensor.dualDemosaicContrast;
+    }
+
     if (raw.bayersensor.pixelShiftMotionCorrectionMethod) {
         toEdit.raw.bayersensor.pixelShiftMotionCorrectionMethod = mods.raw.bayersensor.pixelShiftMotionCorrectionMethod;
     }
@@ -2596,10 +2622,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.raw.bayersensor.pixelShiftSmoothFactor = mods.raw.bayersensor.pixelShiftSmoothFactor;
     }
 
-    if (raw.bayersensor.pixelShiftLmmse) {
-        toEdit.raw.bayersensor.pixelShiftLmmse = mods.raw.bayersensor.pixelShiftLmmse;
-    }
-
     if (raw.bayersensor.pixelShiftEqualBright) {
         toEdit.raw.bayersensor.pixelShiftEqualBright = mods.raw.bayersensor.pixelShiftEqualBright;
     }
@@ -2610,6 +2632,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (raw.bayersensor.pixelShiftNonGreenCross) {
         toEdit.raw.bayersensor.pixelShiftNonGreenCross = mods.raw.bayersensor.pixelShiftNonGreenCross;
+    }
+
+    if (raw.bayersensor.pixelShiftDemosaicMethod) {
+        toEdit.raw.bayersensor.pixelShiftDemosaicMethod = mods.raw.bayersensor.pixelShiftDemosaicMethod;
     }
 
     if (raw.bayersensor.greenEq) {
@@ -2630,6 +2656,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (raw.xtranssensor.method) {
         toEdit.raw.xtranssensor.method          = mods.raw.xtranssensor.method;
+    }
+
+    if (raw.xtranssensor.dualDemosaicContrast) {
+        toEdit.raw.xtranssensor.dualDemosaicContrast          = mods.raw.xtranssensor.dualDemosaicContrast;
     }
 
     if (raw.xtranssensor.ccSteps) {
@@ -3132,9 +3162,9 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
 bool RAWParamsEdited::BayerSensor::isUnchanged() const
 {
-    return  method && imageNum && dcbIterations && dcbEnhance && lmmseIterations/*&& allEnhance*/ &&  greenEq
+    return  method && imageNum && dcbIterations && dcbEnhance && lmmseIterations && dualDemosaicContrast /*&& allEnhance*/ &&  greenEq
             && pixelShiftMotionCorrectionMethod && pixelShiftEperIso && pixelShiftSigma && pixelShiftShowMotion && pixelShiftShowMotionMaskOnly
-            && pixelShiftHoleFill && pixelShiftMedian && pixelShiftNonGreenCross && pixelShiftGreen && pixelShiftBlur && pixelShiftSmooth && pixelShiftLmmse && pixelShiftEqualBright && pixelShiftEqualBrightChannel
+            && pixelShiftHoleFill && pixelShiftMedian && pixelShiftNonGreenCross && pixelShiftDemosaicMethod && pixelShiftGreen && pixelShiftBlur && pixelShiftSmooth && pixelShiftEqualBright && pixelShiftEqualBrightChannel
             && linenoise && linenoiseDirection && pdafLinesFilter && exBlack0 && exBlack1 && exBlack2 && exBlack3 && exTwoGreen;
 }
 

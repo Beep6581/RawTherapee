@@ -59,7 +59,7 @@ TP_BWMIX_FILTER_TOOLTIP;The colour filter simulates shots taken with a coloured 
 TP_BWMIX_RGB_TOOLTIP;Mix the RGB channels. Use presets for guidance.\nPay attention to negative values that may cause artifacts or erratic behaviour.
 TP_COLORAPP_ALGO_QM;Brightness + Colourfulness (QM)
 TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression of hot/bad (brightly coloured) pixels.\n0 = No effect\n1 = Median\n2 = Gaussian.\nAlternatively, adjust the image to avoid very dark shadows.\n\nThese artifacts are due to limitations of CIECAM02.
-TP_COLORAPP_CHROMA_M;Colourfulnes (M)
+TP_COLORAPP_CHROMA_M;Colourfulness (M)
 TP_COLORAPP_CHROMA_M_TOOLTIP;Colourfulness in CIECAM02 differs from L*a*b* and RGB colourfulness.
 TP_COLORAPP_CURVEEDITOR3;Colour curve
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colourfulness.\n\nShows the histogram of chromaticity (L*a*b*) before CIECAM02.\nIf the "Show CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of C, s or M after CIECAM02.\n\nC, s and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel.
@@ -808,12 +808,13 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !HISTORY_MSG_485;Lens Correction
 !HISTORY_MSG_486;Lens Correction - Camera
 !HISTORY_MSG_487;Lens Correction - Lens
-!HISTORY_MSG_488;HDR Tone Mapping
-!HISTORY_MSG_489;HDR TM - Threshold
-!HISTORY_MSG_490;HDR TM - Amount
+!HISTORY_MSG_488;Dynamic Range Compression
+!HISTORY_MSG_489;DRC - Threshold
+!HISTORY_MSG_490;DRC - Amount
 !HISTORY_MSG_491;White Balance
 !HISTORY_MSG_492;RGB Curves
 !HISTORY_MSG_493;L*a*b* Adjustments
+!HISTORY_MSG_DUALDEMOSAIC_CONTRAST;AMaZE+VNG4 - Contrast threshold
 !HISTORY_MSG_HISTMATCHING;Auto-Matched Tone Curve
 !HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 !HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
@@ -821,9 +822,13 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
 !HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
 !HISTORY_MSG_METADATA_MODE;Metadata copy mode
+!HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
+!HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - Demosaic method for motion
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
-!HISTORY_MSG_TM_FATTAL_ANCHOR;HDR TM - Anchor
+!HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
+!HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
+!HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
 !HISTORY_NEWSNAPSHOT;Add
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !HISTORY_SNAPSHOT;Snapshot
@@ -1025,7 +1030,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PARTIALPASTE_SHARPENEDGE;Edges
 !PARTIALPASTE_SHARPENING;Sharpening (USM/RL)
 !PARTIALPASTE_SHARPENMICRO;Microcontrast
-!PARTIALPASTE_TM_FATTAL;HDR Tone mapping
+!PARTIALPASTE_TM_FATTAL;Dynamic Range Compression
 !PARTIALPASTE_VIBRANCE;Vibrance
 !PARTIALPASTE_VIGNETTING;Vignetting correction
 !PARTIALPASTE_WHITEBALANCE;White balance
@@ -1422,7 +1427,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_COLORAPP_LIGHT;Lightness (J)
 !TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM02 differs from L*a*b* and RGB lightness.
 !TP_COLORAPP_MODEL;WP Model
-!TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM02 is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.\n\n<b>Free temp+green + CAT02 + [output]:</b> temp and green are selected bu user, output device's white balance is set in Viewing Conditions.
+!TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM02 is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.\n\n<b>Free temp+green + CAT02 + [output]:</b> temp and green are selected by the user, the output device's white balance is set in Viewing Conditions.
 !TP_COLORAPP_NEUTRAL;Reset
 !TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
 !TP_COLORAPP_RSTPRO;Red & skin-tones protection
@@ -1772,8 +1777,10 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_RAWEXPOS_TWOGREEN;Link greens
 !TP_RAW_1PASSMEDIUM;1-Pass (Medium)
 !TP_RAW_3PASSBEST;3-Pass (Best)
+!TP_RAW_4PASS;4-Pass
 !TP_RAW_AHD;AHD
 !TP_RAW_AMAZE;AMaZE
+!TP_RAW_AMAZEVNG4;AMaZE+VNG4
 !TP_RAW_DCB;DCB
 !TP_RAW_DCBENHANCE;DCB enhancement
 !TP_RAW_DCBITERATIONS;Number of DCB iterations
@@ -1781,6 +1788,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
 !TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
 !TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.\nPixel Shift is for Pentax/Sony Pixel Shift files. It falls back to AMaZE for non-Pixel Shift files.
+!TP_RAW_DUALDEMOSAICCONTRAST;Contrast threshold
 !TP_RAW_EAHD;EAHD
 !TP_RAW_FAST;Fast
 !TP_RAW_HD;Threshold
@@ -1797,6 +1805,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_RAW_NONE;None (Shows sensor pattern)
 !TP_RAW_PIXELSHIFT;Pixel Shift
 !TP_RAW_PIXELSHIFTBLUR;Blur motion mask
+!TP_RAW_PIXELSHIFTDMETHOD;Demosaic method for motion
 !TP_RAW_PIXELSHIFTEPERISO;Sensitivity
 !TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value of 0 should work fine for base ISO.\nHigher values increase sensitivity of motion detection.\nChange in small steps and watch the motion mask while changing.\nIncrease sensitivity for underexposed or high ISO images.
 !TP_RAW_PIXELSHIFTEQUALBRIGHT;Equalize brightness of frames
@@ -1945,6 +1954,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_SHARPENEDGE_PASSES;Iterations
 !TP_SHARPENEDGE_THREE;Luminance only
 !TP_SHARPENING_AMOUNT;Amount
+!TP_SHARPENING_CONTRAST;Contrast threshold
 !TP_SHARPENING_EDRADIUS;Radius
 !TP_SHARPENING_EDTOLERANCE;Edge tolerance
 !TP_SHARPENING_HALOCONTROL;Halo control
@@ -1960,12 +1970,13 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_SHARPENING_THRESHOLD;Threshold
 !TP_SHARPENING_USM;Unsharp Mask
 !TP_SHARPENMICRO_AMOUNT;Quantity
+!TP_SHARPENMICRO_CONTRAST;Contrast threshold
 !TP_SHARPENMICRO_LABEL;Microcontrast
 !TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
 !TP_SHARPENMICRO_UNIFORMITY;Uniformity
 !TP_TM_FATTAL_AMOUNT;Amount
 !TP_TM_FATTAL_ANCHOR;Anchor
-!TP_TM_FATTAL_LABEL;HDR Tone Mapping
+!TP_TM_FATTAL_LABEL;Dynamic Range Compression
 !TP_TM_FATTAL_THRESHOLD;Threshold
 !TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
 !TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Skin-tones

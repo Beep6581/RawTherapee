@@ -462,7 +462,8 @@ void ImProcFunctions::firstAnalysis (const Imagefloat* const original, const Pro
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
 void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pwb, LabImage* lab, const ProcParams* params,
                                       const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2, const ColorAppearance & customColCurve3,
-                                      LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, float &dj, float &yb, int rtt)
+                                      LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, float &dj, float &yb, int rtt,
+                                      bool showSharpMask)
 {
     if (params->colorappearance.enabled) {
 
@@ -1675,7 +1676,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                 if (params->sharpening.enabled)
                     if (execsharp) {
                         float **buffer = lab->L; // We can use the L-buffer from lab as buffer to save some memory
-                        ImProcFunctions::sharpeningcam (ncie, buffer); // sharpening adapted to CIECAM
+                        ImProcFunctions::sharpeningcam (ncie, buffer, showSharpMask); // sharpening adapted to CIECAM
                     }
 
 //if(params->dirpyrequalizer.enabled) if(execsharp) {
@@ -5740,10 +5741,11 @@ void ImProcFunctions::lab2rgb (const LabImage &src, Imagefloat &dst, const Glib:
 void ImProcFunctions::colorToningLabGrid(LabImage *lab, int xstart, int xend, int ystart, int yend, bool MultiThread)
 {
     const float factor = ColorToningParams::LABGRID_CORR_MAX * 3.f;
-    float a_scale = (params->colorToning.labgridAHigh - params->colorToning.labgridALow) / factor;
-    float a_base = params->colorToning.labgridALow;
-    float b_scale = (params->colorToning.labgridBHigh - params->colorToning.labgridBLow) / factor;
-    float b_base = params->colorToning.labgridBLow;
+    const float scaling = ColorToningParams::LABGRID_CORR_SCALE;
+    float a_scale = (params->colorToning.labgridAHigh - params->colorToning.labgridALow) / factor / scaling;
+    float a_base = params->colorToning.labgridALow / scaling;
+    float b_scale = (params->colorToning.labgridBHigh - params->colorToning.labgridBLow) / factor / scaling;
+    float b_base = params->colorToning.labgridBLow / scaling;
 
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)

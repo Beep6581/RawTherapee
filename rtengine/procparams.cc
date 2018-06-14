@@ -317,20 +317,20 @@ ToneCurveParams::ToneCurveParams() :
     method("Blend"),
     expcomp(0),
     curve{
-    DCT_Linear
-},
-curve2{
-    DCT_Linear
-},
-curveMode(ToneCurveParams::TcMode::STD),
-          curveMode2(ToneCurveParams::TcMode::STD),
-          brightness(0),
-          black(0),
-          contrast(0),
-          saturation(0),
-          shcompr(50),
-          hlcompr(0),
-          hlcomprthresh(33),
+        DCT_Linear
+    },
+    curve2{
+        DCT_Linear
+    },
+    curveMode(ToneCurveParams::TcMode::STD),
+    curveMode2(ToneCurveParams::TcMode::STD),
+    brightness(0),
+    black(0),
+    contrast(0),
+    saturation(0),
+    shcompr(50),
+    hlcompr(0),
+    hlcomprthresh(33),
     histmatching(false),
     clampOOG(true)
 {
@@ -367,75 +367,75 @@ bool ToneCurveParams::operator !=(const ToneCurveParams& other) const
 RetinexParams::RetinexParams() :
     enabled(false),
     cdcurve{
-    DCT_Linear
-},
-cdHcurve{
-    DCT_Linear
-},
-lhcurve{
-    DCT_Linear
-},
-transmissionCurve{
-    FCT_MinMaxCPoints,
-    0.00,
-    0.50,
-    0.35,
-    0.35,
-    0.60,
-    0.75,
-    0.35,
-    0.35,
-    1.00,
-    0.50,
-    0.35,
-    0.35
-},
-gaintransmissionCurve{
-    FCT_MinMaxCPoints,
-    0.00,
-    0.1,
-    0.35,
-    0.00,
-    0.25,
-    0.25,
-    0.35,
-    0.35,
-    0.70,
-    0.25,
-    0.35,
-    0.35,
-    1.00,
-    0.1,
-    0.00,
-    0.00
-},
-mapcurve{
-    DCT_Linear
-},
-str(20),
-scal(3),
-iter(1),
-grad(1),
-grads(1),
-gam(1.30),
-slope(3.),
-neigh(80),
-offs(0),
-highlights(0),
-htonalwidth(80),
-shadows(0),
-stonalwidth(80),
-radius(40),
-retinexMethod("high"),
-retinexcolorspace("Lab"),
-gammaretinex("none"),
-mapMethod("none"),
-viewMethod("none"),
-vart(200),
-limd(8),
-highl(4),
-skal(3),
-medianmap(false)
+        DCT_Linear
+    },
+    cdHcurve{
+        DCT_Linear
+    },
+    lhcurve{
+        DCT_Linear
+    },
+    transmissionCurve{
+        FCT_MinMaxCPoints,
+        0.00,
+        0.50,
+        0.35,
+        0.35,
+        0.60,
+        0.75,
+        0.35,
+        0.35,
+        1.00,
+        0.50,
+        0.35,
+        0.35
+    },
+    gaintransmissionCurve{
+        FCT_MinMaxCPoints,
+        0.00,
+        0.1,
+        0.35,
+        0.00,
+        0.25,
+        0.25,
+        0.35,
+        0.35,
+        0.70,
+        0.25,
+        0.35,
+        0.35,
+        1.00,
+        0.1,
+        0.00,
+        0.00
+    },
+    mapcurve{
+        DCT_Linear
+    },
+    str(20),
+    scal(3),
+    iter(1),
+    grad(1),
+    grads(1),
+    gam(1.30),
+    slope(3.),
+    neigh(80),
+    offs(0),
+    highlights(0),
+    htonalwidth(80),
+    shadows(0),
+    stonalwidth(80),
+    radius(40),
+    retinexMethod("high"),
+    retinexcolorspace("Lab"),
+    gammaretinex("none"),
+    mapMethod("none"),
+    viewMethod("none"),
+    vart(200),
+    limd(8),
+    highl(4),
+    skal(3),
+    medianmap(false)
 {
 }
 
@@ -490,38 +490,38 @@ void RetinexParams::getCurves(RetinextransmissionCurve &transmissionCurveLUT, Re
 LCurveParams::LCurveParams() :
     enabled(false),
     lcurve{
-    DCT_Linear
-},
-acurve{
-    DCT_Linear
-},
-bcurve{
-    DCT_Linear
-},
-cccurve{
-    DCT_Linear
-},
-chcurve{
-    FCT_Linear
-},
-lhcurve{
-    FCT_Linear
-},
-hhcurve{
-    FCT_Linear
-},
-lccurve{
-    DCT_Linear
-},
-clcurve{
-    DCT_Linear
-},
-brightness(0),
-contrast(0),
-chromaticity(0),
-avoidcolorshift(false),
-rstprotection(0),
-lcredsk(true)
+        DCT_Linear
+    },
+    acurve{
+        DCT_Linear
+    },
+    bcurve{
+        DCT_Linear
+    },
+    cccurve{
+        DCT_Linear
+    },
+    chcurve{
+        FCT_Linear
+    },
+    lhcurve{
+        FCT_Linear
+    },
+    hhcurve{
+        FCT_Linear
+    },
+    lccurve{
+        DCT_Linear
+    },
+    clcurve{
+        DCT_Linear
+    },
+    brightness(0),
+    contrast(0),
+    chromaticity(0),
+    avoidcolorshift(false),
+    rstprotection(0),
+    lcredsk(true)
 {
 }
 
@@ -555,14 +555,14 @@ RGBCurvesParams::RGBCurvesParams() :
     enabled(false),
     lumamode(false),
     rcurve{
-    DCT_Linear
-},
-gcurve{
-    DCT_Linear
-},
-bcurve{
-    DCT_Linear
-}
+        DCT_Linear
+    },
+    gcurve{
+        DCT_Linear
+    },
+    bcurve{
+        DCT_Linear
+    }
 {
 }
 
@@ -610,82 +610,83 @@ bool LocalContrastParams::operator!=(const LocalContrastParams &other) const
 
 
 const double ColorToningParams::LABGRID_CORR_MAX = 12000.f;
+const double ColorToningParams::LABGRID_CORR_SCALE = 3.f;
 
 ColorToningParams::ColorToningParams() :
     enabled(false),
     autosat(true),
     opacityCurve{
-    FCT_MinMaxCPoints,
-    0.00,
-    0.3,
-    0.35,
-    0.00,
-    0.25,
-    0.8,
-    0.35,
-    0.35,
-    0.70,
-    0.8,
-    0.35,
-    0.35,
-    1.00,
-    0.3,
-    0.00,
-    0.00
-},
-colorCurve{
-    FCT_MinMaxCPoints,
-    0.050,
-    0.62,
-    0.25,
-    0.25,
-    0.585,
-    0.11,
-    0.25,
-    0.25
-},
-satProtectionThreshold(30),
-                       saturatedOpacity(80),
-                       strength(50),
-                       balance(0),
-                       hlColSat(60, 80, false),
-                       shadowsColSat(80, 208, false),
-clcurve{
-    DCT_NURBS,
-    0.00,
-    0.00,
-    0.35,
-    0.65,
-    1.00,
-    1.00
-},
-cl2curve{
-    DCT_NURBS,
-    0.00,
-    0.00,
-    0.35,
-    0.65,
-    1.00,
-    1.00
-},
-method("Lab"),
-twocolor("Std"),
-redlow(0.0),
-greenlow(0.0),
-bluelow(0.0),
-redmed(0.0),
-greenmed(0.0),
-bluemed(0.0),
-redhigh(0.0),
-greenhigh(0.0),
-bluehigh(0.0),
-satlow(0.0),
-sathigh(0.0),
-lumamode(true),
-labgridALow(0.0),
-labgridBLow(0.0),
-labgridAHigh(0.0),
-labgridBHigh(0.0)
+        FCT_MinMaxCPoints,
+        0.00,
+        0.3,
+        0.35,
+        0.00,
+        0.25,
+        0.8,
+        0.35,
+        0.35,
+        0.70,
+        0.8,
+        0.35,
+        0.35,
+        1.00,
+        0.3,
+        0.00,
+        0.00
+    },
+    colorCurve{
+        FCT_MinMaxCPoints,
+        0.050,
+        0.62,
+        0.25,
+        0.25,
+        0.585,
+        0.11,
+        0.25,
+        0.25
+    },
+    satProtectionThreshold(30),
+    saturatedOpacity(80),
+    strength(50),
+    balance(0),
+    hlColSat(60, 80, false),
+    shadowsColSat (80, 208, false),
+    clcurve{
+        DCT_NURBS,
+        0.00,
+        0.00,
+        0.35,
+        0.65,
+        1.00,
+        1.00
+    },
+    cl2curve{
+        DCT_NURBS,
+        0.00,
+        0.00,
+        0.35,
+        0.65,
+        1.00,
+        1.00
+    },
+    method("Lab"),
+    twocolor("Std"),
+    redlow(0.0),
+    greenlow(0.0),
+    bluelow(0.0),
+    redmed(0.0),
+    greenmed(0.0),
+    bluemed(0.0),
+    redhigh(0.0),
+    greenhigh(0.0),
+    bluehigh(0.0),
+    satlow(0.0),
+    sathigh(0.0),
+    lumamode(true),
+    labgridALow(0.0),
+    labgridBLow(0.0),
+    labgridAHigh(0.0),
+    labgridBHigh(0.0)
 {
 }
 
@@ -1010,6 +1011,7 @@ void ColorToningParams::getCurves(ColorGradientCurve& colorCurveLUT, OpacityCurv
 
 SharpeningParams::SharpeningParams() :
     enabled(false),
+    contrast(20.0),
     radius(0.5),
     amount(200),
     threshold(20, 80, 2000, 1200, false),
@@ -1019,10 +1021,10 @@ SharpeningParams::SharpeningParams() :
     halocontrol(false),
     halocontrol_amount(85),
     method("usm"),
-    deconvamount(75),
+    deconvamount(100),
     deconvradius(0.75),
     deconviter(30),
-    deconvdamping(20)
+    deconvdamping(0)
 {
 }
 
@@ -1030,6 +1032,7 @@ bool SharpeningParams::operator ==(const SharpeningParams& other) const
 {
     return
         enabled == other.enabled
+        && contrast == other.contrast
         && radius == other.radius
         && amount == other.amount
         && threshold == other.threshold
@@ -1076,6 +1079,7 @@ SharpenMicroParams::SharpenMicroParams() :
     enabled(false),
     matrix(false),
     amount(20.0),
+    contrast(20.0),
     uniformity(50.0)
 {
 }
@@ -1086,6 +1090,7 @@ bool SharpenMicroParams::operator ==(const SharpenMicroParams& other) const
         enabled == other.enabled
         && matrix == other.matrix
         && amount == other.amount
+        && contrast == other.contrast
         && uniformity == other.uniformity;
 }
 
@@ -1103,8 +1108,8 @@ VibranceParams::VibranceParams() :
     avoidcolorshift(true),
     pastsattog(true),
     skintonescurve{
-    DCT_Linear
-}
+        DCT_Linear
+    }
 {
 }
 
@@ -1201,45 +1206,45 @@ ColorAppearanceParams::ColorAppearanceParams() :
     degreeout(90),
     autodegreeout(true),
     curve{
-    DCT_Linear
-},
-curve2{
-    DCT_Linear
-},
-curve3{
-    DCT_Linear
-},
-curveMode(TcMode::LIGHT),
-curveMode2(TcMode::LIGHT),
-curveMode3(CtcMode::CHROMA),
-surround("Average"),
-surrsrc("Average"),
-adapscen(2000.0),
-autoadapscen(true),
-ybscen(18),
-autoybscen(true),
-adaplum(16),
-badpixsl(0),
-wbmodel("RawT"),
-algo("No"),
-contrast(0.0),
-qcontrast(0.0),
-jlight(0.0),
-qbright(0.0),
-chroma(0.0),
-schroma(0.0),
-mchroma(0.0),
-colorh(0.0),
-rstprotection(0.0),
-surrsource(false),
-gamut(true),
-datacie(false),
-tonecie(false),
-tempout(5000),
-ybout(18),
-greenout(1.0),
-tempsc(5000),
-greensc(1.0)
+       DCT_Linear
+    },
+    curve2{
+       DCT_Linear
+    },
+    curve3{
+       DCT_Linear
+    },
+    curveMode(TcMode::LIGHT),
+    curveMode2(TcMode::LIGHT),
+    curveMode3(CtcMode::CHROMA),
+    surround("Average"),
+    surrsrc("Average"),
+    adapscen(2000.0),
+    autoadapscen(true),
+    ybscen(18),
+    autoybscen(true),
+    adaplum(16),
+    badpixsl(0),
+    wbmodel("RawT"),
+    algo("No"),
+    contrast(0.0),
+    qcontrast(0.0),
+    jlight(0.0),
+    qbright(0.0),
+    chroma(0.0),
+    schroma(0.0),
+    mchroma(0.0),
+    colorh(0.0),
+    rstprotection(0.0),
+    surrsource(false),
+    gamut(true),
+    datacie(false),
+    tonecie(false),
+    tempout(5000),
+    ybout(18),
+    greenout(1.0),
+    tempsc(5000),
+    greensc(1.0)
 {
 }
 
@@ -1297,32 +1302,32 @@ DefringeParams::DefringeParams() :
     radius(2.0),
     threshold(13),
     huecurve{
-    FCT_MinMaxCPoints,
-    0.166666667,
-    0.,
-    0.35,
-    0.35,
-    0.347,
-    0.,
-    0.35,
-    0.35,
-    0.513667426,
-    0,
-    0.35,
-    0.35,
-    0.668944571,
-    0.,
-    0.35,
-    0.35,
-    0.8287775246,
-    0.97835991,
-    0.35,
-    0.35,
-    0.9908883827,
-    0.,
-    0.35,
-    0.35
-}
+        FCT_MinMaxCPoints,
+        0.166666667,
+        0.,
+        0.35,
+        0.35,
+        0.347,
+        0.,
+        0.35,
+        0.35,
+        0.513667426,
+        0,
+        0.35,
+        0.35,
+        0.668944571,
+        0.,
+        0.35,
+        0.35,
+        0.8287775246,
+        0.97835991,
+        0.35,
+        0.35,
+        0.9908883827,
+        0.,
+        0.35,
+        0.35
+    }
 {
 }
 
@@ -1360,46 +1365,46 @@ bool ImpulseDenoiseParams::operator !=(const ImpulseDenoiseParams& other) const
 
 DirPyrDenoiseParams::DirPyrDenoiseParams() :
     lcurve{
-    FCT_MinMaxCPoints,
-    0.05,
-    0.15,
-    0.35,
-    0.35,
-    0.55,
-    0.04,
-    0.35,
-    0.35
-},
-cccurve{
-    FCT_MinMaxCPoints,
-    0.05,
-    0.50,
-    0.35,
-    0.35,
-    0.35,
-    0.05,
-    0.35,
-    0.35
-},
-enabled(false),
-enhance(false),
-median(false),
-perform(false),
-luma(0),
-Ldetail(0),
-chroma(15),
-redchro(0),
-bluechro(0),
-gamma(1.7),
-dmethod("Lab"),
-Lmethod("SLI"),
-Cmethod("MAN"),
-C2method("AUTO"),
-smethod("shal"),
-medmethod("soft"),
-methodmed("none"),
-rgbmethod("soft"),
-passes(1)
+        FCT_MinMaxCPoints,
+        0.05,
+        0.15,
+        0.35,
+        0.35,
+        0.55,
+        0.04,
+        0.35,
+        0.35
+    },
+    cccurve{
+        FCT_MinMaxCPoints,
+        0.05,
+        0.50,
+        0.35,
+        0.35,
+        0.35,
+        0.05,
+        0.35,
+        0.35
+    },
+    enabled(false),
+    enhance(false),
+    median(false),
+    perform(false),
+    luma(0),
+    Ldetail(0),
+    chroma(15),
+    redchro(0),
+    bluechro(0),
+    gamma(1.7),
+    dmethod("Lab"),
+    Lmethod("SLI"),
+    Cmethod("MAN"),
+    C2method("AUTO"),
+    smethod("shal"),
+    medmethod("soft"),
+    methodmed("none"),
+    rgbmethod("soft"),
+    passes(1)
 {
 }
 
@@ -1787,20 +1792,20 @@ bool VignettingParams::operator !=(const VignettingParams& other) const
 ChannelMixerParams::ChannelMixerParams() :
     enabled(false),
     red{
-    100,
-    0,
-    0
-},
-green{
-    0,
-    100,
-    0
-},
-blue{
-    0,
-    0,
-    100
-}
+        100,
+        0,
+        0
+    },
+    green{
+        0,
+        100,
+        0
+    },
+    blue{
+        0,
+        0,
+        100
+    }
 {
 }
 
@@ -1830,34 +1835,34 @@ bool ChannelMixerParams::operator !=(const ChannelMixerParams& other) const
 
 BlackWhiteParams::BlackWhiteParams() :
     beforeCurve{
-    DCT_Linear
-},
-beforeCurveMode(BlackWhiteParams::TcMode::STD_BW),
-afterCurve{
-    DCT_Linear
-},
-afterCurveMode(BlackWhiteParams::TcMode::STD_BW),
-algo("SP"),
-luminanceCurve{
-    FCT_Linear
-},
-autoc(false),
-enabledcc(true),
-enabled(false),
-filter("None"),
-setting("NormalContrast"),
-method("Desaturation"),
-mixerRed(33),
-mixerOrange(33),
-mixerYellow(33),
-mixerGreen(33),
-mixerCyan(33),
-mixerBlue(33),
-mixerMagenta(33),
-mixerPurple(33),
-gammaRed(0),
-gammaGreen(0),
-gammaBlue(0)
+        DCT_Linear
+    },
+    beforeCurveMode(BlackWhiteParams::TcMode::STD_BW),
+    afterCurve{
+        DCT_Linear
+    },
+    afterCurveMode(BlackWhiteParams::TcMode::STD_BW),
+    algo("SP"),
+    luminanceCurve{
+        FCT_Linear
+    },
+    autoc(false),
+    enabledcc(true),
+    enabled(false),
+    filter("None"),
+    setting("RGB-Rel"),
+    method("Desaturation"),
+    mixerRed(33),
+    mixerOrange(33),
+    mixerYellow(33),
+    mixerGreen(33),
+    mixerCyan(33),
+    mixerBlue(33),
+    mixerMagenta(33),
+    mixerPurple(33),
+    gammaRed(0),
+    gammaGreen(0),
+    gammaBlue(0)
 {
 }
 
@@ -2010,156 +2015,156 @@ bool ColorManagementParams::operator !=(const ColorManagementParams& other) cons
 
 WaveletParams::WaveletParams() :
     ccwcurve{
-    static_cast<double>(FCT_MinMaxCPoints),
-    0.0,
-    0.25,
-    0.35,
-    0.35,
-    0.50,
-    0.75,
-    0.35,
-    0.35,
-    0.90,
-    0.0,
-    0.35,
-    0.35
-},
-opacityCurveRG{
-    static_cast<double>(FCT_MinMaxCPoints),
-    0.0,
-    0.50,
-    0.35,
-    0.35,
-    1.00,
-    0.50,
-    0.35,
-    0.35
-},
-opacityCurveBY{
-    static_cast<double>(FCT_MinMaxCPoints),
-    0.0,
-    0.50,
-    0.35,
-    0.35,
-    1.00,
-    0.50,
-    0.35,
-    0.35
-},
-opacityCurveW{
-    static_cast<double>(FCT_MinMaxCPoints),
-    0.00,
-    0.35,
-    0.35,
-    0.00,
-    0.35,
-    0.75,
-    0.35,
-    0.35,
-    0.60,
-    0.75,
-    0.35,
-    0.35,
-    1.00,
-    0.35,
-    0.00,
-    0.00
-},
-opacityCurveWL{
-    static_cast<double>(FCT_MinMaxCPoints),
-    0.0,
-    0.50,
-    0.35,
-    0.35,
-    1.00,
-    0.50,
-    0.35,
-    0.35
-},
-hhcurve{
-    FCT_Linear
-},
-Chcurve{
-    FCT_Linear
-},
-wavclCurve {
-    DCT_Linear
-},
-enabled(false),
-        median(false),
-        medianlev(false),
-        linkedg(true),
-        cbenab(false),
-        greenlow(0),
-        bluelow(0),
-        greenmed(0),
-        bluemed(0),
-        greenhigh(0),
-        bluehigh(0),
-        lipst(false),
-        avoid(false),
-        tmr(false),
-        strength(100),
-        balance(0),
-        iter(0),
-        expcontrast(false),
-        expchroma(false),
-        c{},
-        ch{},
-        expedge(false),
-        expresid(false),
-        expfinal(false),
-        exptoning(false),
-        expnoise(false),
-        Lmethod(4),
-        CLmethod("all"),
-        Backmethod("grey"),
-        Tilesmethod("full"),
-        daubcoeffmethod("4_"),
-        CHmethod("without"),
-        Medgreinf("less"),
-        CHSLmethod("SL"),
-        EDmethod("CU"),
-        NPmethod("none"),
-        BAmethod("none"),
-        TMmethod("cont"),
-        Dirmethod("all"),
-        HSmethod("with"),
-        rescon(0),
-        resconH(0),
-        reschro(0),
-        tmrs(0),
-        gamma(1),
-        sup(0),
-        sky(0.0),
-        thres(7),
-        chroma(5),
-        chro(0),
-        threshold(5),
-        threshold2(4),
-        edgedetect(90),
-        edgedetectthr(20),
-        edgedetectthr2(0),
-        edgesensi(60),
-        edgeampli(10),
-        contrast(0),
-        edgrad(15),
-        edgval(0),
-        edgthresh(10),
-        thr(35),
-        thrH(65),
-        skinprotect(0.0),
-        hueskin(-5, 25, 170, 120, false),
-        hueskin2(-260, -250, -130, -140, false),
-        hllev(50, 75, 100, 98, false),
-        bllev(0, 2, 50, 25, false),
-        pastlev(0, 2, 30, 20, false),
-        satlev(30, 45, 130, 100, false),
-        edgcont(0, 10, 75, 40, false),
-        level0noise(0, 0, false),
-        level1noise(0, 0, false),
-        level2noise(0, 0, false),
-        level3noise(0, 0, false)
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        0.25,
+        0.35,
+        0.35,
+        0.50,
+        0.75,
+        0.35,
+        0.35,
+        0.90,
+        0.0,
+        0.35,
+        0.35
+    },
+    opacityCurveRG{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        0.50,
+        0.35,
+        0.35,
+        1.00,
+        0.50,
+        0.35,
+        0.35
+    },
+    opacityCurveBY{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        0.50,
+        0.35,
+        0.35,
+        1.00,
+        0.50,
+        0.35,
+        0.35
+    },
+    opacityCurveW{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.00,
+        0.35,
+        0.35,
+        0.00,
+        0.35,
+        0.75,
+        0.35,
+        0.35,
+        0.60,
+        0.75,
+        0.35,
+        0.35,
+        1.00,
+        0.35,
+        0.00,
+        0.00
+    },
+    opacityCurveWL{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        0.50,
+        0.35,
+        0.35,
+        1.00,
+        0.50,
+        0.35,
+        0.35
+    },
+    hhcurve{
+        FCT_Linear
+    },
+    Chcurve{
+        FCT_Linear
+    },
+    wavclCurve {
+        DCT_Linear
+    },
+    enabled(false),
+    median(false),
+    medianlev(false),
+    linkedg(true),
+    cbenab(false),
+    greenlow(0),
+    bluelow(0),
+    greenmed(0),
+    bluemed(0),
+    greenhigh(0),
+    bluehigh(0),
+    lipst(false),
+    avoid(false),
+    tmr(false),
+    strength(100),
+    balance(0),
+    iter(0),
+    expcontrast(false),
+    expchroma(false),
+    c{},
+    ch{},
+    expedge(false),
+    expresid(false),
+    expfinal(false),
+    exptoning(false),
+    expnoise(false),
+    Lmethod(4),
+    CLmethod("all"),
+    Backmethod("grey"),
+    Tilesmethod("full"),
+    daubcoeffmethod("4_"),
+    CHmethod("without"),
+    Medgreinf("less"),
+    CHSLmethod("SL"),
+    EDmethod("CU"),
+    NPmethod("none"),
+    BAmethod("none"),
+    TMmethod("cont"),
+    Dirmethod("all"),
+    HSmethod("with"),
+    rescon(0),
+    resconH(0),
+    reschro(0),
+    tmrs(0),
+    gamma(1),
+    sup(0),
+    sky(0.0),
+    thres(7),
+    chroma(5),
+    chro(0),
+    threshold(5),
+    threshold2(4),
+    edgedetect(90),
+    edgedetectthr(20),
+    edgedetectthr2(0),
+    edgesensi(60),
+    edgeampli(10),
+    contrast(0),
+    edgrad(15),
+    edgval(0),
+    edgthresh(10),
+    thr(35),
+    thrH(65),
+    skinprotect(0.0),
+    hueskin(-5, 25, 170, 120, false),
+    hueskin2(-260, -250, -130, -140, false),
+    hllev(50, 75, 100, 98, false),
+    bllev(0, 2, 50, 25, false),
+    pastlev(0, 2, 30, 20, false),
+    satlev(30, 45, 130, 100, false),
+    edgcont(0, 10, 75, 40, false),
+    level0noise(0, 0, false),
+    level1noise(0, 0, false),
+    level2noise(0, 0, false),
+    level3noise(0, 0, false)
 {
 }
 
@@ -2193,70 +2198,69 @@ bool WaveletParams::operator ==(const WaveletParams& other) const
         && iter == other.iter
         && expcontrast == other.expcontrast
         && expchroma == other.expchroma
-    && [this, &other]() -> bool {
-        for (unsigned int i = 0; i < 9; ++i)
-        {
-            if (c[i] != other.c[i] || ch[i] != other.ch[i]) {
-                return false;
-            }
-        }
-
-        return true;
-    }()
-    && expedge == other.expedge
-    && expresid == other.expresid
-    && expfinal == other.expfinal
-    && exptoning == other.exptoning
-    && expnoise == other.expnoise
-    && Lmethod == other.Lmethod
-    && CLmethod == other.CLmethod
-    && Backmethod == other.Backmethod
-    && Tilesmethod == other.Tilesmethod
-    && daubcoeffmethod == other.daubcoeffmethod
-    && CHmethod == other.CHmethod
-    && Medgreinf == other.Medgreinf
-    && CHSLmethod == other.CHSLmethod
-    && EDmethod == other.EDmethod
-    && NPmethod == other.NPmethod
-    && BAmethod == other.BAmethod
-    && TMmethod == other.TMmethod
-    && Dirmethod == other.Dirmethod
-    && HSmethod == other.HSmethod
-    && rescon == other.rescon
-    && resconH == other.resconH
-    && reschro == other.reschro
-    && tmrs == other.tmrs
-    && gamma == other.gamma
-    && sup == other.sup
-    && sky == other.sky
-    && thres == other.thres
-    && chroma == other.chroma
-    && chro == other.chro
-    && threshold == other.threshold
-    && threshold2 == other.threshold2
-    && edgedetect == other.edgedetect
-    && edgedetectthr == other.edgedetectthr
-    && edgedetectthr2 == other.edgedetectthr2
-    && edgesensi == other.edgesensi
-    && edgeampli == other.edgeampli
-    && contrast == other.contrast
-    && edgrad == other.edgrad
-    && edgval == other.edgval
-    && edgthresh == other.edgthresh
-    && thr == other.thr
-    && thrH == other.thrH
-    && skinprotect == other.skinprotect
-    && hueskin == other.hueskin
-    && hueskin2 == other.hueskin2
-    && hllev == other.hllev
-    && bllev == other.bllev
-    && pastlev == other.pastlev
-    && satlev == other.satlev
-    && edgcont == other.edgcont
-    && level0noise == other.level0noise
-    && level1noise == other.level1noise
-    && level2noise == other.level2noise
-    && level3noise == other.level3noise;
+        && [this, &other]() -> bool
+            {
+                for (unsigned int i = 0; i < 9; ++i) {
+                    if (c[i] != other.c[i] || ch[i] != other.ch[i]) {
+                        return false;
+                    }
+                }
+                return true;
+            }()
+        && expedge == other.expedge
+        && expresid == other.expresid
+        && expfinal == other.expfinal
+        && exptoning == other.exptoning
+        && expnoise == other.expnoise
+        && Lmethod == other.Lmethod
+        && CLmethod == other.CLmethod
+        && Backmethod == other.Backmethod
+        && Tilesmethod == other.Tilesmethod
+        && daubcoeffmethod == other.daubcoeffmethod
+        && CHmethod == other.CHmethod
+        && Medgreinf == other.Medgreinf
+        && CHSLmethod == other.CHSLmethod
+        && EDmethod == other.EDmethod
+        && NPmethod == other.NPmethod
+        && BAmethod == other.BAmethod
+        && TMmethod == other.TMmethod
+        && Dirmethod == other.Dirmethod
+        && HSmethod == other.HSmethod
+        && rescon == other.rescon
+        && resconH == other.resconH
+        && reschro == other.reschro
+        && tmrs == other.tmrs
+        && gamma == other.gamma
+        && sup == other.sup
+        && sky == other.sky
+        && thres == other.thres
+        && chroma == other.chroma
+        && chro == other.chro
+        && threshold == other.threshold
+        && threshold2 == other.threshold2
+        && edgedetect == other.edgedetect
+        && edgedetectthr == other.edgedetectthr
+        && edgedetectthr2 == other.edgedetectthr2
+        && edgesensi == other.edgesensi
+        && edgeampli == other.edgeampli
+        && contrast == other.contrast
+        && edgrad == other.edgrad
+        && edgval == other.edgval
+        && edgthresh == other.edgthresh
+        && thr == other.thr
+        && thrH == other.thrH
+        && skinprotect == other.skinprotect
+        && hueskin == other.hueskin
+        && hueskin2 == other.hueskin2
+        && hllev == other.hllev
+        && bllev == other.bllev
+        && pastlev == other.pastlev
+        && satlev == other.satlev
+        && edgcont == other.edgcont
+        && level0noise == other.level0noise
+        && level1noise == other.level1noise
+        && level2noise == other.level2noise
+        && level3noise == other.level3noise;
 }
 
 bool WaveletParams::operator !=(const WaveletParams& other) const
@@ -2284,17 +2288,17 @@ DirPyrEqualizerParams::DirPyrEqualizerParams() :
     enabled(false),
     gamutlab(false),
     mult{
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0
-},
-threshold(0.2),
-skinprotect(0.0),
-hueskin(-5, 25, 170, 120, false),
-cbdlMethod("bef")
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    },
+    threshold(0.2),
+    skinprotect(0.0),
+    hueskin (-5, 25, 170, 120, false),
+    cbdlMethod("bef")
 {
 }
 
@@ -2303,20 +2307,19 @@ bool DirPyrEqualizerParams::operator ==(const DirPyrEqualizerParams& other) cons
     return
         enabled == other.enabled
         && gamutlab == other.gamutlab
-    && [this, &other]() -> bool {
-        for (unsigned int i = 0; i < 6; ++i)
-        {
-            if (mult[i] != other.mult[i]) {
-                return false;
-            }
-        }
-
-        return true;
-    }()
-    && threshold == other.threshold
-    && skinprotect == other.skinprotect
-    && hueskin == other.hueskin
-    && cbdlMethod == other.cbdlMethod;
+        && [this, &other]() -> bool
+            {
+                for (unsigned int i = 0; i < 6; ++i) {
+                    if (mult[i] != other.mult[i]) {
+                        return false;
+                    }
+                }
+                return true;
+            }()
+        && threshold == other.threshold
+        && skinprotect == other.skinprotect
+        && hueskin == other.hueskin
+        && cbdlMethod == other.cbdlMethod;
 }
 
 bool DirPyrEqualizerParams::operator !=(const DirPyrEqualizerParams& other) const
@@ -2327,14 +2330,14 @@ bool DirPyrEqualizerParams::operator !=(const DirPyrEqualizerParams& other) cons
 HSVEqualizerParams::HSVEqualizerParams() :
     enabled(false),
     hcurve{
-    FCT_Linear
-},
-scurve{
-    FCT_Linear
-},
-vcurve{
-    FCT_Linear
-}
+        FCT_Linear
+    },
+    scurve{
+        FCT_Linear
+    },
+    vcurve{
+        FCT_Linear
+    }
 {
 }
 
@@ -2385,6 +2388,7 @@ RAWParams::BayerSensor::BayerSensor() :
     greenthresh(0),
     dcb_iterations(2),
     lmmse_iterations(2),
+    dualDemosaicContrast(20),
     pixelShiftMotionCorrectionMethod(PSMotionCorrectionMethod::AUTO),
     pixelShiftEperIso(0.0),
     pixelShiftSigma(1.0),
@@ -2395,10 +2399,10 @@ RAWParams::BayerSensor::BayerSensor() :
     pixelShiftGreen(true),
     pixelShiftBlur(true),
     pixelShiftSmoothFactor(0.7),
-    pixelShiftLmmse(false),
     pixelShiftEqualBright(false),
     pixelShiftEqualBrightChannel(false),
     pixelShiftNonGreenCross(true),
+    pixelShiftDemosaicMethod(getPSDemosaicMethodString(PSDemosaicMethod::AMAZE)),
     dcb_enhance(true),
     pdafLinesFilter(false)
 {
@@ -2420,6 +2424,7 @@ bool RAWParams::BayerSensor::operator ==(const BayerSensor& other) const
         && greenthresh == other.greenthresh
         && dcb_iterations == other.dcb_iterations
         && lmmse_iterations == other.lmmse_iterations
+        && dualDemosaicContrast == other.dualDemosaicContrast
         && pixelShiftMotionCorrectionMethod == other.pixelShiftMotionCorrectionMethod
         && pixelShiftEperIso == other.pixelShiftEperIso
         && pixelShiftSigma == other.pixelShiftSigma
@@ -2430,10 +2435,10 @@ bool RAWParams::BayerSensor::operator ==(const BayerSensor& other) const
         && pixelShiftGreen == other.pixelShiftGreen
         && pixelShiftBlur == other.pixelShiftBlur
         && pixelShiftSmoothFactor == other.pixelShiftSmoothFactor
-        && pixelShiftLmmse == other.pixelShiftLmmse
         && pixelShiftEqualBright == other.pixelShiftEqualBright
         && pixelShiftEqualBrightChannel == other.pixelShiftEqualBrightChannel
         && pixelShiftNonGreenCross == other.pixelShiftNonGreenCross
+        && pixelShiftDemosaicMethod == other.pixelShiftDemosaicMethod
         && dcb_enhance == other.dcb_enhance
         && pdafLinesFilter == other.pdafLinesFilter;
 }
@@ -2453,28 +2458,29 @@ void RAWParams::BayerSensor::setPixelShiftDefaults()
     pixelShiftGreen = true;
     pixelShiftBlur = true;
     pixelShiftSmoothFactor = 0.7;
-    pixelShiftLmmse = false;
     pixelShiftEqualBright = false;
     pixelShiftEqualBrightChannel = false;
     pixelShiftNonGreenCross = true;
+    pixelShiftDemosaicMethod = getPSDemosaicMethodString(PSDemosaicMethod::AMAZE);
 }
 
 const std::vector<const char*>& RAWParams::BayerSensor::getMethodStrings()
 {
     static const std::vector<const char*> method_strings {
         "amaze",
-        "igv",
+        "amazevng4",
+        "rcd",
+        "dcb",
         "lmmse",
+        "igv",
+        "ahd",
         "eahd",
         "hphd",
         "vng4",
-        "dcb",
-        "ahd",
-        "rcd",
         "fast",
         "mono",
-        "none",
-        "pixelshift"
+        "pixelshift",
+        "none"
     };
     return method_strings;
 }
@@ -2484,8 +2490,26 @@ Glib::ustring RAWParams::BayerSensor::getMethodString(Method method)
     return getMethodStrings()[toUnderlying(method)];
 }
 
+const std::vector<const char*>& RAWParams::BayerSensor::getPSDemosaicMethodStrings()
+{
+    static const std::vector<const char*> method_strings {
+        "amaze",
+        "amazevng4",
+        "lmmse"
+    };
+    return method_strings;
+}
+
+Glib::ustring RAWParams::BayerSensor::getPSDemosaicMethodString(PSDemosaicMethod method)
+{
+    return getPSDemosaicMethodStrings()[toUnderlying(method)];
+}
+
+
+
 RAWParams::XTransSensor::XTransSensor() :
     method(getMethodString(Method::THREE_PASS)),
+    dualDemosaicContrast(20),
     ccSteps(0),
     blackred(0.0),
     blackgreen(0.0),
@@ -2497,6 +2521,7 @@ bool RAWParams::XTransSensor::operator ==(const XTransSensor& other) const
 {
     return
         method == other.method
+        && dualDemosaicContrast == other.dualDemosaicContrast
         && ccSteps == other.ccSteps
         && blackred == other.blackred
         && blackgreen == other.blackgreen
@@ -2511,6 +2536,7 @@ bool RAWParams::XTransSensor::operator !=(const XTransSensor& other) const
 const std::vector<const char*>& RAWParams::XTransSensor::getMethodStrings()
 {
     static const std::vector<const char*> method_strings {
+        "4-pass",
         "3-pass (best)",
         "1-pass (medium)",
         "fast",
@@ -2628,6 +2654,7 @@ void ProcParams::setDefaults()
     sharpening = SharpeningParams();
 
     prsharpening = SharpeningParams();
+    prsharpening.contrast = 0.0;
     prsharpening.method = "rld";
     prsharpening.deconvamount = 100;
     prsharpening.deconvradius = 0.45;
@@ -2838,26 +2865,28 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(
             !pedited || pedited->blackwhite.beforeCurveMode,
             "Black & White",
-        "BeforeCurveMode", {
-            {BlackWhiteParams::TcMode::STD_BW, "Standard"},
-            {BlackWhiteParams::TcMode::FILMLIKE_BW, "FilmLike"},
-            {BlackWhiteParams::TcMode::SATANDVALBLENDING_BW, "SatAndValueBlending"},
-            {BlackWhiteParams::TcMode::WEIGHTEDSTD_BW, "WeightedStd"}
+            "BeforeCurveMode",
+            {
+                {BlackWhiteParams::TcMode::STD_BW, "Standard"},
+                {BlackWhiteParams::TcMode::FILMLIKE_BW, "FilmLike"},
+                {BlackWhiteParams::TcMode::SATANDVALBLENDING_BW, "SatAndValueBlending"},
+                {BlackWhiteParams::TcMode::WEIGHTEDSTD_BW, "WeightedStd"}
 
-        },
-        blackwhite.beforeCurveMode,
-        keyFile
+            },
+            blackwhite.beforeCurveMode,
+            keyFile
         );
         saveToKeyfile(
             !pedited || pedited->blackwhite.afterCurveMode,
             "Black & White",
-        "AfterCurveMode", {
-            {BlackWhiteParams::TcMode::STD_BW, "Standard"},
-            {BlackWhiteParams::TcMode::WEIGHTEDSTD_BW, "WeightedStd"}
+            "AfterCurveMode",
+            {
+                {BlackWhiteParams::TcMode::STD_BW, "Standard"},
+                {BlackWhiteParams::TcMode::WEIGHTEDSTD_BW, "WeightedStd"}
 
-        },
-        blackwhite.afterCurveMode,
-        keyFile
+            },
+            blackwhite.afterCurveMode,
+            keyFile
         );
         saveToKeyfile(!pedited || pedited->blackwhite.beforeCurve, "Black & White", "BeforeCurve", blackwhite.beforeCurve, keyFile);
         saveToKeyfile(!pedited || pedited->blackwhite.afterCurve, "Black & White", "AfterCurve", blackwhite.afterCurve, keyFile);
@@ -2882,6 +2911,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Sharpening
         saveToKeyfile(!pedited || pedited->sharpening.enabled, "Sharpening", "Enabled", sharpening.enabled, keyFile);
+        saveToKeyfile(!pedited || pedited->sharpening.contrast, "Sharpening", "Contrast", sharpening.contrast, keyFile);
         saveToKeyfile(!pedited || pedited->sharpening.method, "Sharpening", "Method", sharpening.method, keyFile);
         saveToKeyfile(!pedited || pedited->sharpening.radius, "Sharpening", "Radius", sharpening.radius, keyFile);
         saveToKeyfile(!pedited || pedited->sharpening.amount, "Sharpening", "Amount", sharpening.amount, keyFile);
@@ -2916,6 +2946,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->sharpenMicro.enabled, "SharpenMicro", "Enabled", sharpenMicro.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->sharpenMicro.matrix, "SharpenMicro", "Matrix", sharpenMicro.matrix, keyFile);
         saveToKeyfile(!pedited || pedited->sharpenMicro.amount, "SharpenMicro", "Strength", sharpenMicro.amount, keyFile);
+        saveToKeyfile(!pedited || pedited->sharpenMicro.contrast, "SharpenMicro", "Contrast", sharpenMicro.contrast, keyFile);
         saveToKeyfile(!pedited || pedited->sharpenMicro.uniformity, "SharpenMicro", "Uniformity", sharpenMicro.uniformity, keyFile);
 
 // WB
@@ -2971,14 +3002,15 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(
             !pedited || pedited->colorappearance.curveMode3,
             "Color appearance",
-        "CurveMode3", {
-            {ColorAppearanceParams::CtcMode::CHROMA, "Chroma"},
-            {ColorAppearanceParams::CtcMode::SATUR, "Saturation"},
-            {ColorAppearanceParams::CtcMode::COLORF, "Colorfullness"}
+            "CurveMode3",
+            {
+                {ColorAppearanceParams::CtcMode::CHROMA, "Chroma"},
+                {ColorAppearanceParams::CtcMode::SATUR, "Saturation"},
+                {ColorAppearanceParams::CtcMode::COLORF, "Colorfullness"}
 
-        },
-        colorappearance.curveMode3,
-        keyFile
+            },
+            colorappearance.curveMode3,
+            keyFile
         );
         saveToKeyfile(!pedited || pedited->colorappearance.curve, "Color appearance", "Curve", colorappearance.curve, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.curve2, "Color appearance", "Curve2", colorappearance.curve2, keyFile);
@@ -3123,6 +3155,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Post resize sharpening
         saveToKeyfile(!pedited || pedited->prsharpening.enabled, "PostResizeSharpening", "Enabled", prsharpening.enabled, keyFile);
+        saveToKeyfile(!pedited || pedited->prsharpening.contrast, "PostResizeSharpening", "Contrast", prsharpening.contrast, keyFile);
         saveToKeyfile(!pedited || pedited->prsharpening.method, "PostResizeSharpening", "Method", prsharpening.method, keyFile);
         saveToKeyfile(!pedited || pedited->prsharpening.radius, "PostResizeSharpening", "Radius", prsharpening.radius, keyFile);
         saveToKeyfile(!pedited || pedited->prsharpening.amount, "PostResizeSharpening", "Amount", prsharpening.amount, keyFile);
@@ -3152,15 +3185,16 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(
             !pedited || pedited->icm.outputIntent,
             "Color Management",
-            "OutputProfileIntent", {
-            {RI_PERCEPTUAL, "Perceptual"},
-            {RI_RELATIVE, "Relative"},
-            {RI_SATURATION, "Saturation"},
-            {RI_ABSOLUTE, "Absolute"}
+            "OutputProfileIntent",
+            {
+                {RI_PERCEPTUAL, "Perceptual"},
+                {RI_RELATIVE, "Relative"},
+                {RI_SATURATION, "Saturation"},
+                {RI_ABSOLUTE, "Absolute"}
 
-        },
-        icm.outputIntent,
-        keyFile
+            },
+            icm.outputIntent,
+            keyFile
         );
         saveToKeyfile(!pedited || pedited->icm.outputBPC, "Color Management", "OutputBPC", icm.outputBPC, keyFile);
         saveToKeyfile(!pedited || pedited->icm.customOutputProfile, "Color Management", "CustomOutputProfile", icm.customOutputProfile, keyFile);
@@ -3369,6 +3403,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.bayersensor.dcbIterations, "RAW Bayer", "DCBIterations", raw.bayersensor.dcb_iterations, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.dcbEnhance, "RAW Bayer", "DCBEnhance", raw.bayersensor.dcb_enhance, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.lmmseIterations, "RAW Bayer", "LMMSEIterations", raw.bayersensor.lmmse_iterations, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.bayersensor.dualDemosaicContrast, "RAW Bayer", "DualDemosaicContrast", raw.bayersensor.dualDemosaicContrast, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftMotionCorrectionMethod, "RAW Bayer", "PixelShiftMotionCorrectionMethod", toUnderlying(raw.bayersensor.pixelShiftMotionCorrectionMethod), keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftEperIso, "RAW Bayer", "PixelShiftEperIso", raw.bayersensor.pixelShiftEperIso, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftSigma, "RAW Bayer", "PixelShiftSigma", raw.bayersensor.pixelShiftSigma, keyFile);
@@ -3379,12 +3414,13 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftGreen, "RAW Bayer", "pixelShiftGreen", raw.bayersensor.pixelShiftGreen, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftBlur, "RAW Bayer", "pixelShiftBlur", raw.bayersensor.pixelShiftBlur, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftSmooth, "RAW Bayer", "pixelShiftSmoothFactor", raw.bayersensor.pixelShiftSmoothFactor, keyFile);
-        saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftLmmse, "RAW Bayer", "pixelShiftLmmse", raw.bayersensor.pixelShiftLmmse, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftEqualBright, "RAW Bayer", "pixelShiftEqualBright", raw.bayersensor.pixelShiftEqualBright, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftEqualBrightChannel, "RAW Bayer", "pixelShiftEqualBrightChannel", raw.bayersensor.pixelShiftEqualBrightChannel, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftNonGreenCross, "RAW Bayer", "pixelShiftNonGreenCross", raw.bayersensor.pixelShiftNonGreenCross, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftDemosaicMethod, "RAW Bayer", "pixelShiftDemosaicMethod", raw.bayersensor.pixelShiftDemosaicMethod, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pdafLinesFilter, "RAW Bayer", "PDAFLinesFilter", raw.bayersensor.pdafLinesFilter, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.method, "RAW X-Trans", "Method", raw.xtranssensor.method, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.xtranssensor.dualDemosaicContrast, "RAW X-Trans", "DualDemosaicContrast", raw.xtranssensor.dualDemosaicContrast, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.ccSteps, "RAW X-Trans", "CcSteps", raw.xtranssensor.ccSteps, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.exBlackRed, "RAW X-Trans", "PreBlackRed", raw.xtranssensor.blackred, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.exBlackGreen, "RAW X-Trans", "PreBlackGreen", raw.xtranssensor.blackgreen, keyFile);
@@ -3576,14 +3612,15 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 keyFile,
                 "Black & White",
                 "BeforeCurveMode",
-            pedited, {
-                {"Standard", BlackWhiteParams::TcMode::STD_BW},
-                {"FilmLike", BlackWhiteParams::TcMode::FILMLIKE_BW},
-                {"SatAndValueBlending", BlackWhiteParams::TcMode::SATANDVALBLENDING_BW},
-                {"WeightedStd", BlackWhiteParams::TcMode::WEIGHTEDSTD_BW}
-            },
-            blackwhite.beforeCurveMode,
-            pedited->blackwhite.beforeCurveMode
+                pedited,
+                {
+                    {"Standard", BlackWhiteParams::TcMode::STD_BW},
+                    {"FilmLike", BlackWhiteParams::TcMode::FILMLIKE_BW},
+                    {"SatAndValueBlending", BlackWhiteParams::TcMode::SATANDVALBLENDING_BW},
+                    {"WeightedStd", BlackWhiteParams::TcMode::WEIGHTEDSTD_BW}
+                },
+                blackwhite.beforeCurveMode,
+                pedited->blackwhite.beforeCurveMode
             );
 
             assignFromKeyfile(keyFile, "Black & White", "AfterCurve", pedited, blackwhite.afterCurve, pedited->blackwhite.afterCurve);
@@ -3591,12 +3628,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 keyFile,
                 "Black & White",
                 "AfterCurveMode",
-            pedited, {
-                {"Standard", BlackWhiteParams::TcMode::STD_BW},
-                {"WeightedStd", BlackWhiteParams::TcMode::WEIGHTEDSTD_BW}
-            },
-            blackwhite.afterCurveMode,
-            pedited->blackwhite.afterCurveMode
+                pedited,
+                {
+                    {"Standard", BlackWhiteParams::TcMode::STD_BW},
+                    {"WeightedStd", BlackWhiteParams::TcMode::WEIGHTEDSTD_BW}
+                },
+                blackwhite.afterCurveMode,
+                pedited->blackwhite.afterCurveMode
             );
         }
 
@@ -3716,6 +3754,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group("Sharpening")) {
             assignFromKeyfile(keyFile, "Sharpening", "Enabled", pedited, sharpening.enabled, pedited->sharpening.enabled);
+            if (ppVersion >= 334) {
+                assignFromKeyfile(keyFile, "Sharpening", "Contrast", pedited, sharpening.contrast, pedited->sharpening.contrast);
+            } else {
+                sharpening.contrast = 0;
+                if (pedited) {
+                    pedited->sharpening.contrast = true;
+                }
+            }
             assignFromKeyfile(keyFile, "Sharpening", "Radius", pedited, sharpening.radius, pedited->sharpening.radius);
             assignFromKeyfile(keyFile, "Sharpening", "Amount", pedited, sharpening.amount, pedited->sharpening.amount);
 
@@ -3759,6 +3805,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "SharpenMicro", "Enabled", pedited, sharpenMicro.enabled, pedited->sharpenMicro.enabled);
             assignFromKeyfile(keyFile, "SharpenMicro", "Matrix", pedited, sharpenMicro.matrix, pedited->sharpenMicro.matrix);
             assignFromKeyfile(keyFile, "SharpenMicro", "Strength", pedited, sharpenMicro.amount, pedited->sharpenMicro.amount);
+            if (ppVersion >= 334) {
+                assignFromKeyfile(keyFile, "SharpenMicro", "Contrast", pedited, sharpenMicro.contrast, pedited->sharpenMicro.contrast);
+            } else {
+                sharpenMicro.contrast = 0;
+                if (pedited) {
+                    pedited->sharpenMicro.contrast = true;
+                }
+            }
             assignFromKeyfile(keyFile, "SharpenMicro", "Uniformity", pedited, sharpenMicro.uniformity, pedited->sharpenMicro.uniformity);
         }
 
@@ -3866,13 +3920,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 keyFile,
                 "Color appearance",
                 "CurveMode3",
-            pedited, {
-                {"Chroma", ColorAppearanceParams::CtcMode::CHROMA},
-                {"Saturation", ColorAppearanceParams::CtcMode::SATUR},
-                {"Colorfullness", ColorAppearanceParams::CtcMode::COLORF}
-            },
-            colorappearance.curveMode3,
-            pedited->colorappearance.curveMode3
+                pedited,
+                {
+                    {"Chroma", ColorAppearanceParams::CtcMode::CHROMA},
+                    {"Saturation", ColorAppearanceParams::CtcMode::SATUR},
+                    {"Colorfullness", ColorAppearanceParams::CtcMode::COLORF}
+                },
+                colorappearance.curveMode3,
+                pedited->colorappearance.curveMode3
             );
 
             if (ppVersion > 200) {
@@ -4125,6 +4180,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group("PostResizeSharpening")) {
             assignFromKeyfile(keyFile, "PostResizeSharpening", "Enabled", pedited, prsharpening.enabled, pedited->prsharpening.enabled);
+            assignFromKeyfile(keyFile, "PostResizeSharpening", "Contrast", pedited, prsharpening.contrast, pedited->prsharpening.contrast);
             assignFromKeyfile(keyFile, "PostResizeSharpening", "Radius", pedited, prsharpening.radius, pedited->prsharpening.radius);
             assignFromKeyfile(keyFile, "PostResizeSharpening", "Amount", pedited, prsharpening.amount, pedited->prsharpening.amount);
 
@@ -4196,10 +4252,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
             assignFromKeyfile(keyFile, "Color Management", "OutputBPC", pedited, icm.outputBPC, pedited->icm.outputBPC);
 
-            if (ppVersion < 334) {
-            } else {
-            }
-            assignFromKeyfile(keyFile, "Color Management", ppVersion < 334 ? "Freegamma" : "CustomOutputProfile", pedited, icm.customOutputProfile, pedited->icm.customOutputProfile);
+            assignFromKeyfile(keyFile, "Color Management", ppVersion < 338 ? "Freegamma" : "CustomOutputProfile", pedited, icm.customOutputProfile, pedited->icm.customOutputProfile);
             assignFromKeyfile(keyFile, "Color Management", "OutputPimariesPreset", pedited, icm.outputPimariesPreset, pedited->icm.outputPrimariesPreset);
             assignFromKeyfile(keyFile, "Color Management", "RedPrimaryX", pedited, icm.redPrimaryX, pedited->icm.redPrimaryX);
             assignFromKeyfile(keyFile, "Color Management", "RedPrimaryY", pedited, icm.redPrimaryY, pedited->icm.redPrimaryY);
@@ -4207,9 +4260,9 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "GreenPrimaryY", pedited, icm.greenPrimaryY, pedited->icm.greenPrimaryY);
             assignFromKeyfile(keyFile, "Color Management", "BluePrimaryX", pedited, icm.bluePrimaryX, pedited->icm.bluePrimaryX);
             assignFromKeyfile(keyFile, "Color Management", "BluePrimaryY", pedited, icm.bluePrimaryY, pedited->icm.bluePrimaryY);
-            assignFromKeyfile(keyFile, "Color Management", ppVersion < 334 ? "Gammafree" : "OutputGammaPreset", pedited, icm.outputGammaPreset, pedited->icm.outputGammaPreset);
-            assignFromKeyfile(keyFile, "Color Management", ppVersion < 334 ? "GammaValue" : "OutputGamma", pedited, icm.outputGamma, pedited->icm.outputGamma);
-            assignFromKeyfile(keyFile, "Color Management", ppVersion < 334 ? "GammaSlope" : "OutputSlope", pedited, icm.outputSlope, pedited->icm.outputSlope);
+            assignFromKeyfile(keyFile, "Color Management", ppVersion < 338 ? "Gammafree" : "OutputGammaPreset", pedited, icm.outputGammaPreset, pedited->icm.outputGammaPreset);
+            assignFromKeyfile(keyFile, "Color Management", ppVersion < 338 ? "GammaValue" : "OutputGamma", pedited, icm.outputGamma, pedited->icm.outputGamma);
+            assignFromKeyfile(keyFile, "Color Management", ppVersion < 338 ? "GammaSlope" : "OutputSlope", pedited, icm.outputSlope, pedited->icm.outputSlope);
             assignFromKeyfile(keyFile, "Color Management", "OutputProfileVersion", pedited, icm.outputProfileVersion, pedited->icm.outputProfileVersion);
             assignFromKeyfile(keyFile, "Color Management", "OutputIlluminant", pedited, icm.outputIlluminant, pedited->icm.outputIlluminant);
         }
@@ -4625,6 +4678,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "ColorToning", "LabGridBLow", pedited, colorToning.labgridBLow, pedited->colorToning.labgridBLow);
             assignFromKeyfile(keyFile, "ColorToning", "LabGridAHigh", pedited, colorToning.labgridAHigh, pedited->colorToning.labgridAHigh);
             assignFromKeyfile(keyFile, "ColorToning", "LabGridBHigh", pedited, colorToning.labgridBHigh, pedited->colorToning.labgridBHigh);
+            if (ppVersion < 337) {
+                const double scale = ColorToningParams::LABGRID_CORR_SCALE;
+                colorToning.labgridALow *= scale;
+                colorToning.labgridAHigh *= scale;
+                colorToning.labgridBLow *= scale;
+                colorToning.labgridBHigh *= scale;
+            }
         }
 
         if (keyFile.has_group("RAW")) {
@@ -4723,6 +4783,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW Bayer", "DCBIterations", pedited, raw.bayersensor.dcb_iterations, pedited->raw.bayersensor.dcbIterations);
             assignFromKeyfile(keyFile, "RAW Bayer", "DCBEnhance", pedited, raw.bayersensor.dcb_enhance, pedited->raw.bayersensor.dcbEnhance);
             assignFromKeyfile(keyFile, "RAW Bayer", "LMMSEIterations", pedited, raw.bayersensor.lmmse_iterations, pedited->raw.bayersensor.lmmseIterations);
+            assignFromKeyfile(keyFile, "RAW Bayer", "DualDemosaicContrast", pedited, raw.bayersensor.dualDemosaicContrast, pedited->raw.bayersensor.dualDemosaicContrast);
 
             if (keyFile.has_key("RAW Bayer", "PixelShiftMotionCorrectionMethod")) {
                 raw.bayersensor.pixelShiftMotionCorrectionMethod = (RAWParams::BayerSensor::PSMotionCorrectionMethod)keyFile.get_integer("RAW Bayer", "PixelShiftMotionCorrectionMethod");
@@ -4744,15 +4805,32 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftGreen", pedited, raw.bayersensor.pixelShiftGreen, pedited->raw.bayersensor.pixelShiftGreen);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftBlur", pedited, raw.bayersensor.pixelShiftBlur, pedited->raw.bayersensor.pixelShiftBlur);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftSmoothFactor", pedited, raw.bayersensor.pixelShiftSmoothFactor, pedited->raw.bayersensor.pixelShiftSmooth);
-            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftLmmse", pedited, raw.bayersensor.pixelShiftLmmse, pedited->raw.bayersensor.pixelShiftLmmse);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftEqualBright", pedited, raw.bayersensor.pixelShiftEqualBright, pedited->raw.bayersensor.pixelShiftEqualBright);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftEqualBrightChannel", pedited, raw.bayersensor.pixelShiftEqualBrightChannel, pedited->raw.bayersensor.pixelShiftEqualBrightChannel);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftNonGreenCross", pedited, raw.bayersensor.pixelShiftNonGreenCross, pedited->raw.bayersensor.pixelShiftNonGreenCross);
+
+            if (ppVersion < 336) {
+                if (keyFile.has_key("RAW Bayer", "pixelShiftLmmse")) {
+                    bool useLmmse = keyFile.get_boolean ("RAW Bayer", "pixelShiftLmmse");
+                    if (useLmmse) {
+                        raw.bayersensor.pixelShiftDemosaicMethod = raw.bayersensor.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::LMMSE);
+                    } else {
+                        raw.bayersensor.pixelShiftDemosaicMethod = raw.bayersensor.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::AMAZE);
+                    }
+                    if (pedited) {
+                        pedited->raw.bayersensor.pixelShiftDemosaicMethod = true;
+                    }
+                }
+            } else {
+                assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftDemosaicMethod", pedited, raw.bayersensor.pixelShiftDemosaicMethod, pedited->raw.bayersensor.pixelShiftDemosaicMethod);
+            }
+
             assignFromKeyfile(keyFile, "RAW Bayer", "PDAFLinesFilter", pedited, raw.bayersensor.pdafLinesFilter, pedited->raw.bayersensor.pdafLinesFilter);
         }
 
         if (keyFile.has_group("RAW X-Trans")) {
             assignFromKeyfile(keyFile, "RAW X-Trans", "Method", pedited, raw.xtranssensor.method, pedited->raw.xtranssensor.method);
+            assignFromKeyfile(keyFile, "RAW X-Trans", "DualDemosaicContrast", pedited, raw.xtranssensor.dualDemosaicContrast, pedited->raw.xtranssensor.dualDemosaicContrast);
             assignFromKeyfile(keyFile, "RAW X-Trans", "CcSteps", pedited, raw.xtranssensor.ccSteps, pedited->raw.xtranssensor.ccSteps);
             assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackRed", pedited, raw.xtranssensor.blackred, pedited->raw.xtranssensor.exBlackRed);
             assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackGreen", pedited, raw.xtranssensor.blackgreen, pedited->raw.xtranssensor.exBlackGreen);

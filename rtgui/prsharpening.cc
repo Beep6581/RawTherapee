@@ -16,14 +16,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "prsharpening.h"
 #include <cmath>
+#include "eventmapper.h"
+#include "prsharpening.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
 PrSharpening::PrSharpening () : FoldableToolPanel(this, "prsharpening", M("TP_PRSHARPENING_LABEL"), false, true)
 {
+
+    auto m = ProcEventMapper::getInstance();
+    EvPrShrContrast = m->newEvent(RESIZE, "HISTORY_MSG_PRSHARPEN_CONTRAST");
 
     std::vector<GradientMilestone> milestones;
     milestones.push_back( GradientMilestone(0.0, 0.0, 0.0, 0.0) );
@@ -33,6 +37,11 @@ PrSharpening::PrSharpening () : FoldableToolPanel(this, "prsharpening", M("TP_PR
 
     Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
     hb->show ();
+    contrast = Gtk::manage(new Adjuster (M("TP_SHARPENING_CONTRAST"), 0, 100, 1, 0));
+    contrast->setAdjusterListener (this);
+    pack_start(*contrast);
+    contrast->show();
+
     Gtk::Label* ml = Gtk::manage (new Gtk::Label (M("TP_SHARPENING_METHOD") + ":"));
     ml->show ();
     method = Gtk::manage (new MyComboBoxText ());
@@ -150,6 +159,7 @@ void PrSharpening::read (const ProcParams* pp, const ParamsEdited* pedited)
     disableListener ();
 
     if (pedited) {
+        contrast->setEditedState    (pedited->prsharpening.contrast ? Edited : UnEdited);
         amount->setEditedState      (pedited->prsharpening.amount ? Edited : UnEdited);
         radius->setEditedState      (pedited->prsharpening.radius ? Edited : UnEdited);
         threshold->setEditedState   (pedited->prsharpening.threshold ? Edited : UnEdited);
@@ -178,6 +188,7 @@ void PrSharpening::read (const ProcParams* pp, const ParamsEdited* pedited)
     hcConn.block (false);
     lastHaloControl = pp->prsharpening.halocontrol;
 
+    contrast->setValue      (pp->prsharpening.contrast);
     amount->setValue        (pp->prsharpening.amount);
     radius->setValue        (pp->prsharpening.radius);
     threshold->setValue<int>(pp->prsharpening.threshold);
@@ -219,6 +230,7 @@ void PrSharpening::read (const ProcParams* pp, const ParamsEdited* pedited)
 void PrSharpening::write (ProcParams* pp, ParamsEdited* pedited)
 {
 
+    pp->prsharpening.contrast         = contrast->getValue ();
     pp->prsharpening.amount           = (int)amount->getValue();
     pp->prsharpening.enabled          = getEnabled ();
     pp->prsharpening.radius           = radius->getValue ();
@@ -240,6 +252,7 @@ void PrSharpening::write (ProcParams* pp, ParamsEdited* pedited)
     }
 
     if (pedited) {
+        pedited->prsharpening.contrast           = contrast->getEditedState ();
         pedited->prsharpening.amount             = amount->getEditedState ();
         pedited->prsharpening.radius             = radius->getEditedState ();
         pedited->prsharpening.threshold          = threshold->getEditedState ();
@@ -260,6 +273,7 @@ void PrSharpening::write (ProcParams* pp, ParamsEdited* pedited)
 void PrSharpening::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
 {
 
+    contrast->setDefault (defParams->prsharpening.contrast);
     amount->setDefault (defParams->prsharpening.amount);
     radius->setDefault (defParams->prsharpening.radius);
     threshold->setDefault<int> (defParams->prsharpening.threshold);
@@ -272,6 +286,7 @@ void PrSharpening::setDefaults (const ProcParams* defParams, const ParamsEdited*
     ddamping->setDefault (defParams->prsharpening.deconvdamping);
 
     if (pedited) {
+        contrast->setDefaultEditedState     (pedited->prsharpening.contrast ? Edited : UnEdited);
         amount->setDefaultEditedState       (pedited->prsharpening.amount ? Edited : UnEdited);
         radius->setDefaultEditedState       (pedited->prsharpening.radius ? Edited : UnEdited);
         threshold->setDefaultEditedState    (pedited->prsharpening.threshold ? Edited : UnEdited);
@@ -283,6 +298,7 @@ void PrSharpening::setDefaults (const ProcParams* defParams, const ParamsEdited*
         diter->setDefaultEditedState        (pedited->prsharpening.deconviter ? Edited : UnEdited);
         ddamping->setDefaultEditedState     (pedited->prsharpening.deconvdamping ? Edited : UnEdited);
     } else {
+        contrast->setDefaultEditedState     (Irrelevant);
         amount->setDefaultEditedState       (Irrelevant);
         radius->setDefaultEditedState       (Irrelevant);
         threshold->setDefaultEditedState    (Irrelevant);
@@ -311,7 +327,9 @@ void PrSharpening::adjusterChanged (Adjuster* a, double newval)
             costr = Glib::ustring::format ((int)a->getValue());
         }
 
-        if (a == amount) {
+        if (a == contrast) {
+            listener->panelChanged (EvPrShrContrast, costr);
+        } else if (a == amount) {
             listener->panelChanged (EvPrShrAmount, costr);
         } else if (a == radius) {
             listener->panelChanged (EvPrShrRadius, costr);
@@ -457,6 +475,7 @@ void PrSharpening::setBatchMode (bool batchMode)
     edgebin->pack_start (*edgebox);
     pack_start (*rld);
 
+    contrast->showEditedCB ();
     radius->showEditedCB ();
     amount->showEditedCB ();
     threshold->showEditedCB ();
@@ -470,9 +489,10 @@ void PrSharpening::setBatchMode (bool batchMode)
     method->append (M("GENERAL_UNCHANGED"));
 }
 
-void PrSharpening::setAdjusterBehavior (bool radiusadd, bool amountadd, bool dampingadd, bool iteradd, bool edgetoladd, bool haloctrladd)
+void PrSharpening::setAdjusterBehavior (bool contrastadd, bool radiusadd, bool amountadd, bool dampingadd, bool iteradd, bool edgetoladd, bool haloctrladd)
 {
 
+    contrast->setAddMode(contrastadd);
     radius->setAddMode(radiusadd);
     dradius->setAddMode(radiusadd);
     amount->setAddMode(amountadd);
@@ -487,6 +507,7 @@ void PrSharpening::setAdjusterBehavior (bool radiusadd, bool amountadd, bool dam
 void PrSharpening::trimValues (rtengine::procparams::ProcParams* pp)
 {
 
+    contrast->trimValue(pp->prsharpening.contrast);
     radius->trimValue(pp->prsharpening.radius);
     dradius->trimValue(pp->prsharpening.deconvradius);
     amount->trimValue(pp->prsharpening.amount);

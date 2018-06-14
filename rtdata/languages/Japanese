@@ -38,6 +38,7 @@ ABOUT_TAB_CREDITS;クレジット
 ABOUT_TAB_LICENSE;ライセンス
 ABOUT_TAB_RELEASENOTES;リリースノート
 ABOUT_TAB_SPLASH;スプラッシュ
+ADJUSTER_RESET_TO_DEFAULT;<b>クリック</b> - デフォルト値にリセット\n<b>Ctrl</b>+<b>クリック</b> - 初期値にリセット
 BATCHQUEUE_AUTOSTART;オートスタート
 BATCHQUEUE_AUTOSTARTHINT;新しいrawファイルが送られて来たら自動的に現像処理を開始します
 BATCHQUEUE_DESTFILENAME;パスとファイル名
@@ -163,7 +164,7 @@ FILEBROWSER_MOVETODARKFDIR;ダークフレーム・ディレクトリに移動
 FILEBROWSER_MOVETOFLATFIELDDIR;フラットフィールド・ディレクトリに移動
 FILEBROWSER_NEW_NAME;新しい名前:
 FILEBROWSER_OPENDEFAULTVIEWER;Windowsのデフォルト・ビューア（キュー処理）
-FILEBROWSER_PARTIALPASTEPROFILE;プロファイルの貼り付け　-　一部
+FILEBROWSER_PARTIALPASTEPROFILE;プロファイルの貼り付け　- 一部
 FILEBROWSER_PASTEPROFILE;プロファイルの貼り付け
 FILEBROWSER_POPUPCANCELJOB;ジョブ キャンセル
 FILEBROWSER_POPUPCOLORLABEL;カラー・ラベル
@@ -185,11 +186,11 @@ FILEBROWSER_POPUPPROCESSFAST;キューに追加 (高速書き出し)
 FILEBROWSER_POPUPPROFILEOPERATIONS;プロファイルの操作
 FILEBROWSER_POPUPRANK;ランク
 FILEBROWSER_POPUPRANK0;ランクなし
-FILEBROWSER_POPUPRANK1;ランク　1　*
+FILEBROWSER_POPUPRANK1;ランク　1 *
 FILEBROWSER_POPUPRANK2;ランク　2 **
-FILEBROWSER_POPUPRANK3;ランク　3　***
-FILEBROWSER_POPUPRANK4;ランク　4　****
-FILEBROWSER_POPUPRANK5;ランク　5　*****
+FILEBROWSER_POPUPRANK3;ランク　3 ***
+FILEBROWSER_POPUPRANK4;ランク　4 ****
+FILEBROWSER_POPUPRANK5;ランク　5 *****
 FILEBROWSER_POPUPREMOVE;ファイルシステムから削除
 FILEBROWSER_POPUPREMOVEINCLPROC;ファイルシステムとバッチの結果から削除
 FILEBROWSER_POPUPRENAME;名前変更
@@ -261,6 +262,7 @@ GENERAL_NONE;なし
 GENERAL_OK;OK
 GENERAL_OPEN;開く
 GENERAL_PORTRAIT;縦
+GENERAL_RESET;リセット
 GENERAL_SAVE;保存
 GENERAL_SLIDER;スライダー
 GENERAL_UNCHANGED;(変更なし)
@@ -291,8 +293,8 @@ HISTORY_MSG_10;シャドウ圧縮
 HISTORY_MSG_11;トーンカーブ 1
 HISTORY_MSG_12;自動露光補正
 HISTORY_MSG_13;露光 クリッピング
-HISTORY_MSG_14;L*a*b*　-　明度
-HISTORY_MSG_15;L*a*b*　-　コントラスト
+HISTORY_MSG_14;L*a*b* - 明度
+HISTORY_MSG_15;L*a*b* - コントラスト
 HISTORY_MSG_16;輝度 黒レベル
 HISTORY_MSG_17;輝度 ハイライト圧縮
 HISTORY_MSG_18;輝度 シャドウ圧縮
@@ -372,7 +374,7 @@ HISTORY_MSG_91;色ノイズの低減
 HISTORY_MSG_92;ノイズ低減のガンマ
 HISTORY_MSG_93;ディテールのコントラスト係数
 HISTORY_MSG_94;ディテールのコントラスト
-HISTORY_MSG_95;L*a*b*の色度
+HISTORY_MSG_95;L*a*b* - 色度
 HISTORY_MSG_96;L*a*b* - a*カーブ
 HISTORY_MSG_97;L*a*b* - b*カーブ
 HISTORY_MSG_98;デモザイク 方式
@@ -388,9 +390,9 @@ HISTORY_MSG_107;フリンジ低減 しきい値
 HISTORY_MSG_108;ハイライト圧縮 しきい値
 HISTORY_MSG_109;リサイズ バウンディングボックス
 HISTORY_MSG_110;リサイズの適用領域
-HISTORY_MSG_111;L*a*b*　-　色ずれ回避
+HISTORY_MSG_111;L*a*b* - 色ずれの回避
 HISTORY_MSG_112;--未使用--
-HISTORY_MSG_113;L*a*b*　-　レッドと肌色トーンを保護
+HISTORY_MSG_113;L*a*b* - レッドと肌色トーンを保護
 HISTORY_MSG_114;DCB 反復
 HISTORY_MSG_115;偽色抑制
 HISTORY_MSG_116;DCB 拡張
@@ -511,7 +513,9 @@ HISTORY_MSG_231;白黒　‘前の‘カーブ
 HISTORY_MSG_232;白黒　‘前の‘カーブのタイプ
 HISTORY_MSG_233;白黒　‘後の‘カーブ
 HISTORY_MSG_234;白黒　‘後の‘カーブのタイプ
+HISTORY_MSG_235;白黒 チャンネルミキサー 自動
 HISTORY_MSG_236;--未使用--
+HISTORY_MSG_237;白黒 チャンネルミキサー
 HISTORY_MSG_238;グラデーションフィルター　フェザー処理
 HISTORY_MSG_239;グラデーションフィルター　強さ
 HISTORY_MSG_240;グラデーションフィルター　中央
@@ -521,20 +525,20 @@ HISTORY_MSG_243;半径
 HISTORY_MSG_244;ビネットフィルター　強さ
 HISTORY_MSG_245;ビネットフィルター　中央
 HISTORY_MSG_246;L*a*b* CL カーブ
-HISTORY_MSG_247;L*a*b* LH　カーブ
-HISTORY_MSG_248;L*a*b* HH　カーブ
+HISTORY_MSG_247;L*a*b* LH カーブ
+HISTORY_MSG_248;L*a*b* HH カーブ
 HISTORY_MSG_249;ディテールレベルのコントラスト - しきい値
 HISTORY_MSG_250;ノイズ低減　-　強化
 HISTORY_MSG_251;白黒 - アルゴリズム
-HISTORY_MSG_252;CbDL　肌色の目標/保護
-HISTORY_MSG_253;CbDL　アーティファクトを軽減
-HISTORY_MSG_254;CbDL　肌色の色相
-HISTORY_MSG_255;ノイズ低減　-　メディアン
+HISTORY_MSG_252;CbDL 肌色の目標/保護
+HISTORY_MSG_253;CbDL アーティファクトを軽減
+HISTORY_MSG_254;CbDL 肌色の色相
+HISTORY_MSG_255;ノイズ低減　- メディアン
 HISTORY_MSG_256;ノイズ低減 - フィルターの種類
 HISTORY_MSG_257;カラートーン調整
-HISTORY_MSG_258;カラートーン調整　-　カラーのカーブ
+HISTORY_MSG_258;カラートーン調整　- カラーのカーブ
 HISTORY_MSG_259;カラートーン調整　-　不透明度のカーブ
-HISTORY_MSG_260;カラートーン調整　-　a*(b*)の不透明度
+HISTORY_MSG_260;カラートーン調整　- a*(b*)の不透明度
 HISTORY_MSG_261;カラートーン調整　-　方法
 HISTORY_MSG_262;カラートーン調整　-　b*の不透明度
 HISTORY_MSG_263;カラートーン調整　-　シャドウのレッド
@@ -546,14 +550,15 @@ HISTORY_MSG_268;カラートーン調整　-　中間トーンのブルー
 HISTORY_MSG_269;カラートーン調整　-　ハイライトのレッド
 HISTORY_MSG_270;カラートーン調整　-　ハイライトのグリーン
 HISTORY_MSG_271;カラートーン調整　-　ハイライトのブルー
-HISTORY_MSG_272;カラートーン調整　-　バランス
+HISTORY_MSG_272;カラートーン調整　- バランス
+HISTORY_MSG_273;カラートーン調整 - SMHでカラーバランス
 HISTORY_MSG_274;カラートーン調整　-　シャドウの彩度
 HISTORY_MSG_275;カラートーン調整　-　ハイライトの彩度
 HISTORY_MSG_276;カラートーン調整　-　不透明度
 HISTORY_MSG_277;カラートーン調整　-　カーブをリセット
 HISTORY_MSG_278;カラートーン調整　-　明度を維持
 HISTORY_MSG_279;カラートーン調整　-　シャドウ
-HISTORY_MSG_280;カラートーン調整　-　ハイライト
+HISTORY_MSG_280;カラートーン調整　- ハイライト
 HISTORY_MSG_281;カラートーン調整　-　彩度の保護
 HISTORY_MSG_282;カラートーン調整　-　彩度のしきい値
 HISTORY_MSG_283;カラートーン調整　-　強さを維持
@@ -577,73 +582,73 @@ HISTORY_MSG_300;-
 HISTORY_MSG_301;輝度ノイズの調整方法
 HISTORY_MSG_302;色ノイズの調整方法
 HISTORY_MSG_303;色ノイズの調整方法
-HISTORY_MSG_304;W-　コントラストレベル
-HISTORY_MSG_305;ウェーブレットのレベル
-HISTORY_MSG_306;W-　プロセス
-HISTORY_MSG_307;W-　プレビュー
-HISTORY_MSG_308;W-　プレビューの方向
-HISTORY_MSG_309;W-　ES　ディテール
-HISTORY_MSG_310;W-　残差　青空の目標/保護
+HISTORY_MSG_304;W- コントラストレベル
+HISTORY_MSG_305;ウェーブレット
+HISTORY_MSG_306;W- プロセス
+HISTORY_MSG_307;W- プレビュー
+HISTORY_MSG_308;W- プレビューの方向
+HISTORY_MSG_309;W- ES ディテール
+HISTORY_MSG_310;W- 残差 青空の目標/保護
 HISTORY_MSG_311;W- ウェーブレットのレベル
-HISTORY_MSG_312;W-　残差　シャドウのしきい値
-HISTORY_MSG_313;W-　色度　明星色/純色
-HISTORY_MSG_314;W-　色域　アーティファクトの軽減
-HISTORY_MSG_315;W-　残差　コントラスト
-HISTORY_MSG_316;W-　色域　肌色の目標/保護
-HISTORY_MSG_317;W-　色域　肌色の色相
-HISTORY_MSG_318;W-　コントラスト　ハイライトレベル
-HISTORY_MSG_319;W-　コントラスト　ハイライト範囲
-HISTORY_MSG_320;W-　コントラスト　シャドウ範囲
-HISTORY_MSG_321;W-　コントラスト　シャドウレベル
-HISTORY_MSG_322;W-　色域　色ずれの回避
-HISTORY_MSG_323;W-　ES　ローカルコントラスト
-HISTORY_MSG_324;W-　色度　明星色
-HISTORY_MSG_325;W-　色度　純色
-HISTORY_MSG_326;W-　色度　方法
-HISTORY_MSG_327;W-　コントラスト　適用先
-HISTORY_MSG_328;W-　色度　リンクを強化
-HISTORY_MSG_329;W-　色調　R/Gの不透明度
-HISTORY_MSG_330;W-　色調　B/Yの不透明度
-HISTORY_MSG_331;W-　コントラストレベル　エキストラ
-HISTORY_MSG_332;W-　タイルの種類
-HISTORY_MSG_333;W-　残差　シャドウ
-HISTORY_MSG_334;W-　残差　色度
-HISTORY_MSG_335;W-　残差　ハイライト
-HISTORY_MSG_336;W-　残差　ハイライトのしきい値
-HISTORY_MSG_337;W-　残差　青空の色相
-HISTORY_MSG_338;W-　ES　半径
-HISTORY_MSG_339;W-　ES　強さ
-HISTORY_MSG_340;W-　強さ
-HISTORY_MSG_341;W-　エッジパフォーマンス
-HISTORY_MSG_342;W-　ES　最初のレベル
-HISTORY_MSG_343;W-　色度のレベル
-HISTORY_MSG_344;W-　色度　方式　スライダー/カーブ
-HISTORY_MSG_345;W-　ES　ローカルコントラスト
-HISTORY_MSG_346;W-　ES　ローカルコントラスト　方式
-HISTORY_MSG_347;W-　ノイズ低減とリファイン　レベル1
-HISTORY_MSG_348;W-　ノイズ低減とリファイン　レベル2
-HISTORY_MSG_349;W-　ノイズ低減とリファイン　レベル3
-HISTORY_MSG_350;W-　ES　エッジ検出
-HISTORY_MSG_351;W-　残差　HHカーブ
-HISTORY_MSG_352;W-　背景色
-HISTORY_MSG_353;W-　ES　グラデーション感度
-HISTORY_MSG_354;W-　ES　強化
-HISTORY_MSG_355;W-　ES　しきい値（低）
-HISTORY_MSG_356;W-　ES　しきい値（高）
-HISTORY_MSG_357;W-　ノイズ低減　ESとリンク
-HISTORY_MSG_358;W-　色域　CHカーブ
+HISTORY_MSG_312;W- 残差　シャドウのしきい値
+HISTORY_MSG_313;W- 色度　明星色/純色
+HISTORY_MSG_314;W- 色域　アーティファクトの軽減
+HISTORY_MSG_315;W- 残差　コントラスト
+HISTORY_MSG_316;W- 色域　肌色の目標/保護
+HISTORY_MSG_317;W- 色域　肌色の色相
+HISTORY_MSG_318;W- コントラスト ハイライトレベル
+HISTORY_MSG_319;W- コントラスト ハイライト範囲
+HISTORY_MSG_320;W- コントラスト シャドウ範囲
+HISTORY_MSG_321;W- コントラスト シャドウレベル
+HISTORY_MSG_322;W- 色域　色ずれの回避
+HISTORY_MSG_323;W- ES　ローカルコントラスト
+HISTORY_MSG_324;W- 色度　明星色
+HISTORY_MSG_325;W- 色度　純色
+HISTORY_MSG_326;W- 色度　方法
+HISTORY_MSG_327;W- コントラスト　適用先
+HISTORY_MSG_328;W- 色度　リンクを強化
+HISTORY_MSG_329;W- 色調　R/Gの不透明度
+HISTORY_MSG_330;W- 色調　B/Yの不透明度
+HISTORY_MSG_331;W- コントラストレベル　エキストラ
+HISTORY_MSG_332;W- タイルの種類
+HISTORY_MSG_333;W- 残差　シャドウ
+HISTORY_MSG_334;W- 残差　色度
+HISTORY_MSG_335;W- 残差　ハイライト
+HISTORY_MSG_336;W- 残差　ハイライトのしきい値
+HISTORY_MSG_337;W- 残差　青空の色相
+HISTORY_MSG_338;W- ES 半径
+HISTORY_MSG_339;W- ES 強さ
+HISTORY_MSG_340;W- 強さ
+HISTORY_MSG_341;W- エッジパフォーマンス
+HISTORY_MSG_342;W- ES 最初のレベル
+HISTORY_MSG_343;W- 色度のレベル
+HISTORY_MSG_344;W- 色度　方式　スライダー/カーブ
+HISTORY_MSG_345;W- ES ローカルコントラスト
+HISTORY_MSG_346;W- ES ローカルコントラスト　方式
+HISTORY_MSG_347;W- ノイズ低減とリファイン　レベル1
+HISTORY_MSG_348;W- ノイズ低減とリファイン　レベル2
+HISTORY_MSG_349;W- ノイズ低減とリファイン　レベル3
+HISTORY_MSG_350;W- ES エッジ検出
+HISTORY_MSG_351;W- 残差　HHカーブ
+HISTORY_MSG_352;W- 背景色
+HISTORY_MSG_353;W- ES グラデーション感度
+HISTORY_MSG_354;W- ES 強化
+HISTORY_MSG_355;W- ES しきい値（低）
+HISTORY_MSG_356;W- ES しきい値（高）
+HISTORY_MSG_357;W- ノイズ低減　ESとリンク
+HISTORY_MSG_358;W- 色域　CHカーブ
 HISTORY_MSG_359;ホット/デッド　しきい値
 HISTORY_MSG_360;トーンマッピング　ガンマ
-HISTORY_MSG_361;W-　最終　色度バランス
-HISTORY_MSG_362;W-　残差　圧縮の方法
-HISTORY_MSG_363;W-　残差　圧縮の強さ
-HISTORY_MSG_364;W-　最終　コントラストバランス
-HISTORY_MSG_365;W-　最終　デルタバランス
-HISTORY_MSG_366;W-　残差　圧縮のガンマ
-HISTORY_MSG_367;W-　ES　ローカルコントラストカーブ
-HISTORY_MSG_368;W-　最終　コントラストバランス
-HISTORY_MSG_369;W-　最終　バランスの方法
-HISTORY_MSG_370;W-　最終　ローカルコントラストカーブ
+HISTORY_MSG_361;W- 最終　色度バランス
+HISTORY_MSG_362;W- 残差　圧縮の方法
+HISTORY_MSG_363;W- 残差　圧縮の強さ
+HISTORY_MSG_364;W- 最終　コントラストバランス
+HISTORY_MSG_365;W- 最終　デルタバランス
+HISTORY_MSG_366;W- 残差　圧縮のガンマ
+HISTORY_MSG_367;W- ES ローカルコントラストカーブ
+HISTORY_MSG_368;W- 最終　コントラストバランス
+HISTORY_MSG_369;W- 最終　バランスの方法
+HISTORY_MSG_370;W- 最終　ローカルコントラストカーブ
 HISTORY_MSG_371;リサイズ後のシャープ化（PRS）
 HISTORY_MSG_372;PRS アンシャープマスク - 半径
 HISTORY_MSG_373;PRS アンシャープマスク - 適用量
@@ -665,6 +670,7 @@ HISTORY_MSG_388;W - 残差 - CB 中間のグリーン
 HISTORY_MSG_389;W - 残差 - CB 中間のブルー
 HISTORY_MSG_390;W - 残差 - CB シャドウのグリーン
 HISTORY_MSG_391;W - 残差 - CB シャドウのブルー
+HISTORY_MSG_392;W - 残差 - カラーバランス
 HISTORY_MSG_393;DCP - ルックテーブル
 HISTORY_MSG_394;DCP - 基本露出
 HISTORY_MSG_395;DCP - ベーステーブル
@@ -744,9 +750,9 @@ HISTORY_MSG_484;CAM02 - 撮影環境のYb 自動
 HISTORY_MSG_485;レンズ補正
 HISTORY_MSG_486;レンズ補正 - カメラ
 HISTORY_MSG_487;レンズ補正 - レンズ
-HISTORY_MSG_488;HDRトーンマッピング
-HISTORY_MSG_489;HDR TM - しきい値
-HISTORY_MSG_490;HDR TM - 量
+HISTORY_MSG_488;ダイナミックレンジ圧縮
+HISTORY_MSG_489;DRC - しきい値
+HISTORY_MSG_490;DRC - 量
 HISTORY_MSG_491;ホワイトバランス
 HISTORY_MSG_492;RGBカーブ
 HISTORY_MSG_493;L*a*b*調整
@@ -759,9 +765,12 @@ HISTORY_MSG_LOCALCONTRAST_ENABLED;ローカルコントラスト
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;ローカルコントラスト - 明るい部分
 HISTORY_MSG_LOCALCONTRAST_RADIUS;ローカルコントラスト - 半径
 HISTORY_MSG_METADATA_MODE;メタデータ コピーモード
+HISTORY_MSG_MICROCONTRAST_CONTRAST;マイクロコントラスト - コントラストのしきい値
 HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;ラインノイズフィルタの方向
 HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAFラインフィルタ
-HISTORY_MSG_TM_FATTAL_ANCHOR;HDR TM - アンカー
+HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - コントラストのしきい値
+HISTORY_MSG_SHARPENING_CONTRAST;シャープ化 - コントラストのしきい値
+HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - アンカー
 HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSNAPSHOT_TOOLTIP;ショートカット: <b>Alt-s</b>
 HISTORY_SNAPSHOT;スナップショット
@@ -974,7 +983,7 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;シャドウ/ハイライト
 PARTIALPASTE_SHARPENEDGE;エッジ
 PARTIALPASTE_SHARPENING;シャープ化 (USM/RL)
 PARTIALPASTE_SHARPENMICRO;マイクロコントラスト
-PARTIALPASTE_TM_FATTAL;HDR トーンマッピング
+PARTIALPASTE_TM_FATTAL;ダイナミックレンジ圧縮
 PARTIALPASTE_VIBRANCE;自然な彩度
 PARTIALPASTE_VIGNETTING;周辺光量補正
 PARTIALPASTE_WAVELETGROUP;ウェーブレット処理
@@ -1315,6 +1324,8 @@ TP_BWMIX_MET;方法
 TP_BWMIX_MET_CHANMIX;チャンネルミキサー
 TP_BWMIX_MET_DESAT;彩度低減
 TP_BWMIX_MET_LUMEQUAL;輝度イコライザー
+TP_BWMIX_MIXC;チャンネルミキサー
+TP_BWMIX_NEUTRAL;リセット
 TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   トータル: %4%%
 TP_BWMIX_RGBLABEL_HINT;ミキサーオプションの全てを考慮した最終のRGBファクター\nトータルは実際に適用されたRGBの合計を表示:\n- 常に100％相対モード\n- 絶対モード100％より高い（明るい）、或いは低い（暗い）
 TP_BWMIX_RGB_TOOLTIP;RGBチャンネルをミックス。ガイダンスとしてプリセットを使います。\nマイナス値はアーティファクトの発生や誤った作用を起こすかもしれないことに注意します
@@ -1516,10 +1527,10 @@ TP_DIRPYRDENOISE_CHROMINANCE_METHODADVANCED_TOOLTIP;手動\n画像全体に作�
 TP_DIRPYRDENOISE_CHROMINANCE_METHOD_TOOLTIP;手動\n画像全体に作用します\nノイズ低減の設定を手動で行います\n\n自動（分割方式）\n画像全体に作用します\n画像を9つに分割して、そこから全体の色ノイズ低減に適した設定を自動的に行います\n\n自動（多分割方式）\nプレビュー画像には反映されません-保存画像だけに反映されます。但し、タイルサイズとその中心をプレビューサイズとその中心にマッチさせる〝プレビュー”方式を使えば、効果がどれ位か予測がつきます。\n画像をタイル状に分割し（タイル数は画像サイズ次第で、10～70枚になります）、各タイルにあった色ノイズ低減の設定を自動で行います\n\n自動（プレビュー方式）\n画像全体に作用します\nプレビューで見えている画像の一部を使って全体の色ノイズ低減に適した設定を自動で行います
 TP_DIRPYRDENOISE_CHROMINANCE_PMZ;自動（プレビュー方式）
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW;プレビュー方式
-TP_DIRPYRDENOISE_CHROMINANCE_PREVIEWRESIDUAL_INFO_TOOLTIP;ウェーブレット変換後、プレビューで見える部分画像で残ったノイズのレベルを表示します\n\n>300以上　非常にノイズが多い\n100～300 ノイズが多い\n50～100　ノイズが少ない\n50以下 ノイズが非常に少ない\n\n算出値はRGBとL*a*b*モードでは異なります。RGBモードは輝度と色を完全に切り離すことが出来ないので、算出値の精度は劣ります。
-TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_INFO;プレビューのサイズ=%1, 中心: Px=%2  Py=%3
-TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO;プレビューのノイズ: 中間色度=%1  高色度=%2
-TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY;プレビューのノイズ: 中間色度= -   高色度= -
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEWRESIDUAL_INFO_TOOLTIP;ウェーブレット変換後、プレビューに表示されている画像のノイズのレベルを表示します\n\n>300以上　非常にノイズが多い\n100～300 ノイズが多い\n50～100　ノイズが少ない\n50以下 ノイズが非常に少ない\n\n算出値はRGBとL*a*b*モードでは異なります。RGBモードは輝度と色を完全に切り離すことが出来ないので、算出値の精度は劣ります。
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_INFO;プレビュー画像のサイズ=%1, 中心: Px=%2  Py=%3
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO;プレビュー画像のノイズ: 平均値=%1  最大値=%2
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY;プレビュー画像のノイズ: 平均値= -   最大値= -
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;タイルのサイズ=%1, 中心位置: X座標=%2  Y座標=%3
 TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;色差 レッド/グリーン
 TP_DIRPYRDENOISE_ENH;強化モード
@@ -1530,17 +1541,17 @@ TP_DIRPYRDENOISE_LUMINANCE_CURVE;輝度カーブ
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;輝度　細部の復元
 TP_DIRPYRDENOISE_LUMINANCE_FRAME;輝度ノイズ
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;輝度
-TP_DIRPYRDENOISE_MAIN_COLORSPACE;方式
+TP_DIRPYRDENOISE_MAIN_COLORSPACE;色空間
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;L*a*b*
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;ノイズ低減
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;raw画像は、RGBまたはL*a*b*方式のいずれかを使用することができます。\n\nraw以外の画像は、選択にかかわらずL*a*b*方式が採用されます
 TP_DIRPYRDENOISE_MAIN_GAMMA;ガンマ
 TP_DIRPYRDENOISE_MAIN_GAMMA_TOOLTIP;ガンマは、トーンの範囲全体でノイズ低減の量を変化させます。値が大きいほど明るいトーンに効果を及ぼし、値が小さいほどシャドウをターゲットにします
-TP_DIRPYRDENOISE_MAIN_MODE;ノイズ低減の質
-TP_DIRPYRDENOISE_MAIN_MODE_AGGRESSIVE;高い
-TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE;標準
-TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;ノイズの状態に応じて低減効果の質を選べます：1-標準　2－高い\n2の方がノイズ低減効果は高くなりますが、その分処理時間が増えます。
+TP_DIRPYRDENOISE_MAIN_MODE;モード
+TP_DIRPYRDENOISE_MAIN_MODE_AGGRESSIVE;積極的
+TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE;控えめ
+TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;”控えめ”モードは低周波の色度パターンが維持されますが、”積極的”モードではそれらも取り除かれます
 TP_DIRPYRDENOISE_MEDIAN_METHOD;方式
 TP_DIRPYRDENOISE_MEDIAN_METHOD_CHROMINANCE;色ノイズだけ
 TP_DIRPYRDENOISE_MEDIAN_METHOD_LAB;L*a*b*
@@ -1554,6 +1565,12 @@ TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;計算領域が3x3ピクセルのメデ�
 TP_DIRPYRDENOISE_MEDIAN_TYPE;フィルターの種類
 TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;適用するメディアンフィルタのサイズを決めます。大きくするとその分処理時間が増えます。大きいサイズを使うとそれだけ処理時間が増えます。\n\n3×3 ソフト: 3x3ピクセルの計算領域で5ピクセルを処理します\n3×3:3x3ピクセルの計算領域で9ピクセルを処理します\n5×5 ソフト: 5x5ピクセルの計算領域で13ピクセルを処理します\n5×5: 5x5ピクセルの計算領域で25ピクセルを処理します\n7×7: 7x7ピクセルの計算領域で49ピクセルを処理します\n9×9: 9x9ピクセルの計算領域で81ピクセルを処理します\n\n場合によっては、小さいウィンドウで複数回適用を繰り返す方が、大きいウィンドウを1回適用するより結果が良いことがあります。
 TP_DIRPYRDENOISE_SLI;スライダー
+TP_DIRPYRDENOISE_TYPE_3X3;3×3
+TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 ソフト
+TP_DIRPYRDENOISE_TYPE_5X5;5×5
+TP_DIRPYRDENOISE_TYPE_5X5SOFT;5×5 ソフト
+TP_DIRPYRDENOISE_TYPE_7X7;7×7
+TP_DIRPYRDENOISE_TYPE_9X9;9×9
 TP_DIRPYREQUALIZER_ALGO;肌色の範囲
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;ファイン：撮影の肌色に近い部分に働くアルゴリズム、他の色への影響を最小限に抑えます\n広範：　アーティファクトの増加を避けるアルゴリズムです
 TP_DIRPYREQUALIZER_ARTIF;アーティファクトを軽減
@@ -1607,7 +1624,7 @@ TP_EXPOSURE_TCMODE_SATANDVALBLENDING;彩度と明度のブレンド
 TP_EXPOSURE_TCMODE_STANDARD;標準
 TP_EXPOSURE_TCMODE_WEIGHTEDSTD;加重平均
 TP_EXPOS_BLACKPOINT_LABEL;raw ブラック・ポイント
-TP_EXPOS_WHITEPOINT_LABEL;raw　ホワイト・ポイント
+TP_EXPOS_WHITEPOINT_LABEL;raw ホワイト・ポイント
 TP_FILMSIMULATION_LABEL;フィルムシミュレーション
 TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapeeはフィルムシミュレーション機能に使う画像をHald CLUTフォルダーの中から探すよう設計されています（プログラムに組み込むにはフォルダーが大き過ぎるため）。\n変更するには、環境設定 > 画像処理 > フィルムシミュレーションと進み\nどのフォルダーが使われているか確認します。機能を利用する場合は、Hald CLUTだけが入っているフォルダーを指定するか、 この機能を使わない場合はそのフォルダーを空にしておきます。\n\n詳しくはRawPediaを参照して下さい。\n\nフィルム画像のスキャンを止めますか？
 TP_FILMSIMULATION_STRENGTH;強さ
@@ -1966,6 +1983,7 @@ TP_SHARPENEDGE_LABEL;エッジ
 TP_SHARPENEDGE_PASSES;反復
 TP_SHARPENEDGE_THREE;輝度のみ
 TP_SHARPENING_AMOUNT;適用量
+TP_SHARPENING_CONTRAST;コントラストのしきい値
 TP_SHARPENING_EDRADIUS;半径
 TP_SHARPENING_EDTOLERANCE;エッジ許容
 TP_SHARPENING_HALOCONTROL;ハロ抑制
@@ -1981,12 +1999,13 @@ TP_SHARPENING_RLD_ITERATIONS;繰返し
 TP_SHARPENING_THRESHOLD;しきい値
 TP_SHARPENING_USM;アンシャープマスク
 TP_SHARPENMICRO_AMOUNT;適用量
+TP_SHARPENMICRO_CONTRAST;コントラストのしきい値
 TP_SHARPENMICRO_LABEL;マイクロコントラスト
 TP_SHARPENMICRO_MATRIX;3×3マトリクスの代わりに 5×5
 TP_SHARPENMICRO_UNIFORMITY;均等
 TP_TM_FATTAL_AMOUNT;量
 TP_TM_FATTAL_ANCHOR;アンカー
-TP_TM_FATTAL_LABEL;HDRトーンマッピング
+TP_TM_FATTAL_LABEL;ダイナミックレンジ圧縮
 TP_TM_FATTAL_THRESHOLD;しきい値
 TP_VIBRANCE_AVOIDCOLORSHIFT;色ずれを回避
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
@@ -2235,17 +2254,9 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
-!GENERAL_RESET;Reset
-!HISTORY_MSG_235;B&amp;W - CM - Auto
-!HISTORY_MSG_237;B&amp;W - CM
-!HISTORY_MSG_273;CT - Color Balance SMH
-!HISTORY_MSG_392;W - Residual - Color Balance
-!TP_BWMIX_MIXC;Channel Mixer
-!TP_BWMIX_NEUTRAL;Reset
-!TP_DIRPYRDENOISE_TYPE_3X3;3×3
-!TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 soft
-!TP_DIRPYRDENOISE_TYPE_5X5;5×5
-!TP_DIRPYRDENOISE_TYPE_5X5SOFT;5×5 soft
-!TP_DIRPYRDENOISE_TYPE_7X7;7×7
-!TP_DIRPYRDENOISE_TYPE_9X9;9×9
+!HISTORY_MSG_DUALDEMOSAIC_CONTRAST;AMaZE+VNG4 - Contrast threshold
+!HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - Demosaic method for motion
+!TP_RAW_4PASS;4-Pass
+!TP_RAW_AMAZEVNG4;AMaZE+VNG4
+!TP_RAW_DUALDEMOSAICCONTRAST;Contrast threshold
+!TP_RAW_PIXELSHIFTDMETHOD;Demosaic method for motion

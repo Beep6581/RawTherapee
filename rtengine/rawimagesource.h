@@ -243,9 +243,9 @@ protected:
     inline  void convert_to_cielab_row  (float* ar, float* ag, float* ab, float* oL, float* oa, float* ob);
     inline  void interpolate_row_g      (float* agh, float* agv, int i);
     inline  void interpolate_row_rb     (float* ar, float* ab, float* pg, float* cg, float* ng, int i);
-    inline  void interpolate_row_rb_mul_pp (float* ar, float* ab, float* pg, float* cg, float* ng, int i, float r_mul, float g_mul, float b_mul, int x1, int width, int skip);
+    inline  void interpolate_row_rb_mul_pp (const array2D<float> &rawData, float* ar, float* ab, float* pg, float* cg, float* ng, int i, float r_mul, float g_mul, float b_mul, int x1, int width, int skip);
 
-    void CA_correct_RT  (const bool autoCA, const double cared, const double cablue, const double caautostrength, array2D<float> &rawData);
+    float* CA_correct_RT  (const bool autoCA, const double cared, const double cablue, const double caautostrength, array2D<float> &rawData, double *fitParamsTransfer, bool fitParamsIn, bool fitParamsOut, float * buffer, bool freeBuffer);
     void ddct8x8s(int isgn, float a[8][8]);
     void processRawWhitepoint (float expos, float preser, array2D<float> &rawData);  // exposure before interpolation
 
@@ -262,12 +262,13 @@ protected:
     void nodemosaic(bool bw);
     void eahd_demosaic();
     void hphd_demosaic();
-    void vng4_demosaic();
+    void vng4_demosaic(const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, bool keepGreens = false);
     void ppg_demosaic();
     void jdl_interpolate_omp();
     void igv_interpolate(int winw, int winh);
     void lmmse_interpolate_omp(int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, int iterations);
-    void amaze_demosaic_RT(int winx, int winy, int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);//Emil's code for AMaZE
+    void amaze_demosaic_RT(int winx, int winy, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);//Emil's code for AMaZE
+    void amaze_vng4_demosaic_RT(int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, double contrast = 0.0);
     void fast_demosaic();//Emil's code for fast demosaicing
     void dcb_demosaic(int iterations, bool dcb_enhance);
     void ahd_demosaic();
@@ -290,8 +291,9 @@ protected:
     void dcb_color_full(float (*image)[3], int x0, int y0, float (*chroma)[2]);
     void cielab (const float (*rgb)[3], float* l, float* a, float *b, const int width, const int height, const int labWidth, const float xyz_cam[3][3]);
     void xtransborder_interpolate (int border);
+    void xtrans_4pass_demosaic_RT (const int passes, const bool useCieLab, double contrast);
     void xtrans_interpolate (const int passes, const bool useCieLab);
-    void fast_xtrans_interpolate ();
+    void fast_xtrans_interpolate (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
     void pixelshift(int winx, int winy, int winw, int winh, const RAWParams::BayerSensor &bayerParams, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection);
     void    hflip       (Imagefloat* im);
     void    vflip       (Imagefloat* im);

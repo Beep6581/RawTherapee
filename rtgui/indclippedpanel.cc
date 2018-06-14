@@ -27,10 +27,19 @@ IndicateClippedPanel::IndicateClippedPanel (ImageArea* ia) : imageArea(ia)
     iFon  = new RTImage ("previewmodeF-focusScreen-on.png");
     iFoff = new RTImage ("previewmodeF-focusScreen-off.png");
 
+    // for previewSharpMask, needs to be replaced with different icons
+    iSon  = new RTImage ("previewmodeF-focusScreen-on.png");
+    iSoff = new RTImage ("previewmodeF-focusScreen-off.png");
+
     previewFocusMask = Gtk::manage (new Gtk::ToggleButton ());
     previewFocusMask->set_relief(Gtk::RELIEF_NONE);
     previewFocusMask->set_tooltip_markup (M("MAIN_TOOLTIP_PREVIEWFOCUSMASK"));
     previewFocusMask->set_image(*iFoff);
+
+    previewSharpMask = Gtk::manage (new Gtk::ToggleButton ());
+    previewSharpMask->set_relief(Gtk::RELIEF_NONE);
+    previewSharpMask->set_tooltip_markup (M("MAIN_TOOLTIP_PREVIEWSHARPMASK"));
+    previewSharpMask->set_image(*iSoff);
 
     Glib::ustring tt;
 
@@ -57,13 +66,16 @@ IndicateClippedPanel::IndicateClippedPanel (ImageArea* ia) : imageArea(ia)
     }
 
     previewFocusMask->set_active (false);
+    previewSharpMask->set_active (false);
     indClippedH->set_active (options.showClippedHighlights);
     indClippedS->set_active (options.showClippedShadows);
 
     pack_start (*previewFocusMask, Gtk::PACK_SHRINK, 0);
+    pack_start (*previewSharpMask, Gtk::PACK_SHRINK, 0);
     pack_start (*indClippedS, Gtk::PACK_SHRINK, 0);
     pack_start (*indClippedH, Gtk::PACK_SHRINK, 0);
 
+    connSharpMask = previewSharpMask->signal_toggled().connect( sigc::bind(sigc::mem_fun(*this, &IndicateClippedPanel::buttonToggled), previewSharpMask) );
     connFocusMask = previewFocusMask->signal_toggled().connect( sigc::bind(sigc::mem_fun(*this, &IndicateClippedPanel::buttonToggled), previewFocusMask) );
     connClippedS = indClippedS->signal_toggled().connect( sigc::bind(sigc::mem_fun(*this, &IndicateClippedPanel::buttonToggled), indClippedS) );
     connClippedH = indClippedH->signal_toggled().connect( sigc::bind(sigc::mem_fun(*this, &IndicateClippedPanel::buttonToggled), indClippedH) );
@@ -86,27 +98,46 @@ void IndicateClippedPanel::toggleFocusMask ()
     previewFocusMask->set_active(!previewFocusMask->get_active());
 }
 
+void IndicateClippedPanel::toggleSharpMask ()
+{
+    previewSharpMask->set_active(!previewSharpMask->get_active());
+}
+
 void IndicateClippedPanel::buttonToggled (Gtk::ToggleButton* tb)
 {
 
     connFocusMask.block(true);
+    connSharpMask.block(true);
     connClippedS.block(true);
     connClippedH.block(true);
 
-    if (tb != previewFocusMask) {
-        previewFocusMask->set_active(false);
-    } else {
+    if (tb == previewFocusMask) {
         if (indClippedS->get_active()) {
             indClippedS->set_active(false);
         }
         if (indClippedH->get_active()) {
             indClippedH->set_active(false);
         }
+        previewSharpMask->set_active(false);
+    } else if (tb == previewSharpMask) {
+        if (indClippedS->get_active()) {
+            indClippedS->set_active(false);
+        }
+        if (indClippedH->get_active()) {
+            indClippedH->set_active(false);
+        }
+        previewFocusMask->set_active(false);
+    } else {
+        previewFocusMask->set_active(false);
+        previewSharpMask->set_active(false);
     }
 
+    imageArea->sharpMaskSelected(previewSharpMask->get_active());
     previewFocusMask->set_image(previewFocusMask->get_active() ? *iFon : *iFoff);
+    previewSharpMask->set_image(previewSharpMask->get_active() ? *iSon : *iSoff);
 
     connFocusMask.block(false);
+    connSharpMask.block(false);
     connClippedS.block(false);
     connClippedH.block(false);
 
@@ -123,4 +154,6 @@ IndicateClippedPanel::~IndicateClippedPanel ()
 {
     delete iFon;
     delete iFoff;
+    delete iSon;
+    delete iSoff;
 }

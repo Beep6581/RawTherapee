@@ -19,13 +19,15 @@
 #define _INDCLIPPEDPANEL_
 
 #include <gtkmm.h>
+#include <iostream>
 
 class ImageArea;
 class IndicateClippedPanel : public Gtk::HBox
 {
 
 protected:
-    Gtk::Image* iFon, *iFoff;
+    Gtk::Image* iFon, *iFoff, *iSon, *iSoff;
+    Gtk::ToggleButton* previewSharpMask;
     Gtk::ToggleButton* previewFocusMask;
     Gtk::ToggleButton* indClippedH;
     Gtk::ToggleButton* indClippedS;
@@ -38,8 +40,9 @@ public:
     void buttonToggled(Gtk::ToggleButton* tb);
     void toggleClipped(bool highlights);  // inverts a toggle programmatically
     void toggleFocusMask();
+    void toggleSharpMask();
 
-    sigc::connection connFocusMask, connClippedS, connClippedH;
+    sigc::connection connFocusMask, connSharpMask, connClippedS, connClippedH;
 
 
     bool showFocusMask ()

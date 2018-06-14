@@ -56,12 +56,15 @@
 #55 06.04.2018 Erweiterung (TooWaBoo) RT 5.4
 #56 27.04.2018 Erweiterung (TooWaBoo) RT 5.4
 #57 17.05.2018 Erweiterung (TooWaBoo) RT 5.4
+#58 19.05.2018 Erweiterung (TooWaBoo) RT 5.4
+#59 29.05.2018 Erweiterung (TooWaBoo) RT 5.4
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
 ABOUT_TAB_LICENSE;Lizenz
 ABOUT_TAB_RELEASENOTES;Versionshinweise
 ABOUT_TAB_SPLASH;Startbild
+ADJUSTER_RESET_TO_DEFAULT;<b>Klick</b> - Auf Standardwert zurücksetzen.\n<b>Strg</b> + <b>Klick</b> - Auf Initialwert zurücksetzen.
 BATCHQUEUE_AUTOSTART;Automatisch starten
 BATCHQUEUE_AUTOSTARTHINT;Bei neuem Job die Verarbeitung automatisch starten
 BATCHQUEUE_DESTFILENAME;Pfad und Dateiname
@@ -285,6 +288,7 @@ GENERAL_NONE;Keine
 GENERAL_OK;OK
 GENERAL_OPEN;Öffnen
 GENERAL_PORTRAIT;Portrait
+GENERAL_RESET;Zurücksetzen
 GENERAL_SAVE;Speichern
 GENERAL_SLIDER;Regler
 GENERAL_UNCHANGED;(Unverändert)
@@ -459,11 +463,11 @@ HISTORY_MSG_154;(Dynamik)\nHautfarbtöne schützen
 HISTORY_MSG_155;(Dynamik)\nFarbverschiebungen\nvermeiden
 HISTORY_MSG_156;(Dynamik)\nPastell und gesättigte\nTöne koppeln
 HISTORY_MSG_157;(Dynamik)\nPastell/gesättigte Töne\nSchwelle
-HISTORY_MSG_158;(Dynamikkompression)\nIntensität
-HISTORY_MSG_159;(Dynamikkompression)\nKantenschutz
-HISTORY_MSG_160;(Dynamikkompression)\nFaktor
-HISTORY_MSG_161;(Dynamikkompression)\nIterationen
-HISTORY_MSG_162;(Dynamikkompression)
+HISTORY_MSG_158;(Tonwertkorrektur)\nIntensität
+HISTORY_MSG_159;(Tonwertkorrektur)\nKantenschutz
+HISTORY_MSG_160;(Tonwertkorrektur)\nFaktor
+HISTORY_MSG_161;(Tonwertkorrektur)\nIterationen
+HISTORY_MSG_162;(Tonwertkorrektur)
 HISTORY_MSG_163;(RGB-Kurven) - Rot
 HISTORY_MSG_164;(RGB-Kurven) - Grün
 HISTORY_MSG_165;(RGB-Kurven) - Blau
@@ -535,7 +539,9 @@ HISTORY_MSG_231;(Schwarz/Weiß)\n“Bevor“-Kurve
 HISTORY_MSG_232;(Schwarz/Weiß)\n“Bevor“-Kurventyp
 HISTORY_MSG_233;(Schwarz/Weiß)\n“Danach“-Kurve
 HISTORY_MSG_234;(Schwarz/Weiß)\n“Danach“-Kurventyp
+HISTORY_MSG_235;(Schwarz/Weiß)\nAuto-Kanalmixer
 HISTORY_MSG_236;--unused--
+HISTORY_MSG_237;(Schwarz/Weiß) - Mixer
 HISTORY_MSG_238;(Grauverlaufsfilter)\nBereich
 HISTORY_MSG_239;(Grauverlaufsfilter)\nIntensität
 HISTORY_MSG_240;(Grauverlaufsfilter)\nRotationsachsen
@@ -571,6 +577,7 @@ HISTORY_MSG_269;(Farbanpassungen)\nLichter - Blau / Rot
 HISTORY_MSG_270;(Farbanpassungen)\nLichter - Cyan / Grün
 HISTORY_MSG_271;(Farbanpassungen)\nLichter - Gelb / Blau
 HISTORY_MSG_272;(Farbanpassungen)\nFarbausgleich
+HISTORY_MSG_273;(Farbanpassungen)\nFarbausgleich\nRegler zurücksetzen
 HISTORY_MSG_274;(Farbanpassungen)\nSättigung Schatten
 HISTORY_MSG_275;(Farbanpassungen)\nSättigung Lichter
 HISTORY_MSG_276;(Farbanpassungen)\nDeckkraft
@@ -657,7 +664,7 @@ HISTORY_MSG_356;(Wavelet)\nKantenschärfung\nSchwelle hoch
 HISTORY_MSG_357;(Wavelet)\nRauschreduzierung\nSchärfung verknüpfen
 HISTORY_MSG_358;(Wavelet) - Gamut\nKontrastkurve
 HISTORY_MSG_359;(Vorverarbeitung)\nHot / Dead-Pixel-Filter\nSchwelle
-HISTORY_MSG_360;(Dynamikkompression)\nGamma
+HISTORY_MSG_360;(Tonwertkorrektur)\nGamma
 HISTORY_MSG_361;(Wavelet) - Endretusche\nFarbausgleich
 HISTORY_MSG_362;(Wavelet) - Restbild\nKompression
 HISTORY_MSG_363;(Wavelet) - Restbild\nKompression - Intensität
@@ -689,6 +696,7 @@ HISTORY_MSG_388;(Wavelet) - Restbild\nFarbausgleich\nMitten Grün / Cyan
 HISTORY_MSG_389;(Wavelet) - Restbild\nFarbausgleich\nMitten Blau / Gelb
 HISTORY_MSG_390;(Wavelet) - Restbild\nFarbausgleich\nSchatten Grün / Cyan
 HISTORY_MSG_391;(Wavelet) - Restbild\nFarbausgleich\nSchatten Blau / Gelb
+HISTORY_MSG_392;(Wavelet) - Restbild\nFarbausgleich
 HISTORY_MSG_393;(Farbmanagement)\nEingangsfarbprofil\nDCP - Look-Tabelle
 HISTORY_MSG_394;(Farbmanagement)\nEingangsfarbprofil\nDCP - Basisbelichtung
 HISTORY_MSG_395;(Farbmanagement)\nEingangsfarbprofil\nDCP - Basistabelle
@@ -768,9 +776,9 @@ HISTORY_MSG_484;(CIECAM02) - Szene\nAuto Yb%
 HISTORY_MSG_485;(Objektivkorrektur)\nProfil
 HISTORY_MSG_486;(Objektivkorrektur)\nProfil - Kamera
 HISTORY_MSG_487;(Objektivkorrektur)\nProfil - Objektiv
-HISTORY_MSG_488;(HDR-Dynamikkompression)
-HISTORY_MSG_489;(HDR-Dynamikkompression)\nSchwelle
-HISTORY_MSG_490;(HDR-Dynamikkompression)\nIntensität
+HISTORY_MSG_488;(Dynamikkompression)
+HISTORY_MSG_489;(Dynamikkompression)\nSchwelle
+HISTORY_MSG_490;(Dynamikkompression)\nIntensität
 HISTORY_MSG_491;(Weißabgleich)
 HISTORY_MSG_492;(RGB-Kurven)
 HISTORY_MSG_493;(L*a*b*)
@@ -783,9 +791,12 @@ HISTORY_MSG_LOCALCONTRAST_ENABLED;(Lokaler Kontrast)
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;(Lokaler Kontrast)\nHelle Bereiche
 HISTORY_MSG_LOCALCONTRAST_RADIUS;(Lokaler Kontrast)\nRadius
 HISTORY_MSG_METADATA_MODE;(Metadaten)\nKopiermodus
+HISTORY_MSG_MICROCONTRAST_CONTRAST;(Mikrokontrast)\nKontrastschwelle
 HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;(Sensor-Matrix)\nVorverarbeitung\nRichtung
 HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;(Sensor-Matrix)\nVorverarbeitung\nPDAF-Zeilenfilter
-HISTORY_MSG_TM_FATTAL_ANCHOR;(HDR-Dynamikkompression)\nHelligkeitsverschiebung
+HISTORY_MSG_PRSHARPEN_CONTRAST;(Skalieren) - Schärfen\nKontrastschwelle
+HISTORY_MSG_SHARPENING_CONTRAST;(Schärfung)\nKontrastschwelle
+HISTORY_MSG_TM_FATTAL_ANCHOR;(Dynamikkompression)\nHelligkeitsverschiebung
 HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
 HISTORY_SNAPSHOT;Schnappschuss
@@ -948,7 +959,7 @@ PARTIALPASTE_DIALOGLABEL;Selektives Einfügen des Bearbeitungsprofils
 PARTIALPASTE_DIRPYRDENOISE;Rauschreduzierung
 PARTIALPASTE_DIRPYREQUALIZER;Detailebenenkontrast
 PARTIALPASTE_DISTORTION;Verzeichnungskorrektur
-PARTIALPASTE_EPD;Dynamikkompression
+PARTIALPASTE_EPD;Tonwertkorrektur
 PARTIALPASTE_EQUALIZER;Anzahl der Ebenen
 PARTIALPASTE_EVERYTHING;Alle Parameter aktivieren / deaktivieren
 PARTIALPASTE_EXIFCHANGES;Änderungen an Exif-Daten
@@ -998,7 +1009,7 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Schatten/Lichter
 PARTIALPASTE_SHARPENEDGE;Kantenschärfung
 PARTIALPASTE_SHARPENING;Schärfung
 PARTIALPASTE_SHARPENMICRO;Mikrokontrast
-PARTIALPASTE_TM_FATTAL;HDR-Dynamikkompression
+PARTIALPASTE_TM_FATTAL;Dynamikkompression
 PARTIALPASTE_VIBRANCE;Dynamik
 PARTIALPASTE_VIGNETTING;Vignettierungskorrektur
 PARTIALPASTE_WAVELETGROUP;Wavelet
@@ -1339,7 +1350,9 @@ TP_BWMIX_MET;Methode
 TP_BWMIX_MET_CHANMIX;Kanalmixer
 TP_BWMIX_MET_DESAT;Entsättigung
 TP_BWMIX_MET_LUMEQUAL;Luminanz
-TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%  Gesamt: %4%%
+TP_BWMIX_MIXC;Kanalmixer
+TP_BWMIX_NEUTRAL;Zurücksetzen
+TP_BWMIX_RGBLABEL;R: %1%% G: %2%% B: %3%% Gesamt: %4%%
 TP_BWMIX_RGBLABEL_HINT;RGB-Faktoren\n\nGesamt: Summe aller RGB-Werte.\n- immer 100% im Modus Relativ\n- höher (heller), oder niedriger (dunkler) 100% im Modus Absolut
 TP_BWMIX_RGB_TOOLTIP;Mischen Sie die Kanäle. Verwenden Sie die Vorgaben zur Orientierung.\nNegative Werte können zu Artefakten führen.
 TP_BWMIX_SETTING;Voreinstellung
@@ -1452,8 +1465,8 @@ TP_COLORAPP_TCMODE_LABEL3;Farbkurve Modus
 TP_COLORAPP_TCMODE_LIGHTNESS;Helligkeit (J)
 TP_COLORAPP_TCMODE_SATUR;Sättigung (S)
 TP_COLORAPP_TEMP_TOOLTIP;Um eine Farbtemperatur auszuwählen\nsetzen Sie die Tönung immer auf "1".\nA Temp=2856\nD50 Temp=5003\nD55 Temp=5503\nD65 Temp=6504\nD75 Temp=7504
-TP_COLORAPP_TONECIE;Dynamikkompression mittels\nCIECAM02-Helligkeit (Q)
-TP_COLORAPP_TONECIE_TOOLTIP;Wenn diese Option ausgeschaltet ist, wird die Dynamikkompression im L*a*b*-Farbraum durchgeführt.\nWenn die Option eingeschaltet ist, wird CIECAM02 für die Dynamikkompression verwendet. Das Werkzeug Dynamikkompression muss aktiviert sein, damit diese Option berücksichtigt wird.
+TP_COLORAPP_TONECIE;Tonwertkorrektur mittels\nCIECAM02-Helligkeit (Q)
+TP_COLORAPP_TONECIE_TOOLTIP;Wenn diese Option ausgeschaltet ist, wird die Tonwertkorrektur im L*a*b*-Farbraum durchgeführt.\nWenn die Option eingeschaltet ist, wird CIECAM02 für die Tonwertkorrektur verwendet. Das Werkzeug Tonwertkorrektur muss aktiviert sein, damit diese Option berücksichtigt wird.
 TP_COLORAPP_WBCAM;[RT+CAT02] + [Ausgabe]
 TP_COLORAPP_WBRT;[RT] + [Ausgabe]
 TP_COLORAPP_YB;Yb% (Ø Luminanz)
@@ -1598,11 +1611,11 @@ TP_DISTORTION_AUTO_TIP;Korrigiert die Verzeichnung in RAW-Bildern durch Vergleic
 TP_DISTORTION_LABEL;Verzeichnungskorrektur
 TP_EPD_EDGESTOPPING;Kantenschutz
 TP_EPD_GAMMA;Gamma
-TP_EPD_LABEL;Dynamikkompression
+TP_EPD_LABEL;Tonwertkorrektur
 TP_EPD_REWEIGHTINGITERATES;Iterationen
 TP_EPD_SCALE;Faktor
 TP_EPD_STRENGTH;Intensität
-TP_EPD_TOOLTIP;Dynamikkompression ist mit dem L*a*b*- und CIECAM02-Modus möglich.\n\nFür den CIECAM02-Modus müssen folgende Optionen aktiviert sein:\n1. CIECAM02\n2. Algorithmus = Helligkeit + Farbigkeit (QM)\n3. Dynamikkompression mittels CIECAM02-Helligkeit (Q)
+TP_EPD_TOOLTIP;Tonwertkorrektur ist mit dem L*a*b*- und CIECAM02-Modus möglich.\n\nFür den CIECAM02-Modus müssen folgende Optionen aktiviert sein:\n1. CIECAM02\n2. Algorithmus = Helligkeit + Farbigkeit (QM)\n3. Tonwertkorrektur mittels CIECAM02-Helligkeit (Q)
 TP_EXPOSURE_AUTOLEVELS;Auto
 TP_EXPOSURE_AUTOLEVELS_TIP;Automatische Belichtungseinstellung\nbasierend auf Bildanalyse.
 TP_EXPOSURE_BLACKLEVEL;Schwarzwert
@@ -2009,6 +2022,7 @@ TP_SHARPENEDGE_LABEL;Kantenschärfung
 TP_SHARPENEDGE_PASSES;Iterationen
 TP_SHARPENEDGE_THREE;Nur Luminanz
 TP_SHARPENING_AMOUNT;Intensität
+TP_SHARPENING_CONTRAST;Kontrastschwelle
 TP_SHARPENING_EDRADIUS;Radius
 TP_SHARPENING_EDTOLERANCE;Kantentoleranz
 TP_SHARPENING_HALOCONTROL;Halokontrolle
@@ -2024,12 +2038,13 @@ TP_SHARPENING_RLD_ITERATIONS;Iterationen
 TP_SHARPENING_THRESHOLD;Schwelle
 TP_SHARPENING_USM;Unschärfemaskierung
 TP_SHARPENMICRO_AMOUNT;Intensität
+TP_SHARPENMICRO_CONTRAST;Kontrastschwelle
 TP_SHARPENMICRO_LABEL;Mikrokontrast
 TP_SHARPENMICRO_MATRIX;3×3-Matrix statt 5×5-Matrix
 TP_SHARPENMICRO_UNIFORMITY;Gleichmäßigkeit
 TP_TM_FATTAL_AMOUNT;Intensität
 TP_TM_FATTAL_ANCHOR;Helligkeitsverschiebung
-TP_TM_FATTAL_LABEL;HDR-Dynamikkompression
+TP_TM_FATTAL_LABEL;Dynamikkompression
 TP_TM_FATTAL_THRESHOLD;Schwelle
 TP_VIBRANCE_AVOIDCOLORSHIFT;Farbverschiebungen vermeiden
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
@@ -2215,7 +2230,7 @@ TP_WAVELET_TILESIZE;Kachelgröße
 TP_WAVELET_TILESLIT;Kleine Kacheln
 TP_WAVELET_TILES_TOOLTIP;“Ganzes Bild“ (empfohlen) liefert eine bessere Qualität.\n“Kacheln“ benötigen weniger Speicher und ist nur für\nComputer mit wenig RAM zu empfehlen.
 TP_WAVELET_TMSTRENGTH;Intensität
-TP_WAVELET_TMSTRENGTH_TOOLTIP;Kontrolliert die Intensität der Dynamik- oder\nKontrastkompression des Restbildes. Ist der\nWert ungleich 0, werden die Intensitäts- und\nGammaregler des Dynamikkompressions-\nWerkzeugs im Belichtungsreiter deaktiviert.
+TP_WAVELET_TMSTRENGTH_TOOLTIP;Kontrolliert die Intensität der Dynamik- oder\nKontrastkompression des Restbildes. Ist der\nWert ungleich 0, werden die Intensitäts- und\nGammaregler des Tonwertkorrektur-\nWerkzeugs im Belichtungsreiter deaktiviert.
 TP_WAVELET_TMTYPE;Kompression
 TP_WAVELET_TON;Tönung
 TP_WBALANCE_AUTO;Automatisch
@@ -2278,11 +2293,9 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
-!GENERAL_RESET;Reset
-!HISTORY_MSG_235;B&amp;W - CM - Auto
-!HISTORY_MSG_237;B&amp;W - CM
-!HISTORY_MSG_273;CT - Color Balance SMH
-!HISTORY_MSG_392;W - Residual - Color Balance
-!TP_BWMIX_MIXC;Channel Mixer
-!TP_BWMIX_NEUTRAL;Reset
+!HISTORY_MSG_DUALDEMOSAIC_CONTRAST;AMaZE+VNG4 - Contrast threshold
+!HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - Demosaic method for motion
+!TP_RAW_4PASS;4-Pass
+!TP_RAW_AMAZEVNG4;AMaZE+VNG4
+!TP_RAW_DUALDEMOSAICCONTRAST;Contrast threshold
+!TP_RAW_PIXELSHIFTDMETHOD;Demosaic method for motion

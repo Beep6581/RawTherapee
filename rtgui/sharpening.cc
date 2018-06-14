@@ -16,17 +16,25 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "sharpening.h"
 #include <cmath>
+#include "eventmapper.h"
+#include "sharpening.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
 Sharpening::Sharpening () : FoldableToolPanel(this, "sharpening", M("TP_SHARPENING_LABEL"), true, true)
 {
+    auto m = ProcEventMapper::getInstance();
+    EvSharpenContrast = m->newEvent(SHARPENING, "HISTORY_MSG_SHARPENING_CONTRAST");
 
     Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
     hb->show ();
+    contrast = Gtk::manage(new Adjuster (M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 20));
+    contrast->setAdjusterListener (this);
+    pack_start(*contrast);
+    contrast->show();
+
     Gtk::Label* ml = Gtk::manage (new Gtk::Label (M("TP_SHARPENING_METHOD") + ":"));
     ml->show ();
     method = Gtk::manage (new MyComboBoxText ());
@@ -39,8 +47,8 @@ Sharpening::Sharpening () : FoldableToolPanel(this, "sharpening", M("TP_SHARPENI
 
     rld = new Gtk::VBox ();
     dradius = Gtk::manage (new Adjuster (M("TP_SHARPENING_EDRADIUS"), 0.4, 2.5, 0.01, 0.75));
-    damount = Gtk::manage (new Adjuster (M("TP_SHARPENING_RLD_AMOUNT"), 0.0, 100, 1, 75));
-    ddamping = Gtk::manage (new Adjuster (M("TP_SHARPENING_RLD_DAMPING"), 0, 100, 1, 20));
+    damount = Gtk::manage (new Adjuster (M("TP_SHARPENING_RLD_AMOUNT"), 0.0, 100, 1, 100));
+    ddamping = Gtk::manage (new Adjuster (M("TP_SHARPENING_RLD_DAMPING"), 0, 100, 1, 0));
     diter = Gtk::manage (new Adjuster (M("TP_SHARPENING_RLD_ITERATIONS"), 5, 100, 1, 30));
     rld->pack_start (*dradius);
     rld->pack_start (*damount);
@@ -144,6 +152,7 @@ void Sharpening::read (const ProcParams* pp, const ParamsEdited* pedited)
     disableListener ();
 
     if (pedited) {
+        contrast->setEditedState   (pedited->sharpening.contrast ? Edited : UnEdited);
         amount->setEditedState      (pedited->sharpening.amount ? Edited : UnEdited);
         radius->setEditedState      (pedited->sharpening.radius ? Edited : UnEdited);
         threshold->setEditedState   (pedited->sharpening.threshold ? Edited : UnEdited);
@@ -172,6 +181,7 @@ void Sharpening::read (const ProcParams* pp, const ParamsEdited* pedited)
     hcConn.block (false);
     lastHaloControl = pp->sharpening.halocontrol;
 
+    contrast->setValue      (pp->sharpening.contrast);
     amount->setValue        (pp->sharpening.amount);
     radius->setValue        (pp->sharpening.radius);
     threshold->setValue<int>(pp->sharpening.threshold);
@@ -213,6 +223,7 @@ void Sharpening::read (const ProcParams* pp, const ParamsEdited* pedited)
 void Sharpening::write (ProcParams* pp, ParamsEdited* pedited)
 {
 
+    pp->sharpening.contrast         = contrast->getValue ();
     pp->sharpening.amount           = (int)amount->getValue();
     pp->sharpening.enabled          = getEnabled ();
     pp->sharpening.radius           = radius->getValue ();
@@ -234,6 +245,7 @@ void Sharpening::write (ProcParams* pp, ParamsEdited* pedited)
     }
 
     if (pedited) {
+        pedited->sharpening.contrast        = contrast->getEditedState ();
         pedited->sharpening.amount          = amount->getEditedState ();
         pedited->sharpening.radius          = radius->getEditedState ();
         pedited->sharpening.threshold       = threshold->getEditedState ();
@@ -253,7 +265,7 @@ void Sharpening::write (ProcParams* pp, ParamsEdited* pedited)
 
 void Sharpening::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
 {
-
+    contrast->setDefault (defParams->sharpening.contrast);
     amount->setDefault (defParams->sharpening.amount);
     radius->setDefault (defParams->sharpening.radius);
     threshold->setDefault<int> (defParams->sharpening.threshold);
@@ -266,6 +278,7 @@ void Sharpening::setDefaults (const ProcParams* defParams, const ParamsEdited* p
     ddamping->setDefault (defParams->sharpening.deconvdamping);
 
     if (pedited) {
+        contrast->setDefaultEditedState     (pedited->sharpening.contrast ? Edited : UnEdited);
         amount->setDefaultEditedState       (pedited->sharpening.amount ? Edited : UnEdited);
         radius->setDefaultEditedState       (pedited->sharpening.radius ? Edited : UnEdited);
         threshold->setDefaultEditedState    (pedited->sharpening.threshold ? Edited : UnEdited);
@@ -277,6 +290,7 @@ void Sharpening::setDefaults (const ProcParams* defParams, const ParamsEdited* p
         diter->setDefaultEditedState        (pedited->sharpening.deconviter ? Edited : UnEdited);
         ddamping->setDefaultEditedState     (pedited->sharpening.deconvdamping ? Edited : UnEdited);
     } else {
+        contrast->setDefaultEditedState     (Irrelevant);
         amount->setDefaultEditedState       (Irrelevant);
         radius->setDefaultEditedState       (Irrelevant);
         threshold->setDefaultEditedState    (Irrelevant);
@@ -305,7 +319,9 @@ void Sharpening::adjusterChanged (Adjuster* a, double newval)
             costr = Glib::ustring::format ((int)a->getValue());
         }
 
-        if (a == amount) {
+        if (a == contrast) {
+            listener->panelChanged (EvSharpenContrast, costr);
+        } else if (a == amount) {
             listener->panelChanged (EvShrAmount, costr);
         } else if (a == radius) {
             listener->panelChanged (EvShrRadius, costr);
@@ -451,6 +467,7 @@ void Sharpening::setBatchMode (bool batchMode)
     edgebin->pack_start (*edgebox);
     pack_start (*rld);
 
+    contrast->showEditedCB ();
     radius->showEditedCB ();
     amount->showEditedCB ();
     threshold->showEditedCB ();
@@ -464,9 +481,10 @@ void Sharpening::setBatchMode (bool batchMode)
     method->append (M("GENERAL_UNCHANGED"));
 }
 
-void Sharpening::setAdjusterBehavior (bool radiusadd, bool amountadd, bool dampingadd, bool iteradd, bool edgetoladd, bool haloctrladd)
+void Sharpening::setAdjusterBehavior (bool contrastadd, bool radiusadd, bool amountadd, bool dampingadd, bool iteradd, bool edgetoladd, bool haloctrladd)
 {
 
+    contrast->setAddMode(contrastadd);
     radius->setAddMode(radiusadd);
     dradius->setAddMode(radiusadd);
     amount->setAddMode(amountadd);
@@ -480,7 +498,7 @@ void Sharpening::setAdjusterBehavior (bool radiusadd, bool amountadd, bool dampi
 
 void Sharpening::trimValues (rtengine::procparams::ProcParams* pp)
 {
-
+    contrast->trimValue(pp->sharpening.contrast);
     radius->trimValue(pp->sharpening.radius);
     dradius->trimValue(pp->sharpening.deconvradius);
     amount->trimValue(pp->sharpening.amount);

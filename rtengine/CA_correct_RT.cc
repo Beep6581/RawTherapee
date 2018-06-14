@@ -27,7 +27,7 @@
 #include "rawimagesource.h"
 #include "rt_math.h"
 #include "median.h"
-
+#include "StopWatch.h"
 namespace {
 
 bool LinEqSolve(int nDim, double* pfMatr, double* pfVect, double* pfSolution)
@@ -111,7 +111,7 @@ bool LinEqSolve(int nDim, double* pfMatr, double* pfVect, double* pfSolution)
 using namespace std;
 using namespace rtengine;
 
-void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const double cablue, const double caautostrength, array2D<float> &rawData)
+float* RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const double cablue, const double caautostrength, array2D<float> &rawData, double *fitParamsTransfer, bool fitParamsIn, bool fitParamsOut, float *buffer, bool freeBuffer)
 {
 // multithreaded and vectorized by Ingo Weyrich
     constexpr int ts = 128;
@@ -124,7 +124,7 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
         for(int j = 0; j < 2; j++)
             if(FC(i, j) == 3) {
                 printf("CA correction supports only RGB Colour filter arrays\n");
-                return;
+                return buffer;
             }
 
     volatile double progress = 0.0;
@@ -135,17 +135,6 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
 
     // local variables
     const int width = W + (W & 1), height = H;
-    //temporary array to store simple interpolation of G
-    float *Gtmp = (float (*)) malloc ((height * width) / 2 * sizeof * Gtmp);
-
-    // temporary array to avoid race conflicts, only every second pixel needs to be saved here
-    float *RawDataTmp = (float*) malloc( (height * width) * sizeof(float) / 2);
-
-    float blockave[2][2] = {{0, 0}, {0, 0}}, blocksqave[2][2] = {{0, 0}, {0, 0}}, blockdenom[2][2] = {{0, 0}, {0, 0}}, blockvar[2][2];
-
-    // Because we can't break parallel processing, we need a switch do handle the errors
-    bool processpasstwo = true;
-
     constexpr int border = 8;
     constexpr int border2 = 16;
 
@@ -154,12 +143,36 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
     const int vblsz = ceil((float)(height + border2) / (ts - border2) + 2 + vz1);
     const int hblsz = ceil((float)(width + border2) / (ts - border2) + 2 + hz1);
 
+    //temporary array to store simple interpolation of G
+    if (!buffer) {
+        buffer = static_cast<float*>(malloc ((height * width + vblsz * hblsz * (2 * 2 + 1)) * sizeof(float)));
+    }
+    float *Gtmp = buffer;
+    float *RawDataTmp = buffer + (height * width) / 2;
+
     //block CA shift values and weight assigned to block
-    float* const blockwt = static_cast<float*>(calloc(vblsz * hblsz * (2 * 2 + 1), sizeof(float)));
+    float *const blockwt = buffer + (height * width);
+    memset(blockwt, 0, vblsz * hblsz * (2 * 2 + 1) * sizeof(float));
     float (*blockshifts)[2][2] = (float (*)[2][2])(blockwt + vblsz * hblsz);
 
-    double fitparams[2][2][16];
+    float blockave[2][2] = {{0, 0}, {0, 0}}, blocksqave[2][2] = {{0, 0}, {0, 0}}, blockdenom[2][2] = {{0, 0}, {0, 0}}, blockvar[2][2];
 
+    // Because we can't break parallel processing, we need a switch do handle the errors
+    bool processpasstwo = true;
+
+    double fitparams[2][2][16];
+    const bool fitParamsSet = fitParamsTransfer && fitParamsIn;
+    if(autoCA && fitParamsSet) {
+        // use stored parameters
+        int index = 0;
+        for(int c = 0; c < 2; ++c) {
+            for(int d = 0; d < 2; ++d) {
+                for(int e = 0; e < 16; ++e) {
+                    fitparams[c][d][e] = fitParamsTransfer[index++];
+                }
+            }
+        }
+    }
     //order of 2d polynomial fit (polyord), and numpar=polyord^2
     int polyord = 4, numpar = 16;
 
@@ -174,22 +187,18 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
 
         int shifthfloor[3], shiftvfloor[3], shifthceil[3], shiftvceil[3];
 
-        //local quadratic fit to shift data within a tile
-        float   coeff[2][3][2];
-        //measured CA shift parameters for a tile
-        float   CAshift[2][2];
         //polynomial fit coefficients
         //residual CA shift amount within a plaquette
         float   shifthfrac[3], shiftvfrac[3];
-        //per thread data for evaluation of block CA shift variance
-        float   blockavethr[2][2] = {{0, 0}, {0, 0}}, blocksqavethr[2][2] = {{0, 0}, {0, 0}}, blockdenomthr[2][2] = {{0, 0}, {0, 0}};
 
         // assign working space
         constexpr int buffersize = sizeof(float) * ts * ts + 8 * sizeof(float) * ts * tsh + 8 * 64 + 63;
-        char *buffer = (char *) malloc(buffersize);
-        char *data = (char*)( ( uintptr_t(buffer) + uintptr_t(63)) / 64 * 64);
+        constexpr int buffersizePassTwo = sizeof(float) * ts * ts + 4 * sizeof(float) * ts * tsh + 4 * 64 + 63;
+        char * const bufferThr = (char *) malloc((autoCA && !fitParamsSet) ? buffersize : buffersizePassTwo);
 
-        // shift the beginning of all arrays but the first by 64 bytes to avoid cache miss conflicts on CPUs which have <=4-way associative L1-Cache
+        char * const data = (char*)( ( uintptr_t(bufferThr) + uintptr_t(63)) / 64 * 64);
+
+        // shift the beginning of all arrays but the first by 64 bytes to avoid cache miss conflicts on CPUs which have <= 4-way associative L1-Cache
 
         //rgb data in a tile
         float* rgb[3];
@@ -197,29 +206,33 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
         rgb[1]         = (float (*)) (data + sizeof(float) * ts * tsh + 1 * 64);
         rgb[2]         = (float (*)) (data + sizeof(float) * (ts * ts + ts * tsh) + 2 * 64);
 
-        //high pass filter for R/B in vertical direction
-        float *rbhpfh  = (float (*)) (data + 2 * sizeof(float) * ts * ts + 3 * 64);
-        //high pass filter for R/B in horizontal direction
-        float *rbhpfv  = (float (*)) (data + 2 * sizeof(float) * ts * ts + sizeof(float) * ts * tsh + 4 * 64);
-        //low pass filter for R/B in horizontal direction
-        float *rblpfh  = (float (*)) (data + 3 * sizeof(float) * ts * ts + 5 * 64);
-        //low pass filter for R/B in vertical direction
-        float *rblpfv  = (float (*)) (data + 3 * sizeof(float) * ts * ts + sizeof(float) * ts * tsh + 6 * 64);
-        //low pass filter for colour differences in horizontal direction
-        float *grblpfh = (float (*)) (data + 4 * sizeof(float) * ts * ts + 7 * 64);
-        //low pass filter for colour differences in vertical direction
-        float *grblpfv = (float (*)) (data + 4 * sizeof(float) * ts * ts + sizeof(float) * ts * tsh + 8 * 64);
-        float *grbdiff = rbhpfh; // there is no overlap in buffer usage => share
-        //green interpolated to optical sample points for R/B
-        float *gshift  = rbhpfv; // there is no overlap in buffer usage => share
-
-
-        if (autoCA) {
+        if (autoCA && !fitParamsSet) {
+            //high pass filter for R/B in vertical direction
+            float *rbhpfh  = (float (*)) (data + 2 * sizeof(float) * ts * ts + 3 * 64);
+            //high pass filter for R/B in horizontal direction
+            float *rbhpfv  = (float (*)) (data + 2 * sizeof(float) * ts * ts + sizeof(float) * ts * tsh + 4 * 64);
+            //low pass filter for R/B in horizontal direction
+            float *rblpfh  = (float (*)) (data + 3 * sizeof(float) * ts * ts + 5 * 64);
+            //low pass filter for R/B in vertical direction
+            float *rblpfv  = (float (*)) (data + 3 * sizeof(float) * ts * ts + sizeof(float) * ts * tsh + 6 * 64);
+            //low pass filter for colour differences in horizontal direction
+            float *grblpfh = (float (*)) (data + 4 * sizeof(float) * ts * ts + 7 * 64);
+            //low pass filter for colour differences in vertical direction
+            float *grblpfv = (float (*)) (data + 4 * sizeof(float) * ts * ts + sizeof(float) * ts * tsh + 8 * 64);
             // Main algorithm: Tile loop calculating correction parameters per tile
+
+            //local quadratic fit to shift data within a tile
+            float coeff[2][3][2];
+            //measured CA shift parameters for a tile
+            float CAshift[2][2];
+
+            //per thread data for evaluation of block CA shift variance
+            float   blockavethr[2][2] = {{0, 0}, {0, 0}}, blocksqavethr[2][2] = {{0, 0}, {0, 0}}, blockdenomthr[2][2] = {{0, 0}, {0, 0}};
+
             #pragma omp for collapse(2) schedule(dynamic) nowait
             for (int top = -border ; top < height; top += ts - border2)
                 for (int left = -border; left < width - (W & 1); left += ts - border2) {
-                    memset(buffer, 0, buffersize);
+                    memset(bufferThr, 0, buffersize);
                     const int vblock = ((top + border) / (ts - border2)) + 1;
                     const int hblock = ((left + border) / (ts - border2)) + 1;
                     const int bottom = min(top + ts, height + border);
@@ -741,7 +754,6 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                                     processpasstwo = false;
                                 }
                             }
-
                 }
 
                 //fitparams[polyord*i+j] gives the coefficients of (vblock^i hblock^j) in a polynomial fit for i,j<=4
@@ -752,11 +764,14 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
 
         // Main algorithm: Tile loop
         if(processpasstwo) {
+            float *grbdiff = (float (*)) (data + 2 * sizeof(float) * ts * ts + 3 * 64); // there is no overlap in buffer usage => share
+            //green interpolated to optical sample points for R/B
+            float *gshift  = (float (*)) (data + 2 * sizeof(float) * ts * ts + sizeof(float) * ts * tsh + 4 * 64); // there is no overlap in buffer usage => share
             #pragma omp for schedule(dynamic) collapse(2) nowait
 
             for (int top = -border; top < height; top += ts - border2)
                 for (int left = -border; left < width - (W & 1); left += ts - border2) {
-                    memset(buffer, 0, buffersize);
+                    memset(bufferThr, 0, buffersizePassTwo);
                     float lblockshifts[2][2];
                     const int vblock = ((top + border) / (ts - border2)) + 1;
                     const int hblock = ((left + border) / (ts - border2)) + 1;
@@ -902,25 +917,42 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                     //end of border fill
                     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-                    if (!autoCA) {
+                    if (!autoCA || fitParamsIn) {
+#ifdef __SSE2__
+                        const vfloat onev = F2V(1.f);
+                        const vfloat epsv = F2V(eps);
+#endif
+
                         //manual CA correction; use red/blue slider values to set CA shift parameters
-                        for (int rr = 3; rr < rr1 - 3; rr++)
-                            for (int cc = 3, indx = rr * ts + cc; cc < cc1 - 3; cc++, indx++) {
-                                int c = FC(rr, cc);
+                        for (int rr = 3; rr < rr1 - 3; rr++) {
+                            int cc = 3 + FC(rr, 1), c = FC(rr,cc), indx = rr * ts + cc;
+#ifdef __SSE2__
+                            for (; cc < cc1 - 10; cc += 8, indx += 8) {
+                                //compute directional weights using image gradients
+                                vfloat val1v = epsv + vabsf(LC2VFU(rgb[1][(rr + 1) * ts + cc]) - LC2VFU(rgb[1][(rr - 1) * ts + cc]));
+                                vfloat val2v = epsv + vabsf(LC2VFU(rgb[1][indx + 1]) - LC2VFU(rgb[1][indx - 1]));
+                                vfloat wtuv = onev / SQRV(val1v + vabsf(LVFU(rgb[c][(rr * ts + cc) >> 1]) - LVFU(rgb[c][((rr - 2) * ts + cc) >> 1])) + vabsf(LC2VFU(rgb[1][(rr - 1) * ts + cc]) - LC2VFU(rgb[1][(rr - 3) * ts + cc])));
+                                vfloat wtdv = onev / SQRV(val1v + vabsf(LVFU(rgb[c][(rr * ts + cc) >> 1]) - LVFU(rgb[c][((rr + 2) * ts + cc) >> 1])) + vabsf(LC2VFU(rgb[1][(rr + 1) * ts + cc]) - LC2VFU(rgb[1][(rr + 3) * ts + cc])));
+                                vfloat wtlv = onev / SQRV(val2v + vabsf(LVFU(rgb[c][indx >> 1]) - LVFU(rgb[c][(indx - 2) >> 1])) + vabsf(LC2VFU(rgb[1][indx - 1]) - LC2VFU(rgb[1][indx - 3])));
+                                vfloat wtrv = onev / SQRV(val2v + vabsf(LVFU(rgb[c][indx >> 1]) - LVFU(rgb[c][(indx + 2) >> 1])) + vabsf(LC2VFU(rgb[1][indx + 1]) - LC2VFU(rgb[1][indx + 3])));
 
-                                if (c != 1) {
-                                    //compute directional weights using image gradients
-                                    float wtu = 1.f / SQR(eps + fabsf(rgb[1][(rr + 1) * ts + cc] - rgb[1][(rr - 1) * ts + cc]) + fabsf(rgb[c][(rr * ts + cc) >> 1] - rgb[c][((rr - 2) * ts + cc) >> 1]) + fabsf(rgb[1][(rr - 1) * ts + cc] - rgb[1][(rr - 3) * ts + cc]));
-                                    float wtd = 1.f / SQR(eps + fabsf(rgb[1][(rr - 1) * ts + cc] - rgb[1][(rr + 1) * ts + cc]) + fabsf(rgb[c][(rr * ts + cc) >> 1] - rgb[c][((rr + 2) * ts + cc) >> 1]) + fabsf(rgb[1][(rr + 1) * ts + cc] - rgb[1][(rr + 3) * ts + cc]));
-                                    float wtl = 1.f / SQR(eps + fabsf(rgb[1][rr * ts + cc + 1] - rgb[1][rr * ts + cc - 1]) + fabsf(rgb[c][(rr * ts + cc) >> 1] - rgb[c][(rr * ts + cc - 2) >> 1]) + fabsf(rgb[1][rr * ts + cc - 1] - rgb[1][rr * ts + cc - 3]));
-                                    float wtr = 1.f / SQR(eps + fabsf(rgb[1][rr * ts + cc - 1] - rgb[1][rr * ts + cc + 1]) + fabsf(rgb[c][(rr * ts + cc) >> 1] - rgb[c][(rr * ts + cc + 2) >> 1]) + fabsf(rgb[1][rr * ts + cc + 1] - rgb[1][rr * ts + cc + 3]));
-
-                                    //store in rgb array the interpolated G value at R/B grid points using directional weighted average
-                                    rgb[1][indx] = (wtu * rgb[1][indx - v1] + wtd * rgb[1][indx + v1] + wtl * rgb[1][indx - 1] + wtr * rgb[1][indx + 1]) / (wtu + wtd + wtl + wtr);
-                                }
-
+                                //store in rgb array the interpolated G value at R/B grid points using directional weighted average
+                                STC2VFU(rgb[1][indx], (wtuv * LC2VFU(rgb[1][indx - v1]) + wtdv * LC2VFU(rgb[1][indx + v1]) + wtlv * LC2VFU(rgb[1][indx - 1]) + wtrv * LC2VFU(rgb[1][indx + 1])) / (wtuv + wtdv + wtlv + wtrv));
                             }
+#endif
+                            for (; cc < cc1 - 3; cc += 2, indx += 2) {
+                                //compute directional weights using image gradients
+                                float wtu = 1.f / SQR(eps + fabsf(rgb[1][(rr + 1) * ts + cc] - rgb[1][(rr - 1) * ts + cc]) + fabsf(rgb[c][(rr * ts + cc) >> 1] - rgb[c][((rr - 2) * ts + cc) >> 1]) + fabsf(rgb[1][(rr - 1) * ts + cc] - rgb[1][(rr - 3) * ts + cc]));
+                                float wtd = 1.f / SQR(eps + fabsf(rgb[1][(rr + 1) * ts + cc] - rgb[1][(rr - 1) * ts + cc]) + fabsf(rgb[c][(rr * ts + cc) >> 1] - rgb[c][((rr + 2) * ts + cc) >> 1]) + fabsf(rgb[1][(rr + 1) * ts + cc] - rgb[1][(rr + 3) * ts + cc]));
+                                float wtl = 1.f / SQR(eps + fabsf(rgb[1][rr * ts + cc + 1] - rgb[1][rr * ts + cc - 1]) + fabsf(rgb[c][(rr * ts + cc) >> 1] - rgb[c][(rr * ts + cc - 2) >> 1]) + fabsf(rgb[1][rr * ts + cc - 1] - rgb[1][rr * ts + cc - 3]));
+                                float wtr = 1.f / SQR(eps + fabsf(rgb[1][rr * ts + cc + 1] - rgb[1][rr * ts + cc - 1]) + fabsf(rgb[c][(rr * ts + cc) >> 1] - rgb[c][(rr * ts + cc + 2) >> 1]) + fabsf(rgb[1][rr * ts + cc + 1] - rgb[1][rr * ts + cc + 3]));
 
+                                //store in rgb array the interpolated G value at R/B grid points using directional weighted average
+                                rgb[1][indx] = (wtu * rgb[1][indx - v1] + wtd * rgb[1][indx + v1] + wtl * rgb[1][indx - 1] + wtr * rgb[1][indx + 1]) / (wtu + wtd + wtl + wtr);
+                            }
+                        }
+                    }
+                    if (!autoCA) {
                         float hfrac = -((float)(hblock - 0.5) / (hblsz - 2) - 0.5);
                         float vfrac = -((float)(vblock - 0.5) / (vblsz - 2) - 0.5) * height / width;
                         lblockshifts[0][0] = 2 * vfrac * cared;
@@ -935,7 +967,6 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                         for (int i = 0; i < polyord; i++) {
                             double powHblock = powVblock;
                             for (int j = 0; j < polyord; j++) {
-                                //printf("i= %d j= %d polycoeff= %f \n",i,j,fitparams[0][0][polyord*i+j]);
                                 lblockshifts[0][0] += powHblock * fitparams[0][0][polyord * i + j];
                                 lblockshifts[0][1] += powHblock * fitparams[0][1][polyord * i + j];
                                 lblockshifts[1][0] += powHblock * fitparams[1][0][polyord * i + j];
@@ -1153,14 +1184,28 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
         }
 
         // clean up
-        free(buffer);
+        free(bufferThr);
     }
 
-    free(Gtmp);
-    free(blockwt);
-    free(RawDataTmp);
+    if(autoCA && fitParamsTransfer && fitParamsOut) {
+        // store calculated parameters
+        int index = 0;
+        for(int c = 0; c < 2; ++c) {
+            for(int d = 0; d < 2; ++d) {
+                for(int e = 0; e < 16; ++e) {
+                    fitParamsTransfer[index++] = fitparams[c][d][e];
+                }
+            }
+        }
+    }
+
+    if(freeBuffer) {
+        free(buffer);
+        buffer = nullptr;
+    }
 
     if(plistener) {
         plistener->setProgress(1.0);
     }
+    return buffer;
 }
