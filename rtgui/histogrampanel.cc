@@ -44,7 +44,7 @@ HistogramPanel::HistogramPanel ()
     set_halign(Gtk::ALIGN_FILL);
     set_name("HistogramPanel");
 
-    histogramArea = Gtk::manage (new HistogramArea (this));
+    histogramArea = Gtk::manage (new HistogramArea (/*this*/));
     histogramArea->set_hexpand(true);
     histogramArea->set_vexpand(true);
     histogramRGBArea = Gtk::manage (new HistogramRGBArea ());
@@ -326,7 +326,7 @@ void HistogramPanel::bar_toggled ()
 void HistogramPanel::rgbv_toggled ()
 {
     // Update Display
-    histogramArea->updateOptions (showRed->get_active(), showGreen->get_active(), showBlue->get_active(), showValue->get_active(), showRAW->get_active(), showFull->get_active(), showChro->get_active());
+    histogramArea->updateOptions (showRed->get_active(), showGreen->get_active(), showBlue->get_active(), showValue->get_active(), showRAW->get_active(), /*showFull->get_active(),*/ showChro->get_active());
     histogramArea->queue_draw ();
 
     histogramRGBArea->updateOptions (showRed->get_active(), showGreen->get_active(), showBlue->get_active(), showValue->get_active(), showRAW->get_active(), showBAR->get_active(), showChro->get_active());
@@ -739,7 +739,7 @@ void HistogramArea::get_preferred_width_for_height_vfunc (int height, int &minim
     get_preferred_width_vfunc (minimum_width, natural_width);
 }
 
-void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool raw, bool full, bool c)
+void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool raw, /*bool full,*/ bool c)
 {
 
     needRed   = r;
