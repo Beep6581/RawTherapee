@@ -28,8 +28,6 @@
 #include "rawimagesource.h"
 #include "rt_math.h"
 #include "opthelper.h"
-#include "gauss.h"
-
 namespace rtengine
 {
 
@@ -414,8 +412,6 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
     constexpr float itrans[ColorCount][ColorCount] =
     { { 1.f, 0.8660254f, -0.5f }, { 1.f, -0.8660254f, -0.5f }, { 1.f, 0.f, 1.f } };
 
-    std::unique_ptr<PixelsMap> recovered_partial;
-
     if(settings->verbose)
         for(int c = 0; c < 3; c++) {
             printf("chmax[%d] : %f\tclmax[%d] : %f\tratio[%d] : %f\n", c, chmax[c], c, clmax[c], c, chmax[c] / clmax[c]);
@@ -570,7 +566,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
     //blur highlight data
     boxblur2(hilite_full[3], hilite_full4, temp, height, width, 1);
 
-    //temp.free(); // free temporary buffer
+    temp.free(); // free temporary buffer
 
     if(plistener) {
         progress += 0.05;
@@ -1109,34 +1105,29 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
             if (pixel[0] > max_f[0] && pixel[1] > max_f[1] && pixel[2] > max_f[2]) {
                 //all channels clipped
                 float Y = (0.299 * clipfix[0] + 0.587 * clipfix[1] + 0.114 * clipfix[2]);
+
                 float factor = whitept / Y;
-                red[i][j]   = CLIP(clipfix[0] * factor);
-                green[i][j] = CLIP(clipfix[1] * factor);
-                blue[i][j]  = CLIP(clipfix[2] * factor);
-                
+                red[i][j]   = clipfix[0] * factor;
+                green[i][j] = clipfix[1] * factor;
+                blue[i][j]  = clipfix[2] * factor;
             } else {//some channels clipped
                 float notclipped[3] = {pixel[0] <= max_f[0] ? 1.f : 0.f, pixel[1] <= max_f[1] ? 1.f : 0.f, pixel[2] <= max_f[2] ? 1.f : 0.f};
 
                 if (notclipped[0] == 0.f) { //red clipped
-                    red[i][j]  = CLIP((clipfix[0] * ((notclipped[1] * pixel[1] + notclipped[2] * pixel[2]) /
+                    red[i][j]  = max(red[i][j], (clipfix[0] * ((notclipped[1] * pixel[1] + notclipped[2] * pixel[2]) /
                                                  (notclipped[1] * clipfix[1] + notclipped[2] * clipfix[2] + epsilon))));
                 }
 
                 if (notclipped[1] == 0.f) { //green clipped
-                    green[i][j] = CLIP((clipfix[1] * ((notclipped[2] * pixel[2] + notclipped[0] * pixel[0]) /
+                    green[i][j] = max(green[i][j], (clipfix[1] * ((notclipped[2] * pixel[2] + notclipped[0] * pixel[0]) /
                                                     (notclipped[2] * clipfix[2] + notclipped[0] * clipfix[0] + epsilon))));
                 }
 
                 if (notclipped[2] == 0.f) { //blue clipped
-                    blue[i][j]  = CLIP((clipfix[2] * ((notclipped[0] * pixel[0] + notclipped[1] * pixel[1]) /
+                    blue[i][j]  = max(blue[i][j], (clipfix[2] * ((notclipped[0] * pixel[0] + notclipped[1] * pixel[1]) /
                                                    (notclipped[0] * clipfix[0] + notclipped[1] * clipfix[1] + epsilon))));
                 }
-
-                if (!recovered_partial) {
-                    recovered_partial.reset(new PixelsMap(width, height));
-                }
-                recovered_partial->set(j, i);
-           }
+            }
 
             Y = (0.299 * red[i][j] + 0.587 * green[i][j] + 0.114 * blue[i][j]);
 
@@ -1146,33 +1137,6 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
                 red[i][j]   *= factor;
                 green[i][j] *= factor;
                 blue[i][j]  *= factor;
-            }
-        }
-    }
-
-    {
-        for (int c = 0; c < 3; ++c) {
-            float **color = c == 0 ? red : c == 1 ? green : blue;
-
-            if (recovered_partial) {
-#ifdef _OPENMP
-                #pragma omp parallel
-#endif
-                gaussianBlur(color, temp, width, height, 1.5f);
-
-#ifdef _OPENMP
-                #pragma omp parallel for
-#endif
-                for (int i = 0; i < height; ++i) {
-                    for (int j = 0; j < width; ++j) {
-                        int skip = recovered_partial->skipIfZero(j, i);
-                        if (skip) {
-                            j += skip-1;
-                        } else if (recovered_partial->get(j, i)) {
-                            color[i][j] = temp[i][j];
-                        }
-                    }
-                }
             }
         }
     }
