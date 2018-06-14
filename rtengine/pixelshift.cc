@@ -323,19 +323,22 @@ BENCHFUN
     if(motionDetection) {
         if(!showOnlyMask) {
             if(bayerParams.pixelShiftMedian) { // We need the demosaiced frames for motion correction
-                if(bayerParams.pixelShiftLmmse) {
+                if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::LMMSE)) {
                     lmmse_interpolate_omp(winw, winh, *(rawDataFrames[0]), red, green, blue, bayerParams.lmmse_iterations);
+                } else if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::AMAZEVNG4)) {
+                    amaze_vng4_demosaic_RT (winw, winh, *(rawDataFrames[0]), red, green, blue, bayerParams.dualDemosaicContrast);
                 } else {
                     amaze_demosaic_RT(winx, winy, winw, winh, *(rawDataFrames[0]), red, green, blue);
                 }
-
                 multi_array2D<float, 3> redTmp(winw, winh);
                 multi_array2D<float, 3> greenTmp(winw, winh);
                 multi_array2D<float, 3> blueTmp(winw, winh);
 
                 for(int i = 0; i < 3; i++) {
-                    if(bayerParams.pixelShiftLmmse) {
+                    if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::LMMSE)) {
                         lmmse_interpolate_omp(winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i], bayerParams.lmmse_iterations);
+                    } else if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::AMAZEVNG4)) {
+                        amaze_vng4_demosaic_RT (winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i], bayerParams.dualDemosaicContrast);
                     } else {
                         amaze_demosaic_RT(winx, winy, winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i]);
                     }
@@ -359,8 +362,10 @@ BENCHFUN
                     }
                 }
             } else {
-                if(bayerParams.pixelShiftLmmse) {
+                if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::LMMSE)) {
                     lmmse_interpolate_omp(winw, winh, rawData, red, green, blue, bayerParams.lmmse_iterations);
+                } else if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::AMAZEVNG4)) {
+                    amaze_vng4_demosaic_RT (winw, winh, rawData, red, green, blue, bayerParams.dualDemosaicContrast);
                 } else {
                     amaze_demosaic_RT(winx, winy, winw, winh, rawData, red, green, blue);
                 }

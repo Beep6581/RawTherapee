@@ -163,15 +163,15 @@ template<class T> void gauss3x3div (T** RESTRICT src, T** RESTRICT dst, T** REST
     #pragma omp single nowait
 #endif
     {
-        dst[0][0] = divBuffer[0][0] / (src[0][0] > 0.f ? src[0][0] : 1.f);
+        dst[0][0] = rtengine::max(divBuffer[0][0] / (src[0][0] > 0.f ? src[0][0] : 1.f), 0.f);
 
         for (int j = 1; j < W - 1; j++)
         {
             float tmp = (b1 * (src[0][j - 1] + src[0][j + 1]) + b0 * src[0][j]);
-            dst[0][j] = divBuffer[0][j] / (tmp > 0.f ? tmp : 1.f);
+            dst[0][j] = rtengine::max(divBuffer[0][j] / (tmp > 0.f ? tmp : 1.f), 0.f);
         }
 
-        dst[0][W - 1] = divBuffer[0][W - 1] / (src[0][W - 1] > 0.f ? src[0][W - 1] : 1.f);
+        dst[0][W - 1] = rtengine::max(divBuffer[0][W - 1] / (src[0][W - 1] > 0.f ? src[0][W - 1] : 1.f), 0.f);
     }
 
 #ifdef _OPENMP
@@ -180,15 +180,15 @@ template<class T> void gauss3x3div (T** RESTRICT src, T** RESTRICT dst, T** REST
 
     for (int i = 1; i < H - 1; i++) {
         float tmp = (b1 * (src[i - 1][0] + src[i + 1][0]) + b0 * src[i][0]);
-        dst[i][0] = divBuffer[i][0] / (tmp > 0.f ? tmp : 1.f);
+        dst[i][0] = rtengine::max(divBuffer[i][0] / (tmp > 0.f ? tmp : 1.f), 0.f);
 
         for (int j = 1; j < W - 1; j++) {
             tmp = (c2 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) + c1 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) + c0 * src[i][j]);
-            dst[i][j] = divBuffer[i][j] / (tmp > 0.f ? tmp : 1.f);
+            dst[i][j] = rtengine::max(divBuffer[i][j] / (tmp > 0.f ? tmp : 1.f), 0.f);
         }
 
         tmp = (b1 * (src[i - 1][W - 1] + src[i + 1][W - 1]) + b0 * src[i][W - 1]);
-        dst[i][W - 1] = divBuffer[i][W - 1] / (tmp > 0.f ? tmp : 1.f);
+        dst[i][W - 1] = rtengine::max(divBuffer[i][W - 1] / (tmp > 0.f ? tmp : 1.f), 0.f);
     }
 
     // last row
@@ -196,14 +196,14 @@ template<class T> void gauss3x3div (T** RESTRICT src, T** RESTRICT dst, T** REST
     #pragma omp single
 #endif
     {
-        dst[H - 1][0] = divBuffer[H - 1][0] / (src[H - 1][0] > 0.f ? src[H - 1][0] : 1.f);
+        dst[H - 1][0] = rtengine::max(divBuffer[H - 1][0] / (src[H - 1][0] > 0.f ? src[H - 1][0] : 1.f), 0.f);
 
         for (int j = 1; j < W - 1; j++) {
             float tmp = (b1 * (src[H - 1][j - 1] + src[H - 1][j + 1]) + b0 * src[H - 1][j]);
-            dst[H - 1][j] = divBuffer[H - 1][j] / (tmp > 0.f ? tmp : 1.f);
+            dst[H - 1][j] = rtengine::max(divBuffer[H - 1][j] / (tmp > 0.f ? tmp : 1.f), 0.f);
         }
 
-        dst[H - 1][W - 1] = divBuffer[H - 1][W - 1] / (src[H - 1][W - 1] > 0.f ? src[H - 1][W - 1] : 1.f);
+        dst[H - 1][W - 1] = rtengine::max(divBuffer[H - 1][W - 1] / (src[H - 1][W - 1] > 0.f ? src[H - 1][W - 1] : 1.f), 0.f);
     }
 }
 
@@ -859,8 +859,8 @@ template<class T> void gaussVerticalSsediv (T** src, T** dst, T** divBuffer, con
             Tv1 = Rv1;
             Rv = LVF(tmp[j][0]) * Bv +  Tv * b1v + Tm2v * b2v + Tm3v * b3v;
             Rv1 = LVF(tmp[j][4]) * Bv +  Tv1 * b1v + Tm2v1 * b2v + Tm3v1 * b3v;
-            STVFU( dst[j][i], LVFU(divBuffer[j][i]) / vself(vmaskf_gt(Rv, ZEROV), Rv, onev));
-            STVFU( dst[j][i + 4], LVFU(divBuffer[j][i + 4]) / vself(vmaskf_gt(Rv1, ZEROV), Rv1, onev));
+            STVFU( dst[j][i], vmaxf(LVFU(divBuffer[j][i]) / vself(vmaskf_gt(Rv, ZEROV), Rv, onev), ZEROV));
+            STVFU( dst[j][i + 4], vmaxf(LVFU(divBuffer[j][i + 4]) / vself(vmaskf_gt(Rv1, ZEROV), Rv1, onev), ZEROV));
             Tm3v = Tm2v;
             Tm3v1 = Tm2v1;
             Tm2v = Tv;
@@ -895,7 +895,7 @@ template<class T> void gaussVerticalSsediv (T** src, T** dst, T** divBuffer, con
         }
 
         for (int j = 0; j < H; j++) {
-            dst[j][i] = divBuffer[j][i] / (tmp[j][0] > 0.f ? tmp[j][0] : 1.f);
+            dst[j][i] = rtengine::max(divBuffer[j][i] / (tmp[j][0] > 0.f ? tmp[j][0] : 1.f), 0.f);
         }
 
     }
@@ -1020,14 +1020,14 @@ template<class T> void gaussVerticaldiv (T** src, T** dst, T** divBuffer, const 
         }
 
         for (int k = 0; k < numcols; k++) {
-            dst[H - 1][i + k] = divBuffer[H - 1][i + k] / (temp2[H - 1][k] = temp2Hm1[k]);
-            dst[H - 2][i + k] = divBuffer[H - 2][i + k] / (temp2[H - 2][k] = B * temp2[H - 2][k] + b1 * temp2[H - 1][k] + b2 * temp2H[k] + b3 * temp2Hp1[k]);
-            dst[H - 3][i + k] = divBuffer[H - 3][i + k] / (temp2[H - 3][k] = B * temp2[H - 3][k] + b1 * temp2[H - 2][k] + b2 * temp2[H - 1][k] + b3 * temp2H[k]);
+            dst[H - 1][i + k] = rtengine::max(divBuffer[H - 1][i + k] / (temp2[H - 1][k] = temp2Hm1[k]), 0.f);
+            dst[H - 2][i + k] = rtengine::max(divBuffer[H - 2][i + k] / (temp2[H - 2][k] = B * temp2[H - 2][k] + b1 * temp2[H - 1][k] + b2 * temp2H[k] + b3 * temp2Hp1[k]), 0.f);
+            dst[H - 3][i + k] = rtengine::max(divBuffer[H - 3][i + k] / (temp2[H - 3][k] = B * temp2[H - 3][k] + b1 * temp2[H - 2][k] + b2 * temp2[H - 1][k] + b3 * temp2H[k]), 0.f);
         }
 
         for (int j = H - 4; j >= 0; j--) {
             for (int k = 0; k < numcols; k++) {
-                dst[j][i + k] = divBuffer[j][i + k] / (temp2[j][k] = B * temp2[j][k] + b1 * temp2[j + 1][k] + b2 * temp2[j + 2][k] + b3 * temp2[j + 3][k]);
+                dst[j][i + k] = rtengine::max(divBuffer[j][i + k] / (temp2[j][k] = B * temp2[j][k] + b1 * temp2[j + 1][k] + b2 * temp2[j + 2][k] + b3 * temp2[j + 3][k]), 0.f);
             }
         }
     }
@@ -1050,12 +1050,12 @@ template<class T> void gaussVerticaldiv (T** src, T** dst, T** divBuffer, const 
         double temp2H   = src[H - 1][i] + M[1][0] * (temp2[H - 1][0] - src[H - 1][i]) + M[1][1] * (temp2[H - 2][0] - src[H - 1][i]) + M[1][2] * (temp2[H - 3][0] - src[H - 1][i]);
         double temp2Hp1 = src[H - 1][i] + M[2][0] * (temp2[H - 1][0] - src[H - 1][i]) + M[2][1] * (temp2[H - 2][0] - src[H - 1][i]) + M[2][2] * (temp2[H - 3][0] - src[H - 1][i]);
 
-        dst[H - 1][i] = divBuffer[H - 1][i] / (temp2[H - 1][0] = temp2Hm1);
-        dst[H - 2][i] = divBuffer[H - 2][i] / (temp2[H - 2][0] = B * temp2[H - 2][0] + b1 * temp2[H - 1][0] + b2 * temp2H + b3 * temp2Hp1);
-        dst[H - 3][i] = divBuffer[H - 3][i] / (temp2[H - 3][0] = B * temp2[H - 3][0] + b1 * temp2[H - 2][0] + b2 * temp2[H - 1][0] + b3 * temp2H);
+        dst[H - 1][i] = rtengine::max(divBuffer[H - 1][i] / (temp2[H - 1][0] = temp2Hm1), 0.f);
+        dst[H - 2][i] = rtengine::max(divBuffer[H - 2][i] / (temp2[H - 2][0] = B * temp2[H - 2][0] + b1 * temp2[H - 1][0] + b2 * temp2H + b3 * temp2Hp1), 0.f);
+        dst[H - 3][i] = rtengine::max(divBuffer[H - 3][i] / (temp2[H - 3][0] = B * temp2[H - 3][0] + b1 * temp2[H - 2][0] + b2 * temp2[H - 1][0] + b3 * temp2H), 0.f);
 
         for (int j = H - 4; j >= 0; j--) {
-            dst[j][i] = divBuffer[j][i] / (temp2[j][0] = B * temp2[j][0] + b1 * temp2[j + 1][0] + b2 * temp2[j + 2][0] + b3 * temp2[j + 3][0]);
+            dst[j][i] = rtengine::max(divBuffer[j][i] / (temp2[j][0] = B * temp2[j][0] + b1 * temp2[j + 1][0] + b2 * temp2[j + 2][0] + b3 * temp2[j + 3][0]), 0.f);
         }
     }
 }

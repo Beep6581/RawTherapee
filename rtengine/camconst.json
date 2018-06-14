@@ -83,10 +83,10 @@ Examples:
         // instead, to take care of possible light leaks from the light sensing area to the optically black (masked)
         // area or sensor imperfections at the outer borders.
 
-        // list of indices of the rows with on-sensor PDAF pixels, for cameras that have such features. The indices here form a pattern that is repeated for the whole height of the sensor. The values are relative to the "pdafOffset" value (see below)
-        "pdafPattern" : [ 0,12,36,54,72,90,114,126,144,162,180,204,216,240,252,270,294,306,324,342,366,384,396,414,432,450,474,492,504,522,540,564,576,594,606,630 ],
+        // list of indices of the rows with on-sensor PDAF pixels, for cameras that have such features. The indices here form a pattern that is repeated for the whole height of the sensor. The values are relative to the "pdaf_offset" value (see below)
+        "pdaf_pattern" : [ 0,12,36,54,72,90,114,126,144,162,180,204,216,240,252,270,294,306,324,342,366,384,396,414,432,450,474,492,504,522,540,564,576,594,606,630 ],
         // index of the first row of the PDAF pattern in the sensor (0 is the topmost row). Allowed to be negative for convenience (this means that the first repetition of the pattern doesn't start from the first row)
-        "pdafOffset" : 3
+        "pdaf_offset" : 3
     },
 
     {
@@ -1604,6 +1604,7 @@ Camera constants:
 
     { // Quality B, missing per ISO samples
         "make_model": "OLYMPUS E-M1",
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 7687,-1984,-606,-4327,11928,2721,-1381,2339,6452 ], // dng d65
         "ranges": { "white": 4080 } // nominal 4095-4094, spread with some settings as long exposure
     },
@@ -1618,12 +1619,14 @@ Camera constants:
 
     { // Quality A, white level correction
         "make_model": "OLYMPUS E-PM2",
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 ],
         "ranges": { "white": 4040 } // nominal 4056
     },
 
     { // Quality B, with long exposure noise reduction White Level gets WL-BL = around 256_12-bit levels less
         "make_model": [ "OLYMPUS E-PL7", "OLYMPUS E-PL8" ],
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 9197,-3190,-659,-2606,10830,2039,-458,1250,5458 ], // DNG_v9.8 D65
         "ranges": { "white": 4080 } // nominal 4093
     },
@@ -1638,6 +1641,11 @@ Camera constants:
         "make_model": "OLYMPUS TG-5",
         "dcraw_matrix": [ 10899,-3833,-1082,-2112,10736,1575,-267,1452,5269 ], // DNG_V9.12 D65
         "ranges": { "white": 4050 } // safe for worst case detected, nominal is 4093
+    },
+
+    { // Quality C, only green equilibration
+        "make_model" : ["OLYMPUS E-3", "OLYMPUS E-520"],
+        "global_green_equilibration" : true
     },
 
     { // Quality C, proper ISO 100-125-160 samples missing, pixelshift files have no black offset etc. #4574
@@ -2269,8 +2277,8 @@ Camera constants:
         "ranges": { "black": 512, "white": 16300 },
         // detected by hand, using the picture from https://www.dpreview.com/forums/thread/3923513
         // P 11 P 23 P 17 P 17 P 17 P 23 P 11 P 17 P 17 P 17 P 23 P 11 P 23 P 11 P 17 P 23 P 11 P 17 P 17 P 23 P 17 P 11 P 17 P 17 P 17 P 23 P 17 P 11 P 17 P 17 P 23 P 11 P 17 P 11 P 23
-        "pdafPattern" : [ 0,12,36,54,72,90,114,126,144,162,180,204,216,240,252,270,294,306,324,342,366,384,396,414,432,450,474,492,504,522,540,564,576,594,606,630 ],
-        "pdafOffset" : 3
+        "pdaf_pattern" : [ 0,12,36,54,72,90,114,126,144,162,180,204,216,240,252,270,294,306,324,342,366,384,396,414,432,450,474,492,504,522,540,564,576,594,606,630 ],
+        "pdaf_offset" : 3
     },
 
     { // Quality A
@@ -2279,8 +2287,8 @@ Camera constants:
         "raw_crop": [ 0, 0, 6024, 4024 ],
         "ranges": { "black": 512, "white": 16300 },
         // contributed by Horshak from https://www.dpreview.com/forums/post/60873077
-        "pdafPattern" : [ 0,12,36,54,72,90,114,126,144,162,180,204,216,240,252,270,294,306,324,342,366,384,396,414,432,450,474,492,504,522,540,564,576,594,606,630 ],
-        "pdafOffset" : 3        
+        "pdaf_pattern" : [ 0,12,36,54,72,90,114,126,144,162,180,204,216,240,252,270,294,306,324,342,366,384,396,414,432,450,474,492,504,522,540,564,576,594,606,630 ],
+        "pdaf_offset" : 3        
     },
 
     { // Quality C, only pdaf data
@@ -2291,8 +2299,8 @@ Camera constants:
         //
         // rotated to match the start of the frame
         //   P 11 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 17 P 5 P 11 P 17 P 5 P 17 P 5 P 11 P 11 P 11 P 17 P 5 P 11 P 11 P 11 P 5 P 17 P 5 P 17 P 11 P 5 P 17 P 11 P 11 P 17 P 11 P 5
-        "pdafPattern" : [ 0,12,24,36,54,66,72,84,96,114,120,132,150,156,174,180,192,204,216,234,240,252,264,276,282,300,306,324,336,342,360,372,384,402,414,420],
-        "pdafOffset" : 9
+        "pdaf_pattern" : [ 0,12,24,36,54,66,72,84,96,114,120,132,150,156,174,180,192,204,216,234,240,252,264,276,282,300,306,324,336,342,360,372,384,402,414,420],
+        "pdaf_offset" : 9
     },
 
     { // Quality A, correction for frame width
@@ -2314,8 +2322,8 @@ Camera constants:
         "raw_crop": [ 0, 0, -36, 0 ], // full raw frame 8000x5320 - 36 rightmost columns are garbage
         "ranges": { "black": 512, "white": 16300 },
         // PDAF info provided by Horshack with the rawshack tool (http://testcams.com/rawshack/)
-        "pdafPattern" : [ 0,24,36,60,84,120,132,156,192,204,240,252,276,300,324,360,372,396,420 ],
-        "pdafOffset" : 31
+        "pdaf_pattern" : [ 0,24,36,60,84,120,132,156,192,204,240,252,276,300,324,360,372,396,420 ],
+        "pdaf_offset" : 31
     },
 
     { // Quality C, color matrix copied from ILCE-9, LongExposures 2-3sec only
@@ -2345,8 +2353,8 @@ Camera constants:
         "dcraw_matrix": [ 6640,-1847,-503,-5238,13010,2474,-993,1673,6527 ], // DNG_v10.1 D65
         "raw_crop": [ 0, 0, -36, 0 ], // full raw frame 8000x5320 - 36 rightmost columns are garbage
         "ranges": { "black": 512, "white": 16300 },
-        "pdafPattern" : [0, 24, 36, 60, 84, 120, 132, 156, 192, 204, 240, 252, 276, 300, 324, 360, 372, 396, 420, 444, 480, 492, 504, 540, 564, 576, 612, 636, 660, 696, 720, 732, 756, 780, 804, 840],
-        "pdafOffset" : 31
+        "pdaf_pattern" : [0, 24, 36, 60, 84, 120, 132, 156, 192, 204, 240, 252, 276, 300, 324, 360, 372, 396, 420, 444, 480, 492, 504, 540, 564, 576, 612, 636, 660, 696, 720, 732, 756, 780, 804, 840],
+        "pdaf_offset" : 31
     },
 
     { // Quality B, color matrix copied from a7rm2
@@ -2357,8 +2365,8 @@ Camera constants:
         // the A9 is the same as the A7III, rotated of 1 position
         // source: https://www.dpreview.com/forums/post/60857788
         // P 11 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 17 P 5 P 11 P 17 P 5 P 17 P 5 P 11 P 11 P 11 P 17 P 5 P 11 P 11 P 11 P 5 P 17 P 5 P 17 P 11 P 5 P 17 P 11 P 11 P 17 P 11 P 5
-        "pdafPattern" : [ 0,12,24,36,54,66,72,84,96,114,120,132,150,156,174,180,192,204,216,234,240,252,264,276,282,300,306,324,336,342,360,372,384,402,414,420 ],
-        "pdafOffset" : -7
+        "pdaf_pattern" : [ 0,12,24,36,54,66,72,84,96,114,120,132,150,156,174,180,192,204,216,234,240,252,264,276,282,300,306,324,336,342,360,372,384,402,414,420 ],
+        "pdaf_offset" : -7
     },
 
     { // Quality B, correction for frame width

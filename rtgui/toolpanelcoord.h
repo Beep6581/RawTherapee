@@ -285,6 +285,7 @@ public:
 
     // imageareatoollistener interface
     void spotWBselected(int x, int y, Thumbnail* thm = nullptr);
+    void sharpMaskSelected (bool sharpMask);
     void cropSelectionReady();
     void rotateSelectionReady(double rotate_deg, Thumbnail* thm = nullptr);
     ToolBar* getToolBar()

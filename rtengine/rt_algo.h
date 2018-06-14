@@ -20,10 +20,10 @@
 #pragma once
 
 #include <cstddef>
+#include "jaggedarray.h"
 
 namespace rtengine
 {
-
 void findMinMaxPercentile(const float* data, size_t size, float minPrct, float& minOut, float maxPrct, float& maxOut, bool multiThread = true);
-
+void buildBlendMask(float** luminance, rtengine::JaggedArray<float> &blend, int W, int H, float contrastThreshold, float amount = 1.f);
 }
