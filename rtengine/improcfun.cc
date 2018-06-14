@@ -5741,10 +5741,11 @@ void ImProcFunctions::lab2rgb (const LabImage &src, Imagefloat &dst, const Glib:
 void ImProcFunctions::colorToningLabGrid(LabImage *lab, int xstart, int xend, int ystart, int yend, bool MultiThread)
 {
     const float factor = ColorToningParams::LABGRID_CORR_MAX * 3.f;
-    float a_scale = (params->colorToning.labgridAHigh - params->colorToning.labgridALow) / factor;
-    float a_base = params->colorToning.labgridALow;
-    float b_scale = (params->colorToning.labgridBHigh - params->colorToning.labgridBLow) / factor;
-    float b_base = params->colorToning.labgridBLow;
+    const float scaling = ColorToningParams::LABGRID_CORR_SCALE;
+    float a_scale = (params->colorToning.labgridAHigh - params->colorToning.labgridALow) / factor / scaling;
+    float a_base = params->colorToning.labgridALow / scaling;
+    float b_scale = (params->colorToning.labgridBHigh - params->colorToning.labgridBLow) / factor / scaling;
+    float b_base = params->colorToning.labgridBLow / scaling;
 
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)

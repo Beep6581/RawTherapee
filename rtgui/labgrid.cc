@@ -74,10 +74,12 @@ void LabGrid::getParams(double &la, double &lb, double &ha, double &hb) const
 
 void LabGrid::setParams(double la, double lb, double ha, double hb, bool notify)
 {
-    low_a = la;
-    low_b = lb;
-    high_a = ha;
-    high_b = hb;
+    const double lo = -rtengine::ColorToningParams::LABGRID_CORR_MAX;
+    const double hi = rtengine::ColorToningParams::LABGRID_CORR_MAX;
+    low_a = rtengine::LIM(la, lo, hi);
+    low_b = rtengine::LIM(lb, lo, hi);
+    high_a = rtengine::LIM(ha, lo, hi);
+    high_b = rtengine::LIM(hb, lo, hi);
     queue_draw();
     if (notify) {
         notifyListener();
