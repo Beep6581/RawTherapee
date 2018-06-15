@@ -108,6 +108,13 @@ public:
     virtual void toggle_button_full () {}
 };*/
 
+class DrawModeListener
+{
+public:
+    virtual ~DrawModeListener() {}
+    virtual void toggle_button_mode () {}
+};
+
 class HistogramArea : public Gtk::DrawingArea, public BackBuffer
 {
 private:
@@ -118,21 +125,23 @@ protected:
     LUTu lhistRaw, rhistRaw, ghistRaw, bhistRaw;
 
     bool valid;
-    //bool fullMode;
-    //FullModeListener *myFullModeListener;
+	int drawMode;
+	DrawModeListener *myDrawModeListener;
     int oldwidth, oldheight;
 
     bool needLuma, needRed, needGreen, needBlue, rawMode, needChroma;
+	
+    
 
     HistogramAreaIdleHelper* haih;
 
 public:
-    explicit HistogramArea(/*FullModeListener *fml = nullptr*/);
+    explicit HistogramArea(DrawModeListener *fml = nullptr);
     ~HistogramArea();
 
     void updateBackBuffer ();
     void update (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw, LUTu &histChroma);
-    void updateOptions (bool r, bool g, bool b, bool l, bool raw, /*bool full ,*/ bool c);
+    void updateOptions (bool r, bool g, bool b, bool l, bool raw, bool c, int mode);
     void on_realize();
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
     bool on_button_press_event (GdkEventButton* event);
@@ -145,9 +154,11 @@ private:
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
     void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
     void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
+	double scalingFunctionLog(double vsize, double val);
+	double scalingFunctionCube(double vsize, double val);
 };
 
-class HistogramPanel : public Gtk::Grid, public PointerMotionListener/*, public FullModeListener*/
+class HistogramPanel : public Gtk::Grid, public PointerMotionListener, public DrawModeListener
 {
 
 protected:
@@ -161,16 +172,15 @@ protected:
     Gtk::ToggleButton* showBlue;
     Gtk::ToggleButton* showValue;
     Gtk::ToggleButton* showRAW;
-    //Gtk::ToggleButton* showFull;
     Gtk::ToggleButton* showBAR;
     Gtk::ToggleButton* showChro;
+    Gtk::Button* showMode;
 
     Gtk::Image *redImage;
     Gtk::Image *greenImage;
     Gtk::Image *blueImage;
     Gtk::Image *valueImage;
     Gtk::Image *rawImage;
-    //Gtk::Image *fullImage;
     Gtk::Image *barImage;
     Gtk::Image *chroImage;
 
@@ -179,10 +189,12 @@ protected:
     Gtk::Image *blueImage_g;
     Gtk::Image *valueImage_g;
     Gtk::Image *rawImage_g;
-    //Gtk::Image *fullImage_g;
     Gtk::Image *barImage_g;
     Gtk::Image *chroImage_g;
 
+    Gtk::Image *modeImage;
+    Gtk::Image *modeImage_g;
+    Gtk::Image *modeImage_g2;
 
     sigc::connection rconn;
     void setHistInvalid ();
@@ -209,14 +221,14 @@ public:
     void blue_toggled ();
     void value_toggled ();
     void raw_toggled ();
-    //void full_toggled ();
     void chro_toggled ();
     void bar_toggled ();
+    void mode_released ();
     void rgbv_toggled ();
     void resized (Gtk::Allocation& req);
 
-    // fullModeListener interface
-    //void toggle_button_full ();
+    // drawModeListener interface
+    void toggle_button_mode ();
 };
 
 #endif
