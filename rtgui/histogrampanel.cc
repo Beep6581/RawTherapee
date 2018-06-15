@@ -446,7 +446,7 @@ void HistogramRGBArea::get_preferred_height_for_width_vfunc (int width, int &min
     int bHeight = width / 30;
 
     if (bHeight >  10) {
-        bHeight =  10;
+        bHeight =  10; // it would be useful to scale this based on display dpi
     } else if (bHeight < 5  ) {
         bHeight = 5;
     }
@@ -455,6 +455,7 @@ void HistogramRGBArea::get_preferred_height_for_width_vfunc (int width, int &min
     natural_height = bHeight;
 }
 
+// unused?
 void HistogramRGBArea::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
 {
     get_preferred_width_vfunc (minimum_width, natural_width);
@@ -709,7 +710,7 @@ Gtk::SizeRequestMode HistogramArea::get_request_mode_vfunc () const
 void HistogramArea::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
 {
     int minimumWidth = 0;
-    int naturalWidth = 0;
+    int naturalWidth = 0; // unused?
     get_preferred_width_vfunc (minimumWidth, naturalWidth);
     get_preferred_height_for_width_vfunc (minimumWidth, minimum_height, natural_height);
 }
@@ -722,18 +723,24 @@ void HistogramArea::get_preferred_width_vfunc (int &minimum_width, int &natural_
 
 void HistogramArea::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
 {
-    int gHeight = width / 2;
+    /*int gHeight = width / 2;
 
     if (gHeight > 150) {
         gHeight = 150;
     } else if (gHeight < 100) {
         gHeight = 100;
-    }
+    }*/
+	
+	inf gHeight = width; // aspect ratio 1:1 should fit on most monitors
+	if (gHeight < 100) {
+		gHeight = 100;
+	}
 
     minimum_height = gHeight * 0.7;
     natural_height = gHeight;
 }
 
+//unused?
 void HistogramArea::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
 {
     get_preferred_width_vfunc (minimum_width, natural_width);
