@@ -45,7 +45,7 @@ HistogramPanel::HistogramPanel ()
     set_halign(Gtk::ALIGN_FILL);
     set_name("HistogramPanel");
 
-    histogramArea = Gtk::manage (new HistogramArea (/*this*/));
+    histogramArea = Gtk::manage (new HistogramArea (this));
     histogramArea->set_hexpand(true);
     histogramArea->set_vexpand(true);
     histogramRGBArea = Gtk::manage (new HistogramRGBArea ());
@@ -402,11 +402,6 @@ void HistogramPanel::reorder (Gtk::PositionType align)
 // DrawModeListener interface:
 void HistogramPanel::toggle_button_mode ()
 {	
-	// Does not seem to be called from HistogramArea::on_button_press_event ... why?
-	//
-	// printf("%i\n",options.histogramDrawMode);
-	// fflush(stdout);
-
 	if (options.histogramDrawMode == 0)
 		showMode->set_image(*modeImage);
 	else if (options.histogramDrawMode == 1)
@@ -889,7 +884,7 @@ void HistogramArea::updateBackBuffer ()
         // does not take into account 0 and 255 values
         // them are handled separately
 
-        int fullhistheight = 0;
+        unsigned int fullhistheight = 0;
 
         for (int i = 1; i < 255; i++) {
             if (needLuma && lhisttemp[i] > fullhistheight) {
@@ -912,9 +907,11 @@ void HistogramArea::updateBackBuffer ()
                 fullhistheight = bhtemp[i];
             }
         }
+		
+		int realhistheight = fullhistheight;
 
-        if (fullhistheight < winh - 2) {
-            fullhistheight = winh - 2;
+        if (realhistheight < winh - 2) {
+            realhistheight = winh - 2;
         }
 
         cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
@@ -924,57 +921,57 @@ void HistogramArea::updateBackBuffer ()
         int ui = 0, oi = 0;
 
         if (needBlue) {
-            drawCurve(cr, bhchanged, fullhistheight, w, h);
+            drawCurve(cr, bhchanged, realhistheight, w, h);
             cr->set_source_rgba (0.0, 0.0, 1.0, 0.4);
             cr->fill ();
 			
-			drawCurve(cr, bhchanged, fullhistheight, w, h);
+			drawCurve(cr, bhchanged, realhistheight, w, h);
             cr->set_source_rgba (0.0, 0.0, 1.0, 0.9);
             cr->stroke ();
 
-            drawMarks(cr, bhchanged, fullhistheight, w, ui, oi);
+            drawMarks(cr, bhchanged, realhistheight, w, ui, oi);
         }
 		
         if (needGreen) {
-            drawCurve(cr, ghchanged, fullhistheight, w, h);
+            drawCurve(cr, ghchanged, realhistheight, w, h);
             cr->set_source_rgba (0.0, 1.0, 0.0, 0.4);
             cr->fill ();
 			
-			drawCurve(cr, ghchanged, fullhistheight, w, h);
+			drawCurve(cr, ghchanged, realhistheight, w, h);
             cr->set_source_rgba (0.0, 1.0, 0.0, 0.9);
             cr->stroke ();
 			
-            drawMarks(cr, ghchanged, fullhistheight, w, ui, oi);
+            drawMarks(cr, ghchanged, realhistheight, w, ui, oi);
         }
 		
         if (needRed) {
-			drawCurve(cr, rhchanged, fullhistheight, w, h);
+			drawCurve(cr, rhchanged, realhistheight, w, h);
 			cr->set_source_rgba (1.0, 0.0, 0.0, 0.4);
             cr->fill ();
             
-			drawCurve(cr, rhchanged, fullhistheight, w, h);
+			drawCurve(cr, rhchanged, realhistheight, w, h);
             cr->set_source_rgba (1.0, 0.0, 0.0, 0.9);
             cr->stroke ();
 
-            drawMarks(cr, rhchanged, fullhistheight, w, ui, oi);
+            drawMarks(cr, rhchanged, realhistheight, w, ui, oi);
         }
 
 		cr->set_operator(Cairo::OPERATOR_SOURCE);
 
         if (needLuma && !rawMode) {
-            drawCurve(cr, lhist, fullhistheight, w, h);
+            drawCurve(cr, lhist, realhistheight, w, h);
             cr->set_source_rgb (0.9, 0.9, 0.9);
             cr->stroke ();
 
-            drawMarks(cr, lhist, fullhistheight, w, ui, oi);
+            drawMarks(cr, lhist, realhistheight, w, ui, oi);
         }
 		
         if (needChroma && !rawMode) {
-            drawCurve(cr, chist, fullhistheight, w, h);
+            drawCurve(cr, chist, realhistheight, w, h);
             cr->set_source_rgb (0.4, 0.4, 0.4);
             cr->stroke ();
 
-            drawMarks(cr, chist, fullhistheight, w, ui, oi);
+            drawMarks(cr, chist, realhistheight, w, ui, oi);
         }
 		
     }
@@ -1133,7 +1130,7 @@ bool HistogramArea::on_button_press_event (GdkEventButton* event)
 		drawMode = (drawMode + 1) % 3;
 		options.histogramDrawMode = (options.histogramDrawMode + 1) % 3;
 		
-		if (myDrawModeListener) { // This doesn't seem te be work? Therefore no update of the button graphics...
+		if (myDrawModeListener) {
             myDrawModeListener->toggle_button_mode ();
         }
 		
