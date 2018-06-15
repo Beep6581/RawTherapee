@@ -398,7 +398,7 @@ void HistogramPanel::reorder (Gtk::PositionType align)
 //
 // HistogramRGBArea
 HistogramRGBArea::HistogramRGBArea () ://needChroma unactive by default
-    val(0), r(0), g(0), b(0), frozen(false), valid(false), needRed(true), needGreen(true), needBlue(true), needLuma(true), rawMode(false), showMode(options.histogramBar), barDisplayed(options.histogramBar), needChroma(false), parent(nullptr)
+    val(0), r(0), g(0), b(0), frozen(false), valid(false), needRed(true), needGreen(true), needBlue(true), needLuma(false), rawMode(false), showMode(options.histogramBar), barDisplayed(options.histogramBar), needChroma(false), parent(nullptr)
 {
 
     get_style_context()->add_class("drawingarea");
@@ -673,7 +673,7 @@ bool HistogramRGBArea::on_button_press_event (GdkEventButton* event)
 //
 // HistogramArea
 HistogramArea::HistogramArea (/*FullModeListener *fml*/) : //needChroma unactive by default
-    valid(false), /*fullMode(options.histogramFullMode), myFullModeListener(fml),*/ oldwidth(-1), oldheight(-1), needLuma(true), needRed(true), needGreen(true), needBlue(true), rawMode(false), needChroma(false)
+    valid(false), /*fullMode(options.histogramFullMode), myFullModeListener(fml),*/ oldwidth(-1), oldheight(-1), needLuma(false), needRed(true), needGreen(true), needBlue(true), rawMode(false), needChroma(false)
 {
 
     lhist(256);
