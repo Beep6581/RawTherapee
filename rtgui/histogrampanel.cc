@@ -702,6 +702,10 @@ HistogramArea::~HistogramArea ()
     }
 }
 
+/* Note: best case scenario would be to have the histogram size really flexible
+   by being able to resize the panel vertically, and the side-bar horizontally.
+   We would only need to enforce some lower limits then. */
+
 Gtk::SizeRequestMode HistogramArea::get_request_mode_vfunc () const
 {
     return Gtk::SIZE_REQUEST_HEIGHT_FOR_WIDTH;
@@ -943,48 +947,64 @@ void HistogramArea::updateBackBuffer ()
 
         cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
         cr->set_line_width (1.0);
+		cr->set_operator(Cairo::OPERATOR_ADD);
 
         int ui = 0, oi = 0;
 
-        if (needLuma && !rawMode) {
-            drawCurve(cr, lhist, realhistheight, w, h);
-            cr->set_source_rgb (0.65, 0.65, 0.65);
+        if (needBlue) {
+            drawCurve(cr, bhchanged, realhistheight, w, h);
+            cr->set_source_rgba (0.0, 0.0, 1.0, 0.4);
             cr->fill ();
-
-            drawMarks(cr, lhist, realhistheight, w, ui, oi);
-        }
-
-        if (needChroma && !rawMode) {
-            drawCurve(cr, chist, realhistheight, w, h);
-            cr->set_source_rgb (0., 0., 0.);
+			
+			drawCurve(cr, bhchanged, realhistheight, w, h);
+            cr->set_source_rgba (0.0, 0.0, 1.0, 0.9);
             cr->stroke ();
 
-            drawMarks(cr, chist, realhistheight, w, ui, oi);
+            drawMarks(cr, bhchanged, realhistheight, w, ui, oi);
         }
-
+		
+        if (needGreen) {
+            drawCurve(cr, ghchanged, realhistheight, w, h);
+            cr->set_source_rgba (0.0, 1.0, 0.0, 0.4);
+            cr->fill ();
+			
+			drawCurve(cr, ghchanged, realhistheight, w, h);
+            cr->set_source_rgba (0.0, 1.0, 0.0, 0.9);
+            cr->stroke ();
+			
+            drawMarks(cr, ghchanged, realhistheight, w, ui, oi);
+        }
+		
         if (needRed) {
-            drawCurve(cr, rhchanged, realhistheight, w, h);
-            cr->set_source_rgb (1.0, 0.0, 0.0);
+			drawCurve(cr, rhchanged, realhistheight, w, h);
+			cr->set_source_rgba (1.0, 0.0, 0.0, 0.4);
+            cr->fill ();
+            
+			drawCurve(cr, rhchanged, realhistheight, w, h);
+            cr->set_source_rgba (1.0, 0.0, 0.0, 0.9);
             cr->stroke ();
 
             drawMarks(cr, rhchanged, realhistheight, w, ui, oi);
         }
 
-        if (needGreen) {
-            drawCurve(cr, ghchanged, realhistheight, w, h);
-            cr->set_source_rgb (0.0, 1.0, 0.0);
+		cr->set_operator(Cairo::OPERATOR_SOURCE);
+
+        if (needLuma && !rawMode) {
+            drawCurve(cr, lhist, realhistheight, w, h);
+            cr->set_source_rgb (0.9, 0.9, 0.9);
             cr->stroke ();
 
-            drawMarks(cr, ghchanged, realhistheight, w, ui, oi);
+            drawMarks(cr, lhist, realhistheight, w, ui, oi);
         }
-
-        if (needBlue) {
-            drawCurve(cr, bhchanged, realhistheight, w, h);
-            cr->set_source_rgb (0.0, 0.0, 1.0);
+		
+        if (needChroma && !rawMode) {
+            drawCurve(cr, chist, realhistheight, w, h);
+            cr->set_source_rgb (0.15, 0.15, 0.15);
             cr->stroke ();
 
-            drawMarks(cr, bhchanged, realhistheight, w, ui, oi);
+            drawMarks(cr, chist, realhistheight, w, ui, oi);
         }
+		
     }
 
     cr->set_source_rgba (1., 1., 1., 0.35);
