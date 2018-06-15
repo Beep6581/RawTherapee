@@ -132,7 +132,7 @@ HistogramPanel::HistogramPanel ()
     showRed->set_active (true);
     showGreen->set_active (true);
     showBlue->set_active (true);
-    showValue->set_active (true);
+    showValue->set_active (false);//unactive by default
     showChro->set_active (false);//unactive by default
 
     showRAW->set_active (false);
