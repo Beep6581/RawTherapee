@@ -731,7 +731,7 @@ void HistogramArea::get_preferred_height_for_width_vfunc (int width, int &minimu
         gHeight = 100;
     }*/
 	
-	inf gHeight = width; // aspect ratio 1:1 should fit on most monitors
+	int gHeight = width; // aspect ratio 1:1 should fit on most monitors
 	if (gHeight < 100) {
 		gHeight = 100;
 	}
