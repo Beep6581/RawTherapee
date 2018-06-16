@@ -312,14 +312,9 @@ void Arcellipse::drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOB
 
         rtengine::Coord center_ = center;
         double radius_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius)) : double (radius);
-//        double radius2_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius2)) : double (radius2);
-        double scalx_ = scalx; //radius2_ / radius_;
-
-        double scaly_ = scaly;
+        double radius2_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius2)) : double (radius2);
         double begang_ = begang;
         double endang_ = endang;
-        double translax_ = translax;
-        double translay_ = translay;
 
         if (datum == IMAGE) {
             coordSystem.imageCoordToScreen (center.x, center.y, center_.x, center_.y);
@@ -329,16 +324,23 @@ void Arcellipse::drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOB
             center_ += objectBuffer->getDataProvider()->posScreen + objectBuffer->getDataProvider()->deltaScreen;
         }
 
-        cr->save();
-        cr->translate (translax_, translay_);
+        if (radius_ > 0 && radius2_ > 0.) {
+            cr->save();
 
-        cr->scale (scalx_, scaly_);
-        cr->translate (- translax_ , - translay_);
+            // To have an ellipse with radius of (rad1, rad2), a circle of radius rad1 shall be twisted with a scale
+            // of rad2 / rad1 for y axis
+            // Center of coordinates (x, y) in previous coordinates system becomes (X, Y) = (x, rad2 / rad1 * y) in new one
+            // To go back to previous location, center shall be translated to t = -Y * (1 - rad1 / rad2) in y axis
+            // (Y = rad2 / rad1 * y and y = t + Y)
+            double scale_ = radius2_ / radius_;
+            cr->scale (1., scale_);
+            cr->translate (0., - center_.y * (1 - 1 / scale_));
 
-        cr->arc (center_.x + 0.5, center_.y + 0.5, radius_, begang_, endang_);
+            cr->arc (center_.x + 0.5, center_.y + 0.5, radius_, begang_, endang_);
 
-        cr->restore();
-        cr->stroke();
+            cr->restore();
+            cr->stroke();
+        }
     }
 }
 
@@ -363,15 +365,9 @@ void Arcellipse::drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOB
 
         rtengine::Coord center_ = center;
         double radius_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius)) : double (radius);
-//        double radius2_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius2)) : double (radius2);
-
-        double scalx_ = scalx; //radius2_ / radius_;
-
-        double scaly_ = scaly;
+        double radius2_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius2)) : double (radius2);
         double begang_ = begang;
         double endang_ = endang;
-        double translax_ = translax;
-        double translay_ = translay;
 
         if (datum == IMAGE) {
             coordSystem.imageCoordToScreen (center.x, center.y, center_.x, center_.y);
@@ -382,16 +378,23 @@ void Arcellipse::drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOB
         }
 
         if (filled && state != INSENSITIVE) {
-            cr->save();
+            if (radius_ > 0 && radius2_ > 0.) {
+                cr->save();
 
-            cr->translate (translax_, translay_);
+                // To have an ellipse with radius of (rad1, rad2), a circle of radius rad1 shall be twisted with a scale
+				// of rad2 / rad1 for y axis
+				// Center of coordinates (x, y) in previous coordinates system becomes (X, Y) = (x, rad2 / rad1 * y) in new one
+				// To go back to previous location, center shall be translated to t = -Y * (1 - rad1 / rad2) in y axis
+				// (Y = rad2 / rad1 * y and y = t + Y)
+				double scale_ = radius2_ / radius_;
+				cr->scale (1., scale_);
+				cr->translate (0., - center_.y * (1 - 1 / scale_));
 
-            cr->scale (scalx_, scaly_);
-            cr->translate (- translax_ , - translay_);
+                cr->arc (center_.x + 0.5, center_.y + 0.5, radius_, begang_, endang_);
 
-            cr->arc (center_.x + 0.5, center_.y + 0.5, radius_, begang_, endang_);
-
-            cr->restore();
+                cr->restore();
+                cr->stroke();
+            }
 
             if (innerLineWidth > 0.) {
                 cr->fill_preserve();
@@ -400,16 +403,23 @@ void Arcellipse::drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOB
                 cr->fill();
             }
         } else if (innerLineWidth > 0.) {
-            cr->save();
+            if (radius_ > 0 && radius2_ > 0.) {
+                cr->save();
 
-            cr->translate (translax_ , translay_);
+                // To have an ellipse with radius of (rad1, rad2), a circle of radius rad1 shall be twisted with a scale
+				// of rad2 / rad1 for y axis
+				// Center of coordinates (x, y) in previous coordinates system becomes (X, Y) = (x, rad2 / rad1 * y) in new one
+				// To go back to previous location, center shall be translated to t = -Y * (1 - rad1 / rad2) in y axis
+				// (Y = rad2 / rad1 * y and y = t + Y)
+				double scale_ = radius2_ / radius_;
+				cr->scale (1., scale_);
+				cr->translate (0., - center_.y * (1 - 1 / scale_));
 
-            cr->scale (scalx_, scaly_);
-            cr->translate (- translax_ , - translay_);
+                cr->arc (center_.x + 0.5, center_.y + 0.5, radius_, begang_, endang_);
 
-            cr->arc (center_.x + 0.5, center_.y + 0.5, radius_, begang_, endang_);
-
-            cr->restore();
+                cr->restore();
+                cr->stroke();
+            }
 
             if (state == INSENSITIVE) {
                 std::valarray<double> ds (1);
@@ -437,14 +447,9 @@ void Arcellipse::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned sh
         cr->set_line_width ( getMouseOverLineWidth() );
         rtengine::Coord center_ = center;
         double radius_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius)) : double (radius);
-//        double radius2_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius2)) : double (radius2);
-
-        double scalx_ = scalx ; //radius2_ / radius_;
-        double scaly_ = scaly;
+        double radius2_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius2)) : double (radius2);
         double begang_ = begang;
         double endang_ = endang;
-        double translax_ = translax;
-        double translay_ = translay;
 
         if (datum == IMAGE) {
             coordSystem.imageCoordToCropCanvas (center.x, center.y, center_.x, center_.y);
@@ -454,15 +459,23 @@ void Arcellipse::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned sh
             center_ += objectBuffer->getDataProvider()->posScreen + objectBuffer->getDataProvider()->deltaScreen;
         }
 
-        cr->save();
+        if (radius_ > 0 && radius2_ > 0.) {
+            cr->save();
 
-        cr->translate (translax_ , translay_);
+            // To have an ellipse with radius of (rad1, rad2), a circle of radius rad1 shall be twisted with a scale
+			// of rad2 / rad1 for y axis
+			// Center of coordinates (x, y) in previous coordinates system becomes (X, Y) = (x, rad2 / rad1 * y) in new one
+			// To go back to previous location, center shall be translated to t = -Y * (1 - rad1 / rad2) in y axis
+			// (Y = rad2 / rad1 * y and y = t + Y)
+			double scale_ = radius2_ / radius_;
+			cr->scale (1., scale_);
+			cr->translate (0., - center_.y * (1 - 1 / scale_));
 
-        cr->scale (scalx_, scaly_);
-        cr->translate (- translax_ , - translay_);
-        cr->arc (center_.x + 0.5, center_.y + 0.5, radius_, begang_, endang_);
+            cr->arc (center_.x + 0.5, center_.y + 0.5, radius_, begang_, endang_);
 
-        cr->restore();
+            cr->restore();
+            cr->stroke();
+        }
 
         if (filled) {
             if (innerLineWidth > 0.) {

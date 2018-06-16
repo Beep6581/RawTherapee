@@ -280,6 +280,8 @@ Locallab::Locallab():
     Evlocallabshapemethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSHAPEMETH");// = 600,
     Evlocallabspotduplicated = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSPOTDUP");
 
+    spotPanel = Gtk::manage(new ControlSpotPanel());
+    expsettings->add(*spotPanel);
     editHBox = Gtk::manage(new Gtk::HBox());
     edit = Gtk::manage(new Gtk::ToggleButton());
     edit->add(*Gtk::manage(new RTImage("editmodehand.png")));
@@ -4879,7 +4881,7 @@ void Locallab::setEditProvider(EditDataProvider * provider)
     EditSubscriber::setEditProvider(provider);
     cTgainshape->setEditProvider(provider);
     cTgainshaperab->setEditProvider(provider);
-
+    spotPanel->setEditProvider(provider);
 }
 
 void Locallab::editToggled()

@@ -16,7 +16,7 @@
 #include <string>
 #include "../rtengine/improcfun.h"
 #include "thresholdadjuster.h"
-
+#include "controlspotpanel.h"
 
 class Locallab :
     public ToolParamBlock,
@@ -165,7 +165,7 @@ private:
     CurveEditorGroup* const LocalcurveEditorgainTrab;
     CurveEditorGroup* const llCurveEditorG;
 
-
+    ControlSpotPanel *spotPanel;
     Gtk::HBox *editHBox;
     Gtk::ToggleButton* edit;
 
