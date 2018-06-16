@@ -72,8 +72,8 @@ HistogramPanel::HistogramPanel ()
     valueImage = new RTImage ("histValue.png");
     chroImage  = new RTImage ("histChro.png");
     rawImage   = new RTImage ("histRaw.png");
+    modeImage  = new RTImage ("histFull.png"); // needs replacement!
     barImage   = new RTImage ("histBar.png");
-	modeImage  = new RTImage ("histFull.png"); // needs replacement!
 
     redImage_g   = new RTImage ("histRedg.png");
     greenImage_g = new RTImage ("histGreeng.png");
@@ -81,9 +81,9 @@ HistogramPanel::HistogramPanel ()
     valueImage_g = new RTImage ("histValueg.png");
     chroImage_g  = new RTImage ("histChrog.png");
     rawImage_g   = new RTImage ("histRawg.png");
+    modeImage_g  = new RTImage ("histFullg.png"); // needs replacement!
+    modeImage_g2 = new RTImage ("histBarg.png"); // needs replacement!
     barImage_g   = new RTImage ("histBarg.png");
-	modeImage_g  = new RTImage ("histFullg.png"); // needs replacement!
-	modeImage_g2 = new RTImage ("histBarg.png"); // needs replacement!
 
     showRed   = Gtk::manage (new Gtk::ToggleButton ());
     showGreen = Gtk::manage (new Gtk::ToggleButton ());
@@ -91,8 +91,8 @@ HistogramPanel::HistogramPanel ()
     showValue = Gtk::manage (new Gtk::ToggleButton ());
     showChro  = Gtk::manage (new Gtk::ToggleButton ());
     showRAW   = Gtk::manage (new Gtk::ToggleButton ());
+    showMode  = Gtk::manage (new Gtk::Button ());
     showBAR   = Gtk::manage (new Gtk::ToggleButton ());
-	showMode  = Gtk::manage (new Gtk::Button ());
 
     showRed->set_name("histButton");
     showRed->set_can_focus(false);
@@ -106,10 +106,10 @@ HistogramPanel::HistogramPanel ()
     showChro->set_can_focus(false);
     showRAW->set_name("histButton");
     showRAW->set_can_focus(false);
+    showMode->set_name("histButton");
+    showMode->set_can_focus(false);
     showBAR->set_name("histButton");
     showBAR->set_can_focus(false);
-	showMode->set_name("histButton");
-	showMode->set_can_focus(false);
 
     showRed->set_relief (Gtk::RELIEF_NONE);
     showGreen->set_relief (Gtk::RELIEF_NONE);
@@ -117,8 +117,8 @@ HistogramPanel::HistogramPanel ()
     showValue->set_relief (Gtk::RELIEF_NONE);
     showChro->set_relief (Gtk::RELIEF_NONE);
     showRAW->set_relief (Gtk::RELIEF_NONE);
+    showMode->set_relief (Gtk::RELIEF_NONE);
     showBAR->set_relief (Gtk::RELIEF_NONE);
-	showMode->set_relief (Gtk::RELIEF_NONE);
 
     showRed->set_tooltip_text   (M("HISTOGRAM_TOOLTIP_R"));
     showGreen->set_tooltip_text (M("HISTOGRAM_TOOLTIP_G"));
@@ -126,8 +126,8 @@ HistogramPanel::HistogramPanel ()
     showValue->set_tooltip_text (M("HISTOGRAM_TOOLTIP_L"));
     showChro->set_tooltip_text  (M("HISTOGRAM_TOOLTIP_CHRO"));
     showRAW->set_tooltip_text   (M("HISTOGRAM_TOOLTIP_RAW"));
+    showMode->set_tooltip_text  (M("HISTOGRAM_TOOLTIP_FULL")); // needs replacement!
     showBAR->set_tooltip_text   (M("HISTOGRAM_TOOLTIP_BAR"));
-	showMode->set_tooltip_text  (M("HISTOGRAM_TOOLTIP_FULL")); // needs replacement!
 
     buttonGrid = Gtk::manage (new Gtk::Grid ());
     buttonGrid->set_orientation(Gtk::ORIENTATION_VERTICAL);
@@ -136,8 +136,8 @@ HistogramPanel::HistogramPanel ()
     showBlue->set_active (true);
     showValue->set_active (false);//unactive by default
     showChro->set_active (false);//unactive by default
-
     showRAW->set_active (false);
+    // no showMode->set_active(), as it's not a ToggleButton
     showBAR->set_active (options.histogramBar);
 
     showRed->set_image   (showRed->get_active()   ? *redImage   : *redImage_g);
@@ -146,14 +146,13 @@ HistogramPanel::HistogramPanel ()
     showValue->set_image (showValue->get_active() ? *valueImage : *valueImage_g);
     showChro->set_image  (showChro->get_active()   ? *chroImage : *chroImage_g);
     showRAW->set_image   (showRAW->get_active()   ? *rawImage   : *rawImage_g);
+    if (options.histogramDrawMode == 0)
+        showMode->set_image(*modeImage);
+    else if (options.histogramDrawMode == 1)
+        showMode->set_image(*modeImage_g);
+    else
+        showMode->set_image(*modeImage_g2);
     showBAR->set_image   (showBAR->get_active()   ? *barImage   : *barImage_g);
-	
-	if (options.histogramDrawMode == 0)
-		showMode->set_image(*modeImage);
-	else if (options.histogramDrawMode == 1)
-		showMode->set_image(*modeImage_g);
-	else
-		showMode->set_image(*modeImage_g2);
 
     showRed->set_hexpand(false);
     showRed->set_vexpand(false);
@@ -179,14 +178,14 @@ HistogramPanel::HistogramPanel ()
     showRAW->set_vexpand(false);
     showRAW->set_halign(Gtk::ALIGN_CENTER);
     showRAW->set_valign(Gtk::ALIGN_START);
+    showMode->set_hexpand(false);
+    showMode->set_vexpand(false);
+    showMode->set_halign(Gtk::ALIGN_CENTER);
+    showMode->set_valign(Gtk::ALIGN_START);
     showBAR->set_hexpand(false);
     showBAR->set_vexpand(false);
     showBAR->set_halign(Gtk::ALIGN_CENTER);
     showBAR->set_valign(Gtk::ALIGN_START);
-	showMode->set_hexpand(false);
-    showMode->set_vexpand(false);
-    showMode->set_halign(Gtk::ALIGN_CENTER);
-    showMode->set_valign(Gtk::ALIGN_START);
 
     showRed->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::red_toggled), showRed );
     showGreen->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::green_toggled), showGreen );
@@ -194,8 +193,8 @@ HistogramPanel::HistogramPanel ()
     showValue->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::value_toggled), showValue );
     showChro->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::chro_toggled), showChro );
     showRAW->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::raw_toggled), showRAW );
-    showBAR->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::bar_toggled), showBAR );
     showMode->signal_released().connect( sigc::mem_fun(*this, &HistogramPanel::mode_released), showMode );
+    showBAR->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::bar_toggled), showBAR );
 
     buttonGrid->add (*showRed);
     buttonGrid->add (*showGreen);
@@ -203,8 +202,8 @@ HistogramPanel::HistogramPanel ()
     buttonGrid->add (*showValue);
     buttonGrid->add (*showChro);
     buttonGrid->add (*showRAW);
+    buttonGrid->add (*showMode);
     buttonGrid->add (*showBAR);
-	buttonGrid->add (*showMode);
 
     // Put the button vbox next to the window's border to be less disturbing
     if (options.histogramPosition == 1) {
@@ -228,8 +227,8 @@ HistogramPanel::~HistogramPanel ()
     delete valueImage;
     delete chroImage;
     delete rawImage;
+    delete modeImage;
     delete barImage;
-	delete modeImage;
 
     delete redImage_g;
     delete greenImage_g;
@@ -237,9 +236,9 @@ HistogramPanel::~HistogramPanel ()
     delete valueImage_g;
     delete chroImage_g;
     delete rawImage_g;
+    delete modeImage_g;
+    delete modeImage_g2;
     delete barImage_g;
-	delete modeImage_g;
-	delete modeImage_g2;
 
 }
 
@@ -320,22 +319,25 @@ void HistogramPanel::raw_toggled ()
 
     rgbv_toggled();
 }
+
+void HistogramPanel::mode_released ()
+{
+    options.histogramDrawMode = (options.histogramDrawMode + 1) % 3;
+    if (options.histogramDrawMode == 0)
+        showMode->set_image(*modeImage);
+    else if (options.histogramDrawMode == 1)
+        showMode->set_image(*modeImage_g);
+    else
+        showMode->set_image(*modeImage_g2);
+    rgbv_toggled();
+}
+
 void HistogramPanel::bar_toggled ()
 {
     showBAR->set_image(showBAR->get_active() ? *barImage : *barImage_g);
     rgbv_toggled();
 }
-void HistogramPanel::mode_released ()
-{
-	options.histogramDrawMode = (options.histogramDrawMode + 1) % 3;
-	if (options.histogramDrawMode == 0)
-		showMode->set_image(*modeImage);
-	else if (options.histogramDrawMode == 1)
-		showMode->set_image(*modeImage_g);
-	else
-		showMode->set_image(*modeImage_g2);
-    rgbv_toggled();
-}
+
 void HistogramPanel::rgbv_toggled ()
 {
     // Update Display
@@ -401,13 +403,13 @@ void HistogramPanel::reorder (Gtk::PositionType align)
 
 // DrawModeListener interface:
 void HistogramPanel::toggle_button_mode ()
-{	
-	if (options.histogramDrawMode == 0)
-		showMode->set_image(*modeImage);
-	else if (options.histogramDrawMode == 1)
-		showMode->set_image(*modeImage_g);
-	else
-		showMode->set_image(*modeImage_g2);
+{   
+    if (options.histogramDrawMode == 0)
+        showMode->set_image(*modeImage);
+    else if (options.histogramDrawMode == 1)
+        showMode->set_image(*modeImage_g);
+    else
+        showMode->set_image(*modeImage_g2);
 }
 
 //
@@ -751,11 +753,11 @@ void HistogramArea::get_preferred_height_for_width_vfunc (int width, int &minimu
     } else if (gHeight < 100) {
         gHeight = 100;
     }*/
-	
-	int gHeight = width; // aspect ratio 1:1 should fit on most monitors
-	if (gHeight < 100) {
-		gHeight = 100;
-	}
+    
+    int gHeight = width; // aspect ratio 1:1 should fit on most monitors
+    if (gHeight < 100) {
+        gHeight = 100;
+    }
 
     minimum_height = gHeight * 0.7;
     natural_height = gHeight;
@@ -776,7 +778,7 @@ void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool raw, boo
     needLuma  = l;
     rawMode   = raw;
     needChroma = c;
-	drawMode = mode;
+    drawMode = mode;
 
     updateBackBuffer ();
 }
@@ -907,8 +909,8 @@ void HistogramArea::updateBackBuffer ()
                 fullhistheight = bhtemp[i];
             }
         }
-		
-		int realhistheight = fullhistheight;
+        
+        int realhistheight = fullhistheight;
 
         if (realhistheight < winh - 2) {
             realhistheight = winh - 2;
@@ -916,7 +918,7 @@ void HistogramArea::updateBackBuffer ()
 
         cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
         cr->set_line_width (1.0);
-		cr->set_operator(Cairo::OPERATOR_ADD);
+        cr->set_operator(Cairo::OPERATOR_ADD);
 
         int ui = 0, oi = 0;
 
@@ -924,39 +926,39 @@ void HistogramArea::updateBackBuffer ()
             drawCurve(cr, bhchanged, realhistheight, w, h);
             cr->set_source_rgba (0.0, 0.0, 1.0, 0.4);
             cr->fill ();
-			
-			drawCurve(cr, bhchanged, realhistheight, w, h);
+            
+            drawCurve(cr, bhchanged, realhistheight, w, h);
             cr->set_source_rgba (0.0, 0.0, 1.0, 0.9);
             cr->stroke ();
 
             drawMarks(cr, bhchanged, realhistheight, w, ui, oi);
         }
-		
+        
         if (needGreen) {
             drawCurve(cr, ghchanged, realhistheight, w, h);
             cr->set_source_rgba (0.0, 1.0, 0.0, 0.4);
             cr->fill ();
-			
-			drawCurve(cr, ghchanged, realhistheight, w, h);
+            
+            drawCurve(cr, ghchanged, realhistheight, w, h);
             cr->set_source_rgba (0.0, 1.0, 0.0, 0.9);
             cr->stroke ();
-			
+            
             drawMarks(cr, ghchanged, realhistheight, w, ui, oi);
         }
-		
+        
         if (needRed) {
-			drawCurve(cr, rhchanged, realhistheight, w, h);
-			cr->set_source_rgba (1.0, 0.0, 0.0, 0.4);
+            drawCurve(cr, rhchanged, realhistheight, w, h);
+            cr->set_source_rgba (1.0, 0.0, 0.0, 0.4);
             cr->fill ();
             
-			drawCurve(cr, rhchanged, realhistheight, w, h);
+            drawCurve(cr, rhchanged, realhistheight, w, h);
             cr->set_source_rgba (1.0, 0.0, 0.0, 0.9);
             cr->stroke ();
 
             drawMarks(cr, rhchanged, realhistheight, w, ui, oi);
         }
 
-		cr->set_operator(Cairo::OPERATOR_SOURCE);
+        cr->set_operator(Cairo::OPERATOR_SOURCE);
 
         if (needLuma && !rawMode) {
             drawCurve(cr, lhist, realhistheight, w, h);
@@ -965,7 +967,7 @@ void HistogramArea::updateBackBuffer ()
 
             drawMarks(cr, lhist, realhistheight, w, ui, oi);
         }
-		
+        
         if (needChroma && !rawMode) {
             drawCurve(cr, chist, realhistheight, w, h);
             cr->set_source_rgb (0.4, 0.4, 0.4);
@@ -973,7 +975,7 @@ void HistogramArea::updateBackBuffer ()
 
             drawMarks(cr, chist, realhistheight, w, ui, oi);
         }
-		
+        
     }
 
     cr->set_source_rgba (1., 1., 1., 0.35);
@@ -985,7 +987,7 @@ void HistogramArea::updateBackBuffer ()
     std::valarray<double> ch_ds (1);
     ch_ds[0] = 4;
     cr->set_dash (ch_ds, 0);
-	
+    
     cr->move_to(w / 4 + 0.5, 1.5);
     cr->line_to(w / 4 + 0.5, h - 2);
     cr->stroke();
@@ -995,44 +997,44 @@ void HistogramArea::updateBackBuffer ()
     cr->move_to(3 * w / 4 + 0.5, 1.5);
     cr->line_to(3 * w / 4 + 0.5, h - 2);
     cr->stroke();
-	
-	if (options.histogramDrawMode == 0)
-	{
-		cr->move_to(1.5, h / 4 + 0.5);
-		cr->line_to(w - 2, h / 4 + 0.5);
-		cr->stroke();
-		cr->move_to(1.5, 2 * h / 4 + 0.5);
-		cr->line_to(w - 2, 2 * h / 4 + 0.5);
-		cr->stroke();
-		cr->move_to(1.5, 3 * h / 4 + 0.5);
-		cr->line_to(w - 2, 3 * h / 4 + 0.5);
-		cr->stroke();
-	}
-	if (options.histogramDrawMode == 1)
-	{
-		cr->move_to(1.5, h - scalingFunctionLog(h,h / 4 + 0.5));
-		cr->line_to(w - 2, h - scalingFunctionLog(h,h / 4 + 0.5));
-		cr->stroke();
-		cr->move_to(1.5, h - scalingFunctionLog(h,2 * h / 4 + 0.5));
-		cr->line_to(w - 2, h - scalingFunctionLog(h,2 * h / 4 + 0.5));
-		cr->stroke();
-		cr->move_to(1.5, h - scalingFunctionLog(h,3 * h / 4 + 0.5));
-		cr->line_to(w - 2, h - scalingFunctionLog(h,3 * h / 4 + 0.5));
-		cr->stroke();
-	}
-	if (options.histogramDrawMode == 2)
-	{
-		cr->move_to(1.5, scalingFunctionCube(h,h / 4 + 0.5));
-		cr->line_to(w - 2, scalingFunctionCube(h,h / 4 + 0.5));
-		cr->stroke();
-		cr->move_to(1.5, scalingFunctionCube(h,2 * h / 4 + 0.5));
-		cr->line_to(w - 2, scalingFunctionCube(h,2 * h / 4 + 0.5));
-		cr->stroke();
-		cr->move_to(1.5, scalingFunctionCube(h,3 * h / 4 + 0.5));
-		cr->line_to(w - 2, scalingFunctionCube(h,3 * h / 4 + 0.5));
-		cr->stroke();
-	}
-	
+    
+    if (options.histogramDrawMode == 0)
+    {
+        cr->move_to(1.5, h / 4 + 0.5);
+        cr->line_to(w - 2, h / 4 + 0.5);
+        cr->stroke();
+        cr->move_to(1.5, 2 * h / 4 + 0.5);
+        cr->line_to(w - 2, 2 * h / 4 + 0.5);
+        cr->stroke();
+        cr->move_to(1.5, 3 * h / 4 + 0.5);
+        cr->line_to(w - 2, 3 * h / 4 + 0.5);
+        cr->stroke();
+    }
+    if (options.histogramDrawMode == 1)
+    {
+        cr->move_to(1.5, h - scalingFunctionLog(h,h / 4 + 0.5));
+        cr->line_to(w - 2, h - scalingFunctionLog(h,h / 4 + 0.5));
+        cr->stroke();
+        cr->move_to(1.5, h - scalingFunctionLog(h,2 * h / 4 + 0.5));
+        cr->line_to(w - 2, h - scalingFunctionLog(h,2 * h / 4 + 0.5));
+        cr->stroke();
+        cr->move_to(1.5, h - scalingFunctionLog(h,3 * h / 4 + 0.5));
+        cr->line_to(w - 2, h - scalingFunctionLog(h,3 * h / 4 + 0.5));
+        cr->stroke();
+    }
+    if (options.histogramDrawMode == 2)
+    {
+        cr->move_to(1.5, scalingFunctionCube(h,h / 4 + 0.5));
+        cr->line_to(w - 2, scalingFunctionCube(h,h / 4 + 0.5));
+        cr->stroke();
+        cr->move_to(1.5, scalingFunctionCube(h,2 * h / 4 + 0.5));
+        cr->line_to(w - 2, scalingFunctionCube(h,2 * h / 4 + 0.5));
+        cr->stroke();
+        cr->move_to(1.5, scalingFunctionCube(h,3 * h / 4 + 0.5));
+        cr->line_to(w - 2, scalingFunctionCube(h,3 * h / 4 + 0.5));
+        cr->stroke();
+    }
+    
     cr->unset_dash();
 
     // Draw the frame's border
@@ -1054,14 +1056,14 @@ void HistogramArea::on_realize ()
 
 double HistogramArea::scalingFunctionLog(double vsize, double val)
 {
-	double factor = 1.0; // can be tuned if necessary - makes the log 'steeper'
-	return vsize * log(factor / (factor + val)) / log(factor / vsize);
+    double factor = 1.0; // can be tuned if necessary - makes the log 'steeper'
+    return vsize * log(factor / (factor + val)) / log(factor / vsize);
 }
 
 double HistogramArea::scalingFunctionCube(double vsize, double val)
 {
-	double factor = 3.0; // can be tuned; higher values compress the middel part of the scale
-	return (val * (4 * (-1.0 + factor) * val * val - 6.0 * (-1.0 + factor) * val * vsize + (-2.0 + 3.0 * factor) * vsize *vsize))/(factor * vsize * vsize);
+    double factor = 3.0; // can be tuned; higher values compress the middel part of the scale
+    return (val * (4 * (-1.0 + factor) * val * val - 6.0 * (-1.0 + factor) * val * vsize + (-2.0 + 3.0 * factor) * vsize *vsize))/(factor * vsize * vsize);
 }
 
 void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
@@ -1072,11 +1074,11 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
 
     for (int i = 0; i < 256; i++) {
         double val = data[i] * (double)(vsize - 2) / scale;
-		
-		if (drawMode == 1)
-			val = scalingFunctionLog((double)vsize,val);
-		if (drawMode == 2)
-			val = scalingFunctionCube((double)vsize,val);
+        
+        if (drawMode == 1)
+            val = scalingFunctionLog((double)vsize,val);
+        if (drawMode == 2)
+            val = scalingFunctionCube((double)vsize,val);
 
         if (val > vsize - 1) {
             val = vsize - 1;
@@ -1125,18 +1127,18 @@ bool HistogramArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 
 bool HistogramArea::on_button_press_event (GdkEventButton* event)
 {
-	if (event->type == GDK_2BUTTON_PRESS && event->button == 1) {
-		
-		drawMode = (drawMode + 1) % 3;
-		options.histogramDrawMode = (options.histogramDrawMode + 1) % 3;
-		
-		if (myDrawModeListener) {
+    if (event->type == GDK_2BUTTON_PRESS && event->button == 1) {
+        
+        drawMode = (drawMode + 1) % 3;
+        options.histogramDrawMode = (options.histogramDrawMode + 1) % 3;
+        
+        if (myDrawModeListener) {
             myDrawModeListener->toggle_button_mode ();
         }
-		
-		updateBackBuffer ();
+        
+        updateBackBuffer ();
         queue_draw ();
-	}
+    }
 
     return true;
 }
