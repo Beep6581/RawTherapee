@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.62
+  Version 2.64
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -358,20 +358,42 @@ filechooser list row:selected {
 #HistogramPanel {
     margin: -2px 0;
     border: none;
+    background-color: transparent;
 }
+
+#HistogramPanel > :nth-child(2) {
+    border: none;
+    border-left: 0.08334em solid @bg-light-grey;
+    background-color: @bg-dark-grey;
+}
+
+#HistogramPanel > :nth-child(1) {
+    border: none;
+    background-color: transparent;
+}
+
+#EditorLeftPaned  #HistogramPanel > :nth-child(1) {
+    border: none;
+    border-right: 0.08334em solid @bg-light-grey;
+    background-color: @bg-dark-grey;
+}
+
+#EditorLeftPaned  #HistogramPanel > :nth-child(2) {
+    border: none;
+    background-color: transparent;
+}
+
 #HistogramArea,
 #HistogramRGBArea {
-    border: 0.08334em solid @bg-dark-grey;
     background-color: @bg-dark-grey;
+    border: 0.08334em solid @bg-dark-grey;
 }
 
 #fullButton,
 #histButton {
     padding: 0.47em 0.41667em;
     margin: 0;
-    border-color: @bg-light-grey;
-    border-style: solid;
-    border-width: 0 0 0 0.08334em;
+    border: none;
     background-color: @bg-dark-grey;
     background-image: none;
     box-shadow: none;
@@ -379,13 +401,7 @@ filechooser list row:selected {
     min-width: 0;
     border-radius: 0;
 }
-#fullButton {
-    padding: 0.47em 0.41667em 0.58334em;
-}
-#EditorLeftPaned #fullButton,
-#EditorLeftPaned #histButton {
-    border-width: 0 0.08334em 0 0;
-}
+
 /*** end ***************************************************************************************/
 
 /*** Separator *********************************************************************************/
