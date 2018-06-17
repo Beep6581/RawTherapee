@@ -1023,6 +1023,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc)
     ipc->setPreviewScale (10);  // Important
     tpc->initImage (ipc, tmb->getType() == FT_Raw);
     ipc->setHistogramListener (this);
+    iareapanel->imageArea->indClippedPanel->silentlyDisableSharpMask();
 
 //    iarea->fitZoom ();   // tell to the editorPanel that the next image has to be fitted to the screen
     iareapanel->imageArea->setPreviewHandler (previewHandler);

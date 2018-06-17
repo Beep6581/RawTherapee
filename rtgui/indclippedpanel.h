@@ -40,6 +40,7 @@ public:
     void buttonToggled(Gtk::ToggleButton* tb);
     void toggleClipped(bool highlights);  // inverts a toggle programmatically
     void toggleFocusMask();
+    void silentlyDisableSharpMask();  // toggle the button off without throwing a toggle event
     void toggleSharpMask();
 
     sigc::connection connFocusMask, connSharpMask, connClippedS, connClippedH;
