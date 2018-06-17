@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.63
+  Version 2.64
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -362,9 +362,8 @@ filechooser list row:selected {
 }
 
 #HistogramPanel > :nth-child(2) {
-    border: 0.08334em solid @bg-dark-grey;
-    border-left-color: @bg-light-grey;
-    border-right: none;
+    border: none;
+    border-left: 0.08334em solid @bg-light-grey;
     background-color: @bg-dark-grey;
 }
 
@@ -374,9 +373,8 @@ filechooser list row:selected {
 }
 
 #EditorLeftPaned  #HistogramPanel > :nth-child(1) {
-    border: 0.08334em solid @bg-dark-grey;
-    border-right-color: @bg-light-grey;
-    border-left: none;
+    border: none;
+    border-right: 0.08334em solid @bg-light-grey;
     background-color: @bg-dark-grey;
 }
 
