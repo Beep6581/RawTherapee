@@ -100,14 +100,6 @@ private:
     // Some ...
 };
 
-
-/*class FullModeListener
-{
-public:
-    virtual ~FullModeListener() {}
-    virtual void toggle_button_full () {}
-};*/
-
 class DrawModeListener
 {
 public:
@@ -125,12 +117,12 @@ protected:
     LUTu lhistRaw, rhistRaw, ghistRaw, bhistRaw;
 
     bool valid;
-	int drawMode;
-	DrawModeListener *myDrawModeListener;
+    int drawMode;
+    DrawModeListener *myDrawModeListener;
     int oldwidth, oldheight;
 
     bool needLuma, needRed, needGreen, needBlue, rawMode, needChroma;
-	
+    
     
 
     HistogramAreaIdleHelper* haih;
@@ -154,8 +146,7 @@ private:
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
     void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
     void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
-	double scalingFunctionLog(double vsize, double val);
-	double scalingFunctionCube(double vsize, double val);
+    double scalingFunctionLog (double vsize, double val);
 };
 
 class HistogramPanel : public Gtk::Grid, public PointerMotionListener, public DrawModeListener

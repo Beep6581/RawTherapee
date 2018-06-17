@@ -39,9 +39,9 @@ extern Options options;
 HistogramPanel::HistogramPanel ()
 {
 
-    set_vexpand(false);
+    set_vexpand(true);
     set_hexpand(true);
-    set_valign(Gtk::ALIGN_START);
+    set_valign(Gtk::ALIGN_FILL);
     set_halign(Gtk::ALIGN_FILL);
     set_name("HistogramPanel");
 
@@ -464,10 +464,10 @@ void HistogramRGBArea::get_preferred_height_for_width_vfunc (int width, int &min
 {
     int bHeight = width / 30;
 
-    if (bHeight >  10) {
-        bHeight =  10; // it would be useful to scale this based on display dpi
-    } else if (bHeight < 5  ) {
-        bHeight = 5;
+    if (bHeight >  15) {
+        bHeight =  15;
+    } else if (bHeight < 10  ) {
+        bHeight = 10;
     }
 
     minimum_height = bHeight;
@@ -721,19 +721,15 @@ HistogramArea::~HistogramArea ()
     }
 }
 
-/* Note: best case scenario would be to have the histogram size really flexible
-   by being able to resize the panel vertically, and the side-bar horizontally.
-   We would only need to enforce some lower limits then. */
-
 Gtk::SizeRequestMode HistogramArea::get_request_mode_vfunc () const
 {
-    return Gtk::SIZE_REQUEST_HEIGHT_FOR_WIDTH;
+    return Gtk::SIZE_REQUEST_CONSTANT_SIZE;
 }
 
 void HistogramArea::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
 {
     int minimumWidth = 0;
-    int naturalWidth = 0; // unused?
+    int naturalWidth = 0; 
     get_preferred_width_vfunc (minimumWidth, naturalWidth);
     get_preferred_height_for_width_vfunc (minimumWidth, minimum_height, natural_height);
 }
@@ -745,16 +741,8 @@ void HistogramArea::get_preferred_width_vfunc (int &minimum_width, int &natural_
 }
 
 void HistogramArea::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
-{
-    /*int gHeight = width / 2;
-
-    if (gHeight > 150) {
-        gHeight = 150;
-    } else if (gHeight < 100) {
-        gHeight = 100;
-    }*/
-    
-    int gHeight = width; // aspect ratio 1:1 should fit on most monitors
+{    
+    int gHeight = width * 0.618;
     if (gHeight < 100) {
         gHeight = 100;
     }
@@ -763,7 +751,6 @@ void HistogramArea::get_preferred_height_for_width_vfunc (int width, int &minimu
     natural_height = gHeight;
 }
 
-//unused?
 void HistogramArea::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
 {
     get_preferred_width_vfunc (minimum_width, natural_width);
@@ -918,67 +905,53 @@ void HistogramArea::updateBackBuffer ()
 
         cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
         cr->set_line_width (1.0);
-        cr->set_operator(Cairo::OPERATOR_ADD);
+        cr->set_operator(Cairo::OPERATOR_SOURCE);
 
         int ui = 0, oi = 0;
 
-        if (needBlue) {
-            drawCurve(cr, bhchanged, realhistheight, w, h);
-            cr->set_source_rgba (0.0, 0.0, 1.0, 0.4);
+        if (needLuma && !rawMode) {
+            drawCurve(cr, lhist, realhistheight, w, h);
+            cr->set_source_rgb (0.65, 0.65, 0.65);
             cr->fill ();
-            
-            drawCurve(cr, bhchanged, realhistheight, w, h);
-            cr->set_source_rgba (0.0, 0.0, 1.0, 0.9);
+
+            drawMarks(cr, lhist, realhistheight, w, ui, oi);
+        }
+
+        if (needChroma && !rawMode) {
+            drawCurve(cr, chist, realhistheight, w, h);
+            cr->set_source_rgb (0., 0., 0.);
             cr->stroke ();
 
-            drawMarks(cr, bhchanged, realhistheight, w, ui, oi);
+            drawMarks(cr, chist, realhistheight, w, ui, oi);
         }
-        
-        if (needGreen) {
-            drawCurve(cr, ghchanged, realhistheight, w, h);
-            cr->set_source_rgba (0.0, 1.0, 0.0, 0.4);
-            cr->fill ();
-            
-            drawCurve(cr, ghchanged, realhistheight, w, h);
-            cr->set_source_rgba (0.0, 1.0, 0.0, 0.9);
-            cr->stroke ();
-            
-            drawMarks(cr, ghchanged, realhistheight, w, ui, oi);
-        }
-        
+
         if (needRed) {
             drawCurve(cr, rhchanged, realhistheight, w, h);
-            cr->set_source_rgba (1.0, 0.0, 0.0, 0.4);
-            cr->fill ();
-            
-            drawCurve(cr, rhchanged, realhistheight, w, h);
-            cr->set_source_rgba (1.0, 0.0, 0.0, 0.9);
+            cr->set_source_rgb (1.0, 0.0, 0.0);
             cr->stroke ();
 
             drawMarks(cr, rhchanged, realhistheight, w, ui, oi);
         }
 
-        cr->set_operator(Cairo::OPERATOR_SOURCE);
-
-        if (needLuma && !rawMode) {
-            drawCurve(cr, lhist, realhistheight, w, h);
-            cr->set_source_rgb (0.9, 0.9, 0.9);
+        if (needGreen) {
+            drawCurve(cr, ghchanged, realhistheight, w, h);
+            cr->set_source_rgb (0.0, 1.0, 0.0);
             cr->stroke ();
 
-            drawMarks(cr, lhist, realhistheight, w, ui, oi);
+            drawMarks(cr, ghchanged, realhistheight, w, ui, oi);
         }
-        
-        if (needChroma && !rawMode) {
-            drawCurve(cr, chist, realhistheight, w, h);
-            cr->set_source_rgb (0.4, 0.4, 0.4);
+
+        if (needBlue) {
+            drawCurve(cr, bhchanged, realhistheight, w, h);
+            cr->set_source_rgb (0.0, 0.0, 1.0);
             cr->stroke ();
 
-            drawMarks(cr, chist, realhistheight, w, ui, oi);
+            drawMarks(cr, bhchanged, realhistheight, w, ui, oi);
         }
         
     }
 
-    cr->set_source_rgba (1., 1., 1., 0.35);
+    cr->set_source_rgba (1., 1., 1., 0.25);
     cr->set_line_width (1.0);
     cr->set_antialias(Cairo::ANTIALIAS_NONE);
 
@@ -988,51 +961,38 @@ void HistogramArea::updateBackBuffer ()
     ch_ds[0] = 4;
     cr->set_dash (ch_ds, 0);
     
-    cr->move_to(w / 4 + 0.5, 1.5);
-    cr->line_to(w / 4 + 0.5, h - 2);
-    cr->stroke();
-    cr->move_to(2 * w / 4 + 0.5, 1.5);
-    cr->line_to(2 * w / 4 + 0.5, h - 2);
-    cr->stroke();
-    cr->move_to(3 * w / 4 + 0.5, 1.5);
-    cr->line_to(3 * w / 4 + 0.5, h - 2);
-    cr->stroke();
+    // determine the number of gridlines based on current h/w
+    int nrOfHGridPartitions = (int)rtengine::min (16.0, pow (2.0, floor ((h - 100) / 250) + 2));
+    int nrOfVGridPartitions = (int)rtengine::min (16.0, pow (2.0, floor ((w - 100) / 250) + 2));
     
-    if (options.histogramDrawMode == 0)
-    {
-        cr->move_to(1.5, h / 4 + 0.5);
-        cr->line_to(w - 2, h / 4 + 0.5);
-        cr->stroke();
-        cr->move_to(1.5, 2 * h / 4 + 0.5);
-        cr->line_to(w - 2, 2 * h / 4 + 0.5);
-        cr->stroke();
-        cr->move_to(1.5, 3 * h / 4 + 0.5);
-        cr->line_to(w - 2, 3 * h / 4 + 0.5);
-        cr->stroke();
+    // draw vertical gridlines
+    if (options.histogramDrawMode < 2) {
+        for (int i = 1; i < nrOfVGridPartitions; i++) {
+            cr->move_to (i * w / nrOfVGridPartitions + 0.5, 1.5);
+            cr->line_to (i * w / nrOfVGridPartitions + 0.5, h - 2);
+            cr->stroke ();
+        }
+    } else {
+        for (int i = 1; i < nrOfVGridPartitions; i++) {
+            cr->move_to (scalingFunctionLog (w, i * w / nrOfVGridPartitions) + 0.5, 1.5);
+            cr->line_to (scalingFunctionLog (w, i * w / nrOfVGridPartitions) + 0.5, h - 2);
+            cr->stroke ();
+        }
     }
-    if (options.histogramDrawMode == 1)
-    {
-        cr->move_to(1.5, h - scalingFunctionLog(h,h / 4 + 0.5));
-        cr->line_to(w - 2, h - scalingFunctionLog(h,h / 4 + 0.5));
-        cr->stroke();
-        cr->move_to(1.5, h - scalingFunctionLog(h,2 * h / 4 + 0.5));
-        cr->line_to(w - 2, h - scalingFunctionLog(h,2 * h / 4 + 0.5));
-        cr->stroke();
-        cr->move_to(1.5, h - scalingFunctionLog(h,3 * h / 4 + 0.5));
-        cr->line_to(w - 2, h - scalingFunctionLog(h,3 * h / 4 + 0.5));
-        cr->stroke();
-    }
-    if (options.histogramDrawMode == 2)
-    {
-        cr->move_to(1.5, scalingFunctionCube(h,h / 4 + 0.5));
-        cr->line_to(w - 2, scalingFunctionCube(h,h / 4 + 0.5));
-        cr->stroke();
-        cr->move_to(1.5, scalingFunctionCube(h,2 * h / 4 + 0.5));
-        cr->line_to(w - 2, scalingFunctionCube(h,2 * h / 4 + 0.5));
-        cr->stroke();
-        cr->move_to(1.5, scalingFunctionCube(h,3 * h / 4 + 0.5));
-        cr->line_to(w - 2, scalingFunctionCube(h,3 * h / 4 + 0.5));
-        cr->stroke();
+    
+    // draw horizontal gridlines
+    if (options.histogramDrawMode == 0) {
+        for (int i = 1; i < nrOfHGridPartitions; i++) {
+            cr->move_to (1.5, i * h / nrOfHGridPartitions + 0.5);
+            cr->line_to (w - 2, i * h / nrOfHGridPartitions + 0.5);
+            cr->stroke ();
+        }
+    } else {
+        for (int i = 1; i < nrOfHGridPartitions; i++) {
+            cr->move_to (1.5, h - scalingFunctionLog(h, i * h / nrOfHGridPartitions) + 0.5);
+            cr->line_to (w - 2, h - scalingFunctionLog(h, i * h / nrOfHGridPartitions) + 0.5);
+            cr->stroke ();
+        }
     }
     
     cr->unset_dash();
@@ -1056,14 +1016,8 @@ void HistogramArea::on_realize ()
 
 double HistogramArea::scalingFunctionLog(double vsize, double val)
 {
-    double factor = 1.0; // can be tuned if necessary - makes the log 'steeper'
-    return vsize * log(factor / (factor + val)) / log(factor / vsize);
-}
-
-double HistogramArea::scalingFunctionCube(double vsize, double val)
-{
-    double factor = 3.0; // can be tuned; higher values compress the middel part of the scale
-    return (val * (4 * (-1.0 + factor) * val * val - 6.0 * (-1.0 + factor) * val * vsize + (-2.0 + 3.0 * factor) * vsize *vsize))/(factor * vsize * vsize);
+    double factor = 20.0; // can be tuned if necessary - higher is flatter curve
+    return vsize * log(factor / (factor + val)) / log(factor / (factor + vsize));
 }
 
 void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
@@ -1075,16 +1029,20 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
     for (int i = 0; i < 256; i++) {
         double val = data[i] * (double)(vsize - 2) / scale;
         
-        if (drawMode == 1)
-            val = scalingFunctionLog((double)vsize,val);
-        if (drawMode == 2)
-            val = scalingFunctionCube((double)vsize,val);
-
+        if (drawMode > 0) { // scale y for single and double log-scale
+            val = scalingFunctionLog ((double)vsize, val);
+        }
+        
         if (val > vsize - 1) {
             val = vsize - 1;
         }
+        
+        double iscaled = i;
+        if (drawMode == 2) { // scale x for double log-scale
+            iscaled = scalingFunctionLog (256.0, (double)i);
+        }
 
-        double posX = (i / 255.0) * (hsize - 1);
+        double posX = (iscaled / 255.0) * (hsize - 1);
         double posY = vsize - 1 - val;
         cr->line_to (posX, posY);
     }
