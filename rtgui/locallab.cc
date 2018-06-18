@@ -280,6 +280,8 @@ Locallab::Locallab():
     Evlocallabshapemethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSHAPEMETH");// = 600,
     Evlocallabspotduplicated = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSPOTDUP");
 
+    spotPanel = Gtk::manage(new ControlSpotPanel());
+    expsettings->add(*spotPanel);
     editHBox = Gtk::manage(new Gtk::HBox());
     edit = Gtk::manage(new Gtk::ToggleButton());
     edit->add(*Gtk::manage(new RTImage("editmodehand.png")));
@@ -485,13 +487,13 @@ Locallab::Locallab():
     lightness->setAdjusterListener(this);
 
     contrast->setAdjusterListener(this);
-/*
-    Gtk::Image* iblueredL = Gtk::manage(new RTImage("ajd-wb-bluered1.png"));
-    Gtk::Image* iblueredR = Gtk::manage(new RTImage("ajd-wb-bluered2.png"));
+    /*
+        Gtk::Image* iblueredL = Gtk::manage(new RTImage("ajd-wb-bluered1.png"));
+        Gtk::Image* iblueredR = Gtk::manage(new RTImage("ajd-wb-bluered2.png"));
 
-    warm = Gtk::manage(new Adjuster(M("TP_LOCALLAB_WARM"), -100., 100., 1., 0., iblueredL, iblueredR));
-    warm->setAdjusterListener(this);
-*/
+        warm = Gtk::manage(new Adjuster(M("TP_LOCALLAB_WARM"), -100., 100., 1., 0., iblueredL, iblueredR));
+        warm->setAdjusterListener(this);
+    */
     chroma->setAdjusterListener(this);
 
     sensi->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
@@ -3884,7 +3886,7 @@ void Locallab::inversChanged()
     }
 
     if (invers->get_active()) {
-      //  warm->hide();
+        //  warm->hide();
         sensi->show();
         llCurveEditorG->hide();
         curvactiv->hide();
@@ -3894,7 +3896,7 @@ void Locallab::inversChanged()
 
     } else {
         sensi->show();
-      //  warm->show();
+        //  warm->show();
         llCurveEditorG->show();
         curvactiv->show();
         qualitycurveMethod->show();
@@ -4879,7 +4881,7 @@ void Locallab::setEditProvider(EditDataProvider * provider)
     EditSubscriber::setEditProvider(provider);
     cTgainshape->setEditProvider(provider);
     cTgainshaperab->setEditProvider(provider);
-
+    spotPanel->setEditProvider(provider);
 }
 
 void Locallab::editToggled()
@@ -4938,51 +4940,51 @@ void Locallab::colorForValue(double valX, double valY, enum ColorCaller::ElemTyp
 CursorShape Locallab::getCursor(int objectID)
 {
     switch (objectID) {
-        case (2): {
-            int angle = degree->getIntValue();
+    case (2): {
+        int angle = degree->getIntValue();
 
-            if (angle < -135 || (angle >= -45 && angle <= 45) || angle > 135) {
-                return CSMove1DV;
-            }
-
-            return CSMove1DH;
-        }
-
-        case (3): {
-            int angle = degree->getIntValue();
-
-            if (angle < -135 || (angle >= -45 && angle <= 45) || angle > 135) {
-                return CSMove1DV;
-            }
-
-            return CSMove1DH;
-        }
-
-        case (0): {
-            int angle = degree->getIntValue();
-
-            if (angle < -135 || (angle >= -45 && angle <= 45) || angle > 135) {
-                return CSMove1DH;
-            }
-
+        if (angle < -135 || (angle >= -45 && angle <= 45) || angle > 135) {
             return CSMove1DV;
         }
 
-        case (1): {
-            int angle = degree->getIntValue();
+        return CSMove1DH;
+    }
 
-            if (angle < -135 || (angle >= -45 && angle <= 45) || angle > 135) {
-                return CSMove1DH;
-            }
+    case (3): {
+        int angle = degree->getIntValue();
 
+        if (angle < -135 || (angle >= -45 && angle <= 45) || angle > 135) {
             return CSMove1DV;
         }
 
-        case (4):
-            return CSMove2D;
+        return CSMove1DH;
+    }
 
-        default:
-            return CSOpenHand;
+    case (0): {
+        int angle = degree->getIntValue();
+
+        if (angle < -135 || (angle >= -45 && angle <= 45) || angle > 135) {
+            return CSMove1DH;
+        }
+
+        return CSMove1DV;
+    }
+
+    case (1): {
+        int angle = degree->getIntValue();
+
+        if (angle < -135 || (angle >= -45 && angle <= 45) || angle > 135) {
+            return CSMove1DH;
+        }
+
+        return CSMove1DV;
+    }
+
+    case (4):
+        return CSMove2D;
+
+    default:
+        return CSOpenHand;
     }
 }
 
