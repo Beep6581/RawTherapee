@@ -39,9 +39,10 @@ ChMixer::ChMixer (): FoldableToolPanel(this, "chmixer", M("TP_CHMIXER_LABEL"), f
     rlabel->set_markup (Glib::ustring("\t<span foreground=\"#b00000\"><b>") + M("TP_CHMIXER_RED") + Glib::ustring(":</b></span>"));
     rlabel->set_alignment(Gtk::ALIGN_START);
 
-    red[0] = Gtk::manage (new Adjuster ("",   -200, 200, 0.1, 100, imgIcon[0]));
-    red[1] = Gtk::manage (new Adjuster ("", -200, 200, 0.1, 0, imgIcon[1]));
-    red[2] = Gtk::manage (new Adjuster ("",  -200, 200, 0.1, 0, imgIcon[2]));
+    constexpr double RANGE = 500.0;
+    red[0] = Gtk::manage (new Adjuster ("",   -RANGE, RANGE, 0.1, 100, imgIcon[0]));
+    red[1] = Gtk::manage (new Adjuster ("", -RANGE, RANGE, 0.1, 0, imgIcon[1]));
+    red[2] = Gtk::manage (new Adjuster ("",  -RANGE, RANGE, 0.1, 0, imgIcon[2]));
 
     Gtk::HSeparator* rsep = Gtk::manage (new Gtk::HSeparator ());
 
@@ -58,9 +59,9 @@ ChMixer::ChMixer (): FoldableToolPanel(this, "chmixer", M("TP_CHMIXER_LABEL"), f
     glabel->set_alignment(Gtk::ALIGN_START);
 
 
-    green[0] = Gtk::manage (new Adjuster ("",   -200, 200, 0.1, 0, imgIcon[3]));
-    green[1] = Gtk::manage (new Adjuster ("", -200, 200, 0.1, 100, imgIcon[4]));
-    green[2] = Gtk::manage (new Adjuster ("",  -200, 200, 0.1, 0, imgIcon[5]));
+    green[0] = Gtk::manage (new Adjuster ("",   -RANGE, RANGE, 0.1, 0, imgIcon[3]));
+    green[1] = Gtk::manage (new Adjuster ("", -RANGE, RANGE, 0.1, 100, imgIcon[4]));
+    green[2] = Gtk::manage (new Adjuster ("",  -RANGE, RANGE, 0.1, 0, imgIcon[5]));
 
     Gtk::HSeparator* gsep = Gtk::manage (new Gtk::HSeparator ());
 
@@ -75,9 +76,9 @@ ChMixer::ChMixer (): FoldableToolPanel(this, "chmixer", M("TP_CHMIXER_LABEL"), f
     Gtk::Label* blabel = Gtk::manage (new Gtk::Label ());
     blabel->set_markup (Glib::ustring("\t<span foreground=\"#1377d7\"><b>") + M("TP_CHMIXER_BLUE") + Glib::ustring(":</b></span>"));
     blabel->set_alignment(Gtk::ALIGN_START);
-    blue[0] = Gtk::manage (new Adjuster ("",   -200, 200, 0.1, 0, imgIcon[6]));
-    blue[1] = Gtk::manage (new Adjuster ("", -200, 200, 0.1, 0, imgIcon[7]));
-    blue[2] = Gtk::manage (new Adjuster ("",  -200, 200, 0.1, 100, imgIcon[8]));
+    blue[0] = Gtk::manage (new Adjuster ("",   -RANGE, RANGE, 0.1, 0, imgIcon[6]));
+    blue[1] = Gtk::manage (new Adjuster ("", -RANGE, RANGE, 0.1, 0, imgIcon[7]));
+    blue[2] = Gtk::manage (new Adjuster ("",  -RANGE, RANGE, 0.1, 100, imgIcon[8]));
 
     for (int i = 0; i < 3; i++) {
         red[i]->setAdjusterListener (this);
