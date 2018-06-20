@@ -464,10 +464,10 @@ void HistogramRGBArea::get_preferred_height_for_width_vfunc (int width, int &min
 {
     int bHeight = width / 30;
 
-    if (bHeight >  15) {
-        bHeight =  15;
-    } else if (bHeight < 10  ) {
+    if (bHeight > 10) {
         bHeight = 10;
+    } else if (bHeight < 5) {
+        bHeight = 5;
     }
 
     minimum_height = bHeight;
