@@ -723,7 +723,7 @@ HistogramArea::~HistogramArea ()
 
 Gtk::SizeRequestMode HistogramArea::get_request_mode_vfunc () const
 {
-    return Gtk::SIZE_REQUEST_CONSTANT_SIZE;
+    return Gtk::SIZE_REQUEST_HEIGHT_FOR_WIDTH;
 }
 
 void HistogramArea::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
@@ -741,8 +741,9 @@ void HistogramArea::get_preferred_width_vfunc (int &minimum_width, int &natural_
 }
 
 void HistogramArea::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
-{    
-    int gHeight = width * 0.618;
+{
+    int gHeight = width / 2;
+    
     if (gHeight < 100) {
         gHeight = 100;
     }
