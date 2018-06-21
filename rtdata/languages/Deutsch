@@ -786,6 +786,7 @@ HISTORY_MSG_492;(RGB-Kurven)
 HISTORY_MSG_493;(L*a*b*)
 HISTORY_MSG_CLAMPOOG;(Belichtung) - Farben\nauf Farbraum beschränken
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;(Farbanpassungen)\nL*a*b* - Farbkorrektur
+HISTORY_MSG_DUALDEMOSAIC_CONTRAST;(Sensor-Matrix)\nFarbinterpolation\nKontrastschwelle
 HISTORY_MSG_HISTMATCHING;(Belichtung)\nAuto-Tonwertkurve
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;(Lokaler Kontrast)\nIntensität
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;(Lokaler Kontrast)\nDunkle Bereiche
@@ -794,6 +795,7 @@ HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;(Lokaler Kontrast)\nHelle Bereiche
 HISTORY_MSG_LOCALCONTRAST_RADIUS;(Lokaler Kontrast)\nRadius
 HISTORY_MSG_METADATA_MODE;(Metadaten)\nKopiermodus
 HISTORY_MSG_MICROCONTRAST_CONTRAST;(Mikrokontrast)\nKontrastschwelle
+HISTORY_MSG_PIXELSHIFT_DEMOSAIC;(Sensor-Matrix)\nFarbinterpolation - PS\nBewegungsmethode
 HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;(Sensor-Matrix)\nVorverarbeitung\nRichtung
 HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;(Sensor-Matrix)\nVorverarbeitung\nPDAF-Zeilenfilter
 HISTORY_MSG_PRSHARPEN_CONTRAST;(Skalieren) - Schärfen\nKontrastschwelle
@@ -1829,8 +1831,10 @@ TP_RAWEXPOS_RGB;Rot, Grün, Blau
 TP_RAWEXPOS_TWOGREEN;Grün-Werte automatisch angleichen
 TP_RAW_1PASSMEDIUM;1-Pass (Medium)
 TP_RAW_3PASSBEST;3-Pass (Beste)
+TP_RAW_4PASS;4-Pass
 TP_RAW_AHD;AHD
 TP_RAW_AMAZE;AMaZE
+TP_RAW_AMAZEVNG4;AMaZE + VNG4
 TP_RAW_DCB;DCB
 TP_RAW_DCBENHANCE;DCB-Verbesserung
 TP_RAW_DCBITERATIONS;Anzahl der DCB-Iterationen
@@ -1838,6 +1842,7 @@ TP_RAW_DMETHOD;Methode
 TP_RAW_DMETHOD_PROGRESSBAR;%1 verarbeitet
 TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaikoptimierung
 TP_RAW_DMETHOD_TOOLTIP;<b>IGV</b> und <b>LMMSE</b> sind speziel für High-ISO-Aufnahmen um die\nRauschreduzierung zu unterstützen ohne zu Maze-Mustern,\nPosterisierung oder einem ausgewaschenen Look zu führen.\n\n<b>Pixel-Shift</b> ist für “Pentax Pixel-Shift“-Dateien. Für "Nicht-Pixel-\nShift"-Dateien wird automatisch AMaZE verwendet.
+TP_RAW_DUALDEMOSAICCONTRAST;Kontrastschwelle
 TP_RAW_EAHD;EAHD
 TP_RAW_FALSECOLOR;Falschfarbenreduzierung
 TP_RAW_FAST;Schnell
@@ -1856,6 +1861,7 @@ TP_RAW_NONE;Keine
 TP_RAW_PIXELSHIFT;Pixel-Shift
 TP_RAW_PIXELSHIFTADAPTIVE;Adaptive Erkennung
 TP_RAW_PIXELSHIFTBLUR;Unschärfebewegungsmaske
+TP_RAW_PIXELSHIFTDMETHOD;Bewegungsmethode
 TP_RAW_PIXELSHIFTEPERISO;Empfindlichkeit
 TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;Der Standardwert 0 wird für die Basis-ISO empfohlen.\nHöhere Werte erhöhen die Empfindlichkeit der Bewegungserkennung.\nVerändern Sie den Wert in kleinen Schritten und beobachten Sie die\nBewegungsmaske. Erhöhen Sie die Empfindlichkeit für unterbelichtete\noder High-ISO-Bilder.
 TP_RAW_PIXELSHIFTEQUALBRIGHT;Frame-Helligkeit angleichen
@@ -2295,9 +2301,4 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-HISTORY_MSG_DUALDEMOSAIC_CONTRAST;(Sensor-Matrix)\nFarbinterpolation\nKontrastschwelle
-HISTORY_MSG_PIXELSHIFT_DEMOSAIC;(Sensor-Matrix)\nFarbinterpolation - PS\nBewegungsmethode
-TP_RAW_4PASS;4-Pass
-TP_RAW_AMAZEVNG4;AMaZE + VNG4
-TP_RAW_DUALDEMOSAICCONTRAST;Kontrastschwelle
-TP_RAW_PIXELSHIFTDMETHOD;Bewegungsmethode
+!MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>Sharpening Contrast Mask</b>.\nShortcut: <b>None</b>\n\nOnly works when sharpening is enabled and zoom >= 100%.
