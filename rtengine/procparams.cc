@@ -1787,19 +1787,19 @@ bool VignettingParams::operator !=(const VignettingParams& other) const
 ChannelMixerParams::ChannelMixerParams() :
     enabled(false),
     red{
-        100,
+        1000,
         0,
         0
     },
     green{
         0,
-        100,
+        1000,
         0
     },
     blue{
         0,
         0,
-        100
+        1000
     }
 {
 }
@@ -3522,6 +3522,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     memcpy (chmixer.red,   rmix.data(), 3 * sizeof (int));
                     memcpy (chmixer.green, gmix.data(), 3 * sizeof (int));
                     memcpy (chmixer.blue,  bmix.data(), 3 * sizeof (int));
+                }
+                if (ppVersion < 338) {
+                    for (int i = 0; i < 3; ++i) {
+                        chmixer.red[i] *= 10;
+                        chmixer.green[i] *= 10;
+                        chmixer.blue[i] *= 10;
+                    }
                 }
 
                 if (pedited) {

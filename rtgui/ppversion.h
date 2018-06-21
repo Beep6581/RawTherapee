@@ -1,11 +1,13 @@
 #pragma once
 
 // This number has to be incremented whenever the PP3 file format is modified or the behaviour of a tool changes
-#define PPVERSION 337
+#define PPVERSION 338
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /*
   Log of version changes
+   338  2018-06-15
+        increased precision for the channel mixer
    337  2018-06-13
         new scales for the LabGrid color toning parameters
    336  2018-06-01
