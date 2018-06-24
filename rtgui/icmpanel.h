@@ -39,22 +39,13 @@ public:
 class ICMPanel :
     public ToolParamBlock,
     public AdjusterListener,
-    public FoldableToolPanel,
-    public rtengine::ICMListener
+    public FoldableToolPanel
 {
 
 protected:
-    Gtk::Frame*        dcpFrame;
-    Gtk::Frame*        coipFrame;
-	
-    Adjuster* oGamma;
-    Adjuster* oSlope;
-    Adjuster* primariesRedX;
-    Adjuster* primariesRedY;
-    Adjuster* primariesGreenX;
-    Adjuster* primariesGreenY;
-    Adjuster* primariesBlueX;
-    Adjuster* primariesBlueY;
+    Gtk::Frame* dcpFrame;
+    Gtk::Frame* coipFrame;
+
     Adjuster* wGamma;
     Adjuster* wSlope;
 
@@ -62,8 +53,6 @@ protected:
     Gtk::HBox* gabox;
 
 
-    bool lastCustomOutputProfile;
-    sigc::connection  coprofconn;
     //bool freegamma;
     bool lastToneCurve;
     sigc::connection tcurveconn;
@@ -91,57 +80,39 @@ private:
     rtengine::ProcEvent EvICMslop;
     rtengine::ProcEvent EvICMtrcinMethod;
 
-    Gtk::VBox       *  iVBox;
-    Gtk::HBox* primariesHBox;
-    Gtk::HBox* oTRCPresetsHBox;
-    Gtk::HBox* profHBox;
-    Gtk::HBox* oIllHBox;
-    Gtk::VBox* primariesVBox;
+    Gtk::VBox* iVBox;
     Gtk::HBox* wTRCHBox;
-    Gtk::HBox* priGreenHBox;
-    Gtk::HBox* priBlueHBox;
-    Gtk::HBox* oTRCHBox;
-    Gtk::HBox* priRedHBox;
 
-    Gtk::CheckButton*  obpc;
-    Gtk::CheckButton*  customOutProfile;
-    Gtk::RadioButton*  inone;
+    Gtk::CheckButton* obpc;
+    Gtk::RadioButton* inone;
 
-    Gtk::RadioButton*  iembedded;
-    Gtk::RadioButton*  icamera;
-    Gtk::RadioButton*  icameraICC;
-    Gtk::RadioButton*  ifromfile;
-    Gtk::Label*        dcpIllLabel;
-    MyComboBoxText*    dcpIll;
-    sigc::connection   dcpillconn;
-    Gtk::CheckButton*  ckbToneCurve;
-    Gtk::CheckButton*  ckbApplyLookTable;
-    Gtk::CheckButton*  ckbApplyBaselineExposureOffset;
-    Gtk::CheckButton*  ckbApplyHueSatMap;
-    MyComboBoxText*    wProfNames;
-    sigc::connection   wprofnamesconn;
-    MyComboBoxText*    oTRCPresets;
-    sigc::connection   otrcconn;
-    MyComboBoxText*    primaries;
-    sigc::connection   primariesconn;
-    MyComboBoxText*    wprofile;
-    sigc::connection   wprofileconn;
-    MyComboBoxText*    oIlluminant;
-    sigc::connection   oillconn;
-    MyComboBoxText*    wTRC;
-    sigc::connection   wtrcconn;
+    Gtk::RadioButton* iembedded;
+    Gtk::RadioButton* icamera;
+    Gtk::RadioButton* icameraICC;
+    Gtk::RadioButton* ifromfile;
+    Gtk::Label* dcpIllLabel;
+    MyComboBoxText* dcpIll;
+    sigc::connection dcpillconn;
+    Gtk::CheckButton* ckbToneCurve;
+    Gtk::CheckButton* ckbApplyLookTable;
+    Gtk::CheckButton* ckbApplyBaselineExposureOffset;
+    Gtk::CheckButton* ckbApplyHueSatMap;
+    MyComboBoxText* wProfNames;
+    sigc::connection wprofnamesconn;
+    MyComboBoxText* wTRC;
+    sigc::connection wtrcconn;
 
-    MyComboBoxText*    oProfNames;
-    sigc::connection   oprofnamesconn;
-    std::unique_ptr<PopUpButton>       oRendIntent;
-    sigc::connection   orendintentconn;
-    Gtk::RadioButton*  iunchanged;
+    MyComboBoxText* oProfNames;
+    sigc::connection oprofnamesconn;
+    std::unique_ptr<PopUpButton> oRendIntent;
+    sigc::connection orendintentconn;
+    Gtk::RadioButton* iunchanged;
     MyFileChooserButton* ipDialog;
     Gtk::RadioButton::Group opts;
-    Gtk::Button*        saveRef;
-    sigc::connection   ipc;
-    Glib::ustring      oldip;
-    ICMPanelListener*  icmplistener;
+    Gtk::Button* saveRef;
+    sigc::connection ipc;
+    Glib::ustring oldip;
+    ICMPanelListener* icmplistener;
 
     double dcpTemperatures[2];
     Glib::ustring lastRefFilename;
@@ -156,26 +127,19 @@ public:
     void setBatchMode(bool batchMode);
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
     void adjusterChanged(Adjuster* a, double newval);
-    void setAdjusterBehavior(bool gammaadd, bool slopeadd);
 
     void wpChanged();
-    void wprimariesChanged();
-    void wprofileChanged();
-    void wtempChanged();
     void wtrcinChanged();
     void opChanged();
     void oiChanged(int n);
     void oBPCChanged();
     void ipChanged();
-    void gpChanged();
-    void GamChanged();
     void ipSelectionChanged();
     void dcpIlluminantChanged();
     void toneCurveChanged();
     void applyLookTableChanged();
     void applyBaselineExposureOffsetChanged();
     void applyHueSatMapChanged();
-    void TRCChanged(double gamm, double slo);
 
     void setRawMeta(bool raw, const rtengine::FramesData* pMeta);
     void saveReferencePressed();

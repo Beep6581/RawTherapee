@@ -283,7 +283,7 @@ Image8* ImProcFunctions::lab2rgb(LabImage* lab, int cx, int cy, int cw, int ch, 
  * If a custom gamma profile can be created, divide by 327.68, convert to xyz and apply the custom gamma transform
  * otherwise divide by 327.68, convert to xyz and apply the sRGB transform, before converting with gamma2curve
  */
-Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm, GammaValues *ga)
+Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm)
 {
 
     if (cx < 0) {
@@ -306,85 +306,75 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
 
     cmsHPROFILE oprof = nullptr;
 
-    if (ga) {
-        lcmsMutex->lock();
-        ICCStore::getInstance()->getGammaArray(icm, *ga);
-        oprof = ICCStore::getInstance()->createGammaProfile(icm, *ga);
-        lcmsMutex->unlock();
-    } else {
-        oprof = ICCStore::getInstance()->getProfile(icm.outputProfile);
-        Glib::ustring outtest = icm.outputProfile;
-        std::string fileis_RTv2 = outtest.substr(0, 4);
-        //printf("IsRTv2=%s\n", fileis_RTv2.c_str());
-        if(fileis_RTv2 == "RTv2") {//Only fot ICC v2 : read tag from desc to retrieve gamma and slope save before in generate ICC v2
-        //due to bug in LCMS in CmsToneCurve
-        //printf("icmout=%s \n",icm.output.c_str());
-            GammaValues g_b; //gamma parameters
-            GammaValues gb; //gamma parameters
-            const double eps = 0.000000001; // not divide by zero
-            double gammatag = 2.4;
-            double slopetag = 12.92;
-            cmsMLU *modelDescMLU = (cmsMLU*) (cmsReadTag(oprof, cmsSigDeviceModelDescTag));
-            if (modelDescMLU) {
-                cmsUInt32Number count = cmsMLUgetWide(modelDescMLU, "eng", "USA", nullptr, 0);  // get buffer length first
-                if (count) {
-                    wchar_t *buffer = new wchar_t[count];
-                    count = cmsMLUgetWide(modelDescMLU, "eng", "USA", buffer, count); // now put the string in the buffer
-                    Glib::ustring modelDesc;
+    oprof = ICCStore::getInstance()->getProfile(icm.outputProfile);
+    Glib::ustring outtest = icm.outputProfile;
+    std::string fileis_RTv2 = outtest.substr(0, 4);
+    //printf("IsRTv2=%s\n", fileis_RTv2.c_str());
+    if(fileis_RTv2 == "RTv2") {//Only fot ICC v2 : read tag from desc to retrieve gamma and slope save before in generate ICC v2
+    //due to bug in LCMS in CmsToneCurve
+    //printf("icmout=%s \n",icm.output.c_str());
+        GammaValues g_b; //gamma parameters
+        const double eps = 0.000000001; // not divide by zero
+        double gammatag = 2.4;
+        double slopetag = 12.92310;
+        cmsMLU *modelDescMLU = (cmsMLU*) (cmsReadTag(oprof, cmsSigDeviceModelDescTag));
+        if (modelDescMLU) {
+            cmsUInt32Number count = cmsMLUgetWide(modelDescMLU, "eng", "USA", nullptr, 0);  // get buffer length first
+            if (count) {
+                wchar_t *buffer = new wchar_t[count];
+                count = cmsMLUgetWide(modelDescMLU, "eng", "USA", buffer, count); // now put the string in the buffer
+                Glib::ustring modelDesc;
 #if __SIZEOF_WCHAR_T__ == 2
-                    char* cModelDesc = g_utf16_to_utf8((unsigned short int*)buffer, -1, nullptr, nullptr, nullptr); // convert to utf-8 in a buffer allocated by glib
-                    if (cModelDesc) {
-                        modelDesc.assign(cModelDesc);
-                        g_free(cModelDesc);
-                    }
+                char* cModelDesc = g_utf16_to_utf8((unsigned short int*)buffer, -1, nullptr, nullptr, nullptr); // convert to utf-8 in a buffer allocated by glib
+                if (cModelDesc) {
+                    modelDesc.assign(cModelDesc);
+                    g_free(cModelDesc);
+                }
 #else
-                    modelDesc = utf32_to_utf8(buffer, count);
+                modelDesc = utf32_to_utf8(buffer, count);
 #endif
-                    delete [] buffer;
-                    if (!modelDesc.empty()) {
-                        printf("dmdd=%s\n", modelDesc.c_str());
+                delete [] buffer;
+                if (!modelDesc.empty()) {
+                    printf("dmdd=%s\n", modelDesc.c_str());
 
-                        std::size_t pos = modelDesc.find("g");
-                        std::size_t posmid = modelDesc.find("s");
-                        std::size_t posend = modelDesc.find("!");
-                        std::string strgamma = modelDesc.substr(pos + 1, (posmid - pos));
-                        gammatag = std::stod(strgamma.c_str());
-                        std::string strslope = modelDesc.substr(posmid + 1, (posend - posmid));
-                        slopetag = std::stod(strslope.c_str());
-                    //	printf("gam=%f slo=%f\n", gammatag, slopetag);
-                    }
-                } else {
-                    printf("Error: lab2rgbOut  /  String length is null!\n");
+                    std::size_t pos = modelDesc.find("g");
+                    std::size_t posmid = modelDesc.find("s");
+                    std::size_t posend = modelDesc.find("!");
+                    std::string strgamma = modelDesc.substr(pos + 1, (posmid - pos));
+                    gammatag = std::stod(strgamma.c_str());
+                    std::string strslope = modelDesc.substr(posmid + 1, (posend - posmid));
+                    slopetag = std::stod(strslope.c_str());
+                //	printf("gam=%f slo=%f\n", gammatag, slopetag);
                 }
             } else {
-                printf("Error: lab2rgbOut  /  cmsReadTag/cmsSigDeviceModelDescTag failed!\n");
+                printf("Error: lab2rgbOut  /  String length is null!\n");
             }
-
-            double pwr = 1.0 / gammatag;
-            double ts = slopetag;
-            double slope = slopetag == 0 ? eps : slopetag;
-
-            int mode = 0;
-            Color::calcGamma(pwr, ts, mode, g_b); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
-            gb[4] = g_b[3] * ts;
-            gb[0] = gammatag;
-            gb[1] = 1. / (1.0 + g_b[4]);
-            gb[2] = g_b[4] / (1.0 + g_b[4]);
-            gb[3] = 1. / slope;
-            gb[5] = 0.0;
-            gb[6] = 0.0;
-     
-            cmsToneCurve* GammaTRC[3];
-            cmsFloat64Number Parameters[7] = { gb[0],  gb[1], gb[2], gb[3], gb[4], gb[5], gb[6] } ;
-
-            GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, Parameters); //5 = smoother than 4
-            cmsWriteTag(oprof, cmsSigRedTRCTag, GammaTRC[0]);
-            cmsWriteTag(oprof, cmsSigGreenTRCTag, GammaTRC[1]);
-            cmsWriteTag(oprof, cmsSigBlueTRCTag, GammaTRC[2]);
-            cmsFreeToneCurve(GammaTRC[0]);
+        } else {
+            printf("Error: lab2rgbOut  /  cmsReadTag/cmsSigDeviceModelDescTag failed!\n");
         }
 
+        double pwr = 1.0 / gammatag;
+        double ts = slopetag;
+        double slope = slopetag == 0 ? eps : slopetag;
 
+        int mode = 0;
+        Color::calcGamma(pwr, ts, mode, g_b); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
+        cmsFloat64Number gammaParams[7]; //gamma parameters
+        gammaParams[4] = g_b[3] * ts;
+        gammaParams[0] = gammatag;
+        gammaParams[1] = 1. / (1.0 + g_b[4]);
+        gammaParams[2] = g_b[4] / (1.0 + g_b[4]);
+        gammaParams[3] = 1. / slope;
+        gammaParams[5] = 0.0;
+        gammaParams[6] = 0.0;
+
+        cmsToneCurve* GammaTRC[3];
+
+        GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, gammaParams); //5 = smoother than 4
+        cmsWriteTag(oprof, cmsSigRedTRCTag, GammaTRC[0]);
+        cmsWriteTag(oprof, cmsSigGreenTRCTag, GammaTRC[1]);
+        cmsWriteTag(oprof, cmsSigBlueTRCTag, GammaTRC[2]);
+        cmsFreeToneCurve(GammaTRC[0]);
     }
 
     if (oprof) {
@@ -439,7 +429,7 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
 }
 
 
-Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int mul, Glib::ustring profile, double gampos, double slpos, double &ga0, double &ga1, double &ga2, double &ga3, double &ga4, double &ga5, double &ga6)
+Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int mul, Glib::ustring profile, double gampos, double slpos)
 {
     TMatrix wprof;
 
@@ -474,7 +464,6 @@ Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int
 
     int five = mul;
 
-    ga6 = 0.0;
     pwr = 1.0 / gampos;
 
     if (gampos < 1.0) {
@@ -592,15 +581,6 @@ Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int
         int mode = 0;
         Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
 
-        ga4 = g_a[3] * ts;
-        ga0 = gampos;
-        ga1 = 1. / (1.0 + g_a[4]);
-        ga2 = g_a[4] / (1.0 + g_a[4]);
-        ga3 = 1. / slpos;
-        ga5 = 0.0;
-        ga6 = 0.0;
-       // printf("ga0=%f ga1=%f ga2=%f ga3=%f ga4=%f\n", ga0, ga1, ga2, ga3, ga4);
-
         cmsCIExyY       xyD;
 
         cmsCIExyYTRIPLE Primaries = {
@@ -610,17 +590,19 @@ Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int
         };
 
         cmsToneCurve* GammaTRC[3];
-        cmsFloat64Number Parameters[7];
-        Parameters[0] = ga0;
-        Parameters[1] = ga1;
-        Parameters[2] = ga2;
-        Parameters[3] = ga3;
-        Parameters[4] = ga4;
-        Parameters[5] = ga5;
-        Parameters[6] = ga6;
-// 7 parameters for smoother curves
+        cmsFloat64Number gammaParams[7];
+        gammaParams[4] = g_a[3] * ts;
+        gammaParams[0] = gampos;
+        gammaParams[1] = 1. / (1.0 + g_a[4]);
+        gammaParams[2] = g_a[4] / (1.0 + g_a[4]);
+        gammaParams[3] = 1. / slpos;
+        gammaParams[5] = 0.0;
+        gammaParams[6] = 0.0;
+       // printf("ga0=%f ga1=%f ga2=%f ga3=%f ga4=%f\n", ga0, ga1, ga2, ga3, ga4);
+
+        // 7 parameters for smoother curves
         cmsWhitePointFromTemp(&xyD, (double)temp);
-        GammaTRC[0] = GammaTRC[1] = GammaTRC[2] =   cmsBuildParametricToneCurve(NULL, five, Parameters);//5 = more smoother than 4
+        GammaTRC[0] = GammaTRC[1] = GammaTRC[2] =   cmsBuildParametricToneCurve(NULL, five, gammaParams);//5 = more smoother than 4
         oprofdef = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC);
         cmsFreeToneCurve(GammaTRC[0]);
     }

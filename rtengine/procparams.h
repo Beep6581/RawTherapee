@@ -1025,20 +1025,6 @@ struct ColorManagementParams {
     RenderingIntent outputIntent;
     bool outputBPC;
 
-    bool customOutputProfile;
-    Glib::ustring outputPimariesPreset;
-    double redPrimaryX;
-    double redPrimaryY;
-    double greenPrimaryX;
-    double greenPrimaryY;
-    double bluePrimaryX;
-    double bluePrimaryY;
-    Glib::ustring outputGammaPreset;
-    double outputGamma;
-    double outputSlope;
-    Glib::ustring outputProfileVersion;
-    Glib::ustring outputIlluminant;
-
     static const Glib::ustring NoICMString;
 
     ColorManagementParams();

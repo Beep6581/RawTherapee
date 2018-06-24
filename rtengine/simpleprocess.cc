@@ -881,9 +881,7 @@ private:
             ipf.lab2rgb (labcbdl, *baseImg, params.icm.workingProfile);
         }
 
-		
-		//gamma TRC working
-     {
+        //gamma TRC working
         if (params.icm.workingTRC == "Custom") { //exec TRC IN free
             Glib::ustring profile;
             profile = params.icm.workingProfile;
@@ -893,11 +891,7 @@ private:
                 int  ch = baseImg->getHeight();
                 // put gamma TRC to 1
                 Imagefloat* readyImg0 = NULL;
-                double ga0, ga1, ga2, ga3, ga4, ga5, ga6;
-                int mul = -5;
-                double gga = 2.4, ssl = 12.92;
-
-                readyImg0 = ipf.workingtrc(baseImg, cw, ch, mul, params.icm.workingProfile, gga, ssl, ga0, ga1, ga2, ga3, ga4, ga5, ga6);
+                readyImg0 = ipf.workingtrc(baseImg, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310);
                 #pragma omp parallel for
 
                 for (int row = 0; row < ch; row++) {
@@ -909,11 +903,10 @@ private:
                 }
 
                 delete readyImg0;
+
                 //adjust TRC
                 Imagefloat* readyImg = NULL;
-                gga = params.icm.outputGamma, ssl = params.icm.outputSlope;
-                mul = 5;
-                readyImg = ipf.workingtrc(baseImg, cw, ch, mul, params.icm.workingProfile, gga, ssl, ga0, ga1, ga2, ga3, ga4, ga5, ga6);
+                readyImg = ipf.workingtrc(baseImg, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope);
                 #pragma omp parallel for
 
                 for (int row = 0; row < ch; row++) {
@@ -925,12 +918,9 @@ private:
                 }
 
                 delete readyImg;
-
             }
         }
-    }
-		
-		
+
         // RGB processing
 
         curve1 (65536);
@@ -1260,30 +1250,16 @@ private:
         bool useLCMS = false;
         bool bwonly = params.blackwhite.enabled && !params.colorToning.enabled && !autili && !butili ;
 
-        if (params.icm.customOutputProfile /*!= "Custom" || params.icm.customOutputProfile*/) {
+        ///////////// Custom output gamma has been removed, the user now has to create
+        ///////////// a new output profile with the ICCProfileCreator
 
-            GammaValues ga;
-            //  if(params.blackwhite.enabled) params.toneCurve.hrenabled=false;
-            readyImg = ipf.lab2rgbOut (labView, cx, cy, cw, ch, params.icm, &ga);
-            customGamma = true;
+        // if Default gamma mode: we use the profile selected in the "Output profile" combobox;
+        // gamma come from the selected profile, otherwise it comes from "Free gamma" tool
 
-            //or selected Free gamma
-            useLCMS = false;
+        readyImg = ipf.lab2rgbOut (labView, cx, cy, cw, ch, params.icm);
 
-            if ((jprof = ICCStore::getInstance()->createCustomGammaOutputProfile (params.icm, ga)) == nullptr) {
-
-			useLCMS = true;
-            }
-
-        } else {
-            // if Default gamma mode: we use the profile selected in the "Output profile" combobox;
-            // gamma come from the selected profile, otherwise it comes from "Free gamma" tool
-
-            readyImg = ipf.lab2rgbOut (labView, cx, cy, cw, ch, params.icm);
-
-            if (settings->verbose) {
-                printf ("Output profile_: \"%s\"\n", params.icm.outputProfile.c_str());
-            }
+        if (settings->verbose) {
+            printf ("Output profile_: \"%s\"\n", params.icm.outputProfile.c_str());
         }
 
         delete labView;

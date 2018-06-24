@@ -592,20 +592,6 @@ public:
     bool outputProfile;
     bool outputIntent;
     bool outputBPC;
-
-    bool customOutputProfile;
-    bool outputPrimariesPreset;
-    bool redPrimaryX;
-    bool redPrimaryY;
-    bool greenPrimaryX;
-    bool greenPrimaryY;
-    bool bluePrimaryX;
-    bool bluePrimaryY;
-    bool outputGammaPreset;
-    bool outputGamma;
-    bool outputSlope;
-    bool outputProfileVersion;
-    bool outputIlluminant;
 };
 class WaveletParamsEdited
 {

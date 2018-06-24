@@ -515,7 +515,6 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
         ipc->setAutoBWListener (blackwhite);
         ipc->setFrameCountListener (bayerprocess);
         ipc->setAutoWBListener (whitebalance);
-        ipc->setICMListener (icm);
         ipc->setAutoColorTonListener (colortoning);
         ipc->setAutoChromaListener (dirpyrdenoise);
         ipc->setWaveletListener (wavelet);

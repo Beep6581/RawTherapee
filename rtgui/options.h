@@ -287,6 +287,20 @@ public:
     bool menuGroupProfileOperations;
     bool menuGroupExtProg;
 
+    // ICC Profile Creator
+    Glib::ustring ICCPC_primariesPreset;
+    double ICCPC_redPrimaryX;
+    double ICCPC_redPrimaryY;
+    double ICCPC_greenPrimaryX;
+    double ICCPC_greenPrimaryY;
+    double ICCPC_bluePrimaryX;
+    double ICCPC_bluePrimaryY;
+    Glib::ustring ICCPC_gammaPreset;
+    double ICCPC_gamma;
+    double ICCPC_slope;
+    Glib::ustring ICCPC_profileVersion;
+    Glib::ustring ICCPC_illuminant;
+
     // fast export options
     bool fastexport_bypass_sharpening;
     bool fastexport_bypass_sharpenEdge;
@@ -341,6 +355,7 @@ public:
     Glib::ustring lastProfilingReferenceDir;
     Glib::ustring lastBWCurvesDir;
     Glib::ustring lastLensProfileDir;
+    Glib::ustring lastICCProfCreatorDir;
     bool gimpPluginShowInfoDialog;
 
     size_t maxRecentFolders;                   // max. number of recent folders stored in options file

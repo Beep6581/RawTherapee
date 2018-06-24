@@ -47,7 +47,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     EvICMslop = m->newEvent(ALLNORAW, "HISTORY_MSG_ICMSLOP");
     EvICMtrcinMethod = m->newEvent(ALLNORAW, "HISTORY_MSG_ICMTRCIN");
 
-    isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = lastCustomOutputProfile = false;
+    isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = false;
 
     ipDialog = Gtk::manage(new MyFileChooserButton(M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
     ipDialog->set_tooltip_text(M("TP_ICM_INPUTCUSTOM_TOOLTIP"));
@@ -61,7 +61,6 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     iFrame->set_label_align(0.025, 0.5);
 
     iVBox = Gtk::manage(new Gtk::VBox());
-    iVBox->set_spacing(2);
 
     inone = Gtk::manage(new Gtk::RadioButton(M("TP_ICM_INPUTNONE")));
     inone->set_tooltip_text(M("TP_ICM_INPUTNONE_TOOLTIP"));
@@ -170,7 +169,6 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wFrame->set_label_align(0.025, 0.5);
 
     Gtk::VBox *wProfVBox = Gtk::manage(new Gtk::VBox());
-    wProfVBox->set_spacing(2);
 
     wProfNames = Gtk::manage(new MyComboBoxText());
     wProfVBox->pack_start(*wProfNames, Gtk::PACK_SHRINK);
@@ -189,21 +187,21 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
 
     wTRCHBox = Gtk::manage(new Gtk::HBox());
 
-    Gtk::Label* wtrclab = Gtk::manage(new Gtk::Label(M("TP_GAMMA_WORKTRC")));
+    Gtk::Label* wtrclab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKTRC")));
 
     wTRCHBox->pack_start(*wtrclab, Gtk::PACK_SHRINK);
     wTRC = Gtk::manage(new MyComboBoxText());
     wTRCHBox->pack_start(*wTRC, Gtk::PACK_EXPAND_WIDGET);
     wProfVBox->pack_start(*wTRCHBox, Gtk::PACK_EXPAND_WIDGET);
-    wTRC->append(M("TP_GAMMA_WORKTRC_NONE"));
-    wTRC->append(M("TP_GAMMA_WORKTRC_CUSTOM"));
+    wTRC->append(M("TP_ICM_WORKTRC_NONE"));
+    wTRC->append(M("TP_ICM_WORKTRC_CUSTOM"));
 
     wTRC->set_active(0);
-    wTRC->set_tooltip_text(M("TP_GAMMA_WORKTRC_TOOLTIP"));
+    wTRC->set_tooltip_text(M("TP_ICM_WORKTRC_TOOLTIP"));
 
 
-    wGamma = Gtk::manage(new Adjuster(M("TP_GAMMA_WORKTRC_GAMMA"), 0.40, 15.0, 0.001, 2.4));
-    wSlope = Gtk::manage(new Adjuster(M("TP_GAMMA_WORKTRC_SLOPE"), 0., 150., 0.01, 12.92));
+    wGamma = Gtk::manage(new Adjuster(M("TP_ICM_WORKTRC_GAMMA"), 0.40, 15.0, 0.001, 2.4));
+    wSlope = Gtk::manage(new Adjuster(M("TP_ICM_WORKTRC_SLOPE"), 0., 150., 0.01, 12.92310));
     wProfVBox->pack_start(*wGamma, Gtk::PACK_SHRINK);
     wGamma->show();
 
@@ -234,7 +232,6 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     oFrame->set_label_align(0.025, 0.5);
 
     Gtk::VBox *oProfVBox = Gtk::manage(new Gtk::VBox());
-    oProfVBox->set_spacing(2);
 
     oProfNames = Gtk::manage(new MyComboBoxText());
     oProfVBox->pack_start(*oProfNames, Gtk::PACK_SHRINK);
@@ -269,171 +266,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     obpc->set_active(true);
     oProfVBox->pack_start(*obpc, Gtk::PACK_SHRINK);
 
-    // Output gamma
-    oTRCPresetsHBox = Gtk::manage(new Gtk::HBox());
-
-    //Gtk::HBox* gaHBox = Gtk::manage(new Gtk::HBox());
-    Gtk::Label* galab = Gtk::manage(new Gtk::Label(M("TP_GAMMA_OUTPUT_TRC_PRESET")));
-
-    oTRCPresetsHBox->pack_start(*galab, Gtk::PACK_SHRINK);
-    oTRCPresets = Gtk::manage(new MyComboBoxText());
-    oTRCPresetsHBox->pack_start(*oTRCPresets, Gtk::PACK_EXPAND_WIDGET);
-
-
-    std::vector<Glib::ustring> outputTRCPresets = rtengine::ICCStore::getGamma();
-
-    for (size_t i = 0; i < outputTRCPresets.size(); i++) {
-        oTRCPresets->append(outputTRCPresets[i]);
-    }
-
-    oTRCPresets->set_active(0);
-
-    Gtk::Frame* cgFrame = Gtk::manage(new Gtk::Frame());
-
-    Gtk::VBox *cgVBox = Gtk::manage(new Gtk::VBox());
-    cgVBox->set_spacing(2);
-
-
-    customOutProfile = Gtk::manage(new Gtk::CheckButton((M("TP_GAMMA_CUSTOM"))));
-    customOutProfile->set_active(false);
-    cgFrame->set_label_widget(*customOutProfile);
-
-
-    //primaries
-    primariesHBox = Gtk::manage(new Gtk::HBox());
-
-    Gtk::Label* prilab = Gtk::manage(new Gtk::Label(M("TP_GAMMA_PRIM")));
-
-    primariesHBox->pack_start(*prilab, Gtk::PACK_SHRINK);
-    primaries = Gtk::manage(new MyComboBoxText());
-    primariesHBox->pack_start(*primaries, Gtk::PACK_EXPAND_WIDGET);
-    cgVBox->pack_start(*primariesHBox, Gtk::PACK_EXPAND_WIDGET);
-    primaries->append(M("TP_GAMMA_PRIM_ACESP0"));
-    primaries->append(M("TP_GAMMA_PRIM_ACESP1"));
-    primaries->append(M("TP_GAMMA_PRIM_ADOBE"));
-    primaries->append(M("TP_GAMMA_PRIM_PROPH"));
-    primaries->append(M("TP_GAMMA_PRIM_REC2020"));
-    primaries->append(M("TP_GAMMA_PRIM_SRGB"));
-    primaries->append(M("TP_GAMMA_PRIM_WIDEG"));
-    primaries->append(M("TP_GAMMA_PRIM_BEST"));
-    primaries->append(M("TP_GAMMA_PRIM_BETA"));
-    primaries->append(M("TP_GAMMA_PRIM_BRUCE"));
-    primaries->append(M("TP_GAMMA_PRIM_FREE"));
-    primaries->set_active(5);
-
-    primariesVBox = Gtk::manage(new Gtk::VBox());
-    priGreenHBox = Gtk::manage(new Gtk::HBox());
-    priBlueHBox = Gtk::manage(new Gtk::HBox());
-    priRedHBox = Gtk::manage(new Gtk::HBox());
-
-    Gtk::Image* gamuts0 =  Gtk::manage(new RTImage("rt-logo-tiny.png"));
-    Gtk::Image* gamutl0 =  Gtk::manage(new RTImage("rt-logo-small.png"));
-    Gtk::Image* gamuts1 =  Gtk::manage(new RTImage("rt-logo-tiny.png"));
-    Gtk::Image* gamutl1 =  Gtk::manage(new RTImage("rt-logo-small.png"));
-    Gtk::Image* gamuts2 =  Gtk::manage(new RTImage("rt-logo-tiny.png"));
-    Gtk::Image* gamutl2 =  Gtk::manage(new RTImage("rt-logo-small.png"));
-    Gtk::Image* gamuts3 =  Gtk::manage(new RTImage("rt-logo-tiny.png"));
-    Gtk::Image* gamutl3 =  Gtk::manage(new RTImage("rt-logo-small.png"));
-    Gtk::Image* gamuts4 =  Gtk::manage(new RTImage("rt-logo-tiny.png"));
-    Gtk::Image* gamutl4 =  Gtk::manage(new RTImage("rt-logo-small.png"));
-    Gtk::Image* gamuts5 =  Gtk::manage(new RTImage("rt-logo-tiny.png"));
-    Gtk::Image* gamutl5 =  Gtk::manage(new RTImage("rt-logo-small.png"));
-
-    primariesRedX = Gtk::manage(new Adjuster(M("TP_GAMMA_PRIM_REDX"), 0.6300, 0.7350, 0.0001, 0.6400, gamuts0, gamutl0));
-    primariesRedY = Gtk::manage(new Adjuster(M("TP_GAMMA_PRIM_REDY"), 0.2650, 0.3350, 0.0001, 0.3300, gamutl1, gamuts1));
-    primariesGreenX = Gtk::manage(new Adjuster(M("TP_GAMMA_PRIM_GREX"), 0.0000, 0.3100, 0.0001, 0.3000, gamutl2, gamuts2));
-    primariesGreenY = Gtk::manage(new Adjuster(M("TP_GAMMA_PRIM_GREY"), 0.5900, 1.0000, 0.0001, 0.6000, gamuts3, gamutl3));
-    primariesBlueX = Gtk::manage(new Adjuster(M("TP_GAMMA_PRIM_BLUX"), 0.0001, 0.1600, 0.0001, 0.1500, gamutl4, gamuts4));
-    primariesBlueY = Gtk::manage(new Adjuster(M("TP_GAMMA_PRIM_BLUY"), -0.0700, 0.0700, 0.0001, 0.060, gamutl5, gamuts5));
-
-    priRedHBox->pack_start(*primariesRedX,Gtk::PACK_EXPAND_WIDGET, 4);
-    priRedHBox->pack_start(*primariesRedY,Gtk::PACK_EXPAND_WIDGET, 4);
-    primariesVBox->pack_start(*priRedHBox,Gtk::PACK_EXPAND_WIDGET, 4);
-
-    priGreenHBox->pack_start(*primariesGreenX, Gtk::PACK_EXPAND_WIDGET, 4);
-    priGreenHBox->pack_start(*primariesGreenY, Gtk::PACK_EXPAND_WIDGET, 4);
-    primariesVBox->pack_start(*priGreenHBox, Gtk::PACK_EXPAND_WIDGET, 4);
-
-    priBlueHBox->pack_start(*primariesBlueX, Gtk::PACK_EXPAND_WIDGET, 4);
-    priBlueHBox->pack_start(*primariesBlueY, Gtk::PACK_EXPAND_WIDGET, 4);
-    primariesVBox->pack_start(*priBlueHBox,Gtk::PACK_EXPAND_WIDGET, 4);
-
-    cgVBox->pack_start(*primariesVBox, Gtk::PACK_SHRINK);
-
-    primariesRedX->setAdjusterListener(this);
-    primariesRedY->setAdjusterListener(this);
-    primariesGreenX->setAdjusterListener(this);
-    primariesGreenY->setAdjusterListener(this);
-    primariesBlueX->setAdjusterListener(this);
-    primariesBlueY->setAdjusterListener(this);
-
-    //sliders gampos and slpos
-    cgVBox->pack_start(*oTRCPresetsHBox, Gtk::PACK_EXPAND_WIDGET);
-    oTRCHBox = Gtk::manage(new Gtk::HBox());
-
-    oGamma = Gtk::manage(new Adjuster(M("TP_GAMMA_CURV"), 1, 3.5, 0.00001, 2.4));
-    oGamma->setAdjusterListener(this);
-
-    if (oGamma->delay < options.adjusterMaxDelay) {
-        oGamma->delay = options.adjusterMaxDelay;
-    }
-
-    oGamma->show();
-
-    oSlope = Gtk::manage(new Adjuster(M("TP_GAMMA_SLOP"), 0, 15, 0.00001, 12.92310));
-    oSlope->setAdjusterListener(this);
-
-    if (oSlope->delay < options.adjusterMaxDelay) {
-        oSlope->delay = options.adjusterMaxDelay;
-    }
-
-    oSlope->show();
-    oTRCHBox->pack_start(*oGamma, Gtk::PACK_EXPAND_WIDGET, 4); //gamma
-    oTRCHBox->pack_start(*oSlope, Gtk::PACK_EXPAND_WIDGET, 4); //slope
-    cgVBox->pack_start(*oTRCHBox, Gtk::PACK_EXPAND_WIDGET, 4);
-
-    //V2  or V4 profiles
-    profHBox = Gtk::manage(new Gtk::HBox());
-    Gtk::Label* proflab = Gtk::manage(new Gtk::Label(M("TP_GAMMA_PROF") + ":"));
-
-    profHBox->pack_start(*proflab, Gtk::PACK_SHRINK);
-    wprofile = Gtk::manage(new MyComboBoxText());
-    profHBox->pack_start(*wprofile, Gtk::PACK_EXPAND_WIDGET);
-
-//  fgVBox->pack_start(*profHBox, Gtk::PACK_EXPAND_WIDGET);
-    wprofile->append(M("TP_GAMMA_PROF_NONE"));
-    wprofile->append(M("TP_GAMMA_PROF_V2"));
-    wprofile->append(M("TP_GAMMA_PROF_V4"));
-
-    wprofile->set_active(0);
-
-    //temperature
-    oIllHBox = Gtk::manage(new Gtk::HBox());
-
-    Gtk::Label* templab = Gtk::manage(new Gtk::Label(M("TP_GAMMA_TEMP") + ":"));
-
-    oIllHBox->pack_start(*templab, Gtk::PACK_SHRINK);
-    oIlluminant = Gtk::manage(new MyComboBoxText());
-    oIllHBox->pack_start(*oIlluminant, Gtk::PACK_EXPAND_WIDGET);
-    cgVBox->pack_start(*oIllHBox, Gtk::PACK_EXPAND_WIDGET);
-    oIlluminant->append(M("TP_GAMMA_TEMP_DEF"));
-    oIlluminant->append(M("TP_GAMMA_TEMP_41"));
-    oIlluminant->append(M("TP_GAMMA_TEMP_50"));
-    oIlluminant->append(M("TP_GAMMA_TEMP_55"));
-    oIlluminant->append(M("TP_GAMMA_TEMP_60"));
-    oIlluminant->append(M("TP_GAMMA_TEMP_65"));
-    oIlluminant->append(M("TP_GAMMA_TEMP_80"));
-    oIlluminant->append(M("TP_GAMMA_TEMP_INC"));
-
-    oIlluminant->set_active(0);
-    oIlluminant->set_tooltip_text(M("TP_GAMMA_TEMP_TOOLTIP"));
-
-    cgVBox->pack_start(*profHBox, Gtk::PACK_EXPAND_WIDGET);
-
-    cgFrame->add(*cgVBox);
-    oProfVBox->pack_start(*cgFrame, Gtk::PACK_EXPAND_WIDGET);
-
     oFrame->add(*oProfVBox);
+
     pack_start(*oFrame, Gtk::PACK_EXPAND_WIDGET);
 
     // ---------------------------- Output gamma list entries
@@ -472,15 +306,10 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wprofnamesconn = wProfNames->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wpChanged));
     oprofnamesconn = oProfNames->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::opChanged));
     orendintentconn = oRendIntent->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::oiChanged));
-    otrcconn = oTRCPresets->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::gpChanged));
     dcpillconn = dcpIll->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::dcpIlluminantChanged));
-    primariesconn = primaries->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wprimariesChanged));
-    wprofileconn = wprofile->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wprofileChanged));
-    oillconn = oIlluminant->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wtempChanged));
     wtrcconn = wTRC->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wtrcinChanged));
 
     obpcconn = obpc->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::oBPCChanged));
-    coprofconn = customOutProfile->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::GamChanged));
     tcurveconn = ckbToneCurve->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::toneCurveChanged));
     ltableconn = ckbApplyLookTable->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::applyLookTableChanged));
     beoconn = ckbApplyBaselineExposureOffset->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::applyBaselineExposureOffsetChanged));
@@ -656,7 +485,6 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     ConnectionBlocker obpcconn_(obpcconn);
     ConnectionBlocker ipc_(ipc);
-    ConnectionBlocker coprofconn_(coprofconn);
     ConnectionBlocker tcurveconn_(tcurveconn);
     ConnectionBlocker ltableconn_(ltableconn);
     ConnectionBlocker beoconn_(beoconn);
@@ -664,11 +492,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     ConnectionBlocker wprofnamesconn_(wprofnamesconn);
     ConnectionBlocker oprofnamesconn_(oprofnamesconn);
     ConnectionBlocker orendintentconn_(orendintentconn);
-    ConnectionBlocker otrcconn_(otrcconn);
     ConnectionBlocker dcpillconn_(dcpillconn);
-    ConnectionBlocker primariesconn_(primariesconn);
-    ConnectionBlocker wprofileconn_(wprofileconn);
-    ConnectionBlocker oillconn_(oillconn);
 
     if (pp->icm.inputProfile.substr(0, 5) != "file:" && !ipDialog->get_filename().empty()) {
         ipDialog->set_filename(pp->icm.inputProfile);
@@ -703,57 +527,6 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     }
 
     wProfNames->set_active_text(pp->icm.workingProfile);
-    oTRCPresets->set_active_text(pp->icm.outputGammaPreset);
-
-
-    if (pp->icm.outputPimariesPreset == "ACES-AP0") {
-        primaries->set_active(0);
-    } else if (pp->icm.outputPimariesPreset == "ACES-AP1") {
-        primaries->set_active(1);
-    } else if (pp->icm.outputPimariesPreset == "Adobe") {
-        primaries->set_active(2);
-    } else if (pp->icm.outputPimariesPreset == "ProPhoto") {
-        primaries->set_active(3);
-    } else if (pp->icm.outputPimariesPreset == "Rec2020") {
-        primaries->set_active(4);
-    } else if (pp->icm.outputPimariesPreset == "sRGB") {
-        primaries->set_active(5);
-    } else if (pp->icm.outputPimariesPreset == "Widegamut") {
-        primaries->set_active(6);
-    } else if (pp->icm.outputPimariesPreset == "BestRGB") {
-        primaries->set_active(7);
-    } else if (pp->icm.outputPimariesPreset == "BetaRGB") {
-        primaries->set_active(8);
-    } else if (pp->icm.outputPimariesPreset == "BruceRGB") {
-        primaries->set_active(9);
-    } else if (pp->icm.outputPimariesPreset == "pfree") {
-        primaries->set_active(10);
-    }
-
-    if (primaries->get_active_row_number() == 10) {
-        primariesVBox->set_sensitive(true);
-    } else {
-        primariesVBox->set_sensitive(false);
-    }
-
-
-    if (pp->icm.outputIlluminant == "DEF") {
-        oIlluminant->set_active(0);
-    } else if (pp->icm.outputIlluminant == "D41") {
-        oIlluminant->set_active(1);
-    } else if (pp->icm.outputIlluminant == "D50") {
-        oIlluminant->set_active(2);
-    } else if (pp->icm.outputIlluminant == "D55") {
-        oIlluminant->set_active(3);
-    } else if (pp->icm.outputIlluminant == "D60") {
-        oIlluminant->set_active(4);
-    } else if (pp->icm.outputIlluminant == "D65") {
-        oIlluminant->set_active(5);
-    } else if (pp->icm.outputIlluminant == "D80") {
-        oIlluminant->set_active(6);
-    } else if (pp->icm.outputIlluminant == "stdA") {
-        oIlluminant->set_active(7);
-    }
 
     if (pp->icm.workingTRC == "none") {
         wTRC->set_active(0);
@@ -761,23 +534,6 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wTRC->set_active(1);
     }
 
-    if (pp->icm.outputProfileVersion == "none") {
-        wprofile->set_active(0);
-    } else if (pp->icm.outputProfileVersion == "v2") {
-        wprofile->set_active(1);
-    } else if (pp->icm.outputProfileVersion == "v4") {
-        wprofile->set_active(2);
-    }
-
-
-    if (primaries->get_active_row_number() == 10) {
-        wprofile->set_active(2);
-    }
-
-    gpChanged();
-    wprofileChanged();
-    wtempChanged();
-    wprimariesChanged();
     wtrcinChanged();
 
     if (pp->icm.outputProfile == ColorManagementParams::NoICMString) {
@@ -802,40 +558,8 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     ckbApplyHueSatMap->set_active(pp->icm.applyHueSatMap);
     lastApplyHueSatMap = pp->icm.applyHueSatMap;
 
-    customOutProfile->set_active(pp->icm.customOutputProfile);
-    lastCustomOutputProfile = pp->icm.customOutputProfile;
-
-    if (!batchMode) {
-        oProfNames->set_sensitive(/*wgamma->get_active_row_number() == 0 &&*/ !pp->icm.customOutputProfile); //"default"
-        oTRCPresets->set_sensitive(pp->icm.customOutputProfile);
-        oGamma->set_sensitive(pp->icm.customOutputProfile);
-        oGamma->set_sensitive(pp->icm.outputGammaPreset == "Custom");
-        oSlope->set_sensitive(pp->icm.customOutputProfile);
-        oSlope->set_sensitive(pp->icm.outputGammaPreset == "Custom");
-        updateRenderingIntent(pp->icm.outputProfile);
-        primaries->set_sensitive(pp->icm.customOutputProfile);
-        wprofile->set_sensitive(pp->icm.customOutputProfile);
-
-        if (wprofile->get_active_row_number() == 2)  {
-            oIlluminant->set_sensitive(pp->icm.customOutputProfile);
-        } else {
-            oIlluminant->set_sensitive(false);
-        }
-
-        //  wtemp->set_sensitive(pp->icm.freegamma);
-
-    }
-
-    oGamma->setValue(pp->icm.workingTRCGamma);
-    oSlope->setValue(pp->icm.workingTRCSlope);
-    primariesRedX->setValue(pp->icm.redPrimaryX);
-    primariesRedY->setValue(pp->icm.redPrimaryY);
-    primariesGreenX->setValue(pp->icm.greenPrimaryX);
-    primariesGreenY->setValue(pp->icm.greenPrimaryY);
-    primariesBlueX->setValue(pp->icm.bluePrimaryX);
-    primariesBlueY->setValue(pp->icm.bluePrimaryY);
-    wGamma->setValue(pp->icm.outputGamma);
-    wSlope->setValue(pp->icm.outputSlope);
+    wGamma->setValue(pp->icm.workingTRCGamma);
+    wSlope->setValue(pp->icm.workingTRCSlope);
 
     if (pedited) {
         iunchanged->set_active(!pedited->icm.inputProfile);
@@ -844,7 +568,6 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         ckbApplyLookTable->set_inconsistent(!pedited->icm.applyLookTable);
         ckbApplyBaselineExposureOffset->set_inconsistent(!pedited->icm.applyBaselineExposureOffset);
         ckbApplyHueSatMap->set_inconsistent(!pedited->icm.applyHueSatMap);
-        customOutProfile->set_inconsistent(!pedited->icm.customOutputProfile);
 
         if (!pedited->icm.workingProfile) {
             wProfNames->set_active_text(M("GENERAL_UNCHANGED"));
@@ -862,36 +585,12 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             dcpIll->set_active_text(M("GENERAL_UNCHANGED"));
         }
 
-        if (!pedited->icm.outputGammaPreset) {
-            oTRCPresets->set_active_text(M("GENERAL_UNCHANGED"));
-        }
-
-        if (!pedited->icm.outputPrimariesPreset) {
-            primaries->set_active_text(M("GENERAL_UNCHANGED"));
-        }
-
-        if (!pedited->icm.outputProfileVersion) {
-            wprofile->set_active_text(M("GENERAL_UNCHANGED"));
-        }
-
-        if (!pedited->icm.outputIlluminant) {
-            oIlluminant->set_active_text(M("GENERAL_UNCHANGED"));
-        }
-
         if (!pedited->icm.workingTRC) {
             wTRC->set_active_text(M("GENERAL_UNCHANGED"));
         }
 
-        oGamma->setEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
-        oSlope->setEditedState(pedited->icm.workingTRCSlope  ? Edited : UnEdited);
-        primariesRedX->setEditedState(pedited->icm.redPrimaryX  ? Edited : UnEdited);
-        primariesRedY->setEditedState(pedited->icm.redPrimaryY  ? Edited : UnEdited);
-        primariesGreenX->setEditedState(pedited->icm.greenPrimaryX  ? Edited : UnEdited);
-        primariesGreenY->setEditedState(pedited->icm.greenPrimaryY  ? Edited : UnEdited);
-        primariesBlueX->setEditedState(pedited->icm.bluePrimaryX  ? Edited : UnEdited);
-        primariesBlueY->setEditedState(pedited->icm.bluePrimaryY  ? Edited : UnEdited);
-        wGamma->setEditedState(pedited->icm.outputGamma ? Edited : UnEdited);
-        wSlope->setEditedState(pedited->icm.outputSlope  ? Edited : UnEdited);
+        wGamma->setEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
+        wSlope->setEditedState(pedited->icm.workingTRCSlope  ? Edited : UnEdited);
 
     }
 
@@ -920,10 +619,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     }
 
     pp->icm.workingProfile = wProfNames->get_active_text();
-    pp->icm.outputGammaPreset = oTRCPresets->get_active_text();
     pp->icm.dcpIlluminant = rtengine::max<int>(dcpIll->get_active_row_number(), 0);
-    pp->icm.outputPimariesPreset = primaries->get_active_text();
-    pp->icm.outputIlluminant = oIlluminant->get_active_text();
     pp->icm.workingTRC = wTRC->get_active_text();
 
     if (oProfNames->get_active_text() == M("TP_ICM_NOICM")) {
@@ -940,78 +636,19 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pp->icm.outputIntent  = rtengine::RI_RELATIVE;
     }
 
-    if (wprofile->get_active_row_number() == 0) {
-        pp->icm.outputProfileVersion = "none";
-    } else if (wprofile->get_active_row_number() == 1) {
-        pp->icm.outputProfileVersion = "v2";
-    } else if (wprofile->get_active_row_number() == 2) {
-        pp->icm.outputProfileVersion = "v4";
-    }
-
-    if (primaries->get_active_row_number() == 0) {
-        pp->icm.outputPimariesPreset = "ACES-AP0";
-    } else if (primaries->get_active_row_number() == 1) {
-        pp->icm.outputPimariesPreset = "ACES-AP1";
-    } else if (primaries->get_active_row_number() == 2) {
-        pp->icm.outputPimariesPreset = "Adobe";
-    } else if (primaries->get_active_row_number() == 3) {
-        pp->icm.outputPimariesPreset = "ProPhoto";
-    } else if (primaries->get_active_row_number() == 4) {
-        pp->icm.outputPimariesPreset = "Rec2020";
-    } else if (primaries->get_active_row_number() == 5) {
-        pp->icm.outputPimariesPreset = "sRGB";
-    } else if (primaries->get_active_row_number() == 6) {
-        pp->icm.outputPimariesPreset = "Widegamut";
-    } else if (primaries->get_active_row_number() == 7) {
-        pp->icm.outputPimariesPreset = "BestRGB";
-    } else if (primaries->get_active_row_number() == 8) {
-        pp->icm.outputPimariesPreset = "BetaRGB";
-    } else if (primaries->get_active_row_number() == 9) {
-        pp->icm.outputPimariesPreset = "BruceRGB";
-    } else if (primaries->get_active_row_number() == 10) {
-        pp->icm.outputPimariesPreset = "pfree";
-    }
-
-    if (oIlluminant->get_active_row_number() == 0) {
-        pp->icm.outputIlluminant = "DEF";
-    } else if (oIlluminant->get_active_row_number() == 1) {
-        pp->icm.outputIlluminant = "D41";
-    } else if (oIlluminant->get_active_row_number() == 2) {
-        pp->icm.outputIlluminant = "D50";
-    } else if (oIlluminant->get_active_row_number() == 3) {
-        pp->icm.outputIlluminant = "D55";
-    } else if (oIlluminant->get_active_row_number() == 4) {
-        pp->icm.outputIlluminant = "D60";
-    } else if (oIlluminant->get_active_row_number() == 5) {
-        pp->icm.outputIlluminant = "D65";
-    } else if (oIlluminant->get_active_row_number() == 6) {
-        pp->icm.outputIlluminant = "D80";
-    } else if (oIlluminant->get_active_row_number() == 7) {
-        pp->icm.outputIlluminant = "stdA";
-    }
-
     if (wTRC->get_active_row_number() == 0) {
         pp->icm.workingTRC = "none";
     } else if (wTRC->get_active_row_number() == 1) {
         pp->icm.workingTRC = "Custom";
     }
 
-    pp->icm.customOutputProfile = customOutProfile->get_active();
     pp->icm.toneCurve = ckbToneCurve->get_active();
     pp->icm.applyLookTable = ckbApplyLookTable->get_active();
     pp->icm.applyBaselineExposureOffset = ckbApplyBaselineExposureOffset->get_active();
     pp->icm.applyHueSatMap = ckbApplyHueSatMap->get_active();
-    pp->icm.workingTRCGamma = (double) oGamma->getValue();
-    pp->icm.workingTRCSlope = (double) oSlope->getValue();
     pp->icm.outputBPC = obpc->get_active();
-    pp->icm.redPrimaryX = (double) primariesRedX->getValue();
-    pp->icm.redPrimaryY = (double) primariesRedY->getValue();
-    pp->icm.greenPrimaryX = (double) primariesGreenX->getValue();
-    pp->icm.greenPrimaryY = (double) primariesGreenY->getValue();
-    pp->icm.bluePrimaryX = (double) primariesBlueX->getValue();
-    pp->icm.bluePrimaryY = (double) primariesBlueY->getValue();
-    pp->icm.outputGamma = (double) wGamma->getValue();
-    pp->icm.outputSlope = (double) wSlope->getValue();
+    pp->icm.workingTRCGamma = (double) wGamma->getValue();
+    pp->icm.workingTRCSlope = (double) wSlope->getValue();
 
     if (pedited) {
         pedited->icm.inputProfile = !iunchanged->get_active();
@@ -1024,98 +661,30 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.applyLookTable = !ckbApplyLookTable->get_inconsistent();
         pedited->icm.applyBaselineExposureOffset = !ckbApplyBaselineExposureOffset->get_inconsistent();
         pedited->icm.applyHueSatMap = !ckbApplyHueSatMap->get_inconsistent();
-        pedited->icm.outputGammaPreset = oTRCPresets->get_active_text() != M("GENERAL_UNCHANGED");
-        pedited->icm.customOutputProfile = !customOutProfile->get_inconsistent();
-        pedited->icm.workingTRCGamma = oGamma->getEditedState();
-        pedited->icm.workingTRCSlope = oSlope->getEditedState();
-        pedited->icm.redPrimaryX = primariesRedX->getEditedState();
-        pedited->icm.redPrimaryY = primariesRedY->getEditedState();
-        pedited->icm.greenPrimaryX = primariesGreenX->getEditedState();
-        pedited->icm.greenPrimaryY = primariesGreenY->getEditedState();
-        pedited->icm.bluePrimaryX = primariesBlueX->getEditedState();
-        pedited->icm.bluePrimaryY = primariesBlueY->getEditedState();
-        pedited->icm.outputGamma = wGamma->getEditedState();
-        pedited->icm.outputSlope = wSlope->getEditedState();
-
-        pedited->icm.outputPrimariesPreset = primaries->get_active_text() != M("GENERAL_UNCHANGED");
-        pedited->icm.outputProfileVersion = wprofile->get_active_text() != M("GENERAL_UNCHANGED");
-        pedited->icm.outputIlluminant = oIlluminant->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->icm.workingTRCGamma = wGamma->getEditedState();
+        pedited->icm.workingTRCSlope = wSlope->getEditedState();
         pedited->icm.workingTRC = wTRC->get_active_text() != M("GENERAL_UNCHANGED");
     }
 }
 
 void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedited)
 {
-    oGamma->setDefault(defParams->icm.workingTRCGamma);
-    oSlope->setDefault(defParams->icm.workingTRCSlope);
-    primariesRedX->setDefault(defParams->icm.redPrimaryX);
-    primariesRedY->setDefault(defParams->icm.redPrimaryY);
-    primariesGreenX->setDefault(defParams->icm.greenPrimaryX);
-    primariesGreenY->setDefault(defParams->icm.greenPrimaryY);
-    primariesBlueX->setDefault(defParams->icm.bluePrimaryX);
-    primariesBlueY->setDefault(defParams->icm.bluePrimaryY);
-    wGamma->setDefault(defParams->icm.outputGamma);
-    wSlope->setDefault(defParams->icm.outputSlope);
+    wGamma->setDefault(defParams->icm.workingTRCGamma);
+    wSlope->setDefault(defParams->icm.workingTRCSlope);
 
     if (pedited) {
-        oGamma->setDefaultEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
-        oSlope->setDefaultEditedState(pedited->icm.workingTRCSlope ? Edited : UnEdited);
-        primariesRedX->setDefaultEditedState(pedited->icm.redPrimaryX ? Edited : UnEdited);
-        primariesRedY->setDefaultEditedState(pedited->icm.redPrimaryY ? Edited : UnEdited);
-        primariesGreenX->setDefaultEditedState(pedited->icm.greenPrimaryX ? Edited : UnEdited);
-        primariesGreenY->setDefaultEditedState(pedited->icm.greenPrimaryY ? Edited : UnEdited);
-        primariesBlueX->setDefaultEditedState(pedited->icm.bluePrimaryX ? Edited : UnEdited);
-        primariesBlueY->setDefaultEditedState(pedited->icm.bluePrimaryY ? Edited : UnEdited);
-        wGamma->setDefaultEditedState(pedited->icm.outputGamma ? Edited : UnEdited);
-        wSlope->setDefaultEditedState(pedited->icm.outputSlope ? Edited : UnEdited);
+        wGamma->setDefaultEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
+        wSlope->setDefaultEditedState(pedited->icm.workingTRCSlope ? Edited : UnEdited);
 
     } else {
-        oGamma->setDefaultEditedState(Irrelevant);
-        oSlope->setDefaultEditedState(Irrelevant);
-        primariesRedX->setDefaultEditedState(Irrelevant);
-        primariesRedY->setDefaultEditedState(Irrelevant);
-        primariesGreenX->setDefaultEditedState(Irrelevant);
-        primariesGreenY->setDefaultEditedState(Irrelevant);
-        primariesBlueX->setDefaultEditedState(Irrelevant);
-        primariesBlueY->setDefaultEditedState(Irrelevant);
         wGamma->setDefaultEditedState(Irrelevant);
         wSlope->setDefaultEditedState(Irrelevant);
 
     }
 }
 
-void ICMPanel::setAdjusterBehavior(bool gammaadd, bool slopeadd)
-{
-    oGamma->setAddMode(gammaadd);
-    oSlope->setAddMode(slopeadd);
-}
-
 void ICMPanel::adjusterChanged(Adjuster* a, double newval)
 {
-
-    if (listener && (customOutProfile->get_active() || batchMode)) {
-
-        Glib::ustring costr = Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2), newval);
-
-        if (a == oGamma) {
-            listener->panelChanged(EvGAMPOS, costr);
-        } else if (a == oSlope) {
-            listener->panelChanged(EvSLPOS, costr);
-        } else if (a == primariesRedX) {
-            listener->panelChanged(EvICMpredx, costr);
-        } else if (a == primariesRedY) {
-            listener->panelChanged(EvICMpredy, costr);
-        } else if (a == primariesGreenX) {
-            listener->panelChanged(EvICMpgrex, costr);
-        } else if (a == primariesGreenY) {
-            listener->panelChanged(EvICMpgrey, costr);
-        } else if (a == primariesBlueX) {
-            listener->panelChanged(EvICMpblux, costr);
-        } else if (a == primariesBlueY) {
-            listener->panelChanged(EvICMpbluy, costr);
-        }
-    }
-
     if (listener  || batchMode) {
         Glib::ustring costr2 = Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2), newval);
 
@@ -1130,48 +699,8 @@ void ICMPanel::adjusterChanged(Adjuster* a, double newval)
 
 void ICMPanel::wpChanged()
 {
-    if (wprofile->get_active_row_number() == 2) {
-        oIlluminant->set_sensitive(true);
-    } else {
-        oIlluminant->set_sensitive(false);
-    }
-
     if (listener) {
         listener->panelChanged(EvWProfile, wProfNames->get_active_text());
-    }
-}
-
-void ICMPanel::wprimariesChanged()
-{
-    if (primaries->get_active_row_number() == 10) {
-        primariesVBox->set_sensitive(true);
-    } else {
-        primariesVBox->set_sensitive(false);
-    }
-
-    if (primaries->get_active_row_number() == 10) {
-        wprofile->set_active(2);
-    }
-
-    if (listener) {
-        listener->panelChanged(EvICMprimariMethod, primaries->get_active_text());
-    }
-}
-
-void ICMPanel::wtempChanged()
-{
-    if (wprofile->get_active_row_number() == 2) {
-        oIlluminant->set_sensitive(true);
-    } else {
-        oIlluminant->set_sensitive(false);
-    }
-
-    if (oIlluminant->get_active_row_number() != 0) {
-        wprofile->set_active(2);
-    }
-
-    if (listener) {
-        listener->panelChanged(EvICMtempMethod, oIlluminant->get_active_text());
     }
 }
 
@@ -1188,40 +717,6 @@ void ICMPanel::wtrcinChanged()
 
     if (listener) {
         listener->panelChanged(EvICMtrcinMethod, wTRC->get_active_text());
-    }
-}
-
-void ICMPanel::wprofileChanged()
-{
-    if (wprofile->get_active_row_number() == 2) {
-        oIlluminant->set_sensitive(true);
-    } else {
-        oIlluminant->set_sensitive(false);
-    }
-
-    if (oIlluminant->get_active_row_number() != 0) {
-        wprofile->set_active(2);
-    }
-
-    if (listener) {
-        listener->panelChanged(EvICMprofileMethod, wprofile->get_active_text());
-
-    }
-}
-
-void ICMPanel::gpChanged()
-{
-    if (oTRCPresets->get_active_row_number() == 0) {
-        oGamma->set_sensitive(true);
-        oSlope->set_sensitive(true);
-    } else {
-        oGamma->set_sensitive(false);
-        oSlope->set_sensitive(false);
-    }
-
-    if (listener) {
-        listener->panelChanged(EvGAMMA, oTRCPresets->get_active_text());
-        oProfNames->set_sensitive(oTRCPresets->get_active_row_number() == 0);
     }
 }
 
@@ -1336,19 +831,6 @@ void ICMPanel::applyHueSatMapChanged()
     }
 }
 
-void ICMPanel::TRCChanged(double gamm, double slo)
-{
-    GThreadLock lock;
-    disableListener();
-    setEnabled(true);
-    oGamma->setValue(gamm);
-    oSlope->setValue(slo);
-    oGamma->setDefault(gamm);
-    oSlope->setDefault(slo);
-    enableListener();
-}
-
-
 void ICMPanel::ipChanged()
 {
 
@@ -1373,111 +855,6 @@ void ICMPanel::ipChanged()
     }
 
     oldip = profname;
-}
-
-void ICMPanel::GamChanged()
-{
-
-    if (wprofile->get_active_row_number() == 2) {
-        oIlluminant->set_sensitive(true);
-    } else {
-        oIlluminant->set_sensitive(false);
-    }
-
-    if (multiImage) {
-        if (customOutProfile->get_inconsistent()) {
-            customOutProfile->set_inconsistent(false);
-            coprofconn.block(true);
-            customOutProfile->set_active(false);
-            coprofconn.block(false);
-        } else if (lastCustomOutputProfile) {
-            customOutProfile->set_inconsistent(true);
-        }
-
-        lastCustomOutputProfile = customOutProfile->get_active();
-    }
-
-    if (listener) {
-        if (customOutProfile->get_inconsistent()) {
-            listener->panelChanged(EvGAMFREE, M("GENERAL_UNCHANGED"));
-        } else if (customOutProfile->get_active()) {
-            listener->panelChanged(EvGAMFREE, M("GENERAL_ENABLED"));
-
-            if (!batchMode) {
-                oProfNames->set_sensitive(false);//disabled choice
-                oTRCPresets->show();
-                oGamma->show();
-                oSlope->show();
-                primaries->show();
-                wprofile->show();
-                oIlluminant->show();
-
-                oTRCPresets->set_sensitive(true);
-                oGamma->set_sensitive(true);
-                oSlope->set_sensitive(true);
-                primaries->set_sensitive(true);
-                wprofile->set_sensitive(true);
-
-                //wtemp->set_sensitive(true);
-                if (wprofile->get_active_row_number() == 2) {
-                    oIlluminant->set_sensitive(true);
-                }
-                primariesHBox->show();
-                primariesVBox->show();
-
-                primariesHBox->set_sensitive(true);
-                if (primaries->get_active_row_number() == 10) {
-                    primariesVBox->set_sensitive(true);
-                } else {
-                    primariesVBox->set_sensitive(false);
-                }
-                oTRCPresetsHBox->show();
-                profHBox->show();
-                oIllHBox->show();
-
-                oTRCPresetsHBox->set_sensitive(true);
-                profHBox->set_sensitive(true);
-                oIllHBox->set_sensitive(true);
-            }
-        } else {
-            listener->panelChanged(EvGAMFREE, M("GENERAL_DISABLED"));
-
-            if (!batchMode) {
-                oProfNames->set_sensitive(true);
-                oTRCPresets->hide();
-                oGamma->hide();
-                oSlope->hide();
-                primaries->hide();
-                wprofile->hide();
-                oIlluminant->hide();
-
-                oTRCPresets->set_sensitive(false);
-                oGamma->set_sensitive(false);
-                oSlope->set_sensitive(false);
-                primaries->set_sensitive(false);
-                wprofile->set_sensitive(false);
-
-                if (wprofile->get_active_row_number() != 2) {
-                    oIlluminant->set_sensitive(false);
-                }
-                primariesHBox->hide();
-                primariesVBox->hide();
-
-                oTRCPresetsHBox->hide();
-                profHBox->hide();
-                oIllHBox->hide();
-
-                primariesHBox->set_sensitive(false);
-                primariesVBox->set_sensitive(false);
-
-                oTRCPresetsHBox->set_sensitive(false);
-                profHBox->set_sensitive(false);
-                oIllHBox->set_sensitive(false);
-
-
-            }
-        }
-    }
 }
 
 void ICMPanel::opChanged()
@@ -1650,14 +1027,8 @@ void ICMPanel::setBatchMode(bool batchMode)
     oRendIntent->addEntry("unchanged-22.png", M("GENERAL_UNCHANGED"));
     oRendIntent->show();
     wProfNames->append(M("GENERAL_UNCHANGED"));
-    oTRCPresets->append(M("GENERAL_UNCHANGED"));
-    primaries->append(M("GENERAL_UNCHANGED"));
-    wprofile->append(M("GENERAL_UNCHANGED"));
-    oIlluminant->append(M("GENERAL_UNCHANGED"));
     wTRC->append(M("GENERAL_UNCHANGED"));
     dcpIll->append(M("GENERAL_UNCHANGED"));
-    oGamma->showEditedCB();
-    oSlope->showEditedCB();
     wGamma->showEditedCB();
     wSlope->showEditedCB();
 }

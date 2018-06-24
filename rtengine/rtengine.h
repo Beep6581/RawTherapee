@@ -351,13 +351,6 @@ public :
     virtual void WBChanged (double temp, double green) = 0;
 };
 
-class ICMListener
-{
-public :
-    virtual ~ICMListener() = default;
-    virtual void TRCChanged (double gamm, double slo) = 0;
-};
-
 class FrameCountListener
 {
 public :
@@ -479,7 +472,6 @@ public:
     virtual void        setFrameCountListener   (FrameCountListener* l) = 0;
     virtual void        setAutoBWListener       (AutoBWListener* l) = 0;
     virtual void        setAutoWBListener       (AutoWBListener* l) = 0;
-    virtual void        setICMListener  	    (ICMListener* l) = 0;
     virtual void        setAutoColorTonListener (AutoColorTonListener* l) = 0;
     virtual void        setAutoChromaListener   (AutoChromaListener* l) = 0;
     virtual void        setRetinexListener      (RetinexListener* l) = 0;

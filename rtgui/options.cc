@@ -198,6 +198,9 @@ void Options::updatePaths()
         lastBWCurvesDir = preferredPath;
     }
 
+    if (lastICCProfCreatorDir.empty() || !Glib::file_test(lastICCProfCreatorDir, Glib::FILE_TEST_EXISTS) || !Glib::file_test(lastICCProfCreatorDir, Glib::FILE_TEST_IS_DIR)) {
+        lastICCProfCreatorDir = preferredPath;
+    }
 }
 
 Glib::ustring Options::getPreferredProfilePath()
@@ -440,6 +443,19 @@ void Options::setDefaults()
     menuGroupProfileOperations = true;
     menuGroupExtProg = true;
 
+    ICCPC_primariesPreset = "sRGB",
+    ICCPC_redPrimaryX = 0.6400;
+    ICCPC_redPrimaryY = 0.3300;
+    ICCPC_greenPrimaryX = 0.3000;
+    ICCPC_greenPrimaryY = 0.6000;
+    ICCPC_bluePrimaryX = 0.1500;
+    ICCPC_bluePrimaryY = 0.0600;
+    ICCPC_gammaPreset = "Custom";
+    ICCPC_gamma = 2.4;
+    ICCPC_slope = 12.92;
+    ICCPC_profileVersion = "v4";
+    ICCPC_illuminant = "DEF";
+
     fastexport_bypass_sharpening         = true;
     fastexport_bypass_sharpenEdge        = true;
     fastexport_bypass_sharpenMicro       = true;
@@ -466,7 +482,6 @@ void Options::setDefaults()
     fastexport_icm_output_profile        = "RT_sRGB";
     fastexport_icm_outputIntent          = rtengine::RI_RELATIVE;
     fastexport_icm_outputBPC             = true;
-    fastexport_icm_custom_output_profile = "Custom";
     fastexport_resize_enabled            = true;
     fastexport_resize_scale              = 1;
     fastexport_resize_appliesTo          = "Cropped area";
@@ -588,6 +603,7 @@ void Options::setDefaults()
     lastProfilingReferenceDir = "";
     lastBWCurvesDir = "";
     lastLensProfileDir = "";
+    lastICCProfCreatorDir = "";
     gimpPluginShowInfoDialog = true;
     maxRecentFolders = 15;
     rtSettings.lensfunDbDirectory = ""; // set also in main.cc and main-cli.cc
@@ -1473,6 +1489,14 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.bruce = keyFile.get_string("Color Management", "Bruce");
                 }
 
+                if (keyFile.has_key("Color Management", "ACES-AP0")) {
+                    rtSettings.ACESp0 = keyFile.get_string("Color Management", "ACES-AP0");
+                }
+
+                if (keyFile.has_key("Color Management", "ACES-AP1")) {
+                    rtSettings.ACESp1 = keyFile.get_string("Color Management", "ACES-AP1");
+                }
+
                 if (keyFile.has_key("Color Management", "GamutLch")) {
                     rtSettings.gamutLch = keyFile.get_boolean("Color Management", "GamutLch");
                 }
@@ -1495,6 +1519,45 @@ void Options::readFromFile(Glib::ustring fname)
 
                 //if( keyFile.has_key ("Color Management", "Ciebadpixgauss")) rtSettings.ciebadpixgauss = keyFile.get_boolean("Color Management", "Ciebadpixgauss");
 
+            }
+
+            if (keyFile.has_group("ICC Profile Creator")) {
+                if (keyFile.has_key("ICC Profile Creator", "PimariesPreset")) {
+                    ICCPC_primariesPreset = keyFile.get_string("ICC Profile Creator", "PimariesPreset");
+                }
+                if (keyFile.has_key("ICC Profile Creator", "RedPrimaryX")) {
+                    ICCPC_redPrimaryX = keyFile.get_double("ICC Profile Creator", "RedPrimaryX");
+                }
+                if (keyFile.has_key("ICC Profile Creator", "RedPrimaryY")) {
+                    ICCPC_redPrimaryY = keyFile.get_double("ICC Profile Creator", "RedPrimaryY");
+                }
+                if (keyFile.has_key("ICC Profile Creator", "GreenPrimaryX")) {
+                    ICCPC_greenPrimaryX = keyFile.get_double("ICC Profile Creator", "GreenPrimaryX");
+                }
+                if (keyFile.has_key("ICC Profile Creator", "GreenPrimaryY")) {
+                    ICCPC_greenPrimaryY = keyFile.get_double("ICC Profile Creator", "GreenPrimaryY");
+                }
+                if (keyFile.has_key("ICC Profile Creator", "BluePrimaryX")) {
+                    ICCPC_bluePrimaryX = keyFile.get_double("ICC Profile Creator", "BluePrimaryX");
+                }
+                if (keyFile.has_key("ICC Profile Creator", "BluePrimaryY")) {
+                    ICCPC_bluePrimaryY = keyFile.get_double("ICC Profile Creator", "BluePrimaryY");
+                }
+                if (keyFile.has_key("ICC Profile Creator", "GammaPreset")) {
+                    ICCPC_gammaPreset = keyFile.get_string("ICC Profile Creator", "GammaPreset");
+                }
+                if (keyFile.has_key("ICC Profile Creator", "Gamma")) {
+                    ICCPC_gamma = keyFile.get_double("ICC Profile Creator", "Gamma");
+                }
+                if (keyFile.has_key("ICC Profile Creator", "Slope")) {
+                    ICCPC_slope = keyFile.get_double("ICC Profile Creator", "Slope");
+                }
+                if (keyFile.has_key("ICC Profile Creator", "ProfileVersion")) {
+                    ICCPC_profileVersion = keyFile.get_string("ICC Profile Creator", "ProfileVersion");
+                }
+                if (keyFile.has_key("ICC Profile Creator", "Illuminant")) {
+                    ICCPC_illuminant = keyFile.get_string("ICC Profile Creator", "Illuminant");
+                }
             }
 
             if (keyFile.has_group("Batch Processing")) {
@@ -1641,10 +1704,6 @@ void Options::readFromFile(Glib::ustring fname)
                     fastexport_icm_outputBPC = keyFile.get_boolean("Fast Export", "fastexport_icm_output_bpc");
                 }
 
-                if (keyFile.has_key("Fast Export", "fastexport_icm_gamma")) {
-                    fastexport_icm_custom_output_profile = keyFile.get_string("Fast Export", "fastexport_icm_gamma");
-                }
-
                 if (keyFile.has_key("Fast Export", "fastexport_resize_enabled")) {
                     fastexport_resize_enabled = keyFile.get_boolean("Fast Export", "fastexport_resize_enabled");
                 }
@@ -1695,6 +1754,7 @@ void Options::readFromFile(Glib::ustring fname)
                 safeDirGet(keyFile, "Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
                 safeDirGet(keyFile, "Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
                 safeDirGet(keyFile, "Dialogs", "LastLensProfileDir", lastLensProfileDir);
+                safeDirGet(keyFile, "Dialogs", "LastICCProfCreatorDir", lastICCProfCreatorDir);
 
                 if (keyFile.has_key("Dialogs", "GimpPluginShowInfoDialog")) {
                     gimpPluginShowInfoDialog = keyFile.get_boolean("Dialogs", "GimpPluginShowInfoDialog");
@@ -1987,6 +2047,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("Color Management", "Best", rtSettings.best);
         keyFile.set_string("Color Management", "Rec2020", rtSettings.rec2020);
         keyFile.set_string("Color Management", "Bruce", rtSettings.bruce);
+        keyFile.set_string("Color Management", "ACES-AP0", rtSettings.ACESp0);
+        keyFile.set_string("Color Management", "ACES-AP1", rtSettings.ACESp1);
         keyFile.set_integer("Color Management", "WhiteBalanceSpotSize", whiteBalanceSpotSize);
         keyFile.set_boolean("Color Management", "GamutICC", rtSettings.gamutICC);
         keyFile.set_boolean("Color Management", "GamutLch", rtSettings.gamutLch);
@@ -2002,6 +2064,18 @@ void Options::saveToFile(Glib::ustring fname)
         //keyFile.set_double  ("Color Management", "Decaction", rtSettings.decaction);
         keyFile.set_string("Color Management", "ClutsDirectory", clutsDir);
 
+        keyFile.set_string("ICC Profile Creator", "PimariesPreset", ICCPC_primariesPreset);
+        keyFile.set_double("ICC Profile Creator", "RedPrimaryX", ICCPC_redPrimaryX);
+        keyFile.set_double("ICC Profile Creator", "RedPrimaryY", ICCPC_redPrimaryY);
+        keyFile.set_double("ICC Profile Creator", "GreenPrimaryX", ICCPC_greenPrimaryX);
+        keyFile.set_double("ICC Profile Creator", "GreenPrimaryY", ICCPC_greenPrimaryY);
+        keyFile.set_double("ICC Profile Creator", "BluePrimaryX", ICCPC_bluePrimaryX);
+        keyFile.set_double("ICC Profile Creator", "BluePrimaryY", ICCPC_bluePrimaryY);
+        keyFile.set_string("ICC Profile Creator", "GammaPreset", ICCPC_gammaPreset);
+        keyFile.set_double("ICC Profile Creator", "Gamma", ICCPC_gamma);
+        keyFile.set_double("ICC Profile Creator", "Slope", ICCPC_slope);
+        keyFile.set_string("ICC Profile Creator", "ProfileVersion", ICCPC_profileVersion);
+        keyFile.set_string("ICC Profile Creator", "Illuminant", ICCPC_illuminant);
 
         Glib::ArrayHandle<int> bab = baBehav;
         keyFile.set_integer_list("Batch Processing", "AdjusterBehavior", bab);
@@ -2038,7 +2112,6 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("Fast Export", "fastexport_icm_output", fastexport_icm_output_profile);
         keyFile.set_integer("Fast Export", "fastexport_icm_output_intent", fastexport_icm_outputIntent);
         keyFile.set_boolean("Fast Export", "fastexport_icm_output_bpc", fastexport_icm_outputBPC);
-        keyFile.set_string("Fast Export", "fastexport_icm_gamma", fastexport_icm_custom_output_profile);
         keyFile.set_boolean("Fast Export", "fastexport_resize_enabled", fastexport_resize_enabled);
         keyFile.set_double("Fast Export", "fastexport_resize_scale", fastexport_resize_scale);
         keyFile.set_string("Fast Export", "fastexport_resize_appliesTo", fastexport_resize_appliesTo);
@@ -2063,6 +2136,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
         keyFile.set_string("Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
         keyFile.set_string("Dialogs", "LastLensProfileDir", lastLensProfileDir);
+        keyFile.set_string("Dialogs", "LastICCProfCreatorDir", lastICCProfCreatorDir);
         keyFile.set_boolean("Dialogs", "GimpPluginShowInfoDialog", gimpPluginShowInfoDialog);
 
         keyFile.set_string("Lensfun", "DBDirectory", rtSettings.lensfunDbDirectory);

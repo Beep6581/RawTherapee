@@ -71,6 +71,7 @@ set(NONCLISOURCEFILES
     histogrampanel.cc
     history.cc
     hsvequalizer.cc
+    iccprofilecreator.cc
     icmpanel.cc
     ilabel.cc
     imagearea.cc

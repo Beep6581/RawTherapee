@@ -387,21 +387,8 @@ void ParamsEdited::set(bool v)
     icm.outputProfile = v;
     icm.outputIntent = v;
     icm.outputBPC = v;
-    icm.outputGammaPreset = v;
-    icm.customOutputProfile = v;
     icm.workingTRCGamma = v;
     icm.workingTRCSlope = v;
-    icm.redPrimaryX = v;
-    icm.redPrimaryY = v;
-    icm.greenPrimaryX = v;
-    icm.greenPrimaryY = v;
-    icm.bluePrimaryX = v;
-    icm.bluePrimaryY = v;
-    icm.outputGamma = v;
-    icm.outputSlope = v;
-    icm.outputPrimariesPreset = v;
-    icm.outputProfileVersion = v;
-    icm.outputIlluminant = v;
     icm.workingTRC = v;
     raw.bayersensor.method = v;
     raw.bayersensor.imageNum = v;
@@ -950,21 +937,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.outputProfile = icm.outputProfile && p.icm.outputProfile == other.icm.outputProfile;
         icm.outputIntent = icm.outputIntent && p.icm.outputIntent == other.icm.outputIntent;
         icm.outputBPC = icm.outputBPC && p.icm.outputBPC == other.icm.outputBPC ;
-        icm.outputGammaPreset = icm.outputGammaPreset && p.icm.outputGammaPreset == other.icm.outputGammaPreset;
-        icm.customOutputProfile = icm.customOutputProfile && p.icm.customOutputProfile == other.icm.customOutputProfile;
         icm.workingTRCGamma = icm.workingTRCGamma && p.icm.workingTRCGamma == other.icm.workingTRCGamma;
         icm.workingTRCSlope = icm.workingTRCSlope && p.icm.workingTRCSlope == other.icm.workingTRCSlope;
-        icm.redPrimaryX = icm.redPrimaryX && p.icm.redPrimaryX == other.icm.redPrimaryX;
-        icm.redPrimaryY = icm.redPrimaryY && p.icm.redPrimaryY == other.icm.redPrimaryY;
-        icm.greenPrimaryX = icm.greenPrimaryX && p.icm.greenPrimaryX == other.icm.greenPrimaryX;
-        icm.greenPrimaryY = icm.greenPrimaryY && p.icm.greenPrimaryY == other.icm.greenPrimaryY;
-        icm.bluePrimaryX = icm.bluePrimaryX && p.icm.bluePrimaryX == other.icm.bluePrimaryX;
-        icm.bluePrimaryY = icm.bluePrimaryY && p.icm.bluePrimaryY == other.icm.bluePrimaryY;
-        icm.outputGamma = icm.outputGamma && p.icm.outputGamma == other.icm.outputGamma;
-        icm.outputSlope = icm.outputSlope && p.icm.outputSlope == other.icm.outputSlope;
-        icm.outputPrimariesPreset = icm.outputPrimariesPreset && p.icm.outputPimariesPreset == other.icm.outputPimariesPreset;
-        icm.outputProfileVersion = icm.outputProfileVersion && p.icm.outputProfileVersion == other.icm.outputProfileVersion;
-        icm.outputIlluminant = icm.outputIlluminant && p.icm.outputIlluminant == other.icm.outputIlluminant;
         icm.workingTRC = icm.workingTRC && p.icm.workingTRC == other.icm.workingTRC;
         raw.bayersensor.method = raw.bayersensor.method && p.raw.bayersensor.method == other.raw.bayersensor.method;
         raw.bayersensor.imageNum = raw.bayersensor.imageNum && p.raw.bayersensor.imageNum == other.raw.bayersensor.imageNum;
@@ -2471,67 +2445,15 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     }
 
     if (icm.workingTRCGamma) {
-        toEdit.icm.workingTRCGamma = dontforceSet && options.baBehav[ADDSET_FREE_OUPUT_GAMMA] ? toEdit.icm.workingTRCGamma + mods.icm.workingTRCGamma : mods.icm.workingTRCGamma;
+        toEdit.icm.workingTRCGamma = mods.icm.workingTRCGamma;
     }
 
     if (icm.workingTRCSlope) {
-        toEdit.icm.workingTRCSlope = dontforceSet && options.baBehav[ADDSET_FREE_OUTPUT_SLOPE] ? toEdit.icm.workingTRCSlope + mods.icm.workingTRCSlope : mods.icm.workingTRCSlope;
-    }
-
-    if (icm.outputGamma) {
-        toEdit.icm.outputGamma = mods.icm.outputGamma;
-    }
-
-    if (icm.outputSlope) {
-        toEdit.icm.outputSlope = mods.icm.outputSlope;
-    }
-
-    if (icm.redPrimaryX) {
-        toEdit.icm.redPrimaryX = mods.icm.redPrimaryX;
-    }
-
-    if (icm.redPrimaryY) {
-        toEdit.icm.redPrimaryY = mods.icm.redPrimaryY;
-    }
-
-    if (icm.greenPrimaryX) {
-        toEdit.icm.greenPrimaryX = mods.icm.greenPrimaryX;
-    }
-
-    if (icm.greenPrimaryY) {
-        toEdit.icm.greenPrimaryY = mods.icm.greenPrimaryY;
-    }
-
-    if (icm.bluePrimaryX) {
-        toEdit.icm.bluePrimaryX = mods.icm.bluePrimaryX;
-    }
-
-    if (icm.bluePrimaryY) {
-        toEdit.icm.bluePrimaryY = mods.icm.bluePrimaryY;
-    }
-
-    if (icm.outputGammaPreset) {
-        toEdit.icm.outputGammaPreset = mods.icm.outputGammaPreset;
-    }
-
-    if (icm.outputPrimariesPreset) {
-        toEdit.icm.outputPimariesPreset = mods.icm.outputPimariesPreset;
-    }
-
-    if (icm.outputProfileVersion) {
-        toEdit.icm.outputProfileVersion = mods.icm.outputProfileVersion;
-    }
-
-    if (icm.outputIlluminant) {
-        toEdit.icm.outputIlluminant = mods.icm.outputIlluminant;
+        toEdit.icm.workingTRCSlope = mods.icm.workingTRCSlope;
     }
 
     if (icm.workingTRC) {
         toEdit.icm.workingTRC = mods.icm.workingTRC;
-    }
-
-    if (icm.customOutputProfile) {
-        toEdit.icm.customOutputProfile = mods.icm.customOutputProfile;
     }
 
     if (raw.bayersensor.method) {

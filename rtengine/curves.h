@@ -267,19 +267,19 @@ public:
     // standard srgb gamma and its inverse
     static inline double gamma2            (double x)
     {
-        return x <= 0.00304 ? x * 12.92 : 1.055 * exp(log(x) / sRGBGammaCurve) - 0.055;
+        return x <= 0.00304 ? x * 12.92310 : 1.055 * exp(log(x) / sRGBGammaCurve) - 0.055;
     }
     static inline double igamma2           (double x)
     {
-        return x <= 0.03928 ? x / 12.92 : exp(log((x + 0.055) / 1.055) * sRGBGammaCurve);
+        return x <= 0.03928 ? x / 12.92310 : exp(log((x + 0.055) / 1.055) * sRGBGammaCurve);
     }
     static inline float gamma2            (float x)
     {
-        return x <= 0.00304 ? x * 12.92 : 1.055 * expf(logf(x) / sRGBGammaCurve) - 0.055;
+        return x <= 0.00304 ? x * 12.92310 : 1.055 * expf(logf(x) / sRGBGammaCurve) - 0.055;
     }
     static inline float igamma2           (float x)
     {
-        return x <= 0.03928 ? x / 12.92 : expf(logf((x + 0.055) / 1.055) * sRGBGammaCurve);
+        return x <= 0.03928 ? x / 12.92310 : expf(logf((x + 0.055) / 1.055) * sRGBGammaCurve);
     }
     // gamma function with adjustable parameters
     static inline double gamma            (double x, double gamma, double start, double slope, double mul, double add)

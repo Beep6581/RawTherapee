@@ -93,7 +93,7 @@ ImProcCoordinator::ImProcCoordinator()
       fw(0), fh(0), tr(0),
       fullw(1), fullh(1),
       pW(-1), pH(-1),
-      plistener(nullptr), imageListener(nullptr), aeListener(nullptr), acListener(nullptr), abwListener(nullptr), awbListener(nullptr), icmListener(nullptr), frameCountListener(nullptr), imageTypeListener(nullptr), actListener(nullptr), adnListener(nullptr), awavListener(nullptr), dehaListener(nullptr), hListener(nullptr),
+      plistener(nullptr), imageListener(nullptr), aeListener(nullptr), acListener(nullptr), abwListener(nullptr), awbListener(nullptr), frameCountListener(nullptr), imageTypeListener(nullptr), actListener(nullptr), adnListener(nullptr), awavListener(nullptr), dehaListener(nullptr), hListener(nullptr),
       resultValid(false), lastOutputProfile("BADFOOD"), lastOutputIntent(RI__COUNT), lastOutputBPC(false), thread(nullptr), changeSinceLast(0), updaterRunning(false), destroying(false), utili(false), autili(false),
       butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false), wavcontlutili(false), colourToningSatLimit(0.f), colourToningSatLimitOpacity(0.f), highQualityComputed(false)
 {}
@@ -495,11 +495,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 int  ch = oprevi->getHeight();
                 // put gamma TRC to 1
                 Imagefloat* readyImg0 = NULL;
-                double ga0, ga1, ga2, ga3, ga4, ga5, ga6;
-                int mul = -5;
-                double gga = 2.4, ssl = 12.92;
-
-                readyImg0 = ipf.workingtrc(oprevi, cw, ch, mul, params.icm.workingProfile, gga, ssl, ga0, ga1, ga2, ga3, ga4, ga5, ga6);
+                readyImg0 = ipf.workingtrc(oprevi, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310);
                 #pragma omp parallel for
 
                 for (int row = 0; row < ch; row++) {
@@ -513,9 +509,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 delete readyImg0;
                 //adjust TRC
                 Imagefloat* readyImg = NULL;
-                gga = params.icm.outputGamma, ssl = params.icm.outputSlope;
-                mul = 5;
-                readyImg = ipf.workingtrc(oprevi, cw, ch, mul, params.icm.workingProfile, gga, ssl, ga0, ga1, ga2, ga3, ga4, ga5, ga6);
+                readyImg = ipf.workingtrc(oprevi, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope);
                 #pragma omp parallel for
 
                 for (int row = 0; row < ch; row++) {

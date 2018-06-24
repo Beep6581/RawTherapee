@@ -1185,7 +1185,6 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
                     params.icm.outputProfile = options.fastexport_icm_output_profile;
                     params.icm.outputIntent = options.fastexport_icm_outputIntent;
                     params.icm.outputBPC = options.fastexport_icm_outputBPC;
-                    params.icm.outputGammaPreset = options.fastexport_icm_custom_output_profile;
                 }
 
                 if (params.resize.enabled) {
