@@ -1762,10 +1762,10 @@ TP_RAWEXPOS_LINEAR;White-point correction
 TP_RAWEXPOS_PRESER;Highlight preservation
 TP_RAWEXPOS_RGB;Red, Green, Blue
 TP_RAWEXPOS_TWOGREEN;Link greens
-TP_RAW_1PASSMEDIUM;1-Pass (Medium)
-TP_RAW_2PASS;2-Pass
-TP_RAW_3PASSBEST;3-Pass (Best)
-TP_RAW_4PASS;4-Pass
+TP_RAW_1PASSMEDIUM;1-pass (Markesteijn)
+TP_RAW_2PASS;1-pass+fast
+TP_RAW_3PASSBEST;3-pass (Markesteijn)
+TP_RAW_4PASS;3-pass+fast
 TP_RAW_AHD;AHD
 TP_RAW_AMAZE;AMaZE
 TP_RAW_AMAZEVNG4;AMaZE+VNG4
@@ -1826,7 +1826,7 @@ TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Smooth transitions between areas with motion and
 TP_RAW_RCD;RCD
 TP_RAW_RCDVNG4;RCD+VNG4
 TP_RAW_SENSOR_BAYER_LABEL;Sensor with Bayer Matrix
-TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.
+TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.\n+fast gives less artifacts in flat areas
 TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix
 TP_RAW_VNG4;VNG4
 TP_RESIZE_APPLIESTO;Applies to:
