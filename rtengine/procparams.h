@@ -1312,6 +1312,7 @@ struct RAWParams {
         enum class Method {
             FOUR_PASS,
             THREE_PASS,
+            TWO_PASS,
             ONE_PASS,
             FAST,
             MONO,

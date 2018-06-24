@@ -51,7 +51,11 @@ void RawImageSource::dual_demosaic_RT(bool isBayer, const RAWParams &raw, int wi
                 rcd_demosaic();
             }
         } else {
-            xtrans_interpolate (3, true);
+            if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FOUR_PASS) ) {
+                xtrans_interpolate (3, true);
+            } else {
+                xtrans_interpolate (1, false);
+            }
         }
 
         return;
@@ -73,7 +77,11 @@ void RawImageSource::dual_demosaic_RT(bool isBayer, const RAWParams &raw, int wi
             rcd_demosaic();
         }
     } else {
-        xtrans_interpolate (3, true);
+        if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FOUR_PASS) ) {
+            xtrans_interpolate (3, true);
+        } else {
+            xtrans_interpolate (1, false);
+        }
         fast_xtrans_interpolate(rawData, redTmp, greenTmp, blueTmp);
     }
 

@@ -2509,6 +2509,7 @@ const std::vector<const char*>& RAWParams::XTransSensor::getMethodStrings()
     static const std::vector<const char*> method_strings {
         "4-pass",
         "3-pass (best)",
+        "2-pass",
         "1-pass (medium)",
         "fast",
         "mono",
