@@ -331,7 +331,7 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
     }
 
     if (!batchMode) {
-        dcbOptions->set_visible(pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::DCB));
+        dcbOptions->set_visible(pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::DCB) || pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::DCBVNG4));
         lmmseOptions->set_visible(pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::LMMSE));
         dualDemosaicOptions->set_visible(pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::AMAZEVNG4)
                                          || pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::DCBVNG4)
@@ -520,7 +520,7 @@ void BayerProcess::methodChanged ()
     const RAWParams::BayerSensor::Method currentMethod = RAWParams::BayerSensor::Method(currentSelection);
 
     if (!batchMode) {
-        if (currentMethod == procparams::RAWParams::BayerSensor::Method::DCB) {
+        if (currentMethod == procparams::RAWParams::BayerSensor::Method::DCB || currentMethod == procparams::RAWParams::BayerSensor::Method::DCBVNG4) {
             dcbOptions->show();
         } else {
             dcbOptions->hide();
