@@ -6,8 +6,10 @@
 
 /*
   Log of version changes
-   338  2018-06-14
+   339  2018-06-25
         [ICM] enhanced custom output profile
+   338  2018-06-15
+        increased precision for the channel mixer
    337  2018-06-13
         new scales for the LabGrid color toning parameters
    336  2018-06-01

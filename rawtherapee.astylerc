@@ -1,0 +1,8 @@
+style=1tbs
+indent=spaces=4
+indent-switches
+break-blocks
+pad-oper
+convert-tabs
+pad-header
+unpad-paren

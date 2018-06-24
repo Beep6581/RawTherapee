@@ -98,6 +98,14 @@ void IndicateClippedPanel::toggleFocusMask ()
     previewFocusMask->set_active(!previewFocusMask->get_active());
 }
 
+void IndicateClippedPanel::silentlyDisableSharpMask ()
+{
+    ConnectionBlocker conBlocker(connSharpMask);
+    previewSharpMask->set_active(false);
+    previewSharpMask->set_image(*iSoff);
+
+}
+
 void IndicateClippedPanel::toggleSharpMask ()
 {
     previewSharpMask->set_active(!previewSharpMask->get_active());

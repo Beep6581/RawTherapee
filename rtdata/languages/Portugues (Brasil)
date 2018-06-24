@@ -1639,6 +1639,7 @@ TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolado
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
 !HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
+!MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>Sharpening Contrast Mask</b>.\nShortcut: <b>None</b>\n\nOnly works when sharpening is enabled and zoom >= 100%.
 !PARTIALPASTE_TM_FATTAL;Dynamic Range Compression
 !TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only available if a dual-illuminant DCP with interpolation support is selected.
 !TP_ICM_INPUTCAMERA;Camera standard

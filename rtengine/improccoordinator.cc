@@ -236,8 +236,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                 printf("Demosaic X-Trans image with using method: %s\n", rp.xtranssensor.method.c_str());
             }
         }
+        bool autoContrast = false;
+        double contrastThreshold = 0.f;
+        imgsrc->demosaic(rp, autoContrast, contrastThreshold); //enabled demosaic
 
-        imgsrc->demosaic(rp);   //enabled demosaic
         // if a demosaic happened we should also call getimage later, so we need to set the M_INIT flag
         todo |= M_INIT;
 
@@ -1258,7 +1260,8 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
     ppar.icm.inputProfile = "(none)";
     Imagefloat* im = new Imagefloat(fW, fH);
     imgsrc->preprocess(ppar.raw, ppar.lensProf, ppar.coarse);
-    imgsrc->demosaic(ppar.raw);
+    double dummy = 0.0;
+    imgsrc->demosaic(ppar.raw, false, dummy);
     ColorTemp currWB = ColorTemp(params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
 
     if (params.wb.method == "Camera") {

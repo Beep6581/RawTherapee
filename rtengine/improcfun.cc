@@ -2255,15 +2255,15 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
     float Balan = float (params->colorToning.balance);
 
-    float chMixRR = float (params->chmixer.red[0]);
-    float chMixRG = float (params->chmixer.red[1]);
-    float chMixRB = float (params->chmixer.red[2]);
-    float chMixGR = float (params->chmixer.green[0]);
-    float chMixGG = float (params->chmixer.green[1]);
-    float chMixGB = float (params->chmixer.green[2]);
-    float chMixBR = float (params->chmixer.blue[0]);
-    float chMixBG = float (params->chmixer.blue[1]);
-    float chMixBB = float (params->chmixer.blue[2]);
+    float chMixRR = float (params->chmixer.red[0])/10.f;
+    float chMixRG = float (params->chmixer.red[1])/10.f;
+    float chMixRB = float (params->chmixer.red[2])/10.f;
+    float chMixGR = float (params->chmixer.green[0])/10.f;
+    float chMixGG = float (params->chmixer.green[1])/10.f;
+    float chMixGB = float (params->chmixer.green[2])/10.f;
+    float chMixBR = float (params->chmixer.blue[0])/10.f;
+    float chMixBG = float (params->chmixer.blue[1])/10.f;
+    float chMixBB = float (params->chmixer.blue[2])/10.f;
 
     bool blackwhite = params->blackwhite.enabled;
     bool complem = params->blackwhite.enabledcc;

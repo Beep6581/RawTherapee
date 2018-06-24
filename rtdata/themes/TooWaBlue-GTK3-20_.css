@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.62
+  Version 2.66
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -164,7 +164,7 @@ filechooser frame {
 }
 
 #PlacesPaned frame {
-    margin: -8px 0 0;
+    margin: -5px 0 0;
 }
 
 frame > border {
@@ -215,7 +215,7 @@ dialog frame > label {
 
 frame > label {
     margin: 0;
-    padding: 0.5em 0;
+    padding: 0.41667em 0 0.33334em 0.08334em;
     color: @headline-frame;
 }
 frame > checkbutton label{
@@ -245,19 +245,22 @@ textview:selected, treeview:selected {
 }
 
 #PlacesPaned > box:nth-child(1) treeview {
-    padding: 0.08334em 0 0.08334em 0.5em;
+    padding: 0.08334em 0 0.08334em 0.416667em;
     -gtk-icon-style: symbolic;
 }
 
 #HistoryPanel {
-    margin-top: 0.5em;
+    margin-top: 0.25em;
+}
+#RightNotebook #HistoryPanel {
+    margin-top: 0.33334em;
 }
 #HistoryPanel > border {
     margin-top: 1.75em;
 }
 #HistoryPanel > label {
-    margin: 0 0 -1.33334em 0;
-    padding: 0;
+    margin: 0 0 -1.5em 0;
+    padding: 0 0 0 0.08334em;
 }
 
 #Snapshots > border {
@@ -284,23 +287,23 @@ textview:selected, treeview:selected {
 
 /*Corrects the space of the snapshot view to the paned separator*/
 #Snapshots {
-    margin-top: -0.33334em;
+    margin-top: 0.16667em;
 }
 /**/
 
 /*** end ***************************************************************************************/
 
 /*** Navigator *********************************************************************************/
-#Navigator .drawingarea {
-    border-top: 0.41667em solid @bg-dark-grey;
-    border-bottom: 0.25em solid @bg-dark-grey;
-}
 #Navigator {
-    background-color: @bg-dark-grey;
+    padding-top: 0.75em;
     padding-bottom: 0.25em;
+    background-color: @bg-dark-grey;
 }
 #Navigator box label {
     padding: 0.16667em 0;
+}
+#Navigator > label:nth-child(2) {
+    margin-top: 0.5em;
 }
 
 /*** end ***************************************************************************************/
@@ -356,9 +359,34 @@ filechooser list row:selected {
 
 /*** Histogram *********************************************************************************/
 #HistogramPanel {
+    min-height: 0;
     margin: -2px 0;
     border: none;
+    background-color: transparent;
 }
+
+#HistogramPanel > :nth-child(2) {
+    border: none;
+    border-left: 0.08334em solid @bg-light-grey;
+    background-color: @bg-dark-grey;
+}
+
+#HistogramPanel > :nth-child(1) {
+    border: none;
+    background-color: transparent;
+}
+
+#EditorLeftPaned  #HistogramPanel > :nth-child(1) {
+    border: none;
+    border-right: 0.08334em solid @bg-light-grey;
+    background-color: @bg-dark-grey;
+}
+
+#EditorLeftPaned  #HistogramPanel > :nth-child(2) {
+    border: none;
+    background-color: transparent;
+}
+
 #HistogramArea,
 #HistogramRGBArea {
     border: 0.08334em solid @bg-dark-grey;
@@ -367,25 +395,24 @@ filechooser list row:selected {
 
 #fullButton,
 #histButton {
-    padding: 0.47em 0.41667em;
+    padding: 0;
     margin: 0;
-    border-color: @bg-light-grey;
-    border-style: solid;
-    border-width: 0 0 0 0.08334em;
+    border:none;
     background-color: @bg-dark-grey;
     background-image: none;
     box-shadow: none;
-    min-height: 0;
-    min-width: 0;
+    min-height: 1.58334em;
+    min-width: 1.5em;
     border-radius: 0;
 }
-#fullButton {
-    padding: 0.47em 0.41667em 0.58334em;
+
+#histButton:first-child {
+    margin-top: 1px;
 }
-#EditorLeftPaned #fullButton,
-#EditorLeftPaned #histButton {
-    border-width: 0 0.08334em 0 0;
+#histButton:last-child {
+    margin-bottom: 1px;
 }
+
 /*** end ***************************************************************************************/
 
 /*** Separator *********************************************************************************/
@@ -413,6 +440,7 @@ popover separator:not(:only-child) {
 
 paned.horizontal > separator {
     background-color: transparent;
+    background-image: none;
     min-width: 0.41667em;
     border-left: 0.25em solid @bg-light-grey;
     border-right: 0.25em solid @bg-light-grey;
@@ -426,8 +454,15 @@ paned.vertical > separator {
     min-height: 0.5em;
     border-top: 1px solid @bg-light-grey;
     border-bottom: 1px solid @bg-light-grey;
-    margin: 0.25em 0 0;
+    margin: 0.25em 0 -0.5em;
     padding: 0.2em 0 0;
+}
+/*Filmstrip*/
+#EditorRightPaned > paned.horizontal > paned.vertical > separator {
+    margin-bottom: 0;
+}
+#EditorRightPaned > paned.horizontal:nth-child(1) > paned.vertical:nth-child(1) > separator {
+    margin-bottom: -0.5em;
 }
 
 dialog paned.horizontal > separator {
@@ -451,8 +486,8 @@ menu separator {
 #IopsPanel separator,
 #FileBrowser separator {
     background-color: shade(@bg-light-grey,.75);
-    margin-top: 0.33334em;
-    margin-bottom: 0.33334em;
+    margin-top: 0.16667em;
+    margin-bottom: 0.16667em;
 }
 
 #MyExpander separator {
@@ -1387,6 +1422,9 @@ button.MiddleH {
 #ProfilePanel {
     margin-bottom: -2px;
     padding-bottom: 0.41667em;
+}
+#ProfilePanel > label {
+    margin-bottom: 0.08334em;
 }
 #ProfilePanel combobox {
     margin-left: 0.16667em;
