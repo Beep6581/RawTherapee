@@ -726,7 +726,42 @@ HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourci: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Capture
 HISTORY_SNAPSHOTS;Captures
+ICCPROFCREATOR_CUSTOM;Personnalisé
+ICCPROFCREATOR_GAMMA;Gamma
+ICCPROFCREATOR_ICCVERSION;Version du profil généré:
+ICCPROFCREATOR_ILL;Illuminant:
+ICCPROFCREATOR_ILL_41;D41
+ICCPROFCREATOR_ILL_50;D50
+ICCPROFCREATOR_ILL_55;D55
+ICCPROFCREATOR_ILL_60;D60
+ICCPROFCREATOR_ILL_65;D65
+ICCPROFCREATOR_ILL_80;D80
+ICCPROFCREATOR_ILL_DEF;Valeur par défaut
+ICCPROFCREATOR_ILL_INC;StdA 2856K
+ICCPROFCREATOR_ILL_TOOLTIP;Vous ne pouvez régler l'Illuminant que pour les profils ICC v4
+ICCPROFCREATOR_PRIMARIES;Primaires:
+ICCPROFCREATOR_PRIM_ACESP0;AcesP0
+ICCPROFCREATOR_PRIM_ACESP1;AcesP1
+ICCPROFCREATOR_PRIM_ADOBE;Adobe
+ICCPROFCREATOR_PRIM_BEST;BestRGB
+ICCPROFCREATOR_PRIM_BETA;BetaRGB
+ICCPROFCREATOR_PRIM_BLUX;Bleu X
+ICCPROFCREATOR_PRIM_BLUY;Bleu Y
+ICCPROFCREATOR_PRIM_BRUCE;BruceRGB
+ICCPROFCREATOR_PRIM_GREX;Vert X
+ICCPROFCREATOR_PRIM_GREY;Vert Y
+ICCPROFCREATOR_PRIM_PROPH;Prophoto
+ICCPROFCREATOR_PRIM_REC2020;Rec2020
+ICCPROFCREATOR_PRIM_REDX;Rouge X
+ICCPROFCREATOR_PRIM_REDY;Rouge Y
+ICCPROFCREATOR_PRIM_SRGB;sRGB
+ICCPROFCREATOR_PRIM_TOOLTIP;Vous ne pouvez régler des Primaires personnalisées que pour les profils ICC v4
+ICCPROFCREATOR_PRIM_WIDEG;Widegamut
+ICCPROFCREATOR_PROF_V2;ICC v2
+ICCPROFCREATOR_PROF_V4;ICC v4
 ICCPROFCREATOR_SAVEDIALOG_TITLE;Enregistrer le profil ICC sous...
+ICCPROFCREATOR_SLOPE;Pente
+ICCPROFCREATOR_TRC_PRESET;Courbe de réponse tonale:
 IPTCPANEL_CATEGORY;Catégorie
 IPTCPANEL_CATEGORYHINT;Identifie le sujet de l'image selon l'opinion du fournisseur.
 IPTCPANEL_CITY;Ville
@@ -1643,6 +1678,12 @@ TP_ICM_SAVEREFERENCE_TOOLTIP;Sauvegarde une image TIFF linéaire avant que le pr
 TP_ICM_TONECURVE;Utiliser la courbe tonale du profil DCP
 TP_ICM_TONECURVE_TOOLTIP;Utilise la courbe tonale DCP incluse. Ce paramètre ne sera actif que si le profil DCP contient une courbe tonale
 TP_ICM_WORKINGPROFILE;Profil de Travail
+TP_ICM_WORKTRC;Courbe de réponse tonale:
+TP_ICM_WORKTRC_CUSTOM;Personnalisé
+TP_ICM_WORKTRC_GAMMA;Gamma
+TP_ICM_WORKTRC_NONE;Aucune
+TP_ICM_WORKTRC_SLOPE;Pente
+TP_ICM_WORKTRC_TOOLTIP;Seulement pour les profils internes
 TP_IMPULSEDENOISE_LABEL;Réduction du bruit d'impulsion
 TP_IMPULSEDENOISE_THRESH;Seuil
 TP_LABCURVE_AVOIDCOLORSHIFT;Éviter les dérives de teinte
@@ -2209,6 +2250,12 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_490;DRC - Amount
 !HISTORY_MSG_CLAMPOOG;Out-of-gamut color clipping
 !HISTORY_MSG_DUALDEMOSAIC_CONTRAST;AMaZE+VNG4 - Contrast threshold
+!HISTORY_MSG_ICMGAMM;Working gamma
+!HISTORY_MSG_ICMPRIMARI;Output profile primaries
+!HISTORY_MSG_ICMPROFILE;Output profile type
+!HISTORY_MSG_ICMSLOP;Working slope
+!HISTORY_MSG_ICMTEMP;Output IccV4 D illuminant
+!HISTORY_MSG_ICMTRCIN;TRC working method
 !HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 !HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - Demosaic method for motion
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
@@ -2232,13 +2279,16 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertical
 !TP_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.
-!TP_RAW_4PASS;4-Pass
+!TP_RAW_2PASS;1-pass+fast
+!TP_RAW_4PASS;3-pass+fast
 !TP_RAW_AMAZEVNG4;AMaZE+VNG4
+!TP_RAW_DCBVNG4;DCB+VNG4
 !TP_RAW_DUALDEMOSAICCONTRAST;Contrast threshold
 !TP_RAW_PIXELSHIFTDMETHOD;Demosaic method for motion
 !TP_RAW_PIXELSHIFTEPERISO;Sensitivity
 !TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value of 0 should work fine for base ISO.\nHigher values increase sensitivity of motion detection.\nChange in small steps and watch the motion mask while changing.\nIncrease sensitivity for underexposed or high ISO images.
 !TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a green mask showing the regions with motion.
+!TP_RAW_RCDVNG4;RCD+VNG4
 !TP_SHARPENING_CONTRAST;Contrast threshold
 !TP_SHARPENMICRO_CONTRAST;Contrast threshold
 !TP_TM_FATTAL_AMOUNT;Amount
