@@ -62,6 +62,7 @@
 #61 14.06.2018 Korrektur (TooWaBoo) RT 5.4
 #62 22.06.2018 Korrektur (TooWaBoo) RT 5.4
 #63 24.06.2018 DCB/RCD+VNG4 (TooWaBoo) RT 5.4
+#64 24.06.2018 Erweiterung/Korrektur (TooWaBoo) RT 5.4
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -605,7 +606,7 @@ HISTORY_MSG_293;(Filmsimulation)
 HISTORY_MSG_294;(Filmsimulation)\nIntensität
 HISTORY_MSG_295;(Filmsimulation) - Film
 HISTORY_MSG_296;(Rauschreduzierung)\nLuminanzkurve
-HISTORY_MSG_297;(Rauschreduzierung)\nQualität
+HISTORY_MSG_297;(Rauschreduzierung)\nModus
 HISTORY_MSG_298;(Vorverarbeitung)\nDead-Pixel-Filter
 HISTORY_MSG_299;(Rauschreduzierung)\nChrominanzkurve
 HISTORY_MSG_300;-
@@ -1574,9 +1575,9 @@ TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;Für RAW-Bilder kann entweder die RGB-\noder L*a*b*-Methode verwendet werden.\n\nFür andere Bilder wird unabhängig von der\nAuswahl immer die L*a*b*-Methode verwendet.
 TP_DIRPYRDENOISE_MAIN_GAMMA;Gamma
 TP_DIRPYRDENOISE_MAIN_GAMMA_TOOLTIP;Mit Gamma kann die Intensität der\nRauschreduzierung über den Farbbereich\nvariiert werden. Bei kleinen Werten sind\nnur dunkle Farbtöne betroffen, bei\ngrößeren Werten wird der Effekt auf\nhellere Töne ausgeweitet.
-TP_DIRPYRDENOISE_MAIN_MODE;Qualität
-TP_DIRPYRDENOISE_MAIN_MODE_AGGRESSIVE;Hoch
-TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE;Standard
+TP_DIRPYRDENOISE_MAIN_MODE;Modus
+TP_DIRPYRDENOISE_MAIN_MODE_AGGRESSIVE;Aggressiv
+TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE;Konservativ
 TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;Einstellung der Qualität der Rauschreduzierung.\nDie Einstellung “Hoch“ verbessert die Rausch-\nreduzierung auf Kosten der Verarbeitungszeit.
 TP_DIRPYRDENOISE_MEDIAN_METHOD;Methode
 TP_DIRPYRDENOISE_MEDIAN_METHOD_CHROMINANCE;Nur Farbe
@@ -2306,3 +2307,4 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 MAIN_TOOLTIP_PREVIEWSHARPMASK;Schärfungs-Kontroll-Maske ein-/ausschalten\n\nFunktioniert nur bei aktivierter Schärfung\nund Zoom >= 100%.
 TP_RAW_DCBVNG4;DCB + VNG4
 TP_RAW_RCDVNG4;RCD + VNG4
+TP_RAW_2PASS;2-Pass
