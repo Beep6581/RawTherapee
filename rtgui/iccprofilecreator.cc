@@ -496,9 +496,6 @@ void ICCProfileCreator::savePressed()
         return;
     }
 
-    // 7 parameters for smoother curves
-    cmsFloat64Number Parameters[7] = { ga[0], ga[1], ga[2], ga[3], ga[4], ga[5], ga[6] };
-
     //change desc Tag , to "free gamma", or "BT709", etc.
     Glib::ustring fName;
     Glib::ustring sPrimariesAndIlluminant;
@@ -857,7 +854,7 @@ void ICCProfileCreator::savePressed()
 
         // Calculate output profile's rTRC gTRC bTRC
         cmsToneCurve* GammaTRC[3];
-        GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, Parameters);
+        GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, ga);
 
         if (profileVersion == "v4") {
             newProfile = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC);

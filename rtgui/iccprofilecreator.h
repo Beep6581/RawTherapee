@@ -30,7 +30,7 @@ class ICCProfileCreator : public Gtk::Dialog, public AdjusterListener
 
 private:
 
-    double ga[7];
+    cmsFloat64Number ga[7]; // 7 parameters for smoother curves
 
     //------------------------ Params -----------------------
     Glib::ustring primariesPreset;
