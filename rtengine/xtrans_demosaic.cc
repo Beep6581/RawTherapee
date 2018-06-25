@@ -114,7 +114,7 @@ void RawImageSource::cielab (const float (*rgb)[3], float* l, float* a, float *b
 #define fcol(row,col) xtrans[(row)%6][(col)%6]
 #define isgreen(row,col) (xtrans[(row)%3][(col)%3]&1)
 
-void RawImageSource::xtransborder_interpolate (int border)
+void RawImageSource::xtransborder_interpolate (int border, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
 {
     const int height = H, width = W;
 
@@ -201,7 +201,7 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
 //        printf("%d-pass X-Trans interpolation using %s conversion...\n", passes, useCieLab ? "lab" : "yuv");
 //    }
 
-    xtransborder_interpolate(6);
+    xtransborder_interpolate(6, red, green, blue);
 
     float xyz_cam[3][3];
     {
@@ -974,7 +974,7 @@ void RawImageSource::fast_xtrans_interpolate (const array2D<float> &rawData, arr
 
     const int height = H, width = W;
 
-    xtransborder_interpolate (1);
+    xtransborder_interpolate (1, red, green, blue);
     int xtrans[6][6];
     ri->getXtransMatrix(xtrans);
 

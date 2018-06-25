@@ -290,7 +290,7 @@ protected:
     void dcb_refinement(float (*image)[3], uint8_t *map, int x0, int y0);
     void dcb_color_full(float (*image)[3], int x0, int y0, float (*chroma)[2]);
     void cielab (const float (*rgb)[3], float* l, float* a, float *b, const int width, const int height, const int labWidth, const float xyz_cam[3][3]);
-    void xtransborder_interpolate (int border);
+    void xtransborder_interpolate (int border, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
     void xtrans_interpolate (const int passes, const bool useCieLab);
     void fast_xtrans_interpolate (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
     void pixelshift(int winx, int winy, int winw, int winh, const RAWParams &rawParams, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection);
