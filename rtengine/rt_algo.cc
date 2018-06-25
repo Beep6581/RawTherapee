@@ -1,6 +1,8 @@
 /*
  *  This file is part of RawTherapee.
  *
+ *  Copyright (c) 2017-2018 Ingo Weyrich <heckflosse67@gmx.de>
+ *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -20,7 +22,7 @@
 #include <cmath>
 #include <cstdint>
 #include <vector>
-
+#include <iostream>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -188,7 +190,9 @@ void findMinMaxPercentile(const float* data, size_t size, float minPrct, float& 
     maxOut += minVal;
 }
 
-void buildBlendMask(float** luminance, rtengine::JaggedArray<float> &blend, int W, int H, float contrastThreshold, float amount) {
+void buildBlendMask(float** luminance, float **blend, int W, int H, float contrastThreshold, float amount) {
+
+    constexpr float scale = 0.0625f / 327.68f;
 
     if(contrastThreshold == 0.f) {
         for(int j = 0; j < H; ++j) {
@@ -197,64 +201,123 @@ void buildBlendMask(float** luminance, rtengine::JaggedArray<float> &blend, int 
             }
         }
     } else {
-        constexpr float scale = 0.0625f / 327.68f;
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
-    {
+        {
+#ifdef __SSE2__
+            const vfloat contrastThresholdv = F2V(contrastThreshold);
+            const vfloat scalev = F2V(scale);
+            const vfloat amountv = F2V(amount);
+#endif
+#ifdef _OPENMP
+            #pragma omp for schedule(dynamic,16)
+#endif
+
+            for(int j = 2; j < H - 2; ++j) {
+                int i = 2;
+#ifdef __SSE2__
+                for(; i < W - 5; i += 4) {
+                    vfloat contrastv = vsqrtf(SQRV(LVFU(luminance[j][i+1]) - LVFU(luminance[j][i-1])) + SQRV(LVFU(luminance[j+1][i]) - LVFU(luminance[j-1][i])) +
+                                              SQRV(LVFU(luminance[j][i+2]) - LVFU(luminance[j][i-2])) + SQRV(LVFU(luminance[j+2][i]) - LVFU(luminance[j-2][i]))) * scalev;
+
+                    STVFU(blend[j][i], amountv * calcBlendFactor(contrastv, contrastThresholdv));
+                }
+#endif
+                for(; i < W - 2; ++i) {
+
+                    float contrast = sqrtf(rtengine::SQR(luminance[j][i+1] - luminance[j][i-1]) + rtengine::SQR(luminance[j+1][i] - luminance[j-1][i]) + 
+                                           rtengine::SQR(luminance[j][i+2] - luminance[j][i-2]) + rtengine::SQR(luminance[j+2][i] - luminance[j-2][i])) * scale;
+
+                    blend[j][i] = amount * calcBlendFactor(contrast, contrastThreshold);
+                }
+            }
+
+#ifdef _OPENMP
+            #pragma omp single
+#endif
+            {
+                // upper border
+                for(int j = 0; j < 2; ++j) {
+                    for(int i = 2; i < W - 2; ++i) {
+                        blend[j][i] = blend[2][i];
+                    }
+                }
+                // lower border
+                for(int j = H - 2; j < H; ++j) {
+                    for(int i = 2; i < W - 2; ++i) {
+                        blend[j][i] = blend[H-3][i];
+                    }
+                }
+                for(int j = 0; j < H; ++j) {
+                    // left border
+                    blend[j][0] = blend[j][1] = blend[j][2];
+                    // right border
+                    blend[j][W - 2] = blend[j][W - 1] = blend[j][W - 3];
+                }
+            }
+
+            // blur blend mask to smooth transitions
+            gaussianBlur(blend, blend, W, H, 2.0);
+        }
+    }
+}
+
+int calcContrastThreshold(float** luminance, float **blend, int W, int H) {
+
+    constexpr float scale = 0.0625f / 327.68f;
+
+#ifdef __SSE2__
+    const vfloat scalev = F2V(scale);
+#endif
+
+    for(int j = 2; j < H - 2; ++j) {
+        int i = 2;
+#ifdef __SSE2__
+        for(; i < W - 5; i += 4) {
+            vfloat contrastv = vsqrtf(SQRV(LVFU(luminance[j][i+1]) - LVFU(luminance[j][i-1])) + SQRV(LVFU(luminance[j+1][i]) - LVFU(luminance[j-1][i])) +
+                                      SQRV(LVFU(luminance[j][i+2]) - LVFU(luminance[j][i-2])) + SQRV(LVFU(luminance[j+2][i]) - LVFU(luminance[j-2][i]))) * scalev;
+            STVFU(blend[j -2 ][i - 2], contrastv);
+        }
+#endif
+        for(; i < W - 2; ++i) {
+
+            float contrast = sqrtf(rtengine::SQR(luminance[j][i+1] - luminance[j][i-1]) + rtengine::SQR(luminance[j+1][i] - luminance[j-1][i]) + 
+                                   rtengine::SQR(luminance[j][i+2] - luminance[j][i-2]) + rtengine::SQR(luminance[j+2][i] - luminance[j-2][i])) * scale;
+
+            blend[j -2][i- 2] = contrast;
+        }
+    }
+
+    const float limit = (W - 2) * (H - 2) / 100.f;
+
+    int c;
+    for (c = 1; c < 100; ++c) {
+        const float contrastThreshold = c / 100.f;
+        float sum = 0.f;
 #ifdef __SSE2__
         const vfloat contrastThresholdv = F2V(contrastThreshold);
-        const vfloat scalev = F2V(scale);
-        const vfloat amountv = F2V(amount);
-#endif
-#ifdef _OPENMP
-        #pragma omp for schedule(dynamic,16)
+        vfloat sumv = ZEROV;
 #endif
 
-        for(int j = 2; j < H - 2; ++j) {
-            int i = 2;
+        for(int j = 0; j < H - 4; ++j) {
+            int i = 0;
 #ifdef __SSE2__
-            for(; i < W - 5; i += 4) {
-                vfloat contrastv = vsqrtf(SQRV(LVFU(luminance[j][i+1]) - LVFU(luminance[j][i-1])) + SQRV(LVFU(luminance[j+1][i]) - LVFU(luminance[j-1][i])) +
-                                          SQRV(LVFU(luminance[j][i+2]) - LVFU(luminance[j][i-2])) + SQRV(LVFU(luminance[j+2][i]) - LVFU(luminance[j-2][i]))) * scalev;
-
-                STVFU(blend[j][i], amountv * calcBlendFactor(contrastv, contrastThresholdv));
+            for(; i < W - 7; i += 4) {
+                sumv += calcBlendFactor(LVFU(blend[j][i]), contrastThresholdv);
             }
 #endif
-            for(; i < W - 2; ++i) {
-
-                float contrast = sqrtf(rtengine::SQR(luminance[j][i+1] - luminance[j][i-1]) + rtengine::SQR(luminance[j+1][i] - luminance[j-1][i]) + 
-                                       rtengine::SQR(luminance[j][i+2] - luminance[j][i-2]) + rtengine::SQR(luminance[j+2][i] - luminance[j-2][i])) * scale;
-
-                blend[j][i] = amount * calcBlendFactor(contrast, contrastThreshold);
+            for(; i < W - 4; ++i) {
+                sum += calcBlendFactor(blend[j][i], contrastThreshold);
             }
         }
-#ifdef _OPENMP
-        #pragma omp single
+#ifdef __SSE2__
+        sum += vhadd(sumv);
 #endif
-        {
-            // upper border
-            for(int j = 0; j < 2; ++j) {
-                for(int i = 2; i < W - 2; ++i) {
-                    blend[j][i] = blend[2][i];
-                }
-            }
-            // lower border
-            for(int j = H - 2; j < H; ++j) {
-                for(int i = 2; i < W - 2; ++i) {
-                    blend[j][i] = blend[H-3][i];
-                }
-            }
-            for(int j = 0; j < H; ++j) {
-                // left border
-                blend[j][0] = blend[j][1] = blend[j][2];
-                // right border
-                blend[j][W - 2] = blend[j][W - 1] = blend[j][W - 3];
-            }
+        if (sum <= limit) {
+            break;
         }
-        // blur blend mask to smooth transitions
-        gaussianBlur(blend, blend, W, H, 2.0);
     }
-    }
+    return c;
 }
 }

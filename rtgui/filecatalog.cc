@@ -564,21 +564,31 @@ std::vector<Glib::ustring> FileCatalog::getFileList ()
 
         auto enumerator = dir->enumerate_children ("standard::name");
 
-        while (auto file = enumerator->next_file ()) {
+        while (true) {
+            try {
+                auto file = enumerator->next_file ();
+                if (!file) {
+                    break;
+                }
 
-            const Glib::ustring fname = file->get_name ();
+                const Glib::ustring fname = file->get_name ();
 
-            auto lastdot = fname.find_last_of ('.');
-            if (lastdot >= fname.length () - 1) {
-                continue;
+                auto lastdot = fname.find_last_of ('.');
+                if (lastdot >= fname.length () - 1) {
+                    continue;
+                }
+
+                const auto fext = fname.substr (lastdot + 1).lowercase ();
+                if (extensions.count (fext) == 0) {
+                    continue;
+                }
+
+                names.emplace_back (Glib::build_filename (selectedDirectory, fname));
+            } catch (Glib::Exception& exception) {
+                if (options.rtSettings.verbose) {
+                    std::cerr << exception.what () << std::endl;
+                }
             }
-
-            const auto fext = fname.substr (lastdot + 1).lowercase ();
-            if (extensions.count (fext) == 0) {
-                continue;
-            }
-
-            names.emplace_back (Glib::build_filename (selectedDirectory, fname));
         }
 
     } catch (Glib::Exception& exception) {

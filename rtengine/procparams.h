@@ -1227,7 +1227,9 @@ struct RAWParams {
             AMAZE,
             AMAZEVNG4,
             RCD,
+            RCDVNG4,
             DCB,
+            DCBVNG4,
             LMMSE,
             IGV,
             AHD,
@@ -1310,6 +1312,7 @@ struct RAWParams {
         enum class Method {
             FOUR_PASS,
             THREE_PASS,
+            TWO_PASS,
             ONE_PASS,
             FAST,
             MONO,

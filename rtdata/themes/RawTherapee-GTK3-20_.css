@@ -18,17 +18,22 @@
   along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* Scrollbar stuck workaround */
-scrollbar:not(.overlay-indicator):hover {
-    min-width: 1px;
-}
+/* text-shadow causes a serious performance degradation in rendering the UI,
+ * at least in comboboxes with many entries (i.e. Profiled Lens Correction).
+*/
 
 * {
     color: #AAAAAA;
+    text-shadow: none;
 }
 
 *:disabled {
     color: #666666;
+}
+
+/* Scrollbar stuck workaround */
+scrollbar:not(.overlay-indicator):hover {
+    min-width: 1px;
 }
 
 .view:selected:not(check):not(radio) {

@@ -1787,19 +1787,19 @@ bool VignettingParams::operator !=(const VignettingParams& other) const
 ChannelMixerParams::ChannelMixerParams() :
     enabled(false),
     red{
-        100,
+        1000,
         0,
         0
     },
     green{
         0,
-        100,
+        1000,
         0
     },
     blue{
         0,
         0,
-        100
+        1000
     }
 {
 }
@@ -2439,7 +2439,9 @@ const std::vector<const char*>& RAWParams::BayerSensor::getMethodStrings()
         "amaze",
         "amazevng4",
         "rcd",
+        "rcdvng4",
         "dcb",
+        "dcbvng4",
         "lmmse",
         "igv",
         "ahd",
@@ -2507,6 +2509,7 @@ const std::vector<const char*>& RAWParams::XTransSensor::getMethodStrings()
     static const std::vector<const char*> method_strings {
         "4-pass",
         "3-pass (best)",
+        "2-pass",
         "1-pass (medium)",
         "fast",
         "mono",
@@ -3522,6 +3525,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     memcpy (chmixer.red,   rmix.data(), 3 * sizeof (int));
                     memcpy (chmixer.green, gmix.data(), 3 * sizeof (int));
                     memcpy (chmixer.blue,  bmix.data(), 3 * sizeof (int));
+                }
+                if (ppVersion < 338) {
+                    for (int i = 0; i < 3; ++i) {
+                        chmixer.red[i] *= 10;
+                        chmixer.green[i] *= 10;
+                        chmixer.blue[i] *= 10;
+                    }
                 }
 
                 if (pedited) {
