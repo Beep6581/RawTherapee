@@ -1255,6 +1255,7 @@ struct RAWParams {
         };
 
         Glib::ustring method;
+        int border;
         int imageNum;
         int ccSteps;
         double black0;

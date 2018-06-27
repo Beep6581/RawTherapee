@@ -206,6 +206,10 @@ private:
         double contrastThresholdDummy;
         imgsrc->demosaic (params.raw, false, contrastThresholdDummy);
 
+        if(imgsrc->getSensorType() == ST_BAYER && params.raw.bayersensor.method != RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)) {
+            imgsrc->setBorder(params.raw.bayersensor.border);
+        }
+
         if (pl) {
             pl->setProgress (0.30);
         }

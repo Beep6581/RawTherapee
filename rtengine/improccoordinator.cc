@@ -243,6 +243,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             highDetailRawComputed = false;
         }
 
+        if(imgsrc->getSensorType() == ST_BAYER && params.raw.bayersensor.method != RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)) {
+            imgsrc->setBorder(params.raw.bayersensor.border);
+        }
+
         if (params.retinex.enabled) {
             lhist16RETI (32768);
             lhist16RETI.clear();

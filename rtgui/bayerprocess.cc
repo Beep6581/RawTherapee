@@ -28,6 +28,7 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
 {
 
     auto m = ProcEventMapper::getInstance();
+    EvDemosaicBorder = m->newEvent(DEMOSAIC, "HISTORY_MSG_RAW_BORDER");
     EvDemosaicContrast = m->newEvent(DEMOSAIC, "HISTORY_MSG_DUALDEMOSAIC_CONTRAST");
     EvDemosaicPixelshiftDemosaicMethod = m->newEvent(DEMOSAIC, "HISTORY_MSG_PIXELSHIFT_DEMOSAIC");
 
@@ -44,6 +45,18 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
 
     hb1->pack_end (*method, Gtk::PACK_EXPAND_WIDGET, 4);
     pack_start( *hb1, Gtk::PACK_SHRINK, 4);
+
+    Gtk::HBox* borderbox = Gtk::manage (new Gtk::HBox ());
+    border = Gtk::manage (new MySpinButton ());
+    borderbox->set_spacing(3);
+    borderbox->pack_start (*Gtk::manage (new Gtk::Label (M("TP_RAW_BORDER"))), Gtk::PACK_SHRINK, 0);
+    borderbox->pack_start (*border);
+    border->set_digits (0);
+    border->set_increments (1, 2);
+    border->set_value (4);
+    border->set_range (0, 16);
+
+    pack_start( *borderbox, Gtk::PACK_SHRINK, 4);
 
     imageNumberBox = Gtk::manage (new Gtk::HBox ());
     imageNumberBox->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_RAW_IMAGENUM") + ": ")), Gtk::PACK_SHRINK, 4);
@@ -234,6 +247,8 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     imageNumber->connect(imageNumber->signal_changed().connect( sigc::mem_fun(*this, &BayerProcess::imageNumberChanged) ));
     pixelShiftMotionMethod->connect(pixelShiftMotionMethod->signal_changed().connect( sigc::mem_fun(*this, &BayerProcess::pixelShiftMotionMethodChanged) ));
     pixelShiftDemosaicMethod->connect(pixelShiftDemosaicMethod->signal_changed().connect( sigc::mem_fun(*this, &BayerProcess::pixelShiftDemosaicMethodChanged) ));
+    borderconn = border->signal_value_changed().connect ( sigc::mem_fun(*this, &BayerProcess::borderChanged), true);
+
 }
 
 
@@ -242,9 +257,11 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
     disableListener ();
     method->block (true);
     imageNumber->block (true);
+    borderconn.block(true);
     pixelShiftDemosaicMethod->block(true);
     //allEnhconn.block (true);
 
+    border->set_value (pp->raw.bayersensor.border);
     imageNumber->set_active(pp->raw.bayersensor.imageNum);
 
     for (size_t i = 0; i < procparams::RAWParams::BayerSensor::getMethodStrings().size(); ++i) {
@@ -356,6 +373,7 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
 
     method->block (false);
     imageNumber->block (false);
+    borderconn.block (false);
     pixelShiftDemosaicMethod->block(false);
     //allEnhconn.block (false);
 
@@ -367,7 +385,7 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
     pp->raw.bayersensor.ccSteps = ccSteps->getIntValue();
     pp->raw.bayersensor.dcb_iterations = dcbIterations->getIntValue();
     pp->raw.bayersensor.dcb_enhance = dcbEnhance->getLastActive ();
-    //pp->raw.bayersensor.all_enhance = allEnhance->getLastActive ();
+    pp->raw.bayersensor.border = border->get_value ();
     pp->raw.bayersensor.lmmse_iterations = lmmseIterations->getIntValue();
     pp->raw.bayersensor.dualDemosaicContrast = dualDemosaicContrast->getValue();
     pp->raw.bayersensor.pixelShiftMotionCorrectionMethod = (RAWParams::BayerSensor::PSMotionCorrectionMethod)pixelShiftMotionMethod->get_active_row_number();
@@ -704,4 +722,9 @@ void BayerProcess::FrameCountChanged(int n, int frameNum)
     //     imageNumberBox->show();
     // }
     // imageNumber->block (false);
+}
+
+void BayerProcess::borderChanged ()
+{
+    listener->panelChanged (EvDemosaicBorder, Glib::ustring::format (border->get_value_as_int()));
 }

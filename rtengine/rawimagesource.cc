@@ -590,8 +590,8 @@ void RawImageSource::transformRect (const PreviewProps &pp, int tran, int &ssx1,
     } else {
         ssx1 = sx1;
         ssy1 = sy1;
-        width  = (sx2 - sx1) / pp.getSkip() + ((sx2 - sx1) % pp.getSkip() > 0);
-        height = (sy2 - sy1) / pp.getSkip() + ((sy2 - sy1) % pp.getSkip() > 0);
+        width  = (sx2 + 1 - sx1) / pp.getSkip() + ((sx2 - sx1) % pp.getSkip() > 0);
+        height = (sy2 + 1 - sy1) / pp.getSkip() + ((sy2 - sy1) % pp.getSkip() > 0);
     }
 }
 
