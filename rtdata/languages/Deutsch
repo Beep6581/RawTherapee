@@ -63,6 +63,7 @@
 #62 22.06.2018 Korrektur (TooWaBoo) RT 5.4
 #63 24.06.2018 DCB/RCD+VNG4 (TooWaBoo) RT 5.4
 #64 24.06.2018 Erweiterung/Korrektur (TooWaBoo) RT 5.4
+#65 25.06.2018 Korrekturen (TooWaBoo) RT 5.4
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -1578,7 +1579,7 @@ TP_DIRPYRDENOISE_MAIN_GAMMA_TOOLTIP;Mit Gamma kann die Intensität der\nRauschre
 TP_DIRPYRDENOISE_MAIN_MODE;Modus
 TP_DIRPYRDENOISE_MAIN_MODE_AGGRESSIVE;Aggressiv
 TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE;Konservativ
-TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;Einstellung der Qualität der Rauschreduzierung.\nDie Einstellung “Hoch“ verbessert die Rausch-\nreduzierung auf Kosten der Verarbeitungszeit.
+TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;"Konservativ" bewahrt Tieffrequenz-Chroma-Muster,\nwährend "Aggressiv" sie entfernt.
 TP_DIRPYRDENOISE_MEDIAN_METHOD;Methode
 TP_DIRPYRDENOISE_MEDIAN_METHOD_CHROMINANCE;Nur Farbe
 TP_DIRPYRDENOISE_MEDIAN_METHOD_LAB;L*a*b*
@@ -1832,9 +1833,9 @@ TP_RAWEXPOS_LINEAR;Korrekturfaktor
 TP_RAWEXPOS_PRESER;Weißpunkt: Lichter schützen
 TP_RAWEXPOS_RGB;Rot, Grün, Blau
 TP_RAWEXPOS_TWOGREEN;Grün-Werte automatisch angleichen
-TP_RAW_1PASSMEDIUM;1-Pass (Medium)
-TP_RAW_3PASSBEST;3-Pass (Beste)
-TP_RAW_4PASS;4-Pass
+TP_RAW_1PASSMEDIUM;1-Pass (Markesteijn)
+TP_RAW_3PASSBEST;3-Pass (Markesteijn)
+TP_RAW_4PASS;3-Pass + schnell
 TP_RAW_AHD;AHD
 TP_RAW_AMAZE;AMaZE
 TP_RAW_AMAZEVNG4;AMaZE + VNG4
@@ -1912,7 +1913,7 @@ TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;StdDev factor Green
 TP_RAW_PIXELSHIFTSTDDEVFACTORRED;StdDev factor Red
 TP_RAW_RCD;RCD
 TP_RAW_SENSOR_BAYER_LABEL;Sensor mit Bayer-Matrix
-TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;Mit “3-Pass“ erzielt man die besten Ergebnisse\n(empfohlen bei Bildern mit niedrigen ISO-Werten).\n\nBei hohen ISO-Werten unterscheidet sich “1-Pass“\nkaum gegenüber “3-Pass“, ist aber deutlich schneller.
+TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;Mit “3-Pass“ erzielt man die besten Ergebnisse\n(empfohlen bei Bildern mit niedrigen ISO-Werten).\n\nBei hohen ISO-Werten unterscheidet sich “1-Pass“\nkaum gegenüber “3-Pass“, ist aber deutlich schneller.\n\n"+ schnell" erzeugt weniger Artefakte in kontrast-\narmen Bereichen.
 TP_RAW_SENSOR_XTRANS_LABEL;Sensor mit X-Trans-Matrix
 TP_RAW_VNG4;VNG4
 TP_RESIZE_APPLIESTO;Anwenden auf:
@@ -2307,4 +2308,4 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 MAIN_TOOLTIP_PREVIEWSHARPMASK;Schärfungs-Kontroll-Maske ein-/ausschalten\n\nFunktioniert nur bei aktivierter Schärfung\nund Zoom >= 100%.
 TP_RAW_DCBVNG4;DCB + VNG4
 TP_RAW_RCDVNG4;RCD + VNG4
-TP_RAW_2PASS;2-Pass
+TP_RAW_2PASS;1-Pass + schnell
