@@ -32,7 +32,7 @@ protected:
 
     MyComboBoxText* method;
     Gtk::HBox *imageNumberBox;
-    MySpinButton* border;
+    Adjuster* border;
     MyComboBoxText* imageNumber;
     Adjuster* ccSteps;
     Gtk::VBox *dcbOptions;
@@ -61,7 +61,6 @@ protected:
     int oldMethod;
 
     IdleRegister idle_register;
-    sigc::connection borderconn;
 
     rtengine::ProcEvent EvDemosaicBorder;
     rtengine::ProcEvent EvDemosaicContrast;
@@ -84,7 +83,6 @@ public:
     void pixelShiftMotionMethodChanged();
     void pixelShiftDemosaicMethodChanged();
     void FrameCountChanged(int n, int frameNum);
-    void borderChanged();
 };
 
 #endif
