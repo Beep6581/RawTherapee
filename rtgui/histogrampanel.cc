@@ -48,6 +48,9 @@ HistogramPanel::HistogramPanel ()
     histogramArea = Gtk::manage (new HistogramArea (this));
     histogramArea->set_hexpand(true);
     histogramArea->set_vexpand(true);
+    histogramArea->set_halign(Gtk::ALIGN_FILL);
+    histogramArea->set_valign(Gtk::ALIGN_FILL);
+    
     histogramRGBArea = Gtk::manage (new HistogramRGBArea ());
     histogramRGBArea->set_hexpand(true);
     histogramRGBArea->set_vexpand(false);
@@ -244,19 +247,9 @@ HistogramPanel::~HistogramPanel ()
 
 void HistogramPanel::resized (Gtk::Allocation& req)
 {
-
-    /*
-    rconn.block (true);
-
-    int gHeight = req.get_width()/2;
-    if (gHeight > 150) gHeight = 150; else if (gHeight < 100) gHeight = 100;
-    int bHeight = req.get_width()/30;
-    if (bHeight >  10) bHeight =  10; else if (bHeight < 5  ) bHeight = 5;
-    histogramArea->set_size_request (req.get_width(), gHeight);
-    histogramRGBArea->set_size_request (req.get_width(), bHeight);
-
-    rconn.block (false);
-    */
+    
+    // Store current aspect ratio of the histogram 
+    options.histogramAspect = histogramArea->get_height() / (float)histogramArea->get_width();
 
     histogramArea->updateBackBuffer ();
     histogramArea->queue_draw ();
@@ -723,33 +716,28 @@ HistogramArea::~HistogramArea ()
 
 Gtk::SizeRequestMode HistogramArea::get_request_mode_vfunc () const
 {
-    return Gtk::SIZE_REQUEST_HEIGHT_FOR_WIDTH;
+    return Gtk::SIZE_REQUEST_CONSTANT_SIZE;
 }
 
 void HistogramArea::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
 {
-    int minimumWidth = 0;
-    int naturalWidth = 0; 
-    get_preferred_width_vfunc (minimumWidth, naturalWidth);
-    get_preferred_height_for_width_vfunc (minimumWidth, minimum_height, natural_height);
+
+    minimum_height = 100;
+    natural_height = 200;
 }
 
 void HistogramArea::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    minimum_width = 60;
-    natural_width = 200;
+    
+    minimum_width = 200;
+    natural_width = 400;
 }
 
 void HistogramArea::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
 {
-    int gHeight = width / 2;
     
-    if (gHeight < 100) {
-        gHeight = 100;
-    }
-
-    minimum_height = gHeight * 0.7;
-    natural_height = gHeight;
+    minimum_height = 0;
+    natural_height = 0;
 }
 
 void HistogramArea::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
