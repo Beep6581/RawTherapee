@@ -46,8 +46,8 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     hb1->pack_end (*method, Gtk::PACK_EXPAND_WIDGET, 4);
     pack_start( *hb1, Gtk::PACK_SHRINK, 4);
 
-    Gtk::HBox* borderbox = Gtk::manage (new Gtk::HBox ());
-    border = Gtk::manage (new Adjuster (M("TP_RAW_BORDER"), 0, 16, 1, 4 ));
+    borderbox = Gtk::manage(new Gtk::HBox());
+    border = Gtk::manage(new Adjuster(M("TP_RAW_BORDER"), 0, 16, 1, 4));
     border->setAdjusterListener (this);
 
     if (border->delay < options.adjusterMaxDelay) {
@@ -55,8 +55,8 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     }
 
     border->show();
-    borderbox->pack_start (*border);
-    pack_start( *borderbox, Gtk::PACK_SHRINK, 4);
+    borderbox->pack_start(*border);
+    pack_start(*borderbox, Gtk::PACK_SHRINK, 4);
 
     imageNumberBox = Gtk::manage (new Gtk::HBox ());
     imageNumberBox->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_RAW_IMAGENUM") + ": ")), Gtk::PACK_SHRINK, 4);
@@ -353,9 +353,11 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
                                          || pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::DCBVNG4)
                                          || pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::RCDVNG4));
         if (pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::PIXELSHIFT)) {
+            borderbox->hide();
             pixelShiftOptions->set_visible(pp->raw.bayersensor.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::PSMotionCorrectionMethod::CUSTOM);
             pixelShiftFrame->show();
         } else {
+            borderbox->show();
             pixelShiftFrame->hide();
         }
 
@@ -564,6 +566,7 @@ void BayerProcess::methodChanged ()
         }
 
         if (currentMethod == procparams::RAWParams::BayerSensor::Method::PIXELSHIFT) {
+            borderbox->hide();
             if(pixelShiftMotionMethod->get_active_row_number() == 2) {
                 pixelShiftOptions->show();
             } else {
@@ -571,6 +574,7 @@ void BayerProcess::methodChanged ()
             }
             pixelShiftFrame->show();
         } else {
+            borderbox->show();
             pixelShiftFrame->hide();
         }
     }

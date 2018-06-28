@@ -31,6 +31,7 @@ class BayerProcess : public ToolParamBlock, public AdjusterListener, public Chec
 protected:
 
     MyComboBoxText* method;
+    Gtk::HBox* borderbox;
     Gtk::HBox *imageNumberBox;
     Adjuster* border;
     MyComboBoxText* imageNumber;
