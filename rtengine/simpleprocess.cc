@@ -203,12 +203,16 @@ private:
         if (pl) {
             pl->setProgress (0.20);
         }
+        if(imgsrc->getSensorType() == ST_BAYER) {
+            if(params.raw.bayersensor.method!= RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)) {
+                imgsrc->setBorder(params.raw.bayersensor.border);
+            } else {
+                imgsrc->setBorder(4);
+            }
+        }
         double contrastThresholdDummy;
         imgsrc->demosaic (params.raw, false, contrastThresholdDummy);
 
-        if(imgsrc->getSensorType() == ST_BAYER && params.raw.bayersensor.method != RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)) {
-            imgsrc->setBorder(params.raw.bayersensor.border);
-        }
 
         if (pl) {
             pl->setProgress (0.30);
