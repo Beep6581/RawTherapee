@@ -416,7 +416,7 @@ void Options::setDefaults ()
     histogramPosition = 1;
     histogramBar = true;
     histogramAspect = 0.618;
-	histogramDrawMode = 0;
+    histogramDrawMode = 0;
     curvebboxpos = 1;
     prevdemo = PD_Sidecar;
     rgbDenoiseThreadLimit = 0;
@@ -1294,8 +1294,8 @@ void Options::readFromFile (Glib::ustring fname)
                 if (keyFile.has_key ("GUI", "HistogramAspect")) {
                     histogramAspect = keyFile.get_double ("GUI", "HistogramAspect");
                 }
-				
-				if (keyFile.has_key ("GUI", "HistogramDrawMode")) {
+                
+                if (keyFile.has_key ("GUI", "HistogramDrawMode")) {
                     histogramDrawMode = keyFile.get_integer ("GUI", "HistogramDrawMode");
                 }
 
