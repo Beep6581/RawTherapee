@@ -553,6 +553,8 @@ void RawImageSource::hphd_demosaic ()
         }
     }
 
+    border_interpolate2(W, H, 4, rawData, red, green, blue);
+
     if (plistener) {
         plistener->setProgress (1.0);
     }
