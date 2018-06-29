@@ -2342,7 +2342,7 @@ void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
                 histogramPanel->unreference();
             }
 
-            leftbox->set_position(options.historyPanelWidth * options.histogramAspect); // Make sure the panel gets the right aspect ratio
+            leftbox->set_position(options.histogramHeight);
             histogramPanel->reorder (Gtk::POS_LEFT);
             break;
 
@@ -2362,7 +2362,7 @@ void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
                 histogramPanel->unreference();
             }
 
-            vboxright->set_position(options.toolPanelWidth * options.histogramAspect); // Make sure the panel gets the right aspect ratio
+            vboxright->set_position(options.histogramHeight); 
             histogramPanel->reorder (Gtk::POS_RIGHT);
             break;
     }

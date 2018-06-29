@@ -247,9 +247,6 @@ HistogramPanel::~HistogramPanel ()
 
 void HistogramPanel::resized (Gtk::Allocation& req)
 {
-    
-    // Store current aspect ratio of the histogram 
-    options.histogramAspect = histogramArea->get_height() / (float)histogramArea->get_width();
 
     histogramArea->updateBackBuffer ();
     histogramArea->queue_draw ();
@@ -266,6 +263,10 @@ void HistogramPanel::resized (Gtk::Allocation& req)
         histogramRGBArea->updateBackBuffer(-1, -1, -1);
         histogramRGBArea->queue_draw ();
     }
+
+    // Store current height of the histogram 
+    options.histogramHeight = get_height();
+    
 }
 
 void HistogramPanel::red_toggled ()

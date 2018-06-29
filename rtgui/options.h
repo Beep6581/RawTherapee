@@ -256,7 +256,7 @@ public:
     int histogramPosition;  // 0=disabled, 1=left pane, 2=right pane
     //int histogramWorking;  // 0=disabled, 1=left pane, 2=right pane
     bool histogramBar;
-    float histogramAspect;
+    int histogramHeight;
     int histogramDrawMode;
     bool FileBrowserToolbarSingleRow;
     bool hideTPVScrollbar;

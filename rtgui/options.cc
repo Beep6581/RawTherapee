@@ -415,7 +415,7 @@ void Options::setDefaults ()
     multiDisplayMode = 0;
     histogramPosition = 1;
     histogramBar = true;
-    histogramAspect = 0.618;
+    histogramHeight = 200;
     histogramDrawMode = 0;
     curvebboxpos = 1;
     prevdemo = PD_Sidecar;
@@ -1290,9 +1290,9 @@ void Options::readFromFile (Glib::ustring fname)
                 if (keyFile.has_key ("GUI", "HistogramBar")) {
                     histogramBar = keyFile.get_boolean ("GUI", "HistogramBar");
                 }
-
-                if (keyFile.has_key ("GUI", "HistogramAspect")) {
-                    histogramAspect = keyFile.get_double ("GUI", "HistogramAspect");
+                
+                if (keyFile.has_key ("GUI", "HistogramHeight")) {
+                    histogramHeight = keyFile.get_integer ("GUI", "HistogramHeight");
                 }
                 
                 if (keyFile.has_key ("GUI", "HistogramDrawMode")) {
@@ -1943,7 +1943,7 @@ void Options::saveToFile (Glib::ustring fname)
         keyFile.set_double_list ("GUI", "NavGuideBrush", navGuideBrush);
         keyFile.set_integer ("GUI", "HistogramPosition", histogramPosition);
         keyFile.set_boolean ("GUI", "HistogramBar", histogramBar);
-        keyFile.set_double  ("GUI", "HistogramAspect", histogramAspect);
+        keyFile.set_integer ("GUI", "HistogramHeight", histogramHeight);
         keyFile.set_integer ("GUI", "HistogramDrawMode", histogramDrawMode);
         keyFile.set_integer ("GUI", "NavigatorRGBUnit", (int)navRGBUnit);
         keyFile.set_integer ("GUI", "NavigatorHSVUnit", (int)navHSVUnit);
