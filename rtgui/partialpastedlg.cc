@@ -104,6 +104,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     // Raw Settings:
     raw_method          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_DMETHOD")));
     raw_imagenum        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_IMAGENUM")));
+    raw_border          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_BORDER")));
     raw_pixelshift      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_PIXELSHIFT")));
     raw_ccSteps         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_FALSECOLOR")));
     raw_dcb_iterations  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_DCBITERATIONS")));
@@ -215,6 +216,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[7]->pack_start (*raw, Gtk::PACK_SHRINK, 2);
     vboxes[7]->pack_start (*hseps[7], Gtk::PACK_SHRINK, 2);
     vboxes[7]->pack_start (*raw_method, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*raw_border, Gtk::PACK_SHRINK, 2);
     vboxes[7]->pack_start (*raw_imagenum, Gtk::PACK_SHRINK, 2);
     vboxes[7]->pack_start (*raw_pixelshift, Gtk::PACK_SHRINK, 2);
     vboxes[7]->pack_start (*raw_ccSteps, Gtk::PACK_SHRINK, 2);
@@ -359,6 +361,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
 
     // Raw Settings:
     raw_methodConn          = raw_method->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    raw_borderConn          = raw_border->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_imagenumConn        = raw_imagenum->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_pixelshiftConn      = raw_pixelshift->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_ccStepsConn         = raw_ccSteps->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
@@ -434,6 +437,7 @@ void PartialPasteDlg::rawToggled ()
 {
 
     ConnectionBlocker raw_methodBlocker(raw_methodConn);
+    ConnectionBlocker raw_borderBlocker(raw_borderConn);
     ConnectionBlocker raw_imagenumBlocker(raw_imagenumConn);
     ConnectionBlocker raw_pixelshiftBlocker(raw_pixelshiftConn);
     ConnectionBlocker raw_ccStepsBlocker(raw_ccStepsConn);
@@ -461,6 +465,7 @@ void PartialPasteDlg::rawToggled ()
     raw->set_inconsistent (false);
 
     raw_method->set_active (raw->get_active ());
+    raw_border->set_active (raw->get_active ());
     raw_imagenum->set_active (raw->get_active ());
     raw_pixelshift->set_active (raw->get_active ());
     raw_ccSteps->set_active (raw->get_active ());
@@ -812,6 +817,10 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
         filterPE.raw.bayersensor.dualDemosaicContrast = falsePE.raw.bayersensor.dualDemosaicContrast;
         filterPE.raw.xtranssensor.method  = falsePE.raw.xtranssensor.method;
         filterPE.raw.xtranssensor.dualDemosaicContrast = falsePE.raw.xtranssensor.dualDemosaicContrast;
+    }
+
+    if (!raw_border->get_active ()) {
+        filterPE.raw.bayersensor.border = falsePE.raw.bayersensor.border;
     }
 
     if (!raw_imagenum->get_active ()) {

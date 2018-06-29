@@ -110,6 +110,7 @@ public:
     Gtk::CheckButton* raw_linenoise;
     Gtk::CheckButton* raw_greenthresh;
     Gtk::CheckButton* raw_method;
+    Gtk::CheckButton* raw_border;
     Gtk::CheckButton* raw_imagenum;
     Gtk::CheckButton* raw_ccSteps;
     Gtk::CheckButton* raw_dcb_iterations;
@@ -134,7 +135,7 @@ public:
     sigc::connection coarserotConn, finerotConn, cropConn, resizeConn, prsharpeningConn, perspectiveConn, commonTransConn;
     sigc::connection metadataConn, exifchConn, iptcConn, icmConn;
     sigc::connection df_fileConn, df_AutoSelectConn, ff_fileConn, ff_AutoSelectConn, ff_BlurRadiusConn, ff_BlurTypeConn, ff_ClipControlConn;
-    sigc::connection raw_caredblueConn, raw_ca_autocorrectConn, raw_hotpix_filtConn, raw_deadpix_filtConn, raw_pdaf_lines_filterConn, raw_linenoiseConn, raw_greenthreshConn, raw_ccStepsConn, raw_methodConn, raw_imagenumConn, raw_dcb_iterationsConn, raw_lmmse_iterationsConn, raw_pixelshiftConn, raw_dcb_enhanceConn, raw_exposConn, raw_preserConn, raw_blackConn;
+    sigc::connection raw_caredblueConn, raw_ca_autocorrectConn, raw_hotpix_filtConn, raw_deadpix_filtConn, raw_pdaf_lines_filterConn, raw_linenoiseConn, raw_greenthreshConn, raw_ccStepsConn, raw_methodConn, raw_borderConn, raw_imagenumConn, raw_dcb_iterationsConn, raw_lmmse_iterationsConn, raw_pixelshiftConn, raw_dcb_enhanceConn, raw_exposConn, raw_preserConn, raw_blackConn;
 
 public:
     PartialPasteDlg (const Glib::ustring &title, Gtk::Window* parent);

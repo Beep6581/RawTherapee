@@ -159,6 +159,13 @@ private:
         imgsrc = ii->getImageSource ();
 
         tr = getCoarseBitMask (params.coarse);
+        if(imgsrc->getSensorType() == ST_BAYER) {
+            if(params.raw.bayersensor.method!= RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)) {
+                imgsrc->setBorder(params.raw.bayersensor.border);
+            } else {
+                imgsrc->setBorder(4);
+            }
+        }
         imgsrc->getFullSize (fw, fh, tr);
 
         // check the crop params
@@ -196,7 +203,6 @@ private:
         ipf_p.reset (new ImProcFunctions (&params, true));
         ImProcFunctions &ipf = * (ipf_p.get());
 
-        pp = PreviewProps (0, 0, fw, fh, 1);
         imgsrc->setCurrentFrame (params.raw.bayersensor.imageNum);
         imgsrc->preprocess ( params.raw, params.lensProf, params.coarse, params.dirpyrDenoise.enabled);
 
@@ -206,9 +212,11 @@ private:
         double contrastThresholdDummy;
         imgsrc->demosaic (params.raw, false, contrastThresholdDummy);
 
+
         if (pl) {
             pl->setProgress (0.30);
         }
+        pp = PreviewProps (0, 0, fw, fh, 1);
 
         if (params.retinex.enabled) { //enabled Retinex
             LUTf cdcurve (65536, 0);

@@ -80,6 +80,7 @@ public:
 
     virtual bool        isRGBSourceModified () const = 0; // tracks whether cached rgb output of demosaic has been modified
 
+    virtual void        setBorder (unsigned int border) {}
     virtual void        setCurrentFrame (unsigned int frameNum) = 0;
     virtual int         getFrameCount () = 0;
 

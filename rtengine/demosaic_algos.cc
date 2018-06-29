@@ -553,6 +553,8 @@ void RawImageSource::hphd_demosaic ()
         }
     }
 
+    border_interpolate2(W, H, 4, rawData, red, green, blue);
+
     if (plistener) {
         plistener->setProgress (1.0);
     }
@@ -714,7 +716,7 @@ void RawImageSource::border_interpolate(unsigned int border, float (*image)[4], 
         }
 }
 
-void RawImageSource::border_interpolate2( int winw, int winh, int lborders)
+void RawImageSource::border_interpolate2( int winw, int winh, int lborders, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
 {
     int bord = lborders;
     int width = winw;
@@ -1657,7 +1659,7 @@ void RawImageSource::igv_interpolate(int winw, int winh)
     chr[2] = hdif;
     chr[3] = vdif;
 
-    border_interpolate2(winw, winh, 7);
+    border_interpolate2(winw, winh, 7, rawData, red, green, blue);
 
     if (plistener) {
         plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::IGV)));
@@ -2047,7 +2049,7 @@ void RawImageSource::igv_interpolate(int winw, int winh)
     vdif  = (float (*))    calloc(width * height / 2, sizeof * vdif);
     hdif  = (float (*))    calloc(width * height / 2, sizeof * hdif);
 
-    border_interpolate2(winw, winh, 7);
+    border_interpolate2(winw, winh, 7, rawData, red, green, blue);
 
     if (plistener) {
         plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::IGV)));

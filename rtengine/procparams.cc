@@ -2345,6 +2345,7 @@ bool FilmSimulationParams::operator !=(const FilmSimulationParams& other) const
 
 RAWParams::BayerSensor::BayerSensor() :
     method(getMethodString(Method::AMAZE)),
+    border(4),
     imageNum(0),
     ccSteps(0),
     black0(0.0),
@@ -2381,6 +2382,7 @@ bool RAWParams::BayerSensor::operator ==(const BayerSensor& other) const
 {
     return
         method == other.method
+        && border == other.border
         && imageNum == other.imageNum
         && ccSteps == other.ccSteps
         && black0 == other.black0
@@ -3345,6 +3347,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.deadPixelFilter, "RAW", "DeadPixelFilter", raw.deadPixelFilter, keyFile);
         saveToKeyfile(!pedited || pedited->raw.hotdeadpix_thresh, "RAW", "HotDeadPixelThresh", raw.hotdeadpix_thresh, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.method, "RAW Bayer", "Method", raw.bayersensor.method, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.bayersensor.border, "RAW Bayer", "Border", raw.bayersensor.border, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.imageNum, "RAW Bayer", "ImageNum", raw.bayersensor.imageNum + 1, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.ccSteps, "RAW Bayer", "CcSteps", raw.bayersensor.ccSteps, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.exBlack0, "RAW Bayer", "PreBlack0", raw.bayersensor.black0, keyFile);
@@ -4673,6 +4676,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group ("RAW Bayer")) {
             assignFromKeyfile(keyFile, "RAW Bayer", "Method", pedited, raw.bayersensor.method, pedited->raw.bayersensor.method);
+            assignFromKeyfile(keyFile, "RAW Bayer", "Border", pedited, raw.bayersensor.border, pedited->raw.bayersensor.border);
 
             if (keyFile.has_key ("RAW Bayer", "ImageNum")) {
                 raw.bayersensor.imageNum = keyFile.get_integer ("RAW Bayer", "ImageNum") - 1;

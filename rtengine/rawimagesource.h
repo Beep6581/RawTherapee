@@ -130,7 +130,7 @@ public:
     void        HLRecovery_Global (ToneCurveParams hrp);
     void        refinement_lassus (int PassCount);
     void        refinement(int PassCount);
-
+    void        setBorder(unsigned int rawBorder) {border = rawBorder;}
     bool        isRGBSourceModified() const
     {
         return rgbSourceModified;   // tracks whether cached rgb output of demosaic has been modified
@@ -274,7 +274,7 @@ protected:
     void ahd_demosaic();
     void rcd_demosaic();
     void border_interpolate(unsigned int border, float (*image)[4], unsigned int start = 0, unsigned int end = 0);
-    void border_interpolate2(int winw, int winh, int lborders);
+    void border_interpolate2(int winw, int winh, int lborders, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
     void dcb_initTileLimits(int &colMin, int &rowMin, int &colMax, int &rowMax, int x0, int y0, int border);
     void fill_raw( float (*cache )[3], int x0, int y0, float** rawData);
     void fill_border( float (*cache )[3], int border, int x0, int y0);
