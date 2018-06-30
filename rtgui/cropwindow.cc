@@ -43,7 +43,7 @@ CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDet
       pmlistener(nullptr), pmhlistener(nullptr), observedCropWin(nullptr),
       crop_custom_ratio(0.f)
 {
-    initZoomSteps();
+    initZoomSteps(); 
     
     Glib::RefPtr<Pango::Context> context = parent->get_pango_context () ;
     Pango::FontDescription fontd = context->get_font_description ();

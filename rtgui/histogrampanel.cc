@@ -45,7 +45,7 @@ HistogramPanel::HistogramPanel ()
     setExpandAlignProperties(histogramArea, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     
     histogramRGBArea = Gtk::manage (new HistogramRGBArea ());
-    setExpandAlignProperties(histogramArea, false, true, Gtk::ALIGN_END, Gtk::ALIGN_FILL);
+    setExpandAlignProperties(histogramRGBArea, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
     histogramRGBArea->show();
 
     gfxGrid = Gtk::manage (new Gtk::Grid ());
@@ -875,7 +875,7 @@ void HistogramArea::updateBackBuffer ()
 
         if (needChroma && !rawMode) {
             drawCurve(cr, chist, realhistheight, w, h);
-            cr->set_source_rgb (0., 0., 0.);
+            cr->set_source_rgb (0.9, 0.9, 0.);
             cr->stroke ();
 
             drawMarks(cr, chist, realhistheight, w, ui, oi);
