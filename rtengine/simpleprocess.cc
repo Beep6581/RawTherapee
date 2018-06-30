@@ -163,7 +163,7 @@ private:
             if(params.raw.bayersensor.method!= RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)) {
                 imgsrc->setBorder(params.raw.bayersensor.border);
             } else {
-                imgsrc->setBorder(std::max(params.raw.bayersensor.border, 1));
+                imgsrc->setBorder(std::max(params.raw.bayersensor.border, 2));
             }
         }
         imgsrc->getFullSize (fw, fh, tr);

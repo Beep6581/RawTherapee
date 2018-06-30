@@ -234,7 +234,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             if(params.raw.bayersensor.method != RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)) {
                 imgsrc->setBorder(params.raw.bayersensor.border);
             } else {
-                imgsrc->setBorder(std::max(params.raw.bayersensor.border, 1));
+                imgsrc->setBorder(std::max(params.raw.bayersensor.border, 2));
             }
         }
         bool autoContrast = false;
