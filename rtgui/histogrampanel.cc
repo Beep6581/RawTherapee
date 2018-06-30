@@ -525,7 +525,7 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustrin
                     // Chroma
                     float chromaval = sqrt(Lab_a * Lab_a + Lab_b * Lab_b) / 1.8;
                     //  float chromaval = sqrt(Lab_a*Lab_a + Lab_b*Lab_b);
-                    cc->set_source_rgb(0.0, 0.0, 0.0);
+                    cc->set_source_rgb(0.9, 0.9, 0.0);
                     cc->move_to((int)(chromaval * (winw / 100.0)), 0);
                     cc->line_to((int)(chromaval * (winw / 100.0)), winh - 0);
                     cc->stroke();
