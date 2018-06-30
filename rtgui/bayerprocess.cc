@@ -28,6 +28,7 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
 {
 
     auto m = ProcEventMapper::getInstance();
+    EvDemosaicBorder = m->newEvent(DEMOSAIC, "HISTORY_MSG_RAW_BORDER");
     EvDemosaicContrast = m->newEvent(DEMOSAIC, "HISTORY_MSG_DUALDEMOSAIC_CONTRAST");
     EvDemosaicPixelshiftDemosaicMethod = m->newEvent(DEMOSAIC, "HISTORY_MSG_PIXELSHIFT_DEMOSAIC");
 
@@ -44,6 +45,18 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
 
     hb1->pack_end (*method, Gtk::PACK_EXPAND_WIDGET, 4);
     pack_start( *hb1, Gtk::PACK_SHRINK, 4);
+
+    borderbox = Gtk::manage(new Gtk::HBox());
+    border = Gtk::manage(new Adjuster(M("TP_RAW_BORDER"), 0, 16, 1, 4));
+    border->setAdjusterListener (this);
+
+    if (border->delay < options.adjusterMaxDelay) {
+        border->delay = options.adjusterMaxDelay;
+    }
+
+    border->show();
+    borderbox->pack_start(*border);
+    pack_start(*borderbox, Gtk::PACK_SHRINK, 4);
 
     imageNumberBox = Gtk::manage (new Gtk::HBox ());
     imageNumberBox->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_RAW_IMAGENUM") + ": ")), Gtk::PACK_SHRINK, 4);
@@ -234,6 +247,7 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     imageNumber->connect(imageNumber->signal_changed().connect( sigc::mem_fun(*this, &BayerProcess::imageNumberChanged) ));
     pixelShiftMotionMethod->connect(pixelShiftMotionMethod->signal_changed().connect( sigc::mem_fun(*this, &BayerProcess::pixelShiftMotionMethodChanged) ));
     pixelShiftDemosaicMethod->connect(pixelShiftDemosaicMethod->signal_changed().connect( sigc::mem_fun(*this, &BayerProcess::pixelShiftDemosaicMethodChanged) ));
+
 }
 
 
@@ -245,6 +259,7 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
     pixelShiftDemosaicMethod->block(true);
     //allEnhconn.block (true);
 
+    border->setValue(pp->raw.bayersensor.border);
     imageNumber->set_active(pp->raw.bayersensor.imageNum);
 
     for (size_t i = 0; i < procparams::RAWParams::BayerSensor::getMethodStrings().size(); ++i) {
@@ -294,6 +309,7 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
     }
 
     if(pedited) {
+        border->setEditedState (pedited->raw.bayersensor.border ? Edited : UnEdited);
         ccSteps->setEditedState (pedited->raw.bayersensor.ccSteps ? Edited : UnEdited);
         dcbIterations->setEditedState ( pedited->raw.bayersensor.dcbIterations ? Edited : UnEdited);
         dcbEnhance->setEdited (pedited->raw.bayersensor.dcbEnhance);
@@ -367,7 +383,7 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
     pp->raw.bayersensor.ccSteps = ccSteps->getIntValue();
     pp->raw.bayersensor.dcb_iterations = dcbIterations->getIntValue();
     pp->raw.bayersensor.dcb_enhance = dcbEnhance->getLastActive ();
-    //pp->raw.bayersensor.all_enhance = allEnhance->getLastActive ();
+    pp->raw.bayersensor.border = border->getIntValue();
     pp->raw.bayersensor.lmmse_iterations = lmmseIterations->getIntValue();
     pp->raw.bayersensor.dualDemosaicContrast = dualDemosaicContrast->getValue();
     pp->raw.bayersensor.pixelShiftMotionCorrectionMethod = (RAWParams::BayerSensor::PSMotionCorrectionMethod)pixelShiftMotionMethod->get_active_row_number();
@@ -401,6 +417,7 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
 
 
     if (pedited) {
+        pedited->raw.bayersensor.border = border->getEditedState ();
         pedited->raw.bayersensor.ccSteps = ccSteps->getEditedState ();
         pedited->raw.bayersensor.method = method->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->raw.bayersensor.imageNum = imageNumber->get_active_text() != M("GENERAL_UNCHANGED");
@@ -428,6 +445,7 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
 
 void BayerProcess::setAdjusterBehavior (bool falsecoloradd, bool iteradd, bool dualdemozecontrastadd, bool pssigmaadd, bool pssmoothadd, bool pseperisoadd)
 {
+    border->setAddMode(false);
     ccSteps->setAddMode(falsecoloradd);
     dcbIterations->setAddMode(iteradd);
     lmmseIterations->setAddMode(iteradd);
@@ -439,6 +457,7 @@ void BayerProcess::setAdjusterBehavior (bool falsecoloradd, bool iteradd, bool d
 
 void BayerProcess::trimValues (rtengine::procparams::ProcParams* pp)
 {
+    border->trimValue(pp->raw.bayersensor.border);
     ccSteps->trimValue(pp->raw.bayersensor.ccSteps);
     dcbIterations->trimValue(pp->raw.bayersensor.dcb_iterations);
     lmmseIterations->trimValue(pp->raw.bayersensor.lmmse_iterations);
@@ -459,6 +478,7 @@ void BayerProcess::setBatchMode(bool batchMode)
     imageNumber->append (M("GENERAL_UNCHANGED"));
     imageNumber->set_active_text (M("GENERAL_UNCHANGED"));
     ToolPanel::setBatchMode (batchMode);
+    border->showEditedCB ();
     ccSteps->showEditedCB ();
     dcbIterations->showEditedCB ();
     lmmseIterations->showEditedCB ();
@@ -474,6 +494,7 @@ void BayerProcess::setDefaults(const rtengine::procparams::ProcParams* defParams
     dualDemosaicContrast->setDefault( defParams->raw.bayersensor.dualDemosaicContrast);
     pixelShiftEperIso->setDefault( defParams->raw.bayersensor.pixelShiftEperIso);
     pixelShiftSigma->setDefault( defParams->raw.bayersensor.pixelShiftSigma);
+    border->setDefault (defParams->raw.bayersensor.border);
     ccSteps->setDefault (defParams->raw.bayersensor.ccSteps);
 
     if (pedited) {
@@ -482,6 +503,7 @@ void BayerProcess::setDefaults(const rtengine::procparams::ProcParams* defParams
         dualDemosaicContrast->setDefaultEditedState( pedited->raw.bayersensor.dualDemosaicContrast ? Edited : UnEdited);
         pixelShiftEperIso->setDefaultEditedState( pedited->raw.bayersensor.pixelShiftEperIso ? Edited : UnEdited);
         pixelShiftSigma->setDefaultEditedState( pedited->raw.bayersensor.pixelShiftSigma ? Edited : UnEdited);
+        border->setDefaultEditedState(pedited->raw.bayersensor.border ? Edited : UnEdited);
         ccSteps->setDefaultEditedState(pedited->raw.bayersensor.ccSteps ? Edited : UnEdited);
     } else {
         dcbIterations->setDefaultEditedState( Irrelevant );
@@ -489,6 +511,7 @@ void BayerProcess::setDefaults(const rtengine::procparams::ProcParams* defParams
         dualDemosaicContrast->setDefaultEditedState( Irrelevant );
         pixelShiftEperIso->setDefaultEditedState( Irrelevant );
         pixelShiftSigma->setDefaultEditedState( Irrelevant );
+        border->setDefaultEditedState(Irrelevant);
         ccSteps->setDefaultEditedState(Irrelevant );
     }
 }
@@ -510,6 +533,8 @@ void BayerProcess::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvPixelShiftSigma, a->getTextValue() );
         } else if (a == pixelShiftSmooth) {
             listener->panelChanged (EvPixelShiftSmooth, a->getTextValue() );
+        } else if (a == border) {
+            listener->panelChanged (EvDemosaicBorder, a->getTextValue() );
         }
     }
 }
@@ -705,3 +730,4 @@ void BayerProcess::FrameCountChanged(int n, int frameNum)
     // }
     // imageNumber->block (false);
 }
+

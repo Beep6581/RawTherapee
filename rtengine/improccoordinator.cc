@@ -230,6 +230,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 printf ("Demosaic X-Trans image with using method: %s\n", rp.xtranssensor.method.c_str());
             }
         }
+        if(imgsrc->getSensorType() == ST_BAYER) {
+            if(params.raw.bayersensor.method != RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)) {
+                imgsrc->setBorder(params.raw.bayersensor.border);
+            } else {
+                imgsrc->setBorder(std::max(params.raw.bayersensor.border, 2));
+            }
+        }
         bool autoContrast = false;
         double contrastThreshold = 0.f;
         imgsrc->demosaic (rp, autoContrast, contrastThreshold); //enabled demosaic

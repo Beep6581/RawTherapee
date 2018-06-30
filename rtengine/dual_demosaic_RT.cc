@@ -69,7 +69,7 @@ void RawImageSource::dual_demosaic_RT(bool isBayer, const RAWParams &raw, int wi
     if (isBayer) {
         vng4_demosaic(rawData, redTmp, greenTmp, blueTmp);
 
-        if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEVNG4) ) {
+        if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEVNG4) || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)) {
             amaze_demosaic_RT(0, 0, winw, winh, rawData, red, green, blue);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCBVNG4) ) {
             dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);

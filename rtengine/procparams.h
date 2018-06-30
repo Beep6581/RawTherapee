@@ -1215,6 +1215,17 @@ struct FilmSimulationParams {
 };
 
 
+struct SoftLightParams {
+    bool enabled;
+    int strength;
+
+    SoftLightParams();
+
+    bool operator==(const SoftLightParams &other) const;
+    bool operator!=(const SoftLightParams &other) const;
+};
+
+
 /**
   * Parameters for RAW demosaicing, common to all sensor type
   */
@@ -1255,6 +1266,7 @@ struct RAWParams {
         };
 
         Glib::ustring method;
+        int border;
         int imageNum;
         int ccSteps;
         double black0;
@@ -1422,6 +1434,7 @@ public:
     DirPyrEqualizerParams   dirpyrequalizer; ///< directional pyramid wavelet parameters
     HSVEqualizerParams      hsvequalizer;    ///< hsv wavelet parameters
     FilmSimulationParams    filmSimulation;  ///< film simulation parameters
+    SoftLightParams         softlight;       ///< softlight parameters
     int                     rank;            ///< Custom image quality ranking
     int                     colorlabel;      ///< Custom color label
     bool                    inTrash;         ///< Marks deleted image

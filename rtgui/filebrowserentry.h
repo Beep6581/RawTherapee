@@ -19,23 +19,27 @@
 #ifndef _FILEBROWSERENTRY_
 #define _FILEBROWSERENTRY_
 
+#include <atomic>
+
 #include <gtkmm.h>
-#include "thumbbrowserentrybase.h"
-#include "thumbnail.h"
-#include "filethumbnailbuttonset.h"
-#include "thumbnaillistener.h"
-#include "thumbimageupdater.h"
-#include "imageareatoollistener.h"
-#include "editenums.h"
+
 #include "../rtengine/rtengine.h"
+
 #include "crophandler.h"
+#include "editenums.h"
+#include "filethumbnailbuttonset.h"
+#include "imageareatoollistener.h"
+#include "thumbbrowserentrybase.h"
+#include "thumbimageupdater.h"
+#include "thumbnail.h"
+#include "thumbnaillistener.h"
 
 
 class FileBrowserEntry;
 struct FileBrowserEntryIdleHelper {
     FileBrowserEntry* fbentry;
     bool destroyed;
-    int pending;
+    std::atomic<int> pending;
 };
 
 class FileThumbnailButtonSet;

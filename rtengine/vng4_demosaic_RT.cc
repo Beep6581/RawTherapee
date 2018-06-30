@@ -336,6 +336,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
             interpolate_row_rb_mul_pp (rawData, red[i], blue[i], green[i - 1], green[i], green[i + 1], i, 1.0, 1.0, 1.0, 0, W, 1);
         }
     }
+    border_interpolate2(W, H, 3, rawData, red, green, blue);
 
     if(plistenerActive) {
         plistener->setProgress (1.0);
