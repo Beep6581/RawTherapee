@@ -38,24 +38,14 @@ extern Options options;
 // HistogramPanel
 HistogramPanel::HistogramPanel ()
 {
-
-    set_vexpand(true);
-    set_hexpand(true);
-    set_valign(Gtk::ALIGN_FILL);
-    set_halign(Gtk::ALIGN_FILL);
+    setExpandAlignProperties(this, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     set_name("HistogramPanel");
 
     histogramArea = Gtk::manage (new HistogramArea (this));
-    histogramArea->set_hexpand(true);
-    histogramArea->set_vexpand(true);
-    histogramArea->set_halign(Gtk::ALIGN_FILL);
-    histogramArea->set_valign(Gtk::ALIGN_FILL);
+    setExpandAlignProperties(histogramArea, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     
     histogramRGBArea = Gtk::manage (new HistogramRGBArea ());
-    histogramRGBArea->set_hexpand(true);
-    histogramRGBArea->set_vexpand(false);
-    histogramRGBArea->set_halign(Gtk::ALIGN_FILL);
-    histogramRGBArea->set_valign(Gtk::ALIGN_END);
+    setExpandAlignProperties(histogramArea, false, true, Gtk::ALIGN_END, Gtk::ALIGN_FILL);
     histogramRGBArea->show();
 
     gfxGrid = Gtk::manage (new Gtk::Grid ());
@@ -157,38 +147,14 @@ HistogramPanel::HistogramPanel ()
         showMode->set_image(*modeImage_g2);
     showBAR->set_image   (showBAR->get_active()   ? *barImage   : *barImage_g);
 
-    showRed->set_hexpand(false);
-    showRed->set_vexpand(false);
-    showRed->set_halign(Gtk::ALIGN_CENTER);
-    showRed->set_valign(Gtk::ALIGN_START);
-    showGreen->set_hexpand(false);
-    showGreen->set_vexpand(false);
-    showGreen->set_halign(Gtk::ALIGN_CENTER);
-    showGreen->set_valign(Gtk::ALIGN_START);
-    showBlue->set_hexpand(false);
-    showRed->set_vexpand(false);
-    showBlue->set_halign(Gtk::ALIGN_CENTER);
-    showBlue->set_valign(Gtk::ALIGN_START);
-    showValue->set_hexpand(false);
-    showValue->set_vexpand(false);
-    showValue->set_halign(Gtk::ALIGN_CENTER);
-    showValue->set_valign(Gtk::ALIGN_START);
-    showChro->set_hexpand(false);
-    showChro->set_vexpand(false);
-    showChro->set_halign(Gtk::ALIGN_CENTER);
-    showChro->set_valign(Gtk::ALIGN_START);
-    showRAW->set_hexpand(false);
-    showRAW->set_vexpand(false);
-    showRAW->set_halign(Gtk::ALIGN_CENTER);
-    showRAW->set_valign(Gtk::ALIGN_START);
-    showMode->set_hexpand(false);
-    showMode->set_vexpand(false);
-    showMode->set_halign(Gtk::ALIGN_CENTER);
-    showMode->set_valign(Gtk::ALIGN_START);
-    showBAR->set_hexpand(false);
-    showBAR->set_vexpand(false);
-    showBAR->set_halign(Gtk::ALIGN_CENTER);
-    showBAR->set_valign(Gtk::ALIGN_START);
+    setExpandAlignProperties(showRed  , false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(showGreen, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(showBlue , false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(showValue, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(showChro , false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(showRAW  , false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(showMode , false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(showBAR  , false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
     showRed->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::red_toggled), showRed );
     showGreen->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::green_toggled), showGreen );

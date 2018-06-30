@@ -2333,15 +2333,15 @@ void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
             if (oldPosition == 0) {
                 // There was no Histogram before, so we create it
                 histogramPanel = Gtk::manage (new HistogramPanel ());
-                leftbox->pack1(*histogramPanel, true, false);
+                leftbox->pack1(*histogramPanel, false, false);
             } else if (oldPosition == 2) {
                 // The histogram was on the right side, so we move it to the left
                 histogramPanel->reference();
                 removeIfThere (vboxright, histogramPanel, false);
-                leftbox->pack1(*histogramPanel, true, false);
+                leftbox->pack1(*histogramPanel, false, false);
                 histogramPanel->unreference();
             }
-
+            
             leftbox->set_position(options.histogramHeight);
             histogramPanel->reorder (Gtk::POS_LEFT);
             break;
@@ -2353,15 +2353,15 @@ void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
             if (oldPosition == 0) {
                 // There was no Histogram before, so we create it
                 histogramPanel = Gtk::manage (new HistogramPanel ());
-                vboxright->pack1 (*histogramPanel, true, false);
+                vboxright->pack1 (*histogramPanel, false, false);
             } else if (oldPosition == 1) {
                 // The histogram was on the left side, so we move it to the right
                 histogramPanel->reference();
                 removeIfThere (leftbox, histogramPanel, false);
-                vboxright->pack1 (*histogramPanel, true, false);
+                vboxright->pack1 (*histogramPanel, false, false);
                 histogramPanel->unreference();
             }
-
+            
             vboxright->set_position(options.histogramHeight); 
             histogramPanel->reorder (Gtk::POS_RIGHT);
             break;
