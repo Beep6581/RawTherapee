@@ -231,10 +231,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             }
         }
         if(imgsrc->getSensorType() == ST_BAYER) {
-            if(params.raw.bayersensor.method!= RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)) {
+            if(params.raw.bayersensor.method != RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)) {
                 imgsrc->setBorder(params.raw.bayersensor.border);
             } else {
-                imgsrc->setBorder(4);
+                imgsrc->setBorder(std::max(params.raw.bayersensor.border, 1));
             }
         }
         bool autoContrast = false;

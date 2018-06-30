@@ -353,11 +353,9 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
                                          || pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::DCBVNG4)
                                          || pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::RCDVNG4));
         if (pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::PIXELSHIFT)) {
-            borderbox->hide();
             pixelShiftOptions->set_visible(pp->raw.bayersensor.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::PSMotionCorrectionMethod::CUSTOM);
             pixelShiftFrame->show();
         } else {
-            borderbox->show();
             pixelShiftFrame->hide();
         }
 
@@ -566,7 +564,6 @@ void BayerProcess::methodChanged ()
         }
 
         if (currentMethod == procparams::RAWParams::BayerSensor::Method::PIXELSHIFT) {
-            borderbox->hide();
             if(pixelShiftMotionMethod->get_active_row_number() == 2) {
                 pixelShiftOptions->show();
             } else {
@@ -574,7 +571,6 @@ void BayerProcess::methodChanged ()
             }
             pixelShiftFrame->show();
         } else {
-            borderbox->show();
             pixelShiftFrame->hide();
         }
     }
