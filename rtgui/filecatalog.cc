@@ -490,6 +490,7 @@ void FileCatalog::exifInfoButtonToggled()
     }
 
     fileBrowser->refreshThumbImages ();
+    refreshHeight();
 }
 
 void FileCatalog::on_realize()
