@@ -501,8 +501,8 @@ void ThumbBrowserBase::configScrollBars ()
         vscroll.get_adjustment()->set_upper (inH);
         hscroll.get_adjustment()->set_lower (0);
         vscroll.get_adjustment()->set_lower (0);
-        hscroll.get_adjustment()->set_step_increment (fd[0]->getEffectiveHeight()); // Is it safe enough to assume fd[0] is accessible? There seems to be no other way to get the _actual_ height of the thumbnail.
-        vscroll.get_adjustment()->set_step_increment (fd[0]->getEffectiveHeight());
+        hscroll.get_adjustment()->set_step_increment (!fd.empty() ? fd[0]->getEffectiveHeight() : 0);
+        vscroll.get_adjustment()->set_step_increment (!fd.empty() ? fd[0]->getEffectiveHeight() : 0);
         hscroll.get_adjustment()->set_page_increment (iw);
         vscroll.get_adjustment()->set_page_increment (ih);
         hscroll.get_adjustment()->set_page_size (iw);
@@ -567,7 +567,7 @@ void ThumbBrowserBase::arrangeFiles()
 
         MYREADERLOCK_RELEASE(l);
         // This will require a Writer access
-        resizeThumbnailArea(currx, rowHeight);
+        resizeThumbnailArea(currx, !fd.empty() ? fd[0]->getEffectiveHeight() : rowHeight);
     } else {
         const int availWidth = internal.get_width();
 
