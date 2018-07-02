@@ -9937,6 +9937,7 @@ static void decodeFPDeltaRow(Bytef * src, Bytef * dst, size_t tileWidth, size_t 
 
 }
 
+#ifndef __F16C__
 // From DNG SDK dng_utils.h
 static inline uint32_t DNG_HalfToFloat(uint16_t halfValue) {
   int32_t sign     = (halfValue >> 15) & 0x00000001;
@@ -9970,6 +9971,7 @@ static inline uint32_t DNG_HalfToFloat(uint16_t halfValue) {
   // Assemble sign, exponent and mantissa.
   return (uint32_t) ((sign << 31) | (exponent << 23) | mantissa);
 }
+#endif
 
 static inline uint32_t DNG_FP24ToFloat(const uint8_t * input) {
   int32_t sign     = (input [0] >> 7) & 0x01;
@@ -10007,10 +10009,23 @@ static inline uint32_t DNG_FP24ToFloat(const uint8_t * input) {
 static void expandFloats(Bytef * dst, int tileWidth, int bytesps) {
   if (bytesps == 2) {
     uint16_t * dst16 = (uint16_t *) dst;
+#ifndef __F16C__
     uint32_t * dst32 = (uint32_t *) dst;
     for (int index = tileWidth - 1; index >= 0; --index) {
-      dst32[index] = DNG_HalfToFloat(dst16[index]);
+        dst32[index] = DNG_HalfToFloat(dst16[index]);
     }
+#else
+    float * dst32 = (float *) dst;
+    int index = tileWidth - 4;
+    for (; index >= 0; index -= 4) {
+        __m128i halfFloatv = _mm_loadu_si128((__m128i_u*)&dst16[index]);
+        STVFU(dst32[index], _mm_cvtph_ps(halfFloatv));
+    }
+    index += 3;
+    for (; index >= 0; --index) {
+        dst32[index] = _cvtsh_ss(dst16[index]);
+    }
+#endif
   } else if (bytesps == 3) {
     uint8_t  * dst8  = ((uint8_t *) dst) + (tileWidth - 1) * 3;
     uint32_t * dst32 = (uint32_t *) dst;
