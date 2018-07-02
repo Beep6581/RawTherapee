@@ -519,9 +519,6 @@ void ThumbBrowserBase::configScrollBars ()
         } else {
             vscroll.show();
         }
-    } else { // hide scrollbars when a filter is applied which returns no files
-        hscroll.hide();
-        vscroll.hide();
     }
 }
 
