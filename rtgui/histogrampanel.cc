@@ -119,7 +119,7 @@ HistogramPanel::HistogramPanel ()
     showValue->set_tooltip_text (M("HISTOGRAM_TOOLTIP_L"));
     showChro->set_tooltip_text  (M("HISTOGRAM_TOOLTIP_CHRO"));
     showRAW->set_tooltip_text   (M("HISTOGRAM_TOOLTIP_RAW"));
-    showMode->set_tooltip_text  (M("HISTOGRAM_TOOLTIP_FULL")); // needs replacement!
+    showMode->set_tooltip_text  (M("HISTOGRAM_TOOLTIP_MODE"));
     showBAR->set_tooltip_text   (M("HISTOGRAM_TOOLTIP_BAR"));
 
     buttonGrid = Gtk::manage (new Gtk::Grid ());
