@@ -754,10 +754,6 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
         }
 
         iarea->setToolHand ();
-
-        if (pmhlistener) {
-            pmhlistener->toggleFreeze();
-        }
     }
 
     state = SNormal;

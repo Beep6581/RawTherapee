@@ -56,7 +56,6 @@ protected:
     int g;
     int b;
 
-    bool frozen;
     bool valid;
 
     bool needRed;
@@ -77,8 +76,6 @@ public:
     ~HistogramRGBArea();
 
     void updateBackBuffer (int r, int g, int b, const Glib::ustring &profile = "", const Glib::ustring &profileW = "");
-    void updateFreeze (bool f);
-    bool getFreeze ();
     bool getShow ();
     void setParent (Gtk::Grid* p)
     {
@@ -201,8 +198,6 @@ public:
     }
     // pointermotionlistener interface
     void pointerMoved (bool validPos, Glib::ustring profile, Glib::ustring profileW, int x, int y, int r, int g, int b);
-    // added pointermotionlistener interface
-    void toggleFreeze();
     // TODO should be protected
     void setHistRGBInvalid ();
 

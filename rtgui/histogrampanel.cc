@@ -217,18 +217,9 @@ void HistogramPanel::resized (Gtk::Allocation& req)
     histogramArea->updateBackBuffer ();
     histogramArea->queue_draw ();
 
-    if (histogramRGBArea->getFreeze()) {
-        histogramRGBArea->updateFreeze(false);
-        // set histogramRGBArea invalid;
-        histogramRGBArea->updateBackBuffer(-1, -1, -1);
-        // re-set freeze to old state
-        histogramRGBArea->updateFreeze(true);
-        histogramRGBArea->queue_draw ();
-    } else {
-        // set histogramRGBArea invalid;
-        histogramRGBArea->updateBackBuffer(-1, -1, -1);
-        histogramRGBArea->queue_draw ();
-    }
+    // set histogramRGBArea invalid;
+    histogramRGBArea->updateBackBuffer(-1, -1, -1);
+    histogramRGBArea->queue_draw ();
 
     // Store current height of the histogram 
     options.histogramHeight = get_height();
@@ -316,18 +307,6 @@ void HistogramPanel::setHistRGBInvalid ()
     histogramRGBArea->queue_draw ();
 }
 
-// "Freeze" is not a button, but a RMB-click, so this is not in the RGBV-Toggle method
-void HistogramPanel::toggleFreeze ()
-{
-    if (histogramRGBArea->getFreeze()) {
-        histogramRGBArea->updateFreeze(false);
-    } else if (histogramRGBArea->getShow()) {
-        histogramRGBArea->updateFreeze(true);
-    }
-
-    return;
-}
-
 void HistogramPanel::pointerMoved (bool validPos, Glib::ustring profile, Glib::ustring profileW, int x, int y, int r, int g, int b)
 {
 
@@ -377,7 +356,7 @@ void HistogramPanel::toggle_button_mode ()
 //
 // HistogramRGBArea
 HistogramRGBArea::HistogramRGBArea () ://needChroma unactive by default, luma too
-    val(0), r(0), g(0), b(0), frozen(false), valid(false), needRed(true), needGreen(true), needBlue(true), needLuma(false), rawMode(false), showMode(options.histogramBar), barDisplayed(options.histogramBar), needChroma(false), parent(nullptr)
+    val(0), r(0), g(0), b(0), valid(false), needRed(true), needGreen(true), needBlue(true), needLuma(false), rawMode(false), showMode(options.histogramBar), barDisplayed(options.histogramBar), needChroma(false), parent(nullptr)
 {
 
     get_style_context()->add_class("drawingarea");
@@ -440,25 +419,14 @@ void HistogramRGBArea::get_preferred_width_for_height_vfunc (int height, int &mi
     get_preferred_width_vfunc (minimum_width, natural_width);
 }
 
-bool HistogramRGBArea::getFreeze()
-{
-    return(frozen);
-}
-
 bool HistogramRGBArea::getShow()
 {
     return(showMode);
 }
 
-void HistogramRGBArea::updateFreeze (bool f)
-{
-    frozen = f;
-    return;
-}
-
 void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustring &profile, const Glib::ustring &profileW)
 {
-    if (!get_realized () || frozen || !showMode) {
+    if (!get_realized () || !showMode) {
         return;
     }
 
@@ -599,8 +567,6 @@ void HistogramRGBArea::updateOptions (bool r, bool g, bool b, bool l, bool raw, 
         removeIfThere(parent, this, false);
         options.histogramBar = false;
         barDisplayed = false;
-        // unfreeze
-        updateFreeze(false);
     }
 
     // Disable (but don't hide it) the bar button when RAW histogram is displayed
@@ -641,7 +607,7 @@ bool HistogramRGBArea::on_button_press_event (GdkEventButton* event)
 {
 
     if (event->type == GDK_2BUTTON_PRESS && event->button == 1) {
-        // do something. Maybe un-freeze ?
+        // do something?
     }
 
     return true;
