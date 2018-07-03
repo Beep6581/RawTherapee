@@ -10008,20 +10008,28 @@ static inline uint32_t DNG_FP24ToFloat(const uint8_t * input) {
 
 static void expandFloats(Bytef * dst, int tileWidth, int bytesps) {
   if (bytesps == 2) {
-    uint16_t * dst16 = (uint16_t *) dst;
+    uint16_t* const dst16 = reinterpret_cast<uint16_t*>(dst);
 #ifndef __F16C__
-    uint32_t * dst32 = (uint32_t *) dst;
+    uint32_t* const dst32 = reinterpret_cast<uint32_t*>(dst);
     for (int index = tileWidth - 1; index >= 0; --index) {
         dst32[index] = DNG_HalfToFloat(dst16[index]);
     }
 #else
-    float * dst32 = (float *) dst;
-    int index = tileWidth - 4;
-    for (; index >= 0; index -= 4) {
+    float* const dst32 = reinterpret_cast<float*>(dst);
+    int index = tileWidth - 8;
+    for (; index >= 0; index -= 8) {
         __m128i halfFloatv = _mm_loadu_si128((__m128i_u*)&dst16[index]);
         STVFU(dst32[index], _mm_cvtph_ps(halfFloatv));
+        STVFU(dst32[index + 4], _mm_cvtph_ps(_mm_shuffle_epi32(halfFloatv, _MM_SHUFFLE(0,0,3,2))));
     }
-    index += 3;
+    index += 4;
+    if(index >= 0) {
+        __m128i halfFloatv = _mm_loadu_si128((__m128i_u*)&dst16[index]);
+        STVFU(dst32[index], _mm_cvtph_ps(halfFloatv));
+        index--;
+    } else {
+        index += 3;
+    }
     for (; index >= 0; --index) {
         dst32[index] = _cvtsh_ss(dst16[index]);
     }
