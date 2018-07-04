@@ -64,6 +64,7 @@
 #63 24.06.2018 DCB/RCD+VNG4 (TooWaBoo) RT 5.4
 #64 24.06.2018 Erweiterung/Korrektur (TooWaBoo) RT 5.4
 #65 25.06.2018 Korrekturen (TooWaBoo) RT 5.4
+#66 04.07.2018 Erweiterung (TooWaBoo) RT 5.4
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -2309,10 +2310,10 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!HISTORY_MSG_RAW_BORDER;Raw border
-!HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
-!HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
-!PARTIALPASTE_SOFTLIGHT;Soft light
-!TP_RAW_BORDER;Border
-!TP_SOFTLIGHT_LABEL;Soft Light
-!TP_SOFTLIGHT_STRENGTH;Strength
+HISTORY_MSG_RAW_BORDER;(Sensor-Matrix)\nFarbinterpolation\nBildrand
+HISTORY_MSG_SOFTLIGHT_ENABLED;(Weiches Licht)
+HISTORY_MSG_SOFTLIGHT_STRENGTH;(Weiches Licht)\nIntensität
+PARTIALPASTE_SOFTLIGHT;Weiches Licht
+TP_RAW_BORDER;Bildrand
+TP_SOFTLIGHT_LABEL;Weiches Licht
+TP_SOFTLIGHT_STRENGTH;Intensität
