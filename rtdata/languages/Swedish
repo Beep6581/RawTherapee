@@ -1959,6 +1959,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
 !HISTORY_MSG_RAW_BORDER;Raw border
+!HISTORY_MSG_RESIZE_ALLOW_UPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
 !HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
 !HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
@@ -2005,7 +2006,9 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control
 !PARTIALPASTE_LOCALCONTRAST;Local contrast
 !PARTIALPASTE_METADATA;Metadata mode
+!PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
+!PARTIALPASTE_RAW_BORDER;Raw border
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
 !PARTIALPASTE_RAW_PIXELSHIFT;Pixel Shift
 !PARTIALPASTE_SOFTLIGHT;Soft light
@@ -2166,6 +2169,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_RAW_RCD;RCD
 !TP_RAW_RCDVNG4;RCD+VNG4
 !TP_RAW_VNG4;VNG4
+!TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
 !TP_RETINEX_CONTEDIT_MAP;Mask equalizer
 !TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorrect raw data to reduce halos and artifacts.
 !TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;This curve can be applied alone or with a Gaussian mask or wavelet mask.\nBeware of artifacts!

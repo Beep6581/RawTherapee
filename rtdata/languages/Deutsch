@@ -804,7 +804,10 @@ HISTORY_MSG_PIXELSHIFT_DEMOSAIC;(Sensor-Matrix)\nFarbinterpolation - PS\nBewegun
 HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;(Sensor-Matrix)\nVorverarbeitung\nRichtung
 HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;(Sensor-Matrix)\nVorverarbeitung\nPDAF-Zeilenfilter
 HISTORY_MSG_PRSHARPEN_CONTRAST;(Skalieren) - Schärfen\nKontrastschwelle
+HISTORY_MSG_RAW_BORDER;(Sensor-Matrix)\nFarbinterpolation\nBildrand
 HISTORY_MSG_SHARPENING_CONTRAST;(Schärfung)\nKontrastschwelle
+HISTORY_MSG_SOFTLIGHT_ENABLED;(Weiches Licht)
+HISTORY_MSG_SOFTLIGHT_STRENGTH;(Weiches Licht)\nIntensität
 HISTORY_MSG_TM_FATTAL_ANCHOR;(Dynamikkompression)\nHelligkeitsverschiebung
 HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
@@ -1019,6 +1022,7 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Schatten/Lichter
 PARTIALPASTE_SHARPENEDGE;Kantenschärfung
 PARTIALPASTE_SHARPENING;Schärfung
 PARTIALPASTE_SHARPENMICRO;Mikrokontrast
+PARTIALPASTE_SOFTLIGHT;Weiches Licht
 PARTIALPASTE_TM_FATTAL;Dynamikkompression
 PARTIALPASTE_VIBRANCE;Dynamik
 PARTIALPASTE_VIGNETTING;Vignettierungskorrektur
@@ -1842,6 +1846,7 @@ TP_RAW_4PASS;3-Pass + schnell
 TP_RAW_AHD;AHD
 TP_RAW_AMAZE;AMaZE
 TP_RAW_AMAZEVNG4;AMaZE + VNG4
+TP_RAW_BORDER;Bildrand
 TP_RAW_DCB;DCB
 TP_RAW_DCBENHANCE;DCB-Verbesserung
 TP_RAW_DCBITERATIONS;Anzahl der DCB-Iterationen
@@ -2059,6 +2064,8 @@ TP_SHARPENMICRO_CONTRAST;Kontrastschwelle
 TP_SHARPENMICRO_LABEL;Mikrokontrast
 TP_SHARPENMICRO_MATRIX;3×3-Matrix statt 5×5-Matrix
 TP_SHARPENMICRO_UNIFORMITY;Gleichmäßigkeit
+TP_SOFTLIGHT_LABEL;Weiches Licht
+TP_SOFTLIGHT_STRENGTH;Intensität
 TP_TM_FATTAL_AMOUNT;Intensität
 TP_TM_FATTAL_ANCHOR;Helligkeitsverschiebung
 TP_TM_FATTAL_LABEL;Dynamikkompression
@@ -2310,10 +2317,7 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-HISTORY_MSG_RAW_BORDER;(Sensor-Matrix)\nFarbinterpolation\nBildrand
-HISTORY_MSG_SOFTLIGHT_ENABLED;(Weiches Licht)
-HISTORY_MSG_SOFTLIGHT_STRENGTH;(Weiches Licht)\nIntensität
-PARTIALPASTE_SOFTLIGHT;Weiches Licht
-TP_RAW_BORDER;Bildrand
-TP_SOFTLIGHT_LABEL;Weiches Licht
-TP_SOFTLIGHT_STRENGTH;Intensität
+!HISTORY_MSG_RESIZE_ALLOW_UPSCALING;Resize - Allow upscaling
+!PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
+!PARTIALPASTE_RAW_BORDER;Raw border
+!TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling

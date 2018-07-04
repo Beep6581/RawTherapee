@@ -2157,6 +2157,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
 !HISTORY_MSG_RAW_BORDER;Raw border
+!HISTORY_MSG_RESIZE_ALLOW_UPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
 !HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
 !HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
@@ -2176,6 +2177,8 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
 !PARTIALPASTE_LOCALCONTRAST;Local contrast
 !PARTIALPASTE_METADATA;Metadata mode
+!PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
+!PARTIALPASTE_RAW_BORDER;Raw border
 !PARTIALPASTE_SOFTLIGHT;Soft light
 !PARTIALPASTE_TM_FATTAL;Dynamic Range Compression
 !PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
@@ -2258,6 +2261,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a green mask showing the regions with motion.
 !TP_RAW_RCD;RCD
 !TP_RAW_RCDVNG4;RCD+VNG4
+!TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
 !TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
 !TP_RETINEX_GAINTRANSMISSION;Gain transmission
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce transmission map to achieve luminance.\nAbscissa: transmission -min from 0, mean, and values (max).\nOrdinate: gain.
