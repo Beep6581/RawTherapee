@@ -490,6 +490,7 @@ void FileCatalog::exifInfoButtonToggled()
     }
 
     fileBrowser->refreshThumbImages ();
+    refreshHeight();
 }
 
 void FileCatalog::on_realize()
@@ -1211,6 +1212,7 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
                 params.resize.appliesTo = options.fastexport_resize_appliesTo;
                 params.resize.method = options.fastexport_resize_method;
                 params.resize.dataspec = options.fastexport_resize_dataspec;
+                params.resize.allowUpscaling = false;
             }
 
             rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (fbe->filename, th->getType() == FT_Raw, params, fastmode && options.fastexport_use_fast_pipeline);

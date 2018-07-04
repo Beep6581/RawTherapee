@@ -741,6 +741,7 @@ HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
 HISTORY_MSG_RAW_BORDER;Raw border
+HISTORY_MSG_RESIZE_ALLOW_UPSCALING;Resize - Allow upscaling
 HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
 HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
 HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
@@ -1775,9 +1776,9 @@ TP_RAW_AMAZE;AMaZE
 TP_RAW_AMAZEVNG4;AMaZE+VNG4
 TP_RAW_BORDER;Border
 TP_RAW_DCB;DCB
-TP_RAW_DCBVNG4;DCB+VNG4
 TP_RAW_DCBENHANCE;DCB enhancement
 TP_RAW_DCBITERATIONS;Number of DCB iterations
+TP_RAW_DCBVNG4;DCB+VNG4
 TP_RAW_DMETHOD;Method
 TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
 TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
@@ -1835,6 +1836,7 @@ TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for 
 TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix
 TP_RAW_VNG4;VNG4
 TP_RESIZE_APPLIESTO;Applies to:
+TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
 TP_RESIZE_CROPPEDAREA;Cropped Area
 TP_RESIZE_FITBOX;Bounding Box
 TP_RESIZE_FULLIMAGE;Full Image
@@ -2070,7 +2072,7 @@ TP_WAVELET_DTHR;Diagonal
 TP_WAVELET_DTWO;Horizontal
 TP_WAVELET_EDCU;Curve
 TP_WAVELET_EDGCONT;Local contrast
-TP_WAVELET_EDGCONT_TOOLTIP;Adjusting the points to the left decreases contrast, and to the right increases it.\nBottom-left, Top-Left, Top-Right, Bottom-right represent respectively local contast for low values, mean, mean+stdev, maxima
+TP_WAVELET_EDGCONT_TOOLTIP;Adjusting the points to the left decreases contrast, and to the right increases it.\nBottom-left, top-left, top-right and bottom-right represent respectively local contrast for low values, mean, mean+stdev and maxima.
 TP_WAVELET_EDGE;Edge Sharpness
 TP_WAVELET_EDGEAMPLI;Base amplification
 TP_WAVELET_EDGEDETECT;Gradient sensitivity
