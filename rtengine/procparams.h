@@ -1000,6 +1000,7 @@ struct ResizeParams {
     int dataspec;
     int width;
     int height;
+    bool allowUpscaling;
 
     ResizeParams();
 

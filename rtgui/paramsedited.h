@@ -569,6 +569,7 @@ public:
     bool width;
     bool height;
     bool enabled;
+    bool allowUpscaling;
 };
 
 class ColorManagementParamsEdited
