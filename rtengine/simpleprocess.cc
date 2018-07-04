@@ -1192,7 +1192,8 @@ private:
         }
 
         if (labResize) { // resize lab data
-            if(labView->W != imw || labView->H != imh) {
+            if ((labView->W != imw || labView->H != imh) &&
+                (params.resize.allowUpscaling || (labView->W >= imw && labView->H >= imh))) {
                 // resize image
                 tmplab = new LabImage (imw, imh);
                 ipf.Lanczos (labView, tmplab, tmpScale);
@@ -1265,7 +1266,8 @@ private:
             pl->setProgress (0.70);
         }
 
-        if (tmpScale != 1.0 && params.resize.method == "Nearest") { // resize rgb data (gamma applied)
+        if (tmpScale != 1.0 && params.resize.method == "Nearest" &&
+            (params.resize.allowUpscaling || (readyImg->getWidth() >= imw && readyImg->getHeight() >= imh))) { // resize rgb data (gamma applied)
             Imagefloat* tempImage = new Imagefloat (imw, imh);
             ipf.resize (readyImg, tempImage, tmpScale);
             delete readyImg;
@@ -1383,7 +1385,7 @@ private:
         assert (params.resize.enabled);
 
         // resize image
-        {
+        if (params.resize.allowUpscaling || (imw <= fw && imh <= fh)) {
             std::unique_ptr<LabImage> resized (new LabImage (imw, imh));
             ipf.Lanczos (tmplab.get(), resized.get(), scale_factor);
             tmplab = std::move (resized);

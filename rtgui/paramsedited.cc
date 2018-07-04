@@ -377,6 +377,7 @@ void ParamsEdited::set (bool v)
     resize.width     = v;
     resize.height    = v;
     resize.enabled   = v;
+    resize.allowUpscaling = v;
     icm.input        = v;
     icm.toneCurve = v;
     icm.applyLookTable = v;
@@ -931,6 +932,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         resize.width = resize.width && p.resize.width == other.resize.width;
         resize.height = resize.height && p.resize.height == other.resize.height;
         resize.enabled = resize.enabled && p.resize.enabled == other.resize.enabled;
+        resize.allowUpscaling = resize.allowUpscaling && p.resize.allowUpscaling == other.resize.allowUpscaling;
         icm.input = icm.input && p.icm.input == other.icm.input;
         icm.toneCurve = icm.toneCurve && p.icm.toneCurve == other.icm.toneCurve;
         icm.applyLookTable = icm.applyLookTable && p.icm.applyLookTable == other.icm.applyLookTable;
@@ -2404,6 +2406,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (resize.enabled) {
         toEdit.resize.enabled     = mods.resize.enabled;
+    }
+
+    if (resize.allowUpscaling) {
+        toEdit.resize.allowUpscaling = mods.resize.allowUpscaling;
     }
 
     if (icm.input) {
