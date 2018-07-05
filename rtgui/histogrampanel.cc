@@ -887,6 +887,10 @@ void HistogramArea::updateBackBuffer ()
     int nrOfHGridPartitions = (int)rtengine::min (16.0, pow (2.0, floor ((h - 100) / 250) + 2));
     int nrOfVGridPartitions = (int)rtengine::min (16.0, pow (2.0, floor ((w - 100) / 250) + 2));
     
+    if (rawMode || options.histogramDrawMode == 2) {
+        nrOfVGridPartitions = 8; // always show 8 stops for the raw histogam and in log-log mode
+    }
+    
     // draw vertical gridlines
     if (options.histogramDrawMode < 2) {
         for (int i = 1; i < nrOfVGridPartitions; i++) {
@@ -895,9 +899,9 @@ void HistogramArea::updateBackBuffer ()
             cr->stroke ();
         }
     } else {
-        for (int i = 1; i < nrOfVGridPartitions; i++) {
-            cr->move_to (scalingFunctionLog (w, i * w / nrOfVGridPartitions) + 0.5, 1.5);
-            cr->line_to (scalingFunctionLog (w, i * w / nrOfVGridPartitions) + 0.5, h - 2);
+        for (int i = 0; i < nrOfVGridPartitions; i++) {
+            cr->move_to (scalingFunctionLog (256, pow(2.0,i)) * w / 256 + 0.5, 1.5);
+            cr->line_to (scalingFunctionLog (256, pow(2.0,i)) * w / 256 + 0.5, h - 2);
             cr->stroke ();
         }
     }
@@ -938,7 +942,7 @@ void HistogramArea::on_realize ()
 
 double HistogramArea::scalingFunctionLog(double vsize, double val)
 {
-    double factor = 20.0; // can be tuned if necessary - higher is flatter curve
+    double factor = 10.0; // can be tuned if necessary - higher is flatter curve
     return vsize * log(factor / (factor + val)) / log(factor / (factor + vsize));
 }
 
