@@ -479,7 +479,7 @@ void Options::setDefaults()
     fastexport_bypass_raw_ff             = true;
     fastexport_icm_input_profile         = "(camera)";
     fastexport_icm_working_profile       = "ProPhoto";
-    fastexport_icm_output_profile        = "RT_sRGB";
+    fastexport_icm_output_profile        = options.rtSettings.srgb;
     fastexport_icm_outputIntent          = rtengine::RI_RELATIVE;
     fastexport_icm_outputBPC             = true;
     fastexport_resize_enabled            = true;
@@ -547,8 +547,6 @@ void Options::setDefaults()
     rtSettings.autoMonitorProfile = false;
     rtSettings.adobe = "RTv4_Medium"; // put the name of yours profiles (here windows)
     rtSettings.prophoto = "RTv4_Large"; // these names appear in the menu "output profile"
-    rtSettings.prophoto10 = "RTv4_Large"; // these names appear in the menu "output profile"
-    rtSettings.srgb10 = "RTv4_sRGB";
     rtSettings.widegamut = "RTv4_Wide";
     rtSettings.srgb = "RTv4_sRGB";
     rtSettings.bruce = "RTv4_Bruce";
@@ -1451,42 +1449,58 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("Color Management", "AdobeRGB")) {
                     rtSettings.adobe = keyFile.get_string("Color Management", "AdobeRGB");
+                    if (rtSettings.adobe == "RT_Medium_gsRGB") {
+                        rtSettings.adobe = "RTv4_Medium";
+                    }
                 }
 
                 if (keyFile.has_key("Color Management", "ProPhoto")) {
                     rtSettings.prophoto = keyFile.get_string("Color Management", "ProPhoto");
-                }
-
-                if (keyFile.has_key("Color Management", "ProPhoto10")) {
-                    rtSettings.prophoto10 = keyFile.get_string("Color Management", "ProPhoto10");
+                    if (rtSettings.prophoto == "RT_Large_gBT709") {
+                        rtSettings.prophoto = "RTv4_Large";
+                    }
                 }
 
                 if (keyFile.has_key("Color Management", "WideGamut")) {
                     rtSettings.widegamut = keyFile.get_string("Color Management", "WideGamut");
+                    if (rtSettings.widegamut == "WideGamutRGB") {
+                        rtSettings.widegamut = "RTv4_Wide";
+                    }
                 }
 
                 if (keyFile.has_key("Color Management", "sRGB")) {
                     rtSettings.srgb = keyFile.get_string("Color Management", "sRGB");
-                }
-
-                if (keyFile.has_key("Color Management", "sRGB10")) {
-                    rtSettings.srgb10 = keyFile.get_string("Color Management", "sRGB10");
+                    if (rtSettings.srgb == "RT_sRGB") {
+                        rtSettings.srgb = "RTv4_sRGB";
+                    }
                 }
 
                 if (keyFile.has_key("Color Management", "Beta")) {
                     rtSettings.beta = keyFile.get_string("Color Management", "Beta");
+                    if (rtSettings.beta == "BetaRGB") {
+                        rtSettings.beta = "RTv4_Beta";
+                    }
                 }
 
                 if (keyFile.has_key("Color Management", "Best")) {
                     rtSettings.best = keyFile.get_string("Color Management", "Best");
+                    if (rtSettings.best == "BestRGB") {
+                        rtSettings.best = "RTv4_Best";
+                    }
                 }
 
                 if (keyFile.has_key("Color Management", "Rec2020")) {
                     rtSettings.rec2020 = keyFile.get_string("Color Management", "Rec2020");
+                    if (rtSettings.rec2020 == "Rec2020") {
+                        rtSettings.rec2020 = "RTv4_Rec2020";
+                    }
                 }
 
                 if (keyFile.has_key("Color Management", "Bruce")) {
                     rtSettings.bruce = keyFile.get_string("Color Management", "Bruce");
+                    if (rtSettings.bruce == "Bruce") {
+                        rtSettings.bruce = "RTv4_Bruce";
+                    }
                 }
 
                 if (keyFile.has_key("Color Management", "ACES-AP0")) {
@@ -2039,10 +2053,8 @@ void Options::saveToFile(Glib::ustring fname)
 
         keyFile.set_string("Color Management", "AdobeRGB", rtSettings.adobe);
         keyFile.set_string("Color Management", "ProPhoto", rtSettings.prophoto);
-        keyFile.set_string("Color Management", "ProPhoto10", rtSettings.prophoto10);
         keyFile.set_string("Color Management", "WideGamut", rtSettings.widegamut);
         keyFile.set_string("Color Management", "sRGB", rtSettings.srgb);
-        keyFile.set_string("Color Management", "sRGB10", rtSettings.srgb10);
         keyFile.set_string("Color Management", "Beta", rtSettings.beta);
         keyFile.set_string("Color Management", "Best", rtSettings.best);
         keyFile.set_string("Color Management", "Rec2020", rtSettings.rec2020);

@@ -322,10 +322,17 @@ void ICCProfileCreator::updateICCVersion()
 
 void ICCProfileCreator::primariesChanged()
 {
-    if (primaries->get_active_text() == M("ICCPROFCREATOR_CUSTOM")) {
-        primariesGrid->set_sensitive(true);
-    } else {
-        primariesGrid->set_sensitive(false);
+    if (primaries->get_active_text() != M("ICCPROFCREATOR_CUSTOM")) {
+        float p[6];
+        ColorTemp temp;
+        Glib::ustring primPresetName(getPrimariesPresetName(primaries->get_active_text()));
+        getPrimaries(primPresetName, p, temp);
+        aPrimariesRedX->setValue(p[0]);
+        aPrimariesRedY->setValue(p[1]);
+        aPrimariesGreenX->setValue(p[2]);
+        aPrimariesGreenY->setValue(p[3]);
+        aPrimariesBlueX->setValue(p[4]);
+        aPrimariesBlueY->setValue(p[5]);
     }
     updateICCVersion();
 }
@@ -379,30 +386,7 @@ void ICCProfileCreator::storeValues()
         options.ICCPC_illuminant = illuminant = "stdA";
     }
 
-    if (primaries->get_active_text() == M("ICCPROFCREATOR_PRIM_ACESP0")) {
-        options.ICCPC_primariesPreset = primariesPreset = "ACES-AP0";
-    } else if (primaries->get_active_text() == M("ICCPROFCREATOR_PRIM_ACESP1")) {
-        options.ICCPC_primariesPreset = primariesPreset = "ACES-AP1";
-    } else if (primaries->get_active_text() == M("ICCPROFCREATOR_PRIM_ADOBE")) {
-        options.ICCPC_primariesPreset = primariesPreset = "Adobe";
-    } else if (primaries->get_active_text() == M("ICCPROFCREATOR_PRIM_PROPH")) {
-        options.ICCPC_primariesPreset = primariesPreset = "ProPhoto";
-    } else if (primaries->get_active_text() == M("ICCPROFCREATOR_PRIM_REC2020")) {
-        options.ICCPC_primariesPreset = primariesPreset = "Rec2020";
-    } else if (primaries->get_active_text() == M("ICCPROFCREATOR_PRIM_SRGB")) {
-        options.ICCPC_primariesPreset = primariesPreset = "sRGB";
-    } else if (primaries->get_active_text() == M("ICCPROFCREATOR_PRIM_WIDEG")) {
-        options.ICCPC_primariesPreset = primariesPreset = "Widegamut";
-    } else if (primaries->get_active_text() == M("ICCPROFCREATOR_PRIM_BEST")) {
-        options.ICCPC_primariesPreset = primariesPreset = "BestRGB";
-    } else if (primaries->get_active_text() == M("ICCPROFCREATOR_PRIM_BETA")) {
-        options.ICCPC_primariesPreset = primariesPreset = "BetaRGB";
-    } else if (primaries->get_active_text() == M("ICCPROFCREATOR_PRIM_BRUCE")) {
-        options.ICCPC_primariesPreset = primariesPreset = "BruceRGB";
-    } else if (primaries->get_active_text() == M("ICCPROFCREATOR_CUSTOM")) {
-        options.ICCPC_primariesPreset = primariesPreset = "custom";
-    }
-
+    options.ICCPC_primariesPreset = primariesPreset = getPrimariesPresetName(primaries->get_active_text());
     options.ICCPC_gamma = gamma = aGamma->getValue();
     options.ICCPC_slope = slope = aSlope->getValue();
     options.ICCPC_redPrimaryX = redPrimaryX = aPrimariesRedX->getValue();
@@ -414,11 +398,137 @@ void ICCProfileCreator::storeValues()
 
 }
 
+Glib::ustring ICCProfileCreator::getPrimariesPresetName(const Glib::ustring &preset)
+{
+    if (primaries->get_active_text() == M("ICCPROFCREATOR_PRIM_ACESP0")) {
+        return Glib::ustring("ACES-AP0");
+    } else if (primaries->get_active_text() == M("ICCPROFCREATOR_PRIM_ACESP1")) {
+        return Glib::ustring("ACES-AP1");
+    } else if (primaries->get_active_text() == M("ICCPROFCREATOR_PRIM_ADOBE")) {
+        return Glib::ustring("Adobe");
+    } else if (primaries->get_active_text() == M("ICCPROFCREATOR_PRIM_PROPH")) {
+        return Glib::ustring("ProPhoto");
+    } else if (primaries->get_active_text() == M("ICCPROFCREATOR_PRIM_REC2020")) {
+        return Glib::ustring("Rec2020");
+    } else if (primaries->get_active_text() == M("ICCPROFCREATOR_PRIM_SRGB")) {
+        return Glib::ustring("sRGB");
+    } else if (primaries->get_active_text() == M("ICCPROFCREATOR_PRIM_WIDEG")) {
+        return Glib::ustring("Widegamut");
+    } else if (primaries->get_active_text() == M("ICCPROFCREATOR_PRIM_BEST")) {
+        return Glib::ustring("BestRGB");
+    } else if (primaries->get_active_text() == M("ICCPROFCREATOR_PRIM_BETA")) {
+        return Glib::ustring("BetaRGB");
+    } else if (primaries->get_active_text() == M("ICCPROFCREATOR_PRIM_BRUCE")) {
+        return Glib::ustring("BruceRGB");
+    } else if (primaries->get_active_text() == M("ICCPROFCREATOR_CUSTOM")) {
+        return Glib::ustring("custom");
+    } else {
+        return Glib::ustring();
+    }
+}
+
+void ICCProfileCreator::getPrimaries(Glib::ustring preset, float *p, ColorTemp &temp)
+{
+    temp = ColorTemp::D50;
+    if (primariesPreset == "Widegamut") {
+        p[0] = 0.7350;    //Widegamut primaries
+        p[1] = 0.2650;
+        p[2] = 0.1150;
+        p[3] = 0.8260;
+        p[4] = 0.1570;
+        p[5] = 0.0180;
+
+    } else if (primariesPreset == "Adobe") {
+        p[0] = 0.6400;    //Adobe primaries
+        p[1] = 0.3300;
+        p[2] = 0.2100;
+        p[3] = 0.7100;
+        p[4] = 0.1500;
+        p[5] = 0.0600;
+        temp = ColorTemp::D65;
+    } else if (primariesPreset == "sRGB") {
+        p[0] = 0.6400;    // sRGB primaries
+        p[1] = 0.3300;
+        p[2] = 0.3000;
+        p[3] = 0.6000;
+        p[4] = 0.1500;
+        p[5] = 0.0600;
+        temp = ColorTemp::D65;
+    } else if (primariesPreset == "BruceRGB") {
+        p[0] = 0.6400;    // Bruce primaries
+        p[1] = 0.3300;
+        p[2] = 0.2800;
+        p[3] = 0.6500;
+        p[4] = 0.1500;
+        p[5] = 0.0600;
+        temp = ColorTemp::D65;
+    } else if (primariesPreset == "BetaRGB") {
+        p[0] = 0.6888;    // Beta primaries
+        p[1] = 0.3112;
+        p[2] = 0.1986;
+        p[3] = 0.7551;
+        p[4] = 0.1265;
+        p[5] = 0.0352;
+    } else if (primariesPreset == "BestRGB") {
+        p[0] = 0.7347;    // Best primaries
+        p[1] = 0.2653;
+        p[2] = 0.2150;
+        p[3] = 0.7750;
+        p[4] = 0.1300;
+        p[5] = 0.0350;
+    } else if (primariesPreset == "Rec2020") {
+        p[0] = 0.7080;    // Rec2020 primaries
+        p[1] = 0.2920;
+        p[2] = 0.1700;
+        p[3] = 0.7970;
+        p[4] = 0.1310;
+        p[5] = 0.0460;
+        temp = ColorTemp::D65;
+    } else if (primariesPreset == "ACES-AP0") {
+        p[0] = 0.7347;    // ACES P0 primaries
+        p[1] = 0.2653;
+        p[2] = 0.0000;
+        p[3] = 1.0;
+        p[4] = 0.0001;
+        p[5] = -0.0770;
+        temp = ColorTemp::D60;
+    } else if (primariesPreset == "ACES-AP1") {
+        p[0] = 0.713;    // ACES P1 primaries
+        p[1] = 0.293;
+        p[2] = 0.165;
+        p[3] = 0.830;
+        p[4] = 0.128;
+        p[5] = 0.044;
+        temp = ColorTemp::D60;
+    } else if (primariesPreset == "ProPhoto") {
+        p[0] = 0.7347;    // ProPhoto and default primaries
+        p[1] = 0.2653;
+        p[2] = 0.1596;
+        p[3] = 0.8404;
+        p[4] = 0.0366;
+        p[5] = 0.0001;
+    } else if (primariesPreset == "custom") {
+        p[0] = redPrimaryX;
+        p[1] = redPrimaryY;
+        p[2] = greenPrimaryX;
+        p[3] = greenPrimaryY;
+        p[4] = bluePrimaryX;
+        p[5] = bluePrimaryY;
+
+    } else {
+        p[0] = 0.7347;    //default primaries
+        p[1] = 0.2653;
+        p[2] = 0.1596;
+        p[3] = 0.8404;
+        p[4] = 0.0366;
+        p[5] = 0.0001;
+    }
+}
+
 // Copyright (c) 2018 Jacques DESMIS <jdesmis@gmail.com>
 // WARNING: the caller must lock lcmsMutex
 void ICCProfileCreator::savePressed()
 {
-    bool pro = false;
     cmsHPROFILE newProfile = nullptr;
     Glib::ustring sNewProfile;
     Glib::ustring sPrimariesPreset;
@@ -426,11 +536,7 @@ void ICCProfileCreator::savePressed()
 
     storeValues();
 
-    // -------------------------------------------- Compute de default file name
-
-    if (gammaPreset == "linear_g1.0" || (gammaPreset == "High_g1.3_s3.35")) {
-        pro = true;    //pro=0  RT_sRGB || Prophoto
-    }
+    // -------------------------------------------- Compute the default file name
 
     //necessary for V2 profile
     if (primariesPreset == "ACES-AP0"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp0)) {
@@ -442,20 +548,14 @@ void ICCProfileCreator::savePressed()
     } else if (primariesPreset == "Adobe"      && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.adobe)) {
         sNewProfile = options.rtSettings.adobe;
         sPrimariesPreset = "Medium_";
-    } else if (primariesPreset == "ProPhoto"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto)   && !pro) {
+    } else if (primariesPreset == "ProPhoto"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto)) {
         sNewProfile = options.rtSettings.prophoto;
-        sPrimariesPreset = "Large_";
-    } else if (primariesPreset == "ProPhoto"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto10) &&  pro) {
-        sNewProfile = options.rtSettings.prophoto10;
         sPrimariesPreset = "Large_";
     } else if (primariesPreset == "Rec2020"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.rec2020)) {
         sNewProfile = options.rtSettings.rec2020;
         sPrimariesPreset = "Rec2020_";
-    } else if (primariesPreset == "sRGB"       && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.srgb)       && !pro) {
+    } else if (primariesPreset == "sRGB"       && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.srgb)) {
         sNewProfile = options.rtSettings.srgb;
-        sPrimariesPreset = "sRGB_";
-    } else if (primariesPreset == "sRGB"       && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.srgb10)     &&  pro) {
-        sNewProfile = options.rtSettings.srgb10;
         sPrimariesPreset = "sRGB_";
     } else if (primariesPreset == "Widegamut"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.widegamut)) {
         sNewProfile = options.rtSettings.widegamut;
@@ -714,106 +814,8 @@ void ICCProfileCreator::savePressed()
         float p[6]; //primaries
         ga[6] = 0.0;
 
-        enum class ColorTemp {
-            D50 = 5003,  // for Widegamut, Prophoto Best, Beta -> D50
-            D65 = 6504,   // for sRGB, AdobeRGB, Bruce Rec2020  -> D65
-            D60 = 6005        //for ACESc->D60
-        };
-        ColorTemp temp = ColorTemp::D50;
-
-        if (primariesPreset == "Widegamut") {
-            p[0] = 0.7350;    //Widegamut primaries
-            p[1] = 0.2650;
-            p[2] = 0.1150;
-            p[3] = 0.8260;
-            p[4] = 0.1570;
-            p[5] = 0.0180;
-
-        } else if (primariesPreset == "Adobe") {
-            p[0] = 0.6400;    //Adobe primaries
-            p[1] = 0.3300;
-            p[2] = 0.2100;
-            p[3] = 0.7100;
-            p[4] = 0.1500;
-            p[5] = 0.0600;
-            temp = ColorTemp::D65;
-        } else if (primariesPreset == "sRGB") {
-            p[0] = 0.6400;    // sRGB primaries
-            p[1] = 0.3300;
-            p[2] = 0.3000;
-            p[3] = 0.6000;
-            p[4] = 0.1500;
-            p[5] = 0.0600;
-            temp = ColorTemp::D65;
-        } else if (primariesPreset == "BruceRGB") {
-            p[0] = 0.6400;    // Bruce primaries
-            p[1] = 0.3300;
-            p[2] = 0.2800;
-            p[3] = 0.6500;
-            p[4] = 0.1500;
-            p[5] = 0.0600;
-            temp = ColorTemp::D65;
-        } else if (primariesPreset == "BetaRGB") {
-            p[0] = 0.6888;    // Beta primaries
-            p[1] = 0.3112;
-            p[2] = 0.1986;
-            p[3] = 0.7551;
-            p[4] = 0.1265;
-            p[5] = 0.0352;
-        } else if (primariesPreset == "BestRGB") {
-            p[0] = 0.7347;    // Best primaries
-            p[1] = 0.2653;
-            p[2] = 0.2150;
-            p[3] = 0.7750;
-            p[4] = 0.1300;
-            p[5] = 0.0350;
-        } else if (primariesPreset == "Rec2020") {
-            p[0] = 0.7080;    // Rec2020 primaries
-            p[1] = 0.2920;
-            p[2] = 0.1700;
-            p[3] = 0.7970;
-            p[4] = 0.1310;
-            p[5] = 0.0460;
-            temp = ColorTemp::D65;
-        } else if (primariesPreset == "ACES-AP0") {
-            p[0] = 0.7347;    // ACES P0 primaries
-            p[1] = 0.2653;
-            p[2] = 0.0000;
-            p[3] = 1.0;
-            p[4] = 0.0001;
-            p[5] = -0.0770;
-            temp = ColorTemp::D60;
-        } else if (primariesPreset == "ACES-AP1") {
-            p[0] = 0.713;    // ACES P1 primaries
-            p[1] = 0.293;
-            p[2] = 0.165;
-            p[3] = 0.830;
-            p[4] = 0.128;
-            p[5] = 0.044;
-            temp = ColorTemp::D60;
-        } else if (primariesPreset == "ProPhoto") {
-            p[0] = 0.7347;    // ProPhoto and default primaries
-            p[1] = 0.2653;
-            p[2] = 0.1596;
-            p[3] = 0.8404;
-            p[4] = 0.0366;
-            p[5] = 0.0001;
-        } else if (primariesPreset == "custom") {
-            p[0] = redPrimaryX;
-            p[1] = redPrimaryY;
-            p[2] = greenPrimaryX;
-            p[3] = greenPrimaryY;
-            p[4] = bluePrimaryX;
-            p[5] = bluePrimaryY;
-
-        } else {
-            p[0] = 0.7347;    //default primaries
-            p[1] = 0.2653;
-            p[2] = 0.1596;
-            p[3] = 0.8404;
-            p[4] = 0.0366;
-            p[5] = 0.0001;
-        }
+        ColorTemp temp;
+        getPrimaries(primariesPreset, p, temp);
 
         cmsCIExyY xyD;
         cmsCIExyYTRIPLE Primaries = {

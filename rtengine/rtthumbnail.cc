@@ -286,7 +286,7 @@ Image8 *load_inspector_mode(const Glib::ustring &fname, RawMetaDataLocation &rml
     neutral.raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
     neutral.raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
     neutral.icm.inputProfile = "(camera)";
-    neutral.icm.workingProfile = "RT_sRGB";
+    neutral.icm.workingProfile = options.rtSettings.srgb;
 
     src.preprocess(neutral.raw, neutral.lensProf, neutral.coarse, false);
     double thresholdDummy = 0.f;

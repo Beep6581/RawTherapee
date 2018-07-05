@@ -30,6 +30,12 @@ class ICCProfileCreator : public Gtk::Dialog, public AdjusterListener
 
 private:
 
+    enum class ColorTemp {
+        D50 = 5003,  // for Widegamut, Prophoto Best, Beta -> D50
+        D60 = 6005,  // for ACESc                          -> D60
+        D65 = 6504   // for sRGB, AdobeRGB, Bruce Rec2020  -> D65
+    };
+
     cmsFloat64Number ga[7]; // 7 parameters for smoother curves
 
     //------------------------ Params -----------------------
@@ -79,7 +85,8 @@ private:
     void illuminantChanged();
     void trcPresetsChanged();
     static std::vector<Glib::ustring> getGamma();
-    void getGammaArray();
+    Glib::ustring getPrimariesPresetName(const Glib::ustring &preset);
+    void getPrimaries(Glib::ustring preset, float *p, ColorTemp &temp);
     void savePressed();
     void closePressed();
 

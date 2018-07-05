@@ -1014,7 +1014,7 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
             /*    Glib::ustring outputProfile;
                 outputProfile =cropHandler.colorParams.output ;
                 printf("Using \"%s\" output\n", outputProfile.c_str());
-                if(outputProfile=="RT_sRGB") printf("OK SRGB2");
+                if(outputProfile==options.rtSettings.srgb) printf("OK SRGB2");
             */
             pmlistener->pointerMoved (false, cropHandler.colorParams.outputProfile, cropHandler.colorParams.workingProfile, mx, my, -1, -1, -1);
 

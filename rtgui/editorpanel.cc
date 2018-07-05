@@ -272,7 +272,7 @@ private:
         }
 
 #else
-        profile = "RT_sRGB";
+        profile = options.rtSettings.srgb;
 #endif
 
 #if !defined(__APPLE__) // monitor profile not supported on apple

@@ -1958,7 +1958,7 @@ ColorManagementParams::ColorManagementParams() :
     workingTRC("none"),
     workingTRCGamma(2.4),
     workingTRCSlope(12.92310),
-    outputProfile("RT_sRGB"),
+    outputProfile(options.rtSettings.srgb),
     outputIntent(RI_RELATIVE),
     outputBPC(true)
 {
@@ -4204,6 +4204,27 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "WorkingTRCSlope", pedited, icm.workingTRCSlope, pedited->icm.workingTRCSlope);
 
             assignFromKeyfile(keyFile, "Color Management", "OutputProfile", pedited, icm.outputProfile, pedited->icm.outputProfile);
+            if (ppVersion < 339) {
+                if (icm.outputProfile == "RT_Medium_gsRGB") {
+                    icm.outputProfile = "RTv4_Medium";
+                } else if (icm.outputProfile == "RT_Large_gBT709" || icm.outputProfile == "RT_Large_g10" || icm.outputProfile == "RT_Large_gsRGB") {
+                    icm.outputProfile = "RTv4_Large";
+                } else if (icm.outputProfile == "WideGamutRGB") {
+                    icm.outputProfile = "RTv4_Wide";
+                } else if (icm.outputProfile == "RT_sRGB_gBT709" || icm.outputProfile == "RT_sRGB_g10" || icm.outputProfile == "RT_sRGB") {
+                    icm.outputProfile = "RTv4_sRGB";
+                } else if (icm.outputProfile == "BetaRGB") { // Have we ever provided this profile ? Should we convert this filename ?
+                    icm.outputProfile = "RTv4_Beta";
+                } else if (icm.outputProfile == "BestRGB") { // Have we ever provided this profile ? Should we convert this filename ?
+                    icm.outputProfile = "RTv4_Best";
+                } else if (icm.outputProfile == "Rec2020") {
+                    icm.outputProfile = "RTv4_Rec2020";
+                } else if (icm.outputProfile == "Bruce") { // Have we ever provided this profile ? Should we convert this filename ?
+                    icm.outputProfile = "RTv4_Bruce";
+                } else if (icm.outputProfile == "ACES") {
+                    icm.outputProfile = "RTv4_ACES-AP0";
+                }
+            }
             if (keyFile.has_key("Color Management", "OutputProfileIntent")) {
                 Glib::ustring intent = keyFile.get_string("Color Management", "OutputProfileIntent");
 
