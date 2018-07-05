@@ -65,6 +65,7 @@
 #64 24.06.2018 Erweiterung/Korrektur (TooWaBoo) RT 5.4
 #65 25.06.2018 Korrekturen (TooWaBoo) RT 5.4
 #66 04.07.2018 Erweiterung (TooWaBoo) RT 5.4
+#67 05.07.2018 Erweiterung (TooWaBoo) RT 5.4
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -2317,7 +2318,7 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!HISTORY_MSG_RESIZE_ALLOW_UPSCALING;Resize - Allow upscaling
-!PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
-!PARTIALPASTE_RAW_BORDER;Raw border
-!TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
+HISTORY_MSG_RESIZE_ALLOW_UPSCALING;(Skalieren)\nHochskalieren zulassen
+PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;Vorverarbeitung: PDAF-Zeilenfilter
+PARTIALPASTE_RAW_BORDER;Farbinterpolation: Bildrand
+TP_RESIZE_ALLOW_UPSCALING;Hochskalieren zulassen
