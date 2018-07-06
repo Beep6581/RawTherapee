@@ -28,6 +28,7 @@
 #include "../rtengine/color.h"
 #include "../rtengine/opthelper.h"
 #include "../rtengine/iccstore.h"
+
 using namespace rtengine;
 
 extern Options options;
@@ -953,23 +954,20 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
     scale = scale <= 0.f ? 0.001f : scale; // avoid division by zero and negative values
 
     for (int i = 0; i < 256; i++) {
-        double val = data[i] * (double)(vsize - 2) / scale;
-        
+        double val = data[i] * (double)vsize / scale;
+
         if (drawMode > 0) { // scale y for single and double log-scale
             val = scalingFunctionLog ((double)vsize, val);
         }
-        
-        if (val > vsize - 1) {
-            val = vsize - 1;
-        }
-        
+
         double iscaled = i;
         if (drawMode == 2) { // scale x for double log-scale
-            iscaled = scalingFunctionLog (256.0, (double)i);
+            iscaled = scalingFunctionLog (255.0, (double)i);
         }
 
         double posX = (iscaled / 255.0) * (hsize - 1);
-        double posY = vsize - 1 - val;
+        double posY = vsize - 2 + val * (4 - vsize) / vsize;
+
         cr->line_to (posX, posY);
     }
 
