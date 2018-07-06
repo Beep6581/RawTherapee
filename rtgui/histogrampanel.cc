@@ -889,7 +889,7 @@ void HistogramArea::updateBackBuffer ()
     int nrOfVGridPartitions = (int)rtengine::min (16.0, pow (2.0, floor ((w - 100) / 250) + 2));
     
     if (options.histogramDrawMode == 2) {
-        nrOfVGridPartitions = 8; // always show 8 stops in log-log mode
+        nrOfVGridPartitions = 9; // always show 9 stops in log-log mode (lines at 1,2,4,8,16,32,64,128)
     }
     
     // draw vertical gridlines
