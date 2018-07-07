@@ -66,7 +66,11 @@ void scale_colors (rtengine::RawImage *ri, float scale_mul[4], float cblack[4], 
     if (ri->isBayer()) {
         const int height = ri->get_iheight();
         const int width = ri->get_iwidth();
-
+        const bool isFloat = ri->isFloat();
+        const int top_margin = ri->get_topmargin();
+        const int left_margin = ri->get_leftmargin();
+        const int raw_width = ri->get_rawwidth();
+        const float * const float_raw_image = ri->get_FloatRawImage();
 #ifdef _OPENMP
         #pragma omp parallel for if(multiThread)
 #endif
@@ -76,8 +80,15 @@ void scale_colors (rtengine::RawImage *ri, float scale_mul[4], float cblack[4], 
             int col = 0;
 
             for (; col < width - 1; col += 2) {
-                float val0 = image[row * width + col][c0];
-                float val1 = image[row * width + col + 1][c1];
+                float val0;
+                float val1;
+                if (isFloat) {
+                    val0 = float_raw_image[(row + top_margin) * raw_width + col + left_margin];
+                    val1 = float_raw_image[(row + top_margin) * raw_width + col + left_margin + 1];
+                } else {
+                    val0 = image[row * width + col][c0];
+                    val1 = image[row * width + col + 1][c1];
+                }
                 val0 -= cblack[c0];
                 val1 -= cblack[c1];
                 val0 *= scale_mul[c0];
@@ -87,7 +98,12 @@ void scale_colors (rtengine::RawImage *ri, float scale_mul[4], float cblack[4], 
             }
 
             if (col < width) { // in case width is odd
-                float val0 = image[row * width + col][c0];
+                float val0;
+                if (isFloat) {
+                    val0 = float_raw_image[(row + top_margin) * raw_width + col + left_margin];
+                } else {
+                    val0 = image[row * width + col][c0];
+                }
                 val0 -= cblack[c0];
                 val0 *= scale_mul[c0];
                 image[row * width + col][c0] = rtengine::CLIP (val0);
