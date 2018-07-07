@@ -889,7 +889,7 @@ void HistogramArea::updateBackBuffer ()
     int nrOfVGridPartitions = (int)rtengine::min (16.0, pow (2.0, floor ((w - 100) / 250) + 2));
     
     if (options.histogramDrawMode == 2) {
-        nrOfVGridPartitions = 9; // always show 9 stops in log-log mode (lines at 1,2,4,8,16,32,64,128)
+        nrOfVGridPartitions = 8; // always show 8 stops in log-log mode (lines at 1,3,7,15,31,63,127)
     }
     
     // draw vertical gridlines
@@ -900,9 +900,9 @@ void HistogramArea::updateBackBuffer ()
             cr->stroke ();
         }
     } else {
-        for (int i = 0; i < nrOfVGridPartitions; i++) {
-            cr->move_to (scalingFunctionLog (256, pow(2.0,i)) * w / 256 + 0.5, 1.5);
-            cr->line_to (scalingFunctionLog (256, pow(2.0,i)) * w / 256 + 0.5, h - 2);
+        for (int i = 1; i < nrOfVGridPartitions; i++) {
+            cr->move_to (scalingFunctionLog (255, pow(2.0,i) - 1) * w / 255 + 0.5, 1.5);
+            cr->line_to (scalingFunctionLog (255, pow(2.0,i) - 1) * w / 255 + 0.5, h - 2);
             cr->stroke ();
         }
     }
