@@ -18,12 +18,15 @@
  */
 #include "resize.h"
 #include "guiutils.h"
+#include "eventmapper.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
 Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), false, true), maxw(100000), maxh(100000)
 {
+    auto m = ProcEventMapper::getInstance();
+    EvResizeAllowUpscaling = m->newEvent(RESIZE, "HISTORY_MSG_RESIZE_ALLOW_UPSCALING");
 
     cropw = 0;
     croph = 0;
@@ -88,6 +91,11 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     sbox->pack_start (*hbox);
 
     sizeBox->pack_start (*sbox, Gtk::PACK_SHRINK, 0);
+
+    allowUpscaling = Gtk::manage(new Gtk::CheckButton(M("TP_RESIZE_ALLOW_UPSCALING")));
+    sizeBox->pack_start(*allowUpscaling);
+    allowUpscaling->signal_toggled().connect(sigc::mem_fun(*this, &Resize::allowUpscalingChanged));
+    
     sizeBox->show_all ();
     sizeBox->reference ();
 
@@ -137,6 +145,7 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
     h->set_value (pp->resize.height);
     setEnabled (pp->resize.enabled);
     spec->set_active (pp->resize.dataspec);
+    allowUpscaling->set_active(pp->resize.allowUpscaling);
     updateGUI();
 
     appliesTo->set_active (0);
@@ -175,6 +184,7 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
             spec->set_active (4);
         }
 
+        allowUpscaling->set_inconsistent(!pedited->resize.allowUpscaling);
         set_inconsistent (multiImage && !pedited->resize.enabled);
     }
 
@@ -214,6 +224,8 @@ void Resize::write (ProcParams* pp, ParamsEdited* pedited)
     pp->resize.enabled = getEnabled ();
     //printf("  L:%d   H:%d\n", pp->resize.width, pp->resize.height);
 
+    pp->resize.allowUpscaling = allowUpscaling->get_active();
+
     if (pedited) {
         pedited->resize.enabled   = !get_inconsistent();
         pedited->resize.dataspec  = dataSpec != MAX_SCALE;
@@ -229,6 +241,7 @@ void Resize::write (ProcParams* pp, ParamsEdited* pedited)
             pedited->resize.width     = false;
             pedited->resize.height    = false;
         }
+        pedited->resize.allowUpscaling = !allowUpscaling->get_inconsistent();
     }
 }
 
@@ -619,6 +632,22 @@ void Resize::enabledChanged ()
         }
     }
 }
+
+
+void Resize::allowUpscalingChanged()
+{
+
+    if (listener) {
+        if (allowUpscaling->get_inconsistent()) {
+            listener->panelChanged(EvResizeAllowUpscaling, M("GENERAL_UNCHANGED"));
+        } else if (allowUpscaling->get_active()) {
+            listener->panelChanged(EvResizeAllowUpscaling, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged(EvResizeAllowUpscaling, M("GENERAL_DISABLED"));
+        }
+    }
+}
+
 
 void Resize::setAdjusterBehavior (bool scaleadd)
 {

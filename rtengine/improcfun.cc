@@ -2275,15 +2275,15 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 
     float Balan = float (params->colorToning.balance);
 
-    float chMixRR = float (params->chmixer.red[0]);
-    float chMixRG = float (params->chmixer.red[1]);
-    float chMixRB = float (params->chmixer.red[2]);
-    float chMixGR = float (params->chmixer.green[0]);
-    float chMixGG = float (params->chmixer.green[1]);
-    float chMixGB = float (params->chmixer.green[2]);
-    float chMixBR = float (params->chmixer.blue[0]);
-    float chMixBG = float (params->chmixer.blue[1]);
-    float chMixBB = float (params->chmixer.blue[2]);
+    float chMixRR = float (params->chmixer.red[0])/10.f;
+    float chMixRG = float (params->chmixer.red[1])/10.f;
+    float chMixRB = float (params->chmixer.red[2])/10.f;
+    float chMixGR = float (params->chmixer.green[0])/10.f;
+    float chMixGG = float (params->chmixer.green[1])/10.f;
+    float chMixGB = float (params->chmixer.green[2])/10.f;
+    float chMixBR = float (params->chmixer.blue[0])/10.f;
+    float chMixBG = float (params->chmixer.blue[1])/10.f;
+    float chMixBB = float (params->chmixer.blue[2])/10.f;
 
     bool blackwhite = params->blackwhite.enabled;
     bool complem = params->blackwhite.enabledcc;
@@ -3208,7 +3208,8 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                     }
                 }
 
-
+                softLight(rtemp, gtemp, btemp, istart, jstart, tW, tH, TS);
+                
                 if (!blackwhite) {
                     if (editImgFloat || editWhatever) {
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
@@ -5871,10 +5872,11 @@ void ImProcFunctions::lab2rgb (const LabImage &src, Imagefloat &dst, const Glib:
 void ImProcFunctions::colorToningLabGrid(LabImage *lab, int xstart, int xend, int ystart, int yend, bool MultiThread)
 {
     const float factor = ColorToningParams::LABGRID_CORR_MAX * 3.f;
-    float a_scale = (params->colorToning.labgridAHigh - params->colorToning.labgridALow) / factor;
-    float a_base = params->colorToning.labgridALow;
-    float b_scale = (params->colorToning.labgridBHigh - params->colorToning.labgridBLow) / factor;
-    float b_base = params->colorToning.labgridBLow;
+    const float scaling = ColorToningParams::LABGRID_CORR_SCALE;
+    float a_scale = (params->colorToning.labgridAHigh - params->colorToning.labgridALow) / factor / scaling;
+    float a_base = params->colorToning.labgridALow / scaling;
+    float b_scale = (params->colorToning.labgridBHigh - params->colorToning.labgridBLow) / factor / scaling;
+    float b_base = params->colorToning.labgridBLow / scaling;
 
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)

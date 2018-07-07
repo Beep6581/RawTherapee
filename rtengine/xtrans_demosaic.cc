@@ -114,7 +114,7 @@ void RawImageSource::cielab (const float (*rgb)[3], float* l, float* a, float *b
 #define fcol(row,col) xtrans[(row)%6][(col)%6]
 #define isgreen(row,col) (xtrans[(row)%3][(col)%3]&1)
 
-void RawImageSource::xtransborder_interpolate (int border)
+void RawImageSource::xtransborder_interpolate (int border, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
 {
     const int height = H, width = W;
 
@@ -201,7 +201,7 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
 //        printf("%d-pass X-Trans interpolation using %s conversion...\n", passes, useCieLab ? "lab" : "yuv");
 //    }
 
-    xtransborder_interpolate(6);
+    xtransborder_interpolate(6, red, green, blue);
 
     float xyz_cam[3][3];
     {
@@ -974,7 +974,7 @@ void RawImageSource::fast_xtrans_interpolate (const array2D<float> &rawData, arr
 
     const int height = H, width = W;
 
-    xtransborder_interpolate (1);
+    xtransborder_interpolate (1, red, green, blue);
     int xtrans[6][6];
     ri->getXtransMatrix(xtrans);
 
@@ -1019,60 +1019,5 @@ void RawImageSource::fast_xtrans_interpolate (const array2D<float> &rawData, arr
 #undef fcol
 #undef isgreen
 
-void RawImageSource::xtrans_4pass_demosaic_RT(int passes, bool useCieLab, double contrast)
-{
-    BENCHFUN
-
-    if (contrast == 0.0) {
-        // contrast == 0.0 means only AMaZE will be used
-        xtrans_interpolate (passes, useCieLab);
-        return;
-    }
-
-    xtrans_interpolate (passes, useCieLab);
-
-    array2D<float> redTmp(W, H);
-    array2D<float> greenTmp(W, H);
-    array2D<float> blueTmp(W, H);
-    array2D<float> L(W, H);
-
-    fast_xtrans_interpolate(rawData, redTmp, greenTmp, blueTmp);
-    const float xyz_rgb[3][3] = {          // XYZ from RGB
-                                { 0.412453, 0.357580, 0.180423 },
-                                { 0.212671, 0.715160, 0.072169 },
-                                { 0.019334, 0.119193, 0.950227 }
-                                };
-    #pragma omp parallel
-    {
-        #pragma omp for
-        for(int i = 0; i < H; ++i) {
-            Color::RGB2L(red[i], green[i], blue[i], L[i], xyz_rgb, W);
-        }
-    }
-    // calculate contrast based blend factors to use vng4 in regions with low contrast
-    JaggedArray<float> blend(W, H);
-    buildBlendMask(L, blend, W, H, contrast / 100.f);
-
-    // the following is split into 3 loops intentionally to avoid cache conflicts on CPUs with only 4-way cache
-    #pragma omp parallel for
-    for(int i = 0; i < H; ++i) {
-        for(int j = 0; j < W; ++j) {
-            red[i][j] = intp(blend[i][j], red[i][j], redTmp[i][j]);
-        }
-    }
-    #pragma omp parallel for
-    for(int i = 0; i < H; ++i) {
-        for(int j = 0; j < W; ++j) {
-            green[i][j] = intp(blend[i][j], green[i][j], greenTmp[i][j]);
-        }
-    }
-    #pragma omp parallel for
-    for(int i = 0; i < H; ++i) {
-        for(int j = 0; j < W; ++j) {
-            blue[i][j] = intp(blend[i][j], blue[i][j], blueTmp[i][j]);
-        }
-    }
-
 }
 
-}

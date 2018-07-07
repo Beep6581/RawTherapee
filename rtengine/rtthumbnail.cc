@@ -289,7 +289,8 @@ Image8 *load_inspector_mode(const Glib::ustring &fname, RawMetaDataLocation &rml
     neutral.icm.working = "RT_sRGB";
 
     src.preprocess(neutral.raw, neutral.lensProf, neutral.coarse, false);
-    src.demosaic(neutral.raw);
+    double thresholdDummy = 0.f;
+    src.demosaic(neutral.raw, false, thresholdDummy);
 
     PreviewProps pp(0, 0, w, h, 1);
 

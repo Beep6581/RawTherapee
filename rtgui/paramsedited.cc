@@ -494,6 +494,7 @@ void ParamsEdited::set(bool v)
     resize.width     = v;
     resize.height    = v;
     resize.enabled   = v;
+    resize.allowUpscaling = v;
     icm.input        = v;
     icm.toneCurve = v;
     icm.applyLookTable = v;
@@ -509,6 +510,7 @@ void ParamsEdited::set(bool v)
     icm.gampos      = v;
     icm.slpos       = v;
     raw.bayersensor.method = v;
+    raw.bayersensor.border = v;
     raw.bayersensor.imageNum = v;
     raw.bayersensor.ccSteps = v;
     raw.bayersensor.exBlack0 = v;
@@ -676,6 +678,8 @@ void ParamsEdited::set(bool v)
     filmSimulation.enabled = v;
     filmSimulation.clutFilename = v;
     filmSimulation.strength = v;
+    softlight.enabled = v;
+    softlight.strength = v;
     metadata.mode = v;
 
     exif = v;
@@ -1162,6 +1166,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         resize.width = resize.width && p.resize.width == other.resize.width;
         resize.height = resize.height && p.resize.height == other.resize.height;
         resize.enabled = resize.enabled && p.resize.enabled == other.resize.enabled;
+        resize.allowUpscaling = resize.allowUpscaling && p.resize.allowUpscaling == other.resize.allowUpscaling;
         icm.input = icm.input && p.icm.input == other.icm.input;
         icm.toneCurve = icm.toneCurve && p.icm.toneCurve == other.icm.toneCurve;
         icm.applyLookTable = icm.applyLookTable && p.icm.applyLookTable == other.icm.applyLookTable;
@@ -1177,6 +1182,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.gampos = icm.gampos && p.icm.gampos == other.icm.gampos;
         icm.slpos = icm.slpos && p.icm.slpos == other.icm.slpos;
         raw.bayersensor.method = raw.bayersensor.method && p.raw.bayersensor.method == other.raw.bayersensor.method;
+        raw.bayersensor.border = raw.bayersensor.border && p.raw.bayersensor.border == other.raw.bayersensor.border;
         raw.bayersensor.imageNum = raw.bayersensor.imageNum && p.raw.bayersensor.imageNum == other.raw.bayersensor.imageNum;
         raw.bayersensor.ccSteps = raw.bayersensor.ccSteps && p.raw.bayersensor.ccSteps == other.raw.bayersensor.ccSteps;
         raw.bayersensor.exBlack0 = raw.bayersensor.exBlack0 && p.raw.bayersensor.black0 == other.raw.bayersensor.black0;
@@ -1339,6 +1345,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         filmSimulation.enabled = filmSimulation.enabled && p.filmSimulation.enabled == other.filmSimulation.enabled;
         filmSimulation.clutFilename = filmSimulation.clutFilename && p.filmSimulation.clutFilename == other.filmSimulation.clutFilename;
         filmSimulation.strength = filmSimulation.strength && p.filmSimulation.strength == other.filmSimulation.strength;
+        softlight.enabled = softlight.enabled && p.softlight.enabled == other.softlight.enabled;
+        softlight.strength = softlight.strength && p.softlight.strength == other.softlight.strength;
         metadata.mode = metadata.mode && p.metadata.mode == other.metadata.mode;
 
 //      How the hell can we handle that???
@@ -3078,6 +3086,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.resize.enabled     = mods.resize.enabled;
     }
 
+    if (resize.allowUpscaling) {
+        toEdit.resize.allowUpscaling = mods.resize.allowUpscaling;
+    }
+
     if (icm.input) {
         toEdit.icm.input      = mods.icm.input;
     }
@@ -3136,6 +3148,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (raw.bayersensor.method) {
         toEdit.raw.bayersensor.method           = mods.raw.bayersensor.method;
+    }
+
+    if (raw.bayersensor.border) {
+        toEdit.raw.bayersensor.border         = mods.raw.bayersensor.border;
     }
 
     if (raw.bayersensor.imageNum) {
@@ -3743,6 +3759,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.filmSimulation.strength        = dontforceSet && options.baBehav[ADDSET_FILMSIMULATION_STRENGTH] ? toEdit.filmSimulation.strength + mods.filmSimulation.strength : mods.filmSimulation.strength;
     }
 
+    if (softlight.enabled) {
+        toEdit.softlight.enabled     = mods.softlight.enabled;
+    }
+
+    if (softlight.strength) {
+        toEdit.softlight.strength        = dontforceSet && options.baBehav[ADDSET_SOFTLIGHT_STRENGTH] ? toEdit.softlight.strength + mods.softlight.strength : mods.softlight.strength;
+    }
+    
     if (metadata.mode) {
         toEdit.metadata.mode     = mods.metadata.mode;
     }
@@ -3762,7 +3786,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
 bool RAWParamsEdited::BayerSensor::isUnchanged() const
 {
-    return  method && imageNum && dcbIterations && dcbEnhance && lmmseIterations && dualDemosaicContrast /*&& allEnhance*/ &&  greenEq
+    return  method && border && imageNum && dcbIterations && dcbEnhance && lmmseIterations && dualDemosaicContrast /*&& allEnhance*/ &&  greenEq
             && pixelShiftMotionCorrectionMethod && pixelShiftEperIso && pixelShiftSigma && pixelShiftShowMotion && pixelShiftShowMotionMaskOnly
             && pixelShiftHoleFill && pixelShiftMedian && pixelShiftNonGreenCross && pixelShiftDemosaicMethod && pixelShiftGreen && pixelShiftBlur && pixelShiftSmooth && pixelShiftEqualBright && pixelShiftEqualBrightChannel
             && linenoise && linenoiseDirection && pdafLinesFilter && exBlack0 && exBlack1 && exBlack2 && exBlack3 && exTwoGreen;

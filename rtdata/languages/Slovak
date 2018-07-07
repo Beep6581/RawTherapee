@@ -1054,7 +1054,11 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
+!HISTORY_MSG_RAW_BORDER;Raw border
+!HISTORY_MSG_RESIZE_ALLOW_UPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
+!HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
+!HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
 !HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
@@ -1122,6 +1126,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !MAIN_TOOLTIP_PREVIEWG;Preview the <b>Green channel</b>.\nShortcut: <b>g</b>
 !MAIN_TOOLTIP_PREVIEWL;Preview the <b>Luminosity</b>.\nShortcut: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 !MAIN_TOOLTIP_PREVIEWR;Preview the <b>Red channel</b>.\nShortcut: <b>r</b>
+!MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>Sharpening Contrast Mask</b>.\nShortcut: <b>None</b>\n\nOnly works when sharpening is enabled and zoom >= 100%.
 !MAIN_TOOLTIP_SHOWHIDELP1;Show/Hide the left panel.\nShortcut: <b>l</b>
 !MAIN_TOOLTIP_SHOWHIDERP1;Show/Hide the right panel.\nShortcut: <b>Alt-l</b>
 !MAIN_TOOLTIP_SHOWHIDETP1;Show/Hide the top panel.\nShortcut: <b>Shift-l</b>
@@ -1174,6 +1179,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
 !PARTIALPASTE_PREPROCESS_HOTPIXFILT;Hot pixel filter
 !PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
+!PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !PARTIALPASTE_PRSHARPENING;Post-resize sharpening
 !PARTIALPASTE_RAWCACORR_AUTO;CA auto-correction
 !PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
@@ -1181,6 +1187,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PARTIALPASTE_RAWEXPOS_LINEAR;White point correction
 !PARTIALPASTE_RAWEXPOS_PRESER;Highlight preservation
 !PARTIALPASTE_RAWGROUP;Raw Settings
+!PARTIALPASTE_RAW_BORDER;Raw border
 !PARTIALPASTE_RAW_DCBENHANCE;DCB enhancement
 !PARTIALPASTE_RAW_DCBITERATIONS;DCB iterations
 !PARTIALPASTE_RAW_DMETHOD;Demosaic method
@@ -1192,6 +1199,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PARTIALPASTE_RGBCURVES;RGB curves
 !PARTIALPASTE_SHARPENEDGE;Edges
 !PARTIALPASTE_SHARPENMICRO;Microcontrast
+!PARTIALPASTE_SOFTLIGHT;Soft light
 !PARTIALPASTE_TM_FATTAL;Dynamic Range Compression
 !PARTIALPASTE_VIBRANCE;Vibrance
 !PREFERENCES_AUTLISLOW;Low
@@ -1827,13 +1835,16 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_RAWEXPOS_PRESER;Highlight preservation
 !TP_RAWEXPOS_RGB;Red, Green, Blue
 !TP_RAWEXPOS_TWOGREEN;Link greens
-!TP_RAW_1PASSMEDIUM;1-Pass (Medium)
-!TP_RAW_3PASSBEST;3-Pass (Best)
-!TP_RAW_4PASS;4-Pass
+!TP_RAW_1PASSMEDIUM;1-pass (Markesteijn)
+!TP_RAW_2PASS;1-pass+fast
+!TP_RAW_3PASSBEST;3-pass (Markesteijn)
+!TP_RAW_4PASS;3-pass+fast
 !TP_RAW_AHD;AHD
 !TP_RAW_AMAZE;AMaZE
 !TP_RAW_AMAZEVNG4;AMaZE+VNG4
+!TP_RAW_BORDER;Border
 !TP_RAW_DCB;DCB
+!TP_RAW_DCBVNG4;DCB+VNG4
 !TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
 !TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
 !TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.\nPixel Shift is for Pentax/Sony Pixel Shift files. It falls back to AMaZE for non-Pixel Shift files.
@@ -1883,10 +1894,12 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_RAW_PIXELSHIFTSMOOTH;Smooth transitions
 !TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Smooth transitions between areas with motion and areas without.\nSet to 0 to disable transition smoothing.\nSet to 1 to either get the AMaZE/LMMSE result of the selected frame (depending on whether "Use LMMSE" is selected), or the median of all four frames if "Use median" is selected.
 !TP_RAW_RCD;RCD
+!TP_RAW_RCDVNG4;RCD+VNG4
 !TP_RAW_SENSOR_BAYER_LABEL;Sensor with Bayer Matrix
-!TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.
+!TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.\n+fast gives less artifacts in flat areas
 !TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix
 !TP_RAW_VNG4;VNG4
+!TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_CROPPEDAREA;Cropped Area
 !TP_RESIZE_FITBOX;Bounding Box
@@ -1991,6 +2004,8 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_SHARPENMICRO_LABEL;Microcontrast
 !TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
 !TP_SHARPENMICRO_UNIFORMITY;Uniformity
+!TP_SOFTLIGHT_LABEL;Soft Light
+!TP_SOFTLIGHT_STRENGTH;Strength
 !TP_TM_FATTAL_AMOUNT;Amount
 !TP_TM_FATTAL_ANCHOR;Anchor
 !TP_TM_FATTAL_LABEL;Dynamic Range Compression
@@ -2084,7 +2099,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_WAVELET_DTWO;Horizontal
 !TP_WAVELET_EDCU;Curve
 !TP_WAVELET_EDGCONT;Local contrast
-!TP_WAVELET_EDGCONT_TOOLTIP;Adjusting the points to the left decreases contrast, and to the right increases it.\nBottom-left, Top-Left, Top-Right, Bottom-right represent respectively local contast for low values, mean, mean+stdev, maxima
+!TP_WAVELET_EDGCONT_TOOLTIP;Adjusting the points to the left decreases contrast, and to the right increases it.\nBottom-left, top-left, top-right and bottom-right represent respectively local contrast for low values, mean, mean+stdev and maxima.
 !TP_WAVELET_EDGE;Edge Sharpness
 !TP_WAVELET_EDGEAMPLI;Base amplification
 !TP_WAVELET_EDGEDETECT;Gradient sensitivity

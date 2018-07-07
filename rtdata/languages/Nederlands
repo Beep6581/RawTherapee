@@ -2156,7 +2156,11 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
+!HISTORY_MSG_RAW_BORDER;Raw border
+!HISTORY_MSG_RESIZE_ALLOW_UPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
+!HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
+!HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
 !HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
 !LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
 !LENSPROFILE_CORRECTION_LCPFILE;LCP File
@@ -2166,12 +2170,16 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !MAIN_TAB_ADVANCED;Advanced
 !MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt-w</b>
 !MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
+!MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>Sharpening Contrast Mask</b>.\nShortcut: <b>None</b>\n\nOnly works when sharpening is enabled and zoom >= 100%.
 !OPTIONS_BUNDLED_MISSING;The bundled profile "<b>%1</b>" could not be found!\n\nYour installation could be damaged.\n\nDefault internal values will be used instead.
 !OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
 !OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
 !PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
 !PARTIALPASTE_LOCALCONTRAST;Local contrast
 !PARTIALPASTE_METADATA;Metadata mode
+!PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
+!PARTIALPASTE_RAW_BORDER;Raw border
+!PARTIALPASTE_SOFTLIGHT;Soft light
 !PARTIALPASTE_TM_FATTAL;Dynamic Range Compression
 !PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_CROP;Crop editing
@@ -2238,8 +2246,11 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertical
 !TP_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.
-!TP_RAW_4PASS;4-Pass
+!TP_RAW_2PASS;1-pass+fast
+!TP_RAW_4PASS;3-pass+fast
 !TP_RAW_AMAZEVNG4;AMaZE+VNG4
+!TP_RAW_BORDER;Border
+!TP_RAW_DCBVNG4;DCB+VNG4
 !TP_RAW_DUALDEMOSAICCONTRAST;Contrast threshold
 !TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
 !TP_RAW_PIXELSHIFTDMETHOD;Demosaic method for motion
@@ -2249,11 +2260,15 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the RGB channels individually.\nDisabled: Use same equalization factor for all channels.
 !TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a green mask showing the regions with motion.
 !TP_RAW_RCD;RCD
+!TP_RAW_RCDVNG4;RCD+VNG4
+!TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
 !TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
 !TP_RETINEX_GAINTRANSMISSION;Gain transmission
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce transmission map to achieve luminance.\nAbscissa: transmission -min from 0, mean, and values (max).\nOrdinate: gain.
 !TP_SHARPENING_CONTRAST;Contrast threshold
 !TP_SHARPENMICRO_CONTRAST;Contrast threshold
+!TP_SOFTLIGHT_LABEL;Soft Light
+!TP_SOFTLIGHT_STRENGTH;Strength
 !TP_TM_FATTAL_AMOUNT;Amount
 !TP_TM_FATTAL_ANCHOR;Anchor
 !TP_TM_FATTAL_LABEL;Dynamic Range Compression

@@ -1813,7 +1813,7 @@ void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
 
         try {
             if (!Glib::file_test(dirname, Glib::FILE_TEST_IS_DIR)) {
-                return;
+                continue;
             }
 
             dir.reset(new Glib::Dir(dirname));

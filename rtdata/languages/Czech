@@ -2237,19 +2237,34 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 !HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - Demosaic method for motion
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
+!HISTORY_MSG_RAW_BORDER;Raw border
+!HISTORY_MSG_RESIZE_ALLOW_UPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
+!HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
+!HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
 !HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
+!MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>Sharpening Contrast Mask</b>.\nShortcut: <b>None</b>\n\nOnly works when sharpening is enabled and zoom >= 100%.
+!PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
+!PARTIALPASTE_RAW_BORDER;Raw border
+!PARTIALPASTE_SOFTLIGHT;Soft light
 !PARTIALPASTE_TM_FATTAL;Dynamic Range Compression
 !SAMPLEFORMAT_32;24-bit floating-point
 !SAMPLEFORMAT_64;32-bit floating-point
 !TP_BWMIX_MIXC;Channel Mixer
 !TP_BWMIX_NEUTRAL;Reset
-!TP_RAW_4PASS;4-Pass
+!TP_RAW_2PASS;1-pass+fast
+!TP_RAW_4PASS;3-pass+fast
 !TP_RAW_AMAZEVNG4;AMaZE+VNG4
+!TP_RAW_BORDER;Border
+!TP_RAW_DCBVNG4;DCB+VNG4
 !TP_RAW_DUALDEMOSAICCONTRAST;Contrast threshold
 !TP_RAW_PIXELSHIFTDMETHOD;Demosaic method for motion
+!TP_RAW_RCDVNG4;RCD+VNG4
+!TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
 !TP_SHARPENING_CONTRAST;Contrast threshold
 !TP_SHARPENMICRO_CONTRAST;Contrast threshold
+!TP_SOFTLIGHT_LABEL;Soft Light
+!TP_SOFTLIGHT_STRENGTH;Strength
 !TP_TM_FATTAL_AMOUNT;Amount
 !TP_TM_FATTAL_ANCHOR;Anchor
 !TP_TM_FATTAL_LABEL;Dynamic Range Compression
