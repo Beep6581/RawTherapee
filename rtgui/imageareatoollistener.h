@@ -29,6 +29,7 @@ class ImageAreaToolListener
 public:
     virtual ~ImageAreaToolListener() {}
     virtual void spotWBselected (int x, int y, Thumbnail* thm = nullptr) {}
+    virtual void sharpMaskSelected (bool sharpMask) {}
     virtual int  getSpotWBRectSize ()
     {
         return 8;

@@ -77,6 +77,9 @@ protected:
     int custom_temp;
     double custom_green;
     double custom_equal;
+
+    IdleRegister idle_register;
+
     void cache_customWB    (int temp, double green); //cache custom WB setting to allow its recall
     void cache_customTemp  (int temp);               //cache Temperature only to allow its recall
     void cache_customGreen (double green);           //cache Green only to allow its recall
@@ -92,7 +95,7 @@ protected:
 public:
 
     WhiteBalance ();
-    ~WhiteBalance () {};
+    ~WhiteBalance ();
 
     static void init    ();
     static void cleanup ();

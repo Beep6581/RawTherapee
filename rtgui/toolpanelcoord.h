@@ -79,6 +79,7 @@
 #include "prsharpening.h"
 #include "fattaltonemap.h"
 #include "localcontrast.h"
+#include "softlight.h"
 #include "guiutils.h"
 
 class ImageEditorCoordinator;
@@ -134,6 +135,7 @@ protected:
     Wavelet * wavelet;
     DirPyrEqualizer* dirpyrequalizer;
     HSVEqualizer* hsvequalizer;
+    SoftLight *softlight;
     FilmSimulation *filmSimulation;
     SensorBayer * sensorbayer;
     SensorXTrans * sensorxtrans;
@@ -280,6 +282,7 @@ public:
 
     // imageareatoollistener interface
     void spotWBselected (int x, int y, Thumbnail* thm = nullptr);
+    void sharpMaskSelected (bool sharpMask);
     void cropSelectionReady ();
     void rotateSelectionReady (double rotate_deg, Thumbnail* thm = nullptr);
     ToolBar* getToolBar ()

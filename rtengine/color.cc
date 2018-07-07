@@ -1837,6 +1837,45 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
     }
 }
 
+void Color::RGB2L(float *R, float *G, float *B, float *L, const float wp[3][3], int width)
+{
+
+#ifdef __SSE2__
+    vfloat minvalfv = F2V(0.f);
+    vfloat maxvalfv = F2V(MAXVALF);
+#endif
+    int i = 0;
+    
+#ifdef __SSE2__
+    for(;i < width - 3; i+=4) {
+        const vfloat rv = LVFU(R[i]);
+        const vfloat gv = LVFU(G[i]);
+        const vfloat bv = LVFU(B[i]);
+        const vfloat yv = F2V(wp[1][0]) * rv + F2V(wp[1][1]) * gv + F2V(wp[1][2]) * bv;
+
+        vmask maxMask = vmaskf_gt(yv, maxvalfv);
+        vmask minMask = vmaskf_lt(yv, minvalfv);
+        if (_mm_movemask_ps((vfloat)vorm(maxMask, minMask))) {
+            // take slower code path for all 4 pixels if one of the values is > MAXVALF. Still faster than non SSE2 version
+            for(int k = 0; k < 4; ++k) {
+                float y = yv[k];
+                L[i + k] = computeXYZ2LabY(y);
+            }
+        } else {
+            STVFU(L[i], cachefy[yv]);
+        }
+    }
+#endif
+    for(;i < width; ++i) {
+        const float rv = R[i];
+        const float gv = G[i];
+        const float bv = B[i];
+        float y = wp[1][0] * rv + wp[1][1] * gv + wp[1][2] * bv;
+
+        L[i] = computeXYZ2LabY(y);
+    }
+}
+
 void Color::XYZ2Lab(float X, float Y, float Z, float &L, float &a, float &b)
 {
 

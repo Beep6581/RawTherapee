@@ -36,6 +36,9 @@ protected:
     Gtk::CheckButton* matrix;
     Adjuster* amount;
     Adjuster* uniformity;
+    Adjuster* contrast;
+
+    rtengine::ProcEvent EvSharpenMicroContrast;
 
     sigc::connection matrixconn;
     bool lastmatrix;
@@ -49,7 +52,7 @@ public:
     void setDefaults         (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
     void setBatchMode        (bool batchMode);
     void trimValues          (rtengine::procparams::ProcParams* pp);
-    void setAdjusterBehavior (bool amountadd, bool uniformityadd );
+    void setAdjusterBehavior (bool amountadd, bool contrastadd, bool uniformityadd);
     void adjusterChanged     (Adjuster* a, double newval);
 
     void enabledChanged      ();

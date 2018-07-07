@@ -26,7 +26,7 @@
 #include "procparams.h"
 #include "gauss.h"
 #include "median.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 namespace
 {
@@ -295,7 +295,7 @@ void calcFrameBrightnessFactor(unsigned int frame, uint32_t datalen, LUTu *histo
 
 using namespace std;
 using namespace rtengine;
-void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RAWParams::BayerSensor &bayerParamsIn, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection)
+void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RAWParams &rawParamsIn, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection)
 {
 BENCHFUN
     if(numFrames != 4) { // fallback for non pixelshift files
@@ -303,7 +303,7 @@ BENCHFUN
         return;
     }
 
-    RAWParams::BayerSensor bayerParams = bayerParamsIn;
+    RAWParams::BayerSensor bayerParams = rawParamsIn.bayersensor;
 
     bool motionDetection = true;
 
@@ -323,19 +323,22 @@ BENCHFUN
     if(motionDetection) {
         if(!showOnlyMask) {
             if(bayerParams.pixelShiftMedian) { // We need the demosaiced frames for motion correction
-                if(bayerParams.pixelShiftLmmse) {
+                if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::LMMSE)) {
                     lmmse_interpolate_omp(winw, winh, *(rawDataFrames[0]), red, green, blue, bayerParams.lmmse_iterations);
+                } else if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::AMAZEVNG4)) {
+                    dual_demosaic_RT (true, rawParamsIn, winw, winh, *(rawDataFrames[0]), red, green, blue, bayerParams.dualDemosaicContrast);
                 } else {
                     amaze_demosaic_RT(winx, winy, winw, winh, *(rawDataFrames[0]), red, green, blue);
                 }
-
                 multi_array2D<float, 3> redTmp(winw, winh);
                 multi_array2D<float, 3> greenTmp(winw, winh);
                 multi_array2D<float, 3> blueTmp(winw, winh);
 
                 for(int i = 0; i < 3; i++) {
-                    if(bayerParams.pixelShiftLmmse) {
+                    if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::LMMSE)) {
                         lmmse_interpolate_omp(winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i], bayerParams.lmmse_iterations);
+                    } else if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::AMAZEVNG4)) {
+                        dual_demosaic_RT (true, rawParamsIn, winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i], bayerParams.dualDemosaicContrast);
                     } else {
                         amaze_demosaic_RT(winx, winy, winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i]);
                     }
@@ -359,8 +362,12 @@ BENCHFUN
                     }
                 }
             } else {
-                if(bayerParams.pixelShiftLmmse) {
+                if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::LMMSE)) {
                     lmmse_interpolate_omp(winw, winh, rawData, red, green, blue, bayerParams.lmmse_iterations);
+                } else if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::AMAZEVNG4)) {
+                    RAWParams rawParamsTmp = rawParamsIn;
+                    rawParamsTmp.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEVNG4);
+                    dual_demosaic_RT (true, rawParamsTmp, winw, winh, rawData, red, green, blue, bayerParams.dualDemosaicContrast);
                 } else {
                     amaze_demosaic_RT(winx, winy, winw, winh, rawData, red, green, blue);
                 }

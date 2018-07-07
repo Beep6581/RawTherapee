@@ -194,6 +194,7 @@ public :
     bool enabled;
     bool matrix;
     bool amount;
+    bool contrast;
     bool uniformity;
 
 };
@@ -203,6 +204,7 @@ class SharpeningParamsEdited
 
 public:
     bool enabled;
+    bool contrast;
     bool radius;
     bool amount;
     bool threshold;
@@ -567,6 +569,7 @@ public:
     bool width;
     bool height;
     bool enabled;
+    bool allowUpscaling;
 };
 
 class ColorManagementParamsEdited
@@ -710,6 +713,13 @@ public:
     bool strength;
 };
 
+class SoftLightParamsEdited
+{
+public:
+    bool enabled;
+    bool strength;
+};
+
 class RAWParamsEdited
 {
 
@@ -719,6 +729,7 @@ public:
 
     public:
         bool method;
+        bool border;
         bool imageNum;
         bool ccSteps;
         bool exBlack0;
@@ -729,6 +740,7 @@ public:
         bool dcbIterations;
         bool dcbEnhance;
         bool lmmseIterations;
+        bool dualDemosaicContrast;
         bool pixelShiftMotionCorrectionMethod;
         bool pixelShiftEperIso;
         bool pixelShiftSigma;
@@ -739,10 +751,10 @@ public:
         bool pixelShiftGreen;
         bool pixelShiftBlur;
         bool pixelShiftSmooth;
-        bool pixelShiftLmmse;
         bool pixelShiftEqualBright;
         bool pixelShiftEqualBrightChannel;
         bool pixelShiftNonGreenCross;
+        bool pixelShiftDemosaicMethod;
 
         //bool allEnhance;
         bool greenEq;
@@ -758,6 +770,7 @@ public:
 
     public:
         bool method;
+        bool dualDemosaicContrast;
         bool ccSteps;
         bool exBlackRed;
         bool exBlackGreen;
@@ -844,6 +857,7 @@ public:
     WaveletParamsEdited             wavelet;
     HSVEqualizerParamsEdited      hsvequalizer;
     FilmSimulationParamsEdited    filmSimulation;
+    SoftLightParamsEdited         softlight;
     MetaDataParamsEdited          metadata;
     bool                          exif;
     bool                          iptc;

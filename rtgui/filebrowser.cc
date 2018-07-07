@@ -127,6 +127,9 @@ void findOriginalEntries (const std::vector<ThumbBrowserEntryBase*>& entries)
 
 FileBrowser::FileBrowser () :
     menuLabel(nullptr),
+#ifdef WIN32
+    miOpenDefaultViewer(nullptr),
+#endif
     selectDF(nullptr),
     thisIsDF(nullptr),
     autoDF(nullptr),
@@ -225,8 +228,6 @@ FileBrowser::FileBrowser () :
      * *********************/
 #if defined(WIN32)
     Gtk::manage(miOpenDefaultViewer = new Gtk::MenuItem (M("FILEBROWSER_OPENDEFAULTVIEWER")));
-#else
-    miOpenDefaultViewer = nullptr;
 #endif
 
     // Build a list of menu items
@@ -240,7 +241,7 @@ FileBrowser::FileBrowser () :
     }
 
     // Attach them to menu
-    if (!mMenuExtProgs.empty() || miOpenDefaultViewer != nullptr) {
+    if (!mMenuExtProgs.empty() || miOpenDefaultViewer) {
         amiExtProg = new Gtk::MenuItem*[mMenuExtProgs.size()];
         int itemNo = 0;
 
@@ -249,11 +250,12 @@ FileBrowser::FileBrowser () :
             p++;
             Gtk::Menu* submenuExtProg = Gtk::manage (new Gtk::Menu());
 
-            if (miOpenDefaultViewer != nullptr) {
+#ifdef WIN32
+            if (miOpenDefaultViewer) {
                 submenuExtProg->attach (*miOpenDefaultViewer, 0, 1, p, p + 1);
                 p++;
             }
-
+#endif
             for (auto it = mMenuExtProgs.begin(); it != mMenuExtProgs.end(); it++, itemNo++) {
                 submenuExtProg->attach (*Gtk::manage(amiExtProg[itemNo] = new Gtk::MenuItem ((*it).first)), 0, 1, p, p + 1);
                 p++;
@@ -262,11 +264,12 @@ FileBrowser::FileBrowser () :
             submenuExtProg->show_all ();
             menuExtProg->set_submenu (*submenuExtProg);
         } else {
-            if (miOpenDefaultViewer != nullptr) {
+#ifdef WIN32
+            if (miOpenDefaultViewer) {
                 pmenu->attach (*miOpenDefaultViewer, 0, 1, p, p + 1);
                 p++;
             }
-
+#endif
             for (auto it = mMenuExtProgs.begin(); it != mMenuExtProgs.end(); it++, itemNo++) {
                 pmenu->attach (*Gtk::manage(amiExtProg[itemNo] = new Gtk::MenuItem ((*it).first)), 0, 1, p, p + 1);
                 p++;
@@ -419,9 +422,11 @@ FileBrowser::FileBrowser () :
         amiExtProg[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), amiExtProg[i]));
     }
 
-    if (miOpenDefaultViewer != nullptr) {
+#ifdef WIN32
+    if (miOpenDefaultViewer) {
         miOpenDefaultViewer->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), miOpenDefaultViewer));
     }
+#endif
 
     trash->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), trash));
     untrash->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), untrash));
@@ -984,8 +989,10 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
         tbl->clearFromCacheRequested (mselected, true);
 
         //queue_draw ();
-    } else if (miOpenDefaultViewer != nullptr && m == miOpenDefaultViewer) {
+#ifdef WIN32
+    } else if (miOpenDefaultViewer && m == miOpenDefaultViewer) {
         openDefaultViewer(1);
+#endif
     }
 }
 
@@ -1091,6 +1098,7 @@ void FileBrowser::partPasteProfile ()
     }
 }
 
+#ifdef WIN32
 void FileBrowser::openDefaultViewer (int destination)
 {
     bool success = true;
@@ -1104,10 +1112,11 @@ void FileBrowser::openDefaultViewer (int destination)
     }
 
     if (!success) {
-        Gtk::MessageDialog msgd (M("MAIN_MSG_IMAGEUNPROCESSED"), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        Gtk::MessageDialog msgd(getToplevelWindow(this), M("MAIN_MSG_IMAGEUNPROCESSED"), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
         msgd.run ();
     }
 }
+#endif
 
 bool FileBrowser::keyPressed (GdkEventKey* event)
 {
@@ -1186,6 +1195,7 @@ bool FileBrowser::keyPressed (GdkEventKey* event)
         }
 
         openRequested(mselected);
+#ifdef WIN32
     } else if (event->keyval == GDK_KEY_F5) {
         int dest = 1;
 
@@ -1197,6 +1207,7 @@ bool FileBrowser::keyPressed (GdkEventKey* event)
 
         openDefaultViewer (dest);
         return true;
+#endif
     } else if (event->keyval == GDK_KEY_Page_Up) {
         scrollPage(GDK_SCROLL_UP);
         return true;

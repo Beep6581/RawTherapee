@@ -82,7 +82,7 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
     reset->add (*Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
     setExpandAlignProperties(reset, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     reset->set_relief (Gtk::RELIEF_NONE);
-    reset->set_tooltip_text (M("ADJUSTER_RESET_TO_DEFAULT"));
+    reset->set_tooltip_markup (M("ADJUSTER_RESET_TO_DEFAULT"));
     reset->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
     reset->set_can_focus(false);
 

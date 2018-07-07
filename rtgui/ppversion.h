@@ -1,11 +1,23 @@
 #pragma once
 
 // This number has to be incremented whenever the PP3 file format is modified or the behaviour of a tool changes
-#define PPVERSION 333
+#define PPVERSION 339
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /*
   Log of version changes
+   339  2018-07-04
+        added allowUpscaling to ResizeParams
+   338  2018-06-15
+        increased precision for the channel mixer
+   337  2018-06-13
+        new scales for the LabGrid color toning parameters
+   336  2018-06-01
+        new demosaic method combobox for pixelshift
+   335  2018-05-30
+        new contrast adjuster in Bayer process tool
+   334  2018-05-13
+        new contrast threshold adjuster in Microcontrast tool
    333  2018-04-26
         new Shadows/Highlights tool
    332  2018-04-18
