@@ -243,6 +243,7 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
     toneCurveMode2->set_active(rtengine::toUnderlying(pp->toneCurve.curveMode2));
 
     histmatching->set_active(pp->toneCurve.histmatching);
+    fromHistMatching = pp->toneCurve.fromHistMatching;
     clampOOG->set_active(pp->toneCurve.clampOOG);
 
     if (pedited) {
@@ -366,6 +367,7 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited)
     }
 
     pp->toneCurve.histmatching = histmatching->get_active();
+    pp->toneCurve.fromHistMatching = fromHistMatching;
     pp->toneCurve.clampOOG = clampOOG->get_active();
 
     if (pedited) {
@@ -386,6 +388,7 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->toneCurve.method     = method->get_active_row_number() != 4;
         pedited->toneCurve.hrenabled  = !hrenabled->get_inconsistent();
         pedited->toneCurve.histmatching = !histmatching->get_inconsistent();
+        pedited->toneCurve.fromHistMatching = true;
         pedited->toneCurve.clampOOG = !clampOOG->get_inconsistent();
     }
 
@@ -916,6 +919,7 @@ void ToneCurve::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & his
 
 void ToneCurve::setHistmatching(bool enabled)
 {
+    fromHistMatching = enabled;
     if (histmatching->get_active()) {
         histmatchconn.block(true);
         histmatching->set_active(enabled);
@@ -930,6 +934,7 @@ void ToneCurve::histmatchingToggled()
     if (listener) {
         if (!batchMode) {
             if (histmatching->get_active()) {
+                fromHistMatching = false;
                 listener->panelChanged(EvHistMatching, M("GENERAL_ENABLED"));
                 waitForAutoExp();
             } else {
@@ -984,6 +989,7 @@ bool ToneCurve::histmatchingComputed()
     shape->openIfNonlinear();
 
     enableListener();
+    fromHistMatching = true;
 
     return false;
 }
