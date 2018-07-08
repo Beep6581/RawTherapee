@@ -79,7 +79,8 @@ bool PopUpCommon::addEntry (const Glib::ustring& fileName, const Glib::ustring& 
     // When there is at least 1 choice, we add the arrow button
     if (images.size() == 1) {
         Gtk::Button* arrowButton = Gtk::manage( new Gtk::Button() );
-        RTImage* arrowImage = Gtk::manage( new RTImage("popuparrow.png") );
+        Gtk::Image *arrowImage = Gtk::manage(new Gtk::Image());
+        arrowImage->set_from_icon_name("pan-down-symbolic", Gtk::ICON_SIZE_BUTTON);
         setExpandAlignProperties(arrowButton, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
         arrowButton->add(*arrowImage); //menuSymbol);
         buttonGroup->attach_next_to(*arrowButton, *button, Gtk::POS_RIGHT, 1, 1);
