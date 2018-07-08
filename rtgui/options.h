@@ -300,6 +300,9 @@ public:
     double ICCPC_slope;
     Glib::ustring ICCPC_profileVersion;
     Glib::ustring ICCPC_illuminant;
+    Glib::ustring ICCPC_description;
+    Glib::ustring ICCPC_copyright;
+    bool ICCPC_appendParamsToDesc;
 
     // fast export options
     bool fastexport_bypass_sharpening;
@@ -388,6 +391,7 @@ public:
     void setBundledDefProfRawMissing (bool value);
     void setDefProfImgMissing (bool value);
     void setBundledDefProfImgMissing (bool value);
+    static Glib::ustring getICCProfileCopyright();
 };
 
 extern Options options;

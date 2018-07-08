@@ -52,14 +52,19 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     , gammaPreset(options.ICCPC_gammaPreset)
     , gamma(options.ICCPC_gamma)
     , slope(options.ICCPC_slope)
+    , appendParamsToDesc(options.ICCPC_appendParamsToDesc)
     , profileVersion(options.ICCPC_profileVersion)
     , illuminant(options.ICCPC_illuminant)
+    , description(options.ICCPC_description)
+    , copyright(options.ICCPC_copyright)
     , parent(rtwindow)
 {
 
     set_default_size(600, -1);
 
     Gtk::Grid* mainGrid = Gtk::manage(new Gtk::Grid());
+    mainGrid->set_column_spacing(3);
+    mainGrid->set_row_spacing(3);
 
     //--------------------------------- primaries
 
@@ -69,6 +74,7 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
 
     primaries = Gtk::manage(new MyComboBoxText());
     setExpandAlignProperties(primaries, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
+    primaries->append(M("ICCPROFCREATOR_CUSTOM"));
     primaries->append(M("ICCPROFCREATOR_PRIM_ACESP0"));
     primaries->append(M("ICCPROFCREATOR_PRIM_ACESP1"));
     primaries->append(M("ICCPROFCREATOR_PRIM_ADOBE"));
@@ -79,7 +85,6 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     primaries->append(M("ICCPROFCREATOR_PRIM_BEST"));
     primaries->append(M("ICCPROFCREATOR_PRIM_BETA"));
     primaries->append(M("ICCPROFCREATOR_PRIM_BRUCE"));
-    primaries->append(M("ICCPROFCREATOR_CUSTOM"));
     primaries->set_tooltip_text(M("ICCPROFCREATOR_PRIM_TOOLTIP"));
     mainGrid->attach(*primaries, 1, 0, 1, 1);
 
@@ -193,24 +198,59 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     iccVersion->append(M("ICCPROFCREATOR_PROF_V2"));
     mainGrid->attach(*iccVersion, 1, 6, 1, 1);
 
+    //--------------------------------- Description
+
+    Gtk::Label* desclab = Gtk::manage(new Gtk::Label(M("ICCPROFCREATOR_DESCRIPTION")));
+    setExpandAlignProperties(desclab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
+    mainGrid->attach(*desclab, 0, 7, 1, 2);
+    eDescription = Gtk::manage(new Gtk::Entry());
+    setExpandAlignProperties(eDescription, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    eDescription->set_tooltip_text(M("ICCPROFCREATOR_DESCRIPTION_TOOLTIP"));
+    mainGrid->attach(*eDescription, 1, 7, 1, 1);
+    cAppendParamsToDesc = Gtk::manage(new Gtk::CheckButton(M("ICCPROFCREATOR_ADD_PARAM_IN_DESC")));
+    setExpandAlignProperties(cAppendParamsToDesc, true, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+    mainGrid->attach(*cAppendParamsToDesc, 1, 8, 1, 1);
+
+    //--------------------------------- Copyright
+
+    Gtk::Label* copylab = Gtk::manage(new Gtk::Label(M("ICCPROFCREATOR_COPYRIGHT")));
+    setExpandAlignProperties(copylab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+    mainGrid->attach(*copylab, 0, 9, 1, 1);
+    Gtk::Grid* copygrid = Gtk::manage(new Gtk::Grid());
+    setExpandAlignProperties(copygrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    eCopyright = Gtk::manage(new Gtk::Entry());
+    setExpandAlignProperties(eCopyright, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    copygrid->attach(*eCopyright, 0, 0, 1, 1);
+    resetCopyright = Gtk::manage(new Gtk::Button());
+    resetCopyright->add (*Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
+    setExpandAlignProperties(resetCopyright, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    resetCopyright->set_relief (Gtk::RELIEF_NONE);
+    resetCopyright->set_tooltip_markup (M("ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP"));
+    resetCopyright->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
+    resetCopyright->set_can_focus(false);
+    copygrid->attach(*resetCopyright, 1, 0, 1, 1);
+    mainGrid->attach(*copygrid, 1, 9, 1, 1);
+
     //--------------------------------- Adding the mainGrid
 
     get_content_area()->add(*mainGrid);
 
     //--------------------------------- Setting default values for Adjusters
 
-    aGamma->setDefault(options.ICCPC_gamma);
-    aSlope->setDefault(options.ICCPC_slope);
-    aPrimariesRedX->setDefault(options.ICCPC_redPrimaryX);
-    aPrimariesRedY->setDefault(options.ICCPC_redPrimaryY);
-    aPrimariesGreenX->setDefault(options.ICCPC_greenPrimaryX);
-    aPrimariesGreenY->setDefault(options.ICCPC_greenPrimaryY);
-    aPrimariesBlueX->setDefault(options.ICCPC_bluePrimaryX);
-    aPrimariesBlueY->setDefault(options.ICCPC_bluePrimaryY);
+    aGamma->setDefault(gamma);
+    aSlope->setDefault(slope);
+    aPrimariesRedX->setDefault(redPrimaryX);
+    aPrimariesRedY->setDefault(redPrimaryY);
+    aPrimariesGreenX->setDefault(greenPrimaryX);
+    aPrimariesGreenY->setDefault(greenPrimaryY);
+    aPrimariesBlueX->setDefault(bluePrimaryX);
+    aPrimariesBlueY->setDefault(bluePrimaryY);
 
     //--------------- Updating widgets with actual values (from options)
 
-    if (primariesPreset == "ACES-AP0") {
+    if (primariesPreset == "custom") {
+        primaries->set_active_text(M("ICCPROFCREATOR_CUSTOM"));
+    } else if (primariesPreset == "ACES-AP0") {
         primaries->set_active_text(M("ICCPROFCREATOR_PRIM_ACESP0"));
     } else if (primariesPreset == "ACES-AP1") {
         primaries->set_active_text(M("ICCPROFCREATOR_PRIM_ACESP1"));
@@ -230,8 +270,6 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
         primaries->set_active_text(M("ICCPROFCREATOR_PRIM_BETA"));
     } else if (primariesPreset == "BruceRGB") {
         primaries->set_active_text(M("ICCPROFCREATOR_PRIM_BRUCE"));
-    } else if (primariesPreset == "custom") {
-        primaries->set_active_text(M("ICCPROFCREATOR_CUSTOM"));
     }
 
     trcPresets->set_active(0);
@@ -239,14 +277,18 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
         trcPresets->set_active_text(gammaPreset);
     }
 
-    aGamma->setValue(options.ICCPC_gamma);
-    aSlope->setValue(options.ICCPC_slope);
+    aGamma->setValue(gamma);
+    aSlope->setValue(slope);
     aPrimariesRedX->setValue(redPrimaryX);
     aPrimariesRedY->setValue(redPrimaryY);
     aPrimariesGreenX->setValue(greenPrimaryX);
     aPrimariesGreenY->setValue(greenPrimaryY);
     aPrimariesBlueX->setValue(bluePrimaryX);
     aPrimariesBlueY->setValue(bluePrimaryY);
+
+    eDescription->set_text(description);
+    eCopyright->set_text(copyright);
+    cAppendParamsToDesc->set_active(appendParamsToDesc);
 
     if (illuminant == "DEF") {
         cIlluminant->set_active_text(M("ICCPROFCREATOR_ILL_DEF"));
@@ -302,6 +344,7 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     primariesconn = primaries->signal_changed().connect(sigc::mem_fun(*this, &ICCProfileCreator::primariesChanged));
     trcpresetsconn = trcPresets->signal_changed().connect(sigc::mem_fun(*this, &ICCProfileCreator::trcPresetsChanged));
     illconn = cIlluminant->signal_changed().connect(sigc::mem_fun(*this, &ICCProfileCreator::illuminantChanged));
+    resetCopyright->signal_clicked().connect(sigc::mem_fun(*this, &ICCProfileCreator::onResetCopyright));
 }
 
 void ICCProfileCreator::closePressed()
@@ -320,12 +363,32 @@ void ICCProfileCreator::updateICCVersion()
     }
 }
 
+void ICCProfileCreator::adjusterChanged (Adjuster* a, double newval)
+{
+    if (a == aPrimariesRedX   || a == aPrimariesRedY   ||
+        a == aPrimariesGreenX || a == aPrimariesGreenY ||
+        a == aPrimariesBlueX  || a == aPrimariesBlueY)
+    {
+        if (primaries->get_active_row_number() > 0) {
+            ConnectionBlocker blocker(primariesconn);
+            primaries->set_active(0);
+            updateICCVersion();
+        }
+    } else if (a == aGamma || a == aSlope) {
+        if (trcPresets->get_active_row_number() > 0) {
+            ConnectionBlocker blocker(trcpresetsconn);
+            trcPresets->set_active(0);
+        }
+    }
+}
+
 void ICCProfileCreator::primariesChanged()
 {
-    if (primaries->get_active_text() != M("ICCPROFCREATOR_CUSTOM")) {
+    if (primaries->get_active_row_number() > 0) {
         float p[6];
         ColorTemp temp;
-        Glib::ustring primPresetName(getPrimariesPresetName(primaries->get_active_text()));
+        Glib::ustring activeValue = primaries->get_active_text();
+        Glib::ustring primPresetName = getPrimariesPresetName(activeValue);
         getPrimaries(primPresetName, p, temp);
         aPrimariesRedX->setValue(p[0]);
         aPrimariesRedY->setValue(p[1]);
@@ -347,9 +410,11 @@ void ICCProfileCreator::trcPresetsChanged()
     aGamma->block(true);
     aSlope->block(true);
 
-    bool sensitive = trcPresets->get_active_row_number() == 0;
-    aGamma->set_sensitive(sensitive);
-    aSlope->set_sensitive(sensitive);
+    double gamma;
+    double slope;
+    getGamma(getGammaPresetName(trcPresets->get_active_text()), gamma, slope);
+    aGamma->setValue(gamma);
+    aSlope->setValue(slope);
 
     aGamma->block(false);
     aSlope->block(false);
@@ -361,11 +426,6 @@ void ICCProfileCreator::storeValues()
         options.ICCPC_profileVersion = profileVersion = "v4";
     } else if (iccVersion->get_active_text() == M("ICCPROFCREATOR_PROF_V2")) {
         options.ICCPC_profileVersion = profileVersion = "v2";
-    }
-
-    options.ICCPC_gammaPreset = gammaPreset = trcPresets->get_active_text();
-    if (gammaPreset == M("ICCPROFCREATOR_CUSTOM")) {
-        options.ICCPC_gammaPreset = gammaPreset = "Custom";
     }
 
     if (cIlluminant->get_active_text() == M("ICCPROFCREATOR_ILL_DEF")) {
@@ -387,6 +447,7 @@ void ICCProfileCreator::storeValues()
     }
 
     options.ICCPC_primariesPreset = primariesPreset = getPrimariesPresetName(primaries->get_active_text());
+    options.ICCPC_gammaPreset = gammaPreset = getGammaPresetName(trcPresets->get_active_text());
     options.ICCPC_gamma = gamma = aGamma->getValue();
     options.ICCPC_slope = slope = aSlope->getValue();
     options.ICCPC_redPrimaryX = redPrimaryX = aPrimariesRedX->getValue();
@@ -395,7 +456,9 @@ void ICCProfileCreator::storeValues()
     options.ICCPC_greenPrimaryY = greenPrimaryY = aPrimariesGreenY->getValue();
     options.ICCPC_bluePrimaryX = bluePrimaryX = aPrimariesBlueX->getValue();
     options.ICCPC_bluePrimaryY = bluePrimaryY = aPrimariesBlueY->getValue();
-
+    options.ICCPC_description = description = eDescription->get_text();
+    options.ICCPC_copyright = copyright = eCopyright->get_text();
+    options.ICCPC_appendParamsToDesc = appendParamsToDesc = cAppendParamsToDesc->get_active();
 }
 
 Glib::ustring ICCProfileCreator::getPrimariesPresetName(const Glib::ustring &preset)
@@ -427,10 +490,10 @@ Glib::ustring ICCProfileCreator::getPrimariesPresetName(const Glib::ustring &pre
     }
 }
 
-void ICCProfileCreator::getPrimaries(Glib::ustring preset, float *p, ColorTemp &temp)
+void ICCProfileCreator::getPrimaries(const Glib::ustring &preset, float *p, ColorTemp &temp)
 {
     temp = ColorTemp::D50;
-    if (primariesPreset == "Widegamut") {
+    if (preset == "Widegamut") {
         p[0] = 0.7350;    //Widegamut primaries
         p[1] = 0.2650;
         p[2] = 0.1150;
@@ -438,7 +501,7 @@ void ICCProfileCreator::getPrimaries(Glib::ustring preset, float *p, ColorTemp &
         p[4] = 0.1570;
         p[5] = 0.0180;
 
-    } else if (primariesPreset == "Adobe") {
+    } else if (preset == "Adobe") {
         p[0] = 0.6400;    //Adobe primaries
         p[1] = 0.3300;
         p[2] = 0.2100;
@@ -446,7 +509,7 @@ void ICCProfileCreator::getPrimaries(Glib::ustring preset, float *p, ColorTemp &
         p[4] = 0.1500;
         p[5] = 0.0600;
         temp = ColorTemp::D65;
-    } else if (primariesPreset == "sRGB") {
+    } else if (preset == "sRGB") {
         p[0] = 0.6400;    // sRGB primaries
         p[1] = 0.3300;
         p[2] = 0.3000;
@@ -454,7 +517,7 @@ void ICCProfileCreator::getPrimaries(Glib::ustring preset, float *p, ColorTemp &
         p[4] = 0.1500;
         p[5] = 0.0600;
         temp = ColorTemp::D65;
-    } else if (primariesPreset == "BruceRGB") {
+    } else if (preset == "BruceRGB") {
         p[0] = 0.6400;    // Bruce primaries
         p[1] = 0.3300;
         p[2] = 0.2800;
@@ -462,21 +525,21 @@ void ICCProfileCreator::getPrimaries(Glib::ustring preset, float *p, ColorTemp &
         p[4] = 0.1500;
         p[5] = 0.0600;
         temp = ColorTemp::D65;
-    } else if (primariesPreset == "BetaRGB") {
+    } else if (preset == "BetaRGB") {
         p[0] = 0.6888;    // Beta primaries
         p[1] = 0.3112;
         p[2] = 0.1986;
         p[3] = 0.7551;
         p[4] = 0.1265;
         p[5] = 0.0352;
-    } else if (primariesPreset == "BestRGB") {
+    } else if (preset == "BestRGB") {
         p[0] = 0.7347;    // Best primaries
         p[1] = 0.2653;
         p[2] = 0.2150;
         p[3] = 0.7750;
         p[4] = 0.1300;
         p[5] = 0.0350;
-    } else if (primariesPreset == "Rec2020") {
+    } else if (preset == "Rec2020") {
         p[0] = 0.7080;    // Rec2020 primaries
         p[1] = 0.2920;
         p[2] = 0.1700;
@@ -484,7 +547,7 @@ void ICCProfileCreator::getPrimaries(Glib::ustring preset, float *p, ColorTemp &
         p[4] = 0.1310;
         p[5] = 0.0460;
         temp = ColorTemp::D65;
-    } else if (primariesPreset == "ACES-AP0") {
+    } else if (preset == "ACES-AP0") {
         p[0] = 0.7347;    // ACES P0 primaries
         p[1] = 0.2653;
         p[2] = 0.0000;
@@ -492,7 +555,7 @@ void ICCProfileCreator::getPrimaries(Glib::ustring preset, float *p, ColorTemp &
         p[4] = 0.0001;
         p[5] = -0.0770;
         temp = ColorTemp::D60;
-    } else if (primariesPreset == "ACES-AP1") {
+    } else if (preset == "ACES-AP1") {
         p[0] = 0.713;    // ACES P1 primaries
         p[1] = 0.293;
         p[2] = 0.165;
@@ -500,14 +563,14 @@ void ICCProfileCreator::getPrimaries(Glib::ustring preset, float *p, ColorTemp &
         p[4] = 0.128;
         p[5] = 0.044;
         temp = ColorTemp::D60;
-    } else if (primariesPreset == "ProPhoto") {
+    } else if (preset == "ProPhoto") {
         p[0] = 0.7347;    // ProPhoto and default primaries
         p[1] = 0.2653;
         p[2] = 0.1596;
         p[3] = 0.8404;
         p[4] = 0.0366;
         p[5] = 0.0001;
-    } else if (primariesPreset == "custom") {
+    } else if (preset == "custom") {
         p[0] = redPrimaryX;
         p[1] = redPrimaryY;
         p[2] = greenPrimaryX;
@@ -523,6 +586,55 @@ void ICCProfileCreator::getPrimaries(Glib::ustring preset, float *p, ColorTemp &
         p[4] = 0.0366;
         p[5] = 0.0001;
     }
+}
+
+Glib::ustring ICCProfileCreator::getGammaPresetName(const Glib::ustring &preset)
+{
+    Glib::ustring name(trcPresets->get_active_text());
+    if (name == M("ICCPROFCREATOR_CUSTOM")) {
+        name = "Custom";
+    }
+    return name;
+}
+
+void ICCProfileCreator::getGamma(const Glib::ustring &preset, double &presetGamma, double &presetSlope)
+{
+    if (preset == "High_g1.3_s3.35") {
+        presetGamma = 1.3;
+        presetSlope = 3.35;
+    } else if (preset == "Low_g2.6_s6.9") {
+        presetGamma = 2.6;
+        presetSlope = 6.9;
+    } else if (preset == "sRGB_g2.4_s12.92") {
+        presetGamma = 2.4;
+        presetSlope = 12.92310;
+    } else if (preset == "BT709_g2.2_s4.5") {
+        presetGamma = 2.22;
+        presetSlope = 4.5;
+    } else if (preset == "linear_g1.0") {
+        presetGamma = 1.;
+        presetSlope = 0.;
+    } else if (preset == "standard_g2.2") {
+        presetGamma = 2.2;
+        presetSlope = 0.;
+    } else if (preset == "standard_g1.8") {
+        presetGamma = 1.8;
+        presetSlope = 0.;
+    } else if (preset == "Lab_g3.0s9.03296") {
+        presetGamma = 3.0;
+        presetSlope = 9.03296;
+    } else if (preset == "Custom") {
+        presetGamma = gamma;
+        presetSlope = slope;
+    } else {
+        presetGamma = 2.4;
+        presetSlope = 12.92310;
+    }
+}
+
+void ICCProfileCreator::onResetCopyright()
+{
+    eCopyright->set_text(Options::getICCProfileCopyright());
 }
 
 // Copyright (c) 2018 Jacques DESMIS <jdesmis@gmail.com>
@@ -541,37 +653,37 @@ void ICCProfileCreator::savePressed()
     //necessary for V2 profile
     if (primariesPreset == "ACES-AP0"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp0)) {
         sNewProfile = options.rtSettings.ACESp0;
-        sPrimariesPreset = "ACES-AP0_";
+        sPrimariesPreset = "ACES-AP0";
     } else if (primariesPreset == "ACES-AP1"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp1)) {
         sNewProfile = options.rtSettings.ACESp1;
-        sPrimariesPreset = "ACES-AP1_";
+        sPrimariesPreset = "ACES-AP1";
     } else if (primariesPreset == "Adobe"      && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.adobe)) {
         sNewProfile = options.rtSettings.adobe;
-        sPrimariesPreset = "Medium_";
+        sPrimariesPreset = "Medium";
     } else if (primariesPreset == "ProPhoto"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto)) {
         sNewProfile = options.rtSettings.prophoto;
-        sPrimariesPreset = "Large_";
+        sPrimariesPreset = "Large";
     } else if (primariesPreset == "Rec2020"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.rec2020)) {
         sNewProfile = options.rtSettings.rec2020;
-        sPrimariesPreset = "Rec2020_";
+        sPrimariesPreset = "Rec2020";
     } else if (primariesPreset == "sRGB"       && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.srgb)) {
         sNewProfile = options.rtSettings.srgb;
-        sPrimariesPreset = "sRGB_";
+        sPrimariesPreset = "sRGB";
     } else if (primariesPreset == "Widegamut"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.widegamut)) {
         sNewProfile = options.rtSettings.widegamut;
-        sPrimariesPreset = "Wide_";
+        sPrimariesPreset = "Wide";
     } else if (primariesPreset == "BestRGB"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.best)) {
         sNewProfile = options.rtSettings.best;
-        sPrimariesPreset = "Best_";
+        sPrimariesPreset = "Best";
     } else if (primariesPreset == "BetaRGB"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.beta)) {
         sNewProfile = options.rtSettings.beta;
-        sPrimariesPreset = "Beta_";
+        sPrimariesPreset = "Beta";
     } else if (primariesPreset == "BruceRGB"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.bruce)) {
         sNewProfile = options.rtSettings.bruce;
-        sPrimariesPreset = "Bruce_";
+        sPrimariesPreset = "Bruce";
     } else if (primariesPreset == "custom") {
         sNewProfile = options.rtSettings.srgb;
-        sPrimariesPreset = "Custom_";
+        sPrimariesPreset = "Custom";
     } else {
         // Should not occurs
         if (rtengine::settings->verbose) {
@@ -602,73 +714,58 @@ void ICCProfileCreator::savePressed()
     double presetGamma = 2.4;
     double presetSlope = 12.92310;
     const double eps = 0.000000001; // not divide by zero
+    getGamma(gammaPreset, presetGamma, presetSlope);
     if (gammaPreset == "High_g1.3_s3.35") {
-        sGammaPreset = "_High_g=1.3_s=3.35";
-        presetGamma = 1.3;
-        presetSlope = 3.35;
+        sGammaPreset = "High_g=1.3_s=3.35";
         ga[0] = 1.3 ;    //for high dynamic images
         ga[1] = 0.998279;
         ga[2] = 0.001721;
         ga[3] = 0.298507;
         ga[4] = 0.005746;
     } else if (gammaPreset == "Low_g2.6_s6.9") {
-        sGammaPreset = "_Low_g=2.6_s=6.9";
-        presetGamma = 2.6;
-        presetSlope = 6.9;
+        sGammaPreset = "Low_g=2.6_s=6.9";
         ga[0] = 2.6 ;    //gamma 2.6 variable : for low contrast images
         ga[1] = 0.891161;
         ga[2] = 0.108839;
         ga[3] = 0.144928;
         ga[4] = 0.076332;
     } else if (gammaPreset == "sRGB_g2.4_s12.92") {
-        sGammaPreset = "_sRGB_g=2.4_s=12.92310";
-        presetGamma = 2.4;
-        presetSlope = 12.92310;
+        sGammaPreset = "sRGB_g=2.4_s=12.92310";
         ga[0] = 2.40;    //sRGB 2.4 12.92  - RT default as Lightroom
         ga[1] = 0.947858;
         ga[2] = 0.052142;
         ga[3] = 0.077399;
         ga[4] = 0.039293;
     } else if (gammaPreset == "BT709_g2.2_s4.5") {
-        sGammaPreset = "_BT709_g=2.2_s=4.5";
-        presetGamma = 2.22;
-        presetSlope = 4.5;
+        sGammaPreset = "BT709_g=2.2_s=4.5";
         ga[0] = 2.22;    //BT709  2.2  4.5  - my preferred as D.Coffin
         ga[1] = 0.909995;
         ga[2] = 0.090005;
         ga[3] = 0.222222;
         ga[4] = 0.081071;
     } else if (gammaPreset == "linear_g1.0") {
-        sGammaPreset = "_Linear_g=1.0";
-        presetGamma = 1.;
-        presetSlope = 0.;
+        sGammaPreset = "Linear_g=1.0";
         ga[0] = 1.0;    //gamma=1 linear : for high dynamic images (cf D.Coffin...)
         ga[1] = 1.;
         ga[2] = 0.;
         ga[3] = 1. / eps;
         ga[4] = 0.;
     } else if (gammaPreset == "standard_g2.2") {
-        sGammaPreset = "_g=2.2";
-        presetGamma = 2.2;
-        presetSlope = 0.;
+        sGammaPreset = "g=2.2";
         ga[0] = 2.2;    //gamma=2.2(as gamma of Adobe, Widegamut...)
         ga[1] = 1.;
         ga[2] = 0.;
         ga[3] = 1. / eps;
         ga[4] = 0.;
     } else if (gammaPreset == "standard_g1.8") {
-        sGammaPreset = "_g=1.8";
-        presetGamma = 1.8;
-        presetSlope = 0.;
+        sGammaPreset = "g=1.8";
         ga[0] = 1.8;    //gamma=1.8(as gamma of Prophoto)
         ga[1] = 1.;
         ga[2] = 0.;
         ga[3] = 1. / eps;
         ga[4] = 0.;
     } else if (gammaPreset == "Lab_g3.0s9.03296") {
-        sGammaPreset = "_LAB_g3.0_s9.03296";
-        presetGamma = 3.0;
-        presetSlope = 9.03296;
+        sGammaPreset = "LAB_g3.0_s9.03296";
         ga[0] = 3.0;    //Lab gamma =3 slope=9.03296
         ga[1] = 0.8621;
         ga[2] = 0.1379;
@@ -690,7 +787,7 @@ void ICCProfileCreator::savePressed()
         ga[3] = 1. / slope2;
         //printf("ga[0]=%f ga[1]=%f ga[2]=%f ga[3]=%f ga[4]=%f\n", ga[0],ga[1],ga[2],ga[3],ga[4]);
 
-        sGammaPreset = Glib::ustring::compose("_g%1_s%2",
+        sGammaPreset = Glib::ustring::compose("g%1_s%2",
                        Glib::ustring::format (std::setw(3), std::fixed, std::setprecision(2), gamma),
                        Glib::ustring::format (std::setw(6), std::fixed, std::setprecision(5), slope));
         presetGamma = gamma;
@@ -703,31 +800,29 @@ void ICCProfileCreator::savePressed()
     sPrimariesAndIlluminant = sPrimariesPreset;
 
     if (profileVersion == "v4" && illuminant != "DEF") {
-         sPrimariesPreset += illuminant;
+         sPrimariesPreset += "-" + illuminant;
         //  printf("outpr=%s \n",outPr.c_str());
     }
 
-    // create description with gamma + slope + primaries
-    std::wostringstream gammaWs;
-    std::wstring gammaStrICC;
-
-    Glib::ustring gammaGS;//to save gamma and slope in a tag
+    Glib::ustring profileDesc;
+    Glib::ustring sGammaSlopeParam;//to save gamma and slope in a dmdd
+    Glib::ustring sGammaSlopeDesc; //to save gamma and slope in a desc
+    Glib::ustring sGamma;
+    Glib::ustring sSlope;
 
     if (gammaPreset == "Custom") {
-        Glib::ustring sGamma(Glib::ustring::format (std::setw(3), std::fixed, std::setprecision(2), gamma));
-        Glib::ustring sSlope(Glib::ustring::format (std::setw(6), std::fixed, std::setprecision(5), slope));
-        fName = (profileVersion == "v4" ? "RTv4_" : "RTv2_") + sPrimariesAndIlluminant + sGamma + " " + sSlope + ".icc";
-        gammaWs << sPrimariesPreset << " g=" << Glib::ustring::format (std::setw(3), std::fixed, std::setprecision(2), gamma) << " s=" << Glib::ustring::format (std::setw(6), std::fixed, std::setprecision(5), slope);
-        gammaGS = "g" + sGamma + "s" + sSlope + "!";
-
-
+        sGamma = Glib::ustring::format (std::setw(3), std::fixed, std::setprecision(2), gamma);
+        sSlope = Glib::ustring::format (std::setw(6), std::fixed, std::setprecision(5), slope);
+        fName = Glib::ustring::compose("RT%1_%2_g%3_s%4.icc", profileVersion, sPrimariesAndIlluminant, sGamma, sSlope);
+        profileDesc = sPrimariesPreset;
     } else {
-        Glib::ustring sGamma(Glib::ustring::format (std::setw(3), std::fixed, std::setprecision(2), presetGamma));
-        Glib::ustring sSlope(Glib::ustring::format (std::setw(6), std::fixed, std::setprecision(5), presetSlope));
-        fName = (profileVersion == "v4" ? "RTv4_" : "RTv2_") + sPrimariesAndIlluminant + sGammaPreset + ".icc";
-        gammaWs << sPrimariesPreset << sGammaPreset;
-        gammaGS = "g" + sGamma + "s" + sSlope + "!";
+        sGamma = Glib::ustring::format (std::setw(3), std::fixed, std::setprecision(2), presetGamma);
+        sSlope = Glib::ustring::format (std::setw(6), std::fixed, std::setprecision(5), presetSlope);
+        fName = Glib::ustring::compose("RT%1_%2_%3.icc", profileVersion, sPrimariesAndIlluminant, sGammaPreset);
+        profileDesc == sPrimariesPreset + sGammaPreset;
     }
+    sGammaSlopeParam = Glib::ustring::compose("g%1s%2!", sGamma, sSlope);
+    sGammaSlopeDesc = Glib::ustring::compose("g=%1 s=%2", sGamma, sSlope);
 
     // -------------------------------------------- Asking the file name
 
@@ -776,128 +871,155 @@ void ICCProfileCreator::savePressed()
         }
     } while (1);
 
-    // -----------------------------------------------------------------
+    // --------------- main tags ------------------
 
-    //write in tag 'dmdd' values of current gamma and slope to retrive after in Output profile
-    wchar_t *wGammaGS = (wchar_t*)g_utf8_to_utf16 (gammaGS.c_str(), -1, NULL, NULL, NULL);
-    if (!wGammaGS) {
-        printf("Error: lab2rgbOut  /  g_utf8_to_utf16 failed!\n");
-    }
-
-    cmsMLU *description = cmsMLUalloc(NULL, 1);
-    // Language code (3 letters code) : https://www.iso.org/obp/ui/
-    // Country code (3 letters code)  : http://www.loc.gov/standards/iso639-2/php/code_list.php
-    if (cmsMLUsetWide(description, "eng", "USA", wGammaGS)) {
-        cmsWriteTag(newProfile, cmsSigDeviceModelDescTag, description); //save 'dmdd' in description
+    if (profileVersion == "v4") {
+        cmsSetProfileVersion(newProfile, 4.3);
     } else {
-        printf("Error: lab2rgbOut  /  cmsMLUsetWide failed for \"%s\" !\n", gammaGS.c_str());
+        cmsSetProfileVersion(newProfile, 2.0);
     }
-    cmsMLU *mlu;
-    cmsContext ContextID = cmsGetProfileContextID(newProfile); // create context to modify some TAGs
-    mlu = cmsMLUalloc(ContextID, 1);
-    cmsMLUsetWide(mlu,  "en", "US", gammaWs.str().c_str());
-
-    cmsMLUfree(description);
-
-    // instruction with //ICC are used to generate ICC profile
-    if (mlu == nullptr) {
-        printf("Description error\n");
-    } else {
-
-        if (profileVersion == "v4") {
-            cmsSetProfileVersion(newProfile, 4.3);
-        } else {
-            cmsSetProfileVersion(newProfile, 2.0);
-        }
 
 //change
-        float p[6]; //primaries
-        ga[6] = 0.0;
+    float p[6]; //primaries
+    ga[6] = 0.0;
 
-        ColorTemp temp;
-        getPrimaries(primariesPreset, p, temp);
+    ColorTemp temp;
+    getPrimaries(primariesPreset, p, temp);
 
-        cmsCIExyY xyD;
-        cmsCIExyYTRIPLE Primaries = {
-            {p[0], p[1], 1.0}, // red
-            {p[2], p[3], 1.0}, // green
-            {p[4], p[5], 1.0}  // blue
-        };
+    cmsCIExyY xyD;
+    cmsCIExyYTRIPLE Primaries = {
+        {p[0], p[1], 1.0}, // red
+        {p[2], p[3], 1.0}, // green
+        {p[4], p[5], 1.0}  // blue
+    };
+
+    if (profileVersion == "v4" && illuminant != "DEF") {
         double tempv4 = 5000.;
-
-        if (profileVersion == "v4" && illuminant != "DEF") {
-            if (illuminant == "D41") {
-                tempv4 = 4100.;
-            } else if (illuminant == "D50") {
-                tempv4 = 5003.;
-            } else if (illuminant == "D55") {
-                tempv4 = 5500.;
-            } else if (illuminant == "D60") {
-                tempv4 = 6004.;
-            } else if (illuminant == "D65") {
-                tempv4 = 6504.;
-            } else if (illuminant == "D80") {
-                tempv4 = 8000.;
-            } else if (illuminant == "stdA") {
-                tempv4 = 5003.;
-            }
-
-            //printf("tempv4=%f \n", tempv4);
-
+        if (illuminant == "D41") {
+            tempv4 = 4100.;
+        } else if (illuminant == "D50") {
+            tempv4 = 5003.;
+        } else if (illuminant == "D55") {
+            tempv4 = 5500.;
+        } else if (illuminant == "D60") {
+            tempv4 = 6004.;
+        } else if (illuminant == "D65") {
+            tempv4 = 6504.;
+        } else if (illuminant == "D80") {
+            tempv4 = 8000.;
+        } else if (illuminant == "stdA") {
+            tempv4 = 5003.;
         }
-
-        if (profileVersion == "v4" && illuminant != "DEF") {
-            cmsWhitePointFromTemp(&xyD, tempv4);
-        } else {
-            cmsWhitePointFromTemp(&xyD, (double)temp);
-        }
-
-        if (illuminant == "stdA") xyD = {0.447573, 0.407440, 1.0};
-
-        // Calculate output profile's rTRC gTRC bTRC
-        cmsToneCurve* GammaTRC[3];
-        GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, ga);
-
-        if (profileVersion == "v4") {
-            newProfile = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC);
-        }
-
-        cmsWriteTag(newProfile, cmsSigRedTRCTag, GammaTRC[0]);
-        cmsWriteTag(newProfile, cmsSigGreenTRCTag, GammaTRC[1]);
-        cmsWriteTag(newProfile, cmsSigBlueTRCTag, GammaTRC[2]);
-        cmsWriteTag(newProfile, cmsSigProfileDescriptionTag, mlu);//desc changed
-
-        /*  //to read XYZ values
-            cmsCIEXYZ *redT = static_cast<cmsCIEXYZ*>(cmsReadTag(newProfile, cmsSigRedMatrixColumnTag));
-            cmsCIEXYZ *greenT  = static_cast<cmsCIEXYZ*>(cmsReadTag(newProfile, cmsSigGreenMatrixColumnTag));
-            cmsCIEXYZ *blueT  = static_cast<cmsCIEXYZ*>(cmsReadTag(newProfile, cmsSigBlueMatrixColumnTag));
-            printf("rx=%f gx=%f bx=%f ry=%f gy=%f by=%f rz=%f gz=%f bz=%f\n", redT->X, greenT->X, blueT->X, redT->Y, greenT->Y, blueT->Y, redT->Z, greenT->Z, blueT->Z);
-        */
-
-        cmsMLUfree(mlu);
-        cmsMLU *copyright = cmsMLUalloc(NULL, 1);
-        cmsMLUsetASCII(copyright, "eng", "USA", "Copyright RawTherapee 2018, CC0");
-        cmsWriteTag(newProfile, cmsSigCopyrightTag, copyright);
-        cmsMLUfree(copyright);
-        //cmsWriteTag(newProfile, cmsSigProfileDescriptionTag,  mlu);//desc changed
-        cmsMLU *MfgDesc;
-        MfgDesc   = cmsMLUalloc(NULL, 1);
-        cmsMLUsetASCII(MfgDesc, "eng", "USA", "RawTherapee");
-        cmsWriteTag(newProfile, cmsSigDeviceMfgDescTag, MfgDesc);
-        cmsMLUfree(MfgDesc);
-
-        /*
-        Glib::ustring realoutPro;
-        realoutPro = options.cacheBaseDir + "/" + fName;//ICC profile in cache
-        */
-
-        if (profileVersion == "v2" || profileVersion == "v4") {
-            cmsSaveProfileToFile(newProfile,  absoluteFName.c_str());
-
-        }
-
-        //if (GammaTRC) {
-        cmsFreeToneCurve(GammaTRC[0]);
-        //}
+        cmsWhitePointFromTemp(&xyD, tempv4);
+    } else {
+        cmsWhitePointFromTemp(&xyD, (double)temp);
     }
+
+    if (illuminant == "stdA") {
+        xyD = {0.447573, 0.407440, 1.0};
+    }
+
+    // Calculate output profile's rTRC gTRC bTRC
+    cmsToneCurve* GammaTRC[3];
+    GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, ga);
+
+    if (profileVersion == "v4") {
+        newProfile = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC);
+    }
+
+    cmsWriteTag(newProfile, cmsSigRedTRCTag, GammaTRC[0]);
+    cmsWriteTag(newProfile, cmsSigGreenTRCTag, GammaTRC[1]);
+    cmsWriteTag(newProfile, cmsSigBlueTRCTag, GammaTRC[2]);
+
+    // --------------- set dmnd tag ------------------
+
+    cmsMLU *dmnd;
+    dmnd = cmsMLUalloc(nullptr, 1);
+    cmsMLUsetASCII(dmnd, "eng", "USA", "RawTherapee");
+    cmsWriteTag(newProfile, cmsSigDeviceMfgDescTag, dmnd);
+    cmsMLUfree(dmnd);
+
+    // --------------- set dmdd tag ------------------
+
+    if (profileVersion == "v2") {
+        //write in tag 'dmdd' values of current gamma and slope to retrieve after in Output profile
+        wchar_t *wParameters = (wchar_t*)g_utf8_to_utf16 (sGammaSlopeParam.c_str(), -1, NULL, NULL, NULL);
+        if (!wParameters) {
+            printf("Error: wParameters  /  g_utf8_to_utf16 failed!\n");
+        }
+
+        cmsMLU *dmdd = cmsMLUalloc(nullptr, 1);
+        // Language code (3 letters code) : https://www.iso.org/obp/ui/
+        // Country code (3 letters code)  : http://www.loc.gov/standards/iso639-2/php/code_list.php
+        if (cmsMLUsetWide(dmdd, "eng", "USA", wParameters)) {
+            if (!cmsWriteTag(newProfile, cmsSigDeviceModelDescTag, dmdd)) {
+                printf("Error: Can't write cmsSigDeviceModelDescTag!\n");
+            }
+        } else {
+            printf("Error: cmsMLUsetWide failed for dmdd \"%s\" !\n", sGammaSlopeParam.c_str());
+        }
+        cmsMLUfree(dmdd);
+    }
+
+    // --------------- set desc tag ------------------
+
+    Glib::ustring sDescription;
+    if (!description.empty()) {
+        if (cAppendParamsToDesc->get_active()) {
+            sDescription = description + " / " + sGammaSlopeDesc;
+        } else {
+            sDescription = description;
+        }
+    } else {
+        if (cAppendParamsToDesc->get_active()) {
+            sDescription = profileDesc + " / " + sGammaSlopeDesc;
+        } else {
+            sDescription = profileDesc;
+        }
+    }
+    //write in tag 'dmdd' values of current gamma and slope to retrieve after in Output profile
+    wchar_t *wDescription = (wchar_t*)g_utf8_to_utf16 (sDescription.c_str(), -1, NULL, NULL, NULL);
+    if (!wDescription) {
+        printf("Error: wDescription  /  g_utf8_to_utf16 failed!\n");
+    }
+
+    cmsMLU *descMLU = cmsMLUalloc(nullptr, 1);
+    // Language code (3 letters code) : https://www.iso.org/obp/ui/
+    // Country code (3 letters code)  : http://www.loc.gov/standards/iso639-2/php/code_list.php
+    if (cmsMLUsetWide(descMLU, "eng", "USA", wDescription)) {
+        if (!cmsWriteTag(newProfile, cmsSigProfileDescriptionTag, descMLU)) {
+            printf("Error: Can't write cmsSigProfileDescriptionTag!\n");
+        }
+    } else {
+        printf("Error: cmsMLUsetWide failed for desc \"%s\" !\n", sDescription.c_str());
+    }
+    cmsMLUfree(descMLU);
+
+    // --------------- set cprt tag ------------------
+
+    cmsMLU *copyMLU = cmsMLUalloc(nullptr, 1);
+    wchar_t *wCopyright = (wchar_t*)g_utf8_to_utf16 (copyright.c_str(), -1, NULL, NULL, NULL);
+    if (!wCopyright) {
+        printf("Error: wCopyright  /  g_utf8_to_utf16 failed!\n");
+    }
+    if (cmsMLUsetWide(copyMLU, "eng", "USA", wCopyright)) {
+        if (!cmsWriteTag(newProfile, cmsSigCopyrightTag, copyMLU)) {
+            printf("Error: Can't write cmsSigCopyrightTag!\n");
+        }
+    } else {
+        printf("Error: cmsMLUsetWide failed for cprt \"%s\" !\n", copyright.c_str());
+    }
+    cmsMLUfree(copyMLU);
+
+
+    /*  //to read XYZ values
+        cmsCIEXYZ *redT = static_cast<cmsCIEXYZ*>(cmsReadTag(newProfile, cmsSigRedMatrixColumnTag));
+        cmsCIEXYZ *greenT  = static_cast<cmsCIEXYZ*>(cmsReadTag(newProfile, cmsSigGreenMatrixColumnTag));
+        cmsCIEXYZ *blueT  = static_cast<cmsCIEXYZ*>(cmsReadTag(newProfile, cmsSigBlueMatrixColumnTag));
+        printf("rx=%f gx=%f bx=%f ry=%f gy=%f by=%f rz=%f gz=%f bz=%f\n", redT->X, greenT->X, blueT->X, redT->Y, greenT->Y, blueT->Y, redT->Z, greenT->Z, blueT->Z);
+    */
+
+    cmsSaveProfileToFile(newProfile,  absoluteFName.c_str());
+
+    cmsFreeToneCurve(GammaTRC[0]);
 }

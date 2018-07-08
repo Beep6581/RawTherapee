@@ -455,6 +455,9 @@ void Options::setDefaults()
     ICCPC_slope = 12.92;
     ICCPC_profileVersion = "v4";
     ICCPC_illuminant = "DEF";
+    ICCPC_description = "";
+    ICCPC_copyright = Options::getICCProfileCopyright();
+    ICCPC_appendParamsToDesc = false;
 
     fastexport_bypass_sharpening         = true;
     fastexport_bypass_sharpenEdge        = true;
@@ -1572,6 +1575,15 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("ICC Profile Creator", "Illuminant")) {
                     ICCPC_illuminant = keyFile.get_string("ICC Profile Creator", "Illuminant");
                 }
+                if (keyFile.has_key("ICC Profile Creator", "Description")) {
+                    ICCPC_description = keyFile.get_string("ICC Profile Creator", "Description");
+                }
+                if (keyFile.has_key("ICC Profile Creator", "Copyright")) {
+                    ICCPC_copyright = keyFile.get_string("ICC Profile Creator", "Copyright");
+                }
+                if (keyFile.has_key("ICC Profile Creator", "AppendParamsToDesc")) {
+                    ICCPC_appendParamsToDesc = keyFile.get_boolean("ICC Profile Creator", "AppendParamsToDesc");
+                }
             }
 
             if (keyFile.has_group("Batch Processing")) {
@@ -2088,6 +2100,10 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_double("ICC Profile Creator", "Slope", ICCPC_slope);
         keyFile.set_string("ICC Profile Creator", "ProfileVersion", ICCPC_profileVersion);
         keyFile.set_string("ICC Profile Creator", "Illuminant", ICCPC_illuminant);
+        keyFile.set_string("ICC Profile Creator", "Description", ICCPC_description);
+        keyFile.set_string("ICC Profile Creator", "Copyright", ICCPC_copyright);
+        keyFile.set_boolean("ICC Profile Creator", "AppendParamsToDesc", ICCPC_appendParamsToDesc);
+
 
         Glib::ArrayHandle<int> bab = baBehav;
         keyFile.set_integer_list("Batch Processing", "AdjusterBehavior", bab);
@@ -2474,4 +2490,9 @@ void Options::setBundledDefProfImgMissing(bool value)
         defProfError &= ~rtengine::toUnderlying(DefProfError::bundledDefProfImgMissing);
     }
 }
-
+Glib::ustring Options::getICCProfileCopyright()
+{
+    Glib::Date now;
+    now.set_time_current();
+    return Glib::ustring::compose("Copyright RawTherapee %1, CC0", now.get_year());
+}

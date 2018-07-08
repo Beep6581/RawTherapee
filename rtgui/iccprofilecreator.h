@@ -49,9 +49,12 @@ private:
     Glib::ustring gammaPreset;
     double gamma;
     double slope;
+    bool appendParamsToDesc;
 
     Glib::ustring profileVersion;
     Glib::ustring illuminant;
+    Glib::ustring description;
+    Glib::ustring copyright;
     //-------------------------------------------------------
 
     RTWindow *parent;
@@ -73,6 +76,10 @@ private:
     sigc::connection primariesconn;
     MyComboBoxText* cIlluminant;
     sigc::connection illconn;
+    Gtk::Entry* eDescription;
+    Gtk::Entry* eCopyright;
+    Gtk::Button* resetCopyright;
+    Gtk::CheckButton *cAppendParamsToDesc;
 
     //Glib::ustring lastPath;
 
@@ -84,11 +91,15 @@ private:
     void primariesChanged();
     void illuminantChanged();
     void trcPresetsChanged();
+    void adjusterChanged (Adjuster* a, double newval);
     static std::vector<Glib::ustring> getGamma();
     Glib::ustring getPrimariesPresetName(const Glib::ustring &preset);
-    void getPrimaries(Glib::ustring preset, float *p, ColorTemp &temp);
+    void getPrimaries(const Glib::ustring &preset, float *p, ColorTemp &temp);
+    Glib::ustring getGammaPresetName(const Glib::ustring &preset);
+    void getGamma(const Glib::ustring &preset, double &gamma, double &slope);
     void savePressed();
     void closePressed();
+    void onResetCopyright();
 
 public:
     explicit ICCProfileCreator (RTWindow *rtwindow);
