@@ -10043,29 +10043,6 @@ static void expandFloats(Bytef * dst, int tileWidth, int bytesps) {
   }
 }
 
-static void copyFloatDataToInt(float * src, ushort * dst, size_t size, float max) {
-  bool negative = false, nan = false;
-
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
-  for (size_t i = 0; i < size; ++i) {
-    if (src[i] < 0.0f) {
-      negative = true;
-      src[i] = 0.0f;
-    } else if (std::isnan(src[i])) {
-      nan = true;
-      src[i] = max;
-    }
-    // Copy the data to the integer buffer to build the thumbnail
-    dst[i] = (ushort)src[i];
-  }
-  if (negative)
-    fprintf(stderr, "DNG Float: Negative data found in input file\n");
-  if (nan)
-    fprintf(stderr, "DNG Float: NaN data found in input file\n");
-}
-
 static int decompress(size_t srcLen, size_t dstLen, unsigned char *in, unsigned char *out) {
     // At least in zlib 1.2.11 the uncompress function is not thread save while it is thread save in zlib 1.2.8
     // This simple replacement is thread save. Used example code from https://zlib.net/zlib_how.html
@@ -10207,9 +10184,6 @@ void CLASS deflate_dng_load_raw() {
 }
   }
 
-  if (ifd->sample_format == 3) {  // Floating point data
-    copyFloatDataToInt(float_raw_image, raw_image, raw_width*raw_height, maximum);
-  }
 }
 
 /* RT: removed unused functions */
