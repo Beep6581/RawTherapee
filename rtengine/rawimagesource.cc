@@ -590,8 +590,8 @@ void RawImageSource::transformRect (const PreviewProps &pp, int tran, int &ssx1,
     } else {
         ssx1 = sx1;
         ssy1 = sy1;
-        width  = (sx2 - sx1) / pp.getSkip() + ((sx2 - sx1) % pp.getSkip() > 0);
-        height = (sy2 - sy1) / pp.getSkip() + ((sy2 - sy1) % pp.getSkip() > 0);
+        width  = (sx2 + 1 - sx1) / pp.getSkip() + ((sx2 + 1 - sx1) % pp.getSkip() > 0);
+        height = (sy2 + 1 - sy1) / pp.getSkip() + ((sy2 + 1 - sy1) % pp.getSkip() > 0);
     }
 }
 
@@ -746,14 +746,11 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 
         for (int ix = 0; ix < imheight; ix++) {
             int i = sy1 + skip * ix;
-
-            if (i >= maxy - skip) {
-                i = maxy - skip - 1;    // avoid trouble
-            }
+            i = std::min(i, maxy - skip); // avoid trouble
 
             if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1) {
                 for (int j = 0, jx = sx1; j < imwidth; j++, jx += skip) {
-                    jx = std::min(jx, maxx - skip - 1); // avoid trouble
+                    jx = std::min(jx, maxx - skip); // avoid trouble
 
                     float rtot = 0.f, gtot = 0.f, btot = 0.f;
 

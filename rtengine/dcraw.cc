@@ -9937,6 +9937,7 @@ static void decodeFPDeltaRow(Bytef * src, Bytef * dst, size_t tileWidth, size_t 
 
 }
 
+#ifndef __F16C__
 // From DNG SDK dng_utils.h
 static inline uint32_t DNG_HalfToFloat(uint16_t halfValue) {
   int32_t sign     = (halfValue >> 15) & 0x00000001;
@@ -9970,6 +9971,7 @@ static inline uint32_t DNG_HalfToFloat(uint16_t halfValue) {
   // Assemble sign, exponent and mantissa.
   return (uint32_t) ((sign << 31) | (exponent << 23) | mantissa);
 }
+#endif
 
 static inline uint32_t DNG_FP24ToFloat(const uint8_t * input) {
   int32_t sign     = (input [0] >> 7) & 0x01;
@@ -10006,11 +10008,32 @@ static inline uint32_t DNG_FP24ToFloat(const uint8_t * input) {
 
 static void expandFloats(Bytef * dst, int tileWidth, int bytesps) {
   if (bytesps == 2) {
-    uint16_t * dst16 = (uint16_t *) dst;
-    uint32_t * dst32 = (uint32_t *) dst;
+    uint16_t* const dst16 = reinterpret_cast<uint16_t*>(dst);
+#ifndef __F16C__
+    uint32_t* const dst32 = reinterpret_cast<uint32_t*>(dst);
     for (int index = tileWidth - 1; index >= 0; --index) {
-      dst32[index] = DNG_HalfToFloat(dst16[index]);
+        dst32[index] = DNG_HalfToFloat(dst16[index]);
     }
+#else
+    float* const dst32 = reinterpret_cast<float*>(dst);
+    int index = tileWidth - 8;
+    for (; index >= 0; index -= 8) {
+        __m128i halfFloatv = _mm_loadu_si128((__m128i*)&dst16[index]);
+        STVFU(dst32[index], _mm_cvtph_ps(halfFloatv));
+        STVFU(dst32[index + 4], _mm_cvtph_ps(_mm_shuffle_epi32(halfFloatv, _MM_SHUFFLE(0,0,3,2))));
+    }
+    index += 4;
+    if(index >= 0) {
+        __m128i halfFloatv = _mm_loadu_si128((__m128i*)&dst16[index]);
+        STVFU(dst32[index], _mm_cvtph_ps(halfFloatv));
+        index--;
+    } else {
+        index += 3;
+    }
+    for (; index >= 0; --index) {
+        dst32[index] = _cvtsh_ss(dst16[index]);
+    }
+#endif
   } else if (bytesps == 3) {
     uint8_t  * dst8  = ((uint8_t *) dst) + (tileWidth - 1) * 3;
     uint32_t * dst32 = (uint32_t *) dst;
@@ -10018,29 +10041,6 @@ static void expandFloats(Bytef * dst, int tileWidth, int bytesps) {
       dst32[index] = DNG_FP24ToFloat(dst8);
     }
   }
-}
-
-static void copyFloatDataToInt(float * src, ushort * dst, size_t size, float max) {
-  bool negative = false, nan = false;
-
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
-  for (size_t i = 0; i < size; ++i) {
-    if (src[i] < 0.0f) {
-      negative = true;
-      src[i] = 0.0f;
-    } else if (std::isnan(src[i])) {
-      nan = true;
-      src[i] = max;
-    }
-    // Copy the data to the integer buffer to build the thumbnail
-    dst[i] = (ushort)src[i];
-  }
-  if (negative)
-    fprintf(stderr, "DNG Float: Negative data found in input file\n");
-  if (nan)
-    fprintf(stderr, "DNG Float: NaN data found in input file\n");
 }
 
 static int decompress(size_t srcLen, size_t dstLen, unsigned char *in, unsigned char *out) {
@@ -10184,9 +10184,6 @@ void CLASS deflate_dng_load_raw() {
 }
   }
 
-  if (ifd->sample_format == 3) {  // Floating point data
-    copyFloatDataToInt(float_raw_image, raw_image, raw_width*raw_height, maximum);
-  }
 }
 
 /* RT: removed unused functions */

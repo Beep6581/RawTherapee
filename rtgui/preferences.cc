@@ -307,6 +307,10 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     appendBehavList ( mi, M ( "TP_FILMSIMULATION_STRENGTH" ), ADDSET_FILMSIMULATION_STRENGTH, true );
 
     mi = behModel->append ();
+    mi->set_value ( behavColumns.label, M ("TP_SOFTLIGHT_LABEL") );
+    appendBehavList ( mi, M ( "TP_SOFTLIGHT_STRENGTH" ), ADDSET_SOFTLIGHT_STRENGTH, true );
+
+    mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_COLORTONING_LABEL"));
     appendBehavList (mi, M ("TP_COLORTONING_SPLITCOCO"), ADDSET_COLORTONING_SPLIT, true);
     appendBehavList (mi, M ("TP_COLORTONING_SATURATIONTHRESHOLD"), ADDSET_COLORTONING_SATTHRESHOLD, true);

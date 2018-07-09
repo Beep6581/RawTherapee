@@ -1924,7 +1924,8 @@ ResizeParams::ResizeParams() :
     method("Lanczos"),
     dataspec(3),
     width(900),
-    height(900)
+    height(900),
+    allowUpscaling(false)
 {
 }
 
@@ -1937,7 +1938,8 @@ bool ResizeParams::operator ==(const ResizeParams& other) const
         && method == other.method
         && dataspec == other.dataspec
         && width == other.width
-        && height == other.height;
+        && height == other.height
+        && allowUpscaling == other.allowUpscaling;
 }
 
 bool ResizeParams::operator !=(const ResizeParams& other) const
@@ -2348,8 +2350,28 @@ bool FilmSimulationParams::operator !=(const FilmSimulationParams& other) const
     return !(*this == other);
 }
 
+
+SoftLightParams::SoftLightParams() :
+    enabled(false),
+    strength(30)
+{
+}
+
+bool SoftLightParams::operator ==(const SoftLightParams& other) const
+{
+    return
+        enabled == other.enabled
+        && strength == other.strength;
+}
+
+bool SoftLightParams::operator !=(const SoftLightParams& other) const
+{
+    return !(*this == other);
+}
+
 RAWParams::BayerSensor::BayerSensor() :
     method(getMethodString(Method::AMAZE)),
+    border(4),
     imageNum(0),
     ccSteps(0),
     black0(0.0),
@@ -2386,6 +2408,7 @@ bool RAWParams::BayerSensor::operator ==(const BayerSensor& other) const
 {
     return
         method == other.method
+        && border == other.border
         && imageNum == other.imageNum
         && ccSteps == other.ccSteps
         && black0 == other.black0
@@ -2693,6 +2716,8 @@ void ProcParams::setDefaults()
     hsvequalizer = HSVEqualizerParams();
 
     filmSimulation = FilmSimulationParams();
+
+    softlight = SoftLightParams();
 
     raw = RAWParams();
 
@@ -3129,6 +3154,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->resize.dataspec, "Resize", "DataSpecified", resize.dataspec, keyFile);
         saveToKeyfile(!pedited || pedited->resize.width, "Resize", "Width", resize.width, keyFile);
         saveToKeyfile(!pedited || pedited->resize.height, "Resize", "Height", resize.height, keyFile);
+        saveToKeyfile(!pedited || pedited->resize.allowUpscaling, "Resize", "AllowUpscaling", resize.allowUpscaling, keyFile);
 
 // Post resize sharpening
         saveToKeyfile(!pedited || pedited->prsharpening.enabled, "PostResizeSharpening", "Enabled", prsharpening.enabled, keyFile);
@@ -3295,6 +3321,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->hsvequalizer.scurve, "HSV Equalizer", "SCurve", hsvequalizer.scurve, keyFile);
         saveToKeyfile(!pedited || pedited->hsvequalizer.vcurve, "HSV Equalizer", "VCurve", hsvequalizer.vcurve, keyFile);
 
+// Soft Light
+        saveToKeyfile(!pedited || pedited->softlight.enabled, "SoftLight", "Enabled", softlight.enabled, keyFile);
+        saveToKeyfile(!pedited || pedited->softlight.strength, "SoftLight", "Strength", softlight.strength, keyFile);
+
 // Film simulation
         saveToKeyfile(!pedited || pedited->filmSimulation.enabled, "Film Simulation", "Enabled", filmSimulation.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->filmSimulation.clutFilename, "Film Simulation", "ClutFilename", filmSimulation.clutFilename, keyFile);
@@ -3354,6 +3384,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.deadPixelFilter, "RAW", "DeadPixelFilter", raw.deadPixelFilter, keyFile);
         saveToKeyfile(!pedited || pedited->raw.hotdeadpix_thresh, "RAW", "HotDeadPixelThresh", raw.hotdeadpix_thresh, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.method, "RAW Bayer", "Method", raw.bayersensor.method, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.bayersensor.border, "RAW Bayer", "Border", raw.bayersensor.border, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.imageNum, "RAW Bayer", "ImageNum", raw.bayersensor.imageNum + 1, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.ccSteps, "RAW Bayer", "CcSteps", raw.bayersensor.ccSteps, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.exBlack0, "RAW Bayer", "PreBlack0", raw.bayersensor.black0, keyFile);
@@ -4147,6 +4178,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Resize", "DataSpecified", pedited, resize.dataspec, pedited->resize.dataspec);
             assignFromKeyfile(keyFile, "Resize", "Width", pedited, resize.width, pedited->resize.width);
             assignFromKeyfile(keyFile, "Resize", "Height", pedited, resize.height, pedited->resize.height);
+            if (ppVersion >= 339) {
+                assignFromKeyfile(keyFile, "Resize", "AllowUpscaling", pedited, resize.allowUpscaling, pedited->resize.allowUpscaling);
+            } else {
+                resize.allowUpscaling = true;
+                if (pedited) {
+                    pedited->resize.allowUpscaling = true;
+                }
+            }
         }
 
         if (keyFile.has_group("PostResizeSharpening")) {
@@ -4204,7 +4243,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "WorkingTRCSlope", pedited, icm.workingTRCSlope, pedited->icm.workingTRCSlope);
 
             assignFromKeyfile(keyFile, "Color Management", "OutputProfile", pedited, icm.outputProfile, pedited->icm.outputProfile);
-            if (ppVersion < 339) {
+            if (ppVersion < 340) {
                 if (icm.outputProfile == "RT_Medium_gsRGB") {
                     icm.outputProfile = "RTv4_Medium";
                 } else if (icm.outputProfile == "RT_Large_gBT709" || icm.outputProfile == "RT_Large_g10" || icm.outputProfile == "RT_Large_gsRGB") {
@@ -4549,6 +4588,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
         }
 
+        if (keyFile.has_group("SoftLight")) {
+            assignFromKeyfile(keyFile, "SoftLight", "Enabled", pedited, softlight.enabled, pedited->softlight.enabled);
+            assignFromKeyfile(keyFile, "SoftLight", "Strength", pedited, softlight.strength, pedited->softlight.strength);
+        }
+
         if (keyFile.has_group("Film Simulation")) {
             assignFromKeyfile(keyFile, "Film Simulation", "Enabled", pedited, filmSimulation.enabled, pedited->filmSimulation.enabled);
             assignFromKeyfile(keyFile, "Film Simulation", "ClutFilename", pedited, filmSimulation.clutFilename, pedited->filmSimulation.clutFilename);
@@ -4732,6 +4776,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group("RAW Bayer")) {
             assignFromKeyfile(keyFile, "RAW Bayer", "Method", pedited, raw.bayersensor.method, pedited->raw.bayersensor.method);
+            assignFromKeyfile(keyFile, "RAW Bayer", "Border", pedited, raw.bayersensor.border, pedited->raw.bayersensor.border);
 
             if (keyFile.has_key("RAW Bayer", "ImageNum")) {
                 raw.bayersensor.imageNum = keyFile.get_integer("RAW Bayer", "ImageNum") - 1;
@@ -4933,6 +4978,7 @@ bool ProcParams::operator ==(const ProcParams& other) const
         && dirpyrequalizer == other.dirpyrequalizer
         && hsvequalizer == other.hsvequalizer
         && filmSimulation == other.filmSimulation
+        && softlight == other.softlight
         && rgbCurves == other.rgbCurves
         && colorToning == other.colorToning
         && metadata == other.metadata

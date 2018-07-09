@@ -1,13 +1,15 @@
 #pragma once
 
 // This number has to be incremented whenever the PP3 file format is modified or the behaviour of a tool changes
-#define PPVERSION 338
+#define PPVERSION 340
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /*
   Log of version changes
-   339  2018-06-25
+   340  2018-06-25
         [ICM] enhanced custom output profile
+   339  2018-07-04
+        added allowUpscaling to ResizeParams
    338  2018-06-15
         increased precision for the channel mixer
    337  2018-06-13
