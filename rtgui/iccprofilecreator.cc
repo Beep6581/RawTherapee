@@ -943,15 +943,13 @@ void ICCProfileCreator::savePressed()
 
     if (profileVersion == "v2") {
         //write in tag 'dmdd' values of current gamma and slope to retrieve after in Output profile
-        wchar_t *wParameters = (wchar_t*)g_utf8_to_utf16 (sGammaSlopeParam.c_str(), -1, NULL, NULL, NULL);
-        if (!wParameters) {
-            printf("Error: wParameters  /  g_utf8_to_utf16 failed!\n");
-        }
+        std::wostringstream wParameters;
+        wParameters << sGammaSlopeParam;
 
         cmsMLU *dmdd = cmsMLUalloc(nullptr, 1);
         // Language code (3 letters code) : https://www.iso.org/obp/ui/
         // Country code (3 letters code)  : http://www.loc.gov/standards/iso639-2/php/code_list.php
-        if (cmsMLUsetWide(dmdd, "eng", "USA", wParameters)) {
+        if (cmsMLUsetWide(dmdd, "eng", "USA", wParameters.str().c_str())) {
             if (!cmsWriteTag(newProfile, cmsSigDeviceModelDescTag, dmdd)) {
                 printf("Error: Can't write cmsSigDeviceModelDescTag!\n");
             }
@@ -977,16 +975,15 @@ void ICCProfileCreator::savePressed()
             sDescription = profileDesc;
         }
     }
+
     //write in tag 'dmdd' values of current gamma and slope to retrieve after in Output profile
-    wchar_t *wDescription = (wchar_t*)g_utf8_to_utf16 (sDescription.c_str(), -1, NULL, NULL, NULL);
-    if (!wDescription) {
-        printf("Error: wDescription  /  g_utf8_to_utf16 failed!\n");
-    }
+    std::wostringstream wDescription;
+    wDescription << sDescription;
 
     cmsMLU *descMLU = cmsMLUalloc(nullptr, 1);
     // Language code (3 letters code) : https://www.iso.org/obp/ui/
     // Country code (3 letters code)  : http://www.loc.gov/standards/iso639-2/php/code_list.php
-    if (cmsMLUsetWide(descMLU, "eng", "USA", wDescription)) {
+    if (cmsMLUsetWide(descMLU, "eng", "USA", wDescription.str().c_str())) {
         if (!cmsWriteTag(newProfile, cmsSigProfileDescriptionTag, descMLU)) {
             printf("Error: Can't write cmsSigProfileDescriptionTag!\n");
         }
@@ -997,12 +994,11 @@ void ICCProfileCreator::savePressed()
 
     // --------------- set cprt tag ------------------
 
+    std::wostringstream wCopyright;
+    wCopyright << copyright;
+
     cmsMLU *copyMLU = cmsMLUalloc(nullptr, 1);
-    wchar_t *wCopyright = (wchar_t*)g_utf8_to_utf16 (copyright.c_str(), -1, NULL, NULL, NULL);
-    if (!wCopyright) {
-        printf("Error: wCopyright  /  g_utf8_to_utf16 failed!\n");
-    }
-    if (cmsMLUsetWide(copyMLU, "eng", "USA", wCopyright)) {
+    if (cmsMLUsetWide(copyMLU, "eng", "USA", wCopyright.str().c_str())) {
         if (!cmsWriteTag(newProfile, cmsSigCopyrightTag, copyMLU)) {
             printf("Error: Can't write cmsSigCopyrightTag!\n");
         }
