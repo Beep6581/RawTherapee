@@ -797,7 +797,7 @@ void ProfilePanel::initProfile (const Glib::ustring& profileFullPath, ProcParams
 
         if (tpc) {
             tpc->setDefaults   (lastsaved->pparams);
-            tpc->profileChange (lastsaved, EvPhotoLoaded, profiles->getSelectedEntry()->label);
+            tpc->profileChange (lastsaved, EvPhotoLoaded, profiles->getSelectedEntry()->label, nullptr, true);
         }
     } else {
         if (pse) {

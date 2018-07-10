@@ -651,6 +651,7 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited)
     pp->icm.gampos = (double) gampos->getValue();
     pp->icm.slpos = (double) slpos->getValue();
     pp->icm.outputBPC = obpc->get_active ();
+    pp->toneCurve.fromHistMatching = false;
 
     if (pedited) {
         pedited->icm.input = !iunchanged->get_active ();

@@ -281,6 +281,7 @@ struct ToneCurveParams {
     int         hlcompr;        // Highlight Recovery's compression
     int         hlcomprthresh;  // Highlight Recovery's threshold
     bool histmatching; // histogram matching
+    bool fromHistMatching;
     bool clampOOG; // clamp out of gamut colours
 
     ToneCurveParams();
@@ -1516,7 +1517,7 @@ public:
     void clearGeneral();
     int  load(const Glib::ustring& fName);
     void set(bool v);
-    void applyTo(ProcParams* destParams) const ;
+    void applyTo(ProcParams* destParams, bool fromLastSaved = false) const ;
 
     rtengine::procparams::ProcParams* pparams;
     ParamsEdited* pedited;
