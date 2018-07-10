@@ -51,7 +51,7 @@ CdfInfo getCdf(const IImage8 &img)
 
     for (int y = 0; y < img.getHeight(); ++y) {
         for (int x = 0; x < img.getWidth(); ++x) {
-            int lum = LIM(0, int(Color::rgbLuminance(float(img.r(y, x)), float(img.g(y, x)), float(img.b(y, x)))), 255);
+            int lum = LIM(int(Color::rgbLuminance(float(img.r(y, x)), float(img.g(y, x)), float(img.b(y, x)))), 0, 255);
             ++ret.cdf[lum];
         }
     }
@@ -206,6 +206,9 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
 
     int fw, fh;
     getFullSize(fw, fh, TR_NONE);
+    if (getRotateDegree() == 90 || getRotateDegree() == 270) {
+        std::swap(fw, fh);
+    }
     int skip = 3;
 
     if (settings->verbose) {
