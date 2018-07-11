@@ -883,30 +883,26 @@ void HistogramArea::updateBackBuffer ()
     std::valarray<double> ch_ds (1);
     ch_ds[0] = 4;
     cr->set_dash (ch_ds, 0);
-    
-    // determine the number of gridlines based on current h/w
+
+    // determine the number of h-gridlines based on current h
     int nrOfHGridPartitions = (int)rtengine::min (16.0, pow (2.0, floor ((h - 100) / 250) + 2));
-    int nrOfVGridPartitions = (int)rtengine::min (16.0, pow (2.0, floor ((w - 100) / 250) + 2));
-    
-    if (options.histogramDrawMode == 2) {
-        nrOfVGridPartitions = 8; // always show 8 stops in log-log mode (lines at 1,3,7,15,31,63,127)
-    }
-    
+    int nrOfVGridPartitions = 8; // always show 8 stops (lines at 1,3,7,15,31,63,127)
+
     // draw vertical gridlines
     if (options.histogramDrawMode < 2) {
         for (int i = 1; i < nrOfVGridPartitions; i++) {
-            cr->move_to (i * w / nrOfVGridPartitions + 0.5, 1.5);
-            cr->line_to (i * w / nrOfVGridPartitions + 0.5, h - 2);
+            cr->move_to ((pow(2.0,i) - 1) / 255 * w + 0.5, 1.5);
+            cr->line_to ((pow(2.0,i) - 1) / 255 * w + 0.5, h - 2);
             cr->stroke ();
         }
     } else {
         for (int i = 1; i < nrOfVGridPartitions; i++) {
-            cr->move_to (scalingFunctionLog (255, pow(2.0,i) - 1) * w / 255 + 0.5, 1.5);
-            cr->line_to (scalingFunctionLog (255, pow(2.0,i) - 1) * w / 255 + 0.5, h - 2);
+            cr->move_to (scalingFunctionLog (255, pow(2.0,i) - 1) / 255 * w + 0.5, 1.5);
+            cr->line_to (scalingFunctionLog (255, pow(2.0,i) - 1) / 255 * w + 0.5, h - 2);
             cr->stroke ();
         }
     }
-    
+
     // draw horizontal gridlines
     if (options.histogramDrawMode == 0) {
         for (int i = 1; i < nrOfHGridPartitions; i++) {
@@ -921,7 +917,7 @@ void HistogramArea::updateBackBuffer ()
             cr->stroke ();
         }
     }
-    
+
     cr->unset_dash();
 
     // Draw the frame's border
