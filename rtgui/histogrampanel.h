@@ -119,8 +119,9 @@ protected:
     int oldwidth, oldheight;
 
     bool needLuma, needRed, needGreen, needBlue, rawMode, needChroma;
-    
-    
+    double factor;
+    bool isPressed;
+    double movingPosition;
 
     HistogramAreaIdleHelper* haih;
 
@@ -134,6 +135,8 @@ public:
     void on_realize();
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
     bool on_button_press_event (GdkEventButton* event);
+    bool on_button_release_event (GdkEventButton* event);
+    bool on_motion_notify_event (GdkEventMotion* event);
 
 private:
     void drawCurve(Cairo::RefPtr<Cairo::Context> &cr, LUTu & data, double scale, int hsize, int vsize);

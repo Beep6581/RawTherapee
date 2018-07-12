@@ -627,6 +627,9 @@ HistogramArea::HistogramArea (DrawModeListener *fml) : //needChroma unactive by 
     ghist(256);
     bhist(256);
     chist(256);
+    
+    factor = 10.0;
+    isPressed = false;
 
     get_style_context()->add_class("drawingarea");
     set_name("HistogramArea");
@@ -934,12 +937,12 @@ void HistogramArea::on_realize ()
 
     Gtk::DrawingArea::on_realize();
     Glib::RefPtr<Gdk::Window> window = get_window();
-    add_events(Gdk::BUTTON_PRESS_MASK);
+    add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
 }
 
 double HistogramArea::scalingFunctionLog(double vsize, double val)
 {
-    double factor = 10.0; // can be tuned if necessary - higher is flatter curve
+    //double factor = 10.0; // can be tuned if necessary - higher is flatter curve
     return vsize * log(factor / (factor + val)) / log(factor / (factor + vsize));
 }
 
@@ -1005,6 +1008,9 @@ bool HistogramArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 
 bool HistogramArea::on_button_press_event (GdkEventButton* event)
 {
+    isPressed = true;
+    movingPosition = event->x;
+    
     if (event->type == GDK_2BUTTON_PRESS && event->button == 1) {
         
         drawMode = (drawMode + 1) % 3;
@@ -1021,3 +1027,27 @@ bool HistogramArea::on_button_press_event (GdkEventButton* event)
     return true;
 }
 
+bool HistogramArea::on_button_release_event (GdkEventButton* event)
+{
+    isPressed = false;
+    return true;
+}
+
+bool HistogramArea::on_motion_notify_event (GdkEventMotion* event)
+{
+    if (isPressed)
+    {
+        double mod = 1 + (event->x - movingPosition) / get_width();
+        
+        factor /= mod;
+        if (factor < 1.0)
+            factor = 1.0;
+        if (factor > 100.0)
+            factor = 100.0;
+        
+        setDirty(true);
+        queue_draw ();
+    }
+    
+    return true;
+}
