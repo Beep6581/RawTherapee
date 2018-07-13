@@ -28,8 +28,8 @@ IndicateClippedPanel::IndicateClippedPanel (ImageArea* ia) : imageArea(ia)
     iFoff = new RTImage ("focusscreen-off.png");
 
     // for previewSharpMask, needs to be replaced with different icons
-    iSon  = new RTImage ("previewmodeF-focusScreen-on.png");
-    iSoff = new RTImage ("previewmodeF-focusScreen-off.png");
+    iSon  = new RTImage ("contrastmask-on.png");
+    iSoff = new RTImage ("contrastmask-off.png");
 
     previewFocusMask = Gtk::manage (new Gtk::ToggleButton ());
     previewFocusMask->set_relief(Gtk::RELIEF_NONE);
