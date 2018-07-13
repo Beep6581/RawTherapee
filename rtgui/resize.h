@@ -66,7 +66,9 @@ private:
     int getComputedHeight ();
     void notifyBBox ();
     void updateGUI ();
+    void allowUpscalingChanged();
 
+    rtengine::ProcEvent EvResizeAllowUpscaling;
     Adjuster*          scale;
     Gtk::VBox*         sizeBox;
     MyComboBoxText*    appliesTo;
@@ -74,12 +76,15 @@ private:
     MyComboBoxText*    spec;
     MySpinButton*      w;
     MySpinButton*      h;
+    Gtk::CheckButton *allowUpscaling;
     int                maxw, maxh;
     int                cropw, croph;
     sigc::connection   sconn, aconn, wconn, hconn;
     bool               wDirty, hDirty;
     ToolParamBlock*    packBox;
     IdleRegister       idle_register;
+
+    static constexpr int MAX_SCALE = 16; // 16 to match the main preview max scale of 1600%
 };
 
 #endif

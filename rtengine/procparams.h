@@ -281,6 +281,7 @@ struct ToneCurveParams {
     int         hlcompr;        // Highlight Recovery's compression
     int         hlcomprthresh;  // Highlight Recovery's threshold
     bool histmatching; // histogram matching
+    bool fromHistMatching;
     bool clampOOG; // clamp out of gamut colours
 
     ToneCurveParams();
@@ -454,6 +455,7 @@ struct ColorToningParams {
     double labgridAHigh;
     double labgridBHigh;
     static const double LABGRID_CORR_MAX;
+    static const double LABGRID_CORR_SCALE;
 
     ColorToningParams();
 
@@ -473,6 +475,7 @@ struct ColorToningParams {
   */
 struct SharpeningParams {
     bool           enabled;
+    double         contrast;
     double         radius;
     int            amount;
     Threshold<int> threshold;
@@ -509,6 +512,7 @@ struct SharpenMicroParams {
     bool    enabled;
     bool    matrix;
     double  amount;
+    double  contrast;
     double  uniformity;
 
     SharpenMicroParams();
@@ -997,6 +1001,7 @@ struct ResizeParams {
     int dataspec;
     int width;
     int height;
+    bool allowUpscaling;
 
     ResizeParams();
 
@@ -1212,6 +1217,17 @@ struct FilmSimulationParams {
 };
 
 
+struct SoftLightParams {
+    bool enabled;
+    int strength;
+
+    SoftLightParams();
+
+    bool operator==(const SoftLightParams &other) const;
+    bool operator!=(const SoftLightParams &other) const;
+};
+
+
 /**
   * Parameters for RAW demosaicing, common to all sensor type
   */
@@ -1222,18 +1238,21 @@ struct RAWParams {
     struct BayerSensor {
         enum class Method {
             AMAZE,
-            IGV,
+            AMAZEVNG4,
+            RCD,
+            RCDVNG4,
+            DCB,
+            DCBVNG4,
             LMMSE,
+            IGV,
+            AHD,
             EAHD,
             HPHD,
             VNG4,
-            DCB,
-            AHD,
-            RCD,
             FAST,
             MONO,
-            NONE,
-            PIXELSHIFT
+            PIXELSHIFT,
+            NONE
         };
 
         enum class PSMotionCorrectionMethod {
@@ -1242,7 +1261,14 @@ struct RAWParams {
             CUSTOM
         };
 
+        enum class PSDemosaicMethod {
+            AMAZE,
+            AMAZEVNG4,
+            LMMSE
+        };
+
         Glib::ustring method;
+        int border;
         int imageNum;
         int ccSteps;
         double black0;
@@ -1261,6 +1287,7 @@ struct RAWParams {
         int greenthresh;
         int dcb_iterations;
         int lmmse_iterations;
+        double dualDemosaicContrast;
         PSMotionCorrectionMethod pixelShiftMotionCorrectionMethod;
         double pixelShiftEperIso;
         double pixelShiftSigma;
@@ -1271,10 +1298,10 @@ struct RAWParams {
         bool pixelShiftGreen;
         bool pixelShiftBlur;
         double pixelShiftSmoothFactor;
-        bool pixelShiftLmmse;
         bool pixelShiftEqualBright;
         bool pixelShiftEqualBrightChannel;
         bool pixelShiftNonGreenCross;
+        Glib::ustring pixelShiftDemosaicMethod;
         bool dcb_enhance;
         bool pdafLinesFilter;
 
@@ -1287,6 +1314,9 @@ struct RAWParams {
 
         static const std::vector<const char*>& getMethodStrings();
         static Glib::ustring getMethodString(Method method);
+
+        static const std::vector<const char*>& getPSDemosaicMethodStrings();
+        static Glib::ustring getPSDemosaicMethodString(PSDemosaicMethod method);
     };
 
     /**
@@ -1294,7 +1324,9 @@ struct RAWParams {
      */
     struct XTransSensor {
         enum class Method {
+            FOUR_PASS,
             THREE_PASS,
+            TWO_PASS,
             ONE_PASS,
             FAST,
             MONO,
@@ -1302,6 +1334,7 @@ struct RAWParams {
         };
 
         Glib::ustring method;
+        double dualDemosaicContrast;
         int ccSteps;
         double blackred;
         double blackgreen;
@@ -1403,6 +1436,7 @@ public:
     DirPyrEqualizerParams   dirpyrequalizer; ///< directional pyramid wavelet parameters
     HSVEqualizerParams      hsvequalizer;    ///< hsv wavelet parameters
     FilmSimulationParams    filmSimulation;  ///< film simulation parameters
+    SoftLightParams         softlight;       ///< softlight parameters
     int                     rank;            ///< Custom image quality ranking
     int                     colorlabel;      ///< Custom color label
     bool                    inTrash;         ///< Marks deleted image
@@ -1483,7 +1517,7 @@ public:
     void clearGeneral();
     int  load(const Glib::ustring& fName);
     void set(bool v);
-    void applyTo(ProcParams* destParams) const ;
+    void applyTo(ProcParams* destParams, bool fromLastSaved = false) const ;
 
     rtengine::procparams::ProcParams* pparams;
     ParamsEdited* pedited;

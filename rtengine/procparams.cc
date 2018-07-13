@@ -33,7 +33,6 @@
 #include "../rtgui/version.h"
 
 using namespace std;
-extern Options options;
 
 namespace
 {
@@ -329,6 +328,7 @@ ToneCurveParams::ToneCurveParams() :
     hlcompr(0),
     hlcomprthresh(33),
     histmatching(false),
+    fromHistMatching(false),
     clampOOG(true)
 {
 }
@@ -353,6 +353,7 @@ bool ToneCurveParams::operator ==(const ToneCurveParams& other) const
         && hlcompr == other.hlcompr
         && hlcomprthresh == other.hlcomprthresh
         && histmatching == other.histmatching
+        && fromHistMatching == other.fromHistMatching
         && clampOOG == other.clampOOG;
 }
 
@@ -607,6 +608,7 @@ bool LocalContrastParams::operator!=(const LocalContrastParams &other) const
 
 
 const double ColorToningParams::LABGRID_CORR_MAX = 12000.f;
+const double ColorToningParams::LABGRID_CORR_SCALE = 3.f;
 
 ColorToningParams::ColorToningParams() :
     enabled(false),
@@ -1007,6 +1009,7 @@ void ColorToningParams::getCurves(ColorGradientCurve& colorCurveLUT, OpacityCurv
 
 SharpeningParams::SharpeningParams() :
     enabled(false),
+    contrast(20.0),
     radius(0.5),
     amount(200),
     threshold(20, 80, 2000, 1200, false),
@@ -1016,10 +1019,10 @@ SharpeningParams::SharpeningParams() :
     halocontrol(false),
     halocontrol_amount(85),
     method("usm"),
-    deconvamount(75),
+    deconvamount(100),
     deconvradius(0.75),
     deconviter(30),
-    deconvdamping(20)
+    deconvdamping(0)
 {
 }
 
@@ -1027,6 +1030,7 @@ bool SharpeningParams::operator ==(const SharpeningParams& other) const
 {
     return
         enabled == other.enabled
+        && contrast == other.contrast
         && radius == other.radius
         && amount == other.amount
         && threshold == other.threshold
@@ -1073,6 +1077,7 @@ SharpenMicroParams::SharpenMicroParams() :
     enabled(false),
     matrix(false),
     amount(20.0),
+    contrast(20.0),
     uniformity(50.0)
 {
 }
@@ -1083,6 +1088,7 @@ bool SharpenMicroParams::operator ==(const SharpenMicroParams& other) const
         enabled == other.enabled
         && matrix == other.matrix
         && amount == other.amount
+        && contrast == other.contrast
         && uniformity == other.uniformity;
 }
 
@@ -1783,19 +1789,19 @@ bool VignettingParams::operator !=(const VignettingParams& other) const
 ChannelMixerParams::ChannelMixerParams() :
     enabled(false),
     red{
-        100,
+        1000,
         0,
         0
     },
     green{
         0,
-        100,
+        1000,
         0
     },
     blue{
         0,
         0,
-        100
+        1000
     }
 {
 }
@@ -1839,7 +1845,7 @@ BlackWhiteParams::BlackWhiteParams() :
     enabledcc(true),
     enabled(false),
     filter("None"),
-    setting("NormalContrast"),
+    setting("RGB-Rel"),
     method("Desaturation"),
     mixerRed(33),
     mixerOrange(33),
@@ -1913,7 +1919,8 @@ ResizeParams::ResizeParams() :
     method("Lanczos"),
     dataspec(3),
     width(900),
-    height(900)
+    height(900),
+    allowUpscaling(false)
 {
 }
 
@@ -1926,7 +1933,8 @@ bool ResizeParams::operator ==(const ResizeParams& other) const
         && method == other.method
         && dataspec == other.dataspec
         && width == other.width
-        && height == other.height;
+        && height == other.height
+        && allowUpscaling == other.allowUpscaling;
 }
 
 bool ResizeParams::operator !=(const ResizeParams& other) const
@@ -2339,8 +2347,28 @@ bool FilmSimulationParams::operator !=(const FilmSimulationParams& other) const
     return !(*this == other);
 }
 
+
+SoftLightParams::SoftLightParams() :
+    enabled(false),
+    strength(30)
+{
+}
+
+bool SoftLightParams::operator ==(const SoftLightParams& other) const
+{
+    return
+        enabled == other.enabled
+        && strength == other.strength;
+}
+
+bool SoftLightParams::operator !=(const SoftLightParams& other) const
+{
+    return !(*this == other);
+}
+
 RAWParams::BayerSensor::BayerSensor() :
     method(getMethodString(Method::AMAZE)),
+    border(4),
     imageNum(0),
     ccSteps(0),
     black0(0.0),
@@ -2353,6 +2381,7 @@ RAWParams::BayerSensor::BayerSensor() :
     greenthresh(0),
     dcb_iterations(2),
     lmmse_iterations(2),
+    dualDemosaicContrast(20),
     pixelShiftMotionCorrectionMethod(PSMotionCorrectionMethod::AUTO),
     pixelShiftEperIso(0.0),
     pixelShiftSigma(1.0),
@@ -2363,10 +2392,10 @@ RAWParams::BayerSensor::BayerSensor() :
     pixelShiftGreen(true),
     pixelShiftBlur(true),
     pixelShiftSmoothFactor(0.7),
-    pixelShiftLmmse(false),
     pixelShiftEqualBright(false),
     pixelShiftEqualBrightChannel(false),
     pixelShiftNonGreenCross(true),
+    pixelShiftDemosaicMethod(getPSDemosaicMethodString(PSDemosaicMethod::AMAZE)),
     dcb_enhance(true),
     pdafLinesFilter(false)
 {
@@ -2376,6 +2405,7 @@ bool RAWParams::BayerSensor::operator ==(const BayerSensor& other) const
 {
     return
         method == other.method
+        && border == other.border
         && imageNum == other.imageNum
         && ccSteps == other.ccSteps
         && black0 == other.black0
@@ -2388,6 +2418,7 @@ bool RAWParams::BayerSensor::operator ==(const BayerSensor& other) const
         && greenthresh == other.greenthresh
         && dcb_iterations == other.dcb_iterations
         && lmmse_iterations == other.lmmse_iterations
+        && dualDemosaicContrast == other.dualDemosaicContrast
         && pixelShiftMotionCorrectionMethod == other.pixelShiftMotionCorrectionMethod
         && pixelShiftEperIso == other.pixelShiftEperIso
         && pixelShiftSigma == other.pixelShiftSigma
@@ -2398,10 +2429,10 @@ bool RAWParams::BayerSensor::operator ==(const BayerSensor& other) const
         && pixelShiftGreen == other.pixelShiftGreen
         && pixelShiftBlur == other.pixelShiftBlur
         && pixelShiftSmoothFactor == other.pixelShiftSmoothFactor
-        && pixelShiftLmmse == other.pixelShiftLmmse
         && pixelShiftEqualBright == other.pixelShiftEqualBright
         && pixelShiftEqualBrightChannel == other.pixelShiftEqualBrightChannel
         && pixelShiftNonGreenCross == other.pixelShiftNonGreenCross
+        && pixelShiftDemosaicMethod == other.pixelShiftDemosaicMethod
         && dcb_enhance == other.dcb_enhance
         && pdafLinesFilter == other.pdafLinesFilter;
 }
@@ -2421,28 +2452,31 @@ void RAWParams::BayerSensor::setPixelShiftDefaults()
     pixelShiftGreen = true;
     pixelShiftBlur = true;
     pixelShiftSmoothFactor = 0.7;
-    pixelShiftLmmse = false;
     pixelShiftEqualBright = false;
     pixelShiftEqualBrightChannel = false;
     pixelShiftNonGreenCross = true;
+    pixelShiftDemosaicMethod = getPSDemosaicMethodString(PSDemosaicMethod::AMAZE);
 }
 
 const std::vector<const char*>& RAWParams::BayerSensor::getMethodStrings()
 {
     static const std::vector<const char*> method_strings {
         "amaze",
-        "igv",
+        "amazevng4",
+        "rcd",
+        "rcdvng4",
+        "dcb",
+        "dcbvng4",
         "lmmse",
+        "igv",
+        "ahd",
         "eahd",
         "hphd",
         "vng4",
-        "dcb",
-        "ahd",
-        "rcd",
         "fast",
         "mono",
-        "none",
-        "pixelshift"
+        "pixelshift",
+        "none"
     };
     return method_strings;
 }
@@ -2452,8 +2486,26 @@ Glib::ustring RAWParams::BayerSensor::getMethodString(Method method)
     return getMethodStrings()[toUnderlying(method)];
 }
 
+const std::vector<const char*>& RAWParams::BayerSensor::getPSDemosaicMethodStrings()
+{
+    static const std::vector<const char*> method_strings {
+        "amaze",
+        "amazevng4",
+        "lmmse"
+    };
+    return method_strings;
+}
+
+Glib::ustring RAWParams::BayerSensor::getPSDemosaicMethodString(PSDemosaicMethod method)
+{
+    return getPSDemosaicMethodStrings()[toUnderlying(method)];
+}
+
+
+
 RAWParams::XTransSensor::XTransSensor() :
     method(getMethodString(Method::THREE_PASS)),
+    dualDemosaicContrast(20),
     ccSteps(0),
     blackred(0.0),
     blackgreen(0.0),
@@ -2465,6 +2517,7 @@ bool RAWParams::XTransSensor::operator ==(const XTransSensor& other) const
 {
     return
         method == other.method
+        && dualDemosaicContrast == other.dualDemosaicContrast
         && ccSteps == other.ccSteps
         && blackred == other.blackred
         && blackgreen == other.blackgreen
@@ -2479,7 +2532,9 @@ bool RAWParams::XTransSensor::operator !=(const XTransSensor& other) const
 const std::vector<const char*>& RAWParams::XTransSensor::getMethodStrings()
 {
     static const std::vector<const char*> method_strings {
+        "4-pass",
         "3-pass (best)",
+        "2-pass",
         "1-pass (medium)",
         "fast",
         "mono",
@@ -2596,6 +2651,7 @@ void ProcParams::setDefaults ()
     sharpening = SharpeningParams();
 
     prsharpening = SharpeningParams();
+    prsharpening.contrast = 0.0;
     prsharpening.method = "rld";
     prsharpening.deconvamount = 100;
     prsharpening.deconvradius = 0.45;
@@ -2658,6 +2714,8 @@ void ProcParams::setDefaults ()
 
     filmSimulation = FilmSimulationParams();
 
+    softlight = SoftLightParams();
+
     raw = RAWParams();
 
     metadata = MetaDataParams();
@@ -2702,6 +2760,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->toneCurve.hlcomprthresh, "Exposure", "HighlightComprThreshold", toneCurve.hlcomprthresh, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.shcompr, "Exposure", "ShadowCompr", toneCurve.shcompr, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.histmatching, "Exposure", "HistogramMatching", toneCurve.histmatching, keyFile);
+        saveToKeyfile(!pedited || pedited->toneCurve.fromHistMatching, "Exposure", "FromHistogramMatching", toneCurve.fromHistMatching, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.clampOOG, "Exposure", "ClampOOG", toneCurve.clampOOG, keyFile);
 
 // Highlight recovery
@@ -2851,6 +2910,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Sharpening
         saveToKeyfile(!pedited || pedited->sharpening.enabled, "Sharpening", "Enabled", sharpening.enabled, keyFile);
+        saveToKeyfile(!pedited || pedited->sharpening.contrast, "Sharpening", "Contrast", sharpening.contrast, keyFile);
         saveToKeyfile(!pedited || pedited->sharpening.method, "Sharpening", "Method", sharpening.method, keyFile);
         saveToKeyfile(!pedited || pedited->sharpening.radius, "Sharpening", "Radius", sharpening.radius, keyFile);
         saveToKeyfile(!pedited || pedited->sharpening.amount, "Sharpening", "Amount", sharpening.amount, keyFile);
@@ -2885,6 +2945,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->sharpenMicro.enabled, "SharpenMicro", "Enabled", sharpenMicro.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->sharpenMicro.matrix, "SharpenMicro", "Matrix", sharpenMicro.matrix, keyFile);
         saveToKeyfile(!pedited || pedited->sharpenMicro.amount, "SharpenMicro", "Strength", sharpenMicro.amount, keyFile);
+        saveToKeyfile(!pedited || pedited->sharpenMicro.contrast, "SharpenMicro", "Contrast", sharpenMicro.contrast, keyFile);
         saveToKeyfile(!pedited || pedited->sharpenMicro.uniformity, "SharpenMicro", "Uniformity", sharpenMicro.uniformity, keyFile);
 
 // WB
@@ -3086,9 +3147,11 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->resize.dataspec, "Resize", "DataSpecified", resize.dataspec, keyFile);
         saveToKeyfile(!pedited || pedited->resize.width, "Resize", "Width", resize.width, keyFile);
         saveToKeyfile(!pedited || pedited->resize.height, "Resize", "Height", resize.height, keyFile);
+        saveToKeyfile(!pedited || pedited->resize.allowUpscaling, "Resize", "AllowUpscaling", resize.allowUpscaling, keyFile);
 
 // Post resize sharpening
         saveToKeyfile(!pedited || pedited->prsharpening.enabled, "PostResizeSharpening", "Enabled", prsharpening.enabled, keyFile);
+        saveToKeyfile(!pedited || pedited->prsharpening.contrast, "PostResizeSharpening", "Contrast", prsharpening.contrast, keyFile);
         saveToKeyfile(!pedited || pedited->prsharpening.method, "PostResizeSharpening", "Method", prsharpening.method, keyFile);
         saveToKeyfile(!pedited || pedited->prsharpening.radius, "PostResizeSharpening", "Radius", prsharpening.radius, keyFile);
         saveToKeyfile(!pedited || pedited->prsharpening.amount, "PostResizeSharpening", "Amount", prsharpening.amount, keyFile);
@@ -3252,6 +3315,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->hsvequalizer.scurve, "HSV Equalizer", "SCurve", hsvequalizer.scurve, keyFile);
         saveToKeyfile(!pedited || pedited->hsvequalizer.vcurve, "HSV Equalizer", "VCurve", hsvequalizer.vcurve, keyFile);
 
+// Soft Light
+        saveToKeyfile(!pedited || pedited->softlight.enabled, "SoftLight", "Enabled", softlight.enabled, keyFile);
+        saveToKeyfile(!pedited || pedited->softlight.strength, "SoftLight", "Strength", softlight.strength, keyFile);
+
 // Film simulation
         saveToKeyfile(!pedited || pedited->filmSimulation.enabled, "Film Simulation", "Enabled", filmSimulation.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->filmSimulation.clutFilename, "Film Simulation", "ClutFilename", filmSimulation.clutFilename, keyFile);
@@ -3311,6 +3378,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.deadPixelFilter, "RAW", "DeadPixelFilter", raw.deadPixelFilter, keyFile);
         saveToKeyfile(!pedited || pedited->raw.hotdeadpix_thresh, "RAW", "HotDeadPixelThresh", raw.hotdeadpix_thresh, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.method, "RAW Bayer", "Method", raw.bayersensor.method, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.bayersensor.border, "RAW Bayer", "Border", raw.bayersensor.border, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.imageNum, "RAW Bayer", "ImageNum", raw.bayersensor.imageNum + 1, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.ccSteps, "RAW Bayer", "CcSteps", raw.bayersensor.ccSteps, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.exBlack0, "RAW Bayer", "PreBlack0", raw.bayersensor.black0, keyFile);
@@ -3324,6 +3392,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.bayersensor.dcbIterations, "RAW Bayer", "DCBIterations", raw.bayersensor.dcb_iterations, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.dcbEnhance, "RAW Bayer", "DCBEnhance", raw.bayersensor.dcb_enhance, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.lmmseIterations, "RAW Bayer", "LMMSEIterations", raw.bayersensor.lmmse_iterations, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.bayersensor.dualDemosaicContrast, "RAW Bayer", "DualDemosaicContrast", raw.bayersensor.dualDemosaicContrast, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftMotionCorrectionMethod, "RAW Bayer", "PixelShiftMotionCorrectionMethod", toUnderlying(raw.bayersensor.pixelShiftMotionCorrectionMethod), keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftEperIso, "RAW Bayer", "PixelShiftEperIso", raw.bayersensor.pixelShiftEperIso, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftSigma, "RAW Bayer", "PixelShiftSigma", raw.bayersensor.pixelShiftSigma, keyFile);
@@ -3334,12 +3403,13 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftGreen, "RAW Bayer", "pixelShiftGreen", raw.bayersensor.pixelShiftGreen, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftBlur, "RAW Bayer", "pixelShiftBlur", raw.bayersensor.pixelShiftBlur, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftSmooth, "RAW Bayer", "pixelShiftSmoothFactor", raw.bayersensor.pixelShiftSmoothFactor, keyFile);
-        saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftLmmse, "RAW Bayer", "pixelShiftLmmse", raw.bayersensor.pixelShiftLmmse, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftEqualBright, "RAW Bayer", "pixelShiftEqualBright", raw.bayersensor.pixelShiftEqualBright, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftEqualBrightChannel, "RAW Bayer", "pixelShiftEqualBrightChannel", raw.bayersensor.pixelShiftEqualBrightChannel, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftNonGreenCross, "RAW Bayer", "pixelShiftNonGreenCross", raw.bayersensor.pixelShiftNonGreenCross, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftDemosaicMethod, "RAW Bayer", "pixelShiftDemosaicMethod", raw.bayersensor.pixelShiftDemosaicMethod, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pdafLinesFilter, "RAW Bayer", "PDAFLinesFilter", raw.bayersensor.pdafLinesFilter, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.method, "RAW X-Trans", "Method", raw.xtranssensor.method, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.xtranssensor.dualDemosaicContrast, "RAW X-Trans", "DualDemosaicContrast", raw.xtranssensor.dualDemosaicContrast, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.ccSteps, "RAW X-Trans", "CcSteps", raw.xtranssensor.ccSteps, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.exBlackRed, "RAW X-Trans", "PreBlackRed", raw.xtranssensor.blackred, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.exBlackGreen, "RAW X-Trans", "PreBlackGreen", raw.xtranssensor.blackgreen, keyFile);
@@ -3463,6 +3533,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Exposure", "Curve2", pedited, toneCurve.curve2, pedited->toneCurve.curve2);
             }
             assignFromKeyfile(keyFile, "Exposure", "HistogramMatching", pedited, toneCurve.histmatching, pedited->toneCurve.histmatching);
+            if (ppVersion < 340) {
+                toneCurve.fromHistMatching = false;
+                if (pedited) {
+                    pedited->toneCurve.fromHistMatching = true;
+                }
+            } else {
+                assignFromKeyfile(keyFile, "Exposure", "FromHistogramMatching", pedited, toneCurve.fromHistMatching, pedited->toneCurve.fromHistMatching);
+            }
             assignFromKeyfile(keyFile, "Exposure", "ClampOOG", pedited, toneCurve.clampOOG, pedited->toneCurve.clampOOG);
         }
 
@@ -3489,6 +3567,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     memcpy (chmixer.red,   rmix.data(), 3 * sizeof (int));
                     memcpy (chmixer.green, gmix.data(), 3 * sizeof (int));
                     memcpy (chmixer.blue,  bmix.data(), 3 * sizeof (int));
+                }
+                if (ppVersion < 338) {
+                    for (int i = 0; i < 3; ++i) {
+                        chmixer.red[i] *= 10;
+                        chmixer.green[i] *= 10;
+                        chmixer.blue[i] *= 10;
+                    }
                 }
 
                 if (pedited) {
@@ -3667,6 +3752,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group ("Sharpening")) {
             assignFromKeyfile(keyFile, "Sharpening", "Enabled", pedited, sharpening.enabled, pedited->sharpening.enabled);
+            if (ppVersion >= 334) {
+                assignFromKeyfile(keyFile, "Sharpening", "Contrast", pedited, sharpening.contrast, pedited->sharpening.contrast);
+            } else {
+                sharpening.contrast = 0;
+                if (pedited) {
+                    pedited->sharpening.contrast = true;
+                }
+            }
             assignFromKeyfile(keyFile, "Sharpening", "Radius", pedited, sharpening.radius, pedited->sharpening.radius);
             assignFromKeyfile(keyFile, "Sharpening", "Amount", pedited, sharpening.amount, pedited->sharpening.amount);
 
@@ -3710,6 +3803,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "SharpenMicro", "Enabled", pedited, sharpenMicro.enabled, pedited->sharpenMicro.enabled);
             assignFromKeyfile(keyFile, "SharpenMicro", "Matrix", pedited, sharpenMicro.matrix, pedited->sharpenMicro.matrix);
             assignFromKeyfile(keyFile, "SharpenMicro", "Strength", pedited, sharpenMicro.amount, pedited->sharpenMicro.amount);
+            if (ppVersion >= 334) {
+                assignFromKeyfile(keyFile, "SharpenMicro", "Contrast", pedited, sharpenMicro.contrast, pedited->sharpenMicro.contrast);
+            } else {
+                sharpenMicro.contrast = 0;
+                if (pedited) {
+                    pedited->sharpenMicro.contrast = true;
+                }
+            }
             assignFromKeyfile(keyFile, "SharpenMicro", "Uniformity", pedited, sharpenMicro.uniformity, pedited->sharpenMicro.uniformity);
         }
 
@@ -4062,10 +4163,19 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Resize", "DataSpecified", pedited, resize.dataspec, pedited->resize.dataspec);
             assignFromKeyfile(keyFile, "Resize", "Width", pedited, resize.width, pedited->resize.width);
             assignFromKeyfile(keyFile, "Resize", "Height", pedited, resize.height, pedited->resize.height);
+            if (ppVersion >= 339) {
+                assignFromKeyfile(keyFile, "Resize", "AllowUpscaling", pedited, resize.allowUpscaling, pedited->resize.allowUpscaling);
+            } else {
+                resize.allowUpscaling = true;
+                if (pedited) {
+                    pedited->resize.allowUpscaling = true;
+                }
+            }
         }
 
         if (keyFile.has_group ("PostResizeSharpening")) {
             assignFromKeyfile(keyFile, "PostResizeSharpening", "Enabled", pedited, prsharpening.enabled, pedited->prsharpening.enabled);
+            assignFromKeyfile(keyFile, "PostResizeSharpening", "Contrast", pedited, prsharpening.contrast, pedited->prsharpening.contrast);
             assignFromKeyfile(keyFile, "PostResizeSharpening", "Radius", pedited, prsharpening.radius, pedited->prsharpening.radius);
             assignFromKeyfile(keyFile, "PostResizeSharpening", "Amount", pedited, prsharpening.amount, pedited->prsharpening.amount);
 
@@ -4440,6 +4550,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
         }
 
+        if (keyFile.has_group("SoftLight")) {
+            assignFromKeyfile(keyFile, "SoftLight", "Enabled", pedited, softlight.enabled, pedited->softlight.enabled);
+            assignFromKeyfile(keyFile, "SoftLight", "Strength", pedited, softlight.strength, pedited->softlight.strength);
+        }
+
         if (keyFile.has_group ("Film Simulation")) {
             assignFromKeyfile(keyFile, "Film Simulation", "Enabled", pedited, filmSimulation.enabled, pedited->filmSimulation.enabled);
             assignFromKeyfile(keyFile, "Film Simulation", "ClutFilename", pedited, filmSimulation.clutFilename, pedited->filmSimulation.clutFilename);
@@ -4542,6 +4657,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "ColorToning", "LabGridBLow", pedited, colorToning.labgridBLow, pedited->colorToning.labgridBLow);
             assignFromKeyfile(keyFile, "ColorToning", "LabGridAHigh", pedited, colorToning.labgridAHigh, pedited->colorToning.labgridAHigh);
             assignFromKeyfile(keyFile, "ColorToning", "LabGridBHigh", pedited, colorToning.labgridBHigh, pedited->colorToning.labgridBHigh);
+            if (ppVersion < 337) {
+                const double scale = ColorToningParams::LABGRID_CORR_SCALE;
+                colorToning.labgridALow *= scale;
+                colorToning.labgridAHigh *= scale;
+                colorToning.labgridBLow *= scale;
+                colorToning.labgridBHigh *= scale;
+            }            
         }
 
         if (keyFile.has_group ("RAW")) {
@@ -4606,6 +4728,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group ("RAW Bayer")) {
             assignFromKeyfile(keyFile, "RAW Bayer", "Method", pedited, raw.bayersensor.method, pedited->raw.bayersensor.method);
+            assignFromKeyfile(keyFile, "RAW Bayer", "Border", pedited, raw.bayersensor.border, pedited->raw.bayersensor.border);
 
             if (keyFile.has_key ("RAW Bayer", "ImageNum")) {
                 raw.bayersensor.imageNum = keyFile.get_integer ("RAW Bayer", "ImageNum") - 1;
@@ -4632,6 +4755,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW Bayer", "DCBIterations", pedited, raw.bayersensor.dcb_iterations, pedited->raw.bayersensor.dcbIterations);
             assignFromKeyfile(keyFile, "RAW Bayer", "DCBEnhance", pedited, raw.bayersensor.dcb_enhance, pedited->raw.bayersensor.dcbEnhance);
             assignFromKeyfile(keyFile, "RAW Bayer", "LMMSEIterations", pedited, raw.bayersensor.lmmse_iterations, pedited->raw.bayersensor.lmmseIterations);
+            assignFromKeyfile(keyFile, "RAW Bayer", "DualDemosaicContrast", pedited, raw.bayersensor.dualDemosaicContrast, pedited->raw.bayersensor.dualDemosaicContrast);
 
             if (keyFile.has_key ("RAW Bayer", "PixelShiftMotionCorrectionMethod")) {
                 raw.bayersensor.pixelShiftMotionCorrectionMethod = (RAWParams::BayerSensor::PSMotionCorrectionMethod)keyFile.get_integer ("RAW Bayer", "PixelShiftMotionCorrectionMethod");
@@ -4653,15 +4777,32 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftGreen", pedited, raw.bayersensor.pixelShiftGreen, pedited->raw.bayersensor.pixelShiftGreen);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftBlur", pedited, raw.bayersensor.pixelShiftBlur, pedited->raw.bayersensor.pixelShiftBlur);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftSmoothFactor", pedited, raw.bayersensor.pixelShiftSmoothFactor, pedited->raw.bayersensor.pixelShiftSmooth);
-            assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftLmmse", pedited, raw.bayersensor.pixelShiftLmmse, pedited->raw.bayersensor.pixelShiftLmmse);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftEqualBright", pedited, raw.bayersensor.pixelShiftEqualBright, pedited->raw.bayersensor.pixelShiftEqualBright);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftEqualBrightChannel", pedited, raw.bayersensor.pixelShiftEqualBrightChannel, pedited->raw.bayersensor.pixelShiftEqualBrightChannel);
             assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftNonGreenCross", pedited, raw.bayersensor.pixelShiftNonGreenCross, pedited->raw.bayersensor.pixelShiftNonGreenCross);
+
+            if (ppVersion < 336) {
+                if (keyFile.has_key("RAW Bayer", "pixelShiftLmmse")) {
+                    bool useLmmse = keyFile.get_boolean ("RAW Bayer", "pixelShiftLmmse");
+                    if (useLmmse) {
+                        raw.bayersensor.pixelShiftDemosaicMethod = raw.bayersensor.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::LMMSE);
+                    } else {
+                        raw.bayersensor.pixelShiftDemosaicMethod = raw.bayersensor.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::AMAZE);
+                    }
+                    if (pedited) {
+                        pedited->raw.bayersensor.pixelShiftDemosaicMethod = true;
+                    }
+                }
+            } else {
+                assignFromKeyfile(keyFile, "RAW Bayer", "pixelShiftDemosaicMethod", pedited, raw.bayersensor.pixelShiftDemosaicMethod, pedited->raw.bayersensor.pixelShiftDemosaicMethod);
+            }
+
             assignFromKeyfile(keyFile, "RAW Bayer", "PDAFLinesFilter", pedited, raw.bayersensor.pdafLinesFilter, pedited->raw.bayersensor.pdafLinesFilter);
         }
 
         if (keyFile.has_group ("RAW X-Trans")) {
             assignFromKeyfile(keyFile, "RAW X-Trans", "Method", pedited, raw.xtranssensor.method, pedited->raw.xtranssensor.method);
+            assignFromKeyfile(keyFile, "RAW X-Trans", "DualDemosaicContrast", pedited, raw.xtranssensor.dualDemosaicContrast, pedited->raw.xtranssensor.dualDemosaicContrast);
             assignFromKeyfile(keyFile, "RAW X-Trans", "CcSteps", pedited, raw.xtranssensor.ccSteps, pedited->raw.xtranssensor.ccSteps);
             assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackRed", pedited, raw.xtranssensor.blackred, pedited->raw.xtranssensor.exBlackRed);
             assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackGreen", pedited, raw.xtranssensor.blackgreen, pedited->raw.xtranssensor.exBlackGreen);
@@ -4785,6 +4926,7 @@ bool ProcParams::operator ==(const ProcParams& other) const
         && dirpyrequalizer == other.dirpyrequalizer
         && hsvequalizer == other.hsvequalizer
         && filmSimulation == other.filmSimulation
+        && softlight == other.softlight
         && rgbCurves == other.rgbCurves
         && colorToning == other.colorToning
         && metadata == other.metadata
@@ -4917,10 +5059,14 @@ void PartialProfile::set(bool v)
     }
 }
 
-void PartialProfile::applyTo(ProcParams* destParams) const
+void PartialProfile::applyTo(ProcParams* destParams, bool fromLastSave) const
 {
     if (destParams && pparams && pedited) {
+        bool fromHistMatching = fromLastSave && destParams->toneCurve.histmatching && pparams->toneCurve.histmatching;
         pedited->combine (*destParams, *pparams, true);
+        if (!fromLastSave) {
+            destParams->toneCurve.fromHistMatching = fromHistMatching;
+        }
     }
 }
 

@@ -44,13 +44,11 @@ protected:
     LabImage*    laboCrop;   // "one chunk" allocation
     LabImage*    labnCrop;   // "one chunk" allocation
     Image8*      cropImg;    // "one chunk" allocation ; displayed image in monitor color space, showing the output profile as well (soft-proofing enabled, which then correspond to workimg) or not
-    float *      cbuf_real;  // "one chunk" allocation
 
     // --- automatically allocated and deleted when necessary, and only renewed on size changes
     Imagefloat*  transCrop;    // "one chunk" allocation, allocated if necessary
     CieImage*    cieCrop;      // allocating 6 images, each in "one chunk" allocation
     // -----------------------------------------------------------------
-    float**      cbuffer;
 
     bool updating;         /// Flag telling if an updater thread is currently processing
     bool newUpdatePending; /// Flag telling the updater thread that a new update is pending

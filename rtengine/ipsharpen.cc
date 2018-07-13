@@ -16,36 +16,96 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "rtengine.h"
+
 #include "improcfun.h"
 #include "gauss.h"
 #include "bilateral2.h"
+#include "jaggedarray.h"
 #include "rt_math.h"
 #include "sleef.c"
 #include "opthelper.h"
-
+//#define BENCHMARK
+#include "StopWatch.h"
+#include "rt_algo.h"
 using namespace std;
 
-namespace rtengine
+namespace {
+
+void sharpenHaloCtrl (float** luminance, float** blurmap, float** base, float** blend, int W, int H, const SharpeningParams &sharpenParam)
 {
 
-#undef ABS
+    const float scale = (100.f - sharpenParam.halocontrol_amount) * 0.01f;
+    const float sharpFac = sharpenParam.amount * 0.01f;
+    float** nL = base;
 
-#define ABS(a) ((a)<0?-(a):(a))
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
 
-extern const Settings* settings;
-void ImProcFunctions::dcdamping (float** aI, float** aO, float damping, int W, int H)
+    for (int i = 2; i < H - 2; i++) {
+        float max1 = 0, max2 = 0, min1 = 0, min2 = 0;
+
+        for (int j = 2; j < W - 2; j++) {
+            // compute 3 iterations, only forward
+            float np1 = 2.f * (nL[i - 2][j] + nL[i - 2][j + 1] + nL[i - 2][j + 2] + nL[i - 1][j] + nL[i - 1][j + 1] + nL[i - 1][j + 2] + nL[i]  [j] + nL[i]  [j + 1] + nL[i]  [j + 2]) / 27.f + nL[i - 1][j + 1] / 3.f;
+            float np2 = 2.f * (nL[i - 1][j] + nL[i - 1][j + 1] + nL[i - 1][j + 2] + nL[i]  [j] + nL[i]  [j + 1] + nL[i]  [j + 2] + nL[i + 1][j] + nL[i + 1][j + 1] + nL[i + 1][j + 2]) / 27.f + nL[i]  [j + 1] / 3.f;
+            float np3 = 2.f * (nL[i]  [j] + nL[i]  [j + 1] + nL[i]  [j + 2] + nL[i + 1][j] + nL[i + 1][j + 1] + nL[i + 1][j + 2] + nL[i + 2][j] + nL[i + 2][j + 1] + nL[i + 2][j + 2]) / 27.f + nL[i + 1][j + 1] / 3.f;
+
+            // Max/Min of all these deltas and the last two max/min
+            float maxn = rtengine::max(np1, np2, np3);
+            float minn = rtengine::min(np1, np2, np3);
+            float max_ = rtengine::max(max1, max2, maxn);
+            float min_ = rtengine::min(min1, min2, minn);
+
+            // Shift the queue
+            max1 = max2;
+            max2 = maxn;
+            min1 = min2;
+            min2 = minn;
+            float labL = luminance[i][j];
+
+            if (max_ < labL) {
+                max_ = labL;
+            }
+
+            if (min_ > labL) {
+                min_ = labL;
+            }
+
+            // deviation from the environment as measurement
+            float diff = nL[i][j] - blurmap[i][j];
+
+            constexpr float upperBound = 2000.f;  // WARNING: Duplicated value, it's baaaaaad !
+            float delta = sharpenParam.threshold.multiply<float, float, float>(
+                              rtengine::min(fabsf(diff), upperBound),   // X axis value = absolute value of the difference
+                              sharpFac * diff               // Y axis max value = sharpening.amount * signed difference
+                          );
+            float newL = labL + delta;
+
+            // applying halo control
+            if (newL > max_) {
+                newL = max_ + (newL - max_) * scale;
+            } else if (newL < min_) {
+                newL = min_ - (min_ - newL) * scale;
+            }
+
+            luminance[i][j] = intp(blend[i][j], newL, luminance[i][j]);
+        }
+    }
+}
+
+void dcdamping (float** aI, float** aO, float damping, int W, int H)
 {
 
     const float dampingFac = -2.0 / (damping * damping);
 
 #ifdef __SSE2__
-    __m128 Iv, Ov, Uv, zerov, onev, fourv, fivev, dampingFacv, Tv, Wv, Lv;
-    zerov = _mm_setzero_ps( );
-    onev = F2V( 1.0f );
-    fourv = F2V( 4.0f );
-    fivev = F2V( 5.0f );
-    dampingFacv = F2V( dampingFac );
+    vfloat Iv, Ov, Uv, zerov, onev, fourv, fivev, dampingFacv, Tv, Wv, Lv;
+    zerov = _mm_setzero_ps();
+    onev = F2V(1.f);
+    fourv = F2V(4.f);
+    fivev = F2V(5.f);
+    dampingFacv = F2V(dampingFac);
 #endif
 #ifdef _OPENMP
     #pragma omp for
@@ -56,8 +116,8 @@ void ImProcFunctions::dcdamping (float** aI, float** aO, float damping, int W, i
 #ifdef __SSE2__
 
         for (; j < W - 3; j += 4) {
-            Iv = LVFU( aI[i][j] );
-            Ov = LVFU( aO[i][j] );
+            Iv = LVFU(aI[i][j]);
+            Ov = LVFU(aO[i][j]);
             Lv = xlogf(Iv / Ov);
             Wv = Ov - Iv;
             Uv = (Ov * Lv + Wv) * dampingFacv;
@@ -68,7 +128,7 @@ void ImProcFunctions::dcdamping (float** aI, float** aO, float damping, int W, i
             Uv = (Wv / Iv) * Uv + onev;
             Uv = vselfzero(vmaskf_gt(Iv, zerov), Uv);
             Uv = vselfzero(vmaskf_gt(Ov, zerov), Uv);
-            STVFU( aI[i][j], Uv );
+            STVFU(aI[i][j], Uv);
         }
 
 #endif
@@ -83,36 +143,44 @@ void ImProcFunctions::dcdamping (float** aI, float** aO, float damping, int W, i
             }
 
             float U = (O * xlogf(I / O) - I + O) * dampingFac;
-            U = min(U, 1.0f);
+            U = rtengine::min(U, 1.0f);
             U = U * U * U * U * (5.f - U * 4.f);
             aI[i][j] = (O - I) / I * U + 1.f;
         }
     }
 }
 
+}
+
+namespace rtengine
+{
+
+extern const Settings* settings;
+
 void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, int W, int H, const SharpeningParams &sharpenParam)
 {
     if (sharpenParam.deconvamount < 1) {
         return;
     }
+BENCHFUN
+    JaggedArray<float> tmpI(W, H);
 
-    float *tmpI[H] ALIGNED16;
-
-    tmpI[0] = new float[W * H];
-
-    for (int i = 1; i < H; i++) {
-        tmpI[i] = tmpI[i - 1] + W;
-    }
-
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
     for (int i = 0; i < H; i++) {
         for(int j = 0; j < W; j++) {
             tmpI[i][j] = max(luminance[i][j], 0.f);
         }
     }
 
-    float damping = sharpenParam.deconvdamping / 5.0;
-    bool needdamp = sharpenParam.deconvdamping > 0;
-    double sigma = sharpenParam.deconvradius / scale;
+    // calculate contrast based blend factors to reduce sharpening in regions with low contrast
+    JaggedArray<float> blend(W, H);
+    buildBlendMask(luminance, blend, W, H, sharpenParam.contrast / 100.f, sharpenParam.deconvamount / 100.0);
+
+    const float damping = sharpenParam.deconvdamping / 5.0;
+    const bool needdamp = sharpenParam.deconvdamping > 0;
+    const double sigma = sharpenParam.deconvradius / scale;
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -121,61 +189,61 @@ void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, int W, i
         for (int k = 0; k < sharpenParam.deconviter; k++) {
             if (!needdamp) {
                 // apply gaussian blur and divide luminance by result of gaussian blur
-                gaussianBlur (tmpI, tmp, W, H, sigma, nullptr, GAUSS_DIV, luminance);
-#ifdef _OPENMP
-                #pragma omp for
-#endif
-                for (int i = 0; i < H; i++) {
-                    for(int j = 0; j < W; j++) {
-                        tmp[i][j] = max(tmp[i][j], 0.f);
-                    }
-                }
+                gaussianBlur(tmpI, tmp, W, H, sigma, nullptr, GAUSS_DIV, luminance);
             } else {
                 // apply gaussian blur + damping
-                gaussianBlur (tmpI, tmp, W, H, sigma);
-                dcdamping (tmp, luminance, damping, W, H);
+                gaussianBlur(tmpI, tmp, W, H, sigma);
+                dcdamping(tmp, luminance, damping, W, H);
             }
-
-            gaussianBlur (tmp, tmpI, W, H, sigma, nullptr, GAUSS_MULT);
-
+            gaussianBlur(tmp, tmpI, W, H, sigma, nullptr, GAUSS_MULT);
         } // end for
-
-        float p2 = sharpenParam.deconvamount / 100.0;
-        float p1 = 1.0 - p2;
 
 #ifdef _OPENMP
         #pragma omp for
 #endif
 
-        for (int i = 0; i < H; i++)
-            for (int j = 0; j < W; j++) {
-                luminance[i][j] = luminance[i][j] * p1 + max(tmpI[i][j], 0.0f) * p2;
+        for (int i = 0; i < H; ++i) {
+            for (int j = 0; j < W; ++j) {
+                luminance[i][j] = intp(blend[i][j], max(tmpI[i][j], 0.0f), luminance[i][j]);
             }
+        }
     } // end parallel
-
-    delete [] tmpI[0];
-
 }
 
-void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &sharpenParam)
+void ImProcFunctions::sharpening (LabImage* lab, const SharpeningParams &sharpenParam, bool showMask)
 {
-
-    if (!sharpenParam.enabled) {
-        return;
-    }
-
-    if (sharpenParam.method == "rld") {
-        deconvsharpening (lab->L, b2, lab->W, lab->H, sharpenParam);
-        return;
-    }
 
     if ((!sharpenParam.enabled) || sharpenParam.amount < 1 || lab->W < 8 || lab->H < 8) {
         return;
     }
 
+    int W = lab->W, H = lab->H;
+
+    if(showMask) {
+        // calculate contrast based blend factors to reduce sharpening in regions with low contrast
+        JaggedArray<float> blend(W, H);
+        buildBlendMask(lab->L, blend, W, H, sharpenParam.contrast / 100.f, sharpenParam.method == "rld" ? sharpenParam.deconvamount / 100.0 : 1.f);
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+
+        for (int i = 0; i < H; ++i) {
+            for (int j = 0; j < W; ++j) {
+                lab->L[i][j] = blend[i][j] * 32768.f;
+            }
+        }
+        return;
+    }
+
+    JaggedArray<float> b2(W, H);
+
+    if (sharpenParam.method == "rld") {
+        deconvsharpening (lab->L, b2, lab->W, lab->H, sharpenParam);
+        return;
+    }
+BENCHFUN
 
     // Rest is UNSHARP MASK
-    int W = lab->W, H = lab->H;
     float** b3 = nullptr;
 
     if (sharpenParam.edgesonly) {
@@ -185,6 +253,10 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
             b3[i] = new float[W];
         }
     }
+
+    // calculate contrast based blend factors to reduce sharpening in regions with low contrast
+    JaggedArray<float> blend(W, H);
+    buildBlendMask(lab->L, blend, W, H, sharpenParam.contrast / 100.f);
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -211,24 +283,18 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
 
         for (int i = 0; i < H; i++)
             for (int j = 0; j < W; j++) {
-                const float upperBound = 2000.f;  // WARNING: Duplicated value, it's baaaaaad !
+                constexpr float upperBound = 2000.f;  // WARNING: Duplicated value, it's baaaaaad !
                 float diff = base[i][j] - b2[i][j];
                 float delta = sharpenParam.threshold.multiply<float, float, float>(
-                                  min(ABS(diff), upperBound),                   // X axis value = absolute value of the difference, truncated to the max value of this field
+                                  min(fabsf(diff), upperBound),                   // X axis value = absolute value of the difference, truncated to the max value of this field
                                   sharpenParam.amount * diff * 0.01f        // Y axis max value
                               );
-                lab->L[i][j] = lab->L[i][j] + delta;
+                lab->L[i][j] = intp(blend[i][j], lab->L[i][j] + delta, lab->L[i][j]);
             }
     } else {
-        float** labCopy = nullptr;
-
         if (!sharpenParam.edgesonly) {
             // make a deep copy of lab->L
-            labCopy = new float*[H];
-
-            for( int i = 0; i < H; i++ ) {
-                labCopy[i] = new float[W];
-            }
+            JaggedArray<float> labCopy(W, H);
 
 #ifdef _OPENMP
             #pragma omp parallel for
@@ -239,18 +305,11 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
                     labCopy[i][j] = lab->L[i][j];
                 }
 
-            base = labCopy;
+            sharpenHaloCtrl (lab->L, b2, labCopy, blend, W, H, sharpenParam);
+        } else {
+            sharpenHaloCtrl (lab->L, b2, base, blend, W, H, sharpenParam);
         }
 
-        sharpenHaloCtrl (lab->L, b2, base, W, H, sharpenParam);
-
-        if (labCopy) {
-            for( int i = 0; i < H; i++ ) {
-                delete[] labCopy[i];
-            }
-
-            delete[] labCopy;
-        }
     }
 
     if (sharpenParam.edgesonly) {
@@ -259,69 +318,6 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
         }
 
         delete [] b3;
-    }
-}
-
-void ImProcFunctions::sharpenHaloCtrl (float** luminance, float** blurmap, float** base, int W, int H, const SharpeningParams &sharpenParam)
-{
-
-    float scale = (100.f - sharpenParam.halocontrol_amount) * 0.01f;
-    float sharpFac = sharpenParam.amount * 0.01f;
-    float** nL = base;
-
-#ifdef _OPENMP
-    #pragma omp parallel for
-#endif
-
-    for (int i = 2; i < H - 2; i++) {
-        float max1 = 0, max2 = 0, min1 = 0, min2 = 0;
-
-        for (int j = 2; j < W - 2; j++) {
-            // compute 3 iterations, only forward
-            float np1 = 2.f * (nL[i - 2][j] + nL[i - 2][j + 1] + nL[i - 2][j + 2] + nL[i - 1][j] + nL[i - 1][j + 1] + nL[i - 1][j + 2] + nL[i]  [j] + nL[i]  [j + 1] + nL[i]  [j + 2]) / 27.f + nL[i - 1][j + 1] / 3.f;
-            float np2 = 2.f * (nL[i - 1][j] + nL[i - 1][j + 1] + nL[i - 1][j + 2] + nL[i]  [j] + nL[i]  [j + 1] + nL[i]  [j + 2] + nL[i + 1][j] + nL[i + 1][j + 1] + nL[i + 1][j + 2]) / 27.f + nL[i]  [j + 1] / 3.f;
-            float np3 = 2.f * (nL[i]  [j] + nL[i]  [j + 1] + nL[i]  [j + 2] + nL[i + 1][j] + nL[i + 1][j + 1] + nL[i + 1][j + 2] + nL[i + 2][j] + nL[i + 2][j + 1] + nL[i + 2][j + 2]) / 27.f + nL[i + 1][j + 1] / 3.f;
-
-            // Max/Min of all these deltas and the last two max/min
-            float maxn = max(np1, np2, np3);
-            float minn = min(np1, np2, np3);
-            float max_ = max(max1, max2, maxn);
-            float min_ = min(min1, min2, minn);
-
-            // Shift the queue
-            max1 = max2;
-            max2 = maxn;
-            min1 = min2;
-            min2 = minn;
-            float labL = luminance[i][j];
-
-            if (max_ < labL) {
-                max_ = labL;
-            }
-
-            if (min_ > labL) {
-                min_ = labL;
-            }
-
-            // deviation from the environment as measurement
-            float diff = nL[i][j] - blurmap[i][j];
-
-            const float upperBound = 2000.f;  // WARNING: Duplicated value, it's baaaaaad !
-            float delta = sharpenParam.threshold.multiply<float, float, float>(
-                              min(ABS(diff), upperBound),   // X axis value = absolute value of the difference
-                              sharpFac * diff               // Y axis max value = sharpening.amount * signed difference
-                          );
-            float newL = labL + delta;
-
-            // applying halo control
-            if (newL > max_) {
-                newL = max_ + (newL - max_) * scale;
-            } else if (newL < min_) {
-                newL = min_ - (min_ - newL) * scale;
-            }
-
-            luminance[i][j] = newL;
-        }
     }
 }
 
@@ -572,25 +568,15 @@ void ImProcFunctions::MLsharpen (LabImage* lab)
 //! \param luminance : Luminance channel of image
 void ImProcFunctions::MLmicrocontrast(float** luminance, int W, int H)
 {
-    if (!params->sharpenMicro.enabled) {
+    if (!params->sharpenMicro.enabled || params->sharpenMicro.contrast == 100 || params->sharpenMicro.amount < 1.0) {
         return;
     }
-
+BENCHFUN
     const int k = params->sharpenMicro.matrix ? 1 : 2;
-
     // k=2 matrix 5x5  k=1 matrix 3x3
     const int width = W, height = H;
-    const float uniform = params->sharpenMicro.uniformity; //between 0 to 100
-    const int unif = (int)(uniform / 10.0f); //put unif between 0 to 10
-    float amount = params->sharpenMicro.amount / 1500.0f; //amount 2000.0 quasi no artifacts ==> 1500 = maximum, after artifacts
-
-    if (amount < 0.000001f) {
-        return;
-    }
-
-    if (k == 1) {
-        amount *= 2.7f;    //25/9 if 3x3
-    }
+    const int unif = params->sharpenMicro.uniformity / 10.0f; //put unif between 0 to 10
+    const float amount = (k == 1 ? 2.7f : 1.f) * params->sharpenMicro.amount / 1500.0f; //amount 2000.0 quasi no artifacts ==> 1500 = maximum, after artifacts, 25/9 if 3x3
 
     if (settings->verbose) {
         printf ("Micro-contrast amount %f\n", amount);
@@ -618,10 +604,13 @@ void ImProcFunctions::MLmicrocontrast(float** luminance, int W, int H)
     const float Cont4[11] = {0.8f, 0.85f, 0.9f, 0.95f, 1.0f, 1.05f, 1.10f, 1.150f, 1.2f, 1.25f, 1.40f};
     const float Cont5[11] = {1.0f, 1.1f, 1.2f, 1.25f, 1.3f, 1.4f, 1.45f, 1.50f, 1.6f, 1.65f, 1.80f};
 
-    const float s = amount;
     const float sqrt2 = sqrt(2.0);
     const float sqrt1d25 = sqrt(1.25);
     float *LM = new float[width * height]; //allocation for Luminance
+
+    // calculate contrast based blend factors to reduce sharpening in regions with low contrast
+    JaggedArray<float> blend(W, H);
+    buildBlendMask(luminance, blend, W, H, params->sharpenMicro.contrast / 100.f);
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -654,9 +643,9 @@ void ImProcFunctions::MLmicrocontrast(float** luminance, int W, int H)
             contrast = std::min(contrast, 1.f);
 
             //matrix 5x5
-            float temp = v + 4.f *( v * (s + sqrt2 * s)); //begin 3x3
-            float temp1 = sqrt2 * s *(LM[offset - width - 1] + LM[offset - width + 1] + LM[offset + width - 1] + LM[offset + width + 1]);
-            temp1 += s * (LM[offset - width] + LM[offset - 1] + LM[offset + 1] + LM[offset + width]);
+            float temp = v + 4.f *( v * (amount + sqrt2 * amount)); //begin 3x3
+            float temp1 = sqrt2 * amount *(LM[offset - width - 1] + LM[offset - width + 1] + LM[offset + width - 1] + LM[offset + width + 1]);
+            temp1 += amount * (LM[offset - width] + LM[offset - 1] + LM[offset + 1] + LM[offset + width]);
 
             temp -= temp1;
 
@@ -669,19 +658,18 @@ void ImProcFunctions::MLmicrocontrast(float** luminance, int W, int H)
 
                 temp2 -= sqrt2 * (LM[offset + 2 * width - 2] + LM[offset + 2 * width + 2] + LM[offset - 2 * width - 2] + LM[offset - 2 * width + 2]);
                 temp2 += 18.601126159f * v ; // 18.601126159 = 4 + 4 * sqrt(2) + 8 * sqrt(1.25)
-                temp2 *= 2.f * s;
+                temp2 *= 2.f * amount;
                 temp += temp2;
             }
 
             temp = std::max(temp, 0.f);
 
-            for(int row = j + k, n = SQR(2*k+1) - 1; row >= j - k; row--) {
-                for(int offset2 = row * width + i + k; offset2 >= row * width + i - k; offset2--) {
+            for(int row = j - k; row <= j + k; ++row) {
+                for(int offset2 = row * width + i - k; offset2 <= row * width + i + k; ++offset2) {
                     if((LM[offset2] - temp) * (v - LM[offset2]) > 0.f) {
                         temp = intp(0.75f, temp, LM[offset2]);
                         goto breakout;
                     }
-                    n--;
                 }
             }
             breakout:
@@ -751,7 +739,7 @@ void ImProcFunctions::MLmicrocontrast(float** luminance, int W, int H)
                 } else {
                     temp = 0.f;
                 }
-                luminance[j][i] *= (temp * temp2 + 1.f);
+                luminance[j][i] = intp(blend[j][i], luminance[j][i] * (temp * temp2 + 1.f), luminance[j][i]);
             } else {
 
                 float temp4 = LM[offset] / tempL; //
@@ -802,7 +790,7 @@ void ImProcFunctions::MLmicrocontrast(float** luminance, int W, int H)
                     } else {
                         temp = 0.f;
                     }
-                    luminance[j][i] /= (temp * temp4 + 1.f);
+                    luminance[j][i] = intp(blend[j][i], luminance[j][i] / (temp * temp4 + 1.f), luminance[j][i]);
                 }
             }
         }
@@ -820,11 +808,30 @@ void ImProcFunctions::MLmicrocontrastcam(CieImage* ncie)
     MLmicrocontrast(ncie->sh_p, ncie->W, ncie->H);
 }
 
-void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
+void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2, bool showMask)
 {
     if ((!params->sharpening.enabled) || params->sharpening.amount < 1 || ncie->W < 8 || ncie->H < 8) {
         return;
     }
+
+    int W = ncie->W, H = ncie->H;
+
+    if(showMask) {
+        // calculate contrast based blend factors to reduce sharpening in regions with low contrast
+        JaggedArray<float> blend(W, H);
+        buildBlendMask(ncie->sh_p, blend, W, H, params->sharpening.contrast / 100.f);
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+
+        for (int i = 0; i < H; ++i) {
+            for (int j = 0; j < W; ++j) {
+                ncie->sh_p[i][j] = blend[i][j] * 32768.f;
+            }
+        }
+        return;
+    }
+
 
     if (params->sharpening.method == "rld") {
         deconvsharpening (ncie->sh_p, b2, ncie->W, ncie->H, params->sharpening);
@@ -833,7 +840,6 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
 
     // Rest is UNSHARP MASK
 
-    int W = ncie->W, H = ncie->H;
     float** b3 = nullptr;
 
     if (params->sharpening.edgesonly) {
@@ -843,6 +849,10 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
             b3[i] = new float[W];
         }
     }
+
+    // calculate contrast based blend factors to reduce sharpening in regions with low contrast
+    JaggedArray<float> blend(W, H);
+    buildBlendMask(ncie->sh_p, blend, W, H, params->sharpening.contrast / 100.f);
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -870,15 +880,15 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
 
         for (int i = 0; i < H; i++)
             for (int j = 0; j < W; j++) {
-                const float upperBound = 2000.f;  // WARNING: Duplicated value, it's baaaaaad !
+                constexpr float upperBound = 2000.f;  // WARNING: Duplicated value, it's baaaaaad !
                 float diff = base[i][j] - b2[i][j];
                 float delta = params->sharpening.threshold.multiply<float, float, float>(
-                                  min(ABS(diff), upperBound),                   // X axis value = absolute value of the difference, truncated to the max value of this field
+                                  min(fabsf(diff), upperBound),                   // X axis value = absolute value of the difference, truncated to the max value of this field
                                   params->sharpening.amount * diff * 0.01f      // Y axis max value
                               );
 
                 if(ncie->J_p[i][j] > 8.0f && ncie->J_p[i][j] < 92.0f) {
-                    ncie->sh_p[i][j] = ncie->sh_p[i][j] + delta;
+                    ncie->sh_p[i][j] = intp(blend[i][j], ncie->sh_p[i][j] + delta, ncie->sh_p[i][j]);
                 }
             }
     } else {
@@ -904,7 +914,7 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
             base = ncieCopy;
         }
 
-        sharpenHaloCtrl (ncie->sh_p, b2, base, W, H, params->sharpening);
+        sharpenHaloCtrl (ncie->sh_p, b2, base, blend, W, H, params->sharpening);
 
         if(ncieCopy) {
             for( int i = 0; i < H; i++ ) {

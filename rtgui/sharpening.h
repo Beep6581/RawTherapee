@@ -28,6 +28,7 @@ class Sharpening : public ToolParamBlock, public ThresholdAdjusterListener, publ
 {
 
 protected:
+    Adjuster* contrast;
     MyComboBoxText* method;
     Adjuster* dradius;
     Adjuster* damount;
@@ -53,6 +54,7 @@ protected:
     bool lastHaloControl;
     sigc::connection hcConn;
 
+    rtengine::ProcEvent EvSharpenContrast;
 public:
 
     Sharpening ();
@@ -70,7 +72,7 @@ public:
     void halocontrol_toggled ();
     void method_changed ();
 
-    void setAdjusterBehavior (bool radiusadd, bool amountadd, bool dampingadd, bool iteradd, bool edgetoladd, bool haloctrladd);
+    void setAdjusterBehavior (bool contrastadd, bool radiusadd, bool amountadd, bool dampingadd, bool iteradd, bool edgetoladd, bool haloctrladd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 

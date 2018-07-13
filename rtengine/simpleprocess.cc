@@ -159,6 +159,13 @@ private:
         imgsrc = ii->getImageSource ();
 
         tr = getCoarseBitMask (params.coarse);
+        if(imgsrc->getSensorType() == ST_BAYER) {
+            if(params.raw.bayersensor.method!= RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)) {
+                imgsrc->setBorder(params.raw.bayersensor.border);
+            } else {
+                imgsrc->setBorder(std::max(params.raw.bayersensor.border, 2));
+            }
+        }
         imgsrc->getFullSize (fw, fh, tr);
 
         // check the crop params
@@ -196,19 +203,20 @@ private:
         ipf_p.reset (new ImProcFunctions (&params, true));
         ImProcFunctions &ipf = * (ipf_p.get());
 
-        pp = PreviewProps (0, 0, fw, fh, 1);
         imgsrc->setCurrentFrame (params.raw.bayersensor.imageNum);
         imgsrc->preprocess ( params.raw, params.lensProf, params.coarse, params.dirpyrDenoise.enabled);
 
         if (pl) {
             pl->setProgress (0.20);
         }
+        double contrastThresholdDummy;
+        imgsrc->demosaic (params.raw, false, contrastThresholdDummy);
 
-        imgsrc->demosaic ( params.raw);
 
         if (pl) {
             pl->setProgress (0.30);
         }
+        pp = PreviewProps (0, 0, fw, fh, 1);
 
         if (params.retinex.enabled) { //enabled Retinex
             LUTf cdcurve (65536, 0);
@@ -741,7 +749,9 @@ private:
             ipf.getAutoExp (aehist, aehistcompr, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
         }
         if (params.toneCurve.histmatching) {
-            imgsrc->getAutoMatchedToneCurve(params.icm, params.toneCurve.curve);
+            if (!params.toneCurve.fromHistMatching) {
+                imgsrc->getAutoMatchedToneCurve(params.icm, params.toneCurve.curve);
+            }
 
             if (params.toneCurve.autoexp) {
                 params.toneCurve.expcomp = 0.0;
@@ -753,7 +763,6 @@ private:
             params.toneCurve.brightness = 0;
             params.toneCurve.contrast = 0;
             params.toneCurve.black = 0;
-
         }        
 
         // at this stage, we can flush the raw data to free up quite an important amount of memory
@@ -1053,20 +1062,8 @@ private:
         }
 
         if (((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) && params.sharpening.enabled) {
+            ipf.sharpening (labView, params.sharpening);
 
-            float **buffer = new float*[fh];
-
-            for (int i = 0; i < fh; i++) {
-                buffer[i] = new float[fw];
-            }
-
-            ipf.sharpening (labView, (float**)buffer, params.sharpening);
-
-            for (int i = 0; i < fh; i++) {
-                delete [] buffer[i];
-            }
-
-            delete [] buffer;
         }
 
         WaveletParams WaveParams = params.wavelet;
@@ -1165,7 +1162,7 @@ private:
 
         int imw, imh;
         double tmpScale = ipf.resizeScale (&params, fw, fh, imw, imh);
-        bool labResize = params.resize.enabled && params.resize.method != "Nearest" && tmpScale != 1.0;
+        bool labResize = params.resize.enabled && params.resize.method != "Nearest" && (tmpScale != 1.0 || params.prsharpening.enabled);
         LabImage *tmplab;
 
         // crop and convert to rgb16
@@ -1196,33 +1193,24 @@ private:
         }
 
         if (labResize) { // resize lab data
-            // resize image
-            tmplab = new LabImage (imw, imh);
-            ipf.Lanczos (labView, tmplab, tmpScale);
-            delete labView;
-            labView = tmplab;
+            if ((labView->W != imw || labView->H != imh) &&
+                (params.resize.allowUpscaling || (labView->W >= imw && labView->H >= imh))) {
+                // resize image
+                tmplab = new LabImage (imw, imh);
+                ipf.Lanczos (labView, tmplab, tmpScale);
+                delete labView;
+                labView = tmplab;
+            }
             cw = labView->W;
             ch = labView->H;
 
             if (params.prsharpening.enabled) {
-                for (int i = 0; i < ch; i++)
+                for (int i = 0; i < ch; i++) {
                     for (int j = 0; j < cw; j++) {
                         labView->L[i][j] = labView->L[i][j] < 0.f ? 0.f : labView->L[i][j];
                     }
-
-                float **buffer = new float*[ch];
-
-                for (int i = 0; i < ch; i++) {
-                    buffer[i] = new float[cw];
                 }
-
-                ipf.sharpening (labView, (float**)buffer, params.prsharpening);
-
-                for (int i = 0; i < ch; i++) {
-                    delete [] buffer[i];
-                }
-
-                delete [] buffer;
+                ipf.sharpening (labView, params.prsharpening);
             }
         }
 
@@ -1279,7 +1267,8 @@ private:
             pl->setProgress (0.70);
         }
 
-        if (tmpScale != 1.0 && params.resize.method == "Nearest") { // resize rgb data (gamma applied)
+        if (tmpScale != 1.0 && params.resize.method == "Nearest" &&
+            (params.resize.allowUpscaling || (readyImg->getWidth() >= imw && readyImg->getHeight() >= imh))) { // resize rgb data (gamma applied)
             Imagefloat* tempImage = new Imagefloat (imw, imh);
             ipf.resize (readyImg, tempImage, tmpScale);
             delete readyImg;
@@ -1397,7 +1386,7 @@ private:
         assert (params.resize.enabled);
 
         // resize image
-        {
+        if (params.resize.allowUpscaling || (imw <= fw && imh <= fh)) {
             std::unique_ptr<LabImage> resized (new LabImage (imw, imh));
             ipf.Lanczos (tmplab.get(), resized.get(), scale_factor);
             tmplab = std::move (resized);
@@ -1487,8 +1476,6 @@ private:
         }
 
         if (params.raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::PIXELSHIFT)) {
-            params.raw.bayersensor.method = procparams::RAWParams::BayerSensor::getMethodString(params.raw.bayersensor.pixelShiftLmmse ? procparams::RAWParams::BayerSensor::Method::LMMSE : procparams::RAWParams::BayerSensor::Method::AMAZE);
-        } else if (params.raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::AMAZE)) {
             params.raw.bayersensor.method = procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::RCD);
         }
 

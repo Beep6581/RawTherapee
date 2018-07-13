@@ -211,19 +211,8 @@ void FileBrowserEntry::procParamsChanged (Thumbnail* thm, int whoChangedIt)
 
 void FileBrowserEntry::updateImage (rtengine::IImage8* img, double scale, rtengine::procparams::CropParams cropParams)
 {
-
-    {
-        GThreadLock lock;
-
-        if ( feih == nullptr ||
-                feih->destroyed ) {
-            img->free();
-            return;
-        }
-
-        redrawRequests++;
-        feih->pending++;
-    }
+    redrawRequests++;
+    feih->pending++;
 
     struct tiupdate {
         FileBrowserEntryIdleHelper* feih;

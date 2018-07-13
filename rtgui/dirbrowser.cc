@@ -48,14 +48,26 @@ std::vector<Glib::ustring> listSubDirs (const Glib::RefPtr<Gio::File>& dir, bool
 
         auto enumerator = dir->enumerate_children ("standard::name,standard::type,standard::is-hidden");
 
-        while (auto file = enumerator->next_file ()) {
-            if (file->get_file_type () != Gio::FILE_TYPE_DIRECTORY) {
-                continue;
+        while (true) {
+            try {
+                auto file = enumerator->next_file ();
+                if (!file) {
+                    break;
+                }
+                if (file->get_file_type () != Gio::FILE_TYPE_DIRECTORY) {
+                    continue;
+                }
+                if (!addHidden && file->is_hidden ()) {
+                    continue;
+                }
+                subDirs.push_back (file->get_name ());
+            } catch (const Glib::Exception& exception) {
+
+                if (options.rtSettings.verbose) {
+                    std::cerr << exception.what () << std::endl;
+                }
+
             }
-            if (!addHidden && file->is_hidden ()) {
-                continue;
-            }
-            subDirs.push_back (file->get_name ());
         }
 
     } catch (const Glib::Exception& exception) {

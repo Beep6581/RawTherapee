@@ -42,7 +42,7 @@ extern const Settings* settings;
 
 Crop::Crop (ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow)
     : PipetteBuffer (editDataProvider), origCrop (nullptr), laboCrop (nullptr), labnCrop (nullptr),
-      cropImg (nullptr), cbuf_real (nullptr), transCrop (nullptr), cieCrop (nullptr), cbuffer (nullptr),
+      cropImg (nullptr), transCrop (nullptr), cieCrop (nullptr),
       updating (false), newUpdatePending (false), skip (10),
       cropx (0), cropy (0), cropw (-1), croph (-1),
       trafx (0), trafy (0), trafw (-1), trafh (-1),
@@ -865,7 +865,7 @@ void Crop::update (int todo)
 
             if ((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled)) {
                 parent->ipf.MLmicrocontrast (labnCrop);
-                parent->ipf.sharpening (labnCrop, (float**)cbuffer, params.sharpening);
+                parent->ipf.sharpening (labnCrop, params.sharpening, parent->sharpMask);
             }
         }
 
@@ -994,7 +994,7 @@ void Crop::update (int todo)
 
             float d, dj, yb; // not used after this block
             parent->ipf.ciecam_02float (cieCrop, float (adap), 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3,
-                                            dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 5, skip, execsharp, d, dj, yb, 1);
+                                        dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 5, skip, execsharp, d, dj, yb, 1, parent->sharpMask);
         } else {
             // CIECAM is disabled, we free up its image buffer to save some space
             if (cieCrop) {
@@ -1080,16 +1080,6 @@ void Crop::freeAll ()
         if (cieCrop  ) {
             delete    cieCrop;
             cieCrop = nullptr;
-        }
-
-        if (cbuf_real) {
-            delete [] cbuf_real;
-            cbuf_real = nullptr;
-        }
-
-        if (cbuffer  ) {
-            delete [] cbuffer;
-            cbuffer = nullptr;
         }
 
         PipetteBuffer::flush();
@@ -1267,21 +1257,6 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
         if (cieCrop) {
             delete cieCrop;
             cieCrop = nullptr;
-        }
-
-        if (cbuffer  ) {
-            delete [] cbuffer;
-        }
-
-        if (cbuf_real) {
-            delete [] cbuf_real;
-        }
-
-        cbuffer = new float*[croph];
-        cbuf_real = new float[ (croph + 2)*cropw];
-
-        for (int i = 0; i < croph; i++) {
-            cbuffer[i] = cbuf_real + cropw * i + cropw;
         }
 
         if (editType == ET_PIPETTE) {

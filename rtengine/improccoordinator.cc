@@ -35,7 +35,7 @@ extern const Settings* settings;
 ImProcCoordinator::ImProcCoordinator ()
     : orig_prev (nullptr), oprevi (nullptr), oprevl (nullptr), nprevl (nullptr), fattal_11_dcrop_cache(nullptr), previmg (nullptr), workimg (nullptr),
       ncie (nullptr), imgsrc (nullptr), lastAwbEqual (0.), lastAwbTempBias (0.0), ipf (&params, true), monitorIntent (RI_RELATIVE),
-      softProof (false), gamutCheck (false), scale (10), highDetailPreprocessComputed (false), highDetailRawComputed (false),
+      softProof (false), gamutCheck (false), sharpMask(false), scale (10), highDetailPreprocessComputed (false), highDetailRawComputed (false),
       allocated (false), bwAutoR (-9000.f), bwAutoG (-9000.f), bwAutoB (-9000.f), CAMMean (NAN),
 
       hltonecurve (65536),
@@ -230,8 +230,17 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 printf ("Demosaic X-Trans image with using method: %s\n", rp.xtranssensor.method.c_str());
             }
         }
+        if(imgsrc->getSensorType() == ST_BAYER) {
+            if(params.raw.bayersensor.method != RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)) {
+                imgsrc->setBorder(params.raw.bayersensor.border);
+            } else {
+                imgsrc->setBorder(std::max(params.raw.bayersensor.border, 2));
+            }
+        }
+        bool autoContrast = false;
+        double contrastThreshold = 0.f;
+        imgsrc->demosaic (rp, autoContrast, contrastThreshold); //enabled demosaic
 
-        imgsrc->demosaic ( rp); //enabled demosaic
         // if a demosaic happened we should also call getimage later, so we need to set the M_INIT flag
         todo |= M_INIT;
 
@@ -430,7 +439,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                                             params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.hrenabled);
         }
         if (params.toneCurve.histmatching) {
-            imgsrc->getAutoMatchedToneCurve(params.icm, params.toneCurve.curve);
+            if (!params.toneCurve.fromHistMatching) {
+                imgsrc->getAutoMatchedToneCurve(params.icm, params.toneCurve.curve);
+            }
 
             if (params.toneCurve.autoexp) {
                 params.toneCurve.expcomp = 0.0;
@@ -442,6 +453,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             params.toneCurve.brightness = 0;
             params.toneCurve.contrast = 0;
             params.toneCurve.black = 0;
+            params.toneCurve.fromHistMatching = true;
 
             if (aeListener) {
                 aeListener->autoMatchedToneCurveChanged(params.toneCurve.curveMode, params.toneCurve.curve);
@@ -1160,6 +1172,11 @@ void ImProcCoordinator::getSoftProofing (bool &softProof, bool &gamutCheck)
     gamutCheck = this->gamutCheck;
 }
 
+void ImProcCoordinator::setSharpMask (bool sharpMask)
+{
+    this->sharpMask = sharpMask;
+}
+
 void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname, bool apply_wb)
 {
 
@@ -1176,7 +1193,8 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname, bool 
     ppar.icm.input = "(none)";
     Imagefloat* im = new Imagefloat (fW, fH);
     imgsrc->preprocess ( ppar.raw, ppar.lensProf, ppar.coarse );
-    imgsrc->demosaic (ppar.raw );
+    double dummy = 0.0;
+    imgsrc->demosaic (ppar.raw, false, dummy);
     ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
 
     if (params.wb.method == "Camera") {

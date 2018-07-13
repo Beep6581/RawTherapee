@@ -138,6 +138,7 @@ private:
     double nextredbw;
     double nextgreenbw;
     double nextbluebw;
+    int nextcount = 0;
 
     IdleRegister idle_register;
 };

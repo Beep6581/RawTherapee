@@ -17,9 +17,13 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <atomic>
 #include <set>
-#include "thumbimageupdater.h"
+
 #include <gtkmm.h>
+
+#include "thumbimageupdater.h"
+
 #include "guiutils.h"
 #include "threadutils.h"
 
@@ -83,7 +87,7 @@ public:
 
     JobList jobs_;
 
-    unsigned int active_;
+    std::atomic<unsigned int> active_;
 
     bool inactive_waiting_;
 
@@ -157,13 +161,11 @@ public:
             j.listener_->updateImage(img, scale, thm->getProcParams().crop);
         }
 
-        {
+        if ( --active_ == 0 ) {
             Glib::Threads::Mutex::Lock lock(mutex_);
-
-            if ( --active_ == 0 &&
-                    inactive_waiting_ ) {
+            if (inactive_waiting_) {
                 inactive_waiting_ = false;
-                inactive_.signal();
+                inactive_.broadcast();
             }
         }
     }
@@ -181,8 +183,7 @@ ThumbImageUpdater::ThumbImageUpdater():
 {
 }
 
-void
-ThumbImageUpdater::add(ThumbBrowserEntryBase* tbe, bool* priority, bool upgrade, ThumbImageUpdateListener* l)
+void ThumbImageUpdater::add(ThumbBrowserEntryBase* tbe, bool* priority, bool upgrade, ThumbImageUpdateListener* l)
 {
     // nobody listening?
     if ( l == nullptr ) {
@@ -216,49 +217,51 @@ ThumbImageUpdater::add(ThumbBrowserEntryBase* tbe, bool* priority, bool upgrade,
 }
 
 
-void
-ThumbImageUpdater::removeJobs(ThumbImageUpdateListener* listener)
+void ThumbImageUpdater::removeJobs(ThumbImageUpdateListener* listener)
 {
     DEBUG("removeJobs(%p)", listener);
 
-    Glib::Threads::Mutex::Lock lock(impl_->mutex_);
+    {
+        Glib::Threads::Mutex::Lock lock(impl_->mutex_);
 
-    for( Impl::JobList::iterator i(impl_->jobs_.begin()); i != impl_->jobs_.end(); ) {
-        if (i->listener_ == listener) {
-            DEBUG("erasing specific job");
-            Impl::JobList::iterator e(i++);
-            impl_->jobs_.erase(e);
-        } else {
-            ++i;
+        for( Impl::JobList::iterator i(impl_->jobs_.begin()); i != impl_->jobs_.end(); ) {
+            if (i->listener_ == listener) {
+                DEBUG("erasing specific job");
+                Impl::JobList::iterator e(i++);
+                impl_->jobs_.erase(e);
+            } else {
+                ++i;
+            }
         }
     }
 
     while ( impl_->active_ != 0 ) {
-        // XXX this is nasty... it would be nicer if we weren't called with
-        // this lock held
-        GThreadUnLock unlock;
         DEBUG("waiting for running jobs1");
-        impl_->inactive_waiting_ = true;
-        impl_->inactive_.wait(impl_->mutex_);
+        {
+            Glib::Threads::Mutex::Lock lock(impl_->mutex_);
+            impl_->inactive_waiting_ = true;
+            impl_->inactive_.wait(impl_->mutex_);
+        }
     }
 }
 
-void
-ThumbImageUpdater::removeAllJobs()
+void ThumbImageUpdater::removeAllJobs()
 {
     DEBUG("stop");
 
-    Glib::Threads::Mutex::Lock lock(impl_->mutex_);
+    {
+        Glib::Threads::Mutex::Lock lock(impl_->mutex_);
 
-    impl_->jobs_.clear();
+        impl_->jobs_.clear();
+    }
 
     while ( impl_->active_ != 0 ) {
-        // XXX this is nasty... it would be nicer if we weren't called with
-        // this lock held
-        GThreadUnLock unlock;
         DEBUG("waiting for running jobs2");
-        impl_->inactive_waiting_ = true;
-        impl_->inactive_.wait(impl_->mutex_);
+        {
+            Glib::Threads::Mutex::Lock lock(impl_->mutex_);
+            impl_->inactive_waiting_ = true;
+            impl_->inactive_.wait(impl_->mutex_);
+        }
     }
 }
 

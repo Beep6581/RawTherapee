@@ -241,13 +241,14 @@ bool ImageArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         mainCropWindow->expose (cr);
     }
 
+    for (std::list<CropWindow*>::reverse_iterator i = cropWins.rbegin(); i != cropWins.rend(); ++i) {
+        (*i)->expose (cr);
+    }
+
     if (options.showInfo && infotext != "") {
         iBackBuffer.copySurface(cr);
     }
 
-    for (std::list<CropWindow*>::reverse_iterator i = cropWins.rbegin(); i != cropWins.rend(); ++i) {
-        (*i)->expose (cr);
-    }
 
     return true;
 }
@@ -557,6 +558,14 @@ void ImageArea::spotWBSelected (int x, int y)
 
     if (listener) {
         listener->spotWBselected (x, y);
+    }
+}
+
+void ImageArea::sharpMaskSelected (bool sharpMask)
+{
+
+    if (listener) {
+        listener->sharpMaskSelected (sharpMask);
     }
 }
 

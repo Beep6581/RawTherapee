@@ -19,12 +19,15 @@
 #ifndef _THUMBNAILBROWSERENTRYBASE_
 #define _THUMBNAILBROWSERENTRYBASE_
 
+#include <atomic>
+
 #include <gtkmm.h>
-#include "lwbuttonset.h"
-#include "thumbnail.h"
-#include "threadutils.h"
-#include "guiutils.h"
+
 #include "cursormanager.h"
+#include "guiutils.h"
+#include "lwbuttonset.h"
+#include "threadutils.h"
+#include "thumbnail.h"
 
 class ThumbBrowserBase;
 class ThumbBrowserEntryBase
@@ -71,7 +74,7 @@ protected:
 
     int ofsX, ofsY; // offset due to the scrolling of the parent
 
-    int redrawRequests;
+    std::atomic<int> redrawRequests;
 
     ThumbBrowserBase* parent;
     ThumbBrowserEntryBase* original;
