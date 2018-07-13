@@ -25,10 +25,10 @@ using namespace rtengine::procparams;
 PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("TP_PERSPECTIVE_LABEL"))
 {
 
-    Gtk::Image* ipersHL =   Gtk::manage (new RTImage ("perspective-h1.png"));
-    Gtk::Image* ipersHR =   Gtk::manage (new RTImage ("perspective-h2.png"));
-    Gtk::Image* ipersVL =   Gtk::manage (new RTImage ("perspective-v1.png"));
-    Gtk::Image* ipersVR =   Gtk::manage (new RTImage ("perspective-v2.png"));
+    Gtk::Image* ipersHL =   Gtk::manage (new RTImage ("perspective-horizontal-left.png"));
+    Gtk::Image* ipersHR =   Gtk::manage (new RTImage ("perspective-horizontal-right.png"));
+    Gtk::Image* ipersVL =   Gtk::manage (new RTImage ("perspective-vertical-bottom.png"));
+    Gtk::Image* ipersVR =   Gtk::manage (new RTImage ("perspective-vertical-top.png"));
 
     horiz = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_HORIZONTAL"), -100, 100, 0.1, 0, ipersHL, ipersHR));
     horiz->setAdjusterListener (this);

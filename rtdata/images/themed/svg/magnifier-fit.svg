@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="24px"
+   height="24px"
+   viewBox="0 0 24 24"
+   version="1.1"
+   id="SVGRoot"
+   inkscape:export-filename="/tmp/template.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   inkscape:version="0.92.2 2405546, 2018-03-11"
+   sodipodi:docname="magnifier-fit.svg">
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#E0E1E2"
+     bordercolor="#666768"
+     borderopacity="1.0"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="34.25"
+     inkscape:cx="12"
+     inkscape:cy="12"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:window-width="1920"
+     inkscape:window-height="1019"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:grid-bbox="true"
+     inkscape:pagecheckerboard="false"
+     inkscape:snap-bbox="true"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-others="false"
+     inkscape:object-nodes="false"
+     inkscape:snap-grids="true"
+     inkscape:snap-bbox-midpoints="false"
+     inkscape:snap-global="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid1374"
+       originx="1"
+       originy="1"
+       empspacing="11"
+       dotted="false" />
+  </sodipodi:namedview>
+  <defs
+     id="defs815" />
+  <metadata
+     id="metadata818">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Maciej Dworak</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title />
+          </cc:Agent>
+        </dc:rights>
+        <dc:description>RawTherapee icon.</dc:description>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="Layer 1">
+    <path
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:0.7;fill:#2a7fff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.55112457;marker:none;enable-background:accumulate"
+       d="M 10.02069,1 C 7.7109336,1 5.4025041,1.9230371 3.6414836,3.6805883 c -3.52197814,3.5151143 -3.52197814,9.2003287 0,12.7154447 2.788297,2.782792 6.9245614,3.345351 10.2860574,1.722055 0.08842,-0.04275 0.200249,-0.08316 0.287561,-0.128903 0.524035,-0.206573 1.79752,-0.602103 2.482272,0.01 0.684753,0.611986 0.502979,1.317693 1.32542,2.138522 L 20.914921,23 22.997253,20.795373 20.177842,17.989182 c -0.82244,-0.820827 -1.474361,-0.64216 -2.148437,-1.434495 -0.674077,-0.792333 0.08517,-2.500033 0.13552,-2.607871 C 19.791381,10.591973 19.201422,6.4633903 16.413122,3.6805883 14.652091,1.9230371 12.330448,1 10.02069,1 Z M 9.9876392,3.7466949 A 6.2421776,6.2421776 0 0 1 16.231328,9.9870795 6.2421776,6.2421776 0 0 1 9.9876375,16.230769 6.2421776,6.2421776 0 0 1 3.7472529,9.9870795 6.2421776,6.2421776 0 0 1 9.9876392,3.7466949 Z"
+       id="path3803"
+       inkscape:connector-curvature="0" />
+    <path
+       style="opacity:0.9;fill:#2a7fff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       d="M 6 6 L 6 9 L 7 9 L 7 7 L 9 7 L 9 6 L 6 6 z M 11 6 L 11 7 L 13 7 L 13 9 L 14 9 L 14 6 L 11 6 z M 6 11 L 6 14 L 9 14 L 9 13 L 7 13 L 7 11 L 6 11 z M 13 11 L 13 13 L 11 13 L 11 14 L 14 14 L 14 11 L 13 11 z "
+       id="rect7737" />
+  </g>
+</svg>

@@ -256,7 +256,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
 
     spotbutton = Gtk::manage (new Gtk::Button ());
     spotbutton->set_tooltip_text(M("TP_WBALANCE_SPOTWB"));
-    Gtk::Image* spotimg = Gtk::manage (new RTImage ("gtk-color-picker-small.png"));
+    Gtk::Image* spotimg = Gtk::manage (new RTImage ("color-picker.png"));
     spotimg->show ();
     spotbutton->set_image (*spotimg);
     spotbutton->show ();

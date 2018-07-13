@@ -24,23 +24,23 @@
 PreviewModePanel::PreviewModePanel (ImageArea* ia) : imageArea(ia)
 {
 
-    iR  = new RTImage ("previewmodeR-on.png");
-    iG  = new RTImage ("previewmodeG-on.png");
-    iB  = new RTImage ("previewmodeB-on.png");
-    iL  = new RTImage ("previewmodeL-on.png");
-    iBC0 = new RTImage ("previewmodeBC0-on.png");
-    iBC1 = new RTImage ("previewmodeBC1-on.png");
-    iBC2 = new RTImage ("previewmodeBC2-on.png");
-    iBC3 = new RTImage ("previewmodeBC3-on.png");
+    iR  = new RTImage ("square-toggle-red-on.png");
+    iG  = new RTImage ("square-toggle-green-off.png");
+    iB  = new RTImage ("square-toggle-blue-on.png");
+    iL  = new RTImage ("square-toggle-luminosity-on.png");
+    iBC0 = new RTImage ("square-toggle-theme-on.png");
+    iBC1 = new RTImage ("square-toggle-black-on.png");
+    iBC2 = new RTImage ("square-toggle-white-on.png");
+    iBC3 = new RTImage ("square-toggle-gray-on.png");
 
-    igR = new RTImage ("previewmodeR-off.png");
-    igG = new RTImage ("previewmodeG-off.png");
-    igB = new RTImage ("previewmodeB-off.png");
-    igL = new RTImage ("previewmodeL-off.png");
-    igBC0 = new RTImage ("previewmodeBC0-off.png");
-    igBC1 = new RTImage ("previewmodeBC1-off.png");
-    igBC2 = new RTImage ("previewmodeBC2-off.png");
-    igBC3 = new RTImage ("previewmodeBC3-off.png");
+    igR = new RTImage ("square-toggle-red-off.png");
+    igG = new RTImage ("square-toggle-green-off.png");
+    igB = new RTImage ("square-toggle-blue-off.png");
+    igL = new RTImage ("square-toggle-luminosity-off.png");
+    igBC0 = new RTImage ("square-toggle-theme-off.png");
+    igBC1 = new RTImage ("square-toggle-black-off.png");
+    igBC2 = new RTImage ("square-toggle-white-off.png");
+    igBC3 = new RTImage ("square-toggle-gray-off.png");
 
     backColor0 = Gtk::manage (new Gtk::ToggleButton ());
     backColor0->set_relief(Gtk::RELIEF_NONE);

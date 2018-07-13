@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # By Maciej Dworak
-# Version 2018-05-21
+# Version 2018-07-13
 # This script generates PNG icons from SVG files using Inkscape.
 # If pngquant is installed, it will automatically use it to compress the PNGs.
 #
@@ -13,7 +13,10 @@
 # No touching below this line
 # -----------------------------------------------------------------------------
 
-tmpDir="$(mktemp -d /tmp/rt-icons-XXXX)" || exit
+#tmpDir="$(mktemp -d /tmp/rt-icons-XXXX)" || exit
+tmpDir="/tmp/rt-icons"
+rm -r "$tmpDir"
+mkdir "$tmpDir" || exit 1
 outDir="$tmpDir"
 
 # Abort if Inkscape is not installed:
@@ -124,7 +127,7 @@ for f in "${@}"; do
 
         for theme in "${!themes[@]}"; do
             printf '%s\n' "Theme: ${theme}"
-            sed -e "s/fill:${colRef};/fill:${themes[$theme]};/" "$svgAbsolute" > "${outDir}/${theme}/${svgFilename}"
+            sed -e "s/fill:${colRef};/fill:${themes[$theme]};/" -e "s/stroke:${colRef};/stroke:${themes[$theme]};/" "$svgAbsolute" > "${outDir}/${theme}/${svgFilename}"
             convertSvg "${outDir}/${theme}/${svgFilename%.svg*}.png" "${outDir}/${theme}/${svgFilename}"
             rm "${outDir}/${theme}/${svgFilename}"
         done

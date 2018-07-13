@@ -745,7 +745,7 @@ Wavelet::Wavelet() :
     resBox->pack_start(*chanMixerMidFrame, Gtk::PACK_SHRINK);
     resBox->pack_start(*chanMixerShadowsFrame, Gtk::PACK_SHRINK);
 
-    //RTImage *resetImg = Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
+    //RTImage *resetImg = Gtk::manage (new RTImage ("undo-small.png", "redo-small.png"));
     //neutral->set_image(*resetImg);
     Gtk::Button* const neutral = Gtk::manage(new Gtk::Button(M("TP_COLORTONING_NEUTRAL")));
     neutral->set_tooltip_text (M("TP_COLORTONING_NEUTRAL_TIP"));

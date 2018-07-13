@@ -104,8 +104,8 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     pack_start( *opacityCurveEditorG, Gtk::PACK_SHRINK, 2);
 
     //---------Chroma curve 1 --------------------
-    iby   = Gtk::manage (new RTImage ("Chanmixer-BY.png"));
-    irg   = Gtk::manage (new RTImage ("Chanmixer-RG.png"));
+    iby   = Gtk::manage (new RTImage ("circle-yellow-blue.png"));
+    irg   = Gtk::manage (new RTImage ("circle-green-red.png"));
 
     clCurveEditorG = new CurveEditorGroup (options.lastColorToningCurvesDir, M("TP_COLORTONING_CHROMAC"));
     clCurveEditorG->setCurveListener (this);
@@ -146,7 +146,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     //--------------------- Reset curves -----------------------------
     /*   Each curve can reset to a different curve, so this button only save one click now... so we remove it.
     neutralCurves = Gtk::manage (new Gtk::Button (M("TP_COLORTONING_NEUTRALCUR")));
-    RTImage *resetImgc = Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
+    RTImage *resetImgc = Gtk::manage (new RTImage ("undo-small.png", "redo-small.png"));
     neutralCurves->set_image(*resetImgc);
     neutralCurves->set_tooltip_text (M("TP_COLORTONING_NEUTRALCUR_TIP"));
     neutralcurvesconn = neutralCurves->signal_pressed().connect( sigc::mem_fun(*this, &ColorToning::neutralCurves_pressed) );
@@ -324,7 +324,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     labgrid = Gtk::manage(new LabGrid(EvColorToningLabGridValue));
     labgridBox->pack_start(*labgrid, true, true);
     labgridReset = Gtk::manage(new Gtk::Button ());
-    labgridReset->add (*Gtk::manage(new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
+    labgridReset->add (*Gtk::manage(new RTImage ("undo-small.png", "redo-small.png")));
     setExpandAlignProperties(labgridReset, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
     labgridReset->set_relief(Gtk::RELIEF_NONE);
     labgridReset->set_tooltip_markup(M("ADJUSTER_RESET_TO_DEFAULT"));

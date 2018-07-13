@@ -669,7 +669,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     //reset button
     neutral = Gtk::manage (new Gtk::Button (M ("TP_COLORAPP_NEUTRAL")));
     setExpandAlignProperties (neutral, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    RTImage *resetImg = Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
+    RTImage *resetImg = Gtk::manage (new RTImage ("undo-small.png", "redo-small.png"));
     setExpandAlignProperties (resetImg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     neutral->set_image (*resetImg);
     neutral->set_tooltip_text (M ("TP_COLORAPP_NEUTRAL_TIP"));

@@ -42,12 +42,12 @@ FileThumbnailButtonSet::FileThumbnailButtonSet (FileBrowserEntry* myEntry)
 {
 
     if (!iconsLoaded) {
-        unRankIcon  = RTImage::createFromPng ("ratednotg.png");
-        rankIcon    = RTImage::createFromPng ("rated.png");
-        gRankIcon   = RTImage::createFromPng ("grayrated.png");
-        trashIcon   = RTImage::createFromPng ("trash-thumbnail.png");
-        unTrashIcon = RTImage::createFromPng ("undelete-thumbnail.png");
-        processIcon = RTImage::createFromPng ("processing-thumbnail.png");
+        unRankIcon  = RTImage::createFromPng ("star-hollow-small.png");
+        rankIcon    = RTImage::createFromPng ("star-gold-small.png");
+        gRankIcon   = RTImage::createFromPng ("star-small.png");
+        trashIcon   = RTImage::createFromPng ("trash-small.png");
+        unTrashIcon = RTImage::createFromPng ("trash-remove-small.png");
+        processIcon = RTImage::createFromPng ("gears-small.png");
 
         colorLabelIcon_0 = RTImage::createFromPng ("circle-empty-gray.png"); //("nocolorlabel.png");
         colorLabelIcon_1 = RTImage::createFromPng ("circle-red.png");

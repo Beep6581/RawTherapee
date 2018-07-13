@@ -179,18 +179,18 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
 
     //----------- RGB / ROYGCBPM Mixer ------------------------------
 
-    imgIcon[0] = Gtk::manage (new RTImage ("Chanmixer-R.png"));
-    imgIcon[1] = Gtk::manage (new RTImage ("Chanmixer-O.png"));
-    imgIcon[2] = Gtk::manage (new RTImage ("Chanmixer-Y.png"));
-    imgIcon[3] = Gtk::manage (new RTImage ("Chanmixer-G.png"));
-    imgIcon[4] = Gtk::manage (new RTImage ("Chanmixer-C.png"));
-    imgIcon[5] = Gtk::manage (new RTImage ("Chanmixer-B.png"));
-    imgIcon[6] = Gtk::manage (new RTImage ("Chanmixer-P.png"));
-    imgIcon[7] = Gtk::manage (new RTImage ("Chanmixer-M.png"));
+    imgIcon[0] = Gtk::manage (new RTImage ("circle-red.png"));
+    imgIcon[1] = Gtk::manage (new RTImage ("circle-orange.png"));
+    imgIcon[2] = Gtk::manage (new RTImage ("circle-yellow.png"));
+    imgIcon[3] = Gtk::manage (new RTImage ("circle-green.png"));
+    imgIcon[4] = Gtk::manage (new RTImage ("circle-cyan.png"));
+    imgIcon[5] = Gtk::manage (new RTImage ("circle-blue.png"));
+    imgIcon[6] = Gtk::manage (new RTImage ("circle-purple.png"));
+    imgIcon[7] = Gtk::manage (new RTImage ("circle-magenta.png"));
 
-    imgIcon[8]  = Gtk::manage (new RTImage ("Chanmixer-Rgamma.png"));
-    imgIcon[9]  = Gtk::manage (new RTImage ("Chanmixer-Ggamma.png"));
-    imgIcon[10] = Gtk::manage (new RTImage ("Chanmixer-Bgamma.png"));
+    imgIcon[8]  = Gtk::manage (new RTImage ("circle-empty-red.png"));
+    imgIcon[9]  = Gtk::manage (new RTImage ("circle-empty-green.png"));
+    imgIcon[10] = Gtk::manage (new RTImage ("circle-empty-blue.png"));
 
     mixerVBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
