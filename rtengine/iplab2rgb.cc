@@ -319,10 +319,10 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
         double slopetag = 12.92310;
         cmsMLU *modelDescMLU = (cmsMLU*) (cmsReadTag(oprof, cmsSigDeviceModelDescTag));
         if (modelDescMLU) {
-            cmsUInt32Number count = cmsMLUgetWide(modelDescMLU, "eng", "USA", nullptr, 0);  // get buffer length first
+            cmsUInt32Number count = cmsMLUgetWide(modelDescMLU, "en", "US", nullptr, 0);  // get buffer length first
             if (count) {
                 wchar_t *buffer = new wchar_t[count];
-                count = cmsMLUgetWide(modelDescMLU, "eng", "USA", buffer, count); // now put the string in the buffer
+                count = cmsMLUgetWide(modelDescMLU, "en", "US", buffer, count); // now put the string in the buffer
                 Glib::ustring modelDesc;
 #if __SIZEOF_WCHAR_T__ == 2
                 char* cModelDesc = g_utf16_to_utf8((unsigned short int*)buffer, -1, nullptr, nullptr, nullptr); // convert to utf-8 in a buffer allocated by glib

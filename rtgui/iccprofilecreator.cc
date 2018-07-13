@@ -935,7 +935,7 @@ void ICCProfileCreator::savePressed()
 
     cmsMLU *dmnd;
     dmnd = cmsMLUalloc(nullptr, 1);
-    cmsMLUsetASCII(dmnd, "eng", "USA", "RawTherapee");
+    cmsMLUsetASCII(dmnd, "en", "US", "RawTherapee");
     cmsWriteTag(newProfile, cmsSigDeviceMfgDescTag, dmnd);
     cmsMLUfree(dmnd);
 
@@ -949,7 +949,7 @@ void ICCProfileCreator::savePressed()
         cmsMLU *dmdd = cmsMLUalloc(nullptr, 1);
         // Language code (3 letters code) : https://www.iso.org/obp/ui/
         // Country code (3 letters code)  : http://www.loc.gov/standards/iso639-2/php/code_list.php
-        if (cmsMLUsetWide(dmdd, "eng", "USA", wParameters.str().c_str())) {
+        if (cmsMLUsetWide(dmdd, "en", "US", wParameters.str().c_str())) {
             if (!cmsWriteTag(newProfile, cmsSigDeviceModelDescTag, dmdd)) {
                 printf("Error: Can't write cmsSigDeviceModelDescTag!\n");
             }
@@ -983,7 +983,7 @@ void ICCProfileCreator::savePressed()
     cmsMLU *descMLU = cmsMLUalloc(nullptr, 1);
     // Language code (3 letters code) : https://www.iso.org/obp/ui/
     // Country code (3 letters code)  : http://www.loc.gov/standards/iso639-2/php/code_list.php
-    if (cmsMLUsetWide(descMLU, "eng", "USA", wDescription.str().c_str())) {
+    if (cmsMLUsetWide(descMLU, "en", "US", wDescription.str().c_str())) {
         if (!cmsWriteTag(newProfile, cmsSigProfileDescriptionTag, descMLU)) {
             printf("Error: Can't write cmsSigProfileDescriptionTag!\n");
         }
@@ -998,7 +998,7 @@ void ICCProfileCreator::savePressed()
     wCopyright << copyright;
 
     cmsMLU *copyMLU = cmsMLUalloc(nullptr, 1);
-    if (cmsMLUsetWide(copyMLU, "eng", "USA", wCopyright.str().c_str())) {
+    if (cmsMLUsetWide(copyMLU, "en", "US", wCopyright.str().c_str())) {
         if (!cmsWriteTag(newProfile, cmsSigCopyrightTag, copyMLU)) {
             printf("Error: Can't write cmsSigCopyrightTag!\n");
         }
