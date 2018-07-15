@@ -27,7 +27,7 @@ ToolBar::ToolBar () : showColPickers(true), listener (nullptr), pickerListener(n
     editingMode = false;
 
     handimg.reset(new RTImage("hand-open.png"));
-    editinghandimg.reset(new RTImage("crosshair1-adjust.png"));
+    editinghandimg.reset(new RTImage("crosshair-adjust.png"));
 
     handTool = Gtk::manage (new Gtk::ToggleButton ());
     handTool->add (*handimg);
