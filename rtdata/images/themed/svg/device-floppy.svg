@@ -27,8 +27,8 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="12"
-     inkscape:cy="12"
+     inkscape:cx="15.81375"
+     inkscape:cy="17.845039"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -44,7 +44,10 @@
      inkscape:snap-others="false"
      inkscape:object-nodes="true"
      inkscape:snap-grids="true"
-     inkscape:snap-bbox-midpoints="false">
+     inkscape:snap-bbox-midpoints="false"
+     inkscape:snap-nodes="true"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:bbox-paths="true">
     <inkscape:grid
        type="xygrid"
        id="grid1374"
@@ -63,7 +66,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
         <dc:creator>
           <cc:Agent>
             <dc:title>Maciej Dworak</dc:title>
@@ -99,25 +102,41 @@
      id="layer1"
      inkscape:groupmode="layer"
      inkscape:label="Layer 1">
-    <path
-       style="opacity:0.7;fill:#2a7fff;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-       d="M 4,1 C 2.338,1 1,2.338 1,4 v 16 c 0,1.662 1.338,3 3,3 h 1 v -8 h 14 v 8 h 1 c 1.662,0 3,-1.338 3,-3 V 4 C 23,2.338 21.662,1 20,1 Z m 0,2 h 16 v 8 H 4 Z M 5,4 V 6 H 19 V 4 Z M 5,7 V 9 H 19 V 7 Z m 1,9 v 6 h 4 v -6 z"
-       id="rect821"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ssssccccssssscccccccccccccccccccc" />
+    <g
+       transform="matrix(1,0,0,-1,-60,24)"
+       id="g35014">
+      <path
+         id="path35010"
+         d="m 63,2 c -0.554,0 -1,0.446 -1,1 v 18 c 0,0.554 0.446,1 1,1 h 18 c 0.554,0 1,-0.446 1,-1 V 6 L 78,2 Z m 4,1 h 10 c 0.554,0 1,0.446 1,1 v 4 c 0,0.554 -0.446,1 -1,1 H 67 C 66.446,9 66,8.554 66,8 V 4 c 0,-0.554 0.446,-1 1,-1 z m -2.111328,8 H 79.111328 C 79.603773,11 80,11.401791 80,11.900391 v 7.199218 C 80,19.598209 79.603773,20 79.111328,20 H 64.888672 C 64.396228,20 64,19.598209 64,19.099609 V 11.900391 C 64,11.401791 64.396228,11 64.888672,11 Z"
+         style="opacity:0.7;fill:#2a7fff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:2;stroke-opacity:1;paint-order:normal"
+         inkscape:connector-curvature="0" />
+      <rect
+         ry="1"
+         rx="1"
+         y="3.5"
+         x="74"
+         height="5"
+         width="3"
+         id="rect35012"
+         style="opacity:0.7;fill:#2a7fff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:2;stroke-opacity:1;paint-order:normal" />
+    </g>
     <rect
-       style="opacity:0.2;fill:#2a7fff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:2.00314951;stroke-opacity:1;paint-order:normal"
-       id="rect814"
-       width="14"
-       height="8"
-       x="5"
-       y="15" />
+       style="opacity:0.3;fill:#2a7fff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:2;stroke-opacity:1;paint-order:normal"
+       id="rect35224"
+       width="12"
+       height="2"
+       x="6"
+       y="6"
+       rx="1"
+       ry="1" />
     <rect
-       style="opacity:0.2;fill:#2a7fff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:2.00314951;stroke-opacity:1;paint-order:normal"
-       id="rect816"
-       width="16"
-       height="8"
-       x="4"
-       y="3" />
+       style="opacity:0.3;fill:#2a7fff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.19089031;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:2;stroke-opacity:1;paint-order:normal"
+       id="rect35226"
+       width="12"
+       height="2"
+       x="6"
+       y="9"
+       rx="1.2"
+       ry="1" />
   </g>
 </svg>
