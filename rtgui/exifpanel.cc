@@ -48,7 +48,7 @@ ExifPanel::ExifPanel () : idata (nullptr)
     exifTree->set_grid_lines (Gtk::TREE_VIEW_GRID_LINES_NONE);
     exifTree->set_row_separator_func (sigc::mem_fun(*this, &ExifPanel::rowSeperatorFunc));
 
-    delicon = RTImage::createFromFile ("cross-small.png");
+    delicon = RTImage::createFromFile ("cancel-small.png");
     keepicon = RTImage::createFromFile ("tick-small.png");
     editicon = RTImage::createFromFile ("add-small.png");
 
