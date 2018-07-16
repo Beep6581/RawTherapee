@@ -74,7 +74,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     trashButtonBox = Gtk::manage( new Gtk::VBox );
     Gtk::Button* emptyT = Gtk::manage( new Gtk::Button ());
     emptyT->set_tooltip_markup (M("FILEBROWSER_EMPTYTRASHHINT"));
-    emptyT->set_image (*Gtk::manage(new RTImage ("trash.png")));
+    emptyT->set_image (*Gtk::manage(new RTImage ("trash-delete.png")));
     emptyT->signal_pressed().connect (sigc::mem_fun(*this, &FileCatalog::emptyTrash));
     trashButtonBox->pack_start (*emptyT, Gtk::PACK_SHRINK, 4);
     emptyT->show ();
@@ -294,11 +294,11 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     buttonBar->pack_start (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK);
 
     // Trash
-    iTrashEmpty = new RTImage("trash.png") ;
-    iTrashFull  = new RTImage("trash-show.png") ;
+    iTrashShowEmpty = new RTImage("trash-empty-show.png") ;
+    iTrashShowFull  = new RTImage("trash-full-show.png") ;
 
     bTrash = Gtk::manage( new Gtk::ToggleButton () );
-    bTrash->set_image (*iTrashEmpty);
+    bTrash->set_image (*iTrashShowEmpty);
     bTrash->set_relief (Gtk::RELIEF_NONE);
     bTrash->set_tooltip_markup (M("FILEBROWSER_SHOWTRASHHINT"));
     bCateg[17] = bTrash->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bTrash, true));
@@ -471,8 +471,8 @@ FileCatalog::~FileCatalog()
     delete igUnRanked;
     delete iUnCLabeled;
     delete igUnCLabeled;
-    delete iTrashEmpty;
-    delete iTrashFull;
+    delete iTrashShowEmpty;
+    delete iTrashShowFull;
     delete iNotTrash;
     delete iOriginal;
     delete iRefreshWhite;
@@ -1975,9 +1975,9 @@ void FileCatalog::setFilterPanel (FilterPanel* fpanel)
 void FileCatalog::trashChanged ()
 {
     if (trashIsEmpty()) {
-        bTrash->set_image(*iTrashEmpty);
+        bTrash->set_image(*iTrashShowEmpty);
     } else {
-        bTrash->set_image(*iTrashFull);
+        bTrash->set_image(*iTrashShowFull);
     }
 }
 
