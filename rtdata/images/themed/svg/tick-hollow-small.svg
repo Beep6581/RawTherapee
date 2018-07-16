@@ -9,16 +9,16 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="24px"
-   height="24px"
-   viewBox="0 0 24 24"
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
    version="1.1"
    id="SVGRoot"
    inkscape:export-filename="/tmp/template.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
    inkscape:version="0.92.2 2405546, 2018-03-11"
-   sodipodi:docname="tick-green-hollow.svg">
+   sodipodi:docname="tick-hollow-small.svg">
   <sodipodi:namedview
      id="base"
      pagecolor="#E0E1E2"
@@ -26,9 +26,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="34.25"
-     inkscape:cx="12"
-     inkscape:cy="12"
+     inkscape:zoom="51.375"
+     inkscape:cx="8"
+     inkscape:cy="8"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -50,7 +50,7 @@
        id="grid1374"
        originx="1"
        originy="1"
-       empspacing="11"
+       empspacing="7"
        dotted="false" />
   </sodipodi:namedview>
   <defs
@@ -63,7 +63,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
         <dc:creator>
           <cc:Agent>
             <dc:title>Maciej Dworak</dc:title>
@@ -98,12 +98,13 @@
   <g
      id="layer1"
      inkscape:groupmode="layer"
-     inkscape:label="Layer 1">
+     inkscape:label="Layer 1"
+     transform="translate(0,-8)">
     <path
        sodipodi:nodetypes="ccccccc"
        inkscape:connector-curvature="0"
        id="path2996-6"
-       d="M 5.6097942,10.407824 8.8048964,13.592176 18.390205,4.0391229 21.585308,7.2234736 8.8048964,19.960877 2.414692,13.592176 Z"
-       style="opacity:0.7;fill:none;fill-opacity:1;stroke:#008000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal" />
+       d="m 4.0349213,15.013352 1.982539,1.973297 5.9476157,-5.91989 1.982541,1.973297 -7.9301567,7.893185 -3.9650776,-3.946592 z"
+       style="opacity:0.7;fill:none;fill-opacity:1;stroke:#2a7fff;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   </g>
 </svg>

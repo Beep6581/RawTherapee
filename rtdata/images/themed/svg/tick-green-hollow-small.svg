@@ -18,7 +18,7 @@
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
    inkscape:version="0.92.2 2405546, 2018-03-11"
-   sodipodi:docname="tick-hollow-small.svg">
+   sodipodi:docname="tick-green-hollow-small.svg">
   <sodipodi:namedview
      id="base"
      pagecolor="#E0E1E2"
@@ -26,9 +26,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="50.625"
-     inkscape:cx="9.4024691"
-     inkscape:cy="8.7703704"
+     inkscape:zoom="51.375"
+     inkscape:cx="8"
+     inkscape:cy="8"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -105,6 +105,6 @@
        inkscape:connector-curvature="0"
        id="path2996-6"
        d="m 4.0349213,15.013352 1.982539,1.973297 5.9476157,-5.91989 1.982541,1.973297 -7.9301567,7.893185 -3.9650776,-3.946592 z"
-       style="opacity:1;fill:none;fill-opacity:1;stroke:#008000;stroke-width:1.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       style="opacity:0.7;fill:none;fill-opacity:1;stroke:#008000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   </g>
 </svg>

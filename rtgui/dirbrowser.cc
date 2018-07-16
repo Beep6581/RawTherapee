@@ -123,7 +123,7 @@ void DirBrowser::fillDirTree ()
 
     openfolder = RTImage::createFromFile ("folder-open-small.png");
     closedfolder = RTImage::createFromFile ("folder-closed-small.png");
-    icdrom = RTImage::createFromFile ("drive-optical.png");
+    icdrom = RTImage::createFromFile ("device-optical.png");
     ifloppy = RTImage::createFromFile ("device-floppy.png");
     ihdd = RTImage::createFromFile ("device-hdd.png");
     iremovable = RTImage::createFromFile ("device-usb.png");

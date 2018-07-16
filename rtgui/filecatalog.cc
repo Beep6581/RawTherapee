@@ -243,10 +243,10 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     // TODO The "g" variant was the more transparent variant of the icon, used
     // when the button was not toggled. Simplify this, change to ordinary
     // togglebutton, use CSS for opacity change.
-    iEdited[0] = new RTImage ("tick-green-hollow-small.png");
-    igEdited[0] = new RTImage ("tick-green-hollow-small.png");
-    iEdited[1] = new RTImage ("tick-green-small.png");
-    igEdited[1] = new RTImage ("tick-green-small.png");
+    iEdited[0] = new RTImage ("tick-hollow-small.png");
+    igEdited[0] = new RTImage ("tick-hollow-small.png");
+    iEdited[1] = new RTImage ("tick-small.png");
+    igEdited[1] = new RTImage ("tick-small.png");
 
     for (int i = 0; i < 2; i++) {
         iEdited[i]->show ();

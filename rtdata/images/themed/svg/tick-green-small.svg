@@ -18,7 +18,7 @@
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
    inkscape:version="0.92.2 2405546, 2018-03-11"
-   sodipodi:docname="tick-small.svg">
+   sodipodi:docname="tick-green-small.svg">
   <sodipodi:namedview
      id="base"
      pagecolor="#E0E1E2"
@@ -27,7 +27,7 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="50.625"
-     inkscape:cx="8"
+     inkscape:cx="5.1160494"
      inkscape:cy="8"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -63,7 +63,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
         <dc:creator>
           <cc:Agent>
             <dc:title>Maciej Dworak</dc:title>
@@ -105,6 +105,6 @@
        inkscape:connector-curvature="0"
        id="path2996-6"
        d="m 3.3333326,14.833333 2.3333332,2.333334 6.9999992,-7 L 15,12.5 5.6666658,21.833333 0.9999997,17.166667 Z"
-       style="opacity:1;fill:#008000;fill-opacity:1;stroke:none;stroke-width:2.30911016" />
+       style="opacity:0.7;fill:#008000;fill-opacity:1;stroke:none;stroke-width:2.30911016" />
   </g>
 </svg>
