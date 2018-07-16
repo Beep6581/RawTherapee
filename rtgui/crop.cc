@@ -128,7 +128,7 @@ Crop::Crop():
     pack_start (*hb2, Gtk::PACK_SHRINK, 4);
 
     selectCrop = Gtk::manage (new Gtk::Button (M("TP_CROP_SELECTCROP")));
-    selectCrop->set_image (*Gtk::manage (new RTImage ("crop.png")));
+    selectCrop->set_image (*Gtk::manage (new RTImage ("crop-small.png")));
 
     pack_start (*selectCrop, Gtk::PACK_SHRINK, 2);
 

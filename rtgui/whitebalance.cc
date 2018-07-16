@@ -303,14 +303,14 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
 
     pack_start (*spotbox, Gtk::PACK_SHRINK, 0);
 
-    Gtk::Image* itempL =  Gtk::manage (new RTImage ("circle-blue.png"));
-    Gtk::Image* itempR =  Gtk::manage (new RTImage ("circle-yellow.png"));
-    Gtk::Image* igreenL = Gtk::manage (new RTImage ("circle-magenta.png"));
-    Gtk::Image* igreenR = Gtk::manage (new RTImage ("circle-green.png"));
-    Gtk::Image* iblueredL = Gtk::manage (new RTImage ("circle-blue.png"));
-    Gtk::Image* iblueredR = Gtk::manage (new RTImage ("circle-red.png"));
-    Gtk::Image* itempbiasL =  Gtk::manage (new RTImage ("circle-blue.png"));
-    Gtk::Image* itempbiasR =  Gtk::manage (new RTImage ("circle-yellow.png"));
+    Gtk::Image* itempL =  Gtk::manage (new RTImage ("circle-blue-small.png"));
+    Gtk::Image* itempR =  Gtk::manage (new RTImage ("circle-yellow-small.png"));
+    Gtk::Image* igreenL = Gtk::manage (new RTImage ("circle-magenta-small.png"));
+    Gtk::Image* igreenR = Gtk::manage (new RTImage ("circle-green-small.png"));
+    Gtk::Image* iblueredL = Gtk::manage (new RTImage ("circle-blue-small.png"));
+    Gtk::Image* iblueredR = Gtk::manage (new RTImage ("circle-red-small.png"));
+    Gtk::Image* itempbiasL =  Gtk::manage (new RTImage ("circle-blue-small.png"));
+    Gtk::Image* itempbiasR =  Gtk::manage (new RTImage ("circle-yellow-small.png"));
 
     temp = Gtk::manage (new Adjuster (M("TP_WBALANCE_TEMPERATURE"), MINTEMP, MAXTEMP, 5, CENTERTEMP, itempL, itempR, &wbSlider2Temp, &wbTemp2Slider));
     green = Gtk::manage (new Adjuster (M("TP_WBALANCE_GREEN"), MINGREEN, MAXGREEN, 0.001, 1.0, igreenL, igreenR));

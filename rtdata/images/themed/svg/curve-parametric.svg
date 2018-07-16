@@ -27,7 +27,7 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="33.833333"
-     inkscape:cx="12"
+     inkscape:cx="7.684729"
      inkscape:cy="12"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -63,7 +63,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
         <dc:creator>
           <cc:Agent>
             <dc:title>Maciej Dworak</dc:title>
@@ -122,7 +122,7 @@
        x="14"
        y="15" />
     <path
-       style="opacity:0.7;fill:none;fill-rule:evenodd;stroke:#2a7fff;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:0.7;fill:none;fill-rule:evenodd;stroke:#2a7fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 22.029557,1.9704433 C 11.97916,6.1566867 5.9385193,13.282258 2.0295567,21.970443"
        id="path4163"
        inkscape:connector-curvature="0"

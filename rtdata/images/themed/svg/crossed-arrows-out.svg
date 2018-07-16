@@ -26,9 +26,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="23.864854"
-     inkscape:cx="11.228587"
-     inkscape:cy="15.516233"
+     inkscape:zoom="34.25"
+     inkscape:cx="12"
+     inkscape:cy="12"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -75,7 +75,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
         <dc:creator>
           <cc:Agent>
             <dc:title>Maciej Dworak</dc:title>
@@ -112,23 +112,23 @@
      inkscape:groupmode="layer"
      inkscape:label="Layer 1">
     <path
-       style="display:inline;opacity:0.7;fill:#2a7fff;fill-opacity:1;stroke:none;stroke-width:0.0348262"
-       d="m 22,2 -5.788798,0.8269698 4.961823,4.9618237 z"
+       style="display:inline;opacity:0.9;fill:#2a7fff;fill-opacity:1;stroke:none;stroke-width:0.0348262"
+       d="M 20.999798,3.0002065 15.211,3.8271763 20.172823,8.789 Z"
        id="path2876"
        inkscape:connector-curvature="0" />
     <path
-       style="display:inline;opacity:0.7;fill:#2a7fff;fill-opacity:1;stroke:none;stroke-width:0.0348262"
-       d="M 7.7887919,2.8269724 2,2 2.8269686,7.7887956 Z"
+       style="display:inline;opacity:0.9;fill:#2a7fff;fill-opacity:1;stroke:none;stroke-width:0.0348262"
+       d="M 8.7887919,3.8271768 3,3.0002044 3.8269686,8.789 Z"
        id="path2866"
        inkscape:connector-curvature="0" />
     <path
-       style="display:inline;opacity:0.7;fill:#2a7fff;fill-opacity:1;stroke:none;stroke-width:0.0348262"
-       d="M 21.173025,16.211206 16.211202,21.173029 22,22 Z"
+       style="display:inline;opacity:0.9;fill:#2a7fff;fill-opacity:1;stroke:none;stroke-width:0.0348262"
+       d="M 20.172823,15.211206 15.211,20.173029 20.999798,21 Z"
        id="path2864"
        inkscape:connector-curvature="0" />
     <path
-       style="display:inline;opacity:0.7;fill:#2a7fff;fill-opacity:1;stroke:none;stroke-width:0.0348262"
-       d="M 2.8269698,16.211202 2,22 7.7887931,21.173025 Z"
+       style="display:inline;opacity:0.9;fill:#2a7fff;fill-opacity:1;stroke:none;stroke-width:0.0348262"
+       d="M 3.8269698,15.211202 3,21 8.7887931,20.173025 Z"
        id="path2893"
        inkscape:connector-curvature="0" />
     <path

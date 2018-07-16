@@ -45,7 +45,7 @@ colRef="#2a7fff"
 
 # Define theme names, and for each theme the color which will replace colorRef:
 declare -A themes
-themes=( ["dark"]="#BBBBBB" ["light"]="#252525" )
+themes=( ["dark"]="#CCCCCC" ["light"]="#252525" )
 
 # Optionally use pngquant to compress resulting PNGs:
 doCompress="false"

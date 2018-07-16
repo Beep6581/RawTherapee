@@ -30,7 +30,7 @@ LensGeometry::LensGeometry () : FoldableToolPanel(this, "lensgeom", M("TP_LENSGE
     pack_start (*fill);
 
     autoCrop = Gtk::manage (new Gtk::Button (M("TP_LENSGEOM_AUTOCROP")));
-    autoCrop->set_image (*Gtk::manage (new RTImage ("crop-auto.png")));
+    autoCrop->set_image (*Gtk::manage (new RTImage ("crop-auto-small.png")));
     pack_start (*autoCrop, Gtk::PACK_SHRINK, 2);
 
     packBox = Gtk::manage (new ToolParamBlock ());

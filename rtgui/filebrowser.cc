@@ -203,8 +203,8 @@ FileBrowser::FileBrowser () :
      ***********************/
 
     // Same image arrays in filecatalog.cc
-    std::array<std::string, 6> clabelActiveIcons = {"circle-empty-gray.png", "circle-red.png", "circle-yellow.png", "circle-green.png", "circle-blue.png", "circle-purple.png"};
-    std::array<std::string, 6> clabelInactiveIcons = {"circle-empty-darkgray.png", "circle-empty-red.png", "circle-empty-yellow.png", "circle-empty-green.png", "circle-empty-blue.png", "circle-empty-purple.png"};
+    std::array<std::string, 6> clabelActiveIcons = {"circle-empty-gray-small.png", "circle-red-small.png", "circle-yellow-small.png", "circle-green-small.png", "circle-blue-small.png", "circle-purple-small.png"};
+    std::array<std::string, 6> clabelInactiveIcons = {"circle-empty-darkgray-small.png", "circle-empty-red-small.png", "circle-empty-yellow-small.png", "circle-empty-green-small.png", "circle-empty-blue-small.png", "circle-empty-purple-small.png"};
 
     if (options.menuGroupLabel) {
         pmenu->attach (*Gtk::manage(menuLabel = new Gtk::MenuItem (M("FILEBROWSER_POPUPCOLORLABEL"))), 0, 1, p, p + 1);

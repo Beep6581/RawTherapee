@@ -139,7 +139,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     iVBox->pack_start (*dcpFrame);
 
     saveRef = Gtk::manage (new Gtk::Button (M("TP_ICM_SAVEREFERENCE")));
-    saveRef->set_image (*Gtk::manage (new RTImage ("save.png")));
+    saveRef->set_image (*Gtk::manage (new RTImage ("save-small.png")));
     saveRef->set_alignment (0.5f, 0.5f);
     saveRef->set_tooltip_markup (M("TP_ICM_SAVEREFERENCE_TOOLTIP"));
     iVBox->pack_start (*saveRef, Gtk::PACK_SHRINK);

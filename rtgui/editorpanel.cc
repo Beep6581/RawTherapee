@@ -533,8 +533,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     beforeAfter->set_relief (Gtk::RELIEF_NONE);
     beforeAfter->set_tooltip_markup (M ("MAIN_TOOLTIP_TOGGLE"));
 
-    iBeforeLockON = new RTImage ("padlock-locked.png");
-    iBeforeLockOFF = new RTImage ("padlock-unlocked.png");
+    iBeforeLockON = new RTImage ("padlock-locked-small.png");
+    iBeforeLockOFF = new RTImage ("padlock-unlocked-small.png");
 
     Gtk::VSeparator* vsept = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vsepz = Gtk::manage (new Gtk::VSeparator ());
