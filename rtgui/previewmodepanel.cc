@@ -25,7 +25,7 @@ PreviewModePanel::PreviewModePanel (ImageArea* ia) : imageArea(ia)
 {
 
     iR  = new RTImage ("square-toggle-red-on.png");
-    iG  = new RTImage ("square-toggle-green-off.png");
+    iG  = new RTImage ("square-toggle-green-on.png");
     iB  = new RTImage ("square-toggle-blue-on.png");
     iL  = new RTImage ("square-toggle-luminosity-on.png");
     iBC0 = new RTImage ("square-toggle-theme-on.png");
@@ -43,41 +43,49 @@ PreviewModePanel::PreviewModePanel (ImageArea* ia) : imageArea(ia)
     igBC3 = new RTImage ("square-toggle-gray-off.png");
 
     backColor0 = Gtk::manage (new Gtk::ToggleButton ());
+    backColor0->get_style_context()->add_class("narrowbutton");
     backColor0->set_relief(Gtk::RELIEF_NONE);
     backColor0->set_tooltip_markup (M("MAIN_TOOLTIP_BACKCOLOR0"));
     backColor0->set_image(options.bgcolor == 0 ? *iBC0 : *igBC0);
 
     backColor1 = Gtk::manage (new Gtk::ToggleButton ());
+    backColor1->get_style_context()->add_class("narrowbutton");
     backColor1->set_relief(Gtk::RELIEF_NONE);
     backColor1->set_tooltip_markup (M("MAIN_TOOLTIP_BACKCOLOR1"));
     backColor1->set_image(options.bgcolor == 1 ? *iBC1 : *igBC1);
 
     backColor3 = Gtk::manage (new Gtk::ToggleButton ());
+    backColor3->get_style_context()->add_class("narrowbutton");
     backColor3->set_relief(Gtk::RELIEF_NONE);
     backColor3->set_tooltip_markup (M("MAIN_TOOLTIP_BACKCOLOR3"));
     backColor3->set_image(options.bgcolor == 3 ? *iBC3 : *igBC3);
 
     backColor2 = Gtk::manage (new Gtk::ToggleButton ());
+    backColor2->get_style_context()->add_class("narrowbutton");
     backColor2->set_relief(Gtk::RELIEF_NONE);
     backColor2->set_tooltip_markup (M("MAIN_TOOLTIP_BACKCOLOR2"));
     backColor2->set_image(options.bgcolor == 2 ? *iBC2 : *igBC2);
 
     previewR = Gtk::manage (new Gtk::ToggleButton ());
+    previewR->get_style_context()->add_class("narrowbutton");
     previewR->set_relief(Gtk::RELIEF_NONE);
     previewR->set_tooltip_markup (M("MAIN_TOOLTIP_PREVIEWR"));
     previewR->set_image(*igR);
 
     previewG = Gtk::manage (new Gtk::ToggleButton ());
+    previewG->get_style_context()->add_class("narrowbutton");
     previewG->set_relief(Gtk::RELIEF_NONE);
     previewG->set_tooltip_markup (M("MAIN_TOOLTIP_PREVIEWG"));
     previewG->set_image(*igG);
 
     previewB = Gtk::manage (new Gtk::ToggleButton ());
+    previewB->get_style_context()->add_class("narrowbutton");
     previewB->set_relief(Gtk::RELIEF_NONE);
     previewB->set_tooltip_markup (M("MAIN_TOOLTIP_PREVIEWB"));
     previewB->set_image(*igB);
 
     previewL = Gtk::manage (new Gtk::ToggleButton ());
+    previewL->get_style_context()->add_class("narrowbutton");
     previewL->set_relief(Gtk::RELIEF_NONE);
     previewL->set_tooltip_markup (M("MAIN_TOOLTIP_PREVIEWL"));
     previewL->set_image(*igL);

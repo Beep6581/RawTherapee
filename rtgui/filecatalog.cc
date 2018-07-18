@@ -163,11 +163,14 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 
     fltrVbox1 = Gtk::manage (new Gtk::VBox());
     fltrRankbox = Gtk::manage (new Gtk::HBox());
+    fltrRankbox->get_style_context()->add_class("smallbuttonbox");
     fltrLabelbox = Gtk::manage (new Gtk::HBox());
+    fltrLabelbox->get_style_context()->add_class("smallbuttonbox");
 
     iUnRanked = new RTImage ("star-gold-hollow-small.png");
     igUnRanked = new RTImage ("star-hollow-small.png");
     bUnRanked = Gtk::manage( new Gtk::ToggleButton () );
+    bUnRanked->get_style_context()->add_class("smallbutton");
     bUnRanked->set_active (false);
     bUnRanked->set_image (*igUnRanked);
     bUnRanked->set_relief (Gtk::RELIEF_NONE);
@@ -182,6 +185,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
         iranked[i]->show ();
         igranked[i]->show ();
         bRank[i] = Gtk::manage( new Gtk::ToggleButton () );
+        bRank[i]->get_style_context()->add_class("smallbutton");
         bRank[i]->set_image (*igranked[i]);
         bRank[i]->set_relief (Gtk::RELIEF_NONE);
         fltrRankbox->pack_start (*bRank[i], Gtk::PACK_SHRINK);
@@ -196,6 +200,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     iUnCLabeled = new RTImage(clabelActiveIcons[0]);
     igUnCLabeled = new RTImage(clabelInactiveIcons[0]);
     bUnCLabeled = Gtk::manage(new Gtk::ToggleButton());
+    bUnCLabeled->get_style_context()->add_class("smallbutton");
     bUnCLabeled->set_active(false);
     bUnCLabeled->set_image(*igUnCLabeled);
     bUnCLabeled->set_relief(Gtk::RELIEF_NONE);
@@ -210,6 +215,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
         iCLabeled[i]->show();
         igCLabeled[i]->show();
         bCLabel[i] = Gtk::manage(new Gtk::ToggleButton());
+        bCLabel[i]->get_style_context()->add_class("smallbutton");
         bCLabel[i]->set_image(*igCLabeled[i]);
         bCLabel[i]->set_relief(Gtk::RELIEF_NONE);
         fltrLabelbox->pack_start(*bCLabel[i], Gtk::PACK_SHRINK);
@@ -237,7 +243,9 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 
     fltrVbox2 = Gtk::manage (new Gtk::VBox());
     fltrEditedBox = Gtk::manage (new Gtk::HBox());
+    fltrEditedBox->get_style_context()->add_class("smallbuttonbox");
     fltrRecentlySavedBox = Gtk::manage (new Gtk::HBox());
+    fltrRecentlySavedBox->get_style_context()->add_class("smallbuttonbox");
 
     // bEdited
     // TODO The "g" variant was the more transparent variant of the icon, used
@@ -251,6 +259,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     for (int i = 0; i < 2; i++) {
         iEdited[i]->show ();
         bEdited[i] = Gtk::manage(new Gtk::ToggleButton ());
+        bEdited[i]->get_style_context()->add_class("smallbutton");
         bEdited[i]->set_active (false);
         bEdited[i]->set_image (*igEdited[i]);
         bEdited[i]->set_relief (Gtk::RELIEF_NONE);
@@ -275,6 +284,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     for (int i = 0; i < 2; i++) {
         iRecentlySaved[i]->show ();
         bRecentlySaved[i] = Gtk::manage(new Gtk::ToggleButton ());
+        bRecentlySaved[i]->get_style_context()->add_class("smallbutton");
         bRecentlySaved[i]->set_active (false);
         bRecentlySaved[i]->set_image (*igRecentlySaved[i]);
         bRecentlySaved[i]->set_relief (Gtk::RELIEF_NONE);

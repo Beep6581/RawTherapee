@@ -13,6 +13,7 @@ Gradient::Gradient () : FoldableToolPanel(this, "gradient", M("TP_GRADIENT_LABEL
 
     editHBox = Gtk::manage (new Gtk::HBox());
     edit = Gtk::manage (new Gtk::ToggleButton());
+    edit->get_style_context()->add_class("independent");
     edit->add (*Gtk::manage (new RTImage ("crosshair-adjust.png")));
     edit->set_tooltip_text(M("EDIT_OBJECT_TOOLTIP"));
     editConn = edit->signal_toggled().connect( sigc::mem_fun(*this, &Gradient::editToggled) );

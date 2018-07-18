@@ -47,6 +47,7 @@ PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label)
     buttonGroup = Gtk::manage( new Gtk::Grid());
     setExpandAlignProperties(buttonGroup, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     buttonGroup->attach(*button, 0, 0, 1, 1);
+    buttonGroup->get_style_context()->add_class("image-combo");
 }
 
 PopUpCommon::~PopUpCommon ()

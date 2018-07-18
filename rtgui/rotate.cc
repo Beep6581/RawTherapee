@@ -39,6 +39,7 @@ Rotate::Rotate () : FoldableToolPanel(this, "rotate", M("TP_ROTATE_LABEL"))
 
     selectStraight = Gtk::manage (new Gtk::Button (M("TP_ROTATE_SELECTLINE")));
     selectStraight->set_image (*Gtk::manage (new RTImage ("rotate-straighten-small.png")));
+    selectStraight->get_style_context()->add_class("independent");
     pack_start (*selectStraight, Gtk::PACK_SHRINK, 2);
 
     selectStraight->signal_pressed().connect( sigc::mem_fun(*this, &Rotate::selectStraightPressed) );
