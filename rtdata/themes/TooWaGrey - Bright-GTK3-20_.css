@@ -25,7 +25,7 @@
 
 /*** Change me *** rgb(red,green,blue) *** allowed values from 0 to 255 for each color ***/
 
-@define-color accent-color rgb(43,119,196);              /*** Active color for Lists, Menu, Borders ... * Default: rgb(35,99,166) ***/
+@define-color accent-color rgb(112,112,112);              /*** Active color for Lists, Menu, Borders ... * Default: rgb(35,99,166) ***/
 @define-color text-hl-color rgb(255,255,255);           /*** Active text color * Default: rgb(210,210,210) ***/
 
 @define-color bg-highlighted-text-color rgb(43,119,196); /*** Highlighted text color background* Default: rgb(35,99,166) ***/
@@ -36,8 +36,8 @@
 @define-color accent-color2 rgb(43,119,196);             /*** Scale, Progressbar, Scrollbar, Tabs * Default: rgb(35,99,166) ***/
 @define-color accent-color4 rgb(135,135,135);           /*** Slider knob * Default: rgb(115,115,115) ***/
 
-@define-color accent-color3 rgb(43,119,196);             /*** Selected thumbnail background color * Default: rgb(35,99,166) ***/
-@define-color text-hl-color3 rgb(255,255,255);          /*** Selected thumbnail text color * Default: rgb(210,210,210) ***/
+@define-color accent-color3 rgb(55,55,55);             /*** Selected thumbnail background color * Default: rgb(35,99,166) ***/
+@define-color text-hl-color3 rgb(210,210,210);          /*** Selected thumbnail text color * Default: rgb(210,210,210) ***/
 
 /*** Change me end *****************************************************************************/
 
@@ -58,15 +58,15 @@
 @define-color text-color rgb(210,210,210);
 @define-color text-tbEntry rgb(230,230,230);
 @define-color border-color rgba(255,255,255,.35);
-@define-color bg-list-hover rgb(68,68,68);
+@define-color bg-list-hover rgb(75,75,75);
 @define-color bg-scale-entry rgba(0,0,0,.14);
-@define-color bg-button-border rgba(0,0,0,.5);
+@define-color bg-button-border rgba(0,0,0,.45);
 @define-color bg-entry-border rgba(0,0,0,.40);
 @define-color view-grid-border rgba(255,255,255,0.25);
 @define-color headline-big rgb(210,210,210);
 @define-color headline-hl rgb(255,255,255);
 @define-color headline-frame rgb(245,245,245);
 /*** New Color Variable v2.53 ************************************************************************/
-@define-color fg-disabled rgb(145,145,145);
+@define-color fg-disabled rgb(160,160,160);
 @define-color bg-tb-spinbutton shade(@bg-grey, 1.3);
 /***********************************************************************************************/
