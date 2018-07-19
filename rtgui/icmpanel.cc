@@ -139,7 +139,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     iVBox->pack_start (*dcpFrame);
 
     saveRef = Gtk::manage (new Gtk::Button (M("TP_ICM_SAVEREFERENCE")));
-    saveRef->set_image (*Gtk::manage (new RTImage ("gtk-save-large.png")));
+    saveRef->set_image (*Gtk::manage (new RTImage ("save-small.png")));
     saveRef->set_alignment (0.5f, 0.5f);
     saveRef->set_tooltip_markup (M("TP_ICM_SAVEREFERENCE_TOOLTIP"));
     iVBox->pack_start (*saveRef, Gtk::PACK_SHRINK);
@@ -1060,7 +1060,7 @@ void ICMPanel::setBatchMode (bool batchMode)
     iVBox->reorder_child (*iunchanged, 5);
     removeIfThere (this, saveRef);
     onames->append (M("GENERAL_UNCHANGED"));
-    ointent->addEntry("unchanged-22.png", M("GENERAL_UNCHANGED"));
+    ointent->addEntry("template-24.png", M("GENERAL_UNCHANGED"));
     ointent->show();
     wnames->append (M("GENERAL_UNCHANGED"));
     wgamma->append (M("GENERAL_UNCHANGED"));

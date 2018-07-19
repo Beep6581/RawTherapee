@@ -24,12 +24,12 @@
 IndicateClippedPanel::IndicateClippedPanel (ImageArea* ia) : imageArea(ia)
 {
 
-    iFon  = new RTImage ("previewmodeF-focusScreen-on.png");
-    iFoff = new RTImage ("previewmodeF-focusScreen-off.png");
+    iFon  = new RTImage ("focusscreen-on.png");
+    iFoff = new RTImage ("focusscreen-off.png");
 
     // for previewSharpMask, needs to be replaced with different icons
-    iSon  = new RTImage ("previewmodeF-focusScreen-on.png");
-    iSoff = new RTImage ("previewmodeF-focusScreen-off.png");
+    iSon  = new RTImage ("contrastmask-on.png");
+    iSoff = new RTImage ("contrastmask-off.png");
 
     previewFocusMask = Gtk::manage (new Gtk::ToggleButton ());
     previewFocusMask->set_relief(Gtk::RELIEF_NONE);
@@ -45,7 +45,7 @@ IndicateClippedPanel::IndicateClippedPanel (ImageArea* ia) : imageArea(ia)
 
     indClippedH = Gtk::manage (new Gtk::ToggleButton ());
     indClippedH->set_relief(Gtk::RELIEF_NONE);
-    indClippedH->add (*Gtk::manage (new RTImage ("warnhl.png")));
+    indClippedH->add (*Gtk::manage (new RTImage ("warning-highlights.png")));
     tt = Glib::ustring::compose("%1\n%2 = %3", M("MAIN_TOOLTIP_INDCLIPPEDH"), M("MAIN_TOOLTIP_THRESHOLD"), options.highlightThreshold);
 
     if (tt.find("&lt;") == Glib::ustring::npos && tt.find("&gt;") == Glib::ustring::npos) {
@@ -56,7 +56,7 @@ IndicateClippedPanel::IndicateClippedPanel (ImageArea* ia) : imageArea(ia)
 
     indClippedS = Gtk::manage (new Gtk::ToggleButton ());
     indClippedS->set_relief(Gtk::RELIEF_NONE);
-    indClippedS->add (*Gtk::manage (new RTImage ("warnsh.png")));
+    indClippedS->add (*Gtk::manage (new RTImage ("warning-shadows.png")));
     tt = Glib::ustring::compose("%1\n%2 = %3", M("MAIN_TOOLTIP_INDCLIPPEDS"), M("MAIN_TOOLTIP_THRESHOLD"), options.shadowThreshold);
 
     if (tt.find("&lt;") == Glib::ustring::npos && tt.find("&gt;") == Glib::ustring::npos) {

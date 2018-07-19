@@ -51,25 +51,25 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
     cAdd = Gdk::Cursor::create (display, Gdk::PLUS);
     cWait = Gdk::Cursor::create (display, Gdk::CLOCK);
 
-    Glib::RefPtr<Gdk::Pixbuf> hand = RTImage::createFromFile ("cross.png");
-    Glib::RefPtr<Gdk::Pixbuf> close_hand = RTImage::createFromFile ("closedhand.png");
-    Glib::RefPtr<Gdk::Pixbuf> wbpick = RTImage::createFromFile ("gtk-color-picker-small.png");
-    Glib::RefPtr<Gdk::Pixbuf> cpick = RTImage::createFromFile ("gtk-color-picker-add.png");
+    Glib::RefPtr<Gdk::Pixbuf> hand = RTImage::createFromFile ("crosshair.png");
+    Glib::RefPtr<Gdk::Pixbuf> close_hand = RTImage::createFromFile ("hand-closed.png");
+    Glib::RefPtr<Gdk::Pixbuf> wbpick = RTImage::createFromFile ("color-picker.png");
+    Glib::RefPtr<Gdk::Pixbuf> cpick = RTImage::createFromFile ("color-picker-add.png");
     Glib::RefPtr<Gdk::Pixbuf> empty = RTImage::createFromFile ("empty.png");
-    Glib::RefPtr<Gdk::Pixbuf> move2D = RTImage::createFromFile ("move-2D.png");
-    Glib::RefPtr<Gdk::Pixbuf> move1DH = RTImage::createFromFile ("move-1D-h.png");
-    Glib::RefPtr<Gdk::Pixbuf> move1DV = RTImage::createFromFile ("move-1D-v.png");
+    Glib::RefPtr<Gdk::Pixbuf> move2D = RTImage::createFromFile ("node-move-xy.png");
+    Glib::RefPtr<Gdk::Pixbuf> move1DH = RTImage::createFromFile ("node-move-x.png");
+    Glib::RefPtr<Gdk::Pixbuf> move1DV = RTImage::createFromFile ("node-move-y.png");
     Glib::RefPtr<Gdk::Pixbuf> moveRotate = RTImage::createFromFile ("move-rotate.png");
 
-    cHand = hand ? Gdk::Cursor::create (cAdd->get_display(), hand, 10, 10) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
-    cClosedHand = close_hand ? Gdk::Cursor::create (cAdd->get_display(), close_hand, 10, 10) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
-    cWB = wbpick ? Gdk::Cursor::create (cAdd->get_display(), wbpick, 3, 15) : Gdk::Cursor::create (cAdd->get_display(), Gdk::ARROW);
-    cAddPicker = cpick ? Gdk::Cursor::create (cAdd->get_display(), cpick, 3, 18) : Gdk::Cursor::create (cAdd->get_display(), Gdk::ARROW);
+    cHand = hand ? Gdk::Cursor::create (cAdd->get_display(), hand, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
+    cClosedHand = close_hand ? Gdk::Cursor::create (cAdd->get_display(), close_hand, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
+    cWB = wbpick ? Gdk::Cursor::create (cAdd->get_display(), wbpick, 4, 21) : Gdk::Cursor::create (cAdd->get_display(), Gdk::ARROW);
+    cAddPicker = cpick ? Gdk::Cursor::create (cAdd->get_display(), cpick, 4, 21) : Gdk::Cursor::create (cAdd->get_display(), Gdk::ARROW);
     cHidden = empty ? Gdk::Cursor::create (cAdd->get_display(), empty, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::FLEUR);
-    cMove2D = move2D ?  Gdk::Cursor::create (cAdd->get_display(), move2D, 11, 11) : Gdk::Cursor::create (cAdd->get_display(), Gdk::FLEUR);
-    cMove1DH = move1DH ?  Gdk::Cursor::create (cAdd->get_display(), move1DH, 11, 11) : Gdk::Cursor::create (cAdd->get_display(), Gdk::FLEUR);
-    cMove1DV = move1DV ?  Gdk::Cursor::create (cAdd->get_display(), move1DV, 11, 11) : Gdk::Cursor::create (cAdd->get_display(), Gdk::FLEUR);
-    cMoveRotate = moveRotate ?  Gdk::Cursor::create (cAdd->get_display(), moveRotate, 11, 11) : Gdk::Cursor::create (cAdd->get_display(), Gdk::CIRCLE);
+    cMove2D = move2D ?  Gdk::Cursor::create (cAdd->get_display(), move2D, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::FLEUR);
+    cMove1DH = move1DH ?  Gdk::Cursor::create (cAdd->get_display(), move1DH, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::FLEUR);
+    cMove1DV = move1DV ?  Gdk::Cursor::create (cAdd->get_display(), move1DV, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::FLEUR);
+    cMoveRotate = moveRotate ?  Gdk::Cursor::create (cAdd->get_display(), moveRotate, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::CIRCLE);
 
     window = mainWindow;
 }

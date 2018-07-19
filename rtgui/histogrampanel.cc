@@ -65,23 +65,23 @@ HistogramPanel::HistogramPanel ()
         gfxGrid->add (*histogramRGBArea);
     }
 
-    redImage   = new RTImage ("histRed.png");
-    greenImage = new RTImage ("histGreen.png");
-    blueImage  = new RTImage ("histBlue.png");
-    valueImage = new RTImage ("histValue.png");
-    chroImage  = new RTImage ("histChro.png");
-    rawImage   = new RTImage ("histRaw.png");
-    fullImage  = new RTImage ("histFull.png");
-    barImage   = new RTImage ("histBar.png");
+    redImage   = new RTImage ("histogram-red-on-small.png");
+    greenImage = new RTImage ("histogram-green-on-small.png");
+    blueImage  = new RTImage ("histogram-blue-on-small.png");
+    valueImage = new RTImage ("histogram-silver-on-small.png");
+    chroImage  = new RTImage ("histogram-gold-on-small.png");
+    rawImage   = new RTImage ("histogram-bayer-on-small.png");
+    fullImage  = new RTImage ("histogram-mode-linear-small.png");
+    barImage   = new RTImage ("histogram-bar-on-small.png");
 
-    redImage_g   = new RTImage ("histRedg.png");
-    greenImage_g = new RTImage ("histGreeng.png");
-    blueImage_g  = new RTImage ("histBlueg.png");
-    valueImage_g = new RTImage ("histValueg.png");
-    chroImage_g  = new RTImage ("histChrog.png");
-    rawImage_g   = new RTImage ("histRawg.png");
-    fullImage_g  = new RTImage ("histFullg.png");
-    barImage_g   = new RTImage ("histBarg.png");
+    redImage_g   = new RTImage ("histogram-red-off-small.png");
+    greenImage_g = new RTImage ("histogram-green-off-small.png");
+    blueImage_g  = new RTImage ("histogram-blue-off-small.png");
+    valueImage_g = new RTImage ("histogram-silver-off-small.png");
+    chroImage_g  = new RTImage ("histogram-gold-off-small.png");
+    rawImage_g   = new RTImage ("histogram-bayer-off-small.png");
+    fullImage_g  = new RTImage ("histogram-mode-linear-small.png");
+    barImage_g   = new RTImage ("histogram-bar-off-small.png");
 
     showRed   = Gtk::manage (new Gtk::ToggleButton ());
     showGreen = Gtk::manage (new Gtk::ToggleButton ());

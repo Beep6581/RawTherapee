@@ -129,7 +129,7 @@ FilterPanel::FilterPanel () : listener (nullptr)
     // add panel ending
     Gtk::VBox* vboxpe = Gtk::manage (new Gtk::VBox ());
     Gtk::HSeparator* hseptpe = Gtk::manage (new Gtk::HSeparator ());
-    Gtk::Image* peImg = Gtk::manage (new RTImage("PanelEnding.png"));
+    Gtk::Image* peImg = Gtk::manage (new RTImage("ornament1.png"));
     vboxpe->pack_start(*hseptpe, Gtk::PACK_SHRINK, 4);
     vboxpe->pack_start(*peImg);
     pack_start(*vboxpe, Gtk::PACK_SHRINK, 0);
