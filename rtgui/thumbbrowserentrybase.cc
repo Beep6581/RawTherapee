@@ -742,16 +742,19 @@ Glib::ustring ThumbBrowserEntryBase::getToolTip (int x, int y)
         tooltip = buttonSet->getToolTip (x, y);
     }
 
-    // if the fileinfo is not shown anyway, make a tooltip with the info
-    if (withFilename < WFNAME_FULL && inside(x, y) && tooltip.empty()) {
+    // Always show the filename in the tooltip since the filename in the thumbnail could be truncated.
+    // If "Show Exif info" is disabled, also show Exif info in the tooltip.
+    if (inside(x, y) && tooltip.empty()) {
         tooltip = dispname;
 
-        if (options.fbShowDateTime && datetimeline != "") {
-            tooltip += Glib::ustring("\n") + datetimeline;
-        }
+        if (withFilename < WFNAME_FULL) {
+            if (options.fbShowDateTime && datetimeline != "") {
+                tooltip += Glib::ustring("\n") + datetimeline;
+            }
 
-        if (options.fbShowBasicExif && exifline != "") {
-            tooltip += Glib::ustring("\n") + exifline;
+            if (options.fbShowBasicExif && exifline != "") {
+                tooltip += Glib::ustring("\n") + exifline;
+            }
         }
     }
 

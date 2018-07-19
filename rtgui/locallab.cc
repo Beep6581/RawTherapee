@@ -282,7 +282,7 @@ Locallab::Locallab():
 
     editHBox = Gtk::manage(new Gtk::HBox());
     edit = Gtk::manage(new Gtk::ToggleButton());
-    edit->add(*Gtk::manage(new RTImage("editmodehand.png")));
+    edit->add(*Gtk::manage(new RTImage("hand-open.png")));
     edit->set_tooltip_text(M("EDIT_OBJECT_TOOLTIP"));
     editConn = edit->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::editToggled));
     editHBox->pack_start(*edit, Gtk::PACK_SHRINK, 0);
@@ -416,7 +416,7 @@ Locallab::Locallab():
     std::vector<double> defaultCurve4;
     std::vector<double> defaultCurve5;
 
-    irg   = Gtk::manage(new RTImage("Chanmixer-RG.png"));
+    irg   = Gtk::manage(new RTImage("circle-green-red-small.png"));
 
     qualitycurveMethod->append(M("TP_LOCALLAB_CURVNONE"));
     qualitycurveMethod->append(M("TP_LOCALLAB_CURVCURR"));
@@ -510,8 +510,8 @@ Locallab::Locallab():
     shcompr->setAdjusterListener(this);
     sensiex->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
     sensiex->setAdjusterListener(this);
-    Gtk::Image* iblueredL = Gtk::manage(new RTImage("ajd-wb-bluered1.png"));
-    Gtk::Image* iblueredR = Gtk::manage(new RTImage("ajd-wb-bluered2.png"));
+    Gtk::Image* iblueredL = Gtk::manage(new RTImage("circle-blue-small.png"));
+    Gtk::Image* iblueredR = Gtk::manage(new RTImage("circle-orange-small.png"));
 
     warm = Gtk::manage(new Adjuster(M("TP_LOCALLAB_WARM"), -100., 100., 1., 0., iblueredL, iblueredR));
     warm->setAdjusterListener(this);
@@ -766,14 +766,14 @@ Locallab::Locallab():
     noisechrof = Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROFINE"), MINCHRO, MAXCHRO, 1, 0));
     noisechroc = Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROCOARSE"), MINCHRO, MAXCHROCC, 1, 0));
 
-    Gtk::Image* iblueredL1 = Gtk::manage(new RTImage("ajd-wb-bluered1.png"));
-    Gtk::Image* iblueredR1 = Gtk::manage(new RTImage("ajd-wb-bluered2.png"));
+    Gtk::Image* iblueredL1 = Gtk::manage(new RTImage("circle-blue-small.png"));
+    Gtk::Image* iblueredR1 = Gtk::manage(new RTImage("circle-red-small.png"));
 
     adjblur = Gtk::manage(new Adjuster(M("TP_LOCALLAB_ADJ"), -100., 100., 1., 0., iblueredL1, iblueredR1));
     adjblur->setAdjusterListener(this);
 
-    Gtk::Image *ar = Gtk::manage(new RTImage("adj-black.png"));
-    Gtk::Image *al = Gtk::manage(new RTImage("adj-white.png"));
+    Gtk::Image *ar = Gtk::manage(new RTImage("circle-black-small.png"));
+    Gtk::Image *al = Gtk::manage(new RTImage("circle-white-small.png"));
 
     noiselequal = Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELEQUAL"), -2, 10, 1, 7, al, ar));
     noiselequal->setAdjusterListener(this);
@@ -866,7 +866,7 @@ Locallab::Locallab():
     neutrHBox1 = Gtk::manage(new Gtk::HBox());
 
     neutral1 = Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_NEUTRAL")));
-    RTImage *resetImg1 = Gtk::manage(new RTImage("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
+    RTImage *resetImg1 = Gtk::manage(new RTImage("undo-small.png", "redo-small.png"));
     neutral1->set_image(*resetImg1);
     neutral1->set_tooltip_text(M("TP_LOCALLAB_NEUTRAL_TIP"));
     neutralconn1 = neutral1->signal_pressed().connect(sigc::mem_fun(*this, &Locallab::neutral_pressed));
@@ -1084,7 +1084,7 @@ Locallab::Locallab():
     neutrHBox = Gtk::manage(new Gtk::HBox());
 
     neutral = Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_NEUTRAL")));
-    RTImage *resetImg = Gtk::manage(new RTImage("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
+    RTImage *resetImg = Gtk::manage(new RTImage("undo-small.png", "redo-small.png"));
     neutral->set_image(*resetImg);
     neutral->set_tooltip_text(M("TP_LOCALLAB_NEUTRAL_TIP"));
     neutralconn = neutral->signal_pressed().connect(sigc::mem_fun(*this, &Locallab::neutral_pressed));

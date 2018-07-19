@@ -1,11 +1,13 @@
 #pragma once
 
 // This number has to be incremented whenever the PP3 file format is modified or the behaviour of a tool changes
-#define PPVERSION 339
+#define PPVERSION 340
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /*
   Log of version changes
+   340  2018-07-08
+        store whether curve is from histogram matching
    339  2018-07-04
         added allowUpscaling to ResizeParams
    338  2018-06-15

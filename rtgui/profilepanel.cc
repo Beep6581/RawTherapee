@@ -63,20 +63,20 @@ ProfilePanel::ProfilePanel () : storedPProfile(nullptr), lastFilename(""), image
     setExpandAlignProperties(profiles, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
     load = Gtk::manage (new Gtk::Button ());
-    load->add (*Gtk::manage (new RTImage ("gtk-open.png")));
+    load->add (*Gtk::manage (new RTImage ("folder-open.png")));
     load->get_style_context()->add_class("Left");
     load->set_margin_left(2);
     setExpandAlignProperties(load, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     save = Gtk::manage (new Gtk::Button ());
-    save->add (*Gtk::manage (new RTImage ("gtk-save-large.png")));
+    save->add (*Gtk::manage (new RTImage ("save.png")));
     save->get_style_context()->add_class("MiddleH");
     setExpandAlignProperties(save, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     copy = Gtk::manage (new Gtk::Button ());
-    copy->add (*Gtk::manage (new RTImage ("edit-copy.png")));
+    copy->add (*Gtk::manage (new RTImage ("copy.png")));
     copy->get_style_context()->add_class("MiddleH");
     setExpandAlignProperties(copy, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     paste = Gtk::manage (new Gtk::Button ());
-    paste->add (*Gtk::manage (new RTImage ("edit-paste.png")));
+    paste->add (*Gtk::manage (new RTImage ("paste.png")));
     paste->get_style_context()->add_class("Right");
     setExpandAlignProperties(paste, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
@@ -797,7 +797,7 @@ void ProfilePanel::initProfile (const Glib::ustring& profileFullPath, ProcParams
 
         if (tpc) {
             tpc->setDefaults   (lastsaved->pparams);
-            tpc->profileChange (lastsaved, EvPhotoLoaded, profiles->getSelectedEntry()->label);
+            tpc->profileChange (lastsaved, EvPhotoLoaded, profiles->getSelectedEntry()->label, nullptr, true);
         }
     } else {
         if (pse) {

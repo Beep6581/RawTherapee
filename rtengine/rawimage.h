@@ -170,10 +170,22 @@ public:
     {
         return top_margin;
     }
+
+    int get_rawwidth() const
+    {
+        return raw_width;
+    }
+
     int get_FujiWidth() const
     {
         return fuji_width;
     }
+
+    float const * get_FloatRawImage() const
+    {
+        return float_raw_image;
+    }
+
     eSensorType getSensorType();
 
     void getRgbCam(float rgbcam[3][4]);
@@ -313,6 +325,11 @@ public:
     bool isXtrans() const
     {
         return filters == 9;
+    }
+
+    bool isFloat() const
+    {
+        return float_raw_image;
     }
 
 public:

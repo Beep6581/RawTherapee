@@ -26,10 +26,10 @@ using namespace rtengine::procparams;
 CACorrection::CACorrection () : FoldableToolPanel(this, "cacorrection", M("TP_CACORRECTION_LABEL"))
 {
 
-    Gtk::Image* icaredL =   Gtk::manage (new RTImage ("ajd-ca-red1.png"));
-    Gtk::Image* icaredR =   Gtk::manage (new RTImage ("ajd-ca-red2.png"));
-    Gtk::Image* icablueL =  Gtk::manage (new RTImage ("ajd-ca-blue1.png"));
-    Gtk::Image* icablueR =  Gtk::manage (new RTImage ("ajd-ca-blue2.png"));
+    Gtk::Image* icaredL =   Gtk::manage (new RTImage ("circle-red-cyan-small.png"));
+    Gtk::Image* icaredR =   Gtk::manage (new RTImage ("circle-cyan-red-small.png"));
+    Gtk::Image* icablueL =  Gtk::manage (new RTImage ("circle-blue-yellow-small.png"));
+    Gtk::Image* icablueR =  Gtk::manage (new RTImage ("circle-yellow-blue-small.png"));
 
     red = Gtk::manage (new Adjuster (M("TP_CACORRECTION_RED"), -0.005, 0.005, 0.0001, 0, icaredL, icaredR));
     red->setAdjusterListener (this);

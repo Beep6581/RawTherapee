@@ -26,8 +26,8 @@ ToolBar::ToolBar () : showColPickers(true), listener (nullptr), pickerListener(n
 
     editingMode = false;
 
-    handimg.reset(new RTImage("openhand.png"));
-    editinghandimg.reset(new RTImage("editmodehand.png"));
+    handimg.reset(new RTImage("hand-open.png"));
+    editinghandimg.reset(new RTImage("crosshair-adjust.png"));
 
     handTool = Gtk::manage (new Gtk::ToggleButton ());
     handTool->add (*handimg);
@@ -38,7 +38,7 @@ ToolBar::ToolBar () : showColPickers(true), listener (nullptr), pickerListener(n
     pack_start (*handTool);
 
     wbTool = Gtk::manage (new Gtk::ToggleButton ());
-    Gtk::Image* wbimg = Gtk::manage (new RTImage ("gtk-color-picker.png"));
+    Gtk::Image* wbimg = Gtk::manage (new RTImage ("color-picker.png"));
     wbTool->add (*wbimg);
     wbimg->show ();
     wbTool->set_relief(Gtk::RELIEF_NONE);
@@ -46,8 +46,8 @@ ToolBar::ToolBar () : showColPickers(true), listener (nullptr), pickerListener(n
 
     pack_start (*wbTool);
 
-    showcolpickersimg.reset(new RTImage("colorPickers-show.png"));
-    hidecolpickersimg.reset(new RTImage("colorPickers-hide.png"));
+    showcolpickersimg.reset(new RTImage("color-picker-show.png"));
+    hidecolpickersimg.reset(new RTImage("color-picker-hide.png"));
 
     colPickerTool = Gtk::manage (new Gtk::ToggleButton ());
     colPickerTool->add (*showcolpickersimg);
@@ -67,7 +67,7 @@ ToolBar::ToolBar () : showColPickers(true), listener (nullptr), pickerListener(n
     pack_start (*cropTool);
 
     straTool = Gtk::manage (new Gtk::ToggleButton ());
-    Gtk::Image* straimg = Gtk::manage (new RTImage ("straighten.png"));
+    Gtk::Image* straimg = Gtk::manage (new RTImage ("rotate-straighten.png"));
     straTool->add (*straimg);
     straimg->show ();
     straTool->set_relief(Gtk::RELIEF_NONE);
