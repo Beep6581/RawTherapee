@@ -935,6 +935,7 @@ PARTIALPASTE_PREPROCESS_DEADPIXFILT;Dead pixel filter
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
 PARTIALPASTE_PREPROCESS_HOTPIXFILT;Hot pixel filter
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
+PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 PARTIALPASTE_PRSHARPENING;Post-resize sharpening
 PARTIALPASTE_RAWCACORR_AUTO;CA auto-correction
 PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
@@ -942,6 +943,7 @@ PARTIALPASTE_RAWEXPOS_BLACK;Black levels
 PARTIALPASTE_RAWEXPOS_LINEAR;White point correction
 PARTIALPASTE_RAWEXPOS_PRESER;Highlight preservation
 PARTIALPASTE_RAWGROUP;Raw Settings
+PARTIALPASTE_RAW_BORDER;Raw border
 PARTIALPASTE_RAW_DCBENHANCE;DCB enhancement
 PARTIALPASTE_RAW_DCBITERATIONS;DCB iterations
 PARTIALPASTE_RAW_DMETHOD;Demosaic method
@@ -1835,8 +1837,8 @@ TP_RAW_SENSOR_BAYER_LABEL;Sensor with Bayer Matrix
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.\n+fast gives less artifacts in flat areas
 TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix
 TP_RAW_VNG4;VNG4
-TP_RESIZE_APPLIESTO;Applies to:
 TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
+TP_RESIZE_APPLIESTO;Applies to:
 TP_RESIZE_CROPPEDAREA;Cropped Area
 TP_RESIZE_FITBOX;Bounding Box
 TP_RESIZE_FULLIMAGE;Full Image
@@ -2207,7 +2209,7 @@ TP_WBALANCE_SOLUX35;Solux 3500K
 TP_WBALANCE_SOLUX41;Solux 4100K
 TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
 TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
-TP_WBALANCE_SPOTWB;Spot WB
+TP_WBALANCE_SPOTWB;Use the pipette to pick the white balance from a neutral patch in the preview.
 TP_WBALANCE_TEMPBIAS;AWB temperature bias
 TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the "auto white balance"\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by "computedTemp + computedTemp * bias".
 TP_WBALANCE_TEMPERATURE;Temperature

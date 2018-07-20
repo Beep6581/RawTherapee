@@ -1,0 +1,139 @@
+#!/usr/bin/env bash
+# By Maciej Dworak
+# Version 2018-07-13
+# This script generates PNG icons from SVG files using Inkscape.
+# If pngquant is installed, it will automatically use it to compress the PNGs.
+#
+# PNG files are written to /tmp/rt-icons-XXXX
+#
+# USAGE
+# Generate PNG icons from many SVG icons and output to /tmp/rt-icons-XXXX
+#   ./generatePngIcons some-icons-*.svg
+
+# No touching below this line
+# -----------------------------------------------------------------------------
+
+#tmpDir="$(mktemp -d /tmp/rt-icons-XXXX)" || exit
+tmpDir="/tmp/rt-icons"
+rm -r "$tmpDir"
+mkdir "$tmpDir" || exit 1
+outDir="$tmpDir"
+
+# Abort if Inkscape is not installed:
+if ! command -v inkscape >/dev/null; then
+    printf '%s\n' "Inkscape does not appear to be installed. Aborting."
+    exit 1
+fi
+
+# Command-line arguments:
+if [[ $# -eq 0 ]]; then
+    printf '%s\n' "This script generates PNG icons from SVG files using Inkscape." \
+    "" \
+    "USAGE" \
+    "   Generate PNG icons from many SVG icons and output to /tmp/rt-icons-XXXX" \
+    "       ./generatePngIcons some-icons-*.svg" \
+    "" \
+    "If pngquant is installed, it will automatically use it to compress the PNGs." \
+    ""
+    exit 0
+fi
+
+printf '%s\n' "Converting SVG icons to PNG." "${#} files passed as arguments."
+
+# This color will be replaced by each theme's color:
+colRef="#2a7fff"
+
+# Define theme names, and for each theme the color which will replace colorRef:
+declare -A themes
+themes=( ["dark"]="#CCCCCC" ["light"]="#252525" )
+
+# Optionally use pngquant to compress resulting PNGs:
+doCompress="false"
+if command -v pngquant >/dev/null; then
+    doCompress="true"
+    printf '%s\n' "pngquant found, will compress PNG files." ""
+fi
+
+# Ask for confirmation if folders already present:
+folderExists="false"
+doDelete="true"
+for theme in "${!themes[@]}"; do
+    if [[ -d "${outDir}/${theme}" ]]; then
+        folderExists="true"
+        doDelete="false"
+    fi
+done
+if [[ $folderExists = "true" ]]; then
+    printf '%s\n' "One or more output folders already exist in \"${outDir}\". If you proceed, they will be deleted."
+    read -r -p "Proceed? [y/n]: "
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        doDelete="true"
+    else
+        printf '%s\n' "Aborting."
+        exit 0
+    fi
+fi
+
+# Create output folders:
+for theme in "${!themes[@]}"; do
+    if [[ -d "${outDir}/${theme}" && $doDelete = "true" ]]; then
+        rm -rf "${outDir:?}/${theme}"
+    fi
+    mkdir -p "${outDir:?}/${theme}" || exit 1
+done
+printf '%s\n' "Output folder: ${outDir}" ""
+
+# Platform-dependent SVG to PNG conversion using Inkscape
+# $1 = output PNG absolute path
+# $2 = input SVG absolute path
+convertSvg() {
+    if [[ ${OSTYPE^^} = "MSYS" ]]; then
+        "/c/Program Files/Inkscape/inkscape.exe" \
+            --without-gui \
+            --export-area-page \
+            --export-background-opacity="0" \
+            --export-png="$1" \
+            "$2"
+    else
+        inkscape \
+            --without-gui \
+            --export-area-page \
+            --export-background-opacity="0" \
+            --export-png="$1" \
+            "$2"
+    fi
+
+    if [[ $doCompress = "true" ]]; then
+        sizeBefore=$(wc -c < "$1")
+        pngquant \
+            --quality=70-80 \
+            --ext .png \
+            --force \
+            --skip-if-larger \
+            "$1"
+        sizeAfter=$(wc -c < "$1")
+        printf 'Filesize fefore: %s    After: %s    Difference: %s\n' "$sizeBefore" "$sizeAfter" "$((sizeBefore - sizeAfter))"
+    fi
+}
+
+# Iterate over each SVG, saving PNGs for each theme.
+# Files passed as arguments can have absolute paths or just filenames depending on how the user calls the script,
+# so svgFilename and svgAbsolute are explicitly handled.
+for f in "${@}"; do
+    if [[ $f = *.svg || $f = *.svgz ]]; then
+        svgAbsolute="$(readlink -m -n "$f")"
+        svgFilename="$(basename "$svgAbsolute")"
+        printf '%s\n' "Processing: ${svgAbsolute}"
+
+        for theme in "${!themes[@]}"; do
+            printf '%s\n' "Theme: ${theme}"
+            sed -e "s/fill:${colRef};/fill:${themes[$theme]};/" -e "s/stroke:${colRef};/stroke:${themes[$theme]};/" "$svgAbsolute" > "${outDir}/${theme}/${svgFilename}"
+            convertSvg "${outDir}/${theme}/${svgFilename%.svg*}.png" "${outDir}/${theme}/${svgFilename}"
+            rm "${outDir}/${theme}/${svgFilename}"
+        done
+
+        printf '\n'
+    fi
+done
+
+printf '%s\n' "Done." ""

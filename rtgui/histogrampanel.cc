@@ -60,24 +60,25 @@ HistogramPanel::HistogramPanel ()
         gfxGrid->add (*histogramRGBArea);
     }
 
-    redImage   = new RTImage ("histRed.png");
-    greenImage = new RTImage ("histGreen.png");
-    blueImage  = new RTImage ("histBlue.png");
-    valueImage = new RTImage ("histValue.png");
-    chroImage  = new RTImage ("histChro.png");
-    rawImage   = new RTImage ("histRaw.png");
-    modeImage  = new RTImage ("histFull.png"); // needs replacement!
-    barImage   = new RTImage ("histBar.png");
+    redImage   = new RTImage ("histogram-red-on-small.png");
+    greenImage = new RTImage ("histogram-green-on-small.png");
+    blueImage  = new RTImage ("histogram-blue-on-small.png");
+    valueImage = new RTImage ("histogram-silver-on-small.png");
+    chroImage  = new RTImage ("histogram-gold-on-small.png");
+    rawImage   = new RTImage ("histogram-bayer-on-small.png");
+    barImage   = new RTImage ("histogram-bar-on-small.png");
 
-    redImage_g   = new RTImage ("histRedg.png");
-    greenImage_g = new RTImage ("histGreeng.png");
-    blueImage_g  = new RTImage ("histBlueg.png");
-    valueImage_g = new RTImage ("histValueg.png");
-    chroImage_g  = new RTImage ("histChrog.png");
-    rawImage_g   = new RTImage ("histRawg.png");
-    modeImage_g  = new RTImage ("histFullg.png"); // needs replacement!
-    modeImage_g2 = new RTImage ("histBarg.png"); // needs replacement!
-    barImage_g   = new RTImage ("histBarg.png");
+    redImage_g   = new RTImage ("histogram-red-off-small.png");
+    greenImage_g = new RTImage ("histogram-green-off-small.png");
+    blueImage_g  = new RTImage ("histogram-blue-off-small.png");
+    valueImage_g = new RTImage ("histogram-silver-off-small.png");
+    chroImage_g  = new RTImage ("histogram-gold-off-small.png");
+    rawImage_g   = new RTImage ("histogram-bayer-off-small.png");
+    barImage_g   = new RTImage ("histogram-bar-off-small.png");
+	
+    mode0Image  = new RTImage ("histogram-mode-linear-small.png");
+    mode1Image  = new RTImage ("histogram-mode-logx-small.png");
+    mode2Image  = new RTImage ("histogram-mode-logxy-small.png");
 
     showRed   = Gtk::manage (new Gtk::ToggleButton ());
     showGreen = Gtk::manage (new Gtk::ToggleButton ());
@@ -141,11 +142,11 @@ HistogramPanel::HistogramPanel ()
     showChro->set_image  (showChro->get_active()   ? *chroImage : *chroImage_g);
     showRAW->set_image   (showRAW->get_active()   ? *rawImage   : *rawImage_g);
     if (options.histogramDrawMode == 0)
-        showMode->set_image(*modeImage);
+        showMode->set_image(*mode0Image);
     else if (options.histogramDrawMode == 1)
-        showMode->set_image(*modeImage_g);
+        showMode->set_image(*mode1Image);
     else
-        showMode->set_image(*modeImage_g2);
+        showMode->set_image(*mode2Image);
     showBAR->set_image   (showBAR->get_active()   ? *barImage   : *barImage_g);
 
     setExpandAlignProperties(showRed  , false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -197,7 +198,9 @@ HistogramPanel::~HistogramPanel ()
     delete valueImage;
     delete chroImage;
     delete rawImage;
-    delete modeImage;
+    delete mode0Image;
+    delete mode1Image;
+    delete mode2Image;
     delete barImage;
 
     delete redImage_g;
@@ -206,8 +209,6 @@ HistogramPanel::~HistogramPanel ()
     delete valueImage_g;
     delete chroImage_g;
     delete rawImage_g;
-    delete modeImage_g;
-    delete modeImage_g2;
     delete barImage_g;
 
 }
@@ -276,11 +277,11 @@ void HistogramPanel::mode_released ()
 {
     options.histogramDrawMode = (options.histogramDrawMode + 1) % 3;
     if (options.histogramDrawMode == 0)
-        showMode->set_image(*modeImage);
+        showMode->set_image(*mode0Image);
     else if (options.histogramDrawMode == 1)
-        showMode->set_image(*modeImage_g);
+        showMode->set_image(*mode1Image);
     else
-        showMode->set_image(*modeImage_g2);
+        showMode->set_image(*mode2Image);
     rgbv_toggled();
 }
 
@@ -345,11 +346,11 @@ void HistogramPanel::reorder (Gtk::PositionType align)
 void HistogramPanel::toggle_button_mode ()
 {   
     if (options.histogramDrawMode == 0)
-        showMode->set_image(*modeImage);
+        showMode->set_image(*mode0Image);
     else if (options.histogramDrawMode == 1)
-        showMode->set_image(*modeImage_g);
+        showMode->set_image(*mode1Image);
     else
-        showMode->set_image(*modeImage_g2);
+        showMode->set_image(*mode2Image);
 }
 
 //

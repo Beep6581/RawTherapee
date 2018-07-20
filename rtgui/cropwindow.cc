@@ -57,11 +57,11 @@ CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDet
 
     titleHeight = ih;
 
-    bZoomOut = new LWButton (RTImage::createFromPng ("gtk-zoom-out-small.png"), 0, nullptr, LWButton::Left, LWButton::Center, "Zoom Out");
-    bZoomIn  = new LWButton (RTImage::createFromPng ("gtk-zoom-in-small.png"),  1, nullptr, LWButton::Left, LWButton::Center, "Zoom In");
-    bZoom100 = new LWButton (RTImage::createFromPng ("gtk-zoom-100-small.png"), 2, nullptr, LWButton::Left, LWButton::Center, "Zoom 100/%");
-    //bZoomFit = new LWButton (RTImage::createFromPng ("gtk-zoom-fit.png"), 3, NULL, LWButton::Left, LWButton::Center, "Zoom Fit");
-    bClose   = new LWButton (RTImage::createFromPng ("gtk-close-small.png"),    4, nullptr, LWButton::Right, LWButton::Center, "Close");
+    bZoomOut = new LWButton (RTImage::createFromPng ("magnifier-minus-small.png"), 0, nullptr, LWButton::Left, LWButton::Center, "Zoom Out");
+    bZoomIn  = new LWButton (RTImage::createFromPng ("magnifier-plus-small.png"),  1, nullptr, LWButton::Left, LWButton::Center, "Zoom In");
+    bZoom100 = new LWButton (RTImage::createFromPng ("magnifier-1to1-small.png"), 2, nullptr, LWButton::Left, LWButton::Center, "Zoom 100/%");
+    //bZoomFit = new LWButton (RTImage::createFromPng ("magnifier-fit.png"), 3, NULL, LWButton::Left, LWButton::Center, "Zoom Fit");
+    bClose   = new LWButton (RTImage::createFromPng ("cancel-small.png"),    4, nullptr, LWButton::Right, LWButton::Center, "Close");
 
     buttonSet.add (bZoomOut);
     buttonSet.add (bZoomIn);
