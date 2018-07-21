@@ -298,8 +298,31 @@ using namespace rtengine;
 void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RAWParams &rawParamsIn, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection)
 {
 BENCHFUN
+
+    //offset of R pixel within a Bayer quartet used for amaze
+    int ex, ey;
+
+    //determine GRBG coset; (ey,ex) is the offset of the R subarray
+    if (FC(0, 0) == 1) { //first pixel is G
+        if (FC(0, 1) == 0) {
+            ey = 0;
+            ex = 1;
+        } else {
+            ey = 1;
+            ex = 0;
+        }
+    } else {//first pixel is R or B
+        if (FC(0, 0) == 0) {
+            ey = 0;
+            ex = 0;
+        } else {
+            ey = 1;
+            ex = 1;
+        }
+    }
+
     if(numFrames != 4) { // fallback for non pixelshift files
-        amaze_demosaic_RT(winx, winy, winw, winh, rawData, red, green, blue);
+        amaze_demosaic_RT(winx, winy, winw, winh, rawData, red, green, blue, ex, ey);
         return;
     }
 
@@ -328,7 +351,7 @@ BENCHFUN
                 } else if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::AMAZEVNG4)) {
                     dual_demosaic_RT (true, rawParamsIn, winw, winh, *(rawDataFrames[0]), red, green, blue, bayerParams.dualDemosaicContrast);
                 } else {
-                    amaze_demosaic_RT(winx, winy, winw, winh, *(rawDataFrames[0]), red, green, blue);
+                    amaze_demosaic_RT(winx, winy, winw, winh, *(rawDataFrames[0]), red, green, blue, ex, ey);
                 }
                 multi_array2D<float, 3> redTmp(winw, winh);
                 multi_array2D<float, 3> greenTmp(winw, winh);
@@ -340,7 +363,7 @@ BENCHFUN
                     } else if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::AMAZEVNG4)) {
                         dual_demosaic_RT (true, rawParamsIn, winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i], bayerParams.dualDemosaicContrast);
                     } else {
-                        amaze_demosaic_RT(winx, winy, winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i]);
+                        amaze_demosaic_RT(winx, winy, winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i], ex, ey);
                     }
                 }
 
@@ -369,7 +392,7 @@ BENCHFUN
                     rawParamsTmp.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEVNG4);
                     dual_demosaic_RT (true, rawParamsTmp, winw, winh, rawData, red, green, blue, bayerParams.dualDemosaicContrast);
                 } else {
-                    amaze_demosaic_RT(winx, winy, winw, winh, rawData, red, green, blue);
+                    amaze_demosaic_RT(winx, winy, winw, winh, rawData, red, green, blue, ex, ey);
                 }
             }
         }

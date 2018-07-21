@@ -2081,7 +2081,28 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AHD) ) {
             ahd_demosaic ();
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZE) ) {
-            amaze_demosaic_RT (0, 0, W, H, rawData, red, green, blue);
+            //offset of R pixel within a Bayer quartet used for amaze
+            int ex, ey;
+
+            //determine GRBG coset; (ey,ex) is the offset of the R subarray
+            if (FC(0, 0) == 1) { //first pixel is G
+                if (FC(0, 1) == 0) {
+                    ey = 0;
+                    ex = 1;
+                } else {
+                    ey = 1;
+                    ex = 0;
+                }
+            } else {//first pixel is R or B
+                if (FC(0, 0) == 0) {
+                    ey = 0;
+                    ex = 0;
+                } else {
+                    ey = 1;
+                    ex = 1;
+                }
+            }
+            amaze_demosaic_RT (0, 0, W, H, rawData, red, green, blue, ex, ey);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEVNG4)
                    || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCBVNG4)
                    || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCDVNG4)) {
