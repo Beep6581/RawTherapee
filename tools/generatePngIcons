@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # By Maciej Dworak
-# Version 2018-07-13
+# Version 2018-07-21
 # This script generates PNG icons from SVG files using Inkscape.
 # If pngquant is installed, it will automatically use it to compress the PNGs.
 #
 # PNG files are written to /tmp/rt-icons-XXXX
 #
-# USAGE
-# Generate PNG icons from many SVG icons and output to /tmp/rt-icons-XXXX
-#   ./generatePngIcons some-icons-*.svg
+# USAGE EXAMPLES
+#   ./tools/generatePngIcons rtdata/images/themed/svg/*
+#   ./tools/generatePngIcons rtdata/images/themed/svg/circle* rtdata/images/themed/svg/square-toggle-*
 
 # No touching below this line
 # -----------------------------------------------------------------------------
