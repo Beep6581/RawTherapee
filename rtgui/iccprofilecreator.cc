@@ -222,7 +222,7 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     setExpandAlignProperties(eCopyright, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     copygrid->attach(*eCopyright, 0, 0, 1, 1);
     resetCopyright = Gtk::manage(new Gtk::Button());
-    resetCopyright->add (*Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
+    resetCopyright->add (*Gtk::manage (new RTImage ("undo-small.png", "redo-small.png")));
     setExpandAlignProperties(resetCopyright, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     resetCopyright->set_relief (Gtk::RELIEF_NONE);
     resetCopyright->set_tooltip_markup (M("ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP"));
