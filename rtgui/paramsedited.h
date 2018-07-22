@@ -54,6 +54,7 @@ public:
     bool hrenabled;
     bool method;
     bool histmatching;
+    bool fromHistMatching;
     bool clampOOG;
 };
 

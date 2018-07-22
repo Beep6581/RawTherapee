@@ -96,10 +96,11 @@ RTWindow::RTWindow ()
 
 #ifndef WIN32
     const std::vector<Glib::RefPtr<Gdk::Pixbuf>> appIcons = {
-        RTImage::createFromFile("rt-logo-tiny.png"),
-        RTImage::createFromFile("rt-logo-small.png"),
-        RTImage::createFromFile("rt-logo-medium.png"),
-        RTImage::createFromFile("rt-logo-large.png")
+        RTImage::createFromFile("rawtherapee-logo-16.png"),
+        RTImage::createFromFile("rawtherapee-logo-24.png"),
+        RTImage::createFromFile("rawtherapee-logo-48.png"),
+        RTImage::createFromFile("rawtherapee-logo-128.png"),
+        RTImage::createFromFile("rawtherapee-logo-256.png")
     };
     try {
         set_default_icon_list(appIcons);
@@ -191,10 +192,10 @@ RTWindow::RTWindow ()
         if (options.mainNBVertical) {
             mainNB->set_tab_pos (Gtk::POS_LEFT);
             fpl->set_angle (90);
-            fpanelLabelGrid->attach_next_to (*Gtk::manage (new RTImage ("gtk-directory.png")), Gtk::POS_TOP, 1, 1);
+            fpanelLabelGrid->attach_next_to (*Gtk::manage (new RTImage ("folder-closed.png")), Gtk::POS_TOP, 1, 1);
             fpanelLabelGrid->attach_next_to (*fpl, Gtk::POS_TOP, 1, 1);
         } else {
-            fpanelLabelGrid->attach_next_to (*Gtk::manage (new RTImage ("gtk-directory.png")), Gtk::POS_RIGHT, 1, 1);
+            fpanelLabelGrid->attach_next_to (*Gtk::manage (new RTImage ("folder-closed.png")), Gtk::POS_RIGHT, 1, 1);
             fpanelLabelGrid->attach_next_to (*fpl, Gtk::POS_RIGHT, 1, 1);
         }
 
@@ -226,8 +227,8 @@ RTWindow::RTWindow ()
         //mainBox->pack_start (*mainNB);
 
         // filling bottom box
-        iFullscreen = new RTImage ("fullscreen.png");
-        iFullscreen_exit = new RTImage ("fullscreen-exit.png");
+        iFullscreen = new RTImage ("fullscreen-enter.png");
+        iFullscreen_exit = new RTImage ("fullscreen-leave.png");
 
         Gtk::Button* iccProfileCreator = Gtk::manage (new Gtk::Button ());
         setExpandAlignProperties (iccProfileCreator, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
@@ -239,7 +240,7 @@ RTWindow::RTWindow ()
         //Gtk::Button* preferences = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_PREFERENCES")+"..."));
         Gtk::Button* preferences = Gtk::manage (new Gtk::Button ());
         setExpandAlignProperties (preferences, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
-        preferences->set_image (*Gtk::manage (new RTImage ("gtk-preferences.png")));
+        preferences->set_image (*Gtk::manage (new RTImage ("preferences.png")));
         preferences->set_tooltip_markup (M ("MAIN_BUTTON_PREFERENCES"));
         preferences->signal_clicked().connect ( sigc::mem_fun (*this, &RTWindow::showPreferences) );
 
@@ -449,7 +450,7 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
         // construct closeable tab for the image
         Gtk::Grid* titleGrid = Gtk::manage (new Gtk::Grid ());
         titleGrid->set_tooltip_markup (name);
-        RTImage *closebimg = Gtk::manage (new RTImage ("gtk-close.png"));
+        RTImage *closebimg = Gtk::manage (new RTImage ("cancel-small.png"));
         Gtk::Button* closeb = Gtk::manage (new Gtk::Button ());
         closeb->set_name ("CloseButton");
         closeb->add (*closebimg);
@@ -457,7 +458,7 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
         closeb->set_focus_on_click (false);
         closeb->signal_clicked().connect ( sigc::bind (sigc::mem_fun (*this, &RTWindow::remEditorPanel), ep));
 
-        titleGrid->attach_next_to (*Gtk::manage (new RTImage ("rtwindow.png")), Gtk::POS_RIGHT, 1, 1);
+        titleGrid->attach_next_to (*Gtk::manage (new RTImage ("aperture.png")), Gtk::POS_RIGHT, 1, 1);
         titleGrid->attach_next_to (*Gtk::manage (new Gtk::Label (Glib::path_get_basename (name))), Gtk::POS_RIGHT, 1, 1);
         titleGrid->attach_next_to (*closeb, Gtk::POS_RIGHT, 1, 1);
         titleGrid->show_all ();
@@ -1009,7 +1010,7 @@ void RTWindow::createSetmEditor()
         el->set_angle (90);
     }
 
-    editorLabelGrid->attach_next_to (*Gtk::manage (new RTImage ("rt-logo-small.png")), pos, 1, 1);
+    editorLabelGrid->attach_next_to (*Gtk::manage (new RTImage ("rawtherapee-logo-24.png")), pos, 1, 1);
     editorLabelGrid->attach_next_to (*el, pos, 1, 1);
 
     editorLabelGrid->set_tooltip_markup (M ("MAIN_FRAME_EDITOR_TOOLTIP"));

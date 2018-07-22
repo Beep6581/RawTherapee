@@ -225,6 +225,7 @@ scrollbar.vertical.overlay-indicator:not(.hovering) slider {
 
 button  {
     padding: 0;
+    box-shadow: none;
     min-height: 5px;
     min-width: 5px;
     background-image: linear-gradient(to bottom, rgba(100,100,100,.3), rgba(30,30,30,.3));
@@ -631,7 +632,6 @@ flowboxchild:selected {
 
 /* Editor tab button */
 #MainNotebook grid label, #MainNotebook grid image  {
-    /* OK */
     padding: 1px;
 }
 
@@ -954,5 +954,65 @@ button#MyFileChooserButton {
 }
 
 #ToolPanelNotebook button {
-	margin: 0px;
+    margin: 0px;
 }
+
+button.flat {
+    background: none;
+    border: none;
+    outline: none;
+}
+
+button.flat:checked {
+    background: #262626;
+}
+
+.text-button, .image-button, .independent {
+    box-shadow: none;
+    min-height: 24px;
+    min-width: 24px;
+    padding: 0px;
+}
+
+/* Makes image-comboboxes (e.g. tone curve types) have same size as image buttons */
+combobox, .popupbutton-arrow {
+    min-height: 24px;
+}
+
+/* Makes image-combobox small icons centered */
+button.toggle > grid > image {
+    padding: 4px;
+}
+
+#histButton {
+    background: none;
+    min-height: 16px;
+    min-width: 16px;
+}
+
+/* -gtk-icon-shadow looks buggy on the small histogram icons */
+#histButton:hover {
+    -gtk-icon-shadow: none;
+}
+
+.narrowbutton {
+    min-width: 10px;
+}
+
+
+.smallbuttonbox button {
+    min-width: 16px;
+    min-height: 16px;
+}
+
+/* Adds padding around sides of text-buttons */
+button.text-button {
+    padding: 0 8px;
+}
+
+/* Adds gap between combobox contents and combobox edges */
+button.combo, .image-combo .toggle, #MyFileChooserButton {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+

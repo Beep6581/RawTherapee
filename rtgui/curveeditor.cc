@@ -34,10 +34,10 @@ DiagonalCurveEditor::DiagonalCurveEditor (Glib::ustring text, CurveEditorGroup* 
 {
 
     // Order set in the same order than "enum DiagonalCurveType". Shouldn't change, for compatibility reason
-    curveType->addEntry("curveType-linear.png",     M("CURVEEDITOR_LINEAR"));       // 0 Linear
-    curveType->addEntry("curveType-spline.png",     M("CURVEEDITOR_CUSTOM"));       // 1 Spline
-    curveType->addEntry("curveType-parametric.png", M("CURVEEDITOR_PARAMETRIC"));   // 2 Parametric
-    curveType->addEntry("curveType-NURBS.png",      M("CURVEEDITOR_NURBS"));        // 3 NURBS
+    curveType->addEntry("curve-linear-small.png", M("CURVEEDITOR_LINEAR")); // 0 Linear
+    curveType->addEntry("curve-spline-small.png", M("CURVEEDITOR_CUSTOM")); // 1 Spline
+    curveType->addEntry("curve-parametric-small.png", M("CURVEEDITOR_PARAMETRIC")); // 2 Parametric
+    curveType->addEntry("curve-nurbs-small.png", M("CURVEEDITOR_NURBS")); // 3 NURBS
     curveType->setSelected(DCT_Linear);
     curveType->show();
 
@@ -145,8 +145,8 @@ FlatCurveEditor::FlatCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup,
     identityValue = 0.5;
 
     // Order set in the same order than "enum FlatCurveType". Shouldn't change, for compatibility reason
-    curveType->addEntry("curveType-flatLinear.png",    M("CURVEEDITOR_LINEAR"));            // 0 Linear
-    curveType->addEntry("curveType-controlPoints.png", M("CURVEEDITOR_MINMAXCPOINTS"));     // 1 Min/Max ControlPoints
+    curveType->addEntry("curve-flat-small.png", M("CURVEEDITOR_LINEAR")); // 0 Linear
+    curveType->addEntry("curve-controlpoints-small.png", M("CURVEEDITOR_MINMAXCPOINTS")); // 1 Min/Max ControlPoints
     curveType->setSelected(FCT_Linear);
     curveType->show();
 }

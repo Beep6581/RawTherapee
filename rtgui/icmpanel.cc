@@ -153,7 +153,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     iVBox->pack_start(*dcpFrame);
 
     saveRef = Gtk::manage(new Gtk::Button(M("TP_ICM_SAVEREFERENCE")));
-    saveRef->set_image(*Gtk::manage(new RTImage("gtk-save-large.png")));
+    saveRef->set_image(*Gtk::manage(new RTImage("save-small.png")));
     saveRef->set_alignment(0.5f, 0.5f);
     saveRef->set_tooltip_markup(M("TP_ICM_SAVEREFERENCE_TOOLTIP"));
     iVBox->pack_start(*saveRef, Gtk::PACK_SHRINK);
@@ -649,6 +649,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.outputBPC = obpc->get_active();
     pp->icm.workingTRCGamma = (double) wGamma->getValue();
     pp->icm.workingTRCSlope = (double) wSlope->getValue();
+    pp->toneCurve.fromHistMatching = false;
 
     if (pedited) {
         pedited->icm.inputProfile = !iunchanged->get_active();
@@ -1024,7 +1025,7 @@ void ICMPanel::setBatchMode(bool batchMode)
     iVBox->reorder_child(*iunchanged, 5);
     removeIfThere(this, saveRef);
     oProfNames->append(M("GENERAL_UNCHANGED"));
-    oRendIntent->addEntry("unchanged-22.png", M("GENERAL_UNCHANGED"));
+    oRendIntent->addEntry("template-24.png", M("GENERAL_UNCHANGED"));
     oRendIntent->show();
     wProfNames->append(M("GENERAL_UNCHANGED"));
     wTRC->append(M("GENERAL_UNCHANGED"));

@@ -26,6 +26,7 @@
 #include "iccstore.h"
 #include "../rtgui/mydiagonalcurve.h"
 #include "improcfun.h"
+//#define BENCHMARK
 #include "StopWatch.h"
 #include <iostream>
 
@@ -51,7 +52,7 @@ CdfInfo getCdf(const IImage8 &img)
 
     for (int y = 0; y < img.getHeight(); ++y) {
         for (int x = 0; x < img.getWidth(); ++x) {
-            int lum = LIM(0, int(Color::rgbLuminance(float(img.r(y, x)), float(img.g(y, x)), float(img.b(y, x)))), 255);
+            int lum = LIM(int(Color::rgbLuminance(float(img.r(y, x)), float(img.g(y, x)), float(img.b(y, x)))), 0, 255);
             ++ret.cdf[lum];
         }
     }
@@ -100,7 +101,6 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
 {
     curve.clear();
     
-    const int npoints = 8;
     int idx = 15;
     for (; idx < int(mapping.size()); ++idx) {
         if (mapping[idx] >= idx) {
@@ -114,7 +114,6 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
             }
         }
     }
-    int step = std::max(int(mapping.size())/npoints, 1);
 
     auto coord = [](int v) -> double { return double(v)/255.0; };
     auto doit =
@@ -147,9 +146,17 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
     while (start < idx && (mapping[start] < 0 || start < idx / 2)) {
         ++start;
     }
-    
-    doit(start, idx, idx > step ? step : idx / 2, true);
-    doit(idx, int(mapping.size()), step, idx - step > step / 2 && std::abs(curve[curve.size()-2] - coord(idx)) > 0.01);
+
+    const int npoints = 8;
+    int step = std::max(int(mapping.size())/npoints, 1);
+    int end = mapping.size();
+    if (idx <= end / 3) {
+        doit(start, idx, idx / 2, true);
+        doit(idx, end, (end - idx) / 3, false);
+    } else {
+        doit(start, idx, idx > step ? step : idx / 2, true);
+        doit(idx, int(mapping.size()), step, idx - step > step / 2 && std::abs(curve[curve.size()-2] - coord(idx)) > 0.01);
+    }
     
     if (curve.size() > 2 && (1 - curve[curve.size()-2] <= step / (256.0 * 3))) {
         curve.pop_back();
@@ -200,6 +207,9 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
 
     int fw, fh;
     getFullSize(fw, fh, TR_NONE);
+    if (getRotateDegree() == 90 || getRotateDegree() == 270) {
+        std::swap(fw, fh);
+    }
     int skip = 3;
 
     if (settings->verbose) {
