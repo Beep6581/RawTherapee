@@ -943,13 +943,19 @@ void ICCProfileCreator::savePressed()
 
     if (profileVersion == "v2") {
         //write in tag 'dmdd' values of current gamma and slope to retrieve after in Output profile
-        std::wostringstream wParameters;
-        wParameters << sGammaSlopeParam;
+        std::wostringstream wGammaSlopeParam;
+        wGammaSlopeParam << sGammaSlopeParam;
 
         cmsMLU *dmdd = cmsMLUalloc(nullptr, 1);
-        // Language code (3 letters code) : https://www.iso.org/obp/ui/
-        // Country code (3 letters code)  : http://www.loc.gov/standards/iso639-2/php/code_list.php
-        if (cmsMLUsetWide(dmdd, "en", "US", wParameters.str().c_str())) {
+        // Language code (2 letters code) : https://www.iso.org/obp/ui/
+        // Country code (2 letters code)  : http://www.loc.gov/standards/iso639-2/php/code_list.php
+        if (sGammaSlopeParam.is_ascii()) {
+            if (cmsMLUsetASCII(dmdd, "en", "US", sGammaSlopeParam.c_str())) {
+                if (!cmsWriteTag(newProfile, cmsSigProfileDescriptionTag, dmdd)) {
+                    printf("Error: Can't write cmsSigProfileDescriptionTag!\n");
+                }
+            }
+        } else if (cmsMLUsetWide(dmdd, "en", "US", wGammaSlopeParam.str().c_str())) {
             if (!cmsWriteTag(newProfile, cmsSigDeviceModelDescTag, dmdd)) {
                 printf("Error: Can't write cmsSigDeviceModelDescTag!\n");
             }
@@ -981,9 +987,15 @@ void ICCProfileCreator::savePressed()
     wDescription << sDescription;
 
     cmsMLU *descMLU = cmsMLUalloc(nullptr, 1);
-    // Language code (3 letters code) : https://www.iso.org/obp/ui/
-    // Country code (3 letters code)  : http://www.loc.gov/standards/iso639-2/php/code_list.php
-    if (cmsMLUsetWide(descMLU, "en", "US", wDescription.str().c_str())) {
+    // Language code (2 letters code) : https://www.iso.org/obp/ui/
+    // Country code (2 letters code)  : http://www.loc.gov/standards/iso639-2/php/code_list.php
+    if (sDescription.is_ascii()) {
+        if (cmsMLUsetASCII(descMLU, "en", "US", sDescription.c_str())) {
+            if (!cmsWriteTag(newProfile, cmsSigProfileDescriptionTag, descMLU)) {
+                printf("Error: Can't write cmsSigProfileDescriptionTag!\n");
+            }
+        }
+    } else if (cmsMLUsetWide(descMLU, "en", "US", wDescription.str().c_str())) {
         if (!cmsWriteTag(newProfile, cmsSigProfileDescriptionTag, descMLU)) {
             printf("Error: Can't write cmsSigProfileDescriptionTag!\n");
         }
