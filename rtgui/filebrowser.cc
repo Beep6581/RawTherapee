@@ -152,7 +152,7 @@ FileBrowser::FileBrowser () :
     pmenu = new Gtk::Menu ();
     pmenu->attach (*Gtk::manage(open = new Gtk::MenuItem (M("FILEBROWSER_POPUPOPEN"))), 0, 1, p, p + 1);
     p++;
-    pmenu->attach (*Gtk::manage(develop = new MyImageMenuItem (M("FILEBROWSER_POPUPPROCESS"), "processing.png")), 0, 1, p, p + 1);
+    pmenu->attach (*Gtk::manage(develop = new MyImageMenuItem (M("FILEBROWSER_POPUPPROCESS"), "gears.png")), 0, 1, p, p + 1);
     p++;
     pmenu->attach (*Gtk::manage(developfast = new Gtk::MenuItem (M("FILEBROWSER_POPUPPROCESSFAST"))), 0, 1, p, p + 1);
     p++;
@@ -201,13 +201,18 @@ FileBrowser::FileBrowser () :
     /***********************
      * color labels
      ***********************/
+
+    // Same image arrays in filecatalog.cc
+    std::array<std::string, 6> clabelActiveIcons = {"circle-empty-gray-small.png", "circle-red-small.png", "circle-yellow-small.png", "circle-green-small.png", "circle-blue-small.png", "circle-purple-small.png"};
+    std::array<std::string, 6> clabelInactiveIcons = {"circle-empty-darkgray-small.png", "circle-empty-red-small.png", "circle-empty-yellow-small.png", "circle-empty-green-small.png", "circle-empty-blue-small.png", "circle-empty-purple-small.png"};
+
     if (options.menuGroupLabel) {
         pmenu->attach (*Gtk::manage(menuLabel = new Gtk::MenuItem (M("FILEBROWSER_POPUPCOLORLABEL"))), 0, 1, p, p + 1);
         p++;
         Gtk::Menu* submenuLabel = Gtk::manage (new Gtk::Menu ());
 
         for (int i = 0; i <= 5; i++) {
-            submenuLabel->attach (*Gtk::manage(colorlabel[i] = new MyImageMenuItem (M(Glib::ustring::compose("%1%2", "FILEBROWSER_POPUPCOLORLABEL", i)), i == 0 ? "cglabel0.png" : Glib::ustring::compose("%1%2%3", "clabel", i, ".png"))), 0, 1, p, p + 1);
+            submenuLabel->attach(*Gtk::manage(colorlabel[i] = new MyImageMenuItem(M(Glib::ustring::compose("%1%2", "FILEBROWSER_POPUPCOLORLABEL", i)), clabelActiveIcons[i])), 0, 1, p, p + 1);
             p++;
         }
 
@@ -215,7 +220,7 @@ FileBrowser::FileBrowser () :
         menuLabel->set_submenu (*submenuLabel);
     } else {
         for (int i = 0; i <= 5; i++) {
-            pmenu->attach (*Gtk::manage(colorlabel[i] = new MyImageMenuItem (M(Glib::ustring::compose("%1%2", "FILEBROWSER_POPUPCOLORLABEL", i)), i == 0 ? "cglabel0.png" : Glib::ustring::compose("%1%2%3", "clabel", i, ".png"))), 0, 1, p, p + 1);
+            pmenu->attach(*Gtk::manage(colorlabel[i] = new MyImageMenuItem(M(Glib::ustring::compose("%1%2", "FILEBROWSER_POPUPCOLORLABEL", i)), clabelInactiveIcons[i])), 0, 1, p, p + 1);
             p++;
         }
     }
@@ -337,7 +342,7 @@ FileBrowser::FileBrowser () :
      * Profile Operations
      * *********************/
     if (options.menuGroupProfileOperations) {
-        pmenu->attach (*Gtk::manage(menuProfileOperations = new MyImageMenuItem (M("FILEBROWSER_POPUPPROFILEOPERATIONS"), "logoicon-wind.png")), 0, 1, p, p + 1);
+        pmenu->attach (*Gtk::manage(menuProfileOperations = new Gtk::MenuItem (M("FILEBROWSER_POPUPPROFILEOPERATIONS"))), 0, 1, p, p + 1);
         p++;
 
         Gtk::Menu* submenuProfileOperations = Gtk::manage (new Gtk::Menu ());
@@ -449,14 +454,14 @@ FileBrowser::FileBrowser () :
 
     // A separate pop-up menu for Color Labels
     int c = 0;
-    pmenuColorLabels = new Gtk::Menu ();
+    pmenuColorLabels = new Gtk::Menu();
 
     for (int i = 0; i <= 5; i++) {
-        pmenuColorLabels->attach (*Gtk::manage(colorlabel_pop[i] = new MyImageMenuItem (M(Glib::ustring::compose("%1%2", "FILEBROWSER_POPUPCOLORLABEL", i)), i == 0 ? "cglabel0.png" : Glib::ustring::compose("%1%2%3", "clabel", i, ".png"))), 0, 1, c, c + 1);
+        pmenuColorLabels->attach(*Gtk::manage(colorlabel_pop[i] = new MyImageMenuItem(M(Glib::ustring::compose("%1%2", "FILEBROWSER_POPUPCOLORLABEL", i)), clabelActiveIcons[i])), 0, 1, c, c + 1);
         c++;
     }
 
-    pmenuColorLabels->show_all ();
+    pmenuColorLabels->show_all();
 
     // Has to be located after creation of applyprof and applypartprof
     updateProfileList ();

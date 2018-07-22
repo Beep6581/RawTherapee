@@ -222,7 +222,7 @@ public:
 
     void imageTypeChanged (bool isRaw, bool isBayer, bool isXtrans, bool isMono = false);
     // profilechangelistener interface
-    void profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited = nullptr);
+    void profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited = nullptr, bool fromLastSave = false);
     void setDefaults    (rtengine::procparams::ProcParams* defparams);
 
     // DirSelectionListener interface

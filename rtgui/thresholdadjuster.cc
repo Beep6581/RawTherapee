@@ -96,7 +96,7 @@ void ThresholdAdjuster::initObject (Glib::ustring label, bool editedcb)
     hbox->pack_start (*this->label);
 
     reset = Gtk::manage (new Gtk::Button ());
-    reset->add (*Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
+    reset->add (*Gtk::manage (new RTImage ("undo-small.png", "redo-small.png")));
     reset->set_relief (Gtk::RELIEF_NONE);
     reset->set_tooltip_markup (M("ADJUSTER_RESET_TO_DEFAULT"));
 

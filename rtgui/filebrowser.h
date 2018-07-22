@@ -85,7 +85,7 @@ protected:
     Gtk::MenuItem* menuRank;
     Gtk::MenuItem* menuLabel;
     Gtk::MenuItem* menuFileOperations;
-    MyImageMenuItem* menuProfileOperations;
+    Gtk::MenuItem* menuProfileOperations;
     Gtk::MenuItem* menuExtProg;
     Gtk::MenuItem** amiExtProg;
     Gtk::MenuItem* miOpenDefaultViewer;

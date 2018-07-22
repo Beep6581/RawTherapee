@@ -25,15 +25,15 @@ using namespace rtengine::procparams;
 ChMixer::ChMixer (): FoldableToolPanel(this, "chmixer", M("TP_CHMIXER_LABEL"), false, true)
 {
 
-    imgIcon[0] = Gtk::manage (new RTImage ("Chanmixer-RR.png"));
-    imgIcon[1] = Gtk::manage (new RTImage ("Chanmixer-RG.png"));
-    imgIcon[2] = Gtk::manage (new RTImage ("Chanmixer-RB.png"));
-    imgIcon[3] = Gtk::manage (new RTImage ("Chanmixer-GR.png"));
-    imgIcon[4] = Gtk::manage (new RTImage ("Chanmixer-GG.png"));
-    imgIcon[5] = Gtk::manage (new RTImage ("Chanmixer-GB.png"));
-    imgIcon[6] = Gtk::manage (new RTImage ("Chanmixer-BR.png"));
-    imgIcon[7] = Gtk::manage (new RTImage ("Chanmixer-BG.png"));
-    imgIcon[8] = Gtk::manage (new RTImage ("Chanmixer-BB.png"));
+    imgIcon[0] = Gtk::manage (new RTImage ("circle-red-small.png"));
+    imgIcon[1] = Gtk::manage (new RTImage ("circle-green-red-small.png"));
+    imgIcon[2] = Gtk::manage (new RTImage ("circle-blue-red-small.png"));
+    imgIcon[3] = Gtk::manage (new RTImage ("circle-red-green-small.png"));
+    imgIcon[4] = Gtk::manage (new RTImage ("circle-green-small.png"));
+    imgIcon[5] = Gtk::manage (new RTImage ("circle-blue-green-small.png"));
+    imgIcon[6] = Gtk::manage (new RTImage ("circle-red-blue-small.png"));
+    imgIcon[7] = Gtk::manage (new RTImage ("circle-green-blue-small.png"));
+    imgIcon[8] = Gtk::manage (new RTImage ("circle-blue-small.png"));
 
     Gtk::Label* rlabel = Gtk::manage (new Gtk::Label ());
     rlabel->set_markup (Glib::ustring("\t<span foreground=\"#b00000\"><b>") + M("TP_CHMIXER_RED") + Glib::ustring(":</b></span>"));
