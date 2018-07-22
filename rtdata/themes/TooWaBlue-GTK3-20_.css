@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.68
+  Version 2.69
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -273,6 +273,10 @@ textview:selected, treeview:selected {
 #Snapshots button {
     margin-top: -8px;
     margin-bottom: -4px;
+}
+#Snapshots button image{
+    min-height: 24px;
+    min-width: 24px;
 }
 #Snapshots > box > :nth-child(1) {
     margin-bottom: 0.41667em;
@@ -653,8 +657,8 @@ scale trough {
 }
 scale:not(:disabled) trough highlight {
     background-color: @accent-color2;
-    border: 0.08334em solid @bg-button-border;
-    box-shadow: inset 0 0.08334em shade(@accent-color2, 1.3);
+    border: 0.08334em solid @bg-dark-grey;
+    box-shadow: inset 0 0.08334em shade(@accent-color2, 1.25);
     border-radius: 0.5em;
 }
 
@@ -847,9 +851,9 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 }
 
 #ToolPanelNotebook > header tab #TextOrIcon image{
-    min-height: 2.66667em;
+    min-height: 2.33334em;
     min-width: 2.5em;
-    padding: 0;
+    padding: 2px 0;
     margin: 0;
 }
 
@@ -1017,26 +1021,25 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     margin: 0;
 }
 #ToolBarPanelFileBrowser .smallbuttonbox:nth-child(1) {
-    min-height: 1.25em;
-    padding: 0;
-    margin: 0;
+    margin: 0 0 2px 0;
 }
 #ToolBarPanelFileBrowser .smallbuttonbox button.smallbutton {
     min-height: 0;
-    min-width: 0;
-    padding: 0.08334em;
-    margin: 0 0.41667em;
+    min-width: 1.16667em;
+    padding: 0;
+    margin: 0 2px;
     border: none;
+    border-radius: 0;
     background-color: transparent;
     background-image: none;
     box-shadow: none;
 }
-#ToolBarPanelFileBrowser .smallbuttonbox button.smallbutton:checked image{
+#ToolBarPanelFileBrowser .smallbuttonbox button.smallbutton:checked {
     background-color: @bg-dark-grey;
 }
 #ToolBarPanelFileBrowser .smallbuttonbox button.smallbutton image{
     -gtk-icon-transform: scale(calc(14/16));
-    margin: -5px
+    margin: -2px
 }
 
 #ToolBarPanelFileBrowser entry + button.flat,
@@ -1475,7 +1478,7 @@ button.MiddleH {
 /**/
 
 /* Button base format for Toolbox and dialogs */
-#ToolPanelNotebook > stack > box > box > combobox .combo,
+#ToolPanelNotebook > stack > box > box > combobox button,
 dialog button,
 #MyExpander button,
 #BatchQueueButtonsMainContainer button {
@@ -1489,15 +1492,25 @@ dialog button,
     padding: 0;
 }
 
-combobox .combo,
-dialog combobox .combo,
-#ToolPanelNotebook combobox .combo,
-#BatchQueueButtonsMainContainer combobox .combo {
-    padding: 0 0.26667em;
+#ToolPanelNotebook > stack > box > box > combobox button.combo,
+dialog button.combo,
+#MyExpander button.combo,
+#BatchQueueButtonsMainContainer button.combo {
+    padding: 0;
+}
+combobox button cellview {
+    padding: 0 0 0 0.20em;
+}
+combobox arrow {
+    padding: 0 0.20em;
 }
 /**/
 
 /* Add/remove space between buttons and labels in toolbox*/
+#ToolPanelNotebook > stack > box > box > label {
+    margin: 0 0 0 0.25em;
+}
+
 #MyExpander combobox:not(:first-child):not(:only-child),
 #MyExpander .image-combo:not(:first-child),
 #MyExpander button:not(.flat) + combobox,
