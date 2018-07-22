@@ -56,7 +56,7 @@ FoldableToolPanel::FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, 
         label->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
         titleHBox->pack_start(*label, Gtk::PACK_EXPAND_WIDGET, 0);
 
-        RTImage *image = Gtk::manage (new RTImage("zoom-100-identifier.png"));
+        RTImage *image = Gtk::manage (new RTImage("one-to-one-small.png"));
         image->set_tooltip_text(M("TP_GENERAL_11SCALE_TOOLTIP"));
         titleHBox->pack_end(*image, Gtk::PACK_SHRINK, 0);
 

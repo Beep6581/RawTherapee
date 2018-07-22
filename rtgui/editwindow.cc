@@ -53,7 +53,7 @@ EditWindow* EditWindow::getInstance(RTWindow* p, bool restore)
 EditWindow::EditWindow (RTWindow* p) : parent(p) , isFullscreen(false), isClosed(true)
 {
 
-    Glib::ustring fName = "rt-logo-tiny.png";
+    Glib::ustring fName = "rawtherapee-logo-24.png";
     Glib::ustring fullPath = rtengine::findIconAbsolutePath(fName);
 
     try {
@@ -172,11 +172,11 @@ void EditWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
 
     // construct closeable tab for the image
     Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
-    hb->pack_start (*Gtk::manage (new RTImage ("rtwindow.png")));
+    hb->pack_start (*Gtk::manage (new RTImage ("aperture.png")));
     hb->pack_start (*Gtk::manage (new Gtk::Label (Glib::path_get_basename (name))));
     hb->set_tooltip_markup (name);
     Gtk::Button* closeb = Gtk::manage (new Gtk::Button ());
-    closeb->set_image (*Gtk::manage(new RTImage ("gtk-close.png")));
+    closeb->set_image (*Gtk::manage(new RTImage ("cancel-small.png")));
     closeb->set_relief (Gtk::RELIEF_NONE);
     closeb->set_focus_on_click (false);
 

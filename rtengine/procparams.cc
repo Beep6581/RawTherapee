@@ -328,6 +328,7 @@ ToneCurveParams::ToneCurveParams() :
     hlcompr(0),
     hlcomprthresh(33),
     histmatching(false),
+    fromHistMatching(false),
     clampOOG(true)
 {
 }
@@ -352,6 +353,7 @@ bool ToneCurveParams::operator ==(const ToneCurveParams& other) const
         && hlcompr == other.hlcompr
         && hlcomprthresh == other.hlcomprthresh
         && histmatching == other.histmatching
+        && fromHistMatching == other.fromHistMatching
         && clampOOG == other.clampOOG;
 }
 
@@ -2758,6 +2760,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->toneCurve.hlcomprthresh, "Exposure", "HighlightComprThreshold", toneCurve.hlcomprthresh, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.shcompr, "Exposure", "ShadowCompr", toneCurve.shcompr, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.histmatching, "Exposure", "HistogramMatching", toneCurve.histmatching, keyFile);
+        saveToKeyfile(!pedited || pedited->toneCurve.fromHistMatching, "Exposure", "FromHistogramMatching", toneCurve.fromHistMatching, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.clampOOG, "Exposure", "ClampOOG", toneCurve.clampOOG, keyFile);
 
 // Highlight recovery
@@ -3530,6 +3533,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Exposure", "Curve2", pedited, toneCurve.curve2, pedited->toneCurve.curve2);
             }
             assignFromKeyfile(keyFile, "Exposure", "HistogramMatching", pedited, toneCurve.histmatching, pedited->toneCurve.histmatching);
+            if (ppVersion < 340) {
+                toneCurve.fromHistMatching = false;
+                if (pedited) {
+                    pedited->toneCurve.fromHistMatching = true;
+                }
+            } else {
+                assignFromKeyfile(keyFile, "Exposure", "FromHistogramMatching", pedited, toneCurve.fromHistMatching, pedited->toneCurve.fromHistMatching);
+            }
             assignFromKeyfile(keyFile, "Exposure", "ClampOOG", pedited, toneCurve.clampOOG, pedited->toneCurve.clampOOG);
         }
 
@@ -5048,10 +5059,14 @@ void PartialProfile::set(bool v)
     }
 }
 
-void PartialProfile::applyTo(ProcParams* destParams) const
+void PartialProfile::applyTo(ProcParams* destParams, bool fromLastSave) const
 {
     if (destParams && pparams && pedited) {
+        bool fromHistMatching = fromLastSave && destParams->toneCurve.histmatching && pparams->toneCurve.histmatching;
         pedited->combine (*destParams, *pparams, true);
+        if (!fromLastSave) {
+            destParams->toneCurve.fromHistMatching = fromHistMatching;
+        }
     }
 }
 

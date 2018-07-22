@@ -1,4 +1,4 @@
-#01 2018-06-30 Digitalpix58
+#01 2018-07-17 Digitalpix58
 
 ABOUT_TAB_BUILD;Versão
 ABOUT_TAB_CREDITS;Créditos
@@ -739,6 +739,7 @@ HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Direção do filtro de ruído de li
 HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;Filtros de linha PDAF
 HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Limite de contraste
 HISTORY_MSG_RAW_BORDER;Borda raw
+HISTORY_MSG_RESIZE_ALLOW_UPSCALING;Redimensionar - Permitir escalonamento
 HISTORY_MSG_SHARPENING_CONTRAST;Nitidez - Limite de contraste
 HISTORY_MSG_SOFTLIGHT_ENABLED;Luz suave
 HISTORY_MSG_SOFTLIGHT_STRENGTH;Luz suave - Intensidade
@@ -932,6 +933,7 @@ PARTIALPASTE_PREPROCESS_DEADPIXFILT;Filtro de pixels mortos
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Equilíbrio verde
 PARTIALPASTE_PREPROCESS_HOTPIXFILT;Filtro de pixel quente
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtro de ruído de linha
+PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;Filtro de linhas PDAF
 PARTIALPASTE_PRSHARPENING;Nitidez pós-redimensionamento
 PARTIALPASTE_RAWCACORR_AUTO;Auto correção CA
 PARTIALPASTE_RAWCACORR_CAREDBLUE;vermelho & azul CA
@@ -939,6 +941,7 @@ PARTIALPASTE_RAWEXPOS_BLACK;Níveis de preto
 PARTIALPASTE_RAWEXPOS_LINEAR;Correção de ponto branco
 PARTIALPASTE_RAWEXPOS_PRESER;preservação do realce
 PARTIALPASTE_RAWGROUP;Configurações Raw
+PARTIALPASTE_RAW_BORDER;Borda raw
 PARTIALPASTE_RAW_DCBENHANCE;Aprimoramento DCB
 PARTIALPASTE_RAW_DCBITERATIONS;Iterações DCB
 PARTIALPASTE_RAW_DMETHOD;Método demosaico
@@ -954,6 +957,7 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Sombras/realces
 PARTIALPASTE_SHARPENEDGE;Bordas
 PARTIALPASTE_SHARPENING;Nitidez (USM/RL)
 PARTIALPASTE_SHARPENMICRO;Microcontraste
+PARTIALPASTE_SOFTLIGHT;Luz suave
 PARTIALPASTE_TM_FATTAL;Compressão de Amplitude Dinâmica(DRC)
 PARTIALPASTE_VIBRANCE;Vibração
 PARTIALPASTE_VIGNETTING;Correção de vinheta
@@ -1766,14 +1770,17 @@ TP_RAWEXPOS_PRESER;Preservação do realce
 TP_RAWEXPOS_RGB;Vermelho, Verde, Azul
 TP_RAWEXPOS_TWOGREEN;Ligações verdes
 TP_RAW_1PASSMEDIUM;1-Passar (Medio)
+TP_RAW_2PASS;1-passar+rápido
 TP_RAW_3PASSBEST;3-Passar (Superior)
 TP_RAW_4PASS;4-Passar
 TP_RAW_AHD;AHD
 TP_RAW_AMAZE;AMaZE
 TP_RAW_AMAZEVNG4;AMaZE+VNG4
+TP_RAW_BORDER;Borda
 TP_RAW_DCB;DCB
 TP_RAW_DCBENHANCE;Aprimoramento DCB
 TP_RAW_DCBITERATIONS;Número de iterações DCB
+TP_RAW_DCBVNG4;DCB+VNG4
 TP_RAW_DMETHOD;Método
 TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
 TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Refinamento Demosaicing...
@@ -1825,10 +1832,12 @@ TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;TO raio padrão de 1.0 geralmente se encaixa bem 
 TP_RAW_PIXELSHIFTSMOOTH;Transições suaves
 TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Transições suaves entre áreas com movimento e áreas sem.\nDefina 0 para desabilitar a transição suave.\nDefina 1 para obter o resultado AMaZE/LMMSE do quadro selecionado (dependendo se "Usar LMMSE" estiver selecionado) ou a mediana de todos os quatro quadros se "Usar mediana" estiver selecionado.
 TP_RAW_RCD;RCD
+TP_RAW_RCDVNG4;RCD+VNG4
 TP_RAW_SENSOR_BAYER_LABEL;Sensor com Matriz Bayer
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-passe dá os melhores resultados (recomendado para imagens com ISO baixo).\n1-passe é quase indistinguível do 3-passe para imagens com ISO alto e é mais rápido.
 TP_RAW_SENSOR_XTRANS_LABEL;Sensor com Matriz X-Trans
 TP_RAW_VNG4;VNG4
+TP_RESIZE_ALLOW_UPSCALING;Permitir Escalonamento
 TP_RESIZE_APPLIESTO;Aplica-se a:
 TP_RESIZE_CROPPEDAREA;Área Recortada
 TP_RESIZE_FITBOX;Caixa Delimitadora
@@ -1918,11 +1927,11 @@ TP_RETINEX_VARIANCE;Contraste
 TP_RETINEX_VARIANCE_TOOLTIP;Baixa variância aumenta o contraste e a saturação local, mas pode levar a artefatos.
 TP_RETINEX_VIEW;Processo
 TP_RETINEX_VIEW_MASK;Máscara
-TP_RETINEX_VIEW_METHOD_TOOLTIP;Padrão - Exibição normal.\nMáscara -  Exibe a máscara.\nMáscara não nítida - Exibe a imagem com uma máscara não nítida de raio alto.\nTransmissão - Auto/Fixo - Exibe o mapa de transmissão do arquivo, antes de qualquer ação de contraste e brilho.\n\nAtenção: a máscara não corresponde à realidade, mas é amplificada para torná-la mais visível.
+TP_RETINEX_VIEW_METHOD_TOOLTIP;Padrão - Exibição normal.\nMáscara -  Exibe a máscara.\nMáscara de nitidez - Exibe a imagem com uma máscara de nitidez de raio alto.\nTransmissão - Auto/Fixo - Exibe o mapa de transmissão do arquivo, antes de qualquer ação de contraste e brilho.\n\nAtenção: a máscara não corresponde à realidade, mas é amplificada para torná-la mais visível.
 TP_RETINEX_VIEW_NONE;Padrão
 TP_RETINEX_VIEW_TRAN;Transmissão - Auto
 TP_RETINEX_VIEW_TRAN2;Transmissão - Fixo
-TP_RETINEX_VIEW_UNSHARP;Máscara não nítida
+TP_RETINEX_VIEW_UNSHARP;Máscara de nitidez
 TP_RGBCURVES_BLUE;B
 TP_RGBCURVES_CHANNEL;Canal
 TP_RGBCURVES_GREEN;G
@@ -1961,12 +1970,14 @@ TP_SHARPENING_RLD_AMOUNT;Montante
 TP_SHARPENING_RLD_DAMPING;Amortecimento
 TP_SHARPENING_RLD_ITERATIONS;Iterações
 TP_SHARPENING_THRESHOLD;Limite
-TP_SHARPENING_USM;Máscara Não Nítida
+TP_SHARPENING_USM;Máscara de Nitidez
 TP_SHARPENMICRO_AMOUNT;Quantidade
 TP_SHARPENMICRO_CONTRAST;Limite de contraste
 TP_SHARPENMICRO_LABEL;Microcontraste
 TP_SHARPENMICRO_MATRIX;3×3 matriz em vez de 5×5
 TP_SHARPENMICRO_UNIFORMITY;Uniformidade
+TP_SOFTLIGHT_LABEL;Luz Suave
+TP_SOFTLIGHT_STRENGTH;Intensidade
 TP_TM_FATTAL_AMOUNT;Montante
 TP_TM_FATTAL_ANCHOR;Âncora
 TP_TM_FATTAL_LABEL;Compressão de Amplitude Dinâmica(DRC)
@@ -2198,7 +2209,7 @@ TP_WBALANCE_SOLUX35;Solux 3500K
 TP_WBALANCE_SOLUX41;Solux 4100K
 TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
 TP_WBALANCE_SOLUX47_NG;Solux 4700K (Galeria Nat.)
-TP_WBALANCE_SPOTWB;Spot WB
+TP_WBALANCE_SPOTWB;Use the pipette to pick the white balance from a neutral patch in the preview.
 TP_WBALANCE_TEMPBIAS;Viés de temperatura AWB
 TP_WBALANCE_TEMPBIAS_TOOLTIP;Permite alterar o cálculo do "balanço de branco automático"\ninclinando-o para temperaturas mais quentes ou mais frias. O viés\né expresso como uma porcentagem da temperatura calculada,\npara que o resultado seja dado por "Temperatura calculada + Temperatura calculada * viés".
 TP_WBALANCE_TEMPERATURE;Temperatura
@@ -2215,18 +2226,3 @@ ZOOMPANEL_ZOOMFITSCREEN;Ajustar toda a imagem à tela\nAtalho: <b>Alt</b>-<b>f</
 ZOOMPANEL_ZOOMIN;Mais Zoom\nAtalho: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!HISTORY_MSG_RESIZE_ALLOW_UPSCALING;Resize - Allow upscaling
-!PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
-!PARTIALPASTE_RAW_BORDER;Raw border
-!PARTIALPASTE_SOFTLIGHT;Soft light
-!TP_RAW_2PASS;1-pass+fast
-!TP_RAW_BORDER;Border
-!TP_RAW_DCBVNG4;DCB+VNG4
-!TP_RAW_RCDVNG4;RCD+VNG4
-!TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
-!TP_SOFTLIGHT_LABEL;Soft Light
-!TP_SOFTLIGHT_STRENGTH;Strength
