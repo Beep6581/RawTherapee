@@ -556,8 +556,8 @@ void Options::setDefaults()
     rtSettings.beta = "RTv4_Beta";
     rtSettings.best = "RTv4_Best";
     rtSettings.rec2020 = "RTv4_Rec2020";
-    rtSettings.ACESp0 = "RTv4_ACES_AP0";
-    rtSettings.ACESp1 = "RTv4_ACES_AP1";
+    rtSettings.ACESp0 = "RTv4_ACES-AP0";
+    rtSettings.ACESp1 = "RTv4_ACES-AP1";
     rtSettings.verbose = false;
     rtSettings.gamutICC = true;
     rtSettings.gamutLch = true;
