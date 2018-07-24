@@ -292,8 +292,6 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_GAMMA_OUTPUT"));
-    appendBehavList (mi, M ("TP_GAMMA_CURV"), ADDSET_FREE_OUPUT_GAMMA, false);
-    appendBehavList (mi, M ("TP_GAMMA_SLOP"), ADDSET_FREE_OUTPUT_SLOPE, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_CHMIXER_LABEL"));

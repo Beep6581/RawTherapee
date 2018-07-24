@@ -6,6 +6,8 @@
 
 /*
   Log of version changes
+   341  2018-07-22
+        [ICM] enhanced custom output profile
    340  2018-07-08
         store whether curve is from histogram matching
    339  2018-07-04

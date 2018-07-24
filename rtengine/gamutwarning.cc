@@ -34,7 +34,7 @@ GamutWarning::GamutWarning(cmsHPROFILE iprof, cmsHPROFILE gamutprof, RenderingIn
     softproof2ref(nullptr)
 {
     if (cmsIsMatrixShaper(gamutprof) && !cmsIsCLUT(gamutprof, intent, LCMS_USED_AS_OUTPUT)) {
-        cmsHPROFILE aces = ICCStore::getInstance()->getProfile("ACES");
+        cmsHPROFILE aces = ICCStore::getInstance()->getProfile("RTv4_ACES-AP0");
         if (aces) {
             lab2ref = cmsCreateTransform(iprof, TYPE_Lab_FLT, aces, TYPE_RGB_FLT, INTENT_ABSOLUTE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
             lab2softproof = cmsCreateTransform(iprof, TYPE_Lab_FLT, gamutprof, TYPE_RGB_FLT, INTENT_ABSOLUTE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
