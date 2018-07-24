@@ -782,7 +782,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             }
 
-
+        ipf.softLight(nprevl);
+        
             if (params.colorappearance.enabled) {
                 //L histo  and Chroma histo for ciecam
                 // histogram well be for Lab (Lch) values, because very difficult to do with J,Q, M, s, C
