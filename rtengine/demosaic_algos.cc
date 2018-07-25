@@ -37,6 +37,7 @@
 #include "sleef.c"
 #include "opthelper.h"
 #include "median.h"
+#define BENCHMARK
 #include "StopWatch.h"
 #ifdef _OPENMP
 #include <omp.h>
@@ -680,6 +681,41 @@ void RawImageSource::ppg_demosaic()
         }
 
     free (image);
+}
+
+void RawImageSource::border_interpolate(unsigned int border, float (*image)[3], unsigned int start, unsigned int end)
+{
+    unsigned row, col, y, x, f;
+    float sum[8];
+    unsigned int width = W, height = H;
+    unsigned int colors = 3;
+
+    if (end == 0 ) {
+        end = H;
+    }
+
+    for (row = start; row < end; row++)
+        for (col = 0; col < width; col++) {
+            if (col == border && row >= border && row < height - border) {
+                col = width - border;
+            }
+
+            memset (sum, 0, sizeof sum);
+
+            for (y = row - 1; y != row + 2; y++)
+                for (x = col - 1; x != col + 2; x++)
+                    if (y < height && x < width) {
+                        f = fc(y, x);
+                        sum[f] += image[y * width + x][f];
+                        sum[f + 4]++;
+                    }
+
+            f = fc(row, col);
+
+            FORCC if (c != f && sum[c + 4]) {
+                image[row * width + col][c] = sum[c] / sum[c + 4];
+            }
+        }
 }
 
 void RawImageSource::border_interpolate(unsigned int border, float (*image)[4], unsigned int start, unsigned int end)
@@ -2303,12 +2339,15 @@ void RawImageSource::igv_interpolate(int winw, int winh)
 
 void RawImageSource::ahd_demosaic()
 {
-    int i, j, k, top, left, row, col, tr, tc, c, d, val, hm[2];
-    float (*pix)[4], (*rix)[3];
+    BENCHFUN
+    int i, j, k, tr, tc, c, d, hm[2];
+    float val;
+    float (*pix)[3], (*rix)[3];
     static const int dir[4] = { -1, 1, -TS, TS };
     float ldiff[2][4], abdiff[2][4], leps, abeps;
-    float xyz[3], xyz_cam[3][4];
-    float* cbrt;
+    float xyz[3], xyz_cam[3][3];
+    LUTf cbrt(65536);
+
     float (*rgb)[TS][TS][3];
     float (*lab)[TS][TS][3];
     float (*lix)[3];
@@ -2316,7 +2355,6 @@ void RawImageSource::ahd_demosaic()
     double r;
 
     int width = W, height = H;
-    float (*image)[4];
     unsigned int colors = 3;
 
     const double xyz_rgb[3][3] = {        /* XYZ from RGB */
@@ -2332,14 +2370,12 @@ void RawImageSource::ahd_demosaic()
         plistener->setProgress (0.0);
     }
 
-    image = (float (*)[4]) calloc (H * W, sizeof * image);
+    float (*image)[3] = (float (*)[3]) calloc (H * W, sizeof * image);
 
     for (int ii = 0; ii < H; ii++)
         for (int jj = 0; jj < W; jj++) {
             image[ii * W + jj][fc(ii, jj)] = rawData[ii][jj];
         }
-
-    cbrt = (float (*)) calloc (0x10000, sizeof * cbrt);
 
     for (i = 0; i < 0x10000; i++) {
         r = (double)i / 65535.0;
@@ -2363,40 +2399,40 @@ void RawImageSource::ahd_demosaic()
     int n_tiles = ((height - 7 + (TS - 7)) / (TS - 6)) * ((width - 7 + (TS - 7)) / (TS - 6));
     int tile = 0;
 
-    for (top = 2; top < height - 5; top += TS - 6)
-        for (left = 2; left < width - 5; left += TS - 6) {
+    for (int top = 2; top < height - 5; top += TS - 6)
+        for (int left = 2; left < width - 5; left += TS - 6) {
             /*  Interpolate green horizontally and vertically:      */
-            for (row = top; row < top + TS && row < height - 2; row++) {
-                col = left + (FC(row, left) & 1);
+            for (int row = top; row < top + TS && row < height - 2; row++) {
+                int col = left + (FC(row, left) & 1);
 
                 for (c = FC(row, col); col < left + TS && col < width - 2; col += 2) {
                     pix = image + (row * width + col);
-                    val = 0.25 * ((pix[-1][1] + pix[0][c] + pix[1][1]) * 2
+                    val = 0.25f * ((pix[-1][1] + pix[0][c] + pix[1][1]) * 2
                                   - pix[-2][c] - pix[2][c]) ;
-                    rgb[0][row - top][col - left][1] = median(static_cast<float>(val), pix[-1][1], pix[1][1]);
-                    val = 0.25 * ((pix[-width][1] + pix[0][c] + pix[width][1]) * 2
+                    rgb[0][row - top][col - left][1] = median(val, pix[-1][1], pix[1][1]);
+                    val = 0.25f * ((pix[-width][1] + pix[0][c] + pix[width][1]) * 2
                                   - pix[-2 * width][c] - pix[2 * width][c]) ;
-                    rgb[1][row - top][col - left][1] = median(static_cast<float>(val), pix[-width][1], pix[width][1]);
+                    rgb[1][row - top][col - left][1] = median(val, pix[-width][1], pix[width][1]);
                 }
             }
 
             /*  Interpolate red and blue, and convert to CIELab:        */
             for (d = 0; d < 2; d++)
-                for (row = top + 1; row < top + TS - 1 && row < height - 3; row++)
-                    for (col = left + 1; col < left + TS - 1 && col < width - 3; col++) {
+                for (int row = top + 1; row < top + TS - 1 && row < height - 3; row++)
+                    for (int col = left + 1; col < left + TS - 1 && col < width - 3; col++) {
                         pix = image + (row * width + col);
                         rix = &rgb[d][row - top][col - left];
                         lix = &lab[d][row - top][col - left];
 
                         if ((c = 2 - FC(row, col)) == 1) {
                             c = FC(row + 1, col);
-                            val = pix[0][1] + (0.5 * ( pix[-1][2 - c] + pix[1][2 - c]
+                            val = pix[0][1] + (0.5f * ( pix[-1][2 - c] + pix[1][2 - c]
                                                        - rix[-1][1] - rix[1][1] ) );
                             rix[0][2 - c] = CLIP(val);
-                            val = pix[0][1] + (0.5 * ( pix[-width][c] + pix[width][c]
+                            val = pix[0][1] + (0.5f * ( pix[-width][c] + pix[width][c]
                                                        - rix[-TS][1] - rix[TS][1] ) );
                         } else
-                            val = rix[0][1] + (0.25 * ( pix[-width - 1][c] + pix[-width + 1][c]
+                            val = rix[0][1] + (0.25f * ( pix[-width - 1][c] + pix[-width + 1][c]
                                                         + pix[+width - 1][c] + pix[+width + 1][c]
                                                         - rix[-TS - 1][1] - rix[-TS + 1][1]
                                                         - rix[+TS - 1][1] - rix[+TS + 1][1]) );
@@ -2404,16 +2440,16 @@ void RawImageSource::ahd_demosaic()
                         rix[0][c] = CLIP(val);
                         c = FC(row, col);
                         rix[0][c] = pix[0][c];
-                        xyz[0] = xyz[1] = xyz[2] = 0.0;
+                        xyz[0] = xyz[1] = xyz[2] = 0.f;
                         FORCC {
                             xyz[0] += xyz_cam[0][c] * rix[0][c];
                             xyz[1] += xyz_cam[1][c] * rix[0][c];
                             xyz[2] += xyz_cam[2][c] * rix[0][c];
                         }
 
-                        xyz[0] = CurveFactory::flinterp(cbrt, xyz[0]);
-                        xyz[1] = CurveFactory::flinterp(cbrt, xyz[1]);
-                        xyz[2] = CurveFactory::flinterp(cbrt, xyz[2]);
+                        xyz[0] = cbrt[xyz[0]];
+                        xyz[1] = cbrt[xyz[1]];
+                        xyz[2] = cbrt[xyz[2]];
 
                         //xyz[0] = xyz[0] > 0.008856 ? pow(xyz[0]/65535,1/3.0) : 7.787*xyz[0] + 16/116.0;
                         //xyz[1] = xyz[1] > 0.008856 ? pow(xyz[1]/65535,1/3.0) : 7.787*xyz[1] + 16/116.0;
@@ -2427,17 +2463,17 @@ void RawImageSource::ahd_demosaic()
             /*  Build homogeneity maps from the CIELab images: */
             memset (homo, 0, 2 * TS * TS);
 
-            for (row = top + 2; row < top + TS - 2 && row < height - 4; row++) {
+            for (int row = top + 2; row < top + TS - 2 && row < height - 4; row++) {
                 tr = row - top;
 
-                for (col = left + 2; col < left + TS - 2 && col < width - 4; col++) {
+                for (int col = left + 2; col < left + TS - 2 && col < width - 4; col++) {
                     tc = col - left;
 
                     for (d = 0; d < 2; d++) {
                         lix = &lab[d][tr][tc];
 
                         for (i = 0; i < 4; i++) {
-                            ldiff[d][i] = ABS(lix[0][0] - lix[dir[i]][0]);
+                            ldiff[d][i] = std::fabs(lix[0][0] - lix[dir[i]][0]);
                             abdiff[d][i] = SQR(lix[0][1] - lix[dir[i]][1])
                                            + SQR(lix[0][2] - lix[dir[i]][2]);
                         }
@@ -2457,10 +2493,10 @@ void RawImageSource::ahd_demosaic()
             }
 
             /*  Combine the most homogenous pixels for the final result:    */
-            for (row = top + 3; row < top + TS - 3 && row < height - 5; row++) {
+            for (int row = top + 3; row < top + TS - 3 && row < height - 5; row++) {
                 tr = row - top;
 
-                for (col = left + 3; col < left + TS - 3 && col < width - 5; col++) {
+                for (int col = left + 3; col < left + TS - 3 && col < width - 5; col++) {
                     tc = col - left;
 
                     for (d = 0; d < 2; d++)
@@ -2473,7 +2509,7 @@ void RawImageSource::ahd_demosaic()
                         FORC3 image[row * width + col][c] = rgb[hm[1] > hm[0]][tr][tc][c];
                     } else
                         FORC3 image[row * width + col][c] =
-                            0.5 * (rgb[0][tr][tc][c] + rgb[1][tr][tc][c]) ;
+                            0.5f * (rgb[0][tr][tc][c] + rgb[1][tr][tc][c]) ;
                 }
             }
 
@@ -2499,7 +2535,6 @@ void RawImageSource::ahd_demosaic()
     }
 
     free (image);
-    free (cbrt);
 }
 #undef TS
 
