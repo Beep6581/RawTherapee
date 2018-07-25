@@ -43,6 +43,7 @@ ImageArea::ImageArea (ImageAreaPanel* p) : parent(p), fullImageWidth(0), fullIma
     zoomPanel = Gtk::manage (new ZoomPanel (this));
     indClippedPanel = Gtk::manage (new IndicateClippedPanel (this));
     previewModePanel =  Gtk::manage (new PreviewModePanel (this));
+    previewModePanel->get_style_context()->add_class("narrowbuttonbox");
 
     add_events(Gdk::LEAVE_NOTIFY_MASK);
 

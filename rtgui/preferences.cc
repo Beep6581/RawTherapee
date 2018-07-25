@@ -292,8 +292,6 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_GAMMA_OUTPUT"));
-    appendBehavList (mi, M ("TP_GAMMA_CURV"), ADDSET_FREE_OUPUT_GAMMA, false);
-    appendBehavList (mi, M ("TP_GAMMA_SLOP"), ADDSET_FREE_OUTPUT_SLOPE, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_CHMIXER_LABEL"));
@@ -1268,7 +1266,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel ()
     startupdir = Gtk::manage ( new Gtk::Entry () );
 
     Gtk::Button* sdselect = Gtk::manage ( new Gtk::Button () );
-    sdselect->set_image (*Gtk::manage (new RTImage ("gtk-open.png")));
+    sdselect->set_image (*Gtk::manage (new RTImage ("folder-open.png")));
 
     Gtk::RadioButton::Group opts = sdcurrent->get_group();
     sdlast->set_group (opts);
@@ -1370,8 +1368,8 @@ Gtk::Widget* Preferences::getFileBrowserPanel ()
     delExt->set_tooltip_text (M ("PREFERENCES_PARSEDEXTDELHINT"));
     moveExtUp->set_tooltip_text (M ("PREFERENCES_PARSEDEXTUPHINT"));
     moveExtDown->set_tooltip_text (M ("PREFERENCES_PARSEDEXTDOWNHINT"));
-    Gtk::Image* addExtImg = Gtk::manage ( new RTImage ("list-add-small.png") );
-    Gtk::Image* delExtImg = Gtk::manage ( new RTImage ("list-remove-red-small.png") );
+    Gtk::Image* addExtImg = Gtk::manage ( new RTImage ("add-small.png") );
+    Gtk::Image* delExtImg = Gtk::manage ( new RTImage ("remove-small.png") );
     Gtk::Image* moveExtUpImg = Gtk::manage ( new RTImage ("arrow-up-small.png") );
     Gtk::Image* moveExtDownImg = Gtk::manage ( new RTImage ("arrow-down-small.png") );
     addExt->add (*addExtImg);

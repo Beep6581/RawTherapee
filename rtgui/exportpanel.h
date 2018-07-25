@@ -51,7 +51,7 @@ protected:
 
     /*      icm_input   = "(camera)";
             icm_working = "sRGB";
-            icm_output  = "RT_sRGB";
+            icm_output  = options.rtSettings.srgb;
             icm_gamma   = "default";
     */
     Gtk::CheckButton* bypass_dirpyrequalizer; // also could leave untouched but disable only small radius adjustments

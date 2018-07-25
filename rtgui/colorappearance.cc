@@ -268,10 +268,10 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     wbmHBox->pack_start (*wbmodel);
     p1VBox->pack_start (*wbmHBox);
 
-    Gtk::Image* itempL =  Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
-    Gtk::Image* itempR =  Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
-    Gtk::Image* igreenL = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
-    Gtk::Image* igreenR = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
+    Gtk::Image* itempL =  Gtk::manage (new RTImage ("circle-blue-small.png"));
+    Gtk::Image* itempR =  Gtk::manage (new RTImage ("circle-yellow-small.png"));
+    Gtk::Image* igreenL = Gtk::manage (new RTImage ("circle-magenta-small.png"));
+    Gtk::Image* igreenR = Gtk::manage (new RTImage ("circle-green-small.png"));
 
 
     tempsc = Gtk::manage (new Adjuster (M ("TP_WBALANCE_TEMPERATURE"), MINTEMP0, MAXTEMP0, 5, CENTERTEMP0, itempL, itempR, &wbSlider2Temp, &wbTemp2Slider));
@@ -575,10 +575,10 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     p3VBox = Gtk::manage ( new Gtk::VBox());
     p3VBox->set_spacing (2);
 
-    Gtk::Image* itempL1 =  Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
-    Gtk::Image* itempR1 =  Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
-    Gtk::Image* igreenL1 = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
-    Gtk::Image* igreenR1 = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
+    Gtk::Image* itempL1 =  Gtk::manage (new RTImage ("circle-blue-small.png"));
+    Gtk::Image* itempR1 =  Gtk::manage (new RTImage ("circle-yellow-small.png"));
+    Gtk::Image* igreenL1 = Gtk::manage (new RTImage ("circle-magenta-small.png"));
+    Gtk::Image* igreenR1 = Gtk::manage (new RTImage ("circle-green-small.png"));
 //   adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTVIEWING"), 0.1,  16384., 0.1,   16.));
     adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTVIEWING"), MINLA0, MAXLA0, 0.01, 16, NULL, NULL, &wbSlider2la, &wbla2Slider));
 
@@ -590,8 +590,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     adaplum->set_tooltip_markup (M ("TP_COLORAPP_ADAPTVIEWING_TOOLTIP"));
     p3VBox->pack_start (*adaplum);
 
-//   Gtk::Image* iblueredL = Gtk::manage (new RTImage ("ajd-wb-bluered1.png"));
-//   Gtk::Image* iblueredR = Gtk::manage (new RTImage ("ajd-wb-bluered2.png"));
+//   Gtk::Image* iblueredL = Gtk::manage (new RTImage ("circle-blue-small.png"));
+//   Gtk::Image* iblueredR = Gtk::manage (new RTImage ("circle-red-small.png"));
 
     degreeout  = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CIECAT_DEGREE"),    0.,  100.,  1.,   100.));
 
@@ -604,10 +604,10 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     degreeout->set_tooltip_markup (M ("TP_COLORAPP_DEGREE_TOOLTIP"));
     p3VBox->pack_start (*degreeout);
     /*
-        Gtk::Image* itempL1 =  Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
-        Gtk::Image* itempR1 =  Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
-        Gtk::Image* igreenL1 = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
-        Gtk::Image* igreenR1 = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
+        Gtk::Image* itempL1 =  Gtk::manage (new RTImage ("circle-blue-small.png"));
+        Gtk::Image* itempR1 =  Gtk::manage (new RTImage ("circle-yellow-small.png"));
+        Gtk::Image* igreenL1 = Gtk::manage (new RTImage ("circle-magenta-small.png"));
+        Gtk::Image* igreenR1 = Gtk::manage (new RTImage ("circle-green-small.png"));
     */
     tempout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_TEMPERATURE"), MINTEMP0, MAXTEMP0, 5, CENTERTEMP0, itempR1, itempL1, &wbSlider2Temp, &wbTemp2Slider));
     greenout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_GREEN"), MINGREEN0, MAXGREEN0, 0.001, 1.0, igreenR1, igreenL1));
@@ -669,7 +669,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     //reset button
     neutral = Gtk::manage (new Gtk::Button (M ("TP_COLORAPP_NEUTRAL")));
     setExpandAlignProperties (neutral, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    RTImage *resetImg = Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
+    RTImage *resetImg = Gtk::manage (new RTImage ("undo-small.png", "redo-small.png"));
     setExpandAlignProperties (resetImg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     neutral->set_image (*resetImg);
     neutral->set_tooltip_text (M ("TP_COLORAPP_NEUTRAL_TIP"));
