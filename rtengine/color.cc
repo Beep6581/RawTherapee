@@ -190,7 +190,6 @@ void Color::init ()
             {
                 gammatab_srgb[i] = gammatab_srgb1[i] = gamma2(i / 65535.0);
             }
-
             gammatab_srgb *= 65535.f;
             gamma2curve.share(gammatab_srgb, LUT_CLIP_BELOW | LUT_CLIP_ABOVE); // shares the buffer with gammatab_srgb but has different clip flags
         }
@@ -394,7 +393,7 @@ void Color::rgb2lab01 (const Glib::ustring &profile, const Glib::ustring &profil
             r = pow_F(r, 1.8f);
             g = pow_F(g, 1.8f);
             b = pow_F(b, 1.8f);
-        } else if (profile == "Rec2020") {
+        } else if (profileW == "Rec2020") {
             if (r > 0.0795f) {
                 r = pow_F(((r + 0.0954f) / 1.0954f), 2.2f);
             } else {
@@ -418,17 +417,17 @@ void Color::rgb2lab01 (const Glib::ustring &profile, const Glib::ustring &profil
             b = pow_F(b, 2.2f);
         }
     } else { //display output profile
-        if (profile == "RT_sRGB" || profile == "RT_sRGB_gBT709" || profile == "RT_sRGB_g10") {
+        if (profile == settings->srgb) {
             // use default "sRGB"
-        } else if (profile == "ProPhoto" || profile == "RT_Large_gBT709" || profile == "RT_Large_g10"  || profile == "RT_Large_gsRGB") {
+        } else if (profile == "ProPhoto" || profile == settings->prophoto) {
             profileCalc = "ProPhoto";
-        } else if (profile == "AdobeRGB1998" || profile == "RT_Medium_gsRGB") {
+        } else if (profile == "AdobeRGB1998" || profile == settings->adobe) {
             profileCalc = "Adobe RGB";
-        } else if (profile == "WideGamutRGB") {
+        } else if (profile == settings->widegamut) {
             profileCalc = "WideGamut";
         }
 
-        if (profile == "RT_sRGB" || profile == "RT_Large_gsRGB"  || profile == "RT_Medium_gsRGB") { //apply sRGB inverse gamma
+        if (profile == settings->srgb || profile == settings->adobe) { //apply sRGB inverse gamma
             if (r > 0.04045f) {
                 r = pow_F(((r + 0.055f) / 1.055f), rtengine::Color::sRGBGammaCurve);
             } else {
@@ -446,7 +445,7 @@ void Color::rgb2lab01 (const Glib::ustring &profile, const Glib::ustring &profil
             } else {
                 b /= 12.92f;
             }
-        } else if (profile == "RT_sRGB_gBT709"  || profile == "RT_Large_gBT709" || profile == "Rec2020") {
+        } else if (profile == settings->prophoto || profile == settings->rec2020) {
             if (r > 0.0795f) {
                 r = pow_F(((r + 0.0954f) / 1.0954f), 2.2f);
             } else {
@@ -470,9 +469,6 @@ void Color::rgb2lab01 (const Glib::ustring &profile, const Glib::ustring &profil
             r = pow_F(r, 1.8f);
             g = pow_F(g, 1.8f);
             b = pow_F(b, 1.8f);
-        } else if (profile == "RT_sRGB_g10"  || profile == "RT_Large_g10") {
-            // gamma 1.0, do nothing
-
         } else {// apply inverse gamma 2.2
 
             r = pow_F(r, 2.2f);
@@ -1594,7 +1590,7 @@ void Color::calcGamma (double pwr, double ts, int mode, GammaValues &gamma)
     bnd[g[1] >= 1.] = 1.;
 
     if (g[1] && (g[1] - 1.) * (g[0] - 1.) <= 0.) {
-        for (i = 0; i < 48; i++) {
+        for (i = 0; i < 99; i++) {
             g[2] = (bnd[0] + bnd[1]) / 2.;
 
             if (g[0]) {
@@ -1834,6 +1830,45 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
         L[i] = computeXYZ2LabY(y);
         a[i] = 500.0f * (fx - fy);
         b[i] = 200.0f * (fy - fz);
+    }
+}
+
+void Color::RGB2L(float *R, float *G, float *B, float *L, const float wp[3][3], int width)
+{
+
+#ifdef __SSE2__
+    vfloat minvalfv = F2V(0.f);
+    vfloat maxvalfv = F2V(MAXVALF);
+#endif
+    int i = 0;
+    
+#ifdef __SSE2__
+    for(;i < width - 3; i+=4) {
+        const vfloat rv = LVFU(R[i]);
+        const vfloat gv = LVFU(G[i]);
+        const vfloat bv = LVFU(B[i]);
+        const vfloat yv = F2V(wp[1][0]) * rv + F2V(wp[1][1]) * gv + F2V(wp[1][2]) * bv;
+
+        vmask maxMask = vmaskf_gt(yv, maxvalfv);
+        vmask minMask = vmaskf_lt(yv, minvalfv);
+        if (_mm_movemask_ps((vfloat)vorm(maxMask, minMask))) {
+            // take slower code path for all 4 pixels if one of the values is > MAXVALF. Still faster than non SSE2 version
+            for(int k = 0; k < 4; ++k) {
+                float y = yv[k];
+                L[i + k] = computeXYZ2LabY(y);
+            }
+        } else {
+            STVFU(L[i], cachefy[yv]);
+        }
+    }
+#endif
+    for(;i < width; ++i) {
+        const float rv = R[i];
+        const float gv = G[i];
+        const float bv = B[i];
+        float y = wp[1][0] * rv + wp[1][1] * gv + wp[1][2] * bv;
+
+        L[i] = computeXYZ2LabY(y);
     }
 }
 

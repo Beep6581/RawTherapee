@@ -58,6 +58,7 @@ protected:
     MyComboBoxText* toneCurveMode;
     MyComboBoxText* toneCurveMode2;
     Gtk::ToggleButton *histmatching;
+    bool fromHistMatching;
     Gtk::CheckButton *clampOOG;
 
     bool clipDirty, lastAuto;

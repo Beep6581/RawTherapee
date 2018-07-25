@@ -52,6 +52,7 @@ set(RTENGINESOURCEFILES
     dfmanager.cc
     diagonalcurves.cc
     dirpyr_equalizer.cc
+    dual_demosaic_RT.cc
     dynamicprofile.cc
     expo_before_b.cc
     fast_demo.cc
@@ -122,6 +123,8 @@ set(RTENGINESOURCEFILES
     gamutwarning.cc
     ipshadowshighlights.cc
     xtrans_demosaic.cc
+    vng4_demosaic_RT.cc
+    ipsoftlight.cc
     )
 
 if(LENSFUN_HAS_LOAD_DIRECTORY)

@@ -1,7 +1,7 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2017 Ingo Weyrich <heckflosse67@gmx.de>
+ *  Copyright (c) 2017-2018 Ingo Weyrich <heckflosse67@gmx.de>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 
 namespace rtengine
 {
-
 void findMinMaxPercentile(const float* data, size_t size, float minPrct, float& minOut, float maxPrct, float& maxOut, bool multiThread = true);
-
+void buildBlendMask(float** luminance, float **blend, int W, int H, float contrastThreshold, float amount = 1.f);
+int calcContrastThreshold(float** luminance, float **blend, int W, int H);
 }

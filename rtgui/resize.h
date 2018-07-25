@@ -66,7 +66,9 @@ private:
     int getComputedHeight ();
     void notifyBBox ();
     void updateGUI ();
+    void allowUpscalingChanged();
 
+    rtengine::ProcEvent EvResizeAllowUpscaling;
     Adjuster*          scale;
     Gtk::VBox*         sizeBox;
     MyComboBoxText*    appliesTo;
@@ -74,6 +76,7 @@ private:
     MyComboBoxText*    spec;
     MySpinButton*      w;
     MySpinButton*      h;
+    Gtk::CheckButton *allowUpscaling;
     int                maxw, maxh;
     int                cropw, croph;
     sigc::connection   sconn, aconn, wconn, hconn;

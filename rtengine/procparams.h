@@ -76,14 +76,14 @@ public:
     {
         if (is_double) {
             return
-                std::fabs (bottom_left - rhs.bottom_left) < 1e-10
-                && std::fabs (top_left - rhs.top_left) < 1e-10
-                && std::fabs (bottom_right - rhs.bottom_right) < 1e-10
-                && std::fabs (top_right - rhs.top_right) < 1e-10;
+                std::fabs(bottom_left - rhs.bottom_left) < 1e-10
+                && std::fabs(top_left - rhs.top_left) < 1e-10
+                && std::fabs(bottom_right - rhs.bottom_right) < 1e-10
+                && std::fabs(top_right - rhs.top_right) < 1e-10;
         } else {
             return
-                std::fabs (bottom_left - rhs.bottom_left) < 1e-10
-                && std::fabs (top_left - rhs.top_left) < 1e-10;
+                std::fabs(bottom_left - rhs.bottom_left) < 1e-10
+                && std::fabs(top_left - rhs.top_left) < 1e-10;
         }
     }
 
@@ -113,7 +113,7 @@ public:
         return top_left;
     }
 
-     T getBottomLeft() const
+    T getBottomLeft() const
     {
         return bottom_left;
     }
@@ -123,7 +123,7 @@ public:
         return top_left;
     }
 
-   T getBottomRight() const
+    T getBottomRight() const
     {
         return bottom_right;
     }
@@ -173,7 +173,7 @@ public:
     // RV: Type of the value on the X axis
     // RV2: Type of the maximum value on the Y axis
     template <typename RT, typename RV, typename RV2>
-    RT multiply (RV x, RV2 y_max) const
+    RT multiply(RV x, RV2 y_max) const
     {
         const double val = x;
 
@@ -281,6 +281,7 @@ struct ToneCurveParams {
     int         hlcompr;        // Highlight Recovery's compression
     int         hlcomprthresh;  // Highlight Recovery's threshold
     bool histmatching; // histogram matching
+    bool fromHistMatching;
     bool clampOOG; // clamp out of gamut colours
 
     ToneCurveParams();
@@ -293,8 +294,7 @@ struct ToneCurveParams {
 /**
   * Parameters of Retinex
   */
-struct RetinexParams
-{
+struct RetinexParams {
     bool enabled;
     std::vector<double>   cdcurve;
     std::vector<double>   cdHcurve;
@@ -340,8 +340,7 @@ struct RetinexParams
 /**
   * Parameters of the luminance curve
   */
-struct LCurveParams
-{
+struct LCurveParams {
     bool enabled;
     std::vector<double>   lcurve;
     std::vector<double>   acurve;
@@ -368,7 +367,7 @@ struct LCurveParams
 
 /**
  * Parameters for local contrast
- */ 
+ */
 struct LocalContrastParams {
     bool enabled;
     int radius;
@@ -454,6 +453,7 @@ struct ColorToningParams {
     double labgridAHigh;
     double labgridBHigh;
     static const double LABGRID_CORR_MAX;
+    static const double LABGRID_CORR_SCALE;
 
     ColorToningParams();
 
@@ -999,6 +999,7 @@ struct ResizeParams {
     int dataspec;
     int width;
     int height;
+    bool allowUpscaling;
 
     ResizeParams();
 
@@ -1010,21 +1011,21 @@ struct ResizeParams {
   * Parameters of the color spaces used during the processing
   */
 struct ColorManagementParams {
-    Glib::ustring input;
-    bool          toneCurve;
-    bool          applyLookTable;
-    bool          applyBaselineExposureOffset;
-    bool          applyHueSatMap;
+    Glib::ustring inputProfile;
+    bool toneCurve;
+    bool applyLookTable;
+    bool applyBaselineExposureOffset;
+    bool applyHueSatMap;
     int dcpIlluminant;
-    Glib::ustring working;
-    Glib::ustring output;
+
+    Glib::ustring workingProfile;
+    Glib::ustring workingTRC;
+    double workingTRCGamma;
+    double workingTRCSlope;
+
+    Glib::ustring outputProfile;
     RenderingIntent outputIntent;
     bool outputBPC;
-
-    Glib::ustring gamma;
-    double gampos;
-    double slpos;
-    bool freegamma;
 
     static const Glib::ustring NoICMString;
 
@@ -1214,6 +1215,17 @@ struct FilmSimulationParams {
 };
 
 
+struct SoftLightParams {
+    bool enabled;
+    int strength;
+
+    SoftLightParams();
+
+    bool operator==(const SoftLightParams &other) const;
+    bool operator!=(const SoftLightParams &other) const;
+};
+
+
 /**
   * Parameters for RAW demosaicing, common to all sensor type
   */
@@ -1224,18 +1236,21 @@ struct RAWParams {
     struct BayerSensor {
         enum class Method {
             AMAZE,
-            IGV,
+            AMAZEVNG4,
+            RCD,
+            RCDVNG4,
+            DCB,
+            DCBVNG4,
             LMMSE,
+            IGV,
+            AHD,
             EAHD,
             HPHD,
             VNG4,
-            DCB,
-            AHD,
-            RCD,
             FAST,
             MONO,
-            NONE,
-            PIXELSHIFT
+            PIXELSHIFT,
+            NONE
         };
 
         enum class PSMotionCorrectionMethod {
@@ -1244,7 +1259,14 @@ struct RAWParams {
             CUSTOM
         };
 
+        enum class PSDemosaicMethod {
+            AMAZE,
+            AMAZEVNG4,
+            LMMSE
+        };
+
         Glib::ustring method;
+        int border;
         int imageNum;
         int ccSteps;
         double black0;
@@ -1263,6 +1285,7 @@ struct RAWParams {
         int greenthresh;
         int dcb_iterations;
         int lmmse_iterations;
+        double dualDemosaicContrast;
         PSMotionCorrectionMethod pixelShiftMotionCorrectionMethod;
         double pixelShiftEperIso;
         double pixelShiftSigma;
@@ -1273,10 +1296,10 @@ struct RAWParams {
         bool pixelShiftGreen;
         bool pixelShiftBlur;
         double pixelShiftSmoothFactor;
-        bool pixelShiftLmmse;
         bool pixelShiftEqualBright;
         bool pixelShiftEqualBrightChannel;
         bool pixelShiftNonGreenCross;
+        Glib::ustring pixelShiftDemosaicMethod;
         bool dcb_enhance;
         bool pdafLinesFilter;
 
@@ -1289,6 +1312,9 @@ struct RAWParams {
 
         static const std::vector<const char*>& getMethodStrings();
         static Glib::ustring getMethodString(Method method);
+
+        static const std::vector<const char*>& getPSDemosaicMethodStrings();
+        static Glib::ustring getPSDemosaicMethodString(PSDemosaicMethod method);
     };
 
     /**
@@ -1296,7 +1322,9 @@ struct RAWParams {
      */
     struct XTransSensor {
         enum class Method {
+            FOUR_PASS,
             THREE_PASS,
+            TWO_PASS,
             ONE_PASS,
             FAST,
             MONO,
@@ -1304,6 +1332,7 @@ struct RAWParams {
         };
 
         Glib::ustring method;
+        double dualDemosaicContrast;
         int ccSteps;
         double blackred;
         double blackgreen;
@@ -1316,7 +1345,7 @@ struct RAWParams {
 
         static const std::vector<const char*>& getMethodStrings();
         static Glib::ustring getMethodString(Method method);
-     };
+    };
 
     BayerSensor bayersensor;         ///< RAW parameters for Bayer sensors
     XTransSensor xtranssensor;       ///< RAW parameters for X-Trans sensors
@@ -1405,6 +1434,7 @@ public:
     DirPyrEqualizerParams   dirpyrequalizer; ///< directional pyramid wavelet parameters
     HSVEqualizerParams      hsvequalizer;    ///< hsv wavelet parameters
     FilmSimulationParams    filmSimulation;  ///< film simulation parameters
+    SoftLightParams         softlight;       ///< softlight parameters
     int                     rank;            ///< Custom image quality ranking
     int                     colorlabel;      ///< Custom color label
     bool                    inTrash;         ///< Marks deleted image
@@ -1444,7 +1474,7 @@ public:
 
     /** Creates a new instance of ProcParams.
       * @return a pointer to the new ProcParams instance. */
-    static ProcParams* create ();
+    static ProcParams* create();
 
     /** Destroys an instance of ProcParams.
       * @param pp a pointer to the ProcParams instance to destroy. */
@@ -1485,7 +1515,7 @@ public:
     void clearGeneral();
     int  load(const Glib::ustring& fName);
     void set(bool v);
-    void applyTo(ProcParams* destParams) const ;
+    void applyTo(ProcParams* destParams, bool fromLastSaved = false) const ;
 
     rtengine::procparams::ProcParams* pparams;
     ParamsEdited* pedited;

@@ -107,13 +107,14 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
             ColorTemp wb = rawImage.getWB ();
             rawImage.getFullSize (fw, fh, TR_NONE);
             PreviewProps pp (0, 0, fw, fh, 1);
-            params.icm.input = Glib::ustring("(embedded)");
+            params.icm.inputProfile = Glib::ustring("(embedded)");
             params.raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
             params.raw.deadPixelFilter = false;
             params.raw.ca_autocorrect = false;
             params.raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
             rawImage.preprocess(params.raw, params.lensProf, params.coarse);
-            rawImage.demosaic(params.raw);
+            double contrastThresholdDummy = 0.0;
+            rawImage.demosaic(params.raw, false, contrastThresholdDummy);
             Imagefloat image(fw, fh);
             rawImage.getImage (wb, TR_NONE, &image, pp, params.toneCurve, params.raw);
             rtengine::Image8 output(fw, fh);

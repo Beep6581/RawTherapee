@@ -71,6 +71,7 @@ set(NONCLISOURCEFILES
     histogrampanel.cc
     history.cc
     hsvequalizer.cc
+    iccprofilecreator.cc
     icmpanel.cc
     ilabel.cc
     imagearea.cc
@@ -154,6 +155,7 @@ set(NONCLISOURCEFILES
     eventmapper.cc
     metadatapanel.cc
     labgrid.cc
+    softlight.cc
     )
 
 include_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")

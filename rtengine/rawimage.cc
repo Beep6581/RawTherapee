@@ -118,6 +118,8 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
         }
         memset(dsum, 0, sizeof dsum);
 
+        constexpr float blackThreshold = 8.f;
+        constexpr float whiteThreshold = 25.f;
         if (this->isBayer()) {
             // calculate number of pixels per color
             dsum[FC(0, 0) + 4] += (int)(((W + 1) / 2) * ((H + 1) / 2));
@@ -135,8 +137,8 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
                 float whitefloat[4];
 
                 for (int c = 0; c < 4; c++) {
-                    cblackfloat[c] = cblack_[c];
-                    whitefloat[c] = this->get_white(c) - 25;
+                    cblackfloat[c] = cblack_[c] + blackThreshold;
+                    whitefloat[c] = this->get_white(c) - whiteThreshold;
                 }
 
                 float *tempdata = data[0];
@@ -154,16 +156,12 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
                                 int c = FC(y, x);
                                 val = tempdata[y * W + x];
 
-                                if (val > whitefloat[c]) { // calculate number of pixels to be substracted from sum and skip the block
+                                if (val > whitefloat[c] || val < cblackfloat[c]) { // calculate number of pixels to be subtracted from sum and skip the block
                                     dsumthr[FC(row, col) + 4]      += (int)(((xmax - col + 1) / 2) * ((ymax - row + 1) / 2));
                                     dsumthr[FC(row, col + 1) + 4]    += (int)(((xmax - col) / 2) * ((ymax - row + 1) / 2));
                                     dsumthr[FC(row + 1, col) + 4]    += (int)(((xmax - col + 1) / 2) * ((ymax - row) / 2));
                                     dsumthr[FC(row + 1, col + 1) + 4]  += (int)(((xmax - col) / 2) * ((ymax - row) / 2));
                                     goto skip_block2;
-                                }
-
-                                if (val < cblackfloat[c]) {
-                                    val = cblackfloat[c];
                                 }
 
                                 sum[c] += val;
@@ -202,11 +200,13 @@ skip_block2:
                 memset(dsumthr, 0, sizeof dsumthr);
                 float sum[8];
                 // make local copies of the black and white values to avoid calculations and conversions
+                float cblackfloat[4];
                 float whitefloat[4];
 
                 for (int c = 0; c < 4; c++)
                 {
-                    whitefloat[c] = this->get_white(c) - 25;
+                    cblackfloat[c] = cblack_[c] + blackThreshold;
+                    whitefloat[c] = this->get_white(c) - whiteThreshold;
                 }
 
                 #pragma omp for nowait
@@ -221,13 +221,11 @@ skip_block2:
                                 int c = XTRANSFC(y, x);
                                 float val = data[y][x];
 
-                                if (val > whitefloat[c]) {
+                                if (val > whitefloat[c] || val < cblackfloat[c]) {
                                     goto skip_block3;
                                 }
 
-                                if ((val -= cblack_[c]) < 0) {
-                                    val = 0;
-                                }
+                                val -= cblack_[c];
 
                                 sum[c] += val;
                                 sum[c + 4]++;
@@ -262,27 +260,16 @@ skip_block3:
                     for (size_t y = row; y < row + 8 && y < H; y++)
                         for (size_t x = col; x < col + 8 && x < W; x++)
                             for (int c = 0; c < 3; c++) {
-                                if (this->isBayer()) {
-                                    c = FC(y, x);
-                                    val = data[y][x];
-                                } else {
-                                    val = data[y][3 * x + c];
-                                }
+                                val = data[y][3 * x + c];
 
-                                if (val > this->get_white(c) - 25) {
+                                if (val > this->get_white(c) - whiteThreshold || val < cblack_[c] + blackThreshold) {
                                     goto skip_block;
                                 }
 
-                                if ((val -= cblack_[c]) < 0) {
-                                    val = 0;
-                                }
+                                val -= cblack_[c];
 
                                 sum[c] += val;
                                 sum[c + 4]++;
-
-                                if ( this->isBayer()) {
-                                    break;
-                                }
                             }
 
                     for (c = 0; c < 8; c++) {

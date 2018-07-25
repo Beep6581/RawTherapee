@@ -292,8 +292,6 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_GAMMA_OUTPUT"));
-    appendBehavList (mi, M ("TP_GAMMA_CURV"), ADDSET_FREE_OUPUT_GAMMA, false);
-    appendBehavList (mi, M ("TP_GAMMA_SLOP"), ADDSET_FREE_OUTPUT_SLOPE, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_CHMIXER_LABEL"));
@@ -307,6 +305,10 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     mi = behModel->append ();
     mi->set_value ( behavColumns.label, M ("TP_FILMSIMULATION_LABEL") );
     appendBehavList ( mi, M ( "TP_FILMSIMULATION_STRENGTH" ), ADDSET_FILMSIMULATION_STRENGTH, true );
+
+    mi = behModel->append ();
+    mi->set_value ( behavColumns.label, M ("TP_SOFTLIGHT_LABEL") );
+    appendBehavList ( mi, M ( "TP_SOFTLIGHT_STRENGTH" ), ADDSET_SOFTLIGHT_STRENGTH, true );
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_COLORTONING_LABEL"));
@@ -386,6 +388,19 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     appendBehavList (mi, M ("TP_WAVELET_EDGEDETECT"), ADDSET_WA_EDGEDETECT, true);
     appendBehavList (mi, M ("TP_WAVELET_EDGEDETECTTHR"), ADDSET_WA_EDGEDETECTTHR, true);
     appendBehavList (mi, M ("TP_WAVELET_EDGEDETECTTHR2"), ADDSET_WA_EDGEDETECTTHR2, true);
+
+    mi = behModel->append ();
+    mi->set_value (behavColumns.label, M ("TP_RAW_SENSOR_BAYER_LABEL"));
+    appendBehavList (mi, M ("TP_RAW_FALSECOLOR"), ADDSET_BAYER_FALSE_COLOR_SUPPRESSION, false);
+    appendBehavList (mi, M ("TP_RAW_DCBITERATIONS") + ", " + M("TP_RAW_LMMSEITERATIONS"), ADDSET_BAYER_ITER, false);
+    appendBehavList (mi, M ("TP_RAW_DUALDEMOSAICCONTRAST"), ADDSET_BAYER_DUALDEMOZCONTRAST, false);
+    appendBehavList (mi, M ("TP_RAW_PIXELSHIFTSIGMA"), ADDSET_BAYER_PS_SIGMA, false);
+    appendBehavList (mi, M ("TP_RAW_PIXELSHIFTSMOOTH"), ADDSET_BAYER_PS_SMOOTH, false);
+    appendBehavList (mi, M ("TP_RAW_PIXELSHIFTEPERISO"), ADDSET_BAYER_PS_EPERISO, false);
+
+    mi = behModel->append ();
+    mi->set_value (behavColumns.label, M ("TP_RAW_SENSOR_XTRANS_LABEL"));
+    appendBehavList (mi, M ("TP_RAW_FALSECOLOR"), ADDSET_XTRANS_FALSE_COLOR_SUPPRESSION, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_PREPROCESS_LABEL"));
@@ -1251,7 +1266,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel ()
     startupdir = Gtk::manage ( new Gtk::Entry () );
 
     Gtk::Button* sdselect = Gtk::manage ( new Gtk::Button () );
-    sdselect->set_image (*Gtk::manage (new RTImage ("gtk-open.png")));
+    sdselect->set_image (*Gtk::manage (new RTImage ("folder-open.png")));
 
     Gtk::RadioButton::Group opts = sdcurrent->get_group();
     sdlast->set_group (opts);
@@ -1353,8 +1368,8 @@ Gtk::Widget* Preferences::getFileBrowserPanel ()
     delExt->set_tooltip_text (M ("PREFERENCES_PARSEDEXTDELHINT"));
     moveExtUp->set_tooltip_text (M ("PREFERENCES_PARSEDEXTUPHINT"));
     moveExtDown->set_tooltip_text (M ("PREFERENCES_PARSEDEXTDOWNHINT"));
-    Gtk::Image* addExtImg = Gtk::manage ( new RTImage ("list-add-small.png") );
-    Gtk::Image* delExtImg = Gtk::manage ( new RTImage ("list-remove-red-small.png") );
+    Gtk::Image* addExtImg = Gtk::manage ( new RTImage ("add-small.png") );
+    Gtk::Image* delExtImg = Gtk::manage ( new RTImage ("remove-small.png") );
     Gtk::Image* moveExtUpImg = Gtk::manage ( new RTImage ("arrow-up-small.png") );
     Gtk::Image* moveExtDownImg = Gtk::manage ( new RTImage ("arrow-down-small.png") );
     addExt->add (*addExtImg);
