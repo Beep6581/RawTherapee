@@ -1047,7 +1047,7 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
 //              pmlistener->pointerMoved (true, mx, my, pix[0], pix[1], pix[2]);
             int imwidth = cropHandler.cropPixbuf->get_width();
             int imheight = cropHandler.cropPixbuf->get_height();
-            guint8* pix = cropHandler.cropPixbuftrue->get_pixels() + vy * cropHandler.cropPixbuf->get_rowstride() + vx * 3;
+            guint8* pix = cropHandler.cropPixbuf->get_pixels() + vy * cropHandler.cropPixbuf->get_rowstride() + vx * 3;
 
             int rval = pix[0];
             int gval = pix[1];
