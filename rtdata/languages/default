@@ -741,6 +741,25 @@ HISTORY_MSG_490;DRC - Amount
 HISTORY_MSG_491;White Balance
 HISTORY_MSG_492;RGB Curves
 HISTORY_MSG_493;L*a*b* Adjustments
+HISTORY_MSG_495;L*a*b Spot created
+HISTORY_MSG_496;L*a*b Spot deleted
+HISTORY_MSG_497;L*a*b Spot selected
+HISTORY_MSG_498;L*a*b Spot name
+HISTORY_MSG_499;L*a*b Spot visibility
+HISTORY_MSG_500;L*a*b Spot shape
+HISTORY_MSG_501;L*a*b Spot method
+HISTORY_MSG_502;L*a*b Spot shape method
+HISTORY_MSG_503;L*a*b Spot locX
+HISTORY_MSG_504;L*a*b Spot locXL
+HISTORY_MSG_505;L*a*b Spot locY
+HISTORY_MSG_506;L*a*b Spot locYT
+HISTORY_MSG_507;L*a*b Spot center
+HISTORY_MSG_508;L*a*b Spot circrad
+HISTORY_MSG_509;L*a*b Spot quality method
+HISTORY_MSG_510;L*a*b Spot transit
+HISTORY_MSG_511;L*a*b Spot thresh
+HISTORY_MSG_512;L*a*b Spot iter
+
 HISTORY_MSG_CLAMPOOG;Out-of-gamut color clipping
 HISTORY_MSG_LOCLOCX;Local - Right
 HISTORY_MSG_LOCCENTER;Local - Center

@@ -521,6 +521,24 @@ enum ProcEventCode {
     EvRGBEnabled = 491,
     EvLEnabled = 492,
 //    EvPixelShiftOneGreen = 493,   can be reused
+    EvLocallabSpotCreated = 494,
+    EvLocallabSpotDeleted = 495,
+    EvLocallabSpotSelected = 496,
+    EvLocallabSpotName = 497,
+    EvLocallabSpotVisibility = 498,
+    EvLocallabSpotShape = 499,
+    EvLocallabSpotSpotMethod = 500,
+    EvLocallabSpotShapeMethod = 501,
+    EvLocallabSpotLocX = 502,
+    EvLocallabSpotLocXL = 503,
+    EvLocallabSpotLocY = 504,
+    EvLocallabSpotLocYT = 505,
+    EvLocallabSpotCenter = 506,
+    EvLocallabSpotCircrad = 507,
+    EvLocallabSpotQualityMethod = 508,
+    EvLocallabSpotTransit = 509,
+    EvLocallabSpotThresh = 510,
+    EvLocallabSpotIter = 511,
     NUMOFEVENTS
 
 

@@ -325,6 +325,27 @@ void ParamsEdited::set(bool v)
     gradient.centerX = v;
     gradient.centerY = v;
     locallab.enabled = v;
+    locallab.nbspot = v;
+    locallab.selspot = v;
+    locallab.id = v;
+    locallab.name = v;
+    locallab.isvisible = v;
+    locallab.shape = v;
+    locallab.spotMethod = v;
+    locallab.shapeMethod = v;
+    locallab.locX = v;
+    locallab.locXL = v;
+    locallab.locY = v;
+    locallab.locYT = v;
+    locallab.centerX = v;
+    locallab.centerY = v;
+    locallab.circrad = v;
+    locallab.qualityMethod = v;
+    locallab.transit = v;
+    locallab.thresh = v;
+    locallab.iter = v;
+
+    /*
     locallab.expcolor = v;
     locallab.expexpose = v;
     locallab.expvibrance = v;
@@ -439,7 +460,10 @@ void ParamsEdited::set(bool v)
     locallab.skintonescurve   = v;
     locallab.sensiv = v;
     locallab.spotduplicated = v;
-
+    locallab.id = v;
+    locallab.name = v;
+    locallab.isvisible = v;
+    */
 
     pcvignette.enabled = v;
     pcvignette.strength = v;
@@ -994,7 +1018,30 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         gradient.strength = gradient.strength && p.gradient.strength == other.gradient.strength;
         gradient.centerX = gradient.centerX && p.gradient.centerX == other.gradient.centerX;
         gradient.centerY = gradient.centerY && p.gradient.centerY == other.gradient.centerY;
+
         locallab.enabled = locallab.enabled && p.locallab.enabled == other.locallab.enabled;
+        locallab.nbspot = locallab.nbspot && p.locallab.nbspot == other.locallab.nbspot;
+        locallab.selspot = locallab.selspot && p.locallab.selspot == other.locallab.selspot;
+        // Control spot settings
+        locallab.id = locallab.id && p.locallab.id == other.locallab.id;
+        locallab.name = locallab.name && p.locallab.name == other.locallab.name;
+        locallab.isvisible = locallab.isvisible && p.locallab.isvisible == other.locallab.isvisible;
+        locallab.shape = locallab.shape && p.locallab.shape == other.locallab.shape;
+        locallab.spotMethod = locallab.spotMethod && p.locallab.spotMethod == other.locallab.spotMethod;
+        locallab.shapeMethod = locallab.shapeMethod && p.locallab.shapeMethod == other.locallab.shapeMethod;
+        locallab.locX = locallab.locX && p.locallab.locX == other.locallab.locX;
+        locallab.locXL = locallab.locXL && p.locallab.locXL == other.locallab.locXL;
+        locallab.locY = locallab.locY && p.locallab.locY == other.locallab.locY;
+        locallab.locYT = locallab.locYT && p.locallab.locYT == other.locallab.locYT;
+        locallab.centerX = locallab.centerX && p.locallab.centerX == other.locallab.centerX;
+        locallab.centerY = locallab.centerY && p.locallab.centerY == other.locallab.centerY;
+        locallab.circrad = locallab.circrad && p.locallab.circrad == other.locallab.circrad;
+        locallab.qualityMethod = locallab.qualityMethod && p.locallab.qualityMethod == other.locallab.qualityMethod;
+        locallab.transit = locallab.transit && p.locallab.transit == other.locallab.transit;
+        locallab.thresh = locallab.thresh && p.locallab.thresh == other.locallab.thresh;
+        locallab.iter = locallab.iter && p.locallab.iter == other.locallab.iter;
+
+        /*
         locallab.avoid = locallab.avoid && p.locallab.avoid == other.locallab.avoid;
         locallab.invers = locallab.invers && p.locallab.invers == other.locallab.invers;
         locallab.cutpast = locallab.cutpast && p.locallab.cutpast == other.locallab.cutpast;
@@ -1109,8 +1156,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         locallab.skintonescurve = locallab.skintonescurve && p.locallab.skintonescurve == other.locallab.skintonescurve;
         locallab.sensiv = locallab.sensiv && p.locallab.sensiv == other.locallab.sensiv;
         locallab.spotduplicated = locallab.spotduplicated && p.locallab.spotduplicated == other.locallab.spotduplicated;
+        */
 
-		
         pcvignette.enabled = pcvignette.enabled && p.pcvignette.enabled == other.pcvignette.enabled;
         pcvignette.strength = pcvignette.strength && p.pcvignette.strength == other.pcvignette.strength;
         pcvignette.feather = pcvignette.feather && p.pcvignette.feather == other.pcvignette.feather;
@@ -1423,7 +1470,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     if (toneCurve.clampOOG) {
         toEdit.toneCurve.clampOOG = mods.toneCurve.clampOOG;
     }
-    
+
     if (retinex.enabled) {
         toEdit.retinex.enabled        = mods.retinex.enabled;
     }
@@ -1770,12 +1817,15 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     if (colorToning.labgridALow) {
         toEdit.colorToning.labgridALow = mods.colorToning.labgridALow;
     }
+
     if (colorToning.labgridBLow) {
         toEdit.colorToning.labgridBLow = mods.colorToning.labgridBLow;
     }
+
     if (colorToning.labgridAHigh) {
         toEdit.colorToning.labgridAHigh = mods.colorToning.labgridAHigh;
     }
+
     if (colorToning.labgridBHigh) {
         toEdit.colorToning.labgridBHigh = mods.colorToning.labgridBHigh;
     }
@@ -2301,7 +2351,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (fattal.amount) {
         toEdit.fattal.amount = mods.fattal.amount;
-    }    
+    }
+
     if (fattal.anchor) {
         toEdit.fattal.anchor = mods.fattal.anchor;
     }
@@ -2458,6 +2509,84 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.locallab.enabled   = mods.locallab.enabled;
     }
 
+    if (locallab.nbspot) {
+        toEdit.locallab.nbspot   = mods.locallab.nbspot;
+    }
+
+    if (locallab.selspot) {
+        toEdit.locallab.selspot   = mods.locallab.selspot;
+    }
+
+    // Control spot settings
+    if (locallab.id) {
+        toEdit.locallab.id   = mods.locallab.id;
+    }
+
+    if (locallab.name) {
+        toEdit.locallab.name   = mods.locallab.name;
+    }
+
+    if (locallab.isvisible) {
+        toEdit.locallab.isvisible   = mods.locallab.isvisible;
+    }
+
+    if (locallab.shape) {
+        toEdit.locallab.shape   = mods.locallab.shape;
+    }
+
+    if (locallab.spotMethod) {
+        toEdit.locallab.spotMethod   = mods.locallab.spotMethod;
+    }
+
+    if (locallab.shapeMethod) {
+        toEdit.locallab.shapeMethod   = mods.locallab.shapeMethod;
+    }
+
+    if (locallab.locX) {
+        toEdit.locallab.locX   = mods.locallab.locX;
+    }
+
+    if (locallab.locXL) {
+        toEdit.locallab.locXL   = mods.locallab.locXL;
+    }
+
+    if (locallab.locY) {
+        toEdit.locallab.locY   = mods.locallab.locY;
+    }
+
+    if (locallab.locYT) {
+        toEdit.locallab.locYT   = mods.locallab.locYT;
+    }
+
+    if (locallab.centerX) {
+        toEdit.locallab.centerX   = mods.locallab.centerX;
+    }
+
+    if (locallab.centerY) {
+        toEdit.locallab.centerY   = mods.locallab.centerY;
+    }
+
+    if (locallab.circrad) {
+        toEdit.locallab.circrad   = mods.locallab.circrad;
+    }
+
+    if (locallab.qualityMethod) {
+        toEdit.locallab.qualityMethod   = mods.locallab.qualityMethod;
+    }
+
+    if (locallab.transit) {
+        toEdit.locallab.transit   = mods.locallab.transit;
+    }
+
+    if (locallab.thresh) {
+        toEdit.locallab.thresh   = mods.locallab.thresh;
+    }
+
+    if (locallab.iter) {
+        toEdit.locallab.iter   = mods.locallab.iter;
+    }
+
+    /*
     if (locallab.expcolor) {
         toEdit.locallab.expcolor   = mods.locallab.expcolor;
     }
@@ -2685,7 +2814,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     if (locallab.spotduplicated) {
         toEdit.locallab.spotduplicated     = mods.locallab.spotduplicated;
     }
-	
+
     if (locallab.sensiex) {
         toEdit.locallab.sensiex     = mods.locallab.sensiex;
     }
@@ -2895,6 +3024,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     if (locallab.chromacbdl) {
         toEdit.locallab.chromacbdl = mods.locallab.chromacbdl;
     }
+    */
 
     if (pcvignette.enabled) {
         toEdit.pcvignette.enabled     = mods.pcvignette.enabled;
@@ -3249,7 +3379,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     if (raw.bayersensor.linenoiseDirection) {
         toEdit.raw.bayersensor.linenoiseDirection = mods.raw.bayersensor.linenoiseDirection;
     }
-    
+
     if (raw.bayersensor.pdafLinesFilter) {
         toEdit.raw.bayersensor.pdafLinesFilter = mods.raw.bayersensor.pdafLinesFilter;
     }

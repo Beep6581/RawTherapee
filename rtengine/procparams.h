@@ -899,6 +899,28 @@ struct GradientParams {
   * Parameters of the Local Lab
   */
 struct LocallabParams {
+    bool enabled;
+    int nbspot;
+    int selspot;
+    // Control spot settings
+    std::vector<int> id;
+    std::vector<Glib::ustring> name;
+    std::vector<int> isvisible;
+    std::vector<Glib::ustring> shape; // ELI, RECT
+    std::vector<Glib::ustring> spotMethod; // norm, exc
+    std::vector<Glib::ustring> shapeMethod; // IND, SYM, INDSL, SYMSL
+    std::vector<int> locX;
+    std::vector<int> locXL;
+    std::vector<int> locY;
+    std::vector<int> locYT;
+    std::vector<int> centerX;
+    std::vector<int> centerY;
+    std::vector<int> circrad;
+    std::vector<Glib::ustring> qualityMethod; // std, enh, enhden
+    std::vector<int> transit;
+    std::vector<int> thresh;
+    std::vector<int> iter;
+
     std::vector<double> llcurve;
     std::vector<double> cccurve;
     std::vector<double> excurve;
@@ -908,6 +930,7 @@ struct LocallabParams {
     std::vector<double> HHcurve;
     std::vector<double> skintonescurve;
 
+    /*
     bool    enabled;
     double  degree;
     int     locY;
@@ -1009,8 +1032,12 @@ struct LocallabParams {
     bool expdenoi;
     double threshold;
     int chromacbdl;
-	bool spotduplicated;
-	
+    bool spotduplicated;
+    int id;
+    Glib::ustring name;
+    bool isvisible;
+    */
+
     LocallabParams();
 
     bool operator ==(const LocallabParams& other) const;

@@ -40,13 +40,13 @@
 
 
 using namespace rtengine;
-using namespace rtengine::procparams;
+
 extern Options options;
 
 
 Locallab::Locallab():
     FoldableToolPanel(this, "locallab", M("TP_LOCALLAB_LABEL"), false, true),
-    EditSubscriber(ET_OBJECTS), lastObject(-1),
+    lastObject(-1),
     expcolor(new MyExpander(true, M("TP_LOCALLAB_COFR"))),
     expexpose(new MyExpander(true, M("TP_LOCALLAB_EXPOSE"))),
     expvibrance(new MyExpander(true, M("TP_LOCALLAB_VIBRANCE"))),
@@ -56,7 +56,7 @@ Locallab::Locallab():
     expsharp(new MyExpander(true, M("TP_LOCALLAB_SHARP"))),
     expcbdl(new MyExpander(true, M("TP_LOCALLAB_CBDL"))),
     expdenoi(new MyExpander(true, M("TP_LOCALLAB_DENOIS"))),
-    expsettings(new MyExpander(false, M("TP_LOCALLAB_SETTINGS"))),
+    expsettings(new ControlSpotPanel()),
 
     LocalcurveEditorgainT(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_TRANSMISSIONGAIN"))),
     LocalcurveEditorgainTrab(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_TRANSMISSIONGAINRAB"))),
@@ -132,8 +132,6 @@ Locallab::Locallab():
     blurMethod(Gtk::manage(new MyComboBoxText())),
     dustMethod(Gtk::manage(new MyComboBoxText())),
 
-    excluFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_EXCLUF")))),
-    artifFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_ARTIF")))),
     shapeFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHFR")))),
     superFrame(Gtk::manage(new Gtk::Frame())),
     dustFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DUST")))),
@@ -141,17 +139,12 @@ Locallab::Locallab():
 
 
     labmdh(Gtk::manage(new Gtk::Label(M("TP_LOCRETI_METHOD") + ":"))),
-    labqual(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_QUAL_METHOD") + ":"))),
     labqualcurv(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_QUALCURV_METHOD") + ":"))),
     labmS(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_STYPE") + ":"))),
     labmEx(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_EXCLUTYPE") + ":"))),
     labmshape(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SHAPETYPE") + ":"))),
 
-    ctboxS(Gtk::manage(new Gtk::HBox())),
-    ctboxshape(Gtk::manage(new Gtk::HBox())),
-    ctboxEx(Gtk::manage(new Gtk::HBox())),
     dhbox(Gtk::manage(new Gtk::HBox())),
-    qualbox(Gtk::manage(new Gtk::HBox())),
     qualcurvbox(Gtk::manage(new Gtk::HBox())),
 
     avoid(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AVOID")))),
@@ -162,8 +155,7 @@ Locallab::Locallab():
     inversret(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
     inverssha(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
     cutpast(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_CUTPAST")))),
-    lastdust(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LASTDUST")))),
-    draggedPointOldAngle(-1000.)
+    lastdust(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LASTDUST"))))
 
 {
     CurveListener::setMulti(true);
@@ -278,17 +270,9 @@ Locallab::Locallab():
     Evlocallabbilateral = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCBILATERAL");// = 598,
     Evlocallabnoiselequal = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCNOISELEQUAL");// = 599,
     Evlocallabshapemethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSHAPEMETH");// = 600,
-    Evlocallabspotduplicated = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSPOTDUP");
+    Evlocallabspotduplicated = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSPOTDUP");// = 601
+    Evlocallabspotcreated = m->newEvent(LUMINANCECURVE, "Spot creation");// = 602
 
-    spotPanel = Gtk::manage(new ControlSpotPanel());
-    expsettings->add(*spotPanel);
-    editHBox = Gtk::manage(new Gtk::HBox());
-    edit = Gtk::manage(new Gtk::ToggleButton());
-    edit->add(*Gtk::manage(new RTImage("editmodehand.png")));
-    edit->set_tooltip_text(M("EDIT_OBJECT_TOOLTIP"));
-    editConn = edit->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::editToggled));
-    editHBox->pack_start(*edit, Gtk::PACK_SHRINK, 0);
-    pack_start(*editHBox, Gtk::PACK_SHRINK, 0);
     int realnbspot;
 
 
@@ -304,17 +288,9 @@ Locallab::Locallab():
 
     const LocallabParams default_params;
 
-    nbspot->setAdjusterListener(this);
-    nbspot->set_tooltip_text(M("TP_LOCALLAB_NBSPOT_TOOLTIP"));
-
-
-    anbspot->setAdjusterListener(this);
-    anbspot->set_tooltip_text(M("TP_LOCALLAB_ANBSPOT_TOOLTIP"));
-
     shapeFrame->set_label_align(0.025, 0.5);
 
-    expsettings->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expsettings));
-
+    expsettings->getExpander()->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expsettings->getExpander()));
 
     expcolor->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expcolor));
     enablecolorConn = expcolor->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expcolor));
@@ -343,73 +319,26 @@ Locallab::Locallab():
     expdenoi->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expdenoi));
     enabledenoiConn = expdenoi->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expdenoi));
 
-
-    ctboxshape->pack_start(*labmshape, Gtk::PACK_SHRINK, 4);
-
-    ctboxEx->pack_start(*labmEx, Gtk::PACK_SHRINK, 4);
-    ctboxEx->set_tooltip_markup(M("TP_LOCALLAB_EXCLUTYPE_TOOLTIP"));
-
     shapemethod->append(M("TP_LOCALLAB_ELI"));
     shapemethod->append(M("TP_LOCALLAB_RECT"));
     shapemethod->set_active(0);
-    shapemethodconn = shapemethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::shapemethodChanged));
-
-
     Exclumethod->append(M("TP_LOCALLAB_EXNORM"));
     Exclumethod->append(M("TP_LOCALLAB_EXECLU"));
     Exclumethod->set_active(0);
-    Exclumethodconn = Exclumethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::ExclumethodChanged));
-
-    sensiexclu->set_tooltip_text(M("TP_LOCALLAB_SENSIEXCLU_TOOLTIP"));
-    sensiexclu->setAdjusterListener(this);
 
     struc->set_tooltip_text(M("TP_LOCALLAB_STRUC_TOOLTIP"));
     struc->setAdjusterListener(this);
-
-    ctboxS->pack_start(*labmS, Gtk::PACK_SHRINK, 4);
-    ctboxS->set_tooltip_markup(M("TP_LOCALLAB_STYPE_TOOLTIP"));
-
 
     Smethod->append(M("TP_LOCALLAB_IND"));
     Smethod->append(M("TP_LOCALLAB_SYM"));
     Smethod->append(M("TP_LOCALLAB_INDSL"));
     Smethod->append(M("TP_LOCALLAB_SYMSL"));
     Smethod->set_active(0);
-    Smethodconn = Smethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::SmethodChanged));
-
-
-    locX->setAdjusterListener(this);
-
-    locXL->setAdjusterListener(this);
-
-    degree->setAdjusterListener(this);
-
-    locY->setAdjusterListener(this);
-
-    locYT->setAdjusterListener(this);
-
-    centerX->setAdjusterListener(this);
-
-    centerY->setAdjusterListener(this);
-
-    circrad->setAdjusterListener(this);
-
-    spotduplicated = Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SPOTDUPLI")));
-    spotduplicated->set_active(false);
-    spotduplicatedConn  = spotduplicated->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::spotduplicatedChanged));
-    spotduplicated->set_tooltip_markup(M("TP_LOCALLAB_SPOTDUPLI_TOOLTIP"));
-    // labspotdup = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SPOTDUP_ENA")));
-
     qualityMethod->append(M("TP_LOCALLAB_STD"));
     qualityMethod->append(M("TP_LOCALLAB_ENH"));
     qualityMethod->append(M("TP_LOCALLAB_ENHDEN"));
     qualityMethod->set_active(0);
-    qualityMethodConn = qualityMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::qualityMethodChanged));
-    qualityMethod->set_tooltip_markup(M("TP_LOCALLAB_METHOD_TOOLTIP"));
 
-    thres->setAdjusterListener(this);
-
-    proxi->setAdjusterListener(this);
     std::vector<GradientMilestone> milestones;
     std::vector<double> defaultCurve;
     std::vector<double> defaultCurve2;
@@ -529,9 +458,6 @@ Locallab::Locallab():
     activlum->set_active(false);
     activlumConn  = activlum->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::activlumChanged));
 
-    transit->set_tooltip_text(M("TP_LOCALLAB_TRANSIT_TOOLTIP"));
-    transit->setAdjusterListener(this);
-
     invers->set_active(false);
     inversConn  = invers->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::inversChanged));
 
@@ -616,10 +542,8 @@ Locallab::Locallab():
 
 
 // end reti
-    ToolParamBlock* const shapeBox = Gtk::manage(new ToolParamBlock());
     avoid->set_active(false);
     avoidConn  = avoid->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::avoidChanged));
-    shapeBox->pack_start(*nbspot);
     pack_start(*anbspot);
 
     hueref->setAdjusterListener(this);
@@ -640,55 +564,10 @@ Locallab::Locallab():
     chromaref->hide();
     lumaref->hide();
     sobelref->hide();
-    ctboxshape->pack_start(*shapemethod);
-    shapeBox->pack_start(*ctboxshape);
 
-    ctboxEx->pack_start(*Exclumethod);
-    shapeBox->pack_start(*ctboxEx);
-
-    excluFrame->set_label_align(0.025, 0.5);
-    excluFrame->set_tooltip_text(M("TP_LOCALLAB_EXCLUF_TOOLTIP"));
-    ToolParamBlock* const excluBox = Gtk::manage(new ToolParamBlock());
-
-    excluBox->pack_start(*sensiexclu);
-    //excluBox->pack_start(*struc);
-    excluFrame->add(*excluBox);
-    shapeBox->pack_start(*excluFrame);
-
-
-//   ctboxS->pack_start(*shapemethod);
-    ctboxS->pack_start(*Smethod);
-    shapeBox->pack_start(*ctboxS);
-
-
-    shapeBox->pack_start(*locX);
-    shapeBox->pack_start(*locXL);
-    //pack_start (*degree);
-    shapeBox->pack_start(*locY);
-    shapeBox->pack_start(*locYT);
-    shapeBox->pack_start(*centerX);
-    shapeBox->pack_start(*centerY);
-    shapeBox->pack_start(*circrad);
-    shapeBox->pack_start(*spotduplicated);
-    //shapeBox->pack_start (*labspotdup);
-    qualbox->pack_start(*labqual, Gtk::PACK_SHRINK, 4);
-    qualbox->pack_start(*qualityMethod);
-    shapeBox->pack_start(*qualbox);
-    shapeBox->pack_start(*transit);
-
-    artifFrame->set_label_align(0.025, 0.5);
-    artifFrame->set_tooltip_text(M("TP_LOCALLAB_ARTIF_TOOLTIP"));
-
-    ToolParamBlock* const artifBox = Gtk::manage(new ToolParamBlock());
-
-    artifBox->pack_start(*thres);
-    artifBox->pack_start(*proxi);
-    artifFrame->add(*artifBox);
-    shapeBox->pack_start(*artifFrame);
-
-    expsettings->add(*shapeBox);
+    // expsettings->add(*spotPanel);
     expsettings->setLevel(2);
-    pack_start(*expsettings);
+    pack_start(*expsettings->getExpander());
 
 
 
@@ -1094,255 +973,11 @@ Locallab::Locallab():
     neutrHBox->pack_start(*neutral);
     pack_start(*neutrHBox);
 
-
-    // Instantiating the Editing geometry; positions will be initialized later
-//   Line  *hLine, *vLine, *locYLine[2], *locXLine[2];
-    Line  *locYLine[2], *locXLine[2];
-    Circle *centerCircle;
-//   Arcellipse *oneellipse;
-
-    Beziers *onebeziers[4] = {};
-    Beziers *twobeziers[4] = {};
-    Beziers *thrbeziers[4] = {};
-    Beziers *foubeziers[4] = {};
-    float innw = 0.7f;
-    // Visible geometry
-    locXLine[0] = new Line();
-    locXLine[0]->innerLineWidth = 2;
-    locXLine[1] = new Line();
-    locXLine[1]->innerLineWidth = 2;
-    locXLine[0]->datum  = locXLine[1]->datum = Geometry::IMAGE;
-
-    locYLine[0] = new Line();
-    locYLine[0]->innerLineWidth = 2;
-    locYLine[1] = new Line();
-    locYLine[1]->innerLineWidth = 2;
-    locYLine[0]->datum = locYLine[1]->datum = Geometry::IMAGE;
-
-    centerCircle = new Circle();
-    centerCircle->datum = Geometry::IMAGE;
-    centerCircle->radiusInImageSpace = true;
-    centerCircle->radius = circrad->getValue(); //19;
-    centerCircle->filled = false;
-
-    if (options.showdelimspot) {
-        onebeziers[0] = new Beziers();
-        onebeziers[0]->datum = Geometry::IMAGE;
-        onebeziers[0]->innerLineWidth = innw;
-
-        onebeziers[1] = new Beziers();
-        onebeziers[1]->datum = Geometry::IMAGE;
-        onebeziers[1]->innerLineWidth = innw;
-
-        onebeziers[2] = new Beziers();
-        onebeziers[2]->datum = Geometry::IMAGE;
-        onebeziers[2]->innerLineWidth = innw;
-
-        onebeziers[3] = new Beziers();
-        onebeziers[3]->datum = Geometry::IMAGE;
-        onebeziers[3]->innerLineWidth = innw;
-
-        twobeziers[0] = new Beziers();
-        twobeziers[0]->datum = Geometry::IMAGE;
-        twobeziers[0]->innerLineWidth = innw;
-
-        twobeziers[1] = new Beziers();
-        twobeziers[1]->datum = Geometry::IMAGE;
-        twobeziers[1]->innerLineWidth = innw;
-
-        twobeziers[2] = new Beziers();
-        twobeziers[2]->datum = Geometry::IMAGE;
-        twobeziers[2]->innerLineWidth = innw;
-
-        twobeziers[3] = new Beziers();
-        twobeziers[3]->datum = Geometry::IMAGE;
-        twobeziers[3]->innerLineWidth = innw;
-
-        thrbeziers[0] = new Beziers();
-        thrbeziers[0]->datum = Geometry::IMAGE;
-        thrbeziers[0]->innerLineWidth = innw;
-
-        thrbeziers[1] = new Beziers();
-        thrbeziers[1]->datum = Geometry::IMAGE;
-        thrbeziers[1]->innerLineWidth = innw;
-
-        thrbeziers[2] = new Beziers();
-        thrbeziers[2]->datum = Geometry::IMAGE;
-        thrbeziers[2]->innerLineWidth = innw;
-
-        thrbeziers[3] = new Beziers();
-        thrbeziers[3]->datum = Geometry::IMAGE;
-        thrbeziers[3]->innerLineWidth = innw;
-
-        foubeziers[0] = new Beziers();
-        foubeziers[0]->datum = Geometry::IMAGE;
-        foubeziers[0]->innerLineWidth = innw;
-
-        foubeziers[1] = new Beziers();
-        foubeziers[1]->datum = Geometry::IMAGE;
-        foubeziers[1]->innerLineWidth = innw;
-
-        foubeziers[2] = new Beziers();
-        foubeziers[2]->datum = Geometry::IMAGE;
-        foubeziers[2]->innerLineWidth = innw;
-
-        foubeziers[3] = new Beziers();
-        foubeziers[3]->datum = Geometry::IMAGE;
-        foubeziers[3]->innerLineWidth = innw;
-    }
-
-
-    EditSubscriber::visibleGeometry.push_back(locXLine[0]);
-    EditSubscriber::visibleGeometry.push_back(locXLine[1]);
-    EditSubscriber::visibleGeometry.push_back(locYLine[0]);
-    EditSubscriber::visibleGeometry.push_back(locYLine[1]);
-    EditSubscriber::visibleGeometry.push_back(centerCircle);
-
-    if (options.showdelimspot) {
-        EditSubscriber::visibleGeometry.push_back(onebeziers[0]);
-        EditSubscriber::visibleGeometry.push_back(onebeziers[1]);
-        EditSubscriber::visibleGeometry.push_back(onebeziers[2]);
-        EditSubscriber::visibleGeometry.push_back(onebeziers[3]);
-        EditSubscriber::visibleGeometry.push_back(twobeziers[0]);
-        EditSubscriber::visibleGeometry.push_back(twobeziers[1]);
-        EditSubscriber::visibleGeometry.push_back(twobeziers[2]);
-        EditSubscriber::visibleGeometry.push_back(twobeziers[3]);
-        EditSubscriber::visibleGeometry.push_back(thrbeziers[0]);
-        EditSubscriber::visibleGeometry.push_back(thrbeziers[1]);
-        EditSubscriber::visibleGeometry.push_back(thrbeziers[2]);
-        EditSubscriber::visibleGeometry.push_back(thrbeziers[3]);
-        EditSubscriber::visibleGeometry.push_back(foubeziers[0]);
-        EditSubscriber::visibleGeometry.push_back(foubeziers[1]);
-        EditSubscriber::visibleGeometry.push_back(foubeziers[2]);
-        EditSubscriber::visibleGeometry.push_back(foubeziers[3]);
-    }
-
-    // MouseOver geometry
-    locXLine[0] = new Line();
-    locXLine[0]->innerLineWidth = 2;
-    locXLine[1] = new Line();
-    locXLine[1]->innerLineWidth = 2;
-    locXLine[0]->datum  = locXLine[1]->datum = Geometry::IMAGE;
-
-    locYLine[0] = new Line();
-    locYLine[0]->innerLineWidth = 2;
-    locYLine[1] = new Line();
-    locYLine[1]->innerLineWidth = 2;
-    locYLine[0]->datum = locYLine[1]->datum = Geometry::IMAGE;
-
-    centerCircle = new Circle();
-    centerCircle->datum = Geometry::IMAGE;
-    centerCircle->radiusInImageSpace = true;
-    centerCircle->radius = circrad->getValue();//19;
-    centerCircle->filled = true;
-
-    if (options.showdelimspot) {
-        onebeziers[0]   = new Beziers();
-        onebeziers[0]->datum = Geometry::IMAGE;
-        onebeziers[0]->innerLineWidth = innw;
-
-        onebeziers[1]   = new Beziers();
-        onebeziers[1]->datum = Geometry::IMAGE;
-        onebeziers[1]->innerLineWidth = innw;
-
-        onebeziers[2]   = new Beziers();
-        onebeziers[2]->datum = Geometry::IMAGE;
-        onebeziers[2]->innerLineWidth = innw;
-
-        onebeziers[3]   = new Beziers();
-        onebeziers[3]->datum = Geometry::IMAGE;
-        onebeziers[3]->innerLineWidth = innw;
-
-        twobeziers[0] = new Beziers();
-        twobeziers[0]->datum = Geometry::IMAGE;
-        twobeziers[0]->innerLineWidth = innw;
-
-        twobeziers[1] = new Beziers();
-        twobeziers[1]->datum = Geometry::IMAGE;
-        twobeziers[1]->innerLineWidth = innw;
-
-        twobeziers[2] = new Beziers();
-        twobeziers[2]->datum = Geometry::IMAGE;
-        twobeziers[2]->innerLineWidth = innw;
-
-        twobeziers[3] = new Beziers();
-        twobeziers[3]->datum = Geometry::IMAGE;
-        twobeziers[3]->innerLineWidth = innw;
-
-        thrbeziers[0] = new Beziers();
-        thrbeziers[0]->datum = Geometry::IMAGE;
-        thrbeziers[0]->innerLineWidth = innw;
-
-        thrbeziers[1] = new Beziers();
-        thrbeziers[1]->datum = Geometry::IMAGE;
-        thrbeziers[1]->innerLineWidth = innw;
-
-        thrbeziers[2] = new Beziers();
-        thrbeziers[2]->datum = Geometry::IMAGE;
-        thrbeziers[2]->innerLineWidth = innw;
-
-        thrbeziers[3] = new Beziers();
-        thrbeziers[3]->datum = Geometry::IMAGE;
-        thrbeziers[3]->innerLineWidth = innw;
-
-        foubeziers[0] = new Beziers();
-        foubeziers[0]->datum = Geometry::IMAGE;
-        foubeziers[0]->innerLineWidth = innw;
-
-        foubeziers[1] = new Beziers();
-        foubeziers[1]->datum = Geometry::IMAGE;
-        foubeziers[1]->innerLineWidth = innw;
-
-        foubeziers[2] = new Beziers();
-        foubeziers[2]->datum = Geometry::IMAGE;
-        foubeziers[2]->innerLineWidth = innw;
-
-        foubeziers[3] = new Beziers();
-        foubeziers[3]->datum = Geometry::IMAGE;
-        foubeziers[3]->innerLineWidth = innw;
-
-    }
-
-    EditSubscriber::mouseOverGeometry.push_back(locXLine[0]);
-    EditSubscriber::mouseOverGeometry.push_back(locXLine[1]);
-
-    EditSubscriber::mouseOverGeometry.push_back(locYLine[0]);
-    EditSubscriber::mouseOverGeometry.push_back(locYLine[1]);
-
-    EditSubscriber::mouseOverGeometry.push_back(centerCircle);
-
-    if (options.showdelimspot) {
-        EditSubscriber::mouseOverGeometry.push_back(onebeziers[0]);
-        EditSubscriber::mouseOverGeometry.push_back(onebeziers[1]);
-        EditSubscriber::mouseOverGeometry.push_back(onebeziers[2]);
-        EditSubscriber::mouseOverGeometry.push_back(onebeziers[3]);
-        EditSubscriber::mouseOverGeometry.push_back(twobeziers[0]);
-        EditSubscriber::mouseOverGeometry.push_back(twobeziers[1]);
-        EditSubscriber::mouseOverGeometry.push_back(twobeziers[2]);
-        EditSubscriber::mouseOverGeometry.push_back(twobeziers[3]);
-        EditSubscriber::mouseOverGeometry.push_back(thrbeziers[0]);
-        EditSubscriber::mouseOverGeometry.push_back(thrbeziers[1]);
-        EditSubscriber::mouseOverGeometry.push_back(thrbeziers[2]);
-        EditSubscriber::mouseOverGeometry.push_back(thrbeziers[3]);
-        EditSubscriber::mouseOverGeometry.push_back(foubeziers[0]);
-        EditSubscriber::mouseOverGeometry.push_back(foubeziers[1]);
-        EditSubscriber::mouseOverGeometry.push_back(foubeziers[2]);
-        EditSubscriber::mouseOverGeometry.push_back(foubeziers[3]);
-    }
-
     show_all();
 }
 
 Locallab::~Locallab()
 {
-    for (std::vector<Geometry*>::const_iterator i = visibleGeometry.begin(); i != visibleGeometry.end(); ++i) {
-        delete *i;
-    }
-
-    for (std::vector<Geometry*>::const_iterator i = mouseOverGeometry.begin(); i != mouseOverGeometry.end(); ++i) {
-        delete *i;
-    }
-
     delete LocalcurveEditorgainT;
     delete LocalcurveEditorgainTrab;
     delete llCurveEditorG;
@@ -1351,7 +986,7 @@ Locallab::~Locallab()
 void Locallab::foldAllButMe(GdkEventButton* event, MyExpander *expander)
 {
     if (event->button == 3) {
-        expsettings->set_expanded(expsettings == expander);
+        expsettings->setExpanded(expsettings->getExpander() == expander);
         expcolor->set_expanded(expcolor == expander);
         expexpose->set_expanded(expexpose == expander);
         expvibrance->set_expanded(expvibrance == expander);
@@ -1405,7 +1040,7 @@ void Locallab::enableToggled(MyExpander *expander)
 
 void Locallab::writeOptions(std::vector<int> &tpOpen)
 {
-    tpOpen.push_back(expsettings->get_expanded());
+    tpOpen.push_back(expsettings->getExpanded());
     tpOpen.push_back(expcolor->get_expanded());
     tpOpen.push_back(expexpose->get_expanded());
     tpOpen.push_back(expvibrance->get_expanded());
@@ -1421,7 +1056,7 @@ void Locallab::writeOptions(std::vector<int> &tpOpen)
 void Locallab::updateToolState(std::vector<int> &tpOpen)
 {
     if (tpOpen.size() >= 10) {
-        expsettings->set_expanded(tpOpen.at(0));
+        expsettings->setExpanded(tpOpen.at(0));
         expcolor->set_expanded(tpOpen.at(1));
         expexpose->set_expanded(tpOpen.at(2));
         expvibrance->set_expanded(tpOpen.at(3));
@@ -2473,6 +2108,128 @@ void Locallab::localretChanged(int **datasp, std::string datastr, std::string ll
 
 void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
 {
+    printf("Locallab read\n");
+
+    // Disable all listeners
+    disableListener();
+
+    if (pedited) {
+        set_inconsistent(multiImage && !pedited->locallab.enabled);
+
+        ControlSpotPanel::SpotEdited* const se = new ControlSpotPanel::SpotEdited();
+
+        if (pedited->locallab.nbspot) {
+            se->addbutton = true;
+            se->deletebutton = true;
+        } else {
+            se->addbutton = false;
+            se->deletebutton = false;
+        }
+
+        se->treeview = pedited->locallab.nbspot || pedited->locallab.selspot;
+        se->name = pedited->locallab.name;
+        se->isvisible = pedited->locallab.isvisible;
+        se->shape = pedited->locallab.shape;
+        se->spotMethod = pedited->locallab.spotMethod;
+        se->shapeMethod = pedited->locallab.shapeMethod;
+        se->locX = pedited->locallab.locX;
+        se->locXL = pedited->locallab.locXL;
+        se->locY = pedited->locallab.locY;
+        se->locYT = pedited->locallab.locYT;
+        se->centerX = pedited->locallab.centerX;
+        se->centerY = pedited->locallab.centerY;
+        se->circrad = pedited->locallab.circrad;
+        se->qualityMethod = pedited->locallab.qualityMethod;
+        se->transit = pedited->locallab.transit;
+        se->thresh = pedited->locallab.thresh;
+        se->iter = pedited->locallab.iter;
+        expsettings->setEditedStates(se);
+    }
+
+    setEnabled(pp->locallab.enabled);
+
+    // Add non existent spots and update existent ones
+    ControlSpotPanel::SpotRow* const r = new ControlSpotPanel::SpotRow();
+
+    for (int i = 0; i < pp->locallab.nbspot; i++) {
+        r->id = pp->locallab.id.at(i);
+        r->name = pp->locallab.name.at(i);
+        r->isvisible = pp->locallab.isvisible.at(i);
+
+        if (pp->locallab.shape.at(i) == "ELI") {
+            r->shape = 0;
+        } else {
+            r->shape = 1;
+        }
+
+        if (pp->locallab.spotMethod.at(i) == "norm") {
+            r->spotMethod = 0;
+        } else {
+            r->spotMethod = 1;
+        }
+
+        if (pp->locallab.shapeMethod.at(i) == "IND") {
+            r->shapeMethod = 0;
+        } else if (pp->locallab.shapeMethod.at(i) == "SYM") {
+            r->shapeMethod = 1;
+        } else if (pp->locallab.shapeMethod.at(i) == "INDSL") {
+            r->shapeMethod = 2;
+        } else {
+            r->shapeMethod = 3;
+        }
+
+        r->locX = pp->locallab.locX.at(i);
+        r->locXL = pp->locallab.locXL.at(i);
+        r->locY = pp->locallab.locY.at(i);
+        r->locYT = pp->locallab.locYT.at(i);
+        r->centerX = pp->locallab.centerX.at(i);
+        r->centerY = pp->locallab.centerY.at(i);
+        r->circrad = pp->locallab.circrad.at(i);
+
+        if (pp->locallab.qualityMethod.at(i) == "std") {
+            r->qualityMethod = 0;
+        } else if (pp->locallab.qualityMethod.at(i) == "enh") {
+            r->qualityMethod = 1;
+        } else {
+            r->qualityMethod = 2;
+        }
+
+        r->transit = pp->locallab.transit.at(i);
+        r->thresh = pp->locallab.thresh.at(i);
+        r->iter = pp->locallab.iter.at(i);
+
+        if (!expsettings->updateControlSpot(r)) {
+            expsettings->addControlSpot(r);
+        }
+    }
+
+    // Delete not anymore existent spots
+    std::vector<int>* const list = expsettings->getSpotIdList();
+    bool ispresent;
+
+    for (int i = 0; i < (int)list->size(); i++) {
+        ispresent = false;
+
+        for (int j = 0; j < pp->locallab.nbspot; j++) {
+            if (list->at(i) == pp->locallab.id.at(j)) {
+                ispresent = true;
+                break;
+            }
+        }
+
+        if (!ispresent) {
+            expsettings->deleteControlSpot(list->at(i));
+        }
+    }
+
+    // Select active spot
+    printf("%d\n", pp->locallab.selspot);
+    expsettings->setSelectedSpot(pp->locallab.selspot);
+
+    // Enable all listeners
+    enableListener();
+
+    /*
     anbspot->hide();
     hueref->hide();
     huerefblur->hide();
@@ -2483,6 +2240,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
     centerYbuf->hide();
 
     disableListener();
+
     enablecolorConn.block(true);
     enablevibranceConn.block(true);
     enableblurConn.block(true);
@@ -2494,6 +2252,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
 
 
     if (pedited) {
+
         degree->setEditedState(pedited->locallab.degree ? Edited : UnEdited);
         locY->setEditedState(pedited->locallab.locY ? Edited : UnEdited);
         locX->setEditedState(pedited->locallab.locX ? Edited : UnEdited);
@@ -2541,7 +2300,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
         pastSatTog->set_inconsistent(!pedited->locallab.pastsattog);
         skinTonesCurve->setUnChanged(!pedited->locallab.skintonescurve);
         sensiv->setEditedState(pedited->locallab.sensiv ? Edited : UnEdited);
-        spotduplicated->set_inconsistent(!pedited->locallab.spotduplicated);
+        // spotduplicated->set_inconsistent(!pedited->locallab.spotduplicated);
 
         for (int i = 0; i < 5; i++) {
             multiplier[i]->setEditedState(pedited->locallab.mult[i] ? Edited : UnEdited);
@@ -2641,11 +2400,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     setEnabled(pp->locallab.enabled);
 
-    shapemethodconn.block(true);
-    Smethodconn.block(true);
-    Exclumethodconn.block(true);
     retinexMethodConn.block(true);
-    qualityMethodConn.block(true);
     qualitycurveMethodConn.block(true);
     blurMethodConn.block(true);
     dustMethodConn.block(true);
@@ -2769,12 +2524,8 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
     ashiftconn.block(false);
     lastAvoidColorShift = pp->locallab.avoidcolorshift;
 
-
-    spotduplicatedConn.block(true);
-    spotduplicated->set_active(pp->locallab.spotduplicated);
-    spotduplicatedConn.block(false);
+    // spotduplicated->set_active(pp->locallab.spotduplicated);
     lastspotduplicated = pp->locallab.spotduplicated;
-
 
     pastsattogconn.block(true);
     pastSatTog->set_active(pp->locallab.pastsattog);
@@ -2831,7 +2582,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
     inversretChanged();
     inversshaChanged();
 
-    updateGeometry(pp->locallab.centerX, pp->locallab.centerY, pp->locallab.circrad, pp->locallab.locY, pp->locallab.degree,  pp->locallab.locX, pp->locallab.locYT, pp->locallab.locXL);
+    // updateGeometry(pp->locallab.centerX, pp->locallab.centerY, pp->locallab.circrad, pp->locallab.locY, pp->locallab.degree,  pp->locallab.locX, pp->locallab.locYT, pp->locallab.locXL);
 
     if (pp->locallab.shapemethod == "ELI") {
         shapemethod->set_active(0);
@@ -2840,8 +2591,6 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
     }
 
     shapemethodChanged();
-    shapemethodconn.block(false);
-
 
     if (pp->locallab.Smethod == "IND") {
         Smethod->set_active(0);
@@ -2855,7 +2604,6 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
 
 
     SmethodChanged();
-    Smethodconn.block(false);
 
     if (pp->locallab.Exclumethod == "norm") {
         Exclumethod->set_active(0);
@@ -2864,7 +2612,6 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
     }
 
     ExclumethodChanged();
-    Exclumethodconn.block(false);
 
     if (pp->locallab.retinexMethod == "low") {
         retinexMethod->set_active(0);
@@ -2875,7 +2622,6 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
     }
 
     retinexMethodChanged();
-    retinexMethodConn.block(false);
 
     if (pp->locallab.blurMethod == "norm") {
         blurMethod->set_active(0);
@@ -2897,7 +2643,6 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
     }
 
     dustMethodChanged();
-    dustMethodConn.block(false);
 
     if (pp->locallab.qualityMethod == "std") {
         qualityMethod->set_active(0);
@@ -2908,7 +2653,6 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
     }
 
     qualityMethodChanged();
-    qualityMethodConn.block(false);
 
     if (pp->locallab.qualitycurveMethod == "none") {
         qualitycurveMethod->set_active(0);
@@ -2955,205 +2699,198 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
     enabledenoiConn.block(false);
 
     enableListener();
-}
-
-void Locallab::updateGeometry(const int centerX_, const int centerY_, const int circrad_, const int locY_, const double degree_, const int locX_, const int locYT_, const int locXL_, const int fullWidth, const int fullHeight)
-{
-    EditDataProvider* dataProvider = getEditProvider();
-
-
-    if (!dataProvider) {
-        return;
-    }
-
-    int imW = 0;
-    int imH = 0;
-
-    if (fullWidth != -1 && fullHeight != -1) {
-        imW = fullWidth;
-        imH = fullHeight;
-    } else {
-        dataProvider->getImageSize(imW, imH);
-
-        if (!imW || !imH) {
-            return;
-        }
-    }
-
-    PolarCoord polCoord1, polCoord2, polCoord0;
-    // dataProvider->getImageSize(imW, imH);
-    double decayY = (locY_) * double (imH) / 2000.;
-    double decayYT = (locYT_) * double (imH) / 2000.;
-    double decayX = (locX_) * (double (imW)) / 2000.;
-    double decayXL = (locXL_) * (double (imW)) / 2000.;
-    rtengine::Coord origin(imW / 2 + centerX_ * imW / 2000.f, imH / 2 + centerY_ * imH / 2000.f);
-//   printf("deX=%f dexL=%f deY=%f deyT=%f locX=%i locY=%i\n", decayX, decayXL, decayY, decayYT, locX_, locY_);
-
-    if (Smethod->get_active_row_number() == 1 || Smethod->get_active_row_number() == 3) {
-        decayYT = decayY;
-        decayXL = decayX;
-    }
-
-//    Line *currLine;
-//    Circle *currCircle;
-//    Beziers *currBeziers;
-    double decay;
-    /*
-    const auto updateLine = [&] (Geometry * geometry, const float radius, const float begin, const float end) {
-        const auto line = static_cast<Line*> (geometry);
-        line->begin = PolarCoord (radius, -degree_ + begin);
-        line->begin += origin;
-        line->end = PolarCoord (radius, -degree_ + end);
-        line->end += origin;
-    };
     */
-    const auto updateLineWithDecay = [&](Geometry * geometry, const float radius, const float decal, const float offSetAngle) {
-        const auto line = static_cast<Line*>(geometry);  //180
-        line->begin = PolarCoord(radius, -degree_ + decal) + PolarCoord(decay, -degree_ + offSetAngle);
-        line->begin += origin;//0
-        line->end = PolarCoord(radius, -degree_ + (decal - 180)) + PolarCoord(decay, -degree_ + offSetAngle);
-        line->end += origin;
-    };
-
-    const auto updateCircle = [&](Geometry * geometry) {
-        const auto circle = static_cast<Circle*>(geometry);
-        circle->center = origin;
-        circle->radius = circrad_;
-    };
-
-    const auto updateBeziers = [&](Geometry * geometry, const double dX_, const double dI_, const double dY_,  const float begi, const float inte, const float en) {
-        const auto beziers = static_cast<Beziers*>(geometry);
-        beziers->begin = PolarCoord(dX_, begi);
-        beziers->begin += origin;//0
-        beziers->inter = PolarCoord(dI_, inte);
-        beziers->inter += origin;//0
-        beziers->end = PolarCoord(dY_,  en);
-        beziers->end += origin;
-        //  printf("dX=%f dI=%f dY=%f begx=%i begy=%i intx=%i inty=%i endx=%i endy=%i\n", dX_, dI_, dY_, beziers->begin.x, beziers->begin.y, beziers->inter.x, beziers->inter.y, beziers->end.x, beziers->end.y);
-    };
-
-    double dimline = 100.;
-
-    if (options.showdelimspot) {
-        dimline = 500.;
-    }
-
-
-    decay = decayX;
-    updateLineWithDecay(visibleGeometry.at(0), dimline, 90., 0.);
-    updateLineWithDecay(mouseOverGeometry.at(0), dimline, 90., 0.);
-
-    decay = decayXL;
-
-    updateLineWithDecay(visibleGeometry.at(1), dimline, 90., 180.);
-    updateLineWithDecay(mouseOverGeometry.at(1), dimline, 90., 180.);
-
-    decay = decayYT;
-    updateLineWithDecay(visibleGeometry.at(2), dimline, 180., 270.);
-    updateLineWithDecay(mouseOverGeometry.at(2), dimline, 180., 270.);
-
-    decay = decayY;
-
-    updateLineWithDecay(visibleGeometry.at(3), dimline, 180, 90.);
-    updateLineWithDecay(mouseOverGeometry.at(3), dimline, 180., 90.);
-
-
-    updateCircle(visibleGeometry.at(4));
-    updateCircle(mouseOverGeometry.at(4));
-
-    if (options.showdelimspot) {
-        //this decayww evaluate approximation of a point in the ellipse for an angle alpha
-        //this decayww evaluate approximation of a point in the ellipse for an angle alpha
-        double decay5 = 1.003819 * ((decayX * decayY) / sqrt(0.00765 * SQR(decayX) + SQR(decayY)));    //0.07179 = SQR(sin(15)/cos(15))  1.0038 = 1 / cos(5)
-        double decay15 = 1.03527 * ((decayX * decayY) / sqrt(0.07179 * SQR(decayX) + SQR(decayY)));    //0.07179 = SQR(sin(15)/cos(15))  1.03527 = 1 / cos(15)
-        double decay30 = 1.15473 * ((decayX * decayY) / sqrt(0.33335 * SQR(decayX) + SQR(decayY)));
-        double decay60 = 2. * ((decayX * decayY) / sqrt(3.0 * SQR(decayX) + SQR(decayY)));
-        double decay75 = 3.86398 * ((decayX * decayY) / sqrt(13.929 * SQR(decayX) + SQR(decayY)));
-        double decay85 = 11.473 * ((decayX * decayY) / sqrt(130.64 * SQR(decayX) + SQR(decayY)));
-
-        double decay5L = 1.003819 * ((decayXL * decayY) / sqrt(0.00765 * SQR(decayXL) + SQR(decayY)));    //0.07179 = SQR(sin(15)/cos(15))  1.0038 = 1 / cos(5)
-        double decay15L = 1.03527 * ((decayXL * decayY) / sqrt(0.07179 * SQR(decayXL) + SQR(decayY)));
-        double decay30L = 1.15473 * ((decayXL * decayY) / sqrt(0.33335 * SQR(decayXL) + SQR(decayY)));
-        double decay60L = 2. * ((decayXL * decayY) / sqrt(3.0 * SQR(decayXL) + SQR(decayY)));
-        double decay75L = 3.86398 * ((decayXL * decayY) / sqrt(13.929 * SQR(decayXL) + SQR(decayY)));
-        double decay85L = 11.473 * ((decayXL * decayY) / sqrt(130.64 * SQR(decayXL) + SQR(decayY)));
-
-        double decay5LT = 1.003819 * ((decayXL * decayYT) / sqrt(0.00765 * SQR(decayXL) + SQR(decayYT)));    //0.07179 = SQR(sin(15)/cos(15))  1.0038 = 1 / cos(5)
-        double decay15LT = 1.03527 * ((decayXL * decayYT) / sqrt(0.07179 * SQR(decayXL) + SQR(decayYT)));
-        double decay30LT = 1.15473 * ((decayXL * decayYT) / sqrt(0.33335 * SQR(decayXL) + SQR(decayYT)));
-        double decay60LT = 2. * ((decayXL * decayYT) / sqrt(3.0 * SQR(decayXL) + SQR(decayYT)));
-        double decay75LT = 3.86398 * ((decayXL * decayYT) / sqrt(13.929 * SQR(decayXL) + SQR(decayYT)));
-        double decay85LT = 11.473 * ((decayXL * decayYT) / sqrt(130.64 * SQR(decayXL) + SQR(decayYT)));
-
-        double decay5T = 1.003819 * ((decayX * decayYT) / sqrt(0.00765 * SQR(decayX) + SQR(decayYT)));    //0.07179 = SQR(sin(15)/cos(15))  1.0038 = 1 / cos(5)
-        double decay15T = 1.03527 * ((decayX * decayYT) / sqrt(0.07179 * SQR(decayX) + SQR(decayYT)));
-        double decay30T = 1.15473 * ((decayX * decayYT) / sqrt(0.33335 * SQR(decayX) + SQR(decayYT)));
-        double decay60T = 2. * ((decayX * decayYT) / sqrt(3.0 * SQR(decayX) + SQR(decayYT)));
-        double decay75T = 3.86398 * ((decayX * decayYT) / sqrt(13.929 * SQR(decayX) + SQR(decayYT)));
-        double decay85T = 11.473 * ((decayX * decayYT) / sqrt(130.64 * SQR(decayX) + SQR(decayYT)));
-
-        double decay45 = (1.414 * decayX * decayY) / sqrt(SQR(decayX) + SQR(decayY));
-        double decay45L = (1.414 * decayXL * decayY) / sqrt(SQR(decayXL) + SQR(decayY));
-        double decay45LT = (1.414 * decayXL * decayYT) / sqrt(SQR(decayXL) + SQR(decayYT));
-        double decay45T = (1.414 * decayX * decayYT) / sqrt(SQR(decayX) + SQR(decayYT));
-
-        //printf("decayX=%f decayY=%f decay10=%f decay45=%f oriX=%i origY=%i\n", decayX, decayY, decay10, decay45, origin.x, origin.y);
-        updateBeziers(visibleGeometry.at(5), decayX, decay5, decay15, 0., 5., 15.);
-        updateBeziers(mouseOverGeometry.at(5), decayX, decay5, decay15, 0., 5., 15.);
-
-        updateBeziers(visibleGeometry.at(6), decay15, decay30, decay45, 15., 30., 45.);
-        updateBeziers(mouseOverGeometry.at(6), decay15, decay30, decay45, 15., 30., 45.);
-
-        updateBeziers(visibleGeometry.at(7), decay45, decay60, decay75, 45., 60., 75.);
-        updateBeziers(mouseOverGeometry.at(7), decay45, decay60, decay75, 45., 60., 75.);
-
-        updateBeziers(visibleGeometry.at(8), decay75, decay85, decayY, 75., 85., 90.);
-        updateBeziers(mouseOverGeometry.at(8), decay75, decay85, decayY, 75., 85., 90.);
-
-        updateBeziers(visibleGeometry.at(9), decayY, decay85L, decay75L, 90., 95., 105.);
-        updateBeziers(mouseOverGeometry.at(9), decayY, decay85L, decay75L, 90., 95., 105.);
-
-        updateBeziers(visibleGeometry.at(10), decay75L, decay60L, decay45L, 105., 120., 135.);
-        updateBeziers(mouseOverGeometry.at(10), decay75L, decay60L, decay45L, 105., 120., 135.);
-
-        updateBeziers(visibleGeometry.at(11), decay45L, decay30L, decay15L, 135., 150., 165.);
-        updateBeziers(mouseOverGeometry.at(11), decay45L, decay30L, decay15L, 135., 150., 165.);
-
-        updateBeziers(visibleGeometry.at(12), decay15L, decay5L, decayXL, 165., 175., 180.);
-        updateBeziers(mouseOverGeometry.at(12), decay15L, decay5L, decayXL, 165., 175., 180.);
-
-
-        updateBeziers(visibleGeometry.at(13), decayXL, decay5LT, decay15LT, 180., 185., 195.);
-        updateBeziers(mouseOverGeometry.at(13), decayXL, decay5LT, decay15LT, 180., 185., 195.);
-
-        updateBeziers(visibleGeometry.at(14), decay15LT, decay30LT, decay45LT, 195., 210., 225.);
-        updateBeziers(mouseOverGeometry.at(14), decay15LT, decay30LT, decay45LT, 195., 210., 225.);
-
-        updateBeziers(visibleGeometry.at(15), decay45LT, decay60LT, decay75LT, 225., 240., 255.);
-        updateBeziers(mouseOverGeometry.at(15), decay45LT, decay60LT, decay75LT, 225., 240., 255.);
-
-        updateBeziers(visibleGeometry.at(16), decay75LT, decay85LT, decayYT, 255., 265., 270.);
-        updateBeziers(mouseOverGeometry.at(16), decay75LT, decay85LT, decayYT, 255., 265., 270.);
-
-        updateBeziers(visibleGeometry.at(17), decayYT, decay85T, decay75T, 270., 275., 285.);
-        updateBeziers(mouseOverGeometry.at(17), decayYT, decay85T, decay75T, 270., 275., 285.);
-
-        updateBeziers(visibleGeometry.at(18), decay75T, decay60T, decay45T, 285., 300., 315.);
-        updateBeziers(mouseOverGeometry.at(18), decay75T, decay60T, decay45T, 285., 300., 315.);
-
-        updateBeziers(visibleGeometry.at(19), decay45T, decay30T, decay15T, 315., 330., 345.);
-        updateBeziers(mouseOverGeometry.at(19), decay45T, decay30T, decay15T, 315., 330., 345.);
-
-        updateBeziers(visibleGeometry.at(20), decay15T, decay5T, decayX, 345., 355., 360.);
-        updateBeziers(mouseOverGeometry.at(20), decay15T, decay5T, decayX, 345., 355., 360.);
-
-    }
-
-
 }
 
 void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
 {
+    printf("Locallab write\n");
+
+    pp->locallab.enabled = getEnabled();
+
+    const int spotPanelEvent = expsettings->getEventType();
+    int spotId;
+    ControlSpotPanel::SpotRow* r;
+
+    switch (spotPanelEvent) {
+        case (1): // 1 = Spot creation event
+            // Spot creation (default initialization)
+            spotId = expsettings->getNewId();
+            r = new ControlSpotPanel::SpotRow();
+            r->id = spotId;
+            r->name = "Control Spot #" + std::to_string(spotId);
+            r->isvisible = true;
+            r->shape = 0;
+            r->spotMethod = 0;
+            r->shapeMethod = 2;
+            r->locX = 250;
+            r->locXL = 250;
+            r->locY = 250;
+            r->locYT = 250;
+            r->centerX = 0;
+            r->centerY = 0;
+            r->circrad = 18;
+            r->qualityMethod = 0;
+            r->transit = 60;
+            r->thresh = 18;
+            r->iter = 0;
+            expsettings->addControlSpot(r);
+            expsettings->setSelectedSpot(spotId);
+
+            // ProcParams update
+            pp->locallab.nbspot++;
+            pp->locallab.selspot = spotId;
+            pp->locallab.id.push_back(r->id);
+            pp->locallab.name.push_back(r->name);
+            pp->locallab.isvisible.push_back(r->isvisible);
+            pp->locallab.shape.push_back("ELI");
+            pp->locallab.spotMethod.push_back("norm");
+            pp->locallab.shapeMethod.push_back("INDSL");
+            pp->locallab.locX.push_back(r->locX);
+            pp->locallab.locXL.push_back(r->locXL);
+            pp->locallab.locY.push_back(r->locY);
+            pp->locallab.locYT.push_back(r->locYT);
+            pp->locallab.centerX.push_back(r->centerX);
+            pp->locallab.centerY.push_back(r->centerY);
+            pp->locallab.circrad.push_back(r->circrad);
+            pp->locallab.qualityMethod.push_back("std");
+            pp->locallab.transit.push_back(r->transit);
+            pp->locallab.thresh.push_back(r->thresh);
+            pp->locallab.iter.push_back(r->iter);
+
+            break;
+
+        case (2): // 2 = Spot deletion event
+            // Get deleted spot index in ProcParams and update it
+            spotId = expsettings->getSelectedSpot();
+
+            for (int i = 0; i < pp->locallab.nbspot; i++) {
+                if (pp->locallab.id.at(i) == spotId) {
+                    // ProcParams update
+                    pp->locallab.nbspot--;
+                    pp->locallab.id.erase(pp->locallab.id.begin() + i);
+                    pp->locallab.name.erase(pp->locallab.name.begin() + i);
+                    pp->locallab.isvisible.erase(pp->locallab.isvisible.begin() + i);
+                    pp->locallab.shape.erase(pp->locallab.shape.begin() + i);
+                    pp->locallab.spotMethod.erase(pp->locallab.spotMethod.begin() + i);
+                    pp->locallab.shapeMethod.erase(pp->locallab.shapeMethod.begin() + i);
+                    pp->locallab.locX.erase(pp->locallab.locX.begin() + i);
+                    pp->locallab.locXL.erase(pp->locallab.locXL.begin() + i);
+                    pp->locallab.locY.erase(pp->locallab.locY.begin() + i);
+                    pp->locallab.locYT.erase(pp->locallab.locYT.begin() + i);
+                    pp->locallab.centerX.erase(pp->locallab.centerX.begin() + i);
+                    pp->locallab.centerY.erase(pp->locallab.centerY.begin() + i);
+                    pp->locallab.circrad.erase(pp->locallab.circrad.begin() + i);
+                    pp->locallab.qualityMethod.erase(pp->locallab.qualityMethod.begin() + i);
+                    pp->locallab.transit.erase(pp->locallab.transit.begin() + i);
+                    pp->locallab.thresh.erase(pp->locallab.thresh.begin() + i);
+                    pp->locallab.iter.erase(pp->locallab.iter.begin() + i);
+                    expsettings->deleteControlSpot(spotId);
+
+                    // Select one remaining spot
+                    if (pp->locallab.nbspot >= 1) {
+                        pp->locallab.selspot = 1;
+                        expsettings->setSelectedSpot(1);
+                    } else {
+                        pp->locallab.selspot = 0;
+                    }
+
+                    break;
+                }
+            }
+
+            break;
+
+        case (3):  // 3 = Spot selection event
+            spotId = expsettings->getSelectedSpot();
+            pp->locallab.selspot = spotId;
+            expsettings->setSelectedSpot(spotId);
+
+            break;
+
+        default: // Spot or locallab GUI updated
+            spotId = expsettings->getSelectedSpot();
+            r = expsettings->getSpot(spotId);
+
+            for (int i = 0; i < pp->locallab.nbspot; i++) {
+                if (pp->locallab.id.at(i) == spotId) {
+                    // ProcParams update
+                    pp->locallab.name.at(i) = r->name;
+                    pp->locallab.isvisible.at(i) = r->isvisible;
+
+                    if (r->shape == 0) {
+                        pp->locallab.shape.at(i) = "ELI";
+                    } else {
+                        pp->locallab.shape.at(i) = "RECT";
+                    }
+
+                    if (r->spotMethod == 0) {
+                        pp->locallab.spotMethod.at(i) = "norm";
+                    } else {
+                        pp->locallab.spotMethod.at(i) = "exc";
+                    }
+
+                    if (r->shapeMethod == 0) {
+                        pp->locallab.shapeMethod.at(i) = "IND";
+                    } else if (r->shapeMethod == 1) {
+                        pp->locallab.shapeMethod.at(i) = "SYM";
+                    } else if (r->shapeMethod == 2) {
+                        pp->locallab.shapeMethod.at(i) = "INDSL";
+                    } else {
+                        pp->locallab.shapeMethod.at(i) = "SYMSL";
+                    }
+
+                    pp->locallab.locX.at(i) = r->locX;
+                    pp->locallab.locXL.at(i) = r->locXL;
+                    pp->locallab.locY.at(i) = r->locY;
+                    pp->locallab.locYT.at(i) = r->locYT;
+                    pp->locallab.centerX.at(i) = r->centerX;
+                    pp->locallab.centerY.at(i) = r->centerY;
+                    pp->locallab.circrad.at(i) = r->circrad;
+
+                    if (r->qualityMethod == 0) {
+                        pp->locallab.qualityMethod.at(i) = "std";
+                    } else if (r->qualityMethod == 1) {
+                        pp->locallab.qualityMethod.at(i) = "enh";
+                    } else {
+                        pp->locallab.qualityMethod.at(i) = "enhden";
+                    }
+
+                    pp->locallab.transit.at(i) = r->transit;
+                    pp->locallab.thresh.at(i) = r->thresh;
+                    pp->locallab.iter.at(i) = r->iter;
+
+                    break;
+                }
+            }
+    }
+
+    if (pedited) {
+        pedited->locallab.enabled = !get_inconsistent();
+
+        ControlSpotPanel::SpotEdited* const se = expsettings->getEditedStates();
+        pedited->locallab.nbspot = se->addbutton || se->deletebutton;
+        pedited->locallab.selspot = se->treeview;
+        pedited->locallab.id = se->addbutton || se->deletebutton;
+        pedited->locallab.name = se->name;
+        pedited->locallab.isvisible = se->isvisible;
+        pedited->locallab.shape = se->shape;
+        pedited->locallab.spotMethod = se->spotMethod;
+        pedited->locallab.shapeMethod = se->shapeMethod;
+        pedited->locallab.locX = se->locX;
+        pedited->locallab.locXL = se->locXL;
+        pedited->locallab.locY = se->locY;
+        pedited->locallab.locYT = se->locYT;
+        pedited->locallab.centerX = se->centerX;
+        pedited->locallab.centerY = se->centerY;
+        pedited->locallab.circrad = se->circrad;
+        pedited->locallab.qualityMethod = se->qualityMethod;
+        pedited->locallab.transit = se->transit;
+        pedited->locallab.thresh = se->thresh;
+        pedited->locallab.iter = se->iter;
+    }
+
+    /*
     pp->locallab.degree = degree->getValue();
     pp->locallab.locY = locY->getIntValue();
     pp->locallab.locX = locX->getValue();
@@ -3260,7 +2997,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
     pp->locallab.pastsattog      = pastSatTog->get_active();
     pp->locallab.skintonescurve  = skinTonesCurve->getCurve();
     pp->locallab.sensiv = sensiv->getIntValue();
-    pp->locallab.spotduplicated = spotduplicated->get_active();
+    // pp->locallab.spotduplicated = spotduplicated->get_active();
 
 
     if (pedited) {
@@ -3381,7 +3118,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.pastsattog      = !pastSatTog->get_inconsistent();
         pedited->locallab.skintonescurve  = !skinTonesCurve->isUnChanged();
         pedited->locallab.sensiv = sensiv->getEditedState();
-        pedited->locallab.spotduplicated = !spotduplicated->get_inconsistent();
+        // pedited->locallab.spotduplicated = !spotduplicated->get_inconsistent();
 
 
     }
@@ -3449,7 +3186,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
     }
 
     if (Smethod->get_active_row_number() == 1  || Smethod->get_active_row_number() == 3) {
-//   if(Smethod->get_active_row_number() == 0  || Smethod->get_active_row_number() == 1) {
+    //   if(Smethod->get_active_row_number() == 0  || Smethod->get_active_row_number() == 1) {
         pp->locallab.locX = locX->getValue();
         pp->locallab.locY = locY->getValue();
 
@@ -3462,12 +3199,14 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             pp->locallab.locY=pp->locallab.locX;
         }
         */
+    /*
     else {
         pp->locallab.locXL = locXL->getValue();
         pp->locallab.locX = locX->getValue();
         pp->locallab.locY = locY->getValue();
         pp->locallab.locYT = locYT->getValue();
     }
+    */
 }
 
 void Locallab::protectskins_toggled()
@@ -3535,7 +3274,7 @@ bool Locallab::spotdupComputed_()
 {
 
     disableListener();
-    spotduplicated->set_active(nextspotdup);
+    // spotduplicated->set_active(nextspotdup);
 
     if (nextspotdup) {
         //labspotdup->show();
@@ -3552,12 +3291,11 @@ bool Locallab::spotdupComputed_()
 
 void Locallab::spotduplicatedChanged()
 {
+    /*
     if (batchMode) {
         if (spotduplicated->get_inconsistent()) {
             spotduplicated->set_inconsistent(false);
-            spotduplicatedConn.block(true);
-            spotduplicated->set_active(false);
-            spotduplicatedConn.block(false);
+            spotduplicated->set_active(false);;
         } else if (lastspotduplicated) {
             spotduplicated->set_inconsistent(true);
         }
@@ -3573,6 +3311,7 @@ void Locallab::spotduplicatedChanged()
             listener->panelChanged(Evlocallabspotduplicated, M("GENERAL_DISABLED"));
         }
     }
+    */
 }
 
 void Locallab::pastsattog_toggled()
@@ -3780,9 +3519,7 @@ void Locallab::ExclumethodChanged()
 {
     if (!batchMode) {
         if (Exclumethod->get_active_row_number() == 0) {
-            excluFrame->hide();
         } else if (Exclumethod->get_active_row_number() == 1) {
-            excluFrame->show();
         }
     }
 
@@ -3891,7 +3628,6 @@ void Locallab::inversChanged()
         llCurveEditorG->hide();
         curvactiv->hide();
         qualitycurveMethod->hide();
-        artifFrame->show();
         labqualcurv->hide();
 
     } else {
@@ -3900,7 +3636,6 @@ void Locallab::inversChanged()
         llCurveEditorG->show();
         curvactiv->show();
         qualitycurveMethod->show();
-        artifFrame->show();
         labqualcurv->show();
 
     }
@@ -4116,9 +3851,10 @@ void Locallab::inversretChanged()
     }
 }
 
-
+// TODO
 void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pedited)
 {
+    /*
     degree->setDefault(defParams->locallab.degree);
     locY->setDefault(defParams->locallab.locY);
     locX->setDefault(defParams->locallab.locX);
@@ -4357,6 +4093,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         sensiv->setDefaultEditedState(Irrelevant);
 
     }
+    */
 }
 
 void Locallab::adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop)
@@ -4369,7 +4106,7 @@ void Locallab::adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop)
 void Locallab::adjusterChanged(Adjuster * a, double newval)
 {
 
-    updateGeometry(int (centerX->getValue()), int (centerY->getValue()), int (circrad->getValue()), (int)locY->getValue(), degree->getValue(), (int)locX->getValue(), (int)locYT->getValue(), (int)locXL->getValue());
+    // updateGeometry(int (centerX->getValue()), int (centerY->getValue()), int (circrad->getValue()), (int)locY->getValue(), degree->getValue(), (int)locX->getValue(), (int)locYT->getValue(), (int)locXL->getValue());
     anbspot->hide();
     hueref->hide();
     huerefblur->hide();
@@ -4648,8 +4385,10 @@ void Locallab::setAdjusterBehavior(bool degreeadd, bool locYadd, bool locXadd, b
 
 }
 
+// TODO
 void Locallab::trimValues(rtengine::procparams::ProcParams * pp)
 {
+    /*
     degree->trimValue(pp->locallab.degree);
     locY->trimValue(pp->locallab.locY);
     locX->trimValue(pp->locallab.locX);
@@ -4726,13 +4465,13 @@ void Locallab::trimValues(rtengine::procparams::ProcParams * pp)
     pastels->trimValue(pp->locallab.pastels);
     saturated->trimValue(pp->locallab.saturated);
     sensiv->trimValue(pp->locallab.sensiv);
-
+     */
 }
 
 void Locallab::setBatchMode(bool batchMode)
 {
-    removeIfThere(this, edit, false);
     ToolPanel::setBatchMode(batchMode);
+    printf("BatchMode : %d\n", batchMode);
 
     hueref->hide();
     huerefblur->hide();
@@ -4878,19 +4617,19 @@ std::vector<double> Locallab::getCurvePoints(ThresholdSelector* tAdjuster) const
 
 void Locallab::setEditProvider(EditDataProvider * provider)
 {
-    EditSubscriber::setEditProvider(provider);
     cTgainshape->setEditProvider(provider);
     cTgainshaperab->setEditProvider(provider);
-    spotPanel->setEditProvider(provider);
+    expsettings->setEditProvider(provider);
 }
 
-void Locallab::editToggled()
+void Locallab::subscribe()
 {
-    if (edit->get_active()) {
-        subscribe();
-    } else {
-        unsubscribe();
-    }
+    expsettings->subscribe();
+}
+
+void Locallab::unsubscribe()
+{
+    expsettings->unsubscribe();
 }
 
 void Locallab::colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller)
@@ -4935,743 +4674,8 @@ void Locallab::colorForValue(double valX, double valY, enum ColorCaller::ElemTyp
     caller->ccBlue = double (B);
 }
 
-
-
-CursorShape Locallab::getCursor(int objectID)
+void Locallab::setListener(ToolPanelListener* tpl)
 {
-    switch (objectID) {
-    case (2): {
-        int angle = degree->getIntValue();
-
-        if (angle < -135 || (angle >= -45 && angle <= 45) || angle > 135) {
-            return CSMove1DV;
-        }
-
-        return CSMove1DH;
-    }
-
-    case (3): {
-        int angle = degree->getIntValue();
-
-        if (angle < -135 || (angle >= -45 && angle <= 45) || angle > 135) {
-            return CSMove1DV;
-        }
-
-        return CSMove1DH;
-    }
-
-    case (0): {
-        int angle = degree->getIntValue();
-
-        if (angle < -135 || (angle >= -45 && angle <= 45) || angle > 135) {
-            return CSMove1DH;
-        }
-
-        return CSMove1DV;
-    }
-
-    case (1): {
-        int angle = degree->getIntValue();
-
-        if (angle < -135 || (angle >= -45 && angle <= 45) || angle > 135) {
-            return CSMove1DH;
-        }
-
-        return CSMove1DV;
-    }
-
-    case (4):
-        return CSMove2D;
-
-    default:
-        return CSOpenHand;
-    }
+    this->listener = tpl;
+    expsettings->setListener(tpl);
 }
-
-bool Locallab::mouseOver(int modifierKey)
-{
-    EditDataProvider* editProvider = getEditProvider();
-
-    if (editProvider && editProvider->object != lastObject) {
-        if (lastObject > -1) {
-            if (lastObject == 2 || lastObject == 3) {
-                EditSubscriber::visibleGeometry.at(2)->state = Geometry::NORMAL;
-                EditSubscriber::visibleGeometry.at(3)->state = Geometry::NORMAL;
-
-            } else if (lastObject == 0 || lastObject == 1) {
-                EditSubscriber::visibleGeometry.at(0)->state = Geometry::NORMAL;
-                EditSubscriber::visibleGeometry.at(1)->state = Geometry::NORMAL;
-
-            }
-
-            else {
-                EditSubscriber::visibleGeometry.at(4)->state = Geometry::NORMAL;
-//               EditSubscriber::visibleGeometry.at (lastObject)->state = Geometry::NORMAL;
-            }
-        }
-
-        if (editProvider->object > -1) {
-            if (editProvider->object == 2 || editProvider->object == 3) {
-                EditSubscriber::visibleGeometry.at(2)->state = Geometry::PRELIGHT;
-                EditSubscriber::visibleGeometry.at(3)->state = Geometry::PRELIGHT;
-
-            } else if (editProvider->object == 0 || editProvider->object == 1) {
-                EditSubscriber::visibleGeometry.at(0)->state = Geometry::PRELIGHT;
-                EditSubscriber::visibleGeometry.at(1)->state = Geometry::PRELIGHT;
-
-            }
-
-            else {
-                EditSubscriber::visibleGeometry.at(4)->state = Geometry::PRELIGHT;
-                //              EditSubscriber::visibleGeometry.at (editProvider->object)->state = Geometry::PRELIGHT;
-            }
-        }
-
-        lastObject = editProvider->object;
-        return true;
-    }
-
-    return false;
-}
-
-bool Locallab::button1Pressed(int modifierKey)
-{
-    if (lastObject < 0) {
-        return false;
-    }
-
-    EditDataProvider *provider = getEditProvider();
-
-    if (!(modifierKey & GDK_CONTROL_MASK)) {
-        // button press is valid (no modifier key)
-        PolarCoord pCoord;
-        //  EditDataProvider *provider = getEditProvider();
-        int imW, imH;
-        provider->getImageSize(imW, imH);
-        double halfSizeW = imW / 2.;
-        double halfSizeH = imH / 2.;
-        draggedCenter.set(int (halfSizeW + halfSizeW * (centerX->getValue() / 1000.)), int (halfSizeH + halfSizeH * (centerY->getValue() / 1000.)));
-
-        // trick to get the correct angle (clockwise/counter-clockwise)
-        rtengine::Coord p1 = draggedCenter;
-        rtengine::Coord p2 = provider->posImage;
-        int p = p1.y;
-        p1.y = p2.y;
-        p2.y = p;
-        pCoord = p2 - p1;
-        draggedPointOldAngle = pCoord.angle;
-        draggedPointAdjusterAngle = degree->getValue();
-
-        if (Smethod->get_active_row_number() == 0 || Smethod->get_active_row_number() == 2) {
-            if (lastObject == 2) {
-                PolarCoord draggedPoint;
-                rtengine::Coord currPos;
-                currPos = provider->posImage;
-                rtengine::Coord centerPos = draggedCenter;
-                double verti = double (imH);
-                int p = centerPos.y;
-                centerPos.y = currPos.y;
-                currPos.y = p;
-                draggedPoint = currPos - centerPos;
-                // compute the projected value of the dragged point
-                draggedlocYOffset = draggedPoint.radius * sin((draggedPoint.angle - degree->getValue()) / 180.*rtengine::RT_PI);
-
-                if (lastObject == 2) {
-                    //draggedlocYOffset = -draggedlocYOffset;
-                    draggedlocYOffset -= (locYT->getValue() / 2000. * verti);
-
-                }
-            } else if (lastObject == 3) {
-                // Dragging a line to change the angle
-                PolarCoord draggedPoint;
-                rtengine::Coord currPos;
-                currPos = provider->posImage;
-                rtengine::Coord centerPos = draggedCenter;
-
-                double verti = double (imH);
-
-                // trick to get the correct angle (clockwise/counter-clockwise)
-                int p = centerPos.y;
-                centerPos.y = currPos.y;
-                currPos.y = p;
-                draggedPoint = currPos - centerPos;
-
-                // draggedPoint.setFromCartesian(centerPos, currPos);
-                // compute the projected value of the dragged point
-                draggedlocYOffset = draggedPoint.radius * sin((draggedPoint.angle - degree->getValue()) / 180.*rtengine::RT_PI);
-
-                if (lastObject == 3) {
-                    draggedlocYOffset = -draggedlocYOffset;
-                    draggedlocYOffset -= (locY->getValue() / 2000. * verti);
-
-                }
-
-            }
-
-        } else if (Smethod->get_active_row_number() == 1 || Smethod->get_active_row_number() == 3) {
-            if (lastObject == 2 || lastObject == 3) {
-                // Dragging a line to change the angle
-                PolarCoord draggedPoint;
-                rtengine::Coord currPos;
-                currPos = provider->posImage;
-                rtengine::Coord centerPos = draggedCenter;
-                double verti = double (imH);
-                // trick to get the correct angle (clockwise/counter-clockwise)
-                int p = centerPos.y;
-                centerPos.y = currPos.y;
-                currPos.y = p;
-                draggedPoint = currPos - centerPos;
-
-                //    draggedPoint.setFromCartesian(centerPos, currPos);
-                // compute the projected value of the dragged point
-                draggedlocYOffset = draggedPoint.radius * sin((draggedPoint.angle - degree->getValue()) / 180.*rtengine::RT_PI);
-
-                if (lastObject == 3) {
-                    draggedlocYOffset = -draggedlocYOffset;
-                }
-
-                draggedlocYOffset -= (locY->getValue() / 2000. * verti);
-            }
-        }
-
-        if (Smethod->get_active_row_number() == 0  || Smethod->get_active_row_number() == 2) {
-            if (lastObject == 0) {
-                // Dragging a line to change the angle
-
-                PolarCoord draggedPoint;
-                rtengine::Coord currPos;
-                currPos = provider->posImage;
-                rtengine::Coord centerPos = draggedCenter;
-
-                double horiz = double (imW);
-
-                // trick to get the correct angle (clockwise/counter-clockwise)
-                int p = centerPos.y;
-                centerPos.y = currPos.y;
-                currPos.y = p;
-                draggedPoint = currPos - centerPos;
-
-                //     draggedPoint.setFromCartesian(centerPos, currPos);
-                // compute the projected value of the dragged point
-                //printf ("rad=%f ang=%f\n", draggedPoint.radius, draggedPoint.angle - degree->getValue());
-                draggedlocXOffset = draggedPoint.radius * sin((draggedPoint.angle - degree->getValue() + 90.) / 180.*rtengine::RT_PI);
-                //  if (lastObject==1)
-                //      draggedlocXOffset = -draggedlocXOffset;//-
-                draggedlocXOffset -= (locX->getValue() / 2000. * horiz);
-            } else if (lastObject == 1) {
-
-                // Dragging a line to change the angle
-                PolarCoord draggedPoint;
-                rtengine::Coord currPos;
-                currPos = provider->posImage;
-                rtengine::Coord centerPos = draggedCenter;
-                double horiz = double (imW);
-                int p = centerPos.y;
-                centerPos.y = currPos.y;
-                currPos.y = p;
-                draggedPoint = currPos - centerPos;
-
-                //     draggedPoint.setFromCartesian(centerPos, currPos);
-                // printf ("rad=%f ang=%f\n", draggedPoint.radius, draggedPoint.angle - degree->getValue());
-                draggedlocXOffset = draggedPoint.radius * sin((draggedPoint.angle - degree->getValue() + 90.) / 180.*rtengine::RT_PI);
-
-                if (lastObject == 1) {
-                    draggedlocXOffset = -draggedlocXOffset;    //-
-                }
-
-                draggedlocXOffset -= (locXL->getValue() / 2000. * horiz);
-            }
-
-        } else if (Smethod->get_active_row_number() == 1  || Smethod->get_active_row_number() == 3) {
-
-            if (lastObject == 0 || lastObject == 1) {
-                PolarCoord draggedPoint;
-                rtengine::Coord currPos;
-                currPos = provider->posImage;
-                rtengine::Coord centerPos = draggedCenter;
-                double horiz = double (imW);
-                int p = centerPos.y;
-                centerPos.y = currPos.y;
-                currPos.y = p;
-                draggedPoint = currPos - centerPos;
-
-                //    draggedPoint.setFromCartesian(centerPos, currPos);
-                //printf ("rad=%f ang=%f\n", draggedPoint.radius, draggedPoint.angle - degree->getValue());
-                draggedlocXOffset = draggedPoint.radius * sin((draggedPoint.angle - degree->getValue() + 90.) / 180.*rtengine::RT_PI);
-
-                if (lastObject == 1) {
-                    draggedlocXOffset = -draggedlocXOffset;    //-
-                }
-
-                draggedlocXOffset -= (locX->getValue() / 2000. * horiz);
-            }
-        }
-
-        /*  else if(Smethod->get_active_row_number()==2) {
-                if (lastObject==0 || lastObject==1 || lastObject==2 || lastObject==3) {
-                if (lastObject==2 || lastObject==3) {
-                    // Dragging a line to change the angle
-                    PolarCoord draggedPoint;
-                    Coord currPos;
-                    currPos = provider->posImage;
-                    Coord centerPos = draggedCenter;
-                    double verti = double(imH);
-                    // trick to get the correct angle (clockwise/counter-clockwise)
-                    int p = centerPos.y;
-                    centerPos.y = currPos.y;
-                    currPos.y = p;
-
-                    draggedPoint.setFromCartesian(centerPos, currPos);
-                    // compute the projected value of the dragged point
-                    draggedlocYOffset = draggedPoint.radius * sin((draggedPoint.angle-degree->getValue())/180.*M_PI);
-                    if (lastObject==3)
-                        draggedlocYOffset = -draggedlocYOffset;
-                    draggedlocYOffset -= (locY->getValue() / 200. * verti);
-                }
-
-
-                if (lastObject==0 || lastObject==1) {
-                    PolarCoord draggedPoint;
-                    Coord currPos;
-                    currPos = provider->posImage;
-                    Coord centerPos = draggedCenter;
-                    double horiz = double(imW);
-                    int p = centerPos.y;
-                    centerPos.y = currPos.y;
-                    currPos.y = p;
-                    draggedPoint.setFromCartesian(centerPos, currPos);
-                    printf("rad=%f ang=%f\n",draggedPoint.radius,draggedPoint.angle-degree->getValue());
-                    draggedlocXOffset = draggedPoint.radius * sin((draggedPoint.angle-degree->getValue()+90.)/180.*M_PI);
-                    if (lastObject==1)
-                        draggedlocXOffset = -draggedlocXOffset;//-
-                    draggedlocXOffset -= (locX->getValue() / 200. * horiz);
-                }
-
-                }
-            }
-            */
-        //    EditSubscriber::dragging = true;
-        EditSubscriber::action = ES_ACTION_DRAGGING;
-        return false;
-    } else {
-        // this will let this class ignore further drag events
-        if (lastObject > -1) { // should theoretically always be true
-            if (lastObject == 2 || lastObject == 3) {
-                EditSubscriber::visibleGeometry.at(2)->state = Geometry::NORMAL;
-                EditSubscriber::visibleGeometry.at(3)->state = Geometry::NORMAL;
-            }
-
-            if (lastObject == 0 || lastObject == 1) {
-                EditSubscriber::visibleGeometry.at(0)->state = Geometry::NORMAL;
-                EditSubscriber::visibleGeometry.at(1)->state = Geometry::NORMAL;
-
-            } else {
-                EditSubscriber::visibleGeometry.at(4)->state = Geometry::NORMAL;
-//               EditSubscriber::visibleGeometry.at (lastObject)->state = Geometry::NORMAL;
-            }
-        }
-
-        lastObject = -1;
-        return true;
-    }
-}
-
-bool Locallab::button1Released()
-{
-    draggedPointOldAngle = -1000.;
-    EditSubscriber::action = ES_ACTION_NONE;
-
-    return true;
-}
-
-bool Locallab::drag1(int modifierKey)
-{
-    // compute the polar coordinate of the mouse position
-    EditDataProvider *provider = getEditProvider();
-    int imW, imH;
-    provider->getImageSize(imW, imH);
-    double halfSizeW = imW / 2.;
-    double halfSizeH = imH / 2.;
-
-    if (Smethod->get_active_row_number() == 0  || Smethod->get_active_row_number() == 2) {
-        if (lastObject == 2) {
-            // Dragging the upper or lower locY bar
-            PolarCoord draggedPoint;
-            rtengine::Coord currPos;
-            currPos = provider->posImage + provider->deltaImage;
-            rtengine::Coord centerPos = draggedCenter;
-            double verti = double (imH);
-            int p = centerPos.y;
-            centerPos.y = currPos.y;
-            currPos.y = p;
-            draggedPoint = currPos - centerPos;
-
-            //  draggedPoint.setFromCartesian(centerPos, currPos);
-            double currDraggedlocYOffset = draggedPoint.radius * sin((draggedPoint.angle - degree->getValue()) / 180.*rtengine::RT_PI);
-
-            if (lastObject == 2) {
-                currDraggedlocYOffset -= draggedlocYOffset;
-            }
-
-            //else if (lastObject==3)
-            // Dragging the lower locY bar
-            //  currDraggedlocYOffset = -currDraggedlocYOffset + draggedlocYOffset;
-            currDraggedlocYOffset = currDraggedlocYOffset * 2000. / verti;
-
-            if (int (currDraggedlocYOffset) != locYT->getIntValue()) {
-                locYT->setValue((int (currDraggedlocYOffset)));
-                double centX, centY;
-                centX = centerX->getValue();
-                centY = centerY->getValue();
-                updateGeometry(centX, centY, circrad->getValue(), locY->getValue(), degree->getValue(), locX->getValue(), locYT->getValue(), locXL->getValue());
-
-                if (listener) {
-                    listener->panelChanged(EvlocallablocY, locYT->getTextValue());
-                }
-
-                return true;
-            }
-        } else if (lastObject == 3) {
-            // Dragging the upper or lower locY bar
-            PolarCoord draggedPoint;
-            rtengine::Coord currPos;
-            currPos = provider->posImage + provider->deltaImage;
-            rtengine::Coord centerPos = draggedCenter;
-            double verti = double (imH);
-            // trick to get the correct angle (clockwise/counter-clockwise)
-            int p = centerPos.y;
-            centerPos.y = currPos.y;
-            currPos.y = p;
-            draggedPoint = currPos - centerPos;
-
-            //  draggedPoint.setFromCartesian(centerPos, currPos);
-            double currDraggedlocYOffset = draggedPoint.radius * sin((draggedPoint.angle - degree->getValue()) / 180.*rtengine::RT_PI);
-
-            //  if (lastObject==2)
-            // Dragging the upper locY bar
-            //      currDraggedlocYOffset -= draggedlocYOffset;
-            //  else
-            if (lastObject == 3)
-                // Dragging the lower locY bar
-            {
-                currDraggedlocYOffset = -currDraggedlocYOffset + draggedlocYOffset;
-            }
-
-            currDraggedlocYOffset = currDraggedlocYOffset * 2000. / verti;
-
-            if (int (currDraggedlocYOffset) != locY->getIntValue()) {
-
-                locY->setValue((int (currDraggedlocYOffset)));
-                double centX, centY;
-                centX = centerX->getValue();
-                centY = centerY->getValue();
-
-                updateGeometry(centX, centY, circrad->getValue(), locY->getValue(), degree->getValue(), locX->getValue(), locYT->getValue(), locXL->getValue());
-
-                if (listener) {
-                    listener->panelChanged(EvlocallablocY, locY->getTextValue());
-                }
-
-                return true;
-            }
-        }
-
-    } else if (Smethod->get_active_row_number() == 1 || Smethod->get_active_row_number() == 3) {
-        if (lastObject == 2 || lastObject == 3) {
-            // Dragging the upper or lower locY bar
-            PolarCoord draggedPoint;
-            rtengine::Coord currPos;
-            currPos = provider->posImage + provider->deltaImage;
-            rtengine::Coord centerPos = draggedCenter;
-            double verti = double (imH);
-            // trick to get the correct angle (clockwise/counter-clockwise)
-            int p = centerPos.y;
-            centerPos.y = currPos.y;
-            currPos.y = p;
-            draggedPoint = currPos - centerPos;
-
-            //   draggedPoint.setFromCartesian(centerPos, currPos);
-            double currDraggedlocYOffset = draggedPoint.radius * sin((draggedPoint.angle - degree->getValue()) / 180.*rtengine::RT_PI);
-
-            if (lastObject == 2)
-                // Dragging the upper locY bar
-            {
-                currDraggedlocYOffset -= draggedlocYOffset;
-            } else if (lastObject == 3)
-                // Dragging the lower locY bar
-            {
-                currDraggedlocYOffset = -currDraggedlocYOffset + draggedlocYOffset;
-            }
-
-            currDraggedlocYOffset = currDraggedlocYOffset * 2000. / verti;
-
-            if (int (currDraggedlocYOffset) != locY->getIntValue()) {
-                locY->setValue((int (currDraggedlocYOffset)));
-                //Smethod->get_active_row_number()==2
-                double centX, centY;
-                centX = centerX->getValue();
-                centY = centerY->getValue();
-
-                updateGeometry(centX, centY, circrad->getValue(), locY->getValue(), degree->getValue(), locX->getValue(),  locYT->getValue(), locXL->getValue());
-
-                if (listener) {
-                    if (Smethod->get_active_row_number() == 1 || Smethod->get_active_row_number() == 3) {
-                        listener->panelChanged(EvlocallablocY, locY->getTextValue());
-                    }
-
-                    //  else listener->panelChanged (EvlocallablocY, locX->getTextValue());
-
-                }
-
-                return true;
-            }
-        }
-
-    }
-
-    if (Smethod->get_active_row_number() == 0 || Smethod->get_active_row_number() == 2) {
-        //else if (lastObject==0) {
-        if (lastObject == 0) {// >=4
-            // Dragging the upper or lower locY bar
-            PolarCoord draggedPoint;
-            rtengine::Coord currPos;
-            currPos = provider->posImage + provider->deltaImage;
-            rtengine::Coord centerPos = draggedCenter;
-            double horiz = double (imW);
-            // trick to get the correct angle (clockwise/counter-clockwise)
-            int p = centerPos.y;
-            centerPos.y = currPos.y;
-            currPos.y = p;
-            draggedPoint = currPos - centerPos;
-
-            //    draggedPoint.setFromCartesian(centerPos, currPos);
-            double currDraggedStrOffset = draggedPoint.radius * sin((draggedPoint.angle - degree->getValue() + 90.) / 180.*rtengine::RT_PI);
-
-            if (lastObject == 0) //>=4
-                // Dragging the upper locY bar
-            {
-                currDraggedStrOffset -= draggedlocXOffset;
-            } else if (lastObject == 1)
-                // Dragging the lower locY bar
-            {
-                currDraggedStrOffset = - currDraggedStrOffset - draggedlocXOffset;    //-
-            }
-
-            currDraggedStrOffset = currDraggedStrOffset * 2000. / horiz;
-
-            if (int (currDraggedStrOffset) != locX->getIntValue()) {
-                locX->setValue((int (currDraggedStrOffset)));
-                double centX, centY;
-                centX = centerX->getValue();
-                centY = centerY->getValue();
-                updateGeometry(centX, centY, circrad->getValue(), locY->getValue(), degree->getValue(), locX->getValue(), locYT->getValue(), locXL->getValue());
-
-                if (listener) {
-                    listener->panelChanged(EvlocallablocX, locX->getTextValue());
-                }
-
-                return true;
-            }
-        } else if (lastObject == 1) {
-            // Dragging the upper or lower locY bar
-            PolarCoord draggedPoint;
-            rtengine::Coord currPos;
-            currPos = provider->posImage + provider->deltaImage;
-            rtengine::Coord centerPos = draggedCenter;
-            double horiz = double (imW);
-            int p = centerPos.y;
-            centerPos.y = currPos.y;
-            currPos.y = p;
-            draggedPoint = currPos - centerPos;
-
-            //draggedPoint.setFromCartesian(centerPos, currPos);
-            double currDraggedStrOffset = draggedPoint.radius * sin((draggedPoint.angle - degree->getValue() + 90.) / 180.*rtengine::RT_PI);
-
-            if (lastObject == 0)
-                // Dragging the upper locY bar
-            {
-                currDraggedStrOffset -= draggedlocXOffset;
-            } else if (lastObject == 1)
-                // Dragging the lower locY bar
-            {
-                currDraggedStrOffset = - currDraggedStrOffset - draggedlocXOffset;    //-
-            }
-
-            currDraggedStrOffset = currDraggedStrOffset * 2000. / horiz;
-
-            if (int (currDraggedStrOffset) != locXL->getIntValue()) {
-                locXL->setValue((int (currDraggedStrOffset)));
-                double centX, centY;
-                centX = centerX->getValue();
-                centY = centerY->getValue();
-                updateGeometry(centX, centY, circrad->getValue(), locY->getValue(), degree->getValue(), locX->getValue(), locYT->getValue(), locXL->getValue());
-
-                if (listener) {
-                    listener->panelChanged(EvlocallablocX, locX->getTextValue());
-                }
-
-                return true;
-            }
-        }
-
-    } else if (Smethod->get_active_row_number() == 1  || Smethod->get_active_row_number() == 3) {
-        if (lastObject == 0 || lastObject == 1) {
-            // Dragging the upper or lower locY bar
-            PolarCoord draggedPoint;
-            rtengine::Coord currPos;
-            currPos = provider->posImage + provider->deltaImage;
-            rtengine::Coord centerPos = draggedCenter;
-            double horiz = double (imW);
-            // trick to get the correct angle (clockwise/counter-clockwise)
-            int p = centerPos.y;
-            centerPos.y = currPos.y;
-            currPos.y = p;
-            draggedPoint = currPos - centerPos;
-
-            // draggedPoint.setFromCartesian(centerPos, currPos);
-            double currDraggedStrOffset = draggedPoint.radius * sin((draggedPoint.angle - degree->getValue() + 90.) / 180.*rtengine::RT_PI);
-
-            if (lastObject == 0)
-                // Dragging the upper locY bar
-            {
-                currDraggedStrOffset -= draggedlocXOffset;
-            } else if (lastObject == 1)
-                // Dragging the lower locY bar
-            {
-                currDraggedStrOffset = - currDraggedStrOffset - draggedlocXOffset;    //-
-            }
-
-            currDraggedStrOffset = currDraggedStrOffset * 2000. / horiz;
-
-            if (int (currDraggedStrOffset) != locX->getIntValue()) {
-                locX->setValue((int (currDraggedStrOffset)));
-                double centX, centY;
-                centX = centerX->getValue();
-                centY = centerY->getValue();
-                updateGeometry(centX, centY, circrad->getValue(), locY->getValue(), degree->getValue(), locX->getValue(), locYT->getValue(), locXL->getValue());
-
-                if (listener) {
-                    listener->panelChanged(EvlocallablocX, locX->getTextValue());
-                }
-
-                return true;
-            }
-        }
-    }
-
-    /*  else if(Smethod->get_active_row_number()==2) {
-            if (lastObject==0 || lastObject==1 || lastObject==2 || lastObject==3) {
-        if (lastObject==2 || lastObject==3) {
-            // Dragging the upper or lower locY bar
-            PolarCoord draggedPoint;
-            Coord currPos;
-            currPos = provider->posImage+provider->deltaImage;
-            Coord centerPos = draggedCenter;
-            double verti = double(imH);
-            // trick to get the correct angle (clockwise/counter-clockwise)
-            int p = centerPos.y;
-            centerPos.y = currPos.y;
-            currPos.y = p;
-            draggedPoint.setFromCartesian(centerPos, currPos);
-            double currDraggedlocYOffset = draggedPoint.radius * sin((draggedPoint.angle-degree->getValue())/180.*M_PI);
-            double currDraggedStrOffset = draggedPoint.radius * sin((draggedPoint.angle-degree->getValue() +90.)/180.*M_PI);
-
-            if (lastObject==2)
-                currDraggedlocYOffset -= draggedlocYOffset;
-            else if (lastObject==3)
-                currDraggedlocYOffset = -currDraggedlocYOffset + draggedlocYOffset;
-            currDraggedlocYOffset = currDraggedlocYOffset * 200. / verti;
-        //  if (int(currDraggedlocYOffset) != locY->getIntValue()) {
-        //      locY->setValue((int(currDraggedlocYOffset)));
-            if (int(currDraggedlocYOffset) != locX->getIntValue()) {//locX
-        //  if (int(currDraggedStrOffset) != locX->getIntValue()) {//locX
-                locX->setValue((int(currDraggedlocYOffset)));
-                double centX,centY;
-                centX=centerX->getValue();
-                centY=centerY->getValue();
-
-            //  updateGeometry (centX, centY, locY->getValue(), degree->getValue(), locX->getValue(),  locYT->getValue(), locXL->getValue());
-                updateGeometry (centX, centY, locX->getValue(), degree->getValue(), locX->getValue(),  locX->getValue(), locX->getValue());
-                if (listener) {
-                    if(Smethod->get_active_row_number()==1) listener->panelChanged (EvlocallablocY, locY->getTextValue());
-
-                    }
-                return true;
-            }
-        }
-            if (lastObject==0 || lastObject==1) {
-                // Dragging the upper or lower locY bar
-                PolarCoord draggedPoint;
-                Coord currPos;
-                currPos = provider->posImage+provider->deltaImage;
-                Coord centerPos = draggedCenter;
-                double horiz = double(imW);
-                int p = centerPos.y;
-                centerPos.y = currPos.y;
-                currPos.y = p;
-                draggedPoint.setFromCartesian(centerPos, currPos);
-                double currDraggedStrOffset = draggedPoint.radius * sin((draggedPoint.angle-degree->getValue() +90.)/180.*M_PI);
-                if (lastObject==0)
-                    currDraggedStrOffset -= draggedlocXOffset;
-                else if (lastObject==1)
-                    currDraggedStrOffset = - currDraggedStrOffset - draggedlocXOffset;//-
-                    currDraggedStrOffset = currDraggedStrOffset * 200. / horiz;
-
-                if (int(currDraggedStrOffset) != locX->getIntValue()) {
-                    locX->setValue((int(currDraggedStrOffset)));
-                    double centX,centY;
-                    centX=centerX->getValue();
-                    centY=centerY->getValue();
-                    updateGeometry (centX, centY, locY->getValue(), degree->getValue(), locX->getValue(), locYT->getValue(),locXL->getValue());
-                    if (listener)
-                        listener->panelChanged (EvlocallablocX, locX->getTextValue());
-                    return true;
-                }
-            }
-
-
-            }
-        }
-        */
-    //else if (lastObject==4) {
-    if (lastObject == 4) {
-
-        // Dragging the circle to change the center
-        rtengine::Coord currPos;
-        draggedCenter += provider->deltaPrevImage;
-        currPos = draggedCenter;
-        currPos.clip(imW, imH);
-        int newCenterX = int ((double (currPos.x) - halfSizeW) / halfSizeW * 1000.);
-        int newCenterY = int ((double (currPos.y) - halfSizeH) / halfSizeH * 1000.);
-
-        if (newCenterX != centerX->getIntValue() || newCenterY != centerY->getIntValue()) {
-            centerX->setValue(newCenterX);
-            centerY->setValue(newCenterY);
-            updateGeometry(newCenterX, newCenterY, circrad->getValue(), locY->getValue(), degree->getValue(), locX->getValue(), locYT->getValue(), locXL->getValue());
-
-            if (listener) {
-                listener->panelChanged(EvlocallabCenter, Glib::ustring::compose("X=%1\nY=%2", centerX->getTextValue(), centerY->getTextValue()));
-            }
-
-            return true;
-        }
-    }
-
-    return false;
-}
-
-void Locallab::switchOffEditMode()
-{
-    if (edit->get_active()) {
-        // switching off the toggle button
-        bool wasBlocked = editConn.block(true);
-        edit->set_active(false);
-
-        if (!wasBlocked) {
-            editConn.block(false);
-        }
-    }
-
-    EditSubscriber::switchOffEditMode();  // disconnect
-}
-

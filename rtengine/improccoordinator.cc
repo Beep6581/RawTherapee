@@ -41,8 +41,8 @@ extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator()
     : orig_prev(nullptr), oprevi(nullptr), oprevl(nullptr), nprevl(nullptr), reserv(nullptr), fattal_11_dcrop_cache(nullptr), previmg(nullptr), workimg(nullptr),
-      ncie (nullptr), imgsrc (nullptr), lastAwbEqual (0.), lastAwbTempBias (0.0), ipf (&params, true), monitorIntent (RI_RELATIVE),
-      softProof (false), gamutCheck (false), sharpMask(false), scale (10), highDetailPreprocessComputed (false), highDetailRawComputed (false),
+      ncie(nullptr), imgsrc(nullptr), lastAwbEqual(0.), lastAwbTempBias(0.0), ipf(&params, true), monitorIntent(RI_RELATIVE),
+      softProof(false), gamutCheck(false), sharpMask(false), scale(10), highDetailPreprocessComputed(false), highDetailRawComputed(false),
       allocated(false), bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(NAN), coordX(0), coordY(0), localX(0), localY(0),
       ctColorCurve(),
       hltonecurve(65536),
@@ -280,6 +280,7 @@ DetailedCrop* ImProcCoordinator::createCrop(::EditDataProvider *editDataProvider
 // cropCall: calling crop, used to prevent self-updates  ...doesn't seem to be used
 void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 {
+    printf("updatePreviewImage\n");
 
     MyMutex::MyLock processingLock(mProcessing);
     int numofphases = 14;
@@ -358,7 +359,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
     // If high detail (=100%) is newly selected, do a demosaic update, since the last was just with FAST
 
     if (imageTypeListener) {
-        imageTypeListener->imageTypeChanged (imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS, imgsrc->isMono());
+        imageTypeListener->imageTypeChanged(imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS, imgsrc->isMono());
     }
 
     if ((todo & M_RAW)
@@ -696,7 +697,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
             DCPProfile::ApplyState as;
             DCPProfile *dcpProf = imgsrc->getDCP(params.icm, as);
 
-            ipf.rgbProc (oprevi, oprevl, nullptr, hltonecurve, shtonecurve, tonecurve, params.toneCurve.saturation,
+            ipf.rgbProc(oprevi, oprevl, nullptr, hltonecurve, shtonecurve, tonecurve, params.toneCurve.saturation,
                         rCurve, gCurve, bCurve, colourToningSatLimit, colourToningSatLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, dcpProf, as, histToneCurve);
 
             if (params.blackwhite.enabled && params.blackwhite.autoc && abwListener) {
@@ -774,7 +775,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
         int maxspot = settings->nspot + 1;
         progress("Applying Color Boost...", 100 * readyphase / numofphases);
 
-
+        // TODO Locallab
         if (params.locallab.enabled) {
             /*
              *  This file is part of RawTherapee.
@@ -796,7 +797,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
              *  2017 2018 Jacques Desmis <jdesmis@gmail.com>
              */
 
-
+            /*
             //*********************************************************
             //advertissment
             //we can probably put all these function outside main process
@@ -807,43 +808,55 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
             //there are probably errors...
             //***********************************************************
 
-            bool isascii = true;
+            // Get image file MD5
             std::string mdfive = getMD5(imgsrc->getFileName());
 
+            // Check if new image file has been loaded
+            bool newimage = false;
 
-            Glib::ustring datainterm = imgsrc->getFileName() + ".ii";//extansion ii arbitrary to test if mip file is possible
-
-            ofstream finterm(datainterm, ios::out);
-
-            if (finterm.fail()) {
-                printf("Non ascii Mip file possible..switch to Profiles\n");
-                isascii = false;
-            } else {
-                printf("ascii Mip file possible!\n");
+            if (prevmdfive == "" || prevmdfive != mdfive) {
+                printf("New image loaded\n");
+                newimage = true;
+                prevmdfive = mdfive;
             }
 
-            finterm.close();
+            // Check if destination folder is writable and get .mip file path
+            if (newimage) { // To avoid systematic access to hard disk
+                bool isascii = true;
+                Glib::ustring datainterm = imgsrc->getFileName() + ".ii";//extansion ii arbitrary to test if mip file is possible
 
-            if (isascii == true) {
-                if (std::remove(datainterm.c_str()) != 0) {
-                    perror("Error deleting test ii file");
+                ofstream finterm(datainterm, ios::out);
+
+                if (finterm.fail()) {
+                    printf("Non ascii Mip file possible..switch to Profiles\n");
+                    isascii = false;
                 } else {
-                    puts("Test ii file successfully deleted");
+                    printf("ascii Mip file possible!\n");
+                }
+
+                finterm.close();
+
+                if (isascii == true) {
+                    if (std::remove(datainterm.c_str()) != 0) {
+                        perror("Error deleting test ii file");
+                    } else {
+                        puts("Test ii file successfully deleted");
+                    }
+                }
+
+                Glib::ustring pop = options.cacheBaseDir + "/mip/";
+
+                if (options.mip == MI_opt || !isascii) {
+                    datal = pop + Glib::path_get_basename(imgsrc->getFileName() + "." + mdfive + ".mip");
+                }
+
+                if (options.mip == MI_prev && isascii) {//&& isascii
+                    datal = imgsrc->getFileName() + ".mip";
                 }
             }
 
-            Glib::ustring pop = options.cacheBaseDir + "/mip/";
-
-            Glib::ustring datal;
-
-            if (options.mip == MI_opt || !isascii) {
-                datal = pop + Glib::path_get_basename(imgsrc->getFileName() + "." + mdfive + ".mip");
-            }
-
-            if (options.mip == MI_prev && isascii) {//&& isascii
-                datal = imgsrc->getFileName() + ".mip";
-            }
-
+            printf("mip files in=%s\n", datal.c_str());
+            */
             /*
             //test to see if wofstream and wifstream works with NON ASCII, but it's bad
                         wofstream test(datal, ios::out);
@@ -851,9 +864,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                         else ("ca va bien\n");
                         test.close();
             */
+            /*
             ifstream fic0(datal, ios::in);
 
-            printf("mip files in=%s\n", datal.c_str());
             //    if(! fic0.fail())    {
             float **shbuffer = nullptr;
             versionmip = 0;
@@ -1223,7 +1236,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
             skinstr = new std::string[maxspot];
             pthstr = new std::string[maxspot];
             exstr = new std::string[maxspot];
-
+            */
+            /*
             //******************************************************************
             //initialize data[xx][0] and Lut cache with params
             //******************************************************************
@@ -1765,8 +1779,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                     maxind = 69;
                 }
 
-// I have forgotten 10010  ==> probably crash...but now it's passed...
-//enabled this code after...
+            // I have forgotten 10010  ==> probably crash...but now it's passed...
+            //enabled this code after...
                 if (versionmip == 10011) {
                     maxind = 70;
                 }
@@ -3277,7 +3291,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
             psthresholds[sp * 500] = s_datcps[0];
             psthresholds[sp * 500 + 1] = s_datcps[1];
-//          printf("B 0=%i 1=%i\n", s_datcps[0], s_datcps[1]);
+            //          printf("B 0=%i 1=%i\n", s_datcps[0], s_datcps[1]);
             std::string ps_str2 = "";
 
             ps_str2 = ps_str2  + std::to_string(s_datcps[0]) +  delim[0] + std::to_string(s_datcps[1]) +  delim[1];
@@ -3655,25 +3669,25 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
             delete [] pthstr;
             delete [] exstr;
 
-        }
+            }
 
-        //*************************************************************
-        // end locallab
-        //*************************************************************
+            //*************************************************************
+            // end locallab
+            //*************************************************************
 
-        histCCurve.clear();
-        histLCurve.clear();
-        ipf.chromiLuminanceCurve(nullptr, pW, nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, histCCurve, histLCurve);
-        ipf.vibrance(nprevl);
+            histCCurve.clear();
+            histLCurve.clear();
+            ipf.chromiLuminanceCurve(nullptr, pW, nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, histCCurve, histLCurve);
+            ipf.vibrance(nprevl);
 
-        if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled)) {
+            if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled)) {
             ipf.EPDToneMap(nprevl, 5, scale);
-        }
+            }
 
-        // for all treatments Defringe, Sharpening, Contrast detail , Microcontrast they are activated if "CIECAM" function are disabled
-        readyphase++;
+            // for all treatments Defringe, Sharpening, Contrast detail , Microcontrast they are activated if "CIECAM" function are disabled
+            readyphase++;
 
-        /* Issue 2785, disabled some 1:1 tools
+            /* Issue 2785, disabled some 1:1 tools
                 if (scale==1) {
                     if((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)){
                         progress ("Denoising luminance impulse...",100*readyphase/numofphases);
@@ -3711,8 +3725,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
                         delete [] buffer;
                         readyphase++;
                     }
-                }
-        */
+                    */
+        }
+
         if (params.dirpyrequalizer.cbdlMethod == "aft") {
             if (((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled))) {
                 progress("Pyramid wavelet...", 100 * readyphase / numofphases);
@@ -4205,7 +4220,7 @@ void ImProcCoordinator::getSoftProofing(bool & softProof, bool & gamutCheck)
     gamutCheck = this->gamutCheck;
 }
 
-void ImProcCoordinator::setSharpMask (bool sharpMask)
+void ImProcCoordinator::setSharpMask(bool sharpMask)
 {
     this->sharpMask = sharpMask;
 }

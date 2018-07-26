@@ -330,9 +330,9 @@ curveMode(ToneCurveParams::TcMode::STD),
           saturation(0),
           shcompr(50),
           hlcompr(0),
-    hlcomprthresh(33),
-    histmatching(false),
-    clampOOG(true)
+          hlcomprthresh(33),
+          histmatching(false),
+          clampOOG(true)
 {
 }
 
@@ -645,11 +645,11 @@ colorCurve{
     0.25
 },
 satProtectionThreshold(30),
-saturatedOpacity(80),
-strength(50),
-balance(0),
-hlColSat(60, 80, false),
-shadowsColSat(80, 208, false),
+                       saturatedOpacity(80),
+                       strength(50),
+                       balance(0),
+                       hlColSat(60, 80, false),
+                       shadowsColSat(80, 208, false),
 clcurve{
     DCT_NURBS,
     0.00,
@@ -681,11 +681,11 @@ greenhigh(0.0),
 bluehigh(0.0),
 satlow(0.0),
 sathigh(0.0),
-    lumamode(true),
-    labgridALow(0.0),
-    labgridBLow(0.0),
-    labgridAHigh(0.0),
-    labgridBHigh(0.0)
+lumamode(true),
+labgridALow(0.0),
+labgridBLow(0.0),
+labgridAHigh(0.0),
+labgridBHigh(0.0)
 {
 }
 
@@ -1849,7 +1849,7 @@ autoc(false),
 enabledcc(true),
 enabled(false),
 filter("None"),
-    setting("RGB-Rel"),
+setting("RGB-Rel"),
 method("Desaturation"),
 mixerRed(33),
 mixerOrange(33),
@@ -2091,7 +2091,7 @@ enabled(false),
         expfinal(false),
         exptoning(false),
         expnoise(false),
-    Lmethod(4),
+        Lmethod(4),
         CLmethod("all"),
         Backmethod("grey"),
         Tilesmethod("full"),
@@ -2261,6 +2261,28 @@ void WaveletParams::getCurves(
 }
 
 LocallabParams::LocallabParams() :
+    enabled(false),
+    nbspot(0),
+    selspot(0),
+    // Control spot settings
+    id(),
+    name(),
+    isvisible(),
+    shape(),
+    spotMethod(),
+    shapeMethod(),
+    locX(),
+    locXL(),
+    locY(),
+    locYT(),
+    centerX(),
+    centerY(),
+    circrad(),
+    qualityMethod(),
+    transit(),
+    thresh(),
+    iter(),
+
     llcurve{
     DCT_NURBS,
     0.0,
@@ -2368,7 +2390,8 @@ HHcurve{
 },
 skintonescurve {
     DCT_Linear
-},
+}
+/*
 enabled(false),
 degree(0),
 locY(250),
@@ -2477,67 +2500,72 @@ expdenoi(false),
 threshold(20),
 chromacbdl(0),
 spotduplicated(false)
+*/
 {
 }
 
 bool LocallabParams::operator ==(const LocallabParams& other) const
 {
-	
+
     return
         enabled == other.enabled
-        && avoid == other.avoid
-        && invers == other.invers
-        && spotduplicated == other.spotduplicated
-        && cutpast == other.cutpast
-        && lastdust == other.lastdust
-        && curvactiv == other.curvactiv
-        && activlum == other.activlum
-        && inversrad == other.inversrad
-        && inversret == other.inversret
-        && inverssha == other.inverssha
-        && degree == other.degree
-        && Smethod == other.Smethod
-        && Exclumethod == other.Exclumethod
-        && shapemethod == other.shapemethod
-        && retinexMethod == other.retinexMethod
-        && blurMethod == other.blurMethod
-        && dustMethod == other.dustMethod
-        && qualityMethod == other.qualityMethod
-        && qualitycurveMethod == other.qualitycurveMethod
-        && locY == other.locY
+        && nbspot == other.nbspot
+        && selspot == other.selspot
+        // Control spot settings
+        && id == other.id
+        && name == other.name
+        && isvisible == other.isvisible
+        && shape == other.shape
+        && spotMethod == other.spotMethod
+        && shapeMethod == other.shapeMethod
         && locX == other.locX
-        && locYT == other.locYT
         && locXL == other.locXL
+        && locY == other.locY
+        && locYT == other.locYT
         && centerX == other.centerX
         && centerY == other.centerY
         && circrad == other.circrad
-        && centerXbuf == other.centerXbuf
-        && centerYbuf == other.centerYbuf
-        && adjblur == other.adjblur
-        && thres == other.thres
-        && proxi == other.proxi
-        && lightness == other.lightness
-        && contrast == other.contrast
-        && chroma == other.chroma
-        && warm == other.warm
-        && expcomp == other.expcomp
-        && hlcompr == other.hlcompr
-        && hlcomprthresh == other.hlcomprthresh
-        && shcompr == other.shcompr
-        && black == other.black
-        && pastels == other.pastels
-        && sensiv == other.sensiv
-        && saturated == other.saturated
-        && psthreshold == other.psthreshold
+        && qualityMethod == other.qualityMethod
+        && transit == other.transit
+        && thresh == other.thresh
+        && iter == other.iter;
+    /*
+    && qualityMethod == other.qualityMethod
+    && qualitycurveMethod == other.qualitycurveMethod
+    && locY == other.locY
+    && locX == other.locX
+    && locYT == other.locYT
+    && locXL == other.locXL
+    && centerX == other.centerX
+    && centerY == other.centerY
+    && circrad == other.circrad
+    && centerXbuf == other.centerXbuf
+    && centerYbuf == other.centerYbuf
+    && adjblur == other.adjblur
+    && thres == other.thres
+    && proxi == other.proxi
+    && lightness == other.lightness
+    && contrast == other.contrast
+    && chroma == other.chroma
+    && warm == other.warm
+    && expcomp == other.expcomp
+    && hlcompr == other.hlcompr
+    && hlcomprthresh == other.hlcomprthresh
+    && shcompr == other.shcompr
+    && black == other.black
+    && pastels == other.pastels
+    && sensiv == other.sensiv
+    && saturated == other.saturated
+    && psthreshold == other.psthreshold
     && [this, &other]() -> bool {
-        for (unsigned int i = 0; i < 5; ++i)
-        {
-            if (mult[i] != other.mult[i]) {
-                return false;
-            }
+    for (unsigned int i = 0; i < 5; ++i)
+    {
+        if (mult[i] != other.mult[i]) {
+            return false;
         }
+    }
 
-        return true;
+    return true;
     }()
     && protectskins == other.protectskins
     && avoidcolorshift == other.avoidcolorshift
@@ -2602,7 +2630,11 @@ bool LocallabParams::operator ==(const LocallabParams& other) const
     && llcurve == other.llcurve
     && cccurve == other.cccurve
     && LHcurve == other.LHcurve
-    && HHcurve == other.HHcurve;
+    && HHcurve == other.HHcurve
+    && id == other.id
+    && name == other.name
+    && isvisible == other.isvisible;
+    */
 
 }
 
@@ -3079,6 +3111,9 @@ void ProcParams::setDefaults()
 
 int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bool fnameAbsolute, ParamsEdited* pedited)
 {
+    // TODO Locallab printf
+    printf("Save to .pp3 file\n");
+
     if (fname.empty() && fname2.empty()) {
         return 0;
     }
@@ -3473,6 +3508,31 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Locallab
         saveToKeyfile(!pedited || pedited->locallab.enabled, "Locallab", "Enabled", locallab.enabled, keyFile);
+        saveToKeyfile(!pedited || pedited->locallab.nbspot, "Locallab", "Nbspot", locallab.nbspot, keyFile);
+        saveToKeyfile(!pedited || pedited->locallab.selspot, "Locallab", "Selspot", locallab.selspot, keyFile);
+
+        for (int i = 0; i < locallab.nbspot; i++) {
+            // Control spot settings
+            saveToKeyfile(!pedited || pedited->locallab.id, "Locallab", "Id_" + std::to_string(i), locallab.id.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.name, "Locallab", "Name_" + std::to_string(i), locallab.name.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.isvisible, "Locallab", "Isvisible_" + std::to_string(i), locallab.isvisible.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.shape, "Locallab", "Shape_" + std::to_string(i), locallab.shape.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.spotMethod, "Locallab", "SpotMethod_" + std::to_string(i), locallab.spotMethod.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.shapeMethod, "Locallab", "ShapeMethod_" + std::to_string(i), locallab.shapeMethod.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.locX, "Locallab", "LocX_" + std::to_string(i), locallab.locX.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.locXL, "Locallab", "LocXL_" + std::to_string(i), locallab.locXL.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.locY, "Locallab", "LocY_" + std::to_string(i), locallab.locY.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.locYT, "Locallab", "LocYT_" + std::to_string(i), locallab.locYT.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.centerX, "Locallab", "CenterX_" + std::to_string(i), locallab.centerX.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.centerY, "Locallab", "CenterY_" + std::to_string(i), locallab.centerY.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.circrad, "Locallab", "Circrad_" + std::to_string(i), locallab.circrad.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.qualityMethod, "Locallab", "QualityMethod_" + std::to_string(i), locallab.qualityMethod.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.transit, "Locallab", "Transit_" + std::to_string(i), locallab.transit.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.thresh, "Locallab", "Thresh_" + std::to_string(i), locallab.thresh.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.iter, "Locallab", "Iter_" + std::to_string(i), locallab.iter.at(i), keyFile);
+        }
+
+        /*
         saveToKeyfile(!pedited || pedited->locallab.expcolor, "Locallab", "Expcolor", locallab.expcolor, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.expexpose, "Locallab", "Expexpose", locallab.expexpose, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.expvibrance, "Locallab", "Expvibrance", locallab.expvibrance, keyFile);
@@ -3590,8 +3650,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->locallab.scaltm, "Locallab", "Scaltm", locallab.scaltm, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.rewei, "Locallab", "Rewei", locallab.rewei, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.spotduplicated, "Locallab", "Spotduplicated", locallab.spotduplicated, keyFile);
-
-
+        saveToKeyfile(!pedited || pedited->locallab.id, "Locallab", "Id", locallab.id, keyFile);
+        saveToKeyfile(!pedited || pedited->locallab.name, "Locallab", "Name", locallab.name, keyFile);
+        saveToKeyfile(!pedited || pedited->locallab.isvisible, "Locallab", "Isvisible", locallab.isvisible, keyFile);
+        */
 
 // Post-crop vignette
         saveToKeyfile(!pedited || pedited->pcvignette.enabled, "PCVignette", "Enabled", pcvignette.enabled, keyFile);
@@ -3998,6 +4060,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Exposure", "Curve", pedited, toneCurve.curve, pedited->toneCurve.curve);
                 assignFromKeyfile(keyFile, "Exposure", "Curve2", pedited, toneCurve.curve2, pedited->toneCurve.curve2);
             }
+
             assignFromKeyfile(keyFile, "Exposure", "HistogramMatching", pedited, toneCurve.histmatching, pedited->toneCurve.histmatching);
             assignFromKeyfile(keyFile, "Exposure", "ClampOOG", pedited, toneCurve.clampOOG, pedited->toneCurve.clampOOG);
         }
@@ -4204,14 +4267,17 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group("Sharpening")) {
             assignFromKeyfile(keyFile, "Sharpening", "Enabled", pedited, sharpening.enabled, pedited->sharpening.enabled);
+
             if (ppVersion >= 334) {
                 assignFromKeyfile(keyFile, "Sharpening", "Contrast", pedited, sharpening.contrast, pedited->sharpening.contrast);
             } else {
                 sharpening.contrast = 0;
+
                 if (pedited) {
                     pedited->sharpening.contrast = true;
                 }
             }
+
             assignFromKeyfile(keyFile, "Sharpening", "Radius", pedited, sharpening.radius, pedited->sharpening.radius);
             assignFromKeyfile(keyFile, "Sharpening", "Amount", pedited, sharpening.amount, pedited->sharpening.amount);
 
@@ -4255,14 +4321,17 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "SharpenMicro", "Enabled", pedited, sharpenMicro.enabled, pedited->sharpenMicro.enabled);
             assignFromKeyfile(keyFile, "SharpenMicro", "Matrix", pedited, sharpenMicro.matrix, pedited->sharpenMicro.matrix);
             assignFromKeyfile(keyFile, "SharpenMicro", "Strength", pedited, sharpenMicro.amount, pedited->sharpenMicro.amount);
+
             if (ppVersion >= 334) {
                 assignFromKeyfile(keyFile, "SharpenMicro", "Contrast", pedited, sharpenMicro.contrast, pedited->sharpenMicro.contrast);
             } else {
                 sharpenMicro.contrast = 0;
+
                 if (pedited) {
                     pedited->sharpenMicro.contrast = true;
                 }
             }
+
             assignFromKeyfile(keyFile, "SharpenMicro", "Uniformity", pedited, sharpenMicro.uniformity, pedited->sharpenMicro.uniformity);
         }
 
@@ -4443,7 +4512,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "FattalToneMapping", "Anchor", pedited, fattal.anchor, pedited->fattal.anchor);
         }
 
-        if (keyFile.has_group ("Shadows & Highlights") && ppVersion >= 333) {
+        if (keyFile.has_group("Shadows & Highlights") && ppVersion >= 333) {
             assignFromKeyfile(keyFile, "Shadows & Highlights", "Enabled", pedited, sh.enabled, pedited->sh.enabled);
             assignFromKeyfile(keyFile, "Shadows & Highlights", "Highlights", pedited, sh.highlights, pedited->sh.highlights);
             assignFromKeyfile(keyFile, "Shadows & Highlights", "HighlightTonalWidth", pedited, sh.htonalwidth, pedited->sh.htonalwidth);
@@ -4599,6 +4668,52 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group("Locallab")) {
             assignFromKeyfile(keyFile, "Locallab", "Enabled", pedited, locallab.enabled, pedited->locallab.enabled);
+            assignFromKeyfile(keyFile, "Locallab", "Nbspot", pedited, locallab.nbspot, pedited->locallab.nbspot);
+            assignFromKeyfile(keyFile, "Locallab", "Selspot", pedited, locallab.selspot, pedited->locallab.selspot);
+
+            // Resize locallab settings if required
+            if (locallab.nbspot > (int)locallab.id.size()) {
+                locallab.id.resize(locallab.nbspot);
+                locallab.name.resize(locallab.nbspot);
+                locallab.isvisible.resize(locallab.nbspot);
+                locallab.shape.resize(locallab.nbspot);
+                locallab.spotMethod.resize(locallab.nbspot);
+                locallab.shapeMethod.resize(locallab.nbspot);
+                locallab.locX.resize(locallab.nbspot);
+                locallab.locXL.resize(locallab.nbspot);
+                locallab.locY.resize(locallab.nbspot);
+                locallab.locYT.resize(locallab.nbspot);
+                locallab.centerX.resize(locallab.nbspot);
+                locallab.centerY.resize(locallab.nbspot);
+                locallab.circrad.resize(locallab.nbspot);
+                locallab.qualityMethod.resize(locallab.nbspot);
+                locallab.transit.resize(locallab.nbspot);
+                locallab.thresh.resize(locallab.nbspot);
+                locallab.iter.resize(locallab.nbspot);
+            }
+
+            for (int i = 0; i < locallab.nbspot; i++) {
+                // Control spot settings
+                assignFromKeyfile(keyFile, "Locallab", "Id_" + std::to_string(i), pedited, locallab.id.at(i), pedited->locallab.id);
+                assignFromKeyfile(keyFile, "Locallab", "Name_" + std::to_string(i), pedited, locallab.name.at(i), pedited->locallab.name);
+                assignFromKeyfile(keyFile, "Locallab", "Isvisible_" + std::to_string(i), pedited, locallab.isvisible.at(i), pedited->locallab.isvisible);
+                assignFromKeyfile(keyFile, "Locallab", "Shape_" + std::to_string(i), pedited, locallab.shape.at(i), pedited->locallab.shape);
+                assignFromKeyfile(keyFile, "Locallab", "SpotMethod_" + std::to_string(i), pedited, locallab.spotMethod.at(i), pedited->locallab.spotMethod);
+                assignFromKeyfile(keyFile, "Locallab", "ShapeMethod_" + std::to_string(i), pedited, locallab.shapeMethod.at(i), pedited->locallab.shapeMethod);
+                assignFromKeyfile(keyFile, "Locallab", "LocX_" + std::to_string(i), pedited, locallab.locX.at(i), pedited->locallab.locX);
+                assignFromKeyfile(keyFile, "Locallab", "LocXL_" + std::to_string(i), pedited, locallab.locXL.at(i), pedited->locallab.locXL);
+                assignFromKeyfile(keyFile, "Locallab", "LocY_" + std::to_string(i), pedited, locallab.locY.at(i), pedited->locallab.locY);
+                assignFromKeyfile(keyFile, "Locallab", "LocYT_" + std::to_string(i), pedited, locallab.locYT.at(i), pedited->locallab.locYT);
+                assignFromKeyfile(keyFile, "Locallab", "CenterX_" + std::to_string(i), pedited, locallab.centerX.at(i), pedited->locallab.centerX);
+                assignFromKeyfile(keyFile, "Locallab", "CenterY_" + std::to_string(i), pedited, locallab.centerY.at(i), pedited->locallab.centerY);
+                assignFromKeyfile(keyFile, "Locallab", "Circrad_" + std::to_string(i), pedited, locallab.circrad.at(i), pedited->locallab.circrad);
+                assignFromKeyfile(keyFile, "Locallab", "QualityMethod_" + std::to_string(i), pedited, locallab.qualityMethod.at(i), pedited->locallab.qualityMethod);
+                assignFromKeyfile(keyFile, "Locallab", "Transit_" + std::to_string(i), pedited, locallab.transit.at(i), pedited->locallab.transit);
+                assignFromKeyfile(keyFile, "Locallab", "Thresh_" + std::to_string(i), pedited, locallab.thresh.at(i), pedited->locallab.thresh);
+                assignFromKeyfile(keyFile, "Locallab", "Iter_" + std::to_string(i), pedited, locallab.iter.at(i), pedited->locallab.iter);
+            }
+
+            /*
             assignFromKeyfile(keyFile, "Locallab", "Expcolor", pedited, locallab.expcolor, pedited->locallab.expcolor);
             assignFromKeyfile(keyFile, "Locallab", "Expcbdl", pedited, locallab.expcbdl, pedited->locallab.expcbdl);
             assignFromKeyfile(keyFile, "Locallab", "Expexpose", pedited, locallab.expexpose, pedited->locallab.expexpose);
@@ -4733,7 +4848,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Locallab", "Threshold", pedited, locallab.threshold, pedited->locallab.threshold);
             assignFromKeyfile(keyFile, "Locallab", "Chromacbdl", pedited, locallab.chromacbdl, pedited->locallab.chromacbdl);
             assignFromKeyfile(keyFile, "Locallab", "Spotduplicated", pedited, locallab.spotduplicated, pedited->locallab.spotduplicated);
-
+            assignFromKeyfile(keyFile, "Locallab", "Id", pedited, locallab.id, pedited->locallab.id);
+            assignFromKeyfile(keyFile, "Locallab", "Name", pedited, locallab.name, pedited->locallab.name);
+            assignFromKeyfile(keyFile, "Locallab", "Isvisible", pedited, locallab.isvisible, pedited->locallab.isvisible);
+            */
         }
 
 
@@ -4862,15 +4980,18 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Wavelet", "Lipst", pedited, wavelet.lipst, pedited->wavelet.lipst);
             assignFromKeyfile(keyFile, "Wavelet", "AvoidColorShift", pedited, wavelet.avoid, pedited->wavelet.avoid);
             assignFromKeyfile(keyFile, "Wavelet", "TMr", pedited, wavelet.tmr, pedited->wavelet.tmr);
+
             if (ppVersion < 331) { // wavelet.Lmethod was a string before version 331
                 Glib::ustring temp;
                 assignFromKeyfile(keyFile, "Wavelet", "LevMethod", pedited, temp, pedited->wavelet.Lmethod);
+
                 if (!temp.empty()) {
                     wavelet.Lmethod = std::stoi(temp);
                 }
             } else {
                 assignFromKeyfile(keyFile, "Wavelet", "LevMethod", pedited, wavelet.Lmethod, pedited->wavelet.Lmethod);
             }
+
             assignFromKeyfile(keyFile, "Wavelet", "ChoiceLevMethod", pedited, wavelet.CLmethod, pedited->wavelet.CLmethod);
             assignFromKeyfile(keyFile, "Wavelet", "BackMethod", pedited, wavelet.Backmethod, pedited->wavelet.Backmethod);
             assignFromKeyfile(keyFile, "Wavelet", "TilesMethod", pedited, wavelet.Tilesmethod, pedited->wavelet.Tilesmethod);
@@ -5337,12 +5458,15 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW Bayer", "PreBlack3", pedited, raw.bayersensor.black3, pedited->raw.bayersensor.exBlack3);
             assignFromKeyfile(keyFile, "RAW Bayer", "PreTwoGreen", pedited, raw.bayersensor.twogreen, pedited->raw.bayersensor.exTwoGreen);
             assignFromKeyfile(keyFile, "RAW Bayer", "LineDenoise", pedited, raw.bayersensor.linenoise, pedited->raw.bayersensor.linenoise);
+
             if (keyFile.has_key("RAW Bayer", "LineDenoiseDirection")) {
                 raw.bayersensor.linenoiseDirection = RAWParams::BayerSensor::LineNoiseDirection(keyFile.get_integer("RAW Bayer", "LineDenoiseDirection"));
+
                 if (pedited) {
                     pedited->raw.bayersensor.linenoiseDirection = true;
                 }
             }
+
             assignFromKeyfile(keyFile, "RAW Bayer", "GreenEqThreshold", pedited, raw.bayersensor.greenthresh, pedited->raw.bayersensor.greenEq);
             assignFromKeyfile(keyFile, "RAW Bayer", "DCBIterations", pedited, raw.bayersensor.dcb_iterations, pedited->raw.bayersensor.dcbIterations);
             assignFromKeyfile(keyFile, "RAW Bayer", "DCBEnhance", pedited, raw.bayersensor.dcb_enhance, pedited->raw.bayersensor.dcbEnhance);
@@ -5358,9 +5482,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
 
             assignFromKeyfile(keyFile, "RAW Bayer", "PixelShiftEperIso", pedited, raw.bayersensor.pixelShiftEperIso, pedited->raw.bayersensor.pixelShiftEperIso);
+
             if (ppVersion < 332) {
                 raw.bayersensor.pixelShiftEperIso += 1.0;
             }
+
             assignFromKeyfile(keyFile, "RAW Bayer", "PixelShiftSigma", pedited, raw.bayersensor.pixelShiftSigma, pedited->raw.bayersensor.pixelShiftSigma);
             assignFromKeyfile(keyFile, "RAW Bayer", "PixelShiftShowMotion", pedited, raw.bayersensor.pixelShiftShowMotion, pedited->raw.bayersensor.pixelShiftShowMotion);
             assignFromKeyfile(keyFile, "RAW Bayer", "PixelShiftShowMotionMaskOnly", pedited, raw.bayersensor.pixelShiftShowMotionMaskOnly, pedited->raw.bayersensor.pixelShiftShowMotionMaskOnly);
@@ -5375,12 +5501,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
             if (ppVersion < 336) {
                 if (keyFile.has_key("RAW Bayer", "pixelShiftLmmse")) {
-                    bool useLmmse = keyFile.get_boolean ("RAW Bayer", "pixelShiftLmmse");
+                    bool useLmmse = keyFile.get_boolean("RAW Bayer", "pixelShiftLmmse");
+
                     if (useLmmse) {
                         raw.bayersensor.pixelShiftDemosaicMethod = raw.bayersensor.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::LMMSE);
                     } else {
                         raw.bayersensor.pixelShiftDemosaicMethod = raw.bayersensor.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::AMAZE);
                     }
+
                     if (pedited) {
                         pedited->raw.bayersensor.pixelShiftDemosaicMethod = true;
                     }

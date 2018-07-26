@@ -455,9 +455,31 @@ public:
 };
 class LocallabParamsEdited
 {
-
+// TODO To be manage by vector<bool>
 public:
     bool enabled;
+    bool nbspot;
+    bool selspot;
+    // Control spot settings
+    bool id;
+    bool name;
+    bool isvisible;
+    bool shape;
+    bool spotMethod;
+    bool shapeMethod;
+    bool locX;
+    bool locXL;
+    bool locY;
+    bool locYT;
+    bool centerX;
+    bool centerY;
+    bool circrad;
+    bool qualityMethod;
+    bool transit;
+    bool thresh;
+    bool iter;
+
+    /*
     bool degree;
     bool locY;
     bool locX;
@@ -567,7 +589,11 @@ public:
     bool pastsattog;
     bool skintonescurve;
     bool sensiv;
-	bool spotduplicated;
+    bool spotduplicated;
+    bool id;
+    bool name;
+    bool isvisible;
+    */
 
 };
 
@@ -913,7 +939,8 @@ public:
 };
 
 
-class MetaDataParamsEdited {
+class MetaDataParamsEdited
+{
 public:
     bool mode;
 };

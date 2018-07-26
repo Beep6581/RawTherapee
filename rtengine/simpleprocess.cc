@@ -966,7 +966,7 @@ private:
 
         LUTu histToneCurve;
 
-        ipf.rgbProc (baseImg, labView, nullptr, curve1, curve2, curve, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve);
+        ipf.rgbProc(baseImg, labView, nullptr, curve1, curve2, curve, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve);
 
         if (settings->verbose) {
             printf("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", autor, autog, autob);
@@ -1040,6 +1040,8 @@ private:
         //     bool localcutili = false;
         reservView->CopyFrom(labView);
 
+        // TODO Locallab
+        /*
         if (params.locallab.enabled) {
             MyTime t1, t2;
             t1.set();
@@ -2208,6 +2210,7 @@ private:
             }
 
         }
+        */
 
         delete reservView;
         reservView = nullptr;
@@ -2242,7 +2245,7 @@ private:
         }
 
         if (((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) && params.sharpening.enabled) {
-            ipf.sharpening (labView, params.sharpening);
+            ipf.sharpening(labView, params.sharpening);
 
         }
 
@@ -2325,7 +2328,7 @@ private:
             float CAMMean = NAN;
 
             float d, dj, yb;
-            ipf.ciecam_02float (cieView, float (adap), 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, dj, yb, 1);
+            ipf.ciecam_02float(cieView, float (adap), 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, dj, yb, 1);
         }
 
         delete cieView;
@@ -2375,13 +2378,14 @@ private:
         }
 
         if (labResize) { // resize lab data
-            if(labView->W != imw || labView->H != imh) {
+            if (labView->W != imw || labView->H != imh) {
                 // resize image
-                tmplab = new LabImage (imw, imh);
-                ipf.Lanczos (labView, tmplab, tmpScale);
+                tmplab = new LabImage(imw, imh);
+                ipf.Lanczos(labView, tmplab, tmpScale);
                 delete labView;
                 labView = tmplab;
             }
+
             cw = labView->W;
             ch = labView->H;
 
@@ -2391,7 +2395,8 @@ private:
                         labView->L[i][j] = labView->L[i][j] < 0.f ? 0.f : labView->L[i][j];
                     }
                 }
-                ipf.sharpening (labView, params.prsharpening);
+
+                ipf.sharpening(labView, params.prsharpening);
             }
         }
 

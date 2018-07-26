@@ -242,6 +242,8 @@ protected:
     bool HHutili;
     bool curveutili;
 
+    std::string prevmdfive;
+    Glib::ustring datal;
     int **dataspot;
     int maxdata;
     std::string *retistr;
@@ -252,6 +254,7 @@ protected:
     std::string *skinstr;
     std::string *pthstr;
     std::string *exstr;
+    std::string *name;
 
     LUTi circrads;
     LUTi centerx;
@@ -467,7 +470,7 @@ public:
     void getMonitorProfile(Glib::ustring& profile, RenderingIntent& intent) const;
     void setSoftProofing(bool softProof, bool gamutCheck);
     void getSoftProofing(bool &softProof, bool &gamutCheck);
-    void setSharpMask      (bool sharpMask);
+    void setSharpMask(bool sharpMask);
     bool updateTryLock()
     {
         return updaterThreadStart.trylock();

@@ -52,7 +52,7 @@ extern const Settings* settings;
 
 Crop::Crop(ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow)
     : PipetteBuffer(editDataProvider), origCrop(nullptr), laboCrop(nullptr), labnCrop(nullptr), reservCrop(nullptr),
-      cropImg (nullptr), shbuf_real(nullptr), transCrop (nullptr), cieCrop (nullptr), shbuffer(nullptr),
+      cropImg(nullptr), shbuf_real(nullptr), transCrop(nullptr), cieCrop(nullptr), shbuffer(nullptr),
       updating(false), newUpdatePending(false), skip(10),
       cropx(0), cropy(0), cropw(-1), croph(-1),
       trafx(0), trafy(0), trafw(-1), trafh(-1),
@@ -823,7 +823,7 @@ void Crop::update(int todo)
         DCPProfile *dcpProf = parent->imgsrc->getDCP(params.icm, as);
 
         LUTu histToneCurve;
-        parent->ipf.rgbProc (baseCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, 
+        parent->ipf.rgbProc(baseCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve,
                             params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->colourToningSatLimit, parent->colourToningSatLimitOpacity, parent->ctColorCurve, parent->ctOpacityCurve, parent->opautili, parent->clToningcurve, parent->cl2Toningcurve,
                             parent->customToneCurve1, parent->customToneCurve2, parent->beforeToneCurveBW, parent->afterToneCurveBW, rrm, ggm, bbm,
                             parent->bwAutoR, parent->bwAutoG, parent->bwAutoB, dcpProf, as, histToneCurve);
@@ -890,6 +890,8 @@ void Crop::update(int todo)
         //     bool tyty = false;
         int maxspot = settings->nspot + 1;
 
+        // TODO Locallab
+        /*
         if (needslocal) {
             //   if (tyty ) {
 
@@ -1775,6 +1777,7 @@ void Crop::update(int todo)
 
             }
         }
+        */
 
         //   int moderetinex;
         //    parent->ipf.MSR(labnCrop, labnCrop->W, labnCrop->H, 1);
@@ -1800,7 +1803,7 @@ void Crop::update(int todo)
 
             if ((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled)) {
                 parent->ipf.MLmicrocontrast(labnCrop);
-                parent->ipf.sharpening (labnCrop, params.sharpening, parent->sharpMask);
+                parent->ipf.sharpening(labnCrop, params.sharpening, parent->sharpMask);
             }
         }
 
@@ -1929,8 +1932,8 @@ void Crop::update(int todo)
             }
 
             float d, dj, yb; // not used after this block
-            parent->ipf.ciecam_02float (cieCrop, float (adap), 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3,
-                                        dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 5, skip, execsharp, d, dj, yb, 1, parent->sharpMask);
+            parent->ipf.ciecam_02float(cieCrop, float (adap), 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3,
+                                       dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 5, skip, execsharp, d, dj, yb, 1, parent->sharpMask);
         } else {
             // CIECAM is disabled, we free up its image buffer to save some space
             if (cieCrop) {
@@ -2036,7 +2039,8 @@ void Crop::freeAll()
         }
 
         PipetteBuffer::flush();
-	}
+    }
+
     cropAllocated = false;
 }
 
@@ -2228,7 +2232,8 @@ bool Crop::setCropSizes(int rcx, int rcy, int rcw, int rch, int skip, bool inter
 
         if (shbuffer) {
             delete [] shbuffer;
-		}
+        }
+
         if (shbuf_real) {
             delete [] shbuf_real;
         }

@@ -24,14 +24,12 @@ class Locallab :
     public FoldableToolPanel,
     public rtengine::localListener,
     public CurveListener,
-    public EditSubscriber,
     public ColorProvider,
     public ThresholdCurveProvider,
     public ThresholdAdjusterListener
 
 {
 private:
-
     rtengine::ProcEvent EvLocenacolor;//548
     rtengine::ProcEvent EvLocenaexpose;//572
     rtengine::ProcEvent EvLocenavibrance;//563
@@ -140,7 +138,8 @@ private:
     rtengine::ProcEvent Evlocallabbilateral;// = 598,
     rtengine::ProcEvent Evlocallabnoiselequal;// = 599,
     rtengine::ProcEvent Evlocallabshapemethod;// = 600,
-    rtengine::ProcEvent Evlocallabspotduplicated;
+    rtengine::ProcEvent Evlocallabspotduplicated;// = 601
+    rtengine::ProcEvent Evlocallabspotcreated;// = 602
 
     IdleRegister idle_register;
 
@@ -159,33 +158,14 @@ private:
     MyExpander* const expsharp;
     MyExpander* const expcbdl;
     MyExpander* const expdenoi;
-    MyExpander* const expsettings;
+    ControlSpotPanel* const expsettings;
 
     CurveEditorGroup* const LocalcurveEditorgainT;
     CurveEditorGroup* const LocalcurveEditorgainTrab;
     CurveEditorGroup* const llCurveEditorG;
 
-    ControlSpotPanel *spotPanel;
-    Gtk::HBox *editHBox;
-    Gtk::ToggleButton* edit;
-
-    Adjuster* nbspot;
     Adjuster* multiplier[5];
 
-    Adjuster* const anbspot;
-    Adjuster* const locX;
-    Adjuster* const locXL;
-    Adjuster* const degree;
-    Adjuster* const locY;
-    Adjuster* const locYT;
-    Adjuster* const centerX;
-    Adjuster* const centerY;
-    Adjuster* const circrad;
-    Adjuster* const sensiexclu;
-    Adjuster* const struc;
-
-    Adjuster* const thres;
-    Adjuster* const proxi;
     Adjuster* const lightness;
     Adjuster* const contrast;
     Adjuster* const chroma;
@@ -196,16 +176,10 @@ private:
     Adjuster* const hlcomprthresh;
     Adjuster* const black;
     Adjuster* const shcompr;
-    /*
-    Adjuster* const lightnessex;
-    Adjuster* const contrastex;
-    Adjuster* const chromaex;
-    */
     Adjuster* const sensiex;
     Adjuster* const radius;
     Adjuster* const strength;
     Adjuster* const sensibn;
-    Adjuster* const transit;
     Adjuster* const stren;
     Adjuster* const gamma;
     Adjuster* const estop;
@@ -237,38 +211,24 @@ private:
     Adjuster* const sobelref;
     Adjuster* const centerXbuf;
     Adjuster* const centerYbuf;
-//    Adjuster* const adjblur;
 
-    MyComboBoxText*   const shapemethod;
-    MyComboBoxText*   const Smethod;
-    MyComboBoxText*   const Exclumethod;
     MyComboBoxText*   const retinexMethod;
-    MyComboBoxText*   const qualityMethod;
     MyComboBoxText*   const qualitycurveMethod;
     MyComboBoxText*   const blurMethod;
     MyComboBoxText*   const dustMethod;
 
-    Gtk::Frame* const excluFrame;
-
-    Gtk::Frame* const artifFrame;
     Gtk::Frame* const shapeFrame;
     Gtk::Frame* const superFrame;
     Gtk::Frame* const dustFrame;
     Gtk::Frame* const wavFrame;
 
     Gtk::Label* const labmdh;
-    Gtk::Label* const labqual;
     Gtk::Label* const labqualcurv;
     Gtk::Label* const labmS;
     Gtk::Label* const labmEx;
     Gtk::Label* const labmshape;
 
-    Gtk::HBox* const ctboxS;
-    Gtk::HBox* const ctboxshape;
-    Gtk::HBox* const ctboxEx;
-
     Gtk::HBox* const dhbox;
-    Gtk::HBox* const qualbox;
     Gtk::HBox* const qualcurvbox;
 
     Gtk::CheckButton* const avoid;
@@ -281,7 +241,6 @@ private:
     Gtk::CheckButton* const cutpast;
     Gtk::CheckButton* const lastdust;
 
-    Gtk::CheckButton* spotduplicated;
     Gtk::Label* labspotdup;
 
     Gtk::Button* neutral;
@@ -328,24 +287,19 @@ private:
     sigc::connection ashiftconn;
     sigc::connection pastsattogconn;
 
-
-
     sigc::connection lumaneutralPressedConn;
     sigc::connection lumacontrastPlusPressedConn;
     sigc::connection lumacontrastMinusPressedConn;
     sigc::connection enablecolorConn, enableexposeConn, enablevibranceConn, enableblurConn, enabletonemapConn;
     sigc::connection enableretiConn, enablesharpConn, enablecbdlConn;
     sigc::connection enabledenoiConn;
-    sigc::connection  editConn, avoidConn, inversConn, cutpastConn, lastdustConn, curvactivConn, activlumConn, inversradConn, inversretConn, inversshaConn,  neutralconn, neutralconn1;
-    sigc::connection  Smethodconn, shapemethodconn, Exclumethodconn, spotduplicatedConn;
+    sigc::connection avoidConn, inversConn, cutpastConn, lastdustConn, curvactivConn, activlumConn, inversradConn, inversretConn, inversshaConn,  neutralconn, neutralconn1;
     sigc::connection retinexMethodConn;
-    sigc::connection qualityMethodConn;
     sigc::connection qualitycurveMethodConn;
     sigc::connection blurMethodConn;
     sigc::connection dustMethodConn;
 
     bool lastspotduplicated;
-
 
     int nextdatasp[102];
     int nextlength;
@@ -367,18 +321,32 @@ private:
     std::string nextex_str;
     std::string nextex_str2;
 
-    double draggedPointOldAngle;
-    double draggedPointAdjusterAngle;
-    double draggedFeatherOffset;
-    double draggedlocYOffset;
-    double draggedlocXOffset;
-    double draggedlocYTOffset;
-    double draggedlocXLOffset;
-    rtengine::Coord draggedCenter;
     bool lastavoid, lastinvers, lastcutpast, lastlastdust, lastinversrad, lastinversret, lastactivlum, lastinverssha, lastcurvactiv;
     int lastanbspot;
 
-    void editToggled();
+    // To be deleted
+    Adjuster* const locX;
+    Adjuster* const locXL;
+    Adjuster* const degree;
+    Adjuster* const locY;
+    Adjuster* const locYT;
+    Adjuster* const centerX;
+    Adjuster* const centerY;
+    Adjuster* const circrad;
+    Adjuster* const sensiexclu;
+    Adjuster* const struc;
+    Adjuster* nbspot;
+    MyComboBoxText*   const shapemethod;
+    MyComboBoxText*   const Smethod;
+    MyComboBoxText*   const Exclumethod;
+    Gtk::CheckButton* spotduplicated;
+    Adjuster* const thres;
+    Adjuster* const proxi;
+    Adjuster* const transit;
+    MyComboBoxText*   const qualityMethod;
+
+    // To be deleted ??
+    Adjuster* const anbspot;
 
 public:
 
@@ -391,10 +359,9 @@ public:
 
     void setBatchMode(bool batchMode);
 
-    void updateGeometry(const int centerX_, const int centerY_, const int circrad_, const int locY_, const double degree_, const int locX_, const int locYT_, const int locXL_, const int fullWidth = -1, const int fullHeight = -1);
-    void SmethodChanged();
-    void shapemethodChanged();
-    void ExclumethodChanged();
+    void SmethodChanged(); // TODO To be deleted
+    void shapemethodChanged(); // TODO To be deleted
+    void ExclumethodChanged(); // TODO To be deleted
     void writeOptions(std::vector<int> &tpOpen);
     void updateToolState(std::vector<int> &tpOpen);
 
@@ -424,10 +391,12 @@ public:
     bool localComputed_();
     bool localretComputed_();
     void setEditProvider(EditDataProvider* provider);
+    void subscribe();
+    void unsubscribe();
     void retinexMethodChanged();
     void blurMethodChanged();
     void dustMethodChanged();
-    void qualityMethodChanged();
+    void qualityMethodChanged(); // TODO To be deleted
     void qualitycurveMethodChanged();
     void lumaneutralPressed();
     void lumacontrastPlusPressed();
@@ -439,12 +408,6 @@ public:
     void pastsattog_toggled();
     std::vector<double> getCurvePoints(ThresholdSelector* tAdjuster) const;
 
-    // EditSubscriber interface
-    CursorShape getCursor(int objectID);
-    bool mouseOver(int modifierKey);
-    bool button1Pressed(int modifierKey);
-    bool button1Released();
-    bool drag1(int modifierKey);
-    void switchOffEditMode();
+    void setListener(ToolPanelListener* tpl);
 };
 
