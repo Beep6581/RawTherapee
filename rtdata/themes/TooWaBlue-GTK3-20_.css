@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.69
+  Version 2.70
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -852,7 +852,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 
 #ToolPanelNotebook > header tab #TextOrIcon image{
     min-height: 2.33334em;
-    min-width: 2.5em;
+    min-width: calc(2em + 4px);
     padding: 2px 0;
     margin: 0;
 }
@@ -1388,11 +1388,15 @@ button.flat {
 /* Resetbutton */
 #MyExpander button.flat,
 dialog scale + button.flat,
-scale + button.flat {
+scale + button.flat,
+dialog entry + button.flat {
     min-height: 1.16667em;
     min-width: 1.66667em;
     margin: 0.08334em 0 0.08334em 0.16667em;
     padding: 0;
+}
+dialog entry + button.flat {
+    min-height: 1.66667em;
 }
 
 #MyExpander scale + button.flat {
@@ -1497,6 +1501,9 @@ dialog button.combo,
 #MyExpander button.combo,
 #BatchQueueButtonsMainContainer button.combo {
     padding: 0;
+}
+#ToolPanelNotebook > stack > box > box > combobox {
+    margin-right: 0.25em;
 }
 combobox button cellview {
     padding: 0 0 0 0.20em;
