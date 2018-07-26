@@ -459,7 +459,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
     readyphase++;
 
-    if (todo & M_AUTOEXP) {
+    if (todo & M_INIT) {
         if (params.toneCurve.autoexp) {
             LUTu aehist;
             int aehistcompr;
