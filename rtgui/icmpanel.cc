@@ -43,9 +43,9 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     EvICMpgrey = m->newEvent(GAMMA, "HISTORY_MSG_ICMPGREY");
     EvICMpblux = m->newEvent(GAMMA, "HISTORY_MSG_ICMPBLUX");
     EvICMpbluy = m->newEvent(GAMMA, "HISTORY_MSG_ICMPBLUY");
-    EvICMgamm = m->newEvent(ALLNORAW, "HISTORY_MSG_ICM_WORKING_GAMMA");
-    EvICMslop = m->newEvent(ALLNORAW, "HISTORY_MSG_ICM_WORKING_SLOPE");
-    EvICMtrcinMethod = m->newEvent(ALLNORAW, "HISTORY_MSG_ICM_WORKING_TRC_METHOD");
+    EvICMgamm = m->newEvent(AUTOEXP, "HISTORY_MSG_ICM_WORKING_GAMMA");
+    EvICMslop = m->newEvent(AUTOEXP, "HISTORY_MSG_ICM_WORKING_SLOPE");
+    EvICMtrcinMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_ICM_WORKING_TRC_METHOD");
 
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = false;
 

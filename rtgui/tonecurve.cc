@@ -30,7 +30,7 @@ using namespace rtengine::procparams;
 ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LABEL"))
 {
     auto m = ProcEventMapper::getInstance();
-    EvHistMatching = m->newEvent(ALLNORAW, "HISTORY_MSG_HISTMATCHING");
+    EvHistMatching = m->newEvent(AUTOEXP, "HISTORY_MSG_HISTMATCHING");
     EvHistMatchingBatch = m->newEvent(M_VOID, "HISTORY_MSG_HISTMATCHING");
     EvClampOOG = m->newEvent(DARKFRAME, "HISTORY_MSG_CLAMPOOG");
 
