@@ -2372,9 +2372,9 @@ ICCPROFCREATOR_SAVEDIALOG_TITLE;ICC-Profile speichern unter ...
 ICCPROFCREATOR_SLOPE;Steigung
 ICCPROFCREATOR_TRC_PRESET;Farbtonkennlinie:
 MAIN_BUTTON_ICCPROFCREATOR;ICC-Profil erstellen
-TP_ICM_WORKTRC;Farbtonkennlinie:
-TP_ICM_WORKTRC_CUSTOM;Benutzerdefiniert
-TP_ICM_WORKTRC_GAMMA;Gamma
-TP_ICM_WORKTRC_NONE;Keine
-TP_ICM_WORKTRC_SLOPE;Steigung
-TP_ICM_WORKTRC_TOOLTIP;Nur für die mitgelieferten\nProfile möglich.
+TP_ICM_WORK_TRC;Farbtonkennlinie:
+TP_ICM_WORK_TRC_CUSTOM;Benutzerdefiniert
+TP_ICM_WORK_TRC_GAMMA;Gamma
+TP_ICM_WORK_TRC_NONE;Keine
+TP_ICM_WORK_TRC_SLOPE;Steigung
+TP_ICM_WORK_TRC_TOOLTIP;Nur für die mitgelieferten\nProfile möglich.
