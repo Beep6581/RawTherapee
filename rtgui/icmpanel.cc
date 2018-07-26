@@ -34,18 +34,18 @@ extern Options options;
 ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunchanged(nullptr), icmplistener(nullptr), lastRefFilename(""), camName("")
 {
     auto m = ProcEventMapper::getInstance();
-    EvICMprimariMethod = m->newEvent(GAMMA, "HISTORY_MSG_ICMPRIMARI");
-    EvICMprofileMethod = m->newEvent(GAMMA, "HISTORY_MSG_ICMPROFILE");
-    EvICMtempMethod = m->newEvent(GAMMA, "HISTORY_MSG_ICMTEMP");
+    EvICMprimariMethod = m->newEvent(GAMMA, "HISTORY_MSG_ICM_OUTPUT_PRIMARIES");
+    EvICMprofileMethod = m->newEvent(GAMMA, "HISTORY_MSG_ICM_OUTPUT_TYPE");
+    EvICMtempMethod = m->newEvent(GAMMA, "HISTORY_MSG_ICM_OUTPUT_TEMP");
     EvICMpredx = m->newEvent(GAMMA, "HISTORY_MSG_ICMPREDX");
     EvICMpredy = m->newEvent(GAMMA, "HISTORY_MSG_ICMPREDY");
     EvICMpgrex = m->newEvent(GAMMA, "HISTORY_MSG_ICMPGREX");
     EvICMpgrey = m->newEvent(GAMMA, "HISTORY_MSG_ICMPGREY");
     EvICMpblux = m->newEvent(GAMMA, "HISTORY_MSG_ICMPBLUX");
     EvICMpbluy = m->newEvent(GAMMA, "HISTORY_MSG_ICMPBLUY");
-    EvICMgamm = m->newEvent(ALLNORAW, "HISTORY_MSG_ICMGAMM");
-    EvICMslop = m->newEvent(ALLNORAW, "HISTORY_MSG_ICMSLOP");
-    EvICMtrcinMethod = m->newEvent(ALLNORAW, "HISTORY_MSG_ICMTRCIN");
+    EvICMgamm = m->newEvent(ALLNORAW, "HISTORY_MSG_ICM_WORKING_GAMMA");
+    EvICMslop = m->newEvent(ALLNORAW, "HISTORY_MSG_ICM_WORKING_SLOPE");
+    EvICMtrcinMethod = m->newEvent(ALLNORAW, "HISTORY_MSG_ICM_WORKING_TRC_METHOD");
 
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = false;
 
@@ -187,21 +187,21 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
 
     wTRCHBox = Gtk::manage(new Gtk::HBox());
 
-    Gtk::Label* wtrclab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKTRC")));
+    Gtk::Label* wtrclab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_TRC")));
 
     wTRCHBox->pack_start(*wtrclab, Gtk::PACK_SHRINK);
     wTRC = Gtk::manage(new MyComboBoxText());
     wTRCHBox->pack_start(*wTRC, Gtk::PACK_EXPAND_WIDGET);
     wProfVBox->pack_start(*wTRCHBox, Gtk::PACK_EXPAND_WIDGET);
-    wTRC->append(M("TP_ICM_WORKTRC_NONE"));
-    wTRC->append(M("TP_ICM_WORKTRC_CUSTOM"));
+    wTRC->append(M("TP_ICM_WORKING_TRC_NONE"));
+    wTRC->append(M("TP_ICM_WORKING_TRC_CUSTOM"));
 
     wTRC->set_active(0);
-    wTRC->set_tooltip_text(M("TP_ICM_WORKTRC_TOOLTIP"));
+    wTRC->set_tooltip_text(M("TP_ICM_WORKING_TRC_TOOLTIP"));
 
 
-    wGamma = Gtk::manage(new Adjuster(M("TP_ICM_WORKTRC_GAMMA"), 0.40, 15.0, 0.001, 2.4));
-    wSlope = Gtk::manage(new Adjuster(M("TP_ICM_WORKTRC_SLOPE"), 0., 150., 0.01, 12.92310));
+    wGamma = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_GAMMA"), 0.40, 15.0, 0.001, 2.4));
+    wSlope = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_SLOPE"), 0., 150., 0.01, 12.92310));
     wProfVBox->pack_start(*wGamma, Gtk::PACK_SHRINK);
     wGamma->show();
 

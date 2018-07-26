@@ -1427,16 +1427,16 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !HISTORY_MSG_491;White Balance
 !HISTORY_MSG_492;RGB Curves
 !HISTORY_MSG_493;L*a*b* Adjustments
-!HISTORY_MSG_CLAMPOOG;Out-of-gamut color clipping
+!HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 !HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 !HISTORY_MSG_DUALDEMOSAIC_CONTRAST;AMaZE+VNG4 - Contrast threshold
-!HISTORY_MSG_HISTMATCHING;Auto-Matched Tone Curve
-!HISTORY_MSG_ICMGAMM;Working gamma
-!HISTORY_MSG_ICMPRIMARI;Output profile primaries
-!HISTORY_MSG_ICMPROFILE;Output profile type
-!HISTORY_MSG_ICMSLOP;Working slope
-!HISTORY_MSG_ICMTEMP;Output IccV4 D illuminant
-!HISTORY_MSG_ICMTRCIN;TRC working method
+!HISTORY_MSG_HISTMATCHING;Auto-matched tone curve
+!HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
+!HISTORY_MSG_ICM_OUTPUT_TEMP;Output - ICC-v4 illuminant D
+!HISTORY_MSG_ICM_OUTPUT_TYPE;Output - Type
+!HISTORY_MSG_ICM_WORKING_GAMMA;Working - Gamma
+!HISTORY_MSG_ICM_WORKING_SLOPE;Working - Slope
+!HISTORY_MSG_ICM_WORKING_TRC_METHOD;Working - TRC method
 !HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 !HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 !HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
@@ -1449,14 +1449,19 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
 !HISTORY_MSG_RAW_BORDER;Raw border
-!HISTORY_MSG_RESIZE_ALLOW_UPSCALING;Resize - Allow upscaling
+!HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
 !HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
 !HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
 !HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
+!ICCPROFCREATOR_COPYRIGHT;Copyright:
+!ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP;Reset to the default copyright, granted to "RawTherapee, CC0"
 !ICCPROFCREATOR_CUSTOM;Custom
+!ICCPROFCREATOR_DESCRIPTION;Description:
+!ICCPROFCREATOR_DESCRIPTION_ADDPARAM;Append gamma and slope values to the description
+!ICCPROFCREATOR_DESCRIPTION_TOOLTIP;Leave empty to set the default description.
 !ICCPROFCREATOR_GAMMA;Gamma
-!ICCPROFCREATOR_ICCVERSION;Generated profile's version:
+!ICCPROFCREATOR_ICCVERSION;ICC version:
 !ICCPROFCREATOR_ILL;Illuminant:
 !ICCPROFCREATOR_ILL_41;D41
 !ICCPROFCREATOR_ILL_50;D50
@@ -1466,7 +1471,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !ICCPROFCREATOR_ILL_80;D80
 !ICCPROFCREATOR_ILL_DEF;Default
 !ICCPROFCREATOR_ILL_INC;StdA 2856K
-!ICCPROFCREATOR_ILL_TOOLTIP;You can only set Illuminant with ICC v4 profiles
+!ICCPROFCREATOR_ILL_TOOLTIP;You can only set the illuminant for ICC v4 profiles.
 !ICCPROFCREATOR_PRIMARIES;Primaries:
 !ICCPROFCREATOR_PRIM_ACESP0;ACES AP0
 !ICCPROFCREATOR_PRIM_ACESP1;ACES AP1
@@ -1483,7 +1488,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !ICCPROFCREATOR_PRIM_REDX;Red X
 !ICCPROFCREATOR_PRIM_REDY;Red Y
 !ICCPROFCREATOR_PRIM_SRGB;sRGB
-!ICCPROFCREATOR_PRIM_TOOLTIP;You can only set Custom Primaries with ICC v4 profiles
+!ICCPROFCREATOR_PRIM_TOOLTIP;You can only set custom primaries for ICC v4 profiles.
 !ICCPROFCREATOR_PRIM_WIDEG;Widegamut
 !ICCPROFCREATOR_PROF_V2;ICC v2
 !ICCPROFCREATOR_PROF_V4;ICC v4
@@ -1550,7 +1555,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !PARTIALPASTE_RAW_BORDER;Raw border
 !PARTIALPASTE_SOFTLIGHT;Soft light
-!PARTIALPASTE_TM_FATTAL;Dynamic Range Compression
+!PARTIALPASTE_TM_FATTAL;Dynamic range compression
 !PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values.
 !PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed.
@@ -1847,12 +1852,12 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
 !TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
 !TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only available if the selected DCP has a tone curve.
-!TP_ICM_WORKTRC;Tone response curve:
-!TP_ICM_WORKTRC_CUSTOM;Custom
-!TP_ICM_WORKTRC_GAMMA;Gamma
-!TP_ICM_WORKTRC_NONE;None
-!TP_ICM_WORKTRC_SLOPE;Slope
-!TP_ICM_WORKTRC_TOOLTIP;Only for build in profiles
+!TP_ICM_WORKING_TRC;Tone response curve:
+!TP_ICM_WORKING_TRC_CUSTOM;Custom
+!TP_ICM_WORKING_TRC_GAMMA;Gamma
+!TP_ICM_WORKING_TRC_NONE;None
+!TP_ICM_WORKING_TRC_SLOPE;Slope
+!TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
 !TP_LABCURVE_CHROMA_TOOLTIP;To apply B&amp;W toning, set Chromaticity to -100.
 !TP_LABCURVE_CURVEEDITOR_A_RANGE1;Green Saturated
 !TP_LABCURVE_CURVEEDITOR_A_RANGE2;Green Pastel

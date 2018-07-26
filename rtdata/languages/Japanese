@@ -772,7 +772,7 @@ HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;ラインノイズフィルタの�
 HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAFラインフィルタ
 HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - コントラストのしきい値
 HISTORY_MSG_RAW_BORDER;Rawの境界
-HISTORY_MSG_RESIZE_ALLOW_UPSCALING;リサイズ - アップスケーリングを可能にする
+HISTORY_MSG_RESIZE_ALLOWUPSCALING;リサイズ - アップスケーリングを可能にする
 HISTORY_MSG_SHARPENING_CONTRAST;シャープ化 - コントラストのしきい値
 HISTORY_MSG_SOFTLIGHT_ENABLED;ソフトな明るさ
 HISTORY_MSG_SOFTLIGHT_STRENGTH;ソフトな明るさ - 強さ
@@ -2262,20 +2262,20 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !GENERAL_SAVE_AS;Save as...
-!HISTORY_MSG_ICMGAMM;Working gamma
-!HISTORY_MSG_ICMPRIMARI;Output profile primaries
-!HISTORY_MSG_ICMPROFILE;Output profile type
-!HISTORY_MSG_ICMSLOP;Working slope
-!HISTORY_MSG_ICMTEMP;Output IccV4 D illuminant
-!HISTORY_MSG_ICMTRCIN;TRC working method
-!ICCPROFCREATOR_ADD_PARAM_IN_DESC;Append Gamma and Slope values to the description
+!HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
+!HISTORY_MSG_ICM_OUTPUT_TEMP;Output - ICC-v4 illuminant D
+!HISTORY_MSG_ICM_OUTPUT_TYPE;Output - Type
+!HISTORY_MSG_ICM_WORKING_GAMMA;Working - Gamma
+!HISTORY_MSG_ICM_WORKING_SLOPE;Working - Slope
+!HISTORY_MSG_ICM_WORKING_TRC_METHOD;Working - TRC method
 !ICCPROFCREATOR_COPYRIGHT;Copyright:
 !ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP;Reset to the default copyright, granted to "RawTherapee, CC0"
 !ICCPROFCREATOR_CUSTOM;Custom
 !ICCPROFCREATOR_DESCRIPTION;Description:
-!ICCPROFCREATOR_DESCRIPTION_TOOLTIP;Leave empty to set the default description
+!ICCPROFCREATOR_DESCRIPTION_ADDPARAM;Append gamma and slope values to the description
+!ICCPROFCREATOR_DESCRIPTION_TOOLTIP;Leave empty to set the default description.
 !ICCPROFCREATOR_GAMMA;Gamma
-!ICCPROFCREATOR_ICCVERSION;Generated profile's version:
+!ICCPROFCREATOR_ICCVERSION;ICC version:
 !ICCPROFCREATOR_ILL;Illuminant:
 !ICCPROFCREATOR_ILL_41;D41
 !ICCPROFCREATOR_ILL_50;D50
@@ -2285,7 +2285,7 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !ICCPROFCREATOR_ILL_80;D80
 !ICCPROFCREATOR_ILL_DEF;Default
 !ICCPROFCREATOR_ILL_INC;StdA 2856K
-!ICCPROFCREATOR_ILL_TOOLTIP;You can only set Illuminant with ICC v4 profiles
+!ICCPROFCREATOR_ILL_TOOLTIP;You can only set the illuminant for ICC v4 profiles.
 !ICCPROFCREATOR_PRIMARIES;Primaries:
 !ICCPROFCREATOR_PRIM_ACESP0;ACES AP0
 !ICCPROFCREATOR_PRIM_ACESP1;ACES AP1
@@ -2302,7 +2302,7 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !ICCPROFCREATOR_PRIM_REDX;Red X
 !ICCPROFCREATOR_PRIM_REDY;Red Y
 !ICCPROFCREATOR_PRIM_SRGB;sRGB
-!ICCPROFCREATOR_PRIM_TOOLTIP;You can only set Custom Primaries with ICC v4 profiles
+!ICCPROFCREATOR_PRIM_TOOLTIP;You can only set custom primaries for ICC v4 profiles.
 !ICCPROFCREATOR_PRIM_WIDEG;Widegamut
 !ICCPROFCREATOR_PROF_V2;ICC v2
 !ICCPROFCREATOR_PROF_V4;ICC v4
@@ -2310,9 +2310,9 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !ICCPROFCREATOR_SLOPE;Slope
 !ICCPROFCREATOR_TRC_PRESET;Tone response curve:
 !MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
-!TP_ICM_WORKTRC;Tone response curve:
-!TP_ICM_WORKTRC_CUSTOM;Custom
-!TP_ICM_WORKTRC_GAMMA;Gamma
-!TP_ICM_WORKTRC_NONE;None
-!TP_ICM_WORKTRC_SLOPE;Slope
-!TP_ICM_WORKTRC_TOOLTIP;Only for build in profiles
+!TP_ICM_WORKING_TRC;Tone response curve:
+!TP_ICM_WORKING_TRC_CUSTOM;Custom
+!TP_ICM_WORKING_TRC_GAMMA;Gamma
+!TP_ICM_WORKING_TRC_NONE;None
+!TP_ICM_WORKING_TRC_SLOPE;Slope
+!TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.

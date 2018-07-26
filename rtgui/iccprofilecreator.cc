@@ -207,7 +207,7 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     setExpandAlignProperties(eDescription, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     eDescription->set_tooltip_text(M("ICCPROFCREATOR_DESCRIPTION_TOOLTIP"));
     mainGrid->attach(*eDescription, 1, 7, 1, 1);
-    cAppendParamsToDesc = Gtk::manage(new Gtk::CheckButton(M("ICCPROFCREATOR_ADD_PARAM_IN_DESC")));
+    cAppendParamsToDesc = Gtk::manage(new Gtk::CheckButton(M("ICCPROFCREATOR_DESCRIPTION_ADDPARAM")));
     setExpandAlignProperties(cAppendParamsToDesc, true, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     mainGrid->attach(*cAppendParamsToDesc, 1, 8, 1, 1);
 
