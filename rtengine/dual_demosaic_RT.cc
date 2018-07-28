@@ -40,11 +40,33 @@ void RawImageSource::dual_demosaic_RT(bool isBayer, const RAWParams &raw, int wi
 {
     BENCHFUN
 
+    //offset of R pixel within a Bayer quartet used for amaze
+    int ex, ey;
+
+    //determine GRBG coset; (ey,ex) is the offset of the R subarray
+    if (FC(0, 0) == 1) { //first pixel is G
+        if (FC(0, 1) == 0) {
+            ey = 0;
+            ex = 1;
+        } else {
+            ey = 1;
+            ex = 0;
+        }
+    } else {//first pixel is R or B
+        if (FC(0, 0) == 0) {
+            ey = 0;
+            ex = 0;
+        } else {
+            ey = 1;
+            ex = 1;
+        }
+    }
+
     if (contrast == 0.0 && !autoContrast) {
         // contrast == 0.0 means only first demosaicer will be used
         if(isBayer) {
             if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEVNG4) ) {
-                amaze_demosaic_RT(0, 0, winw, winh, rawData, red, green, blue);
+                amaze_demosaic_RT(0, 0, winw, winh, rawData, red, green, blue, ex, ey);
             } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCBVNG4) ) {
                 dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);
             } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCDVNG4) ) {
@@ -70,7 +92,7 @@ void RawImageSource::dual_demosaic_RT(bool isBayer, const RAWParams &raw, int wi
         vng4_demosaic(rawData, redTmp, greenTmp, blueTmp);
 
         if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEVNG4) || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)) {
-            amaze_demosaic_RT(0, 0, winw, winh, rawData, red, green, blue);
+            amaze_demosaic_RT(0, 0, winw, winh, rawData, red, green, blue, ex, ey);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCBVNG4) ) {
             dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCDVNG4) ) {

@@ -38,7 +38,7 @@
 namespace rtengine
 {
 
-void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
+void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, const int ex, const int ey)
 {
     BENCHFUN
 
@@ -63,6 +63,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh, c
     constexpr int ts = (AMAZETS & 992) < 96 ? 96 : (AMAZETS & 992);
     constexpr int tsh = ts / 2; // half of Tile size
 
+    /*
     //offset of R pixel within a Bayer quartet
     int ex, ey;
 
@@ -84,6 +85,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh, c
             ex = 1;
         }
     }
+    */
 
     //shifts of pointer value to access pixels in vertical and diagonal directions
     constexpr int v1 = ts, v2 = 2 * ts, v3 = 3 * ts, p1 = -ts + 1, p2 = -2 * ts + 2, p3 = -3 * ts + 3, m1 = ts + 1, m2 = 2 * ts + 2, m3 = 3 * ts + 3;
