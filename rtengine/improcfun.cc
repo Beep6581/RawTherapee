@@ -4082,7 +4082,7 @@ void ImProcFunctions::labtoning (float r, float g, float b, float &ro, float &go
     float opacity2 = (1.f - min<float> (s / satLimit, 1.f) * (1.f - satLimitOpacity));
 
     //float ro, go, bo;
-    float lm = l;
+    float lm = std::max(l, 0.000001f); // avoid division by zero
     float chromat, luma;
 
     if (clToningcurve[lm * 65535.f] / (lm * 65535.f) < 1.f) {
