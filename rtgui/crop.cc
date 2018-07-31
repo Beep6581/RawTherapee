@@ -630,7 +630,7 @@ void Crop::ratioFixedChanged ()
 void Crop::ratioChanged ()
 {
     if (!fixr->get_active ()) {
-        fixr->set_active(true);    // will ajust ratio anyway
+        fixr->set_active(true);    // will adjust ratio anyway
     } else {
         adjustCropToRatio();
     }

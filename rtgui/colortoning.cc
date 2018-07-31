@@ -377,7 +377,7 @@ void ColorToning::neutralCurves_pressed () {
 }
 */
 
-// Will only reset the chanel mixer
+// Will only reset the channel mixer
 void ColorToning::neutral_pressed ()
 {
     disableListener();
