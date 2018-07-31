@@ -4077,24 +4077,22 @@ void ImProcFunctions::labtoning (float r, float g, float b, float &ro, float &go
 
     // get the opacity and tweak it to preserve saturated colors
     //float l_ = Color::gamma_srgb(l*65535.f)/65535.f;
-    float opacity;
-    opacity = (1.f - min<float> (s / satLimit, 1.f) * (1.f - satLimitOpacity)) * ctOpacityCurve.lutOpacityCurve[l * 500.f];
+    float opacity = (1.f - min<float> (s / satLimit, 1.f) * (1.f - satLimitOpacity)) * ctOpacityCurve.lutOpacityCurve[l * 500.f];
     float opacity2 = (1.f - min<float> (s / satLimit, 1.f) * (1.f - satLimitOpacity));
 
-    //float ro, go, bo;
-    float lm = std::max(l, 0.000001f); // avoid division by zero
-    float chromat, luma;
+    l *= 65535.f;
+    float chromat = 0.f, luma = 0.f;
 
-    if (clToningcurve[lm * 65535.f] / (lm * 65535.f) < 1.f) {
-        chromat = (clToningcurve[ (lm) * 65535.f] / (lm * 65535.f)) - 1.f;  //special effect
-    } else {
-        chromat = 1.f - SQR (SQR ((lm * 65535.f) / clToningcurve[ (lm) * 65535.f])); //apply C=f(L) acts  on 'a' and 'b'
+    if (clToningcurve[l] < l) {
+        chromat = clToningcurve[l] / l - 1.f;  //special effect
+    } else if (clToningcurve[l] > l) {
+        chromat = 1.f - SQR(SQR(l / clToningcurve[l])); //apply C=f(L) acts  on 'a' and 'b'
     }
 
-    if (cl2Toningcurve[lm * 65535.f] / (lm * 65535.f) < 1.f) {
-        luma = (cl2Toningcurve[ (lm) * 65535.f] / (lm * 65535.f)) - 1.f;  //special effect
-    } else {
-        luma = 1.f - SQR (SQR ((lm * 65535.f) / (cl2Toningcurve[ (lm) * 65535.f]))); //apply C2=f(L) acts only on 'b'
+    if (cl2Toningcurve[l] < l) {
+        luma = cl2Toningcurve[l] / l - 1.f;  //special effect
+    } else if (cl2Toningcurve[l] > l) {
+        luma = 1.f - SQR(SQR(l / cl2Toningcurve[l])); //apply C2=f(L) acts only on 'b'
     }
 
     if (algm == 1) {
