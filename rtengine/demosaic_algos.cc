@@ -2332,209 +2332,201 @@ void RawImageSource::igv_interpolate(int winw, int winh)
 /*
    Adaptive Homogeneity-Directed interpolation is based on
    the work of Keigo Hirakawa, Thomas Parks, and Paul Lee.
+   Optimized for speed and reduced memory usage 2018 Ingo Weyrich
  */
-#define TS 256      /* Tile Size */
-#define FORC(cnt) for (c=0; c < cnt; c++)
-#define FORC3 FORC(3)
 
+#define TS 144
 void RawImageSource::ahd_demosaic()
 {
     BENCHFUN
-    int i, j, k, tr, tc, c, d, hm[2];
-    float val;
-    float (*pix)[3], (*rix)[3];
-    static const int dir[4] = { -1, 1, -TS, TS };
-    float ldiff[2][4], abdiff[2][4], leps, abeps;
-    float xyz[3], xyz_cam[3][3];
+
+    constexpr int dir[4] = { -1, 1, -TS, TS };
+    float xyz_cam[3][3];
     LUTf cbrt(65536);
 
-    float (*rgb)[TS][TS][3];
-    float (*lab)[TS][TS][3];
-    float (*lix)[3];
-    char (*homo)[TS][TS], *buffer;
-    double r;
-
     int width = W, height = H;
-    unsigned int colors = 3;
 
-    const double xyz_rgb[3][3] = {        /* XYZ from RGB */
+    constexpr double xyz_rgb[3][3] = {        /* XYZ from RGB */
         { 0.412453, 0.357580, 0.180423 },
         { 0.212671, 0.715160, 0.072169 },
         { 0.019334, 0.119193, 0.950227 }
     };
 
-    const float d65_white[3] = { 0.950456, 1, 1.088754 };
+    constexpr float d65_white[3] = { 0.950456, 1, 1.088754 };
 
+    volatile double progress = 0.0;
     if (plistener) {
         plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AHD)));
         plistener->setProgress (0.0);
     }
 
-    float (*image)[3] = (float (*)[3]) calloc (H * W, sizeof * image);
-
-    for (int ii = 0; ii < H; ii++)
-        for (int jj = 0; jj < W; jj++) {
-            image[ii * W + jj][fc(ii, jj)] = rawData[ii][jj];
-        }
-
-    for (i = 0; i < 0x10000; i++) {
-        r = (double)i / 65535.0;
+    for (int i = 0; i < 0x10000; i++) {
+        double r = (double)i / 65535.0;
         cbrt[i] = r > 0.008856 ? std::cbrt(r) : 7.787 * r + 16 / 116.0;
     }
 
-    for (i = 0; i < 3; i++)
-        for (unsigned int j = 0; j < colors; j++)
-            for (xyz_cam[i][j] = k = 0; k < 3; k++) {
+    for (int i = 0; i < 3; i++)
+        for (unsigned int j = 0; j < 3; j++) {
+            xyz_cam[i][j] = 0;
+            for (int k = 0; k < 3; k++) {
                 xyz_cam[i][j] += xyz_rgb[i][k] * imatrices.rgb_cam[k][j] / d65_white[i];
             }
+        }
 
-    border_interpolate(5, image);
-    buffer = (char *) malloc (13 * TS * TS * sizeof(float)); /* 1664 kB */
-    //merror (buffer, "ahd_interpolate()");
-    rgb  = (float(*)[TS][TS][3]) buffer;
-    lab  = (float(*)[TS][TS][3])(buffer + 6 * TS * TS * sizeof(float));
-    homo = (char (*)[TS][TS])   (buffer + 12 * TS * TS * sizeof(float));
+    border_interpolate2(W, H, 5, rawData, red, green, blue);
 
-    // helper variables for progress indication
-    int n_tiles = ((height - 7 + (TS - 7)) / (TS - 6)) * ((width - 7 + (TS - 7)) / (TS - 6));
-    int tile = 0;
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+{
+    int progresscounter = 0;
+    float (*pix), (*rix)[3];
+    float ldiff[2][4], abdiff[2][4];
+    float (*lix)[3];
+    char *buffer = (char *) malloc (12 * TS * TS * sizeof(float) + 2 * TS * TS * sizeof(uint16_t)); /* 1053 kB per core */
+    float (*rgb)[TS][TS][3]  = (float(*)[TS][TS][3]) buffer;
+    float (*lab)[TS][TS][3]  = (float(*)[TS][TS][3])(buffer + 6 * TS * TS * sizeof(float));
+    uint16_t (*homo)[TS][TS] = (uint16_t(*)[TS][TS])(buffer + 12 * TS * TS * sizeof(float));
 
-    for (int top = 2; top < height - 5; top += TS - 6)
+#ifdef _OPENMP
+    #pragma omp for collapse(2) schedule(dynamic) nowait
+#endif
+    for (int top = 2; top < height - 5; top += TS - 6) {
         for (int left = 2; left < width - 5; left += TS - 6) {
-            /*  Interpolate green horizontally and vertically:      */
+            //  Interpolate green horizontally and vertically:
             for (int row = top; row < top + TS && row < height - 2; row++) {
-                int col = left + (FC(row, left) & 1);
-
-                for (c = FC(row, col); col < left + TS && col < width - 2; col += 2) {
-                    pix = image + (row * width + col);
-                    val = 0.25f * ((pix[-1][1] + pix[0][c] + pix[1][1]) * 2
-                                  - pix[-2][c] - pix[2][c]) ;
-                    rgb[0][row - top][col - left][1] = median(val, pix[-1][1], pix[1][1]);
-                    val = 0.25f * ((pix[-width][1] + pix[0][c] + pix[width][1]) * 2
-                                  - pix[-2 * width][c] - pix[2 * width][c]) ;
-                    rgb[1][row - top][col - left][1] = median(val, pix[-width][1], pix[width][1]);
+                for (int col = left + (FC(row, left) & 1); col < std::min(left + TS, width - 2); col += 2) {
+                    pix = &(rawData[row][col]);
+                    float val0 = 0.25f * ((pix[-1] + pix[0] + pix[1]) * 2
+                                  - pix[-2] - pix[2]) ;
+                    rgb[0][row - top][col - left][1] = median(val0, pix[-1], pix[1]);
+                    float val1 = 0.25f * ((pix[-width] + pix[0] + pix[width]) * 2
+                                  - pix[-2 * width] - pix[2 * width]) ;
+                    rgb[1][row - top][col - left][1] = median(val1, pix[-width], pix[width]);
                 }
             }
 
-            /*  Interpolate red and blue, and convert to CIELab:        */
-            for (d = 0; d < 2; d++)
-                for (int row = top + 1; row < top + TS - 1 && row < height - 3; row++)
-                    for (int col = left + 1; col < left + TS - 1 && col < width - 3; col++) {
-                        pix = image + (row * width + col);
+            //  Interpolate red and blue, and convert to CIELab:
+            for (int d = 0; d < 2; d++)
+                for (int row = top + 1; row < top + TS - 1 && row < height - 3; row++) {
+                    int cng = FC(row + 1, FC(row + 1, 0) & 1);
+                    for (int col = left + 1; col < std::min(left + TS - 1, width - 3); col++) {
+                        pix = &(rawData[row][col]);
                         rix = &rgb[d][row - top][col - left];
                         lix = &lab[d][row - top][col - left];
-
-                        if ((c = 2 - FC(row, col)) == 1) {
-                            c = FC(row + 1, col);
-                            val = pix[0][1] + (0.5f * ( pix[-1][2 - c] + pix[1][2 - c]
-                                                       - rix[-1][1] - rix[1][1] ) );
-                            rix[0][2 - c] = CLIP(val);
-                            val = pix[0][1] + (0.5f * ( pix[-width][c] + pix[width][c]
-                                                       - rix[-TS][1] - rix[TS][1] ) );
-                        } else
-                            val = rix[0][1] + (0.25f * ( pix[-width - 1][c] + pix[-width + 1][c]
-                                                        + pix[+width - 1][c] + pix[+width + 1][c]
+                        if (FC(row, col) == 1) {
+                            rix[0][2 - cng] = CLIP(pix[0] + (0.5f * (pix[-1] + pix[1]
+                                                       - rix[-1][1] - rix[1][1] ) ));
+                            rix[0][cng] = CLIP(pix[0] + (0.5f * (pix[-width] + pix[width]
+                                                       - rix[-TS][1] - rix[TS][1])));
+                            rix[0][1] = pix[0];
+                        } else {
+                            rix[0][cng] = CLIP(rix[0][1] + (0.25f * (pix[-width - 1] + pix[-width + 1]
+                                                        + pix[+width - 1] + pix[+width + 1]
                                                         - rix[-TS - 1][1] - rix[-TS + 1][1]
-                                                        - rix[+TS - 1][1] - rix[+TS + 1][1]) );
-
-                        rix[0][c] = CLIP(val);
-                        c = FC(row, col);
-                        rix[0][c] = pix[0][c];
-                        xyz[0] = xyz[1] = xyz[2] = 0.f;
-                        FORCC {
-                            xyz[0] += xyz_cam[0][c] * rix[0][c];
-                            xyz[1] += xyz_cam[1][c] * rix[0][c];
-                            xyz[2] += xyz_cam[2][c] * rix[0][c];
+                                                        - rix[+TS - 1][1] - rix[+TS + 1][1])));
+                            rix[0][2 - cng] = pix[0];
+                        }
+                        float xyz0 = 0.f;
+                        float xyz1 = 0.f;
+                        float xyz2 = 0.f;
+                        
+                        for(unsigned int c = 0; c < 3; ++c) {
+                            xyz0 += xyz_cam[0][c] * rix[0][c];
+                            xyz1 += xyz_cam[1][c] * rix[0][c];
+                            xyz2 += xyz_cam[2][c] * rix[0][c];
                         }
 
-                        xyz[0] = cbrt[xyz[0]];
-                        xyz[1] = cbrt[xyz[1]];
-                        xyz[2] = cbrt[xyz[2]];
+                        xyz0 = cbrt[xyz0];
+                        xyz1 = cbrt[xyz1];
+                        xyz2 = cbrt[xyz2];
 
-                        //xyz[0] = xyz[0] > 0.008856 ? pow(xyz[0]/65535,1/3.0) : 7.787*xyz[0] + 16/116.0;
-                        //xyz[1] = xyz[1] > 0.008856 ? pow(xyz[1]/65535,1/3.0) : 7.787*xyz[1] + 16/116.0;
-                        //xyz[2] = xyz[2] > 0.008856 ? pow(xyz[2]/65535,1/3.0) : 7.787*xyz[2] + 16/116.0;
-
-                        lix[0][0] = (116 * xyz[1] - 16);
-                        lix[0][1] = 500 * (xyz[0] - xyz[1]);
-                        lix[0][2] = 200 * (xyz[1] - xyz[2]);
+                        lix[0][0] = 116.f * xyz1 - 16.f;
+                        lix[0][1] = 500.f * (xyz0 - xyz1);
+                        lix[0][2] = 200.f * (xyz1 - xyz2);
                     }
+                }
 
-            /*  Build homogeneity maps from the CIELab images: */
-            memset (homo, 0, 2 * TS * TS);
+            //  Build homogeneity maps from the CIELab images:
 
             for (int row = top + 2; row < top + TS - 2 && row < height - 4; row++) {
-                tr = row - top;
+                int tr = row - top;
 
-                for (int col = left + 2; col < left + TS - 2 && col < width - 4; col++) {
-                    tc = col - left;
-
-                    for (d = 0; d < 2; d++) {
+                for (int col = left + 2, tc = 2; col < left + TS - 2 && col < width - 4; col++, tc++) {
+                    for (int d = 0; d < 2; d++) {
                         lix = &lab[d][tr][tc];
 
-                        for (i = 0; i < 4; i++) {
+                        for (int i = 0; i < 4; i++) {
                             ldiff[d][i] = std::fabs(lix[0][0] - lix[dir[i]][0]);
                             abdiff[d][i] = SQR(lix[0][1] - lix[dir[i]][1])
                                            + SQR(lix[0][2] - lix[dir[i]][2]);
                         }
                     }
 
-                    leps = min(max(ldiff[0][0], ldiff[0][1]),
-                               max(ldiff[1][2], ldiff[1][3]));
-                    abeps = min(max(abdiff[0][0], abdiff[0][1]),
-                                max(abdiff[1][2], abdiff[1][3]));
+                    float leps = min(max(ldiff[0][0], ldiff[0][1]),
+                                     max(ldiff[1][2], ldiff[1][3]));
+                    float abeps = min(max(abdiff[0][0], abdiff[0][1]),
+                                      max(abdiff[1][2], abdiff[1][3]));
 
-                    for (d = 0; d < 2; d++)
-                        for (i = 0; i < 4; i++)
+                    for (int d = 0; d < 2; d++) {
+                        homo[d][tr][tc] = 0;
+                        for (int i = 0; i < 4; i++) {
                             if (ldiff[d][i] <= leps && abdiff[d][i] <= abeps) {
                                 homo[d][tr][tc]++;
                             }
+                        }
+                    }
                 }
             }
 
-            /*  Combine the most homogenous pixels for the final result:    */
+            //  Combine the most homogenous pixels for the final result:
             for (int row = top + 3; row < top + TS - 3 && row < height - 5; row++) {
-                tr = row - top;
+                int tr = row - top;
 
-                for (int col = left + 3; col < left + TS - 3 && col < width - 5; col++) {
-                    tc = col - left;
+                for (int col = left + 3, tc = 3; col < std::min(left + TS - 3, width - 5); col++, tc++) {
+                    uint16_t hm0 = 0, hm1 = 0;
+                    for (int i = tr - 1; i <= tr + 1; i++)
+                        for (int j = tc - 1; j <= tc + 1; j++) {
+                            hm0 += homo[0][i][j];
+                            hm1 += homo[1][i][j];
+                        }
 
-                    for (d = 0; d < 2; d++)
-                        for (hm[d] = 0, i = tr - 1; i <= tr + 1; i++)
-                            for (j = tc - 1; j <= tc + 1; j++) {
-                                hm[d] += homo[d][i][j];
-                            }
-
-                    if (hm[0] != hm[1]) {
-                        FORC3 image[row * width + col][c] = rgb[hm[1] > hm[0]][tr][tc][c];
-                    } else
-                        FORC3 image[row * width + col][c] =
-                            0.5f * (rgb[0][tr][tc][c] + rgb[1][tr][tc][c]) ;
+                    if (hm0 != hm1) {
+                        int dir = hm1 > hm0;
+                        red[row][col] = rgb[dir][tr][tc][0];
+                        green[row][col] = rgb[dir][tr][tc][1];
+                        blue[row][col] = rgb[dir][tr][tc][2];
+                    } else {
+                        red[row][col] = 0.5f * (rgb[0][tr][tc][0] + rgb[1][tr][tc][0]);
+                        green[row][col] = 0.5f * (rgb[0][tr][tc][1] + rgb[1][tr][tc][1]);
+                        blue[row][col] = 0.5f * (rgb[0][tr][tc][2] + rgb[1][tr][tc][2]);
+                    }
                 }
             }
-
-            tile++;
 
             if(plistener) {
-                plistener->setProgress((double)tile / n_tiles);
-            }
-        }
+                progresscounter++;
 
+                if(progresscounter % 32 == 0) {
+#ifdef _OPENMP
+                    #pragma omp critical (ahdprogress)
+#endif
+                    {
+                        progress += (double)32 * ((TS - 32) * (TS - 32)) / (height * width);
+                        progress = progress > 1.0 ? 1.0 : progress;
+                        plistener->setProgress(progress);
+                    }
+                }
+            }
+ 
+        }
+    }
+    free (buffer);
+}
     if(plistener) {
         plistener->setProgress (1.0);
     }
 
-    free (buffer);
-
-    for (int i = 0; i < H; i++) {
-        for (int j = 0; j < W; j++) {
-            red[i][j] = image[i * W + j][0];
-            green[i][j] = image[i * W + j][1];
-            blue[i][j] = image[i * W + j][2];
-        }
-    }
-
-    free (image);
 }
 #undef TS
 
