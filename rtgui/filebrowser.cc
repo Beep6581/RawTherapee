@@ -202,7 +202,8 @@ FileBrowser::FileBrowser () :
      * color labels
      ***********************/
 
-    // Same image arrays in filecatalog.cc
+    // Thumbnail context menu
+    // Similar image arrays in filecatalog.cc
     std::array<std::string, 6> clabelActiveIcons = {"circle-empty-gray-small.png", "circle-red-small.png", "circle-yellow-small.png", "circle-green-small.png", "circle-blue-small.png", "circle-purple-small.png"};
     std::array<std::string, 6> clabelInactiveIcons = {"circle-empty-darkgray-small.png", "circle-empty-red-small.png", "circle-empty-yellow-small.png", "circle-empty-green-small.png", "circle-empty-blue-small.png", "circle-empty-purple-small.png"};
 

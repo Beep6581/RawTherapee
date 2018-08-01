@@ -26,7 +26,7 @@ using namespace rtengine::procparams;
 Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), false, true), maxw(100000), maxh(100000)
 {
     auto m = ProcEventMapper::getInstance();
-    EvResizeAllowUpscaling = m->newEvent(RESIZE, "HISTORY_MSG_RESIZE_ALLOW_UPSCALING");
+    EvResizeAllowUpscaling = m->newEvent(RESIZE, "HISTORY_MSG_RESIZE_ALLOWUPSCALING");
 
     cropw = 0;
     croph = 0;
