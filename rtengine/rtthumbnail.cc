@@ -1119,7 +1119,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     gmi = gm * defGain / mul_lum;
     bmi = bm * defGain / mul_lum;
 
-    // The RAW exposure is not reflected since it's done in preprocessing. If we only have e.g. the chached thumb,
+    // The RAW exposure is not reflected since it's done in preprocessing. If we only have e.g. the cached thumb,
     // that is already preprocessed. So we simulate the effect here roughly my modifying the exposure accordingly
     if (isRaw) {
         rmi *= params.raw.expos;

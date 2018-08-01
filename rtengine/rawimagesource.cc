@@ -4603,7 +4603,7 @@ void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, floa
             float bo = min(b, maxval);
             float yy = xyz_cam[1][0] * r + xyz_cam[1][1] * g + xyz_cam[1][2] * b;
             float fy = (yy < 65535.0 ? Color::cachef[yy] / 327.68 : std::cbrt(yy / MAXVALD));
-            // compute LCH decompostion of the clipped pixel (only color information, thus C and H will be used)
+            // compute LCH decomposition of the clipped pixel (only color information, thus C and H will be used)
             float x = xyz_cam[0][0] * ro + xyz_cam[0][1] * go + xyz_cam[0][2] * bo;
             float y = xyz_cam[1][0] * ro + xyz_cam[1][1] * go + xyz_cam[1][2] * bo;
             float z = xyz_cam[2][0] * ro + xyz_cam[2][1] * go + xyz_cam[2][2] * bo;
