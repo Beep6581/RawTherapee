@@ -2282,22 +2282,38 @@ LocallabParams::LocallabParams() :
     transit(),
     thresh(),
     iter(),
+    // Color & Light
+    expcolor(),
+    curvactiv(),
+    lightness(),
+    contrast(),
+    chroma(),
+    sensi(),
+    qualitycurveMethod(),
+    llcurve(),
+    cccurve(),
+    LHcurve(),
+    HHcurve(),
+    invers(),
+    // Exposure
 
+    /*
     llcurve{
     DCT_NURBS,
     0.0,
     0.0,
     1.0,
     1.0,
-},
-cccurve{
+    },
+    cccurve{
     DCT_NURBS,
     0.0,
     0.0,
     1.0,
     1.0,
-},
-excurve{
+    },
+    */
+    excurve{
     DCT_NURBS,
     0.0,
     0.0,
@@ -2334,6 +2350,7 @@ localTgaincurverab{
     0.35,
     0.35
 },
+/*
 LHcurve{
     static_cast<double>(FCT_MinMaxCPoints),
     0.0,
@@ -2388,29 +2405,12 @@ HHcurve{
     0.35,
     0.35
 },
+*/
 skintonescurve {
     DCT_Linear
 }
 /*
-enabled(false),
-degree(0),
-locY(250),
-locX(250),
-locYT(250),
-locXL(250),
-centerX(0),
-centerY(0),
-circrad(18),
-centerXbuf(0),
-centerYbuf(0),
 adjblur(0),
-qualityMethod("enh"),
-qualitycurveMethod("none"),
-proxi(0),
-thres(18),
-lightness(0),
-contrast(0),
-chroma(0),
 warm(0),
 expcomp(0),
 black(0),
@@ -2437,7 +2437,6 @@ sharradius(40),
 sharamount(75),
 shardamping(75),
 shariter(30),
-sensi(19),
 sensiex(19),
 sensih(19),
 retrab(500),
@@ -2456,16 +2455,9 @@ scaltm(10),
 rewei(0),
 transit(60),
 avoid(false),
-Smethod("IND"),
-Exclumethod("norm"),
-shapemethod("ELI"),
 retinexMethod("high"),
-blurMethod("norm"),
-dustMethod("mov"),
-invers(false),
 cutpast(false),
 lastdust(false),
-curvactiv(false),
 activlum(false),
 inversrad(false),
 inversret(false),
@@ -2488,7 +2480,6 @@ mult{
     1.0,
     1.0,
 },
-expcolor(false),
 expexpose(false),
 expvibrance(false),
 expblur(false),
@@ -2498,8 +2489,7 @@ expsharp(false),
 expcbdl(false),
 expdenoi(false),
 threshold(20),
-chromacbdl(0),
-spotduplicated(false)
+chromacbdl(0)
 */
 {
 }
@@ -2528,25 +2518,24 @@ bool LocallabParams::operator ==(const LocallabParams& other) const
         && qualityMethod == other.qualityMethod
         && transit == other.transit
         && thresh == other.thresh
-        && iter == other.iter;
+        && iter == other.iter
+        // Color & Light
+        && expcolor == other.expcolor
+        && curvactiv == other.curvactiv
+        && lightness == other.lightness
+        && contrast == other.contrast
+        && chroma == other.chroma
+        && sensi == other.sensi
+        && qualitycurveMethod == other.qualitycurveMethod
+        && llcurve == other.llcurve
+        && cccurve == other.cccurve
+        && LHcurve == other.LHcurve
+        && HHcurve == other.HHcurve
+        && invers == other.invers
+        // Exposure
+        ;
     /*
-    && qualityMethod == other.qualityMethod
-    && qualitycurveMethod == other.qualitycurveMethod
-    && locY == other.locY
-    && locX == other.locX
-    && locYT == other.locYT
-    && locXL == other.locXL
-    && centerX == other.centerX
-    && centerY == other.centerY
-    && circrad == other.circrad
-    && centerXbuf == other.centerXbuf
-    && centerYbuf == other.centerYbuf
     && adjblur == other.adjblur
-    && thres == other.thres
-    && proxi == other.proxi
-    && lightness == other.lightness
-    && contrast == other.contrast
-    && chroma == other.chroma
     && warm == other.warm
     && expcomp == other.expcomp
     && hlcompr == other.hlcompr
@@ -2602,12 +2591,9 @@ bool LocallabParams::operator ==(const LocallabParams& other) const
     && estop == other.estop
     && scaltm == other.scaltm
     && rewei == other.rewei
-    && transit == other.transit
     && chrrt == other.chrrt
     && str == other.str
     && neigh == other.neigh
-    && nbspot == other.nbspot
-    && anbspot == other.anbspot
     && hueref == other.hueref
     && huerefblur == other.huerefblur
     && chromaref == other.chromaref
@@ -2616,7 +2602,6 @@ bool LocallabParams::operator ==(const LocallabParams& other) const
     && vart == other.vart
     && threshold == other.threshold
     && chromacbdl == other.chromacbdl
-    && expcolor == other.expcolor
     && expexpose == other.expexpose
     && expvibrance == other.expvibrance
     && expblur == other.expblur
@@ -2627,13 +2612,6 @@ bool LocallabParams::operator ==(const LocallabParams& other) const
     && expdenoi == other.expdenoi
     && localTgaincurve == other.localTgaincurve
     && localTgaincurverab == other.localTgaincurverab
-    && llcurve == other.llcurve
-    && cccurve == other.cccurve
-    && LHcurve == other.LHcurve
-    && HHcurve == other.HHcurve
-    && id == other.id
-    && name == other.name
-    && isvisible == other.isvisible;
     */
 
 }
@@ -2643,7 +2621,7 @@ bool LocallabParams::operator !=(const LocallabParams& other) const
     return !(*this == other);
 }
 
-
+/*
 void LocallabParams::getCurves(
     LocretigainCurve &cTgainCurve,
     LocretigainCurverab &cTgainCurverab,
@@ -2658,6 +2636,7 @@ void LocallabParams::getCurves(
     hhCurve.Set(this->HHcurve, HHutili);
 
 }
+*/
 
 
 DirPyrEqualizerParams::DirPyrEqualizerParams() :
@@ -3530,10 +3509,23 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
             saveToKeyfile(!pedited || pedited->locallab.transit, "Locallab", "Transit_" + std::to_string(i), locallab.transit.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.thresh, "Locallab", "Thresh_" + std::to_string(i), locallab.thresh.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.iter, "Locallab", "Iter_" + std::to_string(i), locallab.iter.at(i), keyFile);
+            // Color & Light
+            saveToKeyfile(!pedited || pedited->locallab.expcolor, "Locallab", "Expcolor_" + std::to_string(i), locallab.expcolor.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.curvactiv, "Locallab", "Curvactiv_" + std::to_string(i), locallab.curvactiv.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.lightness, "Locallab", "Lightness_" + std::to_string(i), locallab.lightness.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.contrast, "Locallab", "Contrast_" + std::to_string(i), locallab.contrast.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.chroma, "Locallab", "Chroma_" + std::to_string(i), locallab.chroma.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.sensi, "Locallab", "Sensi_" + std::to_string(i), locallab.sensi.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.qualitycurveMethod, "Locallab", "QualityCurveMethod_" + std::to_string(i), locallab.qualitycurveMethod.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.llcurve, "Locallab", "LLCurve_" + std::to_string(i), locallab.llcurve.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.cccurve, "Locallab", "CCCurve_" + std::to_string(i), locallab.cccurve.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.LHcurve, "Locallab", "LHCurve_" + std::to_string(i), locallab.LHcurve.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.HHcurve, "Locallab", "HHCurve_" + std::to_string(i), locallab.HHcurve.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.invers, "Locallab", "Invers_" + std::to_string(i), locallab.invers.at(i), keyFile);
+            // Exposure
         }
 
         /*
-        saveToKeyfile(!pedited || pedited->locallab.expcolor, "Locallab", "Expcolor", locallab.expcolor, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.expexpose, "Locallab", "Expexpose", locallab.expexpose, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.expvibrance, "Locallab", "Expvibrance", locallab.expvibrance, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.expblur, "Locallab", "Expblur", locallab.expblur, keyFile);
@@ -3543,44 +3535,20 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->locallab.expcbdl, "Locallab", "Expcbdl", locallab.expcbdl, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.expdenoi, "Locallab", "Expdenoi", locallab.expdenoi, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.localTgaincurve, "Locallab", "TgainCurve", locallab.localTgaincurve, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.llcurve, "Locallab", "LLCurve", locallab.llcurve, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.cccurve, "Locallab", "CCCurve", locallab.cccurve, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.LHcurve, "Locallab", "LHCurve", locallab.LHcurve, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.HHcurve, "Locallab", "HHCurve", locallab.HHcurve, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.localTgaincurverab, "Locallab", "TgainCurverab", locallab.localTgaincurverab, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.avoid, "Locallab", "Avoid", locallab.avoid, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.invers, "Locallab", "Invers", locallab.invers, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.cutpast, "Locallab", "Cutpast", locallab.cutpast, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.lastdust, "Locallab", "Lastdust", locallab.lastdust, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.curvactiv, "Locallab", "Curvactiv", locallab.curvactiv, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.activlum, "Locallab", "activlum", locallab.activlum, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.inversrad, "Locallab", "Inversrad", locallab.inversrad, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.inverssha, "Locallab", "Inverssha", locallab.inverssha, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.inversret, "Locallab", "Inversret", locallab.inversret, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.degree, "Locallab", "Degree", locallab.degree, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.Smethod, "Locallab", "Smethod", locallab.Smethod, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.Exclumethod, "Locallab", "Exclumethod", locallab.Exclumethod, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.shapemethod, "Locallab", "Shapemethod", locallab.shapemethod, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.retinexMethod, "Locallab", "retinexMethod", locallab.retinexMethod, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.blurMethod, "Locallab", "BlurMethod", locallab.blurMethod, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.dustMethod, "Locallab", "DustMethod", locallab.dustMethod, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.qualityMethod, "Locallab", "qualityMethod", locallab.qualityMethod, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.qualitycurveMethod, "Locallab", "qualitycurveMethod", locallab.qualitycurveMethod, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.locY, "Locallab", "LocY", locallab.locY, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.locX, "Locallab", "LocX", locallab.locX, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.locYT, "Locallab", "LocYT", locallab.locYT, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.locXL, "Locallab", "LocXL", locallab.locXL, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.centerX, "Locallab", "CenterX", locallab.centerX, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.centerY, "Locallab", "CenterY", locallab.centerY, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.circrad, "Locallab", "Circrad", locallab.circrad, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.centerXbuf, "Locallab", "CenterXbuf", locallab.centerXbuf, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.centerYbuf, "Locallab", "CenterYbuf", locallab.centerYbuf, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.adjblur, "Locallab", "Adjblur", locallab.adjblur, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.thres, "Locallab", "Thres", locallab.thres, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.proxi, "Locallab", "Proxi", locallab.proxi, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.lightness, "Locallab", "Lightness", locallab.lightness, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.contrast, "Locallab", "Contrast", locallab.contrast, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.chroma, "Locallab", "Chroma", locallab.chroma, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.warm, "Locallab", "Warm", locallab.warm, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.expcomp, "Locallab", "Expcomp", locallab.expcomp, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.hlcompr, "Locallab", "Hlcompr", locallab.hlcompr, keyFile);
@@ -3610,7 +3578,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->locallab.sharamount, "Locallab", "Sharamount", locallab.sharamount, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.shardamping, "Locallab", "Shardamping", locallab.shardamping, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.shariter, "Locallab", "Shariter", locallab.shariter, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.sensi, "Locallab", "Sensi", locallab.sensi, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.sensiex, "Locallab", "Sensiex", locallab.sensiex, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.sensitm, "Locallab", "Sensitm", locallab.sensitm, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.sensisha, "Locallab", "Sensisha", locallab.sensisha, keyFile);
@@ -3624,8 +3591,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->locallab.chrrt, "Locallab", "Chrrt", locallab.chrrt, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.str, "Locallab", "Str", locallab.str, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.neigh, "Locallab", "Neigh", locallab.neigh, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.nbspot, "Locallab", "Nbspot", locallab.nbspot, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.anbspot, "Locallab", "ANbspot", locallab.anbspot, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.hueref, "Locallab", "Hueref", locallab.hueref, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.huerefblur, "Locallab", "Huerefblur", locallab.huerefblur, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.chromaref, "Locallab", "Chromaref", locallab.chromaref, keyFile);
@@ -3649,10 +3614,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->locallab.estop, "Locallab", "Estop", locallab.estop, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.scaltm, "Locallab", "Scaltm", locallab.scaltm, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.rewei, "Locallab", "Rewei", locallab.rewei, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.spotduplicated, "Locallab", "Spotduplicated", locallab.spotduplicated, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.id, "Locallab", "Id", locallab.id, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.name, "Locallab", "Name", locallab.name, keyFile);
-        saveToKeyfile(!pedited || pedited->locallab.isvisible, "Locallab", "Isvisible", locallab.isvisible, keyFile);
         */
 
 // Post-crop vignette
@@ -4673,6 +4634,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
             // Resize locallab settings if required
             if (locallab.nbspot > (int)locallab.id.size()) {
+                // Control spot settings
                 locallab.id.resize(locallab.nbspot);
                 locallab.name.resize(locallab.nbspot);
                 locallab.isvisible.resize(locallab.nbspot);
@@ -4690,6 +4652,20 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 locallab.transit.resize(locallab.nbspot);
                 locallab.thresh.resize(locallab.nbspot);
                 locallab.iter.resize(locallab.nbspot);
+                // Color & Light
+                locallab.expcolor.resize(locallab.nbspot);
+                locallab.curvactiv.resize(locallab.nbspot);
+                locallab.lightness.resize(locallab.nbspot);
+                locallab.contrast.resize(locallab.nbspot);
+                locallab.chroma.resize(locallab.nbspot);
+                locallab.sensi.resize(locallab.nbspot);
+                locallab.qualitycurveMethod.resize(locallab.nbspot);
+                locallab.llcurve.resize(locallab.nbspot);
+                locallab.cccurve.resize(locallab.nbspot);
+                locallab.LHcurve.resize(locallab.nbspot);
+                locallab.HHcurve.resize(locallab.nbspot);
+                locallab.invers.resize(locallab.nbspot);
+                // Exposure
             }
 
             for (int i = 0; i < locallab.nbspot; i++) {
@@ -4711,10 +4687,23 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Transit_" + std::to_string(i), pedited, locallab.transit.at(i), pedited->locallab.transit);
                 assignFromKeyfile(keyFile, "Locallab", "Thresh_" + std::to_string(i), pedited, locallab.thresh.at(i), pedited->locallab.thresh);
                 assignFromKeyfile(keyFile, "Locallab", "Iter_" + std::to_string(i), pedited, locallab.iter.at(i), pedited->locallab.iter);
+                // Color & Light
+                assignFromKeyfile(keyFile, "Locallab", "Expcolor_" + std::to_string(i), pedited, locallab.expcolor.at(i), pedited->locallab.expcolor);
+                assignFromKeyfile(keyFile, "Locallab", "Curvactiv_" + std::to_string(i), pedited, locallab.curvactiv.at(i), pedited->locallab.curvactiv);
+                assignFromKeyfile(keyFile, "Locallab", "Lightness_" + std::to_string(i), pedited, locallab.lightness.at(i), pedited->locallab.lightness);
+                assignFromKeyfile(keyFile, "Locallab", "Contrast_" + std::to_string(i), pedited, locallab.contrast.at(i), pedited->locallab.contrast);
+                assignFromKeyfile(keyFile, "Locallab", "Chroma_" + std::to_string(i), pedited, locallab.chroma.at(i), pedited->locallab.chroma);
+                assignFromKeyfile(keyFile, "Locallab", "Sensi_" + std::to_string(i), pedited, locallab.sensi.at(i), pedited->locallab.sensi);
+                assignFromKeyfile(keyFile, "Locallab", "QualityCurveMethod_" + std::to_string(i), pedited, locallab.qualitycurveMethod.at(i), pedited->locallab.qualitycurveMethod);
+                assignFromKeyfile(keyFile, "Locallab", "LLCurve_" + std::to_string(i), pedited, locallab.llcurve.at(i), pedited->locallab.llcurve);
+                assignFromKeyfile(keyFile, "Locallab", "CCCurve_" + std::to_string(i), pedited, locallab.cccurve.at(i), pedited->locallab.cccurve);
+                assignFromKeyfile(keyFile, "Locallab", "LHCurve_" + std::to_string(i), pedited, locallab.LHcurve.at(i), pedited->locallab.LHcurve);
+                assignFromKeyfile(keyFile, "Locallab", "HHCurve_" + std::to_string(i), pedited, locallab.HHcurve.at(i), pedited->locallab.HHcurve);
+                assignFromKeyfile(keyFile, "Locallab", "Invers_" + std::to_string(i), pedited, locallab.invers.at(i), pedited->locallab.invers);
+                // Exposure
             }
 
             /*
-            assignFromKeyfile(keyFile, "Locallab", "Expcolor", pedited, locallab.expcolor, pedited->locallab.expcolor);
             assignFromKeyfile(keyFile, "Locallab", "Expcbdl", pedited, locallab.expcbdl, pedited->locallab.expcbdl);
             assignFromKeyfile(keyFile, "Locallab", "Expexpose", pedited, locallab.expexpose, pedited->locallab.expexpose);
             assignFromKeyfile(keyFile, "Locallab", "Expvibrance", pedited, locallab.expvibrance, pedited->locallab.expvibrance);
@@ -4725,40 +4714,16 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Locallab", "Expdenoi", pedited, locallab.expdenoi, pedited->locallab.expdenoi);
             assignFromKeyfile(keyFile, "Locallab", "Avoid", pedited, locallab.avoid, pedited->locallab.avoid);
             assignFromKeyfile(keyFile, "Locallab", "TgainCurve", pedited, locallab.localTgaincurve, pedited->locallab.localTgaincurve);
-            assignFromKeyfile(keyFile, "Locallab", "LLCurve", pedited, locallab.llcurve, pedited->locallab.llcurve);
-            assignFromKeyfile(keyFile, "Locallab", "CCCurve", pedited, locallab.cccurve, pedited->locallab.cccurve);
-            assignFromKeyfile(keyFile, "Locallab", "LHCurve", pedited, locallab.LHcurve, pedited->locallab.LHcurve);
-            assignFromKeyfile(keyFile, "Locallab", "HHCurve", pedited, locallab.HHcurve, pedited->locallab.HHcurve);
             assignFromKeyfile(keyFile, "Locallab", "TgainCurverab", pedited, locallab.localTgaincurverab, pedited->locallab.localTgaincurverab);
-            assignFromKeyfile(keyFile, "Locallab", "Invers", pedited, locallab.invers, pedited->locallab.invers);
             assignFromKeyfile(keyFile, "Locallab", "Cutpast", pedited, locallab.cutpast, pedited->locallab.cutpast);
             assignFromKeyfile(keyFile, "Locallab", "Lastdust", pedited, locallab.lastdust, pedited->locallab.lastdust);
-            assignFromKeyfile(keyFile, "Locallab", "Curvactiv", pedited, locallab.curvactiv, pedited->locallab.curvactiv);
             assignFromKeyfile(keyFile, "Locallab", "activlum", pedited, locallab.activlum, pedited->locallab.activlum);
             assignFromKeyfile(keyFile, "Locallab", "Inversrad", pedited, locallab.inversrad, pedited->locallab.inversrad);
             assignFromKeyfile(keyFile, "Locallab", "Inverssha", pedited, locallab.inverssha, pedited->locallab.inverssha);
             assignFromKeyfile(keyFile, "Locallab", "Inversret", pedited, locallab.inversret, pedited->locallab.inversret);
-            assignFromKeyfile(keyFile, "Locallab", "Degree", pedited, locallab.degree, pedited->locallab.degree);
-            assignFromKeyfile(keyFile, "Locallab", "Smethod", pedited, locallab.Smethod, pedited->locallab.Smethod);
             assignFromKeyfile(keyFile, "Locallab", "Exclumethod", pedited, locallab.Exclumethod, pedited->locallab.Exclumethod);
-            assignFromKeyfile(keyFile, "Locallab", "Shapemethod", pedited, locallab.shapemethod, pedited->locallab.shapemethod);
             assignFromKeyfile(keyFile, "Locallab", "retinexMethod", pedited, locallab.retinexMethod, pedited->locallab.retinexMethod);
-            assignFromKeyfile(keyFile, "Locallab", "BlurMethod", pedited, locallab.blurMethod, pedited->locallab.blurMethod);
-            assignFromKeyfile(keyFile, "Locallab", "DustMethod", pedited, locallab.dustMethod, pedited->locallab.dustMethod);
-            assignFromKeyfile(keyFile, "Locallab", "qualitycurveMethod", pedited, locallab.qualitycurveMethod, pedited->locallab.qualitycurveMethod);
-            assignFromKeyfile(keyFile, "Locallab", "LocY", pedited, locallab.locY, pedited->locallab.locY);
-            assignFromKeyfile(keyFile, "Locallab", "LocX", pedited, locallab.locX, pedited->locallab.locX);
-            assignFromKeyfile(keyFile, "Locallab", "LocYT", pedited, locallab.locYT, pedited->locallab.locYT);
-            assignFromKeyfile(keyFile, "Locallab", "LocXL", pedited, locallab.locXL, pedited->locallab.locXL);
-            assignFromKeyfile(keyFile, "Locallab", "CenterX", pedited, locallab.centerX, pedited->locallab.centerX);
-            assignFromKeyfile(keyFile, "Locallab", "CenterY", pedited, locallab.centerY, pedited->locallab.centerY);
-            assignFromKeyfile(keyFile, "Locallab", "Circrad", pedited, locallab.circrad, pedited->locallab.circrad);
-            assignFromKeyfile(keyFile, "Locallab", "CenterXbuf", pedited, locallab.centerXbuf, pedited->locallab.centerXbuf);
-            assignFromKeyfile(keyFile, "Locallab", "CenterYbuf", pedited, locallab.centerYbuf, pedited->locallab.centerYbuf);
             assignFromKeyfile(keyFile, "Locallab", "Adjblur", pedited, locallab.adjblur, pedited->locallab.adjblur);
-            assignFromKeyfile(keyFile, "Locallab", "Thres", pedited, locallab.thres, pedited->locallab.thres);
-            assignFromKeyfile(keyFile, "Locallab", "Proxi", pedited, locallab.proxi, pedited->locallab.proxi);
-            assignFromKeyfile(keyFile, "Locallab", "Chroma", pedited, locallab.chroma, pedited->locallab.chroma);
             assignFromKeyfile(keyFile, "Locallab", "Warm", pedited, locallab.warm, pedited->locallab.warm);
             assignFromKeyfile(keyFile, "Locallab", "Expcomp", pedited, locallab.expcomp, pedited->locallab.expcomp);
             assignFromKeyfile(keyFile, "Locallab", "Hlcompr", pedited, locallab.hlcompr, pedited->locallab.hlcompr);
@@ -4778,7 +4743,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Locallab", "Sharamount", pedited, locallab.sharamount, pedited->locallab.sharamount);
             assignFromKeyfile(keyFile, "Locallab", "Shardamping", pedited, locallab.shardamping, pedited->locallab.shardamping);
             assignFromKeyfile(keyFile, "Locallab", "Shariter", pedited, locallab.shariter, pedited->locallab.shariter);
-            assignFromKeyfile(keyFile, "Locallab", "Sensi", pedited, locallab.sensi, pedited->locallab.sensi);
             assignFromKeyfile(keyFile, "Locallab", "Sensiex", pedited, locallab.sensiex, pedited->locallab.sensiex);
             assignFromKeyfile(keyFile, "Locallab", "Sensitm", pedited, locallab.sensitm, pedited->locallab.sensitm);
             assignFromKeyfile(keyFile, "Locallab", "Sensisha", pedited, locallab.sensisha, pedited->locallab.sensisha);
@@ -4793,16 +4757,12 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Locallab", "Chrrt", pedited, locallab.chrrt, pedited->locallab.chrrt);
             assignFromKeyfile(keyFile, "Locallab", "Str", pedited, locallab.str, pedited->locallab.str);
             assignFromKeyfile(keyFile, "Locallab", "Neigh", pedited, locallab.neigh, pedited->locallab.neigh);
-            assignFromKeyfile(keyFile, "Locallab", "Nbspot", pedited, locallab.nbspot, pedited->locallab.nbspot);
-            assignFromKeyfile(keyFile, "Locallab", "ANbspot", pedited, locallab.anbspot, pedited->locallab.anbspot);
             assignFromKeyfile(keyFile, "Locallab", "Hueref", pedited, locallab.hueref, pedited->locallab.hueref);
             assignFromKeyfile(keyFile, "Locallab", "Huerefblur", pedited, locallab.huerefblur, pedited->locallab.huerefblur);
             assignFromKeyfile(keyFile, "Locallab", "Chromaref", pedited, locallab.chromaref, pedited->locallab.chromaref);
             assignFromKeyfile(keyFile, "Locallab", "Lumaref", pedited, locallab.lumaref, pedited->locallab.lumaref);
             assignFromKeyfile(keyFile, "Locallab", "Sobelref", pedited, locallab.sobelref, pedited->locallab.sobelref);
             assignFromKeyfile(keyFile, "Locallab", "Vart", pedited, locallab.vart, pedited->locallab.vart);
-            assignFromKeyfile(keyFile, "Locallab", "Lightness", pedited, locallab.lightness, pedited->locallab.lightness);
-            assignFromKeyfile(keyFile, "Locallab", "Contrast", pedited, locallab.contrast, pedited->locallab.contrast);
             assignFromKeyfile(keyFile, "Locallab", "Sensiv", pedited, locallab.sensiv, pedited->locallab.sensiv);
             assignFromKeyfile(keyFile, "Locallab", "Pastels", pedited, locallab.pastels, pedited->locallab.pastels);
             assignFromKeyfile(keyFile, "Locallab", "Saturated", pedited, locallab.saturated, pedited->locallab.saturated);
@@ -4847,10 +4807,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
             assignFromKeyfile(keyFile, "Locallab", "Threshold", pedited, locallab.threshold, pedited->locallab.threshold);
             assignFromKeyfile(keyFile, "Locallab", "Chromacbdl", pedited, locallab.chromacbdl, pedited->locallab.chromacbdl);
-            assignFromKeyfile(keyFile, "Locallab", "Spotduplicated", pedited, locallab.spotduplicated, pedited->locallab.spotduplicated);
-            assignFromKeyfile(keyFile, "Locallab", "Id", pedited, locallab.id, pedited->locallab.id);
-            assignFromKeyfile(keyFile, "Locallab", "Name", pedited, locallab.name, pedited->locallab.name);
-            assignFromKeyfile(keyFile, "Locallab", "Isvisible", pedited, locallab.isvisible, pedited->locallab.isvisible);
             */
         }
 

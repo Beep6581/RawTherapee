@@ -356,6 +356,7 @@ public:
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
     void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
+    void updateLocallabGUI(const rtengine::procparams::ProcParams* pp, int index);
 
     void setBatchMode(bool batchMode);
 
@@ -409,5 +410,7 @@ public:
     std::vector<double> getCurvePoints(ThresholdSelector* tAdjuster) const;
 
     void setListener(ToolPanelListener* tpl);
+    void enableListener();
+    void disableListener();
 };
 

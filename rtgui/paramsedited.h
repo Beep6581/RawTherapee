@@ -455,7 +455,6 @@ public:
 };
 class LocallabParamsEdited
 {
-// TODO To be manage by vector<bool>
 public:
     bool enabled;
     bool nbspot;
@@ -478,33 +477,29 @@ public:
     bool transit;
     bool thresh;
     bool iter;
-
-    /*
-    bool degree;
-    bool locY;
-    bool locX;
-    bool locYT;
-    bool locXL;
-    bool centerX;
-    bool centerY;
-    bool circrad;
-    bool centerXbuf;
-    bool centerYbuf;
-    bool adjblur;
-    bool thres;
-    bool proxi;
-    bool qualityMethod;
-    bool qualitycurveMethod;
+    // Color & Light
+    bool expcolor;
+    bool curvactiv;
     bool lightness;
     bool contrast;
     bool chroma;
+    bool sensi;
+    bool qualitycurveMethod;
+    bool llcurve;
+    bool cccurve;
+    bool LHcurve;
+    bool HHcurve;
+    bool invers;
+    // Exposure
+
+    /*
+    bool adjblur;
     bool warm;
     bool expcomp;
     bool hlcompr;
     bool hlcomprthresh;
     bool black;
     bool shcompr;
-
     bool noiselumf;
     bool noiselumc;
     bool noiselumdetail;
@@ -518,7 +513,6 @@ public:
     bool sharamount;
     bool shardamping;
     bool shariter;
-    bool sensi;
     bool sensiex;
     bool sensih;
     bool retrab;
@@ -535,18 +529,13 @@ public:
     bool rewei;
     bool transit;
     bool avoid;
-    bool Smethod;
     bool Exclumethod;
     bool shapemethod;
     bool sensiexclu;
     bool struc;
     bool retinexMethod;
-    bool blurMethod;
-    bool dustMethod;
     bool str;
     bool neigh;
-    bool nbspot;
-    bool anbspot;
     bool hueref;
     bool huerefblur;
     bool chromaref;
@@ -554,25 +543,18 @@ public:
     bool sobelref;
     bool vart;
     bool activlum;
-    bool invers;
     bool cutpast;
     bool lastdust;
-    bool curvactiv;
     bool inversrad;
     bool inversret;
     bool inverssha;
     bool localTgaincurve;
     bool localTgaincurverab;
-    bool llcurve;
-    bool cccurve;
-    bool LHcurve;
-    bool HHcurve;
     bool excurve;
     bool chrrt;
     bool mult[5];
     bool threshold;
     bool chromacbdl;
-    bool expcolor;
     bool expexpose;
     bool expvibrance;
     bool expblur;
@@ -589,10 +571,6 @@ public:
     bool pastsattog;
     bool skintonescurve;
     bool sensiv;
-    bool spotduplicated;
-    bool id;
-    bool name;
-    bool isvisible;
     */
 
 };

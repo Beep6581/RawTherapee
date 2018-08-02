@@ -920,36 +920,29 @@ struct LocallabParams {
     std::vector<int> transit;
     std::vector<int> thresh;
     std::vector<int> iter;
+    // Color & Light
+    std::vector<int> expcolor;
+    std::vector<int> curvactiv;
+    std::vector<int> lightness;
+    std::vector<int> contrast;
+    std::vector<int> chroma;
+    std::vector<int> sensi;
+    std::vector<Glib::ustring> qualitycurveMethod;
+    std::vector<std::vector<double>> llcurve;
+    std::vector<std::vector<double>> cccurve;
+    std::vector<std::vector<double>> LHcurve;
+    std::vector<std::vector<double>> HHcurve;
+    std::vector<int> invers;
+    // Exposure
 
-    std::vector<double> llcurve;
-    std::vector<double> cccurve;
     std::vector<double> excurve;
     std::vector<double>   localTgaincurve;
     std::vector<double>   localTgaincurverab;
-    std::vector<double> LHcurve;
-    std::vector<double> HHcurve;
     std::vector<double> skintonescurve;
 
     /*
-    bool    enabled;
-    double  degree;
-    int     locY;
-    int     locX;
-    int     locYT;
-    int     locXL;
-    int     centerX;
-    int     centerY;
-    int     circrad;
-    int     centerXbuf;
-    int     centerYbuf;
+
     int     adjblur;
-    Glib::ustring qualityMethod;
-    Glib::ustring qualitycurveMethod;
-    int     proxi;
-    int     thres;
-    int     lightness;
-    int     contrast;
-    int     chroma;
     int     warm;
     int      expcomp;
     int         black;
@@ -976,7 +969,6 @@ struct LocallabParams {
     int     sharamount;
     int     shardamping;
     int     shariter;
-    int     sensi;
     int     sensiex;
     int     sensih;
     int     retrab;
@@ -993,18 +985,12 @@ struct LocallabParams {
     int     estop;
     int     scaltm;
     int     rewei;
-    int     transit;
     bool    avoid;
-    Glib::ustring Smethod;
-    Glib::ustring Exclumethod;
-    Glib::ustring shapemethod;
     Glib::ustring retinexMethod;
     Glib::ustring blurMethod;
     Glib::ustring dustMethod;
-    bool    invers;
     bool    cutpast;
     bool    lastdust;
-    bool    curvactiv;
     bool    activlum;
     bool    inversrad;
     bool    inversret;
@@ -1021,7 +1007,6 @@ struct LocallabParams {
     int     vart;
     int     chrrt;
     double mult[5];
-    bool expcolor;
     bool expexpose;
     bool expvibrance;
     bool expblur;
@@ -1032,10 +1017,6 @@ struct LocallabParams {
     bool expdenoi;
     double threshold;
     int chromacbdl;
-    bool spotduplicated;
-    int id;
-    Glib::ustring name;
-    bool isvisible;
     */
 
     LocallabParams();
@@ -1043,6 +1024,7 @@ struct LocallabParams {
     bool operator ==(const LocallabParams& other) const;
     bool operator !=(const LocallabParams& other) const;
 
+    /*
     void getCurves(
         LocretigainCurve &cTgainCurve,
         LocretigainCurverab &cTgainCurverab,
@@ -1051,6 +1033,7 @@ struct LocallabParams {
         bool &LHutili,
         bool &HHutili
     ) const;
+    */
 };
 
 

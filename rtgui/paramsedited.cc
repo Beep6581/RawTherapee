@@ -324,9 +324,11 @@ void ParamsEdited::set(bool v)
     gradient.strength = v;
     gradient.centerX = v;
     gradient.centerY = v;
+
     locallab.enabled = v;
     locallab.nbspot = v;
     locallab.selspot = v;
+    // Control spot settings
     locallab.id = v;
     locallab.name = v;
     locallab.isvisible = v;
@@ -344,9 +346,22 @@ void ParamsEdited::set(bool v)
     locallab.transit = v;
     locallab.thresh = v;
     locallab.iter = v;
+    // Color & Light
+    locallab.expcolor = v;
+    locallab.curvactiv = v;
+    locallab.lightness = v;
+    locallab.contrast = v;
+    locallab.chroma = v;
+    locallab.sensi = v;
+    locallab.qualitycurveMethod = v;
+    locallab.llcurve = v;
+    locallab.cccurve = v;
+    locallab.LHcurve = v;
+    locallab.HHcurve = v;
+    locallab.invers = v;
+    // Exposure
 
     /*
-    locallab.expcolor = v;
     locallab.expexpose = v;
     locallab.expvibrance = v;
     locallab.expblur = v;
@@ -355,31 +370,13 @@ void ParamsEdited::set(bool v)
     locallab.expsharp = v;
     locallab.expcbdl = v;
     locallab.expdenoi = v;
-    locallab.degree = v;
-    locallab.locY = v;
-    locallab.locX = v;
-    locallab.locYT = v;
-    locallab.locXL = v;
-    locallab.centerX = v;
-    locallab.centerY = v;
-    locallab.circrad = v;
-    locallab.centerXbuf = v;
-    locallab.centerYbuf = v;
     locallab.adjblur = v;
-    locallab.thres = v;
-    locallab.proxi = v;
-    locallab.qualityMethod = v;
-    locallab.qualitycurveMethod = v;
-    locallab.lightness = v;
-    locallab.contrast = v;
-    locallab.chroma = v;
     locallab.warm = v;
     locallab.expcomp = v;
     locallab.hlcompr = v;
     locallab.hlcomprthresh = v;
     locallab.black = v;
     locallab.shcompr = v;
-
     locallab.noiselumf = v;
     locallab.noiselumc = v;
     locallab.noiselumdetail = v;
@@ -393,7 +390,6 @@ void ParamsEdited::set(bool v)
     locallab.sharamount = v;
     locallab.shardamping = v;
     locallab.shariter = v;
-    locallab.sensi = v;
     locallab.sensiex = v;
     locallab.sensih = v;
     locallab.retrab = v;
@@ -410,19 +406,13 @@ void ParamsEdited::set(bool v)
     locallab.estop = v;
     locallab.scaltm = v;
     locallab.rewei = v;
-    locallab.transit = v;
     locallab.chrrt = v;
     locallab.avoid = v;
-    locallab.Smethod = v;
     locallab.Exclumethod = v;
     locallab.shapemethod = v;
     locallab.retinexMethod = v;
-    locallab.blurMethod = v;
-    locallab.dustMethod = v;
-    locallab.invers = v;
     locallab.cutpast = v;
     locallab.lastdust = v;
-    locallab.curvactiv = v;
     locallab.activlum = v;
     locallab.inversrad = v;
     locallab.inversret = v;
@@ -439,16 +429,10 @@ void ParamsEdited::set(bool v)
     locallab.vart = v;
     locallab.localTgaincurve = v;
     locallab.localTgaincurverab = v;
-    locallab.llcurve = v;
-    locallab.cccurve = v;
-    locallab.LHcurve = v;
-    locallab.HHcurve = v;
     locallab.excurve = v;
-
     for (int i = 0; i < 5; i++) {
         locallab.mult[i] = v;
     }
-
     locallab.threshold = v;
     locallab.chromacbdl = v;
     locallab.pastels          = v;
@@ -1040,49 +1024,38 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         locallab.transit = locallab.transit && p.locallab.transit == other.locallab.transit;
         locallab.thresh = locallab.thresh && p.locallab.thresh == other.locallab.thresh;
         locallab.iter = locallab.iter && p.locallab.iter == other.locallab.iter;
+        // Color & Light
+        locallab.expcolor = locallab.expcolor && p.locallab.expcolor == other.locallab.expcolor;
+        locallab.curvactiv = locallab.curvactiv && p.locallab.curvactiv == other.locallab.curvactiv;
+        locallab.lightness = locallab.lightness && p.locallab.lightness == other.locallab.lightness;
+        locallab.contrast = locallab.contrast && p.locallab.contrast == other.locallab.contrast;
+        locallab.chroma = locallab.chroma && p.locallab.chroma == other.locallab.chroma;
+        locallab.sensi = locallab.sensi && p.locallab.sensi == other.locallab.sensi;
+        locallab.qualitycurveMethod = locallab.qualitycurveMethod && p.locallab.qualitycurveMethod == other.locallab.qualitycurveMethod;
+        locallab.llcurve = locallab.llcurve && p.locallab.llcurve == other.locallab.llcurve;
+        locallab.cccurve = locallab.cccurve && p.locallab.cccurve == other.locallab.cccurve;
+        locallab.LHcurve = locallab.LHcurve && p.locallab.LHcurve == other.locallab.LHcurve;
+        locallab.HHcurve = locallab.HHcurve && p.locallab.HHcurve == other.locallab.HHcurve;
+        locallab.invers = locallab.invers && p.locallab.invers == other.locallab.invers;
+        // Exposure
 
         /*
         locallab.avoid = locallab.avoid && p.locallab.avoid == other.locallab.avoid;
-        locallab.invers = locallab.invers && p.locallab.invers == other.locallab.invers;
         locallab.cutpast = locallab.cutpast && p.locallab.cutpast == other.locallab.cutpast;
         locallab.lastdust = locallab.lastdust && p.locallab.lastdust == other.locallab.lastdust;
-        locallab.curvactiv = locallab.curvactiv && p.locallab.curvactiv == other.locallab.curvactiv;
         locallab.activlum = locallab.activlum && p.locallab.activlum == other.locallab.activlum;
         locallab.inversrad = locallab.inversrad && p.locallab.inversrad == other.locallab.inversrad;
         locallab.inversret = locallab.inversret && p.locallab.inversret == other.locallab.inversret;
         locallab.inverssha = locallab.inverssha && p.locallab.inverssha == other.locallab.inverssha;
-        locallab.degree = locallab.degree && p.locallab.degree == other.locallab.degree;
-        locallab.locY = locallab.locY && p.locallab.locY == other.locallab.locY;
-        locallab.locX = locallab.locX && p.locallab.locX == other.locallab.locX;
-        locallab.locYT = locallab.locYT && p.locallab.locYT == other.locallab.locYT;
-        locallab.locXL = locallab.locXL && p.locallab.locXL == other.locallab.locXL;
-        locallab.Smethod = locallab.Smethod && p.locallab.Smethod == other.locallab.Smethod;
-        locallab.shapemethod = locallab.shapemethod && p.locallab.shapemethod == other.locallab.shapemethod;
         locallab.Exclumethod = locallab.Exclumethod && p.locallab.Exclumethod == other.locallab.Exclumethod;
         locallab.retinexMethod = locallab.retinexMethod && p.locallab.retinexMethod == other.locallab.retinexMethod;
-        locallab.blurMethod = locallab.blurMethod && p.locallab.blurMethod == other.locallab.blurMethod;
-        locallab.dustMethod = locallab.dustMethod && p.locallab.dustMethod == other.locallab.dustMethod;
-        locallab.centerX = locallab.centerX && p.locallab.centerX == other.locallab.centerX;
-        locallab.centerY = locallab.centerY && p.locallab.centerY == other.locallab.centerY;
-        locallab.circrad = locallab.circrad && p.locallab.circrad == other.locallab.circrad;
-        locallab.centerXbuf = locallab.centerXbuf && p.locallab.centerXbuf == other.locallab.centerXbuf;
-        locallab.centerYbuf = locallab.centerYbuf && p.locallab.centerYbuf == other.locallab.centerYbuf;
         locallab.adjblur = locallab.adjblur && p.locallab.adjblur == other.locallab.adjblur;
-        locallab.thres = locallab.thres && p.locallab.thres == other.locallab.thres;
-        locallab.proxi = locallab.proxi && p.locallab.proxi == other.locallab.proxi;
-        locallab.qualityMethod = locallab.qualityMethod && p.locallab.qualityMethod == other.locallab.qualityMethod;
-        locallab.qualitycurveMethod = locallab.qualitycurveMethod && p.locallab.qualitycurveMethod == other.locallab.qualitycurveMethod;
-        locallab.lightness = locallab.lightness && p.locallab.lightness == other.locallab.lightness;
-        locallab.contrast = locallab.contrast && p.locallab.contrast == other.locallab.contrast;
-        locallab.chroma = locallab.chroma && p.locallab.chroma == other.locallab.chroma;
         locallab.warm = locallab.warm && p.locallab.warm == other.locallab.warm;
         locallab.expcomp = locallab.expcomp && p.locallab.expcomp == other.locallab.expcomp;
         locallab.hlcompr = locallab.hlcompr && p.locallab.hlcompr == other.locallab.hlcompr;
         locallab.hlcomprthresh = locallab.hlcomprthresh && p.locallab.hlcomprthresh == other.locallab.hlcomprthresh;
         locallab.black = locallab.black && p.locallab.black == other.locallab.black;
         locallab.shcompr = locallab.shcompr && p.locallab.shcompr == other.locallab.shcompr;
-
-
         locallab.noiselumf = locallab.noiselumf && p.locallab.noiselumf == other.locallab.noiselumf;
         locallab.noiselumc = locallab.noiselumc && p.locallab.noiselumc == other.locallab.noiselumc;
         locallab.noiselumdetail = locallab.noiselumdetail && p.locallab.noiselumdetail == other.locallab.noiselumdetail;
@@ -1095,7 +1068,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         locallab.sharradius = locallab.sharradius && p.locallab.sharradius == other.locallab.sharradius;
         locallab.sharamount = locallab.sharamount && p.locallab.sharamount == other.locallab.sharamount;
         locallab.shariter = locallab.shariter && p.locallab.shariter == other.locallab.shariter;
-        locallab.sensi = locallab.sensi && p.locallab.sensi == other.locallab.sensi;
         locallab.sensiex = locallab.sensiex && p.locallab.sensiex == other.locallab.sensiex;
         locallab.sensih = locallab.sensih && p.locallab.sensih == other.locallab.sensih;
         locallab.retrab = locallab.retrab && p.locallab.retrab == other.locallab.retrab;
@@ -1126,12 +1098,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         locallab.vart = locallab.vart && p.locallab.vart == other.locallab.vart;
         locallab.localTgaincurve = locallab.localTgaincurve && p.locallab.localTgaincurve == other.locallab.localTgaincurve;
         locallab.localTgaincurverab = locallab.localTgaincurverab && p.locallab.localTgaincurverab == other.locallab.localTgaincurverab;
-        locallab.llcurve = locallab.llcurve && p.locallab.llcurve == other.locallab.llcurve;
-        locallab.cccurve = locallab.cccurve && p.locallab.cccurve == other.locallab.cccurve;
-        locallab.LHcurve = locallab.LHcurve && p.locallab.LHcurve == other.locallab.LHcurve;
-        locallab.HHcurve = locallab.HHcurve && p.locallab.HHcurve == other.locallab.HHcurve;
         locallab.excurve = locallab.excurve && p.locallab.excurve == other.locallab.excurve;
-        locallab.expcolor = locallab.expcolor && p.locallab.expcolor == other.locallab.expcolor;
         locallab.expexpose = locallab.expexpose && p.locallab.expexpose == other.locallab.expexpose;
         locallab.expvibrance = locallab.expvibrance && p.locallab.expvibrance == other.locallab.expvibrance;
         locallab.expblur = locallab.expblur && p.locallab.expblur == other.locallab.expblur;
@@ -2586,11 +2553,58 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.locallab.iter   = mods.locallab.iter;
     }
 
-    /*
+    // Color & Light
     if (locallab.expcolor) {
         toEdit.locallab.expcolor   = mods.locallab.expcolor;
     }
 
+    if (locallab.curvactiv) {
+        toEdit.locallab.curvactiv    = mods.locallab.curvactiv;
+    }
+
+    if (locallab.lightness) {
+        toEdit.locallab.lightness     = mods.locallab.lightness;
+    }
+
+    if (locallab.contrast) {
+        toEdit.locallab.contrast  = mods.locallab.contrast;
+    }
+
+    if (locallab.chroma) {
+        toEdit.locallab.chroma    = mods.locallab.chroma;
+    }
+
+    if (locallab.sensi) {
+        toEdit.locallab.sensi     = mods.locallab.sensi;
+    }
+
+    if (locallab.qualitycurveMethod) {
+        toEdit.locallab.qualitycurveMethod   = mods.locallab.qualitycurveMethod;
+    }
+
+    if (locallab.llcurve) {
+        toEdit.locallab.llcurve   = mods.locallab.llcurve;
+    }
+
+    if (locallab.cccurve) {
+        toEdit.locallab.cccurve   = mods.locallab.cccurve;
+    }
+
+    if (locallab.LHcurve) {
+        toEdit.locallab.LHcurve   = mods.locallab.LHcurve;
+    }
+
+    if (locallab.HHcurve) {
+        toEdit.locallab.HHcurve   = mods.locallab.HHcurve;
+    }
+
+    if (locallab.invers) {
+        toEdit.locallab.invers    = mods.locallab.invers;
+    }
+
+    // Exposure
+
+    /*
     if (locallab.expexpose) {
         toEdit.locallab.expexpose   = mods.locallab.expexpose;
     }
@@ -2627,20 +2641,12 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.locallab.avoid     = mods.locallab.avoid;
     }
 
-    if (locallab.invers) {
-        toEdit.locallab.invers    = mods.locallab.invers;
-    }
-
     if (locallab.cutpast) {
         toEdit.locallab.cutpast    = mods.locallab.cutpast;
     }
 
     if (locallab.lastdust) {
         toEdit.locallab.lastdust    = mods.locallab.lastdust;
-    }
-
-    if (locallab.curvactiv) {
-        toEdit.locallab.curvactiv    = mods.locallab.curvactiv;
     }
 
     if (locallab.activlum) {
@@ -2659,76 +2665,12 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.locallab.inversret     = mods.locallab.inversret;
     }
 
-    if (locallab.degree) {
-        toEdit.locallab.degree        = mods.locallab.degree; //dontforceSet && options.baBehav[ADDSET_LOCALLAB_DEGREE] ? toEdit.locallab.degree + mods.locallab.degree : mods.locallab.degree;
-    }
-
-    if (locallab.locY) {
-        toEdit.locallab.locY  = mods.locallab.locY;
-    }
-
-    if (locallab.locX) {
-        toEdit.locallab.locX  = mods.locallab.locX;
-    }
-
-    if (locallab.locYT) {
-        toEdit.locallab.locYT     = mods.locallab.locYT;
-    }
-
-    if (locallab.locXL) {
-        toEdit.locallab.locXL     = mods.locallab.locXL;
-    }
-
-    if (locallab.Smethod) {
-        toEdit.locallab.Smethod   = mods.locallab.Smethod;
-    }
-
     if (locallab.Exclumethod) {
         toEdit.locallab.Exclumethod   = mods.locallab.Exclumethod;
     }
 
-    if (locallab.shapemethod) {
-        toEdit.locallab.shapemethod   = mods.locallab.shapemethod;
-    }
-
     if (locallab.retinexMethod) {
         toEdit.locallab.retinexMethod   = mods.locallab.retinexMethod;
-    }
-
-    if (locallab.blurMethod) {
-        toEdit.locallab.blurMethod   = mods.locallab.blurMethod;
-    }
-
-    if (locallab.dustMethod) {
-        toEdit.locallab.dustMethod   = mods.locallab.dustMethod;
-    }
-
-    if (locallab.qualityMethod) {
-        toEdit.locallab.qualityMethod   = mods.locallab.qualityMethod;
-    }
-
-    if (locallab.qualitycurveMethod) {
-        toEdit.locallab.qualitycurveMethod   = mods.locallab.qualitycurveMethod;
-    }
-
-    if (locallab.centerX) {
-        toEdit.locallab.centerX   = mods.locallab.centerX;
-    }
-
-    if (locallab.centerY) {
-        toEdit.locallab.centerY   = mods.locallab.centerY;
-    }
-
-    if (locallab.circrad) {
-        toEdit.locallab.circrad   = mods.locallab.circrad;
-    }
-
-    if (locallab.centerXbuf) {
-        toEdit.locallab.centerXbuf   = mods.locallab.centerXbuf;
-    }
-
-    if (locallab.centerYbuf) {
-        toEdit.locallab.centerYbuf   = mods.locallab.centerYbuf;
     }
 
     if (locallab.adjblur) {
@@ -2741,18 +2683,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (locallab.proxi) {
         toEdit.locallab.proxi   = mods.locallab.proxi;
-    }
-
-    if (locallab.lightness) {
-        toEdit.locallab.lightness     = mods.locallab.lightness;
-    }
-
-    if (locallab.contrast) {
-        toEdit.locallab.contrast  = mods.locallab.contrast;
-    }
-
-    if (locallab.chroma) {
-        toEdit.locallab.chroma    = mods.locallab.chroma;
     }
 
     if (locallab.warm) {
@@ -2811,10 +2741,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.locallab.sensiv     = mods.locallab.sensiv;
     }
 
-    if (locallab.spotduplicated) {
-        toEdit.locallab.spotduplicated     = mods.locallab.spotduplicated;
-    }
-
     if (locallab.sensiex) {
         toEdit.locallab.sensiex     = mods.locallab.sensiex;
     }
@@ -2869,10 +2795,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (locallab.shariter) {
         toEdit.locallab.shariter    = mods.locallab.shariter;
-    }
-
-    if (locallab.sensi) {
-        toEdit.locallab.sensi     = mods.locallab.sensi;
     }
 
     if (locallab.sensitm) {
@@ -2935,10 +2857,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.locallab.rewei  = mods.locallab.rewei;
     }
 
-    if (locallab.transit) {
-        toEdit.locallab.transit   = mods.locallab.transit;
-    }
-
     if (locallab.chrrt) {
         toEdit.locallab.chrrt   = mods.locallab.chrrt;
     }
@@ -2949,14 +2867,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (locallab.neigh) {
         toEdit.locallab.neigh   = mods.locallab.neigh;
-    }
-
-    if (locallab.nbspot) {
-        toEdit.locallab.nbspot   = mods.locallab.nbspot;
-    }
-
-    if (locallab.anbspot) {
-        toEdit.locallab.anbspot   = mods.locallab.anbspot;
     }
 
     if (locallab.hueref) {
@@ -2987,24 +2897,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.locallab.localTgaincurve   = mods.locallab.localTgaincurve;
     }
 
-    if (locallab.llcurve) {
-        toEdit.locallab.llcurve   = mods.locallab.llcurve;
-    }
-
-    if (locallab.cccurve) {
-        toEdit.locallab.cccurve   = mods.locallab.cccurve;
-    }
-
-    if (locallab.LHcurve) {
-        toEdit.locallab.LHcurve   = mods.locallab.LHcurve;
-    }
-
     if (locallab.excurve) {
         toEdit.locallab.excurve   = mods.locallab.excurve;
-    }
-
-    if (locallab.HHcurve) {
-        toEdit.locallab.HHcurve   = mods.locallab.HHcurve;
     }
 
     if (locallab.localTgaincurverab) {
