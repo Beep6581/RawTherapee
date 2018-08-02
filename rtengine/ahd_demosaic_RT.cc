@@ -28,6 +28,7 @@
 #include "rt_math.h"
 #include "../rtgui/multilangmgr.h"
 #include "median.h"
+#define BENCHMARK
 #include "StopWatch.h"
 
 namespace rtengine
@@ -168,9 +169,7 @@ void RawImageSource::ahd_demosaic()
                     for (int d = 0; d < 2; d++) {
                         homo[d][tr][tc] = 0;
                         for (int i = 0; i < 4; i++) {
-                            if (ldiff[d][i] <= leps && abdiff[d][i] <= abeps) {
-                                homo[d][tr][tc]++;
-                            }
+                            homo[d][tr][tc] += ((ldiff[d][i] <= leps) * (abdiff[d][i] <= abeps));
                         }
                     }
                 }
