@@ -1009,7 +1009,7 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
 
         MyMutex::MyLock lock(cropHandler.cimg);
 
-        if (!onArea (CropImage, x, y) || !cropHandler.cropPixbuf) {
+        if (!onArea (CropImage, x, y) || !cropHandler.cropPixbuftrue) {
             cropHandler.getFullImageSize(mx, my);
             //    pmlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
             //   if (pmhlistener) pmhlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
