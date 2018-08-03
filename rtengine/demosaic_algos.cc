@@ -682,41 +682,6 @@ void RawImageSource::ppg_demosaic()
     free (image);
 }
 
-void RawImageSource::border_interpolate(unsigned int border, float (*image)[3], unsigned int start, unsigned int end)
-{
-    unsigned row, col, y, x, f;
-    float sum[8];
-    unsigned int width = W, height = H;
-    unsigned int colors = 3;
-
-    if (end == 0 ) {
-        end = H;
-    }
-
-    for (row = start; row < end; row++)
-        for (col = 0; col < width; col++) {
-            if (col == border && row >= border && row < height - border) {
-                col = width - border;
-            }
-
-            memset (sum, 0, sizeof sum);
-
-            for (y = row - 1; y != row + 2; y++)
-                for (x = col - 1; x != col + 2; x++)
-                    if (y < height && x < width) {
-                        f = fc(y, x);
-                        sum[f] += image[y * width + x][f];
-                        sum[f + 4]++;
-                    }
-
-            f = fc(row, col);
-
-            FORCC if (c != f && sum[c + 4]) {
-                image[row * width + col][c] = sum[c] / sum[c + 4];
-            }
-        }
-}
-
 void RawImageSource::border_interpolate(unsigned int border, float (*image)[4], unsigned int start, unsigned int end)
 {
     unsigned row, col, y, x, f;
