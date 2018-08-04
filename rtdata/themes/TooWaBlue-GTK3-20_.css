@@ -80,7 +80,7 @@
 #IopsPanel button:not(.Right) image,
 #ProfilePanel button image,
 #MainNotebook > header :not(#CloseButton) > image {
-    -gtk-icon-transform: scale(calc(21/24));
+    -gtk-icon-transform: scale(calc(22/24));
 }
 
 *:disabled {
