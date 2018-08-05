@@ -242,14 +242,23 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
 
     void appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustring label, int id, bool set);
 
-    Gtk::Widget* getProcParamsPanel ();
-    Gtk::Widget* getColorManagementPanel ();
-    Gtk::Widget* getFileBrowserPanel ();
-    Gtk::Widget* getGeneralPanel ();
-    Gtk::Widget* getBatchProcPanel ();
-    Gtk::Widget* getPerformancePanel ();
-    Gtk::Widget* getSoundPanel ();
-    Gtk::Widget* getDynProfilePanel ();
+    Gtk::ScrolledWindow *swGeneral;
+    Gtk::ScrolledWindow *swImageProcessing;
+    Gtk::ScrolledWindow *swDynamicProfile;
+    Gtk::ScrolledWindow *swFileBrowser;
+    Gtk::ScrolledWindow *swColorMan;
+    Gtk::ScrolledWindow *swBatchProc;
+    Gtk::ScrolledWindow *swPerformance;
+    Gtk::ScrolledWindow *swSounds;
+
+    Gtk::Widget *getGeneralPanel();
+    Gtk::Widget *getImageProcessingPanel();
+    Gtk::Widget *getDynamicProfilePanel();
+    Gtk::Widget *getFileBrowserPanel();
+    Gtk::Widget *getColorManPanel();
+    Gtk::Widget *getBatchProcPanel();
+    Gtk::Widget *getPerformancePanel();
+    Gtk::Widget *getSoundsPanel();
 
 public:
     explicit Preferences (RTWindow *rtwindow);
