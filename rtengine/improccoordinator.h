@@ -177,18 +177,18 @@ protected:
     int pW, pH;
 
     ProgressListener* plistener;
-    AutoWBListener* awbListener;
     PreviewImageListener* imageListener;
     AutoExpListener* aeListener;
     AutoCamListener* acListener;
     AutoBWListener* abwListener;
+    AutoWBListener* awbListener;
     localListener* aloListener;
+    FrameCountListener *frameCountListener;
+    ImageTypeListener *imageTypeListener;
     AutoColorTonListener* actListener;
     AutoChromaListener* adnListener;
     WaveletListener* awavListener;
     RetinexListener* dehaListener;
-    FrameCountListener *frameCountListener;
-    ImageTypeListener *imageTypeListener;
 
 
     HistogramListener* hListener;

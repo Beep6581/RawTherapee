@@ -202,7 +202,7 @@ public:
     double lumimul[3];
 
     ImProcFunctions(const ProcParams* iparams, bool imultiThread = true)
-        : monitorTransform (nullptr), params (iparams), scale (1), multiThread (imultiThread), lumimul{} {}
+        : monitorTransform(nullptr), params(iparams), scale(1), multiThread(imultiThread), lumimul{} {}
     ~ImProcFunctions();
     bool needsLuminanceOnly()
     {
@@ -238,13 +238,13 @@ public:
 
     void ciecam_02float(CieImage* ncie, float adap, int pW, int pwb, LabImage* lab, const ProcParams* params,
                         const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3,
-                           LUTu &histLCAM, LUTu &histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, float &dj, float &yb, int rtt,
-                           bool showSharpMask = false);
+                        LUTu &histLCAM, LUTu &histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, float &dj, float &yb, int rtt,
+                        bool showSharpMask = false);
     void chromiLuminanceCurve(PipetteBuffer *pipetteBuffer, int pW, LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve, LUTf & satclcurve, LUTf &clcurve, LUTf &curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histLurve);
     void vibrance(LabImage* lab);         //Jacques' vibrance
 //    void colorCurve       (LabImage* lold, LabImage* lnew);
-    void sharpening       (LabImage* lab, const SharpeningParams &sharpenParam, bool showMask = false);
-    void sharpeningcam    (CieImage* ncie, float** buffer, bool showMask = false);
+    void sharpening(LabImage* lab, const SharpeningParams &sharpenParam, bool showMask = false);
+    void sharpeningcam(CieImage* ncie, float** buffer, bool showMask = false);
     void transform(Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const FramesMetaData *metadata, int rawRotationDeg, bool fullImage);
     float resizeScale(const ProcParams* params, int fw, int fh, int &imw, int &imh);
     void lab2monitorRgb(LabImage* lab, Image8* image);
@@ -389,13 +389,13 @@ public:
     void idirpyr_eq_channelcam(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float multi[6], const double dirpyrThreshold, float ** l_a_h, float ** l_b_c, const double skinprot, float b_l, float t_l, float t_r);
     void defringe(LabImage* lab);
     void defringecam(CieImage* ncie);
-    void badpixcam      (CieImage* ncie, double rad, int thr, int mode, float chrom, bool hotbad);
-    void badpixlab      (LabImage* lab, double rad, int thr, float chrom);
+    void badpixcam(CieImage* ncie, double rad, int thr, int mode, float chrom, bool hotbad);
+    void badpixlab(LabImage* lab, double rad, int thr, float chrom);
 
-    void PF_correct_RT    (LabImage * lab, double radius, int thresh);
-    void PF_correct_RTcam (CieImage * ncie, double radius, int thresh);
-    void Badpixelscam (CieImage * ncie, double radius, int thresh, int mode, float chrom, bool hotbad);
-    void BadpixelsLab (LabImage * lab, double radius, int thresh, float chrom);
+    void PF_correct_RT(LabImage * lab, double radius, int thresh);
+    void PF_correct_RTcam(CieImage * ncie, double radius, int thresh);
+    void Badpixelscam(CieImage * ncie, double radius, int thresh, int mode, float chrom, bool hotbad);
+    void BadpixelsLab(LabImage * lab, double radius, int thresh, float chrom);
 
     void ToneMapFattal02(Imagefloat *rgb);
     void localContrast(LabImage *lab);
@@ -404,8 +404,9 @@ public:
     void softLight(float *red, float *green, float *blue, int istart, int jstart, int tW, int tH, int TS);
 
     Image8*     lab2rgb(LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm, bool consider_histogram_settings = true);
-    Imagefloat*    lab2rgbOut(LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm, GammaValues *ga = nullptr);
+    Imagefloat*    lab2rgbOut(LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm);
     // CieImage *ciec;
+    Imagefloat* workingtrc(Imagefloat* working, int cw, int ch, int mul, Glib::ustring profile, double gampos, double slpos);
 
     bool transCoord(int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef = -1, const LensCorrection *pLCPMap = nullptr);
     bool transCoord(int W, int H, const std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef = -1, const LensCorrection *pLCPMap = nullptr);

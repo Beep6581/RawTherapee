@@ -316,8 +316,8 @@ Image8 *load_inspector_mode(const Glib::ustring &fname, RawMetaDataLocation &rml
     ProcParams neutral;
     neutral.raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
     neutral.raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
-    neutral.icm.input = "(camera)";
-    neutral.icm.working = "RT_sRGB";
+    neutral.icm.inputProfile = "(camera)";
+    neutral.icm.workingProfile = options.rtSettings.srgb;
 
     src.preprocess(neutral.raw, neutral.lensProf, neutral.coarse, false);
     double thresholdDummy = 0.f;
@@ -1119,7 +1119,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     gmi = gm * defGain / mul_lum;
     bmi = bm * defGain / mul_lum;
 
-    // The RAW exposure is not reflected since it's done in preprocessing. If we only have e.g. the chached thumb,
+    // The RAW exposure is not reflected since it's done in preprocessing. If we only have e.g. the cached thumb,
     // that is already preprocessed. So we simulate the effect here roughly my modifying the exposure accordingly
     if (isRaw) {
         rmi *= params.raw.expos;
@@ -1265,7 +1265,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     bool opautili = false;
 
     if (params.colorToning.enabled) {
-        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params.icm.working);
+        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params.icm.workingProfile);
         double wp[3][3] = {
             {wprof[0][0], wprof[0][1], wprof[0][2]},
             {wprof[1][0], wprof[1][1], wprof[1][2]},
@@ -1317,10 +1317,10 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     if (isRaw) {
         cmsHPROFILE dummy;
-        RawImageSource::findInputProfile (params.icm.input, nullptr, camName, &dcpProf, dummy);
+        RawImageSource::findInputProfile (params.icm.inputProfile, nullptr, camName, &dcpProf, dummy);
 
         if (dcpProf) {
-            dcpProf->setStep2ApplyState (params.icm.working, params.icm.toneCurve, params.icm.applyLookTable, params.icm.applyBaselineExposureOffset, as);
+            dcpProf->setStep2ApplyState (params.icm.workingProfile, params.icm.toneCurve, params.icm.applyLookTable, params.icm.applyBaselineExposureOffset, as);
         }
     }
 

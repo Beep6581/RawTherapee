@@ -31,6 +31,11 @@
 #include <unistd.h>
 
 #include "iccstore.h"
+#include <iostream>
+#include <fstream>
+#include <string>
+#include "color.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -42,7 +47,7 @@ extern const Settings* settings;
 ImProcCoordinator::ImProcCoordinator()
     : orig_prev(nullptr), oprevi(nullptr), oprevl(nullptr), nprevl(nullptr), reserv(nullptr), fattal_11_dcrop_cache(nullptr), previmg(nullptr), workimg(nullptr),
       ncie (nullptr), imgsrc (nullptr), lastAwbEqual (0.), lastAwbTempBias (0.0), ipf (&params, true), monitorIntent (RI_RELATIVE),
-      softProof (false), gamutCheck (false), sharpMask(false), scale (10), highDetailPreprocessComputed (false), highDetailRawComputed (false),
+      softProof(false), gamutCheck(false), sharpMask(false), scale(10), highDetailPreprocessComputed(false), highDetailRawComputed(false),
       allocated(false), bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(NAN), coordX(0), coordY(0), localX(0), localY(0),
       ctColorCurve(),
       hltonecurve(65536),
@@ -98,9 +103,9 @@ ImProcCoordinator::ImProcCoordinator()
       fw(0), fh(0), tr(0),
       fullw(1), fullh(1),
       pW(-1), pH(-1),
-      plistener(nullptr), awbListener(nullptr), imageListener(nullptr), aeListener(nullptr), acListener(nullptr), abwListener(nullptr),  aloListener(nullptr), actListener(nullptr), adnListener(nullptr), awavListener(nullptr), dehaListener(nullptr), frameCountListener(nullptr), imageTypeListener(nullptr), hListener(nullptr),
+      plistener(nullptr), imageListener(nullptr), aeListener(nullptr), acListener(nullptr), abwListener(nullptr), awbListener(nullptr), aloListener(nullptr), frameCountListener(nullptr), imageTypeListener(nullptr), actListener(nullptr), adnListener(nullptr), awavListener(nullptr), dehaListener(nullptr), hListener(nullptr), 
       resultValid(false), lastOutputProfile("BADFOOD"), lastOutputIntent(RI__COUNT), lastOutputBPC(false), thread(nullptr), changeSinceLast(0), updaterRunning(false), destroying(false), utili(false), autili(false),
-      butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false),  wavcontlutili(false),
+      butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false), wavcontlutili(false),
       dataspot(nullptr), maxdata(0), retistr(nullptr), llstr(nullptr), lhstr(nullptr), ccstr(nullptr), hhstr(nullptr), skinstr(nullptr), pthstr(nullptr), exstr(nullptr),
       circrads(500, -10000),
       centerx(500, -10000),
@@ -358,7 +363,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
     // If high detail (=100%) is newly selected, do a demosaic update, since the last was just with FAST
 
     if (imageTypeListener) {
-        imageTypeListener->imageTypeChanged (imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS, imgsrc->isMono());
+        imageTypeListener->imageTypeChanged(imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS, imgsrc->isMono());
     }
 
     if ((todo & M_RAW)
@@ -382,7 +387,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
         }
         bool autoContrast = false;
         double contrastThreshold = 0.f;
-        imgsrc->demosaic (rp, autoContrast, contrastThreshold); //enabled demosaic
+        imgsrc->demosaic(rp, autoContrast, contrastThreshold); //enabled demosaic
 
         // if a demosaic happened we should also call getimage later, so we need to set the M_INIT flag
         todo |= M_INIT;
@@ -464,6 +469,30 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
             awbListener->WBChanged(params.wb.temperature, params.wb.green);
         }
 
+        /*
+                GammaValues g_a;
+                double pwr = 1.0 / params.icm.gampos;
+                double ts = params.icm.slpos;
+
+
+                int mode = 0;
+                Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope
+                    printf("ga[0]=%f ga[1]=%f ga[2]=%f ga[3]=%f ga[4]=%f\n", g_a[0],g_a[1],g_a[2],g_a[3],g_a[4]);
+
+                    Glib::ustring datal;
+                    datal = "lutsrgb.txt";
+                            ofstream fou(datal, ios::out | ios::trunc);
+
+                for(int i=0; i < 212; i++) {
+                    //printf("igamma2=%i\n", (int) 65535.f*Color::igamma2(i/212.0));
+                            float gam = Color::igamma2(i/211.0);
+                            int lutga = nearbyint(65535.f* gam);
+                          //  fou << 65535*(int)Color::igamma2(i/212.0) << endl;
+                            fou << i << " " << lutga << endl;
+
+                }
+                        fou.close();
+        */
         int tr = getCoarseBitMask(params.coarse);
 
         imgsrc->getFullSize(fw, fh, tr);
@@ -562,9 +591,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
         const int W = oprevi->getWidth();
         const int H = oprevi->getHeight();
         LabImage labcbdl(W, H);
-        ipf.rgb2lab(*oprevi, labcbdl, params.icm.working);
+        ipf.rgb2lab(*oprevi, labcbdl, params.icm.workingProfile);
         ipf.dirpyrequalizer(&labcbdl, scale);
-        ipf.lab2rgb(labcbdl, *oprevi, params.icm.working);
+        ipf.lab2rgb(labcbdl, *oprevi, params.icm.workingProfile);
     }
 
     readyphase++;
@@ -610,6 +639,48 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
     progress("Exposure curve & CIELAB conversion...", 100 * readyphase / numofphases);
 
+    if (todo &  M_AUTOEXP) {
+        if (params.icm.workingTRC == "Custom") { //exec TRC IN free
+            Glib::ustring profile;
+            profile = params.icm.workingProfile;
+
+            if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1") {
+                int  cw = oprevi->getWidth();
+                int  ch = oprevi->getHeight();
+                // put gamma TRC to 1
+                Imagefloat* readyImg0 = NULL;
+                readyImg0 = ipf.workingtrc(oprevi, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310);
+                #pragma omp parallel for
+
+                for (int row = 0; row < ch; row++) {
+                    for (int col = 0; col < cw; col++) {
+                        oprevi->r(row, col) = (float)readyImg0->r(row, col);
+                        oprevi->g(row, col) = (float)readyImg0->g(row, col);
+                        oprevi->b(row, col) = (float)readyImg0->b(row, col);
+                    }
+                }
+
+                delete readyImg0;
+                //adjust TRC
+                Imagefloat* readyImg = NULL;
+                readyImg = ipf.workingtrc(oprevi, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope);
+                #pragma omp parallel for
+
+                for (int row = 0; row < ch; row++) {
+                    for (int col = 0; col < cw; col++) {
+                        oprevi->r(row, col) = (float)readyImg->r(row, col);
+                        oprevi->g(row, col) = (float)readyImg->g(row, col);
+                        oprevi->b(row, col) = (float)readyImg->b(row, col);
+                    }
+                }
+
+                delete readyImg;
+
+            }
+        }
+    }
+
+
     if ((todo & M_RGBCURVE) || (todo & M_CROP)) {
 //        if (hListener) oprevi->calcCroppedHistogram(params, scale, histCropped);
 
@@ -628,7 +699,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
         opautili = false;
 
         if (params.colorToning.enabled) {
-            TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params.icm.working);
+            TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params.icm.workingProfile);
             double wp[3][3] = {
                 {wprof[0][0], wprof[0][1], wprof[0][2]},
                 {wprof[1][0], wprof[1][1], wprof[1][2]},
@@ -741,6 +812,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
     lhist16(32768);
 
     if (todo & (M_LUMACURVE | M_CROP)) {
+        LUTu lhist16(32768);
         lhist16.clear();
 #ifdef _OPENMP
         const int numThreads = min(max(pW * pH / (int)lhist16.getSize(), 1), omp_get_max_threads());
@@ -3856,8 +3928,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
     }
 
     // Update the monitor color transform if necessary
-    if ((todo & M_MONITOR) || (lastOutputProfile != params.icm.output) || lastOutputIntent != params.icm.outputIntent || lastOutputBPC != params.icm.outputBPC) {
-        lastOutputProfile = params.icm.output;
+    if ((todo & M_MONITOR) || (lastOutputProfile != params.icm.outputProfile) || lastOutputIntent != params.icm.outputIntent || lastOutputBPC != params.icm.outputBPC) {
+        lastOutputProfile = params.icm.outputProfile;
         lastOutputIntent = params.icm.outputIntent;
         lastOutputBPC = params.icm.outputBPC;
         ipf.updateColorProfiles(monitorProfile, monitorIntent, softProof, gamutCheck);
@@ -4117,7 +4189,7 @@ bool ImProcCoordinator::getAutoWB(double& temp, double& green, double equal, dou
     }
 }
 
-void ImProcCoordinator::getCamWB(double & temp, double & green)
+void ImProcCoordinator::getCamWB(double& temp, double& green)
 {
 
     if (imgsrc) {
@@ -4126,7 +4198,7 @@ void ImProcCoordinator::getCamWB(double & temp, double & green)
     }
 }
 
-void ImProcCoordinator::getSpotWB(int x, int y, int rect, double & temp, double & tgreen)
+void ImProcCoordinator::getSpotWB(int x, int y, int rect, double& temp, double& tgreen)
 {
 
     ColorTemp ret;
@@ -4193,13 +4265,13 @@ void ImProcCoordinator::getAutoCrop(double ratio, int &x, int &y, int &w, int &h
     y = (fullh - h) / 2;
 }
 
-void ImProcCoordinator::setMonitorProfile(const Glib::ustring & profile, RenderingIntent intent)
+void ImProcCoordinator::setMonitorProfile(const Glib::ustring& profile, RenderingIntent intent)
 {
     monitorProfile = profile;
     monitorIntent = intent;
 }
 
-void ImProcCoordinator::getMonitorProfile(Glib::ustring & profile, RenderingIntent & intent) const
+void ImProcCoordinator::getMonitorProfile(Glib::ustring& profile, RenderingIntent& intent) const
 {
     profile = monitorProfile;
     intent = monitorIntent;
@@ -4211,7 +4283,7 @@ void ImProcCoordinator::setSoftProofing(bool softProof, bool gamutCheck)
     this->gamutCheck = gamutCheck;
 }
 
-void ImProcCoordinator::getSoftProofing(bool & softProof, bool & gamutCheck)
+void ImProcCoordinator::getSoftProofing(bool &softProof, bool &gamutCheck)
 {
     softProof = this->softProof;
     gamutCheck = this->gamutCheck;
@@ -4222,7 +4294,7 @@ void ImProcCoordinator::setSharpMask (bool sharpMask)
     this->sharpMask = sharpMask;
 }
 
-void ImProcCoordinator::saveInputICCReference(const Glib::ustring & fname, bool apply_wb)
+void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool apply_wb)
 {
 
     MyMutex::MyLock lock(mProcessing);
@@ -4235,11 +4307,11 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring & fname, bool 
     PreviewProps pp(0, 0, fW, fH, 1);
     ProcParams ppar = params;
     ppar.toneCurve.hrenabled = false;
-    ppar.icm.input = "(none)";
+    ppar.icm.inputProfile = "(none)";
     Imagefloat* im = new Imagefloat(fW, fH);
     imgsrc->preprocess(ppar.raw, ppar.lensProf, ppar.coarse);
     double dummy = 0.0;
-    imgsrc->demosaic (ppar.raw, false, dummy);
+    imgsrc->demosaic(ppar.raw, false, dummy);
     ColorTemp currWB = ColorTemp(params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
 
     if (params.wb.method == "Camera") {

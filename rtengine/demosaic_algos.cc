@@ -684,7 +684,8 @@ void RawImageSource::ppg_demosaic()
 
 void RawImageSource::border_interpolate(unsigned int border, float (*image)[4], unsigned int start, unsigned int end)
 {
-    unsigned row, col, y, x, f, sum[8];
+    unsigned row, col, y, x, f;
+    float sum[8];
     unsigned int width = W, height = H;
     unsigned int colors = 3;
 

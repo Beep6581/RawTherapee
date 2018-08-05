@@ -1419,6 +1419,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !FILECHOOSER_FILTER_PP;Processing profiles
 !FILECHOOSER_FILTER_SAME;Same format as current photo
 !GENERAL_RESET;Reset
+!GENERAL_SAVE_AS;Save as...
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
 !HISTORY_MSG_235;B&amp;W - CM - Auto
 !HISTORY_MSG_237;B&amp;W - CM
@@ -1643,20 +1644,67 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !HISTORY_MSG_488;Dynamic Range Compression
 !HISTORY_MSG_489;DRC - Threshold
 !HISTORY_MSG_490;DRC - Amount
-!HISTORY_MSG_CLAMPOOG;Out-of-gamut color clipping
+!HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 !HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 !HISTORY_MSG_DUALDEMOSAIC_CONTRAST;AMaZE+VNG4 - Contrast threshold
+!HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
+!HISTORY_MSG_ICM_OUTPUT_TEMP;Output - ICC-v4 illuminant D
+!HISTORY_MSG_ICM_OUTPUT_TYPE;Output - Type
+!HISTORY_MSG_ICM_WORKING_GAMMA;Working - Gamma
+!HISTORY_MSG_ICM_WORKING_SLOPE;Working - Slope
+!HISTORY_MSG_ICM_WORKING_TRC_METHOD;Working - TRC method
 !HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 !HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - Demosaic method for motion
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
 !HISTORY_MSG_RAW_BORDER;Raw border
-!HISTORY_MSG_RESIZE_ALLOW_UPSCALING;Resize - Allow upscaling
+!HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
 !HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
 !HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
 !HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
+!ICCPROFCREATOR_COPYRIGHT;Copyright:
+!ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP;Reset to the default copyright, granted to "RawTherapee, CC0"
+!ICCPROFCREATOR_CUSTOM;Custom
+!ICCPROFCREATOR_DESCRIPTION;Description:
+!ICCPROFCREATOR_DESCRIPTION_ADDPARAM;Append gamma and slope values to the description
+!ICCPROFCREATOR_DESCRIPTION_TOOLTIP;Leave empty to set the default description.
+!ICCPROFCREATOR_GAMMA;Gamma
+!ICCPROFCREATOR_ICCVERSION;ICC version:
+!ICCPROFCREATOR_ILL;Illuminant:
+!ICCPROFCREATOR_ILL_41;D41
+!ICCPROFCREATOR_ILL_50;D50
+!ICCPROFCREATOR_ILL_55;D55
+!ICCPROFCREATOR_ILL_60;D60
+!ICCPROFCREATOR_ILL_65;D65
+!ICCPROFCREATOR_ILL_80;D80
+!ICCPROFCREATOR_ILL_DEF;Default
+!ICCPROFCREATOR_ILL_INC;StdA 2856K
+!ICCPROFCREATOR_ILL_TOOLTIP;You can only set the illuminant for ICC v4 profiles.
+!ICCPROFCREATOR_PRIMARIES;Primaries:
+!ICCPROFCREATOR_PRIM_ACESP0;ACES AP0
+!ICCPROFCREATOR_PRIM_ACESP1;ACES AP1
+!ICCPROFCREATOR_PRIM_ADOBE;Adobe RGB (1998)
+!ICCPROFCREATOR_PRIM_BEST;BestRGB
+!ICCPROFCREATOR_PRIM_BETA;BetaRGB
+!ICCPROFCREATOR_PRIM_BLUX;Blue X
+!ICCPROFCREATOR_PRIM_BLUY;Blue Y
+!ICCPROFCREATOR_PRIM_BRUCE;BruceRGB
+!ICCPROFCREATOR_PRIM_GREX;Green X
+!ICCPROFCREATOR_PRIM_GREY;Green Y
+!ICCPROFCREATOR_PRIM_PROPH;Prophoto
+!ICCPROFCREATOR_PRIM_REC2020;Rec2020
+!ICCPROFCREATOR_PRIM_REDX;Red X
+!ICCPROFCREATOR_PRIM_REDY;Red Y
+!ICCPROFCREATOR_PRIM_SRGB;sRGB
+!ICCPROFCREATOR_PRIM_TOOLTIP;You can only set custom primaries for ICC v4 profiles.
+!ICCPROFCREATOR_PRIM_WIDEG;Widegamut
+!ICCPROFCREATOR_PROF_V2;ICC v2
+!ICCPROFCREATOR_PROF_V4;ICC v4
+!ICCPROFCREATOR_SAVEDIALOG_TITLE;Save ICC profile as...
+!ICCPROFCREATOR_SLOPE;Slope
+!ICCPROFCREATOR_TRC_PRESET;Tone response curve:
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
 !IPTCPANEL_COPYRIGHT;Copyright notice
@@ -1682,6 +1730,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
 !IPTCPANEL_TRANSREFERENCE;Job ID
 !IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
+!MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
 !MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
 !MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
 !MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>Sharpening Contrast Mask</b>.\nShortcut: <b>None</b>\n\nOnly works when sharpening is enabled and zoom >= 100%.
@@ -1703,7 +1752,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !PARTIALPASTE_RAW_PIXELSHIFT;Pixel Shift
 !PARTIALPASTE_RETINEX;Retinex
 !PARTIALPASTE_SOFTLIGHT;Soft light
-!PARTIALPASTE_TM_FATTAL;Dynamic Range Compression
+!PARTIALPASTE_TM_FATTAL;Dynamic range compression
 !PREFERENCES_AUTLISLOW;Low
 !PREFERENCES_AUTLISMAX;Max - Average of all tiles
 !PREFERENCES_AUTLISSTD;High
@@ -1928,6 +1977,12 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_ICM_SAVEREFERENCE;Save Reference Image
 !TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
 !TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
+!TP_ICM_WORKING_TRC;Tone response curve:
+!TP_ICM_WORKING_TRC_CUSTOM;Custom
+!TP_ICM_WORKING_TRC_GAMMA;Gamma
+!TP_ICM_WORKING_TRC_NONE;None
+!TP_ICM_WORKING_TRC_SLOPE;Slope
+!TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
 !TP_PREPROCESS_DEADPIXFILT;Dead pixel filter
 !TP_PREPROCESS_DEADPIXFILT_TOOLTIP;Tries to suppress dead pixels.
 !TP_PREPROCESS_HOTPIXFILT;Hot pixel filter

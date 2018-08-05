@@ -496,20 +496,19 @@ void ParamsEdited::set(bool v)
     resize.height    = v;
     resize.enabled   = v;
     resize.allowUpscaling = v;
-    icm.input        = v;
+    icm.inputProfile = v;
     icm.toneCurve = v;
     icm.applyLookTable = v;
     icm.applyBaselineExposureOffset = v;
     icm.applyHueSatMap = v;
     icm.dcpIlluminant = v;
-    icm.working      = v;
-    icm.output       = v;
+    icm.workingProfile = v;
+    icm.outputProfile = v;
     icm.outputIntent = v;
-    icm.outputBPC    = v;
-    icm.gamma       = v;
-    icm.freegamma   = v;
-    icm.gampos      = v;
-    icm.slpos       = v;
+    icm.outputBPC = v;
+    icm.workingTRCGamma = v;
+    icm.workingTRCSlope = v;
+    icm.workingTRC = v;
     raw.bayersensor.method = v;
     raw.bayersensor.border = v;
     raw.bayersensor.imageNum = v;
@@ -1169,20 +1168,19 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         resize.height = resize.height && p.resize.height == other.resize.height;
         resize.enabled = resize.enabled && p.resize.enabled == other.resize.enabled;
         resize.allowUpscaling = resize.allowUpscaling && p.resize.allowUpscaling == other.resize.allowUpscaling;
-        icm.input = icm.input && p.icm.input == other.icm.input;
+        icm.inputProfile = icm.inputProfile && p.icm.inputProfile == other.icm.inputProfile;
         icm.toneCurve = icm.toneCurve && p.icm.toneCurve == other.icm.toneCurve;
         icm.applyLookTable = icm.applyLookTable && p.icm.applyLookTable == other.icm.applyLookTable;
         icm.applyBaselineExposureOffset = icm.applyBaselineExposureOffset && p.icm.applyBaselineExposureOffset == other.icm.applyBaselineExposureOffset;
         icm.applyHueSatMap = icm.applyHueSatMap && p.icm.applyHueSatMap == other.icm.applyHueSatMap;
         icm.dcpIlluminant = icm.dcpIlluminant && p.icm.dcpIlluminant == other.icm.dcpIlluminant;
-        icm.working = icm.working && p.icm.working == other.icm.working;
-        icm.output = icm.output && p.icm.output == other.icm.output;
+        icm.workingProfile = icm.workingProfile && p.icm.workingProfile == other.icm.workingProfile;
+        icm.outputProfile = icm.outputProfile && p.icm.outputProfile == other.icm.outputProfile;
         icm.outputIntent = icm.outputIntent && p.icm.outputIntent == other.icm.outputIntent;
         icm.outputBPC = icm.outputBPC && p.icm.outputBPC == other.icm.outputBPC ;
-        icm.gamma = icm.gamma && p.icm.gamma == other.icm.gamma;
-        icm.freegamma = icm.freegamma && p.icm.freegamma == other.icm.freegamma;
-        icm.gampos = icm.gampos && p.icm.gampos == other.icm.gampos;
-        icm.slpos = icm.slpos && p.icm.slpos == other.icm.slpos;
+        icm.workingTRCGamma = icm.workingTRCGamma && p.icm.workingTRCGamma == other.icm.workingTRCGamma;
+        icm.workingTRCSlope = icm.workingTRCSlope && p.icm.workingTRCSlope == other.icm.workingTRCSlope;
+        icm.workingTRC = icm.workingTRC && p.icm.workingTRC == other.icm.workingTRC;
         raw.bayersensor.method = raw.bayersensor.method && p.raw.bayersensor.method == other.raw.bayersensor.method;
         raw.bayersensor.border = raw.bayersensor.border && p.raw.bayersensor.border == other.raw.bayersensor.border;
         raw.bayersensor.imageNum = raw.bayersensor.imageNum && p.raw.bayersensor.imageNum == other.raw.bayersensor.imageNum;
@@ -1437,7 +1435,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     if (toneCurve.clampOOG) {
         toEdit.toneCurve.clampOOG = mods.toneCurve.clampOOG;
     }
-    
+
     if (retinex.enabled) {
         toEdit.retinex.enabled        = mods.retinex.enabled;
     }
@@ -1784,12 +1782,15 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     if (colorToning.labgridALow) {
         toEdit.colorToning.labgridALow = mods.colorToning.labgridALow;
     }
+
     if (colorToning.labgridBLow) {
         toEdit.colorToning.labgridBLow = mods.colorToning.labgridBLow;
     }
+
     if (colorToning.labgridAHigh) {
         toEdit.colorToning.labgridAHigh = mods.colorToning.labgridAHigh;
     }
+
     if (colorToning.labgridBHigh) {
         toEdit.colorToning.labgridBHigh = mods.colorToning.labgridBHigh;
     }
@@ -2315,7 +2316,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (fattal.amount) {
         toEdit.fattal.amount = mods.fattal.amount;
-    }    
+    }
+
     if (fattal.anchor) {
         toEdit.fattal.anchor = mods.fattal.anchor;
     }
@@ -3096,8 +3098,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.resize.allowUpscaling = mods.resize.allowUpscaling;
     }
 
-    if (icm.input) {
-        toEdit.icm.input      = mods.icm.input;
+    if (icm.inputProfile) {
+        toEdit.icm.inputProfile = mods.icm.inputProfile;
     }
 
     if (icm.toneCurve) {
@@ -3120,12 +3122,12 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.icm.dcpIlluminant = mods.icm.dcpIlluminant;
     }
 
-    if (icm.working) {
-        toEdit.icm.working        = mods.icm.working;
+    if (icm.workingProfile) {
+        toEdit.icm.workingProfile = mods.icm.workingProfile;
     }
 
-    if (icm.output) {
-        toEdit.icm.output       = mods.icm.output;
+    if (icm.outputProfile) {
+        toEdit.icm.outputProfile = mods.icm.outputProfile;
     }
 
     if (icm.outputIntent) {
@@ -3136,20 +3138,16 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.icm.outputBPC = mods.icm.outputBPC;
     }
 
-    if (icm.gampos) {
-        toEdit.icm.gampos     = dontforceSet && options.baBehav[ADDSET_FREE_OUPUT_GAMMA] ? toEdit.icm.gampos + mods.icm.gampos : mods.icm.gampos;
+    if (icm.workingTRCGamma) {
+        toEdit.icm.workingTRCGamma = mods.icm.workingTRCGamma;
     }
 
-    if (icm.slpos) {
-        toEdit.icm.slpos      = dontforceSet && options.baBehav[ADDSET_FREE_OUTPUT_SLOPE] ? toEdit.icm.slpos + mods.icm.slpos : mods.icm.slpos;
+    if (icm.workingTRCSlope) {
+        toEdit.icm.workingTRCSlope = mods.icm.workingTRCSlope;
     }
 
-    if (icm.gamma) {
-        toEdit.icm.gamma        = mods.icm.gamma;
-    }
-
-    if (icm.freegamma) {
-        toEdit.icm.freegamma    = mods.icm.freegamma;
+    if (icm.workingTRC) {
+        toEdit.icm.workingTRC = mods.icm.workingTRC;
     }
 
     if (raw.bayersensor.method) {
@@ -3271,7 +3269,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     if (raw.bayersensor.linenoiseDirection) {
         toEdit.raw.bayersensor.linenoiseDirection = mods.raw.bayersensor.linenoiseDirection;
     }
-    
+
     if (raw.bayersensor.pdafLinesFilter) {
         toEdit.raw.bayersensor.pdafLinesFilter = mods.raw.bayersensor.pdafLinesFilter;
     }

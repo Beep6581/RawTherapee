@@ -66,6 +66,8 @@
 #65 25.06.2018 Korrekturen (TooWaBoo) RT 5.4
 #66 04.07.2018 Erweiterung (TooWaBoo) RT 5.4
 #67 05.07.2018 Erweiterung (TooWaBoo) RT 5.4
+#68 05.07.2018 Erweiterung (TooWaBoo) RT 5.4
+#69 25.07.2018 Erweiterung (TooWaBoo) RT 5.4
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -289,7 +291,7 @@ GENERAL_DISABLED;Deaktiviert
 GENERAL_ENABLE;Aktivieren
 GENERAL_ENABLED;Aktiviert
 GENERAL_FILE;Datei:
-GENERAL_LANDSCAPE;Quer
+GENERAL_LANDSCAPE;Landschaft
 GENERAL_NA;n/a
 GENERAL_NO;Nein
 GENERAL_NONE;Keine
@@ -298,6 +300,7 @@ GENERAL_OPEN;Öffnen
 GENERAL_PORTRAIT;Portrait
 GENERAL_RESET;Zurücksetzen
 GENERAL_SAVE;Speichern
+GENERAL_SAVE_AS;Speichern
 GENERAL_SLIDER;Regler
 GENERAL_UNCHANGED;(Unverändert)
 GENERAL_WARNING;Warnung
@@ -739,7 +742,7 @@ HISTORY_MSG_423;(Retinex) - Einstellungen\nGammasteigung
 HISTORY_MSG_424;(Retinex) - Einstellungen\nHL-Schwelle
 HISTORY_MSG_425;(Retinex) - Einstellungen\nBasis-Logarithmus
 HISTORY_MSG_426;(Retinex) - Einstellungen\nKorrekturen - Farbton (H)
-HISTORY_MSG_427;Ausgabe-Rendering-Intent
+HISTORY_MSG_427;(Farbmanagement)\nAusgabeprofil\nRendering-Intent
 HISTORY_MSG_428;Monitor-Rendering-Intent
 HISTORY_MSG_429;(Retinex) - Einstellungen\nDynamikkompression\nIterationen
 HISTORY_MSG_430;(Retinex) - Einstellungen\nDynamikkompression\nTransmission Gradient
@@ -794,6 +797,12 @@ HISTORY_MSG_CLAMPOOG;(Belichtung) - Farben\nauf Farbraum beschränken
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;(Farbanpassungen)\nL*a*b* - Farbkorrektur
 HISTORY_MSG_DUALDEMOSAIC_CONTRAST;(Sensor-Matrix)\nFarbinterpolation\nKontrastschwelle
 HISTORY_MSG_HISTMATCHING;(Belichtung)\nAuto-Tonwertkurve
+HISTORY_MSG_ICM_OUTPUT_PRIMARIES;(Farbmanagement)\nAusgabeprofil\nVorlagen
+HISTORY_MSG_ICM_OUTPUT_TEMP;(Farbmanagement)\nAusgabeprofil\nIccV4-Illuminant D
+HISTORY_MSG_ICM_OUTPUT_TYPE;(Farbmanagement)\nAusgabeprofil\nTyp
+HISTORY_MSG_ICM_WORKING_GAMMA;(Farbmanagement)\nArbeitsfarbraum\nGamma
+HISTORY_MSG_ICM_WORKING_SLOPE;(Farbmanagement)\nArbeitsfarbraum\nSteigung
+HISTORY_MSG_ICM_WORKING_TRC_METHOD;(Farbmanagement)\nArbeitsfarbraum\nFarbtonkennlinie
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;(Lokaler Kontrast)\nIntensität
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;(Lokaler Kontrast)\nDunkle Bereiche
 HISTORY_MSG_LOCALCONTRAST_ENABLED;(Lokaler Kontrast)
@@ -806,7 +815,7 @@ HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;(Sensor-Matrix)\nVorverarbeitung\nR
 HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;(Sensor-Matrix)\nVorverarbeitung\nPDAF-Zeilenfilter
 HISTORY_MSG_PRSHARPEN_CONTRAST;(Skalieren) - Schärfen\nKontrastschwelle
 HISTORY_MSG_RAW_BORDER;(Sensor-Matrix)\nFarbinterpolation\nBildrand
-HISTORY_MSG_RESIZE_ALLOW_UPSCALING;(Skalieren)\nHochskalieren zulassen
+HISTORY_MSG_RESIZE_ALLOWUPSCALING;(Skalieren)\nHochskalieren zulassen
 HISTORY_MSG_SHARPENING_CONTRAST;(Schärfung)\nKontrastschwelle
 HISTORY_MSG_SOFTLIGHT_ENABLED;(Weiches Licht)
 HISTORY_MSG_SOFTLIGHT_STRENGTH;(Weiches Licht)\nIntensität
@@ -815,6 +824,47 @@ HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
 HISTORY_SNAPSHOT;Schnappschuss
 HISTORY_SNAPSHOTS;Schnappschüsse
+ICCPROFCREATOR_COPYRIGHT;Copyright:
+ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP;Auf den vorgegebenen Copyright-Text zurücksetzen.
+ICCPROFCREATOR_CUSTOM;Benutzerdefiniert
+ICCPROFCREATOR_DESCRIPTION;Beschreibung:
+ICCPROFCREATOR_DESCRIPTION_ADDPARAM;Füge Gamma- und Steigungswerte der Beschreibung hinzu
+ICCPROFCREATOR_DESCRIPTION_TOOLTIP;Wenn leer, wird die Standardbeschreibung verwendet.
+ICCPROFCREATOR_GAMMA;Gamma
+ICCPROFCREATOR_ICCVERSION;ICC-Version:
+ICCPROFCREATOR_ILL;Illuminant:
+ICCPROFCREATOR_ILL_41;D41
+ICCPROFCREATOR_ILL_50;D50
+ICCPROFCREATOR_ILL_55;D55
+ICCPROFCREATOR_ILL_60;D60
+ICCPROFCREATOR_ILL_65;D65
+ICCPROFCREATOR_ILL_80;D80
+ICCPROFCREATOR_ILL_DEF;Vorgabe
+ICCPROFCREATOR_ILL_INC;StdA 2856K
+ICCPROFCREATOR_ILL_TOOLTIP;Illuminant kann nur bei ICC-v4-Profilen\nverwendet werden.
+ICCPROFCREATOR_PRIMARIES;Vorlage:
+ICCPROFCREATOR_PRIM_ACESP0;ACES AP0
+ICCPROFCREATOR_PRIM_ACESP1;ACES AP1
+ICCPROFCREATOR_PRIM_ADOBE;Adobe RGB (1998)
+ICCPROFCREATOR_PRIM_BEST;BestRGB
+ICCPROFCREATOR_PRIM_BETA;BetaRGB
+ICCPROFCREATOR_PRIM_BLUX;Blau X
+ICCPROFCREATOR_PRIM_BLUY;Blau Y
+ICCPROFCREATOR_PRIM_BRUCE;BruceRGB
+ICCPROFCREATOR_PRIM_GREX;Grün X
+ICCPROFCREATOR_PRIM_GREY;Grün Y
+ICCPROFCREATOR_PRIM_PROPH;Prophoto
+ICCPROFCREATOR_PRIM_REC2020;Rec2020
+ICCPROFCREATOR_PRIM_REDX;Rot X
+ICCPROFCREATOR_PRIM_REDY;Rot Y
+ICCPROFCREATOR_PRIM_SRGB;sRGB
+ICCPROFCREATOR_PRIM_TOOLTIP;Benutzerdefinierte Vorlagen können nur\nbei ICC-v4-Profilen verwendet werden.
+ICCPROFCREATOR_PRIM_WIDEG;Widegamut
+ICCPROFCREATOR_PROF_V2;ICC v2
+ICCPROFCREATOR_PROF_V4;ICC v4
+ICCPROFCREATOR_SAVEDIALOG_TITLE;ICC-Profile speichern unter ...
+ICCPROFCREATOR_SLOPE;Steigung
+ICCPROFCREATOR_TRC_PRESET;Farbtonkennlinie:
 IPTCPANEL_CATEGORY;Kategorie
 IPTCPANEL_CATEGORYHINT;Beschreibt das Thema des Bildes nach\nMeinung des Anbieters.
 IPTCPANEL_CITY;Stadt
@@ -862,6 +912,7 @@ LENSPROFILE_CORRECTION_LCPFILE;LCP-Datei
 LENSPROFILE_CORRECTION_MANUAL;Benutzerdefiniert (Lensfun)
 LENSPROFILE_LENS_WARNING;Warnung: Der Cropfaktor des Profils entspricht nicht dem des Objektivs.\nDies kann zu einem fehlerhaften Ergebnis führen.
 MAIN_BUTTON_FULLSCREEN;Vollbild\nTaste: <b>F11</b>
+MAIN_BUTTON_ICCPROFCREATOR;ICC-Profil erstellen
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigiert zum nächsten Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf das ausgewählte Miniaturbild.\nTaste: <b>F4</b>\n\nNavigiert zum nächsten Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf auf das im Editor geöffnete Bild.\nTaste: <b>Umschalt</b> + <b>F4 </b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;Navigiert zum vorherigen Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf das ausgewählte Miniaturbild.\nTaste: <b>F3</b>\n\nNavigiert zum vorherigen Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf auf das im Editor geöffnete Bild.\nTaste: <b>Umschalt</b> + <b>F3 </b>
 MAIN_BUTTON_NAVSYNC_TOOLTIP;Selektiert das Miniaturbild des aktuell geöffneten\nBildes in der Dateiverwaltung und des Filmstreifens.\nEs werden alle aktiven Filter gelöscht.\nTaste: <b>x</b>\n\nWie oben, jedoch ohne Löschung aktiver Filter. Das\nMiniaturbild des geöffneten Bildes wird nicht angezeigt,\nwenn es herausgefiltert wurde.\nTaste: <b>y</b>
@@ -1134,7 +1185,7 @@ PREFERENCES_GREYSC18;Yb = 18 CIE L#49
 PREFERENCES_GREYSCA;Automatisch
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogramm linksseitig
 PREFERENCES_HISTOGRAMWORKING;Das Arbeitsprofil zur Darstellung des Haupthistogramms verwenden
-PREFERENCES_HISTOGRAM_TOOLTIP;Wenn aktiviert wird das Arbeitsprofil für die Darstellung des\nHaupthistogramms, andernfalls das des gammakorrigierten\nAusgangsprofil, verwendet.
+PREFERENCES_HISTOGRAM_TOOLTIP;Wenn aktiviert wird das Arbeitsprofil für die Darstellung\ndes Haupthistogramms verwendet, andernfalls das des\ngammakorrigierten Ausgangsprofil.
 PREFERENCES_HLTHRESHOLD;Lichter - Schwelle
 PREFERENCES_ICCDIR;ICC-Profile-Verzeichnis
 PREFERENCES_IMG_RELOAD_NEEDED;Änderungen werden nur auf neu geöffnete Bilder angewendet
@@ -1733,7 +1784,7 @@ TP_ICM_INPUTPROFILE;Eingangsfarbprofil
 TP_ICM_LABEL;Farbmanagement
 TP_ICM_NOICM;Kein ICM: sRGB-Ausgabe
 TP_ICM_OUTPUTPROFILE;Ausgabeprofil
-TP_ICM_PROFILEINTENT;Rendering Intent
+TP_ICM_PROFILEINTENT;Rendering-Intent
 TP_ICM_SAVEREFERENCE;Referenzbild speichern
 TP_ICM_SAVEREFERENCE_APPLYWB;Weißabgleich anwenden
 TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Um ICC-Profile zu erstellen, den Weißabgleich beim Speichern anwenden. Um DCP-Profile zu erstellen, den Weißabgleich NICHT beim Speichern anwenden.
@@ -1741,6 +1792,12 @@ TP_ICM_SAVEREFERENCE_TOOLTIP;Speichert das lineare TIFF-Bild bevor das\nEingangs
 TP_ICM_TONECURVE;Tonwertkurve
 TP_ICM_TONECURVE_TOOLTIP;Eingebettete DCP-Tonwertkurve verwenden.\nDie Einstellung ist nur verfügbar wenn sie\nvom Eingangsfarbprofil unterstützt wird.
 TP_ICM_WORKINGPROFILE;Arbeitsfarbraum
+TP_ICM_WORKING_TRC;Farbtonkennlinie:
+TP_ICM_WORKING_TRC_CUSTOM;Benutzerdefiniert
+TP_ICM_WORKING_TRC_GAMMA;Gamma
+TP_ICM_WORKING_TRC_NONE;Keine
+TP_ICM_WORKING_TRC_SLOPE;Steigung
+TP_ICM_WORKING_TRC_TOOLTIP;Nur für die mitgelieferten\nProfile möglich.
 TP_IMPULSEDENOISE_LABEL;Impulsrauschreduzierung
 TP_IMPULSEDENOISE_THRESH;Schwelle
 TP_LABCURVE_AVOIDCOLORSHIFT;Farbverschiebungen vermeiden

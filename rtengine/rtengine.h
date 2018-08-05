@@ -549,7 +549,7 @@ public:
     virtual bool fastPipeline() const = 0;
 };
 
-/** This function performs all the image processinf steps corresponding to the given ProcessingJob. It returns when it is ready, so it can be slow.
+/** This function performs all the image processing steps corresponding to the given ProcessingJob. It returns when it is ready, so it can be slow.
    * The ProcessingJob passed becomes invalid, you can not use it any more.
    * @param job the ProcessingJob to cancel.
    * @param errorCode is the error code if an error occurred (e.g. the input image could not be loaded etc.)
@@ -569,7 +569,7 @@ public:
     virtual ProcessingJob* imageReady (IImagefloat* img) = 0;
     virtual void error (Glib::ustring message) = 0;
 };
-/** This function performs all the image processinf steps corresponding to the given ProcessingJob. It runs in the background, thus it returns immediately,
+/** This function performs all the image processing steps corresponding to the given ProcessingJob. It runs in the background, thus it returns immediately,
    * When it finishes, it calls the BatchProcessingListener with the resulting image and asks for the next job. It the listener gives a new job, it goes on
    * with processing. If no new job is given, it finishes.
    * The ProcessingJob passed becomes invalid, you can not use it any more.

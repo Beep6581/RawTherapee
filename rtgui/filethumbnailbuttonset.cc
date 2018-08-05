@@ -49,7 +49,7 @@ FileThumbnailButtonSet::FileThumbnailButtonSet (FileBrowserEntry* myEntry)
         unTrashIcon = RTImage::createFromPng ("trash-remove-small.png");
         processIcon = RTImage::createFromPng ("gears-small.png");
 
-        colorLabelIcon_0 = RTImage::createFromPng ("circle-empty-gray-small.png"); //("nocolorlabel.png");
+        colorLabelIcon_0 = RTImage::createFromPng ("circle-empty-gray-small.png");
         colorLabelIcon_1 = RTImage::createFromPng ("circle-red-small.png");
         colorLabelIcon_2 = RTImage::createFromPng ("circle-yellow-small.png");
         colorLabelIcon_3 = RTImage::createFromPng ("circle-green-small.png");

@@ -1,4 +1,4 @@
-#01 2018-07-17 Digitalpix58
+#01 2018-07-25 Digitalpix58
 
 ABOUT_TAB_BUILD;Versão
 ABOUT_TAB_CREDITS;Créditos
@@ -45,7 +45,7 @@ DYNPROFILEEDITOR_MOVE_DOWN;Mover para Baixo
 DYNPROFILEEDITOR_MOVE_UP;Mover para Cima
 DYNPROFILEEDITOR_NEW;Novo
 DYNPROFILEEDITOR_NEW_RULE;Nva Regra de Perfil Dinâmico
-DYNPROFILEEDITOR_PROFILE;Processando Perfil
+DYNPROFILEEDITOR_PROFILE;Perfil de Processamento
 EDITWINDOW_TITLE;Edição de Imagem
 EDIT_OBJECT_TOOLTIP;Exibe um widget na janela de visualização que permite ajustar essa ferramenta.
 EDIT_PIPETTE_TOOLTIP;Para adicionar um ponto de ajuste à curva, segure a tecla Ctrl enquanto clica com o botão esquerdo no ponto desejado na visualização da imagem.\nPara ajustar o ponto, Mantenha pressionada a tecla Ctrl enquanto clica com o botão esquerdo na área correspondente na visualização, então solte Ctrl (amenos que deseje um fino controle) e  enquanto ainda mantém pressionado o botão esquerdo do mouse, mova o mouse para cima ou para baixo para mover esse ponto para cima ou para baixo na curva.
@@ -150,7 +150,7 @@ FILEBROWSER_POPUPOPEN;Abrir
 FILEBROWSER_POPUPOPENINEDITOR;Abrir no Editor
 FILEBROWSER_POPUPPROCESS;Coloque na fila
 FILEBROWSER_POPUPPROCESSFAST;Coloque na fila (Exportação rápida)
-FILEBROWSER_POPUPPROFILEOPERATIONS;Processando operações de perfil
+FILEBROWSER_POPUPPROFILEOPERATIONS;Operações de perfil de processamento
 FILEBROWSER_POPUPRANK;Classificar
 FILEBROWSER_POPUPRANK0;Desclassificar
 FILEBROWSER_POPUPRANK1;Rank 1 *
@@ -206,7 +206,7 @@ FILECHOOSER_FILTER_ANY;Todos os arquivos
 FILECHOOSER_FILTER_COLPROF;Perfis de Cores
 FILECHOOSER_FILTER_CURVE;Arquivos de curvas
 FILECHOOSER_FILTER_LCP;Perfis de correção de lentes
-FILECHOOSER_FILTER_PP;Processando perfis
+FILECHOOSER_FILTER_PP;Perfis de processamento
 FILECHOOSER_FILTER_SAME;Mesmo formato da foto atual
 FILECHOOSER_FILTER_TIFF;Arquivos TIFF
 GENERAL_ABOUT;Sobre
@@ -231,6 +231,7 @@ GENERAL_OPEN;Abrir
 GENERAL_PORTRAIT;Retrato
 GENERAL_RESET;Restaurar
 GENERAL_SAVE;Salvar
+GENERAL_SAVE_AS;Salvar como...
 GENERAL_SLIDER;Barra de volume
 GENERAL_UNCHANGED;(Inalterado)
 GENERAL_WARNING;Atenção
@@ -668,7 +669,7 @@ HISTORY_MSG_419;Retinex - Espaço colorido
 HISTORY_MSG_420;Retinex - Histograma - HSL
 HISTORY_MSG_421;Retinex - Gamma
 HISTORY_MSG_422;Retinex - Gamma
-HISTORY_MSG_423;Retinex - Inclinação gamma
+HISTORY_MSG_423;Retinex - Declive gamma
 HISTORY_MSG_424;Retinex - Limite HL
 HISTORY_MSG_425;Retinex - Base de registro
 HISTORY_MSG_426;Retinex - Equalizador de matiz
@@ -727,6 +728,12 @@ HISTORY_MSG_CLAMPOOG;Recorte de cor fora do gamut
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Correção de cor
 HISTORY_MSG_DUALDEMOSAIC_CONTRAST;AMaZE+VNG4 - Limite de contraste
 HISTORY_MSG_HISTMATCHING;Curva de Tom Auto-compatível
+HISTORY_MSG_ICM_OUTPUT_PRIMARIESPrimárias do perfil de saída
+HISTORY_MSG_ICM_OUTPUT_TEMP;Saída IccV4 D iluminante
+HISTORY_MSG_ICM_OUTPUT_TYPE;Tipo de perfil de saída
+HISTORY_MSG_ICM_WORKING_GAMMA;Gamma de trabalho
+HISTORY_MSG_ICM_WORKING_SLOPE;Declive de trabalho
+HISTORY_MSG_ICM_WORKING_TRC_METHOD;Método de trabalho TRC
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;Contraste Local - Montante
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;Contraste Local - Escuridão
 HISTORY_MSG_LOCALCONTRAST_ENABLED;Contraste Local
@@ -739,7 +746,7 @@ HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Direção do filtro de ruído de li
 HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;Filtros de linha PDAF
 HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Limite de contraste
 HISTORY_MSG_RAW_BORDER;Borda raw
-HISTORY_MSG_RESIZE_ALLOW_UPSCALING;Redimensionar - Permitir escalonamento
+HISTORY_MSG_RESIZE_ALLOWUPSCALING;Redimensionar - Permitir escalonamento
 HISTORY_MSG_SHARPENING_CONTRAST;Nitidez - Limite de contraste
 HISTORY_MSG_SOFTLIGHT_ENABLED;Luz suave
 HISTORY_MSG_SOFTLIGHT_STRENGTH;Luz suave - Intensidade
@@ -748,6 +755,47 @@ HISTORY_NEWSNAPSHOT;Adicionar
 HISTORY_NEWSNAPSHOT_TOOLTIP;Atalho: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Instantâneo
 HISTORY_SNAPSHOTS;Instantâneos
+ICCPROFCREATOR_ADD_PARAM_IN_DESC;Anexar os valores Gamma e Declive para a descrição
+ICCPROFCREATOR_COPYRIGHT;Direito Autoral:
+ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP;Restaurar para o direito autoral padrão, concedido a "RawTherapee, CC0"
+ICCPROFCREATOR_CUSTOM;Personalizado
+ICCPROFCREATOR_DESCRIPTION;Descrição:
+ICCPROFCREATOR_DESCRIPTION_TOOLTIP;Deixe em branco para configurar a descrição padrão
+ICCPROFCREATOR_GAMMA;Gamma
+ICCPROFCREATOR_ICCVERSION;Versão do perfil gerado:
+ICCPROFCREATOR_ILL;Iluminante:
+ICCPROFCREATOR_ILL_41;D41
+ICCPROFCREATOR_ILL_50;D50
+ICCPROFCREATOR_ILL_55;D55
+ICCPROFCREATOR_ILL_60;D60
+ICCPROFCREATOR_ILL_65;D65
+ICCPROFCREATOR_ILL_80;D80
+ICCPROFCREATOR_ILL_DEF;Padrão
+ICCPROFCREATOR_ILL_INC;StdA 2856K
+ICCPROFCREATOR_ILL_TOOLTIP;Só podes configurar o iluminante com perfis ICC v4
+ICCPROFCREATOR_PRIMARIES;Primárias:
+ICCPROFCREATOR_PRIM_ACESP0;ACES AP0
+ICCPROFCREATOR_PRIM_ACESP1;ACES AP1
+ICCPROFCREATOR_PRIM_ADOBE;Adobe RGB (1998)
+ICCPROFCREATOR_PRIM_BEST;RGB superior
+ICCPROFCREATOR_PRIM_BETA;BetaRGB
+ICCPROFCREATOR_PRIM_BLUX;Azul X
+ICCPROFCREATOR_PRIM_BLUY;Azul Y
+ICCPROFCREATOR_PRIM_BRUCE;BruceRGB
+ICCPROFCREATOR_PRIM_GREX;Verde X
+ICCPROFCREATOR_PRIM_GREY;Verde Y
+ICCPROFCREATOR_PRIM_PROPH;Prophoto
+ICCPROFCREATOR_PRIM_REC2020;Rec2020
+ICCPROFCREATOR_PRIM_REDX;Vermelho X
+ICCPROFCREATOR_PRIM_REDY;Vermelho Y
+ICCPROFCREATOR_PRIM_SRGB;sRGB
+ICCPROFCREATOR_PRIM_TOOLTIP;Só podes configurar Primárias Personalizadas com perfis ICC v4
+ICCPROFCREATOR_PRIM_WIDEG;Gamut ampla
+ICCPROFCREATOR_PROF_V2;ICC v2
+ICCPROFCREATOR_PROF_V4;ICC v4
+ICCPROFCREATOR_SAVEDIALOG_TITLE;Salvar o perfil ICC como...
+ICCPROFCREATOR_SLOPE;Declive
+ICCPROFCREATOR_TRC_PRESET;Curva de resposta do tom:
 IPTCPANEL_CATEGORY;Categoria
 IPTCPANEL_CATEGORYHINT;Identifica o assunto da imagem na opinião do provedor.
 IPTCPANEL_CITY;Cidade
@@ -795,6 +843,7 @@ LENSPROFILE_CORRECTION_LCPFILE;Arquivo LCP
 LENSPROFILE_CORRECTION_MANUAL;Parâmetros de correção manual
 LENSPROFILE_LENS_WARNING;Aviso: o fator de corte usado para o perfil da lente é maior que o fator de corte da câmera, os resultados podem estar errados.
 MAIN_BUTTON_FULLSCREEN;Tela cheia
+MAIN_BUTTON_ICCPROFCREATOR;Criador de Perfil ICC
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Navegue até a próxima imagem relativa à imagem aberta no Editor.\nAtalho: <b>Shift-F4</b>\n\nPara navegar até a próxima imagem relativa à miniatura selecionada no Navegador de Arquivos ou no Diapositivo:\nAtalho: <b>F4</b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;Navegue até a imagem anterior relativa à imagem aberta no Editor.\nAtalho: <b>Shift-F3</b>\n\nPara navegar até a imagem anterior relativa à miniatura selecionada no Navegador de Arquivos ou no Diapositivo:\nAtalho: <b>F3</b>
 MAIN_BUTTON_NAVSYNC_TOOLTIP;Sincronize o Navegador de Arquivos ou o Diapositivo com o Editor para revelar a miniatura da imagem aberta no momento e limpe os filtros ativos.\nAtalho: <b>x</b>\n\nComo acima, mas sem limpar os filtros ativos:\nAtalho: <b>y</b>\n(Observe que a miniatura da imagem aberta não será mostrada se estiver filtrada).
@@ -901,7 +950,7 @@ PARTIALPASTE_DARKFRAMEAUTOSELECT;Auto-seleção de quadro escuro
 PARTIALPASTE_DARKFRAMEFILE;Arquivo de quadro escuro
 PARTIALPASTE_DEFRINGE;Defringe
 PARTIALPASTE_DETAILGROUP;Configurações de detalhes
-PARTIALPASTE_DIALOGLABEL;Perfil de processamento de colagem parcial
+PARTIALPASTE_DIALOGLABEL;Perfil de processamento colar parcial
 PARTIALPASTE_DIRPYRDENOISE;Redução de ruído
 PARTIALPASTE_DIRPYREQUALIZER;Contraste pelos níveis de detalhe
 PARTIALPASTE_DISTORTION;Correção de distorção
@@ -1084,7 +1133,7 @@ PREFERENCES_MED;Médio (Mosaico/2)
 PREFERENCES_MENUGROUPEXTPROGS;Grupo "Abrir com"
 PREFERENCES_MENUGROUPFILEOPERATIONS;Grupo "operações de Arquivo"
 PREFERENCES_MENUGROUPLABEL;Grupo "Etiqueta de cor"
-PREFERENCES_MENUGROUPPROFILEOPERATIONS;Grupo "Processando operações de perfil"
+PREFERENCES_MENUGROUPPROFILEOPERATIONS;Grupo "Operações de perfil de processamento"
 PREFERENCES_MENUGROUPRANK;Grupo "Rank"
 PREFERENCES_MENUOPTIONS;Opções do Menu de Contexto
 PREFERENCES_METADATA;Metadados
@@ -1118,14 +1167,14 @@ PREFERENCES_PREVDEMO_FAST;Rápido
 PREFERENCES_PREVDEMO_LABEL;Método Demosaicing usado para a visualização em <100% zoom:
 PREFERENCES_PREVDEMO_SIDECAR;Como no PP3
 PREFERENCES_PRINTER;Impressora (Soft-Proofing)
-PREFERENCES_PROFILEHANDLING;Processamento de Tratamento de Perfil
-PREFERENCES_PROFILELOADPR;Processando prioridade de carregamento do perfil
+PREFERENCES_PROFILEHANDLING;Manuseio de Perfil de Processamento
+PREFERENCES_PROFILELOADPR;Prioridade de carregamento do perfil de processamento
 PREFERENCES_PROFILEPRCACHE;Perfil no cache
 PREFERENCES_PROFILEPRFILE;Perfil próximo ao arquivo de entrada
-PREFERENCES_PROFILESAVEBOTH;Salve o perfil de processamento no cache e próximo ao arquivo de entrada
+PREFERENCES_PROFILESAVEBOTH;Salvar o perfil de processamento no cache e próximo ao arquivo de entrada
 PREFERENCES_PROFILESAVECACHE;Salvar o perfil de processamento no cache
 PREFERENCES_PROFILESAVEINPUT;Salvar o perfil de processamento próximo ao arquivo de entrada
-PREFERENCES_PROFILESAVELOCATION;Processando o local de salvamento do perfil
+PREFERENCES_PROFILESAVELOCATION;Local de salvamento do perfil de processamento
 PREFERENCES_PROFILE_NONE;Nenhum
 PREFERENCES_PROPERTY;Propriedade
 PREFERENCES_PRTINTENT;Intenção de renderização
@@ -1187,10 +1236,10 @@ PREFERENCES_WLZER;Não
 PREFERENCES_WORKFLOW;Layout
 PROFILEPANEL_COPYPPASTE;Parâmetros para copiar
 PROFILEPANEL_GLOBALPROFILES;Perfis agrupados
-PROFILEPANEL_LABEL;Processando Perfis
+PROFILEPANEL_LABEL;Perfis de Processamento
 PROFILEPANEL_LOADDLGLABEL;Carregar Parâmetros de Processamento...
 PROFILEPANEL_LOADPPASTE;Parâmetros para carregar
-PROFILEPANEL_MODE_TIP;Processando o modo de preencher o perfil.\n\nBotão pressionado: perfis parciais serão convertidos em perfis completos; os valores ausentes serão substituídos por padrões codificados.\n\nBotão liberado: os perfis serão aplicados como estão, alterando apenas os valores que eles contêm.
+PROFILEPANEL_MODE_TIP;Modo de preenchimento do perfil de procesamento.\n\nBotão pressionado: perfis parciais serão convertidos em perfis completos; os valores ausentes serão substituídos por padrões codificados.\n\nBotão liberado: os perfis serão aplicados como estão, alterando apenas os valores que eles contêm.
 PROFILEPANEL_MYPROFILES;Meus perfis
 PROFILEPANEL_PASTEPPASTE;Parâmetros para colar
 PROFILEPANEL_PCUSTOM;Personalizado
@@ -1211,7 +1260,7 @@ PROGRESSBAR_LOADPNG;Carregando arquivo PNG...
 PROGRESSBAR_LOADTIFF;Carregando arquivo TIFF...
 PROGRESSBAR_NOIMAGES;Nenhuma imagem encontrada
 PROGRESSBAR_PROCESSING;Processando imagem...
-PROGRESSBAR_PROCESSING_PROFILESAVED;Processando perfil salvo
+PROGRESSBAR_PROCESSING_PROFILESAVED;Perfil de processamento salvo
 PROGRESSBAR_READY;Pronto
 PROGRESSBAR_SAVEJPEG;Salvando arquivo JPEG...
 PROGRESSBAR_SAVEPNG;Salvando arquivo PNG...
@@ -1667,6 +1716,12 @@ TP_ICM_SAVEREFERENCE_TOOLTIP;Salve a imagem TIFF linear antes que o perfil de en
 TP_ICM_TONECURVE;Curva de tom
 TP_ICM_TONECURVE_TOOLTIP;Empregue a curva de tom DCP incorporada. A configuração só estará disponível se o DCP selecionado tiver uma curva de tom.
 TP_ICM_WORKINGPROFILE;Perfil de Trabalho
+TP_ICM_WORKING_TRC;Curva de resposta do tom:
+TP_ICM_WORKING_TRC_CUSTOM;Personalizado
+TP_ICM_WORKING_TRC_GAMMA;Gamma
+TP_ICM_WORKING_TRC_NONE;Nenhum
+TP_ICM_WORKING_TRC_SLOPE;Declive
+TP_ICM_WORKING_TRC_TOOLTIP;Apenas para perfis internos
 TP_IMPULSEDENOISE_LABEL;Redução de Ruído por Impulso
 TP_IMPULSEDENOISE_THRESH;Limite
 TP_LABCURVE_AVOIDCOLORSHIFT;Evite mudança de cor
@@ -1752,7 +1807,7 @@ TP_PREPROCESS_NO_FOUND;Nenhum encontrado
 TP_PREPROCESS_PDAFLINESFILTER;Filtro de linhas PDAF
 TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tenta suprimir o ruído de faixas causado por pixels PDAF no sensor, ocorrendo com algumas câmeras mirrorless da Sony em algumas cenas em contraluz com "flare" visível.
 TP_PRSHARPENING_LABEL;Pós-Redimensionamento de Nitidez
-TP_PRSHARPENING_TOOLTIP;Focaliza a imagem após o redimensionamento. Funciona somente quando o método de redimensionamento "Lanczos" é usado. É impossível visualizar os efeitos dessa ferramenta. 35/5000
+TP_PRSHARPENING_TOOLTIP;Focaliza a imagem após o redimensionamento. Funciona somente quando o método de redimensionamento "Lanczos" é usado. É impossível visualizar os efeitos dessa ferramenta. Veja RawPedia para instruções de uso.
 TP_RAWCACORR_AUTO;Auto correção
 TP_RAWCACORR_CABLUE;Azul
 TP_RAWCACORR_CARED;Vermelho
@@ -2217,7 +2272,6 @@ TP_WBALANCE_TUNGSTEN;Tungstênio
 TP_WBALANCE_WATER1;Embaixo da Água 1
 TP_WBALANCE_WATER2;Embaixo da Água 2
 TP_WBALANCE_WATER_HEADER;Embaixo da Água
-Veja RawPedia para instruções de uso.
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Janela de detalhe aberta (nova)
 ZOOMPANEL_ZOOM100;Zoom para 100%\nAtalho: <b>z</b>
@@ -2226,3 +2280,9 @@ ZOOMPANEL_ZOOMFITSCREEN;Ajustar toda a imagem à tela\nAtalho: <b>Alt</b>-<b>f</
 ZOOMPANEL_ZOOMIN;Mais Zoom\nAtalho: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
+!ICCPROFCREATOR_DESCRIPTION_ADDPARAM;Append gamma and slope values to the description

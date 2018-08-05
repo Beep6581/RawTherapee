@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # By Maciej Dworak
-# Version 2018-07-13
+# Version 2018-07-21
 # This script generates PNG icons from SVG files using Inkscape.
 # If pngquant is installed, it will automatically use it to compress the PNGs.
 #
 # PNG files are written to /tmp/rt-icons-XXXX
 #
-# USAGE
-# Generate PNG icons from many SVG icons and output to /tmp/rt-icons-XXXX
-#   ./generatePngIcons some-icons-*.svg
+# USAGE EXAMPLES
+#   ./tools/generatePngIcons rtdata/images/themed/svg/*
+#   ./tools/generatePngIcons rtdata/images/themed/svg/circle* rtdata/images/themed/svg/square-toggle-*
 
 # No touching below this line
 # -----------------------------------------------------------------------------
@@ -20,9 +20,16 @@ mkdir "$tmpDir" || exit 1
 outDir="$tmpDir"
 
 # Abort if Inkscape is not installed:
-if ! command -v inkscape >/dev/null; then
-    printf '%s\n' "Inkscape does not appear to be installed. Aborting."
-    exit 1
+if [[ ${OSTYPE^^} = "MSYS" ]]; then
+    if ! command -v "/c/Program Files/Inkscape/inkscape.exe" >/dev/null; then
+        printf '%s\n' "Inkscape does not appear to be installed. Aborting."
+        exit 1
+    fi
+else
+    if ! command -v inkscape >/dev/null; then
+        printf '%s\n' "Inkscape does not appear to be installed. Aborting."
+        exit 1
+    fi
 fi
 
 # Command-line arguments:
@@ -112,7 +119,7 @@ convertSvg() {
             --skip-if-larger \
             "$1"
         sizeAfter=$(wc -c < "$1")
-        printf 'Filesize fefore: %s    After: %s    Difference: %s\n' "$sizeBefore" "$sizeAfter" "$((sizeBefore - sizeAfter))"
+        printf 'Filesize before: %s    After: %s    Difference: %s\n' "$sizeBefore" "$sizeAfter" "$((sizeBefore - sizeAfter))"
     fi
 }
 

@@ -201,7 +201,7 @@ FILEBROWSER_UNRANK_TOOLTIP;Effacer le rang\nRaccourci: <b>Shift-0</b>
 FILEBROWSER_ZOOMINHINT;Augmenter la taille des vignettes.\nRaccourci: <b>+</b>\n\nRaccourcis dans le mode Éditeur Unique:  <b>Alt-+</b>
 FILEBROWSER_ZOOMOUTHINT;Diminuer la taille des vignettes.\nRaccourci: <b>-</b>\n\nRaccourcis dans le mode Éditeur Unique:  <b>Alt--</b>
 FILECHOOSER_FILTER_ANY;Tous les fichiers
-FILECHOOSER_FILTER_COLPROF;Profils couleur
+FILECHOOSER_FILTER_COLPROF;Profils couleur (*.icc)
 FILECHOOSER_FILTER_CURVE;Fichiers de courbe
 FILECHOOSER_FILTER_LCP;Profils de correction d'objectif
 FILECHOOSER_FILTER_PP;Fichiers de traitement
@@ -228,6 +228,7 @@ GENERAL_OK;OK
 GENERAL_OPEN;Ouvrir
 GENERAL_PORTRAIT;Portrait
 GENERAL_SAVE;Enregistrer
+GENERAL_SAVE_AS;Enregistrer sous...
 GENERAL_SLIDER;Curseur
 GENERAL_UNCHANGED;(Inchangé)
 GENERAL_WARNING;Attention
@@ -725,6 +726,46 @@ HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourci: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Capture
 HISTORY_SNAPSHOTS;Captures
+ICCPROFCREATOR_ADD_PARAM_IN_DESC;Ajoute le paramètre Gamma et Pente (Slope) à la fin de la description
+ICCPROFCREATOR_COPYRIGHT;Copyright:
+ICCPROFCREATOR_CUSTOM;Personnalisé
+ICCPROFCREATOR_DESCRIPTION;Description:
+ICCPROFCREATOR_DESCRIPTION_TOOLTIP;Laisser vide pour que mettre la description par défaut
+ICCPROFCREATOR_GAMMA;Gamma
+ICCPROFCREATOR_ICCVERSION;Version du profil généré:
+ICCPROFCREATOR_ILL;Illuminant:
+ICCPROFCREATOR_ILL_41;D41
+ICCPROFCREATOR_ILL_50;D50
+ICCPROFCREATOR_ILL_55;D55
+ICCPROFCREATOR_ILL_60;D60
+ICCPROFCREATOR_ILL_65;D65
+ICCPROFCREATOR_ILL_80;D80
+ICCPROFCREATOR_ILL_DEF;Valeur par défaut
+ICCPROFCREATOR_ILL_INC;StdA 2856K
+ICCPROFCREATOR_ILL_TOOLTIP;Vous ne pouvez régler l'Illuminant que pour les profils ICC v4
+ICCPROFCREATOR_PRIMARIES;Primaires:
+ICCPROFCREATOR_PRIM_ACESP0;ACES AP0
+ICCPROFCREATOR_PRIM_ACESP1;ACES AP1
+ICCPROFCREATOR_PRIM_ADOBE;Adobe RGB (1998)
+ICCPROFCREATOR_PRIM_BEST;BestRGB
+ICCPROFCREATOR_PRIM_BETA;BetaRGB
+ICCPROFCREATOR_PRIM_BLUX;Bleu X
+ICCPROFCREATOR_PRIM_BLUY;Bleu Y
+ICCPROFCREATOR_PRIM_BRUCE;BruceRGB
+ICCPROFCREATOR_PRIM_GREX;Vert X
+ICCPROFCREATOR_PRIM_GREY;Vert Y
+ICCPROFCREATOR_PRIM_PROPH;Prophoto
+ICCPROFCREATOR_PRIM_REC2020;Rec2020
+ICCPROFCREATOR_PRIM_REDX;Rouge X
+ICCPROFCREATOR_PRIM_REDY;Rouge Y
+ICCPROFCREATOR_PRIM_SRGB;sRGB
+ICCPROFCREATOR_PRIM_TOOLTIP;Vous ne pouvez régler des Primaires personnalisées que pour les profils ICC v4
+ICCPROFCREATOR_PRIM_WIDEG;Widegamut
+ICCPROFCREATOR_PROF_V2;ICC v2
+ICCPROFCREATOR_PROF_V4;ICC v4
+ICCPROFCREATOR_SAVEDIALOG_TITLE;Enregistrer le profil ICC sous...
+ICCPROFCREATOR_SLOPE;Pente
+ICCPROFCREATOR_TRC_PRESET;Courbe de réponse tonale:
 IPTCPANEL_CATEGORY;Catégorie
 IPTCPANEL_CATEGORYHINT;Identifie le sujet de l'image selon l'opinion du fournisseur.
 IPTCPANEL_CITY;Ville
@@ -772,6 +813,7 @@ LENSPROFILE_CORRECTION_LCPFILE;Fichier LCP
 LENSPROFILE_CORRECTION_MANUAL;Paramètres de correction manuel
 LENSPROFILE_LENS_WARNING;Attention: la taille du capteur utilisé pour le profilage de l'objectif est plus grand que celui de l'appareil sélectionné, le résultat peut être faux.
 MAIN_BUTTON_FULLSCREEN;Plein écran
+MAIN_BUTTON_ICCPROFCREATOR;Créateur de Profil ICC
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigue à l'image Suivante relativement à l'image ouverte dans l'Éditeur\nRaccourci: <b>Shift-F4</b>\n\nPour naviguer à l'image Suivante relativement à la vignette sélectionnée dans le Navigateur de fichiers\nRaccourci: <b>F4</b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;Navigue à l'image Précédente relativement à l'image ouverte dans l'Éditeur\nRaccourci: <b>Shift-F3</b>\n\nPour naviguer à l'image Précédente relativement à la vignette sélectionnée dans le Navigateur de fichiers\nRaccourci: <b>F3</b>
 MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronise le Navigateur de fichiers avec l'Éditeur pour révéler la vignette de l'image actuellement ouverte, et efface les filtres dans le Navigateur de fichiers\nRaccourci: <b>x</b>\n\nComme ci-dessus, mais sans effacer les filtres dans le Navigateur de fichiers\nRaccourci: <b>y</b>\n(Notez que la vignette ne sera pas visible si elle a été filtrée).
@@ -860,7 +902,7 @@ NAVIGATOR_S;S:
 NAVIGATOR_V;V:
 NAVIGATOR_XY_FULL;Largeur = %1, Hauteur = %2
 NAVIGATOR_XY_NA;x = n/d, y = n/d
-OPTIONS_BUNDLED_MISSING;Le profile fourni "<b>%1</b>" n'a pas été trouvé!\n\nVotre installation peut être endomagé.\n\nLes valeurs internes par défaut seront utilisées à la place.
+OPTIONS_BUNDLED_MISSING;Le profil fourni "<b>%1</b>" n'a pas été trouvé!\n\nVotre installation peut être endomagé.\n\nLes valeurs internes par défaut seront utilisées à la place.
 OPTIONS_DEFIMG_MISSING;Le profil par défaut pour les <b>images standards</b> n'a pas été trouvé ou n'a pas été réglé.\n\nVérifiez le dossier de vos profils, il peut être manquant ou endommagé\n\n"<b>%1</b>" sera utilisé à la place.
 OPTIONS_DEFRAW_MISSING;Le profil par défaut pour les <b>images Raw</b> n'a pas été trouvé ou n'a pas été réglé.\n\nVérifiez le dossier de vos profils, il peut être manquant ou endommagé\n\n"<b>%1</b>" sera utilisé à la place.
 PARTIALPASTE_ADVANCEDGROUP;Réglages Avancés
@@ -1576,10 +1618,10 @@ TP_FLATFIELD_BT_VERTICAL;Vertical
 TP_FLATFIELD_CLIPCONTROL;Control de l'écrêtage
 TP_FLATFIELD_CLIPCONTROL_TOOLTIP;"Contrôle de l'écrêtage" évite les hautes lumière brûlées dûs à l'application du champ uniforme. S'il y a déjà des hautes lumières brûlées avant l'application du champ uniforme, "Contrôle de l'écrêtage" peut conduire à une dérive couleur.
 TP_FLATFIELD_LABEL;Champ Uniforme
-TP_GAMMA_CURV;Gamma
-TP_GAMMA_FREE;Manuel
-TP_GAMMA_OUTPUT;Gamma de sortie
-TP_GAMMA_SLOP;Pente (linéaire)
+TP_GAMMA_CURV;Gamma:
+TP_GAMMA_CUSTOM;Manuel
+TP_GAMMA_OUTPUT_TRC_PRESET;Courbe de réponse tonale (TRC):
+TP_GAMMA_SLOP;Pente (linéaire):
 TP_GENERAL_11SCALE_TOOLTIP;Les effets de cet outil ne sont visible ou fiable qu'avec un aperçu à l'échelle 1:1.
 TP_GRADIENT_CENTER;Centre
 TP_GRADIENT_CENTER_X;Centre X
@@ -1640,6 +1682,12 @@ TP_ICM_SAVEREFERENCE_TOOLTIP;Sauvegarde une image TIFF linéaire avant que le pr
 TP_ICM_TONECURVE;Utiliser la courbe tonale du profil DCP
 TP_ICM_TONECURVE_TOOLTIP;Utilise la courbe tonale DCP incluse. Ce paramètre ne sera actif que si le profil DCP contient une courbe tonale
 TP_ICM_WORKINGPROFILE;Profil de Travail
+TP_ICM_WORKING_TRC;Courbe de réponse tonale:
+TP_ICM_WORKING_TRC_CUSTOM;Personnalisé
+TP_ICM_WORKING_TRC_GAMMA;Gamma
+TP_ICM_WORKING_TRC_NONE;Aucune
+TP_ICM_WORKING_TRC_SLOPE;Pente
+TP_ICM_WORKING_TRC_TOOLTIP;Seulement pour les profils internes
 TP_IMPULSEDENOISE_LABEL;Réduction du bruit d'impulsion
 TP_IMPULSEDENOISE_THRESH;Seuil
 TP_LABCURVE_AVOIDCOLORSHIFT;Éviter les dérives de teinte
@@ -2204,24 +2252,32 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_488;Dynamic Range Compression
 !HISTORY_MSG_489;DRC - Threshold
 !HISTORY_MSG_490;DRC - Amount
-!HISTORY_MSG_CLAMPOOG;Out-of-gamut color clipping
+!HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 !HISTORY_MSG_DUALDEMOSAIC_CONTRAST;AMaZE+VNG4 - Contrast threshold
+!HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
+!HISTORY_MSG_ICM_OUTPUT_TEMP;Output - ICC-v4 illuminant D
+!HISTORY_MSG_ICM_OUTPUT_TYPE;Output - Type
+!HISTORY_MSG_ICM_WORKING_GAMMA;Working - Gamma
+!HISTORY_MSG_ICM_WORKING_SLOPE;Working - Slope
+!HISTORY_MSG_ICM_WORKING_TRC_METHOD;Working - TRC method
 !HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 !HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - Demosaic method for motion
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
 !HISTORY_MSG_RAW_BORDER;Raw border
-!HISTORY_MSG_RESIZE_ALLOW_UPSCALING;Resize - Allow upscaling
+!HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
 !HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
 !HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
 !HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
+!ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP;Reset to the default copyright, granted to "RawTherapee, CC0"
+!ICCPROFCREATOR_DESCRIPTION_ADDPARAM;Append gamma and slope values to the description
 !MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>Sharpening Contrast Mask</b>.\nShortcut: <b>None</b>\n\nOnly works when sharpening is enabled and zoom >= 100%.
 !PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !PARTIALPASTE_RAW_BORDER;Raw border
 !PARTIALPASTE_SOFTLIGHT;Soft light
-!PARTIALPASTE_TM_FATTAL;Dynamic Range Compression
+!PARTIALPASTE_TM_FATTAL;Dynamic range compression
 !PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
 !PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering

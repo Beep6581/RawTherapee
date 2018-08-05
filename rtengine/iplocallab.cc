@@ -1086,7 +1086,7 @@ void ImProcFunctions::vibrancelocal(int bfw, int bfh, LabImage* lab,  LabImage* 
     const bool protectskins = params->locallab.protectskins;
     const bool avoidcolorshift = params->locallab.avoidcolorshift;
 
-    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.working);
+    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
     //inverse matrix user select
     const double wip[3][3] = {
         {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
@@ -10358,19 +10358,19 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
             float adjustr = 1.0f;
 
 //adapt chroma to working profile
-            if (params->icm.working == "ProPhoto")   {
+            if (params->icm.workingProfile == "ProPhoto")   {
                 adjustr = 1.2f;   // 1.2 instead 1.0 because it's very rare to have C>170..
-            } else if (params->icm.working == "Adobe RGB")  {
+            } else if (params->icm.workingProfile == "Adobe RGB")  {
                 adjustr = 1.8f;
-            } else if (params->icm.working == "sRGB")       {
+            } else if (params->icm.workingProfile == "sRGB")       {
                 adjustr = 2.0f;
-            } else if (params->icm.working == "WideGamut")  {
+            } else if (params->icm.workingProfile == "WideGamut")  {
                 adjustr = 1.2f;
-            } else if (params->icm.working == "Beta RGB")   {
+            } else if (params->icm.workingProfile == "Beta RGB")   {
                 adjustr = 1.4f;
-            } else if (params->icm.working == "BestRGB")    {
+            } else if (params->icm.workingProfile == "BestRGB")    {
                 adjustr = 1.4f;
-            } else if (params->icm.working == "BruceRGB")   {
+            } else if (params->icm.workingProfile == "BruceRGB")   {
                 adjustr = 1.8f;
             }
 
@@ -11729,7 +11729,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
 
 // Gamut and Munsell control - very important do not desactivated to avoid crash
         if (params->locallab.avoid) {
-            TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.working);
+            TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
             float wip[3][3] = {
                 {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
                 {static_cast<float>(wiprof[1][0]), static_cast<float>(wiprof[1][1]), static_cast<float>(wiprof[1][2])},

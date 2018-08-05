@@ -696,20 +696,21 @@ class ColorManagementParamsEdited
 {
 
 public:
-    bool input;
+    bool inputProfile;
     bool toneCurve;
     bool applyLookTable;
     bool applyBaselineExposureOffset;
     bool applyHueSatMap;
     bool dcpIlluminant;
-    bool working;
-    bool output;
+
+    bool workingProfile;
+    bool workingTRC;
+    bool workingTRCGamma;
+    bool workingTRCSlope;
+
+    bool outputProfile;
     bool outputIntent;
     bool outputBPC;
-    bool gamma;
-    bool gampos;
-    bool slpos;
-    bool freegamma;
 };
 class WaveletParamsEdited
 {
@@ -923,7 +924,8 @@ public:
 };
 
 
-class MetaDataParamsEdited {
+class MetaDataParamsEdited
+{
 public:
     bool mode;
 };

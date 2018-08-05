@@ -1152,21 +1152,21 @@ struct ResizeParams {
   * Parameters of the color spaces used during the processing
   */
 struct ColorManagementParams {
-    Glib::ustring input;
-    bool          toneCurve;
-    bool          applyLookTable;
-    bool          applyBaselineExposureOffset;
-    bool          applyHueSatMap;
+    Glib::ustring inputProfile;
+    bool toneCurve;
+    bool applyLookTable;
+    bool applyBaselineExposureOffset;
+    bool applyHueSatMap;
     int dcpIlluminant;
-    Glib::ustring working;
-    Glib::ustring output;
+
+    Glib::ustring workingProfile;
+    Glib::ustring workingTRC;
+    double workingTRCGamma;
+    double workingTRCSlope;
+
+    Glib::ustring outputProfile;
     RenderingIntent outputIntent;
     bool outputBPC;
-
-    Glib::ustring gamma;
-    double gampos;
-    double slpos;
-    bool freegamma;
 
     static const Glib::ustring NoICMString;
 

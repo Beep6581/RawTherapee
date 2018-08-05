@@ -96,13 +96,9 @@ public:
     std::uint8_t     getProofIntents(const Glib::ustring& name) const;
 
     /*static*/ std::vector<Glib::ustring> getWorkingProfiles();
-    static std::vector<Glib::ustring> getGamma();
 
-    static void        getGammaArray(const procparams::ColorManagementParams& icm, GammaValues& ga);
     static cmsHPROFILE makeStdGammaProfile(cmsHPROFILE iprof);
     static cmsHPROFILE createFromMatrix(const double matrix[3][3], bool gamma = false, const Glib::ustring& name = Glib::ustring());
-    static cmsHPROFILE createGammaProfile(const procparams::ColorManagementParams& icm, GammaValues& ga);
-    static cmsHPROFILE createCustomGammaOutputProfile(const procparams::ColorManagementParams& icm, GammaValues& ga);
 
 private:
     class Implementation;

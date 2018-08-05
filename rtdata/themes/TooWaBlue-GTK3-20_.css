@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.67
+  Version 2.70
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -273,6 +273,10 @@ textview:selected, treeview:selected {
 #Snapshots button {
     margin-top: -8px;
     margin-bottom: -4px;
+}
+#Snapshots button image{
+    min-height: 24px;
+    min-width: 24px;
 }
 #Snapshots > box > :nth-child(1) {
     margin-bottom: 0.41667em;
@@ -653,8 +657,8 @@ scale trough {
 }
 scale:not(:disabled) trough highlight {
     background-color: @accent-color2;
-    border: 0.08334em solid @bg-button-border;
-    box-shadow: inset 0 0.08334em shade(@accent-color2, 1.3);
+    border: 0.08334em solid @bg-dark-grey;
+    box-shadow: inset 0 0.08334em shade(@accent-color2, 1.25);
     border-radius: 0.5em;
 }
 
@@ -843,13 +847,13 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     padding: 0 0.33334em;
 }
 #ToolPanelNotebook > header tab + tab {
-    margin-left: 0.33333em;
+    margin-left: 0.25em;
 }
 
-#ToolPanelNotebook > header tab image{
-    min-height: 2.5em;
-    min-width: 2em;
-    padding: 0;
+#ToolPanelNotebook > header tab #TextOrIcon image{
+    min-height: 2.33334em;
+    min-width: calc(2em + 4px);
+    padding: 2px 0;
     margin: 0;
 }
 
@@ -1011,18 +1015,31 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     margin: 0 0.08334em;
 }
 /* Filter */
-#ToolBarPanelFileBrowser > box > box > button {
+#ToolBarPanelFileBrowser .smallbuttonbox {
     min-height: 1.16667em;
+    padding: 0;
+    margin: 0;
+}
+#ToolBarPanelFileBrowser .smallbuttonbox:nth-child(1) {
+    margin: 0 0 2px 0;
+}
+#ToolBarPanelFileBrowser .smallbuttonbox button.smallbutton {
+    min-height: 0;
     min-width: 1.16667em;
     padding: 0;
-    margin: 0 0.08334em -1px;
+    margin: 0 2px;
     border: none;
+    border-radius: 0;
     background-color: transparent;
     background-image: none;
     box-shadow: none;
 }
-#ToolBarPanelFileBrowser > box > box image{
-    -gtk-icon-transform: scale(calc(15/16));
+#ToolBarPanelFileBrowser .smallbuttonbox button.smallbutton:checked {
+    background-color: @bg-dark-grey;
+}
+#ToolBarPanelFileBrowser .smallbuttonbox button.smallbutton image{
+    -gtk-icon-transform: scale(calc(14/16));
+    margin: -2px
 }
 
 #ToolBarPanelFileBrowser entry + button.flat,
@@ -1068,21 +1085,21 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 }
 
 #BeforeAfterContainer label {
-    min-height: 2.41667em;
+    min-height: 2.66667em;
     padding: 0 0.5em;
 }
 /* Small Lock Button */
 #BeforeAfterContainer button {
-    min-height: 1.66667em;
-    min-width: 1.75em;
+    min-height: 2em;
+    min-width: 2.08334em;
     margin: 0.25em 0.25em 0.25em 0;
     padding: 0;
 }
 #BeforeAfterContainer button image{
-    margin-left: 0.083334em;
+    margin-left: 1px;
 }
 #BeforeAfterContainer button:checked image{
-    margin-left: 0.41667em;
+    margin-left: 5px;
 }
 /**/
 
@@ -1101,7 +1118,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     margin-right: 0;
 }
 
-#EditorTopPanel > box:nth-child(9) > button.image-button {
+#EditorTopPanel button.narrowbutton {
     min-width: 1.05em;
     padding: 0;
 }
@@ -1151,10 +1168,6 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 #ToolPanelNotebook scrolledwindow viewport.frame {
     padding: 0 0.56em;
 }
-/* #MyExpander.withScrollbar {
-    padding: 0 6px;
-}
- */
 
 #MyExpander {
     margin: 0;
@@ -1375,11 +1388,15 @@ button.flat {
 /* Resetbutton */
 #MyExpander button.flat,
 dialog scale + button.flat,
-scale + button.flat {
+scale + button.flat,
+dialog entry + button.flat {
     min-height: 1.16667em;
     min-width: 1.66667em;
     margin: 0.08334em 0 0.08334em 0.16667em;
     padding: 0;
+}
+dialog entry + button.flat {
+    min-height: 1.66667em;
 }
 
 #MyExpander scale + button.flat {
@@ -1397,10 +1414,15 @@ scale + button.flat {
 /* Buttons Curve drawingarea*/
 #MyExpander button.flat + button.flat,
 #MyExpander button.flat:first-child {
-    min-height: 2.33334em;
-    min-width: 2.33334em;
-    margin: 0.08334em;
+    min-height: 2em;
+    min-width: 2em;
+    margin: 0.16667em 0.16667em 0 0;
     padding: 0;
+}
+#MyExpander button.flat + button.flat image,
+#MyExpander button.flat:first-child image{
+     -gtk-icon-transform: scale(calc(20/24));
+    margin: -2px;
 }
 /**/
 
@@ -1460,7 +1482,7 @@ button.MiddleH {
 /**/
 
 /* Button base format for Toolbox and dialogs */
-#ToolPanelNotebook > stack > box > box > combobox .combo,
+#ToolPanelNotebook > stack > box > box > combobox button,
 dialog button,
 #MyExpander button,
 #BatchQueueButtonsMainContainer button {
@@ -1474,23 +1496,35 @@ dialog button,
     padding: 0;
 }
 
-combobox .combo,
-dialog combobox .combo,
-#ToolPanelNotebook combobox .combo,
-#BatchQueueButtonsMainContainer combobox .combo {
-    padding: 0 0.26667em;
+#ToolPanelNotebook > stack > box > box > combobox button.combo,
+dialog button.combo,
+#MyExpander button.combo,
+#BatchQueueButtonsMainContainer button.combo {
+    padding: 0;
+}
+#ToolPanelNotebook > stack > box > box > combobox {
+    margin-right: 0.25em;
+}
+combobox button cellview {
+    padding: 0 0 0 0.20em;
+}
+combobox arrow {
+    padding: 0 0.20em;
 }
 /**/
 
 /* Add/remove space between buttons and labels in toolbox*/
+#ToolPanelNotebook > stack > box > box > label {
+    margin: 0 0 0 0.25em;
+}
+
 #MyExpander combobox:not(:first-child):not(:only-child),
-#MyExpander button:not(.flat).Left,
+#MyExpander .image-combo:not(:first-child),
 #MyExpander button:not(.flat) + combobox,
 #MyExpander combobox + button:not(.flat),
-#MyExpander combobox + combobox
-/* Crash
+#MyExpander combobox + combobox,
 #MyExpander button + label,
-#MyExpander combobox + label */ {
+#MyExpander combobox + label {
     margin-left: 0.16667em;
 }
 
@@ -1508,8 +1542,8 @@ buttonbox:not(.dialog-action-area) button{
 }
 
 /* Arrow toggle combo button */
-#IopsPanel button:not(.flat).Left + button:not(.flat).Right,
-#MyExpander button:not(.flat).Left + button:not(.flat).Right {
+#IopsPanel .image-combo button.Right,
+#MyExpander .image-combo button.Right {
     border-left: none;
     margin-left: 0;
     padding-left: 0;
@@ -1518,8 +1552,8 @@ buttonbox:not(.dialog-action-area) button{
     border-bottom-left-radius: 0;
     min-width: 1.33334em;
 }
-#IopsPanel button:not(.flat).Left,
-#MyExpander button:not(.flat).Left {
+#IopsPanel .image-combo button.Left,
+#MyExpander .image-combo button.Left {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     min-width: 2.33334em;
@@ -1531,7 +1565,7 @@ buttonbox:not(.dialog-action-area) button{
     margin: 0;/* x */
 }
 /* Graduated filter big button */
-#ExpanderBox > box > box:first-child > button:not(.flat):not(.text-button):first-child {
+#ExpanderBox button.independent:only-child {
     min-height: 2.33334em;
     min-width: 2.33334em;
     padding: 0;

@@ -467,7 +467,7 @@ void Imagefloat::calcCroppedHistogram(const ProcParams &params, float scale, LUT
     hist.clear();
 
     // Set up factors to calc the lightness
-    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params.icm.working);
+    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params.icm.workingProfile);
 
     float facRed   = wprof[1][0];
     float facGreen = wprof[1][1];
@@ -509,6 +509,52 @@ void Imagefloat::calcCroppedHistogram(const ProcParams &params, float scale, LUT
 }
 
 // Parallelized transformation; create transform with cmsFLAGS_NOCACHE!
+void Imagefloat::ExecCMSTransform2(cmsHTRANSFORM hTransform)
+{
+
+    // LittleCMS cannot parallelize planar setups -- Hombre: LCMS2.4 can! But it we use this new feature, memory allocation
+    // have to be modified too to build temporary buffers that allow multi processor execution
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        AlignedBuffer<float> pBuf(width * 3);
+
+#ifdef _OPENMP
+        #pragma omp for schedule(static)
+#endif
+
+        for (int y = 0; y < height; y++)
+        {
+            float *p = pBuf.data, *pR = r(y), *pG = g(y), *pB = b(y);
+
+            for (int x = 0; x < width; x++) {
+                *(p++) = *(pR++)/ 65535.f;
+                *(p++) = *(pG++)/ 65535.f;
+                *(p++) = *(pB++)/ 65535.f;
+				
+            }
+
+            cmsDoTransform (hTransform, pBuf.data, pBuf.data, width);
+
+            p = pBuf.data;
+            pR = r(y);
+            pG = g(y);
+            pB = b(y);
+
+            for (int x = 0; x < width; x++) {
+                *(pR++) = *(p++);
+                *(pG++) = *(p++);
+                *(pB++) = *(p++);
+            }
+        } // End of parallelization
+    }
+}
+
+
+
+
+// Parallelized transformation; create transform with cmsFLAGS_NOCACHE!
 void Imagefloat::ExecCMSTransform(cmsHTRANSFORM hTransform)
 {
 
@@ -532,6 +578,7 @@ void Imagefloat::ExecCMSTransform(cmsHTRANSFORM hTransform)
                 *(p++) = *(pR++);
                 *(p++) = *(pG++);
                 *(p++) = *(pB++);
+				
             }
 
             cmsDoTransform (hTransform, pBuf.data, pBuf.data, width);
