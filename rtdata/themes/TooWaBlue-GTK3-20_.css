@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.70
+  Version 2.71
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -75,15 +75,24 @@
     -gtk-icon-shadow: none;
 }
 
+#ToolBarPanelFileBrowser button:not(.smallbutton) image,
+#EditorTopPanel  button:not(.narrowbutton) image,
+#IopsPanel button:not(.Right) image,
+#ProfilePanel button image,
+#MainNotebook > header :not(#CloseButton) > image {
+    -gtk-icon-transform: scale(calc(22/24));
+}
+
 *:disabled {
     color: @fg-disabled;
+    -gtk-icon-effect: dim;
 }
 
 #ToolPanelNotebook {
-    min-width: 24.08334em;
+    min-width: 22.25em;
 }
 #HistoryPanel {
-    min-width: 18em;
+    min-width: 17.5em;
 }
 
 window.background {
@@ -135,10 +144,6 @@ undershoot {
 label {
     padding: 0;
     margin: 0;
-}
-
-.drawingarea:not(.slider) {
-    background-color: @bg-dark-grey;
 }
 
 /*** Frames ************************************************************************************/
@@ -408,7 +413,7 @@ filechooser list row:selected {
     background-image: none;
     box-shadow: none;
     min-height: 1.5em;
-    min-width: 1.83334em;
+    min-width: calc(1.33334em + 6px);
     border-radius: 0;
 }
 
@@ -1091,15 +1096,15 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 /* Small Lock Button */
 #BeforeAfterContainer button {
     min-height: 2em;
-    min-width: 2.08334em;
+    min-width: 2em;
     margin: 0.25em 0.25em 0.25em 0;
     padding: 0;
 }
 #BeforeAfterContainer button image{
-    margin-left: 1px;
+    margin: 0 0 0 1px;
 }
 #BeforeAfterContainer button:checked image{
-    margin-left: 5px;
+    margin: 0 -2px 0 3px;
 }
 /**/
 
@@ -1149,9 +1154,10 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 /**/
 #MyExpander .drawingarea:not(.slider) {
     border: 0.08334em solid @bg-light-grey;
+    background-color: @bg-dark-grey;
 }
 #MyExpander .slider,
-#MyExpander .drawingarea:nth-child(2) {
+#MyExpander #CurveSHCSelector {
     background-image: linear-gradient(to bottom, shade (@accent-color4,1.15), shade (@accent-color4,.85));
     background-color: @accent-color4;
     border: 0.08334em solid rgb(15,15,15);
@@ -1506,10 +1512,18 @@ dialog button.combo,
     margin-right: 0.25em;
 }
 combobox button cellview {
-    padding: 0 0 0 0.20em;
+    padding: 0 0 0 0.16667em;
 }
 combobox arrow {
-    padding: 0 0.20em;
+    padding: 0 0.16667em 0 0;
+    margin: 0;
+}
+#MetaPanelNotebook combobox arrow {
+    padding: 0;
+    min-width: 1.25em;
+}
+.popupbutton-arrow {
+    min-width: 0;
 }
 /**/
 
@@ -1540,6 +1554,10 @@ buttonbox:not(.dialog-action-area) button{
 #PrefNotebook buttonbox:not(.dialog-action-area) {
     margin-right: -5px;
 }
+#PrefNotebook radiobutton + entry + button:last-child image {
+    -gtk-icon-transform: scale(calc(17/24));
+    margin: -5px;
+}
 
 /* Arrow toggle combo button */
 #IopsPanel .image-combo button.Right,
@@ -1565,16 +1583,22 @@ buttonbox:not(.dialog-action-area) button{
     margin: 0;/* x */
 }
 /* Graduated filter big button */
-#ExpanderBox button.independent:only-child {
-    min-height: 2.33334em;
-    min-width: 2.33334em;
+#MyExpander button:not(.image-button).independent:first-child:not(.flat):only-child {
+    min-height: 2em;
+    min-width: 2em;
     padding: 0;
-    margin: 0 0 0.5em;
+    margin: 0 0 0.33334em;
 }
-
-.popupbutton-arrow {
-    min-width: 0;
+#MyExpander button:not(.image-button).independent:first-child:not(.flat):only-child image {
+    -gtk-icon-transform: scale(calc(20/24));
+    margin: -2px;
 }
+/* WB pipete big button*/
+#MyExpander button.image-button.independent:first-child:not(.flat):not(:only-child) image {
+    -gtk-icon-transform: scale(calc(18/24));
+    margin: -4px;
+}
+/**/
 
 button.color {
     min-height: 1.16667em;
@@ -1729,7 +1753,7 @@ messagedialog headerbar button.titlebutton {
 
 #MainNotebook tab #CloseButton {
     padding: 0;
-    margin: 0.33334em -3px 0.33334em 0.16667em;
+    margin: 0.41667em -2px 0.5em 0.25em;
     min-width: 1.5em;
     min-height: 1.5em;
 }
