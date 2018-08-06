@@ -37,6 +37,7 @@
 #include "sleef.c"
 #include "opthelper.h"
 #include "median.h"
+#define BENCHMARK
 #include "StopWatch.h"
 #ifdef _OPENMP
 #include <omp.h>
@@ -50,7 +51,7 @@ namespace rtengine
 #undef DIST
 
 #define ABS(a) ((a)<0?-(a):(a))
-#define DIST(a,b) (ABS(a-b))
+#define DIST(a,b) (std::fabs(a-b))
 #define CLIREF(x) LIM(x,-200000.0f,200000.0f) // avoid overflow : do not act directly on image[] or pix[]
 #define x1125(a) (a + xdivf(a, 3))
 #define x0875(a) (a - xdivf(a, 3))
@@ -63,6 +64,7 @@ extern const Settings* settings;
 
 void RawImageSource::eahd_demosaic ()
 {
+    BENCHFUN
     if (plistener) {
         plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::EAHD)));
         plistener->setProgress (0.0);
