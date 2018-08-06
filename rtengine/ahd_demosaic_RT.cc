@@ -29,7 +29,7 @@
 #include "rt_math.h"
 #include "../rtgui/multilangmgr.h"
 #include "median.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 
 namespace rtengine
@@ -205,7 +205,7 @@ void RawImageSource::ahd_demosaic()
                     #pragma omp critical (ahdprogress)
 #endif
                     {
-                        progress += 32.0 * SQR(TS - 32) / (height * width);
+                        progress += 32.0 * SQR(TS - 6) / (height * width);
                         progress = std::min(progress, 1.0);
                         plistener->setProgress(progress);
                     }
