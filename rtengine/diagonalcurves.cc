@@ -359,12 +359,14 @@ void catmull_rom_chain(int n_points, int n_cp, double *x, double *y,
                        std::vector<double> &res_x, std::vector<double> &res_y)
 {
     static const double epsilon = 1e-5;
-    double xr = x[1] - x[0];
-    double yr = y[1] - y[0];
+    // double xr = x[1] - x[0];
+    // double yr = y[1] - y[0];
+    double xr = x[n_cp-1] - x[0];
+    double yr = y[n_cp-1] - y[0];
     double x_first = x[0] - xr * 0.1;
     double y_first = xr > epsilon ? (yr / xr) * (x_first - x[0]) + y[0] : y[0];
-    xr = x[n_cp-1] - x[n_cp-2];
-    yr = y[n_cp-1] - x[n_cp-2];
+    // xr = x[n_cp-1] - x[n_cp-2];
+    // yr = y[n_cp-1] - x[n_cp-2];
     double x_last = x[n_cp-1] + xr * 0.1;
     double y_last = xr > epsilon ? (yr / xr) * (x_last - x[0]) + y[0] : y[0];
 
@@ -477,7 +479,7 @@ double DiagonalCurve::getVal (double t) const
         if (it+1 < poly_x.end() && t - *it > *(it+1) - t) {
             ++d;
         }
-        return *(poly_y.begin() + d);
+        return LIM01(*(poly_y.begin() + d));
         break;
     }
 
