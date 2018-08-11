@@ -221,20 +221,26 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
         curve = { DCT_Linear }; // not enough points, fall back to linear
     } else {
         CubicSplineCurve c(curve);
-        curve.pop_back();
-        curve.pop_back();
-        double gap = coord(step);
-        while (1 - curve[curve.size()-2] > gap) {
-            double x = curve[curve.size()-2] + gap;
-            if (1 - x <= gap / 3) {
-                break;
-            }
+        double mid = coord(idx);
+        double x = 0.0;
+        constexpr double shgap = 0.075;
+        curve = { DCT_Spline };
+        while (mid - x > shgap / 2) {
             curve.push_back(x);
             curve.push_back(c.getVal(x));
+            x += shgap;
+        }
+        curve.push_back(mid);
+        curve.push_back(c.getVal(mid));
+        constexpr double hlgap = 0.2;
+        x = mid + hlgap;
+        while (1 - x > hlgap / 2) {
+            curve.push_back(x);
+            curve.push_back(c.getVal(x));
+            x += hlgap;
         }
         curve.push_back(1.0);
         curve.push_back(1.0);
-        curve.insert(curve.begin(), DCT_Spline);
     }
 }
 

@@ -289,7 +289,8 @@ inline double catmull_rom_tj(double ti,
                              double xi, double yi,
                              double xj, double yj)
 {
-    return sqrt(sqrt(pow2(xj-xi) + pow2(yj-yi))) + ti;
+    static constexpr double alpha = 0.25;
+    return pow(sqrt(pow2(xj-xi) + pow2(yj-yi)), alpha) + ti;
 }
 
 
@@ -303,7 +304,7 @@ inline void catmull_rom_spline(int n_points,
 {
     res_x.reserve(n_points);
     res_y.reserve(n_points);
-    
+
     double t0 = 0;
     double t1 = catmull_rom_tj(t0, p0_x, p0_y, p1_x, p1_y);
     double t2 = catmull_rom_tj(t1, p1_x, p1_y, p2_x, p2_y);
@@ -359,15 +360,13 @@ void catmull_rom_chain(int n_points, int n_cp, double *x, double *y,
                        std::vector<double> &res_x, std::vector<double> &res_y)
 {
     static const double epsilon = 1e-5;
-    // double xr = x[1] - x[0];
-    // double yr = y[1] - y[0];
-    double xr = x[n_cp-1] - x[0];
-    double yr = y[n_cp-1] - y[0];
-    double x_first = x[0] - xr * 0.1;
+    double xr = x[1] - x[0];
+    double yr = y[1] - y[0];
+    double x_first = x[0] - xr * 0.01;
     double y_first = xr > epsilon ? (yr / xr) * (x_first - x[0]) + y[0] : y[0];
-    // xr = x[n_cp-1] - x[n_cp-2];
-    // yr = y[n_cp-1] - x[n_cp-2];
-    double x_last = x[n_cp-1] + xr * 0.1;
+    xr = x[n_cp-1] - x[n_cp-2];
+    yr = y[n_cp-1] - x[n_cp-2];
+    double x_last = x[n_cp-1] + xr * 0.01;
     double y_last = xr > epsilon ? (yr / xr) * (x_last - x[0]) + y[0] : y[0];
 
     int segments = n_cp - 1;
