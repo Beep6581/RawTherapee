@@ -76,9 +76,9 @@ protected:
     unsigned int numFrames = 0;
 
     // to accelerate CIELAB conversion:
-    double lc00, lc01, lc02, lc10, lc11, lc12, lc20, lc21, lc22;
-    double* cache;
-    int threshold;
+    float lc00, lc01, lc02, lc10, lc11, lc12, lc20, lc21, lc22;
+    float* cache;
+    float threshold;
 
     array2D<float> rawData;  // holds preprocessed pixel values, rowData[i][j] corresponds to the ith row and jth column
     array2D<float> *rawDataFrames[4] = {nullptr};

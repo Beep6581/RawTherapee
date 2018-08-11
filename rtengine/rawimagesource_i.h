@@ -62,22 +62,22 @@ inline void RawImageSource::convert_to_cielab_row (float* ar, float* ag, float* 
 {
 
     for (int j = 0; j < W; j++) {
-        double r = ar[j];
-        double g = ag[j];
-        double b = ab[j];
+        float r = ar[j];
+        float g = ag[j];
+        float b = ab[j];
 
-        double x = lc00 * r + lc01 * g + lc02 * b;
-        double y = lc10 * r + lc11 * g + lc12 * b;
-        double z = lc20 * r + lc21 * g + lc22 * b;
+        float x = lc00 * r + lc01 * g + lc02 * b;
+        float y = lc10 * r + lc11 * g + lc12 * b;
+        float z = lc20 * r + lc21 * g + lc22 * b;
 
         if (y > threshold) {
             oL[j] = cache[(int)y];
         } else {
-            oL[j] = float(903.3 * y / MAXVALD);
+            oL[j] = float(903.3f * y / MAXVALF);
         }
 
-        oa[j] = float(500.0 * ((x > threshold ? cache[(int)x] : 7.787 * x / MAXVALD + 16.0 / 116.0) - (y > threshold ? cache[(int)y] : 7.787 * y / MAXVALD + 16.0 / 116.0)));
-        ob[j] = float(200.0 * ((y > threshold ? cache[(int)y] : 7.787 * y / MAXVALD + 16.0 / 116.0) - (z > threshold ? cache[(int)z] : 7.787 * z / MAXVALD + 16.0 / 116.0)));
+        oa[j] = 500.f * ((x > threshold ? cache[(int)x] : 7.787f * x / MAXVALF + 16.f / 116.f) - (y > threshold ? cache[(int)y] : 7.787f * y / MAXVALF + 16.f / 116.f));
+        ob[j] = 200.f * ((y > threshold ? cache[(int)y] : 7.787f * y / MAXVALF + 16.f / 116.f) - (z > threshold ? cache[(int)z] : 7.787f * z / MAXVALF + 16.f / 116.f));
     }
 }
 
@@ -154,125 +154,103 @@ inline void RawImageSource::interpolate_row_rb (float* ar, float* ab, float* pg,
                 : 0.f;
     };
 
-    if ((ri->ISRED(i, 0) || ri->ISRED(i, 1))) {
-        // RGRGR or GRGRGR line
-        for (int j = 0; j < W; j++) {
-            if (ri->ISRED(i, j)) {
-                // red is simple
-                ar[j] = rawData[i][j];
-                // blue: cross interpolation
-                int b = 0;
-                int n = 0;
+    float *nonGreen1 = ar;
+    float *nonGreen2 = ab;
 
-                if (i > 0 && j > 0) {
-                    b += rawData[i - 1][j - 1] - getPg(j - 1);
-                    n++;
-                }
+    if ((ri->ISBLUE(i, 0) || ri->ISBLUE(i, 1))) {
+        std::swap(nonGreen1, nonGreen2);
+    }
+    int j = FC(i, 0) & 1;
+    if (j) {
+        // linear R-G interp. horizontally
+        float val1;
 
-                if (i > 0 && j < W - 1) {
-                    b += rawData[i - 1][j + 1] - getPg(j + 1);
-                    n++;
-                }
+        val1 = cg[0] + rawData[i][1] - cg[1];
 
-                if (i < H - 1 && j > 0) {
-                    b += rawData[i + 1][j - 1] - getNg(j - 1);
-                    n++;
-                }
+        nonGreen1[0] = CLIP(val1);
+        // linear B-G interp. vertically
+        float val2;
 
-                if (i < H - 1 && j < W - 1) {
-                    b += rawData[i + 1][j + 1] - getNg(j + 1);
-                    n++;
-                }
-
-                b = cg[j] + b / std::max(1, n);
-                ab[j] = b;
-            } else {
-                // linear R-G interp. horizontally
-                int r;
-
-                if (j == 0) {
-                    r = cg[0] + rawData[i][1] - cg[1];
-                } else if (j == W - 1) {
-                    r = cg[W - 1] + rawData[i][W - 2] - cg[W - 2];
-                } else {
-                    r = cg[j] + (rawData[i][j - 1] - cg[j - 1] + rawData[i][j + 1] - cg[j + 1]) / 2;
-                }
-
-                ar[j] = CLIP(r);
-                // linear B-G interp. vertically
-                int b;
-
-                if (i == 0) {
-                    b = getNg(j) + rawData[1][j] - cg[j];
-                } else if (i == H - 1) {
-                    b = getPg(j) + rawData[H - 2][j] - cg[j];
-                } else {
-                    b = cg[j] + (rawData[i - 1][j] - getPg(j) + rawData[i + 1][j] - getNg(j)) / 2;
-                }
-
-                ab[j] = b;
-            }
+        if (i == 0) {
+            val2 = getNg(0) + rawData[1][0] - cg[0];
+        } else if (i == H - 1) {
+            val2 = getPg(0) + rawData[H - 2][0] - cg[0];
+        } else {
+            val2 = cg[0] + (rawData[i - 1][0] - getPg(0) + rawData[i + 1][0] - getNg(0)) / 2;
         }
-    } else {
-        // BGBGB or GBGBGB line
-        for (int j = 0; j < W; j++) {
-            if (ri->ISBLUE(i, j)) {
-                // red is simple
-                ab[j] = rawData[i][j];
-                // blue: cross interpolation
-                int r = 0;
-                int n = 0;
 
-                if (i > 0 && j > 0) {
-                    r += rawData[i - 1][j - 1] - getPg(j - 1);
-                    n++;
-                }
+        nonGreen2[0] = val2;
+    }
+    // RGRGR or GRGRGR line
+    for (; j < W - 1; j += 2) {
+        // nonGreen of row is simple
+        nonGreen1[j] = rawData[i][j];
+        // non green of next row: cross interpolation
+        float nonGreen = 0.f;
+        int n = 0;
 
-                if (i > 0 && j < W - 1) {
-                    r += rawData[i - 1][j + 1] - getPg(j + 1);
-                    n++;
-                }
-
-                if (i < H - 1 && j > 0) {
-                    r += rawData[i + 1][j - 1] - getNg(j - 1);
-                    n++;
-                }
-
-                if (i < H - 1 && j < W - 1) {
-                    r += rawData[i + 1][j + 1] - getNg(j + 1);
-                    n++;
-                }
-
-                r = cg[j] + r / std::max(n, 1);
-
-                ar[j] = r;
-            } else {
-                // linear B-G interp. horizontally
-                int b;
-
-                if (j == 0) {
-                    b = cg[0] + rawData[i][1] - cg[1];
-                } else if (j == W - 1) {
-                    b = cg[W - 1] + rawData[i][W - 2] - cg[W - 2];
-                } else {
-                    b = cg[j] + (rawData[i][j - 1] - cg[j - 1] + rawData[i][j + 1] - cg[j + 1]) / 2;
-                }
-
-                ab[j] = CLIP(b);
-                // linear R-G interp. vertically
-                int r;
-
-                if (i == 0) {
-                    r = getNg(j) + rawData[1][j] - cg[j];
-                } else if (i == H - 1) {
-                    r = getPg(j) + rawData[H - 2][j] - cg[j];
-                } else {
-                    r = cg[j] + (rawData[i - 1][j] - getPg(j) + rawData[i + 1][j] - getNg(j)) / 2;
-                }
-
-                ar[j] = r;
+        if (i > 0) {
+            if (j > 0) {
+                nonGreen += rawData[i - 1][j - 1] - getPg(j - 1);
+                n++;
             }
+            nonGreen += rawData[i - 1][j + 1] - getPg(j + 1);
+            n++;
         }
+
+        if (i < H - 1) {
+            if (j > 0) {
+                nonGreen += rawData[i + 1][j - 1] - getNg(j - 1);
+                n++;
+            }
+            nonGreen += rawData[i + 1][j + 1] - getNg(j + 1);
+            n++;
+        }
+
+        nonGreen2[j] = cg[j] + nonGreen / n;
+
+        // linear R-G interp. horizontally
+        float val1;
+
+        if (j == W - 2) {
+            val1 = cg[W - 1] + rawData[i][W - 2] - cg[W - 2];
+        } else {
+            val1 = cg[j + 1] + (rawData[i][j] - cg[j] + rawData[i][j + 2] - cg[j + 2]) / 2;
+        }
+
+        nonGreen1[j + 1] = CLIP(val1);
+        // linear B-G interp. vertically
+        float val2;
+
+        if (i == 0) {
+            val2 = getNg(j + 1) + rawData[1][j + 1] - cg[j + 1];
+        } else if (i == H - 1) {
+            val2 = getPg(j + 1) + rawData[H - 2][j + 1] - cg[j + 1];
+        } else {
+            val2 = cg[j + 1] + (rawData[i - 1][j + 1] - getPg(j + 1) + rawData[i + 1][j + 1] - getNg(j + 1)) / 2;
+        }
+
+        nonGreen2[j + 1] = val2;
+    }
+
+    if(j == W - 1) {
+        // nonGreen of row is simple
+        nonGreen1[j] = rawData[i][j];
+        // non green of next row: cross interpolation
+        float nonGreen = 0.f;
+        int n = 0;
+
+        if (i > 0) {
+            nonGreen += rawData[i - 1][j - 1] - getPg(j - 1);
+            n++;
+        }
+
+        if (i < H - 1) {
+            nonGreen += rawData[i + 1][j - 1] - getNg(j - 1);
+            n++;
+        }
+
+        nonGreen2[j] = cg[j] + nonGreen / n;
     }
 }
 

@@ -85,8 +85,8 @@ void RawImageSource::eahd_demosaic ()
     lc22 = (0.019334 * imatrices.rgb_cam[2][0] + 0.119193 * imatrices.rgb_cam[2][1] + 0.950227 * imatrices.rgb_cam[2][2]) ;// / 1.088754;
 
     int maxindex = 3 * 65536; //2*65536 3 = avoid crash 3/2013 J.Desmis
-    cache = new double[maxindex];
-    threshold = (int)(0.008856 * MAXVALD);
+    cache = new float[maxindex];
+    threshold = 0.008856 * MAXVALD;
 
     for (int i = 0; i < maxindex; i++) {
         cache[i] = std::cbrt(double(i) / MAXVALD);
@@ -98,8 +98,8 @@ void RawImageSource::eahd_demosaic ()
     rh (W, 3), gh (W, 4), bh (W, 3),
     rv (W, 3), gv (W, 4), bv (W, 3),
     lLh (W, 3), lah (W, 3), lbh (W, 3),
-    lLv (W, 3), lav (W, 3), lbv (W, 3),
-    homh (W, 3), homv (W, 3);
+    lLv (W, 3), lav (W, 3), lbv (W, 3);
+    JaggedArray<uint16_t> homh (W, 3), homv (W, 3);
 
     // interpolate first two lines
     interpolate_row_g (gh[0], gv[0], 0);
@@ -122,14 +122,15 @@ void RawImageSource::eahd_demosaic ()
         homv[1][j] = 0;
     }
 
-    int dLmaph[9];
-    int dLmapv[9];
-    int dCamaph[9];
-    int dCamapv[9];
-    int dCbmaph[9];
-    int dCbmapv[9];
+    float dLmaph[9];
+    float dLmapv[9];
+    float dCamaph[9];
+    float dCamapv[9];
+    float dCbmaph[9];
+    float dCbmapv[9];
 
     for (int i = 1; i < H - 1; i++) {
+        int mod[3] = {(i-1) % 3, i % 3, (i+1) %3};
         int ix = i % 3;
         int imx = (i - 1) % 3;
         int ipx = (i + 1) % 3;
@@ -151,19 +152,16 @@ void RawImageSource::eahd_demosaic ()
             homv[ipx][j] = 0;
         }
 
-        int sh, sv, idx;
-
         for (int j = 1; j < W - 1; j++) {
             int dmi = 0;
-
-            for (int x = -1; x <= 1; x++) {
-                idx = (i + x) % 3;
+            for (int x = -1; x <= 0; x++) {
+                int idx = mod[x + 1];
 
                 for (int y = -1; y <= 1; y++) {
                     // compute distance in a, b, and L
                     if (dmi < 4) {
-                        sh = homh[idx][j + y];
-                        sv = homv[idx][j + y];
+                        int sh = homh[idx][j + y];
+                        int sv = homv[idx][j + y];
 
                         if (sh > sv) { // fixate horizontal pixel
                             dLmaph[dmi]  = DIST(lLh[ix][j], lLh[idx][j + y]);
@@ -199,25 +197,29 @@ void RawImageSource::eahd_demosaic ()
                     dmi++;
                 }
             }
+            int idx = mod[2];
+
+            for (int y = -1; y <= 1; y++) {
+                // compute distance in a, b, and L
+                dLmaph[dmi]  = DIST(lLh[ix][j], lLh[idx][j + y]);
+                dCamaph[dmi] = DIST(lah[ix][j], lah[idx][j + y]);
+                dCbmaph[dmi] = DIST(lbh[ix][j], lbh[idx][j + y]);
+                dLmapv[dmi]  = DIST(lLv[ix][j], lLv[idx][j + y]);
+                dCamapv[dmi] = DIST(lav[ix][j], lav[idx][j + y]);
+                dCbmapv[dmi] = DIST(lbv[ix][j], lbv[idx][j + y]);
+                dmi++;
+            }
 
             // compute eL & eC
-            int eL = min(max(dLmaph[3], dLmaph[5]), max(dLmapv[1], dLmapv[7]));
-            int eCa = min(max(dCamaph[3], dCamaph[5]), max(dCamapv[1], dCamapv[7]));
-            int eCb = min(max(dCbmaph[3], dCbmaph[5]), max(dCbmapv[1], dCbmapv[7]));
+            float eL = min(max(dLmaph[3], dLmaph[5]), max(dLmapv[1], dLmapv[7]));
+            float eCa = min(max(dCamaph[3], dCamaph[5]), max(dCamapv[1], dCamapv[7]));
+            float eCb = min(max(dCbmaph[3], dCbmaph[5]), max(dCbmapv[1], dCbmapv[7]));
 
             int wh = 0;
 
-            for (int dmi = 0; dmi < 9; dmi++)
-                if (dLmaph[dmi] <= eL && dCamaph[dmi] <= eCa && dCbmaph[dmi] <= eCb) {
-                    wh++;
-                }
-
-            int wv = 0;
-
-            for (int dmi = 0; dmi < 9; dmi++)
-                if (dLmapv[dmi] <= eL && dCamapv[dmi] <= eCa && dCbmapv[dmi] <= eCb) {
-                    wv++;
-                }
+            for (int dmi = 0; dmi < 9; dmi++) {
+                wh += (dLmaph[dmi] <= eL) * (dCamaph[dmi] <= eCa) * (dCbmaph[dmi] <= eCb);
+            }
 
             homh[imx][j - 1] += wh;
             homh[imx][j]  += wh;
@@ -228,6 +230,12 @@ void RawImageSource::eahd_demosaic ()
             homh[ipx][j - 1] += wh;
             homh[ipx][j]  += wh;
             homh[ipx][j + 1] += wh;
+
+            int wv = 0;
+
+            for (int dmi = 0; dmi < 9; dmi++) {
+                wv += (dLmapv[dmi] <= eL) * (dCamapv[dmi] <= eCa) * (dCbmapv[dmi] <= eCb);
+            }
 
             homv[imx][j - 1] += wv;
             homv[imx][j]  += wv;
@@ -240,16 +248,13 @@ void RawImageSource::eahd_demosaic ()
             homv[ipx][j + 1] += wv;
         }
 
-//}
         // finalize image
-        int hc, vc;
-
         for (int j = 0; j < W; j++) {
             if (ri->ISGREEN(i - 1, j)) {
                 green[i - 1][j] = rawData[i - 1][j];
             } else {
-                hc = homh[imx][j];
-                vc = homv[imx][j];
+                int hc = homh[imx][j];
+                int vc = homv[imx][j];
 
                 if (hc > vc) {
                     green[i - 1][j] = gh[(i - 1) % 4][j];
@@ -267,12 +272,10 @@ void RawImageSource::eahd_demosaic ()
     }
 
     // finish H-2th and H-1th row, homogenity value is still valailable
-    int hc, vc;
-
     for (int i = H - 1; i < H + 1; i++)
         for (int j = 0; j < W; j++) {
-            hc = homh[(i - 1) % 3][j];
-            vc = homv[(i - 1) % 3][j];
+            int hc = homh[(i - 1) % 3][j];
+            int vc = homv[(i - 1) % 3][j];
 
             if (hc > vc) {
                 green[i - 1][j] = gh[(i - 1) % 4][j];
@@ -284,6 +287,7 @@ void RawImageSource::eahd_demosaic ()
         }
 
     // Interpolate R and B
+    #pragma omp parallel for
     for (int i = 0; i < H; i++) {
         if (i == 0) {
             interpolate_row_rb_mul_pp (rawData, red[i], blue[i], nullptr, green[i], green[i + 1], i, 1.0, 1.0, 1.0, 0, W, 1);
