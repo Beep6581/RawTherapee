@@ -367,7 +367,7 @@ void catmull_rom_chain(int n_points, int n_cp, double *x, double *y,
     xr = x[n_cp-1] - x[n_cp-2];
     yr = y[n_cp-1] - x[n_cp-2];
     double x_last = x[n_cp-1] + xr * 0.01;
-    double y_last = xr > epsilon ? (yr / xr) * (x_last - x[0]) + y[0] : y[0];
+    double y_last = xr > epsilon ? (yr / xr) * (x_last - x[n_cp-1]) + y[n_cp-1] : y[n_cp-1];
 
     int segments = n_cp - 1;
     int points_segments = n_points / segments;
