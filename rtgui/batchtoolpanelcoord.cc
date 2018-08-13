@@ -150,7 +150,6 @@ void BatchToolPanelCoordinator::initSession ()
             prsharpening->setAdjusterBehavior (false, false, false, false, false, false, false);
             sharpenEdge->setAdjusterBehavior (false, false);
             sharpenMicro->setAdjusterBehavior (false, false, false);
-            icm->setAdjusterBehavior (false, false);
             epd->setAdjusterBehavior (false, false, false, false, false);
             fattal->setAdjusterBehavior (false, false, false);
 
@@ -199,7 +198,6 @@ void BatchToolPanelCoordinator::initSession ()
 
             sharpenEdge->setAdjusterBehavior (options.baBehav[ADDSET_SHARPENEDGE_AMOUNT], options.baBehav[ADDSET_SHARPENEDGE_PASS]);
             sharpenMicro->setAdjusterBehavior (options.baBehav[ADDSET_SHARPENMICRO_AMOUNT], options.baBehav[ADDSET_SHARPENMICRO_CONTRAST], options.baBehav[ADDSET_SHARPENMICRO_UNIFORMITY]);
-            icm->setAdjusterBehavior (options.baBehav[ADDSET_FREE_OUPUT_GAMMA], options.baBehav[ADDSET_FREE_OUTPUT_SLOPE]);
 //          colortoning->setAdjusterBehavior (options.baBehav[ADDSET_COLORTONING_SPLIT], options.baBehav[ADDSET_COLORTONING_SATTHRESHOLD], options.baBehav[ADDSET_COLORTONING_SATOPACITY], options.baBehav[ADDSET_COLORTONING_STRPROTECT], options.baBehav[ADDSET_COLORTONING_BALANCE]);
             colortoning->setAdjusterBehavior (options.baBehav[ADDSET_COLORTONING_SPLIT], options.baBehav[ADDSET_COLORTONING_SATTHRESHOLD], options.baBehav[ADDSET_COLORTONING_SATOPACITY], options.baBehav[ADDSET_COLORTONING_STRENGTH], options.baBehav[ADDSET_COLORTONING_BALANCE]);
             filmSimulation->setAdjusterBehavior(options.baBehav[ADDSET_FILMSIMULATION_STRENGTH]);
@@ -279,8 +277,6 @@ void BatchToolPanelCoordinator::initSession ()
             if (options.baBehav[ADDSET_CAT_CONTRAST]) { pparams.colorappearance.contrast = 0; }
             if (options.baBehav[ADDSET_CAT_CONTRAST_Q]) { pparams.colorappearance.qcontrast = 0; }
             if (options.baBehav[ADDSET_CAT_HUE]) { pparams.colorappearance.colorh = 0; }
-            if (options.baBehav[ADDSET_FREE_OUPUT_GAMMA]) { pparams.icm.gampos = 0; }
-            if (options.baBehav[ADDSET_FREE_OUTPUT_SLOPE]) { pparams.icm.slpos = 0; }
             //if (options.baBehav[ADDSET_CBOOST_AMOUNT])  pparams.colorBoost.amount = 0;
             //if (options.baBehav[ADDSET_CS_BLUEYELLOW])  pparams.colorShift.a = 0;
             //if (options.baBehav[ADDSET_CS_GREENMAGENTA])  pparams.colorShift.b = 0;

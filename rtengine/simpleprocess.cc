@@ -375,21 +375,21 @@ private:
                             float multip = 1.f;
                             float adjustr = 1.f;
 
-                            if      (params.icm.working == "ProPhoto")   {
+                            if      (params.icm.workingProfile == "ProPhoto")   {
                                 adjustr = 1.f;   //
-                            } else if (params.icm.working == "Adobe RGB")  {
+                            } else if (params.icm.workingProfile == "Adobe RGB")  {
                                 adjustr = 1.f / 1.3f;
-                            } else if (params.icm.working == "sRGB")       {
+                            } else if (params.icm.workingProfile == "sRGB")       {
                                 adjustr = 1.f / 1.3f;
-                            } else if (params.icm.working == "WideGamut")  {
+                            } else if (params.icm.workingProfile == "WideGamut")  {
                                 adjustr = 1.f / 1.1f;
-                            } else if (params.icm.working == "Rec2020")  {
+                            } else if (params.icm.workingProfile == "Rec2020")  {
                                 adjustr = 1.f / 1.1f;
-                            } else if (params.icm.working == "Beta RGB")   {
+                            } else if (params.icm.workingProfile == "Beta RGB")   {
                                 adjustr = 1.f / 1.2f;
-                            } else if (params.icm.working == "BestRGB")    {
+                            } else if (params.icm.workingProfile == "BestRGB")    {
                                 adjustr = 1.f / 1.2f;
-                            } else if (params.icm.working == "BruceRGB")   {
+                            } else if (params.icm.workingProfile == "BruceRGB")   {
                                 adjustr = 1.f / 1.2f;
                             }
 
@@ -618,21 +618,21 @@ private:
                 float MinRMoy = 0.f;
                 float MinBMoy = 0.f;
 
-                if      (params.icm.working == "ProPhoto")   {
+                if      (params.icm.workingProfile == "ProPhoto")   {
                     adjustr = 1.f;
-                } else if (params.icm.working == "Adobe RGB")  {
+                } else if (params.icm.workingProfile == "Adobe RGB")  {
                     adjustr = 1.f / 1.3f;
-                } else if (params.icm.working == "sRGB")       {
+                } else if (params.icm.workingProfile == "sRGB")       {
                     adjustr = 1.f / 1.3f;
-                } else if (params.icm.working == "WideGamut")  {
+                } else if (params.icm.workingProfile == "WideGamut")  {
                     adjustr = 1.f / 1.1f;
-                } else if (params.icm.working == "Rec2020")  {
+                } else if (params.icm.workingProfile == "Rec2020")  {
                     adjustr = 1.f / 1.1f;
-                } else if (params.icm.working == "Beta RGB")   {
+                } else if (params.icm.workingProfile == "Beta RGB")   {
                     adjustr = 1.f / 1.2f;
-                } else if (params.icm.working == "BestRGB")    {
+                } else if (params.icm.workingProfile == "BestRGB")    {
                     adjustr = 1.f / 1.2f;
-                } else if (params.icm.working == "BruceRGB")   {
+                } else if (params.icm.workingProfile == "BruceRGB")   {
                     adjustr = 1.f / 1.2f;
                 }
 
@@ -749,7 +749,9 @@ private:
             ipf.getAutoExp (aehist, aehistcompr, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
         }
         if (params.toneCurve.histmatching) {
-            imgsrc->getAutoMatchedToneCurve(params.icm, params.toneCurve.curve);
+            if (!params.toneCurve.fromHistMatching) {
+                imgsrc->getAutoMatchedToneCurve(params.icm, params.toneCurve.curve);
+            }
 
             if (params.toneCurve.autoexp) {
                 params.toneCurve.expcomp = 0.0;
@@ -761,7 +763,6 @@ private:
             params.toneCurve.brightness = 0;
             params.toneCurve.contrast = 0;
             params.toneCurve.black = 0;
-
         }        
 
         // at this stage, we can flush the raw data to free up quite an important amount of memory
@@ -884,9 +885,49 @@ private:
             const int W = baseImg->getWidth();
             const int H = baseImg->getHeight();
             LabImage labcbdl (W, H);
-            ipf.rgb2lab (*baseImg, labcbdl, params.icm.working);
+            ipf.rgb2lab (*baseImg, labcbdl, params.icm.workingProfile);
             ipf.dirpyrequalizer (&labcbdl, 1);
-            ipf.lab2rgb (labcbdl, *baseImg, params.icm.working);
+            ipf.lab2rgb (labcbdl, *baseImg, params.icm.workingProfile);
+        }
+
+        //gamma TRC working
+        if (params.icm.workingTRC == "Custom") { //exec TRC IN free
+            Glib::ustring profile;
+            profile = params.icm.workingProfile;
+
+            if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1") {
+                int  cw = baseImg->getWidth();
+                int  ch = baseImg->getHeight();
+                // put gamma TRC to 1
+                Imagefloat* readyImg0 = NULL;
+                readyImg0 = ipf.workingtrc(baseImg, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310);
+                #pragma omp parallel for
+
+                for (int row = 0; row < ch; row++) {
+                    for (int col = 0; col < cw; col++) {
+                        baseImg->r(row, col) = (float)readyImg0->r(row, col);
+                        baseImg->g(row, col) = (float)readyImg0->g(row, col);
+                        baseImg->b(row, col) = (float)readyImg0->b(row, col);
+                    }
+                }
+
+                delete readyImg0;
+
+                //adjust TRC
+                Imagefloat* readyImg = NULL;
+                readyImg = ipf.workingtrc(baseImg, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope);
+                #pragma omp parallel for
+
+                for (int row = 0; row < ch; row++) {
+                    for (int col = 0; col < cw; col++) {
+                        baseImg->r(row, col) = (float)readyImg->r(row, col);
+                        baseImg->g(row, col) = (float)readyImg->g(row, col);
+                        baseImg->b(row, col) = (float)readyImg->b(row, col);
+                    }
+                }
+
+                delete readyImg;
+            }
         }
 
         // RGB processing
@@ -913,7 +954,7 @@ private:
         bool opautili = false;
 
         if (params.colorToning.enabled) {
-            TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params.icm.working);
+            TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params.icm.workingProfile);
             double wp[3][3] = {
                 {wprof[0][0], wprof[0][1], wprof[0][2]},
                 {wprof[1][0], wprof[1][1], wprof[1][2]},
@@ -1219,29 +1260,16 @@ private:
         bool useLCMS = false;
         bool bwonly = params.blackwhite.enabled && !params.colorToning.enabled && !autili && !butili ;
 
-        if (params.icm.gamma != "default" || params.icm.freegamma) { // if select gamma output between BT709, sRGB, linear, low, high, 2.2 , 1.8
+        ///////////// Custom output gamma has been removed, the user now has to create
+        ///////////// a new output profile with the ICCProfileCreator
 
-            GammaValues ga;
-            //  if(params.blackwhite.enabled) params.toneCurve.hrenabled=false;
-            readyImg = ipf.lab2rgbOut (labView, cx, cy, cw, ch, params.icm, &ga);
-            customGamma = true;
+        // if Default gamma mode: we use the profile selected in the "Output profile" combobox;
+        // gamma come from the selected profile, otherwise it comes from "Free gamma" tool
 
-            //or selected Free gamma
-            useLCMS = false;
+        readyImg = ipf.lab2rgbOut (labView, cx, cy, cw, ch, params.icm);
 
-            if ((jprof = ICCStore::getInstance()->createCustomGammaOutputProfile (params.icm, ga)) == nullptr) {
-                useLCMS = true;
-            }
-
-        } else {
-            // if Default gamma mode: we use the profile selected in the "Output profile" combobox;
-            // gamma come from the selected profile, otherwise it comes from "Free gamma" tool
-
-            readyImg = ipf.lab2rgbOut (labView, cx, cy, cw, ch, params.icm);
-
-            if (settings->verbose) {
-                printf ("Output profile_: \"%s\"\n", params.icm.output.c_str());
-            }
+        if (settings->verbose) {
+            printf ("Output profile_: \"%s\"\n", params.icm.outputProfile.c_str());
         }
 
         delete labView;
@@ -1300,21 +1328,21 @@ private:
         } else {
             // use the selected output profile if present, otherwise use LCMS2 profile generate by lab2rgb16 w/ gamma
 
-            if (params.icm.output != "" && params.icm.output != ColorManagementParams::NoICMString) {
+            if (params.icm.outputProfile != "" && params.icm.outputProfile != ColorManagementParams::NoICMString) {
 
                 // if ICCStore::getInstance()->getProfile send back an object, then ICCStore::getInstance()->getContent will do too
-                cmsHPROFILE jprof = ICCStore::getInstance()->getProfile (params.icm.output); //get outProfile
+                cmsHPROFILE jprof = ICCStore::getInstance()->getProfile (params.icm.outputProfile); //get outProfile
 
                 if (jprof == nullptr) {
                     if (settings->verbose) {
-                        printf ("\"%s\" ICC output profile not found!\n - use LCMS2 substitution\n", params.icm.output.c_str());
+                        printf ("\"%s\" ICC output profile not found!\n - use LCMS2 substitution\n", params.icm.outputProfile.c_str());
                     }
                 } else {
                     if (settings->verbose) {
-                        printf ("Using \"%s\" output profile\n", params.icm.output.c_str());
+                        printf ("Using \"%s\" output profile\n", params.icm.outputProfile.c_str());
                     }
 
-                    ProfileContent pc = ICCStore::getInstance()->getContent (params.icm.output);
+                    ProfileContent pc = ICCStore::getInstance()->getContent (params.icm.outputProfile);
                     readyImg->setOutputProfile (pc.getData().c_str(), pc.getData().size());
                 }
             } else {
@@ -1361,7 +1389,7 @@ private:
         double scale_factor = ipf.resizeScale (&params, fw, fh, imw, imh);
 
         std::unique_ptr<LabImage> tmplab (new LabImage (fw, fh));
-        ipf.rgb2lab (*baseImg, *tmplab, params.icm.working);
+        ipf.rgb2lab (*baseImg, *tmplab, params.icm.workingProfile);
 
         if (params.crop.enabled) {
             int cx = params.crop.x;
@@ -1398,7 +1426,7 @@ private:
 
         delete baseImg;
         baseImg = new Imagefloat (fw, fh);
-        ipf.lab2rgb (*tmplab, *baseImg, params.icm.working);
+        ipf.lab2rgb (*tmplab, *baseImg, params.icm.workingProfile);
     }
 
     void adjust_procparams (double scale_factor)

@@ -79,7 +79,7 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
     }
 
     reset = Gtk::manage (new Gtk::Button ());
-    reset->add (*Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
+    reset->add (*Gtk::manage (new RTImage ("undo-small.png", "redo-small.png")));
     setExpandAlignProperties(reset, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     reset->set_relief (Gtk::RELIEF_NONE);
     reset->set_tooltip_markup (M("ADJUSTER_RESET_TO_DEFAULT"));
@@ -166,7 +166,7 @@ void Adjuster::addAutoButton (Glib::ustring tooltip)
 {
     if (!automatic) {
         automatic = new Gtk::CheckButton ();
-        //automatic->add (*Gtk::manage (new RTImage ("processing.png")));
+        //automatic->add (*Gtk::manage (new RTImage ("gears.png")));
         automatic->set_tooltip_markup(tooltip.length() ? Glib::ustring::compose("<b>%1</b>\n\n%2", M("GENERAL_AUTO"), tooltip) : M("GENERAL_AUTO"));
         setExpandAlignProperties(automatic, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
         autoChange = automatic->signal_toggled().connect( sigc::mem_fun(*this, &Adjuster::autoToggled) );

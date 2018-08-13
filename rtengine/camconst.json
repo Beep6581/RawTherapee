@@ -660,7 +660,7 @@ Camera constants:
         }
     },
 
-    { // Quality A, ISO and aperture WL data copyed from Shalrath's 60D data at RawTherapee forums
+    { // Quality A, ISO and aperture WL data copied from Shalrath's 60D data at RawTherapee forums
         "make_model": "Canon EOS 60Da",
         "dcraw_matrix": [ 17492,-7240,-2023,-1791,10323,1701,-186,1329,5406 ], // 60Da dng d65
         "ranges": {
@@ -912,7 +912,7 @@ Camera constants:
         }
     },
 
-    { // Quality C, white levels and apperture scaling copied from Canon EOS77d
+    { // Quality C, white levels and aperture scaling copied from Canon EOS77d
         "make_model": [ "Canon EOS Rebel T7i", "Canon EOS 800D", "Canon EOS Kiss X9i" ],
         "dcraw_matrix": [ 6970,-512,-968,-4425,12161,2553,-739,1982,5601 ], // DNG_V9.10.1 D65
         "raw_crop": [ 264, 36, 6024, 4020 ], // full size 6288x4056, official crop 276,48,6275,4047
@@ -944,7 +944,7 @@ Camera constants:
         }
     },
 
-    { // Quality B, apperture scaling copied from Canon EOS77d
+    { // Quality B, aperture scaling copied from Canon EOS77d
         "make_model": [ "Canon EOS Rebel SL2", "Canon EOS 200D", "Canon EOS Kiss X9" ],
         "dcraw_matrix": [ 7377,-742,-998,-4235,11981,2549,-673,1918,5538 ], // DNG_V9.12 D65
         "raw_crop": [ 264, 36, 6024, 4020 ], // full size 6288x4056, official crop 276,48,6275,4047

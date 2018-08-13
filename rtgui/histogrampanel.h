@@ -183,9 +183,9 @@ protected:
     Gtk::Image *barImage_g;
     Gtk::Image *chroImage_g;
 
-    Gtk::Image *modeImage;
-    Gtk::Image *modeImage_g;
-    Gtk::Image *modeImage_g2;
+    Gtk::Image *modeImage0;
+    Gtk::Image *modeImage1;
+    Gtk::Image *modeImage2;
 
     sigc::connection rconn;
     void setHistInvalid ();

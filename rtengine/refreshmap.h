@@ -66,7 +66,7 @@
 #define DEFRINGE                                                                                                          (M_LUMINANCE|M_COLOR)
 #define DIRPYRDENOISE                                                                                                     (M_LUMINANCE|M_COLOR)
 #define DIRPYREQUALIZER                                                                                                   (M_LUMINANCE|M_COLOR)
-#define GAMMA             M_MONITOR
+#define GAMMA             M_VOID //M_MONITOR
 #define CROP              M_CROP
 #define RESIZE            M_VOID
 #define EXIF              M_VOID

@@ -179,8 +179,8 @@ Glib::ustring RenameDialog::getNewName ()
 //    templ = Gtk::manage (new Gtk::Entry ());
 //    Gtk::Button* add = Gtk::manage (new Gtk::Button ());
 //    Gtk::Button* del = Gtk::manage (new Gtk::Button ());
-//    add->add (*Gtk::manage (new RTImage ("list-add-small.png")));
-//    del->add (*Gtk::manage (new RTImage ("list-remove-red-small.png")));
+//    add->add (*Gtk::manage (new RTImage ("add-small.png")));
+//    del->add (*Gtk::manage (new RTImage ("remove-small.png")));
 //    hb->pack_start (*templ);
 //    hb->pack_start (*add, Gtk::PACK_SHRINK, 2);
 //    hb->pack_start (*del, Gtk::PACK_SHRINK, 2);

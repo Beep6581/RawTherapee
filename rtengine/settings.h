@@ -50,17 +50,17 @@ public:
     bool            verbose;
     Glib::ustring   darkFramesPath;         ///< The default directory for dark frames
     Glib::ustring   flatFieldsPath;         ///< The default directory for flat fields
-    Glib::ustring   adobe;                  // default name of AdobeRGB1998
-    Glib::ustring   prophoto;               // default name of Prophoto
-    Glib::ustring   prophoto10;             // default name of Prophoto
 
-    Glib::ustring   widegamut;              //default name of WidegamutRGB
-    Glib::ustring   beta;                   // default name of BetaRGB
-    Glib::ustring   best;                   // default name of BestRGB
-    Glib::ustring   bruce;                  // default name of Bruce
-    Glib::ustring   srgb;                   // default name of SRGB space profile
-    Glib::ustring   srgb10;                 // default name of SRGB space profile
-    Glib::ustring   rec2020;                   // default name of rec2020
+    Glib::ustring   adobe;                  // filename of AdobeRGB1998 profile (default to the bundled one)
+    Glib::ustring   prophoto;               // filename of Prophoto     profile (default to the bundled one)
+    Glib::ustring   widegamut;              // filename of WidegamutRGB profile (default to the bundled one)
+    Glib::ustring   beta;                   // filename of BetaRGB      profile (default to the bundled one)
+    Glib::ustring   best;                   // filename of BestRGB      profile (default to the bundled one)
+    Glib::ustring   bruce;                  // filename of BruceRGB     profile (default to the bundled one)
+    Glib::ustring   srgb;                   // filename of sRGB         profile (default to the bundled one)
+    Glib::ustring   rec2020;                // filename of Rec2020      profile (default to the bundled one)
+    Glib::ustring   ACESp0;                 // filename of ACES P0      profile (default to the bundled one)
+    Glib::ustring   ACESp1;                 // filename of ACES P1      profile (default to the bundled one)
 
     bool            gamutICC; // no longer used
     bool            gamutLch;
@@ -89,13 +89,13 @@ public:
         RAW_IF_NOT_JPEG_FULLSIZE
     };
     ThumbnailInspectorMode thumbnail_inspector_mode;
-    
+
     /** Creates a new instance of Settings.
       * @return a pointer to the new Settings instance. */
-    static Settings* create  ();
+    static Settings* create();
     /** Destroys an instance of Settings.
       * @param s a pointer to the Settings instance to destroy. */
-    static void      destroy (Settings* s);
+    static void      destroy(Settings* s);
 };
 }
 

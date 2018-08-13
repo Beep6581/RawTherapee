@@ -42,19 +42,19 @@ FileThumbnailButtonSet::FileThumbnailButtonSet (FileBrowserEntry* myEntry)
 {
 
     if (!iconsLoaded) {
-        unRankIcon  = RTImage::createFromPng ("ratednotg.png");
-        rankIcon    = RTImage::createFromPng ("rated.png");
-        gRankIcon   = RTImage::createFromPng ("grayrated.png");
-        trashIcon   = RTImage::createFromPng ("trash-thumbnail.png");
-        unTrashIcon = RTImage::createFromPng ("undelete-thumbnail.png");
-        processIcon = RTImage::createFromPng ("processing-thumbnail.png");
+        unRankIcon  = RTImage::createFromPng ("star-hollow-small.png");
+        rankIcon    = RTImage::createFromPng ("star-gold-small.png");
+        gRankIcon   = RTImage::createFromPng ("star-small.png");
+        trashIcon   = RTImage::createFromPng ("trash-small.png");
+        unTrashIcon = RTImage::createFromPng ("trash-remove-small.png");
+        processIcon = RTImage::createFromPng ("gears-small.png");
 
-        colorLabelIcon_0 = RTImage::createFromPng ("cglabel0.png"); //("nocolorlabel.png");
-        colorLabelIcon_1 = RTImage::createFromPng ("clabel1.png");
-        colorLabelIcon_2 = RTImage::createFromPng ("clabel2.png");
-        colorLabelIcon_3 = RTImage::createFromPng ("clabel3.png");
-        colorLabelIcon_4 = RTImage::createFromPng ("clabel4.png");
-        colorLabelIcon_5 = RTImage::createFromPng ("clabel5.png");
+        colorLabelIcon_0 = RTImage::createFromPng ("circle-empty-gray-small.png");
+        colorLabelIcon_1 = RTImage::createFromPng ("circle-red-small.png");
+        colorLabelIcon_2 = RTImage::createFromPng ("circle-yellow-small.png");
+        colorLabelIcon_3 = RTImage::createFromPng ("circle-green-small.png");
+        colorLabelIcon_4 = RTImage::createFromPng ("circle-blue-small.png");
+        colorLabelIcon_5 = RTImage::createFromPng ("circle-purple-small.png");
         iconsLoaded = true;
     }
 

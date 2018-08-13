@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.66
+  Version 2.71
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -72,17 +72,27 @@
     outline-style: none; /* removes the ugly dashed focus line */
     border-image: none;
     transition: none;
+    -gtk-icon-shadow: none;
+}
+
+#ToolBarPanelFileBrowser button:not(.smallbutton) image,
+#EditorTopPanel  button:not(.narrowbutton) image,
+#IopsPanel button:not(.Right) image,
+#ProfilePanel button image,
+#MainNotebook > header :not(#CloseButton) > image {
+    -gtk-icon-transform: scale(calc(22/24));
 }
 
 *:disabled {
     color: @fg-disabled;
+    -gtk-icon-effect: dim;
 }
 
 #ToolPanelNotebook {
-    min-width: 24.08334em;
+    min-width: 22.25em;
 }
 #HistoryPanel {
-    min-width: 18em;
+    min-width: 17.5em;
 }
 
 window.background {
@@ -134,10 +144,6 @@ undershoot {
 label {
     padding: 0;
     margin: 0;
-}
-
-.drawingarea:not(.slider) {
-    background-color: @bg-dark-grey;
 }
 
 /*** Frames ************************************************************************************/
@@ -273,6 +279,10 @@ textview:selected, treeview:selected {
     margin-top: -8px;
     margin-bottom: -4px;
 }
+#Snapshots button image{
+    min-height: 24px;
+    min-width: 24px;
+}
 #Snapshots > box > :nth-child(1) {
     margin-bottom: 0.41667em;
 }
@@ -361,6 +371,7 @@ filechooser list row:selected {
 #HistogramPanel {
     min-height: 0;
     margin: -2px 0;
+    padding: 0;
     border: none;
     background-color: transparent;
 }
@@ -401,18 +412,21 @@ filechooser list row:selected {
     background-color: @bg-dark-grey;
     background-image: none;
     box-shadow: none;
-    min-height: 1.58334em;
-    min-width: 1.5em;
+    min-height: 1.5em;
+    min-width: calc(1.33334em + 6px);
     border-radius: 0;
 }
 
 #histButton:first-child {
-    margin-top: 1px;
+    margin-top: 0.16667em;
 }
 #histButton:last-child {
-    margin-bottom: 1px;
+    margin-bottom: 0.16667em;
 }
 
+#HistogramPanel image {
+    -gtk-icon-transform: scale(calc(14/16));
+}
 /*** end ***************************************************************************************/
 
 /*** Separator *********************************************************************************/
@@ -648,8 +662,8 @@ scale trough {
 }
 scale:not(:disabled) trough highlight {
     background-color: @accent-color2;
-    border: 0.08334em solid @bg-button-border;
-    box-shadow: inset 0 0.08334em shade(@accent-color2, 1.3);
+    border: 0.08334em solid @bg-dark-grey;
+    box-shadow: inset 0 0.08334em shade(@accent-color2, 1.25);
     border-radius: 0.5em;
 }
 
@@ -762,18 +776,18 @@ notebook header.left tab {
     padding: 0.33334em 0;
 }
 notebook header tab > grid > image {
-    min-height: 2.33334em;
+    min-height: 2.5em;
     min-width: 0;
     padding: 0 0.16667em 0 0;
     margin: 0;
 }
 notebook header.left tab > grid > image {
     min-height: 0;
-    min-width: 2.33334em;
+    min-width: 2.5em;
     padding: 0.16667em 0 0;
 }
 notebook header tab label {
-    margin: 0.33334em;
+    margin: 0.08334em;
 }
 notebook header tab:hover label {
     color: @headline-hl;
@@ -838,13 +852,13 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     padding: 0 0.33334em;
 }
 #ToolPanelNotebook > header tab + tab {
-    margin-left: 0.33333em;
+    margin-left: 0.25em;
 }
 
-#ToolPanelNotebook > header tab image{
-    min-height: 2.5em;
-    min-width: 2em;
-    padding: 0;
+#ToolPanelNotebook > header tab #TextOrIcon image{
+    min-height: 2.33334em;
+    min-width: calc(2em + 4px);
+    padding: 2px 0;
     margin: 0;
 }
 
@@ -854,6 +868,10 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 #RightNotebook > stack {
     background-color: @bg-grey;
     padding: 0;
+}
+#RightNotebook header tab label {
+    padding-left: 0.16667em;
+    padding-right: 0.16667em;
 }
 
 #RightNotebook > stack > :nth-child(1) > * > box,
@@ -865,6 +883,11 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 #PrefNotebook header {
     margin: -0.66667em -0.66667em 0.33334em;
 }
+#PrefNotebook header tab label {
+    padding-top: 0.16667em;
+    padding-bottom: 0.16667em;
+}
+
 #AboutNotebook header {
     margin: -0.66667em -0.66667em 0.66667em;
 }
@@ -960,7 +983,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 #MetaPanelNotebook > stack > box > grid > button {
     margin-top: 0.08334em;
     margin-bottom: 0.08334em;
-    min-height: 2.16667em;
+    min-height: 2.33334em;
 }
 
 #MetaPanelNotebook label {
@@ -996,15 +1019,32 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 #ToolBarPanelFileBrowser > button {
     margin: 0 0.08334em;
 }
-#ToolBarPanelFileBrowser > box > box > button {
-    min-height: 0.91667em;
-    min-width: 1.33333em;
+/* Filter */
+#ToolBarPanelFileBrowser .smallbuttonbox {
+    min-height: 1.16667em;
     padding: 0;
-    margin: 0.16667em 0 0 0;
+    margin: 0;
+}
+#ToolBarPanelFileBrowser .smallbuttonbox:nth-child(1) {
+    margin: 0 0 2px 0;
+}
+#ToolBarPanelFileBrowser .smallbuttonbox button.smallbutton {
+    min-height: 0;
+    min-width: 1.16667em;
+    padding: 0;
+    margin: 0 2px;
     border: none;
+    border-radius: 0;
     background-color: transparent;
     background-image: none;
     box-shadow: none;
+}
+#ToolBarPanelFileBrowser .smallbuttonbox button.smallbutton:checked {
+    background-color: @bg-dark-grey;
+}
+#ToolBarPanelFileBrowser .smallbuttonbox button.smallbutton image{
+    -gtk-icon-transform: scale(calc(14/16));
+    margin: -2px
 }
 
 #ToolBarPanelFileBrowser entry + button.flat,
@@ -1050,15 +1090,21 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 }
 
 #BeforeAfterContainer label {
-    min-height: 2.41667em;
+    min-height: 2.66667em;
     padding: 0 0.5em;
 }
 /* Small Lock Button */
 #BeforeAfterContainer button {
-    min-height: 1.66667em;
-    min-width: 1.75em;
-    margin: 0.25em;
-    padding: 0 0 0 0.08334em;
+    min-height: 2em;
+    min-width: 2em;
+    margin: 0.25em 0.25em 0.25em 0;
+    padding: 0;
+}
+#BeforeAfterContainer button image{
+    margin: 0 0 0 1px;
+}
+#BeforeAfterContainer button:checked image{
+    margin: 0 -2px 0 3px;
 }
 /**/
 
@@ -1069,15 +1115,15 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 }
 #EditorTopPanel button {
     margin: 0 0.08334em;
-    min-height: 2.16667em;
-    min-width: 2.16667em;
+    min-height: 2.33334em;
+    min-width: 2.33334em;
 }
 /* Removes margin from the last button. Otherwise the filmstrip will cut of the right border. */
 #EditorTopPanel :last-child > button:last-child {
     margin-right: 0;
 }
 
-#EditorTopPanel > box:nth-child(9) > button.image-button {
+#EditorTopPanel button.narrowbutton {
     min-width: 1.05em;
     padding: 0;
 }
@@ -1108,9 +1154,10 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 /**/
 #MyExpander .drawingarea:not(.slider) {
     border: 0.08334em solid @bg-light-grey;
+    background-color: @bg-dark-grey;
 }
 #MyExpander .slider,
-#MyExpander .drawingarea:nth-child(2) {
+#MyExpander #CurveSHCSelector {
     background-image: linear-gradient(to bottom, shade (@accent-color4,1.15), shade (@accent-color4,.85));
     background-color: @accent-color4;
     border: 0.08334em solid rgb(15,15,15);
@@ -1127,10 +1174,6 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 #ToolPanelNotebook scrolledwindow viewport.frame {
     padding: 0 0.56em;
 }
-/* #MyExpander.withScrollbar {
-    padding: 0 6px;
-}
- */
 
 #MyExpander {
     margin: 0;
@@ -1155,13 +1198,13 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 
 #MyExpanderTitle > box {
     margin: 0;
-    padding: 0.33334em 0;
+    padding: 0.25em 0;
 }
 
 #MyExpanderTitle label {
     color: @headline-big;
     padding: 0;
-    margin: 0 0.25em 0 0.5em;
+    margin: 0.08334em 0.25em 0 0.5em;
 }
 
 #MyExpanderTitle:hover label {
@@ -1263,7 +1306,7 @@ popover.background modelbutton:hover {
 
 /*** Switch ***********************************************************************************/
 switch {
-    min-height: 2.16667em;
+    min-height: 2.33334em;
     min-width: 11em;
     margin: 0;
     padding: 0;
@@ -1308,8 +1351,8 @@ switch:disabled:not(:checked) {
 
 /*** Buttons ***********************************************************************************/
 button {
-    min-height: 2.16667em;
-    min-width: 2.16667em;
+    min-height: 2.33334em;
+    min-width: 2.33334em;
     margin: 0;
     padding: 0; /* x */
     border-radius: 0.2em;
@@ -1336,7 +1379,7 @@ button.text-button label {
 
 filechooser button image,
 #MyFileChooserButton image {
-    opacity: .8;
+    opacity: .70;
     -gtk-icon-style: symbolic;
 }
 
@@ -1347,23 +1390,19 @@ button.flat {
     background-image: none;
     background-color: transparent;
 }
-/* Resetbutton Queue & Save as*/
-dialog scale + button.flat,
-scale + button.flat {
-    min-height: 1.33334em;
-    min-width: 1.25em;
-    margin: 0.25em 0 0.16667em 0.16667em;
-    padding: 0 0 0 0.08334em;
-    -gtk-icon-shadow: none;
-}
 
 /* Resetbutton */
-#MyExpander button.flat {
-    min-height: 1.33334em;
-    min-width: 1.25em;
+#MyExpander button.flat,
+dialog scale + button.flat,
+scale + button.flat,
+dialog entry + button.flat {
+    min-height: 1.16667em;
+    min-width: 1.66667em;
     margin: 0.08334em 0 0.08334em 0.16667em;
-    padding: 0 0 0 0.08334em;
-    -gtk-icon-shadow: none;
+    padding: 0;
+}
+dialog entry + button.flat {
+    min-height: 1.66667em;
 }
 
 #MyExpander scale + button.flat {
@@ -1381,10 +1420,15 @@ scale + button.flat {
 /* Buttons Curve drawingarea*/
 #MyExpander button.flat + button.flat,
 #MyExpander button.flat:first-child {
-    min-height: 2.16667em;
-    min-width: 2.16667em;
-    margin: 0.08334em;
+    min-height: 2em;
+    min-width: 2em;
+    margin: 0.16667em 0.16667em 0 0;
     padding: 0;
+}
+#MyExpander button.flat + button.flat image,
+#MyExpander button.flat:first-child image{
+     -gtk-icon-transform: scale(calc(20/24));
+    margin: -2px;
 }
 /**/
 
@@ -1428,7 +1472,12 @@ button.MiddleH {
 }
 #ProfilePanel combobox {
     margin-left: 0.16667em;
+    margin-right: 0.16667em;
 }
+#ProfilePanel button.Left {
+    margin-left: -2px;
+}
+
 #PlacesPaned button.Left,
 #PlacesPaned button.Right {
     margin-top: 3px;
@@ -1439,7 +1488,7 @@ button.MiddleH {
 /**/
 
 /* Button base format for Toolbox and dialogs */
-#ToolPanelNotebook > stack > box > box > combobox .combo,
+#ToolPanelNotebook > stack > box > box > combobox button,
 dialog button,
 #MyExpander button,
 #BatchQueueButtonsMainContainer button {
@@ -1452,23 +1501,44 @@ dialog button,
     min-width: 1.66667em;
     padding: 0;
 }
-combobox .combo,
-dialog combobox .combo,
-#ToolPanelNotebook combobox .combo,
-#BatchQueueButtonsMainContainer combobox .combo {
-    padding: 0 0.26667em;
+
+#ToolPanelNotebook > stack > box > box > combobox button.combo,
+dialog button.combo,
+#MyExpander button.combo,
+#BatchQueueButtonsMainContainer button.combo {
+    padding: 0;
+}
+#ToolPanelNotebook > stack > box > box > combobox {
+    margin-right: 0.25em;
+}
+combobox button cellview {
+    padding: 0 0 0 0.16667em;
+}
+combobox arrow {
+    padding: 0 0.16667em 0 0;
+    margin: 0;
+}
+#MetaPanelNotebook combobox arrow {
+    padding: 0;
+    min-width: 1.25em;
+}
+.popupbutton-arrow {
+    min-width: 0;
 }
 /**/
 
 /* Add/remove space between buttons and labels in toolbox*/
+#ToolPanelNotebook > stack > box > box > label {
+    margin: 0 0 0 0.25em;
+}
+
 #MyExpander combobox:not(:first-child):not(:only-child),
-#MyExpander button:not(.flat).Left,
+#MyExpander .image-combo:not(:first-child),
 #MyExpander button:not(.flat) + combobox,
 #MyExpander combobox + button:not(.flat),
-#MyExpander combobox + combobox
-/* Crash
+#MyExpander combobox + combobox,
 #MyExpander button + label,
-#MyExpander combobox + label */ {
+#MyExpander combobox + label {
     margin-left: 0.16667em;
 }
 
@@ -1484,22 +1554,27 @@ buttonbox:not(.dialog-action-area) button{
 #PrefNotebook buttonbox:not(.dialog-action-area) {
     margin-right: -5px;
 }
+#PrefNotebook radiobutton + entry + button:last-child image {
+    -gtk-icon-transform: scale(calc(17/24));
+    margin: -5px;
+}
 
 /* Arrow toggle combo button */
-#IopsPanel button:not(.flat).Left + button:not(.flat).Right,
-#MyExpander button:not(.flat).Left + button:not(.flat).Right {
+#IopsPanel .image-combo button.Right,
+#MyExpander .image-combo button.Right {
     border-left: none;
     margin-left: 0;
-    padding-left: 0.33334em;
-    padding-right: 0.33334em;
+    padding-left: 0;
+    padding-right: 0;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
+    min-width: 1.33334em;
 }
-#IopsPanel button:not(.flat).Left,
-#MyExpander button:not(.flat).Left {
+#IopsPanel .image-combo button.Left,
+#MyExpander .image-combo button.Left {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
-    min-width: 2.16667em;
+    min-width: 2.33334em;
 }
 /**/
 
@@ -1508,16 +1583,22 @@ buttonbox:not(.dialog-action-area) button{
     margin: 0;/* x */
 }
 /* Graduated filter big button */
-#ExpanderBox > box > box:first-child > button:not(.flat):not(.text-button):first-child {
-    min-height: 2.16667em;
-    min-width: 2.16667em;
+#MyExpander button:not(.image-button).independent:first-child:not(.flat):only-child {
+    min-height: 2em;
+    min-width: 2em;
     padding: 0;
-    margin: 0 0 0.5em;
+    margin: 0 0 0.33334em;
 }
-
-.popupbutton-arrow {
-    min-width: 0;
+#MyExpander button:not(.image-button).independent:first-child:not(.flat):only-child image {
+    -gtk-icon-transform: scale(calc(20/24));
+    margin: -2px;
 }
+/* WB pipete big button*/
+#MyExpander button.image-button.independent:first-child:not(.flat):not(:only-child) image {
+    -gtk-icon-transform: scale(calc(18/24));
+    margin: -4px;
+}
+/**/
 
 button.color {
     min-height: 1.16667em;
@@ -1526,7 +1607,7 @@ button.color {
 
 /* Save, Cancel, OK ... buttons */
 .dialog-action-area button {
-    min-height: 2.16667em;
+    min-height: 2.33334em;
     margin-top: 0.33334em;
 }
 messagedialog .dialog-action-area button {
@@ -1672,7 +1753,7 @@ messagedialog headerbar button.titlebutton {
 
 #MainNotebook tab #CloseButton {
     padding: 0;
-    margin: 0.33334em -3px 0.33334em 0.08334em;
+    margin: 0.41667em -2px 0.5em 0.25em;
     min-width: 1.5em;
     min-height: 1.5em;
 }
@@ -1731,7 +1812,6 @@ radio {
     min-width: 1.16667em;
     box-shadow: none;
     background-repeat: no-repeat;
-    -gtk-icon-shadow: none;
     color: @text-color;
 }
 radiobutton label,
@@ -1829,7 +1909,6 @@ spinbutton button {
     border: none;
     border-radius: 0;
     box-shadow: none;
-    -gtk-icon-shadow: none;
 }
 #MyExpander spinbutton entry,
 spinbutton entry {

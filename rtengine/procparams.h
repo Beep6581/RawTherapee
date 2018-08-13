@@ -76,14 +76,14 @@ public:
     {
         if (is_double) {
             return
-                std::fabs (bottom_left - rhs.bottom_left) < 1e-10
-                && std::fabs (top_left - rhs.top_left) < 1e-10
-                && std::fabs (bottom_right - rhs.bottom_right) < 1e-10
-                && std::fabs (top_right - rhs.top_right) < 1e-10;
+                std::fabs(bottom_left - rhs.bottom_left) < 1e-10
+                && std::fabs(top_left - rhs.top_left) < 1e-10
+                && std::fabs(bottom_right - rhs.bottom_right) < 1e-10
+                && std::fabs(top_right - rhs.top_right) < 1e-10;
         } else {
             return
-                std::fabs (bottom_left - rhs.bottom_left) < 1e-10
-                && std::fabs (top_left - rhs.top_left) < 1e-10;
+                std::fabs(bottom_left - rhs.bottom_left) < 1e-10
+                && std::fabs(top_left - rhs.top_left) < 1e-10;
         }
     }
 
@@ -113,7 +113,7 @@ public:
         return top_left;
     }
 
-     T getBottomLeft() const
+    T getBottomLeft() const
     {
         return bottom_left;
     }
@@ -123,7 +123,7 @@ public:
         return top_left;
     }
 
-   T getBottomRight() const
+    T getBottomRight() const
     {
         return bottom_right;
     }
@@ -173,7 +173,7 @@ public:
     // RV: Type of the value on the X axis
     // RV2: Type of the maximum value on the Y axis
     template <typename RT, typename RV, typename RV2>
-    RT multiply (RV x, RV2 y_max) const
+    RT multiply(RV x, RV2 y_max) const
     {
         const double val = x;
 
@@ -281,6 +281,7 @@ struct ToneCurveParams {
     int         hlcompr;        // Highlight Recovery's compression
     int         hlcomprthresh;  // Highlight Recovery's threshold
     bool histmatching; // histogram matching
+    bool fromHistMatching;
     bool clampOOG; // clamp out of gamut colours
 
     ToneCurveParams();
@@ -293,8 +294,7 @@ struct ToneCurveParams {
 /**
   * Parameters of Retinex
   */
-struct RetinexParams
-{
+struct RetinexParams {
     bool enabled;
     std::vector<double>   cdcurve;
     std::vector<double>   cdHcurve;
@@ -340,8 +340,7 @@ struct RetinexParams
 /**
   * Parameters of the luminance curve
   */
-struct LCurveParams
-{
+struct LCurveParams {
     bool enabled;
     std::vector<double>   lcurve;
     std::vector<double>   acurve;
@@ -368,7 +367,7 @@ struct LCurveParams
 
 /**
  * Parameters for local contrast
- */ 
+ */
 struct LocalContrastParams {
     bool enabled;
     int radius;
@@ -1012,21 +1011,21 @@ struct ResizeParams {
   * Parameters of the color spaces used during the processing
   */
 struct ColorManagementParams {
-    Glib::ustring input;
-    bool          toneCurve;
-    bool          applyLookTable;
-    bool          applyBaselineExposureOffset;
-    bool          applyHueSatMap;
+    Glib::ustring inputProfile;
+    bool toneCurve;
+    bool applyLookTable;
+    bool applyBaselineExposureOffset;
+    bool applyHueSatMap;
     int dcpIlluminant;
-    Glib::ustring working;
-    Glib::ustring output;
+
+    Glib::ustring workingProfile;
+    Glib::ustring workingTRC;
+    double workingTRCGamma;
+    double workingTRCSlope;
+
+    Glib::ustring outputProfile;
     RenderingIntent outputIntent;
     bool outputBPC;
-
-    Glib::ustring gamma;
-    double gampos;
-    double slpos;
-    bool freegamma;
 
     static const Glib::ustring NoICMString;
 
@@ -1346,7 +1345,7 @@ struct RAWParams {
 
         static const std::vector<const char*>& getMethodStrings();
         static Glib::ustring getMethodString(Method method);
-     };
+    };
 
     BayerSensor bayersensor;         ///< RAW parameters for Bayer sensors
     XTransSensor xtranssensor;       ///< RAW parameters for X-Trans sensors
@@ -1475,7 +1474,7 @@ public:
 
     /** Creates a new instance of ProcParams.
       * @return a pointer to the new ProcParams instance. */
-    static ProcParams* create ();
+    static ProcParams* create();
 
     /** Destroys an instance of ProcParams.
       * @param pp a pointer to the ProcParams instance to destroy. */
@@ -1516,7 +1515,7 @@ public:
     void clearGeneral();
     int  load(const Glib::ustring& fName);
     void set(bool v);
-    void applyTo(ProcParams* destParams) const ;
+    void applyTo(ProcParams* destParams, bool fromLastSaved = false) const ;
 
     rtengine::procparams::ProcParams* pparams;
     ParamsEdited* pedited;

@@ -57,11 +57,11 @@ CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDet
 
     titleHeight = ih;
 
-    bZoomOut = new LWButton (RTImage::createFromPng ("gtk-zoom-out-small.png"), 0, nullptr, LWButton::Left, LWButton::Center, "Zoom Out");
-    bZoomIn  = new LWButton (RTImage::createFromPng ("gtk-zoom-in-small.png"),  1, nullptr, LWButton::Left, LWButton::Center, "Zoom In");
-    bZoom100 = new LWButton (RTImage::createFromPng ("gtk-zoom-100-small.png"), 2, nullptr, LWButton::Left, LWButton::Center, "Zoom 100/%");
-    //bZoomFit = new LWButton (RTImage::createFromPng ("gtk-zoom-fit.png"), 3, NULL, LWButton::Left, LWButton::Center, "Zoom Fit");
-    bClose   = new LWButton (RTImage::createFromPng ("gtk-close-small.png"),    4, nullptr, LWButton::Right, LWButton::Center, "Close");
+    bZoomOut = new LWButton (RTImage::createFromPng ("magnifier-minus-small.png"), 0, nullptr, LWButton::Left, LWButton::Center, "Zoom Out");
+    bZoomIn  = new LWButton (RTImage::createFromPng ("magnifier-plus-small.png"),  1, nullptr, LWButton::Left, LWButton::Center, "Zoom In");
+    bZoom100 = new LWButton (RTImage::createFromPng ("magnifier-1to1-small.png"), 2, nullptr, LWButton::Left, LWButton::Center, "Zoom 100/%");
+    //bZoomFit = new LWButton (RTImage::createFromPng ("magnifier-fit.png"), 3, NULL, LWButton::Left, LWButton::Center, "Zoom Fit");
+    bClose   = new LWButton (RTImage::createFromPng ("cancel-small.png"),    4, nullptr, LWButton::Right, LWButton::Center, "Close");
 
     buttonSet.add (bZoomOut);
     buttonSet.add (bZoomIn);
@@ -362,7 +362,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                             // Add a new Color Picker
                             rtengine::Coord imgPos;
                             screenCoordToImage(x, y, imgPos.x, imgPos.y);
-                            LockableColorPicker *newPicker = new LockableColorPicker(this, &cropHandler.colorParams.output, &cropHandler.colorParams.working);
+                            LockableColorPicker *newPicker = new LockableColorPicker(this, &cropHandler.colorParams.outputProfile, &cropHandler.colorParams.workingProfile);
                             colorPickers.push_back(newPicker);
                             hoveredPicker = newPicker;
                             updateHoveredPicker(&imgPos);
@@ -1010,12 +1010,12 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
             /*    Glib::ustring outputProfile;
                 outputProfile =cropHandler.colorParams.output ;
                 printf("Using \"%s\" output\n", outputProfile.c_str());
-                if(outputProfile=="RT_sRGB") printf("OK SRGB2");
+                if(outputProfile==options.rtSettings.srgb) printf("OK SRGB2");
             */
-            pmlistener->pointerMoved (false, cropHandler.colorParams.output, cropHandler.colorParams.working, mx, my, -1, -1, -1);
+            pmlistener->pointerMoved (false, cropHandler.colorParams.outputProfile, cropHandler.colorParams.workingProfile, mx, my, -1, -1, -1);
 
             if (pmhlistener) {
-                pmhlistener->pointerMoved (false, cropHandler.colorParams.output, cropHandler.colorParams.working, mx, my, -1, -1, -1);
+                pmhlistener->pointerMoved (false, cropHandler.colorParams.outputProfile, cropHandler.colorParams.workingProfile, mx, my, -1, -1, -1);
             }
 
         } else {
@@ -1043,7 +1043,7 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
 //              pmlistener->pointerMoved (true, mx, my, pix[0], pix[1], pix[2]);
             int imwidth = cropHandler.cropPixbuf->get_width();
             int imheight = cropHandler.cropPixbuf->get_height();
-            guint8* pix = cropHandler.cropPixbuftrue->get_pixels() + vy * cropHandler.cropPixbuf->get_rowstride() + vx * 3;
+            guint8* pix = cropHandler.cropPixbuf->get_pixels() + vy * cropHandler.cropPixbuf->get_rowstride() + vx * 3;
 
             int rval = pix[0];
             int gval = pix[1];
@@ -1059,12 +1059,12 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
                     }
                 }
                 //      pmlistener->pointerMoved (true, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
-                pmlistener->pointerMoved (true, cropHandler.colorParams.output, cropHandler.colorParams.working, mx, my, rval, gval, bval);
+                pmlistener->pointerMoved (true, cropHandler.colorParams.outputProfile, cropHandler.colorParams.workingProfile, mx, my, rval, gval, bval);
 
                 if (pmhlistener)
                     //    pmhlistener->pointerMoved (true, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
                 {
-                    pmhlistener->pointerMoved (true, cropHandler.colorParams.output, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
+                    pmhlistener->pointerMoved (true, cropHandler.colorParams.outputProfile, cropHandler.colorParams.workingProfile, mx, my, pix[0], pix[1], pix[2]);
                 }
             }
 

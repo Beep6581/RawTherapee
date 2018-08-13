@@ -2896,7 +2896,7 @@ void CLASS lossy_dng_load_raw()
     }
     order = sorder;
   } else {
-    gamma_curve (1/2.4, 12.92, 1, 255);
+    gamma_curve (1/2.4, 12.92310, 1, 255);
     FORC3 memcpy (cur[c], curve, sizeof cur[0]);
   }
   cinfo.err = jpeg_std_error (&jerr);
@@ -6608,7 +6608,7 @@ void CLASS apply_tiff()
 	  if (model[0] == 'N') load_flags = 80;
 	} else if (raw_width*raw_height*3 == tiff_ifd[raw].bytes) {
 	  load_raw = &CLASS nikon_yuv_load_raw;
-	  gamma_curve (1/2.4, 12.92, 1, 4095);
+	  gamma_curve (1/2.4, 12.92310, 1, 4095);
 	  memset (cblack, 0, sizeof cblack);
 	  filters = 0;
 	} else if (raw_width*raw_height*2 == tiff_ifd[raw].bytes) {
@@ -8792,16 +8792,16 @@ void CLASS identify()
   colors = 3;
   for (i=0; i < 0x10000; i++) curve[i] = i;
 
+  flen = fsize = ifp->size;
+  /*RT*/ if (fsize<100000 || fsize > 0x7fffffff) {
+        is_raw = 0;
+        return;
+  }
+
   order = get2();
   hlen = get4();
   fseek (ifp, 0, SEEK_SET);
   fread (head, 1, 32, ifp);
-  fseek (ifp, 0, SEEK_END);
-  flen = fsize = ftell(ifp);
-  /*RT*/ if (fsize<100000) {
-        is_raw = 0;
-        return;
-  }
   /* RT: changed string constant */
   if ((cp = (char *) memmem (head, 32, (char*)"MMMM", 4)) ||
     (cp = (char *) memmem (head, 32, (char*)"IIII", 4))) {
@@ -8920,7 +8920,7 @@ void CLASS identify()
     strcpy (model,"One");
     parse_redcine();
     load_raw = &CLASS redcine_load_raw;
-    gamma_curve (1/2.4, 12.92, 1, 4095);
+    gamma_curve (1/2.4, 12.92310, 1, 4095);
     filters = 0x49494949;
   } else if (!memcmp (head,"DSC-Image",9))
     parse_rollei();
@@ -10043,29 +10043,6 @@ static void expandFloats(Bytef * dst, int tileWidth, int bytesps) {
   }
 }
 
-static void copyFloatDataToInt(float * src, ushort * dst, size_t size, float max) {
-  bool negative = false, nan = false;
-
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
-  for (size_t i = 0; i < size; ++i) {
-    if (src[i] < 0.0f) {
-      negative = true;
-      src[i] = 0.0f;
-    } else if (std::isnan(src[i])) {
-      nan = true;
-      src[i] = max;
-    }
-    // Copy the data to the integer buffer to build the thumbnail
-    dst[i] = (ushort)src[i];
-  }
-  if (negative)
-    fprintf(stderr, "DNG Float: Negative data found in input file\n");
-  if (nan)
-    fprintf(stderr, "DNG Float: NaN data found in input file\n");
-}
-
 static int decompress(size_t srcLen, size_t dstLen, unsigned char *in, unsigned char *out) {
     // At least in zlib 1.2.11 the uncompress function is not thread save while it is thread save in zlib 1.2.8
     // This simple replacement is thread save. Used example code from https://zlib.net/zlib_how.html
@@ -10207,9 +10184,6 @@ void CLASS deflate_dng_load_raw() {
 }
   }
 
-  if (ifd->sample_format == 3) {  // Floating point data
-    copyFloatDataToInt(float_raw_image, raw_image, raw_width*raw_height, maximum);
-  }
 }
 
 /* RT: removed unused functions */

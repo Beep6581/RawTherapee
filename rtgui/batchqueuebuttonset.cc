@@ -31,9 +31,9 @@ BatchQueueButtonSet::BatchQueueButtonSet (BatchQueueEntry* myEntry)
 {
 
     if (!iconsLoaded) {
-        cancelIcon = RTImage::createFromPng ("gtk-close.png");
-        headIcon   = RTImage::createFromPng ("toleftend.png");
-        tailIcon   = RTImage::createFromPng ("torightend.png");
+        cancelIcon = RTImage::createFromPng ("cancel-small.png");
+        headIcon   = RTImage::createFromPng ("goto-start-small.png");
+        tailIcon   = RTImage::createFromPng ("goto-end-small.png");
         iconsLoaded = true;
     }
 
