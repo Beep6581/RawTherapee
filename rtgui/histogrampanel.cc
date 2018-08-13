@@ -66,9 +66,6 @@ HistogramPanel::HistogramPanel ()
     valueImage = new RTImage ("histogram-silver-on-small.png");
     chroImage  = new RTImage ("histogram-gold-on-small.png");
     rawImage   = new RTImage ("histogram-bayer-on-small.png");
-    modeImage0 = new RTImage ("histogram-mode-linear-small.png");
-    modeImage1 = new RTImage ("histogram-mode-logx-small.png");
-    modeImage2 = new RTImage ("histogram-mode-logxy-small.png");
     barImage   = new RTImage ("histogram-bar-on-small.png");
 
     redImage_g   = new RTImage ("histogram-red-off-small.png");
@@ -77,8 +74,11 @@ HistogramPanel::HistogramPanel ()
     valueImage_g = new RTImage ("histogram-silver-off-small.png");
     chroImage_g  = new RTImage ("histogram-gold-off-small.png");
     rawImage_g   = new RTImage ("histogram-bayer-off-small.png");
-    fullImage_g  = new RTImage ("histogram-mode-linear-small.png");
     barImage_g   = new RTImage ("histogram-bar-off-small.png");
+	
+    mode0Image  = new RTImage ("histogram-mode-linear-small.png");
+    mode1Image  = new RTImage ("histogram-mode-logx-small.png");
+    mode2Image  = new RTImage ("histogram-mode-logxy-small.png");
 
     showRed   = Gtk::manage (new Gtk::ToggleButton ());
     showGreen = Gtk::manage (new Gtk::ToggleButton ());
@@ -142,11 +142,11 @@ HistogramPanel::HistogramPanel ()
     showChro->set_image  (showChro->get_active()   ? *chroImage : *chroImage_g);
     showRAW->set_image   (showRAW->get_active()   ? *rawImage   : *rawImage_g);
     if (options.histogramDrawMode == 0)
-        showMode->set_image(*modeImage0);
+        showMode->set_image(*mode0Image);
     else if (options.histogramDrawMode == 1)
-        showMode->set_image(*modeImage1);
+        showMode->set_image(*mode1Image);
     else
-        showMode->set_image(*modeImage2);
+        showMode->set_image(*mode2Image);
     showBAR->set_image   (showBAR->get_active()   ? *barImage   : *barImage_g);
 
     setExpandAlignProperties(showRed  , false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -198,9 +198,9 @@ HistogramPanel::~HistogramPanel ()
     delete valueImage;
     delete chroImage;
     delete rawImage;
-    delete modeImage0;
-    delete modeImage1;
-    delete modeImage2;
+    delete mode0Image;
+    delete mode1Image;
+    delete mode2Image;
     delete barImage;
 
     delete redImage_g;
@@ -277,11 +277,11 @@ void HistogramPanel::mode_released ()
 {
     options.histogramDrawMode = (options.histogramDrawMode + 1) % 3;
     if (options.histogramDrawMode == 0)
-        showMode->set_image(*modeImage0);
+        showMode->set_image(*mode0Image);
     else if (options.histogramDrawMode == 1)
-        showMode->set_image(*modeImage1);
+        showMode->set_image(*mode1Image);
     else
-        showMode->set_image(*modeImage2);
+        showMode->set_image(*mode2Image);
     rgbv_toggled();
 }
 
@@ -346,11 +346,11 @@ void HistogramPanel::reorder (Gtk::PositionType align)
 void HistogramPanel::toggle_button_mode ()
 {   
     if (options.histogramDrawMode == 0)
-        showMode->set_image(*modeImage0);
+        showMode->set_image(*mode0Image);
     else if (options.histogramDrawMode == 1)
-        showMode->set_image(*modeImage1);
+        showMode->set_image(*mode1Image);
     else
-        showMode->set_image(*modeImage2);
+        showMode->set_image(*mode2Image);
 }
 
 //
