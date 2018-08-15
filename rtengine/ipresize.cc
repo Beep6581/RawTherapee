@@ -373,6 +373,7 @@ float ImProcFunctions::resizeScale (const ProcParams* params, int fw, int fh, in
             } else {
                 dScale = (double)params->resize.height / (double)refh;
             }
+            dScale = (dScale > 1.0 && !params->resize.allowUpscaling) ? 1.0 : dScale;
 
             break;
 
