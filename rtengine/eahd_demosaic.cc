@@ -35,10 +35,40 @@ using namespace std;
 namespace rtengine
 {
 
-inline void RawImageSource::convert_to_cielab_row (float* ar, float* ag, float* ab, float* oL, float* oa, float* ob)
+inline void RawImageSource::convert_to_cielab_row (const LUTf &cache, const float* ar, const float* ag, const float* ab, float* oL, float* oa, float* ob)
 {
 
-    for (int j = 0; j < W; j++) {
+    int j = 0;
+#ifdef __SSE2__
+    vfloat lc00v = F2V(lc00);
+    vfloat lc01v = F2V(lc01);
+    vfloat lc02v = F2V(lc02);
+    vfloat lc10v = F2V(lc10);
+    vfloat lc11v = F2V(lc11);
+    vfloat lc12v = F2V(lc12);
+    vfloat lc20v = F2V(lc20);
+    vfloat lc21v = F2V(lc21);
+    vfloat lc22v = F2V(lc22);
+    vfloat c116v = F2V(116.f);
+    vfloat c200v = F2V(200.f);
+    vfloat c500v = F2V(500.f);
+
+    for (; j < W - 3; j += 4) {
+        vfloat r = LVFU(ar[j]);
+        vfloat g = LVFU(ag[j]);
+        vfloat b = LVFU(ab[j]);
+
+        vfloat x = lc00v * r + lc01v * g + lc02v * b;
+        vfloat y = lc10v * r + lc11v * g + lc12v * b;
+        vfloat z = lc20v * r + lc21v * g + lc22v * b;
+
+        vfloat cy = cache[y];
+        STVFU(oL[j], c116v * cy);
+        STVFU(oa[j], c500v * (cache[x] - cy));
+        STVFU(ob[j], c200v * (cy - cache[z]));
+    }
+#endif
+    for (; j < W; j++) {
         float r = ar[j];
         float g = ag[j];
         float b = ab[j];
@@ -47,14 +77,10 @@ inline void RawImageSource::convert_to_cielab_row (float* ar, float* ag, float* 
         float y = lc10 * r + lc11 * g + lc12 * b;
         float z = lc20 * r + lc21 * g + lc22 * b;
 
-        if (y > threshold) {
-            oL[j] = cache[(int)y];
-        } else {
-            oL[j] = float(903.3f * y / MAXVALF);
-        }
-
-        oa[j] = 500.f * ((x > threshold ? cache[(int)x] : 7.787f * x / MAXVALF + 16.f / 116.f) - (y > threshold ? cache[(int)y] : 7.787f * y / MAXVALF + 16.f / 116.f));
-        ob[j] = 200.f * ((y > threshold ? cache[(int)y] : 7.787f * y / MAXVALF + 16.f / 116.f) - (z > threshold ? cache[(int)z] : 7.787f * z / MAXVALF + 16.f / 116.f));
+        float cy = cache[y];
+        oL[j] = 116.f * cy;
+        oa[j] = 500.f * (cache[x] - cy);
+        ob[j] = 200.f * (cy - cache[z]);
     }
 }
 
@@ -255,12 +281,16 @@ void RawImageSource::eahd_demosaic ()
     lc21 = (0.019334 * imatrices.rgb_cam[1][0] + 0.119193 * imatrices.rgb_cam[1][1] + 0.950227 * imatrices.rgb_cam[1][2]) ;// / 1.088754;
     lc22 = (0.019334 * imatrices.rgb_cam[2][0] + 0.119193 * imatrices.rgb_cam[2][1] + 0.950227 * imatrices.rgb_cam[2][2]) ;// / 1.088754;
 
-    int maxindex = 3 * 65536; //2*65536 3 = avoid crash 3/2013 J.Desmis
-    cache = new float[maxindex];
+    int maxindex = 65536; //2*65536 3 = avoid crash 3/2013 J.Desmis
+    LUTf cache(65536);
+
     threshold = 0.008856 * MAXVALD;
 
     for (int i = 0; i < maxindex; i++) {
-        cache[i] = std::cbrt(double(i) / MAXVALD);
+        if(i <= threshold)
+            cache[i] = (7.787f / MAXVALF) * i + 16.f / 116.f;
+        else
+            cache[i] = std::cbrt(double(i) / MAXVALD);
     }
 
     // end of cielab preparation
@@ -281,10 +311,10 @@ void RawImageSource::eahd_demosaic ()
     interpolate_row_rb (rh[1], bh[1], gh[0], gh[1], gh[2], 1);
     interpolate_row_rb (rv[1], bv[1], gv[0], gv[1], gv[2], 1);
 
-    convert_to_cielab_row (rh[0], gh[0], bh[0], lLh[0], lah[0], lbh[0]);
-    convert_to_cielab_row (rv[0], gv[0], bv[0], lLv[0], lav[0], lbv[0]);
-    convert_to_cielab_row (rh[1], gh[1], bh[1], lLh[1], lah[1], lbh[1]);
-    convert_to_cielab_row (rv[1], gv[1], bv[1], lLv[1], lav[1], lbv[1]);
+    convert_to_cielab_row (cache, rh[0], gh[0], bh[0], lLh[0], lah[0], lbh[0]);
+    convert_to_cielab_row (cache, rv[0], gv[0], bv[0], lLv[0], lav[0], lbv[0]);
+    convert_to_cielab_row (cache, rh[1], gh[1], bh[1], lLh[1], lah[1], lbh[1]);
+    convert_to_cielab_row (cache, rv[1], gv[1], bv[1], lLv[1], lav[1], lbv[1]);
 
     for (int j = 0; j < W; j++) {
         homh[0][j] = 0;
@@ -315,8 +345,8 @@ void RawImageSource::eahd_demosaic ()
             interpolate_row_rb (rv[(i + 1) % 3], bv[(i + 1) % 3], gv[i % 4], gv[(i + 1) % 4], nullptr, i + 1);
         }
 
-        convert_to_cielab_row (rh[(i + 1) % 3], gh[(i + 1) % 4], bh[(i + 1) % 3], lLh[(i + 1) % 3], lah[(i + 1) % 3], lbh[(i + 1) % 3]);
-        convert_to_cielab_row (rv[(i + 1) % 3], gv[(i + 1) % 4], bv[(i + 1) % 3], lLv[(i + 1) % 3], lav[(i + 1) % 3], lbv[(i + 1) % 3]);
+        convert_to_cielab_row (cache, rh[(i + 1) % 3], gh[(i + 1) % 4], bh[(i + 1) % 3], lLh[(i + 1) % 3], lah[(i + 1) % 3], lbh[(i + 1) % 3]);
+        convert_to_cielab_row (cache, rv[(i + 1) % 3], gv[(i + 1) % 4], bv[(i + 1) % 3], lLv[(i + 1) % 3], lav[(i + 1) % 3], lbv[(i + 1) % 3]);
 
         for (int j = 0; j < W; j++) {
             homh[ipx][j] = 0;
