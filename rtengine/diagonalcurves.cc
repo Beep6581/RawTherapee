@@ -317,7 +317,10 @@ inline void catmull_rom_spline(int n_points,
     double c, d, A1_x, A1_y, A2_x, A2_y, A3_x, A3_y;
     double B1_x, B1_y, B2_x, B2_y, C_x, C_y;
 
-    for (i = 0; i < n_points; ++i) {
+    res_x.push_back(p1_x);
+    res_y.push_back(p1_y);
+
+    for (i = 1; i < n_points-1; ++i) {
         t = t1 + space * i;
         
         c = (t1 - t)/(t1 - t0);
@@ -353,6 +356,9 @@ inline void catmull_rom_spline(int n_points,
         res_x.push_back(C_x);
         res_y.push_back(C_y);
     }
+
+    res_x.push_back(p2_x);
+    res_y.push_back(p2_y);
 }
 
 
