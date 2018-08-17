@@ -100,7 +100,7 @@ static void myGdkLockEnter()
 }
 static void myGdkLockLeave()
 {
-    // Automatic gdk_flush for non main tread
+    // Automatic gdk_flush for non main thread
 #if AUTO_GDK_FLUSH
     //if (Glib::Thread::self() != mainThread) {
     //    gdk_flush();

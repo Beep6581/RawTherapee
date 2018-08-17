@@ -1682,12 +1682,12 @@ TP_ICM_SAVEREFERENCE_TOOLTIP;Sauvegarde une image TIFF linéaire avant que le pr
 TP_ICM_TONECURVE;Utiliser la courbe tonale du profil DCP
 TP_ICM_TONECURVE_TOOLTIP;Utilise la courbe tonale DCP incluse. Ce paramètre ne sera actif que si le profil DCP contient une courbe tonale
 TP_ICM_WORKINGPROFILE;Profil de Travail
-TP_ICM_WORKTRC;Courbe de réponse tonale:
-TP_ICM_WORKTRC_CUSTOM;Personnalisé
-TP_ICM_WORKTRC_GAMMA;Gamma
-TP_ICM_WORKTRC_NONE;Aucune
-TP_ICM_WORKTRC_SLOPE;Pente
-TP_ICM_WORKTRC_TOOLTIP;Seulement pour les profils internes
+TP_ICM_WORKING_TRC;Courbe de réponse tonale:
+TP_ICM_WORKING_TRC_CUSTOM;Personnalisé
+TP_ICM_WORKING_TRC_GAMMA;Gamma
+TP_ICM_WORKING_TRC_NONE;Aucune
+TP_ICM_WORKING_TRC_SLOPE;Pente
+TP_ICM_WORKING_TRC_TOOLTIP;Seulement pour les profils internes
 TP_IMPULSEDENOISE_LABEL;Réduction du bruit d'impulsion
 TP_IMPULSEDENOISE_THRESH;Seuil
 TP_LABCURVE_AVOIDCOLORSHIFT;Éviter les dérives de teinte
@@ -2252,30 +2252,32 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_488;Dynamic Range Compression
 !HISTORY_MSG_489;DRC - Threshold
 !HISTORY_MSG_490;DRC - Amount
-!HISTORY_MSG_CLAMPOOG;Out-of-gamut color clipping
+!HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 !HISTORY_MSG_DUALDEMOSAIC_CONTRAST;AMaZE+VNG4 - Contrast threshold
-!HISTORY_MSG_ICMGAMM;Working gamma
-!HISTORY_MSG_ICMPRIMARI;Output profile primaries
-!HISTORY_MSG_ICMPROFILE;Output profile type
-!HISTORY_MSG_ICMSLOP;Working slope
-!HISTORY_MSG_ICMTEMP;Output IccV4 D illuminant
-!HISTORY_MSG_ICMTRCIN;TRC working method
+!HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
+!HISTORY_MSG_ICM_OUTPUT_TEMP;Output - ICC-v4 illuminant D
+!HISTORY_MSG_ICM_OUTPUT_TYPE;Output - Type
+!HISTORY_MSG_ICM_WORKING_GAMMA;Working - Gamma
+!HISTORY_MSG_ICM_WORKING_SLOPE;Working - Slope
+!HISTORY_MSG_ICM_WORKING_TRC_METHOD;Working - TRC method
 !HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 !HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - Demosaic method for motion
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
 !HISTORY_MSG_RAW_BORDER;Raw border
-!HISTORY_MSG_RESIZE_ALLOW_UPSCALING;Resize - Allow upscaling
+!HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
 !HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
 !HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
 !HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
+!ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP;Reset to the default copyright, granted to "RawTherapee, CC0"
+!ICCPROFCREATOR_DESCRIPTION_ADDPARAM;Append gamma and slope values to the description
 !MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>Sharpening Contrast Mask</b>.\nShortcut: <b>None</b>\n\nOnly works when sharpening is enabled and zoom >= 100%.
 !PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !PARTIALPASTE_RAW_BORDER;Raw border
 !PARTIALPASTE_SOFTLIGHT;Soft light
-!PARTIALPASTE_TM_FATTAL;Dynamic Range Compression
+!PARTIALPASTE_TM_FATTAL;Dynamic range compression
 !PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
 !PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering

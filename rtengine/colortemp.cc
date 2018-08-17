@@ -1102,7 +1102,7 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
         // only for lamp different of tungstene
         // first calcul with illuminant (choice)
         // and calcul with : blackbody at equivalent temp of lamp
-        // CRI_color-1 = dispaly Lab values of color CRI_color -1
+        // CRI_color-1 = display Lab values of color CRI_color -1
         const double whiteD50[3] = {0.9646019585, 1.0, 0.8244507152}; //calculate with this tool : spect 5nm
         double CAM02BB00, CAM02BB01, CAM02BB02, CAM02BB10, CAM02BB11, CAM02BB12, CAM02BB20, CAM02BB21, CAM02BB22; //for CIECAT02
         double Xchk[50], Ychk[50], Zchk[50]; //50 : I think it's a good limit for number of color : for CRI and Palette

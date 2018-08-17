@@ -8792,16 +8792,16 @@ void CLASS identify()
   colors = 3;
   for (i=0; i < 0x10000; i++) curve[i] = i;
 
+  flen = fsize = ifp->size;
+  /*RT*/ if (fsize<100000 || fsize > 0x7fffffff) {
+        is_raw = 0;
+        return;
+  }
+
   order = get2();
   hlen = get4();
   fseek (ifp, 0, SEEK_SET);
   fread (head, 1, 32, ifp);
-  fseek (ifp, 0, SEEK_END);
-  flen = fsize = ftell(ifp);
-  /*RT*/ if (fsize<100000) {
-        is_raw = 0;
-        return;
-  }
   /* RT: changed string constant */
   if ((cp = (char *) memmem (head, 32, (char*)"MMMM", 4)) ||
     (cp = (char *) memmem (head, 32, (char*)"IIII", 4))) {
