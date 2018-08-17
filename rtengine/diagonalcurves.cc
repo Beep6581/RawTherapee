@@ -320,41 +320,50 @@ inline void catmull_rom_spline(int n_points,
     res_x.push_back(p1_x);
     res_y.push_back(p1_y);
 
-    for (i = 1; i < n_points-1; ++i) {
-        t = t1 + space * i;
+    // special case, a segment at 0 or 1 is computed exactly
+    if (p1_y == p2_y && (p1_y == 0 || p1_y == 1)) {
+        for (i = 1; i < n_points-1; ++i) {
+            t = p1_x + space * i;
+            res_x.push_back(t);
+            res_y.push_back(p1_y);
+        }
+    } else {
+        for (i = 1; i < n_points-1; ++i) {
+            t = t1 + space * i;
         
-        c = (t1 - t)/(t1 - t0);
-        d = (t - t0)/(t1 - t0);
-        A1_x = c * p0_x + d * p1_x;
-        A1_y = c * p0_y + d * p1_y;
+            c = (t1 - t)/(t1 - t0);
+            d = (t - t0)/(t1 - t0);
+            A1_x = c * p0_x + d * p1_x;
+            A1_y = c * p0_y + d * p1_y;
 
-        c = (t2 - t)/(t2 - t1);
-        d = (t - t1)/(t2 - t1);
-        A2_x = c * p1_x + d * p2_x;
-        A2_y = c * p1_y + d * p2_y;
+            c = (t2 - t)/(t2 - t1);
+            d = (t - t1)/(t2 - t1);
+            A2_x = c * p1_x + d * p2_x;
+            A2_y = c * p1_y + d * p2_y;
 
-        c = (t3 - t)/(t3 - t2);
-        d = (t - t2)/(t3 - t2);
-        A3_x = c * p2_x + d * p3_x;
-        A3_y = c * p2_y + d * p3_y;
+            c = (t3 - t)/(t3 - t2);
+            d = (t - t2)/(t3 - t2);
+            A3_x = c * p2_x + d * p3_x;
+            A3_y = c * p2_y + d * p3_y;
 
-        c = (t2 - t)/(t2 - t0);
-        d = (t - t0)/(t2 - t0);
-        B1_x = c * A1_x + d * A2_x;
-        B1_y = c * A1_y + d * A2_y;
+            c = (t2 - t)/(t2 - t0);
+            d = (t - t0)/(t2 - t0);
+            B1_x = c * A1_x + d * A2_x;
+            B1_y = c * A1_y + d * A2_y;
 
-        c = (t3 - t)/(t3 - t1);
-        d = (t - t1)/(t3 - t1);
-        B2_x = c * A2_x + d * A3_x;
-        B2_y = c * A2_y + d * A3_y;        
+            c = (t3 - t)/(t3 - t1);
+            d = (t - t1)/(t3 - t1);
+            B2_x = c * A2_x + d * A3_x;
+            B2_y = c * A2_y + d * A3_y;        
 
-        c = (t2 - t)/(t2 - t1);
-        d = (t - t1)/(t2 - t1);
-        C_x = c * B1_x + d * B2_x;
-        C_y = c * B1_y + d * B2_y;
+            c = (t2 - t)/(t2 - t1);
+            d = (t - t1)/(t2 - t1);
+            C_x = c * B1_x + d * B2_x;
+            C_y = c * B1_y + d * B2_y;
 
-        res_x.push_back(C_x);
-        res_y.push_back(C_y);
+            res_x.push_back(C_x);
+            res_y.push_back(C_y);
+        }
     }
 
     res_x.push_back(p2_x);
