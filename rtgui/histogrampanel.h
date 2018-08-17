@@ -43,7 +43,15 @@ struct HistogramRGBAreaIdleHelper {
     int pending;
 };
 
-class HistogramRGBArea : public Gtk::DrawingArea, public BackBuffer
+class HistogramScaling
+{
+public:
+    double factor;
+    HistogramScaling() : factor(10.0) {}
+    double log (double vsize, double val);
+};
+
+class HistogramRGBArea : public Gtk::DrawingArea, public BackBuffer, private HistogramScaling
 {
 private:
     typedef const double (*TMatrix)[3];
@@ -88,6 +96,8 @@ public:
     void on_realize();
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
     bool on_button_press_event (GdkEventButton* event);
+    void factorChanged (double newFactor);
+
 private:
     Gtk::SizeRequestMode get_request_mode_vfunc () const;
     void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;
@@ -104,10 +114,14 @@ public:
     virtual void toggle_button_mode () {}
 };
 
-class HistogramArea : public Gtk::DrawingArea, public BackBuffer
+class HistogramArea : public Gtk::DrawingArea, public BackBuffer, private HistogramScaling
 {
+public:
+    typedef sigc::signal<void, double> type_signal_factor_changed;
+
 private:
     IdleRegister idle_register;
+    type_signal_factor_changed sigFactorChanged;
 
 protected:
     LUTu lhist, rhist, ghist, bhist, chist;
@@ -119,7 +133,6 @@ protected:
     int oldwidth, oldheight;
 
     bool needLuma, needRed, needGreen, needBlue, rawMode, needChroma;
-    double factor;
     bool isPressed;
     double movingPosition;
 
@@ -137,6 +150,7 @@ public:
     bool on_button_press_event (GdkEventButton* event);
     bool on_button_release_event (GdkEventButton* event);
     bool on_motion_notify_event (GdkEventMotion* event);
+    type_signal_factor_changed signal_factor_changed();
 
 private:
     void drawCurve(Cairo::RefPtr<Cairo::Context> &cr, LUTu & data, double scale, int hsize, int vsize);
@@ -146,7 +160,6 @@ private:
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
     void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
     void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
-    double scalingFunctionLog (double vsize, double val);
 };
 
 class HistogramPanel : public Gtk::Grid, public PointerMotionListener, public DrawModeListener
