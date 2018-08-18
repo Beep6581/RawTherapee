@@ -86,7 +86,8 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn)
 
             if (!identity) {
                 if (kind == DCT_Spline && N > 2) {
-                    spline_cubic_set ();
+                    //spline_cubic_set ();
+                    catmull_rom_set();
                 } else if (kind == DCT_NURBS && N > 2) {
                     NURBS_set ();
                     fillHash();
@@ -270,6 +271,164 @@ void DiagonalCurve::NURBS_set ()
     fillDyByDx();
 }
 
+
+/*****************************************************************************
+ * Catmull Rom Spline
+ * (https://en.wikipedia.org/wiki/Centripetal_Catmull%E2%80%93Rom_spline)
+ *****************************************************************************/
+
+namespace {
+
+inline double pow2(double x)
+{
+    return x*x;
+}
+
+
+inline double catmull_rom_tj(double ti,
+                             double xi, double yi,
+                             double xj, double yj)
+{
+    // see https://github.com/Beep6581/RawTherapee/pull/4701#issuecomment-414054187
+    static constexpr double alpha = 0.375;
+    return pow(sqrt(pow2(xj-xi) + pow2(yj-yi)), alpha) + ti;
+}
+
+
+inline void catmull_rom_spline(int n_points,
+                               double p0_x, double p0_y,
+                               double p1_x, double p1_y,
+                               double p2_x, double p2_y,
+                               double p3_x, double p3_y,
+                               std::vector<double> &res_x,
+                               std::vector<double> &res_y)
+{
+    res_x.reserve(n_points);
+    res_y.reserve(n_points);
+
+    double t0 = 0;
+    double t1 = catmull_rom_tj(t0, p0_x, p0_y, p1_x, p1_y);
+    double t2 = catmull_rom_tj(t1, p1_x, p1_y, p2_x, p2_y);
+    double t3 = catmull_rom_tj(t2, p2_x, p2_y, p3_x, p3_y);
+
+    double space = (t2-t1) / n_points;
+
+    double t;
+    int i;
+    double c, d, A1_x, A1_y, A2_x, A2_y, A3_x, A3_y;
+    double B1_x, B1_y, B2_x, B2_y, C_x, C_y;
+
+    res_x.push_back(p1_x);
+    res_y.push_back(p1_y);
+
+    // special case, a segment at 0 or 1 is computed exactly
+    if (p1_y == p2_y && (p1_y == 0 || p1_y == 1)) {
+        for (i = 1; i < n_points-1; ++i) {
+            t = p1_x + space * i;
+            res_x.push_back(t);
+            res_y.push_back(p1_y);
+        }
+    } else {
+        for (i = 1; i < n_points-1; ++i) {
+            t = t1 + space * i;
+        
+            c = (t1 - t)/(t1 - t0);
+            d = (t - t0)/(t1 - t0);
+            A1_x = c * p0_x + d * p1_x;
+            A1_y = c * p0_y + d * p1_y;
+
+            c = (t2 - t)/(t2 - t1);
+            d = (t - t1)/(t2 - t1);
+            A2_x = c * p1_x + d * p2_x;
+            A2_y = c * p1_y + d * p2_y;
+
+            c = (t3 - t)/(t3 - t2);
+            d = (t - t2)/(t3 - t2);
+            A3_x = c * p2_x + d * p3_x;
+            A3_y = c * p2_y + d * p3_y;
+
+            c = (t2 - t)/(t2 - t0);
+            d = (t - t0)/(t2 - t0);
+            B1_x = c * A1_x + d * A2_x;
+            B1_y = c * A1_y + d * A2_y;
+
+            c = (t3 - t)/(t3 - t1);
+            d = (t - t1)/(t3 - t1);
+            B2_x = c * A2_x + d * A3_x;
+            B2_y = c * A2_y + d * A3_y;        
+
+            c = (t2 - t)/(t2 - t1);
+            d = (t - t1)/(t2 - t1);
+            C_x = c * B1_x + d * B2_x;
+            C_y = c * B1_y + d * B2_y;
+
+            res_x.push_back(C_x);
+            res_y.push_back(C_y);
+        }
+    }
+
+    res_x.push_back(p2_x);
+    res_y.push_back(p2_y);
+}
+
+
+inline void catmull_rom_reflect(double px, double py, double cx, double cy,
+                                double &rx, double &ry)
+{
+#if 0
+    double dx = px - cx;
+    double dy = py - cy;
+    rx = cx - dx;
+    ry = cy - dy;
+#else
+    // see https://github.com/Beep6581/RawTherapee/pull/4701#issuecomment-414054187
+    static constexpr double epsilon = 1e-5;
+    double dx = px - cx;
+    double dy = py - cy;
+    rx = cx - dx * 0.01;
+    ry = dx > epsilon ? (dy / dx) * (rx - cx) + cy : cy;
+#endif    
+}
+
+
+void catmull_rom_chain(int n_points, int n_cp, double *x, double *y,
+                       std::vector<double> &res_x, std::vector<double> &res_y)
+{
+    double x_first, y_first;
+    double x_last, y_last;
+    catmull_rom_reflect(x[1], y[1], x[0], y[0], x_first, y_first);
+    catmull_rom_reflect(x[n_cp-2], y[n_cp-2], x[n_cp-1], y[n_cp-1], x_last, y_last);
+
+    int segments = n_cp - 1;
+
+    res_x.reserve(n_points);
+    res_y.reserve(n_points);
+
+    for (int i = 0; i < segments; ++i) {
+        int n = max(int(n_points * (x[i+1] - x[i]) + 0.5), 2);
+        catmull_rom_spline(
+            n, i == 0 ? x_first : x[i-1], i == 0 ? y_first : y[i-1],
+            x[i], y[i], x[i+1], y[i+1],
+            i == segments-1 ? x_last : x[i+2],
+            i == segments-1 ? y_last : y[i+2],
+            res_x, res_y);
+    }
+}
+
+} // namespace
+
+
+void DiagonalCurve::catmull_rom_set()
+{
+    int n_points = max(ppn * 65, 65000);
+    poly_x.clear();
+    poly_y.clear();
+    catmull_rom_chain(n_points, N, x, y, poly_x, poly_y);
+}
+
+/*****************************************************************************/
+
+
 double DiagonalCurve::getVal (double t) const
 {
 
@@ -300,7 +459,8 @@ double DiagonalCurve::getVal (double t) const
     }
 
     case DCT_Linear :
-    case DCT_Spline : {
+    // case DCT_Spline :
+    {
         // values under and over the first and last point
         if (t > x[N - 1]) {
             return y[N - 1];
@@ -324,17 +484,30 @@ double DiagonalCurve::getVal (double t) const
         double h = x[k_hi] - x[k_lo];
 
         // linear
-        if (kind == DCT_Linear) {
+        // if (kind == DCT_Linear) {
             return y[k_lo] + (t - x[k_lo]) * ( y[k_hi] - y[k_lo] ) / h;
-        }
-        // spline curve
-        else { // if (kind==Spline) {
-            double a = (x[k_hi] - t) / h;
-            double b = (t - x[k_lo]) / h;
-            double r = a * y[k_lo] + b * y[k_hi] + ((a * a * a - a) * ypp[k_lo] + (b * b * b - b) * ypp[k_hi]) * (h * h) * 0.1666666666666666666666666666666;
-            return CLIPD(r);
-        }
+        // }
+        // // spline curve
+        // else { // if (kind==Spline) {
+        //     double a = (x[k_hi] - t) / h;
+        //     double b = (t - x[k_lo]) / h;
+        //     double r = a * y[k_lo] + b * y[k_hi] + ((a * a * a - a) * ypp[k_lo] + (b * b * b - b) * ypp[k_hi]) * (h * h) * 0.1666666666666666666666666666666;
+        //     return CLIPD(r);
+        // }
 
+        break;
+    }
+
+    case DCT_Spline: {
+        auto it = std::lower_bound(poly_x.begin(), poly_x.end(), t);
+        if (it == poly_x.end()) {
+            return poly_y.back();
+        }
+        auto d = it - poly_x.begin();
+        if (it+1 < poly_x.end() && t - *it > *(it+1) - t) {
+            ++d;
+        }
+        return LIM01(*(poly_y.begin() + d));
         break;
     }
 
