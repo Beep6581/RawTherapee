@@ -20,11 +20,13 @@
 #pragma once
 
 #include <array>
+#include <glibmm.h>
 
 #include "rt_math.h"
 #include "LUT.h"
 #include "labimage.h"
 #include "iccmatrices.h"
+#include "lcms2.h"
 #include "sleef.c"
 
 #define SAT(a,b,c) ((float)max(a,b,c)-(float)min(a,b,c))/(float)max(a,b,c)
