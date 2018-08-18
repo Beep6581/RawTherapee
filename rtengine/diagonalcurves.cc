@@ -390,13 +390,12 @@ void catmull_rom_chain(int n_points, int n_cp, double *x, double *y,
     catmull_rom_reflect(x[n_cp-2], y[n_cp-2], x[n_cp-1], y[n_cp-1], x_last, y_last);
 
     int segments = n_cp - 1;
-    int points_segments = n_points / segments;
 
     res_x.reserve(n_points);
     res_y.reserve(n_points);
 
     for (int i = 0; i < segments; ++i) {
-        int n = points_segments + (i == 0 ? n_points % segments : 0);
+        int n = max(int(n_points * (x[i+1] - x[i]) + 0.5), 2);
         catmull_rom_spline(
             n, i == 0 ? x_first : x[i-1], i == 0 ? y_first : y[i-1],
             x[i], y[i], x[i+1], y[i+1],
