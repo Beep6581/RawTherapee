@@ -918,7 +918,7 @@ MAIN_BUTTON_NAVPREV_TOOLTIP;Navigiert zum vorherigen Miniaturbild in der\nDateiv
 MAIN_BUTTON_NAVSYNC_TOOLTIP;Selektiert das Miniaturbild des aktuell geöffneten\nBildes in der Dateiverwaltung und des Filmstreifens.\nEs werden alle aktiven Filter gelöscht.\nTaste: <b>x</b>\n\nWie oben, jedoch ohne Löschung aktiver Filter. Das\nMiniaturbild des geöffneten Bildes wird nicht angezeigt,\nwenn es herausgefiltert wurde.\nTaste: <b>y</b>
 MAIN_BUTTON_PREFERENCES;Einstellungen
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Bild zur Warteschlange hinzufügen\nTaste: <b>Strg</b> + <b>b</b>
-MAIN_BUTTON_SAVE_TOOLTIP;Bild speichern\nTaste: <b>Strg</b> + <b>s</b>
+MAIN_BUTTON_SAVE_TOOLTIP;Bild speichern\nTaste: <b>Strg+s</b>\nProfil (.pp3) speichern\nTaste: <b>Strg+Shift+s</b>
 MAIN_BUTTON_SENDTOEDITOR;Bild im externen Editor öffnen
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Bild im externen Editor öffnen\nTaste: <b>Strg</b> + <b>e</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Alle seitlichen Bedienfelder ein-/ausblenden\nTaste: <b>m</b>
