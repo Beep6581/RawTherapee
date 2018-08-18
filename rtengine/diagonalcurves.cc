@@ -289,7 +289,7 @@ inline double catmull_rom_tj(double ti,
                              double xi, double yi,
                              double xj, double yj)
 {
-    static constexpr double alpha = 0.25;
+    static constexpr double alpha = 0.5;
     return pow(sqrt(pow2(xj-xi) + pow2(yj-yi)), alpha) + ti;
 }
 
@@ -371,18 +371,23 @@ inline void catmull_rom_spline(int n_points,
 }
 
 
+inline void catmull_rom_reflect(double px, double py, double cx, double cy,
+                                double &rx, double &ry)
+{
+    double dx = px - cx;
+    double dy = py - cy;
+    rx = cx - dx;
+    ry = cy - dy;
+}
+
+
 void catmull_rom_chain(int n_points, int n_cp, double *x, double *y,
                        std::vector<double> &res_x, std::vector<double> &res_y)
 {
-    static const double epsilon = 1e-5;
-    double xr = x[1] - x[0];
-    double yr = y[1] - y[0];
-    double x_first = x[0] - xr * 0.01;
-    double y_first = xr > epsilon ? (yr / xr) * (x_first - x[0]) + y[0] : y[0];
-    xr = x[n_cp-1] - x[n_cp-2];
-    yr = y[n_cp-1] - x[n_cp-2];
-    double x_last = x[n_cp-1] + xr * 0.01;
-    double y_last = xr > epsilon ? (yr / xr) * (x_last - x[n_cp-1]) + y[n_cp-1] : y[n_cp-1];
+    double x_first, y_first;
+    double x_last, y_last;
+    catmull_rom_reflect(x[1], y[1], x[0], y[0], x_first, y_first);
+    catmull_rom_reflect(x[n_cp-2], y[n_cp-2], x[n_cp-1], y[n_cp-1], x_last, y_last);
 
     int segments = n_cp - 1;
     int points_segments = n_points / segments;
