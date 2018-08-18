@@ -1007,7 +1007,9 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
         int mx, my;
         screenCoordToImage (x, y, mx, my);
 
-        if (!onArea (CropImage, x, y) || !cropHandler.cropPixbuf) {
+        MyMutex::MyLock lock(cropHandler.cimg);
+
+        if (!onArea (CropImage, x, y) || !cropHandler.cropPixbuftrue) {
             cropHandler.getFullImageSize(mx, my);
             //    pmlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
             //   if (pmhlistener) pmhlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
@@ -1023,7 +1025,7 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
             }
 
         } else {
-            /*MyMutex::MyLock lock(cropHandler.cimg);
+            /*
 
             int vx = x - xpos - imgX;
             int vy = y - ypos - imgY;
@@ -1033,7 +1035,6 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
 
             */
 
-            cropHandler.cimg.lock ();
             int vx = x - xpos - imgX;
             int vy = y - ypos - imgY;
 
@@ -1045,9 +1046,9 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
 //          guint8* pix = cropHandler.cropPixbuf->get_pixels() + vy*cropHandler.cropPixbuf->get_rowstride() + vx*3;
 //          if (vx < cropHandler.cropPixbuf->get_width() && vy < cropHandler.cropPixbuf->get_height())
 //              pmlistener->pointerMoved (true, mx, my, pix[0], pix[1], pix[2]);
-            int imwidth = cropHandler.cropPixbuf->get_width();
-            int imheight = cropHandler.cropPixbuf->get_height();
-            guint8* pix = cropHandler.cropPixbuf->get_pixels() + vy * cropHandler.cropPixbuf->get_rowstride() + vx * 3;
+            int imwidth = cropHandler.cropPixbuftrue->get_width();
+            int imheight = cropHandler.cropPixbuftrue->get_height();
+            guint8* pix = cropHandler.cropPixbuftrue->get_pixels() + vy * cropHandler.cropPixbuftrue->get_rowstride() + vx * 3;
 
             int rval = pix[0];
             int gval = pix[1];
@@ -1062,17 +1063,16 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
                         isrc->getRawValues(mx, my, params.coarse.rotate, rval, gval, bval);
                     }
                 }
-                //      pmlistener->pointerMoved (true, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
+
+                // Updates the Navigator
+                // TODO: possible double color conversion if rval, gval, bval come from cropHandler.cropPixbuftrue ? see issue #4583
                 pmlistener->pointerMoved (true, cropHandler.colorParams.outputProfile, cropHandler.colorParams.workingProfile, mx, my, rval, gval, bval);
 
-                if (pmhlistener)
-                    //    pmhlistener->pointerMoved (true, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
-                {
-                    pmhlistener->pointerMoved (true, cropHandler.colorParams.outputProfile, cropHandler.colorParams.workingProfile, mx, my, pix[0], pix[1], pix[2]);
+                if (pmhlistener) {
+                    // Updates the HistogramRGBArea
+                    pmhlistener->pointerMoved (true, cropHandler.colorParams.outputProfile, cropHandler.colorParams.workingProfile, mx, my, rval, gval, bval);
                 }
             }
-
-            cropHandler.cimg.unlock ();
         }
     }
 }

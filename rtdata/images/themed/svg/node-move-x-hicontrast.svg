@@ -18,7 +18,7 @@
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
    inkscape:version="0.92.2 2405546, 2018-03-11"
-   sodipodi:docname="gamut-plus.svg">
+   sodipodi:docname="node-move-x-hicontrast.svg">
   <sodipodi:namedview
      id="base"
      pagecolor="#E0E1E2"
@@ -44,7 +44,8 @@
      inkscape:snap-others="false"
      inkscape:object-nodes="false"
      inkscape:snap-grids="true"
-     inkscape:snap-bbox-midpoints="false">
+     inkscape:snap-bbox-midpoints="false"
+     inkscape:snap-bbox-edge-midpoints="true">
     <inkscape:grid
        type="xygrid"
        id="grid1374"
@@ -63,7 +64,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
         <dc:creator>
           <cc:Agent>
             <dc:title>Maciej Dworak</dc:title>
@@ -100,13 +101,20 @@
      inkscape:groupmode="layer"
      inkscape:label="Layer 1">
     <path
-       style="opacity:0.7;fill:#2a7fff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.02779599px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 4.2934,1 1,23 19.445762,15.966985 Z M 8.4468625,7.3605437 17.12655,14.208195 4.1813375,21.129134 Z"
-       id="path17368"
+       style="display:inline;opacity:1;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 17.494308,15.514232 22.17236,12.005696 17.494308,8.4971547 Z"
+       id="path2866-6"
        inkscape:connector-curvature="0" />
     <path
-       style="opacity:0.7;fill:#2a7fff;fill-opacity:1;stroke:none;stroke-width:2.37170815;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 17 1 L 17 4 L 14 4 L 14 7 L 17 7 L 17 10 L 20 10 L 20 7 L 23 7 L 23 4 L 20 4 L 20 1 L 17 1 z "
-       id="rect832" />
+       inkscape:connector-curvature="0"
+       id="path840"
+       d="M 6.505693,15.514232 1.827641,12.005696 6.505693,8.4971548 Z"
+       style="display:inline;opacity:1;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <circle
+       style="opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       id="path1820"
+       cx="12"
+       cy="12"
+       r="2" />
   </g>
 </svg>
