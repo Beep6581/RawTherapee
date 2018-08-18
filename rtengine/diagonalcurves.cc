@@ -289,7 +289,8 @@ inline double catmull_rom_tj(double ti,
                              double xi, double yi,
                              double xj, double yj)
 {
-    static constexpr double alpha = 0.5;
+    // see https://github.com/Beep6581/RawTherapee/pull/4701#issuecomment-414054187
+    static constexpr double alpha = 0.375;
     return pow(sqrt(pow2(xj-xi) + pow2(yj-yi)), alpha) + ti;
 }
 
@@ -374,10 +375,19 @@ inline void catmull_rom_spline(int n_points,
 inline void catmull_rom_reflect(double px, double py, double cx, double cy,
                                 double &rx, double &ry)
 {
+#if 0
     double dx = px - cx;
     double dy = py - cy;
     rx = cx - dx;
     ry = cy - dy;
+#else
+    // see https://github.com/Beep6581/RawTherapee/pull/4701#issuecomment-414054187
+    static constexpr double epsilon = 1e-5;
+    double dx = px - cx;
+    double dy = py - cy;
+    rx = cx - dx * 0.01;
+    ry = dx > epsilon ? (dy / dx) * (rx - cx) + cy : cy;
+#endif    
 }
 
 
