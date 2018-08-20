@@ -8937,7 +8937,9 @@ void CLASS identify()
   for (i=0; i < 0x10000; i++) curve[i] = i;
 
   flen = fsize = ifp->size;
-  /*RT*/ if (fsize<100000 || fsize > 0x7fffffff) {
+
+  // currently fsize is of type signed int which means for files larger than 0x7fffffff byte fsize will be < 0. We need to check for large files if we change the type to unsigned int
+  /*RT*/ if (fsize<100000) {
         is_raw = 0;
         return;
   }
