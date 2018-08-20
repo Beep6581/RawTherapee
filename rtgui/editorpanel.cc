@@ -522,6 +522,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     leftsubbox->show_all ();
     
     leftbox->pack2 (*leftsubbox, true, true);
+    leftbox->show_all ();
 
     // build the middle of the screen
     Gtk::Box* editbox = Gtk::manage (new Gtk::Box (Gtk::ORIENTATION_VERTICAL));
