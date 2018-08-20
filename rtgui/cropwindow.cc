@@ -1379,7 +1379,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                 break;
             }
         }
-        bool useBgColor = (state == SNormal);
+        bool useBgColor = (state == SNormal || state == SDragPicker || state == SDeletePicker);
     
         if (cropHandler.cropPixbuf) {
             imgW = cropHandler.cropPixbuf->get_width ();
