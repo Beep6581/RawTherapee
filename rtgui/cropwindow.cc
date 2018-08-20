@@ -1053,12 +1053,14 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
             int rval = pix[0];
             int gval = pix[1];
             int bval = pix[2];
+            bool isRaw = false;
             if (vx < imwidth && vy < imheight) {
                 rtengine::StagedImageProcessor* ipc = iarea->getImProcCoordinator();
                 if(ipc) {
                     procparams::ProcParams params;
                     ipc->getParams(&params);
-                    if(params.raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::NONE) || params.raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::NONE)) {
+                    isRaw = params.raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::NONE) || params.raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::NONE);
+                    if(isRaw) {
                         ImageSource *isrc = static_cast<ImageSource*>(ipc->getInitialImage());
                         isrc->getRawValues(mx, my, params.coarse.rotate, rval, gval, bval);
                     }
@@ -1066,7 +1068,7 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
 
                 // Updates the Navigator
                 // TODO: possible double color conversion if rval, gval, bval come from cropHandler.cropPixbuftrue ? see issue #4583
-                pmlistener->pointerMoved (true, cropHandler.colorParams.outputProfile, cropHandler.colorParams.workingProfile, mx, my, rval, gval, bval);
+                pmlistener->pointerMoved (true, cropHandler.colorParams.outputProfile, cropHandler.colorParams.workingProfile, mx, my, rval, gval, bval, isRaw);
 
                 if (pmhlistener) {
                     // Updates the HistogramRGBArea
