@@ -491,88 +491,76 @@ public:
     bool HHcurve;
     bool invers;
     // Exposure
-
-    /*
-    bool adjblur;
-    bool warm;
+    bool expexpose;
     bool expcomp;
     bool hlcompr;
     bool hlcomprthresh;
     bool black;
     bool shcompr;
-    bool noiselumf;
-    bool noiselumc;
-    bool noiselumdetail;
-    bool noiselequal;
-    bool noisechrodetail;
-    bool bilateral;
-    bool sensiden;
-    bool noisechrof;
-    bool noisechroc;
-    bool sharradius;
-    bool sharamount;
-    bool shardamping;
-    bool shariter;
+    bool warm;
     bool sensiex;
-    bool sensih;
-    bool retrab;
-    bool sensicb;
-    bool sensibn;
-    bool sensitm;
-    bool sensisha;
+    bool excurve;
+    // Vibrance
+    bool expvibrance;
+    bool saturated;
+    bool pastels;
+    bool psthreshold;
+    bool protectskins;
+    bool avoidcolorshift;
+    bool pastsattog;
+    bool sensiv;
+    bool skintonescurve;
+    // Blur & Noise
+    bool expblur;
     bool radius;
     bool strength;
+    bool sensibn;
+    bool blurMethod;
+    bool activlum;
+    // Tone Mapping
+    bool exptonemap;
     bool stren;
     bool gamma;
     bool estop;
     bool scaltm;
     bool rewei;
-    bool transit;
-    bool avoid;
-    bool Exclumethod;
-    bool shapemethod;
-    bool sensiexclu;
-    bool struc;
+    bool sensitm;
+    // Retinex
+    bool expreti;
     bool retinexMethod;
     bool str;
-    bool neigh;
-    bool hueref;
-    bool huerefblur;
-    bool chromaref;
-    bool lumaref;
-    bool sobelref;
-    bool vart;
-    bool activlum;
-    bool cutpast;
-    bool lastdust;
-    bool inversrad;
-    bool inversret;
-    bool inverssha;
-    bool localTgaincurve;
-    bool localTgaincurverab;
-    bool excurve;
     bool chrrt;
-    bool mult[5];
-    bool threshold;
-    bool chromacbdl;
-    bool expexpose;
-    bool expvibrance;
-    bool expblur;
-    bool exptonemap;
-    bool expreti;
+    bool neigh;
+    bool vart;
+    bool sensih;
+    bool localTgaincurve;
+    bool inversret;
+    // Sharpening
     bool expsharp;
+    bool sharradius;
+    bool sharamount;
+    bool shardamping;
+    bool shariter;
+    bool sensisha;
+    bool inverssha;
+    // Contrast by detail levels
     bool expcbdl;
+    bool mult[5];
+    bool chromacbdl;
+    bool threshold;
+    bool sensicb;
+    // Denoise
     bool expdenoi;
-    bool pastels;
-    bool saturated;
-    bool psthreshold;
-    bool protectskins;
-    bool avoidcolorshift;
-    bool pastsattog;
-    bool skintonescurve;
-    bool sensiv;
-    */
-
+    bool noiselumf;
+    bool noiselumc;
+    bool noiselumdetail;
+    bool noiselequal;
+    bool noisechrof;
+    bool noisechroc;
+    bool adjblur;
+    bool bilateral;
+    bool sensiden;
+    bool avoid;
 };
 
 class LensProfParamsEdited

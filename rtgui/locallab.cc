@@ -521,7 +521,7 @@ Locallab::Locallab():
     cTgainshape = static_cast<FlatCurveEditor*>(LocalcurveEditorgainT->addCurve(CT_Flat, "", nullptr, false, false));
 
     cTgainshape->setIdentityValue(0.);
-    cTgainshape->setResetCurve(FlatCurveType(default_params.localTgaincurve.at(0)), default_params.localTgaincurve);
+    cTgainshape->setResetCurve(FCT_MinMaxCPoints, {(double)FCT_MinMaxCPoints, 0.0, 0.12, 0.35, 0.35, 0.70, 0.50, 0.35, 0.35, 1.00, 0.12, 0.35, 0.35});
     cTgainshape->setTooltip(M("TP_RETINEX_GAINTRANSMISSION_TOOLTIP"));
 
     LocalcurveEditorgainTrab->setCurveListener(this);
@@ -532,7 +532,7 @@ Locallab::Locallab():
 
 
     cTgainshaperab->setIdentityValue(0.);
-    cTgainshaperab->setResetCurve(FlatCurveType(default_params.localTgaincurverab.at(0)), default_params.localTgaincurverab);
+    // cTgainshaperab->setResetCurve(FlatCurveType(default_params.localTgaincurverab.at(0)), default_params.localTgaincurverab);
     cTgainshaperab->setTooltip(M("TP_RETINEX_GAINTRANSMISSIONRAB_TOOLTIP"));
 
     LocalcurveEditorgainT->curveListComplete();
@@ -1002,7 +1002,10 @@ void Locallab::foldAllButMe(GdkEventButton* event, MyExpander *expander)
 
 void Locallab::enableToggled(MyExpander *expander)
 {
-    if (listener) {
+    // TODO Locallab printf
+    printf("enableToggled\n");
+
+    if (getEnabled() && listener) {
         rtengine::ProcEvent event = NUMOFEVENTS;
 
         if (expander == expcolor) {
@@ -1073,6 +1076,11 @@ void Locallab::updateToolState(std::vector<int> &tpOpen)
 
 void Locallab::neutral_pressed()
 {
+    // TODO Locallab printf
+    printf("neutral_pressed\n");
+
+    // TODO Locallab To be deleted
+    /*
     Smethod->set_active(0);
     shapemethod->set_active(0);
     Exclumethod->set_active(0);
@@ -1171,73 +1179,89 @@ void Locallab::neutral_pressed()
     noisechrodetail->resetValue(false);
     bilateral->resetValue(false);
     sensiden->resetValue(false);
+    */
 }
 
 
 void Locallab::lumaneutralPressed()
 {
+    // TODO Locallab printf
+    printf("lumaneutralPressed\n");
 
     for (int i = 0; i < 5; i++) {
         multiplier[i]->setValue(100);
-        adjusterChanged(multiplier[i], 100);
     }
+
+    // Raise event (only for first multiplier because associated event concerns all multipliers)
+    adjusterChanged(multiplier[0], multiplier[0]->getValue()); // Value isn't used
 }
 
 
 void Locallab::lumacontrastPlusPressed()
 {
+    // TODO Locallab printf
+    printf("lumacontrastPlusPressed\n");
 
     for (int i = 0; i < 5; i++) {
         float inc = (5 - i);
         multiplier[i]->setValue(multiplier[i]->getValue() + inc);
-        adjusterChanged(multiplier[i], multiplier[i]->getValue());
     }
+
+    // Raise event (only for first multiplier because associated event concerns all multipliers)
+    adjusterChanged(multiplier[0], multiplier[0]->getValue()); // Value isn't used
 }
 
 
 void Locallab::lumacontrastMinusPressed()
 {
+    // TODO Locallab printf
+    printf("lumacontrastMinusPressed\n");
 
     for (int i = 0; i < 5; i++) {
         float inc = - (5 - i);
         multiplier[i]->setValue(multiplier[i]->getValue() + inc);
-        adjusterChanged(multiplier[i], multiplier[i]->getValue());
     }
+
+    // Raise event (only for first multiplier because associated event concerns all multipliers)
+    adjusterChanged(multiplier[0], multiplier[0]->getValue()); // Value isn't used
 }
-
-
-/*
-void Locallab::autoOpenCurve()
-{
-    cTgainshape->openIfNonlinear();
-
-}
-*/
 
 int localChangedUI(void* data)
 {
+    // TODO Locallab printf
+    printf("localChangedUI\n");
 
+    /*
     GThreadLock lock;
     (static_cast<Locallab*>(data))->localComputed_();
+    */
 
     return 0;
 }
 
 int localretChangedUI(void* data)
 {
+    // TODO Locallab printf
+    printf("localretChangedUI\n");
 
+    /*
     GThreadLock lock;
     (static_cast<Locallab*>(data))->localretComputed_();
+    */
 
     return 0;
 }
 
 bool Locallab::localretComputed_()
 {
+    // TODO Locallab printf
+    printf("localretComputed_\n");
+
+    /*
     disableListener();
 
     //Reticurv
-//update GUI and MIP specially for curve
+    //update GUI and MIP specially for curve
 
     int *s_datc;
     s_datc = new int[70];
@@ -1393,7 +1417,7 @@ bool Locallab::localretComputed_()
     }
 
 
-//    printf("G2 anbspot=%i\n", anbspot->getValue());
+    //    printf("G2 anbspot=%i\n", anbspot->getValue());
 
     if (listener) { //for all sliders
         listener->panelChanged(Evlocallabanbspot, ""); //anbspot->getTextValue());
@@ -1434,7 +1458,7 @@ bool Locallab::localretComputed_()
     if (listener) {//for excurve
         listener->panelChanged(Evlocallabshapeexpos, M(""));
     }
-
+    */
 
     return false;
 
@@ -1442,7 +1466,11 @@ bool Locallab::localretComputed_()
 
 bool Locallab::localComputed_()
 {
-//update GUI and MIP
+    // TODO Locallab printf
+    printf("localComputed_\n");
+
+    /*
+    //update GUI and MIP
     disableListener();
 
     //size spot
@@ -1563,7 +1591,7 @@ bool Locallab::localComputed_()
         activlum->set_active(true);
     }
 
-//TM
+    //TM
     stren->setValue(nextdatasp[49]);
     gamma->setValue(nextdatasp[50]);
     estop->setValue(nextdatasp[51]);
@@ -1915,7 +1943,7 @@ bool Locallab::localComputed_()
 
     //
 
-//   printf("G1 maj anbspot=%i  cretirab=%f\n", anbspot->getValue(), cretirab.at(5));
+    //   printf("G1 maj anbspot=%i  cretirab=%f\n", anbspot->getValue(), cretirab.at(5));
 
 
     //add events for each cases whitout that localalb does not work...
@@ -2065,6 +2093,7 @@ bool Locallab::localComputed_()
     if (listener) {//for expander cbdl
         listener->panelChanged(EvLocenaexpose, M(""));
     }
+    */
 
 
     return false;
@@ -2072,7 +2101,10 @@ bool Locallab::localComputed_()
 
 void Locallab::localChanged(int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat)
 {
+    // TODO Locallab printf
+    printf("localChanged\n");
 
+    /*
     nextstr = datastr;
     nextll_str = ll_str;
     nextlh_str = lh_str;
@@ -2088,10 +2120,15 @@ void Locallab::localChanged(int **datasp, std::string datastr, std::string ll_st
     }
 
     g_idle_add(localChangedUI, this);
+    */
 }
 
 void Locallab::localretChanged(int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat)
 {
+    // TODO Locallab printf
+    printf("localretChanged\n");
+
+    /*
     nextlength = maxdat;
     nextstr2 = datastr;
     nextll_str2 = ll_str;
@@ -2103,6 +2140,7 @@ void Locallab::localretChanged(int **datasp, std::string datastr, std::string ll
     nextex_str2 = ex_str;
 
     g_idle_add(localretChangedUI, this);
+    */
 }
 
 
@@ -2155,7 +2193,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
         sensi->setEditedState(pedited->locallab.sensi ? Edited : UnEdited);
 
         if (!pedited->locallab.qualitycurveMethod) {
-            qualitycurveMethod->set_active(3);
+            qualitycurveMethod->set_active_text(M("GENERAL_UNCHANGED"));
         }
 
         llshape->setUnChanged(!pedited->locallab.llcurve);
@@ -2165,7 +2203,95 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
         invers->set_inconsistent(multiImage && !pedited->locallab.invers);
 
         // Exposure
+        expexpose->set_inconsistent(!pedited->locallab.expexpose);
+        expcomp->setEditedState(pedited->locallab.expcomp ? Edited : UnEdited);
+        hlcompr->setEditedState(pedited->locallab.hlcompr ? Edited : UnEdited);
+        hlcomprthresh->setEditedState(pedited->locallab.hlcomprthresh ? Edited : UnEdited);
+        black->setEditedState(pedited->locallab.black ? Edited : UnEdited);
+        warm->setEditedState(pedited->locallab.warm ? Edited : UnEdited);
+        shcompr->setEditedState(pedited->locallab.shcompr ? Edited : UnEdited);
+        sensiex->setEditedState(pedited->locallab.sensiex ? Edited : UnEdited);
+        shapeexpos->setUnChanged(!pedited->locallab.excurve);
 
+        // Vibrance
+        expvibrance->set_inconsistent(!pedited->locallab.expvibrance);
+        saturated->setEditedState(pedited->locallab.saturated ? Edited : UnEdited);
+        pastels->setEditedState(pedited->locallab.pastels ? Edited : UnEdited);
+        psThreshold->setEditedState(pedited->locallab.psthreshold ? Edited : UnEdited);
+        protectSkins->set_inconsistent(!pedited->locallab.protectskins);
+        avoidColorShift->set_inconsistent(!pedited->locallab.avoidcolorshift);
+        pastSatTog->set_inconsistent(!pedited->locallab.pastsattog);
+        sensiv->setEditedState(pedited->locallab.sensiv ? Edited : UnEdited);
+        skinTonesCurve->setUnChanged(!pedited->locallab.skintonescurve);
+
+        // Blur & Noise
+        expblur->set_inconsistent(!pedited->locallab.expblur);
+        radius->setEditedState(pedited->locallab.radius ? Edited : UnEdited);
+        strength->setEditedState(pedited->locallab.strength ? Edited : UnEdited);
+        sensibn->setEditedState(pedited->locallab.sensibn ? Edited : UnEdited);
+
+        if (!pedited->locallab.blurMethod) {
+            blurMethod->set_active_text(M("GENERAL_UNCHANGED"));
+        }
+
+        activlum->set_inconsistent(multiImage && !pedited->locallab.activlum);
+
+        // Tone Mapping
+        exptonemap->set_inconsistent(!pedited->locallab.exptonemap);
+        stren->setEditedState(pedited->locallab.stren ? Edited : UnEdited);
+        gamma->setEditedState(pedited->locallab.gamma ? Edited : UnEdited);
+        estop->setEditedState(pedited->locallab.estop ? Edited : UnEdited);
+        scaltm->setEditedState(pedited->locallab.scaltm ? Edited : UnEdited);
+        rewei->setEditedState(pedited->locallab.rewei ? Edited : UnEdited);
+        sensitm->setEditedState(pedited->locallab.sensitm ? Edited : UnEdited);
+
+        // Retinex
+        expreti->set_inconsistent(!pedited->locallab.expreti);
+
+        if (!pedited->locallab.retinexMethod) {
+            retinexMethod->set_active_text(M("GENERAL_UNCHANGED"));
+        }
+
+        str->setEditedState(pedited->locallab.str ? Edited : UnEdited);
+        chrrt->setEditedState(pedited->locallab.chrrt ? Edited : UnEdited);
+        neigh->setEditedState(pedited->locallab.neigh ? Edited : UnEdited);
+        vart->setEditedState(pedited->locallab.vart ? Edited : UnEdited);
+        sensih->setEditedState(pedited->locallab.sensih ? Edited : UnEdited);
+        cTgainshape->setUnChanged(!pedited->locallab.localTgaincurve);
+        inversret->set_inconsistent(multiImage && !pedited->locallab.inversret);
+
+        // Sharpening
+        expsharp->set_inconsistent(!pedited->locallab.expsharp);
+        sharradius->setEditedState(pedited->locallab.sharradius ? Edited : UnEdited);
+        sharamount->setEditedState(pedited->locallab.sharamount ? Edited : UnEdited);
+        shardamping->setEditedState(pedited->locallab.shardamping ? Edited : UnEdited);
+        shariter->setEditedState(pedited->locallab.shariter ? Edited : UnEdited);
+        sensisha->setEditedState(pedited->locallab.sensisha ? Edited : UnEdited);
+        inverssha->set_inconsistent(multiImage && !pedited->locallab.inverssha);
+
+        // Contrast by detail levels
+        expcbdl->set_inconsistent(!pedited->locallab.expcbdl);
+
+        for (int i = 0; i < 5; i++) {
+            multiplier[i]->setEditedState(pedited->locallab.mult[i] ? Edited : UnEdited);
+        }
+
+        chromacbdl->setEditedState(pedited->locallab.chromacbdl ? Edited : UnEdited);
+        threshold->setEditedState(pedited->locallab.threshold ? Edited : UnEdited);
+        sensicb->setEditedState(pedited->locallab.sensicb ? Edited : UnEdited);
+
+        // Denoise
+        expdenoi->set_inconsistent(!pedited->locallab.expdenoi);
+        noiselumf->setEditedState(pedited->locallab.noiselumf ? Edited : UnEdited);
+        noiselumc->setEditedState(pedited->locallab.noiselumc ? Edited : UnEdited);
+        noiselumdetail->setEditedState(pedited->locallab.noiselumdetail ? Edited : UnEdited);
+        noiselequal->setEditedState(pedited->locallab.noiselequal ? Edited : UnEdited);
+        noisechrof->setEditedState(pedited->locallab.noisechrof ? Edited : UnEdited);
+        noisechroc->setEditedState(pedited->locallab.noisechroc ? Edited : UnEdited);
+        adjblur->setEditedState(pedited->locallab.adjblur ? Edited : UnEdited);
+        bilateral->setEditedState(pedited->locallab.bilateral ? Edited : UnEdited);
+        sensiden->setEditedState(pedited->locallab.sensiden ? Edited : UnEdited);
+        avoid->set_inconsistent(multiImage && !pedited->locallab.avoid);
     }
 
     setEnabled(pp->locallab.enabled);
@@ -2254,384 +2380,6 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     // Enable all listeners
     enableListener();
-
-    /*
-    anbspot->hide();
-    hueref->hide();
-    huerefblur->hide();
-    chromaref->hide();
-    lumaref->hide();
-    sobelref->hide();
-    centerXbuf->hide();
-    centerYbuf->hide();
-
-    if (pedited) {
-        adjblur->setEditedState(pedited->locallab.adjblur ? Edited : UnEdited);
-        warm->setEditedState(pedited->locallab.warm ? Edited : UnEdited);
-        expcomp->setEditedState(pedited->locallab.expcomp ? Edited : UnEdited);
-        hlcompr->setEditedState(pedited->locallab.hlcompr ? Edited : UnEdited);
-        hlcomprthresh->setEditedState(pedited->locallab.hlcomprthresh ? Edited : UnEdited);
-        black->setEditedState(pedited->locallab.black ? Edited : UnEdited);
-        shcompr->setEditedState(pedited->locallab.shcompr ? Edited : UnEdited);
-        sensiex->setEditedState(pedited->locallab.sensiex ? Edited : UnEdited);
-        sharradius->setEditedState(pedited->locallab.sharradius ? Edited : UnEdited);
-        sharamount->setEditedState(pedited->locallab.sharamount ? Edited : UnEdited);
-        shardamping->setEditedState(pedited->locallab.shardamping ? Edited : UnEdited);
-        shariter->setEditedState(pedited->locallab.shariter ? Edited : UnEdited);
-        sensisha->setEditedState(pedited->locallab.sensisha ? Edited : UnEdited);
-        noiselumf->setEditedState(pedited->locallab.noiselumf ? Edited : UnEdited);
-        noiselumc->setEditedState(pedited->locallab.noiselumc ? Edited : UnEdited);
-        noiselumdetail->setEditedState(pedited->locallab.noiselumdetail ? Edited : UnEdited);
-        noiselequal->setEditedState(pedited->locallab.noiselequal ? Edited : UnEdited);
-        noisechrof->setEditedState(pedited->locallab.noisechrof ? Edited : UnEdited);
-        noisechroc->setEditedState(pedited->locallab.noisechroc ? Edited : UnEdited);
-        noisechrodetail->setEditedState(pedited->locallab.noisechrodetail ? Edited : UnEdited);
-        bilateral->setEditedState(pedited->locallab.bilateral ? Edited : UnEdited);
-        sensiden->setEditedState(pedited->locallab.sensiden ? Edited : UnEdited);
-
-        pastels->setEditedState(pedited->locallab.pastels ? Edited : UnEdited);
-        saturated->setEditedState(pedited->locallab.saturated ? Edited : UnEdited);
-        psThreshold->setEditedState(pedited->locallab.psthreshold ? Edited : UnEdited);
-        protectSkins->set_inconsistent(!pedited->locallab.protectskins);
-        avoidColorShift->set_inconsistent(!pedited->locallab.avoidcolorshift);
-        pastSatTog->set_inconsistent(!pedited->locallab.pastsattog);
-        skinTonesCurve->setUnChanged(!pedited->locallab.skintonescurve);
-        sensiv->setEditedState(pedited->locallab.sensiv ? Edited : UnEdited);
-
-        for (int i = 0; i < 5; i++) {
-            multiplier[i]->setEditedState(pedited->locallab.mult[i] ? Edited : UnEdited);
-        }
-
-        threshold->setEditedState(pedited->locallab.threshold ? Edited : UnEdited);
-        chromacbdl->setEditedState(pedited->locallab.chromacbdl ? Edited : UnEdited);
-        sensiexclu->setEditedState(pedited->locallab.sensiexclu ? Edited : UnEdited);
-        struc->setEditedState(pedited->locallab.struc ? Edited : UnEdited);
-        sensih->setEditedState(pedited->locallab.sensih ? Edited : UnEdited);
-        retrab->setEditedState(pedited->locallab.retrab ? Edited : UnEdited);
-        sensicb->setEditedState(pedited->locallab.sensicb ? Edited : UnEdited);
-        sensibn->setEditedState(pedited->locallab.sensibn ? Edited : UnEdited);
-        sensitm->setEditedState(pedited->locallab.sensitm ? Edited : UnEdited);
-        radius->setEditedState(pedited->locallab.radius ? Edited : UnEdited);
-        strength->setEditedState(pedited->locallab.strength ? Edited : UnEdited);
-        stren->setEditedState(pedited->locallab.stren ? Edited : UnEdited);
-        gamma->setEditedState(pedited->locallab.gamma ? Edited : UnEdited);
-        estop->setEditedState(pedited->locallab.estop ? Edited : UnEdited);
-        scaltm->setEditedState(pedited->locallab.scaltm ? Edited : UnEdited);
-        rewei->setEditedState(pedited->locallab.rewei ? Edited : UnEdited);
-        hueref->setEditedState(pedited->locallab.hueref ? Edited : UnEdited);
-        huerefblur->setEditedState(pedited->locallab.huerefblur ? Edited : UnEdited);
-        chromaref->setEditedState(pedited->locallab.chromaref ? Edited : UnEdited);
-        lumaref->setEditedState(pedited->locallab.lumaref ? Edited : UnEdited);
-        sobelref->setEditedState(pedited->locallab.sobelref ? Edited : UnEdited);
-        transit->setEditedState(pedited->locallab.transit ? Edited : UnEdited);
-        str->setEditedState(pedited->locallab.str ? Edited : UnEdited);
-        neigh->setEditedState(pedited->locallab.neigh ? Edited : UnEdited);
-        vart->setEditedState(pedited->locallab.vart ? Edited : UnEdited);
-        chrrt->setEditedState(pedited->locallab.chrrt ? Edited : UnEdited);
-        set_inconsistent(multiImage && !pedited->locallab.enabled);
-        avoid->set_inconsistent(multiImage && !pedited->locallab.avoid);
-        activlum->set_inconsistent(multiImage && !pedited->locallab.activlum);
-        cutpast->set_inconsistent(multiImage && !pedited->locallab.cutpast);
-        lastdust->set_inconsistent(multiImage && !pedited->locallab.lastdust);
-        inversrad->set_inconsistent(multiImage && !pedited->locallab.inversrad);
-        inverssha->set_inconsistent(multiImage && !pedited->locallab.inverssha);
-        cTgainshape->setUnChanged(!pedited->locallab.localTgaincurve);
-        shapeexpos->setUnChanged(!pedited->locallab.excurve);
-        inversret->set_inconsistent(multiImage && !pedited->locallab.inversret);
-        cTgainshaperab->setUnChanged(!pedited->locallab.localTgaincurverab);
-
-        expexpose->set_inconsistent(!pedited->locallab.expexpose);
-        expvibrance->set_inconsistent(!pedited->locallab.expvibrance);
-        expblur->set_inconsistent(!pedited->locallab.expblur);
-        exptonemap->set_inconsistent(!pedited->locallab.exptonemap);
-        expreti->set_inconsistent(!pedited->locallab.expreti);
-        expsharp->set_inconsistent(!pedited->locallab.expsharp);
-        expcbdl->set_inconsistent(!pedited->locallab.expcbdl);
-        expdenoi->set_inconsistent(!pedited->locallab.expdenoi);
-
-        if (!pedited->locallab.Smethod) {
-            Smethod->set_active_text(M("GENERAL_UNCHANGED"));
-        }
-
-        if (!pedited->locallab.shapemethod) {
-            shapemethod->set_active_text(M("GENERAL_UNCHANGED"));
-        }
-
-        if (!pedited->locallab.Exclumethod) {
-            Exclumethod->set_active_text(M("GENERAL_UNCHANGED"));
-        }
-
-        if (!pedited->locallab.retinexMethod) {
-            retinexMethod->set_active_text(M("GENERAL_UNCHANGED"));
-        }
-
-        if (!pedited->locallab.blurMethod) {
-            blurMethod->set_active_text(M("GENERAL_UNCHANGED"));
-        }
-
-        if (!pedited->locallab.dustMethod) {
-            dustMethod->set_active_text(M("GENERAL_UNCHANGED"));
-        }
-
-        if (!pedited->locallab.qualityMethod) {
-            qualityMethod->set_active_text(M("GENERAL_UNCHANGED"));
-        }
-
-    }
-
-    setEnabled(pp->locallab.enabled);
-
-    retinexMethodConn.block(true);
-    qualitycurveMethodConn.block(true);
-    blurMethodConn.block(true);
-    dustMethodConn.block(true);
-
-    avoidConn.block(true);
-    avoid->set_active(pp->locallab.avoid);
-    avoidConn.block(false);
-    activlumConn.block(true);
-    activlum->set_active(pp->locallab.activlum);
-    activlumConn.block(false);
-    cutpastConn.block(true);
-    cutpast->set_active(pp->locallab.cutpast);
-    cutpastConn.block(false);
-    lastdustConn.block(true);
-    lastdust->set_active(pp->locallab.lastdust);
-    lastdustConn.block(false);
-    inversradConn.block(true);
-    inversrad->set_active(pp->locallab.inversrad);
-    inversradConn.block(false);
-    inversretConn.block(true);
-    inversret->set_active(pp->locallab.inversret);
-    inversretConn.block(false);
-    inversshaConn.block(true);
-    inverssha->set_active(pp->locallab.inverssha);
-    inversshaConn.block(false);
-
-    adjblur->setValue(pp->locallab.adjblur);
-    warm->setValue(pp->locallab.warm);
-    expcomp->setValue(pp->locallab.expcomp);
-    hlcompr->setValue(pp->locallab.hlcompr);
-    hlcomprthresh->setValue(pp->locallab.hlcomprthresh);
-    black->setValue(pp->locallab.black);
-    shcompr->setValue(pp->locallab.shcompr);
-    shcompr->set_sensitive(!((int)black->getValue() == 0));     //at black=0 shcompr value has no effect
-    sensiexclu->setValue(pp->locallab.sensiexclu);
-    struc->setValue(pp->locallab.struc);
-
-    sharradius->setValue(pp->locallab.sharradius);
-    sharamount->setValue(pp->locallab.sharamount);
-    shardamping->setValue(pp->locallab.shardamping);
-    shariter->setValue(pp->locallab.shariter);
-    sensisha->setValue(pp->locallab.sensisha);
-    sensi->setValue(pp->locallab.sensi);
-    sensiex->setValue(pp->locallab.sensiex);
-    sensih->setValue(pp->locallab.sensih);
-    retrab->setValue(pp->locallab.retrab);
-    sensicb->setValue(pp->locallab.sensicb);
-    sensibn->setValue(pp->locallab.sensibn);
-    sensitm->setValue(pp->locallab.sensitm);
-    transit->setValue(pp->locallab.transit);
-    radius->setValue(pp->locallab.radius);
-    strength->setValue(pp->locallab.strength);
-    stren->setValue(pp->locallab.stren);
-    gamma->setValue(pp->locallab.gamma);
-    estop->setValue(pp->locallab.estop);
-    scaltm->setValue(pp->locallab.scaltm);
-    rewei->setValue(pp->locallab.rewei);
-    str->setValue(pp->locallab.str);
-    neigh->setValue(pp->locallab.neigh);
-    nbspot->setValue(pp->locallab.nbspot);
-    anbspot->setValue(pp->locallab.anbspot);
-    hueref->setValue(pp->locallab.hueref);
-    huerefblur->setValue(pp->locallab.huerefblur);
-    chromaref->setValue(pp->locallab.chromaref);
-    lumaref->setValue(pp->locallab.lumaref);
-    sobelref->setValue(pp->locallab.sobelref);
-    vart->setValue(pp->locallab.vart);
-    chrrt->setValue(pp->locallab.chrrt);
-    cTgainshape->setCurve(pp->locallab.localTgaincurve);
-    cTgainshaperab->setCurve(pp->locallab.localTgaincurverab);
-    shapeexpos->setCurve(pp->locallab.excurve);
-    lastactivlum = pp->locallab.activlum;
-    lastanbspot = pp->locallab.anbspot;
-    noiselumf->setValue(pp->locallab.noiselumf);
-    noiselumc->setValue(pp->locallab.noiselumc);
-    noiselumdetail->setValue(pp->locallab.noiselumdetail);
-    noiselequal->setValue(pp->locallab.noiselequal);
-    noisechrof->setValue(pp->locallab.noisechrof);
-    noisechroc->setValue(pp->locallab.noisechroc);
-    noisechrodetail->setValue(pp->locallab.noisechrodetail);
-    bilateral->setValue(pp->locallab.bilateral);
-    sensiden->setValue(pp->locallab.sensiden);
-    expexpose->setEnabled(pp->locallab.expexpose);
-    expvibrance->setEnabled(pp->locallab.expvibrance);
-    sensiv->setValue(pp->locallab.sensiv);
-
-    pskinsconn.block(true);
-    protectSkins->set_active(pp->locallab.protectskins);
-    pskinsconn.block(false);
-    lastProtectSkins = pp->locallab.protectskins;
-
-    ashiftconn.block(true);
-    avoidColorShift->set_active(pp->locallab.avoidcolorshift);
-    ashiftconn.block(false);
-    lastAvoidColorShift = pp->locallab.avoidcolorshift;
-
-    // spotduplicated->set_active(pp->locallab.spotduplicated);
-    lastspotduplicated = pp->locallab.spotduplicated;
-
-    pastsattogconn.block(true);
-    pastSatTog->set_active(pp->locallab.pastsattog);
-    pastsattogconn.block(false);
-    lastPastSatTog = pp->locallab.pastsattog;
-
-    pastels->setValue(pp->locallab.pastels);
-    psThreshold->setValue<int> (pp->locallab.psthreshold);
-
-    if (lastPastSatTog) {
-        // Link both slider, so we set saturated and psThresholds unsensitive
-        psThreshold->set_sensitive(false);
-        saturated->set_sensitive(false);
-        saturated->setValue(pp->locallab.pastels);     // Pastels and Saturated are linked
-    } else {
-        // Separate sliders, so we set saturated and psThresholds sensitive again
-        psThreshold->set_sensitive(true);
-        saturated->set_sensitive(true);
-        saturated->setValue(pp->locallab.saturated);   // Pastels and Saturated are separate
-    }
-
-    skinTonesCurve->setCurve(pp->locallab.skintonescurve);
-
-
-
-    expblur->setEnabled(pp->locallab.expblur);
-    exptonemap->setEnabled(pp->locallab.exptonemap);
-    expreti->setEnabled(pp->locallab.expreti);
-    expsharp->setEnabled(pp->locallab.expsharp);
-    expcbdl->setEnabled(pp->locallab.expcbdl);
-    expdenoi->setEnabled(pp->locallab.expdenoi);
-
-    for (int i = 0; i < 5; i++) {
-        multiplier[i]->setValue(pp->locallab.mult[i]);
-    }
-
-    threshold->setValue(pp->locallab.threshold);
-    chromacbdl->setValue(pp->locallab.chromacbdl);
-
-    lastavoid = pp->locallab.avoid;
-    lastinvers = pp->locallab.invers;
-    lastcutpast = pp->locallab.cutpast;
-    lastlastdust = pp->locallab.lastdust;
-    lastcurvactiv = pp->locallab.curvactiv;
-    lastinversrad = pp->locallab.inversrad;
-    lastinversret = pp->locallab.inversret;
-    lastinverssha = pp->locallab.inverssha;
-    activlumChanged();
-    inversChanged();
-    cutpastChanged();
-    lastdustChanged();
-    curvactivChanged();
-    inversradChanged();
-    inversretChanged();
-    inversshaChanged();
-
-    // updateGeometry(pp->locallab.centerX, pp->locallab.centerY, pp->locallab.circrad, pp->locallab.locY, pp->locallab.degree,  pp->locallab.locX, pp->locallab.locYT, pp->locallab.locXL);
-
-    if (pp->locallab.shapemethod == "ELI") {
-        shapemethod->set_active(0);
-    } else if (pp->locallab.shapemethod == "RECT") {
-        shapemethod->set_active(1);
-    }
-
-    shapemethodChanged();
-
-    if (pp->locallab.Smethod == "IND") {
-        Smethod->set_active(0);
-    } else if (pp->locallab.Smethod == "SYM") {
-        Smethod->set_active(1);
-    } else if (pp->locallab.Smethod == "INDSL") {
-        Smethod->set_active(2);
-    } else if (pp->locallab.Smethod == "SYMSL") {
-        Smethod->set_active(3);
-    }
-
-
-    SmethodChanged();
-
-    if (pp->locallab.Exclumethod == "norm") {
-        Exclumethod->set_active(0);
-    } else if (pp->locallab.Exclumethod == "exc") {
-        Exclumethod->set_active(1);
-    }
-
-    ExclumethodChanged();
-
-    if (pp->locallab.retinexMethod == "low") {
-        retinexMethod->set_active(0);
-    } else if (pp->locallab.retinexMethod == "uni") {
-        retinexMethod->set_active(1);
-    } else if (pp->locallab.retinexMethod == "high") {
-        retinexMethod->set_active(2);
-    }
-
-    retinexMethodChanged();
-
-    if (pp->locallab.blurMethod == "norm") {
-        blurMethod->set_active(0);
-    } else if (pp->locallab.blurMethod == "inv") {
-        blurMethod->set_active(1);
-    } else if (pp->locallab.blurMethod == "sym") {
-        blurMethod->set_active(2);
-    }
-
-    blurMethodChanged();
-    blurMethodConn.block(false);
-
-    if (pp->locallab.dustMethod == "cop") {
-        dustMethod->set_active(0);
-    } else if (pp->locallab.dustMethod == "mov") {
-        dustMethod->set_active(1);
-    } else if (pp->locallab.dustMethod == "pas") {
-        dustMethod->set_active(2);
-    }
-
-    dustMethodChanged();
-
-    if (pp->locallab.qualityMethod == "std") {
-        qualityMethod->set_active(0);
-    } else if (pp->locallab.qualityMethod == "enh") {
-        qualityMethod->set_active(1);
-    } else if (pp->locallab.qualityMethod == "enhden") {
-        qualityMethod->set_active(2);
-    }
-
-    qualityMethodChanged();
-
-    anbspot->hide();
-    hueref->hide();
-    huerefblur->hide();
-    chromaref->hide();
-    lumaref->hide();
-    sobelref->hide();
-    centerXbuf->hide();
-    centerYbuf->hide();
-
-    if (pp->locallab.Smethod == "SYM" || pp->locallab.Smethod == "SYMSL") {
-        locXL->setValue(locX->getValue());
-        locYT->setValue(locY->getValue());
-    } else if (pp->locallab.Smethod == "LOC") {
-        locXL->setValue(locX->getValue());
-        locYT->setValue(locX->getValue());
-        locY->setValue(locX->getValue());
-    } else if (pp->locallab.Smethod == "INDSL" || pp->locallab.Smethod == "IND") {
-        locX->setValue(pp->locallab.locX);
-        locY->setValue(pp->locallab.locY);
-        locXL->setValue(pp->locallab.locXL);
-        locYT->setValue(pp->locallab.locYT);
-
-    }
-    */
 }
 
 void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
@@ -2703,6 +2451,80 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             pp->locallab.HHcurve.push_back({(double)FCT_MinMaxCPoints, 0.0, 0.50, 0.35, 0.35, 0.166, 0.50, 0.35, 0.35, 0.333, 0.50, 0.35, 0.35, 0.50, 0.50, 0.35, 0.35, 0.666, 0.50, 0.35, 0.35, 0.833, 0.50, 0.35, 0.35});
             pp->locallab.invers.push_back(0);
             // Exposure
+            pp->locallab.expexpose.push_back(0);
+            pp->locallab.expcomp.push_back(0);
+            pp->locallab.hlcompr.push_back(20);
+            pp->locallab.hlcomprthresh.push_back(33);
+            pp->locallab.black.push_back(0);
+            pp->locallab.shcompr.push_back(50);
+            pp->locallab.warm.push_back(0);
+            pp->locallab.sensiex.push_back(19);
+            pp->locallab.excurve.push_back({(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0});
+            // Vibrance
+            pp->locallab.expvibrance.push_back(0);
+            pp->locallab.saturated.push_back(0);
+            pp->locallab.pastels.push_back(0);
+            pp->locallab.psthreshold.push_back({0, 75, false});
+            pp->locallab.protectskins.push_back(0);
+            pp->locallab.avoidcolorshift.push_back(1);
+            pp->locallab.pastsattog.push_back(1);
+            pp->locallab.sensiv.push_back(19);
+            pp->locallab.skintonescurve.push_back({(double)DCT_Linear});
+            // Blur & Noise
+            pp->locallab.expblur.push_back(0);
+            pp->locallab.radius.push_back(1);
+            pp->locallab.strength.push_back(0);
+            pp->locallab.sensibn.push_back(40);
+            pp->locallab.blurMethod.push_back("norm");
+            pp->locallab.activlum.push_back(0);
+            // Tone Mapping
+            pp->locallab.exptonemap.push_back(0);
+            pp->locallab.stren.push_back(1);
+            pp->locallab.gamma.push_back(100);
+            pp->locallab.estop.push_back(140);
+            pp->locallab.scaltm.push_back(10);
+            pp->locallab.rewei.push_back(0);
+            pp->locallab.sensitm.push_back(19);
+            // Retinex
+            pp->locallab.expreti.push_back(0);
+            pp->locallab.retinexMethod.push_back("high");
+            pp->locallab.str.push_back(0);
+            pp->locallab.chrrt.push_back(0);
+            pp->locallab.neigh.push_back(50);
+            pp->locallab.vart.push_back(200);
+            pp->locallab.sensih.push_back(19);
+            pp->locallab.localTgaincurve.push_back({(double)FCT_MinMaxCPoints, 0.0, 0.12, 0.35, 0.35, 0.70, 0.50, 0.35, 0.35, 1.00, 0.12, 0.35, 0.35});
+            pp->locallab.inversret.push_back(0);
+            // Sharpening
+            pp->locallab.expsharp.push_back(0);
+            pp->locallab.sharradius.push_back(40);
+            pp->locallab.sharamount.push_back(75);
+            pp->locallab.shardamping.push_back(75);
+            pp->locallab.shariter.push_back(30);
+            pp->locallab.sensisha.push_back(19);
+            pp->locallab.inverssha.push_back(0);
+            // Contrast by detail levels
+            pp->locallab.expcbdl.push_back(0);
+
+            for (int i = 0; i < 5; i++) {
+                pp->locallab.mult[i].push_back(100.0);
+            }
+
+            pp->locallab.chromacbdl.push_back(0);
+            pp->locallab.threshold.push_back(20.0);
+            pp->locallab.sensicb.push_back(19);
+            // Denoise
+            pp->locallab.expdenoi.push_back(0);
+            pp->locallab.noiselumf.push_back(0);
+            pp->locallab.noiselumc.push_back(0);
+            pp->locallab.noiselumdetail.push_back(0);
+            pp->locallab.noiselequal.push_back(7);
+            pp->locallab.noisechrof.push_back(0);
+            pp->locallab.noisechroc.push_back(0);
+            pp->locallab.adjblur.push_back(0);
+            pp->locallab.bilateral.push_back(0);
+            pp->locallab.sensiden.push_back(30);
+            pp->locallab.avoid.push_back(0);
 
             // New created spot selection
             expsettings->setSelectedSpot(spotId);
@@ -2755,8 +2577,81 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.LHcurve.erase(pp->locallab.LHcurve.begin() + i);
                     pp->locallab.HHcurve.erase(pp->locallab.HHcurve.begin() + i);
                     pp->locallab.invers.erase(pp->locallab.invers.begin() + i);
-
                     // Exposure
+                    pp->locallab.expexpose.erase(pp->locallab.expexpose.begin() + i);
+                    pp->locallab.expcomp.erase(pp->locallab.expcomp.begin() + i);
+                    pp->locallab.hlcompr.erase(pp->locallab.hlcompr.begin() + i);
+                    pp->locallab.hlcomprthresh.erase(pp->locallab.hlcomprthresh.begin() + i);
+                    pp->locallab.black.erase(pp->locallab.black.begin() + i);
+                    pp->locallab.shcompr.erase(pp->locallab.shcompr.begin() + i);
+                    pp->locallab.warm.erase(pp->locallab.warm.begin() + i);
+                    pp->locallab.sensiex.erase(pp->locallab.sensiex.begin() + i);
+                    pp->locallab.excurve.erase(pp->locallab.excurve.begin() + i);
+                    // Vibrance
+                    pp->locallab.expvibrance.erase(pp->locallab.expvibrance.begin() + i);
+                    pp->locallab.saturated.erase(pp->locallab.saturated.begin() + i);
+                    pp->locallab.pastels.erase(pp->locallab.pastels.begin() + i);
+                    pp->locallab.psthreshold.erase(pp->locallab.psthreshold.begin() + i);
+                    pp->locallab.protectskins.erase(pp->locallab.protectskins.begin() + i);
+                    pp->locallab.avoidcolorshift.erase(pp->locallab.avoidcolorshift.begin() + i);
+                    pp->locallab.pastsattog.erase(pp->locallab.pastsattog.begin() + i);
+                    pp->locallab.sensiv.erase(pp->locallab.sensiv.begin() + i);
+                    pp->locallab.skintonescurve.erase(pp->locallab.skintonescurve.begin() + i);
+                    // Blur & Noise
+                    pp->locallab.expblur.erase(pp->locallab.expblur.begin() + i);
+                    pp->locallab.radius.erase(pp->locallab.radius.begin() + i);
+                    pp->locallab.strength.erase(pp->locallab.strength.begin() + i);
+                    pp->locallab.sensibn.erase(pp->locallab.sensibn.begin() + i);
+                    pp->locallab.blurMethod.erase(pp->locallab.blurMethod.begin() + i);
+                    pp->locallab.activlum.erase(pp->locallab.activlum.begin() + i);
+                    // Tone Mapping
+                    pp->locallab.exptonemap.erase(pp->locallab.exptonemap.begin() + i);
+                    pp->locallab.stren.erase(pp->locallab.stren.begin() + i);
+                    pp->locallab.gamma.erase(pp->locallab.gamma.begin() + i);
+                    pp->locallab.estop.erase(pp->locallab.estop.begin() + i);
+                    pp->locallab.scaltm.erase(pp->locallab.scaltm.begin() + i);
+                    pp->locallab.rewei.erase(pp->locallab.rewei.begin() + i);
+                    pp->locallab.sensitm.erase(pp->locallab.sensitm.begin() + i);
+                    // Retinex
+                    pp->locallab.expreti.erase(pp->locallab.expreti.begin() + i);
+                    pp->locallab.retinexMethod.erase(pp->locallab.retinexMethod.begin() + i);
+                    pp->locallab.str.erase(pp->locallab.str.begin() + i);
+                    pp->locallab.chrrt.erase(pp->locallab.chrrt.begin() + i);
+                    pp->locallab.neigh.erase(pp->locallab.neigh.begin() + i);
+                    pp->locallab.vart.erase(pp->locallab.vart.begin() + i);
+                    pp->locallab.sensih.erase(pp->locallab.sensih.begin() + i);
+                    pp->locallab.localTgaincurve.erase(pp->locallab.localTgaincurve.begin() + i);
+                    pp->locallab.inversret.erase(pp->locallab.inversret.begin() + i);
+                    // Sharpening
+                    pp->locallab.expsharp.erase(pp->locallab.expsharp.begin() + i);
+                    pp->locallab.sharradius.erase(pp->locallab.sharradius.begin() + i);
+                    pp->locallab.sharamount.erase(pp->locallab.sharamount.begin() + i);
+                    pp->locallab.shardamping.erase(pp->locallab.shardamping.begin() + i);
+                    pp->locallab.shariter.erase(pp->locallab.shariter.begin() + i);
+                    pp->locallab.sensisha.erase(pp->locallab.sensisha.begin() + i);
+                    pp->locallab.inverssha.erase(pp->locallab.inverssha.begin() + i);
+                    // Contrast by detail levels
+                    pp->locallab.expcbdl.erase(pp->locallab.expcbdl.begin() + i);
+
+                    for (int j = 0; j < 5; j++) {
+                        pp->locallab.mult[j].erase(pp->locallab.mult[j].begin() + i);
+                    }
+
+                    pp->locallab.chromacbdl.erase(pp->locallab.chromacbdl.begin() + i);
+                    pp->locallab.threshold.erase(pp->locallab.threshold.begin() + i);
+                    pp->locallab.sensicb.erase(pp->locallab.sensicb.begin() + i);
+                    // Denoise
+                    pp->locallab.expdenoi.erase(pp->locallab.expdenoi.begin() + i);
+                    pp->locallab.noiselumf.erase(pp->locallab.noiselumf.begin() + i);
+                    pp->locallab.noiselumc.erase(pp->locallab.noiselumc.begin() + i);
+                    pp->locallab.noiselumdetail.erase(pp->locallab.noiselumdetail.begin() + i);
+                    pp->locallab.noiselequal.erase(pp->locallab.noiselequal.begin() + i);
+                    pp->locallab.noisechrof.erase(pp->locallab.noisechrof.begin() + i);
+                    pp->locallab.noisechroc.erase(pp->locallab.noisechroc.begin() + i);
+                    pp->locallab.adjblur.erase(pp->locallab.adjblur.begin() + i);
+                    pp->locallab.bilateral.erase(pp->locallab.bilateral.begin() + i);
+                    pp->locallab.sensiden.erase(pp->locallab.sensiden.begin() + i);
+                    pp->locallab.avoid.erase(pp->locallab.avoid.begin() + i);
 
                     // Select one remaining spot
                     if (pp->locallab.nbspot > 0) {
@@ -2864,6 +2759,96 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                 pp->locallab.HHcurve.at(pp->locallab.selspot) = HHshape->getCurve();
                 pp->locallab.invers.at(pp->locallab.selspot) = invers->get_active();
                 // Exposure
+                pp->locallab.expexpose.at(pp->locallab.selspot) = (int)expexpose->getEnabled();
+                pp->locallab.expcomp.at(pp->locallab.selspot) = expcomp->getIntValue();
+                pp->locallab.hlcompr.at(pp->locallab.selspot) = hlcompr->getIntValue();
+                pp->locallab.hlcomprthresh.at(pp->locallab.selspot) = hlcomprthresh->getIntValue();
+                pp->locallab.black.at(pp->locallab.selspot) = black->getIntValue();
+                pp->locallab.shcompr.at(pp->locallab.selspot) = shcompr->getIntValue();
+                pp->locallab.warm.at(pp->locallab.selspot) = warm->getIntValue();
+                pp->locallab.sensiex.at(pp->locallab.selspot) = sensiex->getIntValue();
+                pp->locallab.excurve.at(pp->locallab.selspot) = shapeexpos->getCurve();
+                // Vibrance
+                pp->locallab.expvibrance.at(pp->locallab.selspot) = (int)expvibrance->getEnabled();
+                pp->locallab.saturated.at(pp->locallab.selspot) = saturated->getIntValue();
+                pp->locallab.pastels.at(pp->locallab.selspot) = pastels->getIntValue();
+                pp->locallab.psthreshold.at(pp->locallab.selspot) = psThreshold->getValue<int>();
+                pp->locallab.protectskins.at(pp->locallab.selspot) = (int)protectSkins->get_active();
+                pp->locallab.avoidcolorshift.at(pp->locallab.selspot) = (int)avoidColorShift->get_active();
+                pp->locallab.pastsattog.at(pp->locallab.selspot) = (int)pastSatTog->get_active();
+                pp->locallab.sensiv.at(pp->locallab.selspot) = sensiv->getIntValue();
+                pp->locallab.skintonescurve.at(pp->locallab.selspot) = skinTonesCurve->getCurve();
+                // Blur & Noise
+                pp->locallab.expblur.at(pp->locallab.selspot) = (int)expblur->getEnabled();
+                pp->locallab.radius.at(pp->locallab.selspot) = radius->getIntValue();
+                pp->locallab.strength.at(pp->locallab.selspot) = strength->getIntValue();
+                pp->locallab.sensibn.at(pp->locallab.selspot) = sensibn->getIntValue();
+
+                if (blurMethod->get_active_row_number() == 0) {
+                    pp->locallab.blurMethod.at(pp->locallab.selspot) = "norm";
+                } else if (blurMethod->get_active_row_number() == 1) {
+                    pp->locallab.blurMethod.at(pp->locallab.selspot) = "inv";
+                } else if (blurMethod->get_active_row_number() == 2) {
+                    pp->locallab.blurMethod.at(pp->locallab.selspot) = "sym";
+                }
+
+                pp->locallab.activlum.at(pp->locallab.selspot) = (int)activlum->get_active();
+                // Tone Mapping
+                pp->locallab.exptonemap.at(pp->locallab.selspot) = (int)exptonemap->getEnabled();
+                pp->locallab.stren.at(pp->locallab.selspot) = stren->getIntValue();
+                pp->locallab.gamma.at(pp->locallab.selspot) = gamma->getIntValue();
+                pp->locallab.estop.at(pp->locallab.selspot) = estop->getIntValue();
+                pp->locallab.scaltm.at(pp->locallab.selspot) = scaltm->getIntValue();
+                pp->locallab.rewei.at(pp->locallab.selspot) = rewei->getIntValue();
+                pp->locallab.sensitm.at(pp->locallab.selspot) = sensitm->getIntValue();
+                // Retinex
+                pp->locallab.expreti.at(pp->locallab.selspot) = (int)expreti->getEnabled();
+
+                if (retinexMethod->get_active_row_number() == 0) {
+                    pp->locallab.retinexMethod.at(pp->locallab.selspot) = "low";
+                } else if (retinexMethod->get_active_row_number() == 1) {
+                    pp->locallab.retinexMethod.at(pp->locallab.selspot) = "uni";
+                } else if (retinexMethod->get_active_row_number() == 2) {
+                    pp->locallab.retinexMethod.at(pp->locallab.selspot) = "high";
+                }
+
+                pp->locallab.str.at(pp->locallab.selspot) = str->getIntValue();
+                pp->locallab.chrrt.at(pp->locallab.selspot) = chrrt->getIntValue();
+                pp->locallab.neigh.at(pp->locallab.selspot) = neigh->getIntValue();
+                pp->locallab.vart.at(pp->locallab.selspot) = vart->getIntValue();
+                pp->locallab.sensih.at(pp->locallab.selspot) = sensih->getIntValue();
+                pp->locallab.localTgaincurve.at(pp->locallab.selspot) = cTgainshape->getCurve();
+                pp->locallab.inversret.at(pp->locallab.selspot) = (int)inversret->get_active();
+                // Sharpening
+                pp->locallab.expsharp.at(pp->locallab.selspot) = (int)expsharp->getEnabled();
+                pp->locallab.sharradius.at(pp->locallab.selspot) = sharradius->getIntValue();
+                pp->locallab.sharamount.at(pp->locallab.selspot) = sharamount->getIntValue();
+                pp->locallab.shardamping.at(pp->locallab.selspot) = shardamping->getIntValue();
+                pp->locallab.shariter.at(pp->locallab.selspot) = shariter->getIntValue();
+                pp->locallab.sensisha.at(pp->locallab.selspot) = sensisha->getIntValue();
+                pp->locallab.inverssha.at(pp->locallab.selspot) = (int)inverssha->get_active();
+                // Contrast by detail levels
+                pp->locallab.expcbdl.at(pp->locallab.selspot) = (int)expcbdl->getEnabled();
+
+                for (int i = 0; i < 5; i++) {
+                    pp->locallab.mult[i].at(pp->locallab.selspot) = multiplier[i]->getIntValue();
+                }
+
+                pp->locallab.chromacbdl.at(pp->locallab.selspot) = chromacbdl->getIntValue();
+                pp->locallab.threshold.at(pp->locallab.selspot) = threshold->getValue();
+                pp->locallab.sensicb.at(pp->locallab.selspot) = sensicb->getIntValue();
+                // Denoise
+                pp->locallab.expdenoi.at(pp->locallab.selspot) = (int)expdenoi->getEnabled();
+                pp->locallab.noiselumf.at(pp->locallab.selspot) = noiselumf->getIntValue();
+                pp->locallab.noiselumc.at(pp->locallab.selspot) = noiselumc->getIntValue();
+                pp->locallab.noiselumdetail.at(pp->locallab.selspot) = noiselumdetail->getIntValue();
+                pp->locallab.noiselequal.at(pp->locallab.selspot) = noiselequal->getIntValue();
+                pp->locallab.noisechrof.at(pp->locallab.selspot) = noisechrof->getIntValue();
+                pp->locallab.noisechroc.at(pp->locallab.selspot) = noisechroc->getIntValue();
+                pp->locallab.adjblur.at(pp->locallab.selspot) = adjblur->getIntValue();
+                pp->locallab.bilateral.at(pp->locallab.selspot) = bilateral->getIntValue();
+                pp->locallab.sensiden.at(pp->locallab.selspot) = sensiden->getIntValue();
+                pp->locallab.avoid.at(pp->locallab.selspot) = (int)avoid->get_active();
             }
 
             // Update Locallab tools GUI
@@ -2902,206 +2887,96 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.contrast = contrast->getEditedState();
         pedited->locallab.chroma = chroma->getEditedState();
         pedited->locallab.sensi = sensi->getEditedState();
-        pedited->locallab.qualitycurveMethod = qualitycurveMethod->get_active_row_number() != 3;
+        pedited->locallab.qualitycurveMethod = qualitycurveMethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->locallab.llcurve = !llshape->isUnChanged();
         pedited->locallab.cccurve = !ccshape->isUnChanged();
         pedited->locallab.LHcurve = !LHshape->isUnChanged();
         pedited->locallab.HHcurve = !HHshape->isUnChanged();
         pedited->locallab.invers = !invers->get_inconsistent();
         // Exposure
-    }
-
-    /*
-    pp->locallab.adjblur = adjblur->getIntValue();
-    pp->locallab.warm = warm->getIntValue();
-    pp->locallab.expcomp = expcomp->getValue();
-    pp->locallab.black = (int)black->getValue();
-    pp->locallab.hlcompr = (int)hlcompr->getValue();
-    pp->locallab.hlcomprthresh = (int)hlcomprthresh->getValue();
-    pp->locallab.shcompr = (int)shcompr->getValue();
-    pp->locallab.noiselumc = noiselumc->getIntValue();
-    pp->locallab.noiselumdetail = noiselumdetail->getIntValue();
-    pp->locallab.noiselequal = noiselequal->getIntValue();
-    pp->locallab.noisechrodetail = noisechrodetail->getIntValue();
-    pp->locallab.bilateral = bilateral->getIntValue();
-    pp->locallab.sensiden = sensiden->getIntValue();
-    pp->locallab.noiselumf = noiselumf->getIntValue();
-    pp->locallab.noisechrof = noisechrof->getIntValue();
-    pp->locallab.noisechroc = noisechroc->getIntValue();
-    pp->locallab.sharradius = sharradius->getIntValue();
-    pp->locallab.sharamount = sharamount->getIntValue();
-    pp->locallab.shardamping = shardamping->getIntValue();
-    pp->locallab.shariter = shariter->getIntValue();
-    pp->locallab.sensisha = sensisha->getIntValue();
-    pp->locallab.sensiex = sensiex->getIntValue();
-    pp->locallab.sensih = sensih->getIntValue();
-    pp->locallab.retrab = retrab->getIntValue();
-    pp->locallab.sensicb = sensicb->getIntValue();
-    pp->locallab.sensiexclu = sensiexclu->getIntValue();
-    pp->locallab.struc = struc->getIntValue();
-    pp->locallab.sensibn = sensibn->getIntValue();
-    pp->locallab.sensitm = sensitm->getIntValue();
-    pp->locallab.radius = radius->getIntValue();
-    pp->locallab.strength = strength->getIntValue();
-    pp->locallab.stren = stren->getIntValue();
-    pp->locallab.gamma = gamma->getIntValue();
-    pp->locallab.estop = estop->getIntValue();
-    pp->locallab.scaltm = scaltm->getIntValue();
-    pp->locallab.rewei = rewei->getIntValue();
-    pp->locallab.transit = transit->getIntValue();
-    pp->locallab.avoid = avoid->get_active();
-    pp->locallab.activlum = activlum->get_active();
-    pp->locallab.cutpast = cutpast->get_active();
-    pp->locallab.lastdust = lastdust->get_active();
-    pp->locallab.inversrad = inversrad->get_active();
-    pp->locallab.inversret = inversret->get_active();
-    pp->locallab.inverssha = inverssha->get_active();
-    pp->locallab.str = str->getIntValue();
-    pp->locallab.neigh = neigh->getIntValue();
-    pp->locallab.nbspot = nbspot->getIntValue();
-    pp->locallab.anbspot = anbspot->getIntValue();
-    pp->locallab.hueref = hueref->getValue();
-    pp->locallab.huerefblur = huerefblur->getValue();
-    pp->locallab.chromaref = chromaref->getValue();
-    pp->locallab.lumaref = lumaref->getValue();
-    pp->locallab.sobelref = sobelref->getValue();
-    pp->locallab.vart = vart->getIntValue();
-    pp->locallab.chrrt = chrrt->getIntValue();
-    pp->locallab.localTgaincurve       = cTgainshape->getCurve();
-    pp->locallab.localTgaincurverab       = cTgainshaperab->getCurve();
-    pp->locallab.excurve       = shapeexpos->getCurve();
-
-    pp->locallab.expexpose      = expexpose->getEnabled();
-    pp->locallab.expvibrance      = expvibrance->getEnabled();
-    pp->locallab.expblur      = expblur->getEnabled();
-    pp->locallab.exptonemap      = exptonemap->getEnabled();
-    pp->locallab.expreti      = expreti->getEnabled();
-    pp->locallab.expsharp      = expsharp->getEnabled();
-    pp->locallab.expcbdl      = expcbdl->getEnabled();
-    pp->locallab.expdenoi      = expdenoi->getEnabled();
-
-    for (int i = 0; i < 5; i++) {
-        pp->locallab.mult[i] = multiplier[i]->getIntValue();
-    }
-
-    pp->locallab.threshold = threshold->getIntValue();
-    pp->locallab.chromacbdl = chromacbdl->getIntValue();
-
-    pp->locallab.pastels         = pastels->getIntValue();
-    pp->locallab.saturated       = pastSatTog->get_active() ? pp->locallab.pastels : saturated->getIntValue();
-    pp->locallab.psthreshold     = psThreshold->getValue<int> ();
-    pp->locallab.protectskins    = protectSkins->get_active();
-    pp->locallab.avoidcolorshift = avoidColorShift->get_active();
-    pp->locallab.pastsattog      = pastSatTog->get_active();
-    pp->locallab.skintonescurve  = skinTonesCurve->getCurve();
-    pp->locallab.sensiv = sensiv->getIntValue();
-
-
-    if (pedited) {
-        pedited->locallab.Exclumethod  = Exclumethod->get_active_text() != M("GENERAL_UNCHANGED");
-        pedited->locallab.retinexMethod    = retinexMethod->get_active_text() != M("GENERAL_UNCHANGED");
-        pedited->locallab.adjblur = adjblur->getEditedState();
-        pedited->locallab.warm = warm->getEditedState();
-        pedited->locallab.expcomp    = expcomp->getEditedState();
-        pedited->locallab.black      = black->getEditedState();
-        pedited->locallab.hlcompr    = hlcompr->getEditedState();
+        pedited->locallab.expexpose = !expexpose->get_inconsistent();
+        pedited->locallab.expcomp = expcomp->getEditedState();
+        pedited->locallab.hlcompr = hlcompr->getEditedState();
         pedited->locallab.hlcomprthresh = hlcomprthresh->getEditedState();
-        pedited->locallab.shcompr    = shcompr->getEditedState();
-
-        pedited->locallab.noiselumf = noiselumf->getEditedState();
-        pedited->locallab.noiselumc = noiselumc->getEditedState();
-        pedited->locallab.noiselumdetail = noiselumdetail->getEditedState();
-        pedited->locallab.noiselequal = noiselequal->getEditedState();
-        pedited->locallab.noisechrodetail = noisechrodetail->getEditedState();
-        pedited->locallab.bilateral = bilateral->getEditedState();
-        pedited->locallab.sensiden = sensiden->getEditedState();
-        pedited->locallab.noisechrof = noisechrof->getEditedState();
-        pedited->locallab.noisechroc = noisechroc->getEditedState();
-        pedited->locallab.sharradius = sharradius->getEditedState();
-        pedited->locallab.sharamount = sharamount->getEditedState();
-        pedited->locallab.shardamping = shardamping->getEditedState();
-        pedited->locallab.shariter = shariter->getEditedState();
-        pedited->locallab.sensisha = sensisha->getEditedState();
+        pedited->locallab.black = black->getEditedState();
+        pedited->locallab.shcompr = shcompr->getEditedState();
+        pedited->locallab.warm = warm->getEditedState();
         pedited->locallab.sensiex = sensiex->getEditedState();
-        pedited->locallab.sensih = sensih->getEditedState();
-        pedited->locallab.retrab = retrab->getEditedState();
-        pedited->locallab.sensicb = sensicb->getEditedState();
-        pedited->locallab.sensiexclu = sensiexclu->getEditedState();
-        pedited->locallab.struc = struc->getEditedState();
-        pedited->locallab.sensibn = sensibn->getEditedState();
-        pedited->locallab.sensitm = sensitm->getEditedState();
+        pedited->locallab.excurve = !shapeexpos->isUnChanged();
+        // Vibrance
+        pedited->locallab.expvibrance = !expvibrance->get_inconsistent();
+        pedited->locallab.saturated = saturated->getEditedState();
+        pedited->locallab.pastels = pastels->getEditedState();
+        pedited->locallab.psthreshold = psThreshold->getEditedState();
+        pedited->locallab.protectskins = !protectSkins->get_inconsistent();
+        pedited->locallab.avoidcolorshift = !avoidColorShift->get_inconsistent();
+        pedited->locallab.pastsattog = !pastSatTog->get_inconsistent();
+        pedited->locallab.sensiv = sensiv->getEditedState();
+        pedited->locallab.skintonescurve = !skinTonesCurve->isUnChanged();
+        // Blur & Noise
+        pedited->locallab.expblur = !expblur->get_inconsistent();
         pedited->locallab.radius = radius->getEditedState();
         pedited->locallab.strength = strength->getEditedState();
+        pedited->locallab.sensibn = sensibn->getEditedState();
+        pedited->locallab.blurMethod = blurMethod->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->locallab.activlum = !activlum->get_inconsistent();
+        // Tone Mapping
+        pedited->locallab.exptonemap = !exptonemap->get_inconsistent();
         pedited->locallab.stren = stren->getEditedState();
         pedited->locallab.gamma = gamma->getEditedState();
         pedited->locallab.estop = estop->getEditedState();
         pedited->locallab.scaltm = scaltm->getEditedState();
         pedited->locallab.rewei = rewei->getEditedState();
-        pedited->locallab.avoid = !avoid->get_inconsistent();
-        pedited->locallab.cutpast = !cutpast->get_inconsistent();
-        pedited->locallab.lastdust = !lastdust->get_inconsistent();
-        pedited->locallab.activlum = !activlum->get_inconsistent();
-        pedited->locallab.inversret = !inversret->get_inconsistent();
-        pedited->locallab.inversrad = !inversrad->get_inconsistent();
-        pedited->locallab.inverssha = !inverssha->get_inconsistent();
+        pedited->locallab.sensitm = sensitm->getEditedState();
+        // Retinex
+        pedited->locallab.expreti = !expreti->get_inconsistent();
+        pedited->locallab.retinexMethod = retinexMethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->locallab.str = str->getEditedState();
-        pedited->locallab.neigh = neigh->getEditedState();
-        pedited->locallab.hueref = hueref->getEditedState();
-        pedited->locallab.huerefblur = huerefblur->getEditedState();
-        pedited->locallab.chromaref = chromaref->getEditedState();
-        pedited->locallab.lumaref = lumaref->getEditedState();
-        pedited->locallab.sobelref = sobelref->getEditedState();
-
-        pedited->locallab.vart = vart->getEditedState();
         pedited->locallab.chrrt = chrrt->getEditedState();
-        pedited->locallab.localTgaincurve        = !cTgainshape->isUnChanged();
-        pedited->locallab.localTgaincurverab        = !cTgainshaperab->isUnChanged();
-        pedited->locallab.excurve        = !shapeexpos->isUnChanged();
-
-        pedited->locallab.expexpose     = !expexpose->get_inconsistent();
-        pedited->locallab.expvibrance     = !expvibrance->get_inconsistent();
-        pedited->locallab.expblur     = !expblur->get_inconsistent();
-        pedited->locallab.exptonemap     = !exptonemap->get_inconsistent();
-        pedited->locallab.expreti     = !expreti->get_inconsistent();
-        pedited->locallab.expsharp     = !expsharp->get_inconsistent();
-        pedited->locallab.expcbdl     = !expcbdl->get_inconsistent();
-        pedited->locallab.expdenoi     = !expdenoi->get_inconsistent();
+        pedited->locallab.neigh = neigh->getEditedState();
+        pedited->locallab.vart = vart->getEditedState();
+        pedited->locallab.sensih = sensih->getEditedState();
+        pedited->locallab.localTgaincurve = !cTgainshape->isUnChanged();
+        pedited->locallab.inversret = !inversret->get_inconsistent();
+        // Sharpening
+        pedited->locallab.expsharp = !expsharp->get_inconsistent();
+        pedited->locallab.sharradius = sharradius->getEditedState();
+        pedited->locallab.sharamount = sharamount->getEditedState();
+        pedited->locallab.shardamping = shardamping->getEditedState();
+        pedited->locallab.shariter = shariter->getEditedState();
+        pedited->locallab.sensisha = sensisha->getEditedState();
+        pedited->locallab.inverssha = !inverssha->get_inconsistent();
+        // Contrast by detail levels
+        pedited->locallab.expcbdl = !expcbdl->get_inconsistent();
 
         for (int i = 0; i < 5; i++) {
             pedited->locallab.mult[i] = multiplier[i]->getEditedState();
         }
 
-        pedited->locallab.threshold = threshold->getEditedState();
         pedited->locallab.chromacbdl = chromacbdl->getEditedState();
-        pedited->locallab.pastels         = pastels->getEditedState();
-        pedited->locallab.saturated       = saturated->getEditedState();
-        pedited->locallab.psthreshold     = psThreshold->getEditedState();
-        pedited->locallab.protectskins    = !protectSkins->get_inconsistent();
-        pedited->locallab.avoidcolorshift = !avoidColorShift->get_inconsistent();
-        pedited->locallab.pastsattog      = !pastSatTog->get_inconsistent();
-        pedited->locallab.skintonescurve  = !skinTonesCurve->isUnChanged();
-        pedited->locallab.sensiv = sensiv->getEditedState();
+        pedited->locallab.threshold = threshold->getEditedState();
+        pedited->locallab.sensicb = sensicb->getEditedState();
+        // Denoise
+        pedited->locallab.expdenoi = !expdenoi->get_inconsistent();
+        pedited->locallab.noiselumf = noiselumf->getEditedState();
+        pedited->locallab.noiselumc = noiselumc->getEditedState();
+        pedited->locallab.noiselumdetail = noiselumdetail->getEditedState();
+        pedited->locallab.noiselequal = noiselequal->getEditedState();
+        pedited->locallab.noisechrof = noisechrof->getEditedState();
+        pedited->locallab.noisechroc = noisechroc->getEditedState();
+        pedited->locallab.adjblur = adjblur->getEditedState();
+        pedited->locallab.bilateral = bilateral->getEditedState();
+        pedited->locallab.sensiden = sensiden->getEditedState();
+        pedited->locallab.avoid = !avoid->get_inconsistent();
     }
-
-    if (retinexMethod->get_active_row_number() == 0) {
-        pp->locallab.retinexMethod = "low";
-    } else if (retinexMethod->get_active_row_number() == 1) {
-        pp->locallab.retinexMethod = "uni";
-    } else if (retinexMethod->get_active_row_number() == 2) {
-        pp->locallab.retinexMethod = "high";
-    }
-
-    if (Exclumethod->get_active_row_number() == 0) {
-        pp->locallab.Exclumethod = "norm";
-    } else if (Exclumethod->get_active_row_number() == 1) {
-        pp->locallab.Exclumethod = "exc";
-    }
-    */
 }
 
 void Locallab::protectskins_toggled()
 {
+    printf("protectskins_toggled\n");
+
     if (batchMode) {
+        /*
         if (protectSkins->get_inconsistent()) {
             protectSkins->set_inconsistent(false);
             pskinsconn.block(true);
@@ -3112,20 +2987,26 @@ void Locallab::protectskins_toggled()
         }
 
         lastProtectSkins = protectSkins->get_active();
+        */
     }
 
-    if (listener && getEnabled()) {
-        if (protectSkins->get_active()) {
-            listener->panelChanged(EvlocallabProtectSkins, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged(EvlocallabProtectSkins, M("GENERAL_DISABLED"));
+    if (getEnabled() && expvibrance->getEnabled()) {
+        if (listener) {
+            if (protectSkins->get_active()) {
+                listener->panelChanged(EvlocallabProtectSkins, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(EvlocallabProtectSkins, M("GENERAL_DISABLED"));
+            }
         }
     }
 }
 
 void Locallab::avoidcolorshift_toggled()
 {
+    printf("avoidcolorshift_toggled\n");
+
     if (batchMode) {
+        /*
         if (avoidColorShift->get_inconsistent()) {
             avoidColorShift->set_inconsistent(false);
             ashiftconn.block(true);
@@ -3136,13 +3017,16 @@ void Locallab::avoidcolorshift_toggled()
         }
 
         lastAvoidColorShift = avoidColorShift->get_active();
+        */
     }
 
-    if (listener && getEnabled()) {
-        if (avoidColorShift->get_active()) {
-            listener->panelChanged(EvlocallabAvoidColorShift, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged(EvlocallabAvoidColorShift, M("GENERAL_DISABLED"));
+    if (getEnabled() && expvibrance->getEnabled()) {
+        if (listener) {
+            if (avoidColorShift->get_active()) {
+                listener->panelChanged(EvlocallabAvoidColorShift, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(EvlocallabAvoidColorShift, M("GENERAL_DISABLED"));
+            }
         }
     }
 }
@@ -3150,6 +3034,10 @@ void Locallab::avoidcolorshift_toggled()
 
 void Locallab::spotdupChanged(bool spotchan)
 {
+    // TODO Locallab printf
+    printf("spotdupChanged\n");
+
+    /*
     nextspotdup = spotchan;
 
     const auto func = [](gpointer data) -> gboolean {
@@ -3158,11 +3046,15 @@ void Locallab::spotdupChanged(bool spotchan)
     };
 
     idle_register.add(func, this);
+    */
 }
 
 bool Locallab::spotdupComputed_()
 {
+    // TODO Locallab printf
+    printf("spotdupComputed_\n");
 
+    /*
     disableListener();
     // spotduplicated->set_active(nextspotdup);
 
@@ -3174,6 +3066,7 @@ bool Locallab::spotdupComputed_()
     }
 
     enableListener();
+    */
 
     return false;
 }
@@ -3181,6 +3074,8 @@ bool Locallab::spotdupComputed_()
 
 void Locallab::spotduplicatedChanged()
 {
+    printf("spotduplicatedChanged\n");
+
     /*
     if (batchMode) {
         if (spotduplicated->get_inconsistent()) {
@@ -3206,7 +3101,10 @@ void Locallab::spotduplicatedChanged()
 
 void Locallab::pastsattog_toggled()
 {
+    printf("pastsattog_toggled\n");
+
     if (batchMode) {
+        /*
         if (pastSatTog->get_inconsistent()) {
             pastSatTog->set_inconsistent(false);
             pastsattogconn.block(true);
@@ -3217,24 +3115,20 @@ void Locallab::pastsattog_toggled()
         }
 
         lastPastSatTog = pastSatTog->get_active();
+        */
     }
 
     if (pastSatTog->get_active()) {
-        // Link both slider, so we set saturated and psThresholds unsensitive
-        psThreshold->set_sensitive(false);
-        saturated->set_sensitive(false);
-        saturated->setValue(pastels->getValue());      // Pastels and Saturated are linked
-    } else {
-        // Separate sliders, so we set saturated and psThresholds sensitive again
-        psThreshold->set_sensitive(true);
-        saturated->set_sensitive(true);
+        saturated->setValue(pastels->getValue());
     }
 
-    if (listener && getEnabled()) {
-        if (pastSatTog->get_active()) {
-            listener->panelChanged(EvlocallabPastSatTog, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged(EvlocallabPastSatTog, M("GENERAL_DISABLED"));
+    if (getEnabled() && expvibrance->getEnabled()) {
+        if (listener) {
+            if (pastSatTog->get_active()) {
+                listener->panelChanged(EvlocallabPastSatTog, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(EvlocallabPastSatTog, M("GENERAL_DISABLED"));
+            }
         }
     }
 }
@@ -3269,122 +3163,82 @@ void Locallab::curveChanged(CurveEditor* ce)
         }
     }
 
-    /*
-    if (listener && getEnabled()) {
+    // Exposure
+    if (getEnabled() && expexpose->getEnabled()) {
+        if (ce == shapeexpos) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshapeexpos, M("HISTORY_CUSTOMCURVE"));
+            }
+        }
+    }
+
+    // Vibrance
+    if (getEnabled() && expvibrance->getEnabled()) {
+        if (ce == skinTonesCurve) {
+            if (listener) {
+                listener->panelChanged(EvlocallabSkinTonesCurve, M("HISTORY_CUSTOMCURVE"));
+            }
+        }
+    }
+
+    // Retinex
+    if (getEnabled() && expreti->getEnabled()) {
         if (ce == cTgainshape) {
-            listener->panelChanged(EvlocallabCTgainCurve, M("HISTORY_CUSTOMCURVE"));  //HISTORY_CUSTOMCURVE
-            int strval = retrab->getValue();
-            //update MIP
-            retrab->setValue(strval + 1);
-            adjusterChanged(retrab, strval + 1);
-            usleep(10000);  //to test
-            retrab->setValue(strval);
-
-            adjusterChanged(retrab, strval);
+            if (listener) {
+                listener->panelChanged(EvlocallabCTgainCurve, M("HISTORY_CUSTOMCURVE"));
+            }
         }
+    }
 
-        else if (ce == cTgainshaperab) {
-            listener->panelChanged(EvlocallabCTgainCurverab, M(""));
-        } else if (ce == LHshape) {
-            listener->panelChanged(EvlocallabLHshape, M(""));
-            int strval = retrab->getValue();
-            //update MIP
-            retrab->setValue(strval + 1);
-            adjusterChanged(retrab, strval + 1);
-            usleep(10000);  //to test
-            retrab->setValue(strval);
-
-            adjusterChanged(retrab, strval);
-        } else if (ce == HHshape) {
-            listener->panelChanged(EvlocallabHHshape, M("HISTORY_CUSTOMCURVE"));
-            int strval = retrab->getValue();
-            //update MIP
-            retrab->setValue(strval + 1);
-            adjusterChanged(retrab, strval + 1);
-            usleep(10000);  //to test
-            retrab->setValue(strval);
-        } else if (ce == shapeexpos) {
-            listener->panelChanged(Evlocallabshapeexpos, M("HISTORY_CUSTOMCURVE"));
-            int strval = retrab->getValue();
-            //update MIP
-            retrab->setValue(strval + 1);
-            adjusterChanged(retrab, strval + 1);
-            usleep(10000);  //to test
-            retrab->setValue(strval);
-
-            adjusterChanged(retrab, strval);
-
-
-        } else if (ce == llshape) {
-            listener->panelChanged(Evlocallabllshape, M("HISTORY_CUSTOMCURVE"));
-            int strval = retrab->getValue();
-            //update MIP
-            retrab->setValue(strval + 1);
-            adjusterChanged(retrab, strval + 1);
-            usleep(10000);  //to test
-            retrab->setValue(strval);
-
-            adjusterChanged(retrab, strval);
-
-        } else if (ce == ccshape) {
-            listener->panelChanged(Evlocallabccshape, M("HISTORY_CUSTOMCURVE"));
-            int strval = retrab->getValue();
-            //update MIP
-            retrab->setValue(strval + 1);
-            adjusterChanged(retrab, strval + 1);
-            usleep(10000);  //to test
-            retrab->setValue(strval);
-
-            adjusterChanged(retrab, strval);
-
-
-        } else if (ce == skinTonesCurve) {
-            listener->panelChanged(EvlocallabSkinTonesCurve, M("HISTORY_CUSTOMCURVE"));
-            int strval = retrab->getValue();
-            //update MIP
-            retrab->setValue(strval + 1);
-            adjusterChanged(retrab, strval + 1);
-            usleep(10000);  //to test
-            retrab->setValue(strval);
-            adjusterChanged(retrab, strval);
-        }
+    /*
+    if (ce == skinTonesCurve) {
+        listener->panelChanged(EvlocallabSkinTonesCurve, M("HISTORY_CUSTOMCURVE"));
+        int strval = retrab->getValue();
+        //update MIP
+        retrab->setValue(strval + 1);
+        adjusterChanged(retrab, strval + 1);
+        usleep(10000);  //to test
+        retrab->setValue(strval);
+        adjusterChanged(retrab, strval);
     }
     */
 }
 
 void Locallab::retinexMethodChanged()
 {
-    if (!batchMode) {
+    printf("retinexMethodChanged\n");
 
+    if (!batchMode) {
+        /*
         retrab->hide();
         LocalcurveEditorgainTrab->hide();
+        */
     }
 
-    if (listener) {
-        listener->panelChanged(EvlocallabretinexMethod, retinexMethod->get_active_text());
+    if (getEnabled() && expreti->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabretinexMethod, retinexMethod->get_active_text());
+        }
     }
 }
 
 void Locallab::blurMethodChanged()
 {
-    if (!batchMode) {
+    printf("blurMethodChanged\n");
 
-    }
-
-    if (blurMethod->get_active_row_number() == 0 || blurMethod->get_active_row_number() == 2) {
-        sensibn->show();
-    } else {
-        sensibn->hide();
-    }
-
-    if (listener) {
-        listener->panelChanged(EvlocallabblurMethod, blurMethod->get_active_text());
+    if (getEnabled() && expblur->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabblurMethod, blurMethod->get_active_text());
+        }
     }
 }
 
 
 void Locallab::dustMethodChanged()
 {
+    printf("dustMethodChanged\n");
+
+    /*
     if (!batchMode) {
 
     }
@@ -3393,10 +3247,12 @@ void Locallab::dustMethodChanged()
     if (listener) {
         //   listener->panelChanged (EvlocallabdustMethod, dustMethod->get_active_text ());
     }
+    */
 }
 
 void Locallab::qualityMethodChanged()
 {
+    /*
     if (!batchMode) {
         /*
         if (qualityMethod->get_active_row_number() == 0) { //STD
@@ -3406,25 +3262,29 @@ void Locallab::qualityMethodChanged()
             proxi->show();
             thres->show();
         }
-        */
-    }
+        *//*
+}
 
-    if (listener) {
-        listener->panelChanged(EvlocallabqualityMethod, qualityMethod->get_active_text());
-    }
+if (listener) {
+listener->panelChanged(EvlocallabqualityMethod, qualityMethod->get_active_text());
+}
+*/
 }
 
 void Locallab::qualitycurveMethodChanged()
 {
     printf("qualitycurveMethodChanged\n");
 
-    if (listener) {
-        listener->panelChanged(EvlocallabqualitycurveMethod, qualitycurveMethod->get_active_text());
+    if (getEnabled() && expcolor->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabqualitycurveMethod, qualitycurveMethod->get_active_text());
+        }
     }
 }
 
 void Locallab::ExclumethodChanged()
 {
+    /*
     if (!batchMode) {
         if (Exclumethod->get_active_row_number() == 0) {
         } else if (Exclumethod->get_active_row_number() == 1) {
@@ -3435,11 +3295,12 @@ void Locallab::ExclumethodChanged()
     if (listener) {
         listener->panelChanged(Evlocallabexclumethod, Exclumethod->get_active_text());
     }
-
+    */
 }
 
 void Locallab::shapemethodChanged()
 {
+    /*
     if (!batchMode) {
         //
     }
@@ -3448,10 +3309,12 @@ void Locallab::shapemethodChanged()
     if (listener) {
         listener->panelChanged(Evlocallabshapemethod, shapemethod->get_active_text());
     }
+    */
 }
 
 void Locallab::SmethodChanged()
 {
+    /*
     if (!batchMode) {
         if (Smethod->get_active_row_number() == 0) { //IND 0
             locX->hide();
@@ -3491,28 +3354,29 @@ void Locallab::SmethodChanged()
                     locXL->hide();
                     locY->hide();
                     locYT->hide();
-                }   */
-    }
+                }   *//*
+}
 
-    if (listener && getEnabled()) {
-        if (Smethod->get_active_row_number() == 1  || Smethod->get_active_row_number() == 3) {
-            listener->panelChanged(EvlocallabSmet, Smethod->get_active_text());
-            locXL->setValue(locX->getValue());
-            locYT->setValue(locY->getValue());
-        }
-        //   else if(Smethod->get_active_row_number()==2) {
-        //          listener->panelChanged (EvlocallabSmet, Smethod->get_active_text ());
-        //           locXL->setValue (locX->getValue());
-        //           locYT->setValue (locX->getValue());
-        //          locY->setValue (locX->getValue());
-        //     }
-        else
+if (listener && getEnabled()) {
+if (Smethod->get_active_row_number() == 1  || Smethod->get_active_row_number() == 3) {
+    listener->panelChanged(EvlocallabSmet, Smethod->get_active_text());
+    locXL->setValue(locX->getValue());
+    locYT->setValue(locY->getValue());
+}
+//   else if(Smethod->get_active_row_number()==2) {
+//          listener->panelChanged (EvlocallabSmet, Smethod->get_active_text ());
+//           locXL->setValue (locX->getValue());
+//           locYT->setValue (locX->getValue());
+//          locY->setValue (locX->getValue());
+//     }
+else
 
-        {
-            listener->panelChanged(EvlocallabSmet, Smethod->get_active_text());
+{
+    listener->panelChanged(EvlocallabSmet, Smethod->get_active_text());
 
-        }
-    }
+}
+}
+*/
 }
 void Locallab::inversChanged()
 {
@@ -3546,7 +3410,7 @@ void Locallab::inversChanged()
 
 void Locallab::cutpastChanged()
 {
-
+    /*
     if (batchMode) {
         if (cutpast->get_inconsistent()) {
             cutpast->set_inconsistent(false);
@@ -3568,11 +3432,12 @@ void Locallab::cutpastChanged()
             //     listener->panelChanged (Evlocallabcutpast, M ("GENERAL_DISABLED"));
         }
     }
+    */
 }
 
 void Locallab::lastdustChanged()
 {
-
+    /*
     if (batchMode) {
         if (lastdust->get_inconsistent()) {
             lastdust->set_inconsistent(false);
@@ -3594,6 +3459,7 @@ void Locallab::lastdustChanged()
             //    listener->panelChanged (Evlocallablastdust, M ("GENERAL_DISABLED"));
         }
     }
+    */
 }
 
 
@@ -3630,8 +3496,10 @@ void Locallab::curvactivChanged()
 
 void Locallab::activlumChanged()
 {
+    printf("activlumChanged\n");
 
     if (batchMode) {
+        /*
         if (activlum->get_inconsistent()) {
             activlum->set_inconsistent(false);
             activlumConn.block(true);
@@ -3642,22 +3510,23 @@ void Locallab::activlumChanged()
         }
 
         lastactivlum = activlum->get_active();
+        */
     }
 
-
-    if (listener) {
-
-        if (getEnabled()) {
-            listener->panelChanged(Evlocallabactivlum, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged(Evlocallabactivlum, M("GENERAL_DISABLED"));
+    if (getEnabled() && expblur->getEnabled()) {
+        if (listener) {
+            if (activlum->get_active()) {
+                listener->panelChanged(Evlocallabactivlum, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(Evlocallabactivlum, M("GENERAL_DISABLED"));
+            }
         }
     }
 }
 
 void Locallab::inversradChanged()
 {
-
+    /*
     if (batchMode) {
         if (inversrad->get_inconsistent()) {
             inversrad->set_inconsistent(false);
@@ -3685,12 +3554,15 @@ void Locallab::inversradChanged()
             listener->panelChanged(Evlocallabinversrad, M("GENERAL_DISABLED"));
         }
     }
+    */
 }
 
 void Locallab::inversshaChanged()
 {
+    printf("inversshaChanged\n");
 
     if (batchMode) {
+        /*
         if (inverssha->get_inconsistent()) {
             inverssha->set_inconsistent(false);
             inversshaConn.block(true);
@@ -3701,28 +3573,26 @@ void Locallab::inversshaChanged()
         }
 
         lastinverssha = inverssha->get_active();
+        */
     }
 
-    /*
-        if(inverssha->get_active ()) {
-            sensisha->hide();
-        } else {
-            sensisha->show();
-        }
-    */
-    if (listener) {
-        if (getEnabled()) {
-            listener->panelChanged(Evlocallabinverssha, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged(Evlocallabinverssha, M("GENERAL_DISABLED"));
+    if (getEnabled() && expsharp->getEnabled()) {
+        if (listener) {
+            if (inverssha->get_active()) {
+                listener->panelChanged(Evlocallabinverssha, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(Evlocallabinverssha, M("GENERAL_DISABLED"));
+            }
         }
     }
 }
 
 void Locallab::inversretChanged()
 {
+    printf("inversretChanged\n");
 
     if (batchMode) {
+        /*
         if (inversret->get_inconsistent()) {
             inversret->set_inconsistent(false);
             inversretConn.block(true);
@@ -3733,20 +3603,16 @@ void Locallab::inversretChanged()
         }
 
         lastinversret = inversret->get_active();
+        */
     }
 
-    if (inversret->get_active()) {
-        sensih->hide();
-    } else {
-        sensih->show();
-    }
-
-
-    if (listener) {
-        if (getEnabled()) {
-            listener->panelChanged(Evlocallabinversret, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged(Evlocallabinversret, M("GENERAL_DISABLED"));
+    if (getEnabled() && expsharp->getEnabled()) {
+        if (listener) {
+            if (inversret->get_active()) {
+                listener->panelChanged(Evlocallabinversret, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(Evlocallabinversret, M("GENERAL_DISABLED"));
+            }
         }
     }
 }
@@ -3998,8 +3864,12 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
 
 void Locallab::adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop)
 {
-    if (listener && getEnabled()) {
-        listener->panelChanged(EvlocallabPastSatThreshold, psThreshold->getHistoryString());
+    printf("adjusterChangedTS\n");
+
+    if (getEnabled() && expvibrance->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabPastSatThreshold, psThreshold->getHistoryString());
+        }
     }
 }
 
@@ -4027,6 +3897,169 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
 
+        if (a == sensi) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsensi, sensi->getTextValue());
+            }
+        }
+    }
+
+    // Exposure
+    if (getEnabled() && expexpose->getEnabled()) {
+        if (a == expcomp) {
+            if (listener) {
+                listener->panelChanged(Evlocallabexpcomp, expcomp->getTextValue());
+            }
+        }
+
+        if (a == hlcompr) {
+            if (listener) {
+                listener->panelChanged(Evlocallabhlcompr, hlcompr->getTextValue());
+            }
+        }
+
+        if (a == hlcomprthresh) {
+            if (listener) {
+                listener->panelChanged(Evlocallabhlcomprthresh, hlcomprthresh->getTextValue());
+            }
+        }
+
+        if (a == black) {
+            if (listener) {
+                listener->panelChanged(Evlocallabblack, black->getTextValue());
+            }
+        }
+
+        if (a == shcompr) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshcompr, shcompr->getTextValue());
+            }
+        }
+
+        if (a == warm) {
+            if (listener) {
+                listener->panelChanged(Evlocallabwarm, warm->getTextValue());
+            }
+        }
+
+        if (a == sensiex) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsensiex, sensiex->getTextValue());
+            }
+        }
+    }
+
+    // Vibrance
+    if (a == pastels && pastSatTog->get_active()) {
+        saturated->setValue(newval);
+    }
+
+    if (getEnabled() && expvibrance->getEnabled()) {
+        if (a == saturated && !pastSatTog->get_active()) {
+            if (listener) {
+                listener->panelChanged(EvlocallabSaturated, saturated->getTextValue());
+            }
+        }
+
+        if (a == pastels) {
+            if (listener) {
+                listener->panelChanged(EvlocallabPastels, pastels->getTextValue());
+            }
+        }
+
+        if (a == sensiv) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsensiv, sensiv->getTextValue());
+            }
+        }
+    }
+
+    // Blur & Noise
+    if (getEnabled() && expblur->getEnabled()) {
+        if (a == radius) {
+            if (listener) {
+                listener->panelChanged(Evlocallabradius, radius->getTextValue());
+            }
+        }
+
+        if (a == strength) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrength, strength->getTextValue());
+            }
+        }
+
+        if (a == sensibn) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsensibn, sensibn->getTextValue());
+            }
+        }
+    }
+
+    // Tone Mapping
+    if (getEnabled() && exptonemap->getEnabled()) {
+        if (a == stren) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstren, stren->getTextValue());
+            }
+        }
+
+        if (a == gamma) {
+            if (listener) {
+                listener->panelChanged(Evlocallabgamma, gamma->getTextValue());
+            }
+        }
+
+        if (a == estop) {
+            if (listener) {
+                listener->panelChanged(Evlocallabestop, estop->getTextValue());
+            }
+        }
+
+        if (a == scaltm) {
+            if (listener) {
+                listener->panelChanged(Evlocallabscaltm, scaltm->getTextValue());
+            }
+        }
+
+        if (a == rewei) {
+            if (listener) {
+                listener->panelChanged(Evlocallabrewei, rewei->getTextValue());
+            }
+        }
+
+        if (a == sensitm) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsensitm, sensitm->getTextValue());
+            }
+        }
+    }
+
+    // Retinex
+    if (getEnabled() && expreti->getEnabled()) {
+        if (a == str) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstr, str->getTextValue());
+            }
+        }
+
+        if (a == chrrt) {
+            if (listener) {
+                listener->panelChanged(Evlocallabchrrt, chrrt->getTextValue());
+            }
+        }
+
+        if (a == neigh) {
+            if (listener) {
+                listener->panelChanged(Evlocallabneigh, neigh->getTextValue());
+            }
+        }
+
+        if (a == vart) {
+            if (listener) {
+                listener->panelChanged(Evlocallabvart, vart->getTextValue());
+            }
+        }
+
         if (a == sensih) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensih, sensih->getTextValue());
@@ -4034,144 +4067,132 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         }
     }
 
-    anbspot->hide();
-    hueref->hide();
-    huerefblur->hide();
-    chromaref->hide();
-    lumaref->hide();
-    sobelref->hide();
-    centerXbuf->hide();
-    centerYbuf->hide();
+    // Sharpening
+    if (getEnabled() && expsharp->getEnabled()) {
+        if (a == sharradius) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsharradius, sharradius->getTextValue());
+            }
+        }
 
-    if (a == pastels && pastSatTog->get_active()) {
-        saturated->setValue(newval);
+        if (a == sharamount) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsharamount, sharamount->getTextValue());
+            }
+        }
+
+        if (a == shardamping) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshardamping, shardamping->getTextValue());
+            }
+        }
+
+        if (a == shariter) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshariter, shariter->getTextValue());
+            }
+        }
+
+        if (a == sensisha) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsensis, sensisha->getTextValue());
+            }
+        }
     }
 
-    if (listener && getEnabled()) {
-        if (a == warm) {
-            listener->panelChanged(Evlocallabwarm, warm->getTextValue());
-        } else if (a == expcomp) {
-            listener->panelChanged(Evlocallabexpcomp, expcomp->getTextValue());
-        } else if (a == hlcompr) {
-            listener->panelChanged(Evlocallabhlcompr, hlcompr->getTextValue());
-        } else if (a == hlcomprthresh) {
-            listener->panelChanged(Evlocallabhlcomprthresh, hlcomprthresh->getTextValue());
-        } else if (a == black) {
-            listener->panelChanged(Evlocallabblack, black->getTextValue());
-            shcompr->set_sensitive(!((int)black->getValue() == 0));     //at black=0 shcompr value has no effect
-        } else if (a == shcompr) {
-            listener->panelChanged(Evlocallabshcompr, shcompr->getTextValue());
-        } else if (a == sensiex) {
-            listener->panelChanged(Evlocallabsensiex, sensiex->getTextValue());
-        } else if (a == pastels) {
-            listener->panelChanged(EvlocallabPastels, pastels->getTextValue());
-        } else if (a == saturated && !pastSatTog->get_active()) {
-            listener->panelChanged(EvlocallabSaturated, saturated->getTextValue());
-        } else if (a == sensiv) {
-            listener->panelChanged(Evlocallabsensiv, sensiv->getTextValue());
-        } else if (a == noiselumf) {
-            listener->panelChanged(Evlocallabnoiselumf, noiselumf->getTextValue());
-        } else if (a == noiselumc) {
-            listener->panelChanged(Evlocallabnoiselumc, noiselumc->getTextValue());
-        } else if (a == noiselumdetail) {
-            listener->panelChanged(Evlocallabnoiselumdetail, noiselumdetail->getTextValue());
-        } else if (a == noiselequal) {
-            listener->panelChanged(Evlocallabnoiselequal, noiselequal->getTextValue());
-        } else if (a == noisechrodetail) {
-            listener->panelChanged(Evlocallabnoisechrodetail, noisechrodetail->getTextValue());
-        } else if (a == bilateral) {
-            listener->panelChanged(Evlocallabbilateral, bilateral->getTextValue());
-        } else if (a == sensiden) {
-            listener->panelChanged(Evlocallabsensiden, sensiden->getTextValue());
-        } else if (a == noisechrof) {
-            listener->panelChanged(Evlocallabnoisechrof, noisechrof->getTextValue());
-        } else if (a == noisechroc) {
-            listener->panelChanged(Evlocallabnoisechroc, noisechroc->getTextValue());
-        } else if (a == sharradius) {
-            listener->panelChanged(Evlocallabsharradius, sharradius->getTextValue());
-        } else if (a == sharamount) {
-            listener->panelChanged(Evlocallabsharamount, sharamount->getTextValue());
-        } else if (a == shardamping) {
-            listener->panelChanged(Evlocallabshardamping, shardamping->getTextValue());
-        } else if (a == shariter) {
-            listener->panelChanged(Evlocallabshariter, shariter->getTextValue());
-        } else if (a == sensisha) {
-            listener->panelChanged(Evlocallabsensis, sensisha->getTextValue());
-        } else if (a == sensi) {
-            listener->panelChanged(Evlocallabsensi, sensi->getTextValue());
-        } else if (a == retrab) {
-            listener->panelChanged(Evlocallabretrab, ""); //retrab->getTextValue());
-        } else if (a == radius) {
-            listener->panelChanged(Evlocallabradius, radius->getTextValue());
-        } else if (a == strength) {
-            listener->panelChanged(Evlocallabstrength, strength->getTextValue());
-        } else if (a == stren) {
-            listener->panelChanged(Evlocallabstren, stren->getTextValue());
-        } else if (a == gamma) {
-            listener->panelChanged(Evlocallabgamma, gamma->getTextValue());
-        } else if (a == estop) {
-            listener->panelChanged(Evlocallabestop, estop->getTextValue());
-        } else if (a == scaltm) {
-            listener->panelChanged(Evlocallabscaltm, scaltm->getTextValue());
-        } else if (a == rewei) {
-            listener->panelChanged(Evlocallabrewei, rewei->getTextValue());
-        } else if (a == sensitm) {
-            listener->panelChanged(Evlocallabsensitm, sensitm->getTextValue());
-        } else if (a == str) {
-            listener->panelChanged(Evlocallabstr, str->getTextValue());
-        } else if (a == neigh) {
-            listener->panelChanged(Evlocallabneigh, neigh->getTextValue());
-        } else if (a == hueref) {
-            listener->panelChanged(Evlocallabhueref, ""); //anbspot->getTextValue());
-        } else if (a == huerefblur) {
-            listener->panelChanged(Evlocallabhuerefblur, ""); //anbspot->getTextValue());
-        } else if (a == chromaref) {
-            listener->panelChanged(Evlocallabchromaref, ""); //anbspot->getTextValue());
-        } else if (a == lumaref) {
-            listener->panelChanged(Evlocallablumaref, ""); //anbspot->getTextValue());
-        } else if (a == sobelref) {
-            listener->panelChanged(Evlocallabsobelref, ""); //anbspot->getTextValue());
-        } else if (a == vart) {
-            listener->panelChanged(Evlocallabvart, vart->getTextValue());
-        } else if (a == chrrt) {
-            listener->panelChanged(Evlocallabchrrt, chrrt->getTextValue());
-        } else if (a == threshold) {
-            listener->panelChanged(EvlocallabThresho, threshold->getTextValue());
-        } else if (a == chromacbdl) {
-            listener->panelChanged(Evlocallabchromacbdl, chromacbdl->getTextValue());
-        } else if (a == sensicb) {
-            listener->panelChanged(Evlocallabsensicb, sensicb->getTextValue());
-        } else if (a == sensiexclu) {
-            listener->panelChanged(Evlocallabsensiexclu, sensiexclu->getTextValue());
-        } else if (a == struc) {
-            listener->panelChanged(Evlocallabstruc, struc->getTextValue());
-        } else if (a == sensibn) {
-            listener->panelChanged(Evlocallabsensibn, sensibn->getTextValue());
-        } else if (a == adjblur) {
-            listener->panelChanged(Evlocallabadjblur, adjblur->getTextValue());
-        } else {
-            listener->panelChanged(EvlocallabEqualizer,
-                                   Glib::ustring::compose("%1, %2, %3, %4, %5",
-                                           Glib::ustring::format(std::fixed, std::setprecision(0), multiplier[0]->getValue()),
-                                           Glib::ustring::format(std::fixed, std::setprecision(0), multiplier[1]->getValue()),
-                                           Glib::ustring::format(std::fixed, std::setprecision(0), multiplier[2]->getValue()),
-                                           Glib::ustring::format(std::fixed, std::setprecision(0), multiplier[3]->getValue()),
-                                           Glib::ustring::format(std::fixed, std::setprecision(0), multiplier[4]->getValue()))
-                                  );
+    // Contrast by detail levels
+    if (getEnabled() && expcbdl->getEnabled()) {
+        if (a == multiplier[0] || a == multiplier[1] || a == multiplier[2] || a == multiplier[3] || a == multiplier[4]) {
+            if (listener) {
+                listener->panelChanged(EvlocallabEqualizer,
+                                       Glib::ustring::compose("%1, %2, %3, %4, %5",
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), multiplier[0]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), multiplier[1]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), multiplier[2]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), multiplier[3]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), multiplier[4]->getValue())));
+            }
+        }
 
+        if (a == chromacbdl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabchromacbdl, chromacbdl->getTextValue());
+            }
+        }
+
+        if (a == threshold) {
+            if (listener) {
+                listener->panelChanged(EvlocallabThresho, threshold->getTextValue());
+            }
+        }
+
+        if (a == sensicb) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsensicb, sensicb->getTextValue());
+            }
+        }
+    }
+
+    // Denoise
+    if (getEnabled() && expdenoi->getEnabled()) {
+        if (a == noiselumf) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnoiselumf, noiselumf->getTextValue());
+            }
+        }
+
+        if (a == noiselumc) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnoiselumc, noiselumc->getTextValue());
+            }
+        }
+
+        if (a == noiselumdetail) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnoiselumdetail, noiselumdetail->getTextValue());
+            }
+        }
+
+        if (a == noiselequal) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnoiselequal, noiselequal->getTextValue());
+            }
+        }
+
+        if (a == noisechrof) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnoisechrof, noisechrof->getTextValue());
+            }
+        }
+
+        if (a == noisechroc) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnoisechroc, noisechroc->getTextValue());
+            }
+        }
+
+        if (a == adjblur) {
+            if (listener) {
+                listener->panelChanged(Evlocallabadjblur, adjblur->getTextValue());
+            }
+        }
+
+        if (a == bilateral) {
+            if (listener) {
+                listener->panelChanged(Evlocallabbilateral, bilateral->getTextValue());
+            }
+        }
+
+        if (a == sensiden) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsensiden, sensiden->getTextValue());
+            }
         }
     }
 }
 
 void Locallab::enabledChanged()
 {
-    anbspot->hide();
-    hueref->hide();
-    huerefblur->hide();
-    chromaref->hide();
-    lumaref->hide();
-    sobelref->hide();
-
     if (listener) {
         if (get_inconsistent()) {
             listener->panelChanged(EvlocallabEnabled, M("GENERAL_UNCHANGED"));
@@ -4185,8 +4206,10 @@ void Locallab::enabledChanged()
 
 void Locallab::avoidChanged()
 {
+    printf("avoidChanged\n");
 
     if (batchMode) {
+        /*
         if (avoid->get_inconsistent()) {
             avoid->set_inconsistent(false);
             avoidConn.block(true);
@@ -4197,13 +4220,16 @@ void Locallab::avoidChanged()
         }
 
         lastavoid = avoid->get_active();
+        */
     }
 
-    if (listener) {
-        if (getEnabled()) {
-            listener->panelChanged(Evlocallabavoid, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged(Evlocallabavoid, M("GENERAL_DISABLED"));
+    if (getEnabled() && expdenoi->getEnabled()) {
+        if (listener) {
+            if (avoid->get_active()) {
+                listener->panelChanged(Evlocallabavoid, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(Evlocallabavoid, M("GENERAL_DISABLED"));
+            }
         }
     }
 }
@@ -4534,6 +4560,30 @@ void Locallab::enableListener()
     qualitycurveMethodConn.block(false);
     inversConn.block(false);
     // Exposure
+    enableexposeConn.block(false);
+    // Vibrance
+    enablevibranceConn.block(false);
+    pskinsconn.block(false);
+    ashiftconn.block(false);
+    pastsattogconn.block(false);
+    // Blur & Noise
+    enableblurConn.block(false);
+    blurMethodConn.block(false);
+    activlumConn.block(false);
+    // Tone Mapping
+    enabletonemapConn.block(false);
+    // Retinex
+    enableretiConn.block(false);
+    retinexMethodConn.block(false);
+    inversretConn.block(false);
+    // Sharpening
+    enablesharpConn.block(false);
+    inversshaConn.block(false);
+    // Contrast by detail levels
+    enablecbdlConn.block(false);
+    // Denoise
+    enabledenoiConn.block(false);
+    avoidConn.block(false);
 }
 
 void Locallab::disableListener()
@@ -4547,6 +4597,30 @@ void Locallab::disableListener()
     qualitycurveMethodConn.block(true);
     inversConn.block(true);
     // Exposure
+    enableexposeConn.block(true);
+    // Vibrance
+    enablevibranceConn.block(true);
+    pskinsconn.block(true);
+    ashiftconn.block(true);
+    pastsattogconn.block(true);
+    // Blur & Noise
+    enableblurConn.block(true);
+    blurMethodConn.block(true);
+    activlumConn.block(true);
+    // Tone Mapping
+    enabletonemapConn.block(true);
+    // Retinex
+    enableretiConn.block(true);
+    retinexMethodConn.block(true);
+    inversretConn.block(true);
+    // Sharpening
+    enablesharpConn.block(true);
+    inversshaConn.block(true);
+    // Contrast by detail levels
+    enablecbdlConn.block(true);
+    // Denoise
+    enabledenoiConn.block(true);
+    avoidConn.block(true);
 }
 
 void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, int index)
@@ -4561,6 +4635,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, int
         lightness->setValue(pp->locallab.lightness.at(index));
         contrast->setValue(pp->locallab.contrast.at(index));
         chroma->setValue(pp->locallab.chroma.at(index));
+        sensi->setValue(pp->locallab.sensi.at(index));
 
         if (pp->locallab.qualitycurveMethod.at(index) == "none") {
             qualitycurveMethod->set_active(0);
@@ -4577,7 +4652,103 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, int
         invers->set_active((bool)pp->locallab.invers.at(index));
 
         // Exposure
+        expexpose->setEnabled((bool)pp->locallab.expexpose.at(index));
+        expcomp->setValue(pp->locallab.expcomp.at(index));
+        hlcompr->setValue(pp->locallab.hlcompr.at(index));
+        hlcomprthresh->setValue(pp->locallab.hlcomprthresh.at(index));
+        black->setValue(pp->locallab.black.at(index));
+        shcompr->setValue(pp->locallab.shcompr.at(index));
+        warm->setValue(pp->locallab.warm.at(index));
+        sensiex->setValue(pp->locallab.sensiex.at(index));
+        shapeexpos->setCurve(pp->locallab.excurve.at(index));
 
+        // Vibrance
+        expvibrance->setEnabled((bool)pp->locallab.expvibrance.at(index));
+        saturated->setValue(pp->locallab.saturated.at(index));
+        pastels->setValue(pp->locallab.pastels.at(index));
+        psThreshold->setValue<int>(pp->locallab.psthreshold.at(index));
+        protectSkins->set_active((bool)pp->locallab.protectskins.at(index));
+        avoidColorShift->set_active((bool)pp->locallab.avoidcolorshift.at(index));
+        pastSatTog->set_active((bool)pp->locallab.pastsattog.at(index));
+        sensiv->setValue(pp->locallab.sensiv.at(index));
+        skinTonesCurve->setCurve(pp->locallab.skintonescurve.at(index));
+
+        // Blur & Noise
+        expblur->setEnabled((bool)pp->locallab.expblur.at(index));
+        radius->setValue(pp->locallab.radius.at(index));
+        strength->setValue(pp->locallab.strength.at(index));
+        sensibn->setValue(pp->locallab.sensibn.at(index));
+
+        if (pp->locallab.blurMethod.at(index) == "norm") {
+            blurMethod->set_active(0);
+        } else if (pp->locallab.blurMethod.at(index) == "inv") {
+            blurMethod->set_active(1);
+        } else {
+            blurMethod->set_active(2);
+        }
+
+        activlum->set_active((bool)pp->locallab.activlum.at(index));
+
+        // Tone Mapping
+        exptonemap->setEnabled((bool)pp->locallab.exptonemap.at(index));
+        stren->setValue(pp->locallab.stren.at(index));
+        gamma->setValue(pp->locallab.gamma.at(index));
+        estop->setValue(pp->locallab.estop.at(index));
+        scaltm->setValue(pp->locallab.scaltm.at(index));
+        rewei->setValue(pp->locallab.rewei.at(index));
+        sensitm->setValue(pp->locallab.sensitm.at(index));
+
+        // Retinex
+        expreti->setEnabled((bool)pp->locallab.expreti.at(index));
+
+        if (pp->locallab.retinexMethod.at(index) == "low") {
+            retinexMethod->set_active(0);
+        } else if (pp->locallab.retinexMethod.at(index) == "uni") {
+            retinexMethod->set_active(1);
+        } else {
+            retinexMethod->set_active(2);
+        }
+
+        str->setValue(pp->locallab.str.at(index));
+        chrrt->setValue(pp->locallab.chrrt.at(index));
+        neigh->setValue(pp->locallab.neigh.at(index));
+        vart->setValue(pp->locallab.vart.at(index));
+        sensih->setValue(pp->locallab.sensih.at(index));
+        cTgainshape->setCurve(pp->locallab.localTgaincurve.at(index));
+        inversret->set_active((bool)pp->locallab.inversret.at(index));
+
+        // Sharpening
+        expsharp->setEnabled((bool)pp->locallab.expsharp.at(index));
+        sharradius->setValue(pp->locallab.sharradius.at(index));
+        sharamount->setValue(pp->locallab.sharamount.at(index));
+        shardamping->setValue(pp->locallab.shardamping.at(index));
+        shariter->setValue(pp->locallab.shariter.at(index));
+        sensisha->setValue(pp->locallab.sensisha.at(index));
+        inverssha->set_active((bool)pp->locallab.inverssha.at(index));
+
+        // Contrast by detail levels
+        expcbdl->setEnabled((bool)pp->locallab.expcbdl.at(index));
+
+        for (int i = 0; i < 5; i++) {
+            multiplier[i]->setValue(pp->locallab.mult[i].at(index));
+        }
+
+        chromacbdl->setValue(pp->locallab.chromacbdl.at(index));
+        threshold->setValue(pp->locallab.threshold.at(index));
+        sensicb->setValue(pp->locallab.sensicb.at(index));
+
+        // Denoise
+        expdenoi->setEnabled((bool)pp->locallab.expdenoi.at(index));
+        noiselumf->setValue(pp->locallab.noiselumf.at(index));
+        noiselumc->setValue(pp->locallab.noiselumc.at(index));
+        noiselumdetail->setValue(pp->locallab.noiselumdetail.at(index));
+        noiselequal->setValue(pp->locallab.noiselequal.at(index));
+        noisechrof->setValue(pp->locallab.noisechrof.at(index));
+        noisechroc->setValue(pp->locallab.noisechroc.at(index));
+        adjblur->setValue(pp->locallab.adjblur.at(index));
+        bilateral->setValue(pp->locallab.bilateral.at(index));
+        sensiden->setValue(pp->locallab.sensiden.at(index));
+        avoid->set_active((bool)pp->locallab.avoid.at(index));
     }
 
     // Update Color & Light GUI according to invers button state
@@ -4596,6 +4767,50 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, int
         labqualcurv->show();
 
     }
+
+    // Update Exposure GUI according to black adjuster state
+    shcompr->set_sensitive(!((int)black->getValue() == 0)); // At black = 0, shcompr value has no effect
+
+    // Update Vibrance GUI according to pastsattog button state
+    if (pastSatTog->get_active()) {
+        // Link both slider, so we set saturated and psThresholds unsensitive
+        psThreshold->set_sensitive(false);
+        saturated->set_sensitive(false);
+        saturated->setValue(pastels->getValue()); // Pastels and Saturated are linked
+    } else {
+        // Separate sliders, so we set saturated and psThresholds sensitive again
+        psThreshold->set_sensitive(true);
+        saturated->set_sensitive(true);
+    }
+
+    // Update Retinex GUI according to inversret button state
+    if (inversret->get_active()) {
+        sensih->hide();
+    } else {
+        sensih->show();
+    }
+
+    // Update Sharpening GUI according to inverssha button state
+    if (inverssha->get_active()) {
+        sensisha->hide();
+    } else {
+        sensisha->show();
+    }
+
+    /*
+    lastactivlum = pp->locallab.activlum;
+    lastProtectSkins = pp->locallab.protectskins;
+    lastAvoidColorShift = pp->locallab.avoidcolorshift;
+    lastPastSatTog = pp->locallab.pastsattog;
+    lastavoid = pp->locallab.avoid;
+    lastinvers = pp->locallab.invers;
+    lastcutpast = pp->locallab.cutpast;
+    lastlastdust = pp->locallab.lastdust;
+    lastcurvactiv = pp->locallab.curvactiv;
+    lastinversrad = pp->locallab.inversrad;
+    lastinversret = pp->locallab.inversret;
+    lastinverssha = pp->locallab.inverssha;
+    */
 }
 
 void Locallab::autoOpenCurve()
