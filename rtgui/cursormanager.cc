@@ -51,8 +51,9 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
     cAdd = Gdk::Cursor::create (display, Gdk::PLUS);
     cWait = Gdk::Cursor::create (display, Gdk::CLOCK);
 
-    Glib::RefPtr<Gdk::Pixbuf> hand = RTImage::createFromFile ("crosshair-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> close_hand = RTImage::createFromFile ("hand-closed-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> crosshair = RTImage::createFromFile ("crosshair-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> hand_open = RTImage::createFromFile ("hand-open-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> hand_closed = RTImage::createFromFile ("hand-closed-hicontrast.png");
     Glib::RefPtr<Gdk::Pixbuf> wbpick = RTImage::createFromFile ("color-picker-hicontrast.png");
     Glib::RefPtr<Gdk::Pixbuf> cpick = RTImage::createFromFile ("color-picker-add-hicontrast.png");
     Glib::RefPtr<Gdk::Pixbuf> empty = RTImage::createFromFile ("empty.png");
@@ -61,8 +62,9 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
     Glib::RefPtr<Gdk::Pixbuf> move1DV = RTImage::createFromFile ("node-move-y-hicontrast.png");
     Glib::RefPtr<Gdk::Pixbuf> moveRotate = RTImage::createFromFile ("rotate-aroundnode-hicontrast.png");
 
-    cHand = hand ? Gdk::Cursor::create (cAdd->get_display(), hand, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
-    cClosedHand = close_hand ? Gdk::Cursor::create (cAdd->get_display(), close_hand, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
+    cCrosshair = crosshair ? Gdk::Cursor::create (cAdd->get_display(), crosshair, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
+    cHandOpen = hand_open ? Gdk::Cursor::create (cAdd->get_display(), hand_open, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
+    cHandClosed = hand_closed ? Gdk::Cursor::create (cAdd->get_display(), hand_closed, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
     cWB = wbpick ? Gdk::Cursor::create (cAdd->get_display(), wbpick, 4, 21) : Gdk::Cursor::create (cAdd->get_display(), Gdk::ARROW);
     cAddPicker = cpick ? Gdk::Cursor::create (cAdd->get_display(), cpick, 4, 21) : Gdk::Cursor::create (cAdd->get_display(), Gdk::ARROW);
     cHidden = empty ? Gdk::Cursor::create (cAdd->get_display(), empty, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::FLEUR);
@@ -82,10 +84,12 @@ void CursorManager::setCursor (Glib::RefPtr<Gdk::Window> window, CursorShape sha
         // set_cursor without any arguments to select system default
     {
         window->set_cursor ();
-    } else if (shape == CSOpenHand) {
-        window->set_cursor (cHand);
-    } else if (shape == CSClosedHand) {
-        window->set_cursor (cClosedHand);
+    } else if (shape == CSCrosshair) {
+        window->set_cursor (cCrosshair);
+    } else if (shape == CSHandOpen) {
+        window->set_cursor (cHandOpen);
+    } else if (shape == CSHandClosed) {
+        window->set_cursor (cHandClosed);
     } else if (shape == CSMove) {
         window->set_cursor (cCropMove);
     } else if (shape == CSResizeWidth) {
@@ -115,13 +119,13 @@ void CursorManager::setCursor (Glib::RefPtr<Gdk::Window> window, CursorShape sha
     } else if (shape == CSAddColPicker) {
         window->set_cursor (cAddPicker);
     } else if (shape == CSCropSelect) {
-        window->set_cursor (cHand);
+        window->set_cursor (cCrosshair);
     } else if (shape == CSMoveLeft) {
         window->set_cursor (cLeftTanMove);
     } else if (shape == CSMoveRight) {
         window->set_cursor (cRightTanMove);
     } else if (shape == CSStraighten) {
-        window->set_cursor (cHand);
+        window->set_cursor (cCrosshair);
     } else if (shape == CSWait) {
         window->set_cursor (cWait);
     } else if (shape == CSPlus) {

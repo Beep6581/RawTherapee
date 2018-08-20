@@ -22,11 +22,32 @@
 #include <gtkmm.h>
 
 enum CursorShape {
-    CSUndefined, CSArrow, CSOpenHand, CSClosedHand, CSMove, CSMoveLeft,
-    CSMoveRight, CSResizeWidth, CSResizeHeight, CSResizeDiagonal,
-    CSResizeTopLeft, CSResizeTopRight, CSResizeBottomLeft, CSResizeBottomRight,
-    CSMove2D, CSMove1DH, CSMove1DV, CSMoveRotate,
-    CSSpotWB, CSAddColPicker, CSCropSelect, CSStraighten, CSPlus, CSWait, CSEmpty
+    CSUndefined,
+    CSArrow,
+    CSCrosshair,
+    CSHandOpen,
+    CSHandClosed,
+    CSMove,
+    CSMoveLeft,
+    CSMoveRight,
+    CSResizeWidth,
+    CSResizeHeight,
+    CSResizeDiagonal,
+    CSResizeTopLeft,
+    CSResizeTopRight,
+    CSResizeBottomLeft,
+    CSResizeBottomRight,
+    CSMove2D,
+    CSMove1DH,
+    CSMove1DV,
+    CSMoveRotate,
+    CSSpotWB,
+    CSAddColPicker,
+    CSCropSelect,
+    CSStraighten,
+    CSPlus,
+    CSWait,
+    CSEmpty
 };
 
 class CursorManager
@@ -48,8 +69,9 @@ private:
     Glib::RefPtr<Gdk::Cursor> cCropSelection;
     Glib::RefPtr<Gdk::Cursor> cAdd;
     Glib::RefPtr<Gdk::Cursor> cWait;
-    Glib::RefPtr<Gdk::Cursor> cHand;
-    Glib::RefPtr<Gdk::Cursor> cClosedHand;
+    Glib::RefPtr<Gdk::Cursor> cCrosshair;
+    Glib::RefPtr<Gdk::Cursor> cHandOpen;
+    Glib::RefPtr<Gdk::Cursor> cHandClosed;
     Glib::RefPtr<Gdk::Cursor> cWB;
     Glib::RefPtr<Gdk::Cursor> cAddPicker;
     Glib::RefPtr<Gdk::Cursor> cHidden;
