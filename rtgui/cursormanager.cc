@@ -51,15 +51,15 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
     cAdd = Gdk::Cursor::create (display, Gdk::PLUS);
     cWait = Gdk::Cursor::create (display, Gdk::CLOCK);
 
-    Glib::RefPtr<Gdk::Pixbuf> hand = RTImage::createFromFile ("crosshair.png");
-    Glib::RefPtr<Gdk::Pixbuf> close_hand = RTImage::createFromFile ("hand-closed.png");
-    Glib::RefPtr<Gdk::Pixbuf> wbpick = RTImage::createFromFile ("color-picker.png");
-    Glib::RefPtr<Gdk::Pixbuf> cpick = RTImage::createFromFile ("color-picker-add.png");
+    Glib::RefPtr<Gdk::Pixbuf> hand = RTImage::createFromFile ("crosshair-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> close_hand = RTImage::createFromFile ("hand-closed-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> wbpick = RTImage::createFromFile ("color-picker-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> cpick = RTImage::createFromFile ("color-picker-add-hicontrast.png");
     Glib::RefPtr<Gdk::Pixbuf> empty = RTImage::createFromFile ("empty.png");
-    Glib::RefPtr<Gdk::Pixbuf> move2D = RTImage::createFromFile ("node-move-xy.png");
-    Glib::RefPtr<Gdk::Pixbuf> move1DH = RTImage::createFromFile ("node-move-x.png");
-    Glib::RefPtr<Gdk::Pixbuf> move1DV = RTImage::createFromFile ("node-move-y.png");
-    Glib::RefPtr<Gdk::Pixbuf> moveRotate = RTImage::createFromFile ("move-rotate.png");
+    Glib::RefPtr<Gdk::Pixbuf> move2D = RTImage::createFromFile ("node-move-xy-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> move1DH = RTImage::createFromFile ("node-move-x-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> move1DV = RTImage::createFromFile ("node-move-y-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> moveRotate = RTImage::createFromFile ("rotate-aroundnode-hicontrast.png");
 
     cHand = hand ? Gdk::Cursor::create (cAdd->get_display(), hand, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
     cClosedHand = close_hand ? Gdk::Cursor::create (cAdd->get_display(), close_hand, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);

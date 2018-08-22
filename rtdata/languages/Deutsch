@@ -68,6 +68,7 @@
 #67 05.07.2018 Erweiterung (TooWaBoo) RT 5.4
 #68 05.07.2018 Erweiterung (TooWaBoo) RT 5.4
 #69 25.07.2018 Erweiterung (TooWaBoo) RT 5.4
+#70 25.07.2018 Korrekturen (TooWaBoo) RT 5.4
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -98,11 +99,11 @@ CURVEEDITOR_NURBS;NURBS-Kurve
 CURVEEDITOR_PARAMETRIC;Parametrisch
 CURVEEDITOR_SAVEDLGLABEL;Kurve speichern...
 CURVEEDITOR_SHADOWS;Schatten
-CURVEEDITOR_TOOLTIPCOPY;Kurve in Zwischenablage kopieren
-CURVEEDITOR_TOOLTIPLINEAR;Kurve zurücksetzen
-CURVEEDITOR_TOOLTIPLOAD;Kurve laden
-CURVEEDITOR_TOOLTIPPASTE;Kurve aus Zwischenablage einfügen
-CURVEEDITOR_TOOLTIPSAVE;Kurve speichern
+CURVEEDITOR_TOOLTIPCOPY;Kurve in Zwischenablage kopieren.
+CURVEEDITOR_TOOLTIPLINEAR;Kurve zurücksetzen.
+CURVEEDITOR_TOOLTIPLOAD;Kurve laden.
+CURVEEDITOR_TOOLTIPPASTE;Kurve aus Zwischenablage einfügen.
+CURVEEDITOR_TOOLTIPSAVE;Kurve speichern.
 CURVEEDITOR_TYPE;Typ:
 DIRBROWSER_FOLDERS;Ordner
 DONT_SHOW_AGAIN;Meldung nicht mehr anzeigen.
@@ -116,7 +117,7 @@ DYNPROFILEEDITOR_NEW;Neu
 DYNPROFILEEDITOR_NEW_RULE;Profilregel erstellen
 DYNPROFILEEDITOR_PROFILE;Profil
 EDITWINDOW_TITLE;Bildbearbeitung
-EDIT_OBJECT_TOOLTIP;Schaltet das Einstellungswerkzeug\nim Vorschaubild ein/aus
+EDIT_OBJECT_TOOLTIP;Schaltet das Einstellungswerkzeug\nim Vorschaubild ein/aus.
 EDIT_PIPETTE_TOOLTIP;Um einen Punkt der Kurve hinzuzufügen, halten Sie die Strg-Taste gedrückt und klicken mit der linke Maustaste auf die gewünschte Stelle in der Vorschau.\nUm den Punkt anzupassen, halten Sie die Strg-Taste gedrückt und klicken Sie mit der linken Maustaste auf den entsprechenden Bereich in der Vorschau. Dann lassen Sie die Strg-Taste los (es sei denn, Sie möchten eine Feineinstellung vornehmen) und bewegen die Maus bei gedrückter linker Maustaste nach oben oder unten, um den Punkt auf der Kurve zu bewegen.
 EXIFFILTER_APERTURE;Blende
 EXIFFILTER_CAMERA;Kamera
@@ -254,7 +255,7 @@ FILEBROWSER_SHOWCOLORLABEL5HINT;Nur violett markierte Bilder anzeigen\nTaste: <b
 FILEBROWSER_SHOWDIRHINT;Alle Filter zurücksetzen\nTaste: <b>d</b>
 FILEBROWSER_SHOWEDITEDHINT;Nur bearbeitete Bilder anzeigen\nTaste: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Nur unbearbeitete Bilder anzeigen\nTaste: <b>6</b>
-FILEBROWSER_SHOWEXIFINFO;Bildinformationen ein-/ausblenden\n\nIm Multi-Reitermodus:\nTaste: <b>i</b>\nIm Ein-Reitermodus:\nTaste:  <b>Alt</b> + <b>i</b>
+FILEBROWSER_SHOWEXIFINFO;Bildinformationen ein-/ausblenden.\n\nIm Multi-Reitermodus:\nTaste: <b>i</b>\nIm Ein-Reitermodus:\nTaste:  <b>Alt</b> + <b>i</b>
 FILEBROWSER_SHOWNOTTRASHHINT;Nur nicht gelöschte Bilder anzeigen
 FILEBROWSER_SHOWORIGINALHINT;Zeige nur das Originalbild.\n\nWenn mehrere Bilder mit dem gleichen Dateinamen und unterschiedlichen Dateitypen existieren, ist das Originalbild das Bild, welches in der Liste "Dateitypen anzeigen" unter Einstellungen > Dateiverwaltung als erstes gefunden wird.
 FILEBROWSER_SHOWRANK1HINT;Nur mit 1 Stern bewertete Bilder anzeigen\nTaste: <b>1</b>
@@ -305,13 +306,14 @@ GENERAL_SLIDER;Regler
 GENERAL_UNCHANGED;(Unverändert)
 GENERAL_WARNING;Warnung
 GIMP_PLUGIN_INFO;Willkommen zum RawTherapee GIMP-Plugin!\nNach den Änderungen bitte das RawTherapee-Fenster schließen.\nDas Bild wird dann automatisch in GIMP importiert.
-HISTOGRAM_TOOLTIP_B;Blau-Histogramm ein-/ausblenden
-HISTOGRAM_TOOLTIP_BAR;RGB-Anzeigeleiste ein-/ausblenden\n\nZum Fixieren/Lösen der Anzeige muss mit der\nrechten Maustaste ins Bildfenster geklickt werden.
-HISTOGRAM_TOOLTIP_CHRO;Chromatizität-Histogramm ein/ausblenden
-HISTOGRAM_TOOLTIP_FULL;Skaliertes Histogramm ein/ausschalten
-HISTOGRAM_TOOLTIP_G;Grün-Histogramm ein-/ausblenden
-HISTOGRAM_TOOLTIP_L;CIELab-Luminanz-Histogramm ein-/ausblenden
-HISTOGRAM_TOOLTIP_R;Rot-Histogramm ein-/ausblenden
+HISTOGRAM_TOOLTIP_B;Blau-Histogramm ein-/ausblenden.
+HISTOGRAM_TOOLTIP_BAR;RGB-Anzeigeleiste ein-/ausblenden.
+HISTOGRAM_TOOLTIP_CHRO;Chromatizität-Histogramm ein/ausblenden.
+HISTOGRAM_TOOLTIP_FULL;Skaliertes Histogramm ein/ausschalten.
+HISTOGRAM_TOOLTIP_MODE;Schaltet zwischen linearer, logarithmischer-linearer und\nlogarithmischer-logarithmischer Skalierung um.
+HISTOGRAM_TOOLTIP_G;Grün-Histogramm ein-/ausblenden.
+HISTOGRAM_TOOLTIP_L;CIELab-Luminanz-Histogramm ein-/ausblenden.
+HISTOGRAM_TOOLTIP_R;Rot-Histogramm ein-/ausblenden.
 HISTOGRAM_TOOLTIP_RAW;Zwischen normalen Histogrammen und\nRAW-Histogrammen umschalten.
 HISTORY_CHANGED;Geändert
 HISTORY_CUSTOMCURVE;Benutzerdefiniert
@@ -917,12 +919,12 @@ MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigiert zum nächsten Miniaturbild in der\nDateive
 MAIN_BUTTON_NAVPREV_TOOLTIP;Navigiert zum vorherigen Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf das ausgewählte Miniaturbild.\nTaste: <b>F3</b>\n\nNavigiert zum vorherigen Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf auf das im Editor geöffnete Bild.\nTaste: <b>Umschalt</b> + <b>F3 </b>
 MAIN_BUTTON_NAVSYNC_TOOLTIP;Selektiert das Miniaturbild des aktuell geöffneten\nBildes in der Dateiverwaltung und des Filmstreifens.\nEs werden alle aktiven Filter gelöscht.\nTaste: <b>x</b>\n\nWie oben, jedoch ohne Löschung aktiver Filter. Das\nMiniaturbild des geöffneten Bildes wird nicht angezeigt,\nwenn es herausgefiltert wurde.\nTaste: <b>y</b>
 MAIN_BUTTON_PREFERENCES;Einstellungen
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Bild zur Warteschlange hinzufügen\nTaste: <b>Strg</b> + <b>b</b>
-MAIN_BUTTON_SAVE_TOOLTIP;Bild speichern\nTaste: <b>Strg</b> + <b>s</b>
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Bild zur Warteschlange hinzufügen.\nTaste: <b>Strg</b> + <b>b</b>
+MAIN_BUTTON_SAVE_TOOLTIP;Bild speichern.\nTaste: <b>Strg</b> + <b>s</b>\nProfil (.pp3) speichern.\nTaste: <b>Strg</b> + <b>Umschalt</b> + <b>s</b>
 MAIN_BUTTON_SENDTOEDITOR;Bild im externen Editor öffnen
-MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Bild im externen Editor öffnen\nTaste: <b>Strg</b> + <b>e</b>
-MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Alle seitlichen Bedienfelder ein-/ausblenden\nTaste: <b>m</b>
-MAIN_BUTTON_UNFULLSCREEN;Vollbild beenden\nTaste: <b>F11</b>
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Bild im externen Editor öffnen.\nTaste: <b>Strg</b> + <b>e</b>
+MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Alle seitlichen Bedienfelder ein-/ausblenden.\nTaste: <b>m</b>
+MAIN_BUTTON_UNFULLSCREEN;Vollbild beenden.\nTaste: <b>F11</b>
 MAIN_FRAME_BATCHQUEUE;Warteschlange
 MAIN_FRAME_BATCHQUEUE_TOOLTIP;Warteschlange\nTaste: <b>Strg</b> + <b>F3</b>
 MAIN_FRAME_EDITOR;Editor
@@ -969,26 +971,26 @@ MAIN_TAB_TRANSFORM;Transformieren
 MAIN_TAB_TRANSFORM_TOOLTIP;Taste: <b>Alt</b> + <b>t</b>
 MAIN_TAB_WAVELET;Wavelet
 MAIN_TAB_WAVELET_TOOLTIP;Taste: <b>Alt</b> + <b>w</b>
-MAIN_TOOLTIP_BACKCOLOR0;Hintergrundfarbe der Vorschau basierend auf dem: <b>Oberflächendesign</b>\nTaste: <b>9</b>
+MAIN_TOOLTIP_BACKCOLOR0;Hintergrundfarbe der Vorschau basierend auf dem <b>Oberflächendesign</b>.\nTaste: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR1;Hintergrundfarbe der Vorschau: <b>Schwarz\n</b>Taste: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Hintergrundfarbe der Vorschau: <b>Weiß</b>\nTaste: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR3;Hintergrundfarbe der Vorschau: <b>Mittleres Grau</b>\nTaste: <b>9</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Vorher-Ansicht:</b> Sperren / Entsperren\n\n<b>Gesperrt</b>: Friert die Vorher-Ansicht ein, so\ndass sich die Gesamtwirkung mehrerer\nBearbeitungsschritte beurteilen lässt.\n\n<b>Entsperrt</b>: Die Vorher-Ansicht hinkt dem\naktuellen Bild immer einen Bearbeitungs-\nschritt hinterher.
-MAIN_TOOLTIP_HIDEHP;Linkes Bedienfeld ein-/ausblenden\nTaste: <b>l</b>
-MAIN_TOOLTIP_INDCLIPPEDH;Anzeige zu heller Bereiche ein-/ausschalten\nTaste: <b>&lt;</b>
-MAIN_TOOLTIP_INDCLIPPEDS;Anzeige zu dunkler Bereiche ein-/ausschalten\nTaste: <b>&gt;</b>
+MAIN_TOOLTIP_HIDEHP;Linkes Bedienfeld ein-/ausblenden.\nTaste: <b>l</b>
+MAIN_TOOLTIP_INDCLIPPEDH;Anzeige zu heller Bereiche ein-/ausschalten.\nTaste: <b>&lt;</b>
+MAIN_TOOLTIP_INDCLIPPEDS;Anzeige zu dunkler Bereiche ein-/ausschalten.\nTaste: <b>&gt;</b>
 MAIN_TOOLTIP_PREVIEWB;Vorschau Blau-Kanal\nTaste: <b>b</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;Vorschau Fokusmaske\nTaste: <b>Umschalt</b> + <b>f</b>\n\nPräziser bei Bildern mit geringer Tiefenschärfe,\nniedrigem Rauschen und bei hoher Vergrößerung.
 MAIN_TOOLTIP_PREVIEWG;Vorschau Grün-Kanal\nTaste: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;Vorschau Helligkeit\nTaste: <b>v</b>\n\n0.299·R + 0.587·G + 0.114·B
 MAIN_TOOLTIP_PREVIEWR;Vorschau Rot-Kanal\nTaste: <b>r</b>
-MAIN_TOOLTIP_PREVIEWSHARPMASK;Schärfungs-Kontroll-Maske ein-/ausschalten\n\nFunktioniert nur bei aktivierter Schärfung\nund Zoom >= 100%.
-MAIN_TOOLTIP_QINFO;Bildinformationen ein-/ausblenden\nTaste: <b>i</b>
-MAIN_TOOLTIP_SHOWHIDELP1;Linkes Bedienfeld ein-/ausblenden\nTaste: <b>l</b>
-MAIN_TOOLTIP_SHOWHIDERP1;Rechtes Bedienfeld ein-/ausblenden\nTaste: <b>Alt</b> + <b>l</b>
-MAIN_TOOLTIP_SHOWHIDETP1;Oberes Bedienfeld ein-/ausblenden\nTaste: <b>Umschalt</b> + <b>l</b>
+MAIN_TOOLTIP_PREVIEWSHARPMASK;Schärfungs-Kontroll-Maske ein-/ausschalten.\n\nFunktioniert nur bei aktivierter Schärfung\nund Zoom >= 100%.
+MAIN_TOOLTIP_QINFO;Bildinformationen ein-/ausblenden.\nTaste: <b>i</b>
+MAIN_TOOLTIP_SHOWHIDELP1;Linkes Bedienfeld ein-/ausblenden.\nTaste: <b>l</b>
+MAIN_TOOLTIP_SHOWHIDERP1;Rechtes Bedienfeld ein-/ausblenden.\nTaste: <b>Alt</b> + <b>l</b>
+MAIN_TOOLTIP_SHOWHIDETP1;Oberes Bedienfeld ein-/ausblenden.\nTaste: <b>Umschalt</b> + <b>l</b>
 MAIN_TOOLTIP_THRESHOLD;Schwelle
-MAIN_TOOLTIP_TOGGLE;Vorher/Nachher-Ansicht ein-/ausschalten\nTaste: <b>Umschalt</b> + <b>b</b>
+MAIN_TOOLTIP_TOGGLE;Vorher/Nachher-Ansicht ein-/ausschalten.\nTaste: <b>Umschalt</b> + <b>b</b>
 MONITOR_PROFILE_SYSTEM;Systemvorgabe
 NAVIGATOR_B;B:
 NAVIGATOR_G;G:
@@ -1090,7 +1092,7 @@ PREFERENCES_AUTLISMAX;Max.-Durchschnitt aller Kacheln
 PREFERENCES_AUTLISSTD;Hoch
 PREFERENCES_AUTLISVLOW;Keine
 PREFERENCES_AUTLOW;Niedrig
-PREFERENCES_AUTOMONPROFILE;Automatisch das für den aktuellen Monitor festgelegte Profil verwenden.
+PREFERENCES_AUTOMONPROFILE;Automatisch das für den aktuellen Monitor festgelegte Profil verwenden
 PREFERENCES_AUTOSAVE_TP_OPEN;Werkzeugstatus vor dem Beenden automatisch speichern
 PREFERENCES_AUTSTD;Standard
 PREFERENCES_BATCH_PROCESSING;Stapelverarbeitung
@@ -1224,7 +1226,7 @@ PREFERENCES_NAVGUIDEBRUSH;Farbe der Navigationshilfe
 PREFERENCES_NAVIGATIONFRAME;Navigation
 PREFERENCES_NOISE;Rauschreduzierung
 PREFERENCES_OUTDIR;Ausgabeverzeichnis
-PREFERENCES_OUTDIRFOLDER;In dieses Verzeichnis speichern
+PREFERENCES_OUTDIRFOLDER;In dieses Verzeichnis speichern.
 PREFERENCES_OUTDIRFOLDERHINT;Alle Dateien im ausgewählten Verzeichnis speichern.
 PREFERENCES_OUTDIRTEMPLATE;Dynamisches Verzeichnis verwenden
 PREFERENCES_OUTDIRTEMPLATEHINT;Die folgenden Variablen können verwendet werden:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nDiese Variablen beinhalten bestimmte Teile des Verzeichnispfades, in welchem sich das Bild befindet, oder Attribute des Bildes.\n\nWenn zum Beispiel <b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b> geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31</i>\n<b>%p2</b> = <i>/home/tom/photos</i>\n<b>%p3</b> = <i>/home/tom</i>\n<b>%p4</b> = <i>/home</i>\n\nWenn Sie die Ausgabedatei in dasselbe Verzeichnis wie das Originalbild speichern wollen, dann wählen Sie:\n<b>%p1/%f</b>\n\nWenn Sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen "<i>converted</i>" schreiben wollen, dann wählen Sie:\n<b>%p1/converted/%f</b>\n\nWenn Sie die Ausgabedatei im Verzeichnispfad "<i>/home/tom/photos/converted</i>" speichern wollen, dort jedoch in einem mit dem Namen des Ursprungsverzeichnisses betitelten Unterverzeichnis, dann wählen Sie:\n<b>%p2/converted/%d1/%f</b>\n\nDie Variable <b>%r</b> enthält die Bewertung des Bildes.
@@ -1246,10 +1248,10 @@ PREFERENCES_PRINTER;Drucker (Soft-Proofing)
 PREFERENCES_PROFILEHANDLING;Behandlung der Bearbeitungsprofile
 PREFERENCES_PROFILELOADPR;Priorität der Profile beim Laden
 PREFERENCES_PROFILEPRCACHE;Bearbeitungsprofil im Festplatten-Cache
-PREFERENCES_PROFILEPRFILE;Bearbeitungsprofil, welches geladener Datei beiliegt (Sidecar)
-PREFERENCES_PROFILESAVEBOTH;Verarbeitungsparameter im Festplatten-Cache und zusammen mit der Datei speichern
+PREFERENCES_PROFILEPRFILE;Bearbeitungsprofil welches dem geladenen Bild beiliegt (Sidecar)
+PREFERENCES_PROFILESAVEBOTH;Verarbeitungsparameter im Festplatten-Cache und zusammen mit dem Bild speichern
 PREFERENCES_PROFILESAVECACHE;Verarbeitungsparameter im Festplatten-Cache speichern
-PREFERENCES_PROFILESAVEINPUT;Verarbeitungsparameter zusammen mit Datei speichern (Sidecar)
+PREFERENCES_PROFILESAVEINPUT;Verarbeitungsparameter zusammen mit dem Bild speichern (Sidecar)
 PREFERENCES_PROFILESAVELOCATION;Speicherort der Profile
 PREFERENCES_PROFILE_NONE;Kein Farbprofil
 PREFERENCES_PROPERTY;Eigenschaft
@@ -1325,10 +1327,10 @@ PROFILEPANEL_PINTERNAL;Neutral
 PROFILEPANEL_PLASTSAVED;Zuletzt gespeichert
 PROFILEPANEL_SAVEDLGLABEL;Bearbeitungsprofil speichern...
 PROFILEPANEL_SAVEPPASTE;Zu speichernde Parameter
-PROFILEPANEL_TOOLTIPCOPY;Profil in Zwischenablage kopieren\n\nStrg-Taste beim Klicken festhalten, um\nzu kopierende Parameter auszuwählen.
-PROFILEPANEL_TOOLTIPLOAD;Profil aus Datei laden\n\nStrg-Taste beim Klicken festhalten, um\nzu ladende Parameter auszuwählen.
-PROFILEPANEL_TOOLTIPPASTE;Profil aus Zwischenablage einfügen\n\nStrg-Taste beim Klicken festhalten, um\neinzufügende Parameter auszuwählen.
-PROFILEPANEL_TOOLTIPSAVE;Profil speichern\n\nStrg-Taste beim Klicken festhalten, um\nzu speichernde Parameter auszuwählen.
+PROFILEPANEL_TOOLTIPCOPY;Profil in Zwischenablage kopieren.\n\nStrg-Taste beim Klicken festhalten, um\nzu kopierende Parameter auszuwählen.
+PROFILEPANEL_TOOLTIPLOAD;Profil aus Datei laden.\n\nStrg-Taste beim Klicken festhalten, um\nzu ladende Parameter auszuwählen.
+PROFILEPANEL_TOOLTIPPASTE;Profil aus Zwischenablage einfügen.\n\nStrg-Taste beim Klicken festhalten, um\neinzufügende Parameter auszuwählen.
+PROFILEPANEL_TOOLTIPSAVE;Profil speichern.\n\nStrg-Taste beim Klicken festhalten, um\nzu speichernde Parameter auszuwählen.
 PROGRESSBAR_LOADING;Lade Bild...
 PROGRESSBAR_LOADINGTHUMBS;Lade Miniaturbilder...
 PROGRESSBAR_LOADJPEG;Lade JPEG...
@@ -1384,17 +1386,17 @@ THRESHOLDSELECTOR_T;Oben
 THRESHOLDSELECTOR_TL;Oben-Links
 THRESHOLDSELECTOR_TR;Oben-Rechts
 TOOLBAR_TOOLTIP_COLORPICKER;Farbwähler\n\nWenn eingeschaltet:\n- Mit der linken Maustaste können Sie einen Farbwähler setzen.\n- Zum Verschieben, linke Maustaste festhalten.\n- Umschalttaste + Rechts-Klick entfernt alle Farbwähler.\n- Rechts-Klick auf den Farbwählerbutton blendet die Farbwähler ein/aus\n- Rechts-Klick in einen freien Bereich schaltet auf das Hand-Werkzeug zurück.
-TOOLBAR_TOOLTIP_CROP;Ausschnitt wählen\nTaste: <b>c</b>\n\nZum Verschieben des Ausschnitts,\nUmschalttaste festhalten.
+TOOLBAR_TOOLTIP_CROP;Ausschnitt wählen.\nTaste: <b>c</b>\n\nZum Verschieben des Ausschnitts,\nUmschalttaste festhalten.
 TOOLBAR_TOOLTIP_HAND;Hand-Werkzeug\nTaste: <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;Ausrichten / Drehen\nTaste: <b>s</b>\n\nRichtet das Bild entlang einer Leitlinie aus.
-TOOLBAR_TOOLTIP_WB;Weißabgleich manuell setzen\nTaste: <b>w</b>
+TOOLBAR_TOOLTIP_WB;Weißabgleich manuell setzen.\nTaste: <b>w</b>
 TP_BWMIX_ALGO;OYCPM-Algorithmus
 TP_BWMIX_ALGO_LI;Linear
 TP_BWMIX_ALGO_SP;Spezialeffekte
-TP_BWMIX_ALGO_TOOLTIP;<b>Linear</b> liefert ein lineares Ergebnis\n<b>Spezialeffekte</b> liefert einen speziellen Effekt durch Mischen von Kanälen.
+TP_BWMIX_ALGO_TOOLTIP;<b>Linear</b> liefert ein lineares Ergebnis.\n<b>Spezialeffekte</b> liefert einen speziellen Effekt durch Mischen von Kanälen.
 TP_BWMIX_AUTOCH;Auto
 TP_BWMIX_CC_ENABLED;Komplemantärfarbe anpassen
-TP_BWMIX_CC_TOOLTIP;Aktiviert die automatische Anpassung der\nKomplementärfarbe im ROYGCBPM-Modus
+TP_BWMIX_CC_TOOLTIP;Aktiviert die automatische Anpassung der\nKomplementärfarbe im ROYGCBPM-Modus.
 TP_BWMIX_CHANNEL;Luminanzequalizer
 TP_BWMIX_CURVEEDITOR1;“Bevor“-Kurve
 TP_BWMIX_CURVEEDITOR2;“Danach“-Kurve
@@ -1458,36 +1460,36 @@ TP_CHMIXER_GREEN;Grün-Kanal
 TP_CHMIXER_LABEL;RGB-Kanalmixer
 TP_CHMIXER_RED;Rot-Kanal
 TP_CHROMATABERR_LABEL;Chromatische Aberration
-TP_COARSETRAF_TOOLTIP_HFLIP;Horizontal spiegeln
-TP_COARSETRAF_TOOLTIP_ROTLEFT;Nach links drehen\nTaste: <b>[</b>
-TP_COARSETRAF_TOOLTIP_ROTRIGHT;Nach rechts drehen\nTaste: <b>]</b>
-TP_COARSETRAF_TOOLTIP_VFLIP;Vertikal spiegeln
+TP_COARSETRAF_TOOLTIP_HFLIP;Horizontal spiegeln.
+TP_COARSETRAF_TOOLTIP_ROTLEFT;Nach links drehen.\nTaste: <b>[</b>
+TP_COARSETRAF_TOOLTIP_ROTRIGHT;Nach rechts drehen.\nTaste: <b>]</b>
+TP_COARSETRAF_TOOLTIP_VFLIP;Vertikal spiegeln.
 TP_COLORAPP_ADAPTSCENE;Luminanz (cd/m²)
-TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute Luminanz der Szenenleuchstärket\n(normalerweise 2000cd/m²)
+TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute Luminanz der Szenenleuchstärket\n(normalerweise 2000cd/m²).
 TP_COLORAPP_ADAPTVIEWING;Luminanz (cd/m²)
-TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute Luminanz der Betrachtungsumgebung\n(normalerweise 16cd/m²)
+TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute Luminanz der Betrachtungsumgebung\n(normalerweise 16cd/m²).
 TP_COLORAPP_ADAP_AUTO_TOOLTIP;Wenn aktiviert (empfohlen), werden die optimalen\nWerte aus den Exif-Daten automatisch berechnet.
 TP_COLORAPP_ALGO;Algorithmus
 TP_COLORAPP_ALGO_ALL;Alle
 TP_COLORAPP_ALGO_JC;Helligkeit + Buntheit (JH)
 TP_COLORAPP_ALGO_JS;Helligkeit + Sättigung (JS)
 TP_COLORAPP_ALGO_QM;Helligkeit + Farbigkeit (QM)
-TP_COLORAPP_ALGO_TOOLTIP;Auswahl zwischen Parameter-Teilmengen\nund allen Parametern
+TP_COLORAPP_ALGO_TOOLTIP;Auswahl zwischen Parameter-Teilmengen\nund allen Parametern.
 TP_COLORAPP_BADPIXSL;Hot / Bad-Pixelfilter
 TP_COLORAPP_BADPIXSL_TOOLTIP;Unterdrückt “Hot / Bad“-Pixel\n\n0 = keine Auswirkung\n1 = Mittel\n2 = Gaussian
 TP_COLORAPP_BRIGHT;Helligkeit (Q)
-TP_COLORAPP_BRIGHT_TOOLTIP;Helligkeit in CIECAM02 berücksichtigt die Weißintensität und unterscheidet sich von L*a*b* und RGB-Helligkeit
+TP_COLORAPP_BRIGHT_TOOLTIP;Helligkeit in CIECAM02 berücksichtigt die Weißintensität und unterscheidet sich von L*a*b* und RGB-Helligkeit.
 TP_COLORAPP_CHROMA;Buntheit (H)
 TP_COLORAPP_CHROMA_M;Farbigkeit (M)
-TP_COLORAPP_CHROMA_M_TOOLTIP;Die Farbigkeit in CIECAM02 unterscheidet sich\nvon L*a*b*- und RGB-Farbigkeit
+TP_COLORAPP_CHROMA_M_TOOLTIP;Die Farbigkeit in CIECAM02 unterscheidet sich\nvon L*a*b*- und RGB-Farbigkeit.
 TP_COLORAPP_CHROMA_S;Sättigung (S)
-TP_COLORAPP_CHROMA_S_TOOLTIP;Sättigung in CIECAM02 unterscheidet sich\nvon L*a*b* und RGB Sättigung
-TP_COLORAPP_CHROMA_TOOLTIP;Buntheit in CIECAM02 unterscheidet sich\nvon L*a*b* und RGB-Buntheit
+TP_COLORAPP_CHROMA_S_TOOLTIP;Sättigung in CIECAM02 unterscheidet sich\nvon L*a*b* und RGB Sättigung.
+TP_COLORAPP_CHROMA_TOOLTIP;Buntheit in CIECAM02 unterscheidet sich\nvon L*a*b* und RGB-Buntheit.
 TP_COLORAPP_CIECAT_DEGREE;CAT02 Adaptation
 TP_COLORAPP_CONTRAST;Kontrast (J)
 TP_COLORAPP_CONTRAST_Q;Kontrast (Q)
-TP_COLORAPP_CONTRAST_Q_TOOLTIP;Kontrast (Q) in CIECAM02 unterscheidet sich\nvom L*a*b*- und RGB-Kontrast
-TP_COLORAPP_CONTRAST_TOOLTIP;Kontrast (J) in CIECAM02 unterscheidet sich\nvom L*a*b*- und RGB-Kontrast
+TP_COLORAPP_CONTRAST_Q_TOOLTIP;Kontrast (Q) in CIECAM02 unterscheidet sich\nvom L*a*b*- und RGB-Kontrast.
+TP_COLORAPP_CONTRAST_TOOLTIP;Kontrast (J) in CIECAM02 unterscheidet sich\nvom L*a*b*- und RGB-Kontrast.
 TP_COLORAPP_CURVEEDITOR1;Tonwertkurve 1
 TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Zeigt das Histogramm von L (L*a*b*) vor CIECAM02.\nWenn "CIECAM02-Ausgabe-Histogramm in Kurven anzeigen" aktiviert ist, wird das Histogramm von J oder Q nach CIECAM02-Anpassungen angezeigt.\n\nJ und Q werden nicht im Haupt-Histogramm angezeigt.\nFür die endgültige Ausgabe verwenden Sie das Haupt-Histogramm.
 TP_COLORAPP_CURVEEDITOR2;Tonwertkurve 2
@@ -1497,18 +1499,18 @@ TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Korrigiert Buntheit, Sättigung oder Farbigkeit
 TP_COLORAPP_DATACIE;CIECAM02-Ausgabe-Histogramm in\nKurven anzeigen
 TP_COLORAPP_DATACIE_TOOLTIP;Wenn aktiviert, zeigen die Histogramme\nder CIECAM02-Kurven die angenäherten\nWerte/Bereiche für <b>J oder Q</b> und <b>C, S oder M</b>\nNACH den CIECAM02-Anpassungen an. Das\nbetrifft nicht das Haupt-Histogramm.\n\nWenn deaktiviert, zeigen die Histogramme\nder CIECAM02-Kurven die L*a*b*-Werte\nVOR den CIECAM02-Anpassungen an.
 TP_COLORAPP_DEGREE_AUTO_TOOLTIP;Wenn aktiviert (empfohlen), wird ein optimaler\nWert berechnet, der von CAT02 und CIECAM02\nverwendet wird.\nUm den Wert manuell zu setzen, muss die Option\ndeaktiviert sein (Werte über 64 sind empfohlen).
-TP_COLORAPP_DEGREE_TOOLTIP;Umfang der “CIE Chromatic Adaptation Transform 2002“
+TP_COLORAPP_DEGREE_TOOLTIP;Umfang der “CIE Chromatic Adaptation Transform 2002“.
 TP_COLORAPP_FREE;Farbtemperatur + Tönung + CAT02 + [Ausgabe]
 TP_COLORAPP_GAMUT;Gamutkontrolle (L*a*b*)
 TP_COLORAPP_GAMUT_TOOLTIP;Gamutkontrolle im L*a*b*-Modus erlauben.
 TP_COLORAPP_HUE;Farbton (H)
-TP_COLORAPP_HUE_TOOLTIP;Farbton (H) - Winkel zwischen 0° und 360°
+TP_COLORAPP_HUE_TOOLTIP;Farbton (H) - Winkel zwischen 0° und 360°.
 TP_COLORAPP_LABEL;CIE Color Appearance Model 2002
 TP_COLORAPP_LABEL_CAM02;Bildanpassungen
 TP_COLORAPP_LABEL_SCENE;Umgebungsbedingungen (Szene)
 TP_COLORAPP_LABEL_VIEWING;Betrachtungsbedingungen
 TP_COLORAPP_LIGHT;Helligkeit (J)
-TP_COLORAPP_LIGHT_TOOLTIP;Helligkeit in CIECAM02 unterscheidet sich\nvon L*a*b* und RGB Helligkeit
+TP_COLORAPP_LIGHT_TOOLTIP;Helligkeit in CIECAM02 unterscheidet sich\nvon L*a*b* und RGB Helligkeit.
 TP_COLORAPP_MODEL;Weißpunktmodell
 TP_COLORAPP_MODEL_TOOLTIP;<b>Weißabgleich [RT] + [Ausgabe]:</b>\nRT's Weißabgleich wird für die Szene verwendet,\nCIECAM02 auf D50 gesetzt und der Weißabgleich\ndes Ausgabegerätes kann unter:\n<i>Einstellungen > Farb-Management</i>\neingestellt werden.\n\n<b>Weißabgleich [RT+CAT02] + [Ausgabe]:</b>\nRT's Weißabgleich wird für CAT02 verwendet und\nder Weißabgleich des Ausgabegerätes kann unter\n<i>Einstellungen > Farb-Management</i>\neingestellt werden.
 TP_COLORAPP_NEUTRAL;Zurücksetzen
@@ -1547,7 +1549,7 @@ TP_COLORTONING_BALANCE;Farbausgleich
 TP_COLORTONING_BY;o C/L
 TP_COLORTONING_CHROMAC;Deckkraft
 TP_COLORTONING_COLOR;Farbe
-TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Buntheitsdeckkraft als Funktion der Luminanz oB = f(L)
+TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Buntheitsdeckkraft als Funktion der Luminanz oB = f(L).
 TP_COLORTONING_HIGHLIGHT;Lichter
 TP_COLORTONING_HUE;Farbton
 TP_COLORTONING_LAB;L*a*b*-Überlagerung
@@ -1577,7 +1579,7 @@ TP_COLORTONING_STRENGTH;Intensität
 TP_COLORTONING_TWO2;Spezial-Farbe (2 Farben)
 TP_COLORTONING_TWOALL;Spezial-Farbe
 TP_COLORTONING_TWOBY;Spezial a* und b*
-TP_COLORTONING_TWOCOLOR_TOOLTIP;Standardfarbe:\nLinearer Verlauf, a* = b*.\n\nSpezial-Farbe:\nLinearer Verlauf, a* = b*, aber nicht verbunden\n\nSpezial a* und b*:\nLinearer Verlauf, nicht verbunden, mit unterschiedlichen\nKurven für a* und b*. Bevorzugt für spezielle Effekte.\n\nSpezial-Farbe (2 Farben):\nBesser vorhersehbar
+TP_COLORTONING_TWOCOLOR_TOOLTIP;Standardfarbe:\nLinearer Verlauf, a* = b*.\n\nSpezial-Farbe:\nLinearer Verlauf, a* = b*, aber nicht verbunden\n\nSpezial a* und b*:\nLinearer Verlauf, nicht verbunden, mit unterschiedlichen\nKurven für a* und b*. Bevorzugt für spezielle Effekte.\n\nSpezial-Farbe (2 Farben):\nBesser vorhersehbar.
 TP_COLORTONING_TWOSTD;Standardfarbe
 TP_CROP_FIXRATIO;Format
 TP_CROP_GTDIAGONALS;Diagonalregel
@@ -1593,7 +1595,7 @@ TP_CROP_GUIDETYPE;Hilfslinien:
 TP_CROP_H;Höhe
 TP_CROP_LABEL;Ausschnitt
 TP_CROP_PPI;PPI=
-TP_CROP_SELECTCROP;Ausschnitt wählen
+TP_CROP_SELECTCROP;Ausschnitt wählen.
 TP_CROP_W;Breite
 TP_CROP_X;x
 TP_CROP_Y;y
@@ -1705,8 +1707,8 @@ TP_EXPOSURE_HISTMATCHING_TOOLTIP;Passt Regler und Kurven (mit Ausnahme der Belic
 TP_EXPOSURE_LABEL;Belichtung
 TP_EXPOSURE_SATURATION;Sättigung
 TP_EXPOSURE_TCMODE_FILMLIKE;Filmähnlich
-TP_EXPOSURE_TCMODE_LABEL1;Tonwertkurve 1 Modus
-TP_EXPOSURE_TCMODE_LABEL2;Tonwertkurve 2 Modus
+TP_EXPOSURE_TCMODE_LABEL1;Tonwertkurve 1: Modus
+TP_EXPOSURE_TCMODE_LABEL2;Tonwertkurve 2: Modus
 TP_EXPOSURE_TCMODE_LUMINANCE;Luminanz
 TP_EXPOSURE_TCMODE_PERCEPTUAL;Wahrnehmungsabhängig
 TP_EXPOSURE_TCMODE_SATANDVALBLENDING;Sättigung und Überlagerung
@@ -1739,12 +1741,12 @@ TP_GRADIENT_CENTER_X_TOOLTIP;Ankerpunkt der Rotationsachse X:\n-100 = linker Bil
 TP_GRADIENT_CENTER_Y;Rotationsachse Y
 TP_GRADIENT_CENTER_Y_TOOLTIP;Ankerpunkt der Rotationsachse Y:\n-100 = oberer Bildrand\n0 = Bildmitte\n+100 = unterer Bildrand
 TP_GRADIENT_DEGREE;Rotationswinkel
-TP_GRADIENT_DEGREE_TOOLTIP;Rotationswinkel in Grad
+TP_GRADIENT_DEGREE_TOOLTIP;Rotationswinkel in Grad.
 TP_GRADIENT_FEATHER;Bereich
-TP_GRADIENT_FEATHER_TOOLTIP;Bereich des Verlaufs in Prozent der Bilddiagonalen
+TP_GRADIENT_FEATHER_TOOLTIP;Bereich des Verlaufs in Prozent der Bilddiagonalen.
 TP_GRADIENT_LABEL;Grauverlaufsfilter
 TP_GRADIENT_STRENGTH;Intensität
-TP_GRADIENT_STRENGTH_TOOLTIP;Filterstärke in Blendenstufen
+TP_GRADIENT_STRENGTH_TOOLTIP;Filterstärke in Blendenstufen.
 TP_HLREC_BLEND;Überlagerung
 TP_HLREC_CIELAB;CIELab-Überlagerung
 TP_HLREC_COLOR;Farbübertragung
@@ -1771,15 +1773,15 @@ TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpoliert
 TP_ICM_DCPILLUMINANT_TOOLTIP;DCP-Illumination auswählen. Vorgabe ist\nInterpoliert. Die Einstellung ist nur verfügbar\nwenn sie vom Eingangsfarbprofil unterstützt\nwird.
 TP_ICM_INPUTCAMERA;Kamera-Standard
 TP_ICM_INPUTCAMERAICC;Kameraspezifisches Profil
-TP_ICM_INPUTCAMERAICC_TOOLTIP;Verwendet RawTherapees kameraspezifisches\nDCP/ICC-Eingangsfarbprofil, welches präziser als\neine einfache Matrix ist
+TP_ICM_INPUTCAMERAICC_TOOLTIP;Verwendet RawTherapees kameraspezifisches\nDCP/ICC-Eingangsfarbprofil, welches präziser als\neine einfache Matrix ist.
 TP_ICM_INPUTCAMERA_TOOLTIP;Benutzt eine einfache Farbmatrix von DCRAW,\neine erweiterte RawTherapee-Version oder eine\naus einem DNG.
 TP_ICM_INPUTCUSTOM;DCP/ICC-Profil
-TP_ICM_INPUTCUSTOM_TOOLTIP;Eigenes DCP/ICC-Farbprofil verwenden
+TP_ICM_INPUTCUSTOM_TOOLTIP;Eigenes DCP/ICC-Farbprofil verwenden.
 TP_ICM_INPUTDLGLABEL;DCP/ICC-Profil wählen...
 TP_ICM_INPUTEMBEDDED;Eingebettetes Profil verwenden
-TP_ICM_INPUTEMBEDDED_TOOLTIP;Farbprofil verwenden, das in Nicht-RAW-Bildern\neingebettet ist
+TP_ICM_INPUTEMBEDDED_TOOLTIP;Farbprofil verwenden, das in Nicht-RAW-Bildern\neingebettet ist.
 TP_ICM_INPUTNONE;Kein Profil
-TP_ICM_INPUTNONE_TOOLTIP;Kein Eingangsfarbprofil verwenden
+TP_ICM_INPUTNONE_TOOLTIP;Kein Eingangsfarbprofil verwenden.
 TP_ICM_INPUTPROFILE;Eingangsfarbprofil
 TP_ICM_LABEL;Farbmanagement
 TP_ICM_NOICM;Kein ICM: sRGB-Ausgabe
@@ -1854,24 +1856,24 @@ TP_METADATA_MODE;Kopiermodus
 TP_METADATA_STRIP;Keine
 TP_METADATA_TUNNEL;Unveränderte Daten
 TP_NEUTRAL;Zurücksetzen
-TP_NEUTRAL_TIP;Belichtungseinstellungen auf\nneutrale Werte zurücksetzen
+TP_NEUTRAL_TIP;Belichtungseinstellungen auf\nneutrale Werte zurücksetzen.
 TP_PCVIGNETTE_FEATHER;Bereich
 TP_PCVIGNETTE_FEATHER_TOOLTIP;Bereich:\n0 = nur Bildecken\n50 = halbe Strecke zum Mittelpunkt\n100 = bis zum Mittelpunkt
 TP_PCVIGNETTE_LABEL;Vignettierungsfilter
 TP_PCVIGNETTE_ROUNDNESS;Form
 TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Form:\n0 = Rechteck\n50 = Ellipse\n100 = Kreis
 TP_PCVIGNETTE_STRENGTH;Intensität
-TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filterstärke in Blendenstufen (bezogen auf die Bildecken)
+TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filterstärke in Blendenstufen (bezogen auf die Bildecken).
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspektive
 TP_PERSPECTIVE_VERTICAL;Vertikal
 TP_PFCURVE_CURVEEDITOR_CH;Farbton
 TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Regelt die Intensität der Farbsaumentfernung\nnach Farben. Je höher die Kurve desto stärker\nist der Effekt.
 TP_PREPROCESS_DEADPIXFILT;Dead-Pixel-Filter
-TP_PREPROCESS_DEADPIXFILT_TOOLTIP;Entfernt tote Pixel
+TP_PREPROCESS_DEADPIXFILT_TOOLTIP;Entfernt tote Pixel.
 TP_PREPROCESS_GREENEQUIL;Grün-Ausgleich
 TP_PREPROCESS_HOTPIXFILT;Hot-Pixel-Filter
-TP_PREPROCESS_HOTPIXFILT_TOOLTIP;Entfernt Hot-Pixel
+TP_PREPROCESS_HOTPIXFILT_TOOLTIP;Entfernt Hot-Pixel.
 TP_PREPROCESS_LABEL;Vorverarbeitung
 TP_PREPROCESS_LINEDENOISE;Zeilenrauschfilter
 TP_PREPROCESS_LINEDENOISE_DIRECTION;Richtung
@@ -1945,7 +1947,7 @@ TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Gleicht die Helligkeit der Frames an den ak
 TP_RAW_PIXELSHIFTEXP0;Experimentell
 TP_RAW_PIXELSHIFTGREEN;Bewegung im Grün-Kanal erkennen
 TP_RAW_PIXELSHIFTHOLEFILL;Lücken in der Bewegungsmaske erkennen
-TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Lücken in der Bewegungsmaske erkennen
+TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Lücken in der Bewegungsmaske erkennen.
 TP_RAW_PIXELSHIFTLMMSE;LMMSE für Bewegungsbereiche verwenden
 TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;LMMSE anstatt AMaZE für bewegte Bildbereiche verwenden.\nSinnvoll bei High-ISO-Aufnahmen.
 TP_RAW_PIXELSHIFTMASKTHRESHOLD;3x3 new threshold
@@ -2053,7 +2055,7 @@ TP_RETINEX_MEDIAN;Medianfilter
 TP_RETINEX_METHOD;Methode
 TP_RETINEX_METHOD_TOOLTIP;<b>Schatten</b> wirkt sich auf dunkle Bereiche aus.\n\n<b>Schatten / Lichter</b> wirkt sich auf dunkle und helle Bereiche aus.\n\n<b>Lichter</b> wirkt sich auf helle Bereiche aus.\n\n<b>Spitzlichter</b> wirkt sich auf sehr helle Bereiche aus und reduziert\nMagenta-Falschfarben.
 TP_RETINEX_MLABEL;Schleierred: Min = %1, Max = %2
-TP_RETINEX_MLABEL_TOOLTIP;Sollte nahe bei Min = 0 und Max = 32768 sein
+TP_RETINEX_MLABEL_TOOLTIP;Sollte nahe bei Min = 0 und Max = 32768 sein.
 TP_RETINEX_NEIGHBOR;Radius
 TP_RETINEX_NEUTRAL;Zurücksetzen
 TP_RETINEX_NEUTRAL_TIP;Setzt alle Regler und Kurven\nauf ihre Standardwerte zurück.
@@ -2091,7 +2093,7 @@ TP_RGBCURVES_LUMAMODE_TOOLTIP;Der <b>Helligkeitsmodus</b> ändert die Helligkeit
 TP_RGBCURVES_RED;R
 TP_ROTATE_DEGREE;Winkel
 TP_ROTATE_LABEL;Drehen
-TP_ROTATE_SELECTLINE;Leitlinie wählen
+TP_ROTATE_SELECTLINE;Leitlinie wählen.
 TP_SAVEDIALOG_OK_TIP;Taste: <b>Strg</b> + <b>Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Lichter
 TP_SHADOWSHLIGHTS_HLTONALW;Tonwertbreite Lichter
@@ -2139,7 +2141,7 @@ TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;Rot / Violett
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2;Rot
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3;Rot / Gelb
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4;Gelb
-TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Farbton als Funktion des Farbtons H = f(H)
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Farbton als Funktion des Farbtons H = f(H).
 TP_VIBRANCE_LABEL;Dynamik
 TP_VIBRANCE_PASTELS;Pastelltöne
 TP_VIBRANCE_PASTSATTOG;Pastell und gesättigte Töne koppeln
@@ -2189,7 +2191,7 @@ TP_WAVELET_CHCU;Kurve
 TP_WAVELET_CHR;Farb-Kontrast-Verknüpfung
 TP_WAVELET_CHRO;Ebenengrenze Gesättigte/Pastellfarben
 TP_WAVELET_CHRO_TOOLTIP;Waveletebene (n) die, die Grenze zwischen gesättigten und Pastellfarben bestimmt.\n1-n: Gesättigte Farben\nn-9: Pastellfarben\n\nIst der Wert größer als die vorgegebene Anzahl an Waveletebenen werden diese ignoriert.
-TP_WAVELET_CHR_TOOLTIP;Farbton als Funktion des Kontrasts und der Farb-Kontrast-Verknüpfung
+TP_WAVELET_CHR_TOOLTIP;Farbton als Funktion des Kontrasts und der Farb-Kontrast-Verknüpfung.
 TP_WAVELET_CHSL;Regler
 TP_WAVELET_CHTYPE;Chrominanzmethode
 TP_WAVELET_COLORT;Deckkraft Rot / Grün
@@ -2202,15 +2204,15 @@ TP_WAVELET_CONTR;Gamut
 TP_WAVELET_CONTRA;Kontrast
 TP_WAVELET_CONTRAST_MINUS;Kontrast -
 TP_WAVELET_CONTRAST_PLUS;Kontrast +
-TP_WAVELET_CONTRA_TOOLTIP;Ändert den Kontrast des Restbildes
+TP_WAVELET_CONTRA_TOOLTIP;Ändert den Kontrast des Restbildes.
 TP_WAVELET_CTYPE;Chrominanzkontrolle
 TP_WAVELET_CURVEEDITOR_CC_TOOLTIP;Lokaler Kontrast als Funktion des ursprünglichen Kontrasts.\n\n<b>Niedrige Werte:</b> Wenig lokaler Kontrast (Werte zwischen 10 - 20)\n<b>50%:</b> Durchschnittlicher lokaler Kontrast (Werte zwischen 100 - 300)\n<b>66%:</b> Standardabweichung des Lokalen Kontrasts (Werte zwischen 300 - 800)\n<b>100%:</b> Maximaler lokaler Kontrast (Werte zwischen 3000 - 8000)\n
 TP_WAVELET_CURVEEDITOR_CH;Kontrast = f(H)
 TP_WAVELET_CURVEEDITOR_CH_TOOLTIP;Kontrast als Funktion des Farbtons.\nAchten Sie darauf, dass Sie die Werte beim\nGamut-Farbton nicht überschreiben\n\nDie Kurve hat nur Auswirkung, wenn die Wavelet-\nKontrastregler nicht auf “0“ stehen.
 TP_WAVELET_CURVEEDITOR_CL;L
-TP_WAVELET_CURVEEDITOR_CL_TOOLTIP;Wendet eine Kontrasthelligkeitskurve\nam Ende der Waveletverarbeitung an.\n
+TP_WAVELET_CURVEEDITOR_CL_TOOLTIP;Wendet eine Kontrasthelligkeitskurve\nam Ende der Waveletverarbeitung an.
 TP_WAVELET_CURVEEDITOR_HH;HH
-TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;Farbton als Funktion des Farbtons H = f(H)
+TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;Farbton als Funktion des Farbtons H = f(H).
 TP_WAVELET_DALL;Alle Richtungen
 TP_WAVELET_DAUB;Kantenperformance
 TP_WAVELET_DAUB2;D2 - niedrig
@@ -2285,7 +2287,7 @@ TP_WAVELET_NPTYPE_TOOLTIP;Dieser Algorithmus verwendet ein Pixel und acht\nseine
 TP_WAVELET_OPACITY;Deckkraft Blau / Gelb
 TP_WAVELET_OPACITYW;Kontrastausgleichskurve
 TP_WAVELET_OPACITYWL;Lokale Kontrastkurve
-TP_WAVELET_OPACITYWL_TOOLTIP;Wendet eine lokale Kontrastkurve am\nEnde der Wavelet-Verarbeitung an.\n\nLinks stellt den niedrigsten, rechts den\nhöchsten Kontrast dar.\n
+TP_WAVELET_OPACITYWL_TOOLTIP;Wendet eine lokale Kontrastkurve am\nEnde der Wavelet-Verarbeitung an.\n\nLinks stellt den niedrigsten, rechts den\nhöchsten Kontrast dar.
 TP_WAVELET_PASTEL;Pastellfarben
 TP_WAVELET_PROC;Verarbeitung
 TP_WAVELET_RE1;Schärfung verstärken
@@ -2374,4 +2376,3 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Ausschnitt an Bildschirm anpassen\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
-

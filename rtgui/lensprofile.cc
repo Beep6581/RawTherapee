@@ -139,10 +139,10 @@ LensProfilePanel::LensProfilePanel () :
 
     lensfunCameras->signal_changed().connect(sigc::mem_fun(*this, &LensProfilePanel::onLensfunCameraChanged));
     lensfunLenses->signal_changed().connect(sigc::mem_fun(*this, &LensProfilePanel::onLensfunLensChanged));
-    corrOff->signal_toggled().connect(sigc::mem_fun(*this, &LensProfilePanel::onCorrModeChanged));
-    corrLensfunAuto->signal_toggled().connect(sigc::mem_fun(*this, &LensProfilePanel::onCorrModeChanged));
-    corrLensfunManual->signal_toggled().connect(sigc::mem_fun(*this, &LensProfilePanel::onCorrModeChanged));
-    corrLcpFile->signal_toggled().connect(sigc::mem_fun(*this, &LensProfilePanel::onCorrModeChanged));
+    corrOff->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &LensProfilePanel::onCorrModeChanged), corrOff));
+    corrLensfunAuto->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &LensProfilePanel::onCorrModeChanged), corrLensfunAuto));
+    corrLensfunManual->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &LensProfilePanel::onCorrModeChanged), corrLensfunManual));
+    corrLcpFile->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &LensProfilePanel::onCorrModeChanged), corrLcpFile));
 
     corrUnchanged->hide();
     
@@ -499,84 +499,88 @@ void LensProfilePanel::onLensfunLensChanged()
 }
 
 
-void LensProfilePanel::onCorrModeChanged()
+void LensProfilePanel::onCorrModeChanged(const Gtk::RadioButton *rbChanged)
 {
-    Glib::ustring mode;
+    if (rbChanged->get_active()) {
+        // because the method gets called for the enabled AND the disabled RadioButton, we do the processing only for the enabled one
+        Glib::ustring mode;
 
-    if (corrOff->get_active()) {
-        useLensfunChanged = true;
-        lensfunAutoChanged = true;
-        lcpFileChanged = true;
-        
-        ckbUseDist->set_sensitive(false);
-        ckbUseVign->set_sensitive(false);
-        ckbUseCA->set_sensitive(false);
-        
-        mode = M("GENERAL_NONE");
-    } else if (corrLensfunAuto->get_active()) {
-        useLensfunChanged = true;
-        lensfunAutoChanged = true;
-        lcpFileChanged = true;
-        useDistChanged = true;
-        useVignChanged = true;
+        if (rbChanged == corrOff) {
+            useLensfunChanged = true;
+            lensfunAutoChanged = true;
+            lcpFileChanged = true;
 
-        ckbUseDist->set_sensitive(true);
-        ckbUseVign->set_sensitive(true);
-        ckbUseCA->set_sensitive(false);
+            ckbUseDist->set_sensitive(false);
+            ckbUseVign->set_sensitive(false);
+            ckbUseCA->set_sensitive(false);
 
-        if (metadata) {
-            bool b = disableListener();
-            const LFDatabase *db = LFDatabase::getInstance();
-            LFCamera c = db->findCamera(metadata->getMake(), metadata->getModel());
-            LFLens l = db->findLens(c, metadata->getLens());
-            setLensfunCamera(c.getMake(), c.getModel());
-            setLensfunLens(l.getLens());
-            if (b) {
-                enableListener();
+            mode = M("GENERAL_NONE");
+        } else if (rbChanged == corrLensfunAuto) {
+            useLensfunChanged = true;
+            lensfunAutoChanged = true;
+            lcpFileChanged = true;
+            useDistChanged = true;
+            useVignChanged = true;
+
+            ckbUseDist->set_sensitive(true);
+            ckbUseVign->set_sensitive(true);
+            ckbUseCA->set_sensitive(false);
+
+            if (metadata) {
+                bool b = disableListener();
+                const LFDatabase *db = LFDatabase::getInstance();
+                LFCamera c = db->findCamera(metadata->getMake(), metadata->getModel());
+                LFLens l = db->findLens(c, metadata->getLens());
+                setLensfunCamera(c.getMake(), c.getModel());
+                setLensfunLens(l.getLens());
+                if (b) {
+                    enableListener();
+                }
             }
+
+            mode = M("LENSPROFILE_CORRECTION_AUTOMATCH");
+        } else if (rbChanged == corrLensfunManual) {
+            useLensfunChanged = true;
+            lensfunAutoChanged = true;
+            lcpFileChanged = true;
+            useDistChanged = true;
+            useVignChanged = true;
+
+            ckbUseDist->set_sensitive(true);
+            ckbUseVign->set_sensitive(true);
+            ckbUseCA->set_sensitive(false);
+
+            mode = M("LENSPROFILE_CORRECTION_MANUAL");
+        } else if (rbChanged == corrLcpFile) {
+            useLensfunChanged = true;
+            lensfunAutoChanged = true;
+            lcpFileChanged = true;
+            useDistChanged = true;
+            useVignChanged = true;
+
+            updateDisabled(true);
+
+            mode = M("LENSPROFILE_CORRECTION_LCPFILE");
+        } else if (rbChanged == corrUnchanged) {
+            useLensfunChanged = false;
+            lensfunAutoChanged = false;
+            lcpFileChanged = false;
+            lensfunCameraChanged = false;
+            lensfunLensChanged = false;
+
+            ckbUseDist->set_sensitive(true);
+            ckbUseVign->set_sensitive(true);
+            ckbUseCA->set_sensitive(true);
+
+            mode = M("GENERAL_UNCHANGED");
         }
 
-        mode = M("LENSPROFILE_CORRECTION_AUTOMATCH");
-    } else if (corrLensfunManual->get_active()) {
-        useLensfunChanged = true;
-        lensfunAutoChanged = true;
-        lcpFileChanged = true;
-        useDistChanged = true;
-        useVignChanged = true;
+        lcModeChanged = true;
+        updateLensfunWarning();
 
-        ckbUseDist->set_sensitive(true);
-        ckbUseVign->set_sensitive(true);
-        ckbUseCA->set_sensitive(false);
-
-        mode = M("LENSPROFILE_CORRECTION_MANUAL");
-    } else if (corrLcpFile->get_active()) {
-        useLensfunChanged = true;
-        lensfunAutoChanged = true;
-        lcpFileChanged = true;
-        useDistChanged = true;
-        useVignChanged = true;
-
-        updateDisabled(true);
-
-        mode = M("LENSPROFILE_CORRECTION_LCPFILE");
-    } else if (corrUnchanged->get_active()) {
-        useLensfunChanged = false;
-        lensfunAutoChanged = false;
-        lcpFileChanged = false;
-        lensfunCameraChanged = false;
-        lensfunLensChanged = false;
-
-        ckbUseDist->set_sensitive(true);
-        ckbUseVign->set_sensitive(true);
-        ckbUseCA->set_sensitive(true);
-        
-        mode = M("GENERAL_UNCHANGED");
-    }
-    lcModeChanged = true;
-    updateLensfunWarning();    
-
-    if (listener) {
-        listener->panelChanged(EvLensCorrMode, mode);
+        if (listener) {
+            listener->panelChanged(EvLensCorrMode, mode);
+        }
     }
 }
 

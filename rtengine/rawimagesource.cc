@@ -448,17 +448,6 @@ RawImageSource::RawImageSource()
     , camInitialGain(0.0)
     , defGain(0.0)
     , ri(nullptr)
-    , lc00(0.0)
-    , lc01(0.0)
-    , lc02(0.0)
-    , lc10(0.0)
-    , lc11(0.0)
-    , lc12(0.0)
-    , lc20(0.0)
-    , lc21(0.0)
-    , lc22(0.0)
-    , cache(nullptr)
-    , threshold(0)
     , rawData(0, 0)
     , green(0, 0)
     , red(0, 0)
@@ -491,10 +480,6 @@ RawImageSource::~RawImageSource()
 
     flushRGB();
     flushRawData();
-
-    if (cache) {
-        delete [] cache;
-    }
 
     if (camProfile) {
         cmsCloseProfile(camProfile);
@@ -2827,11 +2812,6 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
 
 void RawImageSource::flushRawData()
 {
-    if (cache) {
-        delete [] cache;
-        cache = nullptr;
-    }
-
     if (rawData) {
         rawData(0, 0);
     }

@@ -105,7 +105,7 @@ public:
 
     void onLensfunCameraChanged();
     void onLensfunLensChanged();
-    void onCorrModeChanged();
+    void onCorrModeChanged(const Gtk::RadioButton *rbChanged);
 };
 
 #endif

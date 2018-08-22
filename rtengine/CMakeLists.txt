@@ -32,6 +32,7 @@ set(RTENGINESOURCEFILES
     EdgePreservingDecomposition.cc
     FTblockDN.cc
     PF_correct_RT.cc
+    ahd_demosaic_RT.cc
     amaze_demosaic_RT.cc
     cJSON.c
     calc_distort.cc
@@ -54,6 +55,7 @@ set(RTENGINESOURCEFILES
     dirpyr_equalizer.cc
     dual_demosaic_RT.cc
     dynamicprofile.cc
+    eahd_demosaic.cc
     expo_before_b.cc
     fast_demo.cc
     ffmanager.cc

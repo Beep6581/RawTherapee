@@ -42,9 +42,9 @@ FileThumbnailButtonSet::FileThumbnailButtonSet (FileBrowserEntry* myEntry)
 {
 
     if (!iconsLoaded) {
-        unRankIcon  = RTImage::createFromPng ("star-hollow-small.png");
-        rankIcon    = RTImage::createFromPng ("star-gold-small.png");
-        gRankIcon   = RTImage::createFromPng ("star-small.png");
+        unRankIcon  = RTImage::createFromPng ("star-hollow-narrow.png");
+        rankIcon    = RTImage::createFromPng ("star-gold-narrow.png");
+        gRankIcon   = RTImage::createFromPng ("star-narrow.png");
         trashIcon   = RTImage::createFromPng ("trash-small.png");
         unTrashIcon = RTImage::createFromPng ("trash-remove-small.png");
         processIcon = RTImage::createFromPng ("gears-small.png");
