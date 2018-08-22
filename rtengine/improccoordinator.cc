@@ -497,7 +497,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
     progress("Exposure curve & CIELAB conversion...", 100 * readyphase / numofphases);
 
-    if (todo &  M_AUTOEXP) {
+    if (todo &  (M_AUTOEXP | M_RGBCURVE)) {
         if (params.icm.workingTRC == "Custom") { //exec TRC IN free
             Glib::ustring profile;
             profile = params.icm.workingProfile;

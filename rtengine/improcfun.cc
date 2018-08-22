@@ -4123,21 +4123,9 @@ void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, LUTf & cur
 
 void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW, LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve, LUTf & lhskcurve, LUTf & clcurve, LUTf & curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histLCurve)
 {
-    if (!params->labCurve.enabled) {
-        if (params->blackwhite.enabled && !params->colorToning.enabled) {
-            for (int i = 0; i < lnew->H; ++i) {
-                for (int j = 0; j < lnew->W; ++j) {
-                    lnew->a[i][j] = lnew->b[i][j] = 0.f;
-                }
-            }
-        }
-        return;
-    }
-    
+
     int W = lold->W;
     int H = lold->H;
-    // lhskcurve.dump("lh_curve");
-    //init Flatcurve for C=f(H)
 
     PlanarWhateverData<float>* editWhatever = nullptr;
     EditUniqueID editID = EUID_None;
@@ -4162,6 +4150,25 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
             }
         }
     }
+
+    if (!params->labCurve.enabled) {
+        if (editPipette && (editID == EUID_Lab_LCurve || editID == EUID_Lab_aCurve || editID == EUID_Lab_bCurve || editID == EUID_Lab_LHCurve || editID == EUID_Lab_CHCurve || editID == EUID_Lab_HHCurve || editID == EUID_Lab_CLCurve || editID == EUID_Lab_CCurve || editID == EUID_Lab_LCCurve)) {
+            // fill pipette buffer with zeros to avoid crashes
+            editWhatever->fill(0.f);
+        }
+        if (params->blackwhite.enabled && !params->colorToning.enabled) {
+            for (int i = 0; i < lnew->H; ++i) {
+                for (int j = 0; j < lnew->W; ++j) {
+                    lnew->a[i][j] = lnew->b[i][j] = 0.f;
+                }
+            }
+        }
+        return;
+    }
+
+    // lhskcurve.dump("lh_curve");
+    //init Flatcurve for C=f(H)
+
 
     FlatCurve* chCurve = nullptr;// curve C=f(H)
     bool chutili = false;
