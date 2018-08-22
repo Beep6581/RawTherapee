@@ -800,131 +800,16 @@ void HistogramArea::updateBackBuffer ()
     Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(surface);
     const Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
 
+    // Setup drawing
     cr->set_source_rgba (0., 0., 0., 0.);
     cr->set_operator (Cairo::OPERATOR_CLEAR);
     cr->paint ();
-    cr->set_operator (Cairo::OPERATOR_OVER);
+    cr->set_operator (Cairo::OPERATOR_SOURCE);
 
-    if (valid) {
-        // For RAW mode use the other hists
-        LUTu& rh = rawMode ? rhistRaw : rhist;
-        LUTu& gh = rawMode ? ghistRaw : ghist;
-        LUTu& bh = rawMode ? bhistRaw : bhist;
-
-        // make double copies of LUT, one for faster access, another one to scale down the raw histos
-        LUTu rhchanged(256), ghchanged(256), bhchanged(256);
-        unsigned int lhisttemp[256] ALIGNED16 {0}, chisttemp[256] ALIGNED16 {0}, rhtemp[256] ALIGNED16 {0}, ghtemp[256] ALIGNED16 {0}, bhtemp[256] ALIGNED16 {0};
-        const int scale = (rawMode ? 8 : 1);
-
-        for(int i = 0; i < 256; i++) {
-            if(needLuma) {
-                lhisttemp[i] = lhist[i];
-            }
-
-            if(needChroma) {
-                chisttemp[i] = chist[i];
-            }
-
-            if(needRed) {
-                rhchanged[i] = rhtemp[i] = rh[i] / scale;
-            }
-
-            if(needGreen) {
-                ghchanged[i] = ghtemp[i] = gh[i] / scale;
-            }
-
-            if(needBlue) {
-                bhchanged[i] = bhtemp[i] = bh[i] / scale;
-            }
-        }
-
-        // compute height of the full histogram (realheight) and
-        // does not take into account 0 and 255 values
-        // them are handled separately
-
-        unsigned int fullhistheight = 0;
-
-        for (int i = 1; i < 255; i++) {
-            if (needLuma && lhisttemp[i] > fullhistheight) {
-                fullhistheight = lhisttemp[i];
-            }
-
-            if (needChroma && chisttemp[i] > fullhistheight) {
-                fullhistheight = chisttemp[i];
-            }
-
-            if (needRed && rhtemp[i] > fullhistheight) {
-                fullhistheight = rhtemp[i];
-            }
-
-            if (needGreen && ghtemp[i] > fullhistheight) {
-                fullhistheight = ghtemp[i];
-            }
-
-            if (needBlue && bhtemp[i] > fullhistheight) {
-                fullhistheight = bhtemp[i];
-            }
-        }
-        
-        int realhistheight = fullhistheight;
-
-        if (realhistheight < winh - 2) {
-            realhistheight = winh - 2;
-        }
-
-        cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
-        cr->set_line_width (1.0);
-        cr->set_operator(Cairo::OPERATOR_SOURCE);
-
-        int ui = 0, oi = 0;
-
-        if (needLuma && !rawMode) {
-            drawCurve(cr, lhist, realhistheight, w, h);
-            cr->set_source_rgb (0.65, 0.65, 0.65);
-            cr->fill ();
-
-            drawMarks(cr, lhist, realhistheight, w, ui, oi);
-        }
-
-        if (needChroma && !rawMode) {
-            drawCurve(cr, chist, realhistheight, w, h);
-            cr->set_source_rgb (0.9, 0.9, 0.);
-            cr->stroke ();
-
-            drawMarks(cr, chist, realhistheight, w, ui, oi);
-        }
-
-        if (needRed) {
-            drawCurve(cr, rhchanged, realhistheight, w, h);
-            cr->set_source_rgb (1.0, 0.0, 0.0);
-            cr->stroke ();
-
-            drawMarks(cr, rhchanged, realhistheight, w, ui, oi);
-        }
-
-        if (needGreen) {
-            drawCurve(cr, ghchanged, realhistheight, w, h);
-            cr->set_source_rgb (0.0, 1.0, 0.0);
-            cr->stroke ();
-
-            drawMarks(cr, ghchanged, realhistheight, w, ui, oi);
-        }
-
-        if (needBlue) {
-            drawCurve(cr, bhchanged, realhistheight, w, h);
-            cr->set_source_rgb (0.0, 0.0, 1.0);
-            cr->stroke ();
-
-            drawMarks(cr, bhchanged, realhistheight, w, ui, oi);
-        }
-        
-    }
-
+    // Prepare drawing gridlines first
     cr->set_source_rgba (1., 1., 1., 0.25);
     cr->set_line_width (1.0);
     cr->set_antialias(Cairo::ANTIALIAS_NONE);
-
-    // Draw the content
     cr->set_line_join(Cairo::LINE_JOIN_MITER);
     std::valarray<double> ch_ds (1);
     ch_ds[0] = 4;
@@ -965,6 +850,115 @@ void HistogramArea::updateBackBuffer ()
     }
 
     cr->unset_dash();
+
+    if (valid) {
+        // For RAW mode use the other hists
+        LUTu& rh = rawMode ? rhistRaw : rhist;
+        LUTu& gh = rawMode ? ghistRaw : ghist;
+        LUTu& bh = rawMode ? bhistRaw : bhist;
+
+        // make double copies of LUT, one for faster access, another one to scale down the raw histos
+        LUTu rhchanged(256), ghchanged(256), bhchanged(256);
+        unsigned int lhisttemp[256] ALIGNED16 {0}, chisttemp[256] ALIGNED16 {0}, rhtemp[256] ALIGNED16 {0}, ghtemp[256] ALIGNED16 {0}, bhtemp[256] ALIGNED16 {0};
+        const int scale = (rawMode ? 8 : 1);
+
+        for(int i = 0; i < 256; i++) {
+            if(needLuma) {
+                lhisttemp[i] = lhist[i];
+            }
+
+            if(needChroma) {
+                chisttemp[i] = chist[i];
+            }
+
+            if(needRed) {
+                rhchanged[i] = rhtemp[i] = rh[i] / scale;
+            }
+
+            if(needGreen) {
+                ghchanged[i] = ghtemp[i] = gh[i] / scale;
+            }
+
+            if(needBlue) {
+                bhchanged[i] = bhtemp[i] = bh[i] / scale;
+            }
+        }
+
+        // Compute the highest point of the histogram for scaling
+        // Values at far left and right end (0 and 255) are handled differently
+        
+        unsigned int histheight = 0;
+
+        for (int i = 1; i < 255; i++) {
+            if (needLuma && lhisttemp[i] > histheight) {
+                histheight = lhisttemp[i];
+            }
+
+            if (needChroma && chisttemp[i] > histheight) {
+                histheight = chisttemp[i];
+            }
+
+            if (needRed && rhtemp[i] > histheight) {
+                histheight = rhtemp[i];
+            }
+
+            if (needGreen && ghtemp[i] > histheight) {
+                histheight = ghtemp[i];
+            }
+
+            if (needBlue && bhtemp[i] > histheight) {
+                histheight = bhtemp[i];
+            }
+        }
+
+        int realhistheight = histheight;
+        
+        if (realhistheight < winh - 2) {
+            realhistheight = winh - 2;
+        }
+
+        cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
+        cr->set_line_width (1.0);
+        cr->set_operator (Cairo::OPERATOR_OVER);
+
+        int ui = 0, oi = 0;
+
+        if (needLuma && !rawMode) {
+            drawCurve(cr, lhist, realhistheight, w, h);
+            cr->set_source_rgba (0.65, 0.65, 0.65, 0.65);
+            cr->fill ();
+            drawMarks(cr, lhist, realhistheight, w, ui, oi);
+        }
+
+        if (needChroma && !rawMode) {
+            drawCurve(cr, chist, realhistheight, w, h);
+            cr->set_source_rgb (0.9, 0.9, 0.);
+            cr->stroke ();
+            drawMarks(cr, chist, realhistheight, w, ui, oi);
+        }
+
+        if (needRed) {
+            drawCurve(cr, rhchanged, realhistheight, w, h);
+            cr->set_source_rgb (1.0, 0.0, 0.0);
+            cr->stroke ();
+            drawMarks(cr, rhchanged, realhistheight, w, ui, oi);
+        }
+
+        if (needGreen) {
+            drawCurve(cr, ghchanged, realhistheight, w, h);
+            cr->set_source_rgb (0.0, 1.0, 0.0);
+            cr->stroke ();
+            drawMarks(cr, ghchanged, realhistheight, w, ui, oi);
+        }
+
+        if (needBlue) {
+            drawCurve(cr, bhchanged, realhistheight, w, h);
+            cr->set_source_rgb (0.0, 0.0, 1.0);
+            cr->stroke ();
+            drawMarks(cr, bhchanged, realhistheight, w, ui, oi);
+        }
+        
+    }
 
     // Draw the frame's border
     style->render_frame(cr, 0, 0, surface->get_width(), surface->get_height());
