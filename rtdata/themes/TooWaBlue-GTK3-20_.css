@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.71
+  Version 2.72
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -370,7 +370,7 @@ filechooser list row:selected {
 /*** Histogram *********************************************************************************/
 #HistogramPanel {
     min-height: 0;
-    margin: -2px 0;
+    margin: 0;
     padding: 0;
     border: none;
     background-color: transparent;
@@ -404,24 +404,23 @@ filechooser list row:selected {
     background-color: @bg-dark-grey;
 }
 
-#fullButton,
 #histButton {
     padding: 0;
     margin: 0;
-    border:none;
+    border: none;
     background-color: @bg-dark-grey;
     background-image: none;
     box-shadow: none;
-    min-height: 1.5em;
+    min-height: 1.41667em;
     min-width: calc(1.33334em + 6px);
     border-radius: 0;
 }
 
 #histButton:first-child {
-    margin-top: 0.16667em;
+    margin-top: 3px;
 }
 #histButton:last-child {
-    margin-bottom: 0.16667em;
+    margin-bottom: 3px;
 }
 
 #HistogramPanel image {
