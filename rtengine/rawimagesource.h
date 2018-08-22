@@ -75,11 +75,6 @@ protected:
     unsigned int currFrame = 0;
     unsigned int numFrames = 0;
 
-    // to accelerate CIELAB conversion:
-    double lc00, lc01, lc02, lc10, lc11, lc12, lc20, lc21, lc22;
-    double* cache;
-    int threshold;
-
     array2D<float> rawData;  // holds preprocessed pixel values, rowData[i][j] corresponds to the ith row and jth column
     array2D<float> *rawDataFrames[4] = {nullptr};
     array2D<float> *rawDataBuffer[3] = {nullptr};
@@ -240,9 +235,8 @@ protected:
     inline  void convert_row_to_RGB (float* r, float* g, float* b, const float* const Y, const float* const I, const float* const Q, const int W);
     inline  void convert_to_RGB (float &r, float &g, float &b, const float Y, const float I, const float Q);
 
-    inline  void convert_to_cielab_row  (float* ar, float* ag, float* ab, float* oL, float* oa, float* ob);
-    inline  void interpolate_row_g      (float* agh, float* agv, int i);
-    inline  void interpolate_row_rb     (float* ar, float* ab, float* pg, float* cg, float* ng, int i);
+    inline  void interpolate_row_g (float* agh, float* agv, int i);
+    inline  void interpolate_row_rb (float* ar, float* ab, float* pg, float* cg, float* ng, int i);
     inline  void interpolate_row_rb_mul_pp (const array2D<float> &rawData, float* ar, float* ab, float* pg, float* cg, float* ng, int i, float r_mul, float g_mul, float b_mul, int x1, int width, int skip);
 
     float* CA_correct_RT  (const bool autoCA, const double cared, const double cablue, const double caautostrength, array2D<float> &rawData, double *fitParamsTransfer, bool fitParamsIn, bool fitParamsOut, float * buffer, bool freeBuffer);

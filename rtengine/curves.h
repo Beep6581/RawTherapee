@@ -444,6 +444,7 @@ protected:
     DiagonalCurveType kind;
 
     void spline_cubic_set ();
+    void catmull_rom_set();
     void NURBS_set ();
 
 public:

@@ -55,6 +55,7 @@ set(RTENGINESOURCEFILES
     dirpyr_equalizer.cc
     dual_demosaic_RT.cc
     dynamicprofile.cc
+    eahd_demosaic.cc
     expo_before_b.cc
     fast_demo.cc
     ffmanager.cc

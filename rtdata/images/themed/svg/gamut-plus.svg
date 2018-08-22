@@ -42,7 +42,7 @@
      inkscape:snap-bbox="true"
      inkscape:bbox-nodes="true"
      inkscape:snap-others="false"
-     inkscape:object-nodes="true"
+     inkscape:object-nodes="false"
      inkscape:snap-grids="true"
      inkscape:snap-bbox-midpoints="false">
     <inkscape:grid
@@ -101,15 +101,9 @@
      inkscape:label="Layer 1">
     <path
        style="opacity:0.7;fill:#2a7fff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.02779599px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 6.67822,3 4.0435,20.6 18.80011,14.973588 Z m 3.32277,5.088435 6.94375,5.478121 -10.35617,5.536751 z"
+       d="M 4.2934,1 1,23 19.445762,15.966985 Z M 8.4468625,7.3605437 17.12655,14.208195 4.1813375,21.129134 Z"
        id="path17368"
        inkscape:connector-curvature="0" />
-    <path
-       inkscape:connector-curvature="0"
-       style="opacity:0.7;fill:#2a7fff;fill-opacity:1;stroke:none;stroke-width:0;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 1,1 V 23 H 23 V 21 H 3 V 1 Z"
-       id="rect18347"
-       sodipodi:nodetypes="ccccccc" />
     <path
        style="opacity:0.7;fill:#2a7fff;fill-opacity:1;stroke:none;stroke-width:2.37170815;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 17 1 L 17 4 L 14 4 L 14 7 L 17 7 L 17 10 L 20 10 L 20 7 L 23 7 L 23 4 L 20 4 L 20 1 L 17 1 z "

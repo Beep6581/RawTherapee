@@ -30,13 +30,13 @@ class Settings
 public:
     Glib::ustring   iccDirectory;           ///< The directory containing the possible output icc profiles
     int             viewingdevice;          // white of output device (D50...D65..)
-    int             viewingdevicegrey;          // level of grey output device
+    int             viewingdevicegrey;      // level of grey output device
     int             viewinggreySc;          // level of grey Scene
-    int             leveldnv;           // level of crop denoise
-    int             leveldnti;          // size of tiles denoise
+    int             leveldnv;               // level of crop denoise
+    int             leveldnti;              // size of tiles denoise
     int             leveldnaut;             // level of auto denoise
     int             leveldnliss;            // level of auto multi zone
-    int             leveldnautsimpl;            // STD or EXPERT
+    int             leveldnautsimpl;        // STD or EXPERT
 
     Glib::ustring   printerProfile;         ///< ICC profile name used for soft-proofing a printer output
     RenderingIntent printerIntent;          ///< Colorimetric intent used with the above profile
@@ -64,7 +64,8 @@ public:
 
     bool            gamutICC; // no longer used
     bool            gamutLch;
-    bool            HistogramWorking;
+    bool            HistogramWorking;       // true: histogram is display the value of the image computed in the Working profile
+                                            // false: histogram is display the value of the image computed in the Output profile
     int             amchroma;
     int             protectred;
     double          protectredh;

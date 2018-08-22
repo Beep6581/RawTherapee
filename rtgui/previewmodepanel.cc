@@ -24,23 +24,23 @@
 PreviewModePanel::PreviewModePanel (ImageArea* ia) : imageArea(ia)
 {
 
-    iR  = new RTImage ("square-toggle-red-on.png");
-    iG  = new RTImage ("square-toggle-green-on.png");
-    iB  = new RTImage ("square-toggle-blue-on.png");
-    iL  = new RTImage ("square-toggle-luminosity-on.png");
-    iBC0 = new RTImage ("square-toggle-theme-on.png");
-    iBC1 = new RTImage ("square-toggle-black-on.png");
-    iBC2 = new RTImage ("square-toggle-white-on.png");
-    iBC3 = new RTImage ("square-toggle-gray-on.png");
+    iR  = new RTImage ("square-toggle-red-on-narrow.png");
+    iG  = new RTImage ("square-toggle-green-on-narrow.png");
+    iB  = new RTImage ("square-toggle-blue-on-narrow.png");
+    iL  = new RTImage ("square-toggle-luminosity-on-narrow.png");
+    iBC0 = new RTImage ("square-toggle-theme-on-narrow.png");
+    iBC1 = new RTImage ("square-toggle-black-on-narrow.png");
+    iBC2 = new RTImage ("square-toggle-white-on-narrow.png");
+    iBC3 = new RTImage ("square-toggle-gray-on-narrow.png");
 
-    igR = new RTImage ("square-toggle-red-off.png");
-    igG = new RTImage ("square-toggle-green-off.png");
-    igB = new RTImage ("square-toggle-blue-off.png");
-    igL = new RTImage ("square-toggle-luminosity-off.png");
-    igBC0 = new RTImage ("square-toggle-theme-off.png");
-    igBC1 = new RTImage ("square-toggle-black-off.png");
-    igBC2 = new RTImage ("square-toggle-white-off.png");
-    igBC3 = new RTImage ("square-toggle-gray-off.png");
+    igR = new RTImage ("square-toggle-red-off-narrow.png");
+    igG = new RTImage ("square-toggle-green-off-narrow.png");
+    igB = new RTImage ("square-toggle-blue-off-narrow.png");
+    igL = new RTImage ("square-toggle-luminosity-off-narrow.png");
+    igBC0 = new RTImage ("square-toggle-theme-off-narrow.png");
+    igBC1 = new RTImage ("square-toggle-black-off-narrow.png");
+    igBC2 = new RTImage ("square-toggle-white-off-narrow.png");
+    igBC3 = new RTImage ("square-toggle-gray-off-narrow.png");
 
     backColor0 = Gtk::manage (new Gtk::ToggleButton ());
     backColor0->get_style_context()->add_class("narrowbutton");
