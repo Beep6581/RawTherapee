@@ -239,9 +239,9 @@ GENERAL_UNCHANGED;(Unchanged)
 GENERAL_WARNING;Warning
 GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
 HISTOGRAM_TOOLTIP_B;Show/Hide blue histogram.
-HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar.\nRight-click on image preview to freeze/unfreeze.
+HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar.
 HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram.
-HISTOGRAM_TOOLTIP_FULL;Toggle full (off) or scaled (on) histogram.
+HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
 HISTOGRAM_TOOLTIP_G;Show/Hide green histogram.
 HISTOGRAM_TOOLTIP_L;Show/Hide CIELab luminance histogram.
 HISTOGRAM_TOOLTIP_R;Show/Hide red histogram.

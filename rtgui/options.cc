@@ -418,7 +418,8 @@ void Options::setDefaults()
     multiDisplayMode = 0;
     histogramPosition = 1;
     histogramBar = true;
-    histogramFullMode = false;
+    histogramHeight = 200;
+    histogramDrawMode = 0;
     curvebboxpos = 1;
     prevdemo = PD_Sidecar;
     rgbDenoiseThreadLimit = 0;
@@ -1308,9 +1309,13 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("GUI", "HistogramBar")) {
                     histogramBar = keyFile.get_boolean("GUI", "HistogramBar");
                 }
-
-                if (keyFile.has_key("GUI", "HistogramFullMode")) {
-                    histogramFullMode = keyFile.get_boolean("GUI", "HistogramFullMode");
+                
+                if (keyFile.has_key ("GUI", "HistogramHeight")) {
+                    histogramHeight = keyFile.get_integer ("GUI", "HistogramHeight");
+                }
+                
+                if (keyFile.has_key ("GUI", "HistogramDrawMode")) {
+                    histogramDrawMode = keyFile.get_integer ("GUI", "HistogramDrawMode");
                 }
 
                 if (keyFile.has_key("GUI", "NavigatorRGBUnit")) {
@@ -2024,22 +2029,23 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("GUI", "FrameColor", bgcolor);
         keyFile.set_boolean("GUI", "ProcessingQueueEnbled", procQueueEnabled);
         Glib::ArrayHandle<int> tpopen = tpOpen;
-        keyFile.set_integer_list("GUI", "ToolPanelsExpanded", tpopen);
-        keyFile.set_boolean("GUI", "ToolPanelsExpandedAutoSave", autoSaveTpOpen);
-        keyFile.set_integer("GUI", "MultiDisplayMode", multiDisplayMode);
-        keyFile.set_double_list("GUI", "CutOverlayBrush", cutOverlayBrush);
-        keyFile.set_double_list("GUI", "NavGuideBrush", navGuideBrush);
-        keyFile.set_integer("GUI", "HistogramPosition", histogramPosition);
-        keyFile.set_boolean("GUI", "HistogramBar", histogramBar);
-        keyFile.set_boolean("GUI", "HistogramFullMode", histogramFullMode);
-        keyFile.set_integer("GUI", "NavigatorRGBUnit", (int)navRGBUnit);
-        keyFile.set_integer("GUI", "NavigatorHSVUnit", (int)navHSVUnit);
-        keyFile.set_boolean("GUI", "ShowFilmStripToolBar", showFilmStripToolBar);
-        keyFile.set_boolean("GUI", "FileBrowserToolbarSingleRow", FileBrowserToolbarSingleRow);
-        keyFile.set_boolean("GUI", "HideTPVScrollbar", hideTPVScrollbar);
-        keyFile.set_boolean("GUI", "UseIconNoText", UseIconNoText);
-        keyFile.set_boolean("GUI", "HistogramWorking", rtSettings.HistogramWorking);
-        keyFile.set_integer("GUI", "CurveBBoxPosition", curvebboxpos);
+        keyFile.set_integer_list ("GUI", "ToolPanelsExpanded", tpopen);
+        keyFile.set_boolean ("GUI", "ToolPanelsExpandedAutoSave", autoSaveTpOpen);
+        keyFile.set_integer ("GUI", "MultiDisplayMode", multiDisplayMode);
+        keyFile.set_double_list ("GUI", "CutOverlayBrush", cutOverlayBrush);
+        keyFile.set_double_list ("GUI", "NavGuideBrush", navGuideBrush);
+        keyFile.set_integer ("GUI", "HistogramPosition", histogramPosition);
+        keyFile.set_boolean ("GUI", "HistogramBar", histogramBar);
+        keyFile.set_integer ("GUI", "HistogramHeight", histogramHeight);
+        keyFile.set_integer ("GUI", "HistogramDrawMode", histogramDrawMode);
+        keyFile.set_integer ("GUI", "NavigatorRGBUnit", (int)navRGBUnit);
+        keyFile.set_integer ("GUI", "NavigatorHSVUnit", (int)navHSVUnit);
+        keyFile.set_boolean ("GUI", "ShowFilmStripToolBar", showFilmStripToolBar);
+        keyFile.set_boolean ("GUI", "FileBrowserToolbarSingleRow", FileBrowserToolbarSingleRow);
+        keyFile.set_boolean ("GUI", "HideTPVScrollbar", hideTPVScrollbar);
+        keyFile.set_boolean ("GUI", "UseIconNoText", UseIconNoText);
+        keyFile.set_boolean ("GUI", "HistogramWorking", rtSettings.HistogramWorking);
+        keyFile.set_integer ("GUI", "CurveBBoxPosition", curvebboxpos);
 
         //Glib::ArrayHandle<int> crvopen = crvOpen;
         //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);
