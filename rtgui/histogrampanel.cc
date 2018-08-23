@@ -312,18 +312,17 @@ void HistogramPanel::setHistRGBInvalid ()
     histogramRGBArea->queue_draw ();
 }
 
-void HistogramPanel::pointerMoved (bool validPos, Glib::ustring profile, Glib::ustring profileW, int x, int y, int r, int g, int b)
+void HistogramPanel::pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw)
 {
 
     if (!validPos) {
         // do something to un-show vertical bars
         histogramRGBArea->updateBackBuffer(-1, -1, -1);
-        histogramRGBArea->queue_draw ();
     } else {
         // do something to show vertical bars
         histogramRGBArea->updateBackBuffer(r, g, b, profile, profileW);
-        histogramRGBArea->queue_draw ();
     }
+    histogramRGBArea->queue_draw ();
 }
 
 /*
