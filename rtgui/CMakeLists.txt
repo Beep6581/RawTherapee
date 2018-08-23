@@ -225,6 +225,10 @@ else()
         )
 endif()
 
+if(OPENMP_FOUND AND NOT APPLE)
+    set(EXTRA_LIB_RTGUI ${EXTRA_LIB_RTGUI} "atomic")
+endif()
+
 # Create config.h which defines where data are stored
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.h")
 
