@@ -197,7 +197,7 @@ public:
         histogramArea->update (histRed, histGreen, histBlue, histLuma, histRedRaw, histGreenRaw, histBlueRaw, histChroma);
     }
     // pointermotionlistener interface
-    void pointerMoved (bool validPos, Glib::ustring profile, Glib::ustring profileW, int x, int y, int r, int g, int b);
+    void pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw = false);
     // added pointermotionlistener interface
     void toggleFreeze();
     // TODO should be protected
