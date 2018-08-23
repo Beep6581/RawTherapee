@@ -520,6 +520,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     ALLNORAW,         // EvWBEnabled
     RGBCURVE,         // EvRGBEnabled
     LUMINANCECURVE,   // EvLEnabled
+    0,                // unused
     LUMINANCECURVE,   // EvLocallabSpotCreated
     LUMINANCECURVE,   // EvLocallabSpotDeleted
     M_VOID,           // EvLocallabSpotSelected

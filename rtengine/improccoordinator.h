@@ -242,8 +242,6 @@ protected:
     bool HHutili;
     bool curveutili;
 
-    std::string prevmdfive;
-    Glib::ustring datal;
     int **dataspot;
     int maxdata;
     std::string *retistr;
@@ -254,7 +252,6 @@ protected:
     std::string *skinstr;
     std::string *pthstr;
     std::string *exstr;
-    std::string *name;
 
     LUTi circrads;
     LUTi centerx;

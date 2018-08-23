@@ -327,120 +327,119 @@ static void SobelCannyLuma(float **sobelL, float **luma, int bfw, int bfh, float
 
 
 
-static void calcLocalParams(int oW, int oH, const LocallabParams& locallab, struct local_params& lp)
+static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locallab, struct local_params& lp)
 {
-    // TODO Locallab
-    /*
     int w = oW;
     int h = oH;
-    int circr = locallab.circrad;
-    float streng = ((float)locallab.stren) / 100.f;
-    float gam = ((float)locallab.gamma) / 100.f;
-    float est = ((float)locallab.estop) / 100.f;
-    float scal_tm = ((float)locallab.scaltm) / 10.f;
-    float rewe = ((float)locallab.rewei);
+    int circr = locallab.circrad.at(sp);
+    float streng = ((float)locallab.stren.at(sp)) / 100.f;
+    float gam = ((float)locallab.gamma.at(sp)) / 100.f;
+    float est = ((float)locallab.estop.at(sp)) / 100.f;
+    float scal_tm = ((float)locallab.scaltm.at(sp)) / 10.f;
+    float rewe = ((float)locallab.rewei.at(sp));
 
-    float thre = locallab.thres / 100.f;
-    double local_x = locallab.locX / 2000.0;
-    double local_y = locallab.locY / 2000.0;
-    double local_xL = locallab.locXL / 2000.0;
-    double local_yT = locallab.locYT / 2000.0;
-    double local_center_x = locallab.centerX / 2000.0 + 0.5;
-    double local_center_y = locallab.centerY / 2000.0 + 0.5;
-    double local_center_xbuf = locallab.centerXbuf / 2000.0;
-    double local_center_ybuf = locallab.centerYbuf / 2000.0;
-    double local_dxx = locallab.proxi / 8000.0;//for proxi = 2==> # 1 pixel
-    double local_dyy = locallab.proxi / 8000.0;
-    float iterati = (float) locallab.proxi;
-    //    double local_dyy = locallab.proxi;
+    float thre = locallab.thresh.at(sp) / 100.f;
+    double local_x = locallab.locX.at(sp) / 2000.0;
+    double local_y = locallab.locY.at(sp) / 2000.0;
+    double local_xL = locallab.locXL.at(sp) / 2000.0;
+    double local_yT = locallab.locYT.at(sp) / 2000.0;
+    double local_center_x = locallab.centerX.at(sp) / 2000.0 + 0.5;
+    double local_center_y = locallab.centerY.at(sp) / 2000.0 + 0.5;
+    double local_center_xbuf = 0.0; // Provision
+    double local_center_ybuf = 0.0; // Provision
+    double local_dxx = locallab.iter.at(sp) / 8000.0; //for proxi = 2==> # 1 pixel
+    double local_dyy = locallab.iter.at(sp) / 8000.0;
+    float iterati = (float) locallab.iter.at(sp);
+//    double local_dyy = locallab.proxi;
 
-    float chromaPastel = float (locallab.pastels)   / 100.0f;
-    float chromaSatur  = float (locallab.saturated) / 100.0f;
-    int local_sensiv = locallab.sensiv;
-    int local_sensiex = locallab.sensiex;
+    float chromaPastel = float (locallab.pastels.at(sp))   / 100.0f;
+    float chromaSatur  = float (locallab.saturated.at(sp)) / 100.0f;
+    int local_sensiv = locallab.sensiv.at(sp);
+    int local_sensiex = locallab.sensiex.at(sp);
 
-    if (locallab.qualityMethod == "std") {
+    if (locallab.qualityMethod.at(sp) == "std") {
         lp.qualmet = 0;
-    } else if (locallab.qualityMethod == "enh") {
+    } else if (locallab.qualityMethod.at(sp) == "enh") {
         lp.qualmet = 1;
-    } else if (locallab.qualityMethod == "enhden") {
+    } else if (locallab.qualityMethod.at(sp) == "enhden") {
         lp.qualmet = 2;
     }
 
-    if (locallab.qualitycurveMethod == "none") {
+    if (locallab.qualitycurveMethod.at(sp) == "none") {
         lp.qualcurvemet = 0;
-    } else if (locallab.qualitycurveMethod == "std") {
+    } else if (locallab.qualitycurveMethod.at(sp) == "std") {
         lp.qualcurvemet = 1;
-    } else if (locallab.qualitycurveMethod == "enh") {
+    } else if (locallab.qualitycurveMethod.at(sp) == "enh") {
         lp.qualcurvemet = 2;
     }
 
-    if (locallab.blurMethod == "norm") {
+    if (locallab.blurMethod.at(sp) == "norm") {
         lp.blurmet = 0;
-    } else if (locallab.blurMethod == "inv") {
+    } else if (locallab.blurMethod.at(sp) == "inv") {
         lp.blurmet = 1;
-    } else if (locallab.blurMethod == "sym") {
+    } else if (locallab.blurMethod.at(sp) == "sym") {
         lp.blurmet = 2;
     }
 
-    if (locallab.Exclumethod == "norm") {
+    if (locallab.spotMethod.at(sp) == "norm") {
         lp.excmet = 0;
-    } else if (locallab.Exclumethod == "exc") {
+    } else if (locallab.spotMethod.at(sp) == "exc") {
         lp.excmet = 1;
     }
 
-    if (locallab.shapemethod == "ELI") {
+    if (locallab.shape.at(sp) == "ELI") {
         lp.shapmet = 0;
-    } else if (locallab.shapemethod == "RECT") {
+    } else if (locallab.shape.at(sp) == "RECT") {
         lp.shapmet = 1;
     }
 
-    float local_noiself = (float)locallab.noiselumf;
-    float local_noiselc = (float)locallab.noiselumc;
-    float local_noiseldetail = locallab.noiselumdetail;
-    int local_noiselequal = locallab.noiselequal;
-    float local_noisechrodetail = locallab.noisechrodetail;
-    int local_sensiden = locallab.sensiden;
+    float local_noiself = (float)locallab.noiselumf.at(sp);
+    float local_noiselc = (float)locallab.noiselumc.at(sp);
+    float local_noiseldetail = locallab.noiselumdetail.at(sp);
+    int local_noiselequal = locallab.noiselequal.at(sp);
+    float local_noisechrodetail = 0.f; // Provision
+    int local_sensiden = locallab.sensiden.at(sp);
 
-    float local_noisecf = ((float)locallab.noisechrof) / 10.f;
-    float local_noisecc = ((float)locallab.noisechroc) / 10.f;
+    float local_noisecf = ((float)locallab.noisechrof.at(sp)) / 10.f;
+    float local_noisecc = ((float)locallab.noisechroc.at(sp)) / 10.f;
     float multi[5];
 
     for (int y = 0; y < 5; y++) {
-        multi[y] = ((float) locallab.mult[y]) / 100.f;
+        multi[y] = ((float) locallab.mult[y].at(sp)) / 100.f;
     }
 
-    float thresho = ((float)locallab.threshold) / 100.f;
-    float chromcbdl = (float)locallab.chromacbdl ;
+    float thresho = ((float)locallab.threshold.at(sp)) / 100.f;
+    float chromcbdl = (float)locallab.chromacbdl.at(sp);
 
-    int local_chroma = locallab.chroma;
-    int local_sensi = locallab.sensi;
-    int local_sensibn = locallab.sensibn;
-    int local_sensitm = locallab.sensitm;
-    int local_sensiexclu = locallab.sensiexclu;
-    int local_struc = locallab.struc;
-    int local_warm = locallab.warm;
-    int local_sensih = locallab.sensih;
-    int local_sensicb = locallab.sensicb;
-    int local_contrast = locallab.contrast;
-    float local_lightness = (float) locallab.lightness;
-    int local_transit = locallab.transit;
-    double radius = (double) locallab.radius;
-    double sharradius = ((double) locallab.sharradius) / 100. ;
-    int local_sensisha = locallab.sensisha;
-    int local_sharamount = locallab.sharamount;
-    int local_shardamping = locallab.shardamping;
-    int local_shariter = locallab.shariter;
-    bool inverse = locallab.invers;
-    bool curvacti = locallab.curvactiv;
-    bool acti = locallab.activlum;
-    bool cupas = locallab.cutpast;
+    int local_chroma = locallab.chroma.at(sp);
+    int local_sensi = locallab.sensi.at(sp);
+    int local_sensibn = locallab.sensibn.at(sp);
+    int local_sensitm = locallab.sensitm.at(sp);
+    int local_sensiexclu = 19; // Provision
+    int local_struc = 0; // Provision
+    int local_warm = locallab.warm.at(sp);
+    int local_sensih = locallab.sensih.at(sp);
+    int local_sensicb = locallab.sensicb.at(sp);
+    int local_contrast = locallab.contrast.at(sp);
+    float local_lightness = (float) locallab.lightness.at(sp);
+    int local_transit = locallab.transit.at(sp);
+    double radius = (double) locallab.radius.at(sp);
+    double sharradius = ((double) locallab.sharradius.at(sp)) / 100. ;
+    int local_sensisha = locallab.sensisha.at(sp);
+    int local_sharamount = locallab.sharamount.at(sp);
+    int local_shardamping = locallab.shardamping.at(sp);
+    int local_shariter = locallab.shariter.at(sp);
+    bool inverse = locallab.invers.at(sp);
+    bool curvacti = locallab.curvactiv.at(sp);
+    bool acti = locallab.activlum.at(sp);
+    bool cupas = false; // Provision
 
-    bool inverserad = locallab.inversrad;
-    bool inverseret = locallab.inversret;
-    bool inversesha = locallab.inverssha;
-    double strength = (double) locallab.strength;
-    float str = (float)locallab.str;
+    bool inverserad = false; // Provision
+    bool inverseret = locallab.inversret.at(sp);
+    bool inversesha = locallab.inverssha.at(sp);
+    double strength = (double) locallab.strength.at(sp);
+    float str = (float)locallab.str.at(sp);
+
     lp.cir = circr;
     lp.actsp = acti;
     lp.xc = w * local_center_x;
@@ -491,8 +490,8 @@ static void calcLocalParams(int oW, int oH, const LocallabParams& locallab, stru
     lp.noisecf = local_noisecf;
     lp.noisecc = local_noisecc;
     lp.sensden = local_sensiden;
-    lp.bilat = locallab.bilateral;
-    lp.adjch = (float) locallab.adjblur;
+    lp.bilat = locallab.bilateral.at(sp);
+    lp.adjch = (float) locallab.adjblur.at(sp);
     lp.strengt = streng;
     lp.gamm = gam;
     lp.esto = est;
@@ -506,29 +505,28 @@ static void calcLocalParams(int oW, int oH, const LocallabParams& locallab, stru
 
     lp.threshol = thresho;
     lp.chromacb = chromcbdl;
-    lp.colorena = locallab.expcolor;
-    lp.blurena = locallab.expblur;
-    lp.tonemapena = locallab.exptonemap;
-    lp.retiena = locallab.expreti;
-    lp.sharpena = locallab.expsharp;
-    lp.cbdlena = locallab.expcbdl;
-    lp.denoiena = locallab.expdenoi;
-    lp.expvib = locallab.expvibrance;
+    lp.colorena = locallab.expcolor.at(sp);
+    lp.blurena = locallab.expblur.at(sp);
+    lp.tonemapena = locallab.exptonemap.at(sp);
+    lp.retiena = locallab.expreti.at(sp);
+    lp.sharpena = locallab.expsharp.at(sp);
+    lp.cbdlena = locallab.expcbdl.at(sp);
+    lp.denoiena = locallab.expdenoi.at(sp);
+    lp.expvib = locallab.expvibrance.at(sp);
     lp.sensv = local_sensiv;
     lp.past =  chromaPastel;
     lp.satur = chromaSatur;
 
-    lp.exposena = locallab.expexpose;
+    lp.exposena = locallab.expexpose.at(sp);
     lp.cut_past = cupas;
-    lp.blac = locallab.black;
-    lp.shcomp = locallab.shcompr;
-    lp.hlcomp = locallab.hlcompr;
-    lp.hlcompthr = locallab.hlcomprthresh;
-    lp.expcomp = locallab.expcomp / 100.;
+    lp.blac = locallab.black.at(sp);
+    lp.shcomp = locallab.shcompr.at(sp);
+    lp.hlcomp = locallab.hlcompr.at(sp);
+    lp.hlcompthr = locallab.hlcomprthresh.at(sp);
+    lp.expcomp = locallab.expcomp.at(sp) / 100.;
     lp.sensex = local_sensiex;
     lp.strucc = local_struc;
     lp.war = local_warm;
-    */
 }
 
 
@@ -741,7 +739,7 @@ void ImProcFunctions::strcurv_data(std::string retistr, int *s_datc, int &siz)
 
 }
 
-void ImProcFunctions::ciecamloc_02float(LabImage* lab, LabImage* dest)
+void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, LabImage* dest)
 {
     //be carefull quasi duplicate with branch cat02wb
     BENCHFUN
@@ -763,14 +761,11 @@ void ImProcFunctions::ciecamloc_02float(LabImage* lab, LabImage* dest)
 
     int tempo;
 
-    // TODO Locallab
-    /*
-    if (params->locallab.warm > 0) {
-        tempo = 5000 - 30 * params->locallab.warm;
+    if (params->locallab.warm.at(sp) > 0) {
+        tempo = 5000 - 30 * params->locallab.warm.at(sp);
     } else {
-        tempo = 5000 - 49 * params->locallab.warm;
+        tempo = 5000 - 49 * params->locallab.warm.at(sp);
     }
-    */
 
     ColorTemp::temp2mulxyz(params->wb.temperature, params->wb.method, Xw, Zw);  //compute white Xw Yw Zw  : white current WB
     ColorTemp::temp2mulxyz(tempo, "Custom", Xwout, Zwout);
@@ -1030,27 +1025,25 @@ void ImProcFunctions::ciecamloc_02float(LabImage* lab, LabImage* dest)
 
 
 
-void ImProcFunctions::vibrancelocal(int bfw, int bfh, LabImage* lab,  LabImage* dest, bool & localskutili, LUTf & sklocalcurve)
+void ImProcFunctions::vibrancelocal(int sp, int bfw, int bfh, LabImage* lab,  LabImage* dest, bool & localskutili, LUTf & sklocalcurve)
 {
-    // TODO Locallab
-    /*
-    if (!params->locallab.expvibrance) {
+    if (!((bool)params->locallab.expvibrance.at(sp))) {
         return;
     }
 
     const int width = bfw;
     const int height = bfh;
 
-    #ifdef _DEBUG
+#ifdef _DEBUG
     MyTime t1e, t2e;
     t1e.set();
     int negat = 0, moreRGB = 0, negsat = 0, moresat = 0;
-    #endif
+#endif
 
-    const float chromaPastel = float (params->locallab.pastels)   / 100.0f;
-    const float chromaSatur  = float (params->locallab.saturated) / 100.0f;
+    const float chromaPastel = float (params->locallab.pastels.at(sp))   / 100.0f;
+    const float chromaSatur  = float (params->locallab.saturated.at(sp)) / 100.0f;
     const float p00 = 0.07f;
-    const float limitpastelsatur = (static_cast<float>(params->locallab.psthreshold.getTopLeft())    / 100.0f) * (1.0f - p00) + p00;
+    const float limitpastelsatur = (static_cast<float>(params->locallab.psthreshold.at(sp).getTopLeft())    / 100.0f) * (1.0f - p00) + p00;
     const float maxdp = (limitpastelsatur - p00) / 4.0f;
     const float maxds = (1.0 - limitpastelsatur) / 4.0f;
     const float p0 = p00 + maxdp;
@@ -1059,7 +1052,7 @@ void ImProcFunctions::vibrancelocal(int bfw, int bfh, LabImage* lab,  LabImage* 
     const float s0 = limitpastelsatur + maxds;
     const float s1 = limitpastelsatur + 2.0f * maxds;
     const float s2 = limitpastelsatur + 3.0f * maxds;
-    const float transitionweighting = static_cast<float>(params->locallab.psthreshold.getBottomLeft()) / 100.0f;
+    const float transitionweighting = static_cast<float>(params->locallab.psthreshold.at(sp).getBottomLeft()) / 100.0f;
     float chromamean = 0.0f;
 
     if (chromaPastel != chromaSatur) {
@@ -1091,8 +1084,8 @@ void ImProcFunctions::vibrancelocal(int bfw, int bfh, LabImage* lab,  LabImage* 
 
 
     const bool highlight = params->toneCurve.hrenabled;//Get the value if "highlight reconstruction" is activated
-    const bool protectskins = params->locallab.protectskins;
-    const bool avoidcolorshift = params->locallab.avoidcolorshift;
+    const bool protectskins = params->locallab.protectskins.at(sp);
+    const bool avoidcolorshift = params->locallab.avoidcolorshift.at(sp);
 
     TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.working);
     //inverse matrix user select
@@ -1103,7 +1096,7 @@ void ImProcFunctions::vibrancelocal(int bfw, int bfh, LabImage* lab,  LabImage* 
     };
 
 
-    #ifdef _DEBUG
+#ifdef _DEBUG
     MunsellDebugInfo* MunsDebugInfo = nullptr;
 
     if (avoidcolorshift) {
@@ -1111,21 +1104,21 @@ void ImProcFunctions::vibrancelocal(int bfw, int bfh, LabImage* lab,  LabImage* 
     }
 
     #pragma omp parallel default(shared) firstprivate(lab, dest, MunsDebugInfo) reduction(+: negat, moreRGB, negsat, moresat) if (multiThread)
-    #else
+#else
     #pragma omp parallel default(shared) if (multiThread)
-    #endif
+#endif
     {
 
         float sathue[5], sathue2[4]; // adjust sat in function of hue
 
 
-    #ifdef _OPENMP
+#ifdef _OPENMP
 
         if (settings->verbose && omp_get_thread_num() == 0) {
-    #else
+#else
 
         if (settings->verbose) {
-    #endif
+#endif
             printf("vibrance:  p0=%1.2f  p1=%1.2f  p2=%1.2f  s0=%1.2f s1=%1.2f s2=%1.2f\n", p0, p1, p2, s0, s1, s2);
             printf("           pastel=%f   satur=%f   limit= %1.2f   chromamean=%0.5f\n", 1.0f + chromaPastel, 1.0f + chromaSatur, limitpastelsatur, chromamean);
         }
@@ -1160,7 +1153,7 @@ void ImProcFunctions::vibrancelocal(int bfw, int bfh, LabImage* lab,  LabImage* 
                     sincosval.x = lab->b[i][j] / (CC * 327.68f);
                 }
 
-    #ifdef _DEBUG
+#ifdef _DEBUG
                 bool neg = false;
                 bool more_rgb = false;
                 //gamut control : Lab values are in gamut
@@ -1174,10 +1167,10 @@ void ImProcFunctions::vibrancelocal(int bfw, int bfh, LabImage* lab,  LabImage* 
                     moreRGB++;
                 }
 
-    #else
+#else
                 //gamut control : Lab values are in gamut
                 Color::gamutLchonly(HH, sincosval, Lprov, Chprov, R, G, B, wip, highlight, 0.15f, 0.98f);
-    #endif
+#endif
 
                 if (Chprov > 6.0f) {
                     const float saturation = SAT(R, G, B);
@@ -1193,489 +1186,487 @@ void ImProcFunctions::vibrancelocal(int bfw, int bfh, LabImage* lab,  LabImage* 
                             //blue: -1.80 -3.14  green = 2.1 3.14   green-yellow=1.4 2.1  red:0 1.4  blue-purple:-0.7  -1.4   purple: 0 -0.7
                             //these values allow a better and differential response
                             if (LL < 20.0f) { //more for blue-purple, blue and red modulate
-                                if (/*HH> -3.1415f &&*//* HH < -1.5f) {
-                                sathue[0] = 1.3f;    //blue
-                                sathue[1] = 1.2f;
-                                sathue[2] = 1.1f;
-                                sathue[3] = 1.05f;
-                                sathue[4] = 0.4f;
-                                sathue2[0] = 1.05f;
-                                sathue2[1] = 1.1f ;
-                                sathue2[2] = 1.05f;
-                                sathue2[3] = 1.0f;
-                            } else if (/*HH>=-1.5f    &&*//* HH < -0.7f) {
-                                sathue[0] = 1.6f;    //blue purple  1.2 1.1
-                                sathue[1] = 1.4f;
-                                sathue[2] = 1.3f;
-                                sathue[3] = 1.2f ;
-                                sathue[4] = 0.4f;
-                                sathue2[0] = 1.2f ;
-                                sathue2[1] = 1.15f;
-                                sathue2[2] = 1.1f ;
-                                sathue2[3] = 1.0f;
-                            } else if (/*HH>=-0.7f    &&*//* HH <  0.0f) {
-                                sathue[0] = 1.2f;    //purple
-                                sathue[1] = 1.0f;
-                                sathue[2] = 1.0f;
-                                sathue[3] = 1.0f ;
-                                sathue[4] = 0.4f;
-                                sathue2[0] = 1.0f ;
-                                sathue2[1] = 1.0f ;
-                                sathue2[2] = 1.0f ;
-                                sathue2[3] = 1.0f;
-                            }
-                            //          else if(  HH>= 0.0f    &&   HH<= 1.4f   ) {sathue[0]=1.1f;sathue[1]=1.1f;sathue[2]=1.1f;sathue[3]=1.0f ;sathue[4]=0.4f;sathue2[0]=1.0f ;sathue2[1]=1.0f ;sathue2[2]=1.0f ;sathue2[3]=1.0f;}//red   0.8 0.7
-                            else if (/*HH>= 0.0f    &&*//* HH <= 1.4f) {
-                                sathue[0] = 1.3f;    //red   0.8 0.7
-                                sathue[1] = 1.2f;
-                                sathue[2] = 1.1f;
-                                sathue[3] = 1.0f ;
-                                sathue[4] = 0.4f;
-                                sathue2[0] = 1.0f ;
-                                sathue2[1] = 1.0f ;
-                                sathue2[2] = 1.0f ;
-                                sathue2[3] = 1.0f;
-                            } else if (/*HH>  1.4f    &&*//* HH <= 2.1f) {
-                                sathue[0] = 1.0f;    //green yellow 1.2 1.1
-                                sathue[1] = 1.0f;
-                                sathue[2] = 1.0f;
-                                sathue[3] = 1.0f ;
-                                sathue[4] = 0.4f;
-                                sathue2[0] = 1.0f ;
-                                sathue2[1] = 1.0f ;
-                                sathue2[2] = 1.0f ;
-                                sathue2[3] = 1.0f;
-                            } else { /*if(HH>  2.1f    && HH<= 3.1415f)*//*
-                                sathue[0] = 1.4f;    //green
-                                sathue[1] = 1.3f;
-                                sathue[2] = 1.2f;
-                                sathue[3] = 1.15f;
-                                sathue[4] = 0.4f;
-                                sathue2[0] = 1.15f;
-                                sathue2[1] = 1.1f ;
-                                sathue2[2] = 1.05f;
-                                sathue2[3] = 1.0f;
-                            }
-                        } else if (LL < 50.0f) { //more for blue and green, less for red and green-yellow
-                            if (/*HH> -3.1415f &&*//* HH < -1.5f) {
-                                sathue[0] = 1.5f;    //blue
-                                sathue[1] = 1.4f;
-                                sathue[2] = 1.3f;
-                                sathue[3] = 1.2f ;
-                                sathue[4] = 0.4f;
-                                sathue2[0] = 1.2f ;
-                                sathue2[1] = 1.1f ;
-                                sathue2[2] = 1.05f;
-                                sathue2[3] = 1.0f;
-                            } else if (/*HH>=-1.5f    &&*//* HH < -0.7f) {
-                                sathue[0] = 1.3f;    //blue purple  1.2 1.1
-                                sathue[1] = 1.2f;
-                                sathue[2] = 1.1f;
-                                sathue[3] = 1.05f;
-                                sathue[4] = 0.4f;
-                                sathue2[0] = 1.05f;
-                                sathue2[1] = 1.05f;
-                                sathue2[2] = 1.0f ;
-                                sathue2[3] = 1.0f;
-                            } else if (/*HH>=-0.7f    &&*//* HH <  0.0f) {
-                                sathue[0] = 1.2f;    //purple
-                                sathue[1] = 1.0f;
-                                sathue[2] = 1.0f;
-                                sathue[3] = 1.0f ;
-                                sathue[4] = 0.4f;
-                                sathue2[0] = 1.0f ;
-                                sathue2[1] = 1.0f ;
-                                sathue2[2] = 1.0f ;
-                                sathue2[3] = 1.0f;
-                            }
-                            //          else if(  HH>= 0.0f    &&   HH<= 1.4f   ) {sathue[0]=0.8f;sathue[1]=0.8f;sathue[2]=0.8f;sathue[3]=0.8f ;sathue[4]=0.4f;sathue2[0]=0.8f ;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//red   0.8 0.7
-                            else if (/*HH>= 0.0f    &&*//* HH <= 1.4f) {
-                                sathue[0] = 1.1f;    //red   0.8 0.7
-                                sathue[1] = 1.0f;
-                                sathue[2] = 0.9f;
-                                sathue[3] = 0.8f ;
-                                sathue[4] = 0.4f;
-                                sathue2[0] = 0.8f ;
-                                sathue2[1] = 0.8f ;
-                                sathue2[2] = 0.8f ;
-                                sathue2[3] = 0.8f;
-                            } else if (/*HH>  1.4f    &&*//* HH <= 2.1f) {
-                                sathue[0] = 1.1f;    //green yellow 1.2 1.1
-                                sathue[1] = 1.1f;
-                                sathue[2] = 1.1f;
-                                sathue[3] = 1.05f;
-                                sathue[4] = 0.4f;
-                                sathue2[0] = 0.9f ;
-                                sathue2[1] = 0.8f ;
-                                sathue2[2] = 0.7f ;
-                                sathue2[3] = 0.6f;
-                            } else { /*if(HH>  2.1f    && HH<= 3.1415f)*//*
-                                sathue[0] = 1.5f;    //green
-                                sathue[1] = 1.4f;
-                                sathue[2] = 1.3f;
-                                sathue[3] = 1.2f ;
-                                sathue[4] = 0.4f;
-                                sathue2[0] = 1.2f ;
-                                sathue2[1] = 1.1f ;
-                                sathue2[2] = 1.05f;
-                                sathue2[3] = 1.0f;
-                            }
+                                if (/*HH> -3.1415f &&*/ HH < -1.5f) {
+                                    sathue[0] = 1.3f;    //blue
+                                    sathue[1] = 1.2f;
+                                    sathue[2] = 1.1f;
+                                    sathue[3] = 1.05f;
+                                    sathue[4] = 0.4f;
+                                    sathue2[0] = 1.05f;
+                                    sathue2[1] = 1.1f ;
+                                    sathue2[2] = 1.05f;
+                                    sathue2[3] = 1.0f;
+                                } else if (/*HH>=-1.5f    &&*/ HH < -0.7f) {
+                                    sathue[0] = 1.6f;    //blue purple  1.2 1.1
+                                    sathue[1] = 1.4f;
+                                    sathue[2] = 1.3f;
+                                    sathue[3] = 1.2f ;
+                                    sathue[4] = 0.4f;
+                                    sathue2[0] = 1.2f ;
+                                    sathue2[1] = 1.15f;
+                                    sathue2[2] = 1.1f ;
+                                    sathue2[3] = 1.0f;
+                                } else if (/*HH>=-0.7f    &&*/ HH <  0.0f) {
+                                    sathue[0] = 1.2f;    //purple
+                                    sathue[1] = 1.0f;
+                                    sathue[2] = 1.0f;
+                                    sathue[3] = 1.0f ;
+                                    sathue[4] = 0.4f;
+                                    sathue2[0] = 1.0f ;
+                                    sathue2[1] = 1.0f ;
+                                    sathue2[2] = 1.0f ;
+                                    sathue2[3] = 1.0f;
+                                }
+                                //          else if(  HH>= 0.0f    &&   HH<= 1.4f   ) {sathue[0]=1.1f;sathue[1]=1.1f;sathue[2]=1.1f;sathue[3]=1.0f ;sathue[4]=0.4f;sathue2[0]=1.0f ;sathue2[1]=1.0f ;sathue2[2]=1.0f ;sathue2[3]=1.0f;}//red   0.8 0.7
+                                else if (/*HH>= 0.0f    &&*/ HH <= 1.4f) {
+                                    sathue[0] = 1.3f;    //red   0.8 0.7
+                                    sathue[1] = 1.2f;
+                                    sathue[2] = 1.1f;
+                                    sathue[3] = 1.0f ;
+                                    sathue[4] = 0.4f;
+                                    sathue2[0] = 1.0f ;
+                                    sathue2[1] = 1.0f ;
+                                    sathue2[2] = 1.0f ;
+                                    sathue2[3] = 1.0f;
+                                } else if (/*HH>  1.4f    &&*/ HH <= 2.1f) {
+                                    sathue[0] = 1.0f;    //green yellow 1.2 1.1
+                                    sathue[1] = 1.0f;
+                                    sathue[2] = 1.0f;
+                                    sathue[3] = 1.0f ;
+                                    sathue[4] = 0.4f;
+                                    sathue2[0] = 1.0f ;
+                                    sathue2[1] = 1.0f ;
+                                    sathue2[2] = 1.0f ;
+                                    sathue2[3] = 1.0f;
+                                } else { /*if(HH>  2.1f    && HH<= 3.1415f)*/
+                                    sathue[0] = 1.4f;    //green
+                                    sathue[1] = 1.3f;
+                                    sathue[2] = 1.2f;
+                                    sathue[3] = 1.15f;
+                                    sathue[4] = 0.4f;
+                                    sathue2[0] = 1.15f;
+                                    sathue2[1] = 1.1f ;
+                                    sathue2[2] = 1.05f;
+                                    sathue2[3] = 1.0f;
+                                }
+                            } else if (LL < 50.0f) { //more for blue and green, less for red and green-yellow
+                                if (/*HH> -3.1415f &&*/ HH < -1.5f) {
+                                    sathue[0] = 1.5f;    //blue
+                                    sathue[1] = 1.4f;
+                                    sathue[2] = 1.3f;
+                                    sathue[3] = 1.2f ;
+                                    sathue[4] = 0.4f;
+                                    sathue2[0] = 1.2f ;
+                                    sathue2[1] = 1.1f ;
+                                    sathue2[2] = 1.05f;
+                                    sathue2[3] = 1.0f;
+                                } else if (/*HH>=-1.5f    &&*/ HH < -0.7f) {
+                                    sathue[0] = 1.3f;    //blue purple  1.2 1.1
+                                    sathue[1] = 1.2f;
+                                    sathue[2] = 1.1f;
+                                    sathue[3] = 1.05f;
+                                    sathue[4] = 0.4f;
+                                    sathue2[0] = 1.05f;
+                                    sathue2[1] = 1.05f;
+                                    sathue2[2] = 1.0f ;
+                                    sathue2[3] = 1.0f;
+                                } else if (/*HH>=-0.7f    &&*/ HH <  0.0f) {
+                                    sathue[0] = 1.2f;    //purple
+                                    sathue[1] = 1.0f;
+                                    sathue[2] = 1.0f;
+                                    sathue[3] = 1.0f ;
+                                    sathue[4] = 0.4f;
+                                    sathue2[0] = 1.0f ;
+                                    sathue2[1] = 1.0f ;
+                                    sathue2[2] = 1.0f ;
+                                    sathue2[3] = 1.0f;
+                                }
+                                //          else if(  HH>= 0.0f    &&   HH<= 1.4f   ) {sathue[0]=0.8f;sathue[1]=0.8f;sathue[2]=0.8f;sathue[3]=0.8f ;sathue[4]=0.4f;sathue2[0]=0.8f ;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//red   0.8 0.7
+                                else if (/*HH>= 0.0f    &&*/ HH <= 1.4f) {
+                                    sathue[0] = 1.1f;    //red   0.8 0.7
+                                    sathue[1] = 1.0f;
+                                    sathue[2] = 0.9f;
+                                    sathue[3] = 0.8f ;
+                                    sathue[4] = 0.4f;
+                                    sathue2[0] = 0.8f ;
+                                    sathue2[1] = 0.8f ;
+                                    sathue2[2] = 0.8f ;
+                                    sathue2[3] = 0.8f;
+                                } else if (/*HH>  1.4f    &&*/ HH <= 2.1f) {
+                                    sathue[0] = 1.1f;    //green yellow 1.2 1.1
+                                    sathue[1] = 1.1f;
+                                    sathue[2] = 1.1f;
+                                    sathue[3] = 1.05f;
+                                    sathue[4] = 0.4f;
+                                    sathue2[0] = 0.9f ;
+                                    sathue2[1] = 0.8f ;
+                                    sathue2[2] = 0.7f ;
+                                    sathue2[3] = 0.6f;
+                                } else { /*if(HH>  2.1f    && HH<= 3.1415f)*/
+                                    sathue[0] = 1.5f;    //green
+                                    sathue[1] = 1.4f;
+                                    sathue[2] = 1.3f;
+                                    sathue[3] = 1.2f ;
+                                    sathue[4] = 0.4f;
+                                    sathue2[0] = 1.2f ;
+                                    sathue2[1] = 1.1f ;
+                                    sathue2[2] = 1.05f;
+                                    sathue2[3] = 1.0f;
+                                }
 
-                        } else if (LL < 80.0f) { //more for green, less for red and green-yellow
-                            if (/*HH> -3.1415f &&*//* HH < -1.5f) {
-                                sathue[0] = 1.3f;    //blue
-                                sathue[1] = 1.2f;
-                                sathue[2] = 1.15f;
-                                sathue[3] = 1.1f ;
-                                sathue[4] = 0.3f;
-                                sathue2[0] = 1.1f ;
-                                sathue2[1] = 1.1f ;
-                                sathue2[2] = 1.05f;
-                                sathue2[3] = 1.0f;
-                            } else if (/*HH>=-1.5f    &&*//* HH < -0.7f) {
-                                sathue[0] = 1.3f;    //blue purple  1.2 1.1
-                                sathue[1] = 1.2f;
-                                sathue[2] = 1.15f;
-                                sathue[3] = 1.1f ;
-                                sathue[4] = 0.3f;
-                                sathue2[0] = 1.1f ;
-                                sathue2[1] = 1.05f;
-                                sathue2[2] = 1.0f ;
-                                sathue2[3] = 1.0f;
-                            } else if (/*HH>=-0.7f    &&*//* HH <  0.0f) {
-                                sathue[0] = 1.2f;    //purple
-                                sathue[1] = 1.0f;
-                                sathue[2] = 1.0f ;
-                                sathue[3] = 1.0f ;
-                                sathue[4] = 0.3f;
-                                sathue2[0] = 1.0f ;
-                                sathue2[1] = 1.0f ;
-                                sathue2[2] = 1.0f ;
-                                sathue2[3] = 1.0f;
-                            }
-                            //          else if(  HH>= 0.0f    &&   HH<= 1.4f   ) {sathue[0]=0.8f;sathue[1]=0.8f;sathue[2]=0.8f ;sathue[3]=0.8f ;sathue[4]=0.3f;sathue2[0]=0.8f ;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//red   0.8 0.7
-                            else if (/*HH>= 0.0f    &&*//* HH <= 1.4f) {
-                                sathue[0] = 1.1f;    //red   0.8 0.7
-                                sathue[1] = 1.0f;
-                                sathue[2] = 0.9f ;
-                                sathue[3] = 0.8f ;
-                                sathue[4] = 0.3f;
-                                sathue2[0] = 0.8f ;
-                                sathue2[1] = 0.8f ;
-                                sathue2[2] = 0.8f ;
-                                sathue2[3] = 0.8f;
-                            } else if (/*HH>  1.4f    &&*//* HH <= 2.1f) {
-                                sathue[0] = 1.3f;    //green yellow 1.2 1.1
-                                sathue[1] = 1.2f;
-                                sathue[2] = 1.1f ;
-                                sathue[3] = 1.05f;
-                                sathue[4] = 0.3f;
-                                sathue2[0] = 1.0f ;
-                                sathue2[1] = 0.9f ;
-                                sathue2[2] = 0.8f ;
-                                sathue2[3] = 0.7f;
-                            } else { /*if(HH>  2.1f    && HH<= 3.1415f)*//*
-                                sathue[0] = 1.6f;    //green - even with Prophoto green are too "little"  1.5 1.3
-                                sathue[1] = 1.4f;
-                                sathue[2] = 1.3f ;
-                                sathue[3] = 1.25f;
-                                sathue[4] = 0.3f;
-                                sathue2[0] = 1.25f;
-                                sathue2[1] = 1.2f ;
-                                sathue2[2] = 1.15f;
-                                sathue2[3] = 1.05f;
-                            }
-                        } else { /*if (LL>=80.0f)*//* //more for green-yellow, less for red and purple
-                            if (/*HH> -3.1415f &&*//* HH < -1.5f) {
-                                sathue[0] = 1.0f;    //blue
-                                sathue[1] = 1.0f;
-                                sathue[2] = 0.9f;
-                                sathue[3] = 0.8f;
-                                sathue[4] = 0.2f;
-                                sathue2[0] = 0.8f;
-                                sathue2[1] = 0.8f ;
-                                sathue2[2] = 0.8f ;
-                                sathue2[3] = 0.8f;
-                            } else if (/*HH>=-1.5f    &&*//* HH < -0.7f) {
-                                sathue[0] = 1.0f;    //blue purple  1.2 1.1
-                                sathue[1] = 1.0f;
-                                sathue[2] = 0.9f;
-                                sathue[3] = 0.8f;
-                                sathue[4] = 0.2f;
-                                sathue2[0] = 0.8f;
-                                sathue2[1] = 0.8f ;
-                                sathue2[2] = 0.8f ;
-                                sathue2[3] = 0.8f;
-                            } else if (/*HH>=-0.7f    &&*//* HH <  0.0f) {
-                                sathue[0] = 1.2f;    //purple
-                                sathue[1] = 1.0f;
-                                sathue[2] = 1.0f;
-                                sathue[3] = 0.9f;
-                                sathue[4] = 0.2f;
-                                sathue2[0] = 0.9f;
-                                sathue2[1] = 0.9f ;
-                                sathue2[2] = 0.8f ;
-                                sathue2[3] = 0.8f;
-                            }
-                            //          else if(  HH>= 0.0f    &&   HH<= 1.4f   ) {sathue[0]=0.8f;sathue[1]=0.8f;sathue[2]=0.8f;sathue[3]=0.8f;sathue[4]=0.2f;sathue2[0]=0.8f;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//red   0.8 0.7
-                            else if (/*HH>= 0.0f    &&*//* HH <= 1.4f) {
-                                sathue[0] = 1.1f;    //red   0.8 0.7
-                                sathue[1] = 1.0f;
-                                sathue[2] = 0.9f;
-                                sathue[3] = 0.8f;
-                                sathue[4] = 0.2f;
-                                sathue2[0] = 0.8f;
-                                sathue2[1] = 0.8f ;
-                                sathue2[2] = 0.8f ;
-                                sathue2[3] = 0.8f;
-                            } else if (/*HH>  1.4f    &&*//* HH <= 2.1f) {
-                                sathue[0] = 1.6f;    //green yellow 1.2 1.1
-                                sathue[1] = 1.5f;
-                                sathue[2] = 1.4f;
-                                sathue[3] = 1.2f;
-                                sathue[4] = 0.2f;
-                                sathue2[0] = 1.1f;
-                                sathue2[1] = 1.05f;
-                                sathue2[2] = 1.0f ;
-                                sathue2[3] = 1.0f;
-                            } else { /*if(HH>  2.1f    && HH<= 3.1415f)*//*
-                                sathue[0] = 1.4f;    //green
-                                sathue[1] = 1.3f;
-                                sathue[2] = 1.2f;
-                                sathue[3] = 1.1f;
-                                sathue[4] = 0.2f;
-                                sathue2[0] = 1.1f;
-                                sathue2[1] = 1.05f;
-                                sathue2[2] = 1.05f;
-                                sathue2[3] = 1.0f;
+                            } else if (LL < 80.0f) { //more for green, less for red and green-yellow
+                                if (/*HH> -3.1415f &&*/ HH < -1.5f) {
+                                    sathue[0] = 1.3f;    //blue
+                                    sathue[1] = 1.2f;
+                                    sathue[2] = 1.15f;
+                                    sathue[3] = 1.1f ;
+                                    sathue[4] = 0.3f;
+                                    sathue2[0] = 1.1f ;
+                                    sathue2[1] = 1.1f ;
+                                    sathue2[2] = 1.05f;
+                                    sathue2[3] = 1.0f;
+                                } else if (/*HH>=-1.5f    &&*/ HH < -0.7f) {
+                                    sathue[0] = 1.3f;    //blue purple  1.2 1.1
+                                    sathue[1] = 1.2f;
+                                    sathue[2] = 1.15f;
+                                    sathue[3] = 1.1f ;
+                                    sathue[4] = 0.3f;
+                                    sathue2[0] = 1.1f ;
+                                    sathue2[1] = 1.05f;
+                                    sathue2[2] = 1.0f ;
+                                    sathue2[3] = 1.0f;
+                                } else if (/*HH>=-0.7f    &&*/ HH <  0.0f) {
+                                    sathue[0] = 1.2f;    //purple
+                                    sathue[1] = 1.0f;
+                                    sathue[2] = 1.0f ;
+                                    sathue[3] = 1.0f ;
+                                    sathue[4] = 0.3f;
+                                    sathue2[0] = 1.0f ;
+                                    sathue2[1] = 1.0f ;
+                                    sathue2[2] = 1.0f ;
+                                    sathue2[3] = 1.0f;
+                                }
+                                //          else if(  HH>= 0.0f    &&   HH<= 1.4f   ) {sathue[0]=0.8f;sathue[1]=0.8f;sathue[2]=0.8f ;sathue[3]=0.8f ;sathue[4]=0.3f;sathue2[0]=0.8f ;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//red   0.8 0.7
+                                else if (/*HH>= 0.0f    &&*/ HH <= 1.4f) {
+                                    sathue[0] = 1.1f;    //red   0.8 0.7
+                                    sathue[1] = 1.0f;
+                                    sathue[2] = 0.9f ;
+                                    sathue[3] = 0.8f ;
+                                    sathue[4] = 0.3f;
+                                    sathue2[0] = 0.8f ;
+                                    sathue2[1] = 0.8f ;
+                                    sathue2[2] = 0.8f ;
+                                    sathue2[3] = 0.8f;
+                                } else if (/*HH>  1.4f    &&*/ HH <= 2.1f) {
+                                    sathue[0] = 1.3f;    //green yellow 1.2 1.1
+                                    sathue[1] = 1.2f;
+                                    sathue[2] = 1.1f ;
+                                    sathue[3] = 1.05f;
+                                    sathue[4] = 0.3f;
+                                    sathue2[0] = 1.0f ;
+                                    sathue2[1] = 0.9f ;
+                                    sathue2[2] = 0.8f ;
+                                    sathue2[3] = 0.7f;
+                                } else { /*if(HH>  2.1f    && HH<= 3.1415f)*/
+                                    sathue[0] = 1.6f;    //green - even with Prophoto green are too "little"  1.5 1.3
+                                    sathue[1] = 1.4f;
+                                    sathue[2] = 1.3f ;
+                                    sathue[3] = 1.25f;
+                                    sathue[4] = 0.3f;
+                                    sathue2[0] = 1.25f;
+                                    sathue2[1] = 1.2f ;
+                                    sathue2[2] = 1.15f;
+                                    sathue2[3] = 1.05f;
+                                }
+                            } else { /*if (LL>=80.0f)*/ //more for green-yellow, less for red and purple
+                                if (/*HH> -3.1415f &&*/ HH < -1.5f) {
+                                    sathue[0] = 1.0f;    //blue
+                                    sathue[1] = 1.0f;
+                                    sathue[2] = 0.9f;
+                                    sathue[3] = 0.8f;
+                                    sathue[4] = 0.2f;
+                                    sathue2[0] = 0.8f;
+                                    sathue2[1] = 0.8f ;
+                                    sathue2[2] = 0.8f ;
+                                    sathue2[3] = 0.8f;
+                                } else if (/*HH>=-1.5f    &&*/ HH < -0.7f) {
+                                    sathue[0] = 1.0f;    //blue purple  1.2 1.1
+                                    sathue[1] = 1.0f;
+                                    sathue[2] = 0.9f;
+                                    sathue[3] = 0.8f;
+                                    sathue[4] = 0.2f;
+                                    sathue2[0] = 0.8f;
+                                    sathue2[1] = 0.8f ;
+                                    sathue2[2] = 0.8f ;
+                                    sathue2[3] = 0.8f;
+                                } else if (/*HH>=-0.7f    &&*/ HH <  0.0f) {
+                                    sathue[0] = 1.2f;    //purple
+                                    sathue[1] = 1.0f;
+                                    sathue[2] = 1.0f;
+                                    sathue[3] = 0.9f;
+                                    sathue[4] = 0.2f;
+                                    sathue2[0] = 0.9f;
+                                    sathue2[1] = 0.9f ;
+                                    sathue2[2] = 0.8f ;
+                                    sathue2[3] = 0.8f;
+                                }
+                                //          else if(  HH>= 0.0f    &&   HH<= 1.4f   ) {sathue[0]=0.8f;sathue[1]=0.8f;sathue[2]=0.8f;sathue[3]=0.8f;sathue[4]=0.2f;sathue2[0]=0.8f;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//red   0.8 0.7
+                                else if (/*HH>= 0.0f    &&*/ HH <= 1.4f) {
+                                    sathue[0] = 1.1f;    //red   0.8 0.7
+                                    sathue[1] = 1.0f;
+                                    sathue[2] = 0.9f;
+                                    sathue[3] = 0.8f;
+                                    sathue[4] = 0.2f;
+                                    sathue2[0] = 0.8f;
+                                    sathue2[1] = 0.8f ;
+                                    sathue2[2] = 0.8f ;
+                                    sathue2[3] = 0.8f;
+                                } else if (/*HH>  1.4f    &&*/ HH <= 2.1f) {
+                                    sathue[0] = 1.6f;    //green yellow 1.2 1.1
+                                    sathue[1] = 1.5f;
+                                    sathue[2] = 1.4f;
+                                    sathue[3] = 1.2f;
+                                    sathue[4] = 0.2f;
+                                    sathue2[0] = 1.1f;
+                                    sathue2[1] = 1.05f;
+                                    sathue2[2] = 1.0f ;
+                                    sathue2[3] = 1.0f;
+                                } else { /*if(HH>  2.1f    && HH<= 3.1415f)*/
+                                    sathue[0] = 1.4f;    //green
+                                    sathue[1] = 1.3f;
+                                    sathue[2] = 1.2f;
+                                    sathue[3] = 1.1f;
+                                    sathue[4] = 0.2f;
+                                    sathue2[0] = 1.1f;
+                                    sathue2[1] = 1.05f;
+                                    sathue2[2] = 1.05f;
+                                    sathue2[3] = 1.0f;
+                                }
                             }
                         }
-                    }
 
-                    float chmodpastel = 0.f, chmodsat = 0.f;
-                    // variables to improve transitions
-                    float pa, pb;// transition = pa*saturation + pb
-                    float chl00 = chromaPastel * satredu * sathue[4];
-                    float chl0  = chromaPastel * satredu * sathue[0];
-                    float chl1  = chromaPastel * satredu * sathue[1];
-                    float chl2  = chromaPastel * satredu * sathue[2];
-                    float chl3  = chromaPastel * satredu * sathue[3];
-                    float chs0  = chromaSatur * satredu * sathue2[0];
-                    float chs1  = chromaSatur * satredu * sathue2[1];
-                    float chs2  = chromaSatur * satredu * sathue2[2];
-                    float chs3  = chromaSatur * satredu * sathue2[3];
-                    float s3    = 1.0f;
+                        float chmodpastel = 0.f, chmodsat = 0.f;
+                        // variables to improve transitions
+                        float pa, pb;// transition = pa*saturation + pb
+                        float chl00 = chromaPastel * satredu * sathue[4];
+                        float chl0  = chromaPastel * satredu * sathue[0];
+                        float chl1  = chromaPastel * satredu * sathue[1];
+                        float chl2  = chromaPastel * satredu * sathue[2];
+                        float chl3  = chromaPastel * satredu * sathue[3];
+                        float chs0  = chromaSatur * satredu * sathue2[0];
+                        float chs1  = chromaSatur * satredu * sathue2[1];
+                        float chs2  = chromaSatur * satredu * sathue2[2];
+                        float chs3  = chromaSatur * satredu * sathue2[3];
+                        float s3    = 1.0f;
 
-                    // We handle only positive values here ;  improve transitions
-                    if (saturation < p00) {
-                        chmodpastel = chl00 ;    //neutral tones
-                    } else if (saturation < p0)               {
-                        pa = (chl00 - chl0) / (p00 - p0);
-                        pb = chl00 - pa * p00;
-                        chmodpastel = pa * saturation + pb;
-                    } else if (saturation < p1)                {
-                        pa = (chl0 - chl1) / (p0 - p1);
-                        pb = chl0 - pa * p0;
-                        chmodpastel = pa * saturation + pb;
-                    } else if (saturation < p2)                {
-                        pa = (chl1 - chl2) / (p1 - p2);
-                        pb = chl1 - pa * p1;
-                        chmodpastel = pa * saturation + pb;
-                    } else if (saturation < limitpastelsatur)  {
-                        pa = (chl2 - chl3) / (p2 - limitpastelsatur);
-                        pb = chl2 - pa * p2;
-                        chmodpastel = pa * saturation + pb;
-                    } else if (saturation < s0)                {
-                        pa = (chl3 - chs0) / (limitpastelsatur - s0) ;
-                        pb = chl3 - pa * limitpastelsatur;
-                        chmodsat    = pa * saturation + pb;
-                    } else if (saturation < s1)                {
-                        pa = (chs0 - chs1) / (s0 - s1);
-                        pb = chs0 - pa * s0;
-                        chmodsat    = pa * saturation + pb;
-                    } else if (saturation < s2)                {
-                        pa = (chs1 - chs2) / (s1 - s2);
-                        pb = chs1 - pa * s1;
-                        chmodsat    = pa * saturation + pb;
-                    } else                                     {
-                        pa = (chs2 - chs3) / (s2 - s3);
-                        pb = chs2 - pa * s2;
-                        chmodsat    = pa * saturation + pb;
-                    }
-
-                    if (chromaPastel != chromaSatur) {
-
-                        // Pastels
-                        if (saturation > p2 && saturation < limitpastelsatur) {
-                            float newchromaPastel = chromaPastel_a * saturation + chromaPastel_b;
-                            chmodpastel = newchromaPastel * satredu * sathue[3];
+                        // We handle only positive values here ;  improve transitions
+                        if (saturation < p00) {
+                            chmodpastel = chl00 ;    //neutral tones
+                        } else if (saturation < p0)               {
+                            pa = (chl00 - chl0) / (p00 - p0);
+                            pb = chl00 - pa * p00;
+                            chmodpastel = pa * saturation + pb;
+                        } else if (saturation < p1)                {
+                            pa = (chl0 - chl1) / (p0 - p1);
+                            pb = chl0 - pa * p0;
+                            chmodpastel = pa * saturation + pb;
+                        } else if (saturation < p2)                {
+                            pa = (chl1 - chl2) / (p1 - p2);
+                            pb = chl1 - pa * p1;
+                            chmodpastel = pa * saturation + pb;
+                        } else if (saturation < limitpastelsatur)  {
+                            pa = (chl2 - chl3) / (p2 - limitpastelsatur);
+                            pb = chl2 - pa * p2;
+                            chmodpastel = pa * saturation + pb;
+                        } else if (saturation < s0)                {
+                            pa = (chl3 - chs0) / (limitpastelsatur - s0) ;
+                            pb = chl3 - pa * limitpastelsatur;
+                            chmodsat    = pa * saturation + pb;
+                        } else if (saturation < s1)                {
+                            pa = (chs0 - chs1) / (s0 - s1);
+                            pb = chs0 - pa * s0;
+                            chmodsat    = pa * saturation + pb;
+                        } else if (saturation < s2)                {
+                            pa = (chs1 - chs2) / (s1 - s2);
+                            pb = chs1 - pa * s1;
+                            chmodsat    = pa * saturation + pb;
+                        } else                                     {
+                            pa = (chs2 - chs3) / (s2 - s3);
+                            pb = chs2 - pa * s2;
+                            chmodsat    = pa * saturation + pb;
                         }
 
-                        // Saturated
-                        if (saturation < s0 && saturation >= limitpastelsatur) {
-                            float newchromaSatur = chromaSatur_a * saturation + chromaSatur_b;
-                            chmodsat = newchromaSatur * satredu * sathue2[0];
-                        }
-                    }// end transition
+                        if (chromaPastel != chromaSatur) {
 
-                    if (saturation <= limitpastelsatur) {
-                        if (chmodpastel >  2.0f) {
-                            chmodpastel = 2.0f;    //avoid too big values
-                        } else if (chmodpastel < -0.93f) {
-                            chmodpastel = -0.93f;    //avoid negative values
-                        }
+                            // Pastels
+                            if (saturation > p2 && saturation < limitpastelsatur) {
+                                float newchromaPastel = chromaPastel_a * saturation + chromaPastel_b;
+                                chmodpastel = newchromaPastel * satredu * sathue[3];
+                            }
 
-                        Chprov *= (1.0f + chmodpastel);
+                            // Saturated
+                            if (saturation < s0 && saturation >= limitpastelsatur) {
+                                float newchromaSatur = chromaSatur_a * saturation + chromaSatur_b;
+                                chmodsat = newchromaSatur * satredu * sathue2[0];
+                            }
+                        }// end transition
 
-                        if (Chprov < 6.0f) {
-                            Chprov = 6.0f;
-                        }
-                    } else { //if (saturation > limitpastelsatur)
-                        if (chmodsat >  1.8f) {
-                            chmodsat = 1.8f;    //saturated
-                        } else if (chmodsat < -0.93f) {
-                            chmodsat = -0.93f;
-                        }
+                        if (saturation <= limitpastelsatur) {
+                            if (chmodpastel >  2.0f) {
+                                chmodpastel = 2.0f;    //avoid too big values
+                            } else if (chmodpastel < -0.93f) {
+                                chmodpastel = -0.93f;    //avoid negative values
+                            }
 
-                        Chprov *= 1.0f + chmodsat;
+                            Chprov *= (1.0f + chmodpastel);
 
-                        if (Chprov < 6.0f) {
-                            Chprov = 6.0f;
+                            if (Chprov < 6.0f) {
+                                Chprov = 6.0f;
+                            }
+                        } else { //if (saturation > limitpastelsatur)
+                            if (chmodsat >  1.8f) {
+                                chmodsat = 1.8f;    //saturated
+                            } else if (chmodsat < -0.93f) {
+                                chmodsat = -0.93f;
+                            }
+
+                            Chprov *= 1.0f + chmodsat;
+
+                            if (Chprov < 6.0f) {
+                                Chprov = 6.0f;
+                            }
                         }
                     }
                 }
-            }
 
-            bool hhModified = false;
+                bool hhModified = false;
 
-            // Vibrance's Skin curve
-            if (sklocalcurve  && localskutili) {
-                if (HH > skbeg && HH < skend) {
-                    if (Chprov < 60.0f) { //skin hue  : todo ==> transition
-                        float HHsk = ask * HH + bsk;
+                // Vibrance's Skin curve
+                if (sklocalcurve  && localskutili) {
+                    if (HH > skbeg && HH < skend) {
+                        if (Chprov < 60.0f) { //skin hue  : todo ==> transition
+                            float HHsk = ask * HH + bsk;
+                            float Hn = (sklocalcurve[HHsk] - bsk) / ask;
+                            float Hc = (Hn * xx + HH * (1.0f - xx));
+                            HH = Hc;
+                            hhModified = true;
+                        } else if (Chprov < (60.0f + dchr)) { //transition chroma
+                            float HHsk = ask * HH + bsk;
+                            float Hn = (sklocalcurve[HHsk] - bsk) / ask;
+                            float Hc = (Hn * xx + HH * (1.0f - xx));
+                            float aa = (HH - Hc) / dchr ;
+                            float bb = HH - (60.0f + dchr) * aa;
+                            HH = aa * Chprov + bb;
+                            hhModified = true;
+                        }
+                    }
+                    //transition hue
+                    else if (HH > (skbeg - dhue) && HH <= skbeg && Chprov < (60.0f + dchr * 0.5f)) {
+                        float HHsk = ask * skbeg + bsk;
                         float Hn = (sklocalcurve[HHsk] - bsk) / ask;
-                        float Hc = (Hn * xx + HH * (1.0f - xx));
-                        HH = Hc;
+                        float Hcc = (Hn * xx + skbeg * (1.0f - xx));
+                        float adh = (Hcc - (skbeg - dhue)) / (dhue);
+                        float bdh = Hcc - adh * skbeg;
+                        HH = adh * HH + bdh;
                         hhModified = true;
-                    } else if (Chprov < (60.0f + dchr)) { //transition chroma
-                        float HHsk = ask * HH + bsk;
+                    } else if (HH >= skend && HH < (skend + dhue) && Chprov < (60.0f + dchr * 0.5f)) {
+                        float HHsk = ask * skend + bsk;
                         float Hn = (sklocalcurve[HHsk] - bsk) / ask;
-                        float Hc = (Hn * xx + HH * (1.0f - xx));
-                        float aa = (HH - Hc) / dchr ;
-                        float bb = HH - (60.0f + dchr) * aa;
-                        HH = aa * Chprov + bb;
+                        float Hcc = (Hn * xx + skend * (1.0f - xx));
+                        float adh = (skend + dhue - Hcc) / (dhue);
+                        float bdh = Hcc - adh * skend;
+                        HH = adh * HH + bdh;
                         hhModified = true;
                     }
+                } // end skin hue
+
+                //Munsell correction
+                if (!avoidcolorshift && hhModified) {
+                    sincosval = xsincosf(HH);
                 }
-                //transition hue
-                else if (HH > (skbeg - dhue) && HH <= skbeg && Chprov < (60.0f + dchr * 0.5f)) {
-                    float HHsk = ask * skbeg + bsk;
-                    float Hn = (sklocalcurve[HHsk] - bsk) / ask;
-                    float Hcc = (Hn * xx + skbeg * (1.0f - xx));
-                    float adh = (Hcc - (skbeg - dhue)) / (dhue);
-                    float bdh = Hcc - adh * skbeg;
-                    HH = adh * HH + bdh;
-                    hhModified = true;
-                } else if (HH >= skend && HH < (skend + dhue) && Chprov < (60.0f + dchr * 0.5f)) {
-                    float HHsk = ask * skend + bsk;
-                    float Hn = (sklocalcurve[HHsk] - bsk) / ask;
-                    float Hcc = (Hn * xx + skend * (1.0f - xx));
-                    float adh = (skend + dhue - Hcc) / (dhue);
-                    float bdh = Hcc - adh * skend;
-                    HH = adh * HH + bdh;
-                    hhModified = true;
-                }
-            } // end skin hue
 
-            //Munsell correction
-            if (!avoidcolorshift && hhModified) {
-                sincosval = xsincosf(HH);
-            }
+                float aprovn, bprovn;
+                bool inGamut;
 
-            float aprovn, bprovn;
-            bool inGamut;
+                do {
+                    inGamut = true;
 
-            do {
-                inGamut = true;
-
-                if (avoidcolorshift) {
-                    float correctionHue = 0.0f;
-                    float correctlum = 0.0f;
+                    if (avoidcolorshift) {
+                        float correctionHue = 0.0f;
+                        float correctlum = 0.0f;
 
 #ifdef _DEBUG
-                    Color::AllMunsellLch(false, Lprov, Lprov, HH, Chprov, CC, correctionHue, correctlum, MunsDebugInfo);
+                        Color::AllMunsellLch(false, Lprov, Lprov, HH, Chprov, CC, correctionHue, correctlum, MunsDebugInfo);
 #else
-                    Color::AllMunsellLch(false, Lprov, Lprov, HH, Chprov, CC, correctionHue, correctlum);
+                        Color::AllMunsellLch(false, Lprov, Lprov, HH, Chprov, CC, correctionHue, correctlum);
 #endif
 
-                    if (correctionHue != 0.f || hhModified) {
-                        sincosval = xsincosf(HH + correctionHue);
-                        hhModified = false;
+                        if (correctionHue != 0.f || hhModified) {
+                            sincosval = xsincosf(HH + correctionHue);
+                            hhModified = false;
+                        }
                     }
-                }
 
-                aprovn = Chprov * sincosval.y;
-                bprovn = Chprov * sincosval.x;
+                    aprovn = Chprov * sincosval.y;
+                    bprovn = Chprov * sincosval.x;
 
-                float fyy = (Color::c1By116 * Lprov) + Color::c16By116;
-                float fxx = (0.002f * aprovn) + fyy;
-                float fzz = fyy - (0.005f * bprovn);
-                float xx_ = 65535.f * Color::f2xyz(fxx) * Color::D50x;
-                //  float yy_ = 65535.0f * Color::f2xyz(fyy);
-                float zz_ = 65535.f * Color::f2xyz(fzz) * Color::D50z;
-                float yy_ = 65535.f * ((Lprov > Color::epskap) ? fyy * fyy*fyy : Lprov / Color::kappa);
+                    float fyy = (Color::c1By116 * Lprov) + Color::c16By116;
+                    float fxx = (0.002f * aprovn) + fyy;
+                    float fzz = fyy - (0.005f * bprovn);
+                    float xx_ = 65535.f * Color::f2xyz(fxx) * Color::D50x;
+                    //  float yy_ = 65535.0f * Color::f2xyz(fyy);
+                    float zz_ = 65535.f * Color::f2xyz(fzz) * Color::D50z;
+                    float yy_ = 65535.f * ((Lprov > Color::epskap) ? fyy * fyy*fyy : Lprov / Color::kappa);
 
-                Color::xyz2rgb(xx_, yy_, zz_, R, G, B, wip);
+                    Color::xyz2rgb(xx_, yy_, zz_, R, G, B, wip);
 
-                if (R < 0.0f || G < 0.0f || B < 0.0f) {
+                    if (R < 0.0f || G < 0.0f || B < 0.0f) {
 #ifdef _DEBUG
-                    negsat++;
+                        negsat++;
 #endif
-                    Chprov *= 0.98f;
-                    inGamut = false;
-                }
+                        Chprov *= 0.98f;
+                        inGamut = false;
+                    }
 
-                // if "highlight reconstruction" enabled don't control Gamut for highlights
-                if ((!highlight) && (R > 65535.0f || G > 65535.0f || B > 65535.0f)) {
+                    // if "highlight reconstruction" enabled don't control Gamut for highlights
+                    if ((!highlight) && (R > 65535.0f || G > 65535.0f || B > 65535.0f)) {
 #ifdef _DEBUG
-                    moresat++;
+                        moresat++;
 #endif
-                    Chprov *= 0.98f;
-                    inGamut = false;
-                }
-            } while (!inGamut);
+                        Chprov *= 0.98f;
+                        inGamut = false;
+                    }
+                } while (!inGamut);
 
-            //put new values in Lab
-            dest->L[i][j] = Lprov * 327.68f;
-            dest->a[i][j] = aprovn * 327.68f;
-            dest->b[i][j] = bprovn * 327.68f;
+                //put new values in Lab
+                dest->L[i][j] = Lprov * 327.68f;
+                dest->a[i][j] = aprovn * 327.68f;
+                dest->b[i][j] = bprovn * 327.68f;
+            }
+    } // end of parallelization
+
+#ifdef _DEBUG
+    t2e.set();
+
+    if (settings->verbose) {
+        printf("Vibrance local (performed in %d usec):\n", t2e.etime(t1e));
+        printf("   Gamut: G1negat=%iiter G165535=%iiter G2negsat=%iiter G265535=%iiter\n", negat, moreRGB, negsat, moresat);
+
+        if (MunsDebugInfo) {
+            printf("   Munsell chrominance: MaxBP=%1.2frad  MaxRY=%1.2frad  MaxGY=%1.2frad  MaxRP=%1.2frad  depass=%u\n", MunsDebugInfo->maxdhue[0], MunsDebugInfo->maxdhue[1], MunsDebugInfo->maxdhue[2], MunsDebugInfo->maxdhue[3], MunsDebugInfo->depass);
         }
-} // end of parallelization
-
-#ifdef _DEBUG
-t2e.set();
-
-if (settings->verbose) {
-    printf("Vibrance local (performed in %d usec):\n", t2e.etime(t1e));
-    printf("   Gamut: G1negat=%iiter G165535=%iiter G2negsat=%iiter G265535=%iiter\n", negat, moreRGB, negsat, moresat);
+    }
 
     if (MunsDebugInfo) {
-        printf("   Munsell chrominance: MaxBP=%1.2frad  MaxRY=%1.2frad  MaxGY=%1.2frad  MaxRP=%1.2frad  depass=%u\n", MunsDebugInfo->maxdhue[0], MunsDebugInfo->maxdhue[1], MunsDebugInfo->maxdhue[2], MunsDebugInfo->maxdhue[3], MunsDebugInfo->depass);
+        delete MunsDebugInfo;
     }
-}
-
-if (MunsDebugInfo) {
-    delete MunsDebugInfo;
-}
 
 #endif
-*/
+
 }
 
 void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabImage* bufexporig, LabImage* lab,  LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve)
 {
-    // TODO Locallab
-    /*
     //exposure local
 
     float maxran = 65536.f; //65536
@@ -1685,11 +1676,11 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
     const float hlrange = maxran - shoulder;
 
 
-    #define TSE 112
+#define TSE 112
 
-    #ifdef _OPENMP
+#ifdef _OPENMP
     #pragma omp parallel if (multiThread)
-    #endif
+#endif
     {
         char *buffer;
 
@@ -1705,9 +1696,9 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
         int tW;
         int tH;
 
-    #ifdef _OPENMP
+#ifdef _OPENMP
         #pragma omp for schedule(dynamic) collapse(2)
-    #endif
+#endif
 
         for (int ii = 0; ii < bfh; ii += TSE)
             for (int jj = 0; jj < bfw; jj += TSE) {
@@ -1757,43 +1748,43 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
                     }
                 }
 
-    /*
-                if (lp.chro != 0) {
+                /*
+                                if (lp.chro != 0) {
+                                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+
+                                            float satby100 = lp.chro / 100.f;
+                                            float a = atemp[ti * TSE + tj];
+                                            float b = btemp[ti * TSE + tj];
+
+                                            atemp[ti * TSE + tj] = a * (1.f + satby100);
+                                            btemp[ti * TSE + tj] = b * (1.f + satby100);
+                                        }
+                                    }
+                                }
+                */
+
+                bool vasy = true;
+
+                if (vasy) {
+                    // ready, fill lab
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
 
-                            float satby100 = lp.chro / 100.f;
-                            float a = atemp[ti * TSE + tj];
-                            float b = btemp[ti * TSE + tj];
-
-                            atemp[ti * TSE + tj] = a * (1.f + satby100);
-                            btemp[ti * TSE + tj] = b * (1.f + satby100);
+                            lab->L[i][j] = Ltemp[ti * TSE + tj];
+                            lab->a[i][j] = atemp[ti * TSE + tj];
+                            lab->b[i][j] = btemp[ti * TSE + tj];
                         }
                     }
                 }
-    *//*
-
-            bool vasy = true;
-
-            if (vasy) {
-                // ready, fill lab
-                for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-
-                        lab->L[i][j] = Ltemp[ti * TSE + tj];
-                        lab->a[i][j] = atemp[ti * TSE + tj];
-                        lab->b[i][j] = btemp[ti * TSE + tj];
-                    }
-                }
             }
-        }
 
-    free(buffer);
+        free(buffer);
 
 
-}
+    }
 
-*/
+
 }
 
 
@@ -7555,12 +7546,12 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
 
 }
 
-void ImProcFunctions::calc_ref(LabImage * original, LabImage * transformed, int cx, int cy, int oW, int oH, int sk, double & huerefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref)
+void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transformed, int cx, int cy, int oW, int oH, int sk, double & huerefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref)
 {
     if (params->locallab.enabled) {
         //always calculate hueref, chromaref, lumaref  before others operations use in normal mode for all modules exceprt denoise
         struct local_params lp;
-        calcLocalParams(oW, oH, params->locallab, lp);
+        calcLocalParams(sp, oW, oH, params->locallab, lp);
 
 // double precision for large summations
         double aveA = 0.;
@@ -8064,7 +8055,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
         int del = 3; // to avoid crash with [loy - begy] and [lox - begx] and bfh bfw  // with gtk2 [loy - begy-1] [lox - begx -1 ] and del = 1
 
         struct local_params lp;
-        calcLocalParams(oW, oH, params->locallab, lp);
+        calcLocalParams(sp, oW, oH, params->locallab, lp);
 
         const float radius = lp.rad / (sk * 1.4f); //0 to 70 ==> see skip
         int strred = (lp.strucc - 1);
@@ -8282,6 +8273,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                 centerx[sp];
                 centery[sp];
                 */
+                /*
                 int currentcenterx = centerx[0];
                 int currentcentery = centery[0];
                 printf("cuX=%i cuY=%i sp=%i\n", currentcenterx, currentcentery, sp);
@@ -8290,6 +8282,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                     printf("i=%i hue=%f sob=%f cex=%i cey=%i\n", i, huerefs[i], sobelrefs[i], centerx[i], centery[i]);
 
                 }
+                */
 
                 JaggedArray<float> Cdeltae(bfw, bfh);
                 JaggedArray<float> Cdeltaesob(bfw, bfh);
@@ -8731,7 +8724,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                             nbaft ++;
                         }
 
-                        if (val[m][r] < 0.4f * sobelrefs[1]) {
+                        if (val[m][r] < 0.4f * sobelrefs[1]) { // TODO Locallab Correct ?
                             rma = r;
                             break;
                         }
@@ -10855,7 +10848,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                     }
                 }
 
-            ImProcFunctions::ciecamloc_02float(bufcat02, bufcat02fin);
+            ImProcFunctions::ciecamloc_02float(sp, bufcat02, bufcat02fin);
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16)
@@ -11120,7 +11113,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
 
 
 
-                ImProcFunctions::vibrancelocal(bfw, bfh, bufexporig, bufexpfin, localskutili, sklocalcurve);
+                ImProcFunctions::vibrancelocal(sp, bfw, bfh, bufexporig, bufexpfin, localskutili, sklocalcurve);
 
 
 
@@ -11214,7 +11207,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                     }
 
                 tmp1 = new LabImage(bfw, bfh);
-                ImProcFunctions::EPDToneMaplocal(bufgb, tmp1, 5, sk);
+                ImProcFunctions::EPDToneMaplocal(sp, bufgb, tmp1, 5, sk);
             } /*else { //stay here in case of
 
                 tmp = new LabImage (transformed->W, transformed->H);
@@ -11448,15 +11441,11 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                 //   }
 
                 //sharpen only square area instaed of all image
-                // TODO Locallab
-                /*
-                ImProcFunctions::deconvsharpeningloc(bufsh, hbuffer, bfw, bfh, loctemp, params->locallab.shardamping, (double)params->locallab.sharradius / 100., params->locallab.shariter, params->locallab.sharamount);
-                */
+                ImProcFunctions::deconvsharpeningloc(bufsh, hbuffer, bfw, bfh, loctemp, params->locallab.shardamping.at(sp), (double)params->locallab.sharradius.at(sp) / 100., params->locallab.shariter.at(sp), params->locallab.sharamount.at(sp));
             } else { //call from dcrop.cc
-                // TODO Locallab
-                /*
-                ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, bfw, bfh, loctemp, params->locallab.shardamping, (double)params->locallab.sharradius / 100., params->locallab.shariter, params->locallab.sharamount);
-                */
+
+                ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, bfw, bfh, loctemp, params->locallab.shardamping.at(sp), (double)params->locallab.sharradius.at(sp) / 100., params->locallab.shariter.at(sp), params->locallab.sharamount.at(sp));
+
             }
 
             float hueplus = hueref + dhuesha;
@@ -11478,10 +11467,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
             int GH = original->H;
             JaggedArray<float> loctemp(GW, GH);
 
-            // TODO Locallab
-            /*
-            ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, GW, GH, loctemp, params->locallab.shardamping, (double)params->locallab.sharradius / 100., params->locallab.shariter, params->locallab.sharamount);
-            */
+            ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, GW, GH, loctemp, params->locallab.shardamping.at(sp), (double)params->locallab.sharradius.at(sp) / 100., params->locallab.shariter.at(sp), params->locallab.sharamount.at(sp));
 
             float hueplus = hueref + dhuesha;
             float huemoins = hueref - dhuesha;
@@ -11618,7 +11604,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
             }
 
             float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
-            ImProcFunctions::MSRLocal(orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 0, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+            ImProcFunctions::MSRLocal(sp, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 0, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 #ifdef _OPENMP
             #pragma omp parallel for
 #endif
@@ -11645,15 +11631,13 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                 InverseReti_Local(lp, original, transformed, tmpl, cx, cy, 0);
             }
 
-            // TODO Locallab
-            /*
-            if (params->locallab.chrrt > 0) {
+            if (params->locallab.chrrt.at(sp) > 0) {
 
                 if (!lp.invret && call <= 3) {
 
-            #ifdef _OPENMP
+#ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
-            #endif
+#endif
 
                     for (int ir = 0; ir < Hd; ir += 1)
                         for (int jr = 0; jr < Wd; jr += 1) {
@@ -11664,9 +11648,9 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
 
                 }  else {
 
-            #ifdef _OPENMP
+#ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
-            #endif
+#endif
 
                     for (int ir = 0; ir < GH; ir += 1)
                         for (int jr = 0; jr < GW; jr += 1) {
@@ -11675,14 +11659,14 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                         }
                 }
 
-                ImProcFunctions::MSRLocal(orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+                ImProcFunctions::MSRLocal(sp, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
                 if (!lp.invret && call <= 3) {
 
 
-            #ifdef _OPENMP
+#ifdef _OPENMP
                     #pragma omp parallel for
-            #endif
+#endif
 
                     for (int ir = 0; ir < Hd; ir += 1)
                         for (int jr = 0; jr < Wd; jr += 1) {
@@ -11707,9 +11691,9 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
 
                 }  else {
 
-            #ifdef _OPENMP
+#ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
-            #endif
+#endif
 
                     for (int ir = 0; ir < Hd; ir += 1)
                         for (int jr = 0; jr < Wd; jr += 1) {
@@ -11732,7 +11716,6 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                 }
 
             }
-            */
 
             delete tmpl;
             delete [] origBuffer;
@@ -11748,9 +11731,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
 
 
 // Gamut and Munsell control - very important do not desactivated to avoid crash
-        // TODO Locallab
-        /*
-        if (params->locallab.avoid) {
+        if (params->locallab.avoid.at(sp)) {
             TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.working);
             float wip[3][3] = {
                 {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
@@ -11759,29 +11740,29 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
             };
             const bool highlight = params->toneCurve.hrenabled;
             const bool needHH = (lp.chro != 0.f);
-        #ifdef _OPENMP
+#ifdef _OPENMP
             #pragma omp parallel if (multiThread)
-        #endif
+#endif
             {
-        #ifdef __SSE2__
+#ifdef __SSE2__
                 float atan2Buffer[transformed->W] ALIGNED16;
                 float sqrtBuffer[transformed->W] ALIGNED16;
                 float sincosyBuffer[transformed->W] ALIGNED16;
                 float sincosxBuffer[transformed->W] ALIGNED16;
                 vfloat c327d68v = F2V(327.68f);
                 vfloat onev = F2V(1.f);
-        #endif
+#endif
 
-        #ifdef _OPENMP
-        #ifdef _DEBUG
+#ifdef _OPENMP
+#ifdef _DEBUG
                 #pragma omp for schedule(dynamic,16) firstprivate(MunsDebugInfo)
-        #else
+#else
                 #pragma omp for schedule(dynamic,16)
-        #endif
-        #endif
+#endif
+#endif
 
                 for (int y = 0; y < transformed->H; y++) {
-        #ifdef __SSE2__
+#ifdef __SSE2__
                     int i = 0;
 
                     for (; i < transformed->W - 3; i += 4) {
@@ -11824,19 +11805,19 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
 
                     }
 
-        #endif
+#endif
 
                     for (int x = 0; x < transformed->W; x++) {
                         float Lprov1 = transformed->L[y][x] / 327.68f;
                         float2 sincosval;
-        #ifdef __SSE2__
+#ifdef __SSE2__
                         float HH = atan2Buffer[x]; // reading HH from line buffer even if line buffer is not filled is faster than branching
                         float Chprov1 = sqrtBuffer[x];
                         sincosval.y = sincosyBuffer[x];
                         sincosval.x = sincosxBuffer[x];
                         float chr = 0.f;
 
-        #else
+#else
                         float aa = transformed->a[y][x];
                         float bb = transformed->b[y][x];
                         float HH = 0.f, chr = 0.f;
@@ -11855,19 +11836,19 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                             sincosval.x = bb / (Chprov1 * 327.68f);
                         }
 
-        #endif
+#endif
 
-        #ifdef _DEBUG
+#ifdef _DEBUG
                         bool neg = false;
                         bool more_rgb = false;
                         Chprov1 = min(Chprov1, chr);
 
                         Color::gamutLchonly(sincosval, Lprov1, Chprov1, wip, highlight, 0.15f, 0.92f, neg, more_rgb);
-        #else
+#else
                         Color::pregamutlab(Lprov1, HH, chr);
                         Chprov1 = min(Chprov1, chr);
                         Color::gamutLchonly(sincosval, Lprov1, Chprov1, wip, highlight, 0.15f, 0.92f);
-        #endif
+#endif
 
                         transformed->L[y][x] = Lprov1 * 327.68f;
                         transformed->a[y][x] = 327.68f * Chprov1 * sincosval.y;
@@ -11879,11 +11860,11 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                             float correctlum = 0.f;
                             float memChprov = sqrtf(SQR(original->a[y][x]) + SQR(original->b[y][x])) / 327.68f;
                             float Chprov = sqrtf(SQR(transformed->a[y][x]) + SQR(transformed->b[y][x])) / 327.68f;
-        #ifdef _DEBUG
+#ifdef _DEBUG
                             Color::AllMunsellLch(true, Lprov1, Lprov2, HH, Chprov, memChprov, correctionHue, correctlum, MunsDebugInfo);
-        #else
+#else
                             Color::AllMunsellLch(true, Lprov1, Lprov2, HH, Chprov, memChprov, correctionHue, correctlum);
-        #endif
+#endif
 
                             if (fabs(correctionHue) < 0.015f) {
                                 HH += correctlum;    // correct only if correct Munsell chroma very little.
@@ -11898,7 +11879,6 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                 }
             }
         }
-        */
 
 #ifdef _DEBUG
 

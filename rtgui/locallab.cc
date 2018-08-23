@@ -3118,8 +3118,16 @@ void Locallab::pastsattog_toggled()
         */
     }
 
+    // Update Vibrance GUI according to pastsattog button state
     if (pastSatTog->get_active()) {
-        saturated->setValue(pastels->getValue());
+        // Link both slider, so we set saturated and psThresholds unsensitive
+        psThreshold->set_sensitive(false);
+        saturated->set_sensitive(false);
+        saturated->setValue(pastels->getValue()); // Pastels and Saturated are linked
+    } else {
+        // Separate sliders, so we set saturated and psThresholds sensitive again
+        psThreshold->set_sensitive(true);
+        saturated->set_sensitive(true);
     }
 
     if (getEnabled() && expvibrance->getEnabled()) {
@@ -3225,6 +3233,13 @@ void Locallab::retinexMethodChanged()
 void Locallab::blurMethodChanged()
 {
     printf("blurMethodChanged\n");
+
+    // Update Blur & Noise GUI according to blurMethod combobox
+    if (blurMethod->get_active_row_number() == 0 || blurMethod->get_active_row_number() == 2) {
+        sensibn->show();
+    } else {
+        sensibn->hide();
+    }
 
     if (getEnabled() && expblur->getEnabled()) {
         if (listener) {
@@ -3359,9 +3374,9 @@ void Locallab::SmethodChanged()
 
 if (listener && getEnabled()) {
 if (Smethod->get_active_row_number() == 1  || Smethod->get_active_row_number() == 3) {
-    listener->panelChanged(EvlocallabSmet, Smethod->get_active_text());
-    locXL->setValue(locX->getValue());
-    locYT->setValue(locY->getValue());
+listener->panelChanged(EvlocallabSmet, Smethod->get_active_text());
+locXL->setValue(locX->getValue());
+locYT->setValue(locY->getValue());
 }
 //   else if(Smethod->get_active_row_number()==2) {
 //          listener->panelChanged (EvlocallabSmet, Smethod->get_active_text ());
@@ -3372,7 +3387,7 @@ if (Smethod->get_active_row_number() == 1  || Smethod->get_active_row_number() =
 else
 
 {
-    listener->panelChanged(EvlocallabSmet, Smethod->get_active_text());
+listener->panelChanged(EvlocallabSmet, Smethod->get_active_text());
 
 }
 }
@@ -3576,6 +3591,13 @@ void Locallab::inversshaChanged()
         */
     }
 
+    // Update Sharpening GUI according to inverssha button state
+    if (inverssha->get_active()) {
+        sensisha->hide();
+    } else {
+        sensisha->show();
+    }
+
     if (getEnabled() && expsharp->getEnabled()) {
         if (listener) {
             if (inverssha->get_active()) {
@@ -3604,6 +3626,13 @@ void Locallab::inversretChanged()
 
         lastinversret = inversret->get_active();
         */
+    }
+
+    // Update Retinex GUI according to inversret button state
+    if (inversret->get_active()) {
+        sensih->hide();
+    } else {
+        sensih->show();
     }
 
     if (getEnabled() && expsharp->getEnabled()) {
@@ -3905,6 +3934,11 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
     }
 
     // Exposure
+    if (a == black) {
+        // Update Exposure GUI according to black adjuster state
+        shcompr->set_sensitive(!((int)black->getValue() == 0)); // At black = 0, shcompr value has no effect
+    }
+
     if (getEnabled() && expexpose->getEnabled()) {
         if (a == expcomp) {
             if (listener) {
@@ -4781,6 +4815,13 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, int
         // Separate sliders, so we set saturated and psThresholds sensitive again
         psThreshold->set_sensitive(true);
         saturated->set_sensitive(true);
+    }
+
+    // Update Blur & Noise GUI according to blurMethod combobox
+    if (blurMethod->get_active_row_number() == 0 || blurMethod->get_active_row_number() == 2) {
+        sensibn->show();
+    } else {
+        sensibn->hide();
     }
 
     // Update Retinex GUI according to inversret button state
