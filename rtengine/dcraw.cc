@@ -2010,7 +2010,7 @@ void CLASS parse_hasselblad_gain()
     hbd.unknown1 = offset ? base + offset : 0;
     fseek(ifp, 32, SEEK_CUR);
     offset = get4();
-    hbd.flatfield = offset ? base + offset : 0;
+    hbd.flatfield = (offset && (base + offset < ifp->size)) ? base + offset : 0;
 }
 
 void CLASS hasselblad_correct()
