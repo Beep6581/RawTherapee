@@ -2080,8 +2080,12 @@ void CLASS hasselblad_correct()
         ffcols = get2();
         ffrows = get2();
         fseek(ifp, hbd.flatfield + 16 * 2, SEEK_SET);
+        unsigned toRead = sizeof(ushort) * 4 * ffcols * ffrows;
+        if (toRead > ifp->size) { // there must be something wrong, see Issue #4748
+            return;
+        }
 
-        ushort *ffmap = (ushort *)malloc(sizeof(*ffmap) * 4 * ffcols * ffrows);
+        ushort *ffmap = (ushort *)malloc(toRead);
         for (i = 0; i < 4 * ffcols * ffrows; i++) ffmap[i] = get2();
 
         /* Get reference values from center of field. This seems to be what Phocus does too,
