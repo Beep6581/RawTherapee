@@ -60,7 +60,7 @@ public:
     ,RT_matrix_from_constant(0)
     ,RT_from_adobe_dng_converter(false)
 	,getbithuff(this,ifp,zero_after_ff)
-	,nikbithuff(this,ifp)
+	,nikbithuff(ifp)
     {
         memset(&hbd, 0, sizeof(hbd));
         aber[0]=aber[1]=aber[2]=aber[3]=1;
@@ -215,7 +215,7 @@ protected:
 int fcol (int row, int col);
 void merror (void *ptr, const char *where);
 void derror();
-void derror(bool condition) {data_error += condition;}
+inline void derror(bool condition) {if(UNLIKELY(condition)) ++data_error;}
 ushort sget2 (uchar *s);
 ushort get2();
 unsigned sget4 (uchar *s);
@@ -257,16 +257,17 @@ getbithuff_t getbithuff;
 class nikbithuff_t
 {
 public:
-   nikbithuff_t(DCraw *p,IMFILE *&i):parent(p),bitbuf(0),errors(0),vbits(0),ifp(i){}
+   nikbithuff_t(IMFILE *&i):bitbuf(0),errors(0),vbits(0),ifp(i){}
    void operator()() {bitbuf = vbits = 0;};
    unsigned operator()(int nbits, ushort *huff);
    unsigned errorCount() { return errors; }
 private:
-   bool derror(bool condition){
-	   errors += condition;
+   inline bool derror(bool condition){
+       if (UNLIKELY(condition)) {
+           ++errors;
+       }
 	   return condition;
    }
-   DCraw *parent;
    unsigned bitbuf, errors;
    int vbits;
    IMFILE *&ifp;
