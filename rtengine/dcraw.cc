@@ -1299,8 +1299,7 @@ BENCHFUN
     free (huff);
     data_error += nikbithuff.errorCount();
     if(data_error) {
-        std::cerr << nikbithuff.errorCount() << " / " << data_error << std::endl;
-        std::cerr << ifname << " decoded with " << data_error << " errors. File possibly corrupted" << std::endl;
+        std::cerr << ifname << " decoded with " << data_error << " errors. File possibly corrupted." << std::endl;
     }
 }
 
