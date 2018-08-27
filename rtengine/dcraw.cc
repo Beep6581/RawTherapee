@@ -612,10 +612,10 @@ inline unsigned CLASS nikbithuff_t::operator() (int nbits, ushort *huff)
         return 0;
     }
     if (vbits < nbits && LIKELY((c = fgetc(ifp)) != EOF)) {
-        bitbuf = (bitbuf << 8) + (uchar) c;
+        bitbuf = (bitbuf << 8) | c;
         vbits += 8;
         if (vbits < nbits && LIKELY((c = fgetc(ifp)) != EOF)) {
-            bitbuf = (bitbuf << 8) + (uchar) c;
+            bitbuf = (bitbuf << 8) | c;
             vbits += 8;
         }
     }
@@ -1291,14 +1291,22 @@ BENCHFUN
         }
     } else {
         for (int row=0; row < height; row++) {
-            for (int col=0; col < raw_width; col++) {
-                int len = nikhuff(huff) & 15;
-                int diff = ((nikbits(len) << 1) + 1) >> 1;
+            for (int col=0; col < 2; col++) {
+                int len = nikhuff(huff);
+                int diff = nikbits(len);
                 if ((diff & (1 << (len-1))) == 0)
                     diff -= (1 << len) - 1;
-                if (col < 2) hpred[col] = vpred[row & 1][col] += diff;
-                else	     hpred[col & 1] += diff;
-                derror((ushort)(hpred[col & 1]) >= max);
+                hpred[col] = vpred[row & 1][col] += diff;
+                derror(hpred[col] >= max);
+                RAW(row,col) = curve[hpred[col]];
+            }
+            for (int col=2; col < raw_width; col++) {
+                int len = nikhuff(huff);
+                int diff = nikbits(len);
+                if ((diff & (1 << (len-1))) == 0)
+                    diff -= (1 << len) - 1;
+                hpred[col & 1] += diff;
+                derror(hpred[col & 1] >= max);
                 RAW(row,col) = curve[hpred[col & 1]];
             }
         }
