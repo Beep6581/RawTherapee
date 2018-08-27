@@ -1262,7 +1262,7 @@ BENCHFUN
 
     // instead of accessing curve[LIM((short)hpred[col & 1],0,0x3fff)] in the inner loop, we just fill the curve with the correct values and access curve[hpred[col & 1]]
     for(int i = 0x4000; i < 0x8000; ++i)
-        curve[i] = curve[3fff];
+        curve[i] = curve[0x3fff];
     for(int i = 0x8000; i < 0x10000; ++i)
         curve[i] = curve[0];
 
