@@ -1259,6 +1259,13 @@ BENCHFUN
     } else if (ver0 != 0x46 && csize <= 0x4001)
         read_shorts (curve, max=csize);
     while (curve[max-2] == curve[max-1]) max--;
+
+    // instead of accessing curve[LIM((short)hpred[col & 1],0,0x3fff)] in the inner loop, we just fill the curve with the correct values and access curve[hpred[col & 1]]
+    for(int i = 0x4000; i < 0x8000; ++i)
+        curve[i] = curve[3fff];
+    for(int i = 0x8000; i < 0x10000; ++i)
+        curve[i] = curve[0];
+
     huff = make_decoder (nikon_tree[tree]);
     fseek (ifp, data_offset, SEEK_SET);
     nikinit();
@@ -1279,7 +1286,7 @@ BENCHFUN
                 if (col < 2) hpred[col] = vpred[row & 1][col] += diff;
                 else	     hpred[col & 1] += diff;
                 derror((ushort)(hpred[col & 1] + min) >= max);
-                RAW(row,col) = curve[LIM((short)hpred[col & 1],0,0x3fff)];
+                RAW(row,col) = curve[hpred[col & 1]];
             }
         }
     } else {
@@ -1292,7 +1299,7 @@ BENCHFUN
                 if (col < 2) hpred[col] = vpred[row & 1][col] += diff;
                 else	     hpred[col & 1] += diff;
                 derror((ushort)(hpred[col & 1]) >= max);
-                RAW(row,col) = curve[LIM((short)hpred[col & 1],0,0x3fff)];
+                RAW(row,col) = curve[hpred[col & 1]];
             }
         }
     }
