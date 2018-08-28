@@ -2496,6 +2496,11 @@ Camera constants:
         "dcraw_matrix": [ 4932, -835, 141, -4878, 11868, 3437, -1138, 1961, 7067 ]
     },
 
+    { // Quality C
+        "make_model": [ "Hasselblad H6D-100cMS" ],
+        "raw_crop": [ 64, 108, 11608, 8708 ]
+    },
+
     // Dummy test entry to test the parser and show the format with all entries active
     {
         "make_model": "DummyMake DummyModel",
