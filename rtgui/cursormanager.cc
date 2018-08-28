@@ -38,7 +38,6 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
 
     cResizeWidth = Gdk::Cursor::create (display, Gdk::SB_H_DOUBLE_ARROW);
     cResizeHeight = Gdk::Cursor::create (display, Gdk::SB_V_DOUBLE_ARROW);
-    //cResizeDiag = Gdk::Cursor::create (display, Gdk::BOTTOM_RIGHT_CORNER);
     cResizeTopLeft = Gdk::Cursor::create (display, Gdk::TOP_LEFT_CORNER);
     cResizeTopRight = Gdk::Cursor::create (display, Gdk::TOP_RIGHT_CORNER);
     cResizeBottomLeft = Gdk::Cursor::create (display, Gdk::BOTTOM_LEFT_CORNER);
@@ -57,7 +56,6 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
     Glib::RefPtr<Gdk::Pixbuf> cropDraw = RTImage::createFromFile ("crop-point-hicontrast.png");
     Glib::RefPtr<Gdk::Pixbuf> resizeWidth = RTImage::createFromFile ("node-move-x-hicontrast.png");
     Glib::RefPtr<Gdk::Pixbuf> resizeHeight = RTImage::createFromFile ("node-move-y-hicontrast.png");
-    //Glib::RefPtr<Gdk::Pixbuf> resizeDiag = RTImage::createFromFile ("node-move-diag-hicontrast.png");
     Glib::RefPtr<Gdk::Pixbuf> resizeTopLeft = RTImage::createFromFile ("node-move-nw-se-hicontrast.png");
     Glib::RefPtr<Gdk::Pixbuf> resizeTopRight = RTImage::createFromFile ("node-move-sw-ne-hicontrast.png");
     Glib::RefPtr<Gdk::Pixbuf> resizeBottomLeft = RTImage::createFromFile ("node-move-sw-ne-hicontrast.png");
@@ -66,8 +64,6 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
     Glib::RefPtr<Gdk::Pixbuf> colPickAdd = RTImage::createFromFile ("color-picker-add-hicontrast.png");
     Glib::RefPtr<Gdk::Pixbuf> empty = RTImage::createFromFile ("empty.png");
     Glib::RefPtr<Gdk::Pixbuf> move2D = RTImage::createFromFile ("node-move-xy-hicontrast.png");
-    //Glib::RefPtr<Gdk::Pixbuf> move1DH = RTImage::createFromFile ("node-move-x-hicontrast.png");
-    //Glib::RefPtr<Gdk::Pixbuf> move1DV = RTImage::createFromFile ("node-move-y-hicontrast.png");
     Glib::RefPtr<Gdk::Pixbuf> rotate = RTImage::createFromFile ("rotate-aroundnode-hicontrast.png");
 
     cCrosshair = crosshair ? Gdk::Cursor::create (cAdd->get_display(), crosshair, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
@@ -84,8 +80,6 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
     cAddPicker = colPickAdd ? Gdk::Cursor::create (cAdd->get_display(), colPickAdd, 4, 21) : Gdk::Cursor::create (cAdd->get_display(), Gdk::ARROW);
     cHidden = empty ? Gdk::Cursor::create (cAdd->get_display(), empty, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::FLEUR);
     cMove2D = move2D ?  Gdk::Cursor::create (cAdd->get_display(), move2D, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::FLEUR);
-    //cMove1DH = move1DH ?  Gdk::Cursor::create (cAdd->get_display(), move1DH, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::FLEUR);
-    //cMove1DV = move1DV ?  Gdk::Cursor::create (cAdd->get_display(), move1DV, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::FLEUR);
     cRotate = rotate ?  Gdk::Cursor::create (cAdd->get_display(), rotate, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::CIRCLE);
 
     window = mainWindow;
@@ -112,7 +106,6 @@ void CursorManager::setCursor (Glib::RefPtr<Gdk::Window> window, CursorShape sha
     } else if (shape == CSResizeHeight) {
         window->set_cursor (cResizeHeight);
     } else if (shape == CSResizeDiagonal) {
-        //window->set_cursor (cResizeDiag);
         window->set_cursor (cMove2D);
     } else if (shape == CSResizeTopLeft) {
         window->set_cursor (cResizeTopLeft);
