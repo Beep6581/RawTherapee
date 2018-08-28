@@ -63,7 +63,7 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
     }
 
     editCPoints = Gtk::manage (new Gtk::ToggleButton());
-    initButton(*editCPoints, Glib::ustring("crosshair-adjust.png"), Gtk::ALIGN_START, false, "EDIT_PIPETTE_TOOLTIP");
+    initButton(*editCPoints, Glib::ustring("crosshair-node-curve.png"), Gtk::ALIGN_START, false, "EDIT_PIPETTE_TOOLTIP");
     editPointCPoints = Gtk::manage (new Gtk::ToggleButton ());
     initButton(*editPointCPoints,  Glib::ustring("edit-point.png"), Gtk::ALIGN_START, false, "CURVEEDITOR_EDITPOINT_HINT");
     copyCPoints = Gtk::manage (new Gtk::Button ());

@@ -43,8 +43,7 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
     cResizeBottomLeft = Gdk::Cursor::create (display, Gdk::BOTTOM_LEFT_CORNER);
     cResizeBottomRight = Gdk::Cursor::create (display, Gdk::BOTTOM_RIGHT_CORNER);
     cCropDraw = Gdk::Cursor::create (display, Gdk::CROSSHAIR);
-    cCropMove = Gdk::Cursor::create (display, Gdk::CROSSHAIR);
-    cCropSelection = Gdk::Cursor::create (display, Gdk::CROSSHAIR);
+    cCropSelection = Gdk::Cursor::create (display, Gdk::STAR); // ?
     cLeftTanMove = Gdk::Cursor::create (display, Gdk::SB_LEFT_ARROW);
     cRightTanMove = Gdk::Cursor::create (display, Gdk::SB_RIGHT_ARROW);
     cAdd = Gdk::Cursor::create (display, Gdk::PLUS);
@@ -100,7 +99,7 @@ void CursorManager::setCursor (Glib::RefPtr<Gdk::Window> window, CursorShape sha
     } else if (shape == CSHandClosed) {
         window->set_cursor (cHandClosed);
     } else if (shape == CSMove) {
-        window->set_cursor (cCropMove);
+        window->set_cursor (cHandClosed);
     } else if (shape == CSResizeWidth) {
         window->set_cursor (cResizeWidth);
     } else if (shape == CSResizeHeight) {
