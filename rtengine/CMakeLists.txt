@@ -32,8 +32,6 @@ set(RTENGINESOURCEFILES
     EdgePreservingDecomposition.cc
     FTblockDN.cc
     PF_correct_RT.cc
-    ahd_demosaic_RT.cc
-    amaze_demosaic_RT.cc
     cJSON.c
     calc_distort.cc
     camconst.cc
@@ -49,15 +47,23 @@ set(RTENGINESOURCEFILES
     dcp.cc
     dcraw.cc
     dcrop.cc
-    demosaic_algos.cc
+    demosaic/ahd.cc
+    demosaic/amaze.cc
+    demosaic/dcb.cc
+    demosaic/demosaic_algos.cc
+    demosaic/dual.cc
+    demosaic/eahd.cc
+    demosaic/fast.cc
+    demosaic/lmmse.cc
+    demosaic/pixelshift.cc
+    demosaic/rcd.cc
+    demosaic/vng4.cc
+    demosaic/xtrans.cc
     dfmanager.cc
     diagonalcurves.cc
     dirpyr_equalizer.cc
-    dual_demosaic_RT.cc
     dynamicprofile.cc
-    eahd_demosaic.cc
     expo_before_b.cc
-    fast_demo.cc
     ffmanager.cc
     flatcurves.cc
     gauss.cc
@@ -101,14 +107,12 @@ set(RTENGINESOURCEFILES
     loadinitial.cc
     myfile.cc
     pipettebuffer.cc
-    pixelshift.cc
     previewimage.cc
     processingjob.cc
     procparams.cc
     profilestore.cc
     rawimage.cc
     rawimagesource.cc
-    rcd_demosaic.cc
     refreshmap.cc
     rt_algo.cc
     rtthumbnail.cc
@@ -124,8 +128,6 @@ set(RTENGINESOURCEFILES
     pdaflinesfilter.cc
     gamutwarning.cc
     ipshadowshighlights.cc
-    xtrans_demosaic.cc
-    vng4_demosaic_RT.cc
     ipsoftlight.cc
     )
 

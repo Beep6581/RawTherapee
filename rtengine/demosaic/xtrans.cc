@@ -4,7 +4,7 @@
 //
 //  code dated: April 18, 2018
 //
-//  xtrans_demosaic.cc is free software: you can redistribute it and/or modify
+//  xtrans.cc is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
@@ -19,13 +19,13 @@
 //
 ////////////////////////////////////////////////////////////////
 
-#include "rtengine.h"
-#include "rawimagesource.h"
-#include "rt_algo.h"
-#include "rt_math.h"
-#include "../rtgui/multilangmgr.h"
-#include "opthelper.h"
-#include "StopWatch.h"
+#include "../rtengine.h"
+#include "../rawimagesource.h"
+#include "../rt_algo.h"
+#include "../rt_math.h"
+#include "../../rtgui/multilangmgr.h"
+#include "../opthelper.h"
+#include "../StopWatch.h"
 
 namespace rtengine
 {

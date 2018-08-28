@@ -11,7 +11,7 @@
 // code dated: May 27, 2010
 // latest modification: Ingo Weyrich, January 25, 2016
 //
-//  amaze_interpolate_RT.cc is free software: you can redistribute it and/or modify
+//  amaze.cc is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
@@ -26,14 +26,14 @@
 //
 ////////////////////////////////////////////////////////////////
 
-#include "rtengine.h"
-#include "rawimagesource.h"
-#include "rt_math.h"
-#include "../rtgui/multilangmgr.h"
-#include "sleef.c"
-#include "opthelper.h"
-#include "median.h"
-#include "StopWatch.h"
+#include "../rtengine.h"
+#include "../rawimagesource.h"
+#include "../rt_math.h"
+#include "../../rtgui/multilangmgr.h"
+#include "../sleef.c"
+#include "../opthelper.h"
+#include "../median.h"
+#include "../StopWatch.h"
 
 namespace rtengine
 {

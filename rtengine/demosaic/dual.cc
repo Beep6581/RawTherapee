@@ -8,7 +8,7 @@
 //  blends output of two demosaicers based on contrast
 //
 //
-//  dual_demosaic_RT.cc is free software: you can redistribute it and/or modify
+//  dual_demosaic.cc is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
@@ -23,13 +23,13 @@
 //
 ////////////////////////////////////////////////////////////////
 
-#include "jaggedarray.h"
-#include "rtengine.h"
-#include "rawimagesource.h"
-#include "rt_math.h"
+#include "../jaggedarray.h"
+#include "../rtengine.h"
+#include "../rawimagesource.h"
+#include "../rt_math.h"
 //#define BENCHMARK
-#include "StopWatch.h"
-#include "rt_algo.h"
+#include "../StopWatch.h"
+#include "../rt_algo.h"
 
 using namespace std;
 

@@ -7,7 +7,7 @@
 //
 // code dated: August 26, 2010
 //
-//  fast_demo.cc is free software: you can redistribute it and/or modify
+//  fast.cc is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
@@ -23,10 +23,10 @@
 ////////////////////////////////////////////////////////////////
 
 #include <cmath>
-#include "rawimagesource.h"
-#include "../rtgui/multilangmgr.h"
-#include "procparams.h"
-#include "opthelper.h"
+#include "../rawimagesource.h"
+#include "../../rtgui/multilangmgr.h"
+#include "../procparams.h"
+#include "../opthelper.h"
 
 using namespace std;
 using namespace rtengine;

@@ -5,7 +5,7 @@
 // optimized for speed by Ingo Weyrich
 //
 //
-//  vng4_interpolate_RT.cc is free software: you can redistribute it and/or modify
+//  vng4.cc is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
@@ -20,12 +20,12 @@
 //
 ////////////////////////////////////////////////////////////////
 
-#include "rtengine.h"
-#include "rawimagesource.h"
-#include "rawimagesource_i.h"
-#include "../rtgui/multilangmgr.h"
+#include "../rtengine.h"
+#include "../rawimagesource.h"
+#include "../rawimagesource_i.h"
+#include "../../rtgui/multilangmgr.h"
 //#define BENCHMARK
-#include "StopWatch.h"
+#include "../StopWatch.h"
 
 namespace rtengine
 {
