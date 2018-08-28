@@ -56,13 +56,13 @@ class CursorManager
 private:
     Glib::RefPtr<Gdk::Cursor> cResizeWidth;
     Glib::RefPtr<Gdk::Cursor> cResizeHeight;
-    Glib::RefPtr<Gdk::Cursor> cResizeDiag;
+    //Glib::RefPtr<Gdk::Cursor> cResizeDiag;
     Glib::RefPtr<Gdk::Cursor> cResizeTopLeft;
     Glib::RefPtr<Gdk::Cursor> cResizeTopRight;
     Glib::RefPtr<Gdk::Cursor> cResizeBottomLeft;
     Glib::RefPtr<Gdk::Cursor> cResizeBottomRight;
+    Glib::RefPtr<Gdk::Cursor> cCropDraw;
     Glib::RefPtr<Gdk::Cursor> cCropMove;
-    Glib::RefPtr<Gdk::Cursor> cCropMoving;
     Glib::RefPtr<Gdk::Cursor> cLeftTanMove;
     Glib::RefPtr<Gdk::Cursor> cRightTanMove;
     Glib::RefPtr<Gdk::Cursor> cNormal;
@@ -76,9 +76,9 @@ private:
     Glib::RefPtr<Gdk::Cursor> cAddPicker;
     Glib::RefPtr<Gdk::Cursor> cHidden;
     Glib::RefPtr<Gdk::Cursor> cMove2D;
-    Glib::RefPtr<Gdk::Cursor> cMove1DH;
-    Glib::RefPtr<Gdk::Cursor> cMove1DV;
-    Glib::RefPtr<Gdk::Cursor> cMoveRotate;
+    //Glib::RefPtr<Gdk::Cursor> cMove1DH;
+    //Glib::RefPtr<Gdk::Cursor> cMove1DV;
+    Glib::RefPtr<Gdk::Cursor> cRotate;
 
     Glib::RefPtr<Gdk::Display> display;
     Glib::RefPtr<Gdk::Window> window;

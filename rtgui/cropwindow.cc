@@ -1251,7 +1251,7 @@ void CropWindow::updateCursor (int x, int y)
                 if (onArea (CropObserved, x, y)) {
                     newType = CSMove;
                 } else {
-                    newType = CSHandOpen;
+                    newType = CSCrosshair;
                 }
             } else if (tm == TMSpotWB) {
                 newType = CSSpotWB;
