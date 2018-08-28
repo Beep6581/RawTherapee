@@ -36,50 +36,45 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
 
 #endif
 
-    cResizeWidth = Gdk::Cursor::create (display, Gdk::SB_H_DOUBLE_ARROW);
-    cResizeHeight = Gdk::Cursor::create (display, Gdk::SB_V_DOUBLE_ARROW);
-    cResizeTopLeft = Gdk::Cursor::create (display, Gdk::TOP_LEFT_CORNER);
-    cResizeTopRight = Gdk::Cursor::create (display, Gdk::TOP_RIGHT_CORNER);
-    cResizeBottomLeft = Gdk::Cursor::create (display, Gdk::BOTTOM_LEFT_CORNER);
-    cResizeBottomRight = Gdk::Cursor::create (display, Gdk::BOTTOM_RIGHT_CORNER);
-    cCropDraw = Gdk::Cursor::create (display, Gdk::CROSSHAIR);
-    cCropSelection = Gdk::Cursor::create (display, Gdk::STAR); // ?
-    cLeftTanMove = Gdk::Cursor::create (display, Gdk::SB_LEFT_ARROW);
-    cRightTanMove = Gdk::Cursor::create (display, Gdk::SB_RIGHT_ARROW);
-    cAdd = Gdk::Cursor::create (display, Gdk::PLUS);
-    cWait = Gdk::Cursor::create (display, Gdk::CLOCK);
+    Glib::RefPtr<Gdk::Pixbuf> add           = RTImage::createFromFile("crosshair-small.png");
+    Glib::RefPtr<Gdk::Pixbuf> colPick       = RTImage::createFromFile("color-picker-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> colPickAdd    = RTImage::createFromFile("color-picker-add-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> cropDraw      = RTImage::createFromFile("crop-point-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> crosshair     = RTImage::createFromFile("crosshair-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> empty         = RTImage::createFromFile("empty.png");
+    Glib::RefPtr<Gdk::Pixbuf> handClosed    = RTImage::createFromFile("hand-closed-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> handOpen      = RTImage::createFromFile("hand-open-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> moveBL        = RTImage::createFromFile("node-move-sw-ne-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> moveBR        = RTImage::createFromFile("node-move-nw-se-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> moveL         = RTImage::createFromFile("node-move-x-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> moveR         = RTImage::createFromFile("node-move-x-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> moveTL        = RTImage::createFromFile("node-move-nw-se-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> moveTR        = RTImage::createFromFile("node-move-sw-ne-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> moveX         = RTImage::createFromFile("node-move-x-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> moveXY        = RTImage::createFromFile("node-move-xy-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> moveY         = RTImage::createFromFile("node-move-y-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> rotate        = RTImage::createFromFile("rotate-aroundnode-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> wait          = RTImage::createFromFile("gears.png"); // Currently unused, create *-hicontrast once used.
 
-    Glib::RefPtr<Gdk::Pixbuf> crosshair = RTImage::createFromFile ("crosshair-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> handOpen = RTImage::createFromFile ("hand-open-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> handClosed = RTImage::createFromFile ("hand-closed-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> cropDraw = RTImage::createFromFile ("crop-point-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> resizeWidth = RTImage::createFromFile ("node-move-x-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> resizeHeight = RTImage::createFromFile ("node-move-y-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> resizeTopLeft = RTImage::createFromFile ("node-move-nw-se-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> resizeTopRight = RTImage::createFromFile ("node-move-sw-ne-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> resizeBottomLeft = RTImage::createFromFile ("node-move-sw-ne-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> resizeBottomRight = RTImage::createFromFile ("node-move-nw-se-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> colPick = RTImage::createFromFile ("color-picker-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> colPickAdd = RTImage::createFromFile ("color-picker-add-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> empty = RTImage::createFromFile ("empty.png");
-    Glib::RefPtr<Gdk::Pixbuf> move2D = RTImage::createFromFile ("node-move-xy-hicontrast.png");
-    Glib::RefPtr<Gdk::Pixbuf> rotate = RTImage::createFromFile ("rotate-aroundnode-hicontrast.png");
-
-    cCrosshair = crosshair ? Gdk::Cursor::create (cAdd->get_display(), crosshair, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
-    cHandOpen = handOpen ? Gdk::Cursor::create (cAdd->get_display(), handOpen, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
-    cHandClosed = handClosed ? Gdk::Cursor::create (cAdd->get_display(), handClosed, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
-    cCropDraw = cropDraw ? Gdk::Cursor::create (cAdd->get_display(), cropDraw, 3, 3) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
-    cResizeWidth = resizeWidth ? Gdk::Cursor::create (cAdd->get_display(), resizeWidth, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
-    cResizeHeight = resizeHeight ? Gdk::Cursor::create (cAdd->get_display(), resizeHeight, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
-    cResizeTopLeft = resizeTopLeft ? Gdk::Cursor::create (cAdd->get_display(), resizeTopLeft, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
-    cResizeTopRight = resizeTopRight ? Gdk::Cursor::create (cAdd->get_display(), resizeTopRight, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
-    cResizeBottomLeft = resizeBottomLeft ? Gdk::Cursor::create (cAdd->get_display(), resizeBottomLeft, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
-    cResizeBottomRight = resizeBottomRight ? Gdk::Cursor::create (cAdd->get_display(), resizeBottomRight, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
-    cWB = colPick ? Gdk::Cursor::create (cAdd->get_display(), colPick, 4, 21) : Gdk::Cursor::create (cAdd->get_display(), Gdk::ARROW);
-    cAddPicker = colPickAdd ? Gdk::Cursor::create (cAdd->get_display(), colPickAdd, 4, 21) : Gdk::Cursor::create (cAdd->get_display(), Gdk::ARROW);
-    cHidden = empty ? Gdk::Cursor::create (cAdd->get_display(), empty, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::FLEUR);
-    cMove2D = move2D ?  Gdk::Cursor::create (cAdd->get_display(), move2D, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::FLEUR);
-    cRotate = rotate ?  Gdk::Cursor::create (cAdd->get_display(), rotate, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::CIRCLE);
+    cAdd = add                  ? Gdk::Cursor::create(display, add, 8, 8)           : Gdk::Cursor::create(display, Gdk::PLUS);
+    cAddPicker = colPickAdd     ? Gdk::Cursor::create(display, colPickAdd, 4, 21)   : Gdk::Cursor::create(display, Gdk::PLUS);
+    cCropDraw = cropDraw        ? Gdk::Cursor::create(display, cropDraw, 3, 3)      : Gdk::Cursor::create(display, Gdk::DIAMOND_CROSS);
+    cCrosshair = crosshair      ? Gdk::Cursor::create(display, crosshair, 12, 12)   : Gdk::Cursor::create(display, Gdk::CROSSHAIR);
+    cEmpty = empty              ? Gdk::Cursor::create(display, empty, 12, 12)       : Gdk::Cursor::create(display, Gdk::BLANK_CURSOR);
+    cHandClosed = handClosed    ? Gdk::Cursor::create(display, handClosed, 12, 12)  : Gdk::Cursor::create(display, Gdk::HAND1);
+    cHandOpen = handOpen        ? Gdk::Cursor::create(display, handOpen, 12, 12)    : Gdk::Cursor::create(display, Gdk::HAND2);
+    cMoveBL = moveBL            ? Gdk::Cursor::create(display, moveBL, 12, 12)      : Gdk::Cursor::create(display, Gdk::BOTTOM_LEFT_CORNER);
+    cMoveBR = moveBR            ? Gdk::Cursor::create(display, moveBR, 12, 12)      : Gdk::Cursor::create(display, Gdk::BOTTOM_RIGHT_CORNER);
+    cMoveL = moveL              ? Gdk::Cursor::create(display, moveL, 12, 12)       : Gdk::Cursor::create(display, Gdk::SB_LEFT_ARROW);
+    cMoveR = moveR              ? Gdk::Cursor::create(display, moveR, 12, 12)       : Gdk::Cursor::create(display, Gdk::SB_RIGHT_ARROW);
+    cMoveTL = moveTL            ? Gdk::Cursor::create(display, moveTL, 12, 12)      : Gdk::Cursor::create(display, Gdk::TOP_LEFT_CORNER);
+    cMoveTR = moveTR            ? Gdk::Cursor::create(display, moveTR, 12, 12)      : Gdk::Cursor::create(display, Gdk::TOP_RIGHT_CORNER);
+    cMoveX = moveX              ? Gdk::Cursor::create(display, moveX, 12, 12)       : Gdk::Cursor::create(display, Gdk::SB_H_DOUBLE_ARROW);
+    cMoveXY = moveXY            ? Gdk::Cursor::create(display, moveXY, 12, 12)      : Gdk::Cursor::create(display, Gdk::FLEUR);
+    cMoveY = moveY              ? Gdk::Cursor::create(display, moveY, 12, 12)       : Gdk::Cursor::create(display, Gdk::SB_V_DOUBLE_ARROW);
+    cRotate = rotate            ? Gdk::Cursor::create(display, rotate, 12, 12)      : Gdk::Cursor::create(display, Gdk::EXCHANGE);
+    cWB = colPick               ? Gdk::Cursor::create(display, colPick, 4, 21)      : Gdk::Cursor::create(display, Gdk::TARGET);
+    cWait = wait                ? Gdk::Cursor::create(display, wait, 12, 12)        : Gdk::Cursor::create(display, Gdk::CLOCK);
 
     window = mainWindow;
 }
@@ -87,59 +82,87 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
 /* Set the cursor of the given window */
 void CursorManager::setCursor (Glib::RefPtr<Gdk::Window> window, CursorShape shape)
 {
-
-    if (shape == CSArrow)
-        // set_cursor without any arguments to select system default
+    switch (shape)
     {
-        window->set_cursor ();
-    } else if (shape == CSCrosshair) {
-        window->set_cursor (cCrosshair);
-    } else if (shape == CSHandOpen) {
-        window->set_cursor (cHandOpen);
-    } else if (shape == CSHandClosed) {
-        window->set_cursor (cHandClosed);
-    } else if (shape == CSMove) {
-        window->set_cursor (cHandClosed);
-    } else if (shape == CSResizeWidth) {
-        window->set_cursor (cResizeWidth);
-    } else if (shape == CSResizeHeight) {
-        window->set_cursor (cResizeHeight);
-    } else if (shape == CSResizeDiagonal) {
-        window->set_cursor (cMove2D);
-    } else if (shape == CSResizeTopLeft) {
-        window->set_cursor (cResizeTopLeft);
-    } else if (shape == CSResizeTopRight) {
-        window->set_cursor (cResizeTopRight);
-    } else if (shape == CSResizeBottomLeft) {
-        window->set_cursor (cResizeBottomLeft);
-    } else if (shape == CSResizeBottomRight) {
-        window->set_cursor (cResizeBottomRight);
-    } else if (shape == CSMove2D) {
-        window->set_cursor (cMove2D);
-    } else if (shape == CSMove1DH) {
-        window->set_cursor (cResizeWidth);
-    } else if (shape == CSMove1DV) {
-        window->set_cursor (cResizeHeight);
-    } else if (shape == CSMoveRotate) {
-        window->set_cursor (cRotate);
-    } else if (shape == CSSpotWB) {
-        window->set_cursor (cWB);
-    } else if (shape == CSAddColPicker) {
-        window->set_cursor (cAddPicker);
-    } else if (shape == CSCropSelect) {
-        window->set_cursor (cCropDraw);
-    } else if (shape == CSMoveLeft) {
-        window->set_cursor (cLeftTanMove);
-    } else if (shape == CSMoveRight) {
-        window->set_cursor (cRightTanMove);
-    } else if (shape == CSStraighten) {
-        window->set_cursor (cRotate);
-    } else if (shape == CSWait) {
-        window->set_cursor (cWait);
-    } else if (shape == CSPlus) {
-        window->set_cursor (cAdd);
-    } else if (shape == CSEmpty) {
-        window->set_cursor (cHidden);
+        case CursorShape::CSAddColPicker:
+            window->set_cursor(cAddPicker);
+            break;
+        case CursorShape::CSArrow:
+            window->set_cursor(); // set_cursor without any arguments to select system default
+            break;
+        case CursorShape::CSCropSelect:
+            window->set_cursor(cCropDraw);
+            break;
+        case CursorShape::CSCrosshair:
+            window->set_cursor(cCrosshair);
+            break;
+        case CursorShape::CSEmpty:
+            window->set_cursor(cEmpty);
+            break;
+        case CursorShape::CSHandClosed:
+            window->set_cursor(cHandClosed);
+            break;
+        case CursorShape::CSHandOpen:
+            window->set_cursor(cHandOpen);
+            break;
+        case CursorShape::CSMove:
+            window->set_cursor(cHandClosed);
+            break;
+        case CursorShape::CSMove1DH:
+            window->set_cursor(cMoveX);
+            break;
+        case CursorShape::CSMove1DV:
+            window->set_cursor(cMoveY);
+            break;
+        case CursorShape::CSMove2D:
+            window->set_cursor(cMoveXY);
+            break;
+        case CursorShape::CSMoveLeft:
+            window->set_cursor(cMoveL);
+            break;
+        case CursorShape::CSMoveRight:
+            window->set_cursor(cMoveR);
+            break;
+        case CursorShape::CSMoveRotate:
+            window->set_cursor(cRotate);
+            break;
+        case CursorShape::CSPlus:
+            window->set_cursor(cAdd);
+            break;
+        case CursorShape::CSResizeBottomLeft:
+            window->set_cursor(cMoveBL);
+            break;
+        case CursorShape::CSResizeBottomRight:
+            window->set_cursor(cMoveBR);
+            break;
+        case CursorShape::CSResizeDiagonal:
+            window->set_cursor(cMoveXY);
+            break;
+        case CursorShape::CSResizeHeight:
+            window->set_cursor(cMoveY);
+            break;
+        case CursorShape::CSResizeTopLeft:
+            window->set_cursor(cMoveTL);
+            break;
+        case CursorShape::CSResizeTopRight:
+            window->set_cursor(cMoveTR);
+            break;
+        case CursorShape::CSResizeWidth:
+            window->set_cursor(cMoveX);
+            break;
+        case CursorShape::CSSpotWB:
+            window->set_cursor(cWB);
+            break;
+        case CursorShape::CSStraighten:
+            window->set_cursor(cRotate);
+            break;
+        case CursorShape::CSUndefined:
+            break;
+        case CursorShape::CSWait:
+            window->set_cursor(cWait);
+            break;
+        default:
+            window->set_cursor(cCrosshair);
     }
 }
 
