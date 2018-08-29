@@ -72,7 +72,7 @@ void RawImageSource::ahd_demosaic()
             }
         }
 
-    border_interpolate(W, H, 5, rawData, red, green, blue);
+    bayerborder_demosaic(W, H, 5, rawData, red, green, blue);
 
 #ifdef _OPENMP
 #pragma omp parallel

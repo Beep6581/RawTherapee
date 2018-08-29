@@ -2087,7 +2087,7 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::LMMSE)) {
             lmmse_demosaic(W, H, rawData, red, green, blue, raw.bayersensor.lmmse_iterations);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST) ) {
-            fast_demosaic();
+            fast_bayerdemosaic();
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO) ) {
             nodemosaic(true);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCD) ) {
@@ -2097,7 +2097,7 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
         }
     } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
         if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST) ) {
-            fast_xtrans_interpolate(rawData, red, green, blue);
+            fast_xtransdemosaic(rawData, red, green, blue);
         } else if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::ONE_PASS)) {
             markesteijn_demosaic(1, false);
         } else if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::THREE_PASS) ) {

@@ -52,7 +52,7 @@ LUTf RawImageSource::initInvGrad()
 #endif
 //LUTf RawImageSource::invGrad = RawImageSource::initInvGrad();
 
-void RawImageSource::fast_demosaic()
+void RawImageSource::fast_bayerdemosaic()
 {
 
     double progress = 0.0;
@@ -494,3 +494,62 @@ void RawImageSource::fast_demosaic()
 }
 #undef TS
 #undef CLF
+
+#define fcol(row,col) xtrans[(row)%6][(col)%6]
+
+void RawImageSource::fast_xtransdemosaic (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
+{
+
+    double progress = 0.0;
+    const bool plistenerActive = plistener;
+
+    if (plistenerActive) {
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "fast Xtrans"));
+        plistener->setProgress (progress);
+    }
+
+    const int height = H, width = W;
+
+    xtransborder_demosaic (1, red, green, blue);
+    int xtrans[6][6];
+    ri->getXtransMatrix(xtrans);
+
+    #pragma omp parallel for
+
+    for(int row = 1; row < height - 1; row++) {
+        for(int col = 1; col < width - 1; col++) {
+            float sum[3] = {0.f};
+
+            for(int v = -1; v <= 1; v++) {
+                for(int h = -1; h <= 1; h++) {
+                    sum[fcol(row + v, col + h)] += rawData[row + v][(col + h)];
+                }
+            }
+
+            switch(fcol(row, col)) {
+            case 0:
+                red[row][col] = rawData[row][col];
+                green[row][col] = sum[1] * 0.2f;
+                blue[row][col] = sum[2] * 0.33333333f;
+                break;
+
+            case 1:
+                red[row][col] = sum[0] * 0.5f;
+                green[row][col] = rawData[row][col];
+                blue[row][col] = sum[2] * 0.5f;
+                break;
+
+            case 2:
+                red[row][col] = sum[0] * 0.33333333f;
+                green[row][col] = sum[1] * 0.2f;
+                blue[row][col] = rawData[row][col];
+                break;
+            }
+        }
+    }
+
+    if (plistenerActive) {
+        plistener->setProgress (1.0);
+    }
+}
+#undef fcol

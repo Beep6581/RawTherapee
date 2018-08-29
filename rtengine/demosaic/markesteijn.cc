@@ -115,54 +115,6 @@ namespace rtengine {
 #define fcol(row,col) xtrans[(row)%6][(col)%6]
 #define isgreen(row,col) (xtrans[(row)%3][(col)%3]&1)
 
-void RawImageSource::xtransborder_interpolate (int border, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
-{
-    const int height = H, width = W;
-
-    int xtrans[6][6];
-    ri->getXtransMatrix(xtrans);
-
-    for (int row = 0; row < height; row++)
-        for (int col = 0; col < width; col++) {
-            if (col == border && row >= border && row < height - border) {
-                col = width - border;
-            }
-
-            float sum[6] = {0.f};
-
-            for (int y = MAX(0, row - 1); y <= MIN(row + 1, height - 1); y++)
-                for (int x = MAX(0, col - 1); x <= MIN(col + 1, width - 1); x++) {
-                    int f = fcol(y, x);
-                    sum[f] += rawData[y][x];
-                    sum[f + 3]++;
-                }
-
-            switch(fcol(row, col)) {
-            case 0:
-                red[row][col] = rawData[row][col];
-                green[row][col] = (sum[1] / sum[4]);
-                blue[row][col] = (sum[2] / sum[5]);
-                break;
-
-            case 1:
-                if(sum[3] == 0.f) { // at the 4 corner pixels it can happen, that we have only green pixels in 2x2 area
-                    red[row][col] = green[row][col] = blue[row][col] = rawData[row][col];
-                } else {
-                    red[row][col] = (sum[0] / sum[3]);
-                    green[row][col] = rawData[row][col];
-                    blue[row][col] = (sum[2] / sum[5]);
-                }
-
-                break;
-
-            case 2:
-                red[row][col] = (sum[0] / sum[3]);
-                green[row][col] = (sum[1] / sum[4]);
-                blue[row][col] = rawData[row][col];
-            }
-        }
-}
-
 /*
    Frank Markesteijn's algorithm for Fuji X-Trans sensors
    adapted to RT by Ingo Weyrich 2014
@@ -198,7 +150,7 @@ void RawImageSource::markesteijn_demosaic (const int passes, const bool useCieLa
 
     const int height = H, width = W;
 
-    xtransborder_interpolate(6, red, green, blue);
+    xtransborder_demosaic(6, red, green, blue);
 
     float xyz_cam[3][3];
     {
@@ -955,64 +907,6 @@ void RawImageSource::markesteijn_demosaic (const int passes, const bool useCieLa
 
 }
 #undef CLIP
-void RawImageSource::fast_xtrans_interpolate (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
-{
-//    if (settings->verbose) {
-//        printf("fast X-Trans interpolation...\n");
-//    }
-
-    double progress = 0.0;
-    const bool plistenerActive = plistener;
-
-    if (plistenerActive) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "fast Xtrans"));
-        plistener->setProgress (progress);
-    }
-
-    const int height = H, width = W;
-
-    xtransborder_interpolate (1, red, green, blue);
-    int xtrans[6][6];
-    ri->getXtransMatrix(xtrans);
-
-    #pragma omp parallel for
-
-    for(int row = 1; row < height - 1; row++) {
-        for(int col = 1; col < width - 1; col++) {
-            float sum[3] = {0.f};
-
-            for(int v = -1; v <= 1; v++) {
-                for(int h = -1; h <= 1; h++) {
-                    sum[fcol(row + v, col + h)] += rawData[row + v][(col + h)];
-                }
-            }
-
-            switch(fcol(row, col)) {
-            case 0:
-                red[row][col] = rawData[row][col];
-                green[row][col] = sum[1] * 0.2f;
-                blue[row][col] = sum[2] * 0.33333333f;
-                break;
-
-            case 1:
-                red[row][col] = sum[0] * 0.5f;
-                green[row][col] = rawData[row][col];
-                blue[row][col] = sum[2] * 0.5f;
-                break;
-
-            case 2:
-                red[row][col] = sum[0] * 0.33333333f;
-                green[row][col] = sum[1] * 0.2f;
-                blue[row][col] = rawData[row][col];
-                break;
-            }
-        }
-    }
-
-    if (plistenerActive) {
-        plistener->setProgress (1.0);
-    }
-}
 #undef fcol
 #undef isgreen
 

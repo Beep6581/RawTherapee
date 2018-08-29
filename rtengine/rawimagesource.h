@@ -41,6 +41,9 @@ private:
     static LUTf initInvGrad ();
     static void colorSpaceConversion_ (Imagefloat* im, const ColorManagementParams& cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName);
     int  defTransform        (int tran);
+    void hphd_vertical       (float** hpmap, int col_from, int col_to);
+    void hphd_horizontal     (float** hpmap, int row_from, int row_to);
+    void hphd_green          (float** hpmap);
 
 protected:
     MyMutex getImageMutex;  // locks getImage
@@ -93,9 +96,6 @@ protected:
     std::vector<double> histMatchingCache;
     ColorManagementParams histMatchingParams;
 
-    void hphd_vertical       (float** hpmap, int col_from, int col_to);
-    void hphd_horizontal     (float** hpmap, int row_from, int row_to);
-    void hphd_green          (float** hpmap);
     void processFalseColorCorrectionThread (Imagefloat* im, array2D<float> &rbconv_Y, array2D<float> &rbconv_I, array2D<float> &rbconv_Q, array2D<float> &rbout_I, array2D<float> &rbout_Q, const int row_from, const int row_to);
     void hlRecovery          (const std::string &method, float* red, float* green, float* blue, int width, float* hlmax);
     void transformRect       (const PreviewProps &pp, int tran, int &sx1, int &sy1, int &width, int &height, int &fw);
@@ -261,11 +261,11 @@ protected:
     void lmmse_demosaic(int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, int iterations);
     void amaze_demosaic(int winx, int winy, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);//Emil's code for AMaZE
     void dual_demosaic(bool isBayer, const RAWParams &raw, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, double &contrast, bool autoContrast = false, int autoX = -1, int autoY = -1);
-    void fast_demosaic();//Emil's code for fast demosaicing
+    void fast_bayerdemosaic();//Emil's code for fast demosaicing
     void dcb_demosaic(int iterations, bool dcb_enhance);
     void ahd_demosaic();
     void rcd_demosaic();
-    void border_interpolate(int winw, int winh, int lborders, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
+    void bayerborder_demosaic(int winw, int winh, int lborders, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
     void dcb_initTileLimits(int &colMin, int &rowMin, int &colMax, int &rowMax, int x0, int y0, int border);
     void fill_raw( float (*cache )[3], int x0, int y0, float** rawData);
     void fill_border( float (*cache )[3], int border, int x0, int y0);
@@ -281,9 +281,9 @@ protected:
     void dcb_refinement(float (*image)[3], uint8_t *map, int x0, int y0);
     void dcb_color_full(float (*image)[3], int x0, int y0, float (*chroma)[2]);
 //    void cielab (const float (*rgb)[3], float* l, float* a, float *b, const int width, const int height, const int labWidth, const float xyz_cam[3][3]);
-    void xtransborder_interpolate (int border, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
+    void xtransborder_demosaic (int border, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
     void markesteijn_demosaic (const int passes, const bool useCieLab);
-    void fast_xtrans_interpolate (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
+    void fast_xtransdemosaic (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
     void pixelshift(int winx, int winy, int winw, int winh, const RAWParams &rawParams, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection);
     void    hflip       (Imagefloat* im);
     void    vflip       (Imagefloat* im);

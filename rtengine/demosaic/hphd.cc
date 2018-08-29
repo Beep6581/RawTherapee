@@ -22,22 +22,11 @@
 #include "../rawimagesource.h"
 #include "../rawimagesource_i.h"
 #include "../jaggedarray.h"
-#include "../rawimage.h"
-#include "../mytime.h"
-#include "../iccmatrices.h"
-#include "../iccstore.h"
-#include "../image8.h"
-#include "../curves.h"
-#include "../dfmanager.h"
-#include "../slicer.h"
 #include "../rt_math.h"
-#include "../color.h"
 #include "../../rtgui/multilangmgr.h"
 #include "../procparams.h"
-#include "../sleef.c"
 #include "../opthelper.h"
-#include "../median.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "../StopWatch.h"
 #ifdef _OPENMP
 #include <omp.h>
@@ -47,8 +36,6 @@ using namespace std;
 
 namespace rtengine
 {
-
-extern const Settings* settings;
 
 #undef ABS
 
@@ -312,215 +299,10 @@ void RawImageSource::hphd_demosaic ()
         }
     }
 
-    border_interpolate(W, H, 4, rawData, red, green, blue);
+    bayerborder_demosaic(W, H, 4, rawData, red, green, blue);
 
     if (plistener) {
         plistener->setProgress (1.0);
-    }
-}
-
-void RawImageSource::border_interpolate( int winw, int winh, int lborders, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
-{
-    int bord = lborders;
-    int width = winw;
-    int height = winh;
-
-    for (int i = 0; i < height; i++) {
-
-        float sum[6];
-
-        for (int j = 0; j < bord; j++) { //first few columns
-            for (int c = 0; c < 6; c++) {
-                sum[c] = 0;
-            }
-
-            for (int i1 = i - 1; i1 < i + 2; i1++)
-                for (int j1 = j - 1; j1 < j + 2; j1++) {
-                    if ((i1 > -1) && (i1 < height) && (j1 > -1)) {
-                        int c = FC(i1, j1);
-                        sum[c] += rawData[i1][j1];
-                        sum[c + 3]++;
-                    }
-                }
-
-            int c = FC(i, j);
-
-            if (c == 1) {
-                red[i][j] = sum[0] / sum[3];
-                green[i][j] = rawData[i][j];
-                blue[i][j] = sum[2] / sum[5];
-            } else {
-                green[i][j] = sum[1] / sum[4];
-
-                if (c == 0) {
-                    red[i][j] = rawData[i][j];
-                    blue[i][j] = sum[2] / sum[5];
-                } else {
-                    red[i][j] = sum[0] / sum[3];
-                    blue[i][j] = rawData[i][j];
-                }
-            }
-        }//j
-
-        for (int j = width - bord; j < width; j++) { //last few columns
-            for (int c = 0; c < 6; c++) {
-                sum[c] = 0;
-            }
-
-            for (int i1 = i - 1; i1 < i + 2; i1++)
-                for (int j1 = j - 1; j1 < j + 2; j1++) {
-                    if ((i1 > -1) && (i1 < height ) && (j1 < width)) {
-                        int c = FC(i1, j1);
-                        sum[c] += rawData[i1][j1];
-                        sum[c + 3]++;
-                    }
-                }
-
-            int c = FC(i, j);
-
-            if (c == 1) {
-                red[i][j] = sum[0] / sum[3];
-                green[i][j] = rawData[i][j];
-                blue[i][j] = sum[2] / sum[5];
-            } else {
-                green[i][j] = sum[1] / sum[4];
-
-                if (c == 0) {
-                    red[i][j] = rawData[i][j];
-                    blue[i][j] = sum[2] / sum[5];
-                } else {
-                    red[i][j] = sum[0] / sum[3];
-                    blue[i][j] = rawData[i][j];
-                }
-            }
-        }//j
-    }//i
-
-    for (int i = 0; i < bord; i++) {
-
-        float sum[6];
-
-        for (int j = bord; j < width - bord; j++) { //first few rows
-            for (int c = 0; c < 6; c++) {
-                sum[c] = 0;
-            }
-
-            for (int i1 = i - 1; i1 < i + 2; i1++)
-                for (int j1 = j - 1; j1 < j + 2; j1++) {
-                    if ((i1 > -1) && (i1 < height) && (j1 > -1)) {
-                        int c = FC(i1, j1);
-                        sum[c] += rawData[i1][j1];
-                        sum[c + 3]++;
-                    }
-                }
-
-            int c = FC(i, j);
-
-            if (c == 1) {
-                red[i][j] = sum[0] / sum[3];
-                green[i][j] = rawData[i][j];
-                blue[i][j] = sum[2] / sum[5];
-            } else {
-                green[i][j] = sum[1] / sum[4];
-
-                if (c == 0) {
-                    red[i][j] = rawData[i][j];
-                    blue[i][j] = sum[2] / sum[5];
-                } else {
-                    red[i][j] = sum[0] / sum[3];
-                    blue[i][j] = rawData[i][j];
-                }
-            }
-        }//j
-    }
-
-    for (int i = height - bord; i < height; i++) {
-
-        float sum[6];
-
-        for (int j = bord; j < width - bord; j++) { //last few rows
-            for (int c = 0; c < 6; c++) {
-                sum[c] = 0;
-            }
-
-            for (int i1 = i - 1; i1 < i + 2; i1++)
-                for (int j1 = j - 1; j1 < j + 2; j1++) {
-                    if ((i1 > -1) && (i1 < height) && (j1 < width)) {
-                        int c = FC(i1, j1);
-                        sum[c] += rawData[i1][j1];
-                        sum[c + 3]++;
-                    }
-                }
-
-            int c = FC(i, j);
-
-            if (c == 1) {
-                red[i][j] = sum[0] / sum[3];
-                green[i][j] = rawData[i][j];
-                blue[i][j] = sum[2] / sum[5];
-            } else {
-                green[i][j] = sum[1] / sum[4];
-
-                if (c == 0) {
-                    red[i][j] = rawData[i][j];
-                    blue[i][j] = sum[2] / sum[5];
-                } else {
-                    red[i][j] = sum[0] / sum[3];
-                    blue[i][j] = rawData[i][j];
-                }
-            }
-        }//j
-    }
-
-}
-
-void RawImageSource::nodemosaic(bool bw)
-{
-    red(W, H);
-    green(W, H);
-    blue(W, H);
-    #pragma omp parallel for
-
-    for (int i = 0; i < H; i++) {
-        for (int j = 0; j < W; j++) {
-            if (bw) {
-                red[i][j] = green[i][j] = blue[i][j] = rawData[i][j];
-            } else if(ri->getSensorType() != ST_FUJI_XTRANS) {
-                switch( FC(i, j)) {
-                case 0:
-                    red[i][j] = rawData[i][j];
-                    green[i][j] = blue[i][j] = 0;
-                    break;
-
-                case 1:
-                    green[i][j] = rawData[i][j];
-                    red[i][j] = blue[i][j] = 0;
-                    break;
-
-                case 2:
-                    blue[i][j] = rawData[i][j];
-                    red[i][j] = green[i][j] = 0;
-                    break;
-                }
-            } else {
-                switch( ri->XTRANSFC(i, j)) {
-                case 0:
-                    red[i][j] = rawData[i][j];
-                    green[i][j] = blue[i][j] = 0;
-                    break;
-
-                case 1:
-                    green[i][j] = rawData[i][j];
-                    red[i][j] = blue[i][j] = 0;
-                    break;
-
-                case 2:
-                    blue[i][j] = rawData[i][j];
-                    red[i][j] = green[i][j] = 0;
-                    break;
-                }
-            }
-        }
     }
 }
 
