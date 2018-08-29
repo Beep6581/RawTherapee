@@ -59,7 +59,6 @@
 #include "../rt_math.h"
 #include "../../rtgui/multilangmgr.h"
 #include "../procparams.h"
-#define BENCHMARK
 #include "../StopWatch.h"
 #ifdef _OPENMP
 #include <omp.h>

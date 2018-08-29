@@ -28,14 +28,12 @@
 #include "../rt_math.h"
 #include "../../rtgui/multilangmgr.h"
 #include "../procparams.h"
-//#define BENCHMARK
 #include "../StopWatch.h"
 
 using namespace std;
 
 namespace rtengine
 {
-
 
 inline void RawImageSource::interpolate_row_g (float* agh, float* agv, int i)
 {

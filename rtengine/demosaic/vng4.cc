@@ -24,7 +24,6 @@
 #include "../rawimagesource.h"
 #include "../rawimagesource_i.h"
 #include "../../rtgui/multilangmgr.h"
-//#define BENCHMARK
 #include "../StopWatch.h"
 
 namespace rtengine

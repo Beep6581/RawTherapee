@@ -20,13 +20,11 @@
 //
 ////////////////////////////////////////////////////////////////
 
-#include <cmath>
 #include "../rawimagesource.h"
 #include "../../rtgui/multilangmgr.h"
 #include "../procparams.h"
 #include "../gauss.h"
 #include "../median.h"
-//#define BENCHMARK
 #include "../StopWatch.h"
 namespace
 {
@@ -297,7 +295,7 @@ using namespace std;
 using namespace rtengine;
 void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RAWParams &rawParamsIn, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection)
 {
-BENCHFUN
+    BENCHFUN
     if(numFrames != 4) { // fallback for non pixelshift files
         amaze_demosaic(winx, winy, winw, winh, rawData, red, green, blue);
         return;

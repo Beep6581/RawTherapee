@@ -119,7 +119,7 @@ namespace rtengine {
    Frank Markesteijn's algorithm for Fuji X-Trans sensors
    adapted to RT by Ingo Weyrich 2014
 */
-// override CLIP function to test unclipped output
+// override CLIP function to test clipped output
 #define CLIP(x) (x)
 void RawImageSource::markesteijn_demosaic (const int passes, const bool useCieLab)
 {

@@ -27,6 +27,8 @@
 #include "../../rtgui/multilangmgr.h"
 #include "../procparams.h"
 #include "../opthelper.h"
+#include "../StopWatch.h"
+
 
 using namespace std;
 using namespace rtengine;
@@ -54,7 +56,7 @@ LUTf RawImageSource::initInvGrad()
 
 void RawImageSource::fast_bayerdemosaic()
 {
-
+    BENCHFUN
     double progress = 0.0;
     const bool plistenerActive = plistener;
 
@@ -499,7 +501,7 @@ void RawImageSource::fast_bayerdemosaic()
 
 void RawImageSource::fast_xtransdemosaic (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
 {
-
+    BENCHFUN
     double progress = 0.0;
     const bool plistenerActive = plistener;
 

@@ -29,7 +29,6 @@
 #include "../rt_math.h"
 #include "../../rtgui/multilangmgr.h"
 #include "../median.h"
-//#define BENCHMARK
 #include "../StopWatch.h"
 
 namespace rtengine

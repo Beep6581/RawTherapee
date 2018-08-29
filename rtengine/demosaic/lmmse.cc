@@ -27,7 +27,6 @@
 #include "../sleef.c"
 #include "../opthelper.h"
 #include "../median.h"
-#define BENCHMARK
 #include "../StopWatch.h"
 
 using namespace std;
@@ -52,6 +51,7 @@ namespace rtengine
 //TODO Tiles to reduce memory consumption
 void RawImageSource::lmmse_demosaic(int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, int iterations)
 {
+    BENCHFUN
     const int width = winw, height = winh;
     const int ba = 10;
     const int rr1 = height + 2 * ba;

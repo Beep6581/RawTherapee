@@ -17,7 +17,6 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <cmath>
-#include <cassert>
 
 #include "../rawimagesource.h"
 #include "../rawimagesource_i.h"
@@ -25,8 +24,7 @@
 #include "../rt_math.h"
 #include "../../rtgui/multilangmgr.h"
 #include "../procparams.h"
-#include "../opthelper.h"
-//#define BENCHMARK
+#define BENCHMARK
 #include "../StopWatch.h"
 #ifdef _OPENMP
 #include <omp.h>
@@ -238,6 +236,7 @@ void RawImageSource::hphd_green (float** hpmap)
 
 void RawImageSource::hphd_demosaic ()
 {
+    BENCHFUN
     if (plistener) {
         plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::HPHD)));
         plistener->setProgress (0.0);

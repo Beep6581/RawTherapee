@@ -16,11 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <cmath>
 
 #include "../rawimagesource.h"
-#include "../rt_math.h"
-#define BENCHMARK
 #include "../StopWatch.h"
 
 using namespace std;
@@ -28,10 +25,9 @@ using namespace std;
 namespace rtengine
 {
 
-extern const Settings* settings;
-
 void RawImageSource::nodemosaic(bool bw)
 {
+    BENCHFUN
     red(W, H);
     green(W, H);
     blue(W, H);

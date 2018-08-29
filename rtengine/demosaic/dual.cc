@@ -27,7 +27,6 @@
 #include "../rtengine.h"
 #include "../rawimagesource.h"
 #include "../rt_math.h"
-//#define BENCHMARK
 #include "../StopWatch.h"
 #include "../rt_algo.h"
 

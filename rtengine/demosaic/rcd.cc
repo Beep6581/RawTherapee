@@ -21,7 +21,6 @@
 #include "../rawimagesource.h"
 #include "../rt_math.h"
 #include "../../rtgui/multilangmgr.h"
-#include "../opthelper.h"
 #include "../StopWatch.h"
 
 using namespace std;

@@ -16,20 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <cmath>
+#include <algorithm>
 
 #include "../rawimagesource.h"
 #include "../rawimage.h"
-#include "../rt_math.h"
-#define BENCHMARK
-#include "../StopWatch.h"
 
 using namespace std;
 
 namespace rtengine
 {
-
-extern const Settings* settings;
 
 void RawImageSource::bayerborder_demosaic( int winw, int winh, int lborders, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
 {
@@ -203,8 +198,8 @@ void RawImageSource::xtransborder_demosaic (int border, array2D<float> &red, arr
 
             float sum[6] = {0.f};
 
-            for (int y = MAX(0, row - 1); y <= MIN(row + 1, height - 1); y++)
-                for (int x = MAX(0, col - 1); x <= MIN(col + 1, width - 1); x++) {
+            for (int y = std::max(0, row - 1); y <= std::min(row + 1, height - 1); y++)
+                for (int x = std::max(0, col - 1); x <= std::min(col + 1, width - 1); x++) {
                     int f = fcol(y, x);
                     sum[f] += rawData[y][x];
                     sum[f + 3]++;
@@ -235,5 +230,5 @@ void RawImageSource::xtransborder_demosaic (int border, array2D<float> &red, arr
             }
         }
 }
-
+#undef fcol
 } /* namespace */
