@@ -35,8 +35,12 @@ using namespace std;
 namespace rtengine
 {
 
+#define CLIREF(x) LIM(x,-200000.0f,200000.0f) // avoid overflow : do not act directly on image[] or pix[]
+#define x1125(a) (a + xdivf(a, 3))
+#define x0875(a) (a - xdivf(a, 3))
 #define x0250(a) xdivf(a, 2)
 #define x00625(a) xdivf(a, 4)
+#define x0125(a) xdivf(a, 3)
 
 // LSMME demosaicing algorithm
 // L. Zhang and X. Wu,
@@ -46,7 +50,7 @@ namespace rtengine
 // Adapted to RawTherapee by Jacques Desmis 3/2013
 // Improved speed and reduced memory consumption by Ingo Weyrich 2/2015
 //TODO Tiles to reduce memory consumption
-void RawImageSource::lmmse_interpolate_omp(int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, int iterations)
+void RawImageSource::lmmse_demosaic(int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, int iterations)
 {
     const int width = winw, height = winh;
     const int ba = 10;
@@ -116,7 +120,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, array2D<float> &r
                 }
             }
 
-            igv_interpolate(winw, winh);
+            igv_demosaic(winw, winh);
             return;
         }
     } else {
@@ -660,4 +664,338 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, array2D<float> &r
 
 }
 
+/*
+   Refinement based on EECI demosaicing algorithm by L. Chang and Y.P. Tan
+   Paul Lee
+   Adapted for RawTherapee - Jacques Desmis 04/2013
+*/
+
+#ifdef __SSE2__
+#define CLIPV(a) LIMV(a,ZEROV,c65535v)
+#endif
+void RawImageSource::refinement(int PassCount)
+{
+
+    int width = W;
+    int height = H;
+    int w1 = width;
+    int w2 = 2 * w1;
+
+    if (plistener) {
+        plistener->setProgressStr (M("TP_RAW_DMETHOD_PROGRESSBAR_REFINE"));
+    }
+
+    array2D<float> *rgb[3];
+    rgb[0] = &red;
+    rgb[1] = &green;
+    rgb[2] = &blue;
+
+    for (int b = 0; b < PassCount; b++) {
+        if (plistener) {
+            plistener->setProgress ((float)b / PassCount);
+        }
+
+
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            float *pix[3];
+
+            /* Reinforce interpolated green pixels on RED/BLUE pixel locations */
+#ifdef _OPENMP
+            #pragma omp for
+#endif
+
+            for (int row = 2; row < height - 2; row++) {
+                int col = 2 + (FC(row, 2) & 1);
+                int c = FC(row, col);
+#ifdef __SSE2__
+                __m128 dLv, dRv, dUv, dDv, v0v;
+                __m128 onev = _mm_set1_ps(1.f);
+                __m128 zd5v = _mm_set1_ps(0.5f);
+                __m128 c65535v = _mm_set1_ps(65535.f);
+
+                for (; col < width - 8; col += 8) {
+                    int indx = row * width + col;
+                    pix[c] = (float*)(*rgb[c]) + indx;
+                    pix[1] = (float*)(*rgb[1]) + indx;
+                    dLv = onev / (onev + vabsf(LC2VFU(pix[c][ -2]) - LC2VFU(pix[c][0])) + vabsf(LC2VFU(pix[1][ 1]) - LC2VFU(pix[1][ -1])));
+                    dRv = onev / (onev + vabsf(LC2VFU(pix[c][  2]) - LC2VFU(pix[c][0])) + vabsf(LC2VFU(pix[1][ 1]) - LC2VFU(pix[1][ -1])));
+                    dUv = onev / (onev + vabsf(LC2VFU(pix[c][-w2]) - LC2VFU(pix[c][0])) + vabsf(LC2VFU(pix[1][w1]) - LC2VFU(pix[1][-w1])));
+                    dDv = onev / (onev + vabsf(LC2VFU(pix[c][ w2]) - LC2VFU(pix[c][0])) + vabsf(LC2VFU(pix[1][w1]) - LC2VFU(pix[1][-w1])));
+                    v0v = CLIPV(LC2VFU(pix[c][0]) + zd5v + ((LC2VFU(pix[1][-1]) - LC2VFU(pix[c][-1])) * dLv + (LC2VFU(pix[1][1]) - LC2VFU(pix[c][1])) * dRv + (LC2VFU(pix[1][-w1]) - LC2VFU(pix[c][-w1])) * dUv + (LC2VFU(pix[1][w1]) - LC2VFU(pix[c][w1])) * dDv ) / (dLv + dRv + dUv + dDv));
+                    STC2VFU(pix[1][0], v0v);
+                }
+
+#endif
+
+                for (; col < width - 2; col += 2) {
+                    int indx = row * width + col;
+                    pix[c] = (float*)(*rgb[c]) + indx;
+                    pix[1] = (float*)(*rgb[1]) + indx;
+                    float dL = 1.f / (1.f + fabsf(pix[c][ -2] - pix[c][0]) + fabsf(pix[1][ 1] - pix[1][ -1]));
+                    float dR = 1.f / (1.f + fabsf(pix[c][  2] - pix[c][0]) + fabsf(pix[1][ 1] - pix[1][ -1]));
+                    float dU = 1.f / (1.f + fabsf(pix[c][-w2] - pix[c][0]) + fabsf(pix[1][w1] - pix[1][-w1]));
+                    float dD = 1.f / (1.f + fabsf(pix[c][ w2] - pix[c][0]) + fabsf(pix[1][w1] - pix[1][-w1]));
+                    float v0 = (pix[c][0] + 0.5f + ((pix[1][ -1] - pix[c][ -1]) * dL + (pix[1][  1] - pix[c][  1]) * dR + (pix[1][-w1] - pix[c][-w1]) * dU + (pix[1][ w1] - pix[c][ w1]) * dD ) / (dL + dR + dU + dD));
+                    pix[1][0] = CLIP(v0);
+                }
+            }
+
+            /* Reinforce interpolated red/blue pixels on GREEN pixel locations */
+#ifdef _OPENMP
+            #pragma omp for
+#endif
+
+            for (int row = 2; row < height - 2; row++) {
+                int col = 2 + (FC(row, 3) & 1);
+                int c = FC(row, col + 1);
+#ifdef __SSE2__
+                __m128 dLv, dRv, dUv, dDv, v0v;
+                __m128 onev = _mm_set1_ps(1.f);
+                __m128 zd5v = _mm_set1_ps(0.5f);
+                __m128 c65535v = _mm_set1_ps(65535.f);
+
+                for (; col < width - 8; col += 8) {
+                    int indx = row * width + col;
+                    pix[1] = (float*)(*rgb[1]) + indx;
+
+                    for (int i = 0; i < 2; c = 2 - c, i++) {
+                        pix[c] = (float*)(*rgb[c]) + indx;
+                        dLv = onev / (onev + vabsf(LC2VFU(pix[1][ -2]) - LC2VFU(pix[1][0])) + vabsf(LC2VFU(pix[c][ 1]) - LC2VFU(pix[c][ -1])));
+                        dRv = onev / (onev + vabsf(LC2VFU(pix[1][  2]) - LC2VFU(pix[1][0])) + vabsf(LC2VFU(pix[c][ 1]) - LC2VFU(pix[c][ -1])));
+                        dUv = onev / (onev + vabsf(LC2VFU(pix[1][-w2]) - LC2VFU(pix[1][0])) + vabsf(LC2VFU(pix[c][w1]) - LC2VFU(pix[c][-w1])));
+                        dDv = onev / (onev + vabsf(LC2VFU(pix[1][ w2]) - LC2VFU(pix[1][0])) + vabsf(LC2VFU(pix[c][w1]) - LC2VFU(pix[c][-w1])));
+                        v0v = CLIPV(LC2VFU(pix[1][0]) + zd5v - ((LC2VFU(pix[1][-1]) - LC2VFU(pix[c][-1])) * dLv + (LC2VFU(pix[1][1]) - LC2VFU(pix[c][1])) * dRv + (LC2VFU(pix[1][-w1]) - LC2VFU(pix[c][-w1])) * dUv + (LC2VFU(pix[1][w1]) - LC2VFU(pix[c][w1])) * dDv ) / (dLv + dRv + dUv + dDv));
+                        STC2VFU(pix[c][0], v0v);
+                    }
+                }
+
+#endif
+
+                for (; col < width - 2; col += 2) {
+                    int indx = row * width + col;
+                    pix[1] = (float*)(*rgb[1]) + indx;
+
+                    for (int i = 0; i < 2; c = 2 - c, i++) {
+                        pix[c] = (float*)(*rgb[c]) + indx;
+                        float dL = 1.f / (1.f + fabsf(pix[1][ -2] - pix[1][0]) + fabsf(pix[c][ 1] - pix[c][ -1]));
+                        float dR = 1.f / (1.f + fabsf(pix[1][  2] - pix[1][0]) + fabsf(pix[c][ 1] - pix[c][ -1]));
+                        float dU = 1.f / (1.f + fabsf(pix[1][-w2] - pix[1][0]) + fabsf(pix[c][w1] - pix[c][-w1]));
+                        float dD = 1.f / (1.f + fabsf(pix[1][ w2] - pix[1][0]) + fabsf(pix[c][w1] - pix[c][-w1]));
+                        float v0 = (pix[1][0] + 0.5f - ((pix[1][ -1] - pix[c][ -1]) * dL + (pix[1][  1] - pix[c][  1]) * dR + (pix[1][-w1] - pix[c][-w1]) * dU + (pix[1][ w1] - pix[c][ w1]) * dD ) / (dL + dR + dU + dD));
+                        pix[c][0] = CLIP(v0);
+                    }
+                }
+            }
+
+            /* Reinforce integrated red/blue pixels on BLUE/RED pixel locations */
+#ifdef _OPENMP
+            #pragma omp for
+#endif
+
+            for (int row = 2; row < height - 2; row++) {
+                int col = 2 + (FC(row, 2) & 1);
+                int c = 2 - FC(row, col);
+#ifdef __SSE2__
+                __m128 dLv, dRv, dUv, dDv, v0v;
+                __m128 onev = _mm_set1_ps(1.f);
+                __m128 zd5v = _mm_set1_ps(0.5f);
+                __m128 c65535v = _mm_set1_ps(65535.f);
+
+                for (; col < width - 8; col += 8) {
+                    int indx = row * width + col;
+                    pix[0] = (float*)(*rgb[0]) + indx;
+                    pix[1] = (float*)(*rgb[1]) + indx;
+                    pix[2] = (float*)(*rgb[2]) + indx;
+                    int d = 2 - c;
+                    dLv = onev / (onev + vabsf(LC2VFU(pix[d][ -2]) - LC2VFU(pix[d][0])) + vabsf(LC2VFU(pix[1][ 1]) - LC2VFU(pix[1][ -1])));
+                    dRv = onev / (onev + vabsf(LC2VFU(pix[d][  2]) - LC2VFU(pix[d][0])) + vabsf(LC2VFU(pix[1][ 1]) - LC2VFU(pix[1][ -1])));
+                    dUv = onev / (onev + vabsf(LC2VFU(pix[d][-w2]) - LC2VFU(pix[d][0])) + vabsf(LC2VFU(pix[1][w1]) - LC2VFU(pix[1][-w1])));
+                    dDv = onev / (onev + vabsf(LC2VFU(pix[d][ w2]) - LC2VFU(pix[d][0])) + vabsf(LC2VFU(pix[1][w1]) - LC2VFU(pix[1][-w1])));
+                    v0v = CLIPV(LC2VFU(pix[1][0]) + zd5v - ((LC2VFU(pix[1][-1]) - LC2VFU(pix[c][-1])) * dLv + (LC2VFU(pix[1][1]) - LC2VFU(pix[c][1])) * dRv + (LC2VFU(pix[1][-w1]) - LC2VFU(pix[c][-w1])) * dUv + (LC2VFU(pix[1][w1]) - LC2VFU(pix[c][w1])) * dDv ) / (dLv + dRv + dUv + dDv));
+                    STC2VFU(pix[c][0], v0v);
+                }
+
+#endif
+
+                for (; col < width - 2; col += 2) {
+                    int indx = row * width + col;
+                    pix[0] = (float*)(*rgb[0]) + indx;
+                    pix[1] = (float*)(*rgb[1]) + indx;
+                    pix[2] = (float*)(*rgb[2]) + indx;
+                    int d = 2 - c;
+                    float dL = 1.f / (1.f + fabsf(pix[d][ -2] - pix[d][0]) + fabsf(pix[1][ 1] - pix[1][ -1]));
+                    float dR = 1.f / (1.f + fabsf(pix[d][  2] - pix[d][0]) + fabsf(pix[1][ 1] - pix[1][ -1]));
+                    float dU = 1.f / (1.f + fabsf(pix[d][-w2] - pix[d][0]) + fabsf(pix[1][w1] - pix[1][-w1]));
+                    float dD = 1.f / (1.f + fabsf(pix[d][ w2] - pix[d][0]) + fabsf(pix[1][w1] - pix[1][-w1]));
+                    float v0 = (pix[1][0] + 0.5f - ((pix[1][ -1] - pix[c][ -1]) * dL + (pix[1][  1] - pix[c][  1]) * dR + (pix[1][-w1] - pix[c][-w1]) * dU + (pix[1][ w1] - pix[c][ w1]) * dD ) / (dL + dR + dU + dD));
+                    pix[c][0] = CLIP(v0);
+                }
+            }
+        } // end parallel
+    }
+
+}
+#ifdef __SSE2__
+#undef CLIPV
+#endif
+
+
+// Refinement based on EECI demozaicing algorithm by L. Chang and Y.P. Tan
+// from "Lassus" : Luis Sanz Rodriguez, adapted by Jacques Desmis - JDC - and Oliver Duis for RawTherapee
+// increases the signal to noise ratio (PSNR) # +1 to +2 dB : tested with Dcraw : eg: Lighthouse + AMaZE : whitout refinement:39.96dB, with refinement:41.86 dB
+// reduce color artifacts, improves the interpolation
+// but it's relatively slow
+//
+// Should be DISABLED if it decreases image quality by increases some image noise and generates blocky edges
+void RawImageSource::refinement_lassus(int PassCount)
+{
+    // const int PassCount=1;
+
+    // if (settings->verbose) printf("Refinement\n");
+
+    int u = W, v = 2 * u, w = 3 * u, x = 4 * u, y = 5 * u;
+    float (*image)[3];
+    image = (float(*)[3]) calloc(W * H, sizeof * image);
+#ifdef _OPENMP
+    #pragma omp parallel shared(image)
+#endif
+    {
+        // convert red, blue, green to image
+#ifdef _OPENMP
+        #pragma omp for
+#endif
+
+        for (int i = 0; i < H; i++) {
+            for (int j = 0; j < W; j++) {
+                image[i * W + j][0] = red  [i][j];
+                image[i * W + j][1] = green[i][j];
+                image[i * W + j][2] = blue [i][j];
+            }
+        }
+
+        for (int b = 0; b < PassCount; b++) {
+            if (plistener) {
+                plistener->setProgressStr (M("TP_RAW_DMETHOD_PROGRESSBAR_REFINE"));
+                plistener->setProgress ((float)b / PassCount);
+            }
+
+            // Reinforce interpolated green pixels on RED/BLUE pixel locations
+#ifdef _OPENMP
+            #pragma omp for
+#endif
+
+            for (int row = 6; row < H - 6; row++) {
+                for (int col = 6 + (FC(row, 2) & 1), c = FC(row, col); col < W - 6; col += 2) {
+                    float (*pix)[3] = image + row * W + col;
+
+                    // Cubic Spline Interpolation by Li and Randhawa, modified by Luis Sanz Rodriguez
+
+                    float f[4];
+                    f[0] = 1.0f / (1.0f + xmul2f(fabs(x1125(pix[-v][c]) - x0875(pix[0][c]) - x0250(pix[-x][c]))) + fabs(x0875(pix[u][1]) - x1125(pix[-u][1]) + x0250(pix[-w][1])) + fabs(x0875(pix[-w][1]) - x1125(pix[-u][1]) + x0250(pix[-y][1])));
+                    f[1] = 1.0f / (1.0f + xmul2f(fabs(x1125(pix[+2][c]) - x0875(pix[0][c]) - x0250(pix[+4][c]))) + fabs(x0875(pix[1][1]) - x1125(pix[-1][1]) + x0250(pix[+3][1])) + fabs(x0875(pix[+3][1]) - x1125(pix[+1][1]) + x0250(pix[+5][1])));
+                    f[2] = 1.0f / (1.0f + xmul2f(fabs(x1125(pix[-2][c]) - x0875(pix[0][c]) - x0250(pix[-4][c]))) + fabs(x0875(pix[1][1]) - x1125(pix[-1][1]) + x0250(pix[-3][1])) + fabs(x0875(pix[-3][1]) - x1125(pix[-1][1]) + x0250(pix[-5][1])));
+                    f[3] = 1.0f / (1.0f + xmul2f(fabs(x1125(pix[+v][c]) - x0875(pix[0][c]) - x0250(pix[+x][c]))) + fabs(x0875(pix[u][1]) - x1125(pix[-u][1]) + x0250(pix[+w][1])) + fabs(x0875(pix[+w][1]) - x1125(pix[+u][1]) + x0250(pix[+y][1])));
+
+                    float g[4];//CLIREF avoid overflow
+                    g[0] = pix[0][c] + (x0875(CLIREF(pix[-u][1] - pix[-u][c])) + x0125(CLIREF(pix[+u][1] - pix[+u][c])));
+                    g[1] = pix[0][c] + (x0875(CLIREF(pix[+1][1] - pix[+1][c])) + x0125(CLIREF(pix[-1][1] - pix[-1][c])));
+                    g[2] = pix[0][c] + (x0875(CLIREF(pix[-1][1] - pix[-1][c])) + x0125(CLIREF(pix[+1][1] - pix[+1][c])));
+                    g[3] = pix[0][c] + (x0875(CLIREF(pix[+u][1] - pix[+u][c])) + x0125(CLIREF(pix[-u][1] - pix[-u][c])));
+
+                    pix[0][1] = (f[0] * g[0] + f[1] * g[1] + f[2] * g[2] + f[3] * g[3]) / (f[0] + f[1] + f[2] + f[3]);
+
+                }
+            }
+
+            // Reinforce interpolated red/blue pixels on GREEN pixel locations
+#ifdef _OPENMP
+            #pragma omp for
+#endif
+
+            for (int row = 6; row < H - 6; row++) {
+                for (int col = 6 + (FC(row, 3) & 1), c = FC(row, col + 1); col < W - 6; col += 2) {
+                    float (*pix)[3] = image + row * W + col;
+
+                    for (int i = 0; i < 2; c = 2 - c, i++) {
+                        float f[4];
+                        f[0] = 1.0f / (1.0f + xmul2f(fabs(x0875(pix[-v][1]) - x1125(pix[0][1]) + x0250(pix[-x][1]))) + fabs(pix[u] [c] - pix[-u][c]) + fabs(pix[-w][c] - pix[-u][c]));
+                        f[1] = 1.0f / (1.0f + xmul2f(fabs(x0875(pix[+2][1]) - x1125(pix[0][1]) + x0250(pix[+4][1]))) + fabs(pix[+1][c] - pix[-1][c]) + fabs(pix[+3][c] - pix[+1][c]));
+                        f[2] = 1.0f / (1.0f + xmul2f(fabs(x0875(pix[-2][1]) - x1125(pix[0][1]) + x0250(pix[-4][1]))) + fabs(pix[+1][c] - pix[-1][c]) + fabs(pix[-3][c] - pix[-1][c]));
+                        f[3] = 1.0f / (1.0f + xmul2f(fabs(x0875(pix[+v][1]) - x1125(pix[0][1]) + x0250(pix[+x][1]))) + fabs(pix[u] [c] - pix[-u][c]) + fabs(pix[+w][c] - pix[+u][c]));
+
+                        float g[5];//CLIREF avoid overflow
+                        g[0] = CLIREF(pix[-u][1] - pix[-u][c]);
+                        g[1] = CLIREF(pix[+1][1] - pix[+1][c]);
+                        g[2] = CLIREF(pix[-1][1] - pix[-1][c]);
+                        g[3] = CLIREF(pix[+u][1] - pix[+u][c]);
+                        g[4] = ((f[0] * g[0] + f[1] * g[1] + f[2] * g[2] + f[3] * g[3]) / (f[0] + f[1] + f[2] + f[3]));
+                        pix[0][c] = pix[0][1] - (0.65f * g[4] + 0.35f * CLIREF(pix[0][1] - pix[0][c]));
+                    }
+                }
+            }
+
+            // Reinforce integrated red/blue pixels on BLUE/RED pixel locations
+#ifdef _OPENMP
+            #pragma omp for
+#endif
+
+            for (int row = 6; row < H - 6; row++) {
+                for (int col = 6 + (FC(row, 2) & 1), c = 2 - FC(row, col), d = 2 - c; col < W - 6; col += 2) {
+                    float (*pix)[3] = image + row * W + col;
+
+                    float f[4];
+                    f[0] = 1.0f / (1.0f + xmul2f(fabs(x1125(pix[-v][d]) - x0875(pix[0][d]) - x0250(pix[-x][d]))) + fabs(x0875(pix[u][1]) - x1125(pix[-u][1]) + x0250(pix[-w][1])) + fabs(x0875(pix[-w][1]) - x1125(pix[-u][1]) + x0250(pix[-y][1])));
+                    f[1] = 1.0f / (1.0f + xmul2f(fabs(x1125(pix[+2][d]) - x0875(pix[0][d]) - x0250(pix[+4][d]))) + fabs(x0875(pix[1][1]) - x1125(pix[-1][1]) + x0250(pix[+3][1])) + fabs(x0875(pix[+3][1]) - x1125(pix[+1][1]) + x0250(pix[+5][1])));
+                    f[2] = 1.0f / (1.0f + xmul2f(fabs(x1125(pix[-2][d]) - x0875(pix[0][d]) - x0250(pix[-4][d]))) + fabs(x0875(pix[1][1]) - x1125(pix[-1][1]) + x0250(pix[-3][1])) + fabs(x0875(pix[-3][1]) - x1125(pix[-1][1]) + x0250(pix[-5][1])));
+                    f[3] = 1.0f / (1.0f + xmul2f(fabs(x1125(pix[+v][d]) - x0875(pix[0][d]) - x0250(pix[+x][d]))) + fabs(x0875(pix[u][1]) - x1125(pix[-u][1]) + x0250(pix[+w][1])) + fabs(x0875(pix[+w][1]) - x1125(pix[+u][1]) + x0250(pix[+y][1])));
+
+                    float g[5];
+                    g[0] = (x0875((pix[-u][1] - pix[-u][c])) + x0125((pix[-v][1] - pix[-v][c])));
+                    g[1] = (x0875((pix[+1][1] - pix[+1][c])) + x0125((pix[+2][1] - pix[+2][c])));
+                    g[2] = (x0875((pix[-1][1] - pix[-1][c])) + x0125((pix[-2][1] - pix[-2][c])));
+                    g[3] = (x0875((pix[+u][1] - pix[+u][c])) + x0125((pix[+v][1] - pix[+v][c])));
+
+                    g[4] = (f[0] * g[0] + f[1] * g[1] + f[2] * g[2] + f[3] * g[3]) / (f[0] + f[1] + f[2] + f[3]);
+
+                    const std::array<float, 9> p = {
+                        pix[-u - 1][1] - pix[-u - 1][c],
+                        pix[-u + 0][1] - pix[-u + 0][c],
+                        pix[-u + 1][1] - pix[-u + 1][c],
+                        pix[+0 - 1][1] - pix[+0 - 1][c],
+                        pix[+0 + 0][1] - pix[+0 + 0][c],
+                        pix[+0 + 1][1] - pix[+0 + 1][c],
+                        pix[+u - 1][1] - pix[+u - 1][c],
+                        pix[+u + 0][1] - pix[+u + 0][c],
+                        pix[+u + 1][1] - pix[+u + 1][c]
+                    };
+
+                    const float med = median(p);
+
+                    pix[0][c] = LIM(pix[0][1] - (1.30f * g[4] - 0.30f * (pix[0][1] - pix[0][c])), 0.99f * (pix[0][1] - med), 1.01f * (pix[0][1] - med));
+
+                }
+            }
+
+        }
+
+        // put modified values to red, green, blue
+#ifdef _OPENMP
+        #pragma omp for
+#endif
+
+        for (int i = 0; i < H; i++) {
+            for (int j = 0; j < W; j++) {
+                red  [i][j] = image[i * W + j][0];
+                green[i][j] = image[i * W + j][1];
+                blue [i][j] = image[i * W + j][2];
+            }
+        }
+    }
+
+    free(image);
+
+}
 } /* namespace */

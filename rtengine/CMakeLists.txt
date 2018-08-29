@@ -54,6 +54,7 @@ set(RTENGINESOURCEFILES
     demosaic/dual.cc
     demosaic/eahd.cc
     demosaic/fast.cc
+    demosaic/igv.cc
     demosaic/lmmse.cc
     demosaic/pixelshift.cc
     demosaic/rcd.cc

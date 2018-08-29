@@ -21,14 +21,12 @@
 
 #include "../rtengine.h"
 #include "../rawimagesource.h"
-#include "../rt_algo.h"
 #include "../rt_math.h"
 #include "../../rtgui/multilangmgr.h"
 #include "../opthelper.h"
 #include "../StopWatch.h"
 
-namespace rtengine
-{
+namespace {
 const double xyz_rgb[3][3] = {          // XYZ from RGB
     { 0.412453, 0.357580, 0.180423 },
     { 0.212671, 0.715160, 0.072169 },
@@ -36,7 +34,7 @@ const double xyz_rgb[3][3] = {          // XYZ from RGB
 };
 const float d65_white[3] = { 0.950456, 1, 1.088754 };
 
-void RawImageSource::cielab (const float (*rgb)[3], float* l, float* a, float *b, const int width, const int height, const int labWidth, const float xyz_cam[3][3])
+void cielab (const float (*rgb)[3], float* l, float* a, float *b, const int width, const int height, const int labWidth, const float xyz_cam[3][3])
 {
     static LUTf cbrt(0x14000);
     static bool cbrtinit = false;
@@ -45,7 +43,7 @@ void RawImageSource::cielab (const float (*rgb)[3], float* l, float* a, float *b
         if(!cbrtinit) {
             for (int i = 0; i < 0x14000; i++) {
                 double r = i / 65535.0;
-                cbrt[i] = r > Color::eps ? std::cbrt(r) : (Color::kappa * r + 16.0) / 116.0;
+                cbrt[i] = r > rtengine::Color::eps ? std::cbrt(r) : (rtengine::Color::kappa * r + 16.0) / 116.0;
             }
 
             cbrtinit = true;
@@ -109,6 +107,9 @@ void RawImageSource::cielab (const float (*rgb)[3], float* l, float* a, float *b
         }
     }
 }
+}
+
+namespace rtengine {
 
 
 #define fcol(row,col) xtrans[(row)%6][(col)%6]
@@ -168,7 +169,7 @@ void RawImageSource::xtransborder_interpolate (int border, array2D<float> &red, 
 */
 // override CLIP function to test unclipped output
 #define CLIP(x) (x)
-void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
+void RawImageSource::markesteijn_demosaic (const int passes, const bool useCieLab)
 {
     BENCHFUN
     constexpr int ts = 114;      /* Tile Size */
@@ -196,10 +197,6 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
     ushort sgrow = 0, sgcol = 0;
 
     const int height = H, width = W;
-
-//    if (settings->verbose) {
-//        printf("%d-pass X-Trans interpolation using %s conversion...\n", passes, useCieLab ? "lab" : "yuv");
-//    }
 
     xtransborder_interpolate(6, red, green, blue);
 
