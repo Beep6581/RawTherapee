@@ -74,8 +74,7 @@ void RawImageSource::igv_demosaic(int winw, int winh)
     chr[2] = hdif;
     chr[3] = vdif;
 
-    unsigned cfarray[2][2] = {{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}};
-    bayerborder_demosaic(winw, winh, 7, rawData, red, green, blue, cfarray);
+    bayerborder_demosaic(winw, winh, 7, rawData, red, green, blue, {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}});
 
     if (plistener) {
         plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::IGV)));

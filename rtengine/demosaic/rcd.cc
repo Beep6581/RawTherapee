@@ -290,8 +290,7 @@ void RawImageSource::rcd_demosaic()
     free(PQ_Dir);
 }
 
-    unsigned cfarray[2][2] = {{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}};
-    bayerborder_demosaic(W, H, rcdBorder, rawData, red, green, blue, cfarray);
+    bayerborder_demosaic(W, H, rcdBorder, rawData, red, green, blue, {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}});
 
     if (plistener) {
         plistener->setProgress(1);

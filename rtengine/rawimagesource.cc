@@ -2060,7 +2060,6 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
     t1.set();
 
     if (ri->getSensorType() == ST_BAYER) {
-        unsigned cfa[2][2] = {{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}};
         if ( raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::HPHD) ) {
             hphd_demosaic ();
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::VNG4) ) {
@@ -2073,10 +2072,11 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
                 plistener->setProgress(0.0);
             }
             std::function<bool(double)> setProgCancel = [this](double p) -> bool {
-                plistener->setProgress(p);
+                if(plistener)
+                    plistener->setProgress(p);
                 return false;
             };
-            amaze_demosaic (0, 0, W, H, rawData, red, green, blue, cfa, setProgCancel, initialGain, border, W, H);
+            amaze_demosaic (0, 0, W, H, rawData, red, green, blue, {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, initialGain, border, W, H);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEVNG4)
                    || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCBVNG4)
                    || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCDVNG4)) {

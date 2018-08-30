@@ -43,14 +43,15 @@ void RawImageSource::dual_demosaic(bool isBayer, const RAWParams &raw, int winw,
     if (contrast == 0.0 && !autoContrast) {
         // contrast == 0.0 means only first demosaicer will be used
         if(isBayer) {
-            unsigned cfa[2][2] = {{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}};
+            std::array<std::array<unsigned, 2>, 2> cfa {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}};
             if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEVNG4) ) {
                 if (plistener) {
                     plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZE)));
                     plistener->setProgress(0.0);
                 }
                 std::function<bool(double)> setProgCancel = [this](double p) -> bool {
-                    plistener->setProgress(p);
+                    if (plistener)
+                        plistener->setProgress(p);
                     return false;
                 };
                 amaze_demosaic(0, 0, winw, winh, rawData, red, green, blue, cfa, setProgCancel, initialGain, border, W, H);
@@ -78,14 +79,15 @@ void RawImageSource::dual_demosaic(bool isBayer, const RAWParams &raw, int winw,
     if (isBayer) {
         vng4_demosaic(rawData, redTmp, greenTmp, blueTmp);
 
-        unsigned cfa[2][2] = {{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}};
+        std::array<std::array<unsigned, 2>, 2> cfa {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}};
         if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEVNG4) || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)) {
             if (plistener) {
                 plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZE)));
                 plistener->setProgress(0.0);
             }
             std::function<bool(double)> setProgCancel = [this](double p) -> bool {
-                plistener->setProgress(p);
+                if (plistener)
+                    plistener->setProgress(p);
                 return false;
             };
             amaze_demosaic(0, 0, winw, winh, rawData, red, green, blue, cfa, setProgCancel, initialGain, border, W, H);

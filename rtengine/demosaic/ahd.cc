@@ -71,8 +71,7 @@ void RawImageSource::ahd_demosaic()
             }
         }
 
-    unsigned cfarray[2][2] = {{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}};
-    bayerborder_demosaic(W, H, 5, rawData, red, green, blue, cfarray);
+    bayerborder_demosaic(W, H, 5, rawData, red, green, blue, {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}});
 
 #ifdef _OPENMP
 #pragma omp parallel

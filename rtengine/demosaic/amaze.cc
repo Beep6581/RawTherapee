@@ -26,6 +26,9 @@
 //
 ////////////////////////////////////////////////////////////////
 
+#include <algorithm>
+#include <array>
+
 #include "../rawimagesource.h"
 #include "../rt_math.h"
 #include "../sleef.c"
@@ -35,7 +38,7 @@
 
 namespace
 {
-unsigned fc(unsigned cfa[2][2], unsigned row, unsigned col)
+unsigned fc(std::array<std::array<unsigned, 2>, 2> cfa, unsigned row, unsigned col)
 {
     return cfa[row & 1][col & 1];
 }
@@ -44,11 +47,11 @@ unsigned fc(unsigned cfa[2][2], unsigned row, unsigned col)
 namespace rtengine
 {
 
-void RawImageSource::amaze_demosaic(int winx, int winy, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, unsigned cfarray[2][2], std::function<bool(double)> setProgCancel, double initGain, int border, int W, int H)
+void RawImageSource::amaze_demosaic(int winx, int winy, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, const std::array<std::array<unsigned, 2>, 2> &cfarray, const std::function<bool(double)> setProgCancel, double initGain, int border, int W, int H)
 {
     BENCHFUN
 
-    volatile double progress = 0.0;
+    double progress = 0.0;
     setProgCancel(progress);
 
     const int width = winw, height = winh;
@@ -1573,8 +1576,8 @@ void RawImageSource::amaze_demosaic(int winx, int winy, int winw, int winh, cons
                     #pragma omp critical (amazeprogress)
 #endif
                     {
-                        progress += (double)32 * ((ts - 32) * (ts - 32)) / (height * width);
-                        progress = progress > 1.0 ? 1.0 : progress;
+                        progress += 32.0 * SQR(ts - 32) / (height * width);
+                        progress = std::min(progress, 1.0);
                         setProgCancel(progress);
                     }
                 }
