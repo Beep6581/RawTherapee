@@ -335,7 +335,8 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
             interpolate_row_rb_mul_pp (rawData, red[i], blue[i], green[i - 1], green[i], green[i + 1], i, 1.0, 1.0, 1.0, 0, W, 1);
         }
     }
-    bayerborder_demosaic(W, H, 3, rawData, red, green, blue);
+    unsigned cfarray[2][2] = {{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}};
+    bayerborder_demosaic(W, H, 3, rawData, red, green, blue, cfarray);
 
     if(plistenerActive) {
         plistener->setProgress (1.0);
