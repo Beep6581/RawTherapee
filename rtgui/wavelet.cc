@@ -919,7 +919,7 @@ void Wavelet::updatewavLabel ()
     }
 }
 
-// Will only reset the chanel mixer
+// Will only reset the channel mixer
 // WARNING!  In mutiImage mode, and for sliders in ADD mode, this will reset the slider to 0, but not to the default value as in SET mode.
 void Wavelet::neutral_pressed ()
 {

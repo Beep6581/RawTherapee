@@ -162,7 +162,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
     const bool protectskins = params->vibrance.protectskins;
     const bool avoidcolorshift = params->vibrance.avoidcolorshift;
 
-    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.working);
+    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.workingProfile);
     //inverse matrix user select
     const float wip[3][3] = {
         {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},

@@ -57,6 +57,7 @@ private:
     lfModifier *data_;
     bool swap_xy_;
     int flags_;
+    MyMutex *lfModifierMutex;
 };
 
 class LFCamera final
@@ -121,6 +122,7 @@ private:
     LFDatabase();
     bool LoadDirectory(const char *dirname);
 
+    MyMutex *lfDBMutex;
     static LFDatabase instance_;
     lfDatabase *data_;
 };

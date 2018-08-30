@@ -33,18 +33,26 @@ class ICMPanelListener
 
 public:
     virtual ~ICMPanelListener() {}
-    virtual void saveInputICCReference (Glib::ustring fname, bool apply_wb) {}
+    virtual void saveInputICCReference(Glib::ustring fname, bool apply_wb) {}
 };
 
-class ICMPanel : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class ICMPanel :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel
 {
 
 protected:
-    Gtk::Frame*        dcpFrame;
-    Adjuster* gampos;
-    Adjuster* slpos;
-    bool lastgamfree;
-    sigc::connection  gamcsconn;
+    Gtk::Frame* dcpFrame;
+    Gtk::Frame* coipFrame;
+
+    Adjuster* wGamma;
+    Adjuster* wSlope;
+
+    Gtk::Label* labmga;
+    Gtk::HBox* gabox;
+
+
     //bool freegamma;
     bool lastToneCurve;
     sigc::connection tcurveconn;
@@ -59,73 +67,84 @@ protected:
     bool isBatchMode;
 
 private:
-    Gtk::VBox       *  iVBox;
+    rtengine::ProcEvent EvICMprimariMethod;
+    rtengine::ProcEvent EvICMprofileMethod;
+    rtengine::ProcEvent EvICMtempMethod;
+    rtengine::ProcEvent EvICMpredx;
+    rtengine::ProcEvent EvICMpredy;
+    rtengine::ProcEvent EvICMpgrex;
+    rtengine::ProcEvent EvICMpgrey;
+    rtengine::ProcEvent EvICMpblux;
+    rtengine::ProcEvent EvICMpbluy;
+    rtengine::ProcEvent EvICMgamm;
+    rtengine::ProcEvent EvICMslop;
+    rtengine::ProcEvent EvICMtrcinMethod;
 
-    Gtk::CheckButton*  obpc;
-    Gtk::CheckButton*  freegamma;
-    Gtk::RadioButton*  inone;
+    Gtk::VBox* iVBox;
+    Gtk::HBox* wTRCHBox;
 
-    Gtk::RadioButton*  iembedded;
-    Gtk::RadioButton*  icamera;
-    Gtk::RadioButton*  icameraICC;
-    Gtk::RadioButton*  ifromfile;
-    Gtk::Label*        dcpIllLabel;
-    MyComboBoxText*    dcpIll;
-    sigc::connection   dcpillconn;
-    Gtk::CheckButton*  ckbToneCurve;
-    Gtk::CheckButton*  ckbApplyLookTable;
-    Gtk::CheckButton*  ckbApplyBaselineExposureOffset;
-    Gtk::CheckButton*  ckbApplyHueSatMap;
-    MyComboBoxText*    wnames;
-    sigc::connection   wnamesconn;
-    MyComboBoxText*    wgamma;
-    sigc::connection   wgammaconn;
+    Gtk::CheckButton* obpc;
+    Gtk::RadioButton* inone;
 
-    MyComboBoxText*    onames;
-    sigc::connection   onamesconn;
-    std::unique_ptr<PopUpButton>       ointent;
-    sigc::connection   ointentconn;
-    Gtk::RadioButton*  iunchanged;
+    Gtk::RadioButton* iembedded;
+    Gtk::RadioButton* icamera;
+    Gtk::RadioButton* icameraICC;
+    Gtk::RadioButton* ifromfile;
+    Gtk::Label* dcpIllLabel;
+    MyComboBoxText* dcpIll;
+    sigc::connection dcpillconn;
+    Gtk::CheckButton* ckbToneCurve;
+    Gtk::CheckButton* ckbApplyLookTable;
+    Gtk::CheckButton* ckbApplyBaselineExposureOffset;
+    Gtk::CheckButton* ckbApplyHueSatMap;
+    MyComboBoxText* wProfNames;
+    sigc::connection wprofnamesconn;
+    MyComboBoxText* wTRC;
+    sigc::connection wtrcconn;
+
+    MyComboBoxText* oProfNames;
+    sigc::connection oprofnamesconn;
+    std::unique_ptr<PopUpButton> oRendIntent;
+    sigc::connection orendintentconn;
+    Gtk::RadioButton* iunchanged;
     MyFileChooserButton* ipDialog;
     Gtk::RadioButton::Group opts;
-    Gtk::Button*        saveRef;
-    sigc::connection   ipc;
-    Glib::ustring      oldip;
-    ICMPanelListener*  icmplistener;
+    Gtk::Button* saveRef;
+    sigc::connection ipc;
+    Glib::ustring oldip;
+    ICMPanelListener* icmplistener;
 
     double dcpTemperatures[2];
     Glib::ustring lastRefFilename;
     Glib::ustring camName;
     void updateDCP(int dcpIlluminant, Glib::ustring dcp_name);
-    void updateRenderingIntent (const Glib::ustring &profile);
+    void updateRenderingIntent(const Glib::ustring &profile);
 public:
-    ICMPanel ();
+    ICMPanel();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setBatchMode   (bool batchMode);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void adjusterChanged (Adjuster* a, double newval);
-    void setAdjusterBehavior (bool gammaadd, bool slopeadd);
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
+    void setBatchMode(bool batchMode);
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
+    void adjusterChanged(Adjuster* a, double newval);
 
-    void wpChanged ();
-    void opChanged ();
-    void oiChanged (int n);
-    void oBPCChanged ();
-    void ipChanged ();
-    void gpChanged ();
-    void GamChanged ();
-    void ipSelectionChanged ();
+    void wpChanged();
+    void wtrcinChanged();
+    void opChanged();
+    void oiChanged(int n);
+    void oBPCChanged();
+    void ipChanged();
+    void ipSelectionChanged();
     void dcpIlluminantChanged();
     void toneCurveChanged();
     void applyLookTableChanged();
     void applyBaselineExposureOffsetChanged();
     void applyHueSatMapChanged();
 
-    void setRawMeta (bool raw, const rtengine::FramesData* pMeta);
-    void saveReferencePressed ();
+    void setRawMeta(bool raw, const rtengine::FramesData* pMeta);
+    void saveReferencePressed();
 
-    void setICMPanelListener (ICMPanelListener* ipl)
+    void setICMPanelListener(ICMPanelListener* ipl)
     {
         icmplistener = ipl;
     }

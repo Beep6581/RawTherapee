@@ -587,6 +587,14 @@ public:
         }
     }
 
+    void fill (T value) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                v(i, j) = value;
+            }
+        }
+    }
+
 };
 
 

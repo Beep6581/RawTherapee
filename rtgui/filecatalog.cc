@@ -193,9 +193,10 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
         bRank[i]->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event), false);
     }
 
-    // Same image arrays in filebrowser.cc
-    std::array<std::string, 6> clabelActiveIcons = {"circle-empty-gray-small.png", "circle-red-small.png", "circle-yellow-small.png", "circle-green-small.png", "circle-blue-small.png", "circle-purple-small.png"};
-    std::array<std::string, 6> clabelInactiveIcons = {"circle-empty-darkgray-small.png", "circle-empty-red-small.png", "circle-empty-yellow-small.png", "circle-empty-green-small.png", "circle-empty-blue-small.png", "circle-empty-purple-small.png"};
+    // Toolbar
+    // Similar image arrays in filebrowser.cc
+    std::array<std::string, 6> clabelActiveIcons = {"circle-gray-small.png", "circle-red-small.png", "circle-yellow-small.png", "circle-green-small.png", "circle-blue-small.png", "circle-purple-small.png"};
+    std::array<std::string, 6> clabelInactiveIcons = {"circle-empty-gray-small.png", "circle-empty-red-small.png", "circle-empty-yellow-small.png", "circle-empty-green-small.png", "circle-empty-blue-small.png", "circle-empty-purple-small.png"};
 
     iUnCLabeled = new RTImage(clabelActiveIcons[0]);
     igUnCLabeled = new RTImage(clabelInactiveIcons[0]);
@@ -1211,12 +1212,11 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
 
                     params.raw.bayersensor.method = options.fastexport_raw_bayer_method;
                     params.raw.xtranssensor.method = options.fastexport_raw_xtrans_method;
-                    params.icm.input = options.fastexport_icm_input;
-                    params.icm.working = options.fastexport_icm_working;
-                    params.icm.output = options.fastexport_icm_output;
+                    params.icm.inputProfile = options.fastexport_icm_input_profile;
+                    params.icm.workingProfile = options.fastexport_icm_working_profile;
+                    params.icm.outputProfile = options.fastexport_icm_output_profile;
                     params.icm.outputIntent = options.fastexport_icm_outputIntent;
                     params.icm.outputBPC = options.fastexport_icm_outputBPC;
-                    params.icm.gamma = options.fastexport_icm_gamma;
                 }
 
                 if (params.resize.enabled) {

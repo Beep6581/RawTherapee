@@ -71,6 +71,7 @@ set(NONCLISOURCEFILES
     histogrampanel.cc
     history.cc
     hsvequalizer.cc
+    iccprofilecreator.cc
     icmpanel.cc
     ilabel.cc
     imagearea.cc
@@ -222,6 +223,10 @@ else()
         ${LCMS_LIBRARY_DIRS}
         ${LENSFUN_LIBRARY_DIRS}
         )
+endif()
+
+if(OPENMP_FOUND AND NOT APPLE)
+    set(EXTRA_LIB_RTGUI ${EXTRA_LIB_RTGUI} "atomic")
 endif()
 
 # Create config.h which defines where data are stored

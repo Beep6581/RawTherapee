@@ -21,6 +21,7 @@
 #include "rtwindow.h"
 #include "options.h"
 #include "preferences.h"
+#include "iccprofilecreator.h"
 #include "cursormanager.h"
 #include "rtimage.h"
 #include "whitebalance.h"
@@ -229,6 +230,12 @@ RTWindow::RTWindow ()
         iFullscreen = new RTImage ("fullscreen-enter.png");
         iFullscreen_exit = new RTImage ("fullscreen-leave.png");
 
+        Gtk::Button* iccProfileCreator = Gtk::manage (new Gtk::Button ());
+        setExpandAlignProperties (iccProfileCreator, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+        iccProfileCreator->set_image (*Gtk::manage (new RTImage ("gamut-plus.png")));
+        iccProfileCreator->set_tooltip_markup (M ("MAIN_BUTTON_ICCPROFCREATOR"));
+        iccProfileCreator->signal_clicked().connect ( sigc::mem_fun (*this, &RTWindow::showICCProfileCreator) );
+
         //Gtk::LinkButton* rtWeb = Gtk::manage (new Gtk::LinkButton ("http://rawtherapee.com"));   // unused... but fail to be linked anyway !?
         //Gtk::Button* preferences = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_PREFERENCES")+"..."));
         Gtk::Button* preferences = Gtk::manage (new Gtk::Button ());
@@ -257,6 +264,7 @@ RTWindow::RTWindow ()
             prProgBar.set_inverted (true);
             actionGrid->set_orientation (Gtk::ORIENTATION_VERTICAL);
             actionGrid->attach_next_to (prProgBar, Gtk::POS_BOTTOM, 1, 1);
+            actionGrid->attach_next_to (*iccProfileCreator, Gtk::POS_BOTTOM, 1, 1);
             actionGrid->attach_next_to (*preferences, Gtk::POS_BOTTOM, 1, 1);
             actionGrid->attach_next_to (*btn_fullscreen, Gtk::POS_BOTTOM, 1, 1);
             mainNB->set_action_widget (actionGrid, Gtk::PACK_END);
@@ -264,6 +272,7 @@ RTWindow::RTWindow ()
             prProgBar.set_orientation (Gtk::ORIENTATION_HORIZONTAL);
             actionGrid->set_orientation (Gtk::ORIENTATION_HORIZONTAL);
             actionGrid->attach_next_to (prProgBar, Gtk::POS_RIGHT, 1, 1);
+            actionGrid->attach_next_to (*iccProfileCreator, Gtk::POS_RIGHT, 1, 1);
             actionGrid->attach_next_to (*preferences, Gtk::POS_RIGHT, 1, 1);
             actionGrid->attach_next_to (*btn_fullscreen, Gtk::POS_RIGHT, 1, 1);
             mainNB->set_action_widget (actionGrid, Gtk::PACK_END);
@@ -747,6 +756,23 @@ void RTWindow::writeToolExpandedStatus (std::vector<int> &tpOpen)
     }
 }
 
+
+void RTWindow::showICCProfileCreator ()
+{
+    ICCProfileCreator *iccpc = new ICCProfileCreator (this);
+    iccpc->run ();
+    delete iccpc;
+
+    fpanel->optionsChanged ();
+
+    if (epanel) {
+        epanel->defaultMonitorProfileChanged (options.rtSettings.monitorProfile, options.rtSettings.autoMonitorProfile);
+    }
+
+    for (const auto &p : epanels) {
+        p.second->defaultMonitorProfileChanged (options.rtSettings.monitorProfile, options.rtSettings.autoMonitorProfile);
+    }
+}
 
 void RTWindow::showPreferences ()
 {

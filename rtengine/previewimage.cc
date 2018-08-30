@@ -107,7 +107,7 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
             ColorTemp wb = rawImage.getWB ();
             rawImage.getFullSize (fw, fh, TR_NONE);
             PreviewProps pp (0, 0, fw, fh, 1);
-            params.icm.input = Glib::ustring("(embedded)");
+            params.icm.inputProfile = Glib::ustring("(embedded)");
             params.raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
             params.raw.deadPixelFilter = false;
             params.raw.ca_autocorrect = false;

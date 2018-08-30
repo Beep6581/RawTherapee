@@ -57,7 +57,7 @@ public:
     /** @brief Update the position of the edited point ; will trigger events
      *
      * @param pos New position
-     * @param chanIdx Chanel index as given in the std::vector upon instantiation
+     * @param chanIdx Channel index as given in the std::vector upon instantiation
      */
     virtual void setPos(double pos, int chanIdx) = 0;
     virtual void stopNumericalAdjustment() = 0;
@@ -91,7 +91,7 @@ public:
 
         // used to update the AxisAdjuster's parameters
         void updateGUI(const Axis &axis);
-        // useed to update the displayed value
+        // used to update the displayed value
         void setValue(double newValue);
         //bool keyPressed(GdkEventKey* event);
         void valueChanged();

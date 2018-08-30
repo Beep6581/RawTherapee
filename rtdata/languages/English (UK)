@@ -2,7 +2,7 @@ EXPORT_BYPASS_RAW_CCSTEPS;Bypass [raw] False Colour Suppression
 FILEBROWSER_COLORLABEL_TOOLTIP;Colour label.\n\nUse dropdown menu or shortcuts:\n<b>Shift-Ctrl-0</b> No Colour\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
 FILEBROWSER_POPUPCOLORLABEL;Colour label
 FILEBROWSER_SHOWUNCOLORHINT;Show images without a colour label.\nShortcut: <b>Alt-0</b>
-FILECHOOSER_FILTER_COLPROF;Colour profiles
+FILECHOOSER_FILTER_COLPROF;Colour profiles (*.icc)
 HISTORY_MSG_46;Colour denoising
 HISTORY_MSG_69;Working colour space
 HISTORY_MSG_70;Output colour space
@@ -24,7 +24,7 @@ HISTORY_MSG_322;W - Gamut - Avoid colour shift
 HISTORY_MSG_385;W - Residual - Colour Balance
 HISTORY_MSG_392;W - Residual - Colour Balance
 HISTORY_MSG_419;Retinex - Colour space
-HISTORY_MSG_CLAMPOOG;Out-of-gamut colour clipping
+HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colours
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Colour correction
 MAIN_TAB_COLOR;Colour
 MAIN_TOOLTIP_BACKCOLOR0;Background colour of the preview: <b>Theme-based</b>\nShortcut: <b>9</b>
@@ -343,6 +343,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !GENERAL_PORTRAIT;Portrait
 !GENERAL_RESET;Reset
 !GENERAL_SAVE;Save
+!GENERAL_SAVE_AS;Save as...
 !GENERAL_SLIDER;Slider
 !GENERAL_UNCHANGED;(Unchanged)
 !GENERAL_WARNING;Warning
@@ -815,7 +816,13 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !HISTORY_MSG_492;RGB Curves
 !HISTORY_MSG_493;L*a*b* Adjustments
 !HISTORY_MSG_DUALDEMOSAIC_CONTRAST;AMaZE+VNG4 - Contrast threshold
-!HISTORY_MSG_HISTMATCHING;Auto-Matched Tone Curve
+!HISTORY_MSG_HISTMATCHING;Auto-matched tone curve
+!HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
+!HISTORY_MSG_ICM_OUTPUT_TEMP;Output - ICC-v4 illuminant D
+!HISTORY_MSG_ICM_OUTPUT_TYPE;Output - Type
+!HISTORY_MSG_ICM_WORKING_GAMMA;Working - Gamma
+!HISTORY_MSG_ICM_WORKING_SLOPE;Working - Slope
+!HISTORY_MSG_ICM_WORKING_TRC_METHOD;Working - TRC method
 !HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 !HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 !HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
@@ -828,7 +835,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
 !HISTORY_MSG_RAW_BORDER;Raw border
-!HISTORY_MSG_RESIZE_ALLOW_UPSCALING;Resize - Allow upscaling
+!HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
 !HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
 !HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
@@ -837,6 +844,47 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !HISTORY_SNAPSHOT;Snapshot
 !HISTORY_SNAPSHOTS;Snapshots
+!ICCPROFCREATOR_COPYRIGHT;Copyright:
+!ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP;Reset to the default copyright, granted to "RawTherapee, CC0"
+!ICCPROFCREATOR_CUSTOM;Custom
+!ICCPROFCREATOR_DESCRIPTION;Description:
+!ICCPROFCREATOR_DESCRIPTION_ADDPARAM;Append gamma and slope values to the description
+!ICCPROFCREATOR_DESCRIPTION_TOOLTIP;Leave empty to set the default description.
+!ICCPROFCREATOR_GAMMA;Gamma
+!ICCPROFCREATOR_ICCVERSION;ICC version:
+!ICCPROFCREATOR_ILL;Illuminant:
+!ICCPROFCREATOR_ILL_41;D41
+!ICCPROFCREATOR_ILL_50;D50
+!ICCPROFCREATOR_ILL_55;D55
+!ICCPROFCREATOR_ILL_60;D60
+!ICCPROFCREATOR_ILL_65;D65
+!ICCPROFCREATOR_ILL_80;D80
+!ICCPROFCREATOR_ILL_DEF;Default
+!ICCPROFCREATOR_ILL_INC;StdA 2856K
+!ICCPROFCREATOR_ILL_TOOLTIP;You can only set the illuminant for ICC v4 profiles.
+!ICCPROFCREATOR_PRIMARIES;Primaries:
+!ICCPROFCREATOR_PRIM_ACESP0;ACES AP0
+!ICCPROFCREATOR_PRIM_ACESP1;ACES AP1
+!ICCPROFCREATOR_PRIM_ADOBE;Adobe RGB (1998)
+!ICCPROFCREATOR_PRIM_BEST;BestRGB
+!ICCPROFCREATOR_PRIM_BETA;BetaRGB
+!ICCPROFCREATOR_PRIM_BLUX;Blue X
+!ICCPROFCREATOR_PRIM_BLUY;Blue Y
+!ICCPROFCREATOR_PRIM_BRUCE;BruceRGB
+!ICCPROFCREATOR_PRIM_GREX;Green X
+!ICCPROFCREATOR_PRIM_GREY;Green Y
+!ICCPROFCREATOR_PRIM_PROPH;Prophoto
+!ICCPROFCREATOR_PRIM_REC2020;Rec2020
+!ICCPROFCREATOR_PRIM_REDX;Red X
+!ICCPROFCREATOR_PRIM_REDY;Red Y
+!ICCPROFCREATOR_PRIM_SRGB;sRGB
+!ICCPROFCREATOR_PRIM_TOOLTIP;You can only set custom primaries for ICC v4 profiles.
+!ICCPROFCREATOR_PRIM_WIDEG;Widegamut
+!ICCPROFCREATOR_PROF_V2;ICC v2
+!ICCPROFCREATOR_PROF_V4;ICC v4
+!ICCPROFCREATOR_SAVEDIALOG_TITLE;Save ICC profile as...
+!ICCPROFCREATOR_SLOPE;Slope
+!ICCPROFCREATOR_TRC_PRESET;Tone response curve:
 !IPTCPANEL_CATEGORY;Category
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITY;City
@@ -884,6 +932,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
 !LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
+!MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
 !MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser or Filmstrip with the Editor to reveal the thumbnail of the currently opened image, and clear any active filters.\nShortcut: <b>x</b>\n\nAs above, but without clearing active filters:\nShortcut: <b>y</b>\n(Note that the thumbnail of the opened image will not be shown if filtered out).
@@ -1038,7 +1087,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PARTIALPASTE_SHARPENING;Sharpening (USM/RL)
 !PARTIALPASTE_SHARPENMICRO;Microcontrast
 !PARTIALPASTE_SOFTLIGHT;Soft light
-!PARTIALPASTE_TM_FATTAL;Dynamic Range Compression
+!PARTIALPASTE_TM_FATTAL;Dynamic range compression
 !PARTIALPASTE_VIBRANCE;Vibrance
 !PARTIALPASTE_VIGNETTING;Vignetting correction
 !PARTIALPASTE_WHITEBALANCE;White balance
@@ -1631,10 +1680,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_FLATFIELD_BT_VERTICAL;Vertical
 !TP_FLATFIELD_CLIPCONTROL;Clip control
 !TP_FLATFIELD_LABEL;Flat-Field
-!TP_GAMMA_CURV;Gamma
-!TP_GAMMA_FREE;Free gamma
-!TP_GAMMA_OUTPUT;Output gamma
-!TP_GAMMA_SLOP;Slope (linear)
 !TP_GENERAL_11SCALE_TOOLTIP;The effects of this tool are only visible or only accurate at a preview scale of 1:1.
 !TP_GRADIENT_CENTER_X_TOOLTIP;Shift gradient to the left (negative values) or right (positive values).
 !TP_GRADIENT_CENTER_Y_TOOLTIP;Shift gradient up (negative values) or down (positive values).
@@ -1685,6 +1730,12 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_ICM_TONECURVE;Tone curve
 !TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only available if the selected DCP has a tone curve.
 !TP_ICM_WORKINGPROFILE;Working Profile
+!TP_ICM_WORKING_TRC;Tone response curve:
+!TP_ICM_WORKING_TRC_CUSTOM;Custom
+!TP_ICM_WORKING_TRC_GAMMA;Gamma
+!TP_ICM_WORKING_TRC_NONE;None
+!TP_ICM_WORKING_TRC_SLOPE;Slope
+!TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
 !TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 !TP_IMPULSEDENOISE_THRESH;Threshold
 !TP_LABCURVE_BRIGHTNESS;Lightness

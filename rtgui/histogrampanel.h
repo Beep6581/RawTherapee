@@ -43,7 +43,15 @@ struct HistogramRGBAreaIdleHelper {
     int pending;
 };
 
-class HistogramRGBArea : public Gtk::DrawingArea, public BackBuffer
+class HistogramScaling
+{
+public:
+    double factor;
+    HistogramScaling() : factor(10.0) {}
+    double log (double vsize, double val);
+};
+
+class HistogramRGBArea : public Gtk::DrawingArea, public BackBuffer, private HistogramScaling
 {
 private:
     typedef const double (*TMatrix)[3];
@@ -56,7 +64,6 @@ protected:
     int g;
     int b;
 
-    bool frozen;
     bool valid;
 
     bool needRed;
@@ -77,8 +84,6 @@ public:
     ~HistogramRGBArea();
 
     void updateBackBuffer (int r, int g, int b, const Glib::ustring &profile = "", const Glib::ustring &profileW = "");
-    void updateFreeze (bool f);
-    bool getFreeze ();
     bool getShow ();
     void setParent (Gtk::Grid* p)
     {
@@ -91,6 +96,8 @@ public:
     void on_realize();
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
     bool on_button_press_event (GdkEventButton* event);
+    void factorChanged (double newFactor);
+
 private:
     Gtk::SizeRequestMode get_request_mode_vfunc () const;
     void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;
@@ -100,42 +107,50 @@ private:
     // Some ...
 };
 
-
-class FullModeListener
+class DrawModeListener
 {
 public:
-    virtual ~FullModeListener() {}
-    virtual void toggle_button_full () {}
+    virtual ~DrawModeListener() {}
+    virtual void toggle_button_mode () {}
 };
 
-class HistogramArea : public Gtk::DrawingArea, public BackBuffer
+class HistogramArea : public Gtk::DrawingArea, public BackBuffer, private HistogramScaling
 {
+public:
+    typedef sigc::signal<void, double> type_signal_factor_changed;
+
 private:
     IdleRegister idle_register;
+    type_signal_factor_changed sigFactorChanged;
 
 protected:
     LUTu lhist, rhist, ghist, bhist, chist;
     LUTu lhistRaw, rhistRaw, ghistRaw, bhistRaw;
 
     bool valid;
-    bool fullMode;
-    FullModeListener *myFullModeListener;
+    int drawMode;
+    DrawModeListener *myDrawModeListener;
     int oldwidth, oldheight;
 
     bool needLuma, needRed, needGreen, needBlue, rawMode, needChroma;
+    bool isPressed;
+    double movingPosition;
 
     HistogramAreaIdleHelper* haih;
 
 public:
-    explicit HistogramArea(FullModeListener *fml = nullptr);
+    explicit HistogramArea(DrawModeListener *fml = nullptr);
     ~HistogramArea();
 
     void updateBackBuffer ();
     void update (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw, LUTu &histChroma);
-    void updateOptions (bool r, bool g, bool b, bool l, bool raw, bool full , bool c);
+    void updateOptions (bool r, bool g, bool b, bool l, bool raw, bool c, int mode);
     void on_realize();
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
     bool on_button_press_event (GdkEventButton* event);
+    bool on_button_release_event (GdkEventButton* event);
+    bool on_motion_notify_event (GdkEventMotion* event);
+    type_signal_factor_changed signal_factor_changed();
 
 private:
     void drawCurve(Cairo::RefPtr<Cairo::Context> &cr, LUTu & data, double scale, int hsize, int vsize);
@@ -147,7 +162,7 @@ private:
     void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
 };
 
-class HistogramPanel : public Gtk::Grid, public PointerMotionListener, public FullModeListener
+class HistogramPanel : public Gtk::Grid, public PointerMotionListener, public DrawModeListener
 {
 
 protected:
@@ -161,16 +176,15 @@ protected:
     Gtk::ToggleButton* showBlue;
     Gtk::ToggleButton* showValue;
     Gtk::ToggleButton* showRAW;
-    Gtk::ToggleButton* showFull;
     Gtk::ToggleButton* showBAR;
     Gtk::ToggleButton* showChro;
+    Gtk::Button* showMode;
 
     Gtk::Image *redImage;
     Gtk::Image *greenImage;
     Gtk::Image *blueImage;
     Gtk::Image *valueImage;
     Gtk::Image *rawImage;
-    Gtk::Image *fullImage;
     Gtk::Image *barImage;
     Gtk::Image *chroImage;
 
@@ -179,10 +193,12 @@ protected:
     Gtk::Image *blueImage_g;
     Gtk::Image *valueImage_g;
     Gtk::Image *rawImage_g;
-    Gtk::Image *fullImage_g;
     Gtk::Image *barImage_g;
     Gtk::Image *chroImage_g;
 
+    Gtk::Image *mode0Image;
+    Gtk::Image *mode1Image;
+    Gtk::Image *mode2Image;
 
     sigc::connection rconn;
     void setHistInvalid ();
@@ -197,9 +213,8 @@ public:
         histogramArea->update (histRed, histGreen, histBlue, histLuma, histRedRaw, histGreenRaw, histBlueRaw, histChroma);
     }
     // pointermotionlistener interface
-    void pointerMoved (bool validPos, Glib::ustring profile, Glib::ustring profileW, int x, int y, int r, int g, int b);
-    // added pointermotionlistener interface
-    void toggleFreeze();
+    void pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw = false);
+
     // TODO should be protected
     void setHistRGBInvalid ();
 
@@ -209,14 +224,14 @@ public:
     void blue_toggled ();
     void value_toggled ();
     void raw_toggled ();
-    void full_toggled ();
     void chro_toggled ();
     void bar_toggled ();
+    void mode_released ();
     void rgbv_toggled ();
     void resized (Gtk::Allocation& req);
 
-    // fullModeListener interface
-    void toggle_button_full ();
+    // drawModeListener interface
+    void toggle_button_mode ();
 };
 
 #endif
