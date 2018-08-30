@@ -256,12 +256,12 @@ protected:
     // demosaicers
     void dcb_demosaic(int iterations, bool dcb_enhance);
     void ahd_demosaic();
-    void amaze_demosaic(int winx, int winy, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);//Emil's code for AMaZE
-    void bayerborder_demosaic(int winw, int winh, int lborders, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
+    void amaze_demosaic(int winx, int winy, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, unsigned cfarray[2][2], std::function<bool(double)> setProgCancel, double initGain, int border, int W, int H);//Emil's code for AMaZE
+    void bayerborder_demosaic(int winw, int winh, int lborders, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, unsigned cfarray[2][2]);
     void dual_demosaic(bool isBayer, const RAWParams &raw, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, double &contrast, bool autoContrast = false, int autoX = -1, int autoY = -1);
     void eahd_demosaic();
     void fast_bayerdemosaic();//Emil's code for fast demosaicing
-    void fast_xtransdemosaic (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
+    void fast_xtransdemosaic (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, int xtrans[6][6]);
     void hphd_demosaic();
     void igv_demosaic(int winw, int winh);
     void lmmse_demosaic(int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, int iterations);
@@ -270,7 +270,7 @@ protected:
     void pixelshift(int winx, int winy, int winw, int winh, const RAWParams &rawParams, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection);
     void rcd_demosaic();
     void vng4_demosaic(const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, bool keepGreens = false);
-    void xtransborder_demosaic (int border, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
+    void xtransborder_demosaic(int winw, int winh, int border, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, int xtrans[6][6]);
 
     void dcb_initTileLimits(int &colMin, int &rowMin, int &colMax, int &rowMax, int x0, int y0, int border);
     void fill_raw( float (*cache )[3], int x0, int y0, float** rawData);

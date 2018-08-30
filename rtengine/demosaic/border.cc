@@ -19,14 +19,21 @@
 #include <algorithm>
 
 #include "../rawimagesource.h"
-#include "../rawimage.h"
+
+namespace
+{
+unsigned fc(unsigned cfa[2][2], unsigned row, unsigned col)
+{
+    return cfa[row & 1][col & 1];
+}
+}
 
 using namespace std;
 
 namespace rtengine
 {
 
-void RawImageSource::bayerborder_demosaic( int winw, int winh, int lborders, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
+void RawImageSource::bayerborder_demosaic(int winw, int winh, int lborders, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, unsigned cfarray[2][2])
 {
     int bord = lborders;
     int width = winw;
@@ -44,13 +51,13 @@ void RawImageSource::bayerborder_demosaic( int winw, int winh, int lborders, con
             for (int i1 = i - 1; i1 < i + 2; i1++)
                 for (int j1 = j - 1; j1 < j + 2; j1++) {
                     if ((i1 > -1) && (i1 < height) && (j1 > -1)) {
-                        int c = FC(i1, j1);
+                        int c = fc(cfarray, i1, j1);
                         sum[c] += rawData[i1][j1];
                         sum[c + 3]++;
                     }
                 }
 
-            int c = FC(i, j);
+            int c = fc(cfarray, i, j);
 
             if (c == 1) {
                 red[i][j] = sum[0] / sum[3];
@@ -77,13 +84,13 @@ void RawImageSource::bayerborder_demosaic( int winw, int winh, int lborders, con
             for (int i1 = i - 1; i1 < i + 2; i1++)
                 for (int j1 = j - 1; j1 < j + 2; j1++) {
                     if ((i1 > -1) && (i1 < height ) && (j1 < width)) {
-                        int c = FC(i1, j1);
+                        int c = fc(cfarray, i1, j1);
                         sum[c] += rawData[i1][j1];
                         sum[c + 3]++;
                     }
                 }
 
-            int c = FC(i, j);
+            int c = fc(cfarray, i, j);
 
             if (c == 1) {
                 red[i][j] = sum[0] / sum[3];
@@ -115,13 +122,13 @@ void RawImageSource::bayerborder_demosaic( int winw, int winh, int lborders, con
             for (int i1 = i - 1; i1 < i + 2; i1++)
                 for (int j1 = j - 1; j1 < j + 2; j1++) {
                     if ((i1 > -1) && (i1 < height) && (j1 > -1)) {
-                        int c = FC(i1, j1);
+                        int c = fc(cfarray, i1, j1);
                         sum[c] += rawData[i1][j1];
                         sum[c + 3]++;
                     }
                 }
 
-            int c = FC(i, j);
+            int c = fc(cfarray, i, j);
 
             if (c == 1) {
                 red[i][j] = sum[0] / sum[3];
@@ -153,13 +160,13 @@ void RawImageSource::bayerborder_demosaic( int winw, int winh, int lborders, con
             for (int i1 = i - 1; i1 < i + 2; i1++)
                 for (int j1 = j - 1; j1 < j + 2; j1++) {
                     if ((i1 > -1) && (i1 < height) && (j1 < width)) {
-                        int c = FC(i1, j1);
+                        int c = fc(cfarray, i1, j1);
                         sum[c] += rawData[i1][j1];
                         sum[c + 3]++;
                     }
                 }
 
-            int c = FC(i, j);
+            int c = fc(cfarray, i, j);
 
             if (c == 1) {
                 red[i][j] = sum[0] / sum[3];
@@ -183,12 +190,9 @@ void RawImageSource::bayerborder_demosaic( int winw, int winh, int lborders, con
 
 #define fcol(row,col) xtrans[(row)%6][(col)%6]
 
-void RawImageSource::xtransborder_demosaic (int border, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
+void RawImageSource::xtransborder_demosaic(int winw, int winh, int border, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, int xtrans[6][6])
 {
-    const int height = H, width = W;
-
-    int xtrans[6][6];
-    ri->getXtransMatrix(xtrans);
+    const int height = winh, width = winw;
 
     for (int row = 0; row < height; row++)
         for (int col = 0; col < width; col++) {

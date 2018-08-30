@@ -82,7 +82,9 @@ void RawImageSource::processRawWhitepoint(float expos, float preser, array2D<flo
             if(ri->getSensorType() == ST_BAYER) {
                 fast_bayerdemosaic();
             } else {
-                fast_xtransdemosaic(rawData, red, green, blue);
+                int xtrans[6][6];
+                ri->getXtransMatrix(xtrans);
+                fast_xtransdemosaic(rawData, red, green, blue, xtrans);
             }
         }
 

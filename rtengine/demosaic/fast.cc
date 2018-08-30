@@ -499,7 +499,7 @@ void RawImageSource::fast_bayerdemosaic()
 
 #define fcol(row,col) xtrans[(row)%6][(col)%6]
 
-void RawImageSource::fast_xtransdemosaic (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
+void RawImageSource::fast_xtransdemosaic (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, int xtrans[6][6])
 {
     BENCHFUN
     double progress = 0.0;
@@ -512,9 +512,7 @@ void RawImageSource::fast_xtransdemosaic (const array2D<float> &rawData, array2D
 
     const int height = H, width = W;
 
-    xtransborder_demosaic (1, red, green, blue);
-    int xtrans[6][6];
-    ri->getXtransMatrix(xtrans);
+    xtransborder_demosaic (width, height, 1, rawData, red, green, blue, xtrans);
 
     #pragma omp parallel for
 

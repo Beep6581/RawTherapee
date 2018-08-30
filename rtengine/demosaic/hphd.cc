@@ -298,7 +298,8 @@ void RawImageSource::hphd_demosaic ()
         }
     }
 
-    bayerborder_demosaic(W, H, 4, rawData, red, green, blue);
+    unsigned cfarray[2][2] = {{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}};
+    bayerborder_demosaic(W, H, 4, rawData, red, green, blue, cfarray);
 
     if (plistener) {
         plistener->setProgress (1.0);
