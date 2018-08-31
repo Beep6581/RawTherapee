@@ -47,7 +47,7 @@ unsigned fc(std::array<std::array<unsigned, 2>, 2> cfa, unsigned row, unsigned c
 namespace rtengine
 {
 
-void RawImageSource::amaze_demosaic(int winx, int winy, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, const std::array<std::array<unsigned, 2>, 2> &cfarray, const std::function<bool(double)> setProgCancel, double initGain, int border, int W, int H)
+void RawImageSource::amaze_demosaic(int winx, int winy, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, const std::array<std::array<unsigned, 2>, 2> &cfarray, const std::function<bool(double)> setProgCancel, double initGain, int border)
 {
     BENCHFUN
 
@@ -1588,7 +1588,7 @@ void RawImageSource::amaze_demosaic(int winx, int winy, int winw, int winh, cons
         free(buffer);
     }
     if(border < 4) {
-        bayerborder_demosaic(W, H, 3, rawData, red, green, blue, cfarray);
+        bayerborder_demosaic(width, height, 3, rawData, red, green, blue, cfarray);
     }
 
     setProgCancel(1.0);
