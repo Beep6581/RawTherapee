@@ -43,7 +43,6 @@ void RawImageSource::dual_demosaic(bool isBayer, const RAWParams &raw, int winw,
     if (contrast == 0.0 && !autoContrast) {
         // contrast == 0.0 means only first demosaicer will be used
         if(isBayer) {
-            std::array<std::array<unsigned, 2>, 2> cfa {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}};
             if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEVNG4) ) {
                 if (plistener) {
                     plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZE)));
@@ -54,7 +53,7 @@ void RawImageSource::dual_demosaic(bool isBayer, const RAWParams &raw, int winw,
                         plistener->setProgress(p);
                     return false;
                 };
-                amaze_demosaic(0, 0, winw, winh, rawData, red, green, blue, cfa, setProgCancel, initialGain, border);
+                amaze_demosaic(0, 0, winw, winh, rawData, red, green, blue, {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, initialGain, border);
             } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCBVNG4) ) {
                 dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);
             } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCDVNG4) ) {
@@ -79,7 +78,6 @@ void RawImageSource::dual_demosaic(bool isBayer, const RAWParams &raw, int winw,
     if (isBayer) {
         vng4_demosaic(rawData, redTmp, greenTmp, blueTmp);
 
-        std::array<std::array<unsigned, 2>, 2> cfa {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}};
         if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEVNG4) || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)) {
             if (plistener) {
                 plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZE)));
@@ -90,7 +88,7 @@ void RawImageSource::dual_demosaic(bool isBayer, const RAWParams &raw, int winw,
                     plistener->setProgress(p);
                 return false;
             };
-            amaze_demosaic(0, 0, winw, winh, rawData, red, green, blue, cfa, setProgCancel, initialGain, border);
+            amaze_demosaic(0, 0, winw, winh, rawData, red, green, blue, {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, initialGain, border);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCBVNG4) ) {
             dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCDVNG4) ) {
