@@ -153,7 +153,8 @@ public:
         if (exponent == 0) {
             if (mantissa == 0) {
                 // Plus or minus zero
-                return (uint32_t) (sign << 31);
+                tmp.i = (uint32_t) (sign << 31);
+                return tmp.f;
             } else {
                 // Denormalized number -- renormalize it
                 while (!(mantissa & 0x00000400)) {
@@ -165,8 +166,9 @@ public:
             }
         } else if (exponent == 31) {
             if (mantissa == 0) {
-            // Positive or negative infinity, convert to maximum (16 bit) values.
-            return (uint32_t) ((sign << 31) | ((0x1eL + 127 - 15) << 23) |  (0x3ffL << 13));
+                // Positive or negative infinity, convert to maximum (16 bit) values.
+                tmp.i = (uint32_t)((sign << 31) | ((0x1eL + 127 - 15) << 23) |  (0x3ffL << 13));
+                return tmp.f;
             } else {
                 // Nan -- Just set to zero.
                 return 0;
