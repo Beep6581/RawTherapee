@@ -443,5 +443,5 @@ CursorShape CurveEditor::getCursor(const int objectID)
         return CSResizeHeight;
     }
 
-    return CSOpenHand;
+    return CSHandOpen;
 }

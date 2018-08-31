@@ -22,41 +22,57 @@
 #include <gtkmm.h>
 
 enum CursorShape {
-    CSUndefined, CSArrow, CSOpenHand, CSClosedHand, CSMove, CSMoveLeft,
-    CSMoveRight, CSResizeWidth, CSResizeHeight, CSResizeDiagonal,
-    CSResizeTopLeft, CSResizeTopRight, CSResizeBottomLeft, CSResizeBottomRight,
-    CSMove2D, CSMove1DH, CSMove1DV, CSMoveRotate,
-    CSSpotWB, CSAddColPicker, CSCropSelect, CSStraighten, CSPlus, CSWait, CSEmpty
+    CSAddColPicker,
+    CSArrow,
+    CSCropSelect,
+    CSCrosshair,
+    CSEmpty,
+    CSHandClosed,
+    CSHandOpen,
+    CSMove,
+    CSMove1DH,
+    CSMove1DV,
+    CSMove2D,
+    CSMoveLeft,
+    CSMoveRight,
+    CSMoveRotate,
+    CSPlus,
+    CSResizeBottomLeft,
+    CSResizeBottomRight,
+    CSResizeDiagonal,
+    CSResizeHeight,
+    CSResizeTopLeft,
+    CSResizeTopRight,
+    CSResizeWidth,
+    CSSpotWB,
+    CSStraighten,
+    CSUndefined,
+    CSWait
 };
 
 class CursorManager
 {
 
 private:
-    Glib::RefPtr<Gdk::Cursor> cResizeWidth;
-    Glib::RefPtr<Gdk::Cursor> cResizeHeight;
-    Glib::RefPtr<Gdk::Cursor> cResizeDiag;
-    Glib::RefPtr<Gdk::Cursor> cResizeTopLeft;
-    Glib::RefPtr<Gdk::Cursor> cResizeTopRight;
-    Glib::RefPtr<Gdk::Cursor> cResizeBottomLeft;
-    Glib::RefPtr<Gdk::Cursor> cResizeBottomRight;
-    Glib::RefPtr<Gdk::Cursor> cCropMove;
-    Glib::RefPtr<Gdk::Cursor> cCropMoving;
-    Glib::RefPtr<Gdk::Cursor> cLeftTanMove;
-    Glib::RefPtr<Gdk::Cursor> cRightTanMove;
-    Glib::RefPtr<Gdk::Cursor> cNormal;
-    Glib::RefPtr<Gdk::Cursor> cCropSelection;
     Glib::RefPtr<Gdk::Cursor> cAdd;
-    Glib::RefPtr<Gdk::Cursor> cWait;
-    Glib::RefPtr<Gdk::Cursor> cHand;
-    Glib::RefPtr<Gdk::Cursor> cClosedHand;
-    Glib::RefPtr<Gdk::Cursor> cWB;
     Glib::RefPtr<Gdk::Cursor> cAddPicker;
-    Glib::RefPtr<Gdk::Cursor> cHidden;
-    Glib::RefPtr<Gdk::Cursor> cMove2D;
-    Glib::RefPtr<Gdk::Cursor> cMove1DH;
-    Glib::RefPtr<Gdk::Cursor> cMove1DV;
-    Glib::RefPtr<Gdk::Cursor> cMoveRotate;
+    Glib::RefPtr<Gdk::Cursor> cCropDraw;
+    Glib::RefPtr<Gdk::Cursor> cCrosshair;
+    Glib::RefPtr<Gdk::Cursor> cHandClosed;
+    Glib::RefPtr<Gdk::Cursor> cHandOpen;
+    Glib::RefPtr<Gdk::Cursor> cEmpty;
+    Glib::RefPtr<Gdk::Cursor> cMoveBL;
+    Glib::RefPtr<Gdk::Cursor> cMoveBR;
+    Glib::RefPtr<Gdk::Cursor> cMoveL;
+    Glib::RefPtr<Gdk::Cursor> cMoveR;
+    Glib::RefPtr<Gdk::Cursor> cMoveTL;
+    Glib::RefPtr<Gdk::Cursor> cMoveTR;
+    Glib::RefPtr<Gdk::Cursor> cMoveX;
+    Glib::RefPtr<Gdk::Cursor> cMoveY;
+    Glib::RefPtr<Gdk::Cursor> cMoveXY;
+    Glib::RefPtr<Gdk::Cursor> cRotate;
+    Glib::RefPtr<Gdk::Cursor> cWB;
+    Glib::RefPtr<Gdk::Cursor> cWait;
 
     Glib::RefPtr<Gdk::Display> display;
     Glib::RefPtr<Gdk::Window> window;
