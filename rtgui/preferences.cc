@@ -1831,6 +1831,8 @@ void Preferences::fillPreferences ()
         iccDir->set_current_folder (moptions.rtSettings.iccDirectory);
     }
 
+    cprevdemo->set_active (moptions.prevdemo);
+
     languages->set_active_text (moptions.language);
     ckbLangAutoDetect->set_active (moptions.languageAutoDetect);
     int themeNbr = getThemeRowNumber (moptions.theme);
