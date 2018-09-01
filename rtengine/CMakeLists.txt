@@ -22,7 +22,6 @@ link_directories("${PROJECT_SOURCE_DIR}/rtexif"
     ${GTHREAD_LIBRARY_DIRS}
     ${IPTCDATA_LIBRARY_DIRS}
     ${LCMS_LIBRARY_DIRS}
-    ${LENSFUN_LIBRARY_DIRS}
     )
 
 set(CAMCONSTSFILE "camconst.json")
@@ -48,7 +47,6 @@ set(RTENGINESOURCEFILES
     dcraw.cc
     dcrop.cc
     demosaic/ahd.cc
-    demosaic/amaze.cc
     demosaic/border.cc
     demosaic/dcb.cc
     demosaic/dual.cc
@@ -185,6 +183,7 @@ target_link_libraries(rtengine rtexif
     ${TIFF_LIBRARIES}
     ${ZLIB_LIBRARIES}
     ${LENSFUN_LIBRARIES}
+    ${RTPROCESS_LIBRARIES}
     )
 
 install(FILES ${CAMCONSTSFILE} DESTINATION "${DATADIR}" PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)

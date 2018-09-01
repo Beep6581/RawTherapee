@@ -26,6 +26,7 @@
 #include "color.h"
 #include "iimage.h"
 #include <iostream>
+#include <rtprocess/librtprocess.h>
 #define HR_SCALE 2
 
 
