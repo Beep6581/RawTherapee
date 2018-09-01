@@ -391,6 +391,17 @@ int processLineParams ( int argc, char **argv )
 
                 case 'b':
                     bits = atoi (currParam.substr (2).c_str());
+                    if (currParam.length() >=3 && currParam.at(2) == '8') {
+                        bits = 8;
+                    } else if (currParam.length() >= 4 && currParam.at(2) == '1' && currParam.at(3) == '6') {
+                        bits = 16;
+                        if (currParam.length() == 5 && currParam.at(4) == 'f') {
+                            isFloat = true;
+                        }
+                    } else if (currParam.length() == 4 && currParam.at(2) == '3' && currParam.at(3) == '2') {
+                        bits = 32;
+                        isFloat = true;
+                    }
 
                     if (bits != 8 && bits != 16 && bits != 32) {
                         std::cerr << "Error: specify output bit depth per channel as -b8 for 8-bit integer, -b16 for 16-bit integer, -b16f for 16-bit float or -b32 for 32-bit float." << std::endl;
@@ -398,8 +409,7 @@ int processLineParams ( int argc, char **argv )
                         return -3;
                     }
 
-                    isFloat = (bits == 16 && currParam.length() == 3 && currParam.at(2) == 'f') || bits == 32;
-                    printf("Float output detected (%d-bit)!\n", bits);
+                    std::cout << "Output is " << bits << "-bit, " << (isFloat ? "floating point" : "integer") << std::endl;
 
                     break;
 
