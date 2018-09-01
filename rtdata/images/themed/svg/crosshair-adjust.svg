@@ -26,7 +26,7 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="34.25"
+     inkscape:zoom="33.833333"
      inkscape:cx="12"
      inkscape:cy="12"
      inkscape:document-units="px"
@@ -63,7 +63,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
         <dc:creator>
           <cc:Agent>
             <dc:title>Maciej Dworak</dc:title>
@@ -101,16 +101,16 @@
      inkscape:label="Layer 1">
     <path
        style="display:inline;opacity:0.9;fill:#2a7fff;fill-opacity:1;stroke:none;stroke-width:0.0348262"
-       d="M 8.0170773,6 4.5085416,1.3219482 1,5.9999999 Z"
+       d="M 8.017077,6 4.508542,1.3219482 1,5.9999999 Z"
        id="path2866"
        inkscape:connector-curvature="0" />
     <path
        inkscape:connector-curvature="0"
        id="path5657"
-       d="M 0.9829227,18 4.4914584,22.678052 8,18 Z"
+       d="M 0.982923,18 4.491458,22.678052 8,18 Z"
        style="display:inline;opacity:0.9;fill:#2a7fff;fill-opacity:1;stroke:none;stroke-width:0.0348262" />
     <path
-       style="opacity:0.7;fill:#2a7fff;fill-opacity:0.4;stroke:#2a7fff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       style="opacity:0.7;fill:#2a7fff;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
        d="M 12,1.5 C 11.169,1.5 10.5,2.169 10.5,3 V 8.845703 C 10.955564,8.629409 11.460388,8.5 12,8.5 c 0.539612,0 1.044436,0.129409 1.5,0.345703 V 3 C 13.5,2.169 12.831,1.5 12,1.5 Z m -9,9 c -0.831,0 -1.5,0.669 -1.5,1.5 0,0.831 0.669,1.5 1.5,1.5 H 8.845703 C 8.629409,13.044436 8.5,12.539612 8.5,12 c 0,-0.539612 0.129409,-1.044436 0.345703,-1.5 z m 12.154297,0 C 15.370591,10.955564 15.5,11.460388 15.5,12 c 0,0.539612 -0.129409,1.044436 -0.345703,1.5 H 21 c 0.831,0 1.5,-0.669 1.5,-1.5 0,-0.831 -0.669,-1.5 -1.5,-1.5 z M 10.5,15.154297 V 21 c 0,0.831 0.669,1.5 1.5,1.5 0.831,0 1.5,-0.669 1.5,-1.5 V 15.154297 C 13.044436,15.370591 12.539612,15.5 12,15.5 c -0.539612,0 -1.044436,-0.129409 -1.5,-0.345703 z"
        id="path1448-3"
        inkscape:connector-curvature="0" />

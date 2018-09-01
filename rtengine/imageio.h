@@ -112,8 +112,8 @@ public:
     }
 
     virtual int     getBPS      () = 0;
-    virtual void    getScanline (int row, unsigned char* buffer, int bps) {}
-    virtual void    setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples = 3, float minValue[3] = nullptr, float  maxValue[3] = nullptr) {}
+    virtual void    getScanline (int row, unsigned char* buffer, int bps, bool isFloat = false) {}
+    virtual void    setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples = 3) {}
 
     virtual bool    readImage   (Glib::ustring &fname, FILE *fh)
     {
@@ -138,7 +138,7 @@ public:
 
     int savePNG  (Glib::ustring fname, volatile int bps = -1);
     int saveJPEG (Glib::ustring fname, int quality = 100, int subSamp = 3);
-    int saveTIFF (Glib::ustring fname, int bps = -1, bool uncompressed = false);
+    int saveTIFF (Glib::ustring fname, int bps = -1, float isFloat = false, bool uncompressed = false);
 
     cmsHPROFILE getEmbeddedProfile ()
     {

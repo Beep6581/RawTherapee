@@ -228,7 +228,7 @@ bool BatchQueue::saveBatchQueue ()
 
         // The column's header is mandatory (the first line will be skipped when loaded)
         file << "input image full path|param file full path|output image full path|file format|jpeg quality|jpeg subsampling|"
-             << "png bit depth|png compression|tiff bit depth|uncompressed tiff|save output params|force format options|fast export|<end of line>"
+             << "png bit depth|png compression|tiff bit depth|tiff is float|uncompressed tiff|save output params|force format options|fast export|<end of line>"
              << std::endl;
 
         // method is already running with entryLock, so no need to lock again
@@ -246,7 +246,7 @@ bool BatchQueue::saveBatchQueue ()
 #endif
                  << saveFormat.jpegQuality << '|' << saveFormat.jpegSubSamp << '|'
                  << saveFormat.pngBits << '|'
-                 << saveFormat.tiffBits << '|'  << saveFormat.tiffUncompressed << '|'
+                 << saveFormat.tiffBits << '|'  << (saveFormat.tiffFloat ? 1 : 0) << '|'  << saveFormat.tiffUncompressed << '|'
                  << saveFormat.saveParams << '|' << entry->forceFormatOpts << '|'
                  << entry->fast_pipeline << '|'
                  << std::endl;
@@ -311,6 +311,7 @@ bool BatchQueue::loadBatchQueue ()
             const auto jpegSubSamp = nextIntOr (options.saveFormat.jpegSubSamp);
             const auto pngBits = nextIntOr (options.saveFormat.pngBits);
             const auto tiffBits = nextIntOr (options.saveFormat.tiffBits);
+            const auto tiffFloat = nextIntOr (options.saveFormat.tiffFloat);
             const auto tiffUncompressed = nextIntOr (options.saveFormat.tiffUncompressed);
             const auto saveParams = nextIntOr (options.saveFormat.saveParams);
             const auto forceFormatOpts = nextIntOr (options.forceFormatOpts);
@@ -352,6 +353,7 @@ bool BatchQueue::loadBatchQueue ()
                 saveFormat.jpegSubSamp = jpegSubSamp;
                 saveFormat.pngBits = pngBits;
                 saveFormat.tiffBits = tiffBits;
+                saveFormat.tiffFloat = tiffFloat == 1;
                 saveFormat.tiffUncompressed = tiffUncompressed != 0;
                 saveFormat.saveParams = saveParams != 0;
                 entry->forceFormatOpts = forceFormatOpts != 0;
@@ -608,7 +610,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImagefloat* img)
         int err = 0;
 
         if (saveFormat.format == "tif") {
-            err = img->saveAsTIFF (fname, saveFormat.tiffBits, saveFormat.tiffUncompressed);
+            err = img->saveAsTIFF (fname, saveFormat.tiffBits, saveFormat.tiffFloat, saveFormat.tiffUncompressed);
         } else if (saveFormat.format == "png") {
             err = img->saveAsPNG (fname, saveFormat.pngBits);
         } else if (saveFormat.format == "jpg") {
