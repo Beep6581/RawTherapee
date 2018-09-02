@@ -70,10 +70,10 @@ protected:
     bool needGreen;
     bool needBlue;
     bool needLuma;
-    bool needChroma;
     bool rawMode;
     bool showMode;
     bool barDisplayed;
+    bool needChroma;
 
     Gtk::Grid* parent;
 
@@ -91,7 +91,7 @@ public:
     };
 
     void update (int val, int rh, int gh, int bh);
-    void updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, bool show);
+    void updateOptions (bool r, bool g, bool b, bool l, bool raw, bool show, bool c);
 
     void on_realize();
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
@@ -104,7 +104,7 @@ private:
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
     void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
     void get_preferred_width_for_height_vfunc (int h, int &minimum_width, int &natural_width) const;
-
+    // Some ...
 };
 
 class DrawModeListener
@@ -124,16 +124,15 @@ private:
     type_signal_factor_changed sigFactorChanged;
 
 protected:
-    LUTu rhist, ghist, bhist, lhist, chist;
-    LUTu rhistRaw, ghistRaw, bhistRaw, lhistRaw; //lhistRaw is unused?
+    LUTu lhist, rhist, ghist, bhist, chist;
+    LUTu lhistRaw, rhistRaw, ghistRaw, bhistRaw;
 
     bool valid;
     int drawMode;
     DrawModeListener *myDrawModeListener;
     int oldwidth, oldheight;
 
-    bool needRed, needGreen, needBlue, needLuma, needChroma;
-    bool rawMode;
+    bool needLuma, needRed, needGreen, needBlue, rawMode, needChroma;
     bool isPressed;
     double movingPosition;
 
@@ -144,8 +143,8 @@ public:
     ~HistogramArea();
 
     void updateBackBuffer ();
-    void update (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histChroma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw);
-    void updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, int mode);
+    void update (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw, LUTu &histChroma);
+    void updateOptions (bool r, bool g, bool b, bool l, bool raw, bool c, int mode);
     void on_realize();
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
     bool on_button_press_event (GdkEventButton* event);
@@ -209,9 +208,9 @@ public:
     HistogramPanel ();
     ~HistogramPanel ();
 
-    void histogramChanged (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histChroma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw)
+    void histogramChanged (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw, LUTu &histChroma)
     {
-        histogramArea->update (histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw);
+        histogramArea->update (histRed, histGreen, histBlue, histLuma, histRedRaw, histGreenRaw, histBlueRaw, histChroma);
     }
     // pointermotionlistener interface
     void pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw = false);
