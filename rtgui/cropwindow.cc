@@ -1249,7 +1249,7 @@ void CropWindow::updateCursor (int x, int y)
                 if (onArea (CropObserved, x, y)) {
                     newType = CSMove;
                 } else {
-                    newType = CSOpenHand;
+                    newType = CSCrosshair;
                 }
             } else if (tm == TMSpotWB) {
                 newType = CSSpotWB;
@@ -1282,7 +1282,7 @@ void CropWindow::updateCursor (int x, int y)
     } else if (state == SCropMove || state == SCropWinMove || state == SObservedMove) {
         newType = CSMove;
     } else if (state == SHandMove || state == SCropImgMove) {
-        newType = CSClosedHand;
+        newType = CSHandClosed;
     } else if (state == SResizeW1 || state == SResizeW2) {
         newType = CSResizeWidth;
     } else if (state == SResizeH1 || state == SResizeH2) {

@@ -230,8 +230,9 @@ bool PreviewWindow::on_motion_notify_event (GdkEventMotion* event)
             mainCropWin->remoteMove ((event->x - press_x) / zoom, (event->y - press_y) / zoom);
             press_x = event->x;
             press_y = event->y;
+            newType = CSHandClosed;
         } else if (inside) {
-            newType = CSClosedHand;
+            newType = CSHandOpen;
         } else {
             newType = CSArrow;
         }
@@ -262,8 +263,8 @@ bool PreviewWindow::on_button_press_event (GdkEventButton* event)
             press_x = event->x;
             press_y = event->y;
 
-            if (cursor_type != CSClosedHand) {
-                cursor_type = CSClosedHand;
+            if (cursor_type != CSHandClosed) {
+                cursor_type = CSHandClosed;
                 CursorManager::setWidgetCursor(get_window(), cursor_type);
             }
         }

@@ -40,6 +40,7 @@ SaveFormatPanel::SaveFormatPanel () : listener (nullptr)
     format->append ("JPEG (8-bit)");
     format->append ("TIFF (8-bit)");
     format->append ("TIFF (16-bit)");
+    format->append ("TIFF (16-bit float)");
     format->append ("TIFF (32-bit float)");
     format->append ("PNG (8-bit)");
     format->append ("PNG (16-bit)");
@@ -48,8 +49,9 @@ SaveFormatPanel::SaveFormatPanel () : listener (nullptr)
     fstr[1] = "tif";
     fstr[2] = "tif";
     fstr[3] = "tif";
-    fstr[4] = "png";
+    fstr[4] = "tif";
     fstr[5] = "png";
+    fstr[6] = "png";
 
     hb1->attach (*flab, 0, 0, 1, 1);
     hb1->attach (*format, 1, 0, 1, 1);
@@ -123,10 +125,12 @@ void SaveFormatPanel::init (SaveFormat &sf)
     if (sf.format == "jpg") {
         format->set_active (0);
     } else if (sf.format == "png" && sf.pngBits == 16) {
-        format->set_active (5);
+        format->set_active (6);
     } else if (sf.format == "png" && sf.pngBits == 8) {
-        format->set_active (4);
+        format->set_active (5);
     } else if (sf.format == "tif" && sf.tiffBits == 32) {
+        format->set_active (4);
+    } else if (sf.format == "tif" && sf.tiffBits == 16 && sf.tiffFloat) {
         format->set_active (3);
     } else if (sf.format == "tif" && sf.tiffBits == 16) {
         format->set_active (2);
@@ -150,19 +154,21 @@ SaveFormat SaveFormatPanel::getFormat ()
     int sel = format->get_active_row_number();
     sf.format = fstr[sel];
 
-    if (sel == 5) {
+    if (sel == 6) {
         sf.pngBits = 16;
     } else {
         sf.pngBits = 8;
     }
 
-    if (sel == 2) {
+    if (sel == 2 || sel == 3) {
         sf.tiffBits = 16;
-    } else if (sel == 3) {
+    } else if (sel == 4) {
         sf.tiffBits = 32;
     } else {
         sf.tiffBits = 8;
     }
+
+    sf.tiffFloat = sel == 4 || sel == 3;
 
     sf.jpegQuality      = (int) jpegQual->getValue ();
     sf.jpegSubSamp      = jpegSubSamp->get_active_row_number() + 1;

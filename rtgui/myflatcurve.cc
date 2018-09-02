@@ -630,7 +630,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
                 switch (area) {
 
                 case (FCT_Area_Insertion):
-                    new_type = CSMove;
+                    new_type = CSMove2D; // Shown when adding a new node in a blank area, both click and drag.
 
                     /* insert a new control point */
                     if (num > 0) {
@@ -681,7 +681,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
                     break;
 
                 case (FCT_Area_Point):
-                    new_type = CSMove;
+                    new_type = CSMove2D; // Shown when node clicked and dragged.
                     editedHandle = FCT_EditedHandle_CPoint;
                     ugpX = curve.x.at(lit_point);
                     ugpY = curve.y.at(lit_point);
@@ -689,7 +689,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
 
                 case (FCT_Area_H):
                 case (FCT_Area_V):
-                    new_type = CSMove;
+                    new_type = CSMove2D; // Shown when vertical line clicked, not dragged.
                     editedHandle = FCT_EditedHandle_CPointUD;
                     ugpX = curve.x.at(lit_point);
                     ugpY = curve.y.at(lit_point);
@@ -876,7 +876,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
                     break;
 
                 case (FCT_Area_Point):
-                    new_type = CSMove;
+                    new_type = CSMove2D; // Shown when node released.
                     break;
 
                 case (FCT_Area_H):
@@ -884,7 +884,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
                     break;
 
                 case (FCT_Area_V):
-                    new_type = CSMove;
+                    new_type = CSMove2D; // Shown when line released.
                     break;
 
                 case (FCT_Area_LeftTan):
@@ -1008,7 +1008,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
                     //new_type = CSMove;
                     //break;
                     case (FCT_Area_V):
-                        new_type = CSMove;
+                        new_type = CSPlus; // Shown when hovering over vertical line.
                         break;
 
                     case (FCT_Area_H):
