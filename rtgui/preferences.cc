@@ -689,87 +689,31 @@ Gtk::Widget* Preferences::getPerformancePanel ()
     finspect->add (*inspectorvb);
     vbPerformance->pack_start (*finspect, Gtk::PACK_SHRINK, 4);
 
-    Gtk::Frame* fdenoise = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_NOISE")) );
-    Gtk::VBox* vbdenoise = Gtk::manage ( new Gtk::VBox (Gtk::PACK_SHRINK, 4) );
+    Gtk::Frame* threadsFrame = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_PERFORMANCE_THREADS")) );
+    Gtk::VBox* threadsVBox = Gtk::manage ( new Gtk::VBox (Gtk::PACK_SHRINK, 4) );
 
-    Gtk::Label* lreloadneeded2 = Gtk::manage (new Gtk::Label (M ("PREFERENCES_IMG_RELOAD_NEEDED"), Gtk::ALIGN_START));
-    Gtk::HBox* threadLimitHB = Gtk::manage (new Gtk::HBox (Gtk::PACK_SHRINK, 4));
-    threadLimitHB->set_tooltip_text (M ("PREFERENCES_RGBDTL_TOOLTIP"));
-    Gtk::Label* RGBDTLl = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_RGBDTL_LABEL") + ":", Gtk::ALIGN_START));
-    rgbDenoiseTreadLimitSB = Gtk::manage ( new Gtk::SpinButton () );
-    rgbDenoiseTreadLimitSB->set_digits (0);
-    rgbDenoiseTreadLimitSB->set_increments (1, 5);
-    rgbDenoiseTreadLimitSB->set_max_length (2); // Will this be sufficient? :)
+    Gtk::HBox* threadsHBox = Gtk::manage (new Gtk::HBox (Gtk::PACK_SHRINK, 4));
+    Gtk::Label* threadsLbl = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_PERFORMANCE_THREADS_LABEL") + ":", Gtk::ALIGN_START));
+    threadsSpinBtn = Gtk::manage ( new Gtk::SpinButton () );
+    threadsSpinBtn->set_digits (0);
+    threadsSpinBtn->set_increments (1, 5);
+    threadsSpinBtn->set_max_length (2); // Will this be sufficient? :)
 #ifdef _OPENMP
     int maxThreadNumber = omp_get_max_threads();
 #else
     int maxThreadNumber = 10;
 #endif
-    rgbDenoiseTreadLimitSB->set_range (0, maxThreadNumber);
-    threadLimitHB->pack_start (*RGBDTLl, Gtk::PACK_SHRINK, 2);
-    threadLimitHB->pack_end (*rgbDenoiseTreadLimitSB, Gtk::PACK_SHRINK, 2);
+    threadsSpinBtn->set_range (0, maxThreadNumber);
 
-    Gtk::Label* dnlab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_LEVDN") + ":", Gtk::ALIGN_START));
-    Gtk::Label* dnautlab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_LEVAUTDN") + ":", Gtk::ALIGN_START));
-    Gtk::Label* dnautsimpllab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_SIMPLAUT") + ":", Gtk::ALIGN_START));
-    Gtk::Label* dntilab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_TINB") + ":", Gtk::ALIGN_START));
-    Gtk::Label* dnwavlab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_WAVLEV") + ":", Gtk::ALIGN_START));
-    Gtk::Label* dnlisslab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_LISS") + ":", Gtk::ALIGN_START));
+    threadsHBox->pack_start (*threadsLbl, Gtk::PACK_SHRINK, 2);
+    threadsHBox->pack_end (*threadsSpinBtn, Gtk::PACK_SHRINK, 2);
 
-    dnv = Gtk::manage (new Gtk::ComboBoxText ());
-    dnv->append (M ("PREFERENCES_MIN"));
-    dnv->append (M ("PREFERENCES_SMA"));
-    dnv->append (M ("PREFERENCES_MED"));
-    dnv->append (M ("PREFERENCES_MAX"));
-    dnaut = Gtk::manage (new Gtk::ComboBoxText ());
-    dnaut->append (M ("PREFERENCES_AUTLOW"));
-    dnaut->append (M ("PREFERENCES_AUTSTD"));
+    threadsVBox->pack_start (*threadsHBox, Gtk::PACK_SHRINK);
+    threadsFrame->add (*threadsVBox);
 
-    dnautsimpl = Gtk::manage (new Gtk::ComboBoxText ());
-    dnautsimpl->append (M ("PREFERENCES_STDAUT"));
-    dnautsimpl->append (M ("PREFERENCES_EXPAUT"));
-
-    dnliss = Gtk::manage (new Gtk::ComboBoxText ());
-    dnliss->append (M ("PREFERENCES_AUTLISVLOW")); //very low
-    dnliss->append (M ("PREFERENCES_AUTLISLOW")); //low
-    dnliss->append (M ("PREFERENCES_AUTLISSTD")); //med
-    dnliss->append (M ("PREFERENCES_AUTLISMAX")); //max
-
-    dnti = Gtk::manage (new Gtk::ComboBoxText ());
-    dnti->append (M ("PREFERENCES_TISTD"));
-    dnti->append (M ("PREFERENCES_TIMAX"));
-
-    dnwavlev = Gtk::manage (new Gtk::ComboBoxText ());
-    dnwavlev->append (M ("PREFERENCES_WLZER"));
-    dnwavlev->append (M ("PREFERENCES_WLONE"));
-    dnwavlev->append (M ("PREFERENCES_WLTWO"));
-
-    Gtk::Table* colon = Gtk::manage (new Gtk::Table (6, 2));
-    colon->attach (*dnlab, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    colon->attach (*dnv, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    colon->attach (*dnautlab, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    colon->attach (*dnaut, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    colon->attach (*dnautsimpllab, 0, 1, 2, 3, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    colon->attach (*dnautsimpl, 1, 2, 2, 3, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    colon->attach (*dnlisslab, 0, 1, 3, 4, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    colon->attach (*dnliss, 1, 2, 3, 4, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    colon->attach (*dntilab, 0, 1, 4, 5, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    colon->attach (*dnti, 1, 2, 4, 5, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    colon->attach (*dnwavlab, 0, 1, 5, 6, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    colon->attach (*dnwavlev, 1, 2, 5, 6, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-
-    vbdenoise->pack_start (*lreloadneeded2, Gtk::PACK_SHRINK);
-    vbdenoise->pack_start (*colon, Gtk::PACK_SHRINK);
-    vbdenoise->pack_start (*threadLimitHB, Gtk::PACK_SHRINK);
-    // <--- To be hard-coded and removed once tested
-    cbdaubech = Gtk::manage (new Gtk::CheckButton (M ("PREFERENCES_DAUB_LABEL"), Gtk::ALIGN_START));
-    cbdaubech->set_tooltip_markup (M ("PREFERENCES_DAUB_TOOLTIP"));
-//   vbdenoise->pack_start (*cbdaubech, Gtk::PACK_SHRINK);
-    // --->
-    fdenoise->add (*vbdenoise);
-    vbPerformance->pack_start (*fdenoise, Gtk::PACK_SHRINK, 4);
-
+    vbPerformance->pack_start (*threadsFrame, Gtk::PACK_SHRINK, 4);
     swPerformance->add(*vbPerformance);
+
     return swPerformance;
 }
 
@@ -1739,14 +1683,6 @@ void Preferences::storePreferences ()
 
     moptions.rtSettings.iccDirectory = iccDir->get_filename ();
 
-    moptions.rtSettings.leveldnv = dnv->get_active_row_number ();
-    moptions.rtSettings.leveldnti = dnti->get_active_row_number ();
-    moptions.rtSettings.leveldnliss = dnliss->get_active_row_number ();
-    moptions.rtSettings.leveldnaut = dnaut->get_active_row_number ();
-    moptions.rtSettings.nrwavlevel = dnwavlev->get_active_row_number ();
-    moptions.rtSettings.leveldnautsimpl = dnautsimpl->get_active_row_number ();
-    moptions.rtSettings.daubech = cbdaubech->get_active ();
-
     moptions.prevdemo = (prevdemo_t)cprevdemo->get_active_row_number ();
     moptions.serializeTiffRead = ctiffserialize->get_active();
 
@@ -1811,7 +1747,7 @@ void Preferences::storePreferences ()
 
     moptions.autoSaveTpOpen = ckbAutoSaveTpOpen->get_active();
 
-    moptions.rgbDenoiseThreadLimit = rgbDenoiseTreadLimitSB->get_value_as_int();
+    moptions.rgbDenoiseThreadLimit = threadsSpinBtn->get_value_as_int();
     moptions.clutCacheSize = clutCacheSizeSB->get_value_as_int();
     moptions.maxInspectorBuffers = maxInspectorBuffersSB->get_value_as_int();
     moptions.rtSettings.thumbnail_inspector_mode = static_cast<rtengine::Settings::ThumbnailInspectorMode>(thumbnailInspectorMode->get_active_row_number());
@@ -1895,14 +1831,7 @@ void Preferences::fillPreferences ()
         iccDir->set_current_folder (moptions.rtSettings.iccDirectory);
     }
 
-    dnv->set_active (moptions.rtSettings.leveldnv);
-    dnti->set_active (moptions.rtSettings.leveldnti);
-    dnliss->set_active (moptions.rtSettings.leveldnliss);
-    dnaut->set_active (moptions.rtSettings.leveldnaut);
-    dnautsimpl->set_active (moptions.rtSettings.leveldnautsimpl);
-    dnwavlev->set_active (moptions.rtSettings.nrwavlevel);
     cprevdemo->set_active (moptions.prevdemo);
-    cbdaubech->set_active (moptions.rtSettings.daubech);
 
     languages->set_active_text (moptions.language);
     ckbLangAutoDetect->set_active (moptions.languageAutoDetect);
@@ -2023,7 +1952,7 @@ void Preferences::fillPreferences ()
 
     ckbAutoSaveTpOpen->set_active (moptions.autoSaveTpOpen);
 
-    rgbDenoiseTreadLimitSB->set_value (moptions.rgbDenoiseThreadLimit);
+    threadsSpinBtn->set_value (moptions.rgbDenoiseThreadLimit);
     clutCacheSizeSB->set_value (moptions.clutCacheSize);
     maxInspectorBuffersSB->set_value (moptions.maxInspectorBuffers);
     thumbnailInspectorMode->set_active(int(moptions.rtSettings.thumbnail_inspector_mode));

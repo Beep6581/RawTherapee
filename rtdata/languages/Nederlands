@@ -906,13 +906,7 @@ PARTIALPASTE_WAVELETGROUP;Wavelet verwerking
 PARTIALPASTE_WHITEBALANCE;Witbalans
 PREFERENCES_ADD;Toevoegen
 PREFERENCES_APPLNEXTSTARTUP;herstart vereist
-PREFERENCES_AUTLISLOW;Laag
-PREFERENCES_AUTLISMAX;Max - Gemiddelde van alle tegels
-PREFERENCES_AUTLISSTD;Hoog
-PREFERENCES_AUTLISVLOW;Geen
-PREFERENCES_AUTLOW;Laag
 PREFERENCES_AUTOMONPROFILE;Gebruik automatisch het standaard monitorprofiel \nvan het besturingsysteem
-PREFERENCES_AUTSTD;Standaard
 PREFERENCES_BATCH_PROCESSING;Batch-verwerking
 PREFERENCES_BEHADDALL;Alles op 'Toevoegen'
 PREFERENCES_BEHADDALLHINT;Zet alle parameters in de <b>Toevoegen</b> mode.\nWijzigingen van parameters in de batch tool zijn <b>deltas</b> op de opgeslagen waarden.
@@ -956,8 +950,6 @@ PREFERENCES_DARKFRAMESHOTS;foto's
 PREFERENCES_DARKFRAMETEMPLATES;sjablonen
 PREFERENCES_DATEFORMAT;Datumformaat
 PREFERENCES_DATEFORMATHINT;<i>U kunt de volgende formaten gebruiken:</i>\n<b>%y</b><i> : jaar</i>\n<b>%m</b><i> : maand</i>\n<b>%d</b><i> : dag</i>\n<i>\nHet Nederlandse datumformaat is bijvoorbeeld:</i>\n<b>%d/%m/%y</b>
-PREFERENCES_DAUB_LABEL;Gebruik Daubechies D6 wavelets in plaats van D4
-PREFERENCES_DAUB_TOOLTIP;De Ruisonderdrukking en Wavelet niveaus gebruiken de Debauchies moeder wavelet. Als je D6 gebruikt in plaats van D4 vergroot het aantal orthogonale Daubechies coëfficiënten en dit verbeterd waarschijnlijk de kwaliteit van de lage niveaus.
 PREFERENCES_DIRDARKFRAMES;Map met donkerframes
 PREFERENCES_DIRHOME;Standaardmap
 PREFERENCES_DIRLAST;Laatst bezochte map
@@ -965,7 +957,6 @@ PREFERENCES_DIROTHER;Anders
 PREFERENCES_DIRSELECTDLG;Selecteer standaardmap bij opstarten...
 PREFERENCES_DIRSOFTWARE;Installatiemap
 PREFERENCES_EDITORLAYOUT;Bewerkingsvenster
-PREFERENCES_EXPAUT;Expert
 PREFERENCES_EXTERNALEDITOR;Externe editor
 PREFERENCES_FBROWSEROPTS;Opties bestandsnavigator
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Enkele rij navigator werkbalk (de-activeer voor lage resolutie)
@@ -1009,12 +1000,7 @@ PREFERENCES_INTENT_RELATIVE;Relatieve colorimetrie
 PREFERENCES_INTENT_SATURATION;Verzadiging
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Toon interne JPEG-miniatuur indien onbewerkt
 PREFERENCES_LANGAUTODETECT;Gebruik taalinstellingen pc
-PREFERENCES_LEVAUTDN;Ruisonderdrukking niveau
-PREFERENCES_LEVDN;Cell grootte
-PREFERENCES_LISS;Auto multi-zone verzachten
-PREFERENCES_MAX;Maxi (Tegel)
 PREFERENCES_MAXRECENTFOLDERS;Maximum aantal recente mappen
-PREFERENCES_MED;Gemiddeld (Tegel/2)
 PREFERENCES_MENUGROUPEXTPROGS;Groepeer open met
 PREFERENCES_MENUGROUPFILEOPERATIONS;Groepeer bestandsbewerkingen
 PREFERENCES_MENUGROUPLABEL;Groepeer labelen
@@ -1022,7 +1008,6 @@ PREFERENCES_MENUGROUPPROFILEOPERATIONS;Groepeer profielbewerkingen
 PREFERENCES_MENUGROUPRANK;Groepeer markering
 PREFERENCES_MENUOPTIONS;Menu-opties
 PREFERENCES_METADATA;Metadata
-PREFERENCES_MIN;Mini (100x115)
 PREFERENCES_MONINTENT;Standaard monitor weergave
 PREFERENCES_MONITOR;Monitor
 PREFERENCES_MONPROFILE;Standaard kleurprofiel
@@ -1031,7 +1016,6 @@ PREFERENCES_MULTITAB;Multi-tab: elke foto opent in nieuw tabvenster
 PREFERENCES_MULTITABDUALMON;Multi-tab, indien beschikbaar op tweede monitor
 PREFERENCES_NAVGUIDEBRUSH;Navigator randkleur
 PREFERENCES_NAVIGATIONFRAME;Navigatie
-PREFERENCES_NOISE;Ruisonderdrukking
 PREFERENCES_OUTDIR;Uitvoermap
 PREFERENCES_OUTDIRFOLDER;Sla op in map
 PREFERENCES_OUTDIRFOLDERHINT;Sla foto's op in andere map
@@ -1065,8 +1049,6 @@ PREFERENCES_PRTPROFILE;Kleurprofiel
 PREFERENCES_PSPATH;Installatiemap Adobe Photoshop
 PREFERENCES_REMEMBERZOOMPAN;Onthoud zoom % en pan startpunt
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Onthoud het zoom % en pan startpunt van de huidige afbeelding als er een nieuwe afbeelding wordt geopend.\n\nDeze optie werkt alleen in "Single Editor Tab Mode" en wanneer "Demozaïekmethode van het voorbeeld <100% zoom" hetzelfde is als "Gelijk aan PP3".
-PREFERENCES_RGBDTL_LABEL;Maximum aantal 'threads' voor Ruisonderdrukking en Wavelet (gedeeld door 2)
-PREFERENCES_RGBDTL_TOOLTIP;Ruisonderdrukking en Wavelet gebruiken ongeveer 128MB RAM voor een 10MPix afbeelding, of 512MB voor een 40MPix afbeelding en additioneel 128MB RAM per thread. Hoe meer threads parallel worden gebruikt, hoe sneller de  bewerking. Laat de instelling op "0" staan om automatisch het maximale aantal threads te gebruiken dat mogelijk is.
 PREFERENCES_SELECTFONT;Kies lettertype
 PREFERENCES_SELECTFONT_COLPICKER;Font van de Kleurkiezer
 PREFERENCES_SELECTLANG;Selecteer taal
@@ -1080,36 +1062,25 @@ PREFERENCES_SHOWDATETIME;Toon datum en tijd
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Toon belichtingscompensatie
 PREFERENCES_SHOWFILMSTRIPTOOLBAR;Toon filmstrip werkbalk
 PREFERENCES_SHTHRESHOLD;Grenswaarde onderbelichting
-PREFERENCES_SIMPLAUT;Gereedschap
 PREFERENCES_SINGLETAB;Enkel-tab: foto's openen in zelfde tabvenster
 PREFERENCES_SINGLETABVERTAB;Enkel-tab ('filmstrip') modus met verticale tabs
-PREFERENCES_SMA;Klein (250x287)
 PREFERENCES_SND_BATCHQUEUEDONE;Verwerkingsrij klaar
 PREFERENCES_SND_HELP;Typ bestandsnaam (of niets: geen geluid).\nWindows: gebruik 'SystemDefault', 'SystemAsterisk', etc. voor systeemgeluiden.\nLinux: gebruik "complete", "window-attention" etc. voor systeemgeluiden
 PREFERENCES_SND_LNGEDITPROCDONE;Bewerking klaar
 PREFERENCES_SND_THRESHOLDSECS;na seconden
 PREFERENCES_STARTUPIMDIR;Standaardmap bij opstarten
-PREFERENCES_STDAUT;Standaard
 PREFERENCES_TAB_BROWSER;Bestandsnavigator
 PREFERENCES_TAB_COLORMGR;Kleurbeheer
 PREFERENCES_TAB_DYNAMICPROFILE;Dynamisch Profielregel
 PREFERENCES_TAB_GENERAL;Algemeen
 PREFERENCES_TAB_IMPROC;Beeldverwerking
-PREFERENCES_TAB_PERFORMANCE;Prestaties en Kwaliteit
 PREFERENCES_TAB_SOUND;Geluiden
-PREFERENCES_TIMAX;Hoog
-PREFERENCES_TINB;Aantal tegles
-PREFERENCES_TISTD;Standaard
 PREFERENCES_TP_LABEL;Gereedschapspaneel:
 PREFERENCES_TP_USEICONORTEXT;Gebruik iconen ipv. tekst voor de tabbladen
 PREFERENCES_TP_VSCROLLBAR;Verberg de schuifbalk van het gereedschapspaneel
 PREFERENCES_TUNNELMETADATA;Kopieer Exif/IPTC/XMP-data onveranderd naar uitvoerbestand
 PREFERENCES_USEBUNDLEDPROFILES;Gebruik gebundelde profielen
 PREFERENCES_VIEW;Witbalans instelling van het uitvoerapparaat (monitor, TV, projector...)
-PREFERENCES_WAVLEV;Vergroot wavelet ninveau voor kwaliteit 'hoog'
-PREFERENCES_WLONE;Eén niveau
-PREFERENCES_WLTWO;Twee niveaus
-PREFERENCES_WLZER;Nee
 PREFERENCES_WORKFLOW;Layout
 PROFILEPANEL_COPYPPASTE;Te kopiëren parameters
 PROFILEPANEL_GLOBALPROFILES;Gebundelde profielen
