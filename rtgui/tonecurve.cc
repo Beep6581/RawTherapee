@@ -229,11 +229,11 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
     hlcomprthresh->setValue (pp->toneCurve.hlcomprthresh);
     shcompr->setValue (pp->toneCurve.shcompr);
 
-    if (!black->getAddMode()) {
+    if (!black->getAddMode() && !batchMode) {
         shcompr->set_sensitive(!((int)black->getValue () == 0));    //at black=0 shcompr value has no effect
     }
     
-    if (!hlcompr->getAddMode()) {
+    if (!hlcompr->getAddMode() && !batchMode) {
         hlcomprthresh->set_sensitive(!((int)hlcompr->getValue () == 0));    //at hlcompr=0 hlcomprthresh value has no effect
     }
 
@@ -615,7 +615,7 @@ void ToneCurve::adjusterChanged (Adjuster* a, double newval)
     } else if (a == black) {
         listener->panelChanged (EvBlack, costr);
 
-        if (!black->getAddMode()) {
+        if (!black->getAddMode() && !batchMode) {
             shcompr->set_sensitive(!((int)black->getValue () == 0));    //at black=0 shcompr value has no effect
         }
     } else if (a == contrast) {
@@ -625,7 +625,7 @@ void ToneCurve::adjusterChanged (Adjuster* a, double newval)
     } else if (a == hlcompr) {
         listener->panelChanged (EvHLCompr, costr);
         
-        if (!hlcompr->getAddMode()) {
+        if (!hlcompr->getAddMode() && !batchMode) {
             hlcomprthresh->set_sensitive(!((int)hlcompr->getValue () == 0));    //at hlcompr=0 hlcomprthresh value has no effect
         }
     } else if (a == hlcomprthresh) {
@@ -668,11 +668,11 @@ void ToneCurve::neutral_pressed ()
         hlrbox->hide();
     }
 
-    if (!black->getAddMode()) {
+    if (!black->getAddMode() && !batchMode) {
         shcompr->set_sensitive(!((int)black->getValue () == 0));    //at black=0 shcompr value has no effect
     }
     
-    if (!hlcompr->getAddMode()) {
+    if (!hlcompr->getAddMode() && !batchMode) {
         hlcomprthresh->set_sensitive(!((int)hlcompr->getValue () == 0));    //at hlcompr=0 hlcomprthresh value has no effect
     }
 
@@ -745,6 +745,11 @@ void ToneCurve::autolevels_toggled ()
             if (!black->getAddMode()) {
                 shcompr->set_sensitive(!((int)black->getValue () == 0));    //at black=0 shcompr value has no effect
             }
+            
+            if (!hlcompr->getAddMode() && !batchMode) {
+                hlcomprthresh->set_sensitive(!((int)hlcompr->getValue () == 0));    //at hlcompr=0 hlcomprthresh value has no effect
+            }
+
         } else {
             listener->panelChanged (EvFixedExp, M("GENERAL_DISABLED"));
         }
@@ -859,8 +864,12 @@ bool ToneCurve::autoExpComputed_ ()
         hlrbox->hide();
     }
 
-    if (!black->getAddMode()) {
+    if (!black->getAddMode() && !batchMode) {
         shcompr->set_sensitive(!((int)black->getValue () == 0));    //at black=0 shcompr value has no effect
+    }
+    
+    if (!hlcompr->getAddMode() && !batchMode) {
+        hlcomprthresh->set_sensitive(!((int)hlcompr->getValue () == 0));    //at hlcompr=0 hlcomprthresh value has no effect
     }
 
     enableListener ();
@@ -983,8 +992,12 @@ bool ToneCurve::histmatchingComputed()
     contrast->setValue(0);
     black->setValue(0);
 
-    if (!black->getAddMode()) {
+    if (!black->getAddMode() && !batchMode) {
         shcompr->set_sensitive(!((int)black->getValue() == 0));
+    }
+    
+    if (!hlcompr->getAddMode() && !batchMode) {
+        hlcomprthresh->set_sensitive(!((int)hlcompr->getValue () == 0));    //at hlcompr=0 hlcomprthresh value has no effect
     }
 
     if (autolevels->get_active() ) {
