@@ -1026,6 +1026,27 @@ bool MyScrolledToolbar::on_scroll_event (GdkEventScroll* event)
             if (value2 != value) {
                 scroll->set_value(value2);
             }
+        } else if (event->direction == GDK_SCROLL_SMOOTH) {
+            step = 0.;
+            if (event->delta_x) {  // if the user use a pad, it can scroll horizontally
+                step = event->delta_x;
+            } else if (event->delta_y) {
+                step = event->delta_y;
+            }
+
+            if (step != 0.) {
+                value2 = value + step /* * 2 */; // we could use a multiplicator here
+
+                if (value2 < lower) {
+                    value2 = lower;
+                } else if (value2 > upper) {
+                    value2 = upper;
+                }
+
+                if (value2 != value) {
+                    scroll->set_value(value2);
+                }
+            }
         }
     }
 
