@@ -630,7 +630,9 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     beforeAfterBox->set_name ("BeforeAfterContainer");
     beforeAfterBox->pack_start (*afterBox);
 
-    editbox->pack_start (*toolBarPanel, Gtk::PACK_SHRINK, 2);
+    MyScrolledToolbar *stb1 = Gtk::manage(new MyScrolledToolbar());
+    stb1->add(*toolBarPanel);
+    editbox->pack_start (*stb1, Gtk::PACK_SHRINK, 2);
     editbox->pack_start (*beforeAfterBox);
 
     // build right side panel
@@ -763,7 +765,10 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     iops->attach_next_to (*tbShowHideSidePanels, Gtk::POS_RIGHT, 1, 1);
     iops->attach_next_to (*tbRightPanel_1, Gtk::POS_RIGHT, 1, 1);
 
-    editbox->pack_start (*iops, Gtk::PACK_SHRINK, 0);
+    MyScrolledToolbar *stb2 = Gtk::manage(new MyScrolledToolbar());
+    stb2->add(*iops);
+
+    editbox->pack_start (*stb2, Gtk::PACK_SHRINK, 0);
     editbox->show_all ();
 
     // build screen
