@@ -111,7 +111,7 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
     //----------- Highlight recovery & threshold -------------
     hlcompr = Gtk::manage (new Adjuster (M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 500, 1, 0));
     pack_start (*hlcompr);
-    hlcomprthresh = Gtk::manage (new Adjuster (M("TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD"), 0, 100, 1, 33));
+    hlcomprthresh = Gtk::manage (new Adjuster (M("TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD"), 0, 100, 1, 0));
     pack_start (*hlcomprthresh);
 
 //----------- Black Level & Compression -------------------
@@ -231,6 +231,10 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     if (!black->getAddMode()) {
         shcompr->set_sensitive(!((int)black->getValue () == 0));    //at black=0 shcompr value has no effect
+    }
+    
+    if (!hlcompr->getAddMode()) {
+        hlcomprthresh->set_sensitive(!((int)hlcompr->getValue () == 0));    //at hlcompr=0 hlcomprthresh value has no effect
     }
 
     brightness->setValue (pp->toneCurve.brightness);
@@ -620,6 +624,10 @@ void ToneCurve::adjusterChanged (Adjuster* a, double newval)
         listener->panelChanged (EvSaturation, costr);
     } else if (a == hlcompr) {
         listener->panelChanged (EvHLCompr, costr);
+        
+        if (!hlcompr->getAddMode()) {
+            hlcomprthresh->set_sensitive(!((int)hlcompr->getValue () == 0));    //at hlcompr=0 hlcomprthresh value has no effect
+        }
     } else if (a == hlcomprthresh) {
         listener->panelChanged (EvHLComprThreshold, costr);
     } else if (a == shcompr) {
@@ -662,6 +670,10 @@ void ToneCurve::neutral_pressed ()
 
     if (!black->getAddMode()) {
         shcompr->set_sensitive(!((int)black->getValue () == 0));    //at black=0 shcompr value has no effect
+    }
+    
+    if (!hlcompr->getAddMode()) {
+        hlcomprthresh->set_sensitive(!((int)hlcompr->getValue () == 0));    //at hlcompr=0 hlcomprthresh value has no effect
     }
 
     contrast->setValue(0);
