@@ -20,7 +20,7 @@
 #define _NAVIGATOR_
 
 #include <gtkmm.h>
-#include "previewwindow.h"
+#include "custom-widgets/previewwindow.h"
 #include "pointermotionlistener.h"
 #include "options.h"
 #include "../rtengine/iccstore.h"

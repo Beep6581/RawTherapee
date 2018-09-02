@@ -19,7 +19,7 @@
 #include "filterpanel.h"
 #include "multilangmgr.h"
 #include "../rtengine/rtengine.h"
-#include "rtimage.h"
+#include "custom-widgets/rtimage.h"
 
 using namespace rtengine;
 

@@ -19,7 +19,7 @@
 #ifndef _BATCHQUEUEBUTTONSET_
 #define _BATCHQUEUEBUTTONSET_
 
-#include "lwbuttonset.h"
+#include "custom-widgets/lwbuttonset.h"
 #include <gtkmm.h>
 
 class BatchQueueEntry;

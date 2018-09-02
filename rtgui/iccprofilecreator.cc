@@ -24,7 +24,7 @@
 #include "addsetids.h"
 #include "../rtengine/icons.h"
 #include "../rtengine/color.h"
-#include "rtimage.h"
+#include "custom-widgets/rtimage.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif

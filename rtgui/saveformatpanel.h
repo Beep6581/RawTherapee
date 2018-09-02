@@ -20,7 +20,7 @@
 #define __SAVEFORMATPANEL_H__
 
 #include <gtkmm.h>
-#include "adjuster.h"
+#include "custom-widgets/adjuster.h"
 #include "guiutils.h"
 #include "options.h"
 

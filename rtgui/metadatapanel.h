@@ -1,5 +1,5 @@
 /** -*- C++ -*-
- *  
+ *
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2017 Alberto Griggio <alberto.griggio@gmail.com>
@@ -21,8 +21,8 @@
 
 #include <gtkmm.h>
 #include "toolpanel.h"
-#include "exifpanel.h"
-#include "iptcpanel.h"
+#include "tools/exifpanel.h"
+#include "tools/iptcpanel.h"
 
 class MetaDataPanel: public Gtk::VBox, public ToolPanel {
 private:
@@ -37,7 +37,7 @@ private:
 public:
     MetaDataPanel();
     ~MetaDataPanel();
-    
+
     void setBatchMode(bool batchMode);
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
     void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);

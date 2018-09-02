@@ -1,5 +1,5 @@
 /** -*- C++ -*-
- *  
+ *
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2018 Alberto Griggio <alberto.griggio@gmail.com>
@@ -20,7 +20,7 @@
 #pragma once
 
 #include <gtkmm.h>
-#include "adjuster.h"
+#include "custom-widgets/adjuster.h"
 #include "toolpanel.h"
 
 class SoftLight: public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
@@ -30,7 +30,7 @@ private:
 
     rtengine::ProcEvent EvSoftLightEnabled;
     rtengine::ProcEvent EvSoftLightStrength;
-    
+
 public:
 
     SoftLight();

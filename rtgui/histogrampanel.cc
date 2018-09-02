@@ -23,7 +23,7 @@
 #include <cstring>
 #include <cmath>
 #include "../rtengine/LUT.h"
-#include "rtimage.h"
+#include "custom-widgets/rtimage.h"
 #include "../rtengine/improccoordinator.h"
 #include "../rtengine/color.h"
 #include "../rtengine/opthelper.h"
@@ -44,11 +44,11 @@ HistogramPanel::HistogramPanel ()
 
     histogramArea = Gtk::manage (new HistogramArea (this));
     setExpandAlignProperties(histogramArea, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
-    
+
     histogramRGBArea = Gtk::manage (new HistogramRGBArea ());
     setExpandAlignProperties(histogramRGBArea, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
     histogramRGBArea->show();
-    
+
     // connecting the two childs
     histogramArea->signal_factor_changed().connect( sigc::mem_fun(*histogramRGBArea, &HistogramRGBArea::factorChanged) );
 
@@ -78,7 +78,7 @@ HistogramPanel::HistogramPanel ()
     chroImage_g  = new RTImage ("histogram-gold-off-small.png");
     rawImage_g   = new RTImage ("histogram-bayer-off-small.png");
     barImage_g   = new RTImage ("histogram-bar-off-small.png");
-	
+
     mode0Image  = new RTImage ("histogram-mode-linear-small.png");
     mode1Image  = new RTImage ("histogram-mode-logx-small.png");
     mode2Image  = new RTImage ("histogram-mode-logxy-small.png");
@@ -226,9 +226,9 @@ void HistogramPanel::resized (Gtk::Allocation& req)
     histogramRGBArea->updateBackBuffer(-1, -1, -1);
     histogramRGBArea->queue_draw ();
 
-    // Store current height of the histogram 
+    // Store current height of the histogram
     options.histogramHeight = get_height();
-    
+
 }
 
 void HistogramPanel::red_toggled ()
@@ -346,7 +346,7 @@ void HistogramPanel::reorder (Gtk::PositionType align)
 
 // DrawModeListener interface:
 void HistogramPanel::toggle_button_mode ()
-{   
+{
     if (options.histogramDrawMode == 0)
         showMode->set_image(*mode0Image);
     else if (options.histogramDrawMode == 1)
@@ -707,14 +707,14 @@ void HistogramArea::get_preferred_height_vfunc (int &minimum_height, int &natura
 
 void HistogramArea::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    
+
     minimum_width = 200;
     natural_width = 400;
 }
 
 void HistogramArea::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
 {
-    
+
     minimum_height = 0;
     natural_height = 0;
 }
@@ -885,7 +885,7 @@ void HistogramArea::updateBackBuffer ()
 
         // Compute the highest point of the histogram for scaling
         // Values at far left and right end (0 and 255) are handled differently
-        
+
         unsigned int histheight = 0;
 
         for (int i = 1; i < 255; i++) {
@@ -911,7 +911,7 @@ void HistogramArea::updateBackBuffer ()
         }
 
         int realhistheight = histheight;
-        
+
         if (realhistheight < winh - 2) {
             realhistheight = winh - 2;
         }
@@ -956,7 +956,7 @@ void HistogramArea::updateBackBuffer ()
             cr->stroke ();
             drawMarks(cr, bhchanged, realhistheight, w, ui, oi);
         }
-        
+
     }
 
     // Draw the frame's border
@@ -1040,16 +1040,16 @@ bool HistogramArea::on_button_press_event (GdkEventButton* event)
 {
     isPressed = true;
     movingPosition = event->x;
-    
+
     if (event->type == GDK_2BUTTON_PRESS && event->button == 1) {
-        
+
         drawMode = (drawMode + 1) % 3;
         options.histogramDrawMode = (options.histogramDrawMode + 1) % 3;
-        
+
         if (myDrawModeListener) {
             myDrawModeListener->toggle_button_mode ();
         }
-        
+
         updateBackBuffer ();
         queue_draw ();
     }
@@ -1068,19 +1068,19 @@ bool HistogramArea::on_motion_notify_event (GdkEventMotion* event)
     if (isPressed)
     {
         double mod = 1 + (event->x - movingPosition) / get_width();
-        
+
         factor /= mod;
         if (factor < 1.0)
             factor = 1.0;
         if (factor > 100.0)
             factor = 100.0;
-        
+
         sigFactorChanged.emit(factor);
-        
+
         setDirty(true);
         queue_draw ();
     }
-    
+
     return true;
 }
 

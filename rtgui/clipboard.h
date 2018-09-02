@@ -23,8 +23,8 @@
 #include "../rtengine/rtengine.h"
 #include "../rtengine/procparams.h"
 #include "paramsedited.h"
-#include "myflatcurve.h"
-#include "mydiagonalcurve.h"
+#include "custom-widgets/curves/myflatcurve.h"
+#include "custom-widgets/curves/mydiagonalcurve.h"
 
 class Clipboard
 {

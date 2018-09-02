@@ -21,7 +21,7 @@
 
 #include <cstring>
 #include "guiutils.h"
-#include "cropwindow.h"
+#include "tools/cropwindow.h"
 #include "imagearea.h"
 #include "../rtengine/dcrop.h"
 #include "../rtengine/refreshmap.h"

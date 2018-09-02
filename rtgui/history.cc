@@ -18,7 +18,7 @@
  */
 #include "history.h"
 #include "multilangmgr.h"
-#include "rtimage.h"
+#include "custom-widgets/rtimage.h"
 #include "guiutils.h"
 #include "eventmapper.h"
 

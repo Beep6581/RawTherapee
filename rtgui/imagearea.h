@@ -20,17 +20,17 @@
 #define __IMAGEAREA_H__
 
 #include <gtkmm.h>
-#include "cropguilistener.h"
+#include "tools/cropguilistener.h"
 #include "imageareapanel.h"
 #include "editenums.h"
 #include "toolbar.h"
 #include "previewhandler.h"
 #include "imageareatoollistener.h"
-#include "cropwindow.h"
+#include "tools/cropwindow.h"
 #include "zoompanel.h"
 #include "indclippedpanel.h"
 #include "previewmodepanel.h"
-#include "edit.h"
+#include "custom-widgets/on-preview-editing/edit.h"
 
 class ImageAreaPanel;
 class ImageArea : public Gtk::DrawingArea, public CropWindowListener, public EditDataProvider, public LockablePickerToolListener

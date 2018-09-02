@@ -23,7 +23,7 @@
 #include "../rtengine/rt_math.h"
 #include "../rtengine/utils.h"
 #include "../rtengine/icons.h"
-#include "rtimage.h"
+#include "custom-widgets/rtimage.h"
 #include "multilangmgr.h"
 
 #include <assert.h>
@@ -1189,7 +1189,7 @@ MyFileChooserButton::MyFileChooserButton(const Glib::ustring &title, Gtk::FileCh
     if (GTK_MINOR_VERSION < 20) {
         set_border_width(2); // margin doesn't work on GTK < 3.20
     }
-    
+
     set_name("MyFileChooserButton");
 }
 
@@ -1272,14 +1272,14 @@ void MyFileChooserButton::set_filter(const Glib::RefPtr<Gtk::FileFilter> &filter
 {
     cur_filter_ = filter;
 }
-    
+
 
 std::vector<Glib::RefPtr<Gtk::FileFilter>> MyFileChooserButton::list_filters()
 {
     return file_filters_;
 }
 
-    
+
 bool MyFileChooserButton::set_current_folder(const std::string &filename)
 {
     current_folder_ = filename;

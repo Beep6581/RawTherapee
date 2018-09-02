@@ -33,7 +33,7 @@
 #include "filecatalog.h"
 #include "batchqueuebuttonset.h"
 #include "guiutils.h"
-#include "rtimage.h"
+#include "custom-widgets/rtimage.h"
 #include <sys/time.h>
 
 using namespace std;

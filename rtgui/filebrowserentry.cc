@@ -23,10 +23,10 @@
 
 #include "guiutils.h"
 #include "threadutils.h"
-#include "rtimage.h"
+#include "custom-widgets/rtimage.h"
 #include "cursormanager.h"
 #include "thumbbrowserbase.h"
-#include "inspector.h"
+#include "custom-widgets/inspector.h"
 
 #define CROPRESIZEBORDER 4
 

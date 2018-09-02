@@ -30,7 +30,7 @@
 #include "gauss.h"
 #include "improcfun.h"
 #include "sleef.c"
-#include "../rtgui/myflatcurve.h"
+#include "../rtgui/custom-widgets/curves/myflatcurve.h"
 #include "rt_math.h"
 #include "opthelper.h"
 #include "median.h"

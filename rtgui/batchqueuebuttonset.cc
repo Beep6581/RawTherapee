@@ -19,7 +19,7 @@
 #include "batchqueuebuttonset.h"
 
 #include "multilangmgr.h"
-#include "rtimage.h"
+#include "custom-widgets/rtimage.h"
 
 bool BatchQueueButtonSet::iconsLoaded = false;
 

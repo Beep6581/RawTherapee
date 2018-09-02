@@ -18,8 +18,8 @@
  */
 #include "filepanel.h"
 
-#include "rtwindow.h"
-#include "inspector.h"
+#include "window/rtwindow.h"
+#include "custom-widgets/inspector.h"
 #include "placesbrowser.h"
 
 FilePanel::FilePanel () : parent(nullptr), error(0)

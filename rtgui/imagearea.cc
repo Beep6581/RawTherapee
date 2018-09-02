@@ -21,7 +21,7 @@
 #include <cmath>
 #include "options.h"
 #include "multilangmgr.h"
-#include "cropwindow.h"
+#include "tools/cropwindow.h"
 #include "../rtengine/refreshmap.h"
 #include "options.h"
 

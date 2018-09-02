@@ -19,7 +19,7 @@
 #include "zoompanel.h"
 #include "multilangmgr.h"
 #include "imagearea.h"
-#include "rtimage.h"
+#include "custom-widgets/rtimage.h"
 
 ZoomPanel::ZoomPanel (ImageArea* iarea) : iarea(iarea)
 {

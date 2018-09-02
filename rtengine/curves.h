@@ -23,9 +23,9 @@
 #include <map>
 #include <string>
 #include "rt_math.h"
-#include "../rtgui/mycurve.h"
-#include "../rtgui/myflatcurve.h"
-#include "../rtgui/mydiagonalcurve.h"
+#include "../rtgui/custom-widgets/curves/mycurve.h"
+#include "../rtgui/custom-widgets/curves/myflatcurve.h"
+#include "../rtgui/custom-widgets/curves/mydiagonalcurve.h"
 #include "color.h"
 #include "procparams.h"
 #include "pipettebuffer.h"

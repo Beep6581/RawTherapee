@@ -24,10 +24,10 @@
 #include "../rtengine/rtengine.h"
 #include "pparamschangelistener.h"
 #include "profilechangelistener.h"
-#include "partialpastedlg.h"
+#include "window/partialpastedlg.h"
 #include "guiutils.h"
-#include "profilestorecombobox.h"
-#include "rtimage.h"
+#include "custom-widgets/profilestorecombobox.h"
+#include "custom-widgets/rtimage.h"
 
 class ProfilePanel : public Gtk::Grid, public PParamsChangeListener, public ProfileStoreListener
 {

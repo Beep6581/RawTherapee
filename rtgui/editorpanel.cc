@@ -24,10 +24,10 @@
 #include "../rtengine/imagesource.h"
 #include "../rtengine/iccstore.h"
 #include "soundman.h"
-#include "rtimage.h"
-#include "rtwindow.h"
+#include "custom-widgets/rtimage.h"
+#include "window/rtwindow.h"
 #include "guiutils.h"
-#include "popupbutton.h"
+#include "custom-widgets/popupbutton.h"
 #include "options.h"
 #include "progressconnector.h"
 #include "procparamchangers.h"
@@ -498,7 +498,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     // build left side panel
     leftbox = new Gtk::Paned (Gtk::ORIENTATION_VERTICAL);
-    
+
     // make a subbox to allow resizing of the histogram (if it's on the left)
     leftsubbox = new Gtk::Box (Gtk::ORIENTATION_VERTICAL);
     leftsubbox->set_size_request (230, 250);
@@ -520,7 +520,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     leftsubbox->pack_start (*history);
 
     leftsubbox->show_all ();
-    
+
     leftbox->pack2 (*leftsubbox, true, true);
     leftbox->show_all ();
 
@@ -635,14 +635,14 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     // build right side panel
     vboxright = new Gtk::Paned (Gtk::ORIENTATION_VERTICAL);
-    
+
     vsubboxright = new Gtk::Box (Gtk::ORIENTATION_VERTICAL, 0);
     vsubboxright->set_size_request (300, 250);
 
     vsubboxright->pack_start (*ppframe, Gtk::PACK_SHRINK, 2);
     // main notebook
     vsubboxright->pack_start (*tpc->toolPanelNotebook);
-    
+
     vboxright->pack2 (*vsubboxright, true, true);
 
     // Save buttons
@@ -852,7 +852,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     if (tbTopPanel_1) {
         tbTopPanel_1->signal_toggled().connect ( sigc::mem_fun (*this, &EditorPanel::tbTopPanel_1_toggled) );
     }
-    
+
 }
 
 EditorPanel::~EditorPanel ()
@@ -2343,7 +2343,7 @@ void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
                 leftbox->pack1(*histogramPanel, false, false);
                 histogramPanel->unreference();
             }
-            
+
             leftbox->set_position(options.histogramHeight);
             histogramPanel->reorder (Gtk::POS_LEFT);
             break;
@@ -2363,14 +2363,14 @@ void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
                 vboxright->pack1 (*histogramPanel, false, false);
                 histogramPanel->unreference();
             }
-            
-            vboxright->set_position(options.histogramHeight); 
+
+            vboxright->set_position(options.histogramHeight);
             histogramPanel->reorder (Gtk::POS_RIGHT);
             break;
     }
 
     iareapanel->imageArea->setPointerMotionHListener (histogramPanel);
-    
+
 }
 
 

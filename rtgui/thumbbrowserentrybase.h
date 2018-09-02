@@ -25,7 +25,7 @@
 
 #include "cursormanager.h"
 #include "guiutils.h"
-#include "lwbuttonset.h"
+#include "custom-widgets/lwbuttonset.h"
 #include "threadutils.h"
 #include "thumbnail.h"
 

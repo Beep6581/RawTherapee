@@ -24,7 +24,7 @@
 #include <set>
 #include "options.h"
 #include "guiutils.h"
-#include "inspector.h"
+#include "custom-widgets/inspector.h"
 
 /*
  * Class handling the list of ThumbBrowserEntry objects and their position in it's allocated space

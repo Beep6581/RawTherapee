@@ -28,7 +28,7 @@
 #endif
 
 #include "guiutils.h"
-#include "rtimage.h"
+#include "custom-widgets/rtimage.h"
 #include "multilangmgr.h"
 #include "options.h"
 

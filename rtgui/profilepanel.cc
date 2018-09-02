@@ -20,8 +20,8 @@
 #include "options.h"
 #include "clipboard.h"
 #include "multilangmgr.h"
-#include "profilestorecombobox.h"
-#include "rtimage.h"
+#include "custom-widgets/profilestorecombobox.h"
+#include "custom-widgets/rtimage.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

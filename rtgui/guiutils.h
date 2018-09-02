@@ -29,7 +29,7 @@
 #include "../rtengine/noncopyable.h"
 #include "../rtengine/rtengine.h"
 
-#include "rtimage.h"
+#include "custom-widgets/rtimage.h"
 
 // for convenience...
 #include "pathutils.h"
@@ -386,7 +386,7 @@ public:
 
     sigc::signal<void> &signal_selection_changed();
     sigc::signal<void> &signal_file_set();
-    
+
     std::string get_filename() const;
     bool set_filename(const std::string &filename);
 
@@ -394,7 +394,7 @@ public:
     void remove_filter(const Glib::RefPtr<Gtk::FileFilter> &filter);
     void set_filter(const Glib::RefPtr<Gtk::FileFilter> &filter);
     std::vector<Glib::RefPtr<Gtk::FileFilter>> list_filters();
-    
+
     bool set_current_folder(const std::string &filename);
     std::string get_current_folder() const;
 

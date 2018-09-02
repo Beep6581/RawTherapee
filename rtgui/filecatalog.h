@@ -28,7 +28,7 @@
 #include "fileselectionlistener.h"
 #include <set>
 #include "fileselectionchangelistener.h"
-#include "coarsepanel.h"
+#include "tools/coarsepanel.h"
 #include "toolbar.h"
 #include "filterpanel.h"
 #include "exportpanel.h"

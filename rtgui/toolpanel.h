@@ -26,7 +26,7 @@
 #include "guiutils.h"
 #include "multilangmgr.h"
 #include "paramsedited.h"
-#include "edit.h"
+#include "custom-widgets/on-preview-editing/edit.h"
 
 class ToolPanel;
 class FoldableToolPanel;

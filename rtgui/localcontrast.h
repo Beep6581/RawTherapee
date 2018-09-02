@@ -1,5 +1,5 @@
 /** -*- C++ -*-
- *  
+ *
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2017 Alberto Griggio <alberto.griggio@gmail.com>
@@ -20,7 +20,7 @@
 #pragma once
 
 #include <gtkmm.h>
-#include "adjuster.h"
+#include "custom-widgets/adjuster.h"
 #include "toolpanel.h"
 
 class LocalContrast: public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
@@ -36,7 +36,7 @@ private:
     rtengine::ProcEvent EvLocalContrastAmount;
     rtengine::ProcEvent EvLocalContrastDarkness;
     rtengine::ProcEvent EvLocalContrastLightness;
-    
+
 public:
 
     LocalContrast();

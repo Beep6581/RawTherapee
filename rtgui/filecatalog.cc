@@ -28,11 +28,11 @@
 
 #include "guiutils.h"
 #include "options.h"
-#include "rtimage.h"
+#include "custom-widgets/rtimage.h"
 #include "cachemanager.h"
 #include "multilangmgr.h"
 #include "filepanel.h"
-#include "renamedlg.h"
+#include "window/renamedlg.h"
 #include "thumbimageupdater.h"
 #include "batchqueue.h"
 #include "placesbrowser.h"
@@ -1226,7 +1226,7 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
                     params.resize.width = options.fastexport_resize_width;
                     params.resize.height = options.fastexport_resize_height;
                 }
-                
+
                 params.resize.enabled = options.fastexport_resize_enabled;
                 params.resize.scale = options.fastexport_resize_scale;
                 params.resize.appliesTo = options.fastexport_resize_appliesTo;

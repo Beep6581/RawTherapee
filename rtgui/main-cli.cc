@@ -28,14 +28,14 @@
 #include <giomm.h>
 #include <iostream>
 #include <tiffio.h>
-#include "rtwindow.h"
+#include "window/rtwindow.h"
 #include <cstring>
 #include <cstdlib>
 #include <locale.h>
 #include "options.h"
 #include "../rtengine/icons.h"
 #include "soundman.h"
-#include "rtimage.h"
+#include "custom-widgets/rtimage.h"
 #include "version.h"
 #include "extprog.h"
 

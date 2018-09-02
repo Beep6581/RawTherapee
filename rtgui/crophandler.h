@@ -26,8 +26,8 @@
 
 #include "../rtengine/rtengine.h"
 
-#include "edit.h"
-#include "lockablecolorpicker.h"
+#include "custom-widgets/on-preview-editing/edit.h"
+#include "custom-widgets/lockablecolorpicker.h"
 #include "threadutils.h"
 
 class CropDisplayHandler

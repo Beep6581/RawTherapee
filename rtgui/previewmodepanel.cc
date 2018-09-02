@@ -19,7 +19,7 @@
 #include "options.h"
 #include "multilangmgr.h"
 #include "imagearea.h"
-#include "rtimage.h"
+#include "custom-widgets/rtimage.h"
 
 PreviewModePanel::PreviewModePanel (ImageArea* ia) : imageArea(ia)
 {

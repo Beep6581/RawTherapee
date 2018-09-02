@@ -18,7 +18,7 @@
  */
 #include "cacorrection.h"
 #include <iomanip>
-#include "rtimage.h"
+#include "custom-widgets/rtimage.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

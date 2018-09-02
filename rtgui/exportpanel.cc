@@ -20,7 +20,7 @@
 #include "exportpanel.h"
 #include "multilangmgr.h"
 #include "options.h"
-#include "rtimage.h"
+#include "custom-widgets/rtimage.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

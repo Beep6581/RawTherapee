@@ -23,7 +23,7 @@
 #include "batchqueueentry.h"
 #include "../rtengine/rtengine.h"
 #include "options.h"
-#include "lwbuttonset.h"
+#include "custom-widgets/lwbuttonset.h"
 #include "thumbbrowserbase.h"
 
 class BatchQueueListener

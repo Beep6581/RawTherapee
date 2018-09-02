@@ -19,7 +19,7 @@
 #include "cursormanager.h"
 
 #include "options.h"
-#include "rtimage.h"
+#include "custom-widgets/rtimage.h"
 
 CursorManager mainWindowCursorManager;
 CursorManager editWindowCursorManager;

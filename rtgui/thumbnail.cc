@@ -31,7 +31,7 @@
 #include "guiutils.h"
 #include "batchqueue.h"
 #include "extprog.h"
-#include "profilestorecombobox.h"
+#include "custom-widgets/profilestorecombobox.h"
 
 using namespace rtengine::procparams;
 

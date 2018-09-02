@@ -28,7 +28,7 @@
 #include "history.h"
 #include "histogrampanel.h"
 #include "thumbnail.h"
-#include "saveasdlg.h"
+#include "window/saveasdlg.h"
 #include "batchqueueentry.h"
 #include "thumbnaillistener.h"
 #include "navigator.h"

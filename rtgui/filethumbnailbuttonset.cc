@@ -18,7 +18,7 @@
  */
 #include "filethumbnailbuttonset.h"
 
-#include "rtimage.h"
+#include "custom-widgets/rtimage.h"
 #include "multilangmgr.h"
 
 extern Glib::ustring argv0;

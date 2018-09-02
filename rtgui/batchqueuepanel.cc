@@ -18,11 +18,11 @@
  */
 #include "batchqueuepanel.h"
 #include "options.h"
-#include "preferences.h"
+#include "window/preferences.h"
 #include "multilangmgr.h"
-#include "rtwindow.h"
+#include "window/rtwindow.h"
 #include "soundman.h"
-#include "rtimage.h"
+#include "custom-widgets/rtimage.h"
 
 static Glib::ustring makeFolderLabel(Glib::ustring path)
 {

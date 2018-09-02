@@ -19,7 +19,7 @@
 #ifndef _PIPETTEBUFFER_H_
 #define _PIPETTEBUFFER_H_
 
-#include "../rtgui/edit.h"
+#include "../rtgui/custom-widgets/on-preview-editing/edit.h"
 #include "array2D.h"
 #include "iimage.h"
 #include "coord.h"

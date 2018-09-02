@@ -20,7 +20,7 @@
 #define _CACORRECTION_H_
 
 #include <gtkmm.h>
-#include "adjuster.h"
+#include "custom-widgets/adjuster.h"
 #include "toolpanel.h"
 
 class CACorrection : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel

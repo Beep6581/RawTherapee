@@ -28,7 +28,7 @@
 #include "batchqueue.h"
 #include "../rtengine/dfmanager.h"
 #include "../rtengine/ffmanager.h"
-#include "rtimage.h"
+#include "custom-widgets/rtimage.h"
 #include "threadutils.h"
 
 extern Options options;

@@ -26,10 +26,10 @@
 #include "filebrowserentry.h"
 #include "browserfilter.h"
 #include "pparamschangelistener.h"
-#include "partialpastedlg.h"
+#include "window/partialpastedlg.h"
 #include "exportpanel.h"
 #include "extprog.h"
-#include "profilestorecombobox.h"
+#include "custom-widgets/profilestorecombobox.h"
 
 class ProfileStoreLabel;
 class FileBrowser;

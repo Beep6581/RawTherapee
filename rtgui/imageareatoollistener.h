@@ -21,7 +21,7 @@
 
 #include "toolbar.h"
 #include "thumbnail.h"
-#include "cropguilistener.h"
+#include "tools/cropguilistener.h"
 
 class ImageAreaToolListener
 {

@@ -22,7 +22,7 @@
 
 #include <gtkmm.h>
 #include "guiutils.h"
-#include "adjuster.h"
+#include "custom-widgets/adjuster.h"
 
 class ExportPanelListener
 {

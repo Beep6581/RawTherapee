@@ -24,7 +24,7 @@
 #include "improcfun.h"
 #include "iccstore.h"
 #include "mytime.h"
-#include "../rtgui/thresholdselector.h"
+#include "../rtgui/custom-widgets/thresholdselector.h"
 #include "curves.h"
 #include "color.h"
 #include "StopWatch.h"

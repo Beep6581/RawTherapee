@@ -23,7 +23,7 @@
 #include <cairomm/cairomm.h>
 #include "../rtengine/rtengine.h"
 #include "../rtengine/coord.h"
-#include "rtimage.h"
+#include "custom-widgets/rtimage.h"
 #include <sstream>
 #include <iostream>
 

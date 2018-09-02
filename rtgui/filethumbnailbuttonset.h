@@ -19,7 +19,7 @@
 #ifndef _FILETHUMBNAILBUTTONSET_
 #define _FILETHUMBNAILBUTTONSET_
 
-#include "lwbuttonset.h"
+#include "custom-widgets/lwbuttonset.h"
 #include <gtkmm.h>
 #include "filebrowserentry.h"
 

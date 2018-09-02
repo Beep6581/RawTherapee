@@ -17,7 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <fftw3.h>
-#include "../rtgui/profilestorecombobox.h"
+#include "../rtgui/custom-widgets/profilestorecombobox.h"
 #include "rtengine.h"
 #include "iccstore.h"
 #include "dcp.h"

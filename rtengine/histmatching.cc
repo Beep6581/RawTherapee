@@ -24,7 +24,7 @@
 #include "color.h"
 #include "rt_math.h"
 #include "iccstore.h"
-#include "../rtgui/mydiagonalcurve.h"
+#include "../rtgui/custom-widgets/curves/mydiagonalcurve.h"
 #include "improcfun.h"
 //#define BENCHMARK
 #include "StopWatch.h"
