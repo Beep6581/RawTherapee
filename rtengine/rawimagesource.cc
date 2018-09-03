@@ -2008,15 +2008,20 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             plistener->setProgressStr ("CA Auto Correction...");
             plistener->setProgress (0.0);
         }
+        std::function<bool(double)> setProgCancel = [this](double p) -> bool {
+            if(plistener)
+                plistener->setProgress(p);
+            return false;
+        };
+        CaFitParams fitParams;
         if(numFrames == 4) {
-            double fitParams[64];
-            float *buffer = CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, *rawDataFrames[0], fitParams, false, true, nullptr, false);
+            librtprocess::CA_correct(W, H, raw.ca_autocorrect, raw.cared, raw.cablue, *rawDataFrames[0], {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, fitParams, false);
             for(int i = 1; i < 3; ++i) {
-                CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, *rawDataFrames[i], fitParams, true, false, buffer, false);
+                librtprocess::CA_correct(W, H, raw.ca_autocorrect, raw.cared, raw.cablue, *rawDataFrames[i], {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, fitParams, true);
             }
-            CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, *rawDataFrames[3], fitParams, true, false, buffer, true);
+            librtprocess::CA_correct(W, H, raw.ca_autocorrect, raw.cared, raw.cablue, *rawDataFrames[3], {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, fitParams, true);
         } else {
-            CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, rawData, nullptr, false, false, nullptr, true);
+            librtprocess::CA_correct(W, H, raw.ca_autocorrect, raw.cared, raw.cablue, rawData, {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, fitParams, false);
         }
     }
 

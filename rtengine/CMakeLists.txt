@@ -27,7 +27,6 @@ link_directories("${PROJECT_SOURCE_DIR}/rtexif"
 set(CAMCONSTSFILE "camconst.json")
 
 set(RTENGINESOURCEFILES
-    CA_correct_RT.cc
     EdgePreservingDecomposition.cc
     FTblockDN.cc
     PF_correct_RT.cc
