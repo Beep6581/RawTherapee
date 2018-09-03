@@ -693,8 +693,6 @@ PREFERENCES_PROFILESAVECACHE;Сачувај параметре обраде у �
 PREFERENCES_PROFILESAVEINPUT;Сачувај парамтре обраде поред улазне датотеке
 PREFERENCES_PROPERTY;Особина
 PREFERENCES_PSPATH;Директоријум са инсталираним Адобе Фотошопом
-PREFERENCES_RGBDTL_LABEL;Највећи број нири приликом уклањања шума
-PREFERENCES_RGBDTL_TOOLTIP;Уклањање шума захтева око 128MB РАМ меморије за слику од 10 мегапиксела или 512MB за слику од 40 мегапиксела, уз додатних 128MB меморије по свакој нити. Што више нити се извршавају заједно то ће брже бити рачунање. Оставите ову вредност на „0“ како би програм аутоматски доделило што је више нитова могуће.
 PREFERENCES_SELECTFONT;Изаберите фонт
 PREFERENCES_SELECTLANG;Језик
 PREFERENCES_SELECTTHEME;Тема
@@ -714,7 +712,6 @@ PREFERENCES_TAB_BROWSER;Преглед датотека
 PREFERENCES_TAB_COLORMGR;Управљање бојама
 PREFERENCES_TAB_GENERAL;Опште
 PREFERENCES_TAB_IMPROC;Обрада сликe
-PREFERENCES_TAB_PERFORMANCE;Перформанса
 PREFERENCES_TAB_SOUND;Звуци
 PREFERENCES_TP_LABEL;Површ алата:
 PREFERENCES_TP_USEICONORTEXT;Користи иконице језичка уместо текста
@@ -1695,13 +1692,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !PARTIALPASTE_RETINEX;Retinex
 !PARTIALPASTE_SOFTLIGHT;Soft light
 !PARTIALPASTE_TM_FATTAL;Dynamic range compression
-!PREFERENCES_AUTLISLOW;Low
-!PREFERENCES_AUTLISMAX;Max - Average of all tiles
-!PREFERENCES_AUTLISSTD;High
-!PREFERENCES_AUTLISVLOW;None
-!PREFERENCES_AUTLOW;Low
 !PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
-!PREFERENCES_AUTSTD;Standard
 !PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
@@ -1718,11 +1709,8 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !PREFERENCES_CURVEBBOXPOS_LEFT;Left
 !PREFERENCES_CURVEBBOXPOS_RIGHT;Right
 !PREFERENCES_D50_OLD;5000K
-!PREFERENCES_DAUB_LABEL;Use Daubechies D6 wavelets instead of D4
-!PREFERENCES_DAUB_TOOLTIP;The Noise Reduction and Wavelet Levels tools use a Debauchies mother wavelet. If you choose D6 instead of D4 you increase the number of orthogonal Daubechies coefficients and probably increase quality of small-scale levels. There is no memory or processing time difference between the two.
 !PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_EDITORCMDLINE;Custom command line
-!PREFERENCES_EXPAUT;Expert
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
 !PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
@@ -1736,20 +1724,13 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maximum number of cached images
 !PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
 !PREFERENCES_LANG;Language
-!PREFERENCES_LEVAUTDN;Denoising level
-!PREFERENCES_LEVDN;Cell size
-!PREFERENCES_LISS;Auto multi-zone smoothing
-!PREFERENCES_MAX;Maxi (Tile)
 !PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
-!PREFERENCES_MED;Medium (Tile/2)
-!PREFERENCES_MIN;Mini (100x115)
 !PREFERENCES_MONINTENT;Default rendering intent
 !PREFERENCES_MONITOR;Monitor
 !PREFERENCES_MONPROFILE;Default color profile
 !PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
 !PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
 !PREFERENCES_NAVIGATIONFRAME;Navigation
-!PREFERENCES_NOISE;Noise Reduction
 !PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
 !PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
 !PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
@@ -1771,22 +1752,12 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize read of tiff files
 !PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;When working with folders full of uncompressed tiff files enabling this option can increase performance of thumb generation.
 !PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show filmstrip toolbar
-!PREFERENCES_SIMPLAUT;Tool mode
-!PREFERENCES_SMA;Small (250x287)
-!PREFERENCES_STDAUT;Standard
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
 !PREFERENCES_THEME;Theme
 !PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
 !PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
-!PREFERENCES_TIMAX;High
-!PREFERENCES_TINB;Number of tiles
-!PREFERENCES_TISTD;Standard
-!PREFERENCES_WAVLEV;Increase wavelet level in quality 'high'
-!PREFERENCES_WLONE;One level
-!PREFERENCES_WLTWO;Two levels
-!PREFERENCES_WLZER;No
 !PROFILEPANEL_PDYNAMIC;Dynamic
 !QINFO_FRAMECOUNT;%2 frames
 !QINFO_HDR;HDR / %2 frame(s)

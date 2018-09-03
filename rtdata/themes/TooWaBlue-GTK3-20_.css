@@ -1,8 +1,8 @@
 /*
   This file is part of RawTherapee.
 
-  Copyright (c) 2016-2017 TooWaBoo
-  Version 2.72
+  Copyright (c) 2016-2018 TooWaBoo
+  Version 2.73
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -79,7 +79,8 @@
 #EditorTopPanel  button:not(.narrowbutton) image,
 #IopsPanel button:not(.Right) image,
 #ProfilePanel button image,
-#MainNotebook > header :not(#CloseButton) > image {
+#MainNotebook > stack > :nth-child(2) > box:nth-child(3) image,
+#MainNotebook > header button:not(#CloseButton) image {
     -gtk-icon-transform: scale(calc(22/24));
 }
 
@@ -777,13 +778,13 @@ notebook header.left tab {
 notebook header tab > grid > image {
     min-height: 2.5em;
     min-width: 0;
-    padding: 0 0.16667em 0 0;
+    padding: 0 0.25em 0 0;
     margin: 0;
 }
 notebook header.left tab > grid > image {
     min-height: 0;
     min-width: 2.5em;
-    padding: 0.16667em 0 0;
+    padding: 0.25em 0 0;
 }
 notebook header tab label {
     margin: 0.08334em;
@@ -982,7 +983,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 #MetaPanelNotebook > stack > box > grid > button {
     margin-top: 0.08334em;
     margin-bottom: 0.08334em;
-    min-height: 2.33334em;
+    min-height: 2.16667em;
 }
 
 #MetaPanelNotebook label {
@@ -1024,8 +1025,8 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     padding: 0;
     margin: 0;
 }
-#ToolBarPanelFileBrowser .smallbuttonbox:nth-child(1) {
-    margin: 0 0 2px 0;
+#ToolBarPanelFileBrowser .smallbuttonbox:nth-child(2) {
+    margin: 1px 0 -1px 0;
 }
 #ToolBarPanelFileBrowser .smallbuttonbox button.smallbutton {
     min-height: 0;
@@ -1042,7 +1043,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     background-color: @bg-dark-grey;
 }
 #ToolBarPanelFileBrowser .smallbuttonbox button.smallbutton image{
-    -gtk-icon-transform: scale(calc(14/16));
+    -gtk-icon-transform: scale(calc(13/16));
     margin: -2px
 }
 
@@ -1114,8 +1115,8 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 }
 #EditorTopPanel button {
     margin: 0 0.08334em;
-    min-height: 2.33334em;
-    min-width: 2.33334em;
+    min-height: 2.16667em;
+    min-width: 2.16667em;
 }
 /* Removes margin from the last button. Otherwise the filmstrip will cut of the right border. */
 #EditorTopPanel :last-child > button:last-child {
@@ -1305,7 +1306,7 @@ popover.background modelbutton:hover {
 
 /*** Switch ***********************************************************************************/
 switch {
-    min-height: 2.33334em;
+    min-height: 2.16667em;
     min-width: 11em;
     margin: 0;
     padding: 0;
@@ -1350,8 +1351,8 @@ switch:disabled:not(:checked) {
 
 /*** Buttons ***********************************************************************************/
 button {
-    min-height: 2.33334em;
-    min-width: 2.33334em;
+    min-height: 2.16667em;
+    min-width: 2.16667em;
     margin: 0;
     padding: 0; /* x */
     border-radius: 0.2em;
@@ -1391,28 +1392,26 @@ button.flat {
 }
 
 /* Resetbutton */
-#MyExpander button.flat,
+#MyExpander button:last-child.flat,
+#MyExpander scale + button.flat,
 dialog scale + button.flat,
-scale + button.flat,
-dialog entry + button.flat {
+#MainNotebook > stack > :nth-child(2) > box:nth-child(1) scale + button.flat,
+entry + button.flat {
     min-height: 1.16667em;
-    min-width: 1.66667em;
+    min-width: 1.5em;
     margin: 0.08334em 0 0.08334em 0.16667em;
-    padding: 0;
+    padding: 0 0 0 0.16667em;
 }
-dialog entry + button.flat {
+dialog entry + button:last-child.flat {
     min-height: 1.66667em;
 }
 
-#MyExpander scale + button.flat {
+#MyExpander scale + button:last-child.flat,
+#MyExpander spinbutton + button:last-child.flat {
     margin: 0 0 0 0.16667em;
 }
-#MyExpander image + button.flat {
-   margin: 0 0 0 0.41667em;
-}
-#MyExpander spinbutton + button.flat {
-    margin: 0 0 0 0.16667em;
-    padding-top: 0.08334em;
+#MyExpander image + button:last-child.flat {
+   margin: 0 0 0 0.25em;
 }
 /**/
 
@@ -1426,7 +1425,7 @@ dialog entry + button.flat {
 }
 #MyExpander button.flat + button.flat image,
 #MyExpander button.flat:first-child image{
-     -gtk-icon-transform: scale(calc(20/24));
+    -gtk-icon-transform: scale(calc(20/24));
     margin: -2px;
 }
 /**/
@@ -1573,7 +1572,7 @@ buttonbox:not(.dialog-action-area) button{
 #MyExpander .image-combo button.Left {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
-    min-width: 2.33334em;
+    min-width: 2.16667em;
 }
 /**/
 
@@ -1606,7 +1605,7 @@ button.color {
 
 /* Save, Cancel, OK ... buttons */
 .dialog-action-area button {
-    min-height: 2.33334em;
+    min-height: 2.16667em;
     margin-top: 0.33334em;
 }
 messagedialog .dialog-action-area button {
@@ -1752,7 +1751,7 @@ messagedialog headerbar button.titlebutton {
 
 #MainNotebook tab #CloseButton {
     padding: 0;
-    margin: 0.41667em -2px 0.5em 0.25em;
+    margin: 0.33334em -2px 0.5em 0.25em;
     min-width: 1.5em;
     min-height: 1.5em;
 }

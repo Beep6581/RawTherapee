@@ -391,14 +391,15 @@ int processLineParams ( int argc, char **argv )
 
                 case 'b':
                     bits = atoi (currParam.substr (2).c_str());
-                    if (currParam.length() >=3 && currParam.at(2) == '8') {
+
+                    if (currParam.length() >= 3 && currParam.at(2) == '8') { // -b8
                         bits = 8;
-                    } else if (currParam.length() >= 4 && currParam.at(2) == '1' && currParam.at(3) == '6') {
+                    } else if (currParam.length() >= 4 && currParam.length() <= 5 && currParam.at(2) == '1' && currParam.at(3) == '6') { // -b16, -b16f
                         bits = 16;
                         if (currParam.length() == 5 && currParam.at(4) == 'f') {
                             isFloat = true;
                         }
-                    } else if (currParam.length() == 4 && currParam.at(2) == '3' && currParam.at(3) == '2') {
+                    } else if (currParam.length() >= 4 && currParam.length() <= 5 && currParam.at(2) == '3' && currParam.at(3) == '2') { // -b32 == -b32f
                         bits = 32;
                         isFloat = true;
                     }
@@ -409,7 +410,7 @@ int processLineParams ( int argc, char **argv )
                         return -3;
                     }
 
-                    std::cout << "Output is " << bits << "-bit, " << (isFloat ? "floating point" : "integer") << std::endl;
+                    std::cout << "Output is " << bits << "-bit " << (isFloat ? "floating-point" : "integer") << "." << std::endl;
 
                     break;
 
