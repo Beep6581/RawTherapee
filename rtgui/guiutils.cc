@@ -992,6 +992,7 @@ MyScrolledToolbar::MyScrolledToolbar ()
 {
     set_policy (Gtk::POLICY_EXTERNAL, Gtk::POLICY_NEVER);
     set_propagate_natural_height(true);
+    get_style_context()->add_class("scrollableToolbar");
 }
 
 bool MyScrolledToolbar::on_scroll_event (GdkEventScroll* event)
