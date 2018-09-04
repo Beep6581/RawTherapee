@@ -19,12 +19,12 @@
  */
 #include <sigc++/slot.h>
 #include "iccprofilecreator.h"
-#include "multilangmgr.h"
-#include "cachemanager.h"
-#include "addsetids.h"
-#include "../rtengine/icons.h"
-#include "../rtengine/color.h"
-#include "custom-widgets/rtimage.h"
+#include "../multilangmgr.h"
+#include "../cachemanager.h"
+#include "../addsetids.h"
+#include "../../rtengine/icons.h"
+#include "../../rtengine/color.h"
+#include "../custom-widgets/rtimage.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif

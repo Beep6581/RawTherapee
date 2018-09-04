@@ -20,8 +20,8 @@
 #pragma once
 
 #include <gtkmm.h>
-#include "custom-widgets/adjuster.h"
-#include "toolpanel.h"
+#include "../custom-widgets/adjuster.h"
+#include "../toolpanel.h"
 
 class LocalContrast: public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
 {

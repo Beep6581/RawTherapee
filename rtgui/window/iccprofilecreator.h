@@ -20,10 +20,10 @@
 #pragma once
 
 #include <gtkmm.h>
-#include "custom-widgets/adjuster.h"
-#include "options.h"
+#include "../custom-widgets/adjuster.h"
+#include "../options.h"
 #include <vector>
-#include "window/rtwindow.h"
+#include "../window/rtwindow.h"
 
 class ICCProfileCreator : public Gtk::Dialog, public AdjusterListener
 {

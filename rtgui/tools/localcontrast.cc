@@ -18,7 +18,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "localcontrast.h"
-#include "eventmapper.h"
+#include "../eventmapper.h"
 #include <iomanip>
 #include <cmath>
 
