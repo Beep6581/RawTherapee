@@ -1008,45 +1008,23 @@ bool MyScrolledToolbar::on_scroll_event (GdkEventScroll* event)
         double value2 = 0.;
 
         if (event->direction == GDK_SCROLL_DOWN) {
-            value2 = value + step;
-
-            if (value2 > upper) {
-                value2 = upper;
-            }
-
+            value2 = rtengine::min<double>(value + step, upper);
             if (value2 != value) {
                 scroll->set_value(value2);
             }
         } else if (event->direction == GDK_SCROLL_UP) {
-            value2 = value - step;
-
-            if (value2 < lower) {
-                value2 = lower;
-            }
-
+            value2 = rtengine::max<double>(value - step, lower);
             if (value2 != value) {
                 scroll->set_value(value2);
             }
         } else if (event->direction == GDK_SCROLL_SMOOTH) {
-            step = 0.;
             if (event->delta_x) {  // if the user use a pad, it can scroll horizontally
-                step = event->delta_x;
+                value2 = rtengine::LIM<double>(value + (event->delta_x > 0 ? 30 : -30), lower, upper);
             } else if (event->delta_y) {
-                step = event->delta_y;
+                value2 = rtengine::LIM<double>(value + (event->delta_y > 0 ? 30 : -30), lower, upper);
             }
-
-            if (step != 0.) {
-                value2 = value + step /* * 2 */; // we could use a multiplicator here
-
-                if (value2 < lower) {
-                    value2 = lower;
-                } else if (value2 > upper) {
-                    value2 = upper;
-                }
-
-                if (value2 != value) {
-                    scroll->set_value(value2);
-                }
+            if (value2 != value) {
+                scroll->set_value(value2);
             }
         }
     }

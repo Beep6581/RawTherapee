@@ -62,7 +62,6 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     inTabMode = false;
 
     set_name ("FileBrowser");
-    set_spacing (2);
 
     //  construct and initialize thumbnail browsers
     fileBrowser = Gtk::manage( new FileBrowser() );
