@@ -331,7 +331,7 @@ void Options::setDefaults()
     dirBrowserHeight = 350;
     dirBrowserSortType = Gtk::SORT_ASCENDING;
     preferencesWidth = 800;
-    preferencesHeight = 0;
+    preferencesHeight = 600;
     toolPanelWidth = 400;
     browserToolPanelWidth = 465;
     browserToolPanelHeight = 600;
