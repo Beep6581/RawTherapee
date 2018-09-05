@@ -29,8 +29,11 @@ class RAWCACorr : public ToolParamBlock, public AdjusterListener, public CheckBo
 
 protected:
     CheckBox* caAutocorrect;
+    Adjuster* caAutoiterations;
     Adjuster* caRed;
     Adjuster* caBlue;
+
+    rtengine::ProcEvent EvPreProcessCAAutoiterations;
 
 public:
 

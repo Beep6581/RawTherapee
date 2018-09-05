@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "rawcacorrection.h"
+#include "eventmapper.h"
 #include "guiutils.h"
 #include "rtimage.h"
 
@@ -25,6 +26,9 @@ using namespace rtengine::procparams;
 
 RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_CHROMATABERR_LABEL"))
 {
+    auto m = ProcEventMapper::getInstance();
+    EvPreProcessCAAutoiterations = m->newEvent(DARKFRAME, "HISTORY_MSG_RAWCACORR_AUTOIT");
+
     Gtk::Image* icaredL =   Gtk::manage (new RTImage ("circle-red-cyan-small.png"));
     Gtk::Image* icaredR =   Gtk::manage (new RTImage ("circle-cyan-red-small.png"));
     Gtk::Image* icablueL =  Gtk::manage (new RTImage ("circle-blue-yellow-small.png"));
@@ -32,6 +36,13 @@ RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_CHROM
 
     caAutocorrect = Gtk::manage (new CheckBox(M("TP_RAWCACORR_AUTO"), multiImage));
     caAutocorrect->setCheckBoxListener (this);
+
+    caAutoiterations = Gtk::manage(new Adjuster (M("TP_RAWCACORR_AUTOIT"), 1, 3, 1, 1));
+    caAutoiterations->setAdjusterListener (this);
+
+    if (caAutoiterations->delay < options.adjusterMaxDelay) {
+        caAutoiterations->delay = options.adjusterMaxDelay;
+    }
 
     caRed = Gtk::manage(new Adjuster (M("TP_RAWCACORR_CARED"), -8.0, 8.0, 0.1, 0, icaredL, icaredR));
     caRed->setAdjusterListener (this);
@@ -51,6 +62,7 @@ RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_CHROM
     caBlue->show();
 
     pack_start( *caAutocorrect, Gtk::PACK_SHRINK, 4);
+    pack_start( *caAutoiterations, Gtk::PACK_SHRINK, 4);
     pack_start( *caRed, Gtk::PACK_SHRINK, 4);
     pack_start( *caBlue, Gtk::PACK_SHRINK, 4);
 
@@ -62,15 +74,18 @@ void RAWCACorr::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
 
     if(pedited ) {
         caAutocorrect->setEdited(pedited->raw.ca_autocorrect);
+        caAutoiterations->setEditedState( pedited->raw.cared ? Edited : UnEdited );
         caRed->setEditedState( pedited->raw.cared ? Edited : UnEdited );
         caBlue->setEditedState( pedited->raw.cablue ? Edited : UnEdited );
     }
 
     // disable Red and Blue sliders when caAutocorrect is enabled
+    caAutoiterations->set_sensitive(pp->raw.ca_autocorrect);
     caRed->set_sensitive(!pp->raw.ca_autocorrect);
     caBlue->set_sensitive(!pp->raw.ca_autocorrect);
 
     caAutocorrect->setValue(pp->raw.ca_autocorrect);
+    caAutoiterations->setValue (pp->raw.caautoiterations);
     caRed->setValue (pp->raw.cared);
     caBlue->setValue (pp->raw.cablue);
 
@@ -80,11 +95,13 @@ void RAWCACorr::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
 void RAWCACorr::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
 {
     pp->raw.ca_autocorrect = caAutocorrect->getLastActive();
+    pp->raw.caautoiterations = caAutoiterations->getValue();
     pp->raw.cared = caRed->getValue();
     pp->raw.cablue = caBlue->getValue();
 
     if (pedited) {
         pedited->raw.ca_autocorrect = !caAutocorrect->get_inconsistent();
+        pedited->raw.caautoiterations = caAutoiterations->getEditedState ();
         pedited->raw.cared = caRed->getEditedState ();
         pedited->raw.cablue = caBlue->getEditedState ();
     }
@@ -97,7 +114,9 @@ void RAWCACorr::adjusterChanged (Adjuster* a, double newval)
 
         Glib::ustring value = a->getTextValue();
 
-        if (a == caRed) {
+        if (a == caAutoiterations) {
+            listener->panelChanged (EvPreProcessCAAutoiterations,  value );
+        } else if (a == caRed) {
             listener->panelChanged (EvPreProcessCARed,  value );
         } else if (a == caBlue) {
             listener->panelChanged (EvPreProcessCABlue,  value );
@@ -110,6 +129,7 @@ void RAWCACorr::checkBoxToggled (CheckBox* c, CheckValue newval)
     if (c == caAutocorrect) {
         if (!batchMode) {
             // disable Red and Blue sliders when caAutocorrect is enabled
+            caAutoiterations->set_sensitive(caAutocorrect->getLastActive ());
             caRed->set_sensitive(!caAutocorrect->getLastActive ());
             caBlue->set_sensitive(!caAutocorrect->getLastActive ());
         }
@@ -122,19 +142,23 @@ void RAWCACorr::checkBoxToggled (CheckBox* c, CheckValue newval)
 void RAWCACorr::setBatchMode(bool batchMode)
 {
     ToolPanel::setBatchMode (batchMode);
+    caAutoiterations->showEditedCB ();
     caRed->showEditedCB ();
     caBlue->showEditedCB ();
 }
 
 void RAWCACorr::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
 {
+    caAutoiterations->setDefault( defParams->raw.caautoiterations);
     caRed->setDefault( defParams->raw.cared);
     caBlue->setDefault( defParams->raw.cablue);
 
     if (pedited) {
+        caAutoiterations->setDefaultEditedState( pedited->raw.caautoiterations ? Edited : UnEdited);
         caRed->setDefaultEditedState( pedited->raw.cared ? Edited : UnEdited);
         caBlue->setDefaultEditedState( pedited->raw.cablue ? Edited : UnEdited);
     } else {
+        caAutoiterations->setDefaultEditedState( Irrelevant );
         caRed->setDefaultEditedState( Irrelevant );
         caBlue->setDefaultEditedState( Irrelevant );
     }
@@ -150,6 +174,7 @@ void RAWCACorr::setAdjusterBehavior (bool caadd)
 void RAWCACorr::trimValues (rtengine::procparams::ProcParams* pp)
 {
 
+    caAutoiterations->trimValue(pp->raw.caautoiterations);
     caRed->trimValue(pp->raw.cared);
     caBlue->trimValue(pp->raw.cablue);
 }

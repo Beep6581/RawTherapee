@@ -431,6 +431,7 @@ void ParamsEdited::set(bool v)
     raw.xtranssensor.exBlackGreen = v;
     raw.xtranssensor.exBlackBlue = v;
     raw.ca_autocorrect = v;
+    raw.caautoiterations  = v;
     raw.cablue  = v;
     raw.cared   = v;
     raw.hotPixelFilter = v;
@@ -986,6 +987,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         raw.xtranssensor.exBlackGreen = raw.xtranssensor.exBlackGreen && p.raw.xtranssensor.blackgreen == other.raw.xtranssensor.blackgreen;
         raw.xtranssensor.exBlackBlue = raw.xtranssensor.exBlackBlue && p.raw.xtranssensor.blackblue == other.raw.xtranssensor.blackblue;
         raw.ca_autocorrect = raw.ca_autocorrect && p.raw.ca_autocorrect == other.raw.ca_autocorrect;
+        raw.caautoiterations = raw.caautoiterations && p.raw.caautoiterations == other.raw.caautoiterations;
         raw.cared = raw.cared && p.raw.cared == other.raw.cared;
         raw.cablue = raw.cablue && p.raw.cablue == other.raw.cablue;
         raw.hotPixelFilter = raw.hotPixelFilter && p.raw.hotPixelFilter == other.raw.hotPixelFilter;
@@ -2626,6 +2628,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.raw.ca_autocorrect  = mods.raw.ca_autocorrect;
     }
 
+    if (raw.caautoiterations) {
+        toEdit.raw.caautoiterations           = dontforceSet && options.baBehav[ADDSET_RAWCACORR] ? toEdit.raw.caautoiterations + mods.raw.caautoiterations : mods.raw.caautoiterations;
+    }
+
     if (raw.cared) {
         toEdit.raw.cared           = dontforceSet && options.baBehav[ADDSET_RAWCACORR] ? toEdit.raw.cared + mods.raw.cared : mods.raw.cared;
     }
@@ -3127,7 +3133,7 @@ bool RAWParamsEdited::XTransSensor::isUnchanged() const
 
 bool RAWParamsEdited::isUnchanged() const
 {
-    return  bayersensor.isUnchanged() && xtranssensor.isUnchanged() && ca_autocorrect && cared && cablue && hotPixelFilter && deadPixelFilter && hotdeadpix_thresh && darkFrame
+    return  bayersensor.isUnchanged() && xtranssensor.isUnchanged() && ca_autocorrect && caautoiterations && cared && cablue && hotPixelFilter && deadPixelFilter && hotdeadpix_thresh && darkFrame
             && df_autoselect && ff_file && ff_AutoSelect && ff_BlurRadius && ff_BlurType && exPos && exPreser && ff_AutoClipControl && ff_clipControl;
 }
 
