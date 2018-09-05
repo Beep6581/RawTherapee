@@ -111,7 +111,19 @@ bool LinEqSolve(int nDim, double* pfMatr, double* pfVect, double* pfSolution)
 using namespace std;
 using namespace rtengine;
 
-float* RawImageSource::CA_correct_RT(const bool autoCA, const size_t autoIterations, const double cared, const double cablue, const double caautostrength, array2D<float> &rawData, double *fitParamsTransfer, bool fitParamsIn, bool fitParamsOut, float *buffer, bool freeBuffer)
+float* RawImageSource::CA_correct_RT(
+    bool autoCA,
+    size_t autoIterations,
+    double cared,
+    double cablue,
+    double caautostrength,
+    const array2D<float> &rawData,
+    double* fitParamsTransfer,
+    bool fitParamsIn,
+    bool fitParamsOut,
+    float* buffer,
+    bool freeBuffer
+)
 {
 // multithreaded and vectorized by Ingo Weyrich
     constexpr int ts = 128;
@@ -120,14 +132,16 @@ float* RawImageSource::CA_correct_RT(const bool autoCA, const size_t autoIterati
     constexpr int v1 = ts, v2 = 2 * ts, v3 = 3 * ts, v4 = 4 * ts; //, p1=-ts+1, p2=-2*ts+2, p3=-3*ts+3, m1=ts+1, m2=2*ts+2, m3=3*ts+3;
 
     // Test for RGB cfa
-    for(int i = 0; i < 2; i++)
-        for(int j = 0; j < 2; j++)
+    for(int i = 0; i < 2; i++) {
+        for(int j = 0; j < 2; j++) {
             if(FC(i, j) == 3) {
                 printf("CA correction supports only RGB Colour filter arrays\n");
                 return buffer;
             }
+        }
+    }
 
-    volatile double progress = 0.0;
+    double progress = 0.0;
 
     if(plistener) {
         plistener->setProgress (progress);
@@ -159,9 +173,16 @@ float* RawImageSource::CA_correct_RT(const bool autoCA, const size_t autoIterati
     bool processpasstwo = true;
     double fitparams[2][2][16];
 
-    const size_t iterations = autoCA ? std::max(autoIterations, static_cast<size_t>(1)) : 1;
+    const size_t iterations =
+        autoCA
+            ? std::max<size_t>(autoIterations, 1)
+            : 1;
+
     for (size_t it = 0; it < iterations && processpasstwo; ++it) {
-        float blockave[2][2] = {{0, 0}, {0, 0}}, blocksqave[2][2] = {{0, 0}, {0, 0}}, blockdenom[2][2] = {{0, 0}, {0, 0}}, blockvar[2][2];
+        float blockave[2][2] = {};
+        float blocksqave[2][2] = {};
+        float blockdenom[2][2] = {};
+        float blockvar[2][2];
         const bool fitParamsSet = fitParamsTransfer && fitParamsIn;
         if(autoCA && fitParamsSet && iterations < 2) {
             // use stored parameters
