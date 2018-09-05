@@ -71,16 +71,16 @@ private:
 
     rtengine::ProcEvent EvResizeAllowUpscaling;
     Adjuster*          scale;
-    Gtk::VBox*         sizeBox;
+    Gtk::VBox*         sizeVB;
     MyComboBoxText*    appliesTo;
     MyComboBoxText*    method;
     MyComboBoxText*    spec;
-    MySpinButton*      w;
-    MySpinButton*      h;
+    MySpinButton*      wPx;
+    MySpinButton*      hPx;
     Gtk::CheckButton *allowUpscaling;
     int                maxw, maxh;
     int                cropw, croph;
-    sigc::connection   sconn, aconn, wconn, hconn;
+    sigc::connection   scaleConn, appliesToConn, wPxConn, hPxConn;
     bool               wDirty, hDirty;
     ToolParamBlock*    packBox;
     IdleRegister       idle_register;
