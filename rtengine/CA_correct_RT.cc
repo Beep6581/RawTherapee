@@ -27,6 +27,7 @@
 #include "rawimagesource.h"
 #include "rt_math.h"
 #include "median.h"
+//#define BENCHMARK
 #include "StopWatch.h"
 namespace {
 
@@ -125,6 +126,7 @@ float* RawImageSource::CA_correct_RT(
     bool freeBuffer
 )
 {
+    BENCHFUN
 // multithreaded and vectorized by Ingo Weyrich
     constexpr int ts = 128;
     constexpr int tsh = ts / 2;
@@ -178,23 +180,25 @@ float* RawImageSource::CA_correct_RT(
             ? std::max<size_t>(autoIterations, 1)
             : 1;
 
+    const bool fitParamsSet = fitParamsTransfer && fitParamsIn && iterations < 2;
+    if(autoCA && fitParamsSet) {
+        // use stored parameters
+        int index = 0;
+        for(int c = 0; c < 2; ++c) {
+            for(int d = 0; d < 2; ++d) {
+                for(int e = 0; e < 16; ++e) {
+                    fitparams[c][d][e] = fitParamsTransfer[index++];
+                }
+            }
+        }
+    }
+
     for (size_t it = 0; it < iterations && processpasstwo; ++it) {
         float blockave[2][2] = {};
         float blocksqave[2][2] = {};
         float blockdenom[2][2] = {};
         float blockvar[2][2];
-        const bool fitParamsSet = fitParamsTransfer && fitParamsIn;
-        if(autoCA && fitParamsSet && iterations < 2) {
-            // use stored parameters
-            int index = 0;
-            for(int c = 0; c < 2; ++c) {
-                for(int d = 0; d < 2; ++d) {
-                    for(int e = 0; e < 16; ++e) {
-                        fitparams[c][d][e] = fitParamsTransfer[index++];
-                    }
-                }
-            }
-        }
+
         //order of 2d polynomial fit (polyord), and numpar=polyord^2
         int polyord = 4, numpar = 16;
 
