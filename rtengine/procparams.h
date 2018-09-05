@@ -1001,6 +1001,7 @@ struct ResizeParams {
     int width;
     int height;
     bool allowUpscaling;
+    int ppi;
 
     ResizeParams();
 

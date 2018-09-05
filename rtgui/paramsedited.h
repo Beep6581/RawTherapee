@@ -573,6 +573,7 @@ public:
     bool height;
     bool enabled;
     bool allowUpscaling;
+    bool ppi;
 };
 
 class ColorManagementParamsEdited

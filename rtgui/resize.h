@@ -47,8 +47,8 @@ public:
 
     void adjusterChanged  (Adjuster* a, double newval);
     void adjusterAutoToggled(Adjuster* a, bool newval);
-    void entryWChanged    ();
-    void entryHChanged    ();
+    void entryWPxChanged  ();
+    void entryHPxChanged  ();
     void appliesToChanged ();
     void methodChanged    ();
     void specChanged      ();
@@ -70,17 +70,32 @@ private:
     void allowUpscalingChanged();
 
     rtengine::ProcEvent EvResizeAllowUpscaling;
+    rtengine::ProcEvent EvResizePPI;
     Adjuster*          scale;
     Gtk::VBox*         sizeVB;
     MyComboBoxText*    appliesTo;
     MyComboBoxText*    method;
     MyComboBoxText*    spec;
-    MySpinButton*      wPx;
-    MySpinButton*      hPx;
+
+    MyComboBoxText* uom;
+
+    MySpinButton* ppiSB;
+    MySpinButton* wPx;
+    MySpinButton* hPx;
+    MySpinButton* wPhys;
+    MySpinButton* hPhys;
+
+    void entryWPhysChanged();
+    void entryHPhysChanged();
+    void ppiChanged();
+    void uomChanged();
+    void updatePxDimensions();
+    void updatePhysDimensions();
+
     Gtk::CheckButton *allowUpscaling;
     int                maxw, maxh;
     int                cropw, croph;
-    sigc::connection   scaleConn, appliesToConn, wPxConn, hPxConn;
+    sigc::connection   scaleConn, appliesToConn, wPxConn, hPxConn, wPhysConn, hPhysConn, ppiConn, uomConn;
     bool               wDirty, hDirty;
     ToolParamBlock*    packBox;
     IdleRegister       idle_register;

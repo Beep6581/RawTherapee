@@ -27,6 +27,7 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
 {
     auto m = ProcEventMapper::getInstance();
     EvResizeAllowUpscaling = m->newEvent(RESIZE, "HISTORY_MSG_RESIZE_ALLOWUPSCALING");
+    EvResizePPI = m->newEvent(RESIZE, "HISTORY_MSG_RESIZE_PIXELSPERINCH");
 
     cropw = 0;
     croph = 0;
@@ -38,9 +39,9 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     appliesTo->append (M("TP_RESIZE_FULLIMAGE"));
     appliesTo->set_active (0);
 
-    Gtk::Label *label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_APPLIESTO")));
-    label->set_alignment(0., 0.);
-    paramTable->attach (*label, 0, 1, 0, 1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    Gtk::Label *appliesToLbl = Gtk::manage (new Gtk::Label (M("TP_RESIZE_APPLIESTO")));
+    appliesToLbl->set_alignment(Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
+    paramTable->attach (*appliesToLbl, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
     paramTable->attach (*appliesTo, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 
     // See Resize::methodChanged() when adding a new method.
@@ -49,9 +50,9 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     method->append (M("TP_RESIZE_NEAREST"));
     method->set_active (0);
 
-    label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_METHOD")));
-    label->set_alignment(0., 0.);
-    paramTable->attach (*label, 0, 1, 1, 2, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    Gtk::Label *methodLbl = Gtk::manage (new Gtk::Label (M("TP_RESIZE_METHOD")));
+    methodLbl->set_alignment(Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
+    paramTable->attach (*methodLbl, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, 2, 2);
     paramTable->attach (*method, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 
     spec = Gtk::manage (new MyComboBoxText ());
@@ -61,12 +62,16 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     spec->append (M("TP_RESIZE_FITBOX"));
     spec->set_active (0);
 
-    label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_SPECIFY")));
-    label->set_alignment(0., 0.);
-    paramTable->attach (*label, 0, 1, 2, 3, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    Gtk::Label *specifyLbl = Gtk::manage (new Gtk::Label (M("TP_RESIZE_SPECIFY")));
+    specifyLbl->set_alignment(Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
+    paramTable->attach (*specifyLbl, 0, 1, 2, 3, Gtk::FILL, Gtk::SHRINK, 2, 2);
     paramTable->attach (*spec, 1, 2, 2, 3, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 
-    pack_start (*paramTable, Gtk::PACK_SHRINK, 4);
+    allowUpscaling = Gtk::manage(new Gtk::CheckButton(M("TP_RESIZE_ALLOW_UPSCALING"))); // TODO Wrong capitalization used, should be sentence-case.
+    allowUpscaling->signal_toggled().connect(sigc::mem_fun(*this, &Resize::allowUpscalingChanged));
+    paramTable->attach (*allowUpscaling, 1, 2, 3, 4, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
+
+    pack_start (*paramTable, Gtk::PACK_SHRINK, 0);
 
     scale = new Adjuster (M("TP_RESIZE_SCALE"), 0.01, MAX_SCALE, 0.01, 1.);
     scale->setAdjusterListener (this);
@@ -75,45 +80,101 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
 
     sizeVB = Gtk::manage (new Gtk::VBox ());
 
-    Gtk::HBox* sHB = Gtk::manage (new Gtk::HBox ());
-    Gtk::HBox* wPxHB = Gtk::manage (new Gtk::HBox ());
-    Gtk::HBox* hPxHB = Gtk::manage (new Gtk::HBox ());
-    wPx = Gtk::manage (new MySpinButton ());
-    hPx = Gtk::manage (new MySpinButton ());
-    wPxHB->set_spacing(3);
-    wPxHB->pack_start (*Gtk::manage (new Gtk::Label (M("TP_RESIZE_W"))), Gtk::PACK_SHRINK, 0);
-    wPxHB->pack_start (*wPx);
-    hPxHB->set_spacing(3);
-    hPxHB->pack_start (*Gtk::manage (new Gtk::Label (M("TP_RESIZE_H"))), Gtk::PACK_SHRINK, 0);
-    hPxHB->pack_start (*hPx);
-    sHB->set_spacing(4);
-    sHB->pack_start (*wPxHB);
-    sHB->pack_start (*hPxHB);
+    uom = Gtk::manage(new MyComboBoxText());
+    uom->append(M("GENERAL_UOM_CENTIMETERS"));
+    uom->append(M("GENERAL_UOM_INCHES"));
+    uom->set_active(0);
 
-    sizeVB->pack_start (*sHB, Gtk::PACK_SHRINK, 0);
+    ppiSB = Gtk::manage(new MySpinButton());
+    wPx = Gtk::manage(new MySpinButton());
+    hPx = Gtk::manage(new MySpinButton());
+    wPhys = Gtk::manage(new MySpinButton());
+    hPhys = Gtk::manage(new MySpinButton());
 
-    allowUpscaling = Gtk::manage(new Gtk::CheckButton(M("TP_RESIZE_ALLOW_UPSCALING")));
-    sizeVB->pack_start(*allowUpscaling);
-    allowUpscaling->signal_toggled().connect(sigc::mem_fun(*this, &Resize::allowUpscalingChanged));
+    ppiSB->set_hexpand(true);
+    wPx->set_hexpand(true);
+    hPx->set_hexpand(true);
+    wPhys->set_hexpand(true);
+    hPhys->set_hexpand(true);
 
-    sizeVB->show_all ();
-    sizeVB->reference ();
+    Gtk::Label* wPxLbl = Gtk::manage(new Gtk::Label(M("GENERAL_WIDTH"))); // TODO delete all TP_RESIZE_W keys
+    Gtk::Label* hPxLbl = Gtk::manage(new Gtk::Label(M("GENERAL_HEIGHT"))); // TODO delete all TP_RESIZE_H keys
+    Gtk::Label* ppiLbl = Gtk::manage(new Gtk::Label(M("GENERAL_PIXELSPERINCH")));
+    Gtk::Label* uomLbl = Gtk::manage(new Gtk::Label(M("GENERAL_UOM")));
+    Gtk::Label* wUomLbl = Gtk::manage(new Gtk::Label(M("GENERAL_WIDTH")));
+    Gtk::Label* hUomLbl = Gtk::manage(new Gtk::Label(M("GENERAL_HEIGHT")));
 
-    wPx->set_digits (0);
-    wPx->set_increments (1, 100);
-    wPx->set_value (800);
-    wPx->set_range (32, MAX_SCALE * maxw);
+    ppiLbl->set_alignment(Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
+    uomLbl->set_alignment(Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
+    wUomLbl->set_alignment(Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
+    hUomLbl->set_alignment(Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
 
-    hPx->set_digits (0);
-    hPx->set_increments (1, 100);
-    hPx->set_value (600);
-    hPx->set_range (32, MAX_SCALE * maxh);
+    Gtk::Grid* dimensionGrid = Gtk::manage(new Gtk::Grid());
+    dimensionGrid->get_style_context()->add_class("grid-spacing");
 
-    wPxConn = wPx->signal_value_changed().connect ( sigc::mem_fun(*this, &Resize::entryWChanged), true);
-    hPxConn = hPx->signal_value_changed().connect ( sigc::mem_fun(*this, &Resize::entryHChanged), true);
-    appliesToConn = appliesTo->signal_changed().connect ( sigc::mem_fun(*this, &Resize::appliesToChanged) );
-    method->signal_changed().connect ( sigc::mem_fun(*this, &Resize::methodChanged) );
-    scaleConn = spec->signal_changed().connect ( sigc::mem_fun(*this, &Resize::specChanged) );
+    dimensionGrid->attach(*wPxLbl, 0, 0, 1, 1);
+    dimensionGrid->attach(*wPx, 1, 0, 1, 1);
+    dimensionGrid->attach(*hPxLbl, 2, 0, 1, 1);
+    dimensionGrid->attach(*hPx, 3, 0, 1, 1);
+
+    MyExpander* physicalME = Gtk::manage(new MyExpander(false, M("Physical Dimensions")));
+
+    Gtk::Grid* physicalGrid = Gtk::manage(new Gtk::Grid());
+    physicalGrid->get_style_context()->add_class("grid-spacing");
+
+    physicalGrid->attach(*ppiLbl, 0, 0, 2, 1);
+    physicalGrid->attach(*ppiSB, 2, 0, 2, 1);
+    physicalGrid->attach(*uomLbl, 0, 1, 2, 1);
+    physicalGrid->attach(*uom, 2, 1, 2, 1);
+    physicalGrid->attach(*wUomLbl, 0, 2, 1, 1);
+    physicalGrid->attach(*wPhys, 1, 2, 1, 1);
+    physicalGrid->attach(*hUomLbl, 2, 2, 1, 1);
+    physicalGrid->attach(*hPhys, 3, 2, 1, 1);
+
+    physicalME->add(*physicalGrid, false);
+    physicalME->setLevel(2);
+
+    sizeVB->pack_start(*dimensionGrid, Gtk::PACK_SHRINK, 0);
+    sizeVB->pack_start(*physicalME, Gtk::PACK_SHRINK, 0);
+
+    sizeVB->show_all();
+    sizeVB->reference();
+    physicalME->set_expanded(false);
+
+    wPx->set_digits(0);
+    wPx->set_increments(1, 100);
+    wPx->set_range(32, MAX_SCALE * maxw);
+    wPx->set_value(800);
+
+    hPx->set_digits(0);
+    hPx->set_increments(1, 100);
+    hPx->set_range(32, MAX_SCALE * maxh);
+    hPx->set_value(600);
+
+    ppiSB->set_digits(0);
+    ppiSB->set_increments(1, 100);
+    ppiSB->set_range(1, 1200);
+    ppiSB->set_value(300);
+
+    wPhys->set_digits(1);
+    wPhys->set_increments(0.1, 1);
+    wPhys->set_range(0.01, 100);
+    wPhys->set_value(10);
+
+    hPhys->set_digits(1);
+    hPhys->set_increments(0.1, 1);
+    hPhys->set_range(0.01, 100);
+    hPhys->set_value(15);
+
+    wPxConn = wPx->signal_value_changed().connect(sigc::mem_fun(*this, &Resize::entryWPxChanged), true);
+    hPxConn = hPx->signal_value_changed().connect(sigc::mem_fun(*this, &Resize::entryHPxChanged), true);
+    wPhysConn = wPhys->signal_value_changed().connect(sigc::mem_fun(*this, &Resize::entryWPhysChanged), true);
+    hPhysConn = hPhys->signal_value_changed().connect(sigc::mem_fun(*this, &Resize::entryHPhysChanged), true);
+    ppiConn = ppiSB->signal_value_changed().connect(sigc::mem_fun(*this, &Resize::ppiChanged));
+    uomConn = uom->signal_changed().connect(sigc::mem_fun(*this, &Resize::uomChanged));
+    appliesToConn = appliesTo->signal_changed().connect(sigc::mem_fun(*this, &Resize::appliesToChanged));
+    method->signal_changed().connect(sigc::mem_fun(*this, &Resize::methodChanged));
+    scaleConn = spec->signal_changed().connect(sigc::mem_fun(*this, &Resize::specChanged));
 
     packBox = Gtk::manage (new ToolParamBlock ());
     pack_end (*packBox);
@@ -135,17 +196,37 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     disableListener ();
     appliesToConn.block (true);
+    ppiConn.block(true);
     wPxConn.block (true);
     hPxConn.block (true);
+    /*
+    wPhysConn.block(true);
+    hPhysConn.block(true);
+    */
     scaleConn.block (true);
     scale->block(true);
 
+    ppiSB->set_value(pp->resize.ppi);
     scale->setValue (pp->resize.scale);
     wPx->set_value (pp->resize.width);
     hPx->set_value (pp->resize.height);
     setEnabled (pp->resize.enabled);
     spec->set_active (pp->resize.dataspec);
     allowUpscaling->set_active(pp->resize.allowUpscaling);
+
+    updatePhysDimensions();
+    /*
+    double wInches = wPx->get_value() / ppiSB->get_value_as_int();
+    double hInches = hPx->get_value() / ppiSB->get_value_as_int();
+    if (uom->get_active_row_number() == 0) {
+        wPhys->set_value(wInches * 2.54);
+        hPhys->set_value(hInches * 2.54);
+    } else {
+        wPhys->set_value(wInches);
+        hPhys->set_value(hInches);
+    }
+    */
+
     updateGUI();
 
     appliesTo->set_active (0);
@@ -169,6 +250,7 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     if (pedited) {
         wDirty = pedited->resize.width;
+        // TODO Do I need to add ppiSB here?
         hDirty = pedited->resize.height;
         scale->setEditedState (pedited->resize.scale ? Edited : UnEdited);
 
@@ -190,8 +272,13 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     scale->block(false);
     scaleConn.block (false);
+    ppiConn.block(false);
     wPxConn.block (false);
     hPxConn.block (false);
+    /*
+    wPhysConn.block(false);
+    hPhysConn.block(false);
+    */
     appliesToConn.block (false);
     enableListener ();
 }
@@ -218,11 +305,11 @@ void Resize::write (ProcParams* pp, ParamsEdited* pedited)
         pp->resize.method = "Nearest";
     }
 
+    pp->resize.ppi = ppiSB->get_value_as_int();
     pp->resize.dataspec = dataSpec;
     pp->resize.width = wPx->get_value_as_int ();
     pp->resize.height = hPx->get_value_as_int ();
     pp->resize.enabled = getEnabled ();
-    //printf("  L:%d   hPx:%d\n", pp->resize.width, pp->resize.height);
 
     pp->resize.allowUpscaling = allowUpscaling->get_active();
 
@@ -231,6 +318,8 @@ void Resize::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->resize.dataspec  = dataSpec != MAX_SCALE;
         pedited->resize.appliesTo = appliesTo->get_active_row_number() != 2;
         pedited->resize.method    = method->get_active_row_number() != 3;
+
+        // TODO Do I need to add ppiSB here?
 
         if (pedited->resize.dataspec) {
             pedited->resize.scale     = scale->getEditedState ();
@@ -281,11 +370,11 @@ int Resize::getComputedWidth()
 {
 
     if (cropw && appliesTo->get_active_row_number() == 0)
-        // we use the crop dimensions
+        // use the crop dimensions
     {
         return (int)((double)(cropw) * (hPx->get_value() / (double)(croph)) + 0.5);
     } else
-        // we use the image dimensions
+        // use the image dimensions
     {
         return (int)((double)(maxw) * (hPx->get_value() / (double)(maxh)) + 0.5);
     }
@@ -295,11 +384,11 @@ int Resize::getComputedHeight()
 {
 
     if (croph && appliesTo->get_active_row_number() == 0)
-        // we use the crop dimensions
+        // use the crop dimensions
     {
         return (int)((double)(croph) * (wPx->get_value() / (double)(cropw)) + 0.5);
     } else
-        // we use the image dimensions
+        // use the image dimensions
     {
         return (int)((double)(maxh) * (wPx->get_value() / (double)(maxw)) + 0.5);
     }
@@ -445,7 +534,7 @@ void Resize::fitBoxScale()
     double newh = hPx->get_value ();
 
     if (cropw && appliesTo->get_active_row_number() == 0) {
-        // we use the crop dimensions
+        // use the crop dimensions
         if (((double)(cropw) / (double)(croph)) > (neww / newh)) {
             // the new scale is given by the image width
             tmpScale = neww / (double)(cropw);
@@ -454,7 +543,7 @@ void Resize::fitBoxScale()
             tmpScale = newh / (double)(croph);
         }
     } else {
-        // we use the image dimensions
+        // use the image dimensions
         if (((double)(maxw) / (double)(maxh)) > (neww / newh)) {
             // the new scale is given by the image width
             tmpScale = neww / (double)(maxw);
@@ -467,12 +556,11 @@ void Resize::fitBoxScale()
     scale->setValue (tmpScale);
 }
 
-void Resize::entryWChanged ()
+void Resize::entryWPxChanged ()
 {
 
     wDirty = true;
 
-    // updating width
     if (!batchMode) {
         if (spec->get_active_row_number() == 3) {
             // Fit box mode
@@ -488,6 +576,9 @@ void Resize::entryWChanged ()
             scale->block (false);
             hPxConn.block (false);
         }
+
+        updatePhysDimensions();
+
     }
 
     if (listener) {
@@ -501,7 +592,7 @@ void Resize::entryWChanged ()
     }
 }
 
-void Resize::entryHChanged ()
+void Resize::entryHPxChanged ()
 {
 
     hDirty = true;
@@ -521,6 +612,9 @@ void Resize::entryHChanged ()
             scale->block (false);
             wPxConn.block (false);
         }
+
+        updatePhysDimensions();
+
     }
 
     if (listener) {
@@ -532,6 +626,106 @@ void Resize::entryHChanged ()
             }
         }
     }
+}
+
+void Resize::entryWPhysChanged()
+{
+    wDirty = true;
+
+    if (!batchMode) {
+        if (spec->get_active_row_number() != 0) {
+            // Anything other than scale mode
+            if (uom->get_active_row_number() == 0) {
+                wPx->set_value((wPhys->get_value() / 2.54) * ppiSB->get_value_as_int());
+            } else {
+                wPx->set_value(wPhys->get_value() * ppiSB->get_value_as_int());
+            }
+            fitBoxScale();
+        }
+    }
+
+    if (listener) {
+        if (spec->get_active_row_number() != 0) {
+            notifyBBox();
+        } else {
+            if (getEnabled () || batchMode) {
+                listener->panelChanged (EvResizeWidth, Glib::ustring::format (wPx->get_value_as_int()));
+            }
+        }
+    }
+}
+
+void Resize::entryHPhysChanged()
+{
+    hDirty = true;
+
+    if (!batchMode) {
+        if (spec->get_active_row_number() != 0) {
+            // Anything other than scale mode
+            if (uom->get_active_row_number() == 0) {
+                hPx->set_value((hPhys->get_value() / 2.54) * ppiSB->get_value_as_int());
+            } else {
+                hPx->set_value(hPhys->get_value() * ppiSB->get_value_as_int());
+            }
+            fitBoxScale();
+        }
+    }
+
+    if (listener) {
+        if (spec->get_active_row_number() != 0) {
+            notifyBBox();
+        } else {
+            if (getEnabled () || batchMode) {
+                listener->panelChanged (EvResizeHeight, Glib::ustring::format (hPx->get_value_as_int()));
+            }
+        }
+    }
+}
+
+void Resize::ppiChanged()
+{
+    updatePxDimensions();
+}
+
+void Resize::uomChanged()
+{
+    updatePxDimensions();
+}
+
+void Resize::updatePxDimensions()
+{
+    wPxConn.block(true);
+    hPxConn.block(true);
+
+    if (uom->get_active_row_number() == 0) {
+        wPx->set_value((wPhys->get_value() / 2.54) * ppiSB->get_value_as_int());
+        hPx->set_value((hPhys->get_value() / 2.54) * ppiSB->get_value_as_int());
+    } else {
+        wPx->set_value(wPhys->get_value() * ppiSB->get_value_as_int());
+        hPx->set_value(hPhys->get_value() * ppiSB->get_value_as_int());
+    }
+
+    wPxConn.block(false);
+    hPxConn.block(false);
+}
+
+void Resize::updatePhysDimensions()
+{
+    wPhysConn.block(true);
+    hPhysConn.block(true);
+
+    double wInches = wPx->get_value() / ppiSB->get_value_as_int();
+    double hInches = hPx->get_value() / ppiSB->get_value_as_int();
+    if (uom->get_active_row_number() == 0) {
+        wPhys->set_value(wInches * 2.54);
+        hPhys->set_value(hInches * 2.54);
+    } else {
+        wPhys->set_value(wInches);
+        hPhys->set_value(hInches);
+    }
+
+    wPhysConn.block(false);
+    hPhysConn.block(false);
 }
 
 void Resize::specChanged ()
@@ -546,13 +740,13 @@ void Resize::specChanged ()
     case (1):
         // Width mode
         wPx->set_value((double)(getComputedWidth()));
-        entryWChanged ();
+        entryWPxChanged ();
         break;
 
     case (2):
         // Height mode
         hPx->set_value((double)(getComputedHeight()));
-        entryHChanged ();
+        entryHPxChanged ();
         break;
 
     case (3):
@@ -584,6 +778,8 @@ void Resize::updateGUI ()
         pack_start (*sizeVB, Gtk::PACK_SHRINK, 4);
         wPx->set_sensitive (true);
         hPx->set_sensitive (false);
+        wPhys->set_sensitive (true);
+        hPhys->set_sensitive (false);
         break;
 
     case (2):
@@ -591,6 +787,8 @@ void Resize::updateGUI ()
         pack_start (*sizeVB, Gtk::PACK_SHRINK, 4);
         wPx->set_sensitive (false);
         hPx->set_sensitive (true);
+        wPhys->set_sensitive (false);
+        hPhys->set_sensitive (true);
         break;
 
     case (3):
@@ -598,6 +796,8 @@ void Resize::updateGUI ()
         pack_start (*sizeVB, Gtk::PACK_SHRINK, 4);
         wPx->set_sensitive (true);
         hPx->set_sensitive (true);
+        wPhys->set_sensitive (true);
+        hPhys->set_sensitive (true);
         break;
 
     default:

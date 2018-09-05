@@ -380,6 +380,7 @@ void ParamsEdited::set(bool v)
     resize.height    = v;
     resize.enabled   = v;
     resize.allowUpscaling = v;
+    resize.ppi = v;
     icm.inputProfile = v;
     icm.toneCurve = v;
     icm.applyLookTable = v;
@@ -940,6 +941,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         resize.height = resize.height && p.resize.height == other.resize.height;
         resize.enabled = resize.enabled && p.resize.enabled == other.resize.enabled;
         resize.allowUpscaling = resize.allowUpscaling && p.resize.allowUpscaling == other.resize.allowUpscaling;
+        resize.ppi = resize.ppi && p.resize.ppi == other.resize.ppi;
         icm.inputProfile = icm.inputProfile && p.icm.inputProfile == other.icm.inputProfile;
         icm.toneCurve = icm.toneCurve && p.icm.toneCurve == other.icm.toneCurve;
         icm.applyLookTable = icm.applyLookTable && p.icm.applyLookTable == other.icm.applyLookTable;
@@ -2434,6 +2436,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (resize.allowUpscaling) {
         toEdit.resize.allowUpscaling = mods.resize.allowUpscaling;
+    }
+
+    if (resize.ppi) {
+        toEdit.resize.ppi = mods.resize.ppi;
     }
 
     if (icm.inputProfile) {

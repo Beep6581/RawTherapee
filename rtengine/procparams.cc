@@ -1931,7 +1931,8 @@ ResizeParams::ResizeParams() :
     dataspec(3),
     width(900),
     height(900),
-    allowUpscaling(false)
+    allowUpscaling(false),
+    ppi(300)
 {
 }
 
@@ -1945,7 +1946,8 @@ bool ResizeParams::operator ==(const ResizeParams& other) const
         && dataspec == other.dataspec
         && width == other.width
         && height == other.height
-        && allowUpscaling == other.allowUpscaling;
+        && allowUpscaling == other.allowUpscaling
+        && ppi == other.ppi;
 }
 
 bool ResizeParams::operator !=(const ResizeParams& other) const
@@ -3171,6 +3173,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->resize.width, "Resize", "Width", resize.width, keyFile);
         saveToKeyfile(!pedited || pedited->resize.height, "Resize", "Height", resize.height, keyFile);
         saveToKeyfile(!pedited || pedited->resize.allowUpscaling, "Resize", "AllowUpscaling", resize.allowUpscaling, keyFile);
+        saveToKeyfile(!pedited || pedited->resize.ppi, "Resize", "PPI", resize.ppi, keyFile);
 
 // Post resize sharpening
         saveToKeyfile(!pedited || pedited->prsharpening.enabled, "PostResizeSharpening", "Enabled", prsharpening.enabled, keyFile);
@@ -4211,6 +4214,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Resize", "DataSpecified", pedited, resize.dataspec, pedited->resize.dataspec);
             assignFromKeyfile(keyFile, "Resize", "Width", pedited, resize.width, pedited->resize.width);
             assignFromKeyfile(keyFile, "Resize", "Height", pedited, resize.height, pedited->resize.height);
+            assignFromKeyfile(keyFile, "Resize", "PPI", pedited, resize.ppi, pedited->resize.ppi);
             if (ppVersion >= 339) {
                 assignFromKeyfile(keyFile, "Resize", "AllowUpscaling", pedited, resize.allowUpscaling, pedited->resize.allowUpscaling);
             } else {
