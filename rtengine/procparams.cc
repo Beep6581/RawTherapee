@@ -2561,7 +2561,7 @@ RAWParams::RAWParams() :
     ff_AutoClipControl(false),
     ff_clipControl(0),
     ca_autocorrect(false),
-    caautoiterations(1),
+    caautoiterations(2),
     cared(0.0),
     cablue(0.0),
     expos(1.0),
@@ -4756,7 +4756,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
 
             assignFromKeyfile(keyFile, "RAW", "CA", pedited, raw.ca_autocorrect, pedited->raw.ca_autocorrect);
-            assignFromKeyfile(keyFile, "RAW", "CAAutoIterations", pedited, raw.caautoiterations, pedited->raw.caautoiterations);
+            if (ppVersion >= 342) {
+                assignFromKeyfile(keyFile, "RAW", "CAAutoIterations", pedited, raw.caautoiterations, pedited->raw.caautoiterations);
+            } else {
+                raw.caautoiterations = 1;
+            }
             assignFromKeyfile(keyFile, "RAW", "CARed", pedited, raw.cared, pedited->raw.cared);
             assignFromKeyfile(keyFile, "RAW", "CABlue", pedited, raw.cablue, pedited->raw.cablue);
             // For compatibility to elder pp3 versions
