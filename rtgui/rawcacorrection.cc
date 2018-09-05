@@ -33,7 +33,7 @@ RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_CHROM
     caAutocorrect = Gtk::manage (new CheckBox(M("TP_RAWCACORR_AUTO"), multiImage));
     caAutocorrect->setCheckBoxListener (this);
 
-    caRed = Gtk::manage(new Adjuster (M("TP_RAWCACORR_CARED"), -4.0, 4.0, 0.1, 0, icaredL, icaredR));
+    caRed = Gtk::manage(new Adjuster (M("TP_RAWCACORR_CARED"), -8.0, 8.0, 0.1, 0, icaredL, icaredR));
     caRed->setAdjusterListener (this);
 
     if (caRed->delay < options.adjusterMaxDelay) {
@@ -41,7 +41,7 @@ RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_CHROM
     }
 
     caRed->show();
-    caBlue = Gtk::manage(new Adjuster (M("TP_RAWCACORR_CABLUE"), -4.0, 4.0, 0.1, 0, icablueL, icablueR));
+    caBlue = Gtk::manage(new Adjuster (M("TP_RAWCACORR_CABLUE"), -8.0, 8.0, 0.1, 0, icablueL, icablueR));
     caBlue->setAdjusterListener (this);
 
     if (caBlue->delay < options.adjusterMaxDelay) {
