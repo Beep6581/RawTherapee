@@ -144,11 +144,17 @@ float* RawImageSource::CA_correct_RT(
             }
         }
     }
-    array2D<float> oldraw(W,H);
+    array2D<float>* oldraw = nullptr;
     if (avoidColourshift) {
+        oldraw = new array2D<float>((W + 1) / 2, H);
+        #pragma omp parallel for
         for(int i = 0; i < H; ++i) {
-            for(int j = 0; j < W; ++j) {
-                oldraw[i][j] = rawData[i][j];
+            int j = FC(i, 0) & 1;
+            for(; j < W - 1; j += 2) {
+                (*oldraw)[i][j / 2] = rawData[i][j];
+            }
+            if(j < W) {
+                (*oldraw)[i][j / 2] = rawData[i][j];
             }
         }
     }
@@ -284,15 +290,15 @@ float* RawImageSource::CA_correct_RT(
                         // rgb values should be floating point numbers between 0 and 1
                         // after white balance multipliers are applied
 
-    #ifdef __SSE2__
+#ifdef __SSE2__
                         vfloat c65535v = F2V(65535.f);
-    #endif
+#endif
 
                         for (int rr = rrmin; rr < rrmax; rr++) {
                             int row = rr + top;
                             int cc = ccmin;
                             int col = cc + left;
-    #ifdef __SSE2__
+#ifdef __SSE2__
                             int c0 = FC(rr, cc);
                             if(c0 == 1) {
                                 rgb[c0][rr * ts + cc] = rawData[row][col] / 65535.f;
@@ -309,7 +315,7 @@ float* RawImageSource::CA_correct_RT(
                                 STVFU(rgb[1][indx1], val1);
                                 STVFU(rgb[1][indx1 + 4], val2);
                             }
-    #endif
+#endif
                             for (; cc < ccmax; cc++, col++) {
                                 int c = FC(rr, cc);
                                 int indx1 = rr * ts + cc;
@@ -389,16 +395,16 @@ float* RawImageSource::CA_correct_RT(
                         //end of initialization
 
 
-    #ifdef __SSE2__
+#ifdef __SSE2__
                         vfloat onev = F2V(1.f);
                         vfloat epsv = F2V(eps);
-    #endif
+#endif
                         for (int rr = 3; rr < rr1 - 3; rr++) {
                             int row = rr + top;
                             int cc = 3 + (FC(rr,3) & 1);
                             int indx = rr * ts + cc;
                             int c = FC(rr,cc);
-    #ifdef __SSE2__
+#ifdef __SSE2__
                             for (; cc < cc1 - 9; cc+=8, indx+=8) {
                                 //compute directional weights using image gradients
                                 vfloat rgb1mv1v = LC2VFU(rgb[1][indx - v1]);
@@ -417,7 +423,7 @@ float* RawImageSource::CA_correct_RT(
                                 STC2VFU(rgb[1][indx], (wtuv * rgb1mv1v + wtdv * rgb1pv1v + wtlv * rgb1m1v + wtrv * rgb1p1v) / (wtuv + wtdv + wtlv + wtrv));
                             }
 
-    #endif
+#endif
                             for (; cc < cc1 - 3; cc+=2, indx+=2) {
                                 //compute directional weights using image gradients
                                 float wtu = 1.f / SQR(eps + fabsf(rgb[1][indx + v1] - rgb[1][indx - v1]) + fabsf(rgb[c][indx >> 1] - rgb[c][(indx - v2) >> 1]) + fabsf(rgb[1][indx - v1] - rgb[1][indx - v3]));
@@ -433,11 +439,11 @@ float* RawImageSource::CA_correct_RT(
                                 int offset = (FC(row,max(left + 3, 0)) & 1);
                                 int col = max(left + 3, 0) + offset;
                                 int indx = rr * ts + 3 - (left < 0 ? (left+3) : 0) + offset;
-    #ifdef __SSE2__
+#ifdef __SSE2__
                                 for(; col < min(cc1 + left - 3, width) - 7; col+=8, indx+=8) {
                                     STVFU(Gtmp[(row * width + col) >> 1], LC2VFU(rgb[1][indx]));
                                 }
-    #endif
+#endif
                                 for(; col < min(cc1 + left - 3, width); col+=2, indx+=2) {
                                     Gtmp[(row * width + col) >> 1] = rgb[1][indx];
                                 }
@@ -445,14 +451,14 @@ float* RawImageSource::CA_correct_RT(
 
                         }
                         //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    #ifdef __SSE2__
+#ifdef __SSE2__
                         vfloat zd25v = F2V(0.25f);
-    #endif
+#endif
                         for (int rr = 4; rr < rr1 - 4; rr++) {
                             int cc = 4 + (FC(rr, 2) & 1);
                             int indx = rr * ts + cc;
                             int c = FC(rr, cc);
-    #ifdef __SSE2__
+#ifdef __SSE2__
                             for (; cc < cc1 - 10; cc += 8, indx += 8) {
                                 vfloat rgb1v = LC2VFU(rgb[1][indx]);
                                 vfloat rgbcv = LVFU(rgb[c][indx >> 1]);
@@ -480,7 +486,7 @@ float* RawImageSource::CA_correct_RT(
                                 STVFU(grblpfh[indx >> 1], zd25v * (glpfhv + (rgbcv + LVFU(rgb[c][(indx + 2) >> 1]) + LVFU(rgb[c][(indx - 2) >> 1]))));
                             }
 
-    #endif
+#endif
                             for (; cc < cc1 - 4; cc += 2, indx += 2) {
                                 rbhpfv[indx >> 1] = fabsf(fabsf((rgb[1][indx] - rgb[c][indx >> 1]) - (rgb[1][indx + v4] - rgb[c][(indx + v4) >> 1])) +
                                                           fabsf((rgb[1][indx - v4] - rgb[c][(indx - v4) >> 1]) - (rgb[1][indx] - rgb[c][indx >> 1])) -
@@ -507,11 +513,11 @@ float* RawImageSource::CA_correct_RT(
                             }
                         }
 
-    #ifdef __SSE2__
+#ifdef __SSE2__
                         vfloat zd3v = F2V(0.3f);
                         vfloat zd1v = F2V(0.1f);
                         vfloat zd5v = F2V(0.5f);
-    #endif
+#endif
 
                         // along line segments, find the point along each segment that minimizes the colour variance
                         // averaged over the tile; evaluate for up/down and left/right away from R/B grid point
@@ -519,7 +525,7 @@ float* RawImageSource::CA_correct_RT(
                             int cc = 8 + (FC(rr, 2) & 1);
                             int indx = rr * ts + cc;
                             int c = FC(rr, cc);
-    #ifdef __SSE2__
+#ifdef __SSE2__
                             vfloat coeff00v = ZEROV;
                             vfloat coeff01v = ZEROV;
                             vfloat coeff02v = ZEROV;
@@ -560,7 +566,7 @@ float* RawImageSource::CA_correct_RT(
                             coeff[1][1][c>>1] += vhadd(coeff11v);
                             coeff[1][2][c>>1] += vhadd(coeff12v);
 
-    #endif
+#endif
                             for (; cc < cc1 - 8; cc += 2, indx += 2) {
 
                                 //in linear interpolation, colour differences are a quadratic function of interpolation position;
@@ -825,17 +831,17 @@ float* RawImageSource::CA_correct_RT(
                         // rgb values should be floating point number between 0 and 1
                         // after white balance multipliers are applied
 
-    #ifdef __SSE2__
+#ifdef __SSE2__
                         vfloat c65535v = F2V(65535.f);
                         vmask gmask = _mm_set_epi32(0, 0xffffffff, 0, 0xffffffff);
-    #endif
+#endif
                         for (int rr = rrmin; rr < rrmax; rr++) {
                             int row = rr + top;
                             int cc = ccmin;
                             int col = cc + left;
                             int indx = row * width + col;
                             int indx1 = rr * ts + cc;
-    #ifdef __SSE2__
+#ifdef __SSE2__
                             int c = FC(rr, cc);
                             if(c & 1) {
                                 rgb[1][indx1] = rawData[row][col] / 65535.f;
@@ -853,7 +859,7 @@ float* RawImageSource::CA_correct_RT(
                                 STVFU(rgb[1][indx1], vself(gmask, PERMUTEPS(gtmpv, _MM_SHUFFLE(1, 1, 0, 0)), val1v));
                                 STVFU(rgb[1][indx1 + 4], vself(gmask, PERMUTEPS(gtmpv, _MM_SHUFFLE(3, 3, 2, 2)), val2v));
                             }
-    #endif
+#endif
                             for (; cc < ccmax; cc++, col++, indx++, indx1++) {
                                 int c = FC(rr, cc);
                                 rgb[c][indx1 >> ((c & 1) ^ 1)] = rawData[row][col] / 65535.f;
@@ -954,15 +960,15 @@ float* RawImageSource::CA_correct_RT(
                         // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
                         if (!autoCA || fitParamsIn) {
-    #ifdef __SSE2__
+#ifdef __SSE2__
                             const vfloat onev = F2V(1.f);
                             const vfloat epsv = F2V(eps);
-    #endif
+#endif
 
                             //manual CA correction; use red/blue slider values to set CA shift parameters
                             for (int rr = 3; rr < rr1 - 3; rr++) {
                                 int cc = 3 + FC(rr, 1), c = FC(rr,cc), indx = rr * ts + cc;
-    #ifdef __SSE2__
+#ifdef __SSE2__
                                 for (; cc < cc1 - 10; cc += 8, indx += 8) {
                                     //compute directional weights using image gradients
                                     vfloat val1v = epsv + vabsf(LC2VFU(rgb[1][(rr + 1) * ts + cc]) - LC2VFU(rgb[1][(rr - 1) * ts + cc]));
@@ -975,7 +981,7 @@ float* RawImageSource::CA_correct_RT(
                                     //store in rgb array the interpolated G value at R/B grid points using directional weighted average
                                     STC2VFU(rgb[1][indx], (wtuv * LC2VFU(rgb[1][indx - v1]) + wtdv * LC2VFU(rgb[1][indx + v1]) + wtlv * LC2VFU(rgb[1][indx - 1]) + wtrv * LC2VFU(rgb[1][indx + 1])) / (wtuv + wtdv + wtlv + wtrv));
                                 }
-    #endif
+#endif
                                 for (; cc < cc1 - 3; cc += 2, indx += 2) {
                                     //compute directional weights using image gradients
                                     float wtu = 1.f / SQR(eps + fabsf(rgb[1][(rr + 1) * ts + cc] - rgb[1][(rr - 1) * ts + cc]) + fabsf(rgb[c][(rr * ts + cc) >> 1] - rgb[c][((rr - 2) * ts + cc) >> 1]) + fabsf(rgb[1][(rr - 1) * ts + cc] - rgb[1][(rr - 3) * ts + cc]));
@@ -1044,7 +1050,7 @@ float* RawImageSource::CA_correct_RT(
                             int indxff = (rr + shiftvfloor[c]) * ts + cc + shifthfloor[c];
                             int indxcc = (rr + shiftvceil[c]) * ts + cc + shifthceil[c];
                             int indxcf = (rr + shiftvceil[c]) * ts + cc + shifthfloor[c];
-    #ifdef __SSE2__
+#ifdef __SSE2__
                             vfloat shifthfracv = F2V(shifthfrac[c]);
                             vfloat shiftvfracv = F2V(shiftvfrac[c]);
                             for (; cc < cc1 - 10; cc += 8, indxfc += 8, indxff += 8, indxcc += 8, indxcf += 8, indx += 4) {
@@ -1060,7 +1066,7 @@ float* RawImageSource::CA_correct_RT(
                                 STVFU(gshift[indx], Gintv);
                             }
 
-    #endif
+#endif
                             for (; cc < cc1 - 4; cc += 2, indxfc += 2, indxff += 2, indxcc += 2, indxcf += 2, ++indx) {
                                 //perform CA correction using colour ratios or colour differences
                                 float Ginthfloor = intp(shifthfrac[c], rgb[1][indxfc], rgb[1][indxff]);
@@ -1080,18 +1086,18 @@ float* RawImageSource::CA_correct_RT(
                         shiftvfrac[0] /= 2.f;
                         shiftvfrac[2] /= 2.f;
 
-    #ifdef __SSE2__
+#ifdef __SSE2__
                         vfloat zd25v = F2V(0.25f);
                         vfloat onev = F2V(1.f);
                         vfloat zd5v = F2V(0.5f);
                         vfloat epsv = F2V(eps);
-    #endif
+#endif
                         for (int rr = 8; rr < rr1 - 8; rr++) {
                             int cc = 8 + (FC(rr, 2) & 1);
                             int c = FC(rr, cc);
                             int GRBdir0 = GRBdir[0][c];
                             int GRBdir1 = GRBdir[1][c];
-    #ifdef __SSE2__
+#ifdef __SSE2__
                             vfloat shifthfracc = F2V(shifthfrac[c]);
                             vfloat shiftvfracc = F2V(shiftvfrac[c]);
                             for (int indx = rr * ts + cc; cc < cc1 - 14; cc += 8, indx += 8) {
@@ -1124,7 +1130,7 @@ float* RawImageSource::CA_correct_RT(
                                 RBint = vself(vmaskf_lt(grbdiffold * grbdiffint, ZEROV), rinv - zd5v * (grbdiffold + grbdiffint), RBint);
                                 STVFU(rgb[c][indx >> 1], RBint);
                             }
-    #endif
+#endif
                             for (int c = FC(rr, cc), indx = rr * ts + cc; cc < cc1 - 8; cc += 2, indx += 2) {
                                 float grbdiffold = rgb[1][indx] - rgb[c][indx >> 1];
 
@@ -1172,11 +1178,11 @@ float* RawImageSource::CA_correct_RT(
                             int cc = border + (FC(rr, 2) & 1);
                             int indx = (row * width + cc + left) >> 1;
                             int indx1 = (rr * ts + cc) >> 1;
-    #ifdef __SSE2__
+#ifdef __SSE2__
                             for (; indx < (row * width + cc1 - border - 7 + left) >> 1; indx+=4, indx1 += 4) {
                                 STVFU(RawDataTmp[indx], c65535v * LVFU(rgb[c][indx1]));
                             }
-    #endif
+#endif
                             for (; indx < (row * width + cc1 - border + left) >> 1; indx++, indx1++) {
                                 RawDataTmp[indx] = 65535.f * rgb[c][indx1];
                             }
@@ -1201,17 +1207,17 @@ float* RawImageSource::CA_correct_RT(
                     }
 
                 #pragma omp barrier
-    // copy temporary image matrix back to image matrix
+                // copy temporary image matrix back to image matrix
                 #pragma omp for
 
                 for(int row = 0; row < height; row++) {
                     int col = FC(row, 0) & 1;
                     int indx = (row * width + col) >> 1;
-    #ifdef __SSE2__
+#ifdef __SSE2__
                     for(; col < width - 7; col += 8, indx += 4) {
                         STC2VFU(rawData[row][col], LVFU(RawDataTmp[indx]));
                     }
-    #endif
+#endif
                     for(; col < width - (W & 1); col += 2, indx++) {
                         rawData[row][col] = RawDataTmp[indx];
                     }
@@ -1244,29 +1250,42 @@ float* RawImageSource::CA_correct_RT(
     if (avoidColourshift) {
         array2D<float> redFactor((W+1)/2, (H+1)/2);
         array2D<float> blueFactor((W+1)/2, (H+1)/2);
+        array2D<float>* nonGreen;
 
-        for(int i = 0; i < H; ++i) {
-            for(int j = 0; j < W; ++j) {
-                float factor = (rawData[i][j] * oldraw[i][j] == 0.0 ? 1.0 : oldraw[i][j] / rawData[i][j]);
-                if(FC(i,j) == 0) {
-                    redFactor[i/2][j/2] = factor;
-                } else if(FC(i,j) == 2) {
-                    blueFactor[i/2][j/2] = factor;
+        #pragma omp parallel
+        {
+            #pragma omp for
+            for(int i = 0; i < H; ++i) {
+                int firstCol = FC(i, 0) & 1;
+                int colour = FC(i, firstCol);
+                nonGreen = colour == 0 ? &redFactor : &blueFactor;
+                int j = firstCol;
+                for(; j < W - 1; j += 2) {
+                    (*nonGreen)[i/2][j/2] = (rawData[i][j] * (*oldraw)[i][j / 2] == 0.0 ? 1.0 : (*oldraw)[i][j / 2] / rawData[i][j]);
+                }
+                if (j < W) {
+                    (*nonGreen)[i/2][j/2] = (rawData[i][j] * (*oldraw)[i][j / 2] == 0.0 ? 1.0 : (*oldraw)[i][j / 2] / rawData[i][j]);
+                }
+            }
+
+            gaussianBlur(redFactor, redFactor, (W+1)/2, (H+1)/2, 30.0);
+            gaussianBlur(blueFactor, blueFactor, (W+1)/2, (H+1)/2, 30.0);
+
+            #pragma omp for
+            for(int i = 0; i < H; ++i) {
+                int firstCol = FC(i, 0) & 1;
+                int colour = FC(i, firstCol);
+                nonGreen = colour == 0 ? &redFactor : &blueFactor;
+                int j = firstCol;
+                for(; j < W - 1; j += 2) {
+                    rawData[i][j] *= (*nonGreen)[i/2][j/2];
+                }
+                if (j < W) {
+                    rawData[i][j] *= (*nonGreen)[i/2][j/2];
                 }
             }
         }
-        gaussianBlur(redFactor, redFactor, (W+1)/2, (H+1)/2, 30.0);
-        gaussianBlur(blueFactor, blueFactor, (W+1)/2, (H+1)/2, 30.0);
-
-        for(int i = 0; i < H; ++i) {
-            for(int j = 0; j < W; ++j) {
-                if(FC(i,j) == 0) {
-                    rawData[i][j] *= redFactor[i/2][j/2];
-                } else if(FC(i,j) == 2) {
-                    rawData[i][j] *= blueFactor[i/2][j/2];
-                }
-            }
-        }
+        delete oldraw;
     }
 
     if(plistener) {
