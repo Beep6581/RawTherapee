@@ -602,6 +602,10 @@ Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int
 
         // 7 parameters for smoother curves
         cmsWhitePointFromTemp(&xyD, (double)temp);
+        if (profile == "ACESp0") {
+            xyD = {0.32168, 0.33767, 1.0};//refine white point to avoid differences
+        }
+        
         GammaTRC[0] = GammaTRC[1] = GammaTRC[2] =   cmsBuildParametricToneCurve(NULL, five, gammaParams);//5 = more smoother than 4
         oprofdef = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC);
         cmsFreeToneCurve(GammaTRC[0]);

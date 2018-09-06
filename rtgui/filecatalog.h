@@ -73,6 +73,7 @@ private:
 
     Gtk::HBox* buttonBar;
     Gtk::HBox* hbToolBar1;
+    MyScrolledToolbar* hbToolBar1STB;
 
     Gtk::HBox* fltrRankbox;
     Gtk::HBox* fltrLabelbox;
