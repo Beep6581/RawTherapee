@@ -991,8 +991,11 @@ void MyScrolledWindow::get_preferred_height_for_width_vfunc (int width, int &min
 MyScrolledToolbar::MyScrolledToolbar ()
 {
     set_policy (Gtk::POLICY_EXTERNAL, Gtk::POLICY_NEVER);
-    set_propagate_natural_height(true);
     get_style_context()->add_class("scrollableToolbar");
+
+    // Works fine with Gtk 3.22, but a a custom made get_preferred_height had to be created as a workaround
+    // taken from the official Gtk3.22 source code
+    //set_propagate_natural_height(true);
 }
 
 bool MyScrolledToolbar::on_scroll_event (GdkEventScroll* event)
@@ -1030,6 +1033,23 @@ bool MyScrolledToolbar::on_scroll_event (GdkEventScroll* event)
     }
 
     return true;
+}
+
+void MyScrolledToolbar::get_preferred_height (int &minimumHeight, int &naturalHeight)
+{
+    int currMinHeight = 0;
+    int currNatHeight = 0;
+    std::vector<Widget*> childs = get_children();
+    minimumHeight = naturalHeight = 0;
+
+    for (auto child : childs)
+    {
+        if(child->is_visible()) {
+            child->get_preferred_height(currMinHeight, currNatHeight);
+            minimumHeight = rtengine::max(currMinHeight, minimumHeight);
+            naturalHeight = rtengine::max(currNatHeight, naturalHeight);
+        }
+    }
 }
 
 MyComboBoxText::MyComboBoxText (bool has_entry) : Gtk::ComboBoxText(has_entry)
