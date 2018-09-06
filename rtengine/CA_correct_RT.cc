@@ -1267,10 +1267,10 @@ float* RawImageSource::CA_correct_RT(
                 nonGreen = colour == 0 ? &redFactor : &blueFactor;
                 int j = firstCol;
                 for(; j < W - 1; j += 2) {
-                    (*nonGreen)[i/2][j/2] = rtengine::LIM((rawData[i][j] <= 1.f || (*oldraw)[i][j / 2] <= 1.f) ? 1.f : (*oldraw)[i][j / 2] / rawData[i][j], 0.5f, 1.5f);
+                    (*nonGreen)[i/2][j/2] = rtengine::LIM((rawData[i][j] <= 1.f || (*oldraw)[i][j / 2] <= 1.f) ? 1.f : (*oldraw)[i][j / 2] / rawData[i][j], 0.5f, 2.f);
                 }
                 if (j < W) {
-                    (*nonGreen)[i/2][j/2] = rtengine::LIM((rawData[i][j] <= 1.f || (*oldraw)[i][j / 2] <= 1.f) ? 1.f : (*oldraw)[i][j / 2] / rawData[i][j], 0.5f, 1.5f);
+                    (*nonGreen)[i/2][j/2] = rtengine::LIM((rawData[i][j] <= 1.f || (*oldraw)[i][j / 2] <= 1.f) ? 1.f : (*oldraw)[i][j / 2] / rawData[i][j], 0.5f, 2.f);
                 }
             }
 
