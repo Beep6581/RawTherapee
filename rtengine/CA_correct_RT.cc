@@ -26,6 +26,7 @@
 #include "rtengine.h"
 #include "rawimagesource.h"
 #include "rt_math.h"
+#include "gauss.h"
 #include "median.h"
 //#define BENCHMARK
 #include "StopWatch.h"
@@ -118,6 +119,7 @@ float* RawImageSource::CA_correct_RT(
     double cared,
     double cablue,
     double caautostrength,
+    bool avoidColourshift,
     const array2D<float> &rawData,
     double* fitParamsTransfer,
     bool fitParamsIn,
@@ -139,6 +141,14 @@ float* RawImageSource::CA_correct_RT(
             if(FC(i, j) == 3) {
                 printf("CA correction supports only RGB Colour filter arrays\n");
                 return buffer;
+            }
+        }
+    }
+    array2D<float> oldraw(W,H);
+    if (avoidColourshift) {
+        for(int i = 0; i < H; ++i) {
+            for(int j = 0; j < W; ++j) {
+                oldraw[i][j] = rawData[i][j];
             }
         }
     }
@@ -1228,6 +1238,35 @@ float* RawImageSource::CA_correct_RT(
     if(freeBuffer) {
         free(buffer);
         buffer = nullptr;
+    }
+
+
+    if (avoidColourshift) {
+        array2D<float> redFactor((W+1)/2, (H+1)/2);
+        array2D<float> blueFactor((W+1)/2, (H+1)/2);
+
+        for(int i = 0; i < H; ++i) {
+            for(int j = 0; j < W; ++j) {
+                float factor = (rawData[i][j] * oldraw[i][j] == 0.0 ? 1.0 : oldraw[i][j] / rawData[i][j]);
+                if(FC(i,j) == 0) {
+                    redFactor[i/2][j/2] = factor;
+                } else if(FC(i,j) == 2) {
+                    blueFactor[i/2][j/2] = factor;
+                }
+            }
+        }
+        gaussianBlur(redFactor, redFactor, (W+1)/2, (H+1)/2, 30.0);
+        gaussianBlur(blueFactor, blueFactor, (W+1)/2, (H+1)/2, 30.0);
+
+        for(int i = 0; i < H; ++i) {
+            for(int j = 0; j < W; ++j) {
+                if(FC(i,j) == 0) {
+                    rawData[i][j] *= redFactor[i/2][j/2];
+                } else if(FC(i,j) == 2) {
+                    rawData[i][j] *= blueFactor[i/2][j/2];
+                }
+            }
+        }
     }
 
     if(plistener) {

@@ -245,6 +245,7 @@ protected:
         double cared,
         double cablue,
         double caautostrength,
+        bool avoidColourshift,
         const array2D<float> &rawData,
         double* fitParamsTransfer,
         bool fitParamsIn,
