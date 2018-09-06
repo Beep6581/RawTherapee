@@ -1252,6 +1252,12 @@ float* RawImageSource::CA_correct_RT(
         array2D<float> blueFactor((W+1)/2, (H+1)/2);
         array2D<float>* nonGreen;
 
+        for(int i = 0; i < (H+1)/2; ++i) {
+            for(int j = 0; j < (W+1)/2; ++j) {
+                redFactor[i][j] = blueFactor[i][j] = 1.f;
+            }
+        }
+
         #pragma omp parallel
         {
             #pragma omp for
@@ -1261,10 +1267,10 @@ float* RawImageSource::CA_correct_RT(
                 nonGreen = colour == 0 ? &redFactor : &blueFactor;
                 int j = firstCol;
                 for(; j < W - 1; j += 2) {
-                    (*nonGreen)[i/2][j/2] = (rawData[i][j] * (*oldraw)[i][j / 2] == 0.0 ? 1.0 : (*oldraw)[i][j / 2] / rawData[i][j]);
+                    (*nonGreen)[i/2][j/2] = rtengine::LIM((rawData[i][j] <= 1.f || (*oldraw)[i][j / 2] <= 1.f) ? 1.f : (*oldraw)[i][j / 2] / rawData[i][j], 0.5f, 1.5f);
                 }
                 if (j < W) {
-                    (*nonGreen)[i/2][j/2] = (rawData[i][j] * (*oldraw)[i][j / 2] == 0.0 ? 1.0 : (*oldraw)[i][j / 2] / rawData[i][j]);
+                    (*nonGreen)[i/2][j/2] = rtengine::LIM((rawData[i][j] <= 1.f || (*oldraw)[i][j / 2] <= 1.f) ? 1.f : (*oldraw)[i][j / 2] / rawData[i][j], 0.5f, 1.5f);
                 }
             }
 
