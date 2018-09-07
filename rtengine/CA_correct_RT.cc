@@ -1270,9 +1270,9 @@ float* RawImageSource::CA_correct_RT(
             #pragma omp single
             {
                 if (H % 2) {
-                    int firstCol = FC(H - 1, 0) & 1;
-                    int colour = FC(H - 1, firstCol);
-                    array2D<float>* nonGreen = colour == 0 ? &redFactor : &blueFactor;
+                    int firstCol = FC(0, 0) & 1;
+                    int colour = FC(0, firstCol);
+                    array2D<float>* nonGreen = colour == 0 ? &blueFactor : &redFactor;
                     for (int j = 0; j < (W + 1) / 2; ++j) {
                         (*nonGreen)[(H + 1) / 2 - 1][j] = (*nonGreen)[(H + 1) / 2 - 2][j];
                     }
