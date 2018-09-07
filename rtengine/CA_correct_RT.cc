@@ -1214,11 +1214,11 @@ float* RawImageSource::CA_correct_RT(
                     int col = FC(row, 0) & 1;
                     int indx = (row * width + col) >> 1;
 #ifdef __SSE2__
-                    for(; col < width - 7; col += 8, indx += 4) {
+                    for(; col < width - 7 - (3 * (W & 1)); col += 8, indx += 4) {
                         STC2VFU(rawData[row][col], LVFU(RawDataTmp[indx]));
                     }
 #endif
-                    for(; col < width - (W & 1); col += 2, indx++) {
+                    for(; col < width - (3 * (W & 1)); col += 2, indx++) {
                         rawData[row][col] = RawDataTmp[indx];
                     }
                 }
@@ -1250,13 +1250,6 @@ float* RawImageSource::CA_correct_RT(
     if (avoidColourshift) {
         array2D<float> redFactor((W+1)/2, (H+1)/2);
         array2D<float> blueFactor((W+1)/2, (H+1)/2);
-        array2D<float>* nonGreen;
-
-        for(int i = 0; i < (H+1)/2; ++i) {
-            for(int j = 0; j < (W+1)/2; ++j) {
-                redFactor[i][j] = blueFactor[i][j] = 1.f;
-            }
-        }
 
         #pragma omp parallel
         {
@@ -1264,7 +1257,7 @@ float* RawImageSource::CA_correct_RT(
             for(int i = 0; i < H; ++i) {
                 int firstCol = FC(i, 0) & 1;
                 int colour = FC(i, firstCol);
-                nonGreen = colour == 0 ? &redFactor : &blueFactor;
+                array2D<float>* nonGreen = colour == 0 ? &redFactor : &blueFactor;
                 int j = firstCol;
                 for(; j < W - 1; j += 2) {
                     (*nonGreen)[i/2][j/2] = rtengine::LIM((rawData[i][j] <= 1.f || (*oldraw)[i][j / 2] <= 1.f) ? 1.f : (*oldraw)[i][j / 2] / rawData[i][j], 0.5f, 2.f);
@@ -1279,9 +1272,19 @@ float* RawImageSource::CA_correct_RT(
                 if (H % 2) {
                     int firstCol = FC(H - 1, 0) & 1;
                     int colour = FC(H - 1, firstCol);
-                    nonGreen = colour == 0 ? &redFactor : &blueFactor;
+                    array2D<float>* nonGreen = colour == 0 ? &redFactor : &blueFactor;
                     for (int j = 0; j < (W + 1) / 2; ++j) {
                         (*nonGreen)[(H + 1) / 2 - 1][j] = (*nonGreen)[(H + 1) / 2 - 2][j];
+                    }
+                }
+
+                if (W % 2) {
+                    int ngRow = 1 - (FC(0, 0) & 1);
+                    int ngCol = FC(ngRow, 0) & 1;
+                    int colour = FC(ngRow, ngCol);
+                    array2D<float>* nonGreen = colour == 0 ? &redFactor : &blueFactor;
+                    for (int i = 0; i < (H + 1) / 2; ++i) {
+                        (*nonGreen)[i][(W + 1) / 2 - 1] = redFactor[i][(W + 1) / 2 - 2];
                     }
                 }
             }
@@ -1295,7 +1298,7 @@ float* RawImageSource::CA_correct_RT(
             for(int i = 0; i < H; ++i) {
                 int firstCol = FC(i, 0) & 1;
                 int colour = FC(i, firstCol);
-                nonGreen = colour == 0 ? &redFactor : &blueFactor;
+                array2D<float>* nonGreen = colour == 0 ? &redFactor : &blueFactor;
                 int j = firstCol;
                 for(; j < W - 1; j += 2) {
                     rawData[i][j] *= (*nonGreen)[i/2][j/2];
