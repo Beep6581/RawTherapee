@@ -146,6 +146,7 @@ float* RawImageSource::CA_correct_RT(
     }
     array2D<float>* oldraw = nullptr;
     if (avoidColourshift) {
+        // copy raw values before ca correction
         oldraw = new array2D<float>((W + 1) / 2, H);
         #pragma omp parallel for
         for(int i = 0; i < H; ++i) {
@@ -646,12 +647,8 @@ float* RawImageSource::CA_correct_RT(
                             if(progresscounter % 8 == 0)
                                 #pragma omp critical (cadetectpass1)
                             {
-                                progress += (double)(8.0 * (ts - border2) * (ts - border2)) / (2 * height * width);
-
-                                if (progress > 1.0) {
-                                    progress = 1.0;
-                                }
-
+                                progress += 4.0 * SQR(ts - border2) / (iterations * height * width);
+                                progress = std::min(progress, 1.0);
                                 plistener->setProgress(progress);
                             }
                         }
@@ -1194,12 +1191,8 @@ float* RawImageSource::CA_correct_RT(
                             if(progresscounter % 8 == 0)
                                 #pragma omp critical (cacorrect)
                             {
-                                progress += (double)(8.0 * (ts - border2) * (ts - border2)) / (2 * height * width);
-
-                                if (progress > 1.0) {
-                                    progress = 1.0;
-                                }
-
+                                progress += 4.0 * SQR(ts - border2) / (iterations * height * width);
+                                progress = std::min(progress, 1.0);
                                 plistener->setProgress(progress);
                             }
                         }
@@ -1255,9 +1248,9 @@ float* RawImageSource::CA_correct_RT(
         {
             #pragma omp for
             for(int i = 0; i < H; ++i) {
-                int firstCol = FC(i, 0) & 1;
-                int colour = FC(i, firstCol);
-                array2D<float>* nonGreen = colour == 0 ? &redFactor : &blueFactor;
+                const int firstCol = FC(i, 0) & 1;
+                const int colour = FC(i, firstCol);
+                const array2D<float>* nonGreen = colour == 0 ? &redFactor : &blueFactor;
                 int j = firstCol;
                 for(; j < W - 1; j += 2) {
                     (*nonGreen)[i/2][j/2] = rtengine::LIM((rawData[i][j] <= 1.f || (*oldraw)[i][j / 2] <= 1.f) ? 1.f : (*oldraw)[i][j / 2] / rawData[i][j], 0.5f, 2.f);
@@ -1270,19 +1263,19 @@ float* RawImageSource::CA_correct_RT(
             #pragma omp single
             {
                 if (H % 2) {
-                    int firstCol = FC(0, 0) & 1;
-                    int colour = FC(0, firstCol);
-                    array2D<float>* nonGreen = colour == 0 ? &blueFactor : &redFactor;
+                    const int firstCol = FC(0, 0) & 1;
+                    const int colour = FC(0, firstCol);
+                    const array2D<float>* nonGreen = colour == 0 ? &blueFactor : &redFactor;
                     for (int j = 0; j < (W + 1) / 2; ++j) {
                         (*nonGreen)[(H + 1) / 2 - 1][j] = (*nonGreen)[(H + 1) / 2 - 2][j];
                     }
                 }
 
                 if (W % 2) {
-                    int ngRow = 1 - (FC(0, 0) & 1);
-                    int ngCol = FC(ngRow, 0) & 1;
-                    int colour = FC(ngRow, ngCol);
-                    array2D<float>* nonGreen = colour == 0 ? &redFactor : &blueFactor;
+                    const int ngRow = 1 - (FC(0, 0) & 1);
+                    const int ngCol = FC(ngRow, 0) & 1;
+                    const int colour = FC(ngRow, ngCol);
+                    const array2D<float>* nonGreen = colour == 0 ? &redFactor : &blueFactor;
                     for (int i = 0; i < (H + 1) / 2; ++i) {
                         (*nonGreen)[i][(W + 1) / 2 - 1] = redFactor[i][(W + 1) / 2 - 2];
                     }
@@ -1296,9 +1289,9 @@ float* RawImageSource::CA_correct_RT(
 
             #pragma omp for
             for(int i = 0; i < H; ++i) {
-                int firstCol = FC(i, 0) & 1;
-                int colour = FC(i, firstCol);
-                array2D<float>* nonGreen = colour == 0 ? &redFactor : &blueFactor;
+                const int firstCol = FC(i, 0) & 1;
+                const int colour = FC(i, firstCol);
+                const array2D<float>* nonGreen = colour == 0 ? &redFactor : &blueFactor;
                 int j = firstCol;
                 for(; j < W - 1; j += 2) {
                     rawData[i][j] *= (*nonGreen)[i/2][j/2];
