@@ -1274,6 +1274,20 @@ float* RawImageSource::CA_correct_RT(
                 }
             }
 
+            #pragma omp single
+            {
+                if (H % 2) {
+                    int firstCol = FC(H - 1, 0) & 1;
+                    int colour = FC(H - 1, firstCol);
+                    nonGreen = colour == 0 ? &redFactor : &blueFactor;
+                    for (int j = 0; j < (W + 1) / 2; ++j) {
+                        (*nonGreen)[(H + 1) / 2 - 1][j] = (*nonGreen)[(H + 1) / 2 - 2][j];
+                    }
+                }
+            }
+
+            #pragma omp barrier
+
             gaussianBlur(redFactor, redFactor, (W+1)/2, (H+1)/2, 30.0);
             gaussianBlur(blueFactor, blueFactor, (W+1)/2, (H+1)/2, 30.0);
 
