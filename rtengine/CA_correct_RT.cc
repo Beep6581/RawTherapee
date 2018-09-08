@@ -147,11 +147,7 @@ float* RawImageSource::CA_correct_RT(
         oldraw = new array2D<float>((W + 1) / 2, H);
         #pragma omp parallel for
         for (int i = 0; i < H; ++i) {
-            int j = FC(i, 0) & 1;
-            for (; j < W - 1; j += 2) {
-                (*oldraw)[i][j / 2] = rawData[i][j];
-            }
-            if (j < W) {
+            for (int j = FC(i, 0) & 1; j < W; j += 2) {
                 (*oldraw)[i][j / 2] = rawData[i][j];
             }
         }
@@ -804,8 +800,7 @@ float* RawImageSource::CA_correct_RT(
                 float* grbdiff = (float (*)) (data + 2 * sizeof(float) * ts * ts + 3 * 64); // there is no overlap in buffer usage => share
                 //green interpolated to optical sample points for R/B
                 float* gshift  = (float (*)) (data + 2 * sizeof(float) * ts * ts + sizeof(float) * ts * tsh + 4 * 64); // there is no overlap in buffer usage => share
-                #pragma omp for schedule(dynamic) collapse(2) nowait
-
+                #pragma omp for schedule(dynamic) collapse(2)
                 for (int top = -border; top < height; top += ts - border2) {
                     for (int left = -border; left < width - (W & 1); left += ts - border2) {
                         memset(bufferThr, 0, buffersizePassTwo);
@@ -958,7 +953,6 @@ float* RawImageSource::CA_correct_RT(
                                 }
                             }
                         }
-
                         //end of border fill
 
                         if (!autoCA || fitParamsIn) {
@@ -1026,7 +1020,6 @@ float* RawImageSource::CA_correct_RT(
                             lblockshifts[1][1] = LIM(lblockshifts[1][1], -bslim, bslim);
                         }//end of setting CA shift parameters
 
-
                         for (int c = 0; c < 3; c += 2) {
 
                             //some parameters for the bilinear interpolation
@@ -1041,7 +1034,6 @@ float* RawImageSource::CA_correct_RT(
                             GRBdir[0][c] = lblockshifts[c>>1][0] > 0 ? 2 : -2;
                             GRBdir[1][c] = lblockshifts[c>>1][1] > 0 ? 2 : -2;
                         }
-
 
                         for (int rr = 4; rr < rr1 - 4; rr++) {
                             int cc = 4 + (FC(rr, 2) & 1);
@@ -1203,7 +1195,6 @@ float* RawImageSource::CA_correct_RT(
                     }
                 }
 
-                #pragma omp barrier
                 // copy temporary image matrix back to image matrix
                 #pragma omp for
 
@@ -1245,7 +1236,7 @@ float* RawImageSource::CA_correct_RT(
 
     if (avoidColourshift) {
         // to avoid or at least reduce the colour shift caused by raw ca correction we compute the per pixel difference factors
-        // of red and blue channel and apply a gaussian blur on them.
+        // of red and blue channel and apply a gaussian blur to them.
         // Then we apply the resulting factors per pixel on the result of raw ca correction
 
         array2D<float> redFactor((W+1)/2, (H+1)/2);
@@ -1253,24 +1244,36 @@ float* RawImageSource::CA_correct_RT(
 
         #pragma omp parallel
         {
+#ifdef __SSE2__
+            const vfloat onev = F2V(1.f);
+            const vfloat twov = F2V(2.f);
+            const vfloat zd5v = F2V(0.5f);
+#endif
             #pragma omp for
             for (int i = 0; i < H; ++i) {
                 const int firstCol = FC(i, 0) & 1;
                 const int colour = FC(i, firstCol);
                 const array2D<float>* nonGreen = colour == 0 ? &redFactor : &blueFactor;
                 int j = firstCol;
-                for (; j < W - 1; j += 2) {
-                    (*nonGreen)[i/2][j/2] = rtengine::LIM((rawData[i][j] <= 1.f || (*oldraw)[i][j / 2] <= 1.f) ? 1.f : (*oldraw)[i][j / 2] / rawData[i][j], 0.5f, 2.f);
+#ifdef __SSE2__
+                for (; j < W - 7; j += 8) {
+                    const vfloat newvals = LC2VFU(rawData[i][j]);
+                    const vfloat oldvals = LVFU((*oldraw)[i][j / 2]);
+                    vfloat factors = oldvals / newvals;
+                    factors = vself(vmaskf_le(newvals, onev), onev, factors);
+                    factors = vself(vmaskf_le(oldvals, onev), onev, factors);
+                    STVFU((*nonGreen)[i/2][j/2], LIMV(factors, zd5v, twov));
                 }
-                if (j < W) {
-                    (*nonGreen)[i/2][j/2] = rtengine::LIM((rawData[i][j] <= 1.f || (*oldraw)[i][j / 2] <= 1.f) ? 1.f : (*oldraw)[i][j / 2] / rawData[i][j], 0.5f, 2.f);
+#endif
+                for (; j < W; j += 2) {
+                    (*nonGreen)[i/2][j/2] = (rawData[i][j] <= 1.f || (*oldraw)[i][j / 2] <= 1.f) ? 1.f : rtengine::LIM((*oldraw)[i][j / 2] / rawData[i][j], 0.5f, 2.f);
                 }
             }
 
             #pragma omp single
             {
                 if (H % 2) {
-                    // odd height => factors for one one channel are not set in last row => use values of preceding row
+                    // odd height => factors for one channel are not set in last row => use values of preceding row
                     const int firstCol = FC(0, 0) & 1;
                     const int colour = FC(0, firstCol);
                     const array2D<float>* nonGreen = colour == 0 ? &blueFactor : &redFactor;
@@ -1280,7 +1283,7 @@ float* RawImageSource::CA_correct_RT(
                 }
 
                 if (W % 2) {
-                    // odd width => factors for one one channel are not set in last column => use value of preceding column
+                    // odd width => factors for one channel are not set in last column => use value of preceding column
                     const int ngRow = 1 - (FC(0, 0) & 1);
                     const int ngCol = FC(ngRow, 0) & 1;
                     const int colour = FC(ngRow, ngCol);
@@ -1301,11 +1304,7 @@ float* RawImageSource::CA_correct_RT(
                 const int firstCol = FC(i, 0) & 1;
                 const int colour = FC(i, firstCol);
                 const array2D<float>* nonGreen = colour == 0 ? &redFactor : &blueFactor;
-                int j = firstCol;
-                for (; j < W - 1; j += 2) {
-                    rawData[i][j] *= (*nonGreen)[i/2][j/2];
-                }
-                if (j < W) {
+                for (int j = firstCol; j < W; j += 2) {
                     rawData[i][j] *= (*nonGreen)[i/2][j/2];
                 }
             }
