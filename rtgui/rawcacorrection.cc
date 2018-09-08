@@ -147,7 +147,7 @@ void RAWCACorr::checkBoxToggled (CheckBox* c, CheckValue newval)
             listener->panelChanged (EvPreProcessAutoCA, caAutocorrect->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
         }
     } else if (c == caAvoidcolourshift) {
-        if (listener) {
+        if (listener && (caAutocorrect->getLastActive() || caRed->getValue() != 0 || caBlue->getValue() != 0)) {
             listener->panelChanged (EvPreProcessCAColourshift, caAvoidcolourshift->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
         }
     }
