@@ -36,6 +36,7 @@ protected:
 
     rtengine::ProcEvent EvPreProcessCAAutoiterations;
     rtengine::ProcEvent EvPreProcessCAColourshift;
+    rtengine::ProcEvent EvPreProcessCAColourshiftHistory;
 
 public:
 

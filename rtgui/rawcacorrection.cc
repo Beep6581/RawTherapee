@@ -29,6 +29,7 @@ RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_CHROM
     auto m = ProcEventMapper::getInstance();
     EvPreProcessCAAutoiterations = m->newEvent(DARKFRAME, "HISTORY_MSG_RAWCACORR_AUTOIT");
     EvPreProcessCAColourshift = m->newEvent(DARKFRAME, "HISTORY_MSG_RAWCACORR_COLOURSHIFT");
+    EvPreProcessCAColourshiftHistory = m->newEvent(M_VOID, "HISTORY_MSG_RAWCACORR_COLOURSHIFT");
 
     Gtk::Image* icaredL =   Gtk::manage (new RTImage ("circle-red-cyan-small.png"));
     Gtk::Image* icaredR =   Gtk::manage (new RTImage ("circle-cyan-red-small.png"));
@@ -147,8 +148,8 @@ void RAWCACorr::checkBoxToggled (CheckBox* c, CheckValue newval)
             listener->panelChanged (EvPreProcessAutoCA, caAutocorrect->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
         }
     } else if (c == caAvoidcolourshift) {
-        if (listener && (caAutocorrect->getLastActive() || caRed->getValue() != 0 || caBlue->getValue() != 0)) {
-            listener->panelChanged (EvPreProcessCAColourshift, caAvoidcolourshift->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        if (listener) {
+            listener->panelChanged ((caAutocorrect->getLastActive() || caRed->getValue() != 0 || caBlue->getValue() != 0) ? EvPreProcessCAColourshift : EvPreProcessCAColourshiftHistory, caAvoidcolourshift->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
         }
     }
 }
