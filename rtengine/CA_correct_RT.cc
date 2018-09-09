@@ -141,10 +141,14 @@ float* RawImageSource::CA_correct_RT(
         }
     }
 
+    array2D<float>* redFactor = nullptr;
+    array2D<float>* blueFactor = nullptr;
     array2D<float>* oldraw = nullptr;
     if (avoidColourshift) {
-        // copy raw values before ca correction
+        redFactor = new array2D<float>((W+1)/2, (H+1)/2);
+        blueFactor = new array2D<float>((W+1)/2, (H+1)/2);
         oldraw = new array2D<float>((W + 1) / 2, H);
+        // copy raw values before ca correction
         #pragma omp parallel for
         for (int i = 0; i < H; ++i) {
             for (int j = FC(i, 0) & 1; j < W; j += 2) {
@@ -1215,7 +1219,81 @@ float* RawImageSource::CA_correct_RT(
             // clean up
             free(bufferThr);
         }
+        if (avoidColourshift) {
+            // to avoid or at least reduce the colour shift caused by raw ca correction we compute the per pixel difference factors
+            // of red and blue channel and apply a gaussian blur to them.
+            // Then we apply the resulting factors per pixel on the result of raw ca correction
+
+            #pragma omp parallel
+            {
+    #ifdef __SSE2__
+                const vfloat onev = F2V(1.f);
+                const vfloat twov = F2V(2.f);
+                const vfloat zd5v = F2V(0.5f);
+    #endif
+                #pragma omp for
+                for (int i = 0; i < H; ++i) {
+                    const int firstCol = FC(i, 0) & 1;
+                    const int colour = FC(i, firstCol);
+                    const array2D<float>* nonGreen = colour == 0 ? redFactor : blueFactor;
+                    int j = firstCol;
+    #ifdef __SSE2__
+                    for (; j < W - 7; j += 8) {
+                        const vfloat newvals = LC2VFU(rawData[i][j]);
+                        const vfloat oldvals = LVFU((*oldraw)[i][j / 2]);
+                        vfloat factors = oldvals / newvals;
+                        factors = vself(vmaskf_le(newvals, onev), onev, factors);
+                        factors = vself(vmaskf_le(oldvals, onev), onev, factors);
+                        STVFU((*nonGreen)[i/2][j/2], LIMV(factors, zd5v, twov));
+                    }
+    #endif
+                    for (; j < W; j += 2) {
+                        (*nonGreen)[i/2][j/2] = (rawData[i][j] <= 1.f || (*oldraw)[i][j / 2] <= 1.f) ? 1.f : rtengine::LIM((*oldraw)[i][j / 2] / rawData[i][j], 0.5f, 2.f);
+                    }
+                }
+
+                #pragma omp single
+                {
+                    if (H % 2) {
+                        // odd height => factors for one channel are not set in last row => use values of preceding row
+                        const int firstCol = FC(0, 0) & 1;
+                        const int colour = FC(0, firstCol);
+                        const array2D<float>* nonGreen = colour == 0 ? blueFactor : redFactor;
+                        for (int j = 0; j < (W + 1) / 2; ++j) {
+                            (*nonGreen)[(H + 1) / 2 - 1][j] = (*nonGreen)[(H + 1) / 2 - 2][j];
+                        }
+                    }
+
+                    if (W % 2) {
+                        // odd width => factors for one channel are not set in last column => use value of preceding column
+                        const int ngRow = 1 - (FC(0, 0) & 1);
+                        const int ngCol = FC(ngRow, 0) & 1;
+                        const int colour = FC(ngRow, ngCol);
+                        const array2D<float>* nonGreen = colour == 0 ? redFactor : blueFactor;
+                        for (int i = 0; i < (H + 1) / 2; ++i) {
+                            (*nonGreen)[i][(W + 1) / 2 - 1] = (*nonGreen)[i][(W + 1) / 2 - 2];
+                        }
+                    }
+                }
+
+                // blur correction factors
+                gaussianBlur(*redFactor, *redFactor, (W+1)/2, (H+1)/2, 30.0);
+                gaussianBlur(*blueFactor, *blueFactor, (W+1)/2, (H+1)/2, 30.0);
+
+                // apply correction factors to avoid (reduce) colour shift
+                #pragma omp for
+                for (int i = 0; i < H; ++i) {
+                    const int firstCol = FC(i, 0) & 1;
+                    const int colour = FC(i, firstCol);
+                    const array2D<float>* nonGreen = colour == 0 ? redFactor : blueFactor;
+                    for (int j = firstCol; j < W; j += 2) {
+                        rawData[i][j] *= (*nonGreen)[i/2][j/2];
+                    }
+                }
+            }
+        }
     }
+
     if (autoCA && fitParamsTransfer && fitParamsOut) {
         // store calculated parameters
         int index = 0;
@@ -1233,83 +1311,10 @@ float* RawImageSource::CA_correct_RT(
         buffer = nullptr;
     }
 
-
     if (avoidColourshift) {
-        // to avoid or at least reduce the colour shift caused by raw ca correction we compute the per pixel difference factors
-        // of red and blue channel and apply a gaussian blur to them.
-        // Then we apply the resulting factors per pixel on the result of raw ca correction
-
-        array2D<float> redFactor((W+1)/2, (H+1)/2);
-        array2D<float> blueFactor((W+1)/2, (H+1)/2);
-
-        #pragma omp parallel
-        {
-#ifdef __SSE2__
-            const vfloat onev = F2V(1.f);
-            const vfloat twov = F2V(2.f);
-            const vfloat zd5v = F2V(0.5f);
-#endif
-            #pragma omp for
-            for (int i = 0; i < H; ++i) {
-                const int firstCol = FC(i, 0) & 1;
-                const int colour = FC(i, firstCol);
-                const array2D<float>* nonGreen = colour == 0 ? &redFactor : &blueFactor;
-                int j = firstCol;
-#ifdef __SSE2__
-                for (; j < W - 7; j += 8) {
-                    const vfloat newvals = LC2VFU(rawData[i][j]);
-                    const vfloat oldvals = LVFU((*oldraw)[i][j / 2]);
-                    vfloat factors = oldvals / newvals;
-                    factors = vself(vmaskf_le(newvals, onev), onev, factors);
-                    factors = vself(vmaskf_le(oldvals, onev), onev, factors);
-                    STVFU((*nonGreen)[i/2][j/2], LIMV(factors, zd5v, twov));
-                }
-#endif
-                for (; j < W; j += 2) {
-                    (*nonGreen)[i/2][j/2] = (rawData[i][j] <= 1.f || (*oldraw)[i][j / 2] <= 1.f) ? 1.f : rtengine::LIM((*oldraw)[i][j / 2] / rawData[i][j], 0.5f, 2.f);
-                }
-            }
-
-            #pragma omp single
-            {
-                if (H % 2) {
-                    // odd height => factors for one channel are not set in last row => use values of preceding row
-                    const int firstCol = FC(0, 0) & 1;
-                    const int colour = FC(0, firstCol);
-                    const array2D<float>* nonGreen = colour == 0 ? &blueFactor : &redFactor;
-                    for (int j = 0; j < (W + 1) / 2; ++j) {
-                        (*nonGreen)[(H + 1) / 2 - 1][j] = (*nonGreen)[(H + 1) / 2 - 2][j];
-                    }
-                }
-
-                if (W % 2) {
-                    // odd width => factors for one channel are not set in last column => use value of preceding column
-                    const int ngRow = 1 - (FC(0, 0) & 1);
-                    const int ngCol = FC(ngRow, 0) & 1;
-                    const int colour = FC(ngRow, ngCol);
-                    const array2D<float>* nonGreen = colour == 0 ? &redFactor : &blueFactor;
-                    for (int i = 0; i < (H + 1) / 2; ++i) {
-                        (*nonGreen)[i][(W + 1) / 2 - 1] = redFactor[i][(W + 1) / 2 - 2];
-                    }
-                }
-            }
-
-            // blur correction factors
-            gaussianBlur(redFactor, redFactor, (W+1)/2, (H+1)/2, 30.0);
-            gaussianBlur(blueFactor, blueFactor, (W+1)/2, (H+1)/2, 30.0);
-
-            // apply correction factors to avoid (reduce) colour shift
-            #pragma omp for
-            for (int i = 0; i < H; ++i) {
-                const int firstCol = FC(i, 0) & 1;
-                const int colour = FC(i, firstCol);
-                const array2D<float>* nonGreen = colour == 0 ? &redFactor : &blueFactor;
-                for (int j = firstCol; j < W; j += 2) {
-                    rawData[i][j] *= (*nonGreen)[i/2][j/2];
-                }
-            }
-        }
         delete oldraw;
+        delete redFactor;
+        delete blueFactor;
     }
 
     if (plistener) {
