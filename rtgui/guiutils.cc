@@ -917,6 +917,11 @@ bool MyExpander::on_enabled_change(GdkEventButton* event)
     return false;
 }
 
+void MyExpander::setSensitive(bool makeSensitive)
+{
+    set_sensitive(makeSensitive);
+}
+
 /*
  *
  * Derived class of some widgets to properly handle the scroll wheel ;

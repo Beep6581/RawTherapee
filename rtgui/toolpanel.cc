@@ -146,5 +146,14 @@ void FoldableToolPanel::setEnabledTooltipText(Glib::ustring tooltipText)
     }
 }
 
-
+void FoldableToolPanel::setGrayedOut(bool doGrayOut)
+{
+    if (doGrayOut) {
+        exp->setEnabled(false);
+        exp->set_expanded(false);
+        exp->setSensitive(false);
+    } else {
+        exp->setSensitive(true);
+    }
+}
 
