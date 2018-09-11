@@ -111,7 +111,7 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
     //----------- Highlight recovery & threshold -------------
     hlcompr = Gtk::manage (new Adjuster (M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 500, 1, 0));
     pack_start (*hlcompr);
-    hlcomprthresh = Gtk::manage (new Adjuster (M("TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD"), 0, 100, 1, 33));
+    hlcomprthresh = Gtk::manage (new Adjuster (M("TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD"), 0, 100, 1, 0));
     pack_start (*hlcomprthresh);
 
 //----------- Black Level & Compression -------------------
@@ -229,8 +229,12 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
     hlcomprthresh->setValue (pp->toneCurve.hlcomprthresh);
     shcompr->setValue (pp->toneCurve.shcompr);
 
-    if (!black->getAddMode()) {
+    if (!black->getAddMode() && !batchMode) {
         shcompr->set_sensitive(!((int)black->getValue () == 0));    //at black=0 shcompr value has no effect
+    }
+    
+    if (!hlcompr->getAddMode() && !batchMode) {
+        hlcomprthresh->set_sensitive(!((int)hlcompr->getValue () == 0));    //at hlcompr=0 hlcomprthresh value has no effect
     }
 
     brightness->setValue (pp->toneCurve.brightness);
@@ -611,7 +615,7 @@ void ToneCurve::adjusterChanged (Adjuster* a, double newval)
     } else if (a == black) {
         listener->panelChanged (EvBlack, costr);
 
-        if (!black->getAddMode()) {
+        if (!black->getAddMode() && !batchMode) {
             shcompr->set_sensitive(!((int)black->getValue () == 0));    //at black=0 shcompr value has no effect
         }
     } else if (a == contrast) {
@@ -620,6 +624,10 @@ void ToneCurve::adjusterChanged (Adjuster* a, double newval)
         listener->panelChanged (EvSaturation, costr);
     } else if (a == hlcompr) {
         listener->panelChanged (EvHLCompr, costr);
+        
+        if (!hlcompr->getAddMode() && !batchMode) {
+            hlcomprthresh->set_sensitive(!((int)hlcompr->getValue () == 0));    //at hlcompr=0 hlcomprthresh value has no effect
+        }
     } else if (a == hlcomprthresh) {
         listener->panelChanged (EvHLComprThreshold, costr);
     } else if (a == shcompr) {
@@ -660,8 +668,12 @@ void ToneCurve::neutral_pressed ()
         hlrbox->hide();
     }
 
-    if (!black->getAddMode()) {
+    if (!black->getAddMode() && !batchMode) {
         shcompr->set_sensitive(!((int)black->getValue () == 0));    //at black=0 shcompr value has no effect
+    }
+    
+    if (!hlcompr->getAddMode() && !batchMode) {
+        hlcomprthresh->set_sensitive(!((int)hlcompr->getValue () == 0));    //at hlcompr=0 hlcomprthresh value has no effect
     }
 
     contrast->setValue(0);
@@ -733,6 +745,11 @@ void ToneCurve::autolevels_toggled ()
             if (!black->getAddMode()) {
                 shcompr->set_sensitive(!((int)black->getValue () == 0));    //at black=0 shcompr value has no effect
             }
+            
+            if (!hlcompr->getAddMode() && !batchMode) {
+                hlcomprthresh->set_sensitive(!((int)hlcompr->getValue () == 0));    //at hlcompr=0 hlcomprthresh value has no effect
+            }
+
         } else {
             listener->panelChanged (EvFixedExp, M("GENERAL_DISABLED"));
         }
@@ -847,8 +864,12 @@ bool ToneCurve::autoExpComputed_ ()
         hlrbox->hide();
     }
 
-    if (!black->getAddMode()) {
+    if (!black->getAddMode() && !batchMode) {
         shcompr->set_sensitive(!((int)black->getValue () == 0));    //at black=0 shcompr value has no effect
+    }
+    
+    if (!hlcompr->getAddMode() && !batchMode) {
+        hlcomprthresh->set_sensitive(!((int)hlcompr->getValue () == 0));    //at hlcompr=0 hlcomprthresh value has no effect
     }
 
     enableListener ();
@@ -971,8 +992,12 @@ bool ToneCurve::histmatchingComputed()
     contrast->setValue(0);
     black->setValue(0);
 
-    if (!black->getAddMode()) {
+    if (!black->getAddMode() && !batchMode) {
         shcompr->set_sensitive(!((int)black->getValue() == 0));
+    }
+    
+    if (!hlcompr->getAddMode() && !batchMode) {
+        hlcomprthresh->set_sensitive(!((int)hlcompr->getValue () == 0));    //at hlcompr=0 hlcomprthresh value has no effect
     }
 
     if (autolevels->get_active() ) {

@@ -1136,7 +1136,7 @@ void CLASS lossless_dng_load_raw()
       fseek (ifp, get4(), SEEK_SET);
     if (!ljpeg_start (&jh, 0)) break;
     jwide = jh.wide;
-    if (filters) jwide *= jh.clrs;
+    if (filters || (colors == 1 && jh.clrs > 1)) jwide *= jh.clrs;
     jwide /= MIN (is_raw, tiff_samples);
     switch (jh.algo) {
       case 0xc1:

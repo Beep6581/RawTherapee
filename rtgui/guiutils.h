@@ -300,6 +300,7 @@ class MyScrolledToolbar : public Gtk::ScrolledWindow
 {
 
     bool on_scroll_event (GdkEventScroll* event);
+    void get_preferred_height (int &minimumHeight, int &naturalHeight);
 
 public:
     MyScrolledToolbar();
