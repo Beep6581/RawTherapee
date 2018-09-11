@@ -16,9 +16,89 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <array>
+
 #include "saveformatpanel.h"
 #include "multilangmgr.h"
 #include "guiutils.h"
+
+namespace
+{
+
+const std::array<SaveFormat, 7> sf_templates = {
+     SaveFormat(
+         "jpg",
+         8,
+         90,
+         2,
+         8,
+         false,
+         true,
+         true
+     ),
+     SaveFormat(
+         "tif",
+         8,
+         90,
+         2,
+         8,
+         false,
+         true,
+         true
+     ),
+     SaveFormat(
+         "tif",
+         8,
+         90,
+         2,
+         16,
+         false,
+         true,
+         true
+     ),
+     SaveFormat(
+         "tif",
+         8,
+         90,
+         2,
+         16,
+         true,
+         true,
+         true
+     ),
+     SaveFormat(
+         "tif",
+         8,
+         90,
+         2,
+         32,
+         true,
+         true,
+         true
+     ),
+     SaveFormat(
+         "png",
+         8,
+         90,
+         2,
+         8,
+         false,
+         true,
+         true
+     ),
+     SaveFormat(
+         "png",
+         16,
+         90,
+         2,
+         8,
+         false,
+         true,
+         true
+     )
+};
+
+}
 
 SaveFormatPanel::SaveFormatPanel () : listener (nullptr)
 {
@@ -44,14 +124,6 @@ SaveFormatPanel::SaveFormatPanel () : listener (nullptr)
     format->append ("TIFF (32-bit float)");
     format->append ("PNG (8-bit)");
     format->append ("PNG (16-bit)");
-
-    fstr[0] = "jpg";
-    fstr[1] = "tif";
-    fstr[2] = "tif";
-    fstr[3] = "tif";
-    fstr[4] = "tif";
-    fstr[5] = "png";
-    fstr[6] = "png";
 
     hb1->attach (*flab, 0, 0, 1, 1);
     hb1->attach (*format, 1, 0, 1, 1);
@@ -148,45 +220,31 @@ void SaveFormatPanel::init (SaveFormat &sf)
 
 SaveFormat SaveFormatPanel::getFormat ()
 {
-
     SaveFormat sf;
 
-    int sel = format->get_active_row_number();
-    sf.format = fstr[sel];
+    const unsigned int sel = format->get_active_row_number();
 
-    if (sel == 6) {
-        sf.pngBits = 16;
-    } else {
-        sf.pngBits = 8;
+    if (sel < sf_templates.size()) {
+        sf = sf_templates[sel];
     }
 
-    if (sel == 2 || sel == 3) {
-        sf.tiffBits = 16;
-    } else if (sel == 4) {
-        sf.tiffBits = 32;
-    } else {
-        sf.tiffBits = 8;
-    }
-
-    sf.tiffFloat = sel == 4 || sel == 3;
-
-    sf.jpegQuality      = (int) jpegQual->getValue ();
-    sf.jpegSubSamp      = jpegSubSamp->get_active_row_number() + 1;
+    sf.jpegQuality = jpegQual->getValue();
+    sf.jpegSubSamp = jpegSubSamp->get_active_row_number() + 1;
     sf.tiffUncompressed = tiffUncompressed->get_active();
-    sf.saveParams       = savesPP->get_active ();
+    sf.saveParams = savesPP->get_active();
+
     return sf;
 }
 
 void SaveFormatPanel::formatChanged ()
 {
+    const unsigned int act = format->get_active_row_number();
 
-    int act = format->get_active_row_number();
-
-    if (act < 0 || act > 6) {
+    if (act >= sf_templates.size()) {
         return;
     }
 
-    Glib::ustring fr = fstr[act];
+    const Glib::ustring& fr = sf_templates[act].format;
 
     if (fr == "jpg") {
         jpegOpts->show_all();
@@ -206,14 +264,13 @@ void SaveFormatPanel::formatChanged ()
 
 void SaveFormatPanel::adjusterChanged (Adjuster* a, double newval)
 {
+    const unsigned int act = format->get_active_row_number();
 
-    int act = format->get_active_row_number();
-
-    if (act < 0 || act > 4) {
+    if (act >= sf_templates.size()) {
         return;
     }
 
     if (listener) {
-        listener->formatChanged (fstr[act]);
+        listener->formatChanged(sf_templates[act].format);
     }
 }

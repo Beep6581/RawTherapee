@@ -55,6 +55,26 @@ struct SaveFormat {
         saveParams (true)
     {
     }
+    SaveFormat(
+        const Glib::ustring& _format,
+        int _png_bits,
+        int _jpeg_quality,
+        int _jpeg_sub_samp,
+        int _tiff_bits,
+        bool _tiff_float,
+        bool _tiff_uncompressed,
+        bool _save_params
+    ) :
+        format(_format),
+        pngBits(_png_bits),
+        jpegQuality(_jpeg_quality),
+        jpegSubSamp(_jpeg_sub_samp),
+        tiffBits(_tiff_bits),
+        tiffFloat(_tiff_float),
+        tiffUncompressed(_tiff_uncompressed),
+        saveParams(_save_params)
+    {
+    }
 
     Glib::ustring format;
     int pngBits;
@@ -272,7 +292,7 @@ public:
     int cropPPI;
     enum CropGuidesMode { CROP_GUIDE_NONE, CROP_GUIDE_FRAME, CROP_GUIDE_FULL };
     CropGuidesMode cropGuides;
-    bool cropAutoFit;    
+    bool cropAutoFit;
 
     // Performance options
     Glib::ustring clutsDir;
