@@ -455,10 +455,10 @@ popover separator:not(:only-child) {
 paned.horizontal > separator {
     background-color: transparent;
     background-image: none;
-    min-width: 0.5em;
+    min-width: 0;
     border: none;
-    margin: 0 -3px 0 calc(-0.083333333333333333em - 3px);
-    padding: 0 3px 0 3px;
+    margin: 0 -0.416666666666666666em 0 -5px;
+    padding: 0 0.416666666666666666em;
 }
 
 paned.vertical > separator {
