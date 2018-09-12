@@ -151,9 +151,9 @@ void FoldableToolPanel::setGrayedOut(bool doGrayOut)
     if (doGrayOut) {
         exp->setEnabled(false);
         exp->set_expanded(false);
-        exp->setSensitive(false);
+        exp->set_sensitive(false);
     } else {
-        exp->setSensitive(true);
+        exp->set_sensitive(true);
     }
 }
 

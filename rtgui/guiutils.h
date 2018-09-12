@@ -268,9 +268,6 @@ public:
     /// Set the collapsed/expanded state of the expander
     void set_expanded( bool expanded );
 
-    // Set whether the expander should be grayed-out.
-    void setSensitive(bool makeSensitive);
-
     /// Get the collapsed/expanded state of the expander
     bool get_expanded();
 
