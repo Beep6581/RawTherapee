@@ -1029,11 +1029,17 @@ float* RawImageSource::CA_correct_RT(
                             //some parameters for the bilinear interpolation
                             shiftvfloor[c] = floor((float)lblockshifts[c>>1][0]);
                             shiftvceil[c] = ceil((float)lblockshifts[c>>1][0]);
-                            shiftvfrac[c] = lblockshifts[c>>1][0] - shiftvfloor[c];
+                            if (lblockshifts[c>>1][0] < 0.f) {
+                                std::swap(shiftvfloor[c], shiftvceil[c]);
+                            }
+                            shiftvfrac[c] = fabs(lblockshifts[c>>1][0] - shiftvfloor[c]);
 
                             shifthfloor[c] = floor((float)lblockshifts[c>>1][1]);
                             shifthceil[c] = ceil((float)lblockshifts[c>>1][1]);
-                            shifthfrac[c] = lblockshifts[c>>1][1] - shifthfloor[c];
+                            if (lblockshifts[c>>1][1] < 0.f) {
+                                std::swap(shifthfloor[c], shifthceil[c]);
+                            }
+                            shifthfrac[c] = fabs(lblockshifts[c>>1][1] - shifthfloor[c]);
 
                             GRBdir[0][c] = lblockshifts[c>>1][0] > 0 ? 2 : -2;
                             GRBdir[1][c] = lblockshifts[c>>1][1] > 0 ? 2 : -2;
