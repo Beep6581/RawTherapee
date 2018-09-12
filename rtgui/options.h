@@ -44,17 +44,6 @@
 #define DEFPROFILE_DYNAMIC  "Dynamic"
 
 struct SaveFormat {
-    SaveFormat() :
-        format ("jpg"),
-        pngBits (8),
-        jpegQuality (90),
-        jpegSubSamp (2),
-        tiffBits (8),
-        tiffFloat(false),
-        tiffUncompressed (true),
-        saveParams (true)
-    {
-    }
     SaveFormat(
         const Glib::ustring& _format,
         int _png_bits,
@@ -73,6 +62,28 @@ struct SaveFormat {
         tiffFloat(_tiff_float),
         tiffUncompressed(_tiff_uncompressed),
         saveParams(_save_params)
+    {
+    }
+    SaveFormat(
+        const Glib::ustring& _format,
+        int _png_bits,
+        int _tiff_bits,
+        bool _tiff_float
+    ) :
+        SaveFormat(
+            _format,
+            _png_bits,
+            90,
+            2,
+            _tiff_bits,
+            _tiff_float,
+            true,
+            true
+        )
+    {
+    }
+    SaveFormat() :
+        SaveFormat("jpg", 8, 8, false)
     {
     }
 

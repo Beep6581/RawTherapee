@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <array>
+#include <utility>
 
 #include "saveformatpanel.h"
 #include "multilangmgr.h"
@@ -25,78 +26,15 @@
 namespace
 {
 
-const std::array<SaveFormat, 7> sf_templates = {
-     SaveFormat(
-         "jpg",
-         8,
-         90,
-         2,
-         8,
-         false,
-         true,
-         true
-     ),
-     SaveFormat(
-         "tif",
-         8,
-         90,
-         2,
-         8,
-         false,
-         true,
-         true
-     ),
-     SaveFormat(
-         "tif",
-         8,
-         90,
-         2,
-         16,
-         false,
-         true,
-         true
-     ),
-     SaveFormat(
-         "tif",
-         8,
-         90,
-         2,
-         16,
-         true,
-         true,
-         true
-     ),
-     SaveFormat(
-         "tif",
-         8,
-         90,
-         2,
-         32,
-         true,
-         true,
-         true
-     ),
-     SaveFormat(
-         "png",
-         8,
-         90,
-         2,
-         8,
-         false,
-         true,
-         true
-     ),
-     SaveFormat(
-         "png",
-         16,
-         90,
-         2,
-         8,
-         false,
-         true,
-         true
-     )
-};
+const std::array<std::pair<const char*, SaveFormat>, 7> sf_templates = {{
+     {"JPEG (8-bit)", SaveFormat("jpg", 8, 8, false)},
+     {"TIFF (8-bit)", SaveFormat("tif", 8, 8, false)},
+     {"TIFF (16-bit)", SaveFormat("tif", 8, 16, false)},
+     {"TIFF (16-bit float)", SaveFormat("tif", 8, 16, true)},
+     {"TIFF (32-bit float)", SaveFormat("tif", 8, 32, true)},
+     {"PNG (8-bit)", SaveFormat("png", 8, 8, false)},
+     {"PNG (16-bit)", SaveFormat("png", 16, 8, false)}
+}};
 
 }
 
@@ -117,13 +55,9 @@ SaveFormatPanel::SaveFormatPanel () : listener (nullptr)
     setExpandAlignProperties(format, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     format->signal_changed ().connect (sigc::mem_fun (*this, &SaveFormatPanel::formatChanged));
 
-    format->append ("JPEG (8-bit)");
-    format->append ("TIFF (8-bit)");
-    format->append ("TIFF (16-bit)");
-    format->append ("TIFF (16-bit float)");
-    format->append ("TIFF (32-bit float)");
-    format->append ("PNG (8-bit)");
-    format->append ("PNG (16-bit)");
+    for (const auto& sf_template : sf_templates) {
+        format->append(sf_template.first);
+    }
 
     hb1->attach (*flab, 0, 0, 1, 1);
     hb1->attach (*format, 1, 0, 1, 1);
@@ -225,7 +159,7 @@ SaveFormat SaveFormatPanel::getFormat ()
     const unsigned int sel = format->get_active_row_number();
 
     if (sel < sf_templates.size()) {
-        sf = sf_templates[sel];
+        sf = sf_templates[sel].second;
     }
 
     sf.jpegQuality = jpegQual->getValue();
@@ -244,7 +178,7 @@ void SaveFormatPanel::formatChanged ()
         return;
     }
 
-    const Glib::ustring& fr = sf_templates[act].format;
+    const Glib::ustring& fr = sf_templates[act].second.format;
 
     if (fr == "jpg") {
         jpegOpts->show_all();
@@ -271,6 +205,6 @@ void SaveFormatPanel::adjusterChanged (Adjuster* a, double newval)
     }
 
     if (listener) {
-        listener->formatChanged(sf_templates[act].format);
+        listener->formatChanged(sf_templates[act].second.format);
     }
 }
