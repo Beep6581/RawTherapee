@@ -124,31 +124,29 @@ SaveFormatPanel::~SaveFormatPanel ()
 
 void SaveFormatPanel::init (SaveFormat &sf)
 {
-
-    FormatChangeListener* tmp = listener;
+    FormatChangeListener* const tmp = listener;
     listener = nullptr;
 
-    if (sf.format == "jpg") {
-        format->set_active (0);
-    } else if (sf.format == "png" && sf.pngBits == 16) {
-        format->set_active (6);
-    } else if (sf.format == "png" && sf.pngBits == 8) {
-        format->set_active (5);
-    } else if (sf.format == "tif" && sf.tiffBits == 32) {
-        format->set_active (4);
-    } else if (sf.format == "tif" && sf.tiffBits == 16 && sf.tiffFloat) {
-        format->set_active (3);
-    } else if (sf.format == "tif" && sf.tiffBits == 16) {
-        format->set_active (2);
-    } else if (sf.format == "tif" && sf.tiffBits == 8) {
-        format->set_active (1);
+    std::pair<int, std::size_t> index;
+
+    for (std::size_t i = 0; i < sf_templates.size(); ++i) {
+        const int weight =
+            10 * (sf.format == sf_templates[i].second.format)
+            + (sf.tiffBits == sf_templates[i].second.tiffBits)
+            + (sf.tiffFloat == sf_templates[i].second.tiffFloat)
+            + (sf.pngBits == sf_templates[i].second.pngBits);
+        if (weight > index.first) {
+            index = {weight, i};
+        }
     }
 
-    jpegSubSamp->set_active (sf.jpegSubSamp - 1);
+    format->set_active(index.second);
 
-    jpegQual->setValue (sf.jpegQuality);
-    savesPP->set_active (sf.saveParams);
-    tiffUncompressed->set_active (sf.tiffUncompressed);
+    jpegSubSamp->set_active(sf.jpegSubSamp - 1);
+    jpegQual->setValue(sf.jpegQuality);
+    savesPP->set_active(sf.saveParams);
+    tiffUncompressed->set_active(sf.tiffUncompressed);
+
     listener = tmp;
 }
 
