@@ -90,7 +90,7 @@
 }
 
 #ToolPanelNotebook {
-    min-width: 22.25em;
+    min-width: 23.25em;
 }
 #HistoryPanel {
     min-width: 17.5em;
@@ -651,10 +651,10 @@ scale {
 
 scale slider {
     /* Slider size is min-width x min-height; margin have to be half of those values, but negative */
-    min-width: 1.166666666666666666em;
-    min-height: 1.166666666666666666em;
+    min-width: 0;
+    min-height: 0;
     margin: -0.583333333333333333em;
-    padding: 0;
+    padding: 0.583333333333333333em;
     border-radius: 1.166666666666666666em;
     background-image: linear-gradient(to bottom, shade (@accent-color4,1.15), shade (@accent-color4,.85));
     box-shadow: none;
@@ -678,6 +678,7 @@ scale.color trough {
     border: 0.083333333333333333em solid shade(@bg-dark-grey,0.9);
     min-height: 0.333333333333333333em;
     min-width: 0.333333333333333333em;
+    border-radius: 0;
 }
 
 scale trough highlight {
@@ -686,14 +687,14 @@ scale trough highlight {
     border: 0.083333333333333333em solid shade(@bg-dark-grey,0.9);
     margin: 0;
     border-radius: 0.333333333333333333em;
-    min-height: 0.333333333333333333em;
-    min-width: 0.333333333333333333em;
+    min-height: 0;
+    min-width: 0;
+    padding: 0.333333333333333333em 0.333333333333333333em 0 0;
     box-shadow: none;
 }
 
 scale.fine-tune trough highlight {
-    min-height: 0.5em;
-    min-width: 0.5em;
+    padding: 0.5em 0.5em 0 0;
     border-radius: 0.5em;
 }
 scale:disabled slider,
@@ -886,7 +887,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 
 #ToolPanelNotebook > header tab #TextOrIcon image{
     min-height: 2.333333333333333333em;
-    min-width: calc(2em + 4px);
+    min-width: 2.333333333333333333em;
     padding: 2px 0;
     margin: 0;
 }
@@ -1172,10 +1173,10 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 
 /*Button editor bottom*/
 #EditorZoomPanel label {
-    min-width: 3.75em;
+    min-width: 4em;
     margin: 0;
     /* font-weight: bold; */
-    -gtk-dpi: 122;
+    -gtk-dpi: 123;
 }
 #IopsPanel button.Left image {
     padding: 0 2px 0 3px;
@@ -1845,7 +1846,7 @@ radiobutton {
 
 check,
 radio {
-    border: 0.1em solid shade(@text-color, 0.95);
+    border: 0.105em solid shade(@text-color, 0.95);
     background-image: none;
     background-color: transparent;
     margin: 0;
