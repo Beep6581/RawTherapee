@@ -350,7 +350,8 @@ filechooser list {
     border: none;
     box-shadow: none;
     padding: 0;
-    margin: -3px 0 0;
+    margin: -4px 0 -1px;
+    border: 0.083333333333333333em solid @bg-dark-grey;
 }
 filechooser list row {
     margin: 0;
