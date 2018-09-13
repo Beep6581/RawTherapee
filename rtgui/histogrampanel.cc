@@ -129,14 +129,14 @@ HistogramPanel::HistogramPanel ()
 
     buttonGrid = Gtk::manage (new Gtk::Grid ());
     buttonGrid->set_orientation(Gtk::ORIENTATION_VERTICAL);
-    showRed->set_active (true);
-    showGreen->set_active (true);
-    showBlue->set_active (true);
-    showValue->set_active (false);//unactive by default
-    showChro->set_active (false);//unactive by default
-    showRAW->set_active (false);
+    showRed->set_active   (options.histogramRed);
+    showGreen->set_active (options.histogramGreen);
+    showBlue->set_active  (options.histogramBlue);
+    showValue->set_active (options.histogramLuma);
+    showChro->set_active  (options.histogramChroma);
+    showRAW->set_active   (options.histogramRAW);
     // no showMode->set_active(), as it's not a ToggleButton
-    showBAR->set_active (options.histogramBar);
+    showBAR->set_active   (options.histogramBar);
 
     showRed->set_image   (showRed->get_active()   ? *redImage   : *redImage_g);
     showGreen->set_image (showGreen->get_active() ? *greenImage : *greenImage_g);
@@ -297,12 +297,12 @@ void HistogramPanel::bar_toggled ()
 void HistogramPanel::rgbv_toggled ()
 {
     // Update Display
-    histogramArea->updateOptions (showRed->get_active(), showGreen->get_active(), showBlue->get_active(), showValue->get_active(), showRAW->get_active(), showChro->get_active(), options.histogramDrawMode);
+    histogramArea->updateOptions (showRed->get_active(), showGreen->get_active(), showBlue->get_active(), showValue->get_active(), showChro->get_active(), showRAW->get_active(), options.histogramDrawMode);
     histogramArea->queue_draw ();
 
-    histogramRGBArea->updateOptions (showRed->get_active(), showGreen->get_active(), showBlue->get_active(), showValue->get_active(), showRAW->get_active(), showBAR->get_active(), showChro->get_active());
+    histogramRGBArea->updateOptions (showRed->get_active(), showGreen->get_active(), showBlue->get_active(), showValue->get_active(), showChro->get_active(), showRAW->get_active(), showBAR->get_active());
     histogramRGBArea->updateBackBuffer (0, 0, 0);
-    histogramArea->queue_draw ();
+    histogramRGBArea->queue_draw ();
 }
 
 void HistogramPanel::setHistRGBInvalid ()
@@ -369,8 +369,11 @@ double HistogramScaling::log(double vsize, double val)
 //
 //
 // HistogramRGBArea
-HistogramRGBArea::HistogramRGBArea () ://needChroma unactive by default, luma too
-    val(0), r(0), g(0), b(0), valid(false), needRed(true), needGreen(true), needBlue(true), needLuma(false), rawMode(false), showMode(options.histogramBar), barDisplayed(options.histogramBar), needChroma(false), parent(nullptr)
+HistogramRGBArea::HistogramRGBArea () :
+    val(0), r(0), g(0), b(0), valid(false),
+    needRed(options.histogramRed), needGreen(options.histogramGreen), needBlue(options.histogramBlue),
+    needLuma(options.histogramLuma), needChroma(options.histogramChroma), rawMode(options.histogramRAW),
+    showMode(options.histogramBar), barDisplayed(options.histogramBar), parent(nullptr)
 {
 
     get_style_context()->add_class("drawingarea");
@@ -583,28 +586,23 @@ void HistogramRGBArea::update (int valh, int rh, int  gh, int bh)
     idle_register.add(func, harih);
 }
 
-void HistogramRGBArea::updateOptions (bool r, bool g, bool b, bool l, bool raw, bool bar, bool c)
+void HistogramRGBArea::updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, bool bar)
 {
 
-    needRed   = r;
-    needGreen = g;
-    needBlue  = b;
-    needLuma  = l;
-    rawMode   = raw;
-    showMode  = bar;
-    needChroma = c;
+    options.histogramRed    = needRed    = r;
+    options.histogramGreen  = needGreen  = g;
+    options.histogramBlue   = needBlue   = b;
+    options.histogramLuma   = needLuma   = l;
+    options.histogramChroma = needChroma = c;
+    options.histogramRAW    = rawMode    = raw;
+    options.histogramBar    = showMode   = bar;
 
-    // Histogram RGB BAR button logic goes here
-
+    // Show/hide the RGB bar widget
     if (bar && !barDisplayed) {
-        // Toggled on, add (show) the widget
         parent->add(*this);
-        options.histogramBar = true;
         barDisplayed = true;
     } else if (!bar && barDisplayed) {
-        // Toggled off, remove (hide) the widget
         removeIfThere(parent, this, false);
-        options.histogramBar = false;
         barDisplayed = false;
     }
 
@@ -661,16 +659,18 @@ void HistogramRGBArea::factorChanged (double newFactor)
 //
 //
 // HistogramArea
-HistogramArea::HistogramArea (DrawModeListener *fml) : //needChroma unactive by default, luma too
+HistogramArea::HistogramArea (DrawModeListener *fml) : 
     valid(false), drawMode(options.histogramDrawMode), myDrawModeListener(fml),
-    oldwidth(-1), oldheight(-1), needLuma(false), needRed(true), needGreen(true), needBlue(true),
-    rawMode(false), needChroma(false), isPressed(false), movingPosition(0.0)
+    oldwidth(-1), oldheight(-1),
+    needRed(options.histogramRed), needGreen(options.histogramGreen), needBlue(options.histogramBlue),
+    needLuma(options.histogramLuma), needChroma(options.histogramChroma), rawMode(options.histogramRAW),
+    isPressed(false), movingPosition(0.0)
 {
 
-    lhist(256);
     rhist(256);
     ghist(256);
     bhist(256);
+    lhist(256);
     chist(256);
 
     get_style_context()->add_class("drawingarea");
@@ -724,32 +724,31 @@ void HistogramArea::get_preferred_width_for_height_vfunc (int height, int &minim
     get_preferred_width_vfunc (minimum_width, natural_width);
 }
 
-void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool raw, bool c, int mode)
+void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, int mode)
 {
-
-    needRed   = r;
-    needGreen = g;
-    needBlue  = b;
-    needLuma  = l;
-    rawMode   = raw;
-    needChroma = c;
-    drawMode = mode;
+    
+    options.histogramRed      = needRed    = r;
+    options.histogramGreen    = needGreen  = g;
+    options.histogramBlue     = needBlue   = b;
+    options.histogramLuma     = needLuma   = l;
+    options.histogramChroma   = needChroma = c;
+    options.histogramRAW      = rawMode    = raw;
+    options.histogramDrawMode = drawMode   = mode;
 
     updateBackBuffer ();
 }
 
-void HistogramArea::update (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw, LUTu &histChroma)
+void HistogramArea::update (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histChroma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw)
 {
     if (histRed) {
-        lhist = histLuma;
-        chist = histChroma;
         rhist = histRed;
         ghist = histGreen;
         bhist = histBlue;
+        lhist = histLuma;
+        chist = histChroma;
         rhistRaw = histRedRaw;
         ghistRaw = histGreenRaw;
         bhistRaw = histBlueRaw;
-
         valid = true;
     } else {
         valid = false;
