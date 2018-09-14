@@ -901,6 +901,7 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 
     if (!raw_ca_autocorrect->get_active ()) {
         filterPE.raw.ca_autocorrect       = falsePE.raw.ca_autocorrect;
+        filterPE.raw.caautoiterations       = falsePE.raw.caautoiterations;
     }
 
     if (!raw_caredblue->get_active ()) {
