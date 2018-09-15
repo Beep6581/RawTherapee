@@ -32,11 +32,11 @@ protected:
     Adjuster* caAutoiterations;
     Adjuster* caRed;
     Adjuster* caBlue;
-//    CheckBox* caAvoidcolourshift;
+    CheckBox* caAvoidcolourshift;
 
     rtengine::ProcEvent EvPreProcessCAAutoiterations;
-//    rtengine::ProcEvent EvPreProcessCAColourshift;
-//    rtengine::ProcEvent EvPreProcessCAColourshiftHistory;
+    rtengine::ProcEvent EvPreProcessCAColourshift;
+    rtengine::ProcEvent EvPreProcessCAColourshiftHistory;
 
 public:
 

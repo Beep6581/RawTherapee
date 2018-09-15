@@ -28,8 +28,8 @@ RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_CHROM
 {
     auto m = ProcEventMapper::getInstance();
     EvPreProcessCAAutoiterations = m->newEvent(DARKFRAME, "HISTORY_MSG_RAWCACORR_AUTOIT");
-//    EvPreProcessCAColourshift = m->newEvent(DARKFRAME, "HISTORY_MSG_RAWCACORR_COLOURSHIFT");
-//    EvPreProcessCAColourshiftHistory = m->newEvent(M_VOID, "HISTORY_MSG_RAWCACORR_COLOURSHIFT");
+    EvPreProcessCAColourshift = m->newEvent(DARKFRAME, "HISTORY_MSG_RAWCACORR_COLOURSHIFT");
+    EvPreProcessCAColourshiftHistory = m->newEvent(M_VOID, "HISTORY_MSG_RAWCACORR_COLOURSHIFT");
 
     Gtk::Image* icaredL =   Gtk::manage (new RTImage ("circle-red-cyan-small.png"));
     Gtk::Image* icaredR =   Gtk::manage (new RTImage ("circle-cyan-red-small.png"));
@@ -68,9 +68,9 @@ RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_CHROM
     pack_start( *caRed, Gtk::PACK_SHRINK, 4);
     pack_start( *caBlue, Gtk::PACK_SHRINK, 4);
 
-//    caAvoidcolourshift = Gtk::manage (new CheckBox(M("TP_RAWCACORR_AVOIDCOLORSHIFT"), multiImage));
-//    caAvoidcolourshift->setCheckBoxListener (this);
-//    pack_start( *caAvoidcolourshift, Gtk::PACK_SHRINK, 4);
+    caAvoidcolourshift = Gtk::manage (new CheckBox(M("TP_RAWCACORR_AVOIDCOLORSHIFT"), multiImage));
+    caAvoidcolourshift->setCheckBoxListener (this);
+    pack_start( *caAvoidcolourshift, Gtk::PACK_SHRINK, 4);
 
 
 }
@@ -81,7 +81,7 @@ void RAWCACorr::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
 
     if(pedited ) {
         caAutocorrect->setEdited(pedited->raw.ca_autocorrect);
-//        caAvoidcolourshift->setEdited(pedited->raw.ca_avoidcolourshift);
+        caAvoidcolourshift->setEdited(pedited->raw.ca_avoidcolourshift);
         caAutoiterations->setEditedState( pedited->raw.caautoiterations ? Edited : UnEdited );
         caRed->setEditedState( pedited->raw.cared ? Edited : UnEdited );
         caBlue->setEditedState( pedited->raw.cablue ? Edited : UnEdited );
@@ -93,7 +93,7 @@ void RAWCACorr::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
     caBlue->set_sensitive(!pp->raw.ca_autocorrect);
 
     caAutocorrect->setValue(pp->raw.ca_autocorrect);
-//    caAvoidcolourshift->setValue(pp->raw.ca_avoidcolourshift);
+    caAvoidcolourshift->setValue(pp->raw.ca_avoidcolourshift);
     caAutoiterations->setValue (pp->raw.caautoiterations);
     caRed->setValue (pp->raw.cared);
     caBlue->setValue (pp->raw.cablue);
@@ -104,14 +104,14 @@ void RAWCACorr::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
 void RAWCACorr::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
 {
     pp->raw.ca_autocorrect = caAutocorrect->getLastActive();
-//    pp->raw.ca_avoidcolourshift = caAvoidcolourshift->getLastActive();
+    pp->raw.ca_avoidcolourshift = caAvoidcolourshift->getLastActive();
     pp->raw.caautoiterations = caAutoiterations->getValue();
     pp->raw.cared = caRed->getValue();
     pp->raw.cablue = caBlue->getValue();
 
     if (pedited) {
         pedited->raw.ca_autocorrect = !caAutocorrect->get_inconsistent();
-//        pedited->raw.ca_avoidcolourshift = !caAvoidcolourshift->get_inconsistent();
+        pedited->raw.ca_avoidcolourshift = !caAvoidcolourshift->get_inconsistent();
         pedited->raw.caautoiterations = caAutoiterations->getEditedState ();
         pedited->raw.cared = caRed->getEditedState ();
         pedited->raw.cablue = caBlue->getEditedState ();
@@ -148,11 +148,11 @@ void RAWCACorr::checkBoxToggled (CheckBox* c, CheckValue newval)
             listener->panelChanged (EvPreProcessAutoCA, caAutocorrect->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
         }
     }
-//     else if (c == caAvoidcolourshift) {
-//        if (listener) {
-//            listener->panelChanged ((caAutocorrect->getLastActive() || caRed->getValue() != 0 || caBlue->getValue() != 0) ? EvPreProcessCAColourshift : EvPreProcessCAColourshiftHistory, caAvoidcolourshift->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
-//        }
-//    }
+     else if (c == caAvoidcolourshift) {
+        if (listener) {
+            listener->panelChanged ((caAutocorrect->getLastActive() || caRed->getValue() != 0 || caBlue->getValue() != 0) ? EvPreProcessCAColourshift : EvPreProcessCAColourshiftHistory, caAvoidcolourshift->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        }
+    }
 }
 
 void RAWCACorr::setBatchMode(bool batchMode)
