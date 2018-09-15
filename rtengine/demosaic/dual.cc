@@ -36,7 +36,7 @@ using namespace std;
 namespace rtengine
 {
 
-void RawImageSource::dual_demosaic(bool isBayer, const RAWParams &raw, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, double &contrast, bool autoContrast, int autoX, int autoY)
+void RawImageSource::dual_demosaic(bool isBayer, const RAWParams &raw, int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, double &contrast, bool autoContrast, int autoX, int autoY)
 {
     BENCHFUN
 

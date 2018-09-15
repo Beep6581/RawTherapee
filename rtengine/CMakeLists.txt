@@ -46,7 +46,6 @@ set(RTENGINESOURCEFILES
     dcraw.cc
     dcrop.cc
     demosaic/ahd.cc
-    demosaic/border.cc
     demosaic/dcb.cc
     demosaic/dual.cc
     demosaic/eahd.cc

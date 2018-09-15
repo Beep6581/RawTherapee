@@ -74,7 +74,7 @@ void RawImageSource::igv_demosaic(int winw, int winh)
     chr[2] = hdif;
     chr[3] = vdif;
 
-    bayerborder_demosaic(winw, winh, 7, rawData, red, green, blue, {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}});
+    librtprocess::bayerborder_demosaic(winw, winh, 7, rawData, red, green, blue, {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}});
 
     if (plistener) {
         plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::IGV)));
@@ -465,7 +465,7 @@ void RawImageSource::igv_demosaic(int winw, int winh)
     vdif  = (float (*))    calloc(width * height / 2, sizeof * vdif);
     hdif  = (float (*))    calloc(width * height / 2, sizeof * hdif);
 
-    border_interpolate(winw, winh, 7, rawData, red, green, blue);
+    librtprocess::bayerborder_demosaic(winw, winh, 7, rawData, red, green, blue, {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}});
 
     if (plistener) {
         plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::IGV)));

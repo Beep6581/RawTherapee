@@ -150,7 +150,7 @@ void RawImageSource::markesteijn_demosaic (const int passes, const bool useCieLa
 
     const int height = H, width = W;
 
-    xtransborder_demosaic(width, height, 6, rawData, red, green, blue, xtrans);
+    librtprocess::xtransborder_demosaic(width, height, 6, rawData, red, green, blue, xtrans);
 
     float xyz_cam[3][3];
     {

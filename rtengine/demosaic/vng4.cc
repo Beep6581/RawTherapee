@@ -30,7 +30,7 @@ namespace rtengine
 {
 #define fc(row,col) (prefilters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
 typedef unsigned short ushort;
-void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, bool keepGreens)
+void RawImageSource::vng4_demosaic (array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, bool keepGreens)
 {
     BENCHFUN
     const signed short int *cp, terms[] = {
@@ -336,7 +336,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
         }
     }
 
-    bayerborder_demosaic(W, H, 3, rawData, red, green, blue, {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}});
+    librtprocess::bayerborder_demosaic(W, H, 3, rawData, red, green, blue, {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}});
 
     if(plistenerActive) {
         plistener->setProgress (1.0);
