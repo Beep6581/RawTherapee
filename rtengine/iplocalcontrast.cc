@@ -26,8 +26,8 @@
 #include <omp.h>
 #endif
 
+#include <rtprocess/librtprocess.h>
 #include "improcfun.h"
-#include "gauss.h"
 #include "array2D.h"
 
 namespace rtengine {
@@ -49,7 +49,7 @@ void ImProcFunctions::localContrast(LabImage *lab)
 #ifdef _OPENMP
     #pragma omp parallel if(multiThread)
 #endif
-    gaussianBlur(lab->L, buf, width, height, sigma);
+    librtprocess::gaussianBlur(lab->L, buf, width, height, sigma);
 
 #ifdef _OPENMP
     #pragma omp parallel for if(multiThread)

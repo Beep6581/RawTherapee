@@ -16,8 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <rtprocess/librtprocess.h>
 #include "shmap.h"
-#include "gauss.h"
 #include "rtengine.h"
 #include "rt_math.h"
 #include "rawimagesource.h"
@@ -96,7 +96,7 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
         #pragma omp parallel
 #endif
         {
-            gaussianBlur (map, map, W, H, radius, buffer);
+            librtprocess::gaussianBlur (map, map, W, H, radius, buffer);
         }
 
         delete [] buffer;
@@ -226,7 +226,7 @@ void SHMap::updateL (float** L, double radius, bool hq, int skip)
         #pragma omp parallel
 #endif
         {
-            gaussianBlur (map, map, W, H, radius);
+            librtprocess::gaussianBlur (map, map, W, H, radius);
         }
     }
 

@@ -17,8 +17,8 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <rtprocess/librtprocess.h>
 #include "improcfun.h"
-#include "gauss.h"
 #include "bilateral2.h"
 #include "jaggedarray.h"
 #include "rt_math.h"
@@ -189,13 +189,13 @@ BENCHFUN
         for (int k = 0; k < sharpenParam.deconviter; k++) {
             if (!needdamp) {
                 // apply gaussian blur and divide luminance by result of gaussian blur
-                gaussianBlur(tmpI, tmp, W, H, sigma, nullptr, GAUSS_DIV, luminance);
+                librtprocess::gaussianBlur(tmpI, tmp, W, H, sigma, nullptr, librtprocess::GAUSS_DIV, luminance);
             } else {
                 // apply gaussian blur + damping
-                gaussianBlur(tmpI, tmp, W, H, sigma);
+                librtprocess::gaussianBlur(tmpI, tmp, W, H, sigma);
                 dcdamping(tmp, luminance, damping, W, H);
             }
-            gaussianBlur(tmp, tmpI, W, H, sigma, nullptr, GAUSS_MULT);
+            librtprocess::gaussianBlur(tmp, tmpI, W, H, sigma, nullptr, librtprocess::GAUSS_MULT);
         } // end for
 
 #ifdef _OPENMP
@@ -264,10 +264,10 @@ BENCHFUN
     {
 
         if (!sharpenParam.edgesonly) {
-            gaussianBlur (lab->L, b2, W, H, sharpenParam.radius / scale);
+            librtprocess::gaussianBlur (lab->L, b2, W, H, sharpenParam.radius / scale);
         } else {
             bilateral<float, float> (lab->L, (float**)b3, b2, W, H, sharpenParam.edges_radius / scale, sharpenParam.edges_tolerance, multiThread);
-            gaussianBlur (b3, b2, W, H, sharpenParam.radius / scale);
+            librtprocess::gaussianBlur (b3, b2, W, H, sharpenParam.radius / scale);
         }
     }
     float** base = lab->L;
@@ -860,10 +860,10 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2, bool showMask)
     {
 
         if (!params->sharpening.edgesonly) {
-            gaussianBlur (ncie->sh_p, b2, W, H, params->sharpening.radius / scale);
+            librtprocess::gaussianBlur (ncie->sh_p, b2, W, H, params->sharpening.radius / scale);
         } else {
             bilateral<float, float> (ncie->sh_p, (float**)b3, b2, W, H, params->sharpening.edges_radius / scale, params->sharpening.edges_tolerance, multiThread);
-            gaussianBlur (b3, b2, W, H, params->sharpening.radius / scale);
+            librtprocess::gaussianBlur (b3, b2, W, H, params->sharpening.radius / scale);
         }
     }
 

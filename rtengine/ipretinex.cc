@@ -40,8 +40,8 @@
 #include <cstdio>
 #include <cmath>
 #include <cstring>
+#include <rtprocess/librtprocess.h>
 #include "rtengine.h"
-#include "gauss.h"
 #include "rawimagesource.h"
 #include "improcfun.h"
 #include "opthelper.h"
@@ -404,7 +404,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 {
                     if(scale == scal - 1)
                     {
-                        gaussianBlur (src, out, W_L, H_L, RetinexScales[scale], buffer);
+                        librtprocess::gaussianBlur (src, out, W_L, H_L, RetinexScales[scale], buffer);
                     } else { // reuse result of last iteration
                         // out was modified in last iteration => restore it
                         if((((mapmet == 2 && scale > 1) || mapmet == 3 || mapmet == 4) || (mapmet > 0 && mapcontlutili)) && it == 1)
@@ -420,7 +420,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                             }
                         }
 
-                        gaussianBlur (out, out, W_L, H_L, sqrtf(SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])), buffer);
+                        librtprocess::gaussianBlur (out, out, W_L, H_L, sqrtf(SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])), buffer);
                     }
                     if((((mapmet == 2 && scale > 2) || mapmet == 3 || mapmet == 4) || (mapmet > 0 && mapcontlutili)) && it == 1 && scale > 0)
                     {

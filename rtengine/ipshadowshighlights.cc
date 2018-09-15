@@ -18,8 +18,8 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <rtprocess/librtprocess.h>
 #include "improcfun.h"
-#include "gauss.h"
 #include "sleef.c"
 #include "opthelper.h"
 
@@ -63,7 +63,7 @@ void ImProcFunctions::shadowsHighlights(LabImage *lab)
                     }
                 }
 
-                gaussianBlur(mask, mask, width, height, sigma);
+                librtprocess::gaussianBlur(mask, mask, width, height, sigma);
             }
 
             const float base = std::pow(4.f, float(amount)/100.f);

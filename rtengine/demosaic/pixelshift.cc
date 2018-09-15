@@ -20,10 +20,10 @@
 //
 ////////////////////////////////////////////////////////////////
 
+#include <rtprocess/librtprocess.h>
 #include "../rawimagesource.h"
 #include "../../rtgui/multilangmgr.h"
 #include "../procparams.h"
-#include "../gauss.h"
 #include "../median.h"
 #include "../StopWatch.h"
 namespace
@@ -858,7 +858,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             #pragma omp parallel
 #endif
             {
-                gaussianBlur(psMask, psMask, winw, winh, sigma);
+                librtprocess::gaussianBlur(psMask, psMask, winw, winh, sigma);
             }
             if(plistener) {
                 plistener->setProgress(0.6);

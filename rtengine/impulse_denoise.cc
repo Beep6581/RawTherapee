@@ -18,13 +18,13 @@
  *
  */
 #include <cstddef>
+#include <rtprocess/librtprocess.h>
 #include "rt_math.h"
 #include "labimage.h"
 #include "improcfun.h"
 #include "cieimage.h"
 #include "sleef.c"
 #include "opthelper.h"
-#include "gauss.h"
 
 using namespace std;
 
@@ -64,7 +64,7 @@ void ImProcFunctions::impulse_nr (LabImage* lab, double thresh)
     #pragma omp parallel
 #endif
     {
-        gaussianBlur (lab->L, lpf, width, height, max(2.0, thresh - 1.0));
+        librtprocess::gaussianBlur (lab->L, lpf, width, height, max(2.0, thresh - 1.0));
     }
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -289,7 +289,7 @@ void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, float **buff
     #pragma omp parallel
 #endif
     {
-        gaussianBlur (ncie->sh_p, lpf, width, height, max(2.0, thresh - 1.0));
+        librtprocess::gaussianBlur (ncie->sh_p, lpf, width, height, max(2.0, thresh - 1.0));
     }
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

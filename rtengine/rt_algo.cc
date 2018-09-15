@@ -27,7 +27,7 @@
 #include <omp.h>
 #endif
 
-#include "gauss.h"
+#include <rtprocess/librtprocess.h>
 #include "opthelper.h"
 #include "rt_algo.h"
 #include "rt_math.h"
@@ -258,7 +258,7 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float contra
             }
 
             // blur blend mask to smooth transitions
-            gaussianBlur(blend, blend, W, H, 2.0);
+            librtprocess::gaussianBlur(blend, blend, W, H, 2.0);
         }
     }
 }

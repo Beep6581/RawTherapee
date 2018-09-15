@@ -27,7 +27,7 @@
 //
 ////////////////////////////////////////////////////////////////
 
-#include "gauss.h"
+#include <rtprocess/librtprocess.h>
 #include "improcfun.h"
 #include "sleef.c"
 #include "../rtgui/myflatcurve.h"
@@ -63,8 +63,8 @@ void ImProcFunctions::PF_correct_RT(LabImage * lab, double radius, int thresh)
     #pragma omp parallel
 #endif
     {
-        gaussianBlur(lab->a, tmpa, width, height, radius);
-        gaussianBlur(lab->b, tmpb, width, height, radius);
+        librtprocess::gaussianBlur(lab->a, tmpa, width, height, radius);
+        librtprocess::gaussianBlur(lab->b, tmpb, width, height, radius);
 
 #ifdef _OPENMP
         #pragma omp for reduction(+:chromave) schedule(dynamic,16)
@@ -260,8 +260,8 @@ void ImProcFunctions::PF_correct_RTcam(CieImage * ncie, double radius, int thres
     #pragma omp parallel
 #endif
     {
-        gaussianBlur(sraa, tmaa, width, height, radius);
-        gaussianBlur(srbb, tmbb, width, height, radius);
+        librtprocess::gaussianBlur(sraa, tmaa, width, height, radius);
+        librtprocess::gaussianBlur(srbb, tmbb, width, height, radius);
 
         float chromaChfactor = 1.f;
 #ifdef _OPENMP
@@ -448,7 +448,7 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
 #endif
         {
             //luma sh_p
-            gaussianBlur(ncie->sh_p, tmL, width, height, radius / 2.0); // low value to avoid artifacts
+            librtprocess::gaussianBlur(ncie->sh_p, tmL, width, height, radius / 2.0); // low value to avoid artifacts
 
 #ifdef __SSE2__
             const vfloat shthrv = F2V(shthr);
@@ -639,8 +639,8 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
 #endif
             {
                 //chroma a and b
-                gaussianBlur(sraa, tmaa, width, height, radius);
-                gaussianBlur(srbb, tmbb, width, height, radius);
+                librtprocess::gaussianBlur(sraa, tmaa, width, height, radius);
+                librtprocess::gaussianBlur(srbb, tmbb, width, height, radius);
             }
 
         } else if (mode == 1) { // choice of median
@@ -869,7 +869,7 @@ void ImProcFunctions::BadpixelsLab(LabImage * lab, double radius, int thresh, fl
 #endif
         {
             // blur L channel
-            gaussianBlur(lab->L, tmL, width, height, radius / 2.0); // low value to avoid artifacts
+            librtprocess::gaussianBlur(lab->L, tmL, width, height, radius / 2.0); // low value to avoid artifacts
 
 #ifdef __SSE2__
             const vfloat shthrv = F2V(shthr);
@@ -1021,8 +1021,8 @@ void ImProcFunctions::BadpixelsLab(LabImage * lab, double radius, int thresh, fl
 #endif
     {
         // blur chroma a and b
-        gaussianBlur(lab->a, tmaa, width, height, radius);
-        gaussianBlur(lab->b, tmbb, width, height, radius);
+        librtprocess::gaussianBlur(lab->a, tmaa, width, height, radius);
+        librtprocess::gaussianBlur(lab->b, tmbb, width, height, radius);
     }
 
     // begin chroma badpixels

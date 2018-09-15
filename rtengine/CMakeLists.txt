@@ -66,7 +66,6 @@ set(RTENGINESOURCEFILES
     expo_before_b.cc
     ffmanager.cc
     flatcurves.cc
-    gauss.cc
     green_equil_RT.cc
     hilite_recon.cc
     iccjpeg.cc
