@@ -334,6 +334,8 @@ void ParamsEdited::set(bool v)
     locallab.isvisible = v;
     locallab.shape = v;
     locallab.spotMethod = v;
+    locallab.sensiexclu = v;
+    locallab.struc = v;
     locallab.shapeMethod = v;
     locallab.locX = v;
     locallab.locXL = v;
@@ -430,9 +432,11 @@ void ParamsEdited::set(bool v)
     locallab.noiselequal = v;
     locallab.noisechrof = v;
     locallab.noisechroc = v;
+    locallab.noisechrodetail = v;
     locallab.adjblur = v;
     locallab.bilateral = v;
     locallab.sensiden = v;
+    // Others
     locallab.avoid = v;
 
     pcvignette.enabled = v;
@@ -998,6 +1002,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         locallab.isvisible = locallab.isvisible && p.locallab.isvisible == other.locallab.isvisible;
         locallab.shape = locallab.shape && p.locallab.shape == other.locallab.shape;
         locallab.spotMethod = locallab.spotMethod && p.locallab.spotMethod == other.locallab.spotMethod;
+        locallab.sensiexclu = locallab.sensiexclu && p.locallab.sensiexclu == other.locallab.sensiexclu;
+        locallab.struc = locallab.struc && p.locallab.struc == other.locallab.struc;
         locallab.shapeMethod = locallab.shapeMethod && p.locallab.shapeMethod == other.locallab.shapeMethod;
         locallab.locX = locallab.locX && p.locallab.locX == other.locallab.locX;
         locallab.locXL = locallab.locXL && p.locallab.locXL == other.locallab.locXL;
@@ -1094,9 +1100,11 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         locallab.noiselequal = locallab.noiselequal && p.locallab.noiselequal == other.locallab.noiselequal;
         locallab.noisechrof = locallab.noisechrof && p.locallab.noisechrof == other.locallab.noisechrof;
         locallab.noisechroc = locallab.noisechroc && p.locallab.noisechroc == other.locallab.noisechroc;
+        locallab.noisechrodetail = locallab.noisechrodetail && p.locallab.noisechrodetail == other.locallab.noisechrodetail;
         locallab.adjblur = locallab.adjblur && p.locallab.adjblur == other.locallab.adjblur;
         locallab.bilateral = locallab.bilateral && p.locallab.bilateral == other.locallab.bilateral;
         locallab.sensiden = locallab.sensiden && p.locallab.sensiden == other.locallab.sensiden;
+        // Others
         locallab.avoid = locallab.avoid && p.locallab.avoid == other.locallab.avoid;
 
         pcvignette.enabled = pcvignette.enabled && p.pcvignette.enabled == other.pcvignette.enabled;
@@ -2480,6 +2488,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.locallab.spotMethod   = mods.locallab.spotMethod;
     }
 
+    if (locallab.sensiexclu) {
+        toEdit.locallab.sensiexclu   = mods.locallab.sensiexclu;
+    }
+
+    if (locallab.struc) {
+        toEdit.locallab.struc   = mods.locallab.struc;
+    }
+
     if (locallab.shapeMethod) {
         toEdit.locallab.shapeMethod   = mods.locallab.shapeMethod;
     }
@@ -2823,6 +2839,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.locallab.noisechroc    = mods.locallab.noisechroc;
     }
 
+    if (locallab.noisechrodetail) {
+        toEdit.locallab.noisechrodetail    = mods.locallab.noisechrodetail;
+    }
+
     if (locallab.adjblur) {
         toEdit.locallab.adjblur   = mods.locallab.adjblur;
     }
@@ -2835,6 +2855,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.locallab.sensiden    = mods.locallab.sensiden;
     }
 
+    // Others
     if (locallab.avoid) {
         toEdit.locallab.avoid     = mods.locallab.avoid;
     }

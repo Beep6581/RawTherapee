@@ -888,7 +888,7 @@ void Crop::update(int todo)
         int sca = skip;
 
         //     bool tyty = false;
-        int maxspot = settings->nspot + 1;
+        int maxspot = 1;
 
         if (needslocal) {
             for (int sp = 0; sp < params.locallab.nbspot; sp++) {

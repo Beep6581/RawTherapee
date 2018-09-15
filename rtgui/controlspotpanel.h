@@ -1,5 +1,21 @@
 /*
  *  This file is part of RawTherapee.
+ *
+ *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *
+ *  RawTherapee is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  RawTherapee is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  2018 Pierre Cabrera <pierre.cab@gmail.com>
  */
 
 #ifndef _CONTROLSPOTPANEL_H_
@@ -20,13 +36,17 @@ class ControlSpotPanel:
     public FoldableToolPanel
 {
 public:
-    /** A SpotRow structure allows exchanges from and to ControlSpotClass */
+    /**
+     * A SpotRow structure allows exchanges from and to ControlSpotClass
+     */
     struct SpotRow {
         int id; // Control spot id
         Glib::ustring name;
         bool isvisible;
         int shape; // 0 = Ellipse, 1 = Rectangle
         int spotMethod; // 0 = Normal, 1 = Excluding
+        int sensiexclu;
+        int struc;
         int shapeMethod; // 0 = Independent (mouse), 1 = Symmetrical (mouse), 2 = Independent (mouse + sliders), 3 = Symmetrical (mouse + sliders)
         int locX;
         int locXL;
@@ -41,7 +61,9 @@ public:
         int iter;
     };
 
-    /** A SpotEdited structure allows exchanges of spot panel widgets edited states from and to ControlSpotClass */
+    /**
+     * A SpotEdited structure allows exchanges of spot panel widgets edited states from and to ControlSpotClass
+     */
     struct SpotEdited {
         bool addbutton;
         bool deletebutton;
@@ -50,6 +72,8 @@ public:
         bool isvisible;
         bool shape;
         bool spotMethod;
+        bool sensiexclu;
+        bool struc;
         bool shapeMethod;
         bool locX;
         bool locXL;
@@ -65,30 +89,94 @@ public:
     };
 
     // Constructor and management functions
+    /**
+     * Default constructor of ControlSpotPanel class
+     */
     ControlSpotPanel();
+    /**
+     * Implementation of setEditProvider function of toolpanel.h
+     *
+     * @param provider The EditDataProvider to be linked to the panel to manage curves
+     */
     void setEditProvider(EditDataProvider* provider);
+    /**
+     * Getter of the event type raised by this panel
+     *
+     * @return The raised event type (0 = No event, 1 = Spot creation event, 2 = Spot deletion event, 3 = Spot selection event)
+     */
     int getEventType();
+    /**
+     * Getter of params of associated spot
+     *
+     * @param id The spot id to get params
+     * @return A SpotRow structure containing params of associated spot
+     */
     SpotRow* getSpot(int id);
+    /**
+     * Get of spot id list
+     *
+     * @return A vector contening the list of spot id
+     */
     std::vector<int>* getSpotIdList();
+    /**
+     * Getter of selected spot id
+     *
+     * @return The id of selected spot in treeview (return 0 if no selected spot)
+     */
     int getSelectedSpot();
+    /**
+     * Setter of selected spot
+     *
+     * @param id The id of spot to be selected
+     */
     void setSelectedSpot(int id);
 
     // Control spot creation functions
+    /**
+     * Getter of available id for new spot creation
+     *
+     * @return An available id (i.e. max existing ones + 1)
+     */
     int getNewId();
+    /**
+     * Add a new spot (and its associated curve)
+     *
+     * @param newSpot A SpotRow structure containing new spot params
+     */
     void addControlSpot(SpotRow* newSpot);
 
     // Control spot update function
+    /**
+     * Update a spot (and its associated curve)
+     *
+     * @param spot A SpotRow structure containing spot params to update
+     */
     int updateControlSpot(SpotRow* spot);
 
     // Control spot delete function
+    /**
+     * Delete a spot (and its associated curve)
+     *
+     * @param id The id of the spot to be deleted
+     */
     void deleteControlSpot(int id);
 
     // Panel widgets edited states management functions
+    /**
+     * Getter of panel widgets edited states
+     *
+     * @return A SpotEdited structure containing the widgets edited states
+     */
     SpotEdited* getEditedStates();
+    /**
+     * Setter of panel widgets edited states
+     *
+     * @param se A SpotEdited structure containing the widgets edidted states to update
+     */
     void setEditedStates(SpotEdited* se);
 
 private:
-    // cell renderer
+    // Cell renderer
     void render_id(Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
     void render_name(Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
     void render_isvisible(Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
@@ -99,7 +187,6 @@ private:
     // TODO Add visibility button
     // TODO Add duplication button
 
-    void save_ControlSpot_param();
     void load_ControlSpot_param();
 
     void controlspotChanged();
@@ -134,6 +221,8 @@ private:
         Gtk::TreeModelColumn<int> curveid; // Associated curve id
         Gtk::TreeModelColumn<int> shape; // 0 = Ellipse, 1 = Rectangle
         Gtk::TreeModelColumn<int> spotMethod; // 0 = Normal, 1 = Excluding
+        Gtk::TreeModelColumn<int> sensiexclu;
+        Gtk::TreeModelColumn<int> struc;
         Gtk::TreeModelColumn<int> shapeMethod; // 0 = Independent (mouse), 1 = Symmetrical (mouse), 2 = Independent (mouse + sliders), 3 = Symmetrical (mouse + sliders)
         Gtk::TreeModelColumn<int> locX;
         Gtk::TreeModelColumn<int> locXL;
@@ -184,6 +273,8 @@ private:
     MyComboBoxText* const qualityMethod_;
     sigc::connection qualityMethodconn_;
 
+    Adjuster* const sensiexclu_;
+    Adjuster* const struc_;
     Adjuster* const locX_;
     Adjuster* const locXL_;
     Adjuster* const locY_;
@@ -195,6 +286,7 @@ private:
     Adjuster* const thresh_;
     Adjuster* const iter_;
 
+    // Internal variables
     int lastObject_;
     rtengine::Coord* lastCoord_;
 

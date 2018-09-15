@@ -319,20 +319,20 @@ ToneCurveParams::ToneCurveParams() :
     curve{
     DCT_Linear
 },
-curve2{
+    curve2{
     DCT_Linear
 },
-curveMode(ToneCurveParams::TcMode::STD),
-          curveMode2(ToneCurveParams::TcMode::STD),
-          brightness(0),
-          black(0),
-          contrast(0),
-          saturation(0),
-          shcompr(50),
-          hlcompr(0),
-          hlcomprthresh(33),
-          histmatching(false),
-          clampOOG(true)
+    curveMode(ToneCurveParams::TcMode::STD),
+    curveMode2(ToneCurveParams::TcMode::STD),
+    brightness(0),
+    black(0),
+    contrast(0),
+    saturation(0),
+    shcompr(50),
+    hlcompr(0),
+    hlcomprthresh(33),
+    histmatching(false),
+    clampOOG(true)
 {
 }
 
@@ -369,13 +369,13 @@ RetinexParams::RetinexParams() :
     cdcurve{
     DCT_Linear
 },
-cdHcurve{
+    cdHcurve{
     DCT_Linear
 },
-lhcurve{
+    lhcurve{
     DCT_Linear
 },
-transmissionCurve{
+    transmissionCurve{
     FCT_MinMaxCPoints,
     0.00,
     0.50,
@@ -390,7 +390,7 @@ transmissionCurve{
     0.35,
     0.35
 },
-gaintransmissionCurve{
+    gaintransmissionCurve{
     FCT_MinMaxCPoints,
     0.00,
     0.1,
@@ -409,33 +409,33 @@ gaintransmissionCurve{
     0.00,
     0.00
 },
-mapcurve{
+    mapcurve{
     DCT_Linear
 },
-str(20),
-scal(3),
-iter(1),
-grad(1),
-grads(1),
-gam(1.30),
-slope(3.),
-neigh(80),
-offs(0),
-highlights(0),
-htonalwidth(80),
-shadows(0),
-stonalwidth(80),
-radius(40),
-retinexMethod("high"),
-retinexcolorspace("Lab"),
-gammaretinex("none"),
-mapMethod("none"),
-viewMethod("none"),
-vart(200),
-limd(8),
-highl(4),
-skal(3),
-medianmap(false)
+    str(20),
+    scal(3),
+    iter(1),
+    grad(1),
+    grads(1),
+    gam(1.30),
+    slope(3.),
+    neigh(80),
+    offs(0),
+    highlights(0),
+    htonalwidth(80),
+    shadows(0),
+    stonalwidth(80),
+    radius(40),
+    retinexMethod("high"),
+    retinexcolorspace("Lab"),
+    gammaretinex("none"),
+    mapMethod("none"),
+    viewMethod("none"),
+    vart(200),
+    limd(8),
+    highl(4),
+    skal(3),
+    medianmap(false)
 {
 }
 
@@ -492,36 +492,36 @@ LCurveParams::LCurveParams() :
     lcurve{
     DCT_Linear
 },
-acurve{
+    acurve{
     DCT_Linear
 },
-bcurve{
+    bcurve{
     DCT_Linear
 },
-cccurve{
+    cccurve{
     DCT_Linear
 },
-chcurve{
+    chcurve{
     FCT_Linear
 },
-lhcurve{
+    lhcurve{
     FCT_Linear
 },
-hhcurve{
+    hhcurve{
     FCT_Linear
 },
-lccurve{
+    lccurve{
     DCT_Linear
 },
-clcurve{
+    clcurve{
     DCT_Linear
 },
-brightness(0),
-contrast(0),
-chromaticity(0),
-avoidcolorshift(false),
-rstprotection(0),
-lcredsk(true)
+    brightness(0),
+    contrast(0),
+    chromaticity(0),
+    avoidcolorshift(false),
+    rstprotection(0),
+    lcredsk(true)
 {
 }
 
@@ -557,10 +557,10 @@ RGBCurvesParams::RGBCurvesParams() :
     rcurve{
     DCT_Linear
 },
-gcurve{
+    gcurve{
     DCT_Linear
 },
-bcurve{
+    bcurve{
     DCT_Linear
 }
 {
@@ -633,7 +633,7 @@ ColorToningParams::ColorToningParams() :
     0.00,
     0.00
 },
-colorCurve{
+    colorCurve{
     FCT_MinMaxCPoints,
     0.050,
     0.62,
@@ -644,13 +644,13 @@ colorCurve{
     0.25,
     0.25
 },
-satProtectionThreshold(30),
-                       saturatedOpacity(80),
-                       strength(50),
-                       balance(0),
-                       hlColSat(60, 80, false),
-                       shadowsColSat(80, 208, false),
-clcurve{
+	satProtectionThreshold(30),
+    saturatedOpacity(80),
+    strength(50),
+    balance(0),
+    hlColSat(60, 80, false),
+    shadowsColSat(80, 208, false),
+    clcurve{
     DCT_NURBS,
     0.00,
     0.00,
@@ -659,7 +659,7 @@ clcurve{
     1.00,
     1.00
 },
-cl2curve{
+    cl2curve{
     DCT_NURBS,
     0.00,
     0.00,
@@ -668,24 +668,24 @@ cl2curve{
     1.00,
     1.00
 },
-method("Lab"),
-twocolor("Std"),
-redlow(0.0),
-greenlow(0.0),
-bluelow(0.0),
-redmed(0.0),
-greenmed(0.0),
-bluemed(0.0),
-redhigh(0.0),
-greenhigh(0.0),
-bluehigh(0.0),
-satlow(0.0),
-sathigh(0.0),
-lumamode(true),
-labgridALow(0.0),
-labgridBLow(0.0),
-labgridAHigh(0.0),
-labgridBHigh(0.0)
+    method("Lab"),
+    twocolor("Std"),
+    redlow(0.0),
+    greenlow(0.0),
+    bluelow(0.0),
+    redmed(0.0),
+    greenmed(0.0),
+    bluemed(0.0),
+    redhigh(0.0),
+    greenhigh(0.0),
+    bluehigh(0.0),
+    satlow(0.0),
+    sathigh(0.0),
+    lumamode(true),
+    labgridALow(0.0),
+    labgridBLow(0.0),
+    labgridAHigh(0.0),
+    labgridBHigh(0.0)
 {
 }
 
@@ -1207,43 +1207,43 @@ ColorAppearanceParams::ColorAppearanceParams() :
     curve{
     DCT_Linear
 },
-curve2{
+    curve2{
     DCT_Linear
 },
-curve3{
+    curve3{
     DCT_Linear
 },
-curveMode(TcMode::LIGHT),
-curveMode2(TcMode::LIGHT),
-curveMode3(CtcMode::CHROMA),
-surround("Average"),
-surrsrc("Average"),
-adapscen(2000.0),
-autoadapscen(true),
-ybscen(18),
-autoybscen(true),
-adaplum(16),
-badpixsl(0),
-wbmodel("RawT"),
-algo("No"),
-contrast(0.0),
-qcontrast(0.0),
-jlight(0.0),
-qbright(0.0),
-chroma(0.0),
-schroma(0.0),
-mchroma(0.0),
-colorh(0.0),
-rstprotection(0.0),
-surrsource(false),
-gamut(true),
-datacie(false),
-tonecie(false),
-tempout(5000),
-ybout(18),
-greenout(1.0),
-tempsc(5000),
-greensc(1.0)
+    curveMode(TcMode::LIGHT),
+    curveMode2(TcMode::LIGHT),
+    curveMode3(CtcMode::CHROMA),
+    surround("Average"),
+    surrsrc("Average"),
+    adapscen(2000.0),
+    autoadapscen(true),
+    ybscen(18),
+    autoybscen(true),
+    adaplum(16),
+    badpixsl(0),
+    wbmodel("RawT"),
+    algo("No"),
+    contrast(0.0),
+    qcontrast(0.0),
+    jlight(0.0),
+    qbright(0.0),
+    chroma(0.0),
+    schroma(0.0),
+    mchroma(0.0),
+    colorh(0.0),
+    rstprotection(0.0),
+    surrsource(false),
+    gamut(true),
+    datacie(false),
+    tonecie(false),
+    tempout(5000),
+    ybout(18),
+    greenout(1.0),
+    tempsc(5000),
+    greensc(1.0)
 {
 }
 
@@ -1374,7 +1374,7 @@ DirPyrDenoiseParams::DirPyrDenoiseParams() :
     0.35,
     0.35
 },
-cccurve{
+    cccurve{
     FCT_MinMaxCPoints,
     0.05,
     0.50,
@@ -1385,25 +1385,25 @@ cccurve{
     0.35,
     0.35
 },
-enabled(false),
-enhance(false),
-median(false),
-perform(false),
-luma(0),
-Ldetail(0),
-chroma(15),
-redchro(0),
-bluechro(0),
-gamma(1.7),
-dmethod("Lab"),
-Lmethod("SLI"),
-Cmethod("MAN"),
-C2method("AUTO"),
-smethod("shal"),
-medmethod("soft"),
-methodmed("none"),
-rgbmethod("soft"),
-passes(1)
+    enabled(false),
+    enhance(false),
+    median(false),
+    perform(false),
+    luma(0),
+    Ldetail(0),
+    chroma(15),
+    redchro(0),
+    bluechro(0),
+    gamma(1.7),
+    dmethod("Lab"),
+    Lmethod("SLI"),
+    Cmethod("MAN"),
+    C2method("AUTO"),
+    smethod("shal"),
+    medmethod("soft"),
+    methodmed("none"),
+    rgbmethod("soft"),
+    passes(1)
 {
 }
 
@@ -1795,12 +1795,12 @@ ChannelMixerParams::ChannelMixerParams() :
     0,
     0
 },
-green{
+    green{
     0,
     100,
     0
 },
-blue{
+    blue{
     0,
     0,
     100
@@ -1836,32 +1836,32 @@ BlackWhiteParams::BlackWhiteParams() :
     beforeCurve{
     DCT_Linear
 },
-beforeCurveMode(BlackWhiteParams::TcMode::STD_BW),
-afterCurve{
+    beforeCurveMode(BlackWhiteParams::TcMode::STD_BW),
+    afterCurve{
     DCT_Linear
 },
-afterCurveMode(BlackWhiteParams::TcMode::STD_BW),
-algo("SP"),
-luminanceCurve{
+    afterCurveMode(BlackWhiteParams::TcMode::STD_BW),
+    algo("SP"),
+    luminanceCurve{
     FCT_Linear
 },
-autoc(false),
-enabledcc(true),
-enabled(false),
-filter("None"),
-setting("RGB-Rel"),
-method("Desaturation"),
-mixerRed(33),
-mixerOrange(33),
-mixerYellow(33),
-mixerGreen(33),
-mixerCyan(33),
-mixerBlue(33),
-mixerMagenta(33),
-mixerPurple(33),
-gammaRed(0),
-gammaGreen(0),
-gammaBlue(0)
+    autoc(false),
+    enabledcc(true),
+    enabled(false),
+    filter("None"),
+    setting("RGB-Rel"),
+    method("Desaturation"),
+    mixerRed(33),
+    mixerOrange(33),
+    mixerYellow(33),
+    mixerGreen(33),
+    mixerCyan(33),
+    mixerBlue(33),
+    mixerMagenta(33),
+    mixerPurple(33),
+    gammaRed(0),
+    gammaGreen(0),
+    gammaBlue(0)
 {
 }
 
@@ -2004,7 +2004,7 @@ WaveletParams::WaveletParams() :
     0.35,
     0.35
 },
-opacityCurveRG{
+    opacityCurveRG{
     static_cast<double>(FCT_MinMaxCPoints),
     0.0,
     0.50,
@@ -2015,7 +2015,7 @@ opacityCurveRG{
     0.35,
     0.35
 },
-opacityCurveBY{
+    opacityCurveBY{
     static_cast<double>(FCT_MinMaxCPoints),
     0.0,
     0.50,
@@ -2026,7 +2026,7 @@ opacityCurveBY{
     0.35,
     0.35
 },
-opacityCurveW{
+    opacityCurveW{
     static_cast<double>(FCT_MinMaxCPoints),
     0.00,
     0.35,
@@ -2045,7 +2045,7 @@ opacityCurveW{
     0.00,
     0.00
 },
-opacityCurveWL{
+    opacityCurveWL{
     static_cast<double>(FCT_MinMaxCPoints),
     0.0,
     0.50,
@@ -2056,90 +2056,90 @@ opacityCurveWL{
     0.35,
     0.35
 },
-hhcurve{
+    hhcurve{
     FCT_Linear
 },
-Chcurve{
+    Chcurve{
     FCT_Linear
 },
-wavclCurve {
+    wavclCurve {
     DCT_Linear
 },
-enabled(false),
-        median(false),
-        medianlev(false),
-        linkedg(true),
-        cbenab(false),
-        greenlow(0),
-        bluelow(0),
-        greenmed(0),
-        bluemed(0),
-        greenhigh(0),
-        bluehigh(0),
-        lipst(false),
-        avoid(false),
-        tmr(false),
-        strength(100),
-        balance(0),
-        iter(0),
-        expcontrast(false),
-        expchroma(false),
-        c{},
-        ch{},
-        expedge(false),
-        expresid(false),
-        expfinal(false),
-        exptoning(false),
-        expnoise(false),
-        Lmethod(4),
-        CLmethod("all"),
-        Backmethod("grey"),
-        Tilesmethod("full"),
-        daubcoeffmethod("4_"),
-        CHmethod("without"),
-        Medgreinf("less"),
-        CHSLmethod("SL"),
-        EDmethod("CU"),
-        NPmethod("none"),
-        BAmethod("none"),
-        TMmethod("cont"),
-        Dirmethod("all"),
-        HSmethod("with"),
-        rescon(0),
-        resconH(0),
-        reschro(0),
-        tmrs(0),
-        gamma(1),
-        sup(0),
-        sky(0.0),
-        thres(7),
-        chroma(5),
-        chro(0),
-        threshold(5),
-        threshold2(4),
-        edgedetect(90),
-        edgedetectthr(20),
-        edgedetectthr2(0),
-        edgesensi(60),
-        edgeampli(10),
-        contrast(0),
-        edgrad(15),
-        edgval(0),
-        edgthresh(10),
-        thr(35),
-        thrH(65),
-        skinprotect(0.0),
-        hueskin(-5, 25, 170, 120, false),
-        hueskin2(-260, -250, -130, -140, false),
-        hllev(50, 75, 100, 98, false),
-        bllev(0, 2, 50, 25, false),
-        pastlev(0, 2, 30, 20, false),
-        satlev(30, 45, 130, 100, false),
-        edgcont(0, 10, 75, 40, false),
-        level0noise(0, 0, false),
-        level1noise(0, 0, false),
-        level2noise(0, 0, false),
-        level3noise(0, 0, false)
+    enabled(false),
+    median(false),
+    medianlev(false),
+    linkedg(true),
+    cbenab(false),
+    greenlow(0),
+    bluelow(0),
+    greenmed(0),
+    bluemed(0),
+    greenhigh(0),
+    bluehigh(0),
+    lipst(false),
+    avoid(false),
+    tmr(false),
+    strength(100),
+    balance(0),
+    iter(0),
+    expcontrast(false),
+    expchroma(false),
+    c{},
+    ch{},
+    expedge(false),
+    expresid(false),
+    expfinal(false),
+    exptoning(false),
+    expnoise(false),
+    Lmethod(4),
+    CLmethod("all"),
+    Backmethod("grey"),
+    Tilesmethod("full"),
+    daubcoeffmethod("4_"),
+    CHmethod("without"),
+    Medgreinf("less"),
+    CHSLmethod("SL"),
+    EDmethod("CU"),
+    NPmethod("none"),
+    BAmethod("none"),
+    TMmethod("cont"),
+    Dirmethod("all"),
+    HSmethod("with"),
+    rescon(0),
+    resconH(0),
+    reschro(0),
+    tmrs(0),
+    gamma(1),
+    sup(0),
+    sky(0.0),
+    thres(7),
+    chroma(5),
+    chro(0),
+    threshold(5),
+    threshold2(4),
+    edgedetect(90),
+    edgedetectthr(20),
+    edgedetectthr2(0),
+    edgesensi(60),
+    edgeampli(10),
+    contrast(0),
+    edgrad(15),
+    edgval(0),
+    edgthresh(10),
+    thr(35),
+    thrH(65),
+    skinprotect(0.0),
+    hueskin(-5, 25, 170, 120, false),
+    hueskin2(-260, -250, -130, -140, false),
+    hllev(50, 75, 100, 98, false),
+    bllev(0, 2, 50, 25, false),
+    pastlev(0, 2, 30, 20, false),
+    satlev(30, 45, 130, 100, false),
+    edgcont(0, 10, 75, 40, false),
+    level0noise(0, 0, false),
+    level1noise(0, 0, false),
+    level2noise(0, 0, false),
+    level3noise(0, 0, false)
 {
 }
 
@@ -2173,70 +2173,70 @@ bool WaveletParams::operator ==(const WaveletParams& other) const
         && iter == other.iter
         && expcontrast == other.expcontrast
         && expchroma == other.expchroma
-    && [this, &other]() -> bool {
-        for (unsigned int i = 0; i < 9; ++i)
-        {
-            if (c[i] != other.c[i] || ch[i] != other.ch[i]) {
-                return false;
+        && [this, &other]() -> bool {
+            for (unsigned int i = 0; i < 9; ++i)
+            {
+                if (c[i] != other.c[i] || ch[i] != other.ch[i]) {
+                    return false;
+                }
             }
-        }
 
-        return true;
-    }()
-    && expedge == other.expedge
-    && expresid == other.expresid
-    && expfinal == other.expfinal
-    && exptoning == other.exptoning
-    && expnoise == other.expnoise
-    && Lmethod == other.Lmethod
-    && CLmethod == other.CLmethod
-    && Backmethod == other.Backmethod
-    && Tilesmethod == other.Tilesmethod
-    && daubcoeffmethod == other.daubcoeffmethod
-    && CHmethod == other.CHmethod
-    && Medgreinf == other.Medgreinf
-    && CHSLmethod == other.CHSLmethod
-    && EDmethod == other.EDmethod
-    && NPmethod == other.NPmethod
-    && BAmethod == other.BAmethod
-    && TMmethod == other.TMmethod
-    && Dirmethod == other.Dirmethod
-    && HSmethod == other.HSmethod
-    && rescon == other.rescon
-    && resconH == other.resconH
-    && reschro == other.reschro
-    && tmrs == other.tmrs
-    && gamma == other.gamma
-    && sup == other.sup
-    && sky == other.sky
-    && thres == other.thres
-    && chroma == other.chroma
-    && chro == other.chro
-    && threshold == other.threshold
-    && threshold2 == other.threshold2
-    && edgedetect == other.edgedetect
-    && edgedetectthr == other.edgedetectthr
-    && edgedetectthr2 == other.edgedetectthr2
-    && edgesensi == other.edgesensi
-    && edgeampli == other.edgeampli
-    && contrast == other.contrast
-    && edgrad == other.edgrad
-    && edgval == other.edgval
-    && edgthresh == other.edgthresh
-    && thr == other.thr
-    && thrH == other.thrH
-    && skinprotect == other.skinprotect
-    && hueskin == other.hueskin
-    && hueskin2 == other.hueskin2
-    && hllev == other.hllev
-    && bllev == other.bllev
-    && pastlev == other.pastlev
-    && satlev == other.satlev
-    && edgcont == other.edgcont
-    && level0noise == other.level0noise
-    && level1noise == other.level1noise
-    && level2noise == other.level2noise
-    && level3noise == other.level3noise;
+            return true;
+        }()
+        && expedge == other.expedge
+        && expresid == other.expresid
+        && expfinal == other.expfinal
+        && exptoning == other.exptoning
+        && expnoise == other.expnoise
+        && Lmethod == other.Lmethod
+        && CLmethod == other.CLmethod
+        && Backmethod == other.Backmethod
+        && Tilesmethod == other.Tilesmethod
+        && daubcoeffmethod == other.daubcoeffmethod
+        && CHmethod == other.CHmethod
+        && Medgreinf == other.Medgreinf
+        && CHSLmethod == other.CHSLmethod
+        && EDmethod == other.EDmethod
+        && NPmethod == other.NPmethod
+        && BAmethod == other.BAmethod
+        && TMmethod == other.TMmethod
+        && Dirmethod == other.Dirmethod
+        && HSmethod == other.HSmethod
+        && rescon == other.rescon
+        && resconH == other.resconH
+        && reschro == other.reschro
+        && tmrs == other.tmrs
+        && gamma == other.gamma
+        && sup == other.sup
+        && sky == other.sky
+        && thres == other.thres
+        && chroma == other.chroma
+        && chro == other.chro
+        && threshold == other.threshold
+        && threshold2 == other.threshold2
+        && edgedetect == other.edgedetect
+        && edgedetectthr == other.edgedetectthr
+        && edgedetectthr2 == other.edgedetectthr2
+        && edgesensi == other.edgesensi
+        && edgeampli == other.edgeampli
+        && contrast == other.contrast
+        && edgrad == other.edgrad
+        && edgval == other.edgval
+        && edgthresh == other.edgthresh
+        && thr == other.thr
+        && thrH == other.thrH
+        && skinprotect == other.skinprotect
+        && hueskin == other.hueskin
+        && hueskin2 == other.hueskin2
+        && hllev == other.hllev
+        && bllev == other.bllev
+        && pastlev == other.pastlev
+        && satlev == other.satlev
+        && edgcont == other.edgcont
+        && level0noise == other.level0noise
+        && level1noise == other.level1noise
+        && level2noise == other.level2noise
+        && level3noise == other.level3noise;
 }
 
 bool WaveletParams::operator !=(const WaveletParams& other) const
@@ -2270,6 +2270,8 @@ LocallabParams::LocallabParams() :
     isvisible(),
     shape(),
     spotMethod(),
+    sensiexclu(),
+    struc(),
     shapeMethod(),
     locX(),
     locXL(),
@@ -2362,9 +2364,11 @@ LocallabParams::LocallabParams() :
     noiselequal(),
     noisechrof(),
     noisechroc(),
+    noisechrodetail(),
     adjblur(),
     bilateral(),
     sensiden(),
+    // Others
     avoid()
 {
 }
@@ -2382,6 +2386,8 @@ bool LocallabParams::operator ==(const LocallabParams& other) const
         && isvisible == other.isvisible
         && shape == other.shape
         && spotMethod == other.spotMethod
+        && sensiexclu == other.sensiexclu
+        && struc == other.struc
         && shapeMethod == other.shapeMethod
         && locX == other.locX
         && locXL == other.locXL
@@ -2462,54 +2468,39 @@ bool LocallabParams::operator ==(const LocallabParams& other) const
         && inverssha == other.inverssha
         // Constrast by detail levels
         && expcbdl == other.expcbdl
-    && [this, &other]()->bool {
-        for (int i = 0; i < 5; i++)
-        {
-            if (mult[i] != other.mult[i]) {
-                return false;
+        && [this, &other]()->bool {
+            for (int i = 0; i < 5; i++)
+            {
+                if (mult[i] != other.mult[i]) {
+                    return false;
+                }
             }
-        }
 
-        return true;
-    }()
-    && chromacbdl == other.chromacbdl
-    && threshold == other.threshold
-    && sensicb == other.sensicb
-    // Denoise
-    && expdenoi == other.expdenoi
-    && noiselumf == other.noiselumf
-    && noiselumc == other.noiselumc
-    && noiselumdetail == other.noiselumdetail
-    && noiselequal == other.noiselequal
-    && noisechrof == other.noisechrof
-    && noisechroc == other.noisechroc
-    && adjblur == other.adjblur
-    && bilateral == other.bilateral
-    && sensiden == other.sensiden
-    && avoid == other.avoid;
+            return true;
+        }()
+        && chromacbdl == other.chromacbdl
+        && threshold == other.threshold
+        && sensicb == other.sensicb
+        // Denoise
+        && expdenoi == other.expdenoi
+        && noiselumf == other.noiselumf
+        && noiselumc == other.noiselumc
+        && noiselumdetail == other.noiselumdetail
+        && noiselequal == other.noiselequal
+        && noisechrof == other.noisechrof
+        && noisechroc == other.noisechroc
+        && noisechrodetail == other.noisechrodetail
+        && adjblur == other.adjblur
+        && bilateral == other.bilateral
+        && sensiden == other.sensiden
+        // Others
+        && avoid == other.avoid;
 }
 
 bool LocallabParams::operator !=(const LocallabParams& other) const
 {
     return !(*this == other);
 }
-
-/*
-void LocallabParams::getCurves(
-    LocretigainCurve &cTgainCurve,
-    LocretigainCurverab &cTgainCurverab,
-    LocLHCurve &lhCurve,
-    LocHHCurve &hhCurve,
-    bool &LHutili,
-    bool &HHutili) const
-{
-    cTgainCurve.Set(this->localTgaincurve);
-    cTgainCurverab.Set(this->localTgaincurverab);
-    lhCurve.Set(this->LHcurve, LHutili);
-    hhCurve.Set(this->HHcurve, HHutili);
-
-}
-*/
 
 
 DirPyrEqualizerParams::DirPyrEqualizerParams() :
@@ -2523,10 +2514,10 @@ DirPyrEqualizerParams::DirPyrEqualizerParams() :
     1.0,
     1.0
 },
-threshold(0.2),
-skinprotect(0.0),
-hueskin(-5, 25, 170, 120, false),
-cbdlMethod("bef")
+    threshold(0.2),
+    skinprotect(0.0),
+    hueskin(-5, 25, 170, 120, false),
+    cbdlMethod("bef")
 {
 }
 
@@ -2535,20 +2526,20 @@ bool DirPyrEqualizerParams::operator ==(const DirPyrEqualizerParams& other) cons
     return
         enabled == other.enabled
         && gamutlab == other.gamutlab
-    && [this, &other]() -> bool {
-        for (unsigned int i = 0; i < 6; ++i)
-        {
-            if (mult[i] != other.mult[i]) {
-                return false;
+        && [this, &other]() -> bool {
+            for (unsigned int i = 0; i < 6; ++i)
+            {
+                if (mult[i] != other.mult[i]) {
+                    return false;
+                }
             }
-        }
 
-        return true;
-    }()
-    && threshold == other.threshold
-    && skinprotect == other.skinprotect
-    && hueskin == other.hueskin
-    && cbdlMethod == other.cbdlMethod;
+            return true;
+        }()
+        && threshold == other.threshold
+        && skinprotect == other.skinprotect
+        && hueskin == other.hueskin
+        && cbdlMethod == other.cbdlMethod;
 }
 
 bool DirPyrEqualizerParams::operator !=(const DirPyrEqualizerParams& other) const
@@ -2561,10 +2552,10 @@ HSVEqualizerParams::HSVEqualizerParams() :
     hcurve{
     FCT_Linear
 },
-scurve{
+    scurve{
     FCT_Linear
 },
-vcurve{
+    vcurve{
     FCT_Linear
 }
 {
@@ -3234,14 +3225,14 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(
             !pedited || pedited->colorappearance.curveMode3,
             "Color appearance",
-        "CurveMode3", {
-            {ColorAppearanceParams::CtcMode::CHROMA, "Chroma"},
-            {ColorAppearanceParams::CtcMode::SATUR, "Saturation"},
-            {ColorAppearanceParams::CtcMode::COLORF, "Colorfullness"}
+            "CurveMode3", {
+                {ColorAppearanceParams::CtcMode::CHROMA, "Chroma"},
+                {ColorAppearanceParams::CtcMode::SATUR, "Saturation"},
+                {ColorAppearanceParams::CtcMode::COLORF, "Colorfullness"}
 
-        },
-        colorappearance.curveMode3,
-        keyFile
+            },
+            colorappearance.curveMode3,
+            keyFile
         );
         saveToKeyfile(!pedited || pedited->colorappearance.curve, "Color appearance", "Curve", colorappearance.curve, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.curve2, "Color appearance", "Curve2", colorappearance.curve2, keyFile);
@@ -3370,6 +3361,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
             saveToKeyfile(!pedited || pedited->locallab.isvisible, "Locallab", "Isvisible_" + std::to_string(i), locallab.isvisible.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.shape, "Locallab", "Shape_" + std::to_string(i), locallab.shape.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.spotMethod, "Locallab", "SpotMethod_" + std::to_string(i), locallab.spotMethod.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.sensiexclu, "Locallab", "SensiExclu_" + std::to_string(i), locallab.sensiexclu.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.struc, "Locallab", "Struc_" + std::to_string(i), locallab.struc.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.shapeMethod, "Locallab", "ShapeMethod_" + std::to_string(i), locallab.shapeMethod.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.locX, "Locallab", "LocX_" + std::to_string(i), locallab.locX.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.locXL, "Locallab", "LocXL_" + std::to_string(i), locallab.locXL.at(i), keyFile);
@@ -3466,9 +3459,11 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
             saveToKeyfile(!pedited || pedited->locallab.noiselequal, "Locallab", "noiselequal_" + std::to_string(i), locallab.noiselequal.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.noisechrof, "Locallab", "noisechrof_" + std::to_string(i), locallab.noisechrof.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.noisechroc, "Locallab", "noisechroc_" + std::to_string(i), locallab.noisechroc.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.noisechrodetail, "Locallab", "noisechrodetail_" + std::to_string(i), locallab.noisechrodetail.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.adjblur, "Locallab", "Adjblur_" + std::to_string(i), locallab.adjblur.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.bilateral, "Locallab", "Bilateral_" + std::to_string(i), locallab.bilateral.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.sensiden, "Locallab", "Sensiden_" + std::to_string(i), locallab.sensiden.at(i), keyFile);
+            // Others
             saveToKeyfile(!pedited || pedited->locallab.avoid, "Locallab", "Avoid_" + std::to_string(i), locallab.avoid.at(i), keyFile);
         }
 
@@ -3527,15 +3522,15 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(
             !pedited || pedited->icm.outputIntent,
             "Color Management",
-        "OutputProfileIntent", {
-            {RI_PERCEPTUAL, "Perceptual"},
-            {RI_RELATIVE, "Relative"},
-            {RI_SATURATION, "Saturation"},
-            {RI_ABSOLUTE, "Absolute"}
+            "OutputProfileIntent", {
+                {RI_PERCEPTUAL, "Perceptual"},
+                {RI_RELATIVE, "Relative"},
+                {RI_SATURATION, "Saturation"},
+                {RI_ABSOLUTE, "Absolute"}
 
-        },
-        icm.outputIntent,
-        keyFile
+            },
+            icm.outputIntent,
+            keyFile
         );
         saveToKeyfile(!pedited || pedited->icm.outputBPC, "Color Management", "OutputBPC", icm.outputBPC, keyFile);
         saveToKeyfile(!pedited || pedited->icm.gamma, "Color Management", "Gammafree", icm.gamma, keyFile);
@@ -3944,14 +3939,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 keyFile,
                 "Black & White",
                 "BeforeCurveMode",
-            pedited, {
-                {"Standard", BlackWhiteParams::TcMode::STD_BW},
-                {"FilmLike", BlackWhiteParams::TcMode::FILMLIKE_BW},
-                {"SatAndValueBlending", BlackWhiteParams::TcMode::SATANDVALBLENDING_BW},
-                {"WeightedStd", BlackWhiteParams::TcMode::WEIGHTEDSTD_BW}
-            },
-            blackwhite.beforeCurveMode,
-            pedited->blackwhite.beforeCurveMode
+                pedited, {
+                    {"Standard", BlackWhiteParams::TcMode::STD_BW},
+                    {"FilmLike", BlackWhiteParams::TcMode::FILMLIKE_BW},
+                    {"SatAndValueBlending", BlackWhiteParams::TcMode::SATANDVALBLENDING_BW},
+                    {"WeightedStd", BlackWhiteParams::TcMode::WEIGHTEDSTD_BW}
+                },
+                blackwhite.beforeCurveMode,
+                pedited->blackwhite.beforeCurveMode
             );
 
             assignFromKeyfile(keyFile, "Black & White", "AfterCurve", pedited, blackwhite.afterCurve, pedited->blackwhite.afterCurve);
@@ -3959,12 +3954,12 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 keyFile,
                 "Black & White",
                 "AfterCurveMode",
-            pedited, {
-                {"Standard", BlackWhiteParams::TcMode::STD_BW},
-                {"WeightedStd", BlackWhiteParams::TcMode::WEIGHTEDSTD_BW}
-            },
-            blackwhite.afterCurveMode,
-            pedited->blackwhite.afterCurveMode
+                pedited, {
+                    {"Standard", BlackWhiteParams::TcMode::STD_BW},
+                    {"WeightedStd", BlackWhiteParams::TcMode::WEIGHTEDSTD_BW}
+                },
+                blackwhite.afterCurveMode,
+                pedited->blackwhite.afterCurveMode
             );
         }
 
@@ -4256,13 +4251,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 keyFile,
                 "Color appearance",
                 "CurveMode3",
-            pedited, {
-                {"Chroma", ColorAppearanceParams::CtcMode::CHROMA},
-                {"Saturation", ColorAppearanceParams::CtcMode::SATUR},
-                {"Colorfullness", ColorAppearanceParams::CtcMode::COLORF}
-            },
-            colorappearance.curveMode3,
-            pedited->colorappearance.curveMode3
+                pedited, {
+                    {"Chroma", ColorAppearanceParams::CtcMode::CHROMA},
+                    {"Saturation", ColorAppearanceParams::CtcMode::SATUR},
+                    {"Colorfullness", ColorAppearanceParams::CtcMode::COLORF}
+                },
+                colorappearance.curveMode3,
+                pedited->colorappearance.curveMode3
             );
 
             if (ppVersion > 200) {
@@ -4496,6 +4491,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 locallab.isvisible.resize(locallab.nbspot);
                 locallab.shape.resize(locallab.nbspot);
                 locallab.spotMethod.resize(locallab.nbspot);
+                locallab.sensiexclu.resize(locallab.nbspot);
+                locallab.struc.resize(locallab.nbspot);
                 locallab.shapeMethod.resize(locallab.nbspot);
                 locallab.locX.resize(locallab.nbspot);
                 locallab.locXL.resize(locallab.nbspot);
@@ -4593,9 +4590,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 locallab.noiselequal.resize(locallab.nbspot);
                 locallab.noisechrof.resize(locallab.nbspot);
                 locallab.noisechroc.resize(locallab.nbspot);
+                locallab.noisechrodetail.resize(locallab.nbspot);
                 locallab.adjblur.resize(locallab.nbspot);
                 locallab.bilateral.resize(locallab.nbspot);
                 locallab.sensiden.resize(locallab.nbspot);
+                // Others
                 locallab.avoid.resize(locallab.nbspot);
             }
 
@@ -4607,6 +4606,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Shape_" + std::to_string(i), pedited, locallab.shape.at(i), pedited->locallab.shape);
                 assignFromKeyfile(keyFile, "Locallab", "SpotMethod_" + std::to_string(i), pedited, locallab.spotMethod.at(i), pedited->locallab.spotMethod);
                 assignFromKeyfile(keyFile, "Locallab", "ShapeMethod_" + std::to_string(i), pedited, locallab.shapeMethod.at(i), pedited->locallab.shapeMethod);
+                assignFromKeyfile(keyFile, "Locallab", "SensiExclu_" + std::to_string(i), pedited, locallab.sensiexclu.at(i), pedited->locallab.sensiexclu);
+                assignFromKeyfile(keyFile, "Locallab", "Struc_" + std::to_string(i), pedited, locallab.struc.at(i), pedited->locallab.struc);
                 assignFromKeyfile(keyFile, "Locallab", "LocX_" + std::to_string(i), pedited, locallab.locX.at(i), pedited->locallab.locX);
                 assignFromKeyfile(keyFile, "Locallab", "LocXL_" + std::to_string(i), pedited, locallab.locXL.at(i), pedited->locallab.locXL);
                 assignFromKeyfile(keyFile, "Locallab", "LocY_" + std::to_string(i), pedited, locallab.locY.at(i), pedited->locallab.locY);
@@ -4714,9 +4715,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "noiselequal_" + std::to_string(i), pedited, locallab.noiselequal.at(i), pedited->locallab.noiselequal);
                 assignFromKeyfile(keyFile, "Locallab", "noisechrof_" + std::to_string(i), pedited, locallab.noisechrof.at(i), pedited->locallab.noisechrof);
                 assignFromKeyfile(keyFile, "Locallab", "noisechroc_" + std::to_string(i), pedited, locallab.noisechroc.at(i), pedited->locallab.noisechroc);
+                assignFromKeyfile(keyFile, "Locallab", "noisechrodetail_" + std::to_string(i), pedited, locallab.noisechrodetail.at(i), pedited->locallab.noisechrodetail);
                 assignFromKeyfile(keyFile, "Locallab", "Adjblur_" + std::to_string(i), pedited, locallab.adjblur.at(i), pedited->locallab.adjblur);
                 assignFromKeyfile(keyFile, "Locallab", "Bilateral_" + std::to_string(i), pedited, locallab.bilateral.at(i), pedited->locallab.bilateral);
                 assignFromKeyfile(keyFile, "Locallab", "Sensiden_" + std::to_string(i), pedited, locallab.sensiden.at(i), pedited->locallab.sensiden);
+                // Others
                 assignFromKeyfile(keyFile, "Locallab", "Avoid_" + std::to_string(i), pedited, locallab.avoid.at(i), pedited->locallab.avoid);
             }
         }

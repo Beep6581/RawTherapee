@@ -465,6 +465,8 @@ public:
     bool isvisible;
     bool shape;
     bool spotMethod;
+    bool sensiexclu;
+    bool struc;
     bool shapeMethod;
     bool locX;
     bool locXL;
@@ -557,9 +559,11 @@ public:
     bool noiselequal;
     bool noisechrof;
     bool noisechroc;
+    bool noisechrodetail;
     bool adjblur;
     bool bilateral;
     bool sensiden;
+    // Others
     bool avoid;
 };
 

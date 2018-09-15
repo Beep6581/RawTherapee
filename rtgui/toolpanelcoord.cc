@@ -595,7 +595,6 @@ void ToolPanelCoordinator::initImage(rtengine::StagedImageProcessor* ipc_, bool 
         ipc->setAutoChromaListener(dirpyrdenoise);
         ipc->setWaveletListener(wavelet);
         ipc->setRetinexListener(retinex);
-        ipc->setlocalListener(locallab);
         ipc->setSizeListener(crop);
         ipc->setSizeListener(resize);
         ipc->setImageTypeListener(this);

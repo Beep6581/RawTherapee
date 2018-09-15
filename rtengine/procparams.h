@@ -908,6 +908,8 @@ struct LocallabParams {
     std::vector<int> isvisible;
     std::vector<Glib::ustring> shape; // ELI, RECT
     std::vector<Glib::ustring> spotMethod; // norm, exc
+    std::vector<int> sensiexclu;
+    std::vector<int> struc;
     std::vector<Glib::ustring> shapeMethod; // IND, SYM, INDSL, SYMSL
     std::vector<int> locX;
     std::vector<int> locXL;
@@ -1000,26 +1002,17 @@ struct LocallabParams {
     std::vector<int> noiselequal;
     std::vector<int> noisechrof;
     std::vector<int> noisechroc;
+    std::vector<int> noisechrodetail;
     std::vector<int> adjblur;
     std::vector<int> bilateral;
     std::vector<int> sensiden;
+    // Others
     std::vector<int> avoid;
 
     LocallabParams();
 
     bool operator ==(const LocallabParams& other) const;
     bool operator !=(const LocallabParams& other) const;
-
-    /*
-    void getCurves(
-        LocretigainCurve &cTgainCurve,
-        LocretigainCurverab &cTgainCurverab,
-        LocLHCurve & lhCurve,
-        LocHHCurve & hhCurve,
-        bool &LHutili,
-        bool &HHutili
-    ) const;
-    */
 };
 
 

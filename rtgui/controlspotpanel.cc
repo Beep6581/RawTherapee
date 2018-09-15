@@ -1,5 +1,21 @@
 /*
  *  This file is part of RawTherapee.
+ *
+ *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *
+ *  RawTherapee is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  RawTherapee is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  2018 Pierre Cabrera <pierre.cab@gmail.com>
  */
 
 #include "../rtengine/rt_math.h"
@@ -18,7 +34,6 @@ ControlSpotPanel::ControlSpotPanel():
     EditSubscriber(ET_OBJECTS),
     FoldableToolPanel(this, "controlspotpanel", M("TP_LOCALLAB_SETTINGS")),
 
-
     button_add_("Add"),
     button_delete_("Delete"),
     button_rename_("Rename"),
@@ -28,6 +43,8 @@ ControlSpotPanel::ControlSpotPanel():
     shapeMethod_(Gtk::manage(new MyComboBoxText())),
     qualityMethod_(Gtk::manage(new MyComboBoxText())),
 
+    sensiexclu_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIEXCLU"), 0, 100, 1, 19))),
+    struc_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUC"), 0, 5, 1, 0))),
     locX_(Gtk::manage(new Adjuster(M("TP_LOCAL_WIDTH"), 0, 2250, 1, 250))),
     locXL_(Gtk::manage(new Adjuster(M("TP_LOCAL_WIDTH_L"), 0, 2250, 1, 250))),
     locY_(Gtk::manage(new Adjuster(M("TP_LOCAL_HEIGHT"), 0, 2250, 1, 250))),
@@ -102,10 +119,6 @@ ControlSpotPanel::ControlSpotPanel():
                 *this, &ControlSpotPanel::render_isvisible));
     }
 
-    // TODO Reload saved control spots (don't forget autosize)
-
-    // TODO Rectangle
-
     Gtk::HBox* const ctboxshape = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelshape = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SHAPETYPE") + ":"));
     ctboxshape->pack_start(*labelshape, Gtk::PACK_SHRINK, 4);
@@ -130,6 +143,19 @@ ControlSpotPanel::ControlSpotPanel():
                               *this, &ControlSpotPanel::spotMethodChanged));
     ctboxspotmethod->pack_start(*spotMethod_);
     pack_start(*ctboxspotmethod);
+
+    Gtk::Frame* const excluFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_EXCLUF")));
+    excluFrame->set_label_align(0.025, 0.5);
+    excluFrame->set_tooltip_text(M("TP_LOCALLAB_EXCLUF_TOOLTIP"));
+    ToolParamBlock* const excluBox = Gtk::manage(new ToolParamBlock());
+    sensiexclu_->set_tooltip_text(M("TP_LOCALLAB_SENSIEXCLU_TOOLTIP"));
+    sensiexclu_->setAdjusterListener(this);
+    excluBox->pack_start(*sensiexclu_);
+    struc_->set_tooltip_text(M("TP_LOCALLAB_STRUC_TOOLTIP"));
+    struc_->setAdjusterListener(this);
+    // excluBox->pack_start(*struc_); // Uncomment this line to use the struc_ adjuster
+    excluFrame->add(*excluBox);
+    pack_start(*excluFrame);
 
     Gtk::HBox* const ctboxshapemethod = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelshapemethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_STYPE") + ":"));
@@ -306,37 +332,6 @@ void ControlSpotPanel::on_button_rename()
     }
 }
 
-// TODO Locallab To be deleted (not used)
-void ControlSpotPanel::save_ControlSpot_param()
-{
-    printf("save_ControlSpot_param\n");
-    // Get selected control spot
-    const auto s = treeview_.get_selection();
-
-    if (!s->count_selected_rows()) {
-        return;
-    }
-
-    const auto iter = s->get_selected();
-    const Gtk::TreeModel::Row row = *iter;
-
-    // Save param in selected control spot
-    row[spots_.shape] = shape_->get_active_row_number();
-    row[spots_.spotMethod] = spotMethod_->get_active_row_number();
-    row[spots_.shapeMethod] = shapeMethod_->get_active_row_number();
-    row[spots_.locX] = static_cast<int>(locX_->getValue());
-    row[spots_.locXL] = static_cast<int>(locXL_->getValue());
-    row[spots_.locY] = static_cast<int>(locY_->getValue());
-    row[spots_.locYT] = static_cast<int>(locYT_->getValue());
-    row[spots_.centerX] = static_cast<int>(centerX_->getValue());
-    row[spots_.centerY] = static_cast<int>(centerY_->getValue());
-    row[spots_.circrad] = static_cast<int>(circrad_->getValue());
-    row[spots_.qualityMethod] = qualityMethod_->get_active_row_number();
-    row[spots_.transit] = static_cast<int>(transit_->getValue());
-    row[spots_.thresh] = static_cast<int>(thresh_->getValue());
-    row[spots_.iter] = static_cast<int>(iter_->getValue());
-}
-
 void ControlSpotPanel::load_ControlSpot_param()
 {
     printf("load_ControlSpot_param\n");
@@ -353,6 +348,8 @@ void ControlSpotPanel::load_ControlSpot_param()
     // Load param in selected control spot
     shape_->set_active(row[spots_.shape]);
     spotMethod_->set_active(row[spots_.spotMethod]);
+    sensiexclu_->setValue(static_cast<double>(row[spots_.sensiexclu]));
+    struc_->setValue(static_cast<double>(row[spots_.struc]));
     shapeMethod_->set_active(row[spots_.shapeMethod]);
     locX_->setValue(static_cast<double>(row[spots_.locX]));
     locXL_->setValue(static_cast<double>(row[spots_.locXL]));
@@ -540,6 +537,22 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
     const auto iter = s->get_selected();
     Gtk::TreeModel::Row row = *iter;
 
+    if (a == sensiexclu_) {
+        row[spots_.sensiexclu] = (int) sensiexclu_->getValue();
+
+        if (listener) {
+            listener->panelChanged(EvLocallabSpotSensiexclu, sensiexclu_->getTextValue());
+        }
+    }
+
+    if (a == struc_) {
+        row[spots_.struc] = (int) struc_->getValue();
+
+        if (listener) {
+            listener->panelChanged(EvLocallabSpotStruc, struc_->getTextValue());
+        }
+    }
+
     if (a == locX_) {
         row[spots_.locX] = (int) locX_->getValue();
 
@@ -663,6 +676,8 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     buttonrenameconn_.block(cond);
     shapeconn_.block(cond);
     spotMethodconn_.block(cond);
+    sensiexclu_->block(cond);
+    struc_->block(cond);
     shapeMethodconn_.block(cond);
     locX_->block(cond);
     locXL_->block(cond);
@@ -682,6 +697,8 @@ void ControlSpotPanel::setParamEditable(bool cond)
     printf("setParamEditable: %d\n", cond);
     shape_->set_sensitive(cond);
     spotMethod_->set_sensitive(cond);
+    sensiexclu_->set_sensitive(cond);
+    struc_->set_sensitive(cond);
     shapeMethod_->set_sensitive(cond);
     locX_->set_sensitive(cond);
     locXL_->set_sensitive(cond);
@@ -1311,6 +1328,8 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(int id)
             r->isvisible = row[spots_.isvisible];
             r->shape = row[spots_.shape];
             r->spotMethod = row[spots_.spotMethod];
+            r->sensiexclu = row[spots_.sensiexclu];
+            r->struc = row[spots_.struc];
             r->shapeMethod = row[spots_.shapeMethod];
             r->locX = row[spots_.locX];
             r->locXL = row[spots_.locXL];
@@ -1417,6 +1436,8 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.curveid] = 0; // No associated curve
     row[spots_.shape] = newSpot->shape;
     row[spots_.spotMethod] = newSpot->spotMethod;
+    row[spots_.sensiexclu] = newSpot->sensiexclu;
+    row[spots_.struc] = newSpot->struc;
     row[spots_.shapeMethod] = newSpot->shapeMethod;
     row[spots_.locX] = newSpot->locX;
     row[spots_.locXL] = newSpot->locXL;
@@ -1455,6 +1476,8 @@ int ControlSpotPanel::updateControlSpot(SpotRow* spot)
             row[spots_.isvisible] = spot->isvisible;
             row[spots_.shape] = spot->shape;
             row[spots_.spotMethod] = spot->spotMethod;
+            row[spots_.sensiexclu] = spot->sensiexclu;
+            row[spots_.struc] = spot->struc;
             row[spots_.shapeMethod] = spot->shapeMethod;
             row[spots_.locX] = spot->locX;
             row[spots_.locXL] = spot->locXL;
@@ -1521,6 +1544,8 @@ ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
     se->isvisible = false; // TODO isvisible
     se->shape = shape_->get_active_row_number() != 2;
     se->spotMethod = spotMethod_->get_active_row_number() != 2;
+    se->sensiexclu = sensiexclu_->getEditedState();
+    se->struc = struc_->getEditedState();
     se->shapeMethod = shapeMethod_->get_active_row_number() != 4;
     se->locX = locX_->getEditedState();
     se->locXL = locXL_->getEditedState();
@@ -1559,6 +1584,9 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
         spotMethod_->set_active(2);
     }
 
+    sensiexclu_->setEditedState(se->sensiexclu ? Edited : UnEdited);
+    struc_->setEditedState(se->struc ? Edited : UnEdited);
+
     if (!se->shapeMethod) {
         shapeMethod_->set_active(4);
     }
@@ -1595,6 +1623,8 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(curveid);
     add(shape);
     add(spotMethod);
+    add(sensiexclu);
+    add(struc);
     add(shapeMethod);
     add(locX);
     add(locXL);

@@ -144,7 +144,7 @@ void BatchToolPanelCoordinator::initSession ()
             distortion->setAdjusterBehavior (false);
             perspective->setAdjusterBehavior (false);
             gradient->setAdjusterBehavior (false, false, false, false);
-            locallab->setAdjusterBehavior (false, false, false, false, false, false, false, false, false, false, false, false, false);
+            // locallab->setAdjusterBehavior (false, false, false, false, false, false, false, false, false, false, false, false, false);
             pcvignette->setAdjusterBehavior (false, false, false);
             cacorrection->setAdjusterBehavior (false);
             sharpening->setAdjusterBehavior (false, false, false, false, false, false, false);

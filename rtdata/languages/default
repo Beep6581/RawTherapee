@@ -759,114 +759,87 @@ HISTORY_MSG_509;L*a*b Spot quality method
 HISTORY_MSG_510;L*a*b Spot transit
 HISTORY_MSG_511;L*a*b Spot thresh
 HISTORY_MSG_512;L*a*b Spot iter
+HISTORY_MSG_513;L*a*b Spot scope
+HISTORY_MSG_514;L*a*b Spot structure
+HISTORY_MSG_515;Local L*a*b*
+HISTORY_MSG_516;Local - Color and light
+HISTORY_MSG_517;Local - Enable super
+HISTORY_MSG_518;Local - Lightness
+HISTORY_MSG_519;Local - Contrast
+HISTORY_MSG_520;Local - Chrominance
+HISTORY_MSG_521;Local - Scope
+HISTORY_MSG_522;Local - curve method
+HISTORY_MSG_523;Local - LL Curve
+HISTORY_MSG_524;Local - CC curve
+HISTORY_MSG_525;Local - LH Curve
+HISTORY_MSG_526;Local - H curve
+HISTORY_MSG_527;Local - Color Inverse
+HISTORY_MSG_528;Local - Exposure
+HISTORY_MSG_529;Local - Exp Compensation
+HISTORY_MSG_530;Local - Exp Hlcompr
+HISTORY_MSG_531;Local - Exp hlcomprthresh
+HISTORY_MSG_532;Local - Exp black
+HISTORY_MSG_533;Local - Exp Shcompr
+HISTORY_MSG_534;Local - Warm Cool
+HISTORY_MSG_535;Local - Exp Scope
+HISTORY_MSG_536;Local - Exp Contrast curve
+HISTORY_MSG_537;Local - Vibrance
+HISTORY_MSG_538;Local - Vib Saturated
+HISTORY_MSG_539;Local - Vib Pastel
+HISTORY_MSG_540;Local - Vib Threshold
+HISTORY_MSG_541;Local - Vib Protect skin tones
+HISTORY_MSG_542;Local - Vib avoid colorshift
+HISTORY_MSG_543;Local - Vib link
+HISTORY_MSG_544;Local - Vib Scope
+HISTORY_MSG_545;Local - Vib H curve
+HISTORY_MSG_546;Local - Blur and noise
+HISTORY_MSG_547;Local - Radius
+HISTORY_MSG_548;Local - Noise
+HISTORY_MSG_549;Local - Blur scope
+HISTORY_MSG_550;Local - Blur method
+HISTORY_MSG_551;Local - Blur Luminance only
+HISTORY_MSG_552;Local - Tone mapping
+HISTORY_MSG_553;Local - TM strength
+HISTORY_MSG_554;Local - TM gamma
+HISTORY_MSG_555;Local - TM edge stopping
+HISTORY_MSG_556;Local - TM scale
+HISTORY_MSG_557;Local - TM Reweighting
+HISTORY_MSG_558;Local - TM scope
+HISTORY_MSG_559;Local - Retinex
+HISTORY_MSG_560;Local - Retinex method
+HISTORY_MSG_561;Local - Retinex strength
+HISTORY_MSG_562;Local - Retinex chroma
+HISTORY_MSG_563;Local - Retinex radius
+HISTORY_MSG_564;Local - Retinex contrast
+HISTORY_MSG_565;Local - Hue scope
+HISTORY_MSG_566;Local - Retinex Gain curve
+HISTORY_MSG_567;Local - Retinex Inverse
+HISTORY_MSG_568;Local - Sharpening
+HISTORY_MSG_569;Local - Sh Radius
+HISTORY_MSG_570;Local - Sh Amount
+HISTORY_MSG_571;Local - Sh Damping
+HISTORY_MSG_572;Local - Sh Iterations
+HISTORY_MSG_573;Local - Sh Scope
+HISTORY_MSG_574;Local - Sh Inverse
+HISTORY_MSG_575;Local - CBDL
+HISTORY_MSG_576;Local - cbdl mult
+HISTORY_MSG_577;Local - cbdl chroma
+HISTORY_MSG_578;Local - cbdl threshold
+HISTORY_MSG_579;Local - cbdl scope
+HISTORY_MSG_580;Local - Denoise
+HISTORY_MSG_581;Local - deNoise lum f
+HISTORY_MSG_582;Local - deNoise lum c
+HISTORY_MSG_583;Local - deNoise lum detail
+HISTORY_MSG_584;Local - deNoise Equalizer white-black
+HISTORY_MSG_585;Local - deNoise chro f
+HISTORY_MSG_586;Local - deNoise chro c
+HISTORY_MSG_587;Local - deNoise chro detail
+HISTORY_MSG_588;Local - deNoise Equalizer blue-red
+HISTORY_MSG_589;Local - deNoise bilateral
+HISTORY_MSG_590;Local - deNoise Scope
+HISTORY_MSG_591;Local - Avoid color shift
 
 HISTORY_MSG_CLAMPOOG;Out-of-gamut color clipping
-HISTORY_MSG_LOCLOCX;Local - Right
-HISTORY_MSG_LOCCENTER;Local - Center
-HISTORY_MSG_LOCDEGRE;Local - Deg
-HISTORY_MSG_LOCLIGHT;Local - Lightness
-HISTORY_MSG_LOCCONTRA;Local - Contrast
-HISTORY_MSG_LOCCHROMA;Local - Chrominance
-HISTORY_MSG_LOCTRANSIT;Local - Transition
-HISTORY_MSG_LOCAVOID;Local - Avoid color shift
-HISTORY_MSG_LOCLOCYT;Local - Top
-HISTORY_MSG_LOCXL;Local - Left
-HISTORY_MSG_LOCSMET;Local - Method
-HISTORY_MSG_LOCINVERS;Local - Color Inverse
-HISTORY_MSG_LOCRADIUS;Local - Radius
-HISTORY_MSG_LOCINVRAD;Local - Blur Inverse
-HISTORY_MSG_LOCSTRENGTH;Local - Noise
-HISTORY_MSG_LOCSENSI;Local - Scope
-HISTORY_MSG_LOCRETIMETH;Local - Retinex method
-HISTORY_MSG_LOCRETISTR;Local - Retinex strength
-HISTORY_MSG_LOCRETINEIGH;Local - Retinex radius
-HISTORY_MSG_LOCRETIVART;Local - Retinex contrast
-HISTORY_MSG_LOCRETIGAINCURV;Local - Retinex Gain curve
-HISTORY_MSG_LOCCHRRT;Local - Retinex chroma
-HISTORY_MSG_LOCINVRET;Local - Retinex Inverse
-HISTORY_MSG_LOCSENSIH;Local - Hue scope
-HISTORY_MSG_LOCNBSPOT;Local - Spot
-HISTORY_MSG_LOCACTIVLUM;Local - Blur Luminance only
-HISTORY_MSG_LOCANBSPOT;Local - Update GUI and Mip -1
-HISTORY_MSG_LOCSHARADIUS;Local - Sh Radius
-HISTORY_MSG_LOCSHAAMOUNT;Local - Sh Amount
-HISTORY_MSG_LOCSHADAMPING;Local - Sh Damping
-HISTORY_MSG_LOCSHAITER;Local - Sh Iterations
-HISTORY_MSG_LOCSENSIS;Local - Sh Scope
-HISTORY_MSG_LOCINVSHA;Local - Sh Inverse
-HISTORY_MSG_LOCCIRCRAD;Local - Spot size
-HISTORY_MSG_LOCTHRES;Local - artifacts theshold
-HISTORY_MSG_LOCPROXI;Local - artifacts iterations
-HISTORY_MSG_LOCQUALMETH;Local - Quality
-HISTORY_MSG_LOCNOISLUMF;Local - deNoise lum f
-HISTORY_MSG_LOCNOISLUMC;Local - deNoise lum c
-HISTORY_MSG_LOCNOISCHROF;Local - deNoise chro f
-HISTORY_MSG_LOCNOISCHROC;Local - deNoise chro c
-HISTORY_MSG_LOCCBDLTHRESHO;Local - cbdl threshold
-HISTORY_MSG_LOCCBDLEQUALIZ;Local - cbdl mult
-HISTORY_MSG_LOCSENSICB;Local - cbdl scope
-HISTORY_MSG_LOCSENSIBN;Local - Blur scope
-HISTORY_MSG_LOCSTREN;Local - TM strength
-HISTORY_MSG_LOCGAMM;Local - TM gamma
-HISTORY_MSG_LOCESTOP;Local - TM edge stopping
-HISTORY_MSG_LOCSCALTM;Local - TM scale
-HISTORY_MSG_LOCREWEI;Local - TM Reweighting
-HISTORY_MSG_LOCSENSITM;Local - TM scope
-HISTORY_MSG_LOCGAINCURRAB;Local - Update GUI and Mip -2
-HISTORY_MSG_LOCRETRAB;Local - Update GUI and Mip -3
-HISTORY_MSG_LOCLSHAPE;Local - LL Curve
-HISTORY_MSG_LOCENACOLOR;Local - Color and light
-HISTORY_MSG_LOCENABLUR;Local - Blur and noise
-HISTORY_MSG_LOCENATM;Local - Tone mapping
-HISTORY_MSG_LOCENARETI;Local - Retinex
-HISTORY_MSG_LOCENASHARP;Local - Sharpening
-HISTORY_MSG_LOCENACBDL;Local - CBDL
-HISTORY_MSG_LOCENADENOI;Local - Denoise
-HISTORY_MSG_LOCLHSHAPE;Local - LH Curve
-HISTORY_MSG_LOCCURVACTIV;Local - Enable super
-HISTORY_MSG_LOCCCSHAPE;Local - CC curve
-HISTORY_MSG_LOCQUALCURVMETH;Local - curve method
-HISTORY_MSG_LOCHUEREF;Local - hueref
-HISTORY_MSG_LOCCHROMAREF;Local - chromaref
-HISTORY_MSG_LOCLUMAREF;Local - lumaref
-HISTORY_MSG_LOCHHSHAPE;Local - H curve
-HISTORY_MSG_LOCENAVIBR;Local - Vibrance
-HISTORY_MSG_LOCSKINTONCURV;Local - Vib H curve
-HISTORY_MSG_LOCPROTSKIN;Local - Vib Protect skin tones
-HISTORY_MSG_LOCAVOIDCOLORSHIFT;Local - Vib avoid colorshift
-HISTORY_MSG_LOCPASTSATTOG;Local - Vib link
-HISTORY_MSG_LOCPASTEL;Local - Vib Pastel
-HISTORY_MSG_LOCSATUR;Local - Vib Saturated
-HISTORY_MSG_LOCPASTSATTHRES;Local - Vib Threshold
-HISTORY_MSG_LOCSENSIV;Local - Vib Scope
-HISTORY_MSG_LOCENAEXPOSE;Local - Exposure
-HISTORY_MSG_LOCEXPCOMP;Local - Exp Compensation
-HISTORY_MSG_LOCHLCOMPR;Local - Exp Hlcompr
-HISTORY_MSG_LOCHLCOMPRTHRESH;Local - Exp hlcomprthresh
-HISTORY_MSG_LOCBLACK;Local - Exp black
-HISTORY_MSG_LOCSHCOMPR;Local - Exp Shcompr
-HISTORY_MSG_LOCSENSIEX;Local - Exp Scope
-HISTORY_MSG_LOCSHAPE;Local - Exp Contrast curve
-HISTORY_MSG_LOCCENTERBUF;Local - Centerbuf
-HISTORY_MSG_LOCNOISEEQUALBLURED;Local - deNoise Equalizer blue-red
-HISTORY_MSG_LOCCUTPAST;Local - cut past
-HISTORY_MSG_LOCCHROCBDL;Local - cbdl chroma
-HISTORY_MSG_LOCBLURMETH;Local - Blur method
-HISTORY_MSG_LOCDUSTMETH;Local - D method
-HISTORY_MSG_LOCLASTDUST;Local - LD
-HISTORY_MSG_LOCSOBELREF;Local - Spot method
-HISTORY_MSG_LOCEXCLUMETH;Local - Spot Excluding scope
-HISTORY_MSG_LOCSENSIEXCL;Local - Spot Excluding struc
-HISTORY_MSG_LOCWARM;Local - Warm Cool
-HISTORY_MSG_LOCNOISELUMDETAIL;Local - deNoise lum detail
-HISTORY_MSG_LOCNOISECHRODETAIL;Local - deNoise chro detail
-HISTORY_MSG_LOCSENSIDEN;Local - deNoise Scope
-HISTORY_MSG_LOCENABLED;Local L*a*b*
-HISTORY_MSG_LOCLOCY;Local - Bottom
-HISTORY_MSG_LOCBILATERAL;Local - deNoise bilateral
-HISTORY_MSG_LOCNOISELEQUAL;Local - deNoise Equalizer white-black
-HISTORY_MSG_LOCSHAPEMETH;Local - Shape Rt-spot method
-HISTORY_MSG_LOCSPOTDUP;Local - Spot duplicated
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_DUALDEMOSAIC_CONTRAST;AMaZE+VNG4 - Contrast threshold
 HISTORY_MSG_HISTMATCHING;Auto-Matched Tone Curve
@@ -1886,10 +1859,7 @@ TP_LOCALLAB_CURV;Lightness - Contrast - Chrominance "Super"
 TP_LOCALLAB_CURVNONE;Disable curves
 TP_LOCALLAB_CURVCURR;Normal
 TP_LOCALLAB_CURVENH;Super
-TP_LOCALLAB_CUTPAST;Copy past buffer
 TP_LOCALLAB_DENOIS;Denoise
-TP_LOCALLAB_DSMOV;Local
-TP_LOCALLAB_DUST;Dust Spot Removal
 TP_LOCALLAB_LUM;Curves
 TP_LOCALLAB_CHROMACBDL;Chroma
 TP_LOCALLAB_CHROMACB_TOOLTIP;Acts as an amplifier-reducer action compare to sliders of luminance.\nUnder 100 reduce, above 100 amplifie
@@ -1925,23 +1895,17 @@ TP_LOCALLAB_INDSL;Independent (mouse + sliders)
 TP_LOCALLAB_IND;Independent (mouse)
 TP_LOCALLAB_INVERS;Inverse
 TP_LOCALLAB_LABEL;Local L*a*b*
-TP_LOCALLAB_NEUTRAL;Reset
-TP_LOCALLAB_NEUTRAL_TIP;Reset Current Control spot
-TP_LOCALLAB_NBSPOT;Control spots
-TP_LOCALLAB_NBSPOT_TOOLTIP;Add multiple control spots and select
 TP_LOCALLAB_STD;Standard
 TP_LOCALLAB_ENH;Enhanced
 TP_LOCALLAB_ENHDEN;Enhanced + chroma denoise
 TP_LOCALLAB_THRES;Threshold chroma
 TP_LOCALLAB_PROXI;Iterations
-TP_LOCALLAB_ANBSPOT;Help to Move Control spot
 TP_LOCALLAB_ANBSPOT_TOOLTIP;Provisory control (I hope somebody can help to manage events!! and suppress this bad function)
 TP_LOCALLAB_LIGHTNESS;Lightness
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts. 
 TP_LOCALLAB_RADIUS;Radius
 TP_LOCALLAB_RETI;Retinex
 TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
-TP_LOCRETI_METHOD;Method
 TP_LOCALLAB_STREN;Strength
 TP_LOCALLAB_TM;Tone Mapping
 TP_LOCALLAB_STR;Strength

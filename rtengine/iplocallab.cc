@@ -395,9 +395,9 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
 
     float local_noiself = (float)locallab.noiselumf.at(sp);
     float local_noiselc = (float)locallab.noiselumc.at(sp);
-    float local_noiseldetail = locallab.noiselumdetail.at(sp);
+    float local_noiseldetail = (float)locallab.noiselumdetail.at(sp);
     int local_noiselequal = locallab.noiselequal.at(sp);
-    float local_noisechrodetail = 0.f; // Provision
+    float local_noisechrodetail = (float)locallab.noisechrodetail.at(sp);
     int local_sensiden = locallab.sensiden.at(sp);
 
     float local_noisecf = ((float)locallab.noisechrof.at(sp)) / 10.f;
@@ -415,8 +415,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     int local_sensi = locallab.sensi.at(sp);
     int local_sensibn = locallab.sensibn.at(sp);
     int local_sensitm = locallab.sensitm.at(sp);
-    int local_sensiexclu = 19; // Provision
-    int local_struc = 0; // Provision
+    int local_sensiexclu = locallab.sensiexclu.at(sp);
+    int local_struc = locallab.struc.at(sp);
     int local_warm = locallab.warm.at(sp);
     int local_sensih = locallab.sensih.at(sp);
     int local_sensicb = locallab.sensicb.at(sp);

@@ -555,8 +555,6 @@ void Options::setDefaults ()
     rtSettings.level0_cbdl = 0;
     rtSettings.level123_cbdl = 30;
 //locallab
-    rtSettings.nspot = 8;//between 1 and ??
-    rtSettings.locdelay = false;//true enabled delay 200 for selection spot
     rtSettings.cropsleep = 50;//generate a pause of 50 µs for dcrop (100%)to avoid crash when moving window, between 0 to ??
     rtSettings.reduchigh = 0.85;//transition for luminance in scope
     rtSettings.reduclow = 0.85;//transition for luminance out scope
@@ -712,9 +710,6 @@ void Options::readFromFile (Glib::ustring fname)
                 if ( keyFile.has_key ("General", "Verbose")) {
                     rtSettings.verbose = keyFile.get_boolean ( "General", "Verbose");
                 }
-                if (keyFile.has_key ("General", "Nspot")) {
-                    rtSettings.nspot          = keyFile.get_integer ("General", "Nspot");
-                }
 
                 if (keyFile.has_key ("General", "Cropsleep")) {
                     rtSettings.cropsleep          = keyFile.get_integer ("General", "Cropsleep");
@@ -727,12 +722,6 @@ void Options::readFromFile (Glib::ustring fname)
                 if (keyFile.has_key ("General", "Reduclow")) {
                     rtSettings.reduclow          = keyFile.get_double ("General", "Reduclow");
                 }
-
-
-                if (keyFile.has_key ("General", "Locdelay")) {
-                    rtSettings.locdelay          = keyFile.get_boolean ("General", "Locdelay");
-                }
-
             }
 
             if (keyFile.has_group ("External Editor")) {
@@ -1827,8 +1816,6 @@ void Options::saveToFile (Glib::ustring fname)
         keyFile.set_string  ("General", "DarkFramesPath", rtSettings.darkFramesPath);
         keyFile.set_string  ("General", "FlatFieldsPath", rtSettings.flatFieldsPath);
         keyFile.set_boolean ("General", "Verbose", rtSettings.verbose);
-        keyFile.set_integer ("General", "Nspot", rtSettings.nspot);
-        keyFile.set_boolean ("General", "Locdelay", rtSettings.locdelay);
         keyFile.set_integer ("General", "Cropsleep", rtSettings.cropsleep);
         keyFile.set_double ("General", "Reduchigh", rtSettings.reduchigh);
         keyFile.set_double ("General", "Reduclow", rtSettings.reduclow);

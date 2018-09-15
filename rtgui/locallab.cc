@@ -17,8 +17,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  *  2017 Jacques Desmis <jdesmis@gmail.com>
+ *  2018 Pierre Cabrera <pierre.cab@gmail.com>
  */
-
 
 #include "locallab.h"
 #include "rtimage.h"
@@ -31,22 +31,20 @@
 #include <string>
 #include <unistd.h>
 #include "../rtengine/improcfun.h"
-#include "eventmapper.h"
 
 #define MINCHRO 0.
 #define MAXCHRO 150
-#define CENTERCHRO 10
 #define MAXCHROCC 100
-
 
 using namespace rtengine;
 
 extern Options options;
 
-
 Locallab::Locallab():
     FoldableToolPanel(this, "locallab", M("TP_LOCALLAB_LABEL"), false, true),
-    lastObject(-1),
+
+    // Expander widgets
+    expsettings(new ControlSpotPanel()),
     expcolor(new MyExpander(true, M("TP_LOCALLAB_COFR"))),
     expexpose(new MyExpander(true, M("TP_LOCALLAB_EXPOSE"))),
     expvibrance(new MyExpander(true, M("TP_LOCALLAB_VIBRANCE"))),
@@ -56,311 +54,149 @@ Locallab::Locallab():
     expsharp(new MyExpander(true, M("TP_LOCALLAB_SHARP"))),
     expcbdl(new MyExpander(true, M("TP_LOCALLAB_CBDL"))),
     expdenoi(new MyExpander(true, M("TP_LOCALLAB_DENOIS"))),
-    expsettings(new ControlSpotPanel()),
 
-    LocalcurveEditorgainT(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_TRANSMISSIONGAIN"))),
-    LocalcurveEditorgainTrab(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_TRANSMISSIONGAINRAB"))),
+    // CurveEditorGroup widgets
+    // Color & Light
     llCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_LUM"))),
+    // Exposure
+    curveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_CURVEEDITOR_TONES_LABEL"))),
+    // Vibrance
+    curveEditorGG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL"))),
+    // Retinex
+    LocalcurveEditorgainT(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_TRANSMISSIONGAIN"))),
 
-
-    anbspot(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ANBSPOT"), 0, 1, 1, 0))),
-    locX(Gtk::manage(new Adjuster(M("TP_LOCAL_WIDTH"), 0, 2250, 1, 250))),
-    locXL(Gtk::manage(new Adjuster(M("TP_LOCAL_WIDTH_L"), 0, 2250, 1, 250))),
-    degree(Gtk::manage(new Adjuster(M("TP_LOCAL_DEGREE"), -180, 180, 1, 0))),
-    locY(Gtk::manage(new Adjuster(M("TP_LOCAL_HEIGHT"), 0, 2250, 1, 250))),
-    locYT(Gtk::manage(new Adjuster(M("TP_LOCAL_HEIGHT_T"), 0, 2250, 1, 250))),
-    centerX(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CENTER_X"), -1000, 1000, 1, 0))),
-    centerY(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CENTER_Y"), -1000, 1000, 1, 0))),
-    circrad(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CIRCRADIUS"), 2, 150, 1, 18))),
-    sensiexclu(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIEXCLU"), 0, 100, 1, 19))),
-    struc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUC"), 0, 5, 1, 0))),
-    thres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRES"), 1, 35, 1, 18))),
-    proxi(Gtk::manage(new Adjuster(M("TP_LOCALLAB_PROXI"), 0, 60, 1, 0))),
+    // Adjuster widgets
+    // Color & Light
     lightness(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LIGHTNESS"), -100, 100, 1, 0))),
     contrast(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTRAST"), -100, 100, 1, 0))),
     chroma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMA"), -100, 150, 1, 0))),
     sensi(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 19))),
+    // Exposure
     expcomp(Gtk::manage(new Adjuster(M("TP_EXPOSURE_EXPCOMP"), -200, 200, 5, 0))),
     hlcompr(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 500, 1, 20))),
     hlcomprthresh(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD"), 0, 100, 1, 33))),
     black(Gtk::manage(new Adjuster(M("TP_EXPOSURE_BLACKLEVEL"), -16384, 32768, 50, 0))),
     shcompr(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRSHADOWS"), 0, 100, 1, 50))),
+    warm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WARM"), -100., 100., 1., 0., Gtk::manage(new RTImage("ajd-wb-bluered1.png")), Gtk::manage(new RTImage("ajd-wb-bluered2.png"))))),
     sensiex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 19))),
+    // Vibrance
+    saturated(Gtk::manage(new Adjuster(M("TP_VIBRANCE_SATURATED"), -100., 100., 1., 0.))),
+    pastels(Gtk::manage(new Adjuster(M("TP_VIBRANCE_PASTELS"), -100., 100., 1., 0.))),
+    sensiv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 19))),
+    // Blur & Noise
     radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), 1, 100, 1, 1))),
     strength(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGTH"), 0, 100, 1, 0))),
     sensibn(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIBN"), 0, 100, 1, 40))),
-    transit(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSIT"), 5, 95, 1, 60))),
+    // Tone Mapping
     stren(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STREN"), -50, 100, 1, 0))),
     gamma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAM"), 80, 150, 1, 100))),
     estop(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ESTOP"), 10, 400, 1, 140))),
     scaltm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALTM"), 1, 100, 1, 10))),
     rewei(Gtk::manage(new Adjuster(M("TP_LOCALLAB_REWEI"), 0, 9, 1, 0))),
     sensitm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 19))),
+    // Retinex
     str(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STR"), 0, 100, 1, 0))),
+    chrrt(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHRRT"), 0, 100, 1, 0))),
     neigh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NEIGH"), 14, 150, 1, 50))),
     vart(Gtk::manage(new Adjuster(M("TP_LOCALLAB_VART"), 50, 500, 1, 200))),
-    chrrt(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHRRT"), 0, 100, 1, 0))),
     sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIH"), 0, 100, 1, 19))),
-    retrab(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RETRAB"), 0, 10000, 1, 500))),
-    chromacbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMACBDL"), 0, 300, 1, 0))),
-    threshold(Gtk::manage(new Adjuster(M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 100, 1, 20))),
-    sensicb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSICB"), 0, 100, 1, 19))),
+    // Sharpening
     sharradius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARRADIUS"), 42, 500, 1, 4))),
     sharamount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARAMOUNT"), 0, 100, 1, 75))),
     shardamping(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARDAMPING"), 0, 100, 1, 75))),
     shariter(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARITER"), 5, 100, 1, 30))),
     sensisha(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 19))),
+    // Contrast by detail levels
+    chromacbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMACBDL"), 0, 300, 1, 0))),
+    threshold(Gtk::manage(new Adjuster(M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 100, 1, 20))),
+    sensicb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSICB"), 0, 100, 1, 19))),
+    // Denoise
+    noiselumf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINE"), MINCHRO, MAXCHRO, 1, 0))),
+    noiselumc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMCOARSE"), MINCHRO, MAXCHROCC, 1, 0))),
     noiselumdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMDETAIL"), 0, 100, 1, 0))),
+    noiselequal(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELEQUAL"), -2, 10, 1, 7, Gtk::manage(new RTImage("adj-white.png")), Gtk::manage(new RTImage("adj-black.png"))))),
+    noisechrof(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROFINE"), MINCHRO, MAXCHRO, 1, 0))),
+    noisechroc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROCOARSE"), MINCHRO, MAXCHROCC, 1, 0))),
     noisechrodetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHRODETAIL"), 0, 100, 1, 0))),
+    adjblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ADJ"), -100., 100., 1., 0., Gtk::manage(new RTImage("ajd-wb-bluered1.png")), Gtk::manage(new RTImage("ajd-wb-bluered2.png"))))),
     bilateral(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BILATERAL"), 0, 100, 1, 0))),
     sensiden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIDEN"), 0, 100, 1, 30))),
-    hueref(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HUEREF"), -3.15, 3.15, 0.01, 0))),
-    huerefblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HUEREFBLUR"), -3.15, 3.15, 0.01, 0))),
-    chromaref(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMAREF"), 0, 200, 0.01, 0))),
-    lumaref(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LUMAMAREF"), 0, 100, 0.01, 0))),
-    sobelref(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOBELREF"), 0, 100, 0.01, 0))),
-    centerXbuf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CENTERBUF_X"), -1000, 1000, 1, 0))),
-    centerYbuf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CENTERBUF_Y"), -1000, 1000, 1, 0))),
 
-    shapemethod(Gtk::manage(new MyComboBoxText())),
-    Smethod(Gtk::manage(new MyComboBoxText())),
-    Exclumethod(Gtk::manage(new MyComboBoxText())),
-
-    retinexMethod(Gtk::manage(new MyComboBoxText())),
-    qualityMethod(Gtk::manage(new MyComboBoxText())),
-    qualitycurveMethod(Gtk::manage(new MyComboBoxText())),
-    blurMethod(Gtk::manage(new MyComboBoxText())),
-    dustMethod(Gtk::manage(new MyComboBoxText())),
-
-    shapeFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHFR")))),
-    superFrame(Gtk::manage(new Gtk::Frame())),
-    dustFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DUST")))),
-    wavFrame(Gtk::manage(new Gtk::Frame())),
-
-
-    labmdh(Gtk::manage(new Gtk::Label(M("TP_LOCRETI_METHOD") + ":"))),
-    labqualcurv(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_QUALCURV_METHOD") + ":"))),
-    labmS(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_STYPE") + ":"))),
-    labmEx(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_EXCLUTYPE") + ":"))),
-    labmshape(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SHAPETYPE") + ":"))),
-
-    dhbox(Gtk::manage(new Gtk::HBox())),
-    qualcurvbox(Gtk::manage(new Gtk::HBox())),
-
-    avoid(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AVOID")))),
-    activlum(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIV")))),
-    invers(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
+    // ButtonCheck widgets
+    // Color & Light
     curvactiv(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_CURV")))),
-    inversrad(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
+    invers(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
+    // Vibrance
+    protectSkins(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_PROTECTSKINS")))),
+    avoidColorShift(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_AVOIDCOLORSHIFT")))),
+    pastSatTog(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_PASTSATTOG")))),
+    // Blur & Noise
+    activlum(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIV")))),
+    // Retinex
     inversret(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
+    // Sharpening
     inverssha(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
-    cutpast(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_CUTPAST")))),
-    lastdust(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LASTDUST"))))
+    // Others
+    avoid(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AVOID")))),
 
+    // ComboBox widgets
+    // Color & Light
+    qualitycurveMethod(Gtk::manage(new MyComboBoxText())),
+    // Blur & Noise
+    blurMethod(Gtk::manage(new MyComboBoxText())),
+    // Retinex
+    retinexMethod(Gtk::manage(new MyComboBoxText())),
+
+    // ThresholdAdjuster widgets
+    // Vibrance
+    psThreshold(Gtk::manage(new ThresholdAdjuster(M("TP_VIBRANCE_PSTHRESHOLD"), -100., 100., 0., M("TP_VIBRANCE_PSTHRESHOLD_WEIGTHING"), 0, 0., 100., 75., M("TP_VIBRANCE_PSTHRESHOLD_SATTHRESH"), 0, this, false))),
+
+    // Other widgets
+    labqualcurv(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_QUALCURV_METHOD") + ":"))),
+    lumacontrastMinusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS")))),
+    lumaneutralButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMANEUTRAL")))),
+    lumacontrastPlusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS"))))
 {
+    ToolVBox* const panel = Gtk::manage(new ToolVBox());
+
     CurveListener::setMulti(true);
-    ProcParams params;
+    std::vector<GradientMilestone> milestones;
+    float R, G, B;
 
-    auto m = ProcEventMapper::getInstance();
-    EvLocenacolor = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCENACOLOR");//548
-    EvLocenaexpose = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCENAEXPOSE");//572
-    EvLocenavibrance = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCENAVIBR");//563
-    EvLocenablur = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCENABLUR");//549
-    EvLocenatonemap = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCENATM");//550
-    EvLocenareti = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCENARETI");//551
-    EvLocenasharp = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCENASHARP");//552
-    EvLocenacbdl = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCENACBDL");//553
-    EvLocenadenoi = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCENADENOI");//554
-
-    EvlocallablocX = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCLOCX"); //= 494,
-    EvlocallabCenter = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCENTER"); //= 495,
-    EvlocallabDegree = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCDEGRE"); //= 496,
-    Evlocallablightness = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCLIGHT"); //= 497,
-    Evlocallabcontrast = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCONTRA"); //= 498,
-    Evlocallabchroma = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCHROMA"); //= 499,
-    Evlocallabtransit = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCTRANSIT"); //= 500,
-    Evlocallabavoid = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCAVOID"); //= 501,
-    EvlocallablocYT = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCLOCYT"); // = 502,
-    EvlocallablocXL = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCXL"); //= 503,
-    EvlocallabSmet = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSMET"); //= 504,
-    Evlocallabinvers = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCINVERS"); //= 505,
-    Evlocallabradius = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCRADIUS"); //= 506,
-    Evlocallabinversrad = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCINVRAD"); //= 507,
-    Evlocallabstrength = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSTRENGTH"); //= 508,
-    Evlocallabsensi = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSENSI"); //= 509,
-    EvlocallabretinexMethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCRETIMETH");//510
-    Evlocallabstr = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCRETISTR");//= 511,
-    Evlocallabneigh = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCRETINEIGH");//= 512,
-    Evlocallabvart = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCRETIVART");//= 513,
-    EvlocallabCTgainCurve = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCRETIGAINCURV");//= 514,
-    Evlocallabchrrt = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCHRRT");//= 515,
-    Evlocallabinversret = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCINVRET");//= 516,
-    Evlocallabsensih = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSENSIH");//= 517,
-    Evlocallabnbspot = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCNBSPOT");//= 518,
-    Evlocallabactivlum = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCACTIVLUM");//= 519,
-    Evlocallabanbspot = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCANBSPOT");//= 520,
-    Evlocallabsharradius = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSHARADIUS");//= 521,
-    Evlocallabsharamount = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSHAAMOUNT");//= 522,
-    Evlocallabshardamping = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSHADAMPING");//= 523,
-    Evlocallabshariter = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSHAITER");//= 524,
-    Evlocallabsensis = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSENSIS");//= 525,
-    Evlocallabinverssha = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCINVSHA");//= 526,
-    Evlocallabcircrad = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCIRCRAD");//= 527,
-    Evlocallabthres = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCTHRES");//= 528,
-    Evlocallabproxi = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCPROXI");//= 529,
-    EvlocallabqualityMethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCQUALMETH");//= 530,
-    Evlocallabnoiselumf = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCNOISLUMF");//= 531,
-    Evlocallabnoiselumc = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCNOISLUMC");//= 532,
-    Evlocallabnoisechrof = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCNOISCHROF");//= 533,
-    Evlocallabnoisechroc = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCNOISCHROC");//= 534,
-    EvlocallabThresho = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCBDLTHRESHO");//= 535,
-    EvlocallabEqualizer = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCBDLEQUALIZ");//= 536,
-    Evlocallabsensicb = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSENSICB");//= 537,
-    Evlocallabsensibn = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSENSIBN");//= 538,
-    Evlocallabstren = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSTREN");//= 539,
-    Evlocallabgamma = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCGAMM");//= 540,
-    Evlocallabestop = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCESTOP");//= 541,
-    Evlocallabscaltm = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSCALTM");//= 542,
-    Evlocallabrewei = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCREWEI");//= 543,
-    Evlocallabsensitm = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSENSITM");//= 544,
-    EvlocallabCTgainCurverab = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCGAINCURRAB");//= 545,
-    Evlocallabretrab = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCRETRAB");//= 546,
-    Evlocallabllshape = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCLSHAPE");//= 547,
-    EvlocallabLHshape = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCLHSHAPE");// = 555,
-    Evlocallabcurvactiv = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCURVACTIV");// = 556,
-    Evlocallabccshape = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCCSHAPE");// = 557,
-    EvlocallabqualitycurveMethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCQUALCURVMETH");// = 558,
-    Evlocallabhueref = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCHUEREF");// = 559,
-    Evlocallabchromaref = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCHROMAREF");// = 560,
-    Evlocallablumaref = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCLUMAREF");// = 561,
-    EvlocallabHHshape = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCHHSHAPE");// = 562,
-    EvlocallabSkinTonesCurve = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSKINTONCURV");// = 564,
-    EvlocallabProtectSkins = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCPROTSKIN");// = 565,
-    EvlocallabAvoidColorShift = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCAVOIDCOLORSHIFT");// = 566,
-    EvlocallabPastSatTog = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCPASTSATTOG");// = 567,
-    EvlocallabPastels = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCPASTEL");// = 568,
-    EvlocallabSaturated = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSATUR");// = 569,
-    EvlocallabPastSatThreshold = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCPASTSATTHRES");// = 570,
-    Evlocallabsensiv = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSENSIV");// = 571,
-    Evlocallabexpcomp = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCEXPCOMP");// = 573,
-    Evlocallabhlcompr = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCHLCOMPR");// = 574,
-    Evlocallabhlcomprthresh = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCHLCOMPRTHRESH");// = 575,
-    Evlocallabblack = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCBLACK");// = 576,
-    Evlocallabshcompr = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSHCOMPR");// = 577,
-    Evlocallabsensiex = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSENSIEX");// = 578,
-    Evlocallabshapeexpos = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSHAPE");// = 579,
-    EvlocallabCenterbuf = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCENTERBUF");// = 580,
-    Evlocallabadjblur = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCNOISEEQUALBLURED");// = 581,
-    Evlocallabcutpast = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCUTPAST");// = 582,
-    Evlocallabchromacbdl = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCCHROCBDL");// = 583,
-    EvlocallabblurMethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCBLURMETH"); //584
-    EvlocallabdustMethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCDUSTMETH");// = 585,
-    Evlocallablastdust = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCLASTDUST");// = 586,
-    Evlocallabsobelref = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSOBELREF");// = 587,
-    Evlocallabexclumethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCEXCLUMETH");// = 588,
-    Evlocallabsensiexclu = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSENSIEXCL");// = 589,
-    Evlocallabstruc = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSTRUC");// = 590,
-    Evlocallabwarm = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCWARM");// = 591,
-    Evlocallabnoiselumdetail = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCNOISELUMDETAIL");// = 592,
-    Evlocallabnoisechrodetail = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCNOISECHRODETAIL");// = 593,
-    Evlocallabsensiden = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSENSIDEN");// = 594,
-    Evlocallabhuerefblur = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCHUEREFBLUR");// = 595,
-    EvlocallabEnabled = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCENABLED");// = 596,
-    EvlocallablocY = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCLOCY");// = 597,
-    Evlocallabbilateral = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCBILATERAL");// = 598,
-    Evlocallabnoiselequal = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCNOISELEQUAL");// = 599,
-    Evlocallabshapemethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSHAPEMETH");// = 600,
-    Evlocallabspotduplicated = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCSPOTDUP");// = 601
-    Evlocallabspotcreated = m->newEvent(LUMINANCECURVE, "Spot creation");// = 602
-
-    int realnbspot;
-
-
-    realnbspot = options.rtSettings.nspot;
-    nbspot = Gtk::manage(new Adjuster(M("TP_LOCALLAB_NBSPOT"), 1, realnbspot, 1, 1));
-
-    if (options.rtSettings.locdelay) {
-
-        if (nbspot->delay < 200) {
-            nbspot->delay = 200;
-        }
-    }
-
-    const LocallabParams default_params;
-
-    shapeFrame->set_label_align(0.025, 0.5);
-
+    // Settings
     expsettings->getExpander()->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expsettings->getExpander()));
+    expsettings->setLevel(2);
 
+    panel->pack_start(*expsettings->getExpander(), false, false);
+
+    // Color & Light
     expcolor->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expcolor));
     enablecolorConn = expcolor->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expcolor));
 
-    expexpose->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expexpose));
-    enableexposeConn = expexpose->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expexpose));
+    curvactivConn = curvactiv->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::curvactivChanged));
 
-    expvibrance->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expvibrance));
-    enablevibranceConn = expvibrance->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expvibrance));
+    lightness->setAdjusterListener(this);
 
-    expblur->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expblur));
-    enableblurConn = expblur->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expblur));
+    contrast->setAdjusterListener(this);
 
-    exptonemap->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), exptonemap));
-    enabletonemapConn = exptonemap->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), exptonemap));
+    chroma->setAdjusterListener(this);
 
-    expreti->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expreti));
-    enableretiConn = expreti->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expreti));
-
-    expsharp->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expsharp));
-    enablesharpConn = expsharp->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expsharp));
-
-    expcbdl->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expcbdl));
-    enablecbdlConn = expcbdl->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expcbdl));
-
-    expdenoi->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expdenoi));
-    enabledenoiConn = expdenoi->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expdenoi));
-
-    shapemethod->append(M("TP_LOCALLAB_ELI"));
-    shapemethod->append(M("TP_LOCALLAB_RECT"));
-    shapemethod->set_active(0);
-    Exclumethod->append(M("TP_LOCALLAB_EXNORM"));
-    Exclumethod->append(M("TP_LOCALLAB_EXECLU"));
-    Exclumethod->set_active(0);
-
-    struc->set_tooltip_text(M("TP_LOCALLAB_STRUC_TOOLTIP"));
-    struc->setAdjusterListener(this);
-
-    Smethod->append(M("TP_LOCALLAB_IND"));
-    Smethod->append(M("TP_LOCALLAB_SYM"));
-    Smethod->append(M("TP_LOCALLAB_INDSL"));
-    Smethod->append(M("TP_LOCALLAB_SYMSL"));
-    Smethod->set_active(0);
-    qualityMethod->append(M("TP_LOCALLAB_STD"));
-    qualityMethod->append(M("TP_LOCALLAB_ENH"));
-    qualityMethod->append(M("TP_LOCALLAB_ENHDEN"));
-    qualityMethod->set_active(0);
-
-    std::vector<GradientMilestone> milestones;
-    std::vector<double> defaultCurve;
-    std::vector<double> defaultCurve2;
-    std::vector<double> defaultCurve2rab;
-    std::vector<double> defaultCurve3;
-    std::vector<double> defaultCurve4;
-    std::vector<double> defaultCurve5;
-
-    irg   = Gtk::manage(new RTImage("Chanmixer-RG.png"));
+    sensi->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
+    sensi->setAdjusterListener(this);
 
     qualitycurveMethod->append(M("TP_LOCALLAB_CURVNONE"));
     qualitycurveMethod->append(M("TP_LOCALLAB_CURVCURR"));
     qualitycurveMethod->append(M("TP_LOCALLAB_CURVENH"));
     qualitycurveMethod->set_active(0);
-    qualitycurveMethodConn = qualitycurveMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::qualitycurveMethodChanged));
     qualitycurveMethod->set_tooltip_markup(M("TP_LOCALLAB_CURVEMETHOD_TOOLTIP"));
+    qualitycurveMethodConn = qualitycurveMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::qualitycurveMethodChanged));
 
     llCurveEditorG->setCurveListener(this);
 
     llshape = static_cast<DiagonalCurveEditor*>(llCurveEditorG->addCurve(CT_Diagonal, "L(L)"));
     llshape->setResetCurve(DCT_NURBS, {(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0});
     llshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+    milestones.clear();
     milestones.push_back(GradientMilestone(0., 0., 0., 0.));
     milestones.push_back(GradientMilestone(1., 1., 1., 1.));
     llshape->setBottomBarBgGradient(milestones);
@@ -369,14 +205,15 @@ Locallab::Locallab():
     ccshape = static_cast<DiagonalCurveEditor*>(llCurveEditorG->addCurve(CT_Diagonal, "C(C)"));
     ccshape->setResetCurve(DCT_NURBS, {(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0});
     ccshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+    milestones.clear();
     milestones.push_back(GradientMilestone(0., 0., 0., 0.));
     milestones.push_back(GradientMilestone(1., 1., 1., 1.));
     ccshape->setBottomBarBgGradient(milestones);
     ccshape->setLeftBarBgGradient(milestones);
 
+    llCurveEditorG->newLine();
 
     LHshape = static_cast<FlatCurveEditor*>(llCurveEditorG->addCurve(CT_Flat, "L(H)", nullptr, false, true));
-
     LHshape->setIdentityValue(0.);
     LHshape->setResetCurve(FCT_MinMaxCPoints, {(double)FCT_MinMaxCPoints, 0.0, 0.50, 0.35, 0.35, 0.166, 0.50, 0.35, 0.35, 0.333, 0.50, 0.35, 0.35, 0.50, 0.50, 0.35, 0.35, 0.666, 0.50, 0.35, 0.35, 0.833, 0.50, 0.35, 0.35});
     LHshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
@@ -384,7 +221,6 @@ Locallab::Locallab():
     milestones.clear();
 
     for (int i = 0; i < 7; i++) {
-        float R, G, B;
         float x = float (i) * (1.0f / 6.0);
         Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
         milestones.push_back(GradientMilestone(double (x), double (R), double (G), double (B)));
@@ -392,9 +228,7 @@ Locallab::Locallab():
 
     LHshape->setBottomBarBgGradient(milestones);
 
-
     HHshape = static_cast<FlatCurveEditor*>(llCurveEditorG->addCurve(CT_Flat, "H(H)", nullptr, false, true));
-
     HHshape->setIdentityValue(0.);
     HHshape->setResetCurve(FCT_MinMaxCPoints, {(double)FCT_MinMaxCPoints, 0.0, 0.50, 0.35, 0.35, 0.166, 0.50, 0.35, 0.35, 0.333, 0.50, 0.35, 0.35, 0.50, 0.50, 0.35, 0.35, 0.666, 0.50, 0.35, 0.35, 0.833, 0.50, 0.35, 0.35});
     HHshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
@@ -402,7 +236,6 @@ Locallab::Locallab():
     milestones.clear();
 
     for (int i = 0; i < 7; i++) {
-        float R, G, B;
         float x = float (i) * (1.0f / 6.0);
 
         Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
@@ -411,73 +244,166 @@ Locallab::Locallab():
 
     HHshape->setBottomBarBgGradient(milestones);
 
-
     llCurveEditorG->curveListComplete();
-    lightness->setAdjusterListener(this);
 
-    contrast->setAdjusterListener(this);
-    /*
-        Gtk::Image* iblueredL = Gtk::manage(new RTImage("ajd-wb-bluered1.png"));
-        Gtk::Image* iblueredR = Gtk::manage(new RTImage("ajd-wb-bluered2.png"));
+    inversConn  = invers->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::inversChanged));
 
-        warm = Gtk::manage(new Adjuster(M("TP_LOCALLAB_WARM"), -100., 100., 1., 0., iblueredL, iblueredR));
-        warm->setAdjusterListener(this);
-    */
-    chroma->setAdjusterListener(this);
+    ToolParamBlock* const colorBox = Gtk::manage(new ToolParamBlock());
+    Gtk::Frame* const superFrame = Gtk::manage(new Gtk::Frame());
+    superFrame->set_label_align(0.025, 0.5);
+    superFrame->set_label_widget(*curvactiv);
+    ToolParamBlock* const superBox = Gtk::manage(new ToolParamBlock());
+    superBox->pack_start(*lightness);
+    superBox->pack_start(*contrast);
+    superBox->pack_start(*chroma);
+    superFrame->add(*superBox);
+    colorBox->pack_start(*superFrame);
+    colorBox->pack_start(*sensi);
+    Gtk::HBox* const qualcurvbox = Gtk::manage(new Gtk::HBox());
+    qualcurvbox->pack_start(*labqualcurv, Gtk::PACK_SHRINK, 4);
+    qualcurvbox->pack_start(*qualitycurveMethod);
+    colorBox->pack_start(*qualcurvbox);
+    colorBox->pack_start(*llCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    colorBox->pack_start(*invers);
+    expcolor->add(*colorBox);
+    expcolor->setLevel(2);
 
-    sensi->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
-    sensi->setAdjusterListener(this);
+    panel->pack_start(*expcolor, false, false);
 
-    centerXbuf->setAdjusterListener(this);;
-    centerYbuf->setAdjusterListener(this);;
-//    adjblur->setAdjusterListener(this);;
-
-//exposure
+    // Exposure
+    expexpose->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expexpose));
+    enableexposeConn = expexpose->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expexpose));
 
     expcomp->setAdjusterListener(this);
-    hlcomprthresh->setAdjusterListener(this);
-    black->setAdjusterListener(this);
+
     hlcompr->setAdjusterListener(this);
+
+    hlcomprthresh->setAdjusterListener(this);
+
+    black->setAdjusterListener(this);
+
     shcompr->setAdjusterListener(this);
+
+    warm->set_tooltip_text(M("TP_LOCALLAB_WARM_TOOLTIP"));
+    warm->setAdjusterListener(this);
+
     sensiex->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
     sensiex->setAdjusterListener(this);
-    Gtk::Image* iblueredL = Gtk::manage(new RTImage("ajd-wb-bluered1.png"));
-    Gtk::Image* iblueredR = Gtk::manage(new RTImage("ajd-wb-bluered2.png"));
 
-    warm = Gtk::manage(new Adjuster(M("TP_LOCALLAB_WARM"), -100., 100., 1., 0., iblueredL, iblueredR));
-    warm->setAdjusterListener(this);
-    warm->set_tooltip_text(M("TP_LOCALLAB_WARM_TOOLTIP"));
+    curveEditorG->setCurveListener(this);
+
+    shapeexpos = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, ""));
+    shapeexpos->setResetCurve(DCT_NURBS, {(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0});
+    shapeexpos->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP"));
+    milestones.clear();
+    milestones.push_back(GradientMilestone(0., 0., 0., 0.));
+    milestones.push_back(GradientMilestone(1., 1., 1., 1.));
+    shapeexpos->setBottomBarBgGradient(milestones);
+    shapeexpos->setLeftBarBgGradient(milestones);
+
+    curveEditorG->curveListComplete();
+
+    ToolParamBlock* const exposeBox = Gtk::manage(new ToolParamBlock());
+    exposeBox->pack_start(*expcomp);
+    exposeBox->pack_start(*hlcompr);
+    exposeBox->pack_start(*hlcomprthresh);
+    exposeBox->pack_start(*black);
+    exposeBox->pack_start(*shcompr);
+    exposeBox->pack_start(*warm);
+    exposeBox->pack_start(*sensiex);
+    exposeBox->pack_start(*curveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    expexpose->add(*exposeBox);
+    expexpose->setLevel(2);
+
+    panel->pack_start(*expexpose, false, false);
+
+    // Vibrance
+    expvibrance->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expvibrance));
+    enablevibranceConn = expvibrance->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expvibrance));
+
+    saturated->setAdjusterListener(this);
+
+    pastels->setAdjusterListener(this);
+
+    psThreshold->set_tooltip_markup(M("TP_VIBRANCE_PSTHRESHOLD_TOOLTIP"));
+    psThreshold->setAdjusterListener(this);
+
+    pskinsconn = protectSkins->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::protectskins_toggled));
+
+    ashiftconn = avoidColorShift->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::avoidcolorshift_toggled));
+
+    pastsattogconn = pastSatTog->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::pastsattog_toggled));
+
+    sensiv->setAdjusterListener(this);
+
+    curveEditorGG->setCurveListener(this);
+
+    skinTonesCurve = static_cast<DiagonalCurveEditor*>(curveEditorGG->addCurve(CT_Diagonal, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES")));
+    skinTonesCurve->setTooltip(M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP"));
+    milestones.clear();
+    // -0.1 rad < Hue < 1.6 rad
+    Color::hsv2rgb01(0.92f, 0.45f, 0.6f, R, G, B);
+    milestones.push_back(GradientMilestone(0.0, double (R), double (G), double (B)));
+    Color::hsv2rgb01(0.14056f, 0.45f, 0.6f, R, G, B);
+    milestones.push_back(GradientMilestone(1.0, double (R), double (G), double (B)));
+    skinTonesCurve->setBottomBarBgGradient(milestones);
+    skinTonesCurve->setLeftBarBgGradient(milestones);
+    skinTonesCurve->setRangeLabels(
+        M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1"), M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2"),
+        M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3"), M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4")
+    );
+    skinTonesCurve->setRangeDefaultMilestones(0.1, 0.4, 0.85);
+
+    curveEditorGG->curveListComplete();
+
+    ToolParamBlock* const vibranceBox = Gtk::manage(new ToolParamBlock());
+    vibranceBox->pack_start(*saturated, Gtk::PACK_SHRINK, 0);
+    vibranceBox->pack_start(*pastels, Gtk::PACK_SHRINK, 0);
+    vibranceBox->pack_start(*psThreshold, Gtk::PACK_SHRINK, 0);
+    vibranceBox->pack_start(*protectSkins, Gtk::PACK_SHRINK, 0);
+    vibranceBox->pack_start(*avoidColorShift, Gtk::PACK_SHRINK, 0);
+    vibranceBox->pack_start(*pastSatTog, Gtk::PACK_SHRINK, 0);
+    vibranceBox->pack_start(*sensiv, Gtk::PACK_SHRINK, 0);
+    vibranceBox->pack_start(*curveEditorGG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    expvibrance->add(*vibranceBox);
+    expvibrance->setLevel(2);
+
+    panel->pack_start(*expvibrance, false, false);
+
+    // Blur & Noise
+    expblur->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expblur));
+    enableblurConn = expblur->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expblur));
 
     radius->setAdjusterListener(this);
-    strength->setAdjusterListener(this);
 
+    strength->setAdjusterListener(this);
 
     sensibn->set_tooltip_text(M("TP_LOCALLAB_SENSIH_TOOLTIP"));
     sensibn->setAdjusterListener(this);
 
-    activlum->set_active(false);
+    blurMethod->append(M("TP_LOCALLAB_BLNORM"));
+    blurMethod->append(M("TP_LOCALLAB_BLINV"));
+    blurMethod->append(M("TP_LOCALLAB_BLSYM"));
+    blurMethod->set_active(0);
+    blurMethod->set_tooltip_markup(M("TP_LOCALLAB_BLMETHOD_TOOLTIP"));
+    blurMethodConn = blurMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::blurMethodChanged));
+
     activlumConn  = activlum->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::activlumChanged));
 
-    invers->set_active(false);
-    inversConn  = invers->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::inversChanged));
+    ToolParamBlock* const blurrBox = Gtk::manage(new ToolParamBlock());
+    blurrBox->pack_start(*radius);
+    blurrBox->pack_start(*strength);
+    blurrBox->pack_start(*sensibn);
+    blurrBox->pack_start(*blurMethod);
+    blurrBox->pack_start(*activlum);
+    expblur->add(*blurrBox);
+    expblur->setLevel(2);
 
-    curvactiv->set_active(false);
-    curvactivConn  = curvactiv->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::curvactivChanged));
+    panel->pack_start(*expblur, false, false);
 
-    inversrad->set_active(false);
-    inversradConn  = inversrad->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::inversradChanged));
-
-    inversret->set_active(false);
-    inversretConn  = inversret->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::inversretChanged));
-
-    cutpast->set_active(false);
-    cutpastConn  = cutpast->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::cutpastChanged));
-    cutpast->set_tooltip_text(M("TP_LOCALLAB_CUTPAST_TOOLTIP"));
-//tone mapping local
-
-    lastdust->set_active(false);
-    lastdustConn  = lastdust->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::lastdustChanged));
-    lastdust->set_tooltip_text(M("TP_LOCALLAB_LASTDUST_TOOLTIP"));
+    // Tone Mapping
+    exptonemap->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), exptonemap));
+    enabletonemapConn = exptonemap->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), exptonemap));
 
     stren->setAdjusterListener(this);
 
@@ -492,101 +418,97 @@ Locallab::Locallab():
     sensitm->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
     sensitm->setAdjusterListener(this);
 
-//end TM
+    ToolParamBlock* const tmBox = Gtk::manage(new ToolParamBlock());
+    tmBox->pack_start(*stren);
+    tmBox->pack_start(*gamma);
+    tmBox->pack_start(*estop);
+    tmBox->pack_start(*scaltm);
+    tmBox->pack_start(*rewei);
+    tmBox->pack_start(*sensitm);
+    exptonemap->add(*tmBox);
+    exptonemap->setLevel(2);
 
+    panel->pack_start(*exptonemap, false, false);
 
-//retinex local
-
-    dhbox->pack_start(*labmdh, Gtk::PACK_SHRINK, 1);
+    // Retinex
+    expreti->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expreti));
+    enableretiConn = expreti->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expreti));
 
     retinexMethod->append(M("TP_RETINEX_LOW"));
     retinexMethod->append(M("TP_RETINEX_UNIFORM"));
     retinexMethod->append(M("TP_RETINEX_HIGH"));
     retinexMethod->set_active(0);
-    retinexMethodConn = retinexMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::retinexMethodChanged));
     retinexMethod->set_tooltip_markup(M("TP_LOCRETI_METHOD_TOOLTIP"));
+    retinexMethodConn = retinexMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::retinexMethodChanged));
 
     str->setAdjusterListener(this);
+
     neigh->setAdjusterListener(this);
+
     vart->setAdjusterListener(this);
+
     chrrt->setAdjusterListener(this);
+
     sensih->set_tooltip_text(M("TP_LOCALLAB_SENSIH_TOOLTIP"));
     sensih->setAdjusterListener(this);
-    retrab->setAdjusterListener(this);
-
 
     LocalcurveEditorgainT->setCurveListener(this);
 
-
     cTgainshape = static_cast<FlatCurveEditor*>(LocalcurveEditorgainT->addCurve(CT_Flat, "", nullptr, false, false));
-
     cTgainshape->setIdentityValue(0.);
     cTgainshape->setResetCurve(FCT_MinMaxCPoints, {(double)FCT_MinMaxCPoints, 0.0, 0.12, 0.35, 0.35, 0.70, 0.50, 0.35, 0.35, 1.00, 0.12, 0.35, 0.35});
     cTgainshape->setTooltip(M("TP_RETINEX_GAINTRANSMISSION_TOOLTIP"));
 
-    LocalcurveEditorgainTrab->setCurveListener(this);
-
-
-
-    cTgainshaperab = static_cast<FlatCurveEditor*>(LocalcurveEditorgainTrab->addCurve(CT_Flat, "", nullptr, false, false));
-
-
-    cTgainshaperab->setIdentityValue(0.);
-    // cTgainshaperab->setResetCurve(FlatCurveType(default_params.localTgaincurverab.at(0)), default_params.localTgaincurverab);
-    cTgainshaperab->setTooltip(M("TP_RETINEX_GAINTRANSMISSIONRAB_TOOLTIP"));
-
     LocalcurveEditorgainT->curveListComplete();
-    LocalcurveEditorgainT->show();
-    LocalcurveEditorgainTrab->curveListComplete();
-    LocalcurveEditorgainTrab->show();
 
+    inversretConn  = inversret->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::inversretChanged));
 
-// end reti
-    avoid->set_active(false);
-    avoidConn  = avoid->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::avoidChanged));
-    pack_start(*anbspot);
+    ToolParamBlock* const retiBox = Gtk::manage(new ToolParamBlock());
+    retiBox->pack_start(*retinexMethod);
+    retiBox->pack_start(*str);
+    retiBox->pack_start(*chrrt);
+    retiBox->pack_start(*neigh);
+    retiBox->pack_start(*vart);
+    retiBox->pack_start(*sensih);
+    retiBox->pack_start(*LocalcurveEditorgainT, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    retiBox->pack_start(*inversret);
+    expreti->add(*retiBox);
+    expreti->setLevel(2);
 
-    hueref->setAdjusterListener(this);
-    huerefblur->setAdjusterListener(this);
-    chromaref->setAdjusterListener(this);
-    lumaref->setAdjusterListener(this);
-    sobelref->setAdjusterListener(this);
+    panel->pack_start(*expreti, false, false);
 
-    pack_start(*hueref);
-    pack_start(*huerefblur);
-    pack_start(*chromaref);
-    pack_start(*lumaref);
-    pack_start(*sobelref);
+    // Sharpening
+    expsharp->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expsharp));
+    enablesharpConn = expsharp->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expsharp));
 
-    anbspot->hide();//keep anbspot  - i used it to test diffrent algo...
-    hueref->hide();
-    huerefblur->hide();
-    chromaref->hide();
-    lumaref->hide();
-    sobelref->hide();
+    sharradius->setAdjusterListener(this);
 
-    // expsettings->add(*spotPanel);
-    expsettings->setLevel(2);
-    pack_start(*expsettings->getExpander());
+    sharamount->setAdjusterListener(this);
 
+    shardamping->setAdjusterListener(this);
 
+    shariter->setAdjusterListener(this);
 
-    Gtk::HBox * buttonBox1 = Gtk::manage(new Gtk::HBox(true, 10));
+    sensisha->set_tooltip_text(M("TP_LOCALLAB_SENSIS_TOOLTIP"));
+    sensisha->setAdjusterListener(this);
 
-    Gtk::Button * lumacontrastMinusButton = Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS")));
-    buttonBox1->pack_start(*lumacontrastMinusButton);
-    lumacontrastMinusPressedConn = lumacontrastMinusButton->signal_pressed().connect(sigc::mem_fun(*this, &Locallab::lumacontrastMinusPressed));
+    inversshaConn  = inverssha->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::inversshaChanged));
 
-    Gtk::Button * lumaneutralButton = Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMANEUTRAL")));
-    buttonBox1->pack_start(*lumaneutralButton);
-    lumaneutralPressedConn = lumaneutralButton->signal_pressed().connect(sigc::mem_fun(*this, &Locallab::lumaneutralPressed));
+    ToolParamBlock* const sharpBox = Gtk::manage(new ToolParamBlock());
+    sharpBox->pack_start(*sharradius);
+    sharpBox->pack_start(*sharamount);
+    sharpBox->pack_start(*shardamping);
+    sharpBox->pack_start(*shariter);
+    sharpBox->pack_start(*sensisha);
+    sharpBox->pack_start(*inverssha);
+    expsharp->add(*sharpBox);
+    expsharp->setLevel(2);
 
-    Gtk::Button * lumacontrastPlusButton = Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS")));
-    buttonBox1->pack_start(*lumacontrastPlusButton);
-    lumacontrastPlusPressedConn = lumacontrastPlusButton->signal_pressed().connect(sigc::mem_fun(*this, &Locallab::lumacontrastPlusPressed));
-    ToolParamBlock* const cbdlBox = Gtk::manage(new ToolParamBlock());
+    panel->pack_start(*expsharp, false, false);
 
-    cbdlBox->pack_start(*buttonBox1);
+    // Contrast by detail levels
+    expcbdl->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expcbdl));
+    enablecbdlConn = expcbdl->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expcbdl));
 
     for (int i = 0; i < 5; i++) {
         Glib::ustring ss;
@@ -600,388 +522,100 @@ Locallab::Locallab():
 
         multiplier[i] = Gtk::manage(new Adjuster(ss, 0, 400, 1, 100));
         multiplier[i]->setAdjusterListener(this);
-        cbdlBox->pack_start(*multiplier[i]);
     }
 
-    Gtk::HSeparator *separator3 = Gtk::manage(new  Gtk::HSeparator());
-    cbdlBox->pack_start(*separator3, Gtk::PACK_SHRINK, 2);
-
     chromacbdl->set_tooltip_text(M("TP_LOCALLAB_CHROMACB_TOOLTIP"));
-
     chromacbdl->setAdjusterListener(this);
-    cbdlBox->pack_start(*chromacbdl);
 
     threshold->setAdjusterListener(this);
-    cbdlBox->pack_start(*threshold);
 
     sensicb->set_tooltip_text(M("TP_LOCALLAB_SENSIH_TOOLTIP"));
     sensicb->setAdjusterListener(this);
-    cbdlBox->pack_start(*sensicb);
 
-    sharradius->setAdjusterListener(this);
+    ToolParamBlock* const cbdlBox = Gtk::manage(new ToolParamBlock());
+    Gtk::HBox* buttonBox = Gtk::manage(new Gtk::HBox(true, 10));
+    buttonBox->pack_start(*lumacontrastMinusButton);
+    lumacontrastMinusPressedConn = lumacontrastMinusButton->signal_pressed().connect(sigc::mem_fun(*this, &Locallab::lumacontrastMinusPressed));
+    buttonBox->pack_start(*lumaneutralButton);
+    lumaneutralPressedConn = lumaneutralButton->signal_pressed().connect(sigc::mem_fun(*this, &Locallab::lumaneutralPressed));
+    buttonBox->pack_start(*lumacontrastPlusButton);
+    lumacontrastPlusPressedConn = lumacontrastPlusButton->signal_pressed().connect(sigc::mem_fun(*this, &Locallab::lumacontrastPlusPressed));
+    cbdlBox->pack_start(*buttonBox);
 
-    sharamount->setAdjusterListener(this);
-
-    shardamping->setAdjusterListener(this);
-
-    shariter->setAdjusterListener(this);
-
-
-    sensisha->set_tooltip_text(M("TP_LOCALLAB_SENSIS_TOOLTIP"));
-    sensisha->setAdjusterListener(this);
-
-    inverssha->set_active(false);
-    inversshaConn  = inverssha->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::inversshaChanged));
-    ToolParamBlock* const sharpBox = Gtk::manage(new ToolParamBlock());
-
-    sharpBox->pack_start(*sharradius);
-    sharpBox->pack_start(*sharamount);
-    sharpBox->pack_start(*shardamping);
-    sharpBox->pack_start(*shariter);
-    sharpBox->pack_start(*sensisha);
-    sharpBox->pack_start(*inverssha);
-
-    noiselumf = Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINE"), MINCHRO, MAXCHRO, 1, 0));
-    noiselumc = Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMCOARSE"), MINCHRO, MAXCHROCC, 1, 0));
-
-    noisechrof = Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROFINE"), MINCHRO, MAXCHRO, 1, 0));
-    noisechroc = Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROCOARSE"), MINCHRO, MAXCHROCC, 1, 0));
-
-    Gtk::Image* iblueredL1 = Gtk::manage(new RTImage("ajd-wb-bluered1.png"));
-    Gtk::Image* iblueredR1 = Gtk::manage(new RTImage("ajd-wb-bluered2.png"));
-
-    adjblur = Gtk::manage(new Adjuster(M("TP_LOCALLAB_ADJ"), -100., 100., 1., 0., iblueredL1, iblueredR1));
-    adjblur->setAdjusterListener(this);
-
-    Gtk::Image *ar = Gtk::manage(new RTImage("adj-black.png"));
-    Gtk::Image *al = Gtk::manage(new RTImage("adj-white.png"));
-
-    noiselequal = Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELEQUAL"), -2, 10, 1, 7, al, ar));
-    noiselequal->setAdjusterListener(this);
-
-    if (noiselequal->delay < 200) {
-        noiselequal->delay = 200;
+    for (int i = 0; i < 5; i++) {
+        cbdlBox->pack_start(*multiplier[i]);
     }
 
+    Gtk::HSeparator *separator = Gtk::manage(new  Gtk::HSeparator());
+    cbdlBox->pack_start(*separator, Gtk::PACK_SHRINK, 2);
+    cbdlBox->pack_start(*chromacbdl);
+    cbdlBox->pack_start(*threshold);
+    cbdlBox->pack_start(*sensicb);
+    expcbdl->add(*cbdlBox);
+    expcbdl->setLevel(2);
+
+    panel->pack_start(*expcbdl, false, false);
+
+    // Denoise
+    expdenoi->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expdenoi));
+    enabledenoiConn = expdenoi->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expdenoi));
 
     noiselumf->setAdjusterListener(this);
 
-    if (noiselumf->delay < 200) {
-        noiselumf->delay = 200;
-    }
-
-
-    noiselumc->setAdjusterListener(this);
-
-    if (noiselumc->delay < 200) {
-        noiselumc->delay = 200;
-    }
-
     noiselumc->set_tooltip_text(M("TP_LOCALLAB_NOISECHROC_TOOLTIP"));
-
+    noiselumc->setAdjusterListener(this);
 
     noiselumdetail->setAdjusterListener(this);
 
-    if (noiselumdetail->delay < 200) {
-        noiselumdetail->delay = 200;
-    }
-
-
-
-    noisechrodetail->setAdjusterListener(this);
-
-    if (noisechrodetail->delay < 200) {
-        noisechrodetail->delay = 200;
-    }
-
-
-    bilateral->setAdjusterListener(this);
-
-    if (bilateral->delay < 200) {
-        bilateral->delay = 200;
-    }
-
-
-    sensiden->setAdjusterListener(this);
-
-    if (sensiden->delay < 200) {
-        sensiden->delay = 200;
-    }
-
+    noiselequal->setAdjusterListener(this);
 
     noisechrof->setAdjusterListener(this);
 
-    if (noisechrof->delay < 200) {
-        noisechrof->delay = 200;
-    }
-
-
+    noisechroc->set_tooltip_text(M("TP_LOCALLAB_NOISECHROC_TOOLTIP"));
     noisechroc->setAdjusterListener(this);
 
-    if (noisechroc->delay < 200) {
-        noisechroc->delay = 200;
-    }
+    noisechrodetail->setAdjusterListener(this);
 
+    adjblur->setAdjusterListener(this);
 
-    noisechroc->set_tooltip_text(M("TP_LOCALLAB_NOISECHROC_TOOLTIP"));
+    bilateral->setAdjusterListener(this);
+
+    sensiden->setAdjusterListener(this);
+
+    avoidConn  = avoid->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::avoidChanged));
 
     ToolParamBlock* const denoisBox = Gtk::manage(new ToolParamBlock());
+    Gtk::Frame* const wavFrame = Gtk::manage(new Gtk::Frame());
     ToolParamBlock* const wavBox = Gtk::manage(new ToolParamBlock());
-
     wavBox->pack_start(*noiselumf);
     wavBox->pack_start(*noiselumc);
     wavBox->pack_start(*noiselumdetail);
     wavBox->pack_start(*noiselequal);
     wavBox->pack_start(*noisechrof);
     wavBox->pack_start(*noisechroc);
-    //wavBox->pack_start(*noisechrodetail);
+    // wavBox->pack_start(*noisechrodetail); // Uncomment this line to use the noisechrodetail adjuster
     wavBox->pack_start(*adjblur);
-
-
     wavFrame->add(*wavBox);
     denoisBox->pack_start(*wavFrame);
-
     denoisBox->pack_start(*bilateral);
     denoisBox->pack_start(*sensiden);
-
-    neutrHBox1 = Gtk::manage(new Gtk::HBox());
-
-    neutral1 = Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_NEUTRAL")));
-    RTImage *resetImg1 = Gtk::manage(new RTImage("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
-    neutral1->set_image(*resetImg1);
-    neutral1->set_tooltip_text(M("TP_LOCALLAB_NEUTRAL_TIP"));
-    neutralconn1 = neutral1->signal_pressed().connect(sigc::mem_fun(*this, &Locallab::neutral_pressed));
-    neutral1->show();
-    neutrHBox1->pack_start(*neutral1);
-    pack_start(*neutrHBox1);
-
-    superFrame->set_label_align(0.025, 0.5);
-    //  Gtk::VBox *superVBox = Gtk::manage ( new Gtk::VBox());
-    ToolParamBlock* const superBox = Gtk::manage(new ToolParamBlock());
-
-    superFrame->set_label_widget(*curvactiv);
-    ToolParamBlock* const colorBox = Gtk::manage(new ToolParamBlock());
-
-//    ToolParamBlock* const dustBox = Gtk::manage (new ToolParamBlock());
-    dustMethod->append(M("TP_LOCALLAB_DSCOP"));
-    dustMethod->append(M("TP_LOCALLAB_DSMOV"));
-    dustMethod->append(M("TP_LOCALLAB_DSPAS"));
-    dustMethod->set_active(0);
-    dustMethodConn = dustMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::dustMethodChanged));
-    dustMethod->set_tooltip_markup(M("TP_LOCALLAB_BLMETHOD_TOOLTIP"));
-
-    superBox->pack_start(*lightness);
-    superBox->pack_start(*contrast);
-    superBox->pack_start(*chroma);
-
-    superFrame->add(*superBox);
-    colorBox->pack_start(*superFrame);
-
-//    colorBox->pack_start(*warm);
-    colorBox->pack_start(*sensi);
-    /*
-        dustFrame->set_label_align(0.025, 0.5);
-        dustBox->pack_start (*dustMethod);
-        dustBox->pack_start (*lastdust);
-        dustBox->pack_start (*cutpast);
-       dustBox->pack_start (*centerXbuf);
-        dustBox->pack_start (*centerYbuf);
-       dustBox->pack_start (*adjblur);
-       dustFrame->add (*dustBox);
-      colorBox->pack_start (*dustFrame);
-      */
-    centerXbuf->hide();
-    centerYbuf->hide();
-
-    qualcurvbox->pack_start(*labqualcurv, Gtk::PACK_SHRINK, 4);
-    qualcurvbox->pack_start(*qualitycurveMethod);
-
-    colorBox->pack_start(*qualcurvbox);
-
-
-    colorBox->pack_start(*llCurveEditorG, Gtk::PACK_SHRINK, 2);
-    colorBox->pack_start(*invers);
-
-    expcolor->add(*colorBox);
-    expcolor->setLevel(2);
-    pack_start(*expcolor);
-
-    ToolParamBlock* const exposeBox = Gtk::manage(new ToolParamBlock());
-
-    curveEditorG = new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_CURVEEDITOR_TONES_LABEL"));
-    curveEditorG->setCurveListener(this);
-
-    shapeexpos = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, ""));
-    shapeexpos->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP"));
-    curveEditorG->curveListComplete();
-
-
-    exposeBox->pack_start(*expcomp);
-    exposeBox->pack_start(*hlcompr);
-    exposeBox->pack_start(*hlcomprthresh);
-    exposeBox->pack_start(*black);
-    exposeBox->pack_start(*shcompr);
-    exposeBox->pack_start(*warm);
-    exposeBox->pack_start(*sensiex);
-    exposeBox->pack_start(*curveEditorG);
-
-    expexpose->add(*exposeBox);
-    expexpose->setLevel(2);
-    pack_start(*expexpose);
-
-    ToolParamBlock* const vibranceBox = Gtk::manage(new ToolParamBlock());
-    std::vector<GradientMilestone> milestonesvib;
-    float R, G, B;
-    // -0.1 rad < Hue < 1.6 rad
-    Color::hsv2rgb01(0.92f, 0.45f, 0.6f, R, G, B);
-    milestonesvib.push_back(GradientMilestone(0.0, double (R), double (G), double (B)));
-    Color::hsv2rgb01(0.14056f, 0.45f, 0.6f, R, G, B);
-    milestonesvib.push_back(GradientMilestone(1.0, double (R), double (G), double (B)));
-
-    saturated = Gtk::manage(new Adjuster(M("TP_VIBRANCE_SATURATED"), -100., 100., 1., 0.));
-    saturated->setAdjusterListener(this);
-    saturated->set_sensitive(false);
-    vibranceBox->pack_start(*saturated, Gtk::PACK_SHRINK, 0);
-
-    pastels = Gtk::manage(new Adjuster(M("TP_VIBRANCE_PASTELS"), -100., 100., 1., 0.));
-    pastels->setAdjusterListener(this);
-    vibranceBox->pack_start(*pastels, Gtk::PACK_SHRINK, 0);
-
-    psThreshold = Gtk::manage(new ThresholdAdjuster(M("TP_VIBRANCE_PSTHRESHOLD"), -100., 100., 0., M("TP_VIBRANCE_PSTHRESHOLD_WEIGTHING"), 0, 0., 100., 75., M("TP_VIBRANCE_PSTHRESHOLD_SATTHRESH"), 0, this, false));
-    psThreshold->setAdjusterListener(this);
-    psThreshold->set_tooltip_markup(M("TP_VIBRANCE_PSTHRESHOLD_TOOLTIP"));
-    psThreshold->set_sensitive(false);
-    vibranceBox->pack_start(*psThreshold, Gtk::PACK_SHRINK, 0);
-
-    protectSkins = Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_PROTECTSKINS")));
-    protectSkins->set_active(true);
-    vibranceBox->pack_start(*protectSkins, Gtk::PACK_SHRINK, 0);
-
-    avoidColorShift = Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_AVOIDCOLORSHIFT")));
-    avoidColorShift->set_active(true);
-    vibranceBox->pack_start(*avoidColorShift, Gtk::PACK_SHRINK, 0);
-
-    pastSatTog = Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_PASTSATTOG")));
-    pastSatTog->set_active(true);
-    vibranceBox->pack_start(*pastSatTog, Gtk::PACK_SHRINK, 0);
-
-    sensiv = Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 19));
-    sensiv->setAdjusterListener(this);
-
-    vibranceBox->pack_start(*sensiv, Gtk::PACK_SHRINK, 0);
-
-    curveEditorGG = new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL"));
-    curveEditorGG->setCurveListener(this);
-
-    skinTonesCurve = static_cast<DiagonalCurveEditor*>(curveEditorGG->addCurve(CT_Diagonal, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES")));
-    skinTonesCurve->setTooltip(M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP"));
-    skinTonesCurve->setBottomBarBgGradient(milestonesvib);
-    skinTonesCurve->setLeftBarBgGradient(milestonesvib);
-    skinTonesCurve->setRangeLabels(
-        M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1"), M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2"),
-        M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3"), M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4")
-    );
-    skinTonesCurve->setRangeDefaultMilestones(0.1, 0.4, 0.85);
-    curveEditorGG->curveListComplete();
-
-    vibranceBox->pack_start(*curveEditorGG, Gtk::PACK_SHRINK, 4);
-
-    pskinsconn = protectSkins->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::protectskins_toggled));
-    ashiftconn = avoidColorShift->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::avoidcolorshift_toggled));
-    pastsattogconn = pastSatTog->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::pastsattog_toggled));
-
-    expvibrance->add(*vibranceBox);
-    expvibrance->setLevel(2);
-    pack_start(*expvibrance);
-
-    ToolParamBlock* const blurrBox = Gtk::manage(new ToolParamBlock());
-    blurMethod->append(M("TP_LOCALLAB_BLNORM"));
-    blurMethod->append(M("TP_LOCALLAB_BLINV"));
-    blurMethod->append(M("TP_LOCALLAB_BLSYM"));
-    blurMethod->set_active(0);
-    blurMethodConn = blurMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::blurMethodChanged));
-    blurMethod->set_tooltip_markup(M("TP_LOCALLAB_BLMETHOD_TOOLTIP"));
-
-    blurrBox->pack_start(*radius);
-    blurrBox->pack_start(*strength);
-    blurrBox->pack_start(*sensibn);
-    blurrBox->pack_start(*blurMethod);
-
-
-    blurrBox->pack_start(*activlum);
-
-    expblur->add(*blurrBox);
-    expblur->setLevel(2);
-    pack_start(*expblur);
-    ToolParamBlock* const tmBox = Gtk::manage(new ToolParamBlock());
-
-    tmBox->pack_start(*stren);
-    tmBox->pack_start(*gamma);
-    tmBox->pack_start(*estop);
-    tmBox->pack_start(*scaltm);
-    tmBox->pack_start(*rewei);
-    tmBox->pack_start(*sensitm);
-
-    exptonemap->add(*tmBox);
-    exptonemap->setLevel(2);
-    pack_start(*exptonemap);
-
-    ToolParamBlock* const retiBox = Gtk::manage(new ToolParamBlock());
-
-    retiBox->pack_start(*retinexMethod);
-    retiBox->pack_start(*str);
-    retiBox->pack_start(*chrrt);
-    retiBox->pack_start(*neigh);
-    retiBox->pack_start(*vart);
-    retiBox->pack_start(*sensih);
-    retiBox->pack_start(*retrab);
-
-    retiBox->pack_start(*LocalcurveEditorgainTrab, Gtk::PACK_SHRINK, 4);
-
-    retiBox->pack_start(*LocalcurveEditorgainT, Gtk::PACK_SHRINK, 4);
-    retiBox->pack_start(*inversret);
-
-    expreti->add(*retiBox);
-    expreti->setLevel(2);
-    pack_start(*expreti);
-
-
-    expsharp->add(*sharpBox);
-    expsharp->setLevel(2);
-    pack_start(*expsharp);
-
-    expcbdl->add(*cbdlBox);
-    expcbdl->setLevel(2);
-    pack_start(*expcbdl);
-
     expdenoi->add(*denoisBox);
     expdenoi->setLevel(2);
-    pack_start(*expdenoi);
 
+    panel->pack_start(*expdenoi, false, false);
 
-//    pack_start (*transit);
-    pack_start(*avoid); //keep avoid clor shift in case of
+    panel->pack_start(*avoid);
 
-    neutrHBox = Gtk::manage(new Gtk::HBox());
-
-    neutral = Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_NEUTRAL")));
-    RTImage *resetImg = Gtk::manage(new RTImage("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
-    neutral->set_image(*resetImg);
-    neutral->set_tooltip_text(M("TP_LOCALLAB_NEUTRAL_TIP"));
-    neutralconn = neutral->signal_pressed().connect(sigc::mem_fun(*this, &Locallab::neutral_pressed));
-    neutral->show();
-    neutrHBox->pack_start(*neutral);
-    pack_start(*neutrHBox);
-
+    pack_start(*panel);
     show_all();
 }
 
 Locallab::~Locallab()
 {
-    delete LocalcurveEditorgainT;
-    delete LocalcurveEditorgainTrab;
     delete llCurveEditorG;
-
+    delete curveEditorG;
+    delete curveEditorGG;
+    delete LocalcurveEditorgainT;
 }
 void Locallab::foldAllButMe(GdkEventButton* event, MyExpander *expander)
 {
@@ -1072,117 +706,6 @@ void Locallab::updateToolState(std::vector<int> &tpOpen)
     }
 }
 
-
-
-void Locallab::neutral_pressed()
-{
-    // TODO Locallab printf
-    printf("neutral_pressed\n");
-
-    // TODO Locallab To be deleted
-    /*
-    Smethod->set_active(0);
-    shapemethod->set_active(0);
-    Exclumethod->set_active(0);
-    locX->resetValue(false);
-    locXL->resetValue(false);
-    locY->resetValue(false);
-    locYT->resetValue(false);
-    centerX->resetValue(false);
-    centerY->resetValue(false);
-    circrad->resetValue(false);
-    centerXbuf->resetValue(false);
-    centerYbuf->resetValue(false);
-    adjblur->resetValue(false);
-    blurMethod->set_active(0);
-    dustMethod->set_active(1);
-    sensiexclu->resetValue(false);
-    struc->resetValue(false);
-    qualityMethod->set_active(1);
-    qualitycurveMethod->set_active(0);
-    thres->resetValue(false);
-    proxi->resetValue(false);
-    lightness->resetValue(false);
-    chroma->resetValue(false);
-    warm->resetValue(false);
-    contrast->resetValue(false);
-    sensi->resetValue(false);
-    radius->resetValue(false);
-    strength->resetValue(false);
-    transit->resetValue(false);
-    sensibn->resetValue(false);
-    invers->set_active(false);
-    cutpast->set_active(false);
-    lastdust->set_active(false);
-    curvactiv->set_active(false);
-    inversrad->set_active(false);
-    inversret->set_active(false);
-    protectSkins->set_active(false);
-    avoidColorShift->set_active(true);
-    pastSatTog->set_active(true);
-    expcolor->setEnabled(false);
-    expexpose->setEnabled(false);
-    expvibrance->setEnabled(false);
-    expblur->setEnabled(false);
-    exptonemap->setEnabled(false);
-    expreti->setEnabled(false);
-    expsharp->setEnabled(false);
-    expcbdl->setEnabled(false);
-    expdenoi->setEnabled(false);
-    stren->resetValue(false);
-    gamma->resetValue(false);
-    estop->resetValue(false);
-    scaltm->resetValue(false);
-    rewei->resetValue(false);
-    sensitm->resetValue(false);
-    retinexMethod->set_active(2);
-    str->resetValue(false);
-    neigh->resetValue(false);
-    vart->resetValue(false);
-    chrrt->resetValue(false);
-    sensih->resetValue(false);
-    retrab->resetValue(false);
-    expcomp->resetValue(false);
-    hlcompr->resetValue(false);
-    hlcomprthresh->resetValue(false);
-    black->resetValue(false);
-    shcompr->resetValue(false);
-    sensiex->resetValue(false);
-    cTgainshape->reset();
-    llshape->reset();
-    ccshape->reset();
-    LHshape->reset();
-    HHshape->reset();
-    shapeexpos->reset();
-    skinTonesCurve->reset();
-    avoid->set_active(false);
-
-    for (int i = 0; i < 5; i++) {
-        multiplier[i]->resetValue(false);
-    }
-
-    chromacbdl->resetValue(false);
-    threshold->resetValue(false);
-    sensicb->resetValue(false);
-    sharradius->resetValue(false);
-    sharamount->resetValue(false);
-    shardamping->resetValue(false);
-    shariter->resetValue(false);
-    sensisha->resetValue(false);
-    inverssha->set_active(false);
-    noiselumf->resetValue(false);
-    noiselumc->resetValue(false);
-    noiselumdetail->resetValue(false);
-    noiselequal->resetValue(false);
-    noisechrof->resetValue(false);
-    noisechroc->resetValue(false);
-    noisechrodetail->resetValue(false);
-    bilateral->resetValue(false);
-    sensiden->resetValue(false);
-    */
-}
-
-
 void Locallab::lumaneutralPressed()
 {
     // TODO Locallab printf
@@ -1195,7 +718,6 @@ void Locallab::lumaneutralPressed()
     // Raise event (only for first multiplier because associated event concerns all multipliers)
     adjusterChanged(multiplier[0], multiplier[0]->getValue()); // Value isn't used
 }
-
 
 void Locallab::lumacontrastPlusPressed()
 {
@@ -1211,7 +733,6 @@ void Locallab::lumacontrastPlusPressed()
     adjusterChanged(multiplier[0], multiplier[0]->getValue()); // Value isn't used
 }
 
-
 void Locallab::lumacontrastMinusPressed()
 {
     // TODO Locallab printf
@@ -1225,924 +746,6 @@ void Locallab::lumacontrastMinusPressed()
     // Raise event (only for first multiplier because associated event concerns all multipliers)
     adjusterChanged(multiplier[0], multiplier[0]->getValue()); // Value isn't used
 }
-
-int localChangedUI(void* data)
-{
-    // TODO Locallab printf
-    printf("localChangedUI\n");
-
-    /*
-    GThreadLock lock;
-    (static_cast<Locallab*>(data))->localComputed_();
-    */
-
-    return 0;
-}
-
-int localretChangedUI(void* data)
-{
-    // TODO Locallab printf
-    printf("localretChangedUI\n");
-
-    /*
-    GThreadLock lock;
-    (static_cast<Locallab*>(data))->localretComputed_();
-    */
-
-    return 0;
-}
-
-bool Locallab::localretComputed_()
-{
-    // TODO Locallab printf
-    printf("localretComputed_\n");
-
-    /*
-    disableListener();
-
-    //Reticurv
-    //update GUI and MIP specially for curve
-
-    int *s_datc;
-    s_datc = new int[70];
-    int siz;
-    //printf("nexts=%s\n", nextstr2.c_str());
-    ImProcFunctions::strcurv_data(nextstr2, s_datc, siz);
-    std::vector<double>   creti;
-
-    for (int j = 0; j < siz; j++) {
-        creti.push_back((double)(s_datc[j]) / 1000.);
-    }
-
-    delete [] s_datc;
-
-    cTgainshape->setCurve(creti);
-
-    int *s_datcl;
-    s_datcl = new int[70];
-    int sizl;
-    ImProcFunctions::strcurv_data(nextll_str2, s_datcl, sizl);
-    std::vector<double>   cll;
-
-    for (int j = 0; j < sizl; j++) {
-        cll.push_back((double)(s_datcl[j]) / 1000.);
-    }
-
-    delete [] s_datcl;
-
-    llshape->setCurve(cll);
-
-
-    int *s_datcc;
-    s_datcc = new int[70];
-    int sizc;
-    ImProcFunctions::strcurv_data(nextcc_str2, s_datcc, sizc);
-    std::vector<double>   ccc;
-
-    for (int j = 0; j < sizc; j++) {
-        ccc.push_back((double)(s_datcc[j]) / 1000.);
-    }
-
-    delete [] s_datcc;
-
-    ccshape->setCurve(ccc);
-
-    int *s_datch;
-    s_datch = new int[70];
-    int sizh;
-    ImProcFunctions::strcurv_data(nextlh_str2, s_datch, sizh);
-    std::vector<double>   clh;
-
-    for (int j = 0; j < sizh; j++) {
-        clh.push_back((double)(s_datch[j]) / 1000.);
-    }
-
-    delete [] s_datch;
-
-    LHshape->setCurve(clh);
-
-
-    int *s_datchh;
-    s_datchh = new int[70];
-    int sizhh;
-    ImProcFunctions::strcurv_data(nexthh_str2, s_datchh, sizhh);
-    std::vector<double>   chh;
-
-    for (int j = 0; j < sizhh; j++) {
-        chh.push_back((double)(s_datchh[j]) / 1000.);
-    }
-
-    delete [] s_datchh;
-
-    HHshape->setCurve(chh);
-
-    //skinTonesCurve
-    int *s_datcsk;
-    s_datcsk = new int[70];
-    int sizsk;
-    ImProcFunctions::strcurv_data(nextsk_str2, s_datcsk, sizsk);
-    std::vector<double>   csk;
-
-    for (int j = 0; j < sizsk; j++) {
-        csk.push_back((double)(s_datcsk[j]) / 1000.);
-    }
-
-    delete [] s_datcsk;
-
-    skinTonesCurve->setCurve(csk);
-
-    //PSthreshold
-    int sizps = 2;
-    int s_datcps[sizps + 1];
-    ImProcFunctions::strcurv_data(nextps_str2, s_datcps, sizps);
-    psThreshold->setValue(s_datcps[0], s_datcps[1]);
-
-
-    //exCurve
-    int *s_datcex;
-    s_datcex = new int[70];
-    int sizex;
-    ImProcFunctions::strcurv_data(nextex_str2, s_datcex, sizex);
-    std::vector<double>   cex;
-
-    for (int j = 0; j < sizex; j++) {
-        cex.push_back((double)(s_datcex[j]) / 1000.);
-    }
-
-    delete [] s_datcex;
-
-    shapeexpos->setCurve(cex);
-
-    enableListener();
-
-    //update all sliders by this strange process!
-    if (anbspot->getValue() == 0) {
-        anbspot->setValue(1);
-
-        if (options.rtSettings.locdelay) {
-            if (anbspot->delay < 100) {
-                anbspot->delay = 100;
-            }
-        }
-
-        adjusterChanged(anbspot, 1);
-
-    } else if (anbspot->getValue() == 1) {
-        anbspot->setValue(0);
-
-        if (options.rtSettings.locdelay) {
-            if (anbspot->delay < 100) {
-                anbspot->delay = 100;
-            }
-        }
-
-        adjusterChanged(anbspot, 0);
-
-    }
-
-    //update all curves
-    std::vector<double>   cretirab;
-    cretirab = cTgainshaperab->getCurve();
-
-    if (cretirab.at(5) == 0.70) {
-        cretirab.at(5) = 0.9;
-        cTgainshaperab->setCurve(cretirab);
-
-        curveChanged(cTgainshaperab);
-    } else if (cretirab.at(5) == 0.90) {
-        cretirab.at(5) = 0.7;
-        cTgainshaperab->setCurve(cretirab);
-        curveChanged(cTgainshaperab);
-
-    }
-
-
-    //    printf("G2 anbspot=%i\n", anbspot->getValue());
-
-    if (listener) { //for all sliders
-        listener->panelChanged(Evlocallabanbspot, ""); //anbspot->getTextValue());
-    }
-
-    if (listener) {//for curve
-        listener->panelChanged(EvlocallabCTgainCurverab, M(""));
-    }
-
-    if (listener) {//for curve
-        listener->panelChanged(EvlocallabCTgainCurve, M(""));
-    }
-
-    if (listener) {//for curve
-        listener->panelChanged(Evlocallabllshape, M(""));
-    }
-
-    if (listener) {//for curve
-        listener->panelChanged(Evlocallabccshape, M(""));
-    }
-
-    if (listener) {//for curve
-        listener->panelChanged(EvlocallabLHshape, M(""));
-    }
-
-    if (listener) {//for curve
-        listener->panelChanged(EvlocallabHHshape, M(""));
-    }
-
-    if (listener) {//for curve
-        listener->panelChanged(EvlocallabSkinTonesCurve, M(""));
-    }
-
-    if (listener) {//for PSthreshold
-        listener->panelChanged(EvlocallabPastSatThreshold, M(""));
-    }
-
-    if (listener) {//for excurve
-        listener->panelChanged(Evlocallabshapeexpos, M(""));
-    }
-    */
-
-    return false;
-
-}
-
-bool Locallab::localComputed_()
-{
-    // TODO Locallab printf
-    printf("localComputed_\n");
-
-    /*
-    //update GUI and MIP
-    disableListener();
-
-    //size spot
-    circrad->setValue(nextdatasp[2]);
-    //center and cursor
-    locX->setValue(nextdatasp[3]);
-    locY->setValue(nextdatasp[4]);
-    locYT->setValue(nextdatasp[5]);
-    locXL->setValue(nextdatasp[6]);
-    centerX->setValue(nextdatasp[7]);
-    centerY->setValue(nextdatasp[8]);
-
-    //sliders
-    lightness->setValue(nextdatasp[9]);
-    contrast->setValue(nextdatasp[10]);
-    chroma->setValue(nextdatasp[11]);
-    sensi->setValue(nextdatasp[12]);
-    transit->setValue(nextdatasp[13]);
-
-    //inverse
-    if (nextdatasp[14] == 0) {
-        invers->set_active(false);
-    } else {
-        invers->set_active(true);
-    }
-
-    //method cursor
-    if (nextdatasp[15] == 0) {
-        Smethod->set_active(0);
-    } else if (nextdatasp[15] == 1) {
-        Smethod->set_active(1);
-    } else if (nextdatasp[15] == 2) {
-        Smethod->set_active(2);
-    } else if (nextdatasp[15] == 3) {
-        Smethod->set_active(3);
-    }
-
-    //nbspot->setValue(nextdatasp[16]);
-
-    //sliders blurr
-    radius->setValue(nextdatasp[17]);
-    strength->setValue(nextdatasp[18]);
-    sensibn->setValue(nextdatasp[19]);
-
-    //inverse
-    if (nextdatasp[20] == 0) {
-        inversrad->set_active(false);
-    } else {
-        inversrad->set_active(true);
-    }
-
-    //sliders retinex
-    str->setValue(nextdatasp[21]);
-    chrrt->setValue(nextdatasp[22]);
-    neigh->setValue(nextdatasp[23]);
-    vart->setValue(nextdatasp[24]);
-    sensih->setValue(nextdatasp[25]);
-
-    //inverse
-    if (nextdatasp[26] == 0) {
-        inversret->set_active(false);
-    } else {
-        inversret->set_active(true);
-    }
-
-    //method retinex
-    if (nextdatasp[27] == 0) {
-        retinexMethod->set_active(0);
-    } else if (nextdatasp[27] == 1) {
-        retinexMethod->set_active(1);
-    } else if (nextdatasp[27] == 2) {
-        retinexMethod->set_active(2);
-    }
-
-    //sharpening
-    sharradius->setValue(nextdatasp[28]);
-    sharamount->setValue(nextdatasp[29]);
-    shardamping->setValue(nextdatasp[30]);
-    shariter->setValue(nextdatasp[31]);
-    sensisha->setValue(nextdatasp[32]);
-
-    if (nextdatasp[33] == 0) {
-        inverssha->set_active(false);
-    } else {
-        inverssha->set_active(true);
-    }
-
-    if (nextdatasp[34] == 0) {
-        qualityMethod->set_active(0);
-    } else if (nextdatasp[34] == 1) {
-        qualityMethod->set_active(1);
-    } else if (nextdatasp[34] == 2) {
-        qualityMethod->set_active(2);
-    }
-
-    thres->setValue(nextdatasp[35]);
-    proxi->setValue(nextdatasp[36]);
-
-    //denoise
-    noiselumf->setValue(nextdatasp[37]);
-    noiselumc->setValue(nextdatasp[38]);
-    noisechrof->setValue(nextdatasp[39]);
-    noisechroc->setValue(nextdatasp[40]);
-
-    //cbdl
-    multiplier[0]->setValue(nextdatasp[41]);
-    multiplier[1]->setValue(nextdatasp[42]);
-    multiplier[2]->setValue(nextdatasp[43]);
-    multiplier[3]->setValue(nextdatasp[44]);
-    multiplier[4]->setValue(nextdatasp[45]);
-    threshold->setValue(nextdatasp[46]);
-    sensicb->setValue(nextdatasp[47]);
-
-    //blur luma
-    if (nextdatasp[48] == 0) {
-        activlum->set_active(false);
-    } else {
-        activlum->set_active(true);
-    }
-
-    //TM
-    stren->setValue(nextdatasp[49]);
-    gamma->setValue(nextdatasp[50]);
-    estop->setValue(nextdatasp[51]);
-    scaltm->setValue(nextdatasp[52]);
-    rewei->setValue(nextdatasp[53]);
-    sensitm->setValue(nextdatasp[54]);
-    //  usleep(10000);
-
-    //Reticurv
-    retrab->setValue(nextdatasp[55]);
-
-    //curvactiv
-    if (nextdatasp[56] == 0) {
-        curvactiv->set_active(false);
-    } else {
-        curvactiv->set_active(true);
-    }
-
-    if (nextdatasp[57] == 0) {
-        qualitycurveMethod->set_active(0);
-    } else if (nextdatasp[57] == 1) {
-        qualitycurveMethod->set_active(1);
-    } else if (nextdatasp[57] == 2) {
-        qualitycurveMethod->set_active(2);
-    }
-
-    sensiv->setValue(nextdatasp[58]);
-    pastels->setValue(nextdatasp[59]);
-    saturated->setValue(nextdatasp[60]);
-
-    //protectskin
-    if (nextdatasp[61] == 0) {
-        protectSkins->set_active(false);
-    } else {
-        protectSkins->set_active(true);
-    }
-
-    //avoidColorShift
-    if (nextdatasp[62] == 0) {
-        avoidColorShift->set_active(false);
-    } else {
-        avoidColorShift->set_active(true);
-    }
-
-    //pastSatTog
-    if (nextdatasp[63] == 0) {
-        pastSatTog->set_active(false);
-        adjusterChanged(pastels, pastels->getValue());
-        adjusterChanged(saturated, saturated->getValue());
-
-    } else {
-        pastSatTog->set_active(true);
-        adjusterChanged(pastels, pastels->getValue());
-        adjusterChanged(saturated, saturated->getValue());
-
-    }
-
-    expcomp->setValue(nextdatasp[64]);
-    black->setValue(nextdatasp[65]);
-    hlcompr->setValue(nextdatasp[66]);
-    hlcomprthresh->setValue(nextdatasp[67]);
-    shcompr->setValue(nextdatasp[68]);
-    sensiex->setValue(nextdatasp[69]);
-
-    centerXbuf->setValue(nextdatasp[70]);
-    centerYbuf->setValue(nextdatasp[71]);
-    adjblur->setValue(nextdatasp[72]);
-
-    //protectskin
-    if (nextdatasp[73] == 0) {
-        cutpast->set_active(false);
-    } else {
-        cutpast->set_active(true);
-    }
-
-    chromacbdl->setValue(nextdatasp[74]);
-
-    if (nextdatasp[75] == 0) {
-        lastdust->set_active(false);
-    } else {
-        lastdust->set_active(true);
-    }
-
-    if (nextdatasp[76] == 0) {
-        blurMethod->set_active(0);
-    } else if (nextdatasp[76] == 1) {
-        blurMethod->set_active(1);
-    } else if (nextdatasp[76] == 2) {
-        blurMethod->set_active(2);
-    }
-
-    if (nextdatasp[77] == 0) {
-        dustMethod->set_active(0);
-    } else if (nextdatasp[77] == 1) {
-        dustMethod->set_active(1);
-    } else if (nextdatasp[77] == 2) {
-        dustMethod->set_active(2);
-    }
-
-    if (nextdatasp[78] == 0) {
-        Exclumethod->set_active(0);
-    } else if (nextdatasp[78] == 1) {
-        Exclumethod->set_active(1);
-    }
-
-    sensiexclu->setValue(nextdatasp[79]);
-    struc->setValue(nextdatasp[80]);
-    warm->setValue(nextdatasp[81]);
-    noiselumdetail->setValue(nextdatasp[82]);
-    noisechrodetail->setValue(nextdatasp[83]);
-    sensiden->setValue(nextdatasp[84]);
-
-    //exp
-    if (nextdatasp[85] == 0) {
-        expdenoi->setEnabled(false);
-    } else {
-        expdenoi->setEnabled(true);
-    }
-
-    if (nextdatasp[86] == 0) {
-        expcolor->setEnabled(false);
-    } else {
-        expcolor->setEnabled(true);
-    }
-
-    if (nextdatasp[87] == 0) {
-        expvibrance->setEnabled(false);
-    } else {
-        expvibrance->setEnabled(true);
-    }
-
-    if (nextdatasp[88] == 0) {
-        expblur->setEnabled(false);
-    } else {
-        expblur->setEnabled(true);
-    }
-
-    if (nextdatasp[89] == 0) {
-        exptonemap->setEnabled(false);
-    } else {
-        exptonemap->setEnabled(true);
-    }
-
-    if (nextdatasp[90] == 0) {
-        expreti->setEnabled(false);
-    } else {
-        expreti->setEnabled(true);
-    }
-
-    if (nextdatasp[91] == 0) {
-        expsharp->setEnabled(false);
-    } else {
-        expsharp->setEnabled(true);
-    }
-
-    if (nextdatasp[92] == 0) {
-        expcbdl->setEnabled(false);
-    } else {
-        expcbdl->setEnabled(true);
-    }
-
-    if (nextdatasp[93] == 0) {
-        expexpose->setEnabled(false);
-    } else {
-        expexpose->setEnabled(true);
-    }
-
-    bilateral->setValue(nextdatasp[94]);
-    noiselequal->setValue(nextdatasp[95]);
-
-    if (nextdatasp[96] == 0) {
-        shapemethod->set_active(0);
-    } else if (nextdatasp[96] == 1) {
-        shapemethod->set_active(1);
-    }
-
-
-
-    double intermedblur = 0.01 * (double) nextdatasp[nextlength - 5];
-    huerefblur->setValue(intermedblur);
-    double intermed = 0.01 * (double) nextdatasp[nextlength - 4];
-    hueref->setValue(intermed);
-
-    chromaref->setValue(nextdatasp[nextlength - 3]);
-    lumaref->setValue(nextdatasp[nextlength - 2]);
-    sobelref->setValue(nextdatasp[nextlength - 1]);
-
-    int *s_datc;
-    s_datc = new int[70];
-    int siz;
-    ImProcFunctions::strcurv_data(nextstr, s_datc, siz);
-
-
-    std::vector<double>   creti;
-
-    for (int j = 0; j < siz; j++) {
-        creti.push_back((double)(s_datc[j]) / 1000.);
-    }
-
-    delete [] s_datc;
-
-    cTgainshape->setCurve(creti);
-
-    //LLcurv
-    int *s_datcl;
-    s_datcl = new int[70];
-    int sizl;
-    ImProcFunctions::strcurv_data(nextll_str, s_datcl, sizl);
-
-
-    std::vector<double>   cll;
-
-    for (int j = 0; j < sizl; j++) {
-        cll.push_back((double)(s_datcl[j]) / 1000.);
-    }
-
-    delete [] s_datcl;
-    llshape->setCurve(cll);
-
-    //CCcurv
-    int *s_datcc;
-    s_datcc = new int[70];
-    int sizc;
-    ImProcFunctions::strcurv_data(nextcc_str, s_datcc, sizc);
-
-
-    std::vector<double>   ccc;
-
-    for (int j = 0; j < sizc; j++) {
-        ccc.push_back((double)(s_datcc[j]) / 1000.);
-    }
-
-    delete [] s_datcc;
-    ccshape->setCurve(ccc);
-
-
-    //LHcurv
-    int *s_datch;
-    s_datch = new int[70];
-    int sizh;
-    ImProcFunctions::strcurv_data(nextlh_str, s_datch, sizh);
-
-
-    std::vector<double>   clh;
-
-    for (int j = 0; j < sizh; j++) {
-        clh.push_back((double)(s_datch[j]) / 1000.);
-    }
-
-    delete [] s_datch;
-    LHshape->setCurve(clh);
-
-    //HHcurv
-    int *s_datchh;
-    s_datchh = new int[70];
-    int sizhh;
-    ImProcFunctions::strcurv_data(nexthh_str, s_datchh, sizhh);
-
-
-    std::vector<double>   chh;
-
-    for (int j = 0; j < sizhh; j++) {
-        chh.push_back((double)(s_datchh[j]) / 1000.);
-    }
-
-    delete [] s_datchh;
-    HHshape->setCurve(chh);
-
-    //skinTonesCurve
-    int *s_datcsk;
-    s_datcsk = new int[70];
-    int sizsk;
-    ImProcFunctions::strcurv_data(nextsk_str, s_datcsk, sizsk);
-    std::vector<double>   csk;
-
-    for (int j = 0; j < sizsk; j++) {
-        csk.push_back((double)(s_datcsk[j]) / 1000.);
-    }
-
-    delete [] s_datcsk;
-
-    skinTonesCurve->setCurve(csk);
-
-    //PSthreshold
-    int sizps = 2;
-    int s_datcps[sizps + 1];
-    ImProcFunctions::strcurv_data(nextps_str, s_datcps, sizps);
-    psThreshold->setValue(s_datcps[0], s_datcps[1]);
-
-
-    //exCurve
-    int *s_datcex;
-    s_datcex = new int[70];
-    int sizex;
-    ImProcFunctions::strcurv_data(nextex_str, s_datcex, sizex);
-    std::vector<double>   cex;
-
-    for (int j = 0; j < sizex; j++) {
-        cex.push_back((double)(s_datcex[j]) / 1000.);
-    }
-
-    delete [] s_datcex;
-    shapeexpos->setCurve(cex);
-
-
-    enableListener();
-
-    //update all sliders by this strange process!
-    if (anbspot->getValue() == 0) {
-        anbspot->setValue(1);
-
-        if (options.rtSettings.locdelay) {
-            if (anbspot->delay < 100) {
-                anbspot->delay = 100;
-            }
-        }
-
-        adjusterChanged(anbspot, 1);
-
-    } else if (anbspot->getValue() == 1) {
-        anbspot->setValue(0);
-
-        if (options.rtSettings.locdelay) {
-            if (anbspot->delay < 100) {
-                anbspot->delay = 100;
-            }
-        }
-
-        adjusterChanged(anbspot, 0);
-
-    }
-
-
-    //update all curves
-    std::vector<double>   cretirab;
-    cretirab = cTgainshaperab->getCurve();
-
-    if (cretirab.at(5) == 0.70) {
-        cretirab.at(5) = 0.9;
-        cTgainshaperab->setCurve(cretirab);
-
-        curveChanged(cTgainshaperab);
-    } else if (cretirab.at(5) == 0.90) {
-        cretirab.at(5) = 0.7;
-        cTgainshaperab->setCurve(cretirab);
-        curveChanged(cTgainshaperab);
-
-    }
-
-    //
-
-    //   printf("G1 maj anbspot=%i  cretirab=%f\n", anbspot->getValue(), cretirab.at(5));
-
-
-    //add events for each cases whitout that localalb does not work...
-    //there is probably an other solution !
-
-    if (listener) { //for all sliders
-        listener->panelChanged(Evlocallabanbspot, ""); //anbspot->getTextValue());
-    }
-
-    if (listener) {//for curve
-        listener->panelChanged(EvlocallabCTgainCurverab, M(""));
-    }
-
-    if (listener) {//for inverse color
-        listener->panelChanged(Evlocallabinvers, M("GENERAL_ENABLED"));
-    }
-
-    if (listener) {//for cutpast
-        //   listener->panelChanged (Evlocallabcutpast, M ("GENERAL_ENABLED"));
-    }
-
-    if (listener) {//for cutpast
-        //    listener->panelChanged (Evlocallablastdust, M ("GENERAL_ENABLED"));
-    }
-
-    if (listener) {//for blur method
-        listener->panelChanged(EvlocallabblurMethod, blurMethod->get_active_text());
-    }
-
-    if (listener) {//for dust method
-        //    listener->panelChanged (EvlocallabdustMethod, dustMethod->get_active_text ());
-    }
-
-    if (listener) {//for Exclude method
-        listener->panelChanged(Evlocallabexclumethod, Exclumethod->get_active_text());
-    }
-
-    if (listener) {//for shape RT-spot method
-        listener->panelChanged(Evlocallabshapemethod, shapemethod->get_active_text());
-    }
-
-    if (listener) {//for curvactiv
-        listener->panelChanged(Evlocallabcurvactiv, M("GENERAL_ENABLED"));
-    }
-
-    if (listener) {//for inverse blurr
-        listener->panelChanged(Evlocallabinversrad, M("GENERAL_ENABLED"));
-    }
-
-    if (listener) {//for quality method
-        listener->panelChanged(EvlocallabqualityMethod, qualityMethod->get_active_text());
-    }
-
-    if (listener) {//for quality method
-        listener->panelChanged(EvlocallabqualitycurveMethod, qualitycurveMethod->get_active_text());
-    }
-
-    if (listener) {//for inverse retinex
-        listener->panelChanged(Evlocallabinversret, M("GENERAL_ENABLED"));
-    }
-
-    if (listener) {//for inverse sharpen
-        listener->panelChanged(Evlocallabinverssha, M("GENERAL_ENABLED"));
-    }
-
-    if (listener) {//for Smethod : position of mouse cursor
-        listener->panelChanged(EvlocallabSmet, Smethod->get_active_text());
-    }
-
-    if (listener) {//for retinex method
-        listener->panelChanged(EvlocallabretinexMethod, retinexMethod->get_active_text());
-    }
-
-    if (listener) {//for curve reti
-        listener->panelChanged(EvlocallabCTgainCurve, M(""));
-    }
-
-    if (listener) {//for curve LL
-        listener->panelChanged(Evlocallabllshape, M(""));
-    }
-
-    if (listener) {//for curve LH
-        listener->panelChanged(EvlocallabLHshape, M(""));
-    }
-
-    if (listener) {//for curve LH
-        listener->panelChanged(Evlocallabccshape, M(""));
-    }
-
-    if (listener) {//for curve LH
-        listener->panelChanged(EvlocallabHHshape, M(""));
-    }
-
-    if (listener) {//for curve Skin
-        listener->panelChanged(EvlocallabSkinTonesCurve, M(""));
-    }
-
-    if (listener) {//for PSthreshold
-        listener->panelChanged(EvlocallabPastSatThreshold, M(""));
-    }
-
-    //for checkbox
-    if (listener) {//f
-        listener->panelChanged(EvlocallabProtectSkins, M(""));
-    }
-
-    if (listener) {//fo
-        listener->panelChanged(EvlocallabAvoidColorShift, M(""));
-    }
-
-    if (listener) {//for
-        listener->panelChanged(EvlocallabPastSatTog, M(""));
-    }
-
-    if (listener) {//for expo curv
-        listener->panelChanged(Evlocallabshapeexpos, M(""));
-    }
-
-    if (listener) {//for expander denoise
-        listener->panelChanged(EvLocenadenoi, M(""));
-    }
-
-    if (listener) {//for expander color
-        listener->panelChanged(EvLocenacolor, M(""));
-    }
-
-    if (listener) {//for expander vib
-        listener->panelChanged(EvLocenavibrance, M(""));
-    }
-
-    if (listener) {//for expander tonem
-        listener->panelChanged(EvLocenatonemap, M(""));
-    }
-
-    if (listener) {//for expander reti
-        listener->panelChanged(EvLocenareti, M(""));
-    }
-
-    if (listener) {//for expander sharp
-        listener->panelChanged(EvLocenasharp, M(""));
-    }
-
-    if (listener) {//for expander cbdl
-        listener->panelChanged(EvLocenacbdl, M(""));
-    }
-
-    if (listener) {//for expander cbdl
-        listener->panelChanged(EvLocenaexpose, M(""));
-    }
-    */
-
-
-    return false;
-}
-
-void Locallab::localChanged(int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat)
-{
-    // TODO Locallab printf
-    printf("localChanged\n");
-
-    /*
-    nextstr = datastr;
-    nextll_str = ll_str;
-    nextlh_str = lh_str;
-    nextcc_str = cc_str;
-    nexthh_str = hh_str;
-    nextsk_str = sk_str;
-    nextps_str = ps_str;
-    nextex_str = ex_str;
-    nextlength = maxdat;
-
-    for (int i = 2; i < nextlength; i++) {//be carefull to this value 102 must be the same as above ==> sobelref->setValue(nextdatasp[101]);
-        nextdatasp[i] = datasp[i][sp];
-    }
-
-    g_idle_add(localChangedUI, this);
-    */
-}
-
-void Locallab::localretChanged(int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat)
-{
-    // TODO Locallab printf
-    printf("localretChanged\n");
-
-    /*
-    nextlength = maxdat;
-    nextstr2 = datastr;
-    nextll_str2 = ll_str;
-    nextlh_str2 = lh_str;
-    nextcc_str2 = cc_str;
-    nexthh_str2 = hh_str;
-    nextsk_str2 = sk_str;
-    nextps_str2 = ps_str;
-    nextex_str2 = ex_str;
-
-    g_idle_add(localretChangedUI, this);
-    */
-}
-
 
 void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
 {
@@ -2170,6 +773,8 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
         se->isvisible = pedited->locallab.isvisible;
         se->shape = pedited->locallab.shape;
         se->spotMethod = pedited->locallab.spotMethod;
+        se->sensiexclu = pedited->locallab.sensiexclu;
+        se->struc = pedited->locallab.struc;
         se->shapeMethod = pedited->locallab.shapeMethod;
         se->locX = pedited->locallab.locX;
         se->locXL = pedited->locallab.locXL;
@@ -2288,9 +893,12 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
         noiselequal->setEditedState(pedited->locallab.noiselequal ? Edited : UnEdited);
         noisechrof->setEditedState(pedited->locallab.noisechrof ? Edited : UnEdited);
         noisechroc->setEditedState(pedited->locallab.noisechroc ? Edited : UnEdited);
+        noisechrodetail->setEditedState(pedited->locallab.noisechrodetail ? Edited : UnEdited);
         adjblur->setEditedState(pedited->locallab.adjblur ? Edited : UnEdited);
         bilateral->setEditedState(pedited->locallab.bilateral ? Edited : UnEdited);
         sensiden->setEditedState(pedited->locallab.sensiden ? Edited : UnEdited);
+
+        // Others
         avoid->set_inconsistent(multiImage && !pedited->locallab.avoid);
     }
 
@@ -2315,6 +923,9 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
         } else {
             r->spotMethod = 1;
         }
+
+        r->sensiexclu = pp->locallab.sensiexclu.at(i);
+        r->struc = pp->locallab.struc.at(i);
 
         if (pp->locallab.shapeMethod.at(i) == "IND") {
             r->shapeMethod = 0;
@@ -2402,6 +1013,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             r->isvisible = true;
             r->shape = 0;
             r->spotMethod = 0;
+            r->sensiexclu = 19;
+            r->struc = 0;
             r->shapeMethod = 2;
             r->locX = 250;
             r->locXL = 250;
@@ -2425,6 +1038,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             pp->locallab.isvisible.push_back(r->isvisible);
             pp->locallab.shape.push_back("ELI");
             pp->locallab.spotMethod.push_back("norm");
+            pp->locallab.sensiexclu.push_back(r->sensiexclu);
+            pp->locallab.struc.push_back(r->struc);
             pp->locallab.shapeMethod.push_back("INDSL");
             pp->locallab.locX.push_back(r->locX);
             pp->locallab.locXL.push_back(r->locXL);
@@ -2521,9 +1136,11 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             pp->locallab.noiselequal.push_back(7);
             pp->locallab.noisechrof.push_back(0);
             pp->locallab.noisechroc.push_back(0);
+            pp->locallab.noisechrodetail.push_back(0);
             pp->locallab.adjblur.push_back(0);
             pp->locallab.bilateral.push_back(0);
             pp->locallab.sensiden.push_back(30);
+            // Others
             pp->locallab.avoid.push_back(0);
 
             // New created spot selection
@@ -2551,6 +1168,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.isvisible.erase(pp->locallab.isvisible.begin() + i);
                     pp->locallab.shape.erase(pp->locallab.shape.begin() + i);
                     pp->locallab.spotMethod.erase(pp->locallab.spotMethod.begin() + i);
+                    pp->locallab.sensiexclu.erase(pp->locallab.sensiexclu.begin() + i);
+                    pp->locallab.struc.erase(pp->locallab.struc.begin() + i);
                     pp->locallab.shapeMethod.erase(pp->locallab.shapeMethod.begin() + i);
                     pp->locallab.locX.erase(pp->locallab.locX.begin() + i);
                     pp->locallab.locXL.erase(pp->locallab.locXL.begin() + i);
@@ -2648,9 +1267,11 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.noiselequal.erase(pp->locallab.noiselequal.begin() + i);
                     pp->locallab.noisechrof.erase(pp->locallab.noisechrof.begin() + i);
                     pp->locallab.noisechroc.erase(pp->locallab.noisechroc.begin() + i);
+                    pp->locallab.noisechrodetail.erase(pp->locallab.noisechrodetail.begin() + i);
                     pp->locallab.adjblur.erase(pp->locallab.adjblur.begin() + i);
                     pp->locallab.bilateral.erase(pp->locallab.bilateral.begin() + i);
                     pp->locallab.sensiden.erase(pp->locallab.sensiden.begin() + i);
+                    // Others
                     pp->locallab.avoid.erase(pp->locallab.avoid.begin() + i);
 
                     // Select one remaining spot
@@ -2707,6 +1328,9 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                 } else {
                     pp->locallab.spotMethod.at(pp->locallab.selspot) = "exc";
                 }
+
+                pp->locallab.sensiexclu.at(pp->locallab.selspot) = r->sensiexclu;
+                pp->locallab.struc.at(pp->locallab.selspot) = r->struc;
 
                 if (r->shapeMethod == 0) {
                     pp->locallab.shapeMethod.at(pp->locallab.selspot) = "IND";
@@ -2845,9 +1469,11 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                 pp->locallab.noiselequal.at(pp->locallab.selspot) = noiselequal->getIntValue();
                 pp->locallab.noisechrof.at(pp->locallab.selspot) = noisechrof->getIntValue();
                 pp->locallab.noisechroc.at(pp->locallab.selspot) = noisechroc->getIntValue();
+                pp->locallab.noisechrodetail.at(pp->locallab.selspot) = noisechrodetail->getIntValue();
                 pp->locallab.adjblur.at(pp->locallab.selspot) = adjblur->getIntValue();
                 pp->locallab.bilateral.at(pp->locallab.selspot) = bilateral->getIntValue();
                 pp->locallab.sensiden.at(pp->locallab.selspot) = sensiden->getIntValue();
+                // Others
                 pp->locallab.avoid.at(pp->locallab.selspot) = (int)avoid->get_active();
             }
 
@@ -2868,6 +1494,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.isvisible = se->isvisible;
         pedited->locallab.shape = se->shape;
         pedited->locallab.spotMethod = se->spotMethod;
+        pedited->locallab.sensiexclu = se->sensiexclu;
+        pedited->locallab.struc = se->struc;
         pedited->locallab.shapeMethod = se->shapeMethod;
         pedited->locallab.locX = se->locX;
         pedited->locallab.locXL = se->locXL;
@@ -2964,9 +1592,11 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.noiselequal = noiselequal->getEditedState();
         pedited->locallab.noisechrof = noisechrof->getEditedState();
         pedited->locallab.noisechroc = noisechroc->getEditedState();
+        pedited->locallab.noisechrodetail = noisechrodetail->getEditedState();
         pedited->locallab.adjblur = adjblur->getEditedState();
         pedited->locallab.bilateral = bilateral->getEditedState();
         pedited->locallab.sensiden = sensiden->getEditedState();
+        // Others
         pedited->locallab.avoid = !avoid->get_inconsistent();
     }
 }
@@ -3029,74 +1659,6 @@ void Locallab::avoidcolorshift_toggled()
             }
         }
     }
-}
-
-
-void Locallab::spotdupChanged(bool spotchan)
-{
-    // TODO Locallab printf
-    printf("spotdupChanged\n");
-
-    /*
-    nextspotdup = spotchan;
-
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<Locallab*>(data)->spotdupComputed_();
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
-    */
-}
-
-bool Locallab::spotdupComputed_()
-{
-    // TODO Locallab printf
-    printf("spotdupComputed_\n");
-
-    /*
-    disableListener();
-    // spotduplicated->set_active(nextspotdup);
-
-    if (nextspotdup) {
-        //labspotdup->show();
-        //usleep(4000000);
-    } else {
-        //labspotdup->hide();
-    }
-
-    enableListener();
-    */
-
-    return false;
-}
-
-
-void Locallab::spotduplicatedChanged()
-{
-    printf("spotduplicatedChanged\n");
-
-    /*
-    if (batchMode) {
-        if (spotduplicated->get_inconsistent()) {
-            spotduplicated->set_inconsistent(false);
-            spotduplicated->set_active(false);;
-        } else if (lastspotduplicated) {
-            spotduplicated->set_inconsistent(true);
-        }
-
-        lastspotduplicated = spotduplicated->get_active();
-    }
-
-    if (listener && getEnabled()) {
-
-        if (spotduplicated->get_active()) {
-            listener->panelChanged(Evlocallabspotduplicated, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged(Evlocallabspotduplicated, M("GENERAL_DISABLED"));
-        }
-    }
-    */
 }
 
 void Locallab::pastsattog_toggled()
@@ -3248,44 +1810,6 @@ void Locallab::blurMethodChanged()
     }
 }
 
-
-void Locallab::dustMethodChanged()
-{
-    printf("dustMethodChanged\n");
-
-    /*
-    if (!batchMode) {
-
-    }
-
-
-    if (listener) {
-        //   listener->panelChanged (EvlocallabdustMethod, dustMethod->get_active_text ());
-    }
-    */
-}
-
-void Locallab::qualityMethodChanged()
-{
-    /*
-    if (!batchMode) {
-        /*
-        if (qualityMethod->get_active_row_number() == 0) { //STD
-            proxi->hide();
-            thres->hide();
-        } else {//enh
-            proxi->show();
-            thres->show();
-        }
-        *//*
-}
-
-if (listener) {
-listener->panelChanged(EvlocallabqualityMethod, qualityMethod->get_active_text());
-}
-*/
-}
-
 void Locallab::qualitycurveMethodChanged()
 {
     printf("qualitycurveMethodChanged\n");
@@ -3297,102 +1821,6 @@ void Locallab::qualitycurveMethodChanged()
     }
 }
 
-void Locallab::ExclumethodChanged()
-{
-    /*
-    if (!batchMode) {
-        if (Exclumethod->get_active_row_number() == 0) {
-        } else if (Exclumethod->get_active_row_number() == 1) {
-        }
-    }
-
-
-    if (listener) {
-        listener->panelChanged(Evlocallabexclumethod, Exclumethod->get_active_text());
-    }
-    */
-}
-
-void Locallab::shapemethodChanged()
-{
-    /*
-    if (!batchMode) {
-        //
-    }
-
-
-    if (listener) {
-        listener->panelChanged(Evlocallabshapemethod, shapemethod->get_active_text());
-    }
-    */
-}
-
-void Locallab::SmethodChanged()
-{
-    /*
-    if (!batchMode) {
-        if (Smethod->get_active_row_number() == 0) { //IND 0
-            locX->hide();
-            locXL->hide();
-            locY->hide();
-            locYT->hide();
-            centerX->hide();
-            centerY->hide();
-        } else if (Smethod->get_active_row_number() == 1) {         // 1 SYM
-            locX->hide();
-            locXL->hide();
-            locY->hide();
-            locYT->hide();
-            centerX->hide();
-            centerY->hide();
-
-        } else if (Smethod->get_active_row_number() == 2) {         //2 SYM
-            locX->show();
-            locXL->show();
-            locY->show();
-            locYT->show();
-            centerX->show();
-            centerY->show();
-
-        } else if (Smethod->get_active_row_number() == 3) {         // 3 SYM
-            locX->show();
-            locXL->hide();
-            locY->show();
-            locYT->hide();
-            centerX->show();
-            centerY->show();
-
-        }
-
-        /*      else if(Smethod->get_active_row_number()==2) {              // LOC
-                    locX->show();
-                    locXL->hide();
-                    locY->hide();
-                    locYT->hide();
-                }   *//*
-}
-
-if (listener && getEnabled()) {
-if (Smethod->get_active_row_number() == 1  || Smethod->get_active_row_number() == 3) {
-listener->panelChanged(EvlocallabSmet, Smethod->get_active_text());
-locXL->setValue(locX->getValue());
-locYT->setValue(locY->getValue());
-}
-//   else if(Smethod->get_active_row_number()==2) {
-//          listener->panelChanged (EvlocallabSmet, Smethod->get_active_text ());
-//           locXL->setValue (locX->getValue());
-//           locYT->setValue (locX->getValue());
-//          locY->setValue (locX->getValue());
-//     }
-else
-
-{
-listener->panelChanged(EvlocallabSmet, Smethod->get_active_text());
-
-}
-}
-*/
-}
 void Locallab::inversChanged()
 {
     printf("inversChanged\n");
@@ -3422,61 +1850,6 @@ void Locallab::inversChanged()
         }
     }
 }
-
-void Locallab::cutpastChanged()
-{
-    /*
-    if (batchMode) {
-        if (cutpast->get_inconsistent()) {
-            cutpast->set_inconsistent(false);
-            cutpastConn.block(true);
-            cutpast->set_active(false);
-            cutpastConn.block(false);
-        } else if (lastcutpast) {
-            cutpast->set_inconsistent(true);
-        }
-
-        lastcutpast = cutpast->get_active();
-    }
-
-
-    if (listener) {
-        if (getEnabled()) {
-            //     listener->panelChanged (Evlocallabcutpast, M ("GENERAL_ENABLED"));
-        } else {
-            //     listener->panelChanged (Evlocallabcutpast, M ("GENERAL_DISABLED"));
-        }
-    }
-    */
-}
-
-void Locallab::lastdustChanged()
-{
-    /*
-    if (batchMode) {
-        if (lastdust->get_inconsistent()) {
-            lastdust->set_inconsistent(false);
-            lastdustConn.block(true);
-            lastdust->set_active(false);
-            lastdustConn.block(false);
-        } else if (lastlastdust) {
-            lastdust->set_inconsistent(true);
-        }
-
-        lastlastdust = lastdust->get_active();
-    }
-
-
-    if (listener) {
-        if (getEnabled()) {
-            //    listener->panelChanged (Evlocallablastdust, M ("GENERAL_ENABLED"));
-        } else {
-            //    listener->panelChanged (Evlocallablastdust, M ("GENERAL_DISABLED"));
-        }
-    }
-    */
-}
-
 
 void Locallab::curvactivChanged()
 {
@@ -3537,39 +1910,6 @@ void Locallab::activlumChanged()
             }
         }
     }
-}
-
-void Locallab::inversradChanged()
-{
-    /*
-    if (batchMode) {
-        if (inversrad->get_inconsistent()) {
-            inversrad->set_inconsistent(false);
-            inversradConn.block(true);
-            inversrad->set_active(false);
-            inversradConn.block(false);
-        } else if (lastinversrad) {
-            inversrad->set_inconsistent(true);
-        }
-
-        lastinversrad = inversrad->get_active();
-    }
-
-    if (inversrad->get_active()) {
-        sensibn->hide();
-    } else {
-        sensibn->show();
-    }
-
-
-    if (listener) {
-        if (getEnabled()) {
-            listener->panelChanged(Evlocallabinversrad, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged(Evlocallabinversrad, M("GENERAL_DISABLED"));
-        }
-    }
-    */
 }
 
 void Locallab::inversshaChanged()
@@ -3658,8 +1998,6 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     centerX->setDefault(defParams->locallab.centerX);
     centerY->setDefault(defParams->locallab.centerY);
     circrad->setDefault(defParams->locallab.circrad);
-    centerXbuf->setDefault(defParams->locallab.centerXbuf);
-    centerYbuf->setDefault(defParams->locallab.centerYbuf);
     adjblur->setDefault(defParams->locallab.adjblur);
     thres->setDefault(defParams->locallab.thres);
     proxi->setDefault(defParams->locallab.proxi);
@@ -3706,14 +2044,6 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     scaltm->setDefault(defParams->locallab.scaltm);
     rewei->setDefault(defParams->locallab.rewei);
     neigh->setDefault(defParams->locallab.neigh);
-    nbspot->setDefault(defParams->locallab.nbspot);
-    anbspot->setDefault(defParams->locallab.anbspot);
-    hueref->setDefault(defParams->locallab.hueref);
-    huerefblur->setDefault(defParams->locallab.huerefblur);
-    chromaref->setDefault(defParams->locallab.chromaref);
-    lumaref->setDefault(defParams->locallab.lumaref);
-    sobelref->setDefault(defParams->locallab.sobelref);
-
     vart->setDefault(defParams->locallab.vart);
     chrrt->setDefault(defParams->locallab.chrrt);
 
@@ -3738,8 +2068,6 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         centerX->setDefaultEditedState(pedited->locallab.centerX ? Edited : UnEdited);
         centerY->setDefaultEditedState(pedited->locallab.centerY ? Edited : UnEdited);
         circrad->setDefaultEditedState(pedited->locallab.circrad ? Edited : UnEdited);
-        centerXbuf->setDefaultEditedState(pedited->locallab.centerXbuf ? Edited : UnEdited);
-        centerYbuf->setDefaultEditedState(pedited->locallab.centerYbuf ? Edited : UnEdited);
         adjblur->setDefaultEditedState(pedited->locallab.adjblur ? Edited : UnEdited);
         thres->setDefaultEditedState(pedited->locallab.thres ? Edited : UnEdited);
         proxi->setDefaultEditedState(pedited->locallab.proxi ? Edited : UnEdited);
@@ -3786,13 +2114,6 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         transit->setDefaultEditedState(pedited->locallab.transit ? Edited : UnEdited);
         str->setDefaultEditedState(pedited->locallab.str ? Edited : UnEdited);
         neigh->setDefaultEditedState(pedited->locallab.neigh ? Edited : UnEdited);
-        nbspot->setDefaultEditedState(pedited->locallab.nbspot ? Edited : UnEdited);
-        anbspot->setDefaultEditedState(pedited->locallab.anbspot ? Edited : UnEdited);
-        hueref->setDefaultEditedState(pedited->locallab.hueref ? Edited : UnEdited);
-        huerefblur->setDefaultEditedState(pedited->locallab.huerefblur ? Edited : UnEdited);
-        chromaref->setDefaultEditedState(pedited->locallab.chromaref ? Edited : UnEdited);
-        lumaref->setDefaultEditedState(pedited->locallab.lumaref ? Edited : UnEdited);
-        sobelref->setDefaultEditedState(pedited->locallab.sobelref ? Edited : UnEdited);
         vart->setDefaultEditedState(pedited->locallab.vart ? Edited : UnEdited);
         chrrt->setDefaultEditedState(pedited->locallab.chrrt ? Edited : UnEdited);
 
@@ -3817,8 +2138,6 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         centerX->setDefaultEditedState(Irrelevant);
         centerY->setDefaultEditedState(Irrelevant);
         circrad->setDefaultEditedState(Irrelevant);
-        centerXbuf->setDefaultEditedState(Irrelevant);
-        centerYbuf->setDefaultEditedState(Irrelevant);
         adjblur->setDefaultEditedState(Irrelevant);
         thres->setDefaultEditedState(Irrelevant);
         proxi->setDefaultEditedState(Irrelevant);
@@ -3865,13 +2184,6 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         transit->setDefaultEditedState(Irrelevant);
         str->setDefaultEditedState(Irrelevant);
         neigh->setDefaultEditedState(Irrelevant);
-        nbspot->setDefaultEditedState(Irrelevant);
-        anbspot->setDefaultEditedState(Irrelevant);
-        hueref->setDefaultEditedState(Irrelevant);
-        huerefblur->setDefaultEditedState(Irrelevant);
-        chromaref->setDefaultEditedState(Irrelevant);
-        lumaref->setDefaultEditedState(Irrelevant);
-        sobelref->setDefaultEditedState(Irrelevant);
         vart->setDefaultEditedState(Irrelevant);
         chrrt->setDefaultEditedState(Irrelevant);
 
@@ -4205,6 +2517,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
 
+        if (a == noisechrodetail) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnoisechrodetail, noisechrodetail->getTextValue());
+            }
+        }
+
         if (a == adjblur) {
             if (listener) {
                 listener->panelChanged(Evlocallabadjblur, adjblur->getTextValue());
@@ -4257,7 +2575,7 @@ void Locallab::avoidChanged()
         */
     }
 
-    if (getEnabled() && expdenoi->getEnabled()) {
+    if (getEnabled()) {
         if (listener) {
             if (avoid->get_active()) {
                 listener->panelChanged(Evlocallabavoid, M("GENERAL_ENABLED"));
@@ -4266,26 +2584,6 @@ void Locallab::avoidChanged()
             }
         }
     }
-}
-
-void Locallab::setAdjusterBehavior(bool degreeadd, bool locYadd, bool locXadd, bool locYTadd, bool locXLadd, bool centeradd, bool lightnessadd, bool contrastadd, bool chromaadd, bool sensiadd, bool transitadd, bool radiusadd,  bool strengthadd)
-{
-    // can I suppress ...no used
-    degree->setAddMode(degreeadd);
-    locY->setAddMode(locYadd);
-    locX->setAddMode(locXadd);
-    locYT->setAddMode(locYTadd);
-    locXL->setAddMode(locXLadd);
-    centerX->setAddMode(centeradd);
-    centerY->setAddMode(centeradd);
-    lightness->setAddMode(lightnessadd);
-    contrast->setAddMode(contrastadd);
-    chroma->setAddMode(chromaadd);
-    sensi->setAddMode(sensiadd);
-    transit->setAddMode(transitadd);
-    radius->setAddMode(radiusadd);
-    strength->setAddMode(strengthadd);
-
 }
 
 // TODO
@@ -4300,8 +2598,6 @@ void Locallab::trimValues(rtengine::procparams::ProcParams * pp)
     centerX->trimValue(pp->locallab.centerX);
     centerY->trimValue(pp->locallab.centerY);
     circrad->trimValue(pp->locallab.circrad);
-    centerXbuf->trimValue(pp->locallab.centerXbuf);
-    centerYbuf->trimValue(pp->locallab.centerYbuf);
     adjblur->trimValue(pp->locallab.adjblur);
     thres->trimValue(pp->locallab.thres);
     proxi->trimValue(pp->locallab.proxi);
@@ -4331,7 +2627,6 @@ void Locallab::trimValues(rtengine::procparams::ProcParams * pp)
     sensi->trimValue(pp->locallab.sensi);
     sensiex->trimValue(pp->locallab.sensiex);
     sensih->trimValue(pp->locallab.sensih);
-    retrab->trimValue(pp->locallab.retrab);
     sensiexclu->trimValue(pp->locallab.sensiexclu);
     struc->trimValue(pp->locallab.struc);
     sensicb->trimValue(pp->locallab.sensicb);
@@ -4347,14 +2642,6 @@ void Locallab::trimValues(rtengine::procparams::ProcParams * pp)
     transit->trimValue(pp->locallab.transit);
     str->trimValue(pp->locallab.str);
     neigh->trimValue(pp->locallab.neigh);
-    nbspot->trimValue(pp->locallab.nbspot);
-    anbspot->trimValue(pp->locallab.anbspot);
-    hueref->trimValue(pp->locallab.hueref);
-    huerefblur->trimValue(pp->locallab.huerefblur);
-    chromaref->trimValue(pp->locallab.chromaref);
-    lumaref->trimValue(pp->locallab.lumaref);
-    sobelref->trimValue(pp->locallab.sobelref);
-
     vart->trimValue(pp->locallab.vart);
     chrrt->trimValue(pp->locallab.chrrt);
 
@@ -4376,24 +2663,7 @@ void Locallab::setBatchMode(bool batchMode)
     ToolPanel::setBatchMode(batchMode);
     printf("BatchMode : %d\n", batchMode);
 
-    hueref->hide();
-    huerefblur->hide();
-    chromaref->hide();
-    lumaref->hide();
-    sobelref->hide();
-    degree->showEditedCB();
-    locY->showEditedCB();
-    locX->showEditedCB();
-    locYT->showEditedCB();
-    locXL->showEditedCB();
-    centerX->showEditedCB();
-    centerY->showEditedCB();
-    circrad->showEditedCB();
-    centerXbuf->showEditedCB();
-    centerYbuf->showEditedCB();
     adjblur->showEditedCB();
-    thres->showEditedCB();
-    proxi->showEditedCB();
     lightness->showEditedCB();
     contrast->showEditedCB();
     chroma->showEditedCB();
@@ -4420,9 +2690,6 @@ void Locallab::setBatchMode(bool batchMode)
     sensi->showEditedCB();
     sensiex->showEditedCB();
     sensih->showEditedCB();
-    retrab->showEditedCB();
-    sensiexclu->showEditedCB();
-    struc->showEditedCB();
     sensicb->showEditedCB();
     sensibn->showEditedCB();
     sensitm->showEditedCB();
@@ -4433,22 +2700,11 @@ void Locallab::setBatchMode(bool batchMode)
     estop->showEditedCB();
     scaltm->showEditedCB();
     rewei->showEditedCB();
-    transit->showEditedCB();
-    Smethod->append(M("GENERAL_UNCHANGED"));
     str->showEditedCB();
     neigh->showEditedCB();
-    nbspot->showEditedCB();
-    anbspot->showEditedCB();
-    hueref->showEditedCB();
-    huerefblur->showEditedCB();
-    chromaref->showEditedCB();
-    lumaref->showEditedCB();
-    sobelref->showEditedCB();
     vart->showEditedCB();
     LocalcurveEditorgainT->setBatchMode(batchMode);
-    LocalcurveEditorgainTrab->setBatchMode(batchMode);
     llCurveEditorG->setBatchMode(batchMode);
-//    llCurveEditorG2->setBatchMode (batchMode);
     chrrt->showEditedCB();
 
     for (int i = 0; i < 5; i++) {
@@ -4520,8 +2776,7 @@ std::vector<double> Locallab::getCurvePoints(ThresholdSelector* tAdjuster) const
 
 void Locallab::setEditProvider(EditDataProvider * provider)
 {
-    cTgainshape->setEditProvider(provider);
-    cTgainshaperab->setEditProvider(provider);
+    // cTgainshape->setEditProvider(provider);
     expsettings->setEditProvider(provider);
 }
 
@@ -4779,9 +3034,12 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, int
         noiselequal->setValue(pp->locallab.noiselequal.at(index));
         noisechrof->setValue(pp->locallab.noisechrof.at(index));
         noisechroc->setValue(pp->locallab.noisechroc.at(index));
+        noisechrodetail->setValue(pp->locallab.noisechrodetail.at(index));
         adjblur->setValue(pp->locallab.adjblur.at(index));
         bilateral->setValue(pp->locallab.bilateral.at(index));
         sensiden->setValue(pp->locallab.sensiden.at(index));
+
+        // Others
         avoid->set_active((bool)pp->locallab.avoid.at(index));
     }
 
@@ -4837,21 +3095,6 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, int
     } else {
         sensisha->show();
     }
-
-    /*
-    lastactivlum = pp->locallab.activlum;
-    lastProtectSkins = pp->locallab.protectskins;
-    lastAvoidColorShift = pp->locallab.avoidcolorshift;
-    lastPastSatTog = pp->locallab.pastsattog;
-    lastavoid = pp->locallab.avoid;
-    lastinvers = pp->locallab.invers;
-    lastcutpast = pp->locallab.cutpast;
-    lastlastdust = pp->locallab.lastdust;
-    lastcurvactiv = pp->locallab.curvactiv;
-    lastinversrad = pp->locallab.inversrad;
-    lastinversret = pp->locallab.inversret;
-    lastinverssha = pp->locallab.inverssha;
-    */
 }
 
 void Locallab::autoOpenCurve()

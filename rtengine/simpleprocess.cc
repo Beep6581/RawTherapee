@@ -1060,7 +1060,7 @@ private:
             LUTf lightCurveloc(32770, 0);
             LUTf exlocalcurve(65536, 0);
 
-            int maxspot = settings->nspot + 1;
+            int maxspot = 1;
             float** shbuffer = nullptr;
 
             for (int sp = 0; sp < params.locallab.nbspot; sp++) {
