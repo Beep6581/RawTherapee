@@ -784,9 +784,8 @@ inline EditDataProvider* EditSubscriber::getEditProvider ()
     return provider;
 }
 
-inline CursorShape EditSubscriber::getCursor (const int objectID)
-{
-    return CSOpenHand;
+inline CursorShape EditSubscriber::getCursor (const int objectID) {
+    return CSHandOpen;
 }
 
 inline bool EditSubscriber::mouseOver (const int modifierKey)

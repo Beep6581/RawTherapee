@@ -5,6 +5,7 @@ Project initiator:
 
 Development contributors, in last name alphabetical order:
 
+  Roel Baars
   Martin Burri
   Javier Celaya
   Jacques Desmis

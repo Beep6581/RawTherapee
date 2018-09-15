@@ -726,8 +726,6 @@ PREFERENCES_PROFILESAVECACHE;Salva il profilo di sviluppo nella memoria
 PREFERENCES_PROFILESAVEINPUT;Salva il profilo di sviluppo a fianco del file originario
 PREFERENCES_PROPERTY;Proprietà
 PREFERENCES_PSPATH;Cartella d'installazione di Adobe Photoshop
-PREFERENCES_RGBDTL_LABEL;Numero massimo di thread per la Riduzione Rumore
-PREFERENCES_RGBDTL_TOOLTIP;La Riduzione Rumore richiede un minimo di circa 128MB di RAM per un'immagine di 10MPixel o 512MB per una di 40MPixel più 128MB di RAM per ogni thread. Più thread vengono eseguiti in parallelo, più rapida sarà l'elaborazione. Lascia l'impostazione a "0" per usare automaticamente quanti più thread possibili.
 PREFERENCES_SELECTFONT;Seleziona il carattere
 PREFERENCES_SELECTLANG;Seleziona la lingua
 PREFERENCES_SELECTTHEME;Seleziona il tema
@@ -747,7 +745,6 @@ PREFERENCES_TAB_BROWSER;Navigatore
 PREFERENCES_TAB_COLORMGR;Gestione Colore
 PREFERENCES_TAB_GENERAL;Generale
 PREFERENCES_TAB_IMPROC;Elaborazione immagine
-PREFERENCES_TAB_PERFORMANCE;Prestazioni
 PREFERENCES_TAB_SOUND;Suoni
 PREFERENCES_TP_LABEL;Pannello Strumenti:
 PREFERENCES_TP_USEICONORTEXT;Utilizza le icone delle schede anziché il testo
@@ -1355,6 +1352,7 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !GENERAL_SAVE_AS;Save as...
 !GENERAL_SLIDER;Slider
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
+!HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
 !HISTORY_MSG_166;Exposure - Reset
 !HISTORY_MSG_173;NR - Detail recovery
 !HISTORY_MSG_203;NR - Color space
@@ -1603,6 +1601,8 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
+!HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
+!HISTORY_MSG_RAWCACORR_COLOURSHIFT;Raw CA Correction - Avoid color shift
 !HISTORY_MSG_RAW_BORDER;Raw border
 !HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
@@ -1709,13 +1709,7 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !PARTIALPASTE_RETINEX;Retinex
 !PARTIALPASTE_SOFTLIGHT;Soft light
 !PARTIALPASTE_TM_FATTAL;Dynamic range compression
-!PREFERENCES_AUTLISLOW;Low
-!PREFERENCES_AUTLISMAX;Max - Average of all tiles
-!PREFERENCES_AUTLISSTD;High
-!PREFERENCES_AUTLISVLOW;None
-!PREFERENCES_AUTLOW;Low
 !PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
-!PREFERENCES_AUTSTD;Standard
 !PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
@@ -1732,11 +1726,8 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !PREFERENCES_CURVEBBOXPOS_LEFT;Left
 !PREFERENCES_CURVEBBOXPOS_RIGHT;Right
 !PREFERENCES_D50_OLD;5000K
-!PREFERENCES_DAUB_LABEL;Use Daubechies D6 wavelets instead of D4
-!PREFERENCES_DAUB_TOOLTIP;The Noise Reduction and Wavelet Levels tools use a Debauchies mother wavelet. If you choose D6 instead of D4 you increase the number of orthogonal Daubechies coefficients and probably increase quality of small-scale levels. There is no memory or processing time difference between the two.
 !PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_EDITORCMDLINE;Custom command line
-!PREFERENCES_EXPAUT;Expert
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
 !PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
@@ -1748,22 +1739,17 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maximum number of cached images
 !PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
 !PREFERENCES_LANG;Language
-!PREFERENCES_LEVAUTDN;Denoising level
-!PREFERENCES_LEVDN;Cell size
-!PREFERENCES_LISS;Auto multi-zone smoothing
-!PREFERENCES_MAX;Maxi (Tile)
 !PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
-!PREFERENCES_MED;Medium (Tile/2)
-!PREFERENCES_MIN;Mini (100x115)
 !PREFERENCES_MONINTENT;Default rendering intent
 !PREFERENCES_MONITOR;Monitor
 !PREFERENCES_MONPROFILE;Default color profile
 !PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
 !PREFERENCES_NAVIGATIONFRAME;Navigation
-!PREFERENCES_NOISE;Noise Reduction
 !PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
 !PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
 !PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
+!PREFERENCES_PERFORMANCE_THREADS;Threads
+!PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
 !PREFERENCES_PREVDEMO;Preview Demosaic Method
 !PREFERENCES_PREVDEMO_FAST;Fast
 !PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
@@ -1782,23 +1768,14 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize read of tiff files
 !PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;When working with folders full of uncompressed tiff files enabling this option can increase performance of thumb generation.
 !PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show filmstrip toolbar
-!PREFERENCES_SIMPLAUT;Tool mode
-!PREFERENCES_SMA;Small (250x287)
-!PREFERENCES_STDAUT;Standard
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
+!PREFERENCES_TAB_PERFORMANCE;Performance
 !PREFERENCES_THEME;Theme
 !PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
 !PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
-!PREFERENCES_TIMAX;High
-!PREFERENCES_TINB;Number of tiles
-!PREFERENCES_TISTD;Standard
 !PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
-!PREFERENCES_WAVLEV;Increase wavelet level in quality 'high'
-!PREFERENCES_WLONE;One level
-!PREFERENCES_WLTWO;Two levels
-!PREFERENCES_WLZER;No
 !PROFILEPANEL_PDYNAMIC;Dynamic
 !QINFO_FRAMECOUNT;%2 frames
 !QINFO_HDR;HDR / %2 frame(s)
@@ -1811,6 +1788,7 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !SAMPLEFORMAT_16;16-bit floating-point
 !SAMPLEFORMAT_32;24-bit floating-point
 !SAMPLEFORMAT_64;32-bit floating-point
+!SAVEDLG_FILEFORMAT_FLOAT; floating-point
 !SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
 !SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
 !SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
@@ -1969,6 +1947,8 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.
 !TP_PRSHARPENING_LABEL;Post-Resize Sharpening
 !TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
+!TP_RAWCACORR_AUTOIT;Iterations
+!TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
 !TP_RAWCACORR_CASTR;Strength
 !TP_RAWEXPOS_BLACK_0;Green 1 (lead)
 !TP_RAWEXPOS_BLACK_1;Red
@@ -2052,7 +2032,7 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !TP_RETINEX_GAIN;Gain
 !TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
 !TP_RETINEX_GAINTRANSMISSION;Gain transmission
-!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce transmission map to achieve luminance.\nAbscissa: transmission -min from 0, mean, and values (max).\nOrdinate: gain.
+!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
 !TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
 !TP_RETINEX_GAMMA;Gamma
 !TP_RETINEX_GAMMA_FREE;Free

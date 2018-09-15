@@ -754,10 +754,6 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
         }
 
         iarea->setToolHand ();
-
-        if (pmhlistener) {
-            pmhlistener->toggleFreeze();
-        }
     }
 
     state = SNormal;
@@ -1253,7 +1249,7 @@ void CropWindow::updateCursor (int x, int y)
                 if (onArea (CropObserved, x, y)) {
                     newType = CSMove;
                 } else {
-                    newType = CSOpenHand;
+                    newType = CSCrosshair;
                 }
             } else if (tm == TMSpotWB) {
                 newType = CSSpotWB;
@@ -1286,7 +1282,7 @@ void CropWindow::updateCursor (int x, int y)
     } else if (state == SCropMove || state == SCropWinMove || state == SObservedMove) {
         newType = CSMove;
     } else if (state == SHandMove || state == SCropImgMove) {
-        newType = CSClosedHand;
+        newType = CSHandClosed;
     } else if (state == SResizeW1 || state == SResizeW2) {
         newType = CSResizeWidth;
     } else if (state == SResizeH1 || state == SResizeH2) {
@@ -1381,7 +1377,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                 break;
             }
         }
-        bool useBgColor = (state == SNormal || state == SDragPicker || state == SDeletePicker);
+        bool useBgColor = (state == SNormal || state == SDragPicker || state == SDeletePicker || state == SEditDrag1);
     
         if (cropHandler.cropPixbuf) {
             imgW = cropHandler.cropPixbuf->get_width ();

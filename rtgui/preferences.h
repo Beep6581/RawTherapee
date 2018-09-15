@@ -165,7 +165,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::CheckButton* filmStripOverlayedFileNames;
     Gtk::CheckButton* sameThumbSize;
 
-    Gtk::SpinButton*  rgbDenoiseTreadLimitSB;
+    Gtk::SpinButton*  threadsSpinBtn;
     Gtk::SpinButton*  clutCacheSizeSB;
     Gtk::SpinButton*  maxInspectorBuffersSB;
     Gtk::ComboBoxText *thumbnailInspectorMode;

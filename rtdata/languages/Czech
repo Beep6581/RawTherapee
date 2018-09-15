@@ -982,14 +982,8 @@ PARTIALPASTE_VIGNETTING;Korekce vinětace
 PARTIALPASTE_WHITEBALANCE;Nastavení bílé
 PREFERENCES_ADD;Přidat
 PREFERENCES_APPLNEXTSTARTUP;vyžaduje restart aplikace
-PREFERENCES_AUTLISLOW;Nízké
-PREFERENCES_AUTLISMAX;Maximální - průměr všech dlaždic
-PREFERENCES_AUTLISSTD;Vysoké
-PREFERENCES_AUTLISVLOW;Ne
-PREFERENCES_AUTLOW;Nízká
 PREFERENCES_AUTOMONPROFILE;Použít barevný profil hlavního monitoru z operačního systému
 PREFERENCES_AUTOSAVE_TP_OPEN;Před ukončením automaticky uložit\nstav sbalení/rozbalení nástrojů.
-PREFERENCES_AUTSTD;Běžná
 PREFERENCES_BATCH_PROCESSING;Dávkové zpracování
 PREFERENCES_BEHADDALL;Vše do 'Přidat'
 PREFERENCES_BEHADDALLHINT;Nastaví všechny parametry do módu <b>Přidat</b>.\nZměna parametrů v panelu dávkového zpracování se aplikuje jako <b>rozdíl</b> k uloženým hodnotám.
@@ -1036,8 +1030,6 @@ PREFERENCES_DARKFRAMESHOTS;snímků
 PREFERENCES_DARKFRAMETEMPLATES;šablony
 PREFERENCES_DATEFORMAT;Formát data
 PREFERENCES_DATEFORMATHINT;Lze použít následující formátovací řetězce:\n<b>%y</b>\t- rok (year)\n<b>%m</b>\t- měsíc (month)\n<b>%d</b>\t- den (day)\n\nNapříklad český formát data:\n<b>%d. %m. %y</b>
-PREFERENCES_DAUB_LABEL;Použít D6 Daubechiesové vlnky namísto D4
-PREFERENCES_DAUB_TOOLTIP;Nástroje Redukce šumu a Úrovně vlnky používají Daubechiesové mateřskou vlnku. Pokud místo D4 vyberete D6 zvýší se počet ortogonálních Daubechiesové koeficientů a pravděpodobně zvýší kvalitu úrovní malého měřítka. Není zde rozdíl ve spotřebě paměti nebo délce zpracování.
 PREFERENCES_DIRDARKFRAMES;Složka tmavých snímků
 PREFERENCES_DIRECTORIES;Složky
 PREFERENCES_DIRHOME;Domovská složka
@@ -1047,7 +1039,6 @@ PREFERENCES_DIRSELECTDLG;Zvolte složku s obrázky při spuštění...
 PREFERENCES_DIRSOFTWARE;Instalační složka
 PREFERENCES_EDITORCMDLINE;Vlastní příkazová řádka
 PREFERENCES_EDITORLAYOUT;Rozvržení editoru
-PREFERENCES_EXPAUT;Expert
 PREFERENCES_EXTERNALEDITOR;Externí editor
 PREFERENCES_FBROWSEROPTS;Volby prohlížeče souborů / náhledů
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Jednořádková lišta nástrojů v prohlížeči souborů\n(vypněte na nízkých rozlišeních)
@@ -1093,12 +1084,7 @@ PREFERENCES_INTENT_SATURATION;Nasycení
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Ukázat vložené JPEG náhledy u needitovaných snímků
 PREFERENCES_LANG;Jazyk
 PREFERENCES_LANGAUTODETECT;Použít systémový jazyk
-PREFERENCES_LEVAUTDN;Úroveň odšumění
-PREFERENCES_LEVDN;Velikost buňky
-PREFERENCES_LISS;Automatické více zónové vyhlazení
-PREFERENCES_MAX;Velká (dlaždice)
 PREFERENCES_MAXRECENTFOLDERS;Maximální počet nedávných složek
-PREFERENCES_MED;Střední (Poloviční dlaždice)
 PREFERENCES_MENUGROUPEXTPROGS;Skupina "Otevřít pomocí"
 PREFERENCES_MENUGROUPFILEOPERATIONS;Skupina "Souborové operace"
 PREFERENCES_MENUGROUPLABEL;Skupina "Barevné štítky"
@@ -1106,7 +1092,6 @@ PREFERENCES_MENUGROUPPROFILEOPERATIONS;Skupina "Operace s profily zpracování"
 PREFERENCES_MENUGROUPRANK;Skupina "Hodnocení"
 PREFERENCES_MENUOPTIONS;Volby místní nabídky
 PREFERENCES_METADATA;Metadata
-PREFERENCES_MIN;Velmi malá (100x115)
 PREFERENCES_MONINTENT;Výchozí reprodukční záměr
 PREFERENCES_MONITOR;Monitor
 PREFERENCES_MONPROFILE;Výchozí barevný profil
@@ -1115,7 +1100,6 @@ PREFERENCES_MULTITAB;Mód více karet editoru
 PREFERENCES_MULTITABDUALMON;Mód více karet editoru ve vlastním okně
 PREFERENCES_NAVGUIDEBRUSH;Barva vodítek navigátoru
 PREFERENCES_NAVIGATIONFRAME;Navigátor
-PREFERENCES_NOISE;Redukce šumu
 PREFERENCES_OUTDIR;Výstupní složka
 PREFERENCES_OUTDIRFOLDER;Ulož do souboru
 PREFERENCES_OUTDIRFOLDERHINT;Uložit obrázky do vybrané složky.
@@ -1151,8 +1135,6 @@ PREFERENCES_PRTPROFILE;Barevný profil
 PREFERENCES_PSPATH;Instalační složka Adobe Photoshop
 PREFERENCES_REMEMBERZOOMPAN;Zapamatovat si procento přiblížení a posun obrázku
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Zapamatovat si procento přiblížení a posun aktuálního obrázku a použít tyto hodnoty při otevírání nového obrázku.\n\nTato volba funguje pouze v režimu "Mód jedné karty editoru" a volba "Metoda demozajkování pro náhled při přiblížení menším než 100%" je nastavena na "Stejně jako v PP3".
-PREFERENCES_RGBDTL_LABEL;Maximální počet vláken pro redukci šumu a úrovně vlnky
-PREFERENCES_RGBDTL_TOOLTIP;Pro automatické nastavení maximálního možného počtu vláken ponechte nastaveno na "0". Čím více vláken běží paralelně, tím rychlejší je výpočet. Paměťové nároky najdete na RawPedii.
 PREFERENCES_SAVE_TP_OPEN_NOW;Uložit stav sbalení/rozbalení nástrojů hned
 PREFERENCES_SELECTFONT;Vyberte hlavní písmo
 PREFERENCES_SELECTFONT_COLPICKER;Vybrat písmo pro Průzkumníka barev
@@ -1167,41 +1149,30 @@ PREFERENCES_SHOWDATETIME;Zobrazovat datum a čas
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Přidat kompenzaci expozice
 PREFERENCES_SHOWFILMSTRIPTOOLBAR;Zobrazit lištu s filmovým pásem
 PREFERENCES_SHTHRESHOLD;Práh oříznutých stínů
-PREFERENCES_SIMPLAUT;Režim nástrojů
 PREFERENCES_SINGLETAB;Mód jedné karty editoru
 PREFERENCES_SINGLETABVERTAB;Mód jedné karty editoru, svislé karty
-PREFERENCES_SMA;Malá (250x287)
 PREFERENCES_SND_BATCHQUEUEDONE;Zpracování fronty dokončeno
 PREFERENCES_SND_HELP;Vložte cestu k souboru pro nastavení zvuku nebo ponechte prázdné (bez zvuku).\nVe Windows zadejte "SystemDefault", "SystemAsterisk" a podobně.\nNa Linuxu použijte "complete", "window-attention" a další.
 PREFERENCES_SND_LNGEDITPROCDONE;Zpracování v editoru dokončeno
 PREFERENCES_SND_THRESHOLDSECS;Po sekundách
 PREFERENCES_STARTUPIMDIR;Složka obrázků při spuštění
-PREFERENCES_STDAUT;Běžný
 PREFERENCES_TAB_BROWSER;Prohlížeč souborů
 PREFERENCES_TAB_COLORMGR;Správa barev
 PREFERENCES_TAB_DYNAMICPROFILE;Pravidla dynamických profilů
 PREFERENCES_TAB_GENERAL;Obecné
 PREFERENCES_TAB_IMPROC;Zpracování obrázku
-PREFERENCES_TAB_PERFORMANCE;Výkon a kvalita
 PREFERENCES_TAB_SOUND;Zvuky
 PREFERENCES_THEME;Vzhled
 PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Vložený JPEG náhled
 PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Obrázek k zobrazení
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutrální vykreslení raw
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Vložený JPEG náhled pokud je v plné velikosti, jinak neutrální raw
-PREFERENCES_TIMAX;Vysoký
-PREFERENCES_TINB;Počet dlaždic
-PREFERENCES_TISTD;Běžný
 PREFERENCES_TP_LABEL;Panel nástrojů:
 PREFERENCES_TP_USEICONORTEXT;V záhlaví karty zobrazit ikonu namísto textu
 PREFERENCES_TP_VSCROLLBAR;Skrýt svislou posuvnou lištu
 PREFERENCES_TUNNELMETADATA;Zkopírovat nezměněná Exif/IPTC/XMP metadata do výstupního souboru
 PREFERENCES_USEBUNDLEDPROFILES;Použít přiložené profily
 PREFERENCES_VIEW;Nastavení vyvážení bílé výstupních zařízení (monitor, TV, projektor, rámeček a jiné)
-PREFERENCES_WAVLEV;Zvýšit úroveň vlnkové transformace v nejvyšší kvalitě
-PREFERENCES_WLONE;Jedna úroveň
-PREFERENCES_WLTWO;Dvě úrovně
-PREFERENCES_WLZER;Ne
 PREFERENCES_WORKFLOW;Rozvržení
 PROFILEPANEL_COPYPPASTE;Parametry pro kopírování
 PROFILEPANEL_GLOBALPROFILES;Přiložené profily
@@ -1870,7 +1841,6 @@ TP_RETINEX_FREEGAMMA;Volná gama
 TP_RETINEX_GAIN;Zisk
 TP_RETINEX_GAINOFFS;Zisk a posun (jasu)
 TP_RETINEX_GAINTRANSMISSION;Přenos zisku
-TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Zesílí nebo zeslabí mapu přenosu pro dosažení jasu.\nÚsečka: přenos -min od 0. průměr. a hodnot (max).\nPořadnice: zisk.
 TP_RETINEX_GAIN_TOOLTIP;Působí na obnovený obrázek.\n\nToto je velmi odlišné od ostatních nastavení. Použito pro černé nebo bílé pixely a pro vyvážení histogramu.
 TP_RETINEX_GAMMA;Gama
 TP_RETINEX_GAMMA_FREE;Volná
@@ -2227,6 +2197,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
 !GENERAL_RESET;Reset
 !GENERAL_SAVE_AS;Save as...
+!HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
 !HISTORY_MSG_235;B&amp;W - CM - Auto
 !HISTORY_MSG_237;B&amp;W - CM
 !HISTORY_MSG_273;CT - Color Balance SMH
@@ -2244,6 +2215,8 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 !HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - Demosaic method for motion
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
+!HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
+!HISTORY_MSG_RAWCACORR_COLOURSHIFT;Raw CA Correction - Avoid color shift
 !HISTORY_MSG_RAW_BORDER;Raw border
 !HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
@@ -2297,8 +2270,12 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !PARTIALPASTE_RAW_BORDER;Raw border
 !PARTIALPASTE_SOFTLIGHT;Soft light
 !PARTIALPASTE_TM_FATTAL;Dynamic range compression
+!PREFERENCES_PERFORMANCE_THREADS;Threads
+!PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
+!PREFERENCES_TAB_PERFORMANCE;Performance
 !SAMPLEFORMAT_32;24-bit floating-point
 !SAMPLEFORMAT_64;32-bit floating-point
+!SAVEDLG_FILEFORMAT_FLOAT; floating-point
 !TP_BWMIX_MIXC;Channel Mixer
 !TP_BWMIX_NEUTRAL;Reset
 !TP_ICM_WORKING_TRC;Tone response curve:
@@ -2307,6 +2284,8 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_ICM_WORKING_TRC_NONE;None
 !TP_ICM_WORKING_TRC_SLOPE;Slope
 !TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
+!TP_RAWCACORR_AUTOIT;Iterations
+!TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
 !TP_RAW_2PASS;1-pass+fast
 !TP_RAW_4PASS;3-pass+fast
 !TP_RAW_AMAZEVNG4;AMaZE+VNG4
@@ -2316,6 +2295,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_RAW_PIXELSHIFTDMETHOD;Demosaic method for motion
 !TP_RAW_RCDVNG4;RCD+VNG4
 !TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
+!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
 !TP_SHARPENING_CONTRAST;Contrast threshold
 !TP_SHARPENMICRO_CONTRAST;Contrast threshold
 !TP_SOFTLIGHT_LABEL;Soft Light

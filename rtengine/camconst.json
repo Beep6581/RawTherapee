@@ -1213,6 +1213,13 @@ Camera constants:
         "ranges": { "white": 4050 } // nominal 4080-4093
     },
 
+    { // Quality C
+        "make_model": [ "DJI FC2103" ],
+        "ranges": {
+            "black": 4080
+        }
+    },
+
     { // Quality B
         "make_model": "FUJIFILM GFX 50S",
         "dcraw_matrix": [ 11756,-4754,-874,-3056,11045,2305,-381,1457,6006 ], // DNGv9.9 D65
@@ -2494,6 +2501,11 @@ Camera constants:
     { // Quality A
         "make_model": [ "Hasselblad H5D-50c", "Hasselblad CFV-50c" ],
         "dcraw_matrix": [ 4932, -835, 141, -4878, 11868, 3437, -1138, 1961, 7067 ]
+    },
+
+    { // Quality C
+        "make_model": [ "Hasselblad H6D-100cMS" ],
+        "raw_crop": [ 64, 108, 11608, 8708 ]
     },
 
     // Dummy test entry to test the parser and show the format with all entries active

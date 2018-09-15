@@ -981,14 +981,8 @@ PARTIALPASTE_WAVELETGROUP;Niveaux d'ondelette
 PARTIALPASTE_WHITEBALANCE;Balance des blancs
 PREFERENCES_ADD;Ajoute
 PREFERENCES_APPLNEXTSTARTUP;appliqué au prochain lancement
-PREFERENCES_AUTLISLOW;Bas
-PREFERENCES_AUTLISMAX;Max - Moyenne de toutes les tuiles
-PREFERENCES_AUTLISSTD;Haut
-PREFERENCES_AUTLISVLOW;Aucun
-PREFERENCES_AUTLOW;Bas
 PREFERENCES_AUTOMONPROFILE;Utiliser automatiquement le profil de l'écran principal
 PREFERENCES_AUTOSAVE_TP_OPEN;Sauver automatiquement l'état ouvert/fermé\n des outils avant de fermer
-PREFERENCES_AUTSTD;Standard
 PREFERENCES_BATCH_PROCESSING;Traitement par lot
 PREFERENCES_BEHADDALL;Tout à 'Ajoute'
 PREFERENCES_BEHADDALLHINT;Règle tous les paramètres sur le mode <b>Ajoute</b>.\nLa modification des paramètres dans le panneau d'édition en par lot sera des <b>deltas</b> par-rapport aux valeurs existantes
@@ -1039,8 +1033,6 @@ PREFERENCES_DARKFRAMESHOTS;image(s)
 PREFERENCES_DARKFRAMETEMPLATES;modèle(s)
 PREFERENCES_DATEFORMAT;Format
 PREFERENCES_DATEFORMATHINT;<i>Vous pouvez utiliser les paramètres de chaînes formatées suivants:</i>\n<b>%y</b><i> : année</i>\n<b>%m</b><i> : mois</i>\n<b>%d</b><i> : jour</i>\n<i>\nPar exemple, le format de date française est:</i>\n<b>%d/%m/%y</b>
-PREFERENCES_DAUB_LABEL;Utiliser les ondelettes de Daubechies D6 au lieu de D4
-PREFERENCES_DAUB_TOOLTIP;Les outils de Réduction de Bruit et de Niveaux d'Ondelettes utilisent une ondelette de Debauchie mère. Si vous choisissez D6 au lieu de D4 vous augmentez le nombre de coéf. orthogonaux de Daubechies et augmentez probablement la qualité des niveaux de taille moyenne. Il n'y a pas de différence de consommation mémoire ou de temps de traitement entre les deux.
 PREFERENCES_DIRDARKFRAMES;Dossier des images de Trame Noire
 PREFERENCES_DIRECTORIES;Dossiers
 PREFERENCES_DIRHOME;Racine de mes documents personnels
@@ -1050,7 +1042,6 @@ PREFERENCES_DIRSELECTDLG;Choix du dossier Image au lancement...
 PREFERENCES_DIRSOFTWARE;Dossier d'installation
 PREFERENCES_EDITORCMDLINE;Ligne de commande personnelle
 PREFERENCES_EDITORLAYOUT;Disposition de l'éditeur
-PREFERENCES_EXPAUT;Expert
 PREFERENCES_EXTERNALEDITOR;Éditeur externe
 PREFERENCES_FBROWSEROPTS;Options du navigateur de fichiers et de vignettes
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barre de menu de l'explorateur de fichiers uni-ligne\n(à désactiver pour les écrans de faible résolution)
@@ -1096,12 +1087,7 @@ PREFERENCES_INTENT_SATURATION;Saturation
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Afficher vignette incluse dans fichier RAW si non édité
 PREFERENCES_LANG;Langage
 PREFERENCES_LANGAUTODETECT;Utiliser les paramètres linguistiques de l'OS
-PREFERENCES_LEVAUTDN;Niveau de débruitage
-PREFERENCES_LEVDN;Taille de la cellule
-PREFERENCES_LISS;Adoucissement auto multi-zone
-PREFERENCES_MAX;Maxi (Tuile)
 PREFERENCES_MAXRECENTFOLDERS;Nombre maximum de dossiers récents
-PREFERENCES_MED;Moyen (Tuile/2)
 PREFERENCES_MENUGROUPEXTPROGS;Groupe "Ouvrir avec"
 PREFERENCES_MENUGROUPFILEOPERATIONS;Opérations sur les fichiers
 PREFERENCES_MENUGROUPLABEL;Label
@@ -1109,7 +1095,6 @@ PREFERENCES_MENUGROUPPROFILEOPERATIONS;Opérations sur les profils
 PREFERENCES_MENUGROUPRANK;Classement
 PREFERENCES_MENUOPTIONS;Options du menu
 PREFERENCES_METADATA;Metadonnées
-PREFERENCES_MIN;Mini (100x115)
 PREFERENCES_MONINTENT;Intention de rendu par défaut
 PREFERENCES_MONITOR;Moniteur
 PREFERENCES_MONPROFILE;Profil couleur par défaut
@@ -1118,7 +1103,6 @@ PREFERENCES_MULTITAB;Éditeurs multiple
 PREFERENCES_MULTITABDUALMON;Éditeurs multiple, si possible sur un second moniteur
 PREFERENCES_NAVGUIDEBRUSH;Couleur du cadre dans le Navigateur
 PREFERENCES_NAVIGATIONFRAME;Navigation
-PREFERENCES_NOISE;Réduction de Bruit
 PREFERENCES_OUTDIR;Dossier de sortie
 PREFERENCES_OUTDIRFOLDER;Dossier de sauvegarde
 PREFERENCES_OUTDIRFOLDERHINT;Place les images traitées dans le dossier selectionné
@@ -1154,8 +1138,6 @@ PREFERENCES_PRTPROFILE;Profil couleur
 PREFERENCES_PSPATH;Dossier d'installation d'Adobe Photoshop
 PREFERENCES_REMEMBERZOOMPAN;Se souvenir de niveau de zoom et de la position de l'image
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Retient le niveau de zoom et la position de l'image courante lors de l'ouverture d'une nouvelle image.\n\nCette option ne fonctionne que dans le mode "Éditeur unique" et quand "Méthode de dématriçage utilisé pour l'aperçu à un zoom <100%" is set to "Idem PP3".
-PREFERENCES_RGBDTL_LABEL;Nombre maximum d'unités de calcul pour la Réduction du bruit
-PREFERENCES_RGBDTL_TOOLTIP;La réduction du bruit nécessite un minimum d'à peu près 128Mo de RAM pour une image de 10MPix ou 512Mo pour une image de 40MPix, ainsi que 128Mo de RAM supplémentaire par unité de calcul. Plus il y aura d'unités de calcul travaillant en parallèle, plus ce sera rapide. Laissez la valeur à "0" pour utiliser automatiquement autant d'unités de calcul que possible.
 PREFERENCES_SAVE_TP_OPEN_NOW;Sauver l'état ouvert/fermé maintenant
 PREFERENCES_SELECTFONT;Police principale
 PREFERENCES_SELECTFONT_COLPICKER;Police des pipette à couleur
@@ -1170,37 +1152,26 @@ PREFERENCES_SHOWDATETIME;Voir la date et l'heure
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Ajoute la compensation d'exposition
 PREFERENCES_SHOWFILMSTRIPTOOLBAR;Montrer la barre d'outil de la pellicule d'image ("filmstrip")
 PREFERENCES_SHTHRESHOLD;Seuil pour le dépassement de domaine inférieur
-PREFERENCES_SIMPLAUT;Mode de l'outil
 PREFERENCES_SINGLETAB;Éditeur unique
 PREFERENCES_SINGLETABVERTAB;Éditeur unique, onglets verticaux
-PREFERENCES_SMA;Petit (250x287)
 PREFERENCES_SND_BATCHQUEUEDONE;File de traitement terminée
 PREFERENCES_SND_HELP;Saisissez un chemin de fichier ou rien du tout (pour ne pas avoir de son). Pour Windows,\nsaisissez "SystemDefault", "SystemAsterisk" etc. pour utiliser les sons systèmes.
 PREFERENCES_SND_LNGEDITPROCDONE;Traitement de la zone de prévisualisation terminé
 PREFERENCES_SND_THRESHOLDSECS;après (s)
 PREFERENCES_STARTUPIMDIR;Répertoire Image au démarrage
-PREFERENCES_STDAUT;Standard
 PREFERENCES_TAB_BROWSER;Navigateur de fichiers
 PREFERENCES_TAB_COLORMGR;Gestion des couleurs
 PREFERENCES_TAB_DYNAMICPROFILE;Règles de Profil Dynamique
 PREFERENCES_TAB_GENERAL;Général
 PREFERENCES_TAB_IMPROC;Traitement de l'image
-PREFERENCES_TAB_PERFORMANCE;Performance
 PREFERENCES_TAB_SOUND;Sons
 PREFERENCES_THEME;Thème
-PREFERENCES_TIMAX;Haut
-PREFERENCES_TINB;Nombre de tuiles
-PREFERENCES_TISTD;Standard
 PREFERENCES_TP_LABEL;Panneau des outils:
 PREFERENCES_TP_USEICONORTEXT;Utiliser des icônes au lieu de textes
 PREFERENCES_TP_VSCROLLBAR;Cacher la barre de défilement verticale
 PREFERENCES_TUNNELMETADATA;Copier les données Exif/IPTC/XMP tel quel dans le fichier de sortie
 PREFERENCES_USEBUNDLEDPROFILES;Utiliser les profils fournis
 PREFERENCES_VIEW;Point blanc du périphérique sortie (moniteur, TV, projecteur,...)
-PREFERENCES_WAVLEV;Augmenter le nombre de niveau d'ondelette en qualité "haute"
-PREFERENCES_WLONE;Un niveau
-PREFERENCES_WLTWO;Deux niveaux
-PREFERENCES_WLZER;Non
 PREFERENCES_WORKFLOW;Habitudes de travail
 PROFILEPANEL_COPYPPASTE;Paramètres à copier
 PROFILEPANEL_GLOBALPROFILES;Profils fournis
@@ -1250,6 +1221,7 @@ SAMPLEFORMAT_32;24 bits à virgule flottante
 SAMPLEFORMAT_64;32 bits à virgule flottante
 SAVEDLG_AUTOSUFFIX;Ajouter automatiquement un suffixe si le fichier existe déjà
 SAVEDLG_FILEFORMAT;Format de fichier
+SAVEDLG_FILEFORMAT_FLOAT; virgule flottante
 SAVEDLG_FORCEFORMATOPTS;Forcer les options d'enregistrement
 SAVEDLG_JPEGQUAL;Qualité JPEG
 SAVEDLG_PNGCOMPR;Compression PNG
@@ -2245,6 +2217,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
 !EXIFFILTER_IMAGETYPE;Image type
 !GENERAL_RESET;Reset
+!HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
 !HISTORY_MSG_235;B&amp;W - CM - Auto
 !HISTORY_MSG_237;B&amp;W - CM
 !HISTORY_MSG_273;CT - Color Balance SMH
@@ -2265,6 +2238,8 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
+!HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
+!HISTORY_MSG_RAWCACORR_COLOURSHIFT;Raw CA Correction - Avoid color shift
 !HISTORY_MSG_RAW_BORDER;Raw border
 !HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
@@ -2278,6 +2253,9 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !PARTIALPASTE_RAW_BORDER;Raw border
 !PARTIALPASTE_SOFTLIGHT;Soft light
 !PARTIALPASTE_TM_FATTAL;Dynamic range compression
+!PREFERENCES_PERFORMANCE_THREADS;Threads
+!PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
+!PREFERENCES_TAB_PERFORMANCE;Performance
 !PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
 !PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
@@ -2292,6 +2270,8 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertical
 !TP_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.
+!TP_RAWCACORR_AUTOIT;Iterations
+!TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
 !TP_RAW_2PASS;1-pass+fast
 !TP_RAW_4PASS;3-pass+fast
 !TP_RAW_AMAZEVNG4;AMaZE+VNG4

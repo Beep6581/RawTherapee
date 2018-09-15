@@ -27,6 +27,8 @@
 #include <utility>
 #include <vector>
 #include "opthelper.h"
+//#define BENCHMARK
+#include "StopWatch.h"
 
 /*
    dcraw.c -- Dave Coffin's raw photo decoder
@@ -602,6 +604,36 @@ inline unsigned CLASS getbithuff_t::operator() (int nbits, ushort *huff)
 #define getbits(n) getbithuff(n,0)
 #define gethuff(h) getbithuff(*h,h+1)
 
+inline unsigned CLASS nikbithuff_t::operator() (int nbits, ushort *huff)
+{
+    unsigned c;
+
+    if (UNLIKELY(nbits == 0)) {
+        return 0;
+    }
+    if (vbits < nbits && LIKELY((c = fgetc(ifp)) != EOF)) {
+        bitbuf = (bitbuf << 8) | c;
+        vbits += 8;
+        if (vbits < nbits && LIKELY((c = fgetc(ifp)) != EOF)) {
+            bitbuf = (bitbuf << 8) | c;
+            vbits += 8;
+        }
+    }
+    c = bitbuf << (32-vbits) >> (32-nbits);
+    if (huff) {
+        vbits -= huff[c] >> 8;
+        c = (uchar) huff[c];
+        derror(vbits < 0);
+    } else {
+        vbits -= nbits;
+    }
+    return c;
+}
+
+#define nikinit(n) nikbithuff()
+#define nikbits(n) nikbithuff(n,0)
+#define nikhuff(h) nikbithuff(*h,h+1)
+
 /*
    Construct a decode tree according the specification in *source.
    The first 16 bytes specify how many codes should be 1-bit, 2-bit
@@ -1104,7 +1136,7 @@ void CLASS lossless_dng_load_raw()
       fseek (ifp, get4(), SEEK_SET);
     if (!ljpeg_start (&jh, 0)) break;
     jwide = jh.wide;
-    if (filters) jwide *= jh.clrs;
+    if (filters || (colors == 1 && jh.clrs > 1)) jwide *= jh.clrs;
     jwide /= MIN (is_raw, tiff_samples);
     switch (jh.algo) {
       case 0xc1:
@@ -1188,67 +1220,101 @@ void CLASS pentax_load_raw()
 
 void CLASS nikon_load_raw()
 {
-  static const uchar nikon_tree[][32] = {
-    { 0,1,5,1,1,1,1,1,1,2,0,0,0,0,0,0,	/* 12-bit lossy */
-      5,4,3,6,2,7,1,0,8,9,11,10,12 },
-    { 0,1,5,1,1,1,1,1,1,2,0,0,0,0,0,0,	/* 12-bit lossy after split */
-      0x39,0x5a,0x38,0x27,0x16,5,4,3,2,1,0,11,12,12 },
-    { 0,1,4,2,3,1,2,0,0,0,0,0,0,0,0,0,  /* 12-bit lossless */
-      5,4,6,3,7,2,8,1,9,0,10,11,12 },
-    { 0,1,4,3,1,1,1,1,1,2,0,0,0,0,0,0,	/* 14-bit lossy */
-      5,6,4,7,8,3,9,2,1,0,10,11,12,13,14 },
-    { 0,1,5,1,1,1,1,1,1,1,2,0,0,0,0,0,	/* 14-bit lossy after split */
-      8,0x5c,0x4b,0x3a,0x29,7,6,5,4,3,2,1,0,13,14 },
-    { 0,1,4,2,2,3,1,2,0,0,0,0,0,0,0,0,	/* 14-bit lossless */
-      7,6,8,5,9,4,10,3,11,12,2,0,1,13,14 } };
-  ushort *huff, ver0, ver1, vpred[2][2], hpred[2], csize;
-  int i, min, max, step=0, tree=0, split=0, row, col, len, shl, diff;
+    static const uchar nikon_tree[][32] = {
+      { 0,1,5,1,1,1,1,1,1,2,0,0,0,0,0,0,	/* 12-bit lossy */
+        5,4,3,6,2,7,1,0,8,9,11,10,12 },
+      { 0,1,5,1,1,1,1,1,1,2,0,0,0,0,0,0,	/* 12-bit lossy after split */
+        0x39,0x5a,0x38,0x27,0x16,5,4,3,2,1,0,11,12,12 },
+      { 0,1,4,2,3,1,2,0,0,0,0,0,0,0,0,0,  /* 12-bit lossless */
+        5,4,6,3,7,2,8,1,9,0,10,11,12 },
+      { 0,1,4,3,1,1,1,1,1,2,0,0,0,0,0,0,	/* 14-bit lossy */
+        5,6,4,7,8,3,9,2,1,0,10,11,12,13,14 },
+      { 0,1,5,1,1,1,1,1,1,1,2,0,0,0,0,0,	/* 14-bit lossy after split */
+        8,0x5c,0x4b,0x3a,0x29,7,6,5,4,3,2,1,0,13,14 },
+      { 0,1,4,2,2,3,1,2,0,0,0,0,0,0,0,0,	/* 14-bit lossless */
+        7,6,8,5,9,4,10,3,11,12,2,0,1,13,14 } };
+    ushort *huff, ver0, ver1, vpred[2][2], hpred[2], csize;
+    int max, step=0, tree=0, split=0;
 
-  fseek (ifp, meta_offset, SEEK_SET);
-  ver0 = fgetc(ifp);
-  ver1 = fgetc(ifp);
-  if (ver0 == 0x49 || ver1 == 0x58)
-    fseek (ifp, 2110, SEEK_CUR);
-  if (ver0 == 0x46) tree = 2;
-  if (tiff_bps == 14) tree += 3;
-  read_shorts (vpred[0], 4);
-  max = 1 << tiff_bps & 0x7fff;
-  if ((csize = get2()) > 1)
-    step = max / (csize-1);
-  if (ver0 == 0x44 && ver1 == 0x20 && step > 0) {
-    for (i=0; i < csize; i++)
-      curve[i*step] = get2();
-    for (i=0; i < max; i++)
-      curve[i] = ( curve[i-i%step]*(step-i%step) +
-		   curve[i-i%step+step]*(i%step) ) / step;
-    fseek (ifp, meta_offset+562, SEEK_SET);
-    split = get2();
-  } else if (ver0 != 0x46 && csize <= 0x4001)
-    read_shorts (curve, max=csize);
-  while (curve[max-2] == curve[max-1]) max--;
-  huff = make_decoder (nikon_tree[tree]);
-  fseek (ifp, data_offset, SEEK_SET);
-  getbits(-1);
-  for (min=row=0; row < height; row++) {
-    if (split && row == split) {
-      free (huff);
-      huff = make_decoder (nikon_tree[tree+1]);
-      max += (min = 16) << 1;
+    fseek (ifp, meta_offset, SEEK_SET);
+    ver0 = fgetc(ifp);
+    ver1 = fgetc(ifp);
+    if (ver0 == 0x49 || ver1 == 0x58)
+        fseek (ifp, 2110, SEEK_CUR);
+    if (ver0 == 0x46) tree = 2;
+    if (tiff_bps == 14) tree += 3;
+    read_shorts (vpred[0], 4);
+    max = 1 << tiff_bps & 0x7fff;
+    if ((csize = get2()) > 1)
+        step = max / (csize-1);
+    if (ver0 == 0x44 && ver1 == 0x20 && step > 0) {
+        for (int i=0; i < csize; i++)
+            curve[i*step] = get2();
+        for (int i=0; i < max; i++)
+            curve[i] = ( curve[i-i%step]*(step-i%step) +
+		    curve[i-i%step+step]*(i%step) ) / step;
+        fseek (ifp, meta_offset+562, SEEK_SET);
+        split = get2();
+    } else if (ver0 != 0x46 && csize <= 0x4001)
+        read_shorts (curve, max=csize);
+    while (curve[max-2] == curve[max-1]) max--;
+
+    // instead of accessing curve[LIM((short)hpred[col & 1],0,0x3fff)] in the inner loop, we just fill the curve with the correct values and access curve[hpred[col & 1]]
+    for(int i = 0x4000; i < 0x8000; ++i)
+        curve[i] = curve[0x3fff];
+    for(int i = 0x8000; i < 0x10000; ++i)
+        curve[i] = curve[0];
+
+    huff = make_decoder (nikon_tree[tree]);
+    fseek (ifp, data_offset, SEEK_SET);
+    nikinit();
+    if (split) {
+        for (int min = 0, row = 0; row < height; row++) {
+            if (row == split) {
+                free (huff);
+                huff = make_decoder (nikon_tree[tree+1]);
+                max += (min = 16) << 1;
+            }
+            for (int col=0; col < raw_width; col++) {
+                int i = nikhuff(huff);
+                int len = i & 15;
+                int shl = i >> 4;
+                int diff = ((nikbits(len-shl) << 1) + 1) << shl >> 1;
+                if ((diff & (1 << (len-1))) == 0)
+                    diff -= (1 << len) - !shl;
+                if (col < 2) hpred[col] = vpred[row & 1][col] += diff;
+                else	     hpred[col & 1] += diff;
+                derror((ushort)(hpred[col & 1] + min) >= max);
+                RAW(row,col) = curve[hpred[col & 1]];
+            }
+        }
+    } else {
+        for (int row=0; row < height; row++) {
+            for (int col=0; col < 2; col++) {
+                int len = nikhuff(huff);
+                int diff = nikbits(len);
+                if ((diff & (1 << (len-1))) == 0)
+                    diff -= (1 << len) - 1;
+                hpred[col] = vpred[row & 1][col] += diff;
+                derror(hpred[col] >= max);
+                RAW(row,col) = curve[hpred[col]];
+            }
+            for (int col=2; col < raw_width; col++) {
+                int len = nikhuff(huff);
+                int diff = nikbits(len);
+                if ((diff & (1 << (len-1))) == 0)
+                    diff -= (1 << len) - 1;
+                hpred[col & 1] += diff;
+                derror(hpred[col & 1] >= max);
+                RAW(row,col) = curve[hpred[col & 1]];
+            }
+        }
     }
-    for (col=0; col < raw_width; col++) {
-      i = gethuff(huff);
-      len = i & 15;
-      shl = i >> 4;
-      diff = ((getbits(len-shl) << 1) + 1) << shl >> 1;
-      if ((diff & (1 << (len-1))) == 0)
-	diff -= (1 << len) - !shl;
-      if (col < 2) hpred[col] = vpred[row & 1][col] += diff;
-      else	   hpred[col & 1] += diff;
-      if ((ushort)(hpred[col & 1] + min) >= max) derror();
-      RAW(row,col) = curve[LIM((short)hpred[col & 1],0,0x3fff)];
+    free (huff);
+    data_error += nikbithuff.errorCount();
+    if(data_error) {
+        std::cerr << ifname << " decoded with " << data_error << " errors. File possibly corrupted." << std::endl;
     }
-  }
-  free (huff);
 }
 
 void CLASS nikon_yuv_load_raw()
@@ -2010,7 +2076,7 @@ void CLASS parse_hasselblad_gain()
     hbd.unknown1 = offset ? base + offset : 0;
     fseek(ifp, 32, SEEK_CUR);
     offset = get4();
-    hbd.flatfield = offset ? base + offset : 0;
+    hbd.flatfield = (offset && (base + offset < ifp->size)) ? base + offset : 0;
 }
 
 void CLASS hasselblad_correct()
@@ -2080,8 +2146,12 @@ void CLASS hasselblad_correct()
         ffcols = get2();
         ffrows = get2();
         fseek(ifp, hbd.flatfield + 16 * 2, SEEK_SET);
+        unsigned toRead = sizeof(ushort) * 4 * ffcols * ffrows;
+        if (toRead > ifp->size) { // there must be something wrong, see Issue #4748
+            return;
+        }
 
-        ushort *ffmap = (ushort *)malloc(sizeof(*ffmap) * 4 * ffcols * ffrows);
+        ushort *ffmap = (ushort *)malloc(toRead);
         for (i = 0; i < 4 * ffcols * ffrows; i++) ffmap[i] = get2();
 
         /* Get reference values from center of field. This seems to be what Phocus does too,

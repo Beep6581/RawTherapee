@@ -488,13 +488,7 @@ PARTIALPASTE_WAVELETGROUP;小波变换等级
 PARTIALPASTE_WHITEBALANCE;白平衡
 PREFERENCES_ADD;添加
 PREFERENCES_APPLNEXTSTARTUP;下次启动生效
-PREFERENCES_AUTLISLOW;低
-PREFERENCES_AUTLISMAX;最大 - 所有块平均值
-PREFERENCES_AUTLISSTD;高
-PREFERENCES_AUTLISVLOW;无
-PREFERENCES_AUTLOW;低
 PREFERENCES_AUTOMONPROFILE;使用操作系统主显示器的色彩档案
-PREFERENCES_AUTSTD;标准
 PREFERENCES_BATCH_PROCESSING;批处理
 PREFERENCES_BEHADDALL;全 '添加'
 PREFERENCES_BEHAVIOR;行为
@@ -536,8 +530,6 @@ PREFERENCES_DARKFRAMESHOTS;张
 PREFERENCES_DARKFRAMETEMPLATES;模板
 PREFERENCES_DATEFORMAT;日期格式
 PREFERENCES_DATEFORMATHINT;<i>可以使用下列控制符:</i>\n<b>%y</b><i> : 年</i>\n<b>%m</b><i> : 月h</i>\n<b>%d</b><i> : 日</i>\n<i>\n例如, 中文日期格式:</i>\n<b>%y/%m/%d</b>
-PREFERENCES_DAUB_LABEL;使用 Daubechies D6 小波变换而不是 D4
-PREFERENCES_DAUB_TOOLTIP;The Noise Reduction and 小波变换等级 tools use a Debauchies mother wavelet. If you choose D6 instead of D4 you increase the number of orthogonal Daubechies coefficients and probably increase quality of small-scale levels. There is no memory or processing time difference between the two.
 PREFERENCES_DIRDARKFRAMES;暗场图像路径
 PREFERENCES_DIRHOME;用户文件路径
 PREFERENCES_DIRLAST;上次访问路径
@@ -545,7 +537,6 @@ PREFERENCES_DIROTHER;其他
 PREFERENCES_DIRSELECTDLG;启动时选择图片路径...
 PREFERENCES_DIRSOFTWARE;软件安装路径
 PREFERENCES_EDITORLAYOUT;编辑器布局
-PREFERENCES_EXPAUT;进阶
 PREFERENCES_EXTERNALEDITOR;外部编辑器
 PREFERENCES_FBROWSEROPTS;文件浏览选项
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar\n(de-select for low resolution display)
@@ -591,12 +582,7 @@ PREFERENCES_INTENT_SATURATION;饱和度
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;如果RAW文件没有修改, 显示内嵌JPEG缩略图
 PREFERENCES_LANG;语言
 PREFERENCES_LANGAUTODETECT;使用系统语言
-PREFERENCES_LEVAUTDN;降噪等级
-PREFERENCES_LEVDN;单元尺寸
-PREFERENCES_LISS;自动多区域平滑
-PREFERENCES_MAX;最大 (Tile)
 PREFERENCES_MAXRECENTFOLDERS;最近访问路径历史记录数
-PREFERENCES_MED;中等 (Tile/2)
 PREFERENCES_MENUGROUPEXTPROGS;Group "Open with"
 PREFERENCES_MENUGROUPFILEOPERATIONS;Group "File operations"
 PREFERENCES_MENUGROUPLABEL;Group "Color label"
@@ -604,7 +590,6 @@ PREFERENCES_MENUGROUPPROFILEOPERATIONS;Group "Processing profile operations"
 PREFERENCES_MENUGROUPRANK;组 "评价"
 PREFERENCES_MENUOPTIONS;子菜单选项
 PREFERENCES_METADATA;元数据
-PREFERENCES_MIN;Mini (100x115)
 PREFERENCES_MONINTENT;默认渲染意图
 PREFERENCES_MONITOR;显示器
 PREFERENCES_MONPROFILE;默认色彩配置文件
@@ -613,7 +598,6 @@ PREFERENCES_MULTITAB;多编辑器标签模式
 PREFERENCES_MULTITABDUALMON;多编辑器标签独立模式
 PREFERENCES_NAVGUIDEBRUSH;导航器引导颜色
 PREFERENCES_NAVIGATIONFRAME;导航器
-PREFERENCES_NOISE;降噪
 PREFERENCES_OUTDIR;输出路径
 PREFERENCES_OUTDIRFOLDER;保存至文件夹
 PREFERENCES_OUTDIRFOLDERHINT;将已寸图片放至所选文件夹
@@ -649,8 +633,6 @@ PREFERENCES_PRTPROFILE;色彩配置文件
 PREFERENCES_PSPATH;Adobe Photoshop安装路径
 PREFERENCES_REMEMBERZOOMPAN;记忆缩放和位置
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
-PREFERENCES_RGBDTL_LABEL;降噪和小波变换等级可用的最大线程数
-PREFERENCES_RGBDTL_TOOLTIP;"0"表示自动选择最大可用线程数 线程越多处理越快, 同时消耗更多内存 
 PREFERENCES_SELECTFONT;设置主要字体
 PREFERENCES_SELECTFONT_COLPICKER;设置色彩选择器字体
 PREFERENCES_SELECTLANG;选择语言
@@ -664,37 +646,26 @@ PREFERENCES_SHOWDATETIME;显示时间日期
 PREFERENCES_SHOWEXPOSURECOMPENSATION;附加曝光补偿
 PREFERENCES_SHOWFILMSTRIPTOOLBAR;显示图像胶片栏
 PREFERENCES_SHTHRESHOLD;阴影过暗阈值
-PREFERENCES_SIMPLAUT;工具模式
 PREFERENCES_SINGLETAB;单编辑器栏模式
 PREFERENCES_SINGLETABVERTAB;单编辑器栏模式, 标签栏垂直
-PREFERENCES_SMA;小 (250x287)
 PREFERENCES_SND_BATCHQUEUEDONE;队列处理完成
 PREFERENCES_SND_HELP;输入完整路径来指定声音文件, 或者留空表示无声 \nWindows系统声音可以使用 "SystemDefault",  "SystemAsterisk" 等  Linux则可以使用 "complete", "window-attention" 等 
 PREFERENCES_SND_LNGEDITPROCDONE;编辑器处理完成
 PREFERENCES_SND_THRESHOLDSECS;几秒之后
 PREFERENCES_STARTUPIMDIR;启动时路径
-PREFERENCES_STDAUT;标准
 PREFERENCES_TAB_BROWSER;文件浏览器
 PREFERENCES_TAB_COLORMGR;色彩管理
 PREFERENCES_TAB_DYNAMICPROFILE;动态预设规则
 PREFERENCES_TAB_GENERAL;一般
 PREFERENCES_TAB_IMPROC;图片处理
-PREFERENCES_TAB_PERFORMANCE;性能和品质
 PREFERENCES_TAB_SOUND;音效
 PREFERENCES_THEME;主题
-PREFERENCES_TIMAX;高
-PREFERENCES_TINB;块数量
-PREFERENCES_TISTD;标准
 PREFERENCES_TP_LABEL;工具栏
 PREFERENCES_TP_USEICONORTEXT;标签使用图标而不是文本
 PREFERENCES_TP_VSCROLLBAR;隐藏垂直滚动栏
 PREFERENCES_TUNNELMETADATA;无损复制 Exif/IPTC/XMP 到输出文件
 PREFERENCES_USEBUNDLEDPROFILES;启用内置预设
 PREFERENCES_VIEW;输出设备白平衡 (显示器、电视、投影仪等)
-PREFERENCES_WAVLEV;在质量为"高"时增加小波变换等级
-PREFERENCES_WLONE;一级
-PREFERENCES_WLTWO;二级
-PREFERENCES_WLZER;无
 PREFERENCES_WORKFLOW;排版
 PROFILEPANEL_LABEL;处理参数配置
 PROFILEPANEL_LOADDLGLABEL;加载处理参数为...
@@ -1063,9 +1034,9 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !GENERAL_SAVE_AS;Save as...
 !GENERAL_SLIDER;Slider
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
-!HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar.\nRight-click on image preview to freeze/unfreeze.
+!HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar.
 !HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram.
-!HISTOGRAM_TOOLTIP_FULL;Toggle full (off) or scaled (on) histogram.
+!HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
 !HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram.
 !HISTORY_MSG_82;Profile changed
 !HISTORY_MSG_86;RGB Curves - Luminosity mode
@@ -1448,6 +1419,8 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
+!HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
+!HISTORY_MSG_RAWCACORR_COLOURSHIFT;Raw CA Correction - Avoid color shift
 !HISTORY_MSG_RAW_BORDER;Raw border
 !HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
@@ -1568,7 +1541,10 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial processing profile should be generated for an image.\n\nThe path of the communication file (*.ini style, a.k.a. "Keyfile") is added as a command line parameter. It contains various parameters required for the scripts and image Exif to allow a rules-based processing profile generation.\n\n<b>WARNING:</b> You are responsible for using double quotes where necessary if you're using paths containing spaces.
 !PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_EDITORCMDLINE;Custom command line
+!PREFERENCES_PERFORMANCE_THREADS;Threads
+!PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
 !PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
+!PREFERENCES_TAB_PERFORMANCE;Performance
 !PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
 !PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
@@ -1595,6 +1571,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !SAMPLEFORMAT_16;16-bit floating-point
 !SAMPLEFORMAT_32;24-bit floating-point
 !SAMPLEFORMAT_64;32-bit floating-point
+!SAVEDLG_FILEFORMAT_FLOAT; floating-point
 !SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
 !SHCSELECTOR_TOOLTIP;Click right mouse button to reset the position of those 3 sliders.
 !SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
@@ -1917,6 +1894,8 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.
 !TP_PRSHARPENING_LABEL;Post-Resize Sharpening
 !TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
+!TP_RAWCACORR_AUTOIT;Iterations
+!TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
 !TP_RAWCACORR_CASTR;Strength
 !TP_RAWEXPOS_BLACKS;Black Levels
 !TP_RAWEXPOS_BLACK_0;Green 1 (lead)
@@ -2015,7 +1994,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_RETINEX_GAIN;Gain
 !TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
 !TP_RETINEX_GAINTRANSMISSION;Gain transmission
-!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce transmission map to achieve luminance.\nAbscissa: transmission -min from 0, mean, and values (max).\nOrdinate: gain.
+!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
 !TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
 !TP_RETINEX_GAMMA;Gamma
 !TP_RETINEX_GAMMA_FREE;Free

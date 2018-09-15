@@ -2021,13 +2021,13 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
 
         if (numFrames == 4) {
             double fitParams[64];
-            float *buffer = CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, *rawDataFrames[0], fitParams, false, true, nullptr, false);
+            float *buffer = CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[0], fitParams, false, true, nullptr, false);
             for(int i = 1; i < 3; ++i) {
-                CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, *rawDataFrames[i], fitParams, true, false, buffer, false);
+                CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[i], fitParams, true, false, buffer, false);
             }
-            CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, *rawDataFrames[3], fitParams, true, false, buffer, true);
+            CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[3], fitParams, true, false, buffer, true);
         } else {
-            CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, rawData, nullptr, false, false, nullptr, true);
+            CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, rawData, nullptr, false, false, nullptr, true);
         }
     }
 
@@ -4730,10 +4730,10 @@ void RawImageSource::getRAWHistogram(LUTu & histRedRaw, LUTu & histGreenRaw, LUT
     histRedRaw.clear();
     histGreenRaw.clear();
     histBlueRaw.clear();
-    const float mult[4] = { 65535.0f / ri->get_white(0),
-                            65535.0f / ri->get_white(1),
-                            65535.0f / ri->get_white(2),
-                            65535.0f / ri->get_white(3)
+    const float mult[4] = { 255.0f / Color::gamma(ri->get_white(0) - cblacksom[0]),
+                            255.0f / Color::gamma(ri->get_white(1) - cblacksom[1]),
+                            255.0f / Color::gamma(ri->get_white(2) - cblacksom[2]),
+                            255.0f / Color::gamma(ri->get_white(3) - cblacksom[3])
                           };
 
     const bool fourColours = ri->getSensorType() == ST_BAYER && ((mult[1] != mult[3] || cblacksom[1] != cblacksom[3]) || FC(0, 0) == 3 || FC(0, 1) == 3 || FC(1, 0) == 3 || FC(1, 1) == 3);
@@ -4839,23 +4839,22 @@ void RawImageSource::getRAWHistogram(LUTu & histRedRaw, LUTu & histGreenRaw, LUT
         } // end of critical region
     } // end of parallel region
 
-    constexpr float gammaLimit = 32767.f * 65536.f; // Color::gamma overflows when the LUT is accessed with too large values
-    for (int i = 0; i < 65536; i++) {
+    for(int i = 0; i < 65536; i++) {
         int idx;
-        idx = CLIP((int)Color::gamma(std::min(mult[0] * (i - (cblacksom[0]/*+black_lev[0]*/)), gammaLimit)));
-        histRedRaw[idx >> 8] += hist[0][i];
+        idx = (int)std::min(255.0f, mult[0] * Color::gamma(std::max(0.0f, i - cblacksom[0])));
+        histRedRaw[idx] += hist[0][i];
 
         if (ri->get_colors() > 1) {
-            idx = CLIP((int)Color::gamma(std::min(mult[1] * (i - (cblacksom[1]/*+black_lev[1]*/)), gammaLimit)));
-            histGreenRaw[idx >> 8] += hist[1][i];
+            idx = (int)std::min(255.0f, mult[1] * Color::gamma(std::max(0.0f, i - cblacksom[1])));
+            histGreenRaw[idx] += hist[1][i];
 
             if (fourColours) {
-                idx = CLIP((int)Color::gamma(std::min(mult[3] * (i - (cblacksom[3]/*+black_lev[3]*/)), gammaLimit)));
-                histGreenRaw[idx >> 8] += hist[3][i];
+                idx = (int)std::min(255.0f, mult[3] * Color::gamma(std::max(0.0f, i - cblacksom[3])));
+                histGreenRaw[idx] += hist[3][i];
             }
 
-            idx = CLIP((int)Color::gamma(std::min(mult[2] * (i - (cblacksom[2]/*+black_lev[2]*/)), gammaLimit)));
-            histBlueRaw[idx >> 8] += hist[2][i];
+            idx = (int)std::min(255.0f, mult[2] * Color::gamma(std::max(0.0f, i - cblacksom[2])));
+            histBlueRaw[idx] += hist[2][i];
         }
     }
 
@@ -5472,7 +5471,9 @@ void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int 
         ynew = H - 1 - ynew;
     }
 
-    int c = ri->getSensorType() == ST_FUJI_XTRANS ? ri->XTRANSFC(ynew, xnew) : ri->FC(ynew, xnew);
+    xnew = LIM(xnew, 0, W - 1);
+    ynew = LIM(ynew, 0, H - 1);
+    int c = ri->getSensorType() == ST_FUJI_XTRANS ? ri->XTRANSFC(ynew,xnew) : ri->FC(ynew,xnew);
     int val = round(rawData[ynew][xnew] / scale_mul[c]);
 
     if (c == 0) {

@@ -955,7 +955,7 @@ bool MyScrolledWindow::on_scroll_event (GdkEventScroll* event)
             if (value2 != value) {
                 scroll->set_value(value2);
             }
-        } else {
+        } else if (event->direction == GDK_SCROLL_UP) {
             value2 = value - step;
 
             if (value2 < lower) {
@@ -979,6 +979,77 @@ void MyScrolledWindow::get_preferred_height_vfunc (int &minimum_height, int &nat
 void MyScrolledWindow::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
 {
     natural_height = minimum_height = 50;
+}
+
+/*
+ *
+ * Derived class of some widgets to properly handle the scroll wheel ;
+ * the user has to use the Shift key to be able to change the widget's value,
+ * otherwise the mouse wheel will scroll the toolbar.
+ *
+ */
+MyScrolledToolbar::MyScrolledToolbar ()
+{
+    set_policy (Gtk::POLICY_EXTERNAL, Gtk::POLICY_NEVER);
+    get_style_context()->add_class("scrollableToolbar");
+
+    // Works fine with Gtk 3.22, but a a custom made get_preferred_height had to be created as a workaround
+    // taken from the official Gtk3.22 source code
+    //set_propagate_natural_height(true);
+}
+
+bool MyScrolledToolbar::on_scroll_event (GdkEventScroll* event)
+{
+    Glib::RefPtr<Gtk::Adjustment> adjust = get_hadjustment();
+    Gtk::Scrollbar *scroll = get_hscrollbar();
+
+    if (adjust && scroll) {
+        double upper = adjust->get_upper();
+        double lower = adjust->get_lower();
+        double value = adjust->get_value();
+        double step  = adjust->get_step_increment() * 2;
+        double value2 = 0.;
+
+        if (event->direction == GDK_SCROLL_DOWN) {
+            value2 = rtengine::min<double>(value + step, upper);
+            if (value2 != value) {
+                scroll->set_value(value2);
+            }
+        } else if (event->direction == GDK_SCROLL_UP) {
+            value2 = rtengine::max<double>(value - step, lower);
+            if (value2 != value) {
+                scroll->set_value(value2);
+            }
+        } else if (event->direction == GDK_SCROLL_SMOOTH) {
+            if (event->delta_x) {  // if the user use a pad, it can scroll horizontally
+                value2 = rtengine::LIM<double>(value + (event->delta_x > 0 ? 30 : -30), lower, upper);
+            } else if (event->delta_y) {
+                value2 = rtengine::LIM<double>(value + (event->delta_y > 0 ? 30 : -30), lower, upper);
+            }
+            if (value2 != value) {
+                scroll->set_value(value2);
+            }
+        }
+    }
+
+    return true;
+}
+
+void MyScrolledToolbar::get_preferred_height (int &minimumHeight, int &naturalHeight)
+{
+    int currMinHeight = 0;
+    int currNatHeight = 0;
+    std::vector<Widget*> childs = get_children();
+    minimumHeight = naturalHeight = 0;
+
+    for (auto child : childs)
+    {
+        if(child->is_visible()) {
+            child->get_preferred_height(currMinHeight, currNatHeight);
+            minimumHeight = rtengine::max(currMinHeight, minimumHeight);
+            naturalHeight = rtengine::max(currNatHeight, naturalHeight);
+        }
+    }
 }
 
 MyComboBoxText::MyComboBoxText (bool has_entry) : Gtk::ComboBoxText(has_entry)

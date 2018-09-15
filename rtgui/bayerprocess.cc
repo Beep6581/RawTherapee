@@ -46,6 +46,20 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     hb1->pack_end (*method, Gtk::PACK_EXPAND_WIDGET, 4);
     pack_start( *hb1, Gtk::PACK_SHRINK, 4);
 
+
+    dualDemosaicOptions = Gtk::manage (new Gtk::VBox ());
+
+    dualDemosaicContrast = Gtk::manage(new Adjuster (M("TP_RAW_DUALDEMOSAICCONTRAST"), 0, 100, 1, 20));
+    dualDemosaicContrast->setAdjusterListener (this);
+
+    if (dualDemosaicContrast->delay < options.adjusterMaxDelay) {
+        dualDemosaicContrast->delay = options.adjusterMaxDelay;
+    }
+
+    dualDemosaicContrast->show();
+    dualDemosaicOptions->pack_start(*dualDemosaicContrast);
+    pack_start( *dualDemosaicOptions, Gtk::PACK_SHRINK, 4);
+
     borderbox = Gtk::manage(new Gtk::HBox());
     border = Gtk::manage(new Adjuster(M("TP_RAW_BORDER"), 0, 16, 1, 4));
     border->setAdjusterListener (this);
@@ -111,20 +125,6 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     lmmseIterations->show();
     lmmseOptions->pack_start(*lmmseIterations);
     pack_start( *lmmseOptions, Gtk::PACK_SHRINK, 4);
-
-    dualDemosaicOptions = Gtk::manage (new Gtk::VBox ());
-
-    dualDemosaicContrast = Gtk::manage(new Adjuster (M("TP_RAW_DUALDEMOSAICCONTRAST"), 0, 100, 1, 20));
-    dualDemosaicContrast->setAdjusterListener (this);
-
-    if (dualDemosaicContrast->delay < options.adjusterMaxDelay) {
-        dualDemosaicContrast->delay = options.adjusterMaxDelay;
-    }
-
-    dualDemosaicContrast->show();
-    dualDemosaicOptions->pack_start(*dualDemosaicContrast);
-    pack_start( *dualDemosaicOptions, Gtk::PACK_SHRINK, 4);
-
 
     // --------------------  PixelShift  ----------------------
 

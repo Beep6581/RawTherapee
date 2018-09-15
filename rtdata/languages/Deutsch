@@ -310,9 +310,9 @@ HISTOGRAM_TOOLTIP_B;Blau-Histogramm ein-/ausblenden.
 HISTOGRAM_TOOLTIP_BAR;RGB-Anzeigeleiste ein-/ausblenden.
 HISTOGRAM_TOOLTIP_CHRO;Chromatizität-Histogramm ein/ausblenden.
 HISTOGRAM_TOOLTIP_FULL;Skaliertes Histogramm ein/ausschalten.
-HISTOGRAM_TOOLTIP_MODE;Schaltet zwischen linearer, logarithmischer-linearer und\nlogarithmischer-logarithmischer Skalierung um.
 HISTOGRAM_TOOLTIP_G;Grün-Histogramm ein-/ausblenden.
 HISTOGRAM_TOOLTIP_L;CIELab-Luminanz-Histogramm ein-/ausblenden.
+HISTOGRAM_TOOLTIP_MODE;Schaltet zwischen linearer, logarithmischer-linearer und\nlogarithmischer-logarithmischer Skalierung um.
 HISTOGRAM_TOOLTIP_R;Rot-Histogramm ein-/ausblenden.
 HISTOGRAM_TOOLTIP_RAW;Zwischen normalen Histogrammen und\nRAW-Histogrammen umschalten.
 HISTORY_CHANGED;Geändert
@@ -1087,14 +1087,8 @@ PARTIALPASTE_WAVELETGROUP;Wavelet
 PARTIALPASTE_WHITEBALANCE;Weißabgleich
 PREFERENCES_ADD;HINZU
 PREFERENCES_APPLNEXTSTARTUP;erfordert Neustart
-PREFERENCES_AUTLISLOW;Niedrig
-PREFERENCES_AUTLISMAX;Max.-Durchschnitt aller Kacheln
-PREFERENCES_AUTLISSTD;Hoch
-PREFERENCES_AUTLISVLOW;Keine
-PREFERENCES_AUTLOW;Niedrig
 PREFERENCES_AUTOMONPROFILE;Automatisch das für den aktuellen Monitor festgelegte Profil verwenden
 PREFERENCES_AUTOSAVE_TP_OPEN;Werkzeugstatus vor dem Beenden automatisch speichern
-PREFERENCES_AUTSTD;Standard
 PREFERENCES_BATCH_PROCESSING;Stapelverarbeitung
 PREFERENCES_BEHADDALL;Alle hinzufügen
 PREFERENCES_BEHADDALLHINT;Setzt alle Parameter auf <b>Hinzufügen</b>.\nAnpassungen der Parameter in der Hintergrundstapelverarbeitung werden als <b>Deltas</b> zu den gespeicherten Werten interpretiert.
@@ -1145,8 +1139,6 @@ PREFERENCES_DARKFRAMESHOTS;Aufnahmen
 PREFERENCES_DARKFRAMETEMPLATES;Vorlagen
 PREFERENCES_DATEFORMAT;Format
 PREFERENCES_DATEFORMATHINT;Die folgenden Variablen können verwendet werden:\n<b>%y</b> : <i>Jahr</i>\n<b>%m</b> : <i>Monat</i>\n<b>%d</b> : <i>Tag</i>\n\nBeispiele:\n<b>%d.%m.%y</b> (übliche deutsche Datumsschreibweise)\n<b>%y-%m-%d</b> (Datumsformat nach ISO 8601 und EN 28601)
-PREFERENCES_DAUB_LABEL;Benutze Daubechies D6-Wavelets anstatt D4
-PREFERENCES_DAUB_TOOLTIP;Rauschreduzierung und Waveletebenen verwenden ein Debauchies Mutter-Wavelet. Wenn Sie D6 statt D4 wählen, erhöhen Sie die Anzahl der orthogonalen Daubechies-Koeffizienten, was die Qualität bei niedrigen Ebenen verbessern kann. Es gibt keinen Unterschied zwischen D4 und D6 im Speicherverbrauch oder in der Verarbeitungszeit.
 PREFERENCES_DIRDARKFRAMES;Dunkelbild-Verzeichnis
 PREFERENCES_DIRECTORIES;Verzeichnisse
 PREFERENCES_DIRHOME;Benutzer-Verzeichnis
@@ -1156,7 +1148,6 @@ PREFERENCES_DIRSELECTDLG;Wähle das Bild-Verzeichnis beim Programmstart...
 PREFERENCES_DIRSOFTWARE;Installationsverzeichnis
 PREFERENCES_EDITORCMDLINE;Benutzerdefinierte Befehlszeile
 PREFERENCES_EDITORLAYOUT;Editor-Layout
-PREFERENCES_EXPAUT;Experte
 PREFERENCES_EXTERNALEDITOR;Externer Editor
 PREFERENCES_FBROWSEROPTS;Bildinformationen und Miniaturbilder
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Einzeilige Toolbar\n(Bei geringer Bildschirmauflösung deaktivieren)
@@ -1202,12 +1193,7 @@ PREFERENCES_INTENT_SATURATION;Sättigung
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Zeige das eingebettete JPEG als Miniaturbild, wenn die RAW-Datei noch nicht editiert wurde
 PREFERENCES_LANG;Sprache
 PREFERENCES_LANGAUTODETECT;Systemsprache verwenden
-PREFERENCES_LEVAUTDN;Rauschreduzierungsstufe
-PREFERENCES_LEVDN;Zellengröße
-PREFERENCES_LISS;Automatische Glättung bei Mehrfachzonen
-PREFERENCES_MAX;Maxi (Kachel)
 PREFERENCES_MAXRECENTFOLDERS;Maximale Anzahl der letzten Dateien
-PREFERENCES_MED;Medium (Kachel/2)
 PREFERENCES_MENUGROUPEXTPROGS;Untermenü "Öffnen mit"
 PREFERENCES_MENUGROUPFILEOPERATIONS;Untermenü Dateioperationen
 PREFERENCES_MENUGROUPLABEL;Untermenü Farbmarkierung
@@ -1215,7 +1201,6 @@ PREFERENCES_MENUGROUPPROFILEOPERATIONS;Untermenü Profiloperationen
 PREFERENCES_MENUGROUPRANK;Untermenü Bewertung
 PREFERENCES_MENUOPTIONS;Menüoptionen
 PREFERENCES_METADATA;Metadaten
-PREFERENCES_MIN;Mini (100x115)
 PREFERENCES_MONINTENT;Standard-Rendering-Intent
 PREFERENCES_MONITOR;Monitor
 PREFERENCES_MONPROFILE;Standardfarbprofil
@@ -1224,7 +1209,6 @@ PREFERENCES_MULTITAB;Multi-Reitermodus
 PREFERENCES_MULTITABDUALMON;Multi-Reitermodus (auf zweitem Monitor, wenn verfügbar)
 PREFERENCES_NAVGUIDEBRUSH;Farbe der Navigationshilfe
 PREFERENCES_NAVIGATIONFRAME;Navigation
-PREFERENCES_NOISE;Rauschreduzierung
 PREFERENCES_OUTDIR;Ausgabeverzeichnis
 PREFERENCES_OUTDIRFOLDER;In dieses Verzeichnis speichern.
 PREFERENCES_OUTDIRFOLDERHINT;Alle Dateien im ausgewählten Verzeichnis speichern.
@@ -1260,8 +1244,6 @@ PREFERENCES_PRTPROFILE;Farbprofil
 PREFERENCES_PSPATH;Adobe Photoshop Installationsverzeichnis
 PREFERENCES_REMEMBERZOOMPAN;Zoom und Bildposition merken
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Öffnen eines neuen Bildes mit den Zoom- und Positionswerten\ndes vorangegangenen Bildes.\n\nFunktioniert nur unter folgenden Bedingungen:\nEin-Reitermodus aktiv\n“Demosaikmethode für 100%-Ansicht“ muss auf “Wie im Bild-\nverarbeitungsprofil vorgegeben“ eingestellt sein.
-PREFERENCES_RGBDTL_LABEL;Maximale Anzahl Threads für Rauschreduzierung
-PREFERENCES_RGBDTL_TOOLTIP;Die Rauschreduzierung benötigt mindestens 128MB RAM für ein 10 Megapixel-Bild oder 512MB für ein 40 Megapixel-Bild, und zusätzlich 128MB RAM pro Thread. Je mehr Threads parallel ablaufen, desto schneller ist die Berechnung. Bei Einstellung "0" werden so viele Threads wie möglich benutzt.
 PREFERENCES_SAVE_TP_OPEN_NOW;Werkzeugstatus jetzt speichern
 PREFERENCES_SELECTFONT;Schriftart
 PREFERENCES_SELECTFONT_COLPICKER;Schriftart für die Farbwähler
@@ -1276,41 +1258,30 @@ PREFERENCES_SHOWDATETIME;Datum und Uhrzeit anzeigen
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Belichtungskorrektur anfügen
 PREFERENCES_SHOWFILMSTRIPTOOLBAR;Toolbar oberhalb des Filmstreifens anzeigen
 PREFERENCES_SHTHRESHOLD;Schatten - Schwelle
-PREFERENCES_SIMPLAUT;Werkzeugmodus
 PREFERENCES_SINGLETAB;Ein-Reitermodus
 PREFERENCES_SINGLETABVERTAB;Ein-Reitermodus (vertikale Reiter)
-PREFERENCES_SMA;Klein (250x287)
 PREFERENCES_SND_BATCHQUEUEDONE;Warteschlange abgearbeitet
 PREFERENCES_SND_HELP;Geben Sie einen Pfad zu einer Sounddatei oder einen Systemklang ein.\n\nBeispiel Systemklänge:\nWindows: SystemDefault, SystemAsterisk ...\nLinux: complete, window-attention ...\n
 PREFERENCES_SND_LNGEDITPROCDONE;Bearbeitung abgeschlossen
 PREFERENCES_SND_THRESHOLDSECS;Verzögerung in Sekunden
 PREFERENCES_STARTUPIMDIR;Bildverzeichnis beim Programmstart
-PREFERENCES_STDAUT;Standard
 PREFERENCES_TAB_BROWSER;Dateiverwaltung
 PREFERENCES_TAB_COLORMGR;Farbmanagement
 PREFERENCES_TAB_DYNAMICPROFILE;Dynamisches Profil
 PREFERENCES_TAB_GENERAL;Allgemein
 PREFERENCES_TAB_IMPROC;Bildbearbeitung
-PREFERENCES_TAB_PERFORMANCE;Performance & Qualität
 PREFERENCES_TAB_SOUND;Klänge
 PREFERENCES_THEME;Oberflächendesign
 PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Eingebundenes JPEG
 PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Bildanzeige
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutrales RAW-Bild 
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Eingebundenes JPEG wenn in Originalgröße, sonst neutrales RAW-Bild
-PREFERENCES_TIMAX;Hoch
-PREFERENCES_TINB;Anzahl Kacheln
-PREFERENCES_TISTD;Standard
 PREFERENCES_TP_LABEL;Werkzeugbereich:
 PREFERENCES_TP_USEICONORTEXT;Symbole statt Text in Karteireitern
 PREFERENCES_TP_VSCROLLBAR;Keine vertikale Scrollbar
 PREFERENCES_TUNNELMETADATA;Exif/XMP unverändert in die Ausgabedatei übernehmen.
 PREFERENCES_USEBUNDLEDPROFILES;Standardprofile verwenden
 PREFERENCES_VIEW;Weißabgleich-Einstellung des Ausgabegerätes (Monitor, TV, Projektor, usw.)
-PREFERENCES_WAVLEV;Die Qualität von Waveletebenen erhöhen
-PREFERENCES_WLONE;Eine Ebene
-PREFERENCES_WLTWO;Zwei Ebenen
-PREFERENCES_WLZER;Nein
 PREFERENCES_WORKFLOW;Layout
 PROFILEPANEL_COPYPPASTE;Zu kopierende Parameter
 PROFILEPANEL_GLOBALPROFILES;Standardprofile
@@ -2376,3 +2347,16 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Ausschnitt an Bildschirm anpassen\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
+!HISTORY_MSG_RAWCACORR_COLOURSHIFT;Raw CA Correction - Avoid color shift
+!PREFERENCES_PERFORMANCE_THREADS;Threads
+!PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
+!PREFERENCES_TAB_PERFORMANCE;Performance
+!SAVEDLG_FILEFORMAT_FLOAT; floating-point
+!TP_RAWCACORR_AUTOIT;Iterations
+!TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift

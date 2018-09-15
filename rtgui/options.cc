@@ -305,6 +305,7 @@ void Options::setDefaults()
     saveFormat.jpegSubSamp = 2;
     saveFormat.pngBits = 8;
     saveFormat.tiffBits = 16;
+    saveFormat.tiffFloat = false;
     saveFormat.tiffUncompressed = true;
     saveFormat.saveParams = true;
 
@@ -313,6 +314,7 @@ void Options::setDefaults()
     saveFormatBatch.jpegSubSamp = 2;
     saveFormatBatch.pngBits = 8;
     saveFormatBatch.tiffBits = 16;
+    saveFormatBatch.tiffFloat = false;
     saveFormatBatch.tiffUncompressed = true;
     saveFormatBatch.saveParams = true;
 
@@ -333,7 +335,7 @@ void Options::setDefaults()
     dirBrowserHeight = 350;
     dirBrowserSortType = Gtk::SORT_ASCENDING;
     preferencesWidth = 800;
-    preferencesHeight = 0;
+    preferencesHeight = 600;
     toolPanelWidth = 400;
     browserToolPanelWidth = 465;
     browserToolPanelHeight = 600;
@@ -421,8 +423,12 @@ void Options::setDefaults()
     mainNBVertical = true;
     multiDisplayMode = 0;
     histogramPosition = 1;
+    histogramRed = true;
+    histogramGreen = true;
+    histogramBlue = true;
     histogramBar = true;
-    histogramFullMode = false;
+    histogramHeight = 200;
+    histogramDrawMode = 0;
     curvebboxpos = 1;
     prevdemo = PD_Sidecar;
     mip = MI_opt;
@@ -543,11 +549,6 @@ void Options::setDefaults()
 //   rtSettings.viewingdevice = 0;
 //   rtSettings.viewingdevicegrey = 3;
     //  rtSettings.viewinggreySc = 1;
-    rtSettings.leveldnv = 2;
-    rtSettings.leveldnti = 0;
-    rtSettings.leveldnaut = 0;
-    rtSettings.leveldnliss = 0;
-    rtSettings.leveldnautsimpl = 0;
 
     rtSettings.printerProfile = Glib::ustring();
     rtSettings.printerIntent = rtengine::RI_RELATIVE;
@@ -590,10 +591,16 @@ void Options::setDefaults()
 
     rtSettings.daubech = false;
 
-    rtSettings.nrauto = 10;//between 2 and 20
-    rtSettings.nrautomax = 40;//between 5 and 100
-    rtSettings.nrhigh = 0.45;//between 0.1 and 0.9
-    rtSettings.nrwavlevel = 1;//integer between 0 and 2
+    // #4327 - Noise Reduction settings removed from Preferences
+    rtSettings.nrauto = 10; // between 2 and 20
+    rtSettings.nrautomax = 40; // between 5 and 100
+    rtSettings.nrhigh = 0.45; // between 0.1 and 0.9
+    rtSettings.nrwavlevel = 1; // integer between 0 and 2
+    rtSettings.leveldnv = 2;
+    rtSettings.leveldnti = 0;
+    rtSettings.leveldnaut = 0;
+    rtSettings.leveldnliss = 0;
+    rtSettings.leveldnautsimpl = 0;
 
 //   rtSettings.colortoningab =0.7;
 //rtSettings.decaction =0.3;
@@ -793,6 +800,10 @@ void Options::readFromFile(Glib::ustring fname)
                     saveFormat.tiffBits = keyFile.get_integer("Output", "TiffBps");
                 }
 
+                if (keyFile.has_key ("Output", "TiffFloat")) {
+                    saveFormat.tiffFloat = keyFile.get_boolean ("Output", "TiffFloat");
+                }
+
                 if (keyFile.has_key("Output", "TiffUncompressed")) {
                     saveFormat.tiffUncompressed = keyFile.get_boolean("Output", "TiffUncompressed");
                 }
@@ -820,6 +831,10 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("Output", "TiffBpsBatch")) {
                     saveFormatBatch.tiffBits = keyFile.get_integer("Output", "TiffBpsBatch");
+                }
+
+                if (keyFile.has_key ("Output", "TiffFloatBatch")) {
+                    saveFormatBatch.tiffFloat = keyFile.get_boolean ("Output", "TiffFloatBatch");
                 }
 
                 if (keyFile.has_key("Output", "TiffUncompressedBatch")) {
@@ -1064,46 +1079,6 @@ void Options::readFromFile(Glib::ustring fname)
                     rgbDenoiseThreadLimit = keyFile.get_integer("Performance", "RgbDenoiseThreadLimit");
                 }
 
-                if (keyFile.has_key("Performance", "NRauto")) {
-                    rtSettings.nrauto = keyFile.get_double("Performance", "NRauto");
-                }
-
-                if (keyFile.has_key("Performance", "NRautomax")) {
-                    rtSettings.nrautomax = keyFile.get_double("Performance", "NRautomax");
-                }
-
-                if (keyFile.has_key("Performance", "NRhigh")) {
-                    rtSettings.nrhigh = keyFile.get_double("Performance", "NRhigh");
-                }
-
-                if (rtSettings.nrhigh == 0.0) { //avoid crash by division by zero in noise reduction
-                    rtSettings.nrhigh = 0.45;
-                }
-
-                if (keyFile.has_key("Performance", "NRWavlevel")) {
-                    rtSettings.nrwavlevel = keyFile.get_integer("Performance", "NRWavlevel");
-                }
-
-                if (keyFile.has_key("Performance", "LevNR")) {
-                    rtSettings.leveldnv = keyFile.get_integer("Performance", "LevNR");
-                }
-
-                if (keyFile.has_key("Performance", "LevNRTI")) {
-                    rtSettings.leveldnti = keyFile.get_integer("Performance", "LevNRTI");
-                }
-
-                if (keyFile.has_key("Performance", "LevNRAUT")) {
-                    rtSettings.leveldnaut = keyFile.get_integer("Performance", "LevNRAUT");
-                }
-
-                if (keyFile.has_key("Performance", "LevNRLISS")) {
-                    rtSettings.leveldnliss = keyFile.get_integer("Performance", "LevNRLISS");
-                }
-
-                if (keyFile.has_key("Performance", "SIMPLNRAUT")) {
-                    rtSettings.leveldnautsimpl = keyFile.get_integer("Performance", "SIMPLNRAUT");
-                }
-
                 if (keyFile.has_key("Performance", "ClutCacheSize")) {
                     clutCacheSize = keyFile.get_integer("Performance", "ClutCacheSize");
                 }
@@ -1126,10 +1101,6 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key ("Profiles", "Mipfiles")) {
                     mip             = (mip_t)keyFile.get_integer ("Profiles", "Mipfiles");
-                }
-
-                if (keyFile.has_key("Performance", "Daubechies")) {
-                    rtSettings.daubech = keyFile.get_boolean("Performance", "Daubechies");
                 }
 
                 if (keyFile.has_key("Performance", "SerializeTiffRead")) {
@@ -1350,13 +1321,41 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("GUI", "HistogramPosition")) {
                     histogramPosition = keyFile.get_integer("GUI", "HistogramPosition");
                 }
+                
+                if (keyFile.has_key("GUI", "HistogramRed")) {
+                    histogramRed = keyFile.get_boolean("GUI", "HistogramRed");
+                }
+                
+                if (keyFile.has_key("GUI", "HistogramGreen")) {
+                    histogramGreen = keyFile.get_boolean("GUI", "HistogramGreen");
+                }
+                
+                if (keyFile.has_key("GUI", "HistogramBlue")) {
+                    histogramBlue = keyFile.get_boolean("GUI", "HistogramBlue");
+                }
+                
+                if (keyFile.has_key("GUI", "HistogramLuma")) {
+                    histogramLuma = keyFile.get_boolean("GUI", "HistogramLuma");
+                }
+                
+                if (keyFile.has_key("GUI", "HistogramChroma")) {
+                    histogramChroma = keyFile.get_boolean("GUI", "HistogramChroma");
+                }
+                
+                if (keyFile.has_key("GUI", "HistogramRAW")) {
+                    histogramRAW = keyFile.get_boolean("GUI", "HistogramRAW");
+                }
 
                 if (keyFile.has_key("GUI", "HistogramBar")) {
                     histogramBar = keyFile.get_boolean("GUI", "HistogramBar");
                 }
-
-                if (keyFile.has_key("GUI", "HistogramFullMode")) {
-                    histogramFullMode = keyFile.get_boolean("GUI", "HistogramFullMode");
+                
+                if (keyFile.has_key ("GUI", "HistogramHeight")) {
+                    histogramHeight = keyFile.get_integer ("GUI", "HistogramHeight");
+                }
+                
+                if (keyFile.has_key ("GUI", "HistogramDrawMode")) {
+                    histogramDrawMode = keyFile.get_integer ("GUI", "HistogramDrawMode");
                 }
 
                 if (keyFile.has_key("GUI", "NavigatorRGBUnit")) {
@@ -1981,20 +1980,10 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("Clipping Indication", "BlinkClipped", blinkClipped);
 
         keyFile.set_integer("Performance", "RgbDenoiseThreadLimit", rgbDenoiseThreadLimit);
-        keyFile.set_double("Performance", "NRauto", rtSettings.nrauto);
-        keyFile.set_double("Performance", "NRautomax", rtSettings.nrautomax);
-        keyFile.set_double("Performance", "NRhigh", rtSettings.nrhigh);
-        keyFile.set_integer("Performance", "NRWavlevel", rtSettings.nrwavlevel);
-        keyFile.set_integer("Performance", "LevNR", rtSettings.leveldnv);
-        keyFile.set_integer("Performance", "LevNRTI", rtSettings.leveldnti);
-        keyFile.set_integer("Performance", "LevNRAUT", rtSettings.leveldnaut);
-        keyFile.set_integer("Performance", "LevNRLISS", rtSettings.leveldnliss);
-        keyFile.set_integer("Performance", "SIMPLNRAUT", rtSettings.leveldnautsimpl);
         keyFile.set_integer("Performance", "ClutCacheSize", clutCacheSize);
         keyFile.set_integer("Performance", "MaxInspectorBuffers", maxInspectorBuffers);
         keyFile.set_integer("Performance", "InspectorDelay", inspectorDelay);
         keyFile.set_integer("Performance", "PreviewDemosaicFromSidecar", prevdemo);
-        keyFile.set_boolean("Performance", "Daubechies", rtSettings.daubech);
         keyFile.set_boolean("Performance", "SerializeTiffRead", serializeTiffRead);
         keyFile.set_integer ("Performance", "Localajustqual", locaaju);
         keyFile.set_integer("Performance", "ThumbnailInspectorMode", int(rtSettings.thumbnail_inspector_mode));
@@ -2005,6 +1994,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("Output", "JpegSubSamp", saveFormat.jpegSubSamp);
         keyFile.set_integer("Output", "PngBps", saveFormat.pngBits);
         keyFile.set_integer("Output", "TiffBps", saveFormat.tiffBits);
+        keyFile.set_boolean("Output", "TiffFloat", saveFormat.tiffFloat);
         keyFile.set_boolean("Output", "TiffUncompressed", saveFormat.tiffUncompressed);
         keyFile.set_boolean("Output", "SaveProcParams", saveFormat.saveParams);
 
@@ -2013,6 +2003,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("Output", "JpegSubSampBatch", saveFormatBatch.jpegSubSamp);
         keyFile.set_integer("Output", "PngBpsBatch", saveFormatBatch.pngBits);
         keyFile.set_integer("Output", "TiffBpsBatch", saveFormatBatch.tiffBits);
+        keyFile.set_boolean("Output", "TiffFloatBatch", saveFormatBatch.tiffFloat);
         keyFile.set_boolean("Output", "TiffUncompressedBatch", saveFormatBatch.tiffUncompressed);
         keyFile.set_boolean("Output", "SaveProcParamsBatch", saveFormatBatch.saveParams);
 
@@ -2085,23 +2076,29 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("GUI", "FrameColor", bgcolor);
         keyFile.set_boolean("GUI", "ProcessingQueueEnbled", procQueueEnabled);
         Glib::ArrayHandle<int> tpopen = tpOpen;
-        keyFile.set_integer_list("GUI", "ToolPanelsExpanded", tpopen);
-        keyFile.set_boolean("GUI", "ToolPanelsExpandedAutoSave", autoSaveTpOpen);
-        keyFile.set_integer("GUI", "MultiDisplayMode", multiDisplayMode);
-        keyFile.set_double_list("GUI", "CutOverlayBrush", cutOverlayBrush);
-        keyFile.set_double_list("GUI", "NavGuideBrush", navGuideBrush);
-        keyFile.set_integer("GUI", "HistogramPosition", histogramPosition);
-        keyFile.set_boolean("GUI", "HistogramBar", histogramBar);
-        keyFile.set_boolean("GUI", "HistogramFullMode", histogramFullMode);
-        keyFile.set_integer("GUI", "NavigatorRGBUnit", (int)navRGBUnit);
-        keyFile.set_integer("GUI", "NavigatorHSVUnit", (int)navHSVUnit);
-        keyFile.set_boolean("GUI", "ShowFilmStripToolBar", showFilmStripToolBar);
-        keyFile.set_boolean ("GUI", "Showdelimspot", showdelimspot);
-        keyFile.set_boolean("GUI", "FileBrowserToolbarSingleRow", FileBrowserToolbarSingleRow);
-        keyFile.set_boolean("GUI", "HideTPVScrollbar", hideTPVScrollbar);
-        keyFile.set_boolean("GUI", "UseIconNoText", UseIconNoText);
-        keyFile.set_boolean("GUI", "HistogramWorking", rtSettings.HistogramWorking);
-        keyFile.set_integer("GUI", "CurveBBoxPosition", curvebboxpos);
+        keyFile.set_integer_list ("GUI", "ToolPanelsExpanded", tpopen);
+        keyFile.set_boolean ("GUI", "ToolPanelsExpandedAutoSave", autoSaveTpOpen);
+        keyFile.set_integer ("GUI", "MultiDisplayMode", multiDisplayMode);
+        keyFile.set_double_list ("GUI", "CutOverlayBrush", cutOverlayBrush);
+        keyFile.set_double_list ("GUI", "NavGuideBrush", navGuideBrush);
+        keyFile.set_integer ("GUI", "HistogramPosition", histogramPosition);
+        keyFile.set_boolean ("GUI", "HistogramRed", histogramRed);
+        keyFile.set_boolean ("GUI", "HistogramGreen", histogramGreen);
+        keyFile.set_boolean ("GUI", "HistogramBlue", histogramBlue);
+        keyFile.set_boolean ("GUI", "HistogramLuma", histogramLuma);
+        keyFile.set_boolean ("GUI", "HistogramChroma", histogramChroma);
+        keyFile.set_boolean ("GUI", "HistogramRAW", histogramRAW);
+        keyFile.set_boolean ("GUI", "HistogramBar", histogramBar);
+        keyFile.set_integer ("GUI", "HistogramHeight", histogramHeight);
+        keyFile.set_integer ("GUI", "HistogramDrawMode", histogramDrawMode);
+        keyFile.set_integer ("GUI", "NavigatorRGBUnit", (int)navRGBUnit);
+        keyFile.set_integer ("GUI", "NavigatorHSVUnit", (int)navHSVUnit);
+        keyFile.set_boolean ("GUI", "ShowFilmStripToolBar", showFilmStripToolBar);
+        keyFile.set_boolean ("GUI", "FileBrowserToolbarSingleRow", FileBrowserToolbarSingleRow);
+        keyFile.set_boolean ("GUI", "HideTPVScrollbar", hideTPVScrollbar);
+        keyFile.set_boolean ("GUI", "UseIconNoText", UseIconNoText);
+        keyFile.set_boolean ("GUI", "HistogramWorking", rtSettings.HistogramWorking);
+        keyFile.set_integer ("GUI", "CurveBBoxPosition", curvebboxpos);
 
         //Glib::ArrayHandle<int> crvopen = crvOpen;
         //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);

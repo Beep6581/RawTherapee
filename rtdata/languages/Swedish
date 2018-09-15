@@ -811,13 +811,7 @@ PARTIALPASTE_WAVELETGROUP;Wavelet-nivåer
 PARTIALPASTE_WHITEBALANCE;Vitbalans
 PREFERENCES_ADD;Lägg till
 PREFERENCES_APPLNEXTSTARTUP;Kräver omstart av RawTherapee
-PREFERENCES_AUTLISLOW;Låg
-PREFERENCES_AUTLISMAX;Max - Medel av alla indelningar
-PREFERENCES_AUTLISSTD;Hög
-PREFERENCES_AUTLISVLOW;Ingen
-PREFERENCES_AUTLOW;Låg
 PREFERENCES_AUTOMONPROFILE;Använd operativsystemets skärmfärgprofil
-PREFERENCES_AUTSTD;Standard
 PREFERENCES_BATCH_PROCESSING;Batchbehandling
 PREFERENCES_BEHADDALL;Sätt allt till 'Lägg till'
 PREFERENCES_BEHADDALLHINT;Sätt alla parametrar till <b>Lägg till</b>-läge.\nFörändringar i parametrar batch-verktyget kommer att vara <b>skillnader</b> gentemot de lagrade värdena.
@@ -860,8 +854,6 @@ PREFERENCES_DARKFRAMESHOTS;bilder
 PREFERENCES_DARKFRAMETEMPLATES;mallar
 PREFERENCES_DATEFORMAT;Datumformat
 PREFERENCES_DATEFORMATHINT;Du kan använda följande format:\n<b>%y</b>: år\n<b>%m</b>: månad\n<b>%d</b>: dag\n\nTill exempel är det svenska datumformatet:\n<b>%y-%m-%d</b>
-PREFERENCES_DAUB_LABEL;Använd Daubechies D6-wavelets istället för D4
-PREFERENCES_DAUB_TOOLTIP;Brusreduceringen och wavelet-verktyget använder en Debauchies moder-wavelet. Om du väljer D6 istället för D4 ökas antalet ortogonala Daubechies-koefficienter och troligtvis ökas också kvaliteten på de småskaliga nivåerna. Det blir ingen skillnad i minnesanvändning eller beräkningstid.
 PREFERENCES_DIRDARKFRAMES;Katalog för svartbilder
 PREFERENCES_DIRHOME;Hemkatalog
 PREFERENCES_DIRLAST;Senaste besökta katalog
@@ -869,7 +861,6 @@ PREFERENCES_DIROTHER;Annan
 PREFERENCES_DIRSELECTDLG;Välj bildkatalog vid uppstart...
 PREFERENCES_DIRSOFTWARE;Installationskatalog
 PREFERENCES_EDITORLAYOUT;Layout för redigeringsvyn
-PREFERENCES_EXPAUT;Expert
 PREFERENCES_EXTERNALEDITOR;Externt bildredigeringsprogram
 PREFERENCES_FBROWSEROPTS;Inställningar för filvyn/miniatyrbilderna
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Filvyns verktygsrad som en rad (avmarkera för lågupplösta skärmar)
@@ -912,11 +903,7 @@ PREFERENCES_INTENT_RELATIVE;Relativ kolorimetrisk
 PREFERENCES_INTENT_SATURATION;Mättnad
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Visa intern råbild om oredigerad
 PREFERENCES_LANGAUTODETECT;Använd operativsystemets språkinställning
-PREFERENCES_LEVAUTDN;Brusreduceringsnivå
-PREFERENCES_LEVDN;Cellstorlek
-PREFERENCES_MAX;Max (Tile)
 PREFERENCES_MAXRECENTFOLDERS;Maximalt antal visade kataloger
-PREFERENCES_MED;Medium (Tile/2)
 PREFERENCES_MENUGROUPEXTPROGS;Visa "Öppna med"
 PREFERENCES_MENUGROUPFILEOPERATIONS;Visa "Filaktiviteter"
 PREFERENCES_MENUGROUPLABEL;Visa "Etikett"
@@ -924,12 +911,10 @@ PREFERENCES_MENUGROUPPROFILEOPERATIONS;Visa "Profilaktiviteter"
 PREFERENCES_MENUGROUPRANK;Visa "Betygsättning"
 PREFERENCES_MENUOPTIONS;Menyval för högerklick
 PREFERENCES_METADATA;Metadata
-PREFERENCES_MIN;Mini (100x115)
 PREFERENCES_MULTITAB;Öppna bilderna i olika flikar
 PREFERENCES_MULTITABDUALMON;Visa bild på andra skärmen, om möjligt, i flerfliksläge
 PREFERENCES_NAVGUIDEBRUSH;Översiktsvyns guidefärg
 PREFERENCES_NAVIGATIONFRAME;Navigering
-PREFERENCES_NOISE;Brusreducering
 PREFERENCES_OUTDIR;Utmatningskatalog
 PREFERENCES_OUTDIRFOLDER;Spara till katalog
 PREFERENCES_OUTDIRFOLDERHINT;Spara de behandlade bilderna i den valda katalogen
@@ -960,8 +945,6 @@ PREFERENCES_PROPERTY;Egenskaper
 PREFERENCES_PSPATH;Adobe Photoshops installationskatalog
 PREFERENCES_REMEMBERZOOMPAN;Kom ihåg förstoringsprocent och panorering
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Kom ihåg förstoringsgraden i % och panoreringen för den aktuella bilden när du öppnar en ny bild.\n\nDet här valet fungerar bara i Enkelfliksläget och när "Demosaicing-metod som ska användas för förstoringsgrader <100 %" är satt til "Som i PP3".
-PREFERENCES_RGBDTL_LABEL;Maximalt antal trådar för brusreducering
-PREFERENCES_RGBDTL_TOOLTIP;Brusreduceringen kräver ungefär 128MB RAM för en 10MPix bild och 512MB för en 40 MPix, och ytterligare 128MB per tråd. Ju fler trådar som körs parallellt, desto snabbare går beräkningarna. Ange värdet "0" för att automatiskt använda så många trådar som möjligt.
 PREFERENCES_SELECTFONT;Välj typsnitt
 PREFERENCES_SELECTFONT_COLPICKER;Välj typsnitt för färgpipetten
 PREFERENCES_SELECTLANG;Välj språk
@@ -974,35 +957,24 @@ PREFERENCES_SHOWDATETIME;Visa datum och tid
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Lägg till exponeringskompensation
 PREFERENCES_SHOWFILMSTRIPTOOLBAR;Visa verktygsraden för filmstrip
 PREFERENCES_SHTHRESHOLD;Tröskelvärde för skuggor
-PREFERENCES_SIMPLAUT;Verktygsläge
 PREFERENCES_SINGLETAB;Öppna en bild åt gången
 PREFERENCES_SINGLETABVERTAB;Enkelfliksläge, vertikala flikar
-PREFERENCES_SMA;Liten (250x287)
 PREFERENCES_SND_BATCHQUEUEDONE;Batchkön färdig
 PREFERENCES_SND_HELP;Fyll i en sökväg till ett ljud.\nI Windows kan "SystemDefault", "SystemAsterisk" o.s.v. användas.\nPå Linuxbaserade system kan du prova med "complete", "windows-attention" o.s.v.
 PREFERENCES_SND_LNGEDITPROCDONE;När behandlingen är klar
 PREFERENCES_SND_THRESHOLDSECS;Ljudet kommer efter så här många sekunder
 PREFERENCES_STARTUPIMDIR;Bildkatalog som visas vid uppstart
-PREFERENCES_STDAUT;Standard
 PREFERENCES_TAB_BROWSER;Filbläddrare
 PREFERENCES_TAB_COLORMGR;Färghantering
 PREFERENCES_TAB_GENERAL;Allmän
 PREFERENCES_TAB_IMPROC;Bildbehandling
-PREFERENCES_TAB_PERFORMANCE;Prestanda
 PREFERENCES_TAB_SOUND;Ljud
-PREFERENCES_TIMAX;Hög
-PREFERENCES_TINB;Antal tiles
-PREFERENCES_TISTD;Standard
 PREFERENCES_TP_LABEL;Verktygspanel:
 PREFERENCES_TP_USEICONORTEXT;Använd ikoner istället för text
 PREFERENCES_TP_VSCROLLBAR;Göm verktygpanelens vertikala skrollist
 PREFERENCES_TUNNELMETADATA;Kopiera Exif/IPTC/XMP till utfilen oförändrat
 PREFERENCES_USEBUNDLEDPROFILES;Visa förinstallerade profiler
 PREFERENCES_VIEW;Utenhetens vitbalansvärde (datorskärm, TV, bildkanon, etc.)
-PREFERENCES_WAVLEV;Öka waveletnivån vid kvalitet "hög"
-PREFERENCES_WLONE;En nivå
-PREFERENCES_WLTWO;Två nivåer
-PREFERENCES_WLZER;Nej
 PREFERENCES_WORKFLOW;Arbetsflöde
 PROFILEPANEL_COPYPPASTE;Parametrar att kopiera
 PROFILEPANEL_GLOBALPROFILES;Förinstallerade profiler
@@ -1879,6 +1851,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !GENERAL_SAVE_AS;Save as...
 !GENERAL_SLIDER;Slider
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
+!HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
 !HISTORY_MSG_173;NR - Detail recovery
 !HISTORY_MSG_203;NR - Color space
 !HISTORY_MSG_235;B&amp;W - CM - Auto
@@ -1965,6 +1938,8 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
+!HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
+!HISTORY_MSG_RAWCACORR_COLOURSHIFT;Raw CA Correction - Avoid color shift
 !HISTORY_MSG_RAW_BORDER;Raw border
 !HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
@@ -2076,11 +2051,12 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
 !PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
 !PREFERENCES_LANG;Language
-!PREFERENCES_LISS;Auto multi-zone smoothing
 !PREFERENCES_MONINTENT;Default rendering intent
 !PREFERENCES_MONITOR;Monitor
 !PREFERENCES_MONPROFILE;Default color profile
 !PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
+!PREFERENCES_PERFORMANCE_THREADS;Threads
+!PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
 !PREFERENCES_PRINTER;Printer (Soft-Proofing)
 !PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
 !PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
@@ -2089,6 +2065,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
 !PREFERENCES_SERIALIZE_TIFF_READ;Tiff Read Settings
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
+!PREFERENCES_TAB_PERFORMANCE;Performance
 !PREFERENCES_THEME;Theme
 !PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
 !PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
@@ -2106,6 +2083,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !SAMPLEFORMAT_16;16-bit floating-point
 !SAMPLEFORMAT_32;24-bit floating-point
 !SAMPLEFORMAT_64;32-bit floating-point
+!SAVEDLG_FILEFORMAT_FLOAT; floating-point
 !SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
 !SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
 !TP_BWMIX_MIXC;Channel Mixer
@@ -2171,6 +2149,8 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertical
 !TP_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.
+!TP_RAWCACORR_AUTOIT;Iterations
+!TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
 !TP_RAW_1PASSMEDIUM;1-pass (Markesteijn)
 !TP_RAW_2PASS;1-pass+fast
 !TP_RAW_3PASSBEST;3-pass (Markesteijn)
@@ -2228,7 +2208,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_RETINEX_CONTEDIT_MAP;Mask equalizer
 !TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorrect raw data to reduce halos and artifacts.
 !TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;This curve can be applied alone or with a Gaussian mask or wavelet mask.\nBeware of artifacts!
-!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce transmission map to achieve luminance.\nAbscissa: transmission -min from 0, mean, and values (max).\nOrdinate: gain.
+!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
 !TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
 !TP_RETINEX_GAMMA_TOOLTIP;Restore tones by applying gamma before and after Retinex. Different from Retinex curves or others curves (Lab, Exposure, etc.).
 !TP_RETINEX_HIGHLIGHT_TOOLTIP;Increase action of High algorithm.\nMay require you to re-adjust "Neighboring pixels" and to increase the "White-point correction" in the Raw tab -> Raw White Points tool.

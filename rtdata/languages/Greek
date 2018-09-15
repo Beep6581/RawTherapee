@@ -578,9 +578,9 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !GENERAL_UNCHANGED;(Unchanged)
 !GENERAL_WARNING;Warning
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
-!HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar.\nRight-click on image preview to freeze/unfreeze.
+!HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar.
 !HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram.
-!HISTOGRAM_TOOLTIP_FULL;Toggle full (off) or scaled (on) histogram.
+!HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
 !HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram.
 !HISTORY_MSG_82;Profile changed
 !HISTORY_MSG_83;S/H - Sharp mask
@@ -998,6 +998,8 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
+!HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
+!HISTORY_MSG_RAWCACORR_COLOURSHIFT;Raw CA Correction - Avoid color shift
 !HISTORY_MSG_RAW_BORDER;Raw border
 !HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
@@ -1081,7 +1083,7 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
 !MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser or Filmstrip with the Editor to reveal the thumbnail of the currently opened image, and clear any active filters.\nShortcut: <b>x</b>\n\nAs above, but without clearing active filters:\nShortcut: <b>y</b>\n(Note that the thumbnail of the opened image will not be shown if filtered out).
 !MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue.\nShortcut: <b>Ctrl+b</b>
-!MAIN_BUTTON_SAVE_TOOLTIP;Save current image.\nShortcut: <b>Ctrl+s</b>
+!MAIN_BUTTON_SAVE_TOOLTIP;Save current image.\nShortcut: <b>Ctrl+s</b>\nSave current profile (.pp3).\nShortcut: <b>Ctrl+Shift+s</b>
 !MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor.\nShortcut: <b>Ctrl+e</b>
 !MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels.\nShortcut: <b>m</b>
 !MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
@@ -1198,14 +1200,8 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !PARTIALPASTE_TM_FATTAL;Dynamic range compression
 !PARTIALPASTE_VIBRANCE;Vibrance
 !PREFERENCES_ADD;Add
-!PREFERENCES_AUTLISLOW;Low
-!PREFERENCES_AUTLISMAX;Max - Average of all tiles
-!PREFERENCES_AUTLISSTD;High
-!PREFERENCES_AUTLISVLOW;None
-!PREFERENCES_AUTLOW;Low
 !PREFERENCES_AUTOMONPROFILE;Use operating system's main monitor color profile
 !PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
-!PREFERENCES_AUTSTD;Standard
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
 !PREFERENCES_BEHADDALL;All to 'Add'
 !PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values.
@@ -1243,13 +1239,10 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_DAUB_LABEL;Use Daubechies D6 wavelets instead of D4
-!PREFERENCES_DAUB_TOOLTIP;The Noise Reduction and Wavelet Levels tools use a Debauchies mother wavelet. If you choose D6 instead of D4 you increase the number of orthogonal Daubechies coefficients and probably increase quality of small-scale levels. There is no memory or processing time difference between the two.
 !PREFERENCES_DIRDARKFRAMES;Dark-frames directory
 !PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_EDITORCMDLINE;Custom command line
 !PREFERENCES_EDITORLAYOUT;Editor Layout
-!PREFERENCES_EXPAUT;Expert
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar\n(de-select for low resolution display)
 !PREFERENCES_FLATFIELDFOUND;Found
 !PREFERENCES_FLATFIELDSDIR;Flat-fields directory
@@ -1282,12 +1275,7 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show embedded JPEG thumbnail if raw is unedited
 !PREFERENCES_LANG;Language
 !PREFERENCES_LANGAUTODETECT;Use system language
-!PREFERENCES_LEVAUTDN;Denoising level
-!PREFERENCES_LEVDN;Cell size
-!PREFERENCES_LISS;Auto multi-zone smoothing
-!PREFERENCES_MAX;Maxi (Tile)
 !PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
-!PREFERENCES_MED;Medium (Tile/2)
 !PREFERENCES_MENUGROUPEXTPROGS;Group "Open with"
 !PREFERENCES_MENUGROUPFILEOPERATIONS;Group "File operations"
 !PREFERENCES_MENUGROUPLABEL;Group "Color label"
@@ -1295,7 +1283,6 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !PREFERENCES_MENUGROUPRANK;Group "Rank"
 !PREFERENCES_MENUOPTIONS;Context Menu Options
 !PREFERENCES_METADATA;Metadata
-!PREFERENCES_MIN;Mini (100x115)
 !PREFERENCES_MONINTENT;Default rendering intent
 !PREFERENCES_MONITOR;Monitor
 !PREFERENCES_MONPROFILE;Default color profile
@@ -1304,13 +1291,14 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !PREFERENCES_MULTITABDUALMON;Multiple Editor Tabs In Own Window Mode
 !PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
 !PREFERENCES_NAVIGATIONFRAME;Navigation
-!PREFERENCES_NOISE;Noise Reduction
 !PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails in the file browser
 !PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
 !PREFERENCES_PANFACTORLABEL;Pan rate amplification
 !PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
 !PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
+!PREFERENCES_PERFORMANCE_THREADS;Threads
+!PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
 !PREFERENCES_PREVDEMO;Preview Demosaic Method
 !PREFERENCES_PREVDEMO_FAST;Fast
 !PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
@@ -1324,8 +1312,6 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !PREFERENCES_PRTPROFILE;Color profile
 !PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
-!PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction and Wavelet Levels
-!PREFERENCES_RGBDTL_TOOLTIP;Leave the setting at "0" to automatically use as many threads as possible. The more threads run in parallel, the faster the computation. Refer to RawPedia for memory requirements.
 !PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
 !PREFERENCES_SELECTFONT;Select main font
 !PREFERENCES_SELECTFONT_COLPICKER;Select Color Picker's font
@@ -1335,36 +1321,26 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !PREFERENCES_SET;Set
 !PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation
 !PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show filmstrip toolbar
-!PREFERENCES_SIMPLAUT;Tool mode
 !PREFERENCES_SINGLETAB;Single Editor Tab Mode
 !PREFERENCES_SINGLETABVERTAB;Single Editor Tab Mode, Vertical Tabs
-!PREFERENCES_SMA;Small (250x287)
 !PREFERENCES_SND_BATCHQUEUEDONE;Queue processing done
 !PREFERENCES_SND_HELP;Enter a full file path to set a sound, or leave blank for no sound.\nFor system sounds on Windows use "SystemDefault", "SystemAsterisk" etc., and on Linux use "complete", "window-attention" etc.
 !PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
 !PREFERENCES_SND_THRESHOLDSECS;After seconds
-!PREFERENCES_STDAUT;Standard
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
-!PREFERENCES_TAB_PERFORMANCE;Performance & Quality
+!PREFERENCES_TAB_PERFORMANCE;Performance
 !PREFERENCES_TAB_SOUND;Sounds
 !PREFERENCES_THEME;Theme
 !PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
 !PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
-!PREFERENCES_TIMAX;High
-!PREFERENCES_TINB;Number of tiles
-!PREFERENCES_TISTD;Standard
 !PREFERENCES_TP_LABEL;Tool panel:
 !PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
 !PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
 !PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
 !PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
 !PREFERENCES_VIEW;Output device's white balance (monitor, TV, projector, viewing, etc.)
-!PREFERENCES_WAVLEV;Increase wavelet level in quality 'high'
-!PREFERENCES_WLONE;One level
-!PREFERENCES_WLTWO;Two levels
-!PREFERENCES_WLZER;No
 !PREFERENCES_WORKFLOW;Layout
 !PROFILEPANEL_COPYPPASTE;Parameters to copy
 !PROFILEPANEL_GLOBALPROFILES;Bundled profiles
@@ -1392,6 +1368,7 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !SAMPLEFORMAT_32;24-bit floating-point
 !SAMPLEFORMAT_64;32-bit floating-point
 !SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
+!SAVEDLG_FILEFORMAT_FLOAT; floating-point
 !SAVEDLG_FORCEFORMATOPTS;Force saving options
 !SAVEDLG_SUBSAMP;Subsampling
 !SAVEDLG_SUBSAMP_1;Best compression
@@ -1856,6 +1833,8 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !TP_PRSHARPENING_LABEL;Post-Resize Sharpening
 !TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
 !TP_RAWCACORR_AUTO;Auto-correction
+!TP_RAWCACORR_AUTOIT;Iterations
+!TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
 !TP_RAWCACORR_CABLUE;Blue
 !TP_RAWCACORR_CARED;Red
 !TP_RAWCACORR_CASTR;Strength
@@ -1961,7 +1940,7 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !TP_RETINEX_GAIN;Gain
 !TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
 !TP_RETINEX_GAINTRANSMISSION;Gain transmission
-!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce transmission map to achieve luminance.\nAbscissa: transmission -min from 0, mean, and values (max).\nOrdinate: gain.
+!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
 !TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
 !TP_RETINEX_GAMMA;Gamma
 !TP_RETINEX_GAMMA_FREE;Free

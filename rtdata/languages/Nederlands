@@ -906,13 +906,7 @@ PARTIALPASTE_WAVELETGROUP;Wavelet verwerking
 PARTIALPASTE_WHITEBALANCE;Witbalans
 PREFERENCES_ADD;Toevoegen
 PREFERENCES_APPLNEXTSTARTUP;herstart vereist
-PREFERENCES_AUTLISLOW;Laag
-PREFERENCES_AUTLISMAX;Max - Gemiddelde van alle tegels
-PREFERENCES_AUTLISSTD;Hoog
-PREFERENCES_AUTLISVLOW;Geen
-PREFERENCES_AUTLOW;Laag
 PREFERENCES_AUTOMONPROFILE;Gebruik automatisch het standaard monitorprofiel \nvan het besturingsysteem
-PREFERENCES_AUTSTD;Standaard
 PREFERENCES_BATCH_PROCESSING;Batch-verwerking
 PREFERENCES_BEHADDALL;Alles op 'Toevoegen'
 PREFERENCES_BEHADDALLHINT;Zet alle parameters in de <b>Toevoegen</b> mode.\nWijzigingen van parameters in de batch tool zijn <b>deltas</b> op de opgeslagen waarden.
@@ -956,8 +950,6 @@ PREFERENCES_DARKFRAMESHOTS;foto's
 PREFERENCES_DARKFRAMETEMPLATES;sjablonen
 PREFERENCES_DATEFORMAT;Datumformaat
 PREFERENCES_DATEFORMATHINT;<i>U kunt de volgende formaten gebruiken:</i>\n<b>%y</b><i> : jaar</i>\n<b>%m</b><i> : maand</i>\n<b>%d</b><i> : dag</i>\n<i>\nHet Nederlandse datumformaat is bijvoorbeeld:</i>\n<b>%d/%m/%y</b>
-PREFERENCES_DAUB_LABEL;Gebruik Daubechies D6 wavelets in plaats van D4
-PREFERENCES_DAUB_TOOLTIP;De Ruisonderdrukking en Wavelet niveaus gebruiken de Debauchies moeder wavelet. Als je D6 gebruikt in plaats van D4 vergroot het aantal orthogonale Daubechies coëfficiënten en dit verbeterd waarschijnlijk de kwaliteit van de lage niveaus.
 PREFERENCES_DIRDARKFRAMES;Map met donkerframes
 PREFERENCES_DIRHOME;Standaardmap
 PREFERENCES_DIRLAST;Laatst bezochte map
@@ -965,7 +957,6 @@ PREFERENCES_DIROTHER;Anders
 PREFERENCES_DIRSELECTDLG;Selecteer standaardmap bij opstarten...
 PREFERENCES_DIRSOFTWARE;Installatiemap
 PREFERENCES_EDITORLAYOUT;Bewerkingsvenster
-PREFERENCES_EXPAUT;Expert
 PREFERENCES_EXTERNALEDITOR;Externe editor
 PREFERENCES_FBROWSEROPTS;Opties bestandsnavigator
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Enkele rij navigator werkbalk (de-activeer voor lage resolutie)
@@ -1009,12 +1000,7 @@ PREFERENCES_INTENT_RELATIVE;Relatieve colorimetrie
 PREFERENCES_INTENT_SATURATION;Verzadiging
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Toon interne JPEG-miniatuur indien onbewerkt
 PREFERENCES_LANGAUTODETECT;Gebruik taalinstellingen pc
-PREFERENCES_LEVAUTDN;Ruisonderdrukking niveau
-PREFERENCES_LEVDN;Cell grootte
-PREFERENCES_LISS;Auto multi-zone verzachten
-PREFERENCES_MAX;Maxi (Tegel)
 PREFERENCES_MAXRECENTFOLDERS;Maximum aantal recente mappen
-PREFERENCES_MED;Gemiddeld (Tegel/2)
 PREFERENCES_MENUGROUPEXTPROGS;Groepeer open met
 PREFERENCES_MENUGROUPFILEOPERATIONS;Groepeer bestandsbewerkingen
 PREFERENCES_MENUGROUPLABEL;Groepeer labelen
@@ -1022,7 +1008,6 @@ PREFERENCES_MENUGROUPPROFILEOPERATIONS;Groepeer profielbewerkingen
 PREFERENCES_MENUGROUPRANK;Groepeer markering
 PREFERENCES_MENUOPTIONS;Menu-opties
 PREFERENCES_METADATA;Metadata
-PREFERENCES_MIN;Mini (100x115)
 PREFERENCES_MONINTENT;Standaard monitor weergave
 PREFERENCES_MONITOR;Monitor
 PREFERENCES_MONPROFILE;Standaard kleurprofiel
@@ -1031,7 +1016,6 @@ PREFERENCES_MULTITAB;Multi-tab: elke foto opent in nieuw tabvenster
 PREFERENCES_MULTITABDUALMON;Multi-tab, indien beschikbaar op tweede monitor
 PREFERENCES_NAVGUIDEBRUSH;Navigator randkleur
 PREFERENCES_NAVIGATIONFRAME;Navigatie
-PREFERENCES_NOISE;Ruisonderdrukking
 PREFERENCES_OUTDIR;Uitvoermap
 PREFERENCES_OUTDIRFOLDER;Sla op in map
 PREFERENCES_OUTDIRFOLDERHINT;Sla foto's op in andere map
@@ -1065,8 +1049,6 @@ PREFERENCES_PRTPROFILE;Kleurprofiel
 PREFERENCES_PSPATH;Installatiemap Adobe Photoshop
 PREFERENCES_REMEMBERZOOMPAN;Onthoud zoom % en pan startpunt
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Onthoud het zoom % en pan startpunt van de huidige afbeelding als er een nieuwe afbeelding wordt geopend.\n\nDeze optie werkt alleen in "Single Editor Tab Mode" en wanneer "Demozaïekmethode van het voorbeeld <100% zoom" hetzelfde is als "Gelijk aan PP3".
-PREFERENCES_RGBDTL_LABEL;Maximum aantal 'threads' voor Ruisonderdrukking en Wavelet (gedeeld door 2)
-PREFERENCES_RGBDTL_TOOLTIP;Ruisonderdrukking en Wavelet gebruiken ongeveer 128MB RAM voor een 10MPix afbeelding, of 512MB voor een 40MPix afbeelding en additioneel 128MB RAM per thread. Hoe meer threads parallel worden gebruikt, hoe sneller de  bewerking. Laat de instelling op "0" staan om automatisch het maximale aantal threads te gebruiken dat mogelijk is.
 PREFERENCES_SELECTFONT;Kies lettertype
 PREFERENCES_SELECTFONT_COLPICKER;Font van de Kleurkiezer
 PREFERENCES_SELECTLANG;Selecteer taal
@@ -1080,36 +1062,25 @@ PREFERENCES_SHOWDATETIME;Toon datum en tijd
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Toon belichtingscompensatie
 PREFERENCES_SHOWFILMSTRIPTOOLBAR;Toon filmstrip werkbalk
 PREFERENCES_SHTHRESHOLD;Grenswaarde onderbelichting
-PREFERENCES_SIMPLAUT;Gereedschap
 PREFERENCES_SINGLETAB;Enkel-tab: foto's openen in zelfde tabvenster
 PREFERENCES_SINGLETABVERTAB;Enkel-tab ('filmstrip') modus met verticale tabs
-PREFERENCES_SMA;Klein (250x287)
 PREFERENCES_SND_BATCHQUEUEDONE;Verwerkingsrij klaar
 PREFERENCES_SND_HELP;Typ bestandsnaam (of niets: geen geluid).\nWindows: gebruik 'SystemDefault', 'SystemAsterisk', etc. voor systeemgeluiden.\nLinux: gebruik "complete", "window-attention" etc. voor systeemgeluiden
 PREFERENCES_SND_LNGEDITPROCDONE;Bewerking klaar
 PREFERENCES_SND_THRESHOLDSECS;na seconden
 PREFERENCES_STARTUPIMDIR;Standaardmap bij opstarten
-PREFERENCES_STDAUT;Standaard
 PREFERENCES_TAB_BROWSER;Bestandsnavigator
 PREFERENCES_TAB_COLORMGR;Kleurbeheer
 PREFERENCES_TAB_DYNAMICPROFILE;Dynamisch Profielregel
 PREFERENCES_TAB_GENERAL;Algemeen
 PREFERENCES_TAB_IMPROC;Beeldverwerking
-PREFERENCES_TAB_PERFORMANCE;Prestaties en Kwaliteit
 PREFERENCES_TAB_SOUND;Geluiden
-PREFERENCES_TIMAX;Hoog
-PREFERENCES_TINB;Aantal tegles
-PREFERENCES_TISTD;Standaard
 PREFERENCES_TP_LABEL;Gereedschapspaneel:
 PREFERENCES_TP_USEICONORTEXT;Gebruik iconen ipv. tekst voor de tabbladen
 PREFERENCES_TP_VSCROLLBAR;Verberg de schuifbalk van het gereedschapspaneel
 PREFERENCES_TUNNELMETADATA;Kopieer Exif/IPTC/XMP-data onveranderd naar uitvoerbestand
 PREFERENCES_USEBUNDLEDPROFILES;Gebruik gebundelde profielen
 PREFERENCES_VIEW;Witbalans instelling van het uitvoerapparaat (monitor, TV, projector...)
-PREFERENCES_WAVLEV;Vergroot wavelet ninveau voor kwaliteit 'hoog'
-PREFERENCES_WLONE;Eén niveau
-PREFERENCES_WLTWO;Twee niveaus
-PREFERENCES_WLZER;Nee
 PREFERENCES_WORKFLOW;Layout
 PROFILEPANEL_COPYPPASTE;Te kopiëren parameters
 PROFILEPANEL_GLOBALPROFILES;Gebundelde profielen
@@ -2114,6 +2085,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !GENERAL_SAVE_AS;Save as...
 !GENERAL_SLIDER;Slider
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
+!HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
 !HISTORY_MSG_173;NR - Detail recovery
 !HISTORY_MSG_203;NR - Color space
 !HISTORY_MSG_235;B&amp;W - CM - Auto
@@ -2163,6 +2135,8 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
+!HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
+!HISTORY_MSG_RAWCACORR_COLOURSHIFT;Raw CA Correction - Avoid color shift
 !HISTORY_MSG_RAW_BORDER;Raw border
 !HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
@@ -2242,9 +2216,12 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !PREFERENCES_EDITORCMDLINE;Custom command line
 !PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
 !PREFERENCES_LANG;Language
+!PREFERENCES_PERFORMANCE_THREADS;Threads
+!PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
 !PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
 !PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
 !PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
+!PREFERENCES_TAB_PERFORMANCE;Performance
 !PREFERENCES_THEME;Theme
 !PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
 !PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
@@ -2261,6 +2238,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !SAMPLEFORMAT_16;16-bit floating-point
 !SAMPLEFORMAT_32;24-bit floating-point
 !SAMPLEFORMAT_64;32-bit floating-point
+!SAVEDLG_FILEFORMAT_FLOAT; floating-point
 !SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
 !SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
 !TP_BWMIX_MIXC;Channel Mixer
@@ -2301,6 +2279,8 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertical
 !TP_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.
+!TP_RAWCACORR_AUTOIT;Iterations
+!TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
 !TP_RAW_2PASS;1-pass+fast
 !TP_RAW_4PASS;3-pass+fast
 !TP_RAW_AMAZEVNG4;AMaZE+VNG4
@@ -2319,7 +2299,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
 !TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
 !TP_RETINEX_GAINTRANSMISSION;Gain transmission
-!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce transmission map to achieve luminance.\nAbscissa: transmission -min from 0, mean, and values (max).\nOrdinate: gain.
+!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
 !TP_SHARPENING_CONTRAST;Contrast threshold
 !TP_SHARPENMICRO_CONTRAST;Contrast threshold
 !TP_SOFTLIGHT_LABEL;Soft Light

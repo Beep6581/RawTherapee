@@ -69,7 +69,7 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     editPointCustom = Gtk::manage (new Gtk::ToggleButton ());
     initButton(*editPointCustom, Glib::ustring("edit-point.png"), Gtk::ALIGN_START, false, "CURVEEDITOR_EDITPOINT_HINT");
     editCustom = Gtk::manage (new Gtk::ToggleButton());
-    initButton(*editCustom, Glib::ustring("crosshair-adjust.png"), Gtk::ALIGN_START, false, "EDIT_PIPETTE_TOOLTIP");
+    initButton(*editCustom, Glib::ustring("crosshair-node-curve.png"), Gtk::ALIGN_START, false, "EDIT_PIPETTE_TOOLTIP");
     editCustom->hide();
     copyCustom = Gtk::manage (new Gtk::Button ());
     initButton(*copyCustom, Glib::ustring("copy.png"), Gtk::ALIGN_END, true);
@@ -146,7 +146,7 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     editPointNURBS = Gtk::manage (new Gtk::ToggleButton ());
     initButton(*editPointNURBS, Glib::ustring("edit-point.png"), Gtk::ALIGN_START, false, "CURVEEDITOR_EDITPOINT_HINT");
     editNURBS = Gtk::manage (new Gtk::ToggleButton());
-    initButton(*editNURBS, Glib::ustring("crosshair-adjust.png"), Gtk::ALIGN_START, false, "EDIT_PIPETTE_TOOLTIP");
+    initButton(*editNURBS, Glib::ustring("crosshair-node-curve.png"), Gtk::ALIGN_START, false, "EDIT_PIPETTE_TOOLTIP");
     editNURBS->hide();
     copyNURBS = Gtk::manage (new Gtk::Button ());
     initButton(*copyNURBS, Glib::ustring("copy.png"), Gtk::ALIGN_END, true);
@@ -224,7 +224,7 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     shcSelector->set_name("CurveSHCSelector");  // To handle the 4px gap between the SHCSelector and the curve through CSS
 
     editParam = Gtk::manage (new Gtk::ToggleButton());
-    initButton(*editParam, Glib::ustring("crosshair-adjust.png"), Gtk::ALIGN_START, false, "EDIT_PIPETTE_TOOLTIP");
+    initButton(*editParam, Glib::ustring("crosshair-node-curve.png"), Gtk::ALIGN_START, false, "EDIT_PIPETTE_TOOLTIP");
     editParam->hide();
     copyParam = Gtk::manage (new Gtk::Button ());
     initButton(*copyParam, Glib::ustring("copy.png"), Gtk::ALIGN_END, true);

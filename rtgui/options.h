@@ -50,6 +50,7 @@ struct SaveFormat {
         jpegQuality (90),
         jpegSubSamp (2),
         tiffBits (8),
+        tiffFloat(false),
         tiffUncompressed (true),
         saveParams (true)
     {
@@ -60,6 +61,7 @@ struct SaveFormat {
     int jpegQuality;
     int jpegSubSamp;  // 1=best compression, 3=best quality
     int tiffBits;
+    bool tiffFloat;
     bool tiffUncompressed;
     bool saveParams;
 };
@@ -256,9 +258,11 @@ public:
     bool sndEnable;
 
     int histogramPosition;  // 0=disabled, 1=left pane, 2=right pane
-    //int histogramWorking;  // 0=disabled, 1=left pane, 2=right pane
+    bool histogramRed, histogramGreen, histogramBlue;
+    bool histogramLuma, histogramChroma, histogramRAW;
     bool histogramBar;
-    bool histogramFullMode;
+    int histogramHeight;
+    int histogramDrawMode;
     bool FileBrowserToolbarSingleRow;
     bool hideTPVScrollbar;
     bool UseIconNoText;

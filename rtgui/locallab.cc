@@ -4982,7 +4982,7 @@ CursorShape Locallab::getCursor(int objectID)
             return CSMove2D;
 
         default:
-            return CSOpenHand;
+            return CSHandOpen;
     }
 }
 

@@ -1013,14 +1013,8 @@ PARTIALPASTE_VIGNETTING;Correção de vinheta
 PARTIALPASTE_WHITEBALANCE;Balanço de branco
 PREFERENCES_ADD;Adicionar
 PREFERENCES_APPLNEXTSTARTUP;é necessário reiniciar
-PREFERENCES_AUTLISLOW;Baixo
-PREFERENCES_AUTLISMAX;Max - Média de todos os mosaicos
-PREFERENCES_AUTLISSTD;Alto
-PREFERENCES_AUTLISVLOW;Nenhum
-PREFERENCES_AUTLOW;Baixo
 PREFERENCES_AUTOMONPROFILE;Usar o perfil de cores do monitor principal do sistema operacional
 PREFERENCES_AUTOSAVE_TP_OPEN;Salvar automaticamente ferramentas recolhidas/expandidas\nestado antes de sair
-PREFERENCES_AUTSTD;Padrão
 PREFERENCES_BATCH_PROCESSING;Processamento em Lote
 PREFERENCES_BEHADDALL;Tudo para 'Adicionar'
 PREFERENCES_BEHADDALLHINT;Definir todos os parâmetros para o <b>Adicionar</b> modo.\nAjustes de parâmetros no painel de ferramentas de lote serão <b>deltas</b> para os valores armazenados.
@@ -1067,8 +1061,6 @@ PREFERENCES_DARKFRAMESHOTS;tiros
 PREFERENCES_DARKFRAMETEMPLATES;modelos
 PREFERENCES_DATEFORMAT;Formato de data
 PREFERENCES_DATEFORMATHINT;Podes usar as seguintes sequências de formatação:\n<b>%y</b>	- ano\n<b>%m</b>	- mês\n<b>%d</b>	- dia\n\nPor exemplo, o padrão ISO 8601 dita o formato de data da seguinte forma:\n<b>%y-%m-%d</b>
-PREFERENCES_DAUB_LABEL;Use as wavelets Daubechies D6 em vez de D4
-PREFERENCES_DAUB_TOOLTIP;As ferramentas Redução de Ruído e Níveis de Wavelet usam uma wavelet mãe Daubechies. A escolha de D6 em vez de D4, aumentará o número de coeficientes ortogonais Daubechies e a provável melhora da qualidade dos níveis de pequena escala, sem aumento de memória ou tempo de processamento entre os dois.
 PREFERENCES_DIRDARKFRAMES;Diretório de quadros escuros
 PREFERENCES_DIRECTORIES;Diretórios
 PREFERENCES_DIRHOME;Diretório inicial
@@ -1078,7 +1070,6 @@ PREFERENCES_DIRSELECTDLG;Selecione Diretório de Imagens na Inicialização...
 PREFERENCES_DIRSOFTWARE;Diretório de instalação
 PREFERENCES_EDITORCMDLINE;Linha de comando personalizada
 PREFERENCES_EDITORLAYOUT;Layout do Editor
-PREFERENCES_EXPAUT;Especialista
 PREFERENCES_EXTERNALEDITOR;Editor Externo
 PREFERENCES_FBROWSEROPTS;Navegador de Arquivos / Opções de Miniaturas
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barra de ferramentas do navegador de arquivos de linha única\n(desmarque para exibição de baixa resolução)
@@ -1124,12 +1115,7 @@ PREFERENCES_INTENT_SATURATION;Saturação
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Mostrar miniatura JPEG incorporada se raw não estiver editada
 PREFERENCES_LANG;Linguagem
 PREFERENCES_LANGAUTODETECT;Use a linguagem do sistema
-PREFERENCES_LEVAUTDN;Nível de remoção de ruídos
-PREFERENCES_LEVDN;Tamanho da célula
-PREFERENCES_LISS;Auto-suavização multizona
-PREFERENCES_MAX;Maxi (Mosaico)
 PREFERENCES_MAXRECENTFOLDERS;Número máximo de pastas recentes
-PREFERENCES_MED;Médio (Mosaico/2)
 PREFERENCES_MENUGROUPEXTPROGS;Grupo "Abrir com"
 PREFERENCES_MENUGROUPFILEOPERATIONS;Grupo "operações de Arquivo"
 PREFERENCES_MENUGROUPLABEL;Grupo "Etiqueta de cor"
@@ -1137,7 +1123,6 @@ PREFERENCES_MENUGROUPPROFILEOPERATIONS;Grupo "Operações de perfil de processam
 PREFERENCES_MENUGROUPRANK;Grupo "Rank"
 PREFERENCES_MENUOPTIONS;Opções do Menu de Contexto
 PREFERENCES_METADATA;Metadados
-PREFERENCES_MIN;Mini (100x115)
 PREFERENCES_MONINTENT;Intenção de renderização padrão
 PREFERENCES_MONITOR;Monitor
 PREFERENCES_MONPROFILE;Perfil de cor padrão
@@ -1146,7 +1131,6 @@ PREFERENCES_MULTITAB;Modo de Mútiplas Abas do Editor
 PREFERENCES_MULTITABDUALMON;Múltiplas Abas do Editor no Modo de Janela Própria
 PREFERENCES_NAVGUIDEBRUSH;Cor do guia do navegador
 PREFERENCES_NAVIGATIONFRAME;Navegação
-PREFERENCES_NOISE;Redução de Ruído
 PREFERENCES_OUTDIR;Diretório de Saída
 PREFERENCES_OUTDIRFOLDER;Salvar na pasta
 PREFERENCES_OUTDIRFOLDERHINT;Salvar imagens na pasta selecionada.
@@ -1182,8 +1166,6 @@ PREFERENCES_PRTPROFILE;Perfil de cor
 PREFERENCES_PSPATH;Diretório de instalação do Adobe Photoshop
 PREFERENCES_REMEMBERZOOMPAN;Lembre-se de zoom % e compensar pan
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Lembre-se do zoom % e de compensar o pan da imagem atual ao abrir uma nova imagem.\n\nEsta opção só funciona em "Modo da Aba do Editor Único" e quando "o método Demosaicing utilizado para a pré-visualização em <100% zoom" está definido como "Como no PP3".
-PREFERENCES_RGBDTL_LABEL;Número máximo de threads para Redução de Ruído e Níveis de Wavelet
-PREFERENCES_RGBDTL_TOOLTIP;Deixe a configuração em "0" para usar automaticamente o maior número de threads possível. Quanto mais threads rodarem em paralelo, mais rápido será o cálculo. Consulte o RawPedia para requisitos de memória.
 PREFERENCES_SAVE_TP_OPEN_NOW;Salvar ferramentas no estado recolhidas/expandididas agora
 PREFERENCES_SELECTFONT;Selecione a fonte principal
 PREFERENCES_SELECTFONT_COLPICKER;Selecione a fonte do Seletor de Cor
@@ -1198,41 +1180,30 @@ PREFERENCES_SHOWDATETIME;Mostrar data e hora
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Acrescentar compensação de exposição
 PREFERENCES_SHOWFILMSTRIPTOOLBAR;Mostrar barra de ferramentas de diapositivos
 PREFERENCES_SHTHRESHOLD;Limite para sombras recortadas
-PREFERENCES_SIMPLAUT;Modo de ferramenta
 PREFERENCES_SINGLETAB;Modo de Aba de Editor Único
 PREFERENCES_SINGLETABVERTAB;Editor de Aba Única, Abas verticais
-PREFERENCES_SMA;Pequeno (250x287)
 PREFERENCES_SND_BATCHQUEUEDONE;Processamento de fila concluído
 PREFERENCES_SND_HELP;Digite um endereço de arquivo completo para definir um som ou deixe em branco para não ter som.\nPara sons do sistema no Windows, use "SystemDefault", "SystemAsterisk" etc., e no Linux use "complete", "window-attention" etc.
 PREFERENCES_SND_LNGEDITPROCDONE;Processamento de Editor concluído
 PREFERENCES_SND_THRESHOLDSECS;Depois de segundos
 PREFERENCES_STARTUPIMDIR;Diretório de imagens na inicialização
-PREFERENCES_STDAUT;Padrão
 PREFERENCES_TAB_BROWSER;Navegador de Arquivo
 PREFERENCES_TAB_COLORMGR;Gerenciamento de Cor
 PREFERENCES_TAB_DYNAMICPROFILE;Regras de Perfil Dinâmico
 PREFERENCES_TAB_GENERAL;Geral
 PREFERENCES_TAB_IMPROC;Processamento de Imagem
-PREFERENCES_TAB_PERFORMANCE;Performance & Qualidade
 PREFERENCES_TAB_SOUND;Sons
 PREFERENCES_THEME;Tema
 PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Visualização JPEG incorporada
 PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Imagem para mostrar
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Renderização raw neutra
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;JPEG incorporado se tamanho completo, raw neutro caso contrário
-PREFERENCES_TIMAX;Alto
-PREFERENCES_TINB;Número de mosaicos
-PREFERENCES_TISTD;Padrão
 PREFERENCES_TP_LABEL;Painel de ferramentas:
 PREFERENCES_TP_USEICONORTEXT;Use ícones de guias em vez de texto
 PREFERENCES_TP_VSCROLLBAR;Ocultar barra de rolagem vertical
 PREFERENCES_TUNNELMETADATA;Copiar Exif/IPTC/XMP inalterado para o arquivo de saída
 PREFERENCES_USEBUNDLEDPROFILES;Use perfis agrupados
 PREFERENCES_VIEW;Balanço de branco do dispositivo de saída (monitor, TV, projetor, visualização, etc.)
-PREFERENCES_WAVLEV;Aumentar o nível de wavelet em qualidade 'alta'
-PREFERENCES_WLONE;Um nível
-PREFERENCES_WLTWO;Dois níveis
-PREFERENCES_WLZER;Não
 PREFERENCES_WORKFLOW;Layout
 PROFILEPANEL_COPYPPASTE;Parâmetros para copiar
 PROFILEPANEL_GLOBALPROFILES;Perfis agrupados
@@ -1922,7 +1893,6 @@ TP_RETINEX_FREEGAMMA;Gamma livre
 TP_RETINEX_GAIN;Ganho
 TP_RETINEX_GAINOFFS;Ganho e Compensação (brilho)
 TP_RETINEX_GAINTRANSMISSION;Transmissão de ganho
-TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplifica ou reduz o mapa de transmissão para obter luminância.\nAbscissa: transmissão -min de 0, média e valores (max).\nOrdenado: ganho.
 TP_RETINEX_GAIN_TOOLTIP;Atua na imagem restaurada.\n\nIsso é muito diferente das outras configurações. Usado para pixels pretos ou brancos e para ajudar a equilibrar o histograma.
 TP_RETINEX_GAMMA;Gamma
 TP_RETINEX_GAMMA_FREE;Livre
@@ -2284,5 +2254,15 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
 !HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
+!HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
+!HISTORY_MSG_RAWCACORR_COLOURSHIFT;Raw CA Correction - Avoid color shift
 !ICCPROFCREATOR_DESCRIPTION_ADDPARAM;Append gamma and slope values to the description
+!PREFERENCES_PERFORMANCE_THREADS;Threads
+!PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
+!PREFERENCES_TAB_PERFORMANCE;Performance
+!SAVEDLG_FILEFORMAT_FLOAT; floating-point
+!TP_RAWCACORR_AUTOIT;Iterations
+!TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
+!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.

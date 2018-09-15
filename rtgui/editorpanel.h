@@ -173,8 +173,10 @@ private:
     Gtk::Image *iShowHideSidePanels;
     Gtk::Image *iShowHideSidePanels_exit;
     Gtk::Image *iBeforeLockON, *iBeforeLockOFF;
-    Gtk::VBox *leftbox;
-    Gtk::VBox *vboxright;
+    Gtk::Paned *leftbox;
+    Gtk::Box *leftsubbox;
+    Gtk::Paned *vboxright;
+    Gtk::Box *vsubboxright;
 
     Gtk::Button* queueimg;
     Gtk::Button* saveimgas;
@@ -191,13 +193,13 @@ private:
     PreviewHandler* beforePreviewHandler;   // for the before-after view
     Navigator* navigator;
     ImageAreaPanel* beforeIarea;    // for the before-after view
-    Gtk::VBox* beforeBox;
-    Gtk::VBox* afterBox;
+    Gtk::Box* beforeBox;
+    Gtk::Box* afterBox;
     Gtk::Label* beforeLabel;
     Gtk::Label* afterLabel;
-    Gtk::HBox* beforeAfterBox;
-    Gtk::HBox* beforeHeaderBox;
-    Gtk::HBox* afterHeaderBox;
+    Gtk::Box* beforeAfterBox;
+    Gtk::Box* beforeHeaderBox;
+    Gtk::Box* afterHeaderBox;
     Gtk::ToggleButton* toggleHistogramProfile;
 
     Gtk::Frame* ppframe;
