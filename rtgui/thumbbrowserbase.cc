@@ -68,14 +68,34 @@ void ThumbBrowserBase::scrollChanged ()
     }
 }
 
-void ThumbBrowserBase::scroll (int direction)
+void ThumbBrowserBase::scroll (int direction, double deltaX, double deltaY)
 {
+    double delta = 0.0;
+    if (abs(deltaX) > abs(deltaY)) {
+        delta = deltaX;
+    } else {
+        delta = deltaY;
+    }
+    double coef = direction == GDK_SCROLL_DOWN || (direction == GDK_SCROLL_SMOOTH && delta > 0.0) ? +1.0 : -1.0;
+
     // GUI already acquired when here
-    if (direction == GDK_SCROLL_UP || direction == GDK_SCROLL_DOWN) {
+    if (direction == GDK_SCROLL_UP || direction == GDK_SCROLL_DOWN || direction == GDK_SCROLL_SMOOTH) {
         if (arrangement == TB_Vertical) {
-            vscroll.set_value (vscroll.get_value() + (direction == GDK_SCROLL_DOWN ? +1 : -1) * vscroll.get_adjustment()->get_step_increment());
+            double currValue = vscroll.get_value();
+            double newValue = rtengine::LIM<double>(currValue + coef * vscroll.get_adjustment()->get_step_increment(),
+                                                    vscroll.get_adjustment()->get_lower (),
+                                                    vscroll.get_adjustment()->get_upper());
+            if (newValue != currValue) {
+                vscroll.set_value (newValue);
+            }
         } else {
-            hscroll.set_value (hscroll.get_value() + (direction == GDK_SCROLL_DOWN ? +1 : -1) * hscroll.get_adjustment()->get_step_increment());
+            double currValue = hscroll.get_value();
+            double newValue = rtengine::LIM<double>(currValue + coef * hscroll.get_adjustment()->get_step_increment(),
+                                                    hscroll.get_adjustment()->get_lower(),
+                                                    hscroll.get_adjustment()->get_upper());
+            if (newValue != currValue) {
+                hscroll.set_value (newValue);
+            }
         }
     }
 }
@@ -83,11 +103,24 @@ void ThumbBrowserBase::scroll (int direction)
 void ThumbBrowserBase::scrollPage (int direction)
 {
     // GUI already acquired when here
+    // GUI already acquired when here
     if (direction == GDK_SCROLL_UP || direction == GDK_SCROLL_DOWN) {
         if (arrangement == TB_Vertical) {
-            vscroll.set_value (vscroll.get_value() + (direction == GDK_SCROLL_DOWN ? +1 : -1) * vscroll.get_adjustment()->get_page_increment());
+            double currValue = vscroll.get_value();
+            double newValue = rtengine::LIM<double>(currValue + (direction == GDK_SCROLL_DOWN ? +1 : -1) * vscroll.get_adjustment()->get_page_increment(),
+                                                    vscroll.get_adjustment()->get_lower(),
+                                                    vscroll.get_adjustment()->get_upper());
+            if (newValue != currValue) {
+                vscroll.set_value (newValue);
+            }
         } else {
-            hscroll.set_value (hscroll.get_value() + (direction == GDK_SCROLL_DOWN ? +1 : -1) * hscroll.get_adjustment()->get_page_increment());
+            double currValue = hscroll.get_value();
+            double newValue = rtengine::LIM<double>(currValue + (direction == GDK_SCROLL_DOWN ? +1 : -1) * hscroll.get_adjustment()->get_page_increment(),
+                                                    hscroll.get_adjustment()->get_lower(),
+                                                    hscroll.get_adjustment()->get_upper());
+            if (newValue != currValue) {
+                hscroll.set_value (newValue);
+            }
         }
     }
 }
@@ -682,7 +715,7 @@ void ThumbBrowserBase::Internal::on_realize()
     bgs = style->get_background_color(Gtk::STATE_FLAG_SELECTED);
 
     set_can_focus(true);
-    add_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK | Gdk::KEY_PRESS_MASK);
+    add_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK | Gdk::SMOOTH_SCROLL_MASK | Gdk::KEY_PRESS_MASK);
     set_has_tooltip (true);
     signal_query_tooltip().connect( sigc::mem_fun(*this, &ThumbBrowserBase::Internal::on_query_tooltip) );
 }
@@ -920,7 +953,10 @@ bool ThumbBrowserBase::Internal::on_scroll_event (GdkEventScroll* event)
 {
     // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)
 
-    parent->scroll (event->direction);
+    printf("ThumbBrowserBase::Internal::on_scroll_event / delta_x=%.5f, delta_y=%.5f, direction=%d, type=%d, send_event=%d\n",
+            event->delta_x, event->delta_y, (int)event->direction, (int)event->type, event->send_event);
+
+    parent->scroll (event->direction, event->delta_x, event->delta_y);
     return true;
 }
 
