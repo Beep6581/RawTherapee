@@ -48,6 +48,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     listener(nullptr),
     fslistener(nullptr),
     iatlistener(nullptr),
+    hbToolBar1STB(nullptr),
     hasValidCurrentEFS(false),
     filterPanel(nullptr),
     exportPanel(nullptr),
@@ -61,7 +62,6 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     inTabMode = false;
 
     set_name ("FileBrowser");
-    set_spacing (2);
 
     //  construct and initialize thumbnail browsers
     fileBrowser = Gtk::manage( new FileBrowser() );
@@ -127,13 +127,19 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 
     // if NOT a single row toolbar
     if (!options.FileBrowserToolbarSingleRow) {
-        pack_start (*hbToolBar1, Gtk::PACK_SHRINK, 0);
+        hbToolBar1STB = Gtk::manage(new MyScrolledToolbar());
+        hbToolBar1STB->set_name("FileBrowserQueryToolbar");
+        hbToolBar1STB->add(*hbToolBar1);
+        pack_start (*hbToolBar1STB, Gtk::PACK_SHRINK, 0);
     }
 
     // setup button bar
     buttonBar = Gtk::manage( new Gtk::HBox () );
     buttonBar->set_name ("ToolBarPanelFileBrowser");
-    pack_start (*buttonBar, Gtk::PACK_SHRINK);
+    MyScrolledToolbar *stb = Gtk::manage(new MyScrolledToolbar());
+    stb->set_name("FileBrowserIconToolbar");
+    stb->add(*buttonBar);
+    pack_start (*stb, Gtk::PACK_SHRINK);
 
     tbLeftPanel_1 = new Gtk::ToggleButton ();
     iLeftPanel_1_Show = new RTImage("panel-to-right.png");
@@ -692,6 +698,9 @@ void FileCatalog::enableTabMode(bool enable)
     } else {
         buttonBar->show();
         hbToolBar1->show();
+        if (hbToolBar1STB) {
+            hbToolBar1STB->show();
+        }
         exifInfo->set_active( options.showFileNames );
     }
 
@@ -910,8 +919,8 @@ void FileCatalog::refreshHeight ()
         newHeight = h;
     }
 
-    if (hbToolBar1->is_visible() && !options.FileBrowserToolbarSingleRow) {
-        newHeight += hbToolBar1->get_height();
+    if (hbToolBar1STB && hbToolBar1STB->is_visible()) {
+        newHeight += hbToolBar1STB->get_height();
     }
 
     if (buttonBar->is_visible()) {
@@ -2039,17 +2048,21 @@ void FileCatalog::updateFBQueryTB (bool singleRow)
     hbToolBar1->reference();
 
     if (singleRow) {
-        bool removed = removeIfThere(this, hbToolBar1, false);
-
-        if (removed) {
+        if (hbToolBar1STB) {
+            hbToolBar1STB->remove_with_viewport();
+            removeIfThere(this, hbToolBar1STB, false);
             buttonBar->pack_start(*hbToolBar1, Gtk::PACK_EXPAND_WIDGET, 0);
+            hbToolBar1STB = nullptr;
         }
     } else {
-        bool removed = removeIfThere(buttonBar, hbToolBar1, false);
-
-        if (removed) {
-            pack_start(*hbToolBar1, Gtk::PACK_SHRINK, 0);
-            reorder_child(*hbToolBar1, 0);
+        if (!hbToolBar1STB) {
+            removeIfThere(buttonBar, hbToolBar1, false);
+            hbToolBar1STB = Gtk::manage(new MyScrolledToolbar());
+            hbToolBar1STB->set_name("FileBrowserQueryToolbar");
+            hbToolBar1STB->add(*hbToolBar1);
+            hbToolBar1STB->show();
+            pack_start (*hbToolBar1STB, Gtk::PACK_SHRINK, 0);
+            reorder_child(*hbToolBar1STB, 0);
         }
     }
 
@@ -2592,7 +2605,7 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
 void FileCatalog::showToolBar()
 {
     if (!options.FileBrowserToolbarSingleRow) {
-        hbToolBar1->show();
+        hbToolBar1STB->show();
     }
 
     buttonBar->show();
@@ -2601,7 +2614,7 @@ void FileCatalog::showToolBar()
 void FileCatalog::hideToolBar()
 {
     if (!options.FileBrowserToolbarSingleRow) {
-        hbToolBar1->hide();
+        hbToolBar1STB->hide();
     }
 
     buttonBar->hide();

@@ -256,7 +256,8 @@ public:
     bool sndEnable;
 
     int histogramPosition;  // 0=disabled, 1=left pane, 2=right pane
-    //int histogramWorking;  // 0=disabled, 1=left pane, 2=right pane
+    bool histogramRed, histogramGreen, histogramBlue;
+    bool histogramLuma, histogramChroma, histogramRAW;
     bool histogramBar;
     int histogramHeight;
     int histogramDrawMode;

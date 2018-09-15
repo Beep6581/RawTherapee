@@ -2015,13 +2015,13 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         };
         CaFitParams fitParams;
         if(numFrames == 4) {
-            librtprocess::CA_correct(W, H, raw.ca_autocorrect, raw.cared, raw.cablue, *rawDataFrames[0], {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, fitParams, false);
+            librtprocess::CA_correct(W, H, raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[0], {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, fitParams, false);
             for(int i = 1; i < 3; ++i) {
-                librtprocess::CA_correct(W, H, raw.ca_autocorrect, raw.cared, raw.cablue, *rawDataFrames[i], {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, fitParams, true);
+                librtprocess::CA_correct(W, H, raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[i], {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, fitParams, true);
             }
-            librtprocess::CA_correct(W, H, raw.ca_autocorrect, raw.cared, raw.cablue, *rawDataFrames[3], {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, fitParams, true);
+            librtprocess::CA_correct(W, H, raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[3], {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, fitParams, true);
         } else {
-            librtprocess::CA_correct(W, H, raw.ca_autocorrect, raw.cared, raw.cablue, rawData, {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, fitParams, false);
+            librtprocess::CA_correct(W, H, raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, rawData, {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, fitParams, false);
         }
     }
 
@@ -5479,6 +5479,8 @@ void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int 
         ynew = H - 1 - ynew;
     }
 
+    xnew = LIM(xnew, 0, W - 1);
+    ynew = LIM(ynew, 0, H - 1);
     int c = ri->getSensorType() == ST_FUJI_XTRANS ? ri->XTRANSFC(ynew,xnew) : ri->FC(ynew,xnew);
     int val = round(rawData[ynew][xnew] / scale_mul[c]);
     if(c == 0) {

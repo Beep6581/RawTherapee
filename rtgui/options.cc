@@ -331,7 +331,7 @@ void Options::setDefaults()
     dirBrowserHeight = 350;
     dirBrowserSortType = Gtk::SORT_ASCENDING;
     preferencesWidth = 800;
-    preferencesHeight = 0;
+    preferencesHeight = 600;
     toolPanelWidth = 400;
     browserToolPanelWidth = 465;
     browserToolPanelHeight = 600;
@@ -419,6 +419,9 @@ void Options::setDefaults()
     mainNBVertical = true;
     multiDisplayMode = 0;
     histogramPosition = 1;
+    histogramRed = true;
+    histogramGreen = true;
+    histogramBlue = true;
     histogramBar = true;
     histogramHeight = 200;
     histogramDrawMode = 0;
@@ -1272,6 +1275,30 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("GUI", "HistogramPosition")) {
                     histogramPosition = keyFile.get_integer("GUI", "HistogramPosition");
                 }
+                
+                if (keyFile.has_key("GUI", "HistogramRed")) {
+                    histogramRed = keyFile.get_boolean("GUI", "HistogramRed");
+                }
+                
+                if (keyFile.has_key("GUI", "HistogramGreen")) {
+                    histogramGreen = keyFile.get_boolean("GUI", "HistogramGreen");
+                }
+                
+                if (keyFile.has_key("GUI", "HistogramBlue")) {
+                    histogramBlue = keyFile.get_boolean("GUI", "HistogramBlue");
+                }
+                
+                if (keyFile.has_key("GUI", "HistogramLuma")) {
+                    histogramLuma = keyFile.get_boolean("GUI", "HistogramLuma");
+                }
+                
+                if (keyFile.has_key("GUI", "HistogramChroma")) {
+                    histogramChroma = keyFile.get_boolean("GUI", "HistogramChroma");
+                }
+                
+                if (keyFile.has_key("GUI", "HistogramRAW")) {
+                    histogramRAW = keyFile.get_boolean("GUI", "HistogramRAW");
+                }
 
                 if (keyFile.has_key("GUI", "HistogramBar")) {
                     histogramBar = keyFile.get_boolean("GUI", "HistogramBar");
@@ -1994,6 +2021,12 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_double_list ("GUI", "CutOverlayBrush", cutOverlayBrush);
         keyFile.set_double_list ("GUI", "NavGuideBrush", navGuideBrush);
         keyFile.set_integer ("GUI", "HistogramPosition", histogramPosition);
+        keyFile.set_boolean ("GUI", "HistogramRed", histogramRed);
+        keyFile.set_boolean ("GUI", "HistogramGreen", histogramGreen);
+        keyFile.set_boolean ("GUI", "HistogramBlue", histogramBlue);
+        keyFile.set_boolean ("GUI", "HistogramLuma", histogramLuma);
+        keyFile.set_boolean ("GUI", "HistogramChroma", histogramChroma);
+        keyFile.set_boolean ("GUI", "HistogramRAW", histogramRAW);
         keyFile.set_boolean ("GUI", "HistogramBar", histogramBar);
         keyFile.set_integer ("GUI", "HistogramHeight", histogramHeight);
         keyFile.set_integer ("GUI", "HistogramDrawMode", histogramDrawMode);
