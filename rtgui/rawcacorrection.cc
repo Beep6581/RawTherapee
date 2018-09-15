@@ -87,11 +87,12 @@ void RAWCACorr::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
         caBlue->setEditedState( pedited->raw.cablue ? Edited : UnEdited );
     }
 
-    // disable Red and Blue sliders when caAutocorrect is enabled
-    caAutoiterations->set_sensitive(pp->raw.ca_autocorrect);
-    caRed->set_sensitive(!pp->raw.ca_autocorrect);
-    caBlue->set_sensitive(!pp->raw.ca_autocorrect);
-
+    if (!batchMode) {
+        // disable Red and Blue sliders when caAutocorrect is enabled
+        caAutoiterations->set_sensitive(pp->raw.ca_autocorrect);
+        caRed->set_sensitive(!pp->raw.ca_autocorrect);
+        caBlue->set_sensitive(!pp->raw.ca_autocorrect);
+    }
     caAutocorrect->setValue(pp->raw.ca_autocorrect);
     caAvoidcolourshift->setValue(pp->raw.ca_avoidcolourshift);
     caAutoiterations->setValue (pp->raw.caautoiterations);
