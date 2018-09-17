@@ -254,7 +254,7 @@ endif()
 
 if(APPLE)
     if("${CODESIGNID}")
-        set(CODESIGNID "${CODESIGNID}" CAHCE STRING "Codesigning Identity")
+        set(CODESIGNID "${CODESIGNID}" CACHE STRING "Codesigning Identity")
     endif()
 endif()
 
