@@ -125,10 +125,15 @@ find -E "${LIB}" -type f -regex '.*\.(a|la|cache)$' | while read -r; do rm "${RE
 
 msg "Copying configuration files from ${GTK_PREFIX}:"
 install -d "${ETC}/gtk-3.0"
-cp "${GTK_PREFIX}/etc/gtk-3.0/im-multipress.conf" "${ETC}/gtk-3.0"
-"${GTK_PREFIX}/bin/gdk-pixbuf-query-loaders" "${LIB}"/gdk-pixbuf-2.0/*/loaders/*.so > "${ETC}/gtk-3.0/gdk-pixbuf.loaders"
-"${GTK_PREFIX}/bin/gtk-query-immodules-3.0"  "${LIB}"/gtk-3.0/*/immodules/*.so      > "${ETC}/gtk-3.0/gtk.immodules"
-#sed -i "" -e "s|${PWD}|/tmp|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
+
+# Make Frameworks folder flat
+mv "${LIB}"/gdk-pixbuf-2.0/2*/loaders/*.so "${LIB}"
+mv "${LIB}"/gtk-3.0/3*/immodules/*.so "${LIB}"
+rm -r "${LIB}"/gtk-3.0
+rm -r "${LIB}"/gdk-pixbuf-2.0
+
+"${GTK_PREFIX}/bin/gdk-pixbuf-query-loaders" "${LIB}"/libpix*.so > "${ETC}/gtk-3.0/gdk-pixbuf.loaders"
+"${GTK_PREFIX}/bin/gtk-query-immodules-3.0"  "${LIB}"/{im*.so,libprint*.so}      > "${ETC}/gtk-3.0/gtk.immodules"
 sed -i "" -e "s|${PWD}/RawTherapee.app/Contents/|@executable_path/../|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
 
 ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/glib-2.0/schemas
@@ -146,13 +151,6 @@ for f in "${iconfolders[@]}"; do
 done
 ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/icons/Adwaita/index.theme
 "${GTK_PREFIX}/bin/gtk-update-icon-cache-3.0" "${RESOURCES}/share/icons/Adwaita"
-
-### Pending deletion:
-# fontconfig files (X11 backend only)
-# if otool -L "${EXECUTABLE}" | grep -sq 'libgtk-x11-2.0'; then
-#     msg "Installing fontconfig files (Using X11 backend. FONTCONFIG_PATH will be set by executable loader.)"
-#     cp -RL "${GTK_PREFIX}/etc/fonts" "${ETC}"
-# fi
 
 # Copy the Lensfun database into the app bundle
 mkdir -p "${RESOURCES}/share/lensfun"
