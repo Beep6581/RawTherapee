@@ -6692,6 +6692,14 @@ void CLASS apply_tiff()
 	  load_raw = &CLASS unpacked_load_raw;
 	  load_flags = 4;
 	  order = 0x4d4d;
+	} else if ((raw_width * raw_height * 2 * tiff_bps) / 16 == tiff_ifd[raw].bytes) {
+	    // 12 bit uncompressed from Nikon Z7
+	    load_raw = &CLASS packed_load_raw;
+	} else if ((raw_width * 2 * tiff_bps / 16 + 8) * raw_height == tiff_ifd[raw].bytes) {
+	    // 14 bit uncompressed from Nikon Z7, still wrong
+	    // each line has 8 padding byte. To inform 'packed_load_raw' about his padding, we have to set load_flags = padding << 9
+	    load_flags = 8 << 9;
+	    load_raw = &CLASS packed_load_raw;
 	} else
 	  load_raw = &CLASS nikon_load_raw;			break;
       case 65535:
