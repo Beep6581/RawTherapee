@@ -1427,48 +1427,46 @@ void ImProcFunctions::Eval2 (float ** WavCoeffs_L, int level,
 
 void ImProcFunctions::CompressDR(float *Source, int W_L, int H_L, float Compression, float DetailBoost)
 {
-
-    constexpr float eps = 0.000001f;
     const int n = W_L * H_L;
 
-    float temp;
+    float exponent;
 
     if(DetailBoost > 0.f && DetailBoost < 0.05f ) {
         float betemp = expf(-(2.f - DetailBoost + 0.694f)) - 1.f; //0.694 = log(2)
-        temp = 1.2f * xlogf( -betemp);
-        temp /= 20.f;
+        exponent = 1.2f * xlogf( -betemp);
+        exponent /= 20.f;
     } else if(DetailBoost >= 0.05f && DetailBoost < 0.25f ) {
         float betemp = expf(-(2.f - DetailBoost + 0.694f)) - 1.f; //0.694 = log(2)
-        temp = 1.2f * xlogf( -betemp);
-        temp /= (-75.f * DetailBoost + 23.75f);
+        exponent = 1.2f * xlogf( -betemp);
+        exponent /= (-75.f * DetailBoost + 23.75f);
     } else if(DetailBoost >= 0.25f) {
         float betemp = expf(-(2.f - DetailBoost + 0.694f)) - 1.f; //0.694 = log(2)
-        temp = 1.2f * xlogf( -betemp);
-        temp /= (-2.f * DetailBoost + 5.5f);
+        exponent = 1.2f * xlogf( -betemp);
+        exponent /= (-2.f * DetailBoost + 5.5f);
     } else {
-        temp = (Compression - 1.0f) / 20.f;
+        exponent = (Compression - 1.0f) / 20.f;
     }
 
-    temp += 1.f;
+    exponent += 1.f;
 
+    // now calculate Source = pow(Source, exponent)
 #ifdef __SSE2__
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
     {
-        vfloat epsv = F2V(eps);
-        vfloat tempv = F2V(temp);
+        vfloat exponentv = F2V(exponent);
 #ifdef _OPENMP
         #pragma omp for
 #endif
 
         for(int i = 0; i < n - 3; i += 4) {
-            STVFU(Source[i], xexpf(xlogf(LVFU(Source[i]) + epsv) * tempv) - epsv);
+            STVFU(Source[i], xexpf(xlogf(LVFU(Source[i])) * exponentv));
         }
     }
 
     for(int i = n - (n % 4); i < n; i++) {
-        Source[i] = xexpf(xlogf(Source[i] + eps) * temp) - eps;
+        Source[i] = xexpf(xlogf(Source[i]) * exponent);
     }
 
 #else
@@ -1477,7 +1475,7 @@ void ImProcFunctions::CompressDR(float *Source, int W_L, int H_L, float Compress
 #endif
 
     for(int i = 0; i < n; i++) {
-        Source[i] = xexpf(xlogf(Source[i] + eps) * temp) - eps;
+        Source[i] = xexpf(xlogf(Source[i]) * exponent);
     }
 
 #endif
