@@ -1741,7 +1741,7 @@ BENCHFUN
 
             }
 
-            if (denoiseLuminance) {
+            if (denoiseLuminance && numtiles >= 1) {
                 for (int i = 0; i < denoiseNestedLevels * numthreads; ++i) {
                     fftwf_free(LbloxArray[i]);
                     fftwf_free(fLbloxArray[i]);
