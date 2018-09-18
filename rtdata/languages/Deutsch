@@ -1277,7 +1277,6 @@ PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Bildanzeige
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutrales RAW-Bild 
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Eingebundenes JPEG wenn in Originalgröße, sonst neutrales RAW-Bild
 PREFERENCES_TP_LABEL;Werkzeugbereich:
-PREFERENCES_TP_USEICONORTEXT;Symbole statt Text in Karteireitern
 PREFERENCES_TP_VSCROLLBAR;Keine vertikale Scrollbar
 PREFERENCES_TUNNELMETADATA;Exif/XMP unverändert in die Ausgabedatei übernehmen.
 PREFERENCES_USEBUNDLEDPROFILES;Standardprofile verwenden

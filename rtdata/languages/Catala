@@ -587,7 +587,6 @@ PREFERENCES_TAB_GENERAL;General
 PREFERENCES_TAB_IMPROC;Processament de la imatge
 PREFERENCES_TAB_SOUND;Sons
 PREFERENCES_TP_LABEL;Panell d'eines:
-PREFERENCES_TP_USEICONORTEXT;Usa les icones tab en comptes de text
 PREFERENCES_TP_VSCROLLBAR;Amaga la barra d'eines vertical
 PREFERENCES_WORKFLOW;Flux de treball
 PROFILEPANEL_COPYPPASTE;Paràmetres a copiar
