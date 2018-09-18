@@ -199,8 +199,11 @@ s|@arch@|${arch}|" \
     "${CONTENTS}/Info.plist"
 plutil -convert binary1 "${CONTENTS}/Info.plist"
 
-
-
+# Sign the app
+CODESIGNID="$(cmake .. -LA -N | grep "CODESIGNID" | cut -d "=" -f2)"
+codesign --deep --force -v -s "${CODESIGNID}"  "${APP}"
+spctl -a -vvvv "${APP}"
+ 
 function CreateDmg {
     local srcDir="$(mktemp -dt $$)"
 
@@ -226,6 +229,9 @@ function CreateDmg {
 
     msg "Creating disk image:"
     hdiutil create -format UDBZ -srcdir "${srcDir}" -volname "${PROJECT_NAME}_${PROJECT_FULL_VERSION}" "${dmg_name}.dmg"
+
+    # Sign disk image
+    codesign --deep --force -v -s "${CODESIGNID}" "${dmg_name}.dmg"
 
     # Zip disk image for redistribution
     zip "${dmg_name}.zip" "${dmg_name}.dmg" AboutThisBuild.txt
