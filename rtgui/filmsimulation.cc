@@ -135,6 +135,8 @@ void FilmSimulation::read( const rtengine::procparams::ProcParams* pp, const Par
                 : pp->filmSimulation.clutFilename
         );
         m_oldClutFilename = m_clutComboBox->getSelectedClut();
+    } else {
+        m_clutComboBox->set_active(-1);
     }
 
     m_strength->setValue(pp->filmSimulation.strength);
@@ -249,7 +251,7 @@ void ClutComboBox::setBatchMode(bool yes)
     if (batchMode != yes) {
         batchMode = yes;
         set_model(m_model());
-        if (batchMode && options.multiDisplayMode) {
+        if (batchMode) {
             updateUnchangedEntry();
         }
     }
@@ -270,7 +272,6 @@ void ClutComboBox::updateUnchangedEntry()
         if (c.size() > 0) {
             Gtk::TreeModel::Row row = c[c.size()-1];
             if (row[m_columns().clutFilename] == "NULL") {
-                std::cout << "  removing " << ((void *)this) << std::endl;
                 m_model()->erase(row);
             }
         }
