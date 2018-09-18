@@ -130,11 +130,23 @@ void SaveFormatPanel::init (SaveFormat &sf)
     std::pair<int, std::size_t> index;
 
     for (std::size_t i = 0; i < sf_templates.size(); ++i) {
+        // Without relating the other SaveFormat fields to the
+        // SaveFormat::format by additional logic the best
+        // way is computing a weight for fitting the input
+        // to one of the sf_templates.
+        // The format field must match exactly, tiffBits,
+        // tiffFloat, and pngBits fields all weigh the same.
+        // By providing sane sets of parameters in getFormat()
+        // we have perfect matches. If the parameters were
+        // tampered with, some entry within SaveFormat::format
+        // will be selected, which will be consistent again.
+
         const int weight =
             10 * (sf.format == sf_templates[i].second.format)
             + (sf.tiffBits == sf_templates[i].second.tiffBits)
             + (sf.tiffFloat == sf_templates[i].second.tiffFloat)
             + (sf.pngBits == sf_templates[i].second.pngBits);
+
         if (weight > index.first) {
             index = {weight, i};
         }
