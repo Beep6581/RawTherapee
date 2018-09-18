@@ -2315,11 +2315,6 @@ void EditorPanel::updateTPVScrollbar (bool hide)
     tpc->updateTPVScrollbar (hide);
 }
 
-void EditorPanel::updateTabsUsesIcons (bool useIcons)
-{
-    tpc->updateTabsUsesIcons (useIcons);
-}
-
 void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
 {
 

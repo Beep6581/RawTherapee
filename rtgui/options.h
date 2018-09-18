@@ -263,7 +263,6 @@ public:
     int histogramDrawMode;
     bool FileBrowserToolbarSingleRow;
     bool hideTPVScrollbar;
-    bool UseIconNoText;
     int whiteBalanceSpotSize;
     int curvebboxpos; // 0=above, 1=right, 2=below, 3=left
 

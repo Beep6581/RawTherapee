@@ -425,8 +425,3 @@ void FilePanel::updateTPVScrollbar (bool hide)
 {
     tpc->updateTPVScrollbar (hide);
 }
-
-void FilePanel::updateTabsUsesIcons (bool useIcons)
-{
-    tpc->updateTabsUsesIcons (useIcons);
-}
