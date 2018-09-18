@@ -49,7 +49,7 @@ int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDi
     RawImageSource::init();
 
 #ifdef _OPENMP
-#pragma omp parallel sections
+#pragma omp parallel sections if (!settings->verbose)
 #endif
 {
 #ifdef _OPENMP

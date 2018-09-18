@@ -211,6 +211,9 @@ void FileBrowserEntry::procParamsChanged (Thumbnail* thm, int whoChangedIt)
 
 void FileBrowserEntry::updateImage (rtengine::IImage8* img, double scale, rtengine::procparams::CropParams cropParams)
 {
+    if (!feih) {
+        return;
+    }
     redrawRequests++;
     feih->pending++;
 

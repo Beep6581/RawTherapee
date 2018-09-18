@@ -5466,7 +5466,7 @@ void ImProcFunctions::getAutoExp  (const LUTu &histogram, int histcompr, double 
 
 
     //now tune hlcompr to bring back rawmax to 65535
-    hlcomprthresh = 33;
+    hlcomprthresh = 0;
     //this is a series approximation of the actual formula for comp,
     //which is a transcendental equation
     float comp = (gain * ((float)whiteclip) / scale - 1.f) * 2.3f; // 2.3 instead of 2 to increase slightly comp

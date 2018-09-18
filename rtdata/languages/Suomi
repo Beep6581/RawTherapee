@@ -580,9 +580,9 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !GENERAL_UNCHANGED;(Unchanged)
 !GENERAL_WARNING;Warning
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
-!HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar.\nRight-click on image preview to freeze/unfreeze.
+!HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar.
 !HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram.
-!HISTOGRAM_TOOLTIP_FULL;Toggle full (off) or scaled (on) histogram.
+!HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
 !HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram.
 !HISTORY_MSG_82;Profile changed
 !HISTORY_MSG_83;S/H - Sharp mask
@@ -1000,6 +1000,8 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
+!HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
+!HISTORY_MSG_RAWCACORR_COLOURSHIFT;Raw CA Correction - Avoid color shift
 !HISTORY_MSG_RAW_BORDER;Raw border
 !HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
@@ -1083,7 +1085,7 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
 !MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser or Filmstrip with the Editor to reveal the thumbnail of the currently opened image, and clear any active filters.\nShortcut: <b>x</b>\n\nAs above, but without clearing active filters:\nShortcut: <b>y</b>\n(Note that the thumbnail of the opened image will not be shown if filtered out).
 !MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue.\nShortcut: <b>Ctrl+b</b>
-!MAIN_BUTTON_SAVE_TOOLTIP;Save current image.\nShortcut: <b>Ctrl+s</b>
+!MAIN_BUTTON_SAVE_TOOLTIP;Save current image.\nShortcut: <b>Ctrl+s</b>\nSave current profile (.pp3).\nShortcut: <b>Ctrl+Shift+s</b>
 !MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor.\nShortcut: <b>Ctrl+e</b>
 !MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels.\nShortcut: <b>m</b>
 !MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
@@ -1297,6 +1299,8 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !PREFERENCES_PANFACTORLABEL;Pan rate amplification
 !PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
 !PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
+!PREFERENCES_PERFORMANCE_THREADS;Threads
+!PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
 !PREFERENCES_PREVDEMO;Preview Demosaic Method
 !PREFERENCES_PREVDEMO_FAST;Fast
 !PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
@@ -1326,6 +1330,7 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
 !PREFERENCES_SND_THRESHOLDSECS;After seconds
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
+!PREFERENCES_TAB_PERFORMANCE;Performance
 !PREFERENCES_TAB_SOUND;Sounds
 !PREFERENCES_THEME;Theme
 !PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
@@ -1365,6 +1370,7 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !SAMPLEFORMAT_32;24-bit floating-point
 !SAMPLEFORMAT_64;32-bit floating-point
 !SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
+!SAVEDLG_FILEFORMAT_FLOAT; floating-point
 !SAVEDLG_FORCEFORMATOPTS;Force saving options
 !SAVEDLG_SUBSAMP;Subsampling
 !SAVEDLG_SUBSAMP_1;Best compression
@@ -1828,6 +1834,8 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !TP_PRSHARPENING_LABEL;Post-Resize Sharpening
 !TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
 !TP_RAWCACORR_AUTO;Auto-correction
+!TP_RAWCACORR_AUTOIT;Iterations
+!TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
 !TP_RAWCACORR_CABLUE;Blue
 !TP_RAWCACORR_CARED;Red
 !TP_RAWCACORR_CASTR;Strength
@@ -1933,7 +1941,7 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !TP_RETINEX_GAIN;Gain
 !TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
 !TP_RETINEX_GAINTRANSMISSION;Gain transmission
-!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce transmission map to achieve luminance.\nAbscissa: transmission -min from 0, mean, and values (max).\nOrdinate: gain.
+!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
 !TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
 !TP_RETINEX_GAMMA;Gamma
 !TP_RETINEX_GAMMA_FREE;Free

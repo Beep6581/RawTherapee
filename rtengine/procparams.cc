@@ -330,7 +330,7 @@ ToneCurveParams::ToneCurveParams() :
     saturation(0),
     shcompr(50),
     hlcompr(0),
-    hlcomprthresh(33),
+    hlcomprthresh(0),
     histmatching(false),
     fromHistMatching(false),
     clampOOG(true)
@@ -2561,6 +2561,8 @@ RAWParams::RAWParams() :
     ff_AutoClipControl(false),
     ff_clipControl(0),
     ca_autocorrect(false),
+    ca_avoidcolourshift(true),
+    caautoiterations(2),
     cared(0.0),
     cablue(0.0),
     expos(1.0),
@@ -2585,6 +2587,8 @@ bool RAWParams::operator ==(const RAWParams& other) const
         && ff_AutoClipControl == other.ff_AutoClipControl
         && ff_clipControl == other.ff_clipControl
         && ca_autocorrect == other.ca_autocorrect
+        && ca_avoidcolourshift == other.ca_avoidcolourshift
+        && caautoiterations == other.caautoiterations
         && cared == other.cared
         && cablue == other.cablue
         && expos == other.expos
@@ -3381,6 +3385,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.ff_AutoClipControl, "RAW", "FlatFieldAutoClipControl", raw.ff_AutoClipControl, keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_clipControl, "RAW", "FlatFieldClipControl", raw.ff_clipControl, keyFile);
         saveToKeyfile(!pedited || pedited->raw.ca_autocorrect, "RAW", "CA", raw.ca_autocorrect, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.ca_avoidcolourshift, "RAW", "CAAvoidColourshift", raw.ca_avoidcolourshift, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.caautoiterations, "RAW", "CAAutoIterations", raw.caautoiterations, keyFile);
         saveToKeyfile(!pedited || pedited->raw.cared, "RAW", "CARed", raw.cared, keyFile);
         saveToKeyfile(!pedited || pedited->raw.cablue, "RAW", "CABlue", raw.cablue, keyFile);
         saveToKeyfile(!pedited || pedited->raw.hotPixelFilter, "RAW", "HotPixelFilter", raw.hotPixelFilter, keyFile);
@@ -4753,6 +4759,17 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
 
             assignFromKeyfile(keyFile, "RAW", "CA", pedited, raw.ca_autocorrect, pedited->raw.ca_autocorrect);
+            if (ppVersion >= 342) {
+                assignFromKeyfile(keyFile, "RAW", "CAAutoIterations", pedited, raw.caautoiterations, pedited->raw.caautoiterations);
+            } else {
+                raw.caautoiterations = 1;
+            }
+
+            if (ppVersion >= 343) {
+                assignFromKeyfile(keyFile, "RAW", "CAAvoidColourshift", pedited, raw.ca_avoidcolourshift, pedited->raw.ca_avoidcolourshift);
+            } else {
+                raw.ca_avoidcolourshift = false;
+            }
             assignFromKeyfile(keyFile, "RAW", "CARed", pedited, raw.cared, pedited->raw.cared);
             assignFromKeyfile(keyFile, "RAW", "CABlue", pedited, raw.cablue, pedited->raw.cablue);
             // For compatibility to elder pp3 versions

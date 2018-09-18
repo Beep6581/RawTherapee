@@ -252,6 +252,12 @@ if(DEFINED LENSFUNDBDIR AND NOT IS_ABSOLUTE "${LENSFUNDBDIR}")
     set(LENSFUNDBDIR "${DATADIR}/${LENSFUNDBDIR}")
 endif()
 
+if(APPLE)
+    if("${CODESIGNID}")
+        set(CODESIGNID "${CODESIGNID}" CACHE STRING "Codesigning Identity")
+    endif()
+endif()
+
 # Enforce absolute paths for non-bundle builds:
 if(NOT BUILD_BUNDLE)
     foreach(path BINDIR DATADIR LIBDIR DOCDIR CREDITSDIR LICENCEDIR)

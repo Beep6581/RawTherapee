@@ -239,7 +239,19 @@ protected:
     inline  void interpolate_row_rb (float* ar, float* ab, float* pg, float* cg, float* ng, int i);
     inline  void interpolate_row_rb_mul_pp (const array2D<float> &rawData, float* ar, float* ab, float* pg, float* cg, float* ng, int i, float r_mul, float g_mul, float b_mul, int x1, int width, int skip);
 
-    float* CA_correct_RT  (const bool autoCA, const double cared, const double cablue, const double caautostrength, array2D<float> &rawData, double *fitParamsTransfer, bool fitParamsIn, bool fitParamsOut, float * buffer, bool freeBuffer);
+    float* CA_correct_RT(
+        bool autoCA,
+        size_t autoIterations,
+        double cared,
+        double cablue,
+        bool avoidColourshift,
+        const array2D<float> &rawData,
+        double* fitParamsTransfer,
+        bool fitParamsIn,
+        bool fitParamsOut,
+        float* buffer,
+        bool freeBuffer
+    );
     void ddct8x8s(int isgn, float a[8][8]);
     void processRawWhitepoint (float expos, float preser, array2D<float> &rawData);  // exposure before interpolation
 

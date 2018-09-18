@@ -1471,7 +1471,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, float isFloat, bool uncompr
         getScanline (row, linebuffer, bps, isFloat);
 
         if (bps == 16) {
-            if(needsReverse && !uncompressed) {
+            if(needsReverse && !uncompressed && isFloat) {
                 for(int i = 0; i < lineWidth; i += 2) {
                     char temp = linebuffer[i];
                     linebuffer[i] = linebuffer[i + 1];

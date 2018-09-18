@@ -2009,13 +2009,13 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         }
         if(numFrames == 4) {
             double fitParams[64];
-            float *buffer = CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, *rawDataFrames[0], fitParams, false, true, nullptr, false);
+            float *buffer = CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[0], fitParams, false, true, nullptr, false);
             for(int i = 1; i < 3; ++i) {
-                CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, *rawDataFrames[i], fitParams, true, false, buffer, false);
+                CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[i], fitParams, true, false, buffer, false);
             }
-            CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, *rawDataFrames[3], fitParams, true, false, buffer, true);
+            CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[3], fitParams, true, false, buffer, true);
         } else {
-            CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, rawData, nullptr, false, false, nullptr, true);
+            CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, rawData, nullptr, false, false, nullptr, true);
         }
     }
 
@@ -5462,6 +5462,8 @@ void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int 
         ynew = H - 1 - ynew;
     }
 
+    xnew = LIM(xnew, 0, W - 1);
+    ynew = LIM(ynew, 0, H - 1);
     int c = ri->getSensorType() == ST_FUJI_XTRANS ? ri->XTRANSFC(ynew,xnew) : ri->FC(ynew,xnew);
     int val = round(rawData[ynew][xnew] / scale_mul[c]);
     if(c == 0) {

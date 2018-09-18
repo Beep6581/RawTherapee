@@ -241,9 +241,9 @@ GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done edit
 HISTOGRAM_TOOLTIP_B;Show/Hide blue histogram.
 HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar.
 HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram.
-HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
 HISTOGRAM_TOOLTIP_G;Show/Hide green histogram.
 HISTOGRAM_TOOLTIP_L;Show/Hide CIELab luminance histogram.
+HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
 HISTOGRAM_TOOLTIP_R;Show/Hide red histogram.
 HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram.
 HISTORY_CHANGED;Changed
@@ -747,6 +747,8 @@ HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - Demosaic method for motion
 HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
+HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
+HISTORY_MSG_RAWCACORR_COLOURSHIFT;Raw CA Correction - Avoid color shift
 HISTORY_MSG_RAW_BORDER;Raw border
 HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
 HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
@@ -1148,6 +1150,8 @@ PREFERENCES_PARSEDEXTADDHINT;Add entered extension to the list.
 PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list.
 PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
 PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
+PREFERENCES_PERFORMANCE_THREADS;Threads
+PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
 PREFERENCES_PREVDEMO;Preview Demosaic Method
 PREFERENCES_PREVDEMO_FAST;Fast
 PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
@@ -1169,8 +1173,6 @@ PREFERENCES_PSPATH;Adobe Photoshop installation directory
 PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
 PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
-PREFERENCES_PERFORMANCE_THREADS;Threads
-PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
 PREFERENCES_SELECTFONT;Select main font
 PREFERENCES_SELECTFONT_COLPICKER;Select Color Picker's font
 PREFERENCES_SELECTLANG;Select language
@@ -1780,6 +1782,8 @@ TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by o
 TP_PRSHARPENING_LABEL;Post-Resize Sharpening
 TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
 TP_RAWCACORR_AUTO;Auto-correction
+TP_RAWCACORR_AUTOIT;Iterations
+TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
 TP_RAWCACORR_CABLUE;Blue
 TP_RAWCACORR_CARED;Red
 TP_RAWCACORR_CASTR;Strength
