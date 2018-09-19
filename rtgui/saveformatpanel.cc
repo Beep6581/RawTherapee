@@ -16,9 +16,27 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <array>
+#include <utility>
+
 #include "saveformatpanel.h"
 #include "multilangmgr.h"
 #include "guiutils.h"
+
+namespace
+{
+
+const std::array<std::pair<const char*, SaveFormat>, 7> sf_templates = {{
+     {"JPEG (8-bit)", SaveFormat("jpg", 8, 8, false)},
+     {"TIFF (8-bit)", SaveFormat("tif", 8, 8, false)},
+     {"TIFF (16-bit)", SaveFormat("tif", 8, 16, false)},
+     {"TIFF (16-bit float)", SaveFormat("tif", 8, 16, true)},
+     {"TIFF (32-bit float)", SaveFormat("tif", 8, 32, true)},
+     {"PNG (8-bit)", SaveFormat("png", 8, 8, false)},
+     {"PNG (16-bit)", SaveFormat("png", 16, 8, false)}
+}};
+
+}
 
 SaveFormatPanel::SaveFormatPanel () : listener (nullptr)
 {
@@ -37,21 +55,9 @@ SaveFormatPanel::SaveFormatPanel () : listener (nullptr)
     setExpandAlignProperties(format, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     format->signal_changed ().connect (sigc::mem_fun (*this, &SaveFormatPanel::formatChanged));
 
-    format->append ("JPEG (8-bit)");
-    format->append ("TIFF (8-bit)");
-    format->append ("TIFF (16-bit)");
-    format->append ("TIFF (16-bit float)");
-    format->append ("TIFF (32-bit float)");
-    format->append ("PNG (8-bit)");
-    format->append ("PNG (16-bit)");
-
-    fstr[0] = "jpg";
-    fstr[1] = "tif";
-    fstr[2] = "tif";
-    fstr[3] = "tif";
-    fstr[4] = "tif";
-    fstr[5] = "png";
-    fstr[6] = "png";
+    for (const auto& sf_template : sf_templates) {
+        format->append(sf_template.first);
+    }
 
     hb1->attach (*flab, 0, 0, 1, 1);
     hb1->attach (*format, 1, 0, 1, 1);
@@ -118,75 +124,71 @@ SaveFormatPanel::~SaveFormatPanel ()
 
 void SaveFormatPanel::init (SaveFormat &sf)
 {
-
-    FormatChangeListener* tmp = listener;
+    FormatChangeListener* const tmp = listener;
     listener = nullptr;
 
-    if (sf.format == "jpg") {
-        format->set_active (0);
-    } else if (sf.format == "png" && sf.pngBits == 16) {
-        format->set_active (6);
-    } else if (sf.format == "png" && sf.pngBits == 8) {
-        format->set_active (5);
-    } else if (sf.format == "tif" && sf.tiffBits == 32) {
-        format->set_active (4);
-    } else if (sf.format == "tif" && sf.tiffBits == 16 && sf.tiffFloat) {
-        format->set_active (3);
-    } else if (sf.format == "tif" && sf.tiffBits == 16) {
-        format->set_active (2);
-    } else if (sf.format == "tif" && sf.tiffBits == 8) {
-        format->set_active (1);
+    std::pair<int, std::size_t> index;
+
+    for (std::size_t i = 0; i < sf_templates.size(); ++i) {
+        // Without relating the other SaveFormat fields to the
+        // SaveFormat::format by additional logic the best
+        // way is computing a weight for fitting the input
+        // to one of the sf_templates.
+        // The format field must match exactly, tiffBits,
+        // tiffFloat, and pngBits fields all weigh the same.
+        // By providing sane sets of parameters in getFormat()
+        // we have perfect matches. If the parameters were
+        // tampered with, some entry within SaveFormat::format
+        // will be selected, which will be consistent again.
+
+        const int weight =
+            10 * (sf.format == sf_templates[i].second.format)
+            + (sf.tiffBits == sf_templates[i].second.tiffBits)
+            + (sf.tiffFloat == sf_templates[i].second.tiffFloat)
+            + (sf.pngBits == sf_templates[i].second.pngBits);
+
+        if (weight > index.first) {
+            index = {weight, i};
+        }
     }
 
-    jpegSubSamp->set_active (sf.jpegSubSamp - 1);
+    format->set_active(index.second);
 
-    jpegQual->setValue (sf.jpegQuality);
-    savesPP->set_active (sf.saveParams);
-    tiffUncompressed->set_active (sf.tiffUncompressed);
+    jpegSubSamp->set_active(sf.jpegSubSamp - 1);
+    jpegQual->setValue(sf.jpegQuality);
+    savesPP->set_active(sf.saveParams);
+    tiffUncompressed->set_active(sf.tiffUncompressed);
+
     listener = tmp;
 }
 
 SaveFormat SaveFormatPanel::getFormat ()
 {
-
     SaveFormat sf;
 
-    int sel = format->get_active_row_number();
-    sf.format = fstr[sel];
+    const unsigned int sel = format->get_active_row_number();
 
-    if (sel == 6) {
-        sf.pngBits = 16;
-    } else {
-        sf.pngBits = 8;
+    if (sel < sf_templates.size()) {
+        sf = sf_templates[sel].second;
     }
 
-    if (sel == 2 || sel == 3) {
-        sf.tiffBits = 16;
-    } else if (sel == 4) {
-        sf.tiffBits = 32;
-    } else {
-        sf.tiffBits = 8;
-    }
-
-    sf.tiffFloat = sel == 4 || sel == 3;
-
-    sf.jpegQuality      = (int) jpegQual->getValue ();
-    sf.jpegSubSamp      = jpegSubSamp->get_active_row_number() + 1;
+    sf.jpegQuality = jpegQual->getValue();
+    sf.jpegSubSamp = jpegSubSamp->get_active_row_number() + 1;
     sf.tiffUncompressed = tiffUncompressed->get_active();
-    sf.saveParams       = savesPP->get_active ();
+    sf.saveParams = savesPP->get_active();
+
     return sf;
 }
 
 void SaveFormatPanel::formatChanged ()
 {
+    const unsigned int act = format->get_active_row_number();
 
-    int act = format->get_active_row_number();
-
-    if (act < 0 || act > 6) {
+    if (act >= sf_templates.size()) {
         return;
     }
 
-    Glib::ustring fr = fstr[act];
+    const Glib::ustring& fr = sf_templates[act].second.format;
 
     if (fr == "jpg") {
         jpegOpts->show_all();
@@ -206,14 +208,13 @@ void SaveFormatPanel::formatChanged ()
 
 void SaveFormatPanel::adjusterChanged (Adjuster* a, double newval)
 {
+    const unsigned int act = format->get_active_row_number();
 
-    int act = format->get_active_row_number();
-
-    if (act < 0 || act > 4) {
+    if (act >= sf_templates.size()) {
         return;
     }
 
     if (listener) {
-        listener->formatChanged (fstr[act]);
+        listener->formatChanged(sf_templates[act].second.format);
     }
 }
