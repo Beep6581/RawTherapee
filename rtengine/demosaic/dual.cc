@@ -53,7 +53,7 @@ void RawImageSource::dual_demosaic(bool isBayer, const RAWParams &raw, int winw,
                         plistener->setProgress(p);
                     return false;
                 };
-                librtprocess::amaze_demosaic(0, 0, winw, winh, rawData, red, green, blue, {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, initialGain, border);
+                librtprocess::amaze_demosaic(winw, winh, 0, 0, winw, winh, rawData, red, green, blue, {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, initialGain, border);
             } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCBVNG4) ) {
                 dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);
             } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCDVNG4) ) {
@@ -88,7 +88,7 @@ void RawImageSource::dual_demosaic(bool isBayer, const RAWParams &raw, int winw,
                     plistener->setProgress(p);
                 return false;
             };
-            librtprocess::amaze_demosaic(0, 0, winw, winh, rawData, red, green, blue, {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, initialGain, border);
+            librtprocess::amaze_demosaic(winw, winh, 0, 0, winw, winh, rawData, red, green, blue, {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, initialGain, border);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCBVNG4) ) {
             dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCDVNG4) ) {

@@ -305,7 +305,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             plistener->setProgress(p);
             return false;
         };
-        librtprocess::amaze_demosaic(winx, winy, winw, winh, rawData, red, green, blue, {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, initialGain, border);
+        librtprocess::amaze_demosaic(winw, winh, winx, winy, winw, winh, rawData, red, green, blue, {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, initialGain, border);
         return;
     }
 
@@ -342,7 +342,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                         plistener->setProgress(p);
                         return false;
                     };
-                    librtprocess::amaze_demosaic(winx, winy, winw, winh, *(rawDataFrames[0]), red, green, blue, {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, initialGain, border);
+                    librtprocess::amaze_demosaic(winw, winh, winx, winy, winw, winh, *(rawDataFrames[0]), red, green, blue, {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, initialGain, border);
                 }
                 multi_array2D<float, 3> redTmp(winw, winh);
                 multi_array2D<float, 3> greenTmp(winw, winh);
@@ -362,7 +362,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                             plistener->setProgress(p);
                             return false;
                         };
-                        librtprocess::amaze_demosaic(winx, winy, winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i], {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, initialGain, border);
+                        librtprocess::amaze_demosaic(winw, winh, winx, winy, winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i], {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, initialGain, border);
                     }
                 }
 
@@ -399,7 +399,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                         plistener->setProgress(p);
                         return false;
                     };
-                    librtprocess::amaze_demosaic(winx, winy, winw, winh, rawData, red, green, blue, {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, initialGain, border);
+                    librtprocess::amaze_demosaic(winw, winh, winx, winy, winw, winh, rawData, red, green, blue, {{{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}}}, setProgCancel, initialGain, border);
                 }
             }
         }
