@@ -805,8 +805,8 @@ BENCHFUN
             }
 
 #endif
-            float *LbloxArray[denoiseNestedLevels * numthreads];
-            float *fLbloxArray[denoiseNestedLevels * numthreads];
+            float *LbloxArray[denoiseNestedLevels * numthreads] = {};
+            float *fLbloxArray[denoiseNestedLevels * numthreads] = {};
 
             if (numtiles > 1 && denoiseLuminance) {
                 for (int i = 0; i < denoiseNestedLevels * numthreads; ++i) {
@@ -1741,9 +1741,11 @@ BENCHFUN
 
             }
 
-            if (denoiseLuminance) {
-                for (int i = 0; i < denoiseNestedLevels * numthreads; ++i) {
+            for (int i = 0; i < denoiseNestedLevels * numthreads; ++i) {
+                if (LbloxArray[i]) {
                     fftwf_free(LbloxArray[i]);
+                }
+                if (fLbloxArray[i]) {
                     fftwf_free(fLbloxArray[i]);
                 }
             }

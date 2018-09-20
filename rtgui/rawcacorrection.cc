@@ -46,7 +46,7 @@ RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_CHROM
         caAutoiterations->delay = options.adjusterMaxDelay;
     }
 
-    caRed = Gtk::manage(new Adjuster (M("TP_RAWCACORR_CARED"), -8.0, 8.0, 0.1, 0, icaredL, icaredR));
+    caRed = Gtk::manage(new Adjuster (M("TP_RAWCACORR_CARED"), -4.0, 4.0, 0.1, 0, icaredL, icaredR));
     caRed->setAdjusterListener (this);
 
     if (caRed->delay < options.adjusterMaxDelay) {
