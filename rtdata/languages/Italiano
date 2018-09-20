@@ -747,7 +747,6 @@ PREFERENCES_TAB_GENERAL;Generale
 PREFERENCES_TAB_IMPROC;Elaborazione immagine
 PREFERENCES_TAB_SOUND;Suoni
 PREFERENCES_TP_LABEL;Pannello Strumenti:
-PREFERENCES_TP_USEICONORTEXT;Utilizza le icone delle schede anziché il testo
 PREFERENCES_TP_VSCROLLBAR;Nascondi la barra di scorrimento verticale
 PREFERENCES_USEBUNDLEDPROFILES;Usa profili inclusi
 PREFERENCES_VIEW;Bilanciamento del bianco del dispositivo di uscita (monitor, TV, proiettore...)

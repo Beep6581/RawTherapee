@@ -80,7 +80,6 @@ public:
 
     bool handleShortcutKey (GdkEventKey* event);
     void updateTPVScrollbar (bool hide);
-    void updateTabsUsesIcons (bool useIcons);
 
 private:
     void on_NB_switch_page(Gtk::Widget* page, guint page_num);

@@ -901,19 +901,6 @@ void RTWindow::updateTPVScrollbar (bool hide)
     }
 }
 
-void RTWindow::updateTabsUsesIcons (bool useIcons)
-{
-    fpanel->updateTabsUsesIcons (useIcons);
-
-    if (epanel) {
-        epanel->updateTabsUsesIcons (useIcons);
-    }
-
-    for (auto panel : epanels) {
-        panel.second->updateTabsUsesIcons (useIcons);
-    }
-}
-
 void RTWindow::updateFBQueryTB (bool singleRow)
 {
     fpanel->fileCatalog->updateFBQueryTB (singleRow);

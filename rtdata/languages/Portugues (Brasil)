@@ -1199,7 +1199,6 @@ PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Imagem para mostrar
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Renderização raw neutra
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;JPEG incorporado se tamanho completo, raw neutro caso contrário
 PREFERENCES_TP_LABEL;Painel de ferramentas:
-PREFERENCES_TP_USEICONORTEXT;Use ícones de guias em vez de texto
 PREFERENCES_TP_VSCROLLBAR;Ocultar barra de rolagem vertical
 PREFERENCES_TUNNELMETADATA;Copiar Exif/IPTC/XMP inalterado para o arquivo de saída
 PREFERENCES_USEBUNDLEDPROFILES;Use perfis agrupados

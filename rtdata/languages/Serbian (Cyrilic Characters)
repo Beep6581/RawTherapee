@@ -714,7 +714,6 @@ PREFERENCES_TAB_GENERAL;Опште
 PREFERENCES_TAB_IMPROC;Обрада сликe
 PREFERENCES_TAB_SOUND;Звуци
 PREFERENCES_TP_LABEL;Површ алата:
-PREFERENCES_TP_USEICONORTEXT;Користи иконице језичка уместо текста
 PREFERENCES_TP_VSCROLLBAR;Сакриј клизаче у области са алаткама
 PREFERENCES_TUNNELMETADATA;Копирај неизмењене IPTC/XMP (када је слика означена другим програмом)
 PREFERENCES_USEBUNDLEDPROFILES;Користи профиле који долазе уз програм
