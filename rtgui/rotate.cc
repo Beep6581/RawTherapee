@@ -44,6 +44,8 @@ Rotate::Rotate () : FoldableToolPanel(this, "rotate", M("TP_ROTATE_LABEL"))
 
     selectStraight->signal_pressed().connect( sigc::mem_fun(*this, &Rotate::selectStraightPressed) );
 
+    degree->setLogScale(2, 0);
+
     show_all ();
 }
 

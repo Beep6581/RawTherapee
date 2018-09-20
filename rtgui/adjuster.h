@@ -71,9 +71,16 @@ protected:
     double vMax;
     double vStep;
 
+    double logBase;
+    double logPivot;
+    bool logAnchorMiddle;
+
     double shapeValue (double a);
     void   refreshLabelStyle ();
     double2double_fun value2slider, slider2value;
+
+    double getSliderValue();
+    void setSliderValue(double val);
 
 public:
 
@@ -173,6 +180,8 @@ public:
     void trimValue (double &val);
     void trimValue (float &val);
     void trimValue (int &val);
+
+    void setLogScale(double base, double pivot, bool anchorMiddle=false);
 };
 
 #endif
