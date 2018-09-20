@@ -1167,7 +1167,6 @@ PREFERENCES_TAB_IMPROC;Traitement de l'image
 PREFERENCES_TAB_SOUND;Sons
 PREFERENCES_THEME;Thème
 PREFERENCES_TP_LABEL;Panneau des outils:
-PREFERENCES_TP_USEICONORTEXT;Utiliser des icônes au lieu de textes
 PREFERENCES_TP_VSCROLLBAR;Cacher la barre de défilement verticale
 PREFERENCES_TUNNELMETADATA;Copier les données Exif/IPTC/XMP tel quel dans le fichier de sortie
 PREFERENCES_USEBUNDLEDPROFILES;Utiliser les profils fournis

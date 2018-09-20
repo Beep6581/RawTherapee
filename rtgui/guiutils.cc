@@ -1434,63 +1434,15 @@ void MyFileChooserButton::get_preferred_width_for_height_vfunc (int height, int 
 
 
 
-TextOrIcon::TextOrIcon (Glib::ustring fname, Glib::ustring labelTx, Glib::ustring tooltipTx, TOITypes type)
+TextOrIcon::TextOrIcon (const Glib::ustring &fname, const Glib::ustring &labelTx, const Glib::ustring &tooltipTx)
 {
 
-    imgIcon = nullptr;
-    label = nullptr;
-    filename = fname;
-    labelText = labelTx;
-    tooltipText = tooltipTx;
+    pack_start(*Gtk::manage(new RTImage(fname)), Gtk::PACK_SHRINK, 0);
+    set_tooltip_markup("<span font_size=\"large\" font_weight=\"bold\">" + labelTx  + "</span>\n" + tooltipTx);
 
     set_name("TextOrIcon");
-
-    switchTo(type);
-}
-
-TextOrIcon::~TextOrIcon ()
-{
-    if (imgIcon) {
-        delete imgIcon;
-    }
-
-    if (label) {
-        delete label;
-    }
-}
-
-void TextOrIcon::switchTo(TOITypes type)
-{
-    switch (type) {
-    case (TOI_ICON):
-        if (!imgIcon) {
-            removeIfThere(this, label, false);
-            delete label;
-            label = nullptr;
-            imgIcon = new RTImage (filename);
-            pack_start(*imgIcon, Gtk::PACK_SHRINK, 0);
-            set_tooltip_markup ("<span font_size=\"large\" font_weight=\"bold\">" + labelText  + "</span>\n" + tooltipText);
-        }
-
-        // do nothing if imgIcon exist, which mean that it is currently being displayed
-        break;
-
-    case(TOI_TEXT):
-    default:
-        if (!label) {
-            removeIfThere(this, imgIcon, false);
-            delete imgIcon;
-            imgIcon = nullptr;
-            label = new Gtk::Label (labelText, Gtk::ALIGN_CENTER);
-            pack_start(*label, Gtk::PACK_EXPAND_WIDGET, 0);
-            set_tooltip_markup (tooltipText);
-        }
-
-        // do nothing if label exist, which mean that it is currently being displayed
-        break;
-    }
-
     show_all();
+
 }
 
 MyImageMenuItem::MyImageMenuItem(Glib::ustring label, Glib::ustring imageFileName)

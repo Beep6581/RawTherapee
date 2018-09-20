@@ -803,7 +803,6 @@ PREFERENCES_TAB_IMPROC;Обработка изображения
 PREFERENCES_TAB_SOUND;Звуки
 PREFERENCES_THEME;Тема
 PREFERENCES_TP_LABEL;Панель инструментов:
-PREFERENCES_TP_USEICONORTEXT;Использовать иконки вместо текста
 PREFERENCES_TP_VSCROLLBAR;Спрятать вертикальную полосу прокрутки
 PREFERENCES_USEBUNDLEDPROFILES;Использовать предустановленный профиль
 PREFERENCES_VIEW;ББ устройства вывода (монитор, проектор и т.д.)

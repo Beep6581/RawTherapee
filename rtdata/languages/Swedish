@@ -970,7 +970,6 @@ PREFERENCES_TAB_GENERAL;Allmän
 PREFERENCES_TAB_IMPROC;Bildbehandling
 PREFERENCES_TAB_SOUND;Ljud
 PREFERENCES_TP_LABEL;Verktygspanel:
-PREFERENCES_TP_USEICONORTEXT;Använd ikoner istället för text
 PREFERENCES_TP_VSCROLLBAR;Göm verktygpanelens vertikala skrollist
 PREFERENCES_TUNNELMETADATA;Kopiera Exif/IPTC/XMP till utfilen oförändrat
 PREFERENCES_USEBUNDLEDPROFILES;Visa förinstallerade profiler

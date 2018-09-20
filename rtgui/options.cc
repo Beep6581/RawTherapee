@@ -443,7 +443,6 @@ void Options::setDefaults()
 
     FileBrowserToolbarSingleRow = false;
     hideTPVScrollbar = false;
-    UseIconNoText = true;
     whiteBalanceSpotSize = 8;
     showFilmStripToolBar = false;
     menuGroupRank = true;
@@ -1342,10 +1341,6 @@ void Options::readFromFile(Glib::ustring fname)
 
 #endif
 
-                if (keyFile.has_key("GUI", "UseIconNoText")) {
-                    UseIconNoText = keyFile.get_boolean("GUI", "UseIconNoText");
-                }
-
                 if (keyFile.has_key("GUI", "HistogramWorking")) {
                     rtSettings.HistogramWorking = keyFile.get_boolean("GUI", "HistogramWorking");
                 }
@@ -2038,7 +2033,6 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean ("GUI", "ShowFilmStripToolBar", showFilmStripToolBar);
         keyFile.set_boolean ("GUI", "FileBrowserToolbarSingleRow", FileBrowserToolbarSingleRow);
         keyFile.set_boolean ("GUI", "HideTPVScrollbar", hideTPVScrollbar);
-        keyFile.set_boolean ("GUI", "UseIconNoText", UseIconNoText);
         keyFile.set_boolean ("GUI", "HistogramWorking", rtSettings.HistogramWorking);
         keyFile.set_integer ("GUI", "CurveBBoxPosition", curvebboxpos);
 

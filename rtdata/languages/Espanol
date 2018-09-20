@@ -842,7 +842,6 @@ PREFERENCES_TAB_GENERAL;General
 PREFERENCES_TAB_IMPROC;Procesamiento de imágenes
 PREFERENCES_TAB_SOUND;Sonidos
 PREFERENCES_TP_LABEL;Panel de herramientas:
-PREFERENCES_TP_USEICONORTEXT;Usar iconos de pestaña en lugar de texto
 PREFERENCES_TP_VSCROLLBAR;Ocultar barra de desplazamiento vertical del panel de herramientas
 PREFERENCES_USEBUNDLEDPROFILES;Usar perfiles empaquetados
 PREFERENCES_VIEW;Balance de blancos en el dispositivo de salida (monitor, TV, proyector...)
