@@ -422,6 +422,9 @@ void Options::setDefaults()
     histogramRed = true;
     histogramGreen = true;
     histogramBlue = true;
+    histogramLuma = false;
+    histogramChroma = false;
+    histogramRAW = false;
     histogramBar = true;
     histogramHeight = 200;
     histogramDrawMode = 0;
