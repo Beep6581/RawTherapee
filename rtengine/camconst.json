@@ -1300,6 +1300,11 @@ Camera constants:
         "ranges": { "white": 16100 }
     },
 
+    { // Quality C, only raw crop
+        "make_model": [ "FUJIFILM X-T3" ],
+        "raw_crop": [ 0, 0, 6254, 0]
+    },    
+    
     { // Quality B
         "make_model": "FUJIFILM X30",
         "dcraw_matrix": [ 12328,-5256,-1144,-4469,12927,1675,-87,1291,4351 ], // DNG_v8.7 D65
