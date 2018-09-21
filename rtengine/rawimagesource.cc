@@ -4720,10 +4720,10 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
     histRedRaw.clear();
     histGreenRaw.clear();
     histBlueRaw.clear();
-    const float mult[4] = { 255.0f / Color::gamma(ri->get_white(0) - cblacksom[0]),
-                            255.0f / Color::gamma(ri->get_white(1) - cblacksom[1]),
-                            255.0f / Color::gamma(ri->get_white(2) - cblacksom[2]),
-                            255.0f / Color::gamma(ri->get_white(3) - cblacksom[3])
+    const float mult[4] = { 255.f / (ri->get_white(0) - cblacksom[0]),
+                            255.f / (ri->get_white(1) - cblacksom[1]),
+                            255.f / (ri->get_white(2) - cblacksom[2]),
+                            255.f / (ri->get_white(3) - cblacksom[3])
                           };
 
     const bool fourColours = ri->getSensorType() == ST_BAYER && ((mult[1] != mult[3] || cblacksom[1] != cblacksom[3]) || FC(0, 0) == 3 || FC(0, 1) == 3 || FC(1, 0) == 3 || FC(1, 1) == 3);
@@ -4829,21 +4829,20 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
         } // end of critical region
     } // end of parallel region
 
-    for(int i = 0; i < 65536; i++) {
-        int idx;
-        idx = (int)std::min(255.0f, mult[0] * Color::gamma(std::max(0.0f, i - cblacksom[0])));
+    for(int i = 0; i < histoSize; i++) {
+        int idx = std::min(255.f, mult[0] * std::max(0.f, i - cblacksom[0]));
         histRedRaw[idx] += hist[0][i];
 
         if (ri->get_colors() > 1) {
-            idx = (int)std::min(255.0f, mult[1] * Color::gamma(std::max(0.0f, i - cblacksom[1])));
+            idx = std::min(255.f, mult[1] * std::max(0.f, i - cblacksom[1]));
             histGreenRaw[idx] += hist[1][i];
 
             if (fourColours) {
-                idx = (int)std::min(255.0f, mult[3] * Color::gamma(std::max(0.0f, i - cblacksom[3])));
+                idx = std::min(255.f, mult[3] * std::max(0.f, i - cblacksom[3]));
                 histGreenRaw[idx] += hist[3][i];
             }
 
-            idx = (int)std::min(255.0f, mult[2] * Color::gamma(std::max(0.0f, i - cblacksom[2])));
+            idx = std::min(255.f, mult[2] * std::max(0.f, i - cblacksom[2]));
             histBlueRaw[idx] += hist[2][i];
         }
     }
