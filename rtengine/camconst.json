@@ -2319,6 +2319,7 @@ Camera constants:
 
     { // Quality A
         "make_model": "Sony ILCE-7M2",
+        "raw_crop": [ 0, 0, 6024, 4024 ],
         "dcraw_matrix": [ 5271,-712,-347,-6153,13653,2763,-1601,2366,7242 ], // DNGv8.7.1
         "ranges": { "black": 512, "white": 16300 }
     },
