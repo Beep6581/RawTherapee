@@ -9082,6 +9082,9 @@ void CLASS identify()
     parse_tiff (thumb_offset+12);
 /*RT*/    exif_base = thumb_offset+12;
     apply_tiff();
+    if (!strcmp(model, "X-T3")) {
+        height = raw_height - 2;
+    }
     if (!load_raw) {
       load_raw = &CLASS unpacked_load_raw;
       tiff_bps = 14;
