@@ -47,6 +47,10 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"),
     contrast->setAdjusterListener (this);
     chromaticity->setAdjusterListener (this);
 
+    brightness->setLogScale(2, 0, true);
+    contrast->setLogScale(2, 0, true);
+    chromaticity->setLogScale(2, 0, true);
+
     //%%%%%%%%%%%%%%%%%%
     Gtk::HSeparator *hsep2 = Gtk::manage (new  Gtk::HSeparator());
     hsep2->show ();

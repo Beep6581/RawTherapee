@@ -41,6 +41,9 @@ Distortion::Distortion (): FoldableToolPanel(this, "distortion", M("TP_DISTORTIO
 
     distor = Gtk::manage (new Adjuster (M("TP_DISTORTION_AMOUNT"), -0.5, 0.5, 0.001, 0, idistL, idistR));
     distor->setAdjusterListener (this);
+
+    distor->setLogScale(2, 0);
+    
     distor->show();
     pack_start (*distor);
 }
