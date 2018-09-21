@@ -317,8 +317,8 @@ void Adjuster::resetPressed (GdkEventButton* event)
 
 double Adjuster::shapeValue (double a)
 {
-
-    return round(a * pow(double(10), digits)) / pow(double(10), digits);
+    double val = round(a * pow(double(10), digits)) / pow(double(10), digits);
+    return val == -0.0 ? 0.0 : val;
 }
 
 void Adjuster::setLimits (double vmin, double vmax, double vstep, double vdefault)
@@ -413,7 +413,7 @@ void Adjuster::sliderChanged ()
     }
 
     spinChange.block (true);
-    double v = getSliderValue();
+    double v = shapeValue(getSliderValue());
     spin->set_value (addMode ? v : slider2value(v));
     spinChange.block (false);
 
