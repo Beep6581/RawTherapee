@@ -2298,18 +2298,6 @@ Camera constants:
         "pdaf_offset" : 3        
     },
 
-    { // Quality C, only pdaf data
-        "make_model": "Sony ILCE-7M3",
-        // A7III, from https://www.dpreview.com/forums/post/60843139
-        // in the original post:
-        //   P 5 P 17 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 17 P 5 P 11 P 17 P 5 P 17 P 5 P 11 P 11 P 11 P 17 P 5 P 11 P 11 P 11 P 5 P 17 P 5 P 17 P 11
-        //
-        // rotated to match the start of the frame
-        //   P 11 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 17 P 5 P 11 P 17 P 5 P 17 P 5 P 11 P 11 P 11 P 17 P 5 P 11 P 11 P 11 P 5 P 17 P 5 P 17 P 11 P 5 P 17 P 11 P 11 P 17 P 11 P 5
-        "pdaf_pattern" : [ 0,12,24,36,54,66,72,84,96,114,120,132,150,156,174,180,192,204,216,234,240,252,264,276,282,300,306,324,336,342,360,372,384,402,414,420],
-        "pdaf_offset" : 9
-    },
-
     { // Quality A, correction for frame width
         "make_model": "Sony ILCE-7R",
         "dcraw_matrix": [ 4913,-541,-202,-6130,13513,2906,-1564,2151,7183 ],
@@ -2351,8 +2339,15 @@ Camera constants:
                 { "iso": [ 64000, 80000, 102400 ], "levels": 16100 }, // g16340 , nc 16330, LongExp 16210
                 { "iso": [ 128000, 160000, 204800 ], "levels": 16000 } // r16275, g16340, nc 16330, LongExp 16330-16370
             ]
-        }
-
+        },
+        // A7III, from https://www.dpreview.com/forums/post/60843139
+        // in the original post:
+        //   P 5 P 17 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 17 P 5 P 11 P 17 P 5 P 17 P 5 P 11 P 11 P 11 P 17 P 5 P 11 P 11 P 11 P 5 P 17 P 5 P 17 P 11
+        //
+        // rotated to match the start of the frame
+        //   P 11 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 17 P 5 P 11 P 17 P 5 P 17 P 5 P 11 P 11 P 11 P 17 P 5 P 11 P 11 P 11 P 5 P 17 P 5 P 17 P 11 P 5 P 17 P 11 P 11 P 17 P 11 P 5
+        "pdaf_pattern" : [ 0,12,24,36,54,66,72,84,96,114,120,132,150,156,174,180,192,204,216,234,240,252,264,276,282,300,306,324,336,342,360,372,384,402,414,420],
+        "pdaf_offset" : 9
     },
 
     { // Quality C,
