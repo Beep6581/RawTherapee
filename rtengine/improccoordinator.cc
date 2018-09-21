@@ -1353,7 +1353,7 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
 
     im->setMetadata(imgsrc->getMetaData()->getRootExifData());
 
-    im->saveTIFF(fname, 16, true);
+    im->saveTIFF(fname, 16, false, true);
     delete im;
 
     if (plistener) {
