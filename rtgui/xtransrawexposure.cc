@@ -53,6 +53,10 @@ XTransRAWExposure::XTransRAWExposure () : FoldableToolPanel(this, "xtransrawexpo
     pack_start( *PexBlackRed, Gtk::PACK_SHRINK, 0);//black
     pack_start( *PexBlackGreen, Gtk::PACK_SHRINK, 0);//black
     pack_start( *PexBlackBlue, Gtk::PACK_SHRINK, 0);//black
+
+    PexBlackRed->setLogScale(100, 0);
+    PexBlackGreen->setLogScale(100, 0);
+    PexBlackBlue->setLogScale(100, 0);
 }
 
 void XTransRAWExposure::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)

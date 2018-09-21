@@ -63,6 +63,9 @@ RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_CHROM
 
     caBlue->show();
 
+    caRed->setLogScale(10, 0);
+    caBlue->setLogScale(10, 0);
+
     pack_start( *caAutocorrect, Gtk::PACK_SHRINK, 4);
     pack_start( *caAutoiterations, Gtk::PACK_SHRINK, 4);
     pack_start( *caRed, Gtk::PACK_SHRINK, 4);

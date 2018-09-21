@@ -40,6 +40,9 @@ CACorrection::CACorrection () : FoldableToolPanel(this, "cacorrection", M("TP_CA
     pack_start (*red);
     pack_start (*blue);
 
+    red->setLogScale(10, 0);
+    blue->setLogScale(10, 0);
+
     show_all();
 }
 
