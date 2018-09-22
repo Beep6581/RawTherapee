@@ -211,6 +211,7 @@ private:
 
     // Locallab GUI management function
     void updateLocallabGUI(const rtengine::procparams::ProcParams* pp, int index);
+    void updateSpecificGUIState();
 
 public:
     Locallab();

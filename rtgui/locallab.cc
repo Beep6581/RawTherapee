@@ -160,7 +160,6 @@ Locallab::Locallab():
     ToolVBox* const panel = Gtk::manage(new ToolVBox());
 
     CurveListener::setMulti(true);
-    std::vector<GradientMilestone> milestones;
     float R, G, B;
 
     // Settings
@@ -196,20 +195,20 @@ Locallab::Locallab():
     llshape = static_cast<DiagonalCurveEditor*>(llCurveEditorG->addCurve(CT_Diagonal, "L(L)"));
     llshape->setResetCurve(DCT_NURBS, {(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0});
     llshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
-    milestones.clear();
-    milestones.push_back(GradientMilestone(0., 0., 0., 0.));
-    milestones.push_back(GradientMilestone(1., 1., 1., 1.));
-    llshape->setBottomBarBgGradient(milestones);
-    llshape->setLeftBarBgGradient(milestones);
+    std::vector<GradientMilestone> mllshape;
+    mllshape.push_back(GradientMilestone(0., 0., 0., 0.));
+    mllshape.push_back(GradientMilestone(1., 1., 1., 1.));
+    llshape->setBottomBarBgGradient(mllshape);
+    llshape->setLeftBarBgGradient(mllshape);
 
     ccshape = static_cast<DiagonalCurveEditor*>(llCurveEditorG->addCurve(CT_Diagonal, "C(C)"));
     ccshape->setResetCurve(DCT_NURBS, {(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0});
     ccshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
-    milestones.clear();
-    milestones.push_back(GradientMilestone(0., 0., 0., 0.));
-    milestones.push_back(GradientMilestone(1., 1., 1., 1.));
-    ccshape->setBottomBarBgGradient(milestones);
-    ccshape->setLeftBarBgGradient(milestones);
+    std::vector<GradientMilestone> mccshape;
+    mccshape.push_back(GradientMilestone(0., 0., 0., 0.));
+    mccshape.push_back(GradientMilestone(1., 1., 1., 1.));
+    ccshape->setBottomBarBgGradient(mccshape);
+    ccshape->setLeftBarBgGradient(mccshape);
 
     llCurveEditorG->newLine();
 
@@ -218,31 +217,31 @@ Locallab::Locallab():
     LHshape->setResetCurve(FCT_MinMaxCPoints, {(double)FCT_MinMaxCPoints, 0.0, 0.50, 0.35, 0.35, 0.166, 0.50, 0.35, 0.35, 0.333, 0.50, 0.35, 0.35, 0.50, 0.50, 0.35, 0.35, 0.666, 0.50, 0.35, 0.35, 0.833, 0.50, 0.35, 0.35});
     LHshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     LHshape->setCurveColorProvider(this, 1);
-    milestones.clear();
+    std::vector<GradientMilestone> mLHshape;
 
     for (int i = 0; i < 7; i++) {
         float x = float (i) * (1.0f / 6.0);
         Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
-        milestones.push_back(GradientMilestone(double (x), double (R), double (G), double (B)));
+        mLHshape.push_back(GradientMilestone(double (x), double (R), double (G), double (B)));
     }
 
-    LHshape->setBottomBarBgGradient(milestones);
+    LHshape->setBottomBarBgGradient(mLHshape);
 
     HHshape = static_cast<FlatCurveEditor*>(llCurveEditorG->addCurve(CT_Flat, "H(H)", nullptr, false, true));
     HHshape->setIdentityValue(0.);
     HHshape->setResetCurve(FCT_MinMaxCPoints, {(double)FCT_MinMaxCPoints, 0.0, 0.50, 0.35, 0.35, 0.166, 0.50, 0.35, 0.35, 0.333, 0.50, 0.35, 0.35, 0.50, 0.50, 0.35, 0.35, 0.666, 0.50, 0.35, 0.35, 0.833, 0.50, 0.35, 0.35});
     HHshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     HHshape->setCurveColorProvider(this, 1);
-    milestones.clear();
+    std::vector<GradientMilestone> mHHshape;
 
     for (int i = 0; i < 7; i++) {
         float x = float (i) * (1.0f / 6.0);
 
         Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
-        milestones.push_back(GradientMilestone(double (x), double (R), double (G), double (B)));
+        mHHshape.push_back(GradientMilestone(double (x), double (R), double (G), double (B)));
     }
 
-    HHshape->setBottomBarBgGradient(milestones);
+    HHshape->setBottomBarBgGradient(mHHshape);
 
     llCurveEditorG->curveListComplete();
 
@@ -295,11 +294,11 @@ Locallab::Locallab():
     shapeexpos = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, ""));
     shapeexpos->setResetCurve(DCT_NURBS, {(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0});
     shapeexpos->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP"));
-    milestones.clear();
-    milestones.push_back(GradientMilestone(0., 0., 0., 0.));
-    milestones.push_back(GradientMilestone(1., 1., 1., 1.));
-    shapeexpos->setBottomBarBgGradient(milestones);
-    shapeexpos->setLeftBarBgGradient(milestones);
+    std::vector<GradientMilestone> mshapeexpos;
+    mshapeexpos.push_back(GradientMilestone(0., 0., 0., 0.));
+    mshapeexpos.push_back(GradientMilestone(1., 1., 1., 1.));
+    shapeexpos->setBottomBarBgGradient(mshapeexpos);
+    shapeexpos->setLeftBarBgGradient(mshapeexpos);
 
     curveEditorG->curveListComplete();
 
@@ -340,14 +339,14 @@ Locallab::Locallab():
 
     skinTonesCurve = static_cast<DiagonalCurveEditor*>(curveEditorGG->addCurve(CT_Diagonal, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES")));
     skinTonesCurve->setTooltip(M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP"));
-    milestones.clear();
+    std::vector<GradientMilestone> mskinTonesCurve;
     // -0.1 rad < Hue < 1.6 rad
     Color::hsv2rgb01(0.92f, 0.45f, 0.6f, R, G, B);
-    milestones.push_back(GradientMilestone(0.0, double (R), double (G), double (B)));
+    mskinTonesCurve.push_back(GradientMilestone(0.0, double (R), double (G), double (B)));
     Color::hsv2rgb01(0.14056f, 0.45f, 0.6f, R, G, B);
-    milestones.push_back(GradientMilestone(1.0, double (R), double (G), double (B)));
-    skinTonesCurve->setBottomBarBgGradient(milestones);
-    skinTonesCurve->setLeftBarBgGradient(milestones);
+    mskinTonesCurve.push_back(GradientMilestone(1.0, double (R), double (G), double (B)));
+    skinTonesCurve->setBottomBarBgGradient(mskinTonesCurve);
+    skinTonesCurve->setLeftBarBgGradient(mskinTonesCurve);
     skinTonesCurve->setRangeLabels(
         M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1"), M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2"),
         M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3"), M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4")
@@ -1479,7 +1478,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
 
             // Update Locallab tools GUI
             disableListener();
-            updateLocallabGUI(pp, pp->locallab.selspot);
+            updateSpecificGUIState();
             enableListener();
     }
 
@@ -1680,7 +1679,7 @@ void Locallab::pastsattog_toggled()
         */
     }
 
-    // Update Vibrance GUI according to pastsattog button state
+    // Update Vibrance GUI according to pastsattog button state (to be compliant with updateSpecificGUIState function)
     if (pastSatTog->get_active()) {
         // Link both slider, so we set saturated and psThresholds unsensitive
         psThreshold->set_sensitive(false);
@@ -1796,7 +1795,7 @@ void Locallab::blurMethodChanged()
 {
     printf("blurMethodChanged\n");
 
-    // Update Blur & Noise GUI according to blurMethod combobox
+    // Update Blur & Noise GUI according to blurMethod combobox (to be compliant with updateSpecificGUIState function)
     if (blurMethod->get_active_row_number() == 0 || blurMethod->get_active_row_number() == 2) {
         sensibn->show();
     } else {
@@ -1931,7 +1930,7 @@ void Locallab::inversshaChanged()
         */
     }
 
-    // Update Sharpening GUI according to inverssha button state
+    // Update Sharpening GUI according to inverssha button state (to be compliant with updateSpecificGUIState function)
     if (inverssha->get_active()) {
         sensisha->hide();
     } else {
@@ -1968,7 +1967,7 @@ void Locallab::inversretChanged()
         */
     }
 
-    // Update Retinex GUI according to inversret button state
+    // Update Retinex GUI according to inversret button state (to be compliant with updateSpecificGUIState function)
     if (inversret->get_active()) {
         sensih->hide();
     } else {
@@ -2247,7 +2246,7 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
 
     // Exposure
     if (a == black) {
-        // Update Exposure GUI according to black adjuster state
+        // Update Exposure GUI according to black adjuster state (to be compliant with updateSpecificGUIState function)
         shcompr->set_sensitive(!((int)black->getValue() == 0)); // At black = 0, shcompr value has no effect
     }
 
@@ -3042,7 +3041,10 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, int
         // Others
         avoid->set_active((bool)pp->locallab.avoid.at(index));
     }
+}
 
+void Locallab::updateSpecificGUIState()
+{
     // Update Color & Light GUI according to invers button state
     if (invers->get_active()) {
         sensi->show();
@@ -3060,10 +3062,10 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, int
 
     }
 
-    // Update Exposure GUI according to black adjuster state
+    // Update Exposure GUI according to black adjuster state (to be compliant with adjusterChanged function)
     shcompr->set_sensitive(!((int)black->getValue() == 0)); // At black = 0, shcompr value has no effect
 
-    // Update Vibrance GUI according to pastsattog button state
+    // Update Vibrance GUI according to pastsattog button state (to be compliant with pastsattog_toggled function)
     if (pastSatTog->get_active()) {
         // Link both slider, so we set saturated and psThresholds unsensitive
         psThreshold->set_sensitive(false);
@@ -3075,21 +3077,21 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, int
         saturated->set_sensitive(true);
     }
 
-    // Update Blur & Noise GUI according to blurMethod combobox
+    // Update Blur & Noise GUI according to blurMethod combobox (to be compliant with blurMethodChanged function)
     if (blurMethod->get_active_row_number() == 0 || blurMethod->get_active_row_number() == 2) {
         sensibn->show();
     } else {
         sensibn->hide();
     }
 
-    // Update Retinex GUI according to inversret button state
+    // Update Retinex GUI according to inversret button state (to be compliant with inversretChanged function)
     if (inversret->get_active()) {
         sensih->hide();
     } else {
         sensih->show();
     }
 
-    // Update Sharpening GUI according to inverssha button state
+    // Update Sharpening GUI according to inverssha button state (to be compliant with inversshaChanged function)
     if (inverssha->get_active()) {
         sensisha->hide();
     } else {
