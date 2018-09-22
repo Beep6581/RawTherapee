@@ -28,8 +28,8 @@ RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_CHROM
 {
     auto m = ProcEventMapper::getInstance();
     EvPreProcessCAAutoiterations = m->newEvent(DARKFRAME, "HISTORY_MSG_RAWCACORR_AUTOIT");
-    EvPreProcessCAColourshift = m->newEvent(DARKFRAME, "HISTORY_MSG_RAWCACORR_COLOURSHIFT");
-    EvPreProcessCAColourshiftHistory = m->newEvent(M_VOID, "HISTORY_MSG_RAWCACORR_COLOURSHIFT");
+    EvPreProcessCAColourshift = m->newEvent(DARKFRAME, "HISTORY_MSG_RAWCACORR_COLORSHIFT");
+    EvPreProcessCAColourshiftHistory = m->newEvent(M_VOID, "HISTORY_MSG_RAWCACORR_COLORSHIFT");
 
     Gtk::Image* icaredL =   Gtk::manage (new RTImage ("circle-red-cyan-small.png"));
     Gtk::Image* icaredR =   Gtk::manage (new RTImage ("circle-cyan-red-small.png"));
