@@ -4720,10 +4720,14 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
     histRedRaw.clear();
     histGreenRaw.clear();
     histBlueRaw.clear();
-    const float mult[4] = { 255.f / (ri->get_white(0) - cblacksom[0]),
-                            255.f / (ri->get_white(1) - cblacksom[1]),
-                            255.f / (ri->get_white(2) - cblacksom[2]),
-                            255.f / (ri->get_white(3) - cblacksom[3])
+
+    const float maxWhite = rtengine::max(ri->get_white(0), ri->get_white(1), ri->get_white(2), ri->get_white(3));
+    const float scale = maxWhite <= 1.f ? 65535.f : 1.f; // special case for float raw images in [0.0;1.0] range
+    const float multScale = maxWhite <= 1.f ? 1.f / 255.f : 255.f;
+    const float mult[4] = { multScale / (ri->get_white(0) - cblacksom[0]),
+                            multScale / (ri->get_white(1) - cblacksom[1]),
+                            multScale / (ri->get_white(2) - cblacksom[2]),
+                            multScale / (ri->get_white(3) - cblacksom[3])
                           };
 
     const bool fourColours = ri->getSensorType() == ST_BAYER && ((mult[1] != mult[3] || cblacksom[1] != cblacksom[3]) || FC(0, 0) == 3 || FC(0, 1) == 3 || FC(1, 0) == 3 || FC(1, 1) == 3);
@@ -4787,26 +4791,26 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
                 c2 = ( fourColours && c2 == 1 && !(i & 1) ) ? 3 : c2;
 
                 for (j = start; j < end - 1; j += 2) {
-                    tmphist[c1][(int)ri->data[i][j]]++;
-                    tmphist[c2][(int)ri->data[i][j + 1]]++;
+                    tmphist[c1][(int)(ri->data[i][j] * scale)]++;
+                    tmphist[c2][(int)(ri->data[i][j + 1] * scale)]++;
                 }
 
                 if(j < end) { // last pixel of row if width is odd
-                    tmphist[c1][(int)ri->data[i][j]]++;
+                    tmphist[c1][(int)(ri->data[i][j] * scale)]++;
                 }
             } else if (ri->get_colors() == 1) {
                 for (int j = start; j < end; j++) {
-                    tmphist[0][(int)ri->data[i][j]]++;
+                    tmphist[0][(int)(ri->data[i][j] * scale)]++;
                 }
             } else if(ri->getSensorType() == ST_FUJI_XTRANS) {
                 for (int j = start; j < end - 1; j += 2) {
                     int c = ri->XTRANSFC(i, j);
-                    tmphist[c][(int)ri->data[i][j]]++;
+                    tmphist[c][(int)(ri->data[i][j] * scale)]++;
                 }
             } else {
                 for (int j = start; j < end; j++) {
                     for (int c = 0; c < 3; c++) {
-                        tmphist[c][(int)ri->data[i][3 * j + c]]++;
+                        tmphist[c][(int)(ri->data[i][3 * j + c] * scale)]++;
                     }
                 }
             }
