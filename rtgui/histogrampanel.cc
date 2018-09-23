@@ -443,7 +443,7 @@ bool HistogramRGBArea::getShow()
 
 void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustring &profile, const Glib::ustring &profileW)
 {
-    if (!get_realized () || !showMode) {
+    if (!get_realized () || !showMode || rawmode) {
         return;
     }
 
@@ -606,10 +606,6 @@ void HistogramRGBArea::updateOptions (bool r, bool g, bool b, bool l, bool c, bo
         barDisplayed = false;
     }
 
-    // Disable (but don't hide it) the bar button when RAW histogram is displayed
-    if (rawMode) {
-        showMode = false;
-    }
 }
 
 void HistogramRGBArea::on_realize ()
