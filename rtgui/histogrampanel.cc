@@ -443,7 +443,7 @@ bool HistogramRGBArea::getShow()
 
 void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustring &profile, const Glib::ustring &profileW)
 {
-    if (!get_realized () || !showMode || rawmode) {
+    if (!get_realized () || !showMode || rawMode) {
         return;
     }
 
