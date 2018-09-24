@@ -1232,18 +1232,18 @@ float* RawImageSource::CA_correct_RT(
 
             #pragma omp parallel
             {
-    #ifdef __SSE2__
+#ifdef __SSE2__
                 const vfloat onev = F2V(1.f);
                 const vfloat twov = F2V(2.f);
                 const vfloat zd5v = F2V(0.5f);
-    #endif
+#endif
                 #pragma omp for
                 for (int i = 0; i < H; ++i) {
                     const int firstCol = FC(i, 0) & 1;
                     const int colour = FC(i, firstCol);
                     const array2D<float>* nonGreen = colour == 0 ? redFactor : blueFactor;
                     int j = firstCol;
-    #ifdef __SSE2__
+#ifdef __SSE2__
                     for (; j < W - 7; j += 8) {
                         const vfloat newvals = LC2VFU(rawData[i][j]);
                         const vfloat oldvals = LVFU((*oldraw)[i][j / 2]);
@@ -1252,7 +1252,7 @@ float* RawImageSource::CA_correct_RT(
                         factors = vself(vmaskf_le(oldvals, onev), onev, factors);
                         STVFU((*nonGreen)[i/2][j/2], LIMV(factors, zd5v, twov));
                     }
-    #endif
+#endif
                     for (; j < W; j += 2) {
                         (*nonGreen)[i/2][j/2] = (rawData[i][j] <= 1.f || (*oldraw)[i][j / 2] <= 1.f) ? 1.f : rtengine::LIM((*oldraw)[i][j / 2] / rawData[i][j], 0.5f, 2.f);
                     }
@@ -1261,12 +1261,10 @@ float* RawImageSource::CA_correct_RT(
                 #pragma omp single
                 {
                     if (H % 2) {
-                        // odd height => factors for one channel are not set in last row => use values of preceding row
-                        const int firstCol = FC(0, 0) & 1;
-                        const int colour = FC(0, firstCol);
-                        const array2D<float>* nonGreen = colour == 0 ? blueFactor : redFactor;
+                        // odd height => factors are not set in last row => use values of preceding row
                         for (int j = 0; j < (W + 1) / 2; ++j) {
-                            (*nonGreen)[(H + 1) / 2 - 1][j] = (*nonGreen)[(H + 1) / 2 - 2][j];
+                            (*redFactor)[(H + 1) / 2 - 1][j] = (*redFactor)[(H + 1) / 2 - 2][j];
+                            (*blueFactor)[(H + 1) / 2 - 1][j] = (*blueFactor)[(H + 1) / 2 - 2][j];
                         }
                     }
 
