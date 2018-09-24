@@ -32,8 +32,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "../rtgui/md5helper.h"
-#include "../rtgui/thresholdselector.h"
 
 
 #undef THREAD_PRIORITY_NORMAL

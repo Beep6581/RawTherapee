@@ -225,7 +225,6 @@ protected:
     ProcParams nextParams2;
     bool destroying;
     bool utili;
-    bool locutili;
     bool autili;
     bool butili;
     bool ccutili;
@@ -239,139 +238,9 @@ protected:
     bool localexutili;
     bool LHutili;
     bool HHutili;
-    bool curveutili;
 
-    int **dataspot;
-    int maxdata;
-    std::string *retistr;
-    std::string *llstr;
-    std::string *lhstr;
-    std::string *ccstr;
-    std::string *hhstr;
-    std::string *skinstr;
-    std::string *pthstr;
-    std::string *exstr;
-
-    LUTi circrads;
     LUTi centerx;
     LUTi centery;
-    LUTi centerxbufs;
-    LUTi centerybufs;
-    LUTi adjblurs;
-    LUTi cutpasts;
-    LUTi lastdusts;
-    LUTi blurmets;
-    LUTi dustmets;
-
-
-    LUTi locx;
-    LUTi locy;
-    LUTi locxl;
-    LUTi locyt;
-    LUTi lights;
-    LUTi contrs;
-    LUTi chroms;
-    LUTi sensis;
-    LUTi expcomps;
-    LUTi blacks;
-    LUTi hlcomprs;
-    LUTi hlcomprthreshs;
-    LUTi shcomprs;
-    LUTi sensiexs;
-
-    LUTi transits;
-    LUTi inverss;
-    LUTi curvactivs;
-    LUTi smeths;
-    LUTi curens;
-    LUTi radiuss;
-    LUTi strengths;
-    LUTi sensibns;
-    LUTi inversrads;
-    LUTi strs;
-    LUTi chrrts;
-    LUTi neighs;
-    LUTi varts;
-    LUTi sensihs;
-    LUTi inversrets;
-    LUTi retinexs;
-    LUTi sps;
-    LUTi sharradiuss;
-    LUTi sharamounts;
-    LUTi shardampings;
-    LUTi inversshas;
-    LUTi shariters;
-    LUTi sensishas;
-    LUTi qualitys;
-    LUTi thress;
-    LUTi proxis;
-    LUTi noiselumfs;
-    LUTi noiselumcs;
-    LUTi noiselumdetails;
-    LUTi noiselequals;
-    LUTi noisechrodetails;
-    LUTi bilaterals;
-    LUTi sensidens;
-    LUTi noisechrofs;
-    LUTi noisechrocs;
-    LUTi mult0s;
-    LUTi mult1s;
-    LUTi mult2s;
-    LUTi mult3s;
-    LUTi mult4s;
-    LUTi chromacbdls;
-    LUTi thresholds;
-    LUTi sensicbs;
-    LUTi activlums;
-    int versionmip;
-    int mipver;
-    LUTi strens;
-    LUTi gammas;
-    LUTi estops;
-    LUTi scaltms;
-    LUTi reweis;
-    LUTi sensitms;
-    LUTi qualitycurves;
-
-    LUTi sizeretics;
-    LUTi reticurvs;
-    LUTi retrabs;
-    LUTi llcurvs;
-    LUTi sizellcs;
-    LUTi lhcurvs;
-    LUTi hhcurvs;
-    LUTi sizelhcs;
-    LUTi sizehhcs;
-    LUTi cccurvs;
-    LUTi sizecccs;
-
-    LUTi sensivs;
-    LUTi saturateds;
-    LUTi pastels;
-    LUTi psthresholds;
-    LUTi protectskinss;
-    LUTi avoidcolorshifts;
-    LUTi pastsattogs;
-    LUTi skintonescurves;
-    LUTi sizeskintonecurves;
-    LUTi excurves;
-    LUTi sizeexcurves;
-
-    LUTi shapemets;
-    LUTi exclumets;
-    LUTi sensiexclus;
-    LUTi strucs;
-    LUTi warms;
-    LUTi expdenois;
-    LUTi expcolors;
-    LUTi expvibrances;
-    LUTi expblurs;
-    LUTi exptonemaps;
-    LUTi expretis;
-    LUTi expsharps;
-    LUTi expcbdls;
-    LUTi expexposes;
-
 
     LUTf huerefs;
     LUTf huerefblurs;
@@ -404,8 +273,6 @@ public:
     void        endUpdateParams(int changeFlags);
     void        stopProcessing();
 //    void updatePreviewImage (int todo, Crop* cropCall = NULL);
-    void        spotduplic(int **dataspot, int spottodupli, int maxdata);
-    void        changenumberofspot(int **dataspot, int maxdata, int maxspot, int ns, Glib::ustring datal, int versionmip);
 
 //           Glib::ustring datal;
 
