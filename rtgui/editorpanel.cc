@@ -2184,9 +2184,11 @@ void EditorPanel::beforeAfterToggled ()
         beforeLabel = Gtk::manage (new Gtk::Label ());
         beforeLabel->set_markup (Glib::ustring ("<b>") + M ("GENERAL_BEFORE") + "</b>");
         tbBeforeLock = Gtk::manage (new Gtk::ToggleButton ());
+        tbBeforeLock->set_relief(Gtk::RELIEF_NONE);
         tbBeforeLock->set_tooltip_markup (M ("MAIN_TOOLTIP_BEFOREAFTERLOCK"));
         tbBeforeLock->signal_toggled().connect ( sigc::mem_fun (*this, &EditorPanel::tbBeforeLock_toggled) );
         beforeHeaderBox = Gtk::manage (new Gtk::Box (Gtk::ORIENTATION_HORIZONTAL));
+        beforeHeaderBox->get_style_context()->add_class("smallbuttonbox");
         beforeHeaderBox->pack_end (*tbBeforeLock, Gtk::PACK_SHRINK, 2);
         beforeHeaderBox->pack_end (*beforeLabel, Gtk::PACK_SHRINK, 2);
         beforeHeaderBox->set_size_request (0, HeaderBoxHeight);
