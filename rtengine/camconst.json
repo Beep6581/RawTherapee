@@ -1214,6 +1214,11 @@ Camera constants:
     },
 
     { // Quality C
+        "make_model": "Canon PowerShot SX220 HS",
+        "raw_crop": [ 92, 16, 4072, 3042 ] // Cut 2pix at lower border because of too high values in blue channel
+    },
+
+    { // Quality C
         "make_model": [ "DJI FC2103" ],
         "ranges": {
             "black": 4080
