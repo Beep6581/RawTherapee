@@ -994,17 +994,16 @@ button.combo, .image-combo .toggle, #MyFileChooserButton {
     padding-right: 4px;
 }
 
-
 /* Progress bars */
 
 progressbar.horizontal {
     min-width: 100px;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
 }
 
 progressbar.vertical {
     min-height: 100px;
-/*    margin: 8px 8px 8px 0;*/
+    margin: 8px 0;
 }
 
 progressbar trough {
@@ -1014,16 +1013,16 @@ progressbar trough {
 
 progressbar progress {
     border-color: #363636;
-    background-color: #FFCC00;
+    border-radius: 3px;
     background-color: #215d9c;
 }
 
 progressbar.horizontal trough, progressbar.horizontal progress {
-    min-height: 8px;
+    min-height: 10px;
 }
 
 progressbar.vertical trough, progressbar.vertical progress {
-    min-width: 8px;
+    min-width: 10px;
 }
 
 /* */
