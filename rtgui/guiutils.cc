@@ -553,11 +553,11 @@ void ExpanderBox::hideBox()
 
 void MyExpander::init()
 {
-    inconsistentPBuf = Gdk::Pixbuf::create_from_file(rtengine::findIconAbsolutePath("expanderInconsistent.png"));
-    enabledPBuf = Gdk::Pixbuf::create_from_file(rtengine::findIconAbsolutePath("expanderEnabled.png"));
-    disabledPBuf = Gdk::Pixbuf::create_from_file(rtengine::findIconAbsolutePath("expanderDisabled.png"));
-    openedPBuf = Gdk::Pixbuf::create_from_file(rtengine::findIconAbsolutePath("expanderOpened.png"));
-    closedPBuf = Gdk::Pixbuf::create_from_file(rtengine::findIconAbsolutePath("expanderClosed.png"));
+    inconsistentPBuf = Gdk::Pixbuf::create_from_file(rtengine::findIconAbsolutePath("power-inconsistent-small.png"));
+    enabledPBuf = Gdk::Pixbuf::create_from_file(rtengine::findIconAbsolutePath("power-on-small.png"));
+    disabledPBuf = Gdk::Pixbuf::create_from_file(rtengine::findIconAbsolutePath("power-off-small.png"));
+    openedPBuf = Gdk::Pixbuf::create_from_file(rtengine::findIconAbsolutePath("expander-open-small.png"));
+    closedPBuf = Gdk::Pixbuf::create_from_file(rtengine::findIconAbsolutePath("expander-closed-small.png"));
 }
 
 MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
@@ -955,7 +955,7 @@ bool MyScrolledWindow::on_scroll_event (GdkEventScroll* event)
             if (value2 != value) {
                 scroll->set_value(value2);
             }
-        } else {
+        } else if (event->direction == GDK_SCROLL_UP) {
             value2 = value - step;
 
             if (value2 < lower) {
@@ -979,6 +979,77 @@ void MyScrolledWindow::get_preferred_height_vfunc (int &minimum_height, int &nat
 void MyScrolledWindow::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
 {
     natural_height = minimum_height = 50;
+}
+
+/*
+ *
+ * Derived class of some widgets to properly handle the scroll wheel ;
+ * the user has to use the Shift key to be able to change the widget's value,
+ * otherwise the mouse wheel will scroll the toolbar.
+ *
+ */
+MyScrolledToolbar::MyScrolledToolbar ()
+{
+    set_policy (Gtk::POLICY_EXTERNAL, Gtk::POLICY_NEVER);
+    get_style_context()->add_class("scrollableToolbar");
+
+    // Works fine with Gtk 3.22, but a a custom made get_preferred_height had to be created as a workaround
+    // taken from the official Gtk3.22 source code
+    //set_propagate_natural_height(true);
+}
+
+bool MyScrolledToolbar::on_scroll_event (GdkEventScroll* event)
+{
+    Glib::RefPtr<Gtk::Adjustment> adjust = get_hadjustment();
+    Gtk::Scrollbar *scroll = get_hscrollbar();
+
+    if (adjust && scroll) {
+        double upper = adjust->get_upper();
+        double lower = adjust->get_lower();
+        double value = adjust->get_value();
+        double step  = adjust->get_step_increment() * 2;
+        double value2 = 0.;
+
+        if (event->direction == GDK_SCROLL_DOWN) {
+            value2 = rtengine::min<double>(value + step, upper);
+            if (value2 != value) {
+                scroll->set_value(value2);
+            }
+        } else if (event->direction == GDK_SCROLL_UP) {
+            value2 = rtengine::max<double>(value - step, lower);
+            if (value2 != value) {
+                scroll->set_value(value2);
+            }
+        } else if (event->direction == GDK_SCROLL_SMOOTH) {
+            if (event->delta_x) {  // if the user use a pad, it can scroll horizontally
+                value2 = rtengine::LIM<double>(value + (event->delta_x > 0 ? 30 : -30), lower, upper);
+            } else if (event->delta_y) {
+                value2 = rtengine::LIM<double>(value + (event->delta_y > 0 ? 30 : -30), lower, upper);
+            }
+            if (value2 != value) {
+                scroll->set_value(value2);
+            }
+        }
+    }
+
+    return true;
+}
+
+void MyScrolledToolbar::get_preferred_height (int &minimumHeight, int &naturalHeight)
+{
+    int currMinHeight = 0;
+    int currNatHeight = 0;
+    std::vector<Widget*> childs = get_children();
+    minimumHeight = naturalHeight = 0;
+
+    for (auto child : childs)
+    {
+        if(child->is_visible()) {
+            child->get_preferred_height(currMinHeight, currNatHeight);
+            minimumHeight = rtengine::max(currMinHeight, minimumHeight);
+            naturalHeight = rtengine::max(currNatHeight, naturalHeight);
+        }
+    }
 }
 
 MyComboBoxText::MyComboBoxText (bool has_entry) : Gtk::ComboBoxText(has_entry)
@@ -1179,7 +1250,7 @@ MyFileChooserButton::MyFileChooserButton(const Glib::ustring &title, Gtk::FileCh
     set_none();
     box_.pack_start(lbl_, true, true);
     Gtk::Image *img = Gtk::manage(new Gtk::Image());
-    img->set_from_icon_name("document-open", Gtk::ICON_SIZE_BUTTON);
+    img->set_from_icon_name("folder-open", Gtk::ICON_SIZE_BUTTON);
     box_.pack_start(*Gtk::manage(new Gtk::VSeparator()), false, false, 5);
     box_.pack_start(*img, false, false);
     box_.show_all_children();

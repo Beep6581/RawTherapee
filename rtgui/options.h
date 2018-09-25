@@ -50,6 +50,7 @@ struct SaveFormat {
         jpegQuality (90),
         jpegSubSamp (2),
         tiffBits (8),
+        tiffFloat(false),
         tiffUncompressed (true),
         saveParams (true)
     {
@@ -60,6 +61,7 @@ struct SaveFormat {
     int jpegQuality;
     int jpegSubSamp;  // 1=best compression, 3=best quality
     int tiffBits;
+    bool tiffFloat;
     bool tiffUncompressed;
     bool saveParams;
 };
@@ -254,9 +256,11 @@ public:
     bool sndEnable;
 
     int histogramPosition;  // 0=disabled, 1=left pane, 2=right pane
-    //int histogramWorking;  // 0=disabled, 1=left pane, 2=right pane
+    bool histogramRed, histogramGreen, histogramBlue;
+    bool histogramLuma, histogramChroma, histogramRAW;
     bool histogramBar;
-    bool histogramFullMode;
+    int histogramHeight;
+    int histogramDrawMode;
     bool FileBrowserToolbarSingleRow;
     bool hideTPVScrollbar;
     bool UseIconNoText;
@@ -287,6 +291,23 @@ public:
     bool menuGroupProfileOperations;
     bool menuGroupExtProg;
 
+    // ICC Profile Creator
+    Glib::ustring ICCPC_primariesPreset;
+    double ICCPC_redPrimaryX;
+    double ICCPC_redPrimaryY;
+    double ICCPC_greenPrimaryX;
+    double ICCPC_greenPrimaryY;
+    double ICCPC_bluePrimaryX;
+    double ICCPC_bluePrimaryY;
+    Glib::ustring ICCPC_gammaPreset;
+    double ICCPC_gamma;
+    double ICCPC_slope;
+    Glib::ustring ICCPC_profileVersion;
+    Glib::ustring ICCPC_illuminant;
+    Glib::ustring ICCPC_description;
+    Glib::ustring ICCPC_copyright;
+    bool ICCPC_appendParamsToDesc;
+
     // fast export options
     bool fastexport_bypass_sharpening;
     bool fastexport_bypass_sharpenEdge;
@@ -309,12 +330,12 @@ public:
     bool fastexport_bypass_raw_ca;
     bool fastexport_bypass_raw_df;
     bool fastexport_bypass_raw_ff;
-    Glib::ustring fastexport_icm_input;
-    Glib::ustring fastexport_icm_working;
-    Glib::ustring fastexport_icm_output;
+    Glib::ustring fastexport_icm_input_profile;
+    Glib::ustring fastexport_icm_working_profile;
+    Glib::ustring fastexport_icm_output_profile;
     rtengine::RenderingIntent fastexport_icm_outputIntent;
     bool          fastexport_icm_outputBPC;
-    Glib::ustring fastexport_icm_gamma;
+    Glib::ustring fastexport_icm_custom_output_profile;
     bool          fastexport_resize_enabled;
     double        fastexport_resize_scale;
     Glib::ustring fastexport_resize_appliesTo;
@@ -342,6 +363,7 @@ public:
     Glib::ustring lastProfilingReferenceDir;
     Glib::ustring lastBWCurvesDir;
     Glib::ustring lastLensProfileDir;
+    Glib::ustring lastICCProfCreatorDir;
     bool gimpPluginShowInfoDialog;
 
     size_t maxRecentFolders;                   // max. number of recent folders stored in options file
@@ -374,6 +396,7 @@ public:
     void setBundledDefProfRawMissing (bool value);
     void setDefProfImgMissing (bool value);
     void setBundledDefProfImgMissing (bool value);
+    static Glib::ustring getICCProfileCopyright();
 };
 
 extern Options options;

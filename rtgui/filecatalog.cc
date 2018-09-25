@@ -48,6 +48,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     listener(nullptr),
     fslistener(nullptr),
     iatlistener(nullptr),
+    hbToolBar1STB(nullptr),
     hasValidCurrentEFS(false),
     filterPanel(nullptr),
     exportPanel(nullptr),
@@ -61,7 +62,6 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     inTabMode = false;
 
     set_name ("FileBrowser");
-    set_spacing (2);
 
     //  construct and initialize thumbnail browsers
     fileBrowser = Gtk::manage( new FileBrowser() );
@@ -74,7 +74,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     trashButtonBox = Gtk::manage( new Gtk::VBox );
     Gtk::Button* emptyT = Gtk::manage( new Gtk::Button ());
     emptyT->set_tooltip_markup (M("FILEBROWSER_EMPTYTRASHHINT"));
-    emptyT->set_image (*Gtk::manage(new RTImage ("trash.png")));
+    emptyT->set_image (*Gtk::manage(new RTImage ("trash-delete.png")));
     emptyT->signal_pressed().connect (sigc::mem_fun(*this, &FileCatalog::emptyTrash));
     trashButtonBox->pack_start (*emptyT, Gtk::PACK_SHRINK, 4);
     emptyT->show ();
@@ -84,8 +84,8 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     hbToolBar1 = Gtk::manage(new Gtk::HBox ());
 
     //setup BrowsePath
-    iRefreshWhite = new RTImage("refresh-white.png");
-    iRefreshRed = new RTImage("refresh-red.png");
+    iRefreshWhite = new RTImage("refresh-small.png");
+    iRefreshRed = new RTImage("refresh-red-small.png");
 
     BrowsePath = Gtk::manage(new Gtk::Entry ());
     BrowsePath->set_width_chars (50);
@@ -104,7 +104,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     BrowsePath->signal_key_press_event().connect(sigc::mem_fun(*this, &FileCatalog::BrowsePath_key_pressed));
 
     //setup Query
-    iQueryClear = new RTImage("gtk-close-small.png");
+    iQueryClear = new RTImage("cancel-small.png");
     Gtk::Label* labelQuery = Gtk::manage(new Gtk::Label(M("FILEBROWSER_QUERYLABEL")));
     Query = Gtk::manage(new Gtk::Entry ()); // cannot use Gtk::manage here as FileCatalog::getFilter will fail on Query->get_text()
     Query->set_text("");
@@ -127,13 +127,19 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 
     // if NOT a single row toolbar
     if (!options.FileBrowserToolbarSingleRow) {
-        pack_start (*hbToolBar1, Gtk::PACK_SHRINK, 0);
+        hbToolBar1STB = Gtk::manage(new MyScrolledToolbar());
+        hbToolBar1STB->set_name("FileBrowserQueryToolbar");
+        hbToolBar1STB->add(*hbToolBar1);
+        pack_start (*hbToolBar1STB, Gtk::PACK_SHRINK, 0);
     }
 
     // setup button bar
     buttonBar = Gtk::manage( new Gtk::HBox () );
     buttonBar->set_name ("ToolBarPanelFileBrowser");
-    pack_start (*buttonBar, Gtk::PACK_SHRINK);
+    MyScrolledToolbar *stb = Gtk::manage(new MyScrolledToolbar());
+    stb->set_name("FileBrowserIconToolbar");
+    stb->add(*buttonBar);
+    pack_start (*stb, Gtk::PACK_SHRINK);
 
     tbLeftPanel_1 = new Gtk::ToggleButton ();
     iLeftPanel_1_Show = new RTImage("panel-to-right.png");
@@ -149,11 +155,11 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     vSepiLeftPanel = new Gtk::VSeparator ();
     buttonBar->pack_start (*vSepiLeftPanel, Gtk::PACK_SHRINK);
 
-    iFilterClear = new RTImage ("filterclear.png");
+    iFilterClear = new RTImage ("filter-clear.png");
     igFilterClear = new RTImage ("filter.png");
     bFilterClear = Gtk::manage(new Gtk::ToggleButton ());
     bFilterClear->set_active (true);
-    bFilterClear->set_image(*iFilterClear);// (*Gtk::manage(new RTImage ("filterclear.png")));
+    bFilterClear->set_image(*iFilterClear);// (*Gtk::manage(new RTImage ("filter-clear.png")));
     bFilterClear->set_relief (Gtk::RELIEF_NONE);
     bFilterClear->set_tooltip_markup (M("FILEBROWSER_SHOWDIRHINT"));
     bFilterClear->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event), false);
@@ -163,11 +169,14 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 
     fltrVbox1 = Gtk::manage (new Gtk::VBox());
     fltrRankbox = Gtk::manage (new Gtk::HBox());
+    fltrRankbox->get_style_context()->add_class("smallbuttonbox");
     fltrLabelbox = Gtk::manage (new Gtk::HBox());
+    fltrLabelbox->get_style_context()->add_class("smallbuttonbox");
 
-    iUnRanked = new RTImage ("ratednot.png");
-    igUnRanked = new RTImage ("ratednotg.png");
+    iUnRanked = new RTImage ("star-gold-hollow-small.png");
+    igUnRanked = new RTImage ("star-hollow-small.png");
     bUnRanked = Gtk::manage( new Gtk::ToggleButton () );
+    bUnRanked->get_style_context()->add_class("smallbutton");
     bUnRanked->set_active (false);
     bUnRanked->set_image (*igUnRanked);
     bUnRanked->set_relief (Gtk::RELIEF_NONE);
@@ -177,11 +186,12 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     bUnRanked->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event), false);
 
     for (int i = 0; i < 5; i++) {
-        iranked[i] = new RTImage ("rated.png");
-        igranked[i] = new RTImage ("grayrated.png");
+        iranked[i] = new RTImage ("star-gold-small.png");
+        igranked[i] = new RTImage ("star-small.png");
         iranked[i]->show ();
         igranked[i]->show ();
         bRank[i] = Gtk::manage( new Gtk::ToggleButton () );
+        bRank[i]->get_style_context()->add_class("smallbutton");
         bRank[i]->set_image (*igranked[i]);
         bRank[i]->set_relief (Gtk::RELIEF_NONE);
         fltrRankbox->pack_start (*bRank[i], Gtk::PACK_SHRINK);
@@ -189,26 +199,33 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
         bRank[i]->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event), false);
     }
 
-    iUnCLabeled = new RTImage ("clabel0.png");
-    igUnCLabeled = new RTImage ("cglabel0.png");
-    bUnCLabeled = Gtk::manage(new Gtk::ToggleButton ());
-    bUnCLabeled->set_active (false);
-    bUnCLabeled->set_image (*igUnCLabeled);
-    bUnCLabeled->set_relief (Gtk::RELIEF_NONE);
-    bUnCLabeled->set_tooltip_markup (M("FILEBROWSER_SHOWUNCOLORHINT"));
+    // Toolbar
+    // Similar image arrays in filebrowser.cc
+    std::array<std::string, 6> clabelActiveIcons = {"circle-gray-small.png", "circle-red-small.png", "circle-yellow-small.png", "circle-green-small.png", "circle-blue-small.png", "circle-purple-small.png"};
+    std::array<std::string, 6> clabelInactiveIcons = {"circle-empty-gray-small.png", "circle-empty-red-small.png", "circle-empty-yellow-small.png", "circle-empty-green-small.png", "circle-empty-blue-small.png", "circle-empty-purple-small.png"};
+
+    iUnCLabeled = new RTImage(clabelActiveIcons[0]);
+    igUnCLabeled = new RTImage(clabelInactiveIcons[0]);
+    bUnCLabeled = Gtk::manage(new Gtk::ToggleButton());
+    bUnCLabeled->get_style_context()->add_class("smallbutton");
+    bUnCLabeled->set_active(false);
+    bUnCLabeled->set_image(*igUnCLabeled);
+    bUnCLabeled->set_relief(Gtk::RELIEF_NONE);
+    bUnCLabeled->set_tooltip_markup(M("FILEBROWSER_SHOWUNCOLORHINT"));
     bCateg[7] = bUnCLabeled->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bUnCLabeled, true));
-    fltrLabelbox->pack_start (*bUnCLabeled, Gtk::PACK_SHRINK);
+    fltrLabelbox->pack_start(*bUnCLabeled, Gtk::PACK_SHRINK);
     bUnCLabeled->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event), false);
 
     for (int i = 0; i < 5; i++) {
-        iCLabeled[i] = new RTImage (Glib::ustring::compose("%1%2%3", "clabel", i + 1, ".png"));
-        igCLabeled[i] = new RTImage (Glib::ustring::compose("%1%2%3", "cglabel", i + 1, ".png"));
-        iCLabeled[i]->show ();
-        igCLabeled[i]->show ();
-        bCLabel[i] = Gtk::manage(new Gtk::ToggleButton ());
-        bCLabel[i]->set_image (*igCLabeled[i]);
-        bCLabel[i]->set_relief (Gtk::RELIEF_NONE);
-        fltrLabelbox->pack_start (*bCLabel[i], Gtk::PACK_SHRINK);
+        iCLabeled[i] = new RTImage(clabelActiveIcons[i+1]);
+        igCLabeled[i] = new RTImage(clabelInactiveIcons[i+1]);
+        iCLabeled[i]->show();
+        igCLabeled[i]->show();
+        bCLabel[i] = Gtk::manage(new Gtk::ToggleButton());
+        bCLabel[i]->get_style_context()->add_class("smallbutton");
+        bCLabel[i]->set_image(*igCLabeled[i]);
+        bCLabel[i]->set_relief(Gtk::RELIEF_NONE);
+        fltrLabelbox->pack_start(*bCLabel[i], Gtk::PACK_SHRINK);
         bCateg[i + 8] = bCLabel[i]->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bCLabel[i], true));
         bCLabel[i]->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event), false);
     }
@@ -233,17 +250,23 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 
     fltrVbox2 = Gtk::manage (new Gtk::VBox());
     fltrEditedBox = Gtk::manage (new Gtk::HBox());
+    fltrEditedBox->get_style_context()->add_class("smallbuttonbox");
     fltrRecentlySavedBox = Gtk::manage (new Gtk::HBox());
+    fltrRecentlySavedBox->get_style_context()->add_class("smallbuttonbox");
 
     // bEdited
-    iEdited[0] = new RTImage ("editednot-small.png");
-    igEdited[0] = new RTImage ("editednotg-small.png");
-    iEdited[1] = new RTImage ("edited-small.png");
-    igEdited[1] = new RTImage ("editedg-small.png");
+    // TODO The "g" variant was the more transparent variant of the icon, used
+    // when the button was not toggled. Simplify this, change to ordinary
+    // togglebutton, use CSS for opacity change.
+    iEdited[0] = new RTImage ("tick-hollow-small.png");
+    igEdited[0] = new RTImage ("tick-hollow-small.png");
+    iEdited[1] = new RTImage ("tick-small.png");
+    igEdited[1] = new RTImage ("tick-small.png");
 
     for (int i = 0; i < 2; i++) {
         iEdited[i]->show ();
         bEdited[i] = Gtk::manage(new Gtk::ToggleButton ());
+        bEdited[i]->get_style_context()->add_class("smallbutton");
         bEdited[i]->set_active (false);
         bEdited[i]->set_image (*igEdited[i]);
         bEdited[i]->set_relief (Gtk::RELIEF_NONE);
@@ -257,14 +280,18 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     bEdited[1]->set_tooltip_markup (M("FILEBROWSER_SHOWEDITEDHINT"));
 
     // RecentlySaved
-    iRecentlySaved[0] = new RTImage ("savednot.png");
-    igRecentlySaved[0] = new RTImage ("savednotg.png");
-    iRecentlySaved[1] = new RTImage ("saved.png");
-    igRecentlySaved[1] = new RTImage ("savedg.png");
+    // TODO The "g" variant was the more transparent variant of the icon, used
+    // when the button was not toggled. Simplify this, change to ordinary
+    // togglebutton, use CSS for opacity change.
+    iRecentlySaved[0] = new RTImage ("saved-no-small.png");
+    igRecentlySaved[0] = new RTImage ("saved-no-small.png");
+    iRecentlySaved[1] = new RTImage ("saved-yes-small.png");
+    igRecentlySaved[1] = new RTImage ("saved-yes-small.png");
 
     for (int i = 0; i < 2; i++) {
         iRecentlySaved[i]->show ();
         bRecentlySaved[i] = Gtk::manage(new Gtk::ToggleButton ());
+        bRecentlySaved[i]->get_style_context()->add_class("smallbutton");
         bRecentlySaved[i]->set_active (false);
         bRecentlySaved[i]->set_image (*igRecentlySaved[i]);
         bRecentlySaved[i]->set_relief (Gtk::RELIEF_NONE);
@@ -284,18 +311,18 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     buttonBar->pack_start (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK);
 
     // Trash
-    iTrashEmpty = new RTImage("trash-show-empty.png") ;
-    iTrashFull  = new RTImage("trash-show-full.png") ;
+    iTrashShowEmpty = new RTImage("trash-empty-show.png") ;
+    iTrashShowFull  = new RTImage("trash-full-show.png") ;
 
     bTrash = Gtk::manage( new Gtk::ToggleButton () );
-    bTrash->set_image (*iTrashEmpty);
+    bTrash->set_image (*iTrashShowEmpty);
     bTrash->set_relief (Gtk::RELIEF_NONE);
     bTrash->set_tooltip_markup (M("FILEBROWSER_SHOWTRASHHINT"));
     bCateg[17] = bTrash->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bTrash, true));
     bTrash->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event), false);
 
     iNotTrash = new RTImage("trash-hide-deleted.png") ;
-    iOriginal = new RTImage("filter-original-2.png");
+    iOriginal = new RTImage("filter-original.png");
 
     bNotTrash = Gtk::manage( new Gtk::ToggleButton () );
     bNotTrash->set_image (*iNotTrash);
@@ -374,13 +401,13 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     // thumbnail zoom
     Gtk::HBox* zoomBox = Gtk::manage( new Gtk::HBox () );
     zoomInButton  = Gtk::manage(  new Gtk::Button () );
-    zoomInButton->set_image (*Gtk::manage(new RTImage ("gtk-zoom-in.png")));
+    zoomInButton->set_image (*Gtk::manage(new RTImage ("magnifier-plus.png")));
     zoomInButton->signal_pressed().connect (sigc::mem_fun(*this, &FileCatalog::zoomIn));
     zoomInButton->set_relief (Gtk::RELIEF_NONE);
     zoomInButton->set_tooltip_markup (M("FILEBROWSER_ZOOMINHINT"));
     zoomBox->pack_end (*zoomInButton, Gtk::PACK_SHRINK);
     zoomOutButton  = Gtk::manage( new Gtk::Button () );
-    zoomOutButton->set_image (*Gtk::manage(new RTImage ("gtk-zoom-out.png")));
+    zoomOutButton->set_image (*Gtk::manage(new RTImage ("magnifier-minus.png")));
     zoomOutButton->signal_pressed().connect (sigc::mem_fun(*this, &FileCatalog::zoomOut));
     zoomOutButton->set_relief (Gtk::RELIEF_NONE);
     zoomOutButton->set_tooltip_markup (M("FILEBROWSER_ZOOMOUTHINT"));
@@ -461,8 +488,8 @@ FileCatalog::~FileCatalog()
     delete igUnRanked;
     delete iUnCLabeled;
     delete igUnCLabeled;
-    delete iTrashEmpty;
-    delete iTrashFull;
+    delete iTrashShowEmpty;
+    delete iTrashShowFull;
     delete iNotTrash;
     delete iOriginal;
     delete iRefreshWhite;
@@ -490,6 +517,7 @@ void FileCatalog::exifInfoButtonToggled()
     }
 
     fileBrowser->refreshThumbImages ();
+    refreshHeight();
 }
 
 void FileCatalog::on_realize()
@@ -564,21 +592,31 @@ std::vector<Glib::ustring> FileCatalog::getFileList ()
 
         auto enumerator = dir->enumerate_children ("standard::name");
 
-        while (auto file = enumerator->next_file ()) {
+        while (true) {
+            try {
+                auto file = enumerator->next_file ();
+                if (!file) {
+                    break;
+                }
 
-            const Glib::ustring fname = file->get_name ();
+                const Glib::ustring fname = file->get_name ();
 
-            auto lastdot = fname.find_last_of ('.');
-            if (lastdot >= fname.length () - 1) {
-                continue;
+                auto lastdot = fname.find_last_of ('.');
+                if (lastdot >= fname.length () - 1) {
+                    continue;
+                }
+
+                const auto fext = fname.substr (lastdot + 1).lowercase ();
+                if (extensions.count (fext) == 0) {
+                    continue;
+                }
+
+                names.emplace_back (Glib::build_filename (selectedDirectory, fname));
+            } catch (Glib::Exception& exception) {
+                if (options.rtSettings.verbose) {
+                    std::cerr << exception.what () << std::endl;
+                }
             }
-
-            const auto fext = fname.substr (lastdot + 1).lowercase ();
-            if (extensions.count (fext) == 0) {
-                continue;
-            }
-
-            names.emplace_back (Glib::build_filename (selectedDirectory, fname));
         }
 
     } catch (Glib::Exception& exception) {
@@ -660,6 +698,9 @@ void FileCatalog::enableTabMode(bool enable)
     } else {
         buttonBar->show();
         hbToolBar1->show();
+        if (hbToolBar1STB) {
+            hbToolBar1STB->show();
+        }
         exifInfo->set_active( options.showFileNames );
     }
 
@@ -681,7 +722,7 @@ void FileCatalog::_refreshProgressBar ()
         Gtk::Label *label = nullptr;
 
         if (!previewsToLoad ) {
-            grid->attach_next_to(*Gtk::manage (new RTImage ("gtk-directory.png")), options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
+            grid->attach_next_to(*Gtk::manage (new RTImage ("folder-closed.png")), options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
             int filteredCount = min(fileBrowser->getNumFiltered(), previewsLoaded);
 
             label = Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER") +
@@ -689,7 +730,7 @@ void FileCatalog::_refreshProgressBar ()
                                                  + Glib::ustring::format(previewsLoaded) +
                                                  (filteredCount != previewsLoaded ? "]" : ")")));
         } else {
-            grid->attach_next_to(*Gtk::manage (new RTImage ("gtk-find.png")), options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
+            grid->attach_next_to(*Gtk::manage (new RTImage ("magnifier.png")), options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
             label = Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER") + " [" + Glib::ustring::format(std::fixed, std::setprecision(0), std::setw(3), (double)previewsLoaded / previewsToLoad * 100 ) + "%]" ));
             filepanel->loadingThumbs("", (double)previewsLoaded / previewsToLoad);
         }
@@ -878,8 +919,8 @@ void FileCatalog::refreshHeight ()
         newHeight = h;
     }
 
-    if (hbToolBar1->is_visible() && !options.FileBrowserToolbarSingleRow) {
-        newHeight += hbToolBar1->get_height();
+    if (hbToolBar1STB && hbToolBar1STB->is_visible()) {
+        newHeight += hbToolBar1STB->get_height();
     }
 
     if (buttonBar->is_visible()) {
@@ -1180,12 +1221,11 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
 
                     params.raw.bayersensor.method = options.fastexport_raw_bayer_method;
                     params.raw.xtranssensor.method = options.fastexport_raw_xtrans_method;
-                    params.icm.input = options.fastexport_icm_input;
-                    params.icm.working = options.fastexport_icm_working;
-                    params.icm.output = options.fastexport_icm_output;
+                    params.icm.inputProfile = options.fastexport_icm_input_profile;
+                    params.icm.workingProfile = options.fastexport_icm_working_profile;
+                    params.icm.outputProfile = options.fastexport_icm_output_profile;
                     params.icm.outputIntent = options.fastexport_icm_outputIntent;
                     params.icm.outputBPC = options.fastexport_icm_outputBPC;
-                    params.icm.gamma = options.fastexport_icm_gamma;
                 }
 
                 if (params.resize.enabled) {
@@ -1201,6 +1241,7 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
                 params.resize.appliesTo = options.fastexport_resize_appliesTo;
                 params.resize.method = options.fastexport_resize_method;
                 params.resize.dataspec = options.fastexport_resize_dataspec;
+                params.resize.allowUpscaling = false;
             }
 
             rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (fbe->filename, th->getType() == FT_Raw, params, fastmode && options.fastexport_use_fast_pipeline);
@@ -1953,9 +1994,9 @@ void FileCatalog::setFilterPanel (FilterPanel* fpanel)
 void FileCatalog::trashChanged ()
 {
     if (trashIsEmpty()) {
-        bTrash->set_image(*iTrashEmpty);
+        bTrash->set_image(*iTrashShowEmpty);
     } else {
-        bTrash->set_image(*iTrashFull);
+        bTrash->set_image(*iTrashShowFull);
     }
 }
 
@@ -2007,17 +2048,21 @@ void FileCatalog::updateFBQueryTB (bool singleRow)
     hbToolBar1->reference();
 
     if (singleRow) {
-        bool removed = removeIfThere(this, hbToolBar1, false);
-
-        if (removed) {
+        if (hbToolBar1STB) {
+            hbToolBar1STB->remove_with_viewport();
+            removeIfThere(this, hbToolBar1STB, false);
             buttonBar->pack_start(*hbToolBar1, Gtk::PACK_EXPAND_WIDGET, 0);
+            hbToolBar1STB = nullptr;
         }
     } else {
-        bool removed = removeIfThere(buttonBar, hbToolBar1, false);
-
-        if (removed) {
-            pack_start(*hbToolBar1, Gtk::PACK_SHRINK, 0);
-            reorder_child(*hbToolBar1, 0);
+        if (!hbToolBar1STB) {
+            removeIfThere(buttonBar, hbToolBar1, false);
+            hbToolBar1STB = Gtk::manage(new MyScrolledToolbar());
+            hbToolBar1STB->set_name("FileBrowserQueryToolbar");
+            hbToolBar1STB->add(*hbToolBar1);
+            hbToolBar1STB->show();
+            pack_start (*hbToolBar1STB, Gtk::PACK_SHRINK, 0);
+            reorder_child(*hbToolBar1STB, 0);
         }
     }
 
@@ -2560,7 +2605,7 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
 void FileCatalog::showToolBar()
 {
     if (!options.FileBrowserToolbarSingleRow) {
-        hbToolBar1->show();
+        hbToolBar1STB->show();
     }
 
     buttonBar->show();
@@ -2569,7 +2614,7 @@ void FileCatalog::showToolBar()
 void FileCatalog::hideToolBar()
 {
     if (!options.FileBrowserToolbarSingleRow) {
-        hbToolBar1->hide();
+        hbToolBar1STB->hide();
     }
 
     buttonBar->hide();

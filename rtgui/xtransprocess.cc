@@ -118,7 +118,8 @@ void XTransProcess::read(const rtengine::procparams::ProcParams* pp, const Param
     dualDemosaicContrast->setValue (pp->raw.xtranssensor.dualDemosaicContrast);
     ccSteps->setValue (pp->raw.xtranssensor.ccSteps);
     if (!batchMode) {
-        dualDemosaicOptions->set_visible(pp->raw.xtranssensor.method == procparams::RAWParams::XTransSensor::getMethodString(procparams::RAWParams::XTransSensor::Method::FOUR_PASS));
+        dualDemosaicOptions->set_visible(pp->raw.xtranssensor.method == procparams::RAWParams::XTransSensor::getMethodString(procparams::RAWParams::XTransSensor::Method::FOUR_PASS)
+                                         || pp->raw.xtranssensor.method == procparams::RAWParams::XTransSensor::getMethodString(procparams::RAWParams::XTransSensor::Method::TWO_PASS));
     }
 
     methodconn.block (false);
@@ -192,7 +193,7 @@ void XTransProcess::methodChanged ()
     oldSelection = curSelection;
 
     if (!batchMode) {
-        if (currentMethod == procparams::RAWParams::XTransSensor::Method::FOUR_PASS) {
+        if (currentMethod == procparams::RAWParams::XTransSensor::Method::FOUR_PASS || currentMethod == procparams::RAWParams::XTransSensor::Method::TWO_PASS) {
             dualDemosaicOptions->show();
         } else {
             dualDemosaicOptions->hide();

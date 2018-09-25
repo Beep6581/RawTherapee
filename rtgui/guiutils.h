@@ -294,6 +294,19 @@ public:
 };
 
 /**
+ * @brief subclass of Gtk::ScrolledWindow in order to handle the large toolbars (wider than available space)
+ */
+class MyScrolledToolbar : public Gtk::ScrolledWindow
+{
+
+    bool on_scroll_event (GdkEventScroll* event);
+    void get_preferred_height (int &minimumHeight, int &naturalHeight);
+
+public:
+    MyScrolledToolbar();
+};
+
+/**
  * @brief subclass of Gtk::ComboBox in order to handle the scrollwheel
  */
 class MyComboBox : public Gtk::ComboBox

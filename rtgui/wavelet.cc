@@ -698,20 +698,20 @@ Wavelet::Wavelet() :
     cbenabConn = cbenab->signal_toggled().connect( sigc::mem_fun(*this, &Wavelet::cbenabToggled) );
     cbenab->set_tooltip_text (M("TP_WAVELET_CB_TOOLTIP"));
 
-    Gtk::Image* const iblueR   = Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
-    Gtk::Image* const iyelL    = Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
-    Gtk::Image* const imagL    = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
-    Gtk::Image* const igreenR  = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
+    Gtk::Image* const iblueR   = Gtk::manage (new RTImage ("circle-blue-small.png"));
+    Gtk::Image* const iyelL    = Gtk::manage (new RTImage ("circle-yellow-small.png"));
+    Gtk::Image* const imagL    = Gtk::manage (new RTImage ("circle-magenta-small.png"));
+    Gtk::Image* const igreenR  = Gtk::manage (new RTImage ("circle-green-small.png"));
 
-    Gtk::Image* const  iblueRm  = Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
-    Gtk::Image* const  iyelLm   = Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
-    Gtk::Image* const  imagLm   = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
-    Gtk::Image* const  igreenRm = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
+    Gtk::Image* const  iblueRm  = Gtk::manage (new RTImage ("circle-blue-small.png"));
+    Gtk::Image* const  iyelLm   = Gtk::manage (new RTImage ("circle-yellow-small.png"));
+    Gtk::Image* const  imagLm   = Gtk::manage (new RTImage ("circle-magenta-small.png"));
+    Gtk::Image* const  igreenRm = Gtk::manage (new RTImage ("circle-green-small.png"));
 
-    Gtk::Image* const iblueRh  = Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
-    Gtk::Image* const iyelLh   = Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
-    Gtk::Image* const imagLh   = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
-    Gtk::Image* const igreenRh = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
+    Gtk::Image* const iblueRh  = Gtk::manage (new RTImage ("circle-blue-small.png"));
+    Gtk::Image* const iyelLh   = Gtk::manage (new RTImage ("circle-yellow-small.png"));
+    Gtk::Image* const imagLh   = Gtk::manage (new RTImage ("circle-magenta-small.png"));
+    Gtk::Image* const igreenRh = Gtk::manage (new RTImage ("circle-green-small.png"));
 
     greenhigh = Gtk::manage (new Adjuster ("", -100., 100., 1., 0., igreenRh, imagLh));
     bluehigh = Gtk::manage (new Adjuster ("", -100., 100., 1., 0., iblueRh, iyelLh));
@@ -745,7 +745,7 @@ Wavelet::Wavelet() :
     resBox->pack_start(*chanMixerMidFrame, Gtk::PACK_SHRINK);
     resBox->pack_start(*chanMixerShadowsFrame, Gtk::PACK_SHRINK);
 
-    //RTImage *resetImg = Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
+    //RTImage *resetImg = Gtk::manage (new RTImage ("undo-small.png", "redo-small.png"));
     //neutral->set_image(*resetImg);
     Gtk::Button* const neutral = Gtk::manage(new Gtk::Button(M("TP_COLORTONING_NEUTRAL")));
     neutral->set_tooltip_text (M("TP_COLORTONING_NEUTRAL_TIP"));
@@ -919,7 +919,7 @@ void Wavelet::updatewavLabel ()
     }
 }
 
-// Will only reset the chanel mixer
+// Will only reset the channel mixer
 // WARNING!  In mutiImage mode, and for sliders in ADD mode, this will reset the slider to 0, but not to the default value as in SET mode.
 void Wavelet::neutral_pressed ()
 {

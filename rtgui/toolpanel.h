@@ -205,6 +205,7 @@ public:
     void setEnabledTooltipText(Glib::ustring tooltipText);
     bool get_inconsistent();  // related to the enabled/disabled state
     void set_inconsistent(bool isInconsistent);  // related to the enabled/disabled state
+    void setGrayedOut(bool doGrayOut); // Set whether the tool should be disabled, collapsed and grayed-out.
 
     void setLevel (int level);
 

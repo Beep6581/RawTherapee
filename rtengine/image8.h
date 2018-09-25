@@ -50,8 +50,8 @@ public:
     {
         return 8 * sizeof(unsigned char);
     }
-    virtual void         getScanline (int row, unsigned char* buffer, int bps);
-    virtual void         setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples, float *minValue = nullptr, float *maxValue = nullptr);
+    virtual void         getScanline (int row, unsigned char* buffer, int bps, bool isFloat = false);
+    virtual void         setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples);
 
     // functions inherited from IImage*:
     virtual MyMutex&     getMutex ()
@@ -78,9 +78,9 @@ public:
     {
         return saveJPEG (fname, quality, subSamp);
     }
-    virtual int          saveAsTIFF (Glib::ustring fname, int bps = -1, bool uncompressed = false)
+    virtual int          saveAsTIFF (Glib::ustring fname, int bps = -1, float isFloat = false, bool uncompressed = false)
     {
-        return saveTIFF (fname, bps, uncompressed);
+        return saveTIFF (fname, bps, isFloat, uncompressed);
     }
     virtual void         setSaveProgressListener (ProgressListener* pl)
     {

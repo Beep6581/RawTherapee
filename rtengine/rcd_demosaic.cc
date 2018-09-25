@@ -291,7 +291,7 @@ void RawImageSource::rcd_demosaic()
     free(PQ_Dir);
 }
 
-    border_interpolate2(W, H, rcdBorder);
+    border_interpolate2(W, H, rcdBorder, rawData, red, green, blue);
 
     if (plistener) {
         plistener->setProgress(1);

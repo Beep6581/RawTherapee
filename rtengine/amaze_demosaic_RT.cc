@@ -1584,6 +1584,9 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh, c
         // clean up
         free(buffer);
     }
+    if(border < 4) {
+        border_interpolate2(W, H, 3, rawData, red, green, blue);
+    }
 
     if(plistener) {
         plistener->setProgress(1.0);

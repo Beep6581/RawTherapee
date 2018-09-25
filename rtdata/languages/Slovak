@@ -633,7 +633,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !FILEBROWSER_SHOWUNCOLORHINT;Show images without a color label.\nShortcut: <b>Alt-0</b>
 !FILEBROWSER_UNRANK_TOOLTIP;Unrank.\nShortcut: <b>Shift-0</b>
 !FILECHOOSER_FILTER_ANY;All files
-!FILECHOOSER_FILTER_COLPROF;Color profiles
+!FILECHOOSER_FILTER_COLPROF;Color profiles (*.icc)
 !FILECHOOSER_FILTER_CURVE;Curve files
 !FILECHOOSER_FILTER_LCP;Lens correction profiles
 !FILECHOOSER_FILTER_PP;Processing profiles
@@ -647,12 +647,13 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !GENERAL_NONE;None
 !GENERAL_OPEN;Open
 !GENERAL_RESET;Reset
+!GENERAL_SAVE_AS;Save as...
 !GENERAL_SLIDER;Slider
 !GENERAL_WARNING;Warning
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
-!HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar.\nRight-click on image preview to freeze/unfreeze.
+!HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar.
 !HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram.
-!HISTOGRAM_TOOLTIP_FULL;Toggle full (off) or scaled (on) histogram.
+!HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
 !HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram.
 !HISTORY_MSG_88;Impulse NR threshold
 !HISTORY_MSG_93;CbDL - Value
@@ -1039,10 +1040,16 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !HISTORY_MSG_491;White Balance
 !HISTORY_MSG_492;RGB Curves
 !HISTORY_MSG_493;L*a*b* Adjustments
-!HISTORY_MSG_CLAMPOOG;Out-of-gamut color clipping
+!HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 !HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 !HISTORY_MSG_DUALDEMOSAIC_CONTRAST;AMaZE+VNG4 - Contrast threshold
-!HISTORY_MSG_HISTMATCHING;Auto-Matched Tone Curve
+!HISTORY_MSG_HISTMATCHING;Auto-matched tone curve
+!HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
+!HISTORY_MSG_ICM_OUTPUT_TEMP;Output - ICC-v4 illuminant D
+!HISTORY_MSG_ICM_OUTPUT_TYPE;Output - Type
+!HISTORY_MSG_ICM_WORKING_GAMMA;Working - Gamma
+!HISTORY_MSG_ICM_WORKING_SLOPE;Working - Slope
+!HISTORY_MSG_ICM_WORKING_TRC_METHOD;Working - TRC method
 !HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 !HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 !HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
@@ -1054,9 +1061,56 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
+!HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
+!HISTORY_MSG_RAWCACORR_COLOURSHIFT;Raw CA Correction - Avoid color shift
+!HISTORY_MSG_RAW_BORDER;Raw border
+!HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
+!HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
+!HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
 !HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
+!ICCPROFCREATOR_COPYRIGHT;Copyright:
+!ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP;Reset to the default copyright, granted to "RawTherapee, CC0"
+!ICCPROFCREATOR_CUSTOM;Custom
+!ICCPROFCREATOR_DESCRIPTION;Description:
+!ICCPROFCREATOR_DESCRIPTION_ADDPARAM;Append gamma and slope values to the description
+!ICCPROFCREATOR_DESCRIPTION_TOOLTIP;Leave empty to set the default description.
+!ICCPROFCREATOR_GAMMA;Gamma
+!ICCPROFCREATOR_ICCVERSION;ICC version:
+!ICCPROFCREATOR_ILL;Illuminant:
+!ICCPROFCREATOR_ILL_41;D41
+!ICCPROFCREATOR_ILL_50;D50
+!ICCPROFCREATOR_ILL_55;D55
+!ICCPROFCREATOR_ILL_60;D60
+!ICCPROFCREATOR_ILL_65;D65
+!ICCPROFCREATOR_ILL_80;D80
+!ICCPROFCREATOR_ILL_DEF;Default
+!ICCPROFCREATOR_ILL_INC;StdA 2856K
+!ICCPROFCREATOR_ILL_TOOLTIP;You can only set the illuminant for ICC v4 profiles.
+!ICCPROFCREATOR_PRIMARIES;Primaries:
+!ICCPROFCREATOR_PRIM_ACESP0;ACES AP0
+!ICCPROFCREATOR_PRIM_ACESP1;ACES AP1
+!ICCPROFCREATOR_PRIM_ADOBE;Adobe RGB (1998)
+!ICCPROFCREATOR_PRIM_BEST;BestRGB
+!ICCPROFCREATOR_PRIM_BETA;BetaRGB
+!ICCPROFCREATOR_PRIM_BLUX;Blue X
+!ICCPROFCREATOR_PRIM_BLUY;Blue Y
+!ICCPROFCREATOR_PRIM_BRUCE;BruceRGB
+!ICCPROFCREATOR_PRIM_GREX;Green X
+!ICCPROFCREATOR_PRIM_GREY;Green Y
+!ICCPROFCREATOR_PRIM_PROPH;Prophoto
+!ICCPROFCREATOR_PRIM_REC2020;Rec2020
+!ICCPROFCREATOR_PRIM_REDX;Red X
+!ICCPROFCREATOR_PRIM_REDY;Red Y
+!ICCPROFCREATOR_PRIM_SRGB;sRGB
+!ICCPROFCREATOR_PRIM_TOOLTIP;You can only set custom primaries for ICC v4 profiles.
+!ICCPROFCREATOR_PRIM_WIDEG;Widegamut
+!ICCPROFCREATOR_PROF_V2;ICC v2
+!ICCPROFCREATOR_PROF_V4;ICC v4
+!ICCPROFCREATOR_SAVEDIALOG_TITLE;Save ICC profile as...
+!ICCPROFCREATOR_SLOPE;Slope
+!ICCPROFCREATOR_TRC_PRESET;Tone response curve:
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
 !IPTCPANEL_COPYRIGHT;Copyright notice
@@ -1086,6 +1140,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !LENSPROFILE_CORRECTION_LCPFILE;LCP File
 !LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
 !LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
+!MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
 !MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser or Filmstrip with the Editor to reveal the thumbnail of the currently opened image, and clear any active filters.\nShortcut: <b>x</b>\n\nAs above, but without clearing active filters:\nShortcut: <b>y</b>\n(Note that the thumbnail of the opened image will not be shown if filtered out).
@@ -1122,6 +1177,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !MAIN_TOOLTIP_PREVIEWG;Preview the <b>Green channel</b>.\nShortcut: <b>g</b>
 !MAIN_TOOLTIP_PREVIEWL;Preview the <b>Luminosity</b>.\nShortcut: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 !MAIN_TOOLTIP_PREVIEWR;Preview the <b>Red channel</b>.\nShortcut: <b>r</b>
+!MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>Sharpening Contrast Mask</b>.\nShortcut: <b>None</b>\n\nOnly works when sharpening is enabled and zoom >= 100%.
 !MAIN_TOOLTIP_SHOWHIDELP1;Show/Hide the left panel.\nShortcut: <b>l</b>
 !MAIN_TOOLTIP_SHOWHIDERP1;Show/Hide the right panel.\nShortcut: <b>Alt-l</b>
 !MAIN_TOOLTIP_SHOWHIDETP1;Show/Hide the top panel.\nShortcut: <b>Shift-l</b>
@@ -1174,6 +1230,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
 !PARTIALPASTE_PREPROCESS_HOTPIXFILT;Hot pixel filter
 !PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
+!PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !PARTIALPASTE_PRSHARPENING;Post-resize sharpening
 !PARTIALPASTE_RAWCACORR_AUTO;CA auto-correction
 !PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
@@ -1181,6 +1238,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PARTIALPASTE_RAWEXPOS_LINEAR;White point correction
 !PARTIALPASTE_RAWEXPOS_PRESER;Highlight preservation
 !PARTIALPASTE_RAWGROUP;Raw Settings
+!PARTIALPASTE_RAW_BORDER;Raw border
 !PARTIALPASTE_RAW_DCBENHANCE;DCB enhancement
 !PARTIALPASTE_RAW_DCBITERATIONS;DCB iterations
 !PARTIALPASTE_RAW_DMETHOD;Demosaic method
@@ -1192,16 +1250,11 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PARTIALPASTE_RGBCURVES;RGB curves
 !PARTIALPASTE_SHARPENEDGE;Edges
 !PARTIALPASTE_SHARPENMICRO;Microcontrast
-!PARTIALPASTE_TM_FATTAL;Dynamic Range Compression
+!PARTIALPASTE_SOFTLIGHT;Soft light
+!PARTIALPASTE_TM_FATTAL;Dynamic range compression
 !PARTIALPASTE_VIBRANCE;Vibrance
-!PREFERENCES_AUTLISLOW;Low
-!PREFERENCES_AUTLISMAX;Max - Average of all tiles
-!PREFERENCES_AUTLISSTD;High
-!PREFERENCES_AUTLISVLOW;None
-!PREFERENCES_AUTLOW;Low
 !PREFERENCES_AUTOMONPROFILE;Use operating system's main monitor color profile
 !PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
-!PREFERENCES_AUTSTD;Standard
 !PREFERENCES_BEHADDALL;All to 'Add'
 !PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values.
 !PREFERENCES_BEHSETALL;All to 'Set'
@@ -1237,12 +1290,9 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_DAUB_LABEL;Use Daubechies D6 wavelets instead of D4
-!PREFERENCES_DAUB_TOOLTIP;The Noise Reduction and Wavelet Levels tools use a Debauchies mother wavelet. If you choose D6 instead of D4 you increase the number of orthogonal Daubechies coefficients and probably increase quality of small-scale levels. There is no memory or processing time difference between the two.
 !PREFERENCES_DIRDARKFRAMES;Dark-frames directory
 !PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_EDITORCMDLINE;Custom command line
-!PREFERENCES_EXPAUT;Expert
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar\n(de-select for low resolution display)
 !PREFERENCES_FLATFIELDFOUND;Found
 !PREFERENCES_FLATFIELDSDIR;Flat-fields directory
@@ -1275,12 +1325,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show embedded JPEG thumbnail if raw is unedited
 !PREFERENCES_LANG;Language
 !PREFERENCES_LANGAUTODETECT;Use system language
-!PREFERENCES_LEVAUTDN;Denoising level
-!PREFERENCES_LEVDN;Cell size
-!PREFERENCES_LISS;Auto multi-zone smoothing
-!PREFERENCES_MAX;Maxi (Tile)
 !PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
-!PREFERENCES_MED;Medium (Tile/2)
 !PREFERENCES_MENUGROUPEXTPROGS;Group "Open with"
 !PREFERENCES_MENUGROUPFILEOPERATIONS;Group "File operations"
 !PREFERENCES_MENUGROUPLABEL;Group "Color label"
@@ -1288,7 +1333,6 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PREFERENCES_MENUGROUPRANK;Group "Rank"
 !PREFERENCES_MENUOPTIONS;Context Menu Options
 !PREFERENCES_METADATA;Metadata
-!PREFERENCES_MIN;Mini (100x115)
 !PREFERENCES_MONINTENT;Default rendering intent
 !PREFERENCES_MONITOR;Monitor
 !PREFERENCES_MONPROFILE;Default color profile
@@ -1296,12 +1340,13 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PREFERENCES_MULTITABDUALMON;Multiple Editor Tabs In Own Window Mode
 !PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
 !PREFERENCES_NAVIGATIONFRAME;Navigation
-!PREFERENCES_NOISE;Noise Reduction
 !PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
 !PREFERENCES_PANFACTORLABEL;Pan rate amplification
 !PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
 !PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
+!PREFERENCES_PERFORMANCE_THREADS;Threads
+!PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
 !PREFERENCES_PREVDEMO;Preview Demosaic Method
 !PREFERENCES_PREVDEMO_FAST;Fast
 !PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
@@ -1314,8 +1359,6 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PREFERENCES_PRTPROFILE;Color profile
 !PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
-!PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction and Wavelet Levels
-!PREFERENCES_RGBDTL_TOOLTIP;Leave the setting at "0" to automatically use as many threads as possible. The more threads run in parallel, the faster the computation. Refer to RawPedia for memory requirements.
 !PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
 !PREFERENCES_SELECTFONT_COLPICKER;Select Color Picker's font
 !PREFERENCES_SERIALIZE_TIFF_READ;Tiff Read Settings
@@ -1323,35 +1366,25 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;When working with folders full of uncompressed tiff files enabling this option can increase performance of thumb generation.
 !PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation
 !PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show filmstrip toolbar
-!PREFERENCES_SIMPLAUT;Tool mode
 !PREFERENCES_SINGLETABVERTAB;Single Editor Tab Mode, Vertical Tabs
-!PREFERENCES_SMA;Small (250x287)
 !PREFERENCES_SND_BATCHQUEUEDONE;Queue processing done
 !PREFERENCES_SND_HELP;Enter a full file path to set a sound, or leave blank for no sound.\nFor system sounds on Windows use "SystemDefault", "SystemAsterisk" etc., and on Linux use "complete", "window-attention" etc.
 !PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
 !PREFERENCES_SND_THRESHOLDSECS;After seconds
-!PREFERENCES_STDAUT;Standard
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
-!PREFERENCES_TAB_PERFORMANCE;Performance & Quality
+!PREFERENCES_TAB_PERFORMANCE;Performance
 !PREFERENCES_TAB_SOUND;Sounds
 !PREFERENCES_THEME;Theme
 !PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
 !PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
-!PREFERENCES_TIMAX;High
-!PREFERENCES_TINB;Number of tiles
-!PREFERENCES_TISTD;Standard
 !PREFERENCES_TP_LABEL;Tool panel:
 !PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
 !PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
 !PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
 !PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
 !PREFERENCES_VIEW;Output device's white balance (monitor, TV, projector, viewing, etc.)
-!PREFERENCES_WAVLEV;Increase wavelet level in quality 'high'
-!PREFERENCES_WLONE;One level
-!PREFERENCES_WLTWO;Two levels
-!PREFERENCES_WLZER;No
 !PROFILEPANEL_COPYPPASTE;Parameters to copy
 !PROFILEPANEL_GLOBALPROFILES;Bundled profiles
 !PROFILEPANEL_LOADPPASTE;Parameters to load
@@ -1376,6 +1409,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !SAMPLEFORMAT_16;16-bit floating-point
 !SAMPLEFORMAT_32;24-bit floating-point
 !SAMPLEFORMAT_64;32-bit floating-point
+!SAVEDLG_FILEFORMAT_FLOAT; floating-point
 !SAVEDLG_FORCEFORMATOPTS;Force saving options
 !SAVEDLG_SUBSAMP;Subsampling
 !SAVEDLG_SUBSAMP_1;Best compression
@@ -1690,10 +1724,6 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_FLATFIELD_CLIPCONTROL;Clip control
 !TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, clip control can lead to color cast.
 !TP_FLATFIELD_LABEL;Flat-Field
-!TP_GAMMA_CURV;Gamma
-!TP_GAMMA_FREE;Free gamma
-!TP_GAMMA_OUTPUT;Output gamma
-!TP_GAMMA_SLOP;Slope (linear)
 !TP_GENERAL_11SCALE_TOOLTIP;The effects of this tool are only visible or only accurate at a preview scale of 1:1.
 !TP_GRADIENT_CENTER;Center
 !TP_GRADIENT_CENTER_X;Center X
@@ -1740,6 +1770,12 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
 !TP_ICM_TONECURVE;Tone curve
 !TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only available if the selected DCP has a tone curve.
+!TP_ICM_WORKING_TRC;Tone response curve:
+!TP_ICM_WORKING_TRC_CUSTOM;Custom
+!TP_ICM_WORKING_TRC_GAMMA;Gamma
+!TP_ICM_WORKING_TRC_NONE;None
+!TP_ICM_WORKING_TRC_SLOPE;Slope
+!TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
 !TP_LABCURVE_AVOIDCOLORSHIFT;Avoid color shift
 !TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction.
 !TP_LABCURVE_CHROMATICITY;Chromaticity
@@ -1812,6 +1848,8 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.
 !TP_PRSHARPENING_LABEL;Post-Resize Sharpening
 !TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
+!TP_RAWCACORR_AUTOIT;Iterations
+!TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
 !TP_RAWCACORR_CABLUE;Blue
 !TP_RAWCACORR_CARED;Red
 !TP_RAWCACORR_CASTR;Strength
@@ -1827,13 +1865,16 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_RAWEXPOS_PRESER;Highlight preservation
 !TP_RAWEXPOS_RGB;Red, Green, Blue
 !TP_RAWEXPOS_TWOGREEN;Link greens
-!TP_RAW_1PASSMEDIUM;1-Pass (Medium)
-!TP_RAW_3PASSBEST;3-Pass (Best)
-!TP_RAW_4PASS;4-Pass
+!TP_RAW_1PASSMEDIUM;1-pass (Markesteijn)
+!TP_RAW_2PASS;1-pass+fast
+!TP_RAW_3PASSBEST;3-pass (Markesteijn)
+!TP_RAW_4PASS;3-pass+fast
 !TP_RAW_AHD;AHD
 !TP_RAW_AMAZE;AMaZE
 !TP_RAW_AMAZEVNG4;AMaZE+VNG4
+!TP_RAW_BORDER;Border
 !TP_RAW_DCB;DCB
+!TP_RAW_DCBVNG4;DCB+VNG4
 !TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
 !TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
 !TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.\nPixel Shift is for Pentax/Sony Pixel Shift files. It falls back to AMaZE for non-Pixel Shift files.
@@ -1883,10 +1924,12 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_RAW_PIXELSHIFTSMOOTH;Smooth transitions
 !TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Smooth transitions between areas with motion and areas without.\nSet to 0 to disable transition smoothing.\nSet to 1 to either get the AMaZE/LMMSE result of the selected frame (depending on whether "Use LMMSE" is selected), or the median of all four frames if "Use median" is selected.
 !TP_RAW_RCD;RCD
+!TP_RAW_RCDVNG4;RCD+VNG4
 !TP_RAW_SENSOR_BAYER_LABEL;Sensor with Bayer Matrix
-!TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.
+!TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.\n+fast gives less artifacts in flat areas
 !TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix
 !TP_RAW_VNG4;VNG4
+!TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_CROPPEDAREA;Cropped Area
 !TP_RESIZE_FITBOX;Bounding Box
@@ -1907,7 +1950,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_RETINEX_GAIN;Gain
 !TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
 !TP_RETINEX_GAINTRANSMISSION;Gain transmission
-!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce transmission map to achieve luminance.\nAbscissa: transmission -min from 0, mean, and values (max).\nOrdinate: gain.
+!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
 !TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
 !TP_RETINEX_GAMMA;Gamma
 !TP_RETINEX_GAMMA_FREE;Free
@@ -1991,6 +2034,8 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_SHARPENMICRO_LABEL;Microcontrast
 !TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
 !TP_SHARPENMICRO_UNIFORMITY;Uniformity
+!TP_SOFTLIGHT_LABEL;Soft Light
+!TP_SOFTLIGHT_STRENGTH;Strength
 !TP_TM_FATTAL_AMOUNT;Amount
 !TP_TM_FATTAL_ANCHOR;Anchor
 !TP_TM_FATTAL_LABEL;Dynamic Range Compression
@@ -2084,7 +2129,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_WAVELET_DTWO;Horizontal
 !TP_WAVELET_EDCU;Curve
 !TP_WAVELET_EDGCONT;Local contrast
-!TP_WAVELET_EDGCONT_TOOLTIP;Adjusting the points to the left decreases contrast, and to the right increases it.\nBottom-left, Top-Left, Top-Right, Bottom-right represent respectively local contast for low values, mean, mean+stdev, maxima
+!TP_WAVELET_EDGCONT_TOOLTIP;Adjusting the points to the left decreases contrast, and to the right increases it.\nBottom-left, top-left, top-right and bottom-right represent respectively local contrast for low values, mean, mean+stdev and maxima.
 !TP_WAVELET_EDGE;Edge Sharpness
 !TP_WAVELET_EDGEAMPLI;Base amplification
 !TP_WAVELET_EDGEDETECT;Gradient sensitivity

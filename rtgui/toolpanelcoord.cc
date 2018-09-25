@@ -78,6 +78,7 @@ ToolPanelCoordinator::ToolPanelCoordinator(bool batch) : ipc(nullptr), hasChange
     dirpyrequalizer     = Gtk::manage(new DirPyrEqualizer());
     hsvequalizer        = Gtk::manage(new HSVEqualizer());
     filmSimulation      = Gtk::manage(new FilmSimulation());
+    softlight           = Gtk::manage(new SoftLight());
     sensorbayer         = Gtk::manage(new SensorBayer());
     sensorxtrans        = Gtk::manage(new SensorXTrans());
     bayerprocess        = Gtk::manage(new BayerProcess());
@@ -112,6 +113,7 @@ ToolPanelCoordinator::ToolPanelCoordinator(bool batch) : ipc(nullptr), hasChange
     addPanel(detailsPanel, sharpenMicro);
     addPanel(colorPanel, hsvequalizer);
     addPanel(colorPanel, filmSimulation);
+    addPanel (colorPanel, softlight);
     addPanel(colorPanel, rgbcurves);
     addPanel(colorPanel, colortoning);
     addPanel(exposurePanel, epd);
@@ -173,7 +175,7 @@ ToolPanelCoordinator::ToolPanelCoordinator(bool batch) : ipc(nullptr), hasChange
     // load panel endings
     for (int i = 0; i < 7; i++) {
         vbPanelEnd[i] = Gtk::manage(new Gtk::VBox());
-        imgPanelEnd[i] = Gtk::manage(new RTImage("PanelEnding.png"));
+        imgPanelEnd[i] = Gtk::manage (new RTImage ("ornament1.png"));
         imgPanelEnd[i]->show();
         vbPanelEnd[i]->pack_start(*imgPanelEnd[i], Gtk::PACK_SHRINK);
         vbPanelEnd[i]->show_all();
@@ -212,13 +214,12 @@ ToolPanelCoordinator::ToolPanelCoordinator(bool batch) : ipc(nullptr), hasChange
     TOITypes type = options.UseIconNoText ? TOI_ICON : TOI_TEXT;
     toiE = Gtk::manage(new TextOrIcon("exposure.png", M("MAIN_TAB_EXPOSURE"), M("MAIN_TAB_EXPOSURE_TOOLTIP"), type));
     toiD = Gtk::manage(new TextOrIcon("detail.png", M("MAIN_TAB_DETAIL"), M("MAIN_TAB_DETAIL_TOOLTIP"), type));
-    toiC = Gtk::manage(new TextOrIcon("colour.png", M("MAIN_TAB_COLOR"), M("MAIN_TAB_COLOR_TOOLTIP"), type));
-    toiW = Gtk::manage(new TextOrIcon("atom.png", M("MAIN_TAB_ADVANCED"), M("MAIN_TAB_ADVANCED_TOOLTIP"), type));
-    toiL = Gtk::manage(new TextOrIcon("openhand.png", M("MAIN_TAB_LOCALLAB"), M("MAIN_TAB_LOCALLAB_TOOLTIP"), type));
-
+    toiC = Gtk::manage (new TextOrIcon ("color-circles.png", M ("MAIN_TAB_COLOR"), M ("MAIN_TAB_COLOR_TOOLTIP"), type));
+    toiW = Gtk::manage (new TextOrIcon ("atom.png", M ("MAIN_TAB_ADVANCED"), M ("MAIN_TAB_ADVANCED_TOOLTIP"), type));
+    toiL = Gtk::manage(new TextOrIcon("hand-open.png", M("MAIN_TAB_LOCALLAB"), M("MAIN_TAB_LOCALLAB_TOOLTIP"), type));
     toiT = Gtk::manage(new TextOrIcon("transform.png", M("MAIN_TAB_TRANSFORM"), M("MAIN_TAB_TRANSFORM_TOOLTIP"), type));
-    toiR = Gtk::manage(new TextOrIcon("raw.png", M("MAIN_TAB_RAW"), M("MAIN_TAB_RAW_TOOLTIP"), type));
-    toiM = Gtk::manage(new TextOrIcon("meta.png", M("MAIN_TAB_METADATA"), M("MAIN_TAB_METADATA_TOOLTIP"), type));
+    toiR = Gtk::manage (new TextOrIcon ("bayer.png", M ("MAIN_TAB_RAW"), M ("MAIN_TAB_RAW_TOOLTIP"), type));
+    toiM = Gtk::manage (new TextOrIcon ("metadata.png", M ("MAIN_TAB_METADATA"), M ("MAIN_TAB_METADATA_TOOLTIP"), type));
 
     toolPanelNotebook->append_page(*exposurePanelSW,  *toiE);
     toolPanelNotebook->append_page(*detailsPanelSW,   *toiD);
@@ -305,6 +306,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                 self->sensorbayer->FoldableToolPanel::show();
                 self->preprocess->FoldableToolPanel::show();
                 self->flatfield->FoldableToolPanel::show();
+                self->retinex->FoldableToolPanel::setGrayedOut(false);
 
                 return FALSE;
             };
@@ -318,6 +320,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                 self->sensorbayer->FoldableToolPanel::hide();
                 self->preprocess->FoldableToolPanel::show();
                 self->flatfield->FoldableToolPanel::show();
+                self->retinex->FoldableToolPanel::setGrayedOut(false);
 
                 return FALSE;
             };
@@ -331,6 +334,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                 self->sensorxtrans->FoldableToolPanel::hide();
                 self->preprocess->FoldableToolPanel::hide();
                 self->flatfield->FoldableToolPanel::show();
+                self->retinex->FoldableToolPanel::setGrayedOut(false);
 
                 return FALSE;
             };
@@ -344,6 +348,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                 self->sensorxtrans->FoldableToolPanel::hide();
                 self->preprocess->FoldableToolPanel::hide();
                 self->flatfield->FoldableToolPanel::hide();
+                self->retinex->FoldableToolPanel::setGrayedOut(false);
 
                 return FALSE;
             };
@@ -353,7 +358,8 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
         const auto func = [](gpointer data) -> gboolean {
             ToolPanelCoordinator* const self = static_cast<ToolPanelCoordinator*>(data);
 
-            self->rawPanelSW->set_sensitive(false);
+            self->rawPanelSW->set_sensitive (false);
+            self->retinex->FoldableToolPanel::setGrayedOut(true);
 
             return FALSE;
         };
@@ -454,7 +460,7 @@ void ToolPanelCoordinator::panelChanged(rtengine::ProcEvent event, const Glib::u
     photoLoadedOnce = true;
 }
 
-void ToolPanelCoordinator::profileChange(const PartialProfile *nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited)
+void ToolPanelCoordinator::profileChange(const PartialProfile *nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited, bool fromLastSave)
 {
     // TODO Locallab printf
     printf("profileChanged\n");
@@ -479,7 +485,7 @@ void ToolPanelCoordinator::profileChange(const PartialProfile *nparams, rtengine
     }
 
     // And apply the partial profile nparams to mergedParams
-    nparams->applyTo(mergedParams);
+    nparams->applyTo(mergedParams, fromLastSave);
 
     // Derive the effective changes, if it's a profile change, to prevent slow RAW rerendering if not necessary
     bool filterRawRefresh = false;

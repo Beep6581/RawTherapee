@@ -1,13 +1,27 @@
 #pragma once
 
 // This number has to be incremented whenever the PP3 file format is modified or the behaviour of a tool changes
-#define PPVERSION 337
+#define PPVERSION 344
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /*
   Log of version changes
-   337  2018-07-26
+   344  2018-09-25
         Added Locallab tool parameters
+   343  2018-09-06
+        raw auto ca correction avoid colour shift
+   342  2018-09-05
+        raw auto ca correction iterations
+   341  2018-07-22
+        [ICM] enhanced custom output profile
+   340  2018-07-08
+        store whether curve is from histogram matching
+   339  2018-07-04
+        added allowUpscaling to ResizeParams
+   338  2018-06-15
+        increased precision for the channel mixer
+   337  2018-06-13
+        new scales for the LabGrid color toning parameters
    336  2018-06-01
         new demosaic method combobox for pixelshift
    335  2018-05-30

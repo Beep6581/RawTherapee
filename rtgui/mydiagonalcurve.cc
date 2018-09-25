@@ -559,7 +559,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
                     getCursorPosition(Gdk::EventType(event->type), event->motion.is_hint != 0, int(event->button.x), int(event->button.y), Gdk::ModifierType(event->button.state));
                     findClosestPoint();
 
-                    new_type = CSMove;
+                    new_type = CSMove2D; // Shown when dragging a node.
 
                     if (distanceX > minDistanceX) {
                         if (mod_type & GDK_CONTROL_MASK) {
@@ -735,7 +735,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
                 }
 
                 if (distanceX <= minDistanceX) {
-                    new_type = CSMove;
+                    new_type = CSMove2D; // Shown on node release.
                     lit_point = closest_point;
                 } else {
                     new_type = CSPlus;
@@ -799,7 +799,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
                         lit_point = -1;
                     } else if (distanceX <= minDistanceX) {
                         // the cursor is close to an existing point
-                        new_type = CSMove;
+                        new_type = CSPlus; // Shown when hovering over node snapping distance (not necessarily over node).
                         lit_point = closest_point;
                     } else {
                         // the cursor is inside the graph but away from existing points

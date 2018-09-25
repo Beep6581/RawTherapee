@@ -104,8 +104,8 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     pack_start( *opacityCurveEditorG, Gtk::PACK_SHRINK, 2);
 
     //---------Chroma curve 1 --------------------
-    iby   = Gtk::manage (new RTImage ("Chanmixer-BY.png"));
-    irg   = Gtk::manage (new RTImage ("Chanmixer-RG.png"));
+    iby   = Gtk::manage (new RTImage ("circle-yellow-blue-small.png"));
+    irg   = Gtk::manage (new RTImage ("circle-green-red-small.png"));
 
     clCurveEditorG = new CurveEditorGroup (options.lastColorToningCurvesDir, M("TP_COLORTONING_CHROMAC"));
     clCurveEditorG->setCurveListener (this);
@@ -146,7 +146,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     //--------------------- Reset curves -----------------------------
     /*   Each curve can reset to a different curve, so this button only save one click now... so we remove it.
     neutralCurves = Gtk::manage (new Gtk::Button (M("TP_COLORTONING_NEUTRALCUR")));
-    RTImage *resetImgc = Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
+    RTImage *resetImgc = Gtk::manage (new RTImage ("undo-small.png", "redo-small.png"));
     neutralCurves->set_image(*resetImgc);
     neutralCurves->set_tooltip_text (M("TP_COLORTONING_NEUTRALCUR_TIP"));
     neutralcurvesconn = neutralCurves->signal_pressed().connect( sigc::mem_fun(*this, &ColorToning::neutralCurves_pressed) );
@@ -226,26 +226,26 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     Gtk::VBox *chanMixerMidBox = Gtk::manage (new Gtk::VBox());
     Gtk::VBox *chanMixerShadowsBox = Gtk::manage (new Gtk::VBox());
 
-    Gtk::Image* iblueR   = Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
-    Gtk::Image* iyelL    = Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
-    Gtk::Image* imagL    = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
-    Gtk::Image* igreenR  = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
-    Gtk::Image* icyanL   = Gtk::manage (new RTImage ("ajd-wb-bluered1.png"));
-    Gtk::Image* iredR    = Gtk::manage (new RTImage ("ajd-wb-bluered2.png"));
+    Gtk::Image* iblueR   = Gtk::manage (new RTImage ("circle-blue-small.png"));
+    Gtk::Image* iyelL    = Gtk::manage (new RTImage ("circle-yellow-small.png"));
+    Gtk::Image* imagL    = Gtk::manage (new RTImage ("circle-magenta-small.png"));
+    Gtk::Image* igreenR  = Gtk::manage (new RTImage ("circle-green-small.png"));
+    Gtk::Image* icyanL   = Gtk::manage (new RTImage ("circle-blue-small.png"));
+    Gtk::Image* iredR    = Gtk::manage (new RTImage ("circle-red-small.png"));
 
-    Gtk::Image* iblueRm  = Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
-    Gtk::Image* iyelLm   = Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
-    Gtk::Image* imagLm   = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
-    Gtk::Image* igreenRm = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
-    Gtk::Image* icyanLm  = Gtk::manage (new RTImage ("ajd-wb-bluered1.png"));
-    Gtk::Image* iredRm   = Gtk::manage (new RTImage ("ajd-wb-bluered2.png"));
+    Gtk::Image* iblueRm  = Gtk::manage (new RTImage ("circle-blue-small.png"));
+    Gtk::Image* iyelLm   = Gtk::manage (new RTImage ("circle-yellow-small.png"));
+    Gtk::Image* imagLm   = Gtk::manage (new RTImage ("circle-magenta-small.png"));
+    Gtk::Image* igreenRm = Gtk::manage (new RTImage ("circle-green-small.png"));
+    Gtk::Image* icyanLm  = Gtk::manage (new RTImage ("circle-blue-small.png"));
+    Gtk::Image* iredRm   = Gtk::manage (new RTImage ("circle-red-small.png"));
 
-    Gtk::Image* iblueRh  = Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
-    Gtk::Image* iyelLh   = Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
-    Gtk::Image* imagLh   = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
-    Gtk::Image* igreenRh = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
-    Gtk::Image* icyanLh  = Gtk::manage (new RTImage ("ajd-wb-bluered1.png"));
-    Gtk::Image* iredRh   = Gtk::manage (new RTImage ("ajd-wb-bluered2.png"));
+    Gtk::Image* iblueRh  = Gtk::manage (new RTImage ("circle-blue-small.png"));
+    Gtk::Image* iyelLh   = Gtk::manage (new RTImage ("circle-yellow-small.png"));
+    Gtk::Image* imagLh   = Gtk::manage (new RTImage ("circle-magenta-small.png"));
+    Gtk::Image* igreenRh = Gtk::manage (new RTImage ("circle-green-small.png"));
+    Gtk::Image* icyanLh  = Gtk::manage (new RTImage ("circle-blue-small.png"));
+    Gtk::Image* iredRh   = Gtk::manage (new RTImage ("circle-red-small.png"));
 
     redhigh   = Gtk::manage (new Adjuster ("", -100., 100., 1., 0., icyanLh, iredRh  ));
     greenhigh = Gtk::manage (new Adjuster ("", -100., 100., 1., 0., imagLh , igreenRh));
@@ -324,7 +324,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     labgrid = Gtk::manage(new LabGrid(EvColorToningLabGridValue));
     labgridBox->pack_start(*labgrid, true, true);
     labgridReset = Gtk::manage(new Gtk::Button ());
-    labgridReset->add (*Gtk::manage(new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
+    labgridReset->add (*Gtk::manage(new RTImage ("undo-small.png", "redo-small.png")));
     setExpandAlignProperties(labgridReset, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
     labgridReset->set_relief(Gtk::RELIEF_NONE);
     labgridReset->set_tooltip_markup(M("ADJUSTER_RESET_TO_DEFAULT"));
@@ -377,7 +377,7 @@ void ColorToning::neutralCurves_pressed () {
 }
 */
 
-// Will only reset the chanel mixer
+// Will only reset the channel mixer
 void ColorToning::neutral_pressed ()
 {
     disableListener();

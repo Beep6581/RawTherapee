@@ -317,11 +317,11 @@ ToneCurveParams::ToneCurveParams() :
     method("Blend"),
     expcomp(0),
     curve{
-    DCT_Linear
-},
+        DCT_Linear
+    },
     curve2{
-    DCT_Linear
-},
+        DCT_Linear
+    },
     curveMode(ToneCurveParams::TcMode::STD),
     curveMode2(ToneCurveParams::TcMode::STD),
     brightness(0),
@@ -330,8 +330,9 @@ ToneCurveParams::ToneCurveParams() :
     saturation(0),
     shcompr(50),
     hlcompr(0),
-    hlcomprthresh(33),
+    hlcomprthresh(0),
     histmatching(false),
+    fromHistMatching(false),
     clampOOG(true)
 {
 }
@@ -356,6 +357,7 @@ bool ToneCurveParams::operator ==(const ToneCurveParams& other) const
         && hlcompr == other.hlcompr
         && hlcomprthresh == other.hlcomprthresh
         && histmatching == other.histmatching
+        && fromHistMatching == other.fromHistMatching
         && clampOOG == other.clampOOG;
 }
 
@@ -610,6 +612,7 @@ bool LocalContrastParams::operator!=(const LocalContrastParams &other) const
 
 
 const double ColorToningParams::LABGRID_CORR_MAX = 12000.f;
+const double ColorToningParams::LABGRID_CORR_SCALE = 3.f;
 
 ColorToningParams::ColorToningParams() :
     enabled(false),
@@ -1791,19 +1794,19 @@ bool VignettingParams::operator !=(const VignettingParams& other) const
 ChannelMixerParams::ChannelMixerParams() :
     enabled(false),
     red{
-    100,
+        1000,
     0,
     0
 },
     green{
     0,
-    100,
+        1000,
     0
 },
     blue{
     0,
     0,
-    100
+        1000
 }
 {
 }
@@ -1923,7 +1926,8 @@ ResizeParams::ResizeParams() :
     method("Lanczos"),
     dataspec(3),
     width(900),
-    height(900)
+    height(900),
+    allowUpscaling(false)
 {
 }
 
@@ -1936,7 +1940,8 @@ bool ResizeParams::operator ==(const ResizeParams& other) const
         && method == other.method
         && dataspec == other.dataspec
         && width == other.width
-        && height == other.height;
+        && height == other.height
+        && allowUpscaling == other.allowUpscaling;
 }
 
 bool ResizeParams::operator !=(const ResizeParams& other) const
@@ -1947,40 +1952,38 @@ bool ResizeParams::operator !=(const ResizeParams& other) const
 const Glib::ustring ColorManagementParams::NoICMString = Glib::ustring("No ICM: sRGB output");
 
 ColorManagementParams::ColorManagementParams() :
-    input("(cameraICC)"),
+    inputProfile("(cameraICC)"),
     toneCurve(false),
     applyLookTable(false),
     applyBaselineExposureOffset(true),
     applyHueSatMap(true),
     dcpIlluminant(0),
-    working("ProPhoto"),
-    output("RT_sRGB"),
+    workingProfile("ProPhoto"),
+    workingTRC("none"),
+    workingTRCGamma(2.4),
+    workingTRCSlope(12.92310),
+    outputProfile(options.rtSettings.srgb),
     outputIntent(RI_RELATIVE),
-    outputBPC(true),
-    gamma("default"),
-    gampos(2.22),
-    slpos(4.5),
-    freegamma(false)
+    outputBPC(true)
 {
 }
 
 bool ColorManagementParams::operator ==(const ColorManagementParams& other) const
 {
     return
-        input == other.input
+        inputProfile == other.inputProfile
         && toneCurve == other.toneCurve
         && applyLookTable == other.applyLookTable
         && applyBaselineExposureOffset == other.applyBaselineExposureOffset
         && applyHueSatMap == other.applyHueSatMap
         && dcpIlluminant == other.dcpIlluminant
-        && working == other.working
-        && output == other.output
+        && workingProfile == other.workingProfile
+        && workingTRC == other.workingTRC
+        && workingTRCGamma == other.workingTRCGamma
+        && workingTRCSlope == other.workingTRCSlope
+        && outputProfile == other.outputProfile
         && outputIntent == other.outputIntent
-        && outputBPC == other.outputBPC
-        && gamma == other.gamma
-        && gampos == other.gampos
-        && slpos == other.slpos
-        && freegamma == other.freegamma;
+        && outputBPC == other.outputBPC;
 }
 
 bool ColorManagementParams::operator !=(const ColorManagementParams& other) const
@@ -2594,8 +2597,28 @@ bool FilmSimulationParams::operator !=(const FilmSimulationParams& other) const
     return !(*this == other);
 }
 
+
+SoftLightParams::SoftLightParams() :
+    enabled(false),
+    strength(30)
+{
+}
+
+bool SoftLightParams::operator ==(const SoftLightParams& other) const
+{
+    return
+        enabled == other.enabled
+        && strength == other.strength;
+}
+
+bool SoftLightParams::operator !=(const SoftLightParams& other) const
+{
+    return !(*this == other);
+}
+
 RAWParams::BayerSensor::BayerSensor() :
     method(getMethodString(Method::AMAZE)),
+    border(4),
     imageNum(0),
     ccSteps(0),
     black0(0.0),
@@ -2632,6 +2655,7 @@ bool RAWParams::BayerSensor::operator ==(const BayerSensor& other) const
 {
     return
         method == other.method
+        && border == other.border
         && imageNum == other.imageNum
         && ccSteps == other.ccSteps
         && black0 == other.black0
@@ -2690,7 +2714,9 @@ const std::vector<const char*>& RAWParams::BayerSensor::getMethodStrings()
         "amaze",
         "amazevng4",
         "rcd",
+        "rcdvng4",
         "dcb",
+        "dcbvng4",
         "lmmse",
         "igv",
         "ahd",
@@ -2758,6 +2784,7 @@ const std::vector<const char*>& RAWParams::XTransSensor::getMethodStrings()
     static const std::vector<const char*> method_strings {
         "4-pass",
         "3-pass (best)",
+        "2-pass",
         "1-pass (medium)",
         "fast",
         "mono",
@@ -2779,6 +2806,8 @@ RAWParams::RAWParams() :
     ff_AutoClipControl(false),
     ff_clipControl(0),
     ca_autocorrect(false),
+    ca_avoidcolourshift(true),
+    caautoiterations(2),
     cared(0.0),
     cablue(0.0),
     expos(1.0),
@@ -2803,6 +2832,8 @@ bool RAWParams::operator ==(const RAWParams& other) const
         && ff_AutoClipControl == other.ff_AutoClipControl
         && ff_clipControl == other.ff_clipControl
         && ca_autocorrect == other.ca_autocorrect
+        && ca_avoidcolourshift == other.ca_avoidcolourshift
+        && caautoiterations == other.caautoiterations
         && cared == other.cared
         && cablue == other.cablue
         && expos == other.expos
@@ -2939,6 +2970,8 @@ void ProcParams::setDefaults()
 
     filmSimulation = FilmSimulationParams();
 
+    softlight = SoftLightParams();
+
     raw = RAWParams();
 
     metadata = MetaDataParams();
@@ -2986,6 +3019,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->toneCurve.hlcomprthresh, "Exposure", "HighlightComprThreshold", toneCurve.hlcomprthresh, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.shcompr, "Exposure", "ShadowCompr", toneCurve.shcompr, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.histmatching, "Exposure", "HistogramMatching", toneCurve.histmatching, keyFile);
+        saveToKeyfile(!pedited || pedited->toneCurve.fromHistMatching, "Exposure", "FromHistogramMatching", toneCurve.fromHistMatching, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.clampOOG, "Exposure", "ClampOOG", toneCurve.clampOOG, keyFile);
 
 // Highlight recovery
@@ -3492,6 +3526,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->resize.dataspec, "Resize", "DataSpecified", resize.dataspec, keyFile);
         saveToKeyfile(!pedited || pedited->resize.width, "Resize", "Width", resize.width, keyFile);
         saveToKeyfile(!pedited || pedited->resize.height, "Resize", "Height", resize.height, keyFile);
+        saveToKeyfile(!pedited || pedited->resize.allowUpscaling, "Resize", "AllowUpscaling", resize.allowUpscaling, keyFile);
 
 // Post resize sharpening
         saveToKeyfile(!pedited || pedited->prsharpening.enabled, "PostResizeSharpening", "Enabled", prsharpening.enabled, keyFile);
@@ -3511,14 +3546,17 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->prsharpening.deconviter, "PostResizeSharpening", "DeconvIterations", prsharpening.deconviter, keyFile);
 
 // Color management
-        saveToKeyfile(!pedited || pedited->icm.input, "Color Management", "InputProfile", relativePathIfInside(fname, fnameAbsolute, icm.input), keyFile);
+        saveToKeyfile(!pedited || pedited->icm.inputProfile, "Color Management", "InputProfile", relativePathIfInside(fname, fnameAbsolute, icm.inputProfile), keyFile);
         saveToKeyfile(!pedited || pedited->icm.toneCurve, "Color Management", "ToneCurve", icm.toneCurve, keyFile);
         saveToKeyfile(!pedited || pedited->icm.applyLookTable, "Color Management", "ApplyLookTable", icm.applyLookTable, keyFile);
         saveToKeyfile(!pedited || pedited->icm.applyBaselineExposureOffset, "Color Management", "ApplyBaselineExposureOffset", icm.applyBaselineExposureOffset, keyFile);
         saveToKeyfile(!pedited || pedited->icm.applyHueSatMap, "Color Management", "ApplyHueSatMap", icm.applyHueSatMap, keyFile);
         saveToKeyfile(!pedited || pedited->icm.dcpIlluminant, "Color Management", "DCPIlluminant", icm.dcpIlluminant, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.working, "Color Management", "WorkingProfile", icm.working, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.output, "Color Management", "OutputProfile", icm.output, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.workingProfile, "Color Management", "WorkingProfile", icm.workingProfile, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.workingTRC, "Color Management", "WorkingTRC", icm.workingTRC, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.workingTRCGamma, "Color Management", "WorkingTRCGamma", icm.workingTRCGamma, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.workingTRCSlope, "Color Management", "WorkingTRCSlope", icm.workingTRCSlope, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.outputProfile, "Color Management", "OutputProfile", icm.outputProfile, keyFile);
         saveToKeyfile(
             !pedited || pedited->icm.outputIntent,
             "Color Management",
@@ -3533,10 +3571,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
             keyFile
         );
         saveToKeyfile(!pedited || pedited->icm.outputBPC, "Color Management", "OutputBPC", icm.outputBPC, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.gamma, "Color Management", "Gammafree", icm.gamma, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.freegamma, "Color Management", "Freegamma", icm.freegamma, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.gampos, "Color Management", "GammaValue", icm.gampos, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.slpos, "Color Management", "GammaSlope", icm.slpos, keyFile);
 
 // Wavelet
         saveToKeyfile(!pedited || pedited->wavelet.enabled, "Wavelet", "Enabled", wavelet.enabled, keyFile);
@@ -3658,6 +3692,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->hsvequalizer.scurve, "HSV Equalizer", "SCurve", hsvequalizer.scurve, keyFile);
         saveToKeyfile(!pedited || pedited->hsvequalizer.vcurve, "HSV Equalizer", "VCurve", hsvequalizer.vcurve, keyFile);
 
+// Soft Light
+        saveToKeyfile(!pedited || pedited->softlight.enabled, "SoftLight", "Enabled", softlight.enabled, keyFile);
+        saveToKeyfile(!pedited || pedited->softlight.strength, "SoftLight", "Strength", softlight.strength, keyFile);
+
 // Film simulation
         saveToKeyfile(!pedited || pedited->filmSimulation.enabled, "Film Simulation", "Enabled", filmSimulation.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->filmSimulation.clutFilename, "Film Simulation", "ClutFilename", filmSimulation.clutFilename, keyFile);
@@ -3711,12 +3749,15 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.ff_AutoClipControl, "RAW", "FlatFieldAutoClipControl", raw.ff_AutoClipControl, keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_clipControl, "RAW", "FlatFieldClipControl", raw.ff_clipControl, keyFile);
         saveToKeyfile(!pedited || pedited->raw.ca_autocorrect, "RAW", "CA", raw.ca_autocorrect, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.ca_avoidcolourshift, "RAW", "CAAvoidColourshift", raw.ca_avoidcolourshift, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.caautoiterations, "RAW", "CAAutoIterations", raw.caautoiterations, keyFile);
         saveToKeyfile(!pedited || pedited->raw.cared, "RAW", "CARed", raw.cared, keyFile);
         saveToKeyfile(!pedited || pedited->raw.cablue, "RAW", "CABlue", raw.cablue, keyFile);
         saveToKeyfile(!pedited || pedited->raw.hotPixelFilter, "RAW", "HotPixelFilter", raw.hotPixelFilter, keyFile);
         saveToKeyfile(!pedited || pedited->raw.deadPixelFilter, "RAW", "DeadPixelFilter", raw.deadPixelFilter, keyFile);
         saveToKeyfile(!pedited || pedited->raw.hotdeadpix_thresh, "RAW", "HotDeadPixelThresh", raw.hotdeadpix_thresh, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.method, "RAW Bayer", "Method", raw.bayersensor.method, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.bayersensor.border, "RAW Bayer", "Border", raw.bayersensor.border, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.imageNum, "RAW Bayer", "ImageNum", raw.bayersensor.imageNum + 1, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.ccSteps, "RAW Bayer", "CcSteps", raw.bayersensor.ccSteps, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.exBlack0, "RAW Bayer", "PreBlack0", raw.bayersensor.black0, keyFile);
@@ -3874,6 +3915,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
 
             assignFromKeyfile(keyFile, "Exposure", "HistogramMatching", pedited, toneCurve.histmatching, pedited->toneCurve.histmatching);
+            if (ppVersion < 340) {
+                toneCurve.fromHistMatching = false;
+                if (pedited) {
+                    pedited->toneCurve.fromHistMatching = true;
+                }
+            } else {
+                assignFromKeyfile(keyFile, "Exposure", "FromHistogramMatching", pedited, toneCurve.fromHistMatching, pedited->toneCurve.fromHistMatching);
+            }
             assignFromKeyfile(keyFile, "Exposure", "ClampOOG", pedited, toneCurve.clampOOG, pedited->toneCurve.clampOOG);
         }
 
@@ -3902,6 +3951,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     memcpy(chmixer.red,   rmix.data(), 3 * sizeof(int));
                     memcpy(chmixer.green, gmix.data(), 3 * sizeof(int));
                     memcpy(chmixer.blue,  bmix.data(), 3 * sizeof(int));
+                }
+                if (ppVersion < 338) {
+                    for (int i = 0; i < 3; ++i) {
+                        chmixer.red[i] *= 10;
+                        chmixer.green[i] *= 10;
+                        chmixer.blue[i] *= 10;
+                    }
                 }
 
                 if (pedited) {
@@ -4753,6 +4809,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Resize", "DataSpecified", pedited, resize.dataspec, pedited->resize.dataspec);
             assignFromKeyfile(keyFile, "Resize", "Width", pedited, resize.width, pedited->resize.width);
             assignFromKeyfile(keyFile, "Resize", "Height", pedited, resize.height, pedited->resize.height);
+            if (ppVersion >= 339) {
+                assignFromKeyfile(keyFile, "Resize", "AllowUpscaling", pedited, resize.allowUpscaling, pedited->resize.allowUpscaling);
+            } else {
+                resize.allowUpscaling = true;
+                if (pedited) {
+                    pedited->resize.allowUpscaling = true;
+                }
+            }
         }
 
         if (keyFile.has_group("PostResizeSharpening")) {
@@ -4792,10 +4856,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group("Color Management")) {
             if (keyFile.has_key("Color Management", "InputProfile")) {
-                icm.input = expandRelativePath(fname, "file:", keyFile.get_string("Color Management", "InputProfile"));
+                icm.inputProfile = expandRelativePath(fname, "file:", keyFile.get_string("Color Management", "InputProfile"));
 
                 if (pedited) {
-                    pedited->icm.input = true;
+                    pedited->icm.inputProfile = true;
                 }
             }
 
@@ -4804,9 +4868,33 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "ApplyBaselineExposureOffset", pedited, icm.applyBaselineExposureOffset, pedited->icm.applyBaselineExposureOffset);
             assignFromKeyfile(keyFile, "Color Management", "ApplyHueSatMap", pedited, icm.applyHueSatMap, pedited->icm.applyHueSatMap);
             assignFromKeyfile(keyFile, "Color Management", "DCPIlluminant", pedited, icm.dcpIlluminant, pedited->icm.dcpIlluminant);
-            assignFromKeyfile(keyFile, "Color Management", "WorkingProfile", pedited, icm.working, pedited->icm.working);
-            assignFromKeyfile(keyFile, "Color Management", "OutputProfile", pedited, icm.output, pedited->icm.output);
+            assignFromKeyfile(keyFile, "Color Management", "WorkingProfile", pedited, icm.workingProfile, pedited->icm.workingProfile);
+            assignFromKeyfile(keyFile, "Color Management", "WorkingTRC", pedited, icm.workingTRC, pedited->icm.workingTRC);
+            assignFromKeyfile(keyFile, "Color Management", "WorkingTRCGamma", pedited, icm.workingTRCGamma, pedited->icm.workingTRCGamma);
+            assignFromKeyfile(keyFile, "Color Management", "WorkingTRCSlope", pedited, icm.workingTRCSlope, pedited->icm.workingTRCSlope);
 
+            assignFromKeyfile(keyFile, "Color Management", "OutputProfile", pedited, icm.outputProfile, pedited->icm.outputProfile);
+            if (ppVersion < 341) {
+                if (icm.outputProfile == "RT_Medium_gsRGB") {
+                    icm.outputProfile = "RTv4_Medium";
+                } else if (icm.outputProfile == "RT_Large_gBT709" || icm.outputProfile == "RT_Large_g10" || icm.outputProfile == "RT_Large_gsRGB") {
+                    icm.outputProfile = "RTv4_Large";
+                } else if (icm.outputProfile == "WideGamutRGB") {
+                    icm.outputProfile = "RTv4_Wide";
+                } else if (icm.outputProfile == "RT_sRGB_gBT709" || icm.outputProfile == "RT_sRGB_g10" || icm.outputProfile == "RT_sRGB") {
+                    icm.outputProfile = "RTv4_sRGB";
+                } else if (icm.outputProfile == "BetaRGB") { // Have we ever provided this profile ? Should we convert this filename ?
+                    icm.outputProfile = "RTv4_Beta";
+                } else if (icm.outputProfile == "BestRGB") { // Have we ever provided this profile ? Should we convert this filename ?
+                    icm.outputProfile = "RTv4_Best";
+                } else if (icm.outputProfile == "Rec2020") {
+                    icm.outputProfile = "RTv4_Rec2020";
+                } else if (icm.outputProfile == "Bruce") { // Have we ever provided this profile ? Should we convert this filename ?
+                    icm.outputProfile = "RTv4_Bruce";
+                } else if (icm.outputProfile == "ACES") {
+                    icm.outputProfile = "RTv4_ACES-AP0";
+                }
+            }
             if (keyFile.has_key("Color Management", "OutputProfileIntent")) {
                 Glib::ustring intent = keyFile.get_string("Color Management", "OutputProfileIntent");
 
@@ -4824,12 +4912,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     pedited->icm.outputIntent = true;
                 }
             }
-
             assignFromKeyfile(keyFile, "Color Management", "OutputBPC", pedited, icm.outputBPC, pedited->icm.outputBPC);
-            assignFromKeyfile(keyFile, "Color Management", "Gammafree", pedited, icm.gamma, pedited->icm.gamma);
-            assignFromKeyfile(keyFile, "Color Management", "Freegamma", pedited, icm.freegamma, pedited->icm.freegamma);
-            assignFromKeyfile(keyFile, "Color Management", "GammaValue", pedited, icm.gampos, pedited->icm.gampos);
-            assignFromKeyfile(keyFile, "Color Management", "GammaSlope", pedited, icm.slpos, pedited->icm.slpos);
         }
 
         if (keyFile.has_group("Wavelet")) {
@@ -5136,6 +5219,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
         }
 
+        if (keyFile.has_group("SoftLight")) {
+            assignFromKeyfile(keyFile, "SoftLight", "Enabled", pedited, softlight.enabled, pedited->softlight.enabled);
+            assignFromKeyfile(keyFile, "SoftLight", "Strength", pedited, softlight.strength, pedited->softlight.strength);
+        }
+
         if (keyFile.has_group("Film Simulation")) {
             assignFromKeyfile(keyFile, "Film Simulation", "Enabled", pedited, filmSimulation.enabled, pedited->filmSimulation.enabled);
             assignFromKeyfile(keyFile, "Film Simulation", "ClutFilename", pedited, filmSimulation.clutFilename, pedited->filmSimulation.clutFilename);
@@ -5243,6 +5331,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "ColorToning", "LabGridBLow", pedited, colorToning.labgridBLow, pedited->colorToning.labgridBLow);
             assignFromKeyfile(keyFile, "ColorToning", "LabGridAHigh", pedited, colorToning.labgridAHigh, pedited->colorToning.labgridAHigh);
             assignFromKeyfile(keyFile, "ColorToning", "LabGridBHigh", pedited, colorToning.labgridBHigh, pedited->colorToning.labgridBHigh);
+            if (ppVersion < 337) {
+                const double scale = ColorToningParams::LABGRID_CORR_SCALE;
+                colorToning.labgridALow *= scale;
+                colorToning.labgridAHigh *= scale;
+                colorToning.labgridBLow *= scale;
+                colorToning.labgridBHigh *= scale;
+            }
         }
 
         if (keyFile.has_group("RAW")) {
@@ -5278,6 +5373,17 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
 
             assignFromKeyfile(keyFile, "RAW", "CA", pedited, raw.ca_autocorrect, pedited->raw.ca_autocorrect);
+            if (ppVersion >= 342) {
+                assignFromKeyfile(keyFile, "RAW", "CAAutoIterations", pedited, raw.caautoiterations, pedited->raw.caautoiterations);
+            } else {
+                raw.caautoiterations = 1;
+            }
+
+            if (ppVersion >= 343) {
+                assignFromKeyfile(keyFile, "RAW", "CAAvoidColourshift", pedited, raw.ca_avoidcolourshift, pedited->raw.ca_avoidcolourshift);
+            } else {
+                raw.ca_avoidcolourshift = false;
+            }
             assignFromKeyfile(keyFile, "RAW", "CARed", pedited, raw.cared, pedited->raw.cared);
             assignFromKeyfile(keyFile, "RAW", "CABlue", pedited, raw.cablue, pedited->raw.cablue);
             // For compatibility to elder pp3 versions
@@ -5312,6 +5418,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group("RAW Bayer")) {
             assignFromKeyfile(keyFile, "RAW Bayer", "Method", pedited, raw.bayersensor.method, pedited->raw.bayersensor.method);
+            assignFromKeyfile(keyFile, "RAW Bayer", "Border", pedited, raw.bayersensor.border, pedited->raw.bayersensor.border);
 
             if (keyFile.has_key("RAW Bayer", "ImageNum")) {
                 raw.bayersensor.imageNum = keyFile.get_integer("RAW Bayer", "ImageNum") - 1;
@@ -5518,6 +5625,7 @@ bool ProcParams::operator ==(const ProcParams& other) const
         && dirpyrequalizer == other.dirpyrequalizer
         && hsvequalizer == other.hsvequalizer
         && filmSimulation == other.filmSimulation
+        && softlight == other.softlight
         && rgbCurves == other.rgbCurves
         && colorToning == other.colorToning
         && metadata == other.metadata
@@ -5650,10 +5758,14 @@ void PartialProfile::set(bool v)
     }
 }
 
-void PartialProfile::applyTo(ProcParams* destParams) const
+void PartialProfile::applyTo(ProcParams* destParams, bool fromLastSave) const
 {
     if (destParams && pparams && pedited) {
+        bool fromHistMatching = fromLastSave && destParams->toneCurve.histmatching && pparams->toneCurve.histmatching;
         pedited->combine(*destParams, *pparams, true);
+        if (!fromLastSave) {
+            destParams->toneCurve.fromHistMatching = fromHistMatching;
+        }
     }
 }
 

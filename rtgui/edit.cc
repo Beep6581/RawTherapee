@@ -1485,7 +1485,7 @@ CursorShape EditDataProvider::getCursor (int objectID)
         currSubscriber->getCursor (objectID);
     }
 
-    return CSOpenHand;
+    return CSHandOpen;
 }
 
 EditSubscriber* EditDataProvider::getCurrSubscriber()

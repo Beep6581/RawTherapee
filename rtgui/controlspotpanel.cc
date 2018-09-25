@@ -1036,7 +1036,7 @@ CursorShape ControlSpotPanel::getCursor(int objectID)
             return CSMove2D;
 
         default:
-            return CSOpenHand;
+            return CSHandOpen;
     }
 }
 

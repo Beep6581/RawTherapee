@@ -73,6 +73,7 @@ private:
 
     Gtk::HBox* buttonBar;
     Gtk::HBox* hbToolBar1;
+    MyScrolledToolbar* hbToolBar1STB;
 
     Gtk::HBox* fltrRankbox;
     Gtk::HBox* fltrLabelbox;
@@ -104,7 +105,7 @@ private:
     Gtk::Image* iCLabeled[5], *igCLabeled[5], *iUnCLabeled, *igUnCLabeled;
     Gtk::Image* iEdited[2], *igEdited[2];
     Gtk::Image* iRecentlySaved[2], *igRecentlySaved[2];
-    Gtk::Image *iTrashEmpty, *iTrashFull;
+    Gtk::Image *iTrashShowEmpty, *iTrashShowFull;
     Gtk::Image *iNotTrash, *iOriginal;
     Gtk::Image *iRefreshWhite, *iRefreshRed;
     Gtk::Image *iLeftPanel_1_Show, *iLeftPanel_1_Hide, *iRightPanel_1_Show, *iRightPanel_1_Hide;

@@ -68,7 +68,7 @@ public:
     virtual ~ImageSource            () {}
     virtual int         load        (const Glib::ustring &fname) = 0;
     virtual void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse, bool prepareDenoise = true) {};
-    virtual void        demosaic    (const RAWParams &raw) {};
+    virtual void        demosaic    (const RAWParams &raw, bool autoContrast, double &contrastThreshold) {};
     virtual void        retinex       (const ColorManagementParams& cmp, const RetinexParams &deh, const ToneCurveParams& Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI) {};
     virtual void        retinexPrepareCurves       (const RetinexParams &retinexParams, LUTf &cdcurve, LUTf &mapcurve, RetinextransmissionCurve &retinextransmissionCurve, RetinexgaintransmissionCurve &retinexgaintransmissionCurve, bool &retinexcontlutili, bool &mapcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI) {};
     virtual void        retinexPrepareBuffers      (const ColorManagementParams& cmp, const RetinexParams &retinexParams, multi_array2D<float, 4> &conversionBuffer, LUTu &lhist16RETI) {};
@@ -80,6 +80,7 @@ public:
 
     virtual bool        isRGBSourceModified () const = 0; // tracks whether cached rgb output of demosaic has been modified
 
+    virtual void        setBorder (unsigned int border) {}
     virtual void        setCurrentFrame (unsigned int frameNum) = 0;
     virtual int         getFrameCount () = 0;
 

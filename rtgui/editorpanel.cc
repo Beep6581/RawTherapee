@@ -272,7 +272,7 @@ private:
         }
 
 #else
-        profile = "RT_sRGB";
+        profile = options.rtSettings.srgb;
 #endif
 
 #if !defined(__APPLE__) // monitor profile not supported on apple
@@ -497,8 +497,11 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     // build GUI
 
     // build left side panel
-    leftbox = new Gtk::VBox ();
-    leftbox->set_size_request (230, 250);
+    leftbox = new Gtk::Paned (Gtk::ORIENTATION_VERTICAL);
+    
+    // make a subbox to allow resizing of the histogram (if it's on the left)
+    leftsubbox = new Gtk::Box (Gtk::ORIENTATION_VERTICAL);
+    leftsubbox->set_size_request (230, 250);
 
     histogramPanel = nullptr;
 
@@ -507,19 +510,22 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     ppframe->set_name ("ProfilePanel");
     ppframe->add (*profilep);
     ppframe->set_label (M ("PROFILEPANEL_LABEL"));
-    //leftbox->pack_start (*ppframe, Gtk::PACK_SHRINK, 4);
+    //leftsubbox->pack_start (*ppframe, Gtk::PACK_SHRINK, 4);
 
     navigator = Gtk::manage (new Navigator ());
     navigator->previewWindow->set_size_request (-1, 150);
-    leftbox->pack_start (*navigator, Gtk::PACK_SHRINK, 2);
+    leftsubbox->pack_start (*navigator, Gtk::PACK_SHRINK, 2);
 
     history = Gtk::manage (new History ());
-    leftbox->pack_start (*history);
+    leftsubbox->pack_start (*history);
 
+    leftsubbox->show_all ();
+    
+    leftbox->pack2 (*leftsubbox, true, true);
     leftbox->show_all ();
 
     // build the middle of the screen
-    Gtk::VBox* editbox = Gtk::manage (new Gtk::VBox ());
+    Gtk::Box* editbox = Gtk::manage (new Gtk::Box (Gtk::ORIENTATION_VERTICAL));
 
     info = Gtk::manage (new Gtk::ToggleButton ());
     Gtk::Image* infoimg = Gtk::manage (new RTImage ("info.png"));
@@ -533,8 +539,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     beforeAfter->set_relief (Gtk::RELIEF_NONE);
     beforeAfter->set_tooltip_markup (M ("MAIN_TOOLTIP_TOGGLE"));
 
-    iBeforeLockON = new RTImage ("lock-on.png");
-    iBeforeLockOFF = new RTImage ("lock-off.png");
+    iBeforeLockON = new RTImage ("padlock-locked-small.png");
+    iBeforeLockOFF = new RTImage ("padlock-unlocked-small.png");
 
     Gtk::VSeparator* vsept = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vsepz = Gtk::manage (new Gtk::VSeparator ());
@@ -590,7 +596,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     tpc->setEditProvider (iareapanel->imageArea);
     tpc->getToolBar()->setLockablePickerToolListener (iareapanel->imageArea);
 
-    Gtk::HBox* toolBarPanel = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* toolBarPanel = Gtk::manage (new Gtk::Box (Gtk::ORIENTATION_HORIZONTAL));
     toolBarPanel->set_name ("EditorTopPanel");
     toolBarPanel->pack_start (*hidehp, Gtk::PACK_SHRINK, 1);
     toolBarPanel->pack_start (*vseph, Gtk::PACK_SHRINK, 2);
@@ -617,23 +623,30 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     toolBarPanel->pack_end   (*iareapanel->imageArea->previewModePanel, Gtk::PACK_SHRINK, 0);
     toolBarPanel->pack_end   (*vsepz4, Gtk::PACK_SHRINK, 2);
 
-    afterBox = Gtk::manage (new Gtk::VBox ());
+    afterBox = Gtk::manage (new Gtk::Box (Gtk::ORIENTATION_VERTICAL));
     afterBox->pack_start (*iareapanel);
 
-    beforeAfterBox = Gtk::manage (new Gtk::HBox());
+    beforeAfterBox = Gtk::manage (new Gtk::Box (Gtk::ORIENTATION_HORIZONTAL));
     beforeAfterBox->set_name ("BeforeAfterContainer");
     beforeAfterBox->pack_start (*afterBox);
 
-    editbox->pack_start (*toolBarPanel, Gtk::PACK_SHRINK, 2);
+    MyScrolledToolbar *stb1 = Gtk::manage(new MyScrolledToolbar());
+    stb1->set_name("EditorToolbarTop");
+    stb1->add(*toolBarPanel);
+    editbox->pack_start (*stb1, Gtk::PACK_SHRINK, 2);
     editbox->pack_start (*beforeAfterBox);
 
     // build right side panel
-    vboxright = new Gtk::VBox (false, 0);
-    vboxright->set_size_request (300, 250);
+    vboxright = new Gtk::Paned (Gtk::ORIENTATION_VERTICAL);
+    
+    vsubboxright = new Gtk::Box (Gtk::ORIENTATION_VERTICAL, 0);
+    vsubboxright->set_size_request (300, 250);
 
-    vboxright->pack_start (*ppframe, Gtk::PACK_SHRINK, 2);
+    vsubboxright->pack_start (*ppframe, Gtk::PACK_SHRINK, 2);
     // main notebook
-    vboxright->pack_start (*tpc->toolPanelNotebook);
+    vsubboxright->pack_start (*tpc->toolPanelNotebook);
+    
+    vboxright->pack2 (*vsubboxright, true, true);
 
     // Save buttons
     Gtk::Grid *iops = new Gtk::Grid ();
@@ -642,19 +655,19 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     iops->set_row_spacing (2);
     iops->set_column_spacing (2);
 
-    Gtk::Image *saveButtonImage =  Gtk::manage (new RTImage ("gtk-save-large.png"));
+    Gtk::Image *saveButtonImage =  Gtk::manage (new RTImage ("save.png"));
     saveimgas = Gtk::manage (new Gtk::Button ());
     saveimgas->add (*saveButtonImage);
     saveimgas->set_tooltip_markup (M ("MAIN_BUTTON_SAVE_TOOLTIP"));
     setExpandAlignProperties (saveimgas, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
-    Gtk::Image *queueButtonImage = Gtk::manage (new RTImage ("processing.png"));
+    Gtk::Image *queueButtonImage = Gtk::manage (new RTImage ("gears.png"));
     queueimg = Gtk::manage (new Gtk::Button ());
     queueimg->add (*queueButtonImage);
     queueimg->set_tooltip_markup (M ("MAIN_BUTTON_PUTTOQUEUE_TOOLTIP"));
     setExpandAlignProperties (queueimg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
-    Gtk::Image *sendToEditorButtonImage = Gtk::manage (new RTImage ("image-editor.png"));
+    Gtk::Image *sendToEditorButtonImage = Gtk::manage (new RTImage ("palette-brush.png"));
     sendtogimp = Gtk::manage (new Gtk::Button ());
     sendtogimp->add (*sendToEditorButtonImage);
     sendtogimp->set_tooltip_markup (M ("MAIN_BUTTON_SENDTOEDITOR_TOOLTIP"));
@@ -690,7 +703,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     if (!simpleEditor && !options.tabbedUI) {
         // Navigation buttons
-        Gtk::Image *navPrevImage = Gtk::manage (new RTImage ("nav-prev.png"));
+        Gtk::Image *navPrevImage = Gtk::manage (new RTImage ("arrow2-left.png"));
         navPrevImage->set_padding (0, 0);
         navPrev = Gtk::manage (new Gtk::Button ());
         navPrev->add (*navPrevImage);
@@ -698,7 +711,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
         navPrev->set_tooltip_markup (M ("MAIN_BUTTON_NAVPREV_TOOLTIP"));
         setExpandAlignProperties (navPrev, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
-        Gtk::Image *navNextImage = Gtk::manage (new RTImage ("nav-next.png"));
+        Gtk::Image *navNextImage = Gtk::manage (new RTImage ("arrow2-right.png"));
         navNextImage->set_padding (0, 0);
         navNext = Gtk::manage (new Gtk::Button ());
         navNext->add (*navNextImage);
@@ -706,7 +719,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
         navNext->set_tooltip_markup (M ("MAIN_BUTTON_NAVNEXT_TOOLTIP"));
         setExpandAlignProperties (navNext, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
-        Gtk::Image *navSyncImage = Gtk::manage (new RTImage ("nav-sync.png"));
+        Gtk::Image *navSyncImage = Gtk::manage (new RTImage ("arrow-updown.png"));
         navSyncImage->set_padding (0, 0);
         navSync = Gtk::manage (new Gtk::Button ());
         navSync->add (*navSyncImage);
@@ -753,7 +766,11 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     iops->attach_next_to (*tbShowHideSidePanels, Gtk::POS_RIGHT, 1, 1);
     iops->attach_next_to (*tbRightPanel_1, Gtk::POS_RIGHT, 1, 1);
 
-    editbox->pack_start (*iops, Gtk::PACK_SHRINK, 0);
+    MyScrolledToolbar *stb2 = Gtk::manage(new MyScrolledToolbar());
+    stb2->set_name("EditorToolbarBottom");
+    stb2->add(*iops);
+
+    editbox->pack_start (*stb2, Gtk::PACK_SHRINK, 0);
     editbox->show_all ();
 
     // build screen
@@ -769,8 +786,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
         hpanedl->set_position (options.historyPanelWidth);
     }
 
-
-    Gtk::VPaned * viewpaned = Gtk::manage (new Gtk::VPaned());
+    Gtk::Paned *viewpaned = Gtk::manage (new Gtk::Paned (Gtk::ORIENTATION_VERTICAL));
     fPanel = filePanel;
 
     if (filePanel) {
@@ -843,6 +859,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     if (tbTopPanel_1) {
         tbTopPanel_1->signal_toggled().connect ( sigc::mem_fun (*this, &EditorPanel::tbTopPanel_1_toggled) );
     }
+    
 }
 
 EditorPanel::~EditorPanel ()
@@ -886,7 +903,9 @@ EditorPanel::~EditorPanel ()
     delete tpc;
 
     delete ppframe;
+    delete leftsubbox;
     delete leftbox;
+    delete vsubboxright;
     delete vboxright;
 
     //delete saveAsDialog;
@@ -1023,6 +1042,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc)
     ipc->setPreviewScale (10);  // Important
     tpc->initImage (ipc, tmb->getType() == FT_Raw);
     ipc->setHistogramListener (this);
+    iareapanel->imageArea->indClippedPanel->silentlyDisableSharpMask();
 
 //    iarea->fitZoom ();   // tell to the editorPanel that the next image has to be fitted to the screen
     iareapanel->imageArea->setPreviewHandler (previewHandler);
@@ -1763,7 +1783,7 @@ bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImagefloat*> *pc,
         img->setSaveProgressListener (parent->getProgressListener());
 
         if (sf.format == "tif")
-            ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImagefloat::saveAsTIFF), fname, sf.tiffBits, sf.tiffUncompressed),
+            ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImagefloat::saveAsTIFF), fname, sf.tiffBits, sf.tiffFloat, sf.tiffUncompressed),
                            sigc::bind (sigc::mem_fun (*this, &EditorPanel::idle_imageSaved), ld, img, fname, sf, pparams));
         else if (sf.format == "png")
             ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImagefloat::saveAsPNG), fname, sf.pngBits),
@@ -1980,9 +2000,9 @@ bool EditorPanel::saveImmediately (const Glib::ustring &filename, const SaveForm
     int err = 0;
 
     if (gimpPlugin) {
-        err = img->saveAsTIFF (filename, 32, true);
+        err = img->saveAsTIFF (filename, 32, true, true);
     } else if (sf.format == "tif") {
-        err = img->saveAsTIFF (filename, sf.tiffBits, sf.tiffUncompressed);
+        err = img->saveAsTIFF (filename, sf.tiffBits, sf.tiffFloat, sf.tiffUncompressed);
     } else if (sf.format == "png") {
         err = img->saveAsPNG (filename, sf.pngBits);
     } else if (sf.format == "jpg") {
@@ -2038,6 +2058,7 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
         SaveFormat sf;
         sf.format = "tif";
         sf.tiffBits = 16;
+        sf.tiffFloat = false;
         sf.tiffUncompressed = true;
         sf.saveParams = true;
 
@@ -2058,7 +2079,7 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
 
         ProgressConnector<int> *ld = new ProgressConnector<int>();
         img->setSaveProgressListener (parent->getProgressListener());
-        ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImagefloat::saveAsTIFF), fileName, sf.tiffBits, sf.tiffUncompressed),
+        ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImagefloat::saveAsTIFF), fileName, sf.tiffBits, sf.tiffFloat, sf.tiffUncompressed),
                        sigc::bind (sigc::mem_fun (*this, &EditorPanel::idle_sentToGimp), ld, img, fileName));
     } else {
         Glib::ustring msg_ = Glib::ustring ("<b> Error during image processing\n</b>");
@@ -2165,7 +2186,7 @@ void EditorPanel::beforeAfterToggled ()
         tbBeforeLock = Gtk::manage (new Gtk::ToggleButton ());
         tbBeforeLock->set_tooltip_markup (M ("MAIN_TOOLTIP_BEFOREAFTERLOCK"));
         tbBeforeLock->signal_toggled().connect ( sigc::mem_fun (*this, &EditorPanel::tbBeforeLock_toggled) );
-        beforeHeaderBox = Gtk::manage (new Gtk::HBox ());
+        beforeHeaderBox = Gtk::manage (new Gtk::Box (Gtk::ORIENTATION_HORIZONTAL));
         beforeHeaderBox->pack_end (*tbBeforeLock, Gtk::PACK_SHRINK, 2);
         beforeHeaderBox->pack_end (*beforeLabel, Gtk::PACK_SHRINK, 2);
         beforeHeaderBox->set_size_request (0, HeaderBoxHeight);
@@ -2179,7 +2200,7 @@ void EditorPanel::beforeAfterToggled ()
 
         afterLabel = Gtk::manage (new Gtk::Label ());
         afterLabel->set_markup (Glib::ustring ("<b>") + M ("GENERAL_AFTER") + "</b>");
-        afterHeaderBox = Gtk::manage (new Gtk::HBox ());
+        afterHeaderBox = Gtk::manage (new Gtk::Box (Gtk::ORIENTATION_HORIZONTAL));
         afterHeaderBox->set_size_request (0, HeaderBoxHeight);
         afterHeaderBox->pack_end (*afterLabel, Gtk::PACK_SHRINK, 2);
         afterBox->pack_start (*afterHeaderBox, Gtk::PACK_SHRINK, 2);
@@ -2228,7 +2249,7 @@ void EditorPanel::histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & his
 {
 
     if (histogramPanel) {
-        histogramPanel->histogramChanged (histRed, histGreen, histBlue, histLuma, histRedRaw, histGreenRaw, histBlueRaw, histChroma);
+        histogramPanel->histogramChanged (histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw);
     }
 
     tpc->updateCurveBackgroundHistogram (histToneCurve, histLCurve, histCCurve,/*histCLurve,  histLLCurve,*/ histLCAM, histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
@@ -2321,17 +2342,17 @@ void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
             if (oldPosition == 0) {
                 // There was no Histogram before, so we create it
                 histogramPanel = Gtk::manage (new HistogramPanel ());
-                leftbox->pack_start (*histogramPanel, Gtk::PACK_SHRINK, 2);
+                leftbox->pack1(*histogramPanel, false, false);
             } else if (oldPosition == 2) {
                 // The histogram was on the right side, so we move it to the left
                 histogramPanel->reference();
                 removeIfThere (vboxright, histogramPanel, false);
-                leftbox->pack_start (*histogramPanel, Gtk::PACK_SHRINK, 2);
+                leftbox->pack1(*histogramPanel, false, false);
                 histogramPanel->unreference();
             }
-
+            
+            leftbox->set_position(options.histogramHeight);
             histogramPanel->reorder (Gtk::POS_LEFT);
-            leftbox->reorder_child (*histogramPanel, 0);
             break;
 
         case 2:
@@ -2341,21 +2362,22 @@ void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
             if (oldPosition == 0) {
                 // There was no Histogram before, so we create it
                 histogramPanel = Gtk::manage (new HistogramPanel ());
-                vboxright->pack_start (*histogramPanel, Gtk::PACK_SHRINK, 2);
+                vboxright->pack1 (*histogramPanel, false, false);
             } else if (oldPosition == 1) {
                 // The histogram was on the left side, so we move it to the right
                 histogramPanel->reference();
                 removeIfThere (leftbox, histogramPanel, false);
-                vboxright->pack_start (*histogramPanel, Gtk::PACK_SHRINK, 2);
+                vboxright->pack1 (*histogramPanel, false, false);
                 histogramPanel->unreference();
             }
-
+            
+            vboxright->set_position(options.histogramHeight); 
             histogramPanel->reorder (Gtk::POS_RIGHT);
-            vboxright->reorder_child (*histogramPanel, 0);
             break;
     }
 
     iareapanel->imageArea->setPointerMotionHListener (histogramPanel);
+    
 }
 
 

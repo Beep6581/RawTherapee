@@ -54,6 +54,7 @@ public:
     bool hrenabled;
     bool method;
     bool histmatching;
+    bool fromHistMatching;
     bool clampOOG;
 };
 
@@ -684,26 +685,28 @@ public:
     bool width;
     bool height;
     bool enabled;
+    bool allowUpscaling;
 };
 
 class ColorManagementParamsEdited
 {
 
 public:
-    bool input;
+    bool inputProfile;
     bool toneCurve;
     bool applyLookTable;
     bool applyBaselineExposureOffset;
     bool applyHueSatMap;
     bool dcpIlluminant;
-    bool working;
-    bool output;
+
+    bool workingProfile;
+    bool workingTRC;
+    bool workingTRCGamma;
+    bool workingTRCSlope;
+
+    bool outputProfile;
     bool outputIntent;
     bool outputBPC;
-    bool gamma;
-    bool gampos;
-    bool slpos;
-    bool freegamma;
 };
 class WaveletParamsEdited
 {
@@ -827,6 +830,13 @@ public:
     bool strength;
 };
 
+class SoftLightParamsEdited
+{
+public:
+    bool enabled;
+    bool strength;
+};
+
 class RAWParamsEdited
 {
 
@@ -836,6 +846,7 @@ public:
 
     public:
         bool method;
+        bool border;
         bool imageNum;
         bool ccSteps;
         bool exBlack0;
@@ -889,6 +900,8 @@ public:
     XTransSensor xtranssensor;
 
     bool ca_autocorrect;
+    bool ca_avoidcolourshift;
+    bool caautoiterations;
     bool cared;
     bool cablue;
     bool hotPixelFilter;
@@ -965,6 +978,7 @@ public:
     WaveletParamsEdited             wavelet;
     HSVEqualizerParamsEdited      hsvequalizer;
     FilmSimulationParamsEdited    filmSimulation;
+    SoftLightParamsEdited         softlight;
     MetaDataParamsEdited          metadata;
     bool                          exif;
     bool                          iptc;

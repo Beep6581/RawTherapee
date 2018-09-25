@@ -80,6 +80,7 @@
 #include "prsharpening.h"
 #include "fattaltonemap.h"
 #include "localcontrast.h"
+#include "softlight.h"
 #include "guiutils.h"
 
 class ImageEditorCoordinator;
@@ -136,6 +137,7 @@ protected:
     Wavelet * wavelet;
     DirPyrEqualizer* dirpyrequalizer;
     HSVEqualizer* hsvequalizer;
+    SoftLight *softlight;
     FilmSimulation *filmSimulation;
     SensorBayer * sensorbayer;
     SensorXTrans * sensorxtrans;
@@ -228,7 +230,7 @@ public:
 
     void imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans, bool isMono = false);
     // profilechangelistener interface
-    void profileChange(const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited = nullptr);
+    void profileChange(const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited = nullptr, bool fromLastSave = false);
     void setDefaults(rtengine::procparams::ProcParams* defparams);
 
     // DirSelectionListener interface
