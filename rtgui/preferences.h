@@ -139,8 +139,6 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::ComboBoxText* cprevdemo;
     Gtk::CheckButton* ctiffserialize;
     Gtk::ComboBoxText* curveBBoxPosC;
-    Gtk::ComboBoxText* cmip;
-    Gtk::ComboBoxText* clocalajust;
 
     Gtk::ComboBoxText* theme;
     Gtk::FontButton* fontButton;
@@ -199,7 +197,6 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::CheckButton* ckbHistogramPositionLeft;
     Gtk::CheckButton* ckbFileBrowserToolbarSingleRow;
     Gtk::CheckButton* ckbShowFilmStripToolBar;
-    Gtk::CheckButton* ckbShowdelimspot;
     Gtk::CheckButton* ckbHideTPVScrollbar;
     Gtk::CheckButton* ckbUseIconNoText;
 

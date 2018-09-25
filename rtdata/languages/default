@@ -1192,12 +1192,6 @@ PREFERENCES_LANGAUTODETECT;Use system language
 PREFERENCES_LEVAUTDN;Denoising level
 PREFERENCES_LEVDN;Cell size
 PREFERENCES_LISS;Auto multi-zone smoothing
-PREFERENCES_LOCAL;Local adjustements
-PREFERENCES_LOCALAJUST_LABEL;Local adjustements Quality Method
-PREFERENCES_LOCALAJUST_STD;Standard
-PREFERENCES_LOCALAJUST_ENH;Enhanced
-PREFERENCES_LOCALAJUST_ENHDEN;Enhanced + chroma denoise
-PREFERENCES_LOCALSHOWDELIMSPOT;Show spot delimiters
 PREFERENCES_MAX;Maxi (Tile)
 PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
 PREFERENCES_MED;Medium (Tile/2)
@@ -1209,11 +1203,6 @@ PREFERENCES_MENUGROUPRANK;Group "Rank"
 PREFERENCES_MENUOPTIONS;Context Menu Options
 PREFERENCES_METADATA;Metadata
 PREFERENCES_MIN;Mini (100x115)
-PREFERENCES_MIP;Mip Profiles
-PREFERENCES_MIP_LABEL;Mip profiles:
-PREFERENCES_MIP_OPT;Mip files in cache
-PREFERENCES_MIP_PREV;Next Input file
-PREFERENCES_MIP_TOOLTIP;Next input file allow multiple sessions of the same file, but do not allow path with NON ASCII characters.\nMip files in Cache, allow NON ASCII characters in path, allow multi session for the same file.
 PREFERENCES_MONINTENT;Default rendering intent
 PREFERENCES_MONITOR;Monitor
 PREFERENCES_MONPROFILE;Default color profile

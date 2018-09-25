@@ -422,8 +422,6 @@ void Options::setDefaults ()
     histogramFullMode = false;
     curvebboxpos = 1;
     prevdemo = PD_Sidecar;
-    mip = MI_opt;
-    locaaju = lo_enhde;
 
     rgbDenoiseThreadLimit = 0;
 #if defined( _OPENMP ) && defined( __x86_64__ )
@@ -441,7 +439,6 @@ void Options::setDefaults ()
     UseIconNoText = true;
     whiteBalanceSpotSize = 8;
     showFilmStripToolBar = false;
-    showdelimspot = false;
     menuGroupRank = true;
     menuGroupLabel = true;
     menuGroupFileOperations = true;
@@ -1090,14 +1087,6 @@ void Options::readFromFile (Glib::ustring fname)
                     prevdemo = (prevdemo_t)keyFile.get_integer ("Performance", "PreviewDemosaicFromSidecar");
                 }
 
-                if (keyFile.has_key ("Performance", "Localajustqual")) {
-                    locaaju             = (locaaju_t)keyFile.get_integer ("Performance", "Localajustqual");
-                }
-
-                if (keyFile.has_key ("Profiles", "Mipfiles")) {
-                    mip             = (mip_t)keyFile.get_integer ("Profiles", "Mipfiles");
-                }
-
                 if (keyFile.has_key ("Performance", "Daubechies")) {
                     rtSettings.daubech = keyFile.get_boolean ("Performance", "Daubechies");
                 }
@@ -1339,10 +1328,6 @@ void Options::readFromFile (Glib::ustring fname)
 
                 if (keyFile.has_key ("GUI", "ShowFilmStripToolBar")) {
                     showFilmStripToolBar = keyFile.get_boolean ("GUI", "ShowFilmStripToolBar");
-                }
-
-                if (keyFile.has_key ("GUI", "Showdelimspot")) {
-                    showdelimspot        = keyFile.get_boolean ("GUI", "Showdelimspot");
                 }
 
                 if (keyFile.has_key ("GUI", "FileBrowserToolbarSingleRow")) {
@@ -1890,7 +1875,6 @@ void Options::saveToFile (Glib::ustring fname)
         keyFile.set_integer ("Performance", "PreviewDemosaicFromSidecar", prevdemo);
         keyFile.set_boolean ("Performance", "Daubechies", rtSettings.daubech);
         keyFile.set_boolean ("Performance", "SerializeTiffRead", serializeTiffRead);
-        keyFile.set_integer ("Performance", "Localajustqual", locaaju);
         keyFile.set_integer("Performance", "ThumbnailInspectorMode", int(rtSettings.thumbnail_inspector_mode));
 
 
@@ -1930,7 +1914,6 @@ void Options::saveToFile (Glib::ustring fname)
         keyFile.set_integer ("Profiles", "LoadParamsFromLocation", paramsLoadLocation);
         keyFile.set_string  ("Profiles", "CustomProfileBuilderPath", CPBPath);
         keyFile.set_integer ("Profiles", "CustomProfileBuilderKeys", CPBKeys);
-        keyFile.set_integer ("Profiles", "Mipfiles", mip);
 
         keyFile.set_integer ("GUI", "WindowWidth", windowWidth);
         keyFile.set_integer ("GUI", "WindowHeight", windowHeight);
@@ -1990,7 +1973,6 @@ void Options::saveToFile (Glib::ustring fname)
         keyFile.set_integer ("GUI", "NavigatorRGBUnit", (int)navRGBUnit);
         keyFile.set_integer ("GUI", "NavigatorHSVUnit", (int)navHSVUnit);
         keyFile.set_boolean ("GUI", "ShowFilmStripToolBar", showFilmStripToolBar);
-        keyFile.set_boolean ("GUI", "Showdelimspot", showdelimspot);
         keyFile.set_boolean ("GUI", "FileBrowserToolbarSingleRow", FileBrowserToolbarSingleRow);
         keyFile.set_boolean ("GUI", "HideTPVScrollbar", hideTPVScrollbar);
         keyFile.set_boolean ("GUI", "UseIconNoText", UseIconNoText);
