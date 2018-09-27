@@ -69,6 +69,7 @@
 #68 05.07.2018 Erweiterung (TooWaBoo) RT 5.4
 #69 25.07.2018 Erweiterung (TooWaBoo) RT 5.4
 #70 25.07.2018 Korrekturen (TooWaBoo) RT 5.4
+#71 28.09.2018 Korrekturen (TooWaBoo) RT 5.5
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -2351,12 +2352,12 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
-!HISTORY_MSG_RAWCACORR_COLORSHIFT;Raw CA Correction - Avoid color shift
-!PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA avoid color shift
-!PREFERENCES_PERFORMANCE_THREADS;Threads
-!PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
-!PREFERENCES_TAB_PERFORMANCE;Performance
-!SAVEDLG_FILEFORMAT_FLOAT; floating-point
-!TP_RAWCACORR_AUTOIT;Iterations
-!TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
+HISTORY_MSG_RAWCACORR_AUTOIT;(Sensor-Matrix)\nChromatische Aberration\nIterationen
+HISTORY_MSG_RAWCACORR_COLORSHIFT;(Sensor-Matrix)\nChromatische Aberration\nFarbverschiebungen\nvermeiden
+PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;Chromatische Aberration: Farbverschiebungen vermeiden
+PREFERENCES_PERFORMANCE_THREADS;Threads
+PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximale Anzahl Threads der Rauschreduzierung und Wavelet (0 = Automatik)
+PREFERENCES_TAB_PERFORMANCE;Performance
+SAVEDLG_FILEFORMAT_FLOAT; Fließkomma
+TP_RAWCACORR_AUTOIT;Iterationen
+TP_RAWCACORR_AVOIDCOLORSHIFT;Farbverschiebungen vermeiden
