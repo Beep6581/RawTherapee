@@ -141,18 +141,19 @@ float* RawImageSource::CA_correct_RT(
         }
     }
 
+    constexpr int cb = 4; // 4 pixels border will be excluded from 'Avoid Colour Shift'
     array2D<float>* redFactor = nullptr;
     array2D<float>* blueFactor = nullptr;
     array2D<float>* oldraw = nullptr;
     if (avoidColourshift) {
-        redFactor = new array2D<float>((W+1)/2, (H+1)/2);
-        blueFactor = new array2D<float>((W+1)/2, (H+1)/2);
-        oldraw = new array2D<float>((W + 1) / 2, H);
+        redFactor = new array2D<float>((W + 1 - 2 * cb) / 2, (H + 1 - 2 * cb) / 2);
+        blueFactor = new array2D<float>((W + 1 - 2 * cb) / 2, (H + 1 - 2 * cb) / 2);
+        oldraw = new array2D<float>((W + 1- 2 * cb) / 2, H- 2 * cb);
         // copy raw values before ca correction
         #pragma omp parallel for
-        for (int i = 0; i < H; ++i) {
-            for (int j = FC(i, 0) & 1; j < W; j += 2) {
-                (*oldraw)[i][j / 2] = rawData[i][j];
+        for (int i = cb; i < H - cb; ++i) {
+            for (int j = cb + (FC(i, 0) & 1); j < W - cb; j += 2) {
+                (*oldraw)[i - cb][(j - cb) / 2] = rawData[i][j];
             }
         }
     }
@@ -1238,14 +1239,14 @@ float* RawImageSource::CA_correct_RT(
                 const vfloat zd5v = F2V(0.5f);
 #endif
                 #pragma omp for
-                for (int i = 0; i < H; ++i) {
+                for (int i = 0; i < H - 2 * cb; ++i) {
                     const int firstCol = FC(i, 0) & 1;
                     const int colour = FC(i, firstCol);
                     const array2D<float>* nonGreen = colour == 0 ? redFactor : blueFactor;
                     int j = firstCol;
 #ifdef __SSE2__
-                    for (; j < W - 7; j += 8) {
-                        const vfloat newvals = LC2VFU(rawData[i][j]);
+                    for (; j < W - 7 - 2 * cb; j += 8) {
+                        const vfloat newvals = LC2VFU(rawData[i + cb][j + cb]);
                         const vfloat oldvals = LVFU((*oldraw)[i][j / 2]);
                         vfloat factors = oldvals / newvals;
                         factors = vself(vmaskf_le(newvals, onev), onev, factors);
@@ -1253,8 +1254,8 @@ float* RawImageSource::CA_correct_RT(
                         STVFU((*nonGreen)[i/2][j/2], LIMV(factors, zd5v, twov));
                     }
 #endif
-                    for (; j < W; j += 2) {
-                        (*nonGreen)[i/2][j/2] = (rawData[i][j] <= 1.f || (*oldraw)[i][j / 2] <= 1.f) ? 1.f : rtengine::LIM((*oldraw)[i][j / 2] / rawData[i][j], 0.5f, 2.f);
+                    for (; j < W - 2 * cb; j += 2) {
+                        (*nonGreen)[i/2][j/2] = (rawData[i + cb][j + cb] <= 1.f || (*oldraw)[i][j / 2] <= 1.f) ? 1.f : rtengine::LIM((*oldraw)[i][j / 2] / rawData[i + cb][j + cb], 0.5f, 2.f);
                     }
                 }
 
@@ -1262,9 +1263,9 @@ float* RawImageSource::CA_correct_RT(
                 {
                     if (H % 2) {
                         // odd height => factors are not set in last row => use values of preceding row
-                        for (int j = 0; j < (W + 1) / 2; ++j) {
-                            (*redFactor)[(H + 1) / 2 - 1][j] = (*redFactor)[(H + 1) / 2 - 2][j];
-                            (*blueFactor)[(H + 1) / 2 - 1][j] = (*blueFactor)[(H + 1) / 2 - 2][j];
+                        for (int j = 0; j < (W + 1 - 2 * cb) / 2; ++j) {
+                            (*redFactor)[(H - 2 * cb + 1) / 2 - 1][j] = (*redFactor)[(H - 2 * cb + 1) / 2 - 2][j];
+                            (*blueFactor)[(H - 2 * cb + 1) / 2 - 1][j] = (*blueFactor)[(H - 2 * cb + 1) / 2 - 2][j];
                         }
                     }
 
@@ -1274,24 +1275,24 @@ float* RawImageSource::CA_correct_RT(
                         const int ngCol = FC(ngRow, 0) & 1;
                         const int colour = FC(ngRow, ngCol);
                         const array2D<float>* nonGreen = colour == 0 ? redFactor : blueFactor;
-                        for (int i = 0; i < (H + 1) / 2; ++i) {
-                            (*nonGreen)[i][(W + 1) / 2 - 1] = (*nonGreen)[i][(W + 1) / 2 - 2];
+                        for (int i = 0; i < (H + 1 - 2 * cb) / 2; ++i) {
+                            (*nonGreen)[i][(W - 2 * cb + 1) / 2 - 1] = (*nonGreen)[i][(W - 2* cb + 1) / 2 - 2];
                         }
                     }
                 }
 
                 // blur correction factors
-                gaussianBlur(*redFactor, *redFactor, (W+1)/2, (H+1)/2, 30.0);
-                gaussianBlur(*blueFactor, *blueFactor, (W+1)/2, (H+1)/2, 30.0);
+                gaussianBlur(*redFactor, *redFactor, (W+1 - 2 * cb)/2, (H+1 - 2 * cb)/2, 30.0);
+                gaussianBlur(*blueFactor, *blueFactor, (W+1 - 2 * cb)/2, (H+1 - 2 * cb)/2, 30.0);
 
                 // apply correction factors to avoid (reduce) colour shift
                 #pragma omp for
-                for (int i = 0; i < H; ++i) {
+                for (int i = 0; i < H - 2 * cb; ++i) {
                     const int firstCol = FC(i, 0) & 1;
                     const int colour = FC(i, firstCol);
                     const array2D<float>* nonGreen = colour == 0 ? redFactor : blueFactor;
-                    for (int j = firstCol; j < W; j += 2) {
-                        rawData[i][j] *= (*nonGreen)[i/2][j/2];
+                    for (int j = firstCol; j < W - 2 * cb; j += 2) {
+                        rawData[i + cb][j + cb] *= (*nonGreen)[i/2][j/2];
                     }
                 }
             }
