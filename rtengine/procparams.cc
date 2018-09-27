@@ -1646,7 +1646,9 @@ bool LensProfParams::operator ==(const LensProfParams& other) const
         && useCA == other.useCA
         && lfCameraMake == other.lfCameraMake
         && lfCameraModel == other.lfCameraModel
-        && lfLens == other.lfLens;
+        && lfLens == other.lfLens
+        && useDist == other.useDist
+        && useVign == other.useVign;
 }
 
 bool LensProfParams::operator !=(const LensProfParams& other) const
@@ -5044,6 +5046,73 @@ int ProcParams::write(const Glib::ustring& fname, const Glib::ustring& content) 
     }
 
     return error;
+}
+
+bool ProcParams::isThumbRelatedChange(const ProcParams &newParams) const
+{
+    return toneCurve != newParams.toneCurve
+        || labCurve != newParams.labCurve
+        || localContrast != newParams.localContrast
+        || rgbCurves != newParams.rgbCurves
+        || colorToning != newParams.colorToning
+        || vibrance != newParams.vibrance
+        || wb != newParams.wb
+        || colorappearance != newParams.colorappearance
+        || epd != newParams.epd
+        || fattal != newParams.fattal
+        || sh != newParams.sh
+        || crop != newParams.crop
+        || coarse != newParams.coarse
+        || commonTrans != newParams.commonTrans
+        || rotate != newParams.rotate
+        || distortion != newParams.distortion
+        || lensProf != newParams.lensProf
+        || perspective != newParams.perspective
+        || gradient != newParams.gradient
+        || pcvignette != newParams.pcvignette
+        || cacorrection != newParams.cacorrection
+        || vignetting != newParams.vignetting
+        || chmixer != newParams.chmixer
+        || blackwhite != newParams.blackwhite
+        || icm != newParams.icm
+        || hsvequalizer != newParams.hsvequalizer
+        || filmSimulation != newParams.filmSimulation
+        || softlight != newParams.softlight;
+}
+
+bool ProcParams::isPanningRelatedChange(const ProcParams &newParams) const
+{
+    return toneCurve != newParams.toneCurve
+        || labCurve != newParams.labCurve
+        || localContrast != newParams.localContrast
+        || rgbCurves != newParams.rgbCurves
+        || colorToning != newParams.colorToning
+        || vibrance != newParams.vibrance
+        || wb != newParams.wb
+        || colorappearance != newParams.colorappearance
+        || epd != newParams.epd
+        || fattal != newParams.fattal
+        || sh != newParams.sh
+        || crop != newParams.crop
+        || coarse != newParams.coarse
+        || commonTrans != newParams.commonTrans
+        || rotate != newParams.rotate
+        || distortion != newParams.distortion
+        || lensProf != newParams.lensProf
+        || perspective != newParams.perspective
+        || gradient != newParams.gradient
+        || pcvignette != newParams.pcvignette
+        || cacorrection != newParams.cacorrection
+        || vignetting != newParams.vignetting
+        || chmixer != newParams.chmixer
+        || blackwhite != newParams.blackwhite
+        || icm != newParams.icm
+        || hsvequalizer != newParams.hsvequalizer
+        || filmSimulation != newParams.filmSimulation
+        || softlight != newParams.softlight
+        || raw != newParams.raw
+        || retinex != newParams.retinex
+        || dirpyrequalizer != newParams.dirpyrequalizer;
 }
 
 PartialProfile::PartialProfile(bool createInstance, bool paramsEditedValue)
