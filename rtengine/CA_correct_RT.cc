@@ -125,9 +125,11 @@ float* RawImageSource::CA_correct_RT(
 )
 {
     BENCHFUN
-// multithreaded and vectorized by Ingo Weyrich
+    // multithreaded and vectorized by Ingo Weyrich
     constexpr int ts = 128;
     constexpr int tsh = ts / 2;
+    constexpr int cb = 2; // 2 pixels border will be excluded from correction
+
     //shifts to location of vertical and diagonal neighbours
     constexpr int v1 = ts, v2 = 2 * ts, v3 = 3 * ts, v4 = 4 * ts; //, p1=-ts+1, p2=-2*ts+2, p3=-3*ts+3, m1=ts+1, m2=2*ts+2, m3=3*ts+3;
 
@@ -141,7 +143,6 @@ float* RawImageSource::CA_correct_RT(
         }
     }
 
-    constexpr int cb = 4; // 4 pixels border will be excluded from 'Avoid Colour Shift'
     array2D<float>* redFactor = nullptr;
     array2D<float>* blueFactor = nullptr;
     array2D<float>* oldraw = nullptr;
@@ -1209,15 +1210,15 @@ float* RawImageSource::CA_correct_RT(
                 // copy temporary image matrix back to image matrix
                 #pragma omp for
 
-                for (int row = 0; row < height; row++) {
-                    int col = FC(row, 0) & 1;
+                for (int row = cb; row < height - cb; row++) {
+                    int col = cb + (FC(row, 0) & 1);
                     int indx = (row * width + col) >> 1;
 #ifdef __SSE2__
-                    for (; col < width - 7 - (3 * (W & 1)); col += 8, indx += 4) {
+                    for (; col < width - 7 - cb; col += 8, indx += 4) {
                         STC2VFU(rawData[row][col], LVFU(RawDataTmp[indx]));
                     }
 #endif
-                    for (; col < width - (3 * (W & 1)); col += 2, indx++) {
+                    for (; col < width - cb; col += 2, indx++) {
                         rawData[row][col] = RawDataTmp[indx];
                     }
                 }
@@ -1282,8 +1283,8 @@ float* RawImageSource::CA_correct_RT(
                 }
 
                 // blur correction factors
-                gaussianBlur(*redFactor, *redFactor, (W+1 - 2 * cb)/2, (H+1 - 2 * cb)/2, 30.0);
-                gaussianBlur(*blueFactor, *blueFactor, (W+1 - 2 * cb)/2, (H+1 - 2 * cb)/2, 30.0);
+                gaussianBlur(*redFactor, *redFactor, (W + 1 - 2 * cb) / 2, (H + 1 - 2 * cb) / 2, 30.0);
+                gaussianBlur(*blueFactor, *blueFactor, (W + 1 - 2 * cb) / 2, (H + 1 - 2 * cb) / 2, 30.0);
 
                 // apply correction factors to avoid (reduce) colour shift
                 #pragma omp for
@@ -1292,7 +1293,7 @@ float* RawImageSource::CA_correct_RT(
                     const int colour = FC(i, firstCol);
                     const array2D<float>* nonGreen = colour == 0 ? redFactor : blueFactor;
                     for (int j = firstCol; j < W - 2 * cb; j += 2) {
-                        rawData[i + cb][j + cb] *= (*nonGreen)[i/2][j/2];
+                        rawData[i + cb][j + cb] *= (*nonGreen)[i / 2][j / 2];
                     }
                 }
             }
