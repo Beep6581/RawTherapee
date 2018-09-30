@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2018 TooWaBoo
-  Version 2.81
+  Version 2.82
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -144,6 +144,10 @@ paned {
 arrow {
     min-width: 1.333333333333333333em;
     min-height: 1.333333333333333333em;
+}
+/* combobox cellview to high for font size 8@96dpi*/
+cellview {
+    margin: -1px 0;
 }
 
 text {
@@ -1585,12 +1589,9 @@ button.MiddleH {
     margin-left: -2px;
 }
 
-#PlacesPaned button.Left,
-#PlacesPaned button.Right {
-    margin-top: 3px;
-}
 #PlacesPaned combobox {
-    margin-bottom: -3px;
+    margin-bottom: -8px;
+    padding-bottom: 0.416666666666666666em;
 }
 /**/
 
