@@ -1501,7 +1501,8 @@ SHParams::SHParams() :
     htonalwidth(70),
     shadows(0),
     stonalwidth(30),
-    radius(40)
+    radius(40),
+    lab(false)
 {
 }
 
@@ -1513,7 +1514,8 @@ bool SHParams::operator ==(const SHParams& other) const
         && htonalwidth == other.htonalwidth
         && shadows == other.shadows
         && stonalwidth == other.stonalwidth
-        && radius == other.radius;
+        && radius == other.radius
+        && lab == other.lab;
 }
 
 bool SHParams::operator !=(const SHParams& other) const
@@ -3088,6 +3090,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->sh.shadows, "Shadows & Highlights", "Shadows", sh.shadows, keyFile);
         saveToKeyfile(!pedited || pedited->sh.stonalwidth, "Shadows & Highlights", "ShadowTonalWidth", sh.stonalwidth, keyFile);
         saveToKeyfile(!pedited || pedited->sh.radius, "Shadows & Highlights", "Radius", sh.radius, keyFile);
+        saveToKeyfile(!pedited || pedited->sh.lab, "Shadows & Highlights", "Lab", sh.lab, keyFile);
 
 // Crop
         saveToKeyfile(!pedited || pedited->crop.enabled, "Crop", "Enabled", crop.enabled, keyFile);
@@ -4020,6 +4023,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Shadows & Highlights", "Shadows", pedited, sh.shadows, pedited->sh.shadows);
             assignFromKeyfile(keyFile, "Shadows & Highlights", "ShadowTonalWidth", pedited, sh.stonalwidth, pedited->sh.stonalwidth);
             assignFromKeyfile(keyFile, "Shadows & Highlights", "Radius", pedited, sh.radius, pedited->sh.radius);
+            if (ppVersion >= 344) {
+                assignFromKeyfile(keyFile, "Shadows & Highlights", "Lab", pedited, sh.lab, pedited->sh.lab);
+            } else {
+                sh.lab = true;
+            }
 
             if (keyFile.has_key("Shadows & Highlights", "LocalContrast") && ppVersion < 329) {
                 int lc = keyFile.get_integer("Shadows & Highlights", "LocalContrast");

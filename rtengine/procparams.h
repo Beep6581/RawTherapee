@@ -749,6 +749,7 @@ struct SHParams {
     int     shadows;
     int     stonalwidth;
     int     radius;
+    bool    lab;
 
     SHParams();
 
