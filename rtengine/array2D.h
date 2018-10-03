@@ -267,11 +267,11 @@ public:
         ar_realloc(w, h);
         memcpy(data, copy, w * h * sizeof(T));
     }
-    int width()
+    int width() const
     {
         return x;
     }
-    int height()
+    int height() const
     {
         return y;
     }
