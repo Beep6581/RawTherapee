@@ -22,6 +22,7 @@
 #include "gauss.h"
 #include "sleef.c"
 #include "opthelper.h"
+#include "guidedfilter.h"
 
 namespace rtengine {
 
@@ -35,9 +36,29 @@ void ImProcFunctions::shadowsHighlights(LabImage *lab)
     const int height = lab->H;
 
     array2D<float> mask(width, height);
-    const float sigma = params->sh.radius * 5.f / scale;
-    LUTf f(32768);
+    array2D<float> L(width, height);
+    const float radius = float(params->sh.radius) * 10 / scale; 
+    LUTf f(65536);
 
+    TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+    TMatrix iws = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
+
+    const auto rgb2lab =
+        [&](float R, float G, float B, float &l, float &a, float &b) -> void
+        {
+            float x, y, z;
+            Color::rgbxyz(R, G, B, x, y, z, ws);
+            Color::XYZ2Lab(x, y, z, l, a, b);
+        };
+
+    const auto lab2rgb =
+        [&](float l, float a, float b, float &R, float &G, float &B) -> void
+        {
+            float x, y, z;
+            Color::Lab2XYZ(l, a, b, x, y, z);
+            Color::xyz2rgb(x, y, z, R, G, B, iws);
+        };
+    
     const auto apply =
         [&](int amount, int tonalwidth, bool hl) -> void
         {
@@ -45,26 +66,23 @@ void ImProcFunctions::shadowsHighlights(LabImage *lab)
             const float scale = hl ? (thresh > 0.f ? 0.9f / thresh : 1.f) : thresh * 0.9f;
 
 #ifdef _OPENMP
-            #pragma omp parallel if (multiThread)
+            #pragma omp parallel for if (multiThread)
 #endif
-            {
-
-#ifdef _OPENMP
-                #pragma omp for
-#endif
-                for (int y = 0; y < height; ++y) {
-                    for (int x = 0; x < width; ++x) {
-                        float l = lab->L[y][x];
-                        if (hl) {
-                            mask[y][x] = (l > thresh) ? 1.f : pow4(l * scale);
-                        } else {
-                            mask[y][x] = l <= thresh ? 1.f : pow4(scale / l);
-                        }
+            for (int y = 0; y < height; ++y) {
+                for (int x = 0; x < width; ++x) {
+                    float l = lab->L[y][x];
+                    float l1 = l / 32768.f;
+                    if (hl) {
+                        mask[y][x] = (l > thresh) ? 1.f : pow4(l * scale);
+                        L[y][x] = 1.f - l1;
+                    } else {
+                        mask[y][x] = l <= thresh ? 1.f : pow4(scale / l);
+                        L[y][x] = l1;
                     }
                 }
-
-                gaussianBlur(mask, mask, width, height, sigma);
             }
+
+            guidedFilter(L, mask, mask, radius, 0.075, multiThread, 4);
 
             const float base = std::pow(4.f, float(amount)/100.f);
             const float gamma = hl ? base : 1.f / base;
@@ -83,32 +101,30 @@ void ImProcFunctions::shadowsHighlights(LabImage *lab)
 #ifdef _OPENMP
                 #pragma omp parallel for if (multiThread)
 #endif
-                for (int l = 0; l < 32768; ++l) {
+                for (int c = 0; c < 65536; ++c) {
+                    float l, a, b;
+                    float R = c, G = c, B = c;
+                    rgb2lab(R, G, B, l, a, b);
                     auto base = pow_F(l / 32768.f, gamma);
                     // get a bit more contrast in the shadows
                     base = sh_contrast.getVal(base);
-                    f[l] = base * 32768.f;
+                    l = base * 32768.f;
+                    lab2rgb(l, a, b, R, G, B);
+                    f[c] = G;
                 }
             } else {
-#ifdef __SSE2__
-                vfloat c32768v = F2V(32768.f);
-                vfloat lv = _mm_setr_ps(0,1,2,3);
-                vfloat fourv = F2V(4.f);
-                vfloat gammav = F2V(gamma);
-                for (int l = 0; l < 32768; l += 4) {
-                    vfloat basev = pow_F(lv / c32768v, gammav);
-                    STVFU(f[l], basev * c32768v);
-                    lv += fourv;
-                }
-#else
 #ifdef _OPENMP
                 #pragma omp parallel for if (multiThread)
 #endif
-                for (int l = 0; l < 32768; ++l) {
+                for (int c = 0; c < 65536; ++c) {
+                    float l, a, b;
+                    float R = c, G = c, B = c;
+                    rgb2lab(R, G, B, l, a, b);
                     auto base = pow_F(l / 32768.f, gamma);
-                    f[l] = base * 32768.f;
+                    l = base * 32768.f;
+                    lab2rgb(l, a, b, R, G, B);
+                    f[c] = G;
                 }
-#endif
             }
 
 #ifdef _OPENMP
@@ -116,30 +132,26 @@ void ImProcFunctions::shadowsHighlights(LabImage *lab)
 #endif
             for (int y = 0; y < height; ++y) {
                 for (int x = 0; x < width; ++x) {
-                    float l = lab->L[y][x];
-                    float blend = mask[y][x];
+                    float blend = LIM01(mask[y][x]);
                     float orig = 1.f - blend;
-                    if (l >= 0.f && l < 32768.f) {
-                        lab->L[y][x] = f[l] * blend + l * orig;
-                        if (!hl && l > 1.f) {
-                            // when pushing shadows, scale also the chromaticity
-                            float s = max(lab->L[y][x] / l * 0.5f, 1.f) * blend;
-                            float a = lab->a[y][x];
-                            float b = lab->b[y][x];
-                            lab->a[y][x] = a * s + a * orig;
-                            lab->b[y][x] = b * s + b * orig;
+                    if (lab->L[y][x] >= 0.f && lab->L[y][x] < 32768.f) {
+                        float rgb[3];
+                        lab2rgb(lab->L[y][x], lab->a[y][x], lab->b[y][x], rgb[0], rgb[1], rgb[2]);
+                        for (int i = 0; i < 3; ++i) {
+                            rgb[i] = f[rgb[i]] * blend + rgb[i] * orig;
                         }
+                        rgb2lab(rgb[0], rgb[1], rgb[2], lab->L[y][x], lab->a[y][x], lab->b[y][x]);
                     }
                 }
             }
         };
 
     if (params->sh.highlights > 0) {
-        apply(params->sh.highlights, params->sh.htonalwidth, true);
+        apply(params->sh.highlights * 0.7, params->sh.htonalwidth, true);
     }
 
     if (params->sh.shadows > 0) {
-        apply(params->sh.shadows, params->sh.stonalwidth, false);
+        apply(params->sh.shadows * 0.6, params->sh.stonalwidth, false);
     }
 }
 
