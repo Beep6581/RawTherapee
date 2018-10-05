@@ -1482,6 +1482,10 @@ button.text-button label {
     margin: 0 0.5em;/* x */
 }
 
+button image + label {
+    margin-left: 0.25em;
+}
+
 #PrefNotebook > stack > :nth-child(5) combobox {
     /* margin: 0.166666666666666666em 0; */
     margin: 2px 0;
@@ -2153,9 +2157,9 @@ headerbar .title:backdrop {
 }
  */
 
-/* 
-.view:not(check):not(radio), image:not(check):not(radio), spinbutton button, cellview {
-    -gtk-icon-transform: scale(1.5);
-}
-* {-gtk-dpi: 144;}
- */
+
+/* .view:not(check):not(radio), image:not(check):not(radio), spinbutton button, cellview {
+    -gtk-icon-transform: scale(calc(( 96 / 96 ) * ( 8 / 9 )));
+} */
+/* * {-gtk-dpi: 144;} */
+
