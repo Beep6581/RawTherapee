@@ -363,15 +363,12 @@ void BatchQueuePanel::pathFolderButtonPressed ()
 // since these settings are shared with editorpanel :
 void BatchQueuePanel::pathFolderChanged ()
 {
-
     options.savePathFolder = outdirFolder->get_filename();
 }
 
-void BatchQueuePanel::formatChanged (Glib::ustring f)
+void BatchQueuePanel::formatChanged(const Glib::ustring& format)
 {
-
-    options.saveFormatBatch = saveFormatPanel->getFormat ();
-
+    options.saveFormatBatch = saveFormatPanel->getFormat();
 }
 
 bool BatchQueuePanel::handleShortcutKey (GdkEventKey* event)
