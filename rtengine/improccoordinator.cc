@@ -1410,7 +1410,39 @@ void ImProcCoordinator::process()
     paramsUpdateMutex.lock();
 
     while (changeSinceLast) {
-        const bool panningRelatedChange = params.isPanningRelatedChange(nextParams);
+        const bool panningRelatedChange =
+               params.toneCurve != nextParams.toneCurve
+            || params.labCurve != nextParams.labCurve
+            || params.localContrast != nextParams.localContrast
+            || params.rgbCurves != nextParams.rgbCurves
+            || params.colorToning != nextParams.colorToning
+            || params.vibrance != nextParams.vibrance
+            || params.wb != nextParams.wb
+            || params.colorappearance != nextParams.colorappearance
+            || params.epd != nextParams.epd
+            || params.fattal != nextParams.fattal
+            || params.sh != nextParams.sh
+            || params.crop != nextParams.crop
+            || params.coarse != nextParams.coarse
+            || params.commonTrans != nextParams.commonTrans
+            || params.rotate != nextParams.rotate
+            || params.distortion != nextParams.distortion
+            || params.lensProf != nextParams.lensProf
+            || params.perspective != nextParams.perspective
+            || params.gradient != nextParams.gradient
+            || params.pcvignette != nextParams.pcvignette
+            || params.cacorrection != nextParams.cacorrection
+            || params.vignetting != nextParams.vignetting
+            || params.chmixer != nextParams.chmixer
+            || params.blackwhite != nextParams.blackwhite
+            || params.icm != nextParams.icm
+            || params.hsvequalizer != nextParams.hsvequalizer
+            || params.filmSimulation != nextParams.filmSimulation
+            || params.softlight != nextParams.softlight
+            || params.raw != nextParams.raw
+            || params.retinex != nextParams.retinex
+            || params.dirpyrequalizer != nextParams.dirpyrequalizer;
+
         params = nextParams;
         int change = changeSinceLast;
         changeSinceLast = 0;

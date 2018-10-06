@@ -1488,9 +1488,6 @@ public:
     bool operator ==(const ProcParams& other) const;
     bool operator !=(const ProcParams& other) const;
 
-    bool isThumbRelatedChange(const ProcParams &newParams) const;
-    bool isPanningRelatedChange(const ProcParams &newParams) const;
-
 private:
     /** Write the ProcParams's text in the file of the given name.
     * @param fname the name of the file

@@ -419,7 +419,36 @@ bool Thumbnail::hasProcParams () const
 
 void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoChangedIt, bool updateCacheNow)
 {
-    const bool needsReprocessing = pparams.isThumbRelatedChange(pp);
+    const bool needsReprocessing =
+           pparams.toneCurve != pp.toneCurve
+        || pparams.labCurve != pp.labCurve
+        || pparams.localContrast != pp.localContrast
+        || pparams.rgbCurves != pp.rgbCurves
+        || pparams.colorToning != pp.colorToning
+        || pparams.vibrance != pp.vibrance
+        || pparams.wb != pp.wb
+        || pparams.colorappearance != pp.colorappearance
+        || pparams.epd != pp.epd
+        || pparams.fattal != pp.fattal
+        || pparams.sh != pp.sh
+        || pparams.crop != pp.crop
+        || pparams.coarse != pp.coarse
+        || pparams.commonTrans != pp.commonTrans
+        || pparams.rotate != pp.rotate
+        || pparams.distortion != pp.distortion
+        || pparams.lensProf != pp.lensProf
+        || pparams.perspective != pp.perspective
+        || pparams.gradient != pp.gradient
+        || pparams.pcvignette != pp.pcvignette
+        || pparams.cacorrection != pp.cacorrection
+        || pparams.vignetting != pp.vignetting
+        || pparams.chmixer != pp.chmixer
+        || pparams.blackwhite != pp.blackwhite
+        || pparams.icm != pp.icm
+        || pparams.hsvequalizer != pp.hsvequalizer
+        || pparams.filmSimulation != pp.filmSimulation
+        || pparams.softlight != pp.softlight;
+
     {
         MyMutex::MyLock lock(mutex);
 
