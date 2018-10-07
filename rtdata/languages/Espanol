@@ -842,7 +842,6 @@ PREFERENCES_TAB_GENERAL;General
 PREFERENCES_TAB_IMPROC;Procesamiento de imágenes
 PREFERENCES_TAB_SOUND;Sonidos
 PREFERENCES_TP_LABEL;Panel de herramientas:
-PREFERENCES_TP_USEICONORTEXT;Usar iconos de pestaña en lugar de texto
 PREFERENCES_TP_VSCROLLBAR;Ocultar barra de desplazamiento vertical del panel de herramientas
 PREFERENCES_USEBUNDLEDPROFILES;Usar perfiles empaquetados
 PREFERENCES_VIEW;Balance de blancos en el dispositivo de salida (monitor, TV, proyector...)
@@ -1727,7 +1726,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
 !HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
-!HISTORY_MSG_RAWCACORR_COLOURSHIFT;Raw CA Correction - Avoid color shift
+!HISTORY_MSG_RAWCACORR_COLORSHIFT;Raw CA Correction - Avoid color shift
 !HISTORY_MSG_RAW_BORDER;Raw border
 !HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
@@ -1831,6 +1830,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 !PARTIALPASTE_METADATA;Metadata mode
 !PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !PARTIALPASTE_PRSHARPENING;Post-resize sharpening
+!PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA avoid color shift
 !PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
 !PARTIALPASTE_RAW_BORDER;Raw border
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image

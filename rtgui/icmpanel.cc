@@ -686,7 +686,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
 
 void ICMPanel::adjusterChanged(Adjuster* a, double newval)
 {
-    if (listener  || batchMode) {
+    if (listener) {
         Glib::ustring costr2 = Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2), newval);
 
         if (a == wGamma) {

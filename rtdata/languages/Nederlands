@@ -1076,7 +1076,6 @@ PREFERENCES_TAB_GENERAL;Algemeen
 PREFERENCES_TAB_IMPROC;Beeldverwerking
 PREFERENCES_TAB_SOUND;Geluiden
 PREFERENCES_TP_LABEL;Gereedschapspaneel:
-PREFERENCES_TP_USEICONORTEXT;Gebruik iconen ipv. tekst voor de tabbladen
 PREFERENCES_TP_VSCROLLBAR;Verberg de schuifbalk van het gereedschapspaneel
 PREFERENCES_TUNNELMETADATA;Kopieer Exif/IPTC/XMP-data onveranderd naar uitvoerbestand
 PREFERENCES_USEBUNDLEDPROFILES;Gebruik gebundelde profielen
@@ -2136,7 +2135,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
 !HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
-!HISTORY_MSG_RAWCACORR_COLOURSHIFT;Raw CA Correction - Avoid color shift
+!HISTORY_MSG_RAWCACORR_COLORSHIFT;Raw CA Correction - Avoid color shift
 !HISTORY_MSG_RAW_BORDER;Raw border
 !HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
@@ -2201,6 +2200,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !PARTIALPASTE_LOCALCONTRAST;Local contrast
 !PARTIALPASTE_METADATA;Metadata mode
 !PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
+!PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA avoid color shift
 !PARTIALPASTE_RAW_BORDER;Raw border
 !PARTIALPASTE_SOFTLIGHT;Soft light
 !PARTIALPASTE_TM_FATTAL;Dynamic range compression

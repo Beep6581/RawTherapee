@@ -24,6 +24,7 @@
 #define MyAppPublisher "rawtherapee.com"
 #define MyAppURL "http://www.rawtherapee.com/"
 #define MyAppExeName "rawtherapee.exe"
+#define MyAppCliExeName "rawtherapee-cli.exe"
 #define MyBuildBasePath "${CMAKE_INSTALL_PREFIX}"
 #define MySourceBasePath "${PROJECT_SOURCE_DIR}"
 #define MyBitDepth "${BUILD_BIT_DEPTH}"
@@ -85,6 +86,8 @@ Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 
 [Tasks]
+Name: "userinstall"; Description: "Only me (Single User Install)"; GroupDescription: "Install RawTherapee for:"; Flags: exclusive unchecked
+Name: "commoninstall"; Description: "Anyone who uses this computer (Multi-User Install)"; GroupDescription: "Install RawTherapee for:"; Flags: exclusive; Check: IsElevatedUser
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 ;Name: "desktopicon\common"; Description: "For all users"; GroupDescription: "Additional icons:"; Flags: exclusive
 ;Name: "desktopicon\user"; Description: "For the current user only"; GroupDescription: "Additional icons:"; Flags: exclusive unchecked
@@ -122,14 +125,31 @@ Source: "{#MyBuildBasePath}\fonts\DroidSansMonoSlashed.ttf"; DestDir: "{fonts}";
 Name: "{group}\{#MyAppName} {#MyAppVersion}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:ProgramOnTheWeb,{#MyAppName}}"; Filename: "{#MyAppURL}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName} {#MyAppVersion}}"; Filename: "{uninstallexe}"
-Name: "{commondesktop}\{#MyAppName} {#MyAppVersion}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+Name: "{commondesktop}\{#MyAppName} {#MyAppVersion}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon and commoninstall
+Name: "{userdesktop}\{#MyAppName} {#MyAppVersion}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon and userinstall
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName} {#MyAppVersion}"; Filename: "{app}\{#MyAppExeName}"; Tasks: quicklaunchicon
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
 [Registry]
-Root: HKCU; Subkey: "SOFTWARE\Classes\Directory\shell\Browse with RawTherapee"; ValueType: string; ValueData: "Browse with RawTherapee"; Flags: uninsdeletekey; Tasks: regBrowseFolder
-Root: HKCU; Subkey: "SOFTWARE\Classes\Directory\shell\Browse with RawTherapee\command"; ValueType: string; ValueData: "{app}\{#MyAppExeName} -w ""%1"""; Flags: uninsdeletekey; Tasks: regBrowseFolder
-Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\Open with RawTherapee"; ValueType: string; ValueData: "Open with RawTherapee"; Flags: uninsdeletekey; Tasks: regOpenFile
-Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\Open with RawTherapee\command"; ValueType: string; ValueData: "{app}\{#MyAppExeName} -R ""%1"""; Flags: uninsdeletekey; Tasks: regOpenFile
+Root: HKCU; Subkey: "SOFTWARE\Classes\Directory\shell\Browse with RawTherapee"; ValueType: string; ValueData: "Browse with RawTherapee"; Flags: uninsdeletekey; Tasks: regBrowseFolder and userinstall
+Root: HKCU; Subkey: "SOFTWARE\Classes\Directory\shell\Browse with RawTherapee\command"; ValueType: string; ValueData: "{app}\{#MyAppExeName} -w ""%1"""; Flags: uninsdeletekey; Tasks: regBrowseFolder and userinstall
+Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\Open with RawTherapee"; ValueType: string; ValueData: "Open with RawTherapee"; Flags: uninsdeletekey; Tasks: regOpenFile and userinstall
+Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\Open with RawTherapee\command"; ValueType: string; ValueData: "{app}\{#MyAppExeName} -R ""%1"""; Flags: uninsdeletekey; Tasks: regOpenFile and userinstall
+Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\{#MyAppExeName}"; ValueType: string; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletekey; Tasks: userinstall
+Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\{#MyAppCliExeName}"; ValueType: string; ValueData: "{app}\{#MyAppCliExeName}"; Flags: uninsdeletekey; Tasks: userinstall
+
+Root: HKLM; Subkey: "SOFTWARE\Classes\Directory\shell\Browse with RawTherapee"; ValueType: string; ValueData: "Browse with RawTherapee"; Flags: uninsdeletekey; Tasks: regBrowseFolder and commoninstall
+Root: HKLM; Subkey: "SOFTWARE\Classes\Directory\shell\Browse with RawTherapee\command"; ValueType: string; ValueData: "{app}\{#MyAppExeName} -w ""%1"""; Flags: uninsdeletekey; Tasks: regBrowseFolder and commoninstall
+Root: HKLM; Subkey: "SOFTWARE\Classes\*\shell\Open with RawTherapee"; ValueType: string; ValueData: "Open with RawTherapee"; Flags: uninsdeletekey; Tasks: regOpenFile and commoninstall
+Root: HKLM; Subkey: "SOFTWARE\Classes\*\shell\Open with RawTherapee\command"; ValueType: string; ValueData: "{app}\{#MyAppExeName} -R ""%1"""; Flags: uninsdeletekey; Tasks: regOpenFile and commoninstall
+Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\{#MyAppExeName}"; ValueType: string; ValueData: "{app}\{#MyAppExeName}"; Flags: uninsdeletekey; Tasks: commoninstall
+Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\{#MyAppCliExeName}"; ValueType: string; ValueData: "{app}\{#MyAppCliExeName}"; Flags: uninsdeletekey; Tasks: commoninstall
+
+[Code]
+function IsElevatedUser(): Boolean;
+begin
+Result := IsAdminLoggedOn or IsPowerUserLoggedOn;
+end;
+ 

@@ -26,7 +26,7 @@ HISTORY_MSG_392;W - Residual - Colour Balance
 HISTORY_MSG_419;Retinex - Colour space
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colours
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Colour correction
-HISTORY_MSG_RAWCACORR_COLOURSHIFT;Raw CA Correction - Avoid colour shift
+HISTORY_MSG_RAWCACORR_COLORSHIFT;Raw CA Correction - Avoid colour shift
 MAIN_TAB_COLOR;Colour
 MAIN_TOOLTIP_BACKCOLOR0;Background colour of the preview: <b>Theme-based</b>\nShortcut: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR1;Background colour of the preview: <b>Black</b>\nShortcut: <b>9</b>
@@ -35,6 +35,7 @@ MAIN_TOOLTIP_BACKCOLOR3;Background colour of the preview: <b>Middle grey</b>\nSh
 PARTIALPASTE_COLORGROUP;Colour Related Settings
 PARTIALPASTE_COLORTONING;Colour toning
 PARTIALPASTE_ICMSETTINGS;Colour management settings
+PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA avoid colour shift
 PARTIALPASTE_RAW_FALSECOLOR;False colour suppression
 PREFERENCES_AUTOMONPROFILE;Use operating system's main monitor colour profile
 PREFERENCES_BEHAVIOR;Behaviour
@@ -1273,7 +1274,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
 !PREFERENCES_TP_LABEL;Tool panel:
-!PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
 !PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
 !PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
 !PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles

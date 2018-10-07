@@ -443,7 +443,7 @@ bool HistogramRGBArea::getShow()
 
 void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustring &profile, const Glib::ustring &profileW)
 {
-    if (!get_realized () || !showMode) {
+    if (!get_realized () || !showMode || rawMode) {
         return;
     }
 
@@ -606,10 +606,6 @@ void HistogramRGBArea::updateOptions (bool r, bool g, bool b, bool l, bool c, bo
         barDisplayed = false;
     }
 
-    // Disable (but don't hide it) the bar button when RAW histogram is displayed
-    if (rawMode) {
-        showMode = false;
-    }
 }
 
 void HistogramRGBArea::on_realize ()
@@ -820,14 +816,14 @@ void HistogramArea::updateBackBuffer ()
     // draw vertical gridlines
     if (options.histogramDrawMode < 2) {
         for (int i = 1; i < nrOfVGridPartitions; i++) {
-            cr->move_to ((pow(2.0,i) - 1) / 255 * w + 0.5, 1.5);
-            cr->line_to ((pow(2.0,i) - 1) / 255 * w + 0.5, h - 2);
+            cr->move_to ((pow(2.0,i) - 1) / 255.0 * w + 0.5, 1.5);
+            cr->line_to ((pow(2.0,i) - 1) / 255.0 * w + 0.5, h - 2);
             cr->stroke ();
         }
     } else {
         for (int i = 1; i < nrOfVGridPartitions; i++) {
-            cr->move_to (HistogramScaling::log (255, pow(2.0,i) - 1) / 255 * w + 0.5, 1.5);
-            cr->line_to (HistogramScaling::log (255, pow(2.0,i) - 1) / 255 * w + 0.5, h - 2);
+            cr->move_to (HistogramScaling::log (255, pow(2.0,i) - 1) / 255.0 * w + 0.5, 1.5);
+            cr->line_to (HistogramScaling::log (255, pow(2.0,i) - 1) / 255.0 * w + 0.5, h - 2);
             cr->stroke ();
         }
     }
@@ -835,14 +831,14 @@ void HistogramArea::updateBackBuffer ()
     // draw horizontal gridlines
     if (options.histogramDrawMode == 0) {
         for (int i = 1; i < nrOfHGridPartitions; i++) {
-            cr->move_to (1.5, i * h / nrOfHGridPartitions + 0.5);
-            cr->line_to (w - 2, i * h / nrOfHGridPartitions + 0.5);
+            cr->move_to (1.5, i * (double)h / nrOfHGridPartitions + 0.5);
+            cr->line_to (w - 2, i * (double)h / nrOfHGridPartitions + 0.5);
             cr->stroke ();
         }
     } else {
         for (int i = 1; i < nrOfHGridPartitions; i++) {
-            cr->move_to (1.5, h - HistogramScaling::log (h, i * h / nrOfHGridPartitions) + 0.5);
-            cr->line_to (w - 2, h - HistogramScaling::log (h, i * h / nrOfHGridPartitions) + 0.5);
+            cr->move_to (1.5, h - HistogramScaling::log (h, i * (double)h / nrOfHGridPartitions) + 0.5);
+            cr->line_to (w - 2, h - HistogramScaling::log (h, i * (double)h / nrOfHGridPartitions) + 0.5);
             cr->stroke ();
         }
     }

@@ -39,6 +39,9 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     pack_start (*horiz);
     pack_start (*vert);
 
+    horiz->setLogScale(2, 0);
+    vert->setLogScale(2, 0);
+
     show_all();
 }
 

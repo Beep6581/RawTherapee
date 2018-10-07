@@ -714,7 +714,6 @@ PREFERENCES_TAB_GENERAL;Опште
 PREFERENCES_TAB_IMPROC;Обрада сликe
 PREFERENCES_TAB_SOUND;Звуци
 PREFERENCES_TP_LABEL;Површ алата:
-PREFERENCES_TP_USEICONORTEXT;Користи иконице језичка уместо текста
 PREFERENCES_TP_VSCROLLBAR;Сакриј клизаче у области са алаткама
 PREFERENCES_TUNNELMETADATA;Копирај неизмењене IPTC/XMP (када је слика означена другим програмом)
 PREFERENCES_USEBUNDLEDPROFILES;Користи профиле који долазе уз програм
@@ -1578,7 +1577,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
 !HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
-!HISTORY_MSG_RAWCACORR_COLOURSHIFT;Raw CA Correction - Avoid color shift
+!HISTORY_MSG_RAWCACORR_COLORSHIFT;Raw CA Correction - Avoid color shift
 !HISTORY_MSG_RAW_BORDER;Raw border
 !HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
@@ -1688,6 +1687,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !PARTIALPASTE_PREPROCESS_HOTPIXFILT;Hot pixel filter
 !PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !PARTIALPASTE_PRSHARPENING;Post-resize sharpening
+!PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA avoid color shift
 !PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
 !PARTIALPASTE_RAW_BORDER;Raw border
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image

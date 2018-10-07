@@ -657,18 +657,21 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     Gtk::Image *saveButtonImage =  Gtk::manage (new RTImage ("save.png"));
     saveimgas = Gtk::manage (new Gtk::Button ());
+    saveimgas->set_relief(Gtk::RELIEF_NONE);
     saveimgas->add (*saveButtonImage);
     saveimgas->set_tooltip_markup (M ("MAIN_BUTTON_SAVE_TOOLTIP"));
     setExpandAlignProperties (saveimgas, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
     Gtk::Image *queueButtonImage = Gtk::manage (new RTImage ("gears.png"));
     queueimg = Gtk::manage (new Gtk::Button ());
+    queueimg->set_relief(Gtk::RELIEF_NONE);
     queueimg->add (*queueButtonImage);
     queueimg->set_tooltip_markup (M ("MAIN_BUTTON_PUTTOQUEUE_TOOLTIP"));
     setExpandAlignProperties (queueimg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
     Gtk::Image *sendToEditorButtonImage = Gtk::manage (new RTImage ("palette-brush.png"));
     sendtogimp = Gtk::manage (new Gtk::Button ());
+    sendtogimp->set_relief(Gtk::RELIEF_NONE);
     sendtogimp->add (*sendToEditorButtonImage);
     sendtogimp->set_tooltip_markup (M ("MAIN_BUTTON_SENDTOEDITOR_TOOLTIP"));
     setExpandAlignProperties (sendtogimp, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
@@ -2184,9 +2187,11 @@ void EditorPanel::beforeAfterToggled ()
         beforeLabel = Gtk::manage (new Gtk::Label ());
         beforeLabel->set_markup (Glib::ustring ("<b>") + M ("GENERAL_BEFORE") + "</b>");
         tbBeforeLock = Gtk::manage (new Gtk::ToggleButton ());
+        tbBeforeLock->set_relief(Gtk::RELIEF_NONE);
         tbBeforeLock->set_tooltip_markup (M ("MAIN_TOOLTIP_BEFOREAFTERLOCK"));
         tbBeforeLock->signal_toggled().connect ( sigc::mem_fun (*this, &EditorPanel::tbBeforeLock_toggled) );
         beforeHeaderBox = Gtk::manage (new Gtk::Box (Gtk::ORIENTATION_HORIZONTAL));
+        beforeHeaderBox->get_style_context()->add_class("smallbuttonbox");
         beforeHeaderBox->pack_end (*tbBeforeLock, Gtk::PACK_SHRINK, 2);
         beforeHeaderBox->pack_end (*beforeLabel, Gtk::PACK_SHRINK, 2);
         beforeHeaderBox->set_size_request (0, HeaderBoxHeight);
@@ -2313,11 +2318,6 @@ void EditorPanel::updateProfiles (const Glib::ustring &printerProfile, rtengine:
 void EditorPanel::updateTPVScrollbar (bool hide)
 {
     tpc->updateTPVScrollbar (hide);
-}
-
-void EditorPanel::updateTabsUsesIcons (bool useIcons)
-{
-    tpc->updateTabsUsesIcons (useIcons);
 }
 
 void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)

@@ -232,6 +232,7 @@ RTWindow::RTWindow ()
 
         Gtk::Button* iccProfileCreator = Gtk::manage (new Gtk::Button ());
         setExpandAlignProperties (iccProfileCreator, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+        iccProfileCreator->set_relief(Gtk::RELIEF_NONE);
         iccProfileCreator->set_image (*Gtk::manage (new RTImage ("gamut-plus.png")));
         iccProfileCreator->set_tooltip_markup (M ("MAIN_BUTTON_ICCPROFCREATOR"));
         iccProfileCreator->signal_clicked().connect ( sigc::mem_fun (*this, &RTWindow::showICCProfileCreator) );
@@ -240,6 +241,7 @@ RTWindow::RTWindow ()
         //Gtk::Button* preferences = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_PREFERENCES")+"..."));
         Gtk::Button* preferences = Gtk::manage (new Gtk::Button ());
         setExpandAlignProperties (preferences, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+        preferences->set_relief(Gtk::RELIEF_NONE);
         preferences->set_image (*Gtk::manage (new RTImage ("preferences.png")));
         preferences->set_tooltip_markup (M ("MAIN_BUTTON_PREFERENCES"));
         preferences->signal_clicked().connect ( sigc::mem_fun (*this, &RTWindow::showPreferences) );
@@ -247,6 +249,7 @@ RTWindow::RTWindow ()
         //btn_fullscreen = Gtk::manage( new Gtk::Button(M("MAIN_BUTTON_FULLSCREEN")));
         btn_fullscreen = Gtk::manage ( new Gtk::Button());
         setExpandAlignProperties (btn_fullscreen, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+        btn_fullscreen->set_relief(Gtk::RELIEF_NONE);
         btn_fullscreen->set_tooltip_markup (M ("MAIN_BUTTON_FULLSCREEN"));
         btn_fullscreen->set_image (*iFullscreen);
         btn_fullscreen->signal_clicked().connect ( sigc::mem_fun (*this, &RTWindow::toggle_fullscreen) );
@@ -898,19 +901,6 @@ void RTWindow::updateTPVScrollbar (bool hide)
 
     for (auto panel : epanels) {
         panel.second->updateTPVScrollbar (hide);
-    }
-}
-
-void RTWindow::updateTabsUsesIcons (bool useIcons)
-{
-    fpanel->updateTabsUsesIcons (useIcons);
-
-    if (epanel) {
-        epanel->updateTabsUsesIcons (useIcons);
-    }
-
-    for (auto panel : epanels) {
-        panel.second->updateTabsUsesIcons (useIcons);
     }
 }
 

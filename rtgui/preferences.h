@@ -201,7 +201,6 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::CheckButton* ckbShowFilmStripToolBar;
     Gtk::CheckButton* ckbShowdelimspot;
     Gtk::CheckButton* ckbHideTPVScrollbar;
-    Gtk::CheckButton* ckbUseIconNoText;
 
     Gtk::CheckButton* ckbAutoSaveTpOpen;
     Gtk::Button* btnSaveTpOpenNow;

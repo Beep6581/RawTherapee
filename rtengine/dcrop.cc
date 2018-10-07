@@ -1887,9 +1887,7 @@ void Crop::update(int todo)
 
         if (params.wavelet.Tilesmethod == "big") {
             realtile = 22;
-        }
-
-        if (params.wavelet.Tilesmethod == "lit") {
+        } else /*if (params.wavelet.Tilesmethod == "lit")*/ {
             realtile = 12;
         }
 

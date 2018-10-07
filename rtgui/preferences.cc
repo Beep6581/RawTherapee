@@ -952,11 +952,8 @@ Gtk::Widget* Preferences::getGeneralPanel()
     ckbHideTPVScrollbar->set_active(false);
     ckbHideTPVScrollbar->set_sensitive(false);
 #endif
-    ckbUseIconNoText = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_TP_USEICONORTEXT")));
-    setExpandAlignProperties(ckbUseIconNoText, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     workflowGrid->attach_next_to(*hb4label, *ckbFileBrowserToolbarSingleRow, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to(*ckbHideTPVScrollbar, *hb4label, Gtk::POS_RIGHT, 1, 1);
-    workflowGrid->attach_next_to(*ckbUseIconNoText, *ckbHideTPVScrollbar, Gtk::POS_RIGHT, 1, 1);
     ckbAutoSaveTpOpen = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_AUTOSAVE_TP_OPEN")));
     workflowGrid->attach_next_to(*ckbAutoSaveTpOpen, *hb4label, Gtk::POS_BOTTOM, 1, 1);
     btnSaveTpOpenNow = Gtk::manage(new Gtk::Button(M("PREFERENCES_SAVE_TP_OPEN_NOW")));
@@ -1783,7 +1780,6 @@ void Preferences::storePreferences()
     moptions.showdelimspot = ckbShowdelimspot->get_active();
     moptions.hideTPVScrollbar = ckbHideTPVScrollbar->get_active();
     moptions.overwriteOutputFile = chOverwriteOutputFile->get_active();
-    moptions.UseIconNoText = ckbUseIconNoText->get_active();
 
     moptions.autoSaveTpOpen = ckbAutoSaveTpOpen->get_active();
 
@@ -1990,7 +1986,6 @@ void Preferences::fillPreferences()
     ckbShowFilmStripToolBar->set_active(moptions.showFilmStripToolBar);
     ckbShowdelimspot->set_active(moptions.showdelimspot);
     ckbHideTPVScrollbar->set_active(moptions.hideTPVScrollbar);
-    ckbUseIconNoText->set_active(moptions.UseIconNoText);
 
     ckbAutoSaveTpOpen->set_active(moptions.autoSaveTpOpen);
 
@@ -2371,11 +2366,6 @@ void Preferences::workflowUpdate()
     if (moptions.hideTPVScrollbar != options.hideTPVScrollbar) {
         // Update the tool panels
         parent->updateTPVScrollbar(moptions.hideTPVScrollbar);
-    }
-
-    if (moptions.UseIconNoText != options.UseIconNoText) {
-        // Update the tool's tab titles
-        parent->updateTabsUsesIcons(moptions.UseIconNoText);
     }
 
     if (moptions.FileBrowserToolbarSingleRow != options.FileBrowserToolbarSingleRow) {

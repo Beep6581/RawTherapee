@@ -803,7 +803,6 @@ PREFERENCES_TAB_IMPROC;Обработка изображения
 PREFERENCES_TAB_SOUND;Звуки
 PREFERENCES_THEME;Тема
 PREFERENCES_TP_LABEL;Панель инструментов:
-PREFERENCES_TP_USEICONORTEXT;Использовать иконки вместо текста
 PREFERENCES_TP_VSCROLLBAR;Спрятать вертикальную полосу прокрутки
 PREFERENCES_USEBUNDLEDPROFILES;Использовать предустановленный профиль
 PREFERENCES_VIEW;ББ устройства вывода (монитор, проектор и т.д.)
@@ -1656,7 +1655,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
 !HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
-!HISTORY_MSG_RAWCACORR_COLOURSHIFT;Raw CA Correction - Avoid color shift
+!HISTORY_MSG_RAWCACORR_COLORSHIFT;Raw CA Correction - Avoid color shift
 !HISTORY_MSG_RAW_BORDER;Raw border
 !HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
@@ -1745,6 +1744,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !PARTIALPASTE_PREPROCESS_HOTPIXFILT;Hot pixel filter
 !PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !PARTIALPASTE_PRSHARPENING;Post-resize sharpening
+!PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA avoid color shift
 !PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
 !PARTIALPASTE_RAW_BORDER;Raw border
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image

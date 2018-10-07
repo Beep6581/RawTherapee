@@ -6692,6 +6692,14 @@ void CLASS apply_tiff()
 	  load_raw = &CLASS unpacked_load_raw;
 	  load_flags = 4;
 	  order = 0x4d4d;
+	} else if ((raw_width * raw_height * 2 * tiff_bps) / 16 == tiff_ifd[raw].bytes) {
+	    // 12 bit uncompressed from Nikon Z7
+	    load_raw = &CLASS packed_load_raw;
+	} else if ((raw_width * 2 * tiff_bps / 16 + 8) * raw_height == tiff_ifd[raw].bytes) {
+	    // 14 bit uncompressed from Nikon Z7, still wrong
+	    // each line has 8 padding byte. To inform 'packed_load_raw' about his padding, we have to set load_flags = padding << 9
+	    load_flags = 8 << 9;
+	    load_raw = &CLASS packed_load_raw;
 	} else
 	  load_raw = &CLASS nikon_load_raw;			break;
       case 65535:
@@ -9074,6 +9082,9 @@ void CLASS identify()
     parse_tiff (thumb_offset+12);
 /*RT*/    exif_base = thumb_offset+12;
     apply_tiff();
+    if (!strcmp(model, "X-T3")) {
+        height = raw_height - 2;
+    }
     if (!load_raw) {
       load_raw = &CLASS unpacked_load_raw;
       tiff_bps = 14;
@@ -9866,7 +9877,8 @@ konica_400z:
     width -= height > 3664 ? 8 : 32;
     if (!strncmp(model,"DSC",3))
       black = 200 << (tiff_bps - 12);
-  } else if (!strcmp(make,"Sony") && raw_width == 6048) {
+  } else if (!strcmp(make,"Sony") && strcmp(model,"ILCE-7M2") && raw_width == 6048) {
+    // for Sony ILCE-7M2 the raw crop is defined in camconst.json
     width -= 24;
     if (strstr(model,"RX1") || strstr(model,"A99"))
       width -= 6;

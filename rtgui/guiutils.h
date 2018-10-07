@@ -450,11 +450,6 @@ typedef enum RTOrientation {
     RTO_Top2Bottom
 } eRTOrientation;
 
-enum TOITypes {
-    TOI_TEXT,
-    TOI_ICON
-};
-
 typedef enum RTNav {
     NAV_NONE,
     NAV_NEXT,
@@ -467,18 +462,8 @@ typedef enum RTNav {
 class TextOrIcon : public Gtk::HBox
 {
 
-protected:
-    Gtk::Image* imgIcon;
-    Gtk::Label* label;
-    Glib::ustring filename;
-    Glib::ustring labelText;
-    Glib::ustring tooltipText;
-
 public:
-    TextOrIcon (Glib::ustring filename, Glib::ustring labelTx, Glib::ustring tooltipTx, TOITypes type);
-    ~TextOrIcon ();
-
-    void switchTo(TOITypes type);
+    TextOrIcon (const Glib::ustring &filename, const Glib::ustring &labelTx, const Glib::ustring &tooltipTx);
 };
 
 class MyImageMenuItem : public Gtk::MenuItem

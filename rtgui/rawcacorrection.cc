@@ -28,8 +28,8 @@ RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_CHROM
 {
     auto m = ProcEventMapper::getInstance();
     EvPreProcessCAAutoiterations = m->newEvent(DARKFRAME, "HISTORY_MSG_RAWCACORR_AUTOIT");
-    EvPreProcessCAColourshift = m->newEvent(DARKFRAME, "HISTORY_MSG_RAWCACORR_COLOURSHIFT");
-    EvPreProcessCAColourshiftHistory = m->newEvent(M_VOID, "HISTORY_MSG_RAWCACORR_COLOURSHIFT");
+    EvPreProcessCAColourshift = m->newEvent(DARKFRAME, "HISTORY_MSG_RAWCACORR_COLORSHIFT");
+    EvPreProcessCAColourshiftHistory = m->newEvent(M_VOID, "HISTORY_MSG_RAWCACORR_COLORSHIFT");
 
     Gtk::Image* icaredL =   Gtk::manage (new RTImage ("circle-red-cyan-small.png"));
     Gtk::Image* icaredR =   Gtk::manage (new RTImage ("circle-cyan-red-small.png"));
@@ -46,7 +46,7 @@ RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_CHROM
         caAutoiterations->delay = options.adjusterMaxDelay;
     }
 
-    caRed = Gtk::manage(new Adjuster (M("TP_RAWCACORR_CARED"), -8.0, 8.0, 0.1, 0, icaredL, icaredR));
+    caRed = Gtk::manage(new Adjuster (M("TP_RAWCACORR_CARED"), -4.0, 4.0, 0.1, 0, icaredL, icaredR));
     caRed->setAdjusterListener (this);
 
     if (caRed->delay < options.adjusterMaxDelay) {
@@ -62,6 +62,9 @@ RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_CHROM
     }
 
     caBlue->show();
+
+    caRed->setLogScale(10, 0);
+    caBlue->setLogScale(10, 0);
 
     pack_start( *caAutocorrect, Gtk::PACK_SHRINK, 4);
     pack_start( *caAutoiterations, Gtk::PACK_SHRINK, 4);
