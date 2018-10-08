@@ -1,7 +1,3 @@
-[Version]
-AppVersion=4.2.84
-Version=322
-
 [Exposure]
 Auto=false
 Clip=0.02

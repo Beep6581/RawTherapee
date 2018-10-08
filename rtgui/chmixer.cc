@@ -84,6 +84,10 @@ ChMixer::ChMixer (): FoldableToolPanel(this, "chmixer", M("TP_CHMIXER_LABEL"), f
         red[i]->setAdjusterListener (this);
         green[i]->setAdjusterListener (this);
         blue[i]->setAdjusterListener (this);
+
+        red[i]->setLogScale(10, red[i]->getValue());
+        green[i]->setLogScale(10, green[i]->getValue());
+        blue[i]->setLogScale(10, blue[i]->getValue());
     }
 
     pack_start (*blabel);

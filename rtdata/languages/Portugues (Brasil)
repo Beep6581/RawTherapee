@@ -1199,7 +1199,6 @@ PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Imagem para mostrar
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Renderização raw neutra
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;JPEG incorporado se tamanho completo, raw neutro caso contrário
 PREFERENCES_TP_LABEL;Painel de ferramentas:
-PREFERENCES_TP_USEICONORTEXT;Use ícones de guias em vez de texto
 PREFERENCES_TP_VSCROLLBAR;Ocultar barra de rolagem vertical
 PREFERENCES_TUNNELMETADATA;Copiar Exif/IPTC/XMP inalterado para o arquivo de saída
 PREFERENCES_USEBUNDLEDPROFILES;Use perfis agrupados
@@ -2257,8 +2256,9 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 !HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
 !HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
 !HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
-!HISTORY_MSG_RAWCACORR_COLOURSHIFT;Raw CA Correction - Avoid color shift
+!HISTORY_MSG_RAWCACORR_COLORSHIFT;Raw CA Correction - Avoid color shift
 !ICCPROFCREATOR_DESCRIPTION_ADDPARAM;Append gamma and slope values to the description
+!PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA avoid color shift
 !PREFERENCES_PERFORMANCE_THREADS;Threads
 !PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
 !PREFERENCES_TAB_PERFORMANCE;Performance

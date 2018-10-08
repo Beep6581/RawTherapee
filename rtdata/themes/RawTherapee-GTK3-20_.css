@@ -368,29 +368,7 @@ separator {
     margin: 5px;
 }
 
-progressbar.vertical trough {
-    min-width: 6px;
-}
-progressbar.vertical trough progress {
-    min-width: 6px;
-}
-
-progressbar.horizontal trough {
-    min-height: 6px;
-}
-progressbar.horizontal trough progress {
-    min-height: 6px;
-}
-
-progressbar trough {
-    background-color: #2A2A2A;
-    border-color: #202020;
-}
-
-notebook header progressbar trough {
-    background-color: #202020;
-    border-color: #181818;
-}
+/* */
 
 .drawingarea {
     border-radius: 0;
@@ -1016,3 +994,35 @@ button.combo, .image-combo .toggle, #MyFileChooserButton {
     padding-right: 4px;
 }
 
+/* Progress bars */
+
+progressbar.horizontal {
+    min-width: 100px;
+    margin-bottom: 2px;
+}
+
+progressbar.vertical {
+    min-height: 100px;
+    margin: 8px 0;
+}
+
+progressbar trough {
+    background-color: #383838;
+    border: none;
+}
+
+progressbar progress {
+    border-color: #363636;
+    border-radius: 3px;
+    background-color: #215d9c;
+}
+
+progressbar.horizontal trough, progressbar.horizontal progress {
+    min-height: 10px;
+}
+
+progressbar.vertical trough, progressbar.vertical progress {
+    min-width: 10px;
+}
+
+/* */

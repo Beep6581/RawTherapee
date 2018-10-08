@@ -44,15 +44,46 @@
 #define DEFPROFILE_DYNAMIC  "Dynamic"
 
 struct SaveFormat {
+    SaveFormat(
+        const Glib::ustring& _format,
+        int _png_bits,
+        int _jpeg_quality,
+        int _jpeg_sub_samp,
+        int _tiff_bits,
+        bool _tiff_float,
+        bool _tiff_uncompressed,
+        bool _save_params
+    ) :
+        format(_format),
+        pngBits(_png_bits),
+        jpegQuality(_jpeg_quality),
+        jpegSubSamp(_jpeg_sub_samp),
+        tiffBits(_tiff_bits),
+        tiffFloat(_tiff_float),
+        tiffUncompressed(_tiff_uncompressed),
+        saveParams(_save_params)
+    {
+    }
+    SaveFormat(
+        const Glib::ustring& _format,
+        int _png_bits,
+        int _tiff_bits,
+        bool _tiff_float
+    ) :
+        SaveFormat(
+            _format,
+            _png_bits,
+            90,
+            2,
+            _tiff_bits,
+            _tiff_float,
+            true,
+            true
+        )
+    {
+    }
     SaveFormat() :
-        format ("jpg"),
-        pngBits (8),
-        jpegQuality (90),
-        jpegSubSamp (2),
-        tiffBits (8),
-        tiffFloat(false),
-        tiffUncompressed (true),
-        saveParams (true)
+        SaveFormat("jpg", 8, 8, false)
     {
     }
 
@@ -263,7 +294,6 @@ public:
     int histogramDrawMode;
     bool FileBrowserToolbarSingleRow;
     bool hideTPVScrollbar;
-    bool UseIconNoText;
     int whiteBalanceSpotSize;
     int curvebboxpos; // 0=above, 1=right, 2=below, 3=left
 
@@ -273,7 +303,7 @@ public:
     int cropPPI;
     enum CropGuidesMode { CROP_GUIDE_NONE, CROP_GUIDE_FRAME, CROP_GUIDE_FULL };
     CropGuidesMode cropGuides;
-    bool cropAutoFit;    
+    bool cropAutoFit;
 
     // Performance options
     Glib::ustring clutsDir;

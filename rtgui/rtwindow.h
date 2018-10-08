@@ -110,7 +110,6 @@ public:
     void updateProfiles (const Glib::ustring &printerProfile, rtengine::RenderingIntent printerIntent, bool printerBPC);
     void updateTPVScrollbar (bool hide);
     void updateHistogramPosition (int oldPosition, int newPosition);
-    void updateTabsUsesIcons (bool useIcons);
     void updateFBQueryTB (bool singleRow);
     void updateFBToolBarVisibility (bool showFilmStripToolBar);
     bool getIsFullscreen()

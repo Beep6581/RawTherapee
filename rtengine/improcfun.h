@@ -270,9 +270,8 @@ public:
 
 
     void EPDToneMapResid(float * WavCoeffs_L0, unsigned int Iterates,  int skip, struct cont_params& cp, int W_L, int H_L, float max0, float min0);
-    float *CompressDR(float *Source, int W_L, int H_L, float Compression, float DetailBoost, float *Compressed);
+    void CompressDR(float *Source, int W_L, int H_L, float Compression, float DetailBoost);
     void ContrastResid(float * WavCoeffs_L0, struct cont_params &cp, int W_L, int H_L, float max0, float min0);
-    float *ContrastDR(float *Source, int W_L, int H_L, float *Contrast = nullptr);
 
     void EPDToneMap(LabImage *lab, unsigned int Iterates = 0, int skip = 1);
     void EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, unsigned int Iterates, int skip);

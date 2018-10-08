@@ -1168,7 +1168,6 @@ PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Obrázek k zobrazení
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutrální vykreslení raw
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Vložený JPEG náhled pokud je v plné velikosti, jinak neutrální raw
 PREFERENCES_TP_LABEL;Panel nástrojů:
-PREFERENCES_TP_USEICONORTEXT;V záhlaví karty zobrazit ikonu namísto textu
 PREFERENCES_TP_VSCROLLBAR;Skrýt svislou posuvnou lištu
 PREFERENCES_TUNNELMETADATA;Zkopírovat nezměněná Exif/IPTC/XMP metadata do výstupního souboru
 PREFERENCES_USEBUNDLEDPROFILES;Použít přiložené profily
@@ -2216,7 +2215,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - Demosaic method for motion
 !HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
 !HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
-!HISTORY_MSG_RAWCACORR_COLOURSHIFT;Raw CA Correction - Avoid color shift
+!HISTORY_MSG_RAWCACORR_COLORSHIFT;Raw CA Correction - Avoid color shift
 !HISTORY_MSG_RAW_BORDER;Raw border
 !HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
@@ -2267,6 +2266,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
 !MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>Sharpening Contrast Mask</b>.\nShortcut: <b>None</b>\n\nOnly works when sharpening is enabled and zoom >= 100%.
 !PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
+!PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA avoid color shift
 !PARTIALPASTE_RAW_BORDER;Raw border
 !PARTIALPASTE_SOFTLIGHT;Soft light
 !PARTIALPASTE_TM_FATTAL;Dynamic range compression

@@ -604,7 +604,7 @@ bool LensProfilePanel::checkLensfunCanCorrect(bool automatch)
 LensProfilePanel::LFDbHelper::LFDbHelper()
 {
 #ifdef _OPENMP
-#pragma omp parallel sections
+#pragma omp parallel sections if (!options.rtSettings.verbose)
 #endif
 {
 #ifdef _OPENMP

@@ -315,6 +315,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
 
     temp = Gtk::manage (new Adjuster (M("TP_WBALANCE_TEMPERATURE"), MINTEMP, MAXTEMP, 5, CENTERTEMP, itempL, itempR, &wbSlider2Temp, &wbTemp2Slider));
     green = Gtk::manage (new Adjuster (M("TP_WBALANCE_GREEN"), MINGREEN, MAXGREEN, 0.001, 1.0, igreenL, igreenR));
+    green->setLogScale(10, 1, true);
     equal = Gtk::manage (new Adjuster (M("TP_WBALANCE_EQBLUERED"), MINEQUAL, MAXEQUAL, 0.001, 1.0, iblueredL, iblueredR));
     tempBias = Gtk::manage (new Adjuster(M("TP_WBALANCE_TEMPBIAS"), -0.5, 0.5, 0.01, 0.0, itempbiasL, itempbiasR));
     cache_customTemp (0);
@@ -689,6 +690,8 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         set_inconsistent(multiImage && !pedited->wb.enabled);
     }
 
+    green->setLogScale(10, green->getValue(), true);
+    
     methconn.block (false);
     enableListener ();
 }
@@ -794,6 +797,8 @@ void WhiteBalance::setWB (int vtemp, double vgreen)
     if (listener) {
         listener->panelChanged (EvWBTemp, Glib::ustring::compose("%1, %2", (int)temp->getValue(), Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(3), green->getValue())));
     }
+
+    green->setLogScale(10, vgreen, true);
 }
 
 void WhiteBalance::setAdjusterBehavior (bool tempadd, bool greenadd, bool equaladd, bool tempbiasadd)
