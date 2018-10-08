@@ -195,10 +195,13 @@ protected:
     void addPanel(Gtk::Box* where, FoldableToolPanel* panel, int level = 1);
     void foldThemAll(GdkEventButton* event);
     void updateVScrollbars(bool hide);
+    void notebookPageChanged(Gtk::Widget* page, guint page_num);
 
 private:
 
     EditDataProvider *editDataProvider;
+    sigc::connection notebookconn;
+    bool photoLoadedOnce; // Used to indicated that a photo has been loaded yet
 
 public:
 
@@ -224,7 +227,7 @@ public:
     // toolpanellistener interface
     void panelChanged(rtengine::ProcEvent event, const Glib::ustring& descr);
 
-    void imageTypeChanged (bool isRaw, bool isBayer, bool isXtrans, bool isMono = false);
+    void imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans, bool isMono = false);
     // profilechangelistener interface
     void profileChange(const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited = nullptr, bool fromLastSave = false);
     void setDefaults(rtengine::procparams::ProcParams* defparams);
@@ -286,7 +289,7 @@ public:
 
     // imageareatoollistener interface
     void spotWBselected(int x, int y, Thumbnail* thm = nullptr);
-    void sharpMaskSelected (bool sharpMask);
+    void sharpMaskSelected(bool sharpMask);
     void cropSelectionReady();
     void rotateSelectionReady(double rotate_deg, Thumbnail* thm = nullptr);
     ToolBar* getToolBar()
@@ -306,7 +309,7 @@ public:
     void toolSelected(ToolMode tool);
     void editModeSwitchedOff();
 
-    void setEditProvider (EditDataProvider *provider);
+    void setEditProvider(EditDataProvider *provider);
 
 private:
     IdleRegister idle_register;

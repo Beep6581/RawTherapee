@@ -549,21 +549,6 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     fdp->add(*vbdp);
     vbImageProcessing->pack_start (*fdp, Gtk::PACK_SHRINK, 4);
 
-    Gtk::Frame* fmip = Gtk::manage(new Gtk::Frame(M("PREFERENCES_MIP")));
-    Gtk::HBox* hbmip = Gtk::manage(new Gtk::HBox(false, 4));
-    Gtk::Label* lmip = Gtk::manage(new Gtk::Label(M("PREFERENCES_MIP_LABEL")));
-    cmip = Gtk::manage(new Gtk::ComboBoxText());
-    cmip->append(M("PREFERENCES_MIP_PREV"));
-    cmip->append(M("PREFERENCES_MIP_OPT"));
-    cmip->set_active(1);
-    cmip->set_tooltip_text(M("PREFERENCES_MIP_TOOLTIP"));
-
-    hbmip->pack_start(*lmip, Gtk::PACK_SHRINK);
-    hbmip->pack_start(*cmip);
-    fmip->add(*hbmip);
-    hbmip->set_border_width(4);
-    vbImageProcessing->pack_start(*fmip, Gtk::PACK_SHRINK, 4);
-
 //    Gtk::Frame* fdf = Gtk::manage (new Gtk::Frame (M ("PREFERENCES_DARKFRAME")) );
 //    Gtk::HBox* hb42 = Gtk::manage (new Gtk::HBox ());
 //    darkFrameDir = Gtk::manage (new Gtk::FileChooserButton (M ("PREFERENCES_DIRDARKFRAMES"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
@@ -1007,23 +992,6 @@ Gtk::Widget* Preferences::getGeneralPanel()
 
     // ---------------------------------------------
 
-
-    Gtk::Frame* flocal = Gtk::manage(new Gtk::Frame(M("PREFERENCES_LOCAL")));
-    setExpandAlignProperties(flocal, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    Gtk::Grid* localGrid = Gtk::manage(new Gtk::Grid());
-    localGrid->set_column_spacing(4);
-    localGrid->set_row_spacing(4);
-    setExpandAlignProperties(localGrid, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
-
-    ckbShowdelimspot =  Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_LOCALSHOWDELIMSPOT")));
-    setExpandAlignProperties(ckbShowdelimspot, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
-    localGrid->attach_next_to(*ckbShowdelimspot, Gtk::POS_LEFT, 3, 1);
-
-    flocal->add(*localGrid);
-    vbGeneral->attach_next_to(*flocal, *flang, Gtk::POS_BOTTOM, 2, 1);
-
-    //--------------------------------------------------
-
     Gtk::Frame* ftheme = Gtk::manage(new Gtk::Frame(M("PREFERENCES_THEME")));
     setExpandAlignProperties(ftheme, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     Gtk::Grid* themeGrid = Gtk::manage(new Gtk::Grid());
@@ -1093,7 +1061,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
     themeGrid->attach_next_to(*butNavGuideCol, *navGuideLabel, Gtk::POS_RIGHT, 1, 1);
 
     ftheme->add(*themeGrid);
-    vbGeneral->attach_next_to (*ftheme, *flocal, Gtk::POS_BOTTOM, 2, 1);
+    vbGeneral->attach_next_to(*ftheme, *flang, Gtk::POS_BOTTOM, 2, 1);
 
     // ---------------------------------------------
 
@@ -1719,8 +1687,6 @@ void Preferences::storePreferences()
 
     moptions.prevdemo = (prevdemo_t)cprevdemo->get_active_row_number ();
     moptions.serializeTiffRead = ctiffserialize->get_active();
-    moptions.mip = (mip_t)cmip->get_active_row_number();
-//    moptions.locaaju = (locaaju_t)clocalajust->get_active_row_number ();
 
     if (sdcurrent->get_active()) {
         moptions.startupDir = STARTUPDIR_CURRENT;
@@ -1777,7 +1743,6 @@ void Preferences::storePreferences()
     moptions.histogramPosition = ckbHistogramPositionLeft->get_active() ? 1 : 2;
     moptions.FileBrowserToolbarSingleRow = ckbFileBrowserToolbarSingleRow->get_active();
     moptions.showFilmStripToolBar = ckbShowFilmStripToolBar->get_active();
-    moptions.showdelimspot = ckbShowdelimspot->get_active();
     moptions.hideTPVScrollbar = ckbHideTPVScrollbar->get_active();
     moptions.overwriteOutputFile = chOverwriteOutputFile->get_active();
 
@@ -1867,9 +1832,7 @@ void Preferences::fillPreferences()
         iccDir->set_current_folder(moptions.rtSettings.iccDirectory);
     }
 
-    cmip->set_active(moptions.mip);
     cprevdemo->set_active (moptions.prevdemo);
-
     languages->set_active_text(moptions.language);
     ckbLangAutoDetect->set_active(moptions.languageAutoDetect);
     int themeNbr = getThemeRowNumber(moptions.theme);
@@ -1984,7 +1947,6 @@ void Preferences::fillPreferences()
     ckbHistogramPositionLeft->set_active(moptions.histogramPosition == 1);
     ckbFileBrowserToolbarSingleRow->set_active(moptions.FileBrowserToolbarSingleRow);
     ckbShowFilmStripToolBar->set_active(moptions.showFilmStripToolBar);
-    ckbShowdelimspot->set_active(moptions.showdelimspot);
     ckbHideTPVScrollbar->set_active(moptions.hideTPVScrollbar);
 
     ckbAutoSaveTpOpen->set_active(moptions.autoSaveTpOpen);

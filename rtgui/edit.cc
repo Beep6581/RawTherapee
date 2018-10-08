@@ -41,21 +41,21 @@ void ObjectMOBuffer::setObjectMode (ObjectMode newType)
 
     if (w && h) {
         switch (newType) {
-            case (OM_255):
-                if (objectMode == OM_65535) {
-                    objectMap->unreference();
-                    objectMap = Cairo::ImageSurface::create (Cairo::FORMAT_A8, w, h);
-                }
+        case (OM_255):
+            if (objectMode == OM_65535) {
+                objectMap->unreference();
+                objectMap = Cairo::ImageSurface::create (Cairo::FORMAT_A8, w, h);
+            }
 
-                break;
+            break;
 
-            case (OM_65535):
-                if (objectMode == OM_255) {
-                    objectMap->unreference();
-                    objectMap = Cairo::ImageSurface::create (Cairo::FORMAT_RGB16_565, w, h);
-                }
+        case (OM_65535):
+            if (objectMode == OM_255) {
+                objectMap->unreference();
+                objectMap = Cairo::ImageSurface::create (Cairo::FORMAT_RGB16_565, w, h);
+            }
 
-                break;
+            break;
         }
     }
 
@@ -312,14 +312,9 @@ void Arcellipse::drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOB
 
         rtengine::Coord center_ = center;
         double radius_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius)) : double (radius);
-//        double radius2_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius2)) : double (radius2);
-        double scalx_ = scalx; //radius2_ / radius_;
-
-        double scaly_ = scaly;
+        double radius2_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius2)) : double (radius2);
         double begang_ = begang;
         double endang_ = endang;
-        double translax_ = translax;
-        double translay_ = translay;
 
         if (datum == IMAGE) {
             coordSystem.imageCoordToScreen (center.x, center.y, center_.x, center_.y);
@@ -329,16 +324,23 @@ void Arcellipse::drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOB
             center_ += objectBuffer->getDataProvider()->posScreen + objectBuffer->getDataProvider()->deltaScreen;
         }
 
-        cr->save();
-        cr->translate (translax_, translay_);
+        if (radius_ > 0 && radius2_ > 0.) {
+            cr->save();
 
-        cr->scale (scalx_, scaly_);
-        cr->translate (- translax_ , - translay_);
+            // To have an ellipse with radius of (rad1, rad2), a circle of radius rad1 shall be twisted with a scale
+            // of rad2 / rad1 for y axis
+            // Center of coordinates (x, y) in previous coordinates system becomes (X, Y) = (x, rad2 / rad1 * y) in new one
+            // To go back to previous location, center shall be translated to t = -Y * (1 - rad1 / rad2) in y axis
+            // (Y = rad2 / rad1 * y and y = t + Y)
+            double scale_ = radius2_ / radius_;
+            cr->scale (1., scale_);
+            cr->translate (0., - center_.y * (1 - 1 / scale_));
 
-        cr->arc (center_.x + 0.5, center_.y + 0.5, radius_, begang_, endang_);
+            cr->arc (center_.x + 0.5, center_.y + 0.5, radius_, begang_, endang_);
 
-        cr->restore();
-        cr->stroke();
+            cr->restore();
+            cr->stroke();
+        }
     }
 }
 
@@ -363,15 +365,9 @@ void Arcellipse::drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOB
 
         rtengine::Coord center_ = center;
         double radius_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius)) : double (radius);
-//        double radius2_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius2)) : double (radius2);
-
-        double scalx_ = scalx; //radius2_ / radius_;
-
-        double scaly_ = scaly;
+        double radius2_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius2)) : double (radius2);
         double begang_ = begang;
         double endang_ = endang;
-        double translax_ = translax;
-        double translay_ = translay;
 
         if (datum == IMAGE) {
             coordSystem.imageCoordToScreen (center.x, center.y, center_.x, center_.y);
@@ -382,16 +378,23 @@ void Arcellipse::drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOB
         }
 
         if (filled && state != INSENSITIVE) {
-            cr->save();
+            if (radius_ > 0 && radius2_ > 0.) {
+                cr->save();
 
-            cr->translate (translax_, translay_);
+                // To have an ellipse with radius of (rad1, rad2), a circle of radius rad1 shall be twisted with a scale
+                // of rad2 / rad1 for y axis
+                // Center of coordinates (x, y) in previous coordinates system becomes (X, Y) = (x, rad2 / rad1 * y) in new one
+                // To go back to previous location, center shall be translated to t = -Y * (1 - rad1 / rad2) in y axis
+                // (Y = rad2 / rad1 * y and y = t + Y)
+                double scale_ = radius2_ / radius_;
+                cr->scale (1., scale_);
+                cr->translate (0., - center_.y * (1 - 1 / scale_));
 
-            cr->scale (scalx_, scaly_);
-            cr->translate (- translax_ , - translay_);
+                cr->arc (center_.x + 0.5, center_.y + 0.5, radius_, begang_, endang_);
 
-            cr->arc (center_.x + 0.5, center_.y + 0.5, radius_, begang_, endang_);
-
-            cr->restore();
+                cr->restore();
+                cr->stroke();
+            }
 
             if (innerLineWidth > 0.) {
                 cr->fill_preserve();
@@ -400,16 +403,23 @@ void Arcellipse::drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOB
                 cr->fill();
             }
         } else if (innerLineWidth > 0.) {
-            cr->save();
+            if (radius_ > 0 && radius2_ > 0.) {
+                cr->save();
 
-            cr->translate (translax_ , translay_);
+                // To have an ellipse with radius of (rad1, rad2), a circle of radius rad1 shall be twisted with a scale
+                // of rad2 / rad1 for y axis
+                // Center of coordinates (x, y) in previous coordinates system becomes (X, Y) = (x, rad2 / rad1 * y) in new one
+                // To go back to previous location, center shall be translated to t = -Y * (1 - rad1 / rad2) in y axis
+                // (Y = rad2 / rad1 * y and y = t + Y)
+                double scale_ = radius2_ / radius_;
+                cr->scale (1., scale_);
+                cr->translate (0., - center_.y * (1 - 1 / scale_));
 
-            cr->scale (scalx_, scaly_);
-            cr->translate (- translax_ , - translay_);
+                cr->arc (center_.x + 0.5, center_.y + 0.5, radius_, begang_, endang_);
 
-            cr->arc (center_.x + 0.5, center_.y + 0.5, radius_, begang_, endang_);
-
-            cr->restore();
+                cr->restore();
+                cr->stroke();
+            }
 
             if (state == INSENSITIVE) {
                 std::valarray<double> ds (1);
@@ -437,14 +447,9 @@ void Arcellipse::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned sh
         cr->set_line_width ( getMouseOverLineWidth() );
         rtengine::Coord center_ = center;
         double radius_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius)) : double (radius);
-//        double radius2_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius2)) : double (radius2);
-
-        double scalx_ = scalx ; //radius2_ / radius_;
-        double scaly_ = scaly;
+        double radius2_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius2)) : double (radius2);
         double begang_ = begang;
         double endang_ = endang;
-        double translax_ = translax;
-        double translay_ = translay;
 
         if (datum == IMAGE) {
             coordSystem.imageCoordToCropCanvas (center.x, center.y, center_.x, center_.y);
@@ -454,15 +459,23 @@ void Arcellipse::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned sh
             center_ += objectBuffer->getDataProvider()->posScreen + objectBuffer->getDataProvider()->deltaScreen;
         }
 
-        cr->save();
+        if (radius_ > 0 && radius2_ > 0.) {
+            cr->save();
 
-        cr->translate (translax_ , translay_);
+            // To have an ellipse with radius of (rad1, rad2), a circle of radius rad1 shall be twisted with a scale
+            // of rad2 / rad1 for y axis
+            // Center of coordinates (x, y) in previous coordinates system becomes (X, Y) = (x, rad2 / rad1 * y) in new one
+            // To go back to previous location, center shall be translated to t = -Y * (1 - rad1 / rad2) in y axis
+            // (Y = rad2 / rad1 * y and y = t + Y)
+            double scale_ = radius2_ / radius_;
+            cr->scale (1., scale_);
+            cr->translate (0., - center_.y * (1 - 1 / scale_));
 
-        cr->scale (scalx_, scaly_);
-        cr->translate (- translax_ , - translay_);
-        cr->arc (center_.x + 0.5, center_.y + 0.5, radius_, begang_, endang_);
+            cr->arc (center_.x + 0.5, center_.y + 0.5, radius_, begang_, endang_);
 
-        cr->restore();
+            cr->restore();
+            cr->stroke();
+        }
 
         if (filled) {
             if (innerLineWidth > 0.) {
@@ -1082,50 +1095,50 @@ void OPIcon::drivenPointToRectangle (const rtengine::Coord &pos,
                                      rtengine::Coord &topLeft, rtengine::Coord &bottomRight, int W, int H)
 {
     switch (drivenPoint) {
-        case (DP_CENTERCENTER):
-            topLeft.x = pos.x - W / 2;
-            topLeft.y = pos.y - H / 2;
-            break;
+    case (DP_CENTERCENTER):
+        topLeft.x = pos.x - W / 2;
+        topLeft.y = pos.y - H / 2;
+        break;
 
-        case (DP_TOPLEFT):
-            topLeft.x = pos.x;
-            topLeft.y = pos.y;
-            break;
+    case (DP_TOPLEFT):
+        topLeft.x = pos.x;
+        topLeft.y = pos.y;
+        break;
 
-        case (DP_TOPCENTER):
-            topLeft.x = pos.x - W / 2;
-            topLeft.y = pos.y;
-            break;
+    case (DP_TOPCENTER):
+        topLeft.x = pos.x - W / 2;
+        topLeft.y = pos.y;
+        break;
 
-        case (DP_TOPRIGHT):
-            topLeft.x = pos.x - W;
-            topLeft.y = pos.y;
-            break;
+    case (DP_TOPRIGHT):
+        topLeft.x = pos.x - W;
+        topLeft.y = pos.y;
+        break;
 
-        case (DP_CENTERRIGHT):
-            topLeft.x = pos.x - W;
-            topLeft.y = pos.y - H / 2;
-            break;
+    case (DP_CENTERRIGHT):
+        topLeft.x = pos.x - W;
+        topLeft.y = pos.y - H / 2;
+        break;
 
-        case (DP_BOTTOMRIGHT):
-            topLeft.x = pos.x - W;
-            topLeft.y = pos.y - H;
-            break;
+    case (DP_BOTTOMRIGHT):
+        topLeft.x = pos.x - W;
+        topLeft.y = pos.y - H;
+        break;
 
-        case (DP_BOTTOMCENTER):
-            topLeft.x = pos.x - W / 2;
-            topLeft.y = pos.y - H;
-            break;
+    case (DP_BOTTOMCENTER):
+        topLeft.x = pos.x - W / 2;
+        topLeft.y = pos.y - H;
+        break;
 
-        case (DP_BOTTOMLEFT):
-            topLeft.x = pos.x;
-            topLeft.y = pos.y - H;
-            break;
+    case (DP_BOTTOMLEFT):
+        topLeft.x = pos.x;
+        topLeft.y = pos.y - H;
+        break;
 
-        case (DP_CENTERLEFT):
-            topLeft.x = pos.x;
-            topLeft.y = pos.y - H / 2;
-            break;
+    case (DP_CENTERLEFT):
+        topLeft.x = pos.x;
+        topLeft.y = pos.y - H / 2;
+        break;
     }
 
     bottomRight.x = topLeft.x + W - 1;

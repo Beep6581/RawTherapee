@@ -357,9 +357,9 @@ class Arcellipse : public Geometry
 {
 public:
     rtengine::Coord center;
-//    rtengine::Coord scalx;
-//    rtengine::Coord scaly;
-
+    // rtengine::Coord scalx;
+    // rtengine::Coord scaly;
+    // TODO translax, translay, scalx and scaly are not used
     double radius;
     double radius2;
     double translax;

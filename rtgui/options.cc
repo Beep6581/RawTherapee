@@ -434,8 +434,6 @@ void Options::setDefaults()
     histogramDrawMode = 0;
     curvebboxpos = 1;
     prevdemo = PD_Sidecar;
-    mip = MI_opt;
-    locaaju = lo_enhde;
 
     rgbDenoiseThreadLimit = 0;
 #if defined( _OPENMP ) && defined( __x86_64__ )
@@ -452,7 +450,6 @@ void Options::setDefaults()
     hideTPVScrollbar = false;
     whiteBalanceSpotSize = 8;
     showFilmStripToolBar = false;
-    showdelimspot = false;
     menuGroupRank = true;
     menuGroupLabel = true;
     menuGroupFileOperations = true;
@@ -576,8 +573,6 @@ void Options::setDefaults()
     rtSettings.level0_cbdl = 0;
     rtSettings.level123_cbdl = 30;
 //locallab
-    rtSettings.nspot = 8;//between 1 and ??
-    rtSettings.locdelay = false;//true enabled delay 200 for selection spot
     rtSettings.cropsleep = 50;//generate a pause of 50 µs for dcrop (100%)to avoid crash when moving window, between 0 to ??
     rtSettings.reduchigh = 0.85;//transition for luminance in scope
     rtSettings.reduclow = 0.85;//transition for luminance out scope
@@ -740,9 +735,6 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("General", "Verbose")) {
                     rtSettings.verbose = keyFile.get_boolean("General", "Verbose");
                 }
-                if (keyFile.has_key ("General", "Nspot")) {
-                    rtSettings.nspot          = keyFile.get_integer ("General", "Nspot");
-                }
 
                 if (keyFile.has_key ("General", "Cropsleep")) {
                     rtSettings.cropsleep          = keyFile.get_integer ("General", "Cropsleep");
@@ -755,12 +747,6 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key ("General", "Reduclow")) {
                     rtSettings.reduclow          = keyFile.get_double ("General", "Reduclow");
                 }
-
-
-                if (keyFile.has_key ("General", "Locdelay")) {
-                    rtSettings.locdelay          = keyFile.get_boolean ("General", "Locdelay");
-                }
-
             }
 
             if (keyFile.has_group("External Editor")) {
@@ -1097,14 +1083,6 @@ void Options::readFromFile(Glib::ustring fname)
                     prevdemo = (prevdemo_t)keyFile.get_integer("Performance", "PreviewDemosaicFromSidecar");
                 }
 
-                if (keyFile.has_key ("Performance", "Localajustqual")) {
-                    locaaju             = (locaaju_t)keyFile.get_integer ("Performance", "Localajustqual");
-                }
-
-                if (keyFile.has_key ("Profiles", "Mipfiles")) {
-                    mip             = (mip_t)keyFile.get_integer ("Profiles", "Mipfiles");
-                }
-
                 if (keyFile.has_key("Performance", "SerializeTiffRead")) {
                     serializeTiffRead = keyFile.get_boolean("Performance", "SerializeTiffRead");
                 }
@@ -1372,12 +1350,8 @@ void Options::readFromFile(Glib::ustring fname)
                     showFilmStripToolBar = keyFile.get_boolean("GUI", "ShowFilmStripToolBar");
                 }
 
-                if (keyFile.has_key ("GUI", "Showdelimspot")) {
-                    showdelimspot        = keyFile.get_boolean ("GUI", "Showdelimspot");
-                }
-
-                if (keyFile.has_key("GUI", "FileBrowserToolbarSingleRow")) {
-                    FileBrowserToolbarSingleRow = keyFile.get_boolean("GUI", "FileBrowserToolbarSingleRow");
+                if (keyFile.has_key ("GUI", "FileBrowserToolbarSingleRow")) {
+                    FileBrowserToolbarSingleRow = keyFile.get_boolean ("GUI", "FileBrowserToolbarSingleRow");
                 }
 
 #if defined(__linux__) && ((GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION > 18) || GTK_MAJOR_VERSION > 3)
@@ -1905,20 +1879,18 @@ void Options::saveToFile(Glib::ustring fname)
             keyFile.set_string("General", "StartupDirectory", "last");
         }
 
-        keyFile.set_string("General", "StartupPath", startupPath);
-        keyFile.set_string("General", "DateFormat", dateFormat);
-        keyFile.set_integer("General", "AdjusterMinDelay", adjusterMinDelay);
-        keyFile.set_integer("General", "AdjusterMaxDelay", adjusterMaxDelay);
-        keyFile.set_boolean("General", "MultiUser", multiUser);
-        keyFile.set_string("General", "Language", language);
-        keyFile.set_boolean("General", "LanguageAutoDetect", languageAutoDetect);
-        keyFile.set_string("General", "Theme", theme);
-        keyFile.set_string("General", "Version", RTVERSION);
-        keyFile.set_string("General", "DarkFramesPath", rtSettings.darkFramesPath);
-        keyFile.set_string("General", "FlatFieldsPath", rtSettings.flatFieldsPath);
-        keyFile.set_boolean("General", "Verbose", rtSettings.verbose);
-        keyFile.set_integer ("General", "Nspot", rtSettings.nspot);
-        keyFile.set_boolean ("General", "Locdelay", rtSettings.locdelay);
+        keyFile.set_string  ("General", "StartupPath", startupPath);
+        keyFile.set_string  ("General", "DateFormat", dateFormat);
+        keyFile.set_integer ("General", "AdjusterMinDelay", adjusterMinDelay);
+        keyFile.set_integer ("General", "AdjusterMaxDelay", adjusterMaxDelay);
+        keyFile.set_boolean ("General", "MultiUser", multiUser);
+        keyFile.set_string  ("General", "Language", language);
+        keyFile.set_boolean ("General", "LanguageAutoDetect", languageAutoDetect);
+        keyFile.set_string  ("General", "Theme", theme);
+        keyFile.set_string  ("General", "Version", RTVERSION);
+        keyFile.set_string  ("General", "DarkFramesPath", rtSettings.darkFramesPath);
+        keyFile.set_string  ("General", "FlatFieldsPath", rtSettings.flatFieldsPath);
+        keyFile.set_boolean ("General", "Verbose", rtSettings.verbose);
         keyFile.set_integer ("General", "Cropsleep", rtSettings.cropsleep);
         keyFile.set_double ("General", "Reduchigh", rtSettings.reduchigh);
         keyFile.set_double ("General", "Reduclow", rtSettings.reduclow);
@@ -1983,7 +1955,6 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("Performance", "InspectorDelay", inspectorDelay);
         keyFile.set_integer("Performance", "PreviewDemosaicFromSidecar", prevdemo);
         keyFile.set_boolean("Performance", "SerializeTiffRead", serializeTiffRead);
-        keyFile.set_integer ("Performance", "Localajustqual", locaaju);
         keyFile.set_integer("Performance", "ThumbnailInspectorMode", int(rtSettings.thumbnail_inspector_mode));
 
 
@@ -2025,7 +1996,6 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("Profiles", "LoadParamsFromLocation", paramsLoadLocation);
         keyFile.set_string("Profiles", "CustomProfileBuilderPath", CPBPath);
         keyFile.set_integer("Profiles", "CustomProfileBuilderKeys", CPBKeys);
-        keyFile.set_integer ("Profiles", "Mipfiles", mip);
 
         keyFile.set_integer("GUI", "WindowWidth", windowWidth);
         keyFile.set_integer("GUI", "WindowHeight", windowHeight);

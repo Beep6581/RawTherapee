@@ -74,7 +74,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     0,                // EvLDNEdgeTolerance: obsolete,
     0,                // EvCDNEnabled:obsolete,
     0,                // free entry
-    RGBCURVE|M_AUTOEXP, // EvDCPToneCurve,
+    RGBCURVE | M_AUTOEXP, // EvDCPToneCurve,
     ALLNORAW,         // EvDCPIlluminant,
     RETINEX,          // EvSHEnabled,
     RGBCURVE,         // EvSHHighlights,
@@ -419,8 +419,8 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DIRPYREQUALIZER,  // EvWavgreenlow
     DIRPYREQUALIZER,  // EvWavbluelow
     DIRPYREQUALIZER,  // EvWavNeutral
-    RGBCURVE|M_AUTOEXP, // EvDCPApplyLookTable,
-    RGBCURVE|M_AUTOEXP, // EvDCPApplyBaselineExposureOffset,
+    RGBCURVE | M_AUTOEXP, // EvDCPApplyLookTable,
+    RGBCURVE | M_AUTOEXP, // EvDCPApplyBaselineExposureOffset,
     ALLNORAW,         // EvDCPApplyHueSatMap
     DIRPYREQUALIZER,  // EvWavenacont
     DIRPYREQUALIZER,  // EvWavenachrom
@@ -519,7 +519,105 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     HDR,              // EvTMFattalAmount
     ALLNORAW,         // EvWBEnabled
     RGBCURVE,         // EvRGBEnabled
-    LUMINANCECURVE    // EvLEnabled
+    LUMINANCECURVE,   // EvLEnabled
+    0,                // unused
+    LUMINANCECURVE,   // EvLocallabSpotCreated
+    LUMINANCECURVE,   // EvLocallabSpotDeleted
+    M_VOID,           // EvLocallabSpotSelected
+    M_VOID,           // EvLocallabSpotName
+    M_VOID,           // EvLocallabSpotVisibility
+    LUMINANCECURVE,   // EvLocallabSpotShape
+    LUMINANCECURVE,   // EvLocallabSpotSpotMethod
+    LUMINANCECURVE,   // EvLocallabSpotShapeMethod
+    LUMINANCECURVE,   // EvLocallabSpotLocX
+    LUMINANCECURVE,   // EvLocallabSpotLocXL
+    LUMINANCECURVE,   // EvLocallabSpotLocY
+    LUMINANCECURVE,   // EvLocallabSpotLocYT
+    LUMINANCECURVE,   // EvLocallabSpotCenter
+    LUMINANCECURVE,   // EvLocallabSpotCircrad
+    LUMINANCECURVE,   // EvLocallabSpotQualityMethod
+    LUMINANCECURVE,   // EvLocallabSpotTransit
+    LUMINANCECURVE,   // EvLocallabSpotThresh
+    LUMINANCECURVE,   // EvLocallabSpotIter
+    LUMINANCECURVE,   // EvLocallabSpotSensiexclu
+    LUMINANCECURVE,   // EvLocallabSpotStruc
+    LUMINANCECURVE,   // EvlocallabEnabled
+    LUMINANCECURVE,   // EvLocenacolor
+    LUMINANCECURVE,   // Evlocallabcurvactiv
+    LUMINANCECURVE,   // Evlocallablightness
+    LUMINANCECURVE,   // Evlocallabcontrast
+    LUMINANCECURVE,   // Evlocallabchroma
+    LUMINANCECURVE,   // Evlocallabsensi
+    LUMINANCECURVE,   // EvlocallabqualitycurveMethod
+    LUMINANCECURVE,   // Evlocallabllshape
+    LUMINANCECURVE,   // Evlocallabccshape
+    LUMINANCECURVE,   // EvlocallabLHshape
+    LUMINANCECURVE,   // EvlocallabHHshape
+    LUMINANCECURVE,   // Evlocallabinvers
+    LUMINANCECURVE,   // EvLocenaexpose
+    LUMINANCECURVE,   // Evlocallabexpcomp
+    LUMINANCECURVE,   // Evlocallabhlcompr
+    LUMINANCECURVE,   // Evlocallabhlcomprthresh
+    LUMINANCECURVE,   // Evlocallabblack
+    LUMINANCECURVE,   // Evlocallabshcompr
+    LUMINANCECURVE,   // Evlocallabwarm
+    LUMINANCECURVE,   // Evlocallabsensiex
+    LUMINANCECURVE,   // Evlocallabshapeexpos
+    LUMINANCECURVE,   // EvLocenavibrance
+    LUMINANCECURVE,   // EvlocallabSaturated
+    LUMINANCECURVE,   // EvlocallabPastels
+    LUMINANCECURVE,   // EvlocallabPastSatThreshold
+    LUMINANCECURVE,   // EvlocallabProtectSkins
+    LUMINANCECURVE,   // EvlocallabAvoidColorShift
+    LUMINANCECURVE,   // EvlocallabPastSatTog
+    LUMINANCECURVE,   // Evlocallabsensiv
+    LUMINANCECURVE,   // EvlocallabSkinTonesCurve
+    LUMINANCECURVE,   // EvLocenablur
+    LUMINANCECURVE,   // Evlocallabradius
+    LUMINANCECURVE,   // Evlocallabstrength
+    LUMINANCECURVE,   // Evlocallabsensibn
+    LUMINANCECURVE,   // EvlocallabblurMethod
+    LUMINANCECURVE,   // Evlocallabactivlum
+    LUMINANCECURVE,   // EvLocenatonemap
+    LUMINANCECURVE,   // Evlocallabstren
+    LUMINANCECURVE,   // Evlocallabgamma
+    LUMINANCECURVE,   // Evlocallabestop
+    LUMINANCECURVE,   // Evlocallabscaltm
+    LUMINANCECURVE,   // Evlocallabrewei
+    LUMINANCECURVE,   // Evlocallabsensitm
+    LUMINANCECURVE,   // EvLocenareti
+    LUMINANCECURVE,   // EvlocallabretinexMethod
+    LUMINANCECURVE,   // Evlocallabstr
+    LUMINANCECURVE,   // Evlocallabchrrt
+    LUMINANCECURVE,   // Evlocallabneigh
+    LUMINANCECURVE,   // Evlocallabvart
+    LUMINANCECURVE,   // Evlocallabsensih
+    LUMINANCECURVE,   // EvlocallabCTgainCurve
+    LUMINANCECURVE,   // Evlocallabinversret
+    LUMINANCECURVE,   // EvLocenasharp
+    LUMINANCECURVE,   // Evlocallabsharradius
+    LUMINANCECURVE,   // Evlocallabsharamount
+    LUMINANCECURVE,   // Evlocallabshardamping
+    LUMINANCECURVE,   // Evlocallabshariter
+    LUMINANCECURVE,   // Evlocallabsensis
+    LUMINANCECURVE,   // Evlocallabinverssha
+    LUMINANCECURVE,   // EvLocenacbdl
+    LUMINANCECURVE,   // EvlocallabEqualizer
+    LUMINANCECURVE,   // Evlocallabchromacbdl
+    LUMINANCECURVE,   // EvlocallabThresho
+    LUMINANCECURVE,   // Evlocallabsensicb
+    LUMINANCECURVE,   // EvLocenadenoi
+    LUMINANCECURVE,   // Evlocallabnoiselumf
+    LUMINANCECURVE,   // Evlocallabnoiselumc
+    LUMINANCECURVE,   // Evlocallabnoiselumdetail
+    LUMINANCECURVE,   // Evlocallabnoiselequal
+    LUMINANCECURVE,   // Evlocallabnoisechrof
+    LUMINANCECURVE,   // Evlocallabnoisechroc
+    LUMINANCECURVE,   // Evlocallabnoisechrodetail
+    LUMINANCECURVE,   // Evlocallabadjblur
+    LUMINANCECURVE,   // Evlocallabbilateral
+    LUMINANCECURVE,   // Evlocallabsensiden
+    LUMINANCECURVE    // Evlocallabavoid
 };
 
 

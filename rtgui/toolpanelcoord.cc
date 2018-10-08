@@ -28,7 +28,7 @@
 
 using namespace rtengine::procparams;
 
-ToolPanelCoordinator::ToolPanelCoordinator(bool batch) : ipc(nullptr), hasChanged(false), editDataProvider(nullptr)
+ToolPanelCoordinator::ToolPanelCoordinator(bool batch) : ipc(nullptr), hasChanged(false), editDataProvider(nullptr), photoLoadedOnce(false)
 {
 
     exposurePanel   = Gtk::manage(new ToolVBox());
@@ -36,7 +36,7 @@ ToolPanelCoordinator::ToolPanelCoordinator(bool batch) : ipc(nullptr), hasChange
     colorPanel      = Gtk::manage(new ToolVBox());
     transformPanel  = Gtk::manage(new ToolVBox());
     rawPanel        = Gtk::manage(new ToolVBox());
-    advancedPanel    = Gtk::manage (new ToolVBox ());
+    advancedPanel    = Gtk::manage(new ToolVBox());
     locallabPanel    = Gtk::manage(new ToolVBox());
 
     coarse              = Gtk::manage(new CoarsePanel());
@@ -108,7 +108,7 @@ ToolPanelCoordinator::ToolPanelCoordinator(bool batch) : ipc(nullptr), hasChange
     addPanel(colorPanel, blackwhite);
     addPanel(exposurePanel, shadowshighlights);
     addPanel(detailsPanel, sharpening);
-    addPanel (detailsPanel, localContrast);
+    addPanel(detailsPanel, localContrast);
     addPanel(detailsPanel, sharpenEdge);
     addPanel(detailsPanel, sharpenMicro);
     addPanel(colorPanel, hsvequalizer);
@@ -118,16 +118,16 @@ ToolPanelCoordinator::ToolPanelCoordinator(bool batch) : ipc(nullptr), hasChange
     addPanel(colorPanel, colortoning);
     addPanel(exposurePanel, epd);
     addPanel(exposurePanel, fattal);
-    addPanel (advancedPanel, retinex);
+    addPanel(advancedPanel, retinex);
     addPanel(exposurePanel, pcvignette);
     addPanel(exposurePanel, gradient);
     addPanel(exposurePanel, lcurve);
-    addPanel (advancedPanel, colorappearance);
+    addPanel(advancedPanel, colorappearance);
     addPanel(detailsPanel, impulsedenoise);
     addPanel(detailsPanel, dirpyrdenoise);
     addPanel(detailsPanel, defringe);
     addPanel(detailsPanel, dirpyrequalizer);
-    addPanel (advancedPanel, wavelet);
+    addPanel(advancedPanel, wavelet);
     addPanel(locallabPanel, locallab);
     addPanel(transformPanel, crop);
     addPanel(transformPanel, resize);
@@ -168,7 +168,7 @@ ToolPanelCoordinator::ToolPanelCoordinator(bool batch) : ipc(nullptr), hasChange
     colorPanelSW       = Gtk::manage(new MyScrolledWindow());
     transformPanelSW   = Gtk::manage(new MyScrolledWindow());
     rawPanelSW         = Gtk::manage(new MyScrolledWindow());
-    advancedPanelSW     = Gtk::manage (new MyScrolledWindow ());
+    advancedPanelSW     = Gtk::manage(new MyScrolledWindow());
     locallabPanelSW     = Gtk::manage(new MyScrolledWindow());
     updateVScrollbars(options.hideTPVScrollbar);
 
@@ -193,9 +193,9 @@ ToolPanelCoordinator::ToolPanelCoordinator(bool batch) : ipc(nullptr), hasChange
     colorPanel->pack_start(*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
     colorPanel->pack_start(*vbPanelEnd[2], Gtk::PACK_SHRINK, 4);
 
-    advancedPanelSW->add       (*advancedPanel);
-    advancedPanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
-    advancedPanel->pack_start (*vbPanelEnd[5], Gtk::PACK_SHRINK, 0);
+    advancedPanelSW->add(*advancedPanel);
+    advancedPanel->pack_start(*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
+    advancedPanel->pack_start(*vbPanelEnd[5], Gtk::PACK_SHRINK, 0);
 
     locallabPanelSW->add(*locallabPanel);
     locallabPanel->pack_start(*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
@@ -219,11 +219,10 @@ ToolPanelCoordinator::ToolPanelCoordinator(bool batch) : ipc(nullptr), hasChange
     toiR = Gtk::manage (new TextOrIcon ("bayer.png", M ("MAIN_TAB_RAW"), M ("MAIN_TAB_RAW_TOOLTIP")));
     toiM = Gtk::manage (new TextOrIcon ("metadata.png", M ("MAIN_TAB_METADATA"), M ("MAIN_TAB_METADATA_TOOLTIP")));
 
-
     toolPanelNotebook->append_page(*exposurePanelSW,  *toiE);
     toolPanelNotebook->append_page(*detailsPanelSW,   *toiD);
     toolPanelNotebook->append_page(*colorPanelSW,     *toiC);
-    toolPanelNotebook->append_page (*advancedPanelSW,   *toiW);
+    toolPanelNotebook->append_page(*advancedPanelSW,   *toiW);
     toolPanelNotebook->append_page(*locallabPanelSW,   *toiL);
     toolPanelNotebook->append_page(*transformPanelSW, *toiT);
     toolPanelNotebook->append_page(*rawPanelSW,       *toiR);
@@ -233,6 +232,9 @@ ToolPanelCoordinator::ToolPanelCoordinator(bool batch) : ipc(nullptr), hasChange
 
     toolPanelNotebook->set_scrollable();
     toolPanelNotebook->show_all();
+
+    notebookconn = toolPanelNotebook->signal_switch_page().connect(
+                       sigc::mem_fun(*this, &ToolPanelCoordinator::notebookPageChanged));
 
     for (auto toolPanel : toolPanels) {
         toolPanel->setListener(this);
@@ -252,6 +254,19 @@ ToolPanelCoordinator::ToolPanelCoordinator(bool batch) : ipc(nullptr), hasChange
     toolBar->setToolBarListener(this);
 }
 
+void ToolPanelCoordinator::notebookPageChanged(Gtk::Widget* page, guint page_num)
+{
+    // Locallab spot curves are set visible if at least one photo has been loaded (to avoid
+    // segfault) and locallab panel is active
+    if (photoLoadedOnce) {
+        if (page == locallabPanelSW) {
+            locallab->subscribe();
+        } else {
+            locallab->unsubscribe();
+        }
+    }
+}
+
 void ToolPanelCoordinator::addPanel(Gtk::Box* where, FoldableToolPanel* panel, int level)
 {
 
@@ -269,18 +284,22 @@ ToolPanelCoordinator::~ToolPanelCoordinator()
 
     closeImage();
 
+    // When deleting toolPanelNotebook, pages removal activates notebookPageChanged function
+    // which is responsible of segfault if listener isn't deactivated before
+    notebookconn.block(true);
+
     delete toolPanelNotebook;
     delete toolBar;
 }
 
-void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXtrans, bool isMono)
+void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans, bool isMono)
 {
     if (isRaw) {
         if (isBayer) {
             const auto func = [](gpointer data) -> gboolean {
                 ToolPanelCoordinator* const self = static_cast<ToolPanelCoordinator*>(data);
 
-                self->rawPanelSW->set_sensitive (true);
+                self->rawPanelSW->set_sensitive(true);
                 self->sensorxtrans->FoldableToolPanel::hide();
                 self->sensorbayer->FoldableToolPanel::show();
                 self->preprocess->FoldableToolPanel::show();
@@ -290,12 +309,11 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
                 return FALSE;
             };
             idle_register.add(func, this);
-        }
-        else if (isXtrans) {
+        } else if (isXtrans) {
             const auto func = [](gpointer data) -> gboolean {
                 ToolPanelCoordinator* const self = static_cast<ToolPanelCoordinator*>(data);
 
-                self->rawPanelSW->set_sensitive (true);
+                self->rawPanelSW->set_sensitive(true);
                 self->sensorxtrans->FoldableToolPanel::show();
                 self->sensorbayer->FoldableToolPanel::hide();
                 self->preprocess->FoldableToolPanel::show();
@@ -305,12 +323,11 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
                 return FALSE;
             };
             idle_register.add(func, this);
-        }
-        else if (isMono) {
+        } else if (isMono) {
             const auto func = [](gpointer data) -> gboolean {
                 ToolPanelCoordinator* const self = static_cast<ToolPanelCoordinator*>(data);
 
-                self->rawPanelSW->set_sensitive (true);
+                self->rawPanelSW->set_sensitive(true);
                 self->sensorbayer->FoldableToolPanel::hide();
                 self->sensorxtrans->FoldableToolPanel::hide();
                 self->preprocess->FoldableToolPanel::hide();
@@ -324,7 +341,7 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
             const auto func = [](gpointer data) -> gboolean {
                 ToolPanelCoordinator* const self = static_cast<ToolPanelCoordinator*>(data);
 
-                self->rawPanelSW->set_sensitive (true);
+                self->rawPanelSW->set_sensitive(true);
                 self->sensorbayer->FoldableToolPanel::hide();
                 self->sensorxtrans->FoldableToolPanel::hide();
                 self->preprocess->FoldableToolPanel::hide();
@@ -352,6 +369,9 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
 
 void ToolPanelCoordinator::panelChanged(rtengine::ProcEvent event, const Glib::ustring& descr)
 {
+    // TODO Locallab printf
+    printf("panelChanged\n");
+    printf("panelChanged event: %d\n", (int)event);
 
     if (!ipc) {
         return;
@@ -390,7 +410,6 @@ void ToolPanelCoordinator::panelChanged(rtengine::ProcEvent event, const Glib::u
         int fw, fh;
         ipc->getInitialImage()->getImageSource()->getFullSize(fw, fh, tr);
         gradient->updateGeometry(params->gradient.centerX, params->gradient.centerY, params->gradient.feather, params->gradient.degree, fw, fh);
-        locallab->updateGeometry(params->locallab.centerX, params->locallab.centerY, params->locallab.circrad, params->locallab.locY, params->locallab.degree,  params->locallab.locX, params->locallab.locYT, params->locallab.locXL, fw, fh);
     }
 
     // some transformations make the crop change for convenience
@@ -417,10 +436,33 @@ void ToolPanelCoordinator::panelChanged(rtengine::ProcEvent event, const Glib::u
     for (auto paramcListener : paramcListeners) {
         paramcListener->procParamsChanged(params, event, descr);
     }
+
+    // Locallab spot curves are set visible if at least one photo has been loaded (to avoid
+    // segfault) and locallab panel is active
+    // When a new photo is loaded, Locallab spot curves need to be set visible again
+    const auto func = [](gpointer data) -> gboolean {
+        ToolPanelCoordinator* const self = static_cast<ToolPanelCoordinator*>(data);
+
+        if (self->photoLoadedOnce && (self->toolPanelNotebook->get_nth_page(self->toolPanelNotebook->get_current_page()) == self->locallabPanelSW))
+        {
+            self->locallab->subscribe();
+        }
+
+        return FALSE;
+    };
+
+    if (event == rtengine::EvPhotoLoaded) {
+        idle_register.add(func, this);
+    }
+
+    photoLoadedOnce = true;
 }
 
 void ToolPanelCoordinator::profileChange(const PartialProfile *nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited, bool fromLastSave)
 {
+    // TODO Locallab printf
+    printf("profileChanged\n");
+    printf("profileChanged event: %d\n", (int)event);
 
     int fw, fh, tr;
 
@@ -485,8 +527,6 @@ void ToolPanelCoordinator::profileChange(const PartialProfile *nparams, rtengine
     if (event == rtengine::EvPhotoLoaded || event == rtengine::EvProfileChanged || event == rtengine::EvHistoryBrowsed || event == rtengine::EvCTRotate) {
         // updating the "on preview" geometry
         gradient->updateGeometry(params->gradient.centerX, params->gradient.centerY, params->gradient.feather, params->gradient.degree, fw, fh);
-        locallab->updateGeometry(params->locallab.centerX, params->locallab.centerY, params->locallab.circrad, params->locallab.locY, params->locallab.degree,  params->locallab.locX, params->locallab.locYT, params->locallab.locXL, fw, fh);
-
     }
 
     // start the IPC processing
@@ -501,6 +541,26 @@ void ToolPanelCoordinator::profileChange(const PartialProfile *nparams, rtengine
     for (auto paramcListener : paramcListeners) {
         paramcListener->procParamsChanged(params, event, descr);
     }
+
+    // Locallab spot curves are set visible if at least one photo has been loaded (to avoid
+    // segfault) and locallab panel is active
+    // When a new photo is loaded, Locallab spot curves need to be set visible again
+    const auto func = [](gpointer data) -> gboolean {
+        ToolPanelCoordinator* const self = static_cast<ToolPanelCoordinator*>(data);
+
+        if (self->photoLoadedOnce && (self->toolPanelNotebook->get_nth_page(self->toolPanelNotebook->get_current_page()) == self->locallabPanelSW))
+        {
+            self->locallab->subscribe();
+        }
+
+        return FALSE;
+    };
+
+    if (event == rtengine::EvPhotoLoaded) {
+        idle_register.add(func, this);
+    }
+
+    photoLoadedOnce = true;
 }
 
 void ToolPanelCoordinator::setDefaults(ProcParams* defparams)
@@ -539,7 +599,6 @@ void ToolPanelCoordinator::initImage(rtengine::StagedImageProcessor* ipc_, bool 
         ipc->setAutoChromaListener(dirpyrdenoise);
         ipc->setWaveletListener(wavelet);
         ipc->setRetinexListener(retinex);
-        ipc->setlocalListener(locallab);
         ipc->setSizeListener(crop);
         ipc->setSizeListener(resize);
         ipc->setImageTypeListener(this);
@@ -690,9 +749,10 @@ void ToolPanelCoordinator::sharpMaskSelected(bool sharpMask)
     if (!ipc) {
         return;
     }
-    ipc->beginUpdateParams ();
+
+    ipc->beginUpdateParams();
     ipc->setSharpMask(sharpMask);
-    ipc->endUpdateParams (rtengine::EvShrEnabled);
+    ipc->endUpdateParams(rtengine::EvShrEnabled);
 }
 
 
@@ -881,7 +941,7 @@ bool ToolPanelCoordinator::handleShortcutKey(GdkEventKey* event)
                 return true;
 
             case GDK_KEY_w:
-                toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*advancedPanelSW));
+                toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(*advancedPanelSW));
                 return true;
 
             case GDK_KEY_o:
@@ -906,7 +966,7 @@ void ToolPanelCoordinator::updateVScrollbars(bool hide)
     colorPanelSW->set_policy(Gtk::POLICY_AUTOMATIC, policy);
     transformPanelSW->set_policy(Gtk::POLICY_AUTOMATIC, policy);
     rawPanelSW->set_policy(Gtk::POLICY_AUTOMATIC, policy);
-    advancedPanelSW->set_policy      (Gtk::POLICY_AUTOMATIC, policy);
+    advancedPanelSW->set_policy(Gtk::POLICY_AUTOMATIC, policy);
     locallabPanelSW->set_policy(Gtk::POLICY_AUTOMATIC, policy);
 
     for (auto currExp : expList) {

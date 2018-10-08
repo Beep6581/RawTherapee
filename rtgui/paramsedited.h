@@ -456,120 +456,116 @@ public:
 };
 class LocallabParamsEdited
 {
-
 public:
     bool enabled;
-    bool degree;
-    bool locY;
+    bool nbspot;
+    bool selspot;
+    // Control spot settings
+    bool id;
+    bool name;
+    bool isvisible;
+    bool shape;
+    bool spotMethod;
+    bool sensiexclu;
+    bool struc;
+    bool shapeMethod;
     bool locX;
-    bool locYT;
     bool locXL;
+    bool locY;
+    bool locYT;
     bool centerX;
     bool centerY;
     bool circrad;
-    bool centerXbuf;
-    bool centerYbuf;
-    bool adjblur;
-    bool thres;
-    bool proxi;
     bool qualityMethod;
-    bool qualitycurveMethod;
+    bool transit;
+    bool thresh;
+    bool iter;
+    // Color & Light
+    bool expcolor;
+    bool curvactiv;
     bool lightness;
     bool contrast;
     bool chroma;
-    bool warm;
+    bool sensi;
+    bool qualitycurveMethod;
+    bool llcurve;
+    bool cccurve;
+    bool LHcurve;
+    bool HHcurve;
+    bool invers;
+    // Exposure
+    bool expexpose;
     bool expcomp;
     bool hlcompr;
     bool hlcomprthresh;
     bool black;
     bool shcompr;
-
-    bool noiselumf;
-    bool noiselumc;
-    bool noiselumdetail;
-    bool noiselequal;
-    bool noisechrodetail;
-    bool bilateral;
-    bool sensiden;
-    bool noisechrof;
-    bool noisechroc;
-    bool sharradius;
-    bool sharamount;
-    bool shardamping;
-    bool shariter;
-    bool sensi;
+    bool warm;
     bool sensiex;
-    bool sensih;
-    bool retrab;
-    bool sensicb;
-    bool sensibn;
-    bool sensitm;
-    bool sensisha;
+    bool excurve;
+    // Vibrance
+    bool expvibrance;
+    bool saturated;
+    bool pastels;
+    bool psthreshold;
+    bool protectskins;
+    bool avoidcolorshift;
+    bool pastsattog;
+    bool sensiv;
+    bool skintonescurve;
+    // Blur & Noise
+    bool expblur;
     bool radius;
     bool strength;
+    bool sensibn;
+    bool blurMethod;
+    bool activlum;
+    // Tone Mapping
+    bool exptonemap;
     bool stren;
     bool gamma;
     bool estop;
     bool scaltm;
     bool rewei;
-    bool transit;
-    bool avoid;
-    bool Smethod;
-    bool Exclumethod;
-    bool shapemethod;
-    bool sensiexclu;
-    bool struc;
-    bool retinexMethod;
-    bool blurMethod;
-    bool dustMethod;
-    bool str;
-    bool neigh;
-    bool nbspot;
-    bool anbspot;
-    bool hueref;
-    bool huerefblur;
-    bool chromaref;
-    bool lumaref;
-    bool sobelref;
-    bool vart;
-    bool activlum;
-    bool invers;
-    bool cutpast;
-    bool lastdust;
-    bool curvactiv;
-    bool inversrad;
-    bool inversret;
-    bool inverssha;
-    bool localTgaincurve;
-    bool localTgaincurverab;
-    bool llcurve;
-    bool cccurve;
-    bool LHcurve;
-    bool HHcurve;
-    bool excurve;
-    bool chrrt;
-    bool mult[5];
-    bool threshold;
-    bool chromacbdl;
-    bool expcolor;
-    bool expexpose;
-    bool expvibrance;
-    bool expblur;
-    bool exptonemap;
+    bool sensitm;
+    // Retinex
     bool expreti;
+    bool retinexMethod;
+    bool str;
+    bool chrrt;
+    bool neigh;
+    bool vart;
+    bool sensih;
+    bool localTgaincurve;
+    bool inversret;
+    // Sharpening
     bool expsharp;
+    bool sharradius;
+    bool sharamount;
+    bool shardamping;
+    bool shariter;
+    bool sensisha;
+    bool inverssha;
+    // Contrast by detail levels
     bool expcbdl;
+    bool mult[5];
+    bool chromacbdl;
+    bool threshold;
+    bool sensicb;
+    // Denoise
     bool expdenoi;
-    bool pastels;
-    bool saturated;
-    bool psthreshold;
-    bool protectskins;
-    bool avoidcolorshift;
-    bool pastsattog;
-    bool skintonescurve;
-    bool sensiv;
-	bool spotduplicated;
-
+    bool noiselumf;
+    bool noiselumc;
+    bool noiselumdetail;
+    bool noiselequal;
+    bool noisechrof;
+    bool noisechroc;
+    bool noisechrodetail;
+    bool adjblur;
+    bool bilateral;
+    bool sensiden;
+    // Others
+    bool avoid;
 };
 
 class LensProfParamsEdited

@@ -802,7 +802,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
     }
 }
 
-void ImProcFunctions::MSRLocal(float** luminance, float** templ, const float* const *originalLuminance, const int width, const int height, const LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
+void ImProcFunctions::MSRLocal(int sp, float** luminance, float** templ, const float* const *originalLuminance, const int width, const int height, const LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
 {
     BENCHFUN
     bool py = true;
@@ -814,10 +814,10 @@ void ImProcFunctions::MSRLocal(float** luminance, float** templ, const float* co
         //   constexpr bool useHsl = false; //never used
         constexpr bool useHslLin = false;//never used
         const float offse = 0.f; //loc.offs;
-        const float chrT = (float)(loc.chrrt) / 100.f;
+        const float chrT = (float)(loc.chrrt.at(sp)) / 100.f;
         const int scal = scall;//3;//loc.scale;;
-        const float vart = loc.vart / 100.f;//variance
-        const float strength = loc.str / 100.f; // Blend with original L channel data
+        const float vart = loc.vart.at(sp) / 100.f;//variance
+        const float strength = loc.str.at(sp) / 100.f; // Blend with original L channel data
         float limD = 10.f;//(float) loc.limd;
         limD = pow(limD, 1.7f);  //about 2500 enough
         //limD *= useHslLin ? 10.f : 1.f;
@@ -826,7 +826,7 @@ void ImProcFunctions::MSRLocal(float** luminance, float** templ, const float* co
 
         //empirical skip evaluation : very difficult  because quasi all parameters interfere
         //to test on several images
-        int nei = (int)(krad * loc.neigh);
+        int nei = (int)(krad * loc.neigh.at(sp));
 
         if (skip >= 4) {
             nei = (int)(0.1f * nei + 2.f);     //not too bad
@@ -836,12 +836,12 @@ void ImProcFunctions::MSRLocal(float** luminance, float** templ, const float* co
 
         int moderetinex = 0;
 
-        if (loc.retinexMethod == "uni") {
+        if (loc.retinexMethod.at(sp) == "uni") {
             moderetinex = 0;
-        } else if (loc.retinexMethod == "low") {
+        } else if (loc.retinexMethod.at(sp) == "low") {
             moderetinex = 1;
         } else {
-            if (loc.retinexMethod == "high") { // default to 2 ( deh.retinexMethod == "high" )
+            if (loc.retinexMethod.at(sp) == "high") { // default to 2 ( deh.retinexMethod == "high" )
                 moderetinex = 2;
             }
         }

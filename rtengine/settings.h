@@ -82,8 +82,6 @@ public:
     //  bool            bw_complementary;
     double          level0_cbdl;
     double          level123_cbdl;
-    int             nspot;
-    bool            locdelay;
     int             cropsleep;
     double          reduchigh;
     double          reduclow;
