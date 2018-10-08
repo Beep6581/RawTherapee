@@ -4485,6 +4485,8 @@ void ImProcCoordinator::process()
             || params.softlight != nextParams.softlight
             || params.raw != nextParams.raw
             || params.retinex != nextParams.retinex
+            || params.wavelet != nextParams.wavelet
+            
             || params.dirpyrequalizer != nextParams.dirpyrequalizer;
 
         params = nextParams;
