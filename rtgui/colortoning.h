@@ -32,12 +32,18 @@ public:
     void setDefaults           (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
     void trimValues            (rtengine::procparams::ProcParams* pp);
     void adjusterChanged       (Adjuster* a, double newval);
-    void adjusterChanged       (ThresholdAdjuster* a, double newBottom, double newTop);
+    void adjusterAutoToggled   (Adjuster* a, bool newval);
     void setAdjusterBehavior   (bool splitAdd, bool satThresholdAdd, bool satOpacityAdd, bool strprotectAdd, bool balanceAdd);
     void neutral_pressed       ();
     //void neutralCurves_pressed ();
     void autoColorTonChanged   (int bwct, int satthres, int satprot);
     bool CTComp_               ();
+
+    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop);
+    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight);
+    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop);
+    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight);
+    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
 
     void enabledChanged        ();
     void curveChanged          (CurveEditor* ce);
@@ -51,7 +57,7 @@ public:
     void colorForValue         (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
 
     void setListener(ToolPanelListener *tpl);
-    
+
 private:
     bool resetPressed(GdkEventButton* event);
 

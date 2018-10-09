@@ -54,6 +54,7 @@ public:
     void trimValues          (rtengine::procparams::ProcParams* pp);
     void setAdjusterBehavior (bool amountadd, bool contrastadd, bool uniformityadd);
     void adjusterChanged     (Adjuster* a, double newval);
+    void adjusterAutoToggled (Adjuster* a, bool newval);
 
     void enabledChanged      ();
     void matrix_toggled      ();

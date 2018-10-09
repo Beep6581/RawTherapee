@@ -363,7 +363,7 @@ void ICCProfileCreator::updateICCVersion()
     }
 }
 
-void ICCProfileCreator::adjusterChanged (Adjuster* a, double newval)
+void ICCProfileCreator::adjusterChanged(Adjuster* a, double newval)
 {
     if (a == aPrimariesRedX   || a == aPrimariesRedY   ||
         a == aPrimariesGreenX || a == aPrimariesGreenY ||
@@ -380,6 +380,10 @@ void ICCProfileCreator::adjusterChanged (Adjuster* a, double newval)
             trcPresets->set_active(0);
         }
     }
+}
+
+void ICCProfileCreator::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void ICCProfileCreator::primariesChanged()

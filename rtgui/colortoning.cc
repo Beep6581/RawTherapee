@@ -318,7 +318,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
 
     //------------------------------------------------------------------------
     // LAB grid
-    auto m = ProcEventMapper::getInstance();    
+    auto m = ProcEventMapper::getInstance();
     EvColorToningLabGridValue = m->newEvent(RGBCURVE, "HISTORY_MSG_COLORTONING_LABGRID_VALUE");
     labgridBox = Gtk::manage(new Gtk::HBox());
     labgrid = Gtk::manage(new LabGrid(EvColorToningLabGridValue));
@@ -688,13 +688,6 @@ void ColorToning::setAdjusterBehavior (bool splitAdd, bool satThresholdAdd, bool
 
 }
 
-void ColorToning::adjusterChanged (ThresholdAdjuster* a, double newBottom, double newTop)
-{
-    if (listener && getEnabled())
-        listener->panelChanged (a == hlColSat ? EvColorToningHighights : EvColorToningShadows,
-                                Glib::ustring::compose(Glib::ustring(M("TP_COLORTONING_HUE") + ": %1" + "\n" + M("TP_COLORTONING_STRENGTH") + ": %2"), int(newTop), int(newBottom)));
-}
-
 void ColorToning::autoColorTonChanged(int bwct, int satthres, int satprot)
 {
     nextbw = bwct;
@@ -731,40 +724,32 @@ bool ColorToning::CTComp_ ()
     return false;
 }
 
-void ColorToning::adjusterChanged (Adjuster* a, double newval)
+void ColorToning::adjusterChanged (ThresholdAdjuster* a, double newBottom, double newTop)
 {
-
-    if (!listener || !getEnabled()) {
-        return;
+    if (listener && getEnabled()) {
+        listener->panelChanged(
+            a == hlColSat
+                ? EvColorToningHighights
+                : EvColorToningShadows,
+            Glib::ustring::compose(Glib::ustring(M("TP_COLORTONING_HUE") + ": %1" + "\n" + M("TP_COLORTONING_STRENGTH") + ": %2"), int(newTop), int(newBottom))
+        );
     }
+}
 
-    if (a == redlow) {
-        listener->panelChanged (EvColorToningredlow, redlow->getTextValue());
-    } else if (a == greenlow) {
-        listener->panelChanged (EvColorToninggreenlow, greenlow->getTextValue());
-    } else if (a == bluelow) {
-        listener->panelChanged (EvColorToningbluelow, bluelow->getTextValue());
-    } else if (a == redmed) {
-        listener->panelChanged (EvColorToningredmed, redmed->getTextValue());
-    } else if (a == greenmed) {
-        listener->panelChanged (EvColorToninggreenmed, greenmed->getTextValue());
-    } else if (a == bluemed) {
-        listener->panelChanged (EvColorToningbluemed, bluemed->getTextValue());
-    } else if (a == redhigh) {
-        listener->panelChanged (EvColorToningredhigh, redhigh->getTextValue());
-    } else if (a == greenhigh) {
-        listener->panelChanged (EvColorToninggreenhigh, greenhigh->getTextValue());
-    } else if (a == bluehigh) {
-        listener->panelChanged (EvColorToningbluehigh, bluehigh->getTextValue());
-    } else if (a == balance) {
-        listener->panelChanged (EvColorToningbalance, balance->getTextValue());
-    } else if (a == satProtectionThreshold) {
-        listener->panelChanged (EvColorToningSatThreshold, a->getTextValue());
-    } else if (a == saturatedOpacity) {
-        listener->panelChanged (EvColorToningSatProtection, a->getTextValue());
-    } else if (a == strength) {
-        listener->panelChanged (EvColorToningStrength, a->getTextValue());
-    }
+void ColorToning::adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight)
+{
+}
+
+void ColorToning::adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop)
+{
+}
+
+void ColorToning::adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight)
+{
+}
+
+void ColorToning::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR)
+{
 }
 
 //Two Color changed
@@ -829,7 +814,7 @@ void ColorToning::methodChanged ()
 
     if (!batchMode) {
         labgridBox->hide();
-        
+
         if (method->get_active_row_number() == 0) { // Lab
             colorSep->show();
             colorCurveEditorG->show();
@@ -1139,6 +1124,45 @@ void ColorToning::trimValues (rtengine::procparams::ProcParams* pp)
     redhigh->trimValue(pp->colorToning.redhigh);
     greenhigh->trimValue(pp->colorToning.greenhigh);
     bluehigh->trimValue(pp->colorToning.bluehigh);
+}
+
+void ColorToning::adjusterChanged(Adjuster* a, double newval)
+{
+    if (!listener || !getEnabled()) {
+        return;
+    }
+
+    if (a == redlow) {
+        listener->panelChanged (EvColorToningredlow, redlow->getTextValue());
+    } else if (a == greenlow) {
+        listener->panelChanged (EvColorToninggreenlow, greenlow->getTextValue());
+    } else if (a == bluelow) {
+        listener->panelChanged (EvColorToningbluelow, bluelow->getTextValue());
+    } else if (a == redmed) {
+        listener->panelChanged (EvColorToningredmed, redmed->getTextValue());
+    } else if (a == greenmed) {
+        listener->panelChanged (EvColorToninggreenmed, greenmed->getTextValue());
+    } else if (a == bluemed) {
+        listener->panelChanged (EvColorToningbluemed, bluemed->getTextValue());
+    } else if (a == redhigh) {
+        listener->panelChanged (EvColorToningredhigh, redhigh->getTextValue());
+    } else if (a == greenhigh) {
+        listener->panelChanged (EvColorToninggreenhigh, greenhigh->getTextValue());
+    } else if (a == bluehigh) {
+        listener->panelChanged (EvColorToningbluehigh, bluehigh->getTextValue());
+    } else if (a == balance) {
+        listener->panelChanged (EvColorToningbalance, balance->getTextValue());
+    } else if (a == satProtectionThreshold) {
+        listener->panelChanged (EvColorToningSatThreshold, a->getTextValue());
+    } else if (a == saturatedOpacity) {
+        listener->panelChanged (EvColorToningSatProtection, a->getTextValue());
+    } else if (a == strength) {
+        listener->panelChanged (EvColorToningStrength, a->getTextValue());
+    }
+}
+
+void ColorToning::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void ColorToning::setBatchMode (bool batchMode)

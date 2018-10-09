@@ -27,12 +27,13 @@
 
 class CropWindow;
 
-class LockablePickerToolListener {
+class LockablePickerToolListener
+{
 public:
-    virtual ~LockablePickerToolListener () {}
+    virtual ~LockablePickerToolListener () = default;
 
     /// Callback on Color Picker's visibility switch
-    virtual void switchPickerVisibility (bool isVisible) {}
+    virtual void switchPickerVisibility(bool isVisible) = 0;
 };
 
 class LockableColorPicker : BackBuffer

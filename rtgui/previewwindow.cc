@@ -194,22 +194,23 @@ void PreviewWindow::setImageArea (ImageArea* ia)
     }
 }
 
-void PreviewWindow::cropPositionChanged (CropWindow* w)
+void PreviewWindow::cropPositionChanged(CropWindow* w)
 {
-
     queue_draw ();
 }
 
-void PreviewWindow::cropWindowSizeChanged (CropWindow* w)
+void PreviewWindow::cropWindowSizeChanged(CropWindow* w)
 {
-
     queue_draw ();
 }
 
-void PreviewWindow::cropZoomChanged (CropWindow* w)
+void PreviewWindow::cropZoomChanged(CropWindow* w)
 {
-
     queue_draw ();
+}
+
+void PreviewWindow::initialImageArrived()
+{
 }
 
 bool PreviewWindow::on_motion_notify_event (GdkEventMotion* event)

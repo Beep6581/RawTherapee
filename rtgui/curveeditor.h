@@ -93,7 +93,7 @@ public:
     void curveTypeToggled();
     bool isUnChanged ();
     void setUnChanged (bool uc);
-    void updateBackgroundHistogram (LUTu & hist);
+    void updateBackgroundHistogram(const LUTu& hist);
 
     void setLeftBarColorProvider(ColorProvider* cp, int callerId);
     void setBottomBarColorProvider(ColorProvider* cp, int callerId);

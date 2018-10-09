@@ -167,7 +167,7 @@ void ChMixer::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
         }
 }
 
-void ChMixer::adjusterChanged (Adjuster* a, double newval)
+void ChMixer::adjusterChanged(Adjuster* a, double newval)
 {
 
     if (listener && getEnabled()) {
@@ -179,6 +179,9 @@ void ChMixer::adjusterChanged (Adjuster* a, double newval)
     }
 }
 
+void ChMixer::adjusterAutoToggled(Adjuster* a, bool newval)
+{
+}
 
 void ChMixer::enabledChanged()
 {

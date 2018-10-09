@@ -212,13 +212,16 @@ public:
     void refreshThumbImages ();
     void refreshHeight ();
 
-    void openRequested          (std::vector<Thumbnail*> tbe);
-    void deleteRequested        (std::vector<FileBrowserEntry*> tbe, bool inclBatchProcessed);
-    void copyMoveRequested      (std::vector<FileBrowserEntry*> tbe, bool moveRequested);
-    void developRequested       (std::vector<FileBrowserEntry*> tbe, bool fastmode);
-    void renameRequested        (std::vector<FileBrowserEntry*> tbe);
-    void clearFromCacheRequested(std::vector<FileBrowserEntry*> tbe, bool leavenotrace);
-    void selectionChanged       (std::vector<Thumbnail*> tbe);
+    void filterApplied();
+    void openRequested(const std::vector<Thumbnail*>& tbe);
+    void deleteRequested(const std::vector<FileBrowserEntry*>& tbe, bool inclBatchProcessed);
+    void copyMoveRequested(const std::vector<FileBrowserEntry*>& tbe, bool moveRequested);
+    void developRequested(const std::vector<FileBrowserEntry*>& tbe, bool fastmode);
+    void renameRequested(const std::vector<FileBrowserEntry*>& tbe);
+    void selectionChanged(const std::vector<Thumbnail*>& tbe);
+    void clearFromCacheRequested(const std::vector<FileBrowserEntry*>& tbe, bool leavenotrace);
+    bool isInTabMode() const;
+
     void emptyTrash ();
     bool trashIsEmpty ();
 
@@ -277,11 +280,6 @@ public:
 
     bool handleShortcutKey (GdkEventKey* event);
 
-    bool isInTabMode()
-    {
-        return inTabMode;
-    }
-
     bool CheckSidePanelsVisibility();
     void toggleSidePanels();
     void toggleLeftPanel();
@@ -289,7 +287,6 @@ public:
 
     void showToolBar();
     void hideToolBar();
-    void filterApplied();
 
 #ifndef _WIN32
     void on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, bool internal);

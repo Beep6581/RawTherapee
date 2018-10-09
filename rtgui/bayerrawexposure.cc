@@ -121,7 +121,7 @@ void BayerRAWExposure::write( rtengine::procparams::ProcParams* pp, ParamsEdited
 
 }
 
-void BayerRAWExposure::adjusterChanged (Adjuster* a, double newval)
+void BayerRAWExposure::adjusterChanged(Adjuster* a, double newval)
 {
     if (listener) {
         Glib::ustring value = a->getTextValue();
@@ -146,6 +146,10 @@ void BayerRAWExposure::adjusterChanged (Adjuster* a, double newval)
             }
         }
     }
+}
+
+void BayerRAWExposure::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void BayerRAWExposure::checkBoxToggled (CheckBox* c, CheckValue newval)

@@ -110,8 +110,8 @@ private:
 class DrawModeListener
 {
 public:
-    virtual ~DrawModeListener() {}
-    virtual void toggle_button_mode () {}
+    virtual ~DrawModeListener() = default;
+    virtual void toggleButtonMode() = 0;
 };
 
 class HistogramArea : public Gtk::DrawingArea, public BackBuffer, private HistogramScaling
@@ -144,7 +144,16 @@ public:
     ~HistogramArea();
 
     void updateBackBuffer ();
-    void update (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histChroma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw);
+    void update(
+        const LUTu& histRed,
+        const LUTu& histGreen,
+        const LUTu& histBlue,
+        const LUTu& histLuma,
+        const LUTu& histChroma,
+        const LUTu& histRedRaw,
+        const LUTu& histGreenRaw,
+        const LUTu& histBlueRaw
+    );
     void updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, int mode);
     void on_realize();
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
@@ -209,9 +218,17 @@ public:
     HistogramPanel ();
     ~HistogramPanel ();
 
-    void histogramChanged (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histChroma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw)
+    void histogramChanged(
+        const LUTu& histRed,
+        const LUTu& histGreen,
+        const LUTu& histBlue,
+        const LUTu& histLuma,
+        const LUTu& histChroma,
+        const LUTu& histRedRaw,
+        const LUTu& histGreenRaw,
+        const LUTu& histBlueRaw)
     {
-        histogramArea->update (histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw);
+        histogramArea->update(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw);
     }
     // pointermotionlistener interface
     void pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw = false);
@@ -232,7 +249,7 @@ public:
     void resized (Gtk::Allocation& req);
 
     // drawModeListener interface
-    void toggle_button_mode ();
+    void toggleButtonMode ();
 };
 
 #endif

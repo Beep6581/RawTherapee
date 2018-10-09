@@ -206,7 +206,7 @@ void SaveFormatPanel::formatChanged ()
     }
 }
 
-void SaveFormatPanel::adjusterChanged (Adjuster* a, double newval)
+void SaveFormatPanel::adjusterChanged(Adjuster* a, double newval)
 {
     const unsigned int act = format->get_active_row_number();
 
@@ -217,4 +217,8 @@ void SaveFormatPanel::adjusterChanged (Adjuster* a, double newval)
     if (listener) {
         listener->formatChanged(sf_templates[act].second.format);
     }
+}
+
+void SaveFormatPanel::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }

@@ -129,7 +129,7 @@ void SharpenEdge::chanthree_toggled ()
     }
 }
 
-void SharpenEdge::adjusterChanged (Adjuster* a, double newval)
+void SharpenEdge::adjusterChanged(Adjuster* a, double newval)
 {
     if (listener && getEnabled()) {
         Glib::ustring value = a->getTextValue();
@@ -140,6 +140,10 @@ void SharpenEdge::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvSharpenEdgeAmount, value );
         }
     }
+}
+
+void SharpenEdge::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void SharpenEdge::setBatchMode(bool batchMode)

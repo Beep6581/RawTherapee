@@ -345,7 +345,7 @@ void HistogramPanel::reorder (Gtk::PositionType align)
 }
 
 // DrawModeListener interface:
-void HistogramPanel::toggle_button_mode ()
+void HistogramPanel::toggleButtonMode ()
 {   
     if (options.histogramDrawMode == 0)
         showMode->set_image(*mode0Image);
@@ -734,7 +734,16 @@ void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool c, bool 
     updateBackBuffer ();
 }
 
-void HistogramArea::update (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histChroma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw)
+void HistogramArea::update(
+    const LUTu& histRed,
+    const LUTu& histGreen,
+    const LUTu& histBlue,
+    const LUTu& histLuma,
+    const LUTu& histChroma,
+    const LUTu& histRedRaw,
+    const LUTu& histGreenRaw,
+    const LUTu& histBlueRaw
+)
 {
     if (histRed) {
         rhist = histRed;
@@ -1042,7 +1051,7 @@ bool HistogramArea::on_button_press_event (GdkEventButton* event)
         options.histogramDrawMode = (options.histogramDrawMode + 1) % 3;
         
         if (myDrawModeListener) {
-            myDrawModeListener->toggle_button_mode ();
+            myDrawModeListener->toggleButtonMode ();
         }
         
         updateBackBuffer ();

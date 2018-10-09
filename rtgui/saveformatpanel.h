@@ -26,7 +26,6 @@
 
 class FormatChangeListener
 {
-
 public:
     virtual ~FormatChangeListener() = default;
     virtual void formatChanged(const Glib::ustring& format) = 0;
@@ -61,6 +60,7 @@ public:
 
     void        formatChanged   ();
     void        adjusterChanged (Adjuster* a, double newval);
+    void        adjusterAutoToggled(Adjuster* a, bool newval);
 };
 
 #endif

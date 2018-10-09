@@ -61,9 +61,15 @@ public:
     void trimValues          (rtengine::procparams::ProcParams* pp);
     void setAdjusterBehavior (bool pastelsadd, bool saturatedadd);
     void adjusterChanged     (Adjuster* a, double newval);
-    void adjusterChanged     (ThresholdAdjuster* a, int newBottom, int newTop);
+    void adjusterAutoToggled (Adjuster* a, bool newval);
     void curveChanged        ();
     void autoOpenCurve       ();
+
+    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop);
+    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight);
+    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop);
+    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight);
+    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
 
     void enabledChanged          ();
     void protectskins_toggled    ();

@@ -539,6 +539,10 @@ void BayerProcess::adjusterChanged (Adjuster* a, double newval)
     }
 }
 
+void BayerProcess::adjusterAutoToggled(Adjuster* a, bool newval)
+{
+}
+
 void BayerProcess::methodChanged ()
 {
     const int currentSelection = method->get_active_row_number();

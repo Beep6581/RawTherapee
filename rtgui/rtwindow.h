@@ -78,7 +78,7 @@ public:
     bool selectEditorPanel (const std::string &name);
 
     void addBatchQueueJob       (BatchQueueEntry* bqe, bool head = false);
-    void addBatchQueueJobs      (std::vector<BatchQueueEntry*> &entries);
+    void addBatchQueueJobs      (const std::vector<BatchQueueEntry*>& entries);
 
     bool keyPressed (GdkEventKey* event);
     bool on_configure_event (GdkEventConfigure* event);
@@ -90,10 +90,12 @@ public:
     void showPreferences ();
     void on_realize ();
     void toggle_fullscreen ();
-    void setProgress (double p);
-    void setProgressStr (Glib::ustring str);
-    void setProgressState (bool inProcessing);
-    void error (Glib::ustring descr);
+
+    void setProgress(double p);
+    void setProgressStr(const Glib::ustring& str);
+    void setProgressState(bool inProcessing);
+    void error(const Glib::ustring& descr);
+
     rtengine::ProgressListener* getProgressListener ()
     {
         return pldBridge;

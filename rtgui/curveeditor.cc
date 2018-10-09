@@ -254,7 +254,7 @@ void CurveEditor::setUnChanged (bool uc)
 /*
  * Update the backgrounds histograms
  */
-void CurveEditor::updateBackgroundHistogram (LUTu & hist)
+void CurveEditor::updateBackgroundHistogram(const LUTu& hist)
 {
     // Copy the histogram in the curve editor cache
     if (hist) {
@@ -265,7 +265,7 @@ void CurveEditor::updateBackgroundHistogram (LUTu & hist)
     }
 
     // Then call the curve editor group to eventually update the histogram
-    subGroup->updateBackgroundHistogram (this);
+    subGroup->updateBackgroundHistogram(this);
 }
 
 // Open up the curve if it has modifications and it's not already opened
