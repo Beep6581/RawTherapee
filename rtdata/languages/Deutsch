@@ -182,7 +182,7 @@ FILEBROWSER_APPLYPROFILE;Profil anwenden
 FILEBROWSER_APPLYPROFILE_PARTIAL;Profil selektiv anwenden
 FILEBROWSER_AUTODARKFRAME;Automatisches Dunkelbild
 FILEBROWSER_AUTOFLATFIELD;Automatisches Weißbild
-FILEBROWSER_BROWSEPATHBUTTONHINT;Ausgewählter Pfad öffnen.
+FILEBROWSER_BROWSEPATHBUTTONHINT;Ausgewählten Pfad öffnen.
 FILEBROWSER_BROWSEPATHHINT;Einen Pfad eingeben:\nTaste:\n<b>Strg</b> + <b>o</b> Setzt den Cursor in das Eingabefeld\n<b>Enter</b> Öffnet den Pfad\n<b>Esc</b> Änderungen verwerfen\n<b>Umschalt</b> + <b>Esc</b> Eingabefeld verlassen\n\nSchnellnavigation:\nTaste:\n<b>~</b> “Home“-Verzeichnis des Benutzers\n<b>!</b> Bilder-Verzeichnis des Benutzers
 FILEBROWSER_CACHE;Festplatten-Cache
 FILEBROWSER_CACHECLEARFROMFULL;Aus dem Festplatten-Cache entfernen (vollständig)
@@ -1183,7 +1183,7 @@ PREFERENCES_GREYSC18;Yb = 18 CIE L#49
 PREFERENCES_GREYSCA;Automatisch
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogramm linksseitig
 PREFERENCES_HISTOGRAMWORKING;Das Arbeitsprofil zur Darstellung des Haupthistogramms verwenden
-PREFERENCES_HISTOGRAM_TOOLTIP;Wenn aktiviert wird das Arbeitsprofil für die Darstellung\ndes Haupthistogramms verwendet, andernfalls das des\ngammakorrigierten Ausgangsprofils.
+PREFERENCES_HISTOGRAM_TOOLTIP;Wenn aktiviert, wird das Arbeitsprofil für die Darstellung\ndes Haupthistogramms verwendet, andernfalls das des\ngammakorrigierten Ausgangsprofils.
 PREFERENCES_HLTHRESHOLD;Lichter - Schwelle
 PREFERENCES_ICCDIR;ICC-Profile-Verzeichnis
 PREFERENCES_IMG_RELOAD_NEEDED;Änderungen werden nur auf neu geöffnete Bilder angewendet
