@@ -691,7 +691,18 @@ scrollbar.hovering slider:hover {
 scrollbar:not(.overlay-indicator):hover {
     min-width: 1px;
 }
-/**/
+
+/* Toolbar stuck workaround */
+.scrollableToolbar > scrollbar:not(.dummy),
+.scrollableToolbar > scrollbar:not(.dummy) > contents:not(.dummy),
+.scrollableToolbar > scrollbar:not(.dummy) > contents:not(.dummy) > trough:not(.dummy),
+.scrollableToolbar > scrollbar:not(.dummy) > contents:not(.dummy) > trough:not(.dummy) > slider:not(.dummy) {
+    padding: 0;
+    margin: 0;
+    min-height: 0;
+    min-width: 0;
+    border: none;
+}
 
 /*** end ***************************************************************************************/
 
@@ -2146,16 +2157,6 @@ headerbar .title:backdrop {
     color: alpha(@winTitle,.60);
 }
 /*** end ***************************************************************************************/
-/* Toolbar stuck workaround */
-/* 
-.scrollableToolbar scrollbar:not(.overlay-indicator) slider:not(.dummy) {
-    padding: 0;
-    margin: 0;
-    min-height: 0;
-    min-width: 0;
-    border: none;
-}
- */
 
 
 /* .view:not(check):not(radio), image:not(check):not(radio), spinbutton button, cellview {
