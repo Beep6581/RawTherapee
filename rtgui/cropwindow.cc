@@ -267,15 +267,22 @@ void CropWindow::flawnOver (bool isFlawnOver)
     this->isFlawnOver = isFlawnOver;
 }
 
-void CropWindow::scroll (int state, GdkScrollDirection direction, int x, int y)
+void CropWindow::scroll (int state, GdkScrollDirection direction, int x, int y, double deltaX, double deltaY)
 {
+    double delta = 0.0;
+    if (abs(deltaX) > abs(deltaY)) {
+        delta = deltaX;
+    } else {
+        delta = deltaY;
+    }
+    bool isUp = direction == GDK_SCROLL_UP || (direction == GDK_SCROLL_SMOOTH && delta < 0.0);
     if ((state & GDK_CONTROL_MASK) && onArea(ColorPicker, x, y)) {
         // resizing a color picker
-        if (direction == GDK_SCROLL_UP) {
+        if (isUp) {
             hoveredPicker->incSize();
             updateHoveredPicker();
             iarea->redraw ();
-        }else if (direction == GDK_SCROLL_DOWN) {
+        } else {
             hoveredPicker->decSize();
             updateHoveredPicker();
             iarea->redraw ();
@@ -287,9 +294,9 @@ void CropWindow::scroll (int state, GdkScrollDirection direction, int x, int y)
 
         screenCoordToImage(newCenterX, newCenterY, newCenterX, newCenterY);
 
-        if (direction == GDK_SCROLL_UP && !isMaxZoom()) {
+        if (isUp && !isMaxZoom()) {
             zoomIn (true, newCenterX, newCenterY);
-        } else if (direction == GDK_SCROLL_DOWN && !isMinZoom()) {
+        } else if (!isUp && !isMinZoom()) {
             zoomOut (true, newCenterX, newCenterY);
         }
     }

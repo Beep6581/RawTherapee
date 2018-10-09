@@ -138,7 +138,7 @@ public:
     enum Arrangement {TB_Horizontal, TB_Vertical};
     void configScrollBars ();
     void scrollChanged ();
-    void scroll (int direction);
+    void scroll (int direction, double deltaX=0.0, double deltaY=0.0);
     void scrollPage (int direction);
 
 private:
