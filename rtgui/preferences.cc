@@ -1363,11 +1363,9 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     Gtk::HBox* hb5 = Gtk::manage(new Gtk::HBox());
     clearThumbnails = Gtk::manage(new Gtk::Button(M("PREFERENCES_CACHECLEARTHUMBS")));
     clearProfiles = Gtk::manage(new Gtk::Button(M("PREFERENCES_CACHECLEARPROFILES")));
-    clearmip = Gtk::manage(new Gtk::Button(M("PREFERENCES_CACHECLEARMIP")));
     clearAll = Gtk::manage(new Gtk::Button(M("PREFERENCES_CACHECLEARALL")));
     hb5->pack_start(*clearThumbnails, Gtk::PACK_SHRINK, 4);
     hb5->pack_start(*clearProfiles, Gtk::PACK_SHRINK, 4);
-    hb5->pack_start(*clearmip, Gtk::PACK_SHRINK, 4);
     hb5->pack_start(*clearAll, Gtk::PACK_SHRINK, 4);
     vbc->pack_start(*hb5, Gtk::PACK_SHRINK, 4);
 
@@ -1390,7 +1388,6 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     extension->signal_activate().connect(sigc::mem_fun(*this, &Preferences::addExtPressed));
     clearThumbnails->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::clearThumbImagesPressed));
     clearProfiles->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::clearProfilesPressed));
-    clearmip->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::clearmipPressed));
     clearAll->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::clearAllPressed));
 
     swFileBrowser->add(*vbFileBrowser);
@@ -2417,11 +2414,6 @@ void Preferences::clearProfilesPressed()
     cacheMgr->clearProfiles();
 }
 
-void Preferences::clearmipPressed()
-{
-
-    cacheMgr->clearmip();
-}
 
 void Preferences::clearThumbImagesPressed()
 {
