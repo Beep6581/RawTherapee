@@ -952,7 +952,7 @@ inline void rescale_nearest (const Array2Df &src, Array2Df &dst, bool multithrea
 
 inline float luminance (float r, float g, float b, TMatrix ws)
 {
-    return r * ws[1][0] + g * ws[1][1] + b * ws[1][2];
+    return Color::rgbLuminance(r, g, b, ws);
 }
 
 

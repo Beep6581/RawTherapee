@@ -256,6 +256,10 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     appendBehavList (mi, M ("TP_DIRPYRDENOISE_MEDIAN_PASSES"), ADDSET_DIRPYRDN_PASSES, true);
 
     mi = behModel->append ();
+    mi->set_value ( behavColumns.label, M ("TP_DEHAZE_LABEL") );
+    appendBehavList ( mi, M ( "TP_DEHAZE_STRENGTH" ), ADDSET_DEHAZE_STRENGTH, true );
+
+    mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_WBALANCE_LABEL"));
     appendBehavList (mi, M ("TP_WBALANCE_TEMPERATURE"), ADDSET_WB_TEMPERATURE, true);
     appendBehavList (mi, M ("TP_WBALANCE_GREEN"), ADDSET_WB_GREEN, true);

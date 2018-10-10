@@ -413,12 +413,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, Crop* cropCall)
 
     readyphase++;
 
-    if ((todo & M_HDR) && params.fattal.enabled) {
+    if ((todo & M_HDR) && (params.fattal.enabled || params.dehaze.enabled)) {
         if (fattal_11_dcrop_cache) {
             delete fattal_11_dcrop_cache;
             fattal_11_dcrop_cache = nullptr;
         }
 
+        ipf.dehaze(orig_prev);
         ipf.ToneMapFattal02(orig_prev);
 
         if (oprevi != orig_prev) {

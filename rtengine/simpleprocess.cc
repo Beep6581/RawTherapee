@@ -854,6 +854,7 @@ private:
 
         ipf.firstAnalysis (baseImg, params, hist16);
 
+        ipf.dehaze(baseImg);
         if (params.fattal.enabled) {
             ipf.ToneMapFattal02(baseImg);
         }
