@@ -16,14 +16,35 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <functional>
+
 #include "saveasdlg.h"
-#include "multilangmgr.h"
+
 #include "guiutils.h"
+#include "multilangmgr.h"
 #include "rtimage.h"
 
 #include "../rtengine/utils.h"
 
 extern Options options;
+
+namespace
+{
+
+Glib::ustring getCurrentFilename(const Gtk::FileChooserWidget* fchooser)
+{
+    Glib::ustring res = fchooser->get_filename();
+
+    // NB: There seem to be a bug in Gtkmm2.22 / FileChooserWidget : if you suppress the filename entry and
+    //     click on a folder in the list, the filename field is empty but get_filename will return the folder's path :/
+    if (Glib::file_test(res, Glib::FILE_TEST_IS_DIR)) {
+        res = fchooser->get_current_name();
+    }
+
+    return res;
+}
+
+}
 
 SaveAsDialog::SaveAsDialog (const Glib::ustring &initialDir, Gtk::Window* parent)
     : Gtk::Dialog (M("GENERAL_SAVE"), *parent)
@@ -219,13 +240,7 @@ SaveFormat SaveAsDialog::getFormat ()
 
 void SaveAsDialog::okPressed ()
 {
-    fname = fchooser->get_filename();
-
-    // NB: There seem to be a bug in Gtkmm2.22 / FileChooserWidget : if you suppress the filename entry and
-    //     click on a folder in the list, the filename field is empty but get_filename will return the folder's path :/
-    if (Glib::file_test(fname, Glib::FILE_TEST_IS_DIR)) {
-        fname = fchooser->get_current_name();
-    }
+    fname = getCurrentFilename(fchooser);
 
     // Checking if the filename field is empty. The user have to click Cancel if he don't want to specify a filename
     if (fname.empty()) {
@@ -246,9 +261,18 @@ void SaveAsDialog::okPressed ()
         // Extension is either empty or unfamiliar
         fname += '.' + formatOpts->getFormat().format;
     } else if (
-        !rtengine::hasJpegExtension(fname)
-        && !rtengine::hasTiffExtension(fname)
-        && !rtengine::hasPngExtension(fname)
+        (
+            formatOpts->getFormat().format == "jpg"
+            && !rtengine::hasJpegExtension(fname)
+        )
+        || (
+            formatOpts->getFormat().format == "tif"
+            && !rtengine::hasTiffExtension(fname)
+        )
+        || (
+            formatOpts->getFormat().format == "png"
+            && !rtengine::hasPngExtension(fname)
+        )
     ) {
         // Create dialog to warn user that the filename may have two extensions on the end
         Gtk::MessageDialog msgd(
@@ -283,15 +307,42 @@ void SaveAsDialog::cancelPressed ()
     response (Gtk::RESPONSE_CANCEL);
 }
 
-void SaveAsDialog::formatChanged (Glib::ustring f)
+void SaveAsDialog::formatChanged(const Glib::ustring& format)
 {
+    const auto sanitize_suffix =
+        [this, format](const std::function<bool (const Glib::ustring&)>& has_suffix)
+        {
+            const Glib::ustring name = getCurrentFilename(fchooser);
 
-    if (f == "jpg") {
+            if (!has_suffix(name)) {
+                fchooser->set_current_name(removeExtension(Glib::path_get_basename(name)) + '.' + format);
+            }
+        };
+
+    if (format == "jpg") {
         fchooser->set_filter (filter_jpg);
-    } else if (f == "png") {
+        sanitize_suffix(
+            [](const Glib::ustring& filename)
+            {
+                return rtengine::hasJpegExtension(filename);
+            }
+        );
+    } else if (format == "png") {
         fchooser->set_filter (filter_png);
-    } else if (f == "tif") {
+        sanitize_suffix(
+            [](const Glib::ustring& filename)
+            {
+                return rtengine::hasPngExtension(filename);
+            }
+        );
+    } else if (format == "tif") {
         fchooser->set_filter (filter_tif);
+        sanitize_suffix(
+            [](const Glib::ustring& filename)
+            {
+                return rtengine::hasTiffExtension(filename);
+            }
+        );
     }
 }
 

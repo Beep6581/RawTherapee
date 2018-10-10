@@ -28,8 +28,8 @@ class FormatChangeListener
 {
 
 public:
-    virtual ~FormatChangeListener () {}
-    virtual void formatChanged (Glib::ustring f) {}
+    virtual ~FormatChangeListener() = default;
+    virtual void formatChanged(const Glib::ustring& format) = 0;
 };
 
 class SaveFormatPanel : public Gtk::Grid, public AdjusterListener

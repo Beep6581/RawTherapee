@@ -34,7 +34,7 @@ void PreviewWindow::on_realize ()
 {
 
     Gtk::DrawingArea::on_realize ();
-    add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK);
+    add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
 }
 
 void PreviewWindow::getObservedFrameArea (int& x, int& y, int& w, int& h)

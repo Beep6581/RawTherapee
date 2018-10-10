@@ -72,7 +72,7 @@ public:
     void saveOptions ();
     void pathFolderChanged ();
     void pathFolderButtonPressed ();
-    void formatChanged (Glib::ustring f);
+    void formatChanged(const Glib::ustring& format) override;
     void updateTab (int qsize, int forceOrientation = 0); // forceOrientation=0: base on options / 1: horizontal / 2: vertical
 
     bool handleShortcutKey (GdkEventKey* event);

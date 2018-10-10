@@ -187,7 +187,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         }
     }
 
-    if (((todo & ALL) == ALL) || panningRelatedChange || (highDetailNeeded && options.prevdemo != PD_Sidecar)) {
+    if (((todo & ALL) == ALL) || (todo & M_MONITOR) || panningRelatedChange || (highDetailNeeded && options.prevdemo != PD_Sidecar)) {
         bwAutoR = bwAutoG = bwAutoB = -9000.f;
 
         if (todo == CROP && ipf.needsPCVignetting()) {
@@ -1022,11 +1022,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
 // process crop, if needed
     for (size_t i = 0; i < crops.size(); i++)
-        if (crops[i]->hasListener() && (panningRelatedChange || crops[i]->get_skip() == 1)) {
+        if (crops[i]->hasListener() && (panningRelatedChange || (todo & M_MONITOR) || crops[i]->get_skip() == 1)) {
             crops[i]->update(todo);     // may call ourselves
         }
 
-    if (panningRelatedChange) {
+    if (panningRelatedChange || (todo & M_MONITOR)) {
         progress("Conversion to RGB...", 100 * readyphase / numofphases);
 
         if ((todo != CROP && todo != MINUPDATE) || (todo & M_MONITOR)) {
@@ -1575,7 +1575,6 @@ void ImProcCoordinator::process()
             || params.raw != nextParams.raw
             || params.retinex != nextParams.retinex
             || params.wavelet != nextParams.wavelet
-            
             || params.dirpyrequalizer != nextParams.dirpyrequalizer;
 
         params = nextParams;
