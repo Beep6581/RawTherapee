@@ -1014,6 +1014,10 @@ inline int find_fast_dim (int dim)
 
 void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
 {
+    if (!params->fattal.enabled) {
+        return;
+    }
+    
     BENCHFUN
     const int detail_level = 3;
 
