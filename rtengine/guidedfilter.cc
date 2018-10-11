@@ -110,7 +110,7 @@ void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2
     const auto f_mean =
         [](array2D<float> &d, array2D<float> &s, int rad) -> void
         {
-            rad = min(rad, s.width() / 2, s.height() / 2);
+            rad = LIM(rad, 0, (min(s.width(), s.height()) - 1) / 2 - 1);
             boxblur<float, float>(s, d, rad, rad, s.width(), s.height());
         };
 

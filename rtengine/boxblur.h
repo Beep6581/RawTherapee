@@ -35,6 +35,8 @@ namespace rtengine
 template<class T, class A> void boxblur (T** src, A** dst, int radx, int rady, int W, int H)
 {
     //box blur image; box range = (radx,rady)
+    assert(2*radx+1 < W);
+    assert(2*rady+1 < H);
 
     AlignedBuffer<float>* buffer = new AlignedBuffer<float> (W * H);
     float* temp = buffer->data;
