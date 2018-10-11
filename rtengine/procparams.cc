@@ -2376,7 +2376,10 @@ bool SoftLightParams::operator !=(const SoftLightParams& other) const
 
 DehazeParams::DehazeParams() :
     enabled(false),
-    strength(50)
+    strength(50),
+    showDepthMap(false),
+    depth(0),
+    detail(0)
 {
 }
 
@@ -2384,7 +2387,10 @@ bool DehazeParams::operator ==(const DehazeParams& other) const
 {
     return
         enabled == other.enabled
-        && strength == other.strength;
+        && strength == other.strength
+        && showDepthMap == other.showDepthMap
+        && depth == other.depth
+        && detail == other.detail;
 }
 
 bool DehazeParams::operator !=(const DehazeParams& other) const
@@ -3062,6 +3068,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 // Dehaze
         saveToKeyfile(!pedited || pedited->dehaze.enabled, "Dehaze", "Enabled", dehaze.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->dehaze.strength, "Dehaze", "Strength", dehaze.strength, keyFile);        
+        saveToKeyfile(!pedited || pedited->dehaze.showDepthMap, "Dehaze", "ShowDepthMap", dehaze.showDepthMap, keyFile);        
+        saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Depth", dehaze.depth, keyFile);        
+        saveToKeyfile(!pedited || pedited->dehaze.detail, "Dehaze", "Detail", dehaze.detail, keyFile);        
 
 // Directional pyramid denoising
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.enabled, "Directional Pyramid Denoising", "Enabled", dirpyrDenoise.enabled, keyFile);
@@ -4647,6 +4656,9 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         if (keyFile.has_group("Dehaze")) {
             assignFromKeyfile(keyFile, "Dehaze", "Enabled", pedited, dehaze.enabled, pedited->dehaze.enabled);
             assignFromKeyfile(keyFile, "Dehaze", "Strength", pedited, dehaze.strength, pedited->dehaze.strength);
+            assignFromKeyfile(keyFile, "Dehaze", "ShowDepthMap", pedited, dehaze.showDepthMap, pedited->dehaze.showDepthMap);
+            assignFromKeyfile(keyFile, "Dehaze", "Depth", pedited, dehaze.depth, pedited->dehaze.depth);
+            assignFromKeyfile(keyFile, "Dehaze", "Detail", pedited, dehaze.detail, pedited->dehaze.detail);
         }
         
         if (keyFile.has_group("Film Simulation")) {

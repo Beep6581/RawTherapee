@@ -1230,6 +1230,9 @@ struct SoftLightParams {
 struct DehazeParams {
     bool enabled;
     int strength;
+    bool showDepthMap;
+    int depth;
+    int detail;
 
     DehazeParams();
 

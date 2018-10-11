@@ -30,12 +30,30 @@ Dehaze::Dehaze(): FoldableToolPanel(this, "dehaze", M("TP_DEHAZE_LABEL"), false,
     auto m = ProcEventMapper::getInstance();
     EvDehazeEnabled = m->newEvent(HDR, "HISTORY_MSG_DEHAZE_ENABLED");
     EvDehazeStrength = m->newEvent(HDR, "HISTORY_MSG_DEHAZE_STRENGTH");
+    EvDehazeShowDepthMap = m->newEvent(HDR, "HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP");
+    EvDehazeDepth = m->newEvent(HDR, "HISTORY_MSG_DEHAZE_DEPTH");
+    EvDehazeDetail = m->newEvent(HDR, "HISTORY_MSG_DEHAZE_DETAIL");
     
     strength = Gtk::manage(new Adjuster(M("TP_DEHAZE_STRENGTH"), 0., 100., 1., 50.));
     strength->setAdjusterListener(this);
     strength->show();
 
+    depth = Gtk::manage(new Adjuster(M("TP_DEHAZE_DEPTH"), -100., 100., 1., 0.));
+    depth->setAdjusterListener(this);
+    depth->show();
+
+    detail = Gtk::manage(new Adjuster(M("TP_DEHAZE_DETAIL"), -100, 100, 1, 0));
+    detail->setAdjusterListener(this);
+    detail->show();
+    
+    showDepthMap = Gtk::manage(new Gtk::CheckButton(M("TP_DEHAZE_SHOW_DEPTH_MAP")));
+    showDepthMap->signal_toggled().connect(sigc::mem_fun(*this, &Dehaze::showDepthMapChanged));
+    showDepthMap->show();
+    
     pack_start(*strength);
+    pack_start(*depth);
+    pack_start(*detail);
+    pack_start(*showDepthMap);
 }
 
 
@@ -45,11 +63,17 @@ void Dehaze::read(const ProcParams *pp, const ParamsEdited *pedited)
 
     if (pedited) {
         strength->setEditedState(pedited->dehaze.strength ? Edited : UnEdited);
+        depth->setEditedState(pedited->dehaze.depth ? Edited : UnEdited);
+        detail->setEditedState(pedited->dehaze.detail ? Edited : UnEdited);
         set_inconsistent(multiImage && !pedited->dehaze.enabled);
+        showDepthMap->set_inconsistent(!pedited->dehaze.showDepthMap);
     }
 
     setEnabled(pp->dehaze.enabled);
     strength->setValue(pp->dehaze.strength);
+    depth->setValue(pp->dehaze.depth);
+    detail->setValue(pp->dehaze.detail);
+    showDepthMap->set_active(pp->dehaze.showDepthMap);
 
     enableListener();
 }
@@ -58,22 +82,34 @@ void Dehaze::read(const ProcParams *pp, const ParamsEdited *pedited)
 void Dehaze::write(ProcParams *pp, ParamsEdited *pedited)
 {
     pp->dehaze.strength = strength->getValue();
+    pp->dehaze.depth = depth->getValue();
+    pp->dehaze.detail = detail->getValue();
     pp->dehaze.enabled = getEnabled();
+    pp->dehaze.showDepthMap = showDepthMap->get_active();
 
     if (pedited) {
         pedited->dehaze.strength = strength->getEditedState();
+        pedited->dehaze.depth = depth->getEditedState();
+        pedited->dehaze.detail = detail->getEditedState();
         pedited->dehaze.enabled = !get_inconsistent();
+        pedited->dehaze.showDepthMap = !showDepthMap->get_inconsistent();
     }
 }
 
 void Dehaze::setDefaults(const ProcParams *defParams, const ParamsEdited *pedited)
 {
     strength->setDefault(defParams->dehaze.strength);
+    depth->setDefault(defParams->dehaze.depth);
+    detail->setDefault(defParams->dehaze.detail);
 
     if (pedited) {
         strength->setDefaultEditedState(pedited->dehaze.strength ? Edited : UnEdited);
+        depth->setDefaultEditedState(pedited->dehaze.depth ? Edited : UnEdited);
+        detail->setDefaultEditedState(pedited->dehaze.detail ? Edited : UnEdited);
     } else {
         strength->setDefaultEditedState(Irrelevant);
+        depth->setDefaultEditedState(Irrelevant);
+        detail->setDefaultEditedState(Irrelevant);
     }
 }
 
@@ -81,7 +117,13 @@ void Dehaze::setDefaults(const ProcParams *defParams, const ParamsEdited *pedite
 void Dehaze::adjusterChanged(Adjuster* a, double newval)
 {
     if (listener && getEnabled()) {
-        listener->panelChanged(EvDehazeStrength, a->getTextValue());
+        if (a == strength) {
+            listener->panelChanged(EvDehazeStrength, a->getTextValue());
+        } else if (a == depth) {
+            listener->panelChanged(EvDehazeDepth, a->getTextValue());
+        } else if (a == detail) {
+            listener->panelChanged(EvDehazeDetail, a->getTextValue());
+        }
     }
 }
 
@@ -100,11 +142,21 @@ void Dehaze::enabledChanged ()
 }
 
 
+void Dehaze::showDepthMapChanged()
+{
+    if (listener) {
+        listener->panelChanged(EvDehazeShowDepthMap, showDepthMap->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    }
+}
+
+
 void Dehaze::setBatchMode(bool batchMode)
 {
     ToolPanel::setBatchMode(batchMode);
 
     strength->showEditedCB();
+    depth->showEditedCB();
+    detail->showEditedCB();
 }
 
 
