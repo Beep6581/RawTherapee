@@ -53,7 +53,6 @@ set(RTENGINESOURCEFILES
     demosaic/hphd.cc
     demosaic/igv.cc
     demosaic/lmmse.cc
-    demosaic/markesteijn.cc
     demosaic/none.cc
     demosaic/pixelshift.cc
     demosaic/rcd.cc

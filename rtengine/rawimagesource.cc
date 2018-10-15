@@ -2116,9 +2116,35 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
             ri->getXtransMatrix(xtrans);
             fast_xtransdemosaic(rawData, red, green, blue, xtrans);
         } else if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::ONE_PASS)) {
-            markesteijn_demosaic(1, false);
+            if (plistener) {
+                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "Xtrans"));
+                plistener->setProgress(0.0);
+            }
+            std::function<bool(double)> setProgCancel = [this](double p) -> bool {
+                if(plistener)
+                    plistener->setProgress(p);
+                return false;
+            };
+            int xtrans[6][6];
+            ri->getXtransMatrix(xtrans);
+            float rgb_cam[3][4];
+            ri->getRgbCam(rgb_cam);
+            librtprocess::markesteijn_demosaic(W, H, rawData, red, green, blue, xtrans, rgb_cam, setProgCancel, 1, false);
         } else if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::THREE_PASS) ) {
-            markesteijn_demosaic(3, true);
+            if (plistener) {
+                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "Xtrans"));
+                plistener->setProgress(0.0);
+            }
+            std::function<bool(double)> setProgCancel = [this](double p) -> bool {
+                if(plistener)
+                    plistener->setProgress(p);
+                return false;
+            };
+            int xtrans[6][6];
+            ri->getXtransMatrix(xtrans);
+            float rgb_cam[3][4];
+            ri->getRgbCam(rgb_cam);
+            librtprocess::markesteijn_demosaic(W, H, rawData, red, green, blue, xtrans, rgb_cam, setProgCancel, 3, true);
         } else if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FOUR_PASS) || raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::TWO_PASS)) {
             if (!autoContrast) {
                 double threshold = raw.xtranssensor.dualDemosaicContrast;

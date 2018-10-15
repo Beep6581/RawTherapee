@@ -266,7 +266,6 @@ protected:
     void hphd_demosaic();
     void igv_demosaic(int winw, int winh);
     void lmmse_demosaic(int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, int iterations);
-    void markesteijn_demosaic (const int passes, const bool useCieLab);
     void nodemosaic(bool bw);
     void pixelshift(int winx, int winy, int winw, int winh, const RAWParams &rawParams, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection);
     void rcd_demosaic();

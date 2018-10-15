@@ -61,9 +61,35 @@ void RawImageSource::dual_demosaic(bool isBayer, const RAWParams &raw, int winw,
             }
         } else {
             if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FOUR_PASS) ) {
-                markesteijn_demosaic (3, true);
+                if (plistener) {
+                    plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "Xtrans"));
+                    plistener->setProgress(0.0);
+                }
+                std::function<bool(double)> setProgCancel = [this](double p) -> bool {
+                    if (plistener)
+                        plistener->setProgress(p);
+                    return false;
+                };
+                int xtrans[6][6];
+                ri->getXtransMatrix(xtrans);
+                float rgb_cam[3][4];
+                ri->getRgbCam(rgb_cam);
+                librtprocess::markesteijn_demosaic(W, H, rawData, red, green, blue, xtrans, rgb_cam, setProgCancel, 3, true);
             } else {
-                markesteijn_demosaic (1, false);
+                if (plistener) {
+                    plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "Xtrans"));
+                    plistener->setProgress(0.0);
+                }
+                std::function<bool(double)> setProgCancel = [this](double p) -> bool {
+                    if (plistener)
+                        plistener->setProgress(p);
+                    return false;
+                };
+                int xtrans[6][6];
+                ri->getXtransMatrix(xtrans);
+                float rgb_cam[3][4];
+                ri->getRgbCam(rgb_cam);
+                librtprocess::markesteijn_demosaic(W, H, rawData, red, green, blue, xtrans, rgb_cam, setProgCancel, 1, false);
             }
         }
 
@@ -96,9 +122,35 @@ void RawImageSource::dual_demosaic(bool isBayer, const RAWParams &raw, int winw,
         }
     } else {
         if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FOUR_PASS) ) {
-            markesteijn_demosaic (3, true);
+            if (plistener) {
+                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "Xtrans"));
+                plistener->setProgress(0.0);
+            }
+            std::function<bool(double)> setProgCancel = [this](double p) -> bool {
+                if (plistener)
+                    plistener->setProgress(p);
+                return false;
+            };
+            int xtrans[6][6];
+            ri->getXtransMatrix(xtrans);
+            float rgb_cam[3][4];
+            ri->getRgbCam(rgb_cam);
+            librtprocess::markesteijn_demosaic(W, H, rawData, red, green, blue, xtrans, rgb_cam, setProgCancel, 3, true);
         } else {
-            markesteijn_demosaic (1, false);
+            if (plistener) {
+                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "Xtrans"));
+                plistener->setProgress(0.0);
+            }
+            std::function<bool(double)> setProgCancel = [this](double p) -> bool {
+                if (plistener)
+                    plistener->setProgress(p);
+                return false;
+            };
+            int xtrans[6][6];
+            ri->getXtransMatrix(xtrans);
+            float rgb_cam[3][4];
+            ri->getRgbCam(rgb_cam);
+            librtprocess::markesteijn_demosaic(W, H, rawData, red, green, blue, xtrans, rgb_cam, setProgCancel, 1, false);
         }
         int xtrans[6][6];
         ri->getXtransMatrix(xtrans);
