@@ -952,10 +952,6 @@ bool ThumbBrowserBase::Internal::on_motion_notify_event (GdkEventMotion* event)
 bool ThumbBrowserBase::Internal::on_scroll_event (GdkEventScroll* event)
 {
     // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)
-
-    printf("ThumbBrowserBase::Internal::on_scroll_event / delta_x=%.5f, delta_y=%.5f, direction=%d, type=%d, send_event=%d\n",
-            event->delta_x, event->delta_y, (int)event->direction, (int)event->type, event->send_event);
-
     parent->scroll (event->direction, event->delta_x, event->delta_y);
     return true;
 }
