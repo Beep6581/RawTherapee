@@ -23,6 +23,7 @@
 #include <cstdint>
 #include <vector>
 #include <iostream>
+#include <vector>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -32,7 +33,8 @@
 #include "rt_algo.h"
 #include "rt_math.h"
 #include "sleef.c"
-
+#include "jaggedarray.h"
+#include "StopWatch.h"
 namespace {
 float calcBlendFactor(float val, float threshold) {
     // sigmoid function
@@ -190,7 +192,7 @@ void findMinMaxPercentile(const float* data, size_t size, float minPrct, float& 
     maxOut += minVal;
 }
 
-void buildBlendMask(float** luminance, float **blend, int W, int H, float contrastThreshold, float amount) {
+void buildBlendMask(float** luminance, float **blend, int W, int H, float contrastThreshold, float amount, bool autoContrast) {
 
     constexpr float scale = 0.0625f / 327.68f;
 
@@ -201,6 +203,64 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float contra
             }
         }
     } else {
+        if (autoContrast) {
+            StopWatch StopC("calculate dual demosaic auto contrast threshold");
+            constexpr int tilesize = 80;
+            const int numTilesW = W / tilesize;
+            const int numTilesH = H / tilesize;
+            std::vector<std::vector<std::pair<float, float>>> variances(numTilesH, std::vector<std::pair<float, float>>(numTilesW));
+
+            #pragma omp parallel for
+            for (int i = 0; i < numTilesH; ++i) {
+                int tileY = i * tilesize;
+                for (int j = 0; j < numTilesW; ++j) {
+                    int tileX = j * tilesize;
+                    double avg = 0.;
+                    for (int y = tileY; y < tileY + tilesize; ++y) {
+                        for (int x = tileX; x < tileX + tilesize; ++x) {
+                            avg += luminance[y][x];
+                        }
+                    }
+                    avg /= SQR(tilesize);
+                    double var = 0.0;
+                    for (int y = tileY; y < tileY + tilesize; ++y) {
+                        for (int x = tileX; x < tileX + tilesize; ++x) {
+                            var += SQR(luminance[y][x] - avg);
+                        }
+                    }
+                    var /= (SQR(tilesize) * avg);
+                    variances[i][j].first = var;
+                    variances[i][j].second = avg;
+    //                std::cout << "y : " << tileY << " ; x : " << tileX << " ; avg : " << avg << " ; var : " << var << std::endl;
+                }
+            }
+            float minvar = RT_INFINITY_F;
+            int minY = 0, minX = 0;
+            for (int i = 0; i < numTilesH; ++i) {
+                for (int j = 0; j < numTilesW; ++j) {
+                    if (variances[i][j].first < minvar && variances[i][j].second > 2000.f && variances[i][j].second < 20000.f) {
+                        minvar = variances[i][j].first;
+                        minY = tilesize * i;
+                        minX = tilesize * j;
+                    }
+                }
+            }
+//            std::cout << "minY : " << minY << std::endl;
+//            std::cout << "minX : " << minX << std::endl;
+//            std::cout << "minvar : " << minvar << std::endl;
+
+            JaggedArray<float> Lum(tilesize, tilesize);
+            JaggedArray<float> Blend(tilesize, tilesize);
+            for (int i = 0; i < tilesize; ++i) {
+                for (int j = 0; j < tilesize; ++j) {
+                    Lum[i][j] = luminance[i + minY][j + minX];
+                }
+            }
+//            std::cout << "contrastThreshold : " << contrastThreshold << std::endl;
+
+            calcContrastThreshold(Lum, Blend, tilesize, tilesize);
+        }
+
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
@@ -318,6 +378,8 @@ int calcContrastThreshold(float** luminance, float **blend, int W, int H) {
             break;
         }
     }
+    std::cout << "dual demosaic auto contrast threshold : " << c << std::endl;
+
     return c;
 }
 }
