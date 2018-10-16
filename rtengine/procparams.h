@@ -1232,7 +1232,6 @@ struct DehazeParams {
     int strength;
     bool showDepthMap;
     int depth;
-    int detail;
 
     DehazeParams();
 

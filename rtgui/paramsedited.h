@@ -731,7 +731,6 @@ public:
     bool strength;
     bool showDepthMap;
     bool depth;
-    bool detail;
 };
 
 

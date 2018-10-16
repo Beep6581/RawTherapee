@@ -28,13 +28,11 @@ class Dehaze: public ToolParamBlock, public AdjusterListener, public FoldableToo
 private:
     Adjuster *strength;
     Adjuster *depth;
-    Adjuster *detail;
     Gtk::CheckButton *showDepthMap;    
 
     rtengine::ProcEvent EvDehazeEnabled;
     rtengine::ProcEvent EvDehazeStrength;
     rtengine::ProcEvent EvDehazeDepth;
-    rtengine::ProcEvent EvDehazeDetail;
     rtengine::ProcEvent EvDehazeShowDepthMap;
     
 public:
