@@ -194,8 +194,6 @@ void findMinMaxPercentile(const float* data, size_t size, float minPrct, float& 
 
 void buildBlendMask(float** luminance, float **blend, int W, int H, float contrastThreshold, float amount, bool autoContrast) {
 
-    constexpr float scale = 0.0625f / 327.68f;
-
     if(contrastThreshold == 0.f) {
         for(int j = 0; j < H; ++j) {
             for(int i = 0; i < W; ++i) {
@@ -203,6 +201,7 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float contra
             }
         }
     } else {
+        constexpr float scale = 0.0625f / 327.68f;
         if (autoContrast) {
             StopWatch StopC("calculate dual demosaic auto contrast threshold");
             constexpr int tilesize = 80;
@@ -215,25 +214,46 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float contra
                 int tileY = i * tilesize;
                 for (int j = 0; j < numTilesW; ++j) {
                     int tileX = j * tilesize;
-                    double avg = 0.;
+#ifdef __SSE2__
+                    vfloat avgv = ZEROV;
+                    for (int y = tileY; y < tileY + tilesize; ++y) {
+                        for (int x = tileX; x < tileX + tilesize; x += 4) {
+                            avgv += LVFU(luminance[y][x]);
+                        }
+                    }
+                    float avg = vhadd(avgv);
+#else
+                    float avg = 0.;
                     for (int y = tileY; y < tileY + tilesize; ++y) {
                         for (int x = tileX; x < tileX + tilesize; ++x) {
                             avg += luminance[y][x];
                         }
                     }
+#endif
                     avg /= SQR(tilesize);
-                    double var = 0.0;
+#ifdef __SSE2__
+                    vfloat varv = ZEROV;
+                    avgv = F2V(avg);
+                    for (int y = tileY; y < tileY + tilesize; ++y) {
+                        for (int x = tileX; x < tileX + tilesize; x +=4) {
+                            varv += SQRV(LVFU(luminance[y][x]) - avgv);
+                        }
+                    }
+                    float var = vhadd(varv);
+#else
+                    float var = 0.0;
                     for (int y = tileY; y < tileY + tilesize; ++y) {
                         for (int x = tileX; x < tileX + tilesize; ++x) {
                             var += SQR(luminance[y][x] - avg);
                         }
                     }
+#endif
                     var /= (SQR(tilesize) * avg);
                     variances[i][j].first = var;
                     variances[i][j].second = avg;
-    //                std::cout << "y : " << tileY << " ; x : " << tileX << " ; avg : " << avg << " ; var : " << var << std::endl;
                 }
             }
+
             float minvar = RT_INFINITY_F;
             int minY = 0, minX = 0;
             for (int i = 0; i < numTilesH; ++i) {
@@ -256,7 +276,6 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float contra
                     Lum[i][j] = luminance[i + minY][j + minX];
                 }
             }
-//            std::cout << "contrastThreshold : " << contrastThreshold << std::endl;
 
             calcContrastThreshold(Lum, Blend, tilesize, tilesize);
         }
