@@ -58,8 +58,7 @@ namespace {
 #endif
 
 
-int get_dark_channel(const array2D<float> &R, const array2D<float> &G, const array2D<float> &B, array2D<float> &dst,
-                     int patchsize, float *ambient, bool multithread)
+int get_dark_channel(const array2D<float> &R, const array2D<float> &G, const array2D<float> &B, array2D<float> &dst, int patchsize, float *ambient, bool clip, bool multithread)
 {
     const int W = R.width();
     const int H = R.height();
@@ -89,7 +88,9 @@ int get_dark_channel(const array2D<float> &R, const array2D<float> &G, const arr
                 }
                 val = min(val, yval);
             }
-            val = LIM01(val);
+            if (clip) {
+                val = LIM01(val);
+            }
             for (int yy = y; yy < pH; ++yy) {
                 std::fill(dst[yy]+x, dst[yy]+pW, val);
             }
@@ -120,7 +121,9 @@ float estimate_ambient_light(const array2D<float> &R, const array2D<float> &G, c
         std::priority_queue<float> p;
         for (int y = 0; y < H; y += patchsize) {
             for (int x = 0; x < W; x += patchsize) {
-                p.push(dark[y][x]);
+                if (!OOG(dark[y][x], 1.f)) {
+                    p.push(dark[y][x]);
+                }
             }
         }
         darklim = get_percentile(p, 0.95);
@@ -131,7 +134,7 @@ float estimate_ambient_light(const array2D<float> &R, const array2D<float> &G, c
 
     for (int y = 0; y < H; y += patchsize) {
         for (int x = 0; x < W; x += patchsize) {
-            if (dark[y][x] >= darklim) {
+            if (dark[y][x] >= darklim && !OOG(dark[y][x], 1.f)) {
                 patches.push_back(std::make_pair(x, y));
             }
         }
@@ -245,7 +248,7 @@ void ImProcFunctions::dehaze(Imagefloat *img)
         extract_channels(img, R, G, B, patchsize, 1e-1, multiThread);
     
         patchsize = max(max(W, H) / 600, 2);
-        npatches = get_dark_channel(R, G, B, dark, patchsize, nullptr, multiThread);
+        npatches = get_dark_channel(R, G, B, dark, patchsize, nullptr, false, multiThread);
         DEBUG_DUMP(dark);
 
         max_t = estimate_ambient_light(R, G, B, dark, patchsize, npatches, ambient);
@@ -256,7 +259,7 @@ void ImProcFunctions::dehaze(Imagefloat *img)
                       << std::endl;
         }
 
-        get_dark_channel(R, G, B, dark, patchsize, ambient, multiThread);
+        get_dark_channel(R, G, B, dark, patchsize, ambient, true, multiThread);
     }
 
     if (min(ambient[0], ambient[1], ambient[2]) < 0.01f) {
@@ -288,6 +291,10 @@ void ImProcFunctions::dehaze(Imagefloat *img)
     }
         
     DEBUG_DUMP(t);
+
+    if (options.rtSettings.verbose) {
+        std::cout << "dehaze: max distance is " << max_t << std::endl;
+    }
 
     float depth = -float(params->dehaze.depth) / 100.f;
     const float t0 = max(1e-3f, std::exp(depth * max_t));
