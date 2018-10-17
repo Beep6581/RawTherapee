@@ -118,7 +118,7 @@ void RawImageSource::dual_demosaic_RT(bool isBayer, const RAWParams &raw, int wi
     }
     // calculate contrast based blend factors to use vng4 in regions with low contrast
     JaggedArray<float> blend(winw, winh);
-    buildBlendMask(L, blend, winw, winh, contrast / 100.f);
+    buildBlendMask(L, blend, winw, winh, contrast / 100.f, 1.f, true);
 
     // the following is split into 3 loops intentionally to avoid cache conflicts on CPUs with only 4-way cache
     #pragma omp parallel for
