@@ -34,23 +34,20 @@
 class ProfileStoreLabel;
 class FileBrowser;
 class FileBrowserEntry;
+
 class FileBrowserListener
 {
-
 public:
-    virtual     ~FileBrowserListener    () {}
-    virtual void filterApplied () {}
-    virtual void openRequested          (std::vector<Thumbnail*> tbe) {}
-    virtual void developRequested       (std::vector<FileBrowserEntry*> tbe, bool fastmode) {}
-    virtual void renameRequested        (std::vector<FileBrowserEntry*> tbe) {}
-    virtual void deleteRequested        (std::vector<FileBrowserEntry*> tbe, bool inclBatchProcessed) {}
-    virtual void copyMoveRequested      (std::vector<FileBrowserEntry*> tbe, bool moveRequested) {}
-    virtual void selectionChanged       (std::vector<Thumbnail*> tbe) {}
-    virtual void clearFromCacheRequested(std::vector<FileBrowserEntry*> tbe, bool leavenotrace) {}
-    virtual bool isInTabMode            ()
-    {
-        return false;
-    }
+    virtual ~FileBrowserListener() = default;
+    virtual void filterApplied() = 0;
+    virtual void openRequested(const std::vector<Thumbnail*>& tbe) = 0;
+    virtual void developRequested(const std::vector<FileBrowserEntry*>& tbe, bool fastmode) = 0;
+    virtual void renameRequested(const std::vector<FileBrowserEntry*>& tbe) = 0;
+    virtual void deleteRequested(const std::vector<FileBrowserEntry*>& tbe, bool inclBatchProcessed) = 0;
+    virtual void copyMoveRequested(const std::vector<FileBrowserEntry*>& tbe, bool moveRequested) = 0;
+    virtual void selectionChanged(const std::vector<Thumbnail*>& tbe) = 0;
+    virtual void clearFromCacheRequested(const std::vector<FileBrowserEntry*>& tbe, bool leavenotrace) = 0;
+    virtual bool isInTabMode() const = 0;
 };
 
 /*
@@ -203,7 +200,9 @@ public:
     // exportpanel interface
     void exportRequested();
 
-    void updateProfileList ();
+    void storeCurrentValue();
+    void updateProfileList();
+    void restoreValue();
 
     type_trash_changed trash_changed();
 };

@@ -26,22 +26,22 @@
 
 #undef THREAD_PRIORITY_NORMAL
 
-class PLDBridge : public rtengine::ProgressListener
+class PLDBridge :
+    public rtengine::ProgressListener
 {
-
-    rtengine::ProgressListener* pl;
-
 public:
-    explicit PLDBridge ( rtengine::ProgressListener* pb)
-        : pl(pb) {}
+    explicit PLDBridge(rtengine::ProgressListener* pb) :
+        pl(pb)
+    {
+    }
 
     // ProgressListener interface
-    void setProgress (double p)
+    void setProgress(double p)
     {
         GThreadLock lock;
         pl->setProgress(p);
     }
-    void setProgressStr (Glib::ustring str)
+    void setProgressStr(const Glib::ustring& str)
     {
         GThreadLock lock;
         Glib::ustring progrstr;
@@ -49,17 +49,20 @@ public:
         pl->setProgressStr(progrstr);
     }
 
-    void setProgressState (bool inProcessing)
+    void setProgressState(bool inProcessing)
     {
         GThreadLock lock;
         pl->setProgressState(inProcessing);
     }
 
-    void error (Glib::ustring descr)
+    void error(const Glib::ustring& descr)
     {
         GThreadLock lock;
         pl->error(descr);
     }
+
+private:
+    rtengine::ProgressListener* const pl;
 };
 
 template<class T>

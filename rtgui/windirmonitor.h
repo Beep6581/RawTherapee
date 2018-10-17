@@ -27,7 +27,7 @@ class WinDirChangeListener
 public:
     virtual ~WinDirChangeListener() = default;
 
-    virtual void winDirChanged () {}
+    virtual void winDirChanged() = 0;
 };
 
 class WinDirMonitor : public Glib::Object

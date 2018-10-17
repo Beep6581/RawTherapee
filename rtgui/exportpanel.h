@@ -26,9 +26,10 @@
 
 class ExportPanelListener
 {
-
 public:
-    virtual void exportRequested () {}
+    virtual ~ExportPanelListener() = default;
+
+    virtual void exportRequested() = 0;
 };
 
 class ExportPanel : public Gtk::VBox

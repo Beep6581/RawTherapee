@@ -33,11 +33,9 @@ class FoldableToolPanel;
 
 class ToolPanelListener
 {
-
 public:
-
-    virtual ~ToolPanelListener() {}
-    virtual void panelChanged   (rtengine::ProcEvent event, const Glib::ustring& descr) {}
+    virtual ~ToolPanelListener() = default;
+    virtual void panelChanged(const rtengine::ProcEvent& event, const Glib::ustring& descr) = 0;
 };
 
 /// @brief This class control the space around the group of tools inside a tab, as well as the space separating each tool. */

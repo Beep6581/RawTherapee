@@ -139,10 +139,10 @@ void Crop::update(int todo)
 
     // give possibility to the listener to modify crop window (as the full image dimensions are already known at this point)
     int wx, wy, ww, wh, ws;
-    bool overrideWindow = false;
+    const bool overrideWindow = cropImageListener;
 
-    if (cropImageListener) {
-        overrideWindow = cropImageListener->getWindow(wx, wy, ww, wh, ws);
+    if (overrideWindow) {
+        cropImageListener->getWindow(wx, wy, ww, wh, ws);
     }
 
     // re-allocate sub-images and arrays if their dimensions changed

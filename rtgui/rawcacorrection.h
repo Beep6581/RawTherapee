@@ -50,6 +50,7 @@ public:
     void trimValues          (rtengine::procparams::ProcParams* pp);
 
     void adjusterChanged     (Adjuster* a, double newval);
+    void adjusterAutoToggled (Adjuster* a, bool newval);
     void checkBoxToggled     (CheckBox* c, CheckValue newval);
 };
 

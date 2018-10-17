@@ -1991,7 +1991,11 @@ void FileBrowser::setExportPanel (ExportPanel* expanel)
     exportPanel->setExportPanelListener (this);
 }
 
-void FileBrowser::updateProfileList ()
+void FileBrowser::storeCurrentValue()
+{
+}
+
+void FileBrowser::updateProfileList()
 {
     // submenu applmenu
     int p = 0;
@@ -2083,6 +2087,10 @@ void FileBrowser::updateProfileList ()
 
     ProfileStore::getInstance()->releaseFileList();
     subMenuList.clear();
+}
+
+void FileBrowser::restoreValue()
+{
 }
 
 void FileBrowser::openRequested( std::vector<FileBrowserEntry*> mselected)

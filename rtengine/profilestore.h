@@ -39,14 +39,14 @@ class ProfileStoreListener
 {
 
 public:
-    virtual ~ProfileStoreListener() {}
+    virtual ~ProfileStoreListener() = default;
 
     /** @brief Called whenever the current value has to be stored before update. */
-    virtual void storeCurrentValue() {}
+    virtual void storeCurrentValue() = 0;
     /** @brief Called whenever the file list has been updated and the content of the listener has to be updated. */
     virtual void updateProfileList() = 0;
     /** @brief Called whenever the profile list has changed and the old value have to be restored (if possible). */
-    virtual void restoreValue() {}
+    virtual void restoreValue() = 0;
 };
 
 /// @brief ProfileStoreEntry type (folder or file)

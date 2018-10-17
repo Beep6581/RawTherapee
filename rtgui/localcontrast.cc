@@ -115,7 +115,6 @@ void LocalContrast::setDefaults(const ProcParams *defParams, const ParamsEdited 
     }
 }
 
-
 void LocalContrast::adjusterChanged(Adjuster* a, double newval)
 {
     if (listener && getEnabled()) {
@@ -131,6 +130,9 @@ void LocalContrast::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
+void LocalContrast::adjusterAutoToggled(Adjuster* a, bool newval)
+{
+}
 
 void LocalContrast::enabledChanged ()
 {

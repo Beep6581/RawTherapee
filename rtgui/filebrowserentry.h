@@ -99,8 +99,8 @@ public:
     // thumbnaillistener interface
     void procParamsChanged (Thumbnail* thm, int whoChangedIt);
     // thumbimageupdatelistener interface
-    void updateImage (rtengine::IImage8* img, double scale, rtengine::procparams::CropParams cropParams);
-    void _updateImage (rtengine::IImage8* img, double scale, rtengine::procparams::CropParams cropParams); // inside gtk thread
+    void updateImage(rtengine::IImage8* img, double scale, const rtengine::procparams::CropParams& cropParams);
+    void _updateImage(rtengine::IImage8* img, double scale, const rtengine::procparams::CropParams& cropParams); // inside gtk thread
 
     virtual bool    motionNotify  (int x, int y);
     virtual bool    pressNotify   (int button, int type, int bstate, int x, int y);

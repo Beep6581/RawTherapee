@@ -29,7 +29,7 @@
 #include "colorprovider.h"
 
 
-class HSVEqualizer : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider
+class HSVEqualizer : public ToolParamBlock, public FoldableToolPanel, public CurveListener, public ColorProvider
 {
 
 protected:

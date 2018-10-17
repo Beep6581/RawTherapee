@@ -1311,9 +1311,8 @@ void Retinex::setAdjusterBehavior (bool strAdd, bool neighAdd, bool limdAdd, boo
 }
 
 
-void Retinex::adjusterChanged (Adjuster* a, double newval)
+void Retinex::adjusterChanged(Adjuster* a, double newval)
 {
-
     if (a == iter && !batchMode) {
         if (iter->getIntValue() > 1) {
             scal->set_sensitive (true);
@@ -1368,11 +1367,11 @@ void Retinex::adjusterChanged (Adjuster* a, double newval)
         listener->panelChanged (EvLradius,  radius->getTextValue());
 
     }
-
-
 }
 
-
+void Retinex::adjusterAutoToggled(Adjuster* a, bool newval)
+{
+}
 
 void Retinex::autoOpenCurve  ()
 {
@@ -1439,11 +1438,22 @@ void Retinex::trimValues (rtengine::procparams::ProcParams* pp)
 
 
 }
-void Retinex::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI)
-{
 
-    cdshape->updateBackgroundHistogram (histLRETI);
-    cdshapeH->updateBackgroundHistogram (histLRETI);
+void Retinex::updateCurveBackgroundHistogram(
+    const LUTu& histToneCurve,
+    const LUTu& histLCurve,
+    const LUTu& histCCurve,
+    const LUTu& histLCAM,
+    const LUTu& histCCAM,
+    const LUTu& histRed,
+    const LUTu& histGreen,
+    const LUTu& histBlue,
+    const LUTu& histLuma,
+    const LUTu& histLRETI
+)
+{
+    cdshape->updateBackgroundHistogram(histLRETI);
+    cdshapeH->updateBackgroundHistogram(histLRETI);
 }
 
 void Retinex::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller)

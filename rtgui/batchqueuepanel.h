@@ -59,11 +59,11 @@ public:
 
     void init (RTWindow* parent);
 
-    void addBatchQueueJobs (std::vector<BatchQueueEntry*> &entries , bool head = false);
+    void addBatchQueueJobs(const std::vector<BatchQueueEntry*>& entries , bool head = false);
 
     // batchqueuelistener interface
-    void queueSizeChanged     (int qsize, bool queueEmptied, bool queueError, Glib::ustring queueErrorMessage);
-    bool canStartNext         ();
+    void queueSizeChanged(int qsize, bool queueEmptied, bool queueError, const Glib::ustring& queueErrorMessage);
+    bool canStartNext();
 
     void startBatchProc ();
     void stopBatchProc ();

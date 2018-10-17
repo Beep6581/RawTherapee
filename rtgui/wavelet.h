@@ -43,9 +43,8 @@ public:
     ~Wavelet ();
 
     bool wavComputed_ ();
-    void adjusterChanged (ThresholdAdjuster* a, double newBottom, double newTop);
-    void adjusterChanged (Adjuster* a, double newval);
-    void adjusterChanged2 (ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
+    void adjusterChanged(Adjuster* a, double newval);
+    void adjusterAutoToggled(Adjuster* a, bool newval);
     void autoOpenCurve ();
     void curveChanged (CurveEditor* ce);
     void read (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
@@ -56,6 +55,12 @@ public:
     void updateToolState (std::vector<int> &tpOpen);
     void write (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
     void writeOptions (std::vector<int> &tpOpen);
+
+    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop);
+    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight);
+    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop);
+    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight);
+    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
 
 private:
     void foldAllButMe (GdkEventButton* event, MyExpander *expander);

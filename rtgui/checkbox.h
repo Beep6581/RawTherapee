@@ -33,10 +33,9 @@ enum class CheckValue {
 
 class CheckBoxListener
 {
-
 public:
-    virtual ~CheckBoxListener() {};
-    virtual void checkBoxToggled (CheckBox* c, CheckValue newval) {}
+    virtual ~CheckBoxListener() = default;
+    virtual void checkBoxToggled(CheckBox* c, CheckValue newval) = 0;
 };
 
 

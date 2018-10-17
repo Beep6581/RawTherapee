@@ -44,6 +44,7 @@ public:
     void straighten (double deg);
 
     void adjusterChanged        (Adjuster* a, double newval);
+    void adjusterAutoToggled    (Adjuster* a, bool newval);
     void setAdjusterBehavior    (bool rotadd);
     void trimValues             (rtengine::procparams::ProcParams* pp);
     void selectStraightPressed  ();

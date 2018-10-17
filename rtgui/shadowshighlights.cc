@@ -152,10 +152,8 @@ void ShadowsHighlights::setDefaults (const ProcParams* defParams, const ParamsEd
 
 void ShadowsHighlights::adjusterChanged (Adjuster* a, double newval)
 {
-
     if (listener && getEnabled()) {
-
-        Glib::ustring costr = Glib::ustring::format ((int)a->getValue());
+        const Glib::ustring costr = Glib::ustring::format ((int)a->getValue());
 
         if (a == highlights) {
             listener->panelChanged (EvSHHighlights, costr);
@@ -169,6 +167,10 @@ void ShadowsHighlights::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvSHRadius, costr);
         }
     }
+}
+
+void ShadowsHighlights::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void ShadowsHighlights::enabledChanged ()

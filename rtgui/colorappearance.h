@@ -80,7 +80,18 @@ public:
 
     void setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool badpixsladd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool mchromaadd, bool colorhadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
-    void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM, LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI);
+    void updateCurveBackgroundHistogram(
+        const LUTu& histToneCurve,
+        const LUTu& histLCurve,
+        const LUTu& histCCurve,
+        const LUTu& histLCAM,
+        const LUTu& histCCAM,
+        const LUTu& histRed,
+        const LUTu& histGreen,
+        const LUTu& histBlue,
+        const LUTu& histLuma,
+        const LUTu& histLRETI
+    );
     virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller);
     void updateToolState (std::vector<int> &tpOpen);
     void writeOptions (std::vector<int> &tpOpen);
