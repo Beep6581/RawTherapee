@@ -5230,11 +5230,11 @@ void ImProcFunctions::EPDToneMapCIE(CieImage *ncie, float a_w, float c_, int Wid
 void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, unsigned int Iterates, int skip)
 {
 
-    float stren = ((float)params->locallab.stren.at(sp)) / 100.f;
-    float edgest = ((float)params->locallab.estop.at(sp)) / 100.f;
-    float sca  = ((float)params->locallab.scaltm.at(sp)) / 10.f;
-    float gamm = ((float)params->locallab.gamma.at(sp)) / 100.f;
-    float rew = ((float)params->locallab.rewei.at(sp));
+    float stren = ((float)params->locallab.spots.at(sp).stren) / 100.f;
+    float edgest = ((float)params->locallab.spots.at(sp).estop) / 100.f;
+    float sca  = ((float)params->locallab.spots.at(sp).scaltm) / 10.f;
+    float gamm = ((float)params->locallab.spots.at(sp).gamma) / 100.f;
+    float rew = ((float)params->locallab.spots.at(sp).rewei);
     //Pointers to whole data and size of it.
     float *L = lab->L[0];
     float *a = lab->a[0];

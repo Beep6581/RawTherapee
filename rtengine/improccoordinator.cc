@@ -767,7 +767,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             float **shbuffer = nullptr;
             int sca = 1;
 
-            for (int sp = 0; sp < params.locallab.nbspot; sp++) {
+            for (int sp = 0; sp < params.locallab.nbspot && sp < (int)params.locallab.spots.size(); sp++) {
                 // Set local curves of current spot to LUT
                 LHutili = false;
                 HHutili = false;
@@ -775,19 +775,19 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 localexutili = false;
                 localcutili = false;
                 localskutili = false;
-                locRETgainCurve.Set(params.locallab.localTgaincurve.at(sp));
-                loclhCurve.Set(params.locallab.LHcurve.at(sp), LHutili);
-                lochhCurve.Set(params.locallab.HHcurve.at(sp), HHutili);
-                CurveFactory::curveLocal(locallutili, params.locallab.llcurve.at(sp), lllocalcurve, sca);
-                CurveFactory::curveCCLocal(localcutili, params.locallab.cccurve.at(sp), cclocalcurve, sca);
-                CurveFactory::curveskLocal(localskutili, params.locallab.skintonescurve.at(sp), sklocalcurve, sca);
-                CurveFactory::curveexLocal(localexutili, params.locallab.excurve.at(sp), exlocalcurve, sca);
-                double ecomp = params.locallab.expcomp.at(sp);
-                double black = params.locallab.black.at(sp);
-                double hlcompr = params.locallab.hlcompr.at(sp);
-                double hlcomprthresh = params.locallab.hlcomprthresh.at(sp);
-                double shcompr = params.locallab.shcompr.at(sp);
-                double br = params.locallab.lightness.at(sp);
+                locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
+                loclhCurve.Set(params.locallab.spots.at(sp).LHcurve, LHutili);
+                lochhCurve.Set(params.locallab.spots.at(sp).HHcurve, HHutili);
+                CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve, sca);
+                CurveFactory::curveCCLocal(localcutili, params.locallab.spots.at(sp).cccurve, cclocalcurve, sca);
+                CurveFactory::curveskLocal(localskutili, params.locallab.spots.at(sp).skintonescurve, sklocalcurve, sca);
+                CurveFactory::curveexLocal(localexutili, params.locallab.spots.at(sp).excurve, exlocalcurve, sca);
+                double ecomp = params.locallab.spots.at(sp).expcomp;
+                double black = params.locallab.spots.at(sp).black;
+                double hlcompr = params.locallab.spots.at(sp).hlcompr;
+                double hlcomprthresh = params.locallab.spots.at(sp).hlcomprthresh;
+                double shcompr = params.locallab.spots.at(sp).shcompr;
+                double br = params.locallab.spots.at(sp).lightness;
                 CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br,
                                                 hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                                                 sca);
@@ -795,7 +795,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 // Reference parameters computation
                 double huere, chromare, lumare, huerefblu, sobelre;
 
-                if (params.locallab.spotMethod.at(sp) == "exc") {
+                if (params.locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reserv, reserv, 0, 0, pW, pH, scale, huerefblu, huere, chromare, lumare, sobelre);
                 } else {
                     ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, huere, chromare, lumare, sobelre);

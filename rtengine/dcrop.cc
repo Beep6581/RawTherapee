@@ -933,25 +933,25 @@ void Crop::update(int todo)
         int maxspot = 1;
 
         if (needslocal) {
-            for (int sp = 0; sp < params.locallab.nbspot; sp++) {
-                locRETgainCurve.Set(params.locallab.localTgaincurve.at(sp));
-                loclhCurve.Set(params.locallab.LHcurve.at(sp), LHutili);
-                lochhCurve.Set(params.locallab.HHcurve.at(sp), HHutili);
+            for (int sp = 0; sp < params.locallab.nbspot && sp < (int)params.locallab.spots.size(); sp++) {
+                locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
+                loclhCurve.Set(params.locallab.spots.at(sp).LHcurve, LHutili);
+                lochhCurve.Set(params.locallab.spots.at(sp).HHcurve, HHutili);
                 locallutili = false;
-                CurveFactory::curveLocal(locallutili, params.locallab.llcurve.at(sp), lllocalcurve2, sca);
+                CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve2, sca);
                 localcutili = false;
-                CurveFactory::curveCCLocal(localcutili, params.locallab.cccurve.at(sp), cclocalcurve2, sca);
+                CurveFactory::curveCCLocal(localcutili, params.locallab.spots.at(sp).cccurve, cclocalcurve2, sca);
                 //localskutili = false;
-                CurveFactory::curveskLocal(localskutili, params.locallab.skintonescurve.at(sp), sklocalcurve2, sca);
-                CurveFactory::curveexLocal(localexutili, params.locallab.excurve.at(sp), exlocalcurve2, sca);
+                CurveFactory::curveskLocal(localskutili, params.locallab.spots.at(sp).skintonescurve, sklocalcurve2, sca);
+                CurveFactory::curveexLocal(localexutili, params.locallab.spots.at(sp).excurve, exlocalcurve2, sca);
 
 
-                double ecomp = params.locallab.expcomp.at(sp);
-                double black = params.locallab.black.at(sp);
-                double hlcompr = params.locallab.hlcompr.at(sp);
-                double hlcomprthresh = params.locallab.hlcomprthresh.at(sp);
-                double shcompr = params.locallab.shcompr.at(sp);
-                double br = params.locallab.lightness.at(sp);
+                double ecomp = params.locallab.spots.at(sp).expcomp;
+                double black = params.locallab.spots.at(sp).black;
+                double hlcompr = params.locallab.spots.at(sp).hlcompr;
+                double hlcomprthresh = params.locallab.spots.at(sp).hlcomprthresh;
+                double shcompr = params.locallab.spots.at(sp).shcompr;
+                double br = params.locallab.spots.at(sp).lightness;
 
                 CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br,
                                                 hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,

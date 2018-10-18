@@ -331,114 +331,114 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
 {
     int w = oW;
     int h = oH;
-    int circr = locallab.circrad.at(sp);
-    float streng = ((float)locallab.stren.at(sp)) / 100.f;
-    float gam = ((float)locallab.gamma.at(sp)) / 100.f;
-    float est = ((float)locallab.estop.at(sp)) / 100.f;
-    float scal_tm = ((float)locallab.scaltm.at(sp)) / 10.f;
-    float rewe = ((float)locallab.rewei.at(sp));
+    int circr = locallab.spots.at(sp).circrad;
+    float streng = ((float)locallab.spots.at(sp).stren) / 100.f;
+    float gam = ((float)locallab.spots.at(sp).gamma) / 100.f;
+    float est = ((float)locallab.spots.at(sp).estop) / 100.f;
+    float scal_tm = ((float)locallab.spots.at(sp).scaltm) / 10.f;
+    float rewe = ((float)locallab.spots.at(sp).rewei);
 
-    float thre = locallab.thresh.at(sp) / 100.f;
-    double local_x = locallab.locX.at(sp) / 2000.0;
-    double local_y = locallab.locY.at(sp) / 2000.0;
-    double local_xL = locallab.locXL.at(sp) / 2000.0;
-    double local_yT = locallab.locYT.at(sp) / 2000.0;
-    double local_center_x = locallab.centerX.at(sp) / 2000.0 + 0.5;
-    double local_center_y = locallab.centerY.at(sp) / 2000.0 + 0.5;
+    float thre = locallab.spots.at(sp).thresh / 100.f;
+    double local_x = locallab.spots.at(sp).locX / 2000.0;
+    double local_y = locallab.spots.at(sp).locY / 2000.0;
+    double local_xL = locallab.spots.at(sp).locXL / 2000.0;
+    double local_yT = locallab.spots.at(sp).locYT / 2000.0;
+    double local_center_x = locallab.spots.at(sp).centerX / 2000.0 + 0.5;
+    double local_center_y = locallab.spots.at(sp).centerY / 2000.0 + 0.5;
     double local_center_xbuf = 0.0; // Provision
     double local_center_ybuf = 0.0; // Provision
-    double local_dxx = locallab.iter.at(sp) / 8000.0; //for proxi = 2==> # 1 pixel
-    double local_dyy = locallab.iter.at(sp) / 8000.0;
-    float iterati = (float) locallab.iter.at(sp);
+    double local_dxx = locallab.spots.at(sp).iter / 8000.0; //for proxi = 2==> # 1 pixel
+    double local_dyy = locallab.spots.at(sp).iter / 8000.0;
+    float iterati = (float) locallab.spots.at(sp).iter;
 //    double local_dyy = locallab.proxi;
 
-    float chromaPastel = float (locallab.pastels.at(sp))   / 100.0f;
-    float chromaSatur  = float (locallab.saturated.at(sp)) / 100.0f;
-    int local_sensiv = locallab.sensiv.at(sp);
-    int local_sensiex = locallab.sensiex.at(sp);
+    float chromaPastel = float (locallab.spots.at(sp).pastels)   / 100.0f;
+    float chromaSatur  = float (locallab.spots.at(sp).saturated) / 100.0f;
+    int local_sensiv = locallab.spots.at(sp).sensiv;
+    int local_sensiex = locallab.spots.at(sp).sensiex;
 
-    if (locallab.qualityMethod.at(sp) == "std") {
+    if (locallab.spots.at(sp).qualityMethod == "std") {
         lp.qualmet = 0;
-    } else if (locallab.qualityMethod.at(sp) == "enh") {
+    } else if (locallab.spots.at(sp).qualityMethod == "enh") {
         lp.qualmet = 1;
-    } else if (locallab.qualityMethod.at(sp) == "enhden") {
+    } else if (locallab.spots.at(sp).qualityMethod == "enhden") {
         lp.qualmet = 2;
     }
 
-    if (locallab.qualitycurveMethod.at(sp) == "none") {
+    if (locallab.spots.at(sp).qualitycurveMethod == "none") {
         lp.qualcurvemet = 0;
-    } else if (locallab.qualitycurveMethod.at(sp) == "std") {
+    } else if (locallab.spots.at(sp).qualitycurveMethod == "std") {
         lp.qualcurvemet = 1;
-    } else if (locallab.qualitycurveMethod.at(sp) == "enh") {
+    } else if (locallab.spots.at(sp).qualitycurveMethod == "enh") {
         lp.qualcurvemet = 2;
     }
 
-    if (locallab.blurMethod.at(sp) == "norm") {
+    if (locallab.spots.at(sp).blurMethod == "norm") {
         lp.blurmet = 0;
-    } else if (locallab.blurMethod.at(sp) == "inv") {
+    } else if (locallab.spots.at(sp).blurMethod == "inv") {
         lp.blurmet = 1;
-    } else if (locallab.blurMethod.at(sp) == "sym") {
+    } else if (locallab.spots.at(sp).blurMethod == "sym") {
         lp.blurmet = 2;
     }
 
-    if (locallab.spotMethod.at(sp) == "norm") {
+    if (locallab.spots.at(sp).spotMethod == "norm") {
         lp.excmet = 0;
-    } else if (locallab.spotMethod.at(sp) == "exc") {
+    } else if (locallab.spots.at(sp).spotMethod == "exc") {
         lp.excmet = 1;
     }
 
-    if (locallab.shape.at(sp) == "ELI") {
+    if (locallab.spots.at(sp).shape == "ELI") {
         lp.shapmet = 0;
-    } else if (locallab.shape.at(sp) == "RECT") {
+    } else if (locallab.spots.at(sp).shape == "RECT") {
         lp.shapmet = 1;
     }
 
-    float local_noiself = (float)locallab.noiselumf.at(sp);
-    float local_noiselc = (float)locallab.noiselumc.at(sp);
-    float local_noiseldetail = (float)locallab.noiselumdetail.at(sp);
-    int local_noiselequal = locallab.noiselequal.at(sp);
-    float local_noisechrodetail = (float)locallab.noisechrodetail.at(sp);
-    int local_sensiden = locallab.sensiden.at(sp);
+    float local_noiself = (float)locallab.spots.at(sp).noiselumf;
+    float local_noiselc = (float)locallab.spots.at(sp).noiselumc;
+    float local_noiseldetail = (float)locallab.spots.at(sp).noiselumdetail;
+    int local_noiselequal = locallab.spots.at(sp).noiselequal;
+    float local_noisechrodetail = (float)locallab.spots.at(sp).noisechrodetail;
+    int local_sensiden = locallab.spots.at(sp).sensiden;
 
-    float local_noisecf = ((float)locallab.noisechrof.at(sp)) / 10.f;
-    float local_noisecc = ((float)locallab.noisechroc.at(sp)) / 10.f;
+    float local_noisecf = ((float)locallab.spots.at(sp).noisechrof) / 10.f;
+    float local_noisecc = ((float)locallab.spots.at(sp).noisechroc) / 10.f;
     float multi[5];
 
     for (int y = 0; y < 5; y++) {
-        multi[y] = ((float) locallab.mult[y].at(sp)) / 100.f;
+        multi[y] = ((float) locallab.spots.at(sp).mult[y]) / 100.f;
     }
 
-    float thresho = ((float)locallab.threshold.at(sp)) / 100.f;
-    float chromcbdl = (float)locallab.chromacbdl.at(sp);
+    float thresho = ((float)locallab.spots.at(sp).threshold) / 100.f;
+    float chromcbdl = (float)locallab.spots.at(sp).chromacbdl;
 
-    int local_chroma = locallab.chroma.at(sp);
-    int local_sensi = locallab.sensi.at(sp);
-    int local_sensibn = locallab.sensibn.at(sp);
-    int local_sensitm = locallab.sensitm.at(sp);
-    int local_sensiexclu = locallab.sensiexclu.at(sp);
-    int local_struc = locallab.struc.at(sp);
-    int local_warm = locallab.warm.at(sp);
-    int local_sensih = locallab.sensih.at(sp);
-    int local_sensicb = locallab.sensicb.at(sp);
-    int local_contrast = locallab.contrast.at(sp);
-    float local_lightness = (float) locallab.lightness.at(sp);
-    int local_transit = locallab.transit.at(sp);
-    double radius = (double) locallab.radius.at(sp);
-    double sharradius = ((double) locallab.sharradius.at(sp)) / 100. ;
-    int local_sensisha = locallab.sensisha.at(sp);
-    int local_sharamount = locallab.sharamount.at(sp);
-    int local_shardamping = locallab.shardamping.at(sp);
-    int local_shariter = locallab.shariter.at(sp);
-    bool inverse = locallab.invers.at(sp);
-    bool curvacti = locallab.curvactiv.at(sp);
-    bool acti = locallab.activlum.at(sp);
+    int local_chroma = locallab.spots.at(sp).chroma;
+    int local_sensi = locallab.spots.at(sp).sensi;
+    int local_sensibn = locallab.spots.at(sp).sensibn;
+    int local_sensitm = locallab.spots.at(sp).sensitm;
+    int local_sensiexclu = locallab.spots.at(sp).sensiexclu;
+    int local_struc = locallab.spots.at(sp).struc;
+    int local_warm = locallab.spots.at(sp).warm;
+    int local_sensih = locallab.spots.at(sp).sensih;
+    int local_sensicb = locallab.spots.at(sp).sensicb;
+    int local_contrast = locallab.spots.at(sp).contrast;
+    float local_lightness = (float) locallab.spots.at(sp).lightness;
+    int local_transit = locallab.spots.at(sp).transit;
+    double radius = (double) locallab.spots.at(sp).radius;
+    double sharradius = ((double) locallab.spots.at(sp).sharradius) / 100. ;
+    int local_sensisha = locallab.spots.at(sp).sensisha;
+    int local_sharamount = locallab.spots.at(sp).sharamount;
+    int local_shardamping = locallab.spots.at(sp).shardamping;
+    int local_shariter = locallab.spots.at(sp).shariter;
+    bool inverse = locallab.spots.at(sp).invers;
+    bool curvacti = locallab.spots.at(sp).curvactiv;
+    bool acti = locallab.spots.at(sp).activlum;
     bool cupas = false; // Provision
 
     bool inverserad = false; // Provision
-    bool inverseret = locallab.inversret.at(sp);
-    bool inversesha = locallab.inverssha.at(sp);
-    double strength = (double) locallab.strength.at(sp);
-    float str = (float)locallab.str.at(sp);
+    bool inverseret = locallab.spots.at(sp).inversret;
+    bool inversesha = locallab.spots.at(sp).inverssha;
+    double strength = (double) locallab.spots.at(sp).strength;
+    float str = (float)locallab.spots.at(sp).str;
 
     lp.cir = circr;
     lp.actsp = acti;
@@ -490,8 +490,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.noisecf = local_noisecf;
     lp.noisecc = local_noisecc;
     lp.sensden = local_sensiden;
-    lp.bilat = locallab.bilateral.at(sp);
-    lp.adjch = (float) locallab.adjblur.at(sp);
+    lp.bilat = locallab.spots.at(sp).bilateral;
+    lp.adjch = (float) locallab.spots.at(sp).adjblur;
     lp.strengt = streng;
     lp.gamm = gam;
     lp.esto = est;
@@ -505,25 +505,25 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
 
     lp.threshol = thresho;
     lp.chromacb = chromcbdl;
-    lp.colorena = locallab.expcolor.at(sp);
-    lp.blurena = locallab.expblur.at(sp);
-    lp.tonemapena = locallab.exptonemap.at(sp);
-    lp.retiena = locallab.expreti.at(sp);
-    lp.sharpena = locallab.expsharp.at(sp);
-    lp.cbdlena = locallab.expcbdl.at(sp);
-    lp.denoiena = locallab.expdenoi.at(sp);
-    lp.expvib = locallab.expvibrance.at(sp);
+    lp.colorena = locallab.spots.at(sp).expcolor;
+    lp.blurena = locallab.spots.at(sp).expblur;
+    lp.tonemapena = locallab.spots.at(sp).exptonemap;
+    lp.retiena = locallab.spots.at(sp).expreti;
+    lp.sharpena = locallab.spots.at(sp).expsharp;
+    lp.cbdlena = locallab.spots.at(sp).expcbdl;
+    lp.denoiena = locallab.spots.at(sp).expdenoi;
+    lp.expvib = locallab.spots.at(sp).expvibrance;
     lp.sensv = local_sensiv;
     lp.past =  chromaPastel;
     lp.satur = chromaSatur;
 
-    lp.exposena = locallab.expexpose.at(sp);
+    lp.exposena = locallab.spots.at(sp).expexpose;
     lp.cut_past = cupas;
-    lp.blac = locallab.black.at(sp);
-    lp.shcomp = locallab.shcompr.at(sp);
-    lp.hlcomp = locallab.hlcompr.at(sp);
-    lp.hlcompthr = locallab.hlcomprthresh.at(sp);
-    lp.expcomp = locallab.expcomp.at(sp) / 100.;
+    lp.blac = locallab.spots.at(sp).black;
+    lp.shcomp = locallab.spots.at(sp).shcompr;
+    lp.hlcomp = locallab.spots.at(sp).hlcompr;
+    lp.hlcompthr = locallab.spots.at(sp).hlcomprthresh;
+    lp.expcomp = locallab.spots.at(sp).expcomp / 100.;
     lp.sensex = local_sensiex;
     lp.strucc = local_struc;
     lp.war = local_warm;
@@ -761,10 +761,10 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, LabImage* dest)
 
     int tempo;
 
-    if (params->locallab.warm.at(sp) > 0) {
-        tempo = 5000 - 30 * params->locallab.warm.at(sp);
+    if (params->locallab.spots.at(sp).warm > 0) {
+        tempo = 5000 - 30 * params->locallab.spots.at(sp).warm;
     } else {
-        tempo = 5000 - 49 * params->locallab.warm.at(sp);
+        tempo = 5000 - 49 * params->locallab.spots.at(sp).warm;
     }
 
     ColorTemp::temp2mulxyz(params->wb.temperature, params->wb.method, Xw, Zw);  //compute white Xw Yw Zw  : white current WB
@@ -1027,7 +1027,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, LabImage* dest)
 
 void ImProcFunctions::vibrancelocal(int sp, int bfw, int bfh, LabImage* lab,  LabImage* dest, bool & localskutili, LUTf & sklocalcurve)
 {
-    if (!((bool)params->locallab.expvibrance.at(sp))) {
+    if (!((bool)params->locallab.spots.at(sp).expvibrance)) {
         return;
     }
 
@@ -1040,10 +1040,10 @@ void ImProcFunctions::vibrancelocal(int sp, int bfw, int bfh, LabImage* lab,  La
     int negat = 0, moreRGB = 0, negsat = 0, moresat = 0;
 #endif
 
-    const float chromaPastel = float (params->locallab.pastels.at(sp))   / 100.0f;
-    const float chromaSatur  = float (params->locallab.saturated.at(sp)) / 100.0f;
+    const float chromaPastel = float (params->locallab.spots.at(sp).pastels)   / 100.0f;
+    const float chromaSatur  = float (params->locallab.spots.at(sp).saturated) / 100.0f;
     const float p00 = 0.07f;
-    const float limitpastelsatur = (static_cast<float>(params->locallab.psthreshold.at(sp).getTopLeft())    / 100.0f) * (1.0f - p00) + p00;
+    const float limitpastelsatur = (static_cast<float>(params->locallab.spots.at(sp).psthreshold.getTopLeft())    / 100.0f) * (1.0f - p00) + p00;
     const float maxdp = (limitpastelsatur - p00) / 4.0f;
     const float maxds = (1.0 - limitpastelsatur) / 4.0f;
     const float p0 = p00 + maxdp;
@@ -1052,7 +1052,7 @@ void ImProcFunctions::vibrancelocal(int sp, int bfw, int bfh, LabImage* lab,  La
     const float s0 = limitpastelsatur + maxds;
     const float s1 = limitpastelsatur + 2.0f * maxds;
     const float s2 = limitpastelsatur + 3.0f * maxds;
-    const float transitionweighting = static_cast<float>(params->locallab.psthreshold.at(sp).getBottomLeft()) / 100.0f;
+    const float transitionweighting = static_cast<float>(params->locallab.spots.at(sp).psthreshold.getBottomLeft()) / 100.0f;
     float chromamean = 0.0f;
 
     if (chromaPastel != chromaSatur) {
@@ -1084,8 +1084,8 @@ void ImProcFunctions::vibrancelocal(int sp, int bfw, int bfh, LabImage* lab,  La
 
 
     const bool highlight = params->toneCurve.hrenabled;//Get the value if "highlight reconstruction" is activated
-    const bool protectskins = params->locallab.protectskins.at(sp);
-    const bool avoidcolorshift = params->locallab.avoidcolorshift.at(sp);
+    const bool protectskins = params->locallab.spots.at(sp).protectskins;
+    const bool avoidcolorshift = params->locallab.spots.at(sp).avoidcolorshift;
 
     TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
     //inverse matrix user select
@@ -11441,10 +11441,10 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                 //   }
 
                 //sharpen only square area instaed of all image
-                ImProcFunctions::deconvsharpeningloc(bufsh, hbuffer, bfw, bfh, loctemp, params->locallab.shardamping.at(sp), (double)params->locallab.sharradius.at(sp) / 100., params->locallab.shariter.at(sp), params->locallab.sharamount.at(sp));
+                ImProcFunctions::deconvsharpeningloc(bufsh, hbuffer, bfw, bfh, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius / 100., params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount);
             } else { //call from dcrop.cc
 
-                ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, bfw, bfh, loctemp, params->locallab.shardamping.at(sp), (double)params->locallab.sharradius.at(sp) / 100., params->locallab.shariter.at(sp), params->locallab.sharamount.at(sp));
+                ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, bfw, bfh, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius / 100., params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount);
 
             }
 
@@ -11467,7 +11467,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
             int GH = original->H;
             JaggedArray<float> loctemp(GW, GH);
 
-            ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, GW, GH, loctemp, params->locallab.shardamping.at(sp), (double)params->locallab.sharradius.at(sp) / 100., params->locallab.shariter.at(sp), params->locallab.sharamount.at(sp));
+            ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, GW, GH, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius / 100., params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount);
 
             float hueplus = hueref + dhuesha;
             float huemoins = hueref - dhuesha;
@@ -11631,7 +11631,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                 InverseReti_Local(lp, original, transformed, tmpl, cx, cy, 0);
             }
 
-            if (params->locallab.chrrt.at(sp) > 0) {
+            if (params->locallab.spots.at(sp).chrrt > 0) {
 
                 if (!lp.invret && call <= 3) {
 
@@ -11731,7 +11731,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
 
 
 // Gamut and Munsell control - very important do not desactivated to avoid crash
-        if (params->locallab.avoid.at(sp)) {
+        if (params->locallab.spots.at(sp).avoid) {
             TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
             float wip[3][3] = {
                 {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
