@@ -52,10 +52,38 @@ namespace rtengine {
 #endif
 
 
+namespace {
+
+int calculate_subsampling(int w, int h, int r)
+{
+    if (r == 1) {
+        return 1;
+    }
+    
+    if (max(w, h) <= 600) {
+        return 1;
+    }
+    
+    for (int s = 5; s > 0; --s) {
+        if (r % s == 0) {
+            return s;
+        }
+    }
+
+    return LIM(r / 2, 2, 4);
+}
+
+} // namespace
+
+
 void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2D<float> &dst, int r, float epsilon, bool multithread, int subsampling)
 {
     const int W = src.width();
     const int H = src.height();
+
+    if (subsampling <= 0) {
+        subsampling = calculate_subsampling(W, H, r);
+    }
 
     enum Op { MUL, DIVEPSILON, ADD, SUB, ADDMUL, SUBMUL };
 

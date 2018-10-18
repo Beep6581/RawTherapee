@@ -208,9 +208,9 @@ void extract_channels(Imagefloat *img, array2D<float> &r, array2D<float> &g, arr
         }
     }
 
-    guidedFilter(r, r, r, radius, epsilon, multithread, radius / 2);
-    guidedFilter(g, g, g, radius, epsilon, multithread, radius / 2);
-    guidedFilter(b, b, b, radius, epsilon, multithread, radius / 2);
+    guidedFilter(r, r, r, radius, epsilon, multithread);
+    guidedFilter(g, g, g, radius, epsilon, multithread);
+    guidedFilter(b, b, b, radius, epsilon, multithread);
 }
 
 
@@ -287,7 +287,7 @@ void ImProcFunctions::dehaze(Imagefloat *img)
 
     {
         array2D<float> guideB(W, H, img->b.ptrs, ARRAY2D_BYREFERENCE);
-        guidedFilter(guideB, t_tilde, t, radius, epsilon, multiThread, patchsize);
+        guidedFilter(guideB, t_tilde, t, radius, epsilon, multiThread);
     }
         
     DEBUG_DUMP(t);
