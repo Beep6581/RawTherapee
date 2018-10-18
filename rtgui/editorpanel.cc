@@ -2277,7 +2277,7 @@ void EditorPanel::histogramChanged(
     const LUTu& histBlueRaw,
     const LUTu& histChroma,
     const LUTu& histLRETI,
-	const bool usableRaw
+    const bool usableRaw
 )
 {
     if (histogramPanel) {

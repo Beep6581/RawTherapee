@@ -153,7 +153,7 @@ public:
         const LUTu& histRedRaw,
         const LUTu& histGreenRaw,
         const LUTu& histBlueRaw,
-		const bool usableRaw
+        const bool usableRaw
     );
     void updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, int mode);
     void on_realize();
@@ -228,7 +228,7 @@ public:
         const LUTu& histRedRaw,
         const LUTu& histGreenRaw,
         const LUTu& histBlueRaw,
-		const bool usableRaw)
+        const bool usableRaw)
     {
         histogramArea->update(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw, usableRaw);
     }

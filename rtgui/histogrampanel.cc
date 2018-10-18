@@ -78,7 +78,7 @@ HistogramPanel::HistogramPanel ()
     chroImage_g  = new RTImage ("histogram-gold-off-small.png");
     rawImage_g   = new RTImage ("histogram-bayer-off-small.png");
     barImage_g   = new RTImage ("histogram-bar-off-small.png");
-	
+    
     mode0Image  = new RTImage ("histogram-mode-linear-small.png");
     mode1Image  = new RTImage ("histogram-mode-logx-small.png");
     mode2Image  = new RTImage ("histogram-mode-logxy-small.png");
@@ -648,7 +648,7 @@ bool HistogramRGBArea::on_button_press_event (GdkEventButton* event)
 
 void HistogramRGBArea::factorChanged (double newFactor)
 {
-	factor = newFactor;
+    factor = newFactor;
 }
 
 //
@@ -743,7 +743,7 @@ void HistogramArea::update(
     const LUTu& histRedRaw,
     const LUTu& histGreenRaw,
     const LUTu& histBlueRaw,
-	const bool usableRaw
+    const bool usableRaw
 )
 {
     if (histRed) {
@@ -759,15 +759,15 @@ void HistogramArea::update(
     } else {
         valid = false;
     }
-	
-	if (!usableRaw && rawMode) {
-		rawMode = false;
-		
-		// What I would actually like to do here is to call members from HistogramPanel
-		//
-		// showRAW->set_active(false);
-		// raw_toggled ()
-	}
+    
+    if (!usableRaw && rawMode) {
+        rawMode = false;
+        
+        // What I would actually like to do here is to call members from HistogramPanel
+        //
+        // showRAW->set_active(false);
+        // raw_toggled ()
+    }
 
     haih->pending++;
     // Can be done outside of the GUI thread

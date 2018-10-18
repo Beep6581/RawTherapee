@@ -297,7 +297,7 @@ public:
         const LUTu& histBlueRaw,
         const LUTu& histChroma,
         const LUTu& histLRETI,
-		const bool usableRaw
+        const bool usableRaw
     ) = 0;
 };
 
