@@ -133,6 +133,13 @@ Crop::Crop():
 
     pack_start (*selectCrop, Gtk::PACK_SHRINK, 2);
 
+    resetCrop = Gtk::manage (new Gtk::Button (M("TP_CROP_RESETCROP")));
+    resetCrop->get_style_context()->add_class("independent");
+    resetCrop->set_image (*Gtk::manage (new RTImage ("crop-small.png")));
+
+    pack_start (*resetCrop, Gtk::PACK_SHRINK, 2);
+
+
     Gtk::HBox* hb3 = Gtk::manage (new Gtk::HBox ());
 
     fixr = Gtk::manage (new Gtk::CheckButton (M("TP_CROP_FIXRATIO")));
@@ -241,6 +248,7 @@ Crop::Crop():
     oconn = orientation->signal_changed().connect( sigc::mem_fun(*this, &Crop::ratioChanged) );
     gconn = guide->signal_changed().connect( sigc::mem_fun(*this, &Crop::notifyListener) );
     selectCrop->signal_pressed().connect( sigc::mem_fun(*this, &Crop::selectPressed) );
+    resetCrop->signal_pressed().connect( sigc::mem_fun(*this, &Crop::doresetCrop) );
     ppi->signal_value_changed().connect( sigc::mem_fun(*this, &Crop::refreshSize) );
 
     nx = ny = nw = nh = 0;
@@ -480,6 +488,23 @@ void Crop::selectPressed ()
     if (clistener) {
         clistener->cropSelectRequested ();
     }
+}
+
+void Crop::doresetCrop ()
+{
+    xDirty = true;
+    yDirty = true;
+    wDirty = true;
+    hDirty = true;
+
+    int X = 0;
+    int Y = 0;
+    int W = maxw;
+    int H = maxh;
+    cropResized (X, Y, W, H);
+    idle_register.add(notifyListenerUI, this);
+
+    refreshSpins();
 }
 
 void Crop::notifyListener ()

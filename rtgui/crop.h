@@ -51,6 +51,7 @@ public:
     void ratioFixedChanged ();  // The toggle button
     void refreshSize    ();
     void selectPressed  ();
+    void doresetCrop    ();
     void setDimensions   (int mw, int mh);
     void enabledChanged ();
     void positionChanged ();
@@ -103,6 +104,7 @@ private:
     MyComboBoxText* orientation;
     MyComboBoxText* guide;
     Gtk::Button* selectCrop;
+    Gtk::Button* resetCrop;
     CropPanelListener* clistener;
     int opt;
     MySpinButton* x;
