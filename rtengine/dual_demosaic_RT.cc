@@ -36,7 +36,7 @@ using namespace std;
 namespace rtengine
 {
 
-void RawImageSource::dual_demosaic_RT(bool isBayer, const RAWParams &raw, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, double &contrast, bool autoContrast, int autoX, int autoY)
+void RawImageSource::dual_demosaic_RT(bool isBayer, const RAWParams &raw, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, double &contrast, bool autoContrast)
 {
     BENCHFUN
 
@@ -90,24 +90,6 @@ void RawImageSource::dual_demosaic_RT(bool isBayer, const RAWParams &raw, int wi
                                 { 0.212671, 0.715160, 0.072169 },
                                 { 0.019334, 0.119193, 0.950227 }
                                 };
-
-    if (autoContrast && autoX >= 0 && autoY >= 0) {
-        constexpr int rectSize = 40;
-        const int autoWidth = min(rectSize, winw - autoX);
-        const int autoHeight = min(rectSize, winh - autoY);
-        if (std::min(autoWidth, autoHeight) > 20) {
-            array2D<float> autoL(autoWidth, autoHeight);
-            for(int i = 0; i < autoHeight; ++i) {
-                Color::RGB2L(red[i + autoY] + autoX, green[i + autoY] + autoX, blue[i + autoY] + autoX, autoL[i], xyz_rgb, autoWidth);
-            }
-            // calculate contrast based blend factors to use vng4 in regions with low contrast
-            JaggedArray<float> blend(autoWidth - 2, autoHeight - 2);
-            int c = calcContrastThreshold(autoL, blend, autoWidth, autoHeight);
-            if(c < 100) {
-                contrast = c; // alternative : contrast = c - 1
-            }
-        }
-    }
 
     #pragma omp parallel
     {

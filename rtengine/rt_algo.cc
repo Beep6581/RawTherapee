@@ -204,80 +204,87 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float contra
         constexpr float scale = 0.0625f / 327.68f;
         if (autoContrast) {
             StopWatch StopC("calculate dual demosaic auto contrast threshold");
-            constexpr int tilesize = 80;
-            const int numTilesW = W / tilesize;
-            const int numTilesH = H / tilesize;
-            std::vector<std::vector<std::pair<float, float>>> variances(numTilesH, std::vector<std::pair<float, float>>(numTilesW));
+            for (int pass = 0; pass < 2; ++pass) {
+                const int tilesize = 80 / (pass + 1);
+                const int numTilesW = W / tilesize;
+                const int numTilesH = H / tilesize;
+                std::vector<std::vector<std::pair<float, float>>> variances(numTilesH, std::vector<std::pair<float, float>>(numTilesW));
 
-            #pragma omp parallel for
-            for (int i = 0; i < numTilesH; ++i) {
-                int tileY = i * tilesize;
-                for (int j = 0; j < numTilesW; ++j) {
-                    int tileX = j * tilesize;
+                #pragma omp parallel for
+                for (int i = 0; i < numTilesH; ++i) {
+                    int tileY = i * tilesize;
+                    for (int j = 0; j < numTilesW; ++j) {
+                        int tileX = j * tilesize;
 #ifdef __SSE2__
-                    vfloat avgv = ZEROV;
-                    for (int y = tileY; y < tileY + tilesize; ++y) {
-                        for (int x = tileX; x < tileX + tilesize; x += 4) {
-                            avgv += LVFU(luminance[y][x]);
+                        vfloat avgv = ZEROV;
+                        for (int y = tileY; y < tileY + tilesize; ++y) {
+                            for (int x = tileX; x < tileX + tilesize; x += 4) {
+                                avgv += LVFU(luminance[y][x]);
+                            }
                         }
-                    }
-                    float avg = vhadd(avgv);
+                        float avg = vhadd(avgv);
 #else
-                    float avg = 0.;
-                    for (int y = tileY; y < tileY + tilesize; ++y) {
-                        for (int x = tileX; x < tileX + tilesize; ++x) {
-                            avg += luminance[y][x];
+                        float avg = 0.;
+                        for (int y = tileY; y < tileY + tilesize; ++y) {
+                            for (int x = tileX; x < tileX + tilesize; ++x) {
+                                avg += luminance[y][x];
+                            }
                         }
-                    }
 #endif
-                    avg /= SQR(tilesize);
+                        avg /= SQR(tilesize);
 #ifdef __SSE2__
-                    vfloat varv = ZEROV;
-                    avgv = F2V(avg);
-                    for (int y = tileY; y < tileY + tilesize; ++y) {
-                        for (int x = tileX; x < tileX + tilesize; x +=4) {
-                            varv += SQRV(LVFU(luminance[y][x]) - avgv);
+                        vfloat varv = ZEROV;
+                        avgv = F2V(avg);
+                        for (int y = tileY; y < tileY + tilesize; ++y) {
+                            for (int x = tileX; x < tileX + tilesize; x +=4) {
+                                varv += SQRV(LVFU(luminance[y][x]) - avgv);
+                            }
                         }
-                    }
-                    float var = vhadd(varv);
+                        float var = vhadd(varv);
 #else
-                    float var = 0.0;
-                    for (int y = tileY; y < tileY + tilesize; ++y) {
-                        for (int x = tileX; x < tileX + tilesize; ++x) {
-                            var += SQR(luminance[y][x] - avg);
+                        float var = 0.0;
+                        for (int y = tileY; y < tileY + tilesize; ++y) {
+                            for (int x = tileX; x < tileX + tilesize; ++x) {
+                                var += SQR(luminance[y][x] - avg);
+                            }
+                        }
+    #endif
+                        var /= (SQR(tilesize) * avg);
+                        variances[i][j].first = var;
+                        variances[i][j].second = avg;
+                    }
+                }
+
+                float minvar = RT_INFINITY_F;
+                int minI = 0, minJ = 0;
+                for (int i = 0; i < numTilesH; ++i) {
+                    for (int j = 0; j < numTilesW; ++j) {
+                        if (variances[i][j].first < minvar && variances[i][j].second > 2000.f && variances[i][j].second < 20000.f) {
+                            minvar = variances[i][j].first;
+                            minI = i;
+                            minJ = j;
                         }
                     }
-#endif
-                    var /= (SQR(tilesize) * avg);
-                    variances[i][j].first = var;
-                    variances[i][j].second = avg;
                 }
-            }
 
-            float minvar = RT_INFINITY_F;
-            int minY = 0, minX = 0;
-            for (int i = 0; i < numTilesH; ++i) {
-                for (int j = 0; j < numTilesW; ++j) {
-                    if (variances[i][j].first < minvar && variances[i][j].second > 2000.f && variances[i][j].second < 20000.f) {
-                        minvar = variances[i][j].first;
-                        minY = tilesize * i;
-                        minX = tilesize * j;
+                const int minY = tilesize * minI;
+                const int minX = tilesize * minJ;
+                std::cout << "minvar : " << minvar << std::endl;
+
+//                if (minvar <= 1.f || pass == 1) {
+                    // a variance <= 1 means we already found a flat region and can skip second pass
+                    JaggedArray<float> Lum(tilesize, tilesize);
+                    JaggedArray<float> Blend(tilesize, tilesize);
+                    for (int i = 0; i < tilesize; ++i) {
+                        for (int j = 0; j < tilesize; ++j) {
+                            Lum[i][j] = luminance[i + minY][j + minX];
+                        }
                     }
-                }
-            }
-//            std::cout << "minY : " << minY << std::endl;
-//            std::cout << "minX : " << minX << std::endl;
-//            std::cout << "minvar : " << minvar << std::endl;
 
-            JaggedArray<float> Lum(tilesize, tilesize);
-            JaggedArray<float> Blend(tilesize, tilesize);
-            for (int i = 0; i < tilesize; ++i) {
-                for (int j = 0; j < tilesize; ++j) {
-                    Lum[i][j] = luminance[i + minY][j + minX];
-                }
+                    /*contrastThreshold =  */calcContrastThreshold(Lum, Blend, tilesize, tilesize);// / 100.f;
+//                    break;
+//                }
             }
-
-            calcContrastThreshold(Lum, Blend, tilesize, tilesize);
         }
 
 #ifdef _OPENMP
@@ -368,7 +375,7 @@ int calcContrastThreshold(float** luminance, float **blend, int W, int H) {
         }
     }
 
-    const float limit = (W - 2) * (H - 2) / 100.f;
+    const float limit = (W - 4) * (H - 4) / 100.f;
 
     int c;
     for (c = 1; c < 100; ++c) {
