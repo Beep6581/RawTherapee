@@ -742,7 +742,8 @@ void HistogramArea::update(
     const LUTu& histChroma,
     const LUTu& histRedRaw,
     const LUTu& histGreenRaw,
-    const LUTu& histBlueRaw
+    const LUTu& histBlueRaw,
+	const bool usableRaw
 )
 {
     if (histRed) {
@@ -758,6 +759,15 @@ void HistogramArea::update(
     } else {
         valid = false;
     }
+	
+	if (!usableRaw && rawMode) {
+		rawMode = false;
+		
+		// What I would actually like to do here is to call members from HistogramPanel
+		//
+		// showRAW->set_active(false);
+		// raw_toggled ()
+	}
 
     haih->pending++;
     // Can be done outside of the GUI thread

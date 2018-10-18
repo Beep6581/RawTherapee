@@ -196,6 +196,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         // raw auto CA is bypassed if no high detail is needed, so we have to compute it when high detail is needed
         if ((todo & M_PREPROC) || (!highDetailPreprocessComputed && highDetailNeeded)) {
+			
             imgsrc->setCurrentFrame(params.raw.bayersensor.imageNum);
 
             imgsrc->preprocess(rp, params.lensProf, params.coarse);
@@ -937,7 +938,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         if (hListener) {
             updateLRGBHistograms();
-            hListener->histogramChanged(histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve, histCCurve, /*histCLurve, histLLCurve,*/ histLCAM, histCCAM, histRedRaw, histGreenRaw, histBlueRaw, histChroma, histLRETI);
+            hListener->histogramChanged(histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve, histCCurve, /*histCLurve, histLLCurve,*/ histLCAM, histCCAM, histRedRaw, histGreenRaw, histBlueRaw, histChroma, histLRETI,imgsrc->isRAW());
         }
     }
 
