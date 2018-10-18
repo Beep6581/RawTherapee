@@ -981,7 +981,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
 
             // Empty run to update the thumb
             rtengine::procparams::ProcParams params = mselected[i]->thumbnail->getProcParams ();
-            mselected[i]->thumbnail->setProcParams (params, nullptr, FILEBROWSER);
+            mselected[i]->thumbnail->setProcParams (params, nullptr, FILEBROWSER, true, true);
         }
 
         if (!mselected.empty() && bppcl) {
