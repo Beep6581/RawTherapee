@@ -1578,6 +1578,13 @@ Camera constants:
         "ranges": { "white": 3980 } // 12-bit files.
     },
 
+    { // Quality C, only colour matrix and PDAF lines info
+        "make_model" : "Nikon Z 7",
+        "dcraw_matrix" : [10405,-3755,-1270,-5461,13787,1793,-1040,2015,6785], // Adobe DNG Converter 11.0 ColorMatrix2
+        "pdaf_pattern" : [0, 12],
+        "pdaf_offset" : 29
+    },
+    
     { // Quality B, 16Mp and 64Mp raw frames
         "make_model": "OLYMPUS E-M5MarkII",
         "dcraw_matrix": [ 9422,-3258,-711,-2655,10898,2015,-512,1354,5512 ], // DNG_v8.8 D65
