@@ -1247,6 +1247,17 @@ bool MyHScale::on_scroll_event (GdkEventScroll* event)
     return false;
 }
 
+bool MyHScale::on_button_press_event (GdkEventButton* event)
+{
+
+    if (event->type == GDK_2BUTTON_PRESS) {
+        // How do I trigger the reset event ... from here?
+        return false;
+    } else {
+        return Gtk::HScale::on_button_press_event(event);
+    }
+}
+
 bool MyHScale::on_key_press_event (GdkEventKey* event)
 {
 

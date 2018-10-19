@@ -363,8 +363,9 @@ public:
  */
 class MyHScale : public Gtk::HScale
 {
-
+    
     bool on_scroll_event (GdkEventScroll* event);
+    bool on_button_press_event (GdkEventButton* event);
     bool on_key_press_event (GdkEventKey* event);
 };
 
