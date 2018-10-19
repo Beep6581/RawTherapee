@@ -51,6 +51,7 @@ public:
 
     void methodChanged();
     void adjusterChanged(Adjuster* a, double newval);
+    void adjusterAutoToggled(Adjuster* a, bool newval);
 };
 
 #endif

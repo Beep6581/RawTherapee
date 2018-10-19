@@ -367,12 +367,11 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
 }
 
 
-void ToolPanelCoordinator::panelChanged(rtengine::ProcEvent event, const Glib::ustring& descr)
+void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const Glib::ustring& descr)
 {
     // TODO Locallab printf
     printf("panelChanged\n");
-    printf("panelChanged event: %d\n", (int)event);
-
+ //   printf("panelChanged event: %d\n", (int)event);
     if (!ipc) {
         return;
     }
@@ -458,12 +457,17 @@ void ToolPanelCoordinator::panelChanged(rtengine::ProcEvent event, const Glib::u
     photoLoadedOnce = true;
 }
 
-void ToolPanelCoordinator::profileChange(const PartialProfile *nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited, bool fromLastSave)
+void ToolPanelCoordinator::profileChange(
+    const PartialProfile* nparams,
+    const rtengine::ProcEvent& event,
+    const Glib::ustring& descr,
+    const ParamsEdited* paramsEdited,
+    bool fromLastSave
+)
 {
     // TODO Locallab printf
     printf("profileChanged\n");
-    printf("profileChanged event: %d\n", (int)event);
-
+//    printf("profileChanged event: %d\n", (int)event);
     int fw, fh, tr;
 
     if (!ipc) {
@@ -563,13 +567,13 @@ void ToolPanelCoordinator::profileChange(const PartialProfile *nparams, rtengine
     photoLoadedOnce = true;
 }
 
-void ToolPanelCoordinator::setDefaults(ProcParams* defparams)
+void ToolPanelCoordinator::setDefaults(const ProcParams* defparams)
 {
-
-    if (defparams)
+    if (defparams) {
         for (auto toolPanel : toolPanels) {
             toolPanel->setDefaults(defparams);
         }
+    }
 }
 
 CropGUIListener* ToolPanelCoordinator::getCropGUIListener()
@@ -699,33 +703,8 @@ void ToolPanelCoordinator::writeToolExpandedStatus(std::vector<int> &tpOpen)
 }
 
 
-void ToolPanelCoordinator::cropSelectionReady()
-{
-
-    toolBar->setTool(TMHand);
-
-    if (!ipc) {
-        return;
-    }
-}
-
-void ToolPanelCoordinator::rotateSelectionReady(double rotate_deg, Thumbnail* thm)
-{
-
-    toolBar->setTool(TMHand);
-
-    if (!ipc) {
-        return;
-    }
-
-    if (rotate_deg != 0.0) {
-        rotate->straighten(rotate_deg);
-    }
-}
-
 void ToolPanelCoordinator::spotWBselected(int x, int y, Thumbnail* thm)
 {
-
     if (!ipc) {
         return;
     }
@@ -745,7 +724,6 @@ void ToolPanelCoordinator::spotWBselected(int x, int y, Thumbnail* thm)
 
 void ToolPanelCoordinator::sharpMaskSelected(bool sharpMask)
 {
-
     if (!ipc) {
         return;
     }
@@ -755,7 +733,42 @@ void ToolPanelCoordinator::sharpMaskSelected(bool sharpMask)
     ipc->endUpdateParams(rtengine::EvShrEnabled);
 }
 
+int ToolPanelCoordinator::getSpotWBRectSize() const
+{
+    return whitebalance->getSize();
+}
 
+void ToolPanelCoordinator::cropSelectionReady()
+{
+    toolBar->setTool (TMHand);
+
+    if (!ipc) {
+        return;
+    }
+}
+
+void ToolPanelCoordinator::rotateSelectionReady(double rotate_deg, Thumbnail* thm)
+{
+    toolBar->setTool (TMHand);
+
+    if (!ipc) {
+        return;
+    }
+
+    if (rotate_deg != 0.0) {
+        rotate->straighten (rotate_deg);
+    }
+}
+
+ToolBar* ToolPanelCoordinator::getToolBar() const
+{
+    return toolBar;
+}
+
+CropGUIListener* ToolPanelCoordinator::startCropEditing(Thumbnail* thm)
+{
+    return crop;
+}
 
 void ToolPanelCoordinator::autoCropRequested()
 {
@@ -866,28 +879,31 @@ void ToolPanelCoordinator::cropSelectRequested()
     toolBar->setTool(TMCropSelect);
 }
 
-void ToolPanelCoordinator::saveInputICCReference(Glib::ustring fname, bool apply_wb)
+void ToolPanelCoordinator::saveInputICCReference(const Glib::ustring& fname, bool apply_wb)
 {
-
     if (ipc) {
         ipc->saveInputICCReference(fname, apply_wb);
     }
 }
 
-int ToolPanelCoordinator::getSpotWBRectSize()
+void ToolPanelCoordinator::updateCurveBackgroundHistogram(
+    const LUTu& histToneCurve,
+    const LUTu& histLCurve,
+    const LUTu& histCCurve,
+    const LUTu& histLCAM,
+    const LUTu& histCCAM,
+    const LUTu& histRed,
+    const LUTu& histGreen,
+    const LUTu& histBlue,
+    const LUTu& histLuma,
+    const LUTu& histLRETI
+)
 {
-
-    return whitebalance->getSize();
-}
-
-void ToolPanelCoordinator::updateCurveBackgroundHistogram(LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, /*LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM, LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI)
-{
-    colorappearance->updateCurveBackgroundHistogram(histToneCurve, histLCurve, histCCurve, /*histCLurve, histLLCurve,*/ histLCAM,  histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
-    toneCurve->updateCurveBackgroundHistogram(histToneCurve, histLCurve, histCCurve,/* histCLurve, histLLCurve,*/ histLCAM,  histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
-    lcurve->updateCurveBackgroundHistogram(histToneCurve, histLCurve, histCCurve, /*histCLurve, histLLCurve,*/ histLCAM, histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
-    rgbcurves->updateCurveBackgroundHistogram(histToneCurve, histLCurve, histCCurve,/* histCLurve, histLLCurve, */histLCAM, histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
-    retinex->updateCurveBackgroundHistogram(histToneCurve, histLCurve, histCCurve,/* histCLurve, histLLCurve, */histLCAM, histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
-
+    colorappearance->updateCurveBackgroundHistogram(histToneCurve, histLCurve, histCCurve, histLCAM,  histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
+    toneCurve->updateCurveBackgroundHistogram(histToneCurve, histLCurve, histCCurve,histLCAM,  histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
+    lcurve->updateCurveBackgroundHistogram(histToneCurve, histLCurve, histCCurve, histLCAM, histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
+    rgbcurves->updateCurveBackgroundHistogram(histToneCurve, histLCurve, histCCurve, histLCAM, histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
+    retinex->updateCurveBackgroundHistogram(histToneCurve, histLCurve, histCCurve, histLCAM, histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
 }
 
 void ToolPanelCoordinator::foldAllButOne(Gtk::Box* parent, FoldableToolPanel* openedSection)

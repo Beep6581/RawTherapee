@@ -709,9 +709,13 @@ void ProfilePanel::selection_changed ()
     dontupdate = false;
 }
 
-void ProfilePanel::procParamsChanged (rtengine::procparams::ProcParams* p, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited)
+void ProfilePanel::procParamsChanged(
+    const rtengine::procparams::ProcParams* p,
+    const rtengine::ProcEvent& ev,
+    const Glib::ustring& descr,
+    const ParamsEdited* paramsEdited
+)
 {
-
     // to prevent recursion, filter out the events caused by the profilepanel
     if (ev == EvProfileChanged || ev == EvPhotoLoaded) {
         return;
@@ -732,6 +736,10 @@ void ProfilePanel::procParamsChanged (rtengine::procparams::ProcParams* p, rteng
     }
 
     *custom->pparams = *p;
+}
+
+void ProfilePanel::clearParamChanges()
+{
 }
 
 /** @brief Initialize the Profile panel with a default profile, overridden by the last saved profile if provided

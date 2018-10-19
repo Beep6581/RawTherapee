@@ -36,8 +36,7 @@ class RTWindow;
 
 class FilePanel final :
     public Gtk::HPaned,
-    public FileSelectionListener,
-    public PParamsChangeListener
+    public FileSelectionListener
 {
 public:
     FilePanel ();
@@ -72,8 +71,8 @@ public:
     void saveOptions ();
 
     // interface fileselectionlistener
-    bool fileSelected           (Thumbnail* thm);
-    bool addBatchQueueJobs ( std::vector<BatchQueueEntry*> &entries );
+    bool fileSelected(Thumbnail* thm);
+    bool addBatchQueueJobs(const std::vector<BatchQueueEntry*>& entries);
 
     void optionsChanged         ();
     bool imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::InitialImage*> * );

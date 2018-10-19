@@ -143,7 +143,7 @@ void EdgePreservingDecompositionUI::setDefaults(const ProcParams *defParams, con
 
 void EdgePreservingDecompositionUI::adjusterChanged(Adjuster* a, double newval)
 {
-    if(listener && getEnabled()) {
+    if (listener && getEnabled()) {
         if(a == strength) {
             listener->panelChanged(EvEPDStrength, Glib::ustring::format(std::setw(2), std::fixed, std::setprecision(2), a->getValue()));
         } else if(a == gamma) {
@@ -156,6 +156,10 @@ void EdgePreservingDecompositionUI::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvEPDReweightingIterates, Glib::ustring::format((int)a->getValue()));
         }
     }
+}
+
+void EdgePreservingDecompositionUI::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void EdgePreservingDecompositionUI::enabledChanged ()

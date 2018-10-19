@@ -87,13 +87,17 @@ void PreProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
     }
 }
 
-void PreProcess::adjusterChanged (Adjuster* a, double newval)
+void PreProcess::adjusterChanged(Adjuster* a, double newval)
 {
     if (listener) {
         if (a == hdThreshold) {
             listener->panelChanged (EvPreProcessHotDeadThresh, a->getTextValue() );
         }
     }
+}
+
+void PreProcess::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void PreProcess::hotPixelChanged ()

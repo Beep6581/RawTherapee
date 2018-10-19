@@ -945,8 +945,8 @@ bool MyScrolledWindow::on_scroll_event (GdkEventScroll* event)
         double step  = adjust->get_step_increment();
         double value2 = 0.;
 
-        printf("MyScrolledwindow::on_scroll_event / delta_x=%.5f, delta_y=%.5f, direction=%d, type=%d, send_event=%d\n",
-                event->delta_x, event->delta_y, (int)event->direction, (int)event->type, event->send_event);
+//        printf("MyScrolledwindow::on_scroll_event / delta_x=%.5f, delta_y=%.5f, direction=%d, type=%d, send_event=%d\n",
+//                event->delta_x, event->delta_y, (int)event->direction, (int)event->type, event->send_event);
 
         if (event->direction == GDK_SCROLL_DOWN) {
             value2 = value + step;
@@ -1020,8 +1020,8 @@ bool MyScrolledToolbar::on_scroll_event (GdkEventScroll* event)
         double step  = adjust->get_step_increment() * 2;
         double value2 = 0.;
 
-        printf("MyScrolledToolbar::on_scroll_event / delta_x=%.5f, delta_y=%.5f, direction=%d, type=%d, send_event=%d\n",
-                event->delta_x, event->delta_y, (int)event->direction, (int)event->type, event->send_event);
+//        printf("MyScrolledToolbar::on_scroll_event / delta_x=%.5f, delta_y=%.5f, direction=%d, type=%d, send_event=%d\n",
+//                event->delta_x, event->delta_y, (int)event->direction, (int)event->type, event->send_event);
 
         if (event->direction == GDK_SCROLL_DOWN) {
             value2 = rtengine::min<double>(value + step, upper);
@@ -1076,8 +1076,8 @@ MyComboBoxText::MyComboBoxText (bool has_entry) : Gtk::ComboBoxText(has_entry)
 bool MyComboBoxText::on_scroll_event (GdkEventScroll* event)
 {
 
-    printf("MyComboboxText::on_scroll_event / delta_x=%.5f, delta_y=%.5f, direction=%d, type=%d, send_event=%d\n",
-            event->delta_x, event->delta_y, (int)event->direction, (int)event->type, event->send_event);
+//    printf("MyComboboxText::on_scroll_event / delta_x=%.5f, delta_y=%.5f, direction=%d, type=%d, send_event=%d\n",
+//            event->delta_x, event->delta_y, (int)event->direction, (int)event->type, event->send_event);
     // If Shift is pressed, the widget is modified
     if (event->state & GDK_SHIFT_MASK) {
         Gtk::ComboBoxText::on_scroll_event(event);
@@ -1235,8 +1235,8 @@ bool MySpinButton::on_scroll_event (GdkEventScroll* event)
 bool MyHScale::on_scroll_event (GdkEventScroll* event)
 {
 
-    printf("MyHScale::on_scroll_event / delta_x=%.5f, delta_y=%.5f, direction=%d, type=%d, send_event=%d\n",
-            event->delta_x, event->delta_y, (int)event->direction, (int)event->type, event->send_event);
+//    printf("MyHScale::on_scroll_event / delta_x=%.5f, delta_y=%.5f, direction=%d, type=%d, send_event=%d\n",
+//            event->delta_x, event->delta_y, (int)event->direction, (int)event->type, event->send_event);
     // If Shift is pressed, the widget is modified
     if (event->state & GDK_SHIFT_MASK) {
         Gtk::HScale::on_scroll_event(event);

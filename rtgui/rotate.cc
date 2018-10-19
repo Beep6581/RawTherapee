@@ -85,12 +85,15 @@ void Rotate::setDefaults (const ProcParams* defParams, const ParamsEdited* pedit
     }
 }
 
-void Rotate::adjusterChanged (Adjuster* a, double newval)
+void Rotate::adjusterChanged(Adjuster* a, double newval)
 {
-
     if (listener) {
-        listener->panelChanged (EvROTDegree, Glib::ustring::format (std::setw(3), std::fixed, std::setprecision(2), degree->getValue()));
+        listener->panelChanged(EvROTDegree, Glib::ustring::format (std::setw(3), std::fixed, std::setprecision(2), degree->getValue()));
     }
+}
+
+void Rotate::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void Rotate::straighten (double deg)

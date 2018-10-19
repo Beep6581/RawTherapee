@@ -113,6 +113,10 @@ void FattalToneMapping::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
+void FattalToneMapping::adjusterAutoToggled(Adjuster* a, bool newval)
+{
+}
+
 void FattalToneMapping::enabledChanged ()
 {
     if (listener) {

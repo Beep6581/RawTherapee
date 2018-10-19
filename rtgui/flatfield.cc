@@ -232,11 +232,10 @@ void FlatField::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedit
 
 }
 
-void FlatField::adjusterChanged (Adjuster* a, double newval)
+void FlatField::adjusterChanged(Adjuster* a, double newval)
 {
     if (listener) {
-
-        Glib::ustring value = a->getTextValue();
+        const Glib::ustring value = a->getTextValue();
 
         if (a == flatFieldBlurRadius) {
             listener->panelChanged (EvFlatFieldBlurRadius,  value);
@@ -248,7 +247,6 @@ void FlatField::adjusterChanged (Adjuster* a, double newval)
 
 void FlatField::adjusterAutoToggled (Adjuster* a, bool newval)
 {
-
     if (multiImage) {
         if (flatFieldClipControl->getAutoInconsistent()) {
             flatFieldClipControl->setAutoInconsistent(false);

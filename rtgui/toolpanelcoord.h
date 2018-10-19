@@ -85,7 +85,8 @@
 
 class ImageEditorCoordinator;
 
-class ToolPanelCoordinator :    public ToolPanelListener,
+class ToolPanelCoordinator :
+    public ToolPanelListener,
     public ToolBarListener,
     public ProfileChangeListener,
     public WBProvider,
@@ -98,9 +99,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
     public ImageAreaToolListener,
     public rtengine::ImageTypeListener
 {
-
 protected:
-
     WhiteBalance* whitebalance;
     Vignetting* vignetting;
     Gradient* gradient;
@@ -198,13 +197,11 @@ protected:
     void notebookPageChanged(Gtk::Widget* page, guint page_num);
 
 private:
-
     EditDataProvider *editDataProvider;
     sigc::connection notebookconn;
     bool photoLoadedOnce; // Used to indicated that a photo has been loaded yet
 
 public:
-
     CoarsePanel* coarse;
     Gtk::Notebook* toolPanelNotebook;
 
@@ -215,7 +212,18 @@ public:
     {
         return hasChanged;
     }
-    void updateCurveBackgroundHistogram(LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, /*LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI);
+    void updateCurveBackgroundHistogram(
+        const LUTu& histToneCurve,
+        const LUTu& histLCurve,
+        const LUTu& histCCurve,
+        const LUTu& histLCAM,
+        const LUTu& histCCAM,
+        const LUTu& histRed,
+        const LUTu& histGreen,
+        const LUTu& histBlue,
+        const LUTu& histLuma,
+        const LUTu& histLRETI
+    );
     void foldAllButOne(Gtk::Box* parent, FoldableToolPanel* openedSection);
 
     // multiple listeners can be added that are notified on changes (typical: profile panel and the history)
@@ -225,12 +233,19 @@ public:
     }
 
     // toolpanellistener interface
-    void panelChanged(rtengine::ProcEvent event, const Glib::ustring& descr);
+    void panelChanged(const rtengine::ProcEvent& event, const Glib::ustring& descr);
 
     void imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans, bool isMono = false);
+
     // profilechangelistener interface
-    void profileChange(const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited = nullptr, bool fromLastSave = false);
-    void setDefaults(rtengine::procparams::ProcParams* defparams);
+    void profileChange(
+        const rtengine::procparams::PartialProfile* nparams,
+        const rtengine::ProcEvent& event,
+        const Glib::ustring& descr,
+        const ParamsEdited* paramsEdited = nullptr,
+        bool fromLastSave = false
+    );
+    void setDefaults(const rtengine::procparams::ProcParams* defparams);
 
     // DirSelectionListener interface
     void dirSelected(const Glib::ustring& dirname, const Glib::ustring& openfile);
@@ -285,22 +300,16 @@ public:
     void cropSelectRequested();
 
     // icmpanellistener interface
-    void saveInputICCReference(Glib::ustring fname, bool apply_wb);
+    void saveInputICCReference(const Glib::ustring& fname, bool apply_wb);
 
     // imageareatoollistener interface
     void spotWBselected(int x, int y, Thumbnail* thm = nullptr);
     void sharpMaskSelected(bool sharpMask);
+    int getSpotWBRectSize() const;
     void cropSelectionReady();
     void rotateSelectionReady(double rotate_deg, Thumbnail* thm = nullptr);
-    ToolBar* getToolBar()
-    {
-        return toolBar;
-    }
-    int  getSpotWBRectSize();
-    CropGUIListener* startCropEditing(Thumbnail* thm = nullptr)
-    {
-        return crop;
-    }
+    ToolBar* getToolBar() const;
+    CropGUIListener* startCropEditing(Thumbnail* thm = nullptr);
 
     void updateTPVScrollbar(bool hide);
     bool handleShortcutKey(GdkEventKey* event);

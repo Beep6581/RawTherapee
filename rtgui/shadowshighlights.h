@@ -32,6 +32,9 @@ protected:
     Adjuster* shadows;
     Adjuster* s_tonalwidth;
     Adjuster* radius;
+    MyComboBoxText *colorspace;
+
+    rtengine::ProcEvent EvSHColorspace;
 
 public:
 
@@ -43,10 +46,13 @@ public:
     void setBatchMode   (bool batchMode);
 
     void adjusterChanged (Adjuster* a, double newval);
+    void adjusterAutoToggled(Adjuster* a, bool newval);
     void enabledChanged  ();
 
     void setAdjusterBehavior (bool hadd, bool sadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
+
+    void colorspaceChanged();
 };
 
 #endif

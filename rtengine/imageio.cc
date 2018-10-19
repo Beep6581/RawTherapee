@@ -704,7 +704,7 @@ int ImageIO::getTIFFSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat,
                 sFormat = IIOSF_UNSIGNED_SHORT;
                 return IMIO_SUCCESS;
             }
-        } else if (samplesperpixel == 3 && sampleformat == SAMPLEFORMAT_IEEEFP) {
+        } else if ((samplesperpixel == 3 || samplesperpixel == 4) && sampleformat == SAMPLEFORMAT_IEEEFP) {
             if (bitspersample==16) {
                 sFormat = IIOSF_FLOAT16;
                 return IMIO_SUCCESS;
@@ -718,7 +718,7 @@ int ImageIO::getTIFFSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat,
                 return IMIO_SUCCESS;
             }
         }
-    } else if (samplesperpixel == 3 && photometric == PHOTOMETRIC_LOGLUV) {
+    } else if ((samplesperpixel == 3 || samplesperpixel == 4) && photometric == PHOTOMETRIC_LOGLUV) {
         if (compression == COMPRESSION_SGILOG24) {
             sFormat = IIOSF_LOGLUV24;
             return IMIO_SUCCESS;

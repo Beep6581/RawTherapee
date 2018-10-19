@@ -522,6 +522,26 @@ void ControlSpotPanel::updateParamVisibility()
     }
 }
 
+void ControlSpotPanel::adjusterAutoToggled(Adjuster* a, bool newval)
+{
+}
+void ControlSpotPanel::adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop)
+{
+}
+void ControlSpotPanel::adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight)
+{
+}
+void ControlSpotPanel::adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop)
+{
+}
+void ControlSpotPanel::adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight)
+{
+}
+void ControlSpotPanel::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR)
+{
+}
+
+
 void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
 {
     printf("adjusterChanged\n");

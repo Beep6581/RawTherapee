@@ -28,12 +28,12 @@ class ToolBarListener
 {
 
 public:
-    virtual ~ToolBarListener() {}
+    virtual ~ToolBarListener() = default;
     /// Callback when a tool is selected
-    virtual void toolSelected (ToolMode tool) {}
+    virtual void toolSelected(ToolMode tool) = 0;
 
     /// Callback when the Edit mode is stopped
-    virtual void editModeSwitchedOff () {}
+    virtual void editModeSwitchedOff() = 0;
 };
 
 class ToolBar : public Gtk::HBox

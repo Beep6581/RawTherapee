@@ -19,16 +19,13 @@
 #ifndef _THUMBNAILLISTENER_
 #define _THUMBNAILLISTENER_
 
-#include "thumbnail.h"
-
 class Thumbnail;
+
 class ThumbnailListener
 {
-
 public:
-
-    virtual void procParamsChanged (Thumbnail* thm, int whoChangedIt) {}
-
+    virtual ~ThumbnailListener() = default;
+    virtual void procParamsChanged(Thumbnail* thm, int whoChangedIt) = 0;
 };
 
 #endif

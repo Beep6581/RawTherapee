@@ -304,9 +304,8 @@ void Sharpening::setDefaults (const ProcParams* defParams, const ParamsEdited* p
     }
 }
 
-void Sharpening::adjusterChanged (Adjuster* a, double newval)
+void Sharpening::adjusterChanged(Adjuster* a, double newval)
 {
-
     if (listener && (multiImage || getEnabled()) ) {
 
         Glib::ustring costr;
@@ -343,13 +342,33 @@ void Sharpening::adjusterChanged (Adjuster* a, double newval)
     }
 }
 
-void Sharpening::adjusterChanged (ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight)
+void Sharpening::adjusterAutoToggled(Adjuster* a, bool newval)
 {
-    if (listener && (multiImage || getEnabled()) ) {
-        if(a == threshold) {
-            listener->panelChanged (EvShrThresh, threshold->getHistoryString());
+}
+
+void Sharpening::adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop)
+{
+}
+
+void Sharpening::adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight)
+{
+}
+
+void Sharpening::adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop)
+{
+}
+
+void Sharpening::adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight)
+{
+    if (listener && (multiImage || getEnabled())) {
+        if (a == threshold) {
+            listener->panelChanged(EvShrThresh, threshold->getHistoryString());
         }
     }
+}
+
+void Sharpening::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR)
+{
 }
 
 void Sharpening::enabledChanged ()

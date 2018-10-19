@@ -1,7 +1,8 @@
-/*
+/* -*- C++ -*-
+ *
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2018 Alberto Griggio <alberto.griggio@gmail.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,20 +17,13 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _QZLISTENER_
-#define _QZLISTENER_
 
-class QuickZoomListener
-{
+#pragma once
 
-public:
+#include "array2D.h"
 
-    virtual void increaseZoom () {}
-    virtual void decreaseZoom () {}
-    virtual void quickZoom () {}
-    virtual void increaseCropZoom () {}
-    virtual void decreaseCropZoom () {}
-    virtual void quickCropZoom () {}
-};
+namespace rtengine {
 
-#endif
+void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2D<float> &dst, int r, float epsilon, bool multithread, int subsampling=4);
+
+} // namespace rtengine

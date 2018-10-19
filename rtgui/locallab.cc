@@ -2202,6 +2202,28 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     */
 }
 
+void Locallab::adjusterAutoToggled(Adjuster* a, bool newval)
+{
+}
+
+void Locallab::adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop)
+{
+}
+void Locallab::adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight)
+{
+}
+
+
+void Locallab::adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight)
+{
+}
+
+void Locallab::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR)
+{
+}
+
+
+
 void Locallab::adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop)
 {
     printf("adjusterChangedTS\n");

@@ -49,6 +49,7 @@ public:
     void autoOpenCurve  ();
 
     void adjusterChanged (Adjuster* a, double newval);
+    void adjusterAutoToggled(Adjuster* a, bool newval);
     void enabledChanged  ();
     void medianChanged  ();
     void chromaChanged (double autchroma, double autred, double autblue);

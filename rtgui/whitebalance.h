@@ -28,10 +28,9 @@
 
 class SpotWBListener
 {
-
 public:
-    virtual ~SpotWBListener () {}
-    virtual void spotWBRequested (int size) {}
+    virtual ~SpotWBListener() = default;
+    virtual void spotWBRequested(int size) = 0;
 };
 
 class WhiteBalance : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoWBListener
@@ -107,7 +106,8 @@ public:
     void optChanged ();
     void spotPressed ();
     void spotSizeChanged ();
-    void adjusterChanged (Adjuster* a, double newval);
+    void adjusterChanged(Adjuster* a, double newval);
+    void adjusterAutoToggled(Adjuster* a, bool newval);
     int  getSize ();
     void setWBProvider (WBProvider* p)
     {

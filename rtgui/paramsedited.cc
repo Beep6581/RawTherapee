@@ -292,6 +292,7 @@ void ParamsEdited::set(bool v)
     sh.shadows       = v;
     sh.stonalwidth   = v;
     sh.radius        = v;
+    sh.lab           = v;
     crop.enabled = v;
     crop.x       = v;
     crop.y       = v;
@@ -966,6 +967,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         sh.shadows = sh.shadows && p.sh.shadows == other.sh.shadows;
         sh.stonalwidth = sh.stonalwidth && p.sh.stonalwidth == other.sh.stonalwidth;
         sh.radius = sh.radius && p.sh.radius == other.sh.radius;
+        sh.lab = sh.lab && p.sh.lab == other.sh.lab;
         crop.enabled = crop.enabled && p.crop.enabled == other.crop.enabled;
         crop.x = crop.x && p.crop.x == other.crop.x;
         crop.y = crop.y && p.crop.y == other.crop.y;
@@ -2344,6 +2346,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (sh.radius) {
         toEdit.sh.radius      = mods.sh.radius;
+    }
+
+    if (sh.lab) {
+        toEdit.sh.lab      = mods.sh.lab;
     }
 
     if (crop.enabled) {

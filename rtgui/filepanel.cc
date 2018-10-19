@@ -228,7 +228,6 @@ void FilePanel::on_NB_switch_page(Gtk::Widget* page, guint page_num)
 
 bool FilePanel::fileSelected (Thumbnail* thm)
 {
-
     if (!parent) {
         return false;
     }
@@ -258,6 +257,16 @@ bool FilePanel::fileSelected (Thumbnail* thm)
                    sigc::bind(sigc::mem_fun(*this, &FilePanel::imageLoaded), thm, ld) );
     return true;
 }
+
+bool FilePanel::addBatchQueueJobs(const std::vector<BatchQueueEntry*>& entries)
+{
+    if (parent) {
+        parent->addBatchQueueJobs (entries);
+    }
+
+    return true;
+}
+
 bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::InitialImage*> *pc )
 {
 
@@ -363,16 +372,6 @@ void FilePanel::open (const Glib::ustring& d)
     } else if (Glib::file_test (d, Glib::FILE_TEST_EXISTS)) {
         dirBrowser->open (Glib::path_get_dirname(d), Glib::path_get_basename(d));
     }
-}
-
-bool FilePanel::addBatchQueueJobs ( std::vector<BatchQueueEntry*> &entries )
-{
-
-    if (parent) {
-        parent->addBatchQueueJobs (entries);
-    }
-
-    return true;
 }
 
 void FilePanel::optionsChanged ()
