@@ -58,6 +58,7 @@ public:
     void autoContrastChanged (double autoContrast);
     void adjusterChanged(Adjuster* a, double newval);
     void checkBoxToggled(CheckBox* c, CheckValue newval);
+    void adjusterAutoToggled(Adjuster* a, bool newval);
 };
 
 #endif

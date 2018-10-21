@@ -73,6 +73,7 @@
 #include "sleef.c"
 #include "opthelper.h"
 #include "rt_algo.h"
+#include "rescale.h"
 
 namespace rtengine
 {
@@ -938,66 +939,14 @@ void solve_pde_fft (Array2Df *F, Array2Df *U, Array2Df *buf, bool multithread)/*
  * RT code from here on
  *****************************************************************************/
 
-inline float get_bilinear_value (const Array2Df &src, float x, float y)
+inline void rescale_bilinear (const Array2Df &src, Array2Df &dst, bool multithread)
 {
-    // Get integer and fractional parts of numbers
-    int xi = x;
-    int yi = y;
-    float xf = x - xi;
-    float yf = y - yi;
-    int xi1 = std::min (xi + 1, src.getCols() - 1);
-    int yi1 = std::min (yi + 1, src.getRows() - 1);
-
-    float bl = src (xi, yi);
-    float br = src (xi1, yi);
-    float tl = src (xi, yi1);
-    float tr = src (xi1, yi1);
-
-    // interpolate
-    float b = xf * br + (1.f - xf) * bl;
-    float t = xf * tr + (1.f - xf) * tl;
-    float pxf = yf * t + (1.f - yf) * b;
-    return pxf;
+    rescaleBilinear(src, dst, multithread);
 }
 
-
-void rescale_bilinear (const Array2Df &src, Array2Df &dst, bool multithread)
+inline void rescale_nearest (const Array2Df &src, Array2Df &dst, bool multithread)
 {
-    float col_scale = float (src.getCols()) / float (dst.getCols());
-    float row_scale = float (src.getRows()) / float (dst.getRows());
-
-#ifdef _OPENMP
-    #pragma omp parallel for if (multithread)
-#endif
-
-    for (int y = 0; y < dst.getRows(); ++y) {
-        float ymrs = y * row_scale;
-
-        for (int x = 0; x < dst.getCols(); ++x) {
-            dst (x, y) = get_bilinear_value (src, x * col_scale, ymrs);
-        }
-    }
-}
-
-void rescale_nearest (const Array2Df &src, Array2Df &dst, bool multithread)
-{
-    const int width = src.getCols();
-    const int height = src.getRows();
-    const int nw = dst.getCols();
-    const int nh = dst.getRows();
-
-#ifdef _OPENMP
-    #pragma omp parallel for if (multithread)
-#endif
-
-    for (int y = 0; y < nh; ++y) {
-        int sy = y * height / nh;
-
-        for (int x = 0; x < nw; ++x) {
-            int sx = x * width / nw;
-            dst (x, y) = src (sx, sy);
-        }
-    }
+    rescaleNearest(src, dst, multithread);
 }
 
 

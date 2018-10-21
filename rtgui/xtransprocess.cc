@@ -189,7 +189,7 @@ void XTransProcess::setDefaults(const rtengine::procparams::ProcParams* defParam
     }
 }
 
-void XTransProcess::adjusterChanged (Adjuster* a, double newval)
+void XTransProcess::adjusterChanged(Adjuster* a, double newval)
 {
     if (listener) {
         if (a == ccSteps) {
@@ -207,6 +207,10 @@ void XTransProcess::checkBoxToggled (CheckBox* c, CheckValue newval)
             listener->panelChanged (EvDemosaicAutoContrast, dualDemosaicAutoContrast->getValueAsStr ());
         }
     }
+}
+
+void XTransProcess::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void XTransProcess::methodChanged ()

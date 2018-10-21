@@ -149,9 +149,8 @@ void Defringe::curveChanged ()
     }
 }
 
-void Defringe::adjusterChanged (Adjuster* a, double newval)
+void Defringe::adjusterChanged(Adjuster* a, double newval)
 {
-
     if (listener && getEnabled()) {
 
         if (a == radius) {
@@ -160,6 +159,10 @@ void Defringe::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvDefringeThreshold, Glib::ustring::format ((int)a->getValue()));
         }
     }
+}
+
+void Defringe::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void Defringe::enabledChanged ()

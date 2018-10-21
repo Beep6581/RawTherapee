@@ -42,7 +42,8 @@ public:
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
     void setBatchMode   (bool batchMode);
 
-    void adjusterChanged (Adjuster* a, double newval);
+    void adjusterChanged(Adjuster* a, double newval);
+    void adjusterAutoToggled(Adjuster* a, bool newval);
     void setAdjusterBehavior (bool amountadd, bool radiusadd, bool strengthadd, bool centeradd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
 };

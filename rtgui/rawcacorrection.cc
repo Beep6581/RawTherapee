@@ -123,7 +123,7 @@ void RAWCACorr::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedit
 
 }
 
-void RAWCACorr::adjusterChanged (Adjuster* a, double newval)
+void RAWCACorr::adjusterChanged(Adjuster* a, double newval)
 {
     if (listener) {
 
@@ -137,6 +137,10 @@ void RAWCACorr::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvPreProcessCABlue,  value );
         }
     }
+}
+
+void RAWCACorr::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void RAWCACorr::checkBoxToggled (CheckBox* c, CheckValue newval)

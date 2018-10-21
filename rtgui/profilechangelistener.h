@@ -19,27 +19,23 @@
 #ifndef _PROFILECHANGELISTENER_
 #define _PROFILECHANGELISTENER_
 
+#include <glibmm/ustring.h>
+
 #include "../rtengine/rtengine.h"
-#include <glibmm.h>
 
 class ProfileChangeListener
 {
-
 public:
-    virtual     ~ProfileChangeListener() {}
-    virtual void profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited = nullptr, bool fromLastSaved = false) {}
-    virtual void setDefaults    (rtengine::procparams::ProcParams* defparams) {}
+    virtual ~ProfileChangeListener() = default;
+    virtual void profileChange(
+        const rtengine::procparams::PartialProfile* nparams,
+        const rtengine::ProcEvent& event,
+        const Glib::ustring& descr,
+        const ParamsEdited* paramsEdited = nullptr,
+        bool fromLastSaved = false
+    ) = 0;
+    virtual void setDefaults(const rtengine::procparams::ProcParams* defparams) = 0;
 };
-
-class BatchProfileChangeListener
-{
-
-public:
-    virtual     ~BatchProfileChangeListener() {}
-    virtual void beginBatchProfileChange(int numberOfEntries) {}
-    virtual void endBatchProfileChange() {}
-};
-
 
 #endif
 

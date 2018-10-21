@@ -25,8 +25,8 @@
 class SHCListener
 {
 public:
-    virtual ~SHCListener() {}
-    virtual void shcChanged () {}
+    virtual ~SHCListener() = default;
+    virtual void shcChanged() = 0;
 };
 
 class SHCSelector : public Gtk::DrawingArea, BackBuffer

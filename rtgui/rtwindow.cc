@@ -630,9 +630,8 @@ void RTWindow::addBatchQueueJob (BatchQueueEntry* bqe, bool head)
     fpanel->queue_draw ();
 }
 
-void RTWindow::addBatchQueueJobs (std::vector<BatchQueueEntry*> &entries)
+void RTWindow::addBatchQueueJobs(const std::vector<BatchQueueEntry*>& entries)
 {
-
     bpanel->addBatchQueueJobs (entries, false);
     fpanel->queue_draw ();
 }
@@ -794,25 +793,30 @@ void RTWindow::showPreferences ()
     }
 }
 
-void RTWindow::setProgress (double p)
+void RTWindow::setProgress(double p)
 {
-    prProgBar.set_fraction (p);
+    prProgBar.set_fraction(p);
 }
 
-void RTWindow::setProgressStr (Glib::ustring str)
+void RTWindow::setProgressStr(const Glib::ustring& str)
 {
     if (!options.mainNBVertical) {
-        prProgBar.set_text ( str );
+        prProgBar.set_text(str);
     }
 }
 
-void RTWindow::setProgressState (bool inProcessing)
+void RTWindow::setProgressState(bool inProcessing)
 {
     if (inProcessing) {
         prProgBar.show();
     } else {
         prProgBar.hide();
     }
+}
+
+void RTWindow::error(const Glib::ustring& descr)
+{
+    prProgBar.set_text(descr);
 }
 
 void RTWindow::toggle_fullscreen ()
@@ -836,11 +840,6 @@ void RTWindow::toggle_fullscreen ()
             btn_fullscreen->set_image (*iFullscreen_exit);
         }
     }
-}
-
-void RTWindow::error (Glib::ustring descr)
-{
-    prProgBar.set_text ( descr );
 }
 
 void RTWindow::SetEditorCurrent()

@@ -30,9 +30,9 @@ class BatchQueueListener
 {
 
 public:
-    virtual ~BatchQueueListener () {}
-    virtual void queueSizeChanged     (int qsize, bool queueEmptied, bool queueError, Glib::ustring queueErrorMessage) = 0;
-    virtual bool canStartNext         () = 0;
+    virtual ~BatchQueueListener() = default;
+    virtual void queueSizeChanged(int qsize, bool queueEmptied, bool queueError, const Glib::ustring& queueErrorMessage) = 0;
+    virtual bool canStartNext() = 0;
 };
 
 class FileCatalog;
@@ -62,9 +62,12 @@ public:
         return (!fd.empty());
     }
 
-    rtengine::ProcessingJob* imageReady (rtengine::IImagefloat* img);
-    void error (Glib::ustring msg);
-    void setProgress (double p);
+    void setProgress(double p);
+    void setProgressStr(const Glib::ustring& str);
+    void setProgressState(bool inProcessing);
+    void error(const Glib::ustring& descr);
+    rtengine::ProcessingJob* imageReady(rtengine::IImagefloat* img);
+
     void rightClicked (ThumbBrowserEntryBase* entry);
     void doubleClicked (ThumbBrowserEntryBase* entry);
     bool keyPressed (GdkEventKey* event);

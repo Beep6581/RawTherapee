@@ -21,11 +21,11 @@
 //#include <giomm.h>
 #include <helpers.h>
 
-class PListener : public rtengine::ProgressListener
+class PListener :
+    public rtengine::ProgressListener
 {
-
 public:
-    void setProgressStr (Glib::ustring str)
+    void setProgressStr(const Glib::ustring& str)
     {
         std::cout << str << std::endl;
     }
@@ -33,11 +33,16 @@ public:
     {
         std::cout << p << std::endl;
     }
+    void setProgressState(bool inProcessing)
+    {
+    }
+    void error(const Glib::ustring& descr)
+    {
+    }
 };
 
 int main (int argc, char* argv[])
 {
-
     if (argc < 4) {
         std::cout << "Usage: rtcmd <infile> <paramfile> <outfile>" << std::endl;
         exit(1);

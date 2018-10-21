@@ -257,9 +257,8 @@ void Resize::setDefaults (const ProcParams* defParams, const ParamsEdited* pedit
     }
 }
 
-void Resize::adjusterChanged (Adjuster* a, double newval)
+void Resize::adjusterChanged(Adjuster* a, double newval)
 {
-
     if (!batchMode) {
         wconn.block (true);
         hconn.block (true);
@@ -272,6 +271,10 @@ void Resize::adjusterChanged (Adjuster* a, double newval)
     if (listener && (getEnabled () || batchMode)) {
         listener->panelChanged (EvResizeScale, Glib::ustring::format (std::setw(5), std::fixed, std::setprecision(2), scale->getValue()));
     }
+}
+
+void Resize::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 int Resize::getComputedWidth()
@@ -351,9 +354,8 @@ void Resize::update (bool isCropped, int cw, int ch, int ow, int oh)
     setDimensions();
 }
 
-void Resize::sizeChanged (int mw, int mh, int ow, int oh)
+void Resize::sizeChanged(int mw, int mh, int ow, int oh)
 {
-
     // updating max values now
     maxw = ow;
     maxh = oh;

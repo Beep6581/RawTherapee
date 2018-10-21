@@ -89,7 +89,13 @@ public:
     void setInitialFileName (const Glib::ustring& filename);
 
     // PParamsChangeListener interface
-    void procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited = nullptr);
+    void procParamsChanged(
+        const rtengine::procparams::ProcParams* params,
+        const rtengine::ProcEvent& ev,
+        const Glib::ustring& descr,
+        const ParamsEdited* paramsEdited = nullptr
+    );
+    void clearParamChanges();
 
     // gui callbacks
     void save_clicked (GdkEventButton* event);

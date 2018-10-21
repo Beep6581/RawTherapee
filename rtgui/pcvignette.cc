@@ -78,9 +78,8 @@ void PCVignette::setDefaults (const ProcParams* defParams, const ParamsEdited* p
     }
 }
 
-void PCVignette::adjusterChanged (Adjuster* a, double newval)
+void PCVignette::adjusterChanged(Adjuster* a, double newval)
 {
-
     if (listener && getEnabled()) {
         if (a == strength) {
             listener->panelChanged (EvPCVignetteStrength, strength->getTextValue());
@@ -90,6 +89,10 @@ void PCVignette::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvPCVignetteRoundness, roundness->getTextValue());
         }
     }
+}
+
+void PCVignette::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void PCVignette::enabledChanged ()

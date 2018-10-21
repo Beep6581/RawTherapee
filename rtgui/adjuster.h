@@ -24,13 +24,13 @@
 #include "guiutils.h"
 
 class Adjuster;
+
 class AdjusterListener
 {
-
 public:
-    virtual ~AdjusterListener() {};
-    virtual void adjusterChanged (Adjuster* a, double newval) {}
-    virtual void adjusterAutoToggled (Adjuster* a, bool newval) {}
+    virtual ~AdjusterListener() = default;
+    virtual void adjusterChanged (Adjuster* a, double newval) = 0;
+    virtual void adjusterAutoToggled (Adjuster* a, bool newval) = 0;
 };
 
 typedef double(*double2double_fun)(double val);

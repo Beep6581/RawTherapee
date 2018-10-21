@@ -1159,7 +1159,12 @@ Glib::ustring EditorPanel::getFileName ()
 }
 
 // TODO!!!
-void EditorPanel::procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited)
+void EditorPanel::procParamsChanged(
+    const rtengine::procparams::ProcParams* params,
+    const rtengine::ProcEvent& ev,
+    const Glib::ustring& descr,
+    const ParamsEdited* paramsEdited
+)
 {
 
 //    if (ev!=EvPhotoLoaded)
@@ -1178,7 +1183,28 @@ void EditorPanel::procParamsChanged (rtengine::procparams::ProcParams* params, r
     info_toggled();
 }
 
-void EditorPanel::setProgressState (bool inProcessing)
+void EditorPanel::clearParamChanges()
+{
+}
+
+void EditorPanel::setProgress(double p)
+{
+    spparams *s = new spparams;
+    s->val = p;
+    s->pProgress = progressLabel;
+    idle_register.add(setprogressStrUI, s);
+}
+
+void EditorPanel::setProgressStr(const Glib::ustring& str)
+{
+    spparams *s = new spparams;
+    s->str = str;
+    s->val = -1;
+    s->pProgress = progressLabel;
+    idle_register.add(setprogressStrUI, s);
+}
+
+void EditorPanel::setProgressState(bool inProcessing)
 {
     struct spsparams {
         bool inProcessing;
@@ -1217,21 +1243,63 @@ void EditorPanel::setProgressState (bool inProcessing)
     idle_register.add (func, p);
 }
 
-void EditorPanel::setProgress (double p)
+void EditorPanel::error(const Glib::ustring& descr)
 {
-    spparams *s = new spparams;
-    s->val = p;
-    s->pProgress = progressLabel;
-    idle_register.add (setprogressStrUI, s);
 }
 
-void EditorPanel::setProgressStr (Glib::ustring str)
+void EditorPanel::error(const Glib::ustring& title, const Glib::ustring& descr)
 {
-    spparams *s = new spparams;
-    s->str = str;
-    s->val = -1;
-    s->pProgress = progressLabel;
-    idle_register.add (setprogressStrUI, s);
+    struct errparams {
+        Glib::ustring descr;
+        Glib::ustring title;
+        EditorPanelIdleHelper* epih;
+    };
+
+    epih->pending++;
+    errparams* const p = new errparams;
+    p->descr = descr;
+    p->title = title;
+    p->epih = epih;
+
+    const auto func = [] (gpointer data) -> gboolean {
+        errparams* const p = static_cast<errparams*> (data);
+
+        if (p->epih->destroyed)
+        {
+            if (p->epih->pending == 1) {
+                delete p->epih;
+            } else {
+                p->epih->pending--;
+            }
+
+            delete p;
+
+            return 0;
+        }
+
+        p->epih->epanel->displayError (p->title, p->descr);
+        p->epih->pending--;
+        delete p;
+
+        return FALSE;
+    };
+
+    idle_register.add (func, p);
+}
+
+void EditorPanel::displayError(const Glib::ustring& title, const Glib::ustring& descr)
+{
+    GtkWidget* msgd = gtk_message_dialog_new_with_markup (nullptr,
+                      GTK_DIALOG_DESTROY_WITH_PARENT,
+                      GTK_MESSAGE_ERROR,
+                      GTK_BUTTONS_OK,
+                      "<b>%s</b>",
+                      descr.data());
+    gtk_window_set_title ((GtkWindow*)msgd, title.data());
+    g_signal_connect_swapped (msgd, "response",
+                              G_CALLBACK (gtk_widget_destroy),
+                              msgd);
+    gtk_widget_show_all (msgd);
 }
 
 // This is only called from the ThreadUI, so within the gtk thread
@@ -1284,61 +1352,6 @@ void EditorPanel::refreshProcessingState (bool inProcessingP)
     isProcessing = inProcessingP;
 
     setprogressStrUI (s);
-}
-
-void EditorPanel::displayError (Glib::ustring title, Glib::ustring descr)
-{
-    GtkWidget* msgd = gtk_message_dialog_new_with_markup (nullptr,
-                      GTK_DIALOG_DESTROY_WITH_PARENT,
-                      GTK_MESSAGE_ERROR,
-                      GTK_BUTTONS_OK,
-                      "<b>%s</b>",
-                      descr.data());
-    gtk_window_set_title ((GtkWindow*)msgd, title.data());
-    g_signal_connect_swapped (msgd, "response",
-                              G_CALLBACK (gtk_widget_destroy),
-                              msgd);
-    gtk_widget_show_all (msgd);
-}
-
-void EditorPanel::error (Glib::ustring title, Glib::ustring descr)
-{
-    struct errparams {
-        Glib::ustring descr;
-        Glib::ustring title;
-        EditorPanelIdleHelper* epih;
-    };
-
-    epih->pending++;
-    errparams* const p = new errparams;
-    p->descr = descr;
-    p->title = title;
-    p->epih = epih;
-
-    const auto func = [] (gpointer data) -> gboolean {
-        errparams* const p = static_cast<errparams*> (data);
-
-        if (p->epih->destroyed)
-        {
-            if (p->epih->pending == 1) {
-                delete p->epih;
-            } else {
-                p->epih->pending--;
-            }
-
-            delete p;
-
-            return 0;
-        }
-
-        p->epih->epanel->displayError (p->title, p->descr);
-        p->epih->pending--;
-        delete p;
-
-        return FALSE;
-    };
-
-    idle_register.add (func, p);
 }
 
 void EditorPanel::info_toggled ()
@@ -2249,15 +2262,28 @@ void EditorPanel::tbBeforeLock_toggled ()
     tbBeforeLock->get_active() ? tbBeforeLock->set_image (*iBeforeLockON) : tbBeforeLock->set_image (*iBeforeLockOFF);
 }
 
-void EditorPanel::histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, /*LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM, LUTu & histCCAM,
-                                    LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw, LUTu & histChroma, LUTu & histLRETI)
+void EditorPanel::histogramChanged(
+    const LUTu& histRed,
+    const LUTu& histGreen,
+    const LUTu& histBlue,
+    const LUTu& histLuma,
+    const LUTu& histToneCurve,
+    const LUTu& histLCurve,
+    const LUTu& histCCurve,
+    const LUTu& histLCAM,
+    const LUTu& histCCAM,
+    const LUTu& histRedRaw,
+    const LUTu& histGreenRaw,
+    const LUTu& histBlueRaw,
+    const LUTu& histChroma,
+    const LUTu& histLRETI
+)
 {
-
     if (histogramPanel) {
-        histogramPanel->histogramChanged (histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw);
+        histogramPanel->histogramChanged(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw);
     }
 
-    tpc->updateCurveBackgroundHistogram (histToneCurve, histLCurve, histCCurve,/*histCLurve,  histLLCurve,*/ histLCAM, histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
+    tpc->updateCurveBackgroundHistogram(histToneCurve, histLCurve, histCCurve, histLCAM, histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
 }
 
 bool EditorPanel::CheckSidePanelsVisibility()

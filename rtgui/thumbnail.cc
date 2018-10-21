@@ -417,10 +417,11 @@ bool Thumbnail::hasProcParams () const
     return pparamsValid;
 }
 
-void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoChangedIt, bool updateCacheNow)
+void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoChangedIt, bool updateCacheNow, bool resetToDefault)
 {
     const bool needsReprocessing =
-           pparams.toneCurve != pp.toneCurve
+           resetToDefault
+        || pparams.toneCurve != pp.toneCurve
         || pparams.labCurve != pp.labCurve
         || pparams.localContrast != pp.localContrast
         || pparams.rgbCurves != pp.rgbCurves

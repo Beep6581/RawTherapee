@@ -282,8 +282,6 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     appendBehavList (mi, M ("TP_VIBRANCE_PASTELS"), ADDSET_VIBRANCE_PASTELS, false);
     appendBehavList (mi, M ("TP_VIBRANCE_SATURATED"), ADDSET_VIBRANCE_SATURATED, false);
 
-    mi = behModel->append ();
-    mi->set_value (behavColumns.label, M ("TP_GAMMA_OUTPUT"));
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_CHMIXER_LABEL"));

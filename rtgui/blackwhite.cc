@@ -1094,9 +1094,8 @@ void BlackWhite::autoch_toggled ()
 
 }
 
-void BlackWhite::adjusterChanged (Adjuster* a, double newval)
+void BlackWhite::adjusterChanged(Adjuster* a, double newval)
 {
-
     // Checking "listener" to avoid "autoch" getting toggled off because it has to change the sliders when toggling on
     if (listener && (a == mixerRed || a == mixerGreen || a == mixerBlue || a == mixerOrange || a == mixerYellow || a == mixerMagenta || a == mixerPurple || a == mixerCyan) ) {
         if (multiImage && autoch->get_inconsistent()) {
@@ -1145,6 +1144,10 @@ void BlackWhite::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvBWpur, value );
         }
     }
+}
+
+void BlackWhite::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void BlackWhite::updateRGBLabel ()

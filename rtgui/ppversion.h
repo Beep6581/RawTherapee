@@ -1,13 +1,15 @@
 #pragma once
 
 // This number has to be incremented whenever the PP3 file format is modified or the behaviour of a tool changes
-#define PPVERSION 344
+#define PPVERSION 345
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /*
   Log of version changes
-   344  2018-10-21
+   345  2018-10-21
         dual demosaic auto contrast threshold
+   344  2018-10-04
+        added Lab/RGB color space selection for shadows/highlights
    343  2018-09-06
         raw auto ca correction avoid colour shift
    342  2018-09-05
