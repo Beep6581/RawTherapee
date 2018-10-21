@@ -28,6 +28,7 @@ XTransProcess::XTransProcess () : FoldableToolPanel(this, "xtransprocess", M("TP
 {
     auto m = ProcEventMapper::getInstance();
     EvDemosaicContrast = m->newEvent(DEMOSAIC, "HISTORY_MSG_DUALDEMOSAIC_CONTRAST");
+    EvDemosaicAutoContrast = m->newEvent(DEMOSAIC, "HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST");
 
     Gtk::HBox* hb1 = Gtk::manage (new Gtk::HBox ());
     hb1->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_RAW_DMETHOD") + ": ")), Gtk::PACK_SHRINK, 4);
@@ -68,6 +69,12 @@ XTransProcess::XTransProcess () : FoldableToolPanel(this, "xtransprocess", M("TP
     pack_start( *hb1, Gtk::PACK_SHRINK, 4);
 
     dualDemosaicOptions = Gtk::manage (new Gtk::VBox ());
+    Gtk::HBox* hbAutoContrast = Gtk::manage(new Gtk::HBox());
+
+    dualDemosaicAutoContrast = Gtk::manage(new CheckBox(M("TP_RAW_DUALDEMOSAICAUTOCONTRAST"), multiImage));
+    dualDemosaicAutoContrast->setCheckBoxListener(this);
+
+    dualDemosaicLabel = Gtk::manage(new Gtk::Label(""));
 
     dualDemosaicContrast = Gtk::manage(new Adjuster (M("TP_RAW_DUALDEMOSAICCONTRAST"), 0, 100, 1, 20));
     dualDemosaicContrast->setAdjusterListener (this);
@@ -76,7 +83,11 @@ XTransProcess::XTransProcess () : FoldableToolPanel(this, "xtransprocess", M("TP
         dualDemosaicContrast->delay = options.adjusterMaxDelay;
     }
 
+    dualDemosaicAutoContrast->show();
     dualDemosaicContrast->show();
+    hbAutoContrast->pack_start(*dualDemosaicAutoContrast);
+    hbAutoContrast->pack_start(*dualDemosaicLabel);
+    dualDemosaicOptions->pack_start(*hbAutoContrast);
     dualDemosaicOptions->pack_start(*dualDemosaicContrast);
     pack_start( *dualDemosaicOptions, Gtk::PACK_SHRINK, 4);
 
@@ -108,6 +119,7 @@ void XTransProcess::read(const rtengine::procparams::ProcParams* pp, const Param
         }
 
     if(pedited ) {
+        dualDemosaicAutoContrast->setEdited ( pedited->raw.xtranssensor.dualDemosaicAutoContrast ? Edited : UnEdited);
         dualDemosaicContrast->setEditedState ( pedited->raw.xtranssensor.dualDemosaicContrast ? Edited : UnEdited);
         ccSteps->setEditedState (pedited->raw.xtranssensor.ccSteps ? Edited : UnEdited);
 
@@ -115,6 +127,7 @@ void XTransProcess::read(const rtengine::procparams::ProcParams* pp, const Param
             method->set_active_text(M("GENERAL_UNCHANGED"));
         }
     }
+    dualDemosaicAutoContrast->setValue (pp->raw.xtranssensor.dualDemosaicAutoContrast);
     dualDemosaicContrast->setValue (pp->raw.xtranssensor.dualDemosaicContrast);
     ccSteps->setValue (pp->raw.xtranssensor.ccSteps);
     if (!batchMode) {
@@ -129,6 +142,7 @@ void XTransProcess::read(const rtengine::procparams::ProcParams* pp, const Param
 
 void XTransProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
 {
+    pp->raw.xtranssensor.dualDemosaicAutoContrast = dualDemosaicAutoContrast->getLastActive ();
     pp->raw.xtranssensor.dualDemosaicContrast = dualDemosaicContrast->getValue();
     pp->raw.xtranssensor.ccSteps = ccSteps->getIntValue();
 
@@ -140,6 +154,7 @@ void XTransProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* p
 
     if (pedited) {
         pedited->raw.xtranssensor.method = method->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->raw.xtranssensor.dualDemosaicAutoContrast = !dualDemosaicAutoContrast->get_inconsistent();
         pedited->raw.xtranssensor.dualDemosaicContrast = dualDemosaicContrast->getEditedState ();
         pedited->raw.xtranssensor.ccSteps = ccSteps->getEditedState ();
     }
@@ -185,6 +200,15 @@ void XTransProcess::adjusterChanged (Adjuster* a, double newval)
     }
 }
 
+void XTransProcess::checkBoxToggled (CheckBox* c, CheckValue newval)
+{
+    if (c == dualDemosaicAutoContrast) {
+        if (listener) {
+            listener->panelChanged (EvDemosaicAutoContrast, dualDemosaicAutoContrast->getValueAsStr ());
+        }
+    }
+}
+
 void XTransProcess::methodChanged ()
 {
     const int curSelection = method->get_active_row_number();
@@ -206,4 +230,24 @@ void XTransProcess::methodChanged ()
             ? EvDemosaicMethodPreProc
             : EvDemosaicMethod, method->get_active_text());
     }
+}
+
+void XTransProcess::autoContrastChanged (double autoContrast)
+{
+    struct Data {
+        XTransProcess *me;
+        double autoContrast;
+    };
+    const auto func = [](gpointer data) -> gboolean {
+        Data *d = static_cast<Data *>(data);
+        XTransProcess *me = d->me;
+        if (d->autoContrast ==  -1.0) {
+            me->dualDemosaicLabel->set_text("");
+        } else {
+            me->dualDemosaicLabel->set_text(Glib::ustring::format(std::fixed, std::setprecision(0), d->autoContrast));
+        }
+        return FALSE;
+    };
+
+    idle_register.add(func, new Data { this, autoContrast });
 }

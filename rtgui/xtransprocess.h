@@ -21,11 +21,12 @@
 
 #include <gtkmm.h>
 #include "adjuster.h"
+#include "checkbox.h"
 #include "guiutils.h"
 #include "toolpanel.h"
 
 
-class XTransProcess : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class XTransProcess : public ToolParamBlock, public AdjusterListener, public CheckBoxListener, public FoldableToolPanel, public rtengine::AutoContrastListener
 {
 
 protected:
@@ -34,9 +35,13 @@ protected:
     Adjuster* ccSteps;
     Gtk::VBox *dualDemosaicOptions;
     Adjuster* dualDemosaicContrast;
+    CheckBox* dualDemosaicAutoContrast;
+    Gtk::Label* dualDemosaicLabel;
 
     int oldSelection;
     sigc::connection methodconn;
+    IdleRegister idle_register;
+    rtengine::ProcEvent EvDemosaicAutoContrast;
     rtengine::ProcEvent EvDemosaicContrast;
 
 public:
@@ -50,7 +55,9 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
 
     void methodChanged();
+    void autoContrastChanged (double autoContrast);
     void adjusterChanged(Adjuster* a, double newval);
+    void checkBoxToggled(CheckBox* c, CheckValue newval);
 };
 
 #endif

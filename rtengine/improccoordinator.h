@@ -158,6 +158,8 @@ protected:
     AutoCamListener* acListener;
     AutoBWListener* abwListener;
     AutoWBListener* awbListener;
+    AutoContrastListener *bayerAutoContrastListener;
+    AutoContrastListener *xtransAutoContrastListener;
     FrameCountListener *frameCountListener;
     ImageTypeListener *imageTypeListener;
 
@@ -342,6 +344,16 @@ public:
     void setFrameCountListener  (FrameCountListener* fcl)
     {
         frameCountListener = fcl;
+    }
+
+    void setBayerAutoContrastListener  (AutoContrastListener* acl)
+    {
+        bayerAutoContrastListener = acl;
+    }
+
+    void setXtransAutoContrastListener  (AutoContrastListener* acl)
+    {
+        xtransAutoContrastListener = acl;
     }
 
     void setImageTypeListener  (ImageTypeListener* itl)

@@ -30,6 +30,7 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     auto m = ProcEventMapper::getInstance();
     EvDemosaicBorder = m->newEvent(DEMOSAIC, "HISTORY_MSG_RAW_BORDER");
     EvDemosaicContrast = m->newEvent(DEMOSAIC, "HISTORY_MSG_DUALDEMOSAIC_CONTRAST");
+    EvDemosaicAutoContrast = m->newEvent(DEMOSAIC, "HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST");
     EvDemosaicPixelshiftDemosaicMethod = m->newEvent(DEMOSAIC, "HISTORY_MSG_PIXELSHIFT_DEMOSAIC");
 
     Gtk::HBox* hb1 = Gtk::manage (new Gtk::HBox ());
@@ -46,17 +47,26 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     hb1->pack_end (*method, Gtk::PACK_EXPAND_WIDGET, 4);
     pack_start( *hb1, Gtk::PACK_SHRINK, 4);
 
+    dualDemosaicOptions = Gtk::manage(new Gtk::VBox());
+    Gtk::HBox* hbAutoContrast = Gtk::manage(new Gtk::HBox());
 
-    dualDemosaicOptions = Gtk::manage (new Gtk::VBox ());
+    dualDemosaicAutoContrast = Gtk::manage(new CheckBox(M("TP_RAW_DUALDEMOSAICAUTOCONTRAST"), multiImage));
+    dualDemosaicAutoContrast->setCheckBoxListener(this);
 
-    dualDemosaicContrast = Gtk::manage(new Adjuster (M("TP_RAW_DUALDEMOSAICCONTRAST"), 0, 100, 1, 20));
-    dualDemosaicContrast->setAdjusterListener (this);
+    dualDemosaicLabel = Gtk::manage(new Gtk::Label(""));
+
+    dualDemosaicContrast = Gtk::manage(new Adjuster(M("TP_RAW_DUALDEMOSAICCONTRAST"), 0, 100, 1, 20));
+    dualDemosaicContrast->setAdjusterListener(this);
 
     if (dualDemosaicContrast->delay < options.adjusterMaxDelay) {
         dualDemosaicContrast->delay = options.adjusterMaxDelay;
     }
 
+    dualDemosaicAutoContrast->show();
     dualDemosaicContrast->show();
+    hbAutoContrast->pack_start(*dualDemosaicAutoContrast);
+    hbAutoContrast->pack_start(*dualDemosaicLabel);
+    dualDemosaicOptions->pack_start(*hbAutoContrast);
     dualDemosaicOptions->pack_start(*dualDemosaicContrast);
     pack_start( *dualDemosaicOptions, Gtk::PACK_SHRINK, 4);
 
@@ -300,6 +310,7 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
     pixelShiftNonGreenCross->setValue (pp->raw.bayersensor.pixelShiftNonGreenCross);
     ccSteps->setValue (pp->raw.bayersensor.ccSteps);
     lmmseIterations->setValue (pp->raw.bayersensor.lmmse_iterations);
+    dualDemosaicAutoContrast->setValue (pp->raw.bayersensor.dualDemosaicAutoContrast);
     dualDemosaicContrast->setValue (pp->raw.bayersensor.dualDemosaicContrast);
     pixelShiftMotionMethod->set_active ((int)pp->raw.bayersensor.pixelShiftMotionCorrectionMethod);
     pixelShiftEperIso->setValue (pp->raw.bayersensor.pixelShiftEperIso);
@@ -324,6 +335,7 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
         pixelShiftEqualBrightChannel->setEdited (pedited->raw.bayersensor.pixelShiftEqualBrightChannel);
         pixelShiftNonGreenCross->setEdited (pedited->raw.bayersensor.pixelShiftNonGreenCross);
         lmmseIterations->setEditedState ( pedited->raw.bayersensor.lmmseIterations ? Edited : UnEdited);
+        dualDemosaicAutoContrast->setEdited ( pedited->raw.bayersensor.dualDemosaicAutoContrast ? Edited : UnEdited);
         dualDemosaicContrast->setEditedState ( pedited->raw.bayersensor.dualDemosaicContrast ? Edited : UnEdited);
         pixelShiftEperIso->setEditedState ( pedited->raw.bayersensor.pixelShiftEperIso ? Edited : UnEdited);
         pixelShiftSigma->setEditedState ( pedited->raw.bayersensor.pixelShiftSigma ? Edited : UnEdited);
@@ -385,6 +397,7 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
     pp->raw.bayersensor.dcb_enhance = dcbEnhance->getLastActive ();
     pp->raw.bayersensor.border = border->getIntValue();
     pp->raw.bayersensor.lmmse_iterations = lmmseIterations->getIntValue();
+    pp->raw.bayersensor.dualDemosaicAutoContrast = dualDemosaicAutoContrast->getLastActive ();
     pp->raw.bayersensor.dualDemosaicContrast = dualDemosaicContrast->getValue();
     pp->raw.bayersensor.pixelShiftMotionCorrectionMethod = (RAWParams::BayerSensor::PSMotionCorrectionMethod)pixelShiftMotionMethod->get_active_row_number();
     pp->raw.bayersensor.pixelShiftEperIso = pixelShiftEperIso->getValue();
@@ -425,6 +438,7 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         pedited->raw.bayersensor.dcbEnhance = !dcbEnhance->get_inconsistent();
         //pedited->raw.bayersensor.allEnhance = !allEnhance->get_inconsistent();
         pedited->raw.bayersensor.lmmseIterations = lmmseIterations->getEditedState ();
+        pedited->raw.bayersensor.dualDemosaicAutoContrast = !dualDemosaicAutoContrast->get_inconsistent();
         pedited->raw.bayersensor.dualDemosaicContrast = dualDemosaicContrast->getEditedState ();
         pedited->raw.bayersensor.pixelShiftMotionCorrectionMethod = pixelShiftMotionMethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->raw.bayersensor.pixelShiftDemosaicMethod = pixelShiftDemosaicMethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -603,7 +617,11 @@ void BayerProcess::imageNumberChanged ()
 
 void BayerProcess::checkBoxToggled (CheckBox* c, CheckValue newval)
 {
-    if (c == dcbEnhance) {
+    if (c == dualDemosaicAutoContrast) {
+        if (listener) {
+            listener->panelChanged (EvDemosaicAutoContrast, dualDemosaicAutoContrast->getValueAsStr ());
+        }
+    } else if (c == dcbEnhance) {
         if (listener) {
             listener->panelChanged (EvDemosaicDCBEnhanced, dcbEnhance->getValueAsStr ());
         }
@@ -711,23 +729,24 @@ void BayerProcess::FrameCountChanged(int n, int frameNum)
     };
 
     idle_register.add(func, new Data { this, n, frameNum });
-    
-    // GThreadLock lock;
-    // imageNumber->block (true);
-
-    // imageNumber->remove_all();
-    // imageNumber->append("1");
-    // for(int i = 2; i <= std::min(n, 4); ++i) {
-    //     std::ostringstream entry;
-    //     entry << i;
-    //     imageNumber->append(entry.str());
-    // }
-    // imageNumber->set_active(std::min(frameNum, n - 1));
-    // if(n == 1) {
-    //     imageNumberBox->hide();
-    // } else {
-    //     imageNumberBox->show();
-    // }
-    // imageNumber->block (false);
 }
 
+void BayerProcess::autoContrastChanged (double autoContrast)
+{
+    struct Data {
+        BayerProcess *me;
+        double autoContrast;
+    };
+    const auto func = [](gpointer data) -> gboolean {
+        Data *d = static_cast<Data *>(data);
+        BayerProcess *me = d->me;
+        if (d->autoContrast ==  -1.0) {
+            me->dualDemosaicLabel->set_text("");
+        } else {
+            me->dualDemosaicLabel->set_text(Glib::ustring::format(std::fixed, std::setprecision(0), d->autoContrast));
+        }
+        return FALSE;
+    };
+
+    idle_register.add(func, new Data { this, autoContrast });
+}

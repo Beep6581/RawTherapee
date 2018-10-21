@@ -2388,6 +2388,7 @@ RAWParams::BayerSensor::BayerSensor() :
     greenthresh(0),
     dcb_iterations(2),
     lmmse_iterations(2),
+    dualDemosaicAutoContrast(true),
     dualDemosaicContrast(20),
     pixelShiftMotionCorrectionMethod(PSMotionCorrectionMethod::AUTO),
     pixelShiftEperIso(0.0),
@@ -2425,6 +2426,7 @@ bool RAWParams::BayerSensor::operator ==(const BayerSensor& other) const
         && greenthresh == other.greenthresh
         && dcb_iterations == other.dcb_iterations
         && lmmse_iterations == other.lmmse_iterations
+        && dualDemosaicAutoContrast == other.dualDemosaicAutoContrast
         && dualDemosaicContrast == other.dualDemosaicContrast
         && pixelShiftMotionCorrectionMethod == other.pixelShiftMotionCorrectionMethod
         && pixelShiftEperIso == other.pixelShiftEperIso
@@ -2512,6 +2514,7 @@ Glib::ustring RAWParams::BayerSensor::getPSDemosaicMethodString(PSDemosaicMethod
 
 RAWParams::XTransSensor::XTransSensor() :
     method(getMethodString(Method::THREE_PASS)),
+    dualDemosaicAutoContrast(true),
     dualDemosaicContrast(20),
     ccSteps(0),
     blackred(0.0),
@@ -2524,6 +2527,7 @@ bool RAWParams::XTransSensor::operator ==(const XTransSensor& other) const
 {
     return
         method == other.method
+        && dualDemosaicAutoContrast == other.dualDemosaicAutoContrast
         && dualDemosaicContrast == other.dualDemosaicContrast
         && ccSteps == other.ccSteps
         && blackred == other.blackred
@@ -3409,6 +3413,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.bayersensor.dcbIterations, "RAW Bayer", "DCBIterations", raw.bayersensor.dcb_iterations, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.dcbEnhance, "RAW Bayer", "DCBEnhance", raw.bayersensor.dcb_enhance, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.lmmseIterations, "RAW Bayer", "LMMSEIterations", raw.bayersensor.lmmse_iterations, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.bayersensor.dualDemosaicAutoContrast, "RAW Bayer", "DualDemosaicAutoContrast", raw.bayersensor.dualDemosaicAutoContrast, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.dualDemosaicContrast, "RAW Bayer", "DualDemosaicContrast", raw.bayersensor.dualDemosaicContrast, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftMotionCorrectionMethod, "RAW Bayer", "PixelShiftMotionCorrectionMethod", toUnderlying(raw.bayersensor.pixelShiftMotionCorrectionMethod), keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftEperIso, "RAW Bayer", "PixelShiftEperIso", raw.bayersensor.pixelShiftEperIso, keyFile);
@@ -3426,6 +3431,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pixelShiftDemosaicMethod, "RAW Bayer", "pixelShiftDemosaicMethod", raw.bayersensor.pixelShiftDemosaicMethod, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.pdafLinesFilter, "RAW Bayer", "PDAFLinesFilter", raw.bayersensor.pdafLinesFilter, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.method, "RAW X-Trans", "Method", raw.xtranssensor.method, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.xtranssensor.dualDemosaicAutoContrast, "RAW X-Trans", "DualDemosaicAutoContrast", raw.xtranssensor.dualDemosaicAutoContrast, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.dualDemosaicContrast, "RAW X-Trans", "DualDemosaicContrast", raw.xtranssensor.dualDemosaicContrast, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.ccSteps, "RAW X-Trans", "CcSteps", raw.xtranssensor.ccSteps, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.exBlackRed, "RAW X-Trans", "PreBlackRed", raw.xtranssensor.blackred, keyFile);
@@ -4836,6 +4842,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW Bayer", "DCBIterations", pedited, raw.bayersensor.dcb_iterations, pedited->raw.bayersensor.dcbIterations);
             assignFromKeyfile(keyFile, "RAW Bayer", "DCBEnhance", pedited, raw.bayersensor.dcb_enhance, pedited->raw.bayersensor.dcbEnhance);
             assignFromKeyfile(keyFile, "RAW Bayer", "LMMSEIterations", pedited, raw.bayersensor.lmmse_iterations, pedited->raw.bayersensor.lmmseIterations);
+            assignFromKeyfile(keyFile, "RAW Bayer", "DualDemosaicAutoContrast", pedited, raw.bayersensor.dualDemosaicAutoContrast, pedited->raw.bayersensor.dualDemosaicAutoContrast);
+            if (ppVersion < 344) {
+                raw.bayersensor.dualDemosaicAutoContrast = false;
+                if (pedited) {
+                    pedited->raw.bayersensor.dualDemosaicAutoContrast = true;
+                }
+            }
             assignFromKeyfile(keyFile, "RAW Bayer", "DualDemosaicContrast", pedited, raw.bayersensor.dualDemosaicContrast, pedited->raw.bayersensor.dualDemosaicContrast);
 
             if (keyFile.has_key("RAW Bayer", "PixelShiftMotionCorrectionMethod")) {
@@ -4883,6 +4896,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group("RAW X-Trans")) {
             assignFromKeyfile(keyFile, "RAW X-Trans", "Method", pedited, raw.xtranssensor.method, pedited->raw.xtranssensor.method);
+            assignFromKeyfile(keyFile, "RAW X-Trans", "DualDemosaicAutoContrast", pedited, raw.xtranssensor.dualDemosaicAutoContrast, pedited->raw.xtranssensor.dualDemosaicAutoContrast);
+            if (ppVersion < 344) {
+                raw.xtranssensor.dualDemosaicAutoContrast = false;
+                if (pedited) {
+                    pedited->raw.xtranssensor.dualDemosaicAutoContrast = true;
+                }
+            }
             assignFromKeyfile(keyFile, "RAW X-Trans", "DualDemosaicContrast", pedited, raw.xtranssensor.dualDemosaicContrast, pedited->raw.xtranssensor.dualDemosaicContrast);
             assignFromKeyfile(keyFile, "RAW X-Trans", "CcSteps", pedited, raw.xtranssensor.ccSteps, pedited->raw.xtranssensor.ccSteps);
             assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackRed", pedited, raw.xtranssensor.blackred, pedited->raw.xtranssensor.exBlackRed);

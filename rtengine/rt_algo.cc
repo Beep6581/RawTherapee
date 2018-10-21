@@ -34,7 +34,7 @@
 #include "rt_math.h"
 #include "sleef.c"
 #include "jaggedarray.h"
-#include "StopWatch.h"
+
 namespace {
 float calcBlendFactor(float val, float threshold) {
     // sigmoid function
@@ -192,7 +192,7 @@ void findMinMaxPercentile(const float* data, size_t size, float minPrct, float& 
     maxOut += minVal;
 }
 
-void buildBlendMask(float** luminance, float **blend, int W, int H, float contrastThreshold, float amount, bool autoContrast) {
+void buildBlendMask(float** luminance, float **blend, int W, int H, float &contrastThreshold, float amount, bool autoContrast) {
 
     if(contrastThreshold == 0.f) {
         for(int j = 0; j < H; ++j) {
@@ -203,7 +203,6 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float contra
     } else {
         constexpr float scale = 0.0625f / 327.68f;
         if (autoContrast) {
-            StopWatch StopC("calculate dual demosaic auto contrast threshold");
             for (int pass = 0; pass < 2; ++pass) {
                 const int tilesize = 80 / (pass + 1);
                 const int numTilesW = W / tilesize;
@@ -269,9 +268,8 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float contra
 
                 const int minY = tilesize * minI;
                 const int minX = tilesize * minJ;
-                std::cout << "minvar : " << minvar << std::endl;
 
-//                if (minvar <= 1.f || pass == 1) {
+                if (minvar <= 1.f || pass == 1) {
                     // a variance <= 1 means we already found a flat region and can skip second pass
                     JaggedArray<float> Lum(tilesize, tilesize);
                     JaggedArray<float> Blend(tilesize, tilesize);
@@ -281,9 +279,9 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float contra
                         }
                     }
 
-                    /*contrastThreshold =  */calcContrastThreshold(Lum, Blend, tilesize, tilesize);// / 100.f;
-//                    break;
-//                }
+                    contrastThreshold =  std::min(contrastThreshold, calcContrastThreshold(Lum, Blend, tilesize, tilesize) / 100.f);
+                    break;
+                }
             }
         }
 
@@ -404,7 +402,6 @@ int calcContrastThreshold(float** luminance, float **blend, int W, int H) {
             break;
         }
     }
-    std::cout << "dual demosaic auto contrast threshold : " << c << std::endl;
 
     return c;
 }

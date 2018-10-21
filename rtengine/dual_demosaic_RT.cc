@@ -40,7 +40,7 @@ void RawImageSource::dual_demosaic_RT(bool isBayer, const RAWParams &raw, int wi
 {
     BENCHFUN
 
-    if (contrast == 0.0 && !autoContrast) {
+    if (contrast == 0.f) {
         // contrast == 0.0 means only first demosaicer will be used
         if(isBayer) {
             if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEVNG4) ) {
@@ -100,7 +100,10 @@ void RawImageSource::dual_demosaic_RT(bool isBayer, const RAWParams &raw, int wi
     }
     // calculate contrast based blend factors to use vng4 in regions with low contrast
     JaggedArray<float> blend(winw, winh);
-    buildBlendMask(L, blend, winw, winh, contrast / 100.f, 1.f, true);
+    float contrastf = contrast / 100.f;
+
+    buildBlendMask(L, blend, winw, winh, contrastf, 1.f, autoContrast);
+    contrast = contrastf * 100.f;
 
     // the following is split into 3 loops intentionally to avoid cache conflicts on CPUs with only 4-way cache
     #pragma omp parallel for
