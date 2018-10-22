@@ -322,7 +322,7 @@ void BatchQueuePanel::addBatchQueueJobs(const std::vector<BatchQueueEntry*>& ent
 
 bool BatchQueuePanel::canStartNext ()
 {
-
+    GThreadLock lock;
     if (qStartStop->get_active()) {
         return true;
     } else {
