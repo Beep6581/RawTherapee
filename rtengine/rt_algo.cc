@@ -269,8 +269,10 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
                 const int minY = tilesize * minI;
                 const int minX = tilesize * minJ;
 
+//                std::cout << pass << ": minvar : " << minvar << std::endl;
                 if (minvar <= 1.f || pass == 1) {
                     // a variance <= 1 means we already found a flat region and can skip second pass
+                    // in second pass we allow a variance of 2
                     JaggedArray<float> Lum(tilesize, tilesize);
                     JaggedArray<float> Blend(tilesize, tilesize);
                     for (int i = 0; i < tilesize; ++i) {
@@ -278,8 +280,7 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
                             Lum[i][j] = luminance[i + minY][j + minX];
                         }
                     }
-
-                    contrastThreshold =  std::min(contrastThreshold, calcContrastThreshold(Lum, Blend, tilesize, tilesize) / 100.f);
+                    contrastThreshold = (pass == 0 || minvar <= 2.f) ? calcContrastThreshold(Lum, Blend, tilesize, tilesize) / 100.f : 0.f;
                     break;
                 }
             }

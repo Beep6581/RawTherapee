@@ -312,6 +312,9 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
     lmmseIterations->setValue (pp->raw.bayersensor.lmmse_iterations);
     dualDemosaicAutoContrast->setValue (pp->raw.bayersensor.dualDemosaicAutoContrast);
     dualDemosaicContrast->setValue (pp->raw.bayersensor.dualDemosaicContrast);
+    if (!batchMode) {
+        dualDemosaicContrast->set_sensitive(!pp->raw.bayersensor.dualDemosaicAutoContrast);
+    }
     pixelShiftMotionMethod->set_active ((int)pp->raw.bayersensor.pixelShiftMotionCorrectionMethod);
     pixelShiftEperIso->setValue (pp->raw.bayersensor.pixelShiftEperIso);
     pixelShiftSigma->setValue (pp->raw.bayersensor.pixelShiftSigma);
@@ -622,6 +625,9 @@ void BayerProcess::imageNumberChanged ()
 void BayerProcess::checkBoxToggled (CheckBox* c, CheckValue newval)
 {
     if (c == dualDemosaicAutoContrast) {
+        if (!batchMode) {
+            dualDemosaicContrast->set_sensitive(newval == CheckValue::off);
+        }
         if (listener) {
             listener->panelChanged (EvDemosaicAutoContrast, dualDemosaicAutoContrast->getValueAsStr ());
         }
