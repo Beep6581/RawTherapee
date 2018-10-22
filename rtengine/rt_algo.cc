@@ -286,64 +286,72 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
             }
         }
 
-#ifdef _OPENMP
-        #pragma omp parallel
-#endif
-        {
-#ifdef __SSE2__
-            const vfloat contrastThresholdv = F2V(contrastThreshold);
-            const vfloat scalev = F2V(scale);
-            const vfloat amountv = F2V(amount);
-#endif
-#ifdef _OPENMP
-            #pragma omp for schedule(dynamic,16)
-#endif
-
-            for(int j = 2; j < H - 2; ++j) {
-                int i = 2;
-#ifdef __SSE2__
-                for(; i < W - 5; i += 4) {
-                    vfloat contrastv = vsqrtf(SQRV(LVFU(luminance[j][i+1]) - LVFU(luminance[j][i-1])) + SQRV(LVFU(luminance[j+1][i]) - LVFU(luminance[j-1][i])) +
-                                              SQRV(LVFU(luminance[j][i+2]) - LVFU(luminance[j][i-2])) + SQRV(LVFU(luminance[j+2][i]) - LVFU(luminance[j-2][i]))) * scalev;
-
-                    STVFU(blend[j][i], amountv * calcBlendFactor(contrastv, contrastThresholdv));
-                }
-#endif
-                for(; i < W - 2; ++i) {
-
-                    float contrast = sqrtf(rtengine::SQR(luminance[j][i+1] - luminance[j][i-1]) + rtengine::SQR(luminance[j+1][i] - luminance[j-1][i]) + 
-                                           rtengine::SQR(luminance[j][i+2] - luminance[j][i-2]) + rtengine::SQR(luminance[j+2][i] - luminance[j-2][i])) * scale;
-
-                    blend[j][i] = amount * calcBlendFactor(contrast, contrastThreshold);
+        if(contrastThreshold == 0.f) {
+            for(int j = 0; j < H; ++j) {
+                for(int i = 0; i < W; ++i) {
+                    blend[j][i] = amount;
                 }
             }
-
+        } else {
 #ifdef _OPENMP
-            #pragma omp single
+            #pragma omp parallel
 #endif
             {
-                // upper border
-                for(int j = 0; j < 2; ++j) {
-                    for(int i = 2; i < W - 2; ++i) {
-                        blend[j][i] = blend[2][i];
-                    }
-                }
-                // lower border
-                for(int j = H - 2; j < H; ++j) {
-                    for(int i = 2; i < W - 2; ++i) {
-                        blend[j][i] = blend[H-3][i];
-                    }
-                }
-                for(int j = 0; j < H; ++j) {
-                    // left border
-                    blend[j][0] = blend[j][1] = blend[j][2];
-                    // right border
-                    blend[j][W - 2] = blend[j][W - 1] = blend[j][W - 3];
-                }
-            }
+#ifdef __SSE2__
+                const vfloat contrastThresholdv = F2V(contrastThreshold);
+                const vfloat scalev = F2V(scale);
+                const vfloat amountv = F2V(amount);
+#endif
+#ifdef _OPENMP
+                #pragma omp for schedule(dynamic,16)
+#endif
 
-            // blur blend mask to smooth transitions
-            gaussianBlur(blend, blend, W, H, 2.0);
+                for(int j = 2; j < H - 2; ++j) {
+                    int i = 2;
+#ifdef __SSE2__
+                    for(; i < W - 5; i += 4) {
+                        vfloat contrastv = vsqrtf(SQRV(LVFU(luminance[j][i+1]) - LVFU(luminance[j][i-1])) + SQRV(LVFU(luminance[j+1][i]) - LVFU(luminance[j-1][i])) +
+                                                  SQRV(LVFU(luminance[j][i+2]) - LVFU(luminance[j][i-2])) + SQRV(LVFU(luminance[j+2][i]) - LVFU(luminance[j-2][i]))) * scalev;
+
+                        STVFU(blend[j][i], amountv * calcBlendFactor(contrastv, contrastThresholdv));
+                    }
+#endif
+                    for(; i < W - 2; ++i) {
+
+                        float contrast = sqrtf(rtengine::SQR(luminance[j][i+1] - luminance[j][i-1]) + rtengine::SQR(luminance[j+1][i] - luminance[j-1][i]) + 
+                                               rtengine::SQR(luminance[j][i+2] - luminance[j][i-2]) + rtengine::SQR(luminance[j+2][i] - luminance[j-2][i])) * scale;
+
+                        blend[j][i] = amount * calcBlendFactor(contrast, contrastThreshold);
+                    }
+                }
+
+#ifdef _OPENMP
+                #pragma omp single
+#endif
+                {
+                    // upper border
+                    for(int j = 0; j < 2; ++j) {
+                        for(int i = 2; i < W - 2; ++i) {
+                            blend[j][i] = blend[2][i];
+                        }
+                    }
+                    // lower border
+                    for(int j = H - 2; j < H; ++j) {
+                        for(int i = 2; i < W - 2; ++i) {
+                            blend[j][i] = blend[H-3][i];
+                        }
+                    }
+                    for(int j = 0; j < H; ++j) {
+                        // left border
+                        blend[j][0] = blend[j][1] = blend[j][2];
+                        // right border
+                        blend[j][W - 2] = blend[j][W - 1] = blend[j][W - 3];
+                    }
+                }
+
+                // blur blend mask to smooth transitions
+                gaussianBlur(blend, blend, W, H, 2.0);
+            }
         }
     }
 }
