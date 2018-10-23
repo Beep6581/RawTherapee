@@ -6462,17 +6462,20 @@ guess_cfa_pc:
             unsigned oldOrder = order;
             order = 0x4d4d; // always big endian per definition in https://www.adobe.com/content/dam/acom/en/products/photoshop/pdfs/dng_spec_1.4.0.0.pdf chapter 7
             unsigned ntags = get4(); // read the number of opcodes
-            while (ntags--) {
-              unsigned opcode = get4();
-              fseek (ifp, 8, SEEK_CUR); // skip 8 bytes as they don't interest us currently
-              if (opcode == 4) { // FixBadPixelsConstant
-                fseek (ifp, 4, SEEK_CUR); // skip 4 bytes as we know that the opcode 4 takes 4 byte
-                if(get4() == 0) { // if raw 0 values should be treated as bad pixels, set zero_is_bad to true (1). That's the only value currently supported by rt
-                    zero_is_bad = 1;
+
+            if (ntags < ifp->size / 12) { // rough check for wrong value (happens for example with DNG files from DJI FC6310)
+                while (ntags-- && !ifp->eof) {
+                  unsigned opcode = get4();
+                  fseek (ifp, 8, SEEK_CUR); // skip 8 bytes as they don't interest us currently
+                  if (opcode == 4) { // FixBadPixelsConstant
+                    fseek (ifp, 4, SEEK_CUR); // skip 4 bytes as we know that the opcode 4 takes 4 byte
+                    if(get4() == 0) { // if raw 0 values should be treated as bad pixels, set zero_is_bad to true (1). That's the only value currently supported by rt
+                        zero_is_bad = 1;
+                    }
+                  } else {
+                    fseek (ifp, get4(), SEEK_CUR);
+                  }
                 }
-              } else {
-                fseek (ifp, get4(), SEEK_CUR);
-              }
             }
             order = oldOrder;
           break;
@@ -10062,6 +10065,10 @@ dng_skip:
     adobe_coeff (make, model);
   if((!strncmp(make, "XIAOYI", 6) || !strncmp(make, "YI", 2)) && !strncmp(model, "M1",2))
 	adobe_coeff (make, model);
+  if(!strncmp(make, "DJI", 3) && !strncmp(model, "FC6310", 6)) // DNG files from this camera have wrong (too high) white level
+    adobe_coeff (make, model);
+  if (!strncmp(make, "LG", 2) && (!strncmp(model, "LG-H850",7) || !strncmp(model, "LG-H815",7)))
+    adobe_coeff (make, model);
   if (raw_color) adobe_coeff (make, model);
   if (load_raw == &CLASS kodak_radc_load_raw)
     if (raw_color) adobe_coeff ("Apple","Quicktake");

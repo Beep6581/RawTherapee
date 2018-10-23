@@ -1225,6 +1225,11 @@ Camera constants:
         }
     },
 
+    { // Quality C
+        "make_model": "DJI FC6310",
+        "ranges": { "white": 64886 }
+    },
+
     { // Quality B
         "make_model": "FUJIFILM GFX 50S",
         "dcraw_matrix": [ 11756,-4754,-874,-3056,11045,2305,-381,1457,6006 ], // DNGv9.9 D65
@@ -1338,13 +1343,13 @@ Camera constants:
         "make_model": "LG mobile LG-H815",
         "dcraw_matrix": [ 5859,547,-1250,-6484,15547,547,-2422,5625,3906 ], // DNG D65
         //"dcraw_matrix": [ 11563,-2891,-3203,-5313,15625,625,-781,2813,5625 ], // DNG A
-        "ranges": { "white_max": 1000 }
+        "ranges": { "white": 1000 }
     },
     { // Quality C
         "make_model": "LG mobile LG-H850",
         //"dcraw_matrix": [ 10000,-2188,-2813,-5156,15469,625,-703,2734,5078 ], // DNG A
         "dcraw_matrix": [ 5313,1016,-1172,-6250,15391,547,-2344,5547,3359 ], // DNG D65
-        "ranges": { "white_max": 1000 }
+        "ranges": { "white": 1000 }
     },
 
     { // Quality A
