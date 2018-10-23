@@ -10067,6 +10067,8 @@ dng_skip:
 	adobe_coeff (make, model);
   if(!strncmp(make, "DJI", 3) && !strncmp(model, "FC6310", 6)) // DNG files from this camera have wrong (too high) white level
     adobe_coeff (make, model);
+  if (!strncmp(make, "LG", 2) && (!strncmp(model, "LG-H850",7) || !strncmp(model, "LG-H815",7)))
+    adobe_coeff (make, model);
   if (raw_color) adobe_coeff (make, model);
   if (load_raw == &CLASS kodak_radc_load_raw)
     if (raw_color) adobe_coeff ("Apple","Quicktake");
