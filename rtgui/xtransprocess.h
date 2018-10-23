@@ -35,8 +35,7 @@ protected:
     Adjuster* ccSteps;
     Gtk::VBox *dualDemosaicOptions;
     Adjuster* dualDemosaicContrast;
-    CheckBox* dualDemosaicAutoContrast;
-    Gtk::Label* dualDemosaicLabel;
+    bool lastAutoContrast;
 
     int oldSelection;
     sigc::connection methodconn;

@@ -59,10 +59,8 @@ protected:
     Adjuster* pixelShiftSigma;
     Gtk::VBox *dualDemosaicOptions;
     Adjuster* dualDemosaicContrast;
-    CheckBox* dualDemosaicAutoContrast;
-    Gtk::Label* dualDemosaicLabel;
     int oldMethod;
-
+    bool lastAutoContrast;
     IdleRegister idle_register;
 
     rtengine::ProcEvent EvDemosaicBorder;

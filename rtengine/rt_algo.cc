@@ -194,7 +194,7 @@ void findMinMaxPercentile(const float* data, size_t size, float minPrct, float& 
 
 void buildBlendMask(float** luminance, float **blend, int W, int H, float &contrastThreshold, float amount, bool autoContrast) {
 
-    if(contrastThreshold == 0.f) {
+    if(contrastThreshold == 0.f && !autoContrast) {
         for(int j = 0; j < H; ++j) {
             for(int i = 0; i < W; ++i) {
                 blend[j][i] = amount;
