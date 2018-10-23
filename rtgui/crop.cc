@@ -135,7 +135,7 @@ Crop::Crop():
 
     resetCrop = Gtk::manage (new Gtk::Button (M("TP_CROP_RESETCROP")));
     resetCrop->get_style_context()->add_class("independent");
-    resetCrop->set_image (*Gtk::manage (new RTImage ("crop-small.png")));
+    resetCrop->set_image (*Gtk::manage (new RTImage ("undo-small.png")));
 
     pack_start (*resetCrop, Gtk::PACK_SHRINK, 2);
 
