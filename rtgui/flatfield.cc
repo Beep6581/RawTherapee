@@ -403,3 +403,21 @@ void FlatField::setShortcutPath(const Glib::ustring& path)
 
     } catch (Glib::Error&) {}
 }
+
+void FlatField::flatFieldAutoClipValueChanged(int n)
+{
+    struct Data {
+        FlatField *me;
+        int n;
+    };
+    const auto func = [](gpointer data) -> gboolean {
+        Data *d = static_cast<Data *>(data);
+        FlatField *me = d->me;
+        me->disableListener();
+        me->flatFieldClipControl->setValue (d->n);
+        me->enableListener();
+        return FALSE;
+    };
+
+    idle_register.add(func, new Data { this, n });
+}

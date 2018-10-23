@@ -371,6 +371,13 @@ public:
     virtual void FrameCountChanged(int n, int frameNum) = 0;
 };
 
+class FlatFieldAutoClipListener
+{
+public:
+    virtual ~FlatFieldAutoClipListener() = default;
+    virtual void flatFieldAutoClipValueChanged(int n) = 0;
+};
+
 class ImageTypeListener
 {
 public:
@@ -481,6 +488,7 @@ public:
     virtual void        setHistogramListener    (HistogramListener *l) = 0;
     virtual void        setPreviewImageListener (PreviewImageListener* l) = 0;
     virtual void        setAutoCamListener      (AutoCamListener* l) = 0;
+    virtual void        setFlatFieldAutoClipListener   (FlatFieldAutoClipListener* l) = 0;
     virtual void        setFrameCountListener   (FrameCountListener* l) = 0;
     virtual void        setAutoBWListener       (AutoBWListener* l) = 0;
     virtual void        setAutoWBListener       (AutoWBListener* l) = 0;

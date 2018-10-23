@@ -158,6 +158,7 @@ protected:
     AutoCamListener* acListener;
     AutoBWListener* abwListener;
     AutoWBListener* awbListener;
+    FlatFieldAutoClipListener *flatFieldAutoClipListener;
     FrameCountListener *frameCountListener;
     ImageTypeListener *imageTypeListener;
 
@@ -342,6 +343,11 @@ public:
     void setFrameCountListener  (FrameCountListener* fcl)
     {
         frameCountListener = fcl;
+    }
+
+    void setFlatFieldAutoClipListener  (FlatFieldAutoClipListener* ffacl)
+    {
+        flatFieldAutoClipListener = ffacl;
     }
 
     void setImageTypeListener  (ImageTypeListener* itl)
