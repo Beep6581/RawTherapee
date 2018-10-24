@@ -159,6 +159,8 @@ protected:
     AutoBWListener* abwListener;
     AutoWBListener* awbListener;
     FlatFieldAutoClipListener *flatFieldAutoClipListener;
+    AutoContrastListener *bayerAutoContrastListener;
+    AutoContrastListener *xtransAutoContrastListener;
     FrameCountListener *frameCountListener;
     ImageTypeListener *imageTypeListener;
 
@@ -348,6 +350,15 @@ public:
     void setFlatFieldAutoClipListener  (FlatFieldAutoClipListener* ffacl)
     {
         flatFieldAutoClipListener = ffacl;
+    }
+    void setBayerAutoContrastListener  (AutoContrastListener* acl)
+    {
+        bayerAutoContrastListener = acl;
+    }
+
+    void setXtransAutoContrastListener  (AutoContrastListener* acl)
+    {
+        xtransAutoContrastListener = acl;
     }
 
     void setImageTypeListener  (ImageTypeListener* itl)

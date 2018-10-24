@@ -385,6 +385,13 @@ public:
     virtual void imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans, bool is_Mono = false) = 0;
 };
 
+class AutoContrastListener
+{
+public :
+    virtual ~AutoContrastListener() = default;
+    virtual void autoContrastChanged (double autoContrast) = 0;
+};
+
 class WaveletListener
 {
 public:
@@ -490,6 +497,8 @@ public:
     virtual void        setAutoCamListener      (AutoCamListener* l) = 0;
     virtual void        setFlatFieldAutoClipListener   (FlatFieldAutoClipListener* l) = 0;
     virtual void        setFrameCountListener   (FrameCountListener* l) = 0;
+    virtual void        setBayerAutoContrastListener (AutoContrastListener* l) = 0;
+    virtual void        setXtransAutoContrastListener (AutoContrastListener* l) = 0;
     virtual void        setAutoBWListener       (AutoBWListener* l) = 0;
     virtual void        setAutoWBListener       (AutoWBListener* l) = 0;
     virtual void        setAutoColorTonListener (AutoColorTonListener* l) = 0;

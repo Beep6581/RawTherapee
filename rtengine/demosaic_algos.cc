@@ -37,7 +37,7 @@
 #include "sleef.c"
 #include "opthelper.h"
 #include "median.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 #ifdef _OPENMP
 #include <omp.h>
