@@ -23,6 +23,7 @@
 #include <cstdint>
 #include <vector>
 #include <iostream>
+#include <vector>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -32,6 +33,7 @@
 #include "rt_algo.h"
 #include "rt_math.h"
 #include "sleef.c"
+#include "jaggedarray.h"
 
 namespace {
 float calcBlendFactor(float val, float threshold) {
@@ -190,75 +192,166 @@ void findMinMaxPercentile(const float* data, size_t size, float minPrct, float& 
     maxOut += minVal;
 }
 
-void buildBlendMask(float** luminance, float **blend, int W, int H, float contrastThreshold, float amount) {
+void buildBlendMask(float** luminance, float **blend, int W, int H, float &contrastThreshold, float amount, bool autoContrast) {
 
-    constexpr float scale = 0.0625f / 327.68f;
-
-    if(contrastThreshold == 0.f) {
+    if(contrastThreshold == 0.f && !autoContrast) {
         for(int j = 0; j < H; ++j) {
             for(int i = 0; i < W; ++i) {
                 blend[j][i] = amount;
             }
         }
     } else {
-#ifdef _OPENMP
-        #pragma omp parallel
-#endif
-        {
-#ifdef __SSE2__
-            const vfloat contrastThresholdv = F2V(contrastThreshold);
-            const vfloat scalev = F2V(scale);
-            const vfloat amountv = F2V(amount);
-#endif
-#ifdef _OPENMP
-            #pragma omp for schedule(dynamic,16)
-#endif
+        constexpr float scale = 0.0625f / 327.68f;
+        if (autoContrast) {
+            for (int pass = 0; pass < 2; ++pass) {
+                const int tilesize = 80 / (pass + 1);
+                const int numTilesW = W / tilesize;
+                const int numTilesH = H / tilesize;
+                std::vector<std::vector<std::pair<float, float>>> variances(numTilesH, std::vector<std::pair<float, float>>(numTilesW));
 
-            for(int j = 2; j < H - 2; ++j) {
-                int i = 2;
+                #pragma omp parallel for
+                for (int i = 0; i < numTilesH; ++i) {
+                    int tileY = i * tilesize;
+                    for (int j = 0; j < numTilesW; ++j) {
+                        int tileX = j * tilesize;
 #ifdef __SSE2__
-                for(; i < W - 5; i += 4) {
-                    vfloat contrastv = vsqrtf(SQRV(LVFU(luminance[j][i+1]) - LVFU(luminance[j][i-1])) + SQRV(LVFU(luminance[j+1][i]) - LVFU(luminance[j-1][i])) +
-                                              SQRV(LVFU(luminance[j][i+2]) - LVFU(luminance[j][i-2])) + SQRV(LVFU(luminance[j+2][i]) - LVFU(luminance[j-2][i]))) * scalev;
-
-                    STVFU(blend[j][i], amountv * calcBlendFactor(contrastv, contrastThresholdv));
+                        vfloat avgv = ZEROV;
+                        for (int y = tileY; y < tileY + tilesize; ++y) {
+                            for (int x = tileX; x < tileX + tilesize; x += 4) {
+                                avgv += LVFU(luminance[y][x]);
+                            }
+                        }
+                        float avg = vhadd(avgv);
+#else
+                        float avg = 0.;
+                        for (int y = tileY; y < tileY + tilesize; ++y) {
+                            for (int x = tileX; x < tileX + tilesize; ++x) {
+                                avg += luminance[y][x];
+                            }
+                        }
+#endif
+                        avg /= SQR(tilesize);
+#ifdef __SSE2__
+                        vfloat varv = ZEROV;
+                        avgv = F2V(avg);
+                        for (int y = tileY; y < tileY + tilesize; ++y) {
+                            for (int x = tileX; x < tileX + tilesize; x +=4) {
+                                varv += SQRV(LVFU(luminance[y][x]) - avgv);
+                            }
+                        }
+                        float var = vhadd(varv);
+#else
+                        float var = 0.0;
+                        for (int y = tileY; y < tileY + tilesize; ++y) {
+                            for (int x = tileX; x < tileX + tilesize; ++x) {
+                                var += SQR(luminance[y][x] - avg);
+                            }
+                        }
+    #endif
+                        var /= (SQR(tilesize) * avg);
+                        variances[i][j].first = var;
+                        variances[i][j].second = avg;
+                    }
                 }
-#endif
-                for(; i < W - 2; ++i) {
 
-                    float contrast = sqrtf(rtengine::SQR(luminance[j][i+1] - luminance[j][i-1]) + rtengine::SQR(luminance[j+1][i] - luminance[j-1][i]) + 
-                                           rtengine::SQR(luminance[j][i+2] - luminance[j][i-2]) + rtengine::SQR(luminance[j+2][i] - luminance[j-2][i])) * scale;
+                float minvar = RT_INFINITY_F;
+                int minI = 0, minJ = 0;
+                for (int i = 0; i < numTilesH; ++i) {
+                    for (int j = 0; j < numTilesW; ++j) {
+                        if (variances[i][j].first < minvar && variances[i][j].second > 2000.f && variances[i][j].second < 20000.f) {
+                            minvar = variances[i][j].first;
+                            minI = i;
+                            minJ = j;
+                        }
+                    }
+                }
 
-                    blend[j][i] = amount * calcBlendFactor(contrast, contrastThreshold);
+                const int minY = tilesize * minI;
+                const int minX = tilesize * minJ;
+
+//                std::cout << pass << ": minvar : " << minvar << std::endl;
+                if (minvar <= 1.f || pass == 1) {
+                    // a variance <= 1 means we already found a flat region and can skip second pass
+                    // in second pass we allow a variance of 2
+                    JaggedArray<float> Lum(tilesize, tilesize);
+                    JaggedArray<float> Blend(tilesize, tilesize);
+                    for (int i = 0; i < tilesize; ++i) {
+                        for (int j = 0; j < tilesize; ++j) {
+                            Lum[i][j] = luminance[i + minY][j + minX];
+                        }
+                    }
+                    contrastThreshold = (pass == 0 || minvar <= 2.f) ? calcContrastThreshold(Lum, Blend, tilesize, tilesize) / 100.f : 0.f;
+                    break;
                 }
             }
+        }
 
+        if(contrastThreshold == 0.f) {
+            for(int j = 0; j < H; ++j) {
+                for(int i = 0; i < W; ++i) {
+                    blend[j][i] = amount;
+                }
+            }
+        } else {
 #ifdef _OPENMP
-            #pragma omp single
+            #pragma omp parallel
 #endif
             {
-                // upper border
-                for(int j = 0; j < 2; ++j) {
-                    for(int i = 2; i < W - 2; ++i) {
-                        blend[j][i] = blend[2][i];
-                    }
-                }
-                // lower border
-                for(int j = H - 2; j < H; ++j) {
-                    for(int i = 2; i < W - 2; ++i) {
-                        blend[j][i] = blend[H-3][i];
-                    }
-                }
-                for(int j = 0; j < H; ++j) {
-                    // left border
-                    blend[j][0] = blend[j][1] = blend[j][2];
-                    // right border
-                    blend[j][W - 2] = blend[j][W - 1] = blend[j][W - 3];
-                }
-            }
+#ifdef __SSE2__
+                const vfloat contrastThresholdv = F2V(contrastThreshold);
+                const vfloat scalev = F2V(scale);
+                const vfloat amountv = F2V(amount);
+#endif
+#ifdef _OPENMP
+                #pragma omp for schedule(dynamic,16)
+#endif
 
-            // blur blend mask to smooth transitions
-            gaussianBlur(blend, blend, W, H, 2.0);
+                for(int j = 2; j < H - 2; ++j) {
+                    int i = 2;
+#ifdef __SSE2__
+                    for(; i < W - 5; i += 4) {
+                        vfloat contrastv = vsqrtf(SQRV(LVFU(luminance[j][i+1]) - LVFU(luminance[j][i-1])) + SQRV(LVFU(luminance[j+1][i]) - LVFU(luminance[j-1][i])) +
+                                                  SQRV(LVFU(luminance[j][i+2]) - LVFU(luminance[j][i-2])) + SQRV(LVFU(luminance[j+2][i]) - LVFU(luminance[j-2][i]))) * scalev;
+
+                        STVFU(blend[j][i], amountv * calcBlendFactor(contrastv, contrastThresholdv));
+                    }
+#endif
+                    for(; i < W - 2; ++i) {
+
+                        float contrast = sqrtf(rtengine::SQR(luminance[j][i+1] - luminance[j][i-1]) + rtengine::SQR(luminance[j+1][i] - luminance[j-1][i]) + 
+                                               rtengine::SQR(luminance[j][i+2] - luminance[j][i-2]) + rtengine::SQR(luminance[j+2][i] - luminance[j-2][i])) * scale;
+
+                        blend[j][i] = amount * calcBlendFactor(contrast, contrastThreshold);
+                    }
+                }
+
+#ifdef _OPENMP
+                #pragma omp single
+#endif
+                {
+                    // upper border
+                    for(int j = 0; j < 2; ++j) {
+                        for(int i = 2; i < W - 2; ++i) {
+                            blend[j][i] = blend[2][i];
+                        }
+                    }
+                    // lower border
+                    for(int j = H - 2; j < H; ++j) {
+                        for(int i = 2; i < W - 2; ++i) {
+                            blend[j][i] = blend[H-3][i];
+                        }
+                    }
+                    for(int j = 0; j < H; ++j) {
+                        // left border
+                        blend[j][0] = blend[j][1] = blend[j][2];
+                        // right border
+                        blend[j][W - 2] = blend[j][W - 1] = blend[j][W - 3];
+                    }
+                }
+
+                // blur blend mask to smooth transitions
+                gaussianBlur(blend, blend, W, H, 2.0);
+            }
         }
     }
 }
@@ -289,7 +382,7 @@ int calcContrastThreshold(float** luminance, float **blend, int W, int H) {
         }
     }
 
-    const float limit = (W - 2) * (H - 2) / 100.f;
+    const float limit = (W - 4) * (H - 4) / 100.f;
 
     int c;
     for (c = 1; c < 100; ++c) {
@@ -318,6 +411,7 @@ int calcContrastThreshold(float** luminance, float **blend, int W, int H) {
             break;
         }
     }
+
     return c;
 }
 }

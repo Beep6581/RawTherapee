@@ -2074,7 +2074,7 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
                 double threshold = raw.bayersensor.dualDemosaicContrast;
                 dual_demosaic_RT (true, raw, W, H, rawData, red, green, blue, threshold, false);
             } else {
-                dual_demosaic_RT (true, raw, W, H, rawData, red, green, blue, contrastThreshold, true, 0, 0);
+                dual_demosaic_RT (true, raw, W, H, rawData, red, green, blue, contrastThreshold, true);
             }
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT) ) {
             pixelshift(0, 0, W, H, raw, currFrame, ri->get_maker(), ri->get_model(), raw.expos);
@@ -2107,7 +2107,7 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
                 double threshold = raw.xtranssensor.dualDemosaicContrast;
                 dual_demosaic_RT (false, raw, W, H, rawData, red, green, blue, threshold, false);
             } else {
-                dual_demosaic_RT (false, raw, W, H, rawData, red, green, blue, contrastThreshold, true, 0, 0);
+                dual_demosaic_RT (false, raw, W, H, rawData, red, green, blue, contrastThreshold, true);
             }
         } else if(raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO) ) {
             nodemosaic(true);
