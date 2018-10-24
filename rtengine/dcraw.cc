@@ -6113,6 +6113,7 @@ int CLASS parse_tiff_ifd (int base)
 	break;
       case 305:  case 11:		/* Software */
 	fgets (software, 64, ifp);
+        RT_software = software;
 	if (!strncmp(software,"Adobe",5) ||
 	    !strncmp(software,"dcraw",5) ||
 	    !strncmp(software,"UFRaw",5) ||
@@ -6395,15 +6396,18 @@ guess_cfa_pc:
 			  cblack[6+c] = getreal(type);
 		}
 		black = 0;
+                RT_blacklevel_from_constant = ThreeValBool::F;
 		break;
       case 50715:			/* BlackLevelDeltaH */
       case 50716:			/* BlackLevelDeltaV */
 	for (num=i=0; i < (len & 0xffff); i++)
 	  num += getreal(type);
 	black += num/len + 0.5;
+        RT_blacklevel_from_constant = ThreeValBool::F;
 	break;
       case 50717:			/* WhiteLevel */
 	maximum = getint(type);
+        RT_whitelevel_from_constant = ThreeValBool::F;
 	break;
       case 50718:			/* DefaultScale */
 	pixel_aspect  = getreal(type);
@@ -6540,8 +6544,6 @@ guess_cfa_pc:
   }
   if (!use_cm)
     FORCC pre_mul[c] /= cc[cm_D65][c][c];
-
-  RT_from_adobe_dng_converter = !strncmp(software, "Adobe DNG Converter", 19);
 
   return 0;
 }
@@ -10042,12 +10044,13 @@ bw:   colors = 1;
 dng_skip:
   if ((use_camera_matrix & (use_camera_wb || dng_version))
         && cmatrix[0][0] > 0.125
-        && !RT_from_adobe_dng_converter /* RT -- do not use the embedded
-                                         * matrices for DNGs coming from the
-                                         * Adobe DNG Converter, to ensure
-                                         * consistency of WB values between
-                                         * DNG-converted and original raw
-                                         * files. See #4129 */) {
+        && strncmp(RT_software.c_str(), "Adobe DNG Converter", 19) != 0
+      /* RT -- do not use the embedded
+       * matrices for DNGs coming from the
+       * Adobe DNG Converter, to ensure
+       * consistency of WB values between
+       * DNG-converted and original raw
+       * files. See #4129 */) {
     memcpy (rgb_cam, cmatrix, sizeof cmatrix);
     raw_color = 0;
   }

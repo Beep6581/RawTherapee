@@ -30,9 +30,9 @@ RawImage::RawImage(  const Glib::ustring &name )
     , allocation(nullptr)
 {
     memset(maximum_c4, 0, sizeof(maximum_c4));
-    RT_matrix_from_constant = 0;
-    RT_blacklevel_from_constant = 0;
-    RT_whitelevel_from_constant = 0;
+    RT_matrix_from_constant = ThreeValBool::X;
+    RT_blacklevel_from_constant = ThreeValBool::X;
+    RT_whitelevel_from_constant = ThreeValBool::X;
 }
 
 RawImage::~RawImage()
@@ -599,14 +599,14 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
 
         if (cc) {
             for (int i = 0; i < 4; i++) {
-                if (RT_blacklevel_from_constant) {
+                if (RT_blacklevel_from_constant == ThreeValBool::T) {
                     int blackFromCc = cc->get_BlackLevel(i, iso_speed);
                     // if black level from camconst > 0xffff it is an absolute value.
                     black_c4[i] = blackFromCc > 0xffff ? (blackFromCc & 0xffff) : blackFromCc + cblack[i];
                 }
 
                 // load 4 channel white level here, will be used if available
-                if (RT_whitelevel_from_constant) {
+                if (RT_whitelevel_from_constant == ThreeValBool::T) {
                     maximum_c4[i] = cc->get_WhiteLevel(i, iso_speed, aperture);
 
                     if(tiff_bps > 0 && maximum_c4[i] > 0 && !isFoveon()) {
@@ -1049,6 +1049,15 @@ DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int is
 
     *black_level = -1;
     *white_level = -1;
+
+    const bool is_pentax_dng = dng_version && !strncmp(RT_software.c_str(), "PENTAX", 6);
+    
+    if (RT_blacklevel_from_constant == ThreeValBool::F && !is_pentax_dng) {
+        *black_level = black;
+    }
+    if (RT_whitelevel_from_constant == ThreeValBool::F && !is_pentax_dng) {
+        *white_level = maximum;
+    }
     memset(trans, 0, sizeof(*trans) * 12);
 
     // indicate that DCRAW wants these from constants (rather than having loaded these from RAW file
@@ -1056,9 +1065,15 @@ DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int is
     // from file, but then we will not provide any black level in the tables. This case is mainly just
     // to avoid loading table values if we have loaded a DNG conversion of a raw file (which already
     // have constants stored in the file).
-    RT_whitelevel_from_constant = 1;
-    RT_blacklevel_from_constant = 1;
-    RT_matrix_from_constant = 1;
+    if (RT_whitelevel_from_constant == ThreeValBool::X || is_pentax_dng) {
+        RT_whitelevel_from_constant = ThreeValBool::T;
+    }
+    if (RT_blacklevel_from_constant == ThreeValBool::X || is_pentax_dng) {
+        RT_blacklevel_from_constant = ThreeValBool::T;
+    }
+    if (RT_matrix_from_constant == ThreeValBool::X) {
+        RT_matrix_from_constant = ThreeValBool::T;
+    }
 
     {
         // test if we have any information in the camera constants store, if so we take that.
@@ -1066,8 +1081,12 @@ DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int is
         rtengine::CameraConst *cc = ccs->get(make, model);
 
         if (cc) {
-            *black_level = cc->get_BlackLevel(0, iso_speed);
-            *white_level = cc->get_WhiteLevel(0, iso_speed, aperture);
+            if (RT_blacklevel_from_constant == ThreeValBool::T) {
+                *black_level = cc->get_BlackLevel(0, iso_speed);
+            }
+            if (RT_whitelevel_from_constant == ThreeValBool::T) {
+                *white_level = cc->get_WhiteLevel(0, iso_speed, aperture);
+            }
 
             if (cc->has_dcrawMatrix()) {
                 const short *mx = cc->get_dcrawMatrix();
@@ -1086,8 +1105,12 @@ DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int is
 
     for (size_t i = 0; i < sizeof table / sizeof(table[0]); i++) {
         if (strcasecmp(name, table[i].prefix) == 0) {
-            *black_level = table[i].black_level;
-            *white_level = table[i].white_level;
+            if (RT_blacklevel_from_constant == ThreeValBool::T) {
+                *black_level = table[i].black_level;
+            }
+            if (RT_whitelevel_from_constant == ThreeValBool::T) {
+                *white_level = table[i].white_level;
+            }
 
             for (int j = 0; j < 12; j++) {
                 trans[j] = table[i].trans[j];
