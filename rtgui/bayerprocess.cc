@@ -251,6 +251,10 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
 
 }
 
+BayerProcess::~BayerProcess ()
+{
+    idle_register.destroy();
+}
 
 void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {

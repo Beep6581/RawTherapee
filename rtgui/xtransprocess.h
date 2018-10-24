@@ -46,6 +46,7 @@ protected:
 public:
 
     XTransProcess ();
+    ~XTransProcess ();
 
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
     void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);

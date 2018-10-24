@@ -97,6 +97,9 @@ XTransProcess::XTransProcess () : FoldableToolPanel(this, "xtransprocess", M("TP
     methodconn = method->signal_changed().connect( sigc::mem_fun(*this, &XTransProcess::methodChanged) );
 }
 
+XTransProcess::~XTransProcess () {
+    idle_register.destroy();
+}
 
 void XTransProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
