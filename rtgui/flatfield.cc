@@ -104,6 +104,11 @@ FlatField::FlatField () : FoldableToolPanel(this, "flatfield", M("TP_FLATFIELD_L
     }
 }
 
+FlatField::~FlatField ()
+{
+    idle_register.destroy();
+}
+
 void FlatField::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
     disableListener ();
@@ -416,6 +421,7 @@ void FlatField::flatFieldAutoClipValueChanged(int n)
         me->disableListener();
         me->flatFieldClipControl->setValue (d->n);
         me->enableListener();
+        delete d;
         return FALSE;
     };
 
