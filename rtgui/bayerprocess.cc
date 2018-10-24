@@ -759,6 +759,7 @@ void BayerProcess::autoContrastChanged (double autoContrast)
         me->disableListener();
         me->dualDemosaicContrast->setValue(d->autoContrast);
         me->enableListener();
+        delete d;
         return FALSE;
     };
 
