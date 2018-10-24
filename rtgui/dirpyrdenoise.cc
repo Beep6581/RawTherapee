@@ -30,11 +30,6 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
 {
     std::vector<GradientMilestone> milestones;
     CurveListener::setMulti(true);
-    nextnresid = 0.;
-    nexthighresid = 0.;
-    nextchroma = 15.;
-    nextred = 0.;
-    nextblue = 0.;
 
     std::vector<double> defaultCurve;
 
@@ -43,8 +38,6 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
 
     Gtk::VBox * lumaVBox = Gtk::manage ( new Gtk::VBox());
     lumaVBox->set_spacing(2);
-
-
 
     ctboxL = Gtk::manage (new Gtk::HBox ());
     Gtk::Label* labmL = Gtk::manage (new Gtk::Label (M("TP_DIRPYRDENOISE_LUMINANCE_CONTROL") + ":"));
@@ -66,11 +59,10 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     lshape->setIdentityValue(0.);
     lshape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
 
-    //lshape->setEditID(EUID_Lab_LCurve, BT_SINGLEPLANE_FLOAT);
     milestones.push_back( GradientMilestone(0., 0., 0., 0.) );
     milestones.push_back( GradientMilestone(1., 1., 1., 1.) );
     lshape->setBottomBarBgGradient(milestones);
-    //lshape->setLeftBarBgGradient(milestones);
+
     milestones.push_back( GradientMilestone(0., 0., 0., 0.) );
     milestones.push_back( GradientMilestone(1., 1., 1., 1.) );
     NoiscurveEditorG->curveListComplete();
@@ -107,7 +99,6 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     C2method->set_active(0);
     C2methodconn = C2method->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::C2methodChanged) );
 
-
     NoiseLabels = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
     NoiseLabels->set_tooltip_text(M("TP_DIRPYRDENOISE_CHROMINANCE_PREVIEWRESIDUAL_INFO_TOOLTIP"));
 
@@ -129,7 +120,6 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     hb1->pack_end (*dmethod, Gtk::PACK_EXPAND_WIDGET, 1);
     pack_start(*hb1, Gtk::PACK_SHRINK, 1);
 
-
     dmethodconn = dmethod->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::dmethodChanged) );
 
     luma->setAdjusterListener (this);
@@ -150,9 +140,6 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
 
     CCcurveEditorG->curveListComplete();
 
-
-    //-----------------------------------------
-
     luma->hide();
     Ldetail->show();
 
@@ -162,8 +149,6 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     chroma->show();
     redchro->show();
     bluechro->show();
-//  perform->show();
-//  perform->set_active (true);
 
     // ---- Median FIltering ----
 
@@ -225,10 +210,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
 
     smethod = Gtk::manage (new MyComboBoxText ());
     smethod->append (M("TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE"));
-//  smethod->append (M("TP_DIRPYRDENOISE_MAIN_MODE_SHBI"));
     smethod->append (M("TP_DIRPYRDENOISE_MAIN_MODE_AGGRESSIVE"));
-//  smethod->append (M("TP_DIRPYRDENOISE_MAIN_MODE_SHALAL"));
-//  smethod->append (M("TP_DIRPYRDENOISE_MAIN_MODE_SHBIBI"));
     smethod->set_active(1);
     hb11->pack_start (*smethod, Gtk::PACK_EXPAND_WIDGET, 1);
     pack_start( *hb11, Gtk::PACK_SHRINK, 1);
@@ -272,17 +254,9 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     chromaFrame->add(*chromaVBox);
     pack_start (*chromaFrame);
 
-//  pack_start( *hb11, Gtk::PACK_SHRINK, 4);
-
-//  pack_start (*median);
-
     ctboxm->pack_start (*methodmed);
     ctbox->pack_start (*medmethod);
     ctboxrgb->pack_start (*rgbmethod);
-//  pack_start (*ctboxm);
-//  pack_start (*ctbox);
-//  pack_start (*ctboxrgb);
-//  pack_start (*passes,Gtk::PACK_SHRINK, 1);
 
     medianVBox->pack_start (*ctboxm);
     medianVBox->pack_start (*ctbox);
@@ -309,136 +283,97 @@ DirPyrDenoise::~DirPyrDenoise ()
 
 void DirPyrDenoise::chromaChanged (double autchroma, double autred, double autblue)
 {
-    nextchroma = autchroma;
-    nextred = autred;
-    nextblue = autblue;
-
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<DirPyrDenoise*>(data)->chromaComputed_();
-        return false;
+    struct Data {
+        DirPyrDenoise *me;
+        double autchroma;
+        double autred;
+        double autblue;
     };
 
-    idle_register.add(func, this);
-}
+    const auto func = [](gpointer data) -> gboolean {
+        Data *d = static_cast<Data *>(data);
+        DirPyrDenoise *me = d->me;
+        me->disableListener();
+        me->chroma->setValue(d->autchroma);
+        me->redchro->setValue(d->autred);
+        me->bluechro->setValue(d->autblue);
+        me->enableListener();
+        delete d;
+        return FALSE;
+    };
 
-bool DirPyrDenoise::chromaComputed_ ()
-{
-
-    disableListener ();
-    chroma->setValue (nextchroma);
-    redchro->setValue (nextred);
-    bluechro->setValue (nextblue);
-    enableListener ();
-    updateNoiseLabel ();
-    return false;
+    idle_register.add(func, new Data { this, autchroma, autred, autblue });
 }
 
 void DirPyrDenoise::noiseTilePrev (int tileX, int tileY, int prevX, int prevY, int sizeT, int sizeP)
 {
-    nexttileX = tileX;
-    nexttileY = tileY;
-    nextprevX = prevX;
-    nextprevY = prevY;
-    nextsizeT = sizeT;
-    nextsizeP = sizeP;
-
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<DirPyrDenoise*>(data)->TilePrevComputed_();
-        return false;
-    };
-
-    idle_register.add(func, this);
-}
-
-bool DirPyrDenoise::TilePrevComputed_ ()
-{
-
-    disableListener ();
-    enableListener ();
-    updateTileLabel ();
-    updatePrevLabel ();
-    return false;
-}
-
-void DirPyrDenoise::updateTileLabel ()
-{
     if (!batchMode) {
-        float sT;
-        float nX, nY;
-        sT = nextsizeT;
-        nX = nexttileX;
-        nY = nexttileY;
-        {
-            TileLabels->set_text(
+        struct Data {
+            DirPyrDenoise *me;
+            int tileX;
+            int tileY;
+            int prevX;
+            int prevY;
+            int sizeT;
+            int sizeP;
+        };
+
+        const auto func = [](gpointer data) -> gboolean {
+            Data *d = static_cast<Data *>(data);
+            DirPyrDenoise *me = d->me;
+            me->TileLabels->set_text(
                 Glib::ustring::compose(M("TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO"),
-                                       Glib::ustring::format(std::fixed, std::setprecision(0), sT),
-                                       Glib::ustring::format(std::fixed, std::setprecision(0), nX),
-                                       Glib::ustring::format(std::fixed, std::setprecision(0), nY))
+                                       Glib::ustring::format(std::fixed, std::setprecision(0), d->sizeT),
+                                       Glib::ustring::format(std::fixed, std::setprecision(0), d->tileX),
+                                       Glib::ustring::format(std::fixed, std::setprecision(0), d->tileY))
             );
-        }
-    }
-}
-void DirPyrDenoise::updatePrevLabel ()
-{
-    if (!batchMode) {
-        float sP;
-        float pX, pY;
-        sP = nextsizeP;
-        pX = nextprevX;
-        pY = nextprevY;
-        {
-            PrevLabels->set_text(
+            me->PrevLabels->set_text(
                 Glib::ustring::compose(M("TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_INFO"),
-                                       Glib::ustring::format(std::fixed, std::setprecision(0), sP),
-                                       Glib::ustring::format(std::fixed, std::setprecision(0), pX),
-                                       Glib::ustring::format(std::fixed, std::setprecision(0), pY))
+                                       Glib::ustring::format(std::fixed, std::setprecision(0), d->sizeP),
+                                       Glib::ustring::format(std::fixed, std::setprecision(0), d->prevX),
+                                       Glib::ustring::format(std::fixed, std::setprecision(0), d->prevY))
             );
-        }
+            delete d;
+            return FALSE;
+        };
+
+        idle_register.add(func, new Data { this, tileX, tileY, prevX, prevY, sizeT, sizeP });
     }
 }
 
 void DirPyrDenoise::noiseChanged (double nresid, double highresid)
 {
-    nextnresid = nresid;
-    nexthighresid = highresid;
-
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<DirPyrDenoise*>(data)->noiseComputed_();
-        return false;
-    };
-
-    idle_register.add(func, this);
-}
-
-bool DirPyrDenoise::noiseComputed_ ()
-{
-
-    disableListener ();
-    enableListener ();
-    updateNoiseLabel ();
-    return false;
-}
-
-void DirPyrDenoise::updateNoiseLabel ()
-{
     if (!batchMode) {
-        float nois, high;
-        nois = nextnresid;
-        high = nexthighresid;
+        struct Data {
+            DirPyrDenoise *me;
+            double nresid;
+            double highresid;
+        };
 
-        if(nois == 0.f && high == 0.f) {
-            NoiseLabels->set_text(M("TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY"));
-        } else {
-            NoiseLabels->set_text(
-                Glib::ustring::compose(M("TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO"),
-                                       Glib::ustring::format(std::fixed, std::setprecision(0), nois),
-                                       Glib::ustring::format(std::fixed, std::setprecision(0), high))
-            );
-        }
+        const auto func = [](gpointer data) -> gboolean {
+            Data *d = static_cast<Data *>(data);
+            DirPyrDenoise *me = d->me;
+            me->updateNoiseLabel(d->nresid, d->highresid);
+            delete d;
+            return FALSE;
+        };
+
+        idle_register.add(func, new Data { this, nresid, highresid });
     }
 }
 
-
+void DirPyrDenoise::updateNoiseLabel (float nois, float high)
+{
+    if(nois == 0.f && high == 0.f) {
+        NoiseLabels->set_text(M("TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY"));
+    } else {
+        NoiseLabels->set_text(
+            Glib::ustring::compose(M("TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO"),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), nois),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), high))
+        );
+    }
+}
 
 void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited)
 {
@@ -647,7 +582,7 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited)
     medmethodconn.block(false);
     rgbmethodconn.block(false);
     methodmedconn.block(false);
-    updateNoiseLabel ();
+    updateNoiseLabel();
 
     enableListener ();
 
