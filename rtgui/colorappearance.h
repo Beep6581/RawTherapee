@@ -59,11 +59,8 @@ public:
     void tonecie_toggled     ();
 //    void sharpcie_toggled     ();
     void autoCamChanged (double ccam, double ccamout);
-    bool autoCamComputed_ ();
     void adapCamChanged (double cadap);
-    bool adapCamComputed_ ();
     void ybCamChanged (int yb);
-    bool ybCamComputed_ ();
 
     void curveChanged        (CurveEditor* ce);
     void curveMode1Changed   ();
@@ -160,8 +157,6 @@ private:
     DiagonalCurveEditor* shape;
     DiagonalCurveEditor* shape2;
     DiagonalCurveEditor* shape3;
-    double nextCcam, nextCcamout, nextCadap;
-    int nextYbscn;
     bool lastAutoDegree;
     bool lastAutoAdapscen;
     bool lastAutoDegreeout;

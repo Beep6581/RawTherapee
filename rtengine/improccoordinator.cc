@@ -611,7 +611,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             if (actListener && params.colorToning.enabled) {
                 if (params.blackwhite.enabled && params.colorToning.autosat) {
-                    actListener->autoColorTonChanged(0, satTH, satPR);    //hide sliders only if autosat
+                    actListener->autoColorTonChanged(satTH, satPR);    //hide sliders only if autosat
                     indi = 0;
                 } else {
                     if (params.colorToning.autosat) {
@@ -656,7 +656,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         printf("ImProcCoordinator / Auto CT:  indi=%d   satH=%d  satPR=%d\n", indi, (int)colourToningSatLimit, (int) colourToningSatLimitOpacity);
                     }
 
-                    actListener->autoColorTonChanged(indi, (int) colourToningSatLimit, (int)colourToningSatLimitOpacity);  //change sliders autosat
+                    actListener->autoColorTonChanged((int) colourToningSatLimit, (int)colourToningSatLimitOpacity);  //change sliders autosat
                 }
 
                 // correct GUI black and white with value

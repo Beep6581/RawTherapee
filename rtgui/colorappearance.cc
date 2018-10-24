@@ -1451,75 +1451,64 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
 
 void ColorAppearance::autoCamChanged (double ccam, double ccamout)
 {
-    nextCcam = ccam;
-    nextCcamout = ccamout;
+    struct Data {
+        ColorAppearance *me;
+        double ccam;
+        double ccamout;
+    };
 
-    const auto func = [] (gpointer data) -> gboolean {
-        static_cast<ColorAppearance*> (data)->autoCamComputed_();
+    const auto func = [](gpointer data) -> gboolean {
+        Data *d = static_cast<Data *>(data);
+        ColorAppearance *me = d->me;
+        me->disableListener();
+        me->degree->setValue(d->ccam);
+        me->degreeout->setValue(d->ccamout);
+        me->enableListener();
+        delete d;
         return FALSE;
     };
 
-    idle_register.add (func, this);
-}
-
-bool ColorAppearance::autoCamComputed_ ()
-{
-
-    disableListener ();
-//  degree->setEnabled (true);
-    degree->setValue (nextCcam);
-    degreeout->setValue (nextCcamout);
-    enableListener ();
-
-    return false;
+    idle_register.add(func, new Data { this, ccam, ccamout });
 }
 
 void ColorAppearance::adapCamChanged (double cadap)
 {
-    nextCadap = cadap;
+    struct Data {
+        ColorAppearance *me;
+        double cadap;
+    };
 
-    const auto func = [] (gpointer data) -> gboolean {
-        static_cast<ColorAppearance*> (data)->adapCamComputed_();
+    const auto func = [](gpointer data) -> gboolean {
+        Data *d = static_cast<Data *>(data);
+        ColorAppearance *me = d->me;
+        me->disableListener();
+        me->adapscen->setValue(d->cadap);
+        me->enableListener();
+        delete d;
         return FALSE;
     };
 
-    idle_register.add (func, this);
-}
-
-bool ColorAppearance::adapCamComputed_ ()
-{
-
-    disableListener ();
-//  degree->setEnabled (true);
-    adapscen->setValue (nextCadap);
-//  ybscen->setValue (nextYbscn);
-    enableListener ();
-
-    return false;
+    idle_register.add(func, new Data { this, cadap });
 }
 
 void ColorAppearance::ybCamChanged (int ybsc)
 {
-    nextYbscn = ybsc;
+    struct Data {
+        ColorAppearance *me;
+        int ybsc;
+    };
 
-    const auto func = [] (gpointer data) -> gboolean {
-        static_cast<ColorAppearance*> (data)->ybCamComputed_();
+    const auto func = [](gpointer data) -> gboolean {
+        Data *d = static_cast<Data *>(data);
+        ColorAppearance *me = d->me;
+        me->disableListener();
+        me->ybscen->setValue(d->ybsc);
+        me->enableListener();
+        delete d;
         return FALSE;
     };
 
-    idle_register.add (func, this);
-}
-
-bool ColorAppearance::ybCamComputed_ ()
-{
-
-    disableListener ();
-//  degree->setEnabled (true);
-//    adapscen->setValue (nextCadap);
-    ybscen->setValue (nextYbscn);
-    enableListener ();
-
-    return false;
+    idle_register.add(func, new Data { this, ybsc });
 }
 
 void ColorAppearance::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller)

@@ -93,7 +93,6 @@ private:
     void neutral_pressed ();
     void neutralchPressed ();
     void tmrToggled ();
-    void updatewavLabel ();
     void wavChanged (double nlevel);
 
     void HSmethodUpdateUI();
@@ -252,7 +251,6 @@ private:
     sigc::connection neutralchPressedConn;
 
     bool lastmedian, lastmedianlev, lastlinkedg, lastavoid, lastlipst, lasttmr, lastcbenab;
-    int nextnlevel;
 
     IdleRegister idle_register;
 };

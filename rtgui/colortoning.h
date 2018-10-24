@@ -36,8 +36,7 @@ public:
     void setAdjusterBehavior   (bool splitAdd, bool satThresholdAdd, bool satOpacityAdd, bool strprotectAdd, bool balanceAdd);
     void neutral_pressed       ();
     //void neutralCurves_pressed ();
-    void autoColorTonChanged   (int bwct, int satthres, int satprot);
-    bool CTComp_               ();
+    void autoColorTonChanged   (int satthres, int satprot);
 
     void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop);
     void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight);
@@ -99,9 +98,6 @@ private:
 
     Gtk::Button* neutral;
     Gtk::HBox* neutrHBox;
-    int nextbw;
-    int nextsatth;
-    int nextsatpr;
     Glib::ustring nextbalcolor;
     Glib::ustring balcolor;
     sigc::connection neutralconn, twocconn; //, neutralcurvesconn;

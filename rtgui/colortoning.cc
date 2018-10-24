@@ -13,7 +13,6 @@ using namespace rtengine::procparams;
 
 ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLORTONING_LABEL"), false, true)
 {
-    nextbw = 0;
     CurveListener::setMulti(true);
 
     //---------------method
@@ -688,40 +687,26 @@ void ColorToning::setAdjusterBehavior (bool splitAdd, bool satThresholdAdd, bool
 
 }
 
-void ColorToning::autoColorTonChanged(int bwct, int satthres, int satprot)
+void ColorToning::autoColorTonChanged(int satthres, int satprot)
 {
-    nextbw = bwct;
-    nextsatth = satthres;
-    nextsatpr = satprot;
+        struct Data {
+            ColorToning *me;
+            int satthres;
+            int satprot;
+        };
 
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<ColorToning*>(data)->CTComp_();
-        return FALSE;
-    };
+        const auto func = [](gpointer data) -> gboolean {
+            Data *d = static_cast<Data *>(data);
+            ColorToning *me = d->me;
+            me->disableListener();
+            me->satProtectionThreshold->setValue(d->satthres);
+            me->saturatedOpacity->setValue(d->satprot);
+            me->enableListener ();
+            delete d;
+            return FALSE;
+        };
 
-    idle_register.add(func, this);
-}
-
-bool ColorToning::CTComp_ ()
-{
-
-    disableListener ();
-    saturatedOpacity->setValue (nextsatpr);
-    satProtectionThreshold->setValue (nextsatth);
-    /*  if(nextbw==1) {
-            saturatedOpacity->show();
-            satProtectionThreshold->show();
-            autosat->show();
-        }
-        else {
-            saturatedOpacity->hide();
-            satProtectionThreshold->hide();
-            autosat->hide();
-        }
-    */
-    enableListener ();
-
-    return false;
+        idle_register.add(func, new Data { this, satthres, satprot });
 }
 
 void ColorToning::adjusterChanged (ThresholdAdjuster* a, double newBottom, double newTop)
