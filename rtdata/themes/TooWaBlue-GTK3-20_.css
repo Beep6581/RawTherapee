@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2018 TooWaBoo
-  Version 2.80
+  Version 2.82
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -80,7 +80,6 @@
     min-height: 0;
     padding: 0;
     margin: 0;
-    opacity: 1;
     border: none;
     box-shadow: none;
 }
@@ -144,6 +143,10 @@ paned {
 arrow {
     min-width: 1.333333333333333333em;
     min-height: 1.333333333333333333em;
+}
+/* combobox cellview to high for font size 8@96dpi*/
+cellview {
+    margin: -1px 0;
 }
 
 text {
@@ -290,7 +293,7 @@ textview:selected, treeview:selected {
 }
 
 #Snapshots > border {
-    min-height: calc(6.5em + 36px);
+    min-height: calc(6em + 36px);
 }
 #Snapshots > label {
     margin-bottom: -4px;
@@ -315,6 +318,7 @@ textview:selected, treeview:selected {
     border: 0.083333333333333333em solid @bg-dark-grey;
     border-radius: 0;
     box-shadow: none;
+    min-height: 2em;
 }
 
 #Snapshots button:hover,
@@ -326,8 +330,9 @@ background-color: @bg-list-hover;
 background-color: shade(@bg-list-hover, 1.15);
 }
 
+fontchooser scrolledwindow,
 #PlacesPaned scrolledwindow,
-#HistoryPanel > border,
+#HistoryPanel scrolledwindow,
 #Snapshots scrolledwindow {
     background-color: @bg-dark-grey;
     border: 0.083333333333333333em solid @bg-dark-grey;
@@ -686,7 +691,18 @@ scrollbar.hovering slider:hover {
 scrollbar:not(.overlay-indicator):hover {
     min-width: 1px;
 }
-/**/
+
+/* Toolbar stuck workaround */
+.scrollableToolbar > scrollbar:not(.dummy),
+.scrollableToolbar > scrollbar:not(.dummy) > contents:not(.dummy),
+.scrollableToolbar > scrollbar:not(.dummy) > contents:not(.dummy) > trough:not(.dummy),
+.scrollableToolbar > scrollbar:not(.dummy) > contents:not(.dummy) > trough:not(.dummy) > slider:not(.dummy) {
+    padding: 0;
+    margin: 0;
+    min-height: 0;
+    min-width: 0;
+    border: none;
+}
 
 /*** end ***************************************************************************************/
 
@@ -1477,6 +1493,10 @@ button.text-button label {
     margin: 0 0.5em;/* x */
 }
 
+button image + label {
+    margin-left: 0.25em;
+}
+
 #PrefNotebook > stack > :nth-child(5) combobox {
     /* margin: 0.166666666666666666em 0; */
     margin: 2px 0;
@@ -1583,12 +1603,9 @@ button.MiddleH {
     margin-left: -2px;
 }
 
-#PlacesPaned button.Left,
-#PlacesPaned button.Right {
-    margin-top: 3px;
-}
 #PlacesPaned combobox {
-    margin-bottom: -3px;
+    margin-bottom: -8px;
+    padding-bottom: 0.416666666666666666em;
 }
 /**/
 
@@ -1699,7 +1716,15 @@ buttonbox:not(.dialog-action-area) button{
 
 button.color {
     min-height: 1.166666666666666666em;
+    min-width: 2.75em;
     padding: 0.25em;
+}
+button.color colorswatch,
+colorchooser colorswatch {
+    border: 1px solid @bg-button-border;
+}
+colorchooser colorswatch#add-color-button:first-child {
+  border-radius: 5.5px 0 0 5.5px;
 }
 
 /* Save, Cancel, OK ... buttons */
@@ -2132,21 +2157,10 @@ headerbar .title:backdrop {
     color: alpha(@winTitle,.60);
 }
 /*** end ***************************************************************************************/
-/* Toolbar stuck workaround */
-
-/* .scrollableToolbar scrollbar:not(.overlay-indicator) slider:not(.dummy) {
-    padding: 0;
-    margin: 0;
-    min-height: 0;
-    min-width: 0;
-    border: none;
-} */
-
 
 
 /* .view:not(check):not(radio), image:not(check):not(radio), spinbutton button, cellview {
-    -gtk-icon-transform: scale(1.5);
-}
-* {-gtk-dpi: 144;} */
-
+    -gtk-icon-transform: scale(calc(( 96 / 96 ) * ( 8 / 9 )));
+} */
+/* * {-gtk-dpi: 144;} */
 

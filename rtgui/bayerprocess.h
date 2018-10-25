@@ -25,7 +25,7 @@
 #include "guiutils.h"
 #include "toolpanel.h"
 
-class BayerProcess : public ToolParamBlock, public AdjusterListener, public CheckBoxListener, public FoldableToolPanel, public rtengine::FrameCountListener
+class BayerProcess : public ToolParamBlock, public AdjusterListener, public CheckBoxListener, public FoldableToolPanel, public rtengine::FrameCountListener, public rtengine::AutoContrastListener
 {
 
 protected:
@@ -60,15 +60,17 @@ protected:
     Gtk::VBox *dualDemosaicOptions;
     Adjuster* dualDemosaicContrast;
     int oldMethod;
-
+    bool lastAutoContrast;
     IdleRegister idle_register;
 
     rtengine::ProcEvent EvDemosaicBorder;
+    rtengine::ProcEvent EvDemosaicAutoContrast;
     rtengine::ProcEvent EvDemosaicContrast;
     rtengine::ProcEvent EvDemosaicPixelshiftDemosaicMethod;
 public:
 
     BayerProcess ();
+    ~BayerProcess ();
 
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
     void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
@@ -80,9 +82,11 @@ public:
     void methodChanged();
     void imageNumberChanged();
     void adjusterChanged(Adjuster* a, double newval);
+    void adjusterAutoToggled (Adjuster* a, bool newval);
     void checkBoxToggled(CheckBox* c, CheckValue newval);
     void pixelShiftMotionMethodChanged();
     void pixelShiftDemosaicMethodChanged();
+    void autoContrastChanged (double autoContrast);
     void FrameCountChanged(int n, int frameNum);
 };
 

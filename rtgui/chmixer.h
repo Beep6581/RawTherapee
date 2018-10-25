@@ -42,6 +42,7 @@ public:
     void setBatchMode    (bool batchMode);
 
     void adjusterChanged (Adjuster* a, double newval);
+    void adjusterAutoToggled(Adjuster* a, bool newval);
     void setAdjusterBehavior (bool rgbadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
     void enabledChanged();

@@ -127,6 +127,7 @@ set(RTENGINESOURCEFILES
     xtrans_demosaic.cc
     vng4_demosaic_RT.cc
     ipsoftlight.cc
+    guidedfilter.cc
     )
 
 if(LENSFUN_HAS_LOAD_DIRECTORY)

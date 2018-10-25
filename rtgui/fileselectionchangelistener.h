@@ -19,13 +19,13 @@
 #ifndef _FILESELECTIONCHANGELISTENER_
 #define _FILESELECTIONCHANGELISTENER_
 
-#include "thumbnail.h"
+class Thumbnail;
 
 class FileSelectionChangeListener
 {
-
 public:
-    virtual void selectionChanged       (const std::vector<Thumbnail*>& selected) {}
+    virtual ~FileSelectionChangeListener() = default;
+    virtual void selectionChanged(const std::vector<Thumbnail*>& selected) = 0;
 };
 
 #endif

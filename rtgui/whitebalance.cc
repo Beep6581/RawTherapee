@@ -370,7 +370,7 @@ void WhiteBalance::enabledChanged()
 }
 
 
-void WhiteBalance::adjusterChanged (Adjuster* a, double newval)
+void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
 {
     int tVal = (int)temp->getValue();
     double gVal = green->getValue();
@@ -431,6 +431,10 @@ void WhiteBalance::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvWBtempBias, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(2), a->getValue()));
         }
     }
+}
+
+void WhiteBalance::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void WhiteBalance::optChanged ()

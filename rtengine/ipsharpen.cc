@@ -176,7 +176,8 @@ BENCHFUN
 
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     JaggedArray<float> blend(W, H);
-    buildBlendMask(luminance, blend, W, H, sharpenParam.contrast / 100.f, sharpenParam.deconvamount / 100.0);
+    float contrast = sharpenParam.contrast / 100.f;
+    buildBlendMask(luminance, blend, W, H, contrast, sharpenParam.deconvamount / 100.f);
 
     const float damping = sharpenParam.deconvdamping / 5.0;
     const bool needdamp = sharpenParam.deconvdamping > 0;
@@ -222,7 +223,8 @@ void ImProcFunctions::sharpening (LabImage* lab, const SharpeningParams &sharpen
     if(showMask) {
         // calculate contrast based blend factors to reduce sharpening in regions with low contrast
         JaggedArray<float> blend(W, H);
-        buildBlendMask(lab->L, blend, W, H, sharpenParam.contrast / 100.f, sharpenParam.method == "rld" ? sharpenParam.deconvamount / 100.0 : 1.f);
+        float contrast = sharpenParam.contrast / 100.f;
+        buildBlendMask(lab->L, blend, W, H, contrast, sharpenParam.method == "rld" ? sharpenParam.deconvamount / 100.f : 1.f);
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -256,7 +258,8 @@ BENCHFUN
 
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     JaggedArray<float> blend(W, H);
-    buildBlendMask(lab->L, blend, W, H, sharpenParam.contrast / 100.f);
+    float contrast = sharpenParam.contrast / 100.f;
+    buildBlendMask(lab->L, blend, W, H, contrast);
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -610,7 +613,8 @@ BENCHFUN
 
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     JaggedArray<float> blend(W, H);
-    buildBlendMask(luminance, blend, W, H, params->sharpenMicro.contrast / 100.f);
+    float contrast = params->sharpenMicro.contrast / 100.f;
+    buildBlendMask(luminance, blend, W, H, contrast);
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -819,7 +823,8 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2, bool showMask)
     if(showMask) {
         // calculate contrast based blend factors to reduce sharpening in regions with low contrast
         JaggedArray<float> blend(W, H);
-        buildBlendMask(ncie->sh_p, blend, W, H, params->sharpening.contrast / 100.f);
+        float contrast = params->sharpening.contrast / 100.f;
+        buildBlendMask(ncie->sh_p, blend, W, H, contrast);
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -852,7 +857,8 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2, bool showMask)
 
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     JaggedArray<float> blend(W, H);
-    buildBlendMask(ncie->sh_p, blend, W, H, params->sharpening.contrast / 100.f);
+    float contrast = params->sharpening.contrast / 100.f;
+    buildBlendMask(ncie->sh_p, blend, W, H, contrast);
 
 #ifdef _OPENMP
     #pragma omp parallel

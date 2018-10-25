@@ -17,12 +17,26 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "shadowshighlights.h"
+#include "eventmapper.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
 ShadowsHighlights::ShadowsHighlights () : FoldableToolPanel(this, "shadowshighlights", M("TP_SHADOWSHLIGHTS_LABEL"), false, true)
 {
+    auto m = ProcEventMapper::getInstance();
+    EvSHColorspace = m->newEvent(RGBCURVE, "HISTORY_MSG_SH_COLORSPACE");
+
+    Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
+    hb->pack_start(*Gtk::manage(new Gtk::Label(M("TP_DIRPYRDENOISE_MAIN_COLORSPACE") + ": ")), Gtk::PACK_SHRINK);
+    colorspace = Gtk::manage(new MyComboBoxText());
+    colorspace->append(M("TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB"));
+    colorspace->append(M("TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB"));
+    hb->pack_start(*colorspace);
+    pack_start(*hb);
+
+    pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+
     highlights   = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), 0, 100, 1, 0));
     h_tonalwidth = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_HLTONALW"), 10, 100, 1, 70));
     pack_start (*highlights);
@@ -46,6 +60,8 @@ ShadowsHighlights::ShadowsHighlights () : FoldableToolPanel(this, "shadowshighli
     shadows->setAdjusterListener (this);
     s_tonalwidth->setAdjusterListener (this);
 
+    colorspace->signal_changed().connect(sigc::mem_fun(*this, &ShadowsHighlights::colorspaceChanged));
+    
     show_all_children ();
 }
 
@@ -61,6 +77,7 @@ void ShadowsHighlights::read (const ProcParams* pp, const ParamsEdited* pedited)
         shadows->setEditedState      (pedited->sh.shadows ? Edited : UnEdited);
         s_tonalwidth->setEditedState (pedited->sh.stonalwidth ? Edited : UnEdited);
         set_inconsistent             (multiImage && !pedited->sh.enabled);
+
     }
 
     setEnabled (pp->sh.enabled);
@@ -71,6 +88,14 @@ void ShadowsHighlights::read (const ProcParams* pp, const ParamsEdited* pedited)
     shadows->setValue       (pp->sh.shadows);
     s_tonalwidth->setValue  (pp->sh.stonalwidth);
 
+    if (pedited && !pedited->sh.lab) {
+        colorspace->set_active(2);
+    } else if (pp->sh.lab) {
+        colorspace->set_active(1);
+    } else {
+        colorspace->set_active(0);
+    }
+    
     enableListener ();
 }
 
@@ -84,6 +109,12 @@ void ShadowsHighlights::write (ProcParams* pp, ParamsEdited* pedited)
     pp->sh.stonalwidth   = (int)s_tonalwidth->getValue ();
     pp->sh.enabled       = getEnabled();
 
+    if (colorspace->get_active_row_number() == 0) {
+        pp->sh.lab = false;
+    } else if (colorspace->get_active_row_number() == 1) {
+        pp->sh.lab = true;
+    }
+
     if (pedited) {
         pedited->sh.radius          = radius->getEditedState ();
         pedited->sh.highlights      = highlights->getEditedState ();
@@ -91,6 +122,7 @@ void ShadowsHighlights::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->sh.shadows         = shadows->getEditedState ();
         pedited->sh.stonalwidth     = s_tonalwidth->getEditedState ();
         pedited->sh.enabled         = !get_inconsistent();
+        pedited->sh.lab = colorspace->get_active_row_number() != 2;
     }
 }
 
@@ -120,10 +152,8 @@ void ShadowsHighlights::setDefaults (const ProcParams* defParams, const ParamsEd
 
 void ShadowsHighlights::adjusterChanged (Adjuster* a, double newval)
 {
-
     if (listener && getEnabled()) {
-
-        Glib::ustring costr = Glib::ustring::format ((int)a->getValue());
+        const Glib::ustring costr = Glib::ustring::format ((int)a->getValue());
 
         if (a == highlights) {
             listener->panelChanged (EvSHHighlights, costr);
@@ -137,6 +167,10 @@ void ShadowsHighlights::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvSHRadius, costr);
         }
     }
+}
+
+void ShadowsHighlights::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void ShadowsHighlights::enabledChanged ()
@@ -153,6 +187,13 @@ void ShadowsHighlights::enabledChanged ()
     }
 }
 
+void ShadowsHighlights::colorspaceChanged()
+{
+    if (listener && (multiImage || getEnabled()) ) {
+        listener->panelChanged(EvSHColorspace, colorspace->get_active_text());
+    }
+}
+
 void ShadowsHighlights::setBatchMode (bool batchMode)
 {
 
@@ -162,6 +203,7 @@ void ShadowsHighlights::setBatchMode (bool batchMode)
     h_tonalwidth->showEditedCB ();
     shadows->showEditedCB ();
     s_tonalwidth->showEditedCB ();
+    colorspace->append(M("GENERAL_UNCHANGED"));    
 }
 
 void ShadowsHighlights::setAdjusterBehavior (bool hadd, bool sadd)

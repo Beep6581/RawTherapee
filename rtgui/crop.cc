@@ -728,7 +728,7 @@ void Crop::setDimensions (int mw, int mh)
     refreshSize ();
 }
 
-void Crop::sizeChanged (int x, int y, int ow, int oh)
+void Crop::sizeChanged(int x, int y, int ow, int oh)
 {
     struct Params {
         Crop* crop;
@@ -1261,9 +1261,8 @@ void Crop::cropManipReady ()
     idle_register.add(notifyListenerUI, this);
 }
 
-double Crop::getRatio ()
+double Crop::getRatio () const
 {
-
     double r = -1.0;
 
     if (!fixr->get_active()) {

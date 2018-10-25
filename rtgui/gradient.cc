@@ -247,10 +247,9 @@ void Gradient::setDefaults (const ProcParams* defParams, const ParamsEdited* ped
     }
 }
 
-void Gradient::adjusterChanged (Adjuster* a, double newval)
+void Gradient::adjusterChanged(Adjuster* a, double newval)
 {
-
-    updateGeometry (int(centerX->getValue()), int(centerY->getValue()), feather->getValue(), degree->getValue());
+    updateGeometry(int(centerX->getValue()), int(centerY->getValue()), feather->getValue(), degree->getValue());
 
     if (listener && getEnabled()) {
 
@@ -264,6 +263,10 @@ void Gradient::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvGradientCenter, Glib::ustring::compose ("X=%1\nY=%2", centerX->getTextValue(), centerY->getTextValue()));
         }
     }
+}
+
+void Gradient::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void Gradient::enabledChanged ()

@@ -66,9 +66,10 @@ public:
     void previewImageChanged ();
 
     // CropWindowListener interface
-    void cropPositionChanged   (CropWindow* w);
-    void cropWindowSizeChanged (CropWindow* w);
-    void cropZoomChanged       (CropWindow* w);
+    void cropPositionChanged(CropWindow* w);
+    void cropWindowSizeChanged(CropWindow* w);
+    void cropZoomChanged(CropWindow* w);
+    void initialImageArrived();
 };
 
 #endif

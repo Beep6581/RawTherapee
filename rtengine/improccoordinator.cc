@@ -93,7 +93,7 @@ ImProcCoordinator::ImProcCoordinator()
       fw(0), fh(0), tr(0),
       fullw(1), fullh(1),
       pW(-1), pH(-1),
-      plistener(nullptr), imageListener(nullptr), aeListener(nullptr), acListener(nullptr), abwListener(nullptr), awbListener(nullptr), frameCountListener(nullptr), imageTypeListener(nullptr), actListener(nullptr), adnListener(nullptr), awavListener(nullptr), dehaListener(nullptr), hListener(nullptr),
+      plistener(nullptr), imageListener(nullptr), aeListener(nullptr), acListener(nullptr), abwListener(nullptr), awbListener(nullptr), flatFieldAutoClipListener(nullptr), bayerAutoContrastListener(nullptr), xtransAutoContrastListener(nullptr), frameCountListener(nullptr), imageTypeListener(nullptr), actListener(nullptr), adnListener(nullptr), awavListener(nullptr), dehaListener(nullptr), hListener(nullptr),
       resultValid(false), lastOutputProfile("BADFOOD"), lastOutputIntent(RI__COUNT), lastOutputBPC(false), thread(nullptr), changeSinceLast(0), updaterRunning(false), destroying(false), utili(false), autili(false),
       butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false), wavcontlutili(false), colourToningSatLimit(0.f), colourToningSatLimitOpacity(0.f), highQualityComputed(false)
 {}
@@ -160,7 +160,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         }
     }
 
-    if (((todo & ALL) == ALL) || panningRelatedChange || (highDetailNeeded && options.prevdemo != PD_Sidecar)) {
+    if (((todo & ALL) == ALL) || (todo & M_MONITOR) || panningRelatedChange || (highDetailNeeded && options.prevdemo != PD_Sidecar)) {
         bwAutoR = bwAutoG = bwAutoB = -9000.f;
 
         if (todo == CROP && ipf.needsPCVignetting()) {
@@ -199,6 +199,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             imgsrc->setCurrentFrame(params.raw.bayersensor.imageNum);
 
             imgsrc->preprocess(rp, params.lensProf, params.coarse);
+            if (flatFieldAutoClipListener && rp.ff_AutoClipControl) {
+                flatFieldAutoClipListener->flatFieldAutoClipValueChanged(imgsrc->getFlatFieldAutoClipValue());
+            }
             imgsrc->getRAWHistogram(histRedRaw, histGreenRaw, histBlueRaw);
 
             highDetailPreprocessComputed = highDetailNeeded;
@@ -239,9 +242,16 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     imgsrc->setBorder(std::max(params.raw.bayersensor.border, 2));
                 }
             }
-            bool autoContrast = false;
-            double contrastThreshold = 0.f;
+            bool autoContrast = imgsrc->getSensorType() == ST_BAYER ? params.raw.bayersensor.dualDemosaicAutoContrast : params.raw.xtranssensor.dualDemosaicAutoContrast;
+            double contrastThreshold = imgsrc->getSensorType() == ST_BAYER ? params.raw.bayersensor.dualDemosaicContrast : params.raw.xtranssensor.dualDemosaicContrast;
             imgsrc->demosaic(rp, autoContrast, contrastThreshold); //enabled demosaic
+
+            if (imgsrc->getSensorType() == ST_BAYER && bayerAutoContrastListener && autoContrast) {
+                bayerAutoContrastListener->autoContrastChanged(autoContrast ? contrastThreshold : -1.0);
+            }
+            if (imgsrc->getSensorType() == ST_FUJI_XTRANS && xtransAutoContrastListener && autoContrast) {
+                xtransAutoContrastListener->autoContrastChanged(autoContrast ? contrastThreshold : -1.0);
+            }
 
             // if a demosaic happened we should also call getimage later, so we need to set the M_INIT flag
             todo |= M_INIT;
@@ -896,11 +906,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
     // process crop, if needed
     for (size_t i = 0; i < crops.size(); i++)
-        if (crops[i]->hasListener() && (panningRelatedChange || crops[i]->get_skip() == 1)) {
+        if (crops[i]->hasListener() && (panningRelatedChange || (highDetailNeeded && options.prevdemo != PD_Sidecar) || (todo & (M_MONITOR | M_RGBCURVE | M_LUMACURVE)) || crops[i]->get_skip() == 1)) {
             crops[i]->update(todo);     // may call ourselves
         }
 
-    if (panningRelatedChange) {
+    if (panningRelatedChange || (todo & M_MONITOR)) {
         progress("Conversion to RGB...", 100 * readyphase / numofphases);
 
         if ((todo != CROP && todo != MINUPDATE) || (todo & M_MONITOR)) {
@@ -1441,6 +1451,7 @@ void ImProcCoordinator::process()
             || params.softlight != nextParams.softlight
             || params.raw != nextParams.raw
             || params.retinex != nextParams.retinex
+            || params.wavelet != nextParams.wavelet
             || params.dirpyrequalizer != nextParams.dirpyrequalizer;
 
         params = nextParams;

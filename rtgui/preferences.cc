@@ -282,8 +282,6 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     appendBehavList (mi, M ("TP_VIBRANCE_PASTELS"), ADDSET_VIBRANCE_PASTELS, false);
     appendBehavList (mi, M ("TP_VIBRANCE_SATURATED"), ADDSET_VIBRANCE_SATURATED, false);
 
-    mi = behModel->append ();
-    mi->set_value (behavColumns.label, M ("TP_GAMMA_OUTPUT"));
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_CHMIXER_LABEL"));
@@ -929,11 +927,6 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     setExpandAlignProperties (hb4label, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     ckbHideTPVScrollbar = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_TP_VSCROLLBAR")) );
     setExpandAlignProperties (ckbHideTPVScrollbar, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
-#if defined(__linux__) && ((GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION > 18) || GTK_MAJOR_VERSION > 3)
-    // Cannot scroll toolbox with mousewheel when HideTPVScrollbar=true #3413
-    ckbHideTPVScrollbar->set_active(false);
-    ckbHideTPVScrollbar->set_sensitive(false);
-#endif
     workflowGrid->attach_next_to (*hb4label, *ckbFileBrowserToolbarSingleRow, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to (*ckbHideTPVScrollbar, *hb4label, Gtk::POS_RIGHT, 1, 1);
     ckbAutoSaveTpOpen = Gtk::manage (new Gtk::CheckButton (M ("PREFERENCES_AUTOSAVE_TP_OPEN")));

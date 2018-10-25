@@ -805,8 +805,15 @@ BENCHFUN
             }
 
 #endif
-            float *LbloxArray[denoiseNestedLevels * numthreads] = {};
-            float *fLbloxArray[denoiseNestedLevels * numthreads] = {};
+            const std::size_t blox_array_size = denoiseNestedLevels * numthreads;
+
+            float *LbloxArray[blox_array_size];
+            float *fLbloxArray[blox_array_size];
+
+            for (std::size_t i = 0; i < blox_array_size; ++i) {
+                LbloxArray[i] = nullptr;
+                fLbloxArray[i] = nullptr;
+            }
 
             if (numtiles > 1 && denoiseLuminance) {
                 for (int i = 0; i < denoiseNestedLevels * numthreads; ++i) {

@@ -104,6 +104,7 @@ public:
     void setDefaults           (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
     void trimValues            (rtengine::procparams::ProcParams* pp);
     void adjusterChanged       (Adjuster* a, double newval);
+    void adjusterAutoToggled   (Adjuster* a, bool newval);
     void autoOpenCurve         ();
     void medianmapChanged        ();
     void minmaxChanged (double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax);
@@ -123,7 +124,18 @@ public:
     void writeOptions (std::vector<int> &tpOpen);
     void updateToolState (std::vector<int> &tpOpen);
     void setAdjusterBehavior (bool strAdd, bool neighAdd, bool limdAdd, bool offsAdd, bool vartAdd, bool gamAdd, bool slopeAdd);
-    void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM, LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI);
+    void updateCurveBackgroundHistogram(
+        const LUTu& histToneCurve,
+        const LUTu& histLCurve,
+        const LUTu& histCCurve,
+        const LUTu& histLCAM,
+        const LUTu& histCCAM,
+        const LUTu& histRed,
+        const LUTu& histGreen,
+        const LUTu& histBlue,
+        const LUTu& histLuma,
+        const LUTu& histLRETI
+    );
 
     virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
 

@@ -62,7 +62,7 @@ public:
 
     void okPressed ();
     void cancelPressed ();
-    void formatChanged (Glib::ustring f);
+    void formatChanged(const Glib::ustring& format) override;
     bool keyPressed (GdkEventKey* event);
 };
 

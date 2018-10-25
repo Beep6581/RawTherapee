@@ -209,7 +209,7 @@ void FileBrowserEntry::procParamsChanged (Thumbnail* thm, int whoChangedIt)
     }
 }
 
-void FileBrowserEntry::updateImage (rtengine::IImage8* img, double scale, rtengine::procparams::CropParams cropParams)
+void FileBrowserEntry::updateImage(rtengine::IImage8* img, double scale, const rtengine::procparams::CropParams& cropParams)
 {
     if (!feih) {
         return;
@@ -260,7 +260,7 @@ void FileBrowserEntry::updateImage (rtengine::IImage8* img, double scale, rtengi
     idle_register.add(func, param, priority);
 }
 
-void FileBrowserEntry::_updateImage (rtengine::IImage8* img, double s, rtengine::procparams::CropParams cropParams)
+void FileBrowserEntry::_updateImage(rtengine::IImage8* img, double s, const rtengine::procparams::CropParams& cropParams)
 {
     MYWRITERLOCK(l, lockRW);
 

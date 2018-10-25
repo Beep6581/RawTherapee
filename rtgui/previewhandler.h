@@ -30,13 +30,13 @@
 
 class PreviewListener
 {
-
 public:
-    virtual ~PreviewListener () {}
-    virtual void previewImageChanged () {}
+    virtual ~PreviewListener() = default;
+    virtual void previewImageChanged() = 0;
 };
 
 class PreviewHandler;
+
 struct PreviewHandlerIdleHelper {
     PreviewHandler* phandler;
     bool destroyed;
@@ -72,9 +72,9 @@ public:
     }
 
     // previewimagelistener
-    void setImage   (rtengine::IImage8* img, double scale, rtengine::procparams::CropParams cp);
-    void delImage   (rtengine::IImage8* img);
-    void imageReady (rtengine::procparams::CropParams cp);
+    void setImage(rtengine::IImage8* img, double scale, const rtengine::procparams::CropParams& cp);
+    void delImage(rtengine::IImage8* img);
+    void imageReady(const rtengine::procparams::CropParams& cp);
 
     // this function is called when a new preview image arrives from rtengine
     void previewImageChanged ();

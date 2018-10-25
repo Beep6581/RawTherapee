@@ -59,11 +59,11 @@ public:
 
     void init (RTWindow* parent);
 
-    void addBatchQueueJobs (std::vector<BatchQueueEntry*> &entries , bool head = false);
+    void addBatchQueueJobs(const std::vector<BatchQueueEntry*>& entries , bool head = false);
 
     // batchqueuelistener interface
-    void queueSizeChanged     (int qsize, bool queueEmptied, bool queueError, Glib::ustring queueErrorMessage);
-    bool canStartNext         ();
+    void queueSizeChanged(int qsize, bool queueEmptied, bool queueError, const Glib::ustring& queueErrorMessage);
+    bool canStartNext();
 
     void startBatchProc ();
     void stopBatchProc ();
@@ -72,7 +72,7 @@ public:
     void saveOptions ();
     void pathFolderChanged ();
     void pathFolderButtonPressed ();
-    void formatChanged (Glib::ustring f);
+    void formatChanged(const Glib::ustring& format) override;
     void updateTab (int qsize, int forceOrientation = 0); // forceOrientation=0: base on options / 1: horizontal / 2: vertical
 
     bool handleShortcutKey (GdkEventKey* event);

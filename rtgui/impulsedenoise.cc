@@ -77,13 +77,15 @@ void ImpulseDenoise::setDefaults (const ProcParams* defParams, const ParamsEdite
     }
 }
 
-void ImpulseDenoise::adjusterChanged (Adjuster* a, double newval)
+void ImpulseDenoise::adjusterChanged(Adjuster* a, double newval)
 {
-
     if (listener && getEnabled()) {
-
         listener->panelChanged (EvIDNThresh, Glib::ustring::format (std::setw(2), std::fixed, std::setprecision(1), a->getValue()));
     }
+}
+
+void ImpulseDenoise::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void ImpulseDenoise::enabledChanged ()

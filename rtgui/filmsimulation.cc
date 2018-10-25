@@ -106,12 +106,16 @@ void FilmSimulation::enabledChanged ()
     }
 }
 
-void FilmSimulation::adjusterChanged( Adjuster* a, double newval )
+void FilmSimulation::adjusterChanged(Adjuster* a, double newval)
 {
-    if (listener && (multiImage || getEnabled()) ) {
-        Glib::ustring value = a->getTextValue();
-        listener->panelChanged ( EvFilmSimulationStrength, value );
+    if (listener && (multiImage || getEnabled())) {
+        const Glib::ustring value = a->getTextValue();
+        listener->panelChanged(EvFilmSimulationStrength, value);
     }
+}
+
+void FilmSimulation::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void FilmSimulation::setBatchMode( bool batchMode )

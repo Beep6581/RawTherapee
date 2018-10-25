@@ -86,9 +86,19 @@ public:
     }
 
     // DetailedCropListener interface
-    void    setDetailedCrop (rtengine::IImage8* im, rtengine::IImage8* imworking, rtengine::procparams::ColorManagementParams cmp,
-                             rtengine::procparams::CropParams cp, int cx, int cy, int cw, int ch, int skip);
-    bool    getWindow (int& cwx, int& cwy, int& cww, int& cwh, int& cskip);
+    void setDetailedCrop(
+        rtengine::IImage8* im,
+        rtengine::IImage8* imworking,
+        const rtengine::procparams::ColorManagementParams& cmp,
+        const rtengine::procparams::CropParams& cp,
+        int cx,
+        int cy,
+        int cw,
+        int ch,
+        int skip
+    );
+    void getWindow(int& cwx, int& cwy, int& cww, int& cwh, int& cskip);
+
     // SizeListener interface
     void    sizeChanged  (int w, int h, int ow, int oh);
 

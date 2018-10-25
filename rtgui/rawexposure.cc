@@ -76,7 +76,7 @@ void RAWExposure::write( rtengine::procparams::ProcParams* pp, ParamsEdited* ped
 
 }
 
-void RAWExposure::adjusterChanged (Adjuster* a, double newval)
+void RAWExposure::adjusterChanged(Adjuster* a, double newval)
 {
     if (listener) {
         Glib::ustring value = a->getTextValue();
@@ -87,6 +87,10 @@ void RAWExposure::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvPreProcessExpCorrPH,  value );
         }
     }
+}
+
+void RAWExposure::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void RAWExposure::setBatchMode(bool batchMode)

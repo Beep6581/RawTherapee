@@ -112,9 +112,8 @@ void Vignetting::setDefaults (const ProcParams* defParams, const ParamsEdited* p
     }
 }
 
-void Vignetting::adjusterChanged (Adjuster* a, double newval)
+void Vignetting::adjusterChanged(Adjuster* a, double newval)
 {
-
     if (listener)  {
         if (a == amount) {
             listener->panelChanged (EvVignettingAmount, amount->getTextValue());
@@ -126,6 +125,10 @@ void Vignetting::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvVignettingCenter, Glib::ustring::compose ("X=%1\nY=%2", centerX->getTextValue(), centerY->getTextValue()));
         }
     }
+}
+
+void Vignetting::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void Vignetting::setAdjusterBehavior (bool amountadd, bool radiusadd, bool strengthadd, bool centeradd)

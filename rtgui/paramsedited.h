@@ -402,12 +402,12 @@ class SHParamsEdited
 
 public:
     bool enabled;
-    bool hq;
     bool highlights;
     bool htonalwidth;
     bool shadows;
     bool stonalwidth;
     bool radius;
+    bool lab;
 };
 
 class CropParamsEdited
@@ -744,6 +744,7 @@ public:
         bool dcbIterations;
         bool dcbEnhance;
         bool lmmseIterations;
+        bool dualDemosaicAutoContrast;
         bool dualDemosaicContrast;
         bool pixelShiftMotionCorrectionMethod;
         bool pixelShiftEperIso;
@@ -774,6 +775,7 @@ public:
 
     public:
         bool method;
+        bool dualDemosaicAutoContrast;
         bool dualDemosaicContrast;
         bool ccSteps;
         bool exBlackRed;

@@ -46,6 +46,7 @@ public:
     void setBatchMode   (bool batchMode);
 
     void adjusterChanged  (Adjuster* a, double newval);
+    void adjusterAutoToggled(Adjuster* a, bool newval);
     void entryWChanged    ();
     void entryHChanged    ();
     void appliesToChanged ();

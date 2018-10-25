@@ -34,7 +34,7 @@ void PreviewWindow::on_realize ()
 {
 
     Gtk::DrawingArea::on_realize ();
-    add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK);
+    add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
 }
 
 void PreviewWindow::getObservedFrameArea (int& x, int& y, int& w, int& h)
@@ -194,22 +194,23 @@ void PreviewWindow::setImageArea (ImageArea* ia)
     }
 }
 
-void PreviewWindow::cropPositionChanged (CropWindow* w)
+void PreviewWindow::cropPositionChanged(CropWindow* w)
 {
-
     queue_draw ();
 }
 
-void PreviewWindow::cropWindowSizeChanged (CropWindow* w)
+void PreviewWindow::cropWindowSizeChanged(CropWindow* w)
 {
-
     queue_draw ();
 }
 
-void PreviewWindow::cropZoomChanged (CropWindow* w)
+void PreviewWindow::cropZoomChanged(CropWindow* w)
 {
-
     queue_draw ();
+}
+
+void PreviewWindow::initialImageArrived()
+{
 }
 
 bool PreviewWindow::on_motion_notify_event (GdkEventMotion* event)
