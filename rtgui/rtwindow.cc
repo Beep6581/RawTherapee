@@ -25,6 +25,7 @@
 #include "cursormanager.h"
 #include "rtimage.h"
 #include "whitebalance.h"
+#include "rtscalable.h"
 #include "../rtengine/icons.h"
 
 #if defined(__APPLE__)
@@ -93,6 +94,10 @@ RTWindow::RTWindow ()
     cacheMgr->init ();
     WhiteBalance::init();
     ProfilePanel::init (this);
+    RTScalable::init(this);
+    RTSurface::init();
+    RTImage::init();
+    MyExpander::init();
 
 #ifndef WIN32
     const std::vector<Glib::RefPtr<Gdk::Pixbuf>> appIcons = {
@@ -192,10 +197,14 @@ RTWindow::RTWindow ()
         if (options.mainNBVertical) {
             mainNB->set_tab_pos (Gtk::POS_LEFT);
             fpl->set_angle (90);
-            fpanelLabelGrid->attach_next_to (*Gtk::manage (new RTImage ("folder-closed.png")), Gtk::POS_TOP, 1, 1);
+            RTImage* folderIcon = Gtk::manage (new RTImage ("folder-closed.png"));
+            fpanelLabelGrid->attach_next_to (*folderIcon, Gtk::POS_TOP, 1, 1);
             fpanelLabelGrid->attach_next_to (*fpl, Gtk::POS_TOP, 1, 1);
         } else {
-            fpanelLabelGrid->attach_next_to (*Gtk::manage (new RTImage ("folder-closed.png")), Gtk::POS_RIGHT, 1, 1);
+            printf("---------------- folder-closed\n");
+            RTImage* folderIcon = Gtk::manage (new RTImage ("folder-closed.png"));
+            printf("---------------- folder-closed : %dx%d\n", folderIcon->get_width(), folderIcon->get_height());
+            fpanelLabelGrid->attach_next_to (*folderIcon, Gtk::POS_RIGHT, 1, 1);
             fpanelLabelGrid->attach_next_to (*fpl, Gtk::POS_RIGHT, 1, 1);
         }
 
@@ -395,6 +404,12 @@ bool RTWindow::on_configure_event (GdkEventConfigure* event)
         get_size (options.windowWidth, options.windowHeight);
         get_position (options.windowX, options.windowY);
     }
+
+    printf("RTWindow::on_configure_event : May update the RTImage and RTSurface\n");
+    int newScale = get_window()->get_scale_factor();
+    double newDPI = get_window()->get_screen()->get_resolution();
+    RTImage::setDPInScale(newDPI, newScale);   // will update the RTImage   on scale/resolution change
+    RTSurface::setDPInScale(newDPI, newScale); // will update the RTSurface on scale/resolution change
 
     return Gtk::Widget::on_configure_event (event);
 }

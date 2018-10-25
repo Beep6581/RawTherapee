@@ -120,6 +120,8 @@ set(NONCLISOURCEFILES
     rgbcurves.cc
     rotate.cc
     rtimage.cc
+	rtsurface.cc
+	rtscalable.cc
     rtwindow.cc
     saveasdlg.cc
     saveformatpanel.cc
@@ -239,6 +241,10 @@ add_executable(rth-cli ${EXTRA_SRC_CLI} ${CLISOURCEFILES})
 # Add dependencies to executables targets
 add_dependencies(rth UpdateInfo)
 add_dependencies(rth-cli UpdateInfo)
+
+#Define a target specific definition to use in code
+target_compile_definitions(rth PUBLIC GUIVERSION)
+target_compile_definitions(rth-cli PUBLIC CLIVERSION)
 
 # Set executables targets properties, i.e. output filename and compile flags
 # for "Debug" builds, open a console in all cases for Windows version

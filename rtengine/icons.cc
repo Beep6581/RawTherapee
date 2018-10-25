@@ -2,7 +2,7 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
- *  Copyright (c) 2011 Jean-Christophe FRISCH <natureh@free.fr>
+ *  Copyright (c) 2018 Jean-Christophe FRISCH <natureh.510@gmail.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -25,62 +25,52 @@
 namespace rtengine
 {
 
-std::vector<Glib::ustring> imagePaths;
+Glib::ustring imagePath;
+Glib::ustring imagePath1;
+Glib::ustring imagePath2;
 
-bool loadIconSet(const Glib::ustring& iconSet)
+Glib::ustring findIconAbsolutePath (const Glib::ustring& iconName, double &dpi)
 {
     try {
+        double fallBackDPI = 0.;
+        Glib::ustring path;
+        Glib::ustring fallBackPath;
 
-        Glib::KeyFile keyFile;
-        keyFile.load_from_file (iconSet);
-
-        auto iconSetDir = keyFile.get_string ("General", "Iconset");
-
-        if (!iconSetDir.empty ()) {
-            imagePaths.push_back (Glib::build_filename (argv0, "images", iconSetDir, "actions"));
-            imagePaths.push_back (Glib::build_filename (argv0, "images", iconSetDir));
-            imagePaths.push_back (Glib::build_filename (argv0, "images", iconSetDir, "devices"));
-            imagePaths.push_back (Glib::build_filename (argv0, "images", iconSetDir, "places"));
+        if (dpi == 96.) {
+            path = imagePath1;
+            fallBackPath = imagePath2;
+            fallBackDPI = 192.;
+        } else {
+            path = imagePath2;
+            fallBackPath = imagePath1;
+            dpi = 192.;
+            fallBackDPI = 96.;
         }
 
-        iconSetDir = keyFile.get_string ("General", "FallbackIconset");
+        auto iconPath = Glib::build_filename(path, iconName);
 
-        if (!iconSetDir.empty ()) {
-            imagePaths.push_back (Glib::build_filename (argv0, "images", iconSetDir, "actions"));
-            imagePaths.push_back (Glib::build_filename (argv0, "images", iconSetDir));
-            imagePaths.push_back (Glib::build_filename (argv0, "images", iconSetDir, "devices"));
-            imagePaths.push_back (Glib::build_filename (argv0, "images", iconSetDir, "places"));
-        }
-
-        return true;
-
-    } catch (const Glib::Exception& exception) {
-
-        if (options.rtSettings.verbose) {
-            std::cerr << "Failed to load icon set \"" << iconSet << "\": " << exception.what() << std::endl;
-        }
-
-        return false;
-
-    }
-}
-
-Glib::ustring findIconAbsolutePath (const Glib::ustring& iconName)
-{
-    try {
-
-        for (const auto& imagePath : imagePaths) {
-            const auto iconPath = Glib::build_filename(imagePath, iconName);
-
+        if (Glib::file_test(iconPath, Glib::FILE_TEST_IS_REGULAR)) {
+            return iconPath;
+        } else {
+            // fallback solution
+            iconPath = Glib::build_filename(fallBackPath, iconName);
             if (Glib::file_test(iconPath, Glib::FILE_TEST_IS_REGULAR)) {
+                dpi = fallBackDPI;
                 return iconPath;
+            } else {
+                // second fallback solution: icon not resolution dependent
+                iconPath = Glib::build_filename(imagePath, iconName);
+                if (Glib::file_test(iconPath, Glib::FILE_TEST_IS_REGULAR)) {
+                    dpi = -1;
+                    return iconPath;
+                }
             }
         }
 
     } catch(const Glib::Exception&) {}
 
     if (options.rtSettings.verbose) {
-        std::cerr << "Icon \"" << iconName << "\" could not be found!" << std::endl;
+        std::cerr << "Icon \"" << iconName << "\" (" << dpi << " dpi) could not be found!" << std::endl;
     }
 
     return Glib::ustring();
@@ -106,12 +96,11 @@ void setPaths ()
         loadIconSet (Glib::build_filename (argv0, "themes", "Default.iconset"));
     }*/
 
-    imagePaths.clear ();
-
-    imagePaths.push_back (Glib::build_filename(argv0, "images", "dark"));
+    imagePath1 = Glib::build_filename(argv0, "images", "1", "dark");
+    imagePath2 = Glib::build_filename(argv0, "images", "2", "dark");
 
     // The images folder is the second fallback solution.
-    imagePaths.push_back (Glib::build_filename(argv0, "images"));
+    imagePath = Glib::build_filename(argv0, "images");
 }
 
 }

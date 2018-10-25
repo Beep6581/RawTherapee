@@ -82,8 +82,8 @@ protected:
     Glib::RefPtr<BackBuffer> backBuffer;
     bool bbSelected, bbFramed;
     guint8* bbPreview;
-    std::vector<Glib::RefPtr<Gdk::Pixbuf> > bbIcons;
-    std::vector<Glib::RefPtr<Gdk::Pixbuf> > bbSpecificityIcons;
+    std::vector<Cairo::RefPtr<Cairo::ImageSurface> > bbIcons;
+    std::vector<Cairo::RefPtr<Cairo::ImageSurface> > bbSpecificityIcons;
     CursorShape cursor_type;
 
     void drawFrame (Cairo::RefPtr<Cairo::Context> cr, const Gdk::RGBA& bg, const Gdk::RGBA& fg);
@@ -188,8 +188,8 @@ public:
 
     virtual void drawProgressBar (Glib::RefPtr<Gdk::Window> win, const Gdk::RGBA& foregr, const Gdk::RGBA& backgr, int x, int w, int y, int h) {}
 
-    virtual std::vector<Glib::RefPtr<Gdk::Pixbuf> > getIconsOnImageArea ();
-    virtual std::vector<Glib::RefPtr<Gdk::Pixbuf> > getSpecificityIconsOnImageArea ();
+    virtual std::vector<Cairo::RefPtr<Cairo::ImageSurface> > getIconsOnImageArea ();
+    virtual std::vector<Cairo::RefPtr<Cairo::ImageSurface> > getSpecificityIconsOnImageArea ();
     virtual void getIconSize (int& w, int& h);
 
     virtual bool    motionNotify  (int x, int y);

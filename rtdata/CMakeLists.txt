@@ -10,12 +10,14 @@ set(THEMEDIR "themes")
 
 # Images, mostly icons, which are generated using the generatePngIcons script:
 set(IMAGES_THEMED
-    "images/themed/png/dark"
-    "images/themed/png/light"
+    "images/themed/png/1"
+    "images/themed/png/2"
     )
 
 # Other images which are generated manually:
-file(GLOB IMAGES_NONTHEMED "images/non-themed/png/*")
+file(GLOB IMAGES_NONTHEMED   LIST_DIRECTORIES false "images/non-themed/png/*")
+file(GLOB IMAGES_NONTHEMED_1 LIST_DIRECTORIES false "images/non-themed/png/1/*")
+file(GLOB IMAGES_NONTHEMED_2 LIST_DIRECTORIES false "images/non-themed/png/2/*")
 
 if(WIN32)
     set(OPTIONSFILE "options/options.win")
@@ -58,7 +60,10 @@ endforeach()
 
 #install(DIRECTORY ${IMAGES_NONTHEMED} DESTINATION "${DATADIR}/images" FILES_MATCHING PATTERN "*.png")
 #install(DIRECTORY ${IMAGES_NONTHEMED} DESTINATION "${DATADIR}/images/")
-install(FILES ${IMAGES_NONTHEMED} DESTINATION "${DATADIR}/images")
+install(FILES ${IMAGES_NONTHEMED}   DESTINATION "${DATADIR}/images")
+
+install(FILES ${IMAGES_NONTHEMED_1} DESTINATION "${DATADIR}/images/1")
+install(FILES ${IMAGES_NONTHEMED_2} DESTINATION "${DATADIR}/images/2")
 
 if(APPLE)
     # CMake escapes first item quote character. Do not remove 'DUMMY_VARIABLE='

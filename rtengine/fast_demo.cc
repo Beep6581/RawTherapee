@@ -77,10 +77,10 @@ void RawImageSource::fast_demosaic()
 #endif
     {
 
-        char (*buffer);
-        float (*greentile);
-        float (*redtile);
-        float (*bluetile);
+        char *buffer;
+        float *greentile;
+        float *redtile;
+        float *bluetile;
 #define CLF 1
         // assign working space
         buffer = (char *) calloc(3 * sizeof(float) * TS * TS + 3 * CLF * 64 + 63, 1);

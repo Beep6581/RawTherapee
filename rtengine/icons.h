@@ -2,6 +2,7 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2018 Jean-Christophe FRISCH <natureh.510@gmail.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -25,7 +26,13 @@
 namespace rtengine
 {
 
-Glib::ustring findIconAbsolutePath (const Glib::ustring& iconName);
+/**
+ * @brief Find the absolute path for an icon name of the desired DPI.
+ *
+ * @return the absolute path to the icon file
+ * @return deiredDPI is updated to another DPI if the desired one wasn't found but a fallback solution exist, or -1 if the icon is not resolution dependent
+ */
+Glib::ustring findIconAbsolutePath (const Glib::ustring& iconName, double &dpi);
 void setPaths ();
 
 }

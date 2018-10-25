@@ -27,7 +27,7 @@
 #include "thumbbrowserbase.h"
 
 bool BatchQueueEntry::iconsLoaded(false);
-Glib::RefPtr<Gdk::Pixbuf> BatchQueueEntry::savedAsIcon;
+Cairo::RefPtr<Cairo::ImageSurface> BatchQueueEntry::savedAsIcon;
 
 BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm) :
     ThumbBrowserEntryBase(fname),
@@ -145,10 +145,10 @@ void BatchQueueEntry::removeButtonSet ()
     buttonSet = nullptr;
 }
 
-std::vector<Glib::RefPtr<Gdk::Pixbuf> > BatchQueueEntry::getIconsOnImageArea ()
+std::vector<Cairo::RefPtr<Cairo::ImageSurface> > BatchQueueEntry::getIconsOnImageArea ()
 {
 
-    std::vector<Glib::RefPtr<Gdk::Pixbuf> > ret;
+    std::vector<Cairo::RefPtr<Cairo::ImageSurface> > ret;
 
     if (!outFileName.empty()) {
         ret.push_back (savedAsIcon);

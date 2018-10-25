@@ -133,6 +133,10 @@ int processLineParams ( int argc, char **argv )
 
         if ( currParam.at (0) == '-' ) {
             switch ( currParam.at (1) ) {
+                case '-':
+                    // GTK --argument, we're skipping it
+                    break;
+
 #ifdef WIN32
 
                 case 'w': // This case is handled outside this function
@@ -248,7 +252,6 @@ RTWindow *create_rt_window()
     defaultIconTheme->append_search_path (icon_path);
 
     rtengine::setPaths();
-    MyExpander::init();  // has to stay AFTER rtengine::setPaths
 
     // ------- loading theme files
 

@@ -57,11 +57,11 @@ CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDet
 
     titleHeight = ih;
 
-    bZoomOut = new LWButton (RTImage::createFromPng ("magnifier-minus-small.png"), 0, nullptr, LWButton::Left, LWButton::Center, "Zoom Out");
-    bZoomIn  = new LWButton (RTImage::createFromPng ("magnifier-plus-small.png"),  1, nullptr, LWButton::Left, LWButton::Center, "Zoom In");
-    bZoom100 = new LWButton (RTImage::createFromPng ("magnifier-1to1-small.png"), 2, nullptr, LWButton::Left, LWButton::Center, "Zoom 100/%");
-    //bZoomFit = new LWButton (RTImage::createFromPng ("magnifier-fit.png"), 3, NULL, LWButton::Left, LWButton::Center, "Zoom Fit");
-    bClose   = new LWButton (RTImage::createFromPng ("cancel-small.png"),    4, nullptr, LWButton::Right, LWButton::Center, "Close");
+    bZoomOut = new LWButton (Cairo::RefPtr<RTSurface>(new RTSurface("magnifier-minus-small.png")), 0, nullptr, LWButton::Left, LWButton::Center, "Zoom Out");
+    bZoomIn  = new LWButton (Cairo::RefPtr<RTSurface>(new RTSurface("magnifier-plus-small.png")),  1, nullptr, LWButton::Left, LWButton::Center, "Zoom In");
+    bZoom100 = new LWButton (Cairo::RefPtr<RTSurface>(new RTSurface("magnifier-1to1-small.png")), 2, nullptr, LWButton::Left, LWButton::Center, "Zoom 100/%");
+    //bZoomFit = new LWButton (Cairo::RefPtr<RTSurface>(new RTSurface("magnifier-fit.png")), 3, NULL, LWButton::Left, LWButton::Center, "Zoom Fit");
+    bClose   = new LWButton (Cairo::RefPtr<RTSurface>(new RTSurface("cancel-small.png")), 4, nullptr, LWButton::Right, LWButton::Center, "Close");
 
     buttonSet.add (bZoomOut);
     buttonSet.add (bZoomIn);
@@ -2372,7 +2372,7 @@ void CropWindow::drawDecoration (Cairo::RefPtr<Cairo::Context> cr)
 
     // draw label
     cr->set_source_rgba (1, 1, 1, 0.5);
-    cr->move_to (x + 10 + sideBorderWidth + bZoomIn->getIcon()->get_width() + bZoomOut->getIcon()->get_width() + bZoom100->getIcon()->get_width(), y + 1 + upperBorderWidth + (titleHeight - ih) / 2);
+    cr->move_to (x + 10 + sideBorderWidth + bZoomIn->getIcon()->getWidth() + bZoomOut->getIcon()->getWidth() + bZoom100->getIcon()->getWidth(), y + 1 + upperBorderWidth + (titleHeight - ih) / 2);
     cllayout->add_to_cairo_context (cr);
     cr->fill ();
 

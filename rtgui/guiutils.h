@@ -181,11 +181,11 @@ public:
     typedef sigc::signal<void> type_signal_enabled_toggled;
 private:
     type_signal_enabled_toggled message;
-    static Glib::RefPtr<Gdk::Pixbuf> inconsistentPBuf; /// "inconsistent" image, displayed when useEnabled is true ; in this case, nothing will tell that an expander is opened/closed
-    static Glib::RefPtr<Gdk::Pixbuf> enabledPBuf;      ///      "enabled" image, displayed when useEnabled is true ; in this case, nothing will tell that an expander is opened/closed
-    static Glib::RefPtr<Gdk::Pixbuf> disabledPBuf;     ///     "disabled" image, displayed when useEnabled is true ; in this case, nothing will tell that an expander is opened/closed
-    static Glib::RefPtr<Gdk::Pixbuf> openedPBuf;       ///       "opened" image, displayed when useEnabled is false
-    static Glib::RefPtr<Gdk::Pixbuf> closedPBuf;       ///       "closed" image, displayed when useEnabled is false
+    static Glib::RefPtr<RTImage> inconsistentImage; /// "inconsistent" image, displayed when useEnabled is true ; in this case, nothing will tell that an expander is opened/closed
+    static Glib::RefPtr<RTImage> enabledImage;      ///      "enabled" image, displayed when useEnabled is true ; in this case, nothing will tell that an expander is opened/closed
+    static Glib::RefPtr<RTImage> disabledImage;     ///     "disabled" image, displayed when useEnabled is true ; in this case, nothing will tell that an expander is opened/closed
+    static Glib::RefPtr<RTImage> openedImage;       ///       "opened" image, displayed when useEnabled is false
+    static Glib::RefPtr<RTImage> closedImage;       ///       "closed" image, displayed when useEnabled is false
     bool enabled;               /// Enabled feature (default to true)
     bool inconsistent;          /// True if the enabled button is inconsistent
     Gtk::EventBox *titleEvBox;  /// EventBox of the title, to get a connector from it
@@ -208,7 +208,7 @@ private:
 protected:
     Gtk::Container* child;      /// Gtk::Contained to display below the expander's title
     Gtk::Widget* headerWidget;  /// Widget to display in the header, next to the arrow image ; can be NULL if the "string" version of the ctor has been used
-    Gtk::Image* statusImage;    /// Image to display the opened/closed status (if useEnabled is false) of the enabled/disabled status (if useEnabled is true)
+    RTImage* statusImage;       /// Image to display the opened/closed status (if useEnabled is false) of the enabled/disabled status (if useEnabled is true)
     Gtk::Label* label;          /// Text to display in the header, next to the arrow image ; can be NULL if the "widget" version of the ctor has been used
     bool useEnabled;            /// Set whether to handle an enabled/disabled feature and display the appropriate images
 

@@ -2,7 +2,7 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
- *  Copyright (c) 2011 Jean-Christophe FRISCH <natureh@free.fr>
+ *  Copyright (c) 2018 Jean-Christophe FRISCH <natureh.510@gmail.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -28,15 +28,44 @@
 namespace
 {
 
-std::map<std::string, Glib::RefPtr<Gdk::Pixbuf>> pixbufCache;
+std::map<std::string, Cairo::RefPtr<Cairo::ImageSurface>> surfaceCache;
 
 }
 
-RTImage::RTImage (const Glib::ustring& fileName, const Glib::ustring& rtlFileName) : Gtk::Image()
+double RTImage::dpiBack = 0.;
+int RTImage::scaleBack = 0;
+
+RTImage::RTImage () {}
+
+RTImage::RTImage (const Glib::ustring& fileName, const Glib::ustring& rtlFileName)
+{
+    setImage (fileName, rtlFileName);
+}
+
+RTImage::RTImage (RTImage &other)
+{
+    from(&other);
+}
+
+RTImage::RTImage (Glib::RefPtr<Gdk::Pixbuf> &pixbuf)
+{
+    if (pixbuf) {
+        set(pixbuf);
+    }
+}
+
+RTImage::RTImage (Glib::RefPtr<RTImage> &other)
+{
+    if (other) {
+        from(other.get());
+    }
+}
+
+void RTImage::setImage (const Glib::ustring& fileName, const Glib::ustring& rtlFileName)
 {
     Glib::ustring imageName;
 
-    if (!rtlFileName.empty () && get_direction () == Gtk::TEXT_DIR_RTL) {
+    if (!rtlFileName.empty() && getDirection() == Gtk::TEXT_DIR_RTL) {
         imageName = rtlFileName;
     } else {
         imageName = fileName;
@@ -45,73 +74,113 @@ RTImage::RTImage (const Glib::ustring& fileName, const Glib::ustring& rtlFileNam
     changeImage (imageName);
 }
 
+/*
+ * On windows, if scale = 2, the dpi is non significant, i.e. should be considered = 192
+ */
+void RTImage::setDPInScale (const double newDPI, const int newScale)
+{
+    if (scaleBack != newScale || (scaleBack == 1 && dpiBack != newDPI)) {
+        RTScalable::setDPInScale(newDPI, newScale);
+        dpiBack = getDPI();
+        scaleBack = getScale();
+        printf("RTImage::setDPInScale : New scale = %d & new DPI = %.3f (%.3f asked) -> Reloading all RTImage\n", scaleBack, dpiBack, newDPI);
+        updateImages();
+    }
+}
+
 void RTImage::changeImage (const Glib::ustring& imageName)
 {
     clear ();
 
-    auto iterator = pixbufCache.find (imageName);
+    auto iterator = surfaceCache.find (imageName);
 
-    if (iterator == pixbufCache.end ()) {
-        const auto imagePath = rtengine::findIconAbsolutePath (imageName);
-        const auto pixbuf = Gdk::Pixbuf::create_from_file (imagePath);
-
-        iterator = pixbufCache.emplace (imageName, pixbuf).first;
+    if (iterator == surfaceCache.end ()) {
+        const auto pixbuf = createFromFile(imageName);
+        iterator = surfaceCache.emplace (imageName, pixbuf).first;
     }
 
+    surface = iterator->second;
     set(iterator->second);
+}
+
+void RTImage::init()
+{
+    dpiBack = RTScalable::getDPI();
+    scaleBack = RTScalable::getScale();
 }
 
 void RTImage::updateImages()
 {
-    for (auto& entry : pixbufCache) {
-        const auto imagePath = rtengine::findIconAbsolutePath (entry.first);
-        entry.second = Gdk::Pixbuf::create_from_file (imagePath);
+    for (auto& entry : surfaceCache) {
+        entry.second = createFromFile(entry.first);
     }
 }
 
-Glib::RefPtr<Gdk::Pixbuf> RTImage::createFromFile (const Glib::ustring& fileName)
+void RTImage::from(RTImage* other)
 {
-    Glib::RefPtr<Gdk::Pixbuf> pixbuf;
+    if (!other) {
+        return;
+    }
+
+    if (other->get_pixbuf()) {
+        set(other->get_pixbuf());
+    } else {
+        surface = other->surface;
+        set(surface);
+    }
+}
+
+void RTImage::from(Glib::RefPtr<RTImage> other)
+{
+    if (other) {
+        from (other.get());
+    }
+}
+
+Cairo::RefPtr<Cairo::ImageSurface> RTImage::createFromFile (const Glib::ustring& fileName)
+{
+    Cairo::RefPtr<Cairo::ImageSurface> surf;
 
     try {
 
-        const auto filePath = rtengine::findIconAbsolutePath (fileName);
+        double requestedDPI = getDPI();
+        const auto filePath = rtengine::findIconAbsolutePath (fileName, requestedDPI);
+        // requestedDPI is now the icon's DPI, not necessarily the one we asked
 
         if (!filePath.empty ()) {
-            pixbuf = Gdk::Pixbuf::create_from_file (filePath);
+            surf = Cairo::ImageSurface::create_from_png(filePath);
         }
 
-    } catch (const Glib::Exception& exception) {
+        if (!surf) {
+            return surf; // nullptr
+        }
 
+        if (getDPI() > 0. && requestedDPI != -1 && requestedDPI != getDPI()) {
+            // scale the bitmap
+            printf("Resizing from %.1f to %.1f DPI\n", requestedDPI, getDPI());
+            resizeImage(surf, getDPI() / requestedDPI);
+        }
+
+        double x=0., y=0.;
+        cairo_surface_get_device_scale(surf->cobj(), &x, &y);
+        printf("   -> Cairo::ImageSurface is now %dx%d (scale: %.1f)\n", surf->get_width(), surf->get_height(), (float)x);
+        if (getScale() == 2) {
+            cairo_surface_set_device_scale(surf->cobj(), 0.5, 0.5);
+            cairo_surface_get_device_scale(surf->cobj(), &x, &y);
+            surf->flush();
+            printf("      Cairo::ImageSurface is now %dx%d (scale: %.1f)\n", surf->get_width(), surf->get_height(), (float)x);
+        }
+    } catch (const Glib::Exception& exception) {
         if (options.rtSettings.verbose) {
             std::cerr << "Failed to load image \"" << fileName << "\": " << exception.what() << std::endl;
         }
-
     }
 
-    return pixbuf;
+    return surf;
 }
 
-Cairo::RefPtr<Cairo::ImageSurface> RTImage::createFromPng (const Glib::ustring& fileName)
+/*
+bool RTImage::on_configure_event(GdkEventConfigure* configure_event)
 {
-    Cairo::RefPtr<Cairo::ImageSurface> surface;
-
-    try {
-
-        const auto filePath = rtengine::findIconAbsolutePath (fileName);
-
-        if (!filePath.empty()) {
-            surface = Cairo::ImageSurface::create_from_png (Glib::locale_from_utf8 (filePath));
-        }
-
-    } catch (const Glib::Exception& exception) {
-
-        if (options.rtSettings.verbose) {
-            std::cerr << "Failed to load PNG \"" << fileName << "\": " << exception.what() << std::endl;
-        }
-    }
-
-    return surface;
 }
-
-
+*/

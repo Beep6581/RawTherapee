@@ -315,7 +315,7 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
 
         for (size_t i = 0; i < bbIcons.size(); i++) {
             // Draw the image at 110, 90, except for the outermost 10 pixels.
-            Gdk::Cairo::set_source_pixbuf(cc, bbIcons[i], istartx, istarty);
+            cc->set_source(bbIcons[i], istartx, istarty);
             cc->rectangle(istartx, istarty, bbIcons[i]->get_width(), bbIcons[i]->get_height());
             cc->fill();
             istartx += bbIcons[i]->get_width() + igap;
@@ -329,7 +329,7 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
 
         for (size_t i = 0; i < bbSpecificityIcons.size(); ++i) {
             istartx2 -= bbSpecificityIcons[i]->get_width() - igap;
-            Gdk::Cairo::set_source_pixbuf(cc, bbSpecificityIcons[i], istartx2, istarty2 - bbSpecificityIcons[i]->get_height());
+            cc->set_source(bbSpecificityIcons[i], istartx2, istarty2 - bbSpecificityIcons[i]->get_height());
             cc->rectangle(istartx2, istarty2 - bbSpecificityIcons[i]->get_height(), bbSpecificityIcons[i]->get_width(), bbSpecificityIcons[i]->get_height());
             cc->fill();
         }
@@ -700,14 +700,14 @@ bool ThumbBrowserEntryBase::insideWindow (int x, int y, int w, int h)
     return !(ofsX + startx > x + w || ofsX + startx + exp_width < x || ofsY + starty > y + h || ofsY + starty + exp_height < y);
 }
 
-std::vector<Glib::RefPtr<Gdk::Pixbuf> > ThumbBrowserEntryBase::getIconsOnImageArea()
+std::vector<Cairo::RefPtr<Cairo::ImageSurface> > ThumbBrowserEntryBase::getIconsOnImageArea()
 {
-    return std::vector<Glib::RefPtr<Gdk::Pixbuf> >();
+    return std::vector<Cairo::RefPtr<Cairo::ImageSurface> >();
 }
 
-std::vector<Glib::RefPtr<Gdk::Pixbuf> > ThumbBrowserEntryBase::getSpecificityIconsOnImageArea()
+std::vector<Cairo::RefPtr<Cairo::ImageSurface> > ThumbBrowserEntryBase::getSpecificityIconsOnImageArea()
 {
-    return std::vector<Glib::RefPtr<Gdk::Pixbuf> >();
+    return std::vector<Cairo::RefPtr<Cairo::ImageSurface> >();
 }
 
 void ThumbBrowserEntryBase::getIconSize(int& w, int& h)

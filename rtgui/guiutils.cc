@@ -32,11 +32,11 @@
 
 using namespace std;
 
-Glib::RefPtr<Gdk::Pixbuf> MyExpander::inconsistentPBuf;
-Glib::RefPtr<Gdk::Pixbuf> MyExpander::enabledPBuf;
-Glib::RefPtr<Gdk::Pixbuf> MyExpander::disabledPBuf;
-Glib::RefPtr<Gdk::Pixbuf> MyExpander::openedPBuf;
-Glib::RefPtr<Gdk::Pixbuf> MyExpander::closedPBuf;
+Glib::RefPtr<RTImage> MyExpander::inconsistentImage;
+Glib::RefPtr<RTImage> MyExpander::enabledImage;
+Glib::RefPtr<RTImage> MyExpander::disabledImage;
+Glib::RefPtr<RTImage> MyExpander::openedImage;
+Glib::RefPtr<RTImage> MyExpander::closedImage;
 
 IdleRegister::~IdleRegister()
 {
@@ -553,16 +553,18 @@ void ExpanderBox::hideBox()
 
 void MyExpander::init()
 {
-    inconsistentPBuf = Gdk::Pixbuf::create_from_file(rtengine::findIconAbsolutePath("power-inconsistent-small.png"));
-    enabledPBuf = Gdk::Pixbuf::create_from_file(rtengine::findIconAbsolutePath("power-on-small.png"));
-    disabledPBuf = Gdk::Pixbuf::create_from_file(rtengine::findIconAbsolutePath("power-off-small.png"));
-    openedPBuf = Gdk::Pixbuf::create_from_file(rtengine::findIconAbsolutePath("expander-open-small.png"));
-    closedPBuf = Gdk::Pixbuf::create_from_file(rtengine::findIconAbsolutePath("expander-closed-small.png"));
+    if (!inconsistentImage) {  // if one is null, all are null
+        inconsistentImage = Glib::RefPtr<RTImage>(new RTImage("power-inconsistent-small.png"));
+        enabledImage = Glib::RefPtr<RTImage>(new RTImage("power-on-small.png"));
+        disabledImage = Glib::RefPtr<RTImage>(new RTImage("power-off-small.png"));
+        openedImage = Glib::RefPtr<RTImage>(new RTImage("expander-open-small.png"));
+        closedImage = Glib::RefPtr<RTImage>(new RTImage("expander-closed-small.png"));
+    }
 }
 
 MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
     enabled(false), inconsistent(false), flushEvent(false), expBox(nullptr),
-    child(nullptr), headerWidget(nullptr), statusImage(nullptr),
+    child(nullptr), headerWidget(nullptr),
     label(nullptr), useEnabled(useEnabled)
 {
     set_spacing(0);
@@ -575,7 +577,7 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
     setExpandAlignProperties(headerHBox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
     if (useEnabled) {
-        statusImage = Gtk::manage(new Gtk::Image(disabledPBuf));
+        statusImage = Gtk::manage(new RTImage(*(disabledImage.get())));
         imageEvBox = Gtk::manage(new Gtk::EventBox());
         imageEvBox->add(*statusImage);
         imageEvBox->set_above_child(true);
@@ -584,7 +586,7 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
         imageEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_enable), false );
         headerHBox->pack_start(*imageEvBox, Gtk::PACK_SHRINK, 0);
     } else {
-        statusImage = Gtk::manage(new Gtk::Image(openedPBuf));
+        statusImage = Gtk::manage(new RTImage(*(openedImage.get())));
         headerHBox->pack_start(*statusImage, Gtk::PACK_SHRINK, 0);
     }
 
@@ -614,7 +616,7 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
 
 MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
     enabled(false), inconsistent(false), flushEvent(false), expBox(nullptr),
-    child(nullptr), headerWidget(nullptr), statusImage(nullptr),
+    child(nullptr), headerWidget(nullptr),
     label(nullptr), useEnabled(useEnabled)
 {
     set_spacing(0);
@@ -628,7 +630,7 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
 
 
     if (useEnabled) {
-        statusImage = Gtk::manage(new Gtk::Image(disabledPBuf));
+        statusImage = Gtk::manage(new RTImage(*(disabledImage.get())));
         imageEvBox = Gtk::manage(new Gtk::EventBox());
         imageEvBox->set_name("MyExpanderStatus");
         imageEvBox->add(*statusImage);
@@ -638,7 +640,7 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
         imageEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_enable), false );
         headerHBox->pack_start(*imageEvBox, Gtk::PACK_SHRINK, 0);
     } else {
-        statusImage = Gtk::manage(new Gtk::Image(openedPBuf));
+        statusImage = Gtk::manage(new RTImage(*(openedImage.get())));
         headerHBox->pack_start(*statusImage, Gtk::PACK_SHRINK, 0);
     }
 
@@ -758,12 +760,12 @@ void MyExpander::set_inconsistent(bool isInconsistent)
 
         if (useEnabled) {
             if (isInconsistent) {
-                statusImage->set(inconsistentPBuf);
+                statusImage->from(inconsistentImage);
             } else {
                 if (enabled) {
-                    statusImage->set(enabledPBuf);
+                    statusImage->from(enabledImage);
                 } else {
-                    statusImage->set(disabledPBuf);
+                    statusImage->from(disabledImage);
                 }
             }
         }
@@ -789,14 +791,14 @@ void MyExpander::setEnabled(bool isEnabled)
                 enabled = false;
 
                 if (!inconsistent) {
-                    statusImage->set(disabledPBuf);
+                    statusImage->from(disabledImage);
                     message.emit();
                 }
             } else {
                 enabled = true;
 
                 if (!inconsistent) {
-                    statusImage->set(enabledPBuf);
+                    statusImage->from(enabledImage);
                     message.emit();
                 }
             }
@@ -832,9 +834,9 @@ void MyExpander::set_expanded( bool expanded )
 
     if (!useEnabled) {
         if (expanded ) {
-            statusImage->set(openedPBuf);
+            statusImage->from(openedImage);
         } else {
-            statusImage->set(closedPBuf);
+            statusImage->from(closedImage);
         }
     }
 
@@ -877,9 +879,9 @@ bool MyExpander::on_toggle(GdkEventButton* event)
 
     if (!useEnabled) {
         if (isVisible) {
-            statusImage->set(closedPBuf);
+            statusImage->from(closedImage);
         } else {
-            statusImage->set(openedPBuf);
+            statusImage->from(openedImage);
         }
     }
 
@@ -904,10 +906,10 @@ bool MyExpander::on_enabled_change(GdkEventButton* event)
     if (event->button == 1) {
         if (enabled) {
             enabled = false;
-            statusImage->set(disabledPBuf);
+            statusImage->from(disabledImage);
         } else {
             enabled = true;
-            statusImage->set(enabledPBuf);
+            statusImage->from(enabledImage);
         }
 
         message.emit();
@@ -1437,7 +1439,9 @@ void MyFileChooserButton::get_preferred_width_for_height_vfunc (int height, int 
 TextOrIcon::TextOrIcon (const Glib::ustring &fname, const Glib::ustring &labelTx, const Glib::ustring &tooltipTx)
 {
 
-    pack_start(*Gtk::manage(new RTImage(fname)), Gtk::PACK_SHRINK, 0);
+    RTImage *img = Gtk::manage(new RTImage(fname));
+    printf(">>> TOI \"%s\" : %d x %d\n", fname.c_str(), img->get_width(), img->get_height());
+    pack_start(*img, Gtk::PACK_SHRINK, 0);
     set_tooltip_markup("<span font_size=\"large\" font_weight=\"bold\">" + labelTx  + "</span>\n" + tooltipTx);
 
     set_name("TextOrIcon");

@@ -121,13 +121,20 @@ DirBrowser::~DirBrowser()
 void DirBrowser::fillDirTree ()
 {
 
-    openfolder = RTImage::createFromFile ("folder-open-small.png");
-    closedfolder = RTImage::createFromFile ("folder-closed-small.png");
-    icdrom = RTImage::createFromFile ("device-optical.png");
-    ifloppy = RTImage::createFromFile ("device-floppy.png");
-    ihdd = RTImage::createFromFile ("device-hdd.png");
-    iremovable = RTImage::createFromFile ("device-usb.png");
-    inetwork = RTImage::createFromFile ("device-network.png");
+    Cairo::RefPtr<Cairo::ImageSurface> openfolder_ = RTImage::createFromFile ("folder-open-small.png");
+    openfolder = Gdk::Pixbuf::create(openfolder_, 0, 0, openfolder_->get_width(), openfolder_->get_height());
+    Cairo::RefPtr<Cairo::ImageSurface> closedfolder_ = RTImage::createFromFile ("folder-open-small.png");
+    closedfolder = Gdk::Pixbuf::create(closedfolder_, 0, 0, closedfolder_->get_width(), closedfolder_->get_height());
+    Cairo::RefPtr<Cairo::ImageSurface> icdrom_ = RTImage::createFromFile ("folder-open-small.png");
+    icdrom = Gdk::Pixbuf::create(icdrom_, 0, 0, icdrom_->get_width(), icdrom_->get_height());
+    Cairo::RefPtr<Cairo::ImageSurface> ifloppy_ = RTImage::createFromFile ("folder-open-small.png");
+    ifloppy = Gdk::Pixbuf::create(ifloppy_, 0, 0, ifloppy_->get_width(), ifloppy_->get_height());
+    Cairo::RefPtr<Cairo::ImageSurface> ihdd_ = RTImage::createFromFile ("folder-open-small.png");
+    ihdd = Gdk::Pixbuf::create(ihdd_, 0, 0, ihdd_->get_width(), ihdd_->get_height());
+    Cairo::RefPtr<Cairo::ImageSurface> iremovable_ = RTImage::createFromFile ("folder-open-small.png");
+    iremovable = Gdk::Pixbuf::create(iremovable_, 0, 0, iremovable_->get_width(), iremovable_->get_height());
+    Cairo::RefPtr<Cairo::ImageSurface> inetwork_ = RTImage::createFromFile ("folder-open-small.png");
+    inetwork = Gdk::Pixbuf::create(inetwork_, 0, 0, inetwork_->get_width(), inetwork_->get_height());
 
     //Create the Tree model:
     dirTreeModel = Gtk::TreeStore::create(dtColumns);

@@ -48,9 +48,12 @@ ExifPanel::ExifPanel () : idata (nullptr)
     exifTree->set_grid_lines (Gtk::TREE_VIEW_GRID_LINES_NONE);
     exifTree->set_row_separator_func (sigc::mem_fun(*this, &ExifPanel::rowSeperatorFunc));
 
-    delicon = RTImage::createFromFile ("cancel-small.png");
-    keepicon = RTImage::createFromFile ("tick-small.png");
-    editicon = RTImage::createFromFile ("add-small.png");
+    Cairo::RefPtr<Cairo::ImageSurface> delicon_ = RTImage::createFromFile ("cancel-small.png");
+    delicon = Gdk::Pixbuf::create(delicon_, 0, 0, delicon_->get_width(), delicon_->get_height());
+    Cairo::RefPtr<Cairo::ImageSurface> keepicon_ = RTImage::createFromFile ("tick-small.png");
+    keepicon = Gdk::Pixbuf::create(keepicon_, 0, 0, keepicon_->get_width(), keepicon_->get_height());
+    Cairo::RefPtr<Cairo::ImageSurface> editicon_ = RTImage::createFromFile ("add-small.png");
+    editicon = Gdk::Pixbuf::create(editicon_, 0, 0, editicon_->get_width(), editicon_->get_height());
 
     Gtk::TreeView::Column *viewcol = Gtk::manage (new Gtk::TreeView::Column ("Field Name"));
     Gtk::CellRendererPixbuf* render_pb = Gtk::manage (new Gtk::CellRendererPixbuf ());
@@ -100,21 +103,21 @@ ExifPanel::ExifPanel () : idata (nullptr)
     setExpandAlignProperties (buttons2, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
     remove = Gtk::manage (new Gtk::Button ()); // M("EXIFPANEL_REMOVE")
-    remove->set_image (*Gtk::manage (new Gtk::Image (delicon)));
+    remove->set_image (*Gtk::manage (new RTImage(delicon)));
     remove->set_tooltip_text (M ("EXIFPANEL_REMOVEHINT"));
     remove->get_style_context()->add_class ("Left");
     setExpandAlignProperties (remove, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     buttons1->attach_next_to (*remove, Gtk::POS_LEFT, 1, 1);
 
     keep = Gtk::manage (new Gtk::Button ()); // M("EXIFPANEL_KEEP")
-    keep->set_image (*Gtk::manage (new Gtk::Image (keepicon)));
+    keep->set_image (*Gtk::manage (new RTImage(keepicon)));
     keep->set_tooltip_text (M ("EXIFPANEL_KEEPHINT"));
     keep->get_style_context()->add_class ("MiddleH");
     setExpandAlignProperties (keep, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     buttons1->attach_next_to (*keep, Gtk::POS_RIGHT, 1, 1);
 
     add = Gtk::manage (new Gtk::Button ()); // M("EXIFPANEL_ADDEDIT")
-    add->set_image (*Gtk::manage (new Gtk::Image (editicon)));
+    add->set_image (*Gtk::manage (new RTImage(editicon)));
     add->set_tooltip_text (M ("EXIFPANEL_ADDEDITHINT"));
     add->get_style_context()->add_class ("Right");
     setExpandAlignProperties (add, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
@@ -128,7 +131,7 @@ ExifPanel::ExifPanel () : idata (nullptr)
     buttons2->attach_next_to (*showAll, Gtk::POS_LEFT, 1, 1);
 
     reset = Gtk::manage (new Gtk::Button ()); // M("EXIFPANEL_RESET")
-    reset->set_image (*Gtk::manage (new RTImage ("undo.png", "redo.png")));
+    reset->set_image (*Gtk::manage (new RTImage("undo.png", "redo.png")));
     reset->set_tooltip_text (M ("EXIFPANEL_RESETHINT"));
     reset->get_style_context()->add_class ("MiddleH");
     setExpandAlignProperties (reset, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
