@@ -171,9 +171,24 @@ public:
     /**
      * Setter of panel widgets edited states
      *
-     * @param se A SpotEdited structure containing the widgets edidted states to update
+     * @param se A SpotEdited structure containing the widgets edited states to update
      */
     void setEditedStates(SpotEdited* se);
+    /**
+     * Implementation of setDefaults function of toolpanel.h
+     *
+     * @param defParams ProcParams containing default values to set to the adjusters
+     * @param pedited   ParamsEdited containing default state values to set to the adjusters
+     */
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
+
+    /**
+     * Variant of setDefaults function which only update adjuster default values
+     *
+     * @param defParams ProcParams containing default values to set to the adjusters
+     * @param id Spot id to consider to update adjusters default values
+     */
+    void updateDefaultsValues(const rtengine::procparams::ProcParams* defParams, int id = 0);
 
 private:
     // Cell renderer

@@ -175,6 +175,13 @@ private:
     Gtk::Button* const lumacontrastPlusButton;
     sigc::connection lumacontrastMinusPressedConn, lumaneutralPressedConn, lumacontrastPlusPressedConn;
 
+    // Others
+    /**
+     * Used to store the default ProcParams when setDefaults function is called
+     * When an other spot is selected, this default ProcParams is used to update adjusters default values
+     */
+    const rtengine::ProcParams* defparams;
+
     // Expander management functions
     void foldAllButMe(GdkEventButton* event, MyExpander *expander);
     void enableToggled(MyExpander *expander);
@@ -212,6 +219,7 @@ private:
     // Locallab GUI management function
     void updateLocallabGUI(const rtengine::procparams::ProcParams* pp, int index);
     void updateSpecificGUIState();
+    void updateDefaultsValues(const rtengine::procparams::ProcParams* defParams, int id = 0);
 
 public:
     Locallab();

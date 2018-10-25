@@ -24,7 +24,6 @@
 #include <iomanip>
 
 using namespace rtengine;
-using namespace rtengine::procparams;
 
 //-----------------------------------------------------------------------------
 // ControlSpotPanel
@@ -1609,6 +1608,72 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
 
     // Enable params listeners
     disableParamlistener(false);
+}
+
+void ControlSpotPanel::setDefaults(const ProcParams * defParams, const ParamsEdited * pedited)
+{
+    // Set default values for adjusters
+    if (defParams->locallab.selspot < (int)defParams->locallab.spots.size()) {
+        updateDefaultsValues(defParams, defParams->locallab.spots.at(defParams->locallab.selspot).id);
+    } else {
+        updateDefaultsValues(defParams);
+    }
+
+    // Set default edited states for adjusters
+    if (pedited) {
+        sensiexclu_->setDefaultEditedState(pedited->locallab.sensiexclu ? Edited : UnEdited);
+        struc_->setDefaultEditedState(pedited->locallab.struc ? Edited : UnEdited);
+        locX_->setDefaultEditedState(pedited->locallab.locX ? Edited : UnEdited);
+        locXL_->setDefaultEditedState(pedited->locallab.locXL ? Edited : UnEdited);
+        locY_->setDefaultEditedState(pedited->locallab.locY ? Edited : UnEdited);
+        locYT_->setDefaultEditedState(pedited->locallab.locYT ? Edited : UnEdited);
+        centerX_->setDefaultEditedState(pedited->locallab.centerX ? Edited : UnEdited);
+        centerY_->setDefaultEditedState(pedited->locallab.centerY ? Edited : UnEdited);
+        circrad_->setDefaultEditedState(pedited->locallab.circrad ? Edited : UnEdited);
+        transit_->setDefaultEditedState(pedited->locallab.transit ? Edited : UnEdited);
+        thresh_->setDefaultEditedState(pedited->locallab.thresh ? Edited : UnEdited);
+        iter_->setDefaultEditedState(pedited->locallab.iter ? Edited : UnEdited);
+    } else {
+        sensiexclu_->setDefaultEditedState(Irrelevant);
+        struc_->setDefaultEditedState(Irrelevant);
+        locX_->setDefaultEditedState(Irrelevant);
+        locXL_->setDefaultEditedState(Irrelevant);
+        locY_->setDefaultEditedState(Irrelevant);
+        locYT_->setDefaultEditedState(Irrelevant);
+        centerX_->setDefaultEditedState(Irrelevant);
+        centerY_->setDefaultEditedState(Irrelevant);
+        circrad_->setDefaultEditedState(Irrelevant);
+        transit_->setDefaultEditedState(Irrelevant);
+        thresh_->setDefaultEditedState(Irrelevant);
+        iter_->setDefaultEditedState(Irrelevant);
+    }
+}
+
+void ControlSpotPanel::updateDefaultsValues(const rtengine::procparams::ProcParams* defParams, int id)
+{
+    const LocallabParams::LocallabSpot* defSpot = new LocallabParams::LocallabSpot();
+
+    for (int i = 0; i < (int)defParams->locallab.spots.size(); i++) {
+        if (defParams->locallab.spots.at(i).id == id) {
+            defSpot = &defParams->locallab.spots.at(i);
+
+            break;
+        }
+    }
+
+    // Set default values for adjusters
+    sensiexclu_->setDefault((double)defSpot->sensiexclu);
+    struc_->setDefault((double)defSpot->struc);
+    locX_->setDefault((double)defSpot->locX);
+    locXL_->setDefault((double)defSpot->locXL);
+    locY_->setDefault((double)defSpot->locY);
+    locYT_->setDefault((double)defSpot->locYT);
+    centerX_->setDefault((double)defSpot->centerX);
+    centerY_->setDefault((double)defSpot->centerY);
+    circrad_->setDefault((double)defSpot->circrad);
+    transit_->setDefault((double)defSpot->transit);
+    thresh_->setDefault((double)defSpot->thresh);
+    iter_->setDefault((double)defSpot->iter);
 }
 
 //-----------------------------------------------------------------------------

@@ -992,6 +992,15 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     // Enable all listeners
     enableListener();
+
+    // Update default values according to selected spot
+    if (pp->locallab.nbspot > 0) {
+        expsettings->updateDefaultsValues(defparams, pp->locallab.spots.at(pp->locallab.selspot).id);
+        updateDefaultsValues(defparams, pp->locallab.spots.at(pp->locallab.selspot).id);
+    } else {
+        expsettings->updateDefaultsValues(defparams);
+        updateDefaultsValues(defparams);
+    }
 }
 
 void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
@@ -1074,6 +1083,10 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             updateLocallabGUI(pp, pp->locallab.selspot);
             enableListener();
 
+            // Update default values according to selected spot
+            expsettings->updateDefaultsValues(defparams, spotId);
+            updateDefaultsValues(defparams, spotId);
+
             break;
 
         case (2): // 2 = Spot deletion event
@@ -1098,6 +1111,15 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     updateLocallabGUI(pp, pp->locallab.selspot);
                     enableListener();
 
+                    // Update default values according to selected spot
+                    if (pp->locallab.nbspot > 0) {
+                        expsettings->updateDefaultsValues(defparams, pp->locallab.spots.at(pp->locallab.selspot).id);
+                        updateDefaultsValues(defparams, pp->locallab.spots.at(pp->locallab.selspot).id);
+                    } else {
+                        expsettings->updateDefaultsValues(defparams);
+                        updateDefaultsValues(defparams);
+                    }
+
                     break;
                 }
             }
@@ -1119,6 +1141,10 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             disableListener();
             updateLocallabGUI(pp, pp->locallab.selspot);
             enableListener();
+
+            // Update default values according to selected spot
+            expsettings->updateDefaultsValues(defparams, spotId);
+            updateDefaultsValues(defparams, spotId);
 
             break;
 
@@ -1802,221 +1828,219 @@ void Locallab::inversretChanged()
     }
 }
 
-// TODO
-void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pedited)
+void Locallab::updateDefaultsValues(const rtengine::procparams::ProcParams* defParams, int id)
 {
-    /*
-    degree->setDefault(defParams->locallab.degree);
-    locY->setDefault(defParams->locallab.locY);
-    locX->setDefault(defParams->locallab.locX);
-    locYT->setDefault(defParams->locallab.locYT);
-    locXL->setDefault(defParams->locallab.locXL);
-    centerX->setDefault(defParams->locallab.centerX);
-    centerY->setDefault(defParams->locallab.centerY);
-    circrad->setDefault(defParams->locallab.circrad);
-    adjblur->setDefault(defParams->locallab.adjblur);
-    thres->setDefault(defParams->locallab.thres);
-    proxi->setDefault(defParams->locallab.proxi);
-    lightness->setDefault(defParams->locallab.lightness);
-    contrast->setDefault(defParams->locallab.contrast);
-    chroma->setDefault(defParams->locallab.chroma);
-    warm->setDefault(defParams->locallab.warm);
-    expcomp->setDefault(defParams->locallab.expcomp);
-    black->setDefault(defParams->locallab.black);
-    hlcompr->setDefault(defParams->locallab.hlcompr);
-    hlcomprthresh->setDefault(defParams->locallab.hlcomprthresh);
-    shcompr->setDefault(defParams->locallab.shcompr);
+    const LocallabParams::LocallabSpot* defSpot = new LocallabParams::LocallabSpot();
 
-    noiselumf->setDefault(defParams->locallab.noiselumf);
-    noiselumc->setDefault(defParams->locallab.noiselumc);
-    noiselumdetail->setDefault(defParams->locallab.noiselumdetail);
-    noiselequal->setDefault(defParams->locallab.noiselequal);
-    noisechrodetail->setDefault(defParams->locallab.noisechrodetail);
-    bilateral->setDefault(defParams->locallab.bilateral);
-    sensiden->setDefault(defParams->locallab.sensiden);
-    noisechrof->setDefault(defParams->locallab.noisechrof);
-    noisechroc->setDefault(defParams->locallab.noisechroc);
-    sharradius->setDefault(defParams->locallab.sharradius);
-    sharamount->setDefault(defParams->locallab.sharamount);
-    shardamping->setDefault(defParams->locallab.shardamping);
-    shariter->setDefault(defParams->locallab.shariter);
-    sensisha->setDefault(defParams->locallab.sensisha);
-    sensi->setDefault(defParams->locallab.sensi);
-    sensiex->setDefault(defParams->locallab.sensiex);
-    sensih->setDefault(defParams->locallab.sensih);
-    retrab->setDefault(defParams->locallab.retrab);
-    sensiexclu->setDefault(defParams->locallab.sensiexclu);
-    struc->setDefault(defParams->locallab.struc);
-    sensicb->setDefault(defParams->locallab.sensicb);
-    sensibn->setDefault(defParams->locallab.sensibn);
-    sensitm->setDefault(defParams->locallab.sensitm);
-    transit->setDefault(defParams->locallab.transit);
-    radius->setDefault(defParams->locallab.radius);
-    strength->setDefault(defParams->locallab.strength);
-    stren->setDefault(defParams->locallab.stren);
-    gamma->setDefault(defParams->locallab.gamma);
-    estop->setDefault(defParams->locallab.estop);
-    gamma->setDefault(defParams->locallab.gamma);
-    scaltm->setDefault(defParams->locallab.scaltm);
-    rewei->setDefault(defParams->locallab.rewei);
-    neigh->setDefault(defParams->locallab.neigh);
-    vart->setDefault(defParams->locallab.vart);
-    chrrt->setDefault(defParams->locallab.chrrt);
+    for (int i = 0; i < (int)defParams->locallab.spots.size(); i++) {
+        if (defParams->locallab.spots.at(i).id == id) {
+            defSpot = &defParams->locallab.spots.at(i);
 
-    for (int i = 0; i < 5; i++) {
-        multiplier[i]->setDefault(defParams->locallab.mult[i]);
+            break;
+        }
     }
 
-    threshold->setDefault(defParams->locallab.threshold);
-    chromacbdl->setDefault(defParams->locallab.chromacbdl);
-    pastels->setDefault(defParams->locallab.pastels);
-    saturated->setDefault(defParams->locallab.saturated);
-    psThreshold->setDefault<int> (defParams->locallab.psthreshold);
-    sensiv->setDefault(defParams->locallab.sensiv);
+    // Set default values for adjusters and threshold adjusters
+    // Color & Light
+    lightness->setDefault((double)defSpot->lightness);
+    contrast->setDefault((double)defSpot->contrast);
+    chroma->setDefault((double)defSpot->chroma);
+    sensi->setDefault((double)defSpot->sensi);
+    // Exposure
+    expcomp->setDefault((double)defSpot->expcomp);
+    hlcompr->setDefault((double)defSpot->hlcompr);
+    hlcomprthresh->setDefault((double)defSpot->hlcomprthresh);
+    black->setDefault((double)defSpot->black);
+    shcompr->setDefault((double)defSpot->shcompr);
+    warm->setDefault((double)defSpot->warm);
+    sensiex->setDefault((double)defSpot->sensiex);
+    // Vibrance
+    saturated->setDefault((double)defSpot->saturated);
+    pastels->setDefault((double)defSpot->pastels);
+    psThreshold->setDefault<int>(defSpot->psthreshold);
+    sensiv->setDefault((double)defSpot->sensiv);
+    // Blur & Noise
+    radius->setDefault((double)defSpot->radius);
+    strength->setDefault((double)defSpot->strength);
+    sensibn->setDefault((double)defSpot->sensibn);
+    // Tone Mapping
+    stren->setDefault((double)defSpot->stren);
+    gamma->setDefault((double)defSpot->gamma);
+    estop->setDefault((double)defSpot->estop);
+    scaltm->setDefault((double)defSpot->scaltm);
+    rewei->setDefault((double)defSpot->rewei);
+    sensitm->setDefault((double)defSpot->sensitm);
+    // Retinex
+    str->setDefault((double)defSpot->str);
+    chrrt->setDefault((double)defSpot->chrrt);
+    neigh->setDefault((double)defSpot->neigh);
+    vart->setDefault((double)defSpot->vart);
+    sensih->setDefault((double)defSpot->sensih);
+    // Sharpening
+    sharradius->setDefault((double)defSpot->sharradius);
+    sharamount->setDefault((double)defSpot->sharamount);
+    shardamping->setDefault((double)defSpot->shardamping);
+    shariter->setDefault((double)defSpot->shariter);
+    sensisha->setDefault((double)defSpot->sensisha);
+    // Contrast by detail levels
+    for (int i = 0; i < 5; i++) {
+        multiplier[i]->setDefault(defSpot->mult[i]);
+    }
+    chromacbdl->setDefault((double)defSpot->chromacbdl);
+    threshold->setDefault(defSpot->threshold);
+    sensicb->setDefault((double)defSpot->sensicb);
+    // Denoise
+    noiselumf->setDefault((double)defSpot->noiselumf);
+    noiselumc->setDefault((double)defSpot->noiselumc);
+    noiselumdetail->setDefault((double)defSpot->noiselumdetail);
+    noiselequal->setDefault((double)defSpot->noiselequal);
+    noisechrof->setDefault((double)defSpot->noisechrof);
+    noisechroc->setDefault((double)defSpot->noisechroc);
+    noisechrodetail->setDefault((double)defSpot->noisechrodetail);
+    adjblur->setDefault((double)defSpot->adjblur);
+    bilateral->setDefault((double)defSpot->bilateral);
+    sensiden->setDefault((double)defSpot->sensiden);
+}
 
+void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pedited)
+{
+    printf("setDefaults\n");
 
+    // Store default ProcParams
+    defparams = defParams;
+
+    // Set default values and edited states for controlspotpanel
+    expsettings->setDefaults(defParams, pedited);
+
+    // Set default values for adjusters and threshold adjusters
+    if (defParams->locallab.selspot < (int)defParams->locallab.spots.size()) {
+        updateDefaultsValues(defParams, defParams->locallab.spots.at(defParams->locallab.selspot).id);
+    } else {
+        updateDefaultsValues(defParams);
+    }
+
+    // Set default edited states for adjusters and threshold adjusters
     if (pedited) {
-        degree->setDefaultEditedState(pedited->locallab.degree ? Edited : UnEdited);
-        locY->setDefaultEditedState(pedited->locallab.locY ? Edited : UnEdited);
-        locX->setDefaultEditedState(pedited->locallab.locX ? Edited : UnEdited);
-        locYT->setDefaultEditedState(pedited->locallab.locYT ? Edited : UnEdited);
-        locXL->setDefaultEditedState(pedited->locallab.locXL ? Edited : UnEdited);
-        centerX->setDefaultEditedState(pedited->locallab.centerX ? Edited : UnEdited);
-        centerY->setDefaultEditedState(pedited->locallab.centerY ? Edited : UnEdited);
-        circrad->setDefaultEditedState(pedited->locallab.circrad ? Edited : UnEdited);
-        adjblur->setDefaultEditedState(pedited->locallab.adjblur ? Edited : UnEdited);
-        thres->setDefaultEditedState(pedited->locallab.thres ? Edited : UnEdited);
-        proxi->setDefaultEditedState(pedited->locallab.proxi ? Edited : UnEdited);
+        // Color & Light
         lightness->setDefaultEditedState(pedited->locallab.lightness ? Edited : UnEdited);
         contrast->setDefaultEditedState(pedited->locallab.contrast ? Edited : UnEdited);
         chroma->setDefaultEditedState(pedited->locallab.chroma ? Edited : UnEdited);
-        warm->setDefaultEditedState(pedited->locallab.warm ? Edited : UnEdited);
+        sensi->setDefaultEditedState(pedited->locallab.sensi ? Edited : UnEdited);
+        // Exposure
         expcomp->setDefaultEditedState(pedited->locallab.expcomp ? Edited : UnEdited);
-        black->setDefaultEditedState(pedited->locallab.black ? Edited : UnEdited);
         hlcompr->setDefaultEditedState(pedited->locallab.hlcompr ? Edited : UnEdited);
         hlcomprthresh->setDefaultEditedState(pedited->locallab.hlcomprthresh ? Edited : UnEdited);
+        black->setDefaultEditedState(pedited->locallab.black ? Edited : UnEdited);
         shcompr->setDefaultEditedState(pedited->locallab.shcompr ? Edited : UnEdited);
-
-        noiselumf->setDefaultEditedState(pedited->locallab.noiselumf ? Edited : UnEdited);
-        noiselumc->setDefaultEditedState(pedited->locallab.noiselumc ? Edited : UnEdited);
-        noiselumdetail->setDefaultEditedState(pedited->locallab.noiselumdetail ? Edited : UnEdited);
-        noiselequal->setDefaultEditedState(pedited->locallab.noiselequal ? Edited : UnEdited);
-        noisechrodetail->setDefaultEditedState(pedited->locallab.noisechrodetail ? Edited : UnEdited);
-        bilateral->setDefaultEditedState(pedited->locallab.bilateral ? Edited : UnEdited);
-        sensiden->setDefaultEditedState(pedited->locallab.sensiden ? Edited : UnEdited);
-        noisechrof->setDefaultEditedState(pedited->locallab.noisechrof ? Edited : UnEdited);
-        noisechroc->setDefaultEditedState(pedited->locallab.noisechroc ? Edited : UnEdited);
-        sharradius->setDefaultEditedState(pedited->locallab.sharradius ? Edited : UnEdited);
-        sharamount->setDefaultEditedState(pedited->locallab.sharamount ? Edited : UnEdited);
-        shardamping->setDefaultEditedState(pedited->locallab.shardamping ? Edited : UnEdited);
-        shariter->setDefaultEditedState(pedited->locallab.shariter ? Edited : UnEdited);
-        sensisha->setDefaultEditedState(pedited->locallab.sensisha ? Edited : UnEdited);
-        sensi->setDefaultEditedState(pedited->locallab.sensi ? Edited : UnEdited);
+        warm->setDefaultEditedState(pedited->locallab.warm ? Edited : UnEdited);
         sensiex->setDefaultEditedState(pedited->locallab.sensiex ? Edited : UnEdited);
-        sensih->setDefaultEditedState(pedited->locallab.sensih ? Edited : UnEdited);
-        retrab->setDefaultEditedState(pedited->locallab.retrab ? Edited : UnEdited);
-        sensiexclu->setDefaultEditedState(pedited->locallab.sensiexclu ? Edited : UnEdited);
-        struc->setDefaultEditedState(pedited->locallab.struc ? Edited : UnEdited);
-        sensicb->setDefaultEditedState(pedited->locallab.sensicb ? Edited : UnEdited);
-        sensibn->setDefaultEditedState(pedited->locallab.sensibn ? Edited : UnEdited);
-        sensitm->setDefaultEditedState(pedited->locallab.sensitm ? Edited : UnEdited);
+        // Vibrance
+        saturated->setDefaultEditedState(pedited->locallab.saturated ? Edited : UnEdited);
+        pastels->setDefaultEditedState(pedited->locallab.pastels ? Edited : UnEdited);
+        psThreshold->setDefaultEditedState(pedited->locallab.psthreshold ? Edited : UnEdited);
+        sensiv->setDefaultEditedState(pedited->locallab.sensiv ? Edited : UnEdited);
+        // Blur & Noise
         radius->setDefaultEditedState(pedited->locallab.radius ? Edited : UnEdited);
         strength->setDefaultEditedState(pedited->locallab.strength ? Edited : UnEdited);
+        sensibn->setDefaultEditedState(pedited->locallab.sensibn ? Edited : UnEdited);
+        // Tone Mapping
         stren->setDefaultEditedState(pedited->locallab.stren ? Edited : UnEdited);
         gamma->setDefaultEditedState(pedited->locallab.gamma ? Edited : UnEdited);
         estop->setDefaultEditedState(pedited->locallab.estop ? Edited : UnEdited);
         scaltm->setDefaultEditedState(pedited->locallab.scaltm ? Edited : UnEdited);
         rewei->setDefaultEditedState(pedited->locallab.rewei ? Edited : UnEdited);
-        transit->setDefaultEditedState(pedited->locallab.transit ? Edited : UnEdited);
+        sensitm->setDefaultEditedState(pedited->locallab.sensitm ? Edited : UnEdited);
+        // Retinex
         str->setDefaultEditedState(pedited->locallab.str ? Edited : UnEdited);
+        chrrt->setDefaultEditedState(pedited->locallab.chrrt ? Edited : UnEdited);
         neigh->setDefaultEditedState(pedited->locallab.neigh ? Edited : UnEdited);
         vart->setDefaultEditedState(pedited->locallab.vart ? Edited : UnEdited);
-        chrrt->setDefaultEditedState(pedited->locallab.chrrt ? Edited : UnEdited);
-
+        sensih->setDefaultEditedState(pedited->locallab.sensih ? Edited : UnEdited);
+        // Sharpening
+        sharradius->setDefaultEditedState(pedited->locallab.sharradius ? Edited : UnEdited);
+        sharamount->setDefaultEditedState(pedited->locallab.sharamount ? Edited : UnEdited);
+        shardamping->setDefaultEditedState(pedited->locallab.shardamping ? Edited : UnEdited);
+        shariter->setDefaultEditedState(pedited->locallab.shariter ? Edited : UnEdited);
+        sensisha->setDefaultEditedState(pedited->locallab.sensisha ? Edited : UnEdited);
+        // Contrast by detail levels
         for (int i = 0; i < 5; i++) {
             multiplier[i]->setDefaultEditedState(pedited->locallab.mult[i] ? Edited : UnEdited);
         }
-
-        threshold->setDefaultEditedState(pedited->locallab.threshold ? Edited : UnEdited);
         chromacbdl->setDefaultEditedState(pedited->locallab.chromacbdl ? Edited : UnEdited);
-
-        pastels->setDefaultEditedState(pedited->locallab.pastels ? Edited : UnEdited);
-        saturated->setDefaultEditedState(pedited->locallab.saturated ? Edited : UnEdited);
-        psThreshold->setDefaultEditedState(pedited->locallab.psthreshold ? Edited : UnEdited);
-        sensiv->setDefaultEditedState(pedited->locallab.sensiv ? Edited : UnEdited);
-
+        threshold->setDefaultEditedState(pedited->locallab.threshold ? Edited : UnEdited);
+        sensicb->setDefaultEditedState(pedited->locallab.sensicb ? Edited : UnEdited);
+        // Denoise
+        noiselumf->setDefaultEditedState(pedited->locallab.noiselumf ? Edited : UnEdited);
+        noiselumc->setDefaultEditedState(pedited->locallab.noiselumc ? Edited : UnEdited);
+        noiselumdetail->setDefaultEditedState(pedited->locallab.noiselumdetail ? Edited : UnEdited);
+        noiselequal->setDefaultEditedState(pedited->locallab.noiselequal ? Edited : UnEdited);
+        noisechrof->setDefaultEditedState(pedited->locallab.noisechrof ? Edited : UnEdited);
+        noisechroc->setDefaultEditedState(pedited->locallab.noisechroc ? Edited : UnEdited);
+        noisechrodetail->setDefaultEditedState(pedited->locallab.noisechrodetail ? Edited : UnEdited);
+        adjblur->setDefaultEditedState(pedited->locallab.adjblur ? Edited : UnEdited);
+        bilateral->setDefaultEditedState(pedited->locallab.bilateral ? Edited : UnEdited);
+        sensiden->setDefaultEditedState(pedited->locallab.sensiden ? Edited : UnEdited);
     } else {
-        degree->setDefaultEditedState(Irrelevant);
-        locY->setDefaultEditedState(Irrelevant);
-        locX->setDefaultEditedState(Irrelevant);
-        locYT->setDefaultEditedState(Irrelevant);
-        locXL->setDefaultEditedState(Irrelevant);
-        centerX->setDefaultEditedState(Irrelevant);
-        centerY->setDefaultEditedState(Irrelevant);
-        circrad->setDefaultEditedState(Irrelevant);
-        adjblur->setDefaultEditedState(Irrelevant);
-        thres->setDefaultEditedState(Irrelevant);
-        proxi->setDefaultEditedState(Irrelevant);
+        // Color & Light
         lightness->setDefaultEditedState(Irrelevant);
         contrast->setDefaultEditedState(Irrelevant);
         chroma->setDefaultEditedState(Irrelevant);
-        warm->setDefaultEditedState(Irrelevant);
+        sensi->setDefaultEditedState(Irrelevant);
+        // Exposure
         expcomp->setDefaultEditedState(Irrelevant);
-        black->setDefaultEditedState(Irrelevant);
         hlcompr->setDefaultEditedState(Irrelevant);
         hlcomprthresh->setDefaultEditedState(Irrelevant);
+        black->setDefaultEditedState(Irrelevant);
         shcompr->setDefaultEditedState(Irrelevant);
-
-        noiselumf->setDefaultEditedState(Irrelevant);
-        noiselumc->setDefaultEditedState(Irrelevant);
-        noiselumdetail->setDefaultEditedState(Irrelevant);
-        noiselequal->setDefaultEditedState(Irrelevant);
-        noisechrodetail->setDefaultEditedState(Irrelevant);
-        bilateral->setDefaultEditedState(Irrelevant);
-        sensiden->setDefaultEditedState(Irrelevant);
-        noisechrof->setDefaultEditedState(Irrelevant);
-        noisechroc->setDefaultEditedState(Irrelevant);
-        sharradius->setDefaultEditedState(Irrelevant);
-        sharamount->setDefaultEditedState(Irrelevant);
-        shardamping->setDefaultEditedState(Irrelevant);
-        shariter->setDefaultEditedState(Irrelevant);
-        sensisha->setDefaultEditedState(Irrelevant);
-        sensi->setDefaultEditedState(Irrelevant);
+        warm->setDefaultEditedState(Irrelevant);
         sensiex->setDefaultEditedState(Irrelevant);
-        sensih->setDefaultEditedState(Irrelevant);
-        retrab->setDefaultEditedState(Irrelevant);
-        sensicb->setDefaultEditedState(Irrelevant);
-        sensiexclu->setDefaultEditedState(Irrelevant);
-        sensicb->setDefaultEditedState(Irrelevant);
-        struc->setDefaultEditedState(Irrelevant);
-        sensitm->setDefaultEditedState(Irrelevant);
+        // Vibrance
+        saturated->setDefaultEditedState(Irrelevant);
+        pastels->setDefaultEditedState(Irrelevant);
+        psThreshold->setDefaultEditedState(Irrelevant);
+        sensiv->setDefaultEditedState(Irrelevant);
+        // Blur & Noise
         radius->setDefaultEditedState(Irrelevant);
         strength->setDefaultEditedState(Irrelevant);
+        sensibn->setDefaultEditedState(Irrelevant);
+        // Tone Mapping
         stren->setDefaultEditedState(Irrelevant);
         gamma->setDefaultEditedState(Irrelevant);
         estop->setDefaultEditedState(Irrelevant);
         scaltm->setDefaultEditedState(Irrelevant);
         rewei->setDefaultEditedState(Irrelevant);
-        transit->setDefaultEditedState(Irrelevant);
+        sensitm->setDefaultEditedState(Irrelevant);
+        // Retinex
         str->setDefaultEditedState(Irrelevant);
+        chrrt->setDefaultEditedState(Irrelevant);
         neigh->setDefaultEditedState(Irrelevant);
         vart->setDefaultEditedState(Irrelevant);
-        chrrt->setDefaultEditedState(Irrelevant);
-
+        sensih->setDefaultEditedState(Irrelevant);
+        // Sharpening
+        sharradius->setDefaultEditedState(Irrelevant);
+        sharamount->setDefaultEditedState(Irrelevant);
+        shardamping->setDefaultEditedState(Irrelevant);
+        shariter->setDefaultEditedState(Irrelevant);
+        sensisha->setDefaultEditedState(Irrelevant);
+        // Contrast by detail levels
         for (int i = 0; i < 5; i++) {
             multiplier[i]->setDefaultEditedState(Irrelevant);
         }
-
-        threshold->setDefaultEditedState(Irrelevant);
         chromacbdl->setDefaultEditedState(Irrelevant);
-
-        pastels->setDefaultEditedState(Irrelevant);
-        saturated->setDefaultEditedState(Irrelevant);
-        psThreshold->setDefaultEditedState(Irrelevant);
-        sensiv->setDefaultEditedState(Irrelevant);
-
+        threshold->setDefaultEditedState(Irrelevant);
+        sensicb->setDefaultEditedState(Irrelevant);
+        // Denoise
+        noiselumf->setDefaultEditedState(Irrelevant);
+        noiselumc->setDefaultEditedState(Irrelevant);
+        noiselumdetail->setDefaultEditedState(Irrelevant);
+        noiselequal->setDefaultEditedState(Irrelevant);
+        noisechrof->setDefaultEditedState(Irrelevant);
+        noisechroc->setDefaultEditedState(Irrelevant);
+        noisechrodetail->setDefaultEditedState(Irrelevant);
+        adjblur->setDefaultEditedState(Irrelevant);
+        bilateral->setDefaultEditedState(Irrelevant);
+        sensiden->setDefaultEditedState(Irrelevant);
     }
-    */
 }
 
 void Locallab::adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop)
@@ -2592,7 +2616,6 @@ std::vector<double> Locallab::getCurvePoints(ThresholdSelector* tAdjuster) const
 
 void Locallab::setEditProvider(EditDataProvider * provider)
 {
-    // cTgainshape->setEditProvider(provider);
     expsettings->setEditProvider(provider);
 }
 
