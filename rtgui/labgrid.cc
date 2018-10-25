@@ -44,20 +44,22 @@ using rtengine::Color;
 bool LabGrid::notifyListener()
 {
     if (listener) {
-        listener->panelChanged(evt, Glib::ustring::compose(M("TP_COLORTONING_LABGRID_VALUES"), int(low_a), int(low_b), int(high_a), int(high_b)));
+        listener->panelChanged(evt, Glib::ustring::compose(evtMsg, int(high_a), int(high_b), int(low_a), int(low_b)));
     }
     return false;
 }
 
 
-LabGrid::LabGrid(rtengine::ProcEvent evt):
+LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low):
     Gtk::DrawingArea(),
-    evt(evt), litPoint(NONE),
+    evt(evt), evtMsg(msg),
+    litPoint(NONE),
     low_a(0.f), high_a(0.f), low_b(0.f), high_b(0.f),
     defaultLow_a(0.f), defaultHigh_a(0.f), defaultLow_b(0.f), defaultHigh_b(0.f),
     listener(nullptr),
     edited(false),
-    isDragged(false)
+    isDragged(false),
+    low_enabled(enable_low)
 {
     set_can_focus(true);
     add_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK);
@@ -201,13 +203,15 @@ bool LabGrid::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         cr->stroke();
 
         // drawing points
-        cr->set_source_rgb(0.1, 0.1, 0.1);
-        if (litPoint == LOW) {
-            cr->arc(loa, lob, 5, 0, 2. * rtengine::RT_PI);
-        } else {
-            cr->arc(loa, lob, 3, 0, 2. * rtengine::RT_PI);
+        if (low_enabled) {
+            cr->set_source_rgb(0.1, 0.1, 0.1);
+            if (litPoint == LOW) {
+                cr->arc(loa, lob, 5, 0, 2. * rtengine::RT_PI);
+            } else {
+                cr->arc(loa, lob, 3, 0, 2. * rtengine::RT_PI);
+            }
+            cr->fill();
         }
-        cr->fill();
 
         cr->set_source_rgb(0.9, 0.9, 0.9);
         if (litPoint == HIGH) {
@@ -298,7 +302,7 @@ bool LabGrid::on_motion_notify_event(GdkEventMotion *event)
         const float thrs = 0.05f;
         const float distlo = (la - ma) * (la - ma) + (lb - mb) * (lb - mb);
         const float disthi = (ha - ma) * (ha - ma) + (hb - mb) * (hb - mb);
-        if (distlo < thrs * thrs && distlo < disthi) {
+        if (low_enabled && distlo < thrs * thrs && distlo < disthi) {
             litPoint = LOW;
         } else if (disthi < thrs * thrs && disthi <= distlo) {
             litPoint = HIGH;
@@ -327,4 +331,19 @@ void LabGrid::get_preferred_width_vfunc(int &minimum_width, int &natural_width) 
 void LabGrid::get_preferred_height_for_width_vfunc(int width, int &minimum_height, int &natural_height) const
 {
     minimum_height = natural_height = width;
+}
+
+
+bool LabGrid::lowEnabled() const
+{
+    return low_enabled;
+}
+
+
+void LabGrid::setLowEnabled(bool yes)
+{
+    if (low_enabled != yes) {
+        low_enabled = yes;
+        queue_draw();
+    }
 }

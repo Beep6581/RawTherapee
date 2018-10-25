@@ -1082,6 +1082,7 @@ private:
 
 
         ipf.vibrance (labView);
+        ipf.labColorCorrectionRegions(labView);
 
         if ((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) {
             ipf.impulsedenoise (labView);
