@@ -1411,8 +1411,8 @@ void ColorToning::labRegionGet(int idx)
 
 void ColorToning::labRegionAddPressed()
 {
-    labRegionData.insert(labRegionData.begin(), rtengine::ColorToningParams::LabCorrectionRegion());
-    labRegionSelected = 0;
+    labRegionSelected = labRegionData.size();
+    labRegionData.push_back(rtengine::ColorToningParams::LabCorrectionRegion());
     labRegionPopulateList();
     labRegionShow(labRegionSelected);
 
