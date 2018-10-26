@@ -104,6 +104,11 @@ FlatField::FlatField () : FoldableToolPanel(this, "flatfield", M("TP_FLATFIELD_L
     }
 }
 
+FlatField::~FlatField ()
+{
+    idle_register.destroy();
+}
+
 void FlatField::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
     disableListener ();
@@ -402,4 +407,23 @@ void FlatField::setShortcutPath(const Glib::ustring& path)
         lastShortcutPath = path;
 
     } catch (Glib::Error&) {}
+}
+
+void FlatField::flatFieldAutoClipValueChanged(int n)
+{
+    struct Data {
+        FlatField *me;
+        int n;
+    };
+    const auto func = [](gpointer data) -> gboolean {
+        Data *d = static_cast<Data *>(data);
+        FlatField *me = d->me;
+        me->disableListener();
+        me->flatFieldClipControl->setValue (d->n);
+        me->enableListener();
+        delete d;
+        return FALSE;
+    };
+
+    idle_register.add(func, new Data { this, n });
 }

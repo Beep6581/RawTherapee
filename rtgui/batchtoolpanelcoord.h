@@ -51,30 +51,36 @@ public:
     explicit BatchToolPanelCoordinator (FilePanel* parent);
 
     // FileSelectionChangeListener interface
-    void selectionChanged (const std::vector<Thumbnail*>& selected);
+    void selectionChanged (const std::vector<Thumbnail*>& selected) override;
 
     // toolpanellistener interface
-    void panelChanged   (rtengine::ProcEvent event, const Glib::ustring& descr);
+    void panelChanged(const rtengine::ProcEvent& event, const Glib::ustring& descr) override;
 
     // profilechangelistener interface
-    void profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited = nullptr);
+    void profileChange(
+        const rtengine::procparams::PartialProfile* nparams,
+        const rtengine::ProcEvent& event,
+        const Glib::ustring& descr,
+        const ParamsEdited* paramsEdited = nullptr,
+        bool fromLastSave = false
+    ) override;
 
     // wbprovider interface
-    void getAutoWB (double& temp, double& green, double equal, double tempBias);
+    void getAutoWB (double& temp, double& green, double equal, double tempBias) override;
     void getCamWB (double& temp, double& green);
 
     // thumbnaillistener interface
-    void procParamsChanged (Thumbnail* thm, int whoChangedIt);
+    void procParamsChanged (Thumbnail* thm, int whoChangedIt) override;
 
     // batchpparamschangelistener interface
-    void beginBatchPParamsChange(int numberOfEntries);
-    void endBatchPParamsChange();
+    void beginBatchPParamsChange(int numberOfEntries) override;
+    void endBatchPParamsChange() override;
 
     // imageareatoollistener interface
-    void spotWBselected (int x, int y, Thumbnail* thm = nullptr);
-    void cropSelectionReady ();
-    void rotateSelectionReady (double rotate_deg, Thumbnail* thm = nullptr);
-    CropGUIListener* startCropEditing (Thumbnail* thm = nullptr);
+    void spotWBselected (int x, int y, Thumbnail* thm = nullptr) override;
+    void cropSelectionReady () override;
+    void rotateSelectionReady (double rotate_deg, Thumbnail* thm = nullptr) override;
+    CropGUIListener* startCropEditing (Thumbnail* thm = nullptr) override;
 
     void optionsChanged ();
 };

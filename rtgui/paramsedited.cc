@@ -521,6 +521,7 @@ void ParamsEdited::set(bool v)
     raw.bayersensor.dcbEnhance = v;
     //raw.bayersensor.allEnhance = v;
     raw.bayersensor.lmmseIterations = v;
+    raw.bayersensor.dualDemosaicAutoContrast = v;
     raw.bayersensor.dualDemosaicContrast = v;
     raw.bayersensor.pixelShiftMotionCorrectionMethod = v;
     raw.bayersensor.pixelShiftEperIso = v;
@@ -541,6 +542,7 @@ void ParamsEdited::set(bool v)
     raw.bayersensor.linenoiseDirection = v;
     raw.bayersensor.pdafLinesFilter = v;
     raw.xtranssensor.method = v;
+    raw.xtranssensor.dualDemosaicAutoContrast = v;
     raw.xtranssensor.dualDemosaicContrast = v;
     raw.xtranssensor.ccSteps = v;
     raw.xtranssensor.exBlackRed = v;
@@ -1194,6 +1196,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         raw.bayersensor.dcbEnhance = raw.bayersensor.dcbEnhance && p.raw.bayersensor.dcb_enhance == other.raw.bayersensor.dcb_enhance;
         //raw.bayersensor.allEnhance = raw.bayersensor.allEnhance && p.raw.bayersensor.all_enhance == other.raw.bayersensor.all_enhance;
         raw.bayersensor.lmmseIterations = raw.bayersensor.lmmseIterations && p.raw.bayersensor.lmmse_iterations == other.raw.bayersensor.lmmse_iterations;
+        raw.bayersensor.dualDemosaicAutoContrast = raw.bayersensor.dualDemosaicAutoContrast && p.raw.bayersensor.dualDemosaicAutoContrast == other.raw.bayersensor.dualDemosaicAutoContrast;
         raw.bayersensor.dualDemosaicContrast = raw.bayersensor.dualDemosaicContrast && p.raw.bayersensor.dualDemosaicContrast == other.raw.bayersensor.dualDemosaicContrast;
         raw.bayersensor.pixelShiftMotionCorrectionMethod = raw.bayersensor.pixelShiftMotionCorrectionMethod && p.raw.bayersensor.pixelShiftMotionCorrectionMethod == other.raw.bayersensor.pixelShiftMotionCorrectionMethod;
         raw.bayersensor.pixelShiftEperIso = raw.bayersensor.pixelShiftEperIso && p.raw.bayersensor.pixelShiftEperIso == other.raw.bayersensor.pixelShiftEperIso;
@@ -1214,6 +1217,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         raw.bayersensor.linenoiseDirection = raw.bayersensor.linenoiseDirection && p.raw.bayersensor.linenoiseDirection == other.raw.bayersensor.linenoiseDirection;
         raw.bayersensor.pdafLinesFilter = raw.bayersensor.pdafLinesFilter && p.raw.bayersensor.pdafLinesFilter == other.raw.bayersensor.pdafLinesFilter;
         raw.xtranssensor.method = raw.xtranssensor.method && p.raw.xtranssensor.method == other.raw.xtranssensor.method;
+        raw.xtranssensor.dualDemosaicAutoContrast = raw.xtranssensor.dualDemosaicAutoContrast && p.raw.xtranssensor.dualDemosaicAutoContrast == other.raw.xtranssensor.dualDemosaicAutoContrast;
         raw.xtranssensor.dualDemosaicContrast = raw.xtranssensor.dualDemosaicContrast && p.raw.xtranssensor.dualDemosaicContrast == other.raw.xtranssensor.dualDemosaicContrast;
         raw.xtranssensor.ccSteps = raw.xtranssensor.ccSteps && p.raw.xtranssensor.ccSteps == other.raw.xtranssensor.ccSteps;
         raw.xtranssensor.exBlackRed = raw.xtranssensor.exBlackRed && p.raw.xtranssensor.blackred == other.raw.xtranssensor.blackred;
@@ -3169,6 +3173,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.raw.bayersensor.lmmse_iterations = mods.raw.bayersensor.lmmse_iterations;
     }
 
+    if (raw.bayersensor.dualDemosaicAutoContrast) {
+        toEdit.raw.bayersensor.dualDemosaicAutoContrast = mods.raw.bayersensor.dualDemosaicAutoContrast;
+    }
+
     if (raw.bayersensor.dualDemosaicContrast) {
         toEdit.raw.bayersensor.dualDemosaicContrast = mods.raw.bayersensor.dualDemosaicContrast;
     }
@@ -3247,6 +3255,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (raw.xtranssensor.method) {
         toEdit.raw.xtranssensor.method          = mods.raw.xtranssensor.method;
+    }
+
+    if (raw.xtranssensor.dualDemosaicAutoContrast) {
+        toEdit.raw.xtranssensor.dualDemosaicAutoContrast          = mods.raw.xtranssensor.dualDemosaicAutoContrast;
     }
 
     if (raw.xtranssensor.dualDemosaicContrast) {
@@ -3769,7 +3781,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
 bool RAWParamsEdited::BayerSensor::isUnchanged() const
 {
-    return  method && border && imageNum && dcbIterations && dcbEnhance && lmmseIterations && dualDemosaicContrast /*&& allEnhance*/ &&  greenEq
+    return  method && border && imageNum && dcbIterations && dcbEnhance && lmmseIterations && dualDemosaicAutoContrast && dualDemosaicContrast /*&& allEnhance*/ &&  greenEq
             && pixelShiftMotionCorrectionMethod && pixelShiftEperIso && pixelShiftSigma && pixelShiftShowMotion && pixelShiftShowMotionMaskOnly
             && pixelShiftHoleFill && pixelShiftMedian && pixelShiftNonGreenCross && pixelShiftDemosaicMethod && pixelShiftGreen && pixelShiftBlur && pixelShiftSmooth && pixelShiftEqualBright && pixelShiftEqualBrightChannel
             && linenoise && linenoiseDirection && pdafLinesFilter && exBlack0 && exBlack1 && exBlack2 && exBlack3 && exTwoGreen;
@@ -3777,7 +3789,7 @@ bool RAWParamsEdited::BayerSensor::isUnchanged() const
 
 bool RAWParamsEdited::XTransSensor::isUnchanged() const
 {
-    return method && exBlackRed && exBlackGreen && exBlackBlue;
+    return method && exBlackRed && exBlackGreen && exBlackBlue && dualDemosaicAutoContrast && dualDemosaicContrast;
 }
 
 bool RAWParamsEdited::isUnchanged() const
