@@ -249,7 +249,7 @@ void BatchQueuePanel::queueSizeChanged(int qsize, bool queueRunning, bool queueE
 {
     updateTab (qsize);
 
-    if (qsize == 0 || (qsize == 1 && !fdir->get_sensitive())) {
+    if (qsize == 0 || (qsize == 1 && queueRunning)) {
         qStartStop->set_sensitive(false);
     } else {
         qStartStop->set_sensitive(true);
