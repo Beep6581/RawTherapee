@@ -60,22 +60,23 @@ public:
     void init (RTWindow* parent);
 
     void addBatchQueueJobs(const std::vector<BatchQueueEntry*>& entries , bool head = false);
+    void saveOptions ();
+
+    bool handleShortcutKey (GdkEventKey* event);
 
     // batchqueuelistener interface
     void queueSizeChanged(int qsize, bool queueEmptied, bool queueError, const Glib::ustring& queueErrorMessage);
     bool canStartNext();
 
+private:
     void startBatchProc ();
     void stopBatchProc ();
     void startOrStopBatchProc();
 
-    void saveOptions ();
     void pathFolderChanged ();
     void pathFolderButtonPressed ();
     void formatChanged(const Glib::ustring& format) override;
     void updateTab (int qsize, int forceOrientation = 0); // forceOrientation=0: base on options / 1: horizontal / 2: vertical
-
-    bool handleShortcutKey (GdkEventKey* event);
 };
 #endif
 
