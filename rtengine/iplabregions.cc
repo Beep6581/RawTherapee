@@ -37,11 +37,18 @@ void ImProcFunctions::labColorCorrectionRegions(LabImage *lab)
     const float scaling = 1.f;
 
     int n = params->colorToning.labregions.size();
+    int show_mask_idx = params->colorToning.labregionsShowMask;
+    if (show_mask_idx >= n) {
+        show_mask_idx = -1;
+    }
     std::vector<std::unique_ptr<FlatCurve>> hmask(n);
     std::vector<std::unique_ptr<FlatCurve>> cmask(n);
     std::vector<std::unique_ptr<FlatCurve>> lmask(n);
 
-    for (int i = 0; i < n; ++i) {
+    const int begin_idx = max(show_mask_idx, 0);
+    const int end_idx = (show_mask_idx < 0 ? n : show_mask_idx+1);
+
+    for (int i = begin_idx; i < end_idx; ++i) {
         auto &r = params->colorToning.labregions[i];
         if (!r.hueMask.empty() && r.hueMask[0] != FCT_Linear) {
             hmask[i].reset(new FlatCurve(r.hueMask, true));
@@ -54,10 +61,9 @@ void ImProcFunctions::labColorCorrectionRegions(LabImage *lab)
         }
     }
 
-    array2D<float> guide(lab->W, lab->H, lab->L, ARRAY2D_BYREFERENCE);
     std::vector<array2D<float>> abmask(n);
     std::vector<array2D<float>> Lmask(n);
-    for (int i = 0; i < n; ++i) {
+    for (int i = begin_idx; i < end_idx; ++i) {
         abmask[i](lab->W, lab->H);
         Lmask[i](lab->W, lab->H);
     }
@@ -81,38 +87,40 @@ void ImProcFunctions::labColorCorrectionRegions(LabImage *lab)
             h1 = lin2log(h1, 3.f);
             float l1 = l / 32768.f;
 
-            if (params->colorToning.labregionsShowMask >= 0 && params->colorToning.labregionsShowMask < n) {
-                int idx = params->colorToning.labregionsShowMask;
-                auto &hm = hmask[idx];
-                auto &cm = cmask[idx];
-                auto &lm = lmask[idx];
-                float blend = (hm ? hm->getVal(h1) : 1.f) * (cm ? cm->getVal(c1) : 1.f) * (lm ? lm->getVal(l1) : 1.f);
-                abmask[idx][y][x] = blend;
-            } else {
-                for (int i = 0; i < n; ++i) {
-                    auto &hm = hmask[i];
-                    auto &cm = cmask[i];
-                    auto &lm = lmask[i];
-                    float blend = (hm ? hm->getVal(h1) : 1.f) * (cm ? cm->getVal(c1) : 1.f) * (lm ? lm->getVal(l1) : 1.f);
-                    Lmask[i][y][x] = abmask[i][y][x] = blend;
-                }
+            for (int i = begin_idx; i < end_idx; ++i) {
+                auto &hm = hmask[i];
+                auto &cm = cmask[i];
+                auto &lm = lmask[i];
+                float blend = LIM01((hm ? hm->getVal(h1) : 1.f) * (cm ? cm->getVal(c1) : 1.f) * (lm ? lm->getVal(l1) : 1.f));
+                Lmask[i][y][x] = abmask[i][y][x] = blend;
             }
         }
     }
 
-    for (int i = 0; i < n; ++i) {
-        rtengine::guidedFilter(guide, abmask[i], abmask[i], max(int(4 / scale + 0.5), 1), 0.001, multiThread);
-        rtengine::guidedFilter(guide, Lmask[i], Lmask[i], max(int(25 / scale + 0.5), 1), 0.0001, multiThread);
-    }
-
-    if (params->colorToning.labregionsShowMask >= 0 && params->colorToning.labregionsShowMask < n) {
-        int idx = params->colorToning.labregionsShowMask;
+    {
+        array2D<float> guide(lab->W, lab->H, lab->L);
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
         for (int y = 0; y < lab->H; ++y) {
             for (int x = 0; x < lab->W; ++x) {
-                auto blend = abmask[idx][y][x];
+                guide[y][x] = LIM01(lab->L[y][x] / 32768.f);
+            }
+        }
+        
+        for (int i = begin_idx; i < end_idx; ++i) {
+            rtengine::guidedFilter(guide, abmask[i], abmask[i], max(int(4 / scale + 0.5), 1), 0.001, multiThread);
+            rtengine::guidedFilter(guide, Lmask[i], Lmask[i], max(int(25 / scale + 0.5), 1), 0.0001, multiThread);
+        }
+    }
+
+    if (show_mask_idx >= 0) {
+#ifdef _OPENMP
+        #pragma omp parallel for if (multiThread)
+#endif
+        for (int y = 0; y < lab->H; ++y) {
+            for (int x = 0; x < lab->W; ++x) {
+                auto blend = abmask[show_mask_idx][y][x];
                 lab->a[y][x] = 0.f;
                 lab->b[y][x] = blend * 42000.f;
                 lab->L[y][x] = LIM(lab->L[y][x] + 32768.f * blend, 0.f, 32768.f);
@@ -142,9 +150,9 @@ void ImProcFunctions::labColorCorrectionRegions(LabImage *lab)
                 auto &r = params->colorToning.labregions[i];
                 float blend = abmask[i][y][x];
                 float s = 1.f + r.saturation / 100.f;
-                float a_new = s * (a + 32768.f * abcoord(r.a) / factor / scaling);
-                float b_new = s * (b + 32768.f * abcoord(r.b) / factor / scaling);
-                float l_new = l * (1.f + r.lightness / 1000.f);
+                float a_new = LIM(s * (a + 32768.f * abcoord(r.a) / factor / scaling), -42000.f, 42000.f);
+                float b_new = LIM(s * (b + 32768.f * abcoord(r.b) / factor / scaling), -42000.f, 42000.f);
+                float l_new = LIM(l * (1.f + float(r.lightness) / 1000.f), 0.f, 32768.f);
                 l = intp(Lmask[i][y][x], l_new, l);
                 a = intp(blend, a_new, a);
                 b = intp(blend, b_new, b);
