@@ -24,7 +24,7 @@
 #include "rawimagesource.h"
 #include "rawimagesource_i.h"
 #include "../rtgui/multilangmgr.h"
-//#define BENCHMARK
+#define BENCHMARK
 #include "StopWatch.h"
 
 namespace rtengine
@@ -176,7 +176,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
 
                 *ip++ = (y1 * width + x1) * 4 + color;
                 *ip++ = (y2 * width + x2) * 4 + color;
-                *ip++ = weight;
+                *ip++ = 1 << weight;
 
                 for (g = 0; g < 8; g++)
                     if (grads & (1 << g)) {
@@ -230,7 +230,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
                     memset (gval, 0, sizeof gval);
 
                     while ((g = ip[0]) != INT_MAX) {        /* Calculate gradients */
-                        float diff = fabsf(pix[g] - pix[ip[1]]) * (1 << ip[2]);
+                        float diff = fabsf(pix[g] - pix[ip[1]]) * ip[2];
                         gval[ip[3]] += diff;
                         ip += 4;
 
