@@ -2,6 +2,7 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright 2018 Maciej Dworak
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -67,7 +68,7 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     paramTable->attach (*specifyLbl, 0, 1, 2, 3, Gtk::FILL, Gtk::SHRINK, 2, 2);
     paramTable->attach (*spec, 1, 2, 2, 3, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 
-    allowUpscaling = Gtk::manage(new Gtk::CheckButton(M("TP_RESIZE_ALLOW_UPSCALING"))); // TODO Wrong capitalization used, should be sentence-case.
+    allowUpscaling = Gtk::manage(new Gtk::CheckButton(M("TP_RESIZE_ALLOW_UPSCALING")));
     allowUpscaling->signal_toggled().connect(sigc::mem_fun(*this, &Resize::allowUpscalingChanged));
     paramTable->attach (*allowUpscaling, 1, 2, 3, 4, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 
@@ -97,8 +98,8 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     wPhys->set_hexpand(true);
     hPhys->set_hexpand(true);
 
-    Gtk::Label* wPxLbl = Gtk::manage(new Gtk::Label(M("GENERAL_WIDTH"))); // TODO delete all TP_RESIZE_W keys
-    Gtk::Label* hPxLbl = Gtk::manage(new Gtk::Label(M("GENERAL_HEIGHT"))); // TODO delete all TP_RESIZE_H keys
+    Gtk::Label* wPxLbl = Gtk::manage(new Gtk::Label(M("GENERAL_WIDTH")));
+    Gtk::Label* hPxLbl = Gtk::manage(new Gtk::Label(M("GENERAL_HEIGHT")));
     Gtk::Label* ppiLbl = Gtk::manage(new Gtk::Label(M("GENERAL_PIXELSPERINCH")));
     Gtk::Label* uomLbl = Gtk::manage(new Gtk::Label(M("GENERAL_UOM")));
     Gtk::Label* wUomLbl = Gtk::manage(new Gtk::Label(M("GENERAL_WIDTH")));
@@ -199,10 +200,6 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
     ppiConn.block(true);
     wPxConn.block (true);
     hPxConn.block (true);
-    /*
-    wPhysConn.block(true);
-    hPhysConn.block(true);
-    */
     scaleConn.block (true);
     scale->block(true);
 
@@ -215,17 +212,6 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
     allowUpscaling->set_active(pp->resize.allowUpscaling);
 
     updatePhysDimensions();
-    /*
-    double wInches = wPx->get_value() / ppiSB->get_value_as_int();
-    double hInches = hPx->get_value() / ppiSB->get_value_as_int();
-    if (uom->get_active_row_number() == 0) {
-        wPhys->set_value(wInches * 2.54);
-        hPhys->set_value(hInches * 2.54);
-    } else {
-        wPhys->set_value(wInches);
-        hPhys->set_value(hInches);
-    }
-    */
 
     updateGUI();
 
@@ -275,10 +261,6 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
     ppiConn.block(false);
     wPxConn.block (false);
     hPxConn.block (false);
-    /*
-    wPhysConn.block(false);
-    hPhysConn.block(false);
-    */
     appliesToConn.block (false);
     enableListener ();
 }
@@ -397,11 +379,9 @@ int Resize::getComputedHeight()
 void Resize::appliesToChanged ()
 {
 
-    //printf("\nPASSAGE EN MODE \"%s\"\n\n", appliesTo->get_active_text().c_str());
     setDimensions();
 
     if (listener && (getEnabled () || batchMode)) {
-        //printf("Appel du listener\n");
         listener->panelChanged (EvResizeAppliesTo, appliesTo->get_active_text());
     }
 }
