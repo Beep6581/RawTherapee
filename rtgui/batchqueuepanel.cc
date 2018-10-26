@@ -324,19 +324,39 @@ void BatchQueuePanel::addBatchQueueJobs(const std::vector<BatchQueueEntry*>& ent
     }
 }
 
-bool BatchQueuePanel::canStartNext ()
-{
-    // This function is called from the background BatchQueue thread.
-    // It cannot call UI functions, so grab the stored state of qStartStop.
-    return qStartStopState;
-}
-
 void BatchQueuePanel::saveOptions ()
 {
 
     options.savePathTemplate    = outdirTemplate->get_text();
     options.saveUsePathTemplate = useTemplate->get_active();
     options.procQueueEnabled    = qAutoStart->get_active();
+}
+
+bool BatchQueuePanel::handleShortcutKey (GdkEventKey* event)
+{
+    bool ctrl = event->state & GDK_CONTROL_MASK;
+
+    if (ctrl) {
+        switch(event->keyval) {
+        case GDK_KEY_s:
+            if (qStartStop->get_active()) {
+                stopBatchProc();
+            } else {
+                startBatchProc();
+            }
+
+            return true;
+        }
+    }
+
+    return batchQueue->keyPressed (event);
+}
+
+bool BatchQueuePanel::canStartNext ()
+{
+    // This function is called from the background BatchQueue thread.
+    // It cannot call UI functions, so grab the stored state of qStartStop.
+    return qStartStopState;
 }
 
 void BatchQueuePanel::pathFolderButtonPressed ()
@@ -367,24 +387,4 @@ void BatchQueuePanel::pathFolderChanged ()
 void BatchQueuePanel::formatChanged(const Glib::ustring& format)
 {
     options.saveFormatBatch = saveFormatPanel->getFormat();
-}
-
-bool BatchQueuePanel::handleShortcutKey (GdkEventKey* event)
-{
-    bool ctrl = event->state & GDK_CONTROL_MASK;
-
-    if (ctrl) {
-        switch(event->keyval) {
-        case GDK_KEY_s:
-            if (qStartStop->get_active()) {
-                stopBatchProc();
-            } else {
-                startBatchProc();
-            }
-
-            return true;
-        }
-    }
-
-    return batchQueue->keyPressed (event);
 }
