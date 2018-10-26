@@ -210,9 +210,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
     #pragma omp parallel
 #endif
     {
-        float gval[8], thold, sum[3];
-        int g;
-        const int progressStep = 64;
+        constexpr int progressStep = 64;
         const double progressInc = (0.98 - progress) / ((height - 2) / progressStep);
         int firstRow = -1;
         int lastRow = -1;
@@ -233,10 +231,11 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
                     green[row][col] = pix[color];
                 } else {
                     int * ip = code[row & prow][col & pcol];
-                    memset (gval, 0, sizeof gval);
+                    float gval[8] = {};
 
+                    int g;
                     while ((g = ip[0]) != INT_MAX) {        /* Calculate gradients */
-                        const float diff = fabsf(pix[g] - pix[ip[1]]) * ip[2];
+                        const float diff = std::fabs(pix[g] - pix[ip[1]]) * ip[2];
                         gval[ip[3]] += diff;
                         ip += 4;
 
@@ -246,24 +245,17 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
                     }
 
                     ip++;
-                    {
-                        float gmin, gmax;
-                        gmin = gmax = gval[0];          /* Choose a threshold */
 
-                        for (g = 1; g < 8; g++) {
-                            gmin = std::min(gmin, gval[g]);
-                            gmax = std::max(gmax, gval[g]);
-                        }
+                    const float thold = rtengine::min(gval[0], gval[1], gval[2], gval[3], gval[4], gval[5], gval[6], gval[7])
+                                      + rtengine::max(gval[0], gval[1], gval[2], gval[3], gval[4], gval[5], gval[6], gval[7]) / 2;
 
-                        thold = gmin + (gmax / 2);
-                    }
-                    memset (sum, 0, sizeof sum);
+                    float sum[3] = {};
                     float t1p2 = pix[color];
 
                     if(color & 1) {
                         int num = 0;
 
-                        for (g = 0; g < 8; g++, ip += 2) {  /* Average the neighbors */
+                        for (int g = 0; g < 8; g++, ip += 2) {  /* Average the neighbors */
                             if (gval[g] <= thold) {
                                 if(ip[1]) {
                                     sum[0] += (t1p2 + pix[ip[1]]) * 0.5f;
@@ -278,7 +270,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
                     } else {
                         int num = 0;
 
-                        for (g = 0; g < 8; g++, ip += 2) {  /* Average the neighbors */
+                        for (int g = 0; g < 8; g++, ip += 2) {  /* Average the neighbors */
                             if (gval[g] <= thold) {
                                 sum[1] += pix[ip[0] + 1];
                                 sum[2] += pix[ip[0] + 3];
@@ -298,7 +290,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
                 }
             }
             if (row - 1 > firstRow) {
-                interpolate_row_rb_mul_pp (rawData, red[row - 1], blue[row - 1], green[row - 2], green[row - 1], green[row], row - 1, 1.0, 1.0, 1.0, 0, W, 1);
+                interpolate_row_rb_mul_pp(rawData, red[row - 1], blue[row - 1], green[row - 2], green[row - 1], green[row], row - 1, 1.0, 1.0, 1.0, 0, W, 1);
             }
 
             if(plistenerActive) {
@@ -314,21 +306,23 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
         }
 
         if (firstRow > 2 && firstRow < H - 3) {
-            interpolate_row_rb_mul_pp (rawData, red[firstRow], blue[firstRow], green[firstRow - 1], green[firstRow], green[firstRow + 1], firstRow, 1.0, 1.0, 1.0, 0, W, 1);
+            interpolate_row_rb_mul_pp(rawData, red[firstRow], blue[firstRow], green[firstRow - 1], green[firstRow], green[firstRow + 1], firstRow, 1.0, 1.0, 1.0, 0, W, 1);
         }
 
         if (lastRow > 2 && lastRow < H - 3) {
-            interpolate_row_rb_mul_pp (rawData, red[lastRow], blue[lastRow], green[lastRow - 1], green[lastRow], green[lastRow + 1], lastRow, 1.0, 1.0, 1.0, 0, W, 1);
+            interpolate_row_rb_mul_pp(rawData, red[lastRow], blue[lastRow], green[lastRow - 1], green[lastRow], green[lastRow + 1], lastRow, 1.0, 1.0, 1.0, 0, W, 1);
+        }
+#ifdef _OPENMP
+        #pragma omp single
+#endif
+        {
+            // let the first thread, which is out of work, do the border interpolation
+            border_interpolate2(W, H, 3, rawData, red, green, blue);
         }
     }
+
     free (code[0][0]);
     free (image);
-
-    if(plistenerActive) {
-        plistener->setProgress (0.98);
-    }
-
-    border_interpolate2(W, H, 3, rawData, red, green, blue);
 
     if(plistenerActive) {
         plistener->setProgress (1.0);
