@@ -135,11 +135,14 @@ void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2
     const array2D<float> &p = src;
     array2D<float> &q = dst;
 
+    AlignedBuffer<float> blur_buf(I.width() * I.height());
     const auto f_mean =
-        [](array2D<float> &d, array2D<float> &s, int rad) -> void
+        [&](array2D<float> &d, array2D<float> &s, int rad) -> void
         {
             rad = LIM(rad, 0, (min(s.width(), s.height()) - 1) / 2 - 1);
-            boxblur<float, float>(s, d, rad, rad, s.width(), s.height());
+            float **src = s;
+            float **dst = d;
+            boxblur<float, float>(src, dst, blur_buf.data, rad, rad, s.width(), s.height());
         };
 
     const auto f_subsample =
