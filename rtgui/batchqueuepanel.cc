@@ -245,7 +245,7 @@ void BatchQueuePanel::updateTab (int qsize, int forceOrientation)
     }
 }
 
-void BatchQueuePanel::queueSizeChanged(int qsize, bool queueEmptied, bool queueError, const Glib::ustring& queueErrorMessage)
+void BatchQueuePanel::queueSizeChanged(int qsize, bool queueRunning, bool queueError, const Glib::ustring& queueErrorMessage)
 {
     updateTab (qsize);
 
@@ -255,12 +255,14 @@ void BatchQueuePanel::queueSizeChanged(int qsize, bool queueEmptied, bool queueE
         qStartStop->set_sensitive(true);
     }
 
-    if (queueEmptied || queueError) {
+    if (!queueRunning) {
         stopBatchProc ();
         fdir->set_sensitive (true);
         fformat->set_sensitive (true);
 
-        SoundManager::playSoundAsync(options.sndBatchQueueDone);
+        if (qsize == 0) {
+            SoundManager::playSoundAsync(options.sndBatchQueueDone);
+        }
     }
 
     if (queueError) {
