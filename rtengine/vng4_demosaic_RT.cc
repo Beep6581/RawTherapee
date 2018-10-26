@@ -215,11 +215,18 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
         int g;
         const int progressStep = 64;
         const double progressInc = (0.98 - progress) / ((height - 2) / progressStep);
+        int firstRow = -1;
+        int lastRow = -1;
 #ifdef _OPENMP
-        #pragma omp for schedule(dynamic, 16) nowait
+        // note, static scheduling is important in this implementation
+        #pragma omp for schedule(static)
 #endif
 
         for (int row = 2; row < height - 2; row++) {    /* Do VNG interpolation */
+            if (firstRow == -1) {
+                firstRow = row;
+            }
+            lastRow = row;
             for (int col = 2; col < width - 2; col++) {
                 float * pix = image[row * width + col];
                 int color = fc(row, col);
@@ -298,6 +305,9 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
                     green[row][col] = 0.5f * (t1 + t2);
                 }
             }
+            if (row - 1 > firstRow) {
+                interpolate_row_rb_mul_pp (rawData, red[row - 1], blue[row - 1], green[row - 2], green[row - 1], green[row], row - 1, 1.0, 1.0, 1.0, 0, W, 1);
+            }
 
             if(plistenerActive) {
                 if((row % progressStep) == 0)
@@ -311,6 +321,24 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
             }
         }
 
+        if (firstRow != -1) {
+            if (firstRow == 0) {
+                interpolate_row_rb_mul_pp (rawData, red[0], blue[0], nullptr, green[0], green[1], 0, 1.0, 1.0, 1.0, 0, W, 1);
+            } else if (firstRow == H - 1) {
+                interpolate_row_rb_mul_pp (rawData, red[firstRow], blue[firstRow], green[firstRow - 1], green[firstRow], nullptr, firstRow, 1.0, 1.0, 1.0, 0, W, 1);
+            } else {
+                interpolate_row_rb_mul_pp (rawData, red[firstRow], blue[firstRow], green[firstRow - 1], green[firstRow], green[firstRow + 1], firstRow, 1.0, 1.0, 1.0, 0, W, 1);
+            }
+        }
+        if (lastRow != -1) {
+            if (lastRow == 0) {
+                interpolate_row_rb_mul_pp (rawData, red[0], blue[0], nullptr, green[0], green[1], 0, 1.0, 1.0, 1.0, 0, W, 1);
+            } else if (lastRow == H - 1) {
+                interpolate_row_rb_mul_pp (rawData, red[lastRow], blue[lastRow], green[lastRow - 1], green[lastRow], nullptr, lastRow, 1.0, 1.0, 1.0, 0, W, 1);
+            } else {
+                interpolate_row_rb_mul_pp (rawData, red[lastRow], blue[lastRow], green[lastRow - 1], green[lastRow], green[lastRow + 1], lastRow, 1.0, 1.0, 1.0, 0, W, 1);
+            }
+        }
     }
     free (code[0][0]);
     free (image);
@@ -319,23 +347,6 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
         plistener->setProgress (0.98);
     }
 
-    // Interpolate R and B
-#ifdef _OPENMP
-    #pragma omp parallel for
-#endif
-
-    for (int i = 0; i < H; i++) {
-        if (i == 0)
-            // rm, gm, bm must be recovered
-            //interpolate_row_rb_mul_pp (red, blue, NULL, green[i], green[i+1], i, rm, gm, bm, 0, W, 1);
-        {
-            interpolate_row_rb_mul_pp (rawData, red[i], blue[i], nullptr, green[i], green[i + 1], i, 1.0, 1.0, 1.0, 0, W, 1);
-        } else if (i == H - 1) {
-            interpolate_row_rb_mul_pp (rawData, red[i], blue[i], green[i - 1], green[i], nullptr, i, 1.0, 1.0, 1.0, 0, W, 1);
-        } else {
-            interpolate_row_rb_mul_pp (rawData, red[i], blue[i], green[i - 1], green[i], green[i + 1], i, 1.0, 1.0, 1.0, 0, W, 1);
-        }
-    }
     border_interpolate2(W, H, 3, rawData, red, green, blue);
 
     if(plistenerActive) {
