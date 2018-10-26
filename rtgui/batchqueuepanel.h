@@ -19,6 +19,8 @@
 #ifndef _BATCHQUEUEPANEL_
 #define _BATCHQUEUEPANEL_
 
+#include <atomic>
+
 #include <gtkmm.h>
 #include "batchqueue.h"
 #include "saveformatpanel.h"
@@ -52,6 +54,8 @@ class BatchQueuePanel : public Gtk::VBox,
     Gtk::HBox* topBox;
 
     IdleRegister idle_register;
+
+    std::atomic<bool> qStartStopState;
 
 public:
     explicit BatchQueuePanel (FileCatalog* aFileCatalog);

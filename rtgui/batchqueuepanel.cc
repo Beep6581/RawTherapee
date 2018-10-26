@@ -286,6 +286,7 @@ void BatchQueuePanel::startBatchProc ()
     // Update switch when queue started programmatically
     qStartStopConn.block (true);
     qStartStop->set_active(true);
+    qStartStopState = true;
     qStartStopConn.block (false);
 
     if (batchQueue->hasJobs()) {
@@ -308,6 +309,7 @@ void BatchQueuePanel::stopBatchProc ()
     // Update switch when queue started programmatically
     qStartStopConn.block (true);
     qStartStop->set_active(false);
+    qStartStopState = false;
     qStartStopConn.block (false);
 
     updateTab (batchQueue->getEntries().size());
@@ -324,14 +326,9 @@ void BatchQueuePanel::addBatchQueueJobs(const std::vector<BatchQueueEntry*>& ent
 
 bool BatchQueuePanel::canStartNext ()
 {
-//    GThreadLock lock;
-    if (qStartStop->get_active()) {
-        return true;
-    } else {
-        fdir->set_sensitive (true);
-        fformat->set_sensitive (true);
-        return false;
-    }
+    // This function is called from the background BatchQueue thread.
+    // It cannot call UI functions, so grab the stored state of qStartStop.
+    return qStartStopState;
 }
 
 void BatchQueuePanel::saveOptions ()
