@@ -71,9 +71,8 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
     const unsigned prefilters = ri->prefilters;
     const int width = W, height = H;
     constexpr unsigned int colors = 4;
-    float (*image)[4];
 
-    image = (float (*)[4]) calloc (height * width, sizeof * image);
+    float (*image)[4] = (float (*)[4]) calloc (height * width, sizeof * image);
 
 #ifdef _OPENMP
     #pragma omp parallel for
@@ -87,7 +86,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
     {
         int lcode[16][16][32];
         float mul[16][16][8];
-        float csum[16][16][4];
+        float csum[16][16][3];
 
 // first linear interpolation
         for (int row = 0; row < 16; row++)
@@ -119,7 +118,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
                 for (unsigned int c = 0; c < colors; c++)
                     if (c != fc(row, col)) {
                         *ip++ = c;
-                        csum[row][col][colcount] = sum[c];
+                        csum[row][col][colcount] = 1.f / sum[c];
                         colcount ++;
                     }
             }
@@ -140,7 +139,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
                 }
 
                 for (unsigned int i = 0; i < colors - 1; i++, ip++) {
-                    pix[ip[0]] = sum[ip[0]] / csum[row & 15][col & 15][i];
+                    pix[ip[0]] = sum[ip[0]] * csum[row & 15][col & 15][i];
                 }
             }
         }
@@ -237,7 +236,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
                     memset (gval, 0, sizeof gval);
 
                     while ((g = ip[0]) != INT_MAX) {        /* Calculate gradients */
-                        float diff = fabsf(pix[g] - pix[ip[1]]) * ip[2];
+                        const float diff = fabsf(pix[g] - pix[ip[1]]) * ip[2];
                         gval[ip[3]] += diff;
                         ip += 4;
 
@@ -252,20 +251,14 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
                         gmin = gmax = gval[0];          /* Choose a threshold */
 
                         for (g = 1; g < 8; g++) {
-                            if (gmin > gval[g]) {
-                                gmin = gval[g];
-                            }
-
-                            if (gmax < gval[g]) {
-                                gmax = gval[g];
-                            }
+                            gmin = std::min(gmin, gval[g]);
+                            gmax = std::max(gmax, gval[g]);
                         }
 
                         thold = gmin + (gmax / 2);
                     }
                     memset (sum, 0, sizeof sum);
-                    float t1, t2;
-                    t1 = t2 = pix[color];
+                    float t1p2 = pix[color];
 
                     if(color & 1) {
                         int num = 0;
@@ -273,7 +266,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
                         for (g = 0; g < 8; g++, ip += 2) {  /* Average the neighbors */
                             if (gval[g] <= thold) {
                                 if(ip[1]) {
-                                    sum[0] += (t1 + pix[ip[1]]) * 0.5f;
+                                    sum[0] += (t1p2 + pix[ip[1]]) * 0.5f;
                                 }
 
                                 sum[1] += pix[ip[0] + (color ^ 2)];
@@ -281,7 +274,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
                             }
                         }
 
-                        t1 += (sum[1] - sum[0]) / num;
+                        t1p2 += (sum[1] - sum[0]) / num;
                     } else {
                         int num = 0;
 
@@ -291,18 +284,17 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
                                 sum[2] += pix[ip[0] + 3];
 
                                 if(ip[1]) {
-                                    sum[0] += (t1 + pix[ip[1]]) * 0.5f;
+                                    sum[0] += (t1p2 + pix[ip[1]]) * 0.5f;
                                 }
 
                                 num++;
                             }
                         }
 
-                        t1 += (sum[1] - sum[0]) / num;
-                        t2 += (sum[2] - sum[0]) / num;
+                        t1p2 += ((sum[1] - sum[0]) + (sum[2] - sum[0])) / num;
                     }
 
-                    green[row][col] = 0.5f * (t1 + t2);
+                    green[row][col] = 0.5f * (t1p2 + pix[color]);
                 }
             }
             if (row - 1 > firstRow) {
@@ -321,23 +313,12 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
             }
         }
 
-        if (firstRow != -1) {
-            if (firstRow == 0) {
-                interpolate_row_rb_mul_pp (rawData, red[0], blue[0], nullptr, green[0], green[1], 0, 1.0, 1.0, 1.0, 0, W, 1);
-            } else if (firstRow == H - 1) {
-                interpolate_row_rb_mul_pp (rawData, red[firstRow], blue[firstRow], green[firstRow - 1], green[firstRow], nullptr, firstRow, 1.0, 1.0, 1.0, 0, W, 1);
-            } else {
-                interpolate_row_rb_mul_pp (rawData, red[firstRow], blue[firstRow], green[firstRow - 1], green[firstRow], green[firstRow + 1], firstRow, 1.0, 1.0, 1.0, 0, W, 1);
-            }
+        if (firstRow > 2 && firstRow < H - 3) {
+            interpolate_row_rb_mul_pp (rawData, red[firstRow], blue[firstRow], green[firstRow - 1], green[firstRow], green[firstRow + 1], firstRow, 1.0, 1.0, 1.0, 0, W, 1);
         }
-        if (lastRow != -1) {
-            if (lastRow == 0) {
-                interpolate_row_rb_mul_pp (rawData, red[0], blue[0], nullptr, green[0], green[1], 0, 1.0, 1.0, 1.0, 0, W, 1);
-            } else if (lastRow == H - 1) {
-                interpolate_row_rb_mul_pp (rawData, red[lastRow], blue[lastRow], green[lastRow - 1], green[lastRow], nullptr, lastRow, 1.0, 1.0, 1.0, 0, W, 1);
-            } else {
-                interpolate_row_rb_mul_pp (rawData, red[lastRow], blue[lastRow], green[lastRow - 1], green[lastRow], green[lastRow + 1], lastRow, 1.0, 1.0, 1.0, 0, W, 1);
-            }
+
+        if (lastRow > 2 && lastRow < H - 3) {
+            interpolate_row_rb_mul_pp (rawData, red[lastRow], blue[lastRow], green[lastRow - 1], green[lastRow], green[lastRow + 1], lastRow, 1.0, 1.0, 1.0, 0, W, 1);
         }
     }
     free (code[0][0]);
