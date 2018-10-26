@@ -775,7 +775,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
     }
 
     redraw ();
-    const bool queueRunning = (processing != nullptr);
+    const bool queueRunning = processing;
     notifyListener (queueRunning);
 
     return processing ? processing->job : nullptr;

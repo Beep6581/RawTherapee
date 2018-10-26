@@ -53,9 +53,9 @@ class BatchQueuePanel : public Gtk::VBox,
     Gtk::HBox* bottomBox;
     Gtk::HBox* topBox;
 
-    IdleRegister idle_register;
-
     std::atomic<bool> qStartStopState;
+
+    IdleRegister idle_register;
 
 public:
     explicit BatchQueuePanel (FileCatalog* aFileCatalog);
