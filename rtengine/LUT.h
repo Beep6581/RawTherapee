@@ -89,8 +89,7 @@ using LUTd = LUT<double>;
 using LUTuc = LUT<uint8_t>;
 
 template<typename T>
-class LUT :
-    public rtengine::NonCopyable
+class LUT
 {
 protected:
     // list of variables ordered to improve cache speed
@@ -198,6 +197,8 @@ public:
         }
     }
 
+    explicit LUT(const LUT&) = delete;
+
     void setClip(int flags)
     {
         clip = flags;
@@ -225,7 +226,7 @@ public:
         return size > 0 ? upperBound : 0;
     }
 
-    LUT<T> & operator=(LUT<T> &rhs)
+    LUT<T> & operator=(const LUT<T>& rhs)
     {
         if (this != &rhs) {
             if (rhs.size > this->size) {
@@ -257,7 +258,7 @@ public:
 
     // handy to sum up per thread histograms. #pragma omp simd speeds up the loop by about factor 3 for LUTu (uint32_t).
     template<typename U = T, typename = typename std::enable_if<std::is_same<U, std::uint32_t>::value>::type>
-    LUT<T> & operator+=(LUT<T> &rhs)
+    LUT<T> & operator+=(const LUT<T>& rhs)
     {
         if (rhs.size == this->size) {
 #ifdef _OPENMP

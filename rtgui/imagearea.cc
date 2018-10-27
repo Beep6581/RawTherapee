@@ -77,7 +77,7 @@ void ImageArea::on_realize()
     // This workaround should be removed when bug is fixed in GTK2 or when migrating to GTK3
     add_events(Gdk::EXPOSURE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK);
 #else
-    add_events(Gdk::EXPOSURE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK);
+    add_events(Gdk::EXPOSURE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK | Gdk::SMOOTH_SCROLL_MASK);
 #endif
 
     Cairo::FontOptions cfo;
@@ -302,9 +302,12 @@ bool ImageArea::on_button_press_event (GdkEventButton* event)
 bool ImageArea::on_scroll_event (GdkEventScroll* event)
 {
 
+//    printf("ImageArea::on_scroll_event / delta_x=%.5f, delta_y=%.5f, direction=%d, type=%d, send_event=%d\n",
+//            event->delta_x, event->delta_y, (int)event->direction, (int)event->type, event->send_event);
+
     CropWindow* cw = getCropWindow (event->x, event->y);
     if (cw) {
-        cw->scroll (event->state, event->direction, event->x, event->y);
+        cw->scroll (event->state, event->direction, event->x, event->y, event->delta_x, event->delta_y);
     }
 
     return true;

@@ -74,7 +74,7 @@ protected:
     RawImage* riFrames[4] = {nullptr};
     unsigned int currFrame = 0;
     unsigned int numFrames = 0;
-
+    int flatFieldAutoClipValue = 0;
     array2D<float> rawData;  // holds preprocessed pixel values, rowData[i][j] corresponds to the ith row and jth column
     array2D<float> *rawDataFrames[4] = {nullptr};
     array2D<float> *rawDataBuffer[3] = {nullptr};
@@ -212,6 +212,7 @@ public:
         ri = riFrames[currFrame];
     }
     int getFrameCount() {return numFrames;}
+    int getFlatFieldAutoClipValue() {return flatFieldAutoClipValue;}
 
     class GreenEqulibrateThreshold {
     public:
@@ -274,7 +275,7 @@ protected:
     void igv_interpolate(int winw, int winh);
     void lmmse_interpolate_omp(int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, int iterations);
     void amaze_demosaic_RT(int winx, int winy, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);//Emil's code for AMaZE
-    void dual_demosaic_RT(bool isBayer, const RAWParams &raw, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, double &contrast, bool autoContrast = false, int autoX = -1, int autoY = -1);
+    void dual_demosaic_RT(bool isBayer, const RAWParams &raw, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, double &contrast, bool autoContrast = false);
     void fast_demosaic();//Emil's code for fast demosaicing
     void dcb_demosaic(int iterations, bool dcb_enhance);
     void ahd_demosaic();

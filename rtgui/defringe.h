@@ -50,6 +50,7 @@ public:
     void curveChanged   ();
 
     void adjusterChanged (Adjuster* a, double newval);
+    void adjusterAutoToggled(Adjuster* a, bool newval);
     void enabledChanged  ();
     virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
 

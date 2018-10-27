@@ -245,9 +245,9 @@ void BatchQueuePanel::updateTab (int qsize, int forceOrientation)
     }
 }
 
-void BatchQueuePanel::queueSizeChanged (int qsize, bool queueEmptied, bool queueError, Glib::ustring queueErrorMessage)
+void BatchQueuePanel::queueSizeChanged(int qsize, bool queueEmptied, bool queueError, const Glib::ustring& queueErrorMessage)
 {
-    updateTab ( qsize);
+    updateTab (qsize);
 
     if (qsize == 0 || (qsize == 1 && !fdir->get_sensitive())) {
         qStartStop->set_sensitive(false);
@@ -311,10 +311,9 @@ void BatchQueuePanel::stopBatchProc ()
     updateTab (batchQueue->getEntries().size());
 }
 
-void BatchQueuePanel::addBatchQueueJobs ( std::vector<BatchQueueEntry*> &entries, bool head)
+void BatchQueuePanel::addBatchQueueJobs(const std::vector<BatchQueueEntry*>& entries, bool head)
 {
-
-    batchQueue->addEntries (entries, head);
+    batchQueue->addEntries(entries, head);
 
     if (!qStartStop->get_active() && qAutoStart->get_active()) {
         startBatchProc ();
@@ -323,7 +322,7 @@ void BatchQueuePanel::addBatchQueueJobs ( std::vector<BatchQueueEntry*> &entries
 
 bool BatchQueuePanel::canStartNext ()
 {
-
+    GThreadLock lock;
     if (qStartStop->get_active()) {
         return true;
     } else {
@@ -363,15 +362,12 @@ void BatchQueuePanel::pathFolderButtonPressed ()
 // since these settings are shared with editorpanel :
 void BatchQueuePanel::pathFolderChanged ()
 {
-
     options.savePathFolder = outdirFolder->get_filename();
 }
 
-void BatchQueuePanel::formatChanged (Glib::ustring f)
+void BatchQueuePanel::formatChanged(const Glib::ustring& format)
 {
-
-    options.saveFormatBatch = saveFormatPanel->getFormat ();
-
+    options.saveFormatBatch = saveFormatPanel->getFormat();
 }
 
 bool BatchQueuePanel::handleShortcutKey (GdkEventKey* event)

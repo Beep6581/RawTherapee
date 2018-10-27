@@ -3043,7 +3043,7 @@ void ExifManager::parse (bool isRaw, bool skipIgnored)
             if (!sftTagList.empty()) {
                 for (auto sft : sftTagList) {
                     int sftVal = sft->toInt();
-                    if (sftVal == (isRaw ? 0 : 2)) {
+                    if (sftVal == 0 || (!isRaw && sftVal == 2)) {
                         frames.push_back(sft->getParent());
                         frameRootDetected = true;
 

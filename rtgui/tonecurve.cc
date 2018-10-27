@@ -587,9 +587,8 @@ float ToneCurve::blendPipetteValues(CurveEditor *ce, float chan1, float chan2, f
     return CurveListener::blendPipetteValues(ce, chan1, chan2, chan3);
 }
 
-void ToneCurve::adjusterChanged (Adjuster* a, double newval)
+void ToneCurve::adjusterChanged(Adjuster* a, double newval)
 {
-
     // Switch off auto exposure if user changes sliders manually
     if (autolevels->get_active() && (a == expcomp || a == brightness || a == contrast || a == black || a == hlcompr || a == hlcomprthresh)) {
         autoconn.block(true);
@@ -639,6 +638,10 @@ void ToneCurve::adjusterChanged (Adjuster* a, double newval)
     } else if (a == shcompr) {
         listener->panelChanged (EvSHCompr, costr);
     }
+}
+
+void ToneCurve::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void ToneCurve::neutral_pressed ()
@@ -808,25 +811,6 @@ void ToneCurve::waitForAutoExp ()
     histmatching->set_sensitive(false);
 }
 
-void ToneCurve::autoExpChanged (double expcomp, int bright, int contr, int black, int hlcompr, int hlcomprthresh, bool hlrecons)
-{
-    nextBlack = black;
-    nextExpcomp = expcomp;
-    nextBrightness = bright;
-    nextContrast = contr;
-    nextHlcompr = hlcompr;
-    nextHlcomprthresh = hlcomprthresh;
-    nextHLRecons = hlrecons;
-
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<ToneCurve*>(data)->autoExpComputed_();
-
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
-}
-
 void ToneCurve::enableAll ()
 {
 
@@ -937,10 +921,20 @@ void ToneCurve::trimValues (rtengine::procparams::ProcParams* pp)
     saturation->trimValue(pp->toneCurve.saturation);
 }
 
-void ToneCurve::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, /*LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM, LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI)
+void ToneCurve::updateCurveBackgroundHistogram(
+    const LUTu& histToneCurve,
+    const LUTu& histLCurve,
+    const LUTu& histCCurve,
+    const LUTu& histLCAM,
+    const LUTu& histCCAM,
+    const LUTu& histRed,
+    const LUTu& histGreen,
+    const LUTu& histBlue,
+    const LUTu& histLuma,
+    const LUTu& histLRETI
+)
 {
-
-    shape->updateBackgroundHistogram (histToneCurve);
+    shape->updateBackgroundHistogram(histToneCurve);
 }
 
 
@@ -972,22 +966,6 @@ void ToneCurve::histmatchingToggled()
         }
     }
 }
-
-
-void ToneCurve::autoMatchedToneCurveChanged(rtengine::procparams::ToneCurveParams::TcMode curveMode, const std::vector<double> &curve)
-{
-    nextToneCurveMode = curveMode;
-    nextToneCurve = curve;
-
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<ToneCurve*>(data)->histmatchingComputed();
-
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
-}
-
 
 bool ToneCurve::histmatchingComputed()
 {
@@ -1023,4 +1001,37 @@ bool ToneCurve::histmatchingComputed()
     fromHistMatching = true;
 
     return false;
+}
+
+void ToneCurve::autoExpChanged(double expcomp, int bright, int contr, int black, int hlcompr, int hlcomprthresh, bool hlrecons)
+{
+    nextBlack = black;
+    nextExpcomp = expcomp;
+    nextBrightness = bright;
+    nextContrast = contr;
+    nextHlcompr = hlcompr;
+    nextHlcomprthresh = hlcomprthresh;
+    nextHLRecons = hlrecons;
+
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<ToneCurve*>(data)->autoExpComputed_();
+
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
+}
+
+void ToneCurve::autoMatchedToneCurveChanged(rtengine::procparams::ToneCurveParams::TcMode curveMode, const std::vector<double>& curve)
+{
+    nextToneCurveMode = curveMode;
+    nextToneCurve = curve;
+
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<ToneCurve*>(data)->histmatchingComputed();
+
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 }

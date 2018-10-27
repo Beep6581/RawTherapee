@@ -29,9 +29,7 @@
 class PreviewLoaderListener
 {
 public:
-    virtual ~PreviewLoaderListener()
-    {
-    }
+    virtual ~PreviewLoaderListener() = default;
 
     /**
      * @brief a preview is ready
@@ -39,16 +37,12 @@ public:
      * @param dir_id directory ID this is for
      * @param fd entry
      */
-    virtual void previewReady(int dir_id, FileBrowserEntry* fd)
-    {
-    }
+    virtual void previewReady(int dir_id, FileBrowserEntry* fd) = 0;
 
     /**
      * @brief all previews have finished loading
      */
-    virtual void previewsFinished(int dir_id_)
-    {
-    }
+    virtual void previewsFinished(int dir_id_) = 0;
 };
 
 class PreviewLoader :

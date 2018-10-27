@@ -97,6 +97,10 @@ void CACorrection::adjusterChanged (Adjuster* a, double newval)
     }
 }
 
+void CACorrection::adjusterAutoToggled(Adjuster* a, bool newval)
+{
+}
+
 void CACorrection::setAdjusterBehavior (bool badd)
 {
 

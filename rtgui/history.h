@@ -27,9 +27,9 @@
 
 class HistoryBeforeLineListener
 {
-
 public:
-    virtual void historyBeforeLineChanged (const rtengine::procparams::ProcParams& params) {}
+    virtual ~HistoryBeforeLineListener() = default;
+    virtual void historyBeforeLineChanged(const rtengine::procparams::ProcParams& params) = 0;
 };
 
 class History : public Gtk::VBox, public PParamsChangeListener
@@ -106,7 +106,12 @@ public:
     }
 
     // pparamschangelistener interface
-    void procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited = nullptr);
+    void procParamsChanged(
+        const rtengine::procparams::ProcParams* params,
+        const rtengine::ProcEvent& ev,
+        const Glib::ustring& descr,
+        const ParamsEdited* paramsEdited = nullptr
+    );
     void clearParamChanges ();
 
     void historySelectionChanged ();

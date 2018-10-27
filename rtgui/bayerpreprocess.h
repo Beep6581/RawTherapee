@@ -46,7 +46,9 @@ public:
     void setBatchMode   (bool batchMode);
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
 
-    void adjusterChanged     (Adjuster* a, double newval);
+    void adjusterChanged(Adjuster* a, double newval);
+    void adjusterAutoToggled(Adjuster* a, bool newval);
+
     void hotDeadPixelChanged();
     void setAdjusterBehavior (bool linedenoiseadd, bool greenequiladd);
     void trimValues          (rtengine::procparams::ProcParams* pp);

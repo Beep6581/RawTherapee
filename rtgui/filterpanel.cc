@@ -35,7 +35,9 @@ FilterPanel::FilterPanel () : listener (nullptr)
     Gtk::HBox* fnhb = Gtk::manage(new Gtk::HBox ());
     fnvb->pack_start (*enaFNumber, Gtk::PACK_SHRINK, 0);
     fnumberFrom = Gtk::manage(new Gtk::Entry ());
+    fnumberFrom->set_width_chars(1);
     fnumberTo = Gtk::manage(new Gtk::Entry ());
+    fnumberTo->set_width_chars(1);
     fnhb->pack_start (*fnumberFrom, true, true, 2);
     fnhb->pack_start (*Gtk::manage(new Gtk::Label(" - ")), false, false, 4);
     fnhb->pack_start (*fnumberTo, true, true, 2);
@@ -47,7 +49,9 @@ FilterPanel::FilterPanel () : listener (nullptr)
     Gtk::HBox* shb = Gtk::manage(new Gtk::HBox ());
     svb->pack_start (*enaShutter, Gtk::PACK_SHRINK, 0);
     shutterFrom = Gtk::manage(new Gtk::Entry ());
+    shutterFrom->set_width_chars(1);
     shutterTo = Gtk::manage(new Gtk::Entry ());
+    shutterTo->set_width_chars(1);
     shb->pack_start (*shutterFrom, true, true, 2);
     shb->pack_start (*Gtk::manage(new Gtk::Label(" - ")), false, false, 4);
     shb->pack_start (*shutterTo, true, true, 2);
@@ -59,7 +63,9 @@ FilterPanel::FilterPanel () : listener (nullptr)
     Gtk::HBox* ihb = Gtk::manage(new Gtk::HBox ());
     ivb->pack_start (*enaISO, Gtk::PACK_SHRINK, 0);
     isoFrom = Gtk::manage(new Gtk::Entry ());
+    isoFrom->set_width_chars(1);
     isoTo = Gtk::manage(new Gtk::Entry ());
+    isoTo->set_width_chars(1);
     ihb->pack_start (*isoFrom, true, true, 2);
     ihb->pack_start (*Gtk::manage(new Gtk::Label(" - ")), false, false, 4);
     ihb->pack_start (*isoTo, true, true, 2);
@@ -71,7 +77,9 @@ FilterPanel::FilterPanel () : listener (nullptr)
     Gtk::HBox* fhb = Gtk::manage(new Gtk::HBox ());
     fvb->pack_start (*enaFocalLen, Gtk::PACK_SHRINK, 0);
     focalFrom = Gtk::manage(new Gtk::Entry ());
+    focalFrom->set_width_chars(1);
     focalTo = Gtk::manage(new Gtk::Entry ());
+    focalTo->set_width_chars(1);
     fhb->pack_start (*focalFrom, true, true, 2);
     fhb->pack_start (*Gtk::manage(new Gtk::Label(" - ")), false, false, 4);
     fhb->pack_start (*focalTo, true, true, 2);

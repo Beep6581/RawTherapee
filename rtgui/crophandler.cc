@@ -106,15 +106,9 @@ void CropHandler::newImage (StagedImageProcessor* ipc_, bool isDetailWindow)
     initial = true;
 }
 
-void CropHandler::sizeChanged (int x, int y, int ow, int oh)    // the ipc notifies it to keep track size changes like rotation
+void CropHandler::sizeChanged(int x, int y, int ow, int oh)    // the ipc notifies it to keep track size changes like rotation
 {
-
     compDim ();
-
-// this should be put into an idle source!!!
-    /*    if (listener)
-            listener->cropWindowChanged ();
-        */
 }
 
 bool CropHandler::isFullDisplay ()
@@ -300,10 +294,18 @@ void CropHandler::getPosition (int& x, int& y)
 }
 
 
-void CropHandler::setDetailedCrop (IImage8* im, IImage8* imtrue, rtengine::procparams::ColorManagementParams cmp,
-                                   rtengine::procparams::CropParams cp, int ax, int ay, int aw, int ah, int askip)
+void CropHandler::setDetailedCrop(
+    IImage8* im,
+    IImage8* imtrue,
+    const rtengine::procparams::ColorManagementParams& cmp,
+    const rtengine::procparams::CropParams& cp,
+    int ax,
+    int ay,
+    int aw,
+    int ah,
+    int askip
+)
 {
-
     if (!enabled) {
         return;
     }
@@ -406,9 +408,8 @@ void CropHandler::setDetailedCrop (IImage8* im, IImage8* imtrue, rtengine::procp
     cimg.unlock ();
 }
 
-bool CropHandler::getWindow (int& cwx, int& cwy, int& cww, int& cwh, int& cskip)
+void CropHandler::getWindow(int& cwx, int& cwy, int& cww, int& cwh, int& cskip)
 {
-
     cwx = cropX;
     cwy = cropY;
     cww = cropW;
@@ -424,8 +425,6 @@ bool CropHandler::getWindow (int& cwx, int& cwy, int& cww, int& cwh, int& cskip)
     }
 
     cskip = zoom >= 1000 ? 1 : zoom/10;
-
-    return true;
 }
 
 void CropHandler::update ()

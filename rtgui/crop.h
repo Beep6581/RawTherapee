@@ -76,7 +76,7 @@ public:
     void cropResized        (int &x, int &y, int& x2, int& y2);
     void cropManipReady     ();
     bool inImageArea        (int x, int y);
-    double getRatio         ();
+    double getRatio         () const;
 
     void setCropPanelListener (CropPanelListener* cl)
     {

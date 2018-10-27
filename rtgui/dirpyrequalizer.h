@@ -63,15 +63,20 @@ public:
     void setBatchMode        (bool batchMode);
     void setAdjusterBehavior (bool multiplieradd, bool thresholdadd, bool skinadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
-    void adjusterChanged (ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight);
-//    void algoChanged         ();
     void cbdlMethodChanged();
     void adjusterChanged (Adjuster* a, double newval);
+    void adjusterAutoToggled(Adjuster* a, bool newval);
     void enabledChanged();
     void gamutlabToggled ();
     void lumaneutralPressed ();
     void lumacontrastPlusPressed ();
     void lumacontrastMinusPressed ();
+
+    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop);
+    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight);
+    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop);
+    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight);
+    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
 };
 
 #endif

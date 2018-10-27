@@ -1544,9 +1544,8 @@ void ColorAppearance::colorForValue (double valX, double valY, enum ColorCaller:
     caller->ccBlue = double (B);
 }
 
-void ColorAppearance::adjusterChanged (Adjuster* a, double newval)
+void ColorAppearance::adjusterChanged(Adjuster* a, double newval)
 {
-
     if (listener && (multiImage || getEnabled()) ) {
         if (a == degree) {
             listener->panelChanged (EvCATDegree, a->getTextValue());
@@ -1594,9 +1593,8 @@ void ColorAppearance::adjusterChanged (Adjuster* a, double newval)
     }
 }
 
-void ColorAppearance::adjusterAutoToggled (Adjuster* a, bool newval)
+void ColorAppearance::adjusterAutoToggled(Adjuster* a, bool newval)
 {
-
     if (multiImage) {
         if (degree->getAutoInconsistent()) {
             degree->setAutoInconsistent (false);
@@ -1844,11 +1842,21 @@ void ColorAppearance::setBatchMode (bool batchMode)
     curveEditorG3->setBatchMode (batchMode);
 }
 
-void ColorAppearance::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI)
+void ColorAppearance::updateCurveBackgroundHistogram(
+    const LUTu& histToneCurve,
+    const LUTu& histLCurve,
+    const LUTu& histCCurve,
+    const LUTu& histLCAM,
+    const LUTu& histCCAM,
+    const LUTu& histRed,
+    const LUTu& histGreen,
+    const LUTu& histBlue,
+    const LUTu& histLuma,
+    const LUTu& histLRETI
+)
 {
-
-    shape->updateBackgroundHistogram (histLCAM);
-    shape3->updateBackgroundHistogram (histCCAM);
+    shape->updateBackgroundHistogram(histLCAM);
+    shape3->updateBackgroundHistogram(histCCAM);
 }
 
 

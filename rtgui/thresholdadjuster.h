@@ -33,16 +33,16 @@ class ThresholdAdjusterListener
 {
 
 public:
-    virtual ~ThresholdAdjusterListener() {}
+    virtual ~ThresholdAdjusterListener() = default;
     // to be used by listener that has created a ThresholdAdjuster with with single threshold and precision > 0
-    virtual void adjusterChanged (ThresholdAdjuster* a, double newBottom, double newTop) {}
+    virtual void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) = 0;
     // to be used by listener that has created a ThresholdAdjuster with with double threshold and precision > 0
-    virtual void adjusterChanged (ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) {}
+    virtual void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) = 0;
     // to be used by listener that has created a ThresholdAdjuster with with single threshold and precision == 0
-    virtual void adjusterChanged (ThresholdAdjuster* a, int newBottom, int newTop) {}
+    virtual void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) = 0;
     // to be used by listener that has created a ThresholdAdjuster with with double threshold and precision == 0
-    virtual void adjusterChanged (ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) {}
-    virtual void adjusterChanged2 (ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) {}
+    virtual void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) = 0;
+    virtual void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) = 0;
 };
 
 

@@ -57,7 +57,7 @@ PreviewHandler::~PreviewHandler ()
 
 //----------------previewimagelistener functions--------------------
 
-void PreviewHandler::setImage (rtengine::IImage8* i, double scale, rtengine::procparams::CropParams cp)
+void PreviewHandler::setImage(rtengine::IImage8* i, double scale, const rtengine::procparams::CropParams& cp)
 {
     pih->pending++;
 
@@ -104,7 +104,7 @@ void PreviewHandler::setImage (rtengine::IImage8* i, double scale, rtengine::pro
 }
 
 
-void PreviewHandler::delImage (IImage8* i)
+void PreviewHandler::delImage(IImage8* i)
 {
     pih->pending++;
 
@@ -149,7 +149,7 @@ void PreviewHandler::delImage (IImage8* i)
     idle_register.add(func, iap);
 }
 
-void PreviewHandler::imageReady (CropParams cp)
+void PreviewHandler::imageReady(const rtengine::procparams::CropParams& cp)
 {
     pih->pending++;
     iaimgpar* iap = new iaimgpar;

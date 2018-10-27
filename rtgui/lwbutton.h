@@ -22,13 +22,13 @@
 #include <gtkmm.h>
 
 class LWButton;
+
 class LWButtonListener
 {
-
 public:
-    virtual ~LWButtonListener () {}
-    virtual void buttonPressed (LWButton* button, int actionCode, void* actionData) {}
-    virtual void redrawNeeded  (LWButton* button) {}
+    virtual ~LWButtonListener() = default;
+    virtual void buttonPressed(LWButton* button, int actionCode, void* actionData)  = 0;
+    virtual void redrawNeeded(LWButton* button) = 0;
 };
 
 class LWButton

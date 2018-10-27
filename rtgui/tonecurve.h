@@ -102,12 +102,12 @@ public:
     virtual float blendPipetteValues (CurveEditor *ce, float chan1, float chan2, float chan3);
 
     void adjusterChanged (Adjuster* a, double newval);
+    void adjusterAutoToggled(Adjuster* a, bool newval);
     void neutral_pressed ();
     void autolevels_toggled ();
     void clip_changed ();
     bool clip_changed_ ();
     void waitForAutoExp ();
-    void autoExpChanged (double expcomp, int bright, int contr, int black, int hlcompr, int hlcomprthresh, bool hlrecons);
     bool autoExpComputed_ ();
     void enableAll ();
     void curveChanged (CurveEditor* ce);
@@ -117,11 +117,24 @@ public:
     bool curveMode2Changed_ ();
     void expandCurve (bool isExpanded);
     bool isCurveExpanded ();
-    void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM, LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI);
+    void updateCurveBackgroundHistogram(
+        const LUTu& histToneCurve,
+        const LUTu& histLCurve,
+        const LUTu& histCCurve,
+        const LUTu& histLCAM,
+        const LUTu& histCCAM,
+        const LUTu& histRed,
+        const LUTu& histGreen,
+        const LUTu& histBlue,
+        const LUTu& histLuma,
+        const LUTu& histLRETI
+    );
 
     void histmatchingToggled();
-    void autoMatchedToneCurveChanged(rtengine::procparams::ToneCurveParams::TcMode curveMode, const std::vector<double> &curve);
     bool histmatchingComputed();
+
+    void autoExpChanged(double expcomp, int bright, int contr, int black, int hlcompr, int hlcomprthresh, bool hlrecons);
+    void autoMatchedToneCurveChanged(rtengine::procparams::ToneCurveParams::TcMode curveMode, const std::vector<double>& curve);
 
     void setRaw (bool raw);
 

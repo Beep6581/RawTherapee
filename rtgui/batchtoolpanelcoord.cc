@@ -385,9 +385,8 @@ void BatchToolPanelCoordinator::initSession ()
     }
 }
 
-void BatchToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::ustring& descr)
+void BatchToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const Glib::ustring& descr)
 {
-
     if (selected.empty()) {
         return;
     }
@@ -613,9 +612,14 @@ void BatchToolPanelCoordinator::endBatchPParamsChange()
  *          Using a Profile panel in the batch tool panel editor is actually
  *          not supported by BatchToolPanelCoordinator::profileChange!
  */
-void BatchToolPanelCoordinator::profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited)
+void BatchToolPanelCoordinator::profileChange(
+    const PartialProfile* nparams,
+    const rtengine::ProcEvent& event,
+    const Glib::ustring& descr,
+    const ParamsEdited* paramsEdited,
+    bool fromLastSave
+)
 {
-
     if (event == rtengine::EvProfileChanged) {
         // a profile has been selected in a hypothetical Profile panel
         // -> ACTUALLY NOT SUPPORTED

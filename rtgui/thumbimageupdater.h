@@ -30,9 +30,7 @@
 class ThumbImageUpdateListener
 {
 public:
-    virtual ~ThumbImageUpdateListener()
-    {
-    }
+    virtual ~ThumbImageUpdateListener() = default;
 
     /**
      * @brief Called when thumbnail image is update
@@ -43,9 +41,7 @@ public:
      *
      * @note no locks are held when called back
      */
-    virtual void updateImage(rtengine::IImage8* img, double scale, rtengine::procparams::CropParams cropParams)
-    {
-    }
+    virtual void updateImage(rtengine::IImage8* img, double scale, const rtengine::procparams::CropParams& cropParams) = 0;
 };
 
 class ThumbImageUpdater :

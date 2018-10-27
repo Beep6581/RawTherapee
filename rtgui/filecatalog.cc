@@ -749,18 +749,6 @@ void FileCatalog::_refreshProgressBar ()
     }
 }
 
-void FileCatalog::filterApplied()
-{
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<FileCatalog*>(data)->_refreshProgressBar();
-
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
-}
-
-
 void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn)
 {
 
@@ -962,9 +950,19 @@ int openRequestedUI (void* p)
     return 0;
 }
 
-void FileCatalog::openRequested  (std::vector<Thumbnail*> tmb)
+void FileCatalog::filterApplied()
 {
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<FileCatalog*>(data)->_refreshProgressBar();
 
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
+}
+
+void FileCatalog::openRequested(const std::vector<Thumbnail*>& tmb)
+{
     FCOIParams* params = new FCOIParams;
     params->catalog = this;
     params->tmb = tmb;
@@ -976,9 +974,8 @@ void FileCatalog::openRequested  (std::vector<Thumbnail*> tmb)
     idle_register.add(openRequestedUI, params);
 }
 
-void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe, bool inclBatchProcessed)
+void FileCatalog::deleteRequested(const std::vector<FileBrowserEntry*>& tbe, bool inclBatchProcessed)
 {
-
     if (tbe.empty()) {
         return;
     }
@@ -1017,14 +1014,11 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe, bool inc
     }
 }
 
-
-void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool moveRequested)
+void FileCatalog::copyMoveRequested(const std::vector<FileBrowserEntry*>& tbe, bool moveRequested)
 {
-
     if (tbe.empty()) {
         return;
     }
-
 
     Glib::ustring fc_title;
 
@@ -1129,9 +1123,9 @@ void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool m
         _refreshProgressBar();
     } // Gtk::RESPONSE_OK
 }
-void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fastmode)
-{
 
+void FileCatalog::developRequested(const std::vector<FileBrowserEntry*>& tbe, bool fastmode)
+{
     if (listener) {
         std::vector<BatchQueueEntry*> entries;
 
@@ -1262,23 +1256,8 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
     }
 }
 
-void FileCatalog::exportRequested ()
+void FileCatalog::renameRequested(const std::vector<FileBrowserEntry*>& tbe)
 {
-
-}
-
-void FileCatalog::setExportPanel (ExportPanel* expanel)
-{
-
-    exportPanel = expanel;
-    exportPanel->set_sensitive (false);
-    exportPanel->setExportPanelListener (this);
-    fileBrowser->setExportPanel(expanel);
-}
-
-void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe)
-{
-
     RenameDialog* renameDlg = new RenameDialog ((Gtk::Window*)get_toplevel());
 
     for (size_t i = 0; i < tbe.size(); i++) {
@@ -1333,9 +1312,15 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe)
     delete renameDlg;
 }
 
-void FileCatalog::clearFromCacheRequested  (std::vector<FileBrowserEntry*> tbe, bool leavenotrace)
+void FileCatalog::selectionChanged(const std::vector<Thumbnail*>& tbe)
 {
+    if (fslistener) {
+        fslistener->selectionChanged (tbe);
+    }
+}
 
+void FileCatalog::clearFromCacheRequested(const std::vector<FileBrowserEntry*>& tbe, bool leavenotrace)
+{
     if (tbe.empty()) {
         return;
     }
@@ -1345,6 +1330,11 @@ void FileCatalog::clearFromCacheRequested  (std::vector<FileBrowserEntry*> tbe, 
         // remove from cache
         cacheMgr->clearFromCache (fname, leavenotrace);
     }
+}
+
+bool FileCatalog::isInTabMode() const
+{
+    return inTabMode;
 }
 
 void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b, bool isMouseClick)
@@ -1966,12 +1956,8 @@ void FileCatalog::refreshEditedState (const std::set<Glib::ustring>& efiles)
     fileBrowser->refreshEditedState (efiles);
 }
 
-void FileCatalog::selectionChanged (std::vector<Thumbnail*> tbe)
+void FileCatalog::exportRequested()
 {
-
-    if (fslistener) {
-        fslistener->selectionChanged (tbe);
-    }
 }
 
 // Called within GTK UI thread
@@ -1991,6 +1977,15 @@ void FileCatalog::setFilterPanel (FilterPanel* fpanel)
     filterPanel->set_sensitive (false);
     filterPanel->setFilterPanelListener (this);
 }
+
+void FileCatalog::setExportPanel(ExportPanel* expanel)
+{
+    exportPanel = expanel;
+    exportPanel->set_sensitive (false);
+    exportPanel->setExportPanelListener (this);
+    fileBrowser->setExportPanel(expanel);
+}
+
 void FileCatalog::trashChanged ()
 {
     if (trashIsEmpty()) {

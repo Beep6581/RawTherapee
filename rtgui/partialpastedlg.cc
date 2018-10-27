@@ -837,8 +837,10 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 
     if (!raw_method->get_active ()) {
         filterPE.raw.bayersensor.method   = falsePE.raw.bayersensor.method;
+        filterPE.raw.bayersensor.dualDemosaicAutoContrast = falsePE.raw.bayersensor.dualDemosaicAutoContrast;
         filterPE.raw.bayersensor.dualDemosaicContrast = falsePE.raw.bayersensor.dualDemosaicContrast;
         filterPE.raw.xtranssensor.method  = falsePE.raw.xtranssensor.method;
+        filterPE.raw.xtranssensor.dualDemosaicAutoContrast = falsePE.raw.xtranssensor.dualDemosaicAutoContrast;
         filterPE.raw.xtranssensor.dualDemosaicContrast = falsePE.raw.xtranssensor.dualDemosaicContrast;
     }
 

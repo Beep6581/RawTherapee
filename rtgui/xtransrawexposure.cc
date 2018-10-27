@@ -90,7 +90,7 @@ void XTransRAWExposure::write( rtengine::procparams::ProcParams* pp, ParamsEdite
 
 }
 
-void XTransRAWExposure::adjusterChanged (Adjuster* a, double newval)
+void XTransRAWExposure::adjusterChanged(Adjuster* a, double newval)
 {
     if (listener) {
         Glib::ustring value = a->getTextValue();
@@ -103,6 +103,10 @@ void XTransRAWExposure::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvPreProcessExpBlackBlue, value);
         }
     }
+}
+
+void XTransRAWExposure::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void XTransRAWExposure::setBatchMode(bool batchMode)

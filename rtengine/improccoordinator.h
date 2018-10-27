@@ -158,6 +158,9 @@ protected:
     AutoCamListener* acListener;
     AutoBWListener* abwListener;
     AutoWBListener* awbListener;
+    FlatFieldAutoClipListener *flatFieldAutoClipListener;
+    AutoContrastListener *bayerAutoContrastListener;
+    AutoContrastListener *xtransAutoContrastListener;
     FrameCountListener *frameCountListener;
     ImageTypeListener *imageTypeListener;
 
@@ -179,7 +182,7 @@ protected:
     void reallocAll ();
     void updateLRGBHistograms ();
     void setScale (int prevscale);
-    void updatePreviewImage (int todo, Crop* cropCall = nullptr);
+    void updatePreviewImage (int todo, bool panningRelatedChange);
 
     MyMutex mProcessing;
     ProcParams params;
@@ -342,6 +345,20 @@ public:
     void setFrameCountListener  (FrameCountListener* fcl)
     {
         frameCountListener = fcl;
+    }
+
+    void setFlatFieldAutoClipListener  (FlatFieldAutoClipListener* ffacl)
+    {
+        flatFieldAutoClipListener = ffacl;
+    }
+    void setBayerAutoContrastListener  (AutoContrastListener* acl)
+    {
+        bayerAutoContrastListener = acl;
+    }
+
+    void setXtransAutoContrastListener  (AutoContrastListener* acl)
+    {
+        xtransAutoContrastListener = acl;
     }
 
     void setImageTypeListener  (ImageTypeListener* itl)

@@ -70,6 +70,7 @@
 #69 25.07.2018 Erweiterung (TooWaBoo) RT 5.4
 #70 25.07.2018 Korrekturen (TooWaBoo) RT 5.4
 #71 28.09.2018 Korrekturen (TooWaBoo) RT 5.5
+#72 05.10.2018 Korrekturen (TooWaBoo) RT 5.5
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -181,7 +182,7 @@ FILEBROWSER_APPLYPROFILE;Profil anwenden
 FILEBROWSER_APPLYPROFILE_PARTIAL;Profil selektiv anwenden
 FILEBROWSER_AUTODARKFRAME;Automatisches Dunkelbild
 FILEBROWSER_AUTOFLATFIELD;Automatisches Weißbild
-FILEBROWSER_BROWSEPATHBUTTONHINT;Ausgewählter Pfad öffnen
+FILEBROWSER_BROWSEPATHBUTTONHINT;Ausgewählten Pfad öffnen.
 FILEBROWSER_BROWSEPATHHINT;Einen Pfad eingeben:\nTaste:\n<b>Strg</b> + <b>o</b> Setzt den Cursor in das Eingabefeld\n<b>Enter</b> Öffnet den Pfad\n<b>Esc</b> Änderungen verwerfen\n<b>Umschalt</b> + <b>Esc</b> Eingabefeld verlassen\n\nSchnellnavigation:\nTaste:\n<b>~</b> “Home“-Verzeichnis des Benutzers\n<b>!</b> Bilder-Verzeichnis des Benutzers
 FILEBROWSER_CACHE;Festplatten-Cache
 FILEBROWSER_CACHECLEARFROMFULL;Aus dem Festplatten-Cache entfernen (vollständig)
@@ -236,7 +237,7 @@ FILEBROWSER_POPUPSELECTALL;Alle auswählen
 FILEBROWSER_POPUPTRASH;In den Papierkorb verschieben
 FILEBROWSER_POPUPUNRANK;Bewertung entfernen
 FILEBROWSER_POPUPUNTRASH;Aus dem Papierkorb wiederherstellen
-FILEBROWSER_QUERYBUTTONHINT;Suchfilter zurücksetzen
+FILEBROWSER_QUERYBUTTONHINT;Suchfilter zurücksetzen.
 FILEBROWSER_QUERYHINT;Nur Dateien anzeigen, deren Namen die angegebene Zeichenkette beinhalten.\n\nTaste:\n<b>Strg</b> + <b>f</b> Setzt den Cursor in das Suchfeld\n<b>Enter</b> Suche starten\n<b>Esc</b> Suchfeld löschen\n<b>Umschalt</b> + <b>Esc</b> Suchfeldfeld verlassen
 FILEBROWSER_QUERYLABEL; Suche:
 FILEBROWSER_RANK1_TOOLTIP;Bewertung 1 *\nTaste: <b>Umschalt</b> + <b>1</b>
@@ -248,31 +249,31 @@ FILEBROWSER_RENAMEDLGLABEL;Datei umbenennen
 FILEBROWSER_RESETDEFAULTPROFILE;Profil auf Vorgabe zurücksetzen
 FILEBROWSER_SELECTDARKFRAME;Dunkelbild wählen...
 FILEBROWSER_SELECTFLATFIELD;Weißbild wählen...
-FILEBROWSER_SHOWCOLORLABEL1HINT;Nur rot markierte Bilder anzeigen\nTaste: <b>Alt</b> + <b>1</b>
-FILEBROWSER_SHOWCOLORLABEL2HINT;Nur gelb markierte Bilder anzeigen\nTaste: <b>Alt</b> + <b>2</b>
-FILEBROWSER_SHOWCOLORLABEL3HINT;Nur grün markierte Bilder anzeigen\nTaste: <b>Alt</b> + <b>3</b>
-FILEBROWSER_SHOWCOLORLABEL4HINT;Nur blau markierte Bilder anzeigen\nTaste: <b>Alt</b> + <b>4</b>
-FILEBROWSER_SHOWCOLORLABEL5HINT;Nur violett markierte Bilder anzeigen\nTaste: <b>Alt</b> + <b>5</b>
-FILEBROWSER_SHOWDIRHINT;Alle Filter zurücksetzen\nTaste: <b>d</b>
-FILEBROWSER_SHOWEDITEDHINT;Nur bearbeitete Bilder anzeigen\nTaste: <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;Nur unbearbeitete Bilder anzeigen\nTaste: <b>6</b>
+FILEBROWSER_SHOWCOLORLABEL1HINT;Nur rot markierte Bilder anzeigen.\nTaste: <b>Alt</b> + <b>1</b>
+FILEBROWSER_SHOWCOLORLABEL2HINT;Nur gelb markierte Bilder anzeigen.\nTaste: <b>Alt</b> + <b>2</b>
+FILEBROWSER_SHOWCOLORLABEL3HINT;Nur grün markierte Bilder anzeigen.\nTaste: <b>Alt</b> + <b>3</b>
+FILEBROWSER_SHOWCOLORLABEL4HINT;Nur blau markierte Bilder anzeigen.\nTaste: <b>Alt</b> + <b>4</b>
+FILEBROWSER_SHOWCOLORLABEL5HINT;Nur violett markierte Bilder anzeigen.\nTaste: <b>Alt</b> + <b>5</b>
+FILEBROWSER_SHOWDIRHINT;Alle Filter zurücksetzen.\nTaste: <b>d</b>
+FILEBROWSER_SHOWEDITEDHINT;Nur bearbeitete Bilder anzeigen.\nTaste: <b>7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Nur unbearbeitete Bilder anzeigen.\nTaste: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Bildinformationen ein-/ausblenden.\n\nIm Multi-Reitermodus:\nTaste: <b>i</b>\nIm Ein-Reitermodus:\nTaste:  <b>Alt</b> + <b>i</b>
-FILEBROWSER_SHOWNOTTRASHHINT;Nur nicht gelöschte Bilder anzeigen
+FILEBROWSER_SHOWNOTTRASHHINT;Nur nicht gelöschte Bilder anzeigen.
 FILEBROWSER_SHOWORIGINALHINT;Zeige nur das Originalbild.\n\nWenn mehrere Bilder mit dem gleichen Dateinamen und unterschiedlichen Dateitypen existieren, ist das Originalbild das Bild, welches in der Liste "Dateitypen anzeigen" unter Einstellungen > Dateiverwaltung als erstes gefunden wird.
-FILEBROWSER_SHOWRANK1HINT;Nur mit 1 Stern bewertete Bilder anzeigen\nTaste: <b>1</b>
-FILEBROWSER_SHOWRANK2HINT;Nur mit 2 Sternen bewertete Bilder anzeigen\nTaste: <b>2</b>
-FILEBROWSER_SHOWRANK3HINT;Nur mit 3 Sternen bewertete Bilder anzeigen\nTaste: <b>3</b>
-FILEBROWSER_SHOWRANK4HINT;Nur mit 4 Sternen bewertete Bilder anzeigen\nTaste: <b>4</b>
-FILEBROWSER_SHOWRANK5HINT;Nur mit 5 Sternen bewertete Bilder anzeigen\nTaste: <b>5</b>
-FILEBROWSER_SHOWRECENTLYSAVEDHINT;Nur gespeicherte Bilder anzeigen\nTaste: <b>Alt</b> + <b>7</b>
-FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Nur nicht gespeicherte Bilder anzeigen\nTaste: <b>Alt</b> + <b>6</b>
-FILEBROWSER_SHOWTRASHHINT;Inhalt des Papierkorbs anzeigen\nTaste: <b>Strg</b> + <b>t</b>
-FILEBROWSER_SHOWUNCOLORHINT;Nur unmarkierte Bilder anzeigen\nTaste: <b>Alt</b> + <b>0</b>
-FILEBROWSER_SHOWUNRANKHINT;Nur unbewertete Bilder anzeigen\nTaste: <b>0</b>
+FILEBROWSER_SHOWRANK1HINT;Nur mit 1 Stern bewertete Bilder anzeigen.\nTaste: <b>1</b>
+FILEBROWSER_SHOWRANK2HINT;Nur mit 2 Sternen bewertete Bilder anzeigen.\nTaste: <b>2</b>
+FILEBROWSER_SHOWRANK3HINT;Nur mit 3 Sternen bewertete Bilder anzeigen.\nTaste: <b>3</b>
+FILEBROWSER_SHOWRANK4HINT;Nur mit 4 Sternen bewertete Bilder anzeigen.\nTaste: <b>4</b>
+FILEBROWSER_SHOWRANK5HINT;Nur mit 5 Sternen bewertete Bilder anzeigen.\nTaste: <b>5</b>
+FILEBROWSER_SHOWRECENTLYSAVEDHINT;Nur gespeicherte Bilder anzeigen.\nTaste: <b>Alt</b> + <b>7</b>
+FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Nur nicht gespeicherte Bilder anzeigen.\nTaste: <b>Alt</b> + <b>6</b>
+FILEBROWSER_SHOWTRASHHINT;Inhalt des Papierkorbs anzeigen.\nTaste: <b>Strg</b> + <b>t</b>
+FILEBROWSER_SHOWUNCOLORHINT;Nur unmarkierte Bilder anzeigen.\nTaste: <b>Alt</b> + <b>0</b>
+FILEBROWSER_SHOWUNRANKHINT;Nur unbewertete Bilder anzeigen.\nTaste: <b>0</b>
 FILEBROWSER_THUMBSIZE;Miniaturbildgröße
-FILEBROWSER_UNRANK_TOOLTIP;Bewertung entfernen\nTaste: <b>Umschalt</b> + <b>0</b>
-FILEBROWSER_ZOOMINHINT;Miniaturbilder vergrößern\n\nIm Multi-Reitermodus:\nTaste: <b>+</b>\nIm Ein-Reitermodus:\nTaste:  <b>Alt</b> <b>+</b>
-FILEBROWSER_ZOOMOUTHINT;Miniaturbilder verkleinern\n\nIm Multi-Reitermodus:\nTaste: <b>-</b>\nIm Ein-Reitermodus:\nTaste:  <b>Alt</b> <b>-</b>
+FILEBROWSER_UNRANK_TOOLTIP;Bewertung entfernen.\nTaste: <b>Umschalt</b> + <b>0</b>
+FILEBROWSER_ZOOMINHINT;Miniaturbilder vergrößern.\n\nIm Multi-Reitermodus:\nTaste: <b>+</b>\nIm Ein-Reitermodus:\nTaste:  <b>Alt</b> <b>+</b>
+FILEBROWSER_ZOOMOUTHINT;Miniaturbilder verkleinern.\n\nIm Multi-Reitermodus:\nTaste: <b>-</b>\nIm Ein-Reitermodus:\nTaste:  <b>Alt</b> <b>-</b>
 FILECHOOSER_FILTER_ANY;Alle Dateien
 FILECHOOSER_FILTER_COLPROF;Farbprofile
 FILECHOOSER_FILTER_CURVE;Kurvendateien
@@ -917,14 +918,14 @@ LENSPROFILE_CORRECTION_LCPFILE;LCP-Datei
 LENSPROFILE_CORRECTION_MANUAL;Benutzerdefiniert (Lensfun)
 LENSPROFILE_LENS_WARNING;Warnung: Der Cropfaktor des Profils entspricht nicht dem des Objektivs.\nDies kann zu einem fehlerhaften Ergebnis führen.
 MAIN_BUTTON_FULLSCREEN;Vollbild\nTaste: <b>F11</b>
-MAIN_BUTTON_ICCPROFCREATOR;ICC-Profil erstellen
+MAIN_BUTTON_ICCPROFCREATOR;ICC-Profil erstellen.
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigiert zum nächsten Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf das ausgewählte Miniaturbild.\nTaste: <b>F4</b>\n\nNavigiert zum nächsten Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf auf das im Editor geöffnete Bild.\nTaste: <b>Umschalt</b> + <b>F4 </b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;Navigiert zum vorherigen Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf das ausgewählte Miniaturbild.\nTaste: <b>F3</b>\n\nNavigiert zum vorherigen Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf auf das im Editor geöffnete Bild.\nTaste: <b>Umschalt</b> + <b>F3 </b>
 MAIN_BUTTON_NAVSYNC_TOOLTIP;Selektiert das Miniaturbild des aktuell geöffneten\nBildes in der Dateiverwaltung und des Filmstreifens.\nEs werden alle aktiven Filter gelöscht.\nTaste: <b>x</b>\n\nWie oben, jedoch ohne Löschung aktiver Filter. Das\nMiniaturbild des geöffneten Bildes wird nicht angezeigt,\nwenn es herausgefiltert wurde.\nTaste: <b>y</b>
 MAIN_BUTTON_PREFERENCES;Einstellungen
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Bild zur Warteschlange hinzufügen.\nTaste: <b>Strg</b> + <b>b</b>
 MAIN_BUTTON_SAVE_TOOLTIP;Bild speichern.\nTaste: <b>Strg</b> + <b>s</b>\nProfil (.pp3) speichern.\nTaste: <b>Strg</b> + <b>Umschalt</b> + <b>s</b>
-MAIN_BUTTON_SENDTOEDITOR;Bild im externen Editor öffnen
+MAIN_BUTTON_SENDTOEDITOR;Bild im externen Editor öffnen.
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Bild im externen Editor öffnen.\nTaste: <b>Strg</b> + <b>e</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Alle seitlichen Bedienfelder ein-/ausblenden.\nTaste: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Vollbild beenden.\nTaste: <b>F11</b>
@@ -939,8 +940,8 @@ MAIN_FRAME_PLACES_ADD;Hinzufügen
 MAIN_FRAME_PLACES_DEL;Entfernen
 MAIN_FRAME_RECENT;Verzeichnishistorie
 MAIN_MSG_ALREADYEXISTS;Diese Datei existiert bereits.
-MAIN_MSG_CANNOTLOAD;Bild kann nicht geladen werden
-MAIN_MSG_CANNOTSAVE;Fehler beim Speichern
+MAIN_MSG_CANNOTLOAD;Bild kann nicht geladen werden.
+MAIN_MSG_CANNOTSAVE;Fehler beim Speichern.
 MAIN_MSG_CANNOTSTARTEDITOR;Der externe Editor kann nicht gestartet werden.
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Setzen Sie bitte den richtigen Pfad in den Einstellungen.
 MAIN_MSG_EMPTYFILENAME;Dateiname fehlt!
@@ -1182,7 +1183,7 @@ PREFERENCES_GREYSC18;Yb = 18 CIE L#49
 PREFERENCES_GREYSCA;Automatisch
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogramm linksseitig
 PREFERENCES_HISTOGRAMWORKING;Das Arbeitsprofil zur Darstellung des Haupthistogramms verwenden
-PREFERENCES_HISTOGRAM_TOOLTIP;Wenn aktiviert wird das Arbeitsprofil für die Darstellung\ndes Haupthistogramms verwendet, andernfalls das des\ngammakorrigierten Ausgangsprofil.
+PREFERENCES_HISTOGRAM_TOOLTIP;Wenn aktiviert, wird das Arbeitsprofil für die Darstellung\ndes Haupthistogramms verwendet, andernfalls das des\ngammakorrigierten Ausgangsprofils.
 PREFERENCES_HLTHRESHOLD;Lichter - Schwelle
 PREFERENCES_ICCDIR;ICC-Profile-Verzeichnis
 PREFERENCES_IMG_RELOAD_NEEDED;Änderungen werden nur auf neu geöffnete Bilder angewendet
@@ -1214,7 +1215,7 @@ PREFERENCES_MULTITABDUALMON;Multi-Reitermodus (auf zweitem Monitor, wenn verfüg
 PREFERENCES_NAVGUIDEBRUSH;Farbe der Navigationshilfe
 PREFERENCES_NAVIGATIONFRAME;Navigation
 PREFERENCES_OUTDIR;Ausgabeverzeichnis
-PREFERENCES_OUTDIRFOLDER;In dieses Verzeichnis speichern.
+PREFERENCES_OUTDIRFOLDER;In dieses Verzeichnis speichern
 PREFERENCES_OUTDIRFOLDERHINT;Alle Dateien im ausgewählten Verzeichnis speichern.
 PREFERENCES_OUTDIRTEMPLATE;Dynamisches Verzeichnis verwenden
 PREFERENCES_OUTDIRTEMPLATEHINT;Die folgenden Variablen können verwendet werden:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nDiese Variablen beinhalten bestimmte Teile des Verzeichnispfades, in welchem sich das Bild befindet, oder Attribute des Bildes.\n\nWenn zum Beispiel <b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b> geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31</i>\n<b>%p2</b> = <i>/home/tom/photos</i>\n<b>%p3</b> = <i>/home/tom</i>\n<b>%p4</b> = <i>/home</i>\n\nWenn Sie die Ausgabedatei in dasselbe Verzeichnis wie das Originalbild speichern wollen, dann wählen Sie:\n<b>%p1/%f</b>\n\nWenn Sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen "<i>converted</i>" schreiben wollen, dann wählen Sie:\n<b>%p1/converted/%f</b>\n\nWenn Sie die Ausgabedatei im Verzeichnispfad "<i>/home/tom/photos/converted</i>" speichern wollen, dort jedoch in einem mit dem Namen des Ursprungsverzeichnisses betitelten Unterverzeichnis, dann wählen Sie:\n<b>%p2/converted/%d1/%f</b>\n\nDie Variable <b>%r</b> enthält die Bewertung des Bildes.
@@ -1251,10 +1252,10 @@ PREFERENCES_PSPATH;Adobe Photoshop Installationsverzeichnis
 PREFERENCES_REMEMBERZOOMPAN;Zoom und Bildposition merken
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Öffnen eines neuen Bildes mit den Zoom- und Positionswerten\ndes vorangegangenen Bildes.\n\nFunktioniert nur unter folgenden Bedingungen:\nEin-Reitermodus aktiv\n“Demosaikmethode für 100%-Ansicht“ muss auf “Wie im Bild-\nverarbeitungsprofil vorgegeben“ eingestellt sein.
 PREFERENCES_SAVE_TP_OPEN_NOW;Werkzeugstatus jetzt speichern
-PREFERENCES_SELECTFONT;Schriftart
-PREFERENCES_SELECTFONT_COLPICKER;Schriftart für die Farbwähler
+PREFERENCES_SELECTFONT;Schriftart:
+PREFERENCES_SELECTFONT_COLPICKER;Schriftart Farbwähler
 PREFERENCES_SELECTLANG;Sprache
-PREFERENCES_SELECTTHEME;Oberflächendesign (erfordert Neustart)
+PREFERENCES_SELECTTHEME;Oberflächendesign
 PREFERENCES_SERIALIZE_TIFF_READ;TIFF-Bilder
 PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialisiertes Lesen von TIFF-Bildern verwenden
 PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Beim Arbeiten mit Ordnern voll unkomprimierter TIFF-Bilder, kann diese Einstellung das Generieren von Miniaturbildern deutlich beschleunigen.
@@ -1278,7 +1279,7 @@ PREFERENCES_TAB_GENERAL;Allgemein
 PREFERENCES_TAB_IMPROC;Bildbearbeitung
 PREFERENCES_TAB_PERFORMANCE;Performance
 PREFERENCES_TAB_SOUND;Klänge
-PREFERENCES_THEME;Oberflächendesign
+PREFERENCES_THEME;Oberflächendesign (erfordert Neustart)
 PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Eingebundenes JPEG
 PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Bildanzeige
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutrales RAW-Bild 
@@ -1541,7 +1542,7 @@ TP_COLORTONING_METHOD;Methode
 TP_COLORTONING_METHOD_TOOLTIP;L*a*b*-Überlagerung, RGB-Regler und RGB-Kurven\nverwenden eine interpolierte Farbüberlagerung.\n\nFarbausgleich (Schatten/Mitten/Lichter) und Sättigung\n(2-Farben) verwenden direkte Farben.
 TP_COLORTONING_MIDTONES;Mitten
 TP_COLORTONING_NEUTRAL;Regler zurücksetzen
-TP_COLORTONING_NEUTRAL_TIP;Alle Werte auf Standard zurücksetzen\n(Schatten, Mitten, Lichter)
+TP_COLORTONING_NEUTRAL_TIP;Alle Werte auf Standard zurücksetzen.\n(Schatten, Mitten, Lichter)
 TP_COLORTONING_OPACITY;Deckkraft
 TP_COLORTONING_RGBCURVES;RGB-Kurven
 TP_COLORTONING_RGBSLIDERS;RGB-Regler
@@ -1573,7 +1574,7 @@ TP_CROP_GUIDETYPE;Hilfslinien:
 TP_CROP_H;Höhe
 TP_CROP_LABEL;Ausschnitt
 TP_CROP_PPI;PPI=
-TP_CROP_SELECTCROP;Ausschnitt wählen.
+TP_CROP_SELECTCROP;Ausschnitt wählen
 TP_CROP_W;Breite
 TP_CROP_X;x
 TP_CROP_Y;y
@@ -2073,7 +2074,7 @@ TP_RGBCURVES_LUMAMODE_TOOLTIP;Der <b>Helligkeitsmodus</b> ändert die Helligkeit
 TP_RGBCURVES_RED;R
 TP_ROTATE_DEGREE;Winkel
 TP_ROTATE_LABEL;Drehen
-TP_ROTATE_SELECTLINE;Leitlinie wählen.
+TP_ROTATE_SELECTLINE;Leitlinie wählen
 TP_SAVEDIALOG_OK_TIP;Taste: <b>Strg</b> + <b>Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Lichter
 TP_SHADOWSHLIGHTS_HLTONALW;Tonwertbreite Lichter
@@ -2350,10 +2351,9 @@ TP_WBALANCE_WATER1;Unterwasser 1
 TP_WBALANCE_WATER2;Unterwasser 2
 TP_WBALANCE_WATER_HEADER;Unterwasser
 ZOOMPANEL_100;(100%)
-ZOOMPANEL_NEWCROPWINDOW;Neues Detailfenster öffnen
+ZOOMPANEL_NEWCROPWINDOW;Neues Detailfenster öffnen.
 ZOOMPANEL_ZOOM100;Zoom 100%\nTaste: <b>z</b>
-ZOOMPANEL_ZOOMFITCROPSCREEN;Ausschnitt an Bildschirm anpassen\nTaste: <b>f</b>
-ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>Alt</b> + <b>f</b>
+ZOOMPANEL_ZOOMFITCROPSCREEN;Ausschnitt an Bildschirm anpassen.\nTaste: <b>f</b>
+ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen.\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
-

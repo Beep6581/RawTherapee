@@ -1154,12 +1154,15 @@ void DiagonalCurveEditorSubGroup::shcChanged ()
 /*
  * Listener
  */
-void DiagonalCurveEditorSubGroup::adjusterChanged (Adjuster* a, double newval)
+void DiagonalCurveEditorSubGroup::adjusterChanged(Adjuster* a, double newval)
 {
-
     paramCurve->setPoints (getCurveFromGUI(DCT_Parametric));
     storeDisplayedCurve();
     parent->curveChanged ();
+}
+
+void DiagonalCurveEditorSubGroup::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 /*
