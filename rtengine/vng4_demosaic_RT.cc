@@ -24,13 +24,13 @@
 #include "rawimagesource.h"
 #include "rawimagesource_i.h"
 #include "../rtgui/multilangmgr.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 
 namespace rtengine
 {
 #define fc(row,col) (prefilters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
-typedef unsigned short ushort;
+
 void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, bool keepGreens)
 {
     BENCHFUN
