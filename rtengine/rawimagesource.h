@@ -269,7 +269,7 @@ protected:
     void nodemosaic(bool bw);
     void eahd_demosaic();
     void hphd_demosaic();
-    void vng4_demosaic(const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, bool keepGreens = false);
+    void vng4_demosaic(const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
     void ppg_demosaic();
     void jdl_interpolate_omp();
     void igv_interpolate(int winw, int winh);

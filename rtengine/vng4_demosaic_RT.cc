@@ -31,7 +31,7 @@ namespace rtengine
 {
 #define fc(row,col) (prefilters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
 
-void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, bool keepGreens)
+void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
 {
     BENCHFUN
     const signed short int *cp, terms[] = {
@@ -227,67 +227,53 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
             for (int col = 2; col < width - 2; col++) {
                 float * pix = image[row * width + col];
                 int color = fc(row, col);
-                if (keepGreens && (color & 1)) {
-                    green[row][col] = pix[color];
-                } else {
-                    int * ip = code[row & prow][col & pcol];
-                    float gval[8] = {};
+                int * ip = code[row & prow][col & pcol];
+                float gval[8] = {};
 
-                    int g;
-                    while ((g = ip[0]) != INT_MAX) {        /* Calculate gradients */
-                        const float diff = std::fabs(pix[g] - pix[ip[1]]) * ip[2];
-                        gval[ip[3]] += diff;
-                        ip += 4;
-
-                        while ((g = *ip++) != -1) {
-                            gval[g] += diff;
-                        }
+                while (ip[0] != INT_MAX) {        /* Calculate gradients */
+                    const float diff = std::fabs(pix[ip[0]] - pix[ip[1]]) * ip[2];
+                    gval[ip[3]] += diff;
+                    ip += 5;
+                    if (UNLIKELY(ip[-1] != -1)) {
+                        gval[ip[-1]] += diff;
+                        ip++;
                     }
-
-                    ip++;
-
-                    const float thold = rtengine::min(gval[0], gval[1], gval[2], gval[3], gval[4], gval[5], gval[6], gval[7])
-                                      + rtengine::max(gval[0], gval[1], gval[2], gval[3], gval[4], gval[5], gval[6], gval[7]) / 2;
-
-                    float sum[3] = {};
-                    float t1p2 = pix[color];
-
-                    if(color & 1) {
-                        int num = 0;
-
-                        for (int g = 0; g < 8; g++, ip += 2) {  /* Average the neighbors */
-                            if (gval[g] <= thold) {
-                                if(ip[1]) {
-                                    sum[0] += (t1p2 + pix[ip[1]]) * 0.5f;
-                                }
-
-                                sum[1] += pix[ip[0] + (color ^ 2)];
-                                num++;
-                            }
-                        }
-
-                        t1p2 += (sum[1] - sum[0]) / num;
-                    } else {
-                        int num = 0;
-
-                        for (int g = 0; g < 8; g++, ip += 2) {  /* Average the neighbors */
-                            if (gval[g] <= thold) {
-                                sum[1] += pix[ip[0] + 1];
-                                sum[2] += pix[ip[0] + 3];
-
-                                if(ip[1]) {
-                                    sum[0] += (t1p2 + pix[ip[1]]) * 0.5f;
-                                }
-
-                                num++;
-                            }
-                        }
-
-                        t1p2 += ((sum[1] - sum[0]) + (sum[2] - sum[0])) / num;
-                    }
-
-                    green[row][col] = 0.5f * (t1p2 + pix[color]);
                 }
+                ip++;
+
+                const float thold = rtengine::min(gval[0], gval[1], gval[2], gval[3], gval[4], gval[5], gval[6], gval[7])
+                                  + rtengine::max(gval[0], gval[1], gval[2], gval[3], gval[4], gval[5], gval[6], gval[7]) * 0.5f;
+
+                float sum0 = 0.f;
+                float sum1 = 0.f;
+                float greenval = pix[color];
+                int num = 0;
+
+                if(color & 1) {
+                    for (int g = 0; g < 8; g++, ip += 2) {  /* Average the neighbors */
+                        if (gval[g] <= thold) {
+                            if(ip[1]) {
+                                sum0 += greenval + pix[ip[1]];
+                            }
+
+                            sum1 += pix[ip[0] + (color ^ 2)];
+                            num++;
+                        }
+                    }
+                    sum0 *= 0.5f;
+                } else {
+                    for (int g = 0; g < 8; g++, ip += 2) {  /* Average the neighbors */
+                        if (gval[g] <= thold) {
+                            if(ip[1]) {
+                                sum0 += greenval + pix[ip[1]];
+                            }
+
+                            sum1 += pix[ip[0] + 1] + pix[ip[0] + 3];
+                            num++;
+                        }
+                    }
+                }
+                green[row][col] = greenval + (sum1 - sum0) / (2 * num);
             }
             if (row - 1 > firstRow) {
                 interpolate_row_rb_mul_pp(rawData, red[row - 1], blue[row - 1], green[row - 2], green[row - 1], green[row], row - 1, 1.0, 1.0, 1.0, 0, W, 1);
