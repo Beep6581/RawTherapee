@@ -731,7 +731,7 @@ ColorToningParams::ColorToningParams() :
         1.00,
         1.00
     },
-    method("Lab"),
+    method("LabRegions"),
     twocolor("Std"),
     redlow(0.0),
     greenlow(0.0),
