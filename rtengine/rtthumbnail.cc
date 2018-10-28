@@ -567,6 +567,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
     tpp->camwbBlue = tpp->blueMultiplier / pre_mul[2]; //ri->get_pre_mul(2);
     //tpp->defGain = 1.0 / min(ri->get_pre_mul(0), ri->get_pre_mul(1), ri->get_pre_mul(2));
     tpp->defGain = max (scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]) / min (scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
+    tpp->defGain *= std::pow(2, ri->getBaselineExposure());
 
     tpp->gammaCorrected = true;
 

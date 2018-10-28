@@ -58,6 +58,7 @@ public:
     ,RT_whitelevel_from_constant(ThreeValBool::X)
     ,RT_blacklevel_from_constant(ThreeValBool::X)
     ,RT_matrix_from_constant(ThreeValBool::X)
+    ,RT_baseline_exposure(0)
 	,getbithuff(this,ifp,zero_after_ff)
 	,nikbithuff(ifp)
     {
@@ -154,6 +155,7 @@ protected:
     ThreeValBool RT_blacklevel_from_constant;
     ThreeValBool RT_matrix_from_constant;
     std::string RT_software;
+    double RT_baseline_exposure;
 
     float cam_mul[4], pre_mul[4], cmatrix[3][4], rgb_cam[3][4];
 

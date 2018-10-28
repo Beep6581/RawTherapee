@@ -6463,6 +6463,9 @@ guess_cfa_pc:
 	xyz[2] = 1 - xyz[0] - xyz[1];
 	FORC3 xyz[c] /= d65_white[c];
 	break;
+      case 50730:                       /* BaselineExposure */
+        if (dng_version) RT_baseline_exposure = getreal(type);
+        break;
       case 50740:			/* DNGPrivateData */
 	if (dng_version) break;
 	parse_minolta (j = get4()+base);

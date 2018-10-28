@@ -716,6 +716,11 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     gm /= area;
     bm /= area;
     bool doHr = (hrp.hrenabled && hrp.method != "Color");
+    const float expcomp = std::pow(2, ri->getBaselineExposure());
+    rm *= expcomp;
+    gm *= expcomp;
+    bm *= expcomp;
+    
 #ifdef _OPENMP
     #pragma omp parallel if(!d1x)       // omp disabled for D1x to avoid race conditions (see Issue 1088 http://code.google.com/p/rawtherapee/issues/detail?id=1088)
     {

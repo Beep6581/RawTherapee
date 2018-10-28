@@ -125,6 +125,8 @@ public:
     float** data;             // holds pixel values, data[i][j] corresponds to the ith row and jth column
     unsigned prefilters;               // original filters saved ( used for 4 color processing )
     unsigned int getFrameCount() const { return is_raw; }
+
+    double getBaselineExposure() const { return RT_baseline_exposure; }
 protected:
     Glib::ustring filename; // complete filename
     int rotate_deg; // 0,90,180,270 degree of rotation: info taken by dcraw from exif
