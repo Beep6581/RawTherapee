@@ -1175,14 +1175,15 @@ void CLASS lossless_dng_load_raw()
 }
 
 static uint32_t DNG_HalfToFloat(uint16_t halfValue);
+
 void CLASS packed_dng_load_raw()
 {
   ushort *pixel, *rp;
   int row, col;
-  int isfloat = (tiff_nifds == 1 && tiff_ifd[0].sample_format == 3 && tiff_bps == 16);
+  int isfloat = (tiff_nifds == 1 && tiff_ifd[0].sample_format == 3 && (tiff_bps == 16 || tiff_bps == 32));
   if (isfloat) {
     float_raw_image = new float[raw_width * raw_height];
-  }      
+  }
 
   pixel = (ushort *) calloc (raw_width, tiff_samples*sizeof *pixel);
   merror (pixel, "packed_dng_load_raw()");
@@ -1195,6 +1196,14 @@ void CLASS packed_dng_load_raw()
               uint32_t f = DNG_HalfToFloat(pixel[col]);
               dst[col] = f;
           }
+      }
+    } else if (isfloat) {
+      if (fread(&float_raw_image[row*raw_width], sizeof(float), raw_width, ifp) != raw_width) {
+        derror();
+      }
+      if ((order == 0x4949) == (ntohs(0x1234) == 0x1234)) {
+        char *d = reinterpret_cast<char *>(float_raw_image);
+        rtengine::swab(d, d, sizeof(float)*raw_width);
       }
     } else {
       getbits(-1);
