@@ -365,6 +365,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
 
     labRegionList = Gtk::manage(new Gtk::ListViewText(3));
     labRegionList->set_size_request(-1, 100);
+    labRegionList->set_can_focus(false);
     labRegionList->set_column_title(0, "#");
     labRegionList->set_column_title(1, M("TP_COLORTONING_LABREGION_LIST_TITLE"));
     labRegionList->set_column_title(2, M("TP_COLORTONING_LABREGION_MASK"));
