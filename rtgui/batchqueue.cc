@@ -436,10 +436,12 @@ void BatchQueue::cancelItems (const std::vector<ThumbBrowserEntryBase*>& items)
             if (entry->thumbnail)
                 entry->thumbnail->imageRemovedFromQueue ();
 
-            const auto func = [](BatchQueueEntry* bqe) -> bool {
-                ::g_remove(bqe->savedParamsFile.c_str());
-                return false;
-            };
+            const auto func =
+                [](BatchQueueEntry* bqe) -> bool
+                {
+                    ::g_remove(bqe->savedParamsFile.c_str());
+                    return false;
+                };
 
             idle_register.add<BatchQueueEntry>(func, entry, true);
         }

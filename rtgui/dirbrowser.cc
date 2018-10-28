@@ -248,13 +248,14 @@ int updateVolumesUI (void* br)
 
 void DirBrowser::winDirChanged ()
 {
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<DirBrowser*>(data)->updateDirTreeRoot();
+    const auto func =
+        [](DirBrowser* self) -> bool
+        {
+            self->updateDirTreeRoot();
+            return false;
+        };
 
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
+    idle_register.add<DirBrowser>(func, this, false);
 }
 #endif
 

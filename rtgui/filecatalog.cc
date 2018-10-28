@@ -1793,13 +1793,14 @@ void FileCatalog::reparseDirectory ()
 
 void FileCatalog::winDirChanged ()
 {
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<FileCatalog*>(data)->reparseDirectory();
+    const auto func =
+        [](FileCatalog* self) -> bool
+        {
+            self->reparseDirectory();
+            return false;
+        };
 
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
+    idle_register.add<FileCatalog>(func, this, false);
 }
 
 #else
