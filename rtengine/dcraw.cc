@@ -30,6 +30,10 @@
 //#define BENCHMARK
 #include "StopWatch.h"
 
+#include <zlib.h>
+#include <stdint.h>
+
+
 /*
    dcraw.c -- Dave Coffin's raw photo decoder
    Copyright 1997-2018 by Dave Coffin, dcoffin a cybercom o net
@@ -1170,23 +1174,37 @@ void CLASS lossless_dng_load_raw()
   }
 }
 
+static uint32_t DNG_HalfToFloat(uint16_t halfValue);
 void CLASS packed_dng_load_raw()
 {
   ushort *pixel, *rp;
   int row, col;
+  int isfloat = (tiff_nifds == 1 && tiff_ifd[0].sample_format == 3 && tiff_bps == 16);
+  if (isfloat) {
+    float_raw_image = new float[raw_width * raw_height];
+  }      
 
   pixel = (ushort *) calloc (raw_width, tiff_samples*sizeof *pixel);
   merror (pixel, "packed_dng_load_raw()");
   for (row=0; row < raw_height; row++) {
-    if (tiff_bps == 16)
+    if (tiff_bps == 16) {
       read_shorts (pixel, raw_width * tiff_samples);
-    else {
+      if (isfloat) {
+          uint32_t *dst = reinterpret_cast<uint32_t *>(&float_raw_image[row*raw_width]);
+          for (col = 0; col < raw_width; col++) {
+              uint32_t f = DNG_HalfToFloat(pixel[col]);
+              dst[col] = f;
+          }
+      }
+    } else {
       getbits(-1);
       for (col=0; col < raw_width * tiff_samples; col++)
 	pixel[col] = getbits(tiff_bps);
     }
-    for (rp=pixel, col=0; col < raw_width; col++)
-      adobe_copy_pixel (row, col, &rp);
+    if (!isfloat) {
+        for (rp=pixel, col=0; col < raw_width; col++)
+            adobe_copy_pixel (row, col, &rp);
+    }
   }
   free (pixel);
 }
@@ -10086,7 +10104,14 @@ dng_skip:
     if (raw_width  < width ) raw_width  = width;
   }
   if (!tiff_bps) tiff_bps = 12;
-  if (!maximum) maximum = ((uint64_t)1 << tiff_bps) - 1; // use uint64_t to avoid overflow if tiff_bps == 32
+  if (!maximum) {
+      if (tiff_nifds == 1 && tiff_ifd[0].sample_format == 3) {
+          // float DNG, default white level is 1.0
+          maximum = 1;
+      } else {
+          maximum = ((uint64_t)1 << tiff_bps) - 1; // use uint64_t to avoid overflow if tiff_bps == 32
+      }
+  }
   if (!load_raw || height < 22 || width < 22 ||
 	tiff_samples > 6 || colors > 4)
     is_raw = 0;
@@ -10169,8 +10194,8 @@ notraw:
 
 /* RT: DNG Float */
 
-#include <zlib.h>
-#include <stdint.h>
+// #include <zlib.h>
+// #include <stdint.h>
 
 static void decodeFPDeltaRow(Bytef * src, Bytef * dst, size_t tileWidth, size_t realTileWidth, int bytesps, int factor) {
   // DecodeDeltaBytes
@@ -10202,9 +10227,10 @@ static void decodeFPDeltaRow(Bytef * src, Bytef * dst, size_t tileWidth, size_t 
 
 }
 
-#ifndef __F16C__
+#if 1 //ndef __F16C__
 // From DNG SDK dng_utils.h
-static inline uint32_t DNG_HalfToFloat(uint16_t halfValue) {
+static //inline
+uint32_t DNG_HalfToFloat(uint16_t halfValue) {
   int32_t sign     = (halfValue >> 15) & 0x00000001;
   int32_t exponent = (halfValue >> 10) & 0x0000001f;
   int32_t mantissa =  halfValue        & 0x000003ff;
