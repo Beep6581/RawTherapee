@@ -50,12 +50,10 @@ struct NLParams {
     Glib::ustring queueErrorMessage;
 };
 
-int bqnotifylistenerUI (void* data)
+bool bqnotifylistenerUI(NLParams* params)
 {
-    NLParams* params = static_cast<NLParams*>(data);
     params->listener->queueSizeChanged (params->qsize, params->queueEmptied, params->queueError, params->queueErrorMessage);
-    delete params;
-    return 0;
+    return false;
 }
 
 }
@@ -438,16 +436,12 @@ void BatchQueue::cancelItems (const std::vector<ThumbBrowserEntryBase*>& items)
             if (entry->thumbnail)
                 entry->thumbnail->imageRemovedFromQueue ();
 
-            const auto func = [](gpointer data) -> gboolean {
-                const BatchQueueEntry* const bqe = static_cast<BatchQueueEntry*>(data);
-
+            const auto func = [](BatchQueueEntry* bqe) -> bool {
                 ::g_remove(bqe->savedParamsFile.c_str());
-                delete bqe;
-
-                return FALSE;
+                return false;
             };
 
-            idle_register.add(func, entry);
+            idle_register.add<BatchQueueEntry>(func, entry, true);
         }
 
         for (const auto entry : fd)
@@ -608,12 +602,14 @@ void BatchQueue::setProgress(double p)
     }
 
     // No need to acquire the GUI, setProgressUI will do it
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<BatchQueue*>(data)->redraw();
-        return FALSE;
-    };
+    const auto func =
+        [](BatchQueue* bq) -> bool
+        {
+            bq->redraw();
+            return false;
+        };
 
-    idle_register.add(func, this);
+    idle_register.add<BatchQueue>(func, this, false);
 }
 
 void BatchQueue::setProgressStr(const Glib::ustring& str)
@@ -643,7 +639,7 @@ void BatchQueue::error(const Glib::ustring& descr)
         params->queueEmptied = false;
         params->queueError = true;
         params->queueErrorMessage = descr;
-        idle_register.add(bqnotifylistenerUI, params);
+        idle_register.add<NLParams>(bqnotifylistenerUI, params, true);
     }
 }
 
@@ -985,7 +981,7 @@ void BatchQueue::notifyListener (bool queueEmptied)
         }
         params->queueEmptied = queueEmptied;
         params->queueError = false;
-        idle_register.add(bqnotifylistenerUI, params);
+        idle_register.add<NLParams>(bqnotifylistenerUI, params, true);
     }
 }
 

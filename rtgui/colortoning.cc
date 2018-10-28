@@ -689,24 +689,24 @@ void ColorToning::setAdjusterBehavior (bool splitAdd, bool satThresholdAdd, bool
 
 void ColorToning::autoColorTonChanged(int satthres, int satprot)
 {
-        struct Data {
-            ColorToning *me;
-            int satthres;
-            int satprot;
+    struct Data {
+        ColorToning *self;
+        int satthres;
+        int satprot;
+    };
+
+    const auto func =
+        [](Data* data) -> bool
+        {
+            ColorToning* const self = data->self;
+            self->disableListener();
+            self->satProtectionThreshold->setValue(data->satthres);
+            self->saturatedOpacity->setValue(data->satprot);
+            self->enableListener();
+            return false;
         };
 
-        const auto func = [](gpointer data) -> gboolean {
-            Data *d = static_cast<Data *>(data);
-            ColorToning *me = d->me;
-            me->disableListener();
-            me->satProtectionThreshold->setValue(d->satthres);
-            me->saturatedOpacity->setValue(d->satprot);
-            me->enableListener ();
-            delete d;
-            return FALSE;
-        };
-
-        idle_register.add(func, new Data { this, satthres, satprot });
+    idle_register.add<Data>(func, new Data{this, satthres, satprot}, true);
 }
 
 void ColorToning::adjusterChanged (ThresholdAdjuster* a, double newBottom, double newTop)

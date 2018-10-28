@@ -95,7 +95,7 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     allowUpscaling = Gtk::manage(new Gtk::CheckButton(M("TP_RESIZE_ALLOW_UPSCALING")));
     sizeBox->pack_start(*allowUpscaling);
     allowUpscaling->signal_toggled().connect(sigc::mem_fun(*this, &Resize::allowUpscalingChanged));
-    
+
     sizeBox->show_all ();
     sizeBox->reference ();
 
@@ -366,76 +366,76 @@ void Resize::sizeChanged(int mw, int mh, int ow, int oh)
 
 void Resize::setDimensions ()
 {
-    const auto func = [](gpointer data) -> gboolean {
-        Resize* const self = static_cast<Resize*>(data);
+    const auto func =
+        [](Resize* self) -> bool
+        {
+            self->wconn.block(true);
+            self->hconn.block(true);
+            self->scale->block(true);
 
-        self->wconn.block(true);
-        self->hconn.block(true);
-        self->scale->block(true);
+            int refw, refh;
 
-        int refw, refh;
-
-        if (self->appliesTo->get_active_row_number() == 0 && self->cropw) {
-            // Applies to Cropped area
-            refw = self->cropw;
-            refh = self->croph;
-        } else {
-            // Applies to Full image or crop is disabled
-            refw = self->maxw;
-            refh = self->maxh;
-        }
-
-        self->w->set_range(32, MAX_SCALE * refw);
-        self->h->set_range(32, MAX_SCALE * refh);
-
-        switch (self->spec->get_active_row_number()) {
-            case 0: {
-                // Scale mode
-                self->w->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refw) * self->scale->getValue() + 0.5)));
-                self->h->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refh) * self->scale->getValue() + 0.5)));
-                break;
+            if (self->appliesTo->get_active_row_number() == 0 && self->cropw) {
+                // Applies to Cropped area
+                refw = self->cropw;
+                refh = self->croph;
+            } else {
+                // Applies to Full image or crop is disabled
+                refw = self->maxw;
+                refh = self->maxh;
             }
 
-            case 1: {
-                // Width mode
-                const double tmp_scale = self->w->get_value() / static_cast<double>(refw);
-                self->scale->setValue(tmp_scale);
-                self->h->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refh) * tmp_scale + 0.5)));
-                break;
+            self->w->set_range(32, MAX_SCALE * refw);
+            self->h->set_range(32, MAX_SCALE * refh);
+
+            switch (self->spec->get_active_row_number()) {
+                case 0: {
+                    // Scale mode
+                    self->w->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refw) * self->scale->getValue() + 0.5)));
+                    self->h->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refh) * self->scale->getValue() + 0.5)));
+                    break;
+                }
+
+                case 1: {
+                    // Width mode
+                    const double tmp_scale = self->w->get_value() / static_cast<double>(refw);
+                    self->scale->setValue(tmp_scale);
+                    self->h->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refh) * tmp_scale + 0.5)));
+                    break;
+                }
+
+                case 2: {
+                    // Height mode
+                    const double tmp_scale = self->h->get_value() / static_cast<double>(refh);
+                    self->scale->setValue(tmp_scale);
+                    self->w->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refw) * tmp_scale + 0.5)));
+                    break;
+                }
+
+                case 3: {
+                    // Bounding box mode
+                    const double tmp_scale =
+                        self->w->get_value() / self->h->get_value() < static_cast<double>(refw) / static_cast<double>(refh)
+                            ? self->w->get_value() / static_cast<double>(refw)
+                            : self->h->get_value() / static_cast<double>(refh);
+
+                    self->scale->setValue(tmp_scale);
+                    break;
+                }
+
+                default: {
+                    break;
+                }
             }
 
-            case 2: {
-                // Height mode
-                const double tmp_scale = self->h->get_value() / static_cast<double>(refh);
-                self->scale->setValue(tmp_scale);
-                self->w->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refw) * tmp_scale + 0.5)));
-                break;
-            }
+            self->scale->block(false);
+            self->wconn.block(false);
+            self->hconn.block(false);
 
-            case 3: {
-                // Bounding box mode
-                const double tmp_scale =
-                    self->w->get_value() / self->h->get_value() < static_cast<double>(refw) / static_cast<double>(refh)
-                        ? self->w->get_value() / static_cast<double>(refw)
-                        : self->h->get_value() / static_cast<double>(refh);
+            return false;
+        };
 
-                self->scale->setValue(tmp_scale);
-                break;
-            }
-
-            default: {
-                break;
-            }
-        }
-
-        self->scale->block(false);
-        self->wconn.block(false);
-        self->hconn.block(false);
-
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
+    idle_register.add<Resize>(func, this, false);
 }
 
 void Resize::fitBoxScale()

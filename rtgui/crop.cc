@@ -38,18 +38,16 @@ public:
         : crop(_crop), notify(_notify) {}
 };
 
-int refreshSpinsUI (void* data)
+bool refreshSpinsUI(RefreshSpinHelper* rsh)
 {
-    RefreshSpinHelper* rsh = static_cast<RefreshSpinHelper*>(data);
-    rsh->crop->refreshSpins (rsh->notify);
-    delete rsh;
-    return 0;
+    rsh->crop->refreshSpins(rsh->notify);
+    return false;
 }
 
-int notifyListenerUI (void* data)
+bool notifyListenerUI(Crop* self)
 {
-    static_cast<Crop*>(data)->notifyListener();
-    return 0;
+    self->notifyListener();
+    return false;
 }
 
 }
@@ -515,16 +513,14 @@ void Crop::enabledChanged ()
 
 void Crop::hFlipCrop ()
 {
-
     nx = maxw - nx - nw;
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add<RefreshSpinHelper>(refreshSpinsUI, new RefreshSpinHelper(this, false), true);
 }
 
 void Crop::vFlipCrop ()
 {
-
     ny = maxh - ny - nh;
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add<RefreshSpinHelper>(refreshSpinsUI, new RefreshSpinHelper(this, false), true);
 }
 
 void Crop::rotateCrop (int deg, bool hflip, bool vflip)
@@ -564,7 +560,7 @@ void Crop::rotateCrop (int deg, bool hflip, bool vflip)
     }
 
     lastRotationDeg = deg;
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add<RefreshSpinHelper>(refreshSpinsUI, new RefreshSpinHelper(this, false), true);
 }
 
 void Crop::positionChanged ()
@@ -578,7 +574,7 @@ void Crop::positionChanged ()
     int W = nw;
     int H = nh;
     cropMoved (X, Y, W, H);
-    idle_register.add(notifyListenerUI, this);
+    idle_register.add<Crop>(notifyListenerUI, this, false);
 }
 
 void Crop::widthChanged ()
@@ -591,7 +587,7 @@ void Crop::widthChanged ()
     int W = (int)w->get_value ();
     int H = nh;
     cropWidth2Resized (X, Y, W, H);
-    idle_register.add(notifyListenerUI, this);
+    idle_register.add<Crop>(notifyListenerUI, this, false);
 }
 
 void Crop::heightChanged ()
@@ -604,7 +600,7 @@ void Crop::heightChanged ()
     int W = nw;
     int H = (int)h->get_value ();
     cropHeight2Resized (X, Y, W, H);
-    idle_register.add(notifyListenerUI, this);
+    idle_register.add<Crop>(notifyListenerUI, this, false);
 }
 
 // Fixed ratio toggle button
@@ -656,7 +652,7 @@ void Crop::adjustCropToRatio()
     }
 
     // This will save the options
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, true));
+    idle_register.add<RefreshSpinHelper>(refreshSpinsUI, new RefreshSpinHelper(this, true), true);
 }
 
 void Crop::refreshSize ()
@@ -742,14 +738,14 @@ void Crop::sizeChanged(int x, int y, int ow, int oh)
         y
     };
 
-    const auto func = [](gpointer data) -> gboolean {
-        Params* const params = static_cast<Params*>(data);
-        params->crop->setDimensions(params->x, params->y);
-        delete params;
-        return FALSE;
-    };
+    const auto func =
+        [](Params* params) -> bool
+        {
+            params->crop->setDimensions(params->x, params->y);
+            return false;
+        };
 
-    idle_register.add(func, params);
+    idle_register.add<Params>(func, params, true);
 }
 
 bool Crop::refreshSpins (bool notify)
@@ -813,7 +809,7 @@ void Crop::cropMoved (int &X, int &Y, int &W, int &H)
     nw = W;
     nh = H;
 
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add<RefreshSpinHelper>(refreshSpinsUI, new RefreshSpinHelper(this, false), true);
 //  Glib::signal_idle().connect (sigc::mem_fun(*this, &Crop::refreshSpins));
 }
 
@@ -857,7 +853,7 @@ void Crop::cropWidth1Resized (int &X, int &Y, int &W, int &H, float custom_ratio
     nw = W;
     nh = H;
 
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add<RefreshSpinHelper>(refreshSpinsUI, new RefreshSpinHelper(this, false), true);
 }
 
 void Crop::cropWidth2Resized (int &X, int &Y, int &W, int &H, float custom_ratio)
@@ -897,7 +893,7 @@ void Crop::cropWidth2Resized (int &X, int &Y, int &W, int &H, float custom_ratio
     nw = W;
     nh = H;
 
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add<RefreshSpinHelper>(refreshSpinsUI, new RefreshSpinHelper(this, false), true);
 }
 
 void Crop::cropHeight1Resized (int &X, int &Y, int &W, int &H, float custom_ratio)
@@ -940,7 +936,7 @@ void Crop::cropHeight1Resized (int &X, int &Y, int &W, int &H, float custom_rati
     nw = W;
     nh = H;
 
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add<RefreshSpinHelper>(refreshSpinsUI, new RefreshSpinHelper(this, false), true);
 }
 
 void Crop::cropHeight2Resized (int &X, int &Y, int &W, int &H, float custom_ratio)
@@ -980,7 +976,7 @@ void Crop::cropHeight2Resized (int &X, int &Y, int &W, int &H, float custom_rati
     nw = W;
     nh = H;
 
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add<RefreshSpinHelper>(refreshSpinsUI, new RefreshSpinHelper(this, false), true);
 }
 
 void Crop::cropTopLeftResized (int &X, int &Y, int &W, int &H, float custom_ratio)
@@ -1022,7 +1018,7 @@ void Crop::cropTopLeftResized (int &X, int &Y, int &W, int &H, float custom_rati
     nw = W;
     nh = H;
 
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add<RefreshSpinHelper>(refreshSpinsUI, new RefreshSpinHelper(this, false), true);
 }
 
 void Crop::cropTopRightResized (int &X, int &Y, int &W, int &H, float custom_ratio)
@@ -1062,7 +1058,7 @@ void Crop::cropTopRightResized (int &X, int &Y, int &W, int &H, float custom_rat
     nw = W;
     nh = H;
 
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add<RefreshSpinHelper>(refreshSpinsUI, new RefreshSpinHelper(this, false), true);
 }
 
 void Crop::cropBottomLeftResized (int &X, int &Y, int &W, int &H, float custom_ratio)
@@ -1102,7 +1098,7 @@ void Crop::cropBottomLeftResized (int &X, int &Y, int &W, int &H, float custom_r
     nw = W;
     nh = H;
 
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add<RefreshSpinHelper>(refreshSpinsUI, new RefreshSpinHelper(this, false), true);
 }
 
 void Crop::cropBottomRightResized (int &X, int &Y, int &W, int &H, float custom_ratio)
@@ -1139,7 +1135,7 @@ void Crop::cropBottomRightResized (int &X, int &Y, int &W, int &H, float custom_
     nw = W;
     nh = H;
 
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add<RefreshSpinHelper>(refreshSpinsUI, new RefreshSpinHelper(this, false), true);
 }
 
 void Crop::cropInit (int &x, int &y, int &w, int &h)
@@ -1253,12 +1249,12 @@ void Crop::cropResized (int &x, int &y, int& x2, int& y2)
     nw = W;
     nh = H;
 
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add<RefreshSpinHelper>(refreshSpinsUI, new RefreshSpinHelper(this, false), true);
 }
 
 void Crop::cropManipReady ()
 {
-    idle_register.add(notifyListenerUI, this);
+    idle_register.add<Crop>(notifyListenerUI, this, false);
 }
 
 double Crop::getRatio () const

@@ -695,7 +695,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
     }
 
     green->setLogScale(10, green->getValue(), true);
-    
+
     methconn.block (false);
     enableListener ();
 }
@@ -915,22 +915,23 @@ void WhiteBalance::WBChanged(double temperature, double greenVal)
         double green_val;
     };
 
-    const auto func = [](gpointer data) -> gboolean {
-        WhiteBalance* const self = static_cast<WhiteBalance*>(static_cast<Data*>(data)->self);
-        const double temperature = static_cast<Data*>(data)->temperature;
-        const double green_val = static_cast<Data*>(data)->green_val;
-        delete static_cast<Data*>(data);
+    const auto func =
+        [](Data* data) -> bool
+        {
+            WhiteBalance* const self = static_cast<WhiteBalance*>(data->self);
+            const double temperature = data->temperature;
+            const double green_val = data->green_val;
 
-        self->disableListener();
-        self->setEnabled(true);
-        self->temp->setValue(temperature);
-        self->green->setValue(green_val);
-        self->temp->setDefault(temperature);
-        self->green->setDefault(green_val);
-        self->enableListener();
+            self->disableListener();
+            self->setEnabled(true);
+            self->temp->setValue(temperature);
+            self->green->setValue(green_val);
+            self->temp->setDefault(temperature);
+            self->green->setDefault(green_val);
+            self->enableListener();
 
-        return FALSE;
-    };
+            return false;
+        };
 
-    idle_register.add(func, new Data{this, temperature, greenVal});
+    idle_register.add<Data>(func, new Data{this, temperature, greenVal}, true);
 }

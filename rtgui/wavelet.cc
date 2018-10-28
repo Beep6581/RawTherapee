@@ -888,22 +888,22 @@ void Wavelet::wavChanged (double nlevel)
 {
     if (!batchMode) {
         struct Data {
-            Wavelet *me;
+            Wavelet *self;
             double nlevel;
         };
 
-        const auto func = [](gpointer data) -> gboolean {
-            Data *d = static_cast<Data *>(data);
-            Wavelet *me = d->me;
-            me->wavLabels->set_text(
-            Glib::ustring::compose(M("TP_WAVELET_LEVLABEL"),
-                                   Glib::ustring::format(std::fixed, std::setprecision(0), d->nlevel))
-            );
-            delete d;
-            return FALSE;
-        };
+        const auto func =
+            [](Data* data) -> bool
+            {
+                Wavelet* self = data->self;
+                self->wavLabels->set_text(
+                Glib::ustring::compose(M("TP_WAVELET_LEVLABEL"),
+                                       Glib::ustring::format(std::fixed, std::setprecision(0), data->nlevel))
+                );
+                return false;
+            };
 
-        idle_register.add(func, new Data { this, nlevel });
+        idle_register.add<Data>(func, new Data{this, nlevel}, true);
     }
 }
 

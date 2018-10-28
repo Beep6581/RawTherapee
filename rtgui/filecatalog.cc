@@ -873,13 +873,14 @@ void FileCatalog::previewsFinished (int dir_id)
         currentEFS = dirEFS;
     }
 
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<FileCatalog*>(data)->previewsFinishedUI();
+    const auto func =
+        [](FileCatalog* self) -> bool
+        {
+            self->previewsFinishedUI();
+            return false;
+        };
 
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
+    idle_register.add<FileCatalog>(func, this, false);
 }
 
 void FileCatalog::setEnabled (bool e)
@@ -941,24 +942,22 @@ struct FCOIParams {
     std::vector<Thumbnail*> tmb;
 };
 
-int openRequestedUI (void* p)
+bool openRequestedUI(FCOIParams* params)
 {
-    FCOIParams* params = static_cast<FCOIParams*>(p);
     params->catalog->_openImage (params->tmb);
-    delete params;
-
-    return 0;
+    return false;
 }
 
 void FileCatalog::filterApplied()
 {
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<FileCatalog*>(data)->_refreshProgressBar();
+    const auto func =
+        [](FileCatalog* self) -> bool
+        {
+            self->_refreshProgressBar();
+            return false;
+        };
 
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
+    idle_register.add<FileCatalog>(func, this, false);
 }
 
 void FileCatalog::openRequested(const std::vector<Thumbnail*>& tmb)
@@ -971,7 +970,7 @@ void FileCatalog::openRequested(const std::vector<Thumbnail*>& tmb)
         tmb[i]->increaseRef ();
     }
 
-    idle_register.add(openRequestedUI, params);
+    idle_register.add<FCOIParams>(openRequestedUI, params, true);
 }
 
 void FileCatalog::deleteRequested(const std::vector<FileBrowserEntry*>& tbe, bool inclBatchProcessed)
@@ -1229,7 +1228,7 @@ void FileCatalog::developRequested(const std::vector<FileBrowserEntry*>& tbe, bo
                     params.resize.width = options.fastexport_resize_width;
                     params.resize.height = options.fastexport_resize_height;
                 }
-                
+
                 params.resize.enabled = options.fastexport_resize_enabled;
                 params.resize.scale = options.fastexport_resize_scale;
                 params.resize.appliesTo = options.fastexport_resize_appliesTo;
@@ -1903,7 +1902,7 @@ void FileCatalog::addAndOpenFile (const Glib::ustring& fname)
         params->catalog = this;
         params->tmb.push_back (tmb);
         tmb->increaseRef ();
-        idle_register.add(openRequestedUI, params);
+        idle_register.add<FCOIParams>(openRequestedUI, params, true);
 
     } catch(Gio::Error&) {}
 }

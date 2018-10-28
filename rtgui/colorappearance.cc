@@ -1452,63 +1452,63 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
 void ColorAppearance::autoCamChanged (double ccam, double ccamout)
 {
     struct Data {
-        ColorAppearance *me;
+        ColorAppearance* me;
         double ccam;
         double ccamout;
     };
 
-    const auto func = [](gpointer data) -> gboolean {
-        Data *d = static_cast<Data *>(data);
-        ColorAppearance *me = d->me;
-        me->disableListener();
-        me->degree->setValue(d->ccam);
-        me->degreeout->setValue(d->ccamout);
-        me->enableListener();
-        delete d;
-        return FALSE;
-    };
+    const auto func =
+        [](Data* data) -> bool
+        {
+            ColorAppearance* const self = data->me;
+            self->disableListener();
+            self->degree->setValue(data->ccam);
+            self->degreeout->setValue(data->ccamout);
+            self->enableListener();
+            return false;
+        };
 
-    idle_register.add(func, new Data { this, ccam, ccamout });
+    idle_register.add<Data>(func, new Data{this, ccam, ccamout}, true);
 }
 
 void ColorAppearance::adapCamChanged (double cadap)
 {
     struct Data {
-        ColorAppearance *me;
+        ColorAppearance* self;
         double cadap;
     };
 
-    const auto func = [](gpointer data) -> gboolean {
-        Data *d = static_cast<Data *>(data);
-        ColorAppearance *me = d->me;
-        me->disableListener();
-        me->adapscen->setValue(d->cadap);
-        me->enableListener();
-        delete d;
-        return FALSE;
-    };
+    const auto func =
+        [](Data* data) -> bool
+        {
+            ColorAppearance* const self = data->self;
+            self->disableListener();
+            self->adapscen->setValue(data->cadap);
+            self->enableListener();
+            return false;
+        };
 
-    idle_register.add(func, new Data { this, cadap });
+    idle_register.add<Data>(func, new Data{this, cadap}, true);
 }
 
 void ColorAppearance::ybCamChanged (int ybsc)
 {
     struct Data {
-        ColorAppearance *me;
+        ColorAppearance* self;
         int ybsc;
     };
 
-    const auto func = [](gpointer data) -> gboolean {
-        Data *d = static_cast<Data *>(data);
-        ColorAppearance *me = d->me;
-        me->disableListener();
-        me->ybscen->setValue(d->ybsc);
-        me->enableListener();
-        delete d;
-        return FALSE;
-    };
+    const auto func =
+        [](Data* data) -> bool
+        {
+            ColorAppearance* self = data->self;
+            self->disableListener();
+            self->ybscen->setValue(data->ybsc);
+            self->enableListener();
+            return false;
+        };
 
-    idle_register.add(func, new Data { this, ybsc });
+    idle_register.add<Data>(func, new Data{this, ybsc}, true);
 }
 
 void ColorAppearance::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller)

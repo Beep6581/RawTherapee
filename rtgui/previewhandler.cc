@@ -67,40 +67,38 @@ void PreviewHandler::setImage(rtengine::IImage8* i, double scale, const rtengine
     iap->scale      = scale;
     iap->cp         = cp;
 
-    const auto func = [](gpointer data) -> gboolean {
-        iaimgpar* const iap = static_cast<iaimgpar*>(data);
-        PreviewHandlerIdleHelper* const pih = iap->pih;
+    const auto func =
+        [](iaimgpar* iap) -> bool
+        {
+            PreviewHandlerIdleHelper* const pih = iap->pih;
 
-        if (pih->destroyed) {
-            if (pih->pending == 1) {
-                delete pih;
-            } else {
-                pih->pending--;
+            if (pih->destroyed) {
+                if (pih->pending == 1) {
+                    delete pih;
+                } else {
+                    pih->pending--;
+                }
+
+                return false;
             }
 
-            delete iap;
+            if (pih->phandler->image) {
+                IImage8* const oldImg = pih->phandler->image;
+                oldImg->getMutex().lock ();
+                pih->phandler->image = iap->image;
+                oldImg->getMutex().unlock ();
+            } else {
+                pih->phandler->image = iap->image;
+            }
 
-            return FALSE;
-        }
+            pih->phandler->cropParams = iap->cp;
+            pih->phandler->previewScale = iap->scale;
+            pih->pending--;
 
-        if (pih->phandler->image) {
-            IImage8* const oldImg = pih->phandler->image;
-            oldImg->getMutex().lock ();
-            pih->phandler->image = iap->image;
-            oldImg->getMutex().unlock ();
-        } else {
-            pih->phandler->image = iap->image;
-        }
+            return false;
+        };
 
-        pih->phandler->cropParams = iap->cp;
-        pih->phandler->previewScale = iap->scale;
-        pih->pending--;
-        delete iap;
-
-        return FALSE;
-    };
-
-    idle_register.add(func, iap);
+    idle_register.add<iaimgpar>(func, iap, true);
 }
 
 
@@ -112,41 +110,39 @@ void PreviewHandler::delImage(IImage8* i)
     iap->image    = i;
     iap->pih = pih;
 
-    const auto func = [](gpointer data) -> gboolean {
-        iaimgpar* iap = static_cast<iaimgpar*>(data);
-        PreviewHandlerIdleHelper* pih = iap->pih;
+    const auto func =
+        [](iaimgpar* iap) -> bool
+        {
+            PreviewHandlerIdleHelper* const pih = iap->pih;
 
-        if (pih->destroyed) {
-            if (pih->pending == 1) {
-                delete pih;
-            } else {
-                pih->pending--;
+            if (pih->destroyed) {
+                if (pih->pending == 1) {
+                    delete pih;
+                } else {
+                    pih->pending--;
+                }
+
+                return false;
             }
 
-            delete iap;
+            if (pih->phandler->image) {
+                IImage8* oldImg = pih->phandler->image;
+                oldImg->getMutex().lock ();
+                pih->phandler->image = nullptr;
+                oldImg->getMutex().unlock ();
+            }
 
-            return FALSE;
-        }
+            iap->image->free ();
+            pih->phandler->previewImgMutex.lock ();
+            pih->phandler->previewImg.clear ();
+            pih->phandler->previewImgMutex.unlock ();
 
-        if (pih->phandler->image) {
-            IImage8* oldImg = pih->phandler->image;
-            oldImg->getMutex().lock ();
-            pih->phandler->image = nullptr;
-            oldImg->getMutex().unlock ();
-        }
+            pih->pending--;
 
-        iap->image->free ();
-        pih->phandler->previewImgMutex.lock ();
-        pih->phandler->previewImg.clear ();
-        pih->phandler->previewImgMutex.unlock ();
+            return false;
+        };
 
-        pih->pending--;
-        delete iap;
-
-        return FALSE;
-    };
-
-    idle_register.add(func, iap);
+    idle_register.add<iaimgpar>(func, iap, true);
 }
 
 void PreviewHandler::imageReady(const rtengine::procparams::CropParams& cp)
@@ -156,34 +152,32 @@ void PreviewHandler::imageReady(const rtengine::procparams::CropParams& cp)
     iap->pih      = pih;
     iap->cp       = cp;
 
-    const auto func = [](gpointer data) -> gboolean {
-        iaimgpar* const iap = static_cast<iaimgpar*>(data);
-        PreviewHandlerIdleHelper* pih = iap->pih;
+    const auto func =
+        [](iaimgpar* iap) -> bool
+        {
+            PreviewHandlerIdleHelper* const pih = iap->pih;
 
-        if (pih->destroyed) {
-            if (pih->pending == 1) {
-                delete pih;
-            } else {
-                pih->pending--;
+            if (pih->destroyed) {
+                if (pih->pending == 1) {
+                    delete pih;
+                } else {
+                    pih->pending--;
+                }
+
+                return false;
             }
 
-            delete iap;
+            pih->phandler->previewImgMutex.lock ();
+            pih->phandler->previewImg = Gdk::Pixbuf::create_from_data (pih->phandler->image->getData(), Gdk::COLORSPACE_RGB, false, 8, pih->phandler->image->getWidth(), pih->phandler->image->getHeight(), 3 * pih->phandler->image->getWidth());
+            pih->phandler->previewImgMutex.unlock ();
+            pih->phandler->cropParams = iap->cp;
+            pih->phandler->previewImageChanged ();
+            pih->pending--;
 
-            return FALSE;
-        }
+            return false;
+        };
 
-        pih->phandler->previewImgMutex.lock ();
-        pih->phandler->previewImg = Gdk::Pixbuf::create_from_data (pih->phandler->image->getData(), Gdk::COLORSPACE_RGB, false, 8, pih->phandler->image->getWidth(), pih->phandler->image->getHeight(), 3 * pih->phandler->image->getWidth());
-        pih->phandler->previewImgMutex.unlock ();
-        pih->phandler->cropParams = iap->cp;
-        pih->phandler->previewImageChanged ();
-        pih->pending--;
-        delete iap;
-
-        return FALSE;
-    };
-
-    idle_register.add(func, iap);
+    idle_register.add<iaimgpar>(func, iap, true);
 }
 
 Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int x, int y, int w, int h, double zoom)

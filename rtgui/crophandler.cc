@@ -338,9 +338,9 @@ void CropHandler::setDetailedCrop(
         bool expected = false;
 
         if (redraw_needed.compare_exchange_strong(expected, true)) {
-            const auto func = [](gpointer data) -> gboolean {
-                CropHandler* const self = static_cast<CropHandler*>(data);
-
+            const auto func =
+                [](CropHandler* self) -> bool
+                {
                 self->cimg.lock ();
 
                 if (self->redraw_needed.exchange(false)) {
@@ -350,7 +350,7 @@ void CropHandler::setDetailedCrop(
                         self->cropimg.clear();
                         self->cropimgtrue.clear();
                         self->cimg.unlock ();
-                        return FALSE;
+                        return false;
                     }
 
                     if (!self->cropimg.empty()) {
@@ -398,10 +398,10 @@ void CropHandler::setDetailedCrop(
                     self->cimg.unlock();
                 }
 
-                return FALSE;
+                return false;
             };
 
-            idle_register.add(func, this/*, G_PRIORITY_HIGH_IDLE*/);
+            idle_register.add<CropHandler>(func, this, false);
         }
     }
 

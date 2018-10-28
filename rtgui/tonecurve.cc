@@ -45,7 +45,7 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
     pack_start(*clampOOG);
     pack_start (*Gtk::manage (new  Gtk::HSeparator()));
     clampOOG->signal_toggled().connect(sigc::mem_fun(*this, &ToneCurve::clampOOGChanged));
-    
+
 //----------- Auto Levels ----------------------------------
     abox = Gtk::manage (new Gtk::HBox ());
     abox->set_spacing (10);
@@ -238,7 +238,7 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
     if (!black->getAddMode() && !batchMode) {
         shcompr->set_sensitive(!((int)black->getValue () == 0));    //at black=0 shcompr value has no effect
     }
-    
+
     if (!hlcompr->getAddMode() && !batchMode) {
         hlcomprthresh->set_sensitive(!((int)hlcompr->getValue () == 0));    //at hlcompr=0 hlcomprthresh value has no effect
     }
@@ -604,7 +604,7 @@ void ToneCurve::adjusterChanged(Adjuster* a, double newval)
     if (a != expcomp && a != hlcompr && a != hlcomprthresh) {
         setHistmatching(false);
     }
-    
+
     Glib::ustring costr;
 
     if (a == expcomp) {
@@ -629,7 +629,7 @@ void ToneCurve::adjusterChanged(Adjuster* a, double newval)
         listener->panelChanged (EvSaturation, costr);
     } else if (a == hlcompr) {
         listener->panelChanged (EvHLCompr, costr);
-        
+
         if (!hlcompr->getAddMode() && !batchMode) {
             hlcomprthresh->set_sensitive(!((int)hlcompr->getValue () == 0));    //at hlcompr=0 hlcomprthresh value has no effect
         }
@@ -650,7 +650,7 @@ void ToneCurve::neutral_pressed ()
 // and sets neutral values to params in exposure panel
 
     setHistmatching(false);
-    
+
     if (batchMode) {
         autolevels->set_inconsistent (false);
         autoconn.block (true);
@@ -680,7 +680,7 @@ void ToneCurve::neutral_pressed ()
     if (!black->getAddMode() && !batchMode) {
         shcompr->set_sensitive(!((int)black->getValue () == 0));    //at black=0 shcompr value has no effect
     }
-    
+
     if (!hlcompr->getAddMode() && !batchMode) {
         hlcomprthresh->set_sensitive(!((int)hlcompr->getValue () == 0));    //at hlcompr=0 hlcomprthresh value has no effect
     }
@@ -754,7 +754,7 @@ void ToneCurve::autolevels_toggled ()
             if (!black->getAddMode()) {
                 shcompr->set_sensitive(!((int)black->getValue () == 0));    //at black=0 shcompr value has no effect
             }
-            
+
             if (!hlcompr->getAddMode() && !batchMode) {
                 hlcomprthresh->set_sensitive(!((int)hlcompr->getValue () == 0));    //at hlcompr=0 hlcomprthresh value has no effect
             }
@@ -857,7 +857,7 @@ bool ToneCurve::autoExpComputed_ ()
     if (!black->getAddMode() && !batchMode) {
         shcompr->set_sensitive(!((int)black->getValue () == 0));    //at black=0 shcompr value has no effect
     }
-    
+
     if (!hlcompr->getAddMode() && !batchMode) {
         hlcomprthresh->set_sensitive(!((int)hlcompr->getValue () == 0));    //at hlcompr=0 hlcomprthresh value has no effect
     }
@@ -979,7 +979,7 @@ bool ToneCurve::histmatchingComputed()
     if (!black->getAddMode() && !batchMode) {
         shcompr->set_sensitive(!((int)black->getValue() == 0));
     }
-    
+
     if (!hlcompr->getAddMode() && !batchMode) {
         hlcomprthresh->set_sensitive(!((int)hlcompr->getValue () == 0));    //at hlcompr=0 hlcomprthresh value has no effect
     }
@@ -1013,13 +1013,14 @@ void ToneCurve::autoExpChanged(double expcomp, int bright, int contr, int black,
     nextHlcomprthresh = hlcomprthresh;
     nextHLRecons = hlrecons;
 
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<ToneCurve*>(data)->autoExpComputed_();
+    const auto func =
+        [](ToneCurve* self) -> bool
+        {
+            self->autoExpComputed_();
+            return false;
+        };
 
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
+    idle_register.add<ToneCurve>(func, this, false);
 }
 
 void ToneCurve::autoMatchedToneCurveChanged(rtengine::procparams::ToneCurveParams::TcMode curveMode, const std::vector<double>& curve)
@@ -1027,11 +1028,12 @@ void ToneCurve::autoMatchedToneCurveChanged(rtengine::procparams::ToneCurveParam
     nextToneCurveMode = curveMode;
     nextToneCurve = curve;
 
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<ToneCurve*>(data)->histmatchingComputed();
+    const auto func =
+        [](ToneCurve* self) -> bool
+        {
+            self->histmatchingComputed();
+            return false;
+        };
 
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
+    idle_register.add<ToneCurve>(func, this, false);
 }

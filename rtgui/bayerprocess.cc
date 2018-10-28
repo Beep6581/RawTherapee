@@ -723,49 +723,51 @@ void BayerProcess::FrameCountChanged(int n, int frameNum)
         int n;
         int frameNum;
     };
-    const auto func = [](gpointer data) -> gboolean {
-        Data *d = static_cast<Data *>(data);
-        BayerProcess *me = d->me;
-        me->imageNumber->block (true);
-        int n = d->n;
-        int frameNum = d->frameNum;
 
-        me->imageNumber->remove_all();
-        me->imageNumber->append("1");
-        for(int i = 2; i <= std::min(n, 4); ++i) {
-            std::ostringstream entry;
-            entry << i;
-            me->imageNumber->append(entry.str());
-        }
-        me->imageNumber->set_active(std::min(frameNum, n - 1));
-        if(n == 1) {
-            me->imageNumberBox->hide();
-        } else {
-            me->imageNumberBox->show();
-        }
-        me->imageNumber->block (false);
-        delete d;
-        return FALSE;
-    };
+    const auto func =
+        [](Data* d) -> bool
+        {
+            BayerProcess *me = d->me;
+            me->imageNumber->block (true);
+            int n = d->n;
+            int frameNum = d->frameNum;
 
-    idle_register.add(func, new Data { this, n, frameNum });
+            me->imageNumber->remove_all();
+            me->imageNumber->append("1");
+            for(int i = 2; i <= std::min(n, 4); ++i) {
+                std::ostringstream entry;
+                entry << i;
+                me->imageNumber->append(entry.str());
+            }
+            me->imageNumber->set_active(std::min(frameNum, n - 1));
+            if(n == 1) {
+                me->imageNumberBox->hide();
+            } else {
+                me->imageNumberBox->show();
+            }
+            me->imageNumber->block (false);
+            return false;
+        };
+
+    idle_register.add<Data>(func, new Data{this, n, frameNum}, true);
 }
 
 void BayerProcess::autoContrastChanged (double autoContrast)
 {
     struct Data {
-        BayerProcess *me;
+        BayerProcess* self;
         double autoContrast;
     };
-    const auto func = [](gpointer data) -> gboolean {
-        Data *d = static_cast<Data *>(data);
-        BayerProcess *me = d->me;
-        me->disableListener();
-        me->dualDemosaicContrast->setValue(d->autoContrast);
-        me->enableListener();
-        delete d;
-        return FALSE;
-    };
 
-    idle_register.add(func, new Data { this, autoContrast });
+    const auto func =
+        [](Data* data) -> bool
+        {
+            BayerProcess* const self = data->self;
+            self->disableListener();
+            self->dualDemosaicContrast->setValue(data->autoContrast);
+            self->enableListener();
+            return false;
+        };
+
+    idle_register.add<Data>(func, new Data{this, autoContrast}, true);
 }

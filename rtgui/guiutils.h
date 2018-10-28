@@ -50,7 +50,54 @@ class IdleRegister final :
 public:
     ~IdleRegister();
 
-    void add(GSourceFunc function, gpointer data, gint priority = G_PRIORITY_DEFAULT_IDLE);
+    template<typename DATA>
+    void add(bool (*function)(DATA*), DATA* data, bool delete_data, gint priority = G_PRIORITY_DEFAULT_IDLE)
+    {
+        const auto dispatch =
+            [](gpointer data) -> gboolean
+            {
+                DataWrapper* const data_wrapper = static_cast<DataWrapper*>(data);
+
+                // This is safe as per https://en.cppreference.com/w/cpp/language/reinterpret_cast item 7)
+                if (!reinterpret_cast<bool (*)(DATA*)>(data_wrapper->function)(static_cast<DATA*>(data_wrapper->data))) {
+                    data_wrapper->self->mutex.lock();
+                    data_wrapper->self->ids.erase(data_wrapper);
+                    data_wrapper->self->mutex.unlock();
+
+                    if (data_wrapper->deleter) {
+                        data_wrapper->deleter(data_wrapper->data);
+                    }
+
+                    delete data_wrapper;
+                    return FALSE;
+                }
+
+                return TRUE;
+            };
+
+        DataWrapper* const data_wrapper = new DataWrapper{
+            this,
+            reinterpret_cast<GSourceFunc>(function),
+            data,
+            [delete_data]() -> GSourceFunc
+            {
+                if (delete_data) {
+                    return
+                        [](gpointer data) -> gboolean
+                        {
+                            delete static_cast<DATA*>(data);
+                            return TRUE;
+                        };
+                }
+                return nullptr;
+            }()
+        };
+
+        mutex.lock();
+        ids[data_wrapper] = gdk_threads_add_idle_full(priority, dispatch, data_wrapper, nullptr);
+        mutex.unlock();
+    }
+
     void destroy();
 
 private:
@@ -58,6 +105,7 @@ private:
         IdleRegister* const self;
         GSourceFunc function;
         gpointer data;
+        GSourceFunc deleter;
     };
 
     std::map<const DataWrapper*, guint> ids;
@@ -399,7 +447,7 @@ public:
 
     sigc::signal<void> &signal_selection_changed();
     sigc::signal<void> &signal_file_set();
-    
+
     std::string get_filename() const;
     bool set_filename(const std::string &filename);
 
@@ -407,7 +455,7 @@ public:
     void remove_filter(const Glib::RefPtr<Gtk::FileFilter> &filter);
     void set_filter(const Glib::RefPtr<Gtk::FileFilter> &filter);
     std::vector<Glib::RefPtr<Gtk::FileFilter>> list_filters();
-    
+
     bool set_current_folder(const std::string &filename);
     std::string get_current_folder() const;
 

@@ -673,14 +673,16 @@ void Retinex::minmaxChanged (double cdma, double cdmin, double mini, double maxi
     nextminT = Tmin;
     nextmaxT = Tmax;
 
-    const auto func = [] (gpointer data) -> gboolean {
-        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-        static_cast<Retinex*> (data)->minmaxComputed_();
+    const auto func =
+        [](Retinex* self) -> bool
+        {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+            // FIXME: The above can't be true?!
+            self->minmaxComputed_();
+            return false;
+        };
 
-        return FALSE;
-    };
-
-    idle_register.add (func, this);
+    idle_register.add<Retinex>(func, this, false);
 }
 
 bool Retinex::minmaxComputed_ ()

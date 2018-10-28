@@ -284,32 +284,32 @@ DirPyrDenoise::~DirPyrDenoise ()
 void DirPyrDenoise::chromaChanged (double autchroma, double autred, double autblue)
 {
     struct Data {
-        DirPyrDenoise *me;
+        DirPyrDenoise* self;
         double autchroma;
         double autred;
         double autblue;
     };
 
-    const auto func = [](gpointer data) -> gboolean {
-        Data *d = static_cast<Data *>(data);
-        DirPyrDenoise *me = d->me;
-        me->disableListener();
-        me->chroma->setValue(d->autchroma);
-        me->redchro->setValue(d->autred);
-        me->bluechro->setValue(d->autblue);
-        me->enableListener();
-        delete d;
-        return FALSE;
-    };
+    const auto func =
+        [](Data* data) -> bool
+        {
+            DirPyrDenoise* const self = data->self;
+            self->disableListener();
+            self->chroma->setValue(data->autchroma);
+            self->redchro->setValue(data->autred);
+            self->bluechro->setValue(data->autblue);
+            self->enableListener();
+            return false;
+        };
 
-    idle_register.add(func, new Data { this, autchroma, autred, autblue });
+    idle_register.add<Data>(func, new Data{this, autchroma, autred, autblue}, true);
 }
 
 void DirPyrDenoise::noiseTilePrev (int tileX, int tileY, int prevX, int prevY, int sizeT, int sizeP)
 {
     if (!batchMode) {
         struct Data {
-            DirPyrDenoise *me;
+            DirPyrDenoise* self;
             int tileX;
             int tileY;
             int prevX;
@@ -318,26 +318,26 @@ void DirPyrDenoise::noiseTilePrev (int tileX, int tileY, int prevX, int prevY, i
             int sizeP;
         };
 
-        const auto func = [](gpointer data) -> gboolean {
-            Data *d = static_cast<Data *>(data);
-            DirPyrDenoise *me = d->me;
-            me->TileLabels->set_text(
-                Glib::ustring::compose(M("TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO"),
-                                       Glib::ustring::format(std::fixed, std::setprecision(0), d->sizeT),
-                                       Glib::ustring::format(std::fixed, std::setprecision(0), d->tileX),
-                                       Glib::ustring::format(std::fixed, std::setprecision(0), d->tileY))
-            );
-            me->PrevLabels->set_text(
-                Glib::ustring::compose(M("TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_INFO"),
-                                       Glib::ustring::format(std::fixed, std::setprecision(0), d->sizeP),
-                                       Glib::ustring::format(std::fixed, std::setprecision(0), d->prevX),
-                                       Glib::ustring::format(std::fixed, std::setprecision(0), d->prevY))
-            );
-            delete d;
-            return FALSE;
-        };
+        const auto func =
+            [](Data* data) -> bool
+            {
+                DirPyrDenoise* self = data->self;
+                self->TileLabels->set_text(
+                    Glib::ustring::compose(M("TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO"),
+                                           Glib::ustring::format(std::fixed, std::setprecision(0), data->sizeT),
+                                           Glib::ustring::format(std::fixed, std::setprecision(0), data->tileX),
+                                           Glib::ustring::format(std::fixed, std::setprecision(0), data->tileY))
+                );
+                self->PrevLabels->set_text(
+                    Glib::ustring::compose(M("TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_INFO"),
+                                           Glib::ustring::format(std::fixed, std::setprecision(0), data->sizeP),
+                                           Glib::ustring::format(std::fixed, std::setprecision(0), data->prevX),
+                                           Glib::ustring::format(std::fixed, std::setprecision(0), data->prevY))
+                );
+                return false;
+            };
 
-        idle_register.add(func, new Data { this, tileX, tileY, prevX, prevY, sizeT, sizeP });
+        idle_register.add<Data>(func, new Data{this, tileX, tileY, prevX, prevY, sizeT, sizeP}, true);
     }
 }
 
@@ -345,20 +345,20 @@ void DirPyrDenoise::noiseChanged (double nresid, double highresid)
 {
     if (!batchMode) {
         struct Data {
-            DirPyrDenoise *me;
+            DirPyrDenoise* self;
             double nresid;
             double highresid;
         };
 
-        const auto func = [](gpointer data) -> gboolean {
-            Data *d = static_cast<Data *>(data);
-            DirPyrDenoise *me = d->me;
-            me->updateNoiseLabel(d->nresid, d->highresid);
-            delete d;
-            return FALSE;
-        };
+        const auto func =
+            [](Data* data) -> bool
+            {
+                DirPyrDenoise* const self = data->self;
+                self->updateNoiseLabel(data->nresid, data->highresid);
+                return false;
+            };
 
-        idle_register.add(func, new Data { this, nresid, highresid });
+        idle_register.add<Data>(func, new Data{this, nresid, highresid}, true);
     }
 }
 

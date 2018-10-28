@@ -170,13 +170,14 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     show_all ();
 
     if (batchQueue->loadBatchQueue()) {
-        const auto func = [](gpointer data) -> gboolean {
-            static_cast<BatchQueue*>(data)->resizeLoadedQueue();
+        const auto func =
+            [](BatchQueue* bq) -> bool
+            {
+                bq->resizeLoadedQueue();
+                return false;
+            };
 
-            return FALSE;
-        };
-
-        idle_register.add(func, batchQueue, G_PRIORITY_LOW);
+        idle_register.add<BatchQueue>(func, batchQueue, false, G_PRIORITY_LOW);
     }
 }
 
