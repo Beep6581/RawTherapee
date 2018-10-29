@@ -245,22 +245,24 @@ void BatchQueuePanel::updateTab (int qsize, int forceOrientation)
     }
 }
 
-void BatchQueuePanel::queueSizeChanged(int qsize, bool queueEmptied, bool queueError, const Glib::ustring& queueErrorMessage)
+void BatchQueuePanel::queueSizeChanged(int qsize, bool queueRunning, bool queueError, const Glib::ustring& queueErrorMessage)
 {
     updateTab (qsize);
 
-    if (qsize == 0 || (qsize == 1 && !fdir->get_sensitive())) {
+    if (qsize == 0 || (qsize == 1 && queueRunning)) {
         qStartStop->set_sensitive(false);
     } else {
         qStartStop->set_sensitive(true);
     }
 
-    if (queueEmptied || queueError) {
+    if (!queueRunning) {
         stopBatchProc ();
         fdir->set_sensitive (true);
         fformat->set_sensitive (true);
 
-        SoundManager::playSoundAsync(options.sndBatchQueueDone);
+        if (qsize == 0) {
+            SoundManager::playSoundAsync(options.sndBatchQueueDone);
+        }
     }
 
     if (queueError) {
@@ -284,6 +286,7 @@ void BatchQueuePanel::startBatchProc ()
     // Update switch when queue started programmatically
     qStartStopConn.block (true);
     qStartStop->set_active(true);
+    qStartStopState = true;
     qStartStopConn.block (false);
 
     if (batchQueue->hasJobs()) {
@@ -306,6 +309,7 @@ void BatchQueuePanel::stopBatchProc ()
     // Update switch when queue started programmatically
     qStartStopConn.block (true);
     qStartStop->set_active(false);
+    qStartStopState = false;
     qStartStopConn.block (false);
 
     updateTab (batchQueue->getEntries().size());
@@ -320,24 +324,39 @@ void BatchQueuePanel::addBatchQueueJobs(const std::vector<BatchQueueEntry*>& ent
     }
 }
 
-bool BatchQueuePanel::canStartNext ()
-{
-
-    if (qStartStop->get_active()) {
-        return true;
-    } else {
-        fdir->set_sensitive (true);
-        fformat->set_sensitive (true);
-        return false;
-    }
-}
-
 void BatchQueuePanel::saveOptions ()
 {
 
     options.savePathTemplate    = outdirTemplate->get_text();
     options.saveUsePathTemplate = useTemplate->get_active();
     options.procQueueEnabled    = qAutoStart->get_active();
+}
+
+bool BatchQueuePanel::handleShortcutKey (GdkEventKey* event)
+{
+    bool ctrl = event->state & GDK_CONTROL_MASK;
+
+    if (ctrl) {
+        switch(event->keyval) {
+        case GDK_KEY_s:
+            if (qStartStop->get_active()) {
+                stopBatchProc();
+            } else {
+                startBatchProc();
+            }
+
+            return true;
+        }
+    }
+
+    return batchQueue->keyPressed (event);
+}
+
+bool BatchQueuePanel::canStartNext ()
+{
+    // This function is called from the background BatchQueue thread.
+    // It cannot call UI functions, so grab the stored state of qStartStop.
+    return qStartStopState;
 }
 
 void BatchQueuePanel::pathFolderButtonPressed ()
@@ -368,24 +387,4 @@ void BatchQueuePanel::pathFolderChanged ()
 void BatchQueuePanel::formatChanged(const Glib::ustring& format)
 {
     options.saveFormatBatch = saveFormatPanel->getFormat();
-}
-
-bool BatchQueuePanel::handleShortcutKey (GdkEventKey* event)
-{
-    bool ctrl = event->state & GDK_CONTROL_MASK;
-
-    if (ctrl) {
-        switch(event->keyval) {
-        case GDK_KEY_s:
-            if (qStartStop->get_active()) {
-                stopBatchProc();
-            } else {
-                startBatchProc();
-            }
-
-            return true;
-        }
-    }
-
-    return batchQueue->keyPressed (event);
 }

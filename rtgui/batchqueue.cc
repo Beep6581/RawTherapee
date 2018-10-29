@@ -45,7 +45,7 @@ namespace
 struct NLParams {
     BatchQueueListener* listener;
     int qsize;
-    bool queueEmptied;
+    bool queueRunning;
     bool queueError;
     Glib::ustring queueErrorMessage;
 };
@@ -53,7 +53,7 @@ struct NLParams {
 int bqnotifylistenerUI (void* data)
 {
     NLParams* params = static_cast<NLParams*>(data);
-    params->listener->queueSizeChanged (params->qsize, params->queueEmptied, params->queueError, params->queueErrorMessage);
+    params->listener->queueSizeChanged (params->qsize, params->queueRunning, params->queueError, params->queueErrorMessage);
     delete params;
     return 0;
 }
@@ -229,7 +229,7 @@ void BatchQueue::addEntries (const std::vector<BatchQueueEntry*>& entries, bool 
         saveBatchQueue ();
 
     redraw ();
-    notifyListener (false);
+    notifyListener (true);
 }
 
 bool BatchQueue::saveBatchQueue ()
@@ -387,7 +387,7 @@ bool BatchQueue::loadBatchQueue ()
     }
 
     redraw ();
-    notifyListener (false);
+    notifyListener (true);
 
     return !fd.empty ();
 }
@@ -460,7 +460,7 @@ void BatchQueue::cancelItems (const std::vector<ThumbBrowserEntryBase*>& items)
     saveBatchQueue ();
 
     redraw ();
-    notifyListener (false);
+    notifyListener (true);
 }
 
 void BatchQueue::headItems (const std::vector<ThumbBrowserEntryBase*>& items)
@@ -640,7 +640,7 @@ void BatchQueue::error(const Glib::ustring& descr)
     if (listener) {
         NLParams* params = new NLParams;
         params->listener = listener;
-        params->queueEmptied = false;
+        params->queueRunning = false;
         params->queueError = true;
         params->queueErrorMessage = descr;
         idle_register.add(bqnotifylistenerUI, params);
@@ -706,7 +706,6 @@ rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
     Glib::ustring processedParams = processing->savedParamsFile;
 
     // delete from the queue
-    bool queueEmptied = false;
     bool remove_button_set = false;
 
     {
@@ -718,9 +717,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
         fd.erase (fd.begin());
 
         // return next job
-        if (fd.empty()) {
-            queueEmptied = true;
-        } else if (listener && listener->canStartNext ()) {
+        if (!fd.empty() && listener && listener->canStartNext ()) {
             BatchQueueEntry* next = static_cast<BatchQueueEntry*>(fd[0]);
             // tag it as selected and set sequence
             next->processing = true;
@@ -778,7 +775,8 @@ rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
     }
 
     redraw ();
-    notifyListener (queueEmptied);
+    const bool queueRunning = processing;
+    notifyListener (queueRunning);
 
     return processing ? processing->job : nullptr;
 }
@@ -973,7 +971,7 @@ void BatchQueue::buttonPressed (LWButton* button, int actionCode, void* actionDa
     }
 }
 
-void BatchQueue::notifyListener (bool queueEmptied)
+void BatchQueue::notifyListener (bool queueRunning)
 {
 
     if (listener) {
@@ -983,7 +981,7 @@ void BatchQueue::notifyListener (bool queueEmptied)
             MYREADERLOCK(l, entryRW);
             params->qsize = fd.size();
         }
-        params->queueEmptied = queueEmptied;
+        params->queueRunning = queueRunning;
         params->queueError = false;
         idle_register.add(bqnotifylistenerUI, params);
     }

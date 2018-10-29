@@ -83,6 +83,7 @@ public:
     virtual void        setBorder (unsigned int border) {}
     virtual void        setCurrentFrame (unsigned int frameNum) = 0;
     virtual int         getFrameCount () = 0;
+    virtual int         getFlatFieldAutoClipValue () = 0;
 
 
     // use right after demosaicing image, add coarse transformation and put the result in the provided Imagefloat*

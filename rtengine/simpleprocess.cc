@@ -209,8 +209,10 @@ private:
         if (pl) {
             pl->setProgress (0.20);
         }
-        double contrastThresholdDummy;
-        imgsrc->demosaic (params.raw, false, contrastThresholdDummy);
+        bool autoContrast = imgsrc->getSensorType() == ST_BAYER ? params.raw.bayersensor.dualDemosaicAutoContrast : params.raw.xtranssensor.dualDemosaicAutoContrast;
+        double contrastThreshold = imgsrc->getSensorType() == ST_BAYER ? params.raw.bayersensor.dualDemosaicContrast : params.raw.xtranssensor.dualDemosaicContrast;
+
+        imgsrc->demosaic (params.raw, autoContrast, contrastThreshold);
 
 
         if (pl) {
@@ -1132,6 +1134,8 @@ private:
         }
 
         wavCLVCurve.Reset();
+
+        ipf.softLight(labView);
 
         //Colorappearance and tone-mapping associated
 
