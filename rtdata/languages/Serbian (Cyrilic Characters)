@@ -909,7 +909,6 @@ TP_CROP_GUIDETYPE;Вођицe:
 TP_CROP_H;В
 TP_CROP_LABEL;Исецање
 TP_CROP_PPI;ППИ=
-TP_CROP_SELECTCROP;    Изабери област
 TP_CROP_W;Ш
 TP_CROP_X;x
 TP_CROP_Y;y

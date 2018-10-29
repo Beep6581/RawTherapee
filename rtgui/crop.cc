@@ -126,19 +126,20 @@ Crop::Crop():
     hb2->pack_start (*h);
 
     pack_start (*hb2, Gtk::PACK_SHRINK, 4);
+    
+    Gtk::HBox* hb5 = Gtk::manage (new Gtk::HBox());
 
     selectCrop = Gtk::manage (new Gtk::Button (M("TP_CROP_SELECTCROP")));
     selectCrop->get_style_context()->add_class("independent");
     selectCrop->set_image (*Gtk::manage (new RTImage ("crop-small.png")));
 
-    pack_start (*selectCrop, Gtk::PACK_SHRINK, 2);
-
     resetCrop = Gtk::manage (new Gtk::Button (M("TP_CROP_RESETCROP")));
     resetCrop->get_style_context()->add_class("independent");
     resetCrop->set_image (*Gtk::manage (new RTImage ("undo-small.png")));
 
-    pack_start (*resetCrop, Gtk::PACK_SHRINK, 2);
-
+    hb5->pack_start (*selectCrop, Gtk::PACK_EXPAND_WIDGET, 2);
+    hb5->pack_start (*resetCrop, Gtk::PACK_EXPAND_WIDGET, 2);
+    pack_start(*hb5, Gtk::PACK_SHRINK, 4);
 
     Gtk::HBox* hb3 = Gtk::manage (new Gtk::HBox ());
 

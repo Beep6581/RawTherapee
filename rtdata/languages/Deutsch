@@ -1590,8 +1590,12 @@ TP_CROP_GTTRIANGLE2;Goldenes Dreieck 2
 TP_CROP_GUIDETYPE;Hilfslinien:
 TP_CROP_H;Höhe
 TP_CROP_LABEL;Ausschnitt
+<<<<<<< HEAD
 TP_CROP_PPI;PPI =
 TP_CROP_SELECTCROP;Ausschnitt wählen
+=======
+TP_CROP_PPI;PPI=
+>>>>>>> Reset crop almost works in batch mode now: you just have to click twice...
 TP_CROP_W;Breite
 TP_CROP_X;Links
 TP_CROP_Y;Oben

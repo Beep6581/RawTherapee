@@ -331,7 +331,6 @@ TP_CROP_GTRULETHIRDS;Kolmijako
 TP_CROP_GUIDETYPE;Sommittelumalli:
 TP_CROP_H;Kork.
 TP_CROP_LABEL;Rajaus
-TP_CROP_SELECTCROP;Valitse alue
 TP_CROP_W;Lev.
 TP_CROP_X;   x
 TP_CROP_Y;   y

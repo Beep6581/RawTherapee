@@ -107,7 +107,7 @@ void BatchToolPanelCoordinator::initSession ()
     // compare all the ProcParams and describe which parameters has different (i.e. inconsistent) values in pparamsEdited
     pparamsEdited.initFrom (initialPP);
 
-    crop->setDimensions (100000, 100000);
+    //crop->setDimensions (100000, 100000);
 
     /*    if (!selected.empty()) {
             pparams = selected[0]->getProcParams ();
@@ -126,6 +126,10 @@ void BatchToolPanelCoordinator::initSession ()
         pparams = selected[0]->getProcParams ();
 
         coarse->initBatchBehavior ();
+        
+        int w,h;
+        selected[0]->getOriginalSize(w,h);
+        crop->setDimensions (w, h);
 
         if (selected.size() == 1) {
 
