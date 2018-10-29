@@ -1574,7 +1574,6 @@ TP_CROP_GUIDETYPE;Hilfslinien:
 TP_CROP_H;Höhe
 TP_CROP_LABEL;Ausschnitt
 TP_CROP_PPI;PPI=
-TP_CROP_SELECTCROP;Ausschnitt wählen
 TP_CROP_W;Breite
 TP_CROP_X;x
 TP_CROP_Y;y
