@@ -6409,6 +6409,7 @@ guess_cfa_pc:
       case 61450:
 	cblack[4] = cblack[5] = MIN(sqrt(len),64);
       case 50714:			/* BlackLevel */
+                RT_blacklevel_from_constant = ThreeValBool::F;
 		if(cblack[4] * cblack[5] == 0) {
 			int dblack[] = { 0,0,0,0 };
 			black = getreal(type);
@@ -6423,7 +6424,6 @@ guess_cfa_pc:
 			  cblack[6+c] = getreal(type);
 		}
 		black = 0;
-                RT_blacklevel_from_constant = ThreeValBool::F;
 		break;
       case 50715:			/* BlackLevelDeltaH */
       case 50716:			/* BlackLevelDeltaV */
@@ -8632,11 +8632,31 @@ void CLASS adobe_coeff (const char *make, const char *model)
   int i, j;
 
   sprintf (name, "%s %s", make, model);
+
+
+  // -- RT --------------------------------------------------------------------
+  const bool is_pentax_dng = dng_version && !strncmp(RT_software.c_str(), "PENTAX", 6);
+  // indicate that DCRAW wants these from constants (rather than having loaded these from RAW file
+  // note: this is simplified so far, in some cases dcraw calls this when it has say the black level
+  // from file, but then we will not provide any black level in the tables. This case is mainly just
+  // to avoid loading table values if we have loaded a DNG conversion of a raw file (which already
+  // have constants stored in the file).
+  if (RT_whitelevel_from_constant == ThreeValBool::X || is_pentax_dng) {
+    RT_whitelevel_from_constant = ThreeValBool::T;
+  }
+  if (RT_blacklevel_from_constant == ThreeValBool::X || is_pentax_dng) {
+    RT_blacklevel_from_constant = ThreeValBool::T;
+  }
+  if (RT_matrix_from_constant == ThreeValBool::X) {
+    RT_matrix_from_constant = ThreeValBool::T;
+  }
+  // -- RT --------------------------------------------------------------------
+  
   for (i=0; i < sizeof table / sizeof *table; i++)
     if (!strncmp (name, table[i].prefix, strlen(table[i].prefix))) {
-      if (table[i].black)   black   = (ushort) table[i].black;
-      if (table[i].maximum) maximum = (ushort) table[i].maximum;
-      if (table[i].trans[0]) {
+      if (RT_blacklevel_from_constant == ThreeValBool::T && table[i].black)   black   = (ushort) table[i].black;
+      if (RT_whitelevel_from_constant == ThreeValBool::T && table[i].maximum) maximum = (ushort) table[i].maximum;
+      if (RT_matrix_from_constant == ThreeValBool::T && table[i].trans[0]) {
 	for (raw_color = j=0; j < 12; j++)
 	  ((double *)cam_xyz)[j] = table[i].trans[j] / 10000.0;
 	cam_xyz_coeff (rgb_cam, cam_xyz);
@@ -10082,7 +10102,8 @@ dng_skip:
        * DNG-converted and original raw
        * files. See #4129 */) {
     memcpy (rgb_cam, cmatrix, sizeof cmatrix);
-    raw_color = 0;
+//    raw_color = 0;
+    RT_matrix_from_constant = ThreeValBool::F;
   }
   if(!strncmp(make, "Panasonic", 9) && !strncmp(model, "DMC-LX100",9))
 	adobe_coeff (make, model);

@@ -1060,20 +1060,20 @@ DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int is
     }
     memset(trans, 0, sizeof(*trans) * 12);
 
-    // indicate that DCRAW wants these from constants (rather than having loaded these from RAW file
-    // note: this is simplified so far, in some cases dcraw calls this when it has say the black level
-    // from file, but then we will not provide any black level in the tables. This case is mainly just
-    // to avoid loading table values if we have loaded a DNG conversion of a raw file (which already
-    // have constants stored in the file).
-    if (RT_whitelevel_from_constant == ThreeValBool::X || is_pentax_dng) {
-        RT_whitelevel_from_constant = ThreeValBool::T;
-    }
-    if (RT_blacklevel_from_constant == ThreeValBool::X || is_pentax_dng) {
-        RT_blacklevel_from_constant = ThreeValBool::T;
-    }
-    if (RT_matrix_from_constant == ThreeValBool::X) {
-        RT_matrix_from_constant = ThreeValBool::T;
-    }
+    // // indicate that DCRAW wants these from constants (rather than having loaded these from RAW file
+    // // note: this is simplified so far, in some cases dcraw calls this when it has say the black level
+    // // from file, but then we will not provide any black level in the tables. This case is mainly just
+    // // to avoid loading table values if we have loaded a DNG conversion of a raw file (which already
+    // // have constants stored in the file).
+    // if (RT_whitelevel_from_constant == ThreeValBool::X || is_pentax_dng) {
+    //     RT_whitelevel_from_constant = ThreeValBool::T;
+    // }
+    // if (RT_blacklevel_from_constant == ThreeValBool::X || is_pentax_dng) {
+    //     RT_blacklevel_from_constant = ThreeValBool::T;
+    // }
+    // if (RT_matrix_from_constant == ThreeValBool::X) {
+    //     RT_matrix_from_constant = ThreeValBool::T;
+    // }
 
     {
         // test if we have any information in the camera constants store, if so we take that.
@@ -1088,7 +1088,7 @@ DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int is
                 *white_level = cc->get_WhiteLevel(0, iso_speed, aperture);
             }
 
-            if (cc->has_dcrawMatrix()) {
+            if (RT_matrix_from_constant == ThreeValBool::T && cc->has_dcrawMatrix()) {
                 const short *mx = cc->get_dcrawMatrix();
 
                 for (int j = 0; j < 12; j++) {
