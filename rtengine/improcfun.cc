@@ -5782,8 +5782,8 @@ void ImProcFunctions::lab2rgb (const LabImage &src, Imagefloat &dst, const Glib:
 */
 void ImProcFunctions::colorToningLabGrid(LabImage *lab, int xstart, int xend, int ystart, int yend, bool MultiThread)
 {
-    const float factor = ColorToningParams::LABGRID_CORR_MAX * 3.f;
-    const float scaling = ColorToningParams::LABGRID_CORR_SCALE;
+    const float factor = 3.f;
+    const float scaling = 3.f;
     float a_scale = (params->colorToning.labgridAHigh - params->colorToning.labgridALow) / factor / scaling;
     float a_base = params->colorToning.labgridALow / scaling;
     float b_scale = (params->colorToning.labgridBHigh - params->colorToning.labgridBLow) / factor / scaling;

@@ -33,7 +33,7 @@ void ImProcFunctions::labColorCorrectionRegions(LabImage *lab)
         return;
     }
 
-    const float factor = ColorToningParams::LABGRID_CORR_MAX * 3.f;
+    const float factor = 3.f;
     const float scaling = 1.f;
 
     int n = params->colorToning.labregions.size();

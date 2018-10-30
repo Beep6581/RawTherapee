@@ -44,7 +44,12 @@ using rtengine::Color;
 bool LabGrid::notifyListener()
 {
     if (listener) {
-        listener->panelChanged(evt, Glib::ustring::compose(evtMsg, int(high_a), int(high_b), int(low_a), int(low_b)));
+        const auto round =
+            [](float v) -> float
+            {
+                return int(v * 1000) / 1000.f;
+            };
+        listener->panelChanged(evt, Glib::ustring::compose(evtMsg, round(high_a), round(high_b), round(low_a), round(low_b)));
     }
     return false;
 }
@@ -76,8 +81,8 @@ void LabGrid::getParams(double &la, double &lb, double &ha, double &hb) const
 
 void LabGrid::setParams(double la, double lb, double ha, double hb, bool notify)
 {
-    const double lo = -rtengine::ColorToningParams::LABGRID_CORR_MAX;
-    const double hi = rtengine::ColorToningParams::LABGRID_CORR_MAX;
+    const double lo = -1.0;
+    const double hi = 1.0;
     low_a = rtengine::LIM(la, lo, hi);
     low_b = rtengine::LIM(lb, lo, hi);
     high_a = rtengine::LIM(ha, lo, hi);
@@ -172,7 +177,7 @@ bool LabGrid::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         cr->translate(0, height);
         cr->scale(1., -1.);
         const int cells = 8;
-        float step = rtengine::ColorToningParams::LABGRID_CORR_MAX / float(cells/2);
+        float step = 1.f / float(cells/2);
         for (int j = 0; j < cells; j++) {
             for (int i = 0; i < cells; i++) {
                 float R, G, B;
@@ -192,10 +197,10 @@ bool LabGrid::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         // drawing the connection line
         cr->set_antialias(Cairo::ANTIALIAS_DEFAULT);
         float loa, hia, lob, hib;
-        loa = .5f * (width + width * low_a / rtengine::ColorToningParams::LABGRID_CORR_MAX);
-        hia = .5f * (width + width * high_a / rtengine::ColorToningParams::LABGRID_CORR_MAX);
-        lob = .5f * (height + height * low_b / rtengine::ColorToningParams::LABGRID_CORR_MAX);
-        hib = .5f * (height + height * high_b / rtengine::ColorToningParams::LABGRID_CORR_MAX);
+        loa = .5f * (width + width * low_a);
+        hia = .5f * (width + width * high_a);
+        lob = .5f * (height + height * low_b);
+        hib = .5f * (height + height * high_b);
         cr->set_line_width(2.);
         cr->set_source_rgb(0.6, 0.6, 0.6);
         cr->move_to(loa, lob);
@@ -279,11 +284,11 @@ bool LabGrid::on_motion_notify_event(GdkEventMotion *event)
     const float mb = (2.0 * mouse_y - height) / (float)height;
     if (isDragged) {
         if (litPoint == LOW) {
-            low_a = ma * rtengine::ColorToningParams::LABGRID_CORR_MAX;
-            low_b = mb * rtengine::ColorToningParams::LABGRID_CORR_MAX;
+            low_a = ma;
+            low_b = mb;
         } else if (litPoint == HIGH) {
-            high_a = ma * rtengine::ColorToningParams::LABGRID_CORR_MAX;
-            high_b = mb * rtengine::ColorToningParams::LABGRID_CORR_MAX;
+            high_a = ma;
+            high_b = mb;
         }
         edited = true;
         grab_focus();
@@ -295,10 +300,10 @@ bool LabGrid::on_motion_notify_event(GdkEventMotion *event)
         queue_draw();
     } else {
         litPoint = NONE;
-        float la = low_a / rtengine::ColorToningParams::LABGRID_CORR_MAX;
-        float lb = low_b / rtengine::ColorToningParams::LABGRID_CORR_MAX;
-        float ha = high_a / rtengine::ColorToningParams::LABGRID_CORR_MAX;
-        float hb = high_b / rtengine::ColorToningParams::LABGRID_CORR_MAX;
+        float la = low_a;
+        float lb = low_b;
+        float ha = high_a;
+        float hb = high_b;
         const float thrs = 0.05f;
         const float distlo = (la - ma) * (la - ma) + (lb - mb) * (lb - mb);
         const float disthi = (ha - ma) * (ha - ma) + (hb - mb) * (hb - mb);

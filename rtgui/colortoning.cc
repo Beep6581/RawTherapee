@@ -596,7 +596,7 @@ void ColorToning::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     lastLumamode = pp->colorToning.lumamode;
 
-    labgrid->setParams(pp->colorToning.labgridALow, pp->colorToning.labgridBLow, pp->colorToning.labgridAHigh, pp->colorToning.labgridBHigh, false);
+    labgrid->setParams(pp->colorToning.labgridALow / ColorToningParams::LABGRID_CORR_MAX, pp->colorToning.labgridBLow / ColorToningParams::LABGRID_CORR_MAX, pp->colorToning.labgridAHigh / ColorToningParams::LABGRID_CORR_MAX, pp->colorToning.labgridBHigh / ColorToningParams::LABGRID_CORR_MAX, false);
 
     if (pedited && !pedited->colorToning.method) {
         method->set_active (5);
@@ -667,6 +667,10 @@ void ColorToning::write (ProcParams* pp, ParamsEdited* pedited)
     pp->colorToning.strength               = strength->getIntValue();
 
     labgrid->getParams(pp->colorToning.labgridALow, pp->colorToning.labgridBLow, pp->colorToning.labgridAHigh, pp->colorToning.labgridBHigh);
+    pp->colorToning.labgridALow *= ColorToningParams::LABGRID_CORR_MAX;
+    pp->colorToning.labgridAHigh *= ColorToningParams::LABGRID_CORR_MAX;
+    pp->colorToning.labgridBLow *= ColorToningParams::LABGRID_CORR_MAX;
+    pp->colorToning.labgridBHigh *= ColorToningParams::LABGRID_CORR_MAX;
 
     labRegionGet(labRegionSelected);
     labRegionShow(labRegionSelected, true);
@@ -778,7 +782,7 @@ void ColorToning::setDefaults (const ProcParams* defParams, const ParamsEdited* 
     hlColSat->setDefault<int> (defParams->colorToning.hlColSat);
     shadowsColSat->setDefault<int> (defParams->colorToning.shadowsColSat);
     strength->setDefault (defParams->colorToning.strength);
-    labgrid->setDefault(defParams->colorToning.labgridALow, defParams->colorToning.labgridBLow, defParams->colorToning.labgridAHigh, defParams->colorToning.labgridBHigh);
+    labgrid->setDefault(defParams->colorToning.labgridALow / ColorToningParams::LABGRID_CORR_MAX, defParams->colorToning.labgridBLow / ColorToningParams::LABGRID_CORR_MAX, defParams->colorToning.labgridAHigh / ColorToningParams::LABGRID_CORR_MAX, defParams->colorToning.labgridBHigh / ColorToningParams::LABGRID_CORR_MAX);
     
 
     if (pedited) {
