@@ -4207,7 +4207,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             if (ppVersion >= 339) {
                 assignFromKeyfile(keyFile, "Resize", "AllowUpscaling", pedited, resize.allowUpscaling, pedited->resize.allowUpscaling);
             } else {
-                resize.allowUpscaling = true;
+                resize.allowUpscaling = false;
                 if (pedited) {
                     pedited->resize.allowUpscaling = true;
                 }
