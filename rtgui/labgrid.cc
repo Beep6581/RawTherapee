@@ -177,7 +177,7 @@ bool LabGrid::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         cr->translate(0, height);
         cr->scale(1., -1.);
         const int cells = 8;
-        float step = 1.f / float(cells/2);
+        float step = 12000.f / float(cells/2);
         for (int j = 0; j < cells; j++) {
             for (int i = 0; i < cells; i++) {
                 float R, G, B;

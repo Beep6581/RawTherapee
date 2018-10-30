@@ -1493,6 +1493,12 @@ bool hasMask(const std::vector<double> &dflt, const std::vector<double> &mask)
     }
 }
 
+
+inline float round_ab(float v)
+{
+    return int(v * 1000) / 1000.f;
+}
+
 } // namespace
 
 
@@ -1505,7 +1511,7 @@ void ColorToning::labRegionPopulateList()
     for (size_t i = 0; i < labRegionData.size(); ++i) {
         auto &r = labRegionData[i];
         auto j = labRegionList->append(std::to_string(i+1));
-        labRegionList->set_text(j, 1, Glib::ustring::compose("a=%1 b=%2 s=%3 l=%4", int(r.a), int(r.b), r.saturation, r.lightness));
+        labRegionList->set_text(j, 1, Glib::ustring::compose("a=%1 b=%2 s=%3 l=%4", round_ab(r.a), round_ab(r.b), r.saturation, r.lightness));
         labRegionList->set_text(
             j, 2, Glib::ustring::compose(
                 "%1%2%3",
@@ -1532,7 +1538,7 @@ void ColorToning::labRegionShow(int idx, bool list_only)
         labRegionChromaticityMask->setCurve(r.chromaticityMask);
         labRegionLightnessMask->setCurve(r.lightnessMask);
     }
-    labRegionList->set_text(idx, 1, Glib::ustring::compose("a=%1 b=%2 s=%3 l=%4", int(r.a), int(r.b), r.saturation, r.lightness));
+    labRegionList->set_text(idx, 1, Glib::ustring::compose("a=%1 b=%2 s=%3 l=%4", round_ab(r.a), round_ab(r.b), r.saturation, r.lightness));
     labRegionList->set_text(
         idx, 2, Glib::ustring::compose(
             "%1%2%3",
