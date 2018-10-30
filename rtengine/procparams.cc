@@ -87,13 +87,6 @@ Glib::ustring relativePathIfInside(const Glib::ustring &procparams_fname, bool f
     return prefix + embedded_fname.substr(dir1.length());
 }
 
-void avoidEmptyCurve(std::vector<double> &curve)
-{
-    if (curve.empty()) {
-        curve.push_back(FCT_Linear);
-    }
-}
-
 void getFromKeyfile(
     const Glib::KeyFile& keyfile,
     const Glib::ustring& group_name,
@@ -142,7 +135,7 @@ void getFromKeyfile(
 )
 {
     value = keyfile.get_double_list(group_name, key);
-    avoidEmptyCurve(value);
+    rtengine::sanitizeCurve(value);
 }
 
 template<typename T>

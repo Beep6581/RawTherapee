@@ -45,6 +45,42 @@ using namespace std;
 namespace rtengine
 {
 
+bool sanitizeCurve(std::vector<double>& curve)
+{
+    // A curve is valid under one of the following conditions:
+    // 1) Curve has exactly one entry which is D(F)CT_Linear
+    // 2) Number of curve entries is > 3 and odd
+    // 3) curve[0] == DCT_Parametric and curve size is >= 8 and curve[1] .. curve[3] are ordered ascending and are distinct
+    if (curve.empty()) {
+        curve.push_back (DCT_Linear);
+        return true;
+    } else if(curve.size() == 1 && curve[0] != DCT_Linear) {
+        curve[0] = DCT_Linear;
+        return true;
+    } else if((curve.size() % 2 == 0 || curve.size() < 5) && curve[0] != DCT_Parametric) {
+        curve.clear();
+        curve.push_back (DCT_Linear);
+        return true;
+    } else if(curve[0] == DCT_Parametric) {
+        if (curve.size() < 8) {
+            curve.clear();
+            curve.push_back (DCT_Linear);
+            return true;
+        } else {
+            // curve[1] to curve[3] must be ordered ascending and distinct
+            for (int i = 1; i < 3; i++) {
+                if (curve[i] >= curve[i + 1]) {
+                    curve[1] = 0.25f;
+                    curve[2] = 0.5f;
+                    curve[3] = 0.75f;
+                    break;
+                }
+            }
+        }
+    }
+    return false;
+}
+
 Curve::Curve () : N(0), ppn(0), x(nullptr), y(nullptr), mc(0.0), mfc(0.0), msc(0.0), mhc(0.0), hashSize(1000 /* has to be initialized to the maximum value */), ypp(nullptr), x1(0.0), y1(0.0), x2(0.0), y2(0.0), x3(0.0), y3(0.0), firstPointIncluded(false), increment(0.0), nbr_points(0) {}
 
 void Curve::AddPolygons ()
