@@ -50,6 +50,13 @@ class Thumbnail
     double autoWBTemp, autoWBGreen, wbEqual, wbTempBias;    // autoWBTemp and autoWBGreen are updated each time autoWB is requested and if wbEqual has been modified
     LUTu aeHistogram;
     int  aeHistCompression;
+    bool aeValid;
+    double aeExposureCompensation;
+    int aeLightness;
+    int aeContrast;
+    int aeBlack;
+    int aeHighlightCompression;
+    int aeHighlightCompressionThreshold;
     int embProfileLength;
     unsigned char* embProfileData;
     cmsHPROFILE embProfile;
@@ -100,6 +107,7 @@ public:
     bool readAEHistogram  (const Glib::ustring& fname);
     bool writeAEHistogram (const Glib::ustring& fname);
 
+    bool isAeValid() { return aeValid; };
     unsigned char* getImage8Data();  // accessor to the 8bit image if it is one, which should be the case for the "Inspector" mode.
 
     // Hombre: ... let's hope that proper template can make this cleaner

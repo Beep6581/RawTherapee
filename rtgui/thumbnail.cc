@@ -854,8 +854,10 @@ void Thumbnail::_loadThumbnail(bool firstTrial)
     }
 
     if ( cfs.thumbImgType == CacheImageData::FULL_THUMBNAIL ) {
-        // load aehistogram
-        tpp->readAEHistogram (getCacheFileName ("aehistograms", ""));
+        if(!tpp->isAeValid()) {
+            // load aehistogram
+            tpp->readAEHistogram (getCacheFileName ("aehistograms", ""));
+        }
 
         // load embedded profile
         tpp->readEmbProfile (getCacheFileName ("embprofiles", ".icc"));
@@ -907,9 +909,10 @@ void Thumbnail::_saveThumbnail ()
     // save thumbnail image
     tpp->writeImage (getCacheFileName ("images", ""));
 
-    // save aehistogram
-    tpp->writeAEHistogram (getCacheFileName ("aehistograms", ""));
-
+    if(!tpp->isAeValid()) {
+        // save aehistogram
+        tpp->writeAEHistogram (getCacheFileName ("aehistograms", ""));
+    }
     // save embedded profile
     tpp->writeEmbProfile (getCacheFileName ("embprofiles", ".icc"));
 
