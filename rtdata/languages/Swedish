@@ -94,8 +94,6 @@ FILEBROWSER_AUTOFLATFIELD;Automatisk plattfältskorrigering
 FILEBROWSER_BROWSEPATHBUTTONHINT;Klicka för att komma till vald sökväg
 FILEBROWSER_BROWSEPATHHINT;Skriv in en sökväg och tryck Enter (Ctrl-Enter i filhanteraren).\n<b>Ctrl-O</b> för att komma till sökfältet.\n<b>Enter</b> / <b>Ctrl-Enter</b> för att bläddra;\n<b>Esc</b> för att rensa ändringar.\n<b>Shift-Esc</b> för att ta bort fokus från sökfältet.\n\n\nPath kortkommando:\n  <b>~</b> - användarens hemkatalog\n  <b>!</b> - användarens bildkatalog
 FILEBROWSER_CACHE;Cache
-FILEBROWSER_CACHECLEARFROMFULL;Rensa från cachen - fullständigt
-FILEBROWSER_CACHECLEARFROMPARTIAL;Rensa från cachen - delvis
 FILEBROWSER_CLEARPROFILE;Återställ profilen
 FILEBROWSER_COLORLABEL_TOOLTIP;Färgetikett\n\nAnvänd menyn eller kortkommandona:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Röd\n<b>Shift-Ctrl-2</b> Gul\n<b>Shift-Ctrl-3</b> Grön\n<b>Shift-Ctrl-4</b> Blå\n<b>Shift-Ctrl-5</b> Lila
 FILEBROWSER_COPYPROFILE;Kopiera profil

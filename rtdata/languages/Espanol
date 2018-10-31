@@ -149,8 +149,6 @@ FILEBROWSER_AUTOFLATFIELD;Campo plano automático
 FILEBROWSER_BROWSEPATHBUTTONHINT;Pulsar para examinar la carpeta seleccionada
 FILEBROWSER_BROWSEPATHHINT;Ingrese la ruta a examinar \n<b>Ctrl-O</b> poner el foco en campo con la ruta\n<b>Enter</b> / <b>Ctrl-Enter</b> para examinar allí;\n<b>Esc</b>Para quitar los cambios.\n<b>Shift-Esc</b> Para quitar el foco.\n\n\nAbreviaturas de ruta:\n  <b>~</b> - Carpeta hogar del usuario\n  <b>!</b> - Carpeta de imágenes del usuario
 FILEBROWSER_CACHE;Caché
-FILEBROWSER_CACHECLEARFROMFULL;Limpiar del caché - Total
-FILEBROWSER_CACHECLEARFROMPARTIAL;Limpiar del caché - Parcial
 FILEBROWSER_CLEARPROFILE;Borrar perfil
 FILEBROWSER_COLORLABEL_TOOLTIP;Etiquetar con color\n\nUse menú desplegable o atajos de teclado:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Rojo\n<b>Shift-Ctrl-2</b> Amarillo\n<b>Shift-Ctrl-3</b> Verde\n<b>Shift-Ctrl-4</b> Azul\n<b>Shift-Ctrl-5</b> Púrpura
 FILEBROWSER_COPYPROFILE;Copiar perfil

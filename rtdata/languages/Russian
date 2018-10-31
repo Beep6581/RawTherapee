@@ -105,8 +105,6 @@ FILEBROWSER_AUTOFLATFIELD;Автоматическое плоское поле
 FILEBROWSER_BROWSEPATHBUTTONHINT;Нажмите кнопку мыши чтобы перейти к выбранному каталогу
 FILEBROWSER_BROWSEPATHHINT;Введите путь для перехода.\n<b>Ctrl-O</b> для перехода на диалог ввода текста.\n<b>Enter</b> / <b>Ctrl-Enter</b> (в обозревателе файлов) для перехода;\n\nЯрлыки путей:\n  <b>~</b> - домашняя папка пользователя\n  <b>!</b> - папка пользователя с изображениями
 FILEBROWSER_CACHE;Кэш
-FILEBROWSER_CACHECLEARFROMFULL;Удалить из кэша - полностью
-FILEBROWSER_CACHECLEARFROMPARTIAL;Удалить из кэша - частично
 FILEBROWSER_CLEARPROFILE;Удалить профиль
 FILEBROWSER_COLORLABEL_TOOLTIP;Color label\n\nUse dropdown menu or Shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
 FILEBROWSER_COPYPROFILE;Скопировать профиль

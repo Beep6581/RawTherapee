@@ -123,8 +123,6 @@ FILEBROWSER_AUTOFLATFIELD;Selecteer automatisch vlakveldopname
 FILEBROWSER_BROWSEPATHBUTTONHINT;Klik om te navigeren naar het gekozen pad
 FILEBROWSER_BROWSEPATHHINT;Typ het pad naar de doelmap.\n<b>Ctrl-O</b> markeer het pad in het tekstveld.\n<b>Enter</b> / <b>Ctrl-Enter</b> open de map.\n<b>Esc</b> maak het tekstveld leeg.\n<b>Shift-Esc</b> verwijder markering.\n\n\nSneltoetsen:\n  <b>~</b> - gebruikers home directory\n  <b>!</b> - gebruikers afbeeldingen map
 FILEBROWSER_CACHE;Cache
-FILEBROWSER_CACHECLEARFROMFULL;Verwijder uit cache - volledig
-FILEBROWSER_CACHECLEARFROMPARTIAL;Verwijder uit cache - gedeeltelijk
 FILEBROWSER_CLEARPROFILE;Verwijder profiel
 FILEBROWSER_COLORLABEL_TOOLTIP;Kleur label\n\nGebruik keuzemenu of nSneltoets:\n<b>Shift-Ctrl-0</b> Geen kleur\n<b>Shift-Ctrl-1</b> Rood\n<b>Shift-Ctrl-2</b> Geel\n<b>Shift-Ctrl-3</b> Groen\n<b>Shift-Ctrl-4</b> Blauw\n<b>Shift-Ctrl-5</b> Paars
 FILEBROWSER_COPYPROFILE;Kopieer profiel

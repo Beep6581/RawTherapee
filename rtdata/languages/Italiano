@@ -92,8 +92,6 @@ FILEBROWSER_AUTOFLATFIELD;Flat Field automatico
 FILEBROWSER_BROWSEPATHBUTTONHINT;Premi per aprire il percorso inserito
 FILEBROWSER_BROWSEPATHHINT;Inserisci il percorso da aprire\n<b>Ctrl-o</b> seleziona il percorso\n<b>Enter</b>, <b>Ctrl-Enter</b> (solo nel Navigatore) porta alla destinazione ;\nScorciatoie:\n <b>~</b> - Cartella home\n <b>!</b> - Cartella Immagini
 FILEBROWSER_CACHE;Memoria
-FILEBROWSER_CACHECLEARFROMFULL;Rimuovi dalla memoria - totale
-FILEBROWSER_CACHECLEARFROMPARTIAL;Rimuovi dalla memoria - parziale
 FILEBROWSER_CLEARPROFILE;Cancella
 FILEBROWSER_COLORLABEL_TOOLTIP;Etichetta colore.\n\nUsa il menù o le scorciatoie:\n<b>Shift-Ctrl-0</b> Nessun Colore\n<b>Shift-Ctrl-1</b> Rosso\n<b>Shift-Ctrl-2</b> Giallo\n<b>Shift-Ctrl-3</b> Verde\n<b>Shift-Ctrl-4</b> Blu\n<b>Shift-Ctrl-5</b> Viola
 FILEBROWSER_COPYPROFILE;Copia
