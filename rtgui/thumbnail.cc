@@ -448,7 +448,8 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
         || pparams.icm != pp.icm
         || pparams.hsvequalizer != pp.hsvequalizer
         || pparams.filmSimulation != pp.filmSimulation
-        || pparams.softlight != pp.softlight;
+        || pparams.softlight != pp.softlight
+        || pparams.dehaze != pp.dehaze;
 
     {
         MyMutex::MyLock lock(mutex);

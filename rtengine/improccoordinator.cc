@@ -419,12 +419,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         readyphase++;
 
-        if ((todo & M_HDR) && params.fattal.enabled) {
+        if ((todo & M_HDR) && (params.fattal.enabled || params.dehaze.enabled)) {
             if (fattal_11_dcrop_cache) {
                 delete fattal_11_dcrop_cache;
                 fattal_11_dcrop_cache = nullptr;
             }
 
+            ipf.dehaze(orig_prev);
             ipf.ToneMapFattal02(orig_prev);
 
             if (oprevi != orig_prev) {
@@ -1453,7 +1454,8 @@ void ImProcCoordinator::process()
             || params.raw != nextParams.raw
             || params.retinex != nextParams.retinex
             || params.wavelet != nextParams.wavelet
-            || params.dirpyrequalizer != nextParams.dirpyrequalizer;
+            || params.dirpyrequalizer != nextParams.dirpyrequalizer
+            || params.dehaze != nextParams.dehaze;
 
         params = nextParams;
         int change = changeSinceLast;

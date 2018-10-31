@@ -1200,9 +1200,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     ipf.firstAnalysis (baseImg, params, hist16);
 
-    if (params.fattal.enabled) {
-        ipf.ToneMapFattal02(baseImg);
-    }
+    ipf.dehaze(baseImg);
+    ipf.ToneMapFattal02(baseImg);
     
     // perform transform
     if (ipf.needsTransform()) {

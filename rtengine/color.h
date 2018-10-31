@@ -205,6 +205,10 @@ public:
         return r * 0.2126729 + g * 0.7151521 + b * 0.0721750;
     }
 
+    static float rgbLuminance(float r, float g, float b, const double workingspace[3][3])
+    {
+        return r * workingspace[1][0] + g * workingspace[1][1] + b * workingspace[1][2];
+    }
 
     /**
     * @brief Convert red/green/blue to L*a*b
