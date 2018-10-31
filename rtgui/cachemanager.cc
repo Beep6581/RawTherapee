@@ -240,6 +240,7 @@ void CacheManager::clearImages () const
 {
     MyMutex::MyLock lock (mutex);
 
+    deleteDir ("data");
     deleteDir ("images");
     deleteDir ("aehistograms");
     deleteDir ("embprofiles");
