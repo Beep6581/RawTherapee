@@ -57,7 +57,9 @@ void CacheManager::init ()
     auto error = g_mkdir_with_parents (baseDir.c_str(), cacheDirMode);
 
     for (const auto& cacheDir : cacheDirs) {
-        error |= g_mkdir_with_parents (Glib::build_filename (baseDir, cacheDir).c_str(), cacheDirMode);
+        if (strncmp(cacheDir, "aehistograms", 12)) {  // don't create aehistograms folder.
+            error |= g_mkdir_with_parents (Glib::build_filename (baseDir, cacheDir).c_str(), cacheDirMode);
+        }
     }
 
     if (error != 0 && options.rtSettings.verbose) {
