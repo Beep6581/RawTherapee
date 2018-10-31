@@ -174,7 +174,7 @@ void CacheManager::deleteEntry (const Glib::ustring& fname)
 
 void CacheManager::clearFromCache (const Glib::ustring& fname, bool purge) const
 {
-    deleteFiles (fname, getMD5 (fname), purge, purge);
+    deleteFiles (fname, getMD5 (fname), true, purge);
 }
 
 void CacheManager::renameEntry (const std::string& oldfilename, const std::string& oldmd5, const std::string& newfilename)
