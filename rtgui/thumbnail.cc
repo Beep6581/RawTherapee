@@ -899,7 +899,7 @@ void Thumbnail::_saveThumbnail ()
         return;
     }
 
-    g_remove (getCacheFileName ("images", ".rtti").c_str ()) != 0);
+    g_remove (getCacheFileName ("images", ".rtti").c_str ()));
 
     // save thumbnail image
     tpp->writeImage (getCacheFileName ("images", ""));
