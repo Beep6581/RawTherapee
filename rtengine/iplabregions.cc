@@ -33,9 +33,6 @@ void ImProcFunctions::labColorCorrectionRegions(LabImage *lab)
         return;
     }
 
-    const float factor = 3.f;
-    const float scaling = 1.f;
-
     int n = params->colorToning.labregions.size();
     int show_mask_idx = params->colorToning.labregionsShowMask;
     if (show_mask_idx >= n) {
@@ -133,8 +130,7 @@ void ImProcFunctions::labColorCorrectionRegions(LabImage *lab)
     const auto abcoord =
         [](float x) -> float
         {
-            const float m = ColorToningParams::LABGRID_CORR_MAX;
-            return SGN(x) * log2lin(std::abs(x) / m, 4.f) * m;
+            return 12000.f * SGN(x) * log2lin(std::abs(x), 4.f);
         };
 
 #ifdef _OPENMP
@@ -150,9 +146,9 @@ void ImProcFunctions::labColorCorrectionRegions(LabImage *lab)
                 auto &r = params->colorToning.labregions[i];
                 float blend = abmask[i][y][x];
                 float s = 1.f + r.saturation / 100.f;
-                float a_new = LIM(s * (a + 32768.f * abcoord(r.a) / factor / scaling), -42000.f, 42000.f);
-                float b_new = LIM(s * (b + 32768.f * abcoord(r.b) / factor / scaling), -42000.f, 42000.f);
-                float l_new = LIM(l * (1.f + float(r.lightness) / 1000.f), 0.f, 32768.f);
+                float a_new = LIM(s * (a + abcoord(r.a)), -42000.f, 42000.f);
+                float b_new = LIM(s * (b + abcoord(r.b)), -42000.f, 42000.f);
+                float l_new = LIM(l * (1.f + float(r.lightness) / 500.f), 0.f, 32768.f);
                 l = intp(Lmask[i][y][x], l_new, l);
                 a = intp(blend, a_new, a);
                 b = intp(blend, b_new, b);
