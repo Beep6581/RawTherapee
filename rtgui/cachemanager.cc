@@ -185,9 +185,6 @@ void CacheManager::renameEntry (const std::string& oldfilename, const std::strin
 
     auto error = g_rename (getCacheFileName ("profiles", oldfilename, paramFileExtension, oldmd5).c_str (), getCacheFileName ("profiles", newfilename, paramFileExtension, newmd5).c_str ());
     error |= g_rename (getCacheFileName ("images", oldfilename, ".rtti", oldmd5).c_str (), getCacheFileName ("images", newfilename, ".rtti", newmd5).c_str ());
-    error |= g_rename (getCacheFileName ("images", oldfilename, ".cust16", oldmd5).c_str (), getCacheFileName ("images", newfilename, ".cust16", newmd5).c_str ());
-    error |= g_rename (getCacheFileName ("images", oldfilename, ".cust", oldmd5).c_str (), getCacheFileName ("images", newfilename, ".cust", newmd5).c_str ());
-    error |= g_rename (getCacheFileName ("images", oldfilename, ".jpg", oldmd5).c_str (), getCacheFileName ("images", newfilename, ".jpg", newmd5).c_str ());
     error |= g_rename (getCacheFileName ("aehistograms", oldfilename, "", oldmd5).c_str (), getCacheFileName ("aehistograms", newfilename, "", newmd5).c_str ());
     error |= g_rename (getCacheFileName ("embprofiles", oldfilename, ".icc", oldmd5).c_str (), getCacheFileName ("embprofiles", newfilename, ".icc", newmd5).c_str ());
     error |= g_rename (getCacheFileName ("data", oldfilename, ".txt", oldmd5).c_str (), getCacheFileName ("data", newfilename, ".txt", newmd5).c_str ());
@@ -278,9 +275,6 @@ void CacheManager::deleteFiles (const Glib::ustring& fname, const std::string& m
     }
 
     auto error = g_remove (getCacheFileName ("images", fname, ".rtti", md5).c_str ());
-    error |= g_remove (getCacheFileName ("images", fname, ".cust16", md5).c_str ());
-    error |= g_remove (getCacheFileName ("images", fname, ".cust", md5).c_str ());
-    error |= g_remove (getCacheFileName ("images", fname, ".jpg", md5).c_str ());
     error |= g_remove (getCacheFileName ("aehistograms", fname, "", md5).c_str ());
     error |= g_remove (getCacheFileName ("embprofiles", fname, ".icc", md5).c_str ());
 

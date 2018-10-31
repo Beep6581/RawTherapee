@@ -899,12 +899,7 @@ void Thumbnail::_saveThumbnail ()
         return;
     }
 
-    if (g_remove (getCacheFileName ("images", ".rtti").c_str ()) != 0) {
-        // No file deleted, so we try to deleted obsolete files, if any
-        g_remove (getCacheFileName ("images", ".cust").c_str ());
-        g_remove (getCacheFileName ("images", ".cust16").c_str ());
-        g_remove (getCacheFileName ("images", ".jpg").c_str ());
-    }
+    g_remove (getCacheFileName ("images", ".rtti").c_str ()) != 0);
 
     // save thumbnail image
     tpp->writeImage (getCacheFileName ("images", ""));
