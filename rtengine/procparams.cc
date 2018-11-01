@@ -2685,7 +2685,7 @@ void ProcParams::setDefaults()
     sharpening = SharpeningParams();
 
     prsharpening = SharpeningParams();
-    prsharpening.contrast = 0.0;
+    prsharpening.contrast = 15.0;
     prsharpening.method = "rld";
     prsharpening.deconvamount = 100;
     prsharpening.deconvradius = 0.45;
