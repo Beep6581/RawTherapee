@@ -455,6 +455,22 @@ struct ColorToningParams {
     static const double LABGRID_CORR_MAX;
     static const double LABGRID_CORR_SCALE;
 
+    struct LabCorrectionRegion {
+        double a;
+        double b;
+        double saturation;
+        double lightness;
+        std::vector<double> hueMask;
+        std::vector<double> chromaticityMask;
+        std::vector<double> lightnessMask;
+
+        LabCorrectionRegion();
+        bool operator==(const LabCorrectionRegion &other) const;
+        bool operator!=(const LabCorrectionRegion &other) const;
+    };
+    std::vector<LabCorrectionRegion> labregions;
+    int labregionsShowMask;
+    
     ColorToningParams();
 
     bool operator ==(const ColorToningParams& other) const;

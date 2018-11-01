@@ -897,6 +897,7 @@ void Crop::update(int todo)
         //    parent->ipf.MSR(labnCrop, labnCrop->W, labnCrop->H, 1);
         parent->ipf.chromiLuminanceCurve(this, 1, labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve,  parent->clcurve, parent->lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
         parent->ipf.vibrance(labnCrop);
+        parent->ipf.labColorCorrectionRegions(labnCrop);
 
         if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled)) {
             parent->ipf.EPDToneMap(labnCrop, 5, skip);

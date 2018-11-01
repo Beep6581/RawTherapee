@@ -43,9 +43,11 @@
 #include "toolpanel.h"
 
 
-class LabGrid: public Gtk::DrawingArea, public BackBuffer {
+class LabGridArea: public Gtk::DrawingArea, public BackBuffer {
 private:
     rtengine::ProcEvent evt;
+    Glib::ustring evtMsg;
+    
     enum State { NONE, HIGH, LOW };
     State litPoint;
     float low_a;
@@ -64,11 +66,14 @@ private:
     sigc::connection delayconn;
     static const int inset = 2;
 
+    bool grid_visible;
+    bool low_enabled;
+
     bool notifyListener();
     void getLitPoint();
 
 public:
-    LabGrid(rtengine::ProcEvent evt);
+    LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low=true);
 
     void getParams(double &la, double &lb, double &ha, double &hb) const;
     void setParams(double la, double lb, double ha, double hb, bool notify);
@@ -78,6 +83,9 @@ public:
     void reset(bool toInitial);
     void setListener(ToolPanelListener *l);
 
+    bool lowEnabled() const;
+    void setLowEnabled(bool yes);
+
     bool on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf);
     void on_style_updated ();
     bool on_button_press_event(GdkEventButton *event);
@@ -86,5 +94,26 @@ public:
     Gtk::SizeRequestMode get_request_mode_vfunc() const;
     void get_preferred_width_vfunc(int &minimum_width, int &natural_width) const;
     void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
+};
+
+
+class LabGrid: public Gtk::HBox {
+private:
+    LabGridArea grid;
+
+    bool resetPressed(GdkEventButton *event);
+    
+public:
+    LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low=true);
+
+    void getParams(double &la, double &lb, double &ha, double &hb) const { return grid.getParams(la, lb, ha, hb); }
+    void setParams(double la, double lb, double ha, double hb, bool notify) { grid.setParams(la, lb, ha, hb, notify); }
+    void setDefault (double la, double lb, double ha, double hb) { grid.setDefault(la, lb, ha, hb); }
+    void setEdited(bool yes) { grid.setEdited(yes); }
+    bool getEdited() const { return grid.getEdited(); }
+    void reset(bool toInitial) { grid.reset(toInitial); }
+    void setListener(ToolPanelListener *l) { grid.setListener(l); }
+    bool lowEnabled() const { return grid.lowEnabled(); }
+    void setLowEnabled(bool yes) { grid.setLowEnabled(yes); }
 };
 
