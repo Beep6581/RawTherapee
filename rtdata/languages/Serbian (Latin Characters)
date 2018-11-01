@@ -85,8 +85,6 @@ FILEBROWSER_AUTOFLATFIELD;Automatski odredi ravno polje
 FILEBROWSER_BROWSEPATHBUTTONHINT;Kliknite za odlazak na uzabranu putanju
 FILEBROWSER_BROWSEPATHHINT;Ukucajte putanju za razgledanje (<b>Ctrl-o</b> postavlja fokus, <b>Ctrl-Enter</b> prikazuje u razgledaču datoteka);nPrečice putanja: <b>~</b> — lični direktorijum, <b>!</b> — direktorijum sa slikama
 FILEBROWSER_CACHE;Ostava
-FILEBROWSER_CACHECLEARFROMFULL;Očisti iz ostave — sve
-FILEBROWSER_CACHECLEARFROMPARTIAL;Očisti iz ostave — polovično
 FILEBROWSER_CLEARPROFILE;Obriši profil
 FILEBROWSER_COLORLABEL_TOOLTIP;Natpis u boji.\n\nKoristite priloženi meni ili prečice:\n<b>Shift-Ctrl-0</b> Bez boje\n<b>Shift-Ctrl-1</b> Crvena\n<b>Shift-Ctrl-2</b> Žuta\n<b>Shift-Ctrl-3</b> Zelena\n<b>Shift-Ctrl-4</b> Plana\n<b>Shift-Ctrl-5</b> Ljubičasta
 FILEBROWSER_COPYPROFILE;Umnoži profil

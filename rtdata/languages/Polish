@@ -96,8 +96,6 @@ FILEBROWSER_AUTOFLATFIELD;Automatyczne użycie klatki typu puste pole
 FILEBROWSER_BROWSEPATHBUTTONHINT;Należy kliknąć, aby przeglądać wybraną ścieżkę
 FILEBROWSER_BROWSEPATHHINT;Umożliwia przeglądanie wprowadzonej ścieżki\n<b>Ctrl-o</b> zaznaczenie\n<b>Enter</b>, <b>Ctrl-Enter</b> (w menedżerze plików) przeglądanie\nSkróty:\n  <b>~</b>      - katalog domowy użytkownika\n  <b>!</b>        - katalog z obrazami użytkownia
 FILEBROWSER_CACHE;Pamięć podręczna
-FILEBROWSER_CACHECLEARFROMFULL;Czyszczenie pamięci podręcznej - pełne
-FILEBROWSER_CACHECLEARFROMPARTIAL;Czyszczenie pamięci podręcznej - częściowe
 FILEBROWSER_CLEARPROFILE;Wyczyść profil
 FILEBROWSER_COLORLABEL_TOOLTIP;Kolorowe etykiety\n\nUżyj za pomocą rozwijanej listy lub skrótów:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Czerwona\n<b>Shift-Ctrl-2</b> Żółta\n<b>Shift-Ctrl-3</b> Zielona\n<b>Shift-Ctrl-4</b> Niebieska\n<b>Shift-Ctrl-5</b> Purpurowa
 FILEBROWSER_COPYPROFILE;Kopiuj profil

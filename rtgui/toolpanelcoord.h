@@ -81,6 +81,7 @@
 #include "fattaltonemap.h"
 #include "localcontrast.h"
 #include "softlight.h"
+#include "dehaze.h"
 #include "guiutils.h"
 
 class ImageEditorCoordinator;
@@ -137,6 +138,7 @@ protected:
     DirPyrEqualizer* dirpyrequalizer;
     HSVEqualizer* hsvequalizer;
     SoftLight *softlight;
+    Dehaze *dehaze;
     FilmSimulation *filmSimulation;
     SensorBayer * sensorbayer;
     SensorXTrans * sensorxtrans;

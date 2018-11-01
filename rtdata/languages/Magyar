@@ -82,8 +82,6 @@ FILEBROWSER_AUTOFLATFIELD;Auto Flat Field
 FILEBROWSER_BROWSEPATHBUTTONHINT;Kattints a kiválasztott útvonal böngészéséhez
 FILEBROWSER_BROWSEPATHHINT;Gépeld be az elérni kívánt útvonalat.\n<b>Ctrl-O</b>-val tudod a fókuszt a beviteli mezőre vinni.\n<b>Enter</b> / <b>Ctrl-Enter</b> (az állományböngészőben) az ottani böngészéshez;\n\nÚtvonalrövidítések:\n  <b>~</b> - felhasználói  fiók (home) könyvtára\n  <b></b> - a felhasználó képkönyvtára
 FILEBROWSER_CACHE;Gyorsítótár
-FILEBROWSER_CACHECLEARFROMFULL;Gyorsítótár ürítése - teljes
-FILEBROWSER_CACHECLEARFROMPARTIAL;Gyorsítótár ürítése - részleges
 FILEBROWSER_CLEARPROFILE;Feldolgozási paraméter törlése
 FILEBROWSER_COPYPROFILE;Feldolgozási paraméterek másolása
 FILEBROWSER_CURRENT_NAME;Aktuális név:

@@ -19,9 +19,12 @@
 #ifndef __CURVES_H__
 #define __CURVES_H__
 
-#include <glibmm.h>
 #include <map>
 #include <string>
+#include <vector>
+
+#include <glibmm.h>
+
 #include "rt_math.h"
 #include "../rtgui/mycurve.h"
 #include "../rtgui/myflatcurve.h"
@@ -42,6 +45,7 @@ using namespace std;
 
 namespace rtengine
 {
+
 class ToneCurve;
 class ColorAppearance;
 
@@ -54,6 +58,8 @@ void setUnlessOOG(T &r, T &g, T &b, const T &rr, const T &gg, const T &bb)
         b = bb;
     }
 }
+
+bool sanitizeCurve(std::vector<double>& curve);
 
 namespace curves {
 

@@ -111,8 +111,6 @@ FILEBROWSER_AUTOFLATFIELD;Champ Uniforme auto
 FILEBROWSER_BROWSEPATHBUTTONHINT;Cliquez pour parcourir le chemin saisi
 FILEBROWSER_BROWSEPATHHINT;Saisissez le chemin à parcourir\n<b>Ctrl-O</b> pour placer le focus sur le champ de saisie.\n<b>Entrée</b> / <b>Ctrl-Entrée</b> pour y naviguer;\n<b>Esc</b> pour effacer les modifications.\n<b>Shift-Esc</b> pour enlever le focus.\n\n\nRaccourcis pour les chemins:\n  <b>~</b> - le dossier utilisateur\n  <b>!</b> - le dossier Images de l'utilisateur
 FILEBROWSER_CACHE;Cache
-FILEBROWSER_CACHECLEARFROMFULL;Supprimer du cache (complet)
-FILEBROWSER_CACHECLEARFROMPARTIAL;Supprimer du cache (partiel)
 FILEBROWSER_CLEARPROFILE;Remettre le profil à zéro
 FILEBROWSER_COLORLABEL_TOOLTIP;Label couleur\n\nUtilisez le menu déroulant ou le raccourci clavier:\n<b>Shift-Ctrl-0</b> Pas de couleur\n<b>Shift-Ctrl-1</b> Rouge\n<b>Shift-Ctrl-2</b> Jaune\n<b>Shift-Ctrl-3</b> Vert\n<b>Shift-Ctrl-4</b> Bleu\n<b>Shift-Ctrl-5</b> Pourpre
 FILEBROWSER_COPYPROFILE;Copier le profil

@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2018 TooWaBoo
-  Version 2.82
+  Version 2.83
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -134,6 +134,18 @@ tooltip {
 }
 tooltip label {
     color: @text-tooltip;
+}
+.grid-spacing > * {
+    margin-top: 0.166666666666666666em;
+    margin-bottom: 0.166666666666666666em;
+}
+.grid-spacing > label:not(:first-child) {
+    margin-left: 0.75em;
+    margin-right: 0.25em;
+}
+.grid-spacing > label:first-child {
+    margin-left: 0;
+    margin-right: 0.25em;
 }
 
 paned {
@@ -1999,7 +2011,7 @@ entry {
 }
 
 spinbutton {
-    margin: 0.083333333333333333em 0;
+    margin: 0.083333333333333333em 0 0.083333333333333333em 0.166666666666666666em;
     padding: 0;
     min-height: 1.666666666666666666em;
     min-width: 0;
@@ -2010,7 +2022,7 @@ spinbutton {
 }
 
 #MyExpander spinbutton {
-    margin: 0.166666666666666666em 0;
+    margin: 0.083333333333333333em 0 0.083333333333333333em 0.166666666666666666em;
     padding: 0;
     min-height: 1.333333333333333333em;
     min-width: 0;

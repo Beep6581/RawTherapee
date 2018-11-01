@@ -79,6 +79,7 @@ ToolPanelCoordinator::ToolPanelCoordinator(bool batch) : ipc(nullptr), hasChange
     hsvequalizer        = Gtk::manage(new HSVEqualizer());
     filmSimulation      = Gtk::manage(new FilmSimulation());
     softlight           = Gtk::manage(new SoftLight());
+    dehaze              = Gtk::manage(new Dehaze());
     sensorbayer         = Gtk::manage(new SensorBayer());
     sensorxtrans        = Gtk::manage(new SensorXTrans());
     bayerprocess        = Gtk::manage(new BayerProcess());
@@ -127,6 +128,7 @@ ToolPanelCoordinator::ToolPanelCoordinator(bool batch) : ipc(nullptr), hasChange
     addPanel(detailsPanel, dirpyrdenoise);
     addPanel(detailsPanel, defringe);
     addPanel(detailsPanel, dirpyrequalizer);
+    addPanel (detailsPanel, dehaze);
     addPanel(advancedPanel, wavelet);
     addPanel(locallabPanel, locallab);
     addPanel(transformPanel, crop);

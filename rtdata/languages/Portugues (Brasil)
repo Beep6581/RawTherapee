@@ -113,8 +113,6 @@ FILEBROWSER_AUTOFLATFIELD;Flat-field automático
 FILEBROWSER_BROWSEPATHBUTTONHINT;Clique para navegar até o caminho escolhido.
 FILEBROWSER_BROWSEPATHHINT;Digite um caminho para navegar até.\n\nAtalhos do teclado:\n<b>Ctrl-o</b> para focar na caixa de texto do caminho.\n<b>Enter</b> / <b>Ctrl-Enter</b> para navegar lá;\n<b>Esc</b> para limpar as alterações.\n<b>Shift-Esc</b> para remover o foco.\n\nAtalhos do caminho:\n<b>~</b>	- diretório home do usuário.\n<b>!</b>	- diretório de fotos do usuário
 FILEBROWSER_CACHE;Cache
-FILEBROWSER_CACHECLEARFROMFULL;Limpeza do cache - completa
-FILEBROWSER_CACHECLEARFROMPARTIAL;Limpeza do cache - partcial
 FILEBROWSER_CLEARPROFILE;Perfil de limpeza
 FILEBROWSER_COLORLABEL_TOOLTIP;Etiqueta de cor.\n\nUse o menu suspenso ou atalhos:\n<b>Shift-Ctrl-0</b> Sem Cor\n<b>Shift-Ctrl-1</b> Vermelho\n<b>Shift-Ctrl-2</b> Amarelo\n<b>Shift-Ctrl-3</b> Verde\n<b>Shift-Ctrl-4</b> Azul\n<b>Shift-Ctrl-5</b> Roxo
 FILEBROWSER_COPYPROFILE;Copiar perfil

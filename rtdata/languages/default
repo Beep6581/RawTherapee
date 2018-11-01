@@ -43,6 +43,10 @@ DYNPROFILEEDITOR_DELETE;Delete
 DYNPROFILEEDITOR_EDIT;Edit
 DYNPROFILEEDITOR_EDIT_RULE;Edit Dynamic Profile Rule
 DYNPROFILEEDITOR_ENTRY_TOOLTIP;The matching is case insensitive.\nUse the "re:" prefix to enter\na regular expression.
+DYNPROFILEEDITOR_IMGTYPE_ANY;Any
+DYNPROFILEEDITOR_IMGTYPE_STD;Standard
+DYNPROFILEEDITOR_IMGTYPE_HDR;HDR
+DYNPROFILEEDITOR_IMGTYPE_PS;Pixel Shift
 DYNPROFILEEDITOR_MOVE_DOWN;Move Down
 DYNPROFILEEDITOR_MOVE_UP;Move Up
 DYNPROFILEEDITOR_NEW;New
@@ -115,8 +119,8 @@ FILEBROWSER_AUTOFLATFIELD;Auto flat-field
 FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path.
 FILEBROWSER_BROWSEPATHHINT;Type a path to navigate to.\n\nKeyboard shortcuts:\n<b>Ctrl-o</b> to focus to the path text box.\n<b>Enter</b> / <b>Ctrl-Enter</b> to browse there;\n<b>Esc</b> to clear changes.\n<b>Shift-Esc</b> to remove focus.\n\nPath shortcuts:\n<b>~</b>	- user's home directory.\n<b>!</b>	- user's pictures directory
 FILEBROWSER_CACHE;Cache
-FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
-FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
+FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
+FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
 FILEBROWSER_CLEARPROFILE;Clear
 FILEBROWSER_COLORLABEL_TOOLTIP;Color label.\n\nUse dropdown menu or shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
 FILEBROWSER_COPYPROFILE;Copy
@@ -842,6 +846,10 @@ HISTORY_MSG_591;Local - Avoid color shift
 
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
+HISTORY_MSG_DEHAZE_DEPTH;Dehaze - Depth
+HISTORY_MSG_DEHAZE_ENABLED;Haze Removal
+HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;Dehaze - Show depth map
+HISTORY_MSG_DEHAZE_STRENGTH;Dehaze - Strength
 HISTORY_MSG_DUALDEMOSAIC_CONTRAST;Dual demosaic - Contrast threshold
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
 HISTORY_MSG_HISTMATCHING;Auto-matched tone curve
@@ -1071,6 +1079,7 @@ PARTIALPASTE_CROP;Crop
 PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark-frame auto-selection
 PARTIALPASTE_DARKFRAMEFILE;Dark-frame file
 PARTIALPASTE_DEFRINGE;Defringe
+PARTIALPASTE_DEHAZE;Haze removal
 PARTIALPASTE_DETAILGROUP;Detail Settings
 PARTIALPASTE_DIALOGLABEL;Partial paste processing profile
 PARTIALPASTE_DIRPYRDENOISE;Noise reduction
@@ -1625,6 +1634,10 @@ TP_DARKFRAME_LABEL;Dark-Frame
 TP_DEFRINGE_LABEL;Defringe
 TP_DEFRINGE_RADIUS;Radius
 TP_DEFRINGE_THRESHOLD;Threshold
+TP_DEHAZE_DEPTH;Depth
+TP_DEHAZE_LABEL;Haze Removal
+TP_DEHAZE_SHOW_DEPTH_MAP;Show Depth Map
+TP_DEHAZE_STRENGTH;Strength
 TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto multi-zones
 TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Automatic global
 TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;Try to evaluate chroma noise\nBe careful, this calculation is average, and is quite subjective !

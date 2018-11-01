@@ -87,13 +87,6 @@ Glib::ustring relativePathIfInside(const Glib::ustring &procparams_fname, bool f
     return prefix + embedded_fname.substr(dir1.length());
 }
 
-void avoidEmptyCurve(std::vector<double> &curve)
-{
-    if (curve.empty()) {
-        curve.push_back(FCT_Linear);
-    }
-}
-
 void getFromKeyfile(
     const Glib::KeyFile& keyfile,
     const Glib::ustring& group_name,
@@ -142,7 +135,7 @@ void getFromKeyfile(
 )
 {
     value = keyfile.get_double_list(group_name, key);
-    avoidEmptyCurve(value);
+    rtengine::sanitizeCurve(value);
 }
 
 template<typename T>
@@ -2620,6 +2613,30 @@ bool SoftLightParams::operator !=(const SoftLightParams& other) const
     return !(*this == other);
 }
 
+
+DehazeParams::DehazeParams() :
+    enabled(false),
+    strength(50),
+    showDepthMap(false),
+    depth(25)
+{
+}
+
+bool DehazeParams::operator ==(const DehazeParams& other) const
+{
+    return
+        enabled == other.enabled
+        && strength == other.strength
+        && showDepthMap == other.showDepthMap
+        && depth == other.depth;
+}
+
+bool DehazeParams::operator !=(const DehazeParams& other) const
+{
+    return !(*this == other);
+}
+
+
 RAWParams::BayerSensor::BayerSensor() :
     method(getMethodString(Method::AMAZE)),
     border(4),
@@ -2980,6 +2997,8 @@ void ProcParams::setDefaults()
 
     softlight = SoftLightParams();
 
+    dehaze = DehazeParams();
+
     raw = RAWParams();
 
     metadata = MetaDataParams();
@@ -3289,6 +3308,12 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->defringe.radius, "Defringing", "Radius", defringe.radius, keyFile);
         saveToKeyfile(!pedited || pedited->defringe.threshold, "Defringing", "Threshold", defringe.threshold, keyFile);
         saveToKeyfile(!pedited || pedited->defringe.huecurve, "Defringing", "HueCurve", defringe.huecurve, keyFile);
+
+// Dehaze
+        saveToKeyfile(!pedited || pedited->dehaze.enabled, "Dehaze", "Enabled", dehaze.enabled, keyFile);
+        saveToKeyfile(!pedited || pedited->dehaze.strength, "Dehaze", "Strength", dehaze.strength, keyFile);        
+        saveToKeyfile(!pedited || pedited->dehaze.showDepthMap, "Dehaze", "ShowDepthMap", dehaze.showDepthMap, keyFile);        
+        saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Depth", dehaze.depth, keyFile);        
 
 // Directional pyramid denoising
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.enabled, "Directional Pyramid Denoising", "Enabled", dirpyrDenoise.enabled, keyFile);
@@ -4828,7 +4853,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             if (ppVersion >= 339) {
                 assignFromKeyfile(keyFile, "Resize", "AllowUpscaling", pedited, resize.allowUpscaling, pedited->resize.allowUpscaling);
             } else {
-                resize.allowUpscaling = true;
+                resize.allowUpscaling = false;
                 if (pedited) {
                     pedited->resize.allowUpscaling = true;
                 }
@@ -5240,6 +5265,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "SoftLight", "Strength", pedited, softlight.strength, pedited->softlight.strength);
         }
 
+        if (keyFile.has_group("Dehaze")) {
+            assignFromKeyfile(keyFile, "Dehaze", "Enabled", pedited, dehaze.enabled, pedited->dehaze.enabled);
+            assignFromKeyfile(keyFile, "Dehaze", "Strength", pedited, dehaze.strength, pedited->dehaze.strength);
+            assignFromKeyfile(keyFile, "Dehaze", "ShowDepthMap", pedited, dehaze.showDepthMap, pedited->dehaze.showDepthMap);
+            assignFromKeyfile(keyFile, "Dehaze", "Depth", pedited, dehaze.depth, pedited->dehaze.depth);
+        }
+        
         if (keyFile.has_group("Film Simulation")) {
             assignFromKeyfile(keyFile, "Film Simulation", "Enabled", pedited, filmSimulation.enabled, pedited->filmSimulation.enabled);
             assignFromKeyfile(keyFile, "Film Simulation", "ClutFilename", pedited, filmSimulation.clutFilename, pedited->filmSimulation.clutFilename);
@@ -5660,7 +5692,8 @@ bool ProcParams::operator ==(const ProcParams& other) const
         && colorToning == other.colorToning
         && metadata == other.metadata
         && exif == other.exif
-        && iptc == other.iptc;
+        && iptc == other.iptc
+        && dehaze == other.dehaze;
 }
 
 bool ProcParams::operator !=(const ProcParams& other) const

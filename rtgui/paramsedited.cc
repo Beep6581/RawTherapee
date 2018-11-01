@@ -683,6 +683,10 @@ void ParamsEdited::set(bool v)
     filmSimulation.strength = v;
     softlight.enabled = v;
     softlight.strength = v;
+    dehaze.enabled = v;
+    dehaze.strength = v;
+    dehaze.showDepthMap = v;
+    dehaze.depth = v;
     metadata.mode = v;
 
     exif = v;
@@ -1353,6 +1357,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         filmSimulation.strength = filmSimulation.strength && p.filmSimulation.strength == other.filmSimulation.strength;
         softlight.enabled = softlight.enabled && p.softlight.enabled == other.softlight.enabled;
         softlight.strength = softlight.strength && p.softlight.strength == other.softlight.strength;
+        dehaze.enabled = dehaze.enabled && p.dehaze.enabled == other.dehaze.enabled;
+        dehaze.strength = dehaze.strength && p.dehaze.strength == other.dehaze.strength;
+        dehaze.showDepthMap = dehaze.showDepthMap && p.dehaze.showDepthMap == other.dehaze.showDepthMap;
+        dehaze.depth = dehaze.depth && p.dehaze.depth == other.dehaze.depth;
         metadata.mode = metadata.mode && p.metadata.mode == other.metadata.mode;
 
 //      How the hell can we handle that???
@@ -3761,7 +3769,23 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     if (softlight.strength) {
         toEdit.softlight.strength        = dontforceSet && options.baBehav[ADDSET_SOFTLIGHT_STRENGTH] ? toEdit.softlight.strength + mods.softlight.strength : mods.softlight.strength;
     }
+
+    if (dehaze.enabled) {
+        toEdit.dehaze.enabled     = mods.dehaze.enabled;
+    }
+
+    if (dehaze.strength) {
+        toEdit.dehaze.strength        = dontforceSet && options.baBehav[ADDSET_DEHAZE_STRENGTH] ? toEdit.dehaze.strength + mods.dehaze.strength : mods.dehaze.strength;
+    }
     
+    if (dehaze.depth) {
+        toEdit.dehaze.depth     = mods.dehaze.depth;
+    }
+
+    if (dehaze.showDepthMap) {
+        toEdit.dehaze.showDepthMap     = mods.dehaze.showDepthMap;
+    }
+
     if (metadata.mode) {
         toEdit.metadata.mode     = mods.metadata.mode;
     }

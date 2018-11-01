@@ -32,6 +32,8 @@
 #include "diagonalcurveeditorsubgroup.h"
 #include "rtimage.h"
 
+#include "../rtengine/curves.h"
+
 DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt, Glib::ustring& curveDir) : CurveEditorSubGroup(curveDir)
 {
 
@@ -813,6 +815,8 @@ void DiagonalCurveEditorSubGroup::loadPressed ()
                     p.push_back (x);
                 }
             }
+
+            rtengine::sanitizeCurve(p);
 
             if (p[0] == (double)(DCT_Spline)) {
                 customCurve->setPoints (p);

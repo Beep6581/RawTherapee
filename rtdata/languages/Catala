@@ -84,8 +84,6 @@ FILEBROWSER_AUTOFLATFIELD;Auto camp pla
 FILEBROWSER_BROWSEPATHBUTTONHINT;Clic per navegar al path escollit
 FILEBROWSER_BROWSEPATHHINT;Escriviu path on buscar.\n<b>Ctrl-O</b> dirigir-se al path de la finestra de text.\n<b>Enter</b> / <b>Ctrl-Enter</b> (en el gestor de fitxers) per a navegar allí;\n\nPath dreceres:\n  <b>~</b> - directori home de l'usuari\n  <b>!</b> - directori de fotografies de l'usuari
 FILEBROWSER_CACHE;Cau
-FILEBROWSER_CACHECLEARFROMFULL;Esborra el cau - tot
-FILEBROWSER_CACHECLEARFROMPARTIAL;Esborra el cau - part
 FILEBROWSER_CLEARPROFILE;Neteja
 FILEBROWSER_COPYPROFILE;Copia
 FILEBROWSER_CURRENT_NAME;Nom actual:

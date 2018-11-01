@@ -146,8 +146,6 @@ FILEBROWSER_AUTOFLATFIELD;オート・フラットフィールド
 FILEBROWSER_BROWSEPATHBUTTONHINT;クリックで選択したパスをブラウズ
 FILEBROWSER_BROWSEPATHHINT;参照するパスを入力します\n<b>Ctrl-O</b> パスのテキストボックスにフォーカス\n<b>Enter</b> / <b>Ctrl-Enter</b>その場所をブラウズします\n<b>Esc</b> 変更をクリア\n<b>Shift-Esc</b>フォーカスを削除\nパスのショートカット:\n  <b>~</b> - ユーザーのホームディレクトリ\n  <b>!</b> - ユーザーの画像ディレクトリ
 FILEBROWSER_CACHE;cache
-FILEBROWSER_CACHECLEARFROMFULL;cacheをクリア - すべて
-FILEBROWSER_CACHECLEARFROMPARTIAL;cacheをクリア - 一部
 FILEBROWSER_CLEARPROFILE;プロファイルのクリア
 FILEBROWSER_COLORLABEL_TOOLTIP;カラー・ラベル\n\nドロップダウン・メニューからか、ショートカット:\nShift-Ctrl-1 レッド\nShift-Ctrl-2 イエロー\nShift-Ctrl-3 グリーン\nShift-Ctrl-4 ブルー\nShift-Ctrl-5 パープル
 FILEBROWSER_COPYPROFILE;プロファイルをコピー
