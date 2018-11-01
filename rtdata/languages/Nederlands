@@ -912,9 +912,6 @@ PREFERENCES_BEHAVIOR;Gedrag
 PREFERENCES_BEHSETALL;Alles op 'Activeer'
 PREFERENCES_BEHSETALLHINT;Zet alle parameters in de <b>Activeer</b> mode.\nWijzigingen van parameters in de batch tool zijn <b>absoluut</b>. De actuele waarden worden gebruikt.
 PREFERENCES_BLACKBODY;Tungsten(wolfraam)
-PREFERENCES_CACHECLEARALL;Wis alles
-PREFERENCES_CACHECLEARPROFILES;Wis profielen
-PREFERENCES_CACHECLEARTHUMBS;Wis miniaturen
 PREFERENCES_CACHEMAXENTRIES;Maximaal aantal elementen in cache
 PREFERENCES_CACHEOPTS;Cache-opties
 PREFERENCES_CACHETHUMBHEIGHT;Maximale hoogte miniaturen

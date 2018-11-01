@@ -491,9 +491,6 @@ PREFERENCES_APPLNEXTSTARTUP;Efectiu en reiniciar
 PREFERENCES_AUTOMONPROFILE;Usa els perfils dels monitors dels sist. operatius automàticament
 PREFERENCES_BATCH_PROCESSING;Process. per lots
 PREFERENCES_BEHAVIOR;Comportament
-PREFERENCES_CACHECLEARALL;Esborrar tot
-PREFERENCES_CACHECLEARPROFILES;Esborrar perfils
-PREFERENCES_CACHECLEARTHUMBS;Esborra minifotos
 PREFERENCES_CACHEMAXENTRIES;Màxim nombre d'entrades a la mem. cau
 PREFERENCES_CACHEOPTS;Opcions memòria cau
 PREFERENCES_CACHETHUMBHEIGHT;Màxima alçada de minifoto

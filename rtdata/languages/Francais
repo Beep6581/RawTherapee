@@ -988,9 +988,6 @@ PREFERENCES_BEHAVIOR;Comportement
 PREFERENCES_BEHSETALL;Tout à 'Remplace'
 PREFERENCES_BEHSETALLHINT;Règle tous les paramètres sur le mode <b>Remplace</b>.\nLa modification des paramètres dans le panneau d'édition en par lot sera <b>absolue</b>, les valeurs réelles seront affichées
 PREFERENCES_BLACKBODY;Tungstène
-PREFERENCES_CACHECLEARALL;Tout nettoyer
-PREFERENCES_CACHECLEARPROFILES;Nettoyer les profils
-PREFERENCES_CACHECLEARTHUMBS;Nettoyer les vignettes
 PREFERENCES_CACHEMAXENTRIES;Nombre maximal d'éléments dans le Cache
 PREFERENCES_CACHEOPTS;Options du Cache
 PREFERENCES_CACHETHUMBHEIGHT;Hauteur maximale des vignettes

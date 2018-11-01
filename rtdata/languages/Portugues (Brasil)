@@ -1020,9 +1020,6 @@ PREFERENCES_BEHAVIOR;Comportamento
 PREFERENCES_BEHSETALL;Tudo para 'Configurar'
 PREFERENCES_BEHSETALLHINT;Definir todos os parâmetros para o <b>Configurar</b> modo.\nAjustes de parâmetros no painel de ferramentas de lote serão <b>absoluto</b>, os valores reais serão exibidos.
 PREFERENCES_BLACKBODY;Tungstênio
-PREFERENCES_CACHECLEARALL;Limpar Tudo
-PREFERENCES_CACHECLEARPROFILES;Limpar Perfis de Processamento
-PREFERENCES_CACHECLEARTHUMBS;Limpar Miniaturas
 PREFERENCES_CACHEMAXENTRIES;Número máximo de entradas de cache
 PREFERENCES_CACHEOPTS;Opções de Cache
 PREFERENCES_CACHETHUMBHEIGHT;Altura máxima da miniatura

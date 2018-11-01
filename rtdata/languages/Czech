@@ -989,9 +989,6 @@ PREFERENCES_BEHAVIOR;Režim
 PREFERENCES_BEHSETALL;Vše do 'Nastavit'
 PREFERENCES_BEHSETALLHINT;Nastaví všechny parametry do módu <b>Nastavit</b>.\nZměna parametrů v panelu dávkového zpracování se aplikuje jako <b>absolutní</b>, budou zobrazeny aktuální hodnoty.
 PREFERENCES_BLACKBODY;Wolfram
-PREFERENCES_CACHECLEARALL;Vymazat vše
-PREFERENCES_CACHECLEARPROFILES;Smazat profily zpracování
-PREFERENCES_CACHECLEARTHUMBS;Vymazat náhledy
 PREFERENCES_CACHEMAXENTRIES;Maximální počet záznamů v mezipaměti
 PREFERENCES_CACHEOPTS;Vlastnosti mezipaměti
 PREFERENCES_CACHETHUMBHEIGHT;Maximální výška náhledu

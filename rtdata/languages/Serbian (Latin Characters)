@@ -597,9 +597,6 @@ PREFERENCES_BEHAVIOR;Ponašanje
 PREFERENCES_BEHSETALL;Sve u „Postavi“
 PREFERENCES_BEHSETALLHINT;Postavlja sve parametre u režim <b>Postavi</b>.\nNjihovo podešavanje pomoću alata iz panela za zakazano će biti <b>apsolutne</b> vrednosti kao što su i izabrane.
 PREFERENCES_BLACKBODY;Obična sijalica
-PREFERENCES_CACHECLEARALL;Obriši sve
-PREFERENCES_CACHECLEARPROFILES;Obriši profile
-PREFERENCES_CACHECLEARTHUMBS;Obriši prikaze
 PREFERENCES_CACHEMAXENTRIES;Najveći broj mest u ostavi
 PREFERENCES_CACHEOPTS;Podešavanje ostave
 PREFERENCES_CACHETHUMBHEIGHT;Najveća visina prikaza

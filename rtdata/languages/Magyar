@@ -475,9 +475,6 @@ PREFERENCES_APPLNEXTSTARTUP;újraindítás után érvényes
 PREFERENCES_AUTOMONPROFILE;Oprendszerben beállított monitor-színprofil automatikus használata
 PREFERENCES_BATCH_PROCESSING;Kötegelt feldolgozás
 PREFERENCES_BEHAVIOR;Viselkedés
-PREFERENCES_CACHECLEARALL;Teljes gyorsítótár törlése
-PREFERENCES_CACHECLEARPROFILES;Feldolg. param. törlése
-PREFERENCES_CACHECLEARTHUMBS;Előnézeti képek törlése
 PREFERENCES_CACHEMAXENTRIES;Gyorsítótárban tárolt képek max. száma
 PREFERENCES_CACHEOPTS;Gyorsítótár beállítások
 PREFERENCES_CACHETHUMBHEIGHT;Előnézeti kép maximális magassága
