@@ -11,7 +11,23 @@ using namespace rtengine;
 using namespace rtengine::procparams;
 
 
-static constexpr int ID_LABREGION_HUE = 5;
+namespace {
+
+constexpr int ID_LABREGION_HUE = 5;
+
+inline bool hasMask(const std::vector<double> &dflt, const std::vector<double> &mask)
+{
+    return !(mask.empty() || mask[0] == FCT_Linear || mask == dflt);
+}
+
+
+inline float round_ab(float v)
+{
+    return int(v * 1000) / 1000.f;
+}
+
+} // namespace
+
 
 ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLORTONING_LABEL"), false, true)
 {
@@ -1403,6 +1419,10 @@ void ColorToning::onLabRegionSelectionChanged()
 
 void ColorToning::labRegionGet(int idx)
 {
+    if (idx < 0 || size_t(idx) >= labRegionData.size()) {
+        return;
+    }
+    
     auto &r = labRegionData[idx];
     double la, lb;
     labRegionAB->getParams(la, lb, r.a, r.b);
@@ -1482,26 +1502,6 @@ void ColorToning::labRegionShowMaskChanged()
 }
 
 
-namespace {
-
-bool hasMask(const std::vector<double> &dflt, const std::vector<double> &mask)
-{
-    if (mask.empty() || mask[0] == FCT_Linear || mask == dflt) {
-        return false;
-    } else {
-        return true;
-    }
-}
-
-
-inline float round_ab(float v)
-{
-    return int(v * 1000) / 1000.f;
-}
-
-} // namespace
-
-
 void ColorToning::labRegionPopulateList()
 {
     ConnectionBlocker b(labRegionSelectionConn);
@@ -1524,7 +1524,7 @@ void ColorToning::labRegionPopulateList()
 
 void ColorToning::labRegionShow(int idx, bool list_only)
 {
-    bool disable = listener;
+    const bool disable = listener;
     if (disable) {
         disableListener();
     }

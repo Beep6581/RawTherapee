@@ -75,9 +75,11 @@ void ImProcFunctions::labColorCorrectionRegions(LabImage *lab)
             float b = lab->b[y][x];
             float c, h;
             Color::Lab2Lch(a, b, c, h);
-            float c1 = lin2log(c * (327.68f / 48000.f), 10.f);
+            // magic constant c_factor: normally chromaticity is in [0; 42000] (see color.h), but here we use the constant to match how the chromaticity pipette works (see improcfun.cc lines 4705-4706 and color.cc line 1930
+            constexpr float c_factor = 327.68f / 48000.f;
+            float c1 = lin2log(c * c_factor, 10.f);
             float h1 = Color::huelab_to_huehsv2(h);
-            h1 = h1 + 1.f/6.f;
+            h1 = h1 + 1.f/6.f; // offset the hue because we start from purple instead of red
             if (h1 > 1.f) {
                 h1 -= 1.f;
             }
