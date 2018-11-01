@@ -247,8 +247,6 @@ void BatchQueuePanel::updateTab (int qsize, int forceOrientation)
 
 void BatchQueuePanel::queueSizeChanged(int qsize, bool queueRunning, bool queueError, const Glib::ustring& queueErrorMessage)
 {
-    updateTab (qsize);
-
     setGuiFromBatchState(queueRunning, qsize);
 
     if (!queueRunning && qsize == 0 && queueShouldRun) {
@@ -284,8 +282,6 @@ void BatchQueuePanel::startBatchProc ()
         saveOptions();
         batchQueue->startProcessing ();
     }
-
-    updateTab (batchQueue->getEntries().size());
 }
 
 void BatchQueuePanel::stopBatchProc ()
@@ -294,8 +290,6 @@ void BatchQueuePanel::stopBatchProc ()
     // background queue thread must check.  It will notify queueSizeChanged()
     // when it stops.
     queueShouldRun = false;
-
-    updateTab (batchQueue->getEntries().size());
 }
 
 void BatchQueuePanel::setGuiFromBatchState(bool queueRunning, int qsize)
@@ -313,6 +307,8 @@ void BatchQueuePanel::setGuiFromBatchState(bool queueRunning, int qsize)
 
     fdir->set_sensitive (!queueRunning);
     fformat->set_sensitive (!queueRunning);
+
+    updateTab(qsize);
 }
 
 void BatchQueuePanel::addBatchQueueJobs(const std::vector<BatchQueueEntry*>& entries, bool head)
