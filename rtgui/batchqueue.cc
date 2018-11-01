@@ -597,6 +597,8 @@ void BatchQueue::startProcessing ()
             // start batch processing
             rtengine::startBatchProcessing (next->job, this);
             queue_draw ();
+
+            notifyListener();
         }
     }
 }

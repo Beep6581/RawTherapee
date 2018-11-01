@@ -281,9 +281,6 @@ void BatchQueuePanel::startBatchProc ()
         // callback in response to the *reported* state.
         queueShouldRun = true;
 
-        // Don't need an update callback from the queue to know it is started:
-        setGuiFromBatchState(true, batchQueue->getEntries().size());
-
         saveOptions();
         batchQueue->startProcessing ();
     }
