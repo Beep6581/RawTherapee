@@ -138,6 +138,18 @@ BENCHFUN
             return 12000.f * SGN(x) * xlog2lin(std::abs(x), 4.f);
         };
 
+    float abca[n];
+    float abcb[n];
+    float rs[n];
+    float rl[n];
+    for (int i = 0; i < n; ++i) {
+        auto &r = params->colorToning.labregions[i];
+        abca[i] = abcoord(r.a);
+        abcb[i] = abcoord(r.b);
+        rs[i] = 1.f + r.saturation / 100.f;
+        rl[i] = 1.f + float(r.lightness) / 500.f;
+    }
+
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
 #endif
@@ -148,12 +160,11 @@ BENCHFUN
             float b = lab->b[y][x];
 
             for (int i = 0; i < n; ++i) {
-                auto &r = params->colorToning.labregions[i];
                 float blend = abmask[i][y][x];
-                float s = 1.f + r.saturation / 100.f;
-                float a_new = LIM(s * (a + abcoord(r.a)), -42000.f, 42000.f);
-                float b_new = LIM(s * (b + abcoord(r.b)), -42000.f, 42000.f);
-                float l_new = LIM(l * (1.f + float(r.lightness) / 500.f), 0.f, 32768.f);
+                float s = rs[i];
+                float a_new = LIM(s * (a + abca[i]), -42000.f, 42000.f);
+                float b_new = LIM(s * (b + abcb[i]), -42000.f, 42000.f);
+                float l_new = LIM(l * rl[i], 0.f, 32768.f);
                 l = intp(Lmask[i][y][x], l_new, l);
                 a = intp(blend, a_new, a);
                 b = intp(blend, b_new, b);
