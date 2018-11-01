@@ -58,8 +58,19 @@ public:
 
     void setListener(ToolPanelListener *tpl);
 
+    void setEditProvider(EditDataProvider *provider);
+    float blendPipetteValues(CurveEditor *ce, float chan1, float chan2, float chan3);
+
 private:
-    bool resetPressed(GdkEventButton* event);
+    void onLabRegionSelectionChanged();
+    void labRegionAddPressed();
+    void labRegionRemovePressed();
+    void labRegionUpPressed();
+    void labRegionDownPressed();
+    void labRegionShowMaskChanged();
+    void labRegionPopulateList();
+    void labRegionShow(int idx, bool list_only=false);
+    void labRegionGet(int idx);
 
     //Gtk::HSeparator* satLimiterSep;
     Gtk::HSeparator* colorSep;
@@ -113,9 +124,33 @@ private:
     sigc::connection lumamodeConn;
 
     rtengine::ProcEvent EvColorToningLabGridValue;
-    Gtk::Button *labgridReset;
     LabGrid *labgrid;
-    Gtk::HBox *labgridBox;
+
+    rtengine::ProcEvent EvLabRegionList;
+    rtengine::ProcEvent EvLabRegionAB;
+    rtengine::ProcEvent EvLabRegionSaturation;
+    rtengine::ProcEvent EvLabRegionLightness;
+    rtengine::ProcEvent EvLabRegionHueMask;
+    rtengine::ProcEvent EvLabRegionChromaticityMask;
+    rtengine::ProcEvent EvLabRegionLightnessMask;
+    rtengine::ProcEvent EvLabRegionShowMask;
+
+    Gtk::VBox *labRegionBox;
+    Gtk::ListViewText *labRegionList;
+    Gtk::Button *labRegionAdd;
+    Gtk::Button *labRegionRemove;
+    Gtk::Button *labRegionUp;
+    Gtk::Button *labRegionDown;
+    LabGrid *labRegionAB;
+    Adjuster *labRegionSaturation;
+    Adjuster *labRegionLightness;
+    FlatCurveEditor *labRegionHueMask;
+    FlatCurveEditor *labRegionChromaticityMask;
+    FlatCurveEditor *labRegionLightnessMask;
+    Gtk::CheckButton *labRegionShowMask;
+    std::vector<rtengine::ColorToningParams::LabCorrectionRegion> labRegionData;
+    int labRegionSelected;
+    sigc::connection labRegionSelectionConn;
 
     IdleRegister idle_register;
 };

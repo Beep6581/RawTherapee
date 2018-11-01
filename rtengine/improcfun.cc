@@ -4210,6 +4210,42 @@ void ImProcFunctions::chromiLuminanceCurve(PipetteBuffer *pipetteBuffer, int pW,
         }
     }
 
+    //-------------------------------------------------------------------------
+    // support for pipettes for the new LabRegions color toning mode this is a
+    // hack to fill the pipette buffers also when
+    // !params->labCurve.enabled. It is ugly, but it's the smallest code
+    // change that I could find
+    //-------------------------------------------------------------------------
+    class TempParams {
+        const ProcParams **p_;
+        const ProcParams *old_;
+        ProcParams tmp_;
+
+    public:
+        explicit TempParams(const ProcParams **p): p_(p)
+        {
+            old_ = *p;
+            tmp_.labCurve.enabled = true;
+            *p_ = &tmp_;
+        }
+
+        ~TempParams()
+        {
+            *p_ = old_;
+        }
+    };
+    std::unique_ptr<TempParams> tempparams;
+    bool pipette_for_colortoning_labregions =
+        editPipette &&
+        params->colorToning.enabled && params->colorToning.method == "LabRegions";
+    if (!params->labCurve.enabled && pipette_for_colortoning_labregions) {
+        utili = autili = butili = ccutili = cclutili = clcutili = false;
+        tempparams.reset(new TempParams(&params));
+        curve.makeIdentity();
+    }
+    //-------------------------------------------------------------------------
+
+    
     if (!params->labCurve.enabled) {
         if (editPipette && (editID == EUID_Lab_LCurve || editID == EUID_Lab_aCurve || editID == EUID_Lab_bCurve || editID == EUID_Lab_LHCurve || editID == EUID_Lab_CHCurve || editID == EUID_Lab_HHCurve || editID == EUID_Lab_CLCurve || editID == EUID_Lab_CCurve || editID == EUID_Lab_LCCurve)) {
             // fill pipette buffer with zeros to avoid crashes
@@ -5912,8 +5948,8 @@ void ImProcFunctions::lab2rgb(const LabImage &src, Imagefloat &dst, const Glib::
 */
 void ImProcFunctions::colorToningLabGrid(LabImage *lab, int xstart, int xend, int ystart, int yend, bool MultiThread)
 {
-    const float factor = ColorToningParams::LABGRID_CORR_MAX * 3.f;
-    const float scaling = ColorToningParams::LABGRID_CORR_SCALE;
+    const float factor = 3.f;
+    const float scaling = 3.f;
     float a_scale = (params->colorToning.labgridAHigh - params->colorToning.labgridALow) / factor / scaling;
     float a_base = params->colorToning.labgridALow / scaling;
     float b_scale = (params->colorToning.labgridBHigh - params->colorToning.labgridBLow) / factor / scaling;
