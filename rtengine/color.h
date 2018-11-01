@@ -651,7 +651,9 @@ public:
     * @param h 'h' channel return value, in [-PI ; +PI] (return value)
     */
     static void Lab2Lch(float a, float b, float &c, float &h);
-
+#ifdef __SSE2__
+    static void Lab2Lch(float *a, float *b, float *c, float *h, int w);
+#endif
 
     /**
     * @brief Convert 'c' and 'h' channels of the Lch color space to the 'a' and 'b' channels of the L*a*b color space (channel 'L' is identical [0 ; 32768])
