@@ -5073,7 +5073,8 @@ bool ProcParams::operator ==(const ProcParams& other) const
         && colorToning == other.colorToning
         && metadata == other.metadata
         && exif == other.exif
-        && iptc == other.iptc;
+        && iptc == other.iptc
+        && dehaze == other.dehaze;
 }
 
 bool ProcParams::operator !=(const ProcParams& other) const
