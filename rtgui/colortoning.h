@@ -62,8 +62,6 @@ public:
     float blendPipetteValues(CurveEditor *ce, float chan1, float chan2, float chan3);
 
 private:
-    bool resetPressed(GdkEventButton* event);
-    bool labRegionResetPressed(GdkEventButton *event);
     void onLabRegionSelectionChanged();
     void labRegionAddPressed();
     void labRegionRemovePressed();
@@ -126,9 +124,7 @@ private:
     sigc::connection lumamodeConn;
 
     rtengine::ProcEvent EvColorToningLabGridValue;
-    Gtk::Button *labgridReset;
     LabGrid *labgrid;
-    Gtk::HBox *labgridBox;
 
     rtengine::ProcEvent EvLabRegionList;
     rtengine::ProcEvent EvLabRegionAB;
@@ -145,7 +141,6 @@ private:
     Gtk::Button *labRegionRemove;
     Gtk::Button *labRegionUp;
     Gtk::Button *labRegionDown;
-    Gtk::Button *labRegionABReset;
     LabGrid *labRegionAB;
     Adjuster *labRegionSaturation;
     Adjuster *labRegionLightness;

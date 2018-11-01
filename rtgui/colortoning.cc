@@ -339,20 +339,8 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     // LAB grid
     auto m = ProcEventMapper::getInstance();
     EvColorToningLabGridValue = m->newEvent(RGBCURVE, "HISTORY_MSG_COLORTONING_LABGRID_VALUE");
-    labgridBox = Gtk::manage(new Gtk::HBox());
     labgrid = Gtk::manage(new LabGrid(EvColorToningLabGridValue, M("TP_COLORTONING_LABGRID_VALUES")));
-    labgridBox->pack_start(*labgrid, true, true);
-    labgridReset = Gtk::manage(new Gtk::Button ());
-    labgridReset->add (*Gtk::manage(new RTImage ("undo-small.png", "redo-small.png")));
-    setExpandAlignProperties(labgridReset, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
-    labgridReset->set_relief(Gtk::RELIEF_NONE);
-    labgridReset->set_tooltip_markup(M("ADJUSTER_RESET_TO_DEFAULT"));
-    labgridReset->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    labgridReset->set_can_focus(false);
-    labgridReset->set_size_request(-1, 20);
-    labgridReset->signal_button_release_event().connect(sigc::mem_fun(*this, &ColorToning::resetPressed));
-    labgridBox->pack_start(*labgridReset, false, false);
-    pack_start(*labgridBox, Gtk::PACK_EXPAND_WIDGET, 4);
+    pack_start(*labgrid, Gtk::PACK_EXPAND_WIDGET, 4);
     //------------------------------------------------------------------------
 
     //------------------------------------------------------------------------
@@ -410,14 +398,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     labRegionBox->pack_start(*hb, true, true);
     
     labRegionAB = Gtk::manage(new LabGrid(EvLabRegionAB, M("TP_COLORTONING_LABREGION_ABVALUES"), false));
-    hb = Gtk::manage(new Gtk::HBox());
-    hb->pack_start(*labRegionAB, true, true);
-    labRegionABReset = Gtk::manage(new Gtk::Button());
-    labRegionABReset->set_tooltip_markup(M("ADJUSTER_RESET_TO_DEFAULT"));
-    labRegionABReset->add(*Gtk::manage(new RTImage("undo-small.png", "redo-small.png")));
-    labRegionABReset->signal_button_release_event().connect(sigc::mem_fun(*this, &ColorToning::labRegionResetPressed));
-    add_button(labRegionABReset, hb);
-    labRegionBox->pack_start(*hb);
+    labRegionBox->pack_start(*labRegionAB);
 
     labRegionSaturation = Gtk::manage(new Adjuster(M("TP_COLORTONING_LABREGION_SATURATION"), -100, 100, 1, 0));
     labRegionSaturation->setAdjusterListener(this);
@@ -985,7 +966,7 @@ void ColorToning::methodChanged ()
 {
 
     if (!batchMode) {
-        labgridBox->hide();
+        labgrid->hide();
         labRegionBox->hide();
 
         if (method->get_active_row_number() == 0) { // Lab
@@ -1155,7 +1136,7 @@ void ColorToning::methodChanged ()
             lumamode->hide();
 
             if (method->get_active_row_number() == 5) {
-                labgridBox->show();
+                labgrid->show();
             } else {
                 labRegionBox->show();
             }
@@ -1386,19 +1367,6 @@ void ColorToning::setBatchMode (bool batchMode)
     clCurveEditorG->setBatchMode (batchMode);
     cl2CurveEditorG->setBatchMode (batchMode);
 
-}
-
-bool ColorToning::resetPressed(GdkEventButton* event)
-{
-    labgrid->reset(event->state & GDK_CONTROL_MASK);
-    return false;
-}
-
-
-bool ColorToning::labRegionResetPressed(GdkEventButton *event)
-{
-    labRegionAB->reset(event->state & GDK_CONTROL_MASK);
-    return false;
 }
 
 

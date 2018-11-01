@@ -41,7 +41,11 @@
 using rtengine::Color;
 
 
-bool LabGrid::notifyListener()
+//-----------------------------------------------------------------------------
+// LabGridArea
+//-----------------------------------------------------------------------------
+
+bool LabGridArea::notifyListener()
 {
     if (listener) {
         const auto round =
@@ -55,7 +59,7 @@ bool LabGrid::notifyListener()
 }
 
 
-LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low):
+LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low):
     Gtk::DrawingArea(),
     evt(evt), evtMsg(msg),
     litPoint(NONE),
@@ -70,7 +74,7 @@ LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_
     add_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK);
 }
 
-void LabGrid::getParams(double &la, double &lb, double &ha, double &hb) const
+void LabGridArea::getParams(double &la, double &lb, double &ha, double &hb) const
 {
     la = low_a;
     ha = high_a;
@@ -79,7 +83,7 @@ void LabGrid::getParams(double &la, double &lb, double &ha, double &hb) const
 }
 
 
-void LabGrid::setParams(double la, double lb, double ha, double hb, bool notify)
+void LabGridArea::setParams(double la, double lb, double ha, double hb, bool notify)
 {
     const double lo = -1.0;
     const double hi = 1.0;
@@ -93,7 +97,7 @@ void LabGrid::setParams(double la, double lb, double ha, double hb, bool notify)
     }
 }
 
-void LabGrid::setDefault (double la, double lb, double ha, double hb)
+void LabGridArea::setDefault (double la, double lb, double ha, double hb)
 {
     defaultLow_a = la;
     defaultLow_b = lb;
@@ -102,7 +106,7 @@ void LabGrid::setDefault (double la, double lb, double ha, double hb)
 }
 
 
-void LabGrid::reset(bool toInitial)
+void LabGridArea::reset(bool toInitial)
 {
     if (toInitial) {
         setParams(defaultLow_a, defaultLow_b, defaultHigh_a, defaultHigh_b, true);
@@ -112,32 +116,32 @@ void LabGrid::reset(bool toInitial)
 }
 
 
-void LabGrid::setEdited(bool yes)
+void LabGridArea::setEdited(bool yes)
 {
     edited = yes;
 }
 
 
-bool LabGrid::getEdited() const
+bool LabGridArea::getEdited() const
 {
     return edited;
 }
 
 
-void LabGrid::setListener(ToolPanelListener *l)
+void LabGridArea::setListener(ToolPanelListener *l)
 {
     listener = l;
 }
 
 
-void LabGrid::on_style_updated ()
+void LabGridArea::on_style_updated ()
 {
     setDirty(true);
     queue_draw ();
 }
 
 
-bool LabGrid::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
+bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
 {
     Gtk::Allocation allocation = get_allocation();
     allocation.set_x(0);
@@ -232,7 +236,7 @@ bool LabGrid::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
 }
 
 
-bool LabGrid::on_button_press_event(GdkEventButton *event)
+bool LabGridArea::on_button_press_event(GdkEventButton *event)
 {
     if (event->button == 1) {
         if (event->type == GDK_2BUTTON_PRESS) {
@@ -259,7 +263,7 @@ bool LabGrid::on_button_press_event(GdkEventButton *event)
 }
 
 
-bool LabGrid::on_button_release_event(GdkEventButton *event)
+bool LabGridArea::on_button_release_event(GdkEventButton *event)
 {
     if (event->button == 1) {
         isDragged = false;
@@ -269,7 +273,7 @@ bool LabGrid::on_button_release_event(GdkEventButton *event)
 }
 
 
-bool LabGrid::on_motion_notify_event(GdkEventMotion *event)
+bool LabGridArea::on_motion_notify_event(GdkEventMotion *event)
 {
     if (isDragged && delayconn.connected()) {
         delayconn.disconnect();
@@ -295,7 +299,7 @@ bool LabGrid::on_motion_notify_event(GdkEventMotion *event)
         if (options.adjusterMinDelay == 0) {
             notifyListener();
         } else {
-            delayconn = Glib::signal_timeout().connect(sigc::mem_fun(*this, &LabGrid::notifyListener), options.adjusterMinDelay);
+            delayconn = Glib::signal_timeout().connect(sigc::mem_fun(*this, &LabGridArea::notifyListener), options.adjusterMinDelay);
         }
         queue_draw();
     } else {
@@ -320,35 +324,66 @@ bool LabGrid::on_motion_notify_event(GdkEventMotion *event)
 }
 
 
-Gtk::SizeRequestMode LabGrid::get_request_mode_vfunc() const
+Gtk::SizeRequestMode LabGridArea::get_request_mode_vfunc() const
 {
     return Gtk::SIZE_REQUEST_HEIGHT_FOR_WIDTH;
 }
 
 
-void LabGrid::get_preferred_width_vfunc(int &minimum_width, int &natural_width) const
+void LabGridArea::get_preferred_width_vfunc(int &minimum_width, int &natural_width) const
 {
     minimum_width = 50;
     natural_width = 150;  // same as GRAPH_SIZE from mycurve.h
 }
 
 
-void LabGrid::get_preferred_height_for_width_vfunc(int width, int &minimum_height, int &natural_height) const
+void LabGridArea::get_preferred_height_for_width_vfunc(int width, int &minimum_height, int &natural_height) const
 {
     minimum_height = natural_height = width;
 }
 
 
-bool LabGrid::lowEnabled() const
+bool LabGridArea::lowEnabled() const
 {
     return low_enabled;
 }
 
 
-void LabGrid::setLowEnabled(bool yes)
+void LabGridArea::setLowEnabled(bool yes)
 {
     if (low_enabled != yes) {
         low_enabled = yes;
         queue_draw();
     }
+}
+
+
+//-----------------------------------------------------------------------------
+// LabGrid
+//-----------------------------------------------------------------------------
+
+LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low):
+    grid(evt, msg, enable_low)
+{
+    Gtk::Button *reset = Gtk::manage(new Gtk::Button());
+    reset->set_tooltip_markup(M("ADJUSTER_RESET_TO_DEFAULT"));
+    reset->add(*Gtk::manage(new RTImage("undo-small.png", "redo-small.png")));
+    reset->signal_button_release_event().connect(sigc::mem_fun(*this, &LabGrid::resetPressed));
+
+    setExpandAlignProperties(reset, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+    reset->set_relief(Gtk::RELIEF_NONE);
+    reset->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
+    reset->set_can_focus(false);
+    reset->set_size_request(-1, 20);
+
+    pack_start(grid, true, true);
+    pack_start(*reset, false, false);
+    show_all_children();
+}
+
+
+bool LabGrid::resetPressed(GdkEventButton *event)
+{
+    grid.reset(event->state & GDK_CONTROL_MASK);
+    return false;    
 }
