@@ -24,6 +24,9 @@
 
 #include "improcfun.h"
 #include "guidedfilter.h"
+#define BENCHMARK
+#include "StopWatch.h"
+#include "sleef.c"
 
 namespace rtengine {
 
@@ -32,7 +35,7 @@ void ImProcFunctions::labColorCorrectionRegions(LabImage *lab)
     if (!params->colorToning.enabled || params->colorToning.method != "LabRegions") {
         return;
     }
-
+BENCHFUN
     int n = params->colorToning.labregions.size();
     int show_mask_idx = params->colorToning.labregionsShowMask;
     if (show_mask_idx >= n) {
@@ -64,7 +67,7 @@ void ImProcFunctions::labColorCorrectionRegions(LabImage *lab)
         abmask[i](lab->W, lab->H);
         Lmask[i](lab->W, lab->H);
     }
-    
+
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
 #endif
@@ -77,13 +80,13 @@ void ImProcFunctions::labColorCorrectionRegions(LabImage *lab)
             Color::Lab2Lch(a, b, c, h);
             // magic constant c_factor: normally chromaticity is in [0; 42000] (see color.h), but here we use the constant to match how the chromaticity pipette works (see improcfun.cc lines 4705-4706 and color.cc line 1930
             constexpr float c_factor = 327.68f / 48000.f;
-            float c1 = lin2log(c * c_factor, 10.f);
+            float c1 = xlin2log(c * c_factor, 10.f);
             float h1 = Color::huelab_to_huehsv2(h);
             h1 = h1 + 1.f/6.f; // offset the hue because we start from purple instead of red
             if (h1 > 1.f) {
                 h1 -= 1.f;
             }
-            h1 = lin2log(h1, 3.f);
+            h1 = xlin2log(h1, 3.f);
             float l1 = l / 32768.f;
 
             for (int i = begin_idx; i < end_idx; ++i) {
@@ -132,7 +135,7 @@ void ImProcFunctions::labColorCorrectionRegions(LabImage *lab)
     const auto abcoord =
         [](float x) -> float
         {
-            return 12000.f * SGN(x) * log2lin(std::abs(x), 4.f);
+            return 12000.f * SGN(x) * xlog2lin(std::abs(x), 4.f);
         };
 
 #ifdef _OPENMP
