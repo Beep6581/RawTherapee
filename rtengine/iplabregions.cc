@@ -182,27 +182,59 @@ BENCHFUN
     }
 
 #ifdef _OPENMP
-    #pragma omp parallel for if (multiThread)
+    #pragma omp parallel if (multiThread)
 #endif
-    for (int y = 0; y < lab->H; ++y) {
-        for (int x = 0; x < lab->W; ++x) {
-            float l = lab->L[y][x];
-            float a = lab->a[y][x];
-            float b = lab->b[y][x];
+    {
+#ifdef __SSE2__
+        vfloat c42000v = F2V(42000.f);
+        vfloat cm42000v = F2V(-42000.f);
+        vfloat c32768v = F2V(32768.f);
+#endif
+#ifdef _OPENMP
+        #pragma omp for
+#endif
+        for (int y = 0; y < lab->H; ++y) {
+            int x = 0;
+#ifdef __SSE2__
+            for (; x < lab->W - 3; x += 4) {
+                vfloat lv = LVFU(lab->L[y][x]);
+                vfloat av = LVFU(lab->a[y][x]);
+                vfloat bv = LVFU(lab->b[y][x]);
 
-            for (int i = 0; i < n; ++i) {
-                float blend = abmask[i][y][x];
-                float s = rs[i];
-                float a_new = LIM(s * (a + abca[i]), -42000.f, 42000.f);
-                float b_new = LIM(s * (b + abcb[i]), -42000.f, 42000.f);
-                float l_new = LIM(l * rl[i], 0.f, 32768.f);
-                l = intp(Lmask[i][y][x], l_new, l);
-                a = intp(blend, a_new, a);
-                b = intp(blend, b_new, b);
+                for (int i = 0; i < n; ++i) {
+                    vfloat blendv = LVFU(abmask[i][y][x]);
+                    vfloat sv = F2V(rs[i]);
+                    vfloat a_newv = LIMV(sv * (av + F2V(abca[i])), cm42000v, c42000v);
+                    vfloat b_newv = LIMV(sv * (bv + F2V(abcb[i])), cm42000v, c42000v);
+                    vfloat l_newv = LIMV(lv * F2V(rl[i]), ZEROV, c32768v);
+                    lv = vintpf(LVFU(Lmask[i][y][x]), l_newv, lv);
+                    av = vintpf(blendv, a_newv, av);
+                    bv = vintpf(blendv, b_newv, bv);
+                }
+                STVFU(lab->L[y][x], lv);
+                STVFU(lab->a[y][x], av);
+                STVFU(lab->b[y][x], bv);
             }
-            lab->L[y][x] = l;
-            lab->a[y][x] = a;
-            lab->b[y][x] = b;
+#endif
+            for (; x < lab->W; ++x) {
+                float l = lab->L[y][x];
+                float a = lab->a[y][x];
+                float b = lab->b[y][x];
+
+                for (int i = 0; i < n; ++i) {
+                    float blend = abmask[i][y][x];
+                    float s = rs[i];
+                    float a_new = LIM(s * (a + abca[i]), -42000.f, 42000.f);
+                    float b_new = LIM(s * (b + abcb[i]), -42000.f, 42000.f);
+                    float l_new = LIM(l * rl[i], 0.f, 32768.f);
+                    l = intp(Lmask[i][y][x], l_new, l);
+                    a = intp(blend, a_new, a);
+                    b = intp(blend, b_new, b);
+                }
+                lab->L[y][x] = l;
+                lab->a[y][x] = a;
+                lab->b[y][x] = b;
+            }
         }
     }
 }
