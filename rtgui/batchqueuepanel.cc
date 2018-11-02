@@ -57,6 +57,8 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     qAutoStart->set_tooltip_text (M("BATCHQUEUE_AUTOSTARTHINT"));
     qAutoStart->set_active (options.procQueueEnabled);
 
+    queueShouldRun = false;
+
     batchQueueButtonBox->pack_start (*qStartStop, Gtk::PACK_SHRINK, 4);
     batchQueueButtonBox->pack_start (*qAutoStart, Gtk::PACK_SHRINK, 4);
     Gtk::Frame *bbox = Gtk::manage(new Gtk::Frame(M("MAIN_FRAME_BATCHQUEUE")));
