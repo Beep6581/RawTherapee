@@ -229,7 +229,7 @@ void BatchQueue::addEntries (const std::vector<BatchQueueEntry*>& entries, bool 
         saveBatchQueue ();
 
     redraw ();
-    notifyListener (true);
+    notifyListener ();
 }
 
 bool BatchQueue::saveBatchQueue ()
@@ -387,7 +387,7 @@ bool BatchQueue::loadBatchQueue ()
     }
 
     redraw ();
-    notifyListener (true);
+    notifyListener ();
 
     return !fd.empty ();
 }
@@ -460,7 +460,7 @@ void BatchQueue::cancelItems (const std::vector<ThumbBrowserEntryBase*>& items)
     saveBatchQueue ();
 
     redraw ();
-    notifyListener (true);
+    notifyListener ();
 }
 
 void BatchQueue::headItems (const std::vector<ThumbBrowserEntryBase*>& items)
@@ -597,6 +597,8 @@ void BatchQueue::startProcessing ()
             // start batch processing
             rtengine::startBatchProcessing (next->job, this);
             queue_draw ();
+
+            notifyListener();
         }
     }
 }
@@ -775,8 +777,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
     }
 
     redraw ();
-    const bool queueRunning = processing;
-    notifyListener (queueRunning);
+    notifyListener ();
 
     return processing ? processing->job : nullptr;
 }
@@ -971,9 +972,9 @@ void BatchQueue::buttonPressed (LWButton* button, int actionCode, void* actionDa
     }
 }
 
-void BatchQueue::notifyListener (bool queueRunning)
+void BatchQueue::notifyListener ()
 {
-
+    const bool queueRunning = processing;
     if (listener) {
         NLParams* params = new NLParams;
         params->listener = listener;

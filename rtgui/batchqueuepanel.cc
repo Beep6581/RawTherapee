@@ -247,22 +247,13 @@ void BatchQueuePanel::updateTab (int qsize, int forceOrientation)
 
 void BatchQueuePanel::queueSizeChanged(int qsize, bool queueRunning, bool queueError, const Glib::ustring& queueErrorMessage)
 {
-    updateTab (qsize);
+    setGuiFromBatchState(queueRunning, qsize);
 
-    if (qsize == 0 || (qsize == 1 && queueRunning)) {
-        qStartStop->set_sensitive(false);
-    } else {
-        qStartStop->set_sensitive(true);
-    }
+    if (!queueRunning && qsize == 0 && queueShouldRun) {
+        // There was work, but it is all done now.
+        queueShouldRun = false;
 
-    if (!queueRunning) {
-        stopBatchProc ();
-        fdir->set_sensitive (true);
-        fformat->set_sensitive (true);
-
-        if (qsize == 0) {
-            SoundManager::playSoundAsync(options.sndBatchQueueDone);
-        }
+        SoundManager::playSoundAsync(options.sndBatchQueueDone);
     }
 
     if (queueError) {
@@ -273,8 +264,7 @@ void BatchQueuePanel::queueSizeChanged(int qsize, bool queueRunning, bool queueE
 
 void BatchQueuePanel::startOrStopBatchProc()
 {
-    bool state = qStartStop->get_state();
-    if (state) {
+    if (qStartStop->get_state()) {
         startBatchProc();
     } else {
         stopBatchProc();
@@ -283,36 +273,42 @@ void BatchQueuePanel::startOrStopBatchProc()
 
 void BatchQueuePanel::startBatchProc ()
 {
-    // Update switch when queue started programmatically
-    qStartStopConn.block (true);
-    qStartStop->set_active(true);
-    qStartStopState = true;
-    qStartStopConn.block (false);
-
     if (batchQueue->hasJobs()) {
-        fdir->set_sensitive (false);
-        fformat->set_sensitive (false);
-        if (batchQueue->getEntries().size() == 1) {
-            qStartStop->set_sensitive(false);
-        }
+        // Update the *desired* state of the queue, then launch it.  The switch
+        // state is not updated here; it is changed by the queueSizeChanged()
+        // callback in response to the *reported* state.
+        queueShouldRun = true;
+
         saveOptions();
         batchQueue->startProcessing ();
-    } else {
-        stopBatchProc ();
     }
-
-    updateTab (batchQueue->getEntries().size());
 }
 
 void BatchQueuePanel::stopBatchProc ()
 {
-    // Update switch when queue started programmatically
-    qStartStopConn.block (true);
-    qStartStop->set_active(false);
-    qStartStopState = false;
-    qStartStopConn.block (false);
+    // There is nothing much to do here except set the desired state, which the
+    // background queue thread must check.  It will notify queueSizeChanged()
+    // when it stops.
+    queueShouldRun = false;
+}
 
-    updateTab (batchQueue->getEntries().size());
+void BatchQueuePanel::setGuiFromBatchState(bool queueRunning, int qsize)
+{
+    // Change the GUI state in response to the reported queue state
+    if (qsize == 0 || (qsize == 1 && queueRunning)) {
+        qStartStop->set_sensitive(false);
+    } else {
+        qStartStop->set_sensitive(true);
+    }
+
+    qStartStopConn.block(true);
+    qStartStop->set_active(queueRunning);
+    qStartStopConn.block(false);
+
+    fdir->set_sensitive (!queueRunning);
+    fformat->set_sensitive (!queueRunning);
+
+    updateTab(qsize);
 }
 
 void BatchQueuePanel::addBatchQueueJobs(const std::vector<BatchQueueEntry*>& entries, bool head)
@@ -320,6 +316,7 @@ void BatchQueuePanel::addBatchQueueJobs(const std::vector<BatchQueueEntry*>& ent
     batchQueue->addEntries(entries, head);
 
     if (!qStartStop->get_active() && qAutoStart->get_active()) {
+        // Auto-start as if the user had pressed the qStartStop switch
         startBatchProc ();
     }
 }
@@ -354,9 +351,9 @@ bool BatchQueuePanel::handleShortcutKey (GdkEventKey* event)
 
 bool BatchQueuePanel::canStartNext ()
 {
-    // This function is called from the background BatchQueue thread.
-    // It cannot call UI functions, so grab the stored state of qStartStop.
-    return qStartStopState;
+    // This function is called from the background BatchQueue thread.  It
+    // cannot call UI functions; we keep the desired state in an atomic.
+    return queueShouldRun;
 }
 
 void BatchQueuePanel::pathFolderButtonPressed ()

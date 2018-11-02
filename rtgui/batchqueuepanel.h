@@ -53,7 +53,7 @@ class BatchQueuePanel : public Gtk::VBox,
     Gtk::HBox* bottomBox;
     Gtk::HBox* topBox;
 
-    std::atomic<bool> qStartStopState;
+    std::atomic<bool> queueShouldRun;
 
     IdleRegister idle_register;
 
@@ -76,6 +76,7 @@ private:
     void startBatchProc ();
     void stopBatchProc ();
     void startOrStopBatchProc();
+    void setGuiFromBatchState(bool queueRunning, int qsize);
 
     void pathFolderChanged ();
     void pathFolderButtonPressed ();
