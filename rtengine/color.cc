@@ -1931,6 +1931,24 @@ void Color::Lab2Lch(float a, float b, float &c, float &h)
     h = xatan2f(b, a);
 }
 
+#ifdef __SSE2__
+void Color::Lab2Lch(float *a, float *b, float *c, float *h, int w)
+{
+    int i = 0;
+    vfloat c327d68v = F2V(327.68f);
+    for (; i < w - 3; i += 4) {
+        vfloat av = LVFU(a[i]);
+        vfloat bv = LVFU(b[i]);
+        STVFU(c[i], vsqrtf(SQRV(av) + SQRV(bv)) / c327d68v);
+        STVFU(h[i], xatan2f(bv, av));
+    }
+    for (; i < w; ++i) {
+        c[i] = sqrtf(SQR(a[i]) + SQR(b[i])) / 327.68f;
+        h[i] = xatan2f(b[i], a[i]);
+    }
+}
+#endif
+
 void Color::Lch2Lab(float c, float h, float &a, float &b)
 {
     float2 sincosval = xsincosf(h);
