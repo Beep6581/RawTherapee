@@ -87,6 +87,7 @@ BENCHFUN
         abmask[i](lab->W, lab->H);
         Lmask[i](lab->W, lab->H);
     }
+    array2D<float> guide(lab->W, lab->H);
 
 #ifdef _OPENMP
     #pragma omp parallel if (multiThread)
@@ -99,7 +100,7 @@ BENCHFUN
     constexpr float c_factor = 327.68f / 48000.f;
 #endif
 #ifdef _OPENMP
-    #pragma omp for
+    #pragma omp for schedule(dynamic, 16)
 #endif
     for (int y = 0; y < lab->H; ++y) {
 #ifdef __SSE2__
@@ -108,53 +109,40 @@ BENCHFUN
         fastlin2log(cBuffer, c_factor, 10.f, lab->W);
 #endif
         for (int x = 0; x < lab->W; ++x) {
-            float l = lab->L[y][x];
+            float l = lab->L[y][x] / 32768.f;
+            guide[y][x] = LIM01(l);
 #ifdef __SSE2__
             // use precalculated values
-            float c1 = cBuffer[x];
+            float c = cBuffer[x];
             float h = hBuffer[x];
 #else
             // magic constant c_factor: normally chromaticity is in [0; 42000] (see color.h), but here we use the constant to match how the chromaticity pipette works (see improcfun.cc lines 4705-4706 and color.cc line 1930
             constexpr float c_factor = 327.68f / 48000.f;
-            float a = lab->a[y][x];
-            float b = lab->b[y][x];
             float c, h;
-            Color::Lab2Lch(a, b, c, h);
-            float c1 = xlin2log(c * c_factor, 10.f);
+            Color::Lab2Lch(lab->a[y][x], lab->b[y][x], c, h);
+            c = xlin2log(c * c_factor, 10.f);
 #endif
-            float h1 = Color::huelab_to_huehsv2(h);
-            h1 = h1 + 1.f/6.f; // offset the hue because we start from purple instead of red
-            if (h1 > 1.f) {
-                h1 -= 1.f;
+            h = Color::huelab_to_huehsv2(h);
+            h += 1.f/6.f; // offset the hue because we start from purple instead of red
+            if (h > 1.f) {
+                h -= 1.f;
             }
-            h1 = xlin2log(h1, 3.f);
-            float l1 = l / 32768.f;
+            h = xlin2log(h, 3.f);
 
             for (int i = begin_idx; i < end_idx; ++i) {
                 auto &hm = hmask[i];
                 auto &cm = cmask[i];
                 auto &lm = lmask[i];
-                float blend = LIM01((hm ? hm->getVal(h1) : 1.f) * (cm ? cm->getVal(c1) : 1.f) * (lm ? lm->getVal(l1) : 1.f));
+                float blend = LIM01((hm ? hm->getVal(h) : 1.f) * (cm ? cm->getVal(c) : 1.f) * (lm ? lm->getVal(l) : 1.f));
                 Lmask[i][y][x] = abmask[i][y][x] = blend;
             }
         }
     }
     }
-    {
-        array2D<float> guide(lab->W, lab->H, lab->L);
-#ifdef _OPENMP
-        #pragma omp parallel for if (multiThread)
-#endif
-        for (int y = 0; y < lab->H; ++y) {
-            for (int x = 0; x < lab->W; ++x) {
-                guide[y][x] = LIM01(lab->L[y][x] / 32768.f);
-            }
-        }
         
-        for (int i = begin_idx; i < end_idx; ++i) {
-            rtengine::guidedFilter(guide, abmask[i], abmask[i], max(int(4 / scale + 0.5), 1), 0.001, multiThread);
-            rtengine::guidedFilter(guide, Lmask[i], Lmask[i], max(int(25 / scale + 0.5), 1), 0.0001, multiThread);
-        }
+    for (int i = begin_idx; i < end_idx; ++i) {
+        rtengine::guidedFilter(guide, abmask[i], abmask[i], max(int(4 / scale + 0.5), 1), 0.001, multiThread);
+        rtengine::guidedFilter(guide, Lmask[i], Lmask[i], max(int(25 / scale + 0.5), 1), 0.0001, multiThread);
     }
 
     if (show_mask_idx >= 0) {
