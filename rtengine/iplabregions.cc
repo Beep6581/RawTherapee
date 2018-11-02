@@ -24,11 +24,12 @@
 
 #include "improcfun.h"
 #include "guidedfilter.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 #include "sleef.c"
 
 namespace {
+
 #ifdef __SSE2__
 void fastlin2log(float *x, float factor, float base, int w)
 {
@@ -46,6 +47,7 @@ void fastlin2log(float *x, float factor, float base, int w)
     }
 }
 #endif
+
 }
 
 namespace rtengine {
@@ -87,59 +89,59 @@ BENCHFUN
         abmask[i](lab->W, lab->H);
         Lmask[i](lab->W, lab->H);
     }
+
     array2D<float> guide(lab->W, lab->H);
+
+    // magic constant c_factor: normally chromaticity is in [0; 42000] (see color.h), but here we use the constant to match how the chromaticity pipette works (see improcfun.cc lines 4705-4706 and color.cc line 1930
+    constexpr float c_factor = 327.68f / 48000.f;
 
 #ifdef _OPENMP
     #pragma omp parallel if (multiThread)
 #endif
     {
 #ifdef __SSE2__
-    float cBuffer[lab->W];
-    float hBuffer[lab->W];
-    // magic constant c_factor: normally chromaticity is in [0; 42000] (see color.h), but here we use the constant to match how the chromaticity pipette works (see improcfun.cc lines 4705-4706 and color.cc line 1930
-    constexpr float c_factor = 327.68f / 48000.f;
+        float cBuffer[lab->W];
+        float hBuffer[lab->W];
 #endif
 #ifdef _OPENMP
-    #pragma omp for schedule(dynamic, 16)
+        #pragma omp for schedule(dynamic, 16)
 #endif
-    for (int y = 0; y < lab->H; ++y) {
+        for (int y = 0; y < lab->H; ++y) {
 #ifdef __SSE2__
-        // vectorized precalculation
-        Color::Lab2Lch(lab->a[y], lab->b[y], cBuffer, hBuffer, lab->W);
-        fastlin2log(cBuffer, c_factor, 10.f, lab->W);
+            // vectorized precalculation
+            Color::Lab2Lch(lab->a[y], lab->b[y], cBuffer, hBuffer, lab->W);
+            fastlin2log(cBuffer, c_factor, 10.f, lab->W);
 #endif
-        for (int x = 0; x < lab->W; ++x) {
-            float l = lab->L[y][x] / 32768.f;
-            guide[y][x] = LIM01(l);
+            for (int x = 0; x < lab->W; ++x) {
+                const float l = lab->L[y][x] / 32768.f;
+                guide[y][x] = LIM01(l);
 #ifdef __SSE2__
-            // use precalculated values
-            float c = cBuffer[x];
-            float h = hBuffer[x];
+                // use precalculated values
+                const float c = cBuffer[x];
+                float h = hBuffer[x];
 #else
-            // magic constant c_factor: normally chromaticity is in [0; 42000] (see color.h), but here we use the constant to match how the chromaticity pipette works (see improcfun.cc lines 4705-4706 and color.cc line 1930
-            constexpr float c_factor = 327.68f / 48000.f;
-            float c, h;
-            Color::Lab2Lch(lab->a[y][x], lab->b[y][x], c, h);
-            c = xlin2log(c * c_factor, 10.f);
+                float c, h;
+                Color::Lab2Lch(lab->a[y][x], lab->b[y][x], c, h);
+                c = xlin2log(c * c_factor, 10.f);
 #endif
-            h = Color::huelab_to_huehsv2(h);
-            h += 1.f/6.f; // offset the hue because we start from purple instead of red
-            if (h > 1.f) {
-                h -= 1.f;
-            }
-            h = xlin2log(h, 3.f);
+                h = Color::huelab_to_huehsv2(h);
+                h += 1.f/6.f; // offset the hue because we start from purple instead of red
+                if (h > 1.f) {
+                    h -= 1.f;
+                }
+                h = xlin2log(h, 3.f);
 
-            for (int i = begin_idx; i < end_idx; ++i) {
-                auto &hm = hmask[i];
-                auto &cm = cmask[i];
-                auto &lm = lmask[i];
-                float blend = LIM01((hm ? hm->getVal(h) : 1.f) * (cm ? cm->getVal(c) : 1.f) * (lm ? lm->getVal(l) : 1.f));
-                Lmask[i][y][x] = abmask[i][y][x] = blend;
+                for (int i = begin_idx; i < end_idx; ++i) {
+                    auto &hm = hmask[i];
+                    auto &cm = cmask[i];
+                    auto &lm = lmask[i];
+                    float blend = LIM01((hm ? hm->getVal(h) : 1.f) * (cm ? cm->getVal(c) : 1.f) * (lm ? lm->getVal(l) : 1.f));
+                    Lmask[i][y][x] = abmask[i][y][x] = blend;
+                }
             }
         }
     }
-    }
-        
+
     for (int i = begin_idx; i < end_idx; ++i) {
         rtengine::guidedFilter(guide, abmask[i], abmask[i], max(int(4 / scale + 0.5), 1), 0.001, multiThread);
         rtengine::guidedFilter(guide, Lmask[i], Lmask[i], max(int(25 / scale + 0.5), 1), 0.0001, multiThread);
@@ -176,7 +178,7 @@ BENCHFUN
         abca[i] = abcoord(r.a);
         abcb[i] = abcoord(r.b);
         rs[i] = 1.f + r.saturation / 100.f;
-        rl[i] = 1.f + float(r.lightness) / 500.f;
+        rl[i] = 1.f + r.lightness / 500.f;
     }
 
 #ifdef _OPENMP
