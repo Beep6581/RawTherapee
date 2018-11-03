@@ -672,9 +672,6 @@ PREFERENCES_BEHAVIOR;Поведение
 PREFERENCES_BEHSETALL;Всё в "Установить"
 PREFERENCES_BEHSETALLHINT;Выставить все параметры в режим <b>Установить</b>.\nНастройки параметров в панели пакетной обработки будут <b>абсолютными</b>, будут показаны используемые значения
 PREFERENCES_BLACKBODY;Лампа накаливания
-PREFERENCES_CACHECLEARALL;Удалить все
-PREFERENCES_CACHECLEARPROFILES;Удалить параметры обработки
-PREFERENCES_CACHECLEARTHUMBS;Удалить эскизы
 PREFERENCES_CACHEMAXENTRIES;Максимальное число элементов в кэше
 PREFERENCES_CACHEOPTS;Параметры кэширования
 PREFERENCES_CACHETHUMBHEIGHT;Максимальная высота эскиза
@@ -1636,7 +1633,6 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !HISTORY_MSG_486;Lens Correction - Camera
 !HISTORY_MSG_487;Lens Correction - Lens
 !HISTORY_MSG_488;Dynamic Range Compression
-!HISTORY_MSG_489;DRC - Threshold
 !HISTORY_MSG_490;DRC - Amount
 !HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 !HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
@@ -2108,7 +2104,6 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_TM_FATTAL_AMOUNT;Amount
 !TP_TM_FATTAL_ANCHOR;Anchor
 !TP_TM_FATTAL_LABEL;Dynamic Range Compression
-!TP_TM_FATTAL_THRESHOLD;Threshold
 !TP_WAVELET_1;Level 1
 !TP_WAVELET_2;Level 2
 !TP_WAVELET_3;Level 3

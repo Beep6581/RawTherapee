@@ -26,14 +26,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="51.375"
+     inkscape:zoom="50.625"
      inkscape:cx="8"
      inkscape:cy="8"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="1920"
-     inkscape:window-height="1019"
+     inkscape:window-height="1017"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -45,7 +45,7 @@
      inkscape:object-nodes="false"
      inkscape:snap-grids="true"
      inkscape:snap-bbox-midpoints="false"
-     inkscape:snap-global="false">
+     inkscape:snap-global="true">
     <inkscape:grid
        type="xygrid"
        id="grid1374"
@@ -103,7 +103,7 @@
      transform="translate(0,-8)">
     <path
        style="opacity:0.7;fill:#2a7fff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.26899993;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:2.00314951;stroke-opacity:1;paint-order:normal"
-       d="m 4.3741546,14.688218 -1.5938192,-1.947276 -1.145969,6.051212 6.3549192,0.573481 -1.6273478,-2.07058 C 10,13 14.365759,15.961974 14.365759,15.961974 c 0,0 -5.3657589,-6.961974 -9.9916044,-1.273756 z"
+       d="M 5.5087882,14.688218 3.914969,12.740942 2.769,18.792154 9.1239192,19.365635 7.4965714,17.295055 C 11.134634,13 15.500393,15.961974 15.500393,15.961974 c 0,0 -5.365759,-6.961974 -9.9916048,-1.273756 z"
        id="path815"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccccc" />

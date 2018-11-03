@@ -491,9 +491,6 @@ PREFERENCES_APPLNEXTSTARTUP;Efectiu en reiniciar
 PREFERENCES_AUTOMONPROFILE;Usa els perfils dels monitors dels sist. operatius automàticament
 PREFERENCES_BATCH_PROCESSING;Process. per lots
 PREFERENCES_BEHAVIOR;Comportament
-PREFERENCES_CACHECLEARALL;Esborrar tot
-PREFERENCES_CACHECLEARPROFILES;Esborrar perfils
-PREFERENCES_CACHECLEARTHUMBS;Esborra minifotos
 PREFERENCES_CACHEMAXENTRIES;Màxim nombre d'entrades a la mem. cau
 PREFERENCES_CACHEOPTS;Opcions memòria cau
 PREFERENCES_CACHETHUMBHEIGHT;Màxima alçada de minifoto
@@ -1313,7 +1310,6 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !HISTORY_MSG_486;Lens Correction - Camera
 !HISTORY_MSG_487;Lens Correction - Lens
 !HISTORY_MSG_488;Dynamic Range Compression
-!HISTORY_MSG_489;DRC - Threshold
 !HISTORY_MSG_490;DRC - Amount
 !HISTORY_MSG_491;White Balance
 !HISTORY_MSG_492;RGB Curves
@@ -2090,7 +2086,6 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_TM_FATTAL_AMOUNT;Amount
 !TP_TM_FATTAL_ANCHOR;Anchor
 !TP_TM_FATTAL_LABEL;Dynamic Range Compression
-!TP_TM_FATTAL_THRESHOLD;Threshold
 !TP_WAVELET_1;Level 1
 !TP_WAVELET_2;Level 2
 !TP_WAVELET_3;Level 3

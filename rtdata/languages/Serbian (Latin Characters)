@@ -597,9 +597,6 @@ PREFERENCES_BEHAVIOR;Ponašanje
 PREFERENCES_BEHSETALL;Sve u „Postavi“
 PREFERENCES_BEHSETALLHINT;Postavlja sve parametre u režim <b>Postavi</b>.\nNjihovo podešavanje pomoću alata iz panela za zakazano će biti <b>apsolutne</b> vrednosti kao što su i izabrane.
 PREFERENCES_BLACKBODY;Obična sijalica
-PREFERENCES_CACHECLEARALL;Obriši sve
-PREFERENCES_CACHECLEARPROFILES;Obriši profile
-PREFERENCES_CACHECLEARTHUMBS;Obriši prikaze
 PREFERENCES_CACHEMAXENTRIES;Najveći broj mest u ostavi
 PREFERENCES_CACHEOPTS;Podešavanje ostave
 PREFERENCES_CACHETHUMBHEIGHT;Najveća visina prikaza
@@ -1548,7 +1545,6 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !HISTORY_MSG_486;Lens Correction - Camera
 !HISTORY_MSG_487;Lens Correction - Lens
 !HISTORY_MSG_488;Dynamic Range Compression
-!HISTORY_MSG_489;DRC - Threshold
 !HISTORY_MSG_490;DRC - Amount
 !HISTORY_MSG_491;White Balance
 !HISTORY_MSG_492;RGB Curves
@@ -2103,7 +2099,6 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !TP_TM_FATTAL_AMOUNT;Amount
 !TP_TM_FATTAL_ANCHOR;Anchor
 !TP_TM_FATTAL_LABEL;Dynamic Range Compression
-!TP_TM_FATTAL_THRESHOLD;Threshold
 !TP_WAVELET_1;Level 1
 !TP_WAVELET_2;Level 2
 !TP_WAVELET_3;Level 3

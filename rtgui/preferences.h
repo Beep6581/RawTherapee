@@ -146,12 +146,9 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::ColorButton* butCropCol;
     Gtk::ColorButton* butNavGuideCol;
 
-    Gtk::SpinButton*   maxThumbSize;
-    Gtk::SpinButton*   maxCacheEntries;
     Gtk::SpinButton*   maxRecentFolders;
-    Gtk::Button*       clearThumbnails;
-    Gtk::Button*       clearProfiles;
-    Gtk::Button*       clearAll;
+    Gtk::SpinButton*   maxThumbHeightSB;
+    Gtk::SpinButton*   maxCacheEntriesSB;
     Gtk::Entry*     extension;
     Gtk::TreeView*  extensions;
     Gtk::Button*    addExt;

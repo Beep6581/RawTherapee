@@ -93,7 +93,7 @@ protected:
     Glib::ustring autoCompleteFileName (const Glib::ustring& fileName, const Glib::ustring& format);
     Glib::ustring getTempFilenameForParams( const Glib::ustring &filename );
     bool saveBatchQueue ();
-    void notifyListener (bool queueRunning);
+    void notifyListener ();
 
     BatchQueueEntry* processing;  // holds the currently processed image
     FileCatalog* fileCatalog;

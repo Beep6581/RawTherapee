@@ -717,7 +717,6 @@ HISTORY_MSG_485;Correção de Lente
 HISTORY_MSG_486;Correção de Lente - Câmera
 HISTORY_MSG_487;Correção de Lente - Lente
 HISTORY_MSG_488;Compressão de Amplitude Dinâmica(DRC)
-HISTORY_MSG_489;DRC - Limite
 HISTORY_MSG_490;DRC - Montante
 HISTORY_MSG_491;Balanço de Branco
 HISTORY_MSG_492;Curvas RGB
@@ -1020,9 +1019,6 @@ PREFERENCES_BEHAVIOR;Comportamento
 PREFERENCES_BEHSETALL;Tudo para 'Configurar'
 PREFERENCES_BEHSETALLHINT;Definir todos os parâmetros para o <b>Configurar</b> modo.\nAjustes de parâmetros no painel de ferramentas de lote serão <b>absoluto</b>, os valores reais serão exibidos.
 PREFERENCES_BLACKBODY;Tungstênio
-PREFERENCES_CACHECLEARALL;Limpar Tudo
-PREFERENCES_CACHECLEARPROFILES;Limpar Perfis de Processamento
-PREFERENCES_CACHECLEARTHUMBS;Limpar Miniaturas
 PREFERENCES_CACHEMAXENTRIES;Número máximo de entradas de cache
 PREFERENCES_CACHEOPTS;Opções de Cache
 PREFERENCES_CACHETHUMBHEIGHT;Altura máxima da miniatura
@@ -2003,7 +1999,6 @@ TP_SOFTLIGHT_STRENGTH;Intensidade
 TP_TM_FATTAL_AMOUNT;Montante
 TP_TM_FATTAL_ANCHOR;Âncora
 TP_TM_FATTAL_LABEL;Compressão de Amplitude Dinâmica(DRC)
-TP_TM_FATTAL_THRESHOLD;Limite
 TP_VIBRANCE_AVOIDCOLORSHIFT;Evite mudança de cor
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;MM
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Tons cor de pele
