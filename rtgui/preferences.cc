@@ -1334,40 +1334,66 @@ Gtk::Widget* Preferences::getFileBrowserPanel ()
 
     fre->add (*vbre);
 
-    Gtk::Frame* frc = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_CACHEOPTS")) );
-    Gtk::VBox* vbc = Gtk::manage ( new Gtk::VBox () );
+    // Cache
+
+    Gtk::Frame* frc = Gtk::manage (new Gtk::Frame(M("PREFERENCES_CACHEOPTS")));
+    Gtk::VBox* vbc = Gtk::manage (new Gtk::VBox());
     frc->add (*vbc);
 
-    Gtk::HBox* hb3 = Gtk::manage ( new Gtk::HBox () );
-    Gtk::Label* chlab = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_CACHETHUMBHEIGHT") + ":") );
-    maxThumbSize = Gtk::manage ( new Gtk::SpinButton () );
-    hb3->pack_start (*chlab, Gtk::PACK_SHRINK, 4);
-    hb3->pack_start (*maxThumbSize, Gtk::PACK_SHRINK, 4);
+    Gtk::Grid* cacheGrid = Gtk::manage(new Gtk::Grid());
+    cacheGrid->get_style_context()->add_class("grid-spacing");
+    setExpandAlignProperties(cacheGrid, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
-    maxThumbSize->set_digits (0);
-    maxThumbSize->set_increments (1, 10);
-    maxThumbSize->set_range (40, 800);
-    vbc->pack_start (*hb3, Gtk::PACK_SHRINK, 4);
+    Gtk::Label* maxThumbHeightLbl = Gtk::manage (new Gtk::Label(M("PREFERENCES_CACHETHUMBHEIGHT") + ":"));
+    setExpandAlignProperties(maxThumbHeightLbl, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    maxThumbHeightSB = Gtk::manage (new Gtk::SpinButton());
+    maxThumbHeightSB->set_digits (0);
+    maxThumbHeightSB->set_increments (1, 10);
+    maxThumbHeightSB->set_range (40, 800);
 
-    Gtk::HBox* hb4 = Gtk::manage ( new Gtk::HBox () );
-    Gtk::Label* celab = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_CACHEMAXENTRIES") + ":") );
-    maxCacheEntries = Gtk::manage ( new Gtk::SpinButton () );
-    hb4->pack_start (*celab, Gtk::PACK_SHRINK, 4);
-    hb4->pack_start (*maxCacheEntries, Gtk::PACK_SHRINK, 4);
+    Gtk::Label* maxCacheEntriesLbl = Gtk::manage (new Gtk::Label(M("PREFERENCES_CACHEMAXENTRIES") + ":"));
+    setExpandAlignProperties(maxCacheEntriesLbl, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    maxCacheEntriesSB = Gtk::manage (new Gtk::SpinButton());
+    maxCacheEntriesSB->set_digits (0);
+    maxCacheEntriesSB->set_increments (1, 10);
+    maxCacheEntriesSB->set_range (10, 100000);
 
-    maxCacheEntries->set_digits (0);
-    maxCacheEntries->set_increments (1, 10);
-    maxCacheEntries->set_range (10, 100000);
-    vbc->pack_start (*hb4, Gtk::PACK_SHRINK, 4);
+    // Separation is needed so that a button is not accidentally clicked when one wanted
+    // to click a spinbox. Ideally, the separation wouldn't require attaching a widget, but how?
+    Gtk::Label *separator = Gtk::manage (new Gtk::Label());
 
-    Gtk::HBox* hb5 = Gtk::manage ( new Gtk::HBox () );
-    clearThumbnails = Gtk::manage ( new Gtk::Button (M ("PREFERENCES_CACHECLEARTHUMBS")) );
-    clearProfiles = Gtk::manage ( new Gtk::Button (M ("PREFERENCES_CACHECLEARPROFILES")) );
-    clearAll = Gtk::manage ( new Gtk::Button (M ("PREFERENCES_CACHECLEARALL")) );
-    hb5->pack_start (*clearThumbnails, Gtk::PACK_SHRINK, 4);
-    hb5->pack_start (*clearProfiles, Gtk::PACK_SHRINK, 4);
-    hb5->pack_start (*clearAll, Gtk::PACK_SHRINK, 4);
-    vbc->pack_start (*hb5, Gtk::PACK_SHRINK, 4);
+    Gtk::Label* clearThumbsLbl = Gtk::manage (new Gtk::Label(M("PREFERENCES_CACHECLEAR_ALLBUTPROFILES")));
+    setExpandAlignProperties(clearThumbsLbl, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    Gtk::Button* clearThumbsBtn = Gtk::manage (new Gtk::Button(M("PREFERENCES_CACHECLEAR")));
+
+    Gtk::Label* clearProfilesLbl = Gtk::manage (new Gtk::Label(M("PREFERENCES_CACHECLEAR_ONLYPROFILES")));
+    setExpandAlignProperties(clearProfilesLbl, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    Gtk::Button* clearProfilesBtn = Gtk::manage (new Gtk::Button(M("PREFERENCES_CACHECLEAR")));
+
+    Gtk::Label* clearAllLbl = Gtk::manage (new Gtk::Label(M("PREFERENCES_CACHECLEAR_ALL")));
+    setExpandAlignProperties(clearAllLbl, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    Gtk::Button* clearAllBtn = Gtk::manage (new Gtk::Button(M("PREFERENCES_CACHECLEAR")));
+
+    cacheGrid->attach (*maxThumbHeightLbl, 0, 0, 1, 1);
+    cacheGrid->attach (*maxThumbHeightSB, 1, 0, 1, 1);
+    cacheGrid->attach (*maxCacheEntriesLbl, 0, 1, 1, 1);
+    cacheGrid->attach (*maxCacheEntriesSB, 1, 1, 1, 1);
+    cacheGrid->attach (*separator, 0, 2, 2, 1);
+    cacheGrid->attach (*clearThumbsLbl, 0, 3, 1, 1);
+    cacheGrid->attach (*clearThumbsBtn, 1, 3, 1, 1);
+    if (moptions.saveParamsCache) {
+        cacheGrid->attach (*clearProfilesLbl, 0, 4, 1, 1);
+        cacheGrid->attach (*clearProfilesBtn, 1, 4, 1, 1);
+        cacheGrid->attach (*clearAllLbl, 0, 5, 1, 1);
+        cacheGrid->attach (*clearAllBtn, 1, 5, 1, 1);
+    }
+
+    vbc->pack_start (*cacheGrid, Gtk::PACK_SHRINK, 4);
+
+    Gtk::Label* clearSafetyLbl = Gtk::manage (new Gtk::Label(M("PREFERENCES_CACHECLEAR_SAFETY")));
+    setExpandAlignProperties(clearSafetyLbl, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    clearSafetyLbl->set_line_wrap(true);
+    vbc->pack_start(*clearSafetyLbl, Gtk::PACK_SHRINK, 4);
 
     Gtk::HBox* hb6 = Gtk::manage ( new Gtk::HBox () );
     Gtk::VBox* vb6 = Gtk::manage ( new Gtk::VBox () );
@@ -1386,9 +1412,11 @@ Gtk::Widget* Preferences::getFileBrowserPanel ()
     moveExtUp->signal_clicked().connect ( sigc::mem_fun (*this, &Preferences::moveExtUpPressed) );
     moveExtDown->signal_clicked().connect ( sigc::mem_fun (*this, &Preferences::moveExtDownPressed) );
     extension->signal_activate().connect ( sigc::mem_fun (*this, &Preferences::addExtPressed) );
-    clearThumbnails->signal_clicked().connect ( sigc::mem_fun (*this, &Preferences::clearThumbImagesPressed) );
-    clearProfiles->signal_clicked().connect ( sigc::mem_fun (*this, &Preferences::clearProfilesPressed) );
-    clearAll->signal_clicked().connect ( sigc::mem_fun (*this, &Preferences::clearAllPressed) );
+    clearThumbsBtn->signal_clicked().connect ( sigc::mem_fun (*this, &Preferences::clearThumbImagesPressed) );
+    if (moptions.saveParamsCache) {
+        clearProfilesBtn->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::clearProfilesPressed));
+        clearAllBtn->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::clearAllPressed));
+    }
 
     swFileBrowser->add(*vbFileBrowser);
     return swFileBrowser;
@@ -1701,8 +1729,8 @@ void Preferences::storePreferences ()
     }
 
     moptions.maxRecentFolders = (int)maxRecentFolders->get_value();
-    moptions.maxThumbnailHeight = (int)maxThumbSize->get_value ();
-    moptions.maxCacheEntries = (int)maxCacheEntries->get_value ();
+    moptions.maxThumbnailHeight = (int)maxThumbHeightSB->get_value ();
+    moptions.maxCacheEntries = (int)maxCacheEntriesSB->get_value ();
     moptions.overlayedFileNames = overlayedFileNames->get_active ();
     moptions.filmStripOverlayedFileNames = filmStripOverlayedFileNames->get_active();
     moptions.sameThumbSize = sameThumbSize->get_active();
@@ -1917,9 +1945,9 @@ void Preferences::fillPreferences ()
         row[extensionColumns.ext]     = moptions.parseExtensions[i];
     }
 
-    maxThumbSize->set_value (moptions.maxThumbnailHeight);
     maxRecentFolders->set_value (moptions.maxRecentFolders);
-    maxCacheEntries->set_value (moptions.maxCacheEntries);
+    maxThumbHeightSB->set_value (moptions.maxThumbnailHeight);
+    maxCacheEntriesSB->set_value (moptions.maxCacheEntries);
     overlayedFileNames->set_active (moptions.overlayedFileNames);
     filmStripOverlayedFileNames->set_active (moptions.filmStripOverlayedFileNames);
     sameThumbSize->set_active (moptions.sameThumbSize);

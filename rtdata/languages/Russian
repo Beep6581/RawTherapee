@@ -672,9 +672,6 @@ PREFERENCES_BEHAVIOR;Поведение
 PREFERENCES_BEHSETALL;Всё в "Установить"
 PREFERENCES_BEHSETALLHINT;Выставить все параметры в режим <b>Установить</b>.\nНастройки параметров в панели пакетной обработки будут <b>абсолютными</b>, будут показаны используемые значения
 PREFERENCES_BLACKBODY;Лампа накаливания
-PREFERENCES_CACHECLEARALL;Удалить все
-PREFERENCES_CACHECLEARPROFILES;Удалить параметры обработки
-PREFERENCES_CACHECLEARTHUMBS;Удалить эскизы
 PREFERENCES_CACHEMAXENTRIES;Максимальное число элементов в кэше
 PREFERENCES_CACHEOPTS;Параметры кэширования
 PREFERENCES_CACHETHUMBHEIGHT;Максимальная высота эскиза

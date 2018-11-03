@@ -597,9 +597,6 @@ PREFERENCES_BEHAVIOR;Понашање
 PREFERENCES_BEHSETALL;Све у „Постави“
 PREFERENCES_BEHSETALLHINT;Поставља све параметре у режим <b>Постави</b>.\nЊихово подешавање помоћу алата из панела за заказано ће бити <b>апсолутне</b> вредности као што су и изабране.
 PREFERENCES_BLACKBODY;Обична сијалица
-PREFERENCES_CACHECLEARALL;Обриши све
-PREFERENCES_CACHECLEARPROFILES;Обриши профиле
-PREFERENCES_CACHECLEARTHUMBS;Обриши приказе
 PREFERENCES_CACHEMAXENTRIES;Највећи број мест у остави
 PREFERENCES_CACHEOPTS;Подешавање оставе
 PREFERENCES_CACHETHUMBHEIGHT;Највећа висина приказа

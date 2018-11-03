@@ -676,9 +676,6 @@ PREFERENCES_BEHAVIOR;Zachowanie
 PREFERENCES_BEHSETALL;'Ustaw' wszystkie
 PREFERENCES_BEHSETALLHINT;Ustaw wszystkie narzędzia w tryb <b>Ustaw</b>.\nZmiany parametrów w panelu edycji zbiorczej zostaną traktowane jako <b>absolutne</b>, nie biorąc pod uwagę poprzednich wartości.
 PREFERENCES_BLACKBODY;Wolfram
-PREFERENCES_CACHECLEARALL;Wyczyść wszystko
-PREFERENCES_CACHECLEARPROFILES;Wyczyść profile
-PREFERENCES_CACHECLEARTHUMBS;Wyczyść miniaturki
 PREFERENCES_CACHEMAXENTRIES;Maksymalna liczba wpisów w pamięci podręcznej
 PREFERENCES_CACHEOPTS;Opcje pamięci podręcznej
 PREFERENCES_CACHETHUMBHEIGHT;Maksymalna wysokość miniatury

@@ -627,9 +627,6 @@ PREFERENCES_BEHAVIOR;Comportamento
 PREFERENCES_BEHSETALL;Tutti a 'Imposta'
 PREFERENCES_BEHSETALLHINT;Imposta tutti i parametri nella modalità <b>Imposta</b>.\nLe regolazioni dei parametri nel pannello strumenti batch saranno <b>assoluti</b>, verranno mostrati i valori reali.
 PREFERENCES_BLACKBODY;Tungsteno
-PREFERENCES_CACHECLEARALL;Rimuovi tutto
-PREFERENCES_CACHECLEARPROFILES;Rimuovi i profili di sviluppo
-PREFERENCES_CACHECLEARTHUMBS;Rimuovi le miniature
 PREFERENCES_CACHEMAXENTRIES;Numero massimo di voci in memoria
 PREFERENCES_CACHEOPTS;Opzioni della memoria
 PREFERENCES_CACHETHUMBHEIGHT;Massima altezza delle miniature

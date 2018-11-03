@@ -817,9 +817,6 @@ PREFERENCES_BEHAVIOR;Uppträdande
 PREFERENCES_BEHSETALL;Sätt allt till 'Ange'
 PREFERENCES_BEHSETALLHINT;Sätt alla parametrar till <b>Ange</b>-läge.\nFörändringar i parametrar i batch-verktyget kommer att vara <b>absoluta</b> och de faktiska värdena kommer att visas.
 PREFERENCES_BLACKBODY;Glödlampa
-PREFERENCES_CACHECLEARALL;Återställ alla
-PREFERENCES_CACHECLEARPROFILES;Återställ profiler
-PREFERENCES_CACHECLEARTHUMBS;Ta bort cachade miniatyrbilder
 PREFERENCES_CACHEMAXENTRIES;Maximalt antal cachefiler
 PREFERENCES_CACHEOPTS;Cacheinställningar
 PREFERENCES_CACHETHUMBHEIGHT;Maximal höjd på miniatyrbilderna
