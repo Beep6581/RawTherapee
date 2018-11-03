@@ -2224,7 +2224,7 @@ bool Thumbnail::readAEHistogram  (const Glib::ustring& fname)
     FILE* f = g_fopen (fname.c_str (), "rb");
 
     if (!f) {
-        aeHistogram (0);
+        aeHistogram.reset();
     } else {
         aeHistogram (65536 >> aeHistCompression);
         fread (&aeHistogram[0], 1, (65536 >> aeHistCompression)*sizeof (aeHistogram[0]), f);
