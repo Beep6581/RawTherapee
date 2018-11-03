@@ -1906,7 +1906,6 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !HISTORY_MSG_486;Lens Correction - Camera
 !HISTORY_MSG_487;Lens Correction - Lens
 !HISTORY_MSG_488;Dynamic Range Compression
-!HISTORY_MSG_489;DRC - Threshold
 !HISTORY_MSG_490;DRC - Amount
 !HISTORY_MSG_491;White Balance
 !HISTORY_MSG_492;RGB Curves
@@ -2230,7 +2229,6 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_TM_FATTAL_AMOUNT;Amount
 !TP_TM_FATTAL_ANCHOR;Anchor
 !TP_TM_FATTAL_LABEL;Dynamic Range Compression
-!TP_TM_FATTAL_THRESHOLD;Threshold
 !TP_WAVELET_CBENAB;Toning and Color Balance
 !TP_WAVELET_CB_TOOLTIP;For strong values product color-toning by combining it or not with levels decomposition 'toning'\nFor low values you can change the white balance of the background (sky, ...) without changing that of the front plane, generally more contrasted
 !TP_WAVELET_CHRO_TOOLTIP;Sets the wavelet level which will be the threshold between saturated and pastel colors.\n1-x: saturated\nx-9: pastel\n\nIf the value exceeds the amount of wavelet levels you are using then it will be ignored.
