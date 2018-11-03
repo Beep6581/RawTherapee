@@ -1143,7 +1143,7 @@ template<class T> void gaussianBlurImpl(T** src, T** dst, const int W, const int
 {
     static constexpr auto GAUSS_SKIP = 0.25;
     static constexpr auto GAUSS_3X3_LIMIT = 0.6;
-    static constexpr auto GAUSS_DOUBLE = 70.0;
+    static constexpr auto GAUSS_DOUBLE = 25.0;
 
     if(buffer) {
         // special variant for very large sigma, currently only used by retinex algorithm
