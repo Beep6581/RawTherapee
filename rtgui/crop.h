@@ -103,6 +103,7 @@ private:
     MyComboBoxText* ratio;
     MyComboBoxText* orientation;
     MyComboBoxText* guide;
+    Gtk::Box* buttonsBox;
     Gtk::Button* selectCrop;
     Gtk::Button* resetCrop;
     CropPanelListener* clistener;
