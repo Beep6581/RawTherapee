@@ -127,7 +127,7 @@ Crop::Crop():
 
     pack_start (*hb2, Gtk::PACK_SHRINK, 4);
     
-    Gtk::HBox* hb5 = Gtk::manage (new Gtk::HBox());
+    buttonsBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_HORIZONTAL));
 
     selectCrop = Gtk::manage (new Gtk::Button (M("TP_CROP_SELECTCROP")));
     selectCrop->get_style_context()->add_class("independent");
@@ -137,9 +137,9 @@ Crop::Crop():
     resetCrop->get_style_context()->add_class("independent");
     resetCrop->set_image (*Gtk::manage (new RTImage ("undo-small.png")));
 
-    hb5->pack_start (*selectCrop, Gtk::PACK_EXPAND_WIDGET, 2);
-    hb5->pack_start (*resetCrop, Gtk::PACK_EXPAND_WIDGET, 2);
-    pack_start(*hb5, Gtk::PACK_SHRINK, 4);
+    buttonsBox->pack_start (*selectCrop, Gtk::PACK_EXPAND_WIDGET, 2);
+    buttonsBox->pack_start (*resetCrop, Gtk::PACK_EXPAND_WIDGET, 2);
+    pack_start(*buttonsBox, Gtk::PACK_SHRINK, 4);
 
     Gtk::HBox* hb3 = Gtk::manage (new Gtk::HBox ());
 
@@ -1323,4 +1323,5 @@ void Crop::setBatchMode (bool batchMode)
     orientation->append (M("GENERAL_UNCHANGED"));
     guide->append (M("GENERAL_UNCHANGED"));
     removeIfThere (this, ppibox);
+    removeIfThere (this, buttonsBox);
 }
