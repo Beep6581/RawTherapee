@@ -2283,4 +2283,48 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!DYNPROFILEEDITOR_IMGTYPE_ANY;Any
+!DYNPROFILEEDITOR_IMGTYPE_HDR;HDR
+!DYNPROFILEEDITOR_IMGTYPE_PS;Pixel Shift
+!DYNPROFILEEDITOR_IMGTYPE_STD;Standard
+!FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
+!FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
+!HISTORY_MSG_489;DRC - Detail
+!HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
+!HISTORY_MSG_COLORTONING_LABREGION_CHROMATICITYMASK;CT - C mask
+!HISTORY_MSG_COLORTONING_LABREGION_HUEMASK;CT - H mask
+!HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESS;CT - Lightness
+!HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESSMASK;CT - L mask
+!HISTORY_MSG_COLORTONING_LABREGION_LIST;CT - List
+!HISTORY_MSG_COLORTONING_LABREGION_SATURATION;CT - Saturation
+!HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;CT - Show mask
+!HISTORY_MSG_DEHAZE_DEPTH;Dehaze - Depth
+!HISTORY_MSG_DEHAZE_ENABLED;Haze Removal
+!HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;Dehaze - Show depth map
+!HISTORY_MSG_DEHAZE_STRENGTH;Dehaze - Strength
+!HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
+!HISTORY_MSG_SH_COLORSPACE;S/H - Colorspace
+!PARTIALPASTE_DEHAZE;Haze removal
 !PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA avoid color shift
+!PREFERENCES_CACHECLEAR;Clear
+!PREFERENCES_CACHECLEAR_ALL;Clear all cached files:
+!PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
+!PREFERENCES_CACHECLEAR_ONLYPROFILES;Clear only cached processing profiles:
+!PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing profiles stored alongside the source images are not touched.
+!TP_COLORTONING_LABREGIONS;L*a*b* correction regions
+!TP_COLORTONING_LABREGION_ABVALUES;a=%1 b=%2
+!TP_COLORTONING_LABREGION_CHROMATICITYMASK;C
+!TP_COLORTONING_LABREGION_HUEMASK;H
+!TP_COLORTONING_LABREGION_LIGHTNESS;Lightness
+!TP_COLORTONING_LABREGION_LIGHTNESSMASK;L
+!TP_COLORTONING_LABREGION_LIST_TITLE;Correction
+!TP_COLORTONING_LABREGION_MASK;Mask
+!TP_COLORTONING_LABREGION_SATURATION;Saturation
+!TP_COLORTONING_LABREGION_SHOWMASK;Show mask
+!TP_DEHAZE_DEPTH;Depth
+!TP_DEHAZE_LABEL;Haze Removal
+!TP_DEHAZE_SHOW_DEPTH_MAP;Show Depth Map
+!TP_DEHAZE_STRENGTH;Strength
+!TP_RAW_DUALDEMOSAICAUTOCONTRAST;Auto threshold
+!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the check-box is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the check-box first (reasonable values depend on the image).
+!TP_TM_FATTAL_THRESHOLD;Detail
