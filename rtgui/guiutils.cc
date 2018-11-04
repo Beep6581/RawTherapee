@@ -561,7 +561,7 @@ void MyExpander::init()
 }
 
 MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
-    enabled(false), inconsistent(false), flushEvent(false), expBox(nullptr),
+    enabled(false), batchMode(false), inconsistent(false), flushEvent(false), expBox(nullptr),
     child(nullptr), headerWidget(nullptr), statusImage(nullptr),
     label(nullptr), useEnabled(useEnabled)
 {
@@ -850,11 +850,19 @@ bool MyExpander::get_expanded()
     return expBox ? expBox->get_visible() : false;
 }
 
-void MyExpander::add  (Gtk::Container& widget, bool setChild)
+void MyExpander::updateSensitivity()
+{
+    if (expBox && useEnabled) {
+        expBox->set_sensitive(enabled);
+    }
+}
+
+void MyExpander::add  (Gtk::Container& widget, bool isBatch, bool setChild)
 {
     if(setChild) {
         child = &widget;
     }
+    batchMode = isBatch;
     expBox = Gtk::manage (new ExpanderBox (child));
     expBox->add (widget);
     pack_start(*expBox, Gtk::PACK_SHRINK, 0);
@@ -909,6 +917,7 @@ bool MyExpander::on_enabled_change(GdkEventButton* event)
             enabled = true;
             statusImage->set(enabledPBuf);
         }
+        updateSensitivity();
 
         message.emit();
         flushEvent = true;

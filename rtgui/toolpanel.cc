@@ -41,6 +41,88 @@ ToolParamBlock::ToolParamBlock() {
 //GTK318
 }
 
+ToolPanel::ToolPanel (Glib::ustring toolName, bool need11) :
+    toolName(toolName),
+    listener(nullptr),
+    tmp(nullptr),
+    batchMode(false),
+    multiImage(false),
+    need100Percent(need11)
+{}
+
+ToolPanel::~ToolPanel() {}
+
+void ToolPanel::setParent(Gtk::Box* parent) {}
+
+Gtk::Box* ToolPanel::getParent()
+{
+    return nullptr;
+}
+
+MyExpander* ToolPanel::getExpander()
+{
+    return nullptr;
+}
+
+void ToolPanel::setExpanded(bool expanded) {}
+
+bool ToolPanel::getExpanded()
+{
+    return false;
+}
+
+void ToolPanel::setMultiImage(bool m)
+{
+    multiImage = m;
+}
+
+void ToolPanel::setListener(ToolPanelListener* tpl)
+{
+    listener = tpl;
+}
+
+void ToolPanel::setEditProvider(EditDataProvider *provider) {}
+
+void ToolPanel::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited) {}
+
+void ToolPanel::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited) {}
+
+void ToolPanel::trimValues(rtengine::procparams::ProcParams* pp)
+{
+    return;
+}
+
+void ToolPanel::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited) {}
+
+void ToolPanel::autoOpenCurve() {}
+
+bool ToolPanel::disableListener()
+{
+    if (tmp == nullptr) {
+        tmp = listener;
+    }
+
+    bool prevState = listener != nullptr;
+    listener = nullptr;
+    return prevState;
+}
+
+void ToolPanel::enableListener()
+{
+    if (tmp != nullptr) {
+        listener = tmp;
+    }
+
+    tmp = nullptr;
+}
+
+void ToolPanel::setBatchMode(bool batchMode)
+{
+    this->batchMode = batchMode;
+}
+
+void ToolPanel::updateSensitivity() {}
+
 FoldableToolPanel::FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, Glib::ustring UILabel, bool need11, bool useEnabled) : ToolPanel(toolName, need11), parentContainer(nullptr), exp(nullptr), lastEnabled(true)
 {
     if (!content) {
@@ -68,8 +150,74 @@ FoldableToolPanel::FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, 
     exp->signal_button_release_event().connect_notify( sigc::mem_fun(this, &FoldableToolPanel::foldThemAll) );
     enaConn = signal_enabled_toggled().connect( sigc::mem_fun(*this, &FoldableToolPanel::enabled_toggled) );
 
-    exp->add (*content);
+    exp->add (*content, batchMode);
     exp->show ();
+}
+
+MyExpander* FoldableToolPanel::getExpander()
+{
+    return exp;
+}
+
+void FoldableToolPanel::setExpanded (bool expanded)
+{
+    if (exp) {
+        exp->set_expanded( expanded );
+    }
+}
+
+void FoldableToolPanel::hide() {
+    if (exp && !batchMode) {  // conditional hide
+        exp->hide();
+    }
+}
+
+void FoldableToolPanel::show() {
+    if (exp) {                // always show
+        exp->show();
+    }
+}
+
+bool FoldableToolPanel::getExpanded ()
+{
+    if (exp) {
+        return exp->get_expanded();
+    }
+
+    return false;
+}
+
+void FoldableToolPanel::setParent (Gtk::Box* parent)
+{
+    parentContainer = parent;
+}
+
+Gtk::Box* FoldableToolPanel::getParent ()
+{
+    return parentContainer;
+}
+
+void FoldableToolPanel::enabledChanged  () {}
+
+bool FoldableToolPanel::getUseEnabled ()
+{
+    if (exp) {
+        return exp->getUseEnabled();
+    } else {
+        return true;
+    }
+}
+
+void FoldableToolPanel::updateSensitivity()
+{
+    if (!batchMode) {
+        exp->updateSensitivity();
+    }
+}
+
+MyExpander::type_signal_enabled_toggled FoldableToolPanel::signal_enabled_toggled()
+{
+    return exp->signal_enabled_toggled();
 }
 
 void FoldableToolPanel::foldThemAll (GdkEventButton* event)
@@ -96,6 +244,10 @@ void FoldableToolPanel::enabled_toggled()
         }
 
         lastEnabled = exp->getEnabled();
+    }
+
+    if (!batchMode) {
+        exp->updateSensitivity();
     }
 
     enabledChanged();
@@ -146,9 +298,9 @@ void FoldableToolPanel::setEnabledTooltipText(Glib::ustring tooltipText)
     }
 }
 
-void FoldableToolPanel::setGrayedOut(bool doGrayOut)
+void FoldableToolPanel::disableTool(bool isDisabled)
 {
-    if (doGrayOut) {
+    if (isDisabled) {
         exp->setEnabled(false);
         exp->set_expanded(false);
         exp->set_sensitive(false);

@@ -715,4 +715,3 @@ void BatchToolPanelCoordinator::spotWBselected (int x, int y, Thumbnail* thm)
             }
     }
 }
-

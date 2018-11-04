@@ -187,6 +187,7 @@ private:
     static Glib::RefPtr<Gdk::Pixbuf> openedPBuf;       ///       "opened" image, displayed when useEnabled is false
     static Glib::RefPtr<Gdk::Pixbuf> closedPBuf;       ///       "closed" image, displayed when useEnabled is false
     bool enabled;               /// Enabled feature (default to true)
+    bool batchMode;             /// Enabled when the expander is added to a batch editor
     bool inconsistent;          /// True if the enabled button is inconsistent
     Gtk::EventBox *titleEvBox;  /// EventBox of the title, to get a connector from it
     Gtk::HBox *headerHBox;
@@ -206,7 +207,7 @@ private:
     void updateStyle();
 
 protected:
-    Gtk::Container* child;      /// Gtk::Contained to display below the expander's title
+    Gtk::Container* child;      /// Gtk::Container to display below the expander's title
     Gtk::Widget* headerWidget;  /// Widget to display in the header, next to the arrow image ; can be NULL if the "string" version of the ctor has been used
     Gtk::Image* statusImage;    /// Image to display the opened/closed status (if useEnabled is false) of the enabled/disabled status (if useEnabled is true)
     Gtk::Label* label;          /// Text to display in the header, next to the arrow image ; can be NULL if the "widget" version of the ctor has been used
@@ -271,9 +272,12 @@ public:
     /// Get the collapsed/expanded state of the expander
     bool get_expanded();
 
+    /// Set the sensitivity state of the expander content
+    void updateSensitivity();
+
     /// Add a Gtk::Container for the content of the expander
     /// Warning: do not manually Show/Hide the widget, because this parameter is handled by the click on the Expander's title
-    void add  (Gtk::Container& widget, bool setChild = true);
+    void add  (Gtk::Container& widget, bool isBatch, bool setChild = true);
 
     void updateVScrollbars(bool hide);
 };

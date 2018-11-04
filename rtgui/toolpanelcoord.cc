@@ -273,7 +273,7 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
                 self->sensorbayer->FoldableToolPanel::show();
                 self->preprocess->FoldableToolPanel::show();
                 self->flatfield->FoldableToolPanel::show();
-                self->retinex->FoldableToolPanel::setGrayedOut(false);
+                self->retinex->FoldableToolPanel::disableTool(false);
 
                 return FALSE;
             };
@@ -288,7 +288,7 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
                 self->sensorbayer->FoldableToolPanel::hide();
                 self->preprocess->FoldableToolPanel::show();
                 self->flatfield->FoldableToolPanel::show();
-                self->retinex->FoldableToolPanel::setGrayedOut(false);
+                self->retinex->FoldableToolPanel::disableTool(false);
 
                 return FALSE;
             };
@@ -303,7 +303,7 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
                 self->sensorxtrans->FoldableToolPanel::hide();
                 self->preprocess->FoldableToolPanel::hide();
                 self->flatfield->FoldableToolPanel::show();
-                self->retinex->FoldableToolPanel::setGrayedOut(false);
+                self->retinex->FoldableToolPanel::disableTool(false);
 
                 return FALSE;
             };
@@ -317,7 +317,7 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
                 self->sensorxtrans->FoldableToolPanel::hide();
                 self->preprocess->FoldableToolPanel::hide();
                 self->flatfield->FoldableToolPanel::hide();
-                self->retinex->FoldableToolPanel::setGrayedOut(false);
+                self->retinex->FoldableToolPanel::disableTool(false);
 
                 return FALSE;
             };
@@ -328,7 +328,7 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
             ToolPanelCoordinator* const self = static_cast<ToolPanelCoordinator*>(data);
 
             self->rawPanelSW->set_sensitive (false);
-            self->retinex->FoldableToolPanel::setGrayedOut(true);
+            self->retinex->FoldableToolPanel::disableTool(true);
 
             return FALSE;
         };
@@ -470,6 +470,7 @@ void ToolPanelCoordinator::profileChange(
 
         if (event == rtengine::EvPhotoLoaded || event == rtengine::EvProfileChanged) {
             toolPanel->autoOpenCurve();
+            toolPanel->updateSensitivity();
         }
     }
 

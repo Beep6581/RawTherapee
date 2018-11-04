@@ -65,72 +65,35 @@ protected:
 
 public:
 
-    ToolPanel (Glib::ustring toolName = "", bool need11 = false) : toolName(toolName), listener(nullptr), tmp(nullptr), batchMode(false), multiImage(false), need100Percent(need11) {}
-    virtual ~ToolPanel() {}
+    ToolPanel (Glib::ustring toolName = "", bool need11 = false);
+    virtual ~ToolPanel();
 
-    virtual void           setParent       (Gtk::Box* parent) {}
-    virtual Gtk::Box*      getParent       ()
-    {
-        return nullptr;
-    }
-    virtual MyExpander*    getExpander     ()
-    {
-        return nullptr;
-    }
-    virtual void           setExpanded     (bool expanded) {}
-    virtual bool           getExpanded     ()
-    {
-        return false;
-    }
-    void           setMultiImage   (bool m)
-    {
-        multiImage = m;
-    }
-    virtual void           setListener     (ToolPanelListener* tpl)
-    {
-        listener = tpl;
-    }
-    virtual void           setEditProvider (EditDataProvider *provider) {}
-    virtual void           read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) {}
-    virtual void           write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) {}
-    virtual void           trimValues      (rtengine::procparams::ProcParams* pp)
-    {
-        return;
-    }
-    virtual void           setDefaults     (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) {}
-    virtual void           autoOpenCurve   () {}
+    virtual void           setParent       (Gtk::Box* parent);
+    virtual Gtk::Box*      getParent       ();
+    virtual MyExpander*    getExpander     ();
+    virtual void           setExpanded     (bool expanded);
+    virtual bool           getExpanded     ();
+    void                   setMultiImage   (bool m);
+    virtual void           setListener     (ToolPanelListener* tpl);
+    virtual void           setEditProvider (EditDataProvider *provider);
+    virtual void           read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
+    virtual void           write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
+    virtual void           trimValues      (rtengine::procparams::ProcParams* pp);
+    virtual void           setDefaults     (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
+    virtual void           autoOpenCurve   ();
+    virtual void           updateSensitivity();
 
     /** @brief Disable the event broadcasting mechanism
      *
      * @return Return the previous state of the broadcast (true: enabled ; false: disabled)
      */
-    bool disableListener ()
-    {
-        if (tmp == nullptr) {
-            tmp = listener;
-        }
-
-        bool prevState = listener != nullptr;
-        listener = nullptr;
-        return prevState;
-    }
+    bool disableListener();
 
     /** @brief Enable the event broadcasting mechanism
      */
-    void enableListener  ()
-    {
-        if (tmp != nullptr) {
-            listener = tmp;
-        }
+    void enableListener();
 
-        tmp = nullptr;
-    }
-
-    virtual void setBatchMode    (bool batchMode)
-    {
-        this->batchMode = batchMode;
-    }
-
+    virtual void setBatchMode(bool batchMode);
 };
 
 class FoldableToolPanel : public ToolPanel
@@ -148,72 +111,31 @@ public:
 
     FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, Glib::ustring UILabel, bool need11 = false, bool useEnabled = false);
 
-    MyExpander* getExpander()
-    {
-        return exp;
-    }
-    void setExpanded (bool expanded)
-    {
-        if (exp) {
-            exp->set_expanded( expanded );
-        }
-    }
-
-    void hide() {
-        if (exp && !batchMode) {  // conditional hide
-            exp->hide();
-        }
-    }
-
-    void show() {
-        if (exp) {                // always show
-            exp->show();
-        }
-    }
-    bool getExpanded ()
-    {
-        if (exp) {
-            return exp->get_expanded();
-        }
-
-        return false;
-    }
-    void setParent (Gtk::Box* parent)
-    {
-        parentContainer = parent;
-    }
-    Gtk::Box* getParent ()
-    {
-        return parentContainer;
-    }
-
-    virtual void enabledChanged  () {}
-
-    bool getUseEnabled ()
-    {
-        if (exp) {
-            return exp->getUseEnabled();
-        } else {
-            return true;
-        }
-    }
+    MyExpander* getExpander();
+    void setExpanded (bool expanded);
+    void hide();
+    void show();
+    bool getExpanded ();
+    void setParent (Gtk::Box* parent);
+    Gtk::Box* getParent ();
+    virtual void enabledChanged  ();
+    bool getUseEnabled ();
     bool getEnabled();  // related to the enabled/disabled state
     void setEnabled(bool isActive);  // related to the enabled/disabled state
     void setEnabledTooltipMarkup(Glib::ustring tooltipMarkup);
     void setEnabledTooltipText(Glib::ustring tooltipText);
     bool get_inconsistent();  // related to the enabled/disabled state
     void set_inconsistent(bool isInconsistent);  // related to the enabled/disabled state
-    void setGrayedOut(bool doGrayOut); // Set whether the tool should be disabled, collapsed and grayed-out.
+    void disableTool(bool isDisabled); // Set whether the whole tool should be disabled, collapsed and grayed-out.
+    void disableToolContent(bool isDisabled); // Set whether the whole tool should be disabled, collapsed and grayed-out.
+    void updateSensitivity();
 
     void setLevel (int level);
 
     // Functions that want to receive an enabled/disabled event from this class
     // will have to receive it from MyExpander directly, we do not create
     // a relaying event
-    MyExpander::type_signal_enabled_toggled signal_enabled_toggled()
-    {
-        return exp->signal_enabled_toggled();
-    }
+    MyExpander::type_signal_enabled_toggled signal_enabled_toggled();
 };
 
 #endif
