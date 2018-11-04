@@ -1365,6 +1365,7 @@ button:checked,
     border-color: shade(@bg-dark-grey, 0.6);
 }
 
+/* Misc */
 button label {
     margin: 0 0.416666666666666666em;
 }
@@ -1456,7 +1457,7 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
 #IopsPanel button,
 #ProfilePanel button,
 #MainNotebook > header > grid > button,
-#MyExpander button.independent:not(.image-button):not(.text-button):first-child:only-child/* Graduated filter big button */,
+#MyExpander button.independent.toggle:not(.image-button):not(.text-button):first-child:only-child/* Graduated filter big button */,
 #MyExpander button.independent.image-button,/* Picker button */
 #MyExpander .drawingarea + grid > button.flat,/* Curve buttons */
 #BatchQueueButtonsMainContainer + grid + box button,
@@ -1482,7 +1483,7 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
 #BatchQueueButtonsMainContainer + grid + box button {
     margin-right: 0;
 }
-#MyExpander button.independent:not(.image-button):not(.text-button):first-child:only-child/* Graduated filter button */,
+#MyExpander button.independent.toggle:not(.image-button):not(.text-button):first-child:only-child/* Graduated filter button */,
 #MyExpander button.independent.image-button,/* Picker button */
 #MyExpander .drawingarea + grid > button.flat,/* Curve buttons */
 #MetaPanelNotebook scrolledwindow + grid > button,
@@ -1725,8 +1726,6 @@ popover button.text-button {
     border: 0.083333333333333333em solid @border-color;
     box-shadow: none;
     background-image: none;
-    margin: 0.083333333333333333em 0;
-    min-height: 1.666666666666666666em;
     padding: 0 0.666666666666666666em;
 }
 popover button.text-button label {
@@ -1751,16 +1750,15 @@ popover button.text-button:active {
 
 /*** end ***************************************************************************************/
 
-/*** Ckeckbox & Radio **************************************************************************/
-checkbox,
-checkbutton,
-radiobutton {
+/*** Checkbox & Radio **************************************************************************/
+checkbutton {
     padding: 0;
-    margin: 0;
-    min-height: 2em;
+    margin: 0.083333333333333333em 0.166666666666666666em;
+    min-height: 1.666666666666666666em;
 }
-#PrefNotebook checkbox,
-#PrefNotebook checkbutton {
+radiobutton {
+    padding: 0.083333333333333333em 0;
+    margin: 0.166666666666666666em;
     min-height: 1.666666666666666666em;
 }
 
@@ -1769,18 +1767,13 @@ radio {
     border: 0.105em solid shade(@text-color, 0.95);
     background-image: none;
     background-color: transparent;
-    margin: 0 0.166666666666666666em;
+    margin: 0;
     padding: 0;
     min-height: 1.166666666666666666em;
     min-width: 1.166666666666666666em;
     box-shadow: none;
     background-repeat: no-repeat;
     color: shade(@text-color, 0.95);
-}
-radiobutton label,
-checkbutton label {
-    margin: 0 0.333333333333333333em;
-    padding: 0;
 }
 check {
     border-radius: 0.166666666666666666em;
@@ -1792,6 +1785,12 @@ radio{
 check:disabled,
 radio:disabled {
     border-color: @fg-disabled;
+}
+
+radiobutton label,
+checkbutton label {
+    margin: 0 0 0 0.416666666666666666em;
+    padding: 0;
 }
 
 frame > checkbutton check{
@@ -1808,7 +1807,6 @@ frame > checkbutton check{
 }
 #PartialPasteHeader {
     margin-left: 0.5em;
-    padding-top: 0.333333333333333333em;
     padding-top: calc(0.666666666666666666em - 5px)
 }
 
@@ -1850,17 +1848,12 @@ spinbutton {
     color: @text-tbEntry;
     box-shadow: inset 0.083333333333333333em  0.083333333333333333em rgba(0, 0, 0, .12), 0 0.083333333333333333em rgba(255, 255, 255, 0.12);
 }
+/* Needed for Reset & and Auto button height*/
+#MyExpander checkbutton + label + spinbutton,
 #MyExpander button + label + spinbutton {
-    margin: 0.333333333333333333em 0; /* Needed for Reset & and Auto button height*/
+    margin-top: 0.333333333333333333em;
+    margin-bottom: 0.333333333333333333em;
 }
-#MyExpander checkbutton + label + spinbutton {
-    margin: 0.333333333333333333em 0; /* Needed for Reset & and Auto checkbox button height*/
-}
-
-#MyExpander image + spinbutton {
-    margin-left: 0.25em;
-}
-
 
 #MyExpander spinbutton button,
 spinbutton button {
