@@ -113,6 +113,10 @@ window > box {
 dialog {
     background-color: @bg-grey;
     border-radius: 0;
+    -GtkDialog-button-spacing: 0;
+    -GtkDialog-content-area-spacing: 0;
+    -GtkDialog-content-area-border: 0;
+    -GtkDialog-action-area-border: 0;
 }
 dialog > box {
     padding: 0.666666666666666666em;
@@ -336,9 +340,13 @@ fontchooser scrolledwindow,
 /*** end ***************************************************************************************/
 
 /*** Load - Save dialog ************************************************************************/
+filechooser {
+margin-bottom: 0.25em;
+}
 
-filechooser  box > box   box > button  {
+filechooser box > box box > button {
 margin-top: 0.5em;
+margin-right: 0;
 }
 
 filechooser image  {
@@ -537,11 +545,14 @@ menu separator {
     padding: 0;
 }
 
-.scrollableToolbar separator:not(.dummy) {
+.scrollableToolbar separator.vertical {
     background-color: shade(@bg-light-grey,.75);
     margin: 0.166666666666666666em;
 }
-
+separator#PrefCacheSeparator.horizontal {
+    margin: 0.25em 0.166666666666666666em;
+    padding: 0;
+}
 #MyExpander separator {
     background-color: @view-grid-border;
     margin: 0.333333333333333333em 0.166666666666666666em;
@@ -944,7 +955,8 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 #PrefNotebook > header {
     margin: -0.666666666666666666em -0.666666666666666666em 0.333333333333333333em;
 }
-#PrefNotebook > header tab label {
+#PrefNotebook > header tab label,
+#AboutNotebook > header tab label {
     padding-top: 0.25em;
     padding-bottom: 0.25em;
 }
@@ -1435,14 +1447,15 @@ colorchooser colorswatch#add-color-button:first-child {
 }
 
 /* Save, Cancel, OK ... buttons */
-.dialog-action-area button {
+dialog .dialog-action-area button {
     min-height: 2.166666666666666666em;
-    margin-top: 1em;
+    margin: 0.5em 0 0 0.333333333333333333em;
     padding: 0;
 }
 messagedialog .dialog-action-area button {
     min-height: 1.833333333333333333em;
-    margin: -12px 0.5em 0.5em 0.5em;
+    margin: -12px 0.5em 0.5em;
+    padding: 0;
 }
 messagedialog .dialog-action-area button:not(:only-child):nth-child(1) {
     margin-right: 0.25em;
@@ -1789,7 +1802,7 @@ radio:disabled {
 
 radiobutton label,
 checkbutton label {
-    margin: 0 0 0 0.416666666666666666em;
+    margin: 0 0.416666666666666666em;
     padding: 0;
 }
 
