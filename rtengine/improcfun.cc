@@ -5315,6 +5315,10 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
         minL = 0.0f;    //Disable the shift if there are no negative numbers. I wish there were just no negative numbers to begin with.
     }
 
+    if (maxL == 0.f) { // avoid division by zero
+        maxL = 1.f;
+    }
+    
     #pragma omp parallel for
 
     for (i = 0; i < N; i++)
