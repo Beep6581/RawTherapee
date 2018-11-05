@@ -1157,9 +1157,9 @@ inline void WeightedStdToneCurve::BatchApply(const size_t start, const size_t en
     float tmpb[4] ALIGNED16;
 
     for (; i + 3 < end; i += 4) {
-        vfloat r_val = LIMV(LVF(r[i]), ZEROV, c65535v);
-        vfloat g_val = LIMV(LVF(g[i]), ZEROV, c65535v);
-        vfloat b_val = LIMV(LVF(b[i]), ZEROV, c65535v);
+        vfloat r_val = vclampf(LVF(r[i]), ZEROV, c65535v);
+        vfloat g_val = vclampf(LVF(g[i]), ZEROV, c65535v);
+        vfloat b_val = vclampf(LVF(b[i]), ZEROV, c65535v);
         vfloat r1 = lutToneCurve[r_val];
         vfloat g1 = Triangle(r_val, r1, g_val);
         vfloat b1 = Triangle(r_val, r1, b_val);
@@ -1172,9 +1172,9 @@ inline void WeightedStdToneCurve::BatchApply(const size_t start, const size_t en
         vfloat r3 = Triangle(b_val, b3, r_val);
         vfloat g3 = Triangle(b_val, b3, g_val);
 
-        STVF(tmpr[0], LIMV(r1 * zd5v + r2 * zd25v + r3 * zd25v, ZEROV, c65535v));
-        STVF(tmpg[0], LIMV(g1 * zd25v + g2 * zd5v + g3 * zd25v, ZEROV, c65535v));
-        STVF(tmpb[0], LIMV(b1 * zd25v + b2 * zd25v + b3 * zd5v, ZEROV, c65535v));
+        STVF(tmpr[0], vclampf(r1 * zd5v + r2 * zd25v + r3 * zd25v, ZEROV, c65535v));
+        STVF(tmpg[0], vclampf(g1 * zd25v + g2 * zd5v + g3 * zd25v, ZEROV, c65535v));
+        STVF(tmpb[0], vclampf(b1 * zd25v + b2 * zd25v + b3 * zd5v, ZEROV, c65535v));
         for (int j = 0; j < 4; ++j) {
             setUnlessOOG(r[i+j], g[i+j], b[i+j], tmpr[j], tmpg[j], tmpb[j]);
         }

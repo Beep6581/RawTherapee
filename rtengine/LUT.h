@@ -320,7 +320,7 @@ public:
 
         // Clamp and convert to integer values. Extract out of SSE register because all
         // lookup operations use regular addresses.
-        vfloat clampedIndexes = vmaxf(vminf(maxsv, indexv), ZEROV); // this automagically uses ZEROV in case indexv is NaN
+        vfloat clampedIndexes = vclampf(indexv, ZEROV, maxsv); // this automagically uses ZEROV in case indexv is NaN
         vint indexes = _mm_cvttps_epi32(clampedIndexes);
         int indexArray[4];
         _mm_storeu_si128(reinterpret_cast<__m128i*>(&indexArray[0]), indexes);
@@ -352,7 +352,7 @@ public:
 
         // Clamp and convert to integer values. Extract out of SSE register because all
         // lookup operations use regular addresses.
-        vfloat clampedIndexes = vmaxf(vminf(maxsv, indexv), ZEROV); // this automagically uses ZEROV in case indexv is NaN
+        vfloat clampedIndexes = vclampf(indexv, ZEROV, maxsv); // this automagically uses ZEROV in case indexv is NaN
         vint indexes = _mm_cvttps_epi32(clampedIndexes);
         int indexArray[4];
         _mm_storeu_si128(reinterpret_cast<__m128i*>(&indexArray[0]), indexes);
@@ -372,7 +372,7 @@ public:
         vfloat lower = _mm_castsi128_ps(_mm_unpacklo_epi64(temp0, temp1));
         vfloat upper = _mm_castsi128_ps(_mm_unpackhi_epi64(temp0, temp1));
 
-        vfloat diff = vmaxf(vminf(sizev, indexv), ZEROV) - _mm_cvtepi32_ps(indexes); // this automagically uses ZEROV in case indexv is NaN
+        vfloat diff = vclampf(indexv, ZEROV, sizev) - _mm_cvtepi32_ps(indexes); // this automagically uses ZEROV in case indexv is NaN
         return vintpf(diff, upper, lower);
     }
 
@@ -383,7 +383,7 @@ public:
 
         // Clamp and convert to integer values. Extract out of SSE register because all
         // lookup operations use regular addresses.
-        vfloat clampedIndexes = vmaxf(vminf(maxsv, indexv), ZEROV); // this automagically uses ZEROV in case indexv is NaN
+        vfloat clampedIndexes = vclampf(indexv, ZEROV, maxsv); // this automagically uses ZEROV in case indexv is NaN
         vint indexes = _mm_cvttps_epi32(clampedIndexes);
         int indexArray[4];
         _mm_storeu_si128(reinterpret_cast<__m128i*>(&indexArray[0]), indexes);
@@ -421,7 +421,7 @@ public:
     vfloat operator[](vint idxv) const
     {
         // convert to float because SSE2 has no min/max for 32bit integers
-        vfloat tempv = vmaxf(vminf(sizev, _mm_cvtepi32_ps(idxv)), ZEROV); // this automagically uses ZEROV in case idxv is NaN (which will never happen because it is a vector of int)
+        vfloat tempv = vclampf(_mm_cvtepi32_ps(idxv), ZEROV, sizev); // this automagically uses ZEROV in case idxv is NaN (which will never happen because it is a vector of int)
         idxv = _mm_cvttps_epi32(tempv);
         // access the LUT 4 times. Trust the compiler. It generates good code here, better than hand written SSE code
         return _mm_setr_ps(data[_mm_cvtsi128_si32(idxv)],
