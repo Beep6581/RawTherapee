@@ -65,7 +65,7 @@ public:
     bool            gamutICC; // no longer used
     bool            gamutLch;
     bool            HistogramWorking;       // true: histogram is display the value of the image computed in the Working profile
-                                            // false: histogram is display the value of the image computed in the Output profile
+    // false: histogram is display the value of the image computed in the Output profile
     int             amchroma;
     int             protectred;
     double          protectredh;
@@ -85,6 +85,7 @@ public:
     int             cropsleep;
     double          reduchigh;
     double          reduclow;
+    bool            detectshape;
 
 
     Glib::ustring   lensfunDbDirectory; ///< The directory containing the lensfun database. If empty, the system defaults will be used (as described in http://lensfun.sourceforge.net/manual/dbsearch.html)

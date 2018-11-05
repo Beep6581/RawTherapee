@@ -43,7 +43,7 @@ ControlSpotPanel::ControlSpotPanel():
     shapeMethod_(Gtk::manage(new MyComboBoxText())),
     qualityMethod_(Gtk::manage(new MyComboBoxText())),
 
-    sensiexclu_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIEXCLU"), 0, 100, 1, 19))),
+    sensiexclu_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIEXCLU"), 0, 100, 1, 12))),
     struc_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUC"), 0, 5, 1, 0))),
     locX_(Gtk::manage(new Adjuster(M("TP_LOCAL_WIDTH"), 0, 2250, 1, 250))),
     locXL_(Gtk::manage(new Adjuster(M("TP_LOCAL_WIDTH_L"), 0, 2250, 1, 250))),
@@ -200,7 +200,7 @@ ControlSpotPanel::ControlSpotPanel():
     qualityMethod_->append(M("TP_LOCALLAB_STD"));
     qualityMethod_->append(M("TP_LOCALLAB_ENH"));
     qualityMethod_->append(M("TP_LOCALLAB_ENHDEN"));
-    qualityMethod_->set_active(0);
+    qualityMethod_->set_active(1);
     qualityMethodconn_ = qualityMethod_->signal_changed().connect(
                              sigc::mem_fun(
                                  *this, &ControlSpotPanel::qualityMethodChanged));

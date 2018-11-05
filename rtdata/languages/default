@@ -1917,6 +1917,9 @@ TP_LOCALLAB_CURV;Lightness - Contrast - Chrominance "Super"
 TP_LOCALLAB_CURVNONE;Disable curves
 TP_LOCALLAB_CURVCURR;Normal
 TP_LOCALLAB_CURVENH;Super
+TP_LOCALLAB_CURVENHSU;Combined HueChroma (experimental)
+TP_LOCALLAB_CURVENCONTRAST;Super+Contrast threshold (experimental)
+TP_LOCALLAB_CURVENSOB2;Combined HueChroma + Contrast threshold (experimental)
 TP_LOCALLAB_DENOIS;Denoise
 TP_LOCALLAB_LUM;Curves
 TP_LOCALLAB_CHROMACBDL;Chroma
