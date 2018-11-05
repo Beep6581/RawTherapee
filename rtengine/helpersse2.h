@@ -157,10 +157,14 @@ static INLINE vfloat vsqrtf(vfloat x)
 }
 static INLINE vfloat vmaxf(vfloat x, vfloat y)
 {
+    // _mm_max_ps(x, y) returns y if x is NaN
+    // don't change the order of the parameters
     return _mm_max_ps(x, y);
 }
 static INLINE vfloat vminf(vfloat x, vfloat y)
 {
+    // _mm_min_ps(x, y) returns y if x is NaN
+    // don't change the order of the parameters
     return _mm_min_ps(x, y);
 }
 
