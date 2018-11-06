@@ -4466,7 +4466,7 @@ void ImProcFunctions::chromiLuminanceCurve(PipetteBuffer *pipetteBuffer, int pW,
                     av = LVFU(lold->a[i][k]);
                     bv = LVFU(lold->b[i][k]);
                     STVF(HHBuffer[k], xatan2f(bv, av));
-                    STVF(CCBuffer[k], _mm_sqrt_ps(SQRV(av) + SQRV(bv)) / c327d68v);
+                    STVF (CCBuffer[k], vsqrtf (SQRV (av) + SQRV (bv)) / c327d68v);
                 }
 
                 for (; k < W; k++) {

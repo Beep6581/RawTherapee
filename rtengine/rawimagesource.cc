@@ -3112,8 +3112,8 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
                 vfloat rowBlackv = blackv[row & 1];
 
                 for (; col < W - 3; col += 4) {
-                    vfloat linecorrv = SQRV(vmaxf(epsv, LVFU(cfablur[row * W + col]) - rowBlackv)) /
-                                       (vmaxf(epsv, LVFU(cfablur1[row * W + col]) - rowBlackv) * vmaxf(epsv, LVFU(cfablur2[row * W + col]) - rowBlackv));
+                    vfloat linecorrv = SQRV(vmaxf(LVFU(cfablur[row * W + col]) - rowBlackv, epsv)) /
+                                       (vmaxf(LVFU(cfablur1[row * W + col]) - rowBlackv, epsv) * vmaxf(LVFU(cfablur2[row * W + col]) - rowBlackv, epsv));
                     vfloat valv = LVFU(rawData[row][col]);
                     valv -= rowBlackv;
                     STVFU(rawData[row][col], valv * linecorrv + rowBlackv);
