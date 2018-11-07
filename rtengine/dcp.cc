@@ -393,13 +393,6 @@ double xyCoordToTemperature(const std::array<double, 2>& white_xy)
     return res;
 }
 
-struct cJSON_deleter {
-    template<typename T>
-    void operator()(T *t) {
-        cJSON_Delete(const_cast<typename std::remove_const<T>::type*>(t));
-    }
-};
-
 std::map<std::string, std::string> getAliases(const Glib::ustring& profile_dir)
 {
     const std::unique_ptr<std::FILE, std::function<void (std::FILE*)>> file(
@@ -426,7 +419,7 @@ std::map<std::string, std::string> getAliases(const Glib::ustring& profile_dir)
     buffer[read] = 0;
 
     cJSON_Minify(buffer.get());
-    const std::unique_ptr<cJSON, cJSON_deleter> root(cJSON_Parse(buffer.get()));
+    const std::unique_ptr<cJSON> root(cJSON_Parse(buffer.get()));
     if (!root || !root->child) {
         if (settings->verbose) {
             std::cout << "Could not parse 'camera_model_aliases.json' file." << std::endl;
