@@ -1113,7 +1113,8 @@ FramesData::FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataL
 
                 // creating FrameData
                 for (auto currFrame : exifManager.frames) {
-                    frames.push_back(std::unique_ptr<FrameData>(new FrameData(currFrame, currFrame->getRoot(), roots.at(0))));
+                    // Note: could leak if emplace_back throws (below as well).  Unlikely in practice.
+                    frames.emplace_back(new FrameData(currFrame, currFrame->getRoot(), roots.at(0)));
                 }
                 for (auto currRoot : roots) {
                     rtexif::Tag* t = currRoot->getTag(0x83BB);
@@ -1135,7 +1136,7 @@ FramesData::FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataL
                 exifManager.parseJPEG ();
                 roots = exifManager.roots;
                 for (auto currFrame : exifManager.frames) {
-                    frames.push_back(std::unique_ptr<FrameData>(new FrameData(currFrame, currFrame->getRoot(), roots.at(0))));
+                    frames.emplace_back(new FrameData(currFrame, currFrame->getRoot(), roots.at(0)));
                 }
                 rewind (exifManager.f); // Not sure this is necessary
                 iptc = iptc_data_new_from_jpeg_file (exifManager.f);
@@ -1153,7 +1154,7 @@ FramesData::FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataL
 
             // creating FrameData
             for (auto currFrame : exifManager.frames) {
-                frames.push_back(std::unique_ptr<FrameData>(new FrameData(currFrame, currFrame->getRoot(), roots.at(0))));
+                frames.emplace_back(new FrameData(currFrame, currFrame->getRoot(), roots.at(0)));
             }
             for (auto currRoot : roots) {
                 rtexif::Tag* t = currRoot->getTag(0x83BB);
