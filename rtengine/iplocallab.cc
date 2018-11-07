@@ -9592,7 +9592,6 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                         gaussianBlur(original->L, tmp2->L, GW, GH, radius);
                         gaussianBlur(original->a, tmp2->a, GW, GH, radius);
                         gaussianBlur(original->b, tmp2->b, GW, GH, radius);
-
                     }
 
                 }
@@ -9602,11 +9601,13 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
 #ifdef _OPENMP
                 #pragma omp parallel
 #endif
+
                 {
                     gaussianBlur(bufgb->L, tmp1->L, bfw, bfh, radius);
                     gaussianBlur(bufgb->a, tmp1->a, bfw, bfh, radius);
                     gaussianBlur(bufgb->b, tmp1->b, bfw, bfh, radius);
                 }
+
 
             } else {
                 tmp1 = new LabImage(transformed->W, transformed->H);;
@@ -9623,9 +9624,13 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
             }
 
             if (lp.stren > 0.1f) {
-                float mean = 0.f;//0 best result
-                float variance = lp.stren ; //(double) SQR(lp.stren)/sk;
-                addGaNoise(tmp1, tmp1, mean, variance, sk) ;
+                if (lp.blurmet <= 1) {
+
+                    float mean = 0.f;//0 best result
+                    float variance = lp.stren ; //(double) SQR(lp.stren)/sk;
+                    addGaNoise(tmp1, tmp1, mean, variance, sk) ;
+                }
+
             }
 
             if (lp.blurmet != 1) { //blur and noise (center)

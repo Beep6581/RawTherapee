@@ -1812,6 +1812,12 @@ void Locallab::blurMethodChanged()
         sensibn->hide();
     }
 
+    if (blurMethod->get_active_row_number() == 2) {
+        strength->hide();
+    } else {
+        strength->show();
+    }
+
     if (getEnabled() && expblur->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabblurMethod, blurMethod->get_active_text());
@@ -3120,6 +3126,12 @@ void Locallab::updateSpecificGUIState()
         sensibn->show();
     } else {
         sensibn->hide();
+    }
+
+    if (blurMethod->get_active_row_number() == 2) {
+        strength->hide();
+    } else {
+        strength->show();
     }
 
     // Update Retinex GUI according to inversret button state (to be compliant with inversretChanged function)
