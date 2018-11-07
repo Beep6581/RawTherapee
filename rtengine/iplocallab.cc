@@ -2093,7 +2093,7 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp,  in
 
 }
 
-void ImProcFunctions::cat02_Local(float **buflightcat, float **buf_a_cat, float ** buf_b_cat, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int sk)
+void ImProcFunctions::cat02_Local(float moddE, float powdE, float **buflightcat, float **buf_a_cat, float ** buf_b_cat, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int sk)
 {
 
 //local cat02
@@ -2128,6 +2128,8 @@ void ImProcFunctions::cat02_Local(float **buflightcat, float **buf_a_cat, float 
 
         const float pb = 4.f;
         const float pa = (1.f - pb) / 40.f;
+        float refa = chromaref * cos(hueref);
+        float refb = chromaref * sin(hueref);
 
         const float ahu = 1.f / (2.8f * varsens - 280.f);
         const float bhu = 1.f - ahu * 2.8f * varsens;
@@ -2226,6 +2228,7 @@ void ImProcFunctions::cat02_Local(float **buflightcat, float **buf_a_cat, float 
                     float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
 #endif
                     float rL = origblur->L[y][x] / 327.68f;
+                    float dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
 
                     float cli = 1.f;
                     float cla = 1.f;
@@ -2280,10 +2283,43 @@ void ImProcFunctions::cat02_Local(float **buflightcat, float **buf_a_cat, float 
                         kch = ak * deltachro + bk;
                     }
 
+                    float kkch = 1.f;
+                    float kchchro = 1.f;
+                    kkch = pa * varsens + pb;
+                    float kch0 = kch;
+
                     if (varsens < 40.f) {
-                        kch = pow(kch, pa * varsens + pb);    //increase under 40
+                        kch = kchchro = pow(kch0, kkch);    //increase under 40
+                        float dEsens = moddE * varsens;
+                        float kdE = 1.f;
+
+                        if (dE > dEsens) {
+                            kdE = 1.f;
+                        } else {
+                            kdE = SQR(SQR(dE / dEsens));
+                        }
+
+                        if (deltahue < 0.3f && settings->detectshape == true) {
+                            kchchro = kch = pow(kch0, (1.f + kdE * moddE * (3.f - 10.f * deltahue)) * kkch);
+                        }
                     }
 
+                    float dEsensall = varsens;
+                    float kD = 1.f;
+
+                    if (settings->detectshape == true) {
+                        if (dE < dEsensall) {
+                            kD = 1.f;
+                        } else {
+                            kD = pow(dEsensall / dE, powdE);
+                        }
+                    }
+
+                    /*
+                                        if (varsens < 40.f) {
+                                            kch = pow(kch, pa * varsens + pb);    //increase under 40
+                                        }
+                    */
                     bool kzon = false;
 
                     //transition = difficult to avoid artifact with scope on flat area (sky...)
@@ -2377,32 +2413,39 @@ void ImProcFunctions::cat02_Local(float **buflightcat, float **buf_a_cat, float 
                         kzon = true;
                     }
 
+                    realstr *= kD;
+                    realstra *= kD;
+                    realstrb *= kD;
+
                     //shape detection for hue chroma and luma
-                    if (varsens <= 20.f) { //to try...
 
-                        if (deltaE <  2.8f * varsens) {
-                            fach = khu;
-                        } else {
-                            fach = khu * (ahu * deltaE + bhu);
+                    if (settings->detectshape == false) {
+                        if (varsens <= 20.f) { //to try...
+
+                            if (deltaE <  2.8f * varsens) {
+                                fach = khu;
+                            } else {
+                                fach = khu * (ahu * deltaE + bhu);
+                            }
+
+                            float kcr = 10.f;
+
+                            if (rchro < kcr) {
+                                fach *= (1.f / (kcr * kcr)) * rchro * rchro;
+                            }
+
+                            if (lp.qualmet >= 1) {
+                            } else {
+                                fach = 1.f;
+                            }
+
+                            if (deltaL <  varsens) {
+                                falu = 1.f;
+                            } else {
+                                falu = alum * deltaL + blum;
+                            }
+
                         }
-
-                        float kcr = 10.f;
-
-                        if (rchro < kcr) {
-                            fach *= (1.f / (kcr * kcr)) * rchro * rchro;
-                        }
-
-                        if (lp.qualmet >= 1) {
-                        } else {
-                            fach = 1.f;
-                        }
-
-                        if (deltaL <  varsens) {
-                            falu = 1.f;
-                        } else {
-                            falu = alum * deltaL + blum;
-                        }
-
                     }
 
                     //    float kdiff = 0.f;
@@ -2816,34 +2859,35 @@ void ImProcFunctions::cbdl_Local(float moddE, float powdE, float ** buflight, fl
 
                     realcligh *= kD;;
                     realcchro *= kD;
-                    /*
-                                        if (lp.senscb <= 20.f) {
 
-                                            if (deltaE <  2.8f * lp.senscb) {
-                                                fach = khu;
-                                            } else {
-                                                fach = khu * (ahu * deltaE + bhu);
-                                            }
+                    if (settings->detectshape == false) {
+                        if (lp.senscb <= 20.f) {
+
+                            if (deltaE <  2.8f * lp.senscb) {
+                                fach = khu;
+                            } else {
+                                fach = khu * (ahu * deltaE + bhu);
+                            }
 
 
-                                            float kcr = 10.f;
+                            float kcr = 10.f;
 
-                                            if (rchro < kcr) {
-                                                fach *= (1.f / (kcr * kcr)) * rchro * rchro;
-                                            }
+                            if (rchro < kcr) {
+                                fach *= (1.f / (kcr * kcr)) * rchro * rchro;
+                            }
 
-                                            if (lp.qualmet >= 1) {
-                                            } else {
-                                                fach = 1.f;
-                                            }
+                            if (lp.qualmet >= 1) {
+                            } else {
+                                fach = 1.f;
+                            }
 
-                                            if (deltaL <  lp.senscb) {
-                                                falu = 1.f;
-                                            } else {
-                                                falu = alum * deltaL + blum;
-                                            }
-                                        }
-                    */
+                            if (deltaL <  lp.senscb) {
+                                falu = 1.f;
+                            } else {
+                                falu = alum * deltaL + blum;
+                            }
+                        }
+                    }
 
                 } else {
                     /*
@@ -3221,34 +3265,36 @@ void ImProcFunctions::TM_Local(float moddE, float powdE, LabImage * tmp1, float 
                         }
 
                         realcligh *= kD;
-                        /*
-                                                if (lp.senstm <= 20.f) {
 
-                                                    if (deltaE <  2.8f * lp.senstm) {
-                                                        fach = khu;
-                                                    } else {
-                                                        fach = khu * (ahu * deltaE + bhu);
-                                                    }
+                        if (settings->detectshape == false) {
+
+                            if (lp.senstm <= 20.f) {
+
+                                if (deltaE <  2.8f * lp.senstm) {
+                                    fach = khu;
+                                } else {
+                                    fach = khu * (ahu * deltaE + bhu);
+                                }
 
 
-                                                    float kcr = 10.f;
+                                float kcr = 10.f;
 
-                                                    if (rchro < kcr) {
-                                                        fach *= (1.f / (kcr * kcr)) * rchro * rchro;
-                                                    }
+                                if (rchro < kcr) {
+                                    fach *= (1.f / (kcr * kcr)) * rchro * rchro;
+                                }
 
-                                                    if (lp.qualmet >= 1) {
-                                                    } else {
-                                                        fach = 1.f;
-                                                    }
+                                if (lp.qualmet >= 1) {
+                                } else {
+                                    fach = 1.f;
+                                }
 
-                                                    if (deltaL <  lp.senstm) {
-                                                        falu = 1.f;
-                                                    } else {
-                                                        falu = alum * deltaL + blum;
-                                                    }
-                                                }
-                        */
+                                if (deltaL <  lp.senstm) {
+                                    falu = 1.f;
+                                } else {
+                                    falu = alum * deltaL + blum;
+                                }
+                            }
+                        }
 
                     } else {
                     }
@@ -3640,35 +3686,36 @@ void ImProcFunctions::BlurNoise_Local(float moddE, float powdE, int call, LabIma
                     realstr *= kD;
                     realstrch *= kD;
 
-                    /*
-                                        if (lp.sensbn <= 20.f) { //to try...
+                    if (settings->detectshape == false) {
 
-                                            if (deltaE <  2.8f * lp.sensbn) {
-                                                fach = khu;
-                                            } else {
-                                                fach = khu * (ahu * deltaE + bhu);
-                                            }
+                        if (lp.sensbn <= 20.f) { //to try...
+
+                            if (deltaE <  2.8f * lp.sensbn) {
+                                fach = khu;
+                            } else {
+                                fach = khu * (ahu * deltaE + bhu);
+                            }
 
 
-                                            float kcr = 10.f;
+                            float kcr = 10.f;
 
-                                            if (rchro < kcr) {
-                                                fach *= (1.f / (kcr * kcr)) * rchro * rchro;
-                                            }
+                            if (rchro < kcr) {
+                                fach *= (1.f / (kcr * kcr)) * rchro * rchro;
+                            }
 
-                                            if (lp.qualmet >= 1) {
-                                            } else {
-                                                fach = 1.f;
-                                            }
+                            if (lp.qualmet >= 1) {
+                            } else {
+                                fach = 1.f;
+                            }
 
-                                            if (deltaL <  lp.sensbn) {
-                                                falu = 1.f;
-                                            } else {
-                                                falu = alum * deltaL + blum;
-                                            }
+                            if (deltaL <  lp.sensbn) {
+                                falu = 1.f;
+                            } else {
+                                falu = alum * deltaL + blum;
+                            }
 
-                                        }
-                                        */
+                        }
+                    }
                 }
 
 
@@ -4165,35 +4212,37 @@ void ImProcFunctions::Reti_Local(float moddE, float powdE, float **buflight, flo
 
                     realstr *= kD;
                     realstrch *= kD;
-                    /*
-                                        //shape detection for hue chroma and luma
-                                        if (lp.sensh <= 20.f) { //to try...
 
-                                            if (deltaE <  2.8f * lp.sensh) {
-                                                fach = khu;
-                                            } else {
-                                                fach = khu * (ahu * deltaE + bhu);
-                                            }
+                    if (settings->detectshape == false) {
 
-                                            float kcr = 10.f;
+                        //shape detection for hue chroma and luma
+                        if (lp.sensh <= 20.f) { //to try...
 
-                                            if (rchro < kcr) {
-                                                fach *= (1.f / (kcr * kcr)) * rchro * rchro;
-                                            }
+                            if (deltaE <  2.8f * lp.sensh) {
+                                fach = khu;
+                            } else {
+                                fach = khu * (ahu * deltaE + bhu);
+                            }
 
-                                            if (lp.qualmet >= 1) {
-                                            } else {
-                                                fach = 1.f;
-                                            }
+                            float kcr = 10.f;
 
-                                            if (deltaL <  lp.sensh) {
-                                                falu = 1.f;
-                                            } else {
-                                                falu = alum * deltaL + blum;
-                                            }
+                            if (rchro < kcr) {
+                                fach *= (1.f / (kcr * kcr)) * rchro * rchro;
+                            }
 
-                                        }
-                    */
+                            if (lp.qualmet >= 1) {
+                            } else {
+                                fach = 1.f;
+                            }
+
+                            if (deltaL <  lp.sensh) {
+                                falu = 1.f;
+                            } else {
+                                falu = alum * deltaL + blum;
+                            }
+
+                        }
+                    }
 
                     // I add these functions...perhaps not good
                     if (kzon) {
@@ -5939,34 +5988,36 @@ void ImProcFunctions::Exclude_Local(float moddE, float powdE, int sen, float **d
                                         }
                     */
                     //shape detection for hue chroma and luma
-                    /*
-                                        if (varsens <= 20.f) { //to try...
+                    if (settings->detectshape == false) {
 
-                                            if (deltaE <  2.8f * varsens) {
-                                                fach = khu;
-                                            } else {
-                                                fach = khu * (ahu * deltaE + bhu);
-                                            }
+                        if (varsens <= 20.f) { //to try...
 
-                                            float kcr = 10.f;
+                            if (deltaE <  2.8f * varsens) {
+                                fach = khu;
+                            } else {
+                                fach = khu * (ahu * deltaE + bhu);
+                            }
 
-                                            if (rchro < kcr) {
-                                                fach *= (1.f / (kcr * kcr)) * rchro * rchro;
-                                            }
+                            float kcr = 10.f;
 
-                                            if (lp.qualmet >= 1) {
-                                            } else {
-                                                fach = 1.f;
-                                            }
+                            if (rchro < kcr) {
+                                fach *= (1.f / (kcr * kcr)) * rchro * rchro;
+                            }
 
-                                            if (deltaL <  varsens) {
-                                                falu = 1.f;
-                                            } else {
-                                                falu = alum * deltaL + blum;
-                                            }
+                            if (lp.qualmet >= 1) {
+                            } else {
+                                fach = 1.f;
+                            }
 
-                                        }
-                    */
+                            if (deltaL <  varsens) {
+                                falu = 1.f;
+                            } else {
+                                falu = alum * deltaL + blum;
+                            }
+
+                        }
+                    }
+
                     // I add these functions...perhaps not good
                     if (kzon) {
                         if (varsens < 60.f) { //arbitrary value
@@ -6418,35 +6469,37 @@ void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, fl
                     realstr *= kD;
                     realstrch *= kD;
 
-                    /*
-                                        //shape detection for hue chroma and luma
-                                        if (varsens <= 20.f) { //to try...
+                    if (settings->detectshape == false) {
 
-                                            if (deltaE <  2.8f * varsens) {
-                                                fach = khu;
-                                            } else {
-                                                fach = khu * (ahu * deltaE + bhu);
-                                            }
+                        //shape detection for hue chroma and luma
+                        if (varsens <= 20.f) { //to try...
 
-                                            float kcr = 10.f;
+                            if (deltaE <  2.8f * varsens) {
+                                fach = khu;
+                            } else {
+                                fach = khu * (ahu * deltaE + bhu);
+                            }
 
-                                            if (rchro < kcr) {
-                                                fach *= (1.f / (kcr * kcr)) * rchro * rchro;
-                                            }
+                            float kcr = 10.f;
 
-                                            if (lp.qualmet >= 1) {
-                                            } else {
-                                                fach = 1.f;
-                                            }
+                            if (rchro < kcr) {
+                                fach *= (1.f / (kcr * kcr)) * rchro * rchro;
+                            }
 
-                                            if (deltaL <  varsens) {
-                                                falu = 1.f;
-                                            } else {
-                                                falu = alum * deltaL + blum;
-                                            }
+                            if (lp.qualmet >= 1) {
+                            } else {
+                                fach = 1.f;
+                            }
 
-                                        }
-                    */
+                            if (deltaL <  varsens) {
+                                falu = 1.f;
+                            } else {
+                                falu = alum * deltaL + blum;
+                            }
+
+                        }
+                    }
+
                     // I add these functions...perhaps not good
                     if (kzon) {
                         if (varsens < 60.f) { //arbitrary value
@@ -7048,37 +7101,39 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
                     realcurv *= kD;
                     realclighsl *= kD;
 
-                    /*
-                                        //detection of deltaE and deltaL
-                                        if (lp.sens <= 20.f) { //to try...
-                                            //fach and kch acts on luma
-                                            if (deltaE <  2.8f * lp.sens) {
-                                                fach = khu;
-                                            } else {
-                                                fach = khu * (ahu * deltaE + bhu);
-                                            }
+                    if (settings->detectshape == false) {
 
-                                            float kcr = 10.f;
+                        //detection of deltaE and deltaL
+                        if (lp.sens <= 20.f) { //to try...
+                            //fach and kch acts on luma
+                            if (deltaE <  2.8f * lp.sens) {
+                                fach = khu;
+                            } else {
+                                fach = khu * (ahu * deltaE + bhu);
+                            }
 
-                                            if (rchro < kcr) {
-                                                fach *= (1.f / (kcr * kcr)) * rchro * rchro;
-                                            }
+                            float kcr = 10.f;
 
-                                            //can be probably improved
-                                            if (lp.qualmet >= 1) {
-                                            } else {
-                                                fach = 1.f;
-                                            }
+                            if (rchro < kcr) {
+                                fach *= (1.f / (kcr * kcr)) * rchro * rchro;
+                            }
 
-                                            //falu acts on chroma
-                                            if (deltaL <  lp.sens) {
-                                                falu = 1.f;
-                                            } else {
-                                                falu = 1.f;// alum * deltaL + blum;
-                                            }
+                            //can be probably improved
+                            if (lp.qualmet >= 1) {
+                            } else {
+                                fach = 1.f;
+                            }
 
-                                        }
-                    */
+                            //falu acts on chroma
+                            if (deltaL <  lp.sens) {
+                                falu = 1.f;
+                            } else {
+                                falu = 1.f;// alum * deltaL + blum;
+                            }
+
+                        }
+                    }
+
                     if (kzon) {
                         if (lp.sens < 60.f) { //arbitrary value
                             if (hueref < -1.1f && hueref > -2.8f) { // detect blue sky
@@ -11369,7 +11424,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                     }
                 }
 
-            cat02_Local(buflightcat, buf_a_cat, buf_b_cat, hueplus, huemoins, hueref, dhueex, chromaref, lumaref, lp, original, transformed, bufcat02fin, cx, cy, sk);
+            cat02_Local(moddE, powdE, buflightcat, buf_a_cat, buf_b_cat, hueplus, huemoins, hueref, dhueex, chromaref, lumaref, lp, original, transformed, bufcat02fin, cx, cy, sk);
 
 
 
