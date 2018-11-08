@@ -1367,7 +1367,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel ()
     // Separation is needed so that a button is not accidentally clicked when one wanted
     // to click a spinbox. Ideally, the separation wouldn't require attaching a widget, but how?
     Gtk::HSeparator *cacheSeparator = Gtk::manage (new  Gtk::HSeparator());
-    cacheSeparator->set_name("PrefCacheSeparator");
+    cacheSeparator->get_style_context()->add_class("grid-row-separator");
 
     Gtk::Label* clearThumbsLbl = Gtk::manage (new Gtk::Label(M("PREFERENCES_CACHECLEAR_ALLBUTPROFILES")));
     setExpandAlignProperties(clearThumbsLbl, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
