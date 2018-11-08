@@ -1532,8 +1532,8 @@ bool EPDParams::operator !=(const EPDParams& other) const
 
 FattalToneMappingParams::FattalToneMappingParams() :
     enabled(false),
-    threshold(0),
-    amount(30),
+    threshold(30),
+    amount(20),
     anchor(50)
 {
 }

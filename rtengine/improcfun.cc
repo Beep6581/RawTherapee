@@ -4407,7 +4407,7 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                     av = LVFU (lold->a[i][k]);
                     bv = LVFU (lold->b[i][k]);
                     STVF (HHBuffer[k], xatan2f (bv, av));
-                    STVF (CCBuffer[k], _mm_sqrt_ps (SQRV (av) + SQRV (bv)) / c327d68v);
+                    STVF (CCBuffer[k], vsqrtf (SQRV (av) + SQRV (bv)) / c327d68v);
                 }
 
                 for (; k < W; k++) {
@@ -5264,6 +5264,10 @@ void ImProcFunctions::EPDToneMap (LabImage *lab, unsigned int Iterates, int skip
         minL = 0.0f;    //Disable the shift if there are no negative numbers. I wish there were just no negative numbers to begin with.
     }
 
+    if (maxL == 0.f) { // avoid division by zero
+        maxL = 1.f;
+    }
+
     #pragma omp parallel for
 
     for (size_t i = 0; i < N; ++i)
@@ -5782,8 +5786,8 @@ void ImProcFunctions::lab2rgb (const LabImage &src, Imagefloat &dst, const Glib:
 */
 void ImProcFunctions::colorToningLabGrid(LabImage *lab, int xstart, int xend, int ystart, int yend, bool MultiThread)
 {
-    const float factor = 3.f;
-    const float scaling = 3.f;
+    const float factor = ColorToningParams::LABGRID_CORR_MAX * 3.f;
+    const float scaling = ColorToningParams::LABGRID_CORR_SCALE;
     float a_scale = (params->colorToning.labgridAHigh - params->colorToning.labgridALow) / factor / scaling;
     float a_base = params->colorToning.labgridALow / scaling;
     float b_scale = (params->colorToning.labgridBHigh - params->colorToning.labgridBLow) / factor / scaling;

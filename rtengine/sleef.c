@@ -23,6 +23,7 @@
 #define L2U .69314718055966295651160180568695068359375
 #define L2L .28235290563031577122588448175013436025525412068e-12
 #define R_LN2 1.442695040888963407359924681001892137426645954152985934135449406931
+#define pow_F(a,b) (xexpf(b*xlogf(a)))
 
 __inline int64_t doubleToRawLongBits(double d) {
   union {
@@ -1263,6 +1264,16 @@ __inline float xdivf( float d, int n){
 	return uflint.floatval;
 }
 
+__inline float xlin2log(float x, float base)
+{
+    constexpr float one(1);
+    return xlogf(x * (base - one) + one) / xlogf(base);
+}
 
+__inline float xlog2lin(float x, float base)
+{
+    constexpr float one(1);
+    return (pow_F(base, x) - one) / (base - one);
+}
 
 #endif

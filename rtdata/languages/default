@@ -44,9 +44,9 @@ DYNPROFILEEDITOR_EDIT;Edit
 DYNPROFILEEDITOR_EDIT_RULE;Edit Dynamic Profile Rule
 DYNPROFILEEDITOR_ENTRY_TOOLTIP;The matching is case insensitive.\nUse the "re:" prefix to enter\na regular expression.
 DYNPROFILEEDITOR_IMGTYPE_ANY;Any
-DYNPROFILEEDITOR_IMGTYPE_STD;Standard
 DYNPROFILEEDITOR_IMGTYPE_HDR;HDR
 DYNPROFILEEDITOR_IMGTYPE_PS;Pixel Shift
+DYNPROFILEEDITOR_IMGTYPE_STD;Standard
 DYNPROFILEEDITOR_MOVE_DOWN;Move Down
 DYNPROFILEEDITOR_MOVE_UP;Move Up
 DYNPROFILEEDITOR_NEW;New
@@ -402,7 +402,7 @@ HISTORY_MSG_145;Microcontrast - Uniformity
 HISTORY_MSG_146;Edge sharpening
 HISTORY_MSG_147;ES - Luminance only
 HISTORY_MSG_148;Microcontrast
-HISTORY_MSG_149;Microcontrast - 33 matrix
+HISTORY_MSG_149;Microcontrast - 3×3 matrix
 HISTORY_MSG_150;Post-demosaic artifact/noise red.
 HISTORY_MSG_151;Vibrance
 HISTORY_MSG_152;Vib - Pastel tones
@@ -725,27 +725,27 @@ HISTORY_MSG_485;Lens Correction
 HISTORY_MSG_486;Lens Correction - Camera
 HISTORY_MSG_487;Lens Correction - Lens
 HISTORY_MSG_488;Dynamic Range Compression
-HISTORY_MSG_489;DRC - Threshold
+HISTORY_MSG_489;DRC - Detail
 HISTORY_MSG_490;DRC - Amount
 HISTORY_MSG_491;White Balance
 HISTORY_MSG_492;RGB Curves
 HISTORY_MSG_493;L*a*b* Adjustments
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
-HISTORY_MSG_COLORTONING_LABREGION_LIST;CT - List
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
-HISTORY_MSG_COLORTONING_LABREGION_SATURATION;CT - Saturation
-HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESS;CT - Lightness
-HISTORY_MSG_COLORTONING_LABREGION_HUEMASK;CT - H mask
 HISTORY_MSG_COLORTONING_LABREGION_CHROMATICITYMASK;CT - C mask
+HISTORY_MSG_COLORTONING_LABREGION_HUEMASK;CT - H mask
+HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESS;CT - Lightness
 HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESSMASK;CT - L mask
+HISTORY_MSG_COLORTONING_LABREGION_LIST;CT - List
+HISTORY_MSG_COLORTONING_LABREGION_SATURATION;CT - Saturation
 HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;CT - Show mask
 HISTORY_MSG_DEHAZE_DEPTH;Dehaze - Depth
 HISTORY_MSG_DEHAZE_ENABLED;Haze Removal
 HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;Dehaze - Show depth map
 HISTORY_MSG_DEHAZE_STRENGTH;Dehaze - Strength
-HISTORY_MSG_DUALDEMOSAIC_CONTRAST;Dual demosaic - Contrast threshold
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
+HISTORY_MSG_DUALDEMOSAIC_CONTRAST;Dual demosaic - Contrast threshold
 HISTORY_MSG_HISTMATCHING;Auto-matched tone curve
 HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
 HISTORY_MSG_ICM_OUTPUT_TEMP;Output - ICC-v4 illuminant D
@@ -768,8 +768,8 @@ HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
 HISTORY_MSG_RAWCACORR_COLORSHIFT;Raw CA Correction - Avoid color shift
 HISTORY_MSG_RAW_BORDER;Raw border
 HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
-HISTORY_MSG_SH_COLORSPACE;S/H - Colorspace
 HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
+HISTORY_MSG_SH_COLORSPACE;S/H - Colorspace
 HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
 HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
 HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
@@ -824,7 +824,7 @@ IPTCPANEL_CITY;City
 IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
 IPTCPANEL_COPYHINT;Copy IPTC settings to clipboard.
 IPTCPANEL_COPYRIGHT;Copyright notice
-IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as 2008 Jane Doe.
+IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
 IPTCPANEL_COUNTRY;Country
 IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
 IPTCPANEL_CREATOR;Creator
@@ -920,20 +920,20 @@ MAIN_TAB_RAW;Raw
 MAIN_TAB_RAW_TOOLTIP;Shortcut: <b>Alt-r</b>
 MAIN_TAB_TRANSFORM;Transform
 MAIN_TAB_TRANSFORM_TOOLTIP;Shortcut: <b>Alt-t</b>
-MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>Theme-based</b>\nShortcut: <b>9</b>
-MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>Black</b>\nShortcut: <b>9</b>
-MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>9</b>
-MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
+MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>theme-based</b>\nShortcut: <b>9</b>
+MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>black</b>\nShortcut: <b>9</b>
+MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>white</b>\nShortcut: <b>9</b>
+MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>middle grey</b>\nShortcut: <b>9</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> view\n\n<b>Lock</b>: keep the <b>Before</b> view unchanged.\nUseful to evaluate the cumulative effect of multiple tools.\nAdditionally, comparisons can be made to any state in the History.\n\n<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view one step behind, showing the image before the effect of the currently used tool.
 MAIN_TOOLTIP_HIDEHP;Show/Hide the left panel (including the history).\nShortcut: <b>l</b>
 MAIN_TOOLTIP_INDCLIPPEDH;Clipped highlight indication.\nShortcut: <b>&lt;</b>
 MAIN_TOOLTIP_INDCLIPPEDS;Clipped shadow indication.\nShortcut: <b>&gt;</b>
-MAIN_TOOLTIP_PREVIEWB;Preview the <b>Blue channel</b>.\nShortcut: <b>b</b>
-MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-f</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels.\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom, about 10-30%.
-MAIN_TOOLTIP_PREVIEWG;Preview the <b>Green channel</b>.\nShortcut: <b>g</b>
-MAIN_TOOLTIP_PREVIEWL;Preview the <b>Luminosity</b>.\nShortcut: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
-MAIN_TOOLTIP_PREVIEWR;Preview the <b>Red channel</b>.\nShortcut: <b>r</b>
-MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>Sharpening Contrast Mask</b>.\nShortcut: <b>None</b>\n\nOnly works when sharpening is enabled and zoom >= 100%.
+MAIN_TOOLTIP_PREVIEWB;Preview the <b>blue channel</b>.\nShortcut: <b>b</b>
+MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>focus mask</b>.\nShortcut: <b>Shift-f</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels.\nZoom out to 10-30% to improve detection accuracy on noisy images.
+MAIN_TOOLTIP_PREVIEWG;Preview the <b>green channel</b>.\nShortcut: <b>g</b>
+MAIN_TOOLTIP_PREVIEWL;Preview the <b>luminosity</b>.\nShortcut: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
+MAIN_TOOLTIP_PREVIEWR;Preview the <b>red channel</b>.\nShortcut: <b>r</b>
+MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>sharpening contrast mask</b>.\nShortcut: <b>None</b>\n\nOnly works when sharpening is enabled and zoom >= 100%.
 MAIN_TOOLTIP_QINFO;Quick info on the image.\nShortcut: <b>i</b>
 MAIN_TOOLTIP_SHOWHIDELP1;Show/Hide the left panel.\nShortcut: <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Show/Hide the right panel.\nShortcut: <b>Alt-l</b>
@@ -1046,9 +1046,11 @@ PREFERENCES_BEHAVIOR;Behavior
 PREFERENCES_BEHSETALL;All to 'Set'
 PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed.
 PREFERENCES_BLACKBODY;Tungsten
-PREFERENCES_CACHECLEARALL;Clear All
-PREFERENCES_CACHECLEARPROFILES;Clear Processing Profiles
-PREFERENCES_CACHECLEARTHUMBS;Clear Thumbnails
+PREFERENCES_CACHECLEAR;Clear
+PREFERENCES_CACHECLEAR_ALL;Clear all cached files:
+PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
+PREFERENCES_CACHECLEAR_ONLYPROFILES;Clear only cached processing profiles:
+PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing profiles stored alongside the source images are not touched.
 PREFERENCES_CACHEMAXENTRIES;Maximum number of cache entries
 PREFERENCES_CACHEOPTS;Cache Options
 PREFERENCES_CACHETHUMBHEIGHT;Maximum thumbnail height
@@ -1304,8 +1306,8 @@ THRESHOLDSELECTOR_HINT;Hold the <b>Shift</b> key to move individual control poin
 THRESHOLDSELECTOR_T;Top
 THRESHOLDSELECTOR_TL;Top-left
 THRESHOLDSELECTOR_TR;Top-right
-TOOLBAR_TOOLTIP_COLORPICKER;Lockable Color Picker\n\nWhen enabled:\nClick in the preview with left mouse button to add a color picker\nDrag it around while pressing the left mouse button\nDelete the color picker with a right mouse button click\nDelete all color pickers with Shift + Right mouse button click\nRight click away from any color picker to go back to the Hand tool
-TOOLBAR_TOOLTIP_CROP;<b>Crop</b> selection.\nShortcut: <b>c</b>\nMove the crop area using <b>Shift-mouse drag</b>
+TOOLBAR_TOOLTIP_COLORPICKER;Lockable Color Picker\n\nWhen the tool is active:\n- Add a picker: <b>left-click</b>.\n- Drag a picker: <b>left-click and drag</b>.\n- Delete a picker: <b>right-click</b>.\n- Delete all pickers: <b>shift</b>+<b>right-click</b>.\n- Revert to hand tool: <b>right-click</b>.
+TOOLBAR_TOOLTIP_CROP;<b>Crop</b> selection.\nShortcut: <b>c</b>\nMove the crop area using <b>Shift</b>+<b>mouse drag</b>.
 TOOLBAR_TOOLTIP_HAND;Hand tool.\nShortcut: <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Straighten</b> / <b>fine rotation</b>.\nShortcut: <b>s</b>\n\nIndicate the vertical or horizontal by drawing a guide line over the image preview. Angle of rotation will be shown next to the guide line. Center of rotation is the geometrical center of the image.
 TOOLBAR_TOOLTIP_WB;Spot white balance.\nShortcut: <b>w</b>
@@ -1384,9 +1386,9 @@ TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left.\n\nShortcuts:\n<b>[</b> - Multiple Ed
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right.\n\nShortcuts:\n<b>]</b> - Multiple Editor Tabs Mode,\n<b>Alt-]</b> - Single Editor Tab Mode.
 TP_COARSETRAF_TOOLTIP_VFLIP;Flip vertically.
 TP_COLORAPP_ADAPTSCENE;Scene absolute luminance
-TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environment (cd/m).\n1) Calculated from the Exif data:\nShutter speed - ISO speed - F number - camera exposure correction.\n2) Calculated from the raw white point and RT's Exposure Compensation slider.
-TP_COLORAPP_ADAPTVIEWING;Viewing absolute luminance (cd/m)
-TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute luminance of the viewing environment\n(usually 16cd/m).
+TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environment (cd/m²).\n1) Calculated from the Exif data:\nShutter speed - ISO speed - F number - camera exposure correction.\n2) Calculated from the raw white point and RT's Exposure Compensation slider.
+TP_COLORAPP_ADAPTVIEWING;Viewing absolute luminance (cd/m²)
+TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute luminance of the viewing environment\n(usually 16cd/m²).
 TP_COLORAPP_ADAP_AUTO_TOOLTIP;If the checkbox is checked (recommended) RawTherapee calculates an optimum value from the Exif data.\nTo set the value manually, uncheck the checkbox first.
 TP_COLORAPP_ALGO;Algorithm
 TP_COLORAPP_ALGO_ALL;All
@@ -1423,7 +1425,7 @@ TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 TP_COLORAPP_GAMUT;Gamut control (L*a*b*)
 TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in L*a*b* mode.
 TP_COLORAPP_HUE;Hue (h)
-TP_COLORAPP_HUE_TOOLTIP;Hue (h) - angle between 0 and 360.
+TP_COLORAPP_HUE_TOOLTIP;Hue (h) - angle between 0° and 360°.
 TP_COLORAPP_LABEL;CIE Color Appearance Model 2002
 TP_COLORAPP_LABEL_CAM02;Image Adjustments
 TP_COLORAPP_LABEL_SCENE;Scene Conditions
@@ -1475,16 +1477,16 @@ TP_COLORTONING_LAB;L*a*b* blending
 TP_COLORTONING_LABEL;Color Toning
 TP_COLORTONING_LABGRID;L*a*b* color correction grid
 TP_COLORTONING_LABGRID_VALUES;HL: a=%1 b=%2\nS: a=%3 b=%4
-TP_COLORTONING_LABREGION_LIST_TITLE;Correction
-TP_COLORTONING_LABREGION_SATURATION;Saturation
-TP_COLORTONING_LABREGION_LIGHTNESS;Lightness
-TP_COLORTONING_LABREGION_MASK;Mask
-TP_COLORTONING_LABREGION_HUEMASK;H
-TP_COLORTONING_LABREGION_CHROMATICITYMASK;C
-TP_COLORTONING_LABREGION_LIGHTNESSMASK;L
-TP_COLORTONING_LABREGION_ABVALUES;a=%1 b=%2
-TP_COLORTONING_LABREGION_SHOWMASK;Show mask
 TP_COLORTONING_LABREGIONS;L*a*b* correction regions
+TP_COLORTONING_LABREGION_ABVALUES;a=%1 b=%2
+TP_COLORTONING_LABREGION_CHROMATICITYMASK;C
+TP_COLORTONING_LABREGION_HUEMASK;H
+TP_COLORTONING_LABREGION_LIGHTNESS;Lightness
+TP_COLORTONING_LABREGION_LIGHTNESSMASK;L
+TP_COLORTONING_LABREGION_LIST_TITLE;Correction
+TP_COLORTONING_LABREGION_MASK;Mask
+TP_COLORTONING_LABREGION_SATURATION;Saturation
+TP_COLORTONING_LABREGION_SHOWMASK;Show mask
 TP_COLORTONING_LUMA;Luminance
 TP_COLORTONING_LUMAMODE;Preserve luminance
 TP_COLORTONING_LUMAMODE_TOOLTIP;If enabled, when you change color (red, green, cyan, blue, etc.) the luminance of each pixel is preserved.
@@ -1584,16 +1586,16 @@ TP_DIRPYRDENOISE_MEDIAN_METHOD_RGB;RGB
 TP_DIRPYRDENOISE_MEDIAN_METHOD_TOOLTIP;When using the "Luminance only" and "L*a*b*" methods, median filtering will be performed just after the wavelet step in the noise reduction pipeline.\nWhen using the "RGB" mode, it will be performed at the very end of the noise reduction pipeline.
 TP_DIRPYRDENOISE_MEDIAN_METHOD_WEIGHTED;Weighted L* (little) + a*b* (normal)
 TP_DIRPYRDENOISE_MEDIAN_PASSES;Median iterations
-TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Applying three median filter iterations with a 33 window size often leads to better results than using one median filter iteration with a 77 window size.
+TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.
 TP_DIRPYRDENOISE_MEDIAN_TYPE;Median type
-TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n33 soft: treats 5 pixels in a 33 pixel window.\n33: treats 9 pixels in a 33 pixel window.\n55 soft: treats 13 pixels in a 55 pixel window.\n55: treats 25 pixels in a 55 pixel window.\n77: treats 49 pixels in a 77 pixel window.\n99: treats 81 pixels in a 99 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
+TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
 TP_DIRPYRDENOISE_SLI;Slider
-TP_DIRPYRDENOISE_TYPE_3X3;33
-TP_DIRPYRDENOISE_TYPE_3X3SOFT;33 soft
-TP_DIRPYRDENOISE_TYPE_5X5;55
-TP_DIRPYRDENOISE_TYPE_5X5SOFT;55 soft
-TP_DIRPYRDENOISE_TYPE_7X7;77
-TP_DIRPYRDENOISE_TYPE_9X9;99
+TP_DIRPYRDENOISE_TYPE_3X3;3×3
+TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 soft
+TP_DIRPYRDENOISE_TYPE_5X5;5×5
+TP_DIRPYRDENOISE_TYPE_5X5SOFT;5×5 soft
+TP_DIRPYRDENOISE_TYPE_7X7;7×7
+TP_DIRPYRDENOISE_TYPE_9X9;9×9
 TP_DIRPYREQUALIZER_ALGO;Skin Color Range
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fine: closer to the colors of the skin, minimizing the action on other colors\nLarge: avoid more artifacts.
 TP_DIRPYREQUALIZER_ARTIF;Reduce artifacts
@@ -2039,14 +2041,14 @@ TP_SHARPENING_USM;Unsharp Mask
 TP_SHARPENMICRO_AMOUNT;Quantity
 TP_SHARPENMICRO_CONTRAST;Contrast threshold
 TP_SHARPENMICRO_LABEL;Microcontrast
-TP_SHARPENMICRO_MATRIX;33 matrix instead of 55
+TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
 TP_SHARPENMICRO_UNIFORMITY;Uniformity
 TP_SOFTLIGHT_LABEL;Soft Light
 TP_SOFTLIGHT_STRENGTH;Strength
 TP_TM_FATTAL_AMOUNT;Amount
 TP_TM_FATTAL_ANCHOR;Anchor
 TP_TM_FATTAL_LABEL;Dynamic Range Compression
-TP_TM_FATTAL_THRESHOLD;Threshold
+TP_TM_FATTAL_THRESHOLD;Detail
 TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid color shift
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Skin-tones
