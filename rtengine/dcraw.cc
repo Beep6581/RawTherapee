@@ -24,10 +24,14 @@
 /*RT*/#define DJGPP
 /*RT*/#include "jpeg.h"
 /*RT*/#include "lj92.h"
+/*RT*/#ifdef _OPENMP
+/*RT*/#include <omp.h>
+/*RT*/#endif
+
 #include <utility>
 #include <vector>
 #include "opthelper.h"
-//#define BENCHMARK
+#define BENCHMARK
 #include "StopWatch.h"
 
 /*
@@ -1126,36 +1130,40 @@ void CLASS ljpeg_idct (struct jhead *jh)
 
 void CLASS lossless_dnglj92_load_raw()
 {
-    unsigned save, tcol=0;
+    BENCHFUN
+    tiff_bps = 16;
+    size_t tileCount = raw_width / tile_width;
+    size_t dataOffset[tileCount];
+    for (size_t t = 0; t < tileCount; ++t) {
+        dataOffset[t] = get4();
+    }
+    uint8_t *data = (uint8_t*)malloc(ifp->size);
+    fseek(ifp, 0, SEEK_SET);
+    // read whole file
+    fread(data, 1, ifp->size, ifp);
 
-    while (tcol < raw_width) {
-        save = ftell(ifp);
-        if (tile_length < INT_MAX) {
-            fseek(ifp, get4(), SEEK_SET);
-        }
-        int data_length = ifp->size - ifp->pos;
+#ifdef _OPENMP
+    #pragma omp parallel for num_threads(std::min<int>(tileCount, omp_get_max_threads()))
+#endif
+    for (size_t t = 0; t < tileCount; ++t) {
+        size_t tcol = t * tile_width;
+        int data_length = ifp->size;
         lj92 lj;
-        uint8_t *data = (uint8_t*)malloc(data_length);
-        fread(data, 1, data_length, ifp);
   
-        fseek(ifp, save, SEEK_SET);
         int newwidth, newheight, newbps;
-        lj92_open(&lj, data, data_length, &newwidth, &newheight, &newbps);
+        lj92_open(&lj, &data[dataOffset[t]], data_length, &newwidth, &newheight, &newbps);
 
         uint16_t *target = (uint16_t*)malloc(newwidth * newheight * 2 * sizeof *target);
         lj92_decode(lj, target, tile_width, 0, NULL, 0);
-        tiff_bps = 16;
         for (int y = 0; y < height; ++y) {
             for(int x = 0; x < tile_width; ++x) {
                 RAW(y, x + tcol) = target[y * tile_width + x];
             }
         }
         lj92_close(lj);
-        tcol += tile_width;
-        get4();
-        free(data);
         free (target);
     }
+    free(data);
 }
 
 void CLASS lossless_dng_load_raw()
