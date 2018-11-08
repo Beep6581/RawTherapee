@@ -23,7 +23,7 @@
 /*RT*/#define LOCALTIME
 /*RT*/#define DJGPP
 /*RT*/#include "jpeg.h"
-
+/*RT*/#include "lj92.h"
 #include <utility>
 #include <vector>
 #include "opthelper.h"
@@ -1122,6 +1122,40 @@ void CLASS ljpeg_idct (struct jhead *jh)
       FORC(8) work[2][i][j] += work[1][c][j] * cs[(i*2+1)*c];
 
   FORC(64) jh->idct[c] = CLIP(((float *)work[2])[c]+0.5);
+}
+
+void CLASS lossless_dnglj92_load_raw()
+{
+    unsigned save, tcol=0;
+
+    while (tcol < raw_width) {
+        save = ftell(ifp);
+        if (tile_length < INT_MAX) {
+            fseek(ifp, get4(), SEEK_SET);
+        }
+        int data_length = ifp->size - ifp->pos;
+        lj92 lj;
+        uint8_t *data = (uint8_t*)malloc(data_length);
+        fread(data, 1, data_length, ifp);
+  
+        fseek(ifp, save, SEEK_SET);
+        int newwidth, newheight, newbps;
+        lj92_open(&lj, data, data_length, &newwidth, &newheight, &newbps);
+
+        uint16_t *target = (uint16_t*)malloc(newwidth * newheight * 2 * sizeof *target);
+        lj92_decode(lj, target, tile_width, 0, NULL, 0);
+        tiff_bps = 16;
+        for (int y = 0; y < height; ++y) {
+            for(int x = 0; x < tile_width; ++x) {
+                RAW(y, x + tcol) = target[y * tile_width + x];
+            }
+        }
+        lj92_close(lj);
+        tcol += tile_width;
+        get4();
+        free(data);
+        free (target);
+    }
 }
 
 void CLASS lossless_dng_load_raw()
@@ -9280,7 +9314,7 @@ void CLASS identify()
     switch (tiff_compress) {
       case 0:
       case 1:     load_raw = &CLASS   packed_dng_load_raw;  break;
-      case 7:     load_raw = &CLASS lossless_dng_load_raw;  break;
+      case 7:     load_raw = (!RT_from_adobe_dng_converter && !strncmp(make,"Blackmagic",10)) ? &CLASS lossless_dnglj92_load_raw : &CLASS lossless_dng_load_raw;  break;
       case 8:     load_raw = &CLASS  deflate_dng_load_raw;  break;
       case 34892: load_raw = &CLASS    lossy_dng_load_raw;  break;
       default:    load_raw = 0;
