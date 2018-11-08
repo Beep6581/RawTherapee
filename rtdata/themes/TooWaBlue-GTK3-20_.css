@@ -473,7 +473,7 @@ separator,
     background-color: transparent;
 }
 grid separator.horizontal, box separator.horizontal {
-    margin: 0.166666666666666666em 0;
+    margin: 0.166666666666666666em;
     padding: 0;
 }
 grid separator.vertical, box separator.vertical {
@@ -549,10 +549,7 @@ menu separator {
     background-color: shade(@bg-light-grey,.75);
     margin: 0.166666666666666666em;
 }
-separator#PrefCacheSeparator.horizontal {
-    margin: 0.25em 0.166666666666666666em;
-    padding: 0;
-}
+
 #MyExpander separator {
     background-color: @view-grid-border;
     margin: 0.333333333333333333em 0.166666666666666666em;
