@@ -33,7 +33,7 @@ extern const Settings *settings;
 LFModifier::~LFModifier()
 {
     if (data_) {
-        MyMutex::MyLock lock(*lfModifierMutex);
+        MyMutex::MyLock lock(lfModifierMutex);
         data_->Destroy();
     }
 }
@@ -113,14 +113,14 @@ void LFModifier::correctCA(double &x, double &y, int cx, int cy, int channel) co
 
 void LFModifier::processVignetteLine(int width, int y, float *line) const
 {
-    MyMutex::MyLock lock(*lfModifierMutex);
+    MyMutex::MyLock lock(lfModifierMutex);
     data_->ApplyColorModification(line, 0, y, width, 1, LF_CR_1(INTENSITY), 0);
 }
 
 
 void LFModifier::processVignetteLine3Channels(int width, int y, float *line) const
 {
-    MyMutex::MyLock lock(*lfModifierMutex);
+    MyMutex::MyLock lock(lfModifierMutex);
     data_->ApplyColorModification(line, 0, y, width, 1, LF_CR_3(RED, GREEN, BLUE), 0);
 }
 
@@ -160,7 +160,6 @@ LFModifier::LFModifier(lfModifier *m, bool swap_xy, int flags):
     swap_xy_(swap_xy),
     flags_(flags)
 {
-    lfModifierMutex = new MyMutex;
 }
 
 
@@ -378,14 +377,13 @@ bool LFDatabase::LoadDirectory(const char *dirname)
 LFDatabase::LFDatabase():
     data_(nullptr)
 {
-    lfDBMutex = new MyMutex;
 }
 
 
 LFDatabase::~LFDatabase()
 {
     if (data_) {
-        MyMutex::MyLock lock(*lfDBMutex);
+        MyMutex::MyLock lock(lfDBMutex);
         data_->Destroy();
     }
 }
@@ -401,7 +399,7 @@ std::vector<LFCamera> LFDatabase::getCameras() const
 {
     std::vector<LFCamera> ret;
     if (data_) {
-        MyMutex::MyLock lock(*lfDBMutex);
+        MyMutex::MyLock lock(lfDBMutex);
         auto cams = data_->GetCameras();
         while (*cams) {
             ret.emplace_back();
@@ -417,7 +415,7 @@ std::vector<LFLens> LFDatabase::getLenses() const
 {
     std::vector<LFLens> ret;
     if (data_) {
-        MyMutex::MyLock lock(*lfDBMutex);
+        MyMutex::MyLock lock(lfDBMutex);
         auto lenses = data_->GetLenses();
         while (*lenses) {
             ret.emplace_back();
@@ -433,7 +431,7 @@ LFCamera LFDatabase::findCamera(const Glib::ustring &make, const Glib::ustring &
 {
     LFCamera ret;
     if (data_) {
-        MyMutex::MyLock lock(*lfDBMutex);
+        MyMutex::MyLock lock(lfDBMutex);
         auto found = data_->FindCamerasExt(make.c_str(), model.c_str());
         if (found) {
             ret.data_ = found[0];
@@ -448,7 +446,7 @@ LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name) c
 {
     LFLens ret;
     if (data_) {
-        MyMutex::MyLock lock(*lfDBMutex);
+        MyMutex::MyLock lock(lfDBMutex);
         auto found = data_->FindLenses(camera.data_, nullptr, name.c_str());
         for (size_t pos = 0; !found && pos < name.size(); ) {
             // try to split the maker from the model of the lens -- we have to
@@ -486,7 +484,7 @@ std::unique_ptr<LFModifier> LFDatabase::getModifier(const LFCamera &camera, cons
 {
     std::unique_ptr<LFModifier> ret;
     if (data_) {
-        MyMutex::MyLock lock(*lfDBMutex);
+        MyMutex::MyLock lock(lfDBMutex);
         if (camera && lens) {
             lfModifier *mod = lfModifier::Create(lens.data_, camera.getCropFactor(), width, height);
             int flags = LF_MODIFY_DISTORTION | LF_MODIFY_SCALE | LF_MODIFY_TCA;

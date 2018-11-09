@@ -825,11 +825,6 @@ unsigned int FramesData::getFrameCount() const
     return dcrawFrameCount ? dcrawFrameCount : frames.size();
 }
 
-FrameData *FramesData::getFrameData(unsigned int frame) const
-{
-    return frames.empty() || frame >= frames.size() ? nullptr : frames.at(frame);
-}
-
 bool FramesData::getPixelShift () const
 {
     // So far only Pentax and Sony provide multi-frame Pixel Shift files.
@@ -1139,9 +1134,7 @@ FramesData::FramesData(const Glib::ustring& fname, std::unique_ptr<RawMetaDataLo
 
                 // creating FrameData
                 for (auto currFrame : exifManager.frames) {
-                    FrameData* fd = new FrameData(currFrame, currFrame->getRoot(), roots.at(0));
-
-                    frames.push_back(fd);
+                    frames.push_back(std::unique_ptr<FrameData>(new FrameData(currFrame, currFrame->getRoot(), roots.at(0))));
                 }
 
                 for (auto currRoot : roots) {
@@ -1167,8 +1160,7 @@ FramesData::FramesData(const Glib::ustring& fname, std::unique_ptr<RawMetaDataLo
                 roots = exifManager.roots;
 
                 for (auto currFrame : exifManager.frames) {
-                    FrameData* fd = new FrameData(currFrame, currFrame->getRoot(), roots.at(0));
-                    frames.push_back(fd);
+                    frames.push_back(std::unique_ptr<FrameData>(new FrameData(currFrame, currFrame->getRoot(), roots.at(0))));
                 }
 
                 rewind(exifManager.f);  // Not sure this is necessary
@@ -1188,9 +1180,7 @@ FramesData::FramesData(const Glib::ustring& fname, std::unique_ptr<RawMetaDataLo
 
             // creating FrameData
             for (auto currFrame : exifManager.frames) {
-                FrameData* fd = new FrameData(currFrame, currFrame->getRoot(), roots.at(0));
-
-                frames.push_back(fd);
+                frames.push_back(std::unique_ptr<FrameData>(new FrameData(currFrame, currFrame->getRoot(), roots.at(0))));
             }
 
             for (auto currRoot : roots) {
