@@ -1131,8 +1131,10 @@ void CLASS ljpeg_idct (struct jhead *jh)
 void CLASS lossless_dnglj92_load_raw()
 {
     BENCHFUN
+
     tiff_bps = 16;
 
+    uint16_t *lincurve = !strncmp(make,"Blackmagic",10) ? curve : nullptr;
     tile_width = tile_length < INT_MAX ? tile_width : raw_width;
     size_t tileCount = raw_width / tile_width;
 
@@ -1161,7 +1163,7 @@ void CLASS lossless_dnglj92_load_raw()
         lj92_open(&lj, &data[dataOffset[t]], data_length, &newwidth, &newheight, &newbps);
 
         uint16_t *target = (uint16_t*)malloc(newwidth * newheight * 2 * sizeof *target);
-        lj92_decode(lj, target, tile_width, 0, NULL, 0);
+        lj92_decode(lj, target, tile_width, 0, lincurve, 0x1000);
         for (int y = 0; y < height; ++y) {
             for(int x = 0; x < tile_width; ++x) {
                 RAW(y, x + tcol) = target[y * tile_width + x];
