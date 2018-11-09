@@ -1132,10 +1132,17 @@ void CLASS lossless_dnglj92_load_raw()
 {
     BENCHFUN
     tiff_bps = 16;
+
+    tile_width = tile_length < INT_MAX ? tile_width : raw_width;
     size_t tileCount = raw_width / tile_width;
+
     size_t dataOffset[tileCount];
-    for (size_t t = 0; t < tileCount; ++t) {
-        dataOffset[t] = get4();
+    if(tile_length < INT_MAX) {
+        for (size_t t = 0; t < tileCount; ++t) {
+            dataOffset[t] = get4();
+        }
+    } else {
+        dataOffset[0] = ifp->pos;
     }
     uint8_t *data = (uint8_t*)malloc(ifp->size);
     fseek(ifp, 0, SEEK_SET);
@@ -1161,7 +1168,7 @@ void CLASS lossless_dnglj92_load_raw()
             }
         }
         lj92_close(lj);
-        free (target);
+        free(target);
     }
     free(data);
 }
@@ -9322,7 +9329,7 @@ void CLASS identify()
     switch (tiff_compress) {
       case 0:
       case 1:     load_raw = &CLASS   packed_dng_load_raw;  break;
-      case 7:     load_raw = (!RT_from_adobe_dng_converter && !strncmp(make,"Blackmagic",10)) ? &CLASS lossless_dnglj92_load_raw : &CLASS lossless_dng_load_raw;  break;
+      case 7:     load_raw = (!RT_from_adobe_dng_converter && (!strncmp(make,"Blackmagic",10) || !strncmp(make,"Canon",5))) ? &CLASS lossless_dnglj92_load_raw : &CLASS lossless_dng_load_raw;  break;
       case 8:     load_raw = &CLASS  deflate_dng_load_raw;  break;
       case 34892: load_raw = &CLASS    lossy_dng_load_raw;  break;
       default:    load_raw = 0;
