@@ -1084,11 +1084,12 @@ inline float WeightedStdToneCurve::Triangle(float a, float a1, float b) const
 #ifdef __SSE2__
 inline vfloat WeightedStdToneCurve::Triangle(vfloat a, vfloat a1, vfloat b) const
 {
+        vmask eqmask = vmaskf_eq(b, a);
         vfloat a2 = a1 - a;
         vmask cmask = vmaskf_lt(b, a);
         vfloat b3 = vself(cmask, b, F2V(65535.f) - b);
         vfloat a3 = vself(cmask, a, F2V(65535.f) - a);
-        return b + a2 * b3 / a3;
+        return vself(eqmask, a1, b + a2 * b3 / a3);
 }
 #endif
 
