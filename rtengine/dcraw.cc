@@ -9329,7 +9329,7 @@ void CLASS identify()
     switch (tiff_compress) {
       case 0:
       case 1:     load_raw = &CLASS   packed_dng_load_raw;  break;
-      case 7:     load_raw = (!RT_from_adobe_dng_converter && (!strncmp(make,"Blackmagic",10) || !strncmp(make,"Canon",5))) ? &CLASS lossless_dnglj92_load_raw : &CLASS lossless_dng_load_raw;  break;
+      case 7:     load_raw = (!RT_from_adobe_dng_converter && ((!strncmp(make,"Blackmagic",10) && strncmp(model, "Pocket Cinema Camera 4K", 23)) || !strncmp(make,"Canon",5))) ? &CLASS lossless_dnglj92_load_raw : &CLASS lossless_dng_load_raw;  break;
       case 8:     load_raw = &CLASS  deflate_dng_load_raw;  break;
       case 34892: load_raw = &CLASS    lossy_dng_load_raw;  break;
       default:    load_raw = 0;
