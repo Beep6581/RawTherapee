@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2018 TooWaBoo
-  Version 2.86
+  Version 2.87
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -179,11 +179,6 @@ frame {
     border-radius: 0;
 }
 
-#BatchQueueButtonsMainContainer frame,
-#MyExpander frame,
-dialog frame {
-    margin: 0.166666666666666666em 0.5em;
-}
 /* affects selection list*/
 entry > window > frame {
     margin: 0;
@@ -193,24 +188,33 @@ entry > window > frame {
     margin: -5px 0 0;
 }
 
-frame > border {
-    padding: 0;
-    border-radius: 0;
-    border: none;
-    background-color: transparent;
+#BatchQueueButtonsMainContainer frame,
+#MyExpander frame,
+dialog frame {
     margin: 0;
-    min-height: 0;
-    min-width: 0;
+    padding: 0.166666666666666666em 0.75em;
 }
-
 #BatchQueueButtonsMainContainer > frame > border,
 #MyExpander frame > border,
 dialog frame > border {
-    padding: 0.416666666666666666em;
+    padding: 0 0.333333333333333333em 0.333333333333333333em;
     border-radius: 0;
     border: 0.083333333333333333em solid @border-color;
     background-color: transparent;
-    margin: 0 -0.5em;
+    margin: 0 -0.583333333333333333em;
+}
+frame > label {
+    margin: 0;
+    padding: 0.416666666666666666em 0;
+    color: @headline-frame;
+}
+frame > checkbutton label{
+    color: @headline-frame;
+}
+#BatchQueueButtonsMainContainer frame > label:not(.dummy),
+#ToolPanelNotebook frame > label:not(.dummy),
+dialog frame > label:not(.dummy) {
+    padding: 0.25em 0.5em;
 }
 
 #PrefNotebook box > frame > border {
@@ -221,12 +225,6 @@ dialog frame > border {
     border: 0.083333333333333333em solid @bg-dark-grey;
 }
 
-#BatchQueueButtonsMainContainer frame > label,
-#ToolPanelNotebook frame > label,
-dialog frame > label {
-    margin: 0;
-    padding: 0.166666666666666666em 0.5em;
-}
 #BatchQueueButtonsMainContainer frame > border {
     margin-bottom: 0.833333333333333333em;
 }
@@ -234,14 +232,6 @@ dialog frame > label {
     padding-left: 0.916666666666666666em;
 }
 
-frame > label {
-    margin: 0;
-    padding: 0.416666666666666666em 0;
-    color: @headline-frame;
-}
-frame > checkbutton label{
-    color: @headline-frame;
-}
 /*** end ***************************************************************************************/
 
 /*** Lists & Views *****************************************************************************/
@@ -397,7 +387,7 @@ filechooser placessidebar list row {
     min-height: calc(1.416666666666666666em + 8px);
 }
 filechooser placessidebar list row label{
-    margin: 0 0 0 0.58333333333333333em;
+    margin: 0 0 0 0.583333333333333333em;
 }
 filechooser list row:hover {
     background-color: @bg-list-hover;
@@ -473,7 +463,7 @@ separator,
     background-color: transparent;
 }
 grid separator.horizontal, box separator.horizontal {
-    margin: 0.333333333333333333em 0.166666666666666666em;
+    margin: 0.25em 0.166666666666666666em;
     padding: 0;
 }
 grid separator.vertical, box separator.vertical {
@@ -546,13 +536,13 @@ menu separator {
 }
 
 .scrollableToolbar separator.vertical {
-    background-color: shade(@bg-light-grey,.75);
+    background-color: shade(@bg-light-grey, .72);
     margin: 0.166666666666666666em;
 }
 
 #MyExpander separator.horizontal {
     background-color: @view-grid-border;
-    margin: 0.333333333333333333em 0.166666666666666666em;
+    margin: 0.25em 0.166666666666666666em;
 }
 #MyFileChooserButton separator {
     background-color: transparent;
@@ -1148,7 +1138,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     border: none;
     border-radius: 0;
     margin: 0;
-    padding: 0.416666666666666666em;
+    padding: 0.5em;
 }
 
     /* Sub-tool (MyExpander) */
@@ -1157,7 +1147,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     border: 0.083333333333333333em solid @border-color;
     border-radius: 0;
     margin: 0;
-    padding: 0.416666666666666666em;
+    padding: 0.333333333333333333em;
 }
 
 #MyExpanderTitle > box {
@@ -1168,7 +1158,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 #MyExpanderTitle label {
     color: @headline-big;
     padding: 0;
-    margin: 0.083333333333333333em 0.25em 0 0.5em;
+    margin: 0.083333333333333333em 0.25em 0 0.166666666666666666em;
 }
 
 #MyExpanderTitle:hover label {
@@ -1285,7 +1275,6 @@ switch {
     padding: 0;
     border-radius: 0.2em;
     background-image: none;
-    box-shadow: inset 0.083333333333333333em 0.083333333333333333em rgba(0, 0, 0, 0.08), 0 0.083333333333333333em rgba(242, 242, 242, 0.1);
     border: 0.083333333333333333em solid @bg-entry-border;
     background-color: @bg-scale-entry;
     margin-bottom: 0.5em;
@@ -1328,8 +1317,8 @@ switch:disabled:not(:checked) {
 /*** Buttons ***********************************************************************************/
 button,
 #BeforeAfterContainer button {
-    min-height: 1.666666666666666666em;
-    min-width: 1.666666666666666666em;
+    min-height: 1.833333333333333333em;
+    min-width: 1.833333333333333333em;
     margin: 0.166666666666666666em;
     border-radius: 0.2em;
     border: 0.083333333333333333em solid @bg-button-border;
@@ -1346,7 +1335,9 @@ button.flat {
 
 button.flat:hover,
 button:hover,
-#BeforeAfterContainer button:hover  {
+#BeforeAfterContainer button:hover,
+#FileBrowserQueryToolbar entry + button.flat:hover,
+#FileBrowserIconToolbar entry + button.flat:hover {
     border-color: @bg-button-border;
     box-shadow: inset 0 0.083333333333333333em rgba(242, 242, 242, 0.1);
     background-image: linear-gradient(to bottom, rgba(100,100,100,.3), rgba(30,30,30,.3));
@@ -1356,15 +1347,18 @@ button:hover,
 #MainNotebook > header > grid > button:hover {
     background-color: alpha(@bg-grey, 0.6);
     border-color: shade(@bg-dark-grey, 0.6);
+    box-shadow: inset 0 0.1em rgba(242, 242, 242, 0.12);
 }
 
 button.flat:active,
 button.flat:checked,
 button:active,
 button:checked,
-#BeforeAfterContainer button:checked {
+#BeforeAfterContainer button:checked,
+#FileBrowserQueryToolbar entry + button.flat:active,
+#FileBrowserIconToolbar entry + button.flat:active {
     border-color: @bg-button-border;
-    box-shadow: inset 0 0.083333333333333333em rgba(242, 242, 242, 0.08);
+    box-shadow: inset 0 0.1em rgba(242, 242, 242, 0.08);
     background-image: linear-gradient(to bottom, rgba(100,100,100,.3), rgba(30,30,30,.3));
     background-color: @bg-button-active;
 }
@@ -1372,6 +1366,7 @@ button:checked,
 #MainNotebook > header > grid > button:active {
     background-color: alpha(@bg-light-grey, 0.8);
     border-color: shade(@bg-dark-grey, 0.6);
+    box-shadow: inset 0 0.1em rgba(242, 242, 242, 0.15);
 }
 
 /* Misc */
@@ -1426,6 +1421,13 @@ combobox entry + button:not(.dummy) {
     margin-bottom: calc(0.416666666666666666em - 8px);
 }
 
+#ProfilePanel combobox {
+    margin-right: -2px;
+}
+#ProfilePanel > grid {
+    margin-bottom: calc(0.416666666666666666em -2px);
+}
+
 /* Reset button */
 scale + button.flat,
 spinbutton + button.flat,
@@ -1472,7 +1474,6 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
 #ProfilePanel button,
 #MainNotebook > header > grid > button,
 #MyExpander button.independent.toggle:not(.image-button):not(.text-button):first-child:only-child/* Graduated filter big button */,
-#MyExpander button.independent.image-button,/* Picker button */
 #MyExpander .drawingarea + grid > button.flat,/* Curve buttons */
 #BatchQueueButtonsMainContainer + grid + box button,
 #RightNotebook > stack > scrolledwindow:last-child button.image-button,/* Fast Export */
@@ -1498,24 +1499,12 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
     margin-right: 0;
 }
 #MyExpander button.independent.toggle:not(.image-button):not(.text-button):first-child:only-child/* Graduated filter button */,
-#MyExpander button.independent.image-button,/* Picker button */
 #MyExpander .drawingarea + grid > button.flat,/* Curve buttons */
 #MetaPanelNotebook scrolledwindow + grid > button,
 #MetaPanelNotebook scrolledwindow + grid + grid > button {
     margin: 0.166666666666666666em;
 }
 
-#MyExpander button.independent.image-button + label + combobox button {
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-}
-
-#ProfilePanel combobox {
-    margin-right: -2px;
-}
-#ProfilePanel > grid {
-    margin-bottom: calc(0.416666666666666666em -2px);
-}
 #EditorTopPanel button.narrowbutton {
     min-width: 0.833333333333333333em;
     padding: 0 0.166666666666666666em;
@@ -1595,11 +1584,11 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
 /* Search & Query buttons */
 #FileBrowserQueryToolbar entry + button.flat,
 #FileBrowserIconToolbar entry + button.flat {
-    min-height: 1.666666666666666666em;
-    min-width: 1.666666666666666666em;
+    min-height: 1.833333333333333333em;
+    min-width: 1.833333333333333333em;
     margin: 0;
     border-radius: 0 0.2em 0.2em 0;
-    box-shadow: inset 0 0.083333333333333333em rgba(0, 0, 0, 0.08), 0 0.083333333333333333em rgba(242, 242, 242, 0.1);
+    box-shadow: inset 0 0.1em rgba(0, 0, 0, 0.1), inset -0.1em -0.1em rgba(230, 230, 230, 0.09);
     border: 0.083333333333333333em solid @bg-entry-border;
     background-color: @bg-scale-entry;
     padding: 0;
@@ -1608,15 +1597,6 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
 #FileBrowserIconToolbar entry + button.flat:not(:hover):not(:active) {
     border-left: none;
     padding-left: 0.083333333333333333em;
-}
-#FileBrowserQueryToolbar entry,
-#FileBrowserIconToolbar entry {
-    min-height: 1.666666666666666666em;
-    min-width: 0;
-    margin: 0;
-    padding: 0 0.333333333333333333em;
-    border-right: none;
-    border-radius: 0.2em 0 0 0.2em;
 }
 
 /* Small Lock Button */
@@ -1768,12 +1748,12 @@ popover button.text-button:active {
 checkbutton {
     padding: 0;
     margin: 0.083333333333333333em 0.166666666666666666em;
-    min-height: 1.666666666666666666em;
+    min-height: 1.833333333333333333em;
 }
 radiobutton {
     padding: 0.083333333333333333em 0;
     margin: 0.166666666666666666em;
-    min-height: 1.666666666666666666em;
+    min-height: 1.833333333333333333em;
 }
 
 check,
@@ -1803,7 +1783,7 @@ radio:disabled {
 
 radiobutton label,
 checkbutton label {
-    margin: 0 0.416666666666666666em;
+    margin: 0 0.583333333333333333em 0 0.416666666666666666em;
     padding: 0;
 }
 
@@ -1828,30 +1808,36 @@ frame > checkbutton check{
 
 /*** Entry & Spinbutton ************************************************************************/
 #MyExpander entry,
-entry {
+entry,
+spinbutton {
     margin: 0.166666666666666666em;
     padding: 0 0.333333333333333333em;
-    min-height: 1.666666666666666666em;
+    min-height: 1.833333333333333333em;
     min-width: 0;
     border-radius: 0.2em;
-    box-shadow: inset 0.083333333333333333em 0.083333333333333333em rgba(0, 0, 0, 0.08), 0 0.083333333333333333em rgba(242, 242, 242, 0.1);
+    box-shadow: inset 0.1em 0.1em rgba(0, 0, 0, 0.1), inset -0.1em -0.1em rgba(230, 230, 230, 0.09);
     border: 0.083333333333333333em solid @bg-entry-border;
     background-color: @bg-scale-entry;
 }
-
+#FileBrowserQueryToolbar entry,
+#FileBrowserIconToolbar entry {
+    min-height: 1.833333333333333333em;
+    margin: 0;
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    box-shadow: inset 0.1em 0.1em rgba(0, 0, 0, 0.1), inset 0 -0.1em rgba(230, 230, 230, 0.09);
+}
+#FileBrowserQueryToolbar box + box > label + entry,
+#FileBrowserIconToolbar entry + button + label + entry {
+    margin-left: 0.166666666666666666em;
+}
 spinbutton {
-    margin: 0.166666666666666666em;
     padding: 0;
-    min-height: 1.666666666666666666em;
-    min-width: 0;
-    border-radius: 0.2em;
-    background-color: @bg-scale-entry;
-    border: 0.083333333333333333em solid @bg-entry-border;
-    box-shadow: inset 0.083333333333333333em 0.083333333333333333em rgba(0, 0, 0, 0.08), 0 0.083333333333333333em rgba(242, 242, 242, 0.1);
 }
 
 #MyExpander spinbutton {
-    margin: 0.16666666666666666666em;
+    margin: 0.166666666666666666em;
     padding: 0;
     min-height: 1.333333333333333333em;
     min-width: 0;
@@ -1860,21 +1846,25 @@ spinbutton {
     background-color: @bg-tb-spinbutton;
     border: 0.083333333333333333em solid @bg-button-border;
     color: @text-tbEntry;
-    box-shadow: inset 0.083333333333333333em  0.083333333333333333em rgba(0, 0, 0, .12), 0 0.083333333333333333em rgba(255, 255, 255, 0.12);
+    box-shadow: inset 0.1em  0.1em rgba(0, 0, 0, .1), inset -0.1em -0.1em rgba(250, 250, 250, .08);
 }
 /* Needed for Reset & and Auto button height*/
-#MyExpander checkbutton + label + spinbutton,
 #MyExpander button + label + spinbutton {
-    margin-top: 0.333333333333333333em;
-    margin-bottom: 0.333333333333333333em;
+    margin-top: 0.416666666666666666em;
+    margin-bottom: 0.416666666666666666em;
 }
+#MyExpander checkbutton + label + spinbutton {
+    margin-top: 0.416666666666666666em;
+    margin-bottom: 0.416666666666666666em;
+}
+/**/
 
 #MyExpander spinbutton button,
 spinbutton button {
     padding: 0;
     margin: 0;
     min-height: 1.333333333333333333em;
-    min-width: 1.5em;
+    min-width: 1.666666666666666666em;
     background-image: none;
     background-color: transparent;
     border: none;
