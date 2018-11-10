@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2018 TooWaBoo
-  Version 2.87
+  Version 2.88
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1038,7 +1038,13 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 }
 
 #ToolBarPanelFileBrowser {
-    margin: 0.416666666666666666em 0;
+    margin: 0 0 0.416666666666666666em 0;
+    min-height: 0;
+    min-width: 0;
+    padding: 0;
+}
+#FileBrowserQueryToolbar {
+    margin: 0 0 0.416666666666666666em 0;
     min-height: 0;
     min-width: 0;
     padding: 0;
@@ -1138,7 +1144,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     border: none;
     border-radius: 0;
     margin: 0;
-    padding: 0.5em;
+    padding: 0.5em 0.333333333333333333em;
 }
 
     /* Sub-tool (MyExpander) */
@@ -1146,7 +1152,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     background-color: transparent;
     border: 0.083333333333333333em solid @border-color;
     border-radius: 0;
-    margin: 0;
+    margin: 0 0.166666666666666666em;
     padding: 0.333333333333333333em;
 }
 
@@ -1598,6 +1604,11 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
     border-left: none;
     padding-left: 0.083333333333333333em;
 }
+#FileBrowserIconToolbar box > entry + button.flat {
+    margin-top: 0.333333333333333333em;
+    margin-bottom: 0.333333333333333333em;
+    min-height: 0;
+}
 
 /* Small Lock Button */
 #BeforeAfterContainer button {
@@ -1822,14 +1833,21 @@ spinbutton {
 #FileBrowserQueryToolbar entry,
 #FileBrowserIconToolbar entry {
     min-height: 1.833333333333333333em;
+    min-width: 0;
     margin: 0;
     border-right: none;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     box-shadow: inset 0.1em 0.1em rgba(0, 0, 0, 0.1), inset 0 -0.1em rgba(230, 230, 230, 0.09);
 }
-#FileBrowserQueryToolbar box + box > label + entry,
-#FileBrowserIconToolbar entry + button + label + entry {
+
+#FileBrowserIconToolbar box > entry {
+    margin-top: 0.333333333333333333em;
+    margin-bottom: 0.333333333333333333em;
+    margin-left: 0.166666666666666666em;
+    min-height: 0;
+}
+#FileBrowserQueryToolbar box + box > label + entry {
     margin-left: 0.166666666666666666em;
 }
 spinbutton {
