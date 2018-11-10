@@ -156,6 +156,13 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
         model = "Unknown";
     }
 
+    if (model == "Unknown") {
+        tag = newFrameRootDir->findTag("UniqueCameraModel");
+        if (tag) {
+            model = tag->valueToString();
+        }
+    }
+
     tag = newFrameRootDir->findTagUpward("Orientation");
     if (tag) {
         orientation = tag->valueToString ();
