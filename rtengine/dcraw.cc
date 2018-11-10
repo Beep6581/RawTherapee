@@ -31,7 +31,7 @@
 #include <utility>
 #include <vector>
 #include "opthelper.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 
 /*
