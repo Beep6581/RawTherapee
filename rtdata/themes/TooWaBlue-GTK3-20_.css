@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2018 TooWaBoo
-  Version 2.88
+  Version 2.89
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1375,6 +1375,39 @@ button:checked,
     box-shadow: inset 0 0.1em rgba(242, 242, 242, 0.15);
 }
 
+/* Combobox */
+button.combo {
+    min-width: 3.25em;
+    padding: 0 0 0 0.25em;
+}
+combobox entry.combo + button.combo {
+    min-width: 1em;
+    margin-left: 0;
+    padding: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: none;
+}
+
+combobox arrow {
+    margin-right: 0.083333333333333333em;
+}
+
+combobox entry.combo + button.combo arrow {
+    margin-right: 0;
+}
+
+#PlacesPaned button.combo {
+    margin: 0;
+}
+#PlacesPaned combobox {
+    margin-bottom: calc(0.416666666666666666em - 8px);
+}
+
+#ProfilePanel combobox {
+    margin-right: -2px;
+}
+
 /* Misc */
 button label {
     margin: 0 0.416666666666666666em;
@@ -1390,14 +1423,7 @@ button image:not(.dummy),
     padding: 0 0.416666666666666666em 0 0;
     opacity: 0.85;
 }
-button.combo {
-    padding: 0 0 0 0.25em;
-}
-combobox arrow {
-    margin-right: 0.083333333333333333em;
-}
-#MetaPanelNotebook button + button:last-child,
-#MetaPanelNotebook scrolledwindow ~ combobox entry + button:not(.dummy) {
+#MetaPanelNotebook button + button:last-child {
     margin-right: 0;
 }
 #MetaPanelNotebook scrolledwindow + grid > button:first-child,
@@ -1408,28 +1434,7 @@ combobox arrow {
 #MetaPanelNotebook scrolledwindow + grid + grid > button:last-child {
     margin-right: 0;
 }
-combobox entry + button:not(.dummy) arrow {
-    margin-right: 0;
-}
-combobox entry + button:not(.dummy) {
-    min-width: 1em;
-    margin-left: 0;
-    padding: 0 ;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    border-left: none;
-}
 
-#PlacesPaned button.combo {
-    margin: 0;
-}
-#PlacesPaned combobox {
-    margin-bottom: calc(0.416666666666666666em - 8px);
-}
-
-#ProfilePanel combobox {
-    margin-right: -2px;
-}
 #ProfilePanel > grid {
     margin-bottom: calc(0.416666666666666666em -2px);
 }
