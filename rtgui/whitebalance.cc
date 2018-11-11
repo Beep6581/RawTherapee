@@ -263,9 +263,13 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
 
     Gtk::Label* slab = Gtk::manage (new Gtk::Label (M("TP_WBALANCE_SIZE")));
     setExpandAlignProperties(slab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    
+    Gtk::Grid* wbsizehelper = Gtk::manage(new Gtk::Grid());
+    wbsizehelper->set_name("WB-Size-Helper");
+    setExpandAlignProperties(wbsizehelper, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
     spotsize = Gtk::manage (new MyComboBoxText ());
-    setExpandAlignProperties(spotsize, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(spotsize, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     spotsize->append ("2");
 
     if (options.whiteBalanceSpotSize == 2) {
@@ -295,10 +299,12 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     if (options.whiteBalanceSpotSize == 32) {
         spotsize->set_active(4);
     }
+    
+    wbsizehelper->attach (*spotsize, 0, 0, 1, 1);
 
     spotgrid->attach (*spotbutton, 0, 0, 1, 1);
     spotgrid->attach (*slab, 1, 0, 1, 1);
-    spotgrid->attach (*spotsize, 2, 0, 1, 1);
+    spotgrid->attach (*wbsizehelper, 2, 0, 1, 1);
     pack_start (*spotgrid, Gtk::PACK_SHRINK, 0 );
     
     Gtk::HSeparator *separator = Gtk::manage (new  Gtk::HSeparator());
