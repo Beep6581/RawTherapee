@@ -39,25 +39,6 @@
 using namespace std;
 using namespace rtengine;
 
-namespace
-{
-
-struct NLParams {
-    BatchQueueListener* listener;
-    int qsize;
-    bool queueEmptied;
-    bool queueError;
-    Glib::ustring queueErrorMessage;
-};
-
-bool bqnotifylistenerUI(NLParams* params)
-{
-    params->listener->queueSizeChanged (params->qsize, params->queueEmptied, params->queueError, params->queueErrorMessage);
-    return false;
-}
-
-}
-
 BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(nullptr), fileCatalog(aFileCatalog), sequence(0), listener(nullptr)
 {
 
@@ -604,14 +585,13 @@ void BatchQueue::setProgress(double p)
     }
 
     // No need to acquire the GUI, setProgressUI will do it
-    const auto func =
-        [](BatchQueue* bq) -> bool
+    idle_register.add(
+        [this]() -> bool
         {
-            bq->redraw();
+            redraw();
             return false;
-        };
-
-    idle_register.add<BatchQueue>(func, this, false);
+        }
+    );
 }
 
 void BatchQueue::setProgressStr(const Glib::ustring& str)
@@ -636,12 +616,15 @@ void BatchQueue::error(const Glib::ustring& descr)
     }
 
     if (listener) {
-        NLParams* params = new NLParams;
-        params->listener = listener;
-        params->queueEmptied = false;
-        params->queueError = true;
-        params->queueErrorMessage = descr;
-        idle_register.add<NLParams>(bqnotifylistenerUI, params, true);
+        BatchQueueListener* const listener_copy = listener;
+
+        idle_register.add(
+            [listener_copy, descr]() -> bool
+            {
+                listener_copy->queueSizeChanged(0, false, true, descr);
+                return false;
+            }
+        );
     }
 }
 
@@ -975,15 +958,21 @@ void BatchQueue::notifyListener (bool queueEmptied)
 {
 
     if (listener) {
-        NLParams* params = new NLParams;
-        params->listener = listener;
-        {
-            MYREADERLOCK(l, entryRW);
-            params->qsize = fd.size();
-        }
-        params->queueEmptied = queueEmptied;
-        params->queueError = false;
-        idle_register.add<NLParams>(bqnotifylistenerUI, params, true);
+        BatchQueueListener* const listener_copy = listener;
+        const std::size_t queue_size =
+            [](MyRWMutex& mutex, const std::vector<ThumbBrowserEntryBase*>& fd) -> std::size_t
+            {
+                MYREADERLOCK(l, mutex);
+                return fd.size();
+            }(entryRW, fd);
+
+        idle_register.add(
+            [listener_copy, queue_size, queueEmptied]() -> bool
+            {
+                listener_copy->queueSizeChanged(queue_size, queueEmptied, false, {});
+                return false;
+            }
+        );
     }
 }
 

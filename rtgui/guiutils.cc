@@ -43,6 +43,19 @@ IdleRegister::~IdleRegister()
     destroy();
 }
 
+void IdleRegister::add(std::function<bool ()> function, gint priority)
+{
+    using Function = std::function<bool ()>;
+
+    const auto func =
+        [](Function* function)
+        {
+            return (*function)();
+        };
+
+    add<Function>(func, new Function(std::move(function)), true, priority);
+}
+
 void IdleRegister::destroy()
 {
     mutex.lock();

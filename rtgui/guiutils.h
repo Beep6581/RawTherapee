@@ -19,6 +19,7 @@
 #ifndef __GUI_UTILS_
 #define __GUI_UTILS_
 
+#include <functional>
 #include <map>
 
 #include <gtkmm.h>
@@ -98,6 +99,7 @@ public:
         mutex.unlock();
     }
 
+    void add(std::function<bool ()> function, gint priority = G_PRIORITY_DEFAULT_IDLE);
     void destroy();
 
 private:
