@@ -1079,6 +1079,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             hListener->histogramChanged(histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve, histCCurve, /*histCLurve, histLLCurve,*/ histLCAM, histCCAM, histRedRaw, histGreenRaw, histBlueRaw, histChroma, histLRETI);
         }
     }
+    if (orig_prev != oprevi) {
+        delete oprevi;
+        oprevi = nullptr;
+    }
+
 
 }
 
