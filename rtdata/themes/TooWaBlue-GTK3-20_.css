@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2018 TooWaBoo
-  Version 2.89
+  Version 2.90
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1377,7 +1377,6 @@ button:checked,
 
 /* Combobox */
 button.combo {
-    min-width: 3.25em;
     padding: 0 0 0 0.25em;
 }
 combobox entry.combo + button.combo {
@@ -1387,6 +1386,14 @@ combobox entry.combo + button.combo {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
     border-left: none;
+}
+#WB-Size-Helper button.combo {
+    min-width: 0;
+    margin: 0;
+}
+#WB-Size-Helper {
+    min-width: 3.5em;
+    margin: 0.166666666666666666em;
 }
 
 combobox arrow {
