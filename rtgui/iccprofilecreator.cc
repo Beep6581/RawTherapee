@@ -668,11 +668,13 @@ void ICCProfileCreator::savePressed()
     // -----------------setmedia white point for monitor  profile sRGB or AdobeRGB in case of profile used for monitor---------------------
     //instead of calculations made by LCMS..small differences
 
-    v2except = (profileVersion == "v2"  && (primariesPreset == "sRGB" || primariesPreset == "Adobe") && illuminant == "DEF");
+    v2except = (profileVersion == "v2"  && (primariesPreset == "sRGB" || primariesPreset == "Adobe" || primariesPreset == "Rec2020"  || primariesPreset == "BruceRGB" || primariesPreset == "ACES-AP1" || primariesPreset == "ACES-AP0") && illuminant == "DEF");
 
     //necessary for V2 profile
 
     if (!v2except) {
+        std::string is_RTv4 = "";
+
         if (primariesPreset == "ACES-AP0"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp0)) {
             sNewProfile = options.rtSettings.ACESp0;
             sPrimariesPreset = "ACES-AP0";
@@ -683,7 +685,14 @@ void ICCProfileCreator::savePressed()
             sNewProfile = options.rtSettings.adobe;
             sPrimariesPreset = "Medium";
         } else if (primariesPreset == "ProPhoto"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto)) {
+            is_RTv4 = options.rtSettings.prophoto.substr(0, 4);
+
+            if (is_RTv4 == "RTv4") {
+                options.rtSettings.prophoto = "RTv2_Large";
+            };
+
             sNewProfile = options.rtSettings.prophoto;
+
             sPrimariesPreset = "Large";
         } else if (primariesPreset == "Rec2020"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.rec2020)) {
             sNewProfile = options.rtSettings.rec2020;
@@ -692,13 +701,33 @@ void ICCProfileCreator::savePressed()
             sNewProfile = options.rtSettings.srgb;
             sPrimariesPreset = "sRGB";
         } else if (primariesPreset == "Widegamut"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.widegamut)) {
+            is_RTv4 = options.rtSettings.widegamut.substr(0, 4);
+
+            if (is_RTv4 == "RTv4") {
+                options.rtSettings.widegamut = "RTv2_Wide";
+            };
+
             sNewProfile = options.rtSettings.widegamut;
+
             sPrimariesPreset = "Wide";
         } else if (primariesPreset == "BestRGB"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.best)) {
+            is_RTv4 = options.rtSettings.best.substr(0, 4);
+
+            if (is_RTv4 == "RTv4") {
+                options.rtSettings.best = "RTv2_Best";
+            };
+
             sNewProfile = options.rtSettings.best;
+
             sPrimariesPreset = "Best";
         } else if (primariesPreset == "BetaRGB"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.beta)) {
             sNewProfile = options.rtSettings.beta;
+            is_RTv4 = options.rtSettings.beta.substr(0, 4);
+
+            if (is_RTv4 == "RTv4") {
+                options.rtSettings.widegamut = "RTv2_Beta";
+            };
+
             sPrimariesPreset = "Beta";
         } else if (primariesPreset == "BruceRGB"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.bruce)) {
             sNewProfile = options.rtSettings.bruce;
@@ -715,7 +744,22 @@ void ICCProfileCreator::savePressed()
             return;
         }
     } else {
-        sNewProfile = "RTv2_Beta";
+        //new model for v2 profile different from D50 by entering directly XYZ values and media white point
+        sNewProfile = "RTv2_Beta";//for copy
+
+        if (primariesPreset == "ACES-AP0") {
+            sPrimariesPreset = "ACES-AP0";
+        } else if (primariesPreset == "ACES-AP1") {
+            sPrimariesPreset = "ACES-AP1";
+        } else if (primariesPreset == "Adobe") {
+            sPrimariesPreset = "Medium";
+        } else if (primariesPreset == "Rec2020") {
+            sPrimariesPreset = "Rec2020";
+        } else if (primariesPreset == "BruceRGB") {
+            sPrimariesPreset = "Bruce";
+        } else if (primariesPreset == "sRGB") {
+            sPrimariesPreset = "sRGB";
+        }
     }
 
     //begin adaptation rTRC gTRC bTRC
@@ -957,16 +1001,30 @@ void ICCProfileCreator::savePressed()
         }
 
         cmsWhitePointFromTemp(&xyD, tempv4);
+
+        if (illuminant == "D65") {
+            xyD = {0.312700492, 0.329000939};
+        }
+
+        if (illuminant == "D60") {
+            xyD = {0.32168, 0.33767};
+        }
+
+
     } else {
         if (v2except) {
 
             cmsCIExyY XYZ;
 
             {
-                // XYZ =  {0.950486322, 1.0, 1.08902736};//White D65 point calculated from white point xy 0,312710 y 0,3290
-                //    XYZ =  {0.95047, 1.0, 1.088830};//White D65 point from B.Lindbloom
-                XYZ =  {0.95045471, 1.0, 1.08905029};
+                XYZ =  {0.95045471, 1.0, 1.08905029};//white D65
             }
+
+            if (primariesPreset == "ACES-AP1" || primariesPreset == "ACES-AP0") {
+                XYZ = {0.952646075, 1.0, 1.008825184};//white D60
+            }
+
+
             cmsCIExyY blackpoint;
 
             {
@@ -981,16 +1039,6 @@ void ICCProfileCreator::savePressed()
 
             if (primariesPreset == "sRGB") {
 
-                //Matrix value from B.Lindbloom
-                /*
-                    rt =  {0.4360747, 0.2225045, 0.0139322};
-                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
-                    bt =  {0.1430804, 0.0606169, 0.7141733};
-                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
-                    gt =  {0.3850649, 0.7168786, 0.0971045};
-                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
-                }
-                */
                 {
                     //Matrix value from spec Adobe
                     rt =  {0.43607, 0.22249, 0.01392};
@@ -1006,23 +1054,56 @@ void ICCProfileCreator::savePressed()
 
             if (primariesPreset == "Adobe") {
                 {
-                    //B.Lindbloom
-                    /*
-                        rt =  {0.6097559, 0.3111242, 0.0194811};
-                        cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
-                        bt =  {0.1492240, 0.0632197, 0.7448387};
-                        cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
-                        gt =  {0.2052401, 0.6256560, 0.0608902};
-                        cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
-                        */
-                }
-                {
                     //Adobe spec
                     rt =  {0.60974, 0.31111, 0.01947};
                     cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
                     bt =  {0.14919, 0.06322, 0.74457};
                     cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
                     gt =  {0.20528, 0.62567, 0.06087};
+                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
+                }
+            }
+
+            if (primariesPreset == "Rec2020") {
+                {
+                    rt =  {0.67337, 0.27901, -0.00192};
+                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
+                    bt =  {0.12506, 0.04561, 0.79686};
+                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
+                    gt =  {0.16577, 0.67538, 0.02997};
+                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
+                }
+            }
+
+            if (primariesPreset == "BruceRGB") {
+                {
+                    rt =  {0.49400, 0.25204, 0.01578};
+                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
+                    bt =  {0.14949, 0.06332, 0.74617};
+                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
+                    gt =  {0.32071, 0.68463, 0.06294};
+                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
+                }
+            }
+
+            if (primariesPreset == "ACES-AP0") {
+                {
+                    rt =  {0.99084, 0.36192, -0.00272};
+                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
+                    bt =  {-0.03900, -0.08443, 0.81938};
+                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
+                    gt =  {0.01236, 0.72250, 0.00824};
+                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
+                }
+            }
+
+            if (primariesPreset == "ACES-AP1") {
+                {
+                    rt =  {0.68970, 0.28445, -0.00604};
+                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
+                    bt =  {0.12456, 0.04379, 0.82094};
+                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
+                    gt =  {0.14995, 0.67175, 0.00999};
                     cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
                 }
             }
@@ -1036,6 +1117,14 @@ void ICCProfileCreator::savePressed()
         xyD = {0.447573, 0.407440, 1.0};
     }
 
+    if (illuminant == "D65") {
+        xyD = {0.312700492, 0.329000939};
+    }
+
+    if (illuminant == "D60") {
+        xyD = {0.32168, 0.33767};
+    }
+
     // Calculate output profile's rTRC gTRC bTRC
 
 
@@ -1046,7 +1135,7 @@ void ICCProfileCreator::savePressed()
     }
 
     if (gammaPreset == "standard_g2.2") {
-        GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildGamma(NULL, 2.19921875);
+        GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildGamma(NULL, 2.19921875);//spec Adobe
     }
 
     if (gammaPreset == "standard_g1.8") {
@@ -1176,6 +1265,7 @@ void ICCProfileCreator::savePressed()
                 }
             }
         }
+
     } else if (cmsMLUsetWide(descMLU, "en", "US", wDescription.str().c_str())) {
         if (!v2except) {
 
