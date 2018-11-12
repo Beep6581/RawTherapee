@@ -823,7 +823,7 @@ void ICCProfileCreator::savePressed()
         sGamma = Glib::ustring::format (std::setw(3), std::fixed, std::setprecision(2), presetGamma);
         sSlope = Glib::ustring::format (std::setw(6), std::fixed, std::setprecision(5), presetSlope);
         fName = Glib::ustring::compose("RT%1_%2_%3.icc", profileVersion, sPrimariesAndIlluminant, sGammaPreset);
-        profileDesc == sPrimariesPreset + sGammaPreset;
+        profileDesc = sPrimariesPreset + sGammaPreset;
     }
     sGammaSlopeParam = Glib::ustring::compose("g%1s%2!", sGamma, sSlope);
     sGammaSlopeDesc = Glib::ustring::compose("g=%1 s=%2", sGamma, sSlope);

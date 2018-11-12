@@ -9138,7 +9138,7 @@ void CLASS identify()
     parse_fuji (get4());
     if (thumb_offset > 120) {
       fseek (ifp, 120, SEEK_SET);
-      is_raw += (i = get4()) && 1;
+      is_raw += (i = get4()) != 0 ? 1 : 0;
       if (is_raw == 2 && shot_select)
 	parse_fuji (i);
     }
