@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2018 TooWaBoo
-  Version 2.90
+  Version 2.91
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1450,7 +1450,15 @@ button image:not(.dummy),
 scale + button.flat,
 spinbutton + button.flat,
 scale + image + image + button.flat {
-    min-height: 1.333333333333333333em;
+    min-height: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+scale + button.flat image:only-child,
+spinbutton + button.flat image:only-child,
+scale + image + image + button.flat image:only-child {
+    margin-top: -0.166666666666666666em;
+    margin-bottom: -0.166666666666666666em;
 }
 
 /*Color chooser & buttons */
