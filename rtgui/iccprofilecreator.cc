@@ -1179,15 +1179,15 @@ void ICCProfileCreator::savePressed()
         xyD = {0.447573, 0.407440, 1.0};
     }
 
-    if (illuminant == "D65") {
+    if (isD65) {
         xyD = {0.312700492, 0.329000939, 1.0};
     }
 
-    if (illuminant == "D60") {
+    if (isD60) {
         xyD = {0.32168, 0.33767, 1.0};
     }
 
-    if (illuminant == "D50") {
+    if (isD50) {
         xyD = {0.3457, 0.3585, 1.0};
     }
 
