@@ -3186,7 +3186,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                     }
                 }
 
-                softLight(rtemp, gtemp, btemp, istart, jstart, tW, tH, TS);
+                //softLight(rtemp, gtemp, btemp, istart, jstart, tW, tH, TS);
                 
                 if (!blackwhite) {
                     if (editImgFloat || editWhatever) {
@@ -4151,6 +4151,42 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
         }
     }
 
+    //-------------------------------------------------------------------------
+    // support for pipettes for the new LabRegions color toning mode this is a
+    // hack to fill the pipette buffers also when
+    // !params->labCurve.enabled. It is ugly, but it's the smallest code
+    // change that I could find
+    //-------------------------------------------------------------------------
+    class TempParams {
+        const ProcParams **p_;
+        const ProcParams *old_;
+        ProcParams tmp_;
+
+    public:
+        explicit TempParams(const ProcParams **p): p_(p)
+        {
+            old_ = *p;
+            tmp_.labCurve.enabled = true;
+            *p_ = &tmp_;
+        }
+
+        ~TempParams()
+        {
+            *p_ = old_;
+        }
+    };
+    std::unique_ptr<TempParams> tempparams;
+    bool pipette_for_colortoning_labregions =
+        editPipette &&
+        params->colorToning.enabled && params->colorToning.method == "LabRegions";
+    if (!params->labCurve.enabled && pipette_for_colortoning_labregions) {
+        utili = autili = butili = ccutili = cclutili = clcutili = false;
+        tempparams.reset(new TempParams(&params));
+        curve.makeIdentity();
+    }
+    //-------------------------------------------------------------------------
+
+    
     if (!params->labCurve.enabled) {
         if (editPipette && (editID == EUID_Lab_LCurve || editID == EUID_Lab_aCurve || editID == EUID_Lab_bCurve || editID == EUID_Lab_LHCurve || editID == EUID_Lab_CHCurve || editID == EUID_Lab_HHCurve || editID == EUID_Lab_CLCurve || editID == EUID_Lab_CCurve || editID == EUID_Lab_LCCurve)) {
             // fill pipette buffer with zeros to avoid crashes
@@ -4371,7 +4407,7 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                     av = LVFU (lold->a[i][k]);
                     bv = LVFU (lold->b[i][k]);
                     STVF (HHBuffer[k], xatan2f (bv, av));
-                    STVF (CCBuffer[k], _mm_sqrt_ps (SQRV (av) + SQRV (bv)) / c327d68v);
+                    STVF (CCBuffer[k], vsqrtf (SQRV (av) + SQRV (bv)) / c327d68v);
                 }
 
                 for (; k < W; k++) {
@@ -5226,6 +5262,10 @@ void ImProcFunctions::EPDToneMap (LabImage *lab, unsigned int Iterates, int skip
 
     if (minL > 0.0f) {
         minL = 0.0f;    //Disable the shift if there are no negative numbers. I wish there were just no negative numbers to begin with.
+    }
+
+    if (maxL == 0.f) { // avoid division by zero
+        maxL = 1.f;
     }
 
     #pragma omp parallel for

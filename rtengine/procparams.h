@@ -455,6 +455,22 @@ struct ColorToningParams {
     static const double LABGRID_CORR_MAX;
     static const double LABGRID_CORR_SCALE;
 
+    struct LabCorrectionRegion {
+        double a;
+        double b;
+        double saturation;
+        double lightness;
+        std::vector<double> hueMask;
+        std::vector<double> chromaticityMask;
+        std::vector<double> lightnessMask;
+
+        LabCorrectionRegion();
+        bool operator==(const LabCorrectionRegion &other) const;
+        bool operator!=(const LabCorrectionRegion &other) const;
+    };
+    std::vector<LabCorrectionRegion> labregions;
+    int labregionsShowMask;
+    
     ColorToningParams();
 
     bool operator ==(const ColorToningParams& other) const;
@@ -1227,6 +1243,19 @@ struct SoftLightParams {
 };
 
 
+struct DehazeParams {
+    bool enabled;
+    int strength;
+    bool showDepthMap;
+    int depth;
+
+    DehazeParams();
+
+    bool operator==(const DehazeParams &other) const;
+    bool operator!=(const DehazeParams &other) const;
+};
+
+
 /**
   * Parameters for RAW demosaicing, common to all sensor type
   */
@@ -1440,6 +1469,7 @@ public:
     HSVEqualizerParams      hsvequalizer;    ///< hsv wavelet parameters
     FilmSimulationParams    filmSimulation;  ///< film simulation parameters
     SoftLightParams         softlight;       ///< softlight parameters
+    DehazeParams            dehaze;          ///< dehaze parameters
     int                     rank;            ///< Custom image quality ranking
     int                     colorlabel;      ///< Custom color label
     bool                    inTrash;         ///< Marks deleted image

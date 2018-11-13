@@ -419,12 +419,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         readyphase++;
 
-        if ((todo & M_HDR) && params.fattal.enabled) {
+        if ((todo & M_HDR) && (params.fattal.enabled || params.dehaze.enabled)) {
             if (fattal_11_dcrop_cache) {
                 delete fattal_11_dcrop_cache;
                 fattal_11_dcrop_cache = nullptr;
             }
 
+            ipf.dehaze(orig_prev);
             ipf.ToneMapFattal02(orig_prev);
 
             if (oprevi != orig_prev) {
@@ -717,6 +718,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             histLCurve.clear();
             ipf.chromiLuminanceCurve(nullptr, pW, nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, histCCurve, histLCurve);
             ipf.vibrance(nprevl);
+            ipf.labColorCorrectionRegions(nprevl);
 
             if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled)) {
                 ipf.EPDToneMap(nprevl, 5, scale);
@@ -792,7 +794,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             }
 
-
+        ipf.softLight(nprevl);
+        
             if (params.colorappearance.enabled) {
                 //L histo  and Chroma histo for ciecam
                 // histogram well be for Lab (Lch) values, because very difficult to do with J,Q, M, s, C
@@ -950,6 +953,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             hListener->histogramChanged(histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve, histCCurve, /*histCLurve, histLLCurve,*/ histLCAM, histCCAM, histRedRaw, histGreenRaw, histBlueRaw, histChroma, histLRETI);
         }
     }
+    if (orig_prev != oprevi) {
+        delete oprevi;
+        oprevi = nullptr;
+    }
+
 
 }
 
@@ -1452,7 +1460,8 @@ void ImProcCoordinator::process()
             || params.raw != nextParams.raw
             || params.retinex != nextParams.retinex
             || params.wavelet != nextParams.wavelet
-            || params.dirpyrequalizer != nextParams.dirpyrequalizer;
+            || params.dirpyrequalizer != nextParams.dirpyrequalizer
+            || params.dehaze != nextParams.dehaze;
 
         params = nextParams;
         int change = changeSinceLast;

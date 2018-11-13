@@ -5,16 +5,19 @@
 #05 2010-11-01 Ilia Popov <ilia_popov@rambler.ru>
 #06 2012-07-17 Roman Milanskij <loooooker@gmail.com>
 #07 2014-02-12 Kostia (Kildor) Romanov <kromanov@gmail.com>
-#07 2018-02-10 Kostia (Kildor) Romanov <kromanov@gmail.com>
+#08 2018-02-10 Kostia (Kildor) Romanov <kromanov@gmail.com>
+#09 2018-11-04 Kostia (Kildor) Romanov <kromanov@gmail.com>
 
 ABOUT_TAB_BUILD;Версия
 ABOUT_TAB_CREDITS;Авторы
 ABOUT_TAB_LICENSE;Лицензия
 ABOUT_TAB_RELEASENOTES;Примечания к выпуску
 ABOUT_TAB_SPLASH;Заставка
+ADJUSTER_RESET_TO_DEFAULT;<b>Click</b>: Сбросить на значение по умолчанию.\n<b>Ctrl</b>+<b>click</b>: Сбросить на начальное значение.
 BATCHQUEUE_AUTOSTART;Автостарт
 BATCHQUEUE_AUTOSTARTHINT;Автоматически запускать обработку при добавлении файла в очередь
 BATCHQUEUE_DESTFILENAME;Имя файла и путь к нему
+BATCHQUEUE_STARTSTOPHINT;Начать или остановить обработку изображений в очереди.\n\Горячая клавиша: <b>Ctrl-S</b>
 BATCH_PROCESSING;Пакетная обработка
 CURVEEDITOR_AXIS_IN;I:
 CURVEEDITOR_AXIS_OUT;O:
@@ -43,6 +46,10 @@ DYNPROFILEEDITOR_DELETE;Удалить
 DYNPROFILEEDITOR_EDIT;Редактировать
 DYNPROFILEEDITOR_EDIT_RULE;Редактировать правило подбора
 DYNPROFILEEDITOR_ENTRY_TOOLTIP;Сопоставление нечувствительно к регистру.\nИспользуйте префикс <b>"re:"</b>\nчтоб ввести регулярное выражение.
+DYNPROFILEEDITOR_IMGTYPE_ANY;Любой
+DYNPROFILEEDITOR_IMGTYPE_HDR;HDR
+DYNPROFILEEDITOR_IMGTYPE_PS;Сдвиг пикселей
+DYNPROFILEEDITOR_IMGTYPE_STD;Стандарт
 DYNPROFILEEDITOR_MOVE_DOWN;Вниз
 DYNPROFILEEDITOR_MOVE_UP;Вверх
 DYNPROFILEEDITOR_NEW;Новый
@@ -52,8 +59,9 @@ EDITWINDOW_TITLE;Редактор
 EXIFFILTER_APERTURE;Диафрагма
 EXIFFILTER_CAMERA;Камера
 EXIFFILTER_EXPOSURECOMPENSATION;Компенсация экспозиции (EV)
-EXIFFILTER_FILETYPE;Тип фильтра
+EXIFFILTER_FILETYPE;Тип файла
 EXIFFILTER_FOCALLEN;Фокусное расстояние
+EXIFFILTER_IMAGETYPE;Тип изображения
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Объектив
 EXIFFILTER_METADATAFILTER;Включить фильтры метаданных
@@ -71,6 +79,7 @@ EXIFPANEL_RESET;Сбросить
 EXIFPANEL_RESETALL;Сбросить все
 EXIFPANEL_RESETALLHINT;Сбросить все теги в первоначальные значения
 EXIFPANEL_RESETHINT;Сбросить выбранные теги в первоначальные значения
+EXIFPANEL_SHOWALL;Показать всё
 EXIFPANEL_SUBDIRECTORY;Подкаталог
 EXPORT_BYPASS_ALL;Выделить все / Снять выделение
 EXPORT_BYPASS_DEFRINGE;Пропустить подавление ореолов
@@ -105,8 +114,6 @@ FILEBROWSER_AUTOFLATFIELD;Автоматическое плоское поле
 FILEBROWSER_BROWSEPATHBUTTONHINT;Нажмите кнопку мыши чтобы перейти к выбранному каталогу
 FILEBROWSER_BROWSEPATHHINT;Введите путь для перехода.\n<b>Ctrl-O</b> для перехода на диалог ввода текста.\n<b>Enter</b> / <b>Ctrl-Enter</b> (в обозревателе файлов) для перехода;\n\nЯрлыки путей:\n  <b>~</b> - домашняя папка пользователя\n  <b>!</b> - папка пользователя с изображениями
 FILEBROWSER_CACHE;Кэш
-FILEBROWSER_CACHECLEARFROMFULL;Удалить из кэша - полностью
-FILEBROWSER_CACHECLEARFROMPARTIAL;Удалить из кэша - частично
 FILEBROWSER_CLEARPROFILE;Удалить профиль
 FILEBROWSER_COLORLABEL_TOOLTIP;Color label\n\nUse dropdown menu or Shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
 FILEBROWSER_COPYPROFILE;Скопировать профиль
@@ -144,6 +151,7 @@ FILEBROWSER_POPUPPROCESS;Поместить в очередь на обрабо�
 FILEBROWSER_POPUPPROCESSFAST;Поставить в очередь (Быстрый экспорт)
 FILEBROWSER_POPUPPROFILEOPERATIONS;Обработка операций профиля
 FILEBROWSER_POPUPRANK;Рейтинг
+FILEBROWSER_POPUPRANK0;Снять
 FILEBROWSER_POPUPRANK1;Рейтинг 1 *
 FILEBROWSER_POPUPRANK2;Рейтинг 2 **
 FILEBROWSER_POPUPRANK3;Рейтинг 3 ***
@@ -176,7 +184,7 @@ FILEBROWSER_SHOWCOLORLABEL5HINT;Показать изображения, отм�
 FILEBROWSER_SHOWDIRHINT;Сбросить все фильтры.\nГорячая клавиша: <b>d</b>
 FILEBROWSER_SHOWEDITEDHINT;Показать измененные изображения.\nГорячая клавиша: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Показать не измененные изображения.\nГорячая клавиша: <b>6</b>
-FILEBROWSER_SHOWEXIFINFO;Показать информацию EXIF.\nГорячая клавиша: <b>i</b>\n\nГорячая клавиша в режиме Одиночного редактора: <b>Alt-i</b>
+FILEBROWSER_SHOWEXIFINFO;Показать информацию EXIF.\nГорячая клавиша: <b>i</b>\n\nГорячая клавиша в режиме Одиночного редактора: <b>Alt-I</b>
 FILEBROWSER_SHOWNOTTRASHHINT;Показать только неудалённые изображения.
 FILEBROWSER_SHOWRANK1HINT;Показать изображения с рейтингом 1.\nГорячая клавиша: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;Показать изображения с рейтингом 2.\nГорячая клавиша: <b>2</b>
@@ -185,11 +193,11 @@ FILEBROWSER_SHOWRANK4HINT;Показать изображения с рейти�
 FILEBROWSER_SHOWRANK5HINT;Показать изображения с рейтингом 5.\nГорячая клавиша: <b>5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Показать изображения, сохранённые недавно.\nГорячая клавиша: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Показать изображения, сохранённые давно.\nГорячая клавиша: <b>Alt-6</b>
-FILEBROWSER_SHOWTRASHHINT;Показать содержимое корзины.\nГорячая клавиша: <b>Ctrl-t</b>
+FILEBROWSER_SHOWTRASHHINT;Показать содержимое корзины.\nГорячая клавиша: <b>Ctrl-T</b>
 FILEBROWSER_SHOWUNCOLORHINT;Показать изображения без цветовой метки.\nГорячая клавиша: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Показать изображения без рейтинга\nГорячая клавиша: <b>0</b>
 FILEBROWSER_THUMBSIZE;Размер эскиза
-FILEBROWSER_UNRANK_TOOLTIP;Удалить рейтинг\nГорячая клавиша: <b>Shift-~</b>
+FILEBROWSER_UNRANK_TOOLTIP;Снять рейтинг\nГорячая клавиша: <b>Shift-~</b>
 FILEBROWSER_ZOOMINHINT;Увеличить размер эскиза\nГорячая клавиша: <b>+</b>\n\nГорячая клавиша в режиме Одиночного редактора: <b>Alt-+</b>
 FILEBROWSER_ZOOMOUTHINT;Уменьшить размер эскиза\nГорячая клавиша: <b>+</b>\n\nГорячая клавиша в режиме Одиночного редактора: <b>Alt--</b>
 FILECHOOSER_FILTER_ANY;Все файлы
@@ -217,7 +225,9 @@ GENERAL_NONE;Нет
 GENERAL_OK;OK
 GENERAL_OPEN;Открыть
 GENERAL_PORTRAIT;Портретный
+GENERAL_RESET;Сбросить
 GENERAL_SAVE;Сохранить
+GENERAL_SAVE_AS;Сохранить как...
 GENERAL_SLIDER;Ползунок
 GENERAL_UNCHANGED;(не менялось)
 GENERAL_WARNING;Внимание
@@ -482,10 +492,21 @@ HISTORY_MSG_249;КпУД: Порог
 HISTORY_MSG_250;ПШ: Улучшенный
 HISTORY_MSG_251;Ч&amp;Б: Алгоритм
 HISTORY_MSG_277;--неиспользуемый--
+HISTORY_MSG_293;Имитация плёнки
+HISTORY_MSG_294;Имитация плёнки: Сила
+HISTORY_MSG_295;Имитация плёнки: Плёнка
+HISTORY_MSG_298;Фильтр битых пикселей
 HISTORY_MSG_300;-
+HISTORY_MSG_488;Компрессия динамического диапазона
+HISTORY_MSG_490;КДД: Величина
 HISTORY_MSG_491;Баланс белого
 HISTORY_MSG_492;Кривые RGB
 HISTORY_MSG_493;Настройки L*a*b*
+HISTORY_MSG_CLAMPOOG;Обрезание цвета за пределами охвата
+HISTORY_MSG_DEHAZE_DEPTH;Убрать дымку: Глубина
+HISTORY_MSG_DEHAZE_ENABLED;Убрать дымку
+HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;Убрать дымку: Маска глубин
+HISTORY_MSG_DEHAZE_STRENGTH;Убрать дымку: Сила
 HISTORY_MSG_HISTMATCHING;Автоподбор тоновой кривой
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;Лок.контраст: Величина
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;Лок.контраст: Тёмные тона
@@ -493,8 +514,11 @@ HISTORY_MSG_LOCALCONTRAST_ENABLED;Лок.контраст
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Лок.контраст: Светлые тона
 HISTORY_MSG_LOCALCONTRAST_RADIUS;Лок.контраст: Радиус
 HISTORY_MSG_METADATA_MODE;Режим копирования метаданных
+HISTORY_MSG_SOFTLIGHT_ENABLED;Мягкий свет
+HISTORY_MSG_SOFTLIGHT_STRENGTH;Мягкий свет: Сила
+HISTORY_MSG_TM_FATTAL_ANCHOR;КДД: Привязка
 HISTORY_NEWSNAPSHOT;Добавить
-HISTORY_NEWSNAPSHOT_TOOLTIP;Горячая клавиша: <b>Alt-s</b>
+HISTORY_NEWSNAPSHOT_TOOLTIP;Горячая клавиша: <b>Alt-S</b>
 HISTORY_SNAPSHOT;Снимок
 HISTORY_SNAPSHOTS;Снимки
 IPTCPANEL_CATEGORY;Категория
@@ -553,7 +577,7 @@ MAIN_MSG_QOVERWRITE;Вы хотите перезаписать его?
 MAIN_MSG_SETPATHFIRST;Прежде необходимо установить целевой каталог в настройках\nчтоб использовать эту функцию!
 MAIN_MSG_WRITEFAILED;Не удалось записать\n\n<b>"%1"</b>.\n\nУбедитесь, что каталог существует и у вас есть права на запись в него.
 MAIN_TAB_ADVANCED;Дополнительные
-MAIN_TAB_ADVANCED_TOOLTIP;Горячая клавиша: <b>Alt-w</b>
+MAIN_TAB_ADVANCED_TOOLTIP;Горячая клавиша: <b>Alt-W</b>
 MAIN_TAB_COLOR;Цвет
 MAIN_TAB_COLOR_TOOLTIP;Горячая клавиша: <b>Alt-C</b>
 MAIN_TAB_DETAIL;Детализация
@@ -586,10 +610,10 @@ MAIN_TOOLTIP_PREVIEWL;Просмотреть <b>Световую составл�
 MAIN_TOOLTIP_PREVIEWR;Просмотреть <b>канал красного</b>.\nГорячая клавиша: <b>r</b>
 MAIN_TOOLTIP_QINFO;Информация об изображении.\nГорячая клавиша <b>i</b>
 MAIN_TOOLTIP_SHOWHIDELP1;Показать/скрыть левую панель\nГорячая клавиша: <b>l</b>
-MAIN_TOOLTIP_SHOWHIDERP1;Показать/скрыть правую панель\nГорячая клавиша: <b>Alt-l</b>
+MAIN_TOOLTIP_SHOWHIDERP1;Показать/скрыть правую панель\nГорячая клавиша: <b>Alt-L</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Показать/скрыть верхнюю панель\nГорячая клавиша: <b>Shift-L</b>
 MAIN_TOOLTIP_THRESHOLD;Порог
-MAIN_TOOLTIP_TOGGLE;Включить режим "<b>до</b>/<b>после</b>".\nГорячая клавиша <b>Shift-B</b>
+MAIN_TOOLTIP_TOGGLE;Включить режим "<b>до/после</b>".\nГорячая клавиша <b>Shift-B</b>
 NAVIGATOR_B;B:
 NAVIGATOR_G;G:
 NAVIGATOR_H;H:
@@ -602,6 +626,9 @@ NAVIGATOR_S;S:
 NAVIGATOR_V;V:
 NAVIGATOR_XY_FULL;Ширина: %1, Высота: %2
 NAVIGATOR_XY_NA;x: --, y: --
+OPTIONS_BUNDLED_MISSING;Встроенный профиль "<b>%1</b>" не найден!\n\nВаша установка может быть повреждена.\n\nБудут использованы внутренние дефолтные значения по умолчанию.
+OPTIONS_DEFIMG_MISSING;Профиль по умолчанию для <b>не-raw снимков</b> не найден или не установлен.\n\nПожалуйста, проверьте папку с профилями, она может отсутствовать или быть повреждена.\n\nБудет использован профиль "<b>%1</b>".
+OPTIONS_DEFRAW_MISSING;Профиль по умолчанию для <b>raw снимков</b> не найден или не установлен.\n\nПожалуйста, проверьте папку с профилями, она может отсутствовать или быть повреждена.\n\nБудет использован профиль "<b>%1</b>".
 PARTIALPASTE_ADVANCEDGROUP;Дополнительные параметры
 PARTIALPASTE_BASICGROUP;Базовые настройки
 PARTIALPASTE_CACORRECTION;Коррекция C/A
@@ -642,7 +669,9 @@ PARTIALPASTE_METADATA;Режим метаданных
 PARTIALPASTE_METAGROUP;Настройка метаданных
 PARTIALPASTE_PCVIGNETTE;Фильтр виньетирования
 PARTIALPASTE_PERSPECTIVE;Перспектива
+PARTIALPASTE_PREPROCESS_DEADPIXFILT;Фильтр битых пикселей
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Выравнивание зелёного канала
+PARTIALPASTE_PREPROCESS_HOTPIXFILT;Фильтр горячих пикселей
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Фильтр полосообразного шума
 PARTIALPASTE_RAWCACORR_AUTO;Автоматическая коррекция ХА
 PARTIALPASTE_RAWEXPOS_BLACK;Уровень черного
@@ -661,6 +690,8 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Тени/света
 PARTIALPASTE_SHARPENEDGE;Края
 PARTIALPASTE_SHARPENING;Повышение резкости
 PARTIALPASTE_SHARPENMICRO;Микроконтраст
+PARTIALPASTE_SOFTLIGHT;Мягкий свет
+PARTIALPASTE_TM_FATTAL;Компрессия динамического диапазона
 PARTIALPASTE_VIBRANCE;Красочность
 PARTIALPASTE_VIGNETTING;Коррекция виньетирования
 PARTIALPASTE_WHITEBALANCE;Баланс белого
@@ -674,9 +705,6 @@ PREFERENCES_BEHAVIOR;Поведение
 PREFERENCES_BEHSETALL;Всё в "Установить"
 PREFERENCES_BEHSETALLHINT;Выставить все параметры в режим <b>Установить</b>.\nНастройки параметров в панели пакетной обработки будут <b>абсолютными</b>, будут показаны используемые значения
 PREFERENCES_BLACKBODY;Лампа накаливания
-PREFERENCES_CACHECLEARALL;Удалить все
-PREFERENCES_CACHECLEARPROFILES;Удалить параметры обработки
-PREFERENCES_CACHECLEARTHUMBS;Удалить эскизы
 PREFERENCES_CACHEMAXENTRIES;Максимальное число элементов в кэше
 PREFERENCES_CACHEOPTS;Параметры кэширования
 PREFERENCES_CACHETHUMBHEIGHT;Максимальная высота эскиза
@@ -821,10 +849,10 @@ PROFILEPANEL_PINTERNAL;Нейтральный
 PROFILEPANEL_PLASTSAVED;Последний сохранённый
 PROFILEPANEL_SAVEDLGLABEL;Сохранить профиль обработки...
 PROFILEPANEL_SAVEPPASTE;Параметры для сохранения
-PROFILEPANEL_TOOLTIPCOPY;Скопировать текущий профиль в буфер обмена.\n<b>Ctrl+click</b> для выбора параметров для копирования
-PROFILEPANEL_TOOLTIPLOAD;Загрузить профиль из файла\n<b>Ctrl+click</b> для выбора параметров для загрузки
-PROFILEPANEL_TOOLTIPPASTE;Вставить профиль из буфера обмена\n<b>Ctrl+click</b> для выбора параметров для вставки
-PROFILEPANEL_TOOLTIPSAVE;Сохранить текущий профиль\n<b>Ctrl+click</b> для выбора параметров для сохранения
+PROFILEPANEL_TOOLTIPCOPY;Скопировать текущий профиль в буфер обмена.\n<b>Ctrl+Click</b> для выбора параметров для копирования
+PROFILEPANEL_TOOLTIPLOAD;Загрузить профиль из файла\n<b>Ctrl+Click</b> для выбора параметров для загрузки
+PROFILEPANEL_TOOLTIPPASTE;Вставить профиль из буфера обмена\n<b>Ctrl+Click</b> для выбора параметров для вставки
+PROFILEPANEL_TOOLTIPSAVE;Сохранить текущий профиль\n<b>Ctrl+Click</b> для выбора параметров для сохранения
 PROGRESSBAR_LOADING;Загрузка изображения...
 PROGRESSBAR_LOADINGTHUMBS;Загрузка миниатюр...
 PROGRESSBAR_LOADJPEG;Чтение JPEG файла...
@@ -839,8 +867,11 @@ PROGRESSBAR_SAVEPNG;Сохранение PNG файла...
 PROGRESSBAR_SAVETIFF;Сохранение TIFF файла...
 PROGRESSBAR_SNAPSHOT_ADDED;Снимок добавлен
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Профиль изменён в браузере
+QINFO_FRAMECOUNT;%2 кадров
+QINFO_HDR;HDR / %2 кадр(ов)
 QINFO_ISO;ISO
 QINFO_NOEXIF;Данные Exif недоступны
+QINFO_PIXELSHIFT;Сдвиг пикселей / %2 frame(s)
 SAVEDLG_AUTOSUFFIX;Автоматически добавлять суффикс если файл существует
 SAVEDLG_FILEFORMAT;Формат файла
 SAVEDLG_FORCEFORMATOPTS;Принудительно установить настройки сохранения
@@ -999,6 +1030,10 @@ TP_DARKFRAME_LABEL;Темновой кадр
 TP_DEFRINGE_LABEL;Подавление ореолов
 TP_DEFRINGE_RADIUS;Радиус
 TP_DEFRINGE_THRESHOLD;Порог
+TP_DEHAZE_DEPTH;Глубина
+TP_DEHAZE_LABEL;Убрать дымку
+TP_DEHAZE_SHOW_DEPTH_MAP;Показать маску глубин
+TP_DEHAZE_STRENGTH;Сила
 TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Автоматический глобальный
 TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;Цветность: синий-жёлтый
 TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Кривая цветности
@@ -1057,6 +1092,7 @@ TP_EXPOSURE_AUTOLEVELS;Автоуровни
 TP_EXPOSURE_AUTOLEVELS_TIP;Переключение выполнения автоуровней для автоматической установки параметров экспозиции на основе анализа изображения
 TP_EXPOSURE_BLACKLEVEL;Уровень чёрного
 TP_EXPOSURE_BRIGHTNESS;Яркость
+TP_EXPOSURE_CLAMPOOG;Обрезать цвета за пределами охвата
 TP_EXPOSURE_CLIP;Ограничить
 TP_EXPOSURE_CLIP_TIP;Часть пикселей, обрезаемая операцией автоматических уровней
 TP_EXPOSURE_COMPRHIGHLIGHTS;Сжатие светов
@@ -1212,16 +1248,29 @@ TP_PERSPECTIVE_LABEL;Перспектива
 TP_PERSPECTIVE_VERTICAL;Вертикальная
 TP_PFCURVE_CURVEEDITOR_CH;Цвет
 TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Контроль силы подавления в зависимости от цвета.\nВыше - сильней, ниже - слабей.
+TP_PREPROCESS_DEADPIXFILT;Фильтр битых пикселей
+TP_PREPROCESS_DEADPIXFILT_TOOLTIP;Пытается подавить битые пиксели.
 TP_PREPROCESS_GREENEQUIL;Выравнивание зелёного
+TP_PREPROCESS_HOTPIXFILT;Фильтр горячих пикселей
+TP_PREPROCESS_HOTPIXFILT_TOOLTIP;Пытается подавить горячие пиксели.
 TP_PREPROCESS_LABEL;Предобработка
 TP_PREPROCESS_LINEDENOISE;Фильтр линейного шума
 TP_PREPROCESS_NO_FOUND;Ничего не найдено
 TP_RAWCACORR_AUTO;Автоматическая коррекция
 TP_RAWCACORR_CABLUE;Синий
 TP_RAWCACORR_CARED;Красный
+TP_RAWCACORR_CASTR;Сила
 TP_RAWEXPOS_BLACKS;Уровни черного
+TP_RAWEXPOS_BLACK_0;Зелёный 1 (ведущий)
+TP_RAWEXPOS_BLACK_1;Красный
+TP_RAWEXPOS_BLACK_2;Синий
+TP_RAWEXPOS_BLACK_3;Зелёный 2
+TP_RAWEXPOS_BLACK_BLUE;Синий
+TP_RAWEXPOS_BLACK_GREEN;Зелёный
+TP_RAWEXPOS_BLACK_RED;Красный
 TP_RAWEXPOS_LINEAR;Коррекция точки белого
 TP_RAWEXPOS_PRESER;Сохранение пересветов
+TP_RAWEXPOS_RGB;Красный, Зелёный, Синий
 TP_RAWEXPOS_TWOGREEN;Два зеленых совместно
 TP_RAW_AHD;AHD
 TP_RAW_AMAZE;AMaZE
@@ -1247,6 +1296,7 @@ TP_RAW_MONO;Моно
 TP_RAW_NONE;Нет (Показать структуру сенсора)
 TP_RAW_PIXELSHIFT;Сдвиг пикселей
 TP_RAW_RCD;RCD
+TP_RAW_RCDVNG4;RCD+VNG4
 TP_RAW_SENSOR_BAYER_LABEL;Сенсор с матрицей Байера
 TP_RAW_SENSOR_XTRANS_LABEL;Сенсор с матрицей X-Trans
 TP_RAW_VNG4;VNG4
@@ -1292,6 +1342,7 @@ TP_SHARPENEDGE_LABEL;Края
 TP_SHARPENEDGE_PASSES;Подходы
 TP_SHARPENEDGE_THREE;Только освещенность
 TP_SHARPENING_AMOUNT;Величина
+TP_SHARPENING_CONTRAST;Порог контраста
 TP_SHARPENING_EDRADIUS;Радиус
 TP_SHARPENING_EDTOLERANCE;Границы краёв
 TP_SHARPENING_HALOCONTROL;Регулировка хром. аберраций
@@ -1307,9 +1358,16 @@ TP_SHARPENING_RLD_ITERATIONS;Повторений
 TP_SHARPENING_THRESHOLD;Порог
 TP_SHARPENING_USM;Маска размытия
 TP_SHARPENMICRO_AMOUNT;Величина
+TP_SHARPENMICRO_CONTRAST;Порог контраста
 TP_SHARPENMICRO_LABEL;Микроконтраст
 TP_SHARPENMICRO_MATRIX;Матрица 3×3 вместо 5×5
 TP_SHARPENMICRO_UNIFORMITY;Равномерность
+TP_SOFTLIGHT_LABEL;Мягкий свет
+TP_SOFTLIGHT_STRENGTH;Сила
+TP_TM_FATTAL_AMOUNT;Величина
+TP_TM_FATTAL_ANCHOR;Якорь
+TP_TM_FATTAL_LABEL;Компрессия динамического диапазона
+TP_TM_FATTAL_THRESHOLD;Детализация
 TP_VIBRANCE_AVOIDCOLORSHIFT;Избегать сдвига цветов
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;ОО
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Оттенки кожи
@@ -1386,7 +1444,7 @@ ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Новое окно детального просмотра
 ZOOMPANEL_ZOOM100;Масштаб 100%\nГорячая клавиша: <b>z</b>
 ZOOMPANEL_ZOOMFITCROPSCREEN;Уместить кадрированное изображение по размеру экрану\nГорячая клавиша: <b>f</b>
-ZOOMPANEL_ZOOMFITSCREEN;Уместить изображение по размерам окна\nГорячая клавиша: <b>Alt</b>-<b>f</b>
+ZOOMPANEL_ZOOMFITSCREEN;Уместить изображение по размерам окна\nГорячая клавиша: <b>Alt-F</b>
 ZOOMPANEL_ZOOMIN;Приблизить\nГорячая клавиша: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 
@@ -1394,27 +1452,22 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
-!BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
 !CURVEEDITOR_AXIS_RIGHT_TAN;RT:
 !CURVEEDITOR_EDITPOINT_HINT;Enable edition of node in/out values.\n\nRight-click on a node to select it.\nRight-click on empty space to de-select the node.
 !EDIT_OBJECT_TOOLTIP;Displays a widget on the preview window which lets you adjust this tool.
 !EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
-!EXIFFILTER_IMAGETYPE;Image type
-!EXIFPANEL_SHOWALL;Show all
 !EXPORT_BYPASS;Processing steps to bypass
 !EXPORT_BYPASS_EQUALIZER;Bypass Wavelet Levels
 !EXPORT_PIPELINE;Processing pipeline
 !EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
 !EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
 !EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
-!FILEBROWSER_POPUPRANK0;Unrank
+!FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
+!FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
 !FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
 !FILECHOOSER_FILTER_PP;Processing profiles
 !FILECHOOSER_FILTER_SAME;Same format as current photo
-!GENERAL_RESET;Reset
-!GENERAL_SAVE_AS;Save as...
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
 !HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
 !HISTORY_MSG_235;B&amp;W - CM - Auto
@@ -1459,12 +1512,8 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !HISTORY_MSG_290;Black Level - Red
 !HISTORY_MSG_291;Black Level - Green
 !HISTORY_MSG_292;Black Level - Blue
-!HISTORY_MSG_293;Film Simulation
-!HISTORY_MSG_294;Film Simulation - Strength
-!HISTORY_MSG_295;Film Simulation - Film
 !HISTORY_MSG_296;NR - Luminance curve
 !HISTORY_MSG_297;NR - Mode
-!HISTORY_MSG_298;Dead pixel filter
 !HISTORY_MSG_299;NR - Chrominance curve
 !HISTORY_MSG_301;NR - Luma control
 !HISTORY_MSG_302;NR - Chroma method
@@ -1637,12 +1686,18 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !HISTORY_MSG_485;Lens Correction
 !HISTORY_MSG_486;Lens Correction - Camera
 !HISTORY_MSG_487;Lens Correction - Lens
-!HISTORY_MSG_488;Dynamic Range Compression
-!HISTORY_MSG_489;DRC - Threshold
-!HISTORY_MSG_490;DRC - Amount
-!HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
+!HISTORY_MSG_489;DRC - Detail
 !HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
-!HISTORY_MSG_DUALDEMOSAIC_CONTRAST;AMaZE+VNG4 - Contrast threshold
+!HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
+!HISTORY_MSG_COLORTONING_LABREGION_CHROMATICITYMASK;CT - C mask
+!HISTORY_MSG_COLORTONING_LABREGION_HUEMASK;CT - H mask
+!HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESS;CT - Lightness
+!HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESSMASK;CT - L mask
+!HISTORY_MSG_COLORTONING_LABREGION_LIST;CT - List
+!HISTORY_MSG_COLORTONING_LABREGION_SATURATION;CT - Saturation
+!HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;CT - Show mask
+!HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
+!HISTORY_MSG_DUALDEMOSAIC_CONTRAST;Dual demosaic - Contrast threshold
 !HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
 !HISTORY_MSG_ICM_OUTPUT_TEMP;Output - ICC-v4 illuminant D
 !HISTORY_MSG_ICM_OUTPUT_TYPE;Output - Type
@@ -1659,9 +1714,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !HISTORY_MSG_RAW_BORDER;Raw border
 !HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
-!HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
-!HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
-!HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
+!HISTORY_MSG_SH_COLORSPACE;S/H - Colorspace
 !ICCPROFCREATOR_COPYRIGHT;Copyright:
 !ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP;Reset to the default copyright, granted to "RawTherapee, CC0"
 !ICCPROFCREATOR_CUSTOM;Custom
@@ -1733,15 +1786,11 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
 !MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>Sharpening Contrast Mask</b>.\nShortcut: <b>None</b>\n\nOnly works when sharpening is enabled and zoom >= 100%.
 !MONITOR_PROFILE_SYSTEM;System default
-!OPTIONS_BUNDLED_MISSING;The bundled profile "<b>%1</b>" could not be found!\n\nYour installation could be damaged.\n\nDefault internal values will be used instead.
-!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
-!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
 !PARTIALPASTE_COLORTONING;Color toning
+!PARTIALPASTE_DEHAZE;Haze removal
 !PARTIALPASTE_EQUALIZER;Wavelet levels
 !PARTIALPASTE_FILMSIMULATION;Film simulation
 !PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control
-!PARTIALPASTE_PREPROCESS_DEADPIXFILT;Dead pixel filter
-!PARTIALPASTE_PREPROCESS_HOTPIXFILT;Hot pixel filter
 !PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !PARTIALPASTE_PRSHARPENING;Post-resize sharpening
 !PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA avoid color shift
@@ -1750,9 +1799,12 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
 !PARTIALPASTE_RAW_PIXELSHIFT;Pixel Shift
 !PARTIALPASTE_RETINEX;Retinex
-!PARTIALPASTE_SOFTLIGHT;Soft light
-!PARTIALPASTE_TM_FATTAL;Dynamic range compression
 !PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
+!PREFERENCES_CACHECLEAR;Clear
+!PREFERENCES_CACHECLEAR_ALL;Clear all cached files:
+!PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
+!PREFERENCES_CACHECLEAR_ONLYPROFILES;Clear only cached processing profiles:
+!PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing profiles stored alongside the source images are not touched.
 !PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
@@ -1809,9 +1861,6 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
 !PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
 !PROFILEPANEL_PDYNAMIC;Dynamic
-!QINFO_FRAMECOUNT;%2 frames
-!QINFO_HDR;HDR / %2 frame(s)
-!QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
 !SAMPLEFORMAT_0;Unknown data format
 !SAMPLEFORMAT_1;8-bit unsigned
 !SAMPLEFORMAT_2;16-bit unsigned
@@ -1884,6 +1933,16 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_COLORTONING_LABEL;Color Toning
 !TP_COLORTONING_LABGRID;L*a*b* color correction grid
 !TP_COLORTONING_LABGRID_VALUES;HL: a=%1 b=%2\nS: a=%3 b=%4
+!TP_COLORTONING_LABREGIONS;L*a*b* correction regions
+!TP_COLORTONING_LABREGION_ABVALUES;a=%1 b=%2
+!TP_COLORTONING_LABREGION_CHROMATICITYMASK;C
+!TP_COLORTONING_LABREGION_HUEMASK;H
+!TP_COLORTONING_LABREGION_LIGHTNESS;Lightness
+!TP_COLORTONING_LABREGION_LIGHTNESSMASK;L
+!TP_COLORTONING_LABREGION_LIST_TITLE;Correction
+!TP_COLORTONING_LABREGION_MASK;Mask
+!TP_COLORTONING_LABREGION_SATURATION;Saturation
+!TP_COLORTONING_LABREGION_SHOWMASK;Show mask
 !TP_COLORTONING_LUMA;Luminance
 !TP_COLORTONING_LUMAMODE;Preserve luminance
 !TP_COLORTONING_LUMAMODE_TOOLTIP;If enabled, when you change color (red, green, cyan, blue, etc.) the luminance of each pixel is preserved.
@@ -1938,7 +1997,6 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_DIRPYREQUALIZER_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
 !TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colors (hue, chroma, luma) and the rest of the image.
 !TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
-!TP_EXPOSURE_CLAMPOOG;Clip out-of-gamut colors
 !TP_EXPOS_BLACKPOINT_LABEL;Raw Black Points
 !TP_EXPOS_WHITEPOINT_LABEL;Raw White Points
 !TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
@@ -1961,10 +2019,6 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_ICM_WORKING_TRC_NONE;None
 !TP_ICM_WORKING_TRC_SLOPE;Slope
 !TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
-!TP_PREPROCESS_DEADPIXFILT;Dead pixel filter
-!TP_PREPROCESS_DEADPIXFILT_TOOLTIP;Tries to suppress dead pixels.
-!TP_PREPROCESS_HOTPIXFILT;Hot pixel filter
-!TP_PREPROCESS_HOTPIXFILT_TOOLTIP;Tries to suppress hot pixels.
 !TP_PREPROCESS_LINEDENOISE_DIRECTION;Direction
 !TP_PREPROCESS_LINEDENOISE_DIRECTION_BOTH;Both
 !TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL;Horizontal
@@ -1976,15 +2030,6 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
 !TP_RAWCACORR_AUTOIT;Iterations
 !TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
-!TP_RAWCACORR_CASTR;Strength
-!TP_RAWEXPOS_BLACK_0;Green 1 (lead)
-!TP_RAWEXPOS_BLACK_1;Red
-!TP_RAWEXPOS_BLACK_2;Blue
-!TP_RAWEXPOS_BLACK_3;Green 2
-!TP_RAWEXPOS_BLACK_BLUE;Blue
-!TP_RAWEXPOS_BLACK_GREEN;Green
-!TP_RAWEXPOS_BLACK_RED;Red
-!TP_RAWEXPOS_RGB;Red, Green, Blue
 !TP_RAW_1PASSMEDIUM;1-pass (Markesteijn)
 !TP_RAW_2PASS;1-pass+fast
 !TP_RAW_3PASSBEST;3-pass (Markesteijn)
@@ -1992,6 +2037,8 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_RAW_AMAZEVNG4;AMaZE+VNG4
 !TP_RAW_BORDER;Border
 !TP_RAW_DCBVNG4;DCB+VNG4
+!TP_RAW_DUALDEMOSAICAUTOCONTRAST;Auto threshold
+!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the check-box is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the check-box first (reasonable values depend on the image).
 !TP_RAW_DUALDEMOSAICCONTRAST;Contrast threshold
 !TP_RAW_IMAGENUM;Sub-image
 !TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
@@ -2024,7 +2071,6 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;The default radius of 1.0 usually fits well for base ISO.\nIncrease the value for high ISO shots, 5.0 is a good starting point.\nWatch the motion mask while changing the value.
 !TP_RAW_PIXELSHIFTSMOOTH;Smooth transitions
 !TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Smooth transitions between areas with motion and areas without.\nSet to 0 to disable transition smoothing.\nSet to 1 to either get the AMaZE/LMMSE result of the selected frame (depending on whether "Use LMMSE" is selected), or the median of all four frames if "Use median" is selected.
-!TP_RAW_RCDVNG4;RCD+VNG4
 !TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.\n+fast gives less artifacts in flat areas
 !TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
 !TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
@@ -2103,14 +2149,6 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_RETINEX_VIEW_TRAN;Transmission - Auto
 !TP_RETINEX_VIEW_TRAN2;Transmission - Fixed
 !TP_RETINEX_VIEW_UNSHARP;Unsharp mask
-!TP_SHARPENING_CONTRAST;Contrast threshold
-!TP_SHARPENMICRO_CONTRAST;Contrast threshold
-!TP_SOFTLIGHT_LABEL;Soft Light
-!TP_SOFTLIGHT_STRENGTH;Strength
-!TP_TM_FATTAL_AMOUNT;Amount
-!TP_TM_FATTAL_ANCHOR;Anchor
-!TP_TM_FATTAL_LABEL;Dynamic Range Compression
-!TP_TM_FATTAL_THRESHOLD;Threshold
 !TP_WAVELET_1;Level 1
 !TP_WAVELET_2;Level 2
 !TP_WAVELET_3;Level 3

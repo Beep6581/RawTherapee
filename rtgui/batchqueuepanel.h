@@ -19,6 +19,8 @@
 #ifndef _BATCHQUEUEPANEL_
 #define _BATCHQUEUEPANEL_
 
+#include <atomic>
+
 #include <gtkmm.h>
 #include "batchqueue.h"
 #include "saveformatpanel.h"
@@ -51,6 +53,8 @@ class BatchQueuePanel : public Gtk::VBox,
     Gtk::HBox* bottomBox;
     Gtk::HBox* topBox;
 
+    std::atomic<bool> queueShouldRun;
+
     IdleRegister idle_register;
 
 public:
@@ -60,22 +64,24 @@ public:
     void init (RTWindow* parent);
 
     void addBatchQueueJobs(const std::vector<BatchQueueEntry*>& entries , bool head = false);
+    void saveOptions ();
+
+    bool handleShortcutKey (GdkEventKey* event);
 
     // batchqueuelistener interface
-    void queueSizeChanged(int qsize, bool queueEmptied, bool queueError, const Glib::ustring& queueErrorMessage);
+    void queueSizeChanged(int qsize, bool queueRunning, bool queueError, const Glib::ustring& queueErrorMessage);
     bool canStartNext();
 
+private:
     void startBatchProc ();
     void stopBatchProc ();
     void startOrStopBatchProc();
+    void setGuiFromBatchState(bool queueRunning, int qsize);
 
-    void saveOptions ();
     void pathFolderChanged ();
     void pathFolderButtonPressed ();
     void formatChanged(const Glib::ustring& format) override;
     void updateTab (int qsize, int forceOrientation = 0); // forceOrientation=0: base on options / 1: horizontal / 2: vertical
-
-    bool handleShortcutKey (GdkEventKey* event);
 };
 #endif
 

@@ -414,8 +414,6 @@ int processLineParams ( int argc, char **argv )
                         return -3;
                     }
 
-                    std::cout << "Output is " << bits << "-bit " << (isFloat ? "floating-point" : "integer") << "." << std::endl;
-
                     break;
 
                 case 't':
@@ -626,6 +624,18 @@ int processLineParams ( int argc, char **argv )
         }
     }
 
+    if (bits == -1) {
+        if (outputType == "jpg") {
+            bits = 8;
+        } else if (outputType == "png") {
+            bits = 8;
+        } else if (outputType == "tif") {
+            bits = 16;
+        } else {
+            bits = 8;
+        }
+    }
+
     if ( !argv1.empty() ) {
         return 1;
     }
@@ -666,6 +676,7 @@ int processLineParams ( int argc, char **argv )
         rtengine::procparams::ProcParams currentParams;
 
         Glib::ustring inputFile = inputFiles[iFile];
+        std::cout << "Output is " << bits << "-bit " << (isFloat ? "floating-point" : "integer") << "." << std::endl;
         std::cout << "Processing: " << inputFile << std::endl;
 
         rtengine::InitialImage* ii = nullptr;

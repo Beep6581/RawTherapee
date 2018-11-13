@@ -31,7 +31,7 @@ class BatchQueueListener
 
 public:
     virtual ~BatchQueueListener() = default;
-    virtual void queueSizeChanged(int qsize, bool queueEmptied, bool queueError, const Glib::ustring& queueErrorMessage) = 0;
+    virtual void queueSizeChanged(int qsize, bool queueRunning, bool queueError, const Glib::ustring& queueErrorMessage) = 0;
     virtual bool canStartNext() = 0;
 };
 
@@ -93,7 +93,7 @@ protected:
     Glib::ustring autoCompleteFileName (const Glib::ustring& fileName, const Glib::ustring& format);
     Glib::ustring getTempFilenameForParams( const Glib::ustring &filename );
     bool saveBatchQueue ();
-    void notifyListener (bool queueEmptied);
+    void notifyListener ();
 
     BatchQueueEntry* processing;  // holds the currently processed image
     FileCatalog* fileCatalog;

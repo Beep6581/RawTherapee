@@ -364,7 +364,7 @@ void RawImageSource::fast_demosaic()
                         for (int j = left + 1, cc = 1; j < right - 1; j += 4, cc += 4) {
                             //interpolate B/R colors at R/B sites
                             _mm_storeu_ps(&bluetile[rr * TS + cc], LVFU(greentile[rr * TS + cc]) - zd25v * ((LVFU(greentile[(rr - 1)*TS + (cc - 1)]) + LVFU(greentile[(rr - 1)*TS + (cc + 1)]) + LVFU(greentile[(rr + 1)*TS + cc + 1]) + LVFU(greentile[(rr + 1)*TS + cc - 1])) -
-                                          _mm_min_ps(clip_ptv, LVFU(rawData[i - 1][j - 1]) + LVFU(rawData[i - 1][j + 1]) + LVFU(rawData[i + 1][j + 1]) + LVFU(rawData[i + 1][j - 1]))));
+                                          vminf(LVFU(rawData[i - 1][j - 1]) + LVFU(rawData[i - 1][j + 1]) + LVFU(rawData[i + 1][j + 1]) + LVFU(rawData[i + 1][j - 1]), clip_ptv)));
                         }
 
 #else
@@ -381,7 +381,7 @@ void RawImageSource::fast_demosaic()
                         for (int j = left + 1, cc = 1; j < right - 1; j += 4, cc += 4) {
                             //interpolate B/R colors at R/B sites
                             _mm_storeu_ps(&redtile[rr * TS + cc], LVFU(greentile[rr * TS + cc]) - zd25v * ((LVFU(greentile[(rr - 1)*TS + cc - 1]) + LVFU(greentile[(rr - 1)*TS + cc + 1]) + LVFU(greentile[(rr + 1)*TS + cc + 1]) + LVFU(greentile[(rr + 1)*TS + cc - 1])) -
-                                          _mm_min_ps(clip_ptv, LVFU(rawData[i - 1][j - 1]) + LVFU(rawData[i - 1][j + 1]) + LVFU(rawData[i + 1][j + 1]) + LVFU(rawData[i + 1][j - 1]))));
+                                          vminf(LVFU(rawData[i - 1][j - 1]) + LVFU(rawData[i - 1][j + 1]) + LVFU(rawData[i + 1][j + 1]) + LVFU(rawData[i + 1][j - 1]), clip_ptv)));
                         }
 
 #else

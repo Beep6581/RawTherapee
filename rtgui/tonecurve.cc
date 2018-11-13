@@ -48,7 +48,7 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
     
 //----------- Auto Levels ----------------------------------
     abox = Gtk::manage (new Gtk::HBox ());
-    abox->set_spacing (10);
+    abox->set_spacing (4);
 
     autolevels = Gtk::manage (new Gtk::ToggleButton (M("TP_EXPOSURE_AUTOLEVELS")));
     autolevels->set_tooltip_markup (M("TP_EXPOSURE_AUTOLEVELS_TIP"));

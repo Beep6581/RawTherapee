@@ -448,7 +448,8 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
         || pparams.icm != pp.icm
         || pparams.hsvequalizer != pp.hsvequalizer
         || pparams.filmSimulation != pp.filmSimulation
-        || pparams.softlight != pp.softlight;
+        || pparams.softlight != pp.softlight
+        || pparams.dehaze != pp.dehaze;
 
     {
         MyMutex::MyLock lock(mutex);
@@ -854,8 +855,10 @@ void Thumbnail::_loadThumbnail(bool firstTrial)
     }
 
     if ( cfs.thumbImgType == CacheImageData::FULL_THUMBNAIL ) {
-        // load aehistogram
-        tpp->readAEHistogram (getCacheFileName ("aehistograms", ""));
+        if(!tpp->isAeValid()) {
+            // load aehistogram
+            tpp->readAEHistogram (getCacheFileName ("aehistograms", ""));
+        }
 
         // load embedded profile
         tpp->readEmbProfile (getCacheFileName ("embprofiles", ".icc"));
@@ -897,19 +900,15 @@ void Thumbnail::_saveThumbnail ()
         return;
     }
 
-    if (g_remove (getCacheFileName ("images", ".rtti").c_str ()) != 0) {
-        // No file deleted, so we try to deleted obsolete files, if any
-        g_remove (getCacheFileName ("images", ".cust").c_str ());
-        g_remove (getCacheFileName ("images", ".cust16").c_str ());
-        g_remove (getCacheFileName ("images", ".jpg").c_str ());
-    }
+    g_remove (getCacheFileName ("images", ".rtti").c_str ());
 
     // save thumbnail image
     tpp->writeImage (getCacheFileName ("images", ""));
 
-    // save aehistogram
-    tpp->writeAEHistogram (getCacheFileName ("aehistograms", ""));
-
+    if(!tpp->isAeValid()) {
+        // save aehistogram
+        tpp->writeAEHistogram (getCacheFileName ("aehistograms", ""));
+    }
     // save embedded profile
     tpp->writeEmbProfile (getCacheFileName ("embprofiles", ".icc"));
 

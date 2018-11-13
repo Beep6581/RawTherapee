@@ -64,7 +64,7 @@ std::vector<Glib::ustring> listSubDirs (const Glib::RefPtr<Gio::File>& dir, bool
             } catch (const Glib::Exception& exception) {
 
                 if (options.rtSettings.verbose) {
-                    std::cerr << exception.what () << std::endl;
+                    std::cerr << exception.what().c_str() << std::endl;
                 }
 
             }

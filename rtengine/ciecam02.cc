@@ -542,9 +542,9 @@ void Ciecam02::xyz2jchqms_ciecam02float ( vfloat &J, vfloat &C, vfloat &h, vfloa
 
     cat02_to_hpefloat ( rp, gp, bp, rc, gc, bc);
     //gamut correction M.H.Brill S.Susstrunk
-    rp = _mm_max_ps (rp, ZEROV);
-    gp = _mm_max_ps (gp, ZEROV);
-    bp = _mm_max_ps (bp, ZEROV);
+    rp = vmaxf (rp, ZEROV);
+    gp = vmaxf (gp, ZEROV);
+    bp = vmaxf (bp, ZEROV);
     rpa = nonlinear_adaptationfloat ( rp, fl );
     gpa = nonlinear_adaptationfloat ( gp, fl );
     bpa = nonlinear_adaptationfloat ( bp, fl );
@@ -559,20 +559,20 @@ void Ciecam02::xyz2jchqms_ciecam02float ( vfloat &J, vfloat &C, vfloat &h, vfloa
     myh = vself (vmaskf_lt (myh, ZEROV), temp, myh);
 
     a = ((rpa + rpa) + gpa + (F2V (0.05f) * bpa) - F2V (0.305f)) * nbb;
-    a = _mm_max_ps (a, ZEROV);  //gamut correction M.H.Brill S.Susstrunk
+    a = vmaxf (a, ZEROV);  //gamut correction M.H.Brill S.Susstrunk
 
     J = pow_F ( a / aw, c * cz * F2V (0.5f));
 
     e = ((F2V (961.53846f)) * nc * ncb) * (xcosf ( myh + F2V (2.0f) ) + F2V (3.8f));
-    t = (e * _mm_sqrt_ps ( (ca * ca) + (cb * cb) )) / (rpa + gpa + (F2V (1.05f) * bpa));
+    t = (e * vsqrtf ( (ca * ca) + (cb * cb) )) / (rpa + gpa + (F2V (1.05f) * bpa));
 
     C = pow_F ( t, F2V (0.9f) ) * J * pow1;
 
     Q = wh * J;
     J *= J * F2V (100.0f);
     M = C * pfl;
-    Q = _mm_max_ps (Q, F2V (0.0001f)); // avoid division by zero
-    s = F2V (100.0f) * _mm_sqrt_ps ( M / Q );
+    Q = vmaxf (Q, F2V (0.0001f)); // avoid division by zero
+    s = F2V (100.0f) * vsqrtf ( M / Q );
     h = (myh * F2V (180.f)) / F2V (rtengine::RT_PI);
 }
 #endif
@@ -710,7 +710,7 @@ void Ciecam02::jch2xyz_ciecam02float ( vfloat &x, vfloat &y, vfloat &z, vfloat J
     xyz_to_cat02float ( rw, gw, bw, xw, yw, zw);
     e = ((F2V (961.53846f)) * nc * ncb) * (xcosf ( ((h * F2V (rtengine::RT_PI)) / F2V (180.0f)) + F2V (2.0f) ) + F2V (3.8f));
     a = pow_F ( J / F2V (100.0f), reccmcz ) * aw;
-    t = pow_F ( F2V (10.f) * C / (_mm_sqrt_ps ( J ) * pow1), F2V (1.1111111f) );
+    t = pow_F ( F2V (10.f) * C / (vsqrtf ( J ) * pow1), F2V (1.1111111f) );
 
     calculate_abfloat ( ca, cb, h, e, t, nbb, a );
     Aab_to_rgbfloat ( rpa, gpa, bpa, a, ca, cb, nbb );
@@ -780,7 +780,7 @@ vfloat Ciecam02::inverse_nonlinear_adaptationfloat ( vfloat c, vfloat fl )
     c -= F2V (0.1f);
     fl = vmulsignf (fl, c);
     c = vabsf (c);
-    c = _mm_min_ps ( c, F2V (399.99f));
+    c = vminf ( c, F2V (399.99f));
     return (F2V (100.0f) / fl) * pow_F ( (F2V (27.13f) * c) / (F2V (400.0f) - c), F2V (2.38095238f) );
 }
 #endif

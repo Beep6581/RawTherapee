@@ -33,6 +33,8 @@
 #include "flatcurveeditorsubgroup.h"
 #include "rtimage.h"
 
+#include "../rtengine/curves.h"
+
 FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::ustring& curveDir) : CurveEditorSubGroup(curveDir)
 {
 
@@ -417,6 +419,8 @@ void FlatCurveEditorSubGroup::loadPressed ()
                     p.push_back (x);
                 }
             }
+
+            rtengine::sanitizeCurve(p);
 
             if (p[0] == (double)(FCT_MinMaxCPoints)) {
                 CPointsCurve->setPoints (p);

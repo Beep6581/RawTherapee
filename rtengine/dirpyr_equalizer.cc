@@ -191,7 +191,7 @@ void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst, int srcwidt
                 int j;
 
                 for(j = 0; j < srcwidth - 3; j += 4) {
-                    _mm_storeu_ps(&tmpChr[i][j], _mm_sqrt_ps(SQRV(LVFU(l_b[i][j])) + SQRV(LVFU(l_a[i][j]))) / div);
+                    _mm_storeu_ps(&tmpChr[i][j], vsqrtf(SQRV(LVFU(l_b[i][j])) + SQRV(LVFU(l_a[i][j]))) / div);
                 }
 
                 for(; j < srcwidth; j++) {
