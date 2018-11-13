@@ -1015,15 +1015,15 @@ void ICCProfileCreator::savePressed()
         cmsWhitePointFromTemp(&xyD, tempv4);
 
         if (illuminant == "D65") {
-            xyD = {0.312700492, 0.329000939};
+            xyD = {0.312700492, 0.329000939, 1.0};
         }
 
         if (illuminant == "D60") {
-            xyD = {0.32168, 0.33767};
+            xyD = {0.32168, 0.33767, 1.0};
         }
 
         if (illuminant == "D50") {
-            xyD = {0.3457, 0.3585};//white D50      near LCMS values but not perfect...it's a compromise!!
+            xyD = {0.3457, 0.3585, 1.0};//white D50      near LCMS values but not perfect...it's a compromise!!
         }
 
     } else {
@@ -1180,15 +1180,15 @@ void ICCProfileCreator::savePressed()
     }
 
     if (illuminant == "D65") {
-        xyD = {0.312700492, 0.329000939};
+        xyD = {0.312700492, 0.329000939, 1.0};
     }
 
     if (illuminant == "D60") {
-        xyD = {0.32168, 0.33767};
+        xyD = {0.32168, 0.33767, 1.0};
     }
 
     if (illuminant == "D50") {
-        xyD = {0.3457, 0.3585};
+        xyD = {0.3457, 0.3585, 1.0};
     }
 
 //    {0.3457, 0.3585, 1.0};
