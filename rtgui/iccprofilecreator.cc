@@ -667,14 +667,18 @@ void ICCProfileCreator::savePressed()
     // -------------------------------------------- Compute the default file name
     // -----------------setmedia white point for monitor  profile sRGB or AdobeRGB in case of profile used for monitor---------------------
     //instead of calculations made by LCMS..small differences
-
-    v2except = (profileVersion == "v2"  && (primariesPreset == "sRGB" || primariesPreset == "Adobe" || primariesPreset == "Rec2020"  || primariesPreset == "BruceRGB" || primariesPreset == "ACES-AP1" || primariesPreset == "ACES-AP0") && illuminant == "DEF");
+    bool isD65 = (primariesPreset == "sRGB" || primariesPreset == "Adobe" || primariesPreset == "Rec2020"  || primariesPreset == "BruceRGB");
+    bool isD60 = (primariesPreset == "ACES-AP1" || primariesPreset == "ACES-AP0");
+    bool isD50 = (primariesPreset == "ProPhoto" || primariesPreset == "Widegamut" || primariesPreset == "BestRGB" || primariesPreset == "BetaRGB");
+    // v2except = (profileVersion == "v2"  && (primariesPreset == "sRGB" || primariesPreset == "Adobe" || primariesPreset == "Rec2020"  || primariesPreset == "BruceRGB" || primariesPreset == "ACES-AP1" || primariesPreset == "ACES-AP0") && illuminant == "DEF");
+    v2except = (profileVersion == "v2"  && (isD65 || isD60  || isD50) && illuminant == "DEF");
 
     //necessary for V2 profile
 
     if (!v2except) {
         std::string is_RTv4 = "";
 
+        //used partially for v4, and in case of if we want to back to old manner for v2
         if (primariesPreset == "ACES-AP0"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp0)) {
             sNewProfile = options.rtSettings.ACESp0;
             sPrimariesPreset = "ACES-AP0";
@@ -759,6 +763,14 @@ void ICCProfileCreator::savePressed()
             sPrimariesPreset = "Bruce";
         } else if (primariesPreset == "sRGB") {
             sPrimariesPreset = "sRGB";
+        } else if (primariesPreset == "ProPhoto") {
+            sPrimariesPreset = "Large";
+        } else if (primariesPreset == "Widegamut") {
+            sPrimariesPreset = "Wide";
+        } else if (primariesPreset == "BestRGB") {
+            sPrimariesPreset = "Best";
+        } else if (primariesPreset == "BetaRGB") {
+            sPrimariesPreset = "Beta";
         }
     }
 
@@ -1010,6 +1022,9 @@ void ICCProfileCreator::savePressed()
             xyD = {0.32168, 0.33767};
         }
 
+        if (illuminant == "D50") {
+            xyD = {0.3457, 0.3585};//white D50      near LCMS values but not perfect...it's a compromise!!
+        }
 
     } else {
         if (v2except) {
@@ -1024,6 +1039,9 @@ void ICCProfileCreator::savePressed()
                 XYZ = {0.952646075, 1.0, 1.008825184};//white D60
             }
 
+            if (isD50) {
+                XYZ = {0.964295676, 1.0, 0.825104603};//white D50 room (prophoto) near LCMS values but not perfect...it's a compromise!!
+            }
 
             cmsCIExyY blackpoint;
 
@@ -1108,6 +1126,50 @@ void ICCProfileCreator::savePressed()
                 }
             }
 
+            if (primariesPreset == "ProPhoto")  {
+                {
+                    rt =  {0.79755, 0.28802, 0.0};
+                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
+                    bt =  {0.03134, 0.00008, 0.82492};
+                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
+                    gt =  {0.13531, 0.71190, -0.00002};
+                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
+                }
+            }
+
+            if (primariesPreset == "Widegamut")  {
+                {
+                    rt =  {0.71603, 0.25818, 0.0};
+                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
+                    bt =  {0.14713, 0.01688, 0.77312};
+                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
+                    gt =  {0.10104, 0.72493, 0.05177};
+                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
+                }
+            }
+
+            if (primariesPreset == "BestRGB")  {
+                {
+                    rt =  {0.63254, 0.22844, 0.0};
+                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
+                    bt =  {0.12695, 0.03418, 0.81540};
+                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
+                    gt =  {0.20471, 0.73738, 0.00951};
+                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
+                }
+            }
+
+            if (primariesPreset == "BetaRGB")  {
+                {
+                    rt =  {0.67113, 0.30321, 0.0};
+                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
+                    bt =  {0.11833, 0.03293, 0.78419};
+                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
+                    gt =  {0.17473, 0.66386, 0.04070};
+                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
+                }
+            }
+
         } else {
             cmsWhitePointFromTemp(&xyD, (double)temp);
         }
@@ -1125,6 +1187,11 @@ void ICCProfileCreator::savePressed()
         xyD = {0.32168, 0.33767};
     }
 
+    if (illuminant == "D50") {
+        xyD = {0.3457, 0.3585};
+    }
+
+//    {0.3457, 0.3585, 1.0};
     // Calculate output profile's rTRC gTRC bTRC
 
 
