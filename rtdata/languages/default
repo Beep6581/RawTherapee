@@ -1060,7 +1060,7 @@ PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 PREFERENCES_CLUTSDIR;HaldCLUT directory
 PREFERENCES_CMMBPC;Black point compensation
 PREFERENCES_CROP;Crop editing
-PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
+PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area when double clicking in the preview image
 PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
 PREFERENCES_CROP_GUIDES_FRAME;Frame
 PREFERENCES_CROP_GUIDES_FULL;Original
@@ -1818,6 +1818,7 @@ TP_PRSHARPENING_LABEL;Post-Resize Sharpening
 TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
 TP_RAWCACORR_AUTO;Auto-correction
 TP_RAWCACORR_AUTOIT;Iterations
+TP_RAWCACORR_AUTOIT_TOOLTIP;This setting is available if "Auto-correction" is checked.\nAuto-correction is conservative, means it often does not correct all Chromatic Aberration.\nTo correct the remaining Chromatic Aberration, you can use up to 5 iterations of automatic Chromatic Aberration correction.\nEach iteration will reduce the remaining Chromatic Aberration from the last iteration at the cost of additional processing time.
 TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
 TP_RAWCACORR_CABLUE;Blue
 TP_RAWCACORR_CARED;Red

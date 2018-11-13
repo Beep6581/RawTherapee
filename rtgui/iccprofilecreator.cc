@@ -909,7 +909,7 @@ void ICCProfileCreator::savePressed()
         sGamma = Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2), presetGamma);
         sSlope = Glib::ustring::format(std::setw(6), std::fixed, std::setprecision(5), presetSlope);
         fName = Glib::ustring::compose("RT%1_%2_%3.icc", profileVersion, sPrimariesAndIlluminant, sGammaPreset);
-        profileDesc == sPrimariesPreset + sGammaPreset;
+        profileDesc = sPrimariesPreset + sGammaPreset;
     }
 
     sGammaSlopeParam = Glib::ustring::compose("g%1s%2!", sGamma, sSlope);
@@ -1025,6 +1025,11 @@ void ICCProfileCreator::savePressed()
         if (illuminant == "D50") {
             xyD = {0.3457, 0.3585, 1.0};//white D50      near LCMS values but not perfect...it's a compromise!!
         }
+        
+        if (illuminant == "stdA") {
+            xyD = {0.447573, 0.407440, 1.0};
+        }
+        
 
     } else {
         if (v2except) {
@@ -1175,19 +1180,16 @@ void ICCProfileCreator::savePressed()
         }
     }
 
-    if (illuminant == "stdA") {
-        xyD = {0.447573, 0.407440, 1.0};
-    }
 
-    if (isD65) {
+    if (isD65 && illuminant == "DEF") {
         xyD = {0.312700492, 0.329000939, 1.0};
     }
 
-    if (isD60) {
+    if (isD60 && illuminant == "DEF") {
         xyD = {0.32168, 0.33767, 1.0};
     }
 
-    if (isD50) {
+    if (isD50 && illuminant == "DEF") {
         xyD = {0.3457, 0.3585, 1.0};
     }
 

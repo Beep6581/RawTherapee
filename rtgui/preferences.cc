@@ -609,7 +609,12 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     crophb->pack_start(*Gtk::manage(new Gtk::Label(M("PREFERENCES_CROP_GUIDES") + ": ")), Gtk::PACK_SHRINK, 4);
     crophb->pack_start(*cropGuides);
     cropvb->pack_start(*crophb);
-    cropAutoFit = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_CROP_AUTO_FIT")));
+    Gtk::Label *cropAutoFitLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_CROP_AUTO_FIT")));
+    cropAutoFitLabel->set_line_wrap(true);
+    setExpandAlignProperties(cropAutoFitLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
+    cropAutoFit = Gtk::manage(new Gtk::CheckButton());
+    setExpandAlignProperties(cropAutoFit, false, true, Gtk::ALIGN_START, Gtk::ALIGN_START);
+    cropAutoFit->add(*cropAutoFitLabel);
     cropvb->pack_start(*cropAutoFit);
     cropframe->add(*cropvb);
     vbImageProcessing->pack_start(*cropframe, Gtk::PACK_SHRINK, 4);
@@ -1403,7 +1408,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel ()
     vbc->pack_start (*cacheGrid, Gtk::PACK_SHRINK, 4);
 
     Gtk::Label* clearSafetyLbl = Gtk::manage (new Gtk::Label(M("PREFERENCES_CACHECLEAR_SAFETY")));
-    setExpandAlignProperties(clearSafetyLbl, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(clearSafetyLbl, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
     clearSafetyLbl->set_line_wrap(true);
     vbc->pack_start(*clearSafetyLbl, Gtk::PACK_SHRINK, 4);
 
