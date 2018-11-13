@@ -965,10 +965,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 void ImProcCoordinator::freeAll()
 {
 
-    if (settings->verbose) {
-        printf("freeall starts %d\n", (int)allocated);
-    }
-
     if (allocated) {
         if (orig_prev != oprevi) {
             delete oprevi;

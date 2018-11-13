@@ -1100,10 +1100,6 @@ void Crop::update(int todo)
 void Crop::freeAll()
 {
 
-    if (settings->verbose) {
-        printf("freeallcrop starts %d\n", (int)cropAllocated);
-    }
-
     if (cropAllocated) {
         if (origCrop) {
             delete    origCrop;
