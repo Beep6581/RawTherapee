@@ -151,12 +151,10 @@ public:
             if (it > pattern_.begin()) {
                 int b2 = *(it-1);
                 int d2 = key - b2;
-                float f = BORDER[std::min(std::min(d, d2), BORDER_WIDTH)];
-                return f;
-            } else {
-                float f = BORDER[std::min(d, BORDER_WIDTH)];
-                return f;
+                d = std::min(d, d2);
             }
+            float f = (d <= BORDER_WIDTH) ? BORDER[d] : 0.f;
+            return f;
         }
         return 0.f;
     }
