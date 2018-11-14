@@ -1387,7 +1387,6 @@ void ICCProfileCreator::savePressed()
     if (!v2except) {
         cmsSaveProfileToFile(newProfile,  absoluteFName.c_str());
     } else {
-        printf("save except\n");
         cmsSaveProfileToFile(profile_v2_except,  absoluteFName.c_str());
 
     }
