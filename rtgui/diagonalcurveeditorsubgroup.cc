@@ -52,20 +52,31 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     // custom curve
     customCurveGrid = new Gtk::Grid ();
     customCurveGrid->set_orientation(Gtk::ORIENTATION_VERTICAL);
-    customCurveGrid->set_row_spacing(2);
-    customCurveGrid->set_column_spacing(2);
+    customCurveGrid->get_style_context()->add_class("grid-curve");
 
     customCurve = Gtk::manage (new MyDiagonalCurve ());
     customCurve->setType (DCT_Spline);
 
     Gtk::Grid* custombbox = Gtk::manage (new Gtk::Grid ()); // curvebboxpos 0=above, 1=right, 2=below, 3=left
+    custombbox->get_style_context()->add_class("grid-spacing");
+    custombbox->get_style_context()->add_class("grid-curve-buttons");
 
-    if (options.curvebboxpos == 0 || options.curvebboxpos == 2) {
+    if (options.curvebboxpos == 0) {
         custombbox->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
         setExpandAlignProperties(custombbox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    } else {
+        custombbox->get_style_context()->add_class("grid-curve-buttons-top");
+    } else if (options.curvebboxpos == 2) {
+        custombbox->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+        setExpandAlignProperties(custombbox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+        custombbox->get_style_context()->add_class("grid-curve-buttons-bottom");
+    } else if (options.curvebboxpos == 1) {
         custombbox->set_orientation(Gtk::ORIENTATION_VERTICAL);
         setExpandAlignProperties(custombbox, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+        custombbox->get_style_context()->add_class("grid-curve-buttons-right");
+    } else if (options.curvebboxpos == 3){
+        custombbox->set_orientation(Gtk::ORIENTATION_VERTICAL);
+        setExpandAlignProperties(custombbox, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+        custombbox->get_style_context()->add_class("grid-curve-buttons-left");
     }
 
     editPointCustom = Gtk::manage (new Gtk::ToggleButton ());
@@ -128,21 +139,32 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 
     // NURBS curve
     NURBSCurveGrid = new Gtk::Grid ();
-    NURBSCurveGrid->set_row_spacing(4);
-    NURBSCurveGrid->set_column_spacing(4);
     NURBSCurveGrid->set_orientation(Gtk::ORIENTATION_VERTICAL);
+    NURBSCurveGrid->get_style_context()->add_class("grid-curve");
 
     NURBSCurve = Gtk::manage (new MyDiagonalCurve ());
     NURBSCurve->setType (DCT_NURBS);
 
     Gtk::Grid* NURBSbbox = Gtk::manage (new Gtk::Grid ());
+    NURBSbbox->get_style_context()->add_class("grid-spacing");
+    NURBSbbox->get_style_context()->add_class("grid-curve-buttons");
 
-    if (options.curvebboxpos == 0 || options.curvebboxpos == 2) {
+    if (options.curvebboxpos == 0) {
         NURBSbbox->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
         setExpandAlignProperties(NURBSbbox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    } else {
+        NURBSbbox->get_style_context()->add_class("grid-curve-buttons-top");
+    } else if (options.curvebboxpos == 2) {
+        NURBSbbox->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+        setExpandAlignProperties(NURBSbbox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+        NURBSbbox->get_style_context()->add_class("grid-curve-buttons-bottom");
+    } else if (options.curvebboxpos == 1) {
         NURBSbbox->set_orientation(Gtk::ORIENTATION_VERTICAL);
         setExpandAlignProperties(NURBSbbox, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+        NURBSbbox->get_style_context()->add_class("grid-curve-buttons-right");
+    } else if (options.curvebboxpos == 3){
+        NURBSbbox->set_orientation(Gtk::ORIENTATION_VERTICAL);
+        setExpandAlignProperties(NURBSbbox, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+        NURBSbbox->get_style_context()->add_class("grid-curve-buttons-left");
     }
 
     editPointNURBS = Gtk::manage (new Gtk::ToggleButton ());
@@ -205,25 +227,36 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 
     // parametric curve
     paramCurveGrid = new Gtk::Grid ();
-    paramCurveGrid->set_row_spacing(4);
-    paramCurveGrid->set_column_spacing(4);
     paramCurveGrid->set_orientation(Gtk::ORIENTATION_VERTICAL);
+    paramCurveGrid->get_style_context()->add_class("grid-curve");
 
     paramCurve = Gtk::manage (new MyDiagonalCurve ());
     paramCurve->setType (DCT_Parametric);
 
     Gtk::Grid* parambbox = Gtk::manage (new Gtk::Grid ());
+    parambbox->get_style_context()->add_class("grid-spacing");
+    parambbox->get_style_context()->add_class("grid-curve-buttons");
 
-    if (options.curvebboxpos == 0 || options.curvebboxpos == 2) {
+    if (options.curvebboxpos == 0) {
         parambbox->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
         setExpandAlignProperties(parambbox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    } else {
+        parambbox->get_style_context()->add_class("grid-curve-buttons-top");
+    } else if (options.curvebboxpos == 2) {
+        parambbox->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+        setExpandAlignProperties(parambbox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+        parambbox->get_style_context()->add_class("grid-curve-buttons-bottom");
+    } else if (options.curvebboxpos == 1) {
         parambbox->set_orientation(Gtk::ORIENTATION_VERTICAL);
         setExpandAlignProperties(parambbox, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+        parambbox->get_style_context()->add_class("grid-curve-buttons-right");
+    } else if (options.curvebboxpos == 3){
+        parambbox->set_orientation(Gtk::ORIENTATION_VERTICAL);
+        setExpandAlignProperties(parambbox, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+        parambbox->get_style_context()->add_class("grid-curve-buttons-left");
     }
 
     shcSelector = Gtk::manage (new SHCSelector ());
-    shcSelector->set_name("CurveSHCSelector");  // To handle the 4px gap between the SHCSelector and the curve through CSS
+    shcSelector->set_name("CurveSHCSelector");
 
     editParam = Gtk::manage (new Gtk::ToggleButton());
     initButton(*editParam, Glib::ustring("crosshair-node-curve.png"), Gtk::ALIGN_START, false, "EDIT_PIPETTE_TOOLTIP");
@@ -272,8 +305,7 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     // paramCurveSliderBox needed to set vspacing(4) between curve+shc and sliders without vspacing between each slider
     Gtk::Grid* paramCurveSliderBox = Gtk::manage (new Gtk::Grid());
     paramCurveSliderBox->set_orientation(Gtk::ORIENTATION_VERTICAL);
-    paramCurveSliderBox->set_column_spacing(2);
-    paramCurveSliderBox->set_row_spacing(2);
+    paramCurveSliderBox->get_style_context()->add_class("grid-curve-sliders");
 
     paramCurveSliderBox->attach_next_to(*evhighlights, Gtk::POS_TOP, 1, 1);
     paramCurveSliderBox->attach_next_to(*evlights, Gtk::POS_TOP, 1, 1);
