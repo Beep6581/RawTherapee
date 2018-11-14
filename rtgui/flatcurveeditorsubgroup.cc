@@ -47,21 +47,32 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
 
     // ControlPoints curve
     CPointsCurveGrid = new Gtk::Grid ();
-    CPointsCurveGrid->set_row_spacing(2);
-    CPointsCurveGrid->set_column_spacing(2);
     CPointsCurveGrid->set_orientation(Gtk::ORIENTATION_VERTICAL);
+    CPointsCurveGrid->get_style_context()->add_class("grid-curve");
 
     CPointsCurve = Gtk::manage (new MyFlatCurve ());
     CPointsCurve->setType (FCT_MinMaxCPoints);
 
     Gtk::Grid* CPointsbbox = Gtk::manage (new Gtk::Grid ()); // curvebboxpos 0=above, 1=right, 2=below, 3=left
+    CPointsbbox->get_style_context()->add_class("grid-spacing");
+    CPointsbbox->get_style_context()->add_class("grid-curve-buttons");
 
-    if (options.curvebboxpos == 0 || options.curvebboxpos == 2) {
+    if (options.curvebboxpos == 0) {
         CPointsbbox->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
         setExpandAlignProperties(CPointsbbox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    } else {
+        CPointsbbox->get_style_context()->add_class("grid-curve-buttons-top");
+    } else if (options.curvebboxpos == 2) {
+        CPointsbbox->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+        setExpandAlignProperties(CPointsbbox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+        CPointsbbox->get_style_context()->add_class("grid-curve-buttons-bottom");
+    } else if (options.curvebboxpos == 1) {
         CPointsbbox->set_orientation(Gtk::ORIENTATION_VERTICAL);
         setExpandAlignProperties(CPointsbbox, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+        CPointsbbox->get_style_context()->add_class("grid-curve-buttons-right");
+    } else if (options.curvebboxpos == 3){
+        CPointsbbox->set_orientation(Gtk::ORIENTATION_VERTICAL);
+        setExpandAlignProperties(CPointsbbox, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+        CPointsbbox->get_style_context()->add_class("grid-curve-buttons-left");
     }
 
     editCPoints = Gtk::manage (new Gtk::ToggleButton());
