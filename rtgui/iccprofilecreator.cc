@@ -1061,14 +1061,14 @@ void ICCProfileCreator::savePressed()
             cmsCIExyY gt;
 
             if (primariesPreset == "sRGB") {
-
+                    //calculated with personnal special spreadsheat
                 {
                     //Matrix value from spec Adobe but adapted with wp
-                    rt =  {0.43604, 0.22249, 0.01392};
+                    rt =  {0.4360411843, 0.2224843154, 0.0139201582};
                     cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
-                    bt =  {0.14305, 0.06061, 0.71391};
+                    bt =  {0.1430457992, 0.0606099658, 0.7139121724};
                     cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
-                    gt =  {0.38512, 0.71690, 0.09706};
+                    gt =  {0.3851136574, 0.7169049862, 0.0970677661};
                     cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
 
                 }
@@ -1077,100 +1077,100 @@ void ICCProfileCreator::savePressed()
 
             if (primariesPreset == "Adobe") {
                 {
-                    //Adobe spec adapted with wp
-                    rt =  {0.60974, 0.31111, 0.01947};
+                    //Adobe spec adapted with wp calculated with personnal special spreadsheat
+                    rt =  {0.6097408852, 0.3111123176, 0.0194653393};
                     cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
-                    bt =  {0.14919, 0.06322, 0.74455};
+                    bt =  {0.1491866649, 0.0632119133, 0.7445599707};
                     cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
-                    gt =  {0.20528, 0.62567, 0.06087};
+                    gt =  {0.2052730908, 0.6256750365, 0.0608747867};
                     cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
                 }
             }
 
             if (primariesPreset == "Rec2020") {
-                {
-                    rt =  {0.67348, 0.27904, -0.00194};
+                {//calculated with personnal special spreadsheat
+                    rt =  {0.6734800343, 0.2790423273, -0.0019336766};
                     cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
-                    bt =  {0.12505, 0.04561, 0.79684};
+                    bt =  {0.1250489478, 0.0456126910, 0.7968509159};
                     cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
-                    gt =  {0.16566, 0.67534, 0.02998};
+                    gt =  {0.1656716588, 0.6753442491, 0.0299828575};
                     cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
                 }
             }
 
             if (primariesPreset == "BruceRGB") {
-                {
-                    rt =  {0.49416, 0.25214, 0.01578};
+                {//calculated with personnal special spreadsheat
+                    rt =  {0.4941542253, 0.2521357351, 0.0157753562};
                     cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
-                    bt =  {0.14952, 0.06335, 0.74622};
+                    bt =  {0.1495175342, 0.0633521060, 0.7462112712};
                     cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
-                    gt =  {0.32053, 0.68451, 0.06291};
+                    gt =  {0.3205288814, 0.6845114263, 0.0629134693};
                     cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
                 }
             }
 
             if (primariesPreset == "ACES-AP0") {
-                {
-                    rt =  {0.99089, 0.36189, -0.00272};
+                {//calculated with personnal special spreadsheat
+                    rt =  {0.9908835135, 0.3618940325, -0.0027137400};
                     cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
-                    bt =  {-0.03893, -0.08441, 0.81937};
+                    bt =  {-0.0389246557, -0.084405166, 0.8193659780};
                     cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
-                    gt =  {0.01224, 0.72250, 0.00826};
+                    gt =  {0.0122417831, 0.7225104015, 0.0082478587};
                     cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
                 }
             }
 
-            if (primariesPreset == "ACES-AP1") {
-                {
-                    rt =  {0.68988, 0.28452, -0.00604};
+            if (primariesPreset == "ACES-AP1") {//done
+                {//calculated with personnal special spreadsheat
+                    rt =  {0.6898756188, 0.2845109670, -0.0060455375};
                     cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
-                    bt =  {0.12456, 0.04379, 0.82094};
+                    bt =  {0.1245615936, 0.0437959432, 0.8209388333};
                     cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
-                    gt =  {0.14977, 0.67169, 0.01001};
+                    gt =  {0.1497634285, 0.6716923572, 0.0100068009};
                     cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
                 }
             }
 
             if (primariesPreset == "ProPhoto")  {
-                {
-                    rt =  {0.79771, 0.28806, 0.0};
+                {//calculated with personnal special spreadsheat
+                    rt =  {0.7977198204, 0.2880493171, -0.0000030551};
                     cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
-                    bt =  {0.03133, 0.00008, 0.82489};
+                    bt =  {0.0313194091, 0.0000771282, 0.8248890748};
                     cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
-                    gt =  {0.13516, 0.71187, 0.00002};
+                    gt =  {0.1351614114, 0.7118728221, 0.0000140770};
                     cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
                 }
             }
 
             if (primariesPreset == "Widegamut")  {
-                {
-                    rt =  {0.71617, 0.25821, 0.0};
+                {//calculated with personnal special spreadsheat
+                    rt =  {0.7161680478, 0.2582038074, -0.0000027515};
                     cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
-                    bt =  {0.14713, 0.01688, 0.77312};
+                    bt =  {0.1471328469, 0.0168600579, 0.7731227232};
                     cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
-                    gt =  {0.10091, 0.72493, 0.05177};
+                    gt =  {0.1008997462, 0.7249354021, 0.0517801251};
                     cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
                 }
             }
 
             if (primariesPreset == "BestRGB")  {
-                {
-                    rt =  {0.63274, 0.22847, 0.0};
+                {//calculated with personnal special spreadsheat
+                    rt =  {0.6327383009, 0.2284760022, -0.0000024233};
                     cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
-                    bt =  {0.12694, 0.03418, 0.81538};
+                    bt =  {0.1269437333, 0.0341753604, 0.8153773703};
                     cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
-                    gt =  {0.20451, 0.73735, 0.00952};
+                    gt =  {0.2045186067, 0.7373479048, 0.0095251497};
                     cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
                 }
             }
 
             if (primariesPreset == "BetaRGB")  {
-                {
-                    rt =  {0.67133, 0.30330, 0.0};
+                {//calculated with personnal special spreadsheat
+                    rt =  {0.6713200674, 0.3033034560, -0.0000012307};
                     cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
-                    bt =  {0.11833, 0.03293, 0.78419};
+                    bt =  {0.1183343909, 0.0329265310, 0.7842009909};
                     cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
-                    gt =  {0.17455, 0.66377, 0.04070};
+                    gt =  {0.1745461827, 0.6637692805, 0.0407003365};
                     cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
                 }
             }
