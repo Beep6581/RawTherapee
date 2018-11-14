@@ -1034,7 +1034,7 @@ void ICCProfileCreator::savePressed()
     } else {
         if (v2except) {
 
-            cmsCIExyY XYZ;
+            cmsCIEXYZ XYZ;
 
             {
                 XYZ =  {0.95045471, 1.0, 1.08905029};//white D65
@@ -1056,9 +1056,9 @@ void ICCProfileCreator::savePressed()
 
             cmsWriteTag(profile_v2_except, cmsSigMediaBlackPointTag, &blackpoint);
             cmsWriteTag(profile_v2_except, cmsSigMediaWhitePointTag, &XYZ);
-            cmsCIExyY rt;
-            cmsCIExyY bt;
-            cmsCIExyY gt;
+            cmsCIEXYZ rt;
+            cmsCIEXYZ bt;
+            cmsCIEXYZ gt;
 
             if (primariesPreset == "sRGB") {
                     //calculated with personnal special spreadsheat
