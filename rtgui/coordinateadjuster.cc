@@ -134,7 +134,7 @@ void CoordinateAdjuster::createWidgets(const std::vector<Axis> &axis)
         box->attach_next_to(*(currAdjuster->label), Gtk::POS_LEFT, 1, 1);
 
         Gtk::FlowBoxChild *fbChild = Gtk::manage(new Gtk::FlowBoxChild());
-        fbChild->get_style_context()->add_class("grid-curve-flowbox");
+        fbChild->get_style_context()->add_class("grid-curve-flowboxes");
         fbChild->set_can_focus(false);
         fbChild->add(*box);
 
