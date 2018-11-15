@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2018 TooWaBoo
-  Version 2.92
+  Version 2.93
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1349,6 +1349,7 @@ button:hover,
     background-image: linear-gradient(to bottom, rgba(100,100,100,.3), rgba(30,30,30,.3));
     background-color: @bg-button-hover;
 }
+.grid-curve-buttons button.flat:hover,
 #MainNotebook > header tab #CloseButton:hover,
 #MainNotebook > header > grid > button:hover {
     background-color: alpha(@bg-grey, 0.6);
@@ -1368,6 +1369,8 @@ button:checked,
     background-image: linear-gradient(to bottom, rgba(100,100,100,.3), rgba(30,30,30,.3));
     background-color: @bg-button-active;
 }
+.grid-curve-buttons button.flat:active,
+.grid-curve-buttons button.flat:checked,
 #MainNotebook > header tab #CloseButton:active,
 #MainNotebook > header > grid > button:active {
     background-color: alpha(@bg-light-grey, 0.8);
@@ -1493,10 +1496,10 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
 #IopsPanel button,
 #ProfilePanel button,
 #MainNotebook > header > grid > button,
-#MyExpander button.independent.toggle:not(.image-button):not(.text-button):first-child:only-child/* Graduated filter big button */,
-#MyExpander .drawingarea + grid > button.flat,/* Curve buttons */
+#MyExpander button.independent.toggle:not(.image-button):not(.text-button):first-child:only-child, /* Graduated filter big button */
+.grid-curve-buttons button.flat,
 #BatchQueueButtonsMainContainer + grid + box button,
-#RightNotebook > stack > scrolledwindow:last-child button.image-button,/* Fast Export */
+#RightNotebook > stack > scrolledwindow:last-child button.image-button, /* Fast Export */
 #MetaPanelNotebook scrolledwindow + grid > button,
 #MetaPanelNotebook scrolledwindow + grid + grid > button {
     min-height: 2.5em;
@@ -1518,10 +1521,12 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
 #BatchQueueButtonsMainContainer + grid + box button {
     margin-right: 0;
 }
-#MyExpander button.independent.toggle:not(.image-button):not(.text-button):first-child:only-child/* Graduated filter button */,
-#MyExpander .drawingarea + grid > button.flat,/* Curve buttons */
+#MyExpander button.independent.toggle:not(.image-button):not(.text-button):first-child:only-child, /* Graduated filter button */
 #MetaPanelNotebook scrolledwindow + grid > button,
 #MetaPanelNotebook scrolledwindow + grid + grid > button {
+    margin: 0.19em;
+}
+.grid-curve-buttons button.flat {
     margin: 0.19em;
 }
 
@@ -1970,6 +1975,34 @@ entry:focus > selection  {
 }
     /* end*/
 
+/*** end ***************************************************************************************/
+
+/* Curves **************************************************************************************/
+.grid-curve {
+    margin: 0.19em;
+    padding: 0.5em;
+    background-color: @bg-dark-grey;
+}
+.grid-curve-flowboxes {
+    margin: 0.25em 0 -0.19em;
+}
+.grid-curve-sliders {
+    margin: 0.5em 0 0;
+    padding: 0.25em;
+    background-color: @bg-grey;
+}
+.grid-curve.top .grid-curve-buttons {
+    margin: -0.19em -0.19em 0.083333333333333333em -0.19em;
+}
+.grid-curve.bottom .grid-curve-buttons {
+    margin: 0.333333333333333333em -0.19em -0.19em -0.19em;
+}
+.grid-curve.right .grid-curve-buttons {
+    margin: -0.19em -0.19em -0.19em 0.083333333333333333em;
+}
+.grid-curve.left .grid-curve-buttons {
+    margin: -0.19em 0.25em -0.19em -0.19em;
+}
 /*** end ***************************************************************************************/
 
 /*** Window Layout *****************************************************************************/
