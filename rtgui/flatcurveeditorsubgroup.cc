@@ -59,19 +59,19 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
     if (options.curvebboxpos == 0) {
         CPointsbbox->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
         setExpandAlignProperties(CPointsbbox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-        CPointsbbox->get_style_context()->add_class("Top");
+        CPointsCurveGrid->get_style_context()->add_class("top");
     } else if (options.curvebboxpos == 2) {
         CPointsbbox->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
         setExpandAlignProperties(CPointsbbox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-        CPointsbbox->get_style_context()->add_class("Bottom");
+        CPointsCurveGrid->get_style_context()->add_class("bottom");
     } else if (options.curvebboxpos == 1) {
         CPointsbbox->set_orientation(Gtk::ORIENTATION_VERTICAL);
         setExpandAlignProperties(CPointsbbox, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
-        CPointsbbox->get_style_context()->add_class("Right");
+        CPointsCurveGrid->get_style_context()->add_class("right");
     } else if (options.curvebboxpos == 3){
         CPointsbbox->set_orientation(Gtk::ORIENTATION_VERTICAL);
         setExpandAlignProperties(CPointsbbox, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
-        CPointsbbox->get_style_context()->add_class("Left");
+        CPointsCurveGrid->get_style_context()->add_class("left");
     }
 
     editCPoints = Gtk::manage (new Gtk::ToggleButton());
