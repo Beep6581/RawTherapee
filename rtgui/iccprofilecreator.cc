@@ -749,7 +749,7 @@ void ICCProfileCreator::savePressed()
         }
     } else {
         //new model for v2 profile different from D50 by entering directly XYZ values and media white point
-        sNewProfile = "RTv2_Beta";//for copy
+        sNewProfile = "RTv2_Beta";//for copy generate others v2 profile. To change date of new profile, I used "ICC profile inspector" and "save as"
 
         if (primariesPreset == "ACES-AP0") {
             sPrimariesPreset = "ACES-AP0";
