@@ -1652,28 +1652,6 @@ BrowserFilter FileCatalog::getFilter ()
             filter.showEdited[i] = anyEditedFilterActive ? bEdited[i]->get_active() : true;
             filter.showRecentlySaved[i] = anyRecentlySavedFilterActive ? bRecentlySaved[i]->get_active() : true;
         }
-
-        if( options.rtSettings.verbose ) {
-            printf ("\n**************** FileCatalog::getFilter *** AFTER STEP 2 \n");
-
-            for (int i = 0; i <= 5; i++) {
-                printf ("filter.showRanked[%i] = %i\n", i, filter.showRanked[i]);
-            }
-
-            for (int i = 0; i <= 5; i++) {
-                printf ("filter.showCLabeled[%i] = %i\n", i, filter.showCLabeled[i]);
-            }
-
-            for (int i = 0; i < 2; i++) {
-                printf ("filter.showEdited[%i] = %i\n", i, filter.showEdited[i]);
-            }
-
-            for (int i = 0; i < 2; i++) {
-                printf ("filter.showRecentlySaved[%i] = %i\n", i, filter.showRecentlySaved[i]);
-            }
-
-            printf ("filter.multiselect = %i\n", filter.multiselect);
-        }
     }
 
 
