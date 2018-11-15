@@ -653,10 +653,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
 
                 if (params.colorToning.enabled && params.colorToning.autosat && actListener) {
-                    if (settings->verbose) {
-                        printf("ImProcCoordinator / Auto CT:  indi=%d   satH=%d  satPR=%d\n", indi, (int)colourToningSatLimit, (int) colourToningSatLimitOpacity);
-                    }
-
                     actListener->autoColorTonChanged(indi, (int) colourToningSatLimit, (int)colourToningSatLimitOpacity);  //change sliders autosat
                 }
 
@@ -965,10 +961,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 void ImProcCoordinator::freeAll()
 {
 
-    if (settings->verbose) {
-        printf("freeall starts %d\n", (int)allocated);
-    }
-
     if (allocated) {
         if (orig_prev != oprevi) {
             delete oprevi;
@@ -1010,10 +1002,6 @@ void ImProcCoordinator::freeAll()
 void ImProcCoordinator::setScale(int prevscale)
 {
 
-    if (settings->verbose) {
-        printf("setscale before lock\n");
-    }
-
     tr = getCoarseBitMask(params.coarse);
 
     int nW, nH;
@@ -1026,10 +1014,6 @@ void ImProcCoordinator::setScale(int prevscale)
         PreviewProps pp(0, 0, fw, fh, prevscale);
         imgsrc->getSize(pp, nW, nH);
     } while (nH < 400 && prevscale > 1 && (nW * nH < 1000000));  // sctually hardcoded values, perhaps a better choice is possible
-
-    if (settings->verbose) {
-        printf("setscale starts (%d, %d)\n", nW, nH);
-    }
 
     if (nW != pW || nH != pH) {
 
@@ -1054,19 +1038,10 @@ void ImProcCoordinator::setScale(int prevscale)
     fullw = fw;
     fullh = fh;
 
-    if (settings->verbose) {
-        printf("setscale ends\n");
-    }
-
     if (!sizeListeners.empty())
         for (size_t i = 0; i < sizeListeners.size(); i++) {
             sizeListeners[i]->sizeChanged(fullw, fullh, fw, fh);
         }
-
-    if (settings->verbose) {
-        printf("setscale ends2\n");
-    }
-
 }
 
 
