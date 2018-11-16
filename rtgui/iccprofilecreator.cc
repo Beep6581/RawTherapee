@@ -41,7 +41,7 @@ extern const Settings* settings;
 const char* sTRCPreset[] = {"BT709_g2.2_s4.5", "sRGB_g2.4_s12.92", "linear_g1.0", "standard_g2.2", "standard_g1.8", "High_g1.3_s3.35", "Low_g2.6_s6.9", "Lab_g3.0s9.03296"}; //gamma free
 
 ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
-    : Gtk::Dialog (M ("MAIN_BUTTON_ICCPROFCREATOR"), *rtwindow, true)
+    : Gtk::Dialog(M("MAIN_BUTTON_ICCPROFCREATOR"), *rtwindow, true)
     , primariesPreset(options.ICCPC_primariesPreset)
     , redPrimaryX(options.ICCPC_redPrimaryX)
     , redPrimaryY(options.ICCPC_redPrimaryY)
@@ -141,12 +141,15 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     setExpandAlignProperties(trcPresets, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
     std::vector<Glib::ustring> outputTRCPresets;
     outputTRCPresets.push_back(M("ICCPROFCREATOR_CUSTOM"));
+
     for (unsigned int i = 0; i < sizeof(sTRCPreset) / sizeof(sTRCPreset[0]); i++) {
         outputTRCPresets.push_back(sTRCPreset[i]);
     }
+
     for (size_t i = 0; i < outputTRCPresets.size(); i++) {
         trcPresets->append(outputTRCPresets[i]);
     }
+
     mainGrid->attach(*trcPresets, 1, 2, 1, 1);
 
     //--------------------------------- sliders gampos and slpos
@@ -157,6 +160,7 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     if (aGamma->delay < options.adjusterMaxDelay) {
         aGamma->delay = options.adjusterMaxDelay;
     }
+
     aGamma->show();
     mainGrid->attach(*aGamma, 1, 3, 1, 1); //gamma
 
@@ -166,6 +170,7 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     if (aSlope->delay < options.adjusterMaxDelay) {
         aSlope->delay = options.adjusterMaxDelay;
     }
+
     aSlope->show();
     mainGrid->attach(*aSlope, 1, 4, 1, 1); //slope
 
@@ -222,10 +227,10 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     setExpandAlignProperties(eCopyright, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     copygrid->attach(*eCopyright, 0, 0, 1, 1);
     resetCopyright = Gtk::manage(new Gtk::Button());
-    resetCopyright->add (*Gtk::manage (new RTImage ("undo-small.png", "redo-small.png")));
+    resetCopyright->add(*Gtk::manage(new RTImage("undo-small.png", "redo-small.png")));
     setExpandAlignProperties(resetCopyright, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
-    resetCopyright->set_relief (Gtk::RELIEF_NONE);
-    resetCopyright->set_tooltip_markup (M("ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP"));
+    resetCopyright->set_relief(Gtk::RELIEF_NONE);
+    resetCopyright->set_tooltip_markup(M("ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP"));
     resetCopyright->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
     resetCopyright->set_can_focus(false);
     copygrid->attach(*resetCopyright, 1, 0, 1, 1);
@@ -273,6 +278,7 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     }
 
     trcPresets->set_active(0);
+
     if (gammaPreset != "Custom") {
         trcPresets->set_active_text(gammaPreset);
     }
@@ -309,6 +315,7 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     }
 
     iccVersion->set_active(0);
+
     if (profileVersion == "v2") {
         iccVersion->set_active(1);
     }
@@ -319,17 +326,17 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
 
     //--------------- Action area button
 
-    Gtk::Button* save = Gtk::manage (new Gtk::Button (M ("GENERAL_SAVE_AS")));
-    save->signal_clicked().connect ( sigc::mem_fun (*this, &ICCProfileCreator::savePressed) );
-    get_action_area()->pack_start (*save);
+    Gtk::Button* save = Gtk::manage(new Gtk::Button(M("GENERAL_SAVE_AS")));
+    save->signal_clicked().connect(sigc::mem_fun(*this, &ICCProfileCreator::savePressed));
+    get_action_area()->pack_start(*save);
 
-    Gtk::Button* close = Gtk::manage (new Gtk::Button (M ("GENERAL_CLOSE")));
-    close->signal_clicked().connect ( sigc::mem_fun (*this, &ICCProfileCreator::closePressed) );
-    get_action_area()->pack_start (*close);
+    Gtk::Button* close = Gtk::manage(new Gtk::Button(M("GENERAL_CLOSE")));
+    close->signal_clicked().connect(sigc::mem_fun(*this, &ICCProfileCreator::closePressed));
+    get_action_area()->pack_start(*close);
 
     //--------------- Show childrens
 
-    show_all_children ();
+    show_all_children();
 
     //--------------- Connecting the signals
 
@@ -366,9 +373,8 @@ void ICCProfileCreator::updateICCVersion()
 void ICCProfileCreator::adjusterChanged(Adjuster* a, double newval)
 {
     if (a == aPrimariesRedX   || a == aPrimariesRedY   ||
-        a == aPrimariesGreenX || a == aPrimariesGreenY ||
-        a == aPrimariesBlueX  || a == aPrimariesBlueY)
-    {
+            a == aPrimariesGreenX || a == aPrimariesGreenY ||
+            a == aPrimariesBlueX  || a == aPrimariesBlueY) {
         if (primaries->get_active_row_number() > 0) {
             ConnectionBlocker blocker(primariesconn);
             primaries->set_active(0);
@@ -401,6 +407,7 @@ void ICCProfileCreator::primariesChanged()
         aPrimariesBlueX->setValue(p[4]);
         aPrimariesBlueY->setValue(p[5]);
     }
+
     updateICCVersion();
 }
 
@@ -497,6 +504,7 @@ Glib::ustring ICCProfileCreator::getPrimariesPresetName(const Glib::ustring &pre
 void ICCProfileCreator::getPrimaries(const Glib::ustring &preset, float *p, ColorTemp &temp)
 {
     temp = ColorTemp::D50;
+
     if (preset == "Widegamut") {
         p[0] = 0.7350;    //Widegamut primaries
         p[1] = 0.2650;
@@ -595,9 +603,11 @@ void ICCProfileCreator::getPrimaries(const Glib::ustring &preset, float *p, Colo
 Glib::ustring ICCProfileCreator::getGammaPresetName(const Glib::ustring &preset)
 {
     Glib::ustring name(trcPresets->get_active_text());
+
     if (name == M("ICCPROFCREATOR_CUSTOM")) {
         name = "Custom";
     }
+
     return name;
 }
 
@@ -646,6 +656,8 @@ void ICCProfileCreator::onResetCopyright()
 void ICCProfileCreator::savePressed()
 {
     cmsHPROFILE newProfile = nullptr;
+    cmsHPROFILE  profile_v2_except = nullptr;
+
     Glib::ustring sNewProfile;
     Glib::ustring sPrimariesPreset;
     Glib::ustring sGammaPreset;
@@ -653,47 +665,113 @@ void ICCProfileCreator::savePressed()
     storeValues();
 
     // -------------------------------------------- Compute the default file name
+    // -----------------setmedia white point for monitor  profile sRGB or AdobeRGB in case of profile used for monitor---------------------
+    //instead of calculations made by LCMS..small differences
+    bool isD65 = (primariesPreset == "sRGB" || primariesPreset == "Adobe" || primariesPreset == "Rec2020"  || primariesPreset == "BruceRGB");
+    bool isD60 = (primariesPreset == "ACES-AP1" || primariesPreset == "ACES-AP0");
+    bool isD50 = (primariesPreset == "ProPhoto" || primariesPreset == "Widegamut" || primariesPreset == "BestRGB" || primariesPreset == "BetaRGB");
+    // v2except = (profileVersion == "v2"  && (primariesPreset == "sRGB" || primariesPreset == "Adobe" || primariesPreset == "Rec2020"  || primariesPreset == "BruceRGB" || primariesPreset == "ACES-AP1" || primariesPreset == "ACES-AP0") && illuminant == "DEF");
+    v2except = (profileVersion == "v2"  && (isD65 || isD60  || isD50) && illuminant == "DEF");
 
     //necessary for V2 profile
-    if (primariesPreset == "ACES-AP0"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp0)) {
-        sNewProfile = options.rtSettings.ACESp0;
-        sPrimariesPreset = "ACES-AP0";
-    } else if (primariesPreset == "ACES-AP1"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp1)) {
-        sNewProfile = options.rtSettings.ACESp1;
-        sPrimariesPreset = "ACES-AP1";
-    } else if (primariesPreset == "Adobe"      && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.adobe)) {
-        sNewProfile = options.rtSettings.adobe;
-        sPrimariesPreset = "Medium";
-    } else if (primariesPreset == "ProPhoto"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto)) {
-        sNewProfile = options.rtSettings.prophoto;
-        sPrimariesPreset = "Large";
-    } else if (primariesPreset == "Rec2020"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.rec2020)) {
-        sNewProfile = options.rtSettings.rec2020;
-        sPrimariesPreset = "Rec2020";
-    } else if (primariesPreset == "sRGB"       && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.srgb)) {
-        sNewProfile = options.rtSettings.srgb;
-        sPrimariesPreset = "sRGB";
-    } else if (primariesPreset == "Widegamut"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.widegamut)) {
-        sNewProfile = options.rtSettings.widegamut;
-        sPrimariesPreset = "Wide";
-    } else if (primariesPreset == "BestRGB"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.best)) {
-        sNewProfile = options.rtSettings.best;
-        sPrimariesPreset = "Best";
-    } else if (primariesPreset == "BetaRGB"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.beta)) {
-        sNewProfile = options.rtSettings.beta;
-        sPrimariesPreset = "Beta";
-    } else if (primariesPreset == "BruceRGB"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.bruce)) {
-        sNewProfile = options.rtSettings.bruce;
-        sPrimariesPreset = "Bruce";
-    } else if (primariesPreset == "custom") {
-        sNewProfile = options.rtSettings.srgb;
-        sPrimariesPreset = "Custom";
-    } else {
-        // Should not occurs
-        if (rtengine::settings->verbose) {
-            printf("\"%s\": unknown working profile! - use LCMS2 substitution\n", primariesPreset.c_str());
+
+    if (!v2except) {
+        std::string is_RTv4 = "";
+
+        //used partially for v4, and in case of if we want to back to old manner for v2
+        if (primariesPreset == "ACES-AP0"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp0)) {
+            sNewProfile = options.rtSettings.ACESp0;
+            sPrimariesPreset = "ACES-AP0";
+        } else if (primariesPreset == "ACES-AP1"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp1)) {
+            sNewProfile = options.rtSettings.ACESp1;
+            sPrimariesPreset = "ACES-AP1";
+        } else if (primariesPreset == "Adobe"      && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.adobe)) {
+            sNewProfile = options.rtSettings.adobe;
+            sPrimariesPreset = "Medium";
+        } else if (primariesPreset == "ProPhoto"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto)) {
+            is_RTv4 = options.rtSettings.prophoto.substr(0, 4);
+
+            if (is_RTv4 == "RTv4") {
+                options.rtSettings.prophoto = "RTv2_Large";
+            };
+
+            sNewProfile = options.rtSettings.prophoto;
+
+            sPrimariesPreset = "Large";
+        } else if (primariesPreset == "Rec2020"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.rec2020)) {
+            sNewProfile = options.rtSettings.rec2020;
+            sPrimariesPreset = "Rec2020";
+        } else if (primariesPreset == "sRGB"       && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.srgb)) {
+            sNewProfile = options.rtSettings.srgb;
+            sPrimariesPreset = "sRGB";
+        } else if (primariesPreset == "Widegamut"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.widegamut)) {
+            is_RTv4 = options.rtSettings.widegamut.substr(0, 4);
+
+            if (is_RTv4 == "RTv4") {
+                options.rtSettings.widegamut = "RTv2_Wide";
+            };
+
+            sNewProfile = options.rtSettings.widegamut;
+
+            sPrimariesPreset = "Wide";
+        } else if (primariesPreset == "BestRGB"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.best)) {
+            is_RTv4 = options.rtSettings.best.substr(0, 4);
+
+            if (is_RTv4 == "RTv4") {
+                options.rtSettings.best = "RTv2_Best";
+            };
+
+            sNewProfile = options.rtSettings.best;
+
+            sPrimariesPreset = "Best";
+        } else if (primariesPreset == "BetaRGB"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.beta)) {
+            sNewProfile = options.rtSettings.beta;
+            is_RTv4 = options.rtSettings.beta.substr(0, 4);
+
+            if (is_RTv4 == "RTv4") {
+                options.rtSettings.widegamut = "RTv2_Beta";
+            };
+
+            sPrimariesPreset = "Beta";
+        } else if (primariesPreset == "BruceRGB"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.bruce)) {
+            sNewProfile = options.rtSettings.bruce;
+            sPrimariesPreset = "Bruce";
+        } else if (primariesPreset == "custom") {
+            sNewProfile = options.rtSettings.srgb;
+            sPrimariesPreset = "Custom";
+        } else {
+            // Should not occurs
+            if (rtengine::settings->verbose) {
+                printf("\"%s\": unknown working profile! - use LCMS2 substitution\n", primariesPreset.c_str());
+            }
+
+            return;
         }
-        return;
+    } else {
+        //new model for v2 profile different from D50 by entering directly XYZ values and media white point
+        sNewProfile = "RTv2_Beta";//for copy generate others v2 profile. To change date of new profile, I used "ICC profile inspector" and "save as"
+
+        if (primariesPreset == "ACES-AP0") {
+            sPrimariesPreset = "ACES-AP0";
+        } else if (primariesPreset == "ACES-AP1") {
+            sPrimariesPreset = "ACES-AP1";
+        } else if (primariesPreset == "Adobe") {
+            sPrimariesPreset = "Medium";
+        } else if (primariesPreset == "Rec2020") {
+            sPrimariesPreset = "Rec2020";
+        } else if (primariesPreset == "BruceRGB") {
+            sPrimariesPreset = "Bruce";
+        } else if (primariesPreset == "sRGB") {
+            sPrimariesPreset = "sRGB";
+        } else if (primariesPreset == "ProPhoto") {
+            sPrimariesPreset = "Large";
+        } else if (primariesPreset == "Widegamut") {
+            sPrimariesPreset = "Wide";
+        } else if (primariesPreset == "BestRGB") {
+            sPrimariesPreset = "Best";
+        } else if (primariesPreset == "BetaRGB") {
+            sPrimariesPreset = "Beta";
+        }
     }
 
     //begin adaptation rTRC gTRC bTRC
@@ -702,16 +780,23 @@ void ICCProfileCreator::savePressed()
         printf("Output Gamma - profile Primaries as RT profile: \"%s\"\n", sNewProfile.c_str());
     }
 
-    newProfile = rtengine::ICCStore::getInstance()->getProfile(sNewProfile); //get output profile
+    if (!v2except) {
+        newProfile = rtengine::ICCStore::getInstance()->getProfile(sNewProfile); //get output profile
+    } else {
+        profile_v2_except = rtengine::ICCStore::getInstance()->getProfile(sNewProfile); //get output profile
 
-    if (newProfile == nullptr) {
-
-        if (rtengine::settings->verbose) {
-            printf("\"%s\" ICC output profile not found!\n", sNewProfile.c_str());
-        }
-        return;
     }
 
+    /*
+        if (newProfile == nullptr ) {
+
+            if (rtengine::settings->verbose) {
+                printf("\"%s\" ICC output profile not found!\n", sNewProfile.c_str());
+            }
+
+            return;
+        }
+    */
     //change desc Tag , to "free gamma", or "BT709", etc.
     Glib::ustring fName;
     Glib::ustring sPrimariesAndIlluminant;
@@ -719,6 +804,7 @@ void ICCProfileCreator::savePressed()
     double presetSlope = 12.92310;
     const double eps = 0.000000001; // not divide by zero
     getGamma(gammaPreset, presetGamma, presetSlope);
+
     if (gammaPreset == "High_g1.3_s3.35") {
         sGammaPreset = "High_g=1.3_s=3.35";
         ga[0] = 1.3 ;    //for high dynamic images
@@ -786,17 +872,18 @@ void ICCProfileCreator::savePressed()
         ga[4] = g_a[3] * ts;
         //printf("g_a.gamma0=%f g_a.gamma1=%f g_a.gamma2=%f g_a.gamma3=%f g_a.gamma4=%f\n", g_a.gamma0,g_a.gamma1,g_a.gamma2,g_a.gamma3,g_a.gamma4);
         ga[0] = gamma;
-        ga[1] = 1. /(1.0 + g_a[4]);
-        ga[2] = g_a[4] /(1.0 + g_a[4]);
+        ga[1] = 1. / (1.0 + g_a[4]);
+        ga[2] = g_a[4] / (1.0 + g_a[4]);
         ga[3] = 1. / slope2;
         //printf("ga[0]=%f ga[1]=%f ga[2]=%f ga[3]=%f ga[4]=%f\n", ga[0],ga[1],ga[2],ga[3],ga[4]);
 
         sGammaPreset = Glib::ustring::compose("g%1_s%2",
-                       Glib::ustring::format (std::setw(3), std::fixed, std::setprecision(2), gamma),
-                       Glib::ustring::format (std::setw(6), std::fixed, std::setprecision(5), slope));
+                                              Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2), gamma),
+                                              Glib::ustring::format(std::setw(6), std::fixed, std::setprecision(5), slope));
         presetGamma = gamma;
         presetSlope = slope;
     }
+
     ga[5] = 0.0;
     ga[6] = 0.0;
 
@@ -804,8 +891,7 @@ void ICCProfileCreator::savePressed()
     sPrimariesAndIlluminant = sPrimariesPreset;
 
     if (profileVersion == "v4" && illuminant != "DEF") {
-         sPrimariesPreset += "-" + illuminant;
-        //  printf("outpr=%s \n",outPr.c_str());
+        sPrimariesPreset += "-" + illuminant;
     }
 
     Glib::ustring profileDesc;
@@ -815,16 +901,17 @@ void ICCProfileCreator::savePressed()
     Glib::ustring sSlope;
 
     if (gammaPreset == "Custom") {
-        sGamma = Glib::ustring::format (std::setw(3), std::fixed, std::setprecision(2), gamma);
-        sSlope = Glib::ustring::format (std::setw(6), std::fixed, std::setprecision(5), slope);
+        sGamma = Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2), gamma);
+        sSlope = Glib::ustring::format(std::setw(6), std::fixed, std::setprecision(5), slope);
         fName = Glib::ustring::compose("RT%1_%2_g%3_s%4.icc", profileVersion, sPrimariesAndIlluminant, sGamma, sSlope);
         profileDesc = sPrimariesPreset;
     } else {
-        sGamma = Glib::ustring::format (std::setw(3), std::fixed, std::setprecision(2), presetGamma);
-        sSlope = Glib::ustring::format (std::setw(6), std::fixed, std::setprecision(5), presetSlope);
+        sGamma = Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2), presetGamma);
+        sSlope = Glib::ustring::format(std::setw(6), std::fixed, std::setprecision(5), presetSlope);
         fName = Glib::ustring::compose("RT%1_%2_%3.icc", profileVersion, sPrimariesAndIlluminant, sGammaPreset);
         profileDesc = sPrimariesPreset + sGammaPreset;
     }
+
     sGammaSlopeParam = Glib::ustring::compose("g%1s%2!", sGamma, sSlope);
     sGammaSlopeDesc = Glib::ustring::compose("g=%1 s=%2", sGamma, sSlope);
 
@@ -876,12 +963,13 @@ void ICCProfileCreator::savePressed()
     } while (1);
 
     // --------------- main tags ------------------
-
-    if (profileVersion == "v4") {
-        cmsSetProfileVersion(newProfile, 4.3);
-    } else {
-        cmsSetProfileVersion(newProfile, 2.0);
-    }
+    /*
+        if (profileVersion == "v4") {
+            cmsSetProfileVersion(newProfile, 4.3);
+        } else {
+            cmsSetProfileVersion(newProfile, 2.0);
+        }
+    */
 
 //change
     float p[6]; //primaries
@@ -897,8 +985,17 @@ void ICCProfileCreator::savePressed()
         {p[4], p[5], 1.0}  // blue
     };
 
+
+    if (v2except) {
+        cmsSetDeviceClass(profile_v2_except, cmsSigDisplayClass);
+        cmsSetPCS(profile_v2_except, cmsSigXYZData);
+        cmsSetHeaderRenderingIntent(profile_v2_except, 0);
+    }
+
+
     if (profileVersion == "v4" && illuminant != "DEF") {
         double tempv4 = 5000.;
+
         if (illuminant == "D41") {
             tempv4 = 4100.;
         } else if (illuminant == "D50") {
@@ -914,36 +1011,243 @@ void ICCProfileCreator::savePressed()
         } else if (illuminant == "stdA") {
             tempv4 = 5003.;
         }
+
         cmsWhitePointFromTemp(&xyD, tempv4);
+
+        if (illuminant == "D65") {
+            xyD = {0.312700492, 0.329000939, 1.0};
+        }
+
+        if (illuminant == "D60") {
+            xyD = {0.32168, 0.33767, 1.0};
+        }
+
+        if (illuminant == "D50") {
+            xyD = {0.3457, 0.3585, 1.0};//white D50      near LCMS values but not perfect...it's a compromise!!
+        }
+
+        if (illuminant == "stdA") {
+            xyD = {0.447573, 0.407440, 1.0};
+        }
+
+
     } else {
-        cmsWhitePointFromTemp(&xyD, (double)temp);
+        if (v2except) {
+
+            cmsCIEXYZ XYZ;
+
+            {
+                XYZ =  {0.95045471, 1.0, 1.08905029};//white D65
+            }
+
+            if (primariesPreset == "ACES-AP1" || primariesPreset == "ACES-AP0") {
+                XYZ = {0.952646075, 1.0, 1.008825184};//white D60
+            }
+
+            if (isD50) {
+                XYZ = {0.964295676, 1.0, 0.825104603};//white D50 room (prophoto) near LCMS values but not perfect...it's a compromise!!
+            }
+
+            cmsCIExyY blackpoint;
+
+            {
+                blackpoint  =  {0., 0., 0.};//White D65 point from the sRGB.icm and AdobeRGB1998 profile specs
+            }
+
+            cmsWriteTag(profile_v2_except, cmsSigMediaBlackPointTag, &blackpoint);
+            cmsWriteTag(profile_v2_except, cmsSigMediaWhitePointTag, &XYZ);
+            cmsCIEXYZ rt;
+            cmsCIEXYZ bt;
+            cmsCIEXYZ gt;
+
+            if (primariesPreset == "sRGB") {
+                    //calculated with personnal special spreadsheat
+                {
+                    //Matrix value from spec Adobe but adapted with wp
+                    rt =  {0.4360411843, 0.2224843154, 0.0139201582};
+                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
+                    bt =  {0.1430457992, 0.0606099658, 0.7139121724};
+                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
+                    gt =  {0.3851136574, 0.7169049862, 0.0970677661};
+                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
+
+                }
+
+            }
+
+            if (primariesPreset == "Adobe") {
+                {
+                    //Adobe spec adapted with wp calculated with personnal special spreadsheat
+                    rt =  {0.6097408852, 0.3111123176, 0.0194653393};
+                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
+                    bt =  {0.1491866649, 0.0632119133, 0.7445599707};
+                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
+                    gt =  {0.2052730908, 0.6256750365, 0.0608747867};
+                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
+                }
+            }
+
+            if (primariesPreset == "Rec2020") {
+                {//calculated with personnal special spreadsheat
+                    rt =  {0.6734800343, 0.2790423273, -0.0019336766};
+                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
+                    bt =  {0.1250489478, 0.0456126910, 0.7968509159};
+                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
+                    gt =  {0.1656716588, 0.6753442491, 0.0299828575};
+                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
+                }
+            }
+
+            if (primariesPreset == "BruceRGB") {
+                {//calculated with personnal special spreadsheat
+                    rt =  {0.4941542253, 0.2521357351, 0.0157753562};
+                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
+                    bt =  {0.1495175342, 0.0633521060, 0.7462112712};
+                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
+                    gt =  {0.3205288814, 0.6845114263, 0.0629134693};
+                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
+                }
+            }
+
+            if (primariesPreset == "ACES-AP0") {
+                {//calculated with personnal special spreadsheat
+                    rt =  {0.9908835135, 0.3618940325, -0.0027137400};
+                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
+                    bt =  {-0.0389246557, -0.084405166, 0.8193659780};
+                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
+                    gt =  {0.0122417831, 0.7225104015, 0.0082478587};
+                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
+                }
+            }
+
+            if (primariesPreset == "ACES-AP1") {//done
+                {//calculated with personnal special spreadsheat
+                    rt =  {0.6898756188, 0.2845109670, -0.0060455375};
+                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
+                    bt =  {0.1245615936, 0.0437959432, 0.8209388333};
+                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
+                    gt =  {0.1497634285, 0.6716923572, 0.0100068009};
+                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
+                }
+            }
+
+            if (primariesPreset == "ProPhoto")  {
+                {//calculated with personnal special spreadsheat
+                    rt =  {0.7977198204, 0.2880493171, -0.0000030551};
+                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
+                    bt =  {0.0313194091, 0.0000771282, 0.8248890748};
+                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
+                    gt =  {0.1351614114, 0.7118728221, 0.0000140770};
+                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
+                }
+            }
+
+            if (primariesPreset == "Widegamut")  {
+                {//calculated with personnal special spreadsheat
+                    rt =  {0.7161680478, 0.2582038074, -0.0000027515};
+                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
+                    bt =  {0.1471328469, 0.0168600579, 0.7731227232};
+                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
+                    gt =  {0.1008997462, 0.7249354021, 0.0517801251};
+                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
+                }
+            }
+
+            if (primariesPreset == "BestRGB")  {
+                {//calculated with personnal special spreadsheat
+                    rt =  {0.6327383009, 0.2284760022, -0.0000024233};
+                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
+                    bt =  {0.1269437333, 0.0341753604, 0.8153773703};
+                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
+                    gt =  {0.2045186067, 0.7373479048, 0.0095251497};
+                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
+                }
+            }
+
+            if (primariesPreset == "BetaRGB")  {
+                {//calculated with personnal special spreadsheat
+                    rt =  {0.6713200674, 0.3033034560, -0.0000012307};
+                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
+                    bt =  {0.1183343909, 0.0329265310, 0.7842009909};
+                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
+                    gt =  {0.1745461827, 0.6637692805, 0.0407003365};
+                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
+                }
+            }
+
+        } else {
+            cmsWhitePointFromTemp(&xyD, (double)temp);
+        }
     }
 
-    if (illuminant == "stdA") {
-        xyD = {0.447573, 0.407440, 1.0};
+
+    if (isD65 && illuminant == "DEF") {
+        xyD = {0.312700492, 0.329000939, 1.0};
     }
 
+    if (isD60 && illuminant == "DEF") {
+        xyD = {0.32168, 0.33767, 1.0};
+    }
+
+    if (isD50 && illuminant == "DEF") {
+        xyD = {0.3457, 0.3585, 1.0};
+    }
+
+//    {0.3457, 0.3585, 1.0};
     // Calculate output profile's rTRC gTRC bTRC
+
+
     cmsToneCurve* GammaTRC[3];
-    GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, ga);
+
+    if (gammaPreset == "standard_g2.2") {
+        GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildGamma(NULL, 2.19921875);//spec Adobe
+    } else if (gammaPreset == "standard_g1.8") {
+        GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildGamma(NULL, 1.80078125);
+    } else if (gammaPreset == "linear_g1.0") {
+        GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildGamma(NULL, 1.0);
+    } else {
+        GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, ga);
+    }
+
+
 
     if (profileVersion == "v4") {
         newProfile = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC);
+    } else if (profileVersion == "v2") {
+        if (v2except) {
+            cmsSetProfileVersion(profile_v2_except, 2.2);
+        } else {
+            cmsSetProfileVersion(newProfile, 2.2);
+        }
     }
 
-    cmsWriteTag(newProfile, cmsSigRedTRCTag, GammaTRC[0]);
-    cmsWriteTag(newProfile, cmsSigGreenTRCTag, GammaTRC[1]);
-    cmsWriteTag(newProfile, cmsSigBlueTRCTag, GammaTRC[2]);
+    if (!v2except) {
+        cmsWriteTag(newProfile, cmsSigRedTRCTag, GammaTRC[0]);
+        cmsWriteTag(newProfile, cmsSigGreenTRCTag, GammaTRC[1]);
+        cmsWriteTag(newProfile, cmsSigBlueTRCTag, GammaTRC[2]);
+    } else {
+        cmsWriteTag(profile_v2_except, cmsSigRedTRCTag, GammaTRC[0]);
+        cmsWriteTag(profile_v2_except, cmsSigGreenTRCTag, GammaTRC[1]);
+        cmsWriteTag(profile_v2_except, cmsSigBlueTRCTag, GammaTRC[2]);
+    }
 
     // --------------- set dmnd tag ------------------
 
     cmsMLU *dmnd;
     dmnd = cmsMLUalloc(nullptr, 1);
     cmsMLUsetASCII(dmnd, "en", "US", "RawTherapee");
-    cmsWriteTag(newProfile, cmsSigDeviceMfgDescTag, dmnd);
+
+    if (!v2except) {
+        cmsWriteTag(newProfile, cmsSigDeviceMfgDescTag, dmnd);
+    } else {
+        cmsWriteTag(profile_v2_except, cmsSigDeviceMfgDescTag, dmnd);
+    }
+
     cmsMLUfree(dmnd);
 
-    // --------------- set dmdd tag ------------------
+
+
+// --------------- set dmdd tag ------------------
 
     if (profileVersion == "v2") {
         //write in tag 'dmdd' values of current gamma and slope to retrieve after in Output profile
@@ -951,27 +1255,43 @@ void ICCProfileCreator::savePressed()
         wGammaSlopeParam << sGammaSlopeParam;
 
         cmsMLU *dmdd = cmsMLUalloc(nullptr, 1);
+
         // Language code (2 letters code) : https://www.iso.org/obp/ui/
         // Country code (2 letters code)  : http://www.loc.gov/standards/iso639-2/php/code_list.php
         if (sGammaSlopeParam.is_ascii()) {
             if (cmsMLUsetASCII(dmdd, "en", "US", sGammaSlopeParam.c_str())) {
-                if (!cmsWriteTag(newProfile, cmsSigProfileDescriptionTag, dmdd)) {
-                    printf("Error: Can't write cmsSigProfileDescriptionTag!\n");
+                if (!v2except) {
+                    if (!cmsWriteTag(newProfile, cmsSigProfileDescriptionTag, dmdd)) {
+                        printf("Error: Can't write cmsSigProfileDescriptionTag!\n");
+                    }
+                } else {
+                    if (!cmsWriteTag(profile_v2_except, cmsSigProfileDescriptionTag, dmdd)) {
+                        printf("Error: Can't write cmsSigProfileDescriptionTag!\n");
+                    }
+
                 }
             }
         } else if (cmsMLUsetWide(dmdd, "en", "US", wGammaSlopeParam.str().c_str())) {
-            if (!cmsWriteTag(newProfile, cmsSigDeviceModelDescTag, dmdd)) {
-                printf("Error: Can't write cmsSigDeviceModelDescTag!\n");
+            if (!v2except) {
+                if (!cmsWriteTag(newProfile, cmsSigDeviceModelDescTag, dmdd)) {
+                    printf("Error: Can't write cmsSigDeviceModelDescTag!\n");
+                }
+            } else {
+                if (!cmsWriteTag(profile_v2_except, cmsSigDeviceModelDescTag, dmdd)) {
+                    printf("Error: Can't write cmsSigDeviceModelDescTag!\n");
+                }
             }
         } else {
             printf("Error: cmsMLUsetWide failed for dmdd \"%s\" !\n", sGammaSlopeParam.c_str());
         }
+
         cmsMLUfree(dmdd);
     }
 
-    // --------------- set desc tag ------------------
+// --------------- set desc tag ------------------
 
     Glib::ustring sDescription;
+
     if (!description.empty()) {
         if (cAppendParamsToDesc->get_active()) {
             sDescription = description + " / " + sGammaSlopeDesc;
@@ -986,41 +1306,67 @@ void ICCProfileCreator::savePressed()
         }
     }
 
-    //write in tag 'dmdd' values of current gamma and slope to retrieve after in Output profile
+//write in tag 'dmdd' values of current gamma and slope to retrieve after in Output profile
     std::wostringstream wDescription;
     wDescription << sDescription;
 
     cmsMLU *descMLU = cmsMLUalloc(nullptr, 1);
-    // Language code (2 letters code) : https://www.iso.org/obp/ui/
-    // Country code (2 letters code)  : http://www.loc.gov/standards/iso639-2/php/code_list.php
+
+// Language code (2 letters code) : https://www.iso.org/obp/ui/
+// Country code (2 letters code)  : http://www.loc.gov/standards/iso639-2/php/code_list.php
     if (sDescription.is_ascii()) {
         if (cmsMLUsetASCII(descMLU, "en", "US", sDescription.c_str())) {
+            if (!v2except) {
+                if (!cmsWriteTag(newProfile, cmsSigProfileDescriptionTag, descMLU)) {
+                    printf("Error: Can't write cmsSigProfileDescriptionTag!\n");
+                }
+            } else {
+                if (!cmsWriteTag(profile_v2_except, cmsSigProfileDescriptionTag, descMLU)) {
+                    printf("Error: Can't write cmsSigProfileDescriptionTag!\n");
+                }
+            }
+        }
+
+    } else if (cmsMLUsetWide(descMLU, "en", "US", wDescription.str().c_str())) {
+        if (!v2except) {
+
             if (!cmsWriteTag(newProfile, cmsSigProfileDescriptionTag, descMLU)) {
                 printf("Error: Can't write cmsSigProfileDescriptionTag!\n");
             }
-        }
-    } else if (cmsMLUsetWide(descMLU, "en", "US", wDescription.str().c_str())) {
-        if (!cmsWriteTag(newProfile, cmsSigProfileDescriptionTag, descMLU)) {
-            printf("Error: Can't write cmsSigProfileDescriptionTag!\n");
+        } else {
+            if (!cmsWriteTag(profile_v2_except, cmsSigProfileDescriptionTag, descMLU)) {
+                printf("Error: Can't write cmsSigProfileDescriptionTag!\n");
+            }
         }
     } else {
         printf("Error: cmsMLUsetWide failed for desc \"%s\" !\n", sDescription.c_str());
     }
+
     cmsMLUfree(descMLU);
 
-    // --------------- set cprt tag ------------------
+// --------------- set cprt tag ------------------
 
     std::wostringstream wCopyright;
     wCopyright << copyright;
 
     cmsMLU *copyMLU = cmsMLUalloc(nullptr, 1);
+
     if (cmsMLUsetWide(copyMLU, "en", "US", wCopyright.str().c_str())) {
-        if (!cmsWriteTag(newProfile, cmsSigCopyrightTag, copyMLU)) {
-            printf("Error: Can't write cmsSigCopyrightTag!\n");
+        if (!v2except) {
+
+            if (!cmsWriteTag(newProfile, cmsSigCopyrightTag, copyMLU)) {
+                printf("Error: Can't write cmsSigCopyrightTag!\n");
+            }
+        } else {
+            if (!cmsWriteTag(profile_v2_except, cmsSigCopyrightTag, copyMLU)) {
+                printf("Error: Can't write cmsSigCopyrightTag!\n");
+            }
+
         }
     } else {
         printf("Error: cmsMLUsetWide failed for cprt \"%s\" !\n", copyright.c_str());
     }
+
     cmsMLUfree(copyMLU);
 
 
@@ -1030,8 +1376,12 @@ void ICCProfileCreator::savePressed()
         cmsCIEXYZ *blueT  = static_cast<cmsCIEXYZ*>(cmsReadTag(newProfile, cmsSigBlueMatrixColumnTag));
         printf("rx=%f gx=%f bx=%f ry=%f gy=%f by=%f rz=%f gz=%f bz=%f\n", redT->X, greenT->X, blueT->X, redT->Y, greenT->Y, blueT->Y, redT->Z, greenT->Z, blueT->Z);
     */
+    if (!v2except) {
+        cmsSaveProfileToFile(newProfile,  absoluteFName.c_str());
+    } else {
+        cmsSaveProfileToFile(profile_v2_except,  absoluteFName.c_str());
 
-    cmsSaveProfileToFile(newProfile,  absoluteFName.c_str());
+    }
 
     cmsFreeToneCurve(GammaTRC[0]);
 }

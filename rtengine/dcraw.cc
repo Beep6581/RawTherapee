@@ -1147,11 +1147,11 @@ void CLASS lossless_dnglj92_load_raw()
     } else {
         dataOffset[0] = ifp->pos;
     }
-    uint8_t *data = (uint8_t*)malloc(ifp->size);
+    const int data_length = ifp->size;
+    const std::unique_ptr<uint8_t[]> data(new uint8_t[data_length]);
     fseek(ifp, 0, SEEK_SET);
     // read whole file
-    int data_length = ifp->size;
-    fread(data, 1, data_length, ifp);
+    fread(data.get(), 1, data_length, ifp);
     lj92 lj;
     int newwidth, newheight, newbps;
     lj92_open(&lj, &data[dataOffset[0]], data_length, &newwidth, &newheight, &newbps);
@@ -1159,7 +1159,6 @@ void CLASS lossless_dnglj92_load_raw()
     if (newwidth * newheight * tileCount != raw_width * raw_height) {
         // not a lj92 file
         fseek(ifp, save, SEEK_SET);
-        free(data);
         lossless_dng_load_raw();
         return;
     }
@@ -1173,17 +1172,15 @@ void CLASS lossless_dnglj92_load_raw()
         int newwidth, newheight, newbps;
         lj92_open(&lj, &data[dataOffset[t]], data_length, &newwidth, &newheight, &newbps);
 
-        uint16_t *target = (uint16_t*)malloc(newwidth * newheight * sizeof *target);
-        lj92_decode(lj, target, tile_width, 0, lincurve, 0x1000);
+        const std::unique_ptr<uint16_t[]> target(new uint16_t[newwidth * newheight]);
+        lj92_decode(lj, target.get(), tile_width, 0, lincurve, 0x1000);
         for (int y = 0; y < height; ++y) {
             for(int x = 0; x < tile_width; ++x) {
                 RAW(y, x + tcol) = target[y * tile_width + x];
             }
         }
         lj92_close(lj);
-        free(target);
     }
-    free(data);
 }
 
 void CLASS lossless_dng_load_raw()

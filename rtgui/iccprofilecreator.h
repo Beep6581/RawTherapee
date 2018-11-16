@@ -50,7 +50,7 @@ private:
     double gamma;
     double slope;
     bool appendParamsToDesc;
-
+    bool v2except;
     Glib::ustring profileVersion;
     Glib::ustring illuminant;
     Glib::ustring description;
