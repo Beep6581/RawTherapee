@@ -1349,7 +1349,7 @@ button:hover,
     background-image: linear-gradient(to bottom, rgba(100,100,100,.3), rgba(30,30,30,.3));
     background-color: @bg-button-hover;
 }
-.grid-curve-buttons button.flat:hover,
+.curve-mainbox .curve-buttonbox  button.flat:hover,
 #MainNotebook > header tab #CloseButton:hover,
 #MainNotebook > header > grid > button:hover {
     background-color: alpha(@bg-grey, 0.6);
@@ -1369,8 +1369,8 @@ button:checked,
     background-image: linear-gradient(to bottom, rgba(100,100,100,.3), rgba(30,30,30,.3));
     background-color: @bg-button-active;
 }
-.grid-curve-buttons button.flat:active,
-.grid-curve-buttons button.flat:checked,
+.curve-mainbox .curve-buttonbox  button.flat:active,
+.curve-mainbox .curve-buttonbox  button.flat:checked,
 #MainNotebook > header tab #CloseButton:active,
 #MainNotebook > header > grid > button:active {
     background-color: alpha(@bg-light-grey, 0.8);
@@ -1497,7 +1497,7 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
 #ProfilePanel button,
 #MainNotebook > header > grid > button,
 #MyExpander button.independent.toggle:not(.image-button):not(.text-button):first-child:only-child, /* Graduated filter big button */
-.grid-curve-buttons button.flat,
+.curve-mainbox .curve-buttonbox button.flat,
 #BatchQueueButtonsMainContainer + grid + box button,
 #RightNotebook > stack > scrolledwindow:last-child button.image-button, /* Fast Export */
 #MetaPanelNotebook scrolledwindow + grid > button,
@@ -1524,9 +1524,6 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
 #MyExpander button.independent.toggle:not(.image-button):not(.text-button):first-child:only-child, /* Graduated filter button */
 #MetaPanelNotebook scrolledwindow + grid > button,
 #MetaPanelNotebook scrolledwindow + grid + grid > button {
-    margin: 0.19em;
-}
-.grid-curve-buttons button.flat {
     margin: 0.19em;
 }
 
@@ -1978,30 +1975,50 @@ entry:focus > selection  {
 /*** end ***************************************************************************************/
 
 /* Curves **************************************************************************************/
-.grid-curve {
+.curve-mainbox {
+    margin: 0.19em;
+    padding: 0.333333333333333333em;
+    background-color: @bg-dark-grey;
+}
+.curve-mainbox .curve-curvebox {
     margin: 0.19em;
     padding: 0.5em;
     background-color: @bg-dark-grey;
+    border: 0.083333333333333333em solid @border-color;
 }
-.grid-curve-flowboxes {
-    margin: 0.25em 0 -0.19em;
+.curve-mainbox .curve-spinbuttonbox {
+    margin: -0.19em 0.19em 0.19em;
+    padding: 0.25em;
+    border: 0.083333333333333333em solid @border-color;
+    border-top: none;
 }
-.grid-curve-sliders {
-    margin: 0.5em 0 0;
+.curve-mainbox .curve-sliderbox {
+    margin: 0.333333333333333333em 0.19em 0.19em;
     padding: 0.25em;
     background-color: @bg-grey;
 }
-.grid-curve.top .grid-curve-buttons {
-    margin: -0.19em -0.19em 0.083333333333333333em -0.19em;
+.curve-mainbox .curve-buttonbox {
+    padding: 0.166666666666666666em;
+    border: 0.083333333333333333em solid @border-color;
 }
-.grid-curve.bottom .grid-curve-buttons {
-    margin: 0.333333333333333333em -0.19em -0.19em -0.19em;
+.curve-mainbox.left .curve-buttonbox {
+    margin: 0.19em -0.19em 0.19em 0.19em;
+    border-right: none;
 }
-.grid-curve.right .grid-curve-buttons {
-    margin: -0.19em -0.19em -0.19em 0.083333333333333333em;
+.curve-mainbox.right .curve-buttonbox {
+    margin: 0.19em 0.19em 0.19em -0.19em;
+    border-left: none;
 }
-.grid-curve.left .grid-curve-buttons {
-    margin: -0.19em 0.25em -0.19em -0.19em;
+.curve-mainbox.top .curve-buttonbox {
+    margin: 0.19em 0.19em -0.19em 0.19em;
+    border-bottom: none;
+}
+.curve-mainbox.bottom .curve-buttonbox {
+    margin: -0.19em 0.19em 0.19em 0.19em;
+    border-top: none;
+}
+.curve-mainbox .curve-buttonbox  button.flat {
+    margin: 0.12em;
 }
 /*** end ***************************************************************************************/
 
