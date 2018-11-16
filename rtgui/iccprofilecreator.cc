@@ -1199,29 +1199,21 @@ void ICCProfileCreator::savePressed()
 
     cmsToneCurve* GammaTRC[3];
 
-    if (gammaPreset != "standard_g2.2"  || gammaPreset != "standard_g1.8"  || gammaPreset != "linear_g1.0") {
-        GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, ga);
-    }
-
     if (gammaPreset == "standard_g2.2") {
         GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildGamma(NULL, 2.19921875);//spec Adobe
-    }
-
-    if (gammaPreset == "standard_g1.8") {
+    } else if (gammaPreset == "standard_g1.8") {
         GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildGamma(NULL, 1.80078125);
-    }
-
-    if (gammaPreset == "linear_g1.0") {
+    } else if (gammaPreset == "linear_g1.0") {
         GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildGamma(NULL, 1.0);
+    } else {
+        GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, ga);
     }
 
 
 
     if (profileVersion == "v4") {
         newProfile = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC);
-    }
-
-    if (profileVersion == "v2") {
+    } else if (profileVersion == "v2") {
         if (v2except) {
             cmsSetProfileVersion(profile_v2_except, 2.2);
         } else {
