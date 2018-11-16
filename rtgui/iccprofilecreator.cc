@@ -1025,11 +1025,11 @@ void ICCProfileCreator::savePressed()
         if (illuminant == "D50") {
             xyD = {0.3457, 0.3585, 1.0};//white D50      near LCMS values but not perfect...it's a compromise!!
         }
-        
+
         if (illuminant == "stdA") {
             xyD = {0.447573, 0.407440, 1.0};
         }
-        
+
 
     } else {
         if (v2except) {
