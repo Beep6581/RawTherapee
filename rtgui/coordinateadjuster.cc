@@ -126,6 +126,8 @@ void CoordinateAdjuster::createWidgets(const std::vector<Axis> &axis)
         currAdjuster->rangeUpperBound = currAxis->rangeUpperBound;
 
         Gtk::Grid *box = Gtk::manage (new Gtk::Grid());
+        box->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+        box->set_column_spacing(3);
 
         setExpandAlignProperties(currAdjuster->label, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
         setExpandAlignProperties(currAdjuster->spinButton, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
@@ -134,7 +136,6 @@ void CoordinateAdjuster::createWidgets(const std::vector<Axis> &axis)
         box->attach_next_to(*(currAdjuster->label), Gtk::POS_LEFT, 1, 1);
 
         Gtk::FlowBoxChild *fbChild = Gtk::manage(new Gtk::FlowBoxChild());
-        fbChild->get_style_context()->add_class("grid-curve-flowboxes");
         fbChild->set_can_focus(false);
         fbChild->add(*box);
 
