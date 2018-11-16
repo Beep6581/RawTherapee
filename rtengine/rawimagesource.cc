@@ -894,6 +894,10 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 
 DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, DCPProfile::ApplyState &as)
 {
+    if (cmp.inputProfile == "(camera)" || cmp.inputProfile == "(none)") {
+        return nullptr;
+    }
+
     DCPProfile *dcpProf = nullptr;
     cmsHPROFILE dummy;
     findInputProfile(cmp.inputProfile, nullptr, (static_cast<const FramesData*>(getMetaData()))->getCamera(), &dcpProf, dummy);
