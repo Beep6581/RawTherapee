@@ -1221,9 +1221,9 @@ menuitem:hover > * {
 menu image:not(.dummy),
 #MyExpander menu image:not(.dummy) {
     min-height: 2em;
-    min-width: 1.333333333333333333em;
+    min-width: 1.5em;
     padding: 0;
-    margin: 0 0 0 -1.583333333333333333em;
+    margin: 0 0 0 -1.333333333333333333em;
 }
 
 /*** Selection popup list (used in filechooser) ***/
@@ -1977,47 +1977,42 @@ entry:focus > selection  {
 /* Curves **************************************************************************************/
 .curve-mainbox {
     margin: 0.19em;
-    padding: 0.333333333333333333em;
-    background-color: @bg-dark-grey;
+    border: 0.083333333333333333em solid @border-color;
 }
 .curve-mainbox .curve-curvebox {
-    margin: 0.19em;
-    padding: 0.5em;
+    margin: 0;
+    padding: 0.416666666666666666em;
     background-color: @bg-dark-grey;
-    border: 0.083333333333333333em solid @border-color;
 }
 .curve-mainbox .curve-spinbuttonbox {
-    margin: -0.19em 0.19em 0.19em;
+    margin: 0;
     padding: 0.25em;
-    border: 0.083333333333333333em solid @border-color;
-    border-top: none;
+    border-top: 0.083333333333333333em solid @border-color;
+    background-color: @bg-dark-grey;
 }
 .curve-mainbox .curve-sliderbox {
-    margin: 0.333333333333333333em 0.19em 0.19em;
+    margin: 0;
     padding: 0.25em;
     background-color: @bg-grey;
+    border-top: 0.083333333333333333em solid @border-color;
 }
 .curve-mainbox .curve-buttonbox {
     padding: 0.166666666666666666em;
-    border: 0.083333333333333333em solid @border-color;
+    background-color: @bg-dark-grey;
 }
 .curve-mainbox.left .curve-buttonbox {
-    margin: 0.19em -0.19em 0.19em 0.19em;
-    border-right: none;
+    border-right: 0.083333333333333333em solid @border-color;
 }
 .curve-mainbox.right .curve-buttonbox {
-    margin: 0.19em 0.19em 0.19em -0.19em;
-    border-left: none;
+    border-left: 0.083333333333333333em solid @border-color;
 }
 .curve-mainbox.top .curve-buttonbox {
-    margin: 0.19em 0.19em -0.19em 0.19em;
-    border-bottom: none;
+    border-bottom: 0.083333333333333333em solid @border-color;
 }
 .curve-mainbox.bottom .curve-buttonbox {
-    margin: -0.19em 0.19em 0.19em 0.19em;
-    border-top: none;
+    border-top: 0.083333333333333333em solid @border-color;
 }
-.curve-mainbox .curve-buttonbox  button.flat {
+.curve-mainbox .curve-buttonbox button.flat {
     margin: 0.12em;
 }
 /*** end ***************************************************************************************/
