@@ -1058,8 +1058,8 @@ cmsHPROFILE rtengine::ICCStore::makeStdGammaProfile(cmsHPROFILE iprof)
         uint32_t size;
     } tags[tag_count];
 
-    const uint32_t gamma = 0x239;
-    int gamma_size = 14;
+    constexpr uint32_t gamma = 0x239;
+    constexpr int gamma_size = 14;
     int data_size = (gamma_size + 3) & ~3;
 
     for (uint32_t i = 0; i < tag_count; i++) {
@@ -1096,13 +1096,13 @@ cmsHPROFILE rtengine::ICCStore::makeStdGammaProfile(cmsHPROFILE iprof)
                 tags[i].sig == 0x6B545243) { // kTRC
             if (gamma_offset == 0) {
                 gamma_offset = offset;
-                uint32_t pcurve[] = { htonl(0x63757276), htonl(0), htonl(gamma_size == 12 ? 0U : 1U) };
+                uint32_t pcurve[] = { htonl(0x63757276), htonl(0), htonl(/*gamma_size == 12 ? 0U : */1U) };
                 memcpy(&nd[offset], pcurve, 12);
 
-                if (gamma_size == 14) {
-                    uint16_t gm = htons(gamma);
-                    memcpy(&nd[offset + 12], &gm, 2);
-                }
+                //if (gamma_size == 14) {
+                uint16_t gm = htons(gamma);
+                memcpy(&nd[offset + 12], &gm, 2);
+                //}
 
                 offset += (gamma_size + 3) & ~3;
             }
