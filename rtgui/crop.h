@@ -103,7 +103,7 @@ private:
     MyComboBoxText* ratio;
     MyComboBoxText* orientation;
     MyComboBoxText* guide;
-    Gtk::Box* buttonsBox;
+
     Gtk::Button* selectCrop;
     Gtk::Button* resetCrop;
     CropPanelListener* clistener;
@@ -115,8 +115,9 @@ private:
     MySpinButton* ppi;
     Gtk::Label* sizecm;
     Gtk::Label* sizein;
-    Gtk::VBox* ppibox;
-    Gtk::VBox* sizebox;
+    Gtk::Grid* ppigrid;
+    Gtk::Grid* methodgrid;
+
     int maxw, maxh;
     double nx, ny;
     int nw, nh;
