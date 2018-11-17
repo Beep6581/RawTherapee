@@ -122,7 +122,7 @@ public:
     void        retinexPrepareBuffers      (const ColorManagementParams& cmp, const RetinexParams &retinexParams, multi_array2D<float, 4> &conversionBuffer, LUTu &lhist16RETI);
     void        flushRawData      ();
     void        flushRGB          ();
-    void        HLRecovery_Global (ToneCurveParams hrp);
+    void        HLRecovery_Global (const ToneCurveParams &hrp);
     void        refinement_lassus (int PassCount);
     void        refinement(int PassCount);
     void        setBorder(unsigned int rawBorder) {border = rawBorder;}

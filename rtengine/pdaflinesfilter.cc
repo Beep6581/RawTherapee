@@ -171,7 +171,8 @@ private:
 PDAFLinesFilter::PDAFLinesFilter(RawImage *ri):
     ri_(ri),
     W_(ri->get_width()),
-    H_(ri->get_height())
+    H_(ri->get_height()),
+    offset_(0)
 {
     gthresh_ = new PDAFGreenEqulibrateThreshold(W_, H_);
 

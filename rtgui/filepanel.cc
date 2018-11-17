@@ -384,16 +384,6 @@ void FilePanel::optionsChanged ()
 bool FilePanel::handleShortcutKey (GdkEventKey* event)
 {
 
-    bool ctrl = event->state & GDK_CONTROL_MASK;
-
-    if (!ctrl) {
-        switch(event->keyval) {
-        }
-    } else {
-        switch (event->keyval) {
-        }
-    }
-
     if(tpc->getToolBar() && tpc->getToolBar()->handleShortcutKey(event)) {
         return true;
     }

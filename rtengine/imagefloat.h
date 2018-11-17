@@ -49,7 +49,7 @@ public:
     Image8*              to8();
     Image16*             to16();
 
-    virtual void         getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::ToneCurveParams hrp);
+    virtual void         getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp);
 
     virtual const char*  getType     () const
     {
