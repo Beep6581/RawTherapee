@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2018 TooWaBoo
-  Version 2.93
+  Version 2.94
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1323,8 +1323,8 @@ switch:disabled:not(:checked) {
 /*** Buttons ***********************************************************************************/
 button,
 #BeforeAfterContainer button {
-    min-height: 1.833333333333333333em;
-    min-width: 1.833333333333333333em;
+    min-height: 1.666666666666666666em;
+    min-width: 1.666666666666666666em;/*x*/
     margin: 0.19em;
     border-radius: 0.2em;
     border: 0.083333333333333333em solid @bg-button-border;
@@ -1606,8 +1606,8 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
 /* Search & Query buttons */
 #FileBrowserQueryToolbar entry + button.flat,
 #FileBrowserIconToolbar entry + button.flat {
-    min-height: 1.833333333333333333em;
-    min-width: 1.833333333333333333em;
+    min-height: 1.666666666666666666em;/*x*/
+    min-width: 1.666666666666666666em;/*x*/
     margin: 0;
     border-radius: 0 0.2em 0.2em 0;
     box-shadow: inset 0 0.1em rgba(0, 0, 0, 0.1), inset -0.1em -0.1em rgba(230, 230, 230, 0.09);
@@ -1655,7 +1655,7 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
     border: 0.083333333333333333em solid @bg-dark-grey;
     border-radius: 0;
     box-shadow: none;
-    min-height: 1.833333333333333333em;
+    min-height: 1.666666666666666666em;/*x*/
 }
 
 #Snapshots button:hover,
@@ -1775,12 +1775,12 @@ popover button.text-button:active {
 checkbutton {
     padding: 0;
     margin: 0.083333333333333333em 0.19em;
-    min-height: 1.833333333333333333em;
+    min-height: 1.666666666666666666em;/*x*/
 }
 radiobutton {
     padding: 0.083333333333333333em 0;
     margin: 0.19em;
-    min-height: 1.833333333333333333em;
+    min-height: 1.666666666666666666em;/*x*/
 }
 
 check,
@@ -1839,7 +1839,7 @@ entry,
 spinbutton {
     margin: 0.19em;
     padding: 0 0.333333333333333333em;
-    min-height: 1.833333333333333333em;
+    min-height: 1.666666666666666666em;/*x*/
     min-width: 0;
     border-radius: 0.2em;
     box-shadow: inset 0.1em 0.1em rgba(0, 0, 0, 0.1), inset -0.1em -0.1em rgba(230, 230, 230, 0.09);
@@ -1848,7 +1848,7 @@ spinbutton {
 }
 #FileBrowserQueryToolbar entry,
 #FileBrowserIconToolbar entry {
-    min-height: 1.833333333333333333em;
+    min-height: 1.666666666666666666em;/*x*/
     min-width: 0;
     margin: 0;
     border-right: none;
@@ -1884,12 +1884,12 @@ spinbutton {
 }
 /* Needed for Reset & and Auto button height*/
 #MyExpander button + label + spinbutton {
-    margin-top: 0.416666666666666666em;
-    margin-bottom: 0.416666666666666666em;
+    margin-top: 0.333333333333333333em;
+    margin-bottom: 0.333333333333333333em;
 }
 #MyExpander checkbutton + label + spinbutton {
-    margin-top: 0.416666666666666666em;
-    margin-bottom: 0.416666666666666666em;
+    margin-top: 0.333333333333333333em;
+    margin-bottom: 0.333333333333333333em;
 }
 /**/
 
@@ -2013,7 +2013,7 @@ entry:focus > selection  {
     border-top: 0.083333333333333333em solid @border-color;
 }
 .curve-mainbox .curve-buttonbox button.flat {
-    margin: 0.12em;
+    margin: 0.19em;
 }
 /*** end ***************************************************************************************/
 
