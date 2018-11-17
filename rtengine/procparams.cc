@@ -87,13 +87,6 @@ Glib::ustring relativePathIfInside(const Glib::ustring &procparams_fname, bool f
     return prefix + embedded_fname.substr(dir1.length());
 }
 
-void avoidEmptyCurve(std::vector<double> &curve)
-{
-    if (curve.empty()) {
-        curve.push_back(FCT_Linear);
-    }
-}
-
 void getFromKeyfile(
     const Glib::KeyFile& keyfile,
     const Glib::ustring& group_name,
@@ -142,7 +135,7 @@ void getFromKeyfile(
 )
 {
     value = keyfile.get_double_list(group_name, key);
-    avoidEmptyCurve(value);
+    rtengine::sanitizeCurve(value);
 }
 
 template<typename T>
@@ -614,6 +607,66 @@ bool LocalContrastParams::operator!=(const LocalContrastParams &other) const
 const double ColorToningParams::LABGRID_CORR_MAX = 12000.f;
 const double ColorToningParams::LABGRID_CORR_SCALE = 3.f;
 
+ColorToningParams::LabCorrectionRegion::LabCorrectionRegion():
+    a(0),
+    b(0),
+    saturation(0),
+    lightness(0),
+    hueMask{
+        FCT_MinMaxCPoints,
+            0.166666667,
+            1.,
+            0.35,
+            0.35,
+            0.8287775246,
+            1.,
+            0.35,
+            0.35
+    },
+    chromaticityMask{
+        FCT_MinMaxCPoints,
+            0.,
+            1.,
+            0.35,
+            0.35,
+            1.,
+            1.,
+            0.35,
+            0.35
+            },
+    lightnessMask{
+        FCT_MinMaxCPoints,
+            0.,
+            1.,
+            0.35,
+            0.35,
+            1.,
+            1.,
+            0.35,
+            0.35
+            }
+{
+}
+
+
+bool ColorToningParams::LabCorrectionRegion::operator==(const LabCorrectionRegion &other) const
+{
+    return a == other.a
+        && b == other.b
+        && saturation == other.saturation
+        && lightness == other.lightness
+        && hueMask == other.hueMask
+        && chromaticityMask == other.chromaticityMask
+        && lightnessMask == other.lightnessMask;
+}
+
+
+bool ColorToningParams::LabCorrectionRegion::operator!=(const LabCorrectionRegion &other) const
+{
+    return !(*this == other);
+}
+
+
 ColorToningParams::ColorToningParams() :
     enabled(false),
     autosat(true),
@@ -671,7 +724,7 @@ ColorToningParams::ColorToningParams() :
         1.00,
         1.00
     },
-    method("Lab"),
+    method("LabRegions"),
     twocolor("Std"),
     redlow(0.0),
     greenlow(0.0),
@@ -688,7 +741,9 @@ ColorToningParams::ColorToningParams() :
     labgridALow(0.0),
     labgridBLow(0.0),
     labgridAHigh(0.0),
-    labgridBHigh(0.0)
+    labgridBHigh(0.0),
+    labregions{LabCorrectionRegion()},
+    labregionsShowMask(-1)
 {
 }
 
@@ -724,7 +779,9 @@ bool ColorToningParams::operator ==(const ColorToningParams& other) const
         && labgridALow == other.labgridALow
         && labgridBLow == other.labgridBLow
         && labgridAHigh == other.labgridAHigh
-        && labgridBHigh == other.labgridBHigh;
+        && labgridBHigh == other.labgridBHigh
+        && labregions == other.labregions
+        && labregionsShowMask == other.labregionsShowMask;
 }
 
 bool ColorToningParams::operator !=(const ColorToningParams& other) const
@@ -1475,8 +1532,8 @@ bool EPDParams::operator !=(const EPDParams& other) const
 
 FattalToneMappingParams::FattalToneMappingParams() :
     enabled(false),
-    threshold(0),
-    amount(30),
+    threshold(30),
+    amount(20),
     anchor(50)
 {
 }
@@ -2375,6 +2432,30 @@ bool SoftLightParams::operator !=(const SoftLightParams& other) const
     return !(*this == other);
 }
 
+
+DehazeParams::DehazeParams() :
+    enabled(false),
+    strength(50),
+    showDepthMap(false),
+    depth(25)
+{
+}
+
+bool DehazeParams::operator ==(const DehazeParams& other) const
+{
+    return
+        enabled == other.enabled
+        && strength == other.strength
+        && showDepthMap == other.showDepthMap
+        && depth == other.depth;
+}
+
+bool DehazeParams::operator !=(const DehazeParams& other) const
+{
+    return !(*this == other);
+}
+
+
 RAWParams::BayerSensor::BayerSensor() :
     method(getMethodString(Method::AMAZE)),
     border(4),
@@ -2668,7 +2749,7 @@ void ProcParams::setDefaults()
     sharpening = SharpeningParams();
 
     prsharpening = SharpeningParams();
-    prsharpening.contrast = 0.0;
+    prsharpening.contrast = 15.0;
     prsharpening.method = "rld";
     prsharpening.deconvamount = 100;
     prsharpening.deconvradius = 0.45;
@@ -2732,6 +2813,8 @@ void ProcParams::setDefaults()
     filmSimulation = FilmSimulationParams();
 
     softlight = SoftLightParams();
+
+    dehaze = DehazeParams();
 
     raw = RAWParams();
 
@@ -3042,6 +3125,12 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->defringe.radius, "Defringing", "Radius", defringe.radius, keyFile);
         saveToKeyfile(!pedited || pedited->defringe.threshold, "Defringing", "Threshold", defringe.threshold, keyFile);
         saveToKeyfile(!pedited || pedited->defringe.huecurve, "Defringing", "HueCurve", defringe.huecurve, keyFile);
+
+// Dehaze
+        saveToKeyfile(!pedited || pedited->dehaze.enabled, "Dehaze", "Enabled", dehaze.enabled, keyFile);
+        saveToKeyfile(!pedited || pedited->dehaze.strength, "Dehaze", "Strength", dehaze.strength, keyFile);        
+        saveToKeyfile(!pedited || pedited->dehaze.showDepthMap, "Dehaze", "ShowDepthMap", dehaze.showDepthMap, keyFile);        
+        saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Depth", dehaze.depth, keyFile);        
 
 // Directional pyramid denoising
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.enabled, "Directional Pyramid Denoising", "Enabled", dirpyrDenoise.enabled, keyFile);
@@ -3383,6 +3472,20 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->colorToning.labgridBLow, "ColorToning", "LabGridBLow", colorToning.labgridBLow, keyFile);
         saveToKeyfile(!pedited || pedited->colorToning.labgridAHigh, "ColorToning", "LabGridAHigh", colorToning.labgridAHigh, keyFile);
         saveToKeyfile(!pedited || pedited->colorToning.labgridBHigh, "ColorToning", "LabGridBHigh", colorToning.labgridBHigh, keyFile);
+        if (!pedited || pedited->colorToning.labregions) {
+            for (size_t j = 0; j < colorToning.labregions.size(); ++j) {
+                std::string n = std::to_string(j+1);
+                auto &l = colorToning.labregions[j];
+                putToKeyfile("ColorToning", Glib::ustring("LabRegionA_") + n, l.a, keyFile);
+                putToKeyfile("ColorToning", Glib::ustring("LabRegionB_") + n, l.b, keyFile);
+                putToKeyfile("ColorToning", Glib::ustring("LabRegionSaturation_") + n, l.saturation, keyFile);
+                putToKeyfile("ColorToning", Glib::ustring("LabRegionLightness_") + n, l.lightness, keyFile);
+                putToKeyfile("ColorToning", Glib::ustring("LabRegionHueMask_") + n, l.hueMask, keyFile);
+                putToKeyfile("ColorToning", Glib::ustring("LabRegionChromaticityMask_") + n, l.chromaticityMask, keyFile);
+                putToKeyfile("ColorToning", Glib::ustring("LabRegionLightnessMask_") + n, l.lightnessMask, keyFile);
+            }
+        }
+        saveToKeyfile(!pedited || pedited->colorToning.labregionsShowMask, "ColorToning", "LabRegionsShowMask", colorToning.labregionsShowMask, keyFile);
 
 // Raw
         saveToKeyfile(!pedited || pedited->raw.darkFrame, "RAW", "DarkFrame", relativePathIfInside(fname, fnameAbsolute, raw.dark_frame), keyFile);
@@ -4214,7 +4317,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             if (ppVersion >= 339) {
                 assignFromKeyfile(keyFile, "Resize", "AllowUpscaling", pedited, resize.allowUpscaling, pedited->resize.allowUpscaling);
             } else {
-                resize.allowUpscaling = true;
+                resize.allowUpscaling = false;
                 if (pedited) {
                     pedited->resize.allowUpscaling = true;
                 }
@@ -4626,6 +4729,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "SoftLight", "Strength", pedited, softlight.strength, pedited->softlight.strength);
         }
 
+        if (keyFile.has_group("Dehaze")) {
+            assignFromKeyfile(keyFile, "Dehaze", "Enabled", pedited, dehaze.enabled, pedited->dehaze.enabled);
+            assignFromKeyfile(keyFile, "Dehaze", "Strength", pedited, dehaze.strength, pedited->dehaze.strength);
+            assignFromKeyfile(keyFile, "Dehaze", "ShowDepthMap", pedited, dehaze.showDepthMap, pedited->dehaze.showDepthMap);
+            assignFromKeyfile(keyFile, "Dehaze", "Depth", pedited, dehaze.depth, pedited->dehaze.depth);
+        }
+        
         if (keyFile.has_group("Film Simulation")) {
             assignFromKeyfile(keyFile, "Film Simulation", "Enabled", pedited, filmSimulation.enabled, pedited->filmSimulation.enabled);
             assignFromKeyfile(keyFile, "Film Simulation", "ClutFilename", pedited, filmSimulation.clutFilename, pedited->filmSimulation.clutFilename);
@@ -4740,6 +4850,49 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 colorToning.labgridBLow *= scale;
                 colorToning.labgridBHigh *= scale;
             }
+            std::vector<ColorToningParams::LabCorrectionRegion> lg;
+            bool found = false;
+            bool done = false;
+            for (int i = 1; !done; ++i) {
+                ColorToningParams::LabCorrectionRegion cur;
+                done = true;
+                std::string n = std::to_string(i);
+                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionA_") + n, pedited, cur.a, pedited->colorToning.labregions)) {
+                    found = true;
+                    done = false;
+                }
+                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionB_") + n, pedited, cur.b, pedited->colorToning.labregions)) {
+                    found = true;
+                    done = false;
+                }
+                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionSaturation_") + n, pedited, cur.saturation, pedited->colorToning.labregions)) {
+                    found = true;
+                    done = false;
+                }
+                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionLightness_") + n, pedited, cur.lightness, pedited->colorToning.labregions)) {
+                    found = true;
+                    done = false;
+                }
+                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionHueMask_") + n, pedited, cur.hueMask, pedited->colorToning.labregions)) {
+                    found = true;
+                    done = false;
+                }
+                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionChromaticityMask_") + n, pedited, cur.chromaticityMask, pedited->colorToning.labregions)) {
+                    found = true;
+                    done = false;
+                }
+                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionLightnessMask_") + n, pedited, cur.lightnessMask, pedited->colorToning.labregions)) {
+                    found = true;
+                    done = false;
+                }
+                if (!done) {
+                    lg.emplace_back(cur);
+                }
+            }
+            if (found) {
+                colorToning.labregions = std::move(lg);
+            }
+            assignFromKeyfile(keyFile, "ColorToning", "LabRegionsShowMask", pedited, colorToning.labregionsShowMask, pedited->colorToning.labregionsShowMask);
         }
 
         if (keyFile.has_group("RAW")) {
@@ -5041,7 +5194,8 @@ bool ProcParams::operator ==(const ProcParams& other) const
         && colorToning == other.colorToning
         && metadata == other.metadata
         && exif == other.exif
-        && iptc == other.iptc;
+        && iptc == other.iptc
+        && dehaze == other.dehaze;
 }
 
 bool ProcParams::operator !=(const ProcParams& other) const

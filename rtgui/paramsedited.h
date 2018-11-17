@@ -178,6 +178,8 @@ public:
     bool labgridBLow;
     bool labgridAHigh;
     bool labgridBHigh;
+    bool labregions;
+    bool labregionsShowMask;
 };
 
 class SharpenEdgeParamsEdited
@@ -724,6 +726,16 @@ public:
     bool strength;
 };
 
+class DehazeParamsEdited
+{
+public:
+    bool enabled;
+    bool strength;
+    bool showDepthMap;
+    bool depth;
+};
+
+
 class RAWParamsEdited
 {
 
@@ -867,6 +879,7 @@ public:
     HSVEqualizerParamsEdited      hsvequalizer;
     FilmSimulationParamsEdited    filmSimulation;
     SoftLightParamsEdited         softlight;
+    DehazeParamsEdited            dehaze;
     MetaDataParamsEdited          metadata;
     bool                          exif;
     bool                          iptc;

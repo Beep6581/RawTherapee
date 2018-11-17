@@ -504,11 +504,11 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 
                     if(useHslLin) {
                         for (; j < W_L - 3; j += 4) {
-                            _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv *  (LIMV(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv) ));
+                            _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv *  (vclampf(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv) ));
                         }
                     } else {
                         for (; j < W_L - 3; j += 4) {
-                            _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv *  xlogf(LIMV(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv) ));
+                            _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv *  xlogf(vclampf(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv) ));
                         }
                     }
 

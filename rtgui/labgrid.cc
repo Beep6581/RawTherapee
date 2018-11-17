@@ -41,29 +41,40 @@
 using rtengine::Color;
 
 
-bool LabGrid::notifyListener()
+//-----------------------------------------------------------------------------
+// LabGridArea
+//-----------------------------------------------------------------------------
+
+bool LabGridArea::notifyListener()
 {
     if (listener) {
-        listener->panelChanged(evt, Glib::ustring::compose(M("TP_COLORTONING_LABGRID_VALUES"), int(low_a), int(low_b), int(high_a), int(high_b)));
+        const auto round =
+            [](float v) -> float
+            {
+                return int(v * 1000) / 1000.f;
+            };
+        listener->panelChanged(evt, Glib::ustring::compose(evtMsg, round(high_a), round(high_b), round(low_a), round(low_b)));
     }
     return false;
 }
 
 
-LabGrid::LabGrid(rtengine::ProcEvent evt):
+LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low):
     Gtk::DrawingArea(),
-    evt(evt), litPoint(NONE),
+    evt(evt), evtMsg(msg),
+    litPoint(NONE),
     low_a(0.f), high_a(0.f), low_b(0.f), high_b(0.f),
     defaultLow_a(0.f), defaultHigh_a(0.f), defaultLow_b(0.f), defaultHigh_b(0.f),
     listener(nullptr),
     edited(false),
-    isDragged(false)
+    isDragged(false),
+    low_enabled(enable_low)
 {
     set_can_focus(true);
     add_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK);
 }
 
-void LabGrid::getParams(double &la, double &lb, double &ha, double &hb) const
+void LabGridArea::getParams(double &la, double &lb, double &ha, double &hb) const
 {
     la = low_a;
     ha = high_a;
@@ -72,10 +83,10 @@ void LabGrid::getParams(double &la, double &lb, double &ha, double &hb) const
 }
 
 
-void LabGrid::setParams(double la, double lb, double ha, double hb, bool notify)
+void LabGridArea::setParams(double la, double lb, double ha, double hb, bool notify)
 {
-    const double lo = -rtengine::ColorToningParams::LABGRID_CORR_MAX;
-    const double hi = rtengine::ColorToningParams::LABGRID_CORR_MAX;
+    const double lo = -1.0;
+    const double hi = 1.0;
     low_a = rtengine::LIM(la, lo, hi);
     low_b = rtengine::LIM(lb, lo, hi);
     high_a = rtengine::LIM(ha, lo, hi);
@@ -86,7 +97,7 @@ void LabGrid::setParams(double la, double lb, double ha, double hb, bool notify)
     }
 }
 
-void LabGrid::setDefault (double la, double lb, double ha, double hb)
+void LabGridArea::setDefault (double la, double lb, double ha, double hb)
 {
     defaultLow_a = la;
     defaultLow_b = lb;
@@ -95,7 +106,7 @@ void LabGrid::setDefault (double la, double lb, double ha, double hb)
 }
 
 
-void LabGrid::reset(bool toInitial)
+void LabGridArea::reset(bool toInitial)
 {
     if (toInitial) {
         setParams(defaultLow_a, defaultLow_b, defaultHigh_a, defaultHigh_b, true);
@@ -105,32 +116,32 @@ void LabGrid::reset(bool toInitial)
 }
 
 
-void LabGrid::setEdited(bool yes)
+void LabGridArea::setEdited(bool yes)
 {
     edited = yes;
 }
 
 
-bool LabGrid::getEdited() const
+bool LabGridArea::getEdited() const
 {
     return edited;
 }
 
 
-void LabGrid::setListener(ToolPanelListener *l)
+void LabGridArea::setListener(ToolPanelListener *l)
 {
     listener = l;
 }
 
 
-void LabGrid::on_style_updated ()
+void LabGridArea::on_style_updated ()
 {
     setDirty(true);
     queue_draw ();
 }
 
 
-bool LabGrid::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
+bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
 {
     Gtk::Allocation allocation = get_allocation();
     allocation.set_x(0);
@@ -170,7 +181,7 @@ bool LabGrid::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         cr->translate(0, height);
         cr->scale(1., -1.);
         const int cells = 8;
-        float step = rtengine::ColorToningParams::LABGRID_CORR_MAX / float(cells/2);
+        float step = 12000.f / float(cells/2);
         for (int j = 0; j < cells; j++) {
             for (int i = 0; i < cells; i++) {
                 float R, G, B;
@@ -190,10 +201,10 @@ bool LabGrid::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         // drawing the connection line
         cr->set_antialias(Cairo::ANTIALIAS_DEFAULT);
         float loa, hia, lob, hib;
-        loa = .5f * (width + width * low_a / rtengine::ColorToningParams::LABGRID_CORR_MAX);
-        hia = .5f * (width + width * high_a / rtengine::ColorToningParams::LABGRID_CORR_MAX);
-        lob = .5f * (height + height * low_b / rtengine::ColorToningParams::LABGRID_CORR_MAX);
-        hib = .5f * (height + height * high_b / rtengine::ColorToningParams::LABGRID_CORR_MAX);
+        loa = .5f * (width + width * low_a);
+        hia = .5f * (width + width * high_a);
+        lob = .5f * (height + height * low_b);
+        hib = .5f * (height + height * high_b);
         cr->set_line_width(2.);
         cr->set_source_rgb(0.6, 0.6, 0.6);
         cr->move_to(loa, lob);
@@ -201,13 +212,15 @@ bool LabGrid::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         cr->stroke();
 
         // drawing points
-        cr->set_source_rgb(0.1, 0.1, 0.1);
-        if (litPoint == LOW) {
-            cr->arc(loa, lob, 5, 0, 2. * rtengine::RT_PI);
-        } else {
-            cr->arc(loa, lob, 3, 0, 2. * rtengine::RT_PI);
+        if (low_enabled) {
+            cr->set_source_rgb(0.1, 0.1, 0.1);
+            if (litPoint == LOW) {
+                cr->arc(loa, lob, 5, 0, 2. * rtengine::RT_PI);
+            } else {
+                cr->arc(loa, lob, 3, 0, 2. * rtengine::RT_PI);
+            }
+            cr->fill();
         }
-        cr->fill();
 
         cr->set_source_rgb(0.9, 0.9, 0.9);
         if (litPoint == HIGH) {
@@ -223,7 +236,7 @@ bool LabGrid::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
 }
 
 
-bool LabGrid::on_button_press_event(GdkEventButton *event)
+bool LabGridArea::on_button_press_event(GdkEventButton *event)
 {
     if (event->button == 1) {
         if (event->type == GDK_2BUTTON_PRESS) {
@@ -250,7 +263,7 @@ bool LabGrid::on_button_press_event(GdkEventButton *event)
 }
 
 
-bool LabGrid::on_button_release_event(GdkEventButton *event)
+bool LabGridArea::on_button_release_event(GdkEventButton *event)
 {
     if (event->button == 1) {
         isDragged = false;
@@ -260,7 +273,7 @@ bool LabGrid::on_button_release_event(GdkEventButton *event)
 }
 
 
-bool LabGrid::on_motion_notify_event(GdkEventMotion *event)
+bool LabGridArea::on_motion_notify_event(GdkEventMotion *event)
 {
     if (isDragged && delayconn.connected()) {
         delayconn.disconnect();
@@ -275,30 +288,30 @@ bool LabGrid::on_motion_notify_event(GdkEventMotion *event)
     const float mb = (2.0 * mouse_y - height) / (float)height;
     if (isDragged) {
         if (litPoint == LOW) {
-            low_a = ma * rtengine::ColorToningParams::LABGRID_CORR_MAX;
-            low_b = mb * rtengine::ColorToningParams::LABGRID_CORR_MAX;
+            low_a = ma;
+            low_b = mb;
         } else if (litPoint == HIGH) {
-            high_a = ma * rtengine::ColorToningParams::LABGRID_CORR_MAX;
-            high_b = mb * rtengine::ColorToningParams::LABGRID_CORR_MAX;
+            high_a = ma;
+            high_b = mb;
         }
         edited = true;
         grab_focus();
         if (options.adjusterMinDelay == 0) {
             notifyListener();
         } else {
-            delayconn = Glib::signal_timeout().connect(sigc::mem_fun(*this, &LabGrid::notifyListener), options.adjusterMinDelay);
+            delayconn = Glib::signal_timeout().connect(sigc::mem_fun(*this, &LabGridArea::notifyListener), options.adjusterMinDelay);
         }
         queue_draw();
     } else {
         litPoint = NONE;
-        float la = low_a / rtengine::ColorToningParams::LABGRID_CORR_MAX;
-        float lb = low_b / rtengine::ColorToningParams::LABGRID_CORR_MAX;
-        float ha = high_a / rtengine::ColorToningParams::LABGRID_CORR_MAX;
-        float hb = high_b / rtengine::ColorToningParams::LABGRID_CORR_MAX;
+        float la = low_a;
+        float lb = low_b;
+        float ha = high_a;
+        float hb = high_b;
         const float thrs = 0.05f;
         const float distlo = (la - ma) * (la - ma) + (lb - mb) * (lb - mb);
         const float disthi = (ha - ma) * (ha - ma) + (hb - mb) * (hb - mb);
-        if (distlo < thrs * thrs && distlo < disthi) {
+        if (low_enabled && distlo < thrs * thrs && distlo < disthi) {
             litPoint = LOW;
         } else if (disthi < thrs * thrs && disthi <= distlo) {
             litPoint = HIGH;
@@ -311,20 +324,66 @@ bool LabGrid::on_motion_notify_event(GdkEventMotion *event)
 }
 
 
-Gtk::SizeRequestMode LabGrid::get_request_mode_vfunc() const
+Gtk::SizeRequestMode LabGridArea::get_request_mode_vfunc() const
 {
     return Gtk::SIZE_REQUEST_HEIGHT_FOR_WIDTH;
 }
 
 
-void LabGrid::get_preferred_width_vfunc(int &minimum_width, int &natural_width) const
+void LabGridArea::get_preferred_width_vfunc(int &minimum_width, int &natural_width) const
 {
     minimum_width = 50;
     natural_width = 150;  // same as GRAPH_SIZE from mycurve.h
 }
 
 
-void LabGrid::get_preferred_height_for_width_vfunc(int width, int &minimum_height, int &natural_height) const
+void LabGridArea::get_preferred_height_for_width_vfunc(int width, int &minimum_height, int &natural_height) const
 {
     minimum_height = natural_height = width;
+}
+
+
+bool LabGridArea::lowEnabled() const
+{
+    return low_enabled;
+}
+
+
+void LabGridArea::setLowEnabled(bool yes)
+{
+    if (low_enabled != yes) {
+        low_enabled = yes;
+        queue_draw();
+    }
+}
+
+
+//-----------------------------------------------------------------------------
+// LabGrid
+//-----------------------------------------------------------------------------
+
+LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low):
+    grid(evt, msg, enable_low)
+{
+    Gtk::Button *reset = Gtk::manage(new Gtk::Button());
+    reset->set_tooltip_markup(M("ADJUSTER_RESET_TO_DEFAULT"));
+    reset->add(*Gtk::manage(new RTImage("undo-small.png", "redo-small.png")));
+    reset->signal_button_release_event().connect(sigc::mem_fun(*this, &LabGrid::resetPressed));
+
+    setExpandAlignProperties(reset, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+    reset->set_relief(Gtk::RELIEF_NONE);
+    reset->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
+    reset->set_can_focus(false);
+    reset->set_size_request(-1, 20);
+
+    pack_start(grid, true, true);
+    pack_start(*reset, false, false);
+    show_all_children();
+}
+
+
+bool LabGrid::resetPressed(GdkEventButton *event)
+{
+    grid.reset(event->state & GDK_CONTROL_MASK);
+    return false;    
 }

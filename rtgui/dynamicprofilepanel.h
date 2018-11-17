@@ -112,8 +112,7 @@ private:
         Gtk::CheckButton *has_lens_;
         Gtk::Entry *lens_;
 
-        Gtk::CheckButton *has_imagetype_;
-        Gtk::Entry *imagetype_;
+        MyComboBoxText *imagetype_;
 
         ProfileStoreComboBox *profilepath_;
     };

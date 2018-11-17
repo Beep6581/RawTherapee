@@ -692,7 +692,7 @@ void Crop::update(int todo)
 
     std::unique_ptr<Imagefloat> fattalCrop;
 
-    if ((todo & M_HDR) && params.fattal.enabled) {
+    if ((todo & M_HDR) && (params.fattal.enabled || params.dehaze.enabled)) {
         Imagefloat *f = origCrop;
         int fw = skips(parent->fw, skip);
         int fh = skips(parent->fh, skip);
@@ -741,6 +741,7 @@ void Crop::update(int todo)
         }
 
         if (need_fattal) {
+            parent->ipf.dehaze(f);
             parent->ipf.ToneMapFattal02(f);
         }
 
@@ -896,6 +897,7 @@ void Crop::update(int todo)
         //    parent->ipf.MSR(labnCrop, labnCrop->W, labnCrop->H, 1);
         parent->ipf.chromiLuminanceCurve(this, 1, labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve,  parent->clcurve, parent->lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
         parent->ipf.vibrance(labnCrop);
+        parent->ipf.labColorCorrectionRegions(labnCrop);
 
         if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled)) {
             parent->ipf.EPDToneMap(labnCrop, 5, skip);
@@ -1098,10 +1100,6 @@ void Crop::update(int todo)
 void Crop::freeAll()
 {
 
-    if (settings->verbose) {
-        printf("freeallcrop starts %d\n", (int)cropAllocated);
-    }
-
     if (cropAllocated) {
         if (origCrop) {
             delete    origCrop;
@@ -1160,10 +1158,6 @@ bool check_need_larger_crop_for_lcp_distortion(int fw, int fh, int x, int y, int
  */
 bool Crop::setCropSizes(int rcx, int rcy, int rcw, int rch, int skip, bool internal)
 {
-
-    if (settings->verbose) {
-        printf("setcropsizes before lock\n");
-    }
 
     if (!internal) {
         cropMutex.lock();
@@ -1256,10 +1250,6 @@ bool Crop::setCropSizes(int rcx, int rcy, int rcw, int rch, int skip, bool inter
     int cw = skips(bw, skip);
     int ch = skips(bh, skip);
 
-    if (settings->verbose) {
-        printf("setsizes starts (%d, %d, %d, %d, %d, %d)\n", orW, orH, trafw, trafh, cw, ch);
-    }
-
     EditType editType = ET_PIPETTE;
 
     if (const auto editProvider = PipetteBuffer::getDataProvider()) {
@@ -1323,10 +1313,6 @@ bool Crop::setCropSizes(int rcx, int rcy, int rcw, int rch, int skip, bool inter
 
     cropx = bx1;
     cropy = by1;
-
-    if (settings->verbose) {
-        printf("setsizes ends\n");
-    }
 
     if (!internal) {
         cropMutex.unlock();

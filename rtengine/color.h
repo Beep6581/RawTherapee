@@ -205,6 +205,10 @@ public:
         return r * 0.2126729 + g * 0.7151521 + b * 0.0721750;
     }
 
+    static float rgbLuminance(float r, float g, float b, const double workingspace[3][3])
+    {
+        return r * workingspace[1][0] + g * workingspace[1][1] + b * workingspace[1][2];
+    }
 
     /**
     * @brief Convert red/green/blue to L*a*b
@@ -647,7 +651,9 @@ public:
     * @param h 'h' channel return value, in [-PI ; +PI] (return value)
     */
     static void Lab2Lch(float a, float b, float &c, float &h);
-
+#ifdef __SSE2__
+    static void Lab2Lch(float *a, float *b, float *c, float *h, int w);
+#endif
 
     /**
     * @brief Convert 'c' and 'h' channels of the Lch color space to the 'a' and 'b' channels of the L*a*b color space (channel 'L' is identical [0 ; 32768])
