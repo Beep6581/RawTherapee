@@ -156,6 +156,13 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
         model = "Unknown";
     }
 
+    if (model == "Unknown") {
+        tag = newFrameRootDir->findTag("UniqueCameraModel");
+        if (tag) {
+            model = tag->valueToString();
+        }
+    }
+
     tag = newFrameRootDir->findTagUpward("Orientation");
     if (tag) {
         orientation = tag->valueToString ();
@@ -809,11 +816,6 @@ unsigned int FramesData::getFrameCount () const
     return dcrawFrameCount ? dcrawFrameCount : frames.size();
 }
 
-FrameData *FramesData::getFrameData (unsigned int frame) const
-{
-    return frames.empty() || frame >= frames.size() ? nullptr : frames.at(frame);
-}
-
 bool FramesData::getPixelShift () const
 {
     // So far only Pentax and Sony provide multi-frame Pixel Shift files.
@@ -1118,9 +1120,7 @@ FramesData::FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataL
 
                 // creating FrameData
                 for (auto currFrame : exifManager.frames) {
-                    FrameData* fd = new FrameData(currFrame, currFrame->getRoot(), roots.at(0));
-
-                    frames.push_back(fd);
+                    frames.push_back(std::unique_ptr<FrameData>(new FrameData(currFrame, currFrame->getRoot(), roots.at(0))));
                 }
                 for (auto currRoot : roots) {
                     rtexif::Tag* t = currRoot->getTag(0x83BB);
@@ -1142,8 +1142,7 @@ FramesData::FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataL
                 exifManager.parseJPEG ();
                 roots = exifManager.roots;
                 for (auto currFrame : exifManager.frames) {
-                    FrameData* fd = new FrameData(currFrame, currFrame->getRoot(), roots.at(0));
-                    frames.push_back(fd);
+                    frames.push_back(std::unique_ptr<FrameData>(new FrameData(currFrame, currFrame->getRoot(), roots.at(0))));
                 }
                 rewind (exifManager.f); // Not sure this is necessary
                 iptc = iptc_data_new_from_jpeg_file (exifManager.f);
@@ -1161,9 +1160,7 @@ FramesData::FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataL
 
             // creating FrameData
             for (auto currFrame : exifManager.frames) {
-                FrameData* fd = new FrameData(currFrame, currFrame->getRoot(), roots.at(0));
-
-                frames.push_back(fd);
+                frames.push_back(std::unique_ptr<FrameData>(new FrameData(currFrame, currFrame->getRoot(), roots.at(0))));
             }
             for (auto currRoot : roots) {
                 rtexif::Tag* t = currRoot->getTag(0x83BB);

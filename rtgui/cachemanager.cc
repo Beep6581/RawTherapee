@@ -57,7 +57,9 @@ void CacheManager::init ()
     auto error = g_mkdir_with_parents (baseDir.c_str(), cacheDirMode);
 
     for (const auto& cacheDir : cacheDirs) {
-        error |= g_mkdir_with_parents (Glib::build_filename (baseDir, cacheDir).c_str(), cacheDirMode);
+        if (strncmp(cacheDir, "aehistograms", 12)) {  // don't create aehistograms folder.
+            error |= g_mkdir_with_parents (Glib::build_filename (baseDir, cacheDir).c_str(), cacheDirMode);
+        }
     }
 
     if (error != 0 && options.rtSettings.verbose) {
@@ -172,7 +174,7 @@ void CacheManager::deleteEntry (const Glib::ustring& fname)
 
 void CacheManager::clearFromCache (const Glib::ustring& fname, bool purge) const
 {
-    deleteFiles (fname, getMD5 (fname), purge, purge);
+    deleteFiles (fname, getMD5 (fname), true, purge);
 }
 
 void CacheManager::renameEntry (const std::string& oldfilename, const std::string& oldmd5, const std::string& newfilename)
@@ -183,9 +185,6 @@ void CacheManager::renameEntry (const std::string& oldfilename, const std::strin
 
     auto error = g_rename (getCacheFileName ("profiles", oldfilename, paramFileExtension, oldmd5).c_str (), getCacheFileName ("profiles", newfilename, paramFileExtension, newmd5).c_str ());
     error |= g_rename (getCacheFileName ("images", oldfilename, ".rtti", oldmd5).c_str (), getCacheFileName ("images", newfilename, ".rtti", newmd5).c_str ());
-    error |= g_rename (getCacheFileName ("images", oldfilename, ".cust16", oldmd5).c_str (), getCacheFileName ("images", newfilename, ".cust16", newmd5).c_str ());
-    error |= g_rename (getCacheFileName ("images", oldfilename, ".cust", oldmd5).c_str (), getCacheFileName ("images", newfilename, ".cust", newmd5).c_str ());
-    error |= g_rename (getCacheFileName ("images", oldfilename, ".jpg", oldmd5).c_str (), getCacheFileName ("images", newfilename, ".jpg", newmd5).c_str ());
     error |= g_rename (getCacheFileName ("aehistograms", oldfilename, "", oldmd5).c_str (), getCacheFileName ("aehistograms", newfilename, "", newmd5).c_str ());
     error |= g_rename (getCacheFileName ("embprofiles", oldfilename, ".icc", oldmd5).c_str (), getCacheFileName ("embprofiles", newfilename, ".icc", newmd5).c_str ());
     error |= g_rename (getCacheFileName ("data", oldfilename, ".txt", oldmd5).c_str (), getCacheFileName ("data", newfilename, ".txt", newmd5).c_str ());
@@ -238,6 +237,7 @@ void CacheManager::clearImages () const
 {
     MyMutex::MyLock lock (mutex);
 
+    deleteDir ("data");
     deleteDir ("images");
     deleteDir ("aehistograms");
     deleteDir ("embprofiles");
@@ -275,9 +275,6 @@ void CacheManager::deleteFiles (const Glib::ustring& fname, const std::string& m
     }
 
     auto error = g_remove (getCacheFileName ("images", fname, ".rtti", md5).c_str ());
-    error |= g_remove (getCacheFileName ("images", fname, ".cust16", md5).c_str ());
-    error |= g_remove (getCacheFileName ("images", fname, ".cust", md5).c_str ());
-    error |= g_remove (getCacheFileName ("images", fname, ".jpg", md5).c_str ());
     error |= g_remove (getCacheFileName ("aehistograms", fname, "", md5).c_str ());
     error |= g_remove (getCacheFileName ("embprofiles", fname, ".icc", md5).c_str ());
 

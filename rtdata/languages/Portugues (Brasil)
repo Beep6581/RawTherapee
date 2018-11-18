@@ -113,8 +113,6 @@ FILEBROWSER_AUTOFLATFIELD;Flat-field automático
 FILEBROWSER_BROWSEPATHBUTTONHINT;Clique para navegar até o caminho escolhido.
 FILEBROWSER_BROWSEPATHHINT;Digite um caminho para navegar até.\n\nAtalhos do teclado:\n<b>Ctrl-o</b> para focar na caixa de texto do caminho.\n<b>Enter</b> / <b>Ctrl-Enter</b> para navegar lá;\n<b>Esc</b> para limpar as alterações.\n<b>Shift-Esc</b> para remover o foco.\n\nAtalhos do caminho:\n<b>~</b>	- diretório home do usuário.\n<b>!</b>	- diretório de fotos do usuário
 FILEBROWSER_CACHE;Cache
-FILEBROWSER_CACHECLEARFROMFULL;Limpeza do cache - completa
-FILEBROWSER_CACHECLEARFROMPARTIAL;Limpeza do cache - partcial
 FILEBROWSER_CLEARPROFILE;Perfil de limpeza
 FILEBROWSER_COLORLABEL_TOOLTIP;Etiqueta de cor.\n\nUse o menu suspenso ou atalhos:\n<b>Shift-Ctrl-0</b> Sem Cor\n<b>Shift-Ctrl-1</b> Vermelho\n<b>Shift-Ctrl-2</b> Amarelo\n<b>Shift-Ctrl-3</b> Verde\n<b>Shift-Ctrl-4</b> Azul\n<b>Shift-Ctrl-5</b> Roxo
 FILEBROWSER_COPYPROFILE;Copiar perfil
@@ -719,7 +717,6 @@ HISTORY_MSG_485;Correção de Lente
 HISTORY_MSG_486;Correção de Lente - Câmera
 HISTORY_MSG_487;Correção de Lente - Lente
 HISTORY_MSG_488;Compressão de Amplitude Dinâmica(DRC)
-HISTORY_MSG_489;DRC - Limite
 HISTORY_MSG_490;DRC - Montante
 HISTORY_MSG_491;Balanço de Branco
 HISTORY_MSG_492;Curvas RGB
@@ -1022,9 +1019,6 @@ PREFERENCES_BEHAVIOR;Comportamento
 PREFERENCES_BEHSETALL;Tudo para 'Configurar'
 PREFERENCES_BEHSETALLHINT;Definir todos os parâmetros para o <b>Configurar</b> modo.\nAjustes de parâmetros no painel de ferramentas de lote serão <b>absoluto</b>, os valores reais serão exibidos.
 PREFERENCES_BLACKBODY;Tungstênio
-PREFERENCES_CACHECLEARALL;Limpar Tudo
-PREFERENCES_CACHECLEARPROFILES;Limpar Perfis de Processamento
-PREFERENCES_CACHECLEARTHUMBS;Limpar Miniaturas
 PREFERENCES_CACHEMAXENTRIES;Número máximo de entradas de cache
 PREFERENCES_CACHEOPTS;Opções de Cache
 PREFERENCES_CACHETHUMBHEIGHT;Altura máxima da miniatura
@@ -2005,7 +1999,6 @@ TP_SOFTLIGHT_STRENGTH;Intensidade
 TP_TM_FATTAL_AMOUNT;Montante
 TP_TM_FATTAL_ANCHOR;Âncora
 TP_TM_FATTAL_LABEL;Compressão de Amplitude Dinâmica(DRC)
-TP_TM_FATTAL_THRESHOLD;Limite
 TP_VIBRANCE_AVOIDCOLORSHIFT;Evite mudança de cor
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;MM
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Tons cor de pele
@@ -2253,16 +2246,60 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!DYNPROFILEEDITOR_IMGTYPE_ANY;Any
+!DYNPROFILEEDITOR_IMGTYPE_HDR;HDR
+!DYNPROFILEEDITOR_IMGTYPE_PS;Pixel Shift
+!DYNPROFILEEDITOR_IMGTYPE_STD;Standard
+!FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
+!FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
 !HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
+!HISTORY_MSG_489;DRC - Detail
+!HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
+!HISTORY_MSG_COLORTONING_LABREGION_CHROMATICITYMASK;CT - C mask
+!HISTORY_MSG_COLORTONING_LABREGION_HUEMASK;CT - H mask
+!HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESS;CT - Lightness
+!HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESSMASK;CT - L mask
+!HISTORY_MSG_COLORTONING_LABREGION_LIST;CT - List
+!HISTORY_MSG_COLORTONING_LABREGION_SATURATION;CT - Saturation
+!HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;CT - Show mask
+!HISTORY_MSG_DEHAZE_DEPTH;Dehaze - Depth
+!HISTORY_MSG_DEHAZE_ENABLED;Haze Removal
+!HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;Dehaze - Show depth map
+!HISTORY_MSG_DEHAZE_STRENGTH;Dehaze - Strength
+!HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
 !HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
 !HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
 !HISTORY_MSG_RAWCACORR_COLORSHIFT;Raw CA Correction - Avoid color shift
+!HISTORY_MSG_SH_COLORSPACE;S/H - Colorspace
 !ICCPROFCREATOR_DESCRIPTION_ADDPARAM;Append gamma and slope values to the description
+!PARTIALPASTE_DEHAZE;Haze removal
 !PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA avoid color shift
+!PREFERENCES_CACHECLEAR;Clear
+!PREFERENCES_CACHECLEAR_ALL;Clear all cached files:
+!PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
+!PREFERENCES_CACHECLEAR_ONLYPROFILES;Clear only cached processing profiles:
+!PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing profiles stored alongside the source images are not touched.
 !PREFERENCES_PERFORMANCE_THREADS;Threads
 !PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
 !PREFERENCES_TAB_PERFORMANCE;Performance
 !SAVEDLG_FILEFORMAT_FLOAT; floating-point
+!TP_COLORTONING_LABREGIONS;L*a*b* correction regions
+!TP_COLORTONING_LABREGION_ABVALUES;a=%1 b=%2
+!TP_COLORTONING_LABREGION_CHROMATICITYMASK;C
+!TP_COLORTONING_LABREGION_HUEMASK;H
+!TP_COLORTONING_LABREGION_LIGHTNESS;Lightness
+!TP_COLORTONING_LABREGION_LIGHTNESSMASK;L
+!TP_COLORTONING_LABREGION_LIST_TITLE;Correction
+!TP_COLORTONING_LABREGION_MASK;Mask
+!TP_COLORTONING_LABREGION_SATURATION;Saturation
+!TP_COLORTONING_LABREGION_SHOWMASK;Show mask
+!TP_DEHAZE_DEPTH;Depth
+!TP_DEHAZE_LABEL;Haze Removal
+!TP_DEHAZE_SHOW_DEPTH_MAP;Show Depth Map
+!TP_DEHAZE_STRENGTH;Strength
 !TP_RAWCACORR_AUTOIT;Iterations
 !TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
+!TP_RAW_DUALDEMOSAICAUTOCONTRAST;Auto threshold
+!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the check-box is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the check-box first (reasonable values depend on the image).
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
+!TP_TM_FATTAL_THRESHOLD;Detail

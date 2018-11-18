@@ -279,6 +279,11 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
             printf ("loadFromImage: Unsupported image type \"%s\"!\n", img->getType());
         }
 
+        ProcParams paramsForAutoExp; // Dummy for constructor
+        ImProcFunctions ipf (&paramsForAutoExp, false);
+        ipf.getAutoExp (tpp->aeHistogram, tpp->aeHistCompression, 0.02, tpp->aeExposureCompensation, tpp->aeLightness, tpp->aeContrast, tpp->aeBlack, tpp->aeHighlightCompression, tpp->aeHighlightCompressionThreshold);
+        tpp->aeValid = true;
+
         if (n > 0) {
             ColorTemp cTemp;
 
@@ -416,7 +421,9 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 
     // did we succeed?
     if ( err ) {
-        printf ("Could not extract thumb from %s\n", fname.data());
+        if (options.rtSettings.verbose) {
+            std::cout << "Could not extract thumb from " << fname.c_str() << std::endl;
+        }
         delete tpp;
         delete img;
         delete ri;
@@ -924,6 +931,11 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
                 }
             }
         }
+        ProcParams paramsForAutoExp; // Dummy for constructor
+        ImProcFunctions ipf (&paramsForAutoExp, false);
+        ipf.getAutoExp (tpp->aeHistogram, tpp->aeHistCompression, 0.02, tpp->aeExposureCompensation, tpp->aeLightness, tpp->aeContrast, tpp->aeBlack, tpp->aeHighlightCompression, tpp->aeHighlightCompressionThreshold);
+        tpp->aeValid = true;
+
         if (ri->get_colors() == 1) {
             pixSum[0] = pixSum[1] = pixSum[2] = 1.;
             n[0] = n[1] = n[2] = 1;
@@ -994,6 +1006,13 @@ Thumbnail::Thumbnail () :
     wbEqual (-1.0),
     wbTempBias (0.0),
     aeHistCompression (3),
+    aeValid(false),
+    aeExposureCompensation(0.0),
+    aeLightness(0),
+    aeContrast(0),
+    aeBlack(0),
+    aeHighlightCompression(0),
+    aeHighlightCompressionThreshold(0),
     embProfileLength (0),
     embProfileData (nullptr),
     embProfile (nullptr),
@@ -1201,9 +1220,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     ipf.firstAnalysis (baseImg, params, hist16);
 
-    if (params.fattal.enabled) {
-        ipf.ToneMapFattal02(baseImg);
-    }
+    ipf.dehaze(baseImg);
+    ipf.ToneMapFattal02(baseImg);
     
     // perform transform
     if (ipf.needsTransform()) {
@@ -1225,8 +1243,17 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     int     hlcompr = params.toneCurve.hlcompr;
     int     hlcomprthresh = params.toneCurve.hlcomprthresh;
 
-    if (params.toneCurve.autoexp && aeHistogram) {
-        ipf.getAutoExp (aeHistogram, aeHistCompression, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
+    if (params.toneCurve.autoexp) {
+        if (aeValid) {
+            expcomp = aeExposureCompensation;
+            bright = aeLightness;
+            contr = aeContrast;
+            black = aeBlack;
+            hlcompr = aeHighlightCompression;
+            hlcomprthresh = aeHighlightCompressionThreshold;
+        } else if (aeHistogram) {
+            ipf.getAutoExp (aeHistogram, aeHistCompression, 0.02, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
+        }
     }
 
     LUTf curve1 (65536);
@@ -1364,6 +1391,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     ipf.chromiLuminanceCurve (nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 
     ipf.vibrance (labView);
+    ipf.labColorCorrectionRegions(labView);
 
     if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || !params.colorappearance.enabled) {
         ipf.EPDToneMap (labView, 5, 6);
@@ -1993,6 +2021,38 @@ bool Thumbnail::readData  (const Glib::ustring& fname)
                 aeHistCompression   = keyFile.get_integer ("LiveThumbData", "AEHistCompression");
             }
 
+            aeValid = true;
+            if (keyFile.has_key ("LiveThumbData", "AEExposureCompensation")) {
+                aeExposureCompensation = keyFile.get_double ("LiveThumbData", "AEExposureCompensation");
+            } else {
+                aeValid = false;
+            }
+            if (keyFile.has_key ("LiveThumbData", "AELightness")) {
+                aeLightness   = keyFile.get_integer ("LiveThumbData", "AELightness");
+            } else {
+                aeValid = false;
+            }
+            if (keyFile.has_key ("LiveThumbData", "AEContrast")) {
+                aeContrast   = keyFile.get_integer ("LiveThumbData", "AEContrast");
+            } else {
+                aeValid = false;
+            }
+            if (keyFile.has_key ("LiveThumbData", "AEBlack")) {
+                aeBlack   = keyFile.get_integer ("LiveThumbData", "AEBlack");
+            } else {
+                aeValid = false;
+            }
+            if (keyFile.has_key ("LiveThumbData", "AEHighlightCompression")) {
+                aeHighlightCompression   = keyFile.get_integer ("LiveThumbData", "AEHighlightCompression");
+            } else {
+                aeValid = false;
+            }
+            if (keyFile.has_key ("LiveThumbData", "AEHighlightCompressionThreshold")) {
+                aeHighlightCompressionThreshold   = keyFile.get_integer ("LiveThumbData", "AEHighlightCompressionThreshold");
+            } else {
+                aeValid = false;
+            }
+
             if (keyFile.has_key ("LiveThumbData", "RedMultiplier")) {
                 redMultiplier       = keyFile.get_double ("LiveThumbData", "RedMultiplier");
             }
@@ -2066,7 +2126,12 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
         keyFile.set_double  ("LiveThumbData", "RedAWBMul", redAWBMul);
         keyFile.set_double  ("LiveThumbData", "GreenAWBMul", greenAWBMul);
         keyFile.set_double  ("LiveThumbData", "BlueAWBMul", blueAWBMul);
-        keyFile.set_integer ("LiveThumbData", "AEHistCompression", aeHistCompression);
+        keyFile.set_double  ("LiveThumbData", "AEExposureCompensation", aeExposureCompensation);
+        keyFile.set_integer ("LiveThumbData", "AELightness", aeLightness);
+        keyFile.set_integer ("LiveThumbData", "AEContrast", aeContrast);
+        keyFile.set_integer ("LiveThumbData", "AEBlack", aeBlack);
+        keyFile.set_integer ("LiveThumbData", "AEHighlightCompression", aeHighlightCompression);
+        keyFile.set_integer ("LiveThumbData", "AEHighlightCompressionThreshold", aeHighlightCompressionThreshold);
         keyFile.set_double  ("LiveThumbData", "RedMultiplier", redMultiplier);
         keyFile.set_double  ("LiveThumbData", "GreenMultiplier", greenMultiplier);
         keyFile.set_double  ("LiveThumbData", "BlueMultiplier", blueMultiplier);
@@ -2127,7 +2192,7 @@ bool Thumbnail::readEmbProfile  (const Glib::ustring& fname)
 
                 if (!fseek (f, 0, SEEK_SET)) {
                     embProfileData = new unsigned char[embProfileLength];
-                    fread (embProfileData, 1, embProfileLength, f);
+                    embProfileLength = fread (embProfileData, 1, embProfileLength, f);
                     embProfile = cmsOpenProfileFromMem (embProfileData, embProfileLength);
                 }
             }
@@ -2162,7 +2227,7 @@ bool Thumbnail::readAEHistogram  (const Glib::ustring& fname)
     FILE* f = g_fopen (fname.c_str (), "rb");
 
     if (!f) {
-        aeHistogram (0);
+        aeHistogram.reset();
     } else {
         aeHistogram (65536 >> aeHistCompression);
         fread (&aeHistogram[0], 1, (65536 >> aeHistCompression)*sizeof (aeHistogram[0]), f);

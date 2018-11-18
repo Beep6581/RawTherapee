@@ -20,6 +20,7 @@
 #define __IMAGEDATA_H__
 
 #include <cstdio>
+#include <memory>
 #include "rawimage.h"
 #include <string>
 #include <glibmm.h>
@@ -89,7 +90,7 @@ public:
 class FramesData : public FramesMetaData {
 private:
     // frame's root IFD, can be a file root IFD or a SUB-IFD
-    std::vector<FrameData*> frames;
+    std::vector<std::unique_ptr<FrameData>> frames;
     // root IFD in the file
     std::vector<rtexif::TagDirectory*> roots;
     IptcData* iptc;
@@ -102,7 +103,6 @@ public:
     void setDCRawFrameCount (unsigned int frameCount);
     unsigned int getRootCount () const;
     unsigned int getFrameCount () const;
-    FrameData *getFrameData (unsigned int frame) const;
     bool getPixelShift () const;
     bool getHDR (unsigned int frame = 0) const;
     std::string getImageType (unsigned int frame) const;

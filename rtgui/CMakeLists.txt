@@ -156,6 +156,7 @@ set(NONCLISOURCEFILES
     metadatapanel.cc
     labgrid.cc
     softlight.cc
+    dehaze.cc
     )
 
 include_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")

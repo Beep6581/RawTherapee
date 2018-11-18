@@ -216,6 +216,45 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
 
     curve.push_back(1.0);
     curve.push_back(1.0);
+
+    // we assume we are matching an S-shaped curve, so try to avoid
+    // concavities in the upper part of the S
+    const auto getpos =
+        [](float x, float xa, float ya, float xb, float yb)
+        {
+            // line equation:
+            // (x - xa) / (xb - xa) = (y - ya) / (yb - ya)
+            return (x - xa) / (xb - xa) * (yb - ya) + ya;
+        };
+    idx = -1;
+    for (size_t i = curve.size()-1; i > 0; i -= 2) {
+        if (curve[i] <= 0.f) {
+            idx = i+1;
+            break;
+        }
+    }
+    if (idx >= 0 && size_t(idx) < curve.size()) {
+        // idx is the position of the first point in the upper part of the S
+        // for each 3 consecutive points (xa, ya), (x, y), (xb, yb) we check
+        // that y is above the point at x of the line between the other two
+        // if this is not the case, we remove (x, y) from the curve
+        while (size_t(idx+5) < curve.size()) {
+            float xa = curve[idx];
+            float ya = curve[idx+1];
+            float x = curve[idx+2];
+            float y = curve[idx+3];
+            float xb = curve[idx+4];
+            float yb = curve[idx+5];
+            float yy = getpos(x, xa, ya, xb, yb);
+            if (yy > y) {
+                // we have to remove (x, y) from the curve
+                curve.erase(curve.begin()+(idx+2), curve.begin()+(idx+4));
+            } else {
+                // move on to the next point
+                idx += 2;
+            }
+        }
+    }
         
     if (curve.size() < 4) {
         curve = { DCT_Linear }; // not enough points, fall back to linear

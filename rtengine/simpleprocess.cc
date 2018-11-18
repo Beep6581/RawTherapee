@@ -856,9 +856,8 @@ private:
 
         ipf.firstAnalysis (baseImg, params, hist16);
 
-        if (params.fattal.enabled) {
-            ipf.ToneMapFattal02(baseImg);
-        }
+        ipf.dehaze(baseImg);
+        ipf.ToneMapFattal02(baseImg);
 
         // perform transform (excepted resizing)
         if (ipf.needsTransform()) {
@@ -1082,6 +1081,7 @@ private:
 
 
         ipf.vibrance (labView);
+        ipf.labColorCorrectionRegions(labView);
 
         if ((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) {
             ipf.impulsedenoise (labView);
@@ -1260,8 +1260,8 @@ private:
 
         Imagefloat* readyImg = nullptr;
         cmsHPROFILE jprof = nullptr;
-        bool customGamma = false;
-        bool useLCMS = false;
+        constexpr bool customGamma = false;
+        constexpr bool useLCMS = false;
         bool bwonly = params.blackwhite.enabled && !params.colorToning.enabled && !autili && !butili ;
 
         ///////////// Custom output gamma has been removed, the user now has to create

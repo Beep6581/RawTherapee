@@ -335,8 +335,6 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
 #endif
                 delete [] buffer;
                 if (!modelDesc.empty()) {
-                    printf("dmdd=%s\n", modelDesc.c_str());
-
                     std::size_t pos = modelDesc.find("g");
                     std::size_t posmid = modelDesc.find("s");
                     std::size_t posend = modelDesc.find("!");

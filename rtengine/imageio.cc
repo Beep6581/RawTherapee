@@ -447,7 +447,7 @@ void my_error_exit (j_common_ptr cinfo)
     (*cinfo->err->output_message) (cinfo);
 
     /* Return control to the setjmp point */
-#if defined( WIN32 ) && defined( __x86_64__ )
+#if defined( WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
     __builtin_longjmp(myerr->setjmp_buffer, 1);
 #else
     longjmp(myerr->setjmp_buffer, 1);
@@ -471,7 +471,7 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
     jerr.pub.error_exit = my_error_exit;
 
     /* Establish the setjmp return context for my_error_exit to use. */
-#if defined( WIN32 ) && defined( __x86_64__ )
+#if defined( WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
 
     if (__builtin_setjmp(jerr.setjmp_buffer)) {
 #else
@@ -1134,7 +1134,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
     jerr.pub.error_exit = my_error_exit;
 
     /* Establish the setjmp return context for my_error_exit to use. */
-#if defined( WIN32 ) && defined( __x86_64__ )
+#if defined( WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
 
     if (__builtin_setjmp(jerr.setjmp_buffer)) {
 #else
@@ -1252,7 +1252,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
     unsigned char *row = new unsigned char [rowlen];
 
     /* To avoid memory leaks we establish a new setjmp return context for my_error_exit to use. */
-#if defined( WIN32 ) && defined( __x86_64__ )
+#if defined( WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
 
     if (__builtin_setjmp(jerr.setjmp_buffer)) {
 #else

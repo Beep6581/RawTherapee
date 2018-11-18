@@ -19,9 +19,12 @@
 #ifndef __CURVES_H__
 #define __CURVES_H__
 
-#include <glibmm.h>
 #include <map>
 #include <string>
+#include <vector>
+
+#include <glibmm.h>
+
 #include "rt_math.h"
 #include "../rtgui/mycurve.h"
 #include "../rtgui/myflatcurve.h"
@@ -42,6 +45,7 @@ using namespace std;
 
 namespace rtengine
 {
+
 class ToneCurve;
 class ColorAppearance;
 
@@ -54,6 +58,8 @@ void setUnlessOOG(T &r, T &g, T &b, const T &rr, const T &gg, const T &bb)
         b = bb;
     }
 }
+
+bool sanitizeCurve(std::vector<double>& curve);
 
 namespace curves {
 
@@ -1078,11 +1084,12 @@ inline float WeightedStdToneCurve::Triangle(float a, float a1, float b) const
 #ifdef __SSE2__
 inline vfloat WeightedStdToneCurve::Triangle(vfloat a, vfloat a1, vfloat b) const
 {
+        vmask eqmask = vmaskf_eq(b, a);
         vfloat a2 = a1 - a;
         vmask cmask = vmaskf_lt(b, a);
         vfloat b3 = vself(cmask, b, F2V(65535.f) - b);
         vfloat a3 = vself(cmask, a, F2V(65535.f) - a);
-        return b + a2 * b3 / a3;
+        return vself(eqmask, a1, b + a2 * b3 / a3);
 }
 #endif
 
@@ -1151,9 +1158,9 @@ inline void WeightedStdToneCurve::BatchApply(const size_t start, const size_t en
     float tmpb[4] ALIGNED16;
 
     for (; i + 3 < end; i += 4) {
-        vfloat r_val = LIMV(LVF(r[i]), ZEROV, c65535v);
-        vfloat g_val = LIMV(LVF(g[i]), ZEROV, c65535v);
-        vfloat b_val = LIMV(LVF(b[i]), ZEROV, c65535v);
+        vfloat r_val = vclampf(LVF(r[i]), ZEROV, c65535v);
+        vfloat g_val = vclampf(LVF(g[i]), ZEROV, c65535v);
+        vfloat b_val = vclampf(LVF(b[i]), ZEROV, c65535v);
         vfloat r1 = lutToneCurve[r_val];
         vfloat g1 = Triangle(r_val, r1, g_val);
         vfloat b1 = Triangle(r_val, r1, b_val);
@@ -1166,9 +1173,9 @@ inline void WeightedStdToneCurve::BatchApply(const size_t start, const size_t en
         vfloat r3 = Triangle(b_val, b3, r_val);
         vfloat g3 = Triangle(b_val, b3, g_val);
 
-        STVF(tmpr[0], LIMV(r1 * zd5v + r2 * zd25v + r3 * zd25v, ZEROV, c65535v));
-        STVF(tmpg[0], LIMV(g1 * zd25v + g2 * zd5v + g3 * zd25v, ZEROV, c65535v));
-        STVF(tmpb[0], LIMV(b1 * zd25v + b2 * zd25v + b3 * zd5v, ZEROV, c65535v));
+        STVF(tmpr[0], vclampf(r1 * zd5v + r2 * zd25v + r3 * zd25v, ZEROV, c65535v));
+        STVF(tmpg[0], vclampf(g1 * zd25v + g2 * zd5v + g3 * zd25v, ZEROV, c65535v));
+        STVF(tmpb[0], vclampf(b1 * zd25v + b2 * zd25v + b3 * zd5v, ZEROV, c65535v));
         for (int j = 0; j < 4; ++j) {
             setUnlessOOG(r[i+j], g[i+j], b[i+j], tmpr[j], tmpg[j], tmpb[j]);
         }

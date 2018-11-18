@@ -104,12 +104,11 @@ void parseKodakIfdTextualInfo (Tag *textualInfo, Tag* exif_)
                 a = atoi (val.c_str());
                 b = atoi (&p1[1]);
             }
-
             t = new Tag (exif, lookupAttrib (exifAttribs, "ExposureTime"));
             t->initRational (a, b);
             exif->replaceTag (t);
 
-            float ssv = -log2 ((float)a / (float)b); // convert to APEX value
+            const float ssv = -log2 ((float)a / std::max((float)b, 0.0001f)); // convert to APEX value, avoid division by zero
             t = new Tag (exif, lookupAttrib (exifAttribs, "ShutterSpeedValue"));
             t->initRational (1000000 * ssv, 1000000);
             exif->replaceTag (t);

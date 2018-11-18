@@ -160,7 +160,7 @@ void ImProcFunctions::shadowsHighlights(LabImage *lab)
                     float orig = 1.f - blend;
                     if (l >= 0.f && l < 32768.f) {
                         if (lab_mode) {
-                            lab->L[y][x] = f[l] * blend + l * orig;
+                            lab->L[y][x] = intp(blend, f[l], l);
                             if (!hl && l > 1.f) {
                                 // when pushing shadows, scale also the chromaticity
                                 float s = max(lab->L[y][x] / l * 0.5f, 1.f) * blend;
@@ -173,7 +173,10 @@ void ImProcFunctions::shadowsHighlights(LabImage *lab)
                             float rgb[3];
                             lab2rgb(l, lab->a[y][x], lab->b[y][x], rgb[0], rgb[1], rgb[2]);
                             for (int i = 0; i < 3; ++i) {
-                                rgb[i] = f[rgb[i]] * blend + rgb[i] * orig;
+                                float c = rgb[i];
+                                if (!OOG(c)) {
+                                    rgb[i] = intp(blend, f[c], c);
+                                }
                             }
                             rgb2lab(rgb[0], rgb[1], rgb[2], lab->L[y][x], lab->a[y][x], lab->b[y][x]);
                         }
