@@ -609,7 +609,12 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     crophb->pack_start(*Gtk::manage(new Gtk::Label(M("PREFERENCES_CROP_GUIDES") + ": ")), Gtk::PACK_SHRINK, 4);
     crophb->pack_start(*cropGuides);
     cropvb->pack_start(*crophb);
-    cropAutoFit = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_CROP_AUTO_FIT")));
+    Gtk::Label *cropAutoFitLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_CROP_AUTO_FIT")));
+    cropAutoFitLabel->set_line_wrap(true);
+    setExpandAlignProperties(cropAutoFitLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
+    cropAutoFit = Gtk::manage(new Gtk::CheckButton());
+    setExpandAlignProperties(cropAutoFit, false, true, Gtk::ALIGN_START, Gtk::ALIGN_START);
+    cropAutoFit->add(*cropAutoFitLabel);
     cropvb->pack_start(*cropAutoFit);
     cropframe->add(*cropvb);
     vbImageProcessing->pack_start(*cropframe, Gtk::PACK_SHRINK, 4);
@@ -769,8 +774,13 @@ Gtk::Widget* Preferences::getColorManPanel ()
     const std::vector<Glib::ustring> profiles = rtengine::ICCStore::getInstance ()->getProfiles (rtengine::ICCStore::ProfileType::MONITOR);
 
     for (const auto profile : profiles) {
-        if (profile.find ("file:") != 0) {
-            monProfile->append (profile);
+        if (profile.find("file:") != 0) {
+            std::string fileis_RTv4 = profile.substr(0, 4);
+
+            if (fileis_RTv4 != "RTv4") {
+            //    printf("pro=%s \n", profile.c_str());
+                monProfile->append(profile);
+            }
         }
     }
 
@@ -1206,7 +1216,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel ()
     startupdir = Gtk::manage ( new Gtk::Entry () );
 
     Gtk::Button* sdselect = Gtk::manage ( new Gtk::Button () );
-    sdselect->set_image (*Gtk::manage (new RTImage ("folder-open.png")));
+    sdselect->set_image (*Gtk::manage (new RTImage ("folder-open-small.png")));
 
     Gtk::RadioButton::Group opts = sdcurrent->get_group();
     sdlast->set_group (opts);
@@ -1275,20 +1285,26 @@ Gtk::Widget* Preferences::getFileBrowserPanel ()
 
 
     Gtk::Frame* frmnu = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_MENUOPTIONS")) );
+    
+    Gtk::Grid* menuGrid = Gtk::manage(new Gtk::Grid());
+    menuGrid->get_style_context()->add_class("grid-spacing");
+    setExpandAlignProperties(menuGrid, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    
     ckbmenuGroupRank = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_MENUGROUPRANK")) );
+    setExpandAlignProperties(ckbmenuGroupRank, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     ckbmenuGroupLabel = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_MENUGROUPLABEL")) );
     ckbmenuGroupFileOperations = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_MENUGROUPFILEOPERATIONS")) );
+    setExpandAlignProperties(ckbmenuGroupFileOperations, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     ckbmenuGroupProfileOperations = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_MENUGROUPPROFILEOPERATIONS")) );
     ckbmenuGroupExtProg = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_MENUGROUPEXTPROGS")) );
-    Gtk::VBox* vbmnu = Gtk::manage ( new Gtk::VBox () );
+    
+    menuGrid->attach (*ckbmenuGroupRank, 0, 0, 1, 1);
+    menuGrid->attach (*ckbmenuGroupLabel, 1, 0, 1, 1);
+    menuGrid->attach (*ckbmenuGroupFileOperations, 0, 1, 1, 1);
+    menuGrid->attach (*ckbmenuGroupProfileOperations, 1, 1, 1, 1);
+    menuGrid->attach (*ckbmenuGroupExtProg, 0, 2, 2, 1);
 
-    vbmnu->pack_start (*ckbmenuGroupRank, Gtk::PACK_SHRINK, 0);
-    vbmnu->pack_start (*ckbmenuGroupLabel, Gtk::PACK_SHRINK, 0);
-    vbmnu->pack_start (*ckbmenuGroupFileOperations, Gtk::PACK_SHRINK, 0);
-    vbmnu->pack_start (*ckbmenuGroupProfileOperations, Gtk::PACK_SHRINK, 0);
-    vbmnu->pack_start (*ckbmenuGroupExtProg, Gtk::PACK_SHRINK, 0);
-
-    frmnu->add (*vbmnu);
+    frmnu->add (*menuGrid);
 
 
     Gtk::Frame* fre = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_PARSEDEXT")) );
@@ -1360,7 +1376,8 @@ Gtk::Widget* Preferences::getFileBrowserPanel ()
 
     // Separation is needed so that a button is not accidentally clicked when one wanted
     // to click a spinbox. Ideally, the separation wouldn't require attaching a widget, but how?
-    Gtk::Label *separator = Gtk::manage (new Gtk::Label());
+    Gtk::HSeparator *cacheSeparator = Gtk::manage (new  Gtk::HSeparator());
+    cacheSeparator->get_style_context()->add_class("grid-row-separator");
 
     Gtk::Label* clearThumbsLbl = Gtk::manage (new Gtk::Label(M("PREFERENCES_CACHECLEAR_ALLBUTPROFILES")));
     setExpandAlignProperties(clearThumbsLbl, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -1378,7 +1395,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel ()
     cacheGrid->attach (*maxThumbHeightSB, 1, 0, 1, 1);
     cacheGrid->attach (*maxCacheEntriesLbl, 0, 1, 1, 1);
     cacheGrid->attach (*maxCacheEntriesSB, 1, 1, 1, 1);
-    cacheGrid->attach (*separator, 0, 2, 2, 1);
+    cacheGrid->attach (*cacheSeparator, 0, 2, 2, 1);
     cacheGrid->attach (*clearThumbsLbl, 0, 3, 1, 1);
     cacheGrid->attach (*clearThumbsBtn, 1, 3, 1, 1);
     if (moptions.saveParamsCache) {
@@ -1391,7 +1408,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel ()
     vbc->pack_start (*cacheGrid, Gtk::PACK_SHRINK, 4);
 
     Gtk::Label* clearSafetyLbl = Gtk::manage (new Gtk::Label(M("PREFERENCES_CACHECLEAR_SAFETY")));
-    setExpandAlignProperties(clearSafetyLbl, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(clearSafetyLbl, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
     clearSafetyLbl->set_line_wrap(true);
     vbc->pack_start(*clearSafetyLbl, Gtk::PACK_SHRINK, 4);
 

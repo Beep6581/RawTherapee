@@ -183,6 +183,7 @@ float estimate_ambient_light(const array2D<float> &R, const array2D<float> &G, c
             }
         }
     }
+    n = std::max(n, 1);
     ambient[0] = rr / n;
     ambient[1] = gg / n;
     ambient[2] = bb / n;
@@ -197,22 +198,15 @@ void extract_channels(Imagefloat *img, array2D<float> &r, array2D<float> &g, arr
     const int W = img->getWidth();
     const int H = img->getHeight();
 
-#ifdef _OPENMP
-    #pragma omp parallel for if (multithread)
-#endif
-    for (int y = 0; y < H; ++y) {
-        for (int x = 0; x < W; ++x) {
-            r[y][x] = img->r(y, x);
-            g[y][x] = img->g(y, x);
-            b[y][x] = img->b(y, x);
-        }
-    }
+    array2D<float> imgR(W, H, img->r.ptrs, ARRAY2D_BYREFERENCE);
+    guidedFilter(imgR, imgR, r, radius, epsilon, multithread);
 
-    guidedFilter(r, r, r, radius, epsilon, multithread);
-    guidedFilter(g, g, g, radius, epsilon, multithread);
-    guidedFilter(b, b, b, radius, epsilon, multithread);
+    array2D<float> imgG(W, H, img->g.ptrs, ARRAY2D_BYREFERENCE);
+    guidedFilter(imgG, imgG, g, radius, epsilon, multithread);
+
+    array2D<float> imgB(W, H, img->b.ptrs, ARRAY2D_BYREFERENCE);
+    guidedFilter(imgB, imgB, b, radius, epsilon, multithread);
 }
-
 
 } // namespace
 

@@ -106,11 +106,7 @@ public:
         return sampleArrangement;
     }
 
-    virtual void    getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::ToneCurveParams hrp)
-    {
-        printf("getStdImage NULL!\n");
-    }
-
+    virtual void    getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp) = 0;
     virtual int     getBPS      () = 0;
     virtual void    getScanline (int row, unsigned char* buffer, int bps, bool isFloat = false) {}
     virtual void    setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples = 3) {}

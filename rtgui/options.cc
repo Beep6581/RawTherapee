@@ -551,16 +551,16 @@ void Options::setDefaults()
     rtSettings.monitorIntent = rtengine::RI_RELATIVE;
     rtSettings.monitorBPC = true;
     rtSettings.autoMonitorProfile = false;
-    rtSettings.adobe = "RTv4_Medium"; // put the name of yours profiles (here windows)
-    rtSettings.prophoto = "RTv4_Large"; // these names appear in the menu "output profile"
-    rtSettings.widegamut = "RTv4_Wide";
-    rtSettings.srgb = "RTv4_sRGB";
-    rtSettings.bruce = "RTv4_Bruce";
-    rtSettings.beta = "RTv4_Beta";
-    rtSettings.best = "RTv4_Best";
-    rtSettings.rec2020 = "RTv4_Rec2020";
-    rtSettings.ACESp0 = "RTv4_ACES-AP0";
-    rtSettings.ACESp1 = "RTv4_ACES-AP1";
+    rtSettings.adobe = "RTv2_Medium"; // put the name of yours profiles (here windows)
+    rtSettings.prophoto = "RTv2_Large"; // these names appear in the menu "output profile"
+    rtSettings.widegamut = "RTv2_Wide";
+    rtSettings.srgb = "RTv2_sRGB";
+    rtSettings.bruce = "RTv2_Bruce";
+    rtSettings.beta = "RTv2_Beta";
+    rtSettings.best = "RTv2_Best";
+    rtSettings.rec2020 = "RTv2_Rec2020";
+    rtSettings.ACESp0 = "RTv2_ACES-AP0";
+    rtSettings.ACESp1 = "RTv2_ACES-AP1";
     rtSettings.verbose = false;
     rtSettings.gamutICC = true;
     rtSettings.gamutLch = true;
@@ -1442,66 +1442,74 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("Color Management", "AdobeRGB")) {
                     rtSettings.adobe = keyFile.get_string("Color Management", "AdobeRGB");
-                    if (rtSettings.adobe == "RT_Medium_gsRGB") {
-                        rtSettings.adobe = "RTv4_Medium";
+                    if (rtSettings.adobe == "RT_Medium_gsRGB"  || rtSettings.adobe == "RTv4_Medium") {
+                        rtSettings.adobe = "RTv2_Medium";
                     }
                 }
 
                 if (keyFile.has_key("Color Management", "ProPhoto")) {
                     rtSettings.prophoto = keyFile.get_string("Color Management", "ProPhoto");
-                    if (rtSettings.prophoto == "RT_Large_gBT709") {
-                        rtSettings.prophoto = "RTv4_Large";
+                    if (rtSettings.prophoto == "RT_Large_gBT709"  || rtSettings.prophoto == "RTv4_Large") {
+                        rtSettings.prophoto = "RTv2_Large";
                     }
                 }
 
                 if (keyFile.has_key("Color Management", "WideGamut")) {
                     rtSettings.widegamut = keyFile.get_string("Color Management", "WideGamut");
-                    if (rtSettings.widegamut == "WideGamutRGB") {
-                        rtSettings.widegamut = "RTv4_Wide";
+                    if (rtSettings.widegamut == "WideGamutRGB"  || rtSettings.widegamut == "RTv4_Wide") {
+                        rtSettings.widegamut = "RTv2_Wide";
                     }
                 }
 
                 if (keyFile.has_key("Color Management", "sRGB")) {
                     rtSettings.srgb = keyFile.get_string("Color Management", "sRGB");
-                    if (rtSettings.srgb == "RT_sRGB") {
-                        rtSettings.srgb = "RTv4_sRGB";
+                    if (rtSettings.srgb == "RT_sRGB"  || rtSettings.srgb == "RTv4_sRGB") {
+                        rtSettings.srgb = "RTv2_sRGB";
                     }
                 }
 
                 if (keyFile.has_key("Color Management", "Beta")) {
                     rtSettings.beta = keyFile.get_string("Color Management", "Beta");
-                    if (rtSettings.beta == "BetaRGB") {
-                        rtSettings.beta = "RTv4_Beta";
+                    if (rtSettings.beta == "BetaRGB"  || rtSettings.beta == "RTv4_Beta") {
+                        rtSettings.beta = "RTv2_Beta";
                     }
                 }
 
                 if (keyFile.has_key("Color Management", "Best")) {
                     rtSettings.best = keyFile.get_string("Color Management", "Best");
-                    if (rtSettings.best == "BestRGB") {
-                        rtSettings.best = "RTv4_Best";
+                    if (rtSettings.best == "BestRGB" || rtSettings.best == "RTv4_Best") {
+                        rtSettings.best = "RTv2_Best";
                     }
                 }
 
                 if (keyFile.has_key("Color Management", "Rec2020")) {
                     rtSettings.rec2020 = keyFile.get_string("Color Management", "Rec2020");
-                    if (rtSettings.rec2020 == "Rec2020") {
-                        rtSettings.rec2020 = "RTv4_Rec2020";
+                    if (rtSettings.rec2020 == "Rec2020"  || rtSettings.rec2020 == "RTv4_Rec2020") {
+                        rtSettings.rec2020 = "RTv2_Rec2020";
                     }
                 }
 
                 if (keyFile.has_key("Color Management", "Bruce")) {
                     rtSettings.bruce = keyFile.get_string("Color Management", "Bruce");
-                    if (rtSettings.bruce == "Bruce") {
-                        rtSettings.bruce = "RTv4_Bruce";
+                    if (rtSettings.bruce == "Bruce"  || rtSettings.bruce == "RTv4_Bruce") {
+                        rtSettings.bruce = "RTv2_Bruce";
                     }
                 }
 
                 if (keyFile.has_key("Color Management", "ACES-AP0")) {
                     rtSettings.ACESp0 = keyFile.get_string("Color Management", "ACES-AP0");
+                    if (rtSettings.ACESp0 == "RTv4_ACES-AP0") {
+                        rtSettings.ACESp0 = "RTv2_ACES-AP0";
+                    }
+                    
                 }
 
                 if (keyFile.has_key("Color Management", "ACES-AP1")) {
                     rtSettings.ACESp1 = keyFile.get_string("Color Management", "ACES-AP1");
+                    if (rtSettings.ACESp1 == "RTv4_ACES-AP1") {
+                        rtSettings.ACESp1 = "RTv2_ACES-AP1";
+                    }
+                    
                 }
 
                 if (keyFile.has_key("Color Management", "GamutLch")) {

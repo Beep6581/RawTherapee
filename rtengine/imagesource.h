@@ -74,7 +74,7 @@ public:
     virtual void        retinexPrepareBuffers      (const ColorManagementParams& cmp, const RetinexParams &retinexParams, multi_array2D<float, 4> &conversionBuffer, LUTu &lhist16RETI) {};
     virtual void        flushRawData       () {};
     virtual void        flushRGB           () {};
-    virtual void        HLRecovery_Global  (ToneCurveParams hrp) {};
+    virtual void        HLRecovery_Global  (const ToneCurveParams &hrp) {};
     virtual void        HLRecovery_inpaint (float** red, float** green, float** blue) {};
     virtual void        MSR (LabImage* lab, LUTf & mapcurve, bool &mapcontlutili, int width, int height, int skip, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax) {};
 
@@ -110,7 +110,6 @@ public:
         return 0;
     }
 
-    virtual FrameData*     getImageData (unsigned int frameNum) = 0;
     virtual ImageMatrices* getImageMatrices () = 0;
     virtual bool           isRAW () const = 0;
     virtual DCPProfile*    getDCP (const ColorManagementParams &cmp, DCPProfile::ApplyState &as)

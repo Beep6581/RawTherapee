@@ -547,8 +547,8 @@ void Color::rgb2hsl(float r, float g, float b, float &h, float &s, float &l)
 #ifdef __SSE2__
 void Color::rgb2hsl(vfloat r, vfloat g, vfloat b, vfloat &h, vfloat &s, vfloat &l)
 {
-    vfloat maxv = _mm_max_ps(r, _mm_max_ps(g, b));
-    vfloat minv = _mm_min_ps(r, _mm_min_ps(g, b));
+    vfloat maxv = vmaxf(r, vmaxf(g, b));
+    vfloat minv = vminf(r, vminf(g, b));
     vfloat C = maxv - minv;
     vfloat tempv = maxv + minv;
     l = (tempv) * F2V(7.6295109e-6f);
@@ -2879,7 +2879,7 @@ void Color::LabGamutMunsell(float *labL, float *laba, float *labb, const int N, 
         av = LVFU(laba[k]);
         bv = LVFU(labb[k]);
         _mm_storeu_ps(&HHBuffer[k], xatan2f(bv, av));
-        _mm_storeu_ps(&CCBuffer[k], _mm_sqrt_ps(SQRV(av) + SQRV(bv)) / c327d68v);
+        _mm_storeu_ps(&CCBuffer[k], vsqrtf(SQRV(av) + SQRV(bv)) / c327d68v);
     }
 
     for(; k < N; k++) {

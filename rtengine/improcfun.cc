@@ -4407,7 +4407,7 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                     av = LVFU (lold->a[i][k]);
                     bv = LVFU (lold->b[i][k]);
                     STVF (HHBuffer[k], xatan2f (bv, av));
-                    STVF (CCBuffer[k], _mm_sqrt_ps (SQRV (av) + SQRV (bv)) / c327d68v);
+                    STVF (CCBuffer[k], vsqrtf (SQRV (av) + SQRV (bv)) / c327d68v);
                 }
 
                 for (; k < W; k++) {
@@ -5262,6 +5262,10 @@ void ImProcFunctions::EPDToneMap (LabImage *lab, unsigned int Iterates, int skip
 
     if (minL > 0.0f) {
         minL = 0.0f;    //Disable the shift if there are no negative numbers. I wish there were just no negative numbers to begin with.
+    }
+
+    if (maxL == 0.f) { // avoid division by zero
+        maxL = 1.f;
     }
 
     #pragma omp parallel for

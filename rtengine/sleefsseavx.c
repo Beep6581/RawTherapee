@@ -1368,8 +1368,9 @@ static INLINE vfloat xcbrtf(vfloat d) {
   return y;
 }
 
-static INLINE vfloat LIMV( vfloat a, vfloat b, vfloat c ) {
-return vmaxf( b, vminf(a,c));
+static INLINE vfloat vclampf(vfloat value, vfloat low, vfloat high) {
+    // clamps value in [low;high], returns low if value is NaN
+    return vmaxf(vminf(high, value), low);
 }
 
 static INLINE vfloat SQRV(vfloat a){

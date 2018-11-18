@@ -132,7 +132,7 @@ Image16* Image16::copy()
     return cp;
 }
 
-void Image16::getStdImage(ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::ToneCurveParams hrp)
+void Image16::getStdImage(ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp)
 {
 
     // compute channel multipliers

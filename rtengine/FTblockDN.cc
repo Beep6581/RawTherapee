@@ -807,8 +807,8 @@ BENCHFUN
 #endif
             const std::size_t blox_array_size = denoiseNestedLevels * numthreads;
 
-            float *LbloxArray[blox_array_size];
-            float *fLbloxArray[blox_array_size];
+            float *LbloxArray[blox_array_size] = {};
+            float *fLbloxArray[blox_array_size] = {};
 
             for (std::size_t i = 0; i < blox_array_size; ++i) {
                 LbloxArray[i] = nullptr;
@@ -3340,7 +3340,7 @@ void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat * provicalc,
                         aNv = LVFU(acalc[i >> 1][j >> 1]);
                         bNv = LVFU(bcalc[i >> 1][j >> 1]);
                         _mm_storeu_ps(&noisevarhue[i1 >> 1][j1 >> 1], xatan2f(bNv, aNv));
-                        _mm_storeu_ps(&noisevarchrom[i1 >> 1][j1 >> 1], _mm_max_ps(c100v, _mm_sqrt_ps(SQRV(aNv) + SQRV(bNv))));
+                        _mm_storeu_ps(&noisevarchrom[i1 >> 1][j1 >> 1], vmaxf(vsqrtf(SQRV(aNv) + SQRV(bNv)),c100v));
                     }
 
                     for (; j < tileright; j += 2) {

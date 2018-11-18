@@ -130,6 +130,7 @@ set(RTENGINESOURCEFILES
     guidedfilter.cc
     ipdehaze.cc
     iplabregions.cc
+    lj92.c
     )
 
 if(LENSFUN_HAS_LOAD_DIRECTORY)

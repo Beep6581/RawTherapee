@@ -421,7 +421,9 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 
     // did we succeed?
     if ( err ) {
-        printf ("Could not extract thumb from %s\n", fname.data());
+        if (options.rtSettings.verbose) {
+            std::cout << "Could not extract thumb from " << fname.c_str() << std::endl;
+        }
         delete tpp;
         delete img;
         delete ri;
@@ -2189,7 +2191,7 @@ bool Thumbnail::readEmbProfile  (const Glib::ustring& fname)
 
                 if (!fseek (f, 0, SEEK_SET)) {
                     embProfileData = new unsigned char[embProfileLength];
-                    fread (embProfileData, 1, embProfileLength, f);
+                    embProfileLength = fread (embProfileData, 1, embProfileLength, f);
                     embProfile = cmsOpenProfileFromMem (embProfileData, embProfileLength);
                 }
             }

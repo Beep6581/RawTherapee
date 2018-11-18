@@ -226,7 +226,7 @@ void rtengine::HaldCLUT::getRGB(
 #else
         const vfloat v_in = _mm_set_ps(0.0f, *b, *g, *r);
         const vfloat v_tmp = v_in * F2V(flevel_minus_one);
-        const vfloat v_rgb = v_tmp - _mm_cvtepi32_ps(_mm_cvttps_epi32(_mm_min_ps(F2V(flevel_minus_two), v_tmp)));
+        const vfloat v_rgb = v_tmp - _mm_cvtepi32_ps(_mm_cvttps_epi32(vminf(v_tmp, F2V(flevel_minus_two))));
 
         size_t index = color * 4;
 

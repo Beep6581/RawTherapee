@@ -66,7 +66,6 @@ private:
     sigc::connection delayconn;
     static const int inset = 2;
 
-    bool grid_visible;
     bool low_enabled;
 
     bool notifyListener();
