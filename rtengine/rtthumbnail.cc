@@ -2191,7 +2191,7 @@ bool Thumbnail::readEmbProfile  (const Glib::ustring& fname)
 
                 if (!fseek (f, 0, SEEK_SET)) {
                     embProfileData = new unsigned char[embProfileLength];
-                    fread (embProfileData, 1, embProfileLength, f);
+                    embProfileLength = fread (embProfileData, 1, embProfileLength, f);
                     embProfile = cmsOpenProfileFromMem (embProfileData, embProfileLength);
                 }
             }
