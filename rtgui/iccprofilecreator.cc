@@ -1310,6 +1310,8 @@ void ICCProfileCreator::savePressed()
         GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildGamma(NULL, 1.80078125);
     } else if (gammaPreset == "linear_g1.0") {
         GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildGamma(NULL, 1.0);
+    } else if(gammaPreset == "Custom" && slope == 0.0) {
+        GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildGamma(NULL, gamma);
     } else {
         GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, ga);
     }
