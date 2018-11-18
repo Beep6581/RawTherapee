@@ -124,7 +124,7 @@ void Image16::setScanline(int row, unsigned char* buffer, int bps, unsigned int 
      */
 }
 
-Image16* Image16::copy()
+Image16* Image16::copy() const
 {
 
     Image16* cp = new Image16(width, height);
@@ -295,8 +295,7 @@ void Image16::getStdImage(const ColorTemp &ctemp, int tran, Imagefloat* image, P
 #undef GCLIP
 }
 
-Image8*
-Image16::to8()
+Image8* Image16::to8() const
 {
     Image8* img8 = new Image8(width, height);
 
@@ -311,8 +310,7 @@ Image16::to8()
     return img8;
 }
 
-Imagefloat*
-Image16::tofloat()
+Imagefloat* Image16::tofloat() const
 {
     Imagefloat* imgfloat = new Imagefloat(width, height);
 

@@ -84,6 +84,7 @@ public:
     virtual int getBPS () const = 0;
     virtual void getScanline (int row, unsigned char* buffer, int bps, bool isFloat = false) const = 0;
     virtual void setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples = 3) = 0;
+    virtual const char* getType () const = 0;
 
     int load (const Glib::ustring &fname);
     int save (const Glib::ustring &fname) const;

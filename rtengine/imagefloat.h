@@ -44,10 +44,10 @@ public:
     Imagefloat (int width, int height);
     ~Imagefloat ();
 
-    Imagefloat*          copy ();
+    Imagefloat* copy () const;
 
-    Image8*              to8();
-    Image16*             to16();
+    Image8* to8() const;
+    Image16* to16() const;
 
     virtual void         getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, PreviewProps pp) const;
 
@@ -75,23 +75,23 @@ public:
     {
         return 8 * sizeof(float);
     }
-    virtual int          saveToFile (Glib::ustring fname)
+    virtual int saveToFile (const Glib::ustring &fname) const
     {
         return save (fname);
     }
-    virtual int          saveAsPNG  (Glib::ustring fname, int bps = -1)
+    virtual int saveAsPNG  (const Glib::ustring &fname, int bps = -1) const
     {
         return savePNG (fname, bps);
     }
-    virtual int          saveAsJPEG (Glib::ustring fname, int quality = 100, int subSamp = 3)
+    virtual int saveAsJPEG (const Glib::ustring &fname, int quality = 100, int subSamp = 3) const
     {
         return saveJPEG (fname, quality, subSamp);
     }
-    virtual int          saveAsTIFF (Glib::ustring fname, int bps = -1, bool isFloat = false, bool uncompressed = false)
+    virtual int saveAsTIFF (const Glib::ustring &fname, int bps = -1, bool isFloat = false, bool uncompressed = false) const
     {
         return saveTIFF (fname, bps, isFloat, uncompressed);
     }
-    virtual void         setSaveProgressListener (ProgressListener* pl)
+    virtual void setSaveProgressListener (ProgressListener* pl)
     {
         setProgressListener (pl);
     }

@@ -89,7 +89,7 @@ void Image8::setScanline (int row, unsigned char* buffer, int bps, unsigned int 
     }
 }
 
-Image8* Image8::copy ()
+Image8* Image8::copy () const
 {
 
     Image8* cp = new Image8 (width, height);
