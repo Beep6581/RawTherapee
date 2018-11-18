@@ -154,7 +154,7 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
 
     //--------------------------------- sliders gampos and slpos
 
-    aGamma = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_GAMMA"), 1, 3.5, 0.01, 2.4));
+    aGamma = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_GAMMA"), 1, 3.5, 0.00001, 2.4));
     setExpandAlignProperties(aGamma, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
 
     if (aGamma->delay < options.adjusterMaxDelay) {
@@ -867,9 +867,8 @@ void ICCProfileCreator::savePressed()
         ga[2] = 0.;
         ga[3] = 1. / eps;
         ga[4] = 0.;
-        presetGamma = 2.2;
+        presetGamma = 2.19921875;
         presetSlope = 0.0;
-
     } else if (gammaPreset == "standard_g1.8") {
         sGammaPreset = "g=1.8";
         ga[0] = 1.8;    //gamma=1.8(as gamma of Prophoto)
@@ -877,7 +876,7 @@ void ICCProfileCreator::savePressed()
         ga[2] = 0.;
         ga[3] = 1. / eps;
         ga[4] = 0.;
-        presetGamma = 1.8;
+        presetGamma = 1.80078125;
         presetSlope = 0.0;
 
     } else if (gammaPreset == "Lab_g3.0s9.03296") {
@@ -907,7 +906,7 @@ void ICCProfileCreator::savePressed()
         //printf("ga[0]=%f ga[1]=%f ga[2]=%f ga[3]=%f ga[4]=%f\n", ga[0],ga[1],ga[2],ga[3],ga[4]);
 
         sGammaPreset = Glib::ustring::compose("g%1_s%2",
-                                              Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2), gamma),
+                                              Glib::ustring::format(std::setw(6), std::fixed, std::setprecision(6), gamma),
                                               Glib::ustring::format(std::setw(6), std::fixed, std::setprecision(5), slope));
         presetGamma = gamma;
         presetSlope = slope;
@@ -930,12 +929,12 @@ void ICCProfileCreator::savePressed()
     Glib::ustring sSlope;
 
     if (gammaPreset == "Custom") {
-        sGamma = Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2), gamma);
+        sGamma = Glib::ustring::format(std::setw(6), std::fixed, std::setprecision(6), gamma);
         sSlope = Glib::ustring::format(std::setw(6), std::fixed, std::setprecision(5), slope);
         fName = Glib::ustring::compose("RT%1_%2_g%3_s%4.icc", profileVersion, sPrimariesAndIlluminant, sGamma, sSlope);
         profileDesc = sPrimariesPreset;
     } else {
-        sGamma = Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2), presetGamma);
+        sGamma = Glib::ustring::format(std::setw(6), std::fixed, std::setprecision(6), presetGamma);
         sSlope = Glib::ustring::format(std::setw(6), std::fixed, std::setprecision(5), presetSlope);
         fName = Glib::ustring::compose("RT%1_%2_%3.icc", profileVersion, sPrimariesAndIlluminant, sGammaPreset);
         profileDesc = sPrimariesPreset + sGammaPreset;

@@ -368,6 +368,7 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
 
         cmsToneCurve* GammaTRC[3];
         if(slopetag == 0.) {
+            //printf("gammatag=%f\n", gammatag);
             GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildGamma(NULL, gammatag);
         }
         else {
