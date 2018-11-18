@@ -110,7 +110,7 @@ void Imagefloat::setScanline (int row, unsigned char* buffer, int bps, unsigned 
 
 namespace rtengine { extern void filmlike_clip(float *r, float *g, float *b); }
 
-void Imagefloat::getScanline (int row, unsigned char* buffer, int bps, bool isFloat)
+void Imagefloat::getScanline (int row, unsigned char* buffer, int bps, bool isFloat) const
 {
 
     if (data == nullptr) {
@@ -168,7 +168,7 @@ Imagefloat* Imagefloat::copy ()
 }
 
 // This is called by the StdImageSource class. We assume that fp images from StdImageSource don't have to deal with gamma
-void Imagefloat::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp)
+void Imagefloat::getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, PreviewProps pp) const
 {
 
     // compute channel multipliers

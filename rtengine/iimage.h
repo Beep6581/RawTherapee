@@ -1751,10 +1751,10 @@ public:
     /** @brief Returns a mutex that can is useful in many situations. No image operations shuold be performed without locking this mutex.
       * @return The mutex */
     virtual MyMutex& getMutex () = 0;
-    virtual cmsHPROFILE getProfile () = 0;
+    virtual cmsHPROFILE getProfile () const = 0;
     /** @brief Returns the bits per pixel of the image.
       * @return The bits per pixel of the image */
-    virtual int getBitsPerPixel () = 0;
+    virtual int getBitsPerPixel () const = 0;
     /** @brief Saves the image to file. It autodetects the format (jpg, tif, png are supported).
       * @param fname is the name of the file
         @return the error code, 0 if none */
@@ -1775,7 +1775,7 @@ public:
       * @param bps can be 8 or 16 depending on the bits per pixels the output file will have
       * @param isFloat is true for saving float images. Will be ignored by file format not supporting float data
         @return the error code, 0 if none */
-    virtual int saveAsTIFF (Glib::ustring fname, int bps = -1, float isFloat = false, bool uncompressed = false) = 0;
+    virtual int saveAsTIFF (Glib::ustring fname, int bps = -1, bool isFloat = false, bool uncompressed = false) = 0;
     /** @brief Sets the progress listener if you want to follow the progress of the image saving operations (optional).
       * @param pl is the pointer to the class implementing the ProgressListener interface */
     virtual void setSaveProgressListener (ProgressListener* pl) = 0;

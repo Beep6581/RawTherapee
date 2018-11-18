@@ -49,29 +49,29 @@ public:
     Image8*              to8();
     Image16*             to16();
 
-    virtual void         getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp);
+    virtual void         getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, PreviewProps pp) const;
 
-    virtual const char*  getType     () const
+    virtual const char* getType () const
     {
         return sImagefloat;
     }
-    virtual int          getBPS      ()
+    virtual int getBPS () const
     {
         return 8 * sizeof(float);
     }
-    virtual void         getScanline (int row, unsigned char* buffer, int bps, bool isFloat = false);
-    virtual void         setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples);
+    virtual void getScanline (int row, unsigned char* buffer, int bps, bool isFloat = false) const;
+    virtual void setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples);
 
     // functions inherited from IImagefloat:
-    virtual MyMutex&     getMutex ()
+    virtual MyMutex& getMutex ()
     {
         return mutex ();
     }
-    virtual cmsHPROFILE  getProfile ()
+    virtual cmsHPROFILE getProfile () const
     {
         return getEmbeddedProfile ();
     }
-    virtual int          getBitsPerPixel ()
+    virtual int getBitsPerPixel () const
     {
         return 8 * sizeof(float);
     }
@@ -87,7 +87,7 @@ public:
     {
         return saveJPEG (fname, quality, subSamp);
     }
-    virtual int          saveAsTIFF (Glib::ustring fname, int bps = -1, float isFloat = false, bool uncompressed = false)
+    virtual int          saveAsTIFF (Glib::ustring fname, int bps = -1, bool isFloat = false, bool uncompressed = false)
     {
         return saveTIFF (fname, bps, isFloat, uncompressed);
     }
@@ -100,7 +100,7 @@ public:
         delete this;
     }
 
-    inline uint16_t      DNG_FloatToHalf(float f)
+    inline uint16_t DNG_FloatToHalf(float f) const
     {
         union {
             float f;

@@ -60,7 +60,7 @@ Image16::~Image16()
 {
 }
 
-void Image16::getScanline(int row, unsigned char* buffer, int bps, bool isFloat)
+void Image16::getScanline(int row, unsigned char* buffer, int bps, bool isFloat) const
 {
 
     if (data == nullptr) {
@@ -132,7 +132,7 @@ Image16* Image16::copy()
     return cp;
 }
 
-void Image16::getStdImage(ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp)
+void Image16::getStdImage(const ColorTemp &ctemp, int tran, Imagefloat* image, PreviewProps pp) const
 {
 
     // compute channel multipliers

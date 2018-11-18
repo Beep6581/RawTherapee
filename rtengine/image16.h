@@ -40,62 +40,70 @@ public:
     Image16(int width, int height);
     ~Image16();
 
-    Image16*             copy();
+    Image16* copy();
 
-    Image8*              to8();
-    Imagefloat*          tofloat();
+    Image8*  to8();
+    Imagefloat* tofloat();
 
-    virtual void         getStdImage(ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp);
+    virtual void getStdImage(const ColorTemp &ctemp, int tran, Imagefloat* image, PreviewProps pp) const;
 
-    virtual const char*  getType() const
+    virtual const char* getType() const
     {
         return sImage16;
     }
-    virtual int          getBPS()
+    virtual int getBPS() const
     {
         return 8 * sizeof(unsigned short);
     }
-    virtual void         getScanline(int row, unsigned char* buffer, int bps, bool isFloat = false);
-    virtual void         setScanline(int row, unsigned char* buffer, int bps, unsigned int numSamples);
+    virtual void getScanline(int row, unsigned char* buffer, int bps, bool isFloat = false) const;
+    virtual void setScanline(int row, unsigned char* buffer, int bps, unsigned int numSamples);
 
     // functions inherited from IImage16:
-    virtual MyMutex&     getMutex()
+    virtual MyMutex& getMutex()
     {
         return mutex();
     }
-    virtual cmsHPROFILE  getProfile()
+
+    virtual cmsHPROFILE getProfile() const
     {
         return getEmbeddedProfile();
     }
-    virtual int          getBitsPerPixel()
+
+    virtual int getBitsPerPixel() const
     {
         return 8 * sizeof(unsigned short);
     }
-    virtual int          saveToFile(Glib::ustring fname)
+
+    virtual int saveToFile(Glib::ustring fname)
     {
         return save(fname);
     }
-    virtual int          saveAsPNG(Glib::ustring fname, int bps = -1)
+
+    virtual int saveAsPNG(Glib::ustring fname, int bps = -1)
     {
         return savePNG(fname, bps);
     }
-    virtual int          saveAsJPEG(Glib::ustring fname, int quality = 100, int subSamp = 3)
+
+    virtual int saveAsJPEG(Glib::ustring fname, int quality = 100, int subSamp = 3)
     {
         return saveJPEG(fname, quality, subSamp);
     }
-    virtual int          saveAsTIFF(Glib::ustring fname, int bps = -1, float isFloat = false, bool uncompressed = false)
+
+    virtual int saveAsTIFF(Glib::ustring fname, int bps = -1, bool isFloat = false, bool uncompressed = false)
     {
         return saveTIFF(fname, bps, isFloat, uncompressed);
     }
-    virtual void         setSaveProgressListener(ProgressListener* pl)
+
+    virtual void setSaveProgressListener(ProgressListener* pl)
     {
         setProgressListener(pl);
     }
-    virtual void         free()
+
+    virtual void free()
     {
         delete this;
     }
-    void                 ExecCMSTransform(cmsHTRANSFORM hTransform);
+    void ExecCMSTransform(cmsHTRANSFORM hTransform);
 
     /* void                 ExecCMSTransform(cmsHTRANSFORM hTransform, const LabImage &labImage, int cx, int cy); */
 };
