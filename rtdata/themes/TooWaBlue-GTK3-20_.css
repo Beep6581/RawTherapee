@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2018 TooWaBoo
-  Version 2.94
+  Version 2.95
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -188,12 +188,14 @@ entry > window > frame {
     margin: -5px 0 0;
 }
 
+#RightNotebook > stack > scrolledwindow frame,
 #BatchQueueButtonsMainContainer frame,
 #MyExpander frame,
 dialog frame {
     margin: 0;
     padding: 0.19em 0.75em;
 }
+#RightNotebook > stack > scrolledwindow frame > border,
 #BatchQueueButtonsMainContainer > frame > border,
 #MyExpander frame > border,
 dialog frame > border {
@@ -211,6 +213,7 @@ frame > label {
 frame > checkbutton label{
     color: @headline-frame;
 }
+#RightNotebook > stack > scrolledwindow frame > label:not(.dummy),
 #BatchQueueButtonsMainContainer frame > label:not(.dummy),
 #ToolPanelNotebook frame > label:not(.dummy),
 dialog frame > label:not(.dummy) {
@@ -549,7 +552,12 @@ menu separator {
 }
 
 #PlacesPaned .view.separator {
-    color: @border-color;
+    color: @view-grid-border;
+}
+
+#MetaPanelNotebook separator {
+    background-color: @border-color;
+    margin: 0.19em 0;
 }
 /*** end****************************************************************************************/
 
@@ -687,7 +695,7 @@ scrollbar:not(.overlay-indicator):hover {
 /*** Scale**************************************************************************************/
 scale {
     padding: 0;
-    min-height: 0;
+   min-height: 1.833333333333333333em;
     margin: 0 -0.333333333333333333em;
 }
 
@@ -736,6 +744,7 @@ scale.fine-tune trough highlight {
     padding: 0.5em 0.5em 0 0;
     border-radius: 0.5em;
 }
+
 scale:disabled slider,
 scale:disabled trough highlight {
     background-color: shade(@bg-grey,.83);
@@ -810,6 +819,7 @@ progressbar.vertical trough.empty {
 progressbar trough.empty progress {
     border-color: transparent;
     background-image: none;
+    box-shadow: none;
 }
 
 /*** end ***************************************************************************************/
@@ -910,15 +920,26 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     min-height: 5em;
 }
 
+#ToolPanelNotebook {
+    background-color: @bg-dark-grey;
+}
+#ToolPanelNotebook > header {
+    border-bottom: 0.083333333333333333em solid @view-grid-border;
+    margin-left: 0.083333333333333333em;
+    margin-right: 0.083333333333333333em;
+}
 #ToolPanelNotebook > header tabs {
     margin-bottom: 0.333333333333333333em;
 }
 #ToolPanelNotebook > header tab > box > image{
     min-height: 2em;
     min-width: 2em;
-    padding-top: 0.25em;
-    padding-bottom: 0.333333333333333333em;
-    margin: 0;
+    margin: 0.25em 0 0.333333333333333333em;
+    padding: 0;
+}
+#ToolPanelNotebook > stack {
+    background-color: @bg-dark-grey;
+    padding: 0.5em 0;
 }
 
 #RightNotebook > header {
@@ -976,6 +997,10 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 #MetaPanelNotebook > header tab label{
     margin: 0.083333333333333333em 0.083333333333333333em 0.19em;
 }
+#MetaPanelNotebook > stack {
+    background-color: @bg-dark-grey;
+    padding: 0 0 0.5em 0;
+}
 
 #MetaPanelNotebook > stack > box {
     border: none;
@@ -983,7 +1008,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     border-radius: 0;
     border-top-style: none;
     padding: 0 0.333333333333333333em 0.25em;
-    margin: 0 0.5em -0.5em;
+    margin:0 0.5em -0.5em;
 }
 #MetaPanelNotebook > stack > box:nth-child(1) > scrolledwindow {
     margin: 0 0 0.333333333333333333em;
@@ -994,10 +1019,6 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     padding: 0 0 0 1.083333333333333333em;
 }
 
-#MetaPanelNotebook separator {
-    background-color: @border-color;
-    margin: 0.19em 0;
-}
 #MetaPanelNotebook entry {
     padding: 0 0.333333333333333333em;
     background-color: @bg-dark-grey;
@@ -1096,11 +1117,6 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 /*** end ***************************************************************************************/
 
 /*** Toolbox ***********************************************************************************/
-#ToolPanelNotebook stack {
-    background-color: @bg-dark-grey;
-    padding: 0 0 0.5em 0;
-}
-
 #MyExpander image {
     min-width: 1.333333333333333333em;
     min-height: 0;
@@ -1131,8 +1147,9 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     margin: 0.083333333333333333em 0 0.166666666666666666em 0;
 }
 
-#ToolPanelNotebook scrolledwindow viewport.frame {
+#ToolPanelNotebook > stack > scrolledwindow > viewport.frame {
     padding: 0 0.5em;
+    margin-top: -0.5em;
 }
 
 #MyExpander {
@@ -1350,6 +1367,7 @@ button:hover,
     background-color: @bg-button-hover;
 }
 .curve-mainbox .curve-buttonbox  button.flat:hover,
+#ToolPanelNotebook > stack > box > box button:hover,
 #MainNotebook > header tab #CloseButton:hover,
 #MainNotebook > header > grid > button:hover {
     background-color: alpha(@bg-grey, 0.6);
@@ -1371,6 +1389,7 @@ button:checked,
 }
 .curve-mainbox .curve-buttonbox  button.flat:active,
 .curve-mainbox .curve-buttonbox  button.flat:checked,
+#ToolPanelNotebook > stack > box > box button:active,
 #MainNotebook > header tab #CloseButton:active,
 #MainNotebook > header > grid > button:active {
     background-color: alpha(@bg-light-grey, 0.8);
@@ -1453,9 +1472,9 @@ button image:not(.dummy),
 scale + button.flat,
 spinbutton + button.flat,
 scale + image + image + button.flat {
-    min-height: 0;
-    margin-top: 0.083333333333333333em;
-    margin-bottom: 0.083333333333333333em;
+    min-height: 1.333333333333333333em;
+    margin-top:0.095em;
+    margin-bottom: 0.095em;
 }
 
 /*Color chooser & buttons */
@@ -1621,8 +1640,8 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
     padding-left: 0.083333333333333333em;
 }
 #FileBrowserIconToolbar box > entry + button.flat {
-    margin-top: 0.333333333333333333em;
-    margin-bottom: 0.333333333333333333em;
+    margin-top: 0.416666666666666666em;
+    margin-bottom: 0.416666666666666666em;
     min-height: 0;
 }
 
@@ -1693,7 +1712,7 @@ window treeview > header image {
 }
 window .view button {
     border: none;
-    border-bottom: 0.083333333333333333em solid @border-color;
+    border-bottom: 0.083333333333333333em solid @view-grid-border;
 }
 dialog .view button {
     border: 0.083333333333333333em solid @border-color;
@@ -1858,8 +1877,8 @@ spinbutton {
 }
 
 #FileBrowserIconToolbar box > entry {
-    margin-top: 0.333333333333333333em;
-    margin-bottom: 0.333333333333333333em;
+    margin-top: 0.416666666666666666em;
+    margin-bottom: 0.416666666666666666em;
     margin-left: 0.19em;
     min-height: 0;
 }
@@ -1997,7 +2016,7 @@ entry:focus > selection  {
     border-top: 0.083333333333333333em solid @border-color;
 }
 .curve-mainbox .curve-buttonbox {
-    padding: 0.166666666666666666em;
+    padding: 0.25em;
     background-color: @bg-dark-grey;
 }
 .curve-mainbox.left .curve-buttonbox {
@@ -2013,7 +2032,7 @@ entry:focus > selection  {
     border-top: 0.083333333333333333em solid @border-color;
 }
 .curve-mainbox .curve-buttonbox button.flat {
-    margin: 0.19em;
+    margin: 0.095em;
 }
 /*** end ***************************************************************************************/
 
