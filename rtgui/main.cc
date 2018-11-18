@@ -267,6 +267,7 @@ RTWindow *create_rt_window()
         Glib::RefPtr<Glib::Regex> regex = Glib::Regex::create (THEMEREGEXSTR, Glib::RegexCompileFlags::REGEX_CASELESS);
         Glib::ustring filename;
         Glib::MatchInfo mInfo;
+        bool isTWBTheme = false;
         bool match = regex->match(options.theme + ".css", mInfo);
         if (match) {
             // save old theme (name + version)
@@ -275,6 +276,9 @@ RTWindow *create_rt_window()
             // update version
             auto pos = options.theme.find("-GTK3-");
             Glib::ustring themeRootName(options.theme.substr(0, pos));
+            if (themeRootName.substr(0, 5) == "TooWa") {
+                isTWBTheme = true;
+            }
             if (GTK_MINOR_VERSION < 20) {
                 options.theme = themeRootName + "-GTK3-_19";
             } else {
@@ -312,22 +316,34 @@ RTWindow *create_rt_window()
             printf ("Error: Can't load css file \"%s\"\n", filename.c_str());
         }
 
-        // Set the font face and size
+        Glib::ustring customStyle;
         if (options.fontFamily != "default") {
+            //GTK318
+            #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+            customStyle = Glib::ustring::compose ("* { font-family: %1; font-size: %2px }\n", options.fontFamily, options.fontSize);
+            #else
+            customStyle = Glib::ustring::compose ("* { font-family: %1; font-size: %2pt }\n", options.fontFamily, options.fontSize);
+            #endif
+            //GTK318
+        }
+
+        if (isTWBTheme && (options.fontSize != 9 || (int)screen->get_resolution() != 96)) {
+            customStyle += Glib::ustring::compose (
+                               ".view:not(check):not(radio), image:not(check):not(radio), spinbutton button,"
+                               " cellview {-gtk-icon-transform: scale(calc(( %1/96 ) * ( %2/9 )));}\n",
+                               (int)screen->get_resolution(), options.fontSize);
+        }
+
+        // Set the font face and size
+        if (!customStyle.empty()) {
             try {
                 cssForced = Gtk::CssProvider::create();
-                //GTK318
-#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
-                cssForced->load_from_data (Glib::ustring::compose ("* { font-family: %1; font-size: %2px }", options.fontFamily, options.fontSize));
-#else
-                cssForced->load_from_data (Glib::ustring::compose ("* { font-family: %1; font-size: %2pt }", options.fontFamily, options.fontSize));
-#endif
-                //GTK318
+                cssForced->load_from_data (customStyle);
                 Gtk::StyleContext::add_provider_for_screen (screen, cssForced, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
             } catch (Glib::Error &err) {
                 printf ("Error: \"%s\"\n", err.what().c_str());
             } catch (...) {
-                printf ("Error: Can't find the font named \"%s\"\n", options.fontFamily.c_str());
+                printf ("Error: Can't tweak the CSS style with:\n\"%s\"\n", customStyle.c_str());
             }
         }
     }
