@@ -80,7 +80,7 @@ public:
         return save(fname);
     }
 
-    saveAsPNG(const Glib::ustring &fname, int bps = -1) const override
+    int saveAsPNG(const Glib::ustring &fname, int bps = -1) const override
     {
         return savePNG(fname, bps);
     }
