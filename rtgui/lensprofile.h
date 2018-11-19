@@ -29,10 +29,6 @@ class LensProfilePanel : public ToolParamBlock, public FoldableToolPanel
 
 protected:
 
-    MyFileChooserButton *fcbLCPFile;
-    Gtk::CheckButton *ckbUseDist, *ckbUseVign, *ckbUseCA;
-    Gtk::HBox *hbLCPFile;
-    Gtk::Label *lLCPFileHead;
     bool lcModeChanged, lcpFileChanged, useDistChanged, useVignChanged, useCAChanged;
     sigc::connection conLCPFile, conUseDist, conUseVign, conUseCA;
     void updateDisabled(bool enable);
@@ -40,14 +36,20 @@ protected:
     bool isRaw;
     const rtengine::FramesMetaData* metadata;
 
+    Gtk::CheckButton *ckbUseDist, *ckbUseVign, *ckbUseCA;
     Gtk::RadioButton::Group corrGroup;
-    Gtk::RadioButton *corrOff;
-    Gtk::RadioButton *corrLensfunAuto;
-    Gtk::RadioButton *corrLensfunManual;
-    Gtk::RadioButton *corrLcpFile;
-    Gtk::RadioButton *corrUnchanged;
+    Gtk::RadioButton *corrOffRB;
+    Gtk::RadioButton *corrLensfunAutoRB;
+    Gtk::RadioButton *corrLensfunManualRB;
+    Gtk::RadioButton *corrLcpFileRB;
+    Gtk::RadioButton *corrUnchangedRB;
+    Gtk::Grid *modesGrid;
+    Gtk::Grid *distGrid;
+    Gtk::Label *lensfunCamerasLbl;
+    Gtk::Label *lensfunLensesLbl;
     MyComboBox *lensfunCameras;
     MyComboBox *lensfunLenses;
+    MyFileChooserButton *corrLcpFileChooser;
     Gtk::Image *warning;
 
     class LFDbHelper
@@ -97,6 +99,7 @@ protected:
     bool setLensfunCamera(const Glib::ustring &make, const Glib::ustring &model);
     bool setLensfunLens(const Glib::ustring &lens);
     bool checkLensfunCanCorrect(bool automatch);
+    void setManualParamsVisibility(bool setVisible);
     void updateLensfunWarning();
 
 public:

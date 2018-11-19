@@ -538,9 +538,6 @@ IPTCPANEL_RESET;Сбросить
 IPTCPANEL_RESETHINT;Сбросить профиль на значения по умолчанию
 IPTCPANEL_SOURCE;Источник
 IPTCPANEL_TITLE;Название
-LENSPROFILE_CORRECTION_AUTOMATCH;Автоподбор параметров коррекции
-LENSPROFILE_CORRECTION_LCPFILE;Файл LCP
-LENSPROFILE_CORRECTION_MANUAL;Ручные параметры коррекции
 LENSPROFILE_LENS_WARNING;Внимание: кроп-фактор используемый для анализа объектива больше чем кроп-фактор камеры, результаты могут быть не верны.
 MAIN_BUTTON_FULLSCREEN;Полный экран
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Перейти к следующему изображению относительно открытого в редакторе\nГорячая клавиша: <b>Shift+F4</b>\n\nПерейти к следущему изображению относительно выбранного в файловом браузере\nгорячая клавиша <b>F4</b>
@@ -1222,9 +1219,6 @@ TP_LENSGEOM_AUTOCROP;Автокадрирование
 TP_LENSGEOM_FILL;Автозаполнение
 TP_LENSGEOM_LABEL;Геометрия
 TP_LENSPROFILE_LABEL;Профиль коррекции объектива
-TP_LENSPROFILE_USECA;Корректировать ХА
-TP_LENSPROFILE_USEDIST;Корректировать дисторсию
-TP_LENSPROFILE_USEVIGN;Корректировать виньетирование
 TP_LOCALCONTRAST_AMOUNT;Величина
 TP_LOCALCONTRAST_DARKNESS;Тёмные тона
 TP_LOCALCONTRAST_LABEL;Локальный контраст
