@@ -1303,10 +1303,10 @@ void CLASS nikon_load_raw()
     if (ver0 == 0x46) tree = 2;
     if (tiff_bps == 14) tree += 3;
     read_shorts (vpred[0], 4);
-    max = 1 << tiff_bps & 0x7fff;
+    max = 1 << (tiff_bps - (ver0 == 0x44 && ver1 == 0x40 ? 2 : 0)) & 0x7fff;
     if ((csize = get2()) > 1)
         step = max / (csize-1);
-    if (ver0 == 0x44 && ver1 == 0x20 && step > 0) {
+    if (ver0 == 0x44 && (ver1 == 0x20 || ver1 == 0x40) && step > 0) {
         for (int i=0; i < csize; i++)
             curve[i*step] = get2();
         for (int i=0; i < max; i++)
@@ -2562,6 +2562,7 @@ void CLASS packed_load_raw()
 
   bwide = raw_width * tiff_bps / 8;
   bwide += bwide & load_flags >> 9;
+  bwide += row_padding;
   rbits = bwide * 8 - raw_width * tiff_bps;
   if (load_flags & 1) bwide = bwide * 16 / 15;
   bite = 8 + (load_flags & 56);
@@ -6759,8 +6760,13 @@ void CLASS apply_tiff()
 	    load_raw = &CLASS packed_load_raw;
 	} else if ((raw_width * 2 * tiff_bps / 16 + 8) * raw_height == tiff_ifd[raw].bytes) {
 	    // 14 bit uncompressed from Nikon Z7, still wrong
-	    // each line has 8 padding byte. To inform 'packed_load_raw' about his padding, we have to set load_flags = padding << 9
-	    load_flags = 8 << 9;
+	    // each line has 8 padding byte.
+	    row_padding = 8;
+	    load_raw = &CLASS packed_load_raw;
+	} else if ((raw_width * 2 * tiff_bps / 16 + 12) * raw_height == tiff_ifd[raw].bytes) {
+	    // 14 bit uncompressed from Nikon Z6, still wrong
+	    // each line has 12 padding byte.
+	    row_padding = 12;
 	    load_raw = &CLASS packed_load_raw;
 	} else
 	  load_raw = &CLASS nikon_load_raw;			break;
