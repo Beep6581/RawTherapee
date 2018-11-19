@@ -681,7 +681,7 @@ void LensProfilePanel::onCorrModeChanged(const Gtk::RadioButton *rbChanged)
         lcModeChanged = true;
         updateLensfunWarning();
 
-        if (rbChanged == corrLensfunManualRB) {
+        if (rbChanged == corrLensfunManualRB || rbChanged == corrLensfunAutoRB) {
             setManualParamsVisibility(true);
         } else {
             setManualParamsVisibility(false);
