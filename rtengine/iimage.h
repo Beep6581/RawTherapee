@@ -82,21 +82,17 @@ public:
     // Read the raw dump of the data
     void readData  (FILE *fh) {}
     // Write a raw dump of the data
-    void writeData (FILE *fh) {}
+    void writeData (FILE *fh) const {}
 
     virtual void normalizeInt (int srcMinVal, int srcMaxVal) {};
     virtual void normalizeFloat (float srcMinVal, float srcMaxVal) {};
-    virtual void computeHistogramAutoWB (double &avg_r, double &avg_g, double &avg_b, int &n, LUTu &histogram, int compression) {}
+    virtual void computeHistogramAutoWB (double &avg_r, double &avg_g, double &avg_b, int &n, LUTu &histogram, int compression) const {}
     virtual void getSpotWBData (double &reds, double &greens, double &blues, int &rn, int &gn, int &bn,
                                 std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue,
-                                int tran) {}
-    virtual void getAutoWBMultipliers (double &rm, double &gm, double &bm)
+                                int tran) const {}
+    virtual void getAutoWBMultipliers (double &rm, double &gm, double &bm) const
     {
         rm = gm = bm = 1.0;
-    }
-    virtual const char* getType () const
-    {
-        return "unknown";
     }
 
 };
@@ -232,7 +228,7 @@ public:
     }
 
     // Send back the row stride. WARNING: unit = byte, not element!
-    int getRowStride ()
+    int getRowStride () const
     {
         return rowstride;
     }
@@ -316,7 +312,7 @@ public:
     }
 
     /** Copy the data to another PlanarWhateverData */
-    void copyData(PlanarWhateverData<T> *dest)
+    void copyData(PlanarWhateverData<T> *dest) const
     {
         assert (dest != NULL);
         // Make sure that the size is the same, reallocate if necessary
@@ -389,7 +385,7 @@ public:
     }
 
     template <class IC>
-    void resizeImgTo (int nw, int nh, TypeInterpolation interp, PlanarWhateverData<IC> *imgPtr)
+    void resizeImgTo (int nw, int nh, TypeInterpolation interp, PlanarWhateverData<IC> *imgPtr) const
     {
         //printf("resizeImgTo: resizing %s image data (%d x %d) to %s (%d x %d)\n", getType(), width, height, imgPtr->getType(), imgPtr->width, imgPtr->height);
         if (width == nw && height == nh) {
@@ -499,17 +495,7 @@ public:
 #endif
     }
 
-    void calcHist(unsigned int *hist16)
-    {
-        for (int row = 0; row < height; row++)
-            for (int col = 0; col < width; col++) {
-                unsigned short idx;
-                convertTo(v(row, col), idx);
-                hist16[idx]++;
-            }
-    }
-
-    void transformPixel (int x, int y, int tran, int& tx, int& ty)
+    void transformPixel (int x, int y, int tran, int& tx, int& ty) const
     {
 
         if (!tran) {
@@ -552,7 +538,7 @@ public:
         }
     }
 
-    void getPipetteData (T &value, int posX, int posY, int squareSize, int tran)
+    void getPipetteData (T &value, int posX, int posY, int squareSize, int tran) const
     {
         int x;
         int y;
@@ -573,14 +559,14 @@ public:
         value = n ? T(accumulator / float(n)) : T(0);
     }
 
-    void readData   (FILE *f)
+    void readData (FILE *f)
     {
         for (int i = 0; i < height; i++) {
             fread (v(i), sizeof(T), width, f);
         }
     }
 
-    void writeData  (FILE *f)
+    void writeData (FILE *f) const
     {
         for (int i = 0; i < height; i++) {
             fwrite (v(i), sizeof(T), width, f);
@@ -622,12 +608,12 @@ public:
     }
 
     // Send back the row stride. WARNING: unit = byte, not element!
-    int getRowStride ()
+    int getRowStride () const
     {
         return rowstride;
     }
     // Send back the plane stride. WARNING: unit = byte, not element!
-    int getPlaneStride ()
+    int getPlaneStride () const
     {
         return planestride;
     }
@@ -732,7 +718,7 @@ public:
     }
 
     /** Copy the data to another PlanarRGBData */
-    void copyData(PlanarRGBData<T> *dest)
+    void copyData(PlanarRGBData<T> *dest) const
     {
         assert (dest != nullptr);
         // Make sure that the size is the same, reallocate if necessary
@@ -820,7 +806,7 @@ public:
     }
 
     template <class IC>
-    void resizeImgTo (int nw, int nh, TypeInterpolation interp, IC *imgPtr)
+    void resizeImgTo (int nw, int nh, TypeInterpolation interp, IC *imgPtr) const
     {
         //printf("resizeImgTo: resizing %s image data (%d x %d) to %s (%d x %d)\n", getType(), width, height, imgPtr->getType(), imgPtr->width, imgPtr->height);
         if (width == nw && height == nh) {
@@ -869,9 +855,9 @@ public:
             // This case should never occur!
             for (int i = 0; i < nh; i++) {
                 for (int j = 0; j < nw; j++) {
-                    r(i, j) = 0;
-                    g(i, j) = 0;
-                    b(i, j) = 0;
+                    imgPtr->r(i, j) = 0;
+                    imgPtr->g(i, j) = 0;
+                    imgPtr->b(i, j) = 0;
                 }
             }
         }
@@ -942,7 +928,7 @@ public:
 #endif
     }
 
-    void calcGrayscaleHist(unsigned int *hist16)
+    void calcGrayscaleHist(unsigned int *hist16) const
     {
         for (int row = 0; row < height; row++)
             for (int col = 0; col < width; col++) {
@@ -956,7 +942,7 @@ public:
             }
     }
 
-    void computeAutoHistogram (LUTu & histogram, int& histcompr)
+    void computeAutoHistogram (LUTu & histogram, int& histcompr) const
     {
         histcompr = 3;
 
@@ -975,7 +961,7 @@ public:
             }
     }
 
-    void computeHistogramAutoWB (double &avg_r, double &avg_g, double &avg_b, int &n, LUTu &histogram, const int compression)
+    void computeHistogramAutoWB (double &avg_r, double &avg_g, double &avg_b, int &n, LUTu &histogram, const int compression) const
     {
         histogram.clear();
         avg_r = avg_g = avg_b = 0.;
@@ -1007,7 +993,7 @@ public:
             }
     }
 
-    void getAutoWBMultipliers (double &rm, double &gm, double &bm)
+    void getAutoWBMultipliers (double &rm, double &gm, double &bm) const
     {
 
         double avg_r = 0.;
@@ -1038,7 +1024,7 @@ public:
         bm = avg_b / double(n);
     }
 
-    void transformPixel (int x, int y, int tran, int& tx, int& ty)
+    void transformPixel (int x, int y, int tran, int& tx, int& ty) const
     {
 
         if (!tran) {
@@ -1083,7 +1069,7 @@ public:
 
     virtual void getSpotWBData (double &reds, double &greens, double &blues, int &rn, int &gn, int &bn,
                                 std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue,
-                                int tran)
+                                int tran) const
     {
         int x;
         int y;
@@ -1120,7 +1106,7 @@ public:
         }
     }
 
-    void getPipetteData (T &valueR, T &valueG, T &valueB, int posX, int posY, int squareSize, int tran)
+    void getPipetteData (T &valueR, T &valueG, T &valueB, int posX, int posY, int squareSize, int tran) const
     {
         int x;
         int y;
@@ -1147,7 +1133,7 @@ public:
         valueB = n ? T(accumulatorB / float(n)) : T(0);
     }
 
-    void readData   (FILE *f)
+    void readData (FILE *f)
     {
         for (int i = 0; i < height; i++) {
             fread (r(i), sizeof(T), width, f);
@@ -1162,7 +1148,7 @@ public:
         }
     }
 
-    void writeData  (FILE *f)
+    void writeData (FILE *f) const
     {
         for (int i = 0; i < height; i++) {
             fwrite (r(i), sizeof(T), width, f);
@@ -1345,7 +1331,7 @@ public:
     }
 
     /** Copy the data to another ChunkyRGBData */
-    void copyData(ChunkyRGBData<T> *dest)
+    void copyData(ChunkyRGBData<T> *dest) const
     {
         assert (dest != nullptr);
         // Make sure that the size is the same, reallocate if necessary
@@ -1421,7 +1407,7 @@ public:
     }
 
     template <class IC>
-    void resizeImgTo (int nw, int nh, TypeInterpolation interp, IC *imgPtr)
+    void resizeImgTo (int nw, int nh, TypeInterpolation interp, IC *imgPtr) const
     {
         //printf("resizeImgTo: resizing %s image data (%d x %d) to %s (%d x %d)\n", getType(), width, height, imgPtr->getType(), imgPtr->width, imgPtr->height);
         if (width == nw && height == nh) {
@@ -1485,9 +1471,9 @@ public:
             // This case should never occur!
             for (int i = 0; i < nh; i++) {
                 for (int j = 0; j < nw; j++) {
-                    r(i, j) = 0;
-                    g(i, j) = 0;
-                    b(i, j) = 0;
+                    imgPtr->r(i, j) = 0;
+                    imgPtr->g(i, j) = 0;
+                    imgPtr->b(i, j) = 0;
                 }
             }
         }
@@ -1545,7 +1531,7 @@ public:
         }
     }
 
-    void calcGrayscaleHist(unsigned int *hist16)
+    void calcGrayscaleHist(unsigned int *hist16) const
     {
         for (int row = 0; row < height; row++)
             for (int col = 0; col < width; col++) {
@@ -1559,7 +1545,7 @@ public:
             }
     }
 
-    void computeAutoHistogram (LUTu & histogram, int& histcompr)
+    void computeAutoHistogram (LUTu & histogram, int& histcompr) const
     {
         histcompr = 3;
 
@@ -1578,7 +1564,7 @@ public:
             }
     }
 
-    void computeHistogramAutoWB (double &avg_r, double &avg_g, double &avg_b, int &n, LUTu &histogram, const int compression)
+    void computeHistogramAutoWB (double &avg_r, double &avg_g, double &avg_b, int &n, LUTu &histogram, const int compression) const
     {
         histogram.clear();
         avg_r = avg_g = avg_b = 0.;
@@ -1610,7 +1596,7 @@ public:
             }
     }
 
-    void getAutoWBMultipliers (double &rm, double &gm, double &bm)
+    void getAutoWBMultipliers (double &rm, double &gm, double &bm) const
     {
 
         double avg_r = 0.;
@@ -1641,7 +1627,7 @@ public:
         bm = avg_b / double(n);
     }
 
-    void transformPixel (int x, int y, int tran, int& tx, int& ty)
+    void transformPixel (int x, int y, int tran, int& tx, int& ty) const
     {
 
         if (!tran) {
@@ -1686,7 +1672,7 @@ public:
 
     virtual void getSpotWBData (double &reds, double &greens, double &blues, int &rn, int &gn, int &bn,
                                 std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue,
-                                int tran)
+                                int tran) const
     {
         int x;
         int y;
@@ -1723,14 +1709,14 @@ public:
         }
     }
 
-    void readData   (FILE *f)
+    void readData (FILE *f)
     {
         for (int i = 0; i < height; i++) {
             fread (r(i), sizeof(T), 3 * width, f);
         }
     }
 
-    void writeData  (FILE *f)
+    void writeData (FILE *f) const
     {
         for (int i = 0; i < height; i++) {
             fwrite (r(i), sizeof(T), 3 * width, f);
@@ -1751,31 +1737,31 @@ public:
     /** @brief Returns a mutex that can is useful in many situations. No image operations shuold be performed without locking this mutex.
       * @return The mutex */
     virtual MyMutex& getMutex () = 0;
-    virtual cmsHPROFILE getProfile () = 0;
+    virtual cmsHPROFILE getProfile () const = 0;
     /** @brief Returns the bits per pixel of the image.
       * @return The bits per pixel of the image */
-    virtual int getBitsPerPixel () = 0;
+    virtual int getBitsPerPixel () const = 0;
     /** @brief Saves the image to file. It autodetects the format (jpg, tif, png are supported).
       * @param fname is the name of the file
         @return the error code, 0 if none */
-    virtual int saveToFile (Glib::ustring fname) = 0;
+    virtual int saveToFile (const Glib::ustring &fname) const = 0;
     /** @brief Saves the image to file in a png format.
       * @param fname is the name of the file
       * @param compression is the amount of compression (0-6), -1 corresponds to the default
       * @param bps can be 8 or 16 depending on the bits per pixels the output file will have
         @return the error code, 0 if none */
-    virtual int saveAsPNG  (Glib::ustring fname, int bps = -1) = 0;
+    virtual int saveAsPNG (const Glib::ustring &fname, int bps = -1) const = 0;
     /** @brief Saves the image to file in a jpg format.
       * @param fname is the name of the file
       * @param quality is the quality of the jpeg (0...100), set it to -1 to use default
         @return the error code, 0 if none */
-    virtual int saveAsJPEG (Glib::ustring fname, int quality = 100, int subSamp = 3 ) = 0;
+    virtual int saveAsJPEG (const Glib::ustring &fname, int quality = 100, int subSamp = 3 ) const = 0;
     /** @brief Saves the image to file in a tif format.
       * @param fname is the name of the file
       * @param bps can be 8 or 16 depending on the bits per pixels the output file will have
       * @param isFloat is true for saving float images. Will be ignored by file format not supporting float data
         @return the error code, 0 if none */
-    virtual int saveAsTIFF (Glib::ustring fname, int bps = -1, float isFloat = false, bool uncompressed = false) = 0;
+    virtual int saveAsTIFF (const Glib::ustring &fname, int bps = -1, bool isFloat = false, bool uncompressed = false) const = 0;
     /** @brief Sets the progress listener if you want to follow the progress of the image saving operations (optional).
       * @param pl is the pointer to the class implementing the ProgressListener interface */
     virtual void setSaveProgressListener (ProgressListener* pl) = 0;
