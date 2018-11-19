@@ -6523,7 +6523,12 @@ guess_cfa_pc:
 	FORC3 xyz[c] /= d65_white[c];
 	break;
       case 50730:                       /* BaselineExposure */
-        if (dng_version) RT_baseline_exposure = getreal(type);
+        if (dng_version) {
+            double be = getreal(type);
+            if (!std::isnan(be)) {
+                RT_baseline_exposure = be;
+            }
+        }
         break;
       case 50740:			/* DNGPrivateData */
 	if (dng_version) break;
