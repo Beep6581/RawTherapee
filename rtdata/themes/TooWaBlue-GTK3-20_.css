@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2018 TooWaBoo
-  Version 2.95
+  Version 2.96
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -96,7 +96,7 @@
 }
 
 #ToolPanelNotebook {
-    min-width: 24em;
+    min-width: 25em;
 }
 #HistoryPanel {
     min-width: 17.5em;
@@ -1120,7 +1120,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 #MyExpander image {
     min-width: 1.333333333333333333em;
     min-height: 0;
-    margin: -3px 0.19em;
+    margin: -1px 0.19em;
 }
 
 /*Curve spinbutton background */
@@ -1448,8 +1448,9 @@ button image:not(.dummy),
 #MyFileChooserButton label {
     margin: 0 0 0 0.416666666666666666em;
 }
-#MyFileChooserButton image {
-    padding: 0 0.416666666666666666em 0 0;
+#MyFileChooserButton image:not(.dummy):last-child {
+    margin: 0 0.416666666666666666em 0 0;
+    min-width: 1.333333333333333333em;
     opacity: 0.85;
 }
 #MetaPanelNotebook button + button:last-child {
