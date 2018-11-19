@@ -50,25 +50,36 @@ protected:
     MyComboBox *lensfunLenses;
     Gtk::Image *warning;
 
-    class LFDbHelper {
+    class LFDbHelper
+    {
     public:
-        class LFModelCam: public Gtk::TreeModel::ColumnRecord {
+        class LFModelCam: public Gtk::TreeModel::ColumnRecord
+        {
         public:
-            LFModelCam() { add(make); add(model); }
+            LFModelCam()
+            {
+                add(make);
+                add(model);
+            }
             Gtk::TreeModelColumn<Glib::ustring> make;
             Gtk::TreeModelColumn<Glib::ustring> model;
         };
 
-        class LFModelLens: public Gtk::TreeModel::ColumnRecord {
+        class LFModelLens: public Gtk::TreeModel::ColumnRecord
+        {
         public:
-            LFModelLens() { add(lens); add(prettylens); }
+            LFModelLens()
+            {
+                add(lens);
+                add(prettylens);
+            }
             Gtk::TreeModelColumn<Glib::ustring> lens;
             Gtk::TreeModelColumn<Glib::ustring> prettylens;
         };
 
         LFModelCam lensfunModelCam;
         LFModelLens lensfunModelLens;
-    
+
         Glib::RefPtr<Gtk::TreeStore> lensfunCameraModel;
         Glib::RefPtr<Gtk::TreeStore> lensfunLensModel;
 
@@ -87,16 +98,16 @@ protected:
     bool setLensfunLens(const Glib::ustring &lens);
     bool checkLensfunCanCorrect(bool automatch);
     void updateLensfunWarning();
-    
+
 public:
 
-    LensProfilePanel ();
+    LensProfilePanel();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setRawMeta     (bool raw, const rtengine::FramesMetaData* pMeta);
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
+    void setRawMeta(bool raw, const rtengine::FramesMetaData* pMeta);
 
-    void onLCPFileChanged ();
+    void onLCPFileChanged();
     void onUseDistChanged();
     void onUseVignChanged();
     void onUseCAChanged();
