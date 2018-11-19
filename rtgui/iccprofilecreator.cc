@@ -154,7 +154,7 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
 
     //--------------------------------- sliders gampos and slpos
 
-    aGamma = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_GAMMA"), 1, 3.5, 0.01, 2.4));
+    aGamma = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_GAMMA"), 1, 3.5, 0.00001, 2.4));
     setExpandAlignProperties(aGamma, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
 
     if (aGamma->delay < options.adjusterMaxDelay) {
@@ -362,12 +362,14 @@ void ICCProfileCreator::closePressed()
 
 void ICCProfileCreator::updateICCVersion()
 {
-    if (cIlluminant->get_active_text() != M("ICCPROFCREATOR_ILL_DEF") || primaries->get_active_text() == M("ICCPROFCREATOR_CUSTOM")) {
-        iccVersion->set_active_text(M("ICCPROFCREATOR_PROF_V4"));
-        iccVersion->set_sensitive(false);
-    } else {
-        iccVersion->set_sensitive(true);
-    }
+//   if (cIlluminant->get_active_text() != M("ICCPROFCREATOR_ILL_DEF") || primaries->get_active_text() == M("ICCPROFCREATOR_CUSTOM")) {
+    //     iccVersion->set_active_text(M("ICCPROFCREATOR_PROF_V4"));
+    //     iccVersion->set_sensitive(false);
+//   } else {
+    //      iccVersion->set_sensitive(true);
+//   }
+
+    iccVersion->set_sensitive(true);
 }
 
 void ICCProfileCreator::adjusterChanged(Adjuster* a, double newval)
@@ -395,7 +397,7 @@ void ICCProfileCreator::adjusterAutoToggled(Adjuster* a, bool newval)
 void ICCProfileCreator::primariesChanged()
 {
     if (primaries->get_active_row_number() > 0) {
-        float p[6];
+        double p[6];
         ColorTemp temp;
         Glib::ustring activeValue = primaries->get_active_text();
         Glib::ustring primPresetName = getPrimariesPresetName(activeValue);
@@ -501,7 +503,7 @@ Glib::ustring ICCProfileCreator::getPrimariesPresetName(const Glib::ustring &pre
     }
 }
 
-void ICCProfileCreator::getPrimaries(const Glib::ustring &preset, float *p, ColorTemp &temp)
+void ICCProfileCreator::getPrimaries(const Glib::ustring &preset, double *p, ColorTemp &temp)
 {
     temp = ColorTemp::D50;
 
@@ -671,7 +673,8 @@ void ICCProfileCreator::savePressed()
     bool isD60 = (primariesPreset == "ACES-AP1" || primariesPreset == "ACES-AP0");
     bool isD50 = (primariesPreset == "ProPhoto" || primariesPreset == "Widegamut" || primariesPreset == "BestRGB" || primariesPreset == "BetaRGB");
     // v2except = (profileVersion == "v2"  && (primariesPreset == "sRGB" || primariesPreset == "Adobe" || primariesPreset == "Rec2020"  || primariesPreset == "BruceRGB" || primariesPreset == "ACES-AP1" || primariesPreset == "ACES-AP0") && illuminant == "DEF");
-    v2except = (profileVersion == "v2"  && (isD65 || isD60  || isD50) && illuminant == "DEF");
+    //  v2except = (profileVersion == "v2"  && (isD65 || isD60  || isD50) && illuminant == "DEF");
+    v2except = (profileVersion == "v2");//  && (isD65 || isD60  || isD50));
 
     //necessary for V2 profile
 
@@ -771,6 +774,8 @@ void ICCProfileCreator::savePressed()
             sPrimariesPreset = "Best";
         } else if (primariesPreset == "BetaRGB") {
             sPrimariesPreset = "Beta";
+        } else if (primariesPreset == "custom") {
+            sPrimariesPreset = "Custom";
         }
     }
 
@@ -812,6 +817,9 @@ void ICCProfileCreator::savePressed()
         ga[2] = 0.001721;
         ga[3] = 0.298507;
         ga[4] = 0.005746;
+        presetGamma = 1.3;
+        presetSlope = 3.35;
+
     } else if (gammaPreset == "Low_g2.6_s6.9") {
         sGammaPreset = "Low_g=2.6_s=6.9";
         ga[0] = 2.6 ;    //gamma 2.6 variable : for low contrast images
@@ -819,6 +827,9 @@ void ICCProfileCreator::savePressed()
         ga[2] = 0.108839;
         ga[3] = 0.144928;
         ga[4] = 0.076332;
+        presetGamma = 2.6;
+        presetSlope = 6.9;
+
     } else if (gammaPreset == "sRGB_g2.4_s12.92") {
         sGammaPreset = "sRGB_g=2.4_s=12.92310";
         ga[0] = 2.40;    //sRGB 2.4 12.92  - RT default as Lightroom
@@ -826,6 +837,9 @@ void ICCProfileCreator::savePressed()
         ga[2] = 0.052142;
         ga[3] = 0.077399;
         ga[4] = 0.039293;
+        presetGamma = 2.4;
+        presetSlope = 12.92310;
+
     } else if (gammaPreset == "BT709_g2.2_s4.5") {
         sGammaPreset = "BT709_g=2.2_s=4.5";
         ga[0] = 2.22;    //BT709  2.2  4.5  - my preferred as D.Coffin
@@ -833,6 +847,9 @@ void ICCProfileCreator::savePressed()
         ga[2] = 0.090005;
         ga[3] = 0.222222;
         ga[4] = 0.081071;
+        presetGamma = 2.2;
+        presetSlope = 4.5;
+
     } else if (gammaPreset == "linear_g1.0") {
         sGammaPreset = "Linear_g=1.0";
         ga[0] = 1.0;    //gamma=1 linear : for high dynamic images (cf D.Coffin...)
@@ -840,6 +857,9 @@ void ICCProfileCreator::savePressed()
         ga[2] = 0.;
         ga[3] = 1. / eps;
         ga[4] = 0.;
+        presetGamma = 1.0;
+        presetSlope = 0.0;
+
     } else if (gammaPreset == "standard_g2.2") {
         sGammaPreset = "g=2.2";
         ga[0] = 2.2;    //gamma=2.2(as gamma of Adobe, Widegamut...)
@@ -847,6 +867,8 @@ void ICCProfileCreator::savePressed()
         ga[2] = 0.;
         ga[3] = 1. / eps;
         ga[4] = 0.;
+        presetGamma = 2.19921875;
+        presetSlope = 0.0;
     } else if (gammaPreset == "standard_g1.8") {
         sGammaPreset = "g=1.8";
         ga[0] = 1.8;    //gamma=1.8(as gamma of Prophoto)
@@ -854,6 +876,9 @@ void ICCProfileCreator::savePressed()
         ga[2] = 0.;
         ga[3] = 1. / eps;
         ga[4] = 0.;
+        presetGamma = 1.80078125;
+        presetSlope = 0.0;
+
     } else if (gammaPreset == "Lab_g3.0s9.03296") {
         sGammaPreset = "LAB_g3.0_s9.03296";
         ga[0] = 3.0;    //Lab gamma =3 slope=9.03296
@@ -861,6 +886,9 @@ void ICCProfileCreator::savePressed()
         ga[2] = 0.1379;
         ga[3] = 0.1107;
         ga[4] = 0.08;
+        presetGamma = 3.0;
+        presetSlope = 9.03926;
+
     } else if (gammaPreset == "Custom") {
         rtengine::GammaValues g_a; //gamma parameters
         double pwr = 1.0 / gamma;
@@ -878,7 +906,7 @@ void ICCProfileCreator::savePressed()
         //printf("ga[0]=%f ga[1]=%f ga[2]=%f ga[3]=%f ga[4]=%f\n", ga[0],ga[1],ga[2],ga[3],ga[4]);
 
         sGammaPreset = Glib::ustring::compose("g%1_s%2",
-                                              Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2), gamma),
+                                              Glib::ustring::format(std::setw(6), std::fixed, std::setprecision(6), gamma),
                                               Glib::ustring::format(std::setw(6), std::fixed, std::setprecision(5), slope));
         presetGamma = gamma;
         presetSlope = slope;
@@ -901,12 +929,12 @@ void ICCProfileCreator::savePressed()
     Glib::ustring sSlope;
 
     if (gammaPreset == "Custom") {
-        sGamma = Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2), gamma);
+        sGamma = Glib::ustring::format(std::setw(6), std::fixed, std::setprecision(6), gamma);
         sSlope = Glib::ustring::format(std::setw(6), std::fixed, std::setprecision(5), slope);
         fName = Glib::ustring::compose("RT%1_%2_g%3_s%4.icc", profileVersion, sPrimariesAndIlluminant, sGamma, sSlope);
         profileDesc = sPrimariesPreset;
     } else {
-        sGamma = Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2), presetGamma);
+        sGamma = Glib::ustring::format(std::setw(6), std::fixed, std::setprecision(6), presetGamma);
         sSlope = Glib::ustring::format(std::setw(6), std::fixed, std::setprecision(5), presetSlope);
         fName = Glib::ustring::compose("RT%1_%2_%3.icc", profileVersion, sPrimariesAndIlluminant, sGammaPreset);
         profileDesc = sPrimariesPreset + sGammaPreset;
@@ -972,7 +1000,7 @@ void ICCProfileCreator::savePressed()
     */
 
 //change
-    float p[6]; //primaries
+    double p[6]; //primaries
     ga[6] = 0.0;
 
     ColorTemp temp;
@@ -984,7 +1012,6 @@ void ICCProfileCreator::savePressed()
         {p[2], p[3], 1.0}, // green
         {p[4], p[5], 1.0}  // blue
     };
-
 
     if (v2except) {
         cmsSetDeviceClass(profile_v2_except, cmsSigDisplayClass);
@@ -1030,28 +1057,64 @@ void ICCProfileCreator::savePressed()
             xyD = {0.447573, 0.407440, 1.0};
         }
 
-
     } else {
         if (v2except) {
 
             cmsCIEXYZ XYZ;
+            double Wx = 1.0;
+            double Wy = 1.0;
+            double Wz = 1.0;
 
-            {
-                XYZ =  {0.95045471, 1.0, 1.08905029};//white D65
-            }
+            if (illuminant == "DEF") {
+                {
+                    Wx = 0.95045471;
+                    Wz = 1.08905029;
+                    XYZ =  {Wx, 1.0, Wz};//white D65
+                }
 
-            if (primariesPreset == "ACES-AP1" || primariesPreset == "ACES-AP0") {
-                XYZ = {0.952646075, 1.0, 1.008825184};//white D60
-            }
+                if (primariesPreset == "ACES-AP1" || primariesPreset == "ACES-AP0") {
+                    Wx = 0.952646075;
+                    Wz = 1.008825184;
+                    XYZ = {Wx, 1.0, Wz};//white D60
+                }
 
-            if (isD50) {
-                XYZ = {0.964295676, 1.0, 0.825104603};//white D50 room (prophoto) near LCMS values but not perfect...it's a compromise!!
+                if (isD50) {
+                    Wx = 0.964295676;
+                    Wz = 0.825104603;
+                    XYZ = {Wx, 1.0, Wz};//white D50 room (prophoto) near LCMS values but not perfect...it's a compromise!!
+                }
+            } else {
+                if (illuminant == "D65") {
+                    Wx = 0.95045471;
+                    Wz = 1.08905029;
+                } else if (illuminant == "D50") {
+                    Wx = 0.964295676;
+                    Wz = 0.825104603;
+                } else if (illuminant == "D55") {
+                    Wx = 0.956565934;
+                    Wz = 0.920253249;
+                } else if (illuminant == "D60") {
+                    Wx = 0.952646075;
+                    Wz = 1.008825184;
+                } else if (illuminant == "D41") {
+                    Wx = 0.991488263;
+                    Wz = 0.631604625;
+                } else if (illuminant == "D80") {
+                    Wx = 0.950095542;
+                    Wz = 1.284213976;
+                } else if (illuminant == "stdA") {
+                    Wx = 1.098500393;
+                    Wz = 0.355848714;
+                }
+
+                XYZ = {Wx, 1.0, Wz};
+
             }
 
             cmsCIExyY blackpoint;
 
             {
-                blackpoint  =  {0., 0., 0.};//White D65 point from the sRGB.icm and AdobeRGB1998 profile specs
+                blackpoint  =  {0., 0., 0.};
             }
 
             cmsWriteTag(profile_v2_except, cmsSigMediaBlackPointTag, &blackpoint);
@@ -1060,120 +1123,162 @@ void ICCProfileCreator::savePressed()
             cmsCIEXYZ bt;
             cmsCIEXYZ gt;
 
-            if (primariesPreset == "sRGB") {
-                    //calculated with personnal special spreadsheat
-                {
-                    //Matrix value from spec Adobe but adapted with wp
-                    rt =  {0.4360411843, 0.2224843154, 0.0139201582};
-                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
-                    bt =  {0.1430457992, 0.0606099658, 0.7139121724};
-                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
-                    gt =  {0.3851136574, 0.7169049862, 0.0970677661};
-                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
+            //calculate XYZ matrix for each primaries and each temp (D50, D65...)
 
-                }
+            // reduce coordonate of primaries
+            //printf("p0=%f p1=%f p2=%f p3=%f p4=%f p5=%f \n", p[0], p[1], p[2], p[3],p[4], p[5]);
+            double Xr = p[0] / p[1];
+            double Yr = 1.0;
+            double Zr = (1.0 - p[0] - p[1]) / p[1];
+            double Xg = p[2] / p[3];
+            double Yg = 1.0;
+            double Zg = (1.0 - p[2] - p[3]) / p[3];
+            double Xb = p[4] / p[5];
+            double Yb = 1.0;
+            double Zb = (1.0 - p[4] - p[5]) / p[5];
 
+            using Triple = std::array<double, 3>;
+
+            using Matrix = std::array<Triple, 3>;
+
+            Matrix input_prim;
+            Matrix inv_input_prim = {};
+
+            input_prim[0][0] = Xr;
+            input_prim[0][1] = Yr;
+            input_prim[0][2] = Zr;
+            input_prim[1][0] = Xg;
+            input_prim[1][1] = Yg;
+            input_prim[1][2] = Zg;
+            input_prim[2][0] = Xb;
+            input_prim[2][1] = Yb;
+            input_prim[2][2] = Zb;
+
+            //printf("in=%f in01=%f in22=%f\n", input_prim[0][0], input_prim[0][1], input_prim[2][2]);
+            if (!rtengine::invertMatrix(input_prim, inv_input_prim)) {
+                std::cout << "Matrix is not invertible, skipping" << std::endl;
             }
 
-            if (primariesPreset == "Adobe") {
-                {
-                    //Adobe spec adapted with wp calculated with personnal special spreadsheat
-                    rt =  {0.6097408852, 0.3111123176, 0.0194653393};
-                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
-                    bt =  {0.1491866649, 0.0632119133, 0.7445599707};
-                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
-                    gt =  {0.2052730908, 0.6256750365, 0.0608747867};
-                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
+            //printf("inv=%f inv01=%f inv22=%f\n", inv_input_prim[0][0], inv_input_prim[0][1], inv_input_prim[2][2]);
+
+            //white point D50 used by LCMS
+            double Wdx = 0.96420;
+            double Wdy = 1.0;
+            double Wdz = 0.82490;
+
+            double Sr = Wx * inv_input_prim [0][0] + Wy * inv_input_prim [1][0] + Wz * inv_input_prim [2][0];
+            double Sg = Wx * inv_input_prim [0][1] + Wy * inv_input_prim [1][1] + Wz * inv_input_prim [2][1];
+            double Sb = Wx * inv_input_prim [0][2] + Wy * inv_input_prim [1][2] + Wz * inv_input_prim [2][2];
+            //printf("sr=%f sg=%f sb=%f\n", Sr, Sg, Sb);
+
+            //XYZ matrix for primaries and temp
+            Matrix mat_xyz = {};
+            mat_xyz[0][0] = Sr * Xr;
+            mat_xyz[0][1] = Sr * Yr;
+            mat_xyz[0][2] = Sr * Zr;
+            mat_xyz[1][0] = Sg * Xg;
+            mat_xyz[1][1] = Sg * Yg;
+            mat_xyz[1][2] = Sg * Zg;
+            mat_xyz[2][0] = Sb * Xb;
+            mat_xyz[2][1] = Sb * Yb;
+            mat_xyz[2][2] = Sb * Zb;
+            //printf("mat0=%f mat22=%f\n", mat_xyz[0][0], mat_xyz[2][2]);
+
+            //chromatic adaptation Bradford
+            Matrix MaBradford = {};
+            MaBradford[0][0] = 0.8951;
+            MaBradford[0][1] = -0.7502;
+            MaBradford[0][2] = 0.0389;
+            MaBradford[1][0] = 0.2664;
+            MaBradford[1][1] = 1.7135;
+            MaBradford[1][2] = -0.0685;
+            MaBradford[2][0] = -0.1614;
+            MaBradford[2][1] = 0.0367;
+            MaBradford[2][2] = 1.0296;
+
+            Matrix Ma_oneBradford = {};
+            Ma_oneBradford[0][0] = 0.9869929;
+            Ma_oneBradford[0][1] = 0.4323053;
+            Ma_oneBradford[0][2] = -0.0085287;
+            Ma_oneBradford[1][0] = -0.1470543;
+            Ma_oneBradford[1][1] = 0.5183603;
+            Ma_oneBradford[1][2] = 0.0400428;
+            Ma_oneBradford[2][0] = 0.1599627;
+            Ma_oneBradford[2][1] = 0.0492912;
+            Ma_oneBradford[2][2] = 0.9684867;
+
+            //R G B source
+            double Rs = Wx * MaBradford[0][0] + Wy * MaBradford[1][0] + Wz * MaBradford[2][0];
+            double Gs = Wx * MaBradford[0][1] + Wy * MaBradford[1][1] + Wz * MaBradford[2][1];
+            double Bs = Wx * MaBradford[0][2] + Wy * MaBradford[1][2] + Wz * MaBradford[2][2];
+
+            // R G B destination
+            double Rd = Wdx * MaBradford[0][0] + Wdy * MaBradford[1][0] + Wdz * MaBradford[2][0];
+            double Gd = Wdx * MaBradford[0][1] + Wdy * MaBradford[1][1] + Wdz * MaBradford[2][1];
+            double Bd = Wdx * MaBradford[0][2] + Wdy * MaBradford[1][2] + Wdz * MaBradford[2][2];
+
+            //cone destination
+            Matrix cone_dest_sourc = {};
+            cone_dest_sourc [0][0] = Rd / Rs;
+            cone_dest_sourc [0][1] = 0.;
+            cone_dest_sourc [0][2] = 0.;
+            cone_dest_sourc [1][0] = 0.;
+            cone_dest_sourc [1][1] = Gd / Gs;
+            cone_dest_sourc [1][2] = 0.;
+            cone_dest_sourc [2][0] = 0.;
+            cone_dest_sourc [2][1] = 0.;
+            cone_dest_sourc [2][2] = Bd / Bs;
+
+            Matrix cone_ma_one = {};
+
+            for (int i = 0; i < 3; ++i) {
+                for (int j = 0; j < 3; ++j) {
+                    cone_ma_one[i][j] = 0;
+
+                    for (int k = 0; k < 3; ++k) {
+                        cone_ma_one[i][j] += cone_dest_sourc [i][k] * Ma_oneBradford[k][j];
+                    }
                 }
             }
 
-            if (primariesPreset == "Rec2020") {
-                {//calculated with personnal special spreadsheat
-                    rt =  {0.6734800343, 0.2790423273, -0.0019336766};
-                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
-                    bt =  {0.1250489478, 0.0456126910, 0.7968509159};
-                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
-                    gt =  {0.1656716588, 0.6753442491, 0.0299828575};
-                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
+            //generate adaptation bradford matrix
+            Matrix adapt_chroma = {};
+
+            for (int i = 0; i < 3; ++i) {
+                for (int j = 0; j < 3; ++j) {
+                    adapt_chroma [i][j] = 0;
+
+                    for (int k = 0; k < 3; ++k) {
+                        adapt_chroma[i][j] +=  MaBradford[i][k] * cone_ma_one[k][j];
+                    }
                 }
             }
 
-            if (primariesPreset == "BruceRGB") {
-                {//calculated with personnal special spreadsheat
-                    rt =  {0.4941542253, 0.2521357351, 0.0157753562};
-                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
-                    bt =  {0.1495175342, 0.0633521060, 0.7462112712};
-                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
-                    gt =  {0.3205288814, 0.6845114263, 0.0629134693};
-                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
+            //real matrix XYZ for primaries, temp, Bradford
+            Matrix mat_xyz_brad = {};
+
+            for (int i = 0; i < 3; ++i) {
+                for (int j = 0; j < 3; ++j) {
+                    mat_xyz_brad[i][j] = 0;
+
+                    for (int k = 0; k < 3; ++k) {
+                        mat_xyz_brad[i][j] +=  mat_xyz[i][k] * adapt_chroma[k][j];
+                    }
                 }
             }
 
-            if (primariesPreset == "ACES-AP0") {
-                {//calculated with personnal special spreadsheat
-                    rt =  {0.9908835135, 0.3618940325, -0.0027137400};
-                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
-                    bt =  {-0.0389246557, -0.084405166, 0.8193659780};
-                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
-                    gt =  {0.0122417831, 0.7225104015, 0.0082478587};
-                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
-                }
-            }
 
-            if (primariesPreset == "ACES-AP1") {//done
-                {//calculated with personnal special spreadsheat
-                    rt =  {0.6898756188, 0.2845109670, -0.0060455375};
-                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
-                    bt =  {0.1245615936, 0.0437959432, 0.8209388333};
-                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
-                    gt =  {0.1497634285, 0.6716923572, 0.0100068009};
-                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
-                }
-            }
+//           printf("adc=%1.10f ad2=%1.10f ad22=%1.10f\n", mat_xyz_brad[0][0], mat_xyz_brad[1][0], mat_xyz_brad[2][2]);
+            //end generate XYZ matrix
 
-            if (primariesPreset == "ProPhoto")  {
-                {//calculated with personnal special spreadsheat
-                    rt =  {0.7977198204, 0.2880493171, -0.0000030551};
-                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
-                    bt =  {0.0313194091, 0.0000771282, 0.8248890748};
-                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
-                    gt =  {0.1351614114, 0.7118728221, 0.0000140770};
-                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
-                }
-            }
+            //write tags
+            rt =  {mat_xyz_brad[0][0], mat_xyz_brad[0][1], mat_xyz_brad[0][2]};
+            cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
+            gt =  {mat_xyz_brad[1][0], mat_xyz_brad[1][1], mat_xyz_brad[1][2]};
+            cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
+            bt =  {mat_xyz_brad[2][0], mat_xyz_brad[2][1], mat_xyz_brad[2][2]};
+            cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
 
-            if (primariesPreset == "Widegamut")  {
-                {//calculated with personnal special spreadsheat
-                    rt =  {0.7161680478, 0.2582038074, -0.0000027515};
-                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
-                    bt =  {0.1471328469, 0.0168600579, 0.7731227232};
-                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
-                    gt =  {0.1008997462, 0.7249354021, 0.0517801251};
-                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
-                }
-            }
-
-            if (primariesPreset == "BestRGB")  {
-                {//calculated with personnal special spreadsheat
-                    rt =  {0.6327383009, 0.2284760022, -0.0000024233};
-                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
-                    bt =  {0.1269437333, 0.0341753604, 0.8153773703};
-                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
-                    gt =  {0.2045186067, 0.7373479048, 0.0095251497};
-                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
-                }
-            }
-
-            if (primariesPreset == "BetaRGB")  {
-                {//calculated with personnal special spreadsheat
-                    rt =  {0.6713200674, 0.3033034560, -0.0000012307};
-                    cmsWriteTag(profile_v2_except, cmsSigRedColorantTag, &rt);
-                    bt =  {0.1183343909, 0.0329265310, 0.7842009909};
-                    cmsWriteTag(profile_v2_except, cmsSigBlueColorantTag, &bt);
-                    gt =  {0.1745461827, 0.6637692805, 0.0407003365};
-                    cmsWriteTag(profile_v2_except, cmsSigGreenColorantTag, &gt);
-                }
-            }
 
         } else {
             cmsWhitePointFromTemp(&xyD, (double)temp);
@@ -1193,7 +1298,6 @@ void ICCProfileCreator::savePressed()
         xyD = {0.3457, 0.3585, 1.0};
     }
 
-//    {0.3457, 0.3585, 1.0};
     // Calculate output profile's rTRC gTRC bTRC
 
 
@@ -1205,6 +1309,8 @@ void ICCProfileCreator::savePressed()
         GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildGamma(NULL, 1.80078125);
     } else if (gammaPreset == "linear_g1.0") {
         GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildGamma(NULL, 1.0);
+    } else if(gammaPreset == "Custom" && slope == 0.0) {
+        GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildGamma(NULL, gamma);
     } else {
         GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, ga);
     }
@@ -1265,7 +1371,7 @@ void ICCProfileCreator::savePressed()
                         printf("Error: Can't write cmsSigProfileDescriptionTag!\n");
                     }
                 } else {
-                    if (!cmsWriteTag(profile_v2_except, cmsSigProfileDescriptionTag, dmdd)) {
+                    if (!cmsWriteTag(profile_v2_except, cmsSigDeviceModelDescTag, dmdd)) {
                         printf("Error: Can't write cmsSigProfileDescriptionTag!\n");
                     }
 
