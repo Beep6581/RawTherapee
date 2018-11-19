@@ -931,7 +931,12 @@ std::shared_ptr<rtengine::LCPProfile> rtengine::LCPStore::getProfile(const Glib:
 
     std::shared_ptr<LCPProfile> res;
     if (!cache.get(filename, res)) {
-        res.reset(new LCPProfile(filename));
+        try {
+            res.reset(new LCPProfile(filename));
+        } catch (...) {
+            return nullptr;
+        }
+
         cache.set(filename, res);
     }
 

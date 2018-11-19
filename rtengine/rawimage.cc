@@ -479,13 +479,13 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
         iwidth  = width;
 
         if (filters || colors == 1) {
-            raw_image = (ushort *) calloc ((raw_height + 7) * raw_width, 2);
+            raw_image = (ushort *) calloc ((static_cast<unsigned int>(raw_height) + 7u) * static_cast<unsigned int>(raw_width), 2);
             merror (raw_image, "main()");
         }
 
         // dcraw needs this global variable to hold pixel data
-        image = (dcrawImage_t)calloc (height * width * sizeof * image + meta_length, 1);
-        meta_data = (char *) (image + height * width);
+        image = (dcrawImage_t)calloc (static_cast<unsigned int>(height) * static_cast<unsigned int>(width) * sizeof * image + meta_length, 1);
+        meta_data = (char *) (image + static_cast<unsigned int>(height) * static_cast<unsigned int>(width));
 
         if(!image) {
             return 200;
@@ -673,7 +673,7 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
     return 0;
 }
 
-float** RawImage::compress_image(int frameNum, bool freeImage)
+float** RawImage::compress_image(unsigned int frameNum, bool freeImage)
 {
     if( !image ) {
         return nullptr;
@@ -682,7 +682,7 @@ float** RawImage::compress_image(int frameNum, bool freeImage)
     if (isBayer() || isXtrans()) {
         if (!allocation) {
             // shift the beginning of all frames but the first by 32 floats to avoid cache miss conflicts on CPUs which have <= 4-way associative L1-Cache
-            allocation = new float[height * width + frameNum * 32];
+            allocation = new float[static_cast<unsigned int>(height) * static_cast<unsigned int>(width) + frameNum * 32u];
             data = new float*[height];
 
             for (int i = 0; i < height; i++) {
