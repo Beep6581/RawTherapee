@@ -16,46 +16,42 @@
 *  You should have received a copy of the GNU General Public License
 *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef _LENSPROFILE_H_
-#define _LENSPROFILE_H_
+#pragma once
 
 #include <gtkmm.h>
-#include "toolpanel.h"
+
 #include "guiutils.h"
 #include "lensgeom.h"
+#include "toolpanel.h"
 
-class LensProfilePanel : public ToolParamBlock, public FoldableToolPanel
+class LensProfilePanel final :
+    public ToolParamBlock,
+    public FoldableToolPanel
 {
+public:
+    LensProfilePanel();
 
-protected:
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
+    void setRawMeta(bool raw, const rtengine::FramesMetaData* pMeta);
 
-    bool lcModeChanged, lcpFileChanged, useDistChanged, useVignChanged, useCAChanged;
-    sigc::connection conLCPFile, conUseDist, conUseVign, conUseCA;
-    void updateDisabled(bool enable);
-    bool allowFocusDep;
-    bool isRaw;
-    const rtengine::FramesMetaData* metadata;
+    void onLCPFileChanged();
+    void onUseDistChanged();
+    void onUseVignChanged();
+    void onUseCAChanged();
 
-    Gtk::CheckButton *ckbUseDist, *ckbUseVign, *ckbUseCA;
-    Gtk::RadioButton::Group corrGroup;
-    Gtk::RadioButton *corrOffRB;
-    Gtk::RadioButton *corrLensfunAutoRB;
-    Gtk::RadioButton *corrLensfunManualRB;
-    Gtk::RadioButton *corrLcpFileRB;
-    Gtk::RadioButton *corrUnchangedRB;
-    Gtk::Grid *modesGrid;
-    Gtk::Grid *distGrid;
-    Gtk::Label *lensfunCamerasLbl;
-    Gtk::Label *lensfunLensesLbl;
-    MyComboBox *lensfunCameras;
-    MyComboBox *lensfunLenses;
-    MyFileChooserButton *corrLcpFileChooser;
-    Gtk::Image *warning;
+    void setBatchMode(bool yes);
 
-    class LFDbHelper
+    void onLensfunCameraChanged();
+    void onLensfunLensChanged();
+    void onCorrModeChanged(const Gtk::RadioButton* rbChanged);
+
+private:
+    class LFDbHelper final
     {
     public:
-        class LFModelCam: public Gtk::TreeModel::ColumnRecord
+        class LFModelCam final :
+            public Gtk::TreeModel::ColumnRecord
         {
         public:
             LFModelCam()
@@ -67,7 +63,8 @@ protected:
             Gtk::TreeModelColumn<Glib::ustring> model;
         };
 
-        class LFModelLens: public Gtk::TreeModel::ColumnRecord
+        class LFModelLens final :
+            public Gtk::TreeModel::ColumnRecord
         {
         public:
             LFModelLens()
@@ -86,40 +83,53 @@ protected:
         Glib::RefPtr<Gtk::TreeStore> lensfunLensModel;
 
         LFDbHelper();
+
         void fillLensfunCameras();
         void fillLensfunLenses();
     };
-    static LFDbHelper *lf;
 
-    bool useLensfunChanged;
-    bool lensfunAutoChanged;
-    bool lensfunCameraChanged;
-    bool lensfunLensChanged;
+    void updateDisabled(bool enable);
 
-    bool setLensfunCamera(const Glib::ustring &make, const Glib::ustring &model);
-    bool setLensfunLens(const Glib::ustring &lens);
+    bool setLensfunCamera(const Glib::ustring& make, const Glib::ustring& model);
+    bool setLensfunLens(const Glib::ustring& lens);
     bool checkLensfunCanCorrect(bool automatch);
     void setManualParamsVisibility(bool setVisible);
     void updateLensfunWarning();
 
-public:
+    bool lcModeChanged;
+    bool lcpFileChanged;
+    bool useDistChanged;
+    bool useVignChanged;
+    bool useCAChanged;
+    bool useLensfunChanged;
+    bool lensfunAutoChanged;
+    bool lensfunCameraChanged;
+    bool lensfunLensChanged;
+    sigc::connection conLCPFile;
+    sigc::connection conUseDist;
+    sigc::connection conUseVign;
+    sigc::connection conUseCA;
+    bool allowFocusDep;
+    bool isRaw;
+    const rtengine::FramesMetaData* metadata;
 
-    LensProfilePanel();
+    Gtk::Grid* const modesGrid;
+    Gtk::Grid* const distGrid;
+    Gtk::RadioButton* const corrUnchangedRB;
+    Gtk::RadioButton::Group corrGroup;
+    Gtk::RadioButton* const corrOffRB;
+    Gtk::RadioButton* const corrLensfunAutoRB;
+    Gtk::RadioButton* const corrLensfunManualRB;
+    Gtk::RadioButton* const corrLcpFileRB;
+    MyFileChooserButton* const corrLcpFileChooser;
+    Gtk::Label* const lensfunCamerasLbl;
+    MyComboBox* const lensfunCameras;
+    Gtk::Label* const lensfunLensesLbl;
+    MyComboBox* const lensfunLenses;
+    Gtk::Image* const warning;
+    Gtk::CheckButton* const ckbUseDist;
+    Gtk::CheckButton* const ckbUseVign;
+    Gtk::CheckButton* const ckbUseCA;
 
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setRawMeta(bool raw, const rtengine::FramesMetaData* pMeta);
-
-    void onLCPFileChanged();
-    void onUseDistChanged();
-    void onUseVignChanged();
-    void onUseCAChanged();
-
-    void setBatchMode(bool yes);
-
-    void onLensfunCameraChanged();
-    void onLensfunLensChanged();
-    void onCorrModeChanged(const Gtk::RadioButton *rbChanged);
+    static LFDbHelper* lf;
 };
-
-#endif

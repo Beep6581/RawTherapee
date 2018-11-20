@@ -56,6 +56,13 @@ constexpr const T& min(const T& a, const T& b)
     return b < a ? b : a;
 }
 
+template<>
+constexpr const float& min(const float& a, const float& b)
+{
+    // For consistency reasons we return b instead of a if a == b or a == NaN
+    return a < b ? a : b;
+}
+
 template<typename T, typename... ARGS>
 constexpr const T& min(const T& a, const T& b, const ARGS&... args)
 {
@@ -72,6 +79,13 @@ template<typename T>
 constexpr const T& max(const T& a, const T& b)
 {
     return a < b ? b : a;
+}
+
+template<>
+constexpr const float& max(const float& a, const float& b)
+{
+    // For consistency reasons we return b instead of a if a == b or a == NaN
+    return b < a ? a : b;
 }
 
 template<typename T, typename... ARGS>
