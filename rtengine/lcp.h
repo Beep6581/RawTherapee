@@ -131,8 +131,8 @@ private:
     bool inPerspect;
     bool inAlternateLensID;
     bool inAlternateLensNames;
-    char lastTag[256];
-    char inInvalidTag[256];
+    char lastTag[257];
+    char inInvalidTag[257];
     LCPPersModel* pCurPersModel;
     LCPModelCommon* pCurCommon;
 

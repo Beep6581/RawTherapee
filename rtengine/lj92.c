@@ -89,7 +89,7 @@ static int parseHuff(ljp* self) {
     u8* huffhead = &self->data[self->ix]; // xstruct.unpack('>HB16B',self.data[self.ix:self.ix+19])
     u8* bits = &huffhead[2];
     bits[0] = 0; // Because table starts from 1
-    int hufflen = BEH(huffhead[0]);
+    unsigned int hufflen = BEH(huffhead[0]);
     if ((self->ix + hufflen) >= self->datalen) return ret;
 #ifdef SLOW_HUFF
     u8* huffval = calloc(hufflen - 19,sizeof(u8));
@@ -546,8 +546,10 @@ static int parseScan(ljp* self) {
                 Px = left + lastrow[col] - lastrow[col-1];break;
             case 5:
                 Px = left + ((lastrow[col] - lastrow[col-1])>>1);break;
+            /* case 6 has a shortcut above
             case 6:
                 Px = lastrow[col] + ((left - lastrow[col-1])>>1);break;
+            */
             case 7:
                 Px = (left + lastrow[col])>>1;break;
             }
