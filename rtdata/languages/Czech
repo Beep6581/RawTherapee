@@ -811,9 +811,6 @@ IPTCPANEL_TITLE;Titulek
 IPTCPANEL_TITLEHINT;Vložte krátké, popisné a lidsky čitelné jméno obrázku. Například název souboru.
 IPTCPANEL_TRANSREFERENCE;Číslo úlohy
 IPTCPANEL_TRANSREFERENCEHINT;Zadejte číslo nebo identifikátor potřebný v pracovním postupu nebo pro sledování.
-LENSPROFILE_CORRECTION_AUTOMATCH;Automatický dohledané korekční parametry
-LENSPROFILE_CORRECTION_LCPFILE;LCP Soubor
-LENSPROFILE_CORRECTION_MANUAL;Ruční korekční parametry
 LENSPROFILE_LENS_WARNING;Varování: crop factor použitý pro profilování objektivu je větší než crop factor fotoaparátu. Výsledek může být nesprávný.
 MAIN_BUTTON_FULLSCREEN;Celá obrazovka
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Přejít k dalšímu obrázku relativnímu k obrázku otevřenému v editoru.\nZkratka: <b>Shift-F4</b>\n\nPřejít k dalšímu obrázku relativnímu k vybranému náhledu v prohlížeči souborů nebo na filmovém pásu:\nZkratka: <b>F4</b>
@@ -1687,9 +1684,6 @@ TP_LENSGEOM_AUTOCROP;Automatický ořez
 TP_LENSGEOM_FILL;Automatické vyplnění
 TP_LENSGEOM_LABEL;Objektiv / Geometrie
 TP_LENSPROFILE_LABEL;Korekční profily objektivů
-TP_LENSPROFILE_USECA;Korekce chromatické aberace
-TP_LENSPROFILE_USEDIST;Korekce zkreslení
-TP_LENSPROFILE_USEVIGN;Korekce vinětace
 TP_LOCALCONTRAST_AMOUNT;Míra
 TP_LOCALCONTRAST_DARKNESS;Úroveň tmavé
 TP_LOCALCONTRAST_LABEL;Místní kontrast

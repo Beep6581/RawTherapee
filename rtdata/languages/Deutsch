@@ -910,9 +910,6 @@ IPTCPANEL_TITLE;Titel
 IPTCPANEL_TITLEHINT;Geben Sie einen kurzen lesbaren Namen\nfür das Bild ein, z.B. den Dateinamen.
 IPTCPANEL_TRANSREFERENCE;Verarbeitungs-ID
 IPTCPANEL_TRANSREFERENCEHINT;Geben Sie eine Kennung zur Kontrolle oder\nVerfolgung des Arbeitsablaufes ein.
-LENSPROFILE_CORRECTION_AUTOMATCH;Automatisch (Lensfun)
-LENSPROFILE_CORRECTION_LCPFILE;LCP-Datei
-LENSPROFILE_CORRECTION_MANUAL;Benutzerdefiniert (Lensfun)
 LENSPROFILE_LENS_WARNING;Warnung: Der Cropfaktor des Profils entspricht nicht dem des Objektivs.\nDies kann zu einem fehlerhaften Ergebnis führen.
 MAIN_BUTTON_FULLSCREEN;Vollbild\nTaste: <b>F11</b>
 MAIN_BUTTON_ICCPROFCREATOR;ICC-Profil erstellen.
@@ -1816,9 +1813,6 @@ TP_LENSGEOM_AUTOCROP;Auto-Schneiden
 TP_LENSGEOM_FILL;Auto-Füllen
 TP_LENSGEOM_LABEL;Objektivkorrekturen
 TP_LENSPROFILE_LABEL;Objektivkorrekturprofil
-TP_LENSPROFILE_USECA;CA korrigieren
-TP_LENSPROFILE_USEDIST;Verzeichnung korrigieren
-TP_LENSPROFILE_USEVIGN;Vignettierung korrigieren
 TP_LOCALCONTRAST_AMOUNT;Intensität
 TP_LOCALCONTRAST_DARKNESS;Dunkle Bereiche
 TP_LOCALCONTRAST_LABEL;Lokaler Kontrast

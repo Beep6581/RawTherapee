@@ -1130,9 +1130,6 @@ TP_LENSGEOM_AUTOCROP; Ritaglio automatico
 TP_LENSGEOM_FILL;Adattamento automatico
 TP_LENSGEOM_LABEL;Obiettivo/Geometria
 TP_LENSPROFILE_LABEL;Profilo di Correzione dell'Obiettivo
-TP_LENSPROFILE_USECA;Correzione dell'Aberrazione Cromatica (AC)
-TP_LENSPROFILE_USEDIST;Correzione della Distorsione
-TP_LENSPROFILE_USEVIGN;Correzione della Vignettatura
 TP_NEUTRAL_TIP;Riporta i controlli dell'esposizione ai valori neutrali.\nVale per gli stessi controlli cui è applicato Livelli Automatici, indipendentemente dal fatto che Livelli Automatici sia abilitato.
 TP_PCVIGNETTE_FEATHER;Scia
 TP_PCVIGNETTE_FEATHER_TOOLTIP;Scia:\n0 = solo i bordi,\n50 = a metà strada con il centro,\n100 = al centro.
@@ -1689,9 +1686,6 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
 !IPTCPANEL_TRANSREFERENCE;Job ID
 !IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
-!LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
-!LENSPROFILE_CORRECTION_LCPFILE;LCP File
-!LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
 !LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
 !MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
 !MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor

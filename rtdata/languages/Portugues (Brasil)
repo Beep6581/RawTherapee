@@ -835,9 +835,6 @@ IPTCPANEL_TITLE;Título
 IPTCPANEL_TITLEHINT;Digite um nome curto e legível para a imagem, pode ser o nome do arquivo.
 IPTCPANEL_TRANSREFERENCE;Job ID
 IPTCPANEL_TRANSREFERENCEHINT;Digite um número ou identificador necessário para controle ou rastreamento do fluxo de trabalho.
-LENSPROFILE_CORRECTION_AUTOMATCH;Parâmetros de correção de correspondência automática
-LENSPROFILE_CORRECTION_LCPFILE;Arquivo LCP
-LENSPROFILE_CORRECTION_MANUAL;Parâmetros de correção manual
 LENSPROFILE_LENS_WARNING;Aviso: o fator de corte usado para o perfil da lente é maior que o fator de corte da câmera, os resultados podem estar errados.
 MAIN_BUTTON_FULLSCREEN;Tela cheia
 MAIN_BUTTON_ICCPROFCREATOR;Criador de Perfil ICC
@@ -1729,9 +1726,6 @@ TP_LENSGEOM_AUTOCROP;Corte automático
 TP_LENSGEOM_FILL;Preenchimento automático
 TP_LENSGEOM_LABEL;Lente / Geometria
 TP_LENSPROFILE_LABEL;Correção de lente perfilada
-TP_LENSPROFILE_USECA;Correção da aberração cromática
-TP_LENSPROFILE_USEDIST;Correção de distorção
-TP_LENSPROFILE_USEVIGN;Correção de vinheta
 TP_LOCALCONTRAST_AMOUNT;Montante
 TP_LOCALCONTRAST_DARKNESS;Nível de escuridão
 TP_LOCALCONTRAST_LABEL;Contraste Local

@@ -1086,9 +1086,6 @@ TP_LENSGEOM_AUTOCROP;Sam iseci
 TP_LENSGEOM_FILL;Sam popuni
 TP_LENSGEOM_LABEL;Objektiv i geometrija
 TP_LENSPROFILE_LABEL;Profili za ispravljanje izobličenja objektiva
-TP_LENSPROFILE_USECA;Ispravljanje hrom. aberacija
-TP_LENSPROFILE_USEDIST;Ispravljanje izobličenja
-TP_LENSPROFILE_USEVIGN;Ispravljanje vinjetarenja
 TP_NEUTRAL;Neutralno
 TP_NEUTRAL_TIP;Vraća klizače ekspozicije na neutralne vrednosti.\nPrimenjuje se na iste kontrole kao u Auto nivoi, bez obzira na to da li ste koristili Auto nivoe ili ne.
 TP_PCVIGNETTE_FEATHER;Umekšavanje
@@ -1665,9 +1662,6 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
 !IPTCPANEL_TRANSREFERENCE;Job ID
 !IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
-!LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
-!LENSPROFILE_CORRECTION_LCPFILE;LCP File
-!LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
 !LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
 !MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
 !MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
