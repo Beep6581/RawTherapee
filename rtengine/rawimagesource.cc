@@ -895,6 +895,10 @@ void RawImageSource::getImage(const ColorTemp &ctemp, int tran, Imagefloat* imag
 
 DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, DCPProfile::ApplyState &as)
 {
+    if (cmp.inputProfile == "(camera)" || cmp.inputProfile == "(none)") {
+        return nullptr;
+    }
+
     DCPProfile *dcpProf = nullptr;
     cmsHPROFILE dummy;
     findInputProfile(cmp.inputProfile, nullptr, (static_cast<const FramesData*>(getMetaData()))->getCamera(), &dcpProf, dummy);
@@ -2832,7 +2836,7 @@ void RawImageSource::flushRGB()
     }
 }
 
-void RawImageSource::HLRecovery_Global(ToneCurveParams hrp)
+void RawImageSource::HLRecovery_Global(const ToneCurveParams &hrp)
 {
     if (hrp.hrenabled && hrp.method == "Color") {
         if (!rgbSourceModified) {
@@ -3243,10 +3247,10 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
     }
 }
 
-void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, const int boxH, const int boxW)
+void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, int boxW)
 {
 
-    if (boxW == 0 && boxH == 0) { // nothing to blur
+    if (boxW < 0 || boxH < 0 || (boxW == 0 && boxH == 0)) { // nothing to blur or negative values
         memcpy(cfablur, riFlatFile->data[0], W * H * sizeof(float));
         return;
     }

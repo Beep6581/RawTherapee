@@ -183,6 +183,7 @@ float estimate_ambient_light(const array2D<float> &R, const array2D<float> &G, c
             }
         }
     }
+    n = std::max(n, 1);
     ambient[0] = rr / n;
     ambient[1] = gg / n;
     ambient[2] = bb / n;

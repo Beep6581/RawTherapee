@@ -335,8 +335,6 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
 #endif
                 delete [] buffer;
                 if (!modelDesc.empty()) {
-                    printf("dmdd=%s\n", modelDesc.c_str());
-
                     std::size_t pos = modelDesc.find("g");
                     std::size_t posmid = modelDesc.find("s");
                     std::size_t posend = modelDesc.find("!");
@@ -369,8 +367,13 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
         gammaParams[6] = 0.0;
 
         cmsToneCurve* GammaTRC[3];
-
-        GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, gammaParams); //5 = smoother than 4
+        if(slopetag == 0.) {
+            //printf("gammatag=%f\n", gammatag);
+            GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildGamma(NULL, gammatag);
+        }
+        else {
+            GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, gammaParams); //5 = smoother than 4
+        }
         cmsWriteTag(oprof, cmsSigRedTRCTag, GammaTRC[0]);
         cmsWriteTag(oprof, cmsSigGreenTRCTag, GammaTRC[1]);
         cmsWriteTag(oprof, cmsSigBlueTRCTag, GammaTRC[2]);

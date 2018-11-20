@@ -37,7 +37,7 @@ Image8::~Image8 ()
 {
 }
 
-void Image8::getScanline (int row, unsigned char* buffer, int bps, bool isFloat)
+void Image8::getScanline (int row, unsigned char* buffer, int bps, bool isFloat) const
 {
 
     if (data == nullptr) {
@@ -89,7 +89,7 @@ void Image8::setScanline (int row, unsigned char* buffer, int bps, unsigned int 
     }
 }
 
-Image8* Image8::copy ()
+Image8* Image8::copy () const
 {
 
     Image8* cp = new Image8 (width, height);
@@ -97,7 +97,7 @@ Image8* Image8::copy ()
     return cp;
 }
 
-void Image8::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::ToneCurveParams hrp)
+void Image8::getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, PreviewProps pp) const
 {
     // compute channel multipliers
     float rm = 1.f, gm = 1.f, bm = 1.f;

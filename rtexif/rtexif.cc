@@ -976,16 +976,19 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
 
     if (tag == 0x002e) { // location of the embedded preview image in raw files of Panasonic cameras
         ExifManager eManager(f, nullptr, true);
-        eManager.parseJPEG(ftell(f)); // try to parse the exif data from the preview image
+        const auto fpos = ftell(f);
+        if (fpos >= 0) {
+            eManager.parseJPEG(fpos); // try to parse the exif data from the preview image
 
-        if (eManager.roots.size()) {
-            const TagDirectory* const previewdir = eManager.roots.at(0);
-            if (previewdir->getTag ("Exif")) {
-                if (previewdir->getTag ("Make")) {
-                    if (previewdir->getTag ("Make")->valueToString() == "Panasonic") { // "make" is not yet available here, so get it from the preview tags to assure we're doing the right thing
-                        Tag* t = new Tag (parent->getRoot(), lookupAttrib (ifdAttribs, "Exif")); // replace raw exif with preview exif assuming there are the same
-                        t->initSubDir (previewdir->getTag ("Exif")->getDirectory());
-                        parent->getRoot()->addTag (t);
+            if (eManager.roots.size()) {
+                const TagDirectory* const previewdir = eManager.roots.at(0);
+                if (previewdir->getTag ("Exif")) {
+                    if (previewdir->getTag ("Make")) {
+                        if (previewdir->getTag ("Make")->valueToString() == "Panasonic") { // "make" is not yet available here, so get it from the preview tags to assure we're doing the right thing
+                            Tag* t = new Tag (parent->getRoot(), lookupAttrib (ifdAttribs, "Exif")); // replace raw exif with preview exif assuming there are the same
+                            t->initSubDir (previewdir->getTag ("Exif")->getDirectory());
+                            parent->getRoot()->addTag (t);
+                        }
                     }
                 }
             }
@@ -2474,7 +2477,7 @@ parse_leafdata (TagDirectory* root, ByteOrder order)
         char *val = (char *)&value[pos];
 
         if (strncmp (&hdr[8], "CameraObj_ISO_speed", 19) == 0) {
-            iso_speed = 25 * (1 << (atoi (val) - 1));
+            iso_speed = 25 * (1 << std::max((atoi (val) - 1), 0));
             found_count++;
         } else if (strncmp (&hdr[8], "ImgProf_rotation_angle", 22) == 0) {
             rotation_angle = atoi (val);

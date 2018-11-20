@@ -1589,6 +1589,13 @@ Camera constants:
         "pdaf_pattern" : [0, 12],
         "pdaf_offset" : 29
     },
+
+    { // Quality C, only colour matrix and PDAF lines info
+        "make_model" : "Nikon Z 6",
+        "dcraw_matrix" : [8210, -2534, -683, -5355, 13338, 2212, -1143, 1929, 6464], // Adobe DNG Converter 11.1 Beta ColorMatrix2
+        "pdaf_pattern" : [0, 12],
+        "pdaf_offset" : 32        
+    },
     
     { // Quality B, 16Mp and 64Mp raw frames
         "make_model": "OLYMPUS E-M5MarkII",

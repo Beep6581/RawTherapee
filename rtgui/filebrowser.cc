@@ -127,9 +127,7 @@ void findOriginalEntries (const std::vector<ThumbBrowserEntryBase*>& entries)
 
 FileBrowser::FileBrowser () :
     menuLabel(nullptr),
-#ifdef WIN32
     miOpenDefaultViewer(nullptr),
-#endif
     selectDF(nullptr),
     thisIsDF(nullptr),
     autoDF(nullptr),

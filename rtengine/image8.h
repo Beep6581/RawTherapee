@@ -38,55 +38,65 @@ public:
     Image8 (int width, int height);
     ~Image8 ();
 
-    Image8*              copy ();
+    Image8* copy () const;
 
-    virtual void         getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::ToneCurveParams hrp);
+    void getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, PreviewProps pp) const override;
 
-    virtual const char*  getType     () const
+    const char* getType () const override
     {
         return sImage8;
     }
-    virtual int          getBPS      ()
+
+    int getBPS () const override
     {
         return 8 * sizeof(unsigned char);
     }
-    virtual void         getScanline (int row, unsigned char* buffer, int bps, bool isFloat = false);
-    virtual void         setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples);
+
+    void getScanline (int row, unsigned char* buffer, int bps, bool isFloat = false) const override;
+    void setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples) override;
 
     // functions inherited from IImage*:
-    virtual MyMutex&     getMutex ()
+    MyMutex& getMutex () override
     {
         return mutex ();
     }
-    virtual cmsHPROFILE  getProfile ()
+
+    cmsHPROFILE getProfile () const override
     {
         return getEmbeddedProfile ();
     }
-    virtual int          getBitsPerPixel ()
+
+    int getBitsPerPixel () const override
     {
         return 8 * sizeof(unsigned char);
     }
-    virtual int          saveToFile (Glib::ustring fname)
+
+    int saveToFile (const Glib::ustring &fname) const override
     {
         return save (fname);
     }
-    virtual int          saveAsPNG  (Glib::ustring fname, int bps = -1)
+
+    int saveAsPNG (const Glib::ustring &fname, int bps = -1) const override
     {
         return savePNG (fname, bps);
     }
-    virtual int          saveAsJPEG (Glib::ustring fname, int quality = 100, int subSamp = 3)
+
+    int saveAsJPEG (const Glib::ustring &fname, int quality = 100, int subSamp = 3) const override
     {
         return saveJPEG (fname, quality, subSamp);
     }
-    virtual int          saveAsTIFF (Glib::ustring fname, int bps = -1, float isFloat = false, bool uncompressed = false)
+
+    int saveAsTIFF (const Glib::ustring &fname, int bps = -1, bool isFloat = false, bool uncompressed = false) const override
     {
         return saveTIFF (fname, bps, isFloat, uncompressed);
     }
-    virtual void         setSaveProgressListener (ProgressListener* pl)
+
+    void setSaveProgressListener (ProgressListener* pl) override
     {
         setProgressListener (pl);
     }
-    virtual void         free ()
+
+    void free () override
     {
         delete this;
     }

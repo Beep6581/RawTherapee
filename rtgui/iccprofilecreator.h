@@ -50,7 +50,7 @@ private:
     double gamma;
     double slope;
     bool appendParamsToDesc;
-
+    bool v2except;
     Glib::ustring profileVersion;
     Glib::ustring illuminant;
     Glib::ustring description;
@@ -95,7 +95,7 @@ private:
     void adjusterAutoToggled(Adjuster* a, bool newval);
     static std::vector<Glib::ustring> getGamma();
     Glib::ustring getPrimariesPresetName(const Glib::ustring &preset);
-    void getPrimaries(const Glib::ustring &preset, float *p, ColorTemp &temp);
+    void getPrimaries(const Glib::ustring &preset, double *p, ColorTemp &temp);
     Glib::ustring getGammaPresetName(const Glib::ustring &preset);
     void getGamma(const Glib::ustring &preset, double &gamma, double &slope);
     void savePressed();

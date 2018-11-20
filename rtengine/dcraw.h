@@ -47,7 +47,9 @@ public:
     ,order(0x4949)
     ,ifname(nullptr)
     ,meta_data(nullptr)
-    ,shot_select(0),multi_out(0)
+    ,shot_select(0)
+    ,multi_out(0)
+    ,row_padding(0)
 	,float_raw_image(nullptr)
     ,image(nullptr)
     ,bright(1.)
@@ -88,7 +90,7 @@ protected:
     unsigned tiff_nifds, tiff_samples, tiff_bps, tiff_compress;
     unsigned black, cblack[4102], maximum, mix_green, raw_color, zero_is_bad;
     unsigned zero_after_ff, is_raw, dng_version, is_foveon, data_error;
-    unsigned tile_width, tile_length, gpsdata[32], load_flags;
+    unsigned tile_width, tile_length, gpsdata[32], load_flags, row_padding;
     bool xtransCompressed = false;
     struct fuji_compressed_params
     {

@@ -1147,11 +1147,11 @@ void CLASS lossless_dnglj92_load_raw()
     } else {
         dataOffset[0] = ifp->pos;
     }
-    uint8_t *data = (uint8_t*)malloc(ifp->size);
+    const int data_length = ifp->size;
+    const std::unique_ptr<uint8_t[]> data(new uint8_t[data_length]);
     fseek(ifp, 0, SEEK_SET);
     // read whole file
-    int data_length = ifp->size;
-    fread(data, 1, data_length, ifp);
+    fread(data.get(), 1, data_length, ifp);
     lj92 lj;
     int newwidth, newheight, newbps;
     lj92_open(&lj, &data[dataOffset[0]], data_length, &newwidth, &newheight, &newbps);
@@ -1159,7 +1159,6 @@ void CLASS lossless_dnglj92_load_raw()
     if (newwidth * newheight * tileCount != raw_width * raw_height) {
         // not a lj92 file
         fseek(ifp, save, SEEK_SET);
-        free(data);
         lossless_dng_load_raw();
         return;
     }
@@ -1173,17 +1172,15 @@ void CLASS lossless_dnglj92_load_raw()
         int newwidth, newheight, newbps;
         lj92_open(&lj, &data[dataOffset[t]], data_length, &newwidth, &newheight, &newbps);
 
-        uint16_t *target = (uint16_t*)malloc(newwidth * newheight * sizeof *target);
-        lj92_decode(lj, target, tile_width, 0, lincurve, 0x1000);
+        const std::unique_ptr<uint16_t[]> target(new uint16_t[newwidth * newheight]);
+        lj92_decode(lj, target.get(), tile_width, 0, lincurve, 0x1000);
         for (int y = 0; y < height; ++y) {
             for(int x = 0; x < tile_width; ++x) {
                 RAW(y, x + tcol) = target[y * tile_width + x];
             }
         }
         lj92_close(lj);
-        free(target);
     }
-    free(data);
 }
 
 void CLASS lossless_dng_load_raw()
@@ -1306,10 +1303,10 @@ void CLASS nikon_load_raw()
     if (ver0 == 0x46) tree = 2;
     if (tiff_bps == 14) tree += 3;
     read_shorts (vpred[0], 4);
-    max = 1 << tiff_bps & 0x7fff;
+    max = 1 << (tiff_bps - (ver0 == 0x44 && ver1 == 0x40 ? 2 : 0)) & 0x7fff;
     if ((csize = get2()) > 1)
         step = max / (csize-1);
-    if (ver0 == 0x44 && ver1 == 0x20 && step > 0) {
+    if (ver0 == 0x44 && (ver1 == 0x20 || ver1 == 0x40) && step > 0) {
         for (int i=0; i < csize; i++)
             curve[i*step] = get2();
         for (int i=0; i < max; i++)
@@ -2565,6 +2562,7 @@ void CLASS packed_load_raw()
 
   bwide = raw_width * tiff_bps / 8;
   bwide += bwide & load_flags >> 9;
+  bwide += row_padding;
   rbits = bwide * 8 - raw_width * tiff_bps;
   if (load_flags & 1) bwide = bwide * 16 / 15;
   bite = 8 + (load_flags & 56);
@@ -6762,8 +6760,13 @@ void CLASS apply_tiff()
 	    load_raw = &CLASS packed_load_raw;
 	} else if ((raw_width * 2 * tiff_bps / 16 + 8) * raw_height == tiff_ifd[raw].bytes) {
 	    // 14 bit uncompressed from Nikon Z7, still wrong
-	    // each line has 8 padding byte. To inform 'packed_load_raw' about his padding, we have to set load_flags = padding << 9
-	    load_flags = 8 << 9;
+	    // each line has 8 padding byte.
+	    row_padding = 8;
+	    load_raw = &CLASS packed_load_raw;
+	} else if ((raw_width * 2 * tiff_bps / 16 + 12) * raw_height == tiff_ifd[raw].bytes) {
+	    // 14 bit uncompressed from Nikon Z6, still wrong
+	    // each line has 12 padding byte.
+	    row_padding = 12;
 	    load_raw = &CLASS packed_load_raw;
 	} else
 	  load_raw = &CLASS nikon_load_raw;			break;
@@ -9138,7 +9141,7 @@ void CLASS identify()
     parse_fuji (get4());
     if (thumb_offset > 120) {
       fseek (ifp, 120, SEEK_SET);
-      is_raw += (i = get4()) && 1;
+      is_raw += (i = get4()) != 0 ? 1 : 0;
       if (is_raw == 2 && shot_select)
 	parse_fuji (i);
     }

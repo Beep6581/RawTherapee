@@ -937,6 +937,7 @@ public:
         choices.insert (p_t (256 * 8 + 61, "HD PENTAX-D FA 28-105mm f/3.5-5.6 ED DC WR"));
         choices.insert (p_t (256 * 8 + 62, "HD PENTAX-D FA 24-70mm f/2.8 ED SDM WR"));
         choices.insert (p_t (256 * 8 + 63, "HD PENTAX-D FA 15-30mm f/2.8 ED SDM WR"));
+        choices.insert (p_t (256 * 8 + 64, "HD PENTAX-D FA* 50mm f/1.4 SDM AW"));
         choices.insert (p_t (256 * 8 + 197, "HD PENTAX-DA 55-300mm f/4.5-6.3 ED PLM WR RE"));
         choices.insert (p_t (256 * 8 + 198, "smc PENTAX-DA L 18-50mm f/4-5.6 DC WR RE"));
         choices.insert (p_t (256 * 8 + 199, "HD PENTAX-DA 18-50mm f/4-5.6 DC WR RE"));

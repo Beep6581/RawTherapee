@@ -60,7 +60,7 @@ Image16::~Image16()
 {
 }
 
-void Image16::getScanline(int row, unsigned char* buffer, int bps, bool isFloat)
+void Image16::getScanline(int row, unsigned char* buffer, int bps, bool isFloat) const
 {
 
     if (data == nullptr) {
@@ -124,7 +124,7 @@ void Image16::setScanline(int row, unsigned char* buffer, int bps, unsigned int 
      */
 }
 
-Image16* Image16::copy()
+Image16* Image16::copy() const
 {
 
     Image16* cp = new Image16(width, height);
@@ -132,7 +132,7 @@ Image16* Image16::copy()
     return cp;
 }
 
-void Image16::getStdImage(ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::ToneCurveParams hrp)
+void Image16::getStdImage(const ColorTemp &ctemp, int tran, Imagefloat* image, PreviewProps pp) const
 {
 
     // compute channel multipliers
@@ -295,8 +295,7 @@ void Image16::getStdImage(ColorTemp ctemp, int tran, Imagefloat* image, PreviewP
 #undef GCLIP
 }
 
-Image8*
-Image16::to8()
+Image8* Image16::to8() const
 {
     Image8* img8 = new Image8(width, height);
 
@@ -311,8 +310,7 @@ Image16::to8()
     return img8;
 }
 
-Imagefloat*
-Image16::tofloat()
+Imagefloat* Image16::tofloat() const
 {
     Imagefloat* imgfloat = new Imagefloat(width, height);
 
