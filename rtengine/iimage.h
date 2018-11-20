@@ -1136,19 +1136,19 @@ public:
     void readData (FILE *f)
     {
         for (int i = 0; i < height; i++) {
-            if (fread(r(i), sizeof(T), width, f) < width) {
+            if (fread(r(i), sizeof(T), width, f) < static_cast<size_t>(width)) {
                 break;
             }
         }
 
         for (int i = 0; i < height; i++) {
-            if (fread(g(i), sizeof(T), width, f) < width) {
+            if (fread(g(i), sizeof(T), width, f) < static_cast<size_t>(width)) {
                 break;
             }
         }
 
         for (int i = 0; i < height; i++) {
-            if (fread(b(i), sizeof(T), width, f) < width) {
+            if (fread(b(i), sizeof(T), width, f) < static_cast<size_t>(width)) {
                 break;
             }
         }
@@ -1718,7 +1718,7 @@ public:
     void readData (FILE *f)
     {
         for (int i = 0; i < height; i++) {
-            if (fread(r(i), sizeof(T), 3 * width, f) < 3 * width) {
+            if (fread(r(i), sizeof(T), 3 * width, f) < 3 * static_cast<size_t>(width)) {
                 break;
             }
         }
