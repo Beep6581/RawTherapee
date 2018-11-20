@@ -503,6 +503,10 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
         fseek (ifp, data_offset, SEEK_SET);
         (this->*load_raw)();
 
+        if (!float_raw_image) { // apply baseline exposure only for float DNGs
+            RT_baseline_exposure = 0;
+        }
+
         if (plistener) {
             plistener->setProgress(0.9 * progressRange);
         }
