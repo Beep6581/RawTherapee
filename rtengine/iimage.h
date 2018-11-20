@@ -1136,15 +1136,21 @@ public:
     void readData (FILE *f)
     {
         for (int i = 0; i < height; i++) {
-            fread (r(i), sizeof(T), width, f);
+            if (fread(r(i), sizeof(T), width, f) < width * sizeof(T)) {
+                break;
+            }
         }
 
         for (int i = 0; i < height; i++) {
-            fread (g(i), sizeof(T), width, f);
+            if (fread(g(i), sizeof(T), width, f) < width * sizeof(T)) {
+                break;
+            }
         }
 
         for (int i = 0; i < height; i++) {
-            fread (b(i), sizeof(T), width, f);
+            if (fread(b(i), sizeof(T), width, f) < width * sizeof(T)) {
+                break;
+            }
         }
     }
 
@@ -1712,7 +1718,9 @@ public:
     void readData (FILE *f)
     {
         for (int i = 0; i < height; i++) {
-            fread (r(i), sizeof(T), 3 * width, f);
+            if (fread(r(i), sizeof(T), 3 * width, f) < 3 * width * sizeof(T)) {
+                break;
+            }
         }
     }
 

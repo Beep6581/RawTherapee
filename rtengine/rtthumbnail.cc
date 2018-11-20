@@ -1934,46 +1934,53 @@ bool Thumbnail::readImage (const Glib::ustring& fname)
 
     Glib::ustring fullFName = fname + ".rtti";
 
-    if (!Glib::file_test (fullFName, Glib::FILE_TEST_EXISTS)) {
+    if (!Glib::file_test(fullFName, Glib::FILE_TEST_EXISTS)) {
         return false;
     }
 
-    FILE* f = g_fopen (fullFName.c_str (), "rb");
+    FILE* f = g_fopen(fullFName.c_str (), "rb");
 
     if (!f) {
         return false;
     }
 
     char imgType[31];  // 30 -> arbitrary size, but should be enough for all image type's name
-    fgets (imgType, 30, f);
-    imgType[strlen (imgType) - 1] = '\0'; // imgType has a \n trailing character, so we overwrite it by the \0 char
+    fgets(imgType, 30, f);
+    imgType[strlen(imgType) - 1] = '\0'; // imgType has a \n trailing character, so we overwrite it by the \0 char
 
     guint32 width, height;
-    fread (&width, 1, sizeof (guint32), f);
-    fread (&height, 1, sizeof (guint32), f);
+
+    if (fread(&width, 1, sizeof(guint32), f) < sizeof(guint32)) {
+        width = 0;
+    }
+
+    if (fread(&height, 1, sizeof(guint32), f) < sizeof(guint32)) {
+        height = 0;
+    }
 
     bool success = false;
 
-    if (!strcmp (imgType, sImage8)) {
-        Image8 *image = new Image8 (width, height);
-        image->readData (f);
-        thumbImg = image;
-        success = true;
-    } else if (!strcmp (imgType, sImage16)) {
-        Image16 *image = new Image16 (width, height);
-        image->readData (f);
-        thumbImg = image;
-        success = true;
-    } else if (!strcmp (imgType, sImagefloat)) {
-        Imagefloat *image = new Imagefloat (width, height);
-        image->readData (f);
-        thumbImg = image;
-        success = true;
-    } else {
-        printf ("readImage: Unsupported image type \"%s\"!\n", imgType);
+    if (std::min(width , height) > 0) {
+        if (!strcmp(imgType, sImage8)) {
+            Image8 *image = new Image8(width, height);
+            image->readData(f);
+            thumbImg = image;
+            success = true;
+        } else if (!strcmp(imgType, sImage16)) {
+            Image16 *image = new Image16(width, height);
+            image->readData(f);
+            thumbImg = image;
+            success = true;
+        } else if (!strcmp(imgType, sImagefloat)) {
+            Imagefloat *image = new Imagefloat(width, height);
+            image->readData(f);
+            thumbImg = image;
+            success = true;
+        } else {
+            printf ("readImage: Unsupported image type \"%s\"!\n", imgType);
+        }
     }
-
-    fclose (f);
+    fclose(f);
     return success;
 }
 
@@ -2223,14 +2230,19 @@ bool Thumbnail::writeEmbProfile (const Glib::ustring& fname)
 bool Thumbnail::readAEHistogram  (const Glib::ustring& fname)
 {
 
-    FILE* f = g_fopen (fname.c_str (), "rb");
+    FILE* f = g_fopen(fname.c_str(), "rb");
 
     if (!f) {
         aeHistogram.reset();
     } else {
-        aeHistogram (65536 >> aeHistCompression);
-        fread (&aeHistogram[0], 1, (65536 >> aeHistCompression)*sizeof (aeHistogram[0]), f);
+        aeHistogram(65536 >> aeHistCompression);
+        const size_t histoBytes = (65536 >> aeHistCompression) * sizeof(aeHistogram[0]);
+        const int bytesRead = fread(&aeHistogram[0], 1, histoBytes, f);
         fclose (f);
+        if (bytesRead != histoBytes) {
+            aeHistogram.reset();
+            return false;
+        }
         return true;
     }
 
