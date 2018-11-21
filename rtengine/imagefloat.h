@@ -218,14 +218,14 @@ public:
         return (uint32_t) ((sign << 31) | (exponent << 23) | mantissa);
     }
 
-    virtual void         normalizeFloat(float srcMinVal, float srcMaxVal);
-    void                 normalizeFloatTo1();
-    void                 normalizeFloatTo65535();
-    void                 calcCroppedHistogram(const ProcParams &params, float scale, LUTu & hist);
-    void                 ExecCMSTransform2(cmsHTRANSFORM hTransform);
+    void normalizeFloat(float srcMinVal, float srcMaxVal) override;
+    void normalizeFloatTo1();
+    void normalizeFloatTo65535();
+    void calcCroppedHistogram(const ProcParams &params, float scale, LUTu & hist);
+    void ExecCMSTransform2(cmsHTRANSFORM hTransform);
 
-    void                 ExecCMSTransform(cmsHTRANSFORM hTransform);
-    void                 ExecCMSTransform(cmsHTRANSFORM hTransform, const LabImage &labImage, int cx, int cy);
+    void ExecCMSTransform(cmsHTRANSFORM hTransform);
+    void ExecCMSTransform(cmsHTRANSFORM hTransform, const LabImage &labImage, int cx, int cy);
 };
 
 }

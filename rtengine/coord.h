@@ -114,22 +114,22 @@ inline void Coord::set (const int x, const int y)
 
 inline Coord& Coord::operator+= (const Coord& other)
 {
-    x += other.x;
-    y += other.y;
+    this->x += other.x;
+    this->y += other.y;
     return *this;
 }
 
 inline Coord& Coord::operator-= (const Coord& other)
 {
-    x -= other.x;
-    y -= other.y;
+    this->x -= other.x;
+    this->y -= other.y;
     return *this;
 }
 
 inline Coord& Coord::operator*= (const double scale)
 {
-    x *= scale;
-    y *= scale;
+    this->x *= scale;
+    this->y *= scale;
     return *this;
 }
 
@@ -218,7 +218,7 @@ inline PolarCoord &PolarCoord::operator-= (const PolarCoord &other)
 
 inline PolarCoord &PolarCoord::operator*= (const double scale)
 {
-    radius *= scale;
+    this->radius *= scale;
     return *this;
 }
 
