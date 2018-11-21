@@ -1051,10 +1051,10 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     appearanceGrid->attach(*vSep,               2, 0, 1, 3);
     appearanceGrid->attach(*mainFontLbl,        0, 1, 1, 1);
     appearanceGrid->attach(*mainFontFB,         1, 1, 1, 1);
-    appearanceGrid->attach(*colorPickerFontLbl, 3, 1, 1, 1);
-    appearanceGrid->attach(*colorPickerFontFB,  4, 1, 1, 1);
-    appearanceGrid->attach(*cropMaskColorLbl,   0, 2, 1, 1);
-    appearanceGrid->attach(*cropMaskColorCB,    1, 2, 1, 1);
+    appearanceGrid->attach(*cropMaskColorLbl,   3, 1, 1, 1);
+    appearanceGrid->attach(*cropMaskColorCB,    4, 1, 1, 1);
+    appearanceGrid->attach(*colorPickerFontLbl, 0, 2, 1, 1);
+    appearanceGrid->attach(*colorPickerFontFB,  1, 2, 1, 1);
     appearanceGrid->attach(*navGuideColorLbl,   3, 2, 1, 1);
     appearanceGrid->attach(*navGuideColorCB,    4, 2, 1, 1);
 
