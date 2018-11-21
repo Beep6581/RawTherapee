@@ -114,10 +114,6 @@ DYNPROFILEEDITOR_DELETE;Löschen
 DYNPROFILEEDITOR_EDIT;Ändern
 DYNPROFILEEDITOR_EDIT_RULE;Profilregel ändern
 DYNPROFILEEDITOR_ENTRY_TOOLTIP;Groß-/Kleinschreibung wird NICHT berücksichtigt.\nFür einen regulären Ausdruck benutzen Sie bitte\n"re:" als Prefix.
-DYNPROFILEEDITOR_IMGTYPE_ANY;Alle
-DYNPROFILEEDITOR_IMGTYPE_HDR;HDR
-DYNPROFILEEDITOR_IMGTYPE_PS;Pixel-Shift
-DYNPROFILEEDITOR_IMGTYPE_STD;Standard
 DYNPROFILEEDITOR_MOVE_DOWN;Runter
 DYNPROFILEEDITOR_MOVE_UP;Hoch
 DYNPROFILEEDITOR_NEW;Neu
@@ -190,8 +186,6 @@ FILEBROWSER_AUTOFLATFIELD;Automatisches Weißbild
 FILEBROWSER_BROWSEPATHBUTTONHINT;Ausgewählten Pfad öffnen.
 FILEBROWSER_BROWSEPATHHINT;Einen Pfad eingeben:\nTaste:\n<b>Strg</b> + <b>o</b> Setzt den Cursor in das Eingabefeld\n<b>Enter</b> Öffnet den Pfad\n<b>Esc</b> Änderungen verwerfen\n<b>Umschalt</b> + <b>Esc</b> Eingabefeld verlassen\n\nSchnellnavigation:\nTaste:\n<b>~</b> “Home“-Verzeichnis des Benutzers\n<b>!</b> Bilder-Verzeichnis des Benutzers
 FILEBROWSER_CACHE;Festplatten-Cache
-FILEBROWSER_CACHECLEARFROMFULL;Alle zwischengespeicherte Profile löschen
-FILEBROWSER_CACHECLEARFROMPARTIAL;Alle NICHT zwischengespeicherte Profile löschen
 FILEBROWSER_CLEARPROFILE;Profil löschen
 FILEBROWSER_COLORLABEL_TOOLTIP;<b>Farbmarkierung</b>\n\nTaste: <b>Strg</b> + <b>Umschalt</b> + <b>0</b> Ohne\nTaste: <b>Strg</b> + <b>Umschalt</b> + <b>1</b> Rot\nTaste: <b>Strg</b> + <b>Umschalt</b> + <b>2</b> Gelb\nTaste: <b>Strg</b> + <b>Umschalt</b> + <b>3</b> Grün\nTaste: <b>Strg</b> + <b>Umschalt</b> + <b>4</b> Blau\nTaste: <b>Strg</b> + <b>Umschalt</b> + <b>5</b> Violett
 FILEBROWSER_COPYPROFILE;Profil kopieren
@@ -316,6 +310,7 @@ GIMP_PLUGIN_INFO;Willkommen zum RawTherapee GIMP-Plugin!\nNach den Änderungen b
 HISTOGRAM_TOOLTIP_B;Blau-Histogramm ein-/ausblenden.
 HISTOGRAM_TOOLTIP_BAR;RGB-Anzeigeleiste ein-/ausblenden.
 HISTOGRAM_TOOLTIP_CHRO;Chromatizität-Histogramm ein/ausblenden.
+HISTOGRAM_TOOLTIP_FULL;Skaliertes Histogramm ein/ausschalten.
 HISTOGRAM_TOOLTIP_G;Grün-Histogramm ein-/ausblenden.
 HISTOGRAM_TOOLTIP_L;CIELab-Luminanz-Histogramm ein-/ausblenden.
 HISTOGRAM_TOOLTIP_MODE;Schaltet zwischen linearer, logarithmischer-linearer und\nlogarithmischer-logarithmischer Skalierung um.
@@ -796,26 +791,12 @@ HISTORY_MSG_485;(Objektivkorrektur)\nProfil
 HISTORY_MSG_486;(Objektivkorrektur)\nProfil - Kamera
 HISTORY_MSG_487;(Objektivkorrektur)\nProfil - Objektiv
 HISTORY_MSG_488;(Dynamikkompression)
-HISTORY_MSG_489;(Dynamikkompression)\nDetails
 HISTORY_MSG_490;(Dynamikkompression)\nIntensität
 HISTORY_MSG_491;(Weißabgleich)
 HISTORY_MSG_492;(RGB-Kurven)
 HISTORY_MSG_493;(L*a*b*)
 HISTORY_MSG_CLAMPOOG;(Belichtung) - Farben\nauf Farbraum beschränken
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;(Farbanpassungen)\nL*a*b*-Farbkorrektur
-HISTORY_MSG_COLORTONING_LABREGION_AB;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich
-HISTORY_MSG_COLORTONING_LABREGION_CHROMATICITYMASK;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - C-Maske
-HISTORY_MSG_COLORTONING_LABREGION_HUEMASK;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - H-Maske
-HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESS;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - Helligkeit
-HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESSMASK;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - L-Maske
-HISTORY_MSG_COLORTONING_LABREGION_LIST;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - Liste
-HISTORY_MSG_COLORTONING_LABREGION_SATURATION;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - Sättigung
-HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - Maske anzeigen
-HISTORY_MSG_DEHAZE_DEPTH;(Bildschleier entfernen)\nTiefe
-HISTORY_MSG_DEHAZE_ENABLED;(Bildschleier entfernen)
-HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;(Bildschleier entfernen)\nMaske anzeigen
-HISTORY_MSG_DEHAZE_STRENGTH;(Bildschleier entfernen)\nIntensität
-HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;(Sensor—Matrix)\nFarbinterpolation\nAuto-Kontrastschwelle
 HISTORY_MSG_DUALDEMOSAIC_CONTRAST;(Sensor-Matrix)\nFarbinterpolation\nKontrastschwelle
 HISTORY_MSG_HISTMATCHING;(Belichtung)\nAuto-Tonwertkurve
 HISTORY_MSG_ICM_OUTPUT_PRIMARIES;(Farbmanagement)\nAusgabeprofil\nVorlagen
@@ -840,7 +821,6 @@ HISTORY_MSG_RAWCACORR_COLORSHIFT;(Sensor-Matrix)\nChromatische Aberration\nFarbv
 HISTORY_MSG_RAW_BORDER;(Sensor-Matrix)\nFarbinterpolation\nBildrand
 HISTORY_MSG_RESIZE_ALLOWUPSCALING;(Skalieren)\nHochskalieren zulassen
 HISTORY_MSG_SHARPENING_CONTRAST;(Schärfung)\nKontrastschwelle
-HISTORY_MSG_SH_COLORSPACE;Farbraum
 HISTORY_MSG_SOFTLIGHT_ENABLED;(Weiches Licht)
 HISTORY_MSG_SOFTLIGHT_STRENGTH;(Weiches Licht)\nIntensität
 HISTORY_MSG_TM_FATTAL_ANCHOR;(Dynamikkompression)\nHelligkeitsverschiebung
@@ -931,6 +911,7 @@ IPTCPANEL_TITLE;Titel
 IPTCPANEL_TITLEHINT;Geben Sie einen kurzen lesbaren Namen\nfür das Bild ein, z.B. den Dateinamen.
 IPTCPANEL_TRANSREFERENCE;Verarbeitungs-ID
 IPTCPANEL_TRANSREFERENCEHINT;Geben Sie eine Kennung zur Kontrolle oder\nVerfolgung des Arbeitsablaufes ein.
+LENSPROFILE_LENS_WARNING;Warnung: Der Cropfaktor des Profils entspricht nicht dem des Objektivs.\nDies kann zu einem fehlerhaften Ergebnis führen.
 MAIN_BUTTON_FULLSCREEN;Vollbild\nTaste: <b>F11</b>
 MAIN_BUTTON_ICCPROFCREATOR;ICC-Profil erstellen.
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigiert zum nächsten Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf das ausgewählte Miniaturbild.\nTaste: <b>F4</b>\n\nNavigiert zum nächsten Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf auf das im Editor geöffnete Bild.\nTaste: <b>Umschalt</b> + <b>F4 </b>
@@ -987,14 +968,16 @@ MAIN_TAB_RAW;RAW
 MAIN_TAB_RAW_TOOLTIP;Taste: <b>Alt</b> + <b>r</b>
 MAIN_TAB_TRANSFORM;Transformieren
 MAIN_TAB_TRANSFORM_TOOLTIP;Taste: <b>Alt</b> + <b>t</b>
+MAIN_TAB_WAVELET;Wavelet
+MAIN_TAB_WAVELET_TOOLTIP;Taste: <b>Alt</b> + <b>w</b>
 MAIN_TOOLTIP_BACKCOLOR0;Hintergrundfarbe der Vorschau basierend auf dem <b>Oberflächendesign</b>.\nTaste: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR1;Hintergrundfarbe der Vorschau: <b>Schwarz\n</b>Taste: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Hintergrundfarbe der Vorschau: <b>Weiß</b>\nTaste: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR3;Hintergrundfarbe der Vorschau: <b>Mittleres Grau</b>\nTaste: <b>9</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Vorher-Ansicht:</b> Sperren / Entsperren\n\n<b>Gesperrt</b>: Friert die Vorher-Ansicht ein, so\ndass sich die Gesamtwirkung mehrerer\nBearbeitungsschritte beurteilen lässt.\n\n<b>Entsperrt</b>: Die Vorher-Ansicht hinkt dem\naktuellen Bild immer einen Bearbeitungs-\nschritt hinterher.
 MAIN_TOOLTIP_HIDEHP;Linkes Bedienfeld ein-/ausblenden.\nTaste: <b>l</b>
-MAIN_TOOLTIP_INDCLIPPEDH;Anzeige zu heller Bereiche ein-/ausschalten.\nTaste: <b>&lt
-MAIN_TOOLTIP_INDCLIPPEDS;Anzeige zu dunkler Bereiche ein-/ausschalten.\nTaste: <b>&gt
+MAIN_TOOLTIP_INDCLIPPEDH;Anzeige zu heller Bereiche ein-/ausschalten.\nTaste: <b>&lt;</b>
+MAIN_TOOLTIP_INDCLIPPEDS;Anzeige zu dunkler Bereiche ein-/ausschalten.\nTaste: <b>&gt;</b>
 MAIN_TOOLTIP_PREVIEWB;Vorschau Blau-Kanal\nTaste: <b>b</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;Vorschau Fokusmaske\nTaste: <b>Umschalt</b> + <b>f</b>\n\nPräziser bei Bildern mit geringer Tiefenschärfe,\nniedrigem Rauschen und bei hoher Vergrößerung.
 MAIN_TOOLTIP_PREVIEWG;Vorschau Grün-Kanal\nTaste: <b>g</b>
@@ -1038,7 +1021,6 @@ PARTIALPASTE_CROP;Ausschnitt
 PARTIALPASTE_DARKFRAMEAUTOSELECT;Dunkelbild: Automatische Auswahl
 PARTIALPASTE_DARKFRAMEFILE;Dunkelbild: Datei
 PARTIALPASTE_DEFRINGE;Farbsaum entfernen (Defringe)
-PARTIALPASTE_DEHAZE;Bildschleier entfernen
 PARTIALPASTE_DETAILGROUP;Detailparameter
 PARTIALPASTE_DIALOGLABEL;Selektives Einfügen des Bearbeitungsprofils
 PARTIALPASTE_DIRPYRDENOISE;Rauschreduzierung
@@ -1101,17 +1083,12 @@ PARTIALPASTE_SOFTLIGHT;Weiches Licht
 PARTIALPASTE_TM_FATTAL;Dynamikkompression
 PARTIALPASTE_VIBRANCE;Dynamik
 PARTIALPASTE_VIGNETTING;Vignettierungskorrektur
+PARTIALPASTE_WAVELETGROUP;Wavelet
 PARTIALPASTE_WHITEBALANCE;Weißabgleich
 PREFERENCES_ADD;HINZU
-PREFERENCES_APPEARANCE;Oberflächendesign (erfordert Neustart)
-PREFERENCES_APPEARANCE_COLORPICKERFONT;Schriftart Farbwähler
-PREFERENCES_APPEARANCE_CROPMASKCOLOR;Farbe/Transparenz für Schnittmaske
-PREFERENCES_APPEARANCE_MAINFONT;Schriftart:
 PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Farbe der Navigationshilfe
-PREFERENCES_APPEARANCE_THEME;Oberflächendesign
 PREFERENCES_APPLNEXTSTARTUP;erfordert Neustart
 PREFERENCES_AUTOMONPROFILE;Automatisch das für den aktuellen Monitor festgelegte Profil verwenden
-PREFERENCES_AUTOSAVE_TP_OPEN;Werkzeugstatus vor dem Beenden automatisch speichern
 PREFERENCES_BATCH_PROCESSING;Stapelverarbeitung
 PREFERENCES_BEHADDALL;Alle hinzufügen
 PREFERENCES_BEHADDALLHINT;Setzt alle Parameter auf <b>Hinzufügen</b>.\nAnpassungen der Parameter in der Hintergrundstapelverarbeitung werden als <b>Deltas</b> zu den gespeicherten Werten interpretiert.
@@ -1119,14 +1096,13 @@ PREFERENCES_BEHAVIOR;Verhalten
 PREFERENCES_BEHSETALL;Alle setzen
 PREFERENCES_BEHSETALLHINT;Setzt alle Parameter auf <b>Setzen</b>.\nAnpassungen der Parameter in der Hintergrundstapelverarbeitung werden als <b>Absolut</b> zu den gespeicherten Werten interpretiert.
 PREFERENCES_BLACKBODY;Wolfram
-PREFERENCES_CACHECLEAR;Löschen
-PREFERENCES_CACHECLEAR_ALL;Alle Dateien im Zwischenspeicher löschen:
-PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Alle Dateien im Zwischenspeicher löschen mit Ausnahme der Bearbeitungsprofile:
-PREFERENCES_CACHECLEAR_ONLYPROFILES;Alle Bearbeitungsprofile im Zwischenspeicher löschen:
-PREFERENCES_CACHECLEAR_SAFETY;Nur Dateien im Zwischenspeicher werden gelöscht. Bearbeitungsprofile im Bildordner bleiben unberührt.
 PREFERENCES_CACHEMAXENTRIES;Maximale Anzahl der Miniaturbilder im Festplatten-Cache
 PREFERENCES_CACHEOPTS;Einstellungen des Festplatten-Cache für Miniaturbilder
 PREFERENCES_CACHETHUMBHEIGHT;Maximale Höhe der Miniaturbilder
+PREFERENCES_CIEART;CIECAM02-Optimierung
+PREFERENCES_CIEART_FRAME;CIECAM02-spezifische Einstellungen
+PREFERENCES_CIEART_LABEL;Einfache statt doppelte Genauigkeit
+PREFERENCES_CIEART_TOOLTIP;Wenn aktiviert, werden CIECAM02-Berechnungen mit einfacher Genauigkeit statt doppelter durchgeführt. Dadurch wird der Vorgang etwas beschleunigt. Die Qualität nimmt jedoch geringfügig ab.
 PREFERENCES_CLIPPINGIND;Anzeige zu heller/dunkler Bereiche
 PREFERENCES_CLUTSCACHE;HaldCLUT-Zwischenspeicher
 PREFERENCES_CLUTSCACHE_LABEL;Maximale Anzahl CLUTs im Zwischenspeicher
@@ -1170,7 +1146,6 @@ PREFERENCES_EDITORCMDLINE;Benutzerdefinierte Befehlszeile
 PREFERENCES_EDITORLAYOUT;Editor-Layout
 PREFERENCES_EXTERNALEDITOR;Externer Editor
 PREFERENCES_FBROWSEROPTS;Bildinformationen und Miniaturbilder
-PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Einzeilige Toolbar
 PREFERENCES_FILEFORMAT;Dateiformat
 PREFERENCES_FLATFIELDFOUND;Gefunden
 PREFERENCES_FLATFIELDSDIR;Weißbild-Verzeichnis
@@ -1351,6 +1326,7 @@ SAVEDLG_FILEFORMAT;Dateiformat
 SAVEDLG_FILEFORMAT_FLOAT; Fließkomma
 SAVEDLG_FORCEFORMATOPTS;Erzwinge Speicheroptionen
 SAVEDLG_JPEGQUAL;JPEG-Qualität
+SAVEDLG_PNGCOMPR;PNG-Kompression
 SAVEDLG_PUTTOQUEUE;Zur Warteschlange hinzufügen
 SAVEDLG_PUTTOQUEUEHEAD;An den Anfang der Warteschlange hinzufügen
 SAVEDLG_PUTTOQUEUETAIL;An das Ende der Warteschlange hinzufügen
@@ -1452,8 +1428,6 @@ TP_COARSETRAF_TOOLTIP_HFLIP;Horizontal spiegeln.
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Nach links drehen.\nTaste: <b>[</b>
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Nach rechts drehen.\nTaste: <b>]</b>
 TP_COARSETRAF_TOOLTIP_VFLIP;Vertikal spiegeln.
-TP_COLORAPP_ABSOLUTELUMINANCE;Absolute Luminanz
-TP_COLORAPP_MEANLUMINANCE;Mittlere Luminanz (Yb%)
 TP_COLORAPP_ALGO;Algorithmus
 TP_COLORAPP_ALGO_ALL;Alle
 TP_COLORAPP_ALGO_JC;Helligkeit + Buntheit (JH)
@@ -1464,7 +1438,6 @@ TP_COLORAPP_BADPIXSL;Hot / Bad-Pixelfilter
 TP_COLORAPP_BADPIXSL_TOOLTIP;Unterdrückt “Hot / Bad“-Pixel\n\n0 = keine Auswirkung\n1 = Mittel\n2 = Gaussian
 TP_COLORAPP_BRIGHT;Helligkeit (Q)
 TP_COLORAPP_BRIGHT_TOOLTIP;Helligkeit in CIECAM02 berücksichtigt die Weißintensität und unterscheidet sich von L*a*b* und RGB-Helligkeit.
-TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;Bei manueller Einstellung werden Werte über 65 empfohlen.
 TP_COLORAPP_CHROMA;Buntheit (H)
 TP_COLORAPP_CHROMA_M;Farbigkeit (M)
 TP_COLORAPP_CHROMA_M_TOOLTIP;Die Farbigkeit in CIECAM02 unterscheidet sich\nvon L*a*b*- und RGB-Farbigkeit.
@@ -1536,16 +1509,6 @@ TP_COLORTONING_LAB;L*a*b*-Überlagerung
 TP_COLORTONING_LABEL;Farbanpassungen
 TP_COLORTONING_LABGRID;L*a*b*-Farbkorrektur
 TP_COLORTONING_LABGRID_VALUES;HL: a=%1, b=%2\nS: a=%3, b=%4
-TP_COLORTONING_LABREGIONS;L*a*b*-Farbkorrektur Bereiche
-TP_COLORTONING_LABREGION_ABVALUES;a=%1 b=%2
-TP_COLORTONING_LABREGION_CHROMATICITYMASK;C
-TP_COLORTONING_LABREGION_HUEMASK;H
-TP_COLORTONING_LABREGION_LIGHTNESS;Helligkeit
-TP_COLORTONING_LABREGION_LIGHTNESSMASK;L
-TP_COLORTONING_LABREGION_LIST_TITLE;Farbkorrektur
-TP_COLORTONING_LABREGION_MASK;Maske
-TP_COLORTONING_LABREGION_SATURATION;Sättigung
-TP_COLORTONING_LABREGION_SHOWMASK;Maske anzeigen
 TP_COLORTONING_LUMA;Luminanz
 TP_COLORTONING_LUMAMODE;Luminanz schützen
 TP_COLORTONING_LUMAMODE_TOOLTIP;Wenn aktiviert, wird die Luminanz der Farben Rot, Grün, Cyan, Blau... geschützt.
@@ -1594,10 +1557,6 @@ TP_DARKFRAME_LABEL;Dunkelbild
 TP_DEFRINGE_LABEL;Farbsaum entfernen (Defringe)
 TP_DEFRINGE_RADIUS;Radius
 TP_DEFRINGE_THRESHOLD;Schwelle
-TP_DEHAZE_DEPTH;Tiefe
-TP_DEHAZE_LABEL;Bildschleier entfernen
-TP_DEHAZE_SHOW_DEPTH_MAP;Maske anzeigen
-TP_DEHAZE_STRENGTH;Intensität
 TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto-Multizonen
 TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Automatisch Global
 TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;Bewertung des Farbrauschens.\nDie Bewertung ist ungenau und sehr subjektiv!
@@ -1628,6 +1587,7 @@ TP_DIRPYRDENOISE_LUMINANCE_FRAME;Luminanz
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminanz
 TP_DIRPYRDENOISE_MAIN_COLORSPACE;Farbraum
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;L*a*b*
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Rauschreduzierung
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;Für RAW-Bilder kann entweder die RGB-\noder L*a*b*-Methode verwendet werden.\n\nFür andere Bilder wird unabhängig von der\nAuswahl immer die L*a*b*-Methode verwendet.
 TP_DIRPYRDENOISE_MAIN_GAMMA;Gamma
@@ -1723,6 +1683,10 @@ TP_FLATFIELD_BT_VERTICAL;Vertikal
 TP_FLATFIELD_CLIPCONTROL;Kontrolle zu heller Bereiche
 TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Verhindert das Abschneiden der Lichter. Wenn\nvor dem Anwenden des Weißbildes schon\nabgeschnittene Lichter vorhanden sind, kann\nes zu einem Farbstich kommen.
 TP_FLATFIELD_LABEL;Weißbild
+TP_GAMMA_CURV;Gamma
+TP_GAMMA_FREE;Freies Gamma
+TP_GAMMA_OUTPUT;Ausgabe-Gamma
+TP_GAMMA_SLOP;Gradient (linear)
 TP_GENERAL_11SCALE_TOOLTIP;Der Effekt dieses Werkzeugs ist nur in der 100%-Ansicht akkurat oder sichtbar.
 TP_GRADIENT_CENTER;Rotationsachse
 TP_GRADIENT_CENTER_X;Rotationsachse X
@@ -1831,16 +1795,7 @@ TP_LABCURVE_RSTPRO_TOOLTIP;Kann mit dem Chromatizitätsregler und\nder CC-Kurve 
 TP_LENSGEOM_AUTOCROP;Auto-Schneiden
 TP_LENSGEOM_FILL;Auto-Füllen
 TP_LENSGEOM_LABEL;Objektivkorrekturen
-TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatisch (Lensfun)
-TP_LENSPROFILE_CORRECTION_LCPFILE;LCP-Datei
-TP_LENSPROFILE_CORRECTION_MANUAL;Benutzerdefiniert (Lensfun)
 TP_LENSPROFILE_LABEL;Objektivkorrekturprofil
-TP_LENSPROFILE_LENS_WARNING;Achtung: Der Crop-Faktor des Profils entspricht\nnicht dem der Kamera.\nDie Ergebnisse sind möglicherweise falsch.
-TP_LENSPROFILE_MODE_HEADER;Profil auswählen
-TP_LENSPROFILE_USE_HEADER;Korrektur auswählen
-TP_LENSPROFILE_USE_CA;CA
-TP_LENSPROFILE_USE_GEOMETRIC;Verzeichnung
-TP_LENSPROFILE_USE_VIGNETTING;Vignettierung
 TP_LOCALCONTRAST_AMOUNT;Intensität
 TP_LOCALCONTRAST_DARKNESS;Dunkle Bereiche
 TP_LOCALCONTRAST_LABEL;Lokaler Kontrast
@@ -1883,7 +1838,6 @@ TP_PRSHARPENING_LABEL;Nach Skalierung schärfen
 TP_PRSHARPENING_TOOLTIP;Schärft das Bild nach der Größenänderung.\nFunktioniert nur mit der Methode “Lanczos“.\nDas Ergebnis wird nicht in RawTherapee\nangezeigt.\n\nWeitere Informationen finden Sie auf “RawPedia“.
 TP_RAWCACORR_AUTO;Autokorrektur
 TP_RAWCACORR_AUTOIT;Iterationen
-TP_RAWCACORR_AUTOIT_TOOLTIP;Diese Einstellung ist verfügbar, wenn "Autokorrektur" aktiviert ist.\nDie Autokorrektur ist konservativ, dh sie korrigiert häufig nicht alle\nchromatischen Aberrationen. Um die verbleibenden chromatischen\nAberrationen zu korrigieren, können Sie bis zu fünf Iterationen\nverwenden. Jede Iteration verringert die verbleibende chromatische\nAberration auf Kosten zusätzlicher Verarbeitungszeit.
 TP_RAWCACORR_AVOIDCOLORSHIFT;Farbverschiebungen vermeiden
 TP_RAWCACORR_CABLUE;Blau
 TP_RAWCACORR_CARED;Rot
@@ -1916,8 +1870,6 @@ TP_RAW_DMETHOD;Methode
 TP_RAW_DMETHOD_PROGRESSBAR;%1 verarbeitet
 TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaikoptimierung
 TP_RAW_DMETHOD_TOOLTIP;<b>IGV</b> und <b>LMMSE</b> sind speziel für High-ISO-Aufnahmen um die\nRauschreduzierung zu unterstützen ohne zu Maze-Mustern,\nPosterisierung oder einem ausgewaschenen Look zu führen.\n\n<b>Pixel-Shift</b> ist für “Pentax Pixel-Shift“-Dateien. Für "Nicht-Pixel-\nShift"-Dateien wird automatisch AMaZE verwendet.
-TP_RAW_DUALDEMOSAICAUTOCONTRAST;Auto-Kontrastschwelle
-TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;Wenn das Kontrollkästchen aktiviert ist (empfohlen), berechnet\nRawTherapee einen optimalen Wert auf der Grundlage homogener\nBereiche im Bild. Wenn kein homogener Bereich vorhanden ist oder\ndas Bild zu sehr rauscht, wird der Wert auf 0 gesetzt.
 TP_RAW_DUALDEMOSAICCONTRAST;Kontrastschwelle
 TP_RAW_EAHD;EAHD
 TP_RAW_FALSECOLOR;Falschfarbenreduzierung
@@ -1935,6 +1887,7 @@ TP_RAW_LMMSE_TOOLTIP;Fügt Gamma (Stufe 1), Median (Stufe 2-4)\nund Optimierung 
 TP_RAW_MONO;Mono
 TP_RAW_NONE;Keine
 TP_RAW_PIXELSHIFT;Pixel-Shift
+TP_RAW_PIXELSHIFTADAPTIVE;Adaptive Erkennung
 TP_RAW_PIXELSHIFTBLUR;Unschärfebewegungsmaske
 TP_RAW_PIXELSHIFTDMETHOD;Bewegungsmethode
 TP_RAW_PIXELSHIFTEPERISO;Empfindlichkeit
@@ -1943,19 +1896,34 @@ TP_RAW_PIXELSHIFTEQUALBRIGHT;Frame-Helligkeit angleichen
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Ausgleich pro Kanal
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;EIN: Individueller Ausgleich der RGB-Kanäle.\nAUS: Identischer Ausgleichsfaktor für alle Kanäle.
 TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Gleicht die Helligkeit der Frames an den aktuellen Frame an.\n\nSind überbelichtete Bereiche vorhanden wählen Sie den hellsten Frame aus um\nMagenta-Farbstiche zu vermeiden oder aktivieren Sie die Bewegungskorrektur.
+TP_RAW_PIXELSHIFTEXP0;Experimentell
 TP_RAW_PIXELSHIFTGREEN;Bewegung im Grün-Kanal erkennen
 TP_RAW_PIXELSHIFTHOLEFILL;Lücken in der Bewegungsmaske erkennen
 TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Lücken in der Bewegungsmaske erkennen.
 TP_RAW_PIXELSHIFTLMMSE;LMMSE für Bewegungsbereiche verwenden
 TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;LMMSE anstatt AMaZE für bewegte Bildbereiche verwenden.\nSinnvoll bei High-ISO-Aufnahmen.
+TP_RAW_PIXELSHIFTMASKTHRESHOLD;3x3 new threshold
 TP_RAW_PIXELSHIFTMEDIAN;Median
+TP_RAW_PIXELSHIFTMEDIAN3;Aktuellen Frame vom Median ausschließen.
+TP_RAW_PIXELSHIFTMEDIAN3_TOOLTIP;Schließt den aktuellen Frame vom Median aus.\nNützlich, wenn sich bewegte Objekte im Frame 2\nund 3 überlappen.
 TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Verwenden Sie den Median aller Frames anstelle des\nausgewählten Frames für Regionen mit Bewegung.\nEntfernt Objekte, die an verschiedenen Stellen in allen\nFrames vorkommen. Erzeugt einen Bewegungseffekt\nauf langsame (überlappende) Objekte.
 TP_RAW_PIXELSHIFTMM_AUTO;Automatisch
 TP_RAW_PIXELSHIFTMM_CUSTOM;Benutzerdefiniert
 TP_RAW_PIXELSHIFTMM_OFF;Aus
+TP_RAW_PIXELSHIFTMOTION;Motion detection level (deprecated)
+TP_RAW_PIXELSHIFTMOTIONCORRECTION;Green motion correction size
 TP_RAW_PIXELSHIFTMOTIONMETHOD;Bewegungskorrektur
 TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 = Keine Bewegungserkennung\n1 - 99 = Bewegung wird entsprechend dem Wert erkannt.\nHöhere Werte erhöhen die Trefferquote\n100 = Der mit AMaZE interpolierte Frame wird verwendet.
+TP_RAW_PIXELSHIFTNONGREENAMAZE;Check red/blue amaze
 TP_RAW_PIXELSHIFTNONGREENCROSS;Bewegung im Rot/Blau-Kanal erkennen
+TP_RAW_PIXELSHIFTNONGREENCROSS2;Check green amaze
+TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Check red/blue horizontal
+TP_RAW_PIXELSHIFTNONGREENVERTICAL;Check red/blue vertical
+TP_RAW_PIXELSHIFTNREADISO;nRead
+TP_RAW_PIXELSHIFTONEGREEN;Benutze ein Grün
+TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Benutze ein Grün anstelle des\nDurchschnitts beider Grüns für\nBereiche ohne Bewegung.
+TP_RAW_PIXELSHIFTPRNU;PRNU (%)
+TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
 TP_RAW_PIXELSHIFTSHOWMOTION;Bewegungsmaske anzeigen
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Nur Maske anzeigen
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Zeigt die Bewegungsmaske ohne Bild.
@@ -1964,6 +1932,9 @@ TP_RAW_PIXELSHIFTSIGMA;Unschärferadius
 TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Der Standard-Radius von 1,0 passt in der Regel für die Basis-ISO.\nErhöhen Sie den Wert für High-ISO-Aufnahmen, 5,0 ist ein guter\nAusgangspunkt für High-ISO-Aufnahmen. Achten Sie auf die\nBewegungsmaske, während Sie den Wert ändern.
 TP_RAW_PIXELSHIFTSMOOTH;Weicher Übergang
 TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Weicher Übergang zwischen Bereichen mit und ohne Bewegung.\n0 = Aus\n1 = AMaZE/LMMSE oder Median
+TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;StdDev factor Blue
+TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;StdDev factor Green
+TP_RAW_PIXELSHIFTSTDDEVFACTORRED;StdDev factor Red
 TP_RAW_RCD;RCD
 TP_RAW_RCDVNG4;RCD + VNG4
 TP_RAW_SENSOR_BAYER_LABEL;Sensor mit Bayer-Matrix
@@ -1985,10 +1956,10 @@ TP_RESIZE_SCALE;Maßstab
 TP_RESIZE_SPECIFY;Basierend auf:
 TP_RESIZE_W;Breite:
 TP_RESIZE_WIDTH;Breite
-TP_RETINEX_CONTEDIT_MAP;Maskenkurve
 TP_RETINEX_CONTEDIT_HSL;HSL-Kurve
 TP_RETINEX_CONTEDIT_LAB;Luminanz (L) L*a*b*
 TP_RETINEX_CONTEDIT_LH;Farbton (H)
+TP_RETINEX_CONTEDIT_MAP;Maskenkurve
 TP_RETINEX_CURVEEDITOR_CD;L = f(L)
 TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminanz in Abhängigkeit der Luminanz.\nKorrigiert direkt die RAW-Daten, um Halos\nund Artefakte zu verringern.
 TP_RETINEX_CURVEEDITOR_LH;Intensität = f(H)
@@ -2011,8 +1982,8 @@ TP_RETINEX_GAMMA_NONE;Keine
 TP_RETINEX_GAMMA_TOOLTIP;Stellt Farbtöne vor und nach der Retinexverarbeitung\ndurch eine Gammakorrektur wieder her.
 TP_RETINEX_GRAD;Transmission Gradient
 TP_RETINEX_GRADS;Intensität Gradient
-TP_RETINEX_GRADS_TOOLTIP;Steht der Regler auf 0 sind alle Iterationen identisch.\nBei > 0 wird die Intensität reduziert, bei &lt
-TP_RETINEX_GRAD_TOOLTIP;Steht der Regler auf 0 sind alle Iterationen identisch.\nBei > 0 werden Skalierung und Schwelle reduziert,\nbei &lt
+TP_RETINEX_GRADS_TOOLTIP;Steht der Regler auf 0 sind alle Iterationen identisch.\nBei > 0 wird die Intensität reduziert, bei &lt; 0 erhöht.
+TP_RETINEX_GRAD_TOOLTIP;Steht der Regler auf 0 sind alle Iterationen identisch.\nBei > 0 werden Skalierung und Schwelle reduziert,\nbei &lt; 0 erhöht.
 TP_RETINEX_HIGH;Lichter
 TP_RETINEX_HIGHLIG;Spitzlichter
 TP_RETINEX_HIGHLIGHT;Spitzlichter Schwelle
@@ -2042,7 +2013,7 @@ TP_RETINEX_NEUTRAL;Zurücksetzen
 TP_RETINEX_NEUTRAL_TIP;Setzt alle Regler und Kurven\nauf ihre Standardwerte zurück.
 TP_RETINEX_OFFSET;Ausgleich (Helligkeit)
 TP_RETINEX_SCALES;Gaußscher Gradient
-TP_RETINEX_SCALES_TOOLTIP;Steht der Regler auf 0 sind alle Iterationen identisch.\nBei > 0 werden Skalierung und Radius reduziert,\nbei &lt
+TP_RETINEX_SCALES_TOOLTIP;Steht der Regler auf 0 sind alle Iterationen identisch.\nBei > 0 werden Skalierung und Radius reduziert,\nbei &lt; 0 erhöht.
 TP_RETINEX_SETTINGS;Einstellungen
 TP_RETINEX_SKAL;Skalierung
 TP_RETINEX_SLOPE;Gammasteigung
@@ -2114,7 +2085,6 @@ TP_SOFTLIGHT_STRENGTH;Intensität
 TP_TM_FATTAL_AMOUNT;Intensität
 TP_TM_FATTAL_ANCHOR;Helligkeitsverschiebung
 TP_TM_FATTAL_LABEL;Dynamikkompression
-TP_TM_FATTAL_THRESHOLD;Details
 TP_VIBRANCE_AVOIDCOLORSHIFT;Farbverschiebungen vermeiden
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Hautfarbtöne
@@ -2336,7 +2306,6 @@ TP_WBALANCE_LED_CRS;CRS SP12 WWMR16
 TP_WBALANCE_LED_HEADER;LED
 TP_WBALANCE_LED_LSI;LSI Lumelex 2040
 TP_WBALANCE_METHOD;Methode
-TP_WBALANCE_PICKER;Farbwähler
 TP_WBALANCE_SHADE;Schatten
 TP_WBALANCE_SIZE;Größe:
 TP_WBALANCE_SOLUX35;Solux 3500K
@@ -2358,3 +2327,73 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Ausschnitt an Bildschirm anpassen.\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen.\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+DYNPROFILEEDITOR_IMGTYPE_ANY;Alle
+DYNPROFILEEDITOR_IMGTYPE_HDR;HDR
+DYNPROFILEEDITOR_IMGTYPE_PS;Pixel-Shift
+DYNPROFILEEDITOR_IMGTYPE_STD;Standard
+FILEBROWSER_CACHECLEARFROMFULL;Alle zwischengespeicherte Profile löschen
+FILEBROWSER_CACHECLEARFROMPARTIAL;Alle NICHT zwischengespeicherte Profile löschen
+HISTORY_MSG_489;(Dynamikkompression)\nDetails
+HISTORY_MSG_COLORTONING_LABREGION_AB;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich
+HISTORY_MSG_COLORTONING_LABREGION_CHROMATICITYMASK;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - C-Maske
+HISTORY_MSG_COLORTONING_LABREGION_HUEMASK;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - H-Maske
+HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESS;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - Helligkeit
+HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESSMASK;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - L-Maske
+HISTORY_MSG_COLORTONING_LABREGION_LIST;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - Liste
+HISTORY_MSG_COLORTONING_LABREGION_SATURATION;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - Sättigung
+HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - Maske anzeigen
+HISTORY_MSG_DEHAZE_DEPTH;(Bildschleier entfernen)\nTiefe
+HISTORY_MSG_DEHAZE_ENABLED;(Bildschleier entfernen)
+HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;(Bildschleier entfernen)\nMaske anzeigen
+HISTORY_MSG_DEHAZE_STRENGTH;(Bildschleier entfernen)\nIntensität
+HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;(Sensor—Matrix)\nFarbinterpolation\nAuto-Kontrastschwelle
+HISTORY_MSG_SH_COLORSPACE;Farbraum
+PARTIALPASTE_DEHAZE;Bildschleier entfernen
+PREFERENCES_APPEARANCE;Oberflächendesign (erfordert Neustart)
+PREFERENCES_APPEARANCE_COLORPICKERFONT;Schriftart Farbwähler
+PREFERENCES_APPEARANCE_CROPMASKCOLOR;Farbe/Transparenz für Schnittmaske
+PREFERENCES_APPEARANCE_MAINFONT;Schriftart:
+PREFERENCES_APPEARANCE_THEME;Oberflächendesign
+PREFERENCES_AUTOSAVE_TP_OPEN;Werkzeugstatus vor dem Beenden automatisch speichern
+PREFERENCES_CACHECLEAR;Löschen
+PREFERENCES_CACHECLEAR_ALL;Alle Dateien im Zwischenspeicher löschen:
+PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Alle Dateien im Zwischenspeicher löschen mit Ausnahme der Bearbeitungsprofile:
+PREFERENCES_CACHECLEAR_ONLYPROFILES;Alle Bearbeitungsprofile im Zwischenspeicher löschen:
+PREFERENCES_CACHECLEAR_SAFETY;Nur Dateien im Zwischenspeicher werden gelöscht. Bearbeitungsprofile im Bildordner bleiben unberührt.
+PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Einzeilige Toolbar
+TP_COLORAPP_ABSOLUTELUMINANCE;Absolute Luminanz
+TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;Bei manueller Einstellung werden Werte über 65 empfohlen.
+TP_COLORAPP_MEANLUMINANCE;Mittlere Luminanz (Yb%)
+TP_COLORTONING_LABREGIONS;L*a*b*-Farbkorrektur Bereiche
+TP_COLORTONING_LABREGION_ABVALUES;a=%1 b=%2
+TP_COLORTONING_LABREGION_CHROMATICITYMASK;C
+TP_COLORTONING_LABREGION_HUEMASK;H
+TP_COLORTONING_LABREGION_LIGHTNESS;Helligkeit
+TP_COLORTONING_LABREGION_LIGHTNESSMASK;L
+TP_COLORTONING_LABREGION_LIST_TITLE;Farbkorrektur
+TP_COLORTONING_LABREGION_MASK;Maske
+TP_COLORTONING_LABREGION_SATURATION;Sättigung
+TP_COLORTONING_LABREGION_SHOWMASK;Maske anzeigen
+TP_DEHAZE_DEPTH;Tiefe
+TP_DEHAZE_LABEL;Bildschleier entfernen
+TP_DEHAZE_SHOW_DEPTH_MAP;Maske anzeigen
+TP_DEHAZE_STRENGTH;Intensität
+TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatisch (Lensfun)
+TP_LENSPROFILE_CORRECTION_LCPFILE;LCP-Datei
+TP_LENSPROFILE_CORRECTION_MANUAL;Benutzerdefiniert (Lensfun)
+TP_LENSPROFILE_LENS_WARNING;Achtung: Der Crop-Faktor des Profils entspricht\nnicht dem der Kamera.\nDie Ergebnisse sind möglicherweise falsch.
+TP_LENSPROFILE_MODE_HEADER;Profil auswählen
+TP_LENSPROFILE_USE_CA;CA
+TP_LENSPROFILE_USE_GEOMETRIC;Verzeichnung
+TP_LENSPROFILE_USE_HEADER;Korrektur auswählen
+TP_LENSPROFILE_USE_VIGNETTING;Vignettierung
+TP_RAWCACORR_AUTOIT_TOOLTIP;Diese Einstellung ist verfügbar, wenn "Autokorrektur" aktiviert ist.\nDie Autokorrektur ist konservativ, d.h. sie korrigiert häufig nicht alle\nchromatischen Aberrationen. Um die verbleibenden chromatischen\nAberrationen zu korrigieren, können Sie bis zu fünf Iterationen\nverwenden. Jede Iteration verringert die verbleibende chromatische\nAberration auf Kosten zusätzlicher Verarbeitungszeit.
+TP_RAW_DUALDEMOSAICAUTOCONTRAST;Auto-Kontrastschwelle
+TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;Wenn das Kontrollkästchen aktiviert ist (empfohlen), berechnet\nRawTherapee einen optimalen Wert auf der Grundlage homogener\nBereiche im Bild. Wenn kein homogener Bereich vorhanden ist oder\ndas Bild zu sehr rauscht, wird der Wert auf 0 gesetzt.
+TP_TM_FATTAL_THRESHOLD;Details
+TP_WBALANCE_PICKER;Farbwähler
