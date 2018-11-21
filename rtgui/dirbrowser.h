@@ -84,7 +84,7 @@ private:
     bool expandSuccess;
 
 #ifdef WIN32
-    int volumes;
+    unsigned int volumes;
 public:
     void updateVolumes ();
     void updateDirTree  (const Gtk::TreeModel::iterator& iter);
