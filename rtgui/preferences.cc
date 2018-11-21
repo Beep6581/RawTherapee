@@ -599,27 +599,25 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     vbImageProcessing->pack_start (*cdf, Gtk::PACK_SHRINK, 4 );
 
     // Crop
-    Gtk::Frame *cropframe = Gtk::manage(new Gtk::Frame(M("PREFERENCES_CROP")));
-    Gtk::VBox *cropvb = Gtk::manage(new Gtk::VBox());
-    Gtk::HBox *crophb = Gtk::manage(new Gtk::HBox());
-    cropGuides = Gtk::manage(new Gtk::ComboBoxText());
-    cropGuides->append(M("PREFERENCES_CROP_GUIDES_NONE"));
-    cropGuides->append(M("PREFERENCES_CROP_GUIDES_FRAME"));
-    cropGuides->append(M("PREFERENCES_CROP_GUIDES_FULL"));
-    crophb->pack_start(*Gtk::manage(new Gtk::Label(M("PREFERENCES_CROP_GUIDES") + ": ")), Gtk::PACK_SHRINK, 4);
-    crophb->pack_start(*cropGuides);
-    cropvb->pack_start(*crophb);
-    Gtk::Label *cropAutoFitLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_CROP_AUTO_FIT")));
-    cropAutoFitLabel->set_line_wrap(true);
-    setExpandAlignProperties(cropAutoFitLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
-    cropAutoFit = Gtk::manage(new Gtk::CheckButton());
-    setExpandAlignProperties(cropAutoFit, false, true, Gtk::ALIGN_START, Gtk::ALIGN_START);
-    cropAutoFit->add(*cropAutoFitLabel);
-    cropvb->pack_start(*cropAutoFit);
-    cropframe->add(*cropvb);
-    vbImageProcessing->pack_start(*cropframe, Gtk::PACK_SHRINK, 4);
+    Gtk::Frame *cropFrame = Gtk::manage(new Gtk::Frame(M("PREFERENCES_CROP")));
+    Gtk::Grid *cropGrid = Gtk::manage(new Gtk::Grid());
+    Gtk::Label *cropGuidesLbl = Gtk::manage(new Gtk::Label(M("PREFERENCES_CROP_GUIDES") + ": "));
+    cropGuidesCombo = Gtk::manage(new Gtk::ComboBoxText());
+    cropGuidesCombo->append(M("PREFERENCES_CROP_GUIDES_NONE"));
+    cropGuidesCombo->append(M("PREFERENCES_CROP_GUIDES_FRAME"));
+    cropGuidesCombo->append(M("PREFERENCES_CROP_GUIDES_FULL"));
+    cropAutoFitCB = Gtk::manage(new Gtk::CheckButton());
+    Gtk::Label *cropAutoFitLbl = Gtk::manage(new Gtk::Label(M("PREFERENCES_CROP_AUTO_FIT")));
+    cropAutoFitLbl->set_line_wrap(true);
+    cropAutoFitCB->add(*cropAutoFitLbl);
+    cropGrid->attach(*cropGuidesLbl, 0, 0, 1, 1);
+    cropGrid->attach(*cropGuidesCombo, 1, 0, 1, 1);
+    cropGrid->attach(*cropAutoFitCB, 0, 1, 2, 1);
+    cropFrame->add(*cropGrid);
+    vbImageProcessing->pack_start(*cropFrame, Gtk::PACK_SHRINK, 4);
 
     swImageProcessing->add(*vbImageProcessing);
+
     return swImageProcessing;
 }
 
@@ -1798,8 +1796,8 @@ void Preferences::storePreferences ()
     moptions.sndLngEditProcDoneSecs = spbSndLngEditProcDoneSecs->get_value ();
 #endif
 
-    moptions.cropGuides = Options::CropGuidesMode(cropGuides->get_active_row_number());
-    moptions.cropAutoFit = cropAutoFit->get_active();
+    moptions.cropGuides = Options::CropGuidesMode(cropGuidesCombo->get_active_row_number());
+    moptions.cropAutoFit = cropAutoFitCB->get_active();
 }
 
 void Preferences::fillPreferences ()
@@ -2015,8 +2013,8 @@ void Preferences::fillPreferences ()
         }
     }
 
-    cropGuides->set_active(moptions.cropGuides);
-    cropAutoFit->set_active(moptions.cropAutoFit);
+    cropGuidesCombo->set_active(moptions.cropGuides);
+    cropAutoFitCB->set_active(moptions.cropAutoFit);
 
     addc.block (false);
     setc.block (false);
