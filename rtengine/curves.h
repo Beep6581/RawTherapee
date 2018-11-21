@@ -920,7 +920,7 @@ private:
     static float cf_range[2];
     static float cf[1000];
     // for ciecam02
-    static float f, c, nc, yb, la, xw, yw, zw, gamut;
+    static float f, c, nc, yb, la, xw, yw, zw;
     static float n, d, nbb, ncb, cz, aw, wh, pfl, fl, pow1;
 
     static void cubic_spline(const float x[], const float y[], const int len, const float out_x[], float out_y[], const int out_len);

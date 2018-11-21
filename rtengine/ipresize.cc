@@ -231,7 +231,8 @@ void ImProcFunctions::Lanczos (const LabImage* src, LabImage* dst, float scale)
         float* const la = aligned_buffer_la.data;
         float* const lb = aligned_buffer_lb.data;
         // weights for interpolation in y direction
-        float w[support] ALIGNED64 = {};
+        float w[support] ALIGNED64;
+        memset(w, 0, sizeof(w));
 
         // Phase 2: do actual interpolation
 #ifdef _OPENMP
