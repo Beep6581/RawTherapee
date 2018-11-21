@@ -2197,11 +2197,13 @@ void ExifManager::parseCIFF (int length, TagDirectory* root)
             t = new Tag (root, lookupAttrib (ifdAttribs, "Make"));
             t->initString (buffer);
             root->addTag (t);
-            fseek (f, strlen (buffer) - 63, SEEK_CUR);
-            fread (buffer, 64, 1, f);
-            t = new Tag (root, lookupAttrib (ifdAttribs, "Model"));
-            t->initString (buffer);
-            root->addTag (t);
+            if (!fseek (f, strlen (buffer) - 63, SEEK_CUR)) {
+                if (fread (buffer, 64, 1, f) == 1) {
+                    t = new Tag (root, lookupAttrib (ifdAttribs, "Model"));
+                    t->initString (buffer);
+                    root->addTag (t);
+                }
+            }
         }
 
         if (type == 0x1818) {
