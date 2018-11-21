@@ -140,11 +140,11 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::CheckButton* ctiffserialize;
     Gtk::ComboBoxText* curveBBoxPosC;
 
-    Gtk::ComboBoxText* theme;
-    Gtk::FontButton* fontButton;
-    Gtk::FontButton* colorPickerFontButton;
-    Gtk::ColorButton* butCropCol;
-    Gtk::ColorButton* butNavGuideCol;
+    Gtk::ComboBoxText* themeCBT;
+    Gtk::FontButton* mainFontFB;
+    Gtk::FontButton* colorPickerFontFB;
+    Gtk::ColorButton* cropMaskColorCB;
+    Gtk::ColorButton* navGuideColorCB;
 
     Gtk::SpinButton*   maxRecentFolders;
     Gtk::SpinButton*   maxThumbHeightSB;
