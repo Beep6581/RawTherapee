@@ -1006,6 +1006,7 @@ PARTIALPASTE_VIBRANCE;Vibração
 PARTIALPASTE_VIGNETTING;Correção de vinheta
 PARTIALPASTE_WHITEBALANCE;Balanço de branco
 PREFERENCES_ADD;Adicionar
+PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Cor do guia do navegador
 PREFERENCES_APPLNEXTSTARTUP;é necessário reiniciar
 PREFERENCES_AUTOMONPROFILE;Usar o perfil de cores do monitor principal do sistema operacional
 PREFERENCES_BATCH_PROCESSING;Processamento em Lote
@@ -1117,7 +1118,6 @@ PREFERENCES_MONPROFILE;Perfil de cor padrão
 PREFERENCES_MONPROFILE_WARNOSX;Devido às limitações do MacOS, apenas o sRGB é suportado.
 PREFERENCES_MULTITAB;Modo de Mútiplas Abas do Editor
 PREFERENCES_MULTITABDUALMON;Múltiplas Abas do Editor no Modo de Janela Própria
-PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Cor do guia do navegador
 PREFERENCES_NAVIGATIONFRAME;Navegação
 PREFERENCES_OUTDIR;Diretório de Saída
 PREFERENCES_OUTDIRFOLDER;Salvar na pasta
@@ -1341,7 +1341,6 @@ TP_COARSETRAF_TOOLTIP_HFLIP;Girar horizontalmente.
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotacione à esquerda.\n\nAtalhos:\n<b>[</b> - Modo de Guias do Editor Múltiplo,\n<b>Alt-[</b> - Modo de Guia do Editor Único.
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotacione à direita.\n\nAtalhos:\n<b>]</b> - Modo de Guias do Editor Múltiplo,\n<b>Alt-]</b> - Modo de Guia do Editor Único.
 TP_COARSETRAF_TOOLTIP_VFLIP;Girar verticalmente.
-TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Luminância absoluta do ambiente de visualização\n(usualmente 16cd/m²).
 TP_COLORAPP_ALGO;Algorimo
 TP_COLORAPP_ALGO_ALL;Tudo
 TP_COLORAPP_ALGO_JC;Claridade + Croma (JC)
@@ -1407,6 +1406,7 @@ TP_COLORAPP_TCMODE_SATUR;Saturação
 TP_COLORAPP_TEMP_TOOLTIP;Para selecionar um iluminante, defina sempre Matiz=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
 TP_COLORAPP_TONECIE;Mapeamento de tom usando CIECAM02
 TP_COLORAPP_TONECIE_TOOLTIP;Se esta opção estiver desativada, o mapeamento de tom é feito no espaço L*a*b*.\nSe esta opção estiver habilitada, o mapeamento de tom é feito usando CIECAM02.\nA ferramenta de Mapeamento de Tom deve estar ativada para que esta configuração tenha efeito.
+TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Luminância absoluta do ambiente de visualização\n(usualmente 16cd/m²).
 TP_COLORAPP_WBCAM;WB [RT+CAT02] + [saída]
 TP_COLORAPP_WBRT;WB [RT] + [saída]
 TP_COLORTONING_AB;o C/L
@@ -2248,15 +2248,25 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 !ICCPROFCREATOR_DESCRIPTION_ADDPARAM;Append gamma and slope values to the description
 !PARTIALPASTE_DEHAZE;Haze removal
 !PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA avoid color shift
+!PREFERENCES_APPEARANCE;Appearance
+!PREFERENCES_APPEARANCE_COLORPICKERFONT;Color picker font
+!PREFERENCES_APPEARANCE_CROPMASKCOLOR;Crop mask color
+!PREFERENCES_APPEARANCE_MAINFONT;Main font
+!PREFERENCES_APPEARANCE_THEME;Theme
+!PREFERENCES_AUTOSAVE_TP_OPEN;Save tool collapsed/expanded state on exit
 !PREFERENCES_CACHECLEAR;Clear
 !PREFERENCES_CACHECLEAR_ALL;Clear all cached files:
 !PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
 !PREFERENCES_CACHECLEAR_ONLYPROFILES;Clear only cached processing profiles:
 !PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing profiles stored alongside the source images are not touched.
+!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
 !PREFERENCES_PERFORMANCE_THREADS;Threads
 !PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
 !PREFERENCES_TAB_PERFORMANCE;Performance
 !SAVEDLG_FILEFORMAT_FLOAT; floating-point
+!TP_COLORAPP_ABSOLUTELUMINANCE;Absolute luminance
+!TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;When setting manually, values above 65 are recommended.
+!TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
 !TP_COLORTONING_LABREGIONS;L*a*b* correction regions
 !TP_COLORTONING_LABREGION_ABVALUES;a=%1 b=%2
 !TP_COLORTONING_LABREGION_CHROMATICITYMASK;C
@@ -2271,9 +2281,22 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 !TP_DEHAZE_LABEL;Haze Removal
 !TP_DEHAZE_SHOW_DEPTH_MAP;Show Depth Map
 !TP_DEHAZE_STRENGTH;Strength
+!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically
+!TP_LENSPROFILE_CORRECTION_LCPFILE;LCP file
+!TP_LENSPROFILE_CORRECTION_MANUAL;Manually
+!TP_LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
+!TP_LENSPROFILE_MODE_HEADER;Select the lens profile:
+!TP_LENSPROFILE_USE_CA;Chromatic aberration
+!TP_LENSPROFILE_USE_GEOMETRIC;Geometric
+!TP_LENSPROFILE_USE_HEADER;Select distortions to correct:
+!TP_LENSPROFILE_USE_VIGNETTING;Vignetting
 !TP_RAWCACORR_AUTOIT;Iterations
+!TP_RAWCACORR_AUTOIT_TOOLTIP;This setting is available if "Auto-correction" is checked.\nAuto-correction is conservative, meaning that it often does not correct all chromatic aberration.\nTo correct the remaining chromatic aberration, you can use up to five iterations of automatic chromatic aberration correction.\nEach iteration will reduce the remaining chromatic aberration from the last iteration at the cost of additional processing time.
 !TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
 !TP_RAW_DUALDEMOSAICAUTOCONTRAST;Auto threshold
 !TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the checkbox is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the checkbox first (reasonable values depend on the image).
+!TP_RETINEX_CONTEDIT_MAP;Equalizer
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
+!TP_RETINEX_MAP;Method
 !TP_TM_FATTAL_THRESHOLD;Detail
+!TP_WBALANCE_PICKER;Pick

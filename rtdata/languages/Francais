@@ -1036,6 +1036,7 @@ PARTIALPASTE_VIGNETTING;Correction du vignettage
 PARTIALPASTE_WAVELETGROUP;Niveaux d'ondelette
 PARTIALPASTE_WHITEBALANCE;Balance des blancs
 PREFERENCES_ADD;Ajoute
+PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Couleur du cadre dans le Navigateur
 PREFERENCES_APPLNEXTSTARTUP;appliqué au prochain lancement
 PREFERENCES_AUTOMONPROFILE;Utiliser automatiquement le profil de l'écran principal
 PREFERENCES_BATCH_PROCESSING;Traitement par lot
@@ -1156,7 +1157,6 @@ PREFERENCES_MONPROFILE;Profil couleur par défaut
 PREFERENCES_MONPROFILE_WARNOSX;Due à des limitations de macOS, seul sRGB est supporté.
 PREFERENCES_MULTITAB;Éditeurs multiple
 PREFERENCES_MULTITABDUALMON;Éditeurs multiple, si possible sur un second moniteur
-PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Couleur du cadre dans le Navigateur
 PREFERENCES_NAVIGATIONFRAME;Navigation
 PREFERENCES_OUTDIR;Dossier de sortie
 PREFERENCES_OUTDIRFOLDER;Dossier de sauvegarde
@@ -1383,7 +1383,6 @@ TP_COARSETRAF_TOOLTIP_HFLIP;Symétriser / axe vertical
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotation vers la gauche\nRaccourci: <b>[</b>\n\nRaccourci en mode Éditeur unique: <b>Alt-[</b>
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotation vers la droite\nRaccourci: <b>]</b>\n\nRaccourci en mode Éditeur unique: <b>Alt-]</b>
 TP_COARSETRAF_TOOLTIP_VFLIP;Symétriser / axe horizontal
-TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Luminance absolue de l'environnement de visionnage\n(souvent 16cd/m²)
 TP_COLORAPP_ALGO;Algorithme
 TP_COLORAPP_ALGO_ALL;Tout
 TP_COLORAPP_ALGO_JC;Luminosité + Chroma (JC)
@@ -1449,6 +1448,7 @@ TP_COLORAPP_TCMODE_SATUR;Saturation
 TP_COLORAPP_TEMP_TOOLTIP;Pour sélectionner un illuminant, toujours régler Teinte=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
 TP_COLORAPP_TONECIE;Compression Tonale utilisant CIECAM02
 TP_COLORAPP_TONECIE_TOOLTIP;Si cette option est désactivée, la compression tonale est faite dans l'espace Lab.\nSi cette options est activée, la compression tonale est faite en utilisant CIECAM02.\nL'outil Compression Tonale doit être activé pour que ce réglage prenne effet
+TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Luminance absolue de l'environnement de visionnage\n(souvent 16cd/m²)
 TP_COLORAPP_WBCAM;BB [RT+CAT02] + [sortie]
 TP_COLORAPP_WBRT;BB [RT] + [sortie]
 TP_COLORTONING_AB;o C/L
@@ -2299,3 +2299,30 @@ ZOOMPANEL_ZOOMFITSCREEN;Affiche l'image entière\nRaccourci: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom Avant\nRaccourci: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!PREFERENCES_APPEARANCE;Appearance
+!PREFERENCES_APPEARANCE_COLORPICKERFONT;Color picker font
+!PREFERENCES_APPEARANCE_CROPMASKCOLOR;Crop mask color
+!PREFERENCES_APPEARANCE_MAINFONT;Main font
+!PREFERENCES_APPEARANCE_THEME;Theme
+!PREFERENCES_AUTOSAVE_TP_OPEN;Save tool collapsed/expanded state on exit
+!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
+!TP_COLORAPP_ABSOLUTELUMINANCE;Absolute luminance
+!TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;When setting manually, values above 65 are recommended.
+!TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
+!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically
+!TP_LENSPROFILE_CORRECTION_LCPFILE;LCP file
+!TP_LENSPROFILE_CORRECTION_MANUAL;Manually
+!TP_LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
+!TP_LENSPROFILE_MODE_HEADER;Select the lens profile:
+!TP_LENSPROFILE_USE_CA;Chromatic aberration
+!TP_LENSPROFILE_USE_GEOMETRIC;Geometric
+!TP_LENSPROFILE_USE_HEADER;Select distortions to correct:
+!TP_LENSPROFILE_USE_VIGNETTING;Vignetting
+!TP_RAWCACORR_AUTOIT_TOOLTIP;This setting is available if "Auto-correction" is checked.\nAuto-correction is conservative, meaning that it often does not correct all chromatic aberration.\nTo correct the remaining chromatic aberration, you can use up to five iterations of automatic chromatic aberration correction.\nEach iteration will reduce the remaining chromatic aberration from the last iteration at the cost of additional processing time.
+!TP_RETINEX_CONTEDIT_MAP;Equalizer
+!TP_RETINEX_MAP;Method
+!TP_WBALANCE_PICKER;Pick

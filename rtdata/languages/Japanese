@@ -1065,6 +1065,7 @@ PARTIALPASTE_VIBRANCE;自然な彩度
 PARTIALPASTE_VIGNETTING;周辺光量補正
 PARTIALPASTE_WHITEBALANCE;ホワイトバランス
 PREFERENCES_ADD;追加
+PREFERENCES_APPEARANCE_NAVGUIDECOLOR;ナビゲーターのガイドカラー
 PREFERENCES_APPLNEXTSTARTUP;要再起動
 PREFERENCES_AUTOMONPROFILE;OSのメインモニター・プロファイルを使用
 PREFERENCES_BATCH_PROCESSING;バッチ処理
@@ -1181,7 +1182,6 @@ PREFERENCES_MONPROFILE;デフォルトのモニタープロファイル
 PREFERENCES_MONPROFILE_WARNOSX;MacのOSの制約により、サポート出来るのはsRGBだけです
 PREFERENCES_MULTITAB;マルチ編集タブモード
 PREFERENCES_MULTITABDUALMON;独自のウィンドウモードによるマルチ編集タブ
-PREFERENCES_APPEARANCE_NAVGUIDECOLOR;ナビゲーターのガイドカラー
 PREFERENCES_NAVIGATIONFRAME;ナビゲーション
 PREFERENCES_OUTDIR;出力ディレクトリ
 PREFERENCES_OUTDIRFOLDER;フォルダに保存
@@ -1407,7 +1407,6 @@ TP_COARSETRAF_TOOLTIP_HFLIP;左右反転
 TP_COARSETRAF_TOOLTIP_ROTLEFT;90度左回転\nショートカット: <b>[</b>\n\nシングル・エディタ・タブのショートカット: <b>Alt-[</b>
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;90度右回転\nショートカット: <b>]</b>\n\nシングル・エディタ・タブのショートカット: <b>Alt-]</b>
 TP_COARSETRAF_TOOLTIP_VFLIP;上下反転
-TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;観視環境の絶対輝度\n(通常 16cd/m2)
 TP_COLORAPP_ALGO;アルゴリズム
 TP_COLORAPP_ALGO_ALL;すべて
 TP_COLORAPP_ALGO_JC;明度 + 色度 (JC)
@@ -1473,6 +1472,7 @@ TP_COLORAPP_TCMODE_SATUR;彩度
 TP_COLORAPP_TEMP_TOOLTIP;選択した光源に関し色偏差は常に1が使われます\n\n色温度=2856\nD50 色温度=5003\nD55 色温度=5503\nD65 色温度=6504\nD75 色温度=7504
 TP_COLORAPP_TONECIE;CIECAM02 明るさ(Q)を使用してトーンマッピング
 TP_COLORAPP_TONECIE_TOOLTIP;このオプションが無効になっている場合、トーンマッピングはL*a*b*空間を使用します\nこのオプションが有効になっている場合、トーンマッピングは、CIECAM02を使用します\nトーンマッピング（L*a*b*/CIECAM02）ツールを有効にするには、この設定を有効にする必要があります
+TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;観視環境の絶対輝度\n(通常 16cd/m2)
 TP_COLORAPP_WBCAM;WB [RT+CAT02] + [出力]
 TP_COLORAPP_WBRT;WB [RT] + [出力]
 TP_COLORTONING_AB;o C/L
@@ -2302,3 +2302,26 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!PREFERENCES_APPEARANCE;Appearance
+!PREFERENCES_APPEARANCE_COLORPICKERFONT;Color picker font
+!PREFERENCES_APPEARANCE_CROPMASKCOLOR;Crop mask color
+!PREFERENCES_APPEARANCE_MAINFONT;Main font
+!PREFERENCES_APPEARANCE_THEME;Theme
+!PREFERENCES_AUTOSAVE_TP_OPEN;Save tool collapsed/expanded state on exit
+!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
+!TP_COLORAPP_ABSOLUTELUMINANCE;Absolute luminance
+!TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;When setting manually, values above 65 are recommended.
+!TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
+!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically
+!TP_LENSPROFILE_CORRECTION_LCPFILE;LCP file
+!TP_LENSPROFILE_CORRECTION_MANUAL;Manually
+!TP_LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
+!TP_LENSPROFILE_MODE_HEADER;Select the lens profile:
+!TP_LENSPROFILE_USE_CA;Chromatic aberration
+!TP_LENSPROFILE_USE_GEOMETRIC;Geometric
+!TP_LENSPROFILE_USE_HEADER;Select distortions to correct:
+!TP_LENSPROFILE_USE_VIGNETTING;Vignetting
+!TP_RAWCACORR_AUTOIT_TOOLTIP;This setting is available if "Auto-correction" is checked.\nAuto-correction is conservative, meaning that it often does not correct all chromatic aberration.\nTo correct the remaining chromatic aberration, you can use up to five iterations of automatic chromatic aberration correction.\nEach iteration will reduce the remaining chromatic aberration from the last iteration at the cost of additional processing time.
+!TP_RETINEX_CONTEDIT_MAP;Equalizer
+!TP_RETINEX_MAP;Method
+!TP_WBALANCE_PICKER;Pick

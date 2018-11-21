@@ -1500,7 +1500,6 @@ TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left.\n\nShortcuts:\n<b>[</b> - Multiple Ed
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right.\n\nShortcuts:\n<b>]</b> - Multiple Editor Tabs Mode,\n<b>Alt-]</b> - Single Editor Tab Mode.
 TP_COARSETRAF_TOOLTIP_VFLIP;Flip vertically.
 TP_COLORAPP_ABSOLUTELUMINANCE;Absolute luminance
-TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
 TP_COLORAPP_ALGO;Algorithm
 TP_COLORAPP_ALGO_ALL;All
 TP_COLORAPP_ALGO_JC;Lightness + Chroma (JC)
@@ -1542,6 +1541,7 @@ TP_COLORAPP_LABEL_SCENE;Scene Conditions
 TP_COLORAPP_LABEL_VIEWING;Viewing Conditions
 TP_COLORAPP_LIGHT;Lightness (J)
 TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM02 differs from L*a*b* and RGB lightness.
+TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
 TP_COLORAPP_MODEL;WP Model
 TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM02 is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.\n\n<b>Free temp+green + CAT02 + [output]:</b> temp and green are selected by the user, the output device's white balance is set in Viewing Conditions.
 TP_COLORAPP_NEUTRAL;Reset
@@ -1884,9 +1884,9 @@ TP_LENSPROFILE_CORRECTION_MANUAL;Manually
 TP_LENSPROFILE_LABEL;Profiled Lens Correction
 TP_LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
 TP_LENSPROFILE_MODE_HEADER;Select the lens profile:
-TP_LENSPROFILE_USE_HEADER;Select distortions to correct:
 TP_LENSPROFILE_USE_CA;Chromatic aberration
 TP_LENSPROFILE_USE_GEOMETRIC;Geometric
+TP_LENSPROFILE_USE_HEADER;Select distortions to correct:
 TP_LENSPROFILE_USE_VIGNETTING;Vignetting
 TP_LOCALLAB_ACTIV;Blur luminance only
 TP_LOCALLAB_ADJ;Equalizer blue-red
@@ -2146,10 +2146,10 @@ TP_RESIZE_SCALE;Scale
 TP_RESIZE_SPECIFY;Specify:
 TP_RESIZE_W;Width:
 TP_RESIZE_WIDTH;Width
-TP_RETINEX_CONTEDIT_MAP;Equalizer
 TP_RETINEX_CONTEDIT_HSL;HSL histogram
 TP_RETINEX_CONTEDIT_LAB;L*a*b* histogram
 TP_RETINEX_CONTEDIT_LH;Hue
+TP_RETINEX_CONTEDIT_MAP;Equalizer
 TP_RETINEX_CURVEEDITOR_CD;L=f(L)
 TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorrect raw data to reduce halos and artifacts.
 TP_RETINEX_CURVEEDITOR_LH;Strength=f(H)
