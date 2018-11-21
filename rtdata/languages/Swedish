@@ -839,7 +839,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT;Format för nycklar
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Namn
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 PREFERENCES_CUSTPROFBUILDPATH;Exekverbar sökväg
-PREFERENCES_CUTOVERLAYBRUSH;Bakgrundsfärg vid beskärning
 PREFERENCES_D50;5000K
 PREFERENCES_D55;5500K
 PREFERENCES_D60;6000K
@@ -858,7 +857,6 @@ PREFERENCES_DIRSOFTWARE;Installationskatalog
 PREFERENCES_EDITORLAYOUT;Layout för redigeringsvyn
 PREFERENCES_EXTERNALEDITOR;Externt bildredigeringsprogram
 PREFERENCES_FBROWSEROPTS;Inställningar för filvyn/miniatyrbilderna
-PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Filvyns verktygsrad som en rad (avmarkera för lågupplösta skärmar)
 PREFERENCES_FILEFORMAT;Filformat
 PREFERENCES_FLATFIELDFOUND;Hittade
 PREFERENCES_FLATFIELDSDIR;Plattfältskatalog
@@ -908,7 +906,7 @@ PREFERENCES_MENUOPTIONS;Menyval för högerklick
 PREFERENCES_METADATA;Metadata
 PREFERENCES_MULTITAB;Öppna bilderna i olika flikar
 PREFERENCES_MULTITABDUALMON;Visa bild på andra skärmen, om möjligt, i flerfliksläge
-PREFERENCES_NAVGUIDEBRUSH;Översiktsvyns guidefärg
+PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Översiktsvyns guidefärg
 PREFERENCES_NAVIGATIONFRAME;Navigering
 PREFERENCES_OUTDIR;Utmatningskatalog
 PREFERENCES_OUTDIRFOLDER;Spara till katalog
@@ -940,11 +938,8 @@ PREFERENCES_PROPERTY;Egenskaper
 PREFERENCES_PSPATH;Adobe Photoshops installationskatalog
 PREFERENCES_REMEMBERZOOMPAN;Kom ihåg förstoringsprocent och panorering
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Kom ihåg förstoringsgraden i % och panoreringen för den aktuella bilden när du öppnar en ny bild.\n\nDet här valet fungerar bara i Enkelfliksläget och när "Demosaicing-metod som ska användas för förstoringsgrader <100 %" är satt til "Som i PP3".
-PREFERENCES_SELECTFONT;Välj typsnitt
-PREFERENCES_SELECTFONT_COLPICKER;Välj typsnitt för färgpipetten
 PREFERENCES_SELECTLANG;Välj språk
-PREFERENCES_SELECTTHEME;Välj tema
-PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Seriell läsning av tiff-filer
+PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Seriell läsning av TIFF-filer
 PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;När man arbetar med bilder i en katalog full med okomprimerade till-filer, så kan prestanda för att generera miniatyrbilder ökas genom att aktivera detta val.
 PREFERENCES_SET;Ange
 PREFERENCES_SHOWBASICEXIF;Visa grundlig Exif-information
@@ -1105,11 +1100,7 @@ TP_COARSETRAF_TOOLTIP_HFLIP;Vänd horisontellt
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotera åt vänster.\nKortkommando: <b>[</b>
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotera åt höger.\nKortkommando: <b>]</b>
 TP_COARSETRAF_TOOLTIP_VFLIP;Vänd vertikalt
-TP_COLORAPP_ADAPTSCENE;Luminans hos vyn
-TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolut luminans hos vyn (cd/m²).\n1) Beräknas från exif-informationen:\nSlutartid - ISO-tal - Bländartal - exponeringskompensation gjord av kameran.\n2) Beräknas från vitpunkten hos råbilden och RT:s reglage för exponeringskompensation
-TP_COLORAPP_ADAPTVIEWING;Betrakningsluminans (cd/m²)
-TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolut luminans hos betrakningsomgivningen\n(vanligtvis 16cd/m²)
-TP_COLORAPP_ADAP_AUTO_TOOLTIP;Om checkboxen är aktiverad (rekommenderas) beräknar RT ett optimalt värde från exif-informationen.\nFör att sätta ett värde manuellt, avaktivera funktionen först
+TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Absolut luminans hos betrakningsomgivningen\n(vanligtvis 16cd/m²)
 TP_COLORAPP_ALGO;Algoritm
 TP_COLORAPP_ALGO_ALL;Alla
 TP_COLORAPP_ALGO_JC;Ljushet + kroma (JC)
@@ -1139,8 +1130,6 @@ TP_COLORAPP_CURVEEDITOR3;Färgkurva
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Justera antingen kroma, mättnad eller colorfulness.\n\nVisar histogrammet hos kromaciteten (Lab) före CIECAM02.\nOm checkboxen "Show CIECAM02 output histograms in curves" är aktiverad, visas histogrammet för C, s eller M efter CIECAM02.\n\nC, s och M visas ej i histogrammet i huvudpanelen.\n\nFör slutligt resultat, se huvudpanelens histogram
 TP_COLORAPP_DATACIE;Resultat av CIECAM02-histogram i kurvor
 TP_COLORAPP_DATACIE_TOOLTIP;När detta är aktiverat, visar CIECAM02-histogram ungefärliga värden/intervall för J eller Q, och C, s eller M efter justeringar i CIECAM02.\nDet här valet påverkar inte huvudhistogrammet.\n\nNär detta är avaktiverat, visar histogrammet för CIECAM02-kurvor Lab-värden innan justeringar av CIECAM02
-TP_COLORAPP_DEGREE_AUTO_TOOLTIP;Om den här checkboxen är aktiverad (rekommenderas), beräknar RT ett optimalt värde som sedan dels används av CAT02 och dels för hela CIECAM02.\nFör att ange ett värde manuellt, avaktivera checkboxen först (värden över 65 rekommenderas)
-TP_COLORAPP_DEGREE_TOOLTIP;Mängd CIE kromatisk anpassning 2002
 TP_COLORAPP_GAMUT;Kontroll av tonomfång (Lab)
 TP_COLORAPP_GAMUT_TOOLTIP;Tillåt kontroll av tonomfång i Lab-läge
 TP_COLORAPP_HUE;Nyans(h)
@@ -1155,8 +1144,6 @@ TP_COLORAPP_MODEL;Vitpunktsmodell
 TP_COLORAPP_MODEL_TOOLTIP;Vitpunktsmodell\n\n<b>WB [RT] + [output]:</b>\nRT:s vitbalans används för bilden, CIECAM02 sätts till D50, utmatningsenhetens vitbalans sätts i <i>Inställningar > Färghantering</i>\n\n<b>WB [RT+CAT02] + [output]:</b>\nRT:s vitbalansinställningar används av CAT02 och utmatningsenhetens vitbalans sätts i Inställningar
 TP_COLORAPP_RSTPRO;Bevara röda färger och hudtoner
 TP_COLORAPP_RSTPRO_TOOLTIP;Bevara röda färger och hudtoner (reglage och kurvor)
-TP_COLORAPP_SHARPCIE;Skärpa, Kontrast genom detaljnivåer, Mikrokontrast och Fyll ut överstrålning med kvalitetskontroll
-TP_COLORAPP_SHARPCIE_TOOLTIP;Skärpa, Kontrast genom detaljnivåer, Mikrokontrast och Fyll ut överstrålning kommer att använda CIECAM02 om den är aktiverad
 TP_COLORAPP_SURROUND;Omgivning
 TP_COLORAPP_SURROUND_AVER;Medel
 TP_COLORAPP_SURROUND_DARK;Mörk
@@ -1440,9 +1427,6 @@ TP_LENSGEOM_AUTOCROP;Autobeskärning
 TP_LENSGEOM_FILL;Fyll automatiskt
 TP_LENSGEOM_LABEL;Geometrisk- och distorsionskorrigering
 TP_LENSPROFILE_LABEL;Objektivkorrigeringsprofil
-TP_LENSPROFILE_USECA;Korrigera för kromatiska abberationer
-TP_LENSPROFILE_USEDIST;Korrigera distorsion
-TP_LENSPROFILE_USEVIGN;Korrigera vinjettering
 TP_NEUTRAL;Återställ
 TP_NEUTRAL_TIP;Återställ exponeringsreglagen till neutrala värden.\nGäller för samma reglage som autonivåer, oavsett om du använder autonivåer eller ej
 TP_PCVIGNETTE_FEATHER;Fjäder
@@ -2026,9 +2010,6 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
 !IPTCPANEL_TRANSREFERENCE;Job ID
 !IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
-!LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
-!LENSPROFILE_CORRECTION_LCPFILE;LCP File
-!LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
 !LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
 !MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
 !MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
@@ -2053,15 +2034,14 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !PARTIALPASTE_RAW_PIXELSHIFT;Pixel Shift
 !PARTIALPASTE_SOFTLIGHT;Soft light
 !PARTIALPASTE_TM_FATTAL;Dynamic range compression
-!PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_CACHECLEAR;Clear
 !PREFERENCES_CACHECLEAR_ALL;Clear all cached files:
 !PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
 !PREFERENCES_CACHECLEAR_ONLYPROFILES;Clear only cached processing profiles:
 !PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing profiles stored alongside the source images are not touched.
 !PREFERENCES_CMMBPC;Black point compensation
-!PREFERENCES_CROP;Crop editing
-!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
+!PREFERENCES_CROP;Crop Editing
+!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop
 !PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
 !PREFERENCES_CROP_GUIDES_FRAME;Frame
 !PREFERENCES_CROP_GUIDES_FULL;Original
@@ -2083,11 +2063,10 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
 !PREFERENCES_PRTINTENT;Rendering intent
 !PREFERENCES_PRTPROFILE;Color profile
-!PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
-!PREFERENCES_SERIALIZE_TIFF_READ;Tiff Read Settings
+!PREFERENCES_SAVE_TP_OPEN_NOW;Save tool collapsed/expanded state now
+!PREFERENCES_SERIALIZE_TIFF_READ;TIFF Read Settings
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
 !PREFERENCES_TAB_PERFORMANCE;Performance
-!PREFERENCES_THEME;Theme
 !PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
 !PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
@@ -2114,9 +2093,6 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_COLORAPP_NEUTRAL;Reset
 !TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
 !TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
-!TP_COLORAPP_YB;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE_TOOLTIP;If "auto" is enabled, Yb is calculated from the mean value of the actual image's luminance
 !TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Chroma opacity as a function of luminance oC=f(L)
 !TP_COLORTONING_LABEL;Color Toning
 !TP_COLORTONING_LABGRID;L*a*b* color correction grid
@@ -2197,7 +2173,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_RAW_DCB;DCB
 !TP_RAW_DCBVNG4;DCB+VNG4
 !TP_RAW_DUALDEMOSAICAUTOCONTRAST;Auto threshold
-!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the check-box is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the check-box first (reasonable values depend on the image).
+!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the checkbox is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the checkbox first (reasonable values depend on the image).
 !TP_RAW_DUALDEMOSAICCONTRAST;Contrast threshold
 !TP_RAW_EAHD;EAHD
 !TP_RAW_FAST;Fast
@@ -2242,7 +2218,6 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_RAW_RCDVNG4;RCD+VNG4
 !TP_RAW_VNG4;VNG4
 !TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
-!TP_RETINEX_CONTEDIT_MAP;Mask equalizer
 !TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorrect raw data to reduce halos and artifacts.
 !TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;This curve can be applied alone or with a Gaussian mask or wavelet mask.\nBeware of artifacts!
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
@@ -2250,7 +2225,6 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_RETINEX_GAMMA_TOOLTIP;Restore tones by applying gamma before and after Retinex. Different from Retinex curves or others curves (Lab, Exposure, etc.).
 !TP_RETINEX_HIGHLIGHT_TOOLTIP;Increase action of High algorithm.\nMay require you to re-adjust "Neighboring pixels" and to increase the "White-point correction" in the Raw tab -> Raw White Points tool.
 !TP_RETINEX_LABEL_MASK;Mask
-!TP_RETINEX_MAP;Mask method
 !TP_RETINEX_MAP_GAUS;Gaussian mask
 !TP_RETINEX_MAP_MAPP;Sharp mask (wavelet partial)
 !TP_RETINEX_MAP_MAPT;Sharp mask (wavelet total)

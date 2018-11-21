@@ -140,11 +140,11 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::CheckButton* ctiffserialize;
     Gtk::ComboBoxText* curveBBoxPosC;
 
-    Gtk::ComboBoxText* theme;
-    Gtk::FontButton* fontButton;
-    Gtk::FontButton* colorPickerFontButton;
-    Gtk::ColorButton* butCropCol;
-    Gtk::ColorButton* butNavGuideCol;
+    Gtk::ComboBoxText* themeCBT;
+    Gtk::FontButton* mainFontFB;
+    Gtk::FontButton* colorPickerFontFB;
+    Gtk::ColorButton* cropMaskColorCB;
+    Gtk::ColorButton* navGuideColorCB;
 
     Gtk::SpinButton*   maxRecentFolders;
     Gtk::SpinButton*   maxThumbHeightSB;
@@ -200,8 +200,8 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
 
     DynamicProfilePanel *dynProfilePanel;
 
-    Gtk::ComboBoxText *cropGuides;
-    Gtk::CheckButton *cropAutoFit;
+    Gtk::ComboBoxText *cropGuidesCombo;
+    Gtk::CheckButton *cropAutoFitCB;
 
     Glib::ustring storedValueRaw;
     Glib::ustring storedValueImg;

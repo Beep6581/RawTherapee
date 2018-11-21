@@ -910,9 +910,6 @@ IPTCPANEL_TITLE;Titel
 IPTCPANEL_TITLEHINT;Geben Sie einen kurzen lesbaren Namen\nfür das Bild ein, z.B. den Dateinamen.
 IPTCPANEL_TRANSREFERENCE;Verarbeitungs-ID
 IPTCPANEL_TRANSREFERENCEHINT;Geben Sie eine Kennung zur Kontrolle oder\nVerfolgung des Arbeitsablaufes ein.
-LENSPROFILE_CORRECTION_AUTOMATCH;Automatisch (Lensfun)
-LENSPROFILE_CORRECTION_LCPFILE;LCP-Datei
-LENSPROFILE_CORRECTION_MANUAL;Benutzerdefiniert (Lensfun)
 LENSPROFILE_LENS_WARNING;Warnung: Der Cropfaktor des Profils entspricht nicht dem des Objektivs.\nDies kann zu einem fehlerhaften Ergebnis führen.
 MAIN_BUTTON_FULLSCREEN;Vollbild\nTaste: <b>F11</b>
 MAIN_BUTTON_ICCPROFCREATOR;ICC-Profil erstellen.
@@ -1090,7 +1087,6 @@ PARTIALPASTE_WHITEBALANCE;Weißabgleich
 PREFERENCES_ADD;HINZU
 PREFERENCES_APPLNEXTSTARTUP;erfordert Neustart
 PREFERENCES_AUTOMONPROFILE;Automatisch das für den aktuellen Monitor festgelegte Profil verwenden
-PREFERENCES_AUTOSAVE_TP_OPEN;Werkzeugstatus vor dem Beenden automatisch speichern
 PREFERENCES_BATCH_PROCESSING;Stapelverarbeitung
 PREFERENCES_BEHADDALL;Alle hinzufügen
 PREFERENCES_BEHADDALLHINT;Setzt alle Parameter auf <b>Hinzufügen</b>.\nAnpassungen der Parameter in der Hintergrundstapelverarbeitung werden als <b>Deltas</b> zu den gespeicherten Werten interpretiert.
@@ -1127,7 +1123,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT;Format
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Name
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;Tag-ID
 PREFERENCES_CUSTPROFBUILDPATH;Anwendungspfad
-PREFERENCES_CUTOVERLAYBRUSH;Farbe/Transparenz für Schnittmaske
 PREFERENCES_D50;5000K
 PREFERENCES_D50_OLD;5000K
 PREFERENCES_D55;5500K
@@ -1149,7 +1144,6 @@ PREFERENCES_EDITORCMDLINE;Benutzerdefinierte Befehlszeile
 PREFERENCES_EDITORLAYOUT;Editor-Layout
 PREFERENCES_EXTERNALEDITOR;Externer Editor
 PREFERENCES_FBROWSEROPTS;Bildinformationen und Miniaturbilder
-PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Einzeilige Toolbar\n(Bei geringer Bildschirmauflösung deaktivieren)
 PREFERENCES_FILEFORMAT;Dateiformat
 PREFERENCES_FLATFIELDFOUND;Gefunden
 PREFERENCES_FLATFIELDSDIR;Weißbild-Verzeichnis
@@ -1206,7 +1200,7 @@ PREFERENCES_MONPROFILE;Standardfarbprofil
 PREFERENCES_MONPROFILE_WARNOSX;Aufgrund einer macOS-Limitierung wird nur sRGB unterstützt.
 PREFERENCES_MULTITAB;Multi-Reitermodus
 PREFERENCES_MULTITABDUALMON;Multi-Reitermodus (auf zweitem Monitor, wenn verfügbar)
-PREFERENCES_NAVGUIDEBRUSH;Farbe der Navigationshilfe
+PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Farbe der Navigationshilfe
 PREFERENCES_NAVIGATIONFRAME;Navigation
 PREFERENCES_OUTDIR;Ausgabeverzeichnis
 PREFERENCES_OUTDIRFOLDER;In dieses Verzeichnis speichern
@@ -1246,10 +1240,7 @@ PREFERENCES_PSPATH;Adobe Photoshop Installationsverzeichnis
 PREFERENCES_REMEMBERZOOMPAN;Zoom und Bildposition merken
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Öffnen eines neuen Bildes mit den Zoom- und Positionswerten\ndes vorangegangenen Bildes.\n\nFunktioniert nur unter folgenden Bedingungen:\nEin-Reitermodus aktiv\n“Demosaikmethode für 100%-Ansicht“ muss auf “Wie im Bild-\nverarbeitungsprofil vorgegeben“ eingestellt sein.
 PREFERENCES_SAVE_TP_OPEN_NOW;Werkzeugstatus jetzt speichern
-PREFERENCES_SELECTFONT;Schriftart:
-PREFERENCES_SELECTFONT_COLPICKER;Schriftart Farbwähler
 PREFERENCES_SELECTLANG;Sprache
-PREFERENCES_SELECTTHEME;Oberflächendesign
 PREFERENCES_SERIALIZE_TIFF_READ;TIFF-Bilder
 PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialisiertes Lesen von TIFF-Bildern verwenden
 PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Beim Arbeiten mit Ordnern voll unkomprimierter TIFF-Bilder, kann diese Einstellung das Generieren von Miniaturbildern deutlich beschleunigen.
@@ -1273,7 +1264,6 @@ PREFERENCES_TAB_GENERAL;Allgemein
 PREFERENCES_TAB_IMPROC;Bildbearbeitung
 PREFERENCES_TAB_PERFORMANCE;Performance
 PREFERENCES_TAB_SOUND;Klänge
-PREFERENCES_THEME;Oberflächendesign (erfordert Neustart)
 PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Eingebundenes JPEG
 PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Bildanzeige
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutrales RAW-Bild 
@@ -1437,11 +1427,7 @@ TP_COARSETRAF_TOOLTIP_HFLIP;Horizontal spiegeln.
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Nach links drehen.\nTaste: <b>[</b>
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Nach rechts drehen.\nTaste: <b>]</b>
 TP_COARSETRAF_TOOLTIP_VFLIP;Vertikal spiegeln.
-TP_COLORAPP_ADAPTSCENE;Luminanz (cd/m²)
-TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute Luminanz der Szenenleuchstärket\n(normalerweise 2000cd/m²).
-TP_COLORAPP_ADAPTVIEWING;Luminanz (cd/m²)
-TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute Luminanz der Betrachtungsumgebung\n(normalerweise 16cd/m²).
-TP_COLORAPP_ADAP_AUTO_TOOLTIP;Wenn aktiviert (empfohlen), werden die optimalen\nWerte aus den Exif-Daten automatisch berechnet.
+TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Absolute Luminanz der Betrachtungsumgebung\n(normalerweise 16cd/m²).
 TP_COLORAPP_ALGO;Algorithmus
 TP_COLORAPP_ALGO_ALL;Alle
 TP_COLORAPP_ALGO_JC;Helligkeit + Buntheit (JH)
@@ -1471,8 +1457,6 @@ TP_COLORAPP_CURVEEDITOR3;Farbkurve
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Korrigiert Buntheit, Sättigung oder Farbigkeit.\n\nZeigt das Histogramm der Chromatizität (L*a*b* ) VOR den CIECAM02-Änderungen an.\nWenn "CIECAM02-Ausgabe-Histogramm in Kurven anzeigen" aktiviert ist, wird das Histogramm von C, S oder M NACH den CIECAM02-Änderungen angezeigt.\n\nC, S und M werden nicht im Haupt-Histogramm angezeigt.\nFür die endgültige Ausgabe verwenden Sie das Haupt-Histogramm.
 TP_COLORAPP_DATACIE;CIECAM02-Ausgabe-Histogramm in\nKurven anzeigen
 TP_COLORAPP_DATACIE_TOOLTIP;Wenn aktiviert, zeigen die Histogramme\nder CIECAM02-Kurven die angenäherten\nWerte/Bereiche für <b>J oder Q</b> und <b>C, S oder M</b>\nNACH den CIECAM02-Anpassungen an. Das\nbetrifft nicht das Haupt-Histogramm.\n\nWenn deaktiviert, zeigen die Histogramme\nder CIECAM02-Kurven die L*a*b*-Werte\nVOR den CIECAM02-Anpassungen an.
-TP_COLORAPP_DEGREE_AUTO_TOOLTIP;Wenn aktiviert (empfohlen), wird ein optimaler\nWert berechnet, der von CAT02 und CIECAM02\nverwendet wird.\nUm den Wert manuell zu setzen, muss die Option\ndeaktiviert sein (Werte über 64 sind empfohlen).
-TP_COLORAPP_DEGREE_TOOLTIP;Umfang der “CIE Chromatic Adaptation Transform 2002“.
 TP_COLORAPP_FREE;Farbtemperatur + Tönung + CAT02 + [Ausgabe]
 TP_COLORAPP_GAMUT;Gamutkontrolle (L*a*b*)
 TP_COLORAPP_GAMUT_TOOLTIP;Gamutkontrolle im L*a*b*-Modus erlauben.
@@ -1490,8 +1474,6 @@ TP_COLORAPP_NEUTRAL;Zurücksetzen
 TP_COLORAPP_NEUTRAL_TIP;Setzt alle CIECAM02-Parameter auf Vorgabewerte zurück.
 TP_COLORAPP_RSTPRO;Hautfarbtöne schützen
 TP_COLORAPP_RSTPRO_TOOLTIP;Hautfarbtöne schützen\nWirkt sich auf Regler und Kurven aus.
-TP_COLORAPP_SHARPCIE;--unused--
-TP_COLORAPP_SHARPCIE_TOOLTIP;--unused--
 TP_COLORAPP_SURROUND;Umgebung
 TP_COLORAPP_SURROUND_AVER;Durchschnitt
 TP_COLORAPP_SURROUND_DARK;Dunkel
@@ -1513,9 +1495,6 @@ TP_COLORAPP_TONECIE;Tonwertkorrektur mittels\nCIECAM02-Helligkeit (Q)
 TP_COLORAPP_TONECIE_TOOLTIP;Wenn diese Option ausgeschaltet ist, wird die Tonwertkorrektur im L*a*b*-Farbraum durchgeführt.\nWenn die Option eingeschaltet ist, wird CIECAM02 für die Tonwertkorrektur verwendet. Das Werkzeug Tonwertkorrektur muss aktiviert sein, damit diese Option berücksichtigt wird.
 TP_COLORAPP_WBCAM;[RT+CAT02] + [Ausgabe]
 TP_COLORAPP_WBRT;[RT] + [Ausgabe]
-TP_COLORAPP_YB;Yb% (Ø Luminanz)
-TP_COLORAPP_YBSCENE;Yb% (Ø Luminanz)
-TP_COLORAPP_YBSCENE_TOOLTIP;Wenn aktiviert, wird der Durchschnittswert der Luminanz berechnet.
 TP_COLORTONING_AB;o C/L
 TP_COLORTONING_AUTOSAT;Automatisch
 TP_COLORTONING_BALANCE;Farbausgleich
@@ -1816,9 +1795,6 @@ TP_LENSGEOM_AUTOCROP;Auto-Schneiden
 TP_LENSGEOM_FILL;Auto-Füllen
 TP_LENSGEOM_LABEL;Objektivkorrekturen
 TP_LENSPROFILE_LABEL;Objektivkorrekturprofil
-TP_LENSPROFILE_USECA;CA korrigieren
-TP_LENSPROFILE_USEDIST;Verzeichnung korrigieren
-TP_LENSPROFILE_USEVIGN;Vignettierung korrigieren
 TP_LOCALCONTRAST_AMOUNT;Intensität
 TP_LOCALCONTRAST_DARKNESS;Dunkle Bereiche
 TP_LOCALCONTRAST_LABEL;Lokaler Kontrast
@@ -2397,5 +2373,5 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 !TP_DEHAZE_SHOW_DEPTH_MAP;Show Depth Map
 !TP_DEHAZE_STRENGTH;Strength
 !TP_RAW_DUALDEMOSAICAUTOCONTRAST;Auto threshold
-!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the check-box is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the check-box first (reasonable values depend on the image).
+!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the checkbox is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the checkbox first (reasonable values depend on the image).
 !TP_TM_FATTAL_THRESHOLD;Detail

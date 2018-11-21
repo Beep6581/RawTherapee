@@ -735,7 +735,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT;Clave de formato
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Nombre
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;ID Etiqueta
 PREFERENCES_CUSTPROFBUILDPATH;Ruta al programa ejecutable
-PREFERENCES_CUTOVERLAYBRUSH;Recortar máscara de color/transparencia
 PREFERENCES_D50;5000ºK
 PREFERENCES_D55;5500ºK
 PREFERENCES_D60;6000ºK
@@ -754,7 +753,6 @@ PREFERENCES_DIRSOFTWARE;Carpeta de instalación
 PREFERENCES_EDITORLAYOUT;Disposición del editor
 PREFERENCES_EXTERNALEDITOR;Editor externo
 PREFERENCES_FBROWSEROPTS;Opciones del explorador de archivos/Miniaturas
-PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barra de herramientas del explorador en una sola fila (deseleccionar para pantallas de baja resolución)
 PREFERENCES_FILEFORMAT;Formato de archivo
 PREFERENCES_FLATFIELDFOUND;Encontrado
 PREFERENCES_FLATFIELDSDIR;Carpeta de archivos de campo plano
@@ -795,7 +793,7 @@ PREFERENCES_MENUOPTIONS;Opciones de menú de contexto
 PREFERENCES_METADATA;Metadatos
 PREFERENCES_MULTITAB;Modo Editor de varias pestañas
 PREFERENCES_MULTITABDUALMON;Modo Editor de varias pestañas, si está disponible en segundo monitor
-PREFERENCES_NAVGUIDEBRUSH;Color de la guía del navegador
+PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Color de la guía del navegador
 PREFERENCES_OUTDIR;Carpeta de salida
 PREFERENCES_OUTDIRFOLDER;Guardar en carpeta
 PREFERENCES_OUTDIRFOLDERHINT;Guardar las imágenes creadas en una carpeta elegida
@@ -816,9 +814,7 @@ PREFERENCES_PROFILESAVECACHE;Guardar perfiles de procesamiento en memoria interm
 PREFERENCES_PROFILESAVEINPUT;Guardar perfiles de procesamiento junto con imagen de entrada
 PREFERENCES_PROPERTY;Propiedad
 PREFERENCES_PSPATH;Carpeta de instalación de Adobe Photoshop
-PREFERENCES_SELECTFONT;Seleccionar fuente
 PREFERENCES_SELECTLANG;Seleccionar idioma
-PREFERENCES_SELECTTHEME;Seleccionar tema
 PREFERENCES_SET;Establecer
 PREFERENCES_SHOWBASICEXIF;Mostrar datos Exif básicos
 PREFERENCES_SHOWDATETIME;Mostrar fecha y hora
@@ -971,11 +967,7 @@ TP_COARSETRAF_TOOLTIP_HFLIP;Voltear horizontalmente.\nAtajo: '['
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotar a la izquierda.\nAtajo: ']'
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotar a la derecha
 TP_COARSETRAF_TOOLTIP_VFLIP;Voltear verticalmente
-TP_COLORAPP_ADAPTSCENE;Adaptación a la luminosidad de la escena
-TP_COLORAPP_ADAPTSCENE_TOOLTIP;Luminancia absoluta del entorno de la escena (cd/m²).\n1) Calculado en base a datos Exif: \nTiempo de Exposición - Velocidad ISO - Número F de apertura - Corrección de exposición\n2) Calculado a partir del Punto Blanco raw y Compensación de Exposición RT.
-TP_COLORAPP_ADAPTVIEWING;Luminosidad de visualización (cd/m²)
-TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Luminancia absoluta del entorno de visualización\n(usualmente 16cd/m²)
-TP_COLORAPP_ADAP_AUTO_TOOLTIP;Si la casilla está seleccionada (como se recomienda) RT calcula el valor óptimo a partir de los datos Exif.\nPara establecer el valor manualmente, primero desmarque la casilla
+TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Luminancia absoluta del entorno de visualización\n(usualmente 16cd/m²)
 TP_COLORAPP_ALGO;Algoritmo
 TP_COLORAPP_ALGO_ALL;Todo
 TP_COLORAPP_ALGO_JC;Claridad + Crominancia (JC)
@@ -1005,8 +997,6 @@ TP_COLORAPP_CURVEEDITOR3;Curva de color
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Ajusta Crominancia, Saturación o Colorido.\n\nMuestra el <b>histograma de Cromaticidad (Lab) antes</b> de los ajustes CIECAM02.\nSi la casilla "Muestra en las curvas histogramas de salida CIECAM02" está seleccionada, muestra el <b>histograma de C, s o M después</b> de CIECAM02.\n\nC, s y M no se muestran en el histograma del panel principal.\n\nVea el histograma de salida final en el panel principal
 TP_COLORAPP_DATACIE;Curvas con histogramas de salida CIECAM02
 TP_COLORAPP_DATACIE_TOOLTIP;Si está seleccionada, los histogramas en las curvas CIECAM02 muestran aproximadamente <b>valores/rangos de J o Q, y C, s o M después</b> de los ajustes CIECAM02.\nEsta selección no influye en el histograma del panel principal.\n\nCuando no está seleccionada, los histogramas en las curvas CIECAM02 muestran <b>valores Lab antes</b> de los ajustes CIECAM02
-TP_COLORAPP_DEGREE_AUTO_TOOLTIP;Si la casilla está seleccionada (como se recomienda), RT calcula el valor óptimo, que es usado por CAT02, y también por todo CIECAM02.\nPara establecer manualmente el valor, primero desmarque la casilla (se recomienda usar valores mayores a 65)
-TP_COLORAPP_DEGREE_TOOLTIP;Cantidad de transformación de adaptación cromática CIE 2002
 TP_COLORAPP_GAMUT;Control de Gamut (Lab)
 TP_COLORAPP_GAMUT_TOOLTIP;Permite control de gamut en modo Lab
 TP_COLORAPP_HUE;Matiz (h)
@@ -1021,8 +1011,6 @@ TP_COLORAPP_MODEL;Modelo de Punto Blanco
 TP_COLORAPP_MODEL_TOOLTIP;Modelo de Punto Blanco\n\n<b>WB [RT] + [salida]:</b>\nEl Balance de Blancos de RT es usado para la escena, CIECAM02 es establecido a D50, y el Balance de Blancos del dispositivo de salida es el establecido en <i>Preferencias > Gestión de Color</i>\n\n<b>WB [RT+CAT02] + [salida]:</b>\nEl Balance de Blancos de RT es usado por CAT02 y el del dispositivo de salida es el establecido en preferencias
 TP_COLORAPP_RSTPRO; Protección de tonos rojos y color piel
 TP_COLORAPP_RSTPRO_TOOLTIP;Intensidad de protección de tonos rojos y color piel (en curvas y en controles deslizantes)
-TP_COLORAPP_SHARPCIE;Enfoque, Contraste por niveles de detalle, Micro-contraste &amp; Eliminación de AC con Q/C
-TP_COLORAPP_SHARPCIE_TOOLTIP;Si se selecciona, Enfoque, Contraste por niveles de detalle, Micro-contraste &amp; Eliminación de AC usarán CIECAM02
 TP_COLORAPP_SURROUND;Entorno
 TP_COLORAPP_SURROUND_AVER;Promedio
 TP_COLORAPP_SURROUND_DARK;Oscuro
@@ -1279,9 +1267,6 @@ TP_LENSGEOM_AUTOCROP;Auto recorte
 TP_LENSGEOM_FILL;Auto relleno
 TP_LENSGEOM_LABEL;Lente / Geometría
 TP_LENSPROFILE_LABEL;Perfil de corrección de lente
-TP_LENSPROFILE_USECA;Corrección de AC
-TP_LENSPROFILE_USEDIST;Corrección de distorsión
-TP_LENSPROFILE_USEVIGN;Corrección de viñeteo
 TP_NEUTRAL_TIP;Restablecer controles de exposición a valores neutros\nAplica a los mismos controles que son afectados por Niveles Automáticos, sin importar si usa o no Niveles Automáticos
 TP_PCVIGNETTE_FEATHER;Difuminado
 TP_PCVIGNETTE_FEATHER_TOOLTIP;Difuminación: \n0=Solo Esquinas\n50=Hasta medio camino al centro\n100=Hasta el Centro
@@ -1814,9 +1799,6 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 !IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
 !IPTCPANEL_TRANSREFERENCE;Job ID
 !IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
-!LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
-!LENSPROFILE_CORRECTION_LCPFILE;LCP File
-!LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
 !LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
 !MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
 !MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
@@ -1854,7 +1836,6 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 !PARTIALPASTE_RETINEX;Retinex
 !PARTIALPASTE_SOFTLIGHT;Soft light
 !PARTIALPASTE_TM_FATTAL;Dynamic range compression
-!PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_CACHECLEAR;Clear
 !PREFERENCES_CACHECLEAR_ALL;Clear all cached files:
 !PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
@@ -1863,8 +1844,8 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 !PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CMMBPC;Black point compensation
-!PREFERENCES_CROP;Crop editing
-!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
+!PREFERENCES_CROP;Crop Editing
+!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop
 !PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
 !PREFERENCES_CROP_GUIDES_FRAME;Frame
 !PREFERENCES_CROP_GUIDES_FULL;Original
@@ -1911,15 +1892,12 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 !PREFERENCES_PRTPROFILE;Color profile
 !PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
-!PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
-!PREFERENCES_SELECTFONT_COLPICKER;Select Color Picker's font
-!PREFERENCES_SERIALIZE_TIFF_READ;Tiff Read Settings
-!PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize read of tiff files
-!PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;When working with folders full of uncompressed tiff files enabling this option can increase performance of thumb generation.
+!PREFERENCES_SAVE_TP_OPEN_NOW;Save tool collapsed/expanded state now
+!PREFERENCES_SERIALIZE_TIFF_READ;TIFF Read Settings
+!PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize reading of TIFF files
 !PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show filmstrip toolbar
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
 !PREFERENCES_TAB_PERFORMANCE;Performance
-!PREFERENCES_THEME;Theme
 !PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
 !PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
@@ -1952,9 +1930,6 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 !TP_COLORAPP_NEUTRAL;Reset
 !TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
 !TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
-!TP_COLORAPP_YB;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE_TOOLTIP;If "auto" is enabled, Yb is calculated from the mean value of the actual image's luminance
 !TP_COLORTONING_LABGRID;L*a*b* color correction grid
 !TP_COLORTONING_LABGRID_VALUES;HL: a=%1 b=%2\nS: a=%3 b=%4
 !TP_COLORTONING_LABREGIONS;L*a*b* correction regions
@@ -2066,7 +2041,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 !TP_RAW_DCB;DCB
 !TP_RAW_DCBVNG4;DCB+VNG4
 !TP_RAW_DUALDEMOSAICAUTOCONTRAST;Auto threshold
-!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the check-box is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the check-box first (reasonable values depend on the image).
+!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the checkbox is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the checkbox first (reasonable values depend on the image).
 !TP_RAW_DUALDEMOSAICCONTRAST;Contrast threshold
 !TP_RAW_EAHD;EAHD
 !TP_RAW_FAST;Fast
@@ -2113,10 +2088,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 !TP_RAW_RCDVNG4;RCD+VNG4
 !TP_RAW_VNG4;VNG4
 !TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
-!TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
-!TP_RETINEX_CONTEDIT_LAB;Histogram equalizer L*a*b*
 !TP_RETINEX_CONTEDIT_LH;Hue equalizer
-!TP_RETINEX_CONTEDIT_MAP;Mask equalizer
 !TP_RETINEX_CURVEEDITOR_CD;L=f(L)
 !TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorrect raw data to reduce halos and artifacts.
 !TP_RETINEX_CURVEEDITOR_LH;Strength=f(H)
@@ -2154,7 +2126,6 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 !TP_RETINEX_LABEL_MASK;Mask
 !TP_RETINEX_LABSPACE;L*a*b*
 !TP_RETINEX_LOW;Low
-!TP_RETINEX_MAP;Mask method
 !TP_RETINEX_MAP_GAUS;Gaussian mask
 !TP_RETINEX_MAP_MAPP;Sharp mask (wavelet partial)
 !TP_RETINEX_MAP_MAPT;Sharp mask (wavelet total)

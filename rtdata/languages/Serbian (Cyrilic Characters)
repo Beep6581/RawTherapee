@@ -610,7 +610,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT;Кључни  формати
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Назив
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;БрОзнаке
 PREFERENCES_CUSTPROFBUILDPATH;Извршна путања
-PREFERENCES_CUTOVERLAYBRUSH;Маска исецања боје/провидног
 PREFERENCES_D50;5000K
 PREFERENCES_D55;5500K
 PREFERENCES_D60;6000K
@@ -629,7 +628,6 @@ PREFERENCES_DIRSOFTWARE;Директоријум са инсталацијом
 PREFERENCES_EDITORLAYOUT;Размештај програма
 PREFERENCES_EXTERNALEDITOR;Спољни уређивач
 PREFERENCES_FBROWSEROPTS;Опције разгледача датотеке
-PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Прикажи алатке у једном реду
 PREFERENCES_FILEFORMAT;Формат датотеке
 PREFERENCES_FLATFIELDFOUND;Нађено
 PREFERENCES_FLATFIELDSDIR;Директоријум за равна поља
@@ -688,9 +686,7 @@ PREFERENCES_PROFILESAVECACHE;Сачувај параметре обраде у �
 PREFERENCES_PROFILESAVEINPUT;Сачувај парамтре обраде поред улазне датотеке
 PREFERENCES_PROPERTY;Особина
 PREFERENCES_PSPATH;Директоријум са инсталираним Адобе Фотошопом
-PREFERENCES_SELECTFONT;Изаберите фонт
 PREFERENCES_SELECTLANG;Језик
-PREFERENCES_SELECTTHEME;Тема
 PREFERENCES_SET;Постави
 PREFERENCES_SHOWBASICEXIF;Прикажи основне Exif податке
 PREFERENCES_SHOWDATETIME;Прикажи датум и време
@@ -841,11 +837,7 @@ TP_COARSETRAF_TOOLTIP_HFLIP;Изврће слику хоризонтално
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Окреће слику улево
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Окреће слику удесно
 TP_COARSETRAF_TOOLTIP_VFLIP;Изврће слику вертикално
-TP_COLORAPP_ADAPTSCENE;Луминозност сцене
-TP_COLORAPP_ADAPTSCENE_TOOLTIP;Апосолутна луминозност окружења сцене (cd/m²).\n1) Рачуна се из Exif података:\nБрзина затварача - ИСО вредност - отвор бленде - корекција експозиције камере.\n2) Рачуна се из беле тачке сирове слике унутар дела програма за компензацију експозиције.
-TP_COLORAPP_ADAPTVIEWING;Луминозност за преглед (cd/m²)
-TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Апсолутна луминозност окружења за преглед\n(обично 16cd/m²).
-TP_COLORAPP_ADAP_AUTO_TOOLTIP;Уколико је штиклирано (препоручено), програм рачуна оптималне вредности на основу Exif података.\nЗа ручно постављање ових вредности, одштиклирајте ово поље.
+TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Апсолутна луминозност окружења за преглед\n(обично 16cd/m²).
 TP_COLORAPP_ALGO;Алгоритам
 TP_COLORAPP_ALGO_ALL;Све
 TP_COLORAPP_ALGO_JC;Светлина + Боја (JC)
@@ -875,8 +867,6 @@ TP_COLORAPP_CURVEEDITOR3;Крива боја
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Подешава било хрому, засићеност или живост боја.\n\nПриказује хистограм хроматисе (Лаб) пре CIECAM02.\nУколико је омогућено „CIECAM02 излазни хистограм у кривуљама“, приказује хистограм за C, s или M након CIECAM02.\n\nC, s и M се не приказују у главној површи за хистограм.\nЗа конаачни изла погледајте главну површ хистограма.
 TP_COLORAPP_DATACIE;CIECAM02 излазни хистограм у кривуљама
 TP_COLORAPP_DATACIE_TOOLTIP;Када је омогућено, хистограми у CIECAM02 кривим приказују приближне вредности/опсеге за J или Q, и C, s или M након CIECAM02 подешавања.\nОвај избор не утиче на приказ у главној површи за хистограм.\n\nКада је искључено, хистограми у CIECAM02 кривим приказују Лаб вредности пре CIECAM02 подешавања.
-TP_COLORAPP_DEGREE_AUTO_TOOLTIP;Уколико је штиклирано (препоручено), програм рачина оптималне вредности, које се затим користе за CAT02, а такође за читав CIECAM02.\nДа би поставили вредности ручне, одштиклирајте ово поље (препоручене су вредности изнад 65).
-TP_COLORAPP_DEGREE_TOOLTIP;Количина преображаја CIE хроматске адаптације2002.
 TP_COLORAPP_GAMUT;Контрола гамута (Лаб)
 TP_COLORAPP_GAMUT_TOOLTIP;Омогућава контролу гамута у Лаб режиму.
 TP_COLORAPP_HUE;Нијанса (h)
@@ -891,8 +881,6 @@ TP_COLORAPP_MODEL;WP модел
 TP_COLORAPP_MODEL_TOOLTIP;Модел беле-тачке.\n\n<b>Баланс беле [RT] + [излаз]</b>: баланс беле из програма се користи за кадар, CIECAM02 се поставља на D50, а баланс беле излазног уређаја се одређује из <i>Подешавања > Управљање бојама</i>.\n\n<b>Баланс беле [RT+CAT02] + [излаз]</b>: подешавања баланса беле из програма се користе од стране CAT02, а баланс беле излазног уређаја се одређује из <i>Подешавања - Управљање бојама</i>.
 TP_COLORAPP_RSTPRO;Заштита црвене и боје коже
 TP_COLORAPP_RSTPRO_TOOLTIP;Заштита црвене боје и боје коже (клизачи и криве).
-TP_COLORAPP_SHARPCIE;--не користи се--
-TP_COLORAPP_SHARPCIE_TOOLTIP;--не користи се--
 TP_COLORAPP_SURROUND;Окружено
 TP_COLORAPP_SURROUND_AVER;Просечно
 TP_COLORAPP_SURROUND_DARK;Тамно
@@ -1086,9 +1074,6 @@ TP_LENSGEOM_AUTOCROP;Сам исеци
 TP_LENSGEOM_FILL;Сам попуни
 TP_LENSGEOM_LABEL;Објектив и геометрија
 TP_LENSPROFILE_LABEL;Профили за исправљање изобличења објектива
-TP_LENSPROFILE_USECA;Исправљање хром. аберација
-TP_LENSPROFILE_USEDIST;Исправљање изобличења
-TP_LENSPROFILE_USEVIGN;Исправљање вињетарења
 TP_NEUTRAL;Неутрално
 TP_NEUTRAL_TIP;Враћа клизаче експозиције на неутралне вредности.\nПримењује се на исте контроле као у Ауто нивои, без обзира на то да ли сте користили Ауто нивое или не.
 TP_PCVIGNETTE_FEATHER;Умекшавање
@@ -1665,9 +1650,6 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
 !IPTCPANEL_TRANSREFERENCE;Job ID
 !IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
-!LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
-!LENSPROFILE_CORRECTION_LCPFILE;LCP File
-!LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
 !LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
 !MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
 !MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
@@ -1711,7 +1693,6 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !PARTIALPASTE_RETINEX;Retinex
 !PARTIALPASTE_SOFTLIGHT;Soft light
 !PARTIALPASTE_TM_FATTAL;Dynamic range compression
-!PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_CACHECLEAR;Clear
 !PREFERENCES_CACHECLEAR_ALL;Clear all cached files:
 !PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
@@ -1721,8 +1702,8 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
 !PREFERENCES_CMMBPC;Black point compensation
-!PREFERENCES_CROP;Crop editing
-!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
+!PREFERENCES_CROP;Crop Editing
+!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop
 !PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
 !PREFERENCES_CROP_GUIDES_FRAME;Frame
 !PREFERENCES_CROP_GUIDES_FULL;Original
@@ -1753,7 +1734,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !PREFERENCES_MONITOR;Monitor
 !PREFERENCES_MONPROFILE;Default color profile
 !PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
-!PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
+!PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Navigator guide color
 !PREFERENCES_NAVIGATIONFRAME;Navigation
 !PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
 !PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
@@ -1772,15 +1753,12 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !PREFERENCES_PRTPROFILE;Color profile
 !PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
-!PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
-!PREFERENCES_SELECTFONT_COLPICKER;Select Color Picker's font
-!PREFERENCES_SERIALIZE_TIFF_READ;Tiff Read Settings
-!PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize read of tiff files
-!PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;When working with folders full of uncompressed tiff files enabling this option can increase performance of thumb generation.
+!PREFERENCES_SAVE_TP_OPEN_NOW;Save tool collapsed/expanded state now
+!PREFERENCES_SERIALIZE_TIFF_READ;TIFF Read Settings
+!PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize reading of TIFF files
 !PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show filmstrip toolbar
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
 !PREFERENCES_TAB_PERFORMANCE;Performance
-!PREFERENCES_THEME;Theme
 !PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
 !PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
@@ -1816,9 +1794,6 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_COLORAPP_NEUTRAL;Reset
 !TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
 !TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
-!TP_COLORAPP_YB;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE_TOOLTIP;If "auto" is enabled, Yb is calculated from the mean value of the actual image's luminance
 !TP_COLORTONING_AB;o C/L
 !TP_COLORTONING_AUTOSAT;Automatic
 !TP_COLORTONING_BALANCE;Balance
@@ -2005,7 +1980,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_RAW_DCB;DCB
 !TP_RAW_DCBVNG4;DCB+VNG4
 !TP_RAW_DUALDEMOSAICAUTOCONTRAST;Auto threshold
-!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the check-box is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the check-box first (reasonable values depend on the image).
+!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the checkbox is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the checkbox first (reasonable values depend on the image).
 !TP_RAW_DUALDEMOSAICCONTRAST;Contrast threshold
 !TP_RAW_EAHD;EAHD
 !TP_RAW_FAST;Fast
@@ -2055,10 +2030,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix
 !TP_RAW_VNG4;VNG4
 !TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
-!TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
-!TP_RETINEX_CONTEDIT_LAB;Histogram equalizer L*a*b*
 !TP_RETINEX_CONTEDIT_LH;Hue equalizer
-!TP_RETINEX_CONTEDIT_MAP;Mask equalizer
 !TP_RETINEX_CURVEEDITOR_CD;L=f(L)
 !TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorrect raw data to reduce halos and artifacts.
 !TP_RETINEX_CURVEEDITOR_LH;Strength=f(H)
@@ -2096,7 +2068,6 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_RETINEX_LABEL_MASK;Mask
 !TP_RETINEX_LABSPACE;L*a*b*
 !TP_RETINEX_LOW;Low
-!TP_RETINEX_MAP;Mask method
 !TP_RETINEX_MAP_GAUS;Gaussian mask
 !TP_RETINEX_MAP_MAPP;Sharp mask (wavelet partial)
 !TP_RETINEX_MAP_MAPT;Sharp mask (wavelet total)

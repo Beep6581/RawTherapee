@@ -835,9 +835,6 @@ IPTCPANEL_TITLE;Título
 IPTCPANEL_TITLEHINT;Digite um nome curto e legível para a imagem, pode ser o nome do arquivo.
 IPTCPANEL_TRANSREFERENCE;Job ID
 IPTCPANEL_TRANSREFERENCEHINT;Digite um número ou identificador necessário para controle ou rastreamento do fluxo de trabalho.
-LENSPROFILE_CORRECTION_AUTOMATCH;Parâmetros de correção de correspondência automática
-LENSPROFILE_CORRECTION_LCPFILE;Arquivo LCP
-LENSPROFILE_CORRECTION_MANUAL;Parâmetros de correção manual
 LENSPROFILE_LENS_WARNING;Aviso: o fator de corte usado para o perfil da lente é maior que o fator de corte da câmera, os resultados podem estar errados.
 MAIN_BUTTON_FULLSCREEN;Tela cheia
 MAIN_BUTTON_ICCPROFCREATOR;Criador de Perfil ICC
@@ -1011,7 +1008,6 @@ PARTIALPASTE_WHITEBALANCE;Balanço de branco
 PREFERENCES_ADD;Adicionar
 PREFERENCES_APPLNEXTSTARTUP;é necessário reiniciar
 PREFERENCES_AUTOMONPROFILE;Usar o perfil de cores do monitor principal do sistema operacional
-PREFERENCES_AUTOSAVE_TP_OPEN;Salvar automaticamente ferramentas recolhidas/expandidas\nestado antes de sair
 PREFERENCES_BATCH_PROCESSING;Processamento em Lote
 PREFERENCES_BEHADDALL;Tudo para 'Adicionar'
 PREFERENCES_BEHADDALLHINT;Definir todos os parâmetros para o <b>Adicionar</b> modo.\nAjustes de parâmetros no painel de ferramentas de lote serão <b>deltas</b> para os valores armazenados.
@@ -1044,7 +1040,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT;Formato de chaves
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Nome
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;ID da Tag
 PREFERENCES_CUSTPROFBUILDPATH;Caminho executável
-PREFERENCES_CUTOVERLAYBRUSH;Cor da máscara de corte/transparência
 PREFERENCES_D50;Configurações no menu principal
 PREFERENCES_D50_OLD;5000K
 PREFERENCES_D55;5500K
@@ -1066,7 +1061,6 @@ PREFERENCES_EDITORCMDLINE;Linha de comando personalizada
 PREFERENCES_EDITORLAYOUT;Layout do Editor
 PREFERENCES_EXTERNALEDITOR;Editor Externo
 PREFERENCES_FBROWSEROPTS;Navegador de Arquivos / Opções de Miniaturas
-PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barra de ferramentas do navegador de arquivos de linha única\n(desmarque para exibição de baixa resolução)
 PREFERENCES_FILEFORMAT;Formato de arquivo
 PREFERENCES_FLATFIELDFOUND;Encontrado
 PREFERENCES_FLATFIELDSDIR;Diretório de campos planos
@@ -1123,7 +1117,7 @@ PREFERENCES_MONPROFILE;Perfil de cor padrão
 PREFERENCES_MONPROFILE_WARNOSX;Devido às limitações do MacOS, apenas o sRGB é suportado.
 PREFERENCES_MULTITAB;Modo de Mútiplas Abas do Editor
 PREFERENCES_MULTITABDUALMON;Múltiplas Abas do Editor no Modo de Janela Própria
-PREFERENCES_NAVGUIDEBRUSH;Cor do guia do navegador
+PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Cor do guia do navegador
 PREFERENCES_NAVIGATIONFRAME;Navegação
 PREFERENCES_OUTDIR;Diretório de Saída
 PREFERENCES_OUTDIRFOLDER;Salvar na pasta
@@ -1161,13 +1155,10 @@ PREFERENCES_PSPATH;Diretório de instalação do Adobe Photoshop
 PREFERENCES_REMEMBERZOOMPAN;Lembre-se de zoom % e compensar pan
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Lembre-se do zoom % e de compensar o pan da imagem atual ao abrir uma nova imagem.\n\nEsta opção só funciona em "Modo da Aba do Editor Único" e quando "o método Demosaicing utilizado para a pré-visualização em <100% zoom" está definido como "Como no PP3".
 PREFERENCES_SAVE_TP_OPEN_NOW;Salvar ferramentas no estado recolhidas/expandididas agora
-PREFERENCES_SELECTFONT;Selecione a fonte principal
-PREFERENCES_SELECTFONT_COLPICKER;Selecione a fonte do Seletor de Cor
 PREFERENCES_SELECTLANG;Selecione linguagem
-PREFERENCES_SELECTTHEME;Selecione tema
-PREFERENCES_SERIALIZE_TIFF_READ;Configurações de leitura tiff
-PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize a leitura de arquivos tiff
-PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Ao trabalhar com pastas cheias de arquivos tiff não compactados, ativar essa opção pode aumentar o desempenho da geração de miniaturas.
+PREFERENCES_SERIALIZE_TIFF_READ;Configurações de leitura TIFF
+PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize a leitura de arquivos TIFF
+PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Ao trabalhar com pastas cheias de arquivos TIFF não compactados, ativar essa opção pode aumentar o desempenho da geração de miniaturas.
 PREFERENCES_SET;Configuração
 PREFERENCES_SHOWBASICEXIF;Mostrar informações Exif básicas
 PREFERENCES_SHOWDATETIME;Mostrar data e hora
@@ -1187,7 +1178,6 @@ PREFERENCES_TAB_DYNAMICPROFILE;Regras de Perfil Dinâmico
 PREFERENCES_TAB_GENERAL;Geral
 PREFERENCES_TAB_IMPROC;Processamento de Imagem
 PREFERENCES_TAB_SOUND;Sons
-PREFERENCES_THEME;Tema
 PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Visualização JPEG incorporada
 PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Imagem para mostrar
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Renderização raw neutra
@@ -1351,11 +1341,7 @@ TP_COARSETRAF_TOOLTIP_HFLIP;Girar horizontalmente.
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotacione à esquerda.\n\nAtalhos:\n<b>[</b> - Modo de Guias do Editor Múltiplo,\n<b>Alt-[</b> - Modo de Guia do Editor Único.
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotacione à direita.\n\nAtalhos:\n<b>]</b> - Modo de Guias do Editor Múltiplo,\n<b>Alt-]</b> - Modo de Guia do Editor Único.
 TP_COARSETRAF_TOOLTIP_VFLIP;Girar verticalmente.
-TP_COLORAPP_ADAPTSCENE;Luminância absoluta da cena
-TP_COLORAPP_ADAPTSCENE_TOOLTIP;Luminância absoluta do ambiente da cena (cd/m²).\n1) Calculada a partir dos dados Exif:\nVelocidade do obturador - velocidade ISO - número F - correção de exposição da câmera.\n2) Calculado a partir do ponto branco raw e do controle deslizante de Compensação de Exposição do RT.
-TP_COLORAPP_ADAPTVIEWING;Visualizando luminância absoluta (cd/m²)
-TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Luminância absoluta do ambiente de visualização\n(usualmente 16cd/m²).
-TP_COLORAPP_ADAP_AUTO_TOOLTIP;Se a caixa de seleção estiver marcada (recommendado) RawTherapee calcula um valor ótimo a partir dos dados Exif.\nPara definir o valor manualmente, desmarque a caixa de seleção primeiro.
+TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Luminância absoluta do ambiente de visualização\n(usualmente 16cd/m²).
 TP_COLORAPP_ALGO;Algorimo
 TP_COLORAPP_ALGO_ALL;Tudo
 TP_COLORAPP_ALGO_JC;Claridade + Croma (JC)
@@ -1385,8 +1371,6 @@ TP_COLORAPP_CURVEEDITOR3;Curva de cor
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Ajustar croma, saturação ou colorido.\n\nMostra o histograma da cromaticidade (L*a*b*) antes de CIECAM02.\nSe a caixa de seleção "Mostrar histogramas de saída do CIECAM02 em curvas" estiver ativada, mostra o histograma de C, s ou M depois de CIECAM02.\n\nC, s e M não são mostrados no painel principal do histograma.\nPara a saída final, consulte o painel principal do histograma.
 TP_COLORAPP_DATACIE;Histogramas de saída em curvas do CIECAM02
 TP_COLORAPP_DATACIE_TOOLTIP;Quando ativado, os histogramas em curvas do CIECAM02 mostram valores/intervalos aproximados para J ou Q, e C, s ou M após os ajustes do CIECAM02.\nEsta seleção não afeta o painel principal do histograma.\n\nQuando desativado, os histogramas em curvas do CIECAM02 mostram L*a*b* valores antes dos ajustes do CIECAM02.
-TP_COLORAPP_DEGREE_AUTO_TOOLTIP;Se a caixa de seleção estiver marcada (recomendado), RawTherapee calcula um valor ótimo, que será usado pelo CAT02, e também para todo o CIECAM02.\nPara definir o valor manualmente, primeiro desmarque a caixa de seleção (valores acima de 65 são recomendados).
-TP_COLORAPP_DEGREE_TOOLTIP;Quantidade de Adaptação Cromática CIE Transformar 2002.
 TP_COLORAPP_FREE;Temp+verde livre + CAT02 + [saída]
 TP_COLORAPP_GAMUT;Controle Gamut (L*a*b*)
 TP_COLORAPP_GAMUT_TOOLTIP;Permitir controle gamut no modo L*a*b*.
@@ -1404,8 +1388,6 @@ TP_COLORAPP_NEUTRAL;Restaurar
 TP_COLORAPP_NEUTRAL_TIP;Restaurar todas as caixas de seleção e curvas dos controles deslizantes para seus valores padrão
 TP_COLORAPP_RSTPRO;Proteção vermelho e de tons de pele
 TP_COLORAPP_RSTPRO_TOOLTIP;Vermelho &amp; proteção de tons de pele afeta os controles deslizantes e as curvas.
-TP_COLORAPP_SHARPCIE;--sem uso--
-TP_COLORAPP_SHARPCIE_TOOLTIP;--sem uso--
 TP_COLORAPP_SURROUND;Borda
 TP_COLORAPP_SURROUND_AVER;Média
 TP_COLORAPP_SURROUND_DARK;Escuro
@@ -1427,9 +1409,6 @@ TP_COLORAPP_TONECIE;Mapeamento de tom usando CIECAM02
 TP_COLORAPP_TONECIE_TOOLTIP;Se esta opção estiver desativada, o mapeamento de tom é feito no espaço L*a*b*.\nSe esta opção estiver habilitada, o mapeamento de tom é feito usando CIECAM02.\nA ferramenta de Mapeamento de Tom deve estar ativada para que esta configuração tenha efeito.
 TP_COLORAPP_WBCAM;WB [RT+CAT02] + [saída]
 TP_COLORAPP_WBRT;WB [RT] + [saída]
-TP_COLORAPP_YB;Yb% (média luminância)
-TP_COLORAPP_YBSCENE;Yb% (média luminância)
-TP_COLORAPP_YBSCENE_TOOLTIP;Se "auto" estiver ativado, Yb é calculado a partir do valor médio da luminância real da imagem
 TP_COLORTONING_AB;o C/L
 TP_COLORTONING_AUTOSAT;Automático
 TP_COLORTONING_BALANCE;Balanço
@@ -1729,9 +1708,6 @@ TP_LENSGEOM_AUTOCROP;Corte automático
 TP_LENSGEOM_FILL;Preenchimento automático
 TP_LENSGEOM_LABEL;Lente / Geometria
 TP_LENSPROFILE_LABEL;Correção de lente perfilada
-TP_LENSPROFILE_USECA;Correção da aberração cromática
-TP_LENSPROFILE_USEDIST;Correção de distorção
-TP_LENSPROFILE_USEVIGN;Correção de vinheta
 TP_LOCALCONTRAST_AMOUNT;Montante
 TP_LOCALCONTRAST_DARKNESS;Nível de escuridão
 TP_LOCALCONTRAST_LABEL;Contraste Local
@@ -1874,7 +1850,6 @@ TP_RESIZE_WIDTH;Largura
 TP_RETINEX_CONTEDIT_HSL;Equalizador de histograma HSL
 TP_RETINEX_CONTEDIT_LAB;Equalizador de histograma L*a*b*
 TP_RETINEX_CONTEDIT_LH;Equalizador de matiz
-TP_RETINEX_CONTEDIT_MAP;Equalizador de máscara
 TP_RETINEX_CURVEEDITOR_CD;L=f(L)
 TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminância de acordo com a luminância L=f(L)\nCorrija dados raw para reduzir halos e artefatos.
 TP_RETINEX_CURVEEDITOR_LH;Intensidade=f(M)
@@ -1911,7 +1886,6 @@ TP_RETINEX_LABEL;Retinex
 TP_RETINEX_LABEL_MASK;Máscara
 TP_RETINEX_LABSPACE;L*a*b*
 TP_RETINEX_LOW;Baixo
-TP_RETINEX_MAP;Método de máscara
 TP_RETINEX_MAP_GAUS;Máscara gaussiana
 TP_RETINEX_MAP_MAPP;Máscara de nitidez (wavelet parcial)
 TP_RETINEX_MAP_MAPT;Máscara de nitidez (wavelet total)
@@ -2300,6 +2274,6 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 !TP_RAWCACORR_AUTOIT;Iterations
 !TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
 !TP_RAW_DUALDEMOSAICAUTOCONTRAST;Auto threshold
-!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the check-box is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the check-box first (reasonable values depend on the image).
+!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the checkbox is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the checkbox first (reasonable values depend on the image).
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
 !TP_TM_FATTAL_THRESHOLD;Detail

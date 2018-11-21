@@ -166,33 +166,37 @@ void ThumbBrowserBase::selectSingle (ThumbBrowserEntryBase* clicked)
 
 void ThumbBrowserBase::selectRange (ThumbBrowserEntryBase* clicked, bool additional)
 {
-    if (selected.empty ()) {
-        addToSelection (clicked, selected);
+    if (selected.empty()) {
+        addToSelection(clicked, selected);
         return;
     }
 
     if (!additional || !lastClicked) {
         // Extend the current range w.r.t to first selected entry.
-        ThumbIterator front = std::find (fd.begin (), fd.end (), selected.front ());
-        ThumbIterator current = std::find (fd.begin (), fd.end (), clicked);
+        ThumbIterator front = std::find(fd.begin(), fd.end(), selected.front());
+        ThumbIterator current = std::find(fd.begin(), fd.end(), clicked);
 
-        if (front > current)
-            std::swap (front, current);
+        if (front > current) {
+            std::swap(front, current);
+        }
 
-        clearSelection (selected);
+        clearSelection(selected);
 
-        for (; front <= current; ++front)
-            addToSelection (*front, selected);
+        for (; front <= current && front != fd.end(); ++front) {
+            addToSelection(*front, selected);
+        }
     } else {
         // Add an additional range w.r.t. the last clicked entry.
-        ThumbIterator last = std::find (fd.begin (), fd.end (), lastClicked);
-        ThumbIterator current = std::find (fd.begin (), fd.end (), clicked);
+        ThumbIterator last = std::find(fd.begin(), fd.end(), lastClicked);
+        ThumbIterator current = std::find (fd.begin(), fd.end(), clicked);
 
-        if (last > current)
-            std::swap (last, current);
+        if (last > current) {
+            std::swap(last, current);
+        }
 
-        for (; last <= current; ++last)
-            addToSelection (*last, selected);
+        for (; last <= current && last != fd.end(); ++last) {
+            addToSelection(*last, selected);
+        }
     }
 }
 
@@ -337,7 +341,7 @@ void ThumbBrowserBase::selectNext (int distance, bool enlarge)
                                 std::swap(front, back);
                             }
 
-                            for (; front <= back; ++front) {
+                            for (; front <= back && front != fd.end(); ++front) {
                                 if (!(*front)->filtered) {
                                     (*front)->selected = true;
                                     redrawNeeded (*front);

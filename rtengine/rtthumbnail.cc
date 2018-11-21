@@ -2238,7 +2238,7 @@ bool Thumbnail::readAEHistogram  (const Glib::ustring& fname)
     } else {
         aeHistogram(65536 >> aeHistCompression);
         const size_t histoBytes = (65536 >> aeHistCompression) * sizeof(aeHistogram[0]);
-        const int bytesRead = fread(&aeHistogram[0], 1, histoBytes, f);
+        const size_t bytesRead = fread(&aeHistogram[0], 1, histoBytes, f);
         fclose (f);
         if (bytesRead != histoBytes) {
             aeHistogram.reset();

@@ -271,7 +271,6 @@ PREFERENCES_PROFILESAVECACHE;Tallenna käsittelyparametrit välimuistiin
 PREFERENCES_PROFILESAVEINPUT;Tallenna käsittelyparametrit oheistiedostoon
 PREFERENCES_PSPATH;Adobe Photoshop:n asennushakemisto
 PREFERENCES_SELECTLANG;Valitse kieli
-PREFERENCES_SELECTTHEME;Valitse teema
 PREFERENCES_SHOWBASICEXIF;Perus EXIF-tiedot
 PREFERENCES_SHOWDATETIME;Päivämäärä ja aika
 PREFERENCES_SHTHRESHOLD;Kynnysarvo tummille alueille
@@ -1090,9 +1089,6 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
 !IPTCPANEL_TRANSREFERENCE;Job ID
 !IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
-!LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
-!LENSPROFILE_CORRECTION_LCPFILE;LCP File
-!LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
 !LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
@@ -1220,7 +1216,6 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !PARTIALPASTE_VIBRANCE;Vibrance
 !PREFERENCES_ADD;Add
 !PREFERENCES_AUTOMONPROFILE;Use operating system's main monitor color profile
-!PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
 !PREFERENCES_BEHADDALL;All to 'Add'
 !PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values.
@@ -1237,8 +1232,8 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
 !PREFERENCES_CMMBPC;Black point compensation
-!PREFERENCES_CROP;Crop editing
-!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
+!PREFERENCES_CROP;Crop Editing
+!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop
 !PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
 !PREFERENCES_CROP_GUIDES_FRAME;Frame
 !PREFERENCES_CROP_GUIDES_FULL;Original
@@ -1254,7 +1249,6 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Name
 !PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 !PREFERENCES_CUSTPROFBUILDPATH;Executable path
-!PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
 !PREFERENCES_D50;Settings in main menu
 !PREFERENCES_D50_OLD;5000K
 !PREFERENCES_D55;5500K
@@ -1266,8 +1260,7 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !PREFERENCES_DIRDARKFRAMES;Dark-frames directory
 !PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_EDITORCMDLINE;Custom command line
-!PREFERENCES_EDITORLAYOUT;Editor Layout
-!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar\n(de-select for low resolution display)
+!PREFERENCES_EDITORLAYOUT;Editor layout
 !PREFERENCES_FLATFIELDFOUND;Found
 !PREFERENCES_FLATFIELDSDIR;Flat-fields directory
 !PREFERENCES_FLATFIELDSHOTS;shots
@@ -1313,7 +1306,7 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
 !PREFERENCES_MULTITAB;Multiple Editor Tabs Mode
 !PREFERENCES_MULTITABDUALMON;Multiple Editor Tabs In Own Window Mode
-!PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
+!PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Navigator guide color
 !PREFERENCES_NAVIGATIONFRAME;Navigation
 !PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails in the file browser
 !PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
@@ -1336,12 +1329,9 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !PREFERENCES_PRTPROFILE;Color profile
 !PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
-!PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
-!PREFERENCES_SELECTFONT;Select main font
-!PREFERENCES_SELECTFONT_COLPICKER;Select Color Picker's font
-!PREFERENCES_SERIALIZE_TIFF_READ;Tiff Read Settings
-!PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize read of tiff files
-!PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;When working with folders full of uncompressed tiff files enabling this option can increase performance of thumb generation.
+!PREFERENCES_SAVE_TP_OPEN_NOW;Save tool collapsed/expanded state now
+!PREFERENCES_SERIALIZE_TIFF_READ;TIFF Read Settings
+!PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize reading of TIFF files
 !PREFERENCES_SET;Set
 !PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation
 !PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show filmstrip toolbar
@@ -1354,7 +1344,6 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
 !PREFERENCES_TAB_PERFORMANCE;Performance
 !PREFERENCES_TAB_SOUND;Sounds
-!PREFERENCES_THEME;Theme
 !PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
 !PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
@@ -1473,11 +1462,7 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !TP_CBDL_METHOD;Process located
 !TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
 !TP_CHROMATABERR_LABEL;Chromatic Aberration
-!TP_COLORAPP_ADAPTSCENE;Scene absolute luminance
-!TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environment (cd/m²).\n1) Calculated from the Exif data:\nShutter speed - ISO speed - F number - camera exposure correction.\n2) Calculated from the raw white point and RT's Exposure Compensation slider.
-!TP_COLORAPP_ADAPTVIEWING;Viewing absolute luminance (cd/m²)
-!TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute luminance of the viewing environment\n(usually 16cd/m²).
-!TP_COLORAPP_ADAP_AUTO_TOOLTIP;If the checkbox is checked (recommended) RawTherapee calculates an optimum value from the Exif data.\nTo set the value manually, uncheck the checkbox first.
+!TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Absolute luminance of the viewing environment\n(usually 16cd/m²).
 !TP_COLORAPP_ALGO;Algorithm
 !TP_COLORAPP_ALGO_ALL;All
 !TP_COLORAPP_ALGO_JC;Lightness + Chroma (JC)
@@ -1507,8 +1492,6 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfulness.\n\nShows the histogram of chromaticity (L*a*b*) before CIECAM02.\nIf the "Show CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of C, s or M after CIECAM02.\n\nC, s and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel.
 !TP_COLORAPP_DATACIE;CIECAM02 output histograms in curves
 !TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show L*a*b* values before CIECAM02 adjustments.
-!TP_COLORAPP_DEGREE_AUTO_TOOLTIP;If the check-box is checked (recommended), RawTherapee calculates an optimum value, which is then used by CAT02, and also for the entire CIECAM02.\nTo set the value manually, uncheck the check-box first (values above 65 are recommended).
-!TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002.
 !TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 !TP_COLORAPP_GAMUT;Gamut control (L*a*b*)
 !TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in L*a*b* mode.
@@ -1526,8 +1509,6 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
 !TP_COLORAPP_RSTPRO;Red & skin-tones protection
 !TP_COLORAPP_RSTPRO_TOOLTIP;Red &amp; skin-tones protection affects both sliders and curves.
-!TP_COLORAPP_SHARPCIE;--unused--
-!TP_COLORAPP_SHARPCIE_TOOLTIP;--unused--
 !TP_COLORAPP_SURROUND;Surround
 !TP_COLORAPP_SURROUND_AVER;Average
 !TP_COLORAPP_SURROUND_DARK;Dark
@@ -1549,9 +1530,6 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in L*a*b* space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
 !TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
 !TP_COLORAPP_WBRT;WB [RT] + [output]
-!TP_COLORAPP_YB;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE_TOOLTIP;If "auto" is enabled, Yb is calculated from the mean value of the actual image's luminance
 !TP_COLORTONING_AB;o C/L
 !TP_COLORTONING_AUTOSAT;Automatic
 !TP_COLORTONING_BALANCE;Balance
@@ -1825,9 +1803,6 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !TP_LENSGEOM_FILL;Auto-fill
 !TP_LENSGEOM_LABEL;Lens / Geometry
 !TP_LENSPROFILE_LABEL;Profiled Lens Correction
-!TP_LENSPROFILE_USECA;Chromatic aberration correction
-!TP_LENSPROFILE_USEDIST;Distortion correction
-!TP_LENSPROFILE_USEVIGN;Vignetting correction
 !TP_LOCALCONTRAST_AMOUNT;Amount
 !TP_LOCALCONTRAST_DARKNESS;Darkness level
 !TP_LOCALCONTRAST_LABEL;Local Contrast
@@ -1902,7 +1877,7 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
 !TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.\nPixel Shift is for Pentax/Sony Pixel Shift files. It falls back to AMaZE for non-Pixel Shift files.
 !TP_RAW_DUALDEMOSAICAUTOCONTRAST;Auto threshold
-!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the check-box is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the check-box first (reasonable values depend on the image).
+!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the checkbox is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the checkbox first (reasonable values depend on the image).
 !TP_RAW_DUALDEMOSAICCONTRAST;Contrast threshold
 !TP_RAW_EAHD;EAHD
 !TP_RAW_FAST;Fast
@@ -1963,10 +1938,7 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !TP_RESIZE_LANCZOS;Lanczos
 !TP_RESIZE_SPECIFY;Specify:
 !TP_RESIZE_WIDTH;Width
-!TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
-!TP_RETINEX_CONTEDIT_LAB;Histogram equalizer L*a*b*
 !TP_RETINEX_CONTEDIT_LH;Hue equalizer
-!TP_RETINEX_CONTEDIT_MAP;Mask equalizer
 !TP_RETINEX_CURVEEDITOR_CD;L=f(L)
 !TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorrect raw data to reduce halos and artifacts.
 !TP_RETINEX_CURVEEDITOR_LH;Strength=f(H)
@@ -2004,7 +1976,6 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !TP_RETINEX_LABEL_MASK;Mask
 !TP_RETINEX_LABSPACE;L*a*b*
 !TP_RETINEX_LOW;Low
-!TP_RETINEX_MAP;Mask method
 !TP_RETINEX_MAP_GAUS;Gaussian mask
 !TP_RETINEX_MAP_MAPP;Sharp mask (wavelet partial)
 !TP_RETINEX_MAP_MAPT;Sharp mask (wavelet total)

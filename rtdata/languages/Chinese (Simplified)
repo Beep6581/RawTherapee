@@ -514,7 +514,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys format
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Name
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 PREFERENCES_CUSTPROFBUILDPATH;可执行文件路径
-PREFERENCES_CUTOVERLAYBRUSH;裁切遮罩色彩和透明度
 PREFERENCES_D50;5000K
 PREFERENCES_D50_OLD;5000K
 PREFERENCES_D55;5500K
@@ -534,7 +533,6 @@ PREFERENCES_DIRSOFTWARE;软件安装路径
 PREFERENCES_EDITORLAYOUT;编辑器布局
 PREFERENCES_EXTERNALEDITOR;外部编辑器
 PREFERENCES_FBROWSEROPTS;文件浏览选项
-PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar\n(de-select for low resolution display)
 PREFERENCES_FILEFORMAT;文件格式
 PREFERENCES_FLATFIELDFOUND;找到
 PREFERENCES_FLATFIELDSDIR;平场图像路径
@@ -591,7 +589,7 @@ PREFERENCES_MONPROFILE;默认色彩配置文件
 PREFERENCES_MONPROFILE_WARNOSX;受MacOS限制, 仅支持sRGB
 PREFERENCES_MULTITAB;多编辑器标签模式
 PREFERENCES_MULTITABDUALMON;多编辑器标签独立模式
-PREFERENCES_NAVGUIDEBRUSH;导航器引导颜色
+PREFERENCES_APPEARANCE_NAVGUIDECOLOR;导航器引导颜色
 PREFERENCES_NAVIGATIONFRAME;导航器
 PREFERENCES_OUTDIR;输出路径
 PREFERENCES_OUTDIRFOLDER;保存至文件夹
@@ -628,13 +626,10 @@ PREFERENCES_PRTPROFILE;色彩配置文件
 PREFERENCES_PSPATH;Adobe Photoshop安装路径
 PREFERENCES_REMEMBERZOOMPAN;记忆缩放和位置
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
-PREFERENCES_SELECTFONT;设置主要字体
-PREFERENCES_SELECTFONT_COLPICKER;设置色彩选择器字体
 PREFERENCES_SELECTLANG;选择语言
-PREFERENCES_SELECTTHEME;选择主题
-PREFERENCES_SERIALIZE_TIFF_READ;Tiff 读取设定
-PREFERENCES_SERIALIZE_TIFF_READ_LABEL;连续载入tiff文件
-PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;开启后可以提高在无压缩tiff图片文件夹中的缩略图生成速度
+PREFERENCES_SERIALIZE_TIFF_READ;TIFF 读取设定
+PREFERENCES_SERIALIZE_TIFF_READ_LABEL;连续载入TIFF文件
+PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;开启后可以提高在无压缩TIFF图片文件夹中的缩略图生成速度
 PREFERENCES_SET;设置
 PREFERENCES_SHOWBASICEXIF;显示基本Exif信息
 PREFERENCES_SHOWDATETIME;显示时间日期
@@ -654,7 +649,6 @@ PREFERENCES_TAB_DYNAMICPROFILE;动态预设规则
 PREFERENCES_TAB_GENERAL;一般
 PREFERENCES_TAB_IMPROC;图片处理
 PREFERENCES_TAB_SOUND;音效
-PREFERENCES_THEME;主题
 PREFERENCES_TP_LABEL;工具栏
 PREFERENCES_TP_VSCROLLBAR;隐藏垂直滚动栏
 PREFERENCES_TUNNELMETADATA;无损复制 Exif/IPTC/XMP 到输出文件
@@ -878,9 +872,6 @@ TP_LENSGEOM_AUTOCROP;自动剪切
 TP_LENSGEOM_FILL;自动填充
 TP_LENSGEOM_LABEL;镜头 / 几何
 TP_LENSPROFILE_LABEL;镜头矫正档案
-TP_LENSPROFILE_USECA;色散矫正
-TP_LENSPROFILE_USEDIST;畸变矫正
-TP_LENSPROFILE_USEVIGN;暗角矫正
 TP_PCVIGNETTE_FEATHER;羽化
 TP_PCVIGNETTE_LABEL;暗角滤镜
 TP_PCVIGNETTE_ROUNDNESS;圆度
@@ -1507,9 +1498,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
 !IPTCPANEL_TRANSREFERENCE;Job ID
 !IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
-!LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
-!LENSPROFILE_CORRECTION_LCPFILE;LCP File
-!LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
 !LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
 !MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
@@ -1545,7 +1533,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PARTIALPASTE_RAW_BORDER;Raw border
 !PARTIALPASTE_SOFTLIGHT;Soft light
 !PARTIALPASTE_TM_FATTAL;Dynamic range compression
-!PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values.
 !PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed.
 !PREFERENCES_CACHECLEAR;Clear
@@ -1553,8 +1540,8 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
 !PREFERENCES_CACHECLEAR_ONLYPROFILES;Clear only cached processing profiles:
 !PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing profiles stored alongside the source images are not touched.
-!PREFERENCES_CROP;Crop editing
-!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
+!PREFERENCES_CROP;Crop Editing
+!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop
 !PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
 !PREFERENCES_CROP_GUIDES_FRAME;Frame
 !PREFERENCES_CROP_GUIDES_FULL;Original
@@ -1564,7 +1551,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PREFERENCES_EDITORCMDLINE;Custom command line
 !PREFERENCES_PERFORMANCE_THREADS;Threads
 !PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
-!PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
+!PREFERENCES_SAVE_TP_OPEN_NOW;Save tool collapsed/expanded state now
 !PREFERENCES_TAB_PERFORMANCE;Performance
 !PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
 !PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
@@ -1636,11 +1623,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_CBDL_METHOD;Process located
 !TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
 !TP_CHROMATABERR_LABEL;Chromatic Aberration
-!TP_COLORAPP_ADAPTSCENE;Scene absolute luminance
-!TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environment (cd/m²).\n1) Calculated from the Exif data:\nShutter speed - ISO speed - F number - camera exposure correction.\n2) Calculated from the raw white point and RT's Exposure Compensation slider.
-!TP_COLORAPP_ADAPTVIEWING;Viewing absolute luminance (cd/m²)
-!TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute luminance of the viewing environment\n(usually 16cd/m²).
-!TP_COLORAPP_ADAP_AUTO_TOOLTIP;If the checkbox is checked (recommended) RawTherapee calculates an optimum value from the Exif data.\nTo set the value manually, uncheck the checkbox first.
+!TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Absolute luminance of the viewing environment\n(usually 16cd/m²).
 !TP_COLORAPP_ALGO;Algorithm
 !TP_COLORAPP_ALGO_ALL;All
 !TP_COLORAPP_ALGO_JC;Lightness + Chroma (JC)
@@ -1670,8 +1653,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfulness.\n\nShows the histogram of chromaticity (L*a*b*) before CIECAM02.\nIf the "Show CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of C, s or M after CIECAM02.\n\nC, s and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel.
 !TP_COLORAPP_DATACIE;CIECAM02 output histograms in curves
 !TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show L*a*b* values before CIECAM02 adjustments.
-!TP_COLORAPP_DEGREE_AUTO_TOOLTIP;If the check-box is checked (recommended), RawTherapee calculates an optimum value, which is then used by CAT02, and also for the entire CIECAM02.\nTo set the value manually, uncheck the check-box first (values above 65 are recommended).
-!TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002.
 !TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 !TP_COLORAPP_GAMUT;Gamut control (L*a*b*)
 !TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in L*a*b* mode.
@@ -1686,8 +1667,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
 !TP_COLORAPP_RSTPRO;Red & skin-tones protection
 !TP_COLORAPP_RSTPRO_TOOLTIP;Red &amp; skin-tones protection affects both sliders and curves.
-!TP_COLORAPP_SHARPCIE;--unused--
-!TP_COLORAPP_SHARPCIE_TOOLTIP;--unused--
 !TP_COLORAPP_SURROUND;Surround
 !TP_COLORAPP_SURROUND_EXDARK;Extremly Dark (Cutsheet)
 !TP_COLORAPP_SURROUND_TOOLTIP;Changes tones and colors to take into account the viewing conditions of the output device.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment (TV). The image will become slighty dark.\n\n<b>Dark</b>: Dark environment (projector). The image will become more dark.\n\n<b>Extremly Dark</b>: Extremly dark environment (cutsheet). The image will become very dark.
@@ -1703,9 +1682,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in L*a*b* space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
 !TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
 !TP_COLORAPP_WBRT;WB [RT] + [output]
-!TP_COLORAPP_YB;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE_TOOLTIP;If "auto" is enabled, Yb is calculated from the mean value of the actual image's luminance
 !TP_COLORTONING_AB;o C/L
 !TP_COLORTONING_AUTOSAT;Automatic
 !TP_COLORTONING_BALANCE;Balance
@@ -1961,7 +1937,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
 !TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.\nPixel Shift is for Pentax/Sony Pixel Shift files. It falls back to AMaZE for non-Pixel Shift files.
 !TP_RAW_DUALDEMOSAICAUTOCONTRAST;Auto threshold
-!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the check-box is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the check-box first (reasonable values depend on the image).
+!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the checkbox is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the checkbox first (reasonable values depend on the image).
 !TP_RAW_DUALDEMOSAICCONTRAST;Contrast threshold
 !TP_RAW_EAHD;EAHD
 !TP_RAW_FALSECOLOR;False color suppression steps
@@ -2016,10 +1992,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_RAW_VNG4;VNG4
 !TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
 !TP_RESIZE_APPLIESTO;Applies to:
-!TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
-!TP_RETINEX_CONTEDIT_LAB;Histogram equalizer L*a*b*
 !TP_RETINEX_CONTEDIT_LH;Hue equalizer
-!TP_RETINEX_CONTEDIT_MAP;Mask equalizer
 !TP_RETINEX_CURVEEDITOR_CD;L=f(L)
 !TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorrect raw data to reduce halos and artifacts.
 !TP_RETINEX_CURVEEDITOR_LH;Strength=f(H)
@@ -2057,7 +2030,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_RETINEX_LABEL_MASK;Mask
 !TP_RETINEX_LABSPACE;L*a*b*
 !TP_RETINEX_LOW;Low
-!TP_RETINEX_MAP;Mask method
 !TP_RETINEX_MAP_GAUS;Gaussian mask
 !TP_RETINEX_MAP_MAPP;Sharp mask (wavelet partial)
 !TP_RETINEX_MAP_MAPT;Sharp mask (wavelet total)

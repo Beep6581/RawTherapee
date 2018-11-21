@@ -538,9 +538,6 @@ IPTCPANEL_RESET;Сбросить
 IPTCPANEL_RESETHINT;Сбросить профиль на значения по умолчанию
 IPTCPANEL_SOURCE;Источник
 IPTCPANEL_TITLE;Название
-LENSPROFILE_CORRECTION_AUTOMATCH;Автоподбор параметров коррекции
-LENSPROFILE_CORRECTION_LCPFILE;Файл LCP
-LENSPROFILE_CORRECTION_MANUAL;Ручные параметры коррекции
 LENSPROFILE_LENS_WARNING;Внимание: кроп-фактор используемый для анализа объектива больше чем кроп-фактор камеры, результаты могут быть не верны.
 MAIN_BUTTON_FULLSCREEN;Полный экран
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Перейти к следующему изображению относительно открытого в редакторе\nГорячая клавиша: <b>Shift+F4</b>\n\nПерейти к следущему изображению относительно выбранного в файловом браузере\nгорячая клавиша <b>F4</b>
@@ -723,7 +720,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT;Формат ключей
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Имя
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 PREFERENCES_CUSTPROFBUILDPATH;Путь к исполняемому файлу
-PREFERENCES_CUTOVERLAYBRUSH; Цвет/прозрачность маски обрезки
 PREFERENCES_D50;5000K
 PREFERENCES_D50_OLD;5000K
 PREFERENCES_D55;5500K
@@ -743,7 +739,6 @@ PREFERENCES_DIRSOFTWARE;Каталог установки
 PREFERENCES_EDITORLAYOUT;Тип редактора
 PREFERENCES_EXTERNALEDITOR;Внешний редактор
 PREFERENCES_FBROWSEROPTS;Настройки
-PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Однорядная панель обозревателя файлов\n(отключите для экранов с низким разрешением)
 PREFERENCES_FILEFORMAT;Формат файлов
 PREFERENCES_FLATFIELDFOUND;Найдено
 PREFERENCES_FLATFIELDSDIR;Папка с файлами плоских полей
@@ -808,9 +803,7 @@ PREFERENCES_PROFILESAVECACHE;Сохранять профиль обработк�
 PREFERENCES_PROFILESAVEINPUT;Сохранять профиль обработки в одном каталоге с исходным файлом
 PREFERENCES_PROPERTY;Свойство
 PREFERENCES_PSPATH;Каталог установки Adobe Photoshop
-PREFERENCES_SELECTFONT;Выбрать шрифт
 PREFERENCES_SELECTLANG;Выбрать язык
-PREFERENCES_SELECTTHEME;Выбрать тему
 PREFERENCES_SET;Установить
 PREFERENCES_SHOWBASICEXIF;Показывать основные данные Exif 
 PREFERENCES_SHOWDATETIME;Показывать дату и время
@@ -829,7 +822,6 @@ PREFERENCES_TAB_DYNAMICPROFILE;Динамические профили
 PREFERENCES_TAB_GENERAL;Основное
 PREFERENCES_TAB_IMPROC;Обработка изображения
 PREFERENCES_TAB_SOUND;Звуки
-PREFERENCES_THEME;Тема
 PREFERENCES_TP_LABEL;Панель инструментов:
 PREFERENCES_TP_VSCROLLBAR;Спрятать вертикальную полосу прокрутки
 PREFERENCES_USEBUNDLEDPROFILES;Использовать предустановленный профиль
@@ -968,11 +960,7 @@ TP_COARSETRAF_TOOLTIP_HFLIP;Горизонтальное зеркальное о
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Повернуть влево\n\nГорячие клавиши:\n<b>[</b> - режим множественных редакторов,\n<b>Alt-[</b> - режим одного редактора
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Повернуть вправо\n\nГорячие клавиши:\n<b>]</b> - режим множественных редакторов,\n<b>Alt-]</b> - режим одного редактора
 TP_COARSETRAF_TOOLTIP_VFLIP;Вертикальное зеркальное отражение
-TP_COLORAPP_ADAPTSCENE;Яркость обстановки
-TP_COLORAPP_ADAPTSCENE_TOOLTIP;Абсолютная освещённость места и объекта съёмки (кд/м²).\n1) Высчитывается из данных Exif:\nВыдержка − Значение ISO − Значение F − Внутрикамерная коррекция выдержки.\n2) Высчитывается из точки белого в raw и значения компенсации экспозиции RT.
-TP_COLORAPP_ADAPTVIEWING;Яркость при просмотре (кд/м²)
-TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Абсолютная яркость при просмотре.\n(Обычно 16 кд/м²)
-TP_COLORAPP_ADAP_AUTO_TOOLTIP;Если галка отмечена (рекомендуется) RT расчитывает оптимальное значение из данных Exif.\nДля ручного редактирования необходимо предварительно снять галку.
+TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Абсолютная яркость при просмотре.\n(Обычно 16 кд/м²)
 TP_COLORAPP_ALGO;Алгоритм
 TP_COLORAPP_ALGO_ALL;Все
 TP_COLORAPP_ALGO_JC;Светимость + Цвет (JC)
@@ -1005,8 +993,6 @@ TP_COLORAPP_GAMUT;Контроль гаммы (L*a*b*)
 TP_COLORAPP_GAMUT_TOOLTIP;Позволяет контролировать гамму в режиме L*a*b*.
 TP_COLORAPP_HUE;Цвет (h)
 TP_COLORAPP_MODEL;Модель точки белого
-TP_COLORAPP_SHARPCIE;--неиспользуемый--
-TP_COLORAPP_SHARPCIE_TOOLTIP;--неиспользуемый--
 TP_CROP_FIXRATIO;Пропорция:
 TP_CROP_GTDIAGONALS;Правило диагоналей
 TP_CROP_GTEPASSPORT;Биометрический паспорт
@@ -1222,9 +1208,6 @@ TP_LENSGEOM_AUTOCROP;Автокадрирование
 TP_LENSGEOM_FILL;Автозаполнение
 TP_LENSGEOM_LABEL;Геометрия
 TP_LENSPROFILE_LABEL;Профиль коррекции объектива
-TP_LENSPROFILE_USECA;Корректировать ХА
-TP_LENSPROFILE_USEDIST;Корректировать дисторсию
-TP_LENSPROFILE_USEVIGN;Корректировать виньетирование
 TP_LOCALCONTRAST_AMOUNT;Величина
 TP_LOCALCONTRAST_DARKNESS;Тёмные тона
 TP_LOCALCONTRAST_LABEL;Локальный контраст
@@ -1799,7 +1782,6 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
 !PARTIALPASTE_RAW_PIXELSHIFT;Pixel Shift
 !PARTIALPASTE_RETINEX;Retinex
-!PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_CACHECLEAR;Clear
 !PREFERENCES_CACHECLEAR_ALL;Clear all cached files:
 !PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
@@ -1809,8 +1791,8 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
 !PREFERENCES_CMMBPC;Black point compensation
-!PREFERENCES_CROP;Crop editing
-!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
+!PREFERENCES_CROP;Crop Editing
+!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop
 !PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
 !PREFERENCES_CROP_GUIDES_FRAME;Frame
 !PREFERENCES_CROP_GUIDES_FULL;Original
@@ -1833,7 +1815,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !PREFERENCES_MONINTENT;Default rendering intent
 !PREFERENCES_MONPROFILE;Default color profile
 !PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
-!PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
+!PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Navigator guide color
 !PREFERENCES_NAVIGATIONFRAME;Navigation
 !PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
 !PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
@@ -1848,11 +1830,9 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !PREFERENCES_PRTPROFILE;Color profile
 !PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
-!PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
-!PREFERENCES_SELECTFONT_COLPICKER;Select Color Picker's font
-!PREFERENCES_SERIALIZE_TIFF_READ;Tiff Read Settings
-!PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize read of tiff files
-!PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;When working with folders full of uncompressed tiff files enabling this option can increase performance of thumb generation.
+!PREFERENCES_SAVE_TP_OPEN_NOW;Save tool collapsed/expanded state now
+!PREFERENCES_SERIALIZE_TIFF_READ;TIFF Read Settings
+!PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize reading of TIFF files
 !PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show filmstrip toolbar
 !PREFERENCES_TAB_PERFORMANCE;Performance
 !PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
@@ -1881,8 +1861,6 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_CBDL_METHOD;Process located
 !TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
 !TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show L*a*b* values before CIECAM02 adjustments.
-!TP_COLORAPP_DEGREE_AUTO_TOOLTIP;If the check-box is checked (recommended), RawTherapee calculates an optimum value, which is then used by CAT02, and also for the entire CIECAM02.\nTo set the value manually, uncheck the check-box first (values above 65 are recommended).
-!TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002.
 !TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 !TP_COLORAPP_HUE_TOOLTIP;Hue (h) - angle between 0° and 360°.
 !TP_COLORAPP_LABEL;CIE Color Appearance Model 2002
@@ -1917,9 +1895,6 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in L*a*b* space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
 !TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
 !TP_COLORAPP_WBRT;WB [RT] + [output]
-!TP_COLORAPP_YB;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE_TOOLTIP;If "auto" is enabled, Yb is calculated from the mean value of the actual image's luminance
 !TP_COLORTONING_AB;o C/L
 !TP_COLORTONING_AUTOSAT;Automatic
 !TP_COLORTONING_BALANCE;Balance
@@ -2038,7 +2013,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_RAW_BORDER;Border
 !TP_RAW_DCBVNG4;DCB+VNG4
 !TP_RAW_DUALDEMOSAICAUTOCONTRAST;Auto threshold
-!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the check-box is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the check-box first (reasonable values depend on the image).
+!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the checkbox is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the checkbox first (reasonable values depend on the image).
 !TP_RAW_DUALDEMOSAICCONTRAST;Contrast threshold
 !TP_RAW_IMAGENUM;Sub-image
 !TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
@@ -2073,10 +2048,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Smooth transitions between areas with motion and areas without.\nSet to 0 to disable transition smoothing.\nSet to 1 to either get the AMaZE/LMMSE result of the selected frame (depending on whether "Use LMMSE" is selected), or the median of all four frames if "Use median" is selected.
 !TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.\n+fast gives less artifacts in flat areas
 !TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
-!TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
-!TP_RETINEX_CONTEDIT_LAB;Histogram equalizer L*a*b*
 !TP_RETINEX_CONTEDIT_LH;Hue equalizer
-!TP_RETINEX_CONTEDIT_MAP;Mask equalizer
 !TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Strength according to hue Strength=f(H)\nThis curve also acts on chroma when using the "Highlight" retinex method.
 !TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;This curve can be applied alone or with a Gaussian mask or wavelet mask.\nBeware of artifacts!
 !TP_RETINEX_EQUAL;Equalizer
@@ -2110,7 +2082,6 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_RETINEX_LABEL_MASK;Mask
 !TP_RETINEX_LABSPACE;L*a*b*
 !TP_RETINEX_LOW;Low
-!TP_RETINEX_MAP;Mask method
 !TP_RETINEX_MAP_GAUS;Gaussian mask
 !TP_RETINEX_MAP_MAPP;Sharp mask (wavelet partial)
 !TP_RETINEX_MAP_MAPT;Sharp mask (wavelet total)

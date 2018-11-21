@@ -811,9 +811,6 @@ IPTCPANEL_TITLE;Titulek
 IPTCPANEL_TITLEHINT;Vložte krátké, popisné a lidsky čitelné jméno obrázku. Například název souboru.
 IPTCPANEL_TRANSREFERENCE;Číslo úlohy
 IPTCPANEL_TRANSREFERENCEHINT;Zadejte číslo nebo identifikátor potřebný v pracovním postupu nebo pro sledování.
-LENSPROFILE_CORRECTION_AUTOMATCH;Automatický dohledané korekční parametry
-LENSPROFILE_CORRECTION_LCPFILE;LCP Soubor
-LENSPROFILE_CORRECTION_MANUAL;Ruční korekční parametry
 LENSPROFILE_LENS_WARNING;Varování: crop factor použitý pro profilování objektivu je větší než crop factor fotoaparátu. Výsledek může být nesprávný.
 MAIN_BUTTON_FULLSCREEN;Celá obrazovka
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Přejít k dalšímu obrázku relativnímu k obrázku otevřenému v editoru.\nZkratka: <b>Shift-F4</b>\n\nPřejít k dalšímu obrázku relativnímu k vybranému náhledu v prohlížeči souborů nebo na filmovém pásu:\nZkratka: <b>F4</b>
@@ -981,7 +978,6 @@ PARTIALPASTE_WHITEBALANCE;Nastavení bílé
 PREFERENCES_ADD;Přidat
 PREFERENCES_APPLNEXTSTARTUP;vyžaduje restart aplikace
 PREFERENCES_AUTOMONPROFILE;Použít barevný profil hlavního monitoru z operačního systému
-PREFERENCES_AUTOSAVE_TP_OPEN;Před ukončením automaticky uložit\nstav sbalení/rozbalení nástrojů.
 PREFERENCES_BATCH_PROCESSING;Dávkové zpracování
 PREFERENCES_BEHADDALL;Vše do 'Přidat'
 PREFERENCES_BEHADDALLHINT;Nastaví všechny parametry do módu <b>Přidat</b>.\nZměna parametrů v panelu dávkového zpracování se aplikuje jako <b>rozdíl</b> k uloženým hodnotám.
@@ -1014,7 +1010,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT;Formát klíče
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Jméno
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 PREFERENCES_CUSTPROFBUILDPATH;Cesta k programu
-PREFERENCES_CUTOVERLAYBRUSH;Barva masky ořezu/průhlednosti
 PREFERENCES_D50;Nastavení v hlavní nabídce
 PREFERENCES_D50_OLD;5000K
 PREFERENCES_D55;5500K
@@ -1036,7 +1031,6 @@ PREFERENCES_EDITORCMDLINE;Vlastní příkazová řádka
 PREFERENCES_EDITORLAYOUT;Rozvržení editoru
 PREFERENCES_EXTERNALEDITOR;Externí editor
 PREFERENCES_FBROWSEROPTS;Volby prohlížeče souborů / náhledů
-PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Jednořádková lišta nástrojů v prohlížeči souborů\n(vypněte na nízkých rozlišeních)
 PREFERENCES_FILEFORMAT;Formát souboru
 PREFERENCES_FLATFIELDFOUND;Nalezeno
 PREFERENCES_FLATFIELDSDIR;Složka Flat Field souborů
@@ -1093,7 +1087,7 @@ PREFERENCES_MONPROFILE;Výchozí barevný profil
 PREFERENCES_MONPROFILE_WARNOSX;Na MacOS je podporováno pouze sRGB.
 PREFERENCES_MULTITAB;Mód více karet editoru
 PREFERENCES_MULTITABDUALMON;Mód více karet editoru ve vlastním okně
-PREFERENCES_NAVGUIDEBRUSH;Barva vodítek navigátoru
+PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Barva vodítek navigátoru
 PREFERENCES_NAVIGATIONFRAME;Navigátor
 PREFERENCES_OUTDIR;Výstupní složka
 PREFERENCES_OUTDIRFOLDER;Ulož do souboru
@@ -1131,13 +1125,10 @@ PREFERENCES_PSPATH;Instalační složka Adobe Photoshop
 PREFERENCES_REMEMBERZOOMPAN;Zapamatovat si procento přiblížení a posun obrázku
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Zapamatovat si procento přiblížení a posun aktuálního obrázku a použít tyto hodnoty při otevírání nového obrázku.\n\nTato volba funguje pouze v režimu "Mód jedné karty editoru" a volba "Metoda demozajkování pro náhled při přiblížení menším než 100%" je nastavena na "Stejně jako v PP3".
 PREFERENCES_SAVE_TP_OPEN_NOW;Uložit stav sbalení/rozbalení nástrojů hned
-PREFERENCES_SELECTFONT;Vyberte hlavní písmo
-PREFERENCES_SELECTFONT_COLPICKER;Vybrat písmo pro Průzkumníka barev
 PREFERENCES_SELECTLANG;Volba jazyka
-PREFERENCES_SELECTTHEME;Zvolit vzhled
-PREFERENCES_SERIALIZE_TIFF_READ;Nastavení čtení Tiff
-PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serializovat čtení tiff souborů
-PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Povolení této volby může zvýšit výkon generování náhledů ve složkách obsahujících mnoho nezkomprimovaných tiff souborů.
+PREFERENCES_SERIALIZE_TIFF_READ;Nastavení čtení TIFF
+PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serializovat čtení TIFF souborů
+PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Povolení této volby může zvýšit výkon generování náhledů ve složkách obsahujících mnoho nezkomprimovaných TIFF souborů.
 PREFERENCES_SET;Nastavit
 PREFERENCES_SHOWBASICEXIF;Zobrazovat základní Exif informace
 PREFERENCES_SHOWDATETIME;Zobrazovat datum a čas
@@ -1157,7 +1148,6 @@ PREFERENCES_TAB_DYNAMICPROFILE;Pravidla dynamických profilů
 PREFERENCES_TAB_GENERAL;Obecné
 PREFERENCES_TAB_IMPROC;Zpracování obrázku
 PREFERENCES_TAB_SOUND;Zvuky
-PREFERENCES_THEME;Vzhled
 PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Vložený JPEG náhled
 PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Obrázek k zobrazení
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutrální vykreslení raw
@@ -1315,11 +1305,7 @@ TP_COARSETRAF_TOOLTIP_HFLIP;Překlopit horizontálně.
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Otočit doleva.\n\nZkratky:\n<b>[</b> - režim více karet editoru,\n<b>Alt-[</b>- režim jedné karty editoru.
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Otočit doprava.\n\nZkratky:\n<b>]</b> - režim více karet editoru,\n<b>Alt-]</b>- režim jedné karty editoru.
 TP_COARSETRAF_TOOLTIP_VFLIP;Překlopit vertikálně.
-TP_COLORAPP_ADAPTSCENE;Absolutní jas scény
-TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolutní jas scény prostředí (cd/m²).\n 1) Vypočítáno z Exifu:\nRychlost závěrky - citlivost - clona - expoziční korekce fotoaparátu.\n 2) Vypočítáno z hodnoty raw bílého bodu a expoziční kompenzace Rawtherapee.
-TP_COLORAPP_ADAPTVIEWING;Absolutní jas prohlížení (cd/m²)
-TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolutní jas prostředí prohlížení\n(obvykle 16cd/m²).
-TP_COLORAPP_ADAP_AUTO_TOOLTIP;Pokud je povoleno (doporučeno), RawTherapee vypočítá optimální hodnotu z Exif dat.\nPokud si přejete zadat hodnotu ručně, nejprve zrušte zatržení tohoto pole. 
+TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Absolutní jas prostředí prohlížení\n(obvykle 16cd/m²).
 TP_COLORAPP_ALGO;Algoritmus
 TP_COLORAPP_ALGO_ALL;Vše
 TP_COLORAPP_ALGO_JC;Světlost + Barevnost (JC)
@@ -1349,8 +1335,6 @@ TP_COLORAPP_CURVEEDITOR3;Barevná křivka
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Upravte barevnost, nasycení nebo pestrobarevnost.\n\nZobrazí histogram barevnosti (L*a*b*) před CIECAM02.\nPokud je volba "Zobrazit CIECAM02 histogramy výstupu v křivkách" povolena, zobrazí histogram C, S nebo M po CIECAM02 .\n\nC, S a M histogramy nejsou na hlavním panelu zobrazeny.\nHistogram konečného výsledku je zobrazen na hlavním panelu.
 TP_COLORAPP_DATACIE;CIECAM02 histogramy výstupu v křivkách
 TP_COLORAPP_DATACIE_TOOLTIP;Pokud je povoleno, zobrazuje histogram v CIECAM02 křivkách přibližné hodnoty/rozsahy po CIECAM02 úpravách J nebo Q, a C, S nebo M.\nVýběr neovlivňuje histogram na hlavním panelu.\n\nPokud je zakázáno, zobrazuje histogram v CIECAM02 křivkách L*a*b* hodnoty před CIECAM02 úpravami.
-TP_COLORAPP_DEGREE_AUTO_TOOLTIP;Pokud je povoleno (doporučeno), RawTherapee vypočítá optimální hodnotu, jenž následně používá jak CAT02 tak i celý CIECAM02.\nZakažte, pokud si přejete zadat hodnotu ručně (doporučeny jsou hodnoty nad 65).
-TP_COLORAPP_DEGREE_TOOLTIP;Míra CIE Chromatic Adaptation Transform 2002.
 TP_COLORAPP_FREE;Volná teplota + zelená + CAT02 + [výstup]
 TP_COLORAPP_GAMUT;Kontrola palety (L*a*b*)
 TP_COLORAPP_GAMUT_TOOLTIP;Povolí kontrolu palety v L*a*b* režimu.
@@ -1368,8 +1352,6 @@ TP_COLORAPP_NEUTRAL;Obnovit
 TP_COLORAPP_NEUTRAL_TIP;Obnoví původní hodnoty u všech posuvníků a křivek.
 TP_COLORAPP_RSTPRO;Ochrana červených a pleťových tónů
 TP_COLORAPP_RSTPRO_TOOLTIP;Ochrana červených a pleťových tónů ovlivňuje posuvníky i křivky.
-TP_COLORAPP_SHARPCIE;--nepoužito--
-TP_COLORAPP_SHARPCIE_TOOLTIP;--nepoužito--
 TP_COLORAPP_SURROUND;Okolí
 TP_COLORAPP_SURROUND_AVER;Průměrné
 TP_COLORAPP_SURROUND_DARK;Tmavé
@@ -1391,9 +1373,6 @@ TP_COLORAPP_TONECIE;Mapování tónů pomocí CIECAM02
 TP_COLORAPP_TONECIE_TOOLTIP;Pokud je volba zakázána, probíhá mapování tónů v prostoru L*a*b*.\nPokud je volba povolena. probíhá mapování tónů pomocí CIECAM02.\nAby měla tato volba efekt, musí být povolen nástroj Mapování tónů.
 TP_COLORAPP_WBCAM;WB [RT+CAT02] + [výstup]
 TP_COLORAPP_WBRT;WB [RT] + [výstup]
-TP_COLORAPP_YB;Yb% (střední jas)
-TP_COLORAPP_YBSCENE;Yb% (střední jas)
-TP_COLORAPP_YBSCENE_TOOLTIP;Pokud je povolena automatika, Yb je vypočteno ze střední hodnoty jasu aktuálního obrázku 
 TP_COLORTONING_AB;o C/L
 TP_COLORTONING_AUTOSAT;Automaticky
 TP_COLORTONING_BALANCE;Vyvážené
@@ -1553,7 +1532,7 @@ TP_EXPOSURE_CURVEEDITOR2;Tónová křivka 2
 TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Podívejte se prosím na článek "Exposure > Tone Curves" na RawPedii, kde se můžete naučit. jak pomocí dvou tónových křivek dosáhnout ten nejlepší výsledek.
 TP_EXPOSURE_EXPCOMP;Kompenzace expozice
 TP_EXPOSURE_HISTMATCHING;Automaticky přizpůsobená Tónová křivka
-TP_EXPOSURE_HISTMATCHING_TOOLTIP;Automatické nastavení posuvníků a křivek (kromě kompenzace expozice) tak, aby bylo dosaženo co největší shody s vloženým Jpeg náhledem.
+TP_EXPOSURE_HISTMATCHING_TOOLTIP;Automatické nastavení posuvníků a křivek (kromě kompenzace expozice) tak, aby bylo dosaženo co největší shody s vloženým JPEG náhledem.
 TP_EXPOSURE_LABEL;Expozice
 TP_EXPOSURE_SATURATION;Nasycení
 TP_EXPOSURE_TCMODE_FILMLIKE;Jako film
@@ -1687,9 +1666,6 @@ TP_LENSGEOM_AUTOCROP;Automatický ořez
 TP_LENSGEOM_FILL;Automatické vyplnění
 TP_LENSGEOM_LABEL;Objektiv / Geometrie
 TP_LENSPROFILE_LABEL;Korekční profily objektivů
-TP_LENSPROFILE_USECA;Korekce chromatické aberace
-TP_LENSPROFILE_USEDIST;Korekce zkreslení
-TP_LENSPROFILE_USEVIGN;Korekce vinětace
 TP_LOCALCONTRAST_AMOUNT;Míra
 TP_LOCALCONTRAST_DARKNESS;Úroveň tmavé
 TP_LOCALCONTRAST_LABEL;Místní kontrast
@@ -1823,7 +1799,6 @@ TP_RESIZE_WIDTH;Šířka
 TP_RETINEX_CONTEDIT_HSL;HSV korekce histogramu
 TP_RETINEX_CONTEDIT_LAB;Histogram korekce L*a*b*
 TP_RETINEX_CONTEDIT_LH;Korekce odstínu
-TP_RETINEX_CONTEDIT_MAP;Korekce masky
 TP_RETINEX_CURVEEDITOR_CD;L=f(L)
 TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Jas dle jasu L=f(L).\nUpraví raw data pro snížení výskytu halo efektu a vzniku artefaktů.
 TP_RETINEX_CURVEEDITOR_LH;Síla=f(O)
@@ -1860,7 +1835,6 @@ TP_RETINEX_LABEL;Retinex
 TP_RETINEX_LABEL_MASK;Maska
 TP_RETINEX_LABSPACE;L*a*b*
 TP_RETINEX_LOW;Slabé
-TP_RETINEX_MAP;Metoda masky
 TP_RETINEX_MAP_GAUS;Gaussova maska
 TP_RETINEX_MAP_MAPP;Ostrá maska (částečná vlnka)
 TP_RETINEX_MAP_MAPT;Ostrá maska (kompletní vlnka)
@@ -2327,7 +2301,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_RAW_BORDER;Border
 !TP_RAW_DCBVNG4;DCB+VNG4
 !TP_RAW_DUALDEMOSAICAUTOCONTRAST;Auto threshold
-!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the check-box is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the check-box first (reasonable values depend on the image).
+!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the checkbox is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the checkbox first (reasonable values depend on the image).
 !TP_RAW_DUALDEMOSAICCONTRAST;Contrast threshold
 !TP_RAW_PIXELSHIFTDMETHOD;Demosaic method for motion
 !TP_RAW_RCDVNG4;RCD+VNG4

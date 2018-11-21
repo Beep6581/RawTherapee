@@ -935,7 +935,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys formaat
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Naam
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 PREFERENCES_CUSTPROFBUILDPATH;Pad naar programma of script
-PREFERENCES_CUTOVERLAYBRUSH;Kleur uitsnedemasker
 PREFERENCES_D50;5000K
 PREFERENCES_D55;5500K
 PREFERENCES_D60;6000K
@@ -954,7 +953,6 @@ PREFERENCES_DIRSOFTWARE;Installatiemap
 PREFERENCES_EDITORLAYOUT;Bewerkingsvenster
 PREFERENCES_EXTERNALEDITOR;Externe editor
 PREFERENCES_FBROWSEROPTS;Opties bestandsnavigator
-PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Enkele rij navigator werkbalk (de-activeer voor lage resolutie)
 PREFERENCES_FILEFORMAT;Bestandstype
 PREFERENCES_FLATFIELDFOUND;Gevonden
 PREFERENCES_FLATFIELDSDIR;Vlakveldmap
@@ -1009,7 +1007,7 @@ PREFERENCES_MONPROFILE;Standaard kleurprofiel
 PREFERENCES_MONPROFILE_WARNOSX;Als gevolg van MacOS beperkingen wordt alleen sRGB ondersteund.
 PREFERENCES_MULTITAB;Multi-tab: elke foto opent in nieuw tabvenster
 PREFERENCES_MULTITABDUALMON;Multi-tab, indien beschikbaar op tweede monitor
-PREFERENCES_NAVGUIDEBRUSH;Navigator randkleur
+PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Navigator randkleur
 PREFERENCES_NAVIGATIONFRAME;Navigatie
 PREFERENCES_OUTDIR;Uitvoermap
 PREFERENCES_OUTDIRFOLDER;Sla op in map
@@ -1044,13 +1042,10 @@ PREFERENCES_PRTPROFILE;Kleurprofiel
 PREFERENCES_PSPATH;Installatiemap Adobe Photoshop
 PREFERENCES_REMEMBERZOOMPAN;Onthoud zoom % en pan startpunt
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Onthoud het zoom % en pan startpunt van de huidige afbeelding als er een nieuwe afbeelding wordt geopend.\n\nDeze optie werkt alleen in "Single Editor Tab Mode" en wanneer "Demozaïekmethode van het voorbeeld <100% zoom" hetzelfde is als "Gelijk aan PP3".
-PREFERENCES_SELECTFONT;Kies lettertype
-PREFERENCES_SELECTFONT_COLPICKER;Font van de Kleurkiezer
 PREFERENCES_SELECTLANG;Selecteer taal
-PREFERENCES_SELECTTHEME;Kies thema
-PREFERENCES_SERIALIZE_TIFF_READ;Tiff Lees Instellingen
-PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serieel lezen van tiff bestanden
-PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Als een map veel ongecomprimeerde tiff bestanden bevat dan versnelt deze optie het genereren van de miniaturen.
+PREFERENCES_SERIALIZE_TIFF_READ;TIFF Lees Instellingen
+PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serieel lezen van TIFF bestanden
+PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Als een map veel ongecomprimeerde TIFF bestanden bevat dan versnelt deze optie het genereren van de miniaturen.
 PREFERENCES_SET;Activeer
 PREFERENCES_SHOWBASICEXIF;Toon standaard Exif-info
 PREFERENCES_SHOWDATETIME;Toon datum en tijd
@@ -1214,11 +1209,7 @@ TP_COARSETRAF_TOOLTIP_HFLIP;Horizontaal spiegelen
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left.\n\nSneltoets:\n<b>[</b> - Multi-tab Mode,\n<b>Alt-[</b> - Enkel-tab Mode.
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right.\n\nSneltoets:\n<b>]</b> - Multi-tab Mode,\n<b>Alt-]</b> - Enkel-tab Mode.
 TP_COARSETRAF_TOOLTIP_VFLIP;Verticaal spiegelen
-TP_COLORAPP_ADAPTSCENE;Opnameomgeving luminositeit
-TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminantie van de opnameomgeving (cd/m²).\n1) Berekend op basis van de Exif data:\nSluitertijd - ISO-waarde - Diafragma - Camera belichtingscompensatie.\n2) Berekend op basis van het raw witpunt en RT's Belichtingscompensatie
-TP_COLORAPP_ADAPTVIEWING;Weergaveomgeving luminositeit (cd/m2)
-TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute luminantie van de weergaveomgeving \n(gebruikelijk 16cd/m²)
-TP_COLORAPP_ADAP_AUTO_TOOLTIP;Als het keuzevakje is aangezet (aanbevolen), dan berekent RT de optimale waarde op basis van de Exif data.\nOm de waarde handmatig in te stellen moet het keuzevakje worden uitgezet
+TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Absolute luminantie van de weergaveomgeving \n(gebruikelijk 16cd/m²)
 TP_COLORAPP_ALGO;Algoritme
 TP_COLORAPP_ALGO_ALL;Alle
 TP_COLORAPP_ALGO_JC;Lichtheid + Chroma (JC)
@@ -1248,8 +1239,6 @@ TP_COLORAPP_CURVEEDITOR3;Chroma curve
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Wijzigt ofwel chroma, verzadiging of kleurrijkheid.\n Het Histogram toont chromaticiteit (Lab) voor CIECAM wijzigingen.\nHet Histogram toont  C,s,M na toepassing van CIECAM indien het selectievakje 'Toon CIECAM uitvoer' is aangezet.\n(C,s,M) worden niet getoond in het Hoofd histogram paneel. \nRaadpleeg het Histogram paneel voor de definitieve uitvoer
 TP_COLORAPP_DATACIE;CIECAM02 uitvoer histogram in de curven
 TP_COLORAPP_DATACIE_TOOLTIP;Indien aangezet, tonen de histogrammen van de CIECAM02 curven bij benadering de waarden/reeksen voor J of Q, en C, s of M na de CIECAM02 aanpassingen.\nDit beïnvloed niet het hoofd histogram paneel.\n\nIndien uitgezet tonen de histogrammen van de CIECAM02 curven de Lab waarden zoals deze waren voor de CIECAM02 aanpassingen
-TP_COLORAPP_DEGREE_AUTO_TOOLTIP;Als het keuzevakje is aangezet (aanbevolen), dan berekent RT een optimale waarde. Deze wordt gebruikt door CAT02 en door CIECAM02.\nOm de waarden handmatig in te stellen moet het keuzevakje worden uitgezet (waarden groter dan 65 worden aanbevolen)
-TP_COLORAPP_DEGREE_TOOLTIP;Hoeveelheid van CIE Chromatic Adaptation Transform 2002
 TP_COLORAPP_GAMUT;Gamut controle (Lab)
 TP_COLORAPP_GAMUT_TOOLTIP;Sta gamut controle toe in Lab mode
 TP_COLORAPP_HUE;Tint (h)
@@ -1264,8 +1253,6 @@ TP_COLORAPP_MODEL;Witpunt Model
 TP_COLORAPP_MODEL_TOOLTIP;<b>WB [RT] + [uitvoer]:</b>\nRT's WB wordt gebruikt voor de opname, CIECAM02 wordt gezet op D50. Het uitvoerapparaat's wit gebruikt de instelling van <i>Voorkeuren > Kleurbeheer</i>\n\n<b>WB [RT+CAT02] + [output]:</b>\nRT's WB instellingen worden gebruikt door CAT02 en het uitvoerapparaat's wit gebruikt de waarde van de Voorkeuren.
 TP_COLORAPP_RSTPRO;Rode en Huidtinten bescherming
 TP_COLORAPP_RSTPRO_TOOLTIP;Rode en Huidtinten bescherming (schuifbalk en curven)
-TP_COLORAPP_SHARPCIE;Verscherpen, Detailcontrast, Microcontrast & Randen met Q/C
-TP_COLORAPP_SHARPCIE_TOOLTIP;Verscherpen, Detailcontrast, Microcontrast & Randen zullen CIECAM02 gebruiken wanneer dit is aangezet.
 TP_COLORAPP_SURROUND;Omgeving
 TP_COLORAPP_SURROUND_AVER;Gemmiddeld
 TP_COLORAPP_SURROUND_DARK;Donker
@@ -1575,9 +1562,6 @@ TP_LENSGEOM_AUTOCROP;Automatisch bijsnijden
 TP_LENSGEOM_FILL;Automatisch uitvullen
 TP_LENSGEOM_LABEL;Objectief / Geometrie
 TP_LENSPROFILE_LABEL;Lenscorrectie Profielen
-TP_LENSPROFILE_USECA;CA correctie
-TP_LENSPROFILE_USEDIST;Lensvervorming correctie
-TP_LENSPROFILE_USEVIGN;Vignettering correctie
 TP_NEUTRAL;Terugzetten
 TP_NEUTRAL_TIP;Alle belichtingsinstellingen naar 0
 TP_PCVIGNETTE_FEATHER;Straal
@@ -1705,7 +1689,6 @@ TP_RESIZE_WIDTH;Breedte
 TP_RETINEX_CONTEDIT_HSL;Histogram balans HSL
 TP_RETINEX_CONTEDIT_LAB;Histogram balans L*a*b*
 TP_RETINEX_CONTEDIT_LH;Tint balans
-TP_RETINEX_CONTEDIT_MAP;Masker mixer
 TP_RETINEX_CURVEEDITOR_CD;L=f(L)
 TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminantie volgens luminantie L=f(L)\nCorrigeert ruwe data om halo's and artefacte te verminderen.
 TP_RETINEX_CURVEEDITOR_LH;Sterkte=f(H)
@@ -1740,7 +1723,6 @@ TP_RETINEX_LABEL;Retinex
 TP_RETINEX_LABEL_MASK;Masker
 TP_RETINEX_LABSPACE;L*a*b*
 TP_RETINEX_LOW;Laag
-TP_RETINEX_MAP;Masker methode
 TP_RETINEX_MAP_GAUS;Gaussiaans masker
 TP_RETINEX_MAP_MAPP;Verscherp masker (wavelet gedeeltelijk)
 TP_RETINEX_MAP_MAPT;Verscherp masker (wavelet totaal)
@@ -2198,9 +2180,6 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !ICCPROFCREATOR_SAVEDIALOG_TITLE;Save ICC profile as...
 !ICCPROFCREATOR_SLOPE;Slope
 !ICCPROFCREATOR_TRC_PRESET;Tone response curve:
-!LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
-!LENSPROFILE_CORRECTION_LCPFILE;LCP File
-!LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
 !LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
 !MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
 !MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
@@ -2220,14 +2199,13 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !PARTIALPASTE_RAW_BORDER;Raw border
 !PARTIALPASTE_SOFTLIGHT;Soft light
 !PARTIALPASTE_TM_FATTAL;Dynamic range compression
-!PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_CACHECLEAR;Clear
 !PREFERENCES_CACHECLEAR_ALL;Clear all cached files:
 !PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
 !PREFERENCES_CACHECLEAR_ONLYPROFILES;Clear only cached processing profiles:
 !PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing profiles stored alongside the source images are not touched.
-!PREFERENCES_CROP;Crop editing
-!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
+!PREFERENCES_CROP;Crop Editing
+!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop
 !PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
 !PREFERENCES_CROP_GUIDES_FRAME;Frame
 !PREFERENCES_CROP_GUIDES_FULL;Original
@@ -2241,9 +2219,8 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
 !PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
 !PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
-!PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
+!PREFERENCES_SAVE_TP_OPEN_NOW;Save tool collapsed/expanded state now
 !PREFERENCES_TAB_PERFORMANCE;Performance
-!PREFERENCES_THEME;Theme
 !PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
 !PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
@@ -2268,9 +2245,6 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_COLORAPP_NEUTRAL;Reset
 !TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
 !TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
-!TP_COLORAPP_YB;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE_TOOLTIP;If "auto" is enabled, Yb is calculated from the mean value of the actual image's luminance
 !TP_COLORTONING_LABGRID;L*a*b* color correction grid
 !TP_COLORTONING_LABGRID_VALUES;HL: a=%1 b=%2\nS: a=%3 b=%4
 !TP_COLORTONING_LABREGIONS;L*a*b* correction regions
@@ -2322,7 +2296,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_RAW_BORDER;Border
 !TP_RAW_DCBVNG4;DCB+VNG4
 !TP_RAW_DUALDEMOSAICAUTOCONTRAST;Auto threshold
-!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the check-box is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the check-box first (reasonable values depend on the image).
+!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the checkbox is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the checkbox first (reasonable values depend on the image).
 !TP_RAW_DUALDEMOSAICCONTRAST;Contrast threshold
 !TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
 !TP_RAW_PIXELSHIFTDMETHOD;Demosaic method for motion
