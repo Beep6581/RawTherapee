@@ -1067,7 +1067,6 @@ PARTIALPASTE_WHITEBALANCE;ホワイトバランス
 PREFERENCES_ADD;追加
 PREFERENCES_APPLNEXTSTARTUP;要再起動
 PREFERENCES_AUTOMONPROFILE;OSのメインモニター・プロファイルを使用
-PREFERENCES_AUTOSAVE_TP_OPEN;プログラム終了の前に、機能パネルの開閉状態を自動的に保存する
 PREFERENCES_BATCH_PROCESSING;バッチ処理
 PREFERENCES_BEHADDALL;すべて '追加'
 PREFERENCES_BEHADDALLHINT;すべてのパラメータを <b>追加</b>モードにします\nバッチツールパネルで設定される調整値が、各画像の既定値に<b>加算</b>されます
@@ -1105,7 +1104,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT;キーフォーマット
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;名前
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;タグID
 PREFERENCES_CUSTPROFBUILDPATH;実行ファイルのパス
-PREFERENCES_CUTOVERLAYBRUSH;切り抜きマスクカラー 不透明度
 PREFERENCES_D50;5000K
 PREFERENCES_D50_OLD;5000k
 PREFERENCES_D55;5500K
@@ -1127,7 +1125,6 @@ PREFERENCES_EDITORCMDLINE;カスタムコマンドライン
 PREFERENCES_EDITORLAYOUT;編集 レイアウト
 PREFERENCES_EXTERNALEDITOR;外部エディタ
 PREFERENCES_FBROWSEROPTS;ファイルブラウザ/サムネイルのオプション
-PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;ファイルブラウザでの一行のツールバー (低解像度表示用に選択解除)
 PREFERENCES_FILEFORMAT;ファイル形式
 PREFERENCES_FLATFIELDFOUND;検出
 PREFERENCES_FLATFIELDSDIR;フラットフィールド・ディレクトリ
@@ -1184,7 +1181,7 @@ PREFERENCES_MONPROFILE;デフォルトのモニタープロファイル
 PREFERENCES_MONPROFILE_WARNOSX;MacのOSの制約により、サポート出来るのはsRGBだけです
 PREFERENCES_MULTITAB;マルチ編集タブモード
 PREFERENCES_MULTITABDUALMON;独自のウィンドウモードによるマルチ編集タブ
-PREFERENCES_NAVGUIDEBRUSH;ナビゲーターのガイドカラー
+PREFERENCES_APPEARANCE_NAVGUIDECOLOR;ナビゲーターのガイドカラー
 PREFERENCES_NAVIGATIONFRAME;ナビゲーション
 PREFERENCES_OUTDIR;出力ディレクトリ
 PREFERENCES_OUTDIRFOLDER;フォルダに保存
@@ -1224,10 +1221,7 @@ PREFERENCES_PSPATH;Adobe Photoshop のインストール・ディレクトリ
 PREFERENCES_REMEMBERZOOMPAN;ズームレベルとパン速度を記憶する
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;現在の画像のズームレベルとパン速度を記憶し、新しく開く画像に適用\n\nこのオプションが使えるのは、編集画面のモードが“シングル編集”で、“プレビューのズームレベルが100%以下の場合に使うデモザイク”が“pp3に従う”と設定されている場合だけです。
 PREFERENCES_SAVE_TP_OPEN_NOW;機能パネルの今の開閉状態を保存する
-PREFERENCES_SELECTFONT;フォント選択
-PREFERENCES_SELECTFONT_COLPICKER;カラーピッカーのフォントを選択
 PREFERENCES_SELECTLANG;言語選択
-PREFERENCES_SELECTTHEME;テーマの選択
 PREFERENCES_SERIALIZE_TIFF_READ;TIFFファイルの読み込み設定
 PREFERENCES_SERIALIZE_TIFF_READ_LABEL;TIFFファイルのシリアル化
 PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;画像フォルダーが多数の非圧縮のTIFFファイルで閉められている場合、このオプションを有効にすることで、サムネイル画像生成の効率が上がります
@@ -1251,7 +1245,6 @@ PREFERENCES_TAB_GENERAL;一般
 PREFERENCES_TAB_IMPROC;画像処理
 PREFERENCES_TAB_PERFORMANCE;パフォーマンス
 PREFERENCES_TAB_SOUND;サウンド
-PREFERENCES_THEME;テーマ
 PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;埋め込まれているJPEGのプレビュー
 PREFERENCES_THUMBNAIL_INSPECTOR_MODE;表示する画像
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW;ニュートラルなrawレンダリング
@@ -1414,11 +1407,7 @@ TP_COARSETRAF_TOOLTIP_HFLIP;左右反転
 TP_COARSETRAF_TOOLTIP_ROTLEFT;90度左回転\nショートカット: <b>[</b>\n\nシングル・エディタ・タブのショートカット: <b>Alt-[</b>
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;90度右回転\nショートカット: <b>]</b>\n\nシングル・エディタ・タブのショートカット: <b>Alt-]</b>
 TP_COARSETRAF_TOOLTIP_VFLIP;上下反転
-TP_COLORAPP_ADAPTSCENE;撮影輝度への適応
-TP_COLORAPP_ADAPTSCENE_TOOLTIP;撮影環境の絶対輝度(cd/m2)\n1)Exif情報から算出：\nシャッター速度、ISO、絞り、カメラの露出補正\n2)rawのホワイトポイントとRTの露光補正スライダー値から算出
-TP_COLORAPP_ADAPTVIEWING;観視輝度への適応 (cd/m2)
-TP_COLORAPP_ADAPTVIEWING_TOOLTIP;観視環境の絶対輝度\n(通常 16cd/m2)
-TP_COLORAPP_ADAP_AUTO_TOOLTIP;チェックボックッスが有効の場合（推奨）はRTがExif情報に基づいて最適値を計算します\n手動で行う場合はチェックボックスを無効にします
+TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;観視環境の絶対輝度\n(通常 16cd/m2)
 TP_COLORAPP_ALGO;アルゴリズム
 TP_COLORAPP_ALGO_ALL;すべて
 TP_COLORAPP_ALGO_JC;明度 + 色度 (JC)
@@ -1448,8 +1437,6 @@ TP_COLORAPP_CURVEEDITOR3;カラーカーブ
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;色度、彩度、鮮やかさのいずれかを調整します\n\nCIECAM02調整前の色度(L*a*b*)のヒストグラムを表示します\nチェックボックスの"カーブにCIECAM02出力のヒストグラムを表示" が有効の場合、CIECAM02調整後のC,sまたはMのヒストグラムを表示します\n\nC, sとMは、メインのヒストグラム・パネルには表示されません\n最終出力は、メインのヒストグラム・パネルを参照してください
 TP_COLORAPP_DATACIE;カーブにCIECAM02出力のヒストグラムを表示
 TP_COLORAPP_DATACIE_TOOLTIP;有効の場合、CIECAM02カーブのヒストグラムは、JかQ、CIECAM02調整後のCかs、またはMの値/範囲の近似値を表示します\nこの選択はメイン・ヒストグラムパネルには影響を与えません\n\n無効の場合、CIECAM02カーブのヒストグラムは、CIECAM調整前のL*a*b*値を表示します
-TP_COLORAPP_DEGREE_AUTO_TOOLTIP;チェックボックスが有効の場合 (推奨)\nRTは、CAT02で使用され、更にCIECAM02全体で使用する最適値を算出します\n手動で値を設定するには、チェックボックスを無効にします (65以上の値を推奨)
-TP_COLORAPP_DEGREE_TOOLTIP;CIE色順応変換2002（CAT02)の量
 TP_COLORAPP_FREE;任意の色温度+グリーン + CAT02 + [出力]
 TP_COLORAPP_GAMUT;色域制御 (L*a*b*)
 TP_COLORAPP_GAMUT_TOOLTIP;L*a*b*モードの色域制御を許可
@@ -1467,8 +1454,6 @@ TP_COLORAPP_NEUTRAL;リセット
 TP_COLORAPP_NEUTRAL_TIP;全てのスライダーチェックボックスとカーブをデフォルトにリセットします
 TP_COLORAPP_RSTPRO;レッドと肌色トーンを保護
 TP_COLORAPP_RSTPRO_TOOLTIP;レッドと肌色トーンを保護はスライダーとカーブの両方に影響します
-TP_COLORAPP_SHARPCIE;Q/C で､シャープ化、ディテールレベルのコントラストとフリンジ低減
-TP_COLORAPP_SHARPCIE_TOOLTIP;有効にした場合、シャープ化、ディテールレベルのコントラストとフリンジ低減は、CIECAM02を使用します
 TP_COLORAPP_SURROUND;周囲環境
 TP_COLORAPP_SURROUND_AVER;普通
 TP_COLORAPP_SURROUND_DARK;暗い
@@ -1490,9 +1475,6 @@ TP_COLORAPP_TONECIE;CIECAM02 明るさ(Q)を使用してトーンマッピング
 TP_COLORAPP_TONECIE_TOOLTIP;このオプションが無効になっている場合、トーンマッピングはL*a*b*空間を使用します\nこのオプションが有効になっている場合、トーンマッピングは、CIECAM02を使用します\nトーンマッピング（L*a*b*/CIECAM02）ツールを有効にするには、この設定を有効にする必要があります
 TP_COLORAPP_WBCAM;WB [RT+CAT02] + [出力]
 TP_COLORAPP_WBRT;WB [RT] + [出力]
-TP_COLORAPP_YB;Yb% (平均輝度)
-TP_COLORAPP_YBSCENE;Yb% (平均輝度)
-TP_COLORAPP_YBSCENE_TOOLTIP;自動が有効になると、Ybは画像の輝度の中間値から計算されます
 TP_COLORTONING_AB;o C/L
 TP_COLORTONING_AUTOSAT;自動彩度
 TP_COLORTONING_BALANCE;バランス
@@ -1948,7 +1930,6 @@ TP_RESIZE_WIDTH;幅
 TP_RETINEX_CONTEDIT_HSL;ヒストグラムイコライザ HSL
 TP_RETINEX_CONTEDIT_LAB;ヒストグラムイコライザ L*a*b*
 TP_RETINEX_CONTEDIT_LH;色相イコライザ
-TP_RETINEX_CONTEDIT_MAP;マスクイコライザ
 TP_RETINEX_CURVEEDITOR_CD;輝度=f(輝度)
 TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;輝度に応じた輝度の関数 L=f(L)\nハロとアーティファクトを減らすためにrawデータを補正します
 TP_RETINEX_CURVEEDITOR_LH;強さ=f(色相)
@@ -1986,7 +1967,6 @@ TP_RETINEX_LABEL;レティネックス
 TP_RETINEX_LABEL_MASK;マスク
 TP_RETINEX_LABSPACE;L*a*b*
 TP_RETINEX_LOW;低
-TP_RETINEX_MAP;マスクの方法
 TP_RETINEX_MAP_GAUS;ガウシアンマスク
 TP_RETINEX_MAP_MAPP;シャープマスク (一部ウェーブレット)
 TP_RETINEX_MAP_MAPT;シャープマスク (全てウェーブレット)

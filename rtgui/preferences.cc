@@ -996,14 +996,14 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     // ---------------------------------------------
 
-    Gtk::Frame* ftheme = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_THEME")) );
+    Gtk::Frame* ftheme = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_APPEARANCE")) );
     setExpandAlignProperties (ftheme, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     Gtk::Grid* themeGrid = Gtk::manage ( new Gtk::Grid() );
     themeGrid->set_column_spacing (4);
     themeGrid->set_row_spacing (4);
     setExpandAlignProperties (themeGrid, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
-    Gtk::Label* themelab = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_SELECTTHEME") + ":") );
+    Gtk::Label* themelab = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_APPEARANCE_THEME") + ":") );
     setExpandAlignProperties (themelab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     theme = Gtk::manage ( new Gtk::ComboBoxText () );
     setExpandAlignProperties (theme, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
@@ -1018,7 +1018,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     themeGrid->attach_next_to (*themelab, Gtk::POS_LEFT, 1, 1);
     themeGrid->attach_next_to (*theme, *themelab, Gtk::POS_RIGHT, 1, 1);
 
-    Gtk::Label* fontlab = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_SELECTFONT")) );
+    Gtk::Label* fontlab = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_APPEARANCE_MAINFONT")) );
     setExpandAlignProperties (fontlab, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
     fontButton = Gtk::manage ( new Gtk::FontButton ());
     setExpandAlignProperties (fontButton, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
@@ -1033,7 +1033,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     themeGrid->attach_next_to (*fontlab, *theme, Gtk::POS_RIGHT, 1, 1);
     themeGrid->attach_next_to (*fontButton, *fontlab, Gtk::POS_RIGHT, 1, 1);
 
-    Gtk::Label* cpfontlab = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_SELECTFONT_COLPICKER") + ":") );
+    Gtk::Label* cpfontlab = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_APPEARANCE_COLORPICKERFONT") + ":") );
     setExpandAlignProperties (cpfontlab, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
     colorPickerFontButton = Gtk::manage ( new Gtk::FontButton ());
     setExpandAlignProperties (fontButton, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
@@ -1048,7 +1048,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     themeGrid->attach_next_to (*cpfontlab, *fontButton, Gtk::POS_RIGHT, 1, 1);
     themeGrid->attach_next_to (*colorPickerFontButton, *cpfontlab, Gtk::POS_RIGHT, 1, 1);
 
-    Gtk::Label* cutOverlayLabel = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_CUTOVERLAYBRUSH") + ":") );
+    Gtk::Label* cutOverlayLabel = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_APPEARANCE_CROPMASKCOLOR") + ":") );
     setExpandAlignProperties (cutOverlayLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     butCropCol = Gtk::manage ( new Gtk::ColorButton() );
     setExpandAlignProperties (butCropCol, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -1056,7 +1056,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     themeGrid->attach_next_to (*cutOverlayLabel, *themelab, Gtk::POS_BOTTOM, 1, 1);
     themeGrid->attach_next_to (*butCropCol, *cutOverlayLabel, Gtk::POS_RIGHT, 1, 1);
 
-    Gtk::Label* navGuideLabel = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_NAVGUIDEBRUSH") + ":") );
+    Gtk::Label* navGuideLabel = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_APPEARANCE_NAVGUIDECOLOR") + ":") );
     setExpandAlignProperties (navGuideLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     butNavGuideCol = Gtk::manage ( new Gtk::ColorButton() );
     setExpandAlignProperties (butNavGuideCol, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
