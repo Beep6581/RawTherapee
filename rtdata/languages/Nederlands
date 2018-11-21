@@ -903,6 +903,7 @@ PARTIALPASTE_VIGNETTING;Vignetteringscorrectie
 PARTIALPASTE_WAVELETGROUP;Wavelet verwerking
 PARTIALPASTE_WHITEBALANCE;Witbalans
 PREFERENCES_ADD;Toevoegen
+PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Navigator randkleur
 PREFERENCES_APPLNEXTSTARTUP;herstart vereist
 PREFERENCES_AUTOMONPROFILE;Gebruik automatisch het standaard monitorprofiel \nvan het besturingsysteem
 PREFERENCES_BATCH_PROCESSING;Batch-verwerking
@@ -1007,7 +1008,6 @@ PREFERENCES_MONPROFILE;Standaard kleurprofiel
 PREFERENCES_MONPROFILE_WARNOSX;Als gevolg van MacOS beperkingen wordt alleen sRGB ondersteund.
 PREFERENCES_MULTITAB;Multi-tab: elke foto opent in nieuw tabvenster
 PREFERENCES_MULTITABDUALMON;Multi-tab, indien beschikbaar op tweede monitor
-PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Navigator randkleur
 PREFERENCES_NAVIGATIONFRAME;Navigatie
 PREFERENCES_OUTDIR;Uitvoermap
 PREFERENCES_OUTDIRFOLDER;Sla op in map
@@ -1209,7 +1209,6 @@ TP_COARSETRAF_TOOLTIP_HFLIP;Horizontaal spiegelen
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left.\n\nSneltoets:\n<b>[</b> - Multi-tab Mode,\n<b>Alt-[</b> - Enkel-tab Mode.
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right.\n\nSneltoets:\n<b>]</b> - Multi-tab Mode,\n<b>Alt-]</b> - Enkel-tab Mode.
 TP_COARSETRAF_TOOLTIP_VFLIP;Verticaal spiegelen
-TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Absolute luminantie van de weergaveomgeving \n(gebruikelijk 16cd/m²)
 TP_COLORAPP_ALGO;Algoritme
 TP_COLORAPP_ALGO_ALL;Alle
 TP_COLORAPP_ALGO_JC;Lichtheid + Chroma (JC)
@@ -1271,6 +1270,7 @@ TP_COLORAPP_TCMODE_LIGHTNESS;lichtheid
 TP_COLORAPP_TCMODE_SATUR;Verzadiging
 TP_COLORAPP_TONECIE;Tonemapping gebruik makend van CIECAM
 TP_COLORAPP_TONECIE_TOOLTIP;Indien uitgezet zal tonemapping plaats vinden in Lab.\nIndien aangezet zal tonemapping gebruik maken van CIECAM02.\nVoorwaarde is dat Tonemapping (Lab/CIECAM02) actief is.
+TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Absolute luminantie van de weergaveomgeving \n(gebruikelijk 16cd/m²)
 TP_COLORAPP_WBCAM;WB [RT+CAT02] + [uitvoer]
 TP_COLORAPP_WBRT;WB [RT] + [uitvoer]
 TP_COLORTONING_AB;o C/L
@@ -2180,13 +2180,12 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !ICCPROFCREATOR_SAVEDIALOG_TITLE;Save ICC profile as...
 !ICCPROFCREATOR_SLOPE;Slope
 !ICCPROFCREATOR_TRC_PRESET;Tone response curve:
-!LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
 !MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
 !MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
 !MAIN_TAB_ADVANCED;Advanced
 !MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt-w</b>
-!MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
-!MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>Sharpening Contrast Mask</b>.\nShortcut: <b>None</b>\n\nOnly works when sharpening is enabled and zoom >= 100%.
+!MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>middle grey</b>\nShortcut: <b>9</b>
+!MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>sharpening contrast mask</b>.\nShortcut: <b>None</b>\n\nOnly works when sharpening is enabled and zoom >= 100%.
 !OPTIONS_BUNDLED_MISSING;The bundled profile "<b>%1</b>" could not be found!\n\nYour installation could be damaged.\n\nDefault internal values will be used instead.
 !OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
 !OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
@@ -2199,6 +2198,12 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !PARTIALPASTE_RAW_BORDER;Raw border
 !PARTIALPASTE_SOFTLIGHT;Soft light
 !PARTIALPASTE_TM_FATTAL;Dynamic range compression
+!PREFERENCES_APPEARANCE;Appearance
+!PREFERENCES_APPEARANCE_COLORPICKERFONT;Color picker font
+!PREFERENCES_APPEARANCE_CROPMASKCOLOR;Crop mask color
+!PREFERENCES_APPEARANCE_MAINFONT;Main font
+!PREFERENCES_APPEARANCE_THEME;Theme
+!PREFERENCES_AUTOSAVE_TP_OPEN;Save tool collapsed/expanded state on exit
 !PREFERENCES_CACHECLEAR;Clear
 !PREFERENCES_CACHECLEAR_ALL;Clear all cached files:
 !PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
@@ -2213,6 +2218,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !PREFERENCES_D50_OLD;5000K
 !PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_EDITORCMDLINE;Custom command line
+!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
 !PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
 !PREFERENCES_LANG;Language
 !PREFERENCES_PERFORMANCE_THREADS;Threads
@@ -2241,7 +2247,10 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
 !TP_BWMIX_MIXC;Channel Mixer
 !TP_BWMIX_NEUTRAL;Reset
+!TP_COLORAPP_ABSOLUTELUMINANCE;Absolute luminance
+!TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;When setting manually, values above 65 are recommended.
 !TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
+!TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
 !TP_COLORAPP_NEUTRAL;Reset
 !TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
 !TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
@@ -2272,6 +2281,15 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_ICM_WORKING_TRC_NONE;None
 !TP_ICM_WORKING_TRC_SLOPE;Slope
 !TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
+!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically
+!TP_LENSPROFILE_CORRECTION_LCPFILE;LCP file
+!TP_LENSPROFILE_CORRECTION_MANUAL;Manually
+!TP_LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
+!TP_LENSPROFILE_MODE_HEADER;Select the lens profile:
+!TP_LENSPROFILE_USE_CA;Chromatic aberration
+!TP_LENSPROFILE_USE_GEOMETRIC;Geometric
+!TP_LENSPROFILE_USE_HEADER;Select distortions to correct:
+!TP_LENSPROFILE_USE_VIGNETTING;Vignetting
 !TP_LOCALCONTRAST_AMOUNT;Amount
 !TP_LOCALCONTRAST_DARKNESS;Darkness level
 !TP_LOCALCONTRAST_LABEL;Local Contrast
@@ -2289,6 +2307,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
 !TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.
 !TP_RAWCACORR_AUTOIT;Iterations
+!TP_RAWCACORR_AUTOIT_TOOLTIP;This setting is available if "Auto-correction" is checked.\nAuto-correction is conservative, meaning that it often does not correct all chromatic aberration.\nTo correct the remaining chromatic aberration, you can use up to five iterations of automatic chromatic aberration correction.\nEach iteration will reduce the remaining chromatic aberration from the last iteration at the cost of additional processing time.
 !TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
 !TP_RAW_2PASS;1-pass+fast
 !TP_RAW_4PASS;3-pass+fast
@@ -2308,9 +2327,11 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_RAW_RCD;RCD
 !TP_RAW_RCDVNG4;RCD+VNG4
 !TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
+!TP_RETINEX_CONTEDIT_MAP;Equalizer
 !TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
 !TP_RETINEX_GAINTRANSMISSION;Gain transmission
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
+!TP_RETINEX_MAP;Method
 !TP_SHARPENING_CONTRAST;Contrast threshold
 !TP_SHARPENMICRO_CONTRAST;Contrast threshold
 !TP_SOFTLIGHT_LABEL;Soft Light
@@ -2320,3 +2341,4 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_TM_FATTAL_LABEL;Dynamic Range Compression
 !TP_TM_FATTAL_THRESHOLD;Detail
 !TP_WAVELET_CB_TOOLTIP;For strong values product color-toning by combining it or not with levels decomposition 'toning'\nFor low values you can change the white balance of the background (sky, ...) without changing that of the front plane, generally more contrasted
+!TP_WBALANCE_PICKER;Pick

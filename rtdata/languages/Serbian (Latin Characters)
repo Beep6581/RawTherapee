@@ -837,7 +837,6 @@ TP_COARSETRAF_TOOLTIP_HFLIP;Izvrće sliku horizontalno
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Okreće sliku ulevo
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Okreće sliku udesno
 TP_COARSETRAF_TOOLTIP_VFLIP;Izvrće sliku vertikalno
-TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Apsolutna luminoznost okruženja za pregled\n(obično 16cd/m²).
 TP_COLORAPP_ALGO;Algoritam
 TP_COLORAPP_ALGO_ALL;Sve
 TP_COLORAPP_ALGO_JC;Svetlina + Boja (JC)
@@ -899,6 +898,7 @@ TP_COLORAPP_TCMODE_LIGHTNESS;Svetlina
 TP_COLORAPP_TCMODE_SATUR;Zasićenost
 TP_COLORAPP_TONECIE;Mapiranje tonova u CIECAM02
 TP_COLORAPP_TONECIE_TOOLTIP;Ukoliko je isključena ova opcija, mapiranje tonova se vrši u Lab okruženju.\nUkoliko je uključena, mapiranje se vrši pomoću CIECAM02.\nMorate koristiti alat za mapiranje tonova kako bi ova opcija bila primenjena.
+TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Apsolutna luminoznost okruženja za pregled\n(obično 16cd/m²).
 TP_COLORAPP_WBCAM;Balans bele [RT+CAT02] + [izlaz]
 TP_COLORAPP_WBRT;Balans bele [RT] + [izlaz]
 TP_CROP_FIXRATIO;Srazmerno:
@@ -1650,14 +1650,13 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
 !IPTCPANEL_TRANSREFERENCE;Job ID
 !IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
-!LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
 !MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
 !MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
 !MAIN_TAB_ADVANCED;Advanced
 !MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt-w</b>
 !MAIN_TAB_INSPECT; Inspect
-!MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
-!MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>Sharpening Contrast Mask</b>.\nShortcut: <b>None</b>\n\nOnly works when sharpening is enabled and zoom >= 100%.
+!MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>middle grey</b>\nShortcut: <b>9</b>
+!MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>sharpening contrast mask</b>.\nShortcut: <b>None</b>\n\nOnly works when sharpening is enabled and zoom >= 100%.
 !MONITOR_PROFILE_SYSTEM;System default
 !NAVIGATOR_B;B:
 !NAVIGATOR_G;G:
@@ -1693,6 +1692,13 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !PARTIALPASTE_RETINEX;Retinex
 !PARTIALPASTE_SOFTLIGHT;Soft light
 !PARTIALPASTE_TM_FATTAL;Dynamic range compression
+!PREFERENCES_APPEARANCE;Appearance
+!PREFERENCES_APPEARANCE_COLORPICKERFONT;Color picker font
+!PREFERENCES_APPEARANCE_CROPMASKCOLOR;Crop mask color
+!PREFERENCES_APPEARANCE_MAINFONT;Main font
+!PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Navigator guide color
+!PREFERENCES_APPEARANCE_THEME;Theme
+!PREFERENCES_AUTOSAVE_TP_OPEN;Save tool collapsed/expanded state on exit
 !PREFERENCES_CACHECLEAR;Clear
 !PREFERENCES_CACHECLEAR_ALL;Clear all cached files:
 !PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
@@ -1716,6 +1722,7 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !PREFERENCES_D50_OLD;5000K
 !PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_EDITORCMDLINE;Custom command line
+!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
 !PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
@@ -1734,7 +1741,6 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !PREFERENCES_MONITOR;Monitor
 !PREFERENCES_MONPROFILE;Default color profile
 !PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
-!PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Navigator guide color
 !PREFERENCES_NAVIGATIONFRAME;Navigation
 !PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
 !PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
@@ -1756,6 +1762,7 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !PREFERENCES_SAVE_TP_OPEN_NOW;Save tool collapsed/expanded state now
 !PREFERENCES_SERIALIZE_TIFF_READ;TIFF Read Settings
 !PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize reading of TIFF files
+!PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Enabling this option when working with folders containing uncompressed TIFF files can increase performance of thumbnail generation.
 !PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show filmstrip toolbar
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
 !PREFERENCES_TAB_PERFORMANCE;Performance
@@ -1779,7 +1786,7 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
 !SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
 !THRESHOLDSELECTOR_BL;Bottom-left
-!TOOLBAR_TOOLTIP_COLORPICKER;Lockable Color Picker\n\nWhen enabled:\nClick in the preview with left mouse button to add a color picker\nDrag it around while pressing the left mouse button\nDelete the color picker with a right mouse button click\nDelete all color pickers with Shift + Right mouse button click\nRight click away from any color picker to go back to the Hand tool
+!TOOLBAR_TOOLTIP_COLORPICKER;Lockable Color Picker\n\nWhen the tool is active:\n- Add a picker: <b>left-click</b>.\n- Drag a picker: <b>left-click and drag</b>.\n- Delete a picker: <b>right-click</b>.\n- Delete all pickers: <b>shift</b>+<b>right-click</b>.\n- Revert to hand tool: <b>right-click</b>.
 !TP_BWMIX_FILTER_TOOLTIP;The color filter simulates shots taken with a colored filter placed in front of the lens. Colored filters reduce the transmission of specific color ranges and therefore affect their lightness. E.g. a red filter darkens blue skies.
 !TP_BWMIX_FILTER_YELLOW;Yellow
 !TP_BWMIX_GAMMA;Gamma Correction
@@ -1790,7 +1797,10 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !TP_CBDL_BEF;Before Black-and-White
 !TP_CBDL_METHOD;Process located
 !TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
+!TP_COLORAPP_ABSOLUTELUMINANCE;Absolute luminance
+!TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;When setting manually, values above 65 are recommended.
 !TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
+!TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
 !TP_COLORAPP_NEUTRAL;Reset
 !TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
 !TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
@@ -1936,6 +1946,15 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !TP_ICM_WORKING_TRC_NONE;None
 !TP_ICM_WORKING_TRC_SLOPE;Slope
 !TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
+!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically
+!TP_LENSPROFILE_CORRECTION_LCPFILE;LCP file
+!TP_LENSPROFILE_CORRECTION_MANUAL;Manually
+!TP_LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
+!TP_LENSPROFILE_MODE_HEADER;Select the lens profile:
+!TP_LENSPROFILE_USE_CA;Chromatic aberration
+!TP_LENSPROFILE_USE_GEOMETRIC;Geometric
+!TP_LENSPROFILE_USE_HEADER;Select distortions to correct:
+!TP_LENSPROFILE_USE_VIGNETTING;Vignetting
 !TP_LOCALCONTRAST_AMOUNT;Amount
 !TP_LOCALCONTRAST_DARKNESS;Darkness level
 !TP_LOCALCONTRAST_LABEL;Local Contrast
@@ -1959,6 +1978,7 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !TP_PRSHARPENING_LABEL;Post-Resize Sharpening
 !TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
 !TP_RAWCACORR_AUTOIT;Iterations
+!TP_RAWCACORR_AUTOIT_TOOLTIP;This setting is available if "Auto-correction" is checked.\nAuto-correction is conservative, meaning that it often does not correct all chromatic aberration.\nTo correct the remaining chromatic aberration, you can use up to five iterations of automatic chromatic aberration correction.\nEach iteration will reduce the remaining chromatic aberration from the last iteration at the cost of additional processing time.
 !TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
 !TP_RAWCACORR_CASTR;Strength
 !TP_RAWEXPOS_BLACK_0;Green 1 (lead)
@@ -2030,7 +2050,10 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix
 !TP_RAW_VNG4;VNG4
 !TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
-!TP_RETINEX_CONTEDIT_LH;Hue equalizer
+!TP_RETINEX_CONTEDIT_HSL;HSL histogram
+!TP_RETINEX_CONTEDIT_LAB;L*a*b* histogram
+!TP_RETINEX_CONTEDIT_LH;Hue
+!TP_RETINEX_CONTEDIT_MAP;Equalizer
 !TP_RETINEX_CURVEEDITOR_CD;L=f(L)
 !TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorrect raw data to reduce halos and artifacts.
 !TP_RETINEX_CURVEEDITOR_LH;Strength=f(H)
@@ -2068,6 +2091,7 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !TP_RETINEX_LABEL_MASK;Mask
 !TP_RETINEX_LABSPACE;L*a*b*
 !TP_RETINEX_LOW;Low
+!TP_RETINEX_MAP;Method
 !TP_RETINEX_MAP_GAUS;Gaussian mask
 !TP_RETINEX_MAP_MAPP;Sharp mask (wavelet partial)
 !TP_RETINEX_MAP_MAPT;Sharp mask (wavelet total)
@@ -2277,6 +2301,7 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !TP_WAVELET_TMSTRENGTH_TOOLTIP;Control the strength of tone mapping or contrast compression of the residual image. When the value is different from 0, the Strength and Gamma sliders of the Tone Mapping tool in the Exposure tab will become grayed out.
 !TP_WAVELET_TMTYPE;Compression method
 !TP_WAVELET_TON;Toning
+!TP_WBALANCE_PICKER;Pick
 !TP_WBALANCE_TEMPBIAS;AWB temperature bias
 !TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the "auto white balance"\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by "computedTemp + computedTemp * bias".
 !ZOOMPANEL_ZOOMFITCROPSCREEN;Fit crop to screen\nShortcut: <b>f</b>
