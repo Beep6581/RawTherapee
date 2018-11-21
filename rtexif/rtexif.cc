@@ -720,7 +720,7 @@ int TagDirectory::write (int start, unsigned char* buffer)
     return maxPos;
 }
 
-void TagDirectory::applyChange (std::string name, Glib::ustring value)
+void TagDirectory::applyChange (const std::string &name, const Glib::ustring &value)
 {
 
     std::string::size_type dp = name.find_first_of ('.');
@@ -842,14 +842,15 @@ TagDirectoryTable::TagDirectoryTable (TagDirectory* p, FILE* f, int memsize, int
     : TagDirectory (p, ta, border), zeroOffset (offs), valuesSize (memsize), defaultType ( type )
 {
     values = new unsigned char[valuesSize];
-    fread (values, 1, valuesSize, f);
+    if (fread (values, 1, valuesSize, f) == static_cast<size_t>(valuesSize)) {
 
-    // Security ; will avoid to read above the buffer limit if the RT's tagDirectoryTable is longer that what's in the file
-    int count = valuesSize / getTypeSize (type);
+        // Security ; will avoid to read above the buffer limit if the RT's tagDirectoryTable is longer that what's in the file
+        int count = valuesSize / getTypeSize (type);
 
-    for (const TagAttrib* tattr = ta; tattr->ignore != -1 && tattr->ID < count; ++tattr) {
-        Tag* newTag = new Tag (this, tattr, (values + zeroOffset + tattr->ID * getTypeSize (type)), tattr->type == AUTO ? type : tattr->type);
-        tags.push_back (newTag); // Here we can insert more tag in the same offset because of bitfield meaning
+        for (const TagAttrib* tattr = ta; tattr->ignore != -1 && tattr->ID < count; ++tattr) {
+            Tag* newTag = new Tag (this, tattr, (values + zeroOffset + tattr->ID * getTypeSize (type)), tattr->type == AUTO ? type : tattr->type);
+            tags.push_back (newTag); // Here we can insert more tag in the same offset because of bitfield meaning
+        }
     }
 }
 TagDirectory* TagDirectoryTable::clone (TagDirectory* parent)
@@ -1215,32 +1216,33 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
 defsubdirs:
     // read value
     value = new unsigned char [valuesize];
-    fread (value, 1, valuesize, f);
-
-    // count the number of valid subdirs
-    int sdcount = count;
-
-    if (sdcount > 0) {
-        if (parent->getAttribTable() == olympusAttribs) {
-            sdcount = 1;
-        }
-
-        // allocate space
-        directory = new TagDirectory*[sdcount + 1];
-
-        // load directories
-        for (size_t j = 0, i = 0; j < count; j++, i++) {
-            int newpos = base + toInt (j * 4, LONG);
-            fseek (f, newpos, SEEK_SET);
-            directory[i] = new TagDirectory (parent, f, base, attrib->subdirAttribs, order);
-        }
-
-        // set the terminating NULL
-        directory[sdcount] = nullptr;
-    } else {
+    if (fread (value, 1, valuesize, f) != static_cast<size_t>(valuesize)) {
         type = INVALID;
-    }
+    } else {
+        // count the number of valid subdirs
+        int sdcount = count;
 
+        if (sdcount > 0) {
+            if (parent->getAttribTable() == olympusAttribs) {
+                sdcount = 1;
+            }
+
+            // allocate space
+            directory = new TagDirectory*[sdcount + 1];
+
+            // load directories
+            for (size_t j = 0, i = 0; j < count; j++, i++) {
+                int newpos = base + toInt (j * 4, LONG);
+                fseek (f, newpos, SEEK_SET);
+                directory[i] = new TagDirectory (parent, f, base, attrib->subdirAttribs, order);
+            }
+
+            // set the terminating NULL
+            directory[sdcount] = nullptr;
+        } else {
+            type = INVALID;
+        }
+    }
     // seek back to the saved position
     fseek (f, save, SEEK_SET);
     return;

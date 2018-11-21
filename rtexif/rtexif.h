@@ -155,11 +155,11 @@ public:
     virtual Tag*     findTagUpward (const char* name) const;
     bool             getXMPTagValue (const char* name, char* value) const;
 
-    void             keepTag       (int ID);
-    virtual void     addTag        (Tag* a);
-    virtual void     addTagFront   (Tag* a);
-    virtual void     replaceTag    (Tag* a);
-    inline Tag*      getTagByIndex (int ix)
+    void        keepTag       (int ID);
+    void        addTag        (Tag* a);
+    void        addTagFront   (Tag* a);
+    void        replaceTag    (Tag* a);
+    inline Tag* getTagByIndex (int ix)
     {
         return tags[ix];
     }
@@ -171,7 +171,7 @@ public:
     virtual int      calculateSize ();
     virtual int      write         (int start, unsigned char* buffer);
     virtual TagDirectory* clone    (TagDirectory* parent);
-    virtual void     applyChange   (std::string field, Glib::ustring value);
+    void     applyChange   (const std::string &field, const Glib::ustring &value);
 
     virtual void     printAll      (unsigned  int level = 0) const; // reentrant debug function, keep level=0 on first call !
     virtual bool     CPBDump       (const Glib::ustring &commFName, const Glib::ustring &imageFName, const Glib::ustring &profileFName, const Glib::ustring &defaultPParams,
