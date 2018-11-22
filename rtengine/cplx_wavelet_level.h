@@ -758,6 +758,6 @@ template<typename T> template<typename E> void wavelet_level<T>::reconstruct_lev
     }
 }
 #endif
-};
+}
 
 #endif
