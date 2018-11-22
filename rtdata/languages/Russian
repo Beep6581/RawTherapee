@@ -705,9 +705,6 @@ PREFERENCES_BLACKBODY;Лампа накаливания
 PREFERENCES_CACHEMAXENTRIES;Максимальное число элементов в кэше
 PREFERENCES_CACHEOPTS;Параметры кэширования
 PREFERENCES_CACHETHUMBHEIGHT;Максимальная высота эскиза
-PREFERENCES_CIEART;Оптимизация CIECAM02
-PREFERENCES_CIEART_LABEL;Использовать числа с плавающей запятой вместо двойной точности
-PREFERENCES_CIEART_TOOLTIP;Если включено, вычисления CIECAM02 будут выполняться в формате плавающей запятой с одинарной точностью вместо использования двойной точности. Это обеспечит небольшое увеличение скорости с несущественной потерей качества.
 PREFERENCES_CLIPPINGIND;Индикация пересветов/затемнений
 PREFERENCES_CURVEBBOXPOS;Позиция кнопок для копирования и вставки кривых
 PREFERENCES_CURVEBBOXPOS_ABOVE;Выше

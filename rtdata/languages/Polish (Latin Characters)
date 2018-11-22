@@ -680,9 +680,6 @@ PREFERENCES_BLACKBODY;Wolfram
 PREFERENCES_CACHEMAXENTRIES;Maksymalna liczba wpisow w pamieci podrecznej
 PREFERENCES_CACHEOPTS;Opcje pamieci podrecznej
 PREFERENCES_CACHETHUMBHEIGHT;Maksymalna wysokosc miniatury
-PREFERENCES_CIEART;CIECAM02 optymalizacja
-PREFERENCES_CIEART_LABEL;Uzyj precyzje zmiennoprzecinkowa zamiast podwojna.
-PREFERENCES_CIEART_TOOLTIP;Gdy umozliwione, kalkulacje CIECAM02 sa wykonywane w notacji zmiennoprzecinkowej o pojedynczej precyzji zamiast podwojnej. Skraca to czas egzekucji kosztem nieistotnej zmiany w jakosci.
 PREFERENCES_CLIPPINGIND;Pokazywanie obcietych przeswietlen/cieni
 PREFERENCES_CLUTSDIR;Folder obrazow HaldCLUT
 PREFERENCES_CUSTPROFBUILD;Zewnetrzny kreator profilow przetwarzania

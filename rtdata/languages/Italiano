@@ -631,9 +631,6 @@ PREFERENCES_BLACKBODY;Tungsteno
 PREFERENCES_CACHEMAXENTRIES;Numero massimo di voci in memoria
 PREFERENCES_CACHEOPTS;Opzioni della memoria
 PREFERENCES_CACHETHUMBHEIGHT;Massima altezza delle miniature
-PREFERENCES_CIEART;Ottimizzazione CIECAM02
-PREFERENCES_CIEART_LABEL;Utilizza precisione singola anziché doppia
-PREFERENCES_CIEART_TOOLTIP;Se abilitata, i calcoli CIECAM02 sono effettuati in formato a virgola mobile a precisione singola anziché doppia. Questo permette un piccolo incremento di velocità al costo di una trascurabile perdita di qualità.
 PREFERENCES_CLIPPINGIND;Indicazione di tosaggio
 PREFERENCES_CUSTPROFBUILD;Generatore profili personalizzati
 PREFERENCES_CUSTPROFBUILDHINT;File eseguibile (o script) richiamato quando è necessario generare un nuovo profilo per un'immagine.\nIl percorso del file di comunicazione (del tipo *.ini, detto "Keyfile") è aggiunto come parametro da linea di comando. Contiene diversi paramentri necessari agli script e ai dati Exif per generare un profilo di elaborazione.\n\n<b>ATTENZIONE:</b>: Devi utilizzare le virgolette doppie quando necessario se utilizzi percorsi contenenti spazi.

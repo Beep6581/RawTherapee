@@ -600,9 +600,6 @@ PREFERENCES_BLACKBODY;Obična sijalica
 PREFERENCES_CACHEMAXENTRIES;Najveći broj mest u ostavi
 PREFERENCES_CACHEOPTS;Podešavanje ostave
 PREFERENCES_CACHETHUMBHEIGHT;Najveća visina prikaza
-PREFERENCES_CIEART;CIECAM02 optimizacija
-PREFERENCES_CIEART_LABEL;Jednostruka tačnost umesto dvostruke
-PREFERENCES_CIEART_TOOLTIP;Ukoliko je omogućeno, radi CIECAM02 računanja sa jednostrukom tačnošću umesto sa dvostrukom. Ovo daje malo povećanje brzine uz neizostavan gubitak na kvalitetu.
 PREFERENCES_CLIPPINGIND;Pokazivači odsečenih delova
 PREFERENCES_CUSTPROFBUILD;Izgradnja proizvoljnog početnog profila slike
 PREFERENCES_CUSTPROFBUILDHINT;Izvršna datoteka (ili skripta) koja se poziva kada izgrađujete novi početni profil za sliku.nPrihvata parametre iz komandne linije radi pravljenja .pp3 datoteke na osnovu nekih pravila:n[Putanja do RAW/JPG] [Putanja podrazumevanog profila] [Blenda] [Ekspozicija u s] [Žižna dužina mm] [ISO] [Objektiv] [Foto-aparat]

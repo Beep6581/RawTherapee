@@ -821,10 +821,6 @@ PREFERENCES_BLACKBODY;Glödlampa
 PREFERENCES_CACHEMAXENTRIES;Maximalt antal cachefiler
 PREFERENCES_CACHEOPTS;Cacheinställningar
 PREFERENCES_CACHETHUMBHEIGHT;Maximal höjd på miniatyrbilderna
-PREFERENCES_CIEART;CIECAM02-optimering
-PREFERENCES_CIEART_FRAME;CIECAM02-Specifika inställningar
-PREFERENCES_CIEART_LABEL;Använd flyttalsprecision istället för dubbel
-PREFERENCES_CIEART_TOOLTIP;Om aktiverat, så kommer alla CIECAM02-beräkningar att utföras med enkel precision i flyttalsformatet istället för med dubbel precision. Detta ger en liten sänkning av beräkningstiden, till ett pris av en försumbar kvalitetsförsämring.
 PREFERENCES_CLIPPINGIND;Klippindikering
 PREFERENCES_CLUTSCACHE;HaldCLUT cache
 PREFERENCES_CLUTSCACHE_LABEL;Maximalt antal cachade CLUTs

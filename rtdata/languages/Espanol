@@ -725,9 +725,6 @@ PREFERENCES_BLACKBODY;Tungsteno
 PREFERENCES_CACHEMAXENTRIES;Cantidad máxima de entradas en la memoria intermedia
 PREFERENCES_CACHEOPTS;Opciones de memoria intermedia
 PREFERENCES_CACHETHUMBHEIGHT;Altura máxima de las miniaturas
-PREFERENCES_CIEART;Optimización CIECAM02
-PREFERENCES_CIEART_LABEL;Usar precisión flotante simple en lugar de doble.
-PREFERENCES_CIEART_TOOLTIP;Si se habilita, los cálculos CIECAM02 se realizan con precisión flotante simple en lugar de doble. Esto provee un pequeño aumento en la velocidad de cálculo a expensas de una casi imperceptible pérdida de calidad
 PREFERENCES_CLIPPINGIND;Indicación de recortes
 PREFERENCES_CLUTSDIR;Directorio HaldCLUT
 PREFERENCES_CUSTPROFBUILD;Programa generador de perfiles de procesamiento de imagen del usuario

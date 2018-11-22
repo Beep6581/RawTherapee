@@ -1099,10 +1099,6 @@ PREFERENCES_BLACKBODY;Wolfram
 PREFERENCES_CACHEMAXENTRIES;Maximale Anzahl der Miniaturbilder im Festplatten-Cache
 PREFERENCES_CACHEOPTS;Einstellungen des Festplatten-Cache für Miniaturbilder
 PREFERENCES_CACHETHUMBHEIGHT;Maximale Höhe der Miniaturbilder
-PREFERENCES_CIEART;CIECAM02-Optimierung
-PREFERENCES_CIEART_FRAME;CIECAM02-spezifische Einstellungen
-PREFERENCES_CIEART_LABEL;Einfache statt doppelte Genauigkeit
-PREFERENCES_CIEART_TOOLTIP;Wenn aktiviert, werden CIECAM02-Berechnungen mit einfacher Genauigkeit statt doppelter durchgeführt. Dadurch wird der Vorgang etwas beschleunigt. Die Qualität nimmt jedoch geringfügig ab.
 PREFERENCES_CLIPPINGIND;Anzeige zu heller/dunkler Bereiche
 PREFERENCES_CLUTSCACHE;HaldCLUT-Zwischenspeicher
 PREFERENCES_CLUTSCACHE_LABEL;Maximale Anzahl CLUTs im Zwischenspeicher

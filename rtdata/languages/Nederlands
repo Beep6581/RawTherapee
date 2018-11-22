@@ -916,10 +916,6 @@ PREFERENCES_BLACKBODY;Tungsten(wolfraam)
 PREFERENCES_CACHEMAXENTRIES;Maximaal aantal elementen in cache
 PREFERENCES_CACHEOPTS;Cache-opties
 PREFERENCES_CACHETHUMBHEIGHT;Maximale hoogte miniaturen
-PREFERENCES_CIEART;CIECAM02 optimalisatie
-PREFERENCES_CIEART_FRAME;CIECAM02-Specifieke instellingen
-PREFERENCES_CIEART_LABEL;Gebruik float precisie in plaats van double
-PREFERENCES_CIEART_TOOLTIP;Indien aangezet worden CIECAM02 berekening uitgevoerd in het single-precision floating-point formaat in plaats van double-precision. Dit levert een iets hogere verwerkingssnelheid ten koste van een verwaarloosbaar verlies aan kwaliteit
 PREFERENCES_CLIPPINGIND;Indicatie over-/onderbelichting
 PREFERENCES_CLUTSCACHE;HaldCLUT cache
 PREFERENCES_CLUTSCACHE_LABEL;Maximum aantal cached Cluts

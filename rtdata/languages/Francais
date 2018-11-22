@@ -1054,10 +1054,6 @@ PREFERENCES_CACHECLEAR_SAFETY;Seuls les fichiers mis en cache sont effacés. Les
 PREFERENCES_CACHEMAXENTRIES;Nombre maximal d'éléments dans le Cache
 PREFERENCES_CACHEOPTS;Options du Cache
 PREFERENCES_CACHETHUMBHEIGHT;Hauteur maximale des vignettes
-PREFERENCES_CIEART;CIECAM02 optimisation
-PREFERENCES_CIEART_FRAME;Réglages spécifiques à CIECAM02
-PREFERENCES_CIEART_LABEL;Utilise la précision float au lieu de double pour CIECAM02
-PREFERENCES_CIEART_TOOLTIP;Si activé, les calculs CIECAM sont réalisés en précision float au lieu de précision double. Cela amène un léger accroissement de vitesse, et une légère réduction de qualité
 PREFERENCES_CLIPPINGIND;Indication du dépassement de plage dynamique
 PREFERENCES_CLUTSCACHE;Cache HaldCLUT
 PREFERENCES_CLUTSCACHE_LABEL;Nombre maximum de chache CLUT
