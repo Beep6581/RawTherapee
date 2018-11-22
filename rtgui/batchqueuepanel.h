@@ -69,8 +69,8 @@ public:
     bool handleShortcutKey (GdkEventKey* event);
 
     // batchqueuelistener interface
-    void queueSizeChanged(int qsize, bool queueRunning, bool queueError, const Glib::ustring& queueErrorMessage);
-    bool canStartNext();
+    void queueSizeChanged(int qsize, bool queueRunning, bool queueError, const Glib::ustring& queueErrorMessage) override;
+    bool canStartNext() override;
 
 private:
     void startBatchProc ();
