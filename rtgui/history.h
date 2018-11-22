@@ -111,8 +111,8 @@ public:
         const rtengine::ProcEvent& ev,
         const Glib::ustring& descr,
         const ParamsEdited* paramsEdited = nullptr
-    );
-    void clearParamChanges ();
+    ) override;
+    void clearParamChanges () override;
 
     void historySelectionChanged ();
     void bookmarkSelectionChanged ();

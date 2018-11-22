@@ -101,7 +101,7 @@ private:
 
 public:
     DirBrowser ();
-    ~DirBrowser();
+    ~DirBrowser() override;
 
     void fillDirTree ();
     void on_sort_column_changed() const;

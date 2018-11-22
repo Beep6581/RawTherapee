@@ -33,7 +33,7 @@ class OLOnOffInterpreter : public Interpreter
 {
 public:
     OLOnOffInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         if (t->toInt() == 0) {
             return "Off";
@@ -48,7 +48,7 @@ class OLYesNoInterpreter : public Interpreter
 {
 public:
     OLYesNoInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         if (t->toInt() == 0) {
             return "No";
@@ -63,7 +63,7 @@ class OLApertureInterpreter : public Interpreter
 {
 public:
     OLApertureInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         std::ostringstream str;
         str.precision (2);
@@ -194,7 +194,7 @@ public:
         lenses["03 02 00"] = "Leica D Summilux 25mm f/1.4 Asph.";
         lenses["05 01 10"] = "Tamron 14-150mm f/3.5-5.8 Di III";
     }
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         std::ostringstream lid;
         lid.setf (std::ios_base::hex, std::ios_base::basefield);
@@ -465,7 +465,7 @@ class OLNoiseFilterInterpreter : public Interpreter
 {
 public:
     OLNoiseFilterInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         int a = t->toInt (0);
         int b = t->toInt (2);
@@ -490,7 +490,7 @@ class OLFlashModeInterpreter : public Interpreter
 {
 public:
     OLFlashModeInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         std::ostringstream str;
         int a = t->toInt ();
@@ -509,7 +509,7 @@ class OLNoiseReductionInterpreter : public Interpreter
 {
 public:
     OLNoiseReductionInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         std::ostringstream str;
         int a = t->toInt ();

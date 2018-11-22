@@ -49,21 +49,21 @@ class ThumbBrowserBase  :  public Gtk::Grid
     public:
         Internal ();
         void setParent (ThumbBrowserBase* p);
-        void on_realize();
-        void on_style_updated();
-        bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
+        void on_realize() override;
+        void on_style_updated() override;
+        bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
 
-        Gtk::SizeRequestMode get_request_mode_vfunc () const;
-        void get_preferred_height_vfunc (int &minimum_height, int &natural_height) const;
-        void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-        void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
-        void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
+        Gtk::SizeRequestMode get_request_mode_vfunc () const override;
+        void get_preferred_height_vfunc (int &minimum_height, int &natural_height) const override;
+        void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
+        void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
+        void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
 
-        bool on_button_press_event (GdkEventButton* event);
-        bool on_button_release_event (GdkEventButton* event);
-        bool on_motion_notify_event (GdkEventMotion* event);
-        bool on_scroll_event (GdkEventScroll* event);
-        bool on_key_press_event (GdkEventKey* event);
+        bool on_button_press_event (GdkEventButton* event) override;
+        bool on_button_release_event (GdkEventButton* event) override;
+        bool on_motion_notify_event (GdkEventMotion* event) override;
+        bool on_scroll_event (GdkEventScroll* event) override;
+        bool on_key_press_event (GdkEventKey* event) override;
         bool on_query_tooltip (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
         void setPosition (int x, int y);
 
@@ -199,7 +199,7 @@ public:
     {
         return fd;
     }
-    void on_style_updated ();
+    void on_style_updated () override;
     void redraw ();   // arrange files and draw area
     void refreshThumbImages (); // refresh thumbnail sizes, re-generate thumbnail images, arrange and draw
     void refreshQuickThumbImages (); // refresh thumbnail sizes, re-generate thumbnail images, arrange and draw

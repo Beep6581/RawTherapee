@@ -261,7 +261,7 @@ getbithuff_t getbithuff;
 class nikbithuff_t
 {
 public:
-   nikbithuff_t(IMFILE *&i):bitbuf(0),errors(0),vbits(0),ifp(i){}
+   explicit nikbithuff_t(IMFILE *&i):bitbuf(0),errors(0),vbits(0),ifp(i){}
    void operator()() {bitbuf = vbits = 0;};
    unsigned operator()(int nbits, ushort *huff);
    unsigned errorCount() { return errors; }
@@ -428,6 +428,7 @@ void kodak_thumb_load_raw();
 // sony_decrypt(unsigned *data, int len, int start, int key);
 class sony_decrypt_t{
 public:
+   explicit sony_decrypt_t() : p(0) {}
    void operator()(unsigned *data, int len, int start, int key);
 private:
    unsigned pad[128], p;

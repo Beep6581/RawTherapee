@@ -62,17 +62,17 @@ protected:
 public:
 
     FlatField ();
-    ~FlatField ();
+    ~FlatField () override;
 
-    void read                (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write               (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setBatchMode        (bool batchMode);
+    void read                (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write               (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setBatchMode        (bool batchMode) override;
     void setAdjusterBehavior (bool clipctrladd);
-    void trimValues          (rtengine::procparams::ProcParams* pp);
-    void setDefaults         (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
+    void trimValues          (rtengine::procparams::ProcParams* pp) override;
+    void setDefaults         (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
 
-    void adjusterChanged            (Adjuster* a, double newval);
-    void adjusterAutoToggled        (Adjuster* a, bool newval);
+    void adjusterChanged            (Adjuster* a, double newval) override;
+    void adjusterAutoToggled        (Adjuster* a, bool newval) override;
     void flatFieldFileChanged       ();
     void flatFieldFile_Reset        ();
     void flatFieldAutoSelectChanged ();
@@ -82,7 +82,7 @@ public:
     {
         ffp = p;
     };
-    void flatFieldAutoClipValueChanged(int n = 0);
+    void flatFieldAutoClipValueChanged(int n = 0) override;
 };
 
 #endif

@@ -114,7 +114,7 @@ public:
         spline_cubic_set();
     }
 
-    double getVal(double t) const
+    double getVal(double t) const override
     {
         // values under and over the first and last point
         if (t > x[N - 1]) {

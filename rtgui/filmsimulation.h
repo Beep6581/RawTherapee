@@ -53,17 +53,17 @@ class FilmSimulation : public ToolParamBlock, public AdjusterListener, public Fo
 public:
     FilmSimulation();
 
-    void adjusterChanged(Adjuster* a, double newval);
-    void adjusterAutoToggled(Adjuster* a, bool newval);
-    void setBatchMode(bool batchMode);
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
+    void adjusterChanged(Adjuster* a, double newval) override;
+    void adjusterAutoToggled(Adjuster* a, bool newval) override;
+    void setBatchMode(bool batchMode) override;
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
     void setAdjusterBehavior(bool strength);
-    void trimValues(rtengine::procparams::ProcParams* pp);
+    void trimValues(rtengine::procparams::ProcParams* pp) override;
 
 private:
     void onClutSelected();
-    void enabledChanged();
+    void enabledChanged() override;
 
     void updateDisable( bool value );
 

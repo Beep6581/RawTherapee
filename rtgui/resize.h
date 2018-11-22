@@ -33,20 +33,20 @@ class Resize final :
 {
 public:
     Resize ();
-    ~Resize ();
+    ~Resize () override;
 
     Gtk::Box* getPackBox ()
     {
         return packBox;
     }
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void setBatchMode   (bool batchMode);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void setBatchMode   (bool batchMode) override;
 
-    void adjusterChanged  (Adjuster* a, double newval);
-    void adjusterAutoToggled(Adjuster* a, bool newval);
+    void adjusterChanged  (Adjuster* a, double newval) override;
+    void adjusterAutoToggled(Adjuster* a, bool newval) override;
     void entryWChanged    ();
     void entryHChanged    ();
     void appliesToChanged ();
@@ -54,12 +54,12 @@ public:
     void specChanged      ();
     void update           (bool isCropped, int cw, int ch, int ow = 0, int oh = 0);
     void setGUIFromCrop   (bool isCropped, int cw, int ch);
-    void sizeChanged      (int w, int h, int ow, int oh);
+    void sizeChanged      (int w, int h, int ow, int oh) override;
     void setDimensions    ();
-    void enabledChanged   ();
+    void enabledChanged   () override;
 
     void setAdjusterBehavior (bool scaleadd);
-    void trimValues          (rtengine::procparams::ProcParams* pp);
+    void trimValues          (rtengine::procparams::ProcParams* pp) override;
 
 private:
     void fitBoxScale ();

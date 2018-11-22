@@ -47,7 +47,7 @@ protected:
 
 public:
     explicit PreviewModePanel (ImageArea* ia);
-    ~PreviewModePanel();
+    ~PreviewModePanel() override;
 
     void toggleR ();
     void toggleG ();

@@ -46,19 +46,19 @@ protected:
 public:
 
     XTransProcess ();
-    ~XTransProcess ();
+    ~XTransProcess () override;
 
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
     void setAdjusterBehavior(bool falsecoloradd, bool dualDemosaicContrastAdd);
-    void setBatchMode(bool batchMode);
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
+    void setBatchMode(bool batchMode) override;
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
 
     void methodChanged();
-    void autoContrastChanged (double autoContrast);
-    void adjusterChanged(Adjuster* a, double newval);
-    void checkBoxToggled(CheckBox* c, CheckValue newval);
-    void adjusterAutoToggled(Adjuster* a, bool newval);
+    void autoContrastChanged (double autoContrast) override;
+    void adjusterChanged(Adjuster* a, double newval) override;
+    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
+    void adjusterAutoToggled(Adjuster* a, bool newval) override;
 };
 
 #endif

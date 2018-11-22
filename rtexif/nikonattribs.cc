@@ -34,7 +34,7 @@ class NAISOInterpreter : public Interpreter
 {
 public:
     NAISOInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         char buffer[32];
         sprintf (buffer, "%d", t->toInt (2));
@@ -47,14 +47,14 @@ class NAISOInfoISOInterpreter : public Interpreter
 {
 public:
     NAISOInfoISOInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         char buffer[32];
         int a = t->toInt();
         sprintf (buffer, "%d", a);
         return buffer;
     }
-    virtual double toDouble (const Tag* t, int ofs)
+    double toDouble (const Tag* t, int ofs) override
     {
         int a = t->getValue()[ofs];
 
@@ -65,7 +65,7 @@ public:
             return 0.;
         }
     }
-    virtual int toInt (const Tag* t, int ofs, TagType astype)
+    int toInt (const Tag* t, int ofs, TagType astype) override
     {
         int a = t->getValue()[ofs];
 
@@ -83,7 +83,7 @@ class NAISOExpansionInterpreter : public Interpreter
 {
 public:
     NAISOExpansionInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         int a = t->toInt();
 
@@ -142,7 +142,7 @@ class NALensTypeInterpreter : public Interpreter
 {
 public:
     NALensTypeInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         int a = t->toInt();
         std::ostringstream str;
@@ -191,7 +191,7 @@ class NAShootingModeInterpreter : public Interpreter
 {
 public:
     NAShootingModeInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         int a = t->toInt();
         std::ostringstream str;
@@ -234,7 +234,7 @@ public:
         afpchoices[0x9] = "Far Left";
         afpchoices[0xa] = "Far Right";
     }
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         int am = t->toInt (0, BYTE);
         int afp = t->toInt (1, BYTE);
@@ -314,7 +314,7 @@ class NALensDataInterpreter : public Interpreter
     static const std::map<std::string, std::string> lenses;
 
 public:
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
 
         static const unsigned char xlat[2][256] = {

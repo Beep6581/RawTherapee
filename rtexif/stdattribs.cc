@@ -327,7 +327,7 @@ class FNumberInterpreter : public Interpreter
 {
 public:
     FNumberInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         char buffer[32];
         double v = t->toDouble();
@@ -346,7 +346,7 @@ class ApertureInterpreter : public Interpreter
 {
 public:
     ApertureInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         char buffer[32];
         double v = pow (2.0, t->toDouble() / 2.0);
@@ -365,7 +365,7 @@ class ExposureBiasInterpreter : public Interpreter
 {
 public:
     ExposureBiasInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         char buffer[32];
         double v = t->toDouble();
@@ -384,7 +384,7 @@ class ShutterSpeedInterpreter : public Interpreter
 {
 public:
     ShutterSpeedInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         char buffer[32];
         double d = pow (2.0, -t->toDouble());
@@ -404,7 +404,7 @@ class ExposureTimeInterpreter : public Interpreter
 {
 public:
     ExposureTimeInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         char buffer[32];
         double d = t->toDouble();
@@ -424,7 +424,7 @@ class FocalLengthInterpreter : public Interpreter
 {
 public:
     FocalLengthInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         char buffer[32];
         double v = t->toDouble();
@@ -443,7 +443,7 @@ class UserCommentInterpreter : public Interpreter
 {
 public:
     UserCommentInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         int count = t->getCount();
 
@@ -563,7 +563,7 @@ public:
         delete [] buffer;
         return retVal;
     }
-    virtual void fromString (Tag* t, const std::string& value)
+    void fromString (Tag* t, const std::string& value) override
     {
         Glib::ustring tmpStr(value);
         t->userCommentFromString (tmpStr);
@@ -575,7 +575,7 @@ class CFAInterpreter : public Interpreter
 {
 public:
     CFAInterpreter() {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         char colors[] = "RGB";
         char buffer[1024];
@@ -632,7 +632,7 @@ UTF8BinInterpreter utf8BinInterpreter;
 class RawImageSegmentationInterpreter : public Interpreter
 {
 public:
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         int segmentNumber = t->toInt(0, SHORT);
         int segmentWidth = t->toInt(2, SHORT);

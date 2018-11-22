@@ -31,8 +31,8 @@ class LensProfilePanel final :
 public:
     LensProfilePanel();
 
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
     void setRawMeta(bool raw, const rtengine::FramesMetaData* pMeta);
 
     void onLCPFileChanged();
@@ -40,7 +40,7 @@ public:
     void onUseVignChanged();
     void onUseCAChanged();
 
-    void setBatchMode(bool yes);
+    void setBatchMode(bool yes) override;
 
     void onLensfunCameraChanged();
     void onLensfunLensChanged();

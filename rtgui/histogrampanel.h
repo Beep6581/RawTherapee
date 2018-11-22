@@ -81,7 +81,7 @@ protected:
 
 public:
     HistogramRGBArea();
-    ~HistogramRGBArea();
+    ~HistogramRGBArea() override;
 
     void updateBackBuffer (int r, int g, int b, const Glib::ustring &profile = "", const Glib::ustring &profileW = "");
     bool getShow ();
@@ -93,17 +93,17 @@ public:
     void update (int val, int rh, int gh, int bh);
     void updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, bool show);
 
-    void on_realize();
-    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
-    bool on_button_press_event (GdkEventButton* event);
+    void on_realize() override;
+    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
+    bool on_button_press_event (GdkEventButton* event) override;
     void factorChanged (double newFactor);
 
 private:
-    Gtk::SizeRequestMode get_request_mode_vfunc () const;
-    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
-    void get_preferred_width_for_height_vfunc (int h, int &minimum_width, int &natural_width) const;
+    Gtk::SizeRequestMode get_request_mode_vfunc () const override;
+    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
+    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
+    void get_preferred_width_for_height_vfunc (int h, int &minimum_width, int &natural_width) const override;
 
 };
 
@@ -141,7 +141,7 @@ protected:
 
 public:
     explicit HistogramArea(DrawModeListener *fml = nullptr);
-    ~HistogramArea();
+    ~HistogramArea() override;
 
     void updateBackBuffer ();
     void update(
@@ -155,21 +155,21 @@ public:
         const LUTu& histBlueRaw
     );
     void updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, int mode);
-    void on_realize();
-    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
-    bool on_button_press_event (GdkEventButton* event);
-    bool on_button_release_event (GdkEventButton* event);
-    bool on_motion_notify_event (GdkEventMotion* event);
+    void on_realize() override;
+    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
+    bool on_button_press_event (GdkEventButton* event) override;
+    bool on_button_release_event (GdkEventButton* event) override;
+    bool on_motion_notify_event (GdkEventMotion* event) override;
     type_signal_factor_changed signal_factor_changed();
 
 private:
     void drawCurve(Cairo::RefPtr<Cairo::Context> &cr, LUTu & data, double scale, int hsize, int vsize);
     void drawMarks(Cairo::RefPtr<Cairo::Context> &cr, LUTu & data, double scale, int hsize, int & ui, int & oi);
-    Gtk::SizeRequestMode get_request_mode_vfunc () const;
-    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
+    Gtk::SizeRequestMode get_request_mode_vfunc () const override;
+    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
+    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
 };
 
 class HistogramPanel : public Gtk::Grid, public PointerMotionListener, public DrawModeListener
@@ -216,7 +216,7 @@ protected:
 public:
 
     HistogramPanel ();
-    ~HistogramPanel ();
+    ~HistogramPanel () override;
 
     void histogramChanged(
         const LUTu& histRed,
@@ -231,7 +231,7 @@ public:
         histogramArea->update(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw);
     }
     // pointermotionlistener interface
-    void pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw = false);
+    void pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw = false) override;
 
     // TODO should be protected
     void setHistRGBInvalid ();
@@ -249,7 +249,7 @@ public:
     void resized (Gtk::Allocation& req);
 
     // drawModeListener interface
-    void toggleButtonMode ();
+    void toggleButtonMode () override;
 };
 
 #endif

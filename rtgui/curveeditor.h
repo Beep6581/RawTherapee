@@ -88,7 +88,7 @@ protected:
 public:
 
     CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup);
-    virtual ~CurveEditor ();
+    ~CurveEditor () override;
     void typeSelectionChanged (int n);
     void curveTypeToggled();
     bool isUnChanged ();
@@ -127,12 +127,12 @@ public:
     sigc::signal<void> signal_curvepoint_click();
     sigc::signal<void> signal_curvepoint_release();
 
-    void switchOffEditMode ();
-    bool mouseOver(const int modifierKey);
-    bool button1Pressed(const int modifierKey);
-    bool button1Released();
-    bool drag1(const int modifierKey);
-    CursorShape getCursor(const int objectID);
+    void switchOffEditMode () override;
+    bool mouseOver(const int modifierKey) override;
+    bool button1Pressed(const int modifierKey) override;
+    bool button1Released() override;
+    bool drag1(const int modifierKey) override;
+    CursorShape getCursor(const int objectID) override;
 
 
 };
@@ -161,7 +161,7 @@ protected:
 
 public:
     DiagonalCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup);
-    std::vector<double> getCurve ();
+    std::vector<double> getCurve () override;
     void setRangeLabels(Glib::ustring r1, Glib::ustring r2, Glib::ustring r3, Glib::ustring r4);
     void getRangeLabels(Glib::ustring &r1, Glib::ustring &r2, Glib::ustring &r3, Glib::ustring &r4);
     void setRangeDefaultMilestones(double m1, double m2, double m3);
@@ -191,15 +191,15 @@ protected:
 
 public:
     FlatCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup, bool isPeriodic = true);
-    virtual void setIdentityValue (const double iValue = 0.5)
+    void setIdentityValue (const double iValue = 0.5) override
     {
         identityValue = iValue;
     }
-    virtual double getIdentityValue ()
+    double getIdentityValue () override
     {
         return identityValue;
     };
-    std::vector<double> getCurve ();
+    std::vector<double> getCurve () override;
 
     // set the reset curve for a given curve type. This is optional; all curve type have a default reset curve
     void setResetCurve(FlatCurveType cType, const std::vector<double> &resetCurve);

@@ -72,7 +72,7 @@ public:
         loadedProfileLength(0), iptc(nullptr), exifRoot (nullptr), sampleFormat(IIOSF_UNKNOWN),
         sampleArrangement(IIOSA_UNKNOWN) {}
 
-    virtual ~ImageIO ();
+    ~ImageIO () override;
 
     void setProgressListener (ProgressListener* l);
     void setSampleFormat(IIOSampleFormat sFormat);

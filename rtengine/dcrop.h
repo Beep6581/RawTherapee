@@ -71,12 +71,12 @@ protected:
 
 public:
     Crop             (ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow);
-    virtual ~Crop    ();
+    ~Crop    () override;
 
     void setEditSubscriber(EditSubscriber* newSubscriber);
     bool hasListener();
     void update      (int todo);
-    void setWindow   (int cropX, int cropY, int cropW, int cropH, int skip)
+    void setWindow   (int cropX, int cropY, int cropW, int cropH, int skip) override
     {
         setCropSizes (cropX, cropY, cropW, cropH, skip, false);
     }
@@ -84,12 +84,12 @@ public:
     /** @brief Synchronously look out if a full update is necessary
      * First try, only make fullUpdate if this returns false
      */
-    bool tryUpdate   ();
+    bool tryUpdate   () override;
     /** @brief Asynchronously reprocess the detailed crop */
-    void fullUpdate  ();  // called via thread
+    void fullUpdate  () override;  // called via thread
 
-    void setListener    (DetailedCropListener* il);
-    void destroy        ();
+    void setListener    (DetailedCropListener* il) override;
+    void destroy        () override;
     int get_skip();
     int getLeftBorder();
     int getUpperBorder();

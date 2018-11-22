@@ -98,35 +98,35 @@ private:
 
 public:
     FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataLocation> rml = nullptr, bool firstFrameOnly = false);
-    ~FramesData ();
+    ~FramesData () override;
 
     void setDCRawFrameCount (unsigned int frameCount);
-    unsigned int getRootCount () const;
-    unsigned int getFrameCount () const;
-    bool getPixelShift () const;
-    bool getHDR (unsigned int frame = 0) const;
-    std::string getImageType (unsigned int frame) const;
-    IIOSampleFormat getSampleFormat (unsigned int frame = 0) const;
-    rtexif::TagDirectory* getFrameExifData (unsigned int frame = 0) const;
-    rtexif::TagDirectory* getRootExifData (unsigned int root = 0) const;
-    rtexif::TagDirectory* getBestExifData (ImageSource *imgSource, procparams::RAWParams *rawParams) const;
-    procparams::IPTCPairs getIPTCData (unsigned int frame = 0) const;
-    bool hasExif (unsigned int frame = 0) const;
-    bool hasIPTC (unsigned int frame = 0) const;
-    tm getDateTime (unsigned int frame = 0) const;
-    time_t getDateTimeAsTS (unsigned int frame = 0) const;
-    int getISOSpeed (unsigned int frame = 0) const;
-    double getFNumber (unsigned int frame = 0) const;
-    double getFocalLen (unsigned int frame = 0) const;
-    double getFocalLen35mm (unsigned int frame = 0) const;
-    float getFocusDist (unsigned int frame = 0) const;
-    double getShutterSpeed (unsigned int frame = 0) const;
-    double getExpComp (unsigned int frame = 0) const;
-    std::string getMake (unsigned int frame = 0) const;
-    std::string getModel (unsigned int frame = 0) const;
-    std::string getLens (unsigned int frame = 0) const;
+    unsigned int getRootCount () const override;
+    unsigned int getFrameCount () const override;
+    bool getPixelShift () const override;
+    bool getHDR (unsigned int frame = 0) const override;
+    std::string getImageType (unsigned int frame) const override;
+    IIOSampleFormat getSampleFormat (unsigned int frame = 0) const override;
+    rtexif::TagDirectory* getFrameExifData (unsigned int frame = 0) const override;
+    rtexif::TagDirectory* getRootExifData (unsigned int root = 0) const override;
+    rtexif::TagDirectory* getBestExifData (ImageSource *imgSource, procparams::RAWParams *rawParams) const override;
+    procparams::IPTCPairs getIPTCData (unsigned int frame = 0) const override;
+    bool hasExif (unsigned int frame = 0) const override;
+    bool hasIPTC (unsigned int frame = 0) const override;
+    tm getDateTime (unsigned int frame = 0) const override;
+    time_t getDateTimeAsTS (unsigned int frame = 0) const override;
+    int getISOSpeed (unsigned int frame = 0) const override;
+    double getFNumber (unsigned int frame = 0) const override;
+    double getFocalLen (unsigned int frame = 0) const override;
+    double getFocalLen35mm (unsigned int frame = 0) const override;
+    float getFocusDist (unsigned int frame = 0) const override;
+    double getShutterSpeed (unsigned int frame = 0) const override;
+    double getExpComp (unsigned int frame = 0) const override;
+    std::string getMake (unsigned int frame = 0) const override;
+    std::string getModel (unsigned int frame = 0) const override;
+    std::string getLens (unsigned int frame = 0) const override;
     std::string getSerialNumber (unsigned int frame = 0) const;
-    std::string getOrientation (unsigned int frame = 0) const;
+    std::string getOrientation (unsigned int frame = 0) const override;
 };
 
 

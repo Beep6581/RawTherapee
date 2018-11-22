@@ -42,7 +42,7 @@ public:
 
     Imagefloat ();
     Imagefloat (int width, int height);
-    ~Imagefloat ();
+    ~Imagefloat () override;
 
     Imagefloat* copy () const;
 

@@ -111,22 +111,22 @@ protected:
 
 public:
     RawImageSource ();
-    ~RawImageSource ();
+    ~RawImageSource () override;
 
-    int load(const Glib::ustring &fname) { return load(fname, false); }
+    int load(const Glib::ustring &fname) override { return load(fname, false); }
     int load(const Glib::ustring &fname, bool firstFrameOnly);
-    void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse, bool prepareDenoise = true);
-    void        demosaic    (const RAWParams &raw, bool autoContrast, double &contrastThreshold);
-    void        retinex       (const ColorManagementParams& cmp, const RetinexParams &deh, const ToneCurveParams& Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI);
-    void        retinexPrepareCurves       (const RetinexParams &retinexParams, LUTf &cdcurve, LUTf &mapcurve, RetinextransmissionCurve &retinextransmissionCurve, RetinexgaintransmissionCurve &retinexgaintransmissionCurve, bool &retinexcontlutili, bool &mapcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI);
-    void        retinexPrepareBuffers      (const ColorManagementParams& cmp, const RetinexParams &retinexParams, multi_array2D<float, 4> &conversionBuffer, LUTu &lhist16RETI);
-    void        flushRawData      ();
-    void        flushRGB          ();
-    void        HLRecovery_Global (const ToneCurveParams &hrp);
+    void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse, bool prepareDenoise = true) override;
+    void        demosaic    (const RAWParams &raw, bool autoContrast, double &contrastThreshold) override;
+    void        retinex       (const ColorManagementParams& cmp, const RetinexParams &deh, const ToneCurveParams& Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI) override;
+    void        retinexPrepareCurves       (const RetinexParams &retinexParams, LUTf &cdcurve, LUTf &mapcurve, RetinextransmissionCurve &retinextransmissionCurve, RetinexgaintransmissionCurve &retinexgaintransmissionCurve, bool &retinexcontlutili, bool &mapcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI) override;
+    void        retinexPrepareBuffers      (const ColorManagementParams& cmp, const RetinexParams &retinexParams, multi_array2D<float, 4> &conversionBuffer, LUTu &lhist16RETI) override;
+    void        flushRawData      () override;
+    void        flushRGB          () override;
+    void        HLRecovery_Global (const ToneCurveParams &hrp) override;
     void        refinement_lassus (int PassCount);
     void        refinement(int PassCount);
-    void        setBorder(unsigned int rawBorder) {border = rawBorder;}
-    bool        isRGBSourceModified() const
+    void        setBorder(unsigned int rawBorder) override {border = rawBorder;}
+    bool        isRGBSourceModified() const override
     {
         return rgbSourceModified;   // tracks whether cached rgb output of demosaic has been modified
     }
@@ -136,57 +136,57 @@ public:
     void        cfaboxblur  (RawImage *riFlatFile, float* cfablur, int boxH, int boxW);
     void        scaleColors (int winx, int winy, int winw, int winh, const RAWParams &raw, array2D<float> &rawData); // raw for cblack
 
-    void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw);
-    eSensorType getSensorType () const
+    void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw) override;
+    eSensorType getSensorType () const override
     {
         return ri != nullptr ? ri->getSensorType() : ST_NONE;
     }
-    bool        isMono () const
+    bool        isMono () const override
     {
         return ri->get_colors() == 1;
     }
-    ColorTemp   getWB       () const
+    ColorTemp   getWB       () const override
     {
         return camera_wb;
     }
-    void        getAutoWBMultipliers (double &rm, double &gm, double &bm);
-    ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal);
-    bool        isWBProviderReady ()
+    void        getAutoWBMultipliers (double &rm, double &gm, double &bm) override;
+    ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal) override;
+    bool        isWBProviderReady () override
     {
         return rawData;
     }
 
-    double      getDefGain  () const
+    double      getDefGain  () const override
     {
         return defGain;
     }
 
-    void        getFullSize (int& w, int& h, int tr = TR_NONE);
-    void        getSize     (const PreviewProps &pp, int& w, int& h);
-    int         getRotateDegree() const
+    void        getFullSize (int& w, int& h, int tr = TR_NONE) override;
+    void        getSize     (const PreviewProps &pp, int& w, int& h) override;
+    int         getRotateDegree() const override
     {
         return ri->get_rotateDegree();
     }
 
-    ImageMatrices* getImageMatrices ()
+    ImageMatrices* getImageMatrices () override
     {
         return &imatrices;
     }
-    bool        isRAW() const
+    bool        isRAW() const override
     {
         return true;
     }
 
-    void        setProgressListener (ProgressListener* pl)
+    void        setProgressListener (ProgressListener* pl) override
     {
         plistener = pl;
     }
-    void        getAutoExpHistogram (LUTu & histogram, int& histcompr);
-    void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw);
-    void getAutoMatchedToneCurve(const ColorManagementParams &cp, std::vector<double> &outCurve);
-    DCPProfile *getDCP(const ColorManagementParams &cmp, DCPProfile::ApplyState &as);
+    void        getAutoExpHistogram (LUTu & histogram, int& histcompr) override;
+    void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw) override;
+    void getAutoMatchedToneCurve(const ColorManagementParams &cp, std::vector<double> &outCurve) override;
+    DCPProfile *getDCP(const ColorManagementParams &cmp, DCPProfile::ApplyState &as) override;
 
-    void convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb);
+    void convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb) override;
     static bool findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, DCPProfile **dcpProf, cmsHPROFILE& in);
     static void colorSpaceConversion   (Imagefloat* im, const ColorManagementParams& cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName)
     {
@@ -197,18 +197,18 @@ public:
     void boxblur2(float** src, float** dst, float** temp, int H, int W, int box );
     void boxblur_resamp(float **src, float **dst, float** temp, int H, int W, int box, int samp );
     void MSR(float** luminance, float **originalLuminance, float **exLuminance,  LUTf & mapcurve, bool &mapcontlutili, int width, int height, const RetinexParams &deh, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax);
-    void HLRecovery_inpaint (float** red, float** green, float** blue);
+    void HLRecovery_inpaint (float** red, float** green, float** blue) override;
     static void HLRecovery_Luminance (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval);
     static void HLRecovery_CIELab (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval, double cam[3][3], double icam[3][3]);
     static void HLRecovery_blend (float* rin, float* gin, float* bin, int width, float maxval, float* hlmax);
     static void init ();
     static void cleanup ();
-    void setCurrentFrame(unsigned int frameNum) {
+    void setCurrentFrame(unsigned int frameNum) override {
         currFrame = std::min(numFrames - 1, frameNum);
         ri = riFrames[currFrame];
     }
-    int getFrameCount() {return numFrames;}
-    int getFlatFieldAutoClipValue() {return flatFieldAutoClipValue;}
+    int getFrameCount() override {return numFrames;}
+    int getFlatFieldAutoClipValue() override {return flatFieldAutoClipValue;}
 
     class GreenEqulibrateThreshold {
     public:
@@ -299,7 +299,7 @@ protected:
     void pixelshift(int winx, int winy, int winw, int winh, const RAWParams &rawParams, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection);
     void    hflip       (Imagefloat* im);
     void    vflip       (Imagefloat* im);
-    void getRawValues(int x, int y, int rotate, int &R, int &G, int &B);
+    void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) override;
 
 };
 }

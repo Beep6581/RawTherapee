@@ -191,10 +191,10 @@ public:
     TagDirectoryTable();
     TagDirectoryTable (TagDirectory* p, unsigned char *v, int memsize, int offs, TagType type, const TagAttrib* ta, ByteOrder border);
     TagDirectoryTable (TagDirectory* p, FILE* f, int memsize, int offset, TagType type, const TagAttrib* ta, ByteOrder border);
-    virtual ~TagDirectoryTable();
-    virtual int calculateSize ();
-    virtual int write (int start, unsigned char* buffer);
-    virtual TagDirectory* clone (TagDirectory* parent);
+    ~TagDirectoryTable() override;
+    int calculateSize () override;
+    int write (int start, unsigned char* buffer) override;
+    TagDirectory* clone (TagDirectory* parent) override;
 };
 
 // a class representing a single tag
@@ -488,7 +488,7 @@ protected:
     std::map<int, std::string> choices;
 public:
     ChoiceInterpreter () {};
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         std::map<int, std::string>::iterator r = choices.find (t->toInt());
 

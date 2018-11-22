@@ -358,7 +358,7 @@ public:
     {
     }
 
-    ~RTApplication()
+    ~RTApplication() override
     {
         if (rtWindow) {
             delete rtWindow;

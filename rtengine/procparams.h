@@ -26,8 +26,6 @@
 #include <glibmm.h>
 #include <lcms2.h>
 
-#include "coord.h"
-#include "LUT.h"
 #include "noncopyable.h"
 
 class ParamsEdited;

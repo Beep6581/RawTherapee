@@ -59,7 +59,7 @@ class BatchQueuePanel : public Gtk::VBox,
 
 public:
     explicit BatchQueuePanel (FileCatalog* aFileCatalog);
-    ~BatchQueuePanel();
+    ~BatchQueuePanel() override;
 
     void init (RTWindow* parent);
 

@@ -6068,7 +6068,7 @@ int CLASS parse_tiff_ifd (int base)
   char software[64], *cbuf, *cp;
   uchar cfa_pat[16], cfa_pc[] = { 0,1,2,3 }, tab[256];
   double cc[2][4][4];
-  double cm[2][4][3] = {NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN};
+  double cm[2][4][3] = {{{NAN,NAN,NAN},{NAN,NAN,NAN},{NAN,NAN,NAN},{NAN,NAN,NAN}},{{NAN,NAN,NAN},{NAN,NAN,NAN},{NAN,NAN,NAN},{NAN,NAN,NAN}}};
   double cam_xyz[4][3], num;
   double ab[]={ 1,1,1,1 }, asn[] = { 0,0,0,0 }, xyz[] = { 1,1,1 };
   unsigned sony_curve[] = { 0,0,0,0,0,4095 };
