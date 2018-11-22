@@ -1638,7 +1638,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                 if (params->defringe.enabled)
                     if (execsharp) {
                         lab->deleteLab();
-                        ImProcFunctions::defringecam (ncie);//defringe adapted to CIECAM
+                        defringecam (ncie);//defringe adapted to CIECAM
                         lab->reallocLab();
                     }
 
@@ -1649,7 +1649,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                     const bool hotbad = params->dirpyrequalizer.skinprotect != 0.0;
 
                     lab->deleteLab();
-                    ImProcFunctions::badpixcam (ncie, artifact / scale, 5, 2, chrom, hotbad);  //enabled remove artifacts for cbDL
+                    badpixcam (ncie, artifact / scale, 5, 2, chrom, hotbad);  //enabled remove artifacts for cbDL
                     lab->reallocLab();
                 }
 
@@ -1657,7 +1657,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                 if (params->colorappearance.badpixsl > 0 && execsharp) {
                     int mode = params->colorappearance.badpixsl;
                     lab->deleteLab();
-                    ImProcFunctions::badpixcam (ncie, 3.0, 10, mode, 0, true);//for bad pixels CIECAM
+                    badpixcam (ncie, 3.0, 10, mode, 0, true);//for bad pixels CIECAM
                     lab->reallocLab();
                 }
 
@@ -1666,17 +1666,17 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                         buffers[0] = lab->L;
                         buffers[1] = lab->a;
                         buffers[2] = lab->b;
-                        ImProcFunctions::impulsedenoisecam (ncie, buffers); //impulse adapted to CIECAM
+                        impulsedenoisecam (ncie, buffers); //impulse adapted to CIECAM
                     }
 
                 if (params->sharpenMicro.enabled)if (execsharp) {
-                        ImProcFunctions::MLmicrocontrastcam (ncie);
+                        MLmicrocontrastcam (ncie);
                     }
 
                 if (params->sharpening.enabled)
                     if (execsharp) {
                         float **buffer = lab->L; // We can use the L-buffer from lab as buffer to save some memory
-                        ImProcFunctions::sharpeningcam (ncie, buffer, showSharpMask); // sharpening adapted to CIECAM
+                        sharpeningcam (ncie, buffer, showSharpMask); // sharpening adapted to CIECAM
                     }
 
 //if(params->dirpyrequalizer.enabled) if(execsharp) {
@@ -1732,7 +1732,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
 
             if (epdEnabled  && params->colorappearance.tonecie && algepd) {
                 lab->deleteLab();
-                ImProcFunctions::EPDToneMapCIE (ncie, a_w, c_, width, height, minQ, maxQ, Iterates, scale );
+                EPDToneMapCIE (ncie, a_w, c_, width, height, minQ, maxQ, Iterates, scale );
                 lab->reallocLab();
             }
 

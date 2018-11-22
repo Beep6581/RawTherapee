@@ -900,8 +900,7 @@ private:
                 int  cw = baseImg->getWidth();
                 int  ch = baseImg->getHeight();
                 // put gamma TRC to 1
-                Imagefloat* readyImg0 = NULL;
-                readyImg0 = ipf.workingtrc(baseImg, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310);
+                Imagefloat* readyImg0 = ipf.workingtrc(baseImg, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310);
                 #pragma omp parallel for
 
                 for (int row = 0; row < ch; row++) {
@@ -915,8 +914,7 @@ private:
                 delete readyImg0;
 
                 //adjust TRC
-                Imagefloat* readyImg = NULL;
-                readyImg = ipf.workingtrc(baseImg, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope);
+                Imagefloat* readyImg = ipf.workingtrc(baseImg, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope);
                 #pragma omp parallel for
 
                 for (int row = 0; row < ch; row++) {
@@ -1258,7 +1256,6 @@ private:
             }
         }
 
-        Imagefloat* readyImg = nullptr;
         cmsHPROFILE jprof = nullptr;
         constexpr bool customGamma = false;
         constexpr bool useLCMS = false;
@@ -1270,7 +1267,7 @@ private:
         // if Default gamma mode: we use the profile selected in the "Output profile" combobox;
         // gamma come from the selected profile, otherwise it comes from "Free gamma" tool
 
-        readyImg = ipf.lab2rgbOut (labView, cx, cy, cw, ch, params.icm);
+        Imagefloat* readyImg = ipf.lab2rgbOut (labView, cx, cy, cw, ch, params.icm);
 
         if (settings->verbose) {
             printf ("Output profile_: \"%s\"\n", params.icm.outputProfile.c_str());

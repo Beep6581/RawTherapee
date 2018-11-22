@@ -89,7 +89,7 @@ public:
     void updateVolumes ();
     void updateDirTree  (const Gtk::TreeModel::iterator& iter);
     void updateDirTreeRoot  ();
-    void winDirChanged ();
+    void winDirChanged () override;
 private:
     void addRoot (char letter);
 #endif

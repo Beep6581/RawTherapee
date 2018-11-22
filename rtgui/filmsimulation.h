@@ -11,7 +11,7 @@
 class ClutComboBox : public MyComboBox
 {
 public:
-    ClutComboBox(const Glib::ustring &path);
+    explicit ClutComboBox(const Glib::ustring &path);
     //int fillFromDir (const Glib::ustring& path);
     int foundClutsCount() const;
     Glib::ustring getSelectedClut();
@@ -34,7 +34,7 @@ private:
         Glib::RefPtr<Gtk::TreeStore> m_model;
         ClutColumns m_columns;
         int count;
-        ClutModel(const Glib::ustring &path);
+        explicit ClutModel(const Glib::ustring &path);
         int parseDir (const Glib::ustring& path);
     };
 

@@ -153,7 +153,7 @@ public:
     Glib::ustring getDefaultCommonDirectory() const;
 
 private:
-    LCPStore(unsigned int _cache_size = 32);
+    explicit LCPStore(unsigned int _cache_size = 32);
 
     // Maps file name to profile as cache
     mutable Cache<Glib::ustring, std::shared_ptr<LCPProfile>> cache;

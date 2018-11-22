@@ -513,8 +513,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     int  cw = oprevi->getWidth();
                     int  ch = oprevi->getHeight();
                     // put gamma TRC to 1
-                    Imagefloat* readyImg0 = NULL;
-                    readyImg0 = ipf.workingtrc(oprevi, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310);
+                    Imagefloat* readyImg0 = ipf.workingtrc(oprevi, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310);
                     #pragma omp parallel for
 
                     for (int row = 0; row < ch; row++) {
@@ -527,8 +526,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                     delete readyImg0;
                     //adjust TRC
-                    Imagefloat* readyImg = NULL;
-                    readyImg = ipf.workingtrc(oprevi, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope);
+                    Imagefloat* readyImg = ipf.workingtrc(oprevi, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope);
                     #pragma omp parallel for
 
                     for (int row = 0; row < ch; row++) {

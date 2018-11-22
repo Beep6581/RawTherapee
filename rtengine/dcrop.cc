@@ -818,9 +818,7 @@ void Crop::update(int todo)
                 //first put gamma TRC to 1
                 int  cw = baseCrop->getWidth();
                 int  ch = baseCrop->getHeight();
-                Imagefloat* readyImg0 = NULL;
-
-                readyImg0 = parent->ipf.workingtrc(baseCrop, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310);
+                Imagefloat* readyImg0 = parent->ipf.workingtrc(baseCrop, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310);
                 #pragma omp parallel for
 
                 for (int row = 0; row < ch; row++) {
@@ -834,8 +832,7 @@ void Crop::update(int todo)
                 delete readyImg0;
 
                 //adjust gamma TRC
-                Imagefloat* readyImg = NULL;
-                readyImg = parent->ipf.workingtrc(baseCrop, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope);
+                Imagefloat* readyImg = parent->ipf.workingtrc(baseCrop, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope);
                 #pragma omp parallel for
 
                 for (int row = 0; row < ch; row++) {

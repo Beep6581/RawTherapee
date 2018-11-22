@@ -5081,8 +5081,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         }
 
         if (keyFile.has_group("Exif")) {
-            std::vector<Glib::ustring> keys = keyFile.get_keys("Exif");
-
             for (const auto& key : keyFile.get_keys("Exif")) {
                 exif[key] = keyFile.get_string("Exif", key);
 
