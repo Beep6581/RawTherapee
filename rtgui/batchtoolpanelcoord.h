@@ -67,7 +67,7 @@ public:
 
     // wbprovider interface
     void getAutoWB (double& temp, double& green, double equal, double tempBias) override;
-    void getCamWB (double& temp, double& green);
+    void getCamWB (double& temp, double& green) override;
 
     // thumbnaillistener interface
     void procParamsChanged (Thumbnail* thm, int whoChangedIt) override;
