@@ -156,8 +156,8 @@ public:
     bool             getXMPTagValue (const char* name, char* value) const;
 
     void        keepTag       (int ID);
-    void        addTag        (Tag* a);
-    void        addTagFront   (Tag* a);
+    void        addTag        (Tag* &a);
+    void        addTagFront   (Tag* &a);
     void        replaceTag    (Tag* a);
     inline Tag* getTagByIndex (int ix)
     {

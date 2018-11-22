@@ -362,7 +362,7 @@ Glib::ustring TagDirectory::getDumpKey (int tagID, const Glib::ustring &tagName)
 
     return key;
 }
-void TagDirectory::addTag (Tag* tag)
+void TagDirectory::addTag (Tag* &tag)
 {
 
     // look up if it already exists:
@@ -374,7 +374,7 @@ void TagDirectory::addTag (Tag* tag)
     }
 }
 
-void TagDirectory::addTagFront (Tag* tag)
+void TagDirectory::addTagFront (Tag* &tag)
 {
 
     // look up if it already exists:
