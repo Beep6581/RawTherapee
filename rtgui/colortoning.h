@@ -67,7 +67,9 @@ private:
     void labRegionRemovePressed();
     void labRegionUpPressed();
     void labRegionDownPressed();
+    void labRegionCopyPressed();
     void labRegionShowMaskChanged();
+    void labRegionChannelChanged();
     void labRegionPopulateList();
     void labRegionShow(int idx, bool list_only=false);
     void labRegionGet(int idx);
@@ -130,10 +132,15 @@ private:
     rtengine::ProcEvent EvLabRegionAB;
     rtengine::ProcEvent EvLabRegionSaturation;
     rtengine::ProcEvent EvLabRegionLightness;
+    rtengine::ProcEvent EvLabRegionSlope;
+    rtengine::ProcEvent EvLabRegionOffset;
+    rtengine::ProcEvent EvLabRegionPower;    
     rtengine::ProcEvent EvLabRegionHueMask;
     rtengine::ProcEvent EvLabRegionChromaticityMask;
     rtengine::ProcEvent EvLabRegionLightnessMask;
+    rtengine::ProcEvent EvLabRegionMaskBlur;
     rtengine::ProcEvent EvLabRegionShowMask;
+    rtengine::ProcEvent EvLabRegionChannel;
 
     Gtk::VBox *labRegionBox;
     Gtk::ListViewText *labRegionList;
@@ -141,12 +148,17 @@ private:
     Gtk::Button *labRegionRemove;
     Gtk::Button *labRegionUp;
     Gtk::Button *labRegionDown;
+    Gtk::Button *labRegionCopy;
     LabGrid *labRegionAB;
     Adjuster *labRegionSaturation;
-    Adjuster *labRegionLightness;
+    Adjuster *labRegionSlope;
+    Adjuster *labRegionOffset;
+    Adjuster *labRegionPower;
+    MyComboBoxText *labRegionChannel;
     FlatCurveEditor *labRegionHueMask;
     FlatCurveEditor *labRegionChromaticityMask;
     FlatCurveEditor *labRegionLightnessMask;
+    Adjuster *labRegionMaskBlur;
     Gtk::CheckButton *labRegionShowMask;
     std::vector<rtengine::ColorToningParams::LabCorrectionRegion> labRegionData;
     int labRegionSelected;
