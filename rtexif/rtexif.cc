@@ -368,6 +368,7 @@ void TagDirectory::addTag (Tag* tag)
     // look up if it already exists:
     if (getTag (tag->getID())) {
         delete tag;
+        tag = nullptr;
     } else {
         tags.push_back (tag);
     }
@@ -379,6 +380,7 @@ void TagDirectory::addTagFront (Tag* tag)
     // look up if it already exists:
     if (getTag (tag->getID())) {
         delete tag;
+        tag = nullptr;
     } else {
         tags.insert (tags.begin(), tag);
     }
@@ -2106,10 +2108,12 @@ void ExifManager::parseCIFF ()
     TagDirectory* root = new TagDirectory (nullptr, ifdAttribs, INTEL);
     Tag* exif = new Tag (root, lookupAttrib (ifdAttribs, "Exif"));
     exif->initSubDir ();
-    Tag* mn = new Tag (exif->getDirectory(), lookupAttrib (exifAttribs, "MakerNote"));
-    mn->initMakerNote (IFD, canonAttribs);
     root->addTag (exif);
-    exif->getDirectory()->addTag (mn);
+    if (exif) {
+        Tag* mn = new Tag (exif->getDirectory(), lookupAttrib (exifAttribs, "MakerNote"));
+        mn->initMakerNote (IFD, canonAttribs);
+        exif->getDirectory()->addTag (mn);
+    }
     parseCIFF (rml->ciffLength, root);
     root->sort ();
 }
@@ -2510,7 +2514,7 @@ parse_leafdata (TagDirectory* root, ByteOrder order)
         root->addTagFront (exif);
     }
 
-    if (!exif->getDirectory()->getTag ("ISOSpeedRatings")) {
+    if (exif && !exif->getDirectory()->getTag ("ISOSpeedRatings")) {
         Tag *t = new Tag (exif->getDirectory(), exif->getDirectory()->getAttrib ("ISOSpeedRatings"));
         t->initInt (iso_speed, LONG);
         exif->getDirectory()->addTagFront (t);
@@ -2836,7 +2840,7 @@ void ExifManager::parse (bool isRaw, bool skipIgnored)
                 exif->initSubDir (exifdir);
                 root->addTagFront (exif);
 
-                if (!exif->getDirectory()->getTag ("ISOSpeedRatings") && exif->getDirectory()->getTag ("ExposureIndex")) {
+                if (exif && !exif->getDirectory()->getTag ("ISOSpeedRatings") && exif->getDirectory()->getTag ("ExposureIndex")) {
                     Tag* niso = new Tag (exif->getDirectory(), exif->getDirectory()->getAttrib ("ISOSpeedRatings"));
                     niso->initInt (exif->getDirectory()->getTag ("ExposureIndex")->toInt(), SHORT);
                     exif->getDirectory()->addTagFront (niso);
