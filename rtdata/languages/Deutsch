@@ -1591,11 +1591,15 @@ TP_CROP_GUIDETYPE;Hilfslinien:
 TP_CROP_H;Höhe
 TP_CROP_LABEL;Ausschnitt
 <<<<<<< HEAD
+<<<<<<< HEAD
 TP_CROP_PPI;PPI =
 TP_CROP_SELECTCROP;Ausschnitt wählen
 =======
 TP_CROP_PPI;PPI=
 >>>>>>> Reset crop almost works in batch mode now: you just have to click twice...
+=======
+TP_CROP_PPI;PPI=
+>>>>>>> 4505dca6d03dc117b7ca4860bf40e58c82065a0b
 TP_CROP_W;Breite
 TP_CROP_X;Links
 TP_CROP_Y;Oben
