@@ -1025,7 +1025,7 @@ void ColorAppearance::Set(const Curve &pCurve)
 }
 
 //
-RetinextransmissionCurve::RetinextransmissionCurve() {};
+RetinextransmissionCurve::RetinextransmissionCurve() {}
 
 void RetinextransmissionCurve::Reset()
 {
@@ -1058,7 +1058,7 @@ void RetinextransmissionCurve::Set(const std::vector<double> &curvePoints)
 }
 
 
-RetinexgaintransmissionCurve::RetinexgaintransmissionCurve() {};
+RetinexgaintransmissionCurve::RetinexgaintransmissionCurve() {}
 
 void RetinexgaintransmissionCurve::Reset()
 {
@@ -1168,7 +1168,7 @@ void OpacityCurve::Set(const std::vector<double> &curvePoints, bool &opautili)
 }
 
 
-WavCurve::WavCurve() : sum(0.f) {};
+WavCurve::WavCurve() : sum(0.f) {}
 
 void WavCurve::Reset()
 {
@@ -1211,7 +1211,7 @@ void WavCurve::Set(const std::vector<double> &curvePoints)
 }
 
 
-WavOpacityCurveRG::WavOpacityCurveRG() {};
+WavOpacityCurveRG::WavOpacityCurveRG() {}
 
 void WavOpacityCurveRG::Reset()
 {
@@ -1244,7 +1244,7 @@ void WavOpacityCurveRG::Set(const std::vector<double> &curvePoints)
 
 }
 
-WavOpacityCurveBY::WavOpacityCurveBY() {};
+WavOpacityCurveBY::WavOpacityCurveBY() {}
 
 void WavOpacityCurveBY::Reset()
 {
@@ -1276,7 +1276,7 @@ void WavOpacityCurveBY::Set(const std::vector<double> &curvePoints)
     }
 }
 
-WavOpacityCurveW::WavOpacityCurveW() {};
+WavOpacityCurveW::WavOpacityCurveW() {}
 
 void WavOpacityCurveW::Reset()
 {
@@ -1308,7 +1308,7 @@ void WavOpacityCurveW::Set(const std::vector<double> &curvePoints)
     }
 }
 
-WavOpacityCurveWL::WavOpacityCurveWL() {};
+WavOpacityCurveWL::WavOpacityCurveWL() {}
 
 void WavOpacityCurveWL::Reset()
 {
@@ -1341,7 +1341,7 @@ void WavOpacityCurveWL::Set(const std::vector<double> &curvePoints)
 }
 
 
-NoiseCurve::NoiseCurve() : sum(0.f) {};
+NoiseCurve::NoiseCurve() : sum(0.f) {}
 
 void NoiseCurve::Reset()
 {
