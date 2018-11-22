@@ -1207,8 +1207,8 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
     } else {
         // read value
         value = new unsigned char [valuesize + 1];
-        fread (value, 1, valuesize, f);
-        value[valuesize] = '\0';
+        auto readSize = fread (value, 1, valuesize, f);
+        value[readSize] = '\0';
     }
 
     // seek back to the saved position
@@ -2149,10 +2149,14 @@ void ExifManager::parseCIFF (int length, TagDirectory* root)
     char buffer[1024];
     Tag* t;
 
-    fseek (f, rml->ciffBase + length - 4, SEEK_SET);
+    if (fseek(f, rml->ciffBase + length - 4, SEEK_SET)) {
+        return;
+    }
 
     int dirStart = get4 (f, INTEL) + rml->ciffBase;
-    fseek (f, dirStart, SEEK_SET);
+    if (fseek(f, dirStart, SEEK_SET)) {
+        return;
+    }
 
     int numOfTags = get2 (f, INTEL);
 
