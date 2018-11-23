@@ -384,7 +384,6 @@ TP_CROP_GTRULETHIRDS;Pravidlo tretín
 TP_CROP_GUIDETYPE;Type vodidiel:
 TP_CROP_H;V
 TP_CROP_LABEL;Orezanie
-TP_CROP_SELECTCROP;    Vyberte Orez
 TP_CROP_W;Š
 TP_CROP_X;x
 TP_CROP_Y;y

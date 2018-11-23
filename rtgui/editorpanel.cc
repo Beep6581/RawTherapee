@@ -1640,6 +1640,10 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
                     iareapanel->imageArea->previewModePanel->toggleB();
                     return true;
 
+                case GDK_KEY_p: //preview mode Sharpening Contrast mask
+                    iareapanel->imageArea->indClippedPanel->toggleSharpMask();
+                    return true;
+
                 case GDK_KEY_v: //preview mode Luminosity
                     iareapanel->imageArea->previewModePanel->toggleL();
                     return true;

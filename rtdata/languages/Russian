@@ -1004,7 +1004,6 @@ TP_CROP_GUIDETYPE;Тип направляющей:
 TP_CROP_H;Высота
 TP_CROP_LABEL;Кадрирование
 TP_CROP_PPI;PPI=
-TP_CROP_SELECTCROP;Включить режим обрезки
 TP_CROP_W;Ширина
 TP_CROP_X;x
 TP_CROP_Y;y

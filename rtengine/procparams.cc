@@ -611,7 +611,9 @@ ColorToningParams::LabCorrectionRegion::LabCorrectionRegion():
     a(0),
     b(0),
     saturation(0),
-    lightness(0),
+    slope(1),
+    offset(0),
+    power(1),
     hueMask{
         FCT_MinMaxCPoints,
             0.166666667,
@@ -644,7 +646,9 @@ ColorToningParams::LabCorrectionRegion::LabCorrectionRegion():
             1.,
             0.35,
             0.35
-            }
+            },
+    maskBlur(0),
+    channel(ColorToningParams::LabCorrectionRegion::CHAN_ALL)
 {
 }
 
@@ -654,10 +658,14 @@ bool ColorToningParams::LabCorrectionRegion::operator==(const LabCorrectionRegio
     return a == other.a
         && b == other.b
         && saturation == other.saturation
-        && lightness == other.lightness
+        && slope == other.slope
+        && offset == other.offset
+        && power == other.power
         && hueMask == other.hueMask
         && chromaticityMask == other.chromaticityMask
-        && lightnessMask == other.lightnessMask;
+        && lightnessMask == other.lightnessMask
+        && maskBlur == other.maskBlur
+        && channel == other.channel;
 }
 
 
@@ -3479,10 +3487,14 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 putToKeyfile("ColorToning", Glib::ustring("LabRegionA_") + n, l.a, keyFile);
                 putToKeyfile("ColorToning", Glib::ustring("LabRegionB_") + n, l.b, keyFile);
                 putToKeyfile("ColorToning", Glib::ustring("LabRegionSaturation_") + n, l.saturation, keyFile);
-                putToKeyfile("ColorToning", Glib::ustring("LabRegionLightness_") + n, l.lightness, keyFile);
+                putToKeyfile("ColorToning", Glib::ustring("LabRegionSlope_") + n, l.slope, keyFile);
+                putToKeyfile("ColorToning", Glib::ustring("LabRegionOffset_") + n, l.offset, keyFile);
+                putToKeyfile("ColorToning", Glib::ustring("LabRegionPower_") + n, l.power, keyFile);
                 putToKeyfile("ColorToning", Glib::ustring("LabRegionHueMask_") + n, l.hueMask, keyFile);
                 putToKeyfile("ColorToning", Glib::ustring("LabRegionChromaticityMask_") + n, l.chromaticityMask, keyFile);
                 putToKeyfile("ColorToning", Glib::ustring("LabRegionLightnessMask_") + n, l.lightnessMask, keyFile);
+                putToKeyfile("ColorToning", Glib::ustring("LabRegionMaskBlur_") + n, l.maskBlur, keyFile);
+                putToKeyfile("ColorToning", Glib::ustring("LabRegionChannel_") + n, l.channel, keyFile);
             }
         }
         saveToKeyfile(!pedited || pedited->colorToning.labregionsShowMask, "ColorToning", "LabRegionsShowMask", colorToning.labregionsShowMask, keyFile);
@@ -4869,7 +4881,15 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     found = true;
                     done = false;
                 }
-                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionLightness_") + n, pedited, cur.lightness, pedited->colorToning.labregions)) {
+                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionSlope_") + n, pedited, cur.slope, pedited->colorToning.labregions)) {
+                    found = true;
+                    done = false;
+                }
+                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionOffset_") + n, pedited, cur.offset, pedited->colorToning.labregions)) {
+                    found = true;
+                    done = false;
+                }
+                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionPower_") + n, pedited, cur.power, pedited->colorToning.labregions)) {
                     found = true;
                     done = false;
                 }
@@ -4882,6 +4902,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     done = false;
                 }
                 if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionLightnessMask_") + n, pedited, cur.lightnessMask, pedited->colorToning.labregions)) {
+                    found = true;
+                    done = false;
+                }
+                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionMaskBlur_") + n, pedited, cur.maskBlur, pedited->colorToning.labregions)) {
+                    found = true;
+                    done = false;
+                }
+                if (assignFromKeyfile(keyFile, "ColorToning", Glib::ustring("LabRegionChannel_") + n, pedited, cur.channel, pedited->colorToning.labregions)) {
                     found = true;
                     done = false;
                 }

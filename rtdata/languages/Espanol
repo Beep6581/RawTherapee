@@ -1075,7 +1075,6 @@ TP_CROP_GUIDETYPE;Clase de guía:
 TP_CROP_H;Al
 TP_CROP_LABEL;Recortar
 TP_CROP_PPI;Ptos/Pulgada=
-TP_CROP_SELECTCROP;Seleccionar recorte
 TP_CROP_W;Ancho
 TP_CROP_X;x
 TP_CROP_Y;y

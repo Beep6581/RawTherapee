@@ -1553,7 +1553,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_CROP_H;Height
 !TP_CROP_LABEL;Crop
 !TP_CROP_PPI;PPI=
-!TP_CROP_SELECTCROP;Select Crop
 !TP_CROP_W;Width
 !TP_CROP_X;X
 !TP_CROP_Y;Y

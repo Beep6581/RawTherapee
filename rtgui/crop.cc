@@ -99,89 +99,129 @@ Crop::Crop():
     maxw = 3000;
     maxh = 2000;
 
-    Gtk::HBox* hb1 = Gtk::manage (new Gtk::HBox ());
+    methodgrid = Gtk::manage(new Gtk::Grid());
+    methodgrid->get_style_context()->add_class("grid-spacing");
+    setExpandAlignProperties(methodgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
-    hb1->pack_start (*Gtk::manage (new Gtk::Label (Glib::ustring(" ") + M("TP_CROP_X") + ": ")));
+    Gtk::Label* xlab = Gtk::manage (new Gtk::Label (M("TP_CROP_X") + ":"));
+    setExpandAlignProperties(xlab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    
     x = Gtk::manage (new MySpinButton ());
-    x->set_size_request (60, -1);
-    hb1->pack_start (*x);
+    setExpandAlignProperties(x, true, false, Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
+    x->set_width_chars(6);
 
-    hb1->pack_start (*Gtk::manage (new Gtk::Label (Glib::ustring("   ") + M("TP_CROP_Y") + ": ")));
+    Gtk::Label* ylab = Gtk::manage (new Gtk::Label (M("TP_CROP_Y") + ":"));
+    setExpandAlignProperties(ylab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    
     y = Gtk::manage (new MySpinButton ());
-    y->set_size_request (60, -1);
-    hb1->pack_start (*y);
-
-    pack_start (*hb1, Gtk::PACK_SHRINK, 2);
-
-    Gtk::HBox* hb2 = Gtk::manage (new Gtk::HBox ());
-
-    hb2->pack_start (*Gtk::manage (new Gtk::Label (M("TP_CROP_W") + ": ")));
+    setExpandAlignProperties(y, true, false, Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
+    y->set_width_chars(6);
+    
+    Gtk::Label* wlab = Gtk::manage (new Gtk::Label (M("TP_CROP_W") + ":"));
+    setExpandAlignProperties(wlab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    
     w = Gtk::manage (new MySpinButton ());
-    w->set_size_request (60, -1);
-    hb2->pack_start (*w);
+    setExpandAlignProperties(w, true, false, Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
+    w->set_width_chars(6);
 
-    hb2->pack_start (*Gtk::manage (new Gtk::Label (M("TP_CROP_H") + ": ")));
+    Gtk::Label* hlab = Gtk::manage (new Gtk::Label (M("TP_CROP_H") + ":"));
+    setExpandAlignProperties(hlab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    
     h = Gtk::manage (new MySpinButton ());
-    h->set_size_request (60, -1);
-    hb2->pack_start (*h);
-
-    pack_start (*hb2, Gtk::PACK_SHRINK, 4);
+    setExpandAlignProperties(h, true, false, Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
+    h->set_width_chars(6);
 
     selectCrop = Gtk::manage (new Gtk::Button (M("TP_CROP_SELECTCROP")));
+    setExpandAlignProperties(selectCrop, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     selectCrop->get_style_context()->add_class("independent");
     selectCrop->set_image (*Gtk::manage (new RTImage ("crop-small.png")));
 
-    pack_start (*selectCrop, Gtk::PACK_SHRINK, 2);
+    resetCrop = Gtk::manage (new Gtk::Button (M("TP_CROP_RESETCROP")));
+    setExpandAlignProperties(resetCrop, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    resetCrop->get_style_context()->add_class("independent");
+    resetCrop->set_image (*Gtk::manage (new RTImage ("undo-small.png")));
+    
+    methodgrid->attach (*xlab, 0, 0, 1, 1);
+    methodgrid->attach (*x, 1, 0, 1, 1);
+    methodgrid->attach (*ylab, 2, 0, 1, 1);
+    methodgrid->attach (*y, 3, 0, 1, 1);
+    methodgrid->attach (*wlab, 0, 1, 1, 1);
+    methodgrid->attach (*w, 1, 1, 1, 1);
+    methodgrid->attach (*hlab, 2, 1, 1, 1);
+    methodgrid->attach (*h, 3, 1, 1, 1);
+    methodgrid->attach (*selectCrop, 0, 2, 2, 1);
+    methodgrid->attach (*resetCrop, 2, 2, 2, 1);
+    pack_start (*methodgrid, Gtk::PACK_EXPAND_WIDGET, 0 );
+    
+    Gtk::HSeparator* methodseparator = Gtk::manage (new  Gtk::HSeparator());
+    methodseparator->get_style_context()->add_class("grid-row-separator");
+    pack_start (*methodseparator, Gtk::PACK_SHRINK, 0);
 
-    Gtk::HBox* hb3 = Gtk::manage (new Gtk::HBox ());
+    Gtk::Grid* settingsgrid = Gtk::manage(new Gtk::Grid());
+    settingsgrid->get_style_context()->add_class("grid-spacing");
+    setExpandAlignProperties(settingsgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
     fixr = Gtk::manage (new Gtk::CheckButton (M("TP_CROP_FIXRATIO")));
+    setExpandAlignProperties(fixr, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     fixr->set_active (1);
 
-    hb3->pack_start (*fixr, Gtk::PACK_SHRINK, 4);
-
     ratio = Gtk::manage (new MyComboBoxText ());
-    hb3->pack_start (*ratio, Gtk::PACK_EXPAND_WIDGET, 4);
+    setExpandAlignProperties(ratio, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
     orientation = Gtk::manage (new MyComboBoxText ());
-    hb3->pack_start (*orientation);
+    setExpandAlignProperties(orientation, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
-    pack_start (*hb3, Gtk::PACK_SHRINK, 4);
-
-    Gtk::HBox* hb31 = Gtk::manage (new Gtk::HBox ());
-
-    hb31->pack_start (*Gtk::manage (new Gtk::Label (M("TP_CROP_GUIDETYPE"))), Gtk::PACK_SHRINK, 4);
+    Gtk::Label* guidelab = Gtk::manage (new Gtk::Label (M("TP_CROP_GUIDETYPE")));
+    setExpandAlignProperties(guidelab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    
     guide = Gtk::manage (new MyComboBoxText ());
-    hb31->pack_start (*guide);
+    setExpandAlignProperties(guide, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    
+    settingsgrid->attach (*fixr, 0, 0, 1, 1);
+    settingsgrid->attach (*ratio, 1, 0, 1, 1);
+    settingsgrid->attach (*orientation, 2, 0, 1, 1);
+    settingsgrid->attach (*guidelab, 0, 1, 1, 1);
+    settingsgrid->attach (*guide, 1, 1, 2, 1);
+    pack_start (*settingsgrid, Gtk::PACK_SHRINK, 0 );
 
-    pack_start (*hb31, Gtk::PACK_SHRINK, 4);
 
-    // ppibox START
-    ppibox = Gtk::manage (new Gtk::VBox());
-    ppibox->pack_start (*Gtk::manage (new  Gtk::HSeparator()), Gtk::PACK_SHRINK, 2);
+    // ppigrid START
+    ppigrid = Gtk::manage(new Gtk::Grid());
+    ppigrid->get_style_context()->add_class("grid-spacing");
+    ppigrid->set_column_homogeneous (true);
+    setExpandAlignProperties(ppigrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
-    Gtk::HBox* hb4 = Gtk::manage (new Gtk::HBox ());
-    hb4->pack_start (*Gtk::manage (new Gtk::Label (M("TP_CROP_PPI"))));
+    Gtk::HSeparator* ppiseparator = Gtk::manage (new  Gtk::HSeparator());
+    ppiseparator->get_style_context()->add_class("grid-row-separator");
+    
+    Gtk::Grid* ppisubgrid = Gtk::manage(new Gtk::Grid());
+    ppisubgrid->get_style_context()->add_class("grid-spacing");
+    setExpandAlignProperties(ppisubgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
+    Gtk::Label* ppilab = Gtk::manage (new Gtk::Label (M("TP_CROP_PPI")));
+    setExpandAlignProperties(ppilab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    
     ppi = Gtk::manage (new MySpinButton ());
-    ppi->set_size_request (60, -1);
-    hb4->pack_start (*ppi);
-
-    sizebox = Gtk::manage (new Gtk::VBox());
+    setExpandAlignProperties(ppi, true, false, Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
+    ppi->set_width_chars(6);
+    
+    ppisubgrid->attach (*ppilab, 0, 0, 1, 1);
+    ppisubgrid->attach (*ppi, 1, 0, 1, 1);
 
     sizecm = Gtk::manage (new Gtk::Label (M("GENERAL_NA") + " cm x " + M("GENERAL_NA") + " cm"));
+    setExpandAlignProperties(sizecm, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    
     sizein = Gtk::manage (new Gtk::Label (M("GENERAL_NA") + " in x " + M("GENERAL_NA") + " in"));
-
-    sizebox->pack_start (*sizecm, Gtk::PACK_SHRINK, 4);
-    sizebox->pack_start (*Gtk::manage (new  Gtk::HSeparator()), Gtk::PACK_SHRINK, 6);
-    sizebox->pack_start (*sizein, Gtk::PACK_SHRINK, 4);
-    sizebox->pack_start (*Gtk::manage (new  Gtk::HSeparator()), Gtk::PACK_SHRINK, 6);
-    sizebox->pack_start (*hb4, Gtk::PACK_SHRINK, 2);
-
-    ppibox->pack_start (*sizebox, Gtk::PACK_SHRINK, 1);
-    pack_start (*ppibox, Gtk::PACK_SHRINK, 0);
+    setExpandAlignProperties(sizein, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    
+    ppigrid->attach (*ppiseparator, 0, 0, 2, 1);
+    ppigrid->attach (*sizecm, 1, 1, 1, 1);
+    ppigrid->attach (*sizein, 1, 2, 1, 1);
+    ppigrid->attach (*ppisubgrid, 0, 1, 1, 2);
+    pack_start (*ppigrid, Gtk::PACK_SHRINK, 0 );
 
     ppi->set_value (300);
-    // ppibox END
+    // ppigrid END
 
     // Populate the combobox
     for (const auto& crop_ratio : crop_ratios) {
@@ -241,6 +281,7 @@ Crop::Crop():
     oconn = orientation->signal_changed().connect( sigc::mem_fun(*this, &Crop::ratioChanged) );
     gconn = guide->signal_changed().connect( sigc::mem_fun(*this, &Crop::notifyListener) );
     selectCrop->signal_pressed().connect( sigc::mem_fun(*this, &Crop::selectPressed) );
+    resetCrop->signal_pressed().connect( sigc::mem_fun(*this, &Crop::doresetCrop) );
     ppi->signal_value_changed().connect( sigc::mem_fun(*this, &Crop::refreshSize) );
 
     nx = ny = nw = nh = 0;
@@ -480,6 +521,23 @@ void Crop::selectPressed ()
     if (clistener) {
         clistener->cropSelectRequested ();
     }
+}
+
+void Crop::doresetCrop ()
+{
+    xDirty = true;
+    yDirty = true;
+    wDirty = true;
+    hDirty = true;
+
+    int X = 0;
+    int Y = 0;
+    int W = maxw;
+    int H = maxh;
+    cropResized (X, Y, W, H);
+    idle_register.add(notifyListenerUI, this);
+
+    refreshSpins();
 }
 
 void Crop::notifyListener ()
@@ -1296,5 +1354,7 @@ void Crop::setBatchMode (bool batchMode)
     ratio->append (M("GENERAL_UNCHANGED"));
     orientation->append (M("GENERAL_UNCHANGED"));
     guide->append (M("GENERAL_UNCHANGED"));
-    removeIfThere (this, ppibox);
+    removeIfThere (this, ppigrid);
+    removeIfThere (methodgrid, selectCrop);
+    removeIfThere (methodgrid, resetCrop);
 }
