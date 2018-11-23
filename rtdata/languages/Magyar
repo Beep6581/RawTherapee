@@ -626,7 +626,6 @@ TP_CROP_GUIDETYPE;Segédvonal típusa:
 TP_CROP_H;M
 TP_CROP_LABEL;Kivágás
 TP_CROP_PPI;PPI=
-TP_CROP_SELECTCROP;    Kijelölés egérrel
 TP_CROP_W;Sz
 TP_CROP_X;x
 TP_CROP_Y;y

@@ -1509,7 +1509,6 @@ TP_CROP_GUIDETYPE;Type de guide:
 TP_CROP_H;H
 TP_CROP_LABEL;Recadrage
 TP_CROP_PPI;PPI=
-TP_CROP_SELECTCROP;    Sélection du recadrage
 TP_CROP_W;L
 TP_CROP_X;X
 TP_CROP_Y;Y
