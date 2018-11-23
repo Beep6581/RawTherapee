@@ -399,6 +399,7 @@ void Options::setDefaults()
     autoSaveTpOpen = true;
     //crvOpen.clear ();
     parseExtensions.clear();
+    userTools.clear();
     parseExtensionsEnabled.clear();
     parsedExtensions.clear();
     renameUseTemplates = false;
@@ -1069,6 +1070,10 @@ void Options::readFromFile(Glib::ustring fname)
             }
 
             if (keyFile.has_group("GUI")) {
+                if (keyFile.has_key("GUI", "UserTools")) {
+                    userTools = keyFile.get_string_list("GUI", "UserTools");
+                }
+
                 if (keyFile.has_key("GUI", "WindowWidth")) {
                     windowWidth = keyFile.get_integer("GUI", "WindowWidth");
                 }
@@ -1967,6 +1972,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("Profiles", "CustomProfileBuilderPath", CPBPath);
         keyFile.set_integer("Profiles", "CustomProfileBuilderKeys", CPBKeys);
 
+        Glib::ArrayHandle<Glib::ustring> pusert = userTools;
+        keyFile.set_string_list("GUI", "UserTools", pusert);
         keyFile.set_integer("GUI", "WindowWidth", windowWidth);
         keyFile.set_integer("GUI", "WindowHeight", windowHeight);
         keyFile.set_integer("GUI", "WindowX", windowX);
