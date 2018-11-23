@@ -1004,7 +1004,7 @@ MAIN_TOOLTIP_PREVIEWFOCUSMASK;Vorschau Fokusmaske\nTaste: <b>Umschalt</b> + <b>f
 MAIN_TOOLTIP_PREVIEWG;Vorschau Grün-Kanal\nTaste: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;Vorschau Helligkeit\nTaste: <b>v</b>\n\n0.299·R + 0.587·G + 0.114·B
 MAIN_TOOLTIP_PREVIEWR;Vorschau Rot-Kanal\nTaste: <b>r</b>
-MAIN_TOOLTIP_PREVIEWSHARPMASK;Schärfungs-Kontroll-Maske ein-/ausschalten.\n\nFunktioniert nur bei aktivierter Schärfung\nund Zoom >= 100%.
+MAIN_TOOLTIP_PREVIEWSHARPMASK;Schärfungs-Kontroll-Maske ein-/ausschalten.\n\nFunktioniert nur bei aktivierter Schärfung\nund Zoom >= 100%.\nTaste: <b>p</b>
 MAIN_TOOLTIP_QINFO;Bildinformationen ein-/ausblenden.\nTaste: <b>i</b>
 MAIN_TOOLTIP_SHOWHIDELP1;Linkes Bedienfeld ein-/ausblenden.\nTaste: <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Rechtes Bedienfeld ein-/ausblenden.\nTaste: <b>Alt</b> + <b>l</b>
@@ -2389,3 +2389,22 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen.\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!HISTORY_MSG_COLORTONING_LABREGION_CHANNEL;CT - Channel
+!HISTORY_MSG_COLORTONING_LABREGION_MASKBLUR;CT - region mask blur
+!HISTORY_MSG_COLORTONING_LABREGION_OFFSET;CT - region offset
+!HISTORY_MSG_COLORTONING_LABREGION_POWER;CT - region power
+!HISTORY_MSG_COLORTONING_LABREGION_SLOPE;CT - region slope
+!TP_COLORTONING_LABREGION_CHANNEL;Channel
+!TP_COLORTONING_LABREGION_CHANNEL_ALL;All
+!TP_COLORTONING_LABREGION_CHANNEL_B;Blue
+!TP_COLORTONING_LABREGION_CHANNEL_G;Green
+!TP_COLORTONING_LABREGION_CHANNEL_R;Red
+!TP_COLORTONING_LABREGION_MASKBLUR;Mask Blur
+!TP_COLORTONING_LABREGION_OFFSET;Offset
+!TP_COLORTONING_LABREGION_POWER;Power
+!TP_COLORTONING_LABREGION_SLOPE;Slope
+!TP_CROP_RESETCROP;Reset

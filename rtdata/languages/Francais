@@ -932,7 +932,7 @@ MAIN_TOOLTIP_PREVIEWFOCUSMASK;Affichage du <b>Masque du focus</b>\nRaccourci: <b
 MAIN_TOOLTIP_PREVIEWG;Affichage du <b>canal Vert</b>\nRaccourci: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;Affichage de la <b>Luminosité</b>\nRaccourci: <b>v</b>\n\n0.299*R + 0.587*V + 0.114*B
 MAIN_TOOLTIP_PREVIEWR;Affichage du <b>canal Rouge</b>\nRaccourci: <b>r</b>
-MAIN_TOOLTIP_PREVIEWSHARPMASK;Prévisualiser le <b>masque de contraste de netteté</b>.\nRaccourci: <b>Aucun</b>\n\nNe fonctionne que si l'outil Netteté est activé et pour un zomm >= 100%.
+MAIN_TOOLTIP_PREVIEWSHARPMASK;Prévisualiser le <b>masque de contraste de netteté</b>.\nRaccourci: <b>p</b>\n\nNe fonctionne que si l'outil Netteté est activé et pour un zomm >= 100%.
 MAIN_TOOLTIP_QINFO;Informations rapide sur l'image\nRaccourci: <b>i</b>
 MAIN_TOOLTIP_SHOWHIDELP1;Montrer/Cacher le panneau gauche\nRaccourci: <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Afficher/Cacher le panneau droit\nRaccourci: <b>Alt-l</b>
@@ -2298,6 +2298,11 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!HISTORY_MSG_COLORTONING_LABREGION_CHANNEL;CT - Channel
+!HISTORY_MSG_COLORTONING_LABREGION_MASKBLUR;CT - region mask blur
+!HISTORY_MSG_COLORTONING_LABREGION_OFFSET;CT - region offset
+!HISTORY_MSG_COLORTONING_LABREGION_POWER;CT - region power
+!HISTORY_MSG_COLORTONING_LABREGION_SLOPE;CT - region slope
 !PREFERENCES_APPEARANCE;Appearance
 !PREFERENCES_APPEARANCE_COLORPICKERFONT;Color picker font
 !PREFERENCES_APPEARANCE_CROPMASKCOLOR;Crop mask color
@@ -2308,6 +2313,17 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_COLORAPP_ABSOLUTELUMINANCE;Absolute luminance
 !TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;When setting manually, values above 65 are recommended.
 !TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
+!TP_COLORTONING_LABREGION_CHANNEL;Channel
+!TP_COLORTONING_LABREGION_CHANNEL_ALL;All
+!TP_COLORTONING_LABREGION_CHANNEL_B;Blue
+!TP_COLORTONING_LABREGION_CHANNEL_G;Green
+!TP_COLORTONING_LABREGION_CHANNEL_R;Red
+!TP_COLORTONING_LABREGION_MASKBLUR;Mask Blur
+!TP_COLORTONING_LABREGION_OFFSET;Offset
+!TP_COLORTONING_LABREGION_POWER;Power
+!TP_COLORTONING_LABREGION_SLOPE;Slope
+!TP_CROP_RESETCROP;Reset
+!TP_CROP_SELECTCROP;Select
 !TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically
 !TP_LENSPROFILE_CORRECTION_LCPFILE;LCP file
 !TP_LENSPROFILE_CORRECTION_MANUAL;Manually

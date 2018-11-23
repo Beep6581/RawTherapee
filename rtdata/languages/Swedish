@@ -1899,13 +1899,18 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 !HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 !HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
-!HISTORY_MSG_COLORTONING_LABREGION_CHROMATICITYMASK;CT - C mask
+!HISTORY_MSG_COLORTONING_LABREGION_CHANNEL;CT - Channel
+!HISTORY_MSG_COLORTONING_LABREGION_CHROMATICITYMASK;CT - region C mask
 !HISTORY_MSG_COLORTONING_LABREGION_HUEMASK;CT - H mask
 !HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESS;CT - Lightness
 !HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESSMASK;CT - L mask
 !HISTORY_MSG_COLORTONING_LABREGION_LIST;CT - List
+!HISTORY_MSG_COLORTONING_LABREGION_MASKBLUR;CT - region mask blur
+!HISTORY_MSG_COLORTONING_LABREGION_OFFSET;CT - region offset
+!HISTORY_MSG_COLORTONING_LABREGION_POWER;CT - region power
 !HISTORY_MSG_COLORTONING_LABREGION_SATURATION;CT - Saturation
-!HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;CT - Show mask
+!HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;CT - region show mask
+!HISTORY_MSG_COLORTONING_LABREGION_SLOPE;CT - region slope
 !HISTORY_MSG_DEHAZE_DEPTH;Dehaze - Depth
 !HISTORY_MSG_DEHAZE_ENABLED;Haze Removal
 !HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;Dehaze - Show depth map
@@ -2010,7 +2015,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !MAIN_TAB_ADVANCED;Advanced
 !MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt-w</b>
 !MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>middle grey</b>\nShortcut: <b>9</b>
-!MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>sharpening contrast mask</b>.\nShortcut: <b>None</b>\n\nOnly works when sharpening is enabled and zoom >= 100%.
+!MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>sharpening contrast mask</b>.\nShortcut: <b>p</b>\n\nOnly works when sharpening is enabled and zoom >= 100%.
 !OPTIONS_BUNDLED_MISSING;The bundled profile "<b>%1</b>" could not be found!\n\nYour installation could be damaged.\n\nDefault internal values will be used instead.
 !OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
 !OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
@@ -2101,18 +2106,29 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_COLORTONING_LABEL;Color Toning
 !TP_COLORTONING_LABGRID;L*a*b* color correction grid
 !TP_COLORTONING_LABGRID_VALUES;HL: a=%1 b=%2\nS: a=%3 b=%4
-!TP_COLORTONING_LABREGIONS;L*a*b* correction regions
+!TP_COLORTONING_LABREGIONS;Color correction regions
 !TP_COLORTONING_LABREGION_ABVALUES;a=%1 b=%2
+!TP_COLORTONING_LABREGION_CHANNEL;Channel
+!TP_COLORTONING_LABREGION_CHANNEL_ALL;All
+!TP_COLORTONING_LABREGION_CHANNEL_B;Blue
+!TP_COLORTONING_LABREGION_CHANNEL_G;Green
+!TP_COLORTONING_LABREGION_CHANNEL_R;Red
 !TP_COLORTONING_LABREGION_CHROMATICITYMASK;C
 !TP_COLORTONING_LABREGION_HUEMASK;H
 !TP_COLORTONING_LABREGION_LIGHTNESS;Lightness
 !TP_COLORTONING_LABREGION_LIGHTNESSMASK;L
 !TP_COLORTONING_LABREGION_LIST_TITLE;Correction
 !TP_COLORTONING_LABREGION_MASK;Mask
+!TP_COLORTONING_LABREGION_MASKBLUR;Mask Blur
+!TP_COLORTONING_LABREGION_OFFSET;Offset
+!TP_COLORTONING_LABREGION_POWER;Power
 !TP_COLORTONING_LABREGION_SATURATION;Saturation
 !TP_COLORTONING_LABREGION_SHOWMASK;Show mask
+!TP_COLORTONING_LABREGION_SLOPE;Slope
 !TP_COLORTONING_METHOD_TOOLTIP;"L*a*b* blending", "RGB sliders" and "RGB curves" use interpolated color blending.\n"Color balance (Shadows/Midtones/Highlights)" and "Saturation 2 colors" use direct colors.\n\nThe Black-and-White tool can be enabled when using any color toning method, which allows for color toning.
 !TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard chroma:\nLinear response, a* = b*.\n\nSpecial chroma:\nLinear response, a* = b*, but unbound - try under the diagonal.\n\nSpecial a* and b*:\nLinear response unbound with separate curves for a* and b*. Intended for special effects.\n\nSpecial chroma 2 colors:\nMore predictable.
+!TP_CROP_RESETCROP;Reset
+!TP_CROP_SELECTCROP;Select
 !TP_DEHAZE_DEPTH;Depth
 !TP_DEHAZE_LABEL;Haze Removal
 !TP_DEHAZE_SHOW_DEPTH_MAP;Show Depth Map
