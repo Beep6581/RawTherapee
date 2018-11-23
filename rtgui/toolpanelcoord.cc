@@ -133,7 +133,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
     addfavoritePanel (advancedPanel, wavelet);
     addfavoritePanel (transformPanel, crop);
     addfavoritePanel (transformPanel, resize);
-    addfavoritePanel (resize->getPackBox(), prsharpening, 2);
+    addPanel (resize->getPackBox(), prsharpening, 2);
     addfavoritePanel (transformPanel, lensgeom);
     addfavoritePanel (lensgeom->getPackBox(), rotate, 2);
     addfavoritePanel (lensgeom->getPackBox(), perspective, 2);
