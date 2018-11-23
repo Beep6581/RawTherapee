@@ -158,8 +158,8 @@ protected:
     rtengine::StagedImageProcessor* ipc;
 
     std::vector<ToolPanel*> toolPanels;
-    std::vector<FoldableToolPanel*> userTools;
-    ToolVBox* userPanel;
+    std::vector<FoldableToolPanel*> favourites;
+    ToolVBox* favouritePanel;
     ToolVBox* exposurePanel;
     ToolVBox* detailsPanel;
     ToolVBox* colorPanel;
@@ -168,7 +168,7 @@ protected:
     ToolVBox* advancedPanel;
     ToolBar* toolBar;
 
-    TextOrIcon* toiU;
+    TextOrIcon* toiF;
     TextOrIcon* toiE;
     TextOrIcon* toiD;
     TextOrIcon* toiC;
@@ -180,7 +180,7 @@ protected:
     Gtk::Image* imgPanelEnd[7];
     Gtk::VBox* vbPanelEnd[7];
 
-    Gtk::ScrolledWindow* userPanelSW;
+    Gtk::ScrolledWindow* favouritePanelSW;
     Gtk::ScrolledWindow* exposurePanelSW;
     Gtk::ScrolledWindow* detailsPanelSW;
     Gtk::ScrolledWindow* colorPanelSW;
@@ -195,7 +195,7 @@ protected:
     void addPanel (Gtk::Box* where, FoldableToolPanel* panel, int level = 1);
     void foldThemAll (GdkEventButton* event);
     void updateVScrollbars (bool hide);
-    void addUserPanel (Gtk::Box* where, FoldableToolPanel* panel);
+    void addfavouritePanel (Gtk::Box* where, FoldableToolPanel* panel, int level = 1);
 
 private:
     EditDataProvider *editDataProvider;

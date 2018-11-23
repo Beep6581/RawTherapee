@@ -31,7 +31,7 @@ using namespace rtengine::procparams;
 ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChanged (false), editDataProvider (nullptr)
 {
 
-    userPanel   = Gtk::manage (new ToolVBox ());
+    favouritePanel   = Gtk::manage (new ToolVBox ());
     exposurePanel   = Gtk::manage (new ToolVBox ());
     detailsPanel    = Gtk::manage (new ToolVBox ());
     colorPanel      = Gtk::manage (new ToolVBox ());
@@ -101,62 +101,62 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
     // Valeurs par dfaut:
     //     Best -> low ISO
     //     Medium -> High ISO
-    userTools.resize(options.userTools.size());
+    favourites.resize(options.favourites.size());
 
-    addUserPanel (colorPanel, whitebalance);
-    addUserPanel (exposurePanel, toneCurve);
-    addUserPanel (colorPanel, vibrance);
-    addUserPanel (colorPanel, chmixer);
-    addUserPanel (colorPanel, blackwhite);
-    addUserPanel (exposurePanel, shadowshighlights);
-    addUserPanel (detailsPanel, sharpening);
-    addUserPanel (detailsPanel, localContrast);
-    addUserPanel (detailsPanel, sharpenEdge);
-    addUserPanel (detailsPanel, sharpenMicro);
-    addUserPanel (colorPanel, hsvequalizer);
-    addUserPanel (colorPanel, filmSimulation);
-    addUserPanel (colorPanel, softlight);
-    addUserPanel (colorPanel, rgbcurves);
-    addUserPanel (colorPanel, colortoning);
-    addUserPanel (exposurePanel, epd);
-    addUserPanel (exposurePanel, fattal);
-    addUserPanel (advancedPanel, retinex);
-    addUserPanel (exposurePanel, pcvignette);
-    addUserPanel (exposurePanel, gradient);
-    addUserPanel (exposurePanel, lcurve);
-    addUserPanel (advancedPanel, colorappearance);
-    addUserPanel (detailsPanel, impulsedenoise);
-    addUserPanel (detailsPanel, dirpyrdenoise);
-    addUserPanel (detailsPanel, defringe);
-    addUserPanel (detailsPanel, dirpyrequalizer);
-    addUserPanel (detailsPanel, dehaze);
-    addUserPanel (advancedPanel, wavelet);
-    addUserPanel (transformPanel, crop);
-    addUserPanel (transformPanel, resize);
-    addPanel (resize->getPackBox(), prsharpening, 2);
-    addUserPanel (transformPanel, lensgeom);
-    addPanel (lensgeom->getPackBox(), rotate, 2);
-    addPanel (lensgeom->getPackBox(), perspective, 2);
-    addPanel (lensgeom->getPackBox(), lensProf, 2);
-    addPanel (lensgeom->getPackBox(), distortion, 2);
-    addPanel (lensgeom->getPackBox(), cacorrection, 2);
-    addPanel (lensgeom->getPackBox(), vignetting, 2);
-    addUserPanel (colorPanel, icm);
-    addUserPanel (rawPanel, sensorbayer);
-    addPanel (sensorbayer->getPackBox(), bayerprocess, 2);
-    addPanel (sensorbayer->getPackBox(), bayerrawexposure, 2);
-    addPanel (sensorbayer->getPackBox(), bayerpreprocess, 2);
-    addPanel (sensorbayer->getPackBox(), rawcacorrection, 2);
-    addUserPanel (rawPanel, sensorxtrans);
-    addPanel (sensorxtrans->getPackBox(), xtransprocess, 2);
-    addPanel (sensorxtrans->getPackBox(), xtransrawexposure, 2);
-    addUserPanel (rawPanel, rawexposure);
-    addUserPanel (rawPanel, preprocess);
-    addUserPanel (rawPanel, darkframe);
-    addUserPanel (rawPanel, flatfield);
+    addfavouritePanel (colorPanel, whitebalance);
+    addfavouritePanel (exposurePanel, toneCurve);
+    addfavouritePanel (colorPanel, vibrance);
+    addfavouritePanel (colorPanel, chmixer);
+    addfavouritePanel (colorPanel, blackwhite);
+    addfavouritePanel (exposurePanel, shadowshighlights);
+    addfavouritePanel (detailsPanel, sharpening);
+    addfavouritePanel (detailsPanel, localContrast);
+    addfavouritePanel (detailsPanel, sharpenEdge);
+    addfavouritePanel (detailsPanel, sharpenMicro);
+    addfavouritePanel (colorPanel, hsvequalizer);
+    addfavouritePanel (colorPanel, filmSimulation);
+    addfavouritePanel (colorPanel, softlight);
+    addfavouritePanel (colorPanel, rgbcurves);
+    addfavouritePanel (colorPanel, colortoning);
+    addfavouritePanel (exposurePanel, epd);
+    addfavouritePanel (exposurePanel, fattal);
+    addfavouritePanel (advancedPanel, retinex);
+    addfavouritePanel (exposurePanel, pcvignette);
+    addfavouritePanel (exposurePanel, gradient);
+    addfavouritePanel (exposurePanel, lcurve);
+    addfavouritePanel (advancedPanel, colorappearance);
+    addfavouritePanel (detailsPanel, impulsedenoise);
+    addfavouritePanel (detailsPanel, dirpyrdenoise);
+    addfavouritePanel (detailsPanel, defringe);
+    addfavouritePanel (detailsPanel, dirpyrequalizer);
+    addfavouritePanel (detailsPanel, dehaze);
+    addfavouritePanel (advancedPanel, wavelet);
+    addfavouritePanel (transformPanel, crop);
+    addfavouritePanel (transformPanel, resize);
+    addfavouritePanel (resize->getPackBox(), prsharpening, 2);
+    addfavouritePanel (transformPanel, lensgeom);
+    addfavouritePanel (lensgeom->getPackBox(), rotate, 2);
+    addfavouritePanel (lensgeom->getPackBox(), perspective, 2);
+    addfavouritePanel (lensgeom->getPackBox(), lensProf, 2);
+    addfavouritePanel (lensgeom->getPackBox(), distortion, 2);
+    addfavouritePanel (lensgeom->getPackBox(), cacorrection, 2);
+    addfavouritePanel (lensgeom->getPackBox(), vignetting, 2);
+    addfavouritePanel (colorPanel, icm);
+    addfavouritePanel (rawPanel, sensorbayer);
+    addfavouritePanel (sensorbayer->getPackBox(), bayerprocess, 2);
+    addfavouritePanel (sensorbayer->getPackBox(), bayerrawexposure, 2);
+    addfavouritePanel (sensorbayer->getPackBox(), bayerpreprocess, 2);
+    addfavouritePanel (sensorbayer->getPackBox(), rawcacorrection, 2);
+    addfavouritePanel (rawPanel, sensorxtrans);
+    addfavouritePanel (sensorxtrans->getPackBox(), xtransprocess, 2);
+    addfavouritePanel (sensorxtrans->getPackBox(), xtransrawexposure, 2);
+    addfavouritePanel (rawPanel, rawexposure);
+    addfavouritePanel (rawPanel, preprocess);
+    addfavouritePanel (rawPanel, darkframe);
+    addfavouritePanel (rawPanel, flatfield);
 
-    for(auto it = userTools.begin(); it != userTools.end(); ++it) {
-        addPanel(userPanel, *it);
+    for(auto it = favourites.begin(); it != favourites.end(); ++it) {
+        addPanel(favouritePanel, *it);
     }
     toolPanels.push_back (coarse);
     toolPanels.push_back(metadata);
@@ -164,7 +164,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
     toolPanelNotebook = new Gtk::Notebook ();
     toolPanelNotebook->set_name ("ToolPanelNotebook");
 
-    userPanelSW        = Gtk::manage (new MyScrolledWindow ());
+    favouritePanelSW        = Gtk::manage (new MyScrolledWindow ());
     exposurePanelSW    = Gtk::manage (new MyScrolledWindow ());
     detailsPanelSW     = Gtk::manage (new MyScrolledWindow ());
     colorPanelSW       = Gtk::manage (new MyScrolledWindow ());
@@ -182,9 +182,9 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
         vbPanelEnd[i]->show_all();
     }
 
-    userPanelSW->add  (*userPanel);
-    userPanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
-    userPanel->pack_start (*vbPanelEnd[0], Gtk::PACK_SHRINK, 4);
+    favouritePanelSW->add  (*favouritePanel);
+    favouritePanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
+    favouritePanel->pack_start (*vbPanelEnd[0], Gtk::PACK_SHRINK, 4);
 
     exposurePanelSW->add  (*exposurePanel);
     exposurePanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
@@ -210,7 +210,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
     rawPanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
     rawPanel->pack_start (*vbPanelEnd[5], Gtk::PACK_SHRINK, 0);
 
-    toiU = Gtk::manage (new TextOrIcon ("wb-sun.png", M ("MAIN_TAB_CUSTOM"), M ("MAIN_TAB_CUSTOM_TOOLTIP")));
+    toiF = Gtk::manage (new TextOrIcon ("wb-sun.png", M ("MAIN_TAB_FAVOURITES"), M ("MAIN_TAB_FAVOURITES_TOOLTIP")));
     toiE = Gtk::manage (new TextOrIcon ("exposure.png", M ("MAIN_TAB_EXPOSURE"), M ("MAIN_TAB_EXPOSURE_TOOLTIP")));
     toiD = Gtk::manage (new TextOrIcon ("detail.png", M ("MAIN_TAB_DETAIL"), M ("MAIN_TAB_DETAIL_TOOLTIP")));
     toiC = Gtk::manage (new TextOrIcon ("color-circles.png", M ("MAIN_TAB_COLOR"), M ("MAIN_TAB_COLOR_TOOLTIP")));
@@ -219,7 +219,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
     toiR = Gtk::manage (new TextOrIcon ("bayer.png", M ("MAIN_TAB_RAW"), M ("MAIN_TAB_RAW_TOOLTIP")));
     toiM = Gtk::manage (new TextOrIcon ("metadata.png", M ("MAIN_TAB_METADATA"), M ("MAIN_TAB_METADATA_TOOLTIP")));
 
-    toolPanelNotebook->append_page (*userPanelSW,  *toiU);
+    toolPanelNotebook->append_page (*favouritePanelSW,  *toiF);
     toolPanelNotebook->append_page (*exposurePanelSW,  *toiE);
     toolPanelNotebook->append_page (*detailsPanelSW,   *toiD);
     toolPanelNotebook->append_page (*colorPanelSW,     *toiC);
@@ -262,15 +262,15 @@ void ToolPanelCoordinator::addPanel (Gtk::Box* where, FoldableToolPanel* panel, 
     toolPanels.push_back (panel);
 }
 
-void ToolPanelCoordinator::addUserPanel (Gtk::Box* where, FoldableToolPanel* panel)
+void ToolPanelCoordinator::addfavouritePanel (Gtk::Box* where, FoldableToolPanel* panel, int level)
 {
     auto name = panel->getToolName();
-    auto it = std::find(options.userTools.begin(), options.userTools.end(), name);
-    if (it != options.userTools.end()) {
-        int index = std::distance(options.userTools.begin(), it);
-        userTools[index] = panel;
+    auto it = std::find(options.favourites.begin(), options.favourites.end(), name);
+    if (it != options.favourites.end()) {
+        int index = std::distance(options.favourites.begin(), it);
+        favourites[index] = panel;
     } else {
-        addPanel(where, panel);
+        addPanel(where, panel, level);
     }
 }
 
@@ -879,6 +879,10 @@ bool ToolPanelCoordinator::handleShortcutKey (GdkEventKey* event)
 
     if (alt) {
         switch (event->keyval) {
+            case GDK_KEY_u:
+                toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*favouritePanelSW));
+                return true;
+
             case GDK_KEY_e:
                 toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*exposurePanelSW));
                 return true;
@@ -916,7 +920,7 @@ void ToolPanelCoordinator::updateVScrollbars (bool hide)
 {
     GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
     Gtk::PolicyType policy = hide ? Gtk::POLICY_NEVER : Gtk::POLICY_AUTOMATIC;
-    userPanelSW->set_policy     (Gtk::POLICY_AUTOMATIC, policy);
+    favouritePanelSW->set_policy     (Gtk::POLICY_AUTOMATIC, policy);
     exposurePanelSW->set_policy     (Gtk::POLICY_AUTOMATIC, policy);
     detailsPanelSW->set_policy      (Gtk::POLICY_AUTOMATIC, policy);
     colorPanelSW->set_policy        (Gtk::POLICY_AUTOMATIC, policy);
