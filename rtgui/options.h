@@ -375,7 +375,7 @@ public:
     int           fastexport_resize_height;
     bool fastexport_use_fast_pipeline;
 
-    std::vector<Glib::ustring> favourites;
+    std::vector<Glib::ustring> favorites;
     // Dialog settings
     Glib::ustring lastIccDir;
     Glib::ustring lastDarkframeDir;
