@@ -1131,7 +1131,7 @@ void ICCProfileCreator::savePressed()
 
             //calculate XYZ matrix for each primaries and each temp (D50, D65...)
 
-            // reduce coordonate of primaries
+            // reduce coordinate of primaries
             //printf("p0=%f p1=%f p2=%f p3=%f p4=%f p5=%f \n", p[0], p[1], p[2], p[3],p[4], p[5]);
             double Xr = p[0] / p[1];
             double Yr = 1.0;
