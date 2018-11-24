@@ -286,6 +286,20 @@ Crop::Crop():
 
     nx = ny = nw = nh = 0;
     lastRotationDeg = 0;
+
+//GTK318
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+    methodgrid->set_row_spacing(4);
+    methodgrid->set_column_spacing(4);
+    settingsgrid->set_row_spacing(4);
+    settingsgrid->set_column_spacing(4);
+    ppigrid->set_row_spacing(4);
+    ppigrid->set_column_spacing(4);
+    ppisubgrid->set_row_spacing(4);
+    ppisubgrid->set_column_spacing(4);
+#endif
+//GTK318
+    
     show_all ();
 }
 
