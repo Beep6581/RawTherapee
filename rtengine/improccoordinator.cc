@@ -506,8 +506,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         if (todo &  (M_AUTOEXP | M_RGBCURVE)) {
             if (params.icm.workingTRC == "Custom") { //exec TRC IN free
-                Glib::ustring profile;
-                profile = params.icm.workingProfile;
+                if (oprevi == orig_prev) {
+                    oprevi = new Imagefloat(pW, pH);
+                    orig_prev->copyData(oprevi);
+                }
+
+                Glib::ustring profile = params.icm.workingProfile;
 
                 if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1") {
                     int  cw = oprevi->getWidth();
