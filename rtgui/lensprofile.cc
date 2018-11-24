@@ -194,6 +194,7 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
     switch (pp->lensProf.lcMode) {
         case procparams::LensProfParams::LcMode::LCP: {
             corrLcpFileRB->set_active(true);
+            setManualParamsVisibility(false);
             break;
         }
 
@@ -209,6 +210,7 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
 
         case procparams::LensProfParams::LcMode::NONE: {
             corrOffRB->set_active(true);
+            setManualParamsVisibility(false);
             break;
         }
     }
