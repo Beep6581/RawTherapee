@@ -85,14 +85,14 @@ public:
     bool lowEnabled() const;
     void setLowEnabled(bool yes);
 
-    bool on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf);
-    void on_style_updated ();
-    bool on_button_press_event(GdkEventButton *event);
-    bool on_button_release_event(GdkEventButton *event);
-    bool on_motion_notify_event(GdkEventMotion *event);
-    Gtk::SizeRequestMode get_request_mode_vfunc() const;
-    void get_preferred_width_vfunc(int &minimum_width, int &natural_width) const;
-    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
+    bool on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf) override;
+    void on_style_updated () override;
+    bool on_button_press_event(GdkEventButton *event) override;
+    bool on_button_release_event(GdkEventButton *event) override;
+    bool on_motion_notify_event(GdkEventMotion *event) override;
+    Gtk::SizeRequestMode get_request_mode_vfunc() const override;
+    void get_preferred_width_vfunc(int &minimum_width, int &natural_width) const override;
+    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
 };
 
 

@@ -42,7 +42,7 @@ public:
 
     Imagefloat ();
     Imagefloat (int width, int height);
-    ~Imagefloat ();
+    ~Imagefloat () override;
 
     Imagefloat* copy () const;
 
@@ -218,7 +218,7 @@ public:
         return (uint32_t) ((sign << 31) | (exponent << 23) | mantissa);
     }
 
-    virtual void         normalizeFloat(float srcMinVal, float srcMaxVal);
+    void                 normalizeFloat(float srcMinVal, float srcMaxVal) override;
     void                 normalizeFloatTo1();
     void                 normalizeFloatTo65535();
     void                 calcCroppedHistogram(const ProcParams &params, float scale, LUTu & hist);

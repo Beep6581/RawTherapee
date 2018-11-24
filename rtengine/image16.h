@@ -38,7 +38,7 @@ public:
 
     Image16();
     Image16(int width, int height);
-    ~Image16();
+    ~Image16() override;
 
     Image16* copy() const;
 

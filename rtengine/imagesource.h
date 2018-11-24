@@ -65,7 +65,7 @@ public:
     ImageSource () : references (1), redAWBMul(-1.), greenAWBMul(-1.), blueAWBMul(-1.),
         embProfile(nullptr), idata(nullptr), dirpyrdenoiseExpComp(INFINITY) {}
 
-    virtual ~ImageSource            () {}
+    ~ImageSource            () override {}
     virtual int         load        (const Glib::ustring &fname) = 0;
     virtual void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse, bool prepareDenoise = true) {};
     virtual void        demosaic    (const RAWParams &raw, bool autoContrast, double &contrastThreshold) {};
@@ -119,11 +119,11 @@ public:
 
     virtual void        setProgressListener (ProgressListener* pl) {}
 
-    void        increaseRef ()
+    void        increaseRef () override
     {
         references++;
     }
-    void        decreaseRef ()
+    void        decreaseRef () override
     {
         references--;
 
@@ -151,19 +151,19 @@ public:
         return dirpyrdenoiseExpComp;
     }
     // functions inherited from the InitialImage interface
-    virtual Glib::ustring getFileName ()
+    Glib::ustring getFileName () override
     {
         return fileName;
     }
-    virtual cmsHPROFILE getEmbeddedProfile ()
+    cmsHPROFILE getEmbeddedProfile () override
     {
         return embProfile;
     }
-    virtual const FramesMetaData* getMetaData ()
+    const FramesMetaData* getMetaData () override
     {
         return idata;
     }
-    virtual ImageSource* getImageSource ()
+    ImageSource* getImageSource () override
     {
         return this;
     }

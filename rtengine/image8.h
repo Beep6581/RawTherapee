@@ -36,7 +36,7 @@ public:
 
     Image8 ();
     Image8 (int width, int height);
-    ~Image8 ();
+    ~Image8 () override;
 
     Image8* copy () const;
 

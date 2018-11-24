@@ -936,12 +936,12 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
 
 
         float cz, wh, pfl;
-        Ciecam02::initcam1float(gamu, yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c);
+        Ciecam02::initcam1float (yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c);
         //printf ("wh=%f \n", wh);
 
         const float pow1 = pow_F(1.64f - pow_F(0.29f, n), 0.73f);
         float nj, nbbj, ncbj, czj, awj, flj;
-        Ciecam02::initcam2float(gamu, yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj);
+        Ciecam02::initcam2float (yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj);
 #ifdef __SSE2__
         const float reccmcz = 1.f / (c2 * czj);
 #endif
@@ -1056,7 +1056,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                                                        Q,  M,  s, aw, fl, wh,
                                                        x,  y,  z,
                                                        xw1, yw1,  zw1,
-                                                       c,  nc, gamu, pow1, nbb, ncb, pfl, cz, d);
+                                                         c,  nc, pow1, nbb, ncb, pfl, cz, d);
                     Jbuffer[k] = J;
                     Cbuffer[k] = C;
                     hbuffer[k] = h;
@@ -1094,7 +1094,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                                                        Q,  M,  s, aw, fl, wh,
                                                        x,  y,  z,
                                                        xw1, yw1,  zw1,
-                                                       c,  nc, gamu, pow1, nbb, ncb, pfl, cz, d);
+                                                         c,  nc, pow1, nbb, ncb, pfl, cz, d);
 #endif
                     float Jpro, Cpro, hpro, Qpro, Mpro, spro;
                     Jpro = J;
@@ -1509,7 +1509,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                             Ciecam02::jch2xyz_ciecam02float(xx, yy, zz,
                                                             J,  C, h,
                                                             xw2, yw2,  zw2,
-                                                            c2, nc2, gamu, pow1n, nbbj, ncbj, flj, czj, dj, awj);
+                                                              c2, nc2, pow1n, nbbj, ncbj, flj, czj, dj, awj);
                             float x, y, z;
                             x = xx * 655.35f;
                             y = yy * 655.35f;
@@ -1664,7 +1664,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                 if (params->defringe.enabled)
                     if (execsharp) {
                         lab->deleteLab();
-                        ImProcFunctions::defringecam(ncie); //defringe adapted to CIECAM
+                        defringecam (ncie);//defringe adapted to CIECAM
                         lab->reallocLab();
                     }
 
@@ -1675,7 +1675,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                     const bool hotbad = params->dirpyrequalizer.skinprotect != 0.0;
 
                     lab->deleteLab();
-                    ImProcFunctions::badpixcam(ncie, artifact / scale, 5, 2, chrom, hotbad);   //enabled remove artifacts for cbDL
+                    badpixcam (ncie, artifact / scale, 5, 2, chrom, hotbad);  //enabled remove artifacts for cbDL
                     lab->reallocLab();
                 }
 
@@ -1683,7 +1683,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                 if (params->colorappearance.badpixsl > 0 && execsharp) {
                     int mode = params->colorappearance.badpixsl;
                     lab->deleteLab();
-                    ImProcFunctions::badpixcam(ncie, 3.0, 10, mode, 0, true); //for bad pixels CIECAM
+                    badpixcam (ncie, 3.0, 10, mode, 0, true);//for bad pixels CIECAM
                     lab->reallocLab();
                 }
 
@@ -1692,17 +1692,17 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         buffers[0] = lab->L;
                         buffers[1] = lab->a;
                         buffers[2] = lab->b;
-                        ImProcFunctions::impulsedenoisecam(ncie, buffers);  //impulse adapted to CIECAM
+                        impulsedenoisecam (ncie, buffers); //impulse adapted to CIECAM
                     }
 
                 if (params->sharpenMicro.enabled)if (execsharp) {
-                        ImProcFunctions::MLmicrocontrastcam(ncie);
+                        MLmicrocontrastcam (ncie);
                     }
 
                 if (params->sharpening.enabled)
                     if (execsharp) {
                         float **buffer = lab->L; // We can use the L-buffer from lab as buffer to save some memory
-                        ImProcFunctions::sharpeningcam(ncie, buffer, showSharpMask);  // sharpening adapted to CIECAM
+                        sharpeningcam (ncie, buffer, showSharpMask); // sharpening adapted to CIECAM
                     }
 
 //if(params->dirpyrequalizer.enabled) if(execsharp) {
@@ -1758,7 +1758,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
 
             if (epdEnabled  && params->colorappearance.tonecie && algepd) {
                 lab->deleteLab();
-                ImProcFunctions::EPDToneMapCIE(ncie, a_w, c_, width, height, minQ, maxQ, Iterates, scale);
+                EPDToneMapCIE (ncie, a_w, c_, width, height, minQ, maxQ, Iterates, scale );
                 lab->reallocLab();
             }
 
@@ -1842,7 +1842,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         Ciecam02::jch2xyz_ciecam02float(xx, yy, zz,
                                                         ncie->J_p[i][j],  ncie_C_p, ncie->h_p[i][j],
                                                         xw2, yw2,  zw2,
-                                                        c2, nc2, gamu, pow1n, nbbj, ncbj, flj, czj, dj, awj);
+                                                          c2, nc2, pow1n, nbbj, ncbj, flj, czj, dj, awj);
                         float x = (float)xx * 655.35f;
                         float y = (float)yy * 655.35f;
                         float z = (float)zz * 655.35f;

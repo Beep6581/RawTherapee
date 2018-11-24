@@ -72,7 +72,7 @@ protected:
     void interpolate ();
     void findClosestPoint();
     CursorShape motionNotify(CursorShape type, double minDistanceX, double minDistanceY, int num);
-    std::vector<double> get_vector (int veclen);
+    std::vector<double> get_vector (int veclen) override;
     void get_LUT (LUTf &lut);
     // Get the cursor position and unclamped position from the curve given an X value ; BEWARE: can be time consuming, use with care
     void getCursorPositionFromCurve(float x);
@@ -82,23 +82,23 @@ protected:
 
 public:
     MyDiagonalCurve ();
-    ~MyDiagonalCurve ();
-    std::vector<double> getPoints ();
-    void setPoints (const std::vector<double>& p);
+    ~MyDiagonalCurve () override;
+    std::vector<double> getPoints () override;
+    void setPoints (const std::vector<double>& p) override;
     void setType (DiagonalCurveType t);
-    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
-    bool handleEvents (GdkEvent* event);
+    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
+    bool handleEvents (GdkEvent* event) override;
     void setActiveParam (int ac);
-    void reset (const std::vector<double> &resetCurve, double identityValue = 0.5);
+    void reset (const std::vector<double> &resetCurve, double identityValue = 0.5) override;
     void updateBackgroundHistogram (LUTu & hist);
 
-    void pipetteMouseOver (CurveEditor *ce, EditDataProvider *provider, int modifierKey);
-    bool pipetteButton1Pressed(EditDataProvider *provider, int modifierKey);
-    void pipetteButton1Released(EditDataProvider *provider);
-    void pipetteDrag(EditDataProvider *provider, int modifierKey);
+    void pipetteMouseOver (CurveEditor *ce, EditDataProvider *provider, int modifierKey) override;
+    bool pipetteButton1Pressed(EditDataProvider *provider, int modifierKey) override;
+    void pipetteButton1Released(EditDataProvider *provider) override;
+    void pipetteDrag(EditDataProvider *provider, int modifierKey) override;
 
-    virtual void setPos(double pos, int chanIdx);
-    virtual void stopNumericalAdjustment();
+    void setPos(double pos, int chanIdx) override;
+    void stopNumericalAdjustment() override;
 };
 
 #endif

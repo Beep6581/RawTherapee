@@ -56,21 +56,21 @@ public:
     bool fast_pipeline;
 
     BatchQueueEntry (rtengine::ProcessingJob* job, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm = nullptr);
-    ~BatchQueueEntry ();
+    ~BatchQueueEntry () override;
 
-    void refreshThumbnailImage ();
-    void calcThumbnailSize ();
+    void refreshThumbnailImage () override;
+    void calcThumbnailSize () override;
 
-    void drawProgressBar (Glib::RefPtr<Gdk::Window> win, const Gdk::RGBA& foregr, const Gdk::RGBA& backgr, int x, int w, int y, int h);
+    void drawProgressBar (Glib::RefPtr<Gdk::Window> win, const Gdk::RGBA& foregr, const Gdk::RGBA& backgr, int x, int w, int y, int h) override;
 
     void removeButtonSet ();
 
-    virtual std::vector<Glib::RefPtr<Gdk::Pixbuf> > getIconsOnImageArea ();
-    virtual void getIconSize (int& w, int& h);
-    virtual Glib::ustring getToolTip (int x, int y);
+    std::vector<Glib::RefPtr<Gdk::Pixbuf> > getIconsOnImageArea () override;
+    void getIconSize (int& w, int& h) override;
+    Glib::ustring getToolTip (int x, int y) override;
 
     // bqentryupdatelistener interface
-    void updateImage (guint8* img, int w, int h, int origw, int origh, guint8* newOPreview);
+    void updateImage (guint8* img, int w, int h, int origw, int origh, guint8* newOPreview) override;
     void _updateImage (guint8* img, int w, int h); // inside gtk thread
 };
 

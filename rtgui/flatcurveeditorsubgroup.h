@@ -46,32 +46,32 @@ protected:
 
 public:
     FlatCurveEditorSubGroup(CurveEditorGroup* prt, Glib::ustring& curveDir);
-    virtual ~FlatCurveEditorSubGroup();
+    ~FlatCurveEditorSubGroup() override;
 
     FlatCurveEditor* addCurve(Glib::ustring curveLabel = "", bool periodic = true);
     //virtual void updateBackgroundHistogram (CurveEditor* ce);
-    void switchGUI();
-    void refresh(CurveEditor *curveToRefresh);
-    void editModeSwitchedOff();
-    void pipetteMouseOver(EditDataProvider *provider, int modifierKey);
-    bool pipetteButton1Pressed(EditDataProvider *provider, int modifierKey);
-    void pipetteButton1Released(EditDataProvider *provider);
-    void pipetteDrag(EditDataProvider *provider, int modifierKey);
-    void showCoordinateAdjuster(CoordinateProvider *provider);
-    void stopNumericalAdjustment();
+    void switchGUI() override;
+    void refresh(CurveEditor *curveToRefresh) override;
+    void editModeSwitchedOff() override;
+    void pipetteMouseOver(EditDataProvider *provider, int modifierKey) override;
+    bool pipetteButton1Pressed(EditDataProvider *provider, int modifierKey) override;
+    void pipetteButton1Released(EditDataProvider *provider) override;
+    void pipetteDrag(EditDataProvider *provider, int modifierKey) override;
+    void showCoordinateAdjuster(CoordinateProvider *provider) override;
+    void stopNumericalAdjustment() override;
 
-    bool curveReset (CurveEditor *ce);
+    bool curveReset (CurveEditor *ce) override;
 
 protected:
-    void storeCurveValues (CurveEditor* ce, const std::vector<double>& p);
-    void storeDisplayedCurve ();
-    void restoreDisplayedHistogram ();
+    void storeCurveValues (CurveEditor* ce, const std::vector<double>& p) override;
+    void storeDisplayedCurve () override;
+    void restoreDisplayedHistogram () override;
     void savePressed ();
     void loadPressed ();
     void copyPressed ();
     void pastePressed ();
-    void removeEditor ();
-    const std::vector<double> getCurveFromGUI (int type);
+    void removeEditor () override;
+    const std::vector<double> getCurveFromGUI (int type) override;
     void editPointToggled(Gtk::ToggleButton *button);
     void editToggled (Gtk::ToggleButton *button);
 };

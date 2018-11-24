@@ -62,20 +62,20 @@ protected:
 public:
 
     LCurve ();
-    ~LCurve ();
+    ~LCurve () override;
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void setBatchMode   (bool batchMode);
-    void autoOpenCurve  ();
-    void setEditProvider     (EditDataProvider *provider);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void setBatchMode   (bool batchMode) override;
+    void autoOpenCurve  () override;
+    void setEditProvider     (EditDataProvider *provider) override;
     void setAdjusterBehavior (bool bradd, bool contradd, bool satadd);
-    void trimValues          (rtengine::procparams::ProcParams* pp);
+    void trimValues          (rtengine::procparams::ProcParams* pp) override;
 
-    void curveChanged (CurveEditor* ce);
-    void adjusterChanged (Adjuster* a, double newval);
-    void adjusterAutoToggled(Adjuster* a, bool newval);
+    void curveChanged (CurveEditor* ce) override;
+    void adjusterChanged (Adjuster* a, double newval) override;
+    void adjusterAutoToggled(Adjuster* a, bool newval) override;
     void avoidcolorshift_toggled ();
     void lcredsk_toggled();
 
@@ -92,9 +92,9 @@ public:
         const LUTu& histLRETI
     );
 
-    virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
+    void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) override;
 
-    void enabledChanged();
+    void enabledChanged() override;
 };
 
 #endif

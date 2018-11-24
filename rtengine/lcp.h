@@ -153,7 +153,7 @@ public:
     Glib::ustring getDefaultCommonDirectory() const;
 
 private:
-    LCPStore(unsigned int _cache_size = 32);
+    explicit LCPStore(unsigned int _cache_size = 32);
 
     // Maps file name to profile as cache
     mutable Cache<Glib::ustring, std::shared_ptr<LCPProfile>> cache;
@@ -190,11 +190,11 @@ public:
     );
 
 
-    void correctDistortion(double &x, double &y, int cx, int cy, double scale) const;  // MUST be the first stage
-    bool isCACorrectionAvailable() const;
-    void correctCA(double& x, double& y, int cx, int cy, int channel) const;
-    void processVignetteLine(int width, int y, float* line) const;
-    void processVignetteLine3Channels(int width, int y, float* line) const;
+    void correctDistortion(double &x, double &y, int cx, int cy, double scale) const override;  // MUST be the first stage
+    bool isCACorrectionAvailable() const override;
+    void correctCA(double& x, double& y, int cx, int cy, int channel) const override;
+    void processVignetteLine(int width, int y, float* line) const override;
+    void processVignetteLine3Channels(int width, int y, float* line) const override;
 
 private:
     bool enableCA;  // is the mapper capable if CA correction?

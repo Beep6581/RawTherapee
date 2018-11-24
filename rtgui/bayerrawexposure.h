@@ -38,15 +38,15 @@ public:
 
     BayerRAWExposure ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setBatchMode   (bool batchMode);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void adjusterChanged     (Adjuster* a, double newval);
-    void adjusterAutoToggled (Adjuster* a, bool newval);
-    void checkBoxToggled     (CheckBox* c, CheckValue newval);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setBatchMode   (bool batchMode) override;
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void adjusterChanged     (Adjuster* a, double newval) override;
+    void adjusterAutoToggled (Adjuster* a, bool newval) override;
+    void checkBoxToggled     (CheckBox* c, CheckValue newval) override;
     void setAdjusterBehavior (bool pexblackadd);
-    void trimValues          (rtengine::procparams::ProcParams* pp);
+    void trimValues          (rtengine::procparams::ProcParams* pp) override;
 };
 
 #endif

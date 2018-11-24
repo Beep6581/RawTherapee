@@ -34,6 +34,10 @@
 //#define BENCHMARK
 #include "StopWatch.h"
 
+#include <zlib.h>
+#include <stdint.h>
+
+
 /*
    dcraw.c -- Dave Coffin's raw photo decoder
    Copyright 1997-2018 by Dave Coffin, dcoffin a cybercom o net
@@ -1229,23 +1233,46 @@ void CLASS lossless_dng_load_raw()
   }
 }
 
+static uint32_t DNG_HalfToFloat(uint16_t halfValue);
+
 void CLASS packed_dng_load_raw()
 {
   ushort *pixel, *rp;
   int row, col;
+  int isfloat = (tiff_nifds == 1 && tiff_ifd[0].sample_format == 3 && (tiff_bps == 16 || tiff_bps == 32));
+  if (isfloat) {
+    float_raw_image = new float[raw_width * raw_height];
+  }
 
   pixel = (ushort *) calloc (raw_width, tiff_samples*sizeof *pixel);
   merror (pixel, "packed_dng_load_raw()");
   for (row=0; row < raw_height; row++) {
-    if (tiff_bps == 16)
+    if (tiff_bps == 16) {
       read_shorts (pixel, raw_width * tiff_samples);
-    else {
+      if (isfloat) {
+          uint32_t *dst = reinterpret_cast<uint32_t *>(&float_raw_image[row*raw_width]);
+          for (col = 0; col < raw_width; col++) {
+              uint32_t f = DNG_HalfToFloat(pixel[col]);
+              dst[col] = f;
+          }
+      }
+    } else if (isfloat) {
+      if (fread(&float_raw_image[row*raw_width], sizeof(float), raw_width, ifp) != raw_width) {
+        derror();
+      }
+      if ((order == 0x4949) == (ntohs(0x1234) == 0x1234)) {
+        char *d = reinterpret_cast<char *>(float_raw_image);
+        rtengine::swab(d, d, sizeof(float)*raw_width);
+      }
+    } else {
       getbits(-1);
       for (col=0; col < raw_width * tiff_samples; col++)
 	pixel[col] = getbits(tiff_bps);
     }
-    for (rp=pixel, col=0; col < raw_width; col++)
-      adobe_copy_pixel (row, col, &rp);
+    if (!isfloat) {
+        for (rp=pixel, col=0; col < raw_width; col++)
+            adobe_copy_pixel (row, col, &rp);
+    }
   }
   free (pixel);
 }
@@ -6041,7 +6068,7 @@ int CLASS parse_tiff_ifd (int base)
   char software[64], *cbuf, *cp;
   uchar cfa_pat[16], cfa_pc[] = { 0,1,2,3 }, tab[256];
   double cc[2][4][4];
-  double cm[2][4][3] = {NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN,NAN};
+  double cm[2][4][3] = {{{NAN,NAN,NAN},{NAN,NAN,NAN},{NAN,NAN,NAN},{NAN,NAN,NAN}},{{NAN,NAN,NAN},{NAN,NAN,NAN},{NAN,NAN,NAN},{NAN,NAN,NAN}}};
   double cam_xyz[4][3], num;
   double ab[]={ 1,1,1,1 }, asn[] = { 0,0,0,0 }, xyz[] = { 1,1,1 };
   unsigned sony_curve[] = { 0,0,0,0,0,4095 };
@@ -6173,6 +6200,7 @@ int CLASS parse_tiff_ifd (int base)
 	break;
       case 305:  case 11:		/* Software */
 	fgets (software, 64, ifp);
+        RT_software = software;
 	if (!strncmp(software,"Adobe",5) ||
 	    !strncmp(software,"dcraw",5) ||
 	    !strncmp(software,"UFRaw",5) ||
@@ -6441,6 +6469,7 @@ guess_cfa_pc:
       case 61450:
 	cblack[4] = cblack[5] = MIN(sqrt(len),64);
       case 50714:			/* BlackLevel */
+                RT_blacklevel_from_constant = ThreeValBool::F;
 		if(cblack[4] * cblack[5] == 0) {
 			int dblack[] = { 0,0,0,0 };
 			black = getreal(type);
@@ -6461,9 +6490,11 @@ guess_cfa_pc:
 	for (num=i=0; i < (len & 0xffff); i++)
 	  num += getreal(type);
 	black += num/len + 0.5;
+        RT_blacklevel_from_constant = ThreeValBool::F;
 	break;
       case 50717:			/* WhiteLevel */
 	maximum = getint(type);
+        RT_whitelevel_from_constant = ThreeValBool::F;
 	break;
       case 50718:			/* DefaultScale */
 	pixel_aspect  = getreal(type);
@@ -6492,6 +6523,14 @@ guess_cfa_pc:
 	xyz[2] = 1 - xyz[0] - xyz[1];
 	FORC3 xyz[c] /= d65_white[c];
 	break;
+      case 50730:                       /* BaselineExposure */
+        if (dng_version) {
+            double be = getreal(type);
+            if (!std::isnan(be)) {
+                RT_baseline_exposure = be;
+            }
+        }
+        break;
       case 50740:			/* DNGPrivateData */
 	if (dng_version) break;
 	parse_minolta (j = get4()+base);
@@ -6600,8 +6639,6 @@ guess_cfa_pc:
   }
   if (!use_cm)
     FORCC pre_mul[c] /= cc[cm_D65][c][c];
-
-  RT_from_adobe_dng_converter = !strncmp(software, "Adobe DNG Converter", 19);
 
   return 0;
 }
@@ -8665,11 +8702,31 @@ void CLASS adobe_coeff (const char *make, const char *model)
   int i, j;
 
   sprintf (name, "%s %s", make, model);
+
+
+  // -- RT --------------------------------------------------------------------
+  const bool is_pentax_dng = dng_version && !strncmp(RT_software.c_str(), "PENTAX", 6);
+  // indicate that DCRAW wants these from constants (rather than having loaded these from RAW file
+  // note: this is simplified so far, in some cases dcraw calls this when it has say the black level
+  // from file, but then we will not provide any black level in the tables. This case is mainly just
+  // to avoid loading table values if we have loaded a DNG conversion of a raw file (which already
+  // have constants stored in the file).
+  if (RT_whitelevel_from_constant == ThreeValBool::X || is_pentax_dng) {
+    RT_whitelevel_from_constant = ThreeValBool::T;
+  }
+  if (RT_blacklevel_from_constant == ThreeValBool::X || is_pentax_dng) {
+    RT_blacklevel_from_constant = ThreeValBool::T;
+  }
+  if (RT_matrix_from_constant == ThreeValBool::X) {
+    RT_matrix_from_constant = ThreeValBool::T;
+  }
+  // -- RT --------------------------------------------------------------------
+  
   for (i=0; i < sizeof table / sizeof *table; i++)
     if (!strncmp (name, table[i].prefix, strlen(table[i].prefix))) {
-      if (table[i].black)   black   = (ushort) table[i].black;
-      if (table[i].maximum) maximum = (ushort) table[i].maximum;
-      if (table[i].trans[0]) {
+      if (RT_blacklevel_from_constant == ThreeValBool::T && table[i].black)   black   = (ushort) table[i].black;
+      if (RT_whitelevel_from_constant == ThreeValBool::T && table[i].maximum) maximum = (ushort) table[i].maximum;
+      if (RT_matrix_from_constant == ThreeValBool::T && table[i].trans[0]) {
 	for (raw_color = j=0; j < 12; j++)
 	  ((double *)cam_xyz)[j] = table[i].trans[j] / 10000.0;
 	cam_xyz_coeff (rgb_cam, cam_xyz);
@@ -10107,14 +10164,16 @@ bw:   colors = 1;
 dng_skip:
   if ((use_camera_matrix & (use_camera_wb || dng_version))
         && cmatrix[0][0] > 0.125
-        && !RT_from_adobe_dng_converter /* RT -- do not use the embedded
-                                         * matrices for DNGs coming from the
-                                         * Adobe DNG Converter, to ensure
-                                         * consistency of WB values between
-                                         * DNG-converted and original raw
-                                         * files. See #4129 */) {
+        && strncmp(RT_software.c_str(), "Adobe DNG Converter", 19) != 0
+      /* RT -- do not use the embedded
+       * matrices for DNGs coming from the
+       * Adobe DNG Converter, to ensure
+       * consistency of WB values between
+       * DNG-converted and original raw
+       * files. See #4129 */) {
     memcpy (rgb_cam, cmatrix, sizeof cmatrix);
-    raw_color = 0;
+//    raw_color = 0;
+    RT_matrix_from_constant = ThreeValBool::F;
   }
   if(!strncmp(make, "Panasonic", 9) && !strncmp(model, "DMC-LX100",9))
 	adobe_coeff (make, model);
@@ -10148,7 +10207,14 @@ dng_skip:
     if (raw_width  < width ) raw_width  = width;
   }
   if (!tiff_bps) tiff_bps = 12;
-  if (!maximum) maximum = ((uint64_t)1 << tiff_bps) - 1; // use uint64_t to avoid overflow if tiff_bps == 32
+  if (!maximum) {
+      if (tiff_nifds == 1 && tiff_ifd[0].sample_format == 3) {
+          // float DNG, default white level is 1.0
+          maximum = 1;
+      } else {
+          maximum = ((uint64_t)1 << tiff_bps) - 1; // use uint64_t to avoid overflow if tiff_bps == 32
+      }
+  }
   if (!load_raw || height < 22 || width < 22 ||
 	tiff_samples > 6 || colors > 4)
     is_raw = 0;
@@ -10231,8 +10297,8 @@ notraw:
 
 /* RT: DNG Float */
 
-#include <zlib.h>
-#include <stdint.h>
+// #include <zlib.h>
+// #include <stdint.h>
 
 static void decodeFPDeltaRow(Bytef * src, Bytef * dst, size_t tileWidth, size_t realTileWidth, int bytesps, int factor) {
   // DecodeDeltaBytes
@@ -10264,9 +10330,10 @@ static void decodeFPDeltaRow(Bytef * src, Bytef * dst, size_t tileWidth, size_t 
 
 }
 
-#ifndef __F16C__
+#if 1 //ndef __F16C__
 // From DNG SDK dng_utils.h
-static inline uint32_t DNG_HalfToFloat(uint16_t halfValue) {
+static //inline
+uint32_t DNG_HalfToFloat(uint16_t halfValue) {
   int32_t sign     = (halfValue >> 15) & 0x00000001;
   int32_t exponent = (halfValue >> 10) & 0x0000001f;
   int32_t mantissa =  halfValue        & 0x000003ff;

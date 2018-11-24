@@ -202,13 +202,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         if (!highDetailNeeded) {
             // if below 100% magnification, take a fast path
-            if (rp.bayersensor.method != RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::NONE) && rp.bayersensor.method != RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::NONE)) {
+            if (rp.bayersensor.method != RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::NONE) && rp.bayersensor.method != RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO)) {
                 rp.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
             }
 
             //bayerrp.all_enhance = false;
 
-            if (rp.xtranssensor.method != RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::NONE) && rp.xtranssensor.method != RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::NONE)) {
+            if (rp.xtranssensor.method != RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::NONE) && rp.xtranssensor.method != RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO)) {
                 rp.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
             }
 
@@ -535,15 +535,18 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         if (todo &  (M_AUTOEXP | M_RGBCURVE)) {
             if (params.icm.workingTRC == "Custom") { //exec TRC IN free
-                Glib::ustring profile;
-                profile = params.icm.workingProfile;
+                if (oprevi == orig_prev) {
+                    oprevi = new Imagefloat(pW, pH);
+                    orig_prev->copyData(oprevi);
+                }
+
+                Glib::ustring profile = params.icm.workingProfile;
 
                 if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1") {
                     int  cw = oprevi->getWidth();
                     int  ch = oprevi->getHeight();
                     // put gamma TRC to 1
-                    Imagefloat* readyImg0 = NULL;
-                    readyImg0 = ipf.workingtrc(oprevi, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310);
+                    Imagefloat* readyImg0 = ipf.workingtrc(oprevi, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310);
                     #pragma omp parallel for
 
                     for (int row = 0; row < ch; row++) {
@@ -556,8 +559,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                     delete readyImg0;
                     //adjust TRC
-                    Imagefloat* readyImg = NULL;
-                    readyImg = ipf.workingtrc(oprevi, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope);
+                    Imagefloat* readyImg = ipf.workingtrc(oprevi, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope);
                     #pragma omp parallel for
 
                     for (int row = 0; row < ch; row++) {

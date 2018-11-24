@@ -220,7 +220,7 @@ void DirBrowser::updateDirTree (const Gtk::TreeModel::iterator& iter)
 void DirBrowser::updateVolumes ()
 {
 
-    int nvolumes = GetLogicalDrives ();
+    unsigned int nvolumes = GetLogicalDrives ();
 
     if (nvolumes != volumes) {
         GThreadLock lock;

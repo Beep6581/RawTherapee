@@ -717,6 +717,11 @@ void RawImageSource::getImage(const ColorTemp &ctemp, int tran, Imagefloat* imag
     gm /= area;
     bm /= area;
     bool doHr = (hrp.hrenabled && hrp.method != "Color");
+    const float expcomp = std::pow(2, ri->getBaselineExposure());
+    rm *= expcomp;
+    gm *= expcomp;
+    bm *= expcomp;
+    
 #ifdef _OPENMP
     #pragma omp parallel if(!d1x)       // omp disabled for D1x to avoid race conditions (see Issue 1088 http://code.google.com/p/rawtherapee/issues/detail?id=1088)
     {
@@ -4402,17 +4407,11 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
 //  very effective to reduce (or remove) the magenta, but with levels of grey !
 void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int width, float maxval, float* hlmax)
 {
-    const int ColorCount = 3;
+    constexpr int ColorCount = 3;
 
     // Transform matrixes rgb>lab and back
-    static const float trans[2][ColorCount][ColorCount] = {
-        { { 1, 1, 1 }, { 1.7320508, -1.7320508, 0 }, { -1, -1, 2 } },
-        { { 1, 1, 1 }, { 1, -1, 1 }, { 1, 1, -1 } }
-    };
-    static const float itrans[2][ColorCount][ColorCount] = {
-        { { 1, 0.8660254, -0.5 }, { 1, -0.8660254, -0.5 }, { 1, 0, 1 } },
-        { { 1, 1, 1 }, { 1, -1, 1 }, { 1, 1, -1 } }
-    };
+    constexpr float trans[ColorCount][ColorCount] = { { 1, 1, 1 }, { 1.7320508, -1.7320508, 0 }, { -1, -1, 2 } };
+    constexpr float itrans[ColorCount][ColorCount] = { { 1, 0.8660254, -0.5 }, { 1, -0.8660254, -0.5 }, { 1, 0, 1 } };
 
 #define FOREACHCOLOR for (int c=0; c < ColorCount; c++)
 
@@ -4469,7 +4468,7 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
 
                 for (int j = 0; j < ColorCount; j++)
                 {
-                    lab[i][c] += trans[ColorCount - 3][c][j] * cam[i][j];
+                    lab[i][c] += trans[c][j] * cam[i][j];
                 }
             }
 
@@ -4493,7 +4492,7 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
 
             for (int j = 0; j < ColorCount; j++)
             {
-                cam[0][c] += itrans[ColorCount - 3][c][j] * lab[0][j];
+                cam[0][c] += itrans[c][j] * lab[0][j];
             }
         }
         FOREACHCOLOR rgb[c] = cam[0][c] / ColorCount;

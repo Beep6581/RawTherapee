@@ -42,15 +42,15 @@ protected:
 public:
 
     RGBCurves ();
-    ~RGBCurves ();
+    ~RGBCurves () override;
 
-    void read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setBatchMode    (bool batchMode);
-    void setEditProvider (EditDataProvider *provider);
-    void autoOpenCurve   ();
+    void read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setBatchMode    (bool batchMode) override;
+    void setEditProvider (EditDataProvider *provider) override;
+    void autoOpenCurve   () override;
 
-    void curveChanged (CurveEditor* ce);
+    void curveChanged (CurveEditor* ce) override;
     void updateCurveBackgroundHistogram(
         const LUTu& histToneCurve,
         const LUTu& histLCurve,
@@ -64,7 +64,7 @@ public:
         const LUTu& histLRETI
     );
     void lumamodeChanged  ();
-    void enabledChanged();
+    void enabledChanged() override;
 };
 
 #endif

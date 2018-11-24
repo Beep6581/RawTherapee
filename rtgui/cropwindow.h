@@ -134,7 +134,7 @@ class CropWindow : public LWButtonListener, public CropDisplayHandler, public Ed
 public:
     CropHandler cropHandler;
     CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDetailWindow);
-    ~CropWindow ();
+    ~CropWindow () override;
 
     void setDecorated       (bool decorated)
     {
@@ -150,19 +150,19 @@ public:
     }
     void deleteColorPickers ();
 
-    void screenCoordToCropBuffer (int phyx, int phyy, int& cropx, int& cropy);
-    void screenCoordToImage (int phyx, int phyy, int& imgx, int& imgy);
+    void screenCoordToCropBuffer (int phyx, int phyy, int& cropx, int& cropy) override;
+    void screenCoordToImage (int phyx, int phyy, int& imgx, int& imgy) override;
     void screenCoordToCropCanvas (int phyx, int phyy, int& prevx, int& prevy);
-    void imageCoordToCropCanvas (int imgx, int imgy, int& phyx, int& phyy);
-    void imageCoordToScreen (int imgx, int imgy, int& phyx, int& phyy);
-    void imageCoordToCropBuffer (int imgx, int imgy, int& phyx, int& phyy);
-    void imageCoordToCropImage (int imgx, int imgy, int& phyx, int& phyy);
-    int scaleValueToImage (int value);
-    float scaleValueToImage (float value);
-    double scaleValueToImage (double value);
-    int scaleValueToCanvas (int value);
-    float scaleValueToCanvas (float value);
-    double scaleValueToCanvas (double value);
+    void imageCoordToCropCanvas (int imgx, int imgy, int& phyx, int& phyy) override;
+    void imageCoordToScreen (int imgx, int imgy, int& phyx, int& phyy) override;
+    void imageCoordToCropBuffer (int imgx, int imgy, int& phyx, int& phyy) override;
+    void imageCoordToCropImage (int imgx, int imgy, int& phyx, int& phyy) override;
+    int scaleValueToImage (int value) override;
+    float scaleValueToImage (float value) override;
+    double scaleValueToImage (double value) override;
+    int scaleValueToCanvas (int value) override;
+    float scaleValueToCanvas (float value) override;
+    double scaleValueToCanvas (double value) override;
     double getZoomFitVal ();
     void setPosition (int x, int y);
     void getPosition (int& x, int& y);
@@ -197,8 +197,8 @@ public:
     void setEditSubscriber (EditSubscriber* newSubscriber);
 
     // interface lwbuttonlistener
-    void buttonPressed (LWButton* button, int actionCode, void* actionData);
-    void redrawNeeded  (LWButton* button);
+    void buttonPressed (LWButton* button, int actionCode, void* actionData) override;
+    void redrawNeeded  (LWButton* button) override;
 
     // crop handling
     void getCropRectangle      (int& x, int& y, int& w, int& h);
@@ -220,10 +220,10 @@ public:
     void delCropWindowListener (CropWindowListener* l);
 
     // crophandlerlistener interface
-    void cropImageUpdated ();
-    void cropWindowChanged ();
-    void initialImageArrived ();
-    void setDisplayPosition (int x, int y);
+    void cropImageUpdated () override;
+    void cropWindowChanged () override;
+    void initialImageArrived () override;
+    void setDisplayPosition (int x, int y) override;
 
     void remoteMove      (int deltaX, int deltaY);
     void remoteMoveReady ();

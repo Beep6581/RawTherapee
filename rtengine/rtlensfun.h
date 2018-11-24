@@ -38,7 +38,7 @@ class LFModifier final :
     public NonCopyable
 {
 public:
-    ~LFModifier();
+    ~LFModifier() override;
 
     explicit operator bool() const;
 

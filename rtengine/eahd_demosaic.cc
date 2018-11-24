@@ -163,7 +163,7 @@ inline void RawImageSource::interpolate_row_rb (float* ar, float* ab, float* pg,
             n++;
         }
 
-        nonGreen2[j] = cg[j] + nonGreen / n;
+        nonGreen2[j] = cg[j] + nonGreen / std::max(n, 1);
 
         // linear R-G interp. horizontally
         float val1;

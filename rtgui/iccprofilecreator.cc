@@ -833,23 +833,29 @@ void ICCProfileCreator::savePressed()
     } else if (gammaPreset == "sRGB_g2.4_s12.92") {
         sGammaPreset = "sRGB_g=2.4_s=12.92310";
         ga[0] = 2.40;    //sRGB 2.4 12.92  - RT default as Lightroom
-        ga[1] = 0.947858;
-        ga[2] = 0.052142;
-        ga[3] = 0.077399;
-        ga[4] = 0.039293;
+        ga[1] = 0.947867;
+        ga[2] = 0.052133;
+        ga[3] = 0.077381;
+        ga[4] = 0.039286;
+        //g3 = 0.00340
+        //g4 = 0.0550
+        //g5 = 0.449842
         presetGamma = 2.4;
         presetSlope = 12.92310;
 
     } else if (gammaPreset == "BT709_g2.2_s4.5") {
         sGammaPreset = "BT709_g=2.2_s=4.5";
-        ga[0] = 2.22;    //BT709  2.2  4.5  - my preferred as D.Coffin
+        ga[0] = 2.22;    //BT709  2.22  4.5  - my preferred as D.Coffin
         ga[1] = 0.909995;
         ga[2] = 0.090005;
         ga[3] = 0.222222;
         ga[4] = 0.081071;
-        presetGamma = 2.2;
+        //g3=0.018016
+        //g4=0.098907
+        //g5=0.517448
+        presetGamma = 2.22;
         presetSlope = 4.5;
-
+        
     } else if (gammaPreset == "linear_g1.0") {
         sGammaPreset = "Linear_g=1.0";
         ga[0] = 1.0;    //gamma=1 linear : for high dynamic images (cf D.Coffin...)
@@ -1125,7 +1131,7 @@ void ICCProfileCreator::savePressed()
 
             //calculate XYZ matrix for each primaries and each temp (D50, D65...)
 
-            // reduce coordonate of primaries
+            // reduce coordinate of primaries
             //printf("p0=%f p1=%f p2=%f p3=%f p4=%f p5=%f \n", p[0], p[1], p[2], p[3],p[4], p[5]);
             double Xr = p[0] / p[1];
             double Yr = 1.0;

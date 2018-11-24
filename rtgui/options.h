@@ -108,8 +108,8 @@ public:
     class Error: public std::exception
     {
     public:
-        Error (const Glib::ustring &msg): msg_ (msg) {}
-        const char *what() const throw()
+        explicit Error (const Glib::ustring &msg): msg_ (msg) {}
+        const char *what() const throw() override
         {
             return msg_.c_str();
         }

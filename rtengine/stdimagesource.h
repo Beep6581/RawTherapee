@@ -40,66 +40,66 @@ protected:
 
 public:
     StdImageSource ();
-    ~StdImageSource ();
+    ~StdImageSource () override;
 
-    int         load        (const Glib::ustring &fname);
-    void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw);
-    ColorTemp   getWB       () const
+    int         load        (const Glib::ustring &fname) override;
+    void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw) override;
+    ColorTemp   getWB       () const override
     {
         return wb;
     }
-    void        getAutoWBMultipliers (double &rm, double &gm, double &bm);
-    ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal);
+    void        getAutoWBMultipliers (double &rm, double &gm, double &bm) override;
+    ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal) override;
 
-    eSensorType getSensorType() const {return ST_NONE;}
-    bool isMono() const {return false;}
+    eSensorType getSensorType() const override {return ST_NONE;}
+    bool isMono() const override {return false;}
 
-    bool        isWBProviderReady ()
+    bool        isWBProviderReady () override
     {
         return true;
     };
 
-    void        getAutoExpHistogram (LUTu &histogram, int& histcompr);
+    void        getAutoExpHistogram (LUTu &histogram, int& histcompr) override;
 
-    double      getDefGain  () const
+    double      getDefGain  () const override
     {
         return 0.0;
     }
 
-    void        getFullSize (int& w, int& h, int tr = TR_NONE);
-    void        getSize     (const PreviewProps &pp, int& w, int& h);
+    void        getFullSize (int& w, int& h, int tr = TR_NONE) override;
+    void        getSize     (const PreviewProps &pp, int& w, int& h) override;
 
     ImageIO*    getImageIO   ()
     {
         return img;
     }
-    ImageMatrices* getImageMatrices ()
+    ImageMatrices* getImageMatrices () override
     {
         return (ImageMatrices*)nullptr;
     }
-    bool        isRAW() const
+    bool        isRAW() const override
     {
         return false;
     }
 
-    void        setProgressListener (ProgressListener* pl)
+    void        setProgressListener (ProgressListener* pl) override
     {
         plistener = pl;
     }
 
-    void        convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb);// RAWParams raw will not be used for non-raw files (see imagesource.h)
+    void        convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb) override;// RAWParams raw will not be used for non-raw files (see imagesource.h)
     static void colorSpaceConversion (Imagefloat* im, const ColorManagementParams &cmp, cmsHPROFILE embedded, IIOSampleFormat sampleFormat);
 
-    bool        isRGBSourceModified() const
+    bool        isRGBSourceModified() const override
     {
         return rgbSourceModified;
     }
-    void setCurrentFrame(unsigned int frameNum) {}
-    int getFrameCount() {return 1;}
-    int getFlatFieldAutoClipValue() {return 0;}
+    void setCurrentFrame(unsigned int frameNum) override {}
+    int getFrameCount() override {return 1;}
+    int getFlatFieldAutoClipValue() override {return 0;}
 
 
-    void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) { R = G = B = 0;}
+    void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) override { R = G = B = 0;}
 
 
 };

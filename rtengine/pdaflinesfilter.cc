@@ -62,7 +62,7 @@ public:
         ++r[col / TILE_SIZE];
     }
     
-    float operator()(int row, int col) const
+    float operator()(int row, int col) const override
     {
         int y = row / TILE_SIZE;
         int x = col / TILE_SIZE;
@@ -136,7 +136,7 @@ public:
         offset_(offset)
     {}
 
-    float operator()(int row) const
+    float operator()(int row) const override
     {
         static constexpr float BORDER[] = { 1.f, 1.f, 0.8f, 0.5f, 0.2f };
         static constexpr int BORDER_WIDTH = sizeof(BORDER)/sizeof(float) - 1;

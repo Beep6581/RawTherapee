@@ -36,12 +36,12 @@ public:
     }
 
     // ProgressListener interface
-    void setProgress(double p)
+    void setProgress(double p) override
     {
         GThreadLock lock;
         pl->setProgress(p);
     }
-    void setProgressStr(const Glib::ustring& str)
+    void setProgressStr(const Glib::ustring& str) override
     {
         GThreadLock lock;
         Glib::ustring progrstr;
@@ -49,13 +49,13 @@ public:
         pl->setProgressStr(progrstr);
     }
 
-    void setProgressState(bool inProcessing)
+    void setProgressState(bool inProcessing) override
     {
         GThreadLock lock;
         pl->setProgressState(inProcessing);
     }
 
-    void error(const Glib::ustring& descr)
+    void error(const Glib::ustring& descr) override
     {
         GThreadLock lock;
         pl->error(descr);

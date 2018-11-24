@@ -56,11 +56,11 @@ class EditorPanel final :
 {
 public:
     explicit EditorPanel (FilePanel* filePanel = nullptr);
-    ~EditorPanel ();
+    ~EditorPanel () override;
 
     void open (Thumbnail* tmb, rtengine::InitialImage* isrc);
     void setAspect ();
-    void on_realize ();
+    void on_realize () override;
     void leftPaneButtonReleased (GdkEventButton *event);
     void rightPaneButtonReleased (GdkEventButton *event);
 
@@ -83,10 +83,10 @@ public:
         return realized;
     }
     // ProgressListener interface
-    void setProgress(double p);
-    void setProgressStr(const Glib::ustring& str);
-    void setProgressState(bool inProcessing);
-    void error(const Glib::ustring& descr);
+    void setProgress(double p) override;
+    void setProgressStr(const Glib::ustring& str) override;
+    void setProgressState(bool inProcessing) override;
+    void error(const Glib::ustring& descr) override;
 
     void error(const Glib::ustring& title, const Glib::ustring& descr);
     void displayError(const Glib::ustring& title, const Glib::ustring& descr);  // this is called by error in the gtk thread
@@ -98,14 +98,14 @@ public:
         const rtengine::ProcEvent& ev,
         const Glib::ustring& descr,
         const ParamsEdited* paramsEdited = nullptr
-    );
-    void clearParamChanges();
+    ) override;
+    void clearParamChanges() override;
 
     // thumbnaillistener interface
-    void procParamsChanged (Thumbnail* thm, int whoChangedIt);
+    void procParamsChanged (Thumbnail* thm, int whoChangedIt) override;
 
     // HistoryBeforeLineListener
-    void historyBeforeLineChanged (const rtengine::procparams::ProcParams& params);
+    void historyBeforeLineChanged (const rtengine::procparams::ProcParams& params) override;
 
     // HistogramListener
     void histogramChanged(
@@ -123,7 +123,7 @@ public:
         const LUTu& histBlueRaw,
         const LUTu& histChroma,
         const LUTu& histLRETI
-    );
+    ) override;
 
     // event handlers
     void info_toggled ();

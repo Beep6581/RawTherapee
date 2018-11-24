@@ -262,104 +262,87 @@ protected:
 
 public:
 
-    ImProcCoordinator();
-    ~ImProcCoordinator();
-    void assign(ImageSource* imgsrc);
+    ImProcCoordinator ();
+    ~ImProcCoordinator () override;
+    void assign     (ImageSource* imgsrc);
 
-    void        getParams(procparams::ProcParams* dst)
+    void        getParams (procparams::ProcParams* dst) override
     {
         *dst = params;
     }
 
-    void        startProcessing(int changeCode);
-    ProcParams* beginUpdateParams();
-    void        endUpdateParams(ProcEvent change);   // must be called after beginUpdateParams, triggers update
-    void        endUpdateParams(int changeFlags);
-    void        stopProcessing();
-//    void updatePreviewImage (int todo, Crop* cropCall = NULL);
-
-//           Glib::ustring datal;
+    void        startProcessing (int changeCode) override;
+    ProcParams* beginUpdateParams () override;
+    void        endUpdateParams (ProcEvent change) override;  // must be called after beginUpdateParams, triggers update
+    void        endUpdateParams (int changeFlags) override;
+    void        stopProcessing () override;
 
     std::string *retistrsav;
 
-
-
-    void setPreviewScale(int scale)
+    void setPreviewScale    (int scale) override
     {
         setScale(scale);
     }
-    int  getPreviewScale()
+    int  getPreviewScale    () override
     {
         return scale;
     }
 
     //void fullUpdatePreviewImage  ();
 
-    int getFullWidth()
+    int getFullWidth () override
     {
         return fullw;
     }
-    int getFullHeight()
+    int getFullHeight () override
     {
         return fullh;
     }
 
-    int getPreviewWidth()
+    int getPreviewWidth () override
     {
         return pW;
     }
-    int getPreviewHeight()
+    int getPreviewHeight () override
     {
         return pH;
     }
 
-    DetailedCrop* createCrop(::EditDataProvider *editDataProvider, bool isDetailWindow);
-    /*
-    <<<<<<< HEAD
-        bool getAutoWB(double& temp, double& green, double equal, double tempBias);
-        void getCamWB(double& temp, double& green);
-        void getSpotWB(int x, int y, int rectSize, double& temp, double& green);
-        void getAutoCrop(double ratio, int &x, int &y, int &w, int &h);
+    DetailedCrop* createCrop  (::EditDataProvider *editDataProvider, bool isDetailWindow) override;
 
-        void setMonitorProfile(const Glib::ustring& profile, RenderingIntent intent);
-        void getMonitorProfile(Glib::ustring& profile, RenderingIntent& intent) const;
-        void setSoftProofing(bool softProof, bool gamutCheck);
-        void getSoftProofing(bool &softProof, bool &gamutCheck);
-    =======
-    */
-    bool getAutoWB(double& temp, double& green, double equal, double tempBias);
-    void getCamWB(double& temp, double& green);
-    void getSpotWB(int x, int y, int rectSize, double& temp, double& green);
-    void getAutoCrop(double ratio, int &x, int &y, int &w, int &h);
-    bool getHighQualComputed();
-    void setHighQualComputed();
-    void setMonitorProfile(const Glib::ustring& profile, RenderingIntent intent);
-    void getMonitorProfile(Glib::ustring& profile, RenderingIntent& intent) const;
-    void setSoftProofing(bool softProof, bool gamutCheck);
-    void getSoftProofing(bool &softProof, bool &gamutCheck);
-    void setSharpMask(bool sharpMask);
-    bool updateTryLock()
+    bool getAutoWB   (double& temp, double& green, double equal, double tempBias) override;
+    void getCamWB    (double& temp, double& green) override;
+    void getSpotWB   (int x, int y, int rectSize, double& temp, double& green) override;
+    void getAutoCrop (double ratio, int &x, int &y, int &w, int &h) override;
+    bool getHighQualComputed() override;
+    void setHighQualComputed() override;
+    void setMonitorProfile (const Glib::ustring& profile, RenderingIntent intent) override;
+    void getMonitorProfile (Glib::ustring& profile, RenderingIntent& intent) const override;
+    void setSoftProofing   (bool softProof, bool gamutCheck) override;
+    void getSoftProofing   (bool &softProof, bool &gamutCheck) override;
+    void setSharpMask      (bool sharpMask) override;
+    bool updateTryLock () override
     {
         return updaterThreadStart.trylock();
     }
-    void updateUnLock()
+    void updateUnLock () override
     {
         updaterThreadStart.unlock();
     }
 
-    void setProgressListener(ProgressListener* pl)
+    void setProgressListener (ProgressListener* pl) override
     {
         plistener = pl;
     }
-    void setPreviewImageListener(PreviewImageListener* il)
+    void setPreviewImageListener    (PreviewImageListener* il) override
     {
         imageListener = il;
     }
-    void setSizeListener(SizeListener* il)
+    void setSizeListener     (SizeListener* il) override
     {
         sizeListeners.push_back(il);
     }
-    void delSizeListener(SizeListener* il)
+    void delSizeListener     (SizeListener* il) override
     {
         std::vector<SizeListener*>::iterator it = std::find(sizeListeners.begin(), sizeListeners.end(), il);
 
@@ -367,71 +350,70 @@ public:
             sizeListeners.erase(it);
         }
     }
-    void setAutoExpListener(AutoExpListener* ael)
+    void setAutoExpListener  (AutoExpListener* ael) override
     {
         aeListener = ael;
     }
-    void setHistogramListener(HistogramListener *h)
+    void setHistogramListener (HistogramListener *h) override
     {
         hListener = h;
     }
-    void setAutoCamListener(AutoCamListener* acl)
+    void setAutoCamListener  (AutoCamListener* acl) override
     {
         acListener = acl;
     }
-    void setAutoBWListener(AutoBWListener* abw)
+    void setAutoBWListener   (AutoBWListener* abw) override
     {
         abwListener = abw;
     }
-
-    void setAutoWBListener(AutoWBListener* awb)
+    void setAutoWBListener   (AutoWBListener* awb) override
     {
         awbListener = awb;
     }
-    void setAutoColorTonListener(AutoColorTonListener* bwct)
+    void setAutoColorTonListener   (AutoColorTonListener* bwct) override
     {
         actListener = bwct;
     }
-    void setAutoChromaListener(AutoChromaListener* adn)
+    void setAutoChromaListener  (AutoChromaListener* adn) override
     {
         adnListener = adn;
     }
-    void setRetinexListener(RetinexListener* adh)
+    void setRetinexListener  (RetinexListener* adh) override
     {
         dehaListener = adh;
     }
-    void setWaveletListener(WaveletListener* awa)
+    void setWaveletListener  (WaveletListener* awa) override
     {
         awavListener = awa;
     }
 
-    void setFrameCountListener(FrameCountListener* fcl)
+    void setFrameCountListener  (FrameCountListener* fcl) override
     {
         frameCountListener = fcl;
     }
 
-    void setFlatFieldAutoClipListener  (FlatFieldAutoClipListener* ffacl)
+    void setFlatFieldAutoClipListener  (FlatFieldAutoClipListener* ffacl) override
     {
         flatFieldAutoClipListener = ffacl;
     }
-    void setBayerAutoContrastListener  (AutoContrastListener* acl)
+    void setBayerAutoContrastListener  (AutoContrastListener* acl) override
     {
         bayerAutoContrastListener = acl;
     }
 
-    void setXtransAutoContrastListener  (AutoContrastListener* acl)
+    void setXtransAutoContrastListener  (AutoContrastListener* acl) override
     {
         xtransAutoContrastListener = acl;
     }
 
-    void setImageTypeListener(ImageTypeListener* itl)
+    void setImageTypeListener  (ImageTypeListener* itl) override
     {
         imageTypeListener = itl;
     }
 
-    void saveInputICCReference(const Glib::ustring& fname, bool apply_wb);
+    void saveInputICCReference (const Glib::ustring& fname, bool apply_wb) override;
 
-    InitialImage*  getInitialImage()
+    InitialImage*  getInitialImage () override
     {
         return imgsrc;
     }
