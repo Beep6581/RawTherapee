@@ -432,7 +432,7 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
 }
 
 
-Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int mul, Glib::ustring profile, double gampos, double slpos)
+void ImProcFunctions::workingtrc(Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring profile, double gampos, double slpos, bool normalizeIn, bool normalizeOut)
 {
     TMatrix wprof;
 
@@ -445,21 +445,19 @@ Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int
     }
     double toxyz[3][3] = {
         {
-            (wprof[0][0] / dx), //I have suppressed / Color::D50x
-            (wprof[0][1] / dx),
-            (wprof[0][2] / dx)
+            (wprof[0][0] / (dx * (normalizeIn ? 65535.0 : 1.0))), //I have suppressed / Color::D50x
+            (wprof[0][1] / (dx * (normalizeIn ? 65535.0 : 1.0))),
+            (wprof[0][2] / (dx * (normalizeIn ? 65535.0 : 1.0)))
         }, {
-            (wprof[1][0]),
-            (wprof[1][1]),
-            (wprof[1][2])
+            (wprof[1][0] / (normalizeIn ? 65535.0 : 1.0)),
+            (wprof[1][1] / (normalizeIn ? 65535.0 : 1.0)),
+            (wprof[1][2] / (normalizeIn ? 65535.0 : 1.0))
         }, {
-            (wprof[2][0] / dz), //I have suppressed / Color::D50z
-            (wprof[2][1] / dz),
-            (wprof[2][2] / dz)
+            (wprof[2][0] / (dz * (normalizeIn ? 65535.0 : 1.0))), //I have suppressed / Color::D50z
+            (wprof[2][1] / (dz * (normalizeIn ? 65535.0 : 1.0))),
+            (wprof[2][2] / (dz * (normalizeIn ? 65535.0 : 1.0)))
         }
     };
-
-    Imagefloat* image = new  Imagefloat(cw, ch);
 
     double pwr;
     double ts;
@@ -618,27 +616,22 @@ Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int
         #pragma omp parallel for if (multiThread)
 
         for (int i = 0; i < ch; i++) {
-            float* rr = working->r(i);
-            float* rg = working->g(i);
-            float* rb = working->b(i);
+            float* rr = src->r(i);
+            float* rg = src->g(i);
+            float* rb = src->b(i);
 
-            float* xa = (float*)image->r(i);
-            float* ya = (float*)image->g(i);
-            float* za = (float*)image->b(i);
+            float* xa = (float*)dst->r(i);
+            float* ya = (float*)dst->g(i);
+            float* za = (float*)dst->b(i);
 
             for (int j = 0; j < cw; j++) {
                 float r1 = rr[j];
                 float g1 = rg[j];
                 float b1 = rb[j];
 
-                float x_ = toxyz[0][0] * r1 + toxyz[0][1] * g1 + toxyz[0][2] * b1;
-                float y_ = toxyz[1][0] * r1 + toxyz[1][1] * g1 + toxyz[1][2] * b1;
-                float z_ = toxyz[2][0] * r1 + toxyz[2][1] * g1 + toxyz[2][2] * b1;
-
-                xa[j] = ( x_) ;
-                ya[j] = ( y_);
-                za[j] = ( z_);
-
+                xa[j] = toxyz[0][0] * r1 + toxyz[0][1] * g1 + toxyz[0][2] * b1;
+                ya[j] = toxyz[1][0] * r1 + toxyz[1][1] * g1 + toxyz[1][2] * b1;
+                za[j] = toxyz[2][0] * r1 + toxyz[2][1] * g1 + toxyz[2][2] * b1;
             }
         }
 
@@ -651,16 +644,14 @@ Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int
         cmsHTRANSFORM hTransform = cmsCreateTransform(iprof, TYPE_RGB_FLT, oprofdef, TYPE_RGB_FLT, params->icm.outputIntent, flags);
         lcmsMutex->unlock();
 
-        image->ExecCMSTransform2(hTransform);
+        dst->ExecCMSTransform2(hTransform, false);
 
         cmsDeleteTransform(hTransform);
-        image->normalizeFloatTo65535();
+        if (normalizeOut) {
+            dst->normalizeFloatTo65535();
+        }
 
     }
-
-
-    return image;
-
 }
 
 

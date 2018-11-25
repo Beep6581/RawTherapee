@@ -475,7 +475,7 @@ void Imagefloat::calcCroppedHistogram(const ProcParams &params, float scale, LUT
 }
 
 // Parallelized transformation; create transform with cmsFLAGS_NOCACHE!
-void Imagefloat::ExecCMSTransform2(cmsHTRANSFORM hTransform)
+void Imagefloat::ExecCMSTransform2(cmsHTRANSFORM hTransform, bool normalizeIn)
 {
 
     // LittleCMS cannot parallelize planar setups -- Hombre: LCMS2.4 can! But it we use this new feature, memory allocation
@@ -487,18 +487,25 @@ void Imagefloat::ExecCMSTransform2(cmsHTRANSFORM hTransform)
         AlignedBuffer<float> pBuf(width * 3);
 
 #ifdef _OPENMP
-        #pragma omp for schedule(static)
+        #pragma omp for schedule(dynamic, 16)
 #endif
 
         for (int y = 0; y < height; y++)
         {
             float *p = pBuf.data, *pR = r(y), *pG = g(y), *pB = b(y);
 
-            for (int x = 0; x < width; x++) {
-                *(p++) = *(pR++)/ 65535.f;
-                *(p++) = *(pG++)/ 65535.f;
-                *(p++) = *(pB++)/ 65535.f;
-				
+            if (normalizeIn) {
+                for (int x = 0; x < width; x++) {
+                    *(p++) = *(pR++)/ 65535.f;
+                    *(p++) = *(pG++)/ 65535.f;
+                    *(p++) = *(pB++)/ 65535.f;
+                }
+            } else {
+                for (int x = 0; x < width; x++) {
+                    *(p++) = *(pR++);
+                    *(p++) = *(pG++);
+                    *(p++) = *(pB++);
+                }
             }
 
             cmsDoTransform (hTransform, pBuf.data, pBuf.data, width);
