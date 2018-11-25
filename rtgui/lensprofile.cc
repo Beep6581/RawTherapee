@@ -78,9 +78,6 @@ LensProfilePanel::LensProfilePanel() :
 
     // Mode choice widgets:
 
-    corrUnchangedRB->hide();
-    corrGroup = corrUnchangedRB->get_group();
-
     setExpandAlignProperties(corrLcpFileChooser, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
     // Manually-selected profile widgets:
@@ -136,19 +133,18 @@ LensProfilePanel::LensProfilePanel() :
 
     // Populate modes grid:
 
-    modesGrid->attach(*corrUnchangedRB, 0, 0, 3, 1);
-    modesGrid->attach(*corrOffRB, 0, 1, 3, 1);
-    modesGrid->attach(*corrLensfunAutoRB, 0, 2, 3, 1);
-    modesGrid->attach(*corrLensfunManualRB, 0, 3, 3, 1);
+    modesGrid->attach(*corrOffRB, 0, 0, 3, 1);
+    modesGrid->attach(*corrLensfunAutoRB, 0, 1, 3, 1);
+    modesGrid->attach(*corrLensfunManualRB, 0, 2, 3, 1);
 
-    modesGrid->attach(*lensfunCamerasLbl, 0, 4, 1, 1);
-    modesGrid->attach(*lensfunCameras, 1, 4, 1, 1);
-    modesGrid->attach(*lensfunLensesLbl, 0, 5, 1, 1);
-    modesGrid->attach(*lensfunLenses, 1, 5, 1, 1);
-    modesGrid->attach(*warning, 2, 4, 1, 2);
+    modesGrid->attach(*lensfunCamerasLbl, 0, 3, 1, 1);
+    modesGrid->attach(*lensfunCameras, 1, 3, 1, 1);
+    modesGrid->attach(*lensfunLensesLbl, 0, 4, 1, 1);
+    modesGrid->attach(*lensfunLenses, 1, 4, 1, 1);
+    modesGrid->attach(*warning, 2, 3, 1, 2);
 
-    modesGrid->attach(*corrLcpFileRB, 0, 6, 1, 1);
-    modesGrid->attach(*corrLcpFileChooser, 1, 6, 2, 1);
+    modesGrid->attach(*corrLcpFileRB, 0, 5, 1, 1);
+    modesGrid->attach(*corrLcpFileChooser, 1, 5, 1, 1);
 
     // Populate distortions grid:
 
@@ -182,10 +178,6 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
 {
     disableListener();
     conUseDist.block(true);
-
-    if (!batchMode) {
-        corrUnchangedRB->hide();
-    }
 
     corrLensfunAutoRB->set_sensitive(true);
 
@@ -397,10 +389,9 @@ void LensProfilePanel::setBatchMode(bool yes)
     FoldableToolPanel::setBatchMode(yes);
 
     if (yes) {
-        corrUnchangedRB->show();
+        corrUnchangedRB->set_group(corrGroup);
+        modesGrid->attach_next_to(*corrUnchangedRB, Gtk::POS_TOP, 3, 1);
         corrUnchangedRB->set_active(true);
-    } else {
-        corrUnchangedRB->hide();
     }
 }
 
