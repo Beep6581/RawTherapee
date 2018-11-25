@@ -432,11 +432,9 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
 }
 
 
-void ImProcFunctions::workingtrc(Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring profile, double gampos, double slpos, bool normalizeIn, bool normalizeOut)
+void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, const Glib::ustring &profile, double gampos, double slpos, bool normalizeIn, bool normalizeOut)
 {
-    TMatrix wprof;
-
-        wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+    const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
     double dx = Color::D50x;
     double dz = Color::D50z;
@@ -574,18 +572,10 @@ void ImProcFunctions::workingtrc(Imagefloat* src, Imagefloat* dst, int cw, int c
     }
 
     GammaValues g_a; //gamma parameters
-    int mode = 0;
+    constexpr int mode = 0;
     Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
 
-    cmsCIExyY       xyD;
 
-    cmsCIExyYTRIPLE Primaries = {
-        {p[0], p[1], 1.0}, // red
-        {p[2], p[3], 1.0}, // green
-        {p[4], p[5], 1.0}  // blue
-    };
-
-    cmsToneCurve* GammaTRC[3];
     cmsFloat64Number gammaParams[7];
     gammaParams[4] = g_a[3] * ts;
     gammaParams[0] = gampos;
@@ -597,65 +587,63 @@ void ImProcFunctions::workingtrc(Imagefloat* src, Imagefloat* dst, int cw, int c
    // printf("ga0=%f ga1=%f ga2=%f ga3=%f ga4=%f\n", ga0, ga1, ga2, ga3, ga4);
 
     // 7 parameters for smoother curves
+    cmsCIExyY xyD;
     cmsWhitePointFromTemp(&xyD, (double)temp);
     if (profile == "ACESp0") {
         xyD = {0.32168, 0.33767, 1.0};//refine white point to avoid differences
     }
 
+    cmsToneCurve* GammaTRC[3];
     GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(NULL, five, gammaParams);//5 = more smoother than 4
+
+    const cmsCIExyYTRIPLE Primaries = {
+        {p[0], p[1], 1.0}, // red
+        {p[2], p[3], 1.0}, // green
+        {p[4], p[5], 1.0}  // blue
+    };
     const cmsHPROFILE oprofdef = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC);
+
     cmsFreeToneCurve(GammaTRC[0]);
 
     if (oprofdef) {
-        cmsUInt32Number flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;
-        cmsHPROFILE iprof = ICCStore::getInstance()->getXYZProfile();
+        constexpr cmsUInt32Number flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;
+        const cmsHPROFILE iprof = ICCStore::getInstance()->getXYZProfile();
         lcmsMutex->lock();
-        //   cmsHTRANSFORM hTransform = cmsCreateTransform(iprof, TYPE_RGB_16, oprofdef, TYPE_RGB_16, params->icm.outputIntent,  cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
-        cmsHTRANSFORM hTransform = cmsCreateTransform(iprof, TYPE_RGB_FLT, oprofdef, TYPE_RGB_FLT, params->icm.outputIntent, flags);
+        const cmsHTRANSFORM hTransform = cmsCreateTransform(iprof, TYPE_RGB_FLT, oprofdef, TYPE_RGB_FLT, params->icm.outputIntent, flags);
         lcmsMutex->unlock();
 #ifdef _OPENMP
         #pragma omp parallel if (multiThread)
 #endif
         {
             AlignedBuffer<float> pBuf(cw * 3);
+            const float normalize = normalizeOut ? 65535.f : 1.f;
 
 #ifdef _OPENMP
-            #pragma omp for schedule(dynamic, 16)
+            #pragma omp for schedule(dynamic, 16) nowait
 #endif
 
-            for (int i = 0; i < ch; i++) {
+            for (int i = 0; i < ch; ++i) {
                 float *p = pBuf.data;
-                float* rr = src->r(i);
-                float* rg = src->g(i);
-                float* rb = src->b(i);
+                for (int j = 0; j < cw; ++j) {
+                    const float r = src->r(i, j);
+                    const float g = src->g(i, j);
+                    const float b = src->b(i, j);
 
-                float* xa = (float*)dst->r(i);
-                float* ya = (float*)dst->g(i);
-                float* za = (float*)dst->b(i);
-
-                for (int j = 0; j < cw; j++) {
-                    float r1 = rr[j];
-                    float g1 = rg[j];
-                    float b1 = rb[j];
-
-                    *(p++) = toxyz[0][0] * r1 + toxyz[0][1] * g1 + toxyz[0][2] * b1;
-                    *(p++) = toxyz[1][0] * r1 + toxyz[1][1] * g1 + toxyz[1][2] * b1;
-                    *(p++) = toxyz[2][0] * r1 + toxyz[2][1] * g1 + toxyz[2][2] * b1;
+                    *(p++) = toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b;
+                    *(p++) = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
+                    *(p++) = toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b;
                 }
-                cmsDoTransform (hTransform, pBuf.data, pBuf.data, cw);
                 p = pBuf.data;
-                for (int x = 0; x < cw; x++) {
-                    *(xa++) = *(p++);
-                    *(ya++) = *(p++);
-                    *(za++) = *(p++);
+                cmsDoTransform(hTransform, p, p, cw);
+                for (int j = 0; j < cw; ++j) {
+                    dst->r(i, j) = *(p++) * normalize;
+                    dst->g(i, j) = *(p++) * normalize;
+                    dst->b(i, j) = *(p++) * normalize;
                 }
             }
         }
 
         cmsDeleteTransform(hTransform);
-        if (normalizeOut) {
-            dst->normalizeFloatTo65535();
-        }
     }
 }
 
