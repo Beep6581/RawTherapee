@@ -65,17 +65,18 @@ LensProfilePanel::LensProfilePanel() :
     }
 
     // Main containers:
+    
+    Gtk::Frame *nodesFrame = Gtk::manage(new Gtk::Frame(M("TP_LENSPROFILE_MODE_HEADER")));
 
     modesGrid->get_style_context()->add_class("grid-spacing");
     setExpandAlignProperties(modesGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    
+    Gtk::Frame *distFrame = Gtk::manage(new Gtk::Frame(M("TP_LENSPROFILE_USE_HEADER")));
 
     distGrid->get_style_context()->add_class("grid-spacing");
     setExpandAlignProperties(distGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
     // Mode choice widgets:
-
-    Gtk::Label* const corrHeaderLbl = Gtk::manage(new Gtk::Label(M("TP_LENSPROFILE_MODE_HEADER")));
-    setExpandAlignProperties(corrHeaderLbl, true, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
     corrUnchangedRB->hide();
     corrGroup = corrUnchangedRB->get_group();
@@ -133,37 +134,34 @@ LensProfilePanel::LensProfilePanel() :
 
     // Choice of properties to correct, applicable to all modes:
 
-    Gtk::Label* const useHeaderLbl = Gtk::manage(new Gtk::Label(M("TP_LENSPROFILE_USE_HEADER")));
-    setExpandAlignProperties(useHeaderLbl, true, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-
     // Populate modes grid:
 
-    modesGrid->attach(*corrHeaderLbl, 0, 0, 2, 1);
-    modesGrid->attach(*corrUnchangedRB, 0, 1, 2, 1);
-    modesGrid->attach(*corrOffRB, 0, 2, 2, 1);
-    modesGrid->attach(*corrLensfunAutoRB, 0, 3, 2, 1);
-    modesGrid->attach(*corrLensfunManualRB, 0, 4, 2, 1);
+    modesGrid->attach(*corrUnchangedRB, 0, 0, 3, 1);
+    modesGrid->attach(*corrOffRB, 0, 1, 3, 1);
+    modesGrid->attach(*corrLensfunAutoRB, 0, 2, 3, 1);
+    modesGrid->attach(*corrLensfunManualRB, 0, 3, 3, 1);
 
-    modesGrid->attach(*lensfunCamerasLbl, 0, 5, 1, 1);
-    modesGrid->attach(*lensfunCameras, 1, 5, 1, 1);
-    modesGrid->attach(*lensfunLensesLbl, 0, 6, 1, 1);
-    modesGrid->attach(*lensfunLenses, 1, 6, 1, 1);
-    modesGrid->attach(*warning, 2, 6, 1, 1);
+    modesGrid->attach(*lensfunCamerasLbl, 0, 4, 1, 1);
+    modesGrid->attach(*lensfunCameras, 1, 4, 1, 1);
+    modesGrid->attach(*lensfunLensesLbl, 0, 5, 1, 1);
+    modesGrid->attach(*lensfunLenses, 1, 5, 1, 1);
+    modesGrid->attach(*warning, 2, 4, 1, 2);
 
-    modesGrid->attach(*corrLcpFileRB, 0, 7, 1, 1);
-    modesGrid->attach(*corrLcpFileChooser, 1, 7, 1, 1);
+    modesGrid->attach(*corrLcpFileRB, 0, 6, 1, 1);
+    modesGrid->attach(*corrLcpFileChooser, 1, 6, 2, 1);
 
     // Populate distortions grid:
 
-    distGrid->attach(*useHeaderLbl, 0, 0, 1, 1);
-    distGrid->attach(*ckbUseDist, 0, 1, 1, 1);
-    distGrid->attach(*ckbUseVign, 0, 2, 1, 1);
-    distGrid->attach(*ckbUseCA, 0, 3, 1, 1);
+    distGrid->attach(*ckbUseDist, 0, 0, 1, 1);
+    distGrid->attach(*ckbUseVign, 0, 1, 1, 1);
+    distGrid->attach(*ckbUseCA, 0, 2, 1, 1);
 
     // Attach grids:
-
-    pack_start(*modesGrid);
-    pack_start(*distGrid);
+    nodesFrame->add(*modesGrid);
+    distFrame->add(*distGrid);
+    
+    pack_start(*nodesFrame, Gtk::PACK_EXPAND_WIDGET);
+    pack_start(*distFrame, Gtk::PACK_EXPAND_WIDGET);
 
     // Signals:
 
