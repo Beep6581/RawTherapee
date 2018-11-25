@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2018 TooWaBoo
-  Version 2.96
+  Version 2.98
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -164,7 +164,9 @@ undershoot {
 }
 
 label {
-    margin: 0 0.19em;
+    padding: 0.083333333333333333em 0;
+    margin: 0.19em;
+    min-height: 1.333333333333333333em;
 }
 
 /*** Frames ************************************************************************************/
@@ -323,11 +325,8 @@ fontchooser scrolledwindow,
     padding-bottom: 0.25em;
     background-color: @bg-dark-grey;
 }
-#Navigator box label {
-    padding: 0.166666666666666666em 0;
-}
-#Navigator > label:nth-child(2) {
-    margin-top: 0.5em;
+#Navigator label {
+    padding: 0;
 }
 
 /*** end ***************************************************************************************/
@@ -927,14 +926,18 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     border-bottom: 0.083333333333333333em solid @view-grid-border;
     margin-left: 0.083333333333333333em;
     margin-right: 0.083333333333333333em;
+    padding: 0 0.19em;
 }
 #ToolPanelNotebook > header tabs {
-    margin-bottom: 0.333333333333333333em;
+    margin: 0 0 0.25em;
 }
-#ToolPanelNotebook > header tab > box > image{
+#ToolPanelNotebook > header tab {
+    padding: 0;
+}
+#ToolPanelNotebook > header tab image{
     min-height: 2em;
     min-width: 2em;
-    margin: 0.25em 0 0.333333333333333333em;
+    margin: 0.19em 0.25em 0.333333333333333333em;
     padding: 0;
 }
 #ToolPanelNotebook > stack {
@@ -963,11 +966,6 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 #PrefNotebook > header {
     margin: -0.666666666666666666em -0.666666666666666666em 0.333333333333333333em;
 }
-#PrefNotebook > header tab label,
-#AboutNotebook > header tab label {
-    padding-top: 0.25em;
-    padding-bottom: 0.25em;
-}
 #PrefNotebook > stack {
     margin: 0 -0.666666666666666666em;
 }
@@ -993,9 +991,6 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 #MetaPanelNotebook > header > tabs {
     background-color: @bg-dark-grey;
     padding-left: 0.333333333333333333em;
-}
-#MetaPanelNotebook > header tab label{
-    margin: 0.083333333333333333em 0.083333333333333333em 0.19em;
 }
 #MetaPanelNotebook > stack {
     background-color: @bg-dark-grey;
@@ -1036,8 +1031,10 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     background-color: transparent;
 }
 
-#MetaPanelNotebook label {
-    padding: 0.083333333333333333em 0 0;
+#MetaPanelNotebook stack label {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0;
 }
 
 /*** end ***************************************************************************************/
@@ -1093,9 +1090,13 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     border-left: 0.083333333333333333em solid @bg-dark-grey;
 }
 
+/* !!! Must be same height as "Small Lock Button" */
 #BeforeAfterContainer label {
-    min-height: 2.666666666666666666em;
     padding: 0 0.5em;
+    min-height: 2em;
+    min-width: 2em;
+    margin: 0.25em 0;
+    border: 0.083333333333333333em solid transparent;
 }
 
 #EditorToolbarTop {
@@ -1478,18 +1479,33 @@ scale + image + image + button.flat {
     margin-bottom: 0.095em;
 }
 
-/*Color chooser & buttons */
+/* Color chooser & buttons */
 button.color {
-    min-height: 1.166666666666666666em;
-    min-width: 2.75em;
-    padding: 0.25em;
+    min-width: 3.25em;
+    box-shadow: none;
+    background-image: none;
+    background-color: transparent;
 }
-button.color colorswatch,
+
+button.color colorswatch {
+    min-height: 0;
+    min-width: 0;
+    margin: 1px;
+    border-radius: 0.2em;
+}
+
 colorchooser colorswatch {
     border: 1px solid @bg-button-border;
 }
 colorchooser colorswatch#add-color-button:first-child {
   border-radius: 5.5px 0 0 5.5px;
+}
+
+/* Font chooser button */
+button.font label{
+    min-height: 0;
+    min-width: 0;
+    margin: 0 0.19em;
 }
 
 /* Save, Cancel, OK ... buttons */
@@ -1708,9 +1724,6 @@ window treeview > header image {
     min-width: 1.333333333333333333em;
 }
 
-.view button.text-button label {
-    margin: 0;
-}
 window .view button {
     border: none;
     border-bottom: 0.083333333333333333em solid @view-grid-border;
@@ -1792,11 +1805,7 @@ popover button.text-button:active {
 /*** end ***************************************************************************************/
 
 /*** Checkbox & Radio **************************************************************************/
-checkbutton {
-    padding: 0;
-    margin: 0.083333333333333333em 0.19em;
-    min-height: 1.666666666666666666em;/*x*/
-}
+checkbutton,
 radiobutton {
     padding: 0.083333333333333333em 0;
     margin: 0.19em;
@@ -1839,16 +1848,11 @@ frame > checkbutton check{
 }
 
 #PartialPaste checkbutton {
-    min-height: 1.166666666666666666em;
-    margin-top: calc(0.416666666666666666em - 4px);
-    margin-bottom: calc(0.416666666666666666em - 4px)
+    padding: 0;
+    margin: 0.19em 0 0 0.583333333333333333em;
 }
 #PartialPaste checkbutton:not(#PartialPasteHeader) {
-    margin-left: 1.166666666666666666em;
-}
-#PartialPasteHeader {
-    margin-left: 0.5em;
-    padding-top: calc(0.666666666666666666em - 5px)
+    margin: 0 0 0 1.166666666666666666em;
 }
 
 /*** end ***************************************************************************************/
@@ -1908,8 +1912,8 @@ spinbutton {
     margin-bottom: 0.333333333333333333em;
 }
 #MyExpander checkbutton + label + spinbutton {
-    margin-top: 0.333333333333333333em;
-    margin-bottom: 0.333333333333333333em;
+    margin-top: 0.416666666666666666em;
+    margin-bottom: 0.416666666666666666em;
 }
 /**/
 
