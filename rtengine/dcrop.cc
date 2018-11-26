@@ -824,37 +824,13 @@ void Crop::update(int todo)
             const Glib::ustring profile = params.icm.workingProfile;
 
             if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1") {
-                int cw = baseCrop->getWidth();
-                int ch = baseCrop->getHeight();
+                const int cw = baseCrop->getWidth();
+                const int ch = baseCrop->getHeight();
                 workingCrop = new Imagefloat(cw, ch);
-                baseCrop->copyData(workingCrop);
                 //first put gamma TRC to 1
-                Imagefloat* readyImg0 = parent->ipf.workingtrc(workingCrop, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310);
-                #pragma omp parallel for
-
-                for (int row = 0; row < ch; row++) {
-                    for (int col = 0; col < cw; col++) {
-                        workingCrop->r(row, col) = (float)readyImg0->r(row, col);
-                        workingCrop->g(row, col) = (float)readyImg0->g(row, col);
-                        workingCrop->b(row, col) = (float)readyImg0->b(row, col);
-                    }
-                }
-
-                delete readyImg0;
-
+                parent->ipf.workingtrc(baseCrop, workingCrop, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310, true, false);
                 //adjust gamma TRC
-                Imagefloat* readyImg = parent->ipf.workingtrc(workingCrop, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope);
-                #pragma omp parallel for
-
-                for (int row = 0; row < ch; row++) {
-                    for (int col = 0; col < cw; col++) {
-                        workingCrop->r(row, col) = (float)readyImg->r(row, col);
-                        workingCrop->g(row, col) = (float)readyImg->g(row, col);
-                        workingCrop->b(row, col) = (float)readyImg->b(row, col);
-                    }
-                }
-
-                delete readyImg;
+                parent->ipf.workingtrc(workingCrop, workingCrop, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope, false, true);
             }
         }
         double rrm, ggm, bbm;

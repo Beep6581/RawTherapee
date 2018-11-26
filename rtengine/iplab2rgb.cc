@@ -303,82 +303,7 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
     }
 
     Imagefloat* image = new Imagefloat(cw, ch);
-
-    cmsHPROFILE oprof = nullptr;
-
-    oprof = ICCStore::getInstance()->getProfile(icm.outputProfile);
-    Glib::ustring outtest = icm.outputProfile;
-    std::string fileis_RTv2 = outtest.substr(0, 4);
-    //printf("IsRTv2=%s\n", fileis_RTv2.c_str());
-    if(fileis_RTv2 == "RTv2") {//Only fot ICC v2 : read tag from desc to retrieve gamma and slope save before in generate ICC v2
-    //due to bug in LCMS in CmsToneCurve
-    //printf("icmout=%s \n",icm.output.c_str());
-        GammaValues g_b; //gamma parameters
-        const double eps = 0.000000001; // not divide by zero
-        double gammatag = 2.4;
-        double slopetag = 12.92310;
-        cmsMLU *modelDescMLU = (cmsMLU*) (cmsReadTag(oprof, cmsSigDeviceModelDescTag));
-        if (modelDescMLU) {
-            cmsUInt32Number count = cmsMLUgetWide(modelDescMLU, "en", "US", nullptr, 0);  // get buffer length first
-            if (count) {
-                wchar_t *buffer = new wchar_t[count];
-                count = cmsMLUgetWide(modelDescMLU, "en", "US", buffer, count); // now put the string in the buffer
-                Glib::ustring modelDesc;
-#if __SIZEOF_WCHAR_T__ == 2
-                char* cModelDesc = g_utf16_to_utf8((unsigned short int*)buffer, -1, nullptr, nullptr, nullptr); // convert to utf-8 in a buffer allocated by glib
-                if (cModelDesc) {
-                    modelDesc.assign(cModelDesc);
-                    g_free(cModelDesc);
-                }
-#else
-                modelDesc = utf32_to_utf8(buffer, count);
-#endif
-                delete [] buffer;
-                if (!modelDesc.empty()) {
-                    std::size_t pos = modelDesc.find("g");
-                    std::size_t posmid = modelDesc.find("s");
-                    std::size_t posend = modelDesc.find("!");
-                    std::string strgamma = modelDesc.substr(pos + 1, (posmid - pos));
-                    gammatag = std::stod(strgamma.c_str());
-                    std::string strslope = modelDesc.substr(posmid + 1, (posend - posmid));
-                    slopetag = std::stod(strslope.c_str());
-                //	printf("gam=%f slo=%f\n", gammatag, slopetag);
-                }
-            } else {
-                printf("Error: lab2rgbOut  /  String length is null!\n");
-            }
-        } else {
-            printf("Error: lab2rgbOut  /  cmsReadTag/cmsSigDeviceModelDescTag failed!\n");
-        }
-
-        double pwr = 1.0 / gammatag;
-        double ts = slopetag;
-        double slope = slopetag == 0 ? eps : slopetag;
-
-        int mode = 0;
-        Color::calcGamma(pwr, ts, mode, g_b); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
-        cmsFloat64Number gammaParams[7]; //gamma parameters
-        gammaParams[4] = g_b[3] * ts;
-        gammaParams[0] = gammatag;
-        gammaParams[1] = 1. / (1.0 + g_b[4]);
-        gammaParams[2] = g_b[4] / (1.0 + g_b[4]);
-        gammaParams[3] = 1. / slope;
-        gammaParams[5] = 0.0;
-        gammaParams[6] = 0.0;
-
-        cmsToneCurve* GammaTRC[3];
-        if(slopetag == 0.) {
-            //printf("gammatag=%f\n", gammatag);
-            GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildGamma(NULL, gammatag);
-        }
-        else {
-            GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, gammaParams); //5 = smoother than 4
-        }
-        cmsWriteTag(oprof, cmsSigRedTRCTag, GammaTRC[0]);
-        cmsWriteTag(oprof, cmsSigGreenTRCTag, GammaTRC[1]);
-        cmsWriteTag(oprof, cmsSigBlueTRCTag, GammaTRC[2]);
-        cmsFreeToneCurve(GammaTRC[0]);
-    }
+    cmsHPROFILE oprof = ICCStore::getInstance()->getProfile(icm.outputProfile);
 
     if (oprof) {
         cmsUInt32Number flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;
@@ -432,42 +357,35 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
 }
 
 
-Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int mul, Glib::ustring profile, double gampos, double slpos)
+void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, const Glib::ustring &profile, double gampos, double slpos, bool normalizeIn, bool normalizeOut)
 {
-    TMatrix wprof;
-
-        wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+    const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
     double dx = Color::D50x;
     double dz = Color::D50z;
     {
         dx = dz = 1.0;
     }
-    double toxyz[3][3] = {
+    const float toxyz[3][3] = {
         {
-            (wprof[0][0] / dx), //I have suppressed / Color::D50x
-            (wprof[0][1] / dx),
-            (wprof[0][2] / dx)
+            static_cast<float>(wprof[0][0] / (dx * (normalizeIn ? 65535.0 : 1.0))), //I have suppressed / Color::D50x
+            static_cast<float>(wprof[0][1] / (dx * (normalizeIn ? 65535.0 : 1.0))),
+            static_cast<float>(wprof[0][2] / (dx * (normalizeIn ? 65535.0 : 1.0)))
         }, {
-            (wprof[1][0]),
-            (wprof[1][1]),
-            (wprof[1][2])
+            static_cast<float>(wprof[1][0] / (normalizeIn ? 65535.0 : 1.0)),
+            static_cast<float>(wprof[1][1] / (normalizeIn ? 65535.0 : 1.0)),
+            static_cast<float>(wprof[1][2] / (normalizeIn ? 65535.0 : 1.0))
         }, {
-            (wprof[2][0] / dz), //I have suppressed / Color::D50z
-            (wprof[2][1] / dz),
-            (wprof[2][2] / dz)
+            static_cast<float>(wprof[2][0] / (dz * (normalizeIn ? 65535.0 : 1.0))), //I have suppressed / Color::D50z
+            static_cast<float>(wprof[2][1] / (dz * (normalizeIn ? 65535.0 : 1.0))),
+            static_cast<float>(wprof[2][2] / (dz * (normalizeIn ? 65535.0 : 1.0)))
         }
     };
 
-    Imagefloat* image = new  Imagefloat(cw, ch);
-
-    double pwr;
-    double ts;
-    ts = slpos;
-
+    double pwr = 1.0 / gampos;
+    double ts = slpos;
     int five = mul;
 
-    pwr = 1.0 / gampos;
 
     if (gampos < 1.0) {
         pwr = gampos;
@@ -476,7 +394,7 @@ Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int
     }
 
     //  int select_temp = 1; //5003K
-    const double eps = 0.000000001; // not divide by zero
+    constexpr double eps = 0.000000001; // not divide by zero
 
     enum class ColorTemp {
         D50 = 5003, // for Widegamut, ProPhoto Best, Beta -> D50
@@ -486,181 +404,172 @@ Imagefloat* ImProcFunctions::workingtrc(Imagefloat* working, int cw, int ch, int
     };
     ColorTemp temp = ColorTemp::D50;
 
-    cmsHPROFILE oprofdef;
     float p[6]; //primaries
 
-    if (true) {
-        //primaries for 10 working profiles ==> output profiles
-        if (profile == "WideGamut") {
-            p[0] = 0.7350;    //Widegamut primaries
-            p[1] = 0.2650;
-            p[2] = 0.1150;
-            p[3] = 0.8260;
-            p[4] = 0.1570;
-            p[5] = 0.0180;
-        } else if (profile == "Adobe RGB") {
-            p[0] = 0.6400;    //Adobe primaries
-            p[1] = 0.3300;
-            p[2] = 0.2100;
-            p[3] = 0.7100;
-            p[4] = 0.1500;
-            p[5] = 0.0600;
-            temp = ColorTemp::D65;
-        } else if (profile == "sRGB") {
-            p[0] = 0.6400;    // sRGB primaries
-            p[1] = 0.3300;
-            p[2] = 0.3000;
-            p[3] = 0.6000;
-            p[4] = 0.1500;
-            p[5] = 0.0600;
-            temp = ColorTemp::D65;
-        } else if (profile == "BruceRGB") {
-            p[0] = 0.6400;    // Bruce primaries
-            p[1] = 0.3300;
-            p[2] = 0.2800;
-            p[3] = 0.6500;
-            p[4] = 0.1500;
-            p[5] = 0.0600;
-            temp = ColorTemp::D65;
-        } else if (profile == "Beta RGB") {
-            p[0] = 0.6888;    // Beta primaries
-            p[1] = 0.3112;
-            p[2] = 0.1986;
-            p[3] = 0.7551;
-            p[4] = 0.1265;
-            p[5] = 0.0352;
-        } else if (profile == "BestRGB") {
-            p[0] = 0.7347;    // Best primaries
-            p[1] = 0.2653;
-            p[2] = 0.2150;
-            p[3] = 0.7750;
-            p[4] = 0.1300;
-            p[5] = 0.0350;
-        } else if (profile == "Rec2020") {
-            p[0] = 0.7080;    // Rec2020 primaries
-            p[1] = 0.2920;
-            p[2] = 0.1700;
-            p[3] = 0.7970;
-            p[4] = 0.1310;
-            p[5] = 0.0460;
-            temp = ColorTemp::D65;
-        } else if (profile == "ACESp0") {
-            p[0] = 0.7347;    // ACES P0 primaries
-            p[1] = 0.2653;
-            p[2] = 0.0000;
-            p[3] = 1.0;
-            p[4] = 0.0001;
-            p[5] = -0.0770;
-            temp = ColorTemp::D60;
-        } else if (profile == "ACESp1") {
-            p[0] = 0.713;    // ACES P1 primaries
-            p[1] = 0.293;
-            p[2] = 0.165;
-            p[3] = 0.830;
-            p[4] = 0.128;
-            p[5] = 0.044;
-            temp = ColorTemp::D60;
-        } else if (profile == "ProPhoto") {
-            p[0] = 0.7347;    //ProPhoto and default primaries
-            p[1] = 0.2653;
-            p[2] = 0.1596;
-            p[3] = 0.8404;
-            p[4] = 0.0366;
-            p[5] = 0.0001;
-        } else {
-            p[0] = 0.7347;    //default primaries always unused
-            p[1] = 0.2653;
-            p[2] = 0.1596;
-            p[3] = 0.8404;
-            p[4] = 0.0366;
-            p[5] = 0.0001;
-        }
-
-        if (slpos == 0) {
-            slpos = eps;
-        }
-
-        GammaValues g_a; //gamma parameters
-        int mode = 0;
-        Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
-
-        cmsCIExyY       xyD;
-
-        cmsCIExyYTRIPLE Primaries = {
-            {p[0], p[1], 1.0}, // red
-            {p[2], p[3], 1.0}, // green
-            {p[4], p[5], 1.0}  // blue
-        };
-
-        cmsToneCurve* GammaTRC[3];
-        cmsFloat64Number gammaParams[7];
-        gammaParams[4] = g_a[3] * ts;
-        gammaParams[0] = gampos;
-        gammaParams[1] = 1. / (1.0 + g_a[4]);
-        gammaParams[2] = g_a[4] / (1.0 + g_a[4]);
-        gammaParams[3] = 1. / slpos;
-        gammaParams[5] = 0.0;
-        gammaParams[6] = 0.0;
-       // printf("ga0=%f ga1=%f ga2=%f ga3=%f ga4=%f\n", ga0, ga1, ga2, ga3, ga4);
-
-        // 7 parameters for smoother curves
-        cmsWhitePointFromTemp(&xyD, (double)temp);
-        if (profile == "ACESp0") {
-            xyD = {0.32168, 0.33767, 1.0};//refine white point to avoid differences
-        }
-        
-        GammaTRC[0] = GammaTRC[1] = GammaTRC[2] =   cmsBuildParametricToneCurve(NULL, five, gammaParams);//5 = more smoother than 4
-        oprofdef = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC);
-        cmsFreeToneCurve(GammaTRC[0]);
+    //primaries for 10 working profiles ==> output profiles
+    if (profile == "WideGamut") {
+        p[0] = 0.7350;    //Widegamut primaries
+        p[1] = 0.2650;
+        p[2] = 0.1150;
+        p[3] = 0.8260;
+        p[4] = 0.1570;
+        p[5] = 0.0180;
+    } else if (profile == "Adobe RGB") {
+        p[0] = 0.6400;    //Adobe primaries
+        p[1] = 0.3300;
+        p[2] = 0.2100;
+        p[3] = 0.7100;
+        p[4] = 0.1500;
+        p[5] = 0.0600;
+        temp = ColorTemp::D65;
+    } else if (profile == "sRGB") {
+        p[0] = 0.6400;    // sRGB primaries
+        p[1] = 0.3300;
+        p[2] = 0.3000;
+        p[3] = 0.6000;
+        p[4] = 0.1500;
+        p[5] = 0.0600;
+        temp = ColorTemp::D65;
+    } else if (profile == "BruceRGB") {
+        p[0] = 0.6400;    // Bruce primaries
+        p[1] = 0.3300;
+        p[2] = 0.2800;
+        p[3] = 0.6500;
+        p[4] = 0.1500;
+        p[5] = 0.0600;
+        temp = ColorTemp::D65;
+    } else if (profile == "Beta RGB") {
+        p[0] = 0.6888;    // Beta primaries
+        p[1] = 0.3112;
+        p[2] = 0.1986;
+        p[3] = 0.7551;
+        p[4] = 0.1265;
+        p[5] = 0.0352;
+    } else if (profile == "BestRGB") {
+        p[0] = 0.7347;    // Best primaries
+        p[1] = 0.2653;
+        p[2] = 0.2150;
+        p[3] = 0.7750;
+        p[4] = 0.1300;
+        p[5] = 0.0350;
+    } else if (profile == "Rec2020") {
+        p[0] = 0.7080;    // Rec2020 primaries
+        p[1] = 0.2920;
+        p[2] = 0.1700;
+        p[3] = 0.7970;
+        p[4] = 0.1310;
+        p[5] = 0.0460;
+        temp = ColorTemp::D65;
+    } else if (profile == "ACESp0") {
+        p[0] = 0.7347;    // ACES P0 primaries
+        p[1] = 0.2653;
+        p[2] = 0.0000;
+        p[3] = 1.0;
+        p[4] = 0.0001;
+        p[5] = -0.0770;
+        temp = ColorTemp::D60;
+    } else if (profile == "ACESp1") {
+        p[0] = 0.713;    // ACES P1 primaries
+        p[1] = 0.293;
+        p[2] = 0.165;
+        p[3] = 0.830;
+        p[4] = 0.128;
+        p[5] = 0.044;
+        temp = ColorTemp::D60;
+    } else if (profile == "ProPhoto") {
+        p[0] = 0.7347;    //ProPhoto and default primaries
+        p[1] = 0.2653;
+        p[2] = 0.1596;
+        p[3] = 0.8404;
+        p[4] = 0.0366;
+        p[5] = 0.0001;
+    } else {
+        p[0] = 0.7347;    //default primaries always unused
+        p[1] = 0.2653;
+        p[2] = 0.1596;
+        p[3] = 0.8404;
+        p[4] = 0.0366;
+        p[5] = 0.0001;
     }
 
+    if (slpos == 0) {
+        slpos = eps;
+    }
+
+    GammaValues g_a; //gamma parameters
+    constexpr int mode = 0;
+    Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
+
+
+    cmsFloat64Number gammaParams[7];
+    gammaParams[4] = g_a[3] * ts;
+    gammaParams[0] = gampos;
+    gammaParams[1] = 1. / (1.0 + g_a[4]);
+    gammaParams[2] = g_a[4] / (1.0 + g_a[4]);
+    gammaParams[3] = 1. / slpos;
+    gammaParams[5] = 0.0;
+    gammaParams[6] = 0.0;
+   // printf("ga0=%f ga1=%f ga2=%f ga3=%f ga4=%f\n", ga0, ga1, ga2, ga3, ga4);
+
+    // 7 parameters for smoother curves
+    cmsCIExyY xyD;
+    cmsWhitePointFromTemp(&xyD, (double)temp);
+    if (profile == "ACESp0") {
+        xyD = {0.32168, 0.33767, 1.0};//refine white point to avoid differences
+    }
+
+    cmsToneCurve* GammaTRC[3];
+    GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(NULL, five, gammaParams);//5 = more smoother than 4
+
+    const cmsCIExyYTRIPLE Primaries = {
+        {p[0], p[1], 1.0}, // red
+        {p[2], p[3], 1.0}, // green
+        {p[4], p[5], 1.0}  // blue
+    };
+    const cmsHPROFILE oprofdef = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC);
+
+    cmsFreeToneCurve(GammaTRC[0]);
+
     if (oprofdef) {
-        #pragma omp parallel for if (multiThread)
+        constexpr cmsUInt32Number flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;
+        const cmsHPROFILE iprof = ICCStore::getInstance()->getXYZProfile();
+        lcmsMutex->lock();
+        const cmsHTRANSFORM hTransform = cmsCreateTransform(iprof, TYPE_RGB_FLT, oprofdef, TYPE_RGB_FLT, params->icm.outputIntent, flags);
+        lcmsMutex->unlock();
+#ifdef _OPENMP
+        #pragma omp parallel if (multiThread)
+#endif
+        {
+            AlignedBuffer<float> pBuf(cw * 3);
+            const float normalize = normalizeOut ? 65535.f : 1.f;
 
-        for (int i = 0; i < ch; i++) {
-            float* rr = working->r(i);
-            float* rg = working->g(i);
-            float* rb = working->b(i);
+#ifdef _OPENMP
+            #pragma omp for schedule(dynamic, 16) nowait
+#endif
 
-            float* xa = (float*)image->r(i);
-            float* ya = (float*)image->g(i);
-            float* za = (float*)image->b(i);
+            for (int i = 0; i < ch; ++i) {
+                float *p = pBuf.data;
+                for (int j = 0; j < cw; ++j) {
+                    const float r = src->r(i, j);
+                    const float g = src->g(i, j);
+                    const float b = src->b(i, j);
 
-            for (int j = 0; j < cw; j++) {
-                float r1 = rr[j];
-                float g1 = rg[j];
-                float b1 = rb[j];
-
-                float x_ = toxyz[0][0] * r1 + toxyz[0][1] * g1 + toxyz[0][2] * b1;
-                float y_ = toxyz[1][0] * r1 + toxyz[1][1] * g1 + toxyz[1][2] * b1;
-                float z_ = toxyz[2][0] * r1 + toxyz[2][1] * g1 + toxyz[2][2] * b1;
-
-                xa[j] = ( x_) ;
-                ya[j] = ( y_);
-                za[j] = ( z_);
-
+                    *(p++) = toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b;
+                    *(p++) = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
+                    *(p++) = toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b;
+                }
+                p = pBuf.data;
+                cmsDoTransform(hTransform, p, p, cw);
+                for (int j = 0; j < cw; ++j) {
+                    dst->r(i, j) = *(p++) * normalize;
+                    dst->g(i, j) = *(p++) * normalize;
+                    dst->b(i, j) = *(p++) * normalize;
+                }
             }
         }
 
-        cmsUInt32Number flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;
-
-
-        lcmsMutex->lock();
-        cmsHPROFILE iprof = ICCStore::getInstance()->getXYZProfile();
-        //   cmsHTRANSFORM hTransform = cmsCreateTransform(iprof, TYPE_RGB_16, oprofdef, TYPE_RGB_16, params->icm.outputIntent,  cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
-        cmsHTRANSFORM hTransform = cmsCreateTransform(iprof, TYPE_RGB_FLT, oprofdef, TYPE_RGB_FLT, params->icm.outputIntent, flags);
-        lcmsMutex->unlock();
-
-        image->ExecCMSTransform2(hTransform);
-
         cmsDeleteTransform(hTransform);
-        image->normalizeFloatTo65535();
-
     }
-
-
-    return image;
-
 }
 
 
