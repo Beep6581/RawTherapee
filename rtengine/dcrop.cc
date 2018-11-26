@@ -819,9 +819,9 @@ void Crop::update(int todo)
                 const int ch = baseCrop->getHeight();
                 workingCrop = new Imagefloat(cw, ch);
                 //first put gamma TRC to 1
-                parent->ipf.workingtrc(baseCrop, workingCrop, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310, true, false);
+                parent->ipf.workingtrc(baseCrop, workingCrop, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310, parent->getCustomTransformIn(), true, false, true);
                 //adjust gamma TRC
-                parent->ipf.workingtrc(workingCrop, workingCrop, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope, false, true);
+                parent->ipf.workingtrc(workingCrop, workingCrop, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope, parent->getCustomTransformOut(), false, true, true);
             }
         }
         double rrm, ggm, bbm;

@@ -94,7 +94,7 @@ ImProcCoordinator::ImProcCoordinator()
       pW(-1), pH(-1),
       plistener(nullptr), imageListener(nullptr), aeListener(nullptr), acListener(nullptr), abwListener(nullptr), awbListener(nullptr), flatFieldAutoClipListener(nullptr), bayerAutoContrastListener(nullptr), xtransAutoContrastListener(nullptr), frameCountListener(nullptr), imageTypeListener(nullptr), actListener(nullptr), adnListener(nullptr), awavListener(nullptr), dehaListener(nullptr), hListener(nullptr),
       resultValid(false), lastOutputProfile("BADFOOD"), lastOutputIntent(RI__COUNT), lastOutputBPC(false), thread(nullptr), changeSinceLast(0), updaterRunning(false), destroying(false), utili(false), autili(false),
-      butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false), wavcontlutili(false), colourToningSatLimit(0.f), colourToningSatLimitOpacity(0.f), highQualityComputed(false)
+      butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false), wavcontlutili(false), colourToningSatLimit(0.f), colourToningSatLimitOpacity(0.f), highQualityComputed(false), customTransformIn(nullptr), customTransformOut(nullptr)
 {}
 
 void ImProcCoordinator::assign(ImageSource* imgsrc)
@@ -128,6 +128,17 @@ ImProcCoordinator::~ImProcCoordinator()
     }
 
     imgsrc->decreaseRef();
+
+    if(customTransformIn) {
+        cmsDeleteTransform(customTransformIn);
+        customTransformIn = nullptr;
+    }
+
+    if(customTransformOut) {
+        cmsDeleteTransform(customTransformOut);
+        customTransformOut = nullptr;
+    }
+
     updaterThreadStart.unlock();
 }
 
@@ -516,9 +527,17 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     const int cw = oprevi->getWidth();
                     const int ch = oprevi->getHeight();
                     // put gamma TRC to 1
-                    ipf.workingtrc(oprevi, oprevi, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310, true, false);
+                    if(customTransformIn) {
+                        cmsDeleteTransform(customTransformIn);
+                        customTransformIn = nullptr;
+                    }
+                    ipf.workingtrc(oprevi, oprevi, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310, customTransformIn, true, false, true);
                     //adjust TRC
-                    ipf.workingtrc(oprevi, oprevi, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope, false, true);
+                    if(customTransformOut) {
+                        cmsDeleteTransform(customTransformOut);
+                        customTransformOut = nullptr;
+                    }
+                    ipf.workingtrc(oprevi, oprevi, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope, customTransformOut, false, true, true);
                 }
             }
         }
