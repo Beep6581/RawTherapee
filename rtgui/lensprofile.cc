@@ -179,7 +179,7 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
     disableListener();
     conUseDist.block(true);
 
-    corrLensfunAutoRB->set_sensitive(true);
+    // corrLensfunAutoRB->set_sensitive(true);
 
     switch (pp->lensProf.lcMode) {
         case procparams::LensProfParams::LcMode::LCP: {
@@ -190,6 +190,9 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
 
         case procparams::LensProfParams::LcMode::LENSFUNAUTOMATCH: {
             corrLensfunAutoRB->set_active(true);
+            if (batchMode) {
+                setManualParamsVisibility(false);
+            }
             break;
         }
 
@@ -203,6 +206,10 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
             setManualParamsVisibility(false);
             break;
         }
+    }
+    
+    if (multiImage) {
+        corrUnchangedRB->set_active(true);
     }
 
     if (pp->lensProf.lcpFile.empty()) {
@@ -227,24 +234,29 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
     const LFDatabase* const db = LFDatabase::getInstance();
     LFCamera c;
 
-    if (!setLensfunCamera(pp->lensProf.lfCameraMake, pp->lensProf.lfCameraModel) && !pp->lensProf.lfManual()) {
+    if (pp->lensProf.lfAutoMatch()) {
         if (metadata) {
             c = db->findCamera(metadata->getMake(), metadata->getModel());
             setLensfunCamera(c.getMake(), c.getModel());
         }
+    } else if (pp->lensProf.lfManual()) {
+        setLensfunCamera(pp->lensProf.lfCameraMake, pp->lensProf.lfCameraModel);
     }
 
-    if (!setLensfunLens(pp->lensProf.lfLens) && !pp->lensProf.lfManual()) {
+    if (pp->lensProf.lfAutoMatch()) {
         if (metadata) {
             const LFLens l = db->findLens(c, metadata->getLens());
             setLensfunLens(l.getLens());
         }
+    } else if (pp->lensProf.lfManual()) {
+        setLensfunLens(pp->lensProf.lfLens);
     }
 
     lcModeChanged = lcpFileChanged = useDistChanged = useVignChanged = useCAChanged = false;
     useLensfunChanged = lensfunAutoChanged = lensfunCameraChanged = lensfunLensChanged = false;
 
-    if (!batchMode && !checkLensfunCanCorrect(true)) {
+    /*  
+   if (!batchMode && !checkLensfunCanCorrect(true)) {
         if (corrLensfunAutoRB->get_active()) {
             corrOffRB->set_active(true);
         }
@@ -252,9 +264,10 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
         corrLensfunAutoRB->set_sensitive(false);
     }
 
-    if (corrLensfunManualRB->get_active() && !checkLensfunCanCorrect(false)) {
+    if (!batchMode && corrLensfunManualRB->get_active() && !checkLensfunCanCorrect(true)) {
         corrOffRB->set_active(true);
-    }
+    } 
+    */
 
     updateLensfunWarning();
 
@@ -293,7 +306,7 @@ void LensProfilePanel::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
 
     const auto itc = lensfunCameras->get_active();
 
-    if (itc) {
+    if (itc && !corrLensfunAutoRB->get_active()) {
         pp->lensProf.lfCameraMake = (*itc)[lf->lensfunModelCam.make];
         pp->lensProf.lfCameraModel = (*itc)[lf->lensfunModelCam.model];
     } else {
@@ -303,7 +316,7 @@ void LensProfilePanel::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
 
     const auto itl = lensfunLenses->get_active();
 
-    if (itl) {
+    if (itl && !corrLensfunAutoRB->get_active()) {
         pp->lensProf.lfLens = (*itl)[lf->lensfunModelLens.lens];
     } else {
         pp->lensProf.lfLens = "";
@@ -386,13 +399,13 @@ void LensProfilePanel::onUseCAChanged()
 
 void LensProfilePanel::setBatchMode(bool yes)
 {
-    FoldableToolPanel::setBatchMode(yes);
 
-    if (yes) {
-        corrUnchangedRB->set_group(corrGroup);
-        modesGrid->attach_next_to(*corrUnchangedRB, Gtk::POS_TOP, 3, 1);
-        corrUnchangedRB->set_active(true);
-    }
+    FoldableToolPanel::setBatchMode(yes);
+    
+    corrUnchangedRB->set_group(corrGroup);
+    modesGrid->attach_next_to(*corrUnchangedRB, Gtk::POS_TOP, 3, 1);
+    corrUnchangedRB->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &LensProfilePanel::onCorrModeChanged), corrUnchangedRB));
+    corrUnchangedRB->set_active(true);
 }
 
 void LensProfilePanel::onLensfunCameraChanged()
@@ -454,15 +467,21 @@ void LensProfilePanel::onCorrModeChanged(const Gtk::RadioButton* rbChanged)
         } else if (rbChanged == corrLensfunAutoRB) {
             useLensfunChanged = true;
             lensfunAutoChanged = true;
+            lensfunCameraChanged = true;
+            lensfunLensChanged = true;
             lcpFileChanged = true;
             useDistChanged = true;
             useVignChanged = true;
 
             ckbUseDist->set_sensitive(true);
             ckbUseVign->set_sensitive(true);
-            ckbUseCA->set_sensitive(false);
+            ckbUseCA->set_sensitive(true);
 
-            if (metadata) {
+            
+            if (batchMode) {
+                setLensfunCamera("", "");
+                setLensfunLens("");
+            } else if (metadata) {
                 const bool disabled = disableListener();
                 const LFDatabase* const db = LFDatabase::getInstance();
                 const LFCamera c = db->findCamera(metadata->getMake(), metadata->getModel());
@@ -479,6 +498,8 @@ void LensProfilePanel::onCorrModeChanged(const Gtk::RadioButton* rbChanged)
         } else if (rbChanged == corrLensfunManualRB) {
             useLensfunChanged = true;
             lensfunAutoChanged = true;
+            lensfunCameraChanged = true;
+            lensfunLensChanged = true;
             lcpFileChanged = true;
             useDistChanged = true;
             useVignChanged = true;
@@ -515,7 +536,7 @@ void LensProfilePanel::onCorrModeChanged(const Gtk::RadioButton* rbChanged)
         lcModeChanged = true;
         updateLensfunWarning();
 
-        if (rbChanged == corrLensfunManualRB || rbChanged == corrLensfunAutoRB) {
+        if (rbChanged == corrLensfunManualRB || (!batchMode && rbChanged == corrLensfunAutoRB)) {
             setManualParamsVisibility(true);
         } else {
             setManualParamsVisibility(false);
