@@ -302,81 +302,11 @@ void ImProcFunctions::updateColorProfiles (const Glib::ustring& monitorProfile, 
     Glib::ustring outtest = monitorProfile ;
     
     std::string fileis_RTv2 = outtest.substr(0, 4);
-        if(fileis_RTv2 == "RTv2" && gamutCheck) {//Only fot ICC v2 : read tag from desc to retrieve gamma and slope save before in generate ICC v2
-        //due to bug in LCMS in CmsToneCurve
-        //printf("icmout=%s \n",icm.output.c_str());
-            GammaValues g_b; //gamma parameters
-            const double eps = 0.000000001; // not divide by zero
-            double gammatag = 2.4;
-            double slopetag = 12.92310;
-            cmsMLU *modelDescMLU = (cmsMLU*) (cmsReadTag(monitor, cmsSigDeviceModelDescTag));
-            if (modelDescMLU) {
-                cmsUInt32Number count = cmsMLUgetWide(modelDescMLU, "en", "US", nullptr, 0);  // get buffer length first
-                if (count) {
-                    wchar_t *buffer = new wchar_t[count];
-                    count = cmsMLUgetWide(modelDescMLU, "en", "US", buffer, count); // now put the string in the buffer
-                    Glib::ustring modelDesc;
-#if __SIZEOF_WCHAR_T__ == 2
-                    char* cModelDesc = g_utf16_to_utf8((unsigned short int*)buffer, -1, nullptr, nullptr, nullptr); // convert to utf-8 in a buffer allocated by glib
-                    if (cModelDesc) {
-                        modelDesc.assign(cModelDesc);
-                        g_free(cModelDesc);
-                    }
-#else
-                    modelDesc = utf32_to_utf8(buffer, count);
-#endif
-                    delete [] buffer;
-                    if (!modelDesc.empty()) {
-                        std::size_t pos = modelDesc.find("g");
-                        std::size_t posmid = modelDesc.find("s");
-                        std::size_t posend = modelDesc.find("!");
-                        std::string strgamma = modelDesc.substr(pos + 1, (posmid - pos));
-                        gammatag = std::stod(strgamma.c_str());
-                        std::string strslope = modelDesc.substr(posmid + 1, (posend - posmid));
-                        slopetag = std::stod(strslope.c_str());
-                   // printf("gam=%f slo=%f\n", gammatag, slopetag);
-                    }
-                } else {
-                    printf("Error: lab2rgbOut  /  String length is null!\n");
-                }
-            } else {
-                printf("Error: lab2rgbOut  /  cmsReadTag/cmsSigDeviceModelDescTag failed!\n");
-            }
 
-            double pwr = 1.0 / gammatag;
-            double ts = slopetag;
-            double slope = slopetag == 0 ? eps : slopetag;
-
-            int mode = 0;
-            Color::calcGamma(pwr, ts, mode, g_b); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
-            cmsFloat64Number gammaParams[7]; //gamma parameters
-            gammaParams[4] = g_b[3] * ts;
-            gammaParams[0] = gammatag;
-            gammaParams[1] = 1. / (1.0 + g_b[4]);
-            gammaParams[2] = g_b[4] / (1.0 + g_b[4]);
-            gammaParams[3] = 1. / slope;
-            gammaParams[5] = 0.0;
-            gammaParams[6] = 0.0;
-
+    if((fileis_RTv2 == "RTv4" || fileis_RTv2 == "RTv2")  && gamutCheck) {
             cmsToneCurve* GammaTRC[3];
-            if(slopetag == 0.) {
-                //printf("gammatag=%f\n", gammatag);
-                GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildGamma(NULL, gammatag);
-            }
-            else {
-                GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, gammaParams); //5 = smoother than 4
-            }
-            GammaTRC[2] = cmsBuildGamma(NULL, gammatag);//if GammaTRC[2] build by cmsBuildParametricToneCurve, gamut check does not work...why  LCMS bug ????
-            cmsWriteTag(monitor, cmsSigRedTRCTag, GammaTRC[0]);
-            cmsWriteTag(monitor, cmsSigGreenTRCTag, GammaTRC[1]);
-            cmsWriteTag(monitor, cmsSigBlueTRCTag, GammaTRC[2]);
-            cmsFreeToneCurve(GammaTRC[0]);
-        }
-        
-        if(fileis_RTv2 == "RTv4"  && gamutCheck) {
-            cmsToneCurve* GammaTRC[3];
-            GammaTRC[2] = cmsBuildGamma(NULL, 2.4);//if GammaTRC[2] used by v4 gamut check does not work...why ??
-            // I have put the value by default 
+            GammaTRC[2] = cmsBuildGamma(NULL, 2.4);//if GammaTRC[2] used by v4 or v2 gamut check does not work...why ??
+            // I have put the value by default perhaps in some cases (gamma very different from 2.4) not very good...
             cmsWriteTag(monitor, cmsSigBlueTRCTag, GammaTRC[2]);
             cmsFreeToneCurve(GammaTRC[0]);
         }
