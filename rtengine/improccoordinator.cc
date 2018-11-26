@@ -28,7 +28,6 @@
 #include <fstream>
 #include <string>
 #include "color.h"
-
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -511,38 +510,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     orig_prev->copyData(oprevi);
                 }
 
-                Glib::ustring profile = params.icm.workingProfile;
+                const Glib::ustring profile = params.icm.workingProfile;
 
                 if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1") {
-                    int  cw = oprevi->getWidth();
-                    int  ch = oprevi->getHeight();
+                    const int cw = oprevi->getWidth();
+                    const int ch = oprevi->getHeight();
                     // put gamma TRC to 1
-                    Imagefloat* readyImg0 = ipf.workingtrc(oprevi, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310);
-                    #pragma omp parallel for
-
-                    for (int row = 0; row < ch; row++) {
-                        for (int col = 0; col < cw; col++) {
-                            oprevi->r(row, col) = (float)readyImg0->r(row, col);
-                            oprevi->g(row, col) = (float)readyImg0->g(row, col);
-                            oprevi->b(row, col) = (float)readyImg0->b(row, col);
-                        }
-                    }
-
-                    delete readyImg0;
+                    ipf.workingtrc(oprevi, oprevi, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310, true, false);
                     //adjust TRC
-                    Imagefloat* readyImg = ipf.workingtrc(oprevi, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope);
-                    #pragma omp parallel for
-
-                    for (int row = 0; row < ch; row++) {
-                        for (int col = 0; col < cw; col++) {
-                            oprevi->r(row, col) = (float)readyImg->r(row, col);
-                            oprevi->g(row, col) = (float)readyImg->g(row, col);
-                            oprevi->b(row, col) = (float)readyImg->b(row, col);
-                        }
-                    }
-
-                    delete readyImg;
-
+                    ipf.workingtrc(oprevi, oprevi, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope, false, true);
                 }
             }
         }
