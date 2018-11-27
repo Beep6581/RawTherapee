@@ -712,18 +712,51 @@ void Crop::ratioChanged ()
 void Crop::adjustCropToRatio()
 {
     if (fixr->get_active() && !fixr->get_inconsistent()) {
+        int W1 = nw, W2 = nw;
+        int H1 = nh, H2 = nh;
+        int X1 = nx, X2 = nx;
+        int Y1 = ny, Y2 = ny;
 
-//        int W = w->get_value ();
-//        int H = h->get_value ();
-        int W = nw;
-        int H = nh;
-        int X = nx;
-        int Y = ny;
+        float r = getRatio();
 
-        if (W >= H) {
-            cropWidth2Resized (X, Y, W, H);
+        H1 = round(W1 / r);
+        Y1 = ny + (nh - H1)/2.0;
+        if (Y1 < 0) {
+            Y1 = 0;
+        }
+        if (H1 > maxh) {
+            H1 = maxh;
+            W1 = round(H1 * r);
+            X1 = nx + (nw - W1)/2.0;
+        }
+        if (Y1+H1 > maxh) {
+            Y1 = maxh - H1;
+        }
+
+        W2 = round(H2 * r);
+        X2 = nx + (nw - W2)/2.0;
+        if (X2 < 0) {
+            X2 = 0;
+        }
+        if (W2 > maxw) {
+            W2 = maxw;
+            H2 = round(W2 / r);
+            Y2 = ny + (nh - H2)/2.0;
+        }
+        if (X2+W2 > maxw) {
+            X2 = maxw - W2;
+        }
+
+        if (W1 * H1 >= W2 * H2) {
+            nx = X1;
+            ny = Y1;
+            nw = W1;
+            nh = H1;
         } else {
-            cropHeight2Resized (X, Y, W, H);
+            nx = X2;
+            ny = Y2;
+            nw = W2;
+            nh = H2;
         }
     }
 
