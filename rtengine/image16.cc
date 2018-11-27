@@ -310,20 +310,6 @@ Image8* Image16::to8() const
     return img8;
 }
 
-Imagefloat* Image16::tofloat() const
-{
-    Imagefloat* imgfloat = new Imagefloat(width, height);
-
-    for (int h = 0; h < height; ++h) {
-        for (int w = 0; w < width; ++w) {
-            imgfloat->r(h, w) = r(h, w);
-            imgfloat->g(h, w) = g(h, w);
-            imgfloat->b(h, w) = b(h, w);
-        }
-    }
-
-    return imgfloat;
-}
 // Parallelized transformation; create transform with cmsFLAGS_NOCACHE!
 void Image16::ExecCMSTransform(cmsHTRANSFORM hTransform)
 {
