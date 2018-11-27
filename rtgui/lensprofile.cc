@@ -207,10 +207,6 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
             break;
         }
     }
-    
-    if (multiImage) {
-        corrUnchangedRB->set_active(true);
-    }
 
     if (pp->lensProf.lcpFile.empty()) {
         const Glib::ustring lastFolder = corrLcpFileChooser->get_current_folder();
@@ -264,17 +260,34 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
         corrLensfunAutoRB->set_sensitive(false);
     }
 
-    if (!batchMode && corrLensfunManualRB->get_active() && !checkLensfunCanCorrect(true)) {
+    if (!batchMode && corrLensfunManualRB->get_active() && !checkLensfunCanCorrect(false)) {
         corrOffRB->set_active(true);
     } 
     */
+    
+    ckbUseDist->set_active(pp->lensProf.useDist);
+    ckbUseVign->set_active(pp->lensProf.useVign);
+    ckbUseCA->set_active(pp->lensProf.useCA);
+    
+    if (pedited) {
+        corrUnchangedRB->set_active(!pedited->lensProf.lcMode);
+        ckbUseDist->set_inconsistent(!pedited->lensProf.useDist);
+        ckbUseVign->set_inconsistent(!pedited->lensProf.useVign);
+        ckbUseCA->set_inconsistent(!pedited->lensProf.useCA);
+        
+        if (!pedited->lensProf.lfCameraMake || !pedited->lensProf.lfCameraModel) {
+            setLensfunCamera("", "");
+        }
+        if (!pedited->lensProf.lfLens) {
+            setLensfunLens("");
+        }
+        
+        ckbUseDist->set_sensitive(true);
+        ckbUseVign->set_sensitive(true);
+        ckbUseCA->set_sensitive(true);
+    }
 
     updateLensfunWarning();
-
-    ckbUseDist->set_active(pp->lensProf.useDist);
-    ckbUseVign->set_active(pp->lensProf.useVign && isRaw);
-    ckbUseCA->set_active(pp->lensProf.useCA && isRaw && ckbUseCA->get_sensitive());
-
     enableListener();
     conUseDist.block(false);
 }
@@ -338,7 +351,7 @@ void LensProfilePanel::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
 
 void LensProfilePanel::setRawMeta(bool raw, const rtengine::FramesMetaData* pMeta)
 {
-    if (!raw || pMeta->getFocusDist() <= 0) {
+    if ((!raw || pMeta->getFocusDist() <= 0) && !batchMode) {
         disableListener();
 
         // CA is very focus layer dependent, otherwise it might even worsen things
@@ -373,6 +386,10 @@ void LensProfilePanel::onLCPFileChanged()
 void LensProfilePanel::onUseDistChanged()
 {
     useDistChanged = true;
+    if (ckbUseDist->get_inconsistent()) {
+        ckbUseDist->set_inconsistent(false);
+        ckbUseDist->set_active(false);
+    }
 
     if (listener) {
         listener->panelChanged(EvLCPUseDist, ckbUseDist->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
@@ -382,6 +399,10 @@ void LensProfilePanel::onUseDistChanged()
 void LensProfilePanel::onUseVignChanged()
 {
     useVignChanged = true;
+    if (ckbUseVign->get_inconsistent()) {
+        ckbUseVign->set_inconsistent(false);
+        ckbUseVign->set_active(false);
+    }
 
     if (listener) {
         listener->panelChanged(EvLCPUseVign, ckbUseVign->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
@@ -391,6 +412,10 @@ void LensProfilePanel::onUseVignChanged()
 void LensProfilePanel::onUseCAChanged()
 {
     useCAChanged = true;
+    if (ckbUseCA->get_inconsistent()) {
+        ckbUseCA->set_inconsistent(false);
+        ckbUseCA->set_active(false);
+    }
 
     if (listener) {
         listener->panelChanged(EvLCPUseCA, ckbUseCA->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
@@ -464,6 +489,7 @@ void LensProfilePanel::onCorrModeChanged(const Gtk::RadioButton* rbChanged)
             ckbUseCA->set_sensitive(false);
 
             mode = M("GENERAL_NONE");
+            
         } else if (rbChanged == corrLensfunAutoRB) {
             useLensfunChanged = true;
             lensfunAutoChanged = true;
@@ -478,23 +504,21 @@ void LensProfilePanel::onCorrModeChanged(const Gtk::RadioButton* rbChanged)
             ckbUseCA->set_sensitive(true);
 
             
+            disableListener();
             if (batchMode) {
                 setLensfunCamera("", "");
                 setLensfunLens("");
             } else if (metadata) {
-                const bool disabled = disableListener();
                 const LFDatabase* const db = LFDatabase::getInstance();
                 const LFCamera c = db->findCamera(metadata->getMake(), metadata->getModel());
                 const LFLens l = db->findLens(c, metadata->getLens());
                 setLensfunCamera(c.getMake(), c.getModel());
                 setLensfunLens(l.getLens());
-
-                if (disabled) {
-                    enableListener();
-                }
             }
-
+            enableListener();
+            
             mode = M("TP_LENSPROFILE_CORRECTION_AUTOMATCH");
+            
         } else if (rbChanged == corrLensfunManualRB) {
             useLensfunChanged = true;
             lensfunAutoChanged = true;
@@ -509,6 +533,7 @@ void LensProfilePanel::onCorrModeChanged(const Gtk::RadioButton* rbChanged)
             ckbUseCA->set_sensitive(false);
 
             mode = M("TP_LENSPROFILE_CORRECTION_MANUAL");
+            
         } else if (rbChanged == corrLcpFileRB) {
             useLensfunChanged = true;
             lensfunAutoChanged = true;
@@ -519,6 +544,7 @@ void LensProfilePanel::onCorrModeChanged(const Gtk::RadioButton* rbChanged)
             updateDisabled(true);
 
             mode = M("TP_LENSPROFILE_CORRECTION_LCPFILE");
+            
         } else if (rbChanged == corrUnchangedRB) {
             useLensfunChanged = false;
             lensfunAutoChanged = false;
@@ -644,9 +670,11 @@ void LensProfilePanel::LFDbHelper::fillLensfunLenses()
 
 void LensProfilePanel::updateDisabled(bool enable)
 {
-    ckbUseDist->set_sensitive(enable);
-    ckbUseVign->set_sensitive(enable && isRaw);
-    ckbUseCA->set_sensitive(enable && allowFocusDep);
+    if (!batchMode) {
+        ckbUseDist->set_sensitive(enable);
+        ckbUseVign->set_sensitive(enable && isRaw);
+        ckbUseCA->set_sensitive(enable && allowFocusDep);
+    }
 }
 
 bool LensProfilePanel::setLensfunCamera(const Glib::ustring& make, const Glib::ustring& model)
