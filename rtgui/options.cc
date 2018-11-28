@@ -942,11 +942,17 @@ void Options::readFromFile(Glib::ustring fname)
                 }
 
                 if (keyFile.has_key("File Browser", "ParseExtensions")) {
-                    parseExtensions = keyFile.get_string_list("File Browser", "ParseExtensions");
+                    auto l = keyFile.get_string_list("File Browser", "ParseExtensions");
+                    if (!l.empty()) {
+                        parseExtensions = l;
+                    }
                 }
 
                 if (keyFile.has_key("File Browser", "ParseExtensionsEnabled")) {
-                    parseExtensionsEnabled = keyFile.get_integer_list("File Browser", "ParseExtensionsEnabled");
+                    auto l = keyFile.get_integer_list("File Browser", "ParseExtensionsEnabled");
+                    if (!l.empty()) {
+                        parseExtensionsEnabled = l;
+                    }
                 }
 
                 if (keyFile.has_key("File Browser", "ThumbnailArrangement")) {
