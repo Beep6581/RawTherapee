@@ -424,7 +424,6 @@ void LensProfilePanel::onUseCAChanged()
 
 void LensProfilePanel::setBatchMode(bool yes)
 {
-
     FoldableToolPanel::setBatchMode(yes);
     
     corrUnchangedRB->set_group(corrGroup);
@@ -504,7 +503,7 @@ void LensProfilePanel::onCorrModeChanged(const Gtk::RadioButton* rbChanged)
             ckbUseCA->set_sensitive(true);
 
             
-            disableListener();
+            const bool disabled = disableListener();
             if (batchMode) {
                 setLensfunCamera("", "");
                 setLensfunLens("");
@@ -515,7 +514,9 @@ void LensProfilePanel::onCorrModeChanged(const Gtk::RadioButton* rbChanged)
                 setLensfunCamera(c.getMake(), c.getModel());
                 setLensfunLens(l.getLens());
             }
-            enableListener();
+            if (disabled) {
+                    enableListener();
+            }
             
             mode = M("TP_LENSPROFILE_CORRECTION_AUTOMATCH");
             
